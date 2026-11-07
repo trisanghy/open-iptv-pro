@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="vi"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self' data: blob:; script-src 'self' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; img-src * data: blob: file:; connect-src * data: blob:; media-src * data: blob:; worker-src 'self' blob:;"/>
+<title>Open IPTV Pro 4.1</title><link rel="stylesheet" href="styles.css"/></head>
+<body>
+<div class="app-shell" id="appShell">
+ <aside class="sidebar">
+  <div class="brand"><div class="brand-icon"><img src="../assets/icon.png" alt="Open IPTV Pro"/></div><div><b>Open IPTV Pro</b><small>OPEN SOURCE <span class="version">4.1</span></small></div></div>
+  <div class="aside-caption">THƯ VIỆN</div>
+  <button class="nav active" data-page="tv"><span>▣</span> Xem truyền hình <small id="navCount">0</small></button>
+  <button class="nav" data-page="fav"><span>★</span> Kênh yêu thích <small id="favCount">0</small></button>
+  <button class="nav" data-page="epg"><span>▤</span> Lịch phát sóng EPG</button>
+  <button class="nav" data-page="shots"><span>▦</span> Ảnh chụp kênh</button>
+  <button class="nav" data-page="folders"><span>▤</span> Thư mục kênh <small id="folderCount">0</small></button>
+  <div class="aside-caption aside-second">CÔNG CỤ</div>
+  <button class="nav" data-page="sources"><span>◈</span> Quản lý nguồn <small id="sourceCount">0</small></button>
+  <button class="nav" id="checkNav"><span>✓</span> Kiểm tra link</button>
+  <button class="nav" id="exportNav"><span>⇩</span> Xuất M3U</button>
+  <button class="nav" id="gitNav"><span>⌘</span> Đăng GitHub / Gist</button>
+  <button class="nav" data-page="settings"><span>⚙</span> Cài đặt</button>
+  <div class="sidebar-bottom"><div class="online-dot"></div><div><b id="appMode">Bản mở nhanh</b><small id="miniStatus">Sẵn sàng</small></div></div>
+ </aside>
+ <main class="main">
+  <header class="topbar"><div class="top-title"><span class="crumb">OPEN IPTV PRO</span><span class="chevron">›</span><b id="pageTitle">Xem truyền hình</b></div>
+   <div class="top-actions"><span class="state-mark" id="activeSourceTag">Chưa có nguồn</span><button class="btn btn-subtle" id="fileBtn">＋ Mở file M3U</button><button class="btn btn-primary" id="urlBtn">↗ Thêm URL</button></div>
+  </header>
+  <div class="content">
+   <section id="page-tv" class="page active-page">
+    <div class="tv-layout">
+     <div class="channel-panel">
+      <div class="panel-header"><div><h2>Danh sách kênh</h2><p id="channelMeta">Chưa có kênh</p></div><button class="icon-btn" id="refreshAllBtn" title="Làm mới các nguồn URL">↻</button></div>
+      <div class="filter-box"><span>⌕</span><input type="search" placeholder="Tìm kênh, nhóm..." id="searchBox"/></div>
+      <div class="folder-actions"><button id="newFolderFromList" title="Tạo thư mục mới">＋ Thư mục</button><button id="expandFolderBtn" title="Mở hết thư mục">▾ Mở hết</button><button id="collapseFolderBtn" title="Đóng hết thư mục">▸ Gập hết</button></div><div class="filter-tabs"><button class="filter-tab active" data-filter="all">Tất cả</button><button class="filter-tab" data-filter="fav">★ Yêu thích</button><button class="filter-tab" data-filter="alive">● Còn sống</button></div>
+      <div class="channel-list" id="channelList"></div>
+     </div>
+     <div class="watch-panel">
+      <div class="player-box" id="playerBox">
+       <video id="video" playsinline preload="none" controlslist="nodownload" crossorigin="anonymous"></video>
+       
+       <div class="empty-player" id="emptyPlayer"><div class="empty-icon">▶</div><h2>Sẵn sàng xem truyền hình</h2><p>Chọn kênh bên trái, hoặc thêm playlist M3U để bắt đầu.</p><div class="empty-actions"><button class="btn btn-primary" id="emptyFileBtn">Mở file M3U</button><button class="btn btn-subtle" id="emptyUrlBtn">Thêm URL</button></div></div>
+      </div>
+      <div class="player-control-card"><span id="streamInfo" class="screen-reader-only" aria-live="polite"></span>
+       <div class="playing-info"><span class="small-lcd" id="playingIcon">TV</span><div><b id="playingTitle">Chưa chọn kênh</b><small id="playingSubtitle">Nhập danh sách để bắt đầu</small></div><button class="icon-btn favorite-current" id="favCurrentBtn" title="Yêu thích">☆</button></div>
+       <div class="controls"><button class="control-sm" id="prevBtn" title="Kênh trước">⏮</button><button class="control-main" id="playBtn" title="Phát / Tạm dừng">▶</button><button class="control-sm" id="stopBtn" title="Dừng">■</button><button class="control-sm" id="nextBtn" title="Kênh sau">⏭</button><div class="control-spacer"></div><span class="volume-icon">◖))</span><input type="range" min="0" max="100" value="80" id="volume" title="Âm lượng"/><button class="control-sm" id="shotBtn" title="Chụp ảnh kênh">▣</button><label class="view-mode" title="Chế độ hiển thị video"><span>Khung hình</span><select id="videoFit" aria-label="Chế độ hiển thị video"><option value="contain">Vừa khung</option><option value="cover">Lấp đầy (cắt cạnh)</option><option value="fill">Kéo giãn</option><option value="none">Kích thước gốc</option></select></label><button class="control-sm" id="pipBtn" title="Cửa sổ nổi Picture-in-Picture">▣ PiP</button><button class="control-sm" id="fullscreenBtn" title="Toàn màn hình">⛶</button></div>
+      </div>
+      <div class="epg-current-card" id="epgCurrent"><span>▤ Lịch phát sóng</span><span id="epgNowText">Chọn kênh để xem chương trình hiện tại</span><button id="openGuideBtn">Xem lịch ›</button></div>
+      <div class="quick-grid"><button class="quick-btn" id="quickChecks"><span>✓</span><b>Kiểm tra các kênh</b><small>Nhiều vòng, có báo cáo</small></button><button class="quick-btn" id="quickShots"><span>▦</span><b>Chụp toàn bộ kênh</b><small>FFmpeg tích hợp</small></button><button class="quick-btn" id="quickExport"><span>⇩</span><b>Xuất playlist</b><small>Tạo file iptv.m3u</small></button></div>
+      <div class="task-box hidden" id="taskBox"><div class="task-line"><b id="taskTitle">Đang xử lý...</b><button id="cancelTaskBtn" class="link-button">Hủy sau lượt hiện tại</button></div><div class="progress-track"><div class="progress-bar" id="progressBar"></div></div><small id="taskProgress">0/0</small></div>
+     </div>
+    </div>
+   </section>
+   <section id="page-epg" class="page"><div class="section-heading"><div><h1>▤ Lịch phát sóng (EPG)</h1><p>Chương trình đang chiếu, sắp chiếu và lịch trong ngày từ nguồn XMLTV.</p></div><div class="heading-actions"><button class="btn btn-subtle" id="epgRefreshBtn">↻ Tải lại EPG</button><button class="btn btn-primary" id="epgSettingsBtn">⚙ Nguồn EPG</button></div></div><div class="filter-box epg-filter"><span>⌕</span><input type="search" id="epgSearch" placeholder="Tìm kênh trong lịch EPG..."/></div><div class="epg-summary" id="epgSummary">Chưa có dữ liệu lịch phát sóng.</div><div class="epg-guide" id="epgGuide"></div></section>
+   <section id="page-settings" class="page"><div class="section-heading"><div><h1>⚙ Cài đặt Open IPTV Pro</h1><p>Màu sắc giao diện, nguồn EPG và kiểm tra cập nhật.</p></div></div><div class="settings-grid">
+    <article class="settings-card"><h2>🎨 Màu giao diện</h2><p>Chọn trên bánh xe màu hoặc dùng bảng màu hệ điều hành.</p><div class="wheel-controls"><div class="color-wheel" id="colorWheel" role="button" tabindex="0" aria-label="Bánh xe màu: nhấp để chọn màu"><div class="wheel-hole" id="wheelHole"></div><div class="wheel-indicator" id="wheelIndicator"></div></div><div class="color-choices"><label>Màu tùy chỉnh <input type="color" id="themePicker" value="#bc7cff"/></label><div class="color-presets"><button data-color="#bc7cff" title="Tím">●</button><button data-color="#58d4a4" title="Xanh ngọc">●</button><button data-color="#51a7ff" title="Xanh dương">●</button><button data-color="#f4a056" title="Cam">●</button><button data-color="#f17fa2" title="Hồng">●</button></div><button class="btn btn-subtle" id="resetThemeBtn">Đặt lại tím mặc định</button></div></div></article>
+    <article class="settings-card"><h2>▤ Nguồn lịch EPG</h2><p>Các địa chỉ XMLTV công khai, tải theo yêu cầu. EPG có thể thiếu một số kênh.</p><div id="epgSources" class="epg-sources"></div><label class="settings-label" for="customEPG">URL XMLTV / .xml.gz mới</label><div class="settings-inline"><input id="customEPG" placeholder="https://example.org/guide.xml.gz"/><button class="btn btn-subtle" id="epgAddSourceBtn">＋ Thêm</button></div><button class="btn btn-primary" id="epgLoadBtn">↻ Cập nhật EPG ngay</button><small id="epgUpdatedLabel">Chưa tải EPG</small></article>
+    <article class="settings-card"><h2>⇧ Kiểm tra cập nhật</h2><p>Kiểm tra GitHub Releases; chỉ mở trang tải, không tự thay file hoặc tự cập nhật.</p><label class="settings-label" for="releaseRepo">Repository public (chủ/tên repo)</label><input id="releaseRepo" placeholder="your-github/open-iptv-pro"/><button class="btn btn-primary" id="updateCheckBtn">Kiểm tra phiên bản mới</button><div id="updateResult" class="update-result">Phiên bản hiện tại: v4.1.0</div></article>
+   </div></section>
+   <section id="page-sources" class="page"><div class="section-heading"><div><h1>Quản lý nguồn IPTV</h1><p>Thêm playlist qua URL hoặc file, bật/tắt nguồn và tải lại khi cần.</p></div><div class="heading-actions"><button class="btn btn-subtle" id="sourcesFileBtn">＋ File M3U</button><button class="btn btn-primary" id="sourcesUrlBtn">↗ URL playlist</button></div></div><div id="sourcesList" class="sources-grid"></div></section>
+   <section id="page-shots" class="page"><div class="section-heading"><div><h1>Snapshot các kênh</h1><p>Ảnh chụp thực tế từ kênh. Có thể mất thời gian với các luồng yếu.</p></div><div><button class="btn btn-primary" id="shotsAllBtn">▣ Chụp toàn bộ</button></div></div><div class="shots-grid" id="shotList"></div></section>
+   <section id="page-folders" class="page"><div class="section-heading"><div><h1>Thư mục và nhóm kênh</h1><p>Giữ nhóm M3U gốc hoặc tạo nhóm riêng, đổi tên và chuyển kênh giữa các thư mục.</p></div><button class="btn btn-primary" id="folderCreateBtn">＋ Tạo thư mục</button></div><div class="folder-manager" id="folderManager"></div></section>
+   <section id="page-fav" class="page"><div class="section-heading"><div><h1>Kênh yêu thích</h1><p>Danh sách kênh đã đánh dấu sao.</p></div></div><div class="favorite-grid" id="favoriteList"></div></section>
+  </div>
+  <footer class="footer"><span><i class="status-dot"></i><span id="footerText">Sẵn sàng • Không yêu cầu Python / Qt / VLC</span></span><span id="footerCounts">0 kênh</span></footer>
+ </main>
+</div>
+<div class="modal-backdrop hidden" id="modal"><div class="modal-box"><div class="modal-header"><h2 id="modalTitle">Thêm nguồn</h2><button class="modal-close" id="modalClose">✕</button></div><div id="modalBody"></div><div class="modal-footer"><button class="btn btn-subtle" id="modalCancel">Hủy</button><button class="btn btn-primary" id="modalConfirm">Xác nhận</button></div></div></div>
+<div class="toast-area" id="toastArea" aria-live="polite"></div>
+<script src="../node_modules/hls.js/dist/hls.min.js"></script><script src="core-browser.js"></script><script src="epg.js"></script><script src="app.js"></script><script src="features.js"></script>
+</body></html>

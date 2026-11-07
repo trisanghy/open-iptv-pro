@@ -1,0 +1,12 @@
+OPEN IPTV PRO 4.1.0 — DANG GITHUB PUBLIC
+
+1. Mac: nhap dup DANG_GITHUB_PUBLIC_MAC.command
+2. Windows: nhap dup DANG_GITHUB_PUBLIC_WINDOWS.bat
+3. Dang nhap GitHub qua trinh duyet (GitHub CLI), nhap ten repo moi (mac dinh open-iptv-pro), kiem tra PUBLISH_FILES.txt, go PUBLIC de xac nhan.
+4. Sau khi dang, vao repository -> Actions -> Build Open IPTV Pro -> Run workflow de tao file cai Mac/Windows.
+
+HUONG DAN: README.md / docs/README_VI.md / docs/HUONG_DAN_SU_DUNG.md / docs/DANG_GITHUB.md
+GIAY PHEP: LICENSE (MIT) + THIRD_PARTY_NOTICES.md
+ANH: docs/images/ + docs/ANH_MINH_HOA.md
+
+Luu y: May phai co Git va GitHub CLI de dang du an. Bo ma nguon KHONG phai DMG/EXE da build. Khong dang token, URL IPTV ca nhan hoac snapshot kenh thuc len public.
