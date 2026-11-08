@@ -1,0 +1,11 @@
+OPEN IPTV PRO v4.19 FULL UI - WINDOWS & MAC
+
+GIU DU TINH NANG: FFmpeg tinh hop trong bo cai, Timeshift 5 phut, Snapshot hang loat, 32 luong, MultiView, EPG, Doctor 2.0, Failover, 8 ngon ngu, auto-update.
+
+Mac: mo BUILD_MAC.command tren may Mac dung kien truc (arm64 hoac x64).
+Windows: mo BUILD_WINDOWS.bat tren Windows x64. Tao NSIS Setup + Portable.
+
+Luu y: ZIP nay la MA NGUON, khong phai bo cai. Trong lan build dau can Internet de npm tai Electron, FFmpeg va electron-builder.
+Khong can cai FFmpeg rieng. Khong cap nhat Android/iOS.
+
+GitHub: trisanghy/open-iptv-pro; repo KHONG tu dong duoc cap nhat tu ZIP nay.

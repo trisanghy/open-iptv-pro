@@ -1,0 +1,108 @@
+{
+  "name": "open-iptv-pro",
+  "productName": "Open IPTV Pro",
+  "version": "4.19.0",
+  "description": "Trình phát IPTV đầy đủ cho Windows và macOS, tích hợp FFmpeg, Timeshift 5 phút, Snapshot và 8 ngôn ngữ. Full IPTV player with bundled FFmpeg.",
+  "main": "src/main.cjs",
+  "author": "Open IPTV Pro contributors",
+  "license": "MIT",
+  "scripts": {
+    "start": "electron .",
+    "test": "node --test tests/*.test.cjs",
+    "dist:mac:arm64": "electron-builder --mac --arm64 --publish never",
+    "dist:mac:x64": "electron-builder --mac --x64 --publish never",
+    "dist:mac:universal": "electron-builder --mac --universal --publish never",
+    "dist:win": "electron-builder --win --x64 --publish never",
+    "dist:dir": "electron-builder --dir",
+    "dist:win:portable": "electron-builder --win portable --x64 --publish never",
+    "audit:size": "node scripts/audit-size.cjs"
+  },
+  "dependencies": {
+    "hls.js": "1.6.15",
+    "electron-updater": "6.8.11",
+    "ffmpeg-static": "5.3.0"
+  },
+  "devDependencies": {
+    "electron": "38.0.0",
+    "electron-builder": "26.0.0"
+  },
+  "build": {
+    "appId": "org.openiptvpro.desktop",
+    "productName": "Open IPTV Pro",
+    "asar": true,
+    "files": [
+      "renderer/**/*",
+      "src/**/*",
+      "assets/icon.png",
+      "node_modules/**/*",
+      "package.json",
+      "!**/*.map",
+      "!**/*.test.*",
+      "!**/test/**",
+      "!**/tests/**",
+      "!**/docs/**"
+    ],
+    "directories": {
+      "output": "dist"
+    },
+    "mac": {
+      "category": "public.app-category.video",
+      "target": [
+        "dmg",
+        "zip"
+      ],
+      "hardenedRuntime": true,
+      "icon": "assets/icon.icns",
+      "artifactName": "Open-IPTV-Pro-${version}-mac-${arch}.${ext}"
+    },
+    "dmg": {
+      "title": "Open IPTV Pro ${version}"
+    },
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "assets/icon.ico",
+      "artifactName": "Open-IPTV-Pro-${version}-${arch}.${ext}"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "artifactName": "Open-IPTV-Pro-Setup-${version}-${arch}.${ext}"
+    },
+    "icon": "assets/icon.png",
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "trisanghy",
+        "repo": "open-iptv-pro",
+        "releaseType": "release"
+      }
+    ],
+    "electronLanguages": [
+      "en-US",
+      "vi",
+      "es",
+      "pt-BR",
+      "zh-CN",
+      "th",
+      "lo",
+      "km"
+    ],
+    "asarUnpack": [
+      "node_modules/ffmpeg-static/**"
+    ]
+  }
+}

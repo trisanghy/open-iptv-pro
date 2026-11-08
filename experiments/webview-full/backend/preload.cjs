@@ -1,0 +1,27 @@
+'use strict';
+const {contextBridge,ipcRenderer}=require('electron');
+contextBridge.exposeInMainWorld('streamleaf',Object.freeze({
+  capabilities:()=>ipcRenderer.invoke('app:capabilities'),
+  startTimeshift:url=>ipcRenderer.invoke('timeshift:start',url),
+  stopTimeshift:()=>ipcRenderer.invoke('timeshift:stop'),
+  timeshiftStatus:()=>ipcRenderer.invoke('timeshift:status'),
+  notifyReminder:(title,body)=>ipcRenderer.invoke('reminder:notify',title,body),
+  fetchEPG:url=>ipcRenderer.invoke('epg:fetch',url),
+  checkUpdate:()=>ipcRenderer.invoke('update:check'),
+  updateStatus:()=>ipcRenderer.invoke('update:status'),
+  downloadUpdate:()=>ipcRenderer.invoke('update:download'),
+  installUpdate:()=>ipcRenderer.invoke('update:install'),
+  openDownloadedUpdate:()=>ipcRenderer.invoke('update:openDownloaded'),
+  onUpdateStatus:cb=>{const listener=(_event,s)=>cb(s);ipcRenderer.on('update:status',listener);return ()=>ipcRenderer.removeListener('update:status',listener);},
+  openRelease:()=>ipcRenderer.invoke('update:openRelease'),
+  openReleases:()=>ipcRenderer.invoke('update:openReleases'),
+  openM3U:()=>ipcRenderer.invoke('source:readFile'),
+  loadURL:url=>ipcRenderer.invoke('source:readUrl',url),
+  proxy:url=>ipcRenderer.invoke('media:proxy',url),
+  mediaKind:url=>ipcRenderer.invoke('media:kind',url),
+  check:url=>ipcRenderer.invoke('link:check',url),
+  snapshot:(url,label)=>ipcRenderer.invoke('snapshot:make',url,label),
+  export:(name,content)=>ipcRenderer.invoke('file:export',name,content),
+  listRepoPlaylists:url=>ipcRenderer.invoke('source:listRepo',url),
+  vlcWebsite:()=>ipcRenderer.invoke('system:openVLC')
+}));

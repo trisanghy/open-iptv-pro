@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="vi"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self' data: blob:; script-src 'self' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; img-src * data: blob: file:; connect-src * data: blob: http://127.0.0.1:*; media-src * data: blob:; worker-src 'self' blob:;"/>
+<title>Open IPTV Pro 4.19 — Native WebView</title><script src="theme-boot.js"></script><link rel="stylesheet" href="styles.css"/></head>
+<body>
+<div class="app-shell" id="appShell">
+ <aside class="sidebar">
+  <div class="brand"><div class="brand-icon"><img src="assets/icon.png" alt="Open IPTV Pro"/></div><div><b>Open IPTV Pro</b><small>OPEN SOURCE <span class="version">4.19</span></small></div></div>
+  <div class="aside-caption">THƯ VIỆN</div>
+  <button class="nav active" data-page="tv"><span>▣</span> Xem truyền hình <small id="navCount">0</small></button>
+  <button class="nav" data-page="fav"><span>★</span> Kênh yêu thích <small id="favCount">0</small></button>
+  <button class="nav" data-page="epg"><span>▤</span> Lịch phát sóng EPG</button>
+  <button class="nav" data-page="multiview"><span>⊞</span> MultiView · 4 kênh</button>
+  <button class="nav" data-page="shots"><span>▦</span> Ảnh chụp kênh</button>
+  <button class="nav" data-page="folders"><span>▤</span> Thư mục kênh <small id="folderCount">0</small></button>
+  <div class="aside-caption aside-second">CÔNG CỤ</div>
+  <button class="nav" data-page="sources"><span>◈</span> Quản lý nguồn <small id="sourceCount">0</small></button>
+  <button class="nav" data-page="health"><span>↗</span> Sức khỏe kênh / Failover</button>
+  <button class="nav" data-page="doctor"><span>✚</span> Smart IPTV Doctor</button>
+  <button class="nav" data-page="profiles"><span>♙</span> Hồ sơ / Khóa trẻ em</button>
+  <button class="nav" id="exportNav"><span>⇩</span> Xuất M3U</button>
+  <button class="nav" data-page="settings"><span>⚙</span> Cài đặt</button>
+  <div class="sidebar-bottom"><div class="online-dot"></div><div><b id="appMode">Bản mở nhanh</b><small id="miniStatus">Sẵn sàng</small></div></div>
+ </aside>
+ <main class="main">
+  <header class="topbar"><div class="top-title"><span class="crumb">OPEN IPTV PRO</span><span class="chevron">›</span><b id="pageTitle">Xem truyền hình</b></div>
+   <div class="top-actions"><span class="state-mark" id="activeSourceTag">Chưa có nguồn</span><button class="btn btn-subtle" id="fileBtn">＋ Mở file M3U</button><button class="btn btn-primary" id="urlBtn">↗ Thêm URL</button></div>
+  </header>
+  <div class="content">
+   <section id="page-tv" class="page active-page">
+    <div class="tv-layout">
+     <div class="channel-panel">
+      <div class="panel-header"><div><h2>Danh sách kênh</h2><p id="channelMeta">Chưa có kênh</p></div><button class="icon-btn" id="refreshAllBtn" title="Làm mới các nguồn URL">↻</button></div>
+      <div class="filter-box"><span>⌕</span><input type="search" placeholder="Tìm kênh, nhóm..." id="searchBox"/></div>
+      <div class="folder-actions"><button id="newFolderFromList" title="Tạo thư mục mới">＋ Thư mục</button><button id="expandFolderBtn" title="Mở hết thư mục">▾ Mở hết</button><button id="collapseFolderBtn" title="Đóng hết thư mục">▸ Gập hết</button></div><div class="filter-tabs"><button class="filter-tab active" data-filter="all">Tất cả</button><button class="filter-tab" data-filter="fav">★ Yêu thích</button><button class="filter-tab" data-filter="alive">● Sống</button><button class="filter-tab" data-filter="dead">● Die</button><button class="filter-tab" data-filter="uncertain">● Chưa rõ</button></div>
+      <p class="channel-drag-hint">↔ Kéo một kênh và thả vào tên thư mục khác để chuyển kênh.</p><div class="channel-list" id="channelList"></div>
+     </div>
+     <div class="watch-panel">
+      <div class="player-box" id="playerBox">
+       <video id="video" playsinline preload="none" controlslist="nodownload" crossorigin="anonymous"></video>
+       
+       <div class="empty-player" id="emptyPlayer"><div class="empty-icon">▶</div><h2>Sẵn sàng xem truyền hình</h2><p>Chọn kênh bên trái, hoặc thêm playlist M3U để bắt đầu.</p><div class="empty-actions"><button class="btn btn-primary" id="emptyFileBtn">Mở file M3U</button><button class="btn btn-subtle" id="emptyUrlBtn">Thêm URL</button></div></div>
+      </div>
+      <div class="player-control-card"><span id="streamInfo" class="screen-reader-only" aria-live="polite"></span>
+       <div class="playing-info"><span class="small-lcd" id="playingIcon">TV</span><div><b id="playingTitle">Chưa chọn kênh</b><small id="playingSubtitle">Nhập danh sách để bắt đầu</small></div><button class="icon-btn favorite-current" id="favCurrentBtn" title="Yêu thích">☆</button></div>
+       <div class="controls"><button class="control-sm" id="prevBtn" title="Kênh trước">⏮</button><button class="control-main" id="playBtn" title="Phát / Tạm dừng">▶</button><button class="control-sm" id="stopBtn" title="Dừng">■</button><button class="control-sm" id="nextBtn" title="Kênh sau">⏭</button><div class="control-spacer"></div><span class="volume-icon">◖))</span><input type="range" min="0" max="100" value="80" id="volume" title="Âm lượng"/><button class="control-sm" id="shotBtn" title="Chụp ảnh kênh">▣</button><label class="view-mode" title="Chế độ hiển thị video"><span>Khung hình</span><select id="videoFit" aria-label="Chế độ hiển thị video"><option value="contain">Vừa khung</option><option value="cover">Lấp đầy (cắt cạnh)</option><option value="fill">Kéo giãn</option><option value="none">Kích thước gốc</option></select></label><button class="control-sm" id="pipBtn" title="Cửa sổ nổi Picture-in-Picture">▣ PiP</button><button class="control-sm" id="fullscreenBtn" title="Toàn màn hình">⛶</button></div>
+      </div>
+      <section class="advanced-timebar"><b>⏪ Timeshift 5 phút</b><button id="bufferToggle" class="btn btn-subtle">Bật bộ đệm</button><button id="bufferRewind" class="btn btn-subtle">−30 giây</button><button id="bufferRewind5" class="btn btn-subtle">⏪ −5 phút</button><button id="bufferLive" class="btn btn-subtle">Về LIVE</button><small id="bufferInfo">Bộ đệm bắt đầu khi bật; nguồn DVR có thể tua ngay</small></section>
+      <div class="epg-current-card" id="epgCurrent"><span>▤ Lịch phát sóng</span><span id="epgNowText">Chọn kênh để xem chương trình hiện tại</span><button id="openGuideBtn">Xem lịch ›</button></div>
+      <details class="compact-tools" id="quickTools">
+       <summary>▤ Công cụ nhanh <small>Kiểm tra · Snapshot · Xuất M3U</small></summary>
+       <div class="quick-grid"><button class="quick-btn" id="quickChecks"><span>✓</span><b>Kiểm tra các kênh</b><small>Mở Quản lý nguồn</small></button><button class="quick-btn" id="quickShots"><span>▦</span><b>Chụp toàn bộ kênh</b><small>FFmpeg tích hợp</small></button><button class="quick-btn" id="quickExport"><span>⇩</span><b>Xuất playlist</b><small>Tạo file iptv.m3u</small></button></div>
+      </details>
+
+     </div>
+    </div>
+   </section>
+   <section id="page-multiview" class="page"><div class="section-heading"><div><h1>⊞ MultiView 4 kênh</h1><p>Di chuột lên ô nào, ô đó phát tiếng. Rời chuột: tất cả im lặng.</p></div><button class="btn btn-subtle" id="multiStop">■ Dừng 4 kênh</button></div><div id="multiGrid" class="multi-grid"></div><p class="hint">Mỗi ô phát một luồng riêng, có thể dùng nhiều băng thông hoặc bị giới hạn kết nối từ nhà cung cấp.</p></section>
+   <section id="page-health" class="page"><div class="section-heading"><div><h1>↗ Smart Channel Health & Auto Failover</h1><p>Giám sát lỗi, độ phân giải, thời gian kết nối; thêm URL dự phòng cho từng kênh.</p></div><button class="btn btn-subtle" id="healthRefresh">↻ Cập nhật</button></div><div class="settings-grid"><article class="settings-card"><h2>Link dự phòng</h2><label class="settings-label">Chọn kênh</label><select class="modal-input" id="backupChannel"></select><label class="settings-label">URL dự phòng (mỗi dòng một link)</label><textarea id="backupURLs" rows="6" class="modal-input" placeholder="https://.../backup.m3u8"></textarea><button class="btn btn-primary" id="backupSave">Lưu nguồn dự phòng</button><p class="hint">App tự dùng link khác khi link chính báo lỗi. Kênh trùng tên trong các nguồn M3U cũng được xem là dự phòng.</p></article><article class="settings-card"><h2>Smart Stream Optimizer</h2><label class="settings-label">Dung lượng bộ đệm</label><select id="bufferPreset" class="modal-input"><option value="fast">Nhanh (7 giây)</option><option value="balanced">Cân bằng (12 giây)</option><option value="stable">Ổn định (25 giây)</option></select><p>Ghi chú: Tùy chỉnh chỉ áp dụng cho luồng HLS qua hls.js.</p><div id="healthOverview" class="health-overview"></div></article></div><div class="settings-card"><h2>Nhật ký sức khỏe kênh</h2><div id="healthTable" class="health-table"></div></div></section>
+   <section id="page-doctor" class="page"><div class="section-heading"><div><h1>✚ Smart IPTV Doctor</h1><p>Phát hiện kênh trùng, link Die, thiếu metadata và EPG; không tự ý sửa dữ liệu gốc.</p></div><div class="heading-actions"><button class="btn btn-subtle" id="doctorDeepCheck">✓ Kiểm tra link sâu</button><button class="btn btn-subtle" id="doctorExport">⇩ Xuất JSON</button><button class="btn btn-primary" id="doctorRun">Chẩn đoán ngay</button></div></div><div id="doctorReport"></div>
+    <section class="settings-card doctor-v2-panel" id="doctorV2Panel">
+     <h2>Chi tiết Doctor · Hình ảnh & đề xuất</h2>
+     <p>Phân tích ảnh chụp trên máy, cảnh báo đứng hình và đề xuất sửa với điểm ưu tiên. Không tự xóa hoặc gộp kênh chỉ vì một ảnh giống nhau.</p>
+     <div class="doctor-v2-actions">
+       <button type="button" class="btn btn-primary" id="doctorVisualScan">Phân tích Snapshot trùng hình</button>
+       <label for="doctorVisualMax">Giới hạn ảnh mỗi lượt</label><select id="doctorVisualMax" class="modal-input"><option value="100">100</option><option value="250">250</option><option value="400">400</option><option value="600">600</option></select>
+       <button class="btn btn-subtle" id="doctorV2Undo" type="button">↶ Hoàn tác sửa gần nhất</button>
+     </div>
+     <p id="doctorVisualStatus" role="status">Chưa quét hình ảnh. Ảnh của các chương trình khác nhau đôi khi có nội dung giống nhau.</p>
+     <div id="doctorVisualMatches" class="doctor-v2-results"></div>
+     <h3>Đề xuất sửa có giải thích</h3><p id="doctorV2Summary"></p><div id="doctorV2Suggestions" class="doctor-v2-results"></div>
+    </section></section>
+   <section id="page-profiles" class="page"><div class="section-heading"><div><h1>♙ Hồ sơ người dùng & kiểm soát trẻ em</h1><p>Yêu thích theo hồ sơ, khóa theo thư mục và mã PIN cục bộ.</p></div></div><div class="settings-grid"><article class="settings-card"><h2>Chuyển hồ sơ</h2><select id="profileChoice" class="modal-input"></select><button class="btn btn-primary" id="profileSwitch">Chuyển hồ sơ</button><h2>Tạo hồ sơ</h2><input id="profileName" class="modal-input" placeholder="Tên hồ sơ"/><label class="check-line"><input type="checkbox" id="profileChild"/> Hồ sơ trẻ em</label><button class="btn btn-subtle" id="profileCreate">Tạo hồ sơ</button></article><article class="settings-card"><h2>Khóa PIN và nhóm hạn chế</h2><label class="settings-label">PIN quản trị (4–8 chữ số)</label><input id="profilePin" type="password" inputmode="numeric" class="modal-input" placeholder="PIN mới"/><button class="btn btn-subtle" id="pinSave">Đặt / đổi PIN</button><div id="profileGroupLocks"></div><p class="hint">PIN tại thiết bị giúp hạn chế thao tác thông thường, không thay thế biện pháp kiểm soát truy cập của hệ điều hành.</p></article></div><p id="profileStatus" class="hint"></p></section>
+   <section id="page-epg" class="page"><div class="section-heading"><div><h1>▤ Lịch phát sóng (EPG)</h1><p>Chương trình đang chiếu, sắp chiếu và lịch trong ngày từ nguồn XMLTV.</p></div><div class="heading-actions"><button class="btn btn-subtle" id="epgRefreshBtn">↻ Tải lại EPG</button><button class="btn btn-primary" id="epgSettingsBtn">⚙ Nguồn EPG</button></div></div><div class="filter-box epg-filter"><span>⌕</span><input type="search" id="epgSearch" placeholder="Tìm kênh trong lịch EPG..."/></div><div class="epg-advanced"><input id="epgGlobalSearch" placeholder="Tìm tên chương trình và đặt nhắc lịch…"/><button id="epgSearchGo" class="btn btn-subtle">Tìm chương trình</button><button id="epgManualMap" class="btn btn-subtle">Ghép EPG thủ công</button><label>Chỉnh giờ (+/− phút) <input id="epgOffset" type="number" value="0" min="-720" max="720" step="15"/></label></div><div id="epgSearchResults" class="epg-search-results"></div><div class="epg-summary" id="epgSummary">Chưa có dữ liệu lịch phát sóng.</div><div class="epg-guide" id="epgGuide"></div></section>
+   <section id="page-settings" class="page"><div class="section-heading"><div><h1>⚙ Cài đặt Open IPTV Pro</h1><p>Màu sắc, bộ đệm truyền hình, nguồn EPG và kiểm tra cập nhật.</p></div></div><div class="settings-grid">
+    <article class="settings-card language-card" id="languageSettings"><h2>🌐 Ngôn ngữ / Language</h2><p id="languageDescription">Chọn ngôn ngữ ứng dụng. Thay đổi có hiệu lực ngay, không cần khởi động lại.</p>
+     <label class="settings-label" for="appLanguage">Ngôn ngữ giao diện</label>
+     <select id="appLanguage" class="modal-input" aria-label="Ngôn ngữ giao diện">
+       <option value="vi">Tiếng Việt</option><option value="en">English</option><option value="es">Español</option><option value="pt-BR">Português (Brasil)</option><option value="zh-CN">简体中文</option><option value="th">ไทย</option><option value="lo">ລາວ</option><option value="km">ភាសាខ្មែរ</option>
+     </select><small id="languageNote">Tên kênh, thư mục cá nhân và nội dung EPG từ nguồn sẽ không bị thay đổi.</small></article>
+    <article class="settings-card appearance-card" id="appearanceSettings"><h2>🌓 Chế độ hiển thị</h2><p>Chọn Sáng, Tối hoặc tự đổi theo giao diện hệ điều hành macOS/Windows.</p>
+     <fieldset class="appearance-switch" aria-label="Chọn chế độ giao diện">
+       <legend>Chế độ giao diện</legend>
+       <label><input type="radio" name="appearanceMode" value="light"/> <span>☀ Sáng</span></label>
+       <label><input type="radio" name="appearanceMode" value="dark"/> <span>☾ Tối</span></label>
+       <label><input type="radio" name="appearanceMode" value="auto"/> <span>◐ Tự động</span></label>
+     </fieldset>
+     <small id="appearanceState" role="status" aria-live="polite">Sử dụng chế độ của hệ thống.</small></article>
+    <article class="settings-card"><h2>🎨 Màu giao diện</h2><p>Chọn trên bánh xe màu hoặc dùng bảng màu hệ điều hành.</p><div class="wheel-controls"><div class="color-wheel" id="colorWheel" role="button" tabindex="0" aria-label="Bánh xe màu: nhấp để chọn màu"><div class="wheel-hole" id="wheelHole"></div><div class="wheel-indicator" id="wheelIndicator"></div></div><div class="color-choices"><label>Màu tùy chỉnh <input type="color" id="themePicker" value="#bc7cff"/></label><div class="color-presets"><button data-color="#bc7cff" title="Tím">●</button><button data-color="#58d4a4" title="Xanh ngọc">●</button><button data-color="#51a7ff" title="Xanh dương">●</button><button data-color="#f4a056" title="Cam">●</button><button data-color="#f17fa2" title="Hồng">●</button></div><button class="btn btn-subtle" id="resetThemeBtn">Đặt lại tím mặc định</button></div></div></article>
+    <article class="settings-card" id="freezeMonitorSettings"><h2>▣ Giám sát hình ảnh đang phát</h2><label class="check-line"><input type="checkbox" id="freezeMonitorEnabled" checked/> Cảnh báo khung hình đứng, màn hình đen (chỉ kênh chính)</label><label class="check-line"><input type="checkbox" id="freezeAutoFailover"/> Thử link dự phòng khi đứng hình được xác nhận (tắt mặc định)</label><p id="freezeMonitorStatus" aria-live="polite">Chưa có kênh đang phát</p><small>Nghi đứng hình không đồng nghĩa link Die. Không tự chuyển nguồn chỉ dựa trên một khung hình tĩnh.</small></article>
+    <article class="settings-card full-tool-panel" id="fullFeatureTools"><h2>▣ Bản đầy đủ · FFmpeg tích hợp</h2><p>Không lược bỏ chức năng. Bộ đệm Timeshift, Snapshot hàng loạt, kiểm tra tối đa 32 luồng, MultiView, PiP và Doctor đều có sẵn.</p><div class="full-tools-links"><button class="btn btn-subtle" type="button" data-nav-to="shots">▦ Snapshot · 1–32 luồng</button><button class="btn btn-subtle" type="button" data-nav-to="sources" data-nav-target="sourceRepairSection">✓ Kiểm tra · 1–32 luồng</button><button class="btn btn-subtle" type="button" data-nav-to="tv">⏪ Timeshift 5 phút</button></div></article>
+    <article class="settings-card" id="defaultBufferSettings"><h2>⏪ Timeshift mặc định</h2><label class="check-line buffer-default-line" for="autoTimeshiftSetting"><input type="checkbox" id="autoTimeshiftSetting"/> Tự bật bộ đệm tua lại 5 phút khi mở kênh</label><p>FFmpeg được tích hợp sẵn. Bộ đệm tua lại 5 phút được tạo cục bộ từ lúc mở kênh; Snapshot hàng loạt hoạt động mà không cần cài FFmpeg ngoài. Nguồn có DRM hoặc chặn truy cập có thể không hỗ trợ.</p><small id="autoTimeshiftState" aria-live="polite">Mặc định: tắt</small></article>
+    <article class="settings-card"><h2>▤ Nguồn lịch EPG</h2><p>Các địa chỉ XMLTV công khai, tải theo yêu cầu. EPG có thể thiếu một số kênh.</p><div id="epgSources" class="epg-sources"></div><label class="settings-label" for="customEPG">URL XMLTV / .xml.gz mới</label><div class="settings-inline"><input id="customEPG" placeholder="https://example.org/guide.xml.gz"/><button class="btn btn-subtle" id="epgAddSourceBtn">＋ Thêm</button></div><button class="btn btn-primary" id="epgLoadBtn">↻ Cập nhật EPG ngay</button><small id="epgUpdatedLabel">Chưa tải EPG</small></article>
+    <article class="settings-card update-settings"><h2>⇧ Cập nhật phiên bản</h2>
+      <p>Kiểm tra bản phát hành chính thức trên GitHub. Khi có bản mới, tải về có tiến độ và xác nhận trước khi cài đặt. Bản chưa ký sẽ dùng bộ cài thủ công an toàn.</p>
+      <label class="settings-label" for="releaseRepo">Repository phát hành chính thức</label><input id="releaseRepo" value="trisanghy/open-iptv-pro" readonly aria-readonly="true"/>
+      <label class="settings-label update-auto-check"><input id="autoCheckUpdates" type="checkbox" checked/> Tự kiểm tra khi mở ứng dụng và thông báo khi có bản mới</label>
+      <label class="settings-label update-auto-check"><input id="autoDownloadUpdates" type="checkbox" checked/> Tự tải bản cập nhật khi có phiên bản mới (chỉ cài đặt sau khi xác nhận)</label>
+      <div class="update-actions">
+       <button class="btn btn-primary" id="updateCheckBtn" type="button">Kiểm tra phiên bản mới</button>
+       <button class="btn btn-primary" id="updateDownloadBtn" type="button" hidden>Tải phiên bản mới</button>
+       <button class="btn btn-primary" id="updateInstallBtn" type="button" hidden>Cài đặt và khởi động lại</button>
+       <button class="btn btn-subtle" id="updateManualBtn" type="button" hidden>Mở bộ cài đã tải</button>
+       <button class="btn btn-subtle" id="updateReleaseBtn" type="button">Xem GitHub Releases</button>
+      </div>
+      <div id="updateProgressBox" class="update-progress" hidden><progress id="updateProgressBar" max="100" value="0"></progress><small id="updateProgressLabel">Chưa tải</small></div>
+      <div id="updateResult" class="update-result" role="status" aria-live="polite">Phiên bản hiện tại: v4.19.0</div>
+     </article>
+   </div></section>
+   <section id="page-sources" class="page"><div class="section-heading"><div><h1>Quản lý nguồn IPTV</h1><p>Quản lý nguồn, tự thu thập, gộp kênh, kiểm tra/sửa link và xuất danh sách tại một nơi.</p></div><div class="heading-actions"><button class="btn btn-subtle" id="sourcesFileBtn">＋ File M3U</button><button class="btn btn-primary" id="sourcesUrlBtn">↗ URL playlist</button></div></div><div class="sources-hub-nav" aria-label="Điều hướng công cụ nguồn">
+    <button type="button" data-source-jump="sourcesList">Nguồn hiện có</button>
+    <button type="button" data-source-jump="collectorSection">Thu thập</button>
+    <button type="button" data-source-jump="sourceMergePanel">Gộp kênh</button>
+    <button type="button" data-source-jump="sourceRepairSection">Kiểm tra & sửa</button>
+   </div>
+   <div id="sourcesList" class="sources-grid"></div>
+   <section class="source-hub-section" id="collectorSection"><div class="source-hub-heading"><h2>☁ Thu thập nguồn IPTV</h2><p>Tìm playlist M3U công khai, chọn nguồn cần lấy; dữ liệu cũ được giữ lại nếu tải lỗi.</p></div>
+    <div class="settings-grid">
+     <article class="settings-card"><h2>1. Kết nối repo IPTV công khai</h2><label class="settings-label" for="collectorRepoURL">URL repository trên GitHub</label><div class="settings-inline"><input id="collectorRepoURL" placeholder="https://github.com/owner/repository"/><button class="btn btn-subtle" id="collectorBrowse">Tìm M3U</button></div><small>Chỉ liệt kê M3U công khai; bạn chọn playlist nào sẽ được thêm. Không chạy mã từ repository.</small><div id="collectorRepoFiles" class="collector-repo-files"></div></article>
+     <article class="settings-card"><h2>2. Nguồn được thu thập</h2><p>Chọn nguồn URL/file đã nhập trong ứng dụng. Giữ nguyên dữ liệu cũ nếu nguồn mới lỗi.</p><div id="collectorSources" class="collector-sources"></div><label class="collector-auto-line"><input id="collectorAuto" type="checkbox"/> Tự thu thập mỗi 60 phút khi ứng dụng đang mở</label><small>Không kiểm tra liên tục khi app đã tắt; tự tải chỉ dùng nguồn đã chọn.</small></article>
+    </div>
+   </section>
+   <section class="settings-card source-merge-panel" id="sourceMergePanel"><h2>⧉ Gộp kênh giống nhau từ nhiều nguồn</h2><p>Chọn những nguồn cần gộp. Phân tích trước trên dữ liệu đã tải; khi gộp, ứng dụng kiểm tra lại các URL, giữ danh sách gốc để hoàn tác và chuyển các link trùng thành link dự phòng. Không tự khẳng định link đang sống.</p><div id="sourceMergeChoices" class="source-merge-choices"></div><div class="source-merge-actions"><button type="button" class="btn btn-subtle" id="sourceMergeAnalyze">⌕ Phân tích kênh trùng</button><button type="button" class="btn btn-primary" id="sourceMergeExecute">⧉ Gộp kênh đã chọn</button><button type="button" class="btn btn-subtle" id="sourceMergeUndo">↶ Hoàn tác</button></div><div id="sourceMergeSummary" class="source-merge-summary" role="status" aria-live="polite">Chọn nguồn để phân tích trước khi gộp.</div><div id="sourceMergeDuplicates" class="source-merge-examples"></div></section>
+   <section class="source-hub-section" id="sourceRepairSection"><div class="source-hub-heading"><h2>✓ Kiểm tra link, tự sửa và xuất playlist</h2><p>Kiểm tra mọi kênh theo thời gian thực; kiểm tra và thay link dự phòng đã xác minh cho playlist hợp nhất. Không xóa dữ liệu gốc.</p></div>
+    <div class="collector-actions"><label class="source-check-workers" for="checkWorkersQuick">Luồng kiểm tra <select id="checkWorkersQuick" class="snapshot-worker-select"><option value="1">1 luồng</option><option value="2">2 luồng</option><option value="3">3 luồng</option><option value="4">4 luồng</option><option value="5">5 luồng</option><option value="6">6 luồng</option><option value="7">7 luồng</option><option value="8">8 luồng</option><option value="9">9 luồng</option><option value="10">10 luồng</option><option value="11">11 luồng</option><option value="12">12 luồng</option><option value="13">13 luồng</option><option value="14">14 luồng</option><option value="15">15 luồng</option><option value="16">16 luồng</option><option value="17">17 luồng</option><option value="18">18 luồng</option><option value="19">19 luồng</option><option value="20">20 luồng</option><option value="21">21 luồng</option><option value="22">22 luồng</option><option value="23">23 luồng</option><option value="24">24 luồng</option><option value="25">25 luồng</option><option value="26">26 luồng</option><option value="27">27 luồng</option><option value="28">28 luồng</option><option value="29">29 luồng</option><option value="30">30 luồng</option><option value="31">31 luồng</option><option value="32">32 luồng</option></select></label><button class="btn btn-primary" id="sourceCheckAllBtn">✓ Kiểm tra toàn bộ kênh</button><button class="btn btn-subtle" id="collectorRepair">🛠 Kiểm tra & thay link dự phòng</button><button class="btn btn-subtle" id="collectorExport">⇩ Xuất playlist sạch</button><button class="btn btn-subtle" id="collectorRestore">↶ Hoàn tác lần gộp</button><button class="btn btn-subtle" id="collectorCancel">■ Hủy tác vụ</button></div>
+    <div class="collector-progress"><div class="progress-track"><div class="progress-bar" id="collectorProgress"></div></div><p id="collectorStatus">Chưa chạy. Thêm nguồn URL hoặc chọn file M3U trong repo trước.</p></div>
+    <p class="hint source-check-note">Nút “Kiểm tra toàn bộ kênh” cập nhật trạng thái Sống / Die / Chưa rõ trong bảng tiến độ nổi (có thể chụp Snapshot đồng thời). Nút thay link dự phòng chỉ xử lý playlist hợp nhất và có bảo vệ dữ liệu.</p>
+    <div class="collector-metrics" id="collectorMetrics"></div><div class="settings-card"><h2>Kết quả theo thời gian thực</h2><div id="collectorResults" class="collector-results"></div></div>
+   </section>
+   </section>
+   <section id="page-shots" class="page"><div class="section-heading"><div><h1>Snapshot các kênh</h1><p>Ảnh chụp thực tế từ kênh, có thể chụp nhiều kênh đồng thời.</p></div><div><button class="btn btn-primary" id="shotsAllBtn">▣ Chụp toàn bộ</button></div></div><div class="snapshot-speedbar"><label for="snapshotWorkersQuick">Chụp song song <select id="snapshotWorkersQuick" class="snapshot-worker-select"><option value="1">1 luồng</option><option value="2">2 luồng</option><option value="3">3 luồng</option><option value="4">4 luồng</option><option value="5">5 luồng</option><option value="6">6 luồng</option><option value="7">7 luồng</option><option value="8">8 luồng</option><option value="9">9 luồng</option><option value="10">10 luồng</option><option value="11">11 luồng</option><option value="12">12 luồng</option><option value="13">13 luồng</option><option value="14">14 luồng</option><option value="15">15 luồng</option><option value="16">16 luồng</option><option value="17">17 luồng</option><option value="18">18 luồng</option><option value="19">19 luồng</option><option value="20">20 luồng</option><option value="21">21 luồng</option><option value="22">22 luồng</option><option value="23">23 luồng</option><option value="24">24 luồng</option><option value="25">25 luồng</option><option value="26">26 luồng</option><option value="27">27 luồng</option><option value="28">28 luồng</option><option value="29">29 luồng</option><option value="30">30 luồng</option><option value="31">31 luồng</option><option value="32">32 luồng</option></select></label><label class="snapshot-skip"><input type="checkbox" id="snapshotSkipQuick" checked/> Bỏ qua kênh đã có ảnh</label><span>FFmpeg tích hợp • Có thể hủy tác vụ</span></div><div class="shot-groups" id="shotList"></div></section>
+   <section id="page-folders" class="page"><div class="section-heading"><div><h1>Thư mục và nhóm kênh</h1><p>Giữ nhóm M3U gốc hoặc tạo nhóm riêng, đổi tên và chuyển kênh giữa các thư mục.</p></div><button class="btn btn-primary" id="folderCreateBtn">＋ Tạo thư mục</button></div><div class="folder-manager" id="folderManager"></div></section>
+   <section id="page-fav" class="page"><div class="section-heading"><div><h1>Kênh yêu thích</h1><p>Danh sách kênh đã đánh dấu sao.</p></div></div><div class="favorite-grid" id="favoriteList"></div></section>
+  </div>
+  <aside class="task-dock hidden" id="taskDock" aria-label="Tiến độ kiểm tra link và chụp ảnh">
+    <div class="task-dock-head"><b>Tiến độ tác vụ</b><button type="button" id="taskDockMinimize" title="Thu gọn / mở rộng">▾</button></div>
+    <div class="task-dock-body">
+      <section id="task-check" class="task-panel hidden" aria-live="polite">
+        <div class="task-line"><b class="task-title">Kiểm tra link</b><button type="button" id="cancelCheckBtn" class="task-cancel link-button">Hủy tác vụ</button></div>
+        <div class="task-status">● Sống 0 · ● Die 0 · ● Chưa rõ 0</div>
+        <div class="progress-track"><div class="task-meter"></div></div><small class="task-count">0/0 kênh</small>
+        <div class="task-live-results" aria-label="Kết quả mới nhất"></div>
+      </section>
+      <section id="task-shots" class="task-panel hidden" aria-live="polite">
+        <div class="task-line"><b class="task-title">Chụp Snapshot</b><button type="button" id="cancelShotsBtn" class="task-cancel link-button">Hủy tác vụ</button></div>
+        <div class="task-status">✓ Có ảnh 0 · ✕ Lỗi 0</div>
+        <div class="progress-track"><div class="task-meter"></div></div><small class="task-count">0/0 kênh</small>
+        <div class="task-current"></div>
+      </section>
+    </div>
+  </aside>
+  <footer class="footer"><span><i class="status-dot"></i><span id="footerText">Sẵn sàng • Không yêu cầu Python / Qt / VLC</span></span><span id="footerCounts">0 kênh</span></footer>
+ </main>
+</div>
+<div class="modal-backdrop hidden" id="modal"><div class="modal-box"><div class="modal-header"><h2 id="modalTitle">Thêm nguồn</h2><button class="modal-close" id="modalClose">✕</button></div><div id="modalBody"></div><div class="modal-footer"><button class="btn btn-subtle" id="modalCancel">Hủy</button><button class="btn btn-primary" id="modalConfirm">Xác nhận</button></div></div></div>
+<div id="channelPreview" class="channel-preview hidden"></div>
+<div class="toast-area" id="toastArea" aria-live="polite"></div>
+<script src="hls.min.js"></script><script src="webview-bridge.js"></script><script src="languages.bundle.js"></script><script src="i18n.js"></script><script src="core-browser.js"></script><script src="collector-core.js"></script><script src="advanced-core.js"></script><script src="doctor-v2-core.js"></script><script src="epg.js"></script><script src="favorites-core.js"></script><script src="app.js"></script><script src="features.js"></script><script src="advanced.js"></script><script src="collector.js"></script><script src="doctor-v2.js"></script>
+</body></html>

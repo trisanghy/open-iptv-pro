@@ -1,0 +1,54 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "Open IPTV Pro WebView Full",
+  "version": "4.19.0",
+  "identifier": "com.openiptvpro.webviewfull",
+  "build": {
+    "frontendDist": "../frontend",
+    "beforeBuildCommand": "npm run prepare",
+    "beforeDevCommand": "npm run prepare"
+  },
+  "app": {
+    "withGlobalTauri": true,
+    "windows": [
+      {
+        "title": "Open IPTV Pro 4.19 — WebView Full",
+        "width": 1360,
+        "height": 850,
+        "minWidth": 980,
+        "minHeight": 640,
+        "backgroundColor": "#080e15"
+      }
+    ],
+    "security": {
+      "csp": "default-src 'self' data: blob:; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src * data: blob:; connect-src 'self' ipc: http://127.0.0.1:* https: http:; media-src * data: blob: http://127.0.0.1:*; worker-src 'self' blob:;"
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": "all",
+    "resources": {
+      "../backend/": "backend/",
+      "../third_party/": "third_party/"
+    },
+    "externalBin": [
+      "binaries/iptv-node",
+      "binaries/ffmpeg",
+      "binaries/ffprobe"
+    ],
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ],
+    "windows": {
+      "webviewInstallMode": {
+        "type": "downloadBootstrapper"
+      }
+    },
+    "macOS": {
+      "minimumSystemVersion": "11.0"
+    }
+  }
+}
