@@ -6,6 +6,7 @@ const http=require('node:http');
 const {randomBytes,createHash}=require('node:crypto');
 const {spawn,spawnSync}=require('node:child_process');
 const {checkRepeated}=require('./stream-check.cjs');
+const {createBatchJobs}=require('./batch-jobs.cjs');
 const {pipeContinuousResponse}=require('./stream-response.cjs');
 const {rewriteHls}=require('./core.cjs');
 const {fetchGuide}=require('./epg.cjs');
@@ -153,6 +154,10 @@ async function makeSnapshot(url,label){
  return engine(url,label);
 }
 
+const batchJobs=createBatchJobs({
+  check:url=>/^https?:\/\//i.test(url)?checkRepeated(url,{fastPositive:true}):Promise.resolve({status:'uncertain',reason:'RTSP/RTMP/UDP không hỗ trợ bộ kiểm tra HTTP'}),
+  snapshot:(url,label)=>makeSnapshot(url,label),
+});
 function setupIPC(){
  ipcMain.handle('timeshift:start',(_e,url)=>{
    urlOK(url);requireFfmpeg();const {id}=timeshift.start(url);
@@ -187,7 +192,10 @@ function setupIPC(){
      if(mediaKindCache.size>150)mediaKindCache.clear();mediaKindCache.set(url,{at:Date.now(),value});return value;
    }catch{return {hls:false};}finally{clearTimeout(t);}
  });
- ipcMain.handle('link:check',async(_e,url)=>{urlOK(url);return await checkRepeated(url);});
+ ipcMain.handle('link:check',async(_e,url)=>{urlOK(url);return await checkRepeated(url,{fastPositive:true});});
+ ipcMain.handle('batch:start',(_e,params)=>batchJobs.start(params));
+ ipcMain.handle('batch:status',(_e,id,offset)=>batchJobs.status(id,offset));
+ ipcMain.handle('batch:cancel',(_e,id)=>batchJobs.cancel(id));
  ipcMain.handle('snapshot:make',async(_e,url,name)=>await makeSnapshot(url,name));
  ipcMain.handle('file:export',async(_e,name,content)=>{
   const r=await dialog.showSaveDialog(webWindow,{defaultPath:name||'iptv.m3u',filters:[{name:'IPTV Playlist',extensions:['m3u']}]});if(r.canceled||!r.filePath)return null;

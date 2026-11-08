@@ -110,7 +110,7 @@
    if(!sameSource)store.sources.push({id:SOURCE,name:'⧉ Playlist đã hợp nhất',origin:'Các nguồn được chọn trong Thu thập',type:'file',enabled:true,collectEnabled:false});
    else sameSource.enabled=true;
    const mergedIds=new Set(selected.map(s=>s.id));rawSources().forEach(s=>{if(mergedIds.has(s.id))s.enabled=false;});
-   for(const c of merged.channels){window.IPTVProAdvanced?.setAlternates?.(c.id,c.alternates||[]);}
+   window.IPTVProAdvanced?.setAlternatesBatch?.(merged.channels.map(c=>[c.id,c.alternates||[]]));
    ctx.save();applied=true;ctx.render();renderInputs();renderSourceMergeControls();stats(merged.stats);lastRun=Date.now();$('sourceMergeSummary').textContent=`Đã gộp ${loaded.length} thành ${merged.channels.length} kênh và ${merged.stats.alternates} link dự phòng. Có thể hoàn tác trong Quản lý nguồn.`;
    msg(`Đã gộp ${merged.channels.length} kênh, ${merged.stats.alternates} dự phòng; link chưa được kiểm tra sẽ ở trạng thái Chưa xác minh.`);log(`Áp dụng danh sách gộp (${merged.channels.length} kênh). Các nguồn cũ vẫn được giữ.`);
   }catch(e){log('Thu thập lỗi: '+e.message,'error');msg('Thu thập thất bại; dữ liệu cũ được giữ lại.');}finally{progress(applied?1:0,1);setBusy(false);}}
@@ -120,6 +120,40 @@
   const workers=Math.min(Number.isInteger(n)&&n>=1&&n<=32?n:4,channels.length);
   let done=0,live=0,dead=0,uncertain=0,replaced=0;progress(0,channels.length);
   msg(`Đang kiểm tra và sửa ${channels.length} kênh với ${workers} luồng song song…`);
+  if(window.streamleaf?.batchStart){
+   let batch,offset=0,lastUI=0,lastSave=Date.now(),cancelSent=false,alternateChanges=[];
+   try{
+    batch=await window.streamleaf.batchStart('repair',channels.map(ch=>({url:ch.url,label:ch.name,alternates:ch.alternates||[]})),workers);
+    while(true){
+     if(cancel&&!cancelSent){cancelSent=true;await window.streamleaf.batchCancel(batch.id);}
+     const state=await window.streamleaf.batchStatus(batch.id,offset);
+     if(state.error)throw Error(state.error);
+     for(const item of state.results){
+      const ch=channels[item.index],before=ch.url,results=item.ok?item.value:[{url:ch.url,status:'uncertain',reason:item.error||'Lỗi kiểm tra'}];
+      if(ch.lastPlayableUrl===ch.url&&ch.lastPlaybackAt&&Date.now()-Date.parse(ch.lastPlaybackAt)<5*60*1000){
+       const old=results.find(r=>r.url===ch.url);if(old){old.status='alive';old.reason='Đã phát được gần đây trong trình phát';old.positiveEvidence=true;}
+      }
+      const fixed=lib.repaired(ch,results);Object.assign(ch,fixed);
+      if(ch.status==='alive')live++;else if(ch.status==='dead')dead++;else uncertain++;
+      if(ch.url!==before){replaced++;if(store.favorites.includes(before))store.favorites.push(ch.url);if(store.snapshots[before]&&!store.snapshots[ch.url])store.snapshots[ch.url]=store.snapshots[before];}
+      alternateChanges.push([ch.id,ch.alternates||[]]);
+      window.IPTVProAdvanced?.onCheck?.(ch,results.find(r=>r.url===ch.url)||{status:ch.status});
+      done++;
+      if(ch.url!==before||ch.status==='dead'||done%20===0)log(`${ch.status==='alive'?'SỐNG':ch.status==='dead'?'DIE':'CHƯA RÕ'} · ${ch.name}${ch.url!==before?' · đã đổi link':''}`);
+     }
+     offset=state.nextOffset;
+     const now=Date.now();
+     if(now-lastUI>250||state.finished){progress(done,channels.length);$('collectorStatus').textContent=`${done}/${channels.length} · Sống ${live} · Die ${dead} · Chưa rõ ${uncertain} · Đổi link ${replaced}`;lastUI=now;}
+     if(now-lastSave>4500){window.IPTVProAdvanced?.setAlternatesBatch?.(alternateChanges.splice(0));ctx.save();ctx.renderList(true);lastSave=now;}
+     if(offset<state.done)continue;
+     if(state.finished)break;
+     await new Promise(resolve=>setTimeout(resolve,220));
+    }
+    window.IPTVProAdvanced?.setAlternatesBatch?.(alternateChanges.splice(0));ctx.save();ctx.render();msg(`${cancel?'Đã dừng':'Đã kiểm tra'} ${done} kênh: ${live} sống, ${dead} lỗi, ${uncertain} chưa rõ; đổi ${replaced} link đã xác minh.`);
+   }catch(e){log('Kiểm tra lỗi: '+e.message,'error');msg('Lỗi kiểm tra. Kết quả đã chạy được giữ lại.');}
+   finally{window.IPTVProAdvanced?.setAlternatesBatch?.(alternateChanges.splice(0));ctx.save();setBusy(false);}
+   return;
+  }
   try{const jobs=channels.slice();async function worker(){while(jobs.length&&!cancel){const ch=jobs.shift(),before=ch.url,candidates=[...new Set([ch.url,...(ch.alternates||[])])].slice(0,6),results=[];
     for(const url of candidates){if(cancel)break;try{const res=await window.streamleaf.check(url);results.push({url,...res});if(res.status==='alive')break;}catch(e){results.push({url,status:'uncertain',reason:e.message});}}
     if(cancel)break;

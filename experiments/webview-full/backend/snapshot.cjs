@@ -24,12 +24,14 @@ function captureOnce({ffmpeg,input,output,hls=false,timeoutMs=22000,spawnProcess
  return new Promise((resolve,reject)=>{
   const args=[
    '-hide_banner','-nostdin','-loglevel','warning','-y',
-   '-rw_timeout','8000000',
+   // Avoid 32 FFmpeg processes spawning many decoding/filter threads each.
+   '-threads','1','-filter_threads','1',
+   '-rw_timeout','6000000',
    '-user_agent','Mozilla/5.0 OpenIPTVPro/4.19',
    // Only HLS demuxer accepts this input option (MP4 and MPEG-TS reject it).
    // Proxy manifests rewrite segment links to /stream?url=..., with no suffix.
    ...(hls ? ['-allowed_extensions','ALL'] : []),
-   '-analyzeduration','3000000','-probesize','2097152',
+   '-analyzeduration','1200000','-probesize','524288',
    '-i',input,
    '-map','0:v:0','-an','-sn','-dn','-frames:v','1',
    '-vf','scale=480:-2','-q:v','4','-f','image2',output
@@ -67,11 +69,15 @@ function createSnapshotEngine({ffmpeg,proxy,folder,baseUrl,timeoutMs=22000}){
   const name=`${safeLabel(label)}_${Date.now()}_${randomBytes(4).toString('hex')}.jpg`;
   const output=path.join(folder,name);
   const hls=/\.m3u8?(?:$|\?)/i.test(url);
-  const candidates=[{name:'nguồn gốc',url},{name:'proxy cục bộ',url:proxy(url)}];
+  // A 22-second direct timeout followed by another 22-second proxy timeout
+  // could block each worker for 44 seconds on a dead channel.
+  // Keep the fallback, but bound each attempt separately.
+  const candidates=[{name:'nguồn gốc',url,budget:Math.min(timeoutMs,11000)},
+                    {name:'proxy cục bộ',url:proxy(url),budget:Math.min(timeoutMs,15000)}];
   const failures=[];
   for(const candidate of candidates){
    try{
-    await captureOnce({ffmpeg,input:candidate.url,output,hls,timeoutMs});
+    await captureOnce({ffmpeg,input:candidate.url,output,hls,timeoutMs:candidate.budget});
     return {file:name,data:`${baseUrl()}${encodeURIComponent(name)}`,method:candidate.name==='nguồn gốc'?'FFmpeg':'FFmpeg · Proxy'};
    }catch(e){failures.push(`${candidate.name}: ${e.message}`);}
   }

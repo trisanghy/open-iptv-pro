@@ -40,6 +40,9 @@
    loadURL:url=>rpc('source:readUrl',url),proxy:url=>rpc('media:proxy',url),
    mediaKind:url=>rpc('media:kind',url),check:url=>rpc('link:check',url),
    snapshot:(url,label)=>rpc('snapshot:make',url,label),
+   batchStart:(kind,items,concurrency)=>rpc('batch:start',{kind,items,concurrency}),
+   batchStatus:(id,offset)=>rpc('batch:status',id,offset),
+   batchCancel:(id)=>rpc('batch:cancel',id),
    export:(name,content)=>invoke('export_m3u',{name,content}),
    listRepoPlaylists:url=>rpc('source:listRepo',url),
    vlcWebsite:()=>invoke('open_external',{url:'https://www.videolan.org/vlc/'})

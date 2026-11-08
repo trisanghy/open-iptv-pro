@@ -358,6 +358,26 @@
   if(dot)dot.className='mini-pill '+(ch.status||'');
   if(label){label.className='channel-health '+(ch.status||'');label.textContent=ch.status==='alive'?'Sống · ':ch.status==='dead'?'Die · ':'Chưa rõ · ';label.title=(ch.reason||'')+(ch.checkedAt?' • Kiểm tra: '+new Date(ch.checkedAt).toLocaleString('vi-VN'):'');}
  }
+ // Node performs the whole batch. This avoids WebKit's per-host HTTP/1.1
+ // connection cap; polling returns immediately while 1-32 native jobs run.
+ async function runNativeBatch(kind,channels,workers,task,onResult,onProgress){
+  const batch=await window.streamleaf.batchStart(kind,channels.map(c=>({url:c.url,label:c.name})),workers);
+  let offset=0,cancelSent=false,lastSave=Date.now(),lastUi=0;
+  while(true){
+   if(task.cancel&&!cancelSent){cancelSent=true;await window.streamleaf.batchCancel(batch.id);}
+   const state=await window.streamleaf.batchStatus(batch.id,offset);
+   if(state.error)throw Error(state.error);
+   for(const item of state.results){onResult(channels[item.index],item);}
+   offset=state.nextOffset;
+   const now=Date.now();
+   if(now-lastUi>300||state.finished){updateTaskUI(kind==='check'?'check':'shots');lastUi=now;}
+   if(onProgress&&now-lastSave>4000){save();onProgress(false);lastSave=now;}
+   // One poll response is capped at 250 results; drain any remaining pages.
+   if(offset<state.done)continue;
+   if(state.finished){save();onProgress?.(true);return state;}
+   await new Promise(resolve=>setTimeout(resolve,220));
+  }
+ }
  async function checkOne(url){if(!native){try{const r=await fetch(url,{method:'GET',signal:AbortSignal.timeout(7000)});if(!r.ok)return {status:'uncertain',reason:'HTTP '+r.status+' • Trình duyệt không đủ bằng chứng để kết luận Die'};return {status:'uncertain',reason:'Trình duyệt không kiểm tra được segment do CORS'};}catch(e){return {status:'uncertain',reason:'CORS / mạng: '+e.message};}}return await window.streamleaf.check(url);}
  async function checkAll(){const t=tasks.check;if(t.running)return toast('Kiểm tra link đang chạy rồi','warn');const all=enabledChannels().slice();if(!all.length)return toast('Chưa có kênh để kiểm tra','warn');
   if(!native)toast('Kiểm tra sâu chỉ có trên bản cài. Trình duyệt có thể bị giới hạn CORS.','warn');
@@ -365,6 +385,24 @@
   const concurrency=Math.min(safeConcurrency(store.checkConcurrency),all.length);
   taskStart('check',all.length);t.workers=concurrency;updateTaskUI('check');let cursor=0;
   textStatus(`Kiểm tra ${all.length} kênh với ${concurrency} luồng song song`);
+  if(window.streamleaf?.batchStart){
+   try{
+    await runNativeBatch('check',all,concurrency,t,(ch,item)=>{
+     let result=item.ok?item.value:{status:'uncertain',reason:item.error||'Lỗi kiểm tra'};
+     const recentPlayback=ch.lastPlayableUrl===ch.url&&ch.lastPlaybackAt&&Date.now()-Date.parse(ch.lastPlaybackAt)<5*60*1000;
+     if(result.status==='dead'&&recentPlayback)result={...result,status:'alive',reason:'Luồng vừa phát được thực tế; không hạ trạng thái khi có mâu thuẫn'};
+     if(result.status==='dead'&&ch.status==='alive'&&!result.confirmedDead)result={...result,status:'uncertain',reason:'Cần xác minh lại trước khi kết luận Die: '+(result.reason||'')};
+     ch.status=['alive','dead'].includes(result.status)?result.status:'uncertain';ch.reason=result.reason||'';ch.checkedAt=new Date().toISOString();
+     if(ch.status==='alive')t.alive++;else if(ch.status==='dead')t.dead++;else t.uncertain++;
+     t.done++;t.results.push({name:ch.name,status:ch.status,reason:ch.reason});
+     window.IPTVProAdvanced?.onCheck?.(ch,result);
+    },()=>{if(filter==='alive')renderList(true);});
+    save();renderList(true);updateTaskUI('check');toast(`Đã kiểm tra ${t.done} kênh: ${t.alive} sống • ${t.dead} die • ${t.uncertain} chưa rõ`);
+    textStatus(`Link: ${t.alive} sống / ${t.dead} die / ${t.uncertain} chưa rõ`);
+   }catch(e){toast('Kiểm tra lỗi: '+e.message,'error');throw e;}
+   finally{save();taskEnd('check');}
+   return;
+  }
   async function worker(){while(!t.cancel&&cursor<all.length){const ch=all[cursor++];let result;
     try{result=await checkOne(ch.url);}catch(e){result={status:'uncertain',reason:e.message};}
     // Do not classify a failure as a dead stream unless the checker returns dead.
@@ -414,6 +452,22 @@
   if(pending.length>70)toast(`Bắt đầu chụp ${pending.length} kênh bằng ${workers} tác vụ song song; có thể hủy ở bảng tiến độ.`, 'warn');
   taskStart('shots',all.length);t.workers=workers;t.skipped=skipped;t.done=skipped;
   t.latest=`Đang chuẩn bị ${workers} tác vụ chụp ảnh`;updateTaskUI('shots');
+  if(window.streamleaf?.batchStart){
+   try{
+    await runNativeBatch('snapshot',pending,workers,t,(c,item)=>{
+     if(item.ok){const result=item.value;
+      store.snapshots[c.url]={...(result.file?{file:result.file}:{data:result.data}),name:c.name,date:new Date().toLocaleString('vi-VN'),method:result.method||'FFmpeg'};
+      t.success++;
+     }else{t.failed++;t.lastError=c.name+': '+(item.error||'Không chụp được ảnh');console.warn('Snapshot:',t.lastError);}
+     t.done++;t.latest=`${t.success} ảnh mới • ${t.failed} lỗi • ${t.done}/${t.total} kênh`;
+    },force=>{if(force||page==='shots')renderShots();if(force&&page==='tv')renderList(true);});
+    save();renderShots();updateTaskUI('shots');
+    toast(`${t.cancel?'Đã dừng':'Đã xong'}: ${t.success} ảnh mới • ${t.skipped} ảnh giữ nguyên • ${t.failed} lỗi`+(t.failed&&t.lastError?' · '+t.lastError.slice(0,130):''),t.failed&&!t.success?'error':'ok');
+    textStatus(`Snapshot ${t.done}/${t.total}: ${t.success} ảnh mới, ${t.skipped} giữ nguyên, ${t.failed} lỗi`);
+   }catch(e){toast('Lỗi chụp Snapshot: '+e.message,'error');throw e;}
+   finally{save();taskEnd('shots');}
+   return;
+  }
   let cursor=0,lastRefresh=0;
   function refreshProgress(force=false){
     const now=Date.now();if(force||now-lastRefresh>850){

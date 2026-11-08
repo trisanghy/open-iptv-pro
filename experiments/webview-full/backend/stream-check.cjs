@@ -43,10 +43,10 @@ function byteRangeForSegment(lines,index){for(let i=index-1;i>=0;i--){const line
 function segmentURL(line,base){try{return new URL(line,base).href;}catch{return null;}}
 function uncertain(reason,more={}){return {status:'uncertain',reason:String(reason).slice(0,250),...more};}
 function alive(reason,more={}){return {status:'alive',reason,positiveEvidence:true,...more};}
-async function inspectHls(url,depth=0,options={}){
+async function inspectHls(url,depth=0,options={},prefetched=null){
  if(depth>4)return uncertain('Danh sách HLS lồng nhau quá sâu');
  let manifest;
- try{manifest=await getPart(url,{...options,timeout:10000,maxBytes:1024*1024,headers:{}});}catch(e){return uncertain(`Không tải được HLS manifest: ${e.message}`,{httpStatus:e.statusCode});}
+ try{manifest=prefetched||await getPart(url,{...options,timeout:10000,maxBytes:1024*1024,headers:{}});}catch(e){return uncertain(`Không tải được HLS manifest: ${e.message}`,{httpStatus:e.statusCode});}
  const body=manifest.data.toString('utf8');
  if(!isHls(body,manifest.url,manifest.type))return uncertain('Phản hồi không phải HLS manifest hợp lệ');
  const lines=body.split(/\r?\n/).map(x=>x.trim()).filter(Boolean);
@@ -96,13 +96,16 @@ async function inspectLink(url,options={}){
  if(!/^https?:\/\//i.test(url))return uncertain('RTSP/UDP/RTMP chưa hỗ trợ bộ kiểm tra HTTP');
  try{
   let p;
-  try{p=await getPart(url,{...options,maxBytes:140000,timeout:9500,headers:{Range:'bytes=0-139999'}});}
+  // Fetch .m3u8 manifests once without Range. A second manifest fetch used
+  // to double the network calls on every verified HLS source.
+  const knownHls=/\.m3u8?(?:$|\?)/i.test(url);
+  try{p=await getPart(url,{...options,maxBytes:knownHls?1024*1024:140000,timeout:9500,headers:knownHls?{}:{Range:'bytes=0-139999'}});}
   catch(e){if(![400,403,404,405,410,416,500,502].includes(e.statusCode))throw e;
    // Some legitimate servers reject Range; retry ordinary GET before classifying.
    p=await getPart(url,{...options,maxBytes:140000,timeout:9500});
   }
   const s=p.data.toString('utf8');
-  if(isHls(s,p.url,p.type))return await inspectHls(p.url,0,options);
+  if(isHls(s,p.url,p.type))return await inspectHls(p.url,0,options,p);
   if(isVideoData(p.data,p.type))return alive('Đã tải trực tiếp dữ liệu video');
   if(/^#EXTM3U/.test(s))return uncertain('Playlist trả về không phải manifest phát video HLS');
   return uncertain('Server phản hồi HTTP thành công nhưng dữ liệu chưa chứng minh được là video');
