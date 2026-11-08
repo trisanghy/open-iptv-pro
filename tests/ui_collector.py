@@ -19,7 +19,7 @@ with sync_playwright() as p:
  html=(root/'renderer/index.html').read_text();html=html.replace('<script src="theme-boot.js"></script>', '')[:html.replace('<script src="theme-boot.js"></script>', '').index('<script src=')]+'</body></html>';html=re.sub(r'<meta http-equiv="Content-Security-Policy"[^>]*>','',html)
  page.set_content(html);page.add_style_tag(content=(root/'renderer/styles.css').read_text())
  page.evaluate('''() => {let data={};Object.defineProperty(window,'localStorage',{configurable:true,value:{getItem:k=>data[k]||null,setItem:(k,v)=>data[k]=String(v),removeItem:k=>delete data[k]}});window.confirm=()=>true;}''')
- for s in ['core-browser.js','collector-core.js','advanced-core.js','epg.js','favorites-core.js','app.js','features.js','advanced.js','collector.js']:
+ for s in ['core-browser.js','collector-core.js','advanced-core.js','epg.js','favorites-core.js','source-edit.js','app.js','features.js','advanced.js','collector.js']:
   page.add_script_tag(content=(root/'renderer'/s).read_text())
  assert page.locator('#gitNav').count()==0
  assert page.locator('.nav[data-page="collector"]').count()==0

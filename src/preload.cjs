@@ -1,6 +1,13 @@
 'use strict';
 const {contextBridge,ipcRenderer}=require('electron');
 contextBridge.exposeInMainWorld('streamleaf',Object.freeze({
+  castDiscover:()=>ipcRenderer.invoke('cast:discover'),
+  airplayDiscover:()=>ipcRenderer.invoke('airplay:discover'),
+  castPlay:(deviceId,url,title)=>ipcRenderer.invoke('cast:play',deviceId,url,title),
+  castStop:()=>ipcRenderer.invoke('cast:stop'),
+  castStatus:()=>ipcRenderer.invoke('cast:status'),
+  castLan:url=>ipcRenderer.invoke('cast:lan',url),
+  openAirplay:url=>ipcRenderer.invoke('airplay:open',url),
   capabilities:()=>ipcRenderer.invoke('app:capabilities'),
   startTimeshift:url=>ipcRenderer.invoke('timeshift:start',url),
   stopTimeshift:()=>ipcRenderer.invoke('timeshift:stop'),

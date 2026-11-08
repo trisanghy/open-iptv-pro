@@ -1,7 +1,7 @@
-# Open IPTV Pro IPTV v3.1 Windows x64: portable Node downloader & installer builder.
+# Open IPTV Pro v4.21 Full Windows x64: local Node downloader and NSIS build.
 # No admin rights, no global installs. Node binary is verified with pinned SHA-256.
 $ErrorActionPreference = 'Stop'
-$root = Split-Path -Parent $MyInvocation.MyCommand.Path
+$root = (Resolve-Path (Join-Path (Split-Path -Parent $MyInvocation.MyCommand.Path) '..')).Path
 Set-Location $root
 $version = '22.16.0'
 $arch = 'win-x64'
@@ -36,7 +36,7 @@ try {
   $env:Path = "$nodeDir;$env:Path"
   Write-Host "Node: $(& $nodeExe --version)"
 
-  Write-Host '[2/4] Tai Electron, HLS, FFmpeg, electron-builder...'
+  Write-Host '[2/4] Tai Electron, HLS, FFmpeg, electron-updater va cong cu build...'
   if (Test-Path (Join-Path $root 'package-lock.json')) {
     & $npmCmd ci --no-audit --no-fund
   } else {
@@ -48,9 +48,9 @@ try {
   & $npmCmd test
   if ($LASTEXITCODE -ne 0) { throw "Kiem thu loi: $LASTEXITCODE" }
 
-  Write-Host '[4/4] Tao EXE Setup & portable...'
+  Write-Host '[4/4] Tao EXE Setup va Portable Day Du FFmpeg...'
   $env:CSC_IDENTITY_AUTO_DISCOVERY = 'false'
-  & $npxCmd --no-install electron-builder --win nsis portable --x64 --publish never
+  & $npxCmd --no-install electron-builder --win --x64 --publish never
   if ($LASTEXITCODE -ne 0) { throw "Dong goi loi: $LASTEXITCODE" }
   $dist = Join-Path $root 'dist'
   Write-Host "THANH CONG. File EXE o: $dist"
@@ -58,6 +58,6 @@ try {
   exit 0
 } catch {
   Write-Host ('LOI: ' + $_.Exception.Message) -ForegroundColor Red
-  Write-Host 'Ban van co the mo phan mem bang MO_OPEN IPTV PRO_WINDOWS.bat'
+  Write-Host 'Neu build loi, xem lai Node/npm, quyen truy cap Internet va log o tren.'
   exit 1
 }

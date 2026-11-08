@@ -12,7 +12,7 @@ with sync_playwright() as p:
   HTMLMediaElement.prototype.play=function(){return Promise.resolve()}; HTMLMediaElement.prototype.pause=function(){};
   window.Hls=class {static isSupported(){return true}static Events={ERROR:'error',LEVEL_SWITCHED:'level'};loadSource(u){window.__playedUrls=(window.__playedUrls||[]).concat(u)}attachMedia(){}on(){}destroy(){}};
  }''')
- for n in ['core-browser.js','advanced-core.js','epg.js','favorites-core.js','app.js','features.js','advanced.js']:
+ for n in ['core-browser.js','advanced-core.js','epg.js','favorites-core.js','source-edit.js','app.js','features.js','advanced.js']:
   page.add_script_tag(content=(root/'renderer'/n).read_text())
  m3u='#EXTM3U\n#EXTINF:-1 group-title="VTV",VTV1\nhttps://a.invalid/stream.m3u8\n'
  page.locator('#fileInput').set_input_files({'name':'demo.m3u','mimeType':'audio/x-mpegurl','buffer':m3u.encode()})

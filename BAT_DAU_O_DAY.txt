@@ -1,14 +1,11 @@
-OPEN IPTV PRO v4.15 — WINDOWS & MAC ONLY
+OPEN IPTV PRO v4.19 FULL UI - WINDOWS & MAC
 
-1. Build Mac: double-click BUILD_MAC.command in this folder. macOS creates .dmg in dist/.
-2. Build Windows: run BUILD_WINDOWS.bat. Windows creates Setup/Portable .exe in dist/.
-3. Run source with Node.js 22+: npm install, then npm start.
-4. In the app open Cài đặt (Settings) → Ngôn ngữ (Language).
-   Choose Tiếng Việt, English, Español, Português, 简体中文, ไทย, ລາວ, ភាសាខ្មែរ.
-5. Language choice is saved and changes immediately. M3U channel titles and EPG data are untouched.
-6. English GitHub About description: GITHUB_ABOUT_EN.txt
-7. Full English GitHub overview: README.md and docs/GITHUB_DESCRIPTION_EN.md
-8. GitHub open-source license: LICENSE (MIT); third-party notices: THIRD_PARTY_NOTICES.md
+GIU DU TINH NANG: FFmpeg tinh hop trong bo cai, Timeshift 5 phut, Snapshot hang loat, 32 luong, MultiView, EPG, Doctor 2.0, Failover, 8 ngon ngu, auto-update.
 
-This ZIP is source code (not a prebuilt installer) and does not include Android/iOS code.
-It does not include commercial IPTV channels, pay-TV subscriptions, or any viewing rights.
+Mac: mo BUILD_MAC.command tren may Mac dung kien truc (arm64 hoac x64).
+Windows: mo BUILD_WINDOWS.bat tren Windows x64. Tao NSIS Setup + Portable.
+
+Luu y: ZIP nay la MA NGUON, khong phai bo cai. Trong lan build dau can Internet de npm tai Electron, FFmpeg va electron-builder.
+Khong can cai FFmpeg rieng. Khong cap nhat Android/iOS.
+
+GitHub: trisanghy/open-iptv-pro; repo KHONG tu dong duoc cap nhat tu ZIP nay.

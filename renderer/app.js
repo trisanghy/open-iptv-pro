@@ -3,6 +3,7 @@
  const native=!!window.streamleaf;
  const core=window.StreamLeafCore;
  const favCore=window.OpenIPTVFavorites;
+ const sourceEdit=window.OpenIPTVSourceEdit;
  const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
  const escape=s=>String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
  const seed={sources:[],channels:[],favorites:[],snapshots:{},folders:[],groupOrder:[],collapsedGroups:[],current:'',volume:.8,videoFit:'contain'};
@@ -28,7 +29,7 @@
  const upgradedChecker=store.checkerVersion!==2;
  if(upgradedChecker){for(const ch of store.channels){if(ch.status==='dead'){ch.status='uncertain';ch.reason='Die từ bản kiểm tra cũ chưa đáng tin; cần kiểm tra lại';ch.checkedAt='';}}store.checkerVersion=2;}
 
- let playbackProofTimer=0,playbackProofUrl='',filter='all',page='tv',hls=null,current=null,playGeneration=0,playCandidates=[],playCandidateIndex=0,playMode='live',failoverTimer=null,modalHandler=null,snapshotBase='';
+ let playbackProofTimer=0,playbackProofUrl='',filter='all',page='tv',hls=null,current=null,playGeneration=0,playCandidates=[],playCandidateIndex=0,playMode='live',failoverTimer=null,modalHandler=null,snapshotBase='',mediaRecoveryCount=0;
  const tasks={
   check:{running:false,cancel:false,visible:false,total:0,done:0,alive:0,dead:0,uncertain:0,results:[]},
   shots:{running:false,cancel:false,visible:false,total:0,done:0,success:0,failed:0,skipped:0,latest:''}
@@ -133,9 +134,10 @@
   });target.append(f);restoreListScroll(prev);
  }
  function renderSources(){const list=$('#sourcesList');list.replaceChildren();if(!store.sources.length){list.innerHTML='<div class="empty-list">Chưa có nguồn. Thêm URL playlist hoặc file M3U từ máy.</div>';return;}
-  for(const s of store.sources){const n=store.channels.filter(c=>c.sourceId===s.id).length;const d=document.createElement('article');d.className='source-card';d.innerHTML=`<div class="source-top"><h3>${escape(s.name)}</h3><label title="Bật / tắt nguồn"><input class="toggle" type="checkbox" ${s.enabled!==false?'checked':''}/></label></div><div class="source-url" title="${escape(s.origin||'')}">${escape(s.origin||'File M3U')}</div><div class="source-meta">${n} kênh • ${s.type==='url'?'Nguồn URL':'File cục bộ'}</div><div class="source-actions"><button class="src-refresh" ${s.type!=='url'?'disabled':''}>↻ Tải lại</button><button class="src-rename">✎ Đổi tên</button><button class="src-delete remove">✕ Xóa</button></div>`;
+  for(const s of store.sources){const n=store.channels.filter(c=>c.sourceId===s.id).length;const d=document.createElement('article');d.className='source-card';d.innerHTML=`<div class="source-top"><h3>${escape(s.name)}</h3><label title="Bật / tắt nguồn"><input class="toggle" type="checkbox" ${s.enabled!==false?'checked':''}/></label></div><div class="source-url" title="${escape(s.origin||'')}">${escape(s.origin||'File M3U')}</div><div class="source-meta">${n} kênh • ${s.type==='url'?'Nguồn URL':'File cục bộ'}</div><div class="source-actions"><button class="src-refresh" ${s.type!=='url'?'disabled':''}>↻ Tải lại</button><button class="src-edit" ${s.type!=='url'?'disabled title="Chỉ sửa được nguồn URL"':''}>✎ Sửa link</button><button class="src-rename">✎ Đổi tên</button><button class="src-delete remove">✕ Xóa</button></div>`;
    d.querySelector('.toggle').addEventListener('change',e=>{s.enabled=e.target.checked;save();render();});
    d.querySelector('.src-refresh').addEventListener('click',()=>refreshSource(s));
+   d.querySelector('.src-edit').addEventListener('click',()=>editSourceUrl(s));
    d.querySelector('.src-rename').addEventListener('click',()=>renameSource(s));
    d.querySelector('.src-delete').addEventListener('click',()=>deleteSource(s));list.append(d);
   }
@@ -257,19 +259,50 @@
  function openURL(){openModal('Thêm playlist bằng URL',`<label class="modal-label">Tên nguồn</label><input class="modal-input" id="urlName" placeholder="Ví dụ: Kênh truyền hình Việt Nam" value="IPTV từ URL"/><label class="modal-label">Đường dẫn M3U</label><input class="modal-input" id="urlValue" placeholder="https://example.com/iptv.m3u" type="url"/><p class="hint">Nhập liên kết tới file M3U chứa nhiều kênh. Bản ứng dụng dùng trình tải tích hợp; bản trình duyệt có thể bị giới hạn CORS.</p>`,async()=>{
     const name=$('#urlName').value.trim()||'IPTV từ URL';const url=$('#urlValue').value.trim();if(!/^https?:\/\//i.test(url))throw Error('URL phải bắt đầu bằng http:// hoặc https://');
     textStatus('Đang tải danh sách từ URL...');const content=native?(await window.streamleaf.loadURL(url)).content:await (await fetch(url)).text();addSource(name,url,content,'url');},'Tải danh sách');}
- async function refreshSource(source){if(!native&&source.type==='url')toast('Chế độ trình duyệt chỉ tải URL khi máy chủ cho phép CORS','warn');try{if(!source.origin?.startsWith('http'))throw Error('Nguồn không phải URL');textStatus('Đang tải lại '+source.name+'...');const content=native?(await window.streamleaf.loadURL(source.origin)).content:await (await fetch(source.origin)).text();const fresh=core.parseM3U(content,source.id);if(!fresh.length)throw Error('Không nhận được kênh nào; giữ nguyên bản cũ');
-   const old=store.channels.filter(c=>c.sourceId===source.id);const states=new Map(old.map(c=>[c.url,{status:c.status,checkedAt:c.checkedAt,reason:c.reason,group:c.group}]));
-   fresh.forEach(c=>Object.assign(c,states.get(c.url)||{}));store.channels=store.channels.filter(c=>c.sourceId!==source.id).concat(fresh);syncGroupOrder();favCore.sync(store);save();render();toast(`Đã làm mới ${fresh.length} kênh từ ${source.name}`);textStatus('Tải lại thành công');}
-   catch(e){toast('Không thể tải lại: '+e.message,'error');textStatus('Tải lại thất bại; đã giữ dữ liệu cũ');}}
+ async function readSourceURL(url){
+  if(native)return (await window.streamleaf.loadURL(url)).content;
+  const r=await fetch(url);if(!r.ok)throw Error('Máy chủ trả HTTP '+r.status);return r.text();
+ }
+ async function replaceURLSource(source,newUrl,newName,mode='edit'){
+  if(window.IPTVProAdvanced?.canEdit?.()===false)throw Error('Hồ sơ trẻ em không được sửa nguồn');
+  if(tasks.check.running||tasks.shots.running)throw Error('Hãy đợi tác vụ kiểm tra/chụp ảnh hoàn thành rồi sửa nguồn');
+  const url=sourceEdit.validatePlaylistUrl(newUrl);
+  if(!store.sources.some(s=>s.id===source.id))throw Error('Nguồn này đã bị xóa');
+  textStatus('Đang xác minh nguồn M3U mới...');
+  const content=await readSourceURL(url);
+  const fresh=core.parseM3U(content,source.id);
+  if(!fresh.length)throw Error('Link mới không có kênh hợp lệ; đã giữ nguyên nguồn cũ');
+  const oldCount=store.channels.filter(c=>c.sourceId===source.id).length;
+  if(mode==='edit'&&oldCount>5&&fresh.length<oldCount/2&&!confirm(`Playlist mới chỉ có ${fresh.length}/${oldCount} kênh. Bạn vẫn muốn thay nguồn?`))throw Error('Đã hủy thay nguồn');
+  const oldCurrent=current&&current.sourceId===source.id?current.id:null;
+  const result=sourceEdit.replaceSourceInStore(store,source.id,url,fresh);
+  source.name=String(newName||'').trim()||source.name;
+  syncGroupOrder();favCore.sync(store);save();render();
+  if(oldCurrent){const replacement=store.channels.find(c=>c.id===oldCurrent);if(replacement){if(current?.url!==replacement.url)await playChannel(replacement.id);else current=replacement;}else stopPlayer();}
+  toast(`Nguồn đã cập nhật: ${fresh.length} kênh • giữ thông tin ${result.matched} kênh cũ`);
+  textStatus('Đã lưu URL nguồn mới và giữ các kênh trùng khớp');return result;
+ }
+ function editSourceUrl(source){
+  if(source.type!=='url')return toast('Nguồn này là file M3U, không có URL để sửa','warn');
+  if(window.IPTVProAdvanced?.canEdit?.()===false)return toast('Hồ sơ trẻ em không được sửa nguồn','warn');
+  openModal('Sửa URL nguồn M3U',`<label class="modal-label">Tên nguồn</label><input class="modal-input" id="sourceEditName" value="${escape(source.name)}" maxlength="140"/><label class="modal-label">Link nguồn M3U mới</label><input class="modal-input" id="sourceEditURL" type="url" value="${escape(source.origin)}" autocomplete="off" spellcheck="false"/><p class="hint">Ứng dụng sẽ tải và kiểm tra link mới trước khi thay nguồn cũ. Giữ kênh yêu thích, thư mục tùy chỉnh và trạng thái kênh khớp. Nếu tải lỗi, không ghi đè.</p>`,async()=>{
+   await replaceURLSource(source,$('#sourceEditURL').value,$('#sourceEditName').value);
+  },'Kiểm tra và lưu');
+ }
+ async function refreshSource(source){
+  try{await replaceURLSource(source,source.origin,source.name,'refresh');}
+  catch(e){toast('Không thể tải lại: '+e.message,'error');textStatus('Tải lại thất bại; đã giữ dữ liệu cũ');}
+ }
  async function refreshAll(){if(tasks.check.running||tasks.shots.running){toast('Hãy đợi hai tác vụ đang chạy xong trước khi làm mới nguồn','warn');return;}const sources=store.sources.filter(s=>s.type==='url'&&s.enabled!==false);if(!sources.length){toast('Chưa có nguồn URL để tải lại','warn');return;}for(const s of sources)await refreshSource(s);}
  function renameSource(s){openModal('Đổi tên nguồn',`<label class="modal-label">Tên nguồn</label><input class="modal-input" id="renameValue" value="${escape(s.name)}"/>`,()=>{s.name=$('#renameValue').value.trim()||s.name;save();render();});}
  function deleteSource(s){if(!confirm(`Xóa nguồn "${s.name}" và tất cả kênh của nguồn này?`))return;store.sources=store.sources.filter(x=>x.id!==s.id);store.channels=store.channels.filter(c=>c.sourceId!==s.id);if(current?.sourceId===s.id)stopPlayer();syncGroupOrder();favCore.sync(store);save();render();toast('Đã xóa nguồn');}
  function enabledChannels(){const s=new Set(store.sources.filter(s=>s.enabled!==false).map(s=>s.id));return store.channels.filter(c=>s.has(c.sourceId));}
- function stopPlayer(){playGeneration++;clearTimeout(failoverTimer);window.IPTVProAdvanced?.onStop?.();if(hls){hls.destroy();hls=null;}player.pause();player.removeAttribute('src');player.load();current=null;$('#playingTitle').textContent='Chưa chọn kênh';$('#playingSubtitle').textContent='Chọn kênh để phát';$('#playBtn').textContent='▶';$('#emptyPlayer').classList.remove('hidden');$('#playingIcon').textContent='TV';updatePlayerFavorite();renderList();window.IPTVExtras?.onChannel?.(null);}
+ function stopPlayer(){window.OpenIPTVCastUI?.stopOnLocalStop?.();playGeneration++;clearTimeout(failoverTimer);window.IPTVProAdvanced?.onStop?.();if(hls){hls.destroy();hls=null;}player.pause();player.removeAttribute('src');player.load();current=null;$('#playingTitle').textContent='Chưa chọn kênh';$('#playingSubtitle').textContent='Chọn kênh để phát';$('#playBtn').textContent='▶';$('#emptyPlayer').classList.remove('hidden');$('#playingIcon').textContent='TV';updatePlayerFavorite();renderList();window.IPTVExtras?.onChannel?.(null);}
  async function loadHlsLib(){if(window.Hls)return window.Hls;if(native)throw Error('Ứng dụng chưa đóng gói hls.js. Hãy chạy npm install rồi đóng gói lại.');return new Promise((resolve,reject)=>{const script=document.createElement('script');script.src='https://cdn.jsdelivr.net/npm/hls.js@1.6.15/dist/hls.min.js';script.onload=()=>window.Hls?resolve(window.Hls):reject(Error('Thiếu thư viện hls.js'));script.onerror=()=>reject(Error('Không tải được hls.js từ CDN để phát HLS trên trình duyệt này'));document.head.append(script);});}
  async function tryPlayback(url,generation){
   if(generation!==playGeneration)return;
   if(hls){hls.destroy();hls=null;}
+  mediaRecoveryCount=0;
   player.pause();player.removeAttribute('src');player.load();
   if(/^(rtsp|rtmp|udp):/i.test(url))throw Error('Luồng RTSP/RTMP/UDP không hỗ trợ; hãy dùng HLS hoặc MP4.');
   const actual=native?await window.streamleaf.proxy(url):url;
@@ -279,9 +312,9 @@
   if(generation!==playGeneration)return;
   if(looksHls && player.canPlayType('application/vnd.apple.mpegurl')){player.crossOrigin=native?'anonymous':null;player.src=actual;}
   else if(looksHls){const H=await loadHlsLib();if(generation!==playGeneration)return;if(!H.isSupported())throw Error('Thiết bị không hỗ trợ HLS MediaSource');
-   hls=new H({enableWorker:true,lowLatencyMode:true,...(window.IPTVProAdvanced?.hlsOptions?.()||{maxBufferLength:12,backBufferLength:8})});hls.loadSource(actual);hls.attachMedia(player);
+   hls=new H({enableWorker:true,lowLatencyMode:false,capLevelToPlayerSize:true,...(window.IPTVProAdvanced?.hlsOptions?.()||{maxBufferLength:12,backBufferLength:6,maxBufferSize:18*1000*1000})});hls.loadSource(actual);hls.attachMedia(player);
    hls.on(H.Events.LEVEL_SWITCHED,(_ev,data)=>{const level=hls?.levels?.[data.level];if(level)window.IPTVProAdvanced?.onQuality?.(current,{bitrate:level.bitrate||0,width:level.width||0,height:level.height||0});});
-   hls.on(H.Events.ERROR,(_e,data)=>{if(generation!==playGeneration)return;if(data.fatal){window.IPTVProAdvanced?.onStreamError?.(current,'HLS '+data.details);recoverPlayback(generation,data.details);}});
+   hls.on(H.Events.ERROR,(_e,data)=>{if(generation!==playGeneration)return;if(data.fatal){if(data.type===H.ErrorTypes.MEDIA_ERROR&&mediaRecoveryCount<1){mediaRecoveryCount++;hls?.recoverMediaError();return;}window.IPTVProAdvanced?.onStreamError?.(current,'HLS '+data.details);recoverPlayback(generation,data.details);}});
   }else{player.crossOrigin=native?'anonymous':null;player.src=actual;}
   $('#streamInfo').textContent=looksHls?'HLS • Đang kết nối':'Video • Đang kết nối';
   const started=Date.now();window.IPTVProAdvanced?.onLoadStart?.(current,url,started);
@@ -307,7 +340,7 @@
   playMode=opts.mode||(override?'catchup':'live');
   playCandidates=override?[override]:(window.OpenIPTVAdvancedCore?.alternatives(found,enabledChannels(),store.alternates||{})||[found.url]);
   playCandidateIndex=0;
-  current=found;store.current=chId;save();renderList(true);
+  current=found;store.current=chId;save();window.OpenIPTVCastUI?.onChannelChanged?.(found);renderList(true);
   $('#playingTitle').textContent=found.name;$('#playingSubtitle').textContent=found.group+' • '+(playMode==='catchup'?'Xem lại':playMode==='timeshift'?'Bộ đệm 5 phút':'Đang phát trực tiếp');$('#playingIcon').textContent=found.name.slice(0,2).toUpperCase();$('#emptyPlayer').classList.add('hidden');$('#streamInfo').textContent='Đang kết nối...';updatePlayerFavorite();
   window.IPTVExtras?.onChannel?.(found);window.IPTVProAdvanced?.onChannel?.(found,playMode);
   try{await tryPlayback(playCandidates[0],generation);}catch(e){recoverPlayback(generation,e.message);}
@@ -381,12 +414,13 @@
   try{await Promise.all(Array.from({length:concurrency},()=>worker()));save();renderList(true);updateTaskUI('check');toast(`Đã kiểm tra ${t.done} kênh: ${t.alive} sống • ${t.dead} die • ${t.uncertain} chưa rõ`);textStatus(`Link: ${t.alive} sống / ${t.dead} die / ${t.uncertain} chưa rõ`);}finally{taskEnd('check');}
  }
  async function snapshotOne(c,quiet=false){let result;
-  if(native){try{result=await window.streamleaf.snapshot(c.url,c.name);}catch(e){if(!quiet)toast('FFmpeg: '+e.message,'warn');}}
+  if(native){try{result=await window.streamleaf.snapshot(c.url,c.name);}catch(e){/* A visible, playable channel can be captured directly without FFmpeg. */}}
   if(!result&&current?.id===c.id&&player.videoWidth){try{const cvs=document.createElement('canvas');cvs.width=480;cvs.height=Math.max(1,Math.round(480*player.videoHeight/player.videoWidth));cvs.getContext('2d').drawImage(player,0,0,cvs.width,cvs.height);result={data:cvs.toDataURL('image/jpeg',.68),method:'Video'};}catch{}}
   if(!result)throw Error('Không lấy được khung hình (luồng lỗi, bảo vệ nội dung hoặc CORS)');
   store.snapshots[c.url]={...(result.file?{file:result.file}:{data:result.data}),name:c.name,date:new Date().toLocaleString('vi-VN'),method:result.method||'FFmpeg'};if(!quiet)save();if(!quiet){renderShots();renderList();toast('Đã chụp ảnh kênh '+c.name);}return result;
  }
  async function snapshotAll(){
+  
   const t=tasks.shots;
   if(t.running)return toast('Đang chụp toàn bộ kênh rồi','warn');
   const all=enabledChannels().slice();if(!all.length)return toast('Chưa có kênh để chụp','warn');
@@ -430,7 +464,14 @@
   const bind=(ids,fn)=>ids.forEach(id=>$('#'+id)?.addEventListener('click',fn));
   bind(['fileBtn','emptyFileBtn','sourcesFileBtn'],loadFile);bind(['urlBtn','emptyUrlBtn','sourcesUrlBtn'],openURL);
   bind(['sourceCheckAllBtn'],checkAll);bind(['quickChecks'],()=>{setPage('sources');document.getElementById('sourceRepairSection')?.scrollIntoView({block:'start'});});bind(['quickShots','shotsAllBtn'],snapshotAll);bind(['quickExport','exportNav'],exportFile);
+  document.querySelectorAll('[data-nav-to]').forEach(button=>button.addEventListener('click',()=>{
+    const destination=button.dataset.navTo;
+    document.querySelector(`.nav[data-page="${destination}"]`)?.click();
+    const target=button.dataset.navTarget;
+    if(target)document.getElementById(target)?.scrollIntoView({block:'start',behavior:'smooth'});
+  }));
   bind(['folderCreateBtn','newFolderFromList'],createFolder);bind(['expandFolderBtn'],()=>{const pos=preserveListScroll();store.collapsedGroups=[];save();renderList();restoreListScroll(pos);});bind(['collapseFolderBtn'],()=>{const pos=preserveListScroll();store.collapsedGroups=groupNames();save();renderList();restoreListScroll(pos);});
+  bind(['castBtn'],()=>{const ch=currentChannel();if(!ch)return toast('Chọn kênh trước khi phát lên TV','warn');window.OpenIPTVCastUI?.open?.(ch,playCandidates[playCandidateIndex]||ch.url);});
   bind(['refreshAllBtn'],refreshAll);bind(['prevBtn'],()=>switchChannel(-1));bind(['nextBtn'],()=>switchChannel(1));bind(['stopBtn'],stopPlayer);bind(['playBtn'],playToggle);
   bind(['favCurrentBtn'],()=>{const channel=currentChannel();if(channel)favorite(channel);});
   bind(['shotBtn'],async()=>{if(!current)return toast('Chưa chọn kênh','warn');try{await snapshotOne(current);}catch(e){toast(e.message,'error');}});
@@ -479,10 +520,10 @@
   document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();if(e.target.tagName==='INPUT')return;if(e.key===' '){e.preventDefault();playToggle();}});
   const chooser=document.createElement('input');chooser.type='file';chooser.id='fileInput';chooser.accept='.m3u,.m3u8,.txt';chooser.className='hidden';chooser.addEventListener('change',async()=>{await importFromInput(chooser.files?.[0]);chooser.value='';});document.body.append(chooser);
  }
- window.IPTVState=Object.freeze({getStore:()=>store,getCurrent:()=>current,getChannels:()=>enabledChannels(),setPage,save,toast,textStatus,player,renderList,render,playChannel,stopPlayer,openModal,loadHlsLib,getPlayMode:()=>playMode,importSource:addSource});
+ window.IPTVState=Object.freeze({getStore:()=>store,getCurrent:()=>current,getChannels:()=>enabledChannels(),setPage,save,toast,textStatus,player,renderList,render,playChannel,stopPlayer,openModal,loadHlsLib,getPlayMode:()=>playMode,tryNextLink:()=>{if(playMode!=='live'||playCandidateIndex+1>=playCandidates.length)return false;void recoverPlayback(playGeneration,'Giám sát xác nhận đứng hình');return true;},importSource:addSource});
  wire();render();if(upgradedChecker)save();
  $('#appMode').textContent=native?'Ứng dụng • Desktop':'Bản xem thử • Web';
  $('#miniStatus').textContent=native?'Không cần Python / VLC':'Safari phát HLS trực tiếp';
- if(native)window.streamleaf.capabilities().then(x=>{snapshotBase=x.snapshotBase||'';window.__snapshotBase=snapshotBase;render();textStatus('Sẵn sàng • FFmpeg tích hợp: '+(x.ffmpegExists?'có':'chưa khả dụng'));}).catch(()=>textStatus('Không đọc được thông tin môi trường'));
+ if(native)window.streamleaf.capabilities().then(x=>{snapshotBase=x.snapshotBase||'';window.__snapshotBase=snapshotBase;render();textStatus('Sẵn sàng • FFmpeg tích hợp: '+(x.ffmpegExists?'đã sẵn sàng':'không khả dụng; vui lòng cài lại bản Full'));}).catch(()=>textStatus('Không đọc được thông tin môi trường'));
  else textStatus('Bản trình duyệt: URL/CORS và snapshot hàng loạt có giới hạn');
 })();

@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro",
-  "version": "4.16.0",
-  "description": "Open-source desktop IPTV player for Windows and macOS with eight interface languages, M3U playlists, EPG, MultiView, snapshots and stream diagnostics",
+  "version": "4.21.1",
+  "description": "Open IPTV Pro Full: chỉnh URL M3U, Google Cast, phát hiện AirPlay qua Bonjour trên macOS và mở Safari AirPlay, FFmpeg/Timeshift tích hợp.",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",
@@ -13,12 +13,16 @@
     "dist:mac:x64": "electron-builder --mac --x64 --publish never",
     "dist:mac:universal": "electron-builder --mac --universal --publish never",
     "dist:win": "electron-builder --win --x64 --publish never",
-    "dist:dir": "electron-builder --dir"
+    "dist:dir": "electron-builder --dir",
+    "dist:win:portable": "electron-builder --win portable --x64 --publish never",
+    "audit:size": "node scripts/audit-size.cjs"
   },
   "dependencies": {
     "hls.js": "1.6.15",
+    "electron-updater": "6.8.11",
     "ffmpeg-static": "5.3.0",
-    "electron-updater": "6.8.11"
+    "castv2-client": "1.2.0",
+    "bonjour-service": "1.4.4"
   },
   "devDependencies": {
     "electron": "38.0.0",
@@ -28,16 +32,17 @@
     "appId": "org.openiptvpro.desktop",
     "productName": "Open IPTV Pro",
     "asar": true,
-    "asarUnpack": [
-      "node_modules/ffmpeg-static/**"
-    ],
     "files": [
       "renderer/**/*",
       "src/**/*",
       "assets/icon.png",
       "node_modules/**/*",
       "package.json",
-      "!**/*.map"
+      "!**/*.map",
+      "!**/*.test.*",
+      "!**/test/**",
+      "!**/tests/**",
+      "!**/docs/**"
     ],
     "directories": {
       "output": "dist"
@@ -50,7 +55,14 @@
       ],
       "hardenedRuntime": true,
       "icon": "assets/icon.icns",
-      "artifactName": "Open-IPTV-Pro-${version}-mac-${arch}.${ext}"
+      "artifactName": "Open-IPTV-Pro-${version}-mac-${arch}.${ext}",
+      "extendInfo": {
+        "NSLocalNetworkUsageDescription": "Open IPTV Pro tìm TV qua Google Cast và AirPlay trên mạng nội bộ.",
+        "NSBonjourServices": [
+          "_googlecast._tcp",
+          "_airplay._tcp"
+        ]
+      }
     },
     "dmg": {
       "title": "Open IPTV Pro ${version}"
@@ -87,6 +99,19 @@
         "repo": "open-iptv-pro",
         "releaseType": "release"
       }
+    ],
+    "electronLanguages": [
+      "en-US",
+      "vi",
+      "es",
+      "pt-BR",
+      "zh-CN",
+      "th",
+      "lo",
+      "km"
+    ],
+    "asarUnpack": [
+      "node_modules/ffmpeg-static/**"
     ]
   }
 }

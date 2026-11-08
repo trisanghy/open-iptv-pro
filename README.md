@@ -1,3 +1,38 @@
+## Bản sửa v4.21.1: Phát hiện TV AirPlay trên macOS
+
+Mục Google Cast chỉ phát hiện Chromecast/Google TV hỗ trợ Google Cast. Mục AirPlay trên Mac giờ có nút **Tìm thiết bị AirPlay**, dùng Bonjour (`dns-sd`) của macOS để hiển thị thiết bị tương thích. Để phát AirPlay, vẫn nhấn **Mở AirPlay trong Safari** và chọn TV trong Safari. Xem `AIRPLAY_FIX_V4_21_1_VI_EN.md` để biết chi tiết. Tất cả tính năng Full, FFmpeg và Timeshift được giữ nguyên.
+
+## v4.21.1 AirPlay discovery fix (macOS)
+
+Chromecast discovery and AirPlay discovery are separate. The AirPlay section now lists macOS Bonjour video AirPlay receivers. To start playback, open Safari from the app and select the receiver in Safari. All Full Edition features are retained.
+
+---
+
+## Mới trong v4.21 / New in v4.21
+
+**Tiếng Việt**
+
+- **Sửa link M3U đã nhập:** Quản lý nguồn → **Sửa link**. Ứng dụng tải và xác minh danh sách mới trước khi lưu; lỗi sẽ giữ nguyên URL cũ. Giữ nguồn, các kênh khớp, thư mục cá nhân và Yêu thích.
+- **Google Cast / Chromecast / Google TV:** Chọn kênh → **Cast / AirPlay** → **Tìm TV** → **Phát trên TV đã chọn**. TV và máy tính phải chung mạng LAN, mDNS không bị chặn. Một số video cần codec/DRM mà TV không hỗ trợ sẽ không phát được.
+- **AirPlay (Mac):** Chọn **Mở AirPlay trong Safari**, sau đó chọn AirPlay trong Safari hoặc dùng **Phản chiếu màn hình** trên macOS. Đây không phải cơ chế tự bắt tay AirPlay trong Electron; Windows không có lựa chọn này.
+- **TV có trình duyệt:** Chọn **Tạo liên kết xem**, mở địa chỉ LAN trên TV. Liên kết có mã ngẫu nhiên, hết hiệu lực khi dừng truyền hoặc đóng app. Máy phát và TV phải kết nối cùng LAN và tường lửa cho phép.
+- **Giữ bản Full:** FFmpeg nhúng, Timeshift, Snapshot 32 luồng, MultiView, Doctor, EPG và cập nhật vẫn có. Không thay Android/iOS.
+
+**English**
+
+- **Edit saved M3U URLs** under Manage Sources → Edit URL. Fetch and validate the replacement first; an error preserves the original source. Matching channel identities, favorites and custom folders are retained.
+- **Google Cast:** Select a channel → Cast / AirPlay → Find TVs → Cast. Devices must be on the same LAN with mDNS enabled. DRM, unsupported codecs, authentication and firewall rules may prevent playback.
+- **AirPlay on macOS:** Opens the current stream in Safari, where the user chooses an AirPlay destination or macOS Screen Mirroring. This is not automatic native AirPlay pairing in Electron; Windows does not offer Safari AirPlay.
+- **Browser on another device:** Generate a temporary signed LAN video page URL and open it on a TV browser. Same-network access required.
+- **Full features maintained:** bundled FFmpeg, Timeshift, 32-worker Snapshot, MultiView, Doctor, EPG and the updater. Android/iOS unchanged.
+
+---
+
+> **Open IPTV Pro v4.20 Full / Sửa cập nhật** — FFmpeg được tích hợp vào ứng dụng; giữ nguyên Timeshift 5 phút, Snapshot hàng loạt, kiểm tra 32 luồng, MultiView, Doctor 2.0, EPG, PiP, Failover và cập nhật phiên bản. Giao diện được thu gọn, không cắt chức năng.
+> **English:** Full edition bundles FFmpeg and retains every desktop function; only the interface is simplified. macOS and Windows source; Android/iOS unchanged.
+
+> **v4.20 Full (Windows/macOS):** FFmpeg tích hợp trong bộ cài, Timeshift 5 phút và Snapshot 32 luồng đầy đủ. Cập nhật bằng GitHub Releases sẽ tải bộ cài đã xác minh hoặc tự cài khi có chữ ký phù hợp. Mac Apple Silicon và Intel được build riêng để FFmpeg đúng kiến trúc.
+
 # Open IPTV Pro
 
 ## 🇻🇳 Tiếng Việt
@@ -17,7 +52,17 @@
 - **Timeshift:** lưu bộ đệm 5 phút kể từ khi bật ghi (không thể tua về trước thời điểm bắt đầu lưu nếu nhà cung cấp không hỗ trợ).
 - **Cá nhân hóa:** giao diện Sáng / Tối / Tự động, bánh xe chọn màu, hồ sơ riêng và khóa PIN cơ bản.
 
-### Cập nhật phiên bản tự động (v4.16)
+### Smart IPTV Doctor 2.0 (giữ nguyên)
+
+- **Freeze Detector:** giám sát video chính theo thời gian thực, cảnh báo khung hình đứng hoặc màn hình đen nhưng không vội kết luận link Die. Tùy chọn thử link dự phòng khi đứng hình được xác nhận được **tắt mặc định**.
+- **Visual Channel Deduplication:** quét Snapshot đã lưu, đối chiếu dấu vân tay hình ảnh và metadata để đề xuất kênh nghi trùng; **không tự gộp** khi chỉ có một ảnh giống nhau.
+- **Doctor 2.0:** điểm ưu tiên đề xuất sửa, phát hiện kênh bị báo Die dù từng phát thành công, thêm dự phòng đã xác minh sau khi bạn chấp thuận, hoàn tác và xuất báo cáo JSON.
+
+![Smart IPTV Doctor 2.0 — ảnh giao diện thử](docs/images/doctor-v4-17.png)
+
+Chi tiết: [Hướng dẫn Doctor 2.0 (Việt/Anh)](docs/DOCTOR_V4_17_VI_EN.md). Phần mới chỉ dành cho Windows/macOS.
+
+### Cập nhật phiên bản tự động (sửa trong v4.20)
 
 Vào **Cài đặt → Cập nhật phiên bản** để kiểm tra GitHub Releases, tải phiên bản mới có tiến độ và xác nhận cài đặt. Mặc định bật **Tự kiểm tra khi mở ứng dụng** và **Tự tải bản mới**, có thể tắt riêng. Nếu bản cài chưa ký hoặc là Portable, app tải bộ cài có checksum SHA256 rồi yêu cầu mở thủ công; không tự thực thi file tải về. Nếu chỉ có mã nguồn hoặc chưa có Release, app hiển thị hướng dẫn rõ ràng.
 
@@ -38,7 +83,7 @@ Vào **Cài đặt → Ngôn ngữ** để chọn: Tiếng Việt, English, Espa
 
 **Lưu ý pháp lý và quyền riêng tư:** phần mềm không cung cấp kênh trả phí, tài khoản thuê bao hay quyền phát lại nội dung. Chỉ sử dụng luồng bạn có quyền truy cập; không đăng playlist riêng, thông tin đăng nhập hoặc token lên GitHub public. Giấy phép MIT áp dụng cho mã nguồn của ứng dụng, còn FFmpeg, Electron, hls.js và dữ liệu EPG có điều khoản riêng tại [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
 
-Bản **v4.16** chỉ cập nhật phần mềm **Windows/macOS**, không cập nhật Android/iOS. Có thể xem hướng dẫn chi tiết tại [Hướng dẫn tiếng Việt](docs/README_VI.md), [Hướng dẫn build](docs/BUILD.md) và [MIT License](LICENSE).
+Bản **v4.20** chỉ cập nhật phần mềm **Windows/macOS**, không cập nhật Android/iOS. Có thể xem hướng dẫn chi tiết tại [Hướng dẫn tiếng Việt](docs/README_VI.md), [Hướng dẫn build](docs/BUILD.md) và [MIT License](LICENSE).
 
 ---
 
@@ -48,7 +93,11 @@ Bản **v4.16** chỉ cập nhật phần mềm **Windows/macOS**, không cập 
 
 ![Open IPTV Pro desktop interface](docs/images/interface-v4-1.png)
 
-> **v4.16.0 · Desktop only.** Android and iOS source code are intentionally **not** included or updated in this release. The project is licensed under the MIT License; bundled dependencies have their own licenses (see [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)). This repository does **not** include commercial television streams, pirated playlists, or viewing rights.
+> **v4.20.0 · Desktop only.** Android and iOS source code are intentionally **not** included or updated in this release. The project is licensed under the MIT License; bundled dependencies have their own licenses (see [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)). This repository does **not** include commercial television streams, pirated playlists, or viewing rights.
+
+## Visual Stream Diagnostics (retained)
+
+**Smart IPTV Doctor 2.0** adds on-device video freeze/black-screen warnings, local perceptual comparison of saved channel snapshots (review only, no automatic merge), prioritized recommendations and undo for the last change. Recently verified backup URLs can be added after confirmation. These features never treat a static scene or one matching frame as proof a stream is dead or two channels are identical. See [Doctor 2.0 guide (Vietnamese/English)](docs/DOCTOR_V4_17_VI_EN.md).
 
 ## In-app updates (v4.16)
 

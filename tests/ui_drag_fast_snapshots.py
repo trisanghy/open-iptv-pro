@@ -25,7 +25,7 @@ with sync_playwright() as p:
        snapshot:async(url,label)=>{const r=window.__shots;r.active++;r.max=Math.max(r.max,r.active);r.calls++;await new Promise(ok=>setTimeout(ok,90));r.active--;return {data:'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22384%22 height=%22216%22%3E%3Crect width=%22384%22 height=%22216%22 fill=%22%23424177%22/%3E%3C/svg%3E',method:'Mock'};}
      };
     }''')
-    for name in ['core-browser.js','favorites-core.js','app.js']:
+    for name in ['core-browser.js','favorites-core.js','source-edit.js','app.js']:
         page.add_script_tag(content=(root/'renderer'/name).read_text())
     page.locator('.brand-icon img').evaluate('(el,v)=>el.src=v','data:image/png;base64,'+base64.b64encode((root/'assets/icon.png').read_bytes()).decode())
     page.evaluate('(text)=>window.IPTVState.importSource("Demo","demo.m3u",text,"file")',m3u)
@@ -51,7 +51,7 @@ with sync_playwright() as p:
        s.snapshots[s.channels[1].url]={data:'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22%3E%3C/svg%3E',name:'Demo 02'};
        window.IPTVState.save();}''')
     page.locator('#snapshotWorkersQuick').select_option('4')
-    assert page.locator('#snapshotWorkersSetting').input_value()=='4'
+    assert page.evaluate('window.IPTVState.getStore().snapshotConcurrency')==4
     assert page.locator('#snapshotSkipQuick').is_checked()
     page.locator('#shotsAllBtn').click()
     expect(page.locator('#task-shots .task-count')).to_have_text('12/12 kênh',timeout=12000)
@@ -63,8 +63,8 @@ with sync_playwright() as p:
     # Option sync and resume full refresh of existing snapshots.
     page.locator('#snapshotSkipQuick').uncheck()
     page.locator('#snapshotWorkersQuick').select_option('2')
-    assert page.locator('#snapshotWorkersSetting').input_value()=='2'
-    assert not page.locator('#snapshotSkipSetting').is_checked()
+    assert page.evaluate('window.IPTVState.getStore().snapshotConcurrency')==2
+    assert page.evaluate('window.IPTVState.getStore().snapshotSkipExisting') is False
     page.evaluate('window.__shots={active:0,max:0,calls:0}')
     page.locator('#shotsAllBtn').click()
     expect(page.locator('#task-shots .task-count')).to_have_text('12/12 kênh',timeout=12000)

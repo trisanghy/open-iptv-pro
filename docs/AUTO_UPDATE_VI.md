@@ -1,18 +1,22 @@
-# Cập nhật phiên bản trong Open IPTV Pro v4.16
+# Sửa chức năng cập nhật – v4.20.0 (Windows/macOS)
 
-1. Vào **Cài đặt → Cập nhật phiên bản**. Mặc định bật **Tự kiểm tra khi mở ứng dụng** và **Tự tải khi có bản mới**; có thể tắt riêng từng tùy chọn.
-2. Khi GitHub Releases có phiên bản cao hơn và đúng bộ cài của hệ điều hành, chọn **Tải phiên bản mới**.
-3. Theo dõi tiến độ; app xác minh checksum/signature rồi mới hiện tùy chọn cài đặt.
-4. Với bản ký hợp lệ: chọn **Cài đặt và khởi động lại**. Chương trình thoát và cài phiên bản mới.
-5. Với bản portable hoặc chưa ký: chương trình tải vào **Downloads/Open-IPTV-Pro-Updates** và có nút **Mở bộ cài đã tải**; làm theo hướng dẫn của macOS/Windows.
+**Quan trọng:** Push mã nguồn lên nhánh `main` không tạo bản cập nhật. Cần phát hành GitHub Release **stable** có bộ cài chính thức.
 
-Không bao giờ cho phép cài phiên bản không có checksum hợp lệ. Nếu thiếu file `SHA256SUMS.txt`, tải thủ công từ GitHub Releases. Chức năng tải tự động không hoạt động với Release chỉ có source code; phải đính kèm DMG + ZIP + `latest-mac.yml` cho macOS hoặc NSIS Setup + `latest.yml` cho Windows.
+1. Build bản v4.20.0 bằng workflow `.github/workflows/release-desktop.yml` trên GitHub Actions sau khi tạo tag `v4.20.0`. Workflow tạo bộ cài Windows Setup `.exe`, Mac `.dmg` + `.zip` theo ARM/Intel, `latest.yml`, `latest-mac.yml` và `SHA256SUMS.txt`.
+2. Người dùng cài v4.20.0 lần đầu bằng DMG/EXE từ GitHub Releases. Sau đó mở **Cài đặt → Cập nhật phiên bản**; tự kiểm tra/tự tải có thể tắt riêng.
+3. Nếu có Release phiên bản cao hơn, ứng dụng tải với thanh tiến độ. Nếu máy có chữ ký phù hợp và metadata đầy đủ, sẽ có nút **Cài đặt và khởi động lại**.
+4. Với bản Mac chưa ký, Windows unsigned hoặc Portable, ứng dụng chỉ tải bộ cài DMG/EXE **sau khi xác minh SHA256**, rồi hiển thị **Mở bộ cài đã tải**. Không tự chạy file chưa ký.
+5. Nếu Release chưa có bộ cài hoặc checksum, ứng dụng báo thiếu thành phần; không báo nhầm là đã cập nhật.
 
-## Lưu ý cho người phát hành
+### Vì sao bản trước không cập nhật được?
 
-- Đẩy mã nguồn v4.16 lên `main`, tăng `package.json` thành `4.16.0`, sau đó tạo tag **v4.16.0**. Workflow `.github/workflows/release-desktop.yml` build các bộ cài và gắn vào GitHub Release.
-- Ký macOS với `MAC_CSC_LINK`, `MAC_CSC_KEY_PASSWORD` và thông tin notarize `APPLE_ID`, `APPLE_APP_SPECIFIC_PASSWORD`, `APPLE_TEAM_ID` trong Secrets. Không đăng các khóa này lên repo.
-- Ký Windows với `WIN_CSC_LINK` / `WIN_CSC_KEY_PASSWORD`. Không có chứng chỉ vẫn build được để thử, nhưng người dùng được hướng dẫn nâng cấp thủ công.
-- GitHub Release cần có `SHA256SUMS.txt`, `latest.yml`, `latest-mac.yml`, `.exe`, `.dmg` và `.zip`.
-- Người đang dùng **v4.15** phải cài **v4.16 lần đầu** theo cách thủ công vì bản cũ chưa có mã tự tải/cài. Từ các bản ký tiếp theo mới có thể nâng cấp ngay trong ứng dụng.
-- Ứng dụng không dùng tính năng ghi/push mã nguồn lên GitHub.
+- `/releases/latest` chỉ liệt kê **Release stable**. Commit mới ở `main` hoặc tag chưa có Release không được coi là bản phát hành.
+- Để tự cập nhật macOS phải có ứng dụng đã ký Apple Developer ID; DMG chưa ký chỉ cài thủ công. Windows dùng Setup NSIS và chữ ký thích hợp; Portable mở bộ cài thủ công.
+- `latest-mac.yml` phải chứa link ZIP cho **cả arm64 và x64**; nếu build riêng mà ghi đè metadata, một kiến trúc sẽ không cập nhật được.
+- Release phải có `SHA256SUMS.txt` để bản chưa ký tải xuống an toàn.
+
+### Chủ repository – phát hành v4.20
+
+Sau khi push mã nguồn (có workflow mới) lên `main`, tạo tag `v4.20.0` và push tag lên GitHub. Theo dõi tab **Actions** đến khi job `release` thành công rồi kiểm tra tab **Releases**. Workflow sẽ bổ sung các bộ cài vào Release. Trường hợp workflow lỗi, không nên tạo một Release chỉ chứa source code và coi là cập nhật xong.
+
+**Không đưa token, private key, playlist cá nhân lên GitHub.** Android/iOS không thay đổi. Giữ FFmpeg nhúng và Timeshift đầy đủ.

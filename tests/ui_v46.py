@@ -34,7 +34,7 @@ with sync_playwright() as p:
       HTMLMediaElement.prototype.pause=function(){};
       window.Hls=class {static isSupported(){return true}static Events={ERROR:'error',LEVEL_SWITCHED:'level'};loadSource(){}attachMedia(){}on(){}destroy(){}};
     }''')
-    for s in ['core-browser.js','collector-core.js','advanced-core.js','epg.js','favorites-core.js','app.js','features.js','advanced.js','collector.js']:
+    for s in ['core-browser.js','collector-core.js','advanced-core.js','epg.js','favorites-core.js','source-edit.js','app.js','features.js','advanced.js','collector.js']:
         page.add_script_tag(content=(root/'renderer'/s).read_text())
     # M3U import
     for name,txt in [('demo1.m3u',m3u1),('demo2.m3u',m3u2)]:

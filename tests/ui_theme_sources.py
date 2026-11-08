@@ -28,7 +28,7 @@ with sync_playwright() as p:
       // Avoid actual DNS/network for example.invalid; this regression tests the UI, not remote IPTV.
       window.fetch=async()=>({ok:false,status:403});
     }''')
-    for name in ['theme-boot.js','core-browser.js','epg.js','advanced-core.js','collector-core.js','favorites-core.js','app.js','features.js','advanced.js','collector.js']:
+    for name in ['theme-boot.js','core-browser.js','epg.js','advanced-core.js','collector-core.js','favorites-core.js','source-edit.js','app.js','features.js','advanced.js','collector.js']:
         page.add_script_tag(content=(root/'renderer'/name).read_text())
     assert page.locator('#checkNav').count()==0,'Standalone check menu should be removed'
     page.locator('.brand-icon img').evaluate('(el,v)=>el.src=v','data:image/png;base64,'+base64.b64encode((root/'assets/icon.png').read_bytes()).decode())
@@ -60,7 +60,7 @@ with sync_playwright() as p:
     assert page.locator('.channel-health').count()>=0
     page.locator('#taskDockMinimize').click()
     page.locator('.nav[data-page="tv"]').click()
-    page.locator('#quickChecks').click()
+    page.locator('.nav[data-page="sources"]').click()
     expect(page.locator('#page-sources')).to_have_class(re.compile('active-page'))
     page.locator('.nav[data-page="settings"]').click()
     # No fake broadcast data needed for screenshot

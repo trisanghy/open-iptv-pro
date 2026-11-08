@@ -10,7 +10,7 @@ const {UpdateManager,identifyInstaller,hasUpdateMetadata,isOfficialAsset,extract
 const base='https://github.com/trisanghy/open-iptv-pro/releases/download/v4.16.1/';
 const mac='Open-IPTV-Pro-4.16.1-mac-universal.dmg';
 const win='Open-IPTV-Pro-Setup-4.16.1-x64.exe';
-const assets=[{name:mac,url:base+mac},{name:win,url:base+win},{name:'latest-mac.yml',url:base+'latest-mac.yml'},{name:'latest.yml',url:base+'latest.yml'}];
+const assets=[{name:mac,url:base+mac},{name:win,url:base+win},{name:'latest-mac.yml',url:base+'latest-mac.yml'},{name:'latest.yml',url:base+'latest.yml'},{name:'SHA256SUMS.txt',url:base+'SHA256SUMS.txt'}];
 const app={isPackaged:true,getVersion:()=> '4.16.0',getPath:()=>tmpdir()};
 const result=(extras={})=>({newer:true,latest:'v4.16.1',assets,...extras});
 const make=(options={})=>new UpdateManager({app,platform:'darwin',arch:'arm64',check:async()=>result(),signatureCheck:()=>false,downloadsDir:path.join(tmpdir(),'open-iptv-auto-updater-test'),...options});

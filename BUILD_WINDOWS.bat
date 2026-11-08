@@ -2,7 +2,7 @@
 setlocal
 cd /d "%~dp0"
 echo ==================================
-echo OPEN IPTV PRO 4.16 - BUILD WINDOWS
+echo OPEN IPTV PRO 4.21.1 FULL - BUILD WINDOWS
 echo ==================================
 echo Downloads build dependencies into a LOCAL folder only.
 echo.

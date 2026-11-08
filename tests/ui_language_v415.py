@@ -13,7 +13,7 @@ with sync_playwright() as p:
  page.set_content(html)
  page.add_style_tag(content=(root/'renderer/styles.css').read_text())
  page.evaluate('''() => {let data={};window.__fakeStorage=data;Object.defineProperty(window,'localStorage',{configurable:true,value:{getItem:k=>data[k]||null,setItem:(k,v)=>data[k]=String(v),removeItem:k=>delete data[k]}})}''')
- for file in ['languages.bundle.js','i18n.js','core-browser.js','collector-core.js','advanced-core.js','epg.js','favorites-core.js','app.js','features.js','advanced.js','collector.js']:
+ for file in ['languages.bundle.js','i18n.js','core-browser.js','collector-core.js','advanced-core.js','epg.js','favorites-core.js','source-edit.js','app.js','features.js','advanced.js','collector.js']:
   page.add_script_tag(content=(root/'renderer'/file).read_text())
  page.locator('.brand-icon img').evaluate('(el,v)=>el.src=v','data:image/png;base64,'+base64.b64encode((root/'assets/icon.png').read_bytes()).decode())
  page.locator('.nav[data-page="settings"]').click()

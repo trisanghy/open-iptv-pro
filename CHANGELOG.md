@@ -1,4 +1,48 @@
+## 4.21.0 – M3U URL Editor + Cast/AirPlay (Desktop Full)
+
+- Sửa URL nguồn M3U đã lưu, giữ danh tính nguồn, kênh khớp, thư mục và Yêu thích; thay thế chỉ sau tải và kiểm tra thành công.
+- Tìm Google Cast qua mDNS, gửi kênh lên Chromecast/Google TV bằng Default Media Receiver.
+- Máy chủ relay LAN tạm thời kèm liên kết ký HMAC cho manifest HLS và segment, không dùng proxy 127.0.0.1 trên TV.
+- AirPlay dùng trình phát Safari trên macOS; hỗ trợ link LAN cho trình duyệt TV.
+- FFmpeg nhúng, Timeshift, Snapshot, MultiView, Doctor và 8 ngôn ngữ được giữ nguyên.
+- Source code tests + simulated UI tests; chưa thử trên thiết bị TV thật.
+
+---
+
+## v4.20.0 — Fix GitHub updater, keep full FFmpeg and Timeshift (2026-11-08)
+- Báo rõ khi GitHub chỉ có commit mã nguồn, chưa có Release hoặc chưa có bộ cài đúng kiến trúc.
+- Thiếu SHA256SUMS.txt/digest thì không tự tải bộ cài chưa được xác minh.
+- Electron autoUpdater thất bại sẽ chuyển sang tải bộ cài đã kiểm tra SHA256 nếu Release có checksum.
+- GitHub Actions tạo Mac Intel + Apple Silicon trên máy build riêng, gộp manifest latest-mac.yml cho cả hai.
+- Không bỏ chức năng, vẫn tích hợp FFmpeg, Timeshift, Snapshot 32 luồng, MultiView và 8 ngôn ngữ.
+
+## v4.19.0 — Full UI (2026-11-08)
+
+- Khôi phục FFmpeg nhúng trong bộ cài Mac/Windows (không yêu cầu cài riêng).
+- Timeshift 5 phút, tự bật Timeshift, Snapshot hàng loạt tối đa 32 tác vụ, MultiView, EPG, Doctor 2.0, kiểm tra 32 luồng, Failover, PiP, Auto Update: giữ nguyên.
+- Cải thiện giao diện: nhóm công cụ nhanh có thể mở rộng, đưa liên kết tới các mục kiểm tra/ảnh chụp/Timeshift vào Cài đặt, gộp báo cáo Doctor thành một hành động.
+- Giữ sửa lỗi luồng video dài hơn 25 giây trong proxy từ v4.18.
+- Khôi phục Windows Setup và Portable; macOS DMG/ZIP, Intel/Apple Silicon.
+
+**English:** Bundled FFmpeg restored. No desktop feature removed; only UI organization is simplified.
+
 # Changelog
+
+## v4.18.0 — Lite builds, stable long-running streams, compact UI
+- Removes bundled FFmpeg; FFmpeg-dependent timeshift/bulk captures remain available when installed externally.
+- Targets architecture-specific macOS builds (ARM64 or Intel) and one Windows NSIS installer, retaining 8 Electron locales.
+- Fixes upstream proxy aborting healthy long-running video streams after a 25-second handshake timeout. Bounds HLS manifests while reading.
+- Caps HLS memory/buffers, video quality to player dimensions, and MultiView tile buffers. Caches short media-type probes; retries recoverable decoding faults once.
+- Unifies Doctor reporting/actions, removes duplicate worker settings and the redundant player quick-action strip. No changes to Android/iOS.
+
+
+## v4.17.0 — Smart IPTV Doctor 2.0, Freeze Monitor, Visual Snapshot Review
+- On-device frozen-frame/black-screen warning for the playing channel.
+- Snapshot perceptual hash comparisons with conservative, review-only duplicate suggestions.
+- Evidence-based diagnostic recommendations with explicit confirmation and undo.
+- Offline JSON reporting; 8-language support for newly added primary controls.
+- Windows/macOS only; no Android/iOS changes.
+
 
 ## v4.16.0 — Thông báo, tải và cài bản cập nhật
 - Kiểm tra GitHub Releases theo repository chính thức, tự thông báo khi mở ứng dụng nếu được bật.

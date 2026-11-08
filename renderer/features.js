@@ -30,7 +30,7 @@
    if(persist)saveConfig();
  }
 
- let guide={names:{},programmes:[],aliasesById:{},manualMappings:config.manualMappings,offsetMinutes:config.offsetMinutes},updatedAt='',loading=false,currentVersion='4.16.0';
+ let guide={names:{},programmes:[],aliasesById:{},manualMappings:config.manualMappings,offsetMinutes:config.offsetMinutes},updatedAt='',loading=false,currentVersion='4.18.0';
  try{const cached=JSON.parse(localStorage.getItem('open-iptv-pro-epg-v1')||'null');if(cached&&cached.guide&&Array.isArray(cached.guide.programmes)){guide=cached.guide;guide.manualMappings=config.manualMappings;guide.offsetMinutes=config.offsetMinutes;updatedAt=cached.updatedAt||'';}}catch{}
  const cacheGuide=()=>{try{localStorage.setItem('open-iptv-pro-epg-v1',JSON.stringify({guide,updatedAt}));}catch{ctx.toast('Bộ nhớ lịch EPG đã đầy; vẫn có thể xem lịch trong phiên hiện tại','warn');}};
  function applyColor(color){if(!/^#[0-9a-fA-F]{6}$/.test(color))return;config.accent=color;
@@ -99,6 +99,7 @@
   if(!state)return;
   const phase=state.phase||'idle';
   $('#updateResult').textContent=state.message||'Chưa có thông tin cập nhật';
+  $('#updateResult').dataset.phase=phase;
   $('#updateDownloadBtn').hidden=phase!=='available';
   $('#updateDownloadBtn').textContent=state.mode==='automatic'?'Tải và chuẩn bị cài đặt':'Tải bản cài đã xác minh';
   $('#updateInstallBtn').hidden=phase!=='downloaded';
@@ -118,9 +119,10 @@
   try{
    const result=await window.streamleaf.checkUpdate();drawUpdateState(result);
    if(result.phase==='available'){
-    if(silent)ctx.toast(`Có bản cập nhật Open IPTV Pro ${result.latest}.`, 'success');
+    if(silent)ctx.toast(`Có bản cập nhật Open IPTV Pro ${result.latest}. Mở Cài đặt → Cập nhật phiên bản.`, 'success');
     if(config.autoDownloadUpdates)await downloadNewVersion();
    }
+   if(result.phase==='source-only'&&silent)ctx.toast('GitHub có mã nguồn mới nhưng chưa có bộ cài để cập nhật.', 'warn');
   }catch(e){drawUpdateState({phase:'error',message:'Không kiểm tra được: '+e.message});}
  }
  async function downloadNewVersion(){

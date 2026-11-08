@@ -20,7 +20,7 @@ with sync_playwright() as p:
  html=re.sub(r'<meta http-equiv="Content-Security-Policy"[^>]*>','',html)
  page.set_content(html);page.add_style_tag(content=(root/'renderer/styles.css').read_text())
  page.evaluate('''() => {let data={};Object.defineProperty(window,'localStorage',{configurable:true,value:{getItem:k=>data[k]||null,setItem:(k,v)=>data[k]=String(v),removeItem:k=>delete data[k]}});window.HTMLMediaElement.prototype.play=function(){return Promise.resolve()};window.HTMLMediaElement.prototype.pause=function(){}; }''')
- for name in ['core-browser.js','advanced-core.js','epg.js','favorites-core.js','app.js','features.js','advanced.js']:
+ for name in ['core-browser.js','advanced-core.js','epg.js','favorites-core.js','source-edit.js','app.js','features.js','advanced.js']:
   page.add_script_tag(content=(root/'renderer'/name).read_text())
  page.locator('.brand-icon img').evaluate('(el,v)=>{el.src=v}', 'data:image/png;base64,'+base64.b64encode((root/'assets/icon.png').read_bytes()).decode())
  page.locator('#fileInput').set_input_files({'name':'demo.m3u','mimeType':'audio/x-mpegurl','buffer':playlist.encode()})

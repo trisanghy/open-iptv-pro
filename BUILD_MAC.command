@@ -1,5 +1,5 @@
 #!/bin/bash
-# Open IPTV Pro 4.16: Tu tai Node.js vao thu muc rieng, KHONG cai vao macOS.
+# Open IPTV Pro 4.21.1 FULL: Tu tai Node.js vao thu muc rieng, KHONG cai vao macOS.
 set -Eeuo pipefail
 cd "$(dirname "$0")"
 PROJECT="$PWD"
@@ -36,7 +36,7 @@ pause_at_end() {
 trap pause_at_end EXIT
 
 printf '\n============================================\n'
-printf ' OPEN IPTV PRO 4.16 - TAO DMG TU DONG\n'
+printf ' OPEN IPTV PRO 4.21.1 FULL - TAO DMG TU DONG\n'
 printf '============================================\n'
 printf 'Mac: %s | Node.js duoc luu rieng trong thu muc ung dung.\n' "$ARCH"
 printf 'Khong yeu cau cai Node/Python/Qt/VLC thu cong.\n'
@@ -68,7 +68,7 @@ fi
 export PATH="$LOCAL_NODE:$PATH"
 printf 'Node: %s | npm: %s\n' "$(node -v)" "$(npm -v)"
 
-printf '\n[2/4] Tu tai Electron + bo phat HLS + FFmpeg + cong cu dong goi...\n'
+printf '\n[2/4] Tu tai Electron + bo phat HLS + FFmpeg tích hợp + cong cu dong goi...\n'
 if [ -f package-lock.json ]; then
   npm ci --no-audit --no-fund
 else

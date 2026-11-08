@@ -32,7 +32,7 @@ with sync_playwright() as p:
    HTMLMediaElement.prototype.pause=function(){};
    window.Hls=class {static isSupported(){return true}static Events={ERROR:'error'};on(){}loadSource(){}attachMedia(){}destroy(){}};
  }''')
- for name in ['core-browser.js','advanced-core.js','epg.js','favorites-core.js','app.js','features.js','advanced.js']:
+ for name in ['core-browser.js','advanced-core.js','epg.js','favorites-core.js','source-edit.js','app.js','features.js','advanced.js']:
   page.add_script_tag(content=(ROOT/'renderer'/name).read_text())
  page.route('https://demo.invalid/**',lambda route:route.abort())
  page.locator('.brand-icon img').evaluate('(el,v)=>el.src=v','data:image/png;base64,'+base64.b64encode((ROOT/'assets/icon.png').read_bytes()).decode())

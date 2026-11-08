@@ -28,7 +28,7 @@
   multi[i]={root:card,video,hls:null,channel:ch};video.muted=true;video.playsInline=true;video.preload='auto';status.textContent='Đang kết nối…';
   const original=ch.url;try{const url=window.streamleaf?.proxy?await window.streamleaf.proxy(original):original;if(multi[i]?.channel!==ch)return;
    const hls=/\.m3u8?(?:$|\?)/i.test(original);
-   if(hls&&!video.canPlayType('application/vnd.apple.mpegurl')){const H=await ctx.loadHlsLib();if(!H.isSupported())throw Error('Không hỗ trợ HLS');const instance=new H({enableWorker:true,maxBufferLength:8,backBufferLength:4});multi[i].hls=instance;instance.loadSource(url);instance.attachMedia(video);instance.on(H.Events.ERROR,(_,e)=>{if(e.fatal)status.textContent='Luồng lỗi: '+e.details;});}
+   if(hls&&!video.canPlayType('application/vnd.apple.mpegurl')){const H=await ctx.loadHlsLib();if(!H.isSupported())throw Error('Không hỗ trợ HLS');const instance=new H({enableWorker:true,lowLatencyMode:false,capLevelToPlayerSize:true,maxBufferLength:5,maxMaxBufferLength:12,backBufferLength:3,maxBufferSize:10*1000*1000});multi[i].hls=instance;instance.loadSource(url);instance.attachMedia(video);instance.on(H.Events.ERROR,(_,e)=>{if(e.fatal)status.textContent='Luồng lỗi: '+e.details;});}
    else video.src=url;
    video.addEventListener('playing',()=>status.textContent=ch.name+' · Đang phát',{once:true});video.addEventListener('error',()=>status.textContent='Không phát được');
    await video.play().catch(()=>{status.textContent='Nhấn ▶ để phát';});
@@ -49,6 +49,7 @@
   if(!all.length)$('#multiGrid').insertAdjacentHTML('beforeend','<p class="hint">Nhập playlist trước rồi chọn kênh cho từng ô.</p>');
  }
  $('#multiStop').onclick=()=>{stopMulti();renderMulti();};
+ document.addEventListener('visibilitychange',()=>{if(document.hidden){hidePreview();if($('#page-multiview').classList.contains('active-page')){stopMulti();}}});
  // ====== Hover preview: snapshot first, otherwise one muted video. ======
  let previewTimer=null,previewHls=null,previewVideo=null,previewId='',previousMainMuted=false;const preview=$('#channelPreview');
  function hidePreview(){clearTimeout(previewTimer);previewTimer=null;previewId='';if(previewVideo){previewVideo.pause();previewVideo.removeAttribute('src');previewVideo.load();}previewHls?.destroy();previewVideo=null;previewHls=null;preview.classList.add('hidden');preview.replaceChildren();}
@@ -57,13 +58,13 @@
   preview.replaceChildren();const picture=snapshot(ch),title=document.createElement('b');title.textContent='Xem trước (không tiếng) · '+ch.name;preview.append(title);
   const video=document.createElement('video');if(picture)video.poster=picture;video.muted=true;video.defaultMuted=true;video.volume=0;video.autoplay=true;video.playsInline=true;video.preload='metadata';preview.append(video);previewVideo=video;preview.classList.remove('hidden');
   try{const url=window.streamleaf?.proxy?await window.streamleaf.proxy(ch.url):ch.url;if(previewId!==ch.id)return;
-   if(/\.m3u8?(?:$|\?)/i.test(ch.url)&&!video.canPlayType('application/vnd.apple.mpegurl')){const H=await ctx.loadHlsLib();if(previewId!==ch.id)return;previewHls=new H({enableWorker:true,maxBufferLength:3,backBufferLength:0});previewHls.loadSource(url);previewHls.attachMedia(video);}else video.src=url;
+   if(/\.m3u8?(?:$|\?)/i.test(ch.url)&&!video.canPlayType('application/vnd.apple.mpegurl')){const H=await ctx.loadHlsLib();if(previewId!==ch.id)return;previewHls=new H({enableWorker:true,lowLatencyMode:false,capLevelToPlayerSize:true,maxBufferLength:2,maxMaxBufferLength:5,backBufferLength:0,maxBufferSize:4*1000*1000});previewHls.loadSource(url);previewHls.attachMedia(video);}else video.src=url;
    video.play().catch(()=>{});
   }catch{title.textContent='Không xem trước được: '+ch.name;}
  }
- function decorateRow(c,row){if(!c||!row||row.dataset.previewAttached==='1')return;row.dataset.previewAttached='1';row.addEventListener('mouseenter',()=>{clearTimeout(previewTimer);hidePreview();previewId=c.id;previewTimer=setTimeout(()=>openPreview(c,row),550);});row.addEventListener('mouseleave',hidePreview);}
+ function decorateRow(c,row){if(!c||!row||row.dataset.previewAttached==='1')return;row.dataset.previewAttached='1';row.addEventListener('mouseenter',()=>{clearTimeout(previewTimer);hidePreview();previewId=c.id;previewTimer=setTimeout(()=>{if(!document.hidden&&!$('#page-multiview').classList.contains('active-page'))openPreview(c,row);},1250);});row.addEventListener('mouseleave',hidePreview);}
  // ====== Auto Failover settings & Health ======
- function hlsOptions(){const len=({fast:8,balanced:20,stable:45})[state.optimizer]||20;return {maxBufferLength:len,maxMaxBufferLength:len*2,backBufferLength:8,manifestLoadingMaxRetry:2,levelLoadingMaxRetry:3,fragLoadingMaxRetry:3};}
+ function hlsOptions(){const len=({fast:7,balanced:12,stable:25})[state.optimizer]||12;return {maxBufferLength:len,maxMaxBufferLength:Math.max(len+8,Math.round(len*1.8)),backBufferLength:6,maxBufferSize:state.optimizer==='stable'?28*1000*1000:18*1000*1000,liveSyncDurationCount:3,manifestLoadingMaxRetry:2,levelLoadingMaxRetry:3,fragLoadingMaxRetry:3};}
  function record(ch,obj){if(!ch)return;const list=state.health[ch.url]||(state.health[ch.url]=[]);list.push({date:new Date().toISOString(),...obj});if(list.length>12)list.splice(0,list.length-12);scheduleHealthSave();}
  let loadStart=0,stallCount=0;
  function onLoadStart(ch,url,at){loadStart=at;stallCount=0;}
@@ -190,13 +191,12 @@
  function doctor(){const g=epg(),matches=channels().filter(c=>window.IPTVGuide.find(g,c).length).length;lastReport=lib.diagnostics(channels(),matches);
   const r=lastReport,root=$('#doctorReport');root.replaceChildren();const summary=document.createElement('div');summary.className='doctor-metrics';
   for(const [name,num] of [['Tổng kênh',r.total],['Sống',r.alive],['Die',r.dead],['URL trùng',r.duplicateUrls],['Thiếu tvg-id',r.missingEpgId],['Khớp EPG',matches]]){const div=document.createElement('article');div.innerHTML=`<b>${num}</b><span>${name}</span>`;summary.append(div);}root.append(summary);
-  const b=document.createElement('div');b.className='settings-card';b.innerHTML='<h2>Đề xuất sửa</h2><p>Không tự xóa hoặc thay link. Kiểm tra thủ công trước khi xuất danh sách.</p>';
-  const list=document.createElement('div');list.className='doctor-issues';for(const item of r.issues.slice(0,120)){const row=document.createElement('div');row.textContent=`${item.name} — ${item.type}: ${item.fix}`;list.append(row);}b.append(list);root.append(b);
+  // Doctor 2.0 owns actionable suggestions; keep this compact summary metrics-only.
   return r;
  }
  $('#doctorDeepCheck').onclick=()=>{ctx.setPage('sources');document.getElementById('sourceRepairSection')?.scrollIntoView({block:'start'});document.getElementById('sourceCheckAllBtn')?.click();};
  $('#doctorRun').onclick=()=>{doctor();ctx.toast('Đã chẩn đoán M3U; vào Quản lý nguồn → Kiểm tra & sửa để kiểm tra luồng thực');};
- $('#doctorExport').onclick=()=>{const report=lastReport||doctor();const payload=JSON.stringify({...report,generatedAt:new Date().toISOString()},null,2);const u=URL.createObjectURL(new Blob([payload],{type:'application/json'}));const a=document.createElement('a');a.href=u;a.download='open-iptv-doctor-report.json';a.click();setTimeout(()=>URL.revokeObjectURL(u),1000);};
+ $('#doctorExport').onclick=()=>{if(window.IPTVDoctor2?.exportReport){window.IPTVDoctor2.exportReport();return;}const report=lastReport||doctor();const payload=JSON.stringify({...report,generatedAt:new Date().toISOString()},null,2);const u=URL.createObjectURL(new Blob([payload],{type:'application/json'}));const a=document.createElement('a');a.href=u;a.download='open-iptv-doctor-report.json';a.click();setTimeout(()=>URL.revokeObjectURL(u),1000);};
  // Keep each profile in step with the one canonical Favorites store.
  function onFavoritesChanged(){
   const active=profile();
@@ -209,7 +209,7 @@
  function onPage(p,last){hidePreview();if(last==='multiview'&&p!=='multiview'){stopMulti();ctx.player.muted=previousMainMuted;}if(p==='multiview'){previousMainMuted=ctx.player.muted;ctx.player.muted=true;renderMulti();}if(p==='health')renderHealth();if(p==='doctor')doctor();if(p==='profiles')renderProfiles();if(p==='epg')renderEpgSearch();applyProfileUI();}
  $('#epgSearchResults').textContent='Nhập tên chương trình để tìm và đặt nhắc lịch.';
  $('#bufferPreset').value=state.optimizer;
- window.IPTVProAdvanced={decorateRow,allowChannel,onCheck,onPlaying,onLoadStart,onQuality,onStreamError,onChannel,onStop,onPage,onFavoritesChanged,hlsOptions,doctor,playCatchup,remind,setAlternates:(id,urls)=>{state.alternates[id]=[...new Set(urls)].slice(0,15);save();},canEdit:()=>!profile().child,canEnterPage:p=>!profile().child||!['sources','folders','settings','health','doctor'].includes(p)};
+ window.IPTVProAdvanced={decorateRow,allowChannel,onCheck,onPlaying,onLoadStart,onQuality,onStreamError,onChannel,onStop,onPage,onFavoritesChanged,hlsOptions,recordHealth:record,doctor,playCatchup,remind,setAlternates:(id,urls)=>{state.alternates[id]=[...new Set(urls)].slice(0,15);save();},canEdit:()=>!profile().child,canEnterPage:p=>!profile().child||!['sources','folders','settings','health','doctor'].includes(p)};
  onFavoritesChanged();
  applyProfileUI();
  setInterval(checkReminders,30000);checkReminders();

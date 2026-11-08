@@ -27,7 +27,7 @@ with sync_playwright() as p:
         capabilities:async()=>({snapshotBase:'',ffmpegExists:true})
       };
     }''')
-    for name in ['core-browser.js','epg.js','favorites-core.js','app.js','features.js']:
+    for name in ['core-browser.js','epg.js','favorites-core.js','source-edit.js','app.js','features.js']:
         page.add_script_tag(content=(root/'renderer'/name).read_text())
     icon=base64.b64encode((root/'assets/icon.png').read_bytes()).decode()
     page.locator('.brand-icon img').evaluate('(el,v)=>el.src=v','data:image/png;base64,'+icon)
@@ -50,7 +50,8 @@ with sync_playwright() as p:
     page.locator('.nav[data-page="sources"]').click()
     page.locator('#sourceCheckAllBtn').click()
     page.locator('.nav[data-page="tv"]').click()
-    page.locator('#quickShots').click()
+    page.locator('.nav[data-page="shots"]').click()
+    page.locator('#shotsAllBtn').click()
     expect(page.locator('#task-check')).to_be_visible()
     expect(page.locator('#task-shots')).to_be_visible()
     page.wait_for_timeout(240)
@@ -78,7 +79,8 @@ with sync_playwright() as p:
     page.locator('.nav[data-page="sources"]').click()
     page.locator('#sourceCheckAllBtn').click()
     page.locator('.nav[data-page="tv"]').click()
-    page.locator('#quickShots').click()
+    page.locator('.nav[data-page="shots"]').click()
+    page.locator('#shotsAllBtn').click()
     page.wait_for_timeout(30)
     page.locator('#cancelCheckBtn').click()
     expect(page.locator('#task-check .task-title')).to_contain_text('Đã dừng',timeout=5000)

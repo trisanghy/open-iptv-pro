@@ -364,3 +364,43 @@ html[data-theme="light"] .source-check-workers select{background:#fff;color:#223
 .update-progress{margin:12px 0;display:grid;gap:5px}
 .update-progress progress{width:100%;height:13px;accent-color:var(--accent)}
 .update-progress small{color:var(--muted, #8998a5)}
+
+/* Doctor 2.0: source comparisons remain reviewable, not auto-merged. */
+.doctor-v2-panel{margin-top:20px}.doctor-v2-actions{display:flex;gap:9px;align-items:center;flex-wrap:wrap;margin:15px 0}.doctor-v2-actions label{font-size:13px}.doctor-v2-actions select{width:auto;min-width:90px}.doctor-v2-results{display:grid;gap:9px}.doctor-v2-match,.doctor-v2-suggestion{display:flex;align-items:center;gap:12px;justify-content:space-between;padding:12px;border:1px solid var(--border,rgba(144,146,170,.2));border-radius:12px;background:var(--card-bg,rgba(155,155,180,.07));min-width:0}.doctor-v2-match>div,.doctor-v2-suggestion>div{min-width:0;flex:1;overflow-wrap:anywhere}.doctor-v2-match small,.doctor-v2-suggestion small{display:block;font-size:12px;opacity:.75;margin-top:5px}.doctor-v2-score{font-weight:700;white-space:nowrap;color:var(--accent,#9a83ee)}#freezeMonitorStatus{font-size:13px}
+
+/* v4.19 Full UI: advanced tools stay available without cluttering the player. */
+.compact-tools{margin:0;border:1px solid var(--edge);border-radius:13px;background:var(--surface);overflow:hidden;flex-shrink:0}
+.compact-tools>summary{display:flex;align-items:center;justify-content:space-between;cursor:pointer;list-style:none;gap:10px;padding:11px 15px;font-weight:700;font-size:12px;color:var(--text)}
+.compact-tools>summary::-webkit-details-marker{display:none}
+.compact-tools>summary::after{content:'⌄';color:var(--muted);margin-left:6px}
+.compact-tools[open]>summary::after{content:'⌃'}
+.compact-tools>summary:hover{background:var(--surface2)}
+.compact-tools>summary small{margin-left:auto;font-size:10px;color:var(--muted);font-weight:500}
+.compact-tools .quick-grid{padding:0 12px 12px;gap:9px}
+.compact-tools .quick-btn{padding:10px;min-height:58px}
+.full-tool-panel{grid-column:1/-1}
+.full-tools-links{display:flex;flex-wrap:wrap;gap:9px;margin-top:12px}
+.full-tools-links .btn{white-space:normal;text-align:left}
+@media(max-width:1120px){.compact-tools .quick-grid{grid-template-columns:1fr}.compact-tools>summary small{display:none}}
+
+/* v4.21 – Cast and source URL editing, while preserving the full player. */
+.cast-modal-box{width:min(630px,96vw);max-height:90vh;overflow:auto}
+.cast-channel{margin:0 0 14px;font-size:12px;color:var(--muted);overflow-wrap:anywhere}
+.cast-section{border-top:1px solid var(--edge);padding:15px 0 12px}
+.cast-section h3{font-size:14px;margin:0 0 8px;color:var(--text)}
+.cast-section .hint{margin:6px 0 12px}
+.cast-section .btn{margin-top:8px}
+.cast-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.cast-actions select{flex:1;min-width:185px;max-width:100%}
+.cast-section #castUrl{margin-top:9px;font-size:11px;width:100%;overflow:hidden;text-overflow:ellipsis}
+.cast-error{color:#f6a5ac!important}
+#castBtn{white-space:nowrap;font-size:11px}
+.source-actions{flex-wrap:wrap}
+.source-actions .src-edit{color:var(--accent);font-weight:600}
+@media(max-width:1190px){#castBtn{font-size:10px;padding:7px 8px}.controls{flex-wrap:wrap}}
+
+/* v4.21.1 – Display macOS AirPlay receivers separately from Google Cast. */
+.cast-airplay-scan{margin:10px 0}
+.airplay-devices{border:1px solid var(--edge);border-radius:10px;padding:8px 12px;margin-top:10px;min-height:36px;color:var(--muted);font-size:13px;overflow-wrap:anywhere}
+.airplay-device{padding:6px 0;color:var(--text)}
+.airplay-device+.airplay-device{border-top:1px solid var(--edge)}

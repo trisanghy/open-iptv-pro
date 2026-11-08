@@ -11,7 +11,7 @@ with sync_playwright() as p:
  html=re.sub(r'<meta http-equiv="Content-Security-Policy"[^>]*>','',html)
  page.set_content(html);page.add_style_tag(content=(root/'renderer/styles.css').read_text())
  page.evaluate('''() => {let data={};Object.defineProperty(window,'localStorage',{configurable:true,value:{getItem:k=>data[k]||null,setItem:(k,v)=>data[k]=String(v),removeItem:k=>delete data[k]}});window.confirm=()=>true;}''')
- for name in ['core-browser.js','favorites-core.js','app.js']:
+ for name in ['core-browser.js','favorites-core.js','source-edit.js','app.js']:
   page.add_script_tag(content=(root/'renderer'/name).read_text())
  playlist_a='#EXTM3U\n#EXTINF:-1 group-title="01 - VTV",VTV1 HD\nhttps://a.example/1.m3u8\n#EXTINF:-1 group-title="01 - VTV",VTV2\nhttps://a.example/2.m3u8\n'
  playlist_b='#EXTM3U\n#EXTINF:-1 group-title="02 - VTV",VTV1\nhttps://b.example/1.m3u8\n#EXTINF:-1 group-title="02 - VTV",VTV3\nhttps://b.example/3.m3u8\n'

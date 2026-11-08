@@ -36,17 +36,19 @@ with sync_playwright() as pw:
        capabilities:async()=>({snapshotBase:'',ffmpegExists:true})
       };
     }''')
-    for name in ['core-browser.js','epg.js','favorites-core.js','collector-core.js','app.js','features.js','collector.js']:
+    for name in ['core-browser.js','epg.js','favorites-core.js','collector-core.js','source-edit.js','app.js','features.js','collector.js']:
         page.add_script_tag(content=(root/'renderer'/name).read_text())
     page.evaluate('(s)=>window.IPTVState.importSource("Synthetic tests","synthetic.m3u",s,"file")',playlist)
     expect(page.locator('.channel-item')).to_have_count(40)
-    page.locator('.nav[data-page="settings"]').click()
-    assert page.locator('#checkWorkersSetting option').count()==32
-    assert page.locator('#snapshotWorkersSetting option').count()==32
-    assert page.locator('#checkWorkersSetting').input_value()=='4'
-    assert page.locator('#snapshotWorkersSetting').input_value()=='4'
-    page.locator('#checkWorkersSetting').select_option('32')
-    page.locator('#snapshotWorkersSetting').select_option('32')
+    # v4.18 consolidates concurrency options into the pages that use them.
+    page.locator('.nav[data-page="sources"]').click()
+    assert page.locator('#checkWorkersQuick option').count()==32
+    assert page.locator('#checkWorkersQuick').input_value()=='4'
+    page.locator('#checkWorkersQuick').select_option('32')
+    page.locator('.nav[data-page="shots"]').click()
+    assert page.locator('#snapshotWorkersQuick option').count()==32
+    assert page.locator('#snapshotWorkersQuick').input_value()=='4'
+    page.locator('#snapshotWorkersQuick').select_option('32')
     state=page.evaluate('''() => {const s=window.IPTVState.getStore();const p=JSON.parse(localStorage.getItem('open-iptv-pro-4'));return [s.checkConcurrency,s.snapshotConcurrency,p.checkConcurrency,p.snapshotConcurrency]}''')
     assert state==[32,32,32,32],state
     page.locator('.nav[data-page="sources"]').click()
@@ -83,18 +85,16 @@ with sync_playwright() as pw:
     observed=page.evaluate('window.__jobs')
     assert observed['check']['max']==2,observed
     assert observed['shot']['max']==32,observed
-    page.locator('.nav[data-page="settings"]').click()
-    assert page.locator('#checkWorkersSetting').input_value()=='2'
-    assert page.locator('#snapshotWorkersSetting').input_value()=='32'
-    # Display controls at their new maximum for the documentation screenshot.
-    page.locator('#checkWorkersSetting').select_option('32')
-    # Display un-obscured settings screenshot with real UI controls and demo data.
+    page.locator('.nav[data-page="sources"]').click()
+    assert page.locator('#checkWorkersQuick').input_value()=='2'
+    page.locator('.nav[data-page="shots"]').click()
+    assert page.locator('#snapshotWorkersQuick').input_value()=='32'
     page.evaluate("""() => {document.querySelector('#taskDock').classList.add('hidden');document.querySelector('#toastArea').replaceChildren();}""")
-    page.locator('#checkPerformanceSettings').scroll_into_view_if_needed()
-    page.locator('#checkPerformanceSettings').screenshot(path=str(root/'docs/images/check-concurrency-v4-12.png'))
-    page.locator('#snapshotPerformanceSettings').screenshot(path=str(root/'docs/images/snapshot-concurrency-v4-12.png'))
+    page.locator('#snapshotWorkersQuick').screenshot(path=str(root/'docs/images/snapshot-concurrency-v4-12.png'))
+    page.locator('.nav[data-page="sources"]').click()
+    page.locator('#checkWorkersQuick').select_option('32')
+    page.locator('#checkWorkersQuick').screenshot(path=str(root/'docs/images/check-concurrency-v4-12.png'))
     # The same check setting also controls the merged-playlist repair job.
-    page.locator('#checkWorkersSetting').select_option('32')
     page.evaluate('''() => {const s=window.IPTVState.getStore();
       s.sources.push({id:'collector_merged',name:'Gộp kiểm thử',enabled:true,type:'file'});
       for(const ch of s.channels)ch.sourceId='collector_merged';

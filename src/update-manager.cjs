@@ -72,7 +72,7 @@ class UpdateManager extends EventEmitter{
   super();this.app=app;this.platform=platform;this.arch=arch;this.resourcesPath=resourcesPath;this.execPath=execPath;
   this.updater=updater;this.check=check;this.fetcher=fetcher;this.now=now;this.signatureCheck=signatureCheck;
   this.downloadsDir=downloadsDir||path.join(app.getPath('downloads'),'Open-IPTV-Pro-Updates');
-  this.latestInfo=null;this.asset=null;this.downloadedPath=null;this.busy=false;this.lastProgress=0;
+  this.latestInfo=null;this.asset=null;this.downloadedPath=null;this.busy=false;this.lastProgress=0;this.activeAbort=null;this.nativeError=null;
   this.state={phase:'idle',version:app.getVersion(),latest:null,message:'Chưa kiểm tra cập nhật',mode:null,progress:0,downloaded:false};
   if(updater){
    updater.autoDownload=false;updater.autoInstallOnAppQuit=false;
@@ -82,24 +82,26 @@ class UpdateManager extends EventEmitter{
     this.lastProgress=this.now();this.setState({phase:'downloading',progress:Math.round(percent),transferred:p.transferred||0,total:p.total||0,message:`Đang tải bản cập nhật: ${Math.round(percent)}%`});
    });
    updater.on('update-downloaded',()=>{this.setState({phase:'downloaded',downloaded:true,progress:100,message:'Đã tải xong. Chọn Cài đặt & khởi động lại.'});});
-   updater.on('error',e=>{this.setState({phase:'error',message:'Không thể cập nhật tự động: '+String(e.message||e).slice(0,240),mode:'manual'});});
+   updater.on('error',e=>{this.nativeError=String(e.message||e).slice(0,240);if(!this.busy)this.setState({phase:'error',message:'Bộ cập nhật hệ thống gặp lỗi: '+this.nativeError,mode:'manual'});});
   }
  }
  setState(delta){this.state={...this.state,...delta};this.emit('status',{...this.state});return {...this.state};}
  snapshot(){return {...this.state};}
  async checkForUpdates(){
   if(this.busy)throw Error('Một thao tác cập nhật khác đang chạy');
-  this.busy=true;this.setState({phase:'checking',progress:0,message:'Đang kiểm tra GitHub Releases…'});
+  this.busy=true;this.setState({phase:'checking',progress:0,downloaded:false,assetName:null,downloadedFile:null,message:'Đang kiểm tra GitHub Releases (không phải các commit mã nguồn)…'});
   try{
    const result=await this.check(OFFICIAL_REPO,this.app.getVersion(),this.fetcher);
    this.latestInfo=result;this.downloadedPath=null;this.asset=null;
    if(result.noRelease)return this.setState({phase:'no-release',latest:null,mode:null,downloaded:false,message:'Repository đã có mã nguồn nhưng chưa có GitHub Release. Không có bản cài đặt để cập nhật.'});
-   if(!result.newer)return this.setState({phase:'up-to-date',latest:result.latest,mode:null,downloaded:false,message:`Đang dùng phiên bản mới nhất (${this.app.getVersion()}).`});
+   if(!result.newer)return this.setState({phase:'up-to-date',latest:result.latest,mode:null,downloaded:false,message:`Bản đã cài v${this.app.getVersion()} đã bằng hoặc mới hơn GitHub Release ${result.latest}. Commit mới trên main chưa phải là bản cập nhật; cần phát hành Release có DMG/EXE.`});
    const asset=identifyInstaller(result.assets,this.platform,this.arch);
    this.asset=asset;
-   if(!asset)return this.setState({phase:'source-only',latest:result.latest,mode:null,downloaded:false,message:`Đã có ${result.latest}, nhưng Release chưa có bộ cài tương thích với ${this.platform}/${this.arch}.`});
+   if(!asset)return this.setState({phase:'source-only',latest:result.latest,mode:null,downloaded:false,message:`Đã có ${result.latest}, nhưng Release chưa có bộ cài cho ${this.platform}/${this.arch}. Người phát hành cần chạy workflow 'Release full desktop installers' và tải lên DMG/EXE, SHA256SUMS.txt, latest.yml/latest-mac.yml.`});
    const signed=this.signatureCheck({app:this.app,platform:this.platform,resourcesPath:this.resourcesPath,execPath:this.execPath});
    const native=!!this.updater&&signed&&hasUpdateMetadata(result.assets,this.platform);
+   const checksum=!!(asset.digest&&/^sha256:[a-f0-9]{64}$/i.test(asset.digest))||(result.assets||[]).some(a=>a.name==='SHA256SUMS.txt'&&isOfficialAsset(a.url));
+   if(!native&&!checksum)return this.setState({phase:'unverified-release',latest:result.latest,mode:null,downloaded:false,assetName:asset.name,message:`Bản ${result.latest} có bộ cài ${asset.name} nhưng thiếu SHA256SUMS.txt hoặc checksum được GitHub cung cấp. Không tải tự động vì chưa thể xác minh an toàn. Vào Releases để tải/cập nhật thủ công.`});
    return this.setState({phase:'available',latest:result.latest,mode:native?'automatic':'manual',assetName:asset.name,downloaded:false,
       message:native?`Có bản mới ${result.latest}. Có thể tải và cài tự động.`:`Có bản mới ${result.latest}. Bản đang dùng chưa đủ điều kiện cập nhật tự cài; có thể tải bộ cài đã xác minh rồi cài thủ công.`});
   }catch(e){return this.setState({phase:'error',message:'Không kiểm tra được bản cập nhật: '+String(e.message||e).slice(0,240),mode:null});}
@@ -111,12 +113,23 @@ class UpdateManager extends EventEmitter{
   this.busy=true;this.setState({phase:'downloading',progress:0,message:'Đang chuẩn bị tải bản cập nhật…'});
   try{
    if(this.state.mode==='automatic'){
-    this.updater.setFeedURL({provider:'github',owner:'trisanghy',repo:'open-iptv-pro'});
-    // Auto-updater validates sha512, signatures and update metadata before installation.
-    const r=await this.updater.checkForUpdates();
-    if(!r?.updateInfo)throw Error('Thiếu metadata cập nhật tự động');
-    await this.updater.downloadUpdate();
-    return this.snapshot();
+    try{
+     this.nativeError=null;
+     this.updater.setFeedURL({provider:'github',owner:'trisanghy',repo:'open-iptv-pro'});
+     // electron-updater validates release metadata, SHA512 and platform signatures.
+     const r=await this.updater.checkForUpdates();
+     if(!r?.updateInfo)throw Error('Không đọc được metadata cập nhật tự động');
+     if(String(r.updateInfo.version||'').replace(/^v/,'')!==String(this.latestInfo.latest||'').replace(/^v/,''))throw Error('Phiên bản từ trình cập nhật không trùng GitHub Release vừa kiểm tra');
+     await this.updater.downloadUpdate();
+     if(this.state.phase!=='downloaded')throw Error(this.nativeError||'Chưa nhận được tín hiệu đã tải xong từ trình cập nhật');
+     return this.snapshot();
+    }catch(err){
+     // A signed installation may nevertheless have mismatched manifests, wrong arch or a
+     // rejected differential update. Fall back to the verified standalone installer.
+     const canFallback=!!(this.asset.digest&&/^sha256:[a-f0-9]{64}$/i.test(this.asset.digest))||(this.latestInfo.assets||[]).some(a=>a.name==='SHA256SUMS.txt'&&isOfficialAsset(a.url));
+     if(!canFallback)throw Error('Cập nhật tự động gặp lỗi ('+String(err.message||err).slice(0,100)+') và Release không có SHA256SUMS.txt để tải bộ cài an toàn.');
+     this.setState({mode:'manual',phase:'downloading',progress:0,message:'Không cài trực tiếp được; đang chuyển sang tải bộ cài đã xác minh. Lý do: '+String(err.message||err).slice(0,130)});
+    }
    }
    // Unsigned and portable builds never auto-execute an installer.
    if(!isOfficialAsset(this.asset.url))throw Error('URL bộ cài không thuộc repository GitHub chính thức');
@@ -124,7 +137,7 @@ class UpdateManager extends EventEmitter{
    let expected=null;
    if(this.asset.digest?.startsWith('sha256:'))expected=this.asset.digest.slice(7).toLowerCase();
    if(!expected && checksumAsset){
-    const response=await this.fetcher(checksumAsset.url,{headers:{'User-Agent':'Open-IPTV-Pro/4.16'}});
+    const response=await this.fetcher(checksumAsset.url,{headers:{'User-Agent':'Open-IPTV-Pro/4.21'},signal:AbortSignal.timeout(15000)});
     if(!response.ok||!isTrustedRedirect(response.url||checksumAsset.url))throw Error('Không đọc được bảng SHA256 từ GitHub');
     const sums=await response.text();if(sums.length>500_000)throw Error('Bảng SHA256 không hợp lệ');
     expected=extractSha256(sums,this.asset.name);
@@ -134,7 +147,8 @@ class UpdateManager extends EventEmitter{
    await fs.mkdir(this.downloadsDir,{recursive:true});
    const finalPath=path.join(this.downloadsDir,filename),tmp=finalPath+'.part';
    let transferred=0;
-   const response=await this.fetcher(this.asset.url,{headers:{'User-Agent':'Open-IPTV-Pro/4.16'}});
+   const controller=new AbortController();this.activeAbort=controller;
+   const response=await this.fetcher(this.asset.url,{headers:{'User-Agent':'Open-IPTV-Pro/4.21'},signal:controller.signal});
    if(!response.ok||!isTrustedRedirect(response.url||this.asset.url))throw Error('Không tải được từ GitHub Releases');
    const total=Number(response.headers?.get?.('content-length'))||Number(this.asset.size)||0;
    const sha=createHash('sha256');let sentAt=0;
@@ -142,17 +156,17 @@ class UpdateManager extends EventEmitter{
     const sink=createWriteStream(tmp,{flags:'w'});
     const source=Readable.fromWeb(response.body);
     source.on('data',buf=>{
-     sha.update(buf);transferred+=buf.length;
+     sha.update(buf);transferred+=buf.length;if(transferred>3*1024*1024*1024){controller.abort();throw Error('Bộ cài vượt quá 3 GB');}
      if(this.now()-sentAt>=250){sentAt=this.now();this.setState({phase:'downloading',transferred,total,progress:total?Math.min(99,Math.floor(transferred/total*100)):0,message:`Đã tải ${(transferred/1048576).toFixed(1)} MB${total?' / '+(total/1048576).toFixed(1)+' MB':''}`});}
     });
     await pipeline(source,sink);
     if(sha.digest('hex')!==expected)throw Error('SHA256 không khớp: đã hủy file tải về để bảo vệ thiết bị');
     await fs.rename(tmp,finalPath);
    }catch(e){await fs.rm(tmp,{force:true}).catch(()=>{});throw e;}
-   this.downloadedPath=finalPath;
+   this.downloadedPath=finalPath;this.activeAbort=null;
    return this.setState({phase:'manual-ready',downloaded:true,progress:100,downloadedFile:finalPath,message:'Đã tải và kiểm tra SHA256. Mở bộ cài để nâng cấp thủ công; dữ liệu kênh được giữ lại.'});
-  }catch(e){return this.setState({phase:'error',mode:'manual',downloaded:false,message:'Tải cập nhật không thành công: '+String(e.message||e).slice(0,250)});}
-  finally{this.busy=false;}
+  }catch(e){return this.setState({phase:'error',mode:'manual',downloaded:false,message:'Tải cập nhật không thành công: '+String(e.message||e).slice(0,250)+'. Có thể bấm Kiểm tra phiên bản mới để thử lại.'});}
+  finally{this.activeAbort=null;this.busy=false;}
  }
  install(){
   if(this.state.phase!=='downloaded'||this.state.mode!=='automatic'||!this.updater)throw Error('Chưa có bản cập nhật tự động đã tải xong');

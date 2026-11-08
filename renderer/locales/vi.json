@@ -240,5 +240,17 @@
   "Đang kiểm tra GitHub Releases...": "Đang kiểm tra GitHub Releases...",
   "Chưa bật nguồn EPG nào": "Chưa bật nguồn EPG nào",
   "Đang tải XMLTV...": "Đang tải XMLTV...",
-  "Đã hoàn tất kiểm tra EPG": "Đã hoàn tất kiểm tra EPG"
+  "Đã hoàn tất kiểm tra EPG": "Đã hoàn tất kiểm tra EPG",
+  "Smart IPTV Doctor 2.0": "Smart IPTV Doctor 2.0",
+  "Phân tích Snapshot trùng hình": "Phân tích Snapshot trùng hình",
+  "Giới hạn ảnh mỗi lượt": "Giới hạn ảnh mỗi lượt",
+  "Lập đề xuất sửa": "Lập đề xuất sửa",
+  "Hoàn tác sửa gần nhất": "Hoàn tác sửa gần nhất",
+  "Xuất báo cáo Doctor 2.0": "Xuất báo cáo Doctor 2.0",
+  "Đề xuất sửa có giải thích": "Đề xuất sửa có giải thích",
+  "Giám sát hình ảnh đang phát": "Giám sát hình ảnh đang phát",
+  "Cảnh báo khung hình đứng, màn hình đen (chỉ kênh chính)": "Cảnh báo khung hình đứng, màn hình đen (chỉ kênh chính)",
+  "Thử link dự phòng khi đứng hình được xác nhận (tắt mặc định)": "Thử link dự phòng khi đứng hình được xác nhận (tắt mặc định)",
+  "Chưa có kênh đang phát": "Chưa có kênh đang phát",
+  "Không tự xóa hoặc gộp kênh chỉ vì một ảnh giống nhau.": "Không tự xóa hoặc gộp kênh chỉ vì một ảnh giống nhau."
 }
