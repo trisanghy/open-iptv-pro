@@ -1,0 +1,39 @@
+name: Build Mobile APK (Debug)
+on:
+  workflow_dispatch:
+  push:
+    branches: [experiment/mobile-capacitor-4211]
+    paths:
+      - 'experiments/mobile-capacitor/**'
+      - '.github/workflows/mobile-apk.yml'
+jobs:
+  android:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: experiments/mobile-capacitor
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: android-actions/setup-android@v3
+      - name: Install and test
+        run: |
+          npm install --no-audit --no-fund
+          npm test
+          npm run build
+          npx cap add android
+          npx cap sync android
+          node scripts/patch-native.mjs
+      - name: Build Android debug APK
+        run: cd android && chmod +x gradlew && ./gradlew --no-daemon --max-workers=4 assembleDebug
+      - uses: actions/upload-artifact@v4
+        with:
+          name: OpenIPTVPro-Mobile-debug-APK
+          path: experiments/mobile-capacitor/android/app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error

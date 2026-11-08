@@ -1,0 +1,29 @@
+{
+  "name": "open-iptv-pro-mobile",
+  "private": true,
+  "version": "4.21.1-mobile.1",
+  "type": "module",
+  "description": "Mobile branch derived from Open IPTV Pro 4.21.1. Capacitor 8, native AVPlayer/ExoPlayer.",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1",
+    "build": "vite build",
+    "test": "node --test tests/*.test.mjs",
+    "android:init": "cap add android",
+    "ios:init": "cap add ios",
+    "android:sync": "npm run build && cap sync android",
+    "ios:sync": "npm run build && cap sync ios"
+  },
+  "dependencies": {
+    "@capacitor/core": "^8.0.0",
+    "@capacitor/android": "^8.0.0",
+    "@capacitor/ios": "^8.0.0",
+    "@capacitor/filesystem": "^8.0.0",
+    "@capacitor/share": "^8.0.0",
+    "@capgo/capacitor-video-player": "^8.2.0",
+    "hls.js": "^1.6.15"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^8.0.0",
+    "vite": "^7.0.0"
+  }
+}

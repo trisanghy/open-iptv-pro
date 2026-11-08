@@ -1,0 +1,5 @@
+import test from 'node:test';import assert from 'node:assert/strict';import vm from 'node:vm';import fs from 'node:fs';
+const context={window:{},URL,Intl,Date};vm.runInNewContext(fs.readFileSync(new URL('../src/core-browser.js',import.meta.url),'utf8'),context);
+const core=context.window.StreamLeafCore;
+test('v4.21.1 desktop M3U parser imported unchanged',()=>{const m='#EXTM3U\n#EXTINF:-1 tvg-logo="https://example.org/1.png" group-title="01 - VTV",VTV1\nhttps://example.org/live.m3u8\n#EXTINF:-1 group-title="Thể thao",Thể thao 1\nhttps://example.org/sport.mp4';const r=core.parseM3U(m,'test');assert.equal(r.length,2);assert.equal(r[0].group,'01 - VTV');assert.equal(r[0].logo,'https://example.org/1.png');assert.equal(r[1].name,'Thể thao 1');});
+test('playlist export keeps metadata and categorizes positively dead',()=>{const result=core.exportM3U([{name:'A',url:'https://example.org/a.m3u8',status:'dead',group:'Tin tức'},{name:'B',url:'https://example.org/b.m3u8',status:'alive',group:'Thể thao'}]);assert.match(result,/99 - KÊNH LỖI/);assert.match(result,/Thể thao/);});

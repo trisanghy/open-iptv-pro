@@ -1,0 +1,8 @@
+{
+  "appId": "com.trisanghy.openiptvpro.mobile",
+  "appName": "Open IPTV Pro Mobile",
+  "webDir": "dist",
+  "plugins": {},
+  "android": {"allowMixedContent": true},
+  "ios": {"contentInset": "always"}
+}
