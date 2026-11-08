@@ -1,3 +1,13 @@
+## v4.22.2 — Backup / Restore for Windows and macOS
+
+**Tiếng Việt:** Bổ sung Sao lưu / Khôi phục trong sidebar và Cài đặt. Xuất file `.iptvbackup` gồm playlist, yêu thích, thư mục, cấu hình, EPG và tùy chọn ảnh Snapshot. Khi khôi phục, ứng dụng kiểm tra dữ liệu, xem trước và xác nhận, tránh ghi đè ảnh cũ và rollback cấu hình nếu lỗi. File sao lưu chưa mã hóa. Xem `HUONG_DAN_BACKUP_RESTORE_V4_22_2.md`.
+
+**English:** Desktop Backup/Restore exports playlists, favorites, groups, settings, EPG and optional Snapshot images into a local `.iptvbackup` file. Imports are validated and require confirmation; images are restored under non-colliding names and settings are rolled back on failure. Backup files are not encrypted.
+
+**Cập nhật mã nguồn GitHub trên Mac:** chạy `bash ~/Downloads/CAP_NHAT_GITHUB_V4_22_2_MAC.command` sau khi tải ZIP mã nguồn và script vào Downloads. Script kiểm tra test, đăng nhập GitHub qua `gh`, đồng bộ mã nguồn desktop lên repository `trisanghy/open-iptv-pro` sau xác nhận. Không force-push, không sửa iOS/Android, không tự tạo Release.
+
+---
+
 ## v4.22 Full – Cập nhật và bộ biểu tượng macOS
 
 **Tiếng Việt:** Repository phát hành chính thức `trisanghy/open-iptv-pro` được cố định, không cần nhập lại. Ứng dụng đọc phiên bản từ tên bộ cài / tag / tên Release, tìm bản mới đúng hệ điều hành & kiến trúc (Mac Apple Silicon, Mac Intel hoặc Windows), tự tải khi bật tùy chọn, xác minh trước khi cài. Mac chưa ký dùng bộ cài DMG thủ công; ứng dụng ký đúng chuẩn có thể dùng trình tự cài tự động. Menu thay bằng 12 icon SVG nét bo tròn đồng nhất, giữ logo ứng dụng và toàn bộ FFmpeg/Timeshift Full.

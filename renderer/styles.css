@@ -430,3 +430,12 @@ html[data-theme="light"] .source-check-workers select{background:#fff;color:#223
 .update-publisher-icon{display:inline-grid;place-items:center;width:20px;height:20px;border-radius:50%;color:#fff;background:#33b07b;font-size:12px}
 .update-result[data-phase="available"],.update-result[data-phase="downloaded"],.update-result[data-phase="manual-ready"]{border-color:color-mix(in srgb,var(--accent) 60%,var(--edge));background:color-mix(in srgb,var(--accent) 8%,var(--surface))}
 @media(max-width:1100px){.sidebar .nav{gap:9px;padding:0 7px}.sidebar .nav .macos-nav-symbol{width:29px;min-width:29px;height:29px}}
+
+/* Desktop backup / restore */
+.backup-settings-card{scroll-margin-top:18px}
+.backup-settings-card .backup-actions{display:flex;flex-wrap:wrap;gap:9px;margin:15px 0 6px}
+.backup-settings-card .check-line{margin-top:13px;line-height:1.5}
+.backup-settings-card .backup-status{margin:10px 0 12px;padding:10px 12px;border-radius:10px;border:1px solid var(--edge);background:var(--surface2);color:var(--text);font-size:12px;line-height:1.5;overflow-wrap:anywhere}
+.backup-settings-card .backup-status.backup-error{border-color:#df6868;color:#ffadad}
+.backup-settings-card small{display:block;color:var(--muted);line-height:1.6}
+@media(max-width:1100px){.backup-settings-card .backup-actions>.btn{flex:1 1 155px;white-space:normal}}

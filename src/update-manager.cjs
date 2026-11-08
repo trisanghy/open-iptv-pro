@@ -7,7 +7,7 @@ const {createHash}=require('node:crypto');
 const {promises:fs,existsSync,createWriteStream}=require('node:fs');
 const path=require('node:path');
 const {spawnSync}=require('node:child_process');
-const {Readable}=require('node:stream');
+const {Readable,Transform}=require('node:stream');
 const {pipeline}=require('node:stream/promises');
 const {checkUpdate}=require('./update-check.cjs');
 
@@ -68,9 +68,10 @@ function isTrustedRedirect(url){
 }
 
 class UpdateManager extends EventEmitter{
- constructor({app,platform=process.platform,arch=process.arch,resourcesPath=process.resourcesPath,execPath=process.execPath,updater=null,check=checkUpdate,fetcher=fetch,now=()=>Date.now(),signatureCheck=canNativeInstall,downloadsDir}){
+ constructor({app,platform=process.platform,arch=process.arch,resourcesPath=process.resourcesPath,execPath=process.execPath,updater=null,check=checkUpdate,fetcher=fetch,now=()=>Date.now(),signatureCheck=canNativeInstall,downloadsDir,maxInstallerBytes=3*1024*1024*1024,downloadIdleMs=90_000}){
   super();this.app=app;this.platform=platform;this.arch=arch;this.resourcesPath=resourcesPath;this.execPath=execPath;
   this.updater=updater;this.check=check;this.fetcher=fetcher;this.now=now;this.signatureCheck=signatureCheck;
+  this.maxInstallerBytes=maxInstallerBytes;this.downloadIdleMs=downloadIdleMs;
   this.downloadsDir=downloadsDir||path.join(app.getPath('downloads'),'Open-IPTV-Pro-Updates');
   this.latestInfo=null;this.asset=null;this.downloadedPath=null;this.busy=false;this.lastProgress=0;this.activeAbort=null;this.nativeError=null;
   this.state={phase:'idle',version:app.getVersion(),latest:null,message:'Chưa kiểm tra cập nhật',mode:null,progress:0,downloaded:false};
@@ -137,7 +138,7 @@ class UpdateManager extends EventEmitter{
    let expected=null;
    if(this.asset.digest?.startsWith('sha256:'))expected=this.asset.digest.slice(7).toLowerCase();
    if(!expected && checksumAsset){
-    const response=await this.fetcher(checksumAsset.url,{headers:{'User-Agent':'Open-IPTV-Pro/4.21'},signal:AbortSignal.timeout(15000)});
+    const response=await this.fetcher(checksumAsset.url,{headers:{'User-Agent':'Open-IPTV-Pro/4.22.2'},signal:AbortSignal.timeout(15000)});
     if(!response.ok||!isTrustedRedirect(response.url||checksumAsset.url))throw Error('Không đọc được bảng SHA256 từ GitHub');
     const sums=await response.text();if(sums.length>500_000)throw Error('Bảng SHA256 không hợp lệ');
     expected=extractSha256(sums,this.asset.name);
@@ -148,21 +149,31 @@ class UpdateManager extends EventEmitter{
    const finalPath=path.join(this.downloadsDir,filename),tmp=finalPath+'.part';
    let transferred=0;
    const controller=new AbortController();this.activeAbort=controller;
-   const response=await this.fetcher(this.asset.url,{headers:{'User-Agent':'Open-IPTV-Pro/4.21'},signal:controller.signal});
-   if(!response.ok||!isTrustedRedirect(response.url||this.asset.url))throw Error('Không tải được từ GitHub Releases');
-   const total=Number(response.headers?.get?.('content-length'))||Number(this.asset.size)||0;
-   const sha=createHash('sha256');let sentAt=0;
+   // A large installer must have a short connection timeout and a *rolling* idle
+   // timeout, not a fixed total-download deadline on a slow connection.
+   const IDLE_MS=this.downloadIdleMs;
+   let idleTimer;
+   const armIdle=()=>{clearTimeout(idleTimer);idleTimer=setTimeout(()=>controller.abort(new Error('Tải xuống bị ngắt do quá lâu không nhận được dữ liệu')),IDLE_MS);/* Keep the timer referenced while a download is in flight. */};
    try{
-    const sink=createWriteStream(tmp,{flags:'w'});
-    const source=Readable.fromWeb(response.body);
-    source.on('data',buf=>{
-     sha.update(buf);transferred+=buf.length;if(transferred>3*1024*1024*1024){controller.abort();throw Error('Bộ cài vượt quá 3 GB');}
+    armIdle();
+    const response=await this.fetcher(this.asset.url,{headers:{'User-Agent':'Open-IPTV-Pro/4.22.2'},signal:controller.signal});
+    if(!response.ok||!isTrustedRedirect(response.url||this.asset.url))throw Error('Không tải được từ GitHub Releases');
+    if(!response.body)throw Error('Máy chủ không trả dữ liệu bộ cài');
+    const total=Number(response.headers?.get?.('content-length'))||Number(this.asset.size)||0;
+    if(total>this.maxInstallerBytes)throw Error('Bộ cài vượt quá 3 GB');
+    const sha=createHash('sha256');let sentAt=0;
+    const progress=new Transform({transform:(buf,enc,done)=>{
+     transferred+=buf.length;
+     if(transferred>this.maxInstallerBytes){controller.abort(Error('Bộ cài vượt quá dung lượng cho phép'));return done(Error('Bộ cài vượt quá dung lượng cho phép'));}
+     sha.update(buf);armIdle();
      if(this.now()-sentAt>=250){sentAt=this.now();this.setState({phase:'downloading',transferred,total,progress:total?Math.min(99,Math.floor(transferred/total*100)):0,message:`Đã tải ${(transferred/1048576).toFixed(1)} MB${total?' / '+(total/1048576).toFixed(1)+' MB':''}`});}
-    });
-    await pipeline(source,sink);
+     done(null,buf);
+    }});
+    await pipeline(Readable.fromWeb(response.body),progress,createWriteStream(tmp,{flags:'w'}));
     if(sha.digest('hex')!==expected)throw Error('SHA256 không khớp: đã hủy file tải về để bảo vệ thiết bị');
     await fs.rename(tmp,finalPath);
-   }catch(e){await fs.rm(tmp,{force:true}).catch(()=>{});throw e;}
+   }catch(e){await fs.rm(tmp,{force:true}).catch(()=>{});throw controller.signal.aborted && controller.signal.reason instanceof Error ? controller.signal.reason : e;}
+   finally{clearTimeout(idleTimer);}
    this.downloadedPath=finalPath;this.activeAbort=null;
    return this.setState({phase:'manual-ready',downloaded:true,progress:100,downloadedFile:finalPath,message:'Đã tải bản cập nhật an toàn. Chọn Mở bộ cài để hoàn tất nâng cấp (giữ nguyên dữ liệu).'});
   }catch(e){return this.setState({phase:'error',mode:'manual',downloaded:false,message:'Tải cập nhật không thành công: '+String(e.message||e).slice(0,250)+'. Có thể bấm Kiểm tra phiên bản mới để thử lại.'});}

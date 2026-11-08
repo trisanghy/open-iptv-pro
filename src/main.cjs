@@ -1,6 +1,7 @@
 'use strict';
 const {app,BrowserWindow,dialog,ipcMain,shell,nativeTheme} = require('electron');
 const path=require('node:path');
+const {pathToFileURL}=require('node:url');
 const fs=require('node:fs');
 const http=require('node:http');
 const {randomBytes,createHash}=require('node:crypto');
@@ -14,8 +15,10 @@ const {listPublicPlaylists}=require('./repo-sources.cjs');
 const {createTimeshift}=require('./timeshift.cjs');
 const {CastService}=require('./cast-service.cjs');
 const {discoverAirplay}=require('./airplay-discovery.cjs');
+const backupService=require('./backup-service.cjs');
 const secret=randomBytes(20).toString('hex');
 let webWindow, server, port, timeshift, updates;
+let pendingBackup=null, pendingRestore=null;
 const castService=new CastService();
 const mediaKindCache=new Map();
 const MAX_PLAYLIST=25*1024*1024;
@@ -23,7 +26,7 @@ function urlOK(raw){const u=new URL(raw);if(!['http:','https:'].includes(u.proto
 function fileSafeName(s){return String(s).replace(/[^\p{L}\p{N}_.-]+/gu,'_').slice(0,80)||'channel';}
 async function readURL(raw,maxBytes=MAX_PLAYLIST,timeout=18000){
  urlOK(raw);const c=new AbortController();const t=setTimeout(()=>c.abort(),timeout);
- try {const res=await fetch(raw,{signal:c.signal,redirect:'follow',headers:{'User-Agent':'Open-IPTV-Pro/4.21'}});
+ try {const res=await fetch(raw,{signal:c.signal,redirect:'follow',headers:{'User-Agent':'Open-IPTV-Pro/4.22.2'}});
    if(!res.ok)throw new Error(`Máy chủ trả HTTP ${res.status}`);
    const parts=[];let len=0;
    for await(const chunk of res.body){len+=chunk.length;if(len>maxBytes)throw new Error('Playlist quá lớn');parts.push(chunk);}
@@ -65,7 +68,7 @@ async function handleStream(req,res){
   const ctrl=new AbortController();
   const timeout=setTimeout(()=>ctrl.abort(),25000); // connect / first response timeout ONLY
   const range=req.headers.range;
-  const upstream=await fetch(url,{signal:ctrl.signal,redirect:'follow',headers:{'User-Agent':'Open-IPTV-Pro/4.21',...(range?{Range:range}:{})}});
+  const upstream=await fetch(url,{signal:ctrl.signal,redirect:'follow',headers:{'User-Agent':'Open-IPTV-Pro/4.22.2',...(range?{Range:range}:{})}});
   const ctype=upstream.headers.get('content-type')||'';
   const maybeHls=/\.m3u8?(?:$|\?)/i.test(upstream.url)||/mpegurl/i.test(ctype);
   const headers={'Content-Type':ctype||'application/octet-stream','Cache-Control':'no-store','Accept-Ranges':upstream.headers.get('accept-ranges')||'bytes'};
@@ -134,7 +137,7 @@ async function makeSnapshot(url,label){
  return new Promise((resolve,reject)=>{
   const args=['-hide_banner','-nostdin','-loglevel','error','-y','-rw_timeout','7500000','-probesize','1048576','-analyzeduration','1600000','-i',url,'-an','-sn','-dn','-threads','1','-frames:v','1','-vf','scale=384:-2','-q:v','5',dest];
   const child=spawn(ffmpeg,args,{windowsHide:true,stdio:['ignore','ignore','pipe']});
-  let stderr='';child.stderr.on('data',d=>{stderr+=d.toString().slice(0,1000);});
+  let stderr='';child.stderr.on('data',d=>{stderr=(stderr+d.toString()).slice(-1800);});
   const kill=setTimeout(()=>{child.kill('SIGKILL');},12000);
   child.on('error',e=>{clearTimeout(kill);reject(new Error('Không khởi động được FFmpeg: '+e.message));});
   child.on('close',code=>{clearTimeout(kill);
@@ -185,7 +188,7 @@ function setupIPC(){
  ipcMain.handle('media:kind',async(_e,url)=>{
    urlOK(url);const cached=mediaKindCache.get(url);if(cached&&Date.now()-cached.at<15*60_000)return cached.value;const ctrl=new AbortController();const t=setTimeout(()=>ctrl.abort(),5000);
    try{
-     const r=await fetch(url,{headers:{Range:'bytes=0-2047','User-Agent':'Open-IPTV-Pro/4.21'},signal:ctrl.signal});
+     const r=await fetch(url,{headers:{Range:'bytes=0-2047','User-Agent':'Open-IPTV-Pro/4.22.2'},signal:ctrl.signal});
      const ct=r.headers.get('content-type')||'';let sample='';
      if(r.body){const rd=r.body.getReader();const part=await rd.read();if(part.value)sample=Buffer.from(part.value).subarray(0,2048).toString('utf8');await rd.cancel();}
      const value={hls:/mpegurl/i.test(ct)||(/^#EXTM3U/m.test(sample)&&/#EXT-X-/.test(sample))};
@@ -198,14 +201,48 @@ function setupIPC(){
   const r=await dialog.showSaveDialog(webWindow,{defaultPath:name||'iptv.m3u',filters:[{name:'IPTV Playlist',extensions:['m3u']}]});if(r.canceled||!r.filePath)return null;
   const p=r.filePath;const temp=p+'.tmp-'+randomBytes(4).toString('hex');fs.writeFileSync(temp,content,'utf8');fs.renameSync(temp,p);return p;
  });
+ // The backup format is local-only; file paths and image access never cross the preload bridge.
+ ipcMain.handle('backup:export',async(_e,storage,includeSnapshots)=>{
+  const {output,summary}=await backupService.createBackup(storage,path.join(app.getPath('userData'),'snapshots'),{includeSnapshots,appVersion:app.getVersion()});
+  const r=await dialog.showSaveDialog(webWindow,{title:'Sao lưu dữ liệu Open IPTV Pro',defaultPath:`Open-IPTV-Pro-${new Date().toISOString().slice(0,10)}.iptvbackup`,filters:[{name:'Open IPTV Pro Backup',extensions:['iptvbackup']}]});
+  if(r.canceled||!r.filePath)return {canceled:true};
+  await backupService.saveAtomic(r.filePath,output);
+  return {canceled:false,file:r.filePath,...summary};
+ });
+ ipcMain.handle('backup:inspect',async()=>{
+  pendingBackup=null;pendingRestore=null;
+  const r=await dialog.showOpenDialog(webWindow,{title:'Chọn file sao lưu để khôi phục',properties:['openFile'],filters:[{name:'Open IPTV Pro Backup',extensions:['iptvbackup']}]});
+  if(r.canceled||!r.filePaths[0])return {canceled:true};
+  const {sha256,summary}=await backupService.readBackup(r.filePaths[0]);
+  const token=randomBytes(18).toString('hex');pendingBackup={path:r.filePaths[0],sha256,token};
+  return {canceled:false,token,...summary};
+ });
+ ipcMain.handle('backup:restore',async(_e,token)=>{
+  if(!pendingBackup||pendingBackup.token!==token)throw Error('Phiên khôi phục không hợp lệ. Hãy chọn file lại.');
+  const picked=pendingBackup;pendingBackup=null;
+  const {data,sha256}=await backupService.readBackup(picked.path);
+  if(sha256!==picked.sha256)throw Error('File sao lưu đã thay đổi kể từ khi xem trước.');
+  const snapshotDir=path.join(app.getPath('userData'),'snapshots');
+  const restored=await backupService.restoreBackup(data,snapshotDir);
+  const finishToken=randomBytes(18).toString('hex');
+  pendingRestore={token:finishToken,paths:restored.createdFiles,snapshotDir};
+  return {storage:restored.storage,finishToken};
+ });
+ ipcMain.handle('backup:finish',async(_e,token,success)=>{
+  if(!pendingRestore||pendingRestore.token!==token)return false;
+  const r=pendingRestore;pendingRestore=null;
+  if(success!==true)await backupService.discardImportedImages(r.paths,r.snapshotDir);
+  return true;
+ });
  ipcMain.handle('source:listRepo',async(_e,url)=>await listPublicPlaylists(url));
  ipcMain.handle('system:openVLC',()=>shell.openExternal('https://www.videolan.org/vlc/'));
 }
 function createWindow(){
- webWindow=new BrowserWindow({width:1360,height:850,minWidth:980,minHeight:640,backgroundColor:nativeTheme.shouldUseDarkColors?'#080e15':'#f3f6fb',title:'Open IPTV Pro 4.21',icon:path.join(__dirname,'../assets/icon.png'),webPreferences:{preload:path.join(__dirname,'preload.cjs'),sandbox:true,contextIsolation:true,nodeIntegration:false,webSecurity:true}});
+ webWindow=new BrowserWindow({width:1360,height:850,minWidth:980,minHeight:640,backgroundColor:nativeTheme.shouldUseDarkColors?'#080e15':'#f3f6fb',title:`Open IPTV Pro ${app.getVersion()}`,icon:path.join(__dirname,'../assets/icon.png'),webPreferences:{preload:path.join(__dirname,'preload.cjs'),sandbox:true,contextIsolation:true,nodeIntegration:false,webSecurity:true}});
  webWindow.loadFile(path.join(__dirname,'../renderer/index.html'));
  webWindow.webContents.setWindowOpenHandler(()=>({action:'deny'}));
- webWindow.webContents.on('will-navigate',(event,url)=>{if(!url.startsWith('file:'))event.preventDefault();});
+ const appEntry=pathToFileURL(path.join(__dirname,'../renderer/index.html')).href;
+ webWindow.webContents.on('will-navigate',(event,url)=>{if(url!==appEntry)event.preventDefault();});
 }
 app.whenReady().then(async()=>{timeshift=createTimeshift({baseDir:app.getPath('userData'),ffmpegPath:ffmpegPath()||'ffmpeg',logger:()=>{}});await startProxy();
  let nativeUpdater=null;try{nativeUpdater=require('electron-updater').autoUpdater;}catch(e){console.warn('Updater unavailable:',e.message);}

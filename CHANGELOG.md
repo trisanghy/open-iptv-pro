@@ -1,3 +1,10 @@
+## 4.22.1 — Desktop stability (Windows/macOS)
+
+- Sửa downloader cập nhật: giới hạn dung lượng an toàn, tránh ngoại lệ không được bắt trong sự kiện streaming, phát hiện kết nối ngừng nhận dữ liệu.
+- Cấu hình build xác nhận file bộ cài tồn tại thực tế trước khi báo thành công.
+- Giao diện hiển thị đúng phiên bản; hạn chế điều hướng khỏi entry file; bộ nhớ stderr FFmpeg có giới hạn.
+- Giữ nguyên bộ FFmpeg và chức năng Timeshift Full. Android/iOS tạm dừng.
+
 ## 4.22.0 – Repository cố định, cập nhật tương thích và icon macOS
 
 - Bỏ ô repository có thể nhập; dùng `trisanghy/open-iptv-pro` làm nhà phát hành mặc định.
@@ -177,3 +184,10 @@
 - Add attached thumbnail snapshots and desktop disk-based persistence.
 - Add fit/fill/stretch/original video sizing and fullscreen safe-area CSS.
 - Publish MIT source license, third-party notices, GitHub scripts, CI, docs.
+
+## 4.22.2 — Backup/Restore desktop (chưa phát hành)
+
+- Backup & Restore file `.iptvbackup`: lưu cấu hình, playlist, favorites, hồ sơ, EPG, tùy chọn ảnh Snapshot.
+- Trình chọn file gốc Electron, xác nhận trước khi ghi đè, rollback cấu hình nếu lỗi, kiểm tra SHA-256 cho ảnh.
+- Thêm phím tắt ở sidebar và card Cài đặt; bổ sung dịch giao diện 7 ngôn ngữ.
+- Chưa publish GitHub và chưa sửa iOS/Android.

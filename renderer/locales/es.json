@@ -293,5 +293,13 @@
   "Liên kết nội bộ sẽ hiện tại đây": "Aquí aparecerá el enlace local",
   "⌕ Tìm thiết bị AirPlay": "⌕ Buscar dispositivos AirPlay",
   "Chưa tìm thiết bị AirPlay": "Aún no se han buscado dispositivos AirPlay",
-  "Danh sách AirPlay chỉ để nhận biết thiết bị. Việc chọn TV và phát video thực hiện trong Safari.": "La lista es informativa. Selecciona el televisor y reproduce en Safari."
+  "Danh sách AirPlay chỉ để nhận biết thiết bị. Việc chọn TV và phát video thực hiện trong Safari.": "La lista es informativa. Selecciona el televisor y reproduce en Safari.",
+  "Sao lưu / Khôi phục": "Copia / Restaurar",
+  "⤓ Sao lưu & Khôi phục dữ liệu": "⤓ Copia de seguridad y restauración",
+  "Tạo một file .iptvbackup để chuyển playlist, kênh yêu thích, thư mục, hồ sơ, EPG và cài đặt giữa Windows/macOS. Chọn thêm ảnh Snapshot nếu muốn giữ ảnh chụp kênh.": "Crea un archivo .iptvbackup para transferir listas, favoritos, carpetas, perfiles, EPG y ajustes entre Windows/macOS. Incluye las capturas para conservar las imágenes.",
+  "Kèm ảnh Snapshot đã lưu trên máy": "Incluir capturas guardadas",
+  "⇩ Tạo file Backup": "⇩ Crear copia",
+  "↶ Restore từ file": "↶ Restaurar archivo",
+  "Chưa có thao tác sao lưu hoặc khôi phục.": "No se ha creado ni restaurado ninguna copia.",
+  "Backup không mã hóa, có thể chứa URL có tài khoản/mật khẩu và thông tin hồ sơ. Hãy giữ file ở nơi an toàn. Restore sẽ yêu cầu xác nhận trước khi thay dữ liệu hiện tại. Không sao lưu bộ đệm Timeshift tạm thời hoặc chương trình đã cài.": "Las copias no están cifradas y pueden contener URL con credenciales y datos de perfiles. Guárdalas de forma segura. Restaurar requiere confirmación antes de reemplazar los datos. No incluye Timeshift temporal ni la aplicación instalada."
 }

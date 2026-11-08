@@ -52,7 +52,7 @@ class CastRelay{
   const ctrl=new AbortController();const timeout=setTimeout(()=>ctrl.abort(),18000);
   res.once('close',()=>ctrl.abort());
   try{
-   const upstream=await this.fetchImpl(url,{signal:ctrl.signal,redirect:'follow',headers:{'User-Agent':'Open-IPTV-Pro/4.21',...(req.headers.range?{Range:req.headers.range}:{})},method:req.method});
+   const upstream=await this.fetchImpl(url,{signal:ctrl.signal,redirect:'follow',headers:{'User-Agent':'Open-IPTV-Pro/4.22.2',...(req.headers.range?{Range:req.headers.range}:{})},method:req.method});
    const ctype=upstream.headers.get('content-type')||'application/octet-stream';
    const isHls=/mpegurl/i.test(ctype)||/\.m3u8?(?:$|\?)/i.test(upstream.url||url);
    const headers={'Cache-Control':'no-store','Content-Type':ctype,'Access-Control-Allow-Origin':'*'};

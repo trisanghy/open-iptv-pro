@@ -293,5 +293,13 @@
   "Liên kết nội bộ sẽ hiện tại đây": "ลิงก์เล่นในเครือข่ายจะปรากฏที่นี่",
   "⌕ Tìm thiết bị AirPlay": "⌕ ค้นหาอุปกรณ์ AirPlay",
   "Chưa tìm thiết bị AirPlay": "ยังไม่ได้ค้นหาอุปกรณ์ AirPlay",
-  "Danh sách AirPlay chỉ để nhận biết thiết bị. Việc chọn TV và phát video thực hiện trong Safari.": "รายการนี้ใช้ดูอุปกรณ์เท่านั้น โปรดเลือกทีวีและเล่นวิดีโอใน Safari"
+  "Danh sách AirPlay chỉ để nhận biết thiết bị. Việc chọn TV và phát video thực hiện trong Safari.": "รายการนี้ใช้ดูอุปกรณ์เท่านั้น โปรดเลือกทีวีและเล่นวิดีโอใน Safari",
+  "Sao lưu / Khôi phục": "สำรอง / กู้คืน",
+  "⤓ Sao lưu & Khôi phục dữ liệu": "⤓ สำรองและกู้คืนข้อมูล",
+  "Tạo một file .iptvbackup để chuyển playlist, kênh yêu thích, thư mục, hồ sơ, EPG và cài đặt giữa Windows/macOS. Chọn thêm ảnh Snapshot nếu muốn giữ ảnh chụp kênh.": "สร้างไฟล์ .iptvbackup เพื่อย้ายเพลย์ลิสต์ รายการโปรด โฟลเดอร์ โปรไฟล์ EPG และการตั้งค่าระหว่าง Windows/macOS เลือกรวมภาพ Snapshot ได้",
+  "Kèm ảnh Snapshot đã lưu trên máy": "รวมภาพ Snapshot ที่บันทึกไว้",
+  "⇩ Tạo file Backup": "⇩ สร้างไฟล์สำรอง",
+  "↶ Restore từ file": "↶ กู้คืนจากไฟล์",
+  "Chưa có thao tác sao lưu hoặc khôi phục.": "ยังไม่มีการสำรองหรือกู้คืนข้อมูล",
+  "Backup không mã hóa, có thể chứa URL có tài khoản/mật khẩu và thông tin hồ sơ. Hãy giữ file ở nơi an toàn. Restore sẽ yêu cầu xác nhận trước khi thay dữ liệu hiện tại. Không sao lưu bộ đệm Timeshift tạm thời hoặc chương trình đã cài.": "ไฟล์สำรองไม่ได้เข้ารหัส อาจมี URL พร้อมข้อมูลบัญชีและโปรไฟล์ เก็บไฟล์ไว้ให้ปลอดภัย การกู้คืนจะขอการยืนยันก่อนแทนที่ข้อมูลปัจจุบัน ไม่รวม Timeshift ชั่วคราวหรือโปรแกรมที่ติดตั้ง"
 }

@@ -307,5 +307,13 @@
   "Liên kết nội bộ sẽ hiện tại đây": "A local playback link will appear here",
   "⌕ Tìm thiết bị AirPlay": "⌕ Find AirPlay devices",
   "Chưa tìm thiết bị AirPlay": "AirPlay devices not scanned yet",
-  "Danh sách AirPlay chỉ để nhận biết thiết bị. Việc chọn TV và phát video thực hiện trong Safari.": "AirPlay device list is informational. Select a TV and start playback in Safari."
+  "Danh sách AirPlay chỉ để nhận biết thiết bị. Việc chọn TV và phát video thực hiện trong Safari.": "AirPlay device list is informational. Select a TV and start playback in Safari.",
+  "Sao lưu / Khôi phục": "Backup / Restore",
+  "⤓ Sao lưu & Khôi phục dữ liệu": "⤓ Backup & Restore Data",
+  "Tạo một file .iptvbackup để chuyển playlist, kênh yêu thích, thư mục, hồ sơ, EPG và cài đặt giữa Windows/macOS. Chọn thêm ảnh Snapshot nếu muốn giữ ảnh chụp kênh.": "Create a .iptvbackup file to transfer playlists, favorites, folders, profiles, EPG and settings across Windows/macOS. Include Snapshots to keep channel images.",
+  "Kèm ảnh Snapshot đã lưu trên máy": "Include saved channel Snapshots",
+  "⇩ Tạo file Backup": "⇩ Create Backup File",
+  "↶ Restore từ file": "↶ Restore from File",
+  "Chưa có thao tác sao lưu hoặc khôi phục.": "No backup or restore has been performed.",
+  "Backup không mã hóa, có thể chứa URL có tài khoản/mật khẩu và thông tin hồ sơ. Hãy giữ file ở nơi an toàn. Restore sẽ yêu cầu xác nhận trước khi thay dữ liệu hiện tại. Không sao lưu bộ đệm Timeshift tạm thời hoặc chương trình đã cài.": "Backup files are not encrypted. They may contain credentialed URLs and profile data. Store them securely. Restore asks for confirmation before replacing current data. Temporary Timeshift buffers and the installed app are not backed up."
 }

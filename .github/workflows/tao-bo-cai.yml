@@ -10,7 +10,9 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: {node-version: '22'}
-      - run: npm install --no-audit --no-fund
+      - name: Install Node dependencies
+        shell: bash
+        run: if [ -f package-lock.json ]; then npm ci --no-audit --no-fund; else npm install --no-audit --no-fund; fi
       - run: npm test
   build:
     needs: test
@@ -28,7 +30,9 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: {node-version: '22'}
-      - run: npm install --no-audit --no-fund
+      - name: Install Node dependencies
+        shell: bash
+        run: if [ -f package-lock.json ]; then npm ci --no-audit --no-fund; else npm install --no-audit --no-fund; fi
       - run: npm test
       - name: Build installer
         run: npx electron-builder --${{ matrix.platform }} --${{ matrix.arch }} --publish never

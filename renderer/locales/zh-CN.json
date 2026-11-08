@@ -293,5 +293,13 @@
   "Liên kết nội bộ sẽ hiện tại đây": "局域网播放链接将显示在这里",
   "⌕ Tìm thiết bị AirPlay": "⌕ 搜索 AirPlay 设备",
   "Chưa tìm thiết bị AirPlay": "尚未搜索 AirPlay 设备",
-  "Danh sách AirPlay chỉ để nhận biết thiết bị. Việc chọn TV và phát video thực hiện trong Safari.": "此列表仅供参考。请在 Safari 中选择电视并开始播放。"
+  "Danh sách AirPlay chỉ để nhận biết thiết bị. Việc chọn TV và phát video thực hiện trong Safari.": "此列表仅供参考。请在 Safari 中选择电视并开始播放。",
+  "Sao lưu / Khôi phục": "备份 / 还原",
+  "⤓ Sao lưu & Khôi phục dữ liệu": "⤓ 数据备份与还原",
+  "Tạo một file .iptvbackup để chuyển playlist, kênh yêu thích, thư mục, hồ sơ, EPG và cài đặt giữa Windows/macOS. Chọn thêm ảnh Snapshot nếu muốn giữ ảnh chụp kênh.": "创建 .iptvbackup 文件，在 Windows/macOS 之间迁移播放列表、收藏、文件夹、用户资料、EPG 和设置。可选择包含频道截图。",
+  "Kèm ảnh Snapshot đã lưu trên máy": "包含已保存的频道截图",
+  "⇩ Tạo file Backup": "⇩ 创建备份文件",
+  "↶ Restore từ file": "↶ 从文件还原",
+  "Chưa có thao tác sao lưu hoặc khôi phục.": "尚未进行备份或还原。",
+  "Backup không mã hóa, có thể chứa URL có tài khoản/mật khẩu và thông tin hồ sơ. Hãy giữ file ở nơi an toàn. Restore sẽ yêu cầu xác nhận trước khi thay dữ liệu hiện tại. Không sao lưu bộ đệm Timeshift tạm thời hoặc chương trình đã cài.": "备份文件未加密，可能包含带账号密码的 URL 和用户资料。请妥善保管。还原前会要求确认并替换当前数据。不包含临时 Timeshift 缓冲或已安装的程序。"
 }

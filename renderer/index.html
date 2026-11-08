@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="vi"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
 <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: blob:; script-src 'self' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; img-src * data: blob: file:; connect-src * data: blob:; media-src * data: blob:; worker-src 'self' blob:;"/>
-<title>Open IPTV Pro 4.22</title><script src="theme-boot.js"></script><link rel="stylesheet" href="styles.css"/></head>
+<title>Open IPTV Pro 4.22.2</title><script src="theme-boot.js"></script><link rel="stylesheet" href="styles.css"/></head>
 <body>
 <div class="app-shell" id="appShell">
  <aside class="sidebar">
-  <div class="brand"><div class="brand-icon"><img src="../assets/icon.png" alt="Open IPTV Pro"/></div><div><b>Open IPTV Pro</b><small>OPEN SOURCE <span class="version">4.22</span></small></div></div>
+  <div class="brand"><div class="brand-icon"><img src="../assets/icon.png" alt="Open IPTV Pro"/></div><div><b>Open IPTV Pro</b><small>OPEN SOURCE <span class="version">4.22.2</span></small></div></div>
   <div class="aside-caption">THƯ VIỆN</div>
   <button class="nav active" data-page="tv"><span>▣</span> Xem truyền hình <small id="navCount">0</small></button>
   <button class="nav" data-page="fav"><span>★</span> Kênh yêu thích <small id="favCount">0</small></button>
@@ -20,6 +20,7 @@
   <button class="nav" data-page="profiles"><span>♙</span> Hồ sơ / Khóa trẻ em</button>
   <button class="nav" id="exportNav"><span>⇩</span> Xuất M3U</button>
   <button class="nav" data-page="settings"><span>⚙</span> Cài đặt</button>
+  <button class="nav" id="backupNav" type="button"><span>⤓</span> Sao lưu / Khôi phục</button>
   <div class="sidebar-bottom"><div class="online-dot"></div><div><b id="appMode">Bản mở nhanh</b><small id="miniStatus">Sẵn sàng</small></div></div>
  </aside>
  <main class="main">
@@ -73,6 +74,14 @@
    <section id="page-profiles" class="page"><div class="section-heading"><div><h1>♙ Hồ sơ người dùng & kiểm soát trẻ em</h1><p>Yêu thích theo hồ sơ, khóa theo thư mục và mã PIN cục bộ.</p></div></div><div class="settings-grid"><article class="settings-card"><h2>Chuyển hồ sơ</h2><select id="profileChoice" class="modal-input"></select><button class="btn btn-primary" id="profileSwitch">Chuyển hồ sơ</button><h2>Tạo hồ sơ</h2><input id="profileName" class="modal-input" placeholder="Tên hồ sơ"/><label class="check-line"><input type="checkbox" id="profileChild"/> Hồ sơ trẻ em</label><button class="btn btn-subtle" id="profileCreate">Tạo hồ sơ</button></article><article class="settings-card"><h2>Khóa PIN và nhóm hạn chế</h2><label class="settings-label">PIN quản trị (4–8 chữ số)</label><input id="profilePin" type="password" inputmode="numeric" class="modal-input" placeholder="PIN mới"/><button class="btn btn-subtle" id="pinSave">Đặt / đổi PIN</button><div id="profileGroupLocks"></div><p class="hint">PIN tại thiết bị giúp hạn chế thao tác thông thường, không thay thế biện pháp kiểm soát truy cập của hệ điều hành.</p></article></div><p id="profileStatus" class="hint"></p></section>
    <section id="page-epg" class="page"><div class="section-heading"><div><h1>▤ Lịch phát sóng (EPG)</h1><p>Chương trình đang chiếu, sắp chiếu và lịch trong ngày từ nguồn XMLTV.</p></div><div class="heading-actions"><button class="btn btn-subtle" id="epgRefreshBtn">↻ Tải lại EPG</button><button class="btn btn-primary" id="epgSettingsBtn">⚙ Nguồn EPG</button></div></div><div class="filter-box epg-filter"><span>⌕</span><input type="search" id="epgSearch" placeholder="Tìm kênh trong lịch EPG..."/></div><div class="epg-advanced"><input id="epgGlobalSearch" placeholder="Tìm tên chương trình và đặt nhắc lịch…"/><button id="epgSearchGo" class="btn btn-subtle">Tìm chương trình</button><button id="epgManualMap" class="btn btn-subtle">Ghép EPG thủ công</button><label>Chỉnh giờ (+/− phút) <input id="epgOffset" type="number" value="0" min="-720" max="720" step="15"/></label></div><div id="epgSearchResults" class="epg-search-results"></div><div class="epg-summary" id="epgSummary">Chưa có dữ liệu lịch phát sóng.</div><div class="epg-guide" id="epgGuide"></div></section>
    <section id="page-settings" class="page"><div class="section-heading"><div><h1>⚙ Cài đặt Open IPTV Pro</h1><p>Màu sắc, bộ đệm truyền hình, nguồn EPG và kiểm tra cập nhật.</p></div></div><div class="settings-grid">
+    <article class="settings-card backup-settings-card" id="backupSettings">
+      <h2>⤓ Sao lưu &amp; Khôi phục dữ liệu</h2>
+      <p>Tạo một file .iptvbackup để chuyển playlist, kênh yêu thích, thư mục, hồ sơ, EPG và cài đặt giữa Windows/macOS. Chọn thêm ảnh Snapshot nếu muốn giữ ảnh chụp kênh.</p>
+      <label class="check-line" for="backupIncludeSnapshots"><input type="checkbox" id="backupIncludeSnapshots" checked/> Kèm ảnh Snapshot đã lưu trên máy</label>
+      <div class="backup-actions"><button id="backupExportBtn" class="btn btn-primary" type="button">⇩ Tạo file Backup</button><button id="backupImportBtn" class="btn btn-subtle" type="button">↶ Restore từ file</button></div>
+      <p id="backupStatus" role="status" aria-live="polite" class="backup-status">Chưa có thao tác sao lưu hoặc khôi phục.</p>
+      <small>Backup không mã hóa, có thể chứa URL có tài khoản/mật khẩu và thông tin hồ sơ. Hãy giữ file ở nơi an toàn. Restore sẽ yêu cầu xác nhận trước khi thay dữ liệu hiện tại. Không sao lưu bộ đệm Timeshift tạm thời hoặc chương trình đã cài.</small>
+    </article>
     <article class="settings-card language-card" id="languageSettings"><h2>🌐 Ngôn ngữ / Language</h2><p id="languageDescription">Chọn ngôn ngữ ứng dụng. Thay đổi có hiệu lực ngay, không cần khởi động lại.</p>
      <label class="settings-label" for="appLanguage">Ngôn ngữ giao diện</label>
      <select id="appLanguage" class="modal-input" aria-label="Ngôn ngữ giao diện">
@@ -170,5 +179,5 @@
 </div>
 <div id="channelPreview" class="channel-preview hidden"></div>
 <div class="toast-area" id="toastArea" aria-live="polite"></div>
-<script src="app-icons.js"></script><script src="../node_modules/hls.js/dist/hls.min.js"></script><script src="languages.bundle.js"></script><script src="i18n.js"></script><script src="core-browser.js"></script><script src="collector-core.js"></script><script src="advanced-core.js"></script><script src="doctor-v2-core.js"></script><script src="epg.js"></script><script src="favorites-core.js"></script><script src="source-edit.js"></script><script src="app.js"></script><script src="cast-ui.js"></script><script src="features.js"></script><script src="advanced.js"></script><script src="collector.js"></script><script src="doctor-v2.js"></script>
+<script src="app-icons.js"></script><script src="../node_modules/hls.js/dist/hls.min.js"></script><script src="languages.bundle.js"></script><script src="i18n.js"></script><script src="core-browser.js"></script><script src="collector-core.js"></script><script src="advanced-core.js"></script><script src="doctor-v2-core.js"></script><script src="epg.js"></script><script src="favorites-core.js"></script><script src="source-edit.js"></script><script src="app.js"></script><script src="cast-ui.js"></script><script src="features.js"></script><script src="advanced.js"></script><script src="collector.js"></script><script src="doctor-v2.js"></script><script src="backup-ui.js"></script>
 </body></html>

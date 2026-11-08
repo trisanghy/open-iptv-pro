@@ -39,7 +39,7 @@ function getCandidate(release,repo,platform,arch,version){
 }
 async function checkUpdate(repo,version,fetcher=fetch,platform=process.platform,arch=process.arch){
  const valid=validateRepo(repo),base=`https://api.github.com/repos/${valid}`;
- const options={headers:{Accept:'application/vnd.github+json','User-Agent':'Open-IPTV-Pro/4.22','X-GitHub-Api-Version':'2022-11-28'},signal:AbortSignal.timeout(15000)};
+ const options={headers:{Accept:'application/vnd.github+json','User-Agent':'Open-IPTV-Pro/4.22.2','X-GitHub-Api-Version':'2022-11-28'},signal:AbortSignal.timeout(15000)};
  const get=async url=>{
   try{return await fetcher(url,options)}
   catch(e){throw Error('Không kết nối được GitHub hoặc đã hết thời gian chờ: '+String(e.message||e).slice(0,150));}

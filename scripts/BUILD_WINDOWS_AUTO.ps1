@@ -1,4 +1,4 @@
-# Open IPTV Pro v4.21 Full Windows x64: local Node downloader and NSIS build.
+# Open IPTV Pro v4.22.2 Full Windows x64: local Node downloader and NSIS build.
 # No admin rights, no global installs. Node binary is verified with pinned SHA-256.
 $ErrorActionPreference = 'Stop'
 $root = (Resolve-Path (Join-Path (Split-Path -Parent $MyInvocation.MyCommand.Path) '..')).Path
@@ -12,6 +12,22 @@ $nodeDir = Join-Path $tools "node-v$version-$arch"
 $nodeExe = Join-Path $nodeDir 'node.exe'
 $npmCmd = Join-Path $nodeDir 'npm.cmd'
 $npxCmd = Join-Path $nodeDir 'npx.cmd'
+
+# A user-installed Node.js 22+ is preferred; do not download another copy when it works.
+$availableNode = Get-Command node.exe -ErrorAction SilentlyContinue
+$availableNpm = Get-Command npm.cmd -ErrorAction SilentlyContinue
+$availableNpx = Get-Command npx.cmd -ErrorAction SilentlyContinue
+if ($availableNode -and $availableNpm -and $availableNpx) {
+  try {
+    $systemMajor = [int]((& $availableNode.Source -p "process.versions.node.split('.')[0]").Trim())
+    if ($systemMajor -ge 22) {
+      $nodeExe = $availableNode.Source
+      $npmCmd = $availableNpm.Source
+      $npxCmd = $availableNpx.Source
+      Write-Host "Su dung Node.js co san tren Windows: $(& $nodeExe -v)"
+    }
+  } catch { Write-Host 'Khong the dung Node.js co san, se dung ban local da xac minh.' }
+}
 
 try {
   if (-not [Environment]::Is64BitOperatingSystem) { throw 'Chi ho tro Windows 64-bit.' }
@@ -53,7 +69,15 @@ try {
   & $npxCmd --no-install electron-builder --win --x64 --publish never
   if ($LASTEXITCODE -ne 0) { throw "Dong goi loi: $LASTEXITCODE" }
   $dist = Join-Path $root 'dist'
-  Write-Host "THANH CONG. File EXE o: $dist"
+  # Verify the actual files: successful process exit is not proof of a usable installer.
+  $appVersion = (Get-Content -Raw (Join-Path $root 'package.json') | ConvertFrom-Json).version
+  $setupFile = Join-Path $dist "Open-IPTV-Pro-Setup-$appVersion-x64.exe"
+  $portableFile = Join-Path $dist "Open-IPTV-Pro-$appVersion-x64.exe"
+  foreach ($item in @($setupFile, $portableFile)) {
+    if (-not (Test-Path -LiteralPath $item -PathType Leaf)) { throw "Khong tim thay EXE: $item" }
+    if ((Get-Item -LiteralPath $item).Length -lt 1000000) { throw "File EXE bat thuong, qua nho: $item" }
+  }
+  Write-Host "THANH CONG. Setup: $setupFile; Portable: $portableFile"
   Start-Process explorer.exe -ArgumentList "`"$dist`""
   exit 0
 } catch {

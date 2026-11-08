@@ -1,5 +1,5 @@
 #!/bin/bash
-# Open IPTV Pro 4.22 FULL: Tu tai Node.js vao thu muc rieng, KHONG cai vao macOS.
+# Open IPTV Pro 4.22.2 FULL: Tu tai Node.js vao thu muc rieng, KHONG cai vao macOS.
 set -Eeuo pipefail
 cd "$(dirname "$0")"
 PROJECT="$PWD"
@@ -21,6 +21,18 @@ esac
 ARCHIVE="node-v${NODE_VER}-${PLATFORM}.tar.gz"
 TOOLS="$PROJECT/.open-iptv-tools"
 LOCAL_NODE="$TOOLS/node-v${NODE_VER}-${PLATFORM}/bin"
+# Prefer a working Node.js 22+ already installed by the user (for example, via Homebrew).
+# Avoid repeated 50 MB downloads just to build a newer desktop release.
+if command -v node >/dev/null 2>&1 && command -v npm >/dev/null 2>&1; then
+  EXISTING_MAJOR=$(node -p "Number(process.versions.node.split('.')[0])" 2>/dev/null || echo 0)
+  if [[ "$EXISTING_MAJOR" =~ ^[0-9]+$ ]] && [ "$EXISTING_MAJOR" -ge 22 ]; then
+    EXISTING_BIN="$(dirname "$(command -v node)")"
+    if [ -x "$EXISTING_BIN/npm" ]; then
+      LOCAL_NODE="$EXISTING_BIN"
+      echo "Dang dung Node.js co san: $(node -v) ($LOCAL_NODE)"
+    fi
+  fi
+fi
 
 pause_at_end() {
   status=$?
@@ -36,9 +48,9 @@ pause_at_end() {
 trap pause_at_end EXIT
 
 printf '\n============================================\n'
-printf ' OPEN IPTV PRO 4.22 FULL - TAO DMG TU DONG\n'
+printf ' OPEN IPTV PRO 4.22.2 FULL - TAO DMG TU DONG\n'
 printf '============================================\n'
-printf 'Mac: %s | Node.js duoc luu rieng trong thu muc ung dung.\n' "$ARCH"
+printf 'Mac: %s | Node.js duoc su dung tu may neu phu hop, neu khong tu tai rieng.\n' "$ARCH"
 printf 'Khong yeu cau cai Node/Python/Qt/VLC thu cong.\n'
 
 if [ ! -x "$LOCAL_NODE/node" ] || [ ! -x "$LOCAL_NODE/npm" ]; then
@@ -82,5 +94,18 @@ printf '\n[4/4] Dang tao bo cai Mac (.dmg / .app) ...\n'
 if [ -z "${CSC_LINK:-}" ]; then export CSC_IDENTITY_AUTO_DISCOVERY=false; fi
 npx --no-install electron-builder --mac --"$BUILD_ARCH" --publish never
 
-printf '\nTHANH CONG! File DMG nam trong: %s/dist\n' "$PROJECT"
+# Do not report success unless both installer formats for this architecture exist.
+VERSION=$(node -p "require('./package.json').version")
+DMG="$PROJECT/dist/Open-IPTV-Pro-${VERSION}-mac-${BUILD_ARCH}.dmg"
+ZIP="$PROJECT/dist/Open-IPTV-Pro-${VERSION}-mac-${BUILD_ARCH}.zip"
+if [ ! -s "$DMG" ] || [ ! -s "$ZIP" ]; then
+  echo 'Electron Builder ket thuc nhung thieu bo cai DMG hoac ZIP dung kien truc.'
+  echo "Can kiem tra: $DMG va $ZIP"
+  exit 1
+fi
+printf '
+THANH CONG! DMG: %s
+ZIP: %s
+' "$DMG" "$ZIP"
+
 open "$PROJECT/dist"

@@ -23,8 +23,8 @@ test('Full build: after media headers, live response is not killed by initial ha
   const body=await reply.text();assert.match(body,/segment1/);assert.match(body,/segment5/);assert.match(body,/done/);
  }finally{await close(downstream);await close(upstream);}
 });
-test('v4.20 Full: FFmpeg packaged and full desktop capabilities retained',()=>{
- assert.equal(pkg.version,'4.22.0');
+test('v4.22.1 Full: FFmpeg packaged and full desktop capabilities retained',()=>{
+ assert.equal(pkg.version,'4.22.2');
  assert.equal(pkg.dependencies['ffmpeg-static'],'5.3.0');
  assert.ok(pkg.build.asarUnpack.includes('node_modules/ffmpeg-static/**'));
  assert.ok(pkg.build.files.includes('node_modules/**/*'));
