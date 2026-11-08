@@ -1,0 +1,5 @@
+Open-source IPTV player for Windows & macOS with 8 languages, M3U playlists, EPG, MultiView, snapshots, and stream health checks.
+
+Suggested GitHub topics: iptv, iptv-player, m3u, hls, xmltv, epg, electron, macos, windows, open-source, multilingual, ffmpeg
+
+See docs/GITHUB_DESCRIPTION_EN.md for a full English description and release notes.

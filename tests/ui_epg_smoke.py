@@ -12,12 +12,12 @@ with sync_playwright() as p:
  page=b.new_page(viewport={'width':1460,'height':930},accept_downloads=True)
  errors=[];page.on('pageerror',lambda e:errors.append(str(e)))
  html=(root/'renderer/index.html').read_text()
- html=html[:html.index('<script src=')]+'</body></html>'
+ html=html.replace('<script src="theme-boot.js"></script>', '')[:html.replace('<script src="theme-boot.js"></script>', '').index('<script src=')]+'</body></html>'
  html=re.sub(r'<meta http-equiv="Content-Security-Policy"[^>]*>','',html)
  page.set_content(html)
  page.add_style_tag(content=(root/'renderer/styles.css').read_text())
  page.evaluate('''() => {let data={};Object.defineProperty(window,'localStorage',{configurable:true,value:{getItem:k=>data[k]||null,setItem:(k,v)=>data[k]=String(v),removeItem:k=>delete data[k]}})}''')
- for filename in ['core-browser.js','epg.js','app.js','features.js']:
+ for filename in ['core-browser.js','epg.js','favorites-core.js','app.js','features.js']:
   page.add_script_tag(content=(root/'renderer'/filename).read_text())
  page.locator('.brand-icon img').evaluate('(el,v)=>el.src=v','data:image/png;base64,'+base64.b64encode((root/'assets/icon.png').read_bytes()).decode())
  page.locator('#fileInput').set_input_files({'name':'demo.m3u','mimeType':'audio/x-mpegurl','buffer':channels.encode()})

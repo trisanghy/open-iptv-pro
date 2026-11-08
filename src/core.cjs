@@ -12,7 +12,7 @@ function parseM3U(content, sourceId='import') {
     if(s.startsWith('#EXTINF:')) {
       const match=s.match(/,(.*)$/); const name=(match?match[1]:'').trim()||'Kênh không tên';
       const data=attrs(s.slice(0,s.indexOf(',')>=0?s.indexOf(','):s.length));
-      pending={name,group:data['group-title']||'Khác',logo:data['tvg-logo']||'',tvgId:data['tvg-id']||'',status:'unchecked',checkedAt:''};
+      pending={name,group:data['group-title']||'Khác',logo:data['tvg-logo']||'',tvgId:data['tvg-id']||'',catchup:data['catchup']||'',catchupSource:data['catchup-source']||'',catchupDays:data['catchup-days']||'',status:'unchecked',checkedAt:''};
     } else if(pending && s && !s.startsWith('#')) {
       try { const u=new URL(s); if(!['http:','https:','rtsp:','rtmp:','udp:'].includes(u.protocol)) {pending=null;continue;} } catch {pending=null;continue;}
       channels.push({...pending, url:s,sourceId,id:`${sourceId}|${channels.length}`}); pending=null;
@@ -36,7 +36,7 @@ function exportM3U(channels, time=new Date(), opts={}) {
    }
    const escapeAttr=t=>String(t||'').replace(/[\r\n"]/g,' ').trim();
    const name=String(ch.name||'Kênh').replace(/[\r\n]/g,' ');
-   out.push(`#EXTINF:-1 tvg-id="${escapeAttr(ch.tvgId)}" tvg-logo="${escapeAttr(ch.logo)}" group-title="${escapeAttr(group)}",${name}`);
+   out.push(`#EXTINF:-1 tvg-id="${escapeAttr(ch.tvgId)}" tvg-logo="${escapeAttr(ch.logo)}" catchup="${escapeAttr(ch.catchup)}" catchup-source="${escapeAttr(ch.catchupSource)}" catchup-days="${escapeAttr(ch.catchupDays)}" group-title="${escapeAttr(group)}",${name}`);
    out.push(ch.url);
  }
  return out.join('\n')+'\n';

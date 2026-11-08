@@ -2,6 +2,10 @@
 const {contextBridge,ipcRenderer}=require('electron');
 contextBridge.exposeInMainWorld('streamleaf',Object.freeze({
   capabilities:()=>ipcRenderer.invoke('app:capabilities'),
+  startTimeshift:url=>ipcRenderer.invoke('timeshift:start',url),
+  stopTimeshift:()=>ipcRenderer.invoke('timeshift:stop'),
+  timeshiftStatus:()=>ipcRenderer.invoke('timeshift:status'),
+  notifyReminder:(title,body)=>ipcRenderer.invoke('reminder:notify',title,body),
   fetchEPG:url=>ipcRenderer.invoke('epg:fetch',url),
   checkUpdate:repo=>ipcRenderer.invoke('update:check',repo),
   openRelease:repo=>ipcRenderer.invoke('update:openRelease',repo),
@@ -12,6 +16,6 @@ contextBridge.exposeInMainWorld('streamleaf',Object.freeze({
   check:url=>ipcRenderer.invoke('link:check',url),
   snapshot:(url,label)=>ipcRenderer.invoke('snapshot:make',url,label),
   export:(name,content)=>ipcRenderer.invoke('file:export',name,content),
-  publish:(config,content)=>ipcRenderer.invoke('github:publish',config,content),
+  listRepoPlaylists:url=>ipcRenderer.invoke('source:listRepo',url),
   vlcWebsite:()=>ipcRenderer.invoke('system:openVLC')
 }));

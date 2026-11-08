@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro",
-  "version": "4.1.0",
-  "description": "Open-source desktop IPTV player with XMLTV EPG, PiP, theme wheel, update checks, M3U folders, per-channel snapshots, HLS player and link checks",
+  "version": "4.15.0",
+  "description": "Open-source desktop IPTV player for Windows and macOS with eight interface languages, M3U playlists, EPG, MultiView, snapshots and stream diagnostics",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

@@ -1,5 +1,5 @@
 #!/bin/bash
-# Open IPTV Pro 3.1: Tu tai Node.js vao thu muc rieng, KHONG cai vao macOS.
+# Open IPTV Pro 4.15: Tu tai Node.js vao thu muc rieng, KHONG cai vao macOS.
 set -Eeuo pipefail
 cd "$(dirname "$0")"
 PROJECT="$PWD"
@@ -26,7 +26,7 @@ pause_at_end() {
   status=$?
   if [ "$status" -ne 0 ]; then
     printf '\nLOI: Khong tao duoc bo cai. Xem dong loi o phia tren.\n'
-    printf 'Van co the mo giao dien ngay bang MO_OPEN IPTV PRO_MAC.command.\n'
+    printf 'Van co the mo giao dien ngay bang README.md de xem cach chay du an.\n'
   fi
   if [ -t 0 ]; then
     printf '\nNhan Enter de dong cua so...'
@@ -36,7 +36,7 @@ pause_at_end() {
 trap pause_at_end EXIT
 
 printf '\n============================================\n'
-printf ' OPEN IPTV PRO IPTV 3.1 - TAO DMG TU DONG\n'
+printf ' OPEN IPTV PRO 4.15 - TAO DMG TU DONG\n'
 printf '============================================\n'
 printf 'Mac: %s | Node.js duoc luu rieng trong thu muc ung dung.\n' "$ARCH"
 printf 'Khong yeu cau cai Node/Python/Qt/VLC thu cong.\n'

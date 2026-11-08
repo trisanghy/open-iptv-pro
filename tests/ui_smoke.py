@@ -17,7 +17,7 @@ with sync_playwright() as p:
  page=b.new_page(viewport={'width':1440,'height':900},accept_downloads=True)
  errors=[];page.on('pageerror',lambda e:errors.append(str(e)))
  html=(root/'renderer/index.html').read_text()
- html=html[:html.index('<script src=')]+'</body></html>'
+ html=html.replace('<script src="theme-boot.js"></script>', '')[:html.replace('<script src="theme-boot.js"></script>', '').index('<script src=')]+'</body></html>'
  html=re.sub(r'<meta http-equiv="Content-Security-Policy"[^>]*>','',html)
  page.set_content(html)
  page.add_style_tag(content=(root/'renderer/styles.css').read_text())
@@ -27,6 +27,7 @@ with sync_playwright() as p:
    getItem:k=>data[k]||null,setItem:(k,v)=>data[k]=String(v),removeItem:k=>delete data[k]}});
  }''')
  page.add_script_tag(content=(root/'renderer/core-browser.js').read_text())
+ page.add_script_tag(content=(root/'renderer/favorites-core.js').read_text())
  page.add_script_tag(content=(root/'renderer/app.js').read_text())
  page.locator('#fileBtn').click()
  page.locator('#fileInput').set_input_files({'name':'demo.m3u','mimeType':'audio/x-mpegurl','buffer':m3u.encode()})

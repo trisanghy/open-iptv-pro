@@ -11,7 +11,7 @@ function validateGuideURL(raw){
 async function fetchGuide(raw,fetcher=fetch){
  const url=validateGuideURL(raw), controller=new AbortController(),timer=setTimeout(()=>controller.abort(),30000);
  try{
-   const response=await fetcher(url,{signal:controller.signal,headers:{'User-Agent':'Open-IPTV-Pro/4.1 (XMLTV client)','Accept':'application/xml,text/xml,application/gzip,*/*'}});
+   const response=await fetcher(url,{signal:controller.signal,headers:{'User-Agent':'Open-IPTV-Pro/4.15 (XMLTV client)','Accept':'application/xml,text/xml,application/gzip,*/*'}});
    if(!response.ok)throw Error('EPG HTTP '+response.status);
    let length=0;const chunks=[];
    for await(const chunk of response.body){length+=chunk.length;if(length>MAX_COMPRESSED)throw Error('EPG tải về quá lớn');chunks.push(Buffer.from(chunk));}
