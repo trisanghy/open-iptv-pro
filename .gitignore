@@ -27,3 +27,11 @@ settings.json
 **/IPTV_MAC_KIEM_TRA/
 # Non-sensitive demo fixtures with deliberately fake URLs only
 !examples/demo.m3u
+
+# Experiment Tauri / WebView
+webview-native/node_modules/
+webview-native/dist/
+webview-native/src-tauri/target/
+webview-native/src-tauri/binaries/*
+!webview-native/src-tauri/binaries/.gitkeep
+webview-native/ELECTRON_API_AUDIT.json

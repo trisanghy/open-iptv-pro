@@ -1,0 +1,1 @@
+# Full FFmpeg and FFprobe sidecars are injected by scripts/prepare-ffmpeg.mjs at build time.

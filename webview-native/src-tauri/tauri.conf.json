@@ -1,0 +1,51 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "Open IPTV Pro WebView Trial",
+  "version": "0.1.0",
+  "identifier": "com.openiptvpro.webviewtrial",
+  "build": {
+    "frontendDist": "../dist",
+    "devUrl": "http://localhost:1420",
+    "beforeDevCommand": "vite --port 1420",
+    "beforeBuildCommand": "npm run frontend:build"
+  },
+  "app": {
+    "windows": [
+      {
+        "title": "Open IPTV Pro – WebView Trial",
+        "width": 1160,
+        "height": 780,
+        "minWidth": 840,
+        "minHeight": 580
+      }
+    ],
+    "security": {
+      "csp": "default-src 'self' tauri: asset: http: https:; connect-src 'self' ipc: http: https: ws: wss:; media-src 'self' http: https: blob:; img-src 'self' data: blob: http: https:; style-src 'self' 'unsafe-inline'; script-src 'self'"
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": [
+      "all"
+    ],
+    "externalBin": [
+      "binaries/ffmpeg",
+      "binaries/ffprobe"
+    ],
+    "windows": {
+      "webviewInstallMode": {
+        "type": "downloadBootstrapper"
+      }
+    },
+    "macOS": {
+      "minimumSystemVersion": "11.0"
+    },
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/256x256.png",
+      "icons/icon.ico",
+      "icons/icon.icns"
+    ]
+  }
+}

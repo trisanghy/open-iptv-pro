@@ -1,0 +1,51 @@
+name: WebView trial build with FFmpeg
+on:
+  workflow_dispatch:
+  push:
+    branches: ["experiment/native-webview-ffmpeg"]
+    paths: ["webview-native/**", ".github/workflows/webview-trial-build.yml"]
+permissions:
+  contents: read
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-latest
+            tag: windows-x64
+          - os: macos-latest
+            tag: macos-arm64
+          - os: macos-15-intel
+            tag: macos-intel
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        working-directory: webview-native
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: swatinem/rust-cache@v2
+        with:
+          workspaces: webview-native/src-tauri
+      - name: Install dependencies
+        run: npm install
+      - name: Prepare full FFmpeg and FFprobe sidecars
+        run: npm run prepare:ffmpeg
+      - name: Audit Electron migrations
+        run: npm run audit:electron
+      - name: Build installer (trial only)
+        run: npm run build:installer
+      - name: Upload installer artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: open-iptv-webview-${{ matrix.tag }}
+          path: |
+            webview-native/src-tauri/target/release/bundle/**/*.exe
+            webview-native/src-tauri/target/release/bundle/**/*.msi
+            webview-native/src-tauri/target/release/bundle/**/*.dmg
+            webview-native/src-tauri/target/release/bundle/**/*.app/**
+          if-no-files-found: error
