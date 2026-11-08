@@ -1,5 +1,5 @@
 #!/bin/bash
-# Open IPTV Pro 4.15: Tu tai Node.js vao thu muc rieng, KHONG cai vao macOS.
+# Open IPTV Pro 4.16: Tu tai Node.js vao thu muc rieng, KHONG cai vao macOS.
 set -Eeuo pipefail
 cd "$(dirname "$0")"
 PROJECT="$PWD"
@@ -36,7 +36,7 @@ pause_at_end() {
 trap pause_at_end EXIT
 
 printf '\n============================================\n'
-printf ' OPEN IPTV PRO 4.15 - TAO DMG TU DONG\n'
+printf ' OPEN IPTV PRO 4.16 - TAO DMG TU DONG\n'
 printf '============================================\n'
 printf 'Mac: %s | Node.js duoc luu rieng trong thu muc ung dung.\n' "$ARCH"
 printf 'Khong yeu cau cai Node/Python/Qt/VLC thu cong.\n'
@@ -79,8 +79,8 @@ printf '\n[3/4] Kiem tra ma nguon...\n'
 npm test
 
 printf '\n[4/4] Dang tao bo cai Mac (.dmg / .app) ...\n'
-export CSC_IDENTITY_AUTO_DISCOVERY=false
-npx --no-install electron-builder --mac dmg --"$BUILD_ARCH"
+if [ -z "${CSC_LINK:-}" ]; then export CSC_IDENTITY_AUTO_DISCOVERY=false; fi
+npx --no-install electron-builder --mac --"$BUILD_ARCH" --publish never
 
 printf '\nTHANH CONG! File DMG nam trong: %s/dist\n' "$PROJECT"
 open "$PROJECT/dist"

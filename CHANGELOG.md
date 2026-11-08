@@ -1,5 +1,13 @@
 # Changelog
 
+## v4.16.0 — Thông báo, tải và cài bản cập nhật
+- Kiểm tra GitHub Releases theo repository chính thức, tự thông báo khi mở ứng dụng nếu được bật.
+- Tải bộ cài mới kèm tiến độ, xác minh SHA256 và chỉ cài khi người dùng xác nhận.
+- Bản có chữ ký số và metadata hợp lệ dùng electron-updater; bản chưa ký hoặc portable mở bộ cài thủ công.
+- Thêm GitHub Actions phát hành bộ cài, ZIP cập nhật Mac, latest.yml/latest-mac.yml và SHA256SUMS.txt.
+- Không sửa Android/iOS, playlist, dữ liệu Snapshot hoặc Yêu thích.
+
+
 ## v4.14.0 — Flat icon + Android/iOS source
 - Thay logo app desktop thành tam giác Play đặc, gradient xanh ngọc–xanh dương–tím trên nền trắng, không có chữ, không Liquid Glass.
 - Bổ sung source app Android/iOS Capacitor 8 trong `mobile/`, giao diện cảm ứng riêng cùng parser M3U/EPG với desktop.

@@ -3,9 +3,12 @@
 ## CI builds
 
 - GitHub Actions workflows under `.github/workflows/`
-- `workflow_dispatch` creates separate unsigned installers on Intel Mac, Apple Silicon and Windows 64-bit runners.
+- `workflow_dispatch` creates separate development installers on Intel Mac, Apple Silicon and Windows 64-bit runners.
+- Pushing a `v*` tag triggers `release-desktop.yml`: tests, macOS universal + Windows x64 builds, GitHub Release assets, update manifests and SHA256SUMS.txt.
 - `npm test` runs before building.
-- CI uploads the outputs as **artifacts**; it does **not automatically publish a public release** or push to Gist.
+- Development builds are uploaded as **artifacts**. The release workflow publishes binaries on tag pushes. No push to Gist.
+- **Automatic installation requires signed packages.** Configure `MAC_CSC_LINK`, `MAC_CSC_KEY_PASSWORD`, `APPLE_ID`, `APPLE_APP_SPECIFIC_PASSWORD`, `APPLE_TEAM_ID`, and Windows `WIN_CSC_LINK`, `WIN_CSC_KEY_PASSWORD` secrets where appropriate.
+- For update compatibility, the macOS release needs both `.dmg` and `.zip` plus `latest-mac.yml`; Windows requires NSIS Setup plus `latest.yml`. Never publish secrets or private keys.
 
 ## Runtime / Dependencies
 

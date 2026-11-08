@@ -1,3 +1,12 @@
+# v4.16 desktop auto-update – verification
+
+- `npm test`: **51/51 pass** (42 existing checks + 9 new updater tests).
+- `python tests/ui_auto_update_v416.py`: pass (official repository, check new release, download progress, install confirmation, manual installer fallback, no Release, source-only release).
+- `python tests/ui_language_v415.py`: pass for all 8 interface languages.
+- Node syntax: `src/main.cjs`, `src/preload.cjs`, `src/update-manager.cjs`, `renderer/features.js` checked.
+- GitHub Actions YAML parsed; **no GitHub publication performed here**.
+- **Not tested:** real signed/notarized DMG, Windows Setup, automatic system-level installation on Mac/Windows or the actual GitHub release pipeline. These require OS-specific build machines and release signing credentials.
+
 # Open IPTV Pro v4.13 — Kiểm thử sửa Yêu thích và icon
 
 - **42/42 bài kiểm thử Node.js đạt.**

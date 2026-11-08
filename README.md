@@ -2,39 +2,59 @@
 
 ## 🇻🇳 Tiếng Việt
 
-**Open IPTV Pro** là phần mềm xem và quản lý IPTV mã nguồn mở dành cho **Windows và macOS**, hỗ trợ 8 ngôn ngữ, danh sách M3U, lịch phát sóng XMLTV EPG, MultiView 4 kênh, Snapshot và kiểm tra/sửa luồng nhiều vòng.
+**Open IPTV Pro** là phần mềm xem và quản lý IPTV mã nguồn mở dành cho **Windows và macOS**. Ứng dụng hỗ trợ 8 ngôn ngữ, danh sách M3U, lịch phát sóng EPG, MultiView 4 kênh, ảnh xem trước, kiểm tra nhiều vòng và sửa link dự phòng.
 
-### Tính năng
+![Giao diện Open IPTV Pro](docs/images/interface-v4-1.png)
 
-- **Nguồn M3U:** nhập file hoặc URL, quản lý nhiều nguồn, gộp kênh trùng và link dự phòng.
-- **Phát IPTV:** danh sách kênh, thư mục, Yêu thích đồng bộ, xem trước và PiP khi hỗ trợ.
-- **EPG & MultiView:** lịch phát sóng, tìm kiếm chương trình, nhắc lịch, xem 4 kênh cùng lúc.
-- **Snapshot & kiểm tra link:** chụp ảnh hàng loạt, phân loại Sống / Die / Chưa rõ; tối đa 32 tác vụ kiểm tra và 32 tác vụ chụp đồng thời.
-- **Timeshift:** bộ đệm 5 phút kể từ khi bật ghi nếu nguồn hỗ trợ.
-- **Tùy chỉnh:** Sáng/Tối/Tự động, màu giao diện, hồ sơ, PIN cơ bản.
+### Tính năng chính
 
-### Ngôn ngữ
+- **Nguồn IPTV:** nhập file hoặc URL M3U, quản lý nhiều nguồn, thu thập M3U công khai, gộp kênh trùng và giữ link dự phòng.
+- **Xem truyền hình:** tìm kiếm, thư mục, kéo thả kênh, đồng bộ Yêu thích giữa các màn hình, chế độ cửa sổ nổi PiP khi được hỗ trợ.
+- **EPG:** lịch phát sóng XMLTV, ghép kênh, tìm chương trình và nhắc lịch khi ứng dụng đang chạy.
+- **MultiView:** xem 4 kênh cùng lúc; rê chuột vào ô nào thì ô đó phát tiếng.
+- **Snapshot:** chụp và hiển thị ảnh theo kênh, có thể chạy nhiều tác vụ cùng lúc bằng FFmpeg.
+- **Kiểm tra & sửa link:** phân loại Sống / Die / Chưa rõ, kiểm tra nhiều vòng, tự dùng link dự phòng đã xác minh. Hỗ trợ tối đa 32 tác vụ kiểm tra và 32 tác vụ chụp ảnh đồng thời.
+- **Timeshift:** lưu bộ đệm 5 phút kể từ khi bật ghi (không thể tua về trước thời điểm bắt đầu lưu nếu nhà cung cấp không hỗ trợ).
+- **Cá nhân hóa:** giao diện Sáng / Tối / Tự động, bánh xe chọn màu, hồ sơ riêng và khóa PIN cơ bản.
 
-Vào **Cài đặt → Ngôn ngữ** để chọn Tiếng Việt, English, Español, Português (Brasil), 简体中文, ไทย, ລາວ hoặc ភាសាខ្មែរ. Tên kênh và dữ liệu EPG từ nguồn không tự dịch.
+### Cập nhật phiên bản tự động (v4.16)
 
-### Cài đặt và build
+Vào **Cài đặt → Cập nhật phiên bản** để kiểm tra GitHub Releases, tải phiên bản mới có tiến độ và xác nhận cài đặt. Mặc định bật **Tự kiểm tra khi mở ứng dụng** và **Tự tải bản mới**, có thể tắt riêng. Nếu bản cài chưa ký hoặc là Portable, app tải bộ cài có checksum SHA256 rồi yêu cầu mở thủ công; không tự thực thi file tải về. Nếu chỉ có mã nguồn hoặc chưa có Release, app hiển thị hướng dẫn rõ ràng.
 
-- Trên Mac dùng `BUILD_MAC.command`; trên Windows dùng `BUILD_WINDOWS.bat`.
-- Cần Node.js 22+ và npm để tạo bộ cài. Các bản build chưa ký có thể bị Gatekeeper/SmartScreen chặn.
-- Bản 4.15 chỉ dành cho Windows/macOS; không cập nhật Android/iOS.
+> **Lần nâng cấp đầu tiên:** v4.15 chưa có trình cập nhật tự tải/cài nên phải **cài v4.16 thủ công một lần**. Để bản Mac tự cài cập nhật về sau, cần ký bằng Apple Developer ID và notarize; bản Windows nên được ký. Xem [Hướng dẫn cập nhật và phát hành](docs/AUTO_UPDATE_VI.md).
 
-**Lưu ý:** Không kèm kênh truyền hình hoặc tài khoản thuê bao. Chỉ sử dụng luồng có quyền truy cập. Giấy phép MIT chỉ áp dụng cho mã nguồn phần mềm; dữ liệu truyền hình và thư viện bên thứ ba có giấy phép riêng.
+### 8 ngôn ngữ giao diện
+
+Vào **Cài đặt → Ngôn ngữ** để chọn: Tiếng Việt, English, Español, Português (Brasil), 简体中文, ไทย, ລາວ hoặc ភាសាខ្មែរ. Thiết lập được lưu sau khi đóng ứng dụng. Tên kênh, tên nhóm M3U và dữ liệu EPG không bị tự động dịch. Một số thông báo kỹ thuật chuyên sâu có thể chưa được dịch hết.
+
+### Sử dụng và cài đặt
+
+1. Mở ứng dụng và chọn **Mở file M3U** hoặc **Thêm URL**.
+2. Chọn kênh để phát; có thể đánh dấu Yêu thích và sắp xếp theo thư mục.
+3. Vào **Quản lý nguồn** để thu thập, gộp, kiểm tra và sửa link.
+4. Vào **Cài đặt** để chọn ngôn ngữ, màu giao diện, số luồng kiểm tra và Snapshot.
+
+**Tạo bộ cài từ mã nguồn:** cần Node.js 22+, npm và Internet cho lần cài gói đầu tiên. Trên Mac chạy `BUILD_MAC.command` (hoặc `npm run dist:mac:arm64` / `npm run dist:mac:x64`); trên Windows chạy `BUILD_WINDOWS.bat` (hoặc `npm run dist:win`). File build nằm trong `dist/`. Bộ cài chưa ký có thể gặp cảnh báo bảo mật; cần ký và notarize trước khi phát hành chính thức.
+
+**Lưu ý pháp lý và quyền riêng tư:** phần mềm không cung cấp kênh trả phí, tài khoản thuê bao hay quyền phát lại nội dung. Chỉ sử dụng luồng bạn có quyền truy cập; không đăng playlist riêng, thông tin đăng nhập hoặc token lên GitHub public. Giấy phép MIT áp dụng cho mã nguồn của ứng dụng, còn FFmpeg, Electron, hls.js và dữ liệu EPG có điều khoản riêng tại [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+
+Bản **v4.16** chỉ cập nhật phần mềm **Windows/macOS**, không cập nhật Android/iOS. Có thể xem hướng dẫn chi tiết tại [Hướng dẫn tiếng Việt](docs/README_VI.md), [Hướng dẫn build](docs/BUILD.md) và [MIT License](LICENSE).
 
 ---
 
 ## 🇬🇧 English
 
-
 **Open-source IPTV desktop player for macOS and Windows, featuring an 8-language interface, M3U playlists, XMLTV program guides, four-channel MultiView, snapshots, and multi-pass stream health checks.**
 
 ![Open IPTV Pro desktop interface](docs/images/interface-v4-1.png)
 
-> **v4.15.0 · Desktop only.** Android and iOS source code are intentionally **not** included or updated in this release. The project is licensed under the MIT License; bundled dependencies have their own licenses (see [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)). This repository does **not** include commercial television streams, pirated playlists, or viewing rights.
+> **v4.16.0 · Desktop only.** Android and iOS source code are intentionally **not** included or updated in this release. The project is licensed under the MIT License; bundled dependencies have their own licenses (see [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)). This repository does **not** include commercial television streams, pirated playlists, or viewing rights.
+
+## In-app updates (v4.16)
+
+**Settings → Software Updates** checks the official GitHub Releases repository, reports available versions, downloads with progress and SHA256 validation, and automatically downloads an available verified update (configurable) and asks permission before installing/restarting. Signed installed desktop builds can update in-app when GitHub Releases includes proper metadata and installers. Unsigned/portable builds download a verified installer for **manual** installation. A source-code-only Release cannot be installed. See [Update instructions (Vietnamese)](docs/AUTO_UPDATE_VI.md).
+
+**Migration:** users of v4.15 must install v4.16 manually once, because the old version does not contain the new updater. macOS automatic installation requires Developer ID signing and notarization; Windows signing is recommended.
 
 ## Languages
 

@@ -50,7 +50,7 @@ try {
 
   Write-Host '[4/4] Tao EXE Setup & portable...'
   $env:CSC_IDENTITY_AUTO_DISCOVERY = 'false'
-  & $npxCmd --no-install electron-builder --win nsis portable --x64
+  & $npxCmd --no-install electron-builder --win nsis portable --x64 --publish never
   if ($LASTEXITCODE -ne 0) { throw "Dong goi loi: $LASTEXITCODE" }
   $dist = Join-Path $root 'dist'
   Write-Host "THANH CONG. File EXE o: $dist"

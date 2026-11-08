@@ -24,5 +24,8 @@ test('compare update versions and validate repository',()=>{
 test('GitHub releases: newer version or missing releases',async()=>{
  const good=await checkUpdate('owner/open-iptv-pro','4.1.0',async()=>({ok:true,json:async()=>({tag_name:'v4.3.0',published_at:'2026-11-08T00:00:00Z'})}));
  assert.equal(good.newer,true);assert.equal(good.latest,'v4.3.0');
- await assert.rejects(()=>checkUpdate('owner/open-iptv-pro','4.1.0',async()=>({ok:false,status:404})),/Releases/);
+ const noRelease=await checkUpdate('owner/open-iptv-pro','4.15.0',async(url)=>url.endsWith('/releases/latest')?{ok:false,status:404}:{ok:true,status:200});
+ assert.equal(noRelease.noRelease,true);
+ assert.equal(noRelease.newer,false);
+ await assert.rejects(()=>checkUpdate('owner/missing','4.15.0',async()=>({ok:false,status:404})),/không tồn tại/);
 });

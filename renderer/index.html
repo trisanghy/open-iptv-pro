@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="vi"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
 <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: blob:; script-src 'self' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; img-src * data: blob: file:; connect-src * data: blob:; media-src * data: blob:; worker-src 'self' blob:;"/>
-<title>Open IPTV Pro 4.15</title><script src="theme-boot.js"></script><link rel="stylesheet" href="styles.css"/></head>
+<title>Open IPTV Pro 4.16</title><script src="theme-boot.js"></script><link rel="stylesheet" href="styles.css"/></head>
 <body>
 <div class="app-shell" id="appShell">
  <aside class="sidebar">
-  <div class="brand"><div class="brand-icon"><img src="../assets/icon.png" alt="Open IPTV Pro"/></div><div><b>Open IPTV Pro</b><small>OPEN SOURCE <span class="version">4.15</span></small></div></div>
+  <div class="brand"><div class="brand-icon"><img src="../assets/icon.png" alt="Open IPTV Pro"/></div><div><b>Open IPTV Pro</b><small>OPEN SOURCE <span class="version">4.16</span></small></div></div>
   <div class="aside-caption">THƯ VIỆN</div>
   <button class="nav active" data-page="tv"><span>▣</span> Xem truyền hình <small id="navCount">0</small></button>
   <button class="nav" data-page="fav"><span>★</span> Kênh yêu thích <small id="favCount">0</small></button>
@@ -76,7 +76,21 @@
     <article class="settings-card" id="checkPerformanceSettings"><h2>✓ Số luồng kiểm tra kênh</h2><p>Kiểm tra nhiều URL đồng thời; mỗi URL vẫn qua các vòng xác minh riêng để hạn chế báo Die nhầm.</p><label class="settings-label" for="checkWorkersSetting">Kiểm tra đồng thời (1–32)</label><select id="checkWorkersSetting" class="snapshot-worker-select"><option value="1">1 · Tuần tự</option><option value="2">2 · Nhẹ</option><option value="3">3 · luồng song song</option><option value="4">4 · Cân bằng (mặc định)</option><option value="5">5 · luồng song song</option><option value="6">6 · luồng song song</option><option value="7">7 · luồng song song</option><option value="8">8 · Nhanh</option><option value="9">9 · luồng song song</option><option value="10">10 · luồng song song</option><option value="11">11 · luồng song song</option><option value="12">12 · Rất cao</option><option value="13">13 · luồng song song</option><option value="14">14 · luồng song song</option><option value="15">15 · luồng song song</option><option value="16">16 · Cao</option><option value="17">17 · luồng song song</option><option value="18">18 · luồng song song</option><option value="19">19 · luồng song song</option><option value="20">20 · luồng song song</option><option value="21">21 · luồng song song</option><option value="22">22 · luồng song song</option><option value="23">23 · luồng song song</option><option value="24">24 · Rất cao</option><option value="25">25 · luồng song song</option><option value="26">26 · luồng song song</option><option value="27">27 · luồng song song</option><option value="28">28 · luồng song song</option><option value="29">29 · luồng song song</option><option value="30">30 · luồng song song</option><option value="31">31 · luồng song song</option><option value="32">32 · Tối đa</option></select><small>Lưu tự động. Thay đổi có hiệu lực ở lần kiểm tra tiếp theo; có thể kiểm tra và chụp Snapshot cùng lúc.</small></article>
     <article class="settings-card" id="defaultBufferSettings"><h2>⏪ Timeshift mặc định</h2><label class="check-line buffer-default-line" for="autoTimeshiftSetting"><input type="checkbox" id="autoTimeshiftSetting"/> Tự bật bộ đệm tua lại 5 phút khi mở kênh</label><p>Bộ đệm cục bộ bắt đầu tích lũy từ lúc xem kênh; chưa có sẵn 5 phút để tua ngay. Chỉ hoạt động trong ứng dụng Mac/Windows có FFmpeg, nguồn hỗ trợ và đủ dung lượng ổ đĩa.</p><small id="autoTimeshiftState" aria-live="polite">Mặc định: tắt</small></article>
     <article class="settings-card"><h2>▤ Nguồn lịch EPG</h2><p>Các địa chỉ XMLTV công khai, tải theo yêu cầu. EPG có thể thiếu một số kênh.</p><div id="epgSources" class="epg-sources"></div><label class="settings-label" for="customEPG">URL XMLTV / .xml.gz mới</label><div class="settings-inline"><input id="customEPG" placeholder="https://example.org/guide.xml.gz"/><button class="btn btn-subtle" id="epgAddSourceBtn">＋ Thêm</button></div><button class="btn btn-primary" id="epgLoadBtn">↻ Cập nhật EPG ngay</button><small id="epgUpdatedLabel">Chưa tải EPG</small></article>
-    <article class="settings-card"><h2>⇧ Kiểm tra cập nhật</h2><p>Kiểm tra GitHub Releases; chỉ mở trang tải, không tự thay file hoặc tự cập nhật.</p><label class="settings-label" for="releaseRepo">Repository public (chủ/tên repo)</label><input id="releaseRepo" placeholder="your-github/open-iptv-pro"/><button class="btn btn-primary" id="updateCheckBtn">Kiểm tra phiên bản mới</button><div id="updateResult" class="update-result">Phiên bản hiện tại: v4.15.0</div></article>
+    <article class="settings-card update-settings"><h2>⇧ Cập nhật phiên bản</h2>
+      <p>Kiểm tra bản phát hành chính thức trên GitHub. Khi có bản mới, tải về có tiến độ và xác nhận trước khi cài đặt. Bản chưa ký sẽ dùng bộ cài thủ công an toàn.</p>
+      <label class="settings-label" for="releaseRepo">Repository phát hành chính thức</label><input id="releaseRepo" value="trisanghy/open-iptv-pro" readonly aria-readonly="true"/>
+      <label class="settings-label update-auto-check"><input id="autoCheckUpdates" type="checkbox" checked/> Tự kiểm tra khi mở ứng dụng và thông báo khi có bản mới</label>
+      <label class="settings-label update-auto-check"><input id="autoDownloadUpdates" type="checkbox" checked/> Tự tải bản cập nhật khi có phiên bản mới (chỉ cài đặt sau khi xác nhận)</label>
+      <div class="update-actions">
+       <button class="btn btn-primary" id="updateCheckBtn" type="button">Kiểm tra phiên bản mới</button>
+       <button class="btn btn-primary" id="updateDownloadBtn" type="button" hidden>Tải phiên bản mới</button>
+       <button class="btn btn-primary" id="updateInstallBtn" type="button" hidden>Cài đặt và khởi động lại</button>
+       <button class="btn btn-subtle" id="updateManualBtn" type="button" hidden>Mở bộ cài đã tải</button>
+       <button class="btn btn-subtle" id="updateReleaseBtn" type="button">Xem GitHub Releases</button>
+      </div>
+      <div id="updateProgressBox" class="update-progress" hidden><progress id="updateProgressBar" max="100" value="0"></progress><small id="updateProgressLabel">Chưa tải</small></div>
+      <div id="updateResult" class="update-result" role="status" aria-live="polite">Phiên bản hiện tại: v4.16.0</div>
+     </article>
    </div></section>
    <section id="page-sources" class="page"><div class="section-heading"><div><h1>Quản lý nguồn IPTV</h1><p>Quản lý nguồn, tự thu thập, gộp kênh, kiểm tra/sửa link và xuất danh sách tại một nơi.</p></div><div class="heading-actions"><button class="btn btn-subtle" id="sourcesFileBtn">＋ File M3U</button><button class="btn btn-primary" id="sourcesUrlBtn">↗ URL playlist</button></div></div><div class="sources-hub-nav" aria-label="Điều hướng công cụ nguồn">
     <button type="button" data-source-jump="sourcesList">Nguồn hiện có</button>

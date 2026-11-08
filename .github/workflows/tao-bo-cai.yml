@@ -1,8 +1,6 @@
 name: Build Open IPTV Pro (Windows + macOS)
 on:
   workflow_dispatch:
-  push:
-    tags: ['v*']
 permissions:
   contents: read
 jobs:

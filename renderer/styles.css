@@ -355,3 +355,12 @@ html[data-theme="light"] .source-check-workers select{background:#fff;color:#223
 .language-card select{width:100%;max-width:420px;margin-top:8px;font-size:15px;min-height:44px}
 .language-card small{display:block;margin-top:12px;color:var(--muted,#8fa3b4)}
 .language-card{border-color:color-mix(in srgb,var(--accent) 30%,var(--line,#253e4e))}
+
+/* v4.16 - update controls */
+.update-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px;margin-bottom:12px}
+.update-actions button[hidden],.update-progress[hidden]{display:none!important}
+.update-auto-check{display:flex;align-items:center;gap:10px;margin-top:15px}
+.update-auto-check input{accent-color:var(--accent);width:17px;height:17px}
+.update-progress{margin:12px 0;display:grid;gap:5px}
+.update-progress progress{width:100%;height:13px;accent-color:var(--accent)}
+.update-progress small{color:var(--muted, #8998a5)}

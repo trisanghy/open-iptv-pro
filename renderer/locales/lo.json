@@ -240,5 +240,16 @@
   "Đang kiểm tra GitHub Releases...": "ກຳລັງກວດ GitHub Releases...",
   "Chưa bật nguồn EPG nào": "ບໍ່ມີແຫຼ່ງ EPG ທີ່ເປີດ",
   "Đang tải XMLTV...": "ກຳລັງໂຫລດ XMLTV...",
-  "Đã hoàn tất kiểm tra EPG": "ກວດ EPG ສຳເລັດ"
+  "Đã hoàn tất kiểm tra EPG": "ກວດ EPG ສຳເລັດ",
+  "Cập nhật phiên bản": "ອັບເດດຊອບແວ",
+  "Repository phát hành chính thức": "ຄັງເຜີຍແຜ່ທາງການ",
+  "Tự kiểm tra khi mở ứng dụng và thông báo khi có bản mới": "ກວດສອບອັບເດດເມື່ອເປີດແອັບ ແລະ ແຈ້ງເຕືອນ",
+  "Tải phiên bản mới": "ດາວໂຫຼດເວີຊັນໃໝ່",
+  "Tải và chuẩn bị cài đặt": "ດາວໂຫຼດ ແລະ ກຽມຕິດຕັ້ງ",
+  "Tải bản cài đã xác minh": "ດາວໂຫຼດຊຸດຕິດຕັ້ງທີ່ກວດສອບແລ້ວ",
+  "Cài đặt và khởi động lại": "ຕິດຕັ້ງ ແລະ ເປີດໃໝ່",
+  "Mở bộ cài đã tải": "ເປີດຊຸດຕິດຕັ້ງທີ່ດາວໂຫຼດ",
+  "Xem GitHub Releases": "ເບິ່ງ GitHub Releases",
+  "Chưa tải": "ຍັງບໍ່ໄດ້ດາວໂຫຼດ",
+  "Tự tải bản cập nhật khi có phiên bản mới (chỉ cài đặt sau khi xác nhận)": "ດາວໂຫຼດສະບັບໃໝ່ອັດຕະໂນມັດ (ຕິດຕັ້ງຫຼັງຢືນຢັນ)"
 }

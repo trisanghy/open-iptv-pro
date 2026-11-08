@@ -240,5 +240,16 @@
   "Đang kiểm tra GitHub Releases...": "正在检查 GitHub Releases...",
   "Chưa bật nguồn EPG nào": "未启用 EPG 来源",
   "Đang tải XMLTV...": "正在下载 XMLTV...",
-  "Đã hoàn tất kiểm tra EPG": "EPG 检查完成"
+  "Đã hoàn tất kiểm tra EPG": "EPG 检查完成",
+  "Cập nhật phiên bản": "软件更新",
+  "Repository phát hành chính thức": "官方发布仓库",
+  "Tự kiểm tra khi mở ứng dụng và thông báo khi có bản mới": "启动时自动检查并通知更新",
+  "Tải phiên bản mới": "下载新版本",
+  "Tải và chuẩn bị cài đặt": "下载并准备安装",
+  "Tải bản cài đã xác minh": "下载已验证的安装包",
+  "Cài đặt và khởi động lại": "安装并重启",
+  "Mở bộ cài đã tải": "打开已下载的安装包",
+  "Xem GitHub Releases": "查看 GitHub 发行版",
+  "Chưa tải": "尚未下载",
+  "Tự tải bản cập nhật khi có phiên bản mới (chỉ cài đặt sau khi xác nhận)": "发现新版本时自动下载（确认后才安装）"
 }

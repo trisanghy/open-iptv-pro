@@ -240,5 +240,16 @@
   "Đang kiểm tra GitHub Releases...": "Buscando versiones en GitHub...",
   "Chưa bật nguồn EPG nào": "Ninguna fuente EPG activada",
   "Đang tải XMLTV...": "Descargando XMLTV...",
-  "Đã hoàn tất kiểm tra EPG": "Comprobación EPG completa"
+  "Đã hoàn tất kiểm tra EPG": "Comprobación EPG completa",
+  "Cập nhật phiên bản": "Actualizaciones",
+  "Repository phát hành chính thức": "Repositorio oficial",
+  "Tự kiểm tra khi mở ứng dụng và thông báo khi có bản mới": "Buscar actualizaciones al iniciar y notificar",
+  "Tải phiên bản mới": "Descargar versión nueva",
+  "Tải và chuẩn bị cài đặt": "Descargar y preparar instalación",
+  "Tải bản cài đã xác minh": "Descargar instalador verificado",
+  "Cài đặt và khởi động lại": "Instalar y reiniciar",
+  "Mở bộ cài đã tải": "Abrir instalador descargado",
+  "Xem GitHub Releases": "Ver versiones en GitHub",
+  "Chưa tải": "Sin descargar",
+  "Tự tải bản cập nhật khi có phiên bản mới (chỉ cài đặt sau khi xác nhận)": "Descargar nuevas versiones automáticamente (instalar solo tras confirmar)"
 }

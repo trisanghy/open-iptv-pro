@@ -240,5 +240,17 @@
   "Đang kiểm tra GitHub Releases...": "Checking GitHub Releases...",
   "Chưa bật nguồn EPG nào": "No EPG Source Enabled",
   "Đang tải XMLTV...": "Downloading XMLTV...",
-  "Đã hoàn tất kiểm tra EPG": "EPG Check Complete"
+  "Đã hoàn tất kiểm tra EPG": "EPG Check Complete",
+  "Cập nhật phiên bản": "Software Updates",
+  "Repository phát hành chính thức": "Official release repository",
+  "Tự kiểm tra khi mở ứng dụng và thông báo khi có bản mới": "Check for updates on startup and notify me",
+  "Tải phiên bản mới": "Download new version",
+  "Tải và chuẩn bị cài đặt": "Download and prepare update",
+  "Tải bản cài đã xác minh": "Download verified installer",
+  "Cài đặt và khởi động lại": "Install and restart",
+  "Mở bộ cài đã tải": "Open downloaded installer",
+  "Xem GitHub Releases": "View GitHub Releases",
+  "Chưa tải": "Not downloaded",
+  "Kiểm tra bản phát hành chính thức trên GitHub. Khi có bản mới, tải về có tiến độ và xác nhận trước khi cài đặt. Bản chưa ký sẽ dùng bộ cài thủ công an toàn.": "Check official GitHub releases, download with progress, and confirm before installing. Unsigned builds use a verified manual installer.",
+  "Tự tải bản cập nhật khi có phiên bản mới (chỉ cài đặt sau khi xác nhận)": "Automatically download new versions (install only after confirmation)"
 }

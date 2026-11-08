@@ -30,7 +30,7 @@
    if(persist)saveConfig();
  }
 
- let guide={names:{},programmes:[],aliasesById:{},manualMappings:config.manualMappings,offsetMinutes:config.offsetMinutes},updatedAt='',loading=false,currentVersion='4.15.0';
+ let guide={names:{},programmes:[],aliasesById:{},manualMappings:config.manualMappings,offsetMinutes:config.offsetMinutes},updatedAt='',loading=false,currentVersion='4.16.0';
  try{const cached=JSON.parse(localStorage.getItem('open-iptv-pro-epg-v1')||'null');if(cached&&cached.guide&&Array.isArray(cached.guide.programmes)){guide=cached.guide;guide.manualMappings=config.manualMappings;guide.offsetMinutes=config.offsetMinutes;updatedAt=cached.updatedAt||'';}}catch{}
  const cacheGuide=()=>{try{localStorage.setItem('open-iptv-pro-epg-v1',JSON.stringify({guide,updatedAt}));}catch{ctx.toast('Bộ nhớ lịch EPG đã đầy; vẫn có thể xem lịch trong phiên hiện tại','warn');}};
  function applyColor(color){if(!/^#[0-9a-fA-F]{6}$/.test(color))return;config.accent=color;
@@ -93,18 +93,51 @@
    throw Error('Thiết bị hoặc video hiện tại không hỗ trợ Picture-in-Picture');
   }catch(e){ctx.toast('PiP: '+e.message,'warn');}
  }
- async function updateCheck(){const repo=$('#releaseRepo').value.trim();config.repo=repo;saveConfig();$('#updateResult').textContent='Đang kiểm tra GitHub Releases...';
-  try{let result;
-   if(window.streamleaf?.checkUpdate)result=await window.streamleaf.checkUpdate(repo);
-   else{
-    if(!/^[a-z\d-]+\/[a-z\d_.-]+$/i.test(repo))throw Error('Nhập repository theo dạng tai-khoan/open-iptv-pro');
-    const response=await fetch(`https://api.github.com/repos/${repo}/releases/latest`);if(!response.ok)throw Error('GitHub HTTP '+response.status);const rel=await response.json();const latest=rel.tag_name||'';
-    if(!/^v?\d+\.\d+\.\d+/.test(latest))throw Error('Tag phát hành không hợp lệ');
-    const parts=v=>v.replace(/^v/,'').split(/[.-]/).slice(0,3).map(Number);const a=parts(latest),b=parts(currentVersion);result={newer:a.some((n,i)=>n>b[i]&&a.slice(0,i).every((v,j)=>v===b[j])),latest,url:`https://github.com/${repo}/releases/latest`};
+ const officialRepo='trisanghy/open-iptv-pro';
+ function setUpdateBusy(on){$('#updateCheckBtn').disabled=!!on;$('#updateDownloadBtn').disabled=!!on;}
+ function drawUpdateState(state){
+  if(!state)return;
+  const phase=state.phase||'idle';
+  $('#updateResult').textContent=state.message||'Chưa có thông tin cập nhật';
+  $('#updateDownloadBtn').hidden=phase!=='available';
+  $('#updateDownloadBtn').textContent=state.mode==='automatic'?'Tải và chuẩn bị cài đặt':'Tải bản cài đã xác minh';
+  $('#updateInstallBtn').hidden=phase!=='downloaded';
+  $('#updateManualBtn').hidden=phase!=='manual-ready';
+  $('#updateProgressBox').hidden=!['downloading','downloaded','manual-ready','installing'].includes(phase);
+  const progress=Number(state.progress)||0;
+  $('#updateProgressBar').value=Math.max(0,Math.min(100,progress));
+  $('#updateProgressLabel').textContent=phase==='downloading'?`Tiến độ tải: ${progress}%`:`${progress}%`;
+  setUpdateBusy(phase==='checking'||phase==='downloading'||phase==='installing');
+ }
+ async function updateCheck({silent=false}={}){
+  if(!window.streamleaf?.checkUpdate){
+   $('#updateResult').textContent='Chức năng cài đặt tự động chỉ hoạt động trong bản desktop đã đóng gói.';
+   return;
+  }
+  if(!silent)drawUpdateState({phase:'checking',message:'Đang kiểm tra GitHub Releases...'});
+  try{
+   const result=await window.streamleaf.checkUpdate();drawUpdateState(result);
+   if(result.phase==='available'){
+    if(silent)ctx.toast(`Có bản cập nhật Open IPTV Pro ${result.latest}.`, 'success');
+    if(config.autoDownloadUpdates)await downloadNewVersion();
    }
-   $('#updateResult').replaceChildren();const msg=document.createElement('span');msg.textContent=result.newer?`Có bản mới ${result.latest}!`:`Đang dùng phiên bản mới nhất (${currentVersion}); bản phát hành: ${result.latest}.`;
-   $('#updateResult').append(msg);if(result.newer){const a=document.createElement('a');a.textContent='Mở trang tải bản mới';a.href=result.url;a.target='_blank';a.rel='noopener noreferrer';if(window.streamleaf?.openRelease){a.addEventListener('click',e=>{e.preventDefault();window.streamleaf.openRelease(repo);});}$('#updateResult').append(a);}
-  }catch(e){$('#updateResult').textContent='Không kiểm tra được: '+e.message;}
+  }catch(e){drawUpdateState({phase:'error',message:'Không kiểm tra được: '+e.message});}
+ }
+ async function downloadNewVersion(){
+  if(!window.streamleaf?.downloadUpdate)return;
+  drawUpdateState({phase:'downloading',message:'Đang chuẩn bị tải...',progress:0});
+  try{drawUpdateState(await window.streamleaf.downloadUpdate());}
+  catch(e){drawUpdateState({phase:'error',message:'Không tải được phiên bản mới: '+e.message});}
+ }
+ async function installNewVersion(){
+  if(!window.streamleaf?.installUpdate)return;
+  if(!confirm('Ứng dụng sẽ thoát để cài bản cập nhật. Tiếp tục?'))return;
+  try{drawUpdateState(await window.streamleaf.installUpdate());}
+  catch(e){drawUpdateState({phase:'error',message:'Không thể cài đặt: '+e.message});}
+ }
+ async function openDownloadedInstaller(){
+  try{const result=await window.streamleaf.openDownloadedUpdate();if(result)ctx.toast('Không mở được bộ cài: '+result,'warn');}
+  catch(e){ctx.toast('Không mở được bộ cài: '+e.message,'warn');}
  }
  $('#epgSources')?.addEventListener('change',()=>{});
  $('#pipBtn').addEventListener('click',pictureInPicture);
@@ -124,8 +157,21 @@
  $('#colorWheel').addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();applyColor('#bc7cff');}});
  document.querySelectorAll('.color-presets button').forEach(b=>{b.style.color=b.dataset.color;b.onclick=()=>applyColor(b.dataset.color)});
  $('#resetThemeBtn').onclick=()=>applyColor('#bc7cff');
- $('#releaseRepo').value=config.repo;$('#releaseRepo').addEventListener('change',e=>{config.repo=e.target.value.trim();saveConfig();});
- $('#updateCheckBtn').addEventListener('click',updateCheck);
+ config.repo=officialRepo;$('#releaseRepo').value=officialRepo;
+ if(typeof config.autoCheckUpdates!=='boolean')config.autoCheckUpdates=true;
+ if(typeof config.autoDownloadUpdates!=='boolean')config.autoDownloadUpdates=true;
+ $('#autoCheckUpdates').checked=config.autoCheckUpdates;
+ $('#autoDownloadUpdates').checked=config.autoDownloadUpdates;
+ $('#autoCheckUpdates').addEventListener('change',e=>{config.autoCheckUpdates=!!e.target.checked;saveConfig();});
+ $('#autoDownloadUpdates').addEventListener('change',e=>{config.autoDownloadUpdates=!!e.target.checked;saveConfig();});
+ $('#updateCheckBtn').addEventListener('click',()=>updateCheck());
+ $('#updateDownloadBtn').addEventListener('click',downloadNewVersion);
+ $('#updateInstallBtn').addEventListener('click',installNewVersion);
+ $('#updateManualBtn').addEventListener('click',openDownloadedInstaller);
+ $('#updateReleaseBtn').addEventListener('click',()=>window.streamleaf?.openReleases?.() || window.open('https://github.com/trisanghy/open-iptv-pro/releases','_blank'));
+ window.streamleaf?.onUpdateStatus?.(drawUpdateState);
+ window.streamleaf?.updateStatus?.().then(drawUpdateState).catch(()=>{});
+ if(config.autoCheckUpdates&&window.streamleaf?.checkUpdate)setTimeout(()=>updateCheck({silent:true}),3500);
  applyColor(config.accent);renderSources();renderGuidePages();
  window.IPTVExtras={render:renderNow,onChannel:renderNow,onPage:p=>{if(p==='settings')renderSources();if(p==='epg')renderGuidePages();},decorateRow,getGuide:()=>guide,setMapping:(id,epgId)=>{if(epgId)config.manualMappings[id]=epgId;else delete config.manualMappings[id];guide.manualMappings=config.manualMappings;saveConfig();cacheGuide();renderGuidePages();ctx.renderList();},setOffset:minutes=>{config.offsetMinutes=Math.max(-720,Math.min(720,Number(minutes)||0));guide.offsetMinutes=config.offsetMinutes;saveConfig();cacheGuide();renderGuidePages();ctx.renderList();},getOffset:()=>config.offsetMinutes};
  window.setInterval(()=>{renderNow();if(document.querySelector('#page-epg').classList.contains('active-page'))renderEPG();},60000);

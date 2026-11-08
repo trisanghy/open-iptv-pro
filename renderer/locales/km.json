@@ -240,5 +240,16 @@
   "Đang kiểm tra GitHub Releases...": "កំពុងពិនិត្យ GitHub Releases...",
   "Chưa bật nguồn EPG nào": "មិនមានប្រភព EPG បានបើក",
   "Đang tải XMLTV...": "កំពុងទាញ XMLTV...",
-  "Đã hoàn tất kiểm tra EPG": "បានពិនិត្យ EPG រួច"
+  "Đã hoàn tất kiểm tra EPG": "បានពិនិត្យ EPG រួច",
+  "Cập nhật phiên bản": "អាប់ដេតកម្មវិធី",
+  "Repository phát hành chính thức": "ឃ្លាំងចេញផ្សាយផ្លូវការ",
+  "Tự kiểm tra khi mở ứng dụng và thông báo khi có bản mới": "ពិនិត្យបច្ចុប្បន្នភាពពេលបើកកម្មវិធី និងជូនដំណឹង",
+  "Tải phiên bản mới": "ទាញយកកំណែថ្មី",
+  "Tải và chuẩn bị cài đặt": "ទាញយក និងរៀបចំដំឡើង",
+  "Tải bản cài đã xác minh": "ទាញយកកម្មវិធីដំឡើងដែលបានផ្ទៀងផ្ទាត់",
+  "Cài đặt và khởi động lại": "ដំឡើង ហើយចាប់ផ្តើមឡើងវិញ",
+  "Mở bộ cài đã tải": "បើកកម្មវិធីដំឡើងដែលបានទាញយក",
+  "Xem GitHub Releases": "មើល GitHub Releases",
+  "Chưa tải": "មិនទាន់ទាញយក",
+  "Tự tải bản cập nhật khi có phiên bản mới (chỉ cài đặt sau khi xác nhận)": "ទាញយកកំណែថ្មីដោយស្វ័យប្រវត្តិ (ដំឡើងក្រោយពេលបញ្ជាក់)"
 }

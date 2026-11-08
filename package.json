@@ -1,7 +1,7 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro",
-  "version": "4.15.0",
+  "version": "4.16.0",
   "description": "Open-source desktop IPTV player for Windows and macOS with eight interface languages, M3U playlists, EPG, MultiView, snapshots and stream diagnostics",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
@@ -9,15 +9,16 @@
   "scripts": {
     "start": "electron .",
     "test": "node --test tests/*.test.cjs",
-    "dist:mac:arm64": "electron-builder --mac dmg --arm64",
-    "dist:mac:x64": "electron-builder --mac dmg --x64",
-    "dist:mac:universal": "electron-builder --mac dmg --universal",
-    "dist:win": "electron-builder --win nsis portable --x64",
+    "dist:mac:arm64": "electron-builder --mac --arm64 --publish never",
+    "dist:mac:x64": "electron-builder --mac --x64 --publish never",
+    "dist:mac:universal": "electron-builder --mac --universal --publish never",
+    "dist:win": "electron-builder --win --x64 --publish never",
     "dist:dir": "electron-builder --dir"
   },
   "dependencies": {
     "hls.js": "1.6.15",
-    "ffmpeg-static": "5.3.0"
+    "ffmpeg-static": "5.3.0",
+    "electron-updater": "6.8.11"
   },
   "devDependencies": {
     "electron": "38.0.0",
@@ -43,8 +44,11 @@
     },
     "mac": {
       "category": "public.app-category.video",
-      "target": "dmg",
-      "hardenedRuntime": false,
+      "target": [
+        "dmg",
+        "zip"
+      ],
+      "hardenedRuntime": true,
       "icon": "assets/icon.icns",
       "artifactName": "Open-IPTV-Pro-${version}-mac-${arch}.${ext}"
     },
@@ -75,6 +79,14 @@
       "createDesktopShortcut": true,
       "artifactName": "Open-IPTV-Pro-Setup-${version}-${arch}.${ext}"
     },
-    "icon": "assets/icon.png"
+    "icon": "assets/icon.png",
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "trisanghy",
+        "repo": "open-iptv-pro",
+        "releaseType": "release"
+      }
+    ]
   }
 }
