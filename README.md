@@ -1,5 +1,35 @@
 # Open IPTV Pro
 
+## 🇻🇳 Tiếng Việt
+
+**Open IPTV Pro** là phần mềm xem và quản lý IPTV mã nguồn mở dành cho **Windows và macOS**, hỗ trợ 8 ngôn ngữ, danh sách M3U, lịch phát sóng XMLTV EPG, MultiView 4 kênh, Snapshot và kiểm tra/sửa luồng nhiều vòng.
+
+### Tính năng
+
+- **Nguồn M3U:** nhập file hoặc URL, quản lý nhiều nguồn, gộp kênh trùng và link dự phòng.
+- **Phát IPTV:** danh sách kênh, thư mục, Yêu thích đồng bộ, xem trước và PiP khi hỗ trợ.
+- **EPG & MultiView:** lịch phát sóng, tìm kiếm chương trình, nhắc lịch, xem 4 kênh cùng lúc.
+- **Snapshot & kiểm tra link:** chụp ảnh hàng loạt, phân loại Sống / Die / Chưa rõ; tối đa 32 tác vụ kiểm tra và 32 tác vụ chụp đồng thời.
+- **Timeshift:** bộ đệm 5 phút kể từ khi bật ghi nếu nguồn hỗ trợ.
+- **Tùy chỉnh:** Sáng/Tối/Tự động, màu giao diện, hồ sơ, PIN cơ bản.
+
+### Ngôn ngữ
+
+Vào **Cài đặt → Ngôn ngữ** để chọn Tiếng Việt, English, Español, Português (Brasil), 简体中文, ไทย, ລາວ hoặc ភាសាខ្មែរ. Tên kênh và dữ liệu EPG từ nguồn không tự dịch.
+
+### Cài đặt và build
+
+- Trên Mac dùng `BUILD_MAC.command`; trên Windows dùng `BUILD_WINDOWS.bat`.
+- Cần Node.js 22+ và npm để tạo bộ cài. Các bản build chưa ký có thể bị Gatekeeper/SmartScreen chặn.
+- Bản 4.15 chỉ dành cho Windows/macOS; không cập nhật Android/iOS.
+
+**Lưu ý:** Không kèm kênh truyền hình hoặc tài khoản thuê bao. Chỉ sử dụng luồng có quyền truy cập. Giấy phép MIT chỉ áp dụng cho mã nguồn phần mềm; dữ liệu truyền hình và thư viện bên thứ ba có giấy phép riêng.
+
+---
+
+## 🇬🇧 English
+
+
 **Open-source IPTV desktop player for macOS and Windows, featuring an 8-language interface, M3U playlists, XMLTV program guides, four-channel MultiView, snapshots, and multi-pass stream health checks.**
 
 ![Open IPTV Pro desktop interface](docs/images/interface-v4-1.png)
