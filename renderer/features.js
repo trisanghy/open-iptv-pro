@@ -30,7 +30,7 @@
    if(persist)saveConfig();
  }
 
- let guide={names:{},programmes:[],aliasesById:{},manualMappings:config.manualMappings,offsetMinutes:config.offsetMinutes},updatedAt='',loading=false,currentVersion='4.18.0';
+ let guide={names:{},programmes:[],aliasesById:{},manualMappings:config.manualMappings,offsetMinutes:config.offsetMinutes},updatedAt='',loading=false,currentVersion='4.22.0';
  try{const cached=JSON.parse(localStorage.getItem('open-iptv-pro-epg-v1')||'null');if(cached&&cached.guide&&Array.isArray(cached.guide.programmes)){guide=cached.guide;guide.manualMappings=config.manualMappings;guide.offsetMinutes=config.offsetMinutes;updatedAt=cached.updatedAt||'';}}catch{}
  const cacheGuide=()=>{try{localStorage.setItem('open-iptv-pro-epg-v1',JSON.stringify({guide,updatedAt}));}catch{ctx.toast('Bộ nhớ lịch EPG đã đầy; vẫn có thể xem lịch trong phiên hiện tại','warn');}};
  function applyColor(color){if(!/^#[0-9a-fA-F]{6}$/.test(color))return;config.accent=color;
@@ -122,13 +122,13 @@
     if(silent)ctx.toast(`Có bản cập nhật Open IPTV Pro ${result.latest}. Mở Cài đặt → Cập nhật phiên bản.`, 'success');
     if(config.autoDownloadUpdates)await downloadNewVersion();
    }
-   if(result.phase==='source-only'&&silent)ctx.toast('GitHub có mã nguồn mới nhưng chưa có bộ cài để cập nhật.', 'warn');
+   if(result.phase==='manual-ready')ctx.toast('Bản cập nhật đã tải xong. Mở bộ cài để hoàn tất.', 'success');
   }catch(e){drawUpdateState({phase:'error',message:'Không kiểm tra được: '+e.message});}
  }
  async function downloadNewVersion(){
   if(!window.streamleaf?.downloadUpdate)return;
   drawUpdateState({phase:'downloading',message:'Đang chuẩn bị tải...',progress:0});
-  try{drawUpdateState(await window.streamleaf.downloadUpdate());}
+  try{const state=await window.streamleaf.downloadUpdate();drawUpdateState(state);if(state.phase==='manual-ready')ctx.toast('Đã tải bản mới. Bấm Mở bộ cài đã tải để cập nhật.', 'success');if(state.phase==='downloaded')ctx.toast('Đã tải bản mới. Xác nhận cài đặt để hoàn tất.', 'success');}
   catch(e){drawUpdateState({phase:'error',message:'Không tải được phiên bản mới: '+e.message});}
  }
  async function installNewVersion(){
@@ -159,7 +159,7 @@
  $('#colorWheel').addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();applyColor('#bc7cff');}});
  document.querySelectorAll('.color-presets button').forEach(b=>{b.style.color=b.dataset.color;b.onclick=()=>applyColor(b.dataset.color)});
  $('#resetThemeBtn').onclick=()=>applyColor('#bc7cff');
- config.repo=officialRepo;$('#releaseRepo').value=officialRepo;
+ config.repo=officialRepo;
  if(typeof config.autoCheckUpdates!=='boolean')config.autoCheckUpdates=true;
  if(typeof config.autoDownloadUpdates!=='boolean')config.autoDownloadUpdates=true;
  $('#autoCheckUpdates').checked=config.autoCheckUpdates;

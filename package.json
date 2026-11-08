@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro",
-  "version": "4.21.1",
-  "description": "Open IPTV Pro Full: chỉnh URL M3U, Google Cast, phát hiện AirPlay qua Bonjour trên macOS và mở Safari AirPlay, FFmpeg/Timeshift tích hợp.",
+  "version": "4.22.0",
+  "description": "Open IPTV Pro Full: cập nhật chính thức theo hệ điều hành, icon macOS hiện đại, chỉnh URL M3U, Google Cast/AirPlay, FFmpeg Timeshift tích hợp.",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

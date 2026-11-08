@@ -1,3 +1,11 @@
+## v4.22 Full – Cập nhật và bộ biểu tượng macOS
+
+**Tiếng Việt:** Repository phát hành chính thức `trisanghy/open-iptv-pro` được cố định, không cần nhập lại. Ứng dụng đọc phiên bản từ tên bộ cài / tag / tên Release, tìm bản mới đúng hệ điều hành & kiến trúc (Mac Apple Silicon, Mac Intel hoặc Windows), tự tải khi bật tùy chọn, xác minh trước khi cài. Mac chưa ký dùng bộ cài DMG thủ công; ứng dụng ký đúng chuẩn có thể dùng trình tự cài tự động. Menu thay bằng 12 icon SVG nét bo tròn đồng nhất, giữ logo ứng dụng và toàn bộ FFmpeg/Timeshift Full.
+
+**English:** The official release repository `trisanghy/open-iptv-pro` is built in. Version checks accept flexible release tag naming and locate a compatible newer installer for macOS ARM64, macOS Intel or Windows. Downloads are integrity-checked; signed eligible builds may install automatically after confirmation, while unsigned macOS builds open a verified DMG for manual installation. The sidebar now uses a consistent macOS-inspired SVG icon set. FFmpeg, Timeshift and all Full features remain included.
+
+**Important:** Pushing source to GitHub does not publish installers. Release assets are required for updates. macOS automatic in-place installation requires a properly signed application. No Apple-owned SF Symbols files or fonts are bundled.
+
 ## Bản sửa v4.21.1: Phát hiện TV AirPlay trên macOS
 
 Mục Google Cast chỉ phát hiện Chromecast/Google TV hỗ trợ Google Cast. Mục AirPlay trên Mac giờ có nút **Tìm thiết bị AirPlay**, dùng Bonjour (`dns-sd`) của macOS để hiển thị thiết bị tương thích. Để phát AirPlay, vẫn nhấn **Mở AirPlay trong Safari** và chọn TV trong Safari. Xem `AIRPLAY_FIX_V4_21_1_VI_EN.md` để biết chi tiết. Tất cả tính năng Full, FFmpeg và Timeshift được giữ nguyên.

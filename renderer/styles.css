@@ -404,3 +404,29 @@ html[data-theme="light"] .source-check-workers select{background:#fff;color:#223
 .airplay-devices{border:1px solid var(--edge);border-radius:10px;padding:8px 12px;margin-top:10px;min-height:36px;color:var(--muted);font-size:13px;overflow-wrap:anywhere}
 .airplay-device{padding:6px 0;color:var(--text)}
 .airplay-device+.airplay-device{border-top:1px solid var(--edge)}
+
+
+/* v4.22 • native-feeling macOS sidebar: rounded SF-like monoline shapes, not system proprietary icons. */
+.sidebar{padding:22px 12px 16px;gap:0;background:linear-gradient(158deg,color-mix(in srgb,var(--surface) 94%,#747a94),var(--surface));}
+.sidebar .brand{padding:3px 10px 25px}
+.sidebar .brand-icon{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.13);box-shadow:none}
+.sidebar .nav{border:1px solid transparent;border-radius:12px;gap:12px;height:45px;margin:2px 0;padding:0 10px;font-weight:570;letter-spacing:-.12px;transition:background .16s ease, border-color .16s ease,color .16s ease}
+.sidebar .nav .macos-nav-symbol{width:32px;min-width:32px;height:32px;display:grid;place-items:center;border-radius:10px;background:rgba(var(--nav-rgb),.12);color:rgb(var(--nav-rgb));transition:background .16s ease,transform .16s ease}
+.sidebar .nav .macos-nav-symbol svg{display:block;flex:none;width:19px;height:19px}
+.sidebar .nav:hover{background:rgba(145,155,177,.10);color:var(--text)}
+.sidebar .nav:hover .macos-nav-symbol{background:rgba(var(--nav-rgb),.18);transform:translateY(-.5px)}
+.sidebar .nav.active{background:color-mix(in srgb,var(--accent) 15%,var(--surface))!important;border-color:color-mix(in srgb,var(--accent) 22%,transparent)!important;color:var(--text)!important}
+.sidebar .nav.active .macos-nav-symbol{background:color-mix(in srgb,var(--accent) 23%,transparent);color:var(--accent)!important}
+.sidebar .nav .macos-nav-symbol{font-size:0}
+.sidebar .nav small{font-weight:570;opacity:.8}
+.macos-icon-button{display:inline-flex;align-items:center;justify-content:center;gap:7px}
+.macos-button-icon{display:inline-flex;align-items:center;justify-content:center}
+.macos-button-icon svg{width:17px;height:17px}
+#refreshAllBtn .macos-button-icon svg{width:18px;height:18px}
+.update-settings{border-radius:18px}
+.update-settings h2{letter-spacing:-.4px}
+.update-publisher{font-size:12px;color:var(--text);display:flex;flex-wrap:wrap;align-items:center;gap:9px;background:color-mix(in srgb,var(--accent) 7%,var(--surface));padding:12px 14px;border:1px solid var(--edge);border-radius:12px;margin:14px 0 17px}
+.update-publisher small{display:block;color:var(--muted);font-weight:450;margin-left:auto}
+.update-publisher-icon{display:inline-grid;place-items:center;width:20px;height:20px;border-radius:50%;color:#fff;background:#33b07b;font-size:12px}
+.update-result[data-phase="available"],.update-result[data-phase="downloaded"],.update-result[data-phase="manual-ready"]{border-color:color-mix(in srgb,var(--accent) 60%,var(--edge));background:color-mix(in srgb,var(--accent) 8%,var(--surface))}
+@media(max-width:1100px){.sidebar .nav{gap:9px;padding:0 7px}.sidebar .nav .macos-nav-symbol{width:29px;min-width:29px;height:29px}}

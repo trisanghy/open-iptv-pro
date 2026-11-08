@@ -1,4 +1,8 @@
-OPEN IPTV PRO v4.19 FULL UI - WINDOWS & MAC
+OPEN IPTV PRO v4.22 FULL – WINDOWS & MAC
+
+Tự kiểm tra & tải bản mới đúng hệ điều hành, repository GitHub nhà phát hành cố định, icon macOS SVG hiện đại.
+
+OPEN IPTV PRO v4.22 FULL UI - WINDOWS & MAC
 
 GIU DU TINH NANG: FFmpeg tinh hop trong bo cai, Timeshift 5 phut, Snapshot hang loat, 32 luong, MultiView, EPG, Doctor 2.0, Failover, 8 ngon ngu, auto-update.
 

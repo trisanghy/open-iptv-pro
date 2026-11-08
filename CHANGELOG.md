@@ -1,3 +1,13 @@
+## 4.22.0 – Repository cố định, cập nhật tương thích và icon macOS
+
+- Bỏ ô repository có thể nhập; dùng `trisanghy/open-iptv-pro` làm nhà phát hành mặc định.
+- Không từ chối toàn bộ Release khi tag không đúng mẫu `vX.Y.Z`; nhận diện phiên bản từ tag, tên và tên bộ cài; tìm bản tương thích trong Releases.
+- Không đề xuất bản cũ; chọn đúng hệ điều hành/kiến trúc, tự tải có tiến độ khi tùy chọn được bật; giữ xác minh SHA256 hoặc chữ ký trước khi cài.
+- Thay icon điều hướng bằng SVG bo tròn đồng bộ, tăng khả năng nhìn và tương phản, giữ giao diện 8 ngôn ngữ.
+- Giữ toàn bộ FFmpeg, Timeshift, Snapshot, MultiView, Cast/AirPlay và tính năng Full.
+
+**English:** Fixed official repository, flexible Release/version matching, platform-aware verified downloads, macOS-inspired sidebar icon set, all Full features preserved.
+
 ## 4.21.0 – M3U URL Editor + Cast/AirPlay (Desktop Full)
 
 - Sửa URL nguồn M3U đã lưu, giữ danh tính nguồn, kênh khớp, thư mục và Yêu thích; thay thế chỉ sau tải và kiểm tra thành công.

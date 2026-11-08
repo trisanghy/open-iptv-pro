@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="vi"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
 <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: blob:; script-src 'self' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; img-src * data: blob: file:; connect-src * data: blob:; media-src * data: blob:; worker-src 'self' blob:;"/>
-<title>Open IPTV Pro 4.21</title><script src="theme-boot.js"></script><link rel="stylesheet" href="styles.css"/></head>
+<title>Open IPTV Pro 4.22</title><script src="theme-boot.js"></script><link rel="stylesheet" href="styles.css"/></head>
 <body>
 <div class="app-shell" id="appShell">
  <aside class="sidebar">
-  <div class="brand"><div class="brand-icon"><img src="../assets/icon.png" alt="Open IPTV Pro"/></div><div><b>Open IPTV Pro</b><small>OPEN SOURCE <span class="version">4.21</span></small></div></div>
+  <div class="brand"><div class="brand-icon"><img src="../assets/icon.png" alt="Open IPTV Pro"/></div><div><b>Open IPTV Pro</b><small>OPEN SOURCE <span class="version">4.22</span></small></div></div>
   <div class="aside-caption">THƯ VIỆN</div>
   <button class="nav active" data-page="tv"><span>▣</span> Xem truyền hình <small id="navCount">0</small></button>
   <button class="nav" data-page="fav"><span>★</span> Kênh yêu thích <small id="favCount">0</small></button>
@@ -91,9 +91,9 @@
     <article class="settings-card full-tool-panel" id="fullFeatureTools"><h2>▣ Bản đầy đủ · FFmpeg tích hợp</h2><p>Không lược bỏ chức năng. Bộ đệm Timeshift, Snapshot hàng loạt, kiểm tra tối đa 32 luồng, MultiView, PiP và Doctor đều có sẵn.</p><div class="full-tools-links"><button class="btn btn-subtle" type="button" data-nav-to="shots">▦ Snapshot · 1–32 luồng</button><button class="btn btn-subtle" type="button" data-nav-to="sources" data-nav-target="sourceRepairSection">✓ Kiểm tra · 1–32 luồng</button><button class="btn btn-subtle" type="button" data-nav-to="tv">⏪ Timeshift 5 phút</button></div></article>
     <article class="settings-card" id="defaultBufferSettings"><h2>⏪ Timeshift mặc định</h2><label class="check-line buffer-default-line" for="autoTimeshiftSetting"><input type="checkbox" id="autoTimeshiftSetting"/> Tự bật bộ đệm tua lại 5 phút khi mở kênh</label><p>FFmpeg được tích hợp sẵn. Bộ đệm tua lại 5 phút được tạo cục bộ từ lúc mở kênh; Snapshot hàng loạt hoạt động mà không cần cài FFmpeg ngoài. Nguồn có DRM hoặc chặn truy cập có thể không hỗ trợ.</p><small id="autoTimeshiftState" aria-live="polite">Mặc định: tắt</small></article>
     <article class="settings-card"><h2>▤ Nguồn lịch EPG</h2><p>Các địa chỉ XMLTV công khai, tải theo yêu cầu. EPG có thể thiếu một số kênh.</p><div id="epgSources" class="epg-sources"></div><label class="settings-label" for="customEPG">URL XMLTV / .xml.gz mới</label><div class="settings-inline"><input id="customEPG" placeholder="https://example.org/guide.xml.gz"/><button class="btn btn-subtle" id="epgAddSourceBtn">＋ Thêm</button></div><button class="btn btn-primary" id="epgLoadBtn">↻ Cập nhật EPG ngay</button><small id="epgUpdatedLabel">Chưa tải EPG</small></article>
-    <article class="settings-card update-settings"><h2>⇧ Cập nhật phiên bản</h2>
-      <p>Kiểm tra bản phát hành chính thức trên GitHub. Khi có bản mới, tải về có tiến độ và xác nhận trước khi cài đặt. Bản chưa ký sẽ tải DMG/EXE đã xác minh SHA256 và yêu cầu bạn mở để cài. Việc đẩy commit lên GitHub không tự tạo bản phát hành; Release phải có bộ cài.</p>
-      <label class="settings-label" for="releaseRepo">Repository phát hành chính thức</label><input id="releaseRepo" value="trisanghy/open-iptv-pro" readonly aria-readonly="true"/>
+    <article class="settings-card update-settings"><h2>↥ Cập nhật phiên bản</h2>
+      <p>Ứng dụng tự tìm bản mới trên GitHub của nhà phát hành và chọn đúng bộ cài cho Mac hoặc Windows. Khi tải xong, bạn xác nhận trước khi cài đặt. Bản macOS chưa ký sẽ mở bộ cài để bạn hoàn tất thủ công.</p>
+      <p class="update-publisher"><span class="update-publisher-icon" aria-hidden="true">✓</span> Nhà phát hành chính thức · Open IPTV Pro <small>trisanghy/open-iptv-pro</small></p>
       <label class="settings-label update-auto-check"><input id="autoCheckUpdates" type="checkbox" checked/> Tự kiểm tra khi mở ứng dụng và thông báo khi có bản mới</label>
       <label class="settings-label update-auto-check"><input id="autoDownloadUpdates" type="checkbox" checked/> Tự tải bản cập nhật khi có phiên bản mới (chỉ cài đặt sau khi xác nhận)</label>
       <div class="update-actions">
@@ -104,7 +104,7 @@
        <button class="btn btn-subtle" id="updateReleaseBtn" type="button">Xem GitHub Releases</button>
       </div>
       <div id="updateProgressBox" class="update-progress" hidden><progress id="updateProgressBar" max="100" value="0"></progress><small id="updateProgressLabel">Chưa tải</small></div>
-      <div id="updateResult" class="update-result" role="status" aria-live="polite">Phiên bản hiện tại: v4.21.0</div>
+      <div id="updateResult" class="update-result" role="status" aria-live="polite">Đang kiểm tra trạng thái phiên bản</div>
      </article>
    </div></section>
    <section id="page-sources" class="page"><div class="section-heading"><div><h1>Quản lý nguồn IPTV</h1><p>Quản lý nguồn, tự thu thập, gộp kênh, kiểm tra/sửa link và xuất danh sách tại một nơi.</p></div><div class="heading-actions"><button class="btn btn-subtle" id="sourcesFileBtn">＋ File M3U</button><button class="btn btn-primary" id="sourcesUrlBtn">↗ URL playlist</button></div></div><div class="sources-hub-nav" aria-label="Điều hướng công cụ nguồn">
@@ -170,5 +170,5 @@
 </div>
 <div id="channelPreview" class="channel-preview hidden"></div>
 <div class="toast-area" id="toastArea" aria-live="polite"></div>
-<script src="../node_modules/hls.js/dist/hls.min.js"></script><script src="languages.bundle.js"></script><script src="i18n.js"></script><script src="core-browser.js"></script><script src="collector-core.js"></script><script src="advanced-core.js"></script><script src="doctor-v2-core.js"></script><script src="epg.js"></script><script src="favorites-core.js"></script><script src="source-edit.js"></script><script src="app.js"></script><script src="cast-ui.js"></script><script src="features.js"></script><script src="advanced.js"></script><script src="collector.js"></script><script src="doctor-v2.js"></script>
+<script src="app-icons.js"></script><script src="../node_modules/hls.js/dist/hls.min.js"></script><script src="languages.bundle.js"></script><script src="i18n.js"></script><script src="core-browser.js"></script><script src="collector-core.js"></script><script src="advanced-core.js"></script><script src="doctor-v2-core.js"></script><script src="epg.js"></script><script src="favorites-core.js"></script><script src="source-edit.js"></script><script src="app.js"></script><script src="cast-ui.js"></script><script src="features.js"></script><script src="advanced.js"></script><script src="collector.js"></script><script src="doctor-v2.js"></script>
 </body></html>

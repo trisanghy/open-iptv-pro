@@ -24,7 +24,7 @@ test('Full build: after media headers, live response is not killed by initial ha
  }finally{await close(downstream);await close(upstream);}
 });
 test('v4.20 Full: FFmpeg packaged and full desktop capabilities retained',()=>{
- assert.equal(pkg.version,'4.21.1');
+ assert.equal(pkg.version,'4.22.0');
  assert.equal(pkg.dependencies['ffmpeg-static'],'5.3.0');
  assert.ok(pkg.build.asarUnpack.includes('node_modules/ffmpeg-static/**'));
  assert.ok(pkg.build.files.includes('node_modules/**/*'));

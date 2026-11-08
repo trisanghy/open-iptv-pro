@@ -37,7 +37,7 @@ function isOfficialAsset(url){
  try{const u=new URL(url);return u.protocol==='https:'&&u.origin==='https://github.com'&&u.href.startsWith(HTTPS_RELEASE);}catch{return false;}
 }
 function safeFileName(name){
- if(typeof name!=='string'||!/^Open-IPTV-Pro-[\w.\- ]+\.(?:dmg|exe)$/i.test(name)||name.includes('..'))throw Error('Tên file cài đặt không hợp lệ');
+ if(typeof name!=='string'||!/^[-\w.() ]{3,180}\.(?:dmg|exe)$/i.test(name)||name.includes('..'))throw Error('Tên file cài đặt không hợp lệ');
  return name;
 }
 function canNativeInstall({app,platform,resourcesPath,execPath,env=process.env,spawn=spawnSync,fsExists=existsSync}){
@@ -89,22 +89,22 @@ class UpdateManager extends EventEmitter{
  snapshot(){return {...this.state};}
  async checkForUpdates(){
   if(this.busy)throw Error('Một thao tác cập nhật khác đang chạy');
-  this.busy=true;this.setState({phase:'checking',progress:0,downloaded:false,assetName:null,downloadedFile:null,message:'Đang kiểm tra GitHub Releases (không phải các commit mã nguồn)…'});
+  this.busy=true;this.setState({phase:'checking',progress:0,downloaded:false,assetName:null,downloadedFile:null,message:'Đang tìm phiên bản mới phù hợp với thiết bị…'});
   try{
-   const result=await this.check(OFFICIAL_REPO,this.app.getVersion(),this.fetcher);
+   const result=await this.check(OFFICIAL_REPO,this.app.getVersion(),this.fetcher,this.platform,this.arch);
    this.latestInfo=result;this.downloadedPath=null;this.asset=null;
-   if(result.noRelease)return this.setState({phase:'no-release',latest:null,mode:null,downloaded:false,message:'Repository đã có mã nguồn nhưng chưa có GitHub Release. Không có bản cài đặt để cập nhật.'});
-   if(!result.newer)return this.setState({phase:'up-to-date',latest:result.latest,mode:null,downloaded:false,message:`Bản đã cài v${this.app.getVersion()} đã bằng hoặc mới hơn GitHub Release ${result.latest}. Commit mới trên main chưa phải là bản cập nhật; cần phát hành Release có DMG/EXE.`});
+   if(result.noRelease)return this.setState({phase:'no-release',latest:null,mode:null,downloaded:false,message:'Chưa có bản cập nhật mới phù hợp cho thiết bị này.'});
+   if(!result.newer)return this.setState({phase:'up-to-date',latest:result.latest,mode:null,downloaded:false,message:'Ứng dụng đang ở phiên bản mới nhất dành cho thiết bị này.'});
    const asset=identifyInstaller(result.assets,this.platform,this.arch);
    this.asset=asset;
-   if(!asset)return this.setState({phase:'source-only',latest:result.latest,mode:null,downloaded:false,message:`Đã có ${result.latest}, nhưng Release chưa có bộ cài cho ${this.platform}/${this.arch}. Người phát hành cần chạy workflow 'Release full desktop installers' và tải lên DMG/EXE, SHA256SUMS.txt, latest.yml/latest-mac.yml.`});
+   if(!asset)return this.setState({phase:'source-only',latest:result.latest,mode:null,downloaded:false,message:'Chưa có bản cập nhật mới phù hợp cho hệ điều hành và kiến trúc máy này.'});
    const signed=this.signatureCheck({app:this.app,platform:this.platform,resourcesPath:this.resourcesPath,execPath:this.execPath});
    const native=!!this.updater&&signed&&hasUpdateMetadata(result.assets,this.platform);
    const checksum=!!(asset.digest&&/^sha256:[a-f0-9]{64}$/i.test(asset.digest))||(result.assets||[]).some(a=>a.name==='SHA256SUMS.txt'&&isOfficialAsset(a.url));
-   if(!native&&!checksum)return this.setState({phase:'unverified-release',latest:result.latest,mode:null,downloaded:false,assetName:asset.name,message:`Bản ${result.latest} có bộ cài ${asset.name} nhưng thiếu SHA256SUMS.txt hoặc checksum được GitHub cung cấp. Không tải tự động vì chưa thể xác minh an toàn. Vào Releases để tải/cập nhật thủ công.`});
+   if(!native&&!checksum)return this.setState({phase:'unverified-release',latest:result.latest,mode:null,downloaded:false,assetName:asset.name,message:'Đã thấy bản mới nhưng file phát hành thiếu SHA256SUMS.txt hoặc thông tin xác minh. Vui lòng dùng nút GitHub Releases để tải an toàn.'});
    return this.setState({phase:'available',latest:result.latest,mode:native?'automatic':'manual',assetName:asset.name,downloaded:false,
-      message:native?`Có bản mới ${result.latest}. Có thể tải và cài tự động.`:`Có bản mới ${result.latest}. Bản đang dùng chưa đủ điều kiện cập nhật tự cài; có thể tải bộ cài đã xác minh rồi cài thủ công.`});
-  }catch(e){return this.setState({phase:'error',message:'Không kiểm tra được bản cập nhật: '+String(e.message||e).slice(0,240),mode:null});}
+      message:native?`Có bản cập nhật ${result.latest} cho thiết bị này. Đang sẵn sàng tải và cài.`:`Có bản cập nhật ${result.latest} cho thiết bị này. Sẽ tải bộ cài đã xác minh để nâng cấp.`});
+  }catch(e){return this.setState({phase:'error',message:'Không thể kiểm tra cập nhật lúc này. Vui lòng kiểm tra kết nối Internet rồi thử lại.',mode:null});}
   finally{this.busy=false;}
  }
  async download(){
@@ -164,7 +164,7 @@ class UpdateManager extends EventEmitter{
     await fs.rename(tmp,finalPath);
    }catch(e){await fs.rm(tmp,{force:true}).catch(()=>{});throw e;}
    this.downloadedPath=finalPath;this.activeAbort=null;
-   return this.setState({phase:'manual-ready',downloaded:true,progress:100,downloadedFile:finalPath,message:'Đã tải và kiểm tra SHA256. Mở bộ cài để nâng cấp thủ công; dữ liệu kênh được giữ lại.'});
+   return this.setState({phase:'manual-ready',downloaded:true,progress:100,downloadedFile:finalPath,message:'Đã tải bản cập nhật an toàn. Chọn Mở bộ cài để hoàn tất nâng cấp (giữ nguyên dữ liệu).'});
   }catch(e){return this.setState({phase:'error',mode:'manual',downloaded:false,message:'Tải cập nhật không thành công: '+String(e.message||e).slice(0,250)+'. Có thể bấm Kiểm tra phiên bản mới để thử lại.'});}
   finally{this.activeAbort=null;this.busy=false;}
  }

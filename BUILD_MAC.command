@@ -1,5 +1,5 @@
 #!/bin/bash
-# Open IPTV Pro 4.21.1 FULL: Tu tai Node.js vao thu muc rieng, KHONG cai vao macOS.
+# Open IPTV Pro 4.22 FULL: Tu tai Node.js vao thu muc rieng, KHONG cai vao macOS.
 set -Eeuo pipefail
 cd "$(dirname "$0")"
 PROJECT="$PWD"
@@ -36,7 +36,7 @@ pause_at_end() {
 trap pause_at_end EXIT
 
 printf '\n============================================\n'
-printf ' OPEN IPTV PRO 4.21.1 FULL - TAO DMG TU DONG\n'
+printf ' OPEN IPTV PRO 4.22 FULL - TAO DMG TU DONG\n'
 printf '============================================\n'
 printf 'Mac: %s | Node.js duoc luu rieng trong thu muc ung dung.\n' "$ARCH"
 printf 'Khong yeu cau cai Node/Python/Qt/VLC thu cong.\n'
