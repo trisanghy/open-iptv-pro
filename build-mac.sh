@@ -22,7 +22,7 @@ if [ -n "$FREE_KIB" ] && [ "$FREE_KIB" -lt 6291456 ]; then
 fi
 WORK="$(mktemp -d "$DOWNLOADS/.openiptv-42337-build.XXXXXXXX")"
 OUT="$DOWNLOADS/OpenIPTVPro_Build_v$VERSION"
-LOG="$DOWNLOADS/OpenIPTVPro_Build_v$VERSION_ERROR.log"
+LOG="$DOWNLOADS/OpenIPTVPro_Build_v${VERSION}_ERROR.log"
 SUCCESS=0
 cleanup() {
   status=$?
