@@ -1,0 +1,84 @@
+name: Build v4.23.40 macOS Universal and Windows x64
+on:
+  push:
+    branches: [iptv-build-source]
+    paths: [.github/workflows/build-v42340-universal-win.yml]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  mac-universal:
+    runs-on: macos-15
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify one ZIP and build universal Mac DMG
+        env:
+          CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          echo 'd3fa103a7e8eea33e3d1ed384a166b7a2e36c103a8cc31b04e90b144e63e0e69  source/OpenIPTVPro_Source_v4.23.40.zip' | shasum -a 256 -c -
+          unzip -q source/OpenIPTVPro_Source_v4.23.40.zip -d "$RUNNER_TEMP"
+          cd "$RUNNER_TEMP/Open-IPTV-Pro-v4_23_40_Full_Desktop"
+          test "$(node -p 'require("./package.json").version')" = '4.23.40'
+          npm install --no-audit --no-fund
+          npm test
+          npx electron-builder --mac dmg --universal --publish never
+          DMG='dist/Open-IPTV-Pro-4.23.40-mac-universal.dmg'
+          test -s "$DMG"
+          EXE='dist/mac-universal/Open IPTV Pro.app/Contents/MacOS/Open IPTV Pro'
+          test -f "$EXE"
+          lipo -archs "$EXE" | tee "$RUNNER_TEMP/archs.txt"
+          grep -q arm64 "$RUNNER_TEMP/archs.txt"
+          grep -q x86_64 "$RUNNER_TEMP/archs.txt"
+          mkdir -p "$GITHUB_WORKSPACE/build-out/mac"
+          cp "$DMG" "$GITHUB_WORKSPACE/build-out/mac/"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: mac-universal-v42340
+          path: build-out/mac/*.dmg
+          if-no-files-found: error
+  windows-x64:
+    runs-on: windows-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify one ZIP and build Windows Setup and Portable
+        shell: pwsh
+        env:
+          CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $zip = 'source/OpenIPTVPro_Source_v4.23.40.zip'
+          $sha = (Get-FileHash -LiteralPath $zip -Algorithm SHA256).Hash.ToLowerInvariant()
+          if ($sha -ne 'd3fa103a7e8eea33e3d1ed384a166b7a2e36c103a8cc31b04e90b144e63e0e69') { throw 'Invalid ZIP checksum' }
+          Expand-Archive -LiteralPath $zip -DestinationPath $env:RUNNER_TEMP -Force
+          $project = Join-Path $env:RUNNER_TEMP 'Open-IPTV-Pro-v4_23_40_Full_Desktop'
+          Set-Location $project
+          $pkg = Get-Content package.json -Raw | ConvertFrom-Json
+          if ($pkg.version -ne '4.23.40') { throw 'Wrong source version' }
+          npm install --no-audit --no-fund
+          if ($LASTEXITCODE -ne 0) { throw 'npm install failed' }
+          npm test
+          if ($LASTEXITCODE -ne 0) { throw 'npm test failed' }
+          npx electron-builder --win --x64 --publish never
+          if ($LASTEXITCODE -ne 0) { throw 'Windows package build failed' }
+          $out = Join-Path $env:GITHUB_WORKSPACE 'build-out\win'
+          New-Item -ItemType Directory -Path $out -Force | Out-Null
+          foreach($file in @('Open-IPTV-Pro-Setup-4.23.40-x64.exe','Open-IPTV-Pro-4.23.40-x64.exe')) {
+            $src = Join-Path $project ('dist\' + $file)
+            if (-not (Test-Path $src -PathType Leaf)) { throw "Missing installer: $file" }
+            Copy-Item -LiteralPath $src -Destination (Join-Path $out $file)
+          }
+      - uses: actions/upload-artifact@v4
+        with:
+          name: windows-x64-v42340
+          path: build-out/win/*.exe
+          if-no-files-found: error
