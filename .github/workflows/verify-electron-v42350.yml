@@ -1,0 +1,53 @@
+name: Verify Electron v4.23.50 live translation recovery and DMG-only profile
+on:
+  push:
+    branches: [experiment/electron-v42349-vi-translation-premium-tts]
+    paths:
+      - '.github/workflows/verify-electron-v42350.yml'
+      - 'overlays/*v42350*'
+      - 'build-mac-v42350.sh'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify build script configuration
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          bash -n build-mac-v42350.sh
+          grep -Fq 'V50_REV="0c05223a31d1f9725cb0e5eb09a9441716041aa2"' build-mac-v42350.sh
+          grep -Fq 'dmg-only-v42350.cjs' build-mac-v42350.sh
+          grep -Fq 'OpenIPTVPro_Source_v4.23.50.zip' build-mac-v42350.sh
+          ! grep -Fq 'unzip -Z1 "$WORK/$PATCH_SOURCE" | grep -Fxq' build-mac-v42350.sh
+      - name: Integrate against verified full desktop source and run tests
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          echo '06e8123c768f41c14f47264fbc7220d1bdfa6ce5dc07e69eceba50e929abc783  source/OpenIPTVPro_Source_v4.23.47.zip' | sha256sum -c -
+          unzip -q source/OpenIPTVPro_Source_v4.23.47.zip -d "$RUNNER_TEMP"
+          PROJECT="$RUNNER_TEMP/Open-IPTV-Pro-v4_23_47_Full_Desktop"
+          cp overlays/whisper-autoinstall-v42347.cjs "$PROJECT/src/whisper-autoinstall.cjs"
+          ( cd "$PROJECT" && node "$GITHUB_WORKSPACE/overlays/v4.23.48-apply.cjs" "$GITHUB_WORKSPACE/overlays" )
+          ( cd "$PROJECT" && node "$GITHUB_WORKSPACE/overlays/v4.23.49-apply.cjs" "$GITHUB_WORKSPACE/overlays" )
+          ( cd "$PROJECT" && node "$GITHUB_WORKSPACE/overlays/v4.23.50-apply.cjs" "$GITHUB_WORKSPACE/overlays" )
+          ( cd "$PROJECT" && node "$GITHUB_WORKSPACE/overlays/dmg-only-v42350.cjs" )
+          for js in src/live-caption-service.cjs src/local-ai-autoinstall.cjs src/caption-translator.cjs src/local-tts-service.cjs renderer/live-captions-v42343.js renderer/local-tts-v42344.js src/main.cjs src/preload.cjs; do
+            node --check "$PROJECT/$js"
+          done
+          python3 -m py_compile "$PROJECT/src/argos-bridge.py"
+          python3 "$PROJECT/tests/argos-runtime-v42350.test.py"
+          ( cd "$PROJECT" && node --test --test-concurrency=2 tests/*.test.cjs )
+          test "$(node -p 'require(process.argv[1]).version' "$PROJECT/package.json")" = "4.23.50"
+          mv "$PROJECT" "$RUNNER_TEMP/Open-IPTV-Pro-v4_23_50_Full_Desktop"
+          ( cd "$RUNNER_TEMP" && zip -q -r OpenIPTVPro_Source_v4.23.50.zip Open-IPTV-Pro-v4_23_50_Full_Desktop -x '*/node_modules/*' '*/dist/*' '*/.git/*' '*/__pycache__/*' )
+          unzip -tq "$RUNNER_TEMP/OpenIPTVPro_Source_v4.23.50.zip"
+          unzip -p "$RUNNER_TEMP/OpenIPTVPro_Source_v4.23.50.zip" 'Open-IPTV-Pro-v4_23_50_Full_Desktop/package.json' > "$RUNNER_TEMP/verified.json"
+          node -e 'const fs=require("fs");const p=JSON.parse(fs.readFileSync(process.argv[1],"utf8"));if(p.version!=="4.23.50"||JSON.stringify(p.build.mac.target)!=="[\"dmg\"]"||p.build.dmg.writeUpdateInfo!==false)process.exit(1)' "$RUNNER_TEMP/verified.json"
