@@ -1,3 +1,18 @@
+## v4.23.39 — 2026-11-16 — Full-width adaptive video frame
+
+- **Fix:** Bỏ giới hạn chiều rộng `min(100%, calc(clamp(...) * aspect-ratio))` gây dư khoảng đen hai bên; khung trình phát nay sử dụng **100% bề ngang** vùng nội dung và chỉ chừa viền.
+- Giữ `aspect-ratio` dựa trên metadata video với giá trị khởi tạo 16:9; tự đổi tỷ lệ khi phát các nguồn 4:3, 16:9, siêu rộng hoặc dọc.
+- Duy trì `object-fit: contain` để tránh méo/cắt video và giữ các điều khiển phát ở hai hàng bên dưới hình.
+- Kế thừa v4.23.38: cơ chế nhận biết tỷ lệ nguồn; sửa xung đột CSS áp giới hạn chiều rộng không cần thiết.
+- Giữ sidebar thu gọn, nút mở danh sách kênh nhỏ, EPG, link dự phòng, âm lượng, Cast/AirPlay, PiP, Timeshift, FFmpeg và các chức năng desktop.
+- Phát hành **một ZIP mã nguồn xác minh SHA-256**; GitHub Actions chạy kiểm thử mã nguồn và kiểm tra lệnh build Bash.
+
+## v4.23.38 — 2026-11-16 — Source-native aspect ratio
+
+- Mặc định khung video 16:9 khi chưa có metadata nguồn; cập nhật theo `videoWidth/videoHeight` và sự kiện thay đổi kích thước video khi phát.
+- Không chuyển các nút điều khiển vào vùng hình; giữ video và thanh điều khiển ở vùng riêng.
+- Phát hiện và khắc phục giới hạn chiều rộng ở bản v4.23.39.
+
 ## v4.23.36 — 2026-11-16
 - Settings: 3 accessible dropdowns for concurrency and replay duration.
 - macOS updater: verified DMG handoff with application shutdown; no exit on failure.

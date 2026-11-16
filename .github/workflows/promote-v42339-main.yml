@@ -1,0 +1,60 @@
+name: Promote complete Open IPTV Pro v4.23.39 source to main
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/promote-v42339-main.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  promote:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - name: Verify ZIP and update all tracked desktop source files
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          ZIP=source/OpenIPTVPro_Source_v4.23.39.zip
+          echo "9fff925ca8bd5563ba1500bb579e0bc9aa6605f26f411e7b872a09686bc32aa3  $ZIP" | sha256sum -c -
+          unzip -q "$ZIP" -d "$RUNNER_TEMP"
+          ROOT="$RUNNER_TEMP/Open-IPTV-Pro-v4_23_39_Full_Desktop"
+          test -f "$ROOT/package.json"
+          test "$(node -p 'require(process.argv[1]).version' "$ROOT/package.json")" = "4.23.39"
+          for dir in src renderer scripts tests assets; do
+            test -d "$ROOT/$dir"
+            mkdir -p "$dir"
+            rsync -a --delete "$ROOT/$dir/" "$dir/"
+          done
+          rsync -a "$ROOT/" ./ \
+            --exclude '.git/' \
+            --exclude '.github/' \
+            --exclude 'node_modules/' \
+            --exclude 'dist/' \
+            --exclude 'source/' \
+            --exclude 'README.md' \
+            --exclude 'CHANGELOG.md' \
+            --exclude 'RELEASE_NOTES_V4_23_39.md' \
+            --exclude 'docs/images/'
+          grep -Eq '"version"[[:space:]]*:[[:space:]]*"4[.]23[.]39"' package.json
+          grep -Fq 'width: 100%!important' renderer/video-source-aspect-v42338.css
+          test -f renderer/video-source-aspect-v42338.js
+          test -f BUILD_MAC.command
+          node --test --test-concurrency=2 tests/*.test.cjs
+      - name: Commit updated source directly onto main
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "No desktop changes to commit"
+            exit 0
+          fi
+          git commit -m "feat(desktop): sync complete v4.23.39 full-width player source"
+          git push origin HEAD:main

@@ -1,30 +1,32 @@
-# Open IPTV Pro — Desktop v4.23.37
+# Open IPTV Pro — Desktop v4.23.39
 
-**Electron 38 / Chromium · macOS (Apple Silicon, Intel) · Windows**
+**Một trải nghiệm IPTV hiện đại, linh hoạt và nhiều công cụ cho Windows & macOS.**  
+**A versatile, modern IPTV desktop experience — powered by Electron / Chromium.**
 
-[**Source ZIP v4.23.37**](source/OpenIPTVPro_Source_v4.23.37.zip) · [Changelog / release notes](RELEASE_NOTES_V4_23_37.md) · [Automatic Mac source build](https://raw.githubusercontent.com/trisanghy/open-iptv-pro/iptv-build-source/build-mac.sh)
+[**Mã nguồn ZIP v4.23.39**](source/OpenIPTVPro_Source_v4.23.39.zip) · [**Ghi chú phát hành / Release notes**](RELEASE_NOTES_V4_23_39.md) · [**Script build Mac một lệnh**](https://raw.githubusercontent.com/trisanghy/open-iptv-pro/iptv-build-source/build-mac-v42339.sh)
 
-This repository's `main` branch carries the desktop source for **4.23.37**, with a single downloadable source archive and screenshots of the latest two-row TV player layout.
+## Điểm mới của v4.23.39
 
-## Giao diện mới nhất / Latest screenshots
+- **Khung video phủ toàn chiều ngang khả dụng** của khu vực xem, chỉ giữ viền giao diện; sửa hiện tượng hở khoảng đen lớn ở hai bên khi thu gọn danh sách kênh.
+- **Tỷ lệ khung tự thích nghi với nguồn phát**: mặc định 16:9, cập nhật theo kích thước video khi nhận metadata; hỗ trợ nguồn 4:3, siêu rộng và video dọc. Không ép méo tỷ lệ hình ảnh.
+- Giữ **các nút điều khiển tách khỏi vùng video**: hàng trên gồm kênh, phát/chuyển kênh, âm lượng, Cast/AirPlay, PiP và fullscreen; hàng dưới gồm EPG, khung hình, link chính/dự phòng và yêu thích.
+- Nút mở danh sách kênh thu nhỏ một nửa, giảm khoảng trống; sidebar icon vẫn căn giữa.
+- Tiếp tục hỗ trợ M3U, EPG, HLS/DASH, FFmpeg, Timeshift, DVR, Snapshot, MultiView, kéo thả quản lý kênh, chọn nhiều bằng Shift, Auto Failover và sao lưu/khôi phục.
 
-![Player v4.23.37 — volume and playback controls](docs/images/OpenIPTVPro-v4.23.37-player-layout.jpg)
+## Ảnh giao diện / Screenshots
 
-![Player with channel list v4.23.37](docs/images/OpenIPTVPro-v4.23.37-channel-list.jpg)
+![Bố cục trình phát hai hàng — ảnh từ v4.23.37](docs/images/OpenIPTVPro-v4.23.37-player-layout.jpg)
 
-*Ảnh giao diện kiểm tra bằng Chromium, không phải ảnh xác nhận luồng truyền hình đang phát trực tiếp.*
+![Bố cục danh sách kênh — ảnh từ v4.23.37](docs/images/OpenIPTVPro-v4.23.37-channel-list.jpg)
 
-### Thay đổi nổi bật / Highlights
+*Hai ảnh trên là ảnh bố cục của v4.23.37 để tham khảo; thay đổi khung video phủ chiều ngang của v4.23.39 nằm trong mã nguồn. Không trình bày ảnh cũ như ảnh kiểm thử v4.23.39.*
 
-- Trình phát có **hai hàng điều khiển**; âm lượng lên hàng trên cạnh điều khiển phát, Cast/AirPlay, PiP, fullscreen; EPG, khung hình, link dự phòng và yêu thích ở hàng dưới.
-- Nút mở lại danh sách kênh giảm còn **một nửa kích thước**, giảm khoảng trống và mở rộng tối đa vùng video.
-- Sidebar gộp có icon căn giữa và khoảng cách đồng đều; thu gọn danh sách kênh độc lập với sidebar.
-- Sắp xếp thư mục và kênh bằng kéo thả; giữ **Shift** để chọn nhiều kênh.
-- Cấu hình luồng kiểm tra, Snapshot, thời gian tua lại bằng các hộp chọn.
-- Trên macOS, bản cập nhật DMG tải và xác minh thành công được mở trước khi ứng dụng thoát hoàn toàn.
-- Giữ tính năng EPG, FFmpeg, Timeshift, DVR, Snapshot, Auto Failover và MultiView.
+## Phát triển và kiểm thử
 
-**Test:** 264 passed, 0 failed, 2 skipped (source checks). Việc đưa source lên `main` không đồng nghĩa đã phát hành DMG/EXE hoặc Release GitHub.
+- ZIP nguồn đầy đủ để phát triển Windows/macOS: `source/OpenIPTVPro_Source_v4.23.39.zip`.
+- SHA-256: `9fff925ca8bd5563ba1500bb579e0bc9aa6605f26f411e7b872a09686bc32aa3`.
+- Nhánh `iptv-build-source` có script build macOS bằng một lệnh, tự tải **một ZIP**, chạy kiểm thử, tạo DMG và giữ ZIP nguồn đúng phiên bản.
+- Các bài kiểm thử mã nguồn đã được GitHub Actions chạy khi đóng gói v4.23.39. **Đưa mã nguồn lên GitHub không đồng nghĩa đã phát hành installer DMG/EXE hay ký ứng dụng.**
 
 ---
 
