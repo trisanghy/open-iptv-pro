@@ -1,0 +1,58 @@
+name: Validate v4.23.46 translated captions on Mac and Windows installers
+on:
+  push:
+    branches: [iptv-build-source]
+    paths: [.github/workflows/verify-captions-v42346.yml]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  mac-arm64:
+    runs-on: macos-15
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - name: Verify source ZIP then build Apple Silicon DMG
+        shell: bash
+        env: {CSC_IDENTITY_AUTO_DISCOVERY: 'false'}
+        run: |
+          set -Eeuo pipefail
+          echo '8819480afd9ca4d6c9543831979c8593963db711ca648769596dae45f3f69c80  source/OpenIPTVPro_Source_v4.23.46.zip' | shasum -a 256 -c -
+          unzip -q source/OpenIPTVPro_Source_v4.23.46.zip -d "$RUNNER_TEMP"
+          cd "$RUNNER_TEMP/Open-IPTV-Pro-v4_23_46_Full_Desktop"
+          test "$(node -p 'require("./package.json").version')" = 4.23.46
+          npm install --no-audit --no-fund
+          npm test
+          npx electron-builder --mac dmg --arm64 --publish never
+          test -s 'dist/Open-IPTV-Pro-4.23.46-mac-arm64.dmg'
+          test "$(lipo -archs 'dist/mac-arm64/Open IPTV Pro.app/Contents/MacOS/Open IPTV Pro')" = arm64
+          echo 'PASS: Mac ARM64 compiled with translated caption backend'
+  windows-x64:
+    runs-on: windows-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - name: Verify ZIP then build Windows Setup and Portable
+        shell: pwsh
+        env: {CSC_IDENTITY_AUTO_DISCOVERY: 'false'}
+        run: |
+          $ErrorActionPreference='Stop'
+          $sha=(Get-FileHash 'source/OpenIPTVPro_Source_v4.23.46.zip' -Algorithm SHA256).Hash.ToLowerInvariant()
+          if($sha -ne '8819480afd9ca4d6c9543831979c8593963db711ca648769596dae45f3f69c80'){throw 'Invalid source SHA256'}
+          Expand-Archive 'source/OpenIPTVPro_Source_v4.23.46.zip' -DestinationPath $env:RUNNER_TEMP -Force
+          Set-Location (Join-Path $env:RUNNER_TEMP 'Open-IPTV-Pro-v4_23_46_Full_Desktop')
+          if((Get-Content package.json -Raw | ConvertFrom-Json).version -ne '4.23.46'){throw 'Wrong version'}
+          npm install --no-audit --no-fund
+          if($LASTEXITCODE -ne 0){throw 'npm install failed'}
+          npm test
+          if($LASTEXITCODE -ne 0){throw 'npm test failed'}
+          npx electron-builder --win --x64 --publish never
+          if($LASTEXITCODE -ne 0){throw 'electron-builder failed'}
+          foreach($f in @('Open-IPTV-Pro-Setup-4.23.46-x64.exe','Open-IPTV-Pro-4.23.46-x64.exe')){
+            if(-not (Test-Path (Join-Path 'dist' $f) -PathType Leaf)){throw "Missing $f"}
+          }
+          Write-Host 'PASS: Windows caption-enabled Setup and Portable'
