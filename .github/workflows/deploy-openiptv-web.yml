@@ -52,6 +52,10 @@ jobs:
           node --check _site/app.js
           node --test web-online/tests/browser-channel-check.test.cjs
           node --test web-online/tests/resume-last.test.cjs
+          node --check _site/web-autoplay.js
+          node --test web-online/tests/web-autoplay.test.cjs
+          grep -q 'rel="icon"' _site/index.html
+          grep -q 'src="web-autoplay.js"' _site/index.html
           grep -q 'id="webAutoResumeLast"' _site/index.html
       - name: Verify Web player volume control
         shell: bash
