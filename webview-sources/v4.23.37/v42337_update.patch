@@ -1,0 +1,480 @@
+--- a/BUILD_MAC.command
++++ b/BUILD_MAC.command
+@@ -5,7 +5,7 @@
+ LOG="$HOME/Downloads/OpenIPTV_WebView_FULL_build.log"
+ exec > >(tee -a "$LOG") 2>&1
+ trap 'code=$?; if (( code != 0 )); then echo "BUILD THẤT BẠI (mã $code). Xem log: $LOG"; fi' EXIT
+-printf '\n=== Open IPTV Pro v4.23.36 WebView / Backup & Restore / Build Fix ===\n'
++printf '\n=== Open IPTV Pro v4.23.37 WebView / Backup & Restore / Build Fix ===\n'
+ printf 'Thư mục nguồn: %s\nLog: %s\n' "$PWD" "$LOG"
+ FREE_KB=$(df -Pk . | awk 'NR==2 {print $4}')
+ if (( FREE_KB < 10*1024*1024 )); then
+@@ -37,7 +37,7 @@
+ export npm_config_fetch_retry_mintimeout=10000
+ export npm_config_fetch_retry_maxtimeout=30000
+ npm install --no-audit --no-fund --foreground-scripts --loglevel=info
+-printf '\n== Kiểm thử mã v4.23.36 gốc và bridge ==\n'
++printf '\n== Kiểm thử mã v4.23.37 gốc và bridge ==\n'
+ npm run test:original
+ npm run test:bridge
+ printf '\n== Đóng gói tài nguyên FFmpeg/FFprobe/Node (có trạng thái) ==\n'
+--- a/BUILD_WINDOWS.ps1
++++ b/BUILD_WINDOWS.ps1
+@@ -1,4 +1,4 @@
+-# Open IPTV Pro WebView v4.23.36 — Windows NSIS build.
++# Open IPTV Pro WebView v4.23.37 — Windows NSIS build.
+ # Run through BUILD_WINDOWS.cmd or from PowerShell using -ExecutionPolicy Bypass -File.
+ # NEVER calls electron-builder (WebView is Tauri 2).
+ param(
+@@ -31,7 +31,7 @@
+ try {
+   Start-Transcript -Path $log -Append -ErrorAction Stop | Out-Null
+   $transcript = $true
+-  Write-Host '=== OPEN IPTV PRO WEBVIEW 4.23.36 - WINDOWS (Tauri 2) ===' -ForegroundColor Green
++  Write-Host '=== OPEN IPTV PRO WEBVIEW 4.23.37 - WINDOWS (Tauri 2) ===' -ForegroundColor Green
+   Write-Host "Source: $root"
+   Write-Host "Log: $log"
+   if (-not [Environment]::Is64BitOperatingSystem -or -not [Environment]::Is64BitProcess) {
+--- a/BUILD_WINDOWS.cmd
++++ b/BUILD_WINDOWS.cmd
+@@ -2,7 +2,7 @@
+ setlocal
+ cd /d "%~dp0"
+ echo ========================================================
+-echo OPEN IPTV PRO WEBVIEW 4.23.36 - WINDOWS NSIS BUILD
++echo OPEN IPTV PRO WEBVIEW 4.23.37 - WINDOWS NSIS BUILD
+  echo This builds TAURI/WEBVIEW2 - NOT Electron.
+ echo ========================================================
+ powershell.exe -NoLogo -NoProfile -ExecutionPolicy Bypass -File "%~dp0BUILD_WINDOWS.ps1"
+--- a/PUSH_GITHUB_MAC.command
++++ b/PUSH_GITHUB_MAC.command
+@@ -1,5 +1,5 @@
+ #!/bin/bash
+-# Đẩy đúng mã nguồn WebView v4.23.36 full Electron feature sync vào nhánh thử nghiệm hiện có.
++# Đẩy đúng mã nguồn WebView v4.23.37 full Electron feature sync vào nhánh thử nghiệm hiện có.
+ # Chỉ thay đổi experiments/webview-full và workflow WebView, không sửa main/Electron.
+ set -euo pipefail
+ BRANCH='experiment/native-webview-ffmpeg'
+@@ -14,7 +14,7 @@
+ [ -f "$SOURCE_DIR/frontend/backup-ui.js" ] || fail 'Thiếu giao diện Backup/Restore.'
+ [ -f "$SOURCE_DIR/frontend/dvr-ui.js" ] && [ -f "$SOURCE_DIR/frontend/smart-discovery-ui.js" ] || fail 'Thiếu module DVR/Smart Discovery mới.'
+ [ -f "$SOURCE_DIR/backend/recording-scheduler.cjs" ] || fail 'Thiếu backend DVR.'
+-grep -q '"version": "4.23.36"' "$SOURCE_DIR/package.json" || fail 'Không đúng mã WebView v4.23.36.'
++grep -q '"version": "4.23.37"' "$SOURCE_DIR/package.json" || fail 'Không đúng mã WebView v4.23.37.'
+ mkdir -p "$TARGET_PARENT"
+ 
+ # Chỉ cảnh báo nếu tài khoản CLI hiện tại khác chủ repo; không tự đổi/xóa xác thực.
+@@ -26,7 +26,7 @@
+   if [ "$GH_USER" = 'trisanghy' ]; then gh auth setup-git >/dev/null 2>&1 || true; fi
+ fi
+ 
+-printf '\n=== PUBLISH WEBVIEW 4.23.36 FULL SYNC / WIN + MAC ===\n'
++printf '\n=== PUBLISH WEBVIEW 4.23.37 FULL SYNC / WIN + MAC ===\n'
+ printf 'Repo: %s\nNhánh: %s\n' "$REMOTE" "$BRANCH"
+ printf '[1/5] Kiểm tra nhánh GitHub và tải phiên bản mới nhất...\n'
+ # Clone MỚI đúng nhánh có sẵn; không động đến thư mục làm việc/nhánh main của người dùng.
+@@ -83,8 +83,8 @@
+   fail "Git chưa cấu hình tên/email commit. Chạy 'git config --global user.name <tên>' và 'git config --global user.email <email GitHub>' rồi chạy lại."
+ fi
+ 
+-printf '[4/5] Commit bản WebView v4.23.36...\n'
+-git commit -m 'feat(webview): v4.23.36 full Electron feature parity, DVR, themes and backup'
++printf '[4/5] Commit bản WebView v4.23.37...\n'
++git commit -m 'feat(webview): v4.23.37 full Electron feature parity, DVR, themes and backup'
+ printf '[5/5] Push đúng nhánh từ commit mới (KHÔNG force)...\n'
+ if ! git push origin "HEAD:refs/heads/$BRANCH"; then
+   fail "Push không thành công. Chưa thay đổi main. Kiểm tra tài khoản/quyền GitHub, hoặc nhánh có commit mới. Có thể xem commit tại $REPO"
+--- a/README.md
++++ b/README.md
+@@ -1,4 +1,4 @@
+-# Open IPTV Pro v4.23.36 — Native WebView (Tauri 2)
++# Open IPTV Pro v4.23.37 — Native WebView (Tauri 2)
+ 
+ Đồng bộ từ file Electron `OpenIPTVPro_Source_v4.23.35.zip` do người dùng cung cấp, dựa trên WebView v4.23.12.
+ 
+--- a/package.json
++++ b/package.json
+@@ -1,7 +1,7 @@
+ {
+   "name": "open-iptv-pro-webview-full",
+   "private": true,
+-  "version": "4.23.36",
++  "version": "4.23.37",
+   "type": "module",
+   "scripts": {
+     "dev": "npm run assets && tauri dev",
+@@ -20,5 +20,5 @@
+   "devDependencies": {
+     "@tauri-apps/cli": "^2.0.0"
+   },
+-  "description": "Tauri 2 WebView synced with Electron v4.23.35; drag-and-drop fix: two-row player controls, sidebar/channel tools, replay, FFmpeg fallback, HLS/DASH, DVR, backups, Smart Discovery, Doctor 3.0."
++  "description": "Tauri 2 WebView synced with Electron v4.23.35; drag-and-drop fix and automatic source aspect ratio: two-row player controls, sidebar/channel tools, replay, FFmpeg fallback, HLS/DASH, DVR, backups, Smart Discovery, Doctor 3.0."
+ }
+--- a/backend/electron-compat.cjs
++++ b/backend/electron-compat.cjs
+@@ -7,7 +7,7 @@
+ const isMac=process.platform==='darwin';
+ function appData(){if(isMac)return path.join(os.homedir(),'Library','Application Support');if(process.platform==='win32')return process.env.APPDATA||path.join(os.homedir(),'AppData','Roaming');return process.env.XDG_CONFIG_HOME||path.join(os.homedir(),'.config');}
+ app.getPath=(key)=>{if(key==='userData')return path.join(appData(),'open-iptv-pro');if(key==='downloads')return path.join(os.homedir(),'Downloads');if(key==='home')return os.homedir();return appData()};
+-app.getVersion=()=> '4.23.36';app.isPackaged=true;
++app.getVersion=()=> '4.23.37';app.isPackaged=true;
+ app.whenReady=()=>Promise.resolve();app.quit=()=>process.exit(0);
+ class BrowserWindow{
+   constructor(){this.webContents={send:()=>{},setWindowOpenHandler:()=>{},on:()=>{}};BrowserWindow.instances.push(this);}
+--- a/backend/main.cjs
++++ b/backend/main.cjs
+@@ -31,7 +31,7 @@
+ function fileSafeName(s){return String(s).replace(/[^\p{L}\p{N}_.-]+/gu,'_').slice(0,80)||'channel';}
+ async function readURL(raw,maxBytes=MAX_PLAYLIST,timeout=18000){
+  urlOK(raw);const c=new AbortController();const t=setTimeout(()=>c.abort(),timeout);
+- try {const res=await fetch(raw,{signal:c.signal,redirect:'follow',headers:{'User-Agent':'Open-IPTV-Pro/4.23.36'}});
++ try {const res=await fetch(raw,{signal:c.signal,redirect:'follow',headers:{'User-Agent':'Open-IPTV-Pro/4.23.37'}});
+    if(!res.ok)throw new Error(`Máy chủ trả HTTP ${res.status}`);
+    const parts=[];let len=0;
+    for await(const chunk of res.body){len+=chunk.length;if(len>maxBytes)throw new Error('Playlist quá lớn');parts.push(chunk);}
+@@ -104,7 +104,7 @@
+   const ctrl=new AbortController();
+   const timeout=setTimeout(()=>ctrl.abort(),25000); // connect / first response timeout ONLY
+   const range=req.headers.range;
+-  const upstream=await fetch(url,{signal:ctrl.signal,redirect:'follow',headers:{'User-Agent':'Open-IPTV-Pro/4.23.36',...(range?{Range:range}:{})}});
++  const upstream=await fetch(url,{signal:ctrl.signal,redirect:'follow',headers:{'User-Agent':'Open-IPTV-Pro/4.23.37',...(range?{Range:range}:{})}});
+   const ctype=upstream.headers.get('content-type')||'';
+   const maybeHls=/\.m3u8?(?:$|\?)/i.test(upstream.url)||/mpegurl/i.test(ctype);
+   const headers={'Content-Type':ctype||'application/octet-stream','Cache-Control':'no-store','Accept-Ranges':upstream.headers.get('accept-ranges')||'bytes'};
+@@ -247,7 +247,7 @@
+  ipcMain.handle('media:kind',async(_e,url)=>{
+    urlOK(url);const cached=mediaKindCache.get(url);if(cached&&Date.now()-cached.at<15*60_000)return cached.value;const ctrl=new AbortController();const t=setTimeout(()=>ctrl.abort(),5000);
+    try{
+-     const r=await fetch(url,{headers:{Range:'bytes=0-2047','User-Agent':'Open-IPTV-Pro/4.23.36'},signal:ctrl.signal});
++     const r=await fetch(url,{headers:{Range:'bytes=0-2047','User-Agent':'Open-IPTV-Pro/4.23.37'},signal:ctrl.signal});
+      const ct=r.headers.get('content-type')||'';let sample='';
+      if(r.body){const rd=r.body.getReader();const part=await rd.read();if(part.value)sample=Buffer.from(part.value).subarray(0,2048).toString('utf8');await rd.cancel();}
+      const value=inspectMedia({url,contentType:ct,sample:Buffer.from(sample),acceptRanges:r.headers.get('accept-ranges')||''});
+@@ -320,7 +320,7 @@
+  ipcMain.handle('system:openVLC',()=>shell.openExternal('https://www.videolan.org/vlc/'));
+ }
+ function createWindow(){
+- webWindow=new BrowserWindow({width:1360,height:850,minWidth:980,minHeight:640,backgroundColor:nativeTheme.shouldUseDarkColors?'#080e15':'#f3f6fb',title:'Open IPTV Pro 4.23.36',icon:path.join(__dirname,'../assets/icon.png'),webPreferences:{preload:path.join(__dirname,'preload.cjs'),sandbox:true,contextIsolation:true,nodeIntegration:false,webSecurity:true}});
++ webWindow=new BrowserWindow({width:1360,height:850,minWidth:980,minHeight:640,backgroundColor:nativeTheme.shouldUseDarkColors?'#080e15':'#f3f6fb',title:'Open IPTV Pro 4.23.37',icon:path.join(__dirname,'../assets/icon.png'),webPreferences:{preload:path.join(__dirname,'preload.cjs'),sandbox:true,contextIsolation:true,nodeIntegration:false,webSecurity:true}});
+  webWindow.loadFile(path.join(__dirname,'../renderer/index.html'));
+  webWindow.webContents.setWindowOpenHandler(()=>({action:'deny'}));
+  webWindow.webContents.on('will-navigate',(event,url)=>{if(!url.startsWith('file:'))event.preventDefault();});
+--- a/backend/package.json
++++ b/backend/package.json
+@@ -1,7 +1,7 @@
+ {
+   "name": "open-iptv-pro-webview-backend",
+   "private": true,
+-  "version": "4.23.36",
++  "version": "4.23.37",
+   "dependencies": {
+     "bonjour-service": "1.4.4",
+     "castv2-client": "1.2.0"
+--- a/tests/v42335_parity.test.cjs
++++ b/tests/v42335_parity.test.cjs
+@@ -8,14 +8,14 @@
+ const root=path.resolve(__dirname,'..');
+ const read=(name)=>fs.readFileSync(path.join(root,name),'utf8');
+ 
+-test('WebView hotfix 4.23.36 builds on Electron reference 4.23.35',()=>{
++test('WebView hotfix 4.23.37 builds on Electron reference 4.23.35',()=>{
+  const pkg=require('../package.json');
+- assert.equal(pkg.version,'4.23.36');
+- assert.equal(require('../backend/package.json').version,'4.23.36');
++ assert.equal(pkg.version,'4.23.37');
++ assert.equal(require('../backend/package.json').version,'4.23.37');
+  assert.equal(require('../electron-original/package.json').version,'4.23.35');
+- assert.match(read('src-tauri/Cargo.toml'),/version = "4\.23\.36"/);
+- assert.equal(JSON.parse(read('src-tauri/tauri.conf.json')).version,'4.23.36');
+- assert.match(read('frontend/index.html'),/4\.23\.36/);
++ assert.match(read('src-tauri/Cargo.toml'),/version = "4\.23\.37"/);
++ assert.equal(JSON.parse(read('src-tauri/tauri.conf.json')).version,'4.23.37');
++ assert.match(read('frontend/index.html'),/4\.23\.37/);
+ });
+ 
+ test('two-row controls and 11 theme CSS are present, all script and stylesheet names are local',()=>{
+--- a/tests/modern_v42312.test.cjs
++++ b/tests/modern_v42312.test.cjs
+@@ -2,9 +2,9 @@
+ const test=require('node:test');const assert=require('node:assert/strict');
+ const fs=require('node:fs');const path=require('node:path');const os=require('node:os');const vm=require('node:vm');const {spawn}=require('node:child_process');
+ const root=path.resolve(__dirname,'..');const read=p=>fs.readFileSync(path.join(root,p),'utf8');
+-const version='4.23.36';
++const version='4.23.37';
+ 
+-test('v4.23.36 synced frontend, 11 themes & new feature UI load in Tauri with valid local asset paths',()=>{
++test('v4.23.37 synced frontend, 11 themes & new feature UI load in Tauri with valid local asset paths',()=>{
+  const html=read('frontend/index.html');const cfg=JSON.parse(read('src-tauri/tauri.conf.json'));
+  assert.equal(cfg.version,version);assert.equal(JSON.parse(read('package.json')).version,version);
+  assert.match(html,/webview-bridge\.js/);assert.doesNotMatch(html,/\.\.\/node_modules/);
+@@ -16,7 +16,7 @@
+  assert.match(read('frontend/app.js'),/start\+=1000/);
+ });
+ 
+-test('WebView bridge exports all v4.23.36 native services and uses native file pickers',async()=>{
++test('WebView bridge exports all v4.23.37 native services and uses native file pickers',async()=>{
+  const calls=[];const code=read('frontend/webview-bridge.js');const result={port:9890,secret:'s'};
+  const window={__TAURI__:{core:{invoke:async(name,args)=>{calls.push({name,args});if(name==='backend_info')return result;if(name==='pick_dvr_directory')return '/tmp/test';if(name==='pick_backup_open')return '/tmp/demo.iptvbackup';if(name==='pick_epg_file')return '/tmp/demo.xml';if(name==='pick_backup_save')return '/tmp/demo.iptvbackup';return true;}}}};
+  const fetch=async(url,opts)=>({ok:true,json:async()=>({ok:true,data:{url,method:JSON.parse(opts.body).method,args:JSON.parse(opts.body).args}})});
+--- a/tests/features_v4211.test.cjs
++++ b/tests/features_v4211.test.cjs
+@@ -25,7 +25,7 @@
+  const conf=JSON.parse(file('src-tauri/tauri.conf.json'));
+  const pkg=JSON.parse(file('package.json'));
+  const backendPkg=JSON.parse(file('backend/package.json'));
+- assert.equal(conf.version,'4.23.36');assert.equal(pkg.version,'4.23.36');
++ assert.equal(conf.version,'4.23.37');assert.equal(pkg.version,'4.23.37');
+  assert.equal(conf.bundle.targets,'all');
+  assert.deepEqual(conf.bundle.externalBin,['binaries/iptv-node','binaries/ffmpeg','binaries/ffprobe']);
+  assert.equal(backendPkg.dependencies['bonjour-service'],'1.4.4');
+--- /dev/null
++++ b/tests/video_aspect_v42337.test.cjs
+@@ -0,0 +1,56 @@
++'use strict';
++const test = require('node:test');
++const assert = require('node:assert/strict');
++const fs = require('node:fs');
++const path = require('node:path');
++const vm = require('node:vm');
++const base = path.join(__dirname,'../frontend');
++const read = (name) => fs.readFileSync(path.join(base,name),'utf8');
++
++function makeUI() {
++  const events = new Map(), attributes = {};
++  const video = {videoWidth:0,videoHeight:0, addEventListener(name,fn){events.set(name,fn)}};
++  const stage = {dataset:{},style:{setProperty(n,v){attributes[n]=v}}};
++  const label = {textContent:'',title:''};
++  const window = {};
++  const document={getElementById(n){return {video,playerBox:stage,videoSourceRatio:label}[n]}};
++  vm.runInNewContext(read('video-aspect-v42337.js'),{document,window});
++  return {video,stage,label,events,attributes,window};
++}
++
++test('Video stage starts at 16:9 and detects intrinsic 4:3, 9:16 and cinematic streams',()=>{
++  const t=makeUI();
++  assert.equal(t.label.textContent,'16:9');
++  t.video.videoWidth=1440;t.video.videoHeight=1080;t.events.get('loadedmetadata')();
++  assert.equal(t.label.textContent,'4:3');
++  assert.equal(t.attributes['--iptv-video-ratio'],'1440 / 1080');
++  t.video.videoWidth=1080;t.video.videoHeight=1920;t.events.get('resize')();
++  assert.equal(t.label.textContent,'9:16');
++  t.video.videoWidth=2520;t.video.videoHeight=1080;t.events.get('resize')();
++  assert.equal(t.label.textContent,'21:9');
++});
++
++test('Video stage resets to 16:9 on source replacement, stop, errors, or corrupted metadata',()=>{
++  const t=makeUI();
++  t.events.get('loadedmetadata')();
++  t.video.videoWidth=640;t.video.videoHeight=480;t.events.get('loadedmetadata')();
++  t.events.get('loadstart')();
++  assert.equal(t.label.textContent,'16:9');
++  t.video.videoHeight=0;t.events.get('resize')();
++  assert.equal(t.label.textContent,'16:9');
++  t.video.videoHeight=1;t.video.videoWidth=20000;t.events.get('resize')();
++  assert.equal(t.label.textContent,'16:9');
++  t.events.get('error')();
++  assert.equal(t.label.textContent,'16:9');
++});
++
++test('Aspect CSS is last, covers all themes and does not stretch fullscreen',()=>{
++  const html=read('index.html'),css=read('video-aspect-v42337.css');
++  assert.ok(html.indexOf('player-two-row-v42335.css') < html.indexOf('video-aspect-v42337.css'));
++  assert.match(html,/id="videoSourceRatio"/);
++  assert.match(html,/video-aspect-v42337\.js/);
++  assert.match(css, /#page-tv #playerBox:not\(:fullscreen\)/);
++  assert.match(css, /aspect-ratio:\s*var\(--iptv-video-ratio\) !important/);
++  assert.match(css, /#playerBox:fullscreen/);
++  assert.match(css, /aspect-ratio: auto !important/);
++});
+--- a/tests/windows_build_regression.test.cjs
++++ b/tests/windows_build_regression.test.cjs
+@@ -34,6 +34,6 @@
+  const electron=JSON.parse(read('electron-original/package.json'));
+  assert.equal(web.name,'open-iptv-pro-webview-full');
+  assert.equal(electron.name,'open-iptv-pro');
+- assert.equal(web.version,'4.23.36');
++ assert.equal(web.version,'4.23.37');
+  assert.equal(electron.version,'4.23.35');
+ });
+--- a/tests/webview_drag_drop_v42336.test.cjs
++++ b/tests/webview_drag_drop_v42336.test.cjs
+@@ -13,7 +13,7 @@
+ 
+ test('Tauri disables native drop interception so internal HTML5 DnD works on Windows',()=>{
+  assert.equal(tauri.app.windows[0].dragDropEnabled,false);
+- assert.equal(tauri.version,'4.23.36');
++ assert.equal(tauri.version,'4.23.37');
+ });
+ test('Pointer reorder handles channel, folder and cross-folder drop without reloading',()=>{
+  const js=read('frontend/app.js'),css=read('frontend/styles.css');
+--- a/src-tauri/tauri.conf.json
++++ b/src-tauri/tauri.conf.json
+@@ -1,7 +1,7 @@
+ {
+   "$schema": "https://schema.tauri.app/config/2",
+   "productName": "Open IPTV Pro WebView Full",
+-  "version": "4.23.36",
++  "version": "4.23.37",
+   "identifier": "com.openiptvpro.webviewfull",
+   "build": {
+     "frontendDist": "../frontend"
+@@ -11,7 +11,7 @@
+     "windows": [
+       {
+         "dragDropEnabled": false,
+-        "title": "Open IPTV Pro 4.23.36 — WebView",
++        "title": "Open IPTV Pro 4.23.37 — WebView",
+         "width": 1360,
+         "height": 850,
+         "minWidth": 980,
+--- a/src-tauri/Cargo.toml
++++ b/src-tauri/Cargo.toml
+@@ -1,6 +1,6 @@
+ [package]
+ name = "open-iptv-pro-webview-full"
+-version = "4.23.36"
++version = "4.23.37"
+ edition = "2021"
+ build = "build.rs"
+ 
+--- /dev/null
++++ b/frontend/video-aspect-v42337.js
+@@ -0,0 +1,60 @@
++// v4.23.37 — intrinsic video aspect ratio, default 16:9.
++// Reads dimensions reported by the actual HTMLVideoElement, including HLS/DASH
++// and FFmpeg-backed HLS; does not assume the playlist/channel name is 16:9.
++(() => {
++  'use strict';
++  const video = document.getElementById('video');
++  const stage = document.getElementById('playerBox');
++  const label = document.getElementById('videoSourceRatio');
++  if (!video || !stage) return;
++
++  const DEFAULT_WIDTH = 16;
++  const DEFAULT_HEIGHT = 9;
++  function normalizedDimensions(width, height) {
++    const w = Number(width), h = Number(height);
++    if (!Number.isFinite(w) || !Number.isFinite(h) || w < 1 || h < 1) {
++      return [DEFAULT_WIDTH, DEFAULT_HEIGHT];
++    }
++    // Limit pathological metadata (e.g. malformed streams) without changing
++    // valid 21:9, 9:16 and other common aspect ratios.
++    const ratio = w / h;
++    if (ratio < 0.2 || ratio > 5) return [DEFAULT_WIDTH, DEFAULT_HEIGHT];
++    return [w, h];
++  }
++  function ratioText(w, h) {
++    const ratio = w / h;
++    const known = [[16, 9], [4, 3], [3, 2], [21, 9], [1, 1], [9, 16], [3, 4]];
++    for (const [a, b] of known) {
++      if (Math.abs(ratio - a / b) < 0.014) return `${a}:${b}`;
++    }
++    return `${ratio.toFixed(2)}:1`;
++  }
++  function applyDimensions(width, height) {
++    const [w, h] = normalizedDimensions(width, height);
++    const factor = w / h;
++    stage.style.setProperty('--iptv-video-ratio', `${w} / ${h}`);
++    stage.style.setProperty('--iptv-video-ratio-number', factor.toFixed(6));
++    const description = ratioText(w, h);
++    stage.dataset.sourceAspectRatio = description;
++    if (label) {
++      label.textContent = description;
++      label.title = `Tỷ lệ khung video từ nguồn phát: ${description}`;
++    }
++    return description;
++  }
++  function readVideoSize() {
++    return applyDimensions(video.videoWidth, video.videoHeight);
++  }
++  function resetAspect() { return applyDimensions(DEFAULT_WIDTH, DEFAULT_HEIGHT); }
++  for (const event of ['loadedmetadata', 'loadeddata', 'resize', 'canplay']) {
++    video.addEventListener(event, readVideoSize);
++  }
++  for (const event of ['emptied', 'loadstart']) {
++    video.addEventListener(event, resetAspect);
++  }
++  // After a channel switch to an audio-only stream, fall back to 16:9.
++  video.addEventListener('error', resetAspect);
++  resetAspect();
++  // Lightweight test interface; never controls playback or stores preferences.
++  window.OpenIPTVVideoAspect = Object.freeze({ applyDimensions, readVideoSize, resetAspect });
++})();
+--- /dev/null
++++ b/frontend/video-aspect-v42337.css
+@@ -0,0 +1,43 @@
++/* v4.23.37 — follow the intrinsic display aspect ratio of the active video.
++   The default is 16:9 until media metadata is available. Avoid a hardcoded
++   16:9 stage and the wide empty side gutters shown with TV sources.
++   Place after every theme/layout stylesheet so all eleven presets agree. */
++#page-tv #playerBox:not(:fullscreen) {
++  --iptv-video-ratio: 16 / 9;
++  --iptv-video-ratio-number: 1.777778;
++  /* Keep the complete source-shaped stage inside the available screen height.
++     CSS min() lets portrait, square, and 4:3 streams remain centered. */
++  --iptv-video-height-cap: min(78vh, max(180px, calc(100vh - 210px)), 900px);
++  aspect-ratio: var(--iptv-video-ratio) !important;
++  width: min(100%, calc(var(--iptv-video-height-cap) * var(--iptv-video-ratio-number))) !important;
++  height: auto !important;
++  min-height: 0 !important;
++  max-height: none !important;
++  min-width: 0 !important;
++  flex: 0 0 auto !important;
++  align-self: start !important;
++  justify-self: center !important;
++  margin-inline: auto !important;
++  box-sizing: border-box;
++}
++#page-tv #playerBox:not(:fullscreen) > video {
++  width: 100% !important;
++  height: 100% !important;
++  inset: 0 !important;
++  object-position: center center;
++}
++#page-tv .view-mode .video-source-ratio {
++  display: inline-flex;
++  align-items: center;
++  justify-content: center;
++  min-width: 34px;
++  white-space: nowrap;
++  border-radius: 5px;
++  border: 1px solid var(--edge, #364351);
++  padding: 3px 5px;
++  font-size: 10px;
++  font-variant-numeric: tabular-nums;
++  color: var(--muted, #aab6c5);
++}
++/* Fullscreen remains full-screen; contain preserves the entire picture. */
++#playerBox:fullscreen { aspect-ratio: auto !important; width: 100vw !important; height: 100vh !important; margin: 0 !important; }
+--- a/frontend/index.html
++++ b/frontend/index.html
+@@ -1,11 +1,11 @@
+ <!DOCTYPE html>
+ <html lang="vi"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+ <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: blob:; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src * data: blob:; connect-src 'self' ipc: http://127.0.0.1:* https: http:; media-src * data: blob: http://127.0.0.1:*; worker-src 'self' blob:;"/>
+-<title>Open IPTV Pro 4.23.36 — WebView</title><script src="theme-boot.js"></script><link rel="stylesheet" href="styles.css"/><link rel="stylesheet" href="ui-styles.css"/><link rel="stylesheet" href="ui-fullsync.css"/><link rel="stylesheet" href="ui-refined.css"/><link rel="stylesheet" href="ui-polish.css"/><link rel="stylesheet" href="player-ux.css"/><link rel="stylesheet" href="settings-v42317.css"/><link rel="stylesheet" href="sidebar-link-picker-v42329.css"/><link rel="stylesheet" href="video-layout-fix-v42330.css"/><link rel="stylesheet" href="channel-panel-compact-v42333.css"/><link rel="stylesheet" href="sidebar-channel-align-v42334.css"/><link rel="stylesheet" href="player-two-row-v42335.css"/></head>
++<title>Open IPTV Pro 4.23.37 — WebView</title><script src="theme-boot.js"></script><link rel="stylesheet" href="styles.css"/><link rel="stylesheet" href="ui-styles.css"/><link rel="stylesheet" href="ui-fullsync.css"/><link rel="stylesheet" href="ui-refined.css"/><link rel="stylesheet" href="ui-polish.css"/><link rel="stylesheet" href="player-ux.css"/><link rel="stylesheet" href="settings-v42317.css"/><link rel="stylesheet" href="sidebar-link-picker-v42329.css"/><link rel="stylesheet" href="video-layout-fix-v42330.css"/><link rel="stylesheet" href="channel-panel-compact-v42333.css"/><link rel="stylesheet" href="sidebar-channel-align-v42334.css"/><link rel="stylesheet" href="player-two-row-v42335.css"/><link rel="stylesheet" href="video-aspect-v42337.css"/></head>
+ <body>
+ <div class="app-shell" id="appShell">
+  <aside class="sidebar" id="appSidebar">
+-  <div class="brand"><div class="brand-icon"><img src="assets/icon.png" alt="Open IPTV Pro"/></div><div><b>Open IPTV Pro</b><small>OPEN SOURCE <span class="version">4.23.36</span></small></div></div>
++  <div class="brand"><div class="brand-icon"><img src="assets/icon.png" alt="Open IPTV Pro"/></div><div><b>Open IPTV Pro</b><small>OPEN SOURCE <span class="version">4.23.37</span></small></div></div>
+   <button type="button" class="sidebar-edge-toggle" id="sidebarToggleBtn" aria-label="Thu gọn thanh bên" aria-expanded="true" aria-controls="appSidebar" title="Thu gọn sidebar">☰</button>
+   <div class="aside-caption">THƯ VIỆN</div>
+   <button class="nav active" data-page="tv"><span>▣</span> Xem truyền hình <small id="navCount">0</small></button>
+@@ -82,7 +82,7 @@
+          <span id="epgNowText" class="screen-reader-only" aria-live="polite">Chọn kênh để xem chương trình hiện tại</span>
+          <button type="button" id="openGuideBtn" title="Xem toàn bộ lịch phát sóng EPG" aria-label="Xem lịch phát sóng EPG">▤</button>
+         </div>
+-        <label class="view-mode" title="Chế độ hiển thị video"><span>Khung hình</span><select id="videoFit" aria-label="Chế độ hiển thị video"><option value="contain">Vừa khung</option><option value="cover">Lấp đầy (cắt cạnh)</option><option value="fill">Kéo giãn</option><option value="none">Kích thước gốc</option></select></label>
++        <label class="view-mode" title="Chế độ hiển thị video"><span>Khung hình</span><span class="video-source-ratio" id="videoSourceRatio" title="Tỷ lệ video: tự động nhận diện từ nguồn, mặc định 16:9" aria-live="polite">16:9</span><select id="videoFit" aria-label="Chế độ hiển thị video"><option value="contain">Vừa khung</option><option value="cover">Lấp đầy (cắt cạnh)</option><option value="fill">Kéo giãn</option><option value="none">Kích thước gốc</option></select></label>
+         <div class="manual-link-picker"><label for="manualStreamSelect">Link phát</label><select id="manualStreamSelect" aria-label="Chọn thủ công link phát chính hoặc dự phòng" title="Chọn link phát cho kênh đang xem" disabled><option value="">Chưa chọn kênh</option></select></div>
+         <button class="icon-btn favorite-current" id="favCurrentBtn" title="Yêu thích" aria-label="Đánh dấu kênh yêu thích">☆</button>
+        </div>
+@@ -376,5 +376,5 @@
+ </div>
+ <div id="channelPreview" class="channel-preview hidden"></div>
+ <div class="toast-area" id="toastArea" aria-live="polite"></div>
+-<script src="app-icons.js"></script><script src="hls.min.js"></script><script src="dash.all.min.js"></script><script src="webview-bridge.js"></script><script src="languages.bundle.js"></script><script src="i18n.js"></script><script src="core-browser.js"></script><script src="collector-core.js"></script><script src="advanced-core.js"></script><script src="doctor-v2-core.js"></script><script src="doctor-v3-core.js"></script><script src="epg.js"></script><script src="favorites-core.js"></script><script src="source-edit.js"></script><script src="channel-order.js"></script><script src="startup-policy.js"></script><script src="playback-route-policy.js"></script><script src="playback-preference.js"></script><script src="manual-stream-selection.js"></script><script src="app.js"></script><script src="cast-ui.js"></script><script src="features.js"></script><script src="advanced.js"></script><script src="collector.js"></script><script src="doctor-v2.js"></script><script src="smart-discovery-ui.js"></script><script src="doctor-v3.js"></script><script src="backup-ui.js"></script><script src="dvr-ui.js"></script><script src="settings-ui.js"></script><script src="ui-style.js"></script><script src="theme-stage.js"></script><script src="player-ux.js"></script><script src="sidebar-channel-align-v42334.js"></script>
++<script src="app-icons.js"></script><script src="hls.min.js"></script><script src="dash.all.min.js"></script><script src="webview-bridge.js"></script><script src="languages.bundle.js"></script><script src="i18n.js"></script><script src="core-browser.js"></script><script src="collector-core.js"></script><script src="advanced-core.js"></script><script src="doctor-v2-core.js"></script><script src="doctor-v3-core.js"></script><script src="epg.js"></script><script src="favorites-core.js"></script><script src="source-edit.js"></script><script src="channel-order.js"></script><script src="startup-policy.js"></script><script src="playback-route-policy.js"></script><script src="playback-preference.js"></script><script src="manual-stream-selection.js"></script><script src="app.js"></script><script src="cast-ui.js"></script><script src="features.js"></script><script src="advanced.js"></script><script src="collector.js"></script><script src="doctor-v2.js"></script><script src="smart-discovery-ui.js"></script><script src="doctor-v3.js"></script><script src="backup-ui.js"></script><script src="dvr-ui.js"></script><script src="settings-ui.js"></script><script src="ui-style.js"></script><script src="theme-stage.js"></script><script src="player-ux.js"></script><script src="sidebar-channel-align-v42334.js"></script><script src="video-aspect-v42337.js"></script>
+ </body></html>
