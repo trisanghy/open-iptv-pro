@@ -38,20 +38,19 @@
     if (!enabled()) dismissPrompt();
   });
 
-  const lastId = typeof store.current === 'string' ? store.current : '';
-  if (!lastId) return;
-
   let started = false;
   let dismissed = false;
   let panel;
   let message;
   let action;
+  const lastId = typeof store.current === 'string' ? store.current : '';
   const isLast = () => app.getCurrent?.()?.id === lastId;
   const hasSource = () => !!(video.currentSrc || video.getAttribute?.('src') || video.src);
   const dismissPrompt = () => {
     dismissed = true;
     if (panel) panel.hidden = true;
   };
+  if (!lastId) return;
   const showPrompt = (text) => {
     if (!started || dismissed || !enabled() || !isLast()) return;
     message.textContent = text;
