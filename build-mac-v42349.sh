@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Open IPTV Pro v4.23.49 — verified Vietnamese translation + 25 VieNeu CPU premium voices.
+# Open IPTV Pro v4.23.49 — Mac DMG-only installer + separate exact-version source ZIP.
 set -Eeuo pipefail
 VERSION=4.23.47
 SOURCE=OpenIPTVPro_Source_v4.23.47.zip
@@ -14,7 +14,7 @@ esac
 DOWNLOADS="$HOME/Downloads"
 mkdir -p "$DOWNLOADS"
 WORK="$(mktemp -d "$DOWNLOADS/.openiptv-42347-${ARCH}.XXXXXXXX")"
-OUT="$DOWNLOADS/OpenIPTVPro_Build_v4.23.49_${ARCH}"
+OUT="$DOWNLOADS/OpenIPTVPro_Build_v4.23.49_DMG_Source_${ARCH}"
 LOG="$DOWNLOADS/OpenIPTVPro_Build_v4.23.49_${ARCH}_ERROR.log"
 SUCCESS=0
 cleanup() {
@@ -95,6 +95,16 @@ PROJECT_FINAL="$WORK/Open-IPTV-Pro-v4_23_49_Full_Desktop"
 mv "$PROJECT" "$PROJECT_FINAL"
 PROJECT="$PROJECT_FINAL"
 node --check "$PROJECT/src/whisper-autoinstall.cjs"
+echo '[3/5] Configuring DMG-only electron-builder target; disabling ZIP app and blockmap...'
+DMG_PROFILE_REV="7c3db39b4b88e8327a851ec06617861d86a841f5"
+curl -fsSL --retry 2 --connect-timeout 15 --max-time 60 \
+  "https://raw.githubusercontent.com/trisanghy/open-iptv-pro/$DMG_PROFILE_REV/overlays/dmg-only-v42349.cjs" \
+  -o "$WORK/dmg-only-v42349.cjs"
+( cd "$PROJECT" && node "$WORK/dmg-only-v42349.cjs" )
+node -e 'const p=require(process.argv[1]);const b=p.build||{};if(p.version!=="4.23.49"||JSON.stringify(b.mac?.target)!=="[\"dmg\"]"||b.dmg?.writeUpdateInfo!==false)process.exit(1)' "$PROJECT/package.json" || {
+ echo 'macOS DMG-only configuration was not applied' >&2
+ exit 1
+}
 ( cd "$WORK" && zip -q -r "$PATCH_SOURCE" "Open-IPTV-Pro-v4_23_49_Full_Desktop" -x '*/node_modules/*' '*/dist/*' '*/.git/*' '*/__pycache__/*' )
 unzip -tq "$WORK/$PATCH_SOURCE" >/dev/null
 # Avoid 'unzip -Z1 | grep -q' under pipefail: early grep exit can trigger SIGPIPE 141.
@@ -123,11 +133,20 @@ else
   echo 'DMG built, but uncompressed executable location could not be checked.' >&2
   exit 1
 fi
-echo '[5/5] Keeping only native DMG and matching source ZIP...'
+echo '[5/5] Keeping exactly native DMG and matching source ZIP...'
 [ ! -L "$OUT" ] || { echo 'Output folder is a symlink; refusing to overwrite.' >&2; exit 1; }
 mkdir -p "$OUT"
+# Do not erase unrelated files silently. Only two exact filenames are permitted here.
+if find "$OUT" -mindepth 1 -maxdepth 1 ! -name "$DMG" ! -name "$PATCH_SOURCE" -print | grep -m 1 . >/dev/null; then
+ echo "Output folder contains unrelated files; refusing to remove them: $OUT" >&2
+ exit 1
+fi
 cp "$PROJECT/dist/$DMG" "$OUT/$DMG"
 mv "$WORK/$PATCH_SOURCE" "$OUT/$PATCH_SOURCE"
+[ "$(find "$OUT" -mindepth 1 -maxdepth 1 -type f | wc -l | tr -d '[:space:]')" = 2 ] || {
+ echo 'Expected exactly one DMG and one source ZIP in output folder' >&2
+ exit 1
+}
 rm -f "$LOG"
 SUCCESS=1
 echo "DONE: $OUT"
