@@ -1,4 +1,5 @@
 name: Package v4.23.45 one-click Whisper and multilingual TTS
+# Validate legacy version-sync test after new release bump
 on:
   push:
     branches: [iptv-build-source]
