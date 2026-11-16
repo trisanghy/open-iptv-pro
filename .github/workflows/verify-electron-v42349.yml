@@ -5,6 +5,7 @@ on:
     paths:
       - '.github/workflows/verify-electron-v42349.yml'
       - 'overlays/*v42349*'
+      - 'overlays/*v42350*'
       - 'overlays/v4.23.49-apply.cjs'
       - 'build-mac-v42349.sh'
   workflow_dispatch:
@@ -45,6 +46,9 @@ jobs:
             node --check "$PROJECT/$js"
           done
           python3 -m py_compile "$PROJECT/src/argos-bridge.py" "$PROJECT/src/vieneu-bridge.py"
+          grep -Fq 'auto-detected language' "$PROJECT/src/live-caption-service.cjs"
+          grep -Fq 'rememberOnce(e.utteranceKey||text)' "$PROJECT/renderer/local-tts-v42344.js"
+          grep -Fq 'function applyDuck()' "$PROJECT/renderer/local-tts-v42344.js"
           ( cd "$PROJECT" && node --test --test-concurrency=2 tests/*.test.cjs )
           test -s "$PROJECT/src/argos-bridge.py"
           test -s "$PROJECT/src/vieneu-bridge.py"
