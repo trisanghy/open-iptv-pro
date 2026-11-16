@@ -45,7 +45,10 @@ jobs:
           npx electron-builder --mac dmg --"$BUILD_ARCH" --publish never
           DMG="dist/Open-IPTV-Pro-4.23.40-mac-$BUILD_ARCH.dmg"
           test -s "$DMG"
-          EXE="dist/mac-$BUILD_ARCH/Open IPTV Pro.app/Contents/MacOS/Open IPTV Pro"
+          # electron-builder uses dist/mac for Intel, dist/mac-arm64 for Apple Silicon.
+          APP_DIR="mac-$BUILD_ARCH"
+          if [ "$BUILD_ARCH" = 'x64' ]; then APP_DIR='mac'; fi
+          EXE="dist/$APP_DIR/Open IPTV Pro.app/Contents/MacOS/Open IPTV Pro"
           test -s "$EXE"
           ACTUAL="$(lipo -archs "$EXE")"
           EXPECTED="$BUILD_ARCH"
