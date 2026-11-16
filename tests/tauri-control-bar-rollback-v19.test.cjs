@@ -30,7 +30,7 @@ test('v17 source ratio and v18 sidebar tab preserved',()=>{
  assert.match(entry,/video-source-aspect-v17\.js/);
 });
 test('one-ZIP installer pins current minor version tag without replacing previous builds',()=>{
- assert.match(pkg.version,/^4\.23\.17-tauri\.19\.\d+$/);
+ assert.match(pkg.version,/^4\.23\.17-tauri\.\d+(?:\.\d+)*$/);
  const release=pkg.version.split('-tauri.')[1];
  assert.ok(script.includes('VERSION="'+pkg.version+'"'));
  assert.ok(script.includes('TAG="rust-lab/v'+release+'"'));

@@ -29,4 +29,5 @@ chrono = { version = "0.4", features = ["serde"] }
 uuid = { version = "1", features = ["v4"] }
 sha2 = "0.10"
 base64 = "0.22"
+zip = { version = "2.2", default-features = false, features = ["deflate"] }
 flate2 = "1"

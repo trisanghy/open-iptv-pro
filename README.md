@@ -109,3 +109,25 @@ Xem [changelog v19.1](CHANGELOG_RUSTLAB_V19_1.md) và [ghi chú phát hành v19.
 ### Bản vá v19.2 — tự động build sửa lỗi CI
 
 Bản v19.2 giữ nguyên hai hàng điều khiển và EPG thực tế của v19.1, chỉ khắc phục bước kiểm tra kiến trúc macOS Universal (lệnh `lipo`) và các bài kiểm thử cũ từng đóng đinh phiên bản v19. Tag mới `rust-lab/v19.2`; không ghi đè tag v19/v19.1. Bộ cài Windows và macOS chỉ được công bố nếu workflow GitHub Actions thực sự build thành công.
+
+## Rust Lab v20 — cập nhật theo Electron v4.23.45
+
+**Nguồn đối chiếu:** ZIP mã nguồn Electron `OpenIPTVPro_Source_v4.23.45.zip` do người dùng cung cấp (các module `live-captions-v42343.js`, `local-tts-v42344.js`, `whisper-auto-v42345.js`, dịch vụ `src/live-caption-service.cjs`, `src/local-ai-autoinstall.cjs`, `src/local-tts-service.cjs` và `src/whisper-autoinstall.cjs`). Phần xử lý native được **viết lại bằng Rust** cho Tauri 2, không dùng IPC Electron hay yêu cầu cài Node ở máy đích.
+
+- **Live Caption / Live Translate (beta):** Whisper.cpp nhận âm thanh luồng IPTV qua FFmpeg và phát sự kiện phụ đề trực tiếp. Translate tạo câu tiếng Anh; phụ đề trong PiP là best-effort.
+- **TTS offline đa ngôn ngữ:** Piper đọc câu dịch, Argos dịch offline từ English sang `vi/en/es/fr/de/zh/pt/it/ru/id`; người dùng chọn mức âm lượng tiếng gốc 0–100% khi giọng dịch phát.
+- **Cài mô hình một nút:** cài Whisper.cpp + mô hình GGML multilingual và cài uv Python 3.11 riêng, Piper/Argos/giọng đọc. Tải chỉ bắt đầu khi bấm cài, URL nguồn giới hạn HTTPS, xác thực SHA-256 cho Whisper/model và uv, không dùng quyền quản trị.
+- **Giữ trình phát:** thanh điều khiển hai hàng v19.2 với EPG, chọn link thủ công, Khung hình, PiP, âm lượng và snapshot. Bảng AI riêng bên dưới hai hàng, không thay đổi các ID và sự kiện phát cũ.
+- **Quy trình phát hành:** tag bất biến `rust-lab/v20`. Windows Setup + Portable và ZIP nguồn được phát hành ngay khi Windows build thành công; DMG macOS Universal đính kèm sau nếu job Mac hoàn tất. Không ảnh hưởng `main` hay nhãn Latest của Electron.
+
+### Ranh giới và kiểm chứng
+
+Mã nguồn, tương thích API và kiểm thử JavaScript chỉ chứng minh tính nhất quán ở mức mã nguồn. Cần chạy thử thực tế trên macOS/Windows để xác nhận FFmpeg giải mã audio nguồn, tải mô hình từ các máy chủ phát hành, các CLI Whisper/Argos/Piper có hoạt động trên từng kiến trúc và phụ đề có xuất hiện đúng trong PiP. Thiết lập một mô hình có thể tải hàng trăm MB và cần Internet một lần.
+
+**Chưa đồng bộ hoàn toàn chức năng Electron:** Google Cast/mDNS + LAN relay của Electron và một số chức năng webview/codec chuyên biệt chưa chuyển đầy đủ thành backend Rust; Cast trong Rust Lab vẫn hạn chế. Không quảng cáo tính năng như đã tương đương chỉ vì có nút UI.
+
+**Một lệnh build Mac từ tag v20:**
+```bash
+curl -fsSL https://raw.githubusercontent.com/trisanghy/open-iptv-pro/experiment/rust-tauri-v2/scripts/BUILD_RUSTLAB_MAC_ONE_ZIP_FAST.sh | bash
+```
+Xem [bảng đối chiếu chức năng](ELECTRON_V42345_PARITY_RUSTLAB_V20.md), [changelog v20](CHANGELOG_RUSTLAB_V20.md), [release notes v20](RELEASE_NOTES_RUST_LAB_V20.md).

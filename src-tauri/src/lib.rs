@@ -8,6 +8,7 @@ mod recordings;
 mod compat;
 mod primary_store;
 mod link_checker;
+mod local_ai;
 
 use std::{path::PathBuf,sync::Arc};
 use tokio::sync::Mutex;
@@ -68,6 +69,7 @@ pub fn run() {
             });
             let monitor=state.clone();
             tauri::async_runtime::spawn(async move { recordings::dvr_monitor(monitor).await; });
+            app.manage(Arc::new(local_ai::LocalAi::new(data_dir.clone(),state.ffmpeg.clone())));
             app.manage(state);
             Ok(())
         })

@@ -8,6 +8,11 @@
   }
   const invoke = (op, ...args) => window.__TAURI__.core.invoke('bridge', { op, args });
   const commands = {
+    captionStatus: 'caption:status', captionStart: 'caption:start',
+    captionStop: 'caption:stop', captionChooseFile: 'caption:chooseFile',
+    captionAutoInstall: 'caption:install',
+    ttsStatus: 'tts:status', ttsInstall: 'tts:install',
+    ttsSynthesize: 'tts:synthesize', ttsStop: 'tts:stop',
     castDiscover: 'cast:discover', airplayDiscover: 'airplay:discover',
     castPlay: 'cast:play', castStop: 'cast:stop', castStatus: 'cast:status',
     castLan: 'cast:lan', openAirplay: 'airplay:open', capabilities: 'app:capabilities',
@@ -31,6 +36,21 @@
     if(typeof cb === 'function') queueMicrotask(() => api.updateStatus().then(cb).catch(() => {}));
     return () => {};
   };
+  // Tauri 2 native event subscriptions; compatible with Electron's onEvent API.
+  // Return an immediate unsubscribe closure even though listen() is asynchronous.
+  const onNative = (eventName, callback) => {
+    if (typeof callback !== 'function') return () => {};
+    const eventApi = window.__TAURI__?.event;
+    if (typeof eventApi?.listen !== 'function') return () => {};
+    let disposed = false, unlisten;
+    Promise.resolve(eventApi.listen(eventName, event => {
+      if (!disposed) callback(event?.payload ?? event);
+    })).then(stop => { unlisten = stop; if (disposed) stop(); })
+      .catch(err => console.warn('Tauri AI event:', err));
+    return () => {disposed = true; if (unlisten) unlisten();};
+  };
+  api.captionOnEvent = cb => onNative('caption:event', cb);
+  api.ttsOnEvent = cb => onNative('tts:event', cb);
   window.streamleaf = Object.freeze(api);
   document.documentElement.dataset.desktopRuntime = 'tauri2-rust';
 })();

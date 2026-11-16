@@ -6,7 +6,8 @@
  const modules=[
   'video-source-aspect-v17.js','app.js','cast-ui.js','features.js','advanced.js','collector.js',
   'doctor-v2.js','smart-discovery-ui.js','doctor-v3.js','backup-ui.js',
-  'dvr-ui.js','settings-ui.js','ui-style.js','theme-stage.js','player-ux.js','fullscreen-panels.js'
+  'dvr-ui.js','settings-ui.js','ui-style.js','theme-stage.js','player-ux.js','fullscreen-panels.js',
+  'live-captions-v42343.js','local-tts-v42344.js','whisper-auto-v42345.js'
  ];
  for(const filename of modules){
   await new Promise((resolve,reject)=>{

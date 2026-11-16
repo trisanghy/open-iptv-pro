@@ -1,0 +1,10 @@
+
+#page-tv .player-control-card #captionAutoInstall{
+ min-height:30px!important;height:30px!important;
+ padding:4px 9px!important;border-radius:7px!important;
+ border:1px solid var(--edge,#3b4b58)!important;
+ color:var(--text,#ebf4f8)!important;
+ background:var(--surface2,#1b2938)!important;
+ font-size:11px!important;font-weight:650!important;
+}
+#page-tv .player-control-card #captionAutoInstall:disabled{opacity:.65!important;cursor:progress!important;}

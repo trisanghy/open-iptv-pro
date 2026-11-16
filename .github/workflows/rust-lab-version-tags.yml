@@ -170,7 +170,7 @@ jobs:
 
   release:
     name: Publish Rust Lab prerelease without changing Electron Latest
-    needs: [tag, macos, windows]
+    needs: [tag, windows]
     if: needs.tag.outputs.publish == 'true'
     runs-on: ubuntu-latest
     steps:
@@ -187,8 +187,7 @@ jobs:
           test "$(git rev-parse "refs/tags/${TAG}^{commit}")" = "$GITHUB_SHA"
       - uses: actions/download-artifact@v4
         with:
-          pattern: rustlab-*
-          merge-multiple: true
+          name: rustlab-windows
           path: dist
       - name: Download the exactly tagged source ZIP and checksums
         shell: bash
@@ -200,7 +199,7 @@ jobs:
           curl --fail --location --retry 3 \
             "https://github.com/${GITHUB_REPOSITORY}/archive/refs/tags/${TAG}.zip" \
             --output "dist/OpenIPTVPro-RustLab-v${RELEASE_NO}-Source.zip"
-          (cd dist && sha256sum ./*.dmg ./*.exe ./*.zip > SHA256SUMS.txt)
+          (cd dist && sha256sum ./*.exe ./*.zip > SHA256SUMS.txt)
       - name: Check whether this version already has a release
         id: check
         shell: bash
@@ -219,15 +218,40 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ needs.tag.outputs.tag_name }}
-          name: Open IPTV Pro Rust Lab v${{ needs.tag.outputs.release_number }} — macOS Universal + Windows x64
-          body_path: RELEASE_NOTES_RUST_LAB_V19_2.md
+          name: Open IPTV Pro Rust Lab v${{ needs.tag.outputs.release_number }} — Windows x64 + macOS (when ready)
+          body_path: RELEASE_NOTES_RUST_LAB_V20.md
           prerelease: true
           make_latest: false
           fail_on_unmatched_files: true
           overwrite_files: false
           files: |
-            dist/*.dmg
             dist/*Setup*.exe
             dist/*Portable*.zip
             dist/*Source.zip
             dist/SHA256SUMS.txt
+  release-macos:
+    name: Attach verified macOS Universal DMG to the Rust Lab prerelease
+    needs: [tag, macos, release]
+    if: needs.tag.outputs.publish == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: rustlab-macos
+          path: dist
+      - name: Verify macOS artifact and checksum
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd dist
+          compgen -G '*.dmg' >/dev/null
+          sha256sum ./*.dmg > SHA256SUMS-macOS.txt
+      - name: Attach macOS DMG without overwriting prior assets
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ needs.tag.outputs.tag_name }}
+        run: |
+          set -euo pipefail
+          gh release view "$TAG" --repo "$GITHUB_REPOSITORY"
+          gh release upload "$TAG" dist/*.dmg dist/SHA256SUMS-macOS.txt --repo "$GITHUB_REPOSITORY"
