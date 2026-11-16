@@ -1,87 +1,176 @@
-# Open IPTV Pro v4.22.2 Full Windows x64: local Node downloader and NSIS build.
-# No admin rights, no global installs. Node binary is verified with pinned SHA-256.
+# Open IPTV Pro v4.23.16 Full Desktop - Windows build repair 2026-11-10.
+# This script always builds from its own project root, never from the caller's folder.
+# Windows symlink permissions are checked before downloading any dependencies.
+# No signing, release publishing, or system-wide installs are performed.
 $ErrorActionPreference = 'Stop'
-$root = (Resolve-Path (Join-Path (Split-Path -Parent $MyInvocation.MyCommand.Path) '..')).Path
-Set-Location $root
-$version = '22.16.0'
-$arch = 'win-x64'
-$expected = '21c2d9735c80b8f86dab19305aa6a9f6f59bbc808f68de3eef09d5832e3bfbbd'
-$filename = "node-v${version}-${arch}.zip"
-$tools = Join-Path $root '.open-iptv-tools'
-$nodeDir = Join-Path $tools "node-v$version-$arch"
-$nodeExe = Join-Path $nodeDir 'node.exe'
-$npmCmd = Join-Path $nodeDir 'npm.cmd'
-$npxCmd = Join-Path $nodeDir 'npx.cmd'
+$root = [System.IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
+$projectFile = Join-Path $root 'package.json'
+$logDir = Join-Path $root 'build-logs'
+$hasTranscript = $false
 
-# A user-installed Node.js 22+ is preferred; do not download another copy when it works.
-$availableNode = Get-Command node.exe -ErrorAction SilentlyContinue
-$availableNpm = Get-Command npm.cmd -ErrorAction SilentlyContinue
-$availableNpx = Get-Command npx.cmd -ErrorAction SilentlyContinue
-if ($availableNode -and $availableNpm -and $availableNpx) {
+function Assert-ProjectRoot {
+  if (-not (Test-Path -LiteralPath $projectFile -PathType Leaf)) {
+    throw "Khong tim thay package.json trong: $root. Giai nen dung ZIP v4.23.16, chay BUILD_WINDOWS.bat o thu muc goc (khong chay trong scripts hay ban experiment)."
+  }
+  $info = Get-Content -LiteralPath $projectFile -Raw -Encoding UTF8 | ConvertFrom-Json
+  if ($info.name -ne 'open-iptv-pro' -or $info.version -ne '4.23.16') {
+    throw "Sai ma nguon: can open-iptv-pro v4.23.16, hien co $($info.name) v$($info.version). Khong ghi de du an cu."
+  }
+  if (-not (Test-Path -LiteralPath (Join-Path $root 'src\main.cjs'))) {
+    throw 'Thieu src/main.cjs. Tep ZIP co the bi giai nen thieu.'
+  }
+  if (-not (Test-Path -LiteralPath (Join-Path $root 'scripts\BUILD_WINDOWS_AUTO.ps1'))) {
+    throw 'Thieu script build trong thu muc scripts.'
+  }
+}
+
+function Test-SymlinkPrivilege {
+  $tempRoot = Join-Path ([System.IO.Path]::GetTempPath()) ('OpenIPTV-Symlink-' + [guid]::NewGuid().ToString('N'))
   try {
-    $systemMajor = [int]((& $availableNode.Source -p "process.versions.node.split('.')[0]").Trim())
-    if ($systemMajor -ge 22) {
-      $nodeExe = $availableNode.Source
-      $npmCmd = $availableNpm.Source
-      $npxCmd = $availableNpx.Source
-      Write-Host "Su dung Node.js co san tren Windows: $(& $nodeExe -v)"
+    New-Item -Path $tempRoot -ItemType Directory -Force | Out-Null
+    $source = Join-Path $tempRoot 'original.txt'
+    $link = Join-Path $tempRoot 'link.txt'
+    [System.IO.File]::WriteAllText($source, 'Open IPTV Pro test')
+    New-Item -Path $link -ItemType SymbolicLink -Target $source -ErrorAction Stop | Out-Null
+    return (Test-Path -LiteralPath $link)
+  } catch {
+    return $false
+  } finally {
+    if (Test-Path -LiteralPath $tempRoot) {
+      Remove-Item -LiteralPath $tempRoot -Recurse -Force -ErrorAction SilentlyContinue
     }
-  } catch { Write-Host 'Khong the dung Node.js co san, se dung ban local da xac minh.' }
+  }
 }
 
 try {
-  if (-not [Environment]::Is64BitOperatingSystem) { throw 'Chi ho tro Windows 64-bit.' }
-  if ((-not (Test-Path $nodeExe)) -or (-not (Test-Path $npmCmd))) {
-    New-Item -ItemType Directory -Force -Path $tools | Out-Null
-    $file = Join-Path $tools $filename
-    $url = "https://nodejs.org/dist/v$version/$filename"
-    Write-Host "[1/4] Tai Node.js tu nguon chinh thuc: $url"
-    [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-    Invoke-WebRequest -Uri $url -OutFile $file -UseBasicParsing
-    $actual = (Get-FileHash -Algorithm SHA256 -Path $file).Hash.ToLowerInvariant()
-    if ($actual -ne $expected) {
-      Remove-Item -Force $file
-      throw 'SHA-256 sai! Da huy bo file tai ve.'
-    }
-    Write-Host 'SHA-256 chinh xac. Dang giai nen...'
-    Expand-Archive -Path $file -DestinationPath $tools -Force
-  } else {
-    Write-Host '[1/4] Su dung Node.js da tai trong thu muc rieng.'
-  }
-  if (-not (Test-Path $nodeExe)) { throw 'Khong the giai nen Node.js.' }
-  $env:Path = "$nodeDir;$env:Path"
-  Write-Host "Node: $(& $nodeExe --version)"
+  Write-Host '====================================================='
+  Write-Host ' OPEN IPTV PRO 4.23.16 - WINDOWS 64-BIT / BUILD FIX'
+  Write-Host '====================================================='
+  if (-not [Environment]::Is64BitOperatingSystem) { throw 'Can Windows 64-bit (x64).' }
+  Assert-ProjectRoot
+  Set-Location -LiteralPath $root
+  Write-Host "PROJECT: $root"
+  Write-Host 'TEST: package.json v4.23.16 - OK'
 
-  Write-Host '[2/4] Tai Electron, HLS, FFmpeg, electron-updater va cong cu build...'
-  if (Test-Path (Join-Path $root 'package-lock.json')) {
+  New-Item -Path $logDir -ItemType Directory -Force | Out-Null
+  try {
+    Start-Transcript -Path (Join-Path $logDir 'BUILD_WINDOWS_LAST.log') -Force -ErrorAction Stop | Out-Null
+    $hasTranscript = $true
+  } catch { Write-Host 'Khong tao duoc transcript; van tiep tuc va in loi tren man hinh.' }
+
+  # winCodeSign 2.6.0 includes macOS dylib symlinks. 7-Zip extraction fails without
+  # Developer Mode or Administrator rights, even when the app is not code-signed.
+  Write-Host '[0/4] Kiem tra quyen tao symbolic link (winCodeSign)...'
+  if (-not (Test-SymlinkPrivilege)) {
+    Write-Host 'KHONG DU QUYEN SYMBOLIC LINK: Windows se chan giai nen winCodeSign.' -ForegroundColor Yellow
+    Write-Host 'Cach 1 (nen dung): Windows Settings > System > For developers > Developer Mode ON.'
+    Write-Host 'Sau khi bat Developer Mode, dong Terminal nay va chay lai BUILD_WINDOWS.bat.'
+    Write-Host 'Cach 2: chon A de dong y cho chay LAI script nay bang quyen Administrator (UAC).'
+    $choice = Read-Host 'Nhap D (mo Settings), A (chay bang Administrator), hoac Enter (dung)'
+    if ($choice -match '^[dD]$') {
+      Start-Process 'ms-settings:developers' | Out-Null
+      throw 'Hay bat Developer Mode va chay lai BUILD_WINDOWS.bat.'
+    }
+    if ($choice -match '^[aA]$') {
+      if ($hasTranscript) { Stop-Transcript | Out-Null; $hasTranscript = $false }
+      $elevated = Start-Process -FilePath 'powershell.exe' -Verb RunAs -Wait -PassThru -ArgumentList @('-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', ('"' + $PSCommandPath + '"'))
+      exit $elevated.ExitCode
+    }
+    throw 'Da dung build, chua thay doi ma nguon. Hay bat Developer Mode.'
+  }
+  Write-Host 'Symlink privilege: OK'
+
+  $version = '22.16.0'
+  $arch = 'win-x64'
+  $sha256 = '21c2d9735c80b8f86dab19305aa6a9f6f59bbc808f68de3eef09d5832e3bfbbd'
+  $tools = Join-Path $root '.open-iptv-tools'
+  $nodeDir = Join-Path $tools "node-v${version}-${arch}"
+  $nodeExe = Join-Path $nodeDir 'node.exe'
+  $npmCmd = Join-Path $nodeDir 'npm.cmd'
+  $npxCmd = Join-Path $nodeDir 'npx.cmd'
+  $usingSystemNode = $false
+
+  $existingNode = Get-Command node.exe -ErrorAction SilentlyContinue
+  $existingNpm = Get-Command npm.cmd -ErrorAction SilentlyContinue
+  $existingNpx = Get-Command npx.cmd -ErrorAction SilentlyContinue
+  if ($existingNode -and $existingNpm -and $existingNpx) {
+    try {
+      $major = [int]((& $existingNode.Source -p 'process.versions.node.split(".")[0]').Trim())
+      if ($major -ge 22) {
+        $nodeExe = $existingNode.Source
+        $npmCmd = $existingNpm.Source
+        $npxCmd = $existingNpx.Source
+        $usingSystemNode = $true
+      }
+    } catch { Write-Host 'Node he thong khong dung duoc, chuyen sang local.' }
+  }
+
+  if (-not $usingSystemNode) {
+    if ((-not (Test-Path -LiteralPath $nodeExe)) -or (-not (Test-Path -LiteralPath $npmCmd))) {
+      New-Item -Path $tools -ItemType Directory -Force | Out-Null
+      $archive = Join-Path $tools "node-v${version}-${arch}.zip"
+      $url = "https://nodejs.org/dist/v$version/node-v${version}-${arch}.zip"
+      Write-Host "[1/4] Tai Node.js tu $url"
+      [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+      Invoke-WebRequest -Uri $url -OutFile $archive -UseBasicParsing
+      $actual = (Get-FileHash -LiteralPath $archive -Algorithm SHA256).Hash.ToLowerInvariant()
+      if ($actual -ne $sha256) {
+        Remove-Item -LiteralPath $archive -Force
+        throw 'Node ZIP SHA256 khong khop. Da xoa file tai ve.'
+      }
+      Expand-Archive -LiteralPath $archive -DestinationPath $tools -Force
+    }
+    $env:Path = "$nodeDir;$env:Path"
+  } else {
+    Write-Host '[1/4] Dung Node.js da cai tren Windows.'
+  }
+  if (-not (Test-Path -LiteralPath $nodeExe)) { throw 'Khong tim thay Node.js sau khi cai.' }
+  Write-Host "Node version: $(& $nodeExe --version)"
+
+  Write-Host '[2/4] Cai npm dependencies trong THU MUC GOC DU AN...'
+  Set-Location -LiteralPath $root
+  if (Test-Path -LiteralPath (Join-Path $root 'package-lock.json')) {
     & $npmCmd ci --no-audit --no-fund
   } else {
     & $npmCmd install --no-audit --no-fund
   }
-  if ($LASTEXITCODE -ne 0) { throw "npm install/ci loi: $LASTEXITCODE" }
+  if ($LASTEXITCODE -ne 0) { throw "npm ci/install fail: $LASTEXITCODE" }
 
-  Write-Host '[3/4] Kiem tra ma nguon...'
+  Write-Host '[3/4] Chay npm test...'
   & $npmCmd test
-  if ($LASTEXITCODE -ne 0) { throw "Kiem thu loi: $LASTEXITCODE" }
+  if ($LASTEXITCODE -ne 0) { throw "npm test fail: $LASTEXITCODE" }
 
-  Write-Host '[4/4] Tao EXE Setup va Portable Day Du FFmpeg...'
+  Write-Host '[4/4] Dong goi NSIS Setup va Portable (khong phat hanh GitHub)...'
   $env:CSC_IDENTITY_AUTO_DISCOVERY = 'false'
-  & $npxCmd --no-install electron-builder --win --x64 --publish never
-  if ($LASTEXITCODE -ne 0) { throw "Dong goi loi: $LASTEXITCODE" }
+  $buildStarted = [DateTime]::UtcNow
+  Set-Location -LiteralPath $root
+  # Explicit project dir prevents 'Cannot find package.json' in scripts/other folders.
+  & $npxCmd --no-install electron-builder --projectDir "$root" --win --x64 --publish never
+  if ($LASTEXITCODE -ne 0) { throw "electron-builder fail: $LASTEXITCODE" }
+
   $dist = Join-Path $root 'dist'
-  # Verify the actual files: successful process exit is not proof of a usable installer.
-  $appVersion = (Get-Content -Raw (Join-Path $root 'package.json') | ConvertFrom-Json).version
-  $setupFile = Join-Path $dist "Open-IPTV-Pro-Setup-$appVersion-x64.exe"
-  $portableFile = Join-Path $dist "Open-IPTV-Pro-$appVersion-x64.exe"
+  $setupFile = Join-Path $dist 'Open-IPTV-Pro-Setup-4.23.16-x64.exe'
+  $portableFile = Join-Path $dist 'Open-IPTV-Pro-4.23.16-x64.exe'
   foreach ($item in @($setupFile, $portableFile)) {
-    if (-not (Test-Path -LiteralPath $item -PathType Leaf)) { throw "Khong tim thay EXE: $item" }
-    if ((Get-Item -LiteralPath $item).Length -lt 1000000) { throw "File EXE bat thuong, qua nho: $item" }
+    if (-not (Test-Path -LiteralPath $item -PathType Leaf)) { throw "Thieu file EXE: $item" }
+    $file = Get-Item -LiteralPath $item
+    if ($file.Length -lt 1000000) { throw "EXE bat thuong (nho hon 1 MB): $item" }
+    if ($file.LastWriteTimeUtc -lt $buildStarted.AddSeconds(-5)) {
+      throw "EXE da ton tai tu ban build cu, chua duoc tao lai: $item"
+    }
   }
-  Write-Host "THANH CONG. Setup: $setupFile; Portable: $portableFile"
-  Start-Process explorer.exe -ArgumentList "`"$dist`""
+  Write-Host '=====================================================' -ForegroundColor Green
+  Write-Host 'BUILD WINDOWS THANH CONG - Open IPTV Pro v4.23.16' -ForegroundColor Green
+  Write-Host "Setup:    $setupFile" -ForegroundColor Green
+  Write-Host "Portable: $portableFile" -ForegroundColor Green
+  Write-Host 'Luu y: EXE chua ky so; Windows SmartScreen co the hien canh bao.'
+  Write-Host '====================================================='
+  Start-Process explorer.exe -ArgumentList ('"' + $dist + '"')
+  if ($hasTranscript) { Stop-Transcript | Out-Null; $hasTranscript = $false }
   exit 0
 } catch {
-  Write-Host ('LOI: ' + $_.Exception.Message) -ForegroundColor Red
-  Write-Host 'Neu build loi, xem lai Node/npm, quyen truy cap Internet va log o tren.'
+  Write-Host ("BUILD THAT BAI: " + $_.Exception.Message) -ForegroundColor Red
+  Write-Host "Log (neu co): $logDir\BUILD_WINDOWS_LAST.log" -ForegroundColor Yellow
+  if ($hasTranscript) { try { Stop-Transcript | Out-Null } catch {} }
   exit 1
 }

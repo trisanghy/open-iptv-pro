@@ -11,7 +11,7 @@ const MAX_IMAGES_BYTES=96*1024*1024;
 const MAX_IMAGE_BYTES=5*1024*1024;
 const MAX_IMAGE_COUNT=2000;
 const imageName=/^[\p{L}\p{N}_.-]{1,160}\.jpg$/u;
-const allowedKey=k=>typeof k==='string'&&(k.startsWith('open-iptv-pro-')||k.startsWith('open-iptv-doctor-v2-')||k==='streamleaf-3')&&k.length<128;
+const allowedKey=k=>typeof k==='string'&&(k.startsWith('open-iptv-pro-')||(k.startsWith('open-iptv-doctor-v2-')||k.startsWith('open-iptv-doctor-v3-'))||k==='streamleaf-3')&&k.length<128;
 const obj=v=>v!==null&&typeof v==='object'&&!Array.isArray(v);
 const hash=b=>createHash('sha256').update(b).digest('hex');
 function checkedStorage(raw){

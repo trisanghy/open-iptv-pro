@@ -39,10 +39,10 @@ test('4.22.1: abort stalled network transfer rather than hanging forever',async(
  try{await m.checkForUpdates();const r=await m.download();assert.equal(r.phase,'error');assert.match(r.message,/lâu không nhận/);assert.deepEqual(await readdir(dir),[]);}finally{await rm(dir,{recursive:true,force:true});}
 });
 test('4.22.1: full desktop builds and workflow use the correct new release notes',()=>{
- const fs=require('node:fs');const pkg=require('../package.json');assert.equal(pkg.version,'4.22.2');
+ const fs=require('node:fs');const pkg=require('../package.json');assert.equal(pkg.version,'4.23.17');
  assert.equal(pkg.dependencies['ffmpeg-static'],'5.3.0');
  const yaml=fs.readFileSync(path.join(__dirname,'../.github/workflows/release-desktop.yml'),'utf8');
- assert.match(yaml,/RELEASE_NOTES_V4_22_2_VI_EN\.md/);assert.match(yaml,/macos-15-intel/);
+ assert.match(yaml,/RELEASE_NOTES_V4_23_2_VI_EN\.md/);assert.match(yaml,/macos-15-intel/);
  const mac=fs.readFileSync(path.join(__dirname,'../BUILD_MAC.command'),'utf8');assert.match(mac,/-s \"\$DMG\"/);
  const win=fs.readFileSync(path.join(__dirname,'../scripts/BUILD_WINDOWS_AUTO.ps1'),'utf8');assert.match(win,/setupFile/);assert.match(win,/portableFile/);
 });

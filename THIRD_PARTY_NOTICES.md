@@ -5,6 +5,7 @@ with their **own** license terms. This MIT license does not replace them.
 
 - **Electron / Chromium / Node.js**: see licensing files distributed by Electron.
 - **hls.js**: see `node_modules/hls.js/LICENSE` installed through npm.
+- **dash.js (dashjs 5.3.0)**: BSD-3-Clause; see `node_modules/dashjs/LICENSE` installed through npm, for MPEG-DASH playback.
 - **FFmpeg (optional external tool):** v4.18 Lite does **not** bundle or distribute an FFmpeg executable. Users can install FFmpeg separately to enable Timeshift and bulk snapshots. Its license depends on the build; consult https://ffmpeg.org/legal.html.
 - **electron-builder**: see package license in npm distribution.
 

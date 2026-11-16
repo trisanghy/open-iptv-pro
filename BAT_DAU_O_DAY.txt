@@ -1,15 +1,30 @@
-OPEN IPTV PRO v4.22 FULL – WINDOWS & MAC
+OPEN IPTV PRO v4.23.7 - BAN MA NGUON TONG HOP FULL DESKTOP (WINDOWS/macOS)
 
-Tự kiểm tra & tải bản mới đúng hệ điều hành, repository GitHub nhà phát hành cố định, icon macOS SVG hiện đại.
+DAY LA MOT DU AN MA NGUON HOAN CHINH, KHONG PHAI NHIEU BAN ZIP LONG NHAU.
+Tich hop cac thay doi tu v4.22.1 -> v4.23.7.
 
-OPEN IPTV PRO v4.22 FULL UI - WINDOWS & MAC
+TINH NANG TICH HOP:
+- Quan ly M3U/M3U8, thu muc, keo tha, yeu thich, gop kenh, lien ket du phong.
+- Smart Discovery tai Quan ly nguon: quoc gia/the loai/ngon ngu/toan cau; quet ALL hoac 10-1.000 kenh.
+- IPTV Doctor 3.0: kiem tra ALL, cham diem uu tien, bao cao, de xuat link du phong co xac nhan.
+- EPG XMLTV URL/file (.xml/.xmltv/.gz); tuy chon tu tai luc khoi dong va preset quoc gia.
+- DVR hen gio theo EPG/thu cong; xuat MP4; ten file kenh+ngay gio+EPG (neu co).
+- Tua lai toi da khoang 10 phut, -10 giay / -30 giay / Ve LIVE.
+- Backup/Restore, FFmpeg, Snapshot, MultiView, Cast/AirPlay, PiP, Failover, auto-update, 8 ngon ngu.
+- Tien do tac vu thu gon tai footer; nut kiem tra kenh chay ngay trang xem TV.
 
-GIU DU TINH NANG: FFmpeg tinh hop trong bo cai, Timeshift 5 phut, Snapshot hang loat, 32 luong, MultiView, EPG, Doctor 2.0, Failover, 8 ngon ngu, auto-update.
+HUONG DAN BUILD:
+Windows: giai nen ZIP, vao thu muc goc co package.json, chay BUILD_WINDOWS.bat.
+Mac: giai nen ZIP, chay bash BUILD_MAC.command tu thu muc goc.
+LAN DAU CAN INTERNET DE TAI NODE/ELECTRON/CAC THU VIEN.
+ZIP NAY LA MA NGUON, KHONG PHAI FILE EXE/DMG DA BUILD.
 
-Mac: mo BUILD_MAC.command tren may Mac dung kien truc (arm64 hoac x64).
-Windows: mo BUILD_WINDOWS.bat tren Windows x64. Tao NSIS Setup + Portable.
+DOC THEM: TONG_HOP_PHIEN_BAN_V4_23_7.md, README.md, CHANGELOG.md.
 
-Luu y: ZIP nay la MA NGUON, khong phai bo cai. Trong lan build dau can Internet de npm tai Electron, FFmpeg va electron-builder.
-Khong can cai FFmpeg rieng. Khong cap nhat Android/iOS.
+GIOI HAN:
+- DVR can app dang chay va may khong ngu; video khong nam trong file backup.
+- Nguon IPTV/EPG cong dong co the thay doi va khong duoc bao dam luon phat duoc.
+- Chua push GitHub / chua tao Release / chua build thu EXE, DMG tren may that.
+- KHONG cap nhat iOS/Android.
 
-GitHub: trisanghy/open-iptv-pro; repo KHONG tu dong duoc cap nhat tu ZIP nay.
+GitHub (tham khao): https://github.com/trisanghy/open-iptv-pro

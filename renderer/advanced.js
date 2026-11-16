@@ -4,16 +4,52 @@
  const ctx=window.IPTVState,lib=window.OpenIPTVAdvancedCore;
  const $=q=>document.querySelector(q), esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
  const key='open-iptv-pro-advanced-v1';
- const defaults={alternates:{},health:{},reminders:[],optimizer:'balanced',autoTimeshift:false,profiles:[{id:'admin',name:'Người lớn',child:false,favorites:[]}],profileId:'admin',restrictedGroups:[],pin:null};
+ const defaults={alternates:{},health:{},reminders:[],optimizer:'balanced',replayMinutes:10,autoTimeshift:false,profiles:[{id:'admin',name:'Người lớn',child:false,favorites:[]}],profileId:'admin',restrictedGroups:[],pin:null};
  let state;try{state={...defaults,...JSON.parse(localStorage.getItem(key)||'{}')}}catch{state={...defaults}};
  if(!Array.isArray(state.profiles)||!state.profiles.length)state.profiles=defaults.profiles;
  if(!state.alternates||typeof state.alternates!=='object')state.alternates={};
  if(!state.health||typeof state.health!=='object')state.health={};
  if(!Array.isArray(state.reminders))state.reminders=[];
  state.autoTimeshift=state.autoTimeshift===true;
+ if(![5,10,15,30].includes(Number(state.replayMinutes)))state.replayMinutes=10;
  ctx.getStore().alternates=state.alternates;
- const save=()=>{if(window.__openIPTVRestoringBackup)return;ctx.getStore().alternates=state.alternates;try{localStorage.setItem(key,JSON.stringify(state))}catch{ctx.toast('Đầy bộ nhớ cấu hình nâng cao','warn')}};
- let pendingHealthSave=null;function scheduleHealthSave(){if(pendingHealthSave)return;pendingHealthSave=setTimeout(()=>{pendingHealthSave=null;save();},1500);}
+ // WebViews have a small per-origin storage quota. Detailed probes are ephemeral;
+ // never let 1,000+ checked channels evict playlists, favorites, PINs or profiles.
+ const HEALTH_CHANNEL_LIMIT=320, HEALTH_EVENTS_PER_CHANNEL=3;
+ function compactHealth(){
+  const entries=Object.entries(state.health||{}).filter(([url,events])=>typeof url==='string'&&Array.isArray(events)&&events.length);
+  entries.sort((a,b)=>String(b[1].at(-1)?.date||'').localeCompare(String(a[1].at(-1)?.date||'')));
+  const compact=Object.create(null);
+  for(const [url,events] of entries.slice(0,HEALTH_CHANNEL_LIMIT)){
+   compact[url]=events.slice(-HEALTH_EVENTS_PER_CHANNEL).map(e=>({
+    date:String(e.date||''),status:String(e.status||'').slice(0,24),type:String(e.type||'').slice(0,24),
+    reason:String(e.reason||'').slice(0,120),latencyMs:e.latencyMs??null,
+    startupMs:e.startupMs??null,width:e.width||0,height:e.height||0,
+    stalls:e.stalls||0,bitrate:e.bitrate||0
+   }));
+  }
+  state.health=compact;
+ }
+ compactHealth();
+ let lastQuotaWarning=0, healthSaveDisabled=false;
+ const warnQuota=message=>{if(Date.now()-lastQuotaWarning>60000){lastQuotaWarning=Date.now();ctx.toast(message,'warn');}};
+ const save=()=>{
+  if(window.__openIPTVRestoringBackup)return;
+  ctx.getStore().alternates=state.alternates;
+  compactHealth();
+  const safeConfig={...state,health:healthSaveDisabled?{}:state.health};
+  try{localStorage.setItem(key,JSON.stringify(safeConfig));return true;}
+  catch(e){
+   // First discard only transient diagnostic history, never user settings.
+   try{localStorage.setItem(key,JSON.stringify({...safeConfig,health:{}}));healthSaveDisabled=true;
+    warnQuota('Giới hạn lưu trữ: chỉ lịch sử kiểm tra cũ không được giữ; nguồn và cài đặt vẫn an toàn.');return true;
+   }catch(err){
+    console.warn('Cannot persist advanced settings:',err?.name||'storage error');
+    warnQuota('Bộ nhớ lưu trữ đã đầy: không ghi được cài đặt nâng cao. Hãy sao lưu dữ liệu trước khi dọn bộ nhớ ứng dụng.');return false;
+   }
+  }
+ };
+ let pendingHealthSave=null;function scheduleHealthSave(){if(pendingHealthSave)return;pendingHealthSave=setTimeout(()=>{pendingHealthSave=null;save();},4000);} 
  window.addEventListener('beforeunload',()=>{if(pendingHealthSave){clearTimeout(pendingHealthSave);save();}});
  const channels=()=>ctx.getChannels();
  const profile=()=>state.profiles.find(p=>p.id===state.profileId)||state.profiles[0];
@@ -53,19 +89,25 @@
  // ====== Hover preview: snapshot first, otherwise one muted video. ======
  let previewTimer=null,previewHls=null,previewVideo=null,previewId='',previousMainMuted=false;const preview=$('#channelPreview');
  function hidePreview(){clearTimeout(previewTimer);previewTimer=null;previewId='';if(previewVideo){previewVideo.pause();previewVideo.removeAttribute('src');previewVideo.load();}previewHls?.destroy();previewVideo=null;previewHls=null;preview.classList.add('hidden');preview.replaceChildren();}
- async function openPreview(ch,anchor){if(previewId!==ch.id)return;
-  const r=anchor.getBoundingClientRect();preview.style.left=Math.min(r.right+12,window.innerWidth-300)+'px';preview.style.top=Math.min(Math.max(75,r.top),window.innerHeight-235)+'px';
+ async function openPreview(ch,anchor){if(previewId!==ch.id||!anchor.isConnected)return;
+  const r=anchor.getBoundingClientRect();preview.style.left=Math.max(8,Math.min(r.right+12,window.innerWidth-290))+'px';preview.style.top=Math.max(8,Math.min(Math.max(75,r.top),window.innerHeight-235))+'px';
   preview.replaceChildren();const picture=snapshot(ch),title=document.createElement('b');title.textContent='Xem trước (không tiếng) · '+ch.name;preview.append(title);
-  const video=document.createElement('video');if(picture)video.poster=picture;video.muted=true;video.defaultMuted=true;video.volume=0;video.autoplay=true;video.playsInline=true;video.preload='metadata';preview.append(video);previewVideo=video;preview.classList.remove('hidden');
+  // A second decoder + FFmpeg while watching TV can overload WebKit on macOS.
+  if(document.documentElement.dataset.desktopRuntime==='tauri2-rust'&&!ctx.player.paused){
+   title.textContent=(picture?'Ảnh đã lưu (xem trước tĩnh) · ':'Đang phát TV; tạm ngừng xem trước video để tiết kiệm RAM · ')+ch.name;
+   if(picture){const img=document.createElement('img');img.src=picture;img.alt='Ảnh chụp đã lưu, không phải video trực tiếp';img.style.cssText='display:block;width:100%;max-height:200px;object-fit:contain';preview.append(img);}
+   preview.classList.remove('hidden');return;
+  }
+  const video=document.createElement('video');if(picture)video.poster=picture;video.muted=true;video.defaultMuted=true;video.volume=0;video.autoplay=true;video.playsInline=true;video.preload='metadata';video.addEventListener('error',()=>{if(previewVideo===video)title.textContent=(picture?'Ảnh đã lưu • không phát được xem trước · ':'Không xem trước được (nguồn lỗi hoặc bị chặn) · ')+ch.name;},{once:true});preview.append(video);previewVideo=video;preview.classList.remove('hidden');
   try{const url=window.streamleaf?.proxy?await window.streamleaf.proxy(ch.url):ch.url;if(previewId!==ch.id)return;
    if(/\.m3u8?(?:$|\?)/i.test(ch.url)&&!video.canPlayType('application/vnd.apple.mpegurl')){const H=await ctx.loadHlsLib();if(previewId!==ch.id)return;previewHls=new H({enableWorker:true,lowLatencyMode:false,capLevelToPlayerSize:true,maxBufferLength:2,maxMaxBufferLength:5,backBufferLength:0,maxBufferSize:4*1000*1000});previewHls.loadSource(url);previewHls.attachMedia(video);}else video.src=url;
    video.play().catch(()=>{});
   }catch{title.textContent='Không xem trước được: '+ch.name;}
  }
- function decorateRow(c,row){if(!c||!row||row.dataset.previewAttached==='1')return;row.dataset.previewAttached='1';row.addEventListener('mouseenter',()=>{clearTimeout(previewTimer);hidePreview();previewId=c.id;previewTimer=setTimeout(()=>{if(!document.hidden&&!$('#page-multiview').classList.contains('active-page'))openPreview(c,row);},1250);});row.addEventListener('mouseleave',hidePreview);}
+ function decorateRow(c,row){if(!c||!/^https?:\/\//i.test(c.url||'')||!row||row.dataset.previewAttached==='1')return;row.dataset.previewAttached='1';row.addEventListener('mouseenter',()=>{clearTimeout(previewTimer);hidePreview();previewId=c.id;previewTimer=setTimeout(()=>{if(row.isConnected&&!document.hidden&&!$('#page-multiview').classList.contains('active-page'))openPreview(c,row);},1250);});row.addEventListener('mouseleave',hidePreview);}
  // ====== Auto Failover settings & Health ======
- function hlsOptions(){const len=({fast:7,balanced:12,stable:25})[state.optimizer]||12;return {maxBufferLength:len,maxMaxBufferLength:Math.max(len+8,Math.round(len*1.8)),backBufferLength:6,maxBufferSize:state.optimizer==='stable'?28*1000*1000:18*1000*1000,liveSyncDurationCount:3,manifestLoadingMaxRetry:2,levelLoadingMaxRetry:3,fragLoadingMaxRetry:3};}
- function record(ch,obj){if(!ch)return;const list=state.health[ch.url]||(state.health[ch.url]=[]);list.push({date:new Date().toISOString(),...obj});if(list.length>12)list.splice(0,list.length-12);scheduleHealthSave();}
+ function hlsOptions(){const tauri=document.documentElement.dataset.desktopRuntime==='tauri2-rust';const len=tauri?({fast:5,balanced:8,stable:12})[state.optimizer]||8:({fast:7,balanced:12,stable:25})[state.optimizer]||12;return {maxBufferLength:len,maxMaxBufferLength:Math.max(len+5,Math.round(len*1.5)),backBufferLength:tauri?3:6,maxBufferSize:tauri?10*1000*1000:state.optimizer==='stable'?28*1000*1000:18*1000*1000,liveSyncDurationCount:3,manifestLoadingMaxRetry:2,levelLoadingMaxRetry:3,fragLoadingMaxRetry:3};}
+ function record(ch,obj){if(!ch||typeof ch.url!=='string')return;const list=state.health[ch.url]||(state.health[ch.url]=[]);list.push({date:new Date().toISOString(),...obj});if(list.length>HEALTH_EVENTS_PER_CHANNEL)list.splice(0,list.length-HEALTH_EVENTS_PER_CHANNEL);if(Object.keys(state.health).length>HEALTH_CHANNEL_LIMIT+24)compactHealth();scheduleHealthSave();}
  let loadStart=0,stallCount=0;
  function onLoadStart(ch,url,at){loadStart=at;stallCount=0;}
  function onPlaying(ch,url){if(!ch)return;record(ch,{status:'alive',type:'playback',startupMs:loadStart?Date.now()-loadStart:null,width:ctx.player.videoWidth||0,height:ctx.player.videoHeight||0,stalls:stallCount,url});maybeAutoBuffer(ch);}
@@ -76,7 +118,7 @@
  let lastHealthSample=0;setInterval(()=>{const ch=ctx.getCurrent(),v=ctx.player;if(!ch||v.paused||!v.videoWidth||Date.now()-lastHealthSample<14000)return;lastHealthSample=Date.now();const q=v.getVideoPlaybackQuality?.();record(ch,{type:'live',status:'alive',width:v.videoWidth,height:v.videoHeight,stalls:stallCount,droppedFrames:q?.droppedVideoFrames??null});},15000);
  function renderHealth(){const select=$('#backupChannel');const currentChoice=select.value||ctx.getCurrent()?.id||'';select.replaceChildren();
   for(const c of channels()){const opt=document.createElement('option');opt.value=c.id;opt.textContent=c.name+' · '+c.group;select.append(opt);}if(channels().some(c=>c.id===currentChoice))select.value=currentChoice;
-  const current=channels().find(c=>c.id===select.value);$('#backupURLs').value=(state.alternates[current?.id]||[]).join('\n');$('#bufferPreset').value=state.optimizer;
+  const current=channels().find(c=>c.id===select.value);$('#backupURLs').value=(state.alternates[current?.id]||[]).join('\n');$('#bufferPreset').value=state.optimizer;updatePreferredLabel(current);
   const all=channels(),live=all.filter(c=>c.status==='alive').length,dead=all.filter(c=>c.status==='dead').length;
   $('#healthOverview').textContent=`Đã kiểm tra: ${live} sống · ${dead} Die · ${all.length-live-dead} chưa xác minh`;
   const root=$('#healthTable');root.replaceChildren();const table=document.createElement('table');table.innerHTML='<thead><tr><th>Kênh</th><th>Trạng thái</th><th>Kiểm tra gần nhất</th><th>Khởi phát</th><th>Độ phân giải</th><th>Bitrate HLS</th></tr></thead>';
@@ -84,16 +126,36 @@
    for(const val of [c.name,c.status==='alive'?'Sống':c.status==='dead'?'Die':'Chưa rõ',last?.date?new Date(last.date).toLocaleString('vi-VN'):'—',v?.startupMs!=null?v.startupMs+' ms':'—',v?.width?v.width+'×'+v.height:'—',q?.bitrate?Math.round(q.bitrate/1000)+' kbps':'—']){const td=document.createElement('td');td.textContent=val;tr.append(td);}decorateRow(c,tr);body.append(tr);}
   table.append(body);root.append(table);
  }
- $('#backupChannel').onchange=()=>{$('#backupURLs').value=(state.alternates[$('#backupChannel').value]||[]).join('\n');};
- $('#backupSave').onclick=()=>{const ch=channels().find(c=>c.id===$('#backupChannel').value);if(!ch)return ctx.toast('Chưa chọn kênh','warn');const raw=$('#backupURLs').value.split(/\r?\n/).map(x=>x.trim()).filter(Boolean);if(raw.length>9||raw.some(u=>!lib.validURL(u)))return ctx.toast('Tối đa 9 URL hợp lệ dùng HTTP(S)','warn');state.alternates[ch.id]=[...new Set(raw.filter(u=>u!==ch.url))];save();ctx.toast('Đã lưu '+state.alternates[ch.id].length+' link dự phòng');};
+ function updatePreferredLabel(ch){
+  const line=$('#backupPreferredStatus'),reset=$('#backupResetPreferred');
+  if(!line||!reset)return;
+  const preferred=String(ch?.preferredStreamUrl||'');
+  const selected=preferred&&window.IPTVAdaptivePlayback?.candidates(ch,channels(),state.alternates,lib.alternatives)?.[0]===preferred;
+  line.textContent=selected?'Đã ưu tiên link dự phòng từng phát ổn định (được lưu riêng cho kênh này).':preferred?'Link cũ không còn trong danh sách dự phòng, sẽ dùng URL mới từ M3U.':'Chưa có link dự phòng được xác minh ổn định.';
+  reset.disabled=!preferred;
+ }
+ $('#backupChannel').onchange=()=>{const ch=channels().find(c=>c.id===$('#backupChannel').value);$('#backupURLs').value=(state.alternates[ch?.id]||[]).join('\n');updatePreferredLabel(ch);};
+ $('#backupResetPreferred').onclick=()=>{const ch=channels().find(c=>c.id===$('#backupChannel').value);if(!ch)return;delete ch.preferredStreamUrl;delete ch.preferredStreamAt;ctx.save();updatePreferredLabel(ch);ctx.toast('Đã đặt lại ưu tiên: từ lần mở tiếp theo sẽ thử link gốc trước');};
+ $('#backupSave').onclick=()=>{const ch=channels().find(c=>c.id===$('#backupChannel').value);if(!ch)return ctx.toast('Chưa chọn kênh','warn');const raw=$('#backupURLs').value.split(/\r?\n/).map(x=>x.trim()).filter(Boolean);if(raw.length>9||raw.some(u=>!lib.validURL(u)))return ctx.toast('Tối đa 9 URL hợp lệ dùng HTTP(S)','warn');state.alternates[ch.id]=[...new Set(raw.filter(u=>u!==ch.url))];save();updatePreferredLabel(ch);ctx.toast('Đã lưu '+state.alternates[ch.id].length+' link dự phòng');};
  $('#bufferPreset').onchange=e=>{state.optimizer=e.target.value;save();ctx.toast('Đã lưu chế độ bộ đệm');};
  $('#healthRefresh').onclick=renderHealth;
  // ====== Local timeshift / remote DVR ======
  let buffering=false,bufferId='',bufferStarting=false,bufferRequest=0;
  let activeChannelId='',autoAttemptedId='',autoSuppressedId='';
  const autoSetting=$('#autoTimeshiftSetting'),autoLabel=$('#autoTimeshiftState');
+ function replayMinutes(){return [5,10,15,30].includes(Number(state.replayMinutes))?Number(state.replayMinutes):10;}
+ function syncReplayUI(){const minutes=replayMinutes();
+  document.querySelectorAll('input[name="replayMinutesChoice"]').forEach(input=>{input.checked=Number(input.value)===minutes;});
+  for(const id of ['bufferWindowMinutes','bufferInfoMinutes','autoTimeshiftWindowMinutes']){const el=$('#'+id);if(el)el.textContent=String(minutes);}
+  const label=$('#replayMinutesState');if(label)label.textContent='Đang dùng: '+minutes+' phút'+(buffering?' · Bộ đệm đang chạy giữ thời gian cũ':'');
+ }
+ document.querySelectorAll('input[name="replayMinutesChoice"]').forEach(input=>input.addEventListener('change',()=>{
+  if(!input.checked)return;state.replayMinutes=Number(input.value);save();syncReplayUI();
+  ctx.toast('Đã lưu tua lại '+replayMinutes()+' phút; áp dụng từ lần bật bộ đệm tiếp theo');
+ }));
+ syncReplayUI();
  function describeAutoSetting(){autoSetting.checked=!!state.autoTimeshift;autoLabel.textContent=state.autoTimeshift?(window.streamleaf?.startTimeshift?'Đã bật: tự dùng bộ đệm khi mở kênh LIVE.':'Đã lưu: sẽ tự bật khi chạy bản desktop có FFmpeg.'):'Mặc định: tắt (bật thủ công trong Xem TV).';}
- autoSetting.addEventListener('change',()=>{state.autoTimeshift=autoSetting.checked;save();describeAutoSetting();ctx.toast(state.autoTimeshift?'Đã bật Timeshift mặc định cho các kênh LIVE tiếp theo':'Đã tắt Timeshift mặc định');});
+ autoSetting.addEventListener('change',()=>{state.autoTimeshift=autoSetting.checked;save();describeAutoSetting();ctx.toast(state.autoTimeshift?'Đã bật Tua lại mặc định cho các kênh LIVE tiếp theo':'Đã tắt Tua lại mặc định');});
  describeAutoSetting();
  function maybeAutoBuffer(ch){
   if(!state.autoTimeshift||!window.streamleaf?.startTimeshift||!ch||ctx.getPlayMode?.()!=='live'||buffering||bufferStarting)return;
@@ -107,14 +169,14 @@
   const ch=ctx.getCurrent();
   if(buffering){bufferRequest++;buffering=false;const oldId=bufferId;bufferId='';if(manual)autoSuppressedId=ch?.id||'';await safeStopOwned(oldId);setStatus('Đã tắt bộ đệm; trở về LIVE');$('#bufferToggle').textContent='Bật bộ đệm';if(ch)void ctx.playChannel(ch.id);return;}
   if(bufferStarting)return;
-  if(!ch)return ctx.toast('Chọn kênh trước khi bật Timeshift','warn');
-  if(ctx.getPlayMode?.()!=='live')return ctx.toast('Timeshift chỉ dùng với kênh đang phát LIVE','warn');
+  if(!ch)return ctx.toast('Chọn kênh trước khi bật Tua lại','warn');
+  if(ctx.getPlayMode?.()!=='live')return ctx.toast('Tua lại chỉ dùng với kênh đang phát LIVE','warn');
   if(!window.streamleaf?.startTimeshift)return ctx.toast('Bộ đệm cục bộ chỉ hỗ trợ ứng dụng desktop có FFmpeg','warn');
   if(manual){autoSuppressedId='';autoAttemptedId=ch.id;}
   const ticket=++bufferRequest;bufferStarting=true;let createdId='';
-  setStatus('Đang tạo bộ đệm 5 phút; cần đợi segment đầu tiên…');$('#bufferToggle').disabled=true;
+  setStatus('Đang tạo bộ đệm tua lại '+replayMinutes()+' phút; cần đợi segment đầu tiên…');$('#bufferToggle').disabled=true;
   try{
-   const out=await window.streamleaf.startTimeshift(ch.url);createdId=out.id;bufferId=out.id;
+   const out=await window.streamleaf.startTimeshift(ch.url,replayMinutes());createdId=out.id;bufferId=out.id;
    const stale=()=>ticket!==bufferRequest||ctx.getCurrent()?.id!==ch.id||ctx.getPlayMode?.()!=='live';
    if(stale())return;
    let ready=false;
@@ -127,8 +189,8 @@
    if(!ready)throw Error('Nguồn không tạo được segment, vẫn tiếp tục phát LIVE');
    buffering=true;$('#bufferToggle').textContent='Tắt bộ đệm';
    await ctx.playChannel(ch.id,out.url,{buffer:true,mode:'timeshift'});
-   setStatus('Đệm tối đa ~5 phút kể từ khi bật; có thể tua −30 giây.');
-  }catch(e){if(ticket===bufferRequest){buffering=false;ctx.toast('Timeshift: '+e.message,'warn');setStatus('Chưa thể bật bộ đệm, kênh vẫn phát LIVE');}}
+   setStatus('Đệm tối đa ~'+replayMinutes()+' phút kể từ khi bật; có thể tua −10 hoặc −30 giây.');
+  }catch(e){if(ticket===bufferRequest){buffering=false;ctx.toast('Tua lại: '+e.message,'warn');setStatus('Chưa thể bật bộ đệm, kênh vẫn phát LIVE');}}
   finally{
    if(!buffering)await safeStopOwned(createdId);
    if(ticket===bufferRequest){bufferStarting=false;$('#bufferToggle').disabled=false;}
@@ -136,8 +198,8 @@
   }
  }
  $('#bufferToggle').onclick=()=>toggleBuffer(true);
- $('#bufferRewind').onclick=()=>{const v=ctx.player,r=lib.seekRange(v,300);if(!r||r.available<2)return ctx.toast('Chưa có đủ dữ liệu DVR/Timeshift để tua','warn');v.currentTime=Math.max(r.start,v.currentTime-30);setStatus('Đang xem lại trong khoảng '+Math.round(r.available)+' giây đã có');};
- $('#bufferRewind5').onclick=()=>{const v=ctx.player,r=lib.seekRange(v,300);if(!r||r.available<2)return ctx.toast('Chưa có dữ liệu tua ngược','warn');v.currentTime=r.start;setStatus('Đã tua về mốc cũ nhất có sẵn (~'+Math.round(r.available)+' giây)');};
+ $('#bufferRewind').onclick=()=>{const v=ctx.player,r=lib.seekRange(v,replayMinutes()*60);if(!r||r.available<2)return ctx.toast('Chưa có đủ dữ liệu DVR/Tua lại để tua','warn');v.currentTime=Math.max(r.start,v.currentTime-30);setStatus('Đang xem lại trong khoảng '+Math.round(r.available)+' giây đã có');};
+ $('#bufferRewind10').onclick=()=>{const v=ctx.player,r=lib.seekRange(v,replayMinutes()*60);if(!r||r.available<2)return ctx.toast('Chưa có dữ liệu tua lại','warn');v.currentTime=Math.max(r.start,v.currentTime-10);setStatus('Tua lại 10 giây · có '+Math.round(r.available)+' giây dữ liệu');};
  $('#bufferLive').onclick=()=>{const ch=ctx.getCurrent();if(!ch)return;bufferRequest++;buffering=false;bufferStarting=false;autoSuppressedId=ch.id;const id=bufferId;bufferId='';void safeStopOwned(id);$('#bufferToggle').textContent='Bật bộ đệm';$('#bufferToggle').disabled=false;setStatus('Đang xem LIVE');void ctx.playChannel(ch.id);};
  function onStop(){bufferRequest++;buffering=false;bufferStarting=false;bufferId='';activeChannelId='';autoAttemptedId='';autoSuppressedId='';$('#bufferToggle').textContent='Bật bộ đệm';$('#bufferToggle').disabled=false;window.streamleaf?.stopTimeshift?.().catch(()=>{});}
  // ====== EPG search, reminders, catch-up and mapping ======
@@ -169,7 +231,7 @@
  async function hashPIN(pin,salt){if(!crypto?.subtle)throw Error('Máy không hỗ trợ WebCrypto');const data=new TextEncoder().encode(pin),input=await crypto.subtle.importKey('raw',data,'PBKDF2',false,['deriveBits']);const bits=await crypto.subtle.deriveBits({name:'PBKDF2',salt:new TextEncoder().encode(salt),iterations:120000,hash:'SHA-256'},input,256);return [...new Uint8Array(bits)].map(x=>x.toString(16).padStart(2,'0')).join('');}
  async function verifyPIN(){if(!state.pin)return false;const pin=prompt('Nhập PIN quản trị để mở khóa');if(pin===null)return false;return (await hashPIN(pin,state.pin.salt))===state.pin.hash;}
  async function allowChannel(ch){const prof=profile();if(!prof.child)return true;if(!(state.restrictedGroups||[]).includes(ch.group))return true;try{if(await verifyPIN())return true;}catch{}ctx.toast('Kênh thuộc nhóm bị khóa trong hồ sơ trẻ em','warn');return false;}
- function applyProfileUI(){const child=profile().child;const selectors=['.nav[data-page="sources"]','.nav[data-page="folders"]','.nav[data-page="settings"]','.nav[data-page="health"]','.nav[data-page="doctor"]','#backupNav','#backupExportBtn','#backupImportBtn','#exportNav','#fileBtn','#urlBtn','#newFolderFromList','#refreshAllBtn','#folderCreateBtn','#quickExport','#emptyFileBtn','#emptyUrlBtn','#sourcesFileBtn','#sourcesUrlBtn'];for(const selector of selectors){const el=$(selector);if(el){el.disabled=child;el.title=child?'Hãy nhập PIN và chuyển sang hồ sơ người lớn':'';}}for(const selector of ['#profileCreate','#pinSave','#profileName','#profileChild','#profilePin']){const el=$(selector);if(el)el.disabled=child;}$('#profileGroupLocks').querySelectorAll('input').forEach(x=>x.disabled=child);document.body.classList.toggle('child-profile',child);}
+ function applyProfileUI(){const child=profile().child;const selectors=['.nav[data-page="sources"]','.nav[data-page="folders"]','.nav[data-page="settings"]','.nav[data-page="health"]','.nav[data-page="doctor"]','#backupExportBtn','#backupImportBtn','#exportNav','#fileBtn','#urlBtn','#newFolderFromList','#refreshAllBtn','#folderCreateBtn','#quickExport','#emptyFileBtn','#emptyUrlBtn','#sourcesFileBtn','#sourcesUrlBtn'];for(const selector of selectors){const el=$(selector);if(el){el.disabled=child;el.title=child?'Hãy nhập PIN và chuyển sang hồ sơ người lớn':'';}}for(const selector of ['#profileCreate','#pinSave','#profileName','#profileChild','#profilePin']){const el=$(selector);if(el)el.disabled=child;}$('#profileGroupLocks').querySelectorAll('input').forEach(x=>x.disabled=child);document.body.classList.toggle('child-profile',child);}
  function renderProfiles(){const sel=$('#profileChoice');sel.replaceChildren();for(const pr of state.profiles){const o=document.createElement('option');o.value=pr.id;o.textContent=pr.name+(pr.child?' · Trẻ em':' · Người lớn');sel.append(o);}sel.value=profile().id;
   $('#profileStatus').textContent='Đang dùng: '+profile().name+' · Các nhóm bị khóa: '+state.restrictedGroups.length;
   const root=$('#profileGroupLocks');root.replaceChildren();const legend=document.createElement('p');legend.textContent='Nhóm không cho trẻ xem:';root.append(legend);for(const g of [...new Set(channels().map(c=>c.group))].slice(0,120)){
@@ -209,7 +271,7 @@
  function onPage(p,last){hidePreview();if(last==='multiview'&&p!=='multiview'){stopMulti();ctx.player.muted=previousMainMuted;}if(p==='multiview'){previousMainMuted=ctx.player.muted;ctx.player.muted=true;renderMulti();}if(p==='health')renderHealth();if(p==='doctor')doctor();if(p==='profiles')renderProfiles();if(p==='epg')renderEpgSearch();applyProfileUI();}
  $('#epgSearchResults').textContent='Nhập tên chương trình để tìm và đặt nhắc lịch.';
  $('#bufferPreset').value=state.optimizer;
- window.IPTVProAdvanced={decorateRow,allowChannel,onCheck,onPlaying,onLoadStart,onQuality,onStreamError,onChannel,onStop,onPage,onFavoritesChanged,hlsOptions,recordHealth:record,doctor,playCatchup,remind,setAlternates:(id,urls)=>{state.alternates[id]=[...new Set(urls)].slice(0,15);save();},canEdit:()=>!profile().child,canEnterPage:p=>!profile().child||!['sources','folders','settings','health','doctor'].includes(p)};
+ window.IPTVProAdvanced={decorateRow,closePreview:hidePreview,allowChannel,onCheck,onPlaying,onLoadStart,onQuality,onStreamError,onChannel,onStop,onPage,onFavoritesChanged,hlsOptions,getReplayMinutes:replayMinutes,recordHealth:record,doctor,playCatchup,remind,setAlternates:(id,urls)=>{state.alternates[id]=[...new Set(urls)].slice(0,15);save();},canEdit:()=>!profile().child,canEnterPage:p=>!profile().child||!['sources','discovery','folders','settings','health','doctor'].includes(p)};
  onFavoritesChanged();
  applyProfileUI();
  setInterval(checkReminders,30000);checkReminders();

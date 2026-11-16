@@ -30,8 +30,9 @@ with sync_playwright() as p:
  assert page.evaluate("getComputedStyle(document.documentElement).getPropertyValue('--accent').trim()")=='#fd8844'
  page.locator('#colorWheel').click(position={'x':145,'y':84})
  assert page.locator('#themePicker').input_value().startswith('#')
- page.locator('#releaseRepo').fill('myaccount/open-iptv-pro')
- page.locator('#releaseRepo').dispatch_event('change')
+ if page.locator('#releaseRepo').count():
+  page.locator('#releaseRepo').fill('myaccount/open-iptv-pro')
+  page.locator('#releaseRepo').dispatch_event('change')
  page.locator('.nav[data-page="epg"]').click()
  page.evaluate('''data => {const s=window.IPTVState.getStore();const g=window.IPTVGuide.parse(data,s.channels);localStorage.setItem('testGuide',JSON.stringify(g));window.__testEPG=g;}''',xml)
  assert page.evaluate("window.IPTVGuide.when('20261108060000 +0700')") == int(datetime.datetime(2026,11,7,23,tzinfo=datetime.timezone.utc).timestamp()*1000)

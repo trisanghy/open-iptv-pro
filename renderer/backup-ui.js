@@ -6,13 +6,17 @@
  const $=id=>document.getElementById(id);
  const exportBtn=$('backupExportBtn'),importBtn=$('backupImportBtn'),status=$('backupStatus');
  if(!exportBtn||!importBtn||!status)return;
- const owned=k=>k.startsWith('open-iptv-pro-')||k.startsWith('open-iptv-doctor-v2-')||k==='streamleaf-3';
+ const owned=k=>k.startsWith('open-iptv-pro-')||(k.startsWith('open-iptv-doctor-v2-')||k.startsWith('open-iptv-doctor-v3-'))||k==='streamleaf-3';
  const collect=()=>{
   const entries=[];
   for(let i=0;i<localStorage.length;i++){
    const k=localStorage.key(i);if(k&&owned(k))entries.push([k,localStorage.getItem(k)]);
   }
-  return Object.fromEntries(entries);
+  const out=Object.fromEntries(entries);
+  if(window.IPTVPrimaryPersistence?.nativeReady&&window.IPTVPrimaryPersistence.initialRaw){
+   out['open-iptv-pro-4']=window.IPTVPrimaryPersistence.initialRaw;
+  }
+  return out;
  };
  const busy=s=>{exportBtn.disabled=s;importBtn.disabled=s;};
  const message=(s,isError=false)=>{status.textContent=s;status.classList.toggle('backup-error',isError);};
@@ -32,6 +36,7 @@
   busy(true);message('Đang chuẩn bị bản sao lưu…');
   try{
    ctx.save();
+   await window.IPTVPrimaryPersistence?.flush?.();
    const result=await api.backupExport(collect(),$('backupIncludeSnapshots').checked);
    if(result.canceled){message('Đã hủy thao tác sao lưu.');return;}
    message(`Đã sao lưu ${result.sourceCount} nguồn, ${result.channelCount} kênh, ${result.images} ảnh (${format(result.bytes)}).${result.missingImages?' Bỏ qua '+result.missingImages+' ảnh không còn trên máy.':''}`);
@@ -47,29 +52,45 @@
    const preview=await api.backupInspect();
    if(preview.canceled){message('Đã hủy chọn file.');return;}
    const time=preview.createdAt?new Date(preview.createdAt).toLocaleString():'Không rõ';
-   message(`Đã kiểm tra: ${preview.sourceCount} nguồn, ${preview.channelCount} kênh, ${preview.images} ảnh • ${format(preview.bytes)}.`);
-   if(!confirm(`KHÔI PHỤC DỮ LIỆU OPEN IPTV PRO?\n\nNgày sao lưu: ${time}\nPhiên bản: ${preview.appVersion||'Không rõ'}\nNguồn: ${preview.sourceCount} | Kênh: ${preview.channelCount} | Ảnh Snapshot: ${preview.images}\n\nToàn bộ playlist, kênh yêu thích, hồ sơ, thiết lập và dữ liệu hiện tại sẽ bị THAY THẾ.\n\nHãy sao lưu dữ liệu hiện tại trước khi tiếp tục.\n\nBạn đồng ý khôi phục và khởi động lại giao diện?`)){
+   message(`Đã kiểm tra: ${preview.sourceCount} nguồn, ${preview.channelCount} kênh, ${preview.images} ảnh • ${preview.recordingSchedules??0} lịch ghi tương lai • ${format(preview.bytes)}.`);
+   if(!confirm(`KHÔI PHỤC DỮ LIỆU OPEN IPTV PRO?\n\nNgày sao lưu: ${time}\nPhiên bản: ${preview.appVersion||'Không rõ'}\nNguồn: ${preview.sourceCount} | Kênh: ${preview.channelCount} | Ảnh Snapshot: ${preview.images}\nLịch ghi tương lai: ${preview.recordingSchedules??0} (chỉ khi file Backup hỗ trợ)\n\nToàn bộ playlist, kênh yêu thích, hồ sơ, thiết lập và dữ liệu hiện tại sẽ bị THAY THẾ.\n\nHãy sao lưu dữ liệu hiện tại trước khi tiếp tục.\n\nBạn đồng ý khôi phục và khởi động lại giao diện?`)){
     message('Đã hủy khôi phục, dữ liệu hiện tại không thay đổi.');return;
    }
    message('Đang nhập ảnh Snapshot và dữ liệu…');
+   await window.IPTVPrimaryPersistence?.flush?.();
    const restored=await api.backupRestore(preview.token);
    finishToken=restored.finishToken;
    const previous=collect();
    window.__openIPTVRestoringBackup=true; // Prevent beforeunload/pending autosaves from overwriting restored data.
    try{
+    const nativePrimary=window.IPTVPrimaryPersistence?.nativeReady;
+    const restoredPrimary=restored.storage['open-iptv-pro-4']||restored.storage['streamleaf-3'];
+    if(nativePrimary&&typeof restoredPrimary!=='string')throw Error('Backup thiếu dữ liệu nguồn và kênh.');
+    // Restore other preferences in localStorage, but move large playlists to
+    // Rust app-data before telling the native backup operation to commit.
     for(const k of Object.keys(previous))localStorage.removeItem(k);
     for(const [k,v] of Object.entries(restored.storage)){
      if(!owned(k)||typeof v!=='string')throw Error('Khóa cài đặt không hợp lệ.');
+     if(nativePrimary&&(k==='open-iptv-pro-4'||k==='streamleaf-3'))continue;
      localStorage.setItem(k,v);
     }
+    if(nativePrimary)await api.storeWrite(restoredPrimary);
     const committed=await api.backupFinish(finishToken,true);
     if(!committed)throw Error('Không thể xác nhận dữ liệu đã khôi phục.');
     finishToken=null;
     message('Khôi phục thành công. Đang tải lại giao diện…');
     window.location.reload();
    }catch(e){
-    for(const k of Object.keys(collect()))localStorage.removeItem(k);
-    for(const [k,v] of Object.entries(previous))localStorage.setItem(k,v);
+    // Both stores can be rolled back; do not let an exception here hide the
+    // original restore failure or destroy a valid native backup.
+    try{
+     for(const k of Object.keys(collect()))localStorage.removeItem(k);
+     for(const [k,v] of Object.entries(previous)){
+      if(window.IPTVPrimaryPersistence?.nativeReady&&(k==='open-iptv-pro-4'||k==='streamleaf-3'))continue;
+      localStorage.setItem(k,v);
+     }
+     if(window.IPTVPrimaryPersistence?.nativeReady&&previous['open-iptv-pro-4'])await api.storeWrite(previous['open-iptv-pro-4']);
+    }catch(rollbackError){console.error('Restore rollback:',rollbackError);}
     window.__openIPTVRestoringBackup=false;
     throw e;
    }
@@ -78,9 +99,5 @@
    message('Không thể khôi phục: '+e.message,true);
    ctx.toast('Khôi phục thất bại; đã giữ lại dữ liệu trước đó','error');
   }finally{busy(false);}
- });
- $('backupNav')?.addEventListener('click',()=>{
-  ctx.setPage('settings');
-  $('backupSettings')?.scrollIntoView({block:'start',behavior:'smooth'});
  });
 })();

@@ -1,0 +1,44 @@
+name: Tauri Rust Lab (experimental, no publishing)
+on:
+  push:
+    branches:
+      - experiment/rust-tauri-v2
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  test-and-build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-2022
+            bundle: nsis
+          - os: macos-latest
+            bundle: dmg
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Install JS dependencies
+        run: npm install --no-audit --no-fund
+      - name: JavaScript compatibility tests
+        run: npm test
+      - name: Verify renderer assets
+        run: npm run prepare:renderer
+      - name: Audit Tauri IPC compatibility
+        run: npm run audit:bridge
+      - name: Rust unit tests
+        run: cargo test --manifest-path src-tauri/Cargo.toml
+      - name: Build native bundle (unsigned)
+        run: npm run build -- --bundles ${{ matrix.bundle }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: tauri-rust-lab-${{ matrix.os }}
+          path: |
+            src-tauri/target/release/bundle/**/*.exe
+            src-tauri/target/release/bundle/**/*.dmg
+          if-no-files-found: error

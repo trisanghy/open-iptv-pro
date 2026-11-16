@@ -31,6 +31,9 @@ function planReplacement(oldChannels,newChannels,sourceId,otherChannels=[]){
   if(prev){claimed.add(prev);matched++;
    if(!usedIds.has(prev.id))result.id=prev.id;
    result.group=prev.group||result.group;
+   // Keep an independently verified playback preference, not the old playlist
+   // URL. Playback only uses it if the refreshed alternatives still include it.
+   if(prev.preferredStreamUrl){result.preferredStreamUrl=prev.preferredStreamUrl;result.preferredStreamAt=prev.preferredStreamAt;}
    // A changed URL may carry a different stream; old alive/dead evidence is invalid.
    if(prev.url===result.url){for(const k of ['status','checkedAt','reason'])if(prev[k]!==undefined)result[k]=prev[k];}
   }

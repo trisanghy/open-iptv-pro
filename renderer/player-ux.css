@@ -1,0 +1,91 @@
+/* Core player controls: identical circular action buttons across ALL 11 themes. */
+#page-tv .controls :is(#prevBtn,#playBtn,#stopBtn,#nextBtn,#shotBtn,#fullscreenBtn){
+ width:42px!important;height:42px!important;min-width:42px!important;min-height:42px!important;
+ flex:0 0 42px!important;padding:0!important;border-radius:50%!important;
+ display:inline-grid!important;place-items:center!important;line-height:1!important;
+ box-sizing:border-box!important;font-size:19px!important;transform:none!important;
+}
+#page-tv .controls #playBtn{font-size:22px!important;font-weight:700!important}
+#page-tv .controls{align-items:center!important}
+#page-tv .controls :is(#prevBtn,#playBtn,#stopBtn,#nextBtn):focus-visible{outline:2px solid var(--accent,#ff4e9e);outline-offset:3px}
+.video-seekbar{display:flex;align-items:center;gap:10px;padding:13px 5px 2px;font-size:12px;min-width:0;color:var(--text,#eee)}
+.video-seekbar[hidden]{display:none!important}
+.video-seekbar input[type=range]{flex:1;width:auto;min-width:60px;accent-color:var(--accent,#ff4e9e)}
+.video-seek-hint{font-size:11px;opacity:.75;white-space:nowrap}
+.fullscreen-ux{display:none!important}
+.player-box:fullscreen{padding:0!important;background:#000!important}
+.player-box:fullscreen video{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;object-fit:contain!important}
+.player-box:fullscreen .fullscreen-ux{
+ display:flex!important;position:absolute!important;z-index:300!important;
+ bottom:max(18px,env(safe-area-inset-bottom,0px))!important;left:3%!important;right:3%!important;
+ align-items:center!important;gap:12px!important;min-height:64px!important;padding:10px 16px!important;
+ background:rgba(10,12,20,.77)!important;backdrop-filter:blur(18px)!important;
+ border:1px solid rgba(255,255,255,.17)!important;border-radius:20px!important;
+ transition:opacity .2s ease, transform .2s ease!important;opacity:1!important;pointer-events:auto!important;
+ color:#fff!important;
+}
+.player-box:fullscreen .fullscreen-ux button{
+ width:42px!important;height:42px!important;min-width:42px!important;border-radius:50%!important;
+ background:rgba(255,255,255,.12)!important;border:0!important;color:white!important;font-size:18px!important;
+ padding:0!important;display:grid!important;place-items:center!important;cursor:pointer!important;
+}
+.player-box:fullscreen .fullscreen-ux #fsPlay{background:var(--accent,#ff4e9e)!important;color:#151018!important}
+.player-box:fullscreen .fullscreen-ux #fsSeek{flex:1!important;width:auto!important;min-width:40px!important;accent-color:var(--accent,#ff4e9e)!important}
+.player-box:fullscreen .fullscreen-ux .fs-channel{max-width:22vw;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:12px;font-weight:700}
+.player-box:fullscreen .fullscreen-ux .fs-clock{font-size:11px;white-space:nowrap;font-variant-numeric:tabular-nums}
+.player-box:fullscreen.player-idle .fullscreen-ux{opacity:0!important;pointer-events:none!important;transform:translateY(12px)!important}
+.player-box:fullscreen.player-idle{cursor:none!important}
+.player-box:fullscreen .empty-player{pointer-events:auto}
+@media(max-width:1050px){
+ #page-tv .controls :is(#prevBtn,#playBtn,#stopBtn,#nextBtn,#shotBtn,#fullscreenBtn){width:36px!important;height:36px!important;min-width:36px!important;min-height:36px!important;flex-basis:36px!important}
+ .video-seek-hint{display:none}
+ .player-box:fullscreen .fullscreen-ux{gap:7px!important;left:1%!important;right:1%!important}
+ .player-box:fullscreen .fullscreen-ux .fs-channel{display:none}
+}
+
+/* Fullscreen EPG + DVR drawer is scoped to playerBox, so no second player runs. */
+.player-box:fullscreen .fullscreen-ux #fsEPG,
+.player-box:fullscreen .fullscreen-ux #fsDVR{
+ width:auto!important;min-width:72px!important;height:40px!important;
+ padding:0 11px!important;border-radius:12px!important;font-size:12px!important;
+ white-space:nowrap!important;font-weight:650!important;
+}
+.player-box:fullscreen .fullscreen-ux button[aria-expanded="true"]{
+ background:var(--accent,#bc7cff)!important;color:#151018!important;
+}
+.player-box:fullscreen.fs-drawer-open .fullscreen-ux{opacity:1!important;pointer-events:auto!important;transform:none!important;}
+.player-box:fullscreen .fs-drawer:not([hidden]){
+ display:flex!important;flex-direction:column!important;
+ position:absolute!important;z-index:310!important;
+ right:3%!important;bottom:calc(max(18px,env(safe-area-inset-bottom,0px)) + 80px)!important;
+ width:min(520px,94vw)!important;max-height:min(58vh,560px)!important;
+ color:#f2f4fa!important;background:rgba(13,18,29,.94)!important;
+ border:1px solid rgba(255,255,255,.22)!important;border-radius:17px!important;
+ box-shadow:0 16px 60px rgba(0,0,0,.6)!important;
+ backdrop-filter:blur(22px)!important;pointer-events:auto!important;
+ overflow:hidden!important;
+}
+.fs-drawer[hidden]{display:none!important}
+.fs-drawer-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:15px 16px;border-bottom:1px solid #ffffff24}
+.fs-drawer-head strong{font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fs-drawer-head button{background:#ffffff20;border:0;border-radius:8px;color:white;font-size:16px;padding:5px 10px;cursor:pointer}
+.fs-drawer-content{padding:10px 15px 16px;overflow-y:auto;overscroll-behavior:contain;min-height:0}
+.fs-drawer-empty{color:#c5cbd9;font-size:13px;line-height:1.7}
+.fs-epg-row,.fs-dvr-row{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid #ffffff19;font-size:12px}
+.fs-epg-time{flex:0 0 100px;color:#b2b6cb;font-size:11px;font-variant-numeric:tabular-nums}
+.fs-epg-details,.fs-dvr-details{min-width:0;flex:1;display:flex;flex-direction:column;gap:5px}
+.fs-epg-details strong,.fs-dvr-details strong{font-size:12px;line-height:1.35}
+.fs-epg-details small,.fs-dvr-details small{color:#aeb6c6;font-size:11px;line-height:1.4}
+.fs-epg-details .fs-live{color:#6beeb7;font-weight:700}
+.fs-dvr-pill{white-space:nowrap;border-radius:6px;background:#ffffff1d;padding:6px 9px;font-size:10px}
+.fs-dvr-row.is-recording .fs-dvr-pill{background:#bd4040;color:white}
+.fs-drawer-action,.fs-record-btn{border:1px solid #ffffff44;border-radius:8px;background:#ffffff17;color:white;padding:8px 12px;font-size:11px;cursor:pointer}
+.fs-drawer-action{margin-top:12px;width:100%;font-weight:700}
+.fs-record-btn{flex-shrink:0}
+.fs-drawer-action:hover,.fs-record-btn:hover{background:#ffffff30}
+@media(max-width:850px){
+ .player-box:fullscreen .fullscreen-ux #fsEPG,.player-box:fullscreen .fullscreen-ux #fsDVR{min-width:56px!important;padding:0 5px!important;font-size:11px!important}
+ .player-box:fullscreen .fullscreen-ux .fs-clock{display:none}
+ .player-box:fullscreen .fs-drawer:not([hidden]){right:2%!important;bottom:90px!important;max-height:55vh!important}
+}
+@media(prefers-reduced-motion:reduce){.player-box:fullscreen .fullscreen-ux{transition:none!important}}

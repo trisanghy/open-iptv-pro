@@ -138,7 +138,7 @@ class UpdateManager extends EventEmitter{
    let expected=null;
    if(this.asset.digest?.startsWith('sha256:'))expected=this.asset.digest.slice(7).toLowerCase();
    if(!expected && checksumAsset){
-    const response=await this.fetcher(checksumAsset.url,{headers:{'User-Agent':'Open-IPTV-Pro/4.22.2'},signal:AbortSignal.timeout(15000)});
+    const response=await this.fetcher(checksumAsset.url,{headers:{'User-Agent':'Open-IPTV-Pro/4.23.8'},signal:AbortSignal.timeout(15000)});
     if(!response.ok||!isTrustedRedirect(response.url||checksumAsset.url))throw Error('Không đọc được bảng SHA256 từ GitHub');
     const sums=await response.text();if(sums.length>500_000)throw Error('Bảng SHA256 không hợp lệ');
     expected=extractSha256(sums,this.asset.name);
@@ -156,7 +156,7 @@ class UpdateManager extends EventEmitter{
    const armIdle=()=>{clearTimeout(idleTimer);idleTimer=setTimeout(()=>controller.abort(new Error('Tải xuống bị ngắt do quá lâu không nhận được dữ liệu')),IDLE_MS);/* Keep the timer referenced while a download is in flight. */};
    try{
     armIdle();
-    const response=await this.fetcher(this.asset.url,{headers:{'User-Agent':'Open-IPTV-Pro/4.22.2'},signal:controller.signal});
+    const response=await this.fetcher(this.asset.url,{headers:{'User-Agent':'Open-IPTV-Pro/4.23.8'},signal:controller.signal});
     if(!response.ok||!isTrustedRedirect(response.url||this.asset.url))throw Error('Không tải được từ GitHub Releases');
     if(!response.body)throw Error('Máy chủ không trả dữ liệu bộ cài');
     const total=Number(response.headers?.get?.('content-length'))||Number(this.asset.size)||0;

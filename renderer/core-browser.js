@@ -1,9 +1,13 @@
 'use strict';
 (function(){
  function attrs(s){let o={};for(const m of s.matchAll(/([\w-]+)="([^"]*)"/g))o[m[1]]=m[2];return o;}
+ function splitExtinf(s){let quoted=false;
+  for(let i=0;i<s.length;i++){if(s[i]==='"')quoted=!quoted;else if(s[i]===','&&!quoted)return {meta:s.slice(0,i),name:s.slice(i+1).trim()};}
+  return {meta:s,name:''};
+ }
  function parseM3U(content,sourceId='file'){
   const lines=String(content||'').replace(/^\uFEFF/,'').split(/\r?\n/);if(!lines.some(s=>/^#EXTM3U\b|^#EXTINF:/i.test(s.trim())))throw Error('File không phải danh sách M3U hợp lệ');
-  const out=[];let meta=null;for(const s0 of lines){const s=s0.trim();if(/^#EXTINF:/i.test(s)){const p=s.indexOf(',');const a=attrs(p>0?s.slice(0,p):s);meta={name:(p>0?s.slice(p+1).trim():'')||'Kênh chưa có tên',group:a['group-title']||'Khác',logo:a['tvg-logo']||'',tvgId:a['tvg-id']||'',catchup:a['catchup']||'',catchupSource:a['catchup-source']||'',catchupDays:a['catchup-days']||'',status:'unchecked',checkedAt:''};}else if(meta&&s&&!s.startsWith('#')){try{const u=new URL(s);if(!['http:','https:','rtsp:','rtmp:','udp:'].includes(u.protocol)){meta=null;continue;}}catch{meta=null;continue}out.push({...meta,url:s,sourceId,id:sourceId+'|'+out.length});meta=null;}}
+  const out=[];let meta=null;for(const s0 of lines){const s=s0.trim();if(/^#EXTINF:/i.test(s)){const parts=splitExtinf(s);const a=attrs(parts.meta);meta={name:parts.name||'Kênh chưa có tên',group:a['group-title']||'Khác',logo:a['tvg-logo']||'',tvgId:a['tvg-id']||'',catchup:a['catchup']||'',catchupSource:a['catchup-source']||'',catchupDays:a['catchup-days']||'',status:'unchecked',checkedAt:''};}else if(meta&&s&&!s.startsWith('#')){try{const u=new URL(s);if(!['http:','https:','rtsp:','rtmp:','udp:'].includes(u.protocol)){meta=null;continue;}}catch{meta=null;continue}out.push({...meta,url:s,sourceId,id:sourceId+'|'+out.length});meta=null;}}
   return out;
  }
  function stamp(){return new Intl.DateTimeFormat('en-GB',{timeZone:'Asia/Bangkok',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).format(new Date()).replace(',','');}

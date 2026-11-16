@@ -58,7 +58,7 @@
   if(s.type!=='url')return {channels:cached,stale:false};
   try{const txt=window.streamleaf?.loadURL?(await window.streamleaf.loadURL(origin)).content:await (async()=>{const r=await fetch(origin);if(!r.ok)throw Error('HTTP '+r.status);return r.text();})();
    const next=core.parseM3U(txt,s.id);if(!next.length)throw Error('M3U không có kênh');if(cached.length>=20&&next.length<cached.length*.5)throw Error('Số kênh giảm hơn 50%, giữ dữ liệu đã có');
-   const states=new Map(cached.map(c=>[c.url,{status:c.status,checkedAt:c.checkedAt,reason:c.reason}]));next.forEach(c=>Object.assign(c,states.get(c.url)||{}));return {channels:next,stale:false};
+   const states=new Map(cached.map(c=>[c.url,{status:c.status,checkedAt:c.checkedAt,reason:c.reason,lastPlayableUrl:c.lastPlayableUrl,lastPlaybackAt:c.lastPlaybackAt,lastSnapshotUrl:c.lastSnapshotUrl,lastSnapshotAt:c.lastSnapshotAt,positiveEvidence:c.positiveEvidence}]));next.forEach(c=>Object.assign(c,states.get(c.url)||{}));return {channels:next,stale:false};
   }catch(e){if(cached.length)return {channels:cached,stale:true,error:e.message};throw e;}
  }
  async function collect(auto=false){if(busy)return;const selected=enabledInputs();if(!selected.length){ctx.toast('Chưa chọn nguồn thu thập','warn');return;}
@@ -74,7 +74,7 @@
    store.collectorBackup={channels:old.map(c=>({...c})),originalSources:selected.map(src=>({id:src.id,channels:store.channels.filter(c=>c.sourceId===src.id).map(c=>({...c}))})),sourceEnabled:rawSources().map(s=>[s.id,s.enabled]),hadMerged:!!sameSource};
    for(const [id,list] of sourceReplacements){store.channels=store.channels.filter(c=>c.sourceId!==id).concat(list);}
    const previous=new Map(old.map(c=>[lib.keyFor(c),c]));
-   for(const c of merged.channels){const oldC=previous.get(lib.keyFor(c));if(oldC){c.id=oldC.id;c.status=oldC.status;c.checkedAt=oldC.checkedAt;c.reason=oldC.reason;if(oldFav.has(oldC.url)&&oldC.url!==c.url)store.favorites.push(c.url);}}
+   for(const c of merged.channels){const oldC=previous.get(lib.keyFor(c));if(oldC){c.id=oldC.id;c.status=oldC.status;c.checkedAt=oldC.checkedAt;c.reason=oldC.reason;c.lastPlayableUrl=oldC.lastPlayableUrl;c.lastPlaybackAt=oldC.lastPlaybackAt;c.lastSnapshotUrl=oldC.lastSnapshotUrl;c.lastSnapshotAt=oldC.lastSnapshotAt;c.positiveEvidence=oldC.positiveEvidence;if(oldFav.has(oldC.url)&&oldC.url!==c.url)store.favorites.push(c.url);}}
    store.favorites=[...new Set(store.favorites)];store.channels=store.channels.filter(c=>c.sourceId!==SOURCE).concat(merged.channels);
    if(!sameSource)store.sources.push({id:SOURCE,name:'⧉ Playlist đã hợp nhất',origin:'Các nguồn được chọn trong Thu thập',type:'file',enabled:true,collectEnabled:false});
    else sameSource.enabled=true;
@@ -90,13 +90,21 @@
   let done=0,live=0,dead=0,uncertain=0,replaced=0;progress(0,channels.length);
   msg(`Đang kiểm tra và sửa ${channels.length} kênh với ${workers} luồng song song…`);
   try{const jobs=channels.slice();async function worker(){while(jobs.length&&!cancel){const ch=jobs.shift(),before=ch.url,candidates=[...new Set([ch.url,...(ch.alternates||[])])].slice(0,6),results=[];
-    for(const url of candidates){if(cancel)break;try{const res=await window.streamleaf.check(url);results.push({url,...res});if(res.status==='alive')break;}catch(e){results.push({url,status:'uncertain',reason:e.message});}}
+    for(const url of candidates){if(cancel)break;try{const res=await window.streamleaf.check(url);results.push({url,...res});if(res.status==='alive'&&res.positiveEvidence===true)break;}catch(e){results.push({url,status:'uncertain',reason:e.message});}}
     if(cancel)break;
-    // Proof from a real playback session is stronger than a failed HTTP probe.
-    if(ch.lastPlayableUrl===ch.url&&ch.lastPlaybackAt&&Date.now()-Date.parse(ch.lastPlaybackAt)<5*60*1000){
-     const old=results.find(r=>r.url===ch.url);if(old){old.status='alive';old.reason='Đã phát được gần đây trong trình phát';old.positiveEvidence=true;}
+    // Keep a fresh playback/snapshot proof even if HTTP/CDN probes disagree.
+    const originalProof={...ch};
+    if(window.IPTVHealthEvidence.recentProof(ch)){
+     const old=results.find(r=>r.url===ch.url);
+     if(old){old.status='alive';old.reason='Đã phát/chụp được video thật trong 30 phút';old.positiveEvidence=true;old.confirmedDead=false;}
     }
-    const fixed=lib.repaired(ch,results);Object.assign(ch,fixed);if(ch.status==='alive')live++;else if(ch.status==='dead')dead++;else uncertain++;
+    const fixed=lib.repaired(ch,results);Object.assign(ch,fixed);
+    // The repair helper may choose another URL; never discard the proof of
+    // the originally playable channel during a non-authoritative HTTP scan.
+    if(ch.url===before&&window.IPTVHealthEvidence.recentProof(originalProof)){
+     window.IPTVHealthEvidence.applyProbe(ch,results.find(r=>r.url===ch.url)||{status:'uncertain'});
+    }
+    if(ch.status==='alive')live++;else if(ch.status==='dead')dead++;else uncertain++;
     if(ch.url!==before){replaced++;if(store.favorites.includes(before))store.favorites.push(ch.url);if(store.snapshots[before]&&!store.snapshots[ch.url])store.snapshots[ch.url]=store.snapshots[before];}
     window.IPTVProAdvanced?.setAlternates?.(ch.id,ch.alternates);window.IPTVProAdvanced?.onCheck?.(ch,results.find(r=>r.url===ch.url)||{status:ch.status});
     done++;progress(done,channels.length);$('collectorStatus').textContent=`${done}/${channels.length} · Sống ${live} · Die ${dead} · Chưa rõ ${uncertain} · Đổi link ${replaced}`;log(`${ch.status==='alive'?'SỐNG':ch.status==='dead'?'DIE':'CHƯA RÕ'} · ${ch.name}${ch.url!==before?' · đã chọn link dự phòng':''}`);if(done%4===0){ctx.save();ctx.renderList(true);}

@@ -1,3 +1,162 @@
+## 4.23.17 — Cấu hình kiểm tra, Sidebar màu và tua lại tùy chỉnh
+- Nút Snapshot/kiểm tra chuyển thành lựa chọn thật, tự lưu và đồng bộ.
+- Bảng màu chuyển từ bánh xe sang sidebar, gộp với chế độ hiển thị; lựa chọn Sidebar gọn/đầy đủ.
+- FFmpeg tua lại 5/10/15/30 phút, lưu tùy chọn và áp dụng lần khởi tạo mới.
+- Thử nghiệm hỗ trợ MPEG-DASH (.mpd) bằng dash.js và proxy manifest/segment (không hỗ trợ vượt DRM).
+
+## v4.23.16 — Desktop Chromium networking for HLS (2026-11-11)
+
+- Prefer Electron Chromium `net.fetch()` for IPTV HLS manifest, segments, VOD and channel checks. Supports macOS/Windows system proxies and TLS setup.
+- Preserve Node HTTP fetch solely as fallback after Chromium transport errors. Do not retry denied HTTP responses as alternate identities.
+- Enhance local M3U diagnostics: explain DNS/TLS/connection errors and optionally compare with macOS curl without printing URL tokens.
+- No automatic claims that blocked/unreachable streams are dead; DRM and provider restrictions remain respected.
+- Regression tests for transport fallback, cancellation, HTTP denials and local proxy with Chromium-like injected fetcher.
+
+## v4.23.15 — Live Events HLS / VOD compatibility & LIVE seek correction (2026-11-11)
+- Đối chiếu file M3U do người dùng gửi: 557 kênh, 72 LIVE EVENTS (71 HLS, 1 MPEG-DASH); không phân loại phát theo nhãn nhóm.
+- HLS.js phát sau MANIFEST_PARSED; tránh lỗi play() quá sớm, giữ kiểm tra thế hệ/attempt để chặn callback cũ sau failover.
+- HTTP relay HLS tách thành module testable, dùng desktop browser-like User-Agent, không gửi Range khi lấy manifest, retry GET thường nếu segment range không được hỗ trợ.
+- Nguồn HLS trả HTML, HTTP 403/404, nội dung không hợp lệ sẽ được báo chính xác; không biến lỗi upstream thành thành công giả.
+- Thanh chọn vị trí chỉ hiển thị trên EVENT/VOD có vùng seekable thật; LIVE không hiện thanh chọn phân đoạn, vẫn có Tua lại 10 phút riêng.
+- Phát hiện DASH .mpd và báo không được hỗ trợ thay vì đưa nhầm vào HLS.js. Không tự vượt DRM/xác thực.
+- Công cụ chẩn đoán M3U tại scripts/diagnose-m3u.cjs (không tiết lộ URL đầy đủ). Không kèm playlist của người dùng.
+- Kiểm thử: 173 đạt, 0 lỗi; 2 FFmpeg integration chạy riêng đạt; HTTP proxy dùng local server fixtures, chưa xác nhận được các host video bên ngoài.
+
+## v4.23.14 — Stream Events / VOD & player usability (2026-11-11)
+- Xác định HLS bằng nội dung manifest, kể cả URL thiếu .m3u8 hoặc trả application/octet-stream; proxy giữ đủ byte đầu tiên của TS/MP4.
+- Phân biệt HLS EVENT, VOD và LIVE. Thanh chọn phân đoạn chỉ xuất hiện khi video thực sự có vùng seekable; sự kiện có thể tua khi máy chủ cho phép.
+- Nút phát/tạm dừng/kênh trước/kênh sau/dừng/chụp/fullscreen có cùng đường kính hình tròn trong các theme.
+- Fullscreen: overlay điều khiển chỉ hiện khi di chuột và tự ẩn khi ngừng tương tác.
+- Phím tắt Xem TV: ←/→ chuyển kênh; ↑/↓ tăng/giảm âm lượng 5%; bỏ qua khi người dùng đang nhập liệu.
+- Mở lại kênh gần nhất khi khởi động nếu còn trong nguồn đang bật; không tự tạo thêm playlist.
+- macOS: đóng cửa sổ bằng nút đỏ sẽ thoát ứng dụng, không còn tiến trình giao diện ẩn.
+- Không thay đổi DVR/Backup/EPG/Doctor, không chỉnh iOS/Android.
+- **Giới hạn**: không xác minh được playlist nts12.s.gy trực tiếp từ môi trường kiểm thử; khả năng phát còn phụ thuộc codec/DRM/headers/địa lý/nhà cung cấp.
+
+## v4.23.13 — Đồng bộ thanh cuộn và Cài đặt một cột
+
+- Thanh cuộn dọc/ngang theo màu nhấn của phong cách hiện tại và bánh xe màu, bao gồm sidebar, danh sách kênh, EPG, Smart Discovery và chi tiết tác vụ.
+- Cài đặt thu gọn thành **mỗi nhóm một hàng toàn chiều rộng**, bấm vào mới mở chi tiết; hỗ trợ Compact/Comfort.
+- Bỏ liên kết Sao lưu/Khôi phục dư ở sidebar; chức năng Backup/Restore vẫn nằm tại **Cài đặt → Sao lưu & Khôi phục dữ liệu**.
+- Không thay đổi cơ chế phát, ghi hình, Timeshift, EPG, nguồn M3U hay dữ liệu cá nhân.
+
+## v4.23.12 – TV reference layout rebuild & accent fix
+
+- Cinema TV: theater navigation, one actual video player at left, current/next programme information at right, channel carousel using existing playlist and real snapshots. Full channel list opens as a drawer.
+- Glassmorphism: horizontal nav, 3 functional zones (channels / playable video / EPG). Liquid/glass effects stay on panels instead of obscuring the video.
+- Broadcast Studio: 2×2 recent snapshot rack and actual current video. Snapshot cards are clearly not four live feeds; MultiView page remains the real multi-stream player.
+- Bento Dashboard: welcome area and featured carousel above the main player; Swiss Editorial typography refined.
+- Fix custom color wheel: removing the inset shadow that covered the saturation/value gradients, persisting explicit accent selection (`accentCustom`) and applying chosen color to buttons, active tabs, controls and progress across themes.
+- Preserve existing original video element, IPC and DVR handlers while changing layouts; restore controls when leaving TV overlays.
+- 11 interface styles, Compact / Comfort; no changes to IPTV streams, EPG parser, DVR or updater paths.
+
+## 4.23.11 — Full-sync UI and TV dashboard layouts
+
+- Unified 11 themes: Current, Minimalism, Material 3, Apple HIG, Liquid Glass, Cinema TV, Fluent 2, Glassmorphism, Broadcast Studio, Bento Dashboard, Swiss Editorial.
+- Independent Compact/Comfort density persisted in localStorage and included in backup keys; adjusts navigation, channel rows, player controls, cards and settings throughout app.
+- Theme palettes and structural layout per preset for Windows/macOS, including horizontal navigation in Cinema/Swiss, and full AMOLED black override.
+- Consistent styling of all pages, EPG/DVR panels, Snapshot, popups, sources, forms, playback controls and footer; custom accent remains usable.
+- Regression tests for 11 styles x 2 densities at 1000/1360px; verified footer visibility and no page-wide overflow. Electron installer testing is still required.
+- No mobile changes and no automatic GitHub publication.
+
+## v4.23.10 — Interface Style Picker (Windows/macOS)
+- Add five selectable visual designs in Settings: Current, Minimalism, Material Design 3 inspired, Apple HIG inspired, Liquid Glass inspired.
+- CSS-only changes across navigation, card shapes, controls, surface tones and effects; do not duplicate IPTV, DVR or network logic.
+- Save a dedicated UI-style preference, initialize it before the stylesheet renders, and include it with namespaced Backup/Restore data.
+- Keep Light/Dark/AMOLED/Auto, hue wheel, all eight app languages and the previous UI as a one-click revert.
+- Reduced-motion and reduced-transparency fallbacks for accessible presentation; Liquid Glass effects confined to navigation/controls.
+- Regression: 142 passing Node.js tests, two FFmpeg integration tests skipped by default; Chromium UI verified at 1000 and 1360 px.
+- No packaged Windows EXE or macOS DMG runtime certification in this environment; GitHub remains unchanged.
+
+## 4.23.9 – Snapshot / Smart Discovery Preview Fix
+- Snapshot: nhấn ảnh mở đúng kênh trong trình phát; nếu nguồn tắt, hỏi trước khi bật, không thay đổi âm thầm.
+- Snapshot: tự tìm kênh hiện có theo URL khi ID thay đổi; ảnh cũ không trùng URL chỉ ghép lại nếu tên kênh là duy nhất và người dùng xác nhận.
+- Snapshot: bấm Enter/Space cũng mở kênh; nút yêu thích không làm chuyển trang.
+- Smart Discovery: rê chuột lên kết quả để xem trước bằng luồng tạm không tiếng, không thêm nguồn hay đổi trạng thái kiểm tra.
+- Dừng preview khi đổi trang, lọc hoặc render lại danh sách để tránh phát ngầm.
+
+## v4.23.8 — Giao diện compact, AMOLED, bánh xe màu
+- Tiến độ tác vụ mở bằng popup nhỏ nổi phía trên footer, không nới cao thanh trạng thái. Bấm bên ngoài hoặc Escape để thu lại.
+- Cài đặt chuyển sang các nhóm thu gọn; chỉ mở mục cần chỉnh, tự mở nhóm EPG/Backup từ điều hướng.
+- Bổ sung AMOLED đen tuyệt đối và bánh xe màu hỗ trợ kéo, chọn sắc độ và độ sáng; lưu lựa chọn.
+- Giữ nguyên chức năng phát IPTV, EPG, DVR, Doctor, Discovery, Backup, Win/macOS.
+
+## v4.23.7 — Compact footer tasks / instant channel scan / startup EPG presets
+- Move the check/snapshot task dock into the bottom-right status footer, collapsed by default; expanding it reflows rather than overlays controls.
+- Run channel validation directly from the TV quick action, without switching page.
+- Enable XMLTV startup refresh once by default on upgrade; user can switch it off after upgrade. Add optional published EPGShare01 and IPTV-EPG.org country feeds; only Vietnam enabled by default. Preserve user-added sources and preferences.
+- Make multi-source EPG deduplication linear in the number of programmes instead of rebuilding a full set for each feed.
+- Regression checks: Node.js, Chromium UI at 1000/1360 px, EPG manual import and opt-out. No actual Windows/macOS packaged runtime validated.
+
+## v4.23.6 — EPG Auto Refresh / Manual Import (Windows/macOS)
+- Optional per-launch refresh for enabled XMLTV sources. Off by default, only once per session; skips startup when no M3U channels exist.
+- Manual secure XMLTV import (.xml, .xmltv, .gz) through OS file chooser with bounded gzip decompression and format validation.
+- Import requires confirmation before replacing existing guide; old data is preserved on failure, cancellation, or unusable content.
+- Existing remote XMLTV refresh remains accessible on EPG page and settings. DVR/Replay and other desktop capabilities unchanged.
+
+## v4.23.5 — MP4 DVR + 10-minute Replay (Windows/macOS)
+
+- Full scheduled DVR recordings finish as valid `.mp4` files with channel, local start/end and EPG/manual programme title in the filename.
+- Capture to `.part.ts`, verify TS evidence, stream-copy remux to `.part.mp4`, validate MP4 and atomically rename when complete. Preserve TS if conversion fails, disk is full or app exits; show "Finalizing MP4" state.
+- Replay buffer: 5 minutes → ~10 minutes, controls −10s / −30s / LIVE plus buffer toggle, bounded temporary storage and disk reserve.
+- Automatic EPG title lookup for quick/manual schedule when a programme overlaps the selected time; retain explicit user title.
+- Source-only change for desktop; no git push or native installer validation claimed.
+
+## v4.23.5 — DVR controls inside Timeshift + non-overlay task dock (Windows/macOS)
+
+- Exposed safe scheduled recording from the watch page Timeshift section, with current-channel prefill, start/end fields, confirmation and status for active/upcoming recordings.
+- Quick link opens the existing full EPG recording management page, preserving stop/cancel/file-location behavior.
+- Moved task progress from a fixed overlay to a collapsible in-flow panel at the bottom of the main window, so it no longer obscures playback buttons.
+- Retained DVR FFmpeg worker isolation, Windows build repairs and the full v4.23.3 feature set.
+- Tested Node.js regressions and desktop Chromium UI at 1000 and 1360 px; packaged source only, not built native installers.
+
+## v4.23.3 — Safe Scheduled Recording (DVR), Windows/macOS (source only)
+
+- Hẹn giờ ghi chương trình trực tiếp từ EPG hoặc nhập lịch thủ công, chọn thư mục, xem tiến độ và hủy/dừng.
+- Một tiến trình FFmpeg stream-copy MPEG-TS độc lập; giới hạn một bản ghi tại một thời điểm, từ chối lịch trùng; ưu tiên ổn định phát IPTV và Timeshift.
+- Lưu lịch bằng ghi file nguyên tử; xử lý lịch bỏ lỡ, khởi động lại, tiến trình lỗi, thoát sớm, dung lượng đĩa thấp, gián đoạn, hoàn tất.
+- Chỉ `.ts` hoàn chỉnh được báo thành công; bản dở giữ dưới `.partial.ts` / `.interrupted.ts`; không tự ghi đè.
+- Backup/Restore bổ sung lịch tương lai, không bao gồm video; hỗ trợ Backup cũ.
+- Thêm bộ test mô phỏng FFmpeg, test luồng MPEG-TS thật và kiểm thử giao diện Chromium cho hai độ rộng.
+- Giữ v4.23.2 làm mốc; chưa build thử DMG/EXE trên thiết bị thật, chưa publish GitHub.
+
+## v4.23.2 — Desktop Stability & UI/Logic Audit (Windows/macOS)
+- Doctor 3.0: scan ALL without channel count truncation, stale-only and quick presets, bounded workers, progress/cancel, guards against false Alive/Die.
+- Smart Discovery: evidence-gated stream status, resume unchecked channels in ALL mode, load-more results, catalog-switch preview invalidation.
+- Source import/refresh: rollback on localStorage quota error, visible warning; asynchronous bounded local-file reading.
+- M3U: corrected comma parsing inside quoted EXTINF fields and case-insensitive metadata handling.
+- Regression tests extended for scans >1,000 channels, cancellation, unsafe classifications, source parsing and screen integration.
+- Source only; no claimed native macOS/Windows binary or GitHub Release. iOS/Android unchanged.
+
+## v4.23.1 — Source Manager + Discovery đa nguồn (Desktop)
+- Gộp Smart IPTV Discovery vào Quản lý nguồn, bỏ mục menu riêng.
+- Danh mục mới: iptv-org theo quốc gia, danh mục, ngôn ngữ, toàn cầu; Free-TV/IPTV chọn lọc.
+- Thêm **Kiểm tra tất cả không giới hạn số kênh**, hoặc kiểm tra nhanh tối đa 1.000 kênh mỗi lượt, 2–8 worker, tiến độ, hủy, tìm kiếm và lọc trạng thái.
+- Chỉ tải các danh mục được phép; vẫn yêu cầu xác nhận trước khi nhập, giữ nguyên nguồn cũ.
+- Giữ nguyên Smart IPTV Doctor 3.0, Backup/Restore và bộ tính năng Full Desktop.
+
+# Changelog
+
+## 4.23.0 — Smart IPTV Discovery + Doctor 3.0 (Windows/macOS)
+
+- Thêm mục Smart Discovery: chọn quốc gia (mặc định VN), tải playlist iptv-org HTTPS trong giới hạn, kiểm tra theo đợt 10–50 kênh, tối đa ba luồng, và phân biệt có bằng chứng phát / Die đã lặp lại / Chưa rõ. Không theo redirect lạ trong nguồn danh mục.
+- Có nút chỉ nhập kênh đã xác minh Sống hoặc nhập playlist gốc sau cảnh báo và xác nhận. Nguồn nhập không tự được collector cập nhật/gộp.
+- Doctor 3.0: xếp hạng dựa trên lịch sử phát, thời gian mở kênh, độ trễ và sự cố; đề xuất metadata, xác minh thêm 10–40 kênh, JSON; link dự phòng cần xác nhận và có Hoàn tác.
+- Backup/Restore nhận cả dữ liệu Doctor v3; không thay khả năng khôi phục bản 4.22.2.
+- Giữ nguyên Doctor v2, chức năng desktop Full và giao diện gốc. Không chạm Android/iOS. Chưa phát hành bộ cài hoặc push GitHub.
+
+
+## v4.22.2 — Full Desktop Backup / Restore (Windows/macOS)
+
+- Thêm nút **Backup / Restore** tại giao diện desktop và phần Cài đặt.
+- Xuất/nhập `.iptvbackup`: danh sách nguồn M3U, kênh, yêu thích, nhóm, hồ sơ/PIN theo định dạng hiện lưu, cài đặt giao diện/EPG/Doctor; có thể kèm ảnh Snapshot JPG.
+- Kiểm tra định dạng dữ liệu và SHA-256 của ảnh khi khôi phục. Hiển thị xem trước, yêu cầu xác nhận; ảnh cũ không bị ghi đè, cài đặt được rollback nếu thao tác ghi thất bại.
+- Giới hạn file 128 MB; bản sao lưu **không mã hóa** và không chứa Timeshift buffer / app installer.
+- Cập nhật hướng dẫn, README, release notes và script GitHub; giữ nguyên FFmpeg, Timeshift, MultiView, Cast/AirPlay, Doctor, EPG và tám ngôn ngữ.
+- Chỉ sửa Windows/macOS. Android/iOS giữ nguyên; push mã nguồn không đồng nghĩa đã phát hành installer trên Releases.
+
+**English:** Adds verified, confirmed local backup/restore of playlists, favorites, settings, profiles, EPG and optional Snapshot files. Replaced settings roll back on failure; backup files are not encrypted. Desktop only.
+
 ## 4.22.1 — Desktop stability (Windows/macOS)
 
 - Sửa downloader cập nhật: giới hạn dung lượng an toàn, tránh ngoại lệ không được bắt trong sự kiện streaming, phát hiện kết nối ngừng nhận dữ liệu.

@@ -2,6 +2,16 @@
 const GROUP_LIVE = '03 - LIVE EVENTS 🔴';
 const DEAD_GROUP = '99 - KÊNH LỖI';
 function attrs(t) { const o={}; const r=/([\w-]+)="([^"]*)"/g; let m; while((m=r.exec(t)))o[m[1]]=m[2]; return o; }
+// The channel-name comma is the first comma OUTSIDE quoted EXTINF metadata.
+// Otherwise tvg-name="News, Local" mistakenly becomes the channel name.
+function splitExtinf(s){
+ let quoted=false;
+ for(let i=0;i<s.length;i++){
+  if(s[i]==='"')quoted=!quoted;
+  else if(s[i]===','&&!quoted)return {meta:s.slice(0,i),name:s.slice(i+1).trim()};
+ }
+ return {meta:s,name:''};
+}
 function parseM3U(content, sourceId='import') {
   const lines=String(content||'').replace(/^\uFEFF/,'').split(/\r?\n/);
   const valid=lines.some(x=>/^#EXTM3U\b/i.test(x.trim())||/^#EXTINF:/i.test(x.trim()));
@@ -9,9 +19,10 @@ function parseM3U(content, sourceId='import') {
   const channels=[]; let pending=null;
   for(let i=0;i<lines.length;i++) {
     const s=lines[i].trim();
-    if(s.startsWith('#EXTINF:')) {
-      const match=s.match(/,(.*)$/); const name=(match?match[1]:'').trim()||'Kênh không tên';
-      const data=attrs(s.slice(0,s.indexOf(',')>=0?s.indexOf(','):s.length));
+    if(/^#EXTINF:/i.test(s)) {
+      const parts=splitExtinf(s);
+      const name=parts.name||'Kênh không tên';
+      const data=attrs(parts.meta);
       pending={name,group:data['group-title']||'Khác',logo:data['tvg-logo']||'',tvgId:data['tvg-id']||'',catchup:data['catchup']||'',catchupSource:data['catchup-source']||'',catchupDays:data['catchup-days']||'',status:'unchecked',checkedAt:''};
     } else if(pending && s && !s.startsWith('#')) {
       try { const u=new URL(s); if(!['http:','https:','rtsp:','rtmp:','udp:'].includes(u.protocol)) {pending=null;continue;} } catch {pending=null;continue;}

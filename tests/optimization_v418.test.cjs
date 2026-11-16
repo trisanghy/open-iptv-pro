@@ -24,7 +24,7 @@ test('Full build: after media headers, live response is not killed by initial ha
  }finally{await close(downstream);await close(upstream);}
 });
 test('v4.22.1 Full: FFmpeg packaged and full desktop capabilities retained',()=>{
- assert.equal(pkg.version,'4.22.2');
+ assert.equal(pkg.version,'4.23.17');
  assert.equal(pkg.dependencies['ffmpeg-static'],'5.3.0');
  assert.ok(pkg.build.asarUnpack.includes('node_modules/ffmpeg-static/**'));
  assert.ok(pkg.build.files.includes('node_modules/**/*'));
@@ -34,7 +34,7 @@ test('v4.22.1 Full: FFmpeg packaged and full desktop capabilities retained',()=>
  assert.equal(pkg.build.win.target.some(x=>x.target==='portable'),true);
  assert.ok(pkg.scripts['dist:mac:universal'].includes('--universal'));
  const html=fs.readFileSync(path.join(__dirname,'../renderer/index.html'),'utf8');
- for(const id of ['doctorRun','doctorExport','doctorVisualScan','doctorV2Undo','bufferToggle','bufferRewind','bufferRewind5','bufferLive','autoTimeshiftSetting','shotsAllBtn','snapshotWorkersQuick','checkWorkersQuick','multiGrid','pipBtn','quickChecks','quickShots','quickExport'])assert.ok(html.includes(`id="${id}"`),id);
+ for(const id of ['doctorRun','doctorExport','doctorVisualScan','doctorV2Undo','bufferToggle','bufferRewind','bufferRewind10','bufferLive','autoTimeshiftSetting','shotsAllBtn','snapshotWorkersQuick','checkWorkersQuick','multiGrid','pipBtn','quickChecks','quickShots','quickExport'])assert.ok(html.includes(`id="${id}"`),id);
  assert.ok(html.includes('FFmpeg tích hợp'));
  assert.ok(!html.includes('Bản Lite không kèm FFmpeg'));
  const native=fs.readFileSync(path.join(__dirname,'../src/main.cjs'),'utf8');
