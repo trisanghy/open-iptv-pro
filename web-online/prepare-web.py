@@ -39,11 +39,6 @@ audio_new="store.current=chId;if(!native&&!opts.buffer){player.defaultMuted=stor
 if app_text.count(audio_old) != 1:
     sys.exit('Missing audio playback insertion point')
 app_text=app_text.replace(audio_old,audio_new,1)
-autoplay_guard_old="    if(e?.name==='NotAllowedError'){\n     $('#streamInfo').textContent='Nhấn Phát để tiếp tục';\n     toast('Trình phát yêu cầu thao tác Phát của người dùng','warn');\n    }"
-autoplay_guard_new="    if(e?.name==='NotAllowedError'){\n     // Ignore an old play() rejection if another attempt already plays.\n     if(!player.paused)return;\n     $('#streamInfo').textContent='Nhấn Phát để tiếp tục';\n     if(!native){\n      document.dispatchEvent(new CustomEvent('openiptv:autoplay-blocked',{detail:{channelId:current?.id}}));\n      return;\n     }\n     toast('Trình phát yêu cầu thao tác Phát của người dùng','warn');\n    }"
-if app_text.count(autoplay_guard_old) != 1:
-    sys.exit('Missing autoplay policy guard insertion point')
-app_text=app_text.replace(autoplay_guard_old,autoplay_guard_new,1)
 app_file.write_text(app_text,encoding='utf-8')
 
 html=(out/'index.html').read_text(encoding='utf-8')

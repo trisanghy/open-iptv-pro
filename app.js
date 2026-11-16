@@ -687,13 +687,7 @@
    if(promise?.catch)promise.catch(e=>{
     if(!isCurrent()||e?.name==='AbortError')return;
     if(e?.name==='NotAllowedError'){
-     // Ignore an old play() rejection if another attempt already plays.
-     if(!player.paused)return;
      $('#streamInfo').textContent='Nhấn Phát để tiếp tục';
-     if(!native){
-      document.dispatchEvent(new CustomEvent('openiptv:autoplay-blocked',{detail:{channelId:current?.id}}));
-      return;
-     }
      toast('Trình phát yêu cầu thao tác Phát của người dùng','warn');
     }else recoverPlayback(generation,e.message||'Lỗi video',attempt);
    });
