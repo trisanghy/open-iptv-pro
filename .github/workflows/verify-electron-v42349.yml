@@ -1,0 +1,55 @@
+name: Verify Electron v4.23.49 Vietnamese translation and premium voices
+on:
+  push:
+    branches: [experiment/electron-v42349-vi-translation-premium-tts]
+    paths:
+      - '.github/workflows/verify-electron-v42349.yml'
+      - 'overlays/*v42349*'
+      - 'overlays/v4.23.49-apply.cjs'
+      - 'build-mac-v42349.sh'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Syntax-check Mac builder and expected pinned assets
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          bash -n build-mac-v42349.sh
+          grep -Fq 'V49_REV="2823022e2fce2a3bd54412be5c34a79651e59ee6"' build-mac-v42349.sh
+          grep -Fq 'OpenIPTVPro_Source_v4.23.49.zip' build-mac-v42349.sh
+          grep -Fq 'unzip -p "$WORK/$PATCH_SOURCE"' build-mac-v42349.sh
+          ! grep -Fq 'unzip -Z1 "$WORK/$PATCH_SOURCE" | grep -Fxq' build-mac-v42349.sh
+      - name: Patch actual verified full Electron source and run all unit tests
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          echo '06e8123c768f41c14f47264fbc7220d1bdfa6ce5dc07e69eceba50e929abc783  source/OpenIPTVPro_Source_v4.23.47.zip' | sha256sum -c -
+          unzip -q source/OpenIPTVPro_Source_v4.23.47.zip -d "$RUNNER_TEMP"
+          PROJECT="$RUNNER_TEMP/Open-IPTV-Pro-v4_23_47_Full_Desktop"
+          test -s "$PROJECT/package.json"
+          cp overlays/whisper-autoinstall-v42347.cjs "$PROJECT/src/whisper-autoinstall.cjs"
+          ( cd "$PROJECT" && node "$GITHUB_WORKSPACE/overlays/v4.23.48-apply.cjs" "$GITHUB_WORKSPACE/overlays" )
+          test "$(node -p 'require(process.argv[1]).version' "$PROJECT/package.json")" = "4.23.48"
+          ( cd "$PROJECT" && node "$GITHUB_WORKSPACE/overlays/v4.23.49-apply.cjs" "$GITHUB_WORKSPACE/overlays" )
+          test "$(node -p 'require(process.argv[1]).version' "$PROJECT/package.json")" = "4.23.49"
+          for js in src/local-ai-autoinstall.cjs src/caption-translator.cjs src/local-tts-service.cjs src/premium-voices.cjs renderer/local-tts-v42344.js renderer/live-captions-v42343.js src/main.cjs src/preload.cjs; do
+            node --check "$PROJECT/$js"
+          done
+          python3 -m py_compile "$PROJECT/src/argos-bridge.py" "$PROJECT/src/vieneu-bridge.py"
+          ( cd "$PROJECT" && node --test --test-concurrency=2 tests/*.test.cjs )
+          test -s "$PROJECT/src/argos-bridge.py"
+          test -s "$PROJECT/src/vieneu-bridge.py"
+          mv "$PROJECT" "$RUNNER_TEMP/Open-IPTV-Pro-v4_23_49_Full_Desktop"
+          ( cd "$RUNNER_TEMP" && zip -q -r 'OpenIPTVPro_Source_v4.23.49.zip' 'Open-IPTV-Pro-v4_23_49_Full_Desktop' -x '*/node_modules/*' '*/dist/*' '*/.git/*' '*/__pycache__/*' )
+          unzip -tq "$RUNNER_TEMP/OpenIPTVPro_Source_v4.23.49.zip"
+          unzip -p "$RUNNER_TEMP/OpenIPTVPro_Source_v4.23.49.zip" 'Open-IPTV-Pro-v4_23_49_Full_Desktop/package.json' > "$RUNNER_TEMP/verified.json"
+          node -e 'const fs=require("fs");if(JSON.parse(fs.readFileSync(process.argv[1],"utf8")).version!=="4.23.49")process.exit(1)' "$RUNNER_TEMP/verified.json"
