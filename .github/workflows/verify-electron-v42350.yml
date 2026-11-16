@@ -23,7 +23,7 @@ jobs:
         run: |
           set -Eeuo pipefail
           bash -n build-mac-v42350.sh
-          grep -Fq 'V50_REV="0c05223a31d1f9725cb0e5eb09a9441716041aa2"' build-mac-v42350.sh
+          grep -Fq 'V50_REV="f087dae3d8ccf1ca0d405b62497ae50b3d582651"' build-mac-v42350.sh
           grep -Fq 'dmg-only-v42350.cjs' build-mac-v42350.sh
           grep -Fq 'OpenIPTVPro_Source_v4.23.50.zip' build-mac-v42350.sh
           ! grep -Fq 'unzip -Z1 "$WORK/$PATCH_SOURCE" | grep -Fxq' build-mac-v42350.sh
