@@ -1,0 +1,61 @@
+name: Validate v4.23.45 desktop installers with automatic Whisper and TTS setup
+on:
+  push:
+    branches: [iptv-build-source]
+    paths: [.github/workflows/verify-ai-desktop-v42345.yml]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  mac-arm64:
+    runs-on: macos-15
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify one source ZIP and create native Mac DMG
+        env:
+          CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          echo 'dd4edee5da5ed2042bbea1aaa5003eebbfdb6a032cfb78c7bf2c972329cde448  source/OpenIPTVPro_Source_v4.23.45.zip' | shasum -a 256 -c -
+          unzip -q source/OpenIPTVPro_Source_v4.23.45.zip -d "$RUNNER_TEMP"
+          cd "$RUNNER_TEMP/Open-IPTV-Pro-v4_23_45_Full_Desktop"
+          test "$(node -p 'require("./package.json").version')" = 4.23.45
+          npm install --no-audit --no-fund
+          npm test
+          npx electron-builder --mac dmg --arm64 --publish never
+          test -s 'dist/Open-IPTV-Pro-4.23.45-mac-arm64.dmg'
+          test "$(lipo -archs 'dist/mac-arm64/Open IPTV Pro.app/Contents/MacOS/Open IPTV Pro')" = arm64
+          echo 'Mac ARM64 installer verified'
+  windows-x64:
+    runs-on: windows-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify one source ZIP and create Windows x64 Setup/Portable
+        shell: pwsh
+        env:
+          CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+        run: |
+          $ErrorActionPreference='Stop'
+          if((Get-FileHash 'source/OpenIPTVPro_Source_v4.23.45.zip' -Algorithm SHA256).Hash.ToLowerInvariant() -ne 'dd4edee5da5ed2042bbea1aaa5003eebbfdb6a032cfb78c7bf2c972329cde448'){throw 'Source SHA mismatch'}
+          Expand-Archive 'source/OpenIPTVPro_Source_v4.23.45.zip' -DestinationPath $env:RUNNER_TEMP -Force
+          Set-Location (Join-Path $env:RUNNER_TEMP 'Open-IPTV-Pro-v4_23_45_Full_Desktop')
+          if((Get-Content package.json -Raw | ConvertFrom-Json).version -ne '4.23.45'){throw 'Wrong source version'}
+          npm install --no-audit --no-fund
+          if($LASTEXITCODE -ne 0){throw 'npm install failure'}
+          npm test
+          if($LASTEXITCODE -ne 0){throw 'npm tests failure'}
+          npx electron-builder --win --x64 --publish never
+          if($LASTEXITCODE -ne 0){throw 'Win builder failure'}
+          foreach($name in @('Open-IPTV-Pro-Setup-4.23.45-x64.exe','Open-IPTV-Pro-4.23.45-x64.exe')){
+            if(-not (Test-Path (Join-Path 'dist' $name) -PathType Leaf)){throw ('Missing '+$name)}
+          }
+          Write-Host 'Windows x64 installers verified'
