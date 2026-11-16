@@ -83,7 +83,7 @@ fn whisper_asset()->Option<(&'static str,&'static str)>{
  }
 }
 fn allowed_download_host(host:&str)->bool{
- matches!(host,"github.com"|"release-assets.githubusercontent.com"|"objects.githubusercontent.com"|"huggingface.co"|"cas-bridge.xethub.hf.co"|"cdn-lfs.hf.co"|"cdn-lfs-us-1.hf.co"|"releases.astral.sh")||host.ends_with(".xethub.hf.co")
+ matches!(host,"github.com"|"release-assets.githubusercontent.com"|"objects.githubusercontent.com"|"huggingface.co"|"releases.astral.sh") || host=="hf.co" || host.ends_with(".hf.co")
 }
 async fn download_verified(app:&AppHandle,event:&str,url:&str,target:&Path,sha:&str,limit:u64)->Result<(),String>{
  let origin=reqwest::Url::parse(url).map_err(error)?;
@@ -212,15 +212,19 @@ pub async fn caption_stop(ai:&LocalAi)->Value{
  if let Some(task)=ai.caption.lock().await.take(){task.abort();}
  json!(true)
 }
-pub async fn caption_start(app:AppHandle,ai:Arc<LocalAi>,url:&str,translate:bool)->Result<Value,String>{
+pub async fn caption_start(app:AppHandle,ai:Arc<LocalAi>,url:&str,translate:bool,target:&str)->Result<Value,String>{
  let parsed=reqwest::Url::parse(url).map_err(error)?;
  if !matches!(parsed.scheme(),"http"|"https"){return Err("Chỉ nhận URL http/https".into());}
  let (bin,model)=caption_files(&ai);
  let bin=bin.ok_or("Chưa cài whisper-cli")?;let model=model.ok_or("Chưa cài mô hình Whisper")?;
  let ffmpeg=ai.ffmpeg.clone().ok_or("Thiếu FFmpeg")?;
+ let target=if translate{target}else{"en"};
+ if translate&&translation_status(&ai,target)["ready"]!=true{
+  return Err(format!("Chưa có mô hình dịch {target}; mở ⚙ rồi chọn Cài mô hình dịch"));
+ }
  caption_stop(&ai).await;
  let id=ai.next.fetch_add(1,Ordering::SeqCst)+1;
- let ai_clone=ai.clone();let src=url.to_owned();
+ let ai_clone=ai.clone();let src=url.to_owned();let target=target.to_owned();let result_language=target.clone();
  let task=tokio::spawn(async move{
   let dir=ai_clone.caption_root().join("temp").join(format!("session-{id}-{}",Uuid::new_v4()));
   if let Err(e)=tokio::fs::create_dir_all(&dir).await {let _=app.emit("caption:event",json!({"type":"error","id":id,"message":e.to_string()}));return;}
@@ -239,7 +243,10 @@ pub async fn caption_start(app:AppHandle,ai:Arc<LocalAi>,url:&str,translate:bool
     if translate{wh.arg("-tr");}
     let result=output_timeout(&mut wh,70).await?;
     let phrase=caption_text(&result.stdout);
-    if !phrase.is_empty(){let _=app.emit("caption:event",json!({"type":"segment","id":id,"text":phrase,"translated":translate,"language":if translate{"en"}else{"auto"}}));}
+    if !phrase.is_empty(){
+     let rendered=if translate{translate_caption_text(&ai_clone,&target,&phrase).await?}else{phrase.clone()};
+     let _=app.emit("caption:event",json!({"type":"segment","id":id,"text":rendered,"originalText":phrase,"translated":translate,"language":if translate{target.as_str()}else{"auto"},"target":target}));
+    }
     Ok::<(),String>(())
    }.await;
    let _=tokio::fs::remove_file(&wav).await;
@@ -253,7 +260,7 @@ pub async fn caption_start(app:AppHandle,ai:Arc<LocalAi>,url:&str,translate:bool
   let _=app.emit("caption:event",json!({"type":"stopped","id":id}));
  });
  *ai.caption.lock().await=Some(task);
- Ok(json!({"running":true,"id":id,"language":if translate{"en"}else{"auto"},"translated":translate}))
+ Ok(json!({"running":true,"id":id,"language":if translate{result_language.as_str()}else{"auto"},"translated":translate}))
 }
 const LANGS:[(&str,&str);10]=[
  ("vi","vi_VN-25hours_single-low"),("en","en_US-lessac-low"),("es","es_ES-mls_10246-low"),
@@ -303,17 +310,14 @@ fn find_small_file(dir:&Path,name:&str,depth:u8)->Option<PathBuf>{
  }None
 }
 fn tts_progress(app:&AppHandle,lang:&str,msg:&str){let _=app.emit("tts:event",json!({"type":"progress","target":lang,"message":msg}));}
-pub async fn tts_install(app:AppHandle,ai:Arc<LocalAi>,lang:&str)->Result<Value,String>{
- lang_voice(lang).ok_or("Ngôn ngữ giọng đọc không được hỗ trợ")?;
- if ai.installing_tts.compare_exchange(false,true,Ordering::SeqCst,Ordering::SeqCst).is_err(){return Err("Đang cài mô hình khác".into());}
- let lang=lang.to_owned();
- let result=async{
-  let root=ai.tts_root();tokio::fs::create_dir_all(&root).await.map_err(error)?;
+// Shared Argos runtime: translation captions do not require any Piper voice model.
+async fn ensure_argos_runtime(app:&AppHandle,ai:&LocalAi,lang:&str)->Result<(),String>{
+ let root=ai.tts_root();tokio::fs::create_dir_all(&root).await.map_err(error)?;
   let uv=root.join("uv").join(exec_name("uv"));
   if !exists(&uv,1){
    let (asset,sha)=uv_asset().ok_or("CPU chưa được hỗ trợ cài tự động")?;
    let archive=root.join("uv").join(asset);
-   tts_progress(&app,&lang,"Tải bộ công cụ uv chính thức (SHA-256)…");
+   tts_progress(app,lang,"Tải bộ công cụ uv chính thức (SHA-256)…");
    download_verified(&app,"tts:event",&format!("https://github.com/astral-sh/uv/releases/download/0.12.24/{asset}"),&archive,sha,40*1024*1024).await?;
    let dst=root.join("uv").join("unpacked");tokio::fs::create_dir_all(&dst).await.map_err(error)?;
    if cfg!(windows){safe_unzip(&archive,&dst)?;}else{
@@ -324,18 +328,85 @@ pub async fn tts_install(app:AppHandle,ai:Arc<LocalAi>,lang:&str)->Result<Value,
    #[cfg(unix)]{use std::os::unix::fs::PermissionsExt;fs::set_permissions(&uv,fs::Permissions::from_mode(0o700)).map_err(error)?;}
    let _=tokio::fs::remove_file(archive).await;
   }
-  let venv=root.join("python-env");let python=tts_python(&ai);let piper=tts_exe(&ai,"piper");
-  let argos=tts_exe(&ai,"argos-translate");let pm=tts_exe(&ai,"argospm");
+  let venv=root.join("python-env");let python=tts_python(ai);
+  let argos=tts_exe(ai,"argos-translate");let pm=tts_exe(ai,"argospm");
   if !exists(&python,1){
-   tts_progress(&app,&lang,"Cài Python 3.11 trong dữ liệu riêng của ứng dụng…");
-   run_install(&app,&uv,&["python","install","3.11"],&lang,&root,500).await?;
+   tts_progress(app,lang,"Cài Python 3.11 trong dữ liệu riêng của ứng dụng…");
+   run_install(app,&uv,&["python","install","3.11"],lang,&root,500).await?;
    let v=venv.to_string_lossy().into_owned();
-   run_install(&app,&uv,&["venv",&v,"--python","3.11","--python-preference","only-managed"],&lang,&root,240).await?;
+   run_install(app,&uv,&["venv",&v,"--python","3.11","--python-preference","only-managed"],lang,&root,240).await?;
   }
-  if !exists(&piper,1)||!exists(&argos,1){
-   tts_progress(&app,&lang,"Cài Piper TTS và Argos Translate…");
+  if !exists(&argos,1)||!exists(&pm,1){
+   tts_progress(app,lang,"Cài Argos Translate offline…");
    let p=python.to_string_lossy().into_owned();
-   run_install(&app,&uv,&["pip","install","--python",&p,"piper-tts==1.8.0","argostranslate==1.11.0"],&lang,&root,900).await?;
+   run_install(app,&uv,&["pip","install","--python",&p,"argostranslate==1.11.0"],lang,&root,900).await?;
+  }
+ Ok(())
+}
+const TRANSLATION_TARGETS:[&str;21]=["en","vi","zh","ja","ko","th","es","fr","de","pt","it","ru","id","ar","hi","tr","nl","pl","uk","sv","ms"];
+fn translation_supported(lang:&str)->bool{TRANSLATION_TARGETS.contains(&lang)}
+pub fn translation_status(ai:&LocalAi,lang:&str)->Value{
+ let supported=translation_supported(lang);
+ let ready=supported&&(lang=="en"||(exists(&tts_exe(ai,"argos-translate"),1)&&pairs(ai)[lang]==true));
+ json!({"target":lang,"supported":supported,"ready":ready,"offline":true,
+   "installing":ai.installing_tts.load(Ordering::SeqCst),
+   "availableLanguages":TRANSLATION_TARGETS,
+   "reason":if !supported{"Ngôn ngữ chưa được hỗ trợ"}else if ready{""}else{"Chưa cài mô hình dịch offline cho ngôn ngữ này"}})
+}
+pub async fn translation_install(app:AppHandle,ai:Arc<LocalAi>,lang:&str)->Result<Value,String>{
+ if !translation_supported(lang){return Err("Ngôn ngữ dịch chưa được hỗ trợ".into());}
+ if lang=="en"{return Ok(json!({"installed":true,"target":"en","ready":true}));}
+ if ai.installing_tts.compare_exchange(false,true,Ordering::SeqCst,Ordering::SeqCst).is_err(){
+  return Err("Đang cài mô hình dịch hoặc giọng đọc khác".into());
+ }
+ let lang=lang.to_owned();
+ let result=async{
+  caption_progress(&app,&format!("Đang chuẩn bị công cụ dịch {lang} offline…"));
+  ensure_argos_runtime(&app,&ai,&lang).await?;
+  let root=ai.tts_root();
+  if pairs(&ai)[lang.as_str()]!=true{
+   caption_progress(&app,&format!("Đang tải mô hình English → {lang}…"));
+   let pm=tts_exe(&ai,"argospm");
+   run_install(&app,&pm,&["update"],&lang,&root,350).await?;
+   run_install(&app,&pm,&["install",&format!("translate-en_{lang}")],&lang,&root,800).await?;
+   let mut value=pairs(&ai);value[lang.as_str()]=json!(true);
+   tokio::fs::write(root.join("installed-pairs.json"),serde_json::to_vec(&value).map_err(error)?).await.map_err(error)?;
+  }
+  let status=translation_status(&ai,&lang);
+  if status["ready"]!=true{return Err("Mô hình dịch chưa sẵn sàng".into());}
+  caption_progress(&app,&format!("Đã cài mô hình dịch {lang}, có thể dùng offline."));
+  Ok(json!({"installed":true,"target":lang,"ready":true}))
+ }.await;
+ ai.installing_tts.store(false,Ordering::SeqCst);
+ result
+}
+async fn translate_caption_text(ai:&LocalAi,lang:&str,phrase:&str)->Result<String,String>{
+ if lang=="en"{return Ok(phrase.to_owned());}
+ if translation_status(ai,lang)["ready"]!=true{
+  return Err(format!("Chưa cài dịch {lang}; vào ⚙ và chọn Cài mô hình dịch"));
+ }
+ let mut cmd=Command::new(tts_exe(ai,"argos-translate"));
+ cmd.args(["--from-lang","en","--to-lang",lang,phrase])
+   .env("ARGOS_PACKAGES_DIR",ai.tts_root().join("argos-packages"))
+   .env("ARGOS_DEVICE_TYPE","cpu");
+ let output=output_timeout(&mut cmd,55).await?;
+ let text=String::from_utf8_lossy(&output.stdout).trim().chars().take(1000).collect::<String>();
+ if text.is_empty(){return Err("Argos không trả về bản dịch".into());}
+ Ok(text)
+}
+pub async fn tts_install(app:AppHandle,ai:Arc<LocalAi>,lang:&str)->Result<Value,String>{
+ lang_voice(lang).ok_or("Ngôn ngữ giọng đọc không được hỗ trợ")?;
+ if ai.installing_tts.compare_exchange(false,true,Ordering::SeqCst,Ordering::SeqCst).is_err(){return Err("Đang cài mô hình khác".into());}
+ let lang=lang.to_owned();
+ let result=async{
+  let root=ai.tts_root();tokio::fs::create_dir_all(&root).await.map_err(error)?;
+  ensure_argos_runtime(&app,&ai,&lang).await?;
+  let python=tts_python(&ai);let piper=tts_exe(&ai,"piper");
+  let uv=root.join("uv").join(exec_name("uv"));let pm=tts_exe(&ai,"argospm");
+  if !exists(&piper,1){
+   tts_progress(&app,&lang,"Cài công cụ giọng đọc Piper TTS…");
+   let p=python.to_string_lossy().into_owned();
+   run_install(&app,&uv,&["pip","install","--python",&p,"piper-tts==1.8.0"],&lang,&root,900).await?;
   }
   let voice=tts_voice(&ai,&lang)?;let voice_cfg=voice.with_extension("onnx.json");
   if !exists(&voice,1_000_000)||!exists(&voice_cfg,20){

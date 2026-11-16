@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro-tauri-experiment",
   "private": true,
-  "version": "4.23.17-tauri.20.2",
-  "description": "Rust Lab v20.2: fixed OpenWhispr release ZIP executable names; Electron v4.23.45 offline Live Caption, English translation, Piper/Argos voice-over, SHA-256 verified one-click local model installs",
+  "version": "4.23.17-tauri.21",
+  "description": "Rust Lab v21: verified HF CDN downloads and offline multilingual live translation; Electron v4.23.45 offline Live Caption, English translation, Piper/Argos voice-over, SHA-256 verified one-click local model installs",
   "license": "MIT",
   "scripts": {
     "dev": "tauri dev",
@@ -17,7 +17,7 @@
     "prebuild": "node scripts/prepare-renderer.cjs",
     "prepare:renderer": "node scripts/prepare-renderer.cjs",
     "test:legacy": "node --test tests/*.test.cjs",
-    "test:quick": "node --test tests/tauri-control-bar-rollback-v19.test.cjs tests/tauri-playback-reentry-v7.test.cjs tests/tauri-link-dropdown-v13.test.cjs tests/tauri-channel-panel-v11.test.cjs tests/tauri-video-source-aspect-v17.test.cjs tests/tauri-reopen-tab-v18.test.cjs tests/tauri-player-layout-v19-1.test.cjs tests/tauri-local-ai-v20.test.cjs"
+    "test:quick": "node --test tests/tauri-control-bar-rollback-v19.test.cjs tests/tauri-playback-reentry-v7.test.cjs tests/tauri-link-dropdown-v13.test.cjs tests/tauri-channel-panel-v11.test.cjs tests/tauri-video-source-aspect-v17.test.cjs tests/tauri-reopen-tab-v18.test.cjs tests/tauri-player-layout-v19-1.test.cjs tests/tauri-local-ai-v20.test.cjs tests/tauri-multilingual-v21.test.cjs"
   },
   "devDependencies": {
     "@tauri-apps/cli": "^2.0.0"

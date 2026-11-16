@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="vi"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
 <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: blob:; script-src 'self' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; img-src * data: blob: file:; connect-src * data: blob:; media-src * data: blob:; worker-src 'self' blob:;"/>
-<title>Open IPTV Pro · Rust Lab v20</title><script src="tauri-bridge.js"></script><script src="theme-boot.js"></script><link rel="stylesheet" href="styles.css"/><link rel="stylesheet" href="ui-styles.css"/><link rel="stylesheet" href="ui-fullsync.css"/><link rel="stylesheet" href="ui-refined.css"/><link rel="stylesheet" href="ui-polish.css"/><link rel="stylesheet" href="player-ux.css"/><link rel="stylesheet" href="manual-link-picker.css"/><link rel="stylesheet" href="settings-v42317.css"/><link rel="stylesheet" href="channel-organizer.css"/><link rel="stylesheet" href="sidebar-compact.css"/><link rel="stylesheet" href="channel-panel-toggle.css"/><link rel="stylesheet" href="tv-compact-collapse-v14.css"/><link rel="stylesheet" href="player-layout-rollback-v19.css"/><link rel="stylesheet" href="player-layout-v19-1.css"/><link rel="stylesheet" href="live-caption-row-v42343.css"/><link rel="stylesheet" href="local-tts-row-v42344.css"/><link rel="stylesheet" href="whisper-auto-v42345.css"/></head>
+<title>Open IPTV Pro · Rust Lab v21</title><script src="tauri-bridge.js"></script><script src="theme-boot.js"></script><link rel="stylesheet" href="styles.css"/><link rel="stylesheet" href="ui-styles.css"/><link rel="stylesheet" href="ui-fullsync.css"/><link rel="stylesheet" href="ui-refined.css"/><link rel="stylesheet" href="ui-polish.css"/><link rel="stylesheet" href="player-ux.css"/><link rel="stylesheet" href="manual-link-picker.css"/><link rel="stylesheet" href="settings-v42317.css"/><link rel="stylesheet" href="channel-organizer.css"/><link rel="stylesheet" href="sidebar-compact.css"/><link rel="stylesheet" href="channel-panel-toggle.css"/><link rel="stylesheet" href="tv-compact-collapse-v14.css"/><link rel="stylesheet" href="player-layout-rollback-v19.css"/><link rel="stylesheet" href="player-layout-v19-1.css"/><link rel="stylesheet" href="live-caption-row-v42343.css"/><link rel="stylesheet" href="local-tts-row-v42344.css"/><link rel="stylesheet" href="whisper-auto-v42345.css"/></head>
 <body>
 <div class="app-shell" id="appShell">
  <aside class="sidebar" id="appSidebar" aria-label="Điều hướng ứng dụng">
@@ -79,8 +79,20 @@
        <div class="caption-third-row" id="captionThirdRow">
  <div class="caption-third-controls" role="group" aria-label="Phụ đề và dịch trực tiếp trên thiết bị">
  <label title="Nhận diện tiếng nói bằng Whisper local"><input type="checkbox" id="liveCaptionToggle"/>Live Caption</label>
- <label title="Dịch giọng nói sang tiếng Anh offline"><input type="checkbox" id="liveTranslateToggle"/>Live Translate</label>
- <select id="liveTranslateTarget" aria-label="Ngôn ngữ dịch"><option value="en">English</option></select>
+ <label title="Dịch giọng nói sang ngôn ngữ được chọn, hoàn toàn offline"><input type="checkbox" id="liveTranslateToggle"/>Live Translate</label>
+ <select id="liveTranslateTarget" aria-label="Ngôn ngữ dịch">
+  <option value="vi" selected>Tiếng Việt</option><option value="en">English</option>
+  <option value="zh">中文 · Trung</option><option value="ja">日本語 · Nhật</option>
+  <option value="ko">한국어 · Hàn</option><option value="th">ไทย · Thái</option>
+  <option value="es">Español</option><option value="fr">Français</option>
+  <option value="de">Deutsch</option><option value="pt">Português</option>
+  <option value="it">Italiano</option><option value="ru">Русский</option>
+  <option value="id">Indonesia</option><option value="ar">العربية</option>
+  <option value="hi">हिन्दी</option><option value="tr">Türkçe</option>
+  <option value="nl">Nederlands</option><option value="pl">Polski</option>
+  <option value="uk">Українська</option><option value="sv">Svenska</option>
+  <option value="ms">Bahasa Melayu</option>
+ </select>
  <button type="button" id="liveCaptionSetup" aria-expanded="false" aria-controls="liveCaptionSetupPanel" title="Thiết lập Whisper">⚙</button>
  <small id="liveCaptionStatus" role="status" aria-live="polite">Kiểm tra Whisper…</small>
  <label class="tts-mode" title="Piper TTS đọc lời dịch trên máy"><input type="checkbox" id="liveTtsToggle"/>🔊 Giọng dịch TTS</label>
@@ -102,9 +114,10 @@
  </div>
  <div class="caption-third-setup" id="liveCaptionSetupPanel" hidden>
   <button type="button" id="captionAutoInstall" title="Cài Whisper CLI và mô hình đa ngôn ngữ SHA-256">Cài Whisper tự động</button>
+  <button type="button" id="captionTranslationInstall" title="Tự tải mô hình Argos cho ngôn ngữ đang chọn">Cài mô hình dịch</button>
   <button type="button" id="captionChooseBinary">Chọn whisper-cli</button>
   <button type="button" id="captionChooseModel">Chọn mô hình GGML (.bin)</button>
-  <small>Nhận diện và tạo giọng đọc chạy offline sau khi tải mô hình. Dịch Whisper sang English trước khi TTS.</small>
+  <small>Whisper nhận diện giọng nói → English; Argos dịch sang ngôn ngữ chọn; Piper đọc giọng dịch nếu bật TTS. Chỉ cần tải mô hình một lần.</small>
  </div>
 </div>
 <div id="liveCaptionOutput" class="caption-third-output" role="status" aria-live="polite" hidden></div>

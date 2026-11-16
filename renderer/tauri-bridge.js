@@ -11,6 +11,7 @@
     captionStatus: 'caption:status', captionStart: 'caption:start',
     captionStop: 'caption:stop', captionChooseFile: 'caption:chooseFile',
     captionAutoInstall: 'caption:install',
+    captionTranslationStatus: 'caption:translationStatus', captionTranslationInstall: 'caption:translationInstall',
     ttsStatus: 'tts:status', ttsInstall: 'tts:install',
     ttsSynthesize: 'tts:synthesize', ttsStop: 'tts:stop',
     castDiscover: 'cast:discover', airplayDiscover: 'airplay:discover',

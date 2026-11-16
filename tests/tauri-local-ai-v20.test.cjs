@@ -47,8 +47,8 @@ test('local speech is limited, volatile and ducking restored',()=>{
 test('v20.2 uses an immutable tag without modifying main',()=>{
  const pkg=JSON.parse(read('package.json'));
  const sh=read('scripts/BUILD_RUSTLAB_MAC_ONE_ZIP_FAST.sh');
- assert.equal(pkg.version,'4.23.17-tauri.20.2');
- assert.ok(sh.includes('TAG="rust-lab/v20.2"'));
+ assert.equal(pkg.version,'4.23.17-tauri.21');
+ assert.ok(sh.includes('TAG="rust-lab/v21"'));
  assert.ok(sh.includes('archive/refs/tags/${TAG}.zip'));
 });
 

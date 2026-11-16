@@ -111,7 +111,8 @@
  if(api.captionOnEvent)api.captionOnEvent(e=>{
   if(!enabled||!translate?.checked||!e||e.type!=='segment'||!e.translated||!e.text)return;
   updateSession();
-  const text=String(e.text).trim();
+  // Whisper reports intermediate English even when displayed captions use a different target.
+  const text=String(e.originalText||e.text).trim();
   if(!text)return;
   if(busy||playing){queued=text;return;}
   void speak(text);

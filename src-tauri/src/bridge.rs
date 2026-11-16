@@ -139,16 +139,18 @@ pub async fn bridge(app:AppHandle,state:State<'_,Arc<AppState>>,local_ai_state:S
  match op.as_str() {
   "app:capabilities"=>Ok(json!({"native":true,"platform":if cfg!(target_os="windows"){"win32"}else if cfg!(target_os="macos"){"darwin"}else{"linux"},
    "ffmpegExists":s.ffmpeg.is_some(),"snapshotBase":format!("http://127.0.0.1:{}/snapshot?key={}&file=",s.port,s.secret),
-   "version":"4.23.17-tauri.20","runtime":"tauri2-rust"})),
+   "version":"4.23.17-tauri.21","runtime":"tauri2-rust"})),
   // v20: Native, local-only AI services from Electron v4.23.45 feature port.
   "caption:status"=>Ok(local_ai::caption_status(ai)),
   "caption:install"=>local_ai::caption_install(app.clone(),ai.clone()).await,
   "caption:start"=>{
    let opts=item(&args,0);
    let url=opts["url"].as_str().ok_or("Thiếu URL âm thanh IPTV")?;
-   local_ai::caption_start(app.clone(),ai.clone(),url,opts["translate"].as_bool().unwrap_or(false)).await
+   local_ai::caption_start(app.clone(),ai.clone(),url,opts["translate"].as_bool().unwrap_or(false),opts["target"].as_str().unwrap_or("en")).await
   },
   "caption:stop"=>Ok(local_ai::caption_stop(ai).await),
+  "caption:translationStatus"=>Ok(local_ai::translation_status(ai,item(&args,0).as_str().unwrap_or("en"))),
+  "caption:translationInstall"=>local_ai::translation_install(app.clone(),ai.clone(),text(&args,0)?).await,
   "caption:chooseFile"=>{
    let kind=text(&args,0)?;
    let path=file_open(app.clone(),"").await?;

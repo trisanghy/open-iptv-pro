@@ -85,3 +85,12 @@
  #page-tv .player-control-card .caption-third-controls{flex:1 1 100%!important;}
  #page-tv .player-control-card .caption-third-row .playback-extra{margin-left:auto!important;}
 }
+/* v21: room for multi-language labels without changing the approved player rows. */
+#page-tv .player-control-card .caption-third-controls #liveTranslateTarget{
+ width:140px!important;min-width:140px!important;max-width:160px!important;
+}
+@container (max-width:580px){
+ #page-tv .player-control-card .caption-third-controls #liveTranslateTarget{
+  width:120px!important;min-width:120px!important;max-width:150px!important;
+ }
+}
