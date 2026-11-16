@@ -1,0 +1,61 @@
+name: Package v4.23.40 classic-controls desktop source
+on:
+  push:
+    branches: [iptv-build-source]
+    paths: [.github/workflows/package-v42340.yml]
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: package-source-v42340
+  cancel-in-progress: false
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - name: Extract pinned v4.23.39 source and apply UI/build fix
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          echo '9fff925ca8bd5563ba1500bb579e0bc9aa6605f26f411e7b872a09686bc32aa3  source/OpenIPTVPro_Source_v4.23.39.zip' | sha256sum -c -
+          mkdir -p "$RUNNER_TEMP/iptv"
+          unzip -q source/OpenIPTVPro_Source_v4.23.39.zip -d "$RUNNER_TEMP/iptv"
+          mv "$RUNNER_TEMP/iptv/Open-IPTV-Pro-v4_23_39_Full_Desktop" "$RUNNER_TEMP/iptv/Open-IPTV-Pro-v4_23_40_Full_Desktop"
+          cd "$RUNNER_TEMP/iptv/Open-IPTV-Pro-v4_23_40_Full_Desktop"
+          node "$GITHUB_WORKSPACE/overlays/v4.23.40-apply.cjs" "$GITHUB_WORKSPACE/overlays/v4.23.40-controls.css"
+          test "$(node -p 'require("./package.json").version')" = '4.23.40'
+          test -f renderer/player-classic-controls-v42340.css
+          grep -Fq 'OPENIPTV_BUILD_ARCH' BUILD_MAC.command
+          node --test --test-concurrency=2 tests/*.test.cjs
+          echo "PROJECT=$PWD" >> "$GITHUB_ENV"
+      - name: Produce one full source ZIP and SHA-256
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          python3 - <<'PY'
+          import os,zipfile
+          from pathlib import Path
+          root=Path(os.environ['PROJECT'])
+          out=Path('source/OpenIPTVPro_Source_v4.23.40.zip')
+          exclude={'dist','node_modules','.git','.open-iptv-tools','__pycache__'}
+          with zipfile.ZipFile(out,'w',zipfile.ZIP_DEFLATED,compresslevel=8) as archive:
+              for p in sorted(root.rglob('*')):
+                  if p.is_file() and not any(s in exclude for s in p.relative_to(root).parts):
+                      archive.write(p,arcname=f'{root.name}/{p.relative_to(root).as_posix()}')
+          with zipfile.ZipFile(out) as archive:
+              assert archive.testzip() is None
+              assert f'{root.name}/renderer/player-classic-controls-v42340.css' in archive.namelist()
+          print(out,out.stat().st_size)
+          PY
+          sha256sum source/OpenIPTVPro_Source_v4.23.40.zip > source/OpenIPTVPro_Source_v4.23.40.zip.sha256
+      - name: Publish verified archive in separate branch
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add source/OpenIPTVPro_Source_v4.23.40.zip source/OpenIPTVPro_Source_v4.23.40.zip.sha256
+          git commit -m 'build(source): publish classic-controls v4.23.40 desktop ZIP'
+          git push origin HEAD:iptv-build-source
