@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Open IPTV Pro v4.23.49 — verified Vietnamese translation + 24 VieNeu CPU premium voices.
+# Open IPTV Pro v4.23.49 — verified Vietnamese translation + 25 VieNeu CPU premium voices.
 set -Eeuo pipefail
 VERSION=4.23.47
 SOURCE=OpenIPTVPro_Source_v4.23.47.zip
@@ -74,10 +74,10 @@ NEW_PROJECT="$WORK/Open-IPTV-Pro-v4_23_48_Full_Desktop"
 mv "$PROJECT" "$NEW_PROJECT"
 PROJECT="$NEW_PROJECT"
 echo '[3/5] Applying v4.23.49 Argos verified translation, VieNeu voices and ASAR fixes...'
-V49_REV="2823022e2fce2a3bd54412be5c34a79651e59ee6"
+V49_REV="a662e66219c6cd4a9778c28b7c5c16f4ae8ddb70"
 V49_ASSETS="$WORK/overlays49"
 mkdir -p "$V49_ASSETS"
-for file in argos-bridge-v42349.py caption-translator-v42349.cjs premium-voices-v42349.cjs vieneu-bridge-v42349.py local-ai-autoinstall-v42349.cjs local-tts-service-v42349.cjs local-tts-ui-v42349.js live-captions-ui-v42349.js v42349-translation-premium.test.cjs v4.23.49-apply.cjs; do
+for file in argos-bridge-v42349.py caption-translator-v42349.cjs premium-voices-v42349.cjs vieneu-bridge-v42349.py local-ai-autoinstall-v42349.cjs local-tts-service-v42349.cjs local-tts-ui-v42349.js live-captions-ui-v42349.js v42349-translation-premium.test.cjs argos-bridge-v42350.py local-ai-autoinstall-v42350.cjs caption-translator-v42350.cjs local-tts-service-v42350.cjs local-tts-ui-v42350.js direct-caption-routing-v42350.cjs v42350-direct-routing.test.cjs v4.23.49-apply.cjs; do
   curl -fsSL --retry 2 --connect-timeout 15 --max-time 120 \
     "https://raw.githubusercontent.com/trisanghy/open-iptv-pro/$V49_REV/overlays/$file" \
     -o "$V49_ASSETS/$file"
