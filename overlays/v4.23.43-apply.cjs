@@ -7,7 +7,7 @@ function swap(p,a,b){const s=read(p);assert(s.includes(a),p+' missing expected p
 const pkg=JSON.parse(read('package.json'));assert.equal(pkg.version,old);
 pkg.version=next;pkg.description='Open IPTV Pro v4.23.43 Desktop - Live Caption and English Live Translate beta using local Whisper.cpp, compact third toolbar row';
 write('package.json',JSON.stringify(pkg,null,2)+'\n');
-for(const p of ['BUILD_WINDOWS.bat','scripts/BUILD_WINDOWS_AUTO.ps1'])swap(p,old,next);
+for(const p of ['BUILD_WINDOWS.bat','scripts/BUILD_WINDOWS_AUTO.ps1']){const body=read(p);assert(body.includes(old),p+' old version missing');write(p,body.replaceAll(old,next));}
 swap('renderer/index.html','<title>Open IPTV Pro '+old+'</title>','<title>Open IPTV Pro '+next+'</title>');
 swap('renderer/index.html','<span class="version">'+old+'</span>','<span class="version">'+next+'</span>');
 let html=read('renderer/index.html');
