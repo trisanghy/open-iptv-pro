@@ -77,6 +77,7 @@
   const lastId = typeof store.current === 'string' ? store.current : '';
   const isLast = () => app.getCurrent?.()?.id === lastId;
   const hasSource = () => !!(video.currentSrc || video.getAttribute?.('src') || video.src);
+  const actuallyPlaying = () => !video.paused && !video.ended;
   const dismissPrompt = () => {
     dismissed = true;
     if (panel) panel.hidden = true;
@@ -84,6 +85,8 @@
   if (!lastId) return;
   const showPrompt = (text) => {
     if (!started || dismissed || !enabled() || !isLast()) return;
+    // A positive playback state overrides any stale autoplay failure.
+    if (actuallyPlaying()) { panel.hidden = true; return; }
     message.textContent = text;
     action.textContent = !audioEnabled() ? 'Phát kênh' : video.muted ? 'Bật âm thanh' : 'Phát có tiếng';
     panel.hidden = false;
@@ -129,14 +132,20 @@
   });
 
   video.addEventListener('playing', () => {
-    if (!started || dismissed || !isLast()) return;
-    if (video.muted && audioEnabled()) showPrompt('Kênh đang phát nhưng âm thanh bị tắt.');
-    else dismissPrompt();
+    if (started && isLast()) dismissPrompt();
   });
-  video.addEventListener('canplay', () => {
-    if (started && !dismissed && isLast() && video.paused) {
-      showPrompt(audioEnabled() ? 'Trình duyệt yêu cầu bạn nhấn Phát có tiếng.' : 'Trình duyệt yêu cầu nhấn Phát kênh.');
-    }
+  video.addEventListener('play', () => {
+    if (started && isLast()) dismissPrompt();
+  });
+  // Do not show a "browser blocked audio" message on canplay or a timer:
+  // they also occur on streams that are already playing with sound.
+  document.addEventListener('openiptv:autoplay-blocked', event => {
+    if (!started || dismissed || !isLast() || !enabled()) return;
+    if (event?.detail?.channelId !== lastId) return;
+    if (actuallyPlaying()) { panel.hidden = true; return; }
+    showPrompt(audioEnabled()
+      ? 'Trình duyệt từ chối tự phát có tiếng. Nhấn Phát có tiếng để tiếp tục.'
+      : 'Trình duyệt yêu cầu nhấn Phát kênh.');
   });
 
   const resume = () => {
@@ -152,12 +161,7 @@
     Promise.resolve(app.playChannel(lastId)).catch(() => {
       showPrompt('Không thể tự mở kênh trước đó. Nhấn để thử phát.');
     });
-    window.setTimeout(() => {
-      if (dismissed || !enabled() || !isLast()) return;
-      if (video.muted && audioEnabled()) showPrompt('Kênh đang phát nhưng bị tắt tiếng.');
-      else if (video.paused) showPrompt(audioEnabled() ? 'Trình duyệt đang chặn tự phát có tiếng. Nhấn Phát có tiếng.' : 'Trình duyệt chặn tự phát. Nhấn Phát kênh.');
-      else dismissPrompt();
-    }, 7000);
+    // Only a confirmed rejected play() call may display the audio-permission notice.
   };
   if (document.readyState === 'complete') window.setTimeout(resume, 0);
   else window.addEventListener('load', resume, {once:true});

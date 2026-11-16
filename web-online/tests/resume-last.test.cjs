@@ -49,13 +49,16 @@ async function environment({state={},channels=[{id:'news'}],mutedInitially=false
     IPTVState:app,setTimeout(fn){tasks.push(fn);},
     addEventListener(name,fn){if(name==='load')tasks.push(fn)}
   };
+  const documentListeners={};
   const document={
     readyState:'complete',
     getElementById:id=>elems[id]||null,
     createElement:element,
+    addEventListener(type,fn){(documentListeners[type]??=[]).push(fn);},
+    dispatch(type,detail){for(const fn of documentListeners[type]??[])fn({type,detail});}
   };
   vm.runInNewContext(source,{window,document,Promise,console});
-  return {data,calls,elems,video,app,tasks,
+  return {data,calls,elems,video,app,document,tasks,
     async start(){const fn=tasks.shift();fn?.();await Promise.resolve();},
     async tick(){const fn=tasks.shift();fn?.();await Promise.resolve();}
   };
@@ -101,7 +104,7 @@ test('blocked sound autoplay shows actionable button; click plays unmuted',async
   const e=await environment();
   await e.start();
   // Simulate browser still blocking autoplay after source becomes ready
-  e.video.dispatch('canplay');
+  e.document.dispatch('openiptv:autoplay-blocked',{channelId:'news'});
   const panel=e.elems.playerBox.children[0];
   assert.equal(panel.hidden,false);
   assert.match(panel.children[1].textContent,/Phát có tiếng/);
@@ -114,7 +117,7 @@ test('blocked sound autoplay shows actionable button; click plays unmuted',async
   assert.equal(panel.hidden,true);
 });
 test('browser NotAllowedError keeps the sound-enable prompt visible',async()=>{
-  const e=await environment();await e.start();e.video.dispatch('canplay');
+  const e=await environment();await e.start();e.document.dispatch('openiptv:autoplay-blocked',{channelId:'news'});
   const panel=e.elems.playerBox.children[0];e.video.canPlay=false;
   panel.children[1].dispatch('click');
   await Promise.resolve();await Promise.resolve();
@@ -122,7 +125,7 @@ test('browser NotAllowedError keeps the sound-enable prompt visible',async()=>{
   assert.match(panel.children[0].textContent,/chưa cho phép/);
 });
 test('switching OFF hides pending prompt without pausing playback',async()=>{
-  const e=await environment();await e.start();e.video.dispatch('canplay');
+  const e=await environment();await e.start();e.document.dispatch('openiptv:autoplay-blocked',{channelId:'news'});
   const panel=e.elems.playerBox.children[0];
   e.elems.webAutoResumeLast.checked=false;e.elems.webAutoResumeLast.dispatch('change');
   assert.equal(panel.hidden,true);assert.equal(e.calls.save,1);
@@ -155,7 +158,7 @@ test('audio disabled opens last channel muted and no unmute overlay on playing',
 });
 test('disabled audio uses silent playback action, not forced sound',async()=>{
   const e=await environment({state:{autoEnableAudio:false}});
-  await e.start();e.video.dispatch('canplay');
+  await e.start();e.document.dispatch('openiptv:autoplay-blocked',{channelId:'news'});
   const panel=e.elems.playerBox.children[0];
   assert.equal(panel.children[1].textContent,'Phát kênh');
   panel.children[1].dispatch('click');
@@ -179,4 +182,36 @@ test('audio preference remains configurable before any channel exists',async()=>
   const e=await environment({state:{current:''}});
   e.elems.webAutoEnableAudio.checked=false;e.elems.webAutoEnableAudio.dispatch('change');
   assert.equal(e.data.autoEnableAudio,false);assert.equal(e.calls.save,1);
+});
+
+test('canplay is never mistaken for a confirmed autoplay audio denial',async()=>{
+  const e=await environment();await e.start();
+  e.video.dispatch('canplay');
+  assert.equal(e.elems.playerBox.children[0].hidden,true);
+});
+test('slow loading no longer triggers a speculative blocked-audio toast',async()=>{
+  const e=await environment();await e.start();
+  await e.tick();
+  assert.equal(e.elems.playerBox.children[0].hidden,true);
+});
+test('playing with sound ignores a late autoplay denial from prior attempt',async()=>{
+  const e=await environment();await e.start();
+  e.video.paused=false;e.video.muted=false;e.video.volume=.7;
+  e.video.dispatch('playing');
+  e.document.dispatch('openiptv:autoplay-blocked',{channelId:'news'});
+  assert.equal(e.elems.playerBox.children[0].hidden,true);
+});
+test('autoplay-denied event from a different channel is ignored',async()=>{
+  const e=await environment();await e.start();
+  e.document.dispatch('openiptv:autoplay-blocked',{channelId:'other'});
+  assert.equal(e.elems.playerBox.children[0].hidden,true);
+});
+test('confirmed NotAllowedError while paused shows an actionable notice',async()=>{
+  const e=await environment();await e.start();
+  e.document.dispatch('openiptv:autoplay-blocked',{channelId:'news'});
+  const panel=e.elems.playerBox.children[0];
+  assert.equal(panel.hidden,false);
+  assert.match(panel.children[0].textContent,/từ chối tự phát có tiếng/);
+  e.video.paused=false;e.video.dispatch('playing');
+  assert.equal(panel.hidden,true);
 });
