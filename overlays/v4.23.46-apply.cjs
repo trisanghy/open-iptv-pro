@@ -98,8 +98,11 @@ const modelInit="  localModelInstaller=createAutoModelInstaller({dataDir:app.get
 swap('src/main.cjs',modelInit,modelInit+'\n  captionTranslator=createCaptionTranslator({installer:localModelInstaller});');
 swap('src/main.cjs',"  ipcMain.handle('caption:status',()=>liveCaptionService.status());",
 "  ipcMain.handle('caption:languageStatus',(_e,target)=>captionTranslator.status(target));\n  ipcMain.handle('caption:installLanguage',(_e,target)=>captionTranslator.install(target));\n  ipcMain.handle('caption:status',()=>liveCaptionService.status());");
-swap('src/main.cjs',"ipcMain.handle('caption:start',(_e,opts)=>liveCaptionService.start(opts));",
-"ipcMain.handle('caption:start',(_e,opts)=>{if(opts?.translate===true&&!isValidTarget(opts?.target||'en'))throw Error('Ngôn ngữ đích không hợp lệ');return liveCaptionService.start(opts);});");
+const currentMain=get('src/main.cjs');
+const startHandler=currentMain.match(/ipcMain\.handle\('caption:start',\(_e,(\w+)\)=>liveCaptionService\.start\(\1\)\);/);
+assert(startHandler,'Expected caption:start handler missing in original Electron code');
+put('src/main.cjs',currentMain.replace(startHandler[0],
+"ipcMain.handle('caption:start',(_e,options)=>{if(options?.translate===true&&!isValidTarget(options?.target||'en'))throw Error('Ngôn ngữ đích không hợp lệ');return liveCaptionService.start(options);});"));
 swap('src/preload.cjs',"  captionStatus:()=>ipcRenderer.invoke('caption:status'),",
 "  captionLanguageStatus:target=>ipcRenderer.invoke('caption:languageStatus',target),\n  captionInstallLanguage:target=>ipcRenderer.invoke('caption:installLanguage',target),\n  captionStatus:()=>ipcRenderer.invoke('caption:status'),");
 swap('renderer/local-tts-v42344.js',"const text=String(e.text).trim();",
