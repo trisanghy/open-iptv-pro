@@ -1,0 +1,231 @@
+/* v4.23.41 - approved playback toolbar, source video stays independent.
+   Desktop row 1: channel | previous/play/stop/next | volume | PiP/fullscreen.
+   Desktop row 2: stacked current/next EPG | frame mode | stream selector | favorite.
+   Keep this stylesheet LAST after all theme/player styles. */
+#page-tv .player-control-card {
+  display:block!important;
+  width:100%!important; min-width:0!important;
+  padding:0!important; overflow:visible!important;
+  container-type:inline-size!important;
+}
+#page-tv .player-control-card .control-layout-top,
+#page-tv .player-control-card .control-layout-bottom {
+  width:100%!important; min-width:0!important;box-sizing:border-box!important;
+}
+#page-tv .player-control-card .control-layout-top {
+  display:grid!important;
+  grid-template-columns:minmax(180px,1.12fr) minmax(248px,1fr) minmax(150px,.7fr) max-content!important;
+  align-items:center!important;
+  gap:0!important;
+  padding:8px 12px!important;
+  min-height:92px!important;
+  border-bottom:1px solid var(--edge,#30424c)!important;
+}
+#page-tv .player-control-card .control-layout-top > * {
+  min-width:0!important;position:relative!important;grid-row:1!important;
+}
+#page-tv .player-control-card .control-layout-top .playing-info {
+  grid-column:1!important;
+  align-items:center!important;display:flex!important;gap:12px!important;
+  min-width:0!important;padding:7px 12px!important;margin:0!important;
+  border-right:1px solid var(--edge,#30424c)!important;
+}
+#page-tv .player-control-card .control-layout-top .playing-channel-text{
+  min-width:0!important;overflow:hidden!important;
+}
+#page-tv .player-control-card .control-layout-top .playing-info b {
+  font-size:clamp(16px,1.2vw,21px)!important;line-height:1.3!important;
+}
+#page-tv .player-control-card .control-layout-top .playing-info small {
+  font-size:clamp(11px,.93vw,14px)!important;
+}
+#page-tv .player-control-card .controls.transport-controls{
+  grid-column:2!important;min-width:0!important;
+  display:flex!important;align-items:center!important;justify-content:space-evenly!important;
+  gap:clamp(6px,1.2vw,16px)!important;
+  padding:5px 12px!important;margin:0!important;flex-wrap:nowrap!important;
+  border-right:1px solid var(--edge,#30424c)!important;
+}
+#page-tv .player-control-card .controls.transport-controls :is(#prevBtn,#stopBtn,#nextBtn) {
+  position:static!important;display:grid!important;place-items:center!important;
+  flex:0 0 42px!important;width:42px!important;min-width:42px!important;
+  height:42px!important;min-height:42px!important;
+  border:0!important;border-radius:50%!important;background:transparent!important;
+  color:var(--text,#ecf2f7)!important;font-size:22px!important;
+  padding:0!important;transform:none!important;visibility:visible!important;opacity:1!important;
+}
+#page-tv .player-control-card .controls.transport-controls #playBtn {
+  position:static!important;display:grid!important;place-items:center!important;
+  flex:0 0 68px!important;width:68px!important;min-width:68px!important;
+  height:68px!important;min-height:68px!important;
+  border-radius:50%!important;
+  background:#48e65d!important;color:#102719!important;
+  border:2px solid #56ed6b!important;
+  box-shadow:0 0 0 2px #193a28!important;
+  font-size:30px!important;font-weight:800!important;
+  padding:0!important;transform:none!important;visibility:visible!important;opacity:1!important;
+}
+#page-tv .player-control-card .volume-controls {
+  grid-column:3!important;display:flex!important;align-items:center!important;
+  justify-content:center!important;gap:9px!important;padding:6px 15px!important;
+  min-width:0!important;margin:0!important;
+  border-right:0!important;white-space:nowrap!important;
+}
+#page-tv .player-control-card .volume-controls .volume-icon{
+  display:inline-flex!important;align-items:center!important;flex:0 0 auto!important;
+  font-size:22px!important;line-height:1!important;color:var(--text,#e5edf3)!important;
+}
+#page-tv .player-control-card .volume-controls #volume{
+  display:block!important;appearance:auto!important;
+  flex:1 1 auto!important;min-width:64px!important;width:100%!important;
+  max-width:260px!important;margin:0!important;
+  accent-color:#48e65d!important;opacity:1!important;visibility:visible!important;
+}
+#page-tv .player-control-card .output-controls {
+  grid-column:4!important;display:flex!important;align-items:center!important;
+  justify-content:flex-end!important;gap:7px!important;flex-wrap:nowrap!important;
+  min-width:0!important;padding:5px 5px 5px 9px!important;margin:0!important;
+}
+#page-tv .player-control-card .output-controls :is(#pipBtn,#fullscreenBtn){
+  display:inline-flex!important;align-items:center!important;justify-content:center!important;
+  flex:0 0 auto!important;min-height:42px!important;width:auto!important;
+  border-radius:12px!important;padding:8px 10px!important;
+  font-size:13px!important;background:var(--surface2,#172532)!important;
+  border:1px solid var(--edge,#30424c)!important;
+  visibility:visible!important;opacity:1!important;position:static!important;
+}
+#page-tv .player-control-card .output-controls #fullscreenBtn {min-width:42px!important;padding:6px!important;}
+/* Keep Cast available in the expanded tools, not mixed into the approved top row. */
+#page-tv .player-control-card .playback-extra-inner #castBtn {
+  display:inline-flex!important;align-items:center!important;justify-content:center!important;
+  position:static!important;visibility:visible!important;opacity:1!important;
+  min-height:36px!important;flex:0 0 auto!important;
+}
+#page-tv .player-control-card .control-layout-bottom{
+  display:grid!important;
+  grid-template-columns:minmax(250px,1.6fr) minmax(130px,.62fr) minmax(155px,1.05fr) 50px!important;
+  align-items:center!important;gap:12px!important;
+  padding:10px 14px!important;min-height:88px!important;
+}
+#page-tv .player-control-card #epgCurrent {
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr) 34px!important;
+  grid-template-rows:minmax(25px,auto) minmax(25px,auto)!important;
+  column-gap:9px!important;row-gap:4px!important;
+  align-items:center!important;
+  padding:3px 12px 3px 0!important;margin:0!important;
+  border:0!important;border-right:1px solid var(--edge,#30424c)!important;
+  border-radius:0!important;background:transparent!important;box-shadow:none!important;
+  min-width:0!important;
+}
+/* A single line for the CURRENT programme, a second line for the NEXT programme. */
+#page-tv .player-control-card #epgCurrent .epg-current-item,
+#page-tv .player-control-card #epgCurrent .epg-next-item{
+  display:flex!important;flex-direction:row!important;align-items:center!important;
+  gap:9px!important;min-width:0!important;max-width:100%!important;
+  width:100%!important;overflow:hidden!important;flex-wrap:nowrap!important;
+  border:0!important;padding:0!important;margin:0!important;
+}
+#page-tv .player-control-card #epgCurrent .epg-current-item{grid-column:1!important;grid-row:1!important}
+#page-tv .player-control-card #epgCurrent .epg-next-item{grid-column:1!important;grid-row:2!important}
+#page-tv .player-control-card #epgCurrent :is(.epg-current-item,.epg-next-item)::before{
+  flex:0 0 67px;white-space:nowrap;
+  font-size:12px!important;font-weight:600;
+  color:var(--muted,#9baebe)!important;
+}
+#page-tv .player-control-card #epgCurrent .epg-current-item::before{content:"Đang phát"}
+#page-tv .player-control-card #epgCurrent .epg-next-item::before{content:"Tiếp theo"}
+#page-tv .player-control-card #epgCurrent :is(.epg-current-item,.epg-next-item) b{
+  display:block!important;flex:1 1 auto!important;min-width:0!important;max-width:100%!important;
+  overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important;
+  font-size:clamp(12px,.96vw,15px)!important;font-weight:650!important;
+  line-height:1.35!important;
+}
+#page-tv .player-control-card #epgCurrent :is(.epg-current-item,.epg-next-item) small{
+  display:block!important;flex:0 0 auto!important;
+  font-size:clamp(10px,.8vw,12px)!important;line-height:1.2!important;
+  white-space:nowrap!important;color:var(--muted,#9baebe)!important;
+}
+#page-tv .player-control-card #openGuideBtn {
+  grid-column:2!important;grid-row:1 / 3!important;
+  position:static!important;display:grid!important;place-items:center!important;
+  width:34px!important;height:42px!important;min-width:34px!important;min-height:42px!important;
+  padding:0!important;border-radius:9px!important;font-size:19px!important;
+}
+#page-tv .player-control-card .view-mode{
+  display:flex!important;align-items:center!important;gap:8px!important;
+  min-width:0!important;white-space:nowrap!important;
+  padding:0!important;margin:0!important;
+}
+#page-tv .player-control-card .view-mode span{font-size:12px!important}
+#page-tv .player-control-card .view-mode select{
+  min-width:0!important;max-width:none!important;
+  width:100%!important;height:40px!important;font-size:13px!important;
+}
+#page-tv .player-control-card .manual-link-picker {
+  display:flex!important;align-items:center!important;
+  min-width:0!important;gap:6px!important;padding:0!important;margin:0!important;
+}
+#page-tv .player-control-card .manual-link-picker label{display:none!important}
+#page-tv .player-control-card #manualStreamSelect{
+  display:block!important;min-width:0!important;max-width:100%!important;
+  width:100%!important;height:42px!important;font-size:13px!important;
+}
+#page-tv .player-control-card #favCurrentBtn {
+  display:grid!important;place-items:center!important;
+  width:46px!important;min-width:46px!important;height:46px!important;
+  border-radius:12px!important;font-size:27px!important;
+  padding:0!important;margin:0!important;
+}
+/* Constrain only the toolbar, never the player's <video> or fullscreen layer. */
+@container (max-width:980px){
+  #page-tv .player-control-card .control-layout-top{
+    grid-template-columns:minmax(0,1fr) minmax(248px,1fr)!important;row-gap:0!important;
+  }
+  #page-tv .player-control-card .control-layout-top .playing-info{
+    grid-column:1!important;grid-row:1!important;
+  }
+  #page-tv .player-control-card .controls.transport-controls{
+    grid-column:2!important;grid-row:1!important;border-right:0!important;
+  }
+  #page-tv .player-control-card .volume-controls{
+    grid-column:1!important;grid-row:2!important;
+    justify-content:flex-start!important;border-top:1px solid var(--edge,#30424c)!important;
+  }
+  #page-tv .player-control-card .output-controls{
+    grid-column:2!important;grid-row:2!important;
+    border-top:1px solid var(--edge,#30424c)!important;
+  }
+  #page-tv .player-control-card .control-layout-bottom{
+    grid-template-columns:minmax(0,1fr) minmax(140px,.66fr) 50px!important;
+  }
+  #page-tv .player-control-card #epgCurrent{grid-column:1 / 4!important;grid-row:1!important;border-right:0!important}
+  #page-tv .player-control-card .view-mode{grid-column:1!important;grid-row:2!important}
+  #page-tv .player-control-card .manual-link-picker{grid-column:2!important;grid-row:2!important}
+  #page-tv .player-control-card #favCurrentBtn{grid-column:3!important;grid-row:2!important}
+}
+@container (max-width:550px){
+  #page-tv .player-control-card .control-layout-top{grid-template-columns:minmax(0,1fr)!important}
+  #page-tv .player-control-card .control-layout-top .playing-info{
+    grid-column:1!important;grid-row:1!important;border-right:0!important;
+  }
+  #page-tv .player-control-card .controls.transport-controls{
+    grid-column:1!important;grid-row:2!important;border-top:1px solid var(--edge,#30424c)!important;
+  }
+  #page-tv .player-control-card .volume-controls{
+    grid-column:1!important;grid-row:3!important;
+  }
+  #page-tv .player-control-card .output-controls{
+    grid-column:1!important;grid-row:4!important;justify-content:flex-end!important;
+  }
+  #page-tv .player-control-card .control-layout-bottom{
+    grid-template-columns:minmax(0,1fr) 46px!important;
+  }
+  #page-tv .player-control-card #epgCurrent{grid-column:1 / -1!important;grid-row:1!important}
+  #page-tv .player-control-card .view-mode{grid-column:1 / -1!important;grid-row:2!important}
+  #page-tv .player-control-card .manual-link-picker{grid-column:1!important;grid-row:3!important}
+  #page-tv .player-control-card #favCurrentBtn{grid-column:2!important;grid-row:3!important}
+  #page-tv .player-control-card #epgCurrent :is(.epg-current-item,.epg-next-item)::before{
+    flex-basis:55px;font-size:11px!important;
+  }
+}
