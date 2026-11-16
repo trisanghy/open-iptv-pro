@@ -74,6 +74,13 @@ for(const p of fs.readdirSync(f('tests')).filter(n=>n.endsWith('.test.cjs'))){
  const full='tests/'+p,raw=read(full),modified=raw.replaceAll(before,after).replaceAll(oldHelper,newHelper);
  if(modified!==raw)write(full,modified);
 }
+// Prior test expected the old argospm CLI command; v4.23.48 deliberately uses Python model APIs.
+const legacyTest='tests/multilingual-captions-v42346.test.cjs';
+if(fs.existsSync(f(legacyTest))){
+ const original=read(legacyTest);
+ assert(original.includes('assert.match(c,/translate-en_/)'),'Expected old Argos CLI regression assertion');
+ write(legacyTest,original.replace('assert.match(c,/translate-en_/)','assert.match(c,/argos-bridge\\.py/)'));
+}
 copy('argos-tts-voice-v42348.test.cjs','tests/argos-tts-voice-v42348.test.cjs');
 write('RELEASE_NOTES_V4_23_48.md',[
  '# Open IPTV Pro v4.23.48 — Argos translation fix and Piper voice selection',
