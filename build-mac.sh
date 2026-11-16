@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
-# Open IPTV Pro v4.23.40 — one Mac command, automatically selects Apple Silicon or Intel.
+# Open IPTV Pro v4.23.41 — one Mac command, automatically selects Apple Silicon or Intel.
 set -Eeuo pipefail
-VERSION=4.23.40
-SOURCE=OpenIPTVPro_Source_v4.23.40.zip
-SHA256=d3fa103a7e8eea33e3d1ed384a166b7a2e36c103a8cc31b04e90b144e63e0e69
+VERSION=4.23.41
+SOURCE=OpenIPTVPro_Source_v4.23.41.zip
+SHA256=469228cbd0bba63d3d9471a8d8e336f68fc24defa62d8b514f56257f53413e89
 RAW=https://raw.githubusercontent.com/trisanghy/open-iptv-pro/iptv-build-source/source
 if [ "$(uname -s)" != Darwin ]; then echo 'This command requires macOS.' >&2; exit 1; fi
 case "$(uname -m)" in
@@ -14,8 +14,8 @@ esac
 DOWNLOADS="$HOME/Downloads"
 mkdir -p "$DOWNLOADS"
 WORK="$(mktemp -d "$DOWNLOADS/.openiptv-42340-${ARCH}.XXXXXXXX")"
-OUT="$DOWNLOADS/OpenIPTVPro_Build_v4.23.40_${ARCH}"
-LOG="$DOWNLOADS/OpenIPTVPro_Build_v4.23.40_${ARCH}_ERROR.log"
+OUT="$DOWNLOADS/OpenIPTVPro_Build_v4.23.41_${ARCH}"
+LOG="$DOWNLOADS/OpenIPTVPro_Build_v4.23.41_${ARCH}_ERROR.log"
 SUCCESS=0
 cleanup() {
   code=$?
@@ -40,7 +40,7 @@ PROJECT="$WORK/Open-IPTV-Pro-v4_23_40_Full_Desktop"
 grep -Eq '"version"[[:space:]]*:[[:space:]]*"4[.]23[.]40"' "$PROJECT/package.json" || { echo 'Wrong source version' >&2; exit 1; }
 echo "[3/4] Building native Mac $ARCH DMG..."
 ( cd "$PROJECT" && OPENIPTV_ONE_COMMAND=1 bash ./BUILD_MAC.command ) 2>&1 | tee "$WORK/build.log"
-DMG="Open-IPTV-Pro-4.23.40-mac-${ARCH}.dmg"
+DMG="Open-IPTV-Pro-4.23.41-mac-${ARCH}.dmg"
 [ -s "$PROJECT/dist/$DMG" ] || { echo "Missing $DMG" >&2; exit 1; }
 APP_DIR="mac-${ARCH}"
 if [ "$ARCH" = 'x64' ]; then APP_DIR='mac'; fi
