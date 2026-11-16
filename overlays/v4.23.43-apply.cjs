@@ -24,19 +24,19 @@ const insert=[
 ' </div>',third
 ].join('\n');
 html=html.replace(third,insert);
-const end='</details>\n        <div class="video-seekbar"';
-assert(html.includes(end),'End of third row missing');
-html=html.replace(end,[
-'</details>',
+const detailsAt=html.indexOf('id="playbackExtra"');
+const closingAt=html.indexOf('</details>',detailsAt);
+assert(detailsAt>=0&&closingAt>detailsAt,'Playback extra details closing tag missing');
+const closingText=[
 '<div class="caption-third-setup" id="liveCaptionSetupPanel" hidden>',
 ' <button type="button" id="captionChooseBinary">Chọn whisper-cli</button>',
 ' <button type="button" id="captionChooseModel">Chọn mô hình GGML (.bin)</button>',
 ' <small>Cần cài whisper.cpp và tải mô hình riêng. Dịch chỉ sang English.</small>',
 '</div>',
 '</div>',
-'<div id="liveCaptionOutput" class="caption-third-output" role="status" aria-live="polite" hidden></div>',
-'        <div class="video-seekbar"'
-].join('\n'));
+'<div id="liveCaptionOutput" class="caption-third-output" role="status" aria-live="polite" hidden></div>'
+].join('\\n');
+html=html.slice(0,closingAt+'</details>'.length)+'\\n'+closingText+html.slice(closingAt+'</details>'.length);
 const sheet='live-caption-row-v42343.css',script='live-captions-v42343.js';
 assert(!html.includes(sheet)&&!html.includes(script));
 html=html.replace('</head>','<link rel="stylesheet" href="'+sheet+'"/></head>');
