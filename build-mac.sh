@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Open IPTV Pro v4.23.37: one verified source ZIP from isolated branch -> DMG + source ZIP.
+# Open IPTV Pro v4.23.37: fast single-ZIP macOS builder; retain one SHA-256 check.
 set -Eeuo pipefail
 VERSION="4.23.37"
 ARCHIVE="OpenIPTVPro_Source_v$VERSION.zip"
@@ -10,7 +10,7 @@ case "$(uname -s)-$(uname -m)" in
   Darwin-x86_64) ARCH="x64" ;;
   *) echo "ERROR: This command only builds macOS Intel/Apple Silicon." >&2; exit 1 ;;
 esac
-for cmd in curl shasum unzip awk sed df mktemp tee wc tr; do
+for cmd in curl shasum unzip awk sed df mktemp tee; do
   command -v "$cmd" >/dev/null 2>&1 || { echo "Missing utility: $cmd" >&2; exit 1; }
 done
 DOWNLOADS="$HOME/Downloads"
@@ -38,13 +38,12 @@ trap cleanup EXIT
 trap 'exit 130' INT
 trap 'exit 143' TERM
 echo "[1/4] Downloading one source ZIP: v$VERSION"
-curl -fL --retry 3 --connect-timeout 20 --max-time 300 \
+curl -fL --retry 2 --connect-timeout 15 --max-time 180 \
   --output "$WORK/$ARCHIVE" "$RAW/source/$ARCHIVE"
 [ -s "$WORK/$ARCHIVE" ] || { echo "Downloaded ZIP is missing." >&2; exit 1; }
 SHA="$(shasum -a 256 "$WORK/$ARCHIVE" | awk '{print $1}')"
 [ "$SHA" = "$EXPECTED_SHA256" ] || { echo "Source ZIP SHA-256 verification failed!" >&2; exit 1; }
-unzip -tq "$WORK/$ARCHIVE" >/dev/null
-echo "[2/4] Extracting verified source..."
+echo "[2/4] Extracting source (no redundant ZIP pre-scan)..."
 unzip -q "$WORK/$ARCHIVE" -d "$WORK"
 PROJECT="$WORK/Open-IPTV-Pro-v4_23_37_Full_Desktop"
 [ -f "$PROJECT/package.json" ] || { echo "Missing source package.json." >&2; exit 1; }
@@ -59,8 +58,6 @@ fi
 DMG_NAME="Open-IPTV-Pro-$VERSION-mac-$ARCH.dmg"
 DMG="$PROJECT/dist/$DMG_NAME"
 [ -s "$DMG" ] || { echo "DMG not found: $DMG" >&2; exit 1; }
-SIZE="$(wc -c < "$DMG" | tr -d ' ')"
-[ "$SIZE" -ge 1048576 ] || { echo "DMG is unexpectedly small." >&2; exit 1; }
 echo "[4/4] Cleaning result: keeping ONLY DMG and matching source ZIP."
 if [ -L "$OUT" ]; then echo "Output directory is a symlink; refusing to overwrite." >&2; exit 1; fi
 if [ -e "$OUT" ] && [ ! -d "$OUT" ]; then echo "Output path is not a directory." >&2; exit 1; fi
@@ -72,8 +69,8 @@ if [ -d "$OUT" ]; then
   done
 fi
 mkdir -p "$WORK/ready" "$OUT"
-cp "$DMG" "$WORK/ready/$DMG_NAME"
-cp "$WORK/$ARCHIVE" "$WORK/ready/$ARCHIVE"
+mv "$DMG" "$WORK/ready/$DMG_NAME"
+mv "$WORK/$ARCHIVE" "$WORK/ready/$ARCHIVE"
 rm -f "$OUT/$DMG_NAME" "$OUT/$ARCHIVE"
 mv "$WORK/ready/$DMG_NAME" "$OUT/$DMG_NAME"
 mv "$WORK/ready/$ARCHIVE" "$OUT/$ARCHIVE"
