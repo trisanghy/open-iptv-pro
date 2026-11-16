@@ -42,7 +42,12 @@ for(const [asset,dest] of [
  ['local-ai-autoinstall-v42349.cjs','src/local-ai-autoinstall.cjs'],
  ['local-tts-service-v42349.cjs','src/local-tts-service.cjs'],
  ['local-tts-ui-v42349.js','renderer/local-tts-v42344.js'],
- ['live-captions-ui-v42349.js','renderer/live-captions-v42343.js']
+ ['live-captions-ui-v42349.js','renderer/live-captions-v42343.js'],
+ ['argos-bridge-v42350.py','src/argos-bridge.py'],
+ ['local-ai-autoinstall-v42350.cjs','src/local-ai-autoinstall.cjs'],
+ ['caption-translator-v42350.cjs','src/caption-translator.cjs'],
+ ['local-tts-service-v42350.cjs','src/local-tts-service.cjs'],
+ ['local-tts-ui-v42350.js','renderer/local-tts-v42344.js']
 ])copy(asset,dest);
 let html=read('renderer/index.html');
 html=html.replaceAll('Dịch sang tiếng Anh trên máy','Nhận diện rồi dịch sang ngôn ngữ đã chọn (offline)');
@@ -99,7 +104,23 @@ for(const p of fs.readdirSync(file('tests')).filter(x=>x.endsWith('.test.cjs')))
  }
  if(v!==read(target))write(target,v);
 }
+// Compatibility with old tests that used the removed English-only CLI and ASAR Python paths.
+for(const p of ['tests/argos-tts-voice-v42348.test.cjs','tests/multilingual-captions-v42346.test.cjs']){
+ if(!fs.existsSync(file(p)))continue;
+ let testText=read(p);
+ testText=testText.replace("path.join(root,'local-tts','verified-language-pairs')",
+   "path.join(dir,'local-tts','verified-language-pairs')");
+ testText=testText.replaceAll("assert.match(c,/argos-bridge\\.py/)","assert.match(c,/installPair\\('en',lang\\)/)");
+ testText=testText.replaceAll("assert.match(caption,/argos-bridge\\.py/)","assert.match(caption,/dirs\\.argosBridge/)");
+ testText=testText.replaceAll("assert.match(tts,/argos-bridge\\.py/)","assert.match(tts,/managed\\.argosBridge/)");
+ write(p,testText);
+}
 copy('v42349-translation-premium.test.cjs','tests/v42349-translation-premium.test.cjs');
+const fresh=read('tests/v42349-translation-premium.test.cjs')
+ .replace("assert.match(s,/vieneu-bridge\\.py/);","assert.match(s,/managed\\.vieneuBridge/);");
+write('tests/v42349-translation-premium.test.cjs',fresh);
+copy('v42350-direct-routing.test.cjs','tests/v42350-direct-routing.test.cjs');
+const directPatch=require(path.join(assets,'direct-caption-routing-v42350.cjs'));
 write('RELEASE_NOTES_V4_23_49.md',[
  '# Open IPTV Pro v4.23.49 — Verified Vietnamese translation and premium TTS',
  '',
