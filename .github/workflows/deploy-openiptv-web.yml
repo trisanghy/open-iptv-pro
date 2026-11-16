@@ -51,6 +51,8 @@ jobs:
           node --check _site/browser-channel-check.js
           node --check _site/app.js
           node --test web-online/tests/browser-channel-check.test.cjs
+          node --test web-online/tests/resume-last.test.cjs
+          grep -q 'id="webAutoResumeLast"' _site/index.html
       - name: Cache Vietnam XMLTV for browsers (avoids CORS + gzip issues)
         shell: bash
         run: |

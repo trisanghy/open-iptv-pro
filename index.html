@@ -256,6 +256,16 @@
         <small id="replayMinutesState" role="status">Đang dùng: 10 phút</small></fieldset>
       </div><small>Kiểm tra tối đa 32 luồng; tốc độ thực tế phụ thuộc máy, mạng và giới hạn từ nhà cung cấp. Bộ đệm chỉ ghi từ lúc bật, không tua về trước khi bật.</small>
     </article>
+    <article class="settings-card" id="webAutoResumeSettings">
+      <h2>▶ Tự mở kênh khi vào website</h2>
+      <label class="check-line" for="webAutoResumeLast">
+        <input type="checkbox" id="webAutoResumeLast" checked/>
+        Tự động phát lại kênh xem cuối
+      </label>
+      <small id="webAutoResumeHint" role="status" aria-live="polite">
+        Mặc định bật. Thử tự phát có tiếng; trình duyệt có thể yêu cầu nhấn Phát có tiếng một lần.
+      </small>
+    </article>
     <article class="settings-card" id="defaultBufferSettings"><h2>⏪ Tua lại mặc định</h2><label class="check-line buffer-default-line" for="autoTimeshiftSetting"><input type="checkbox" id="autoTimeshiftSetting"/> Tự bật bộ đệm tua lại <span id="autoTimeshiftWindowMinutes">10</span> phút khi mở kênh</label><p>FFmpeg được tích hợp sẵn. Bộ đệm tua lại theo số phút đã chọn được tạo cục bộ từ lúc mở kênh; Snapshot hàng loạt hoạt động mà không cần cài FFmpeg ngoài. Nguồn có DRM hoặc chặn truy cập có thể không hỗ trợ.</p><small id="autoTimeshiftState" aria-live="polite">Mặc định: tắt</small></article>
     <article class="settings-card" id="epgSettingsCard"><h2>▤ Nguồn lịch EPG</h2><p>Quản lý nguồn XMLTV (.xml / .xml.gz), cập nhật tự động hoặc nhập file từ máy. EPG cũ được giữ lại nếu cập nhật lỗi.</p>
       <label class="check-line" for="epgAutoRefreshStart"><input type="checkbox" id="epgAutoRefreshStart"/> Tự tải EPG khi khởi động ứng dụng</label>

@@ -1,83 +1,134 @@
 'use strict';
-/* Web-only: each browser profile remembers its last selected IPTV channel. */
+/* Web-only last-channel resume. Try audible autoplay; never force mute.
+ * When Chrome/Safari disallow autoplay with sound, require a user gesture.
+ */
 (() => {
   if (window.streamleaf) return;
+  const $ = id => document.getElementById(id);
   const app = window.IPTVState;
-  const video = document.getElementById('video');
-  const holder = document.getElementById('playerBox');
-  if (!app || !video || !holder) return;
-  const state = app.getStore?.();
-  const id = typeof state?.current === 'string' ? state.current : '';
-  if (!id) return;
-  const channel = app.getChannels?.().find(ch => ch.id === id);
-  if (!channel) return;
+  const video = $('video');
+  const holder = $('playerBox');
+  const toggle = $('webAutoResumeLast');
+  const hint = $('webAutoResumeHint');
+  if (!app || !video || !holder || !toggle) return;
+  const store = app.getStore?.();
+  if (!store || typeof store !== 'object') return;
+
+  const enabled = () => store.autoResumeLastChannel !== false;
+  const explain = (message) => {
+    if (hint) hint.textContent = message || (
+      enabled()
+        ? 'Mặc định bật. Thử tự phát có tiếng; Chrome/Safari có thể yêu cầu nhấn Phát có tiếng một lần.'
+        : 'Đã tắt. Lần mở website sau sẽ không tự phát kênh.'
+    );
+  };
+  toggle.checked = enabled();
+  explain();
+
+  toggle.addEventListener('change', () => {
+    const previous = store.autoResumeLastChannel;
+    store.autoResumeLastChannel = !!toggle.checked;
+    if (app.save?.() === false) {
+      store.autoResumeLastChannel = previous;
+      toggle.checked = enabled();
+      explain('Không lưu được cài đặt, vui lòng kiểm tra dung lượng bộ nhớ trình duyệt.');
+      return;
+    }
+    explain();
+    if (!enabled()) dismissPrompt();
+  });
+
+  const lastId = typeof store.current === 'string' ? store.current : '';
+  if (!lastId) return;
 
   let started = false;
   let dismissed = false;
-  const panel = document.createElement('div');
-  panel.id = 'web-resume-panel';
-  panel.className = 'web-resume-panel';
-  panel.setAttribute('role', 'status');
-  panel.setAttribute('aria-live', 'polite');
-  panel.hidden = true;
-  const label = document.createElement('span');
-  label.textContent = 'Đã mở lại kênh vừa xem';
-  const button = document.createElement('button');
-  button.type = 'button';
-  button.textContent = 'Bật âm thanh';
-  panel.append(label, button);
-  holder.append(panel);
-
-  const stillLast = () => app.getCurrent?.()?.id === id;
-  const hide = () => { dismissed = true; panel.hidden = true; };
-  const show = (message, action) => {
-    if (dismissed || !stillLast()) return;
-    label.textContent = message;
-    button.textContent = action;
+  let panel;
+  let message;
+  let action;
+  const isLast = () => app.getCurrent?.()?.id === lastId;
+  const hasSource = () => !!(video.currentSrc || video.getAttribute?.('src') || video.src);
+  const dismissPrompt = () => {
+    dismissed = true;
+    if (panel) panel.hidden = true;
+  };
+  const showPrompt = (text) => {
+    if (!started || dismissed || !enabled() || !isLast()) return;
+    message.textContent = text;
+    action.textContent = video.muted ? 'Bật âm thanh' : 'Phát có tiếng';
     panel.hidden = false;
   };
-  button.addEventListener('click', () => {
-    if (!stillLast()) { hide(); return; }
+
+  // Keep the audio-permission action inside video, not in the two-row toolbar.
+  panel = document.createElement('div');
+  panel.id = 'web-resume-panel';
+  panel.className = 'web-resume-panel';
+  panel.setAttribute('role','status');
+  panel.setAttribute('aria-live','polite');
+  panel.hidden = true;
+  message = document.createElement('span');
+  message.textContent = 'Nhấn để phát kênh đã xem với âm thanh';
+  action = document.createElement('button');
+  action.type = 'button';
+  action.textContent = 'Phát có tiếng';
+  panel.append(message,action);
+  holder.append(panel);
+
+  action.addEventListener('click', () => {
+    if (!enabled() || !isLast()) { dismissPrompt(); return; }
+    // Must run on the synchronous user-click stack to satisfy autoplay policy.
     video.defaultMuted = false;
     video.muted = false;
+    video.autoplay = false;
     panel.hidden = true;
-    try {
-      const promise = video.play();
-      Promise.resolve(promise).then(hide, err => {
-        show('Trình duyệt chưa cho phép phát kênh', 'Nhấn để phát');
-        console.debug('Restore requires playback gesture', err?.name || 'unknown');
+    if (!hasSource()) {
+      // Stream may have failed to prepare. Retry the selected channel.
+      Promise.resolve(app.playChannel(lastId)).catch(() => {
+        showPrompt('Không nạp được kênh. Thử phát lại.');
       });
-    } catch (_) {
-      show('Trình duyệt chưa cho phép phát kênh', 'Nhấn để phát');
+      return;
+    }
+    try {
+      Promise.resolve(video.play()).then(() => {
+        if (!video.muted && !video.paused) dismissPrompt();
+        else showPrompt('Trình phát vẫn chưa phát có tiếng.');
+      }, () => showPrompt('Trình duyệt chưa cho phép phát có tiếng. Nhấn lại để thử.'));
+    } catch {
+      showPrompt('Không phát được nguồn này. Nhấn lại để thử.');
     }
   });
+
   video.addEventListener('playing', () => {
-    if (!started || dismissed) return;
-    if (!stillLast()) { hide(); return; }
-    if (video.muted) show('Đã tự phát kênh lần trước (đang tắt tiếng)', 'Bật âm thanh');
-    else hide();
+    if (!started || dismissed || !isLast()) return;
+    if (video.muted) showPrompt('Kênh đang phát nhưng âm thanh bị tắt.');
+    else dismissPrompt();
   });
-  video.addEventListener('emptied', () => {
-    if (started && !stillLast()) hide();
+  video.addEventListener('canplay', () => {
+    if (started && !dismissed && isLast() && video.paused) {
+      showPrompt('Trình duyệt yêu cầu bạn nhấn Phát có tiếng.');
+    }
   });
 
-  const start = () => {
-    if (started || dismissed || app.getCurrent?.() || !app.getChannels?.().some(ch => ch.id === id)) return;
+  const resume = () => {
+    if (!enabled() || started || app.getCurrent?.()) return;
+    if (!app.getChannels?.().some(ch => ch.id === lastId)) return;
     started = true;
-    video.defaultMuted = true;
-    video.muted = true;
-    video.autoplay = true;
+    // The desktop version is untouched; this is web-only behavior.
+    video.defaultMuted = false;
+    video.muted = false;
+    video.autoplay = false;
     video.playsInline = true;
     video.setAttribute('playsinline', '');
-    Promise.resolve(app.playChannel(id)).catch(() => {
-      show('Không thể tự phát kênh đã xem', 'Thử phát lại');
+    Promise.resolve(app.playChannel(lastId)).catch(() => {
+      showPrompt('Không thể tự mở kênh trước đó. Nhấn để thử phát.');
     });
     window.setTimeout(() => {
-      if (dismissed || !stillLast()) return;
-      if (video.paused) show('Nhấn để tiếp tục kênh đã xem', 'Phát kênh');
-      else if (video.muted) show('Đã tự phát kênh lần trước (đang tắt tiếng)', 'Bật âm thanh');
-    }, 6500);
+      if (dismissed || !enabled() || !isLast()) return;
+      if (video.muted) showPrompt('Kênh đang phát nhưng bị tắt tiếng.');
+      else if (video.paused) showPrompt('Trình duyệt đang chặn tự phát có tiếng. Nhấn Phát có tiếng.');
+      else dismissPrompt();
+    }, 7000);
   };
-  if (document.readyState === 'complete') window.setTimeout(start, 0);
-  else window.addEventListener('load', start, { once: true });
+  if (document.readyState === 'complete') window.setTimeout(resume, 0);
+  else window.addEventListener('load', resume, {once:true});
 })();

@@ -1,0 +1,134 @@
+'use strict';
+const test=require('node:test');
+const assert=require('node:assert/strict');
+const vm=require('node:vm');
+const fs=require('node:fs');
+const path=require('node:path');
+const source=fs.readFileSync(path.join(__dirname,'../resume-last.js'),'utf8');
+
+function element(tag='div'){
+  const callbacks={};
+  return {
+    tag,hidden:false,textContent:'',checked:false,children:[],attributes:{},
+    addEventListener:(type,fn)=>{(callbacks[type]??=[]).push(fn);},
+    dispatch:(type)=>{for(const fn of callbacks[type]??[])fn();},
+    append(...children){this.children.push(...children);},
+    setAttribute(name,value){this.attributes[name]=value;},
+    getAttribute(name){return this.attributes[name]??null;},
+  };
+}
+async function environment({state={},channels=[{id:'news'}],mutedInitially=false,saveOK=true}={}){
+  const data={current:'news',...state};
+  const elems={
+    video:element('video'),playerBox:element('div'),
+    webAutoResumeLast:element('input'),webAutoResumeHint:element('small'),
+  };
+  const video=elems.video;
+  Object.assign(video,{
+    muted:mutedInitially,defaultMuted:mutedInitially,autoplay:false,
+    paused:true,currentSrc:'https://test.invalid/hls.m3u8',
+    volume:.8,playCalls:0,canPlay:true,
+    play(){
+      this.playCalls++;
+      if(!this.canPlay)return Promise.reject(Object.assign(new Error('Blocked'),{name:'NotAllowedError'}));
+      this.paused=false;
+      this.dispatch('playing');
+      return Promise.resolve();
+    },
+  });
+  const calls={play:[],save:0};
+  let current=null;
+  const app={
+    getStore:()=>data,getChannels:()=>channels,getCurrent:()=>current,
+    save:()=>{calls.save++;return saveOK;},
+    playChannel(id){calls.play.push(id);current=channels.find(x=>x.id===id)||null;return Promise.resolve();}
+  };
+  const tasks=[];
+  const window={
+    IPTVState:app,setTimeout(fn){tasks.push(fn);},
+    addEventListener(name,fn){if(name==='load')tasks.push(fn)}
+  };
+  const document={
+    readyState:'complete',
+    getElementById:id=>elems[id]||null,
+    createElement:element,
+  };
+  vm.runInNewContext(source,{window,document,Promise,console});
+  return {data,calls,elems,video,app,tasks,
+    async start(){const fn=tasks.shift();fn?.();await Promise.resolve();},
+    async tick(){const fn=tasks.shift();fn?.();await Promise.resolve();}
+  };
+}
+test('default setting is ON and persisted OFF is respected',async()=>{
+  const enabled=await environment();
+  assert.equal(enabled.elems.webAutoResumeLast.checked,true);
+  const disabled=await environment({state:{autoResumeLastChannel:false}});
+  assert.equal(disabled.elems.webAutoResumeLast.checked,false);
+  await disabled.start();
+  assert.deepEqual(disabled.calls.play,[]);
+});
+test('toggling setting persists to the same browser-specific store',async()=>{
+  const e=await environment();
+  e.elems.webAutoResumeLast.checked=false;e.elems.webAutoResumeLast.dispatch('change');
+  assert.equal(e.data.autoResumeLastChannel,false);
+  assert.equal(e.calls.save,1);
+  e.elems.webAutoResumeLast.checked=true;e.elems.webAutoResumeLast.dispatch('change');
+  assert.equal(e.data.autoResumeLastChannel,true);
+  assert.equal(e.calls.save,2);
+});
+test('failed save rolls the toggle back',async()=>{
+  const e=await environment({saveOK:false});
+  e.elems.webAutoResumeLast.checked=false;e.elems.webAutoResumeLast.dispatch('change');
+  assert.equal(e.elems.webAutoResumeLast.checked,true);
+  assert.equal(e.data.autoResumeLastChannel,undefined);
+});
+test('last channel auto-resumes with sound enabled',async()=>{
+  const e=await environment({mutedInitially:true});
+  await e.start();
+  assert.deepEqual(e.calls.play,['news']);
+  assert.equal(e.video.muted,false);
+  assert.equal(e.video.defaultMuted,false);
+  assert.equal(e.video.autoplay,false);
+});
+test('missing channel, disabled source, or prior manual playback does not auto-resume',async()=>{
+  const e=await environment({channels:[{id:'other'}]});await e.start();
+  assert.equal(e.calls.play.length,0);
+  const missing=await environment({state:{current:''}});await missing.start();
+  assert.equal(missing.calls.play.length,0);
+});
+test('blocked sound autoplay shows actionable button; click plays unmuted',async()=>{
+  const e=await environment();
+  await e.start();
+  // Simulate browser still blocking autoplay after source becomes ready
+  e.video.dispatch('canplay');
+  const panel=e.elems.playerBox.children[0];
+  assert.equal(panel.hidden,false);
+  assert.match(panel.children[1].textContent,/Phát có tiếng/);
+  e.video.canPlay=true;
+  panel.children[1].dispatch('click');
+  await Promise.resolve();
+  await Promise.resolve();
+  assert.equal(e.video.muted,false);
+  assert.equal(e.video.playCalls,1);
+  assert.equal(panel.hidden,true);
+});
+test('browser NotAllowedError keeps the sound-enable prompt visible',async()=>{
+  const e=await environment();await e.start();e.video.dispatch('canplay');
+  const panel=e.elems.playerBox.children[0];e.video.canPlay=false;
+  panel.children[1].dispatch('click');
+  await Promise.resolve();await Promise.resolve();
+  assert.equal(panel.hidden,false);
+  assert.match(panel.children[0].textContent,/chưa cho phép/);
+});
+test('switching OFF hides pending prompt without pausing playback',async()=>{
+  const e=await environment();await e.start();e.video.dispatch('canplay');
+  const panel=e.elems.playerBox.children[0];
+  e.elems.webAutoResumeLast.checked=false;e.elems.webAutoResumeLast.dispatch('change');
+  assert.equal(panel.hidden,true);assert.equal(e.calls.save,1);
+});
+test('if web player is already handling a channel, do not replace it',async()=>{
+  const e=await environment();
+  e.app.getCurrent=()=>({id:'other'});
+  await e.start();
+  assert.deepEqual(e.calls.play,[]);
+});
