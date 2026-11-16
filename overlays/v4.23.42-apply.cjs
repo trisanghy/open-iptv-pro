@@ -26,9 +26,9 @@ assert.equal((html.match(/id="castBtn"/g)||[]).length,1,'Duplicate Cast control 
 assert(html.indexOf('id="castBtn"')>html.indexOf('<div class="playback-extra-inner">'),'Expected Cast inside expanded tools in v4.23.41');
 const cast=oldButton[0];
 html=html.replace(cast,'');
-const outputOpen='<div class="output-controls" role="group" aria-label="PiP và toàn màn hình">';
-assert(html.includes(outputOpen),'Top-row output controls changed');
-html=html.replace(outputOpen,'<div class="output-controls" role="group" aria-label="Cast / AirPlay, PiP và toàn màn hình">\n         '+cast);
+const outputOpen=html.match(/<div class="output-controls"[^>]*>/);
+assert(outputOpen,'Top-row output controls not found');
+html=html.replace(outputOpen[0],'<div class="output-controls" role="group" aria-label="Cast / AirPlay, PiP và toàn màn hình">\n         '+cast);
 assert(html.indexOf('id="castBtn"')<html.indexOf('<div class="control-layout-bottom">'),'Cast must be on the first row');
 assert.equal((html.match(/id="castBtn"/g)||[]).length,1,'Cast binding must remain unique');
 const viewModeTag='<label class="view-mode" title="Chế độ hiển thị video"><span>Khung hình</span>';
