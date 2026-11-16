@@ -1,0 +1,62 @@
+name: Publish macOS arm64 Release v4.23.38
+on:
+  push:
+    branches: [iptv-build-source]
+    paths: [.github/workflows/publish-release-v42338.yml]
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  release:
+    runs-on: macos-15
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validate exact source and build DMG
+        env:
+          CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          echo 'c55bbcfac141bcc0af6dd7b678dad7ace3fee90c20415c008111b9a97981943e  source/OpenIPTVPro_Source_v4.23.38.zip' | shasum -a 256 -c -
+          test "$(uname -m)" = arm64
+          mkdir -p "$RUNNER_TEMP/iptv"
+          unzip -q source/OpenIPTVPro_Source_v4.23.38.zip -d "$RUNNER_TEMP/iptv"
+          cd "$RUNNER_TEMP/iptv/Open-IPTV-Pro-v4_23_38_Full_Desktop"
+          test "$(node -p 'require("./package.json").version')" = 4.23.38
+          npm install --no-audit --no-fund
+          npm test
+          npx electron-builder --mac dmg --arm64 --publish never
+          test -s dist/Open-IPTV-Pro-4.23.38-mac-arm64.dmg
+          mkdir -p "$RUNNER_TEMP/release-assets"
+          cp dist/Open-IPTV-Pro-4.23.38-mac-arm64.dmg "$RUNNER_TEMP/release-assets/"
+          cp "$GITHUB_WORKSPACE/source/OpenIPTVPro_Source_v4.23.38.zip" "$RUNNER_TEMP/release-assets/"
+          (cd "$RUNNER_TEMP/release-assets" && shasum -a 256 Open-IPTV-Pro-4.23.38-mac-arm64.dmg OpenIPTVPro_Source_v4.23.38.zip > SHA256SUMS.txt)
+      - name: Publish Release
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -Eeuo pipefail
+          cat > "$RUNNER_TEMP/release-notes.md" <<'EOF'
+          ## Open IPTV Pro v4.23.38 — Adaptive Video Aspect Ratio
+
+          - Default video frame ratio 16:9; follows real video metadata including 4:3, portrait and ultrawide streams.
+          - Resets the aspect ratio on source changes; keeps playback controls outside the picture.
+          - Preserves EPG, FFmpeg, Timeshift, DVR, MultiView, Cast/AirPlay and channel management.
+
+          **Release assets:** macOS Apple Silicon DMG, full desktop source ZIP and SHA256SUMS.txt.
+          **Provenance:** The DMG is rebuilt on GitHub Actions from the verified v4.23.38 source ZIP. It may not be byte-for-byte identical to the separately uploaded local DMG. macOS Intel and Windows installers are not included.
+          **Note:** The main branch already contains newer v4.23.39 source; this historical Release is not marked as Latest.
+          EOF
+          cd "$RUNNER_TEMP/release-assets"
+          if gh release view v4.23.38 --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            gh release upload v4.23.38 *.dmg *.zip SHA256SUMS.txt --clobber --repo "$GITHUB_REPOSITORY"
+            gh release edit v4.23.38 --title "Open IPTV Pro v4.23.38 — Adaptive Video Player" --notes-file "$RUNNER_TEMP/release-notes.md" --latest=false --repo "$GITHUB_REPOSITORY"
+          else
+            gh release create v4.23.38 *.dmg *.zip SHA256SUMS.txt --target "$GITHUB_SHA" --title "Open IPTV Pro v4.23.38 — Adaptive Video Player" --notes-file "$RUNNER_TEMP/release-notes.md" --latest=false --repo "$GITHUB_REPOSITORY"
+          fi
+          gh release view v4.23.38 --repo "$GITHUB_REPOSITORY" --json url,assets --jq '{url,assets:(.assets|map({name,size}))}'
