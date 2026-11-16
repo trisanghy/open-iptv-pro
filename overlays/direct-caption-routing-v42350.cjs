@@ -30,6 +30,11 @@ const changes=[
     "file": "renderer/live-captions-v42343.js",
     "from": "   message(translate.checked?'Đang nghe → dịch '+LANGUAGE_NAMES[lang.value]:'Đang nghe để tạo phụ đề…');",
     "to": "   message(translate.checked?'Đang xác định ngôn ngữ → ưu tiên dịch trực tiếp '+LANGUAGE_NAMES[lang.value]:'Đang nghe để tạo phụ đề…');"
+  },
+  {
+    "file": "src/main.cjs",
+    "from": "  localTTS=createLocalSpeechService({dataDir:app.getPath('userData'),managed:localModelInstaller.paths(),notify:data=>{if(webWindow&&!webWindow.isDestroyed())webWindow.webContents.send('tts:event',data);}});",
+    "to": "  localTTS=createLocalSpeechService({dataDir:app.getPath('userData'),managed:localModelInstaller.paths(),translateText:(text,target,source)=>captionTranslator.translateText(text,target,source),notify:data=>{if(webWindow&&!webWindow.isDestroyed())webWindow.webContents.send('tts:event',data);}});"
   }
 ];
 for(const {file,from,to} of changes){
