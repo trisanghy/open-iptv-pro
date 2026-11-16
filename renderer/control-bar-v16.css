@@ -67,3 +67,15 @@ html[data-channel-panel-collapsed="true"]:not([data-ui-style="cinema"]) #page-tv
 html[data-sidebar-collapsed="true"][data-channel-panel-collapsed="true"]:not([data-ui-style="cinema"]) #page-tv .channel-panel-reopen{
  top:14px!important;left:calc(72px - 2px)!important;
 }
+
+/* Rust Lab v17 — the player's OUTER frame follows the encoded video ratio.
+   Earlier theme max-height constraints caused unwanted side gaps; the frame
+   remains full width, with vertical scroll for tall sources (e.g. 9:16). */
+#page-tv .player-box:not(:fullscreen){
+ aspect-ratio:var(--ipvp-source-video-aspect,16 / 9)!important;
+ width:100%!important;max-width:none!important;
+ height:auto!important;max-height:none!important;min-height:0!important;
+ flex:0 0 auto!important;
+}
+/* Fullscreen is controlled by the viewport; don't force the stream ratio there. */
+#page-tv .player-box:fullscreen{aspect-ratio:auto!important;width:100%!important;height:100%!important;max-height:none!important}

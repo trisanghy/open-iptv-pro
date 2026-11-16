@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro-tauri-experiment",
   "private": true,
-  "version": "4.23.17-tauri.16",
-  "description": "Rust Lab v16: two-row TV controls with live Now/Next EPG and compact playback/source controls.",
+  "version": "4.23.17-tauri.17",
+  "description": "Rust Lab v17: adaptive player frame follows source video aspect ratio (16:9 fallback), keeping two-row controls.",
   "license": "MIT",
   "scripts": {
     "dev": "tauri dev",
@@ -17,7 +17,7 @@
     "prebuild": "node scripts/prepare-renderer.cjs",
     "prepare:renderer": "node scripts/prepare-renderer.cjs",
     "test:legacy": "node --test tests/*.test.cjs",
-    "test:quick": "node --test tests/tauri-control-bar-v16.test.cjs tests/tauri-playback-reentry-v7.test.cjs tests/tauri-link-dropdown-v13.test.cjs tests/tauri-channel-panel-v11.test.cjs"
+    "test:quick": "node --test tests/tauri-control-bar-v16.test.cjs tests/tauri-playback-reentry-v7.test.cjs tests/tauri-link-dropdown-v13.test.cjs tests/tauri-channel-panel-v11.test.cjs tests/tauri-video-source-aspect-v17.test.cjs"
   },
   "devDependencies": {
     "@tauri-apps/cli": "^2.0.0"

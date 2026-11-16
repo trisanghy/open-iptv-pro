@@ -4,7 +4,7 @@
  try{await window.IPTVPrimaryPersistence.ready;}
  catch(error){console.error('Storage bootstrap failed:',error);}
  const modules=[
-  'app.js','cast-ui.js','features.js','advanced.js','collector.js',
+  'video-source-aspect-v17.js','app.js','cast-ui.js','features.js','advanced.js','collector.js',
   'doctor-v2.js','smart-discovery-ui.js','doctor-v3.js','backup-ui.js',
   'dvr-ui.js','settings-ui.js','ui-style.js','theme-stage.js','player-ux.js','fullscreen-panels.js'
  ];

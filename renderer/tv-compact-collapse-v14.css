@@ -21,7 +21,7 @@ html:not([data-ui-style="cinema"])[data-channel-panel-collapsed="true"] #page-tv
   display:block!important;box-sizing:border-box!important;
   width:100%!important;min-width:0!important;max-width:none!important;
   height:auto!important;min-height:0!important;max-height:none!important;
-  aspect-ratio:16/9!important;align-self:stretch!important;
+  aspect-ratio:var(--ipvp-source-video-aspect,16 / 9)!important;align-self:stretch!important;
   margin:0!important;overflow:hidden!important;
 }
 html:not([data-ui-style="cinema"])[data-channel-panel-collapsed="true"] #page-tv .player-box:not(:fullscreen)>video{
