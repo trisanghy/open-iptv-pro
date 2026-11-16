@@ -60,7 +60,7 @@ curl -fsSL --retry 3 --connect-timeout 20 --max-time 180 -o "$PROJECT/.apply-v42
 curl -fsSL --retry 3 --connect-timeout 20 --max-time 180 -o "$PROJECT/.overlay-v42337.css" "$RAW/overlays/v4.23.37.css"
 [ -s "$PROJECT/.apply-v42337.cjs" ] && [ -s "$PROJECT/.overlay-v42337.css" ] || { echo "Missing UI overlay" >&2; exit 1; }
 # Mac's system Perl injects overlay after BUILD_MAC has provisioned Node, before npm test.
-perl -0pi -e 's{(export PATH="\$LOCAL_NODE:\$PATH")}{\$1\nnode "\$PROJECT/.apply-v42337.cjs"}' "$PROJECT/BUILD_MAC.command"
+perl -0pi -e 's{(export PATH="\$LOCAL_NODE:\$PATH")}{${1}\nnode "\$PROJECT/.apply-v42337.cjs"}' "$PROJECT/BUILD_MAC.command"
 grep -Fq 'node "$PROJECT/.apply-v42337.cjs"' "$PROJECT/BUILD_MAC.command" || { echo "Could not activate v4.23.37 source overlay" >&2; exit 1; }
 [ -f "$PROJECT/package.json" ] || { echo "Source missing package.json" >&2; exit 1; }
 if ! grep -Eq '"version"[[:space:]]*:[[:space:]]*"4[.]23[.]36"' "$PROJECT/package.json"; then
