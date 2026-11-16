@@ -3,7 +3,7 @@ set -Eeuo pipefail
 ARCHIVE='OpenIPTVPro_RustNative_C3_v4.23.17_UREQFIX_Source.zip'
 BRANCH='experiment/rust-native-slint-libmpv-c3-autobuild'
 SHA256='21d67fa25035d1f432fb5280f8b795d377dad890d684737b8459269209c502ff'
-URL="https://raw.githubusercontent.com/trisanghy/open-iptv-pro/refs/heads/$BRANCH/source/$ARCHIVE"
+URL="https://raw.githubusercontent.com/trisanghy/open-iptv-pro/refs/heads/$BRANCH/source/$ARCHIVE.base64"
 OUT="$HOME/Downloads/OpenIPTVPro_C3_v4.23.17_BUILD"
 DMG='OpenIPTVPro_C3_v4.23.17.dmg'
 SRC='OpenIPTVPro_C3_v4.23.17_Source.zip'
@@ -13,7 +13,8 @@ fail(){ printf 'ERROR: %s\n' "$*" >&2; exit 1; }
 msg(){ printf '\n==> %s\n' "$*"; }
 [ "$(uname -s)" = Darwin ] || fail 'macOS is required'
 msg 'Downloading exact Rust Native C3 source from isolated GitHub branch'
-curl -fL --retry 3 --connect-timeout 20 "$URL" -o "$WORK/source.zip" || fail "Source archive not published: $URL"
+curl -fL --retry 3 --connect-timeout 20 "$URL" -o "$WORK/source.b64" || fail "Source archive not published: $URL"
+base64 -D < "$WORK/source.b64" > "$WORK/source.zip" || fail "Cannot decode source archive"
 [ "$(shasum -a 256 "$WORK/source.zip" | awk '{print $1}')" = "$SHA256" ] || fail 'Source checksum mismatch'
 unzip -tq "$WORK/source.zip" >/dev/null || fail 'Invalid ZIP'
 if ! xcode-select -p >/dev/null 2>&1; then
