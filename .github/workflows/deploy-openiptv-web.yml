@@ -44,8 +44,17 @@ jobs:
           cp /tmp/iptv-web-deps/node_modules/hls.js/dist/hls.min.js _site/hls.min.js
           cp /tmp/iptv-web-deps/node_modules/dashjs/dist/modern/umd/dash.all.min.js _site/dash.all.min.js
           python3 web-online/prepare-web.py /tmp/openiptv-source/Open_IPTV_Pro_WebView_v4_23_37_FULL _site
-      - name: Configure GitHub Pages
-        uses: actions/configure-pages@v5
+      - name: Preserve complete website as downloadable ZIP
+        shell: bash
+        run: |
+          cd _site
+          zip -qr ../openiptv-web-site.zip .
+      - name: Upload browser-ready static site
+        uses: actions/upload-artifact@v4
+        with:
+          name: openiptv-web-static-site
+          path: openiptv-web-site.zip
+          if-no-files-found: error
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v4
         with:
@@ -57,6 +66,8 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
       - name: Deploy Open IPTV Pro Web
         id: deployment
         uses: actions/deploy-pages@v4
