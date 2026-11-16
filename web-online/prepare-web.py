@@ -66,14 +66,13 @@ html=html.replace('Âm lượng, chụp ảnh và FFmpeg','Chụp ảnh và FFmp
 menu_pattern=r'\s*<details class="playback-extra" id="playbackExtra">[\s\S]*?</details>'
 if len(re.findall(menu_pattern,html)) != 1:
     sys.exit('Expected exactly one old player ellipsis menu')
-html=re.sub(menu_pattern,'',html,count=1)
+html=re.sub(menu_pattern,'\n         '+${JSON.stringify(hidden)},html,count=1)
 html=html.replace('</head>','<link rel="stylesheet" href="web-only.css"/><link rel="stylesheet" href="resume-last.css"/><link rel="stylesheet" href="web-volume.css"/><link rel="manifest" href="manifest.webmanifest"/></head>',1)
 html=html.replace('</body>','<script src="web-only.js"></script><script src="resume-last.js"></script><script src="web-volume.js"></script></body>',1)
 if 'id="playbackExtra"' in html:
     sys.exit('Obsolete three-dots player menu still present')
 if html.count('id="volume"') != 1:
     sys.exit('Web toolbar must have one volume range')
-html=html.replace('</body>',"<div id=\"webLegacyPlayerActionHooks\" hidden aria-hidden=\"true\" style=\"display:none!important\"><button type=\"button\" id=\"shotBtn\" hidden tabindex=\"-1\"></button><button type=\"button\" id=\"tryFfmpegBtn\" hidden tabindex=\"-1\"></button></div>"+'\n</body>',1)
 if html.count('id="shotBtn"') != 1 or html.count('id="tryFfmpegBtn"') != 1:
     sys.exit('Player legacy hooks must remain singular for event bindings')
 (out/'index.html').write_text(html,encoding='utf-8')
