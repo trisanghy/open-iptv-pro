@@ -135,7 +135,7 @@ function createAutoModelInstaller({dataDir,notify=()=>{},platform=process.platfo
      supported:Object.keys(VOICES),model:premiumCache};
   }
   const voice=voiceFile(lang,voiceId);
-  return {installed:hasFile(piper)&&hasFile(voice,1000000)&&hasFile(voice+'.json')&&(! (lang!=='en')||(hasFile(argos)&&pairReady(lang))),
+  return {installed:hasFile(piper)&&hasFile(voice,1000000)&&hasFile(voice+'.json'),
    installing:!!active,target:lang,voiceName:voiceIdFor(lang,voiceId),voiceInstalled:hasFile(voice,1000000)&&hasFile(voice+'.json'),
    engineInstalled:hasFile(piper),translatorInstalled:hasFile(argos),translationModelInstalled:pairReady(lang),
    supported:Object.keys(VOICES),message:active?'Đang cài mô hình…':'',piper,argos,model:voice,argosDir};
@@ -210,12 +210,6 @@ function createAutoModelInstaller({dataDir,notify=()=>{},platform=process.platfo
    if(!hasFile(voiceFile(lang,selectedVoice),1000000)||!hasFile(voiceFile(lang,selectedVoice)+'.json')){
     report('Đang tải giọng đọc '+selectedVoice+' (cài một lần)…',lang);
     await run(python,['-m','piper.download_voices','--data-dir',voices,selectedVoice],lang,480000);
-   }
-   if(lang!=='en'){
-    report('Đang kiểm tra mô hình Argos English → '+lang+' thực tế…',lang);
-    await run(python,['-u',bridgePath('argos-bridge.py'),'install',lang],lang,480000);
-    fs.mkdirSync(verifiedDir,{recursive:true});
-    fs.writeFileSync(path.join(verifiedDir,lang+'.ok'),'verified-v42349\n',{mode:0o600});
    }
    if(!state(lang,selectedVoice).installed)throw Error('Mô hình chưa được cài hoàn chỉnh. Vui lòng xem trạng thái.');
    report('Đã cài xong mô hình '+selectedVoice+'. Có thể dùng ngoại tuyến.',lang);
