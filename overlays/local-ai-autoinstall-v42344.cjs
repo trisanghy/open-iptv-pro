@@ -156,6 +156,6 @@ function createAutoModelInstaller({dataDir,notify=()=>{},platform=process.platfo
   finally{active=null;}
  }
  function cancel(){const old=active;active=null;try{old?.child?.kill('SIGKILL');}catch{};return !!old;}
- return Object.freeze({state,install,cancel,paths:()=>({piper,argos,pm,voices,argosDir})});
+ return Object.freeze({state,install,cancel,paths:()=>({piper,argos,pm,voices,argosDir,voiceFile,pairReady})});
 }
 module.exports={createAutoModelInstaller,VOICES,UV,uvReleaseFor,downloadPinned};
