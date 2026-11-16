@@ -20,15 +20,15 @@ test('duplicate caption text is filtered before queueing or synthesis',()=>{
  assert.match(ui,/DEDUP_MS=45000/);
  assert.match(ui,/function normalizeSpeech\(/);
  assert.match(ui,/function acceptSpeech\(/);
- assert.match(ui,/if\(!acceptSpeech\(text\)\)return/);
+ assert.match(ui,/if\(!acceptSpeech\(sourceLanguage\+' '\+text\)\)return/);
  assert.match(ui,/recentSpeech\.clear\(\)/);
  assert.match(ui,/recentSpeech\.size>80/);
 });
 test('one-command builder remains pinned to own immutable minor version',()=>{
  const pkg=JSON.parse(fs.readFileSync(path.join(root,'package.json'),'utf8'));
  const sh=fs.readFileSync(path.join(root,'scripts/BUILD_RUSTLAB_MAC_ONE_ZIP_FAST.sh'),'utf8');
- assert.equal(pkg.version,'4.23.17-tauri.23');
- assert.ok(sh.includes('TAG="rust-lab/v23"'));
+ assert.equal(pkg.version,'4.23.17-tauri.23.1');
+ assert.ok(sh.includes('TAG="rust-lab/v23.1"'));
 });
 
 test('Unicode punctuation and whitespace are folded before deduplication',()=>{

@@ -30,8 +30,8 @@ test('Whisper English intermediate is retained for optional Piper voiceover',()=
  assert.match(bridge,/opts\["target"\]/);
  assert.ok(ui.includes('captionStart({url,translate:translate.checked,target:lang})'));
  assert.match(rust,/originalText/);
- assert.ok(tts.includes('e.originalText||e.text'));
- assert.match(rust,/translate_caption_text\(&ai_clone,&target,&phrase\)\.await\?/);
+ assert.ok(tts.includes('const payload={text,sourceLanguage,englishFallbackText:englishFallback}'));
+ assert.match(rust,/argos_plan\(&ai_clone,&source,&target\)\.await\?/);
 });
 
 test('slow Hugging Face model downloads use long total deadline with stall detection',()=>{

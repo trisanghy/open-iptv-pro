@@ -25,7 +25,7 @@ test('natural TTS uses persistent app-private worker and retains volume ducking'
  assert.match(rust,/async fn natural_request/);
  assert.match(py,/list_preset_voices\(\)/);
  assert.match(py,/engine\.infer\(text=text, voice=voice\)/);
- assert.match(js,/function attenuate\(\)/);
+ assert.match(js,/function applyDuck\(\)/);
  assert.match(js,/function restore\(\)/);
  assert.match(js,/resetPlayback/);
 });
@@ -39,7 +39,7 @@ test('native and JS APIs dispatch selected natural/Piper voices',()=>{
 });
 test('release stays independently versioned and fast build pins its tag',()=>{
  const pkg=JSON.parse(read('package.json')),script=read('scripts/BUILD_RUSTLAB_MAC_ONE_ZIP_FAST.sh');
- assert.equal(pkg.version,'4.23.17-tauri.23');
- assert.ok(script.includes('TAG="rust-lab/v23"'));
- assert.ok(script.includes('VERSION="4.23.17-tauri.22"'));
+ assert.equal(pkg.version,'4.23.17-tauri.23.1');
+ assert.ok(script.includes('TAG="rust-lab/v23.1"'));
+ assert.ok(script.includes('VERSION="4.23.17-tauri.23"'));
 });
