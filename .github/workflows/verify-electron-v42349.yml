@@ -25,7 +25,7 @@ jobs:
         run: |
           set -Eeuo pipefail
           bash -n build-mac-v42349.sh
-          grep -Fq 'V49_REV="a662e66219c6cd4a9778c28b7c5c16f4ae8ddb70"' build-mac-v42349.sh
+          grep -Fq 'V49_REV="56dd019a6aab6e0e76600cc00c6e412aa8636e13"' build-mac-v42349.sh
           grep -Fq 'OpenIPTVPro_Source_v4.23.49.zip' build-mac-v42349.sh
           grep -Fq 'direct-caption-routing-v42350.cjs' build-mac-v42349.sh
           grep -Fq 'v42350-direct-routing.test.cjs' build-mac-v42349.sh
