@@ -25,12 +25,12 @@ replacement=(Path(__file__).resolve().parent/'epg-fetch-function.txt').read_text
 js=js[:start]+replacement+'\n'+js[end:]
 features.write_text(js,encoding='utf-8')
 
-for name in ('web-only.js','web-only.css'):
+for name in ('web-only.js','web-only.css','resume-last.js','resume-last.css'):
     copy2(Path(__file__).resolve().parent/name,out/name)
 html=(out/'index.html').read_text(encoding='utf-8')
 html=html.replace('<title>Open IPTV Pro 4.23.38 — WebView</title>','<title>Open IPTV Pro — Web Online</title>')
-html=html.replace('</head>','<link rel="stylesheet" href="web-only.css"/><link rel="manifest" href="manifest.webmanifest"/></head>',1)
-html=html.replace('</body>','<script src="web-only.js"></script></body>',1)
+html=html.replace('</head>','<link rel="stylesheet" href="web-only.css"/><link rel="stylesheet" href="resume-last.css"/><link rel="manifest" href="manifest.webmanifest"/></head>',1)
+html=html.replace('</body>','<script src="web-only.js"></script><script src="resume-last.js"></script></body>',1)
 (out/'index.html').write_text(html,encoding='utf-8')
 (out/'.nojekyll').write_text('')
 (out/'manifest.webmanifest').write_text(json.dumps({
