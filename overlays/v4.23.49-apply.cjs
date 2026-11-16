@@ -15,7 +15,7 @@ const old='4.23.48',next='4.23.49';
 const pkg=JSON.parse(read('package.json'));
 assert.equal(pkg.version,old,'Expected exact 4.23.48 patched source');
 pkg.version=next;
-pkg.description='Open IPTV Pro v4.23.49 — real Vietnamese Argos translation, 24 on-device premium VieNeu voices and TTS diagnostic';
+pkg.description='Open IPTV Pro v4.23.49 — real Vietnamese Argos translation, 25 on-device premium VieNeu voices and TTS diagnostic';
 if(Array.isArray(pkg.build?.files)){
  for(const pythonAsset of ['src/argos-bridge.py','src/vieneu-bridge.py']){
   if(!pkg.build.files.includes(pythonAsset))pkg.build.files.push(pythonAsset);
@@ -153,7 +153,7 @@ write('RELEASE_NOTES_V4_23_49.md',[
  '',
  '- Revalidates Argos by translating an actual sentence; stale flags and damaged en_vi models are repaired on demand.',
  '- Adds a one-click English→Vietnamese test with visible output under caption settings.',
- '- Adds 24 VieNeu-TTS v3 Turbo 48 kHz preset voices; every selection is local, opt-in, downloaded to an isolated venv/cache.',
+ '- Adds 25 VieNeu-TTS v3 Turbo 48 kHz preset voices; every selection is local, opt-in, downloaded to an isolated venv/cache.',
  '- Keeps the 3 original lightweight Vietnamese Piper voice models as alternatives.',
  '- A translated subtitle in the selected TTS language goes directly to speech without translating twice.',
  '- Adds independent voice preview, so TTS can be tested without a live IPTV stream.',
