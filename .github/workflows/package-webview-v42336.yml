@@ -1,0 +1,57 @@
+name: Publish single WebView v4.23.36 source ZIP
+
+on:
+  push:
+    branches:
+      - experiment/native-webview-ffmpeg
+    paths:
+      - .github/workflows/package-webview-v42336.yml
+      - webview-sources/v4.23.35/**
+      - webview-sources/v4.23.36/webview-v4.23.36-dragfix.patch
+
+permissions:
+  contents: write
+
+concurrency:
+  group: single-webview-source-v42336
+  cancel-in-progress: false
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout isolated WebView branch
+        uses: actions/checkout@v4
+        with:
+          ref: experiment/native-webview-ffmpeg
+          fetch-depth: 1
+          persist-credentials: true
+      - name: Assemble and commit one complete source ZIP
+        shell: bash
+        run: |
+          set -euo pipefail
+          SOURCE='Open_IPTV_Pro_WebView_v4_23_35_FULL_SYNC_20261116.zip'
+          BASE_DIR='webview-sources/v4.23.35'
+          PATCH='webview-sources/v4.23.36/webview-v4.23.36-dragfix.patch'
+          OUTPUT='webview-sources/v4.23.36/Open_IPTV_Pro_WebView_v4_23_36_FULL_SOURCE.zip'
+          OLD_ROOT='Open_IPTV_Pro_WebView_v4_23_35_FULL'
+          NEW_ROOT='Open_IPTV_Pro_WebView_v4_23_36_FULL'
+          WORK="$RUNNER_TEMP/webview-single-archive"
+          mkdir -p "$WORK" "$(dirname "$OUTPUT")"
+          for i in 0 1 2 3 4 5 6 7; do
+            printf -v suffix '%02d' "$i"
+            cat "$BASE_DIR/$SOURCE.part$suffix" >> "$WORK/base.zip"
+          done
+          unzip -q "$WORK/base.zip" -d "$WORK"
+          (cd "$WORK/$OLD_ROOT" && patch --batch -p1 < "$GITHUB_WORKSPACE/$PATCH")
+          mv "$WORK/$OLD_ROOT" "$WORK/$NEW_ROOT"
+          (cd "$WORK" && zip -q -r -1 "$GITHUB_WORKSPACE/$OUTPUT" "$NEW_ROOT" -x '*/node_modules/*' '*/src-tauri/target/*' '*/src-tauri/binaries/*' '*/.DS_Store')
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -f "$OUTPUT"
+          if git diff --cached --quiet; then
+            echo 'Single ZIP already current; nothing to commit.'
+          else
+            git commit -m 'build(webview): publish v4.23.36 in one source ZIP'
+            git push origin HEAD:refs/heads/experiment/native-webview-ffmpeg
+          fi
