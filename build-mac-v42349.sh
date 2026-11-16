@@ -137,7 +137,8 @@ echo '[5/5] Keeping exactly native DMG and matching source ZIP...'
 [ ! -L "$OUT" ] || { echo 'Output folder is a symlink; refusing to overwrite.' >&2; exit 1; }
 mkdir -p "$OUT"
 # Do not erase unrelated files silently. Only two exact filenames are permitted here.
-if find "$OUT" -mindepth 1 -maxdepth 1 ! -name "$DMG" ! -name "$PATCH_SOURCE" -print | grep -m 1 . >/dev/null; then
+EXTRA_OUTPUT="$(find "$OUT" -mindepth 1 -maxdepth 1 ! -name "$DMG" ! -name "$PATCH_SOURCE" -print -quit)"
+if [ -n "$EXTRA_OUTPUT" ]; then
  echo "Output folder contains unrelated files; refusing to remove them: $OUT" >&2
  exit 1
 fi
