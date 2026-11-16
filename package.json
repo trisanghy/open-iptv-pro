@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro-tauri-experiment",
   "private": true,
-  "version": "4.23.17-tauri.21",
-  "description": "Rust Lab v21: verified HF CDN downloads and offline multilingual live translation; Electron v4.23.45 offline Live Caption, English translation, Piper/Argos voice-over, SHA-256 verified one-click local model installs",
+  "version": "4.23.17-tauri.21.1",
+  "description": "Rust Lab v21.1: verified HF CDN downloads and offline multilingual live translation; Electron v4.23.45 offline Live Caption, English translation, Piper/Argos voice-over, SHA-256 verified one-click local model installs",
   "license": "MIT",
   "scripts": {
     "dev": "tauri dev",

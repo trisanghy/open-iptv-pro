@@ -1,6 +1,7 @@
-# Open IPTV Pro · Rust Lab v21
+# Open IPTV Pro · Rust Lab v21.1
 Isolated Rust + Tauri experimental desktop build; does not change Electron main.
 ## Fixes
+- Allow up to 30 minutes for the 148 MB model on slower connections, with 25-second connection timeout and 75-second per-read stall protection.
 - Accept verified HTTPS model downloads from Hugging Face's current *.hf.co CDN redirects (including us.aws.cdn.hf.co). The pinned Whisper SHA-256 checksum remains enforced.
 - Continue to normalize the upstream Whisper ZIP executable to whisper-cli on macOS/Windows (from v20.1).
 ## Multilingual offline Live Translate

@@ -92,7 +92,8 @@ async fn download_verified(app:&AppHandle,event:&str,url:&str,target:&Path,sha:&
   if attempt.previous().len()>8{attempt.error("Too many redirects")}
   else if attempt.url().scheme()!="https"||!attempt.url().host_str().is_some_and(allowed_download_host){attempt.error("Unexpected redirect host")}
   else{attempt.follow()}
- })).timeout(Duration::from_secs(90)).build().map_err(error)?;
+ })).connect_timeout(Duration::from_secs(25)).read_timeout(Duration::from_secs(75))
+ .timeout(Duration::from_secs(1800)).build().map_err(error)?;
  let resp=client.get(origin).send().await.map_err(error)?.error_for_status().map_err(error)?;
  if resp.content_length().is_some_and(|n|n>limit){return Err("Tệp vượt giới hạn tải".into());}
  let temp=target.with_extension("download-part");

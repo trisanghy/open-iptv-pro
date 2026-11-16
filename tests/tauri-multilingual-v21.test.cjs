@@ -33,3 +33,9 @@ test('Whisper English intermediate is retained for optional Piper voiceover',()=
  assert.ok(tts.includes('e.originalText||e.text'));
  assert.match(rust,/translate_caption_text\(&ai_clone,&target,&phrase\)\.await\?/);
 });
+
+test('slow Hugging Face model downloads use long total deadline with stall detection',()=>{
+ assert.ok(rust.includes('connect_timeout(Duration::from_secs(25))'));
+ assert.ok(rust.includes('read_timeout(Duration::from_secs(75))'));
+ assert.ok(rust.includes('timeout(Duration::from_secs(1800))'));
+});
