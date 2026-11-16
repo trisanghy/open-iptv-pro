@@ -12,6 +12,19 @@ out=Path(a.destination)
 if not (src/'index.html').is_file() or not (src/'app.js').is_file():
     sys.exit('Missing WebView frontend/index.html or app.js')
 copytree(src,out,dirs_exist_ok=True)
+# Web-only EPG downloader: native desktop frontend calls its own RPC.
+# Replace exactly one fetchXML implementation so a future build never undoes
+# the same-origin EPG fix when regenerating the Pages website.
+features=out/'features.js'
+js=features.read_text(encoding='utf-8')
+start=js.find(' async function fetchXML(url){')
+end=js.find(' async function refreshEPG(',start)
+if start<0 or end<0:
+    sys.exit('Cannot patch the EPG downloader: frontend API changed')
+replacement=(Path(__file__).resolve().parent/'epg-fetch-function.txt').read_text(encoding='utf-8').rstrip()
+js=js[:start]+replacement+'\n'+js[end:]
+features.write_text(js,encoding='utf-8')
+
 for name in ('web-only.js','web-only.css'):
     copy2(Path(__file__).resolve().parent/name,out/name)
 html=(out/'index.html').read_text(encoding='utf-8')
