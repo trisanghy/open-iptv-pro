@@ -1,16 +1,17 @@
 #!/usr/bin/env bash
 # Open IPTV Pro 4.23.36 - single-command Mac build from isolated GitHub source branch.
 set -Eeuo pipefail
-VERSION="4.23.36"
+VERSION="4.23.37"
 RAW="https://raw.githubusercontent.com/trisanghy/open-iptv-pro/iptv-build-source"
-ARCHIVE="OpenIPTVPro_Source_v4.23.36.zip"
+BASE_ARCHIVE="OpenIPTVPro_Source_v4.23.36.zip"
+ARCHIVE="OpenIPTVPro_Source_v4.23.37.zip"
 EXPECTED_SHA256="ba1c9f35cb5dabbcf8bf73c4eca5a048ce3ad3b4ef7487633d4d4ba0246084ce"
 case "$(uname -s)-$(uname -m)" in
   Darwin-arm64) ARCH="arm64" ;;
   Darwin-x86_64) ARCH="x64" ;;
   *) echo "ERROR: Only macOS Intel and Apple Silicon are supported." >&2; exit 1 ;;
 esac
-for cmd in curl shasum unzip awk sed df mktemp base64; do
+for cmd in curl shasum unzip awk sed df mktemp base64 perl zip; do
   command -v "$cmd" >/dev/null 2>&1 || { echo "Missing required utility: $cmd" >&2; exit 1; }
 done
 DOWNLOADS="$HOME/Downloads"
@@ -45,14 +46,22 @@ for PART in 00 01 02 03 04 05 06 07 08 09 10; do
   curl -fsSL --retry 3 --connect-timeout 20 --max-time 180 -o "$WORK/parts/$PART" "$RAW/source/v4.23.36.part$PART.b64"
   [ -s "$WORK/parts/$PART" ] || { echo "Empty chunk $PART" >&2; exit 1; }
 done
-cat "$WORK/parts/"* | base64 -D > "$WORK/$ARCHIVE"
-SHA="$(shasum -a 256 "$WORK/$ARCHIVE" | awk '{print $1}')"
+cat "$WORK/parts/"* | base64 -D > "$WORK/$BASE_ARCHIVE"
+SHA="$(shasum -a 256 "$WORK/$BASE_ARCHIVE" | awk '{print $1}')"
 if [ "$SHA" != "$EXPECTED_SHA256" ]; then
   echo "ERROR: Source ZIP SHA256 mismatch. Aborting." >&2; exit 1
 fi
-unzip -tq "$WORK/$ARCHIVE" >/dev/null
-unzip -q "$WORK/$ARCHIVE" -d "$WORK"
-PROJECT="$WORK/Open-IPTV-Pro-v4_23_36_Full_Desktop"
+unzip -tq "$WORK/$BASE_ARCHIVE" >/dev/null
+unzip -q "$WORK/$BASE_ARCHIVE" -d "$WORK"
+PROJECT="$WORK/Open-IPTV-Pro-v4_23_37_Full_Desktop"
+mv "$WORK/Open-IPTV-Pro-v4_23_36_Full_Desktop" "$PROJECT"
+echo "Downloading tested v4.23.37 UI overlay..."
+curl -fsSL --retry 3 --connect-timeout 20 --max-time 180 -o "$PROJECT/.apply-v42337.cjs" "$RAW/overlays/v4.23.37-apply.cjs"
+curl -fsSL --retry 3 --connect-timeout 20 --max-time 180 -o "$PROJECT/.overlay-v42337.css" "$RAW/overlays/v4.23.37.css"
+[ -s "$PROJECT/.apply-v42337.cjs" ] && [ -s "$PROJECT/.overlay-v42337.css" ] || { echo "Missing UI overlay" >&2; exit 1; }
+# Mac's system Perl injects overlay after BUILD_MAC has provisioned Node, before npm test.
+perl -0pi -e 's{(export PATH="\$LOCAL_NODE:\$PATH")}{\$1\nnode "\$PROJECT/.apply-v42337.cjs"}' "$PROJECT/BUILD_MAC.command"
+grep -Fq 'node "$PROJECT/.apply-v42337.cjs"' "$PROJECT/BUILD_MAC.command" || { echo "Could not activate v4.23.37 source overlay" >&2; exit 1; }
 [ -f "$PROJECT/package.json" ] || { echo "Source missing package.json" >&2; exit 1; }
 if ! grep -Eq '"version"[[:space:]]*:[[:space:]]*"4[.]23[.]36"' "$PROJECT/package.json"; then
   echo "Wrong source version; refusing to build." >&2; exit 1
@@ -68,6 +77,14 @@ SIZE="$(wc -c < "$DMG" | tr -d ' ')"
 [ "$SIZE" -ge 1048576 ] || { echo "DMG too small: $SIZE" >&2; exit 1; }
 mkdir -p "$WORK/ready"
 cp "$DMG" "$WORK/ready/$DMG_NAME"
+# Package exactly the patched v4.23.37 source, excluding generated installations.
+[ "$(sed -nE 's/^[[:space:]]*"version":[[:space:]]*"([^"]+)".*/\1/p' "$PROJECT/package.json" | head -1)" = "$VERSION" ] || { echo "Patched source version mismatch" >&2; exit 1; }
+(
+  cd "$WORK"
+  PROJECT_DIR="$(basename "$PROJECT")"
+  zip -qr "$WORK/$ARCHIVE" "$PROJECT_DIR" -x "$PROJECT_DIR/node_modules/*" "$PROJECT_DIR/dist/*" "$PROJECT_DIR/.open-iptv-tools/*" "$PROJECT_DIR/.git/*"
+)
+unzip -tq "$WORK/$ARCHIVE" >/dev/null || { echo "Source ZIP corrupt" >&2; exit 1; }
 cp "$WORK/$ARCHIVE" "$WORK/ready/$ARCHIVE"
 if [ -L "$OUT" ]; then echo "Output directory is a symbolic link; refusing to overwrite." >&2; exit 1; fi
 if [ -e "$OUT" ] && [ ! -d "$OUT" ]; then echo "Output destination is not a directory." >&2; exit 1; fi
