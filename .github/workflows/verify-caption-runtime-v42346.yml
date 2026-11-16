@@ -1,0 +1,26 @@
+name: Runtime smoke for v4.23.46 local Caption to Translate
+on:
+  push:
+    branches: [iptv-build-source]
+    paths: [.github/workflows/verify-caption-runtime-v42346.yml]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  mock-end-to-end:
+    runs-on: ubuntu-latest
+    timeout-minutes: 7
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - name: Verify verified source and execute audio/transcription/translation mocks
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          echo '8819480afd9ca4d6c9543831979c8593963db711ca648769596dae45f3f69c80  source/OpenIPTVPro_Source_v4.23.46.zip' | sha256sum -c -
+          unzip -q source/OpenIPTVPro_Source_v4.23.46.zip -d "$RUNNER_TEMP"
+          cd "$RUNNER_TEMP/Open-IPTV-Pro-v4_23_46_Full_Desktop"
+          cp "$GITHUB_WORKSPACE/overlays/caption-runtime-v42346.test.cjs" tests/caption-runtime-v42346.test.cjs
+          node --test tests/caption-runtime-v42346.test.cjs
+          echo 'PASS: fake live audio segment generated, Whisper produced English text, Argos produced Vietnamese subtitles.'
