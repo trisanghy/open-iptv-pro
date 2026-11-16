@@ -137,7 +137,7 @@ function createLocalSpeechService(options={}){
     notify({id:task.id,type:'status',message:'Đang dịch English → '+lang+' (offline)…'});
     // Argos CLI uses only locally installed language pairs. No auto-download here.
     if(!fileOK(managed?.python))throw Error('Chưa tìm thấy Python Argos nội bộ.');
-    speakText=(await invokeProcess(managed.python,['-u',path.join(__dirname,'argos-bridge.py'),'translate',lang],task,{stdin:input,timeout:45000})).trim();
+    speakText=(await invokeProcess(managed.python,['-u',managed.argosBridge,'translate',lang],task,{stdin:input,timeout:45000})).trim();
     if(!speakText)throw Error('Argos chưa dịch được. Hãy cài gói en → '+lang+'.');
     speakText=speakText.slice(0,600);
    }
@@ -145,10 +145,10 @@ function createLocalSpeechService(options={}){
    const output=path.join(temp,'speak.wav');
    if(premium){
     notify({id:task.id,type:'status',message:'VieNeu 48 kHz đang tổng hợp giọng '+premium+' (offline)…'});
-    if(!fileOK(managed?.premiumPython)||!fileOK(path.join(__dirname,'vieneu-bridge.py')))
+    if(!fileOK(managed?.premiumPython)||!fileOK(managed.vieneuBridge))
      throw Error('Thiếu môi trường giọng VieNeu hoặc mã nguồn tổng hợp');
     await invokeProcess(managed.premiumPython,
-      ['-u',path.join(__dirname,'vieneu-bridge.py'),'speak',premium,output],task,{stdin:speakText,timeout:210000});
+      ['-u',managed.vieneuBridge,'speak',premium,output],task,{stdin:speakText,timeout:210000});
    }else{
     notify({id:task.id,type:'status',message:'Đang tạo giọng đọc Piper ('+lang+')…'});
     // piper-tts v1.8.0 CLI supports model absolute path and text after "--".
