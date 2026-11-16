@@ -142,6 +142,25 @@
   }catch(e){status('Cài TTS lỗi: '+String(e.message||e).slice(0,125));}
   finally{install.disabled=false;await refresh();}
  });
+ const preview=$('liveTtsPreview');
+ preview?.addEventListener('click',async()=>{
+  if(preview.disabled)return;
+  preview.disabled=true;
+  status('Đang tạo một câu nghe thử giọng '+voice.value+'…');
+  try{
+   const ready=await api.ttsStatus(target.value,voice.value);
+   if(!ready?.ready)throw Error(ready?.reason||'Giọng chưa được cài');
+   const phrase=target.value==='vi'?'Xin chào, đây là giọng đọc tiếng Việt của Open IPTV Pro.':
+     target.value==='en'?'Hello. This is your Open IPTV Pro voice test.':'Hello';
+   const res=await api.ttsSynthesize({target:target.value,voice:voice.value,
+     text:phrase,alreadyTranslated:true});
+   if(!res?.audioBase64||res.mime!=='audio/wav')throw Error('Chưa tạo được file WAV nghe thử');
+   const audio=new Audio('data:audio/wav;base64,'+res.audioBase64);
+   await audio.play();
+   status('Đang nghe thử giọng '+voice.value+' (offline)');
+  }catch(e){status('Nghe thử lỗi: '+String(e.message||e));}
+  finally{preview.disabled=false;}
+ });
  if(api.ttsOnEvent)api.ttsOnEvent(e=>{
   if(!e)return;
   if(e.type==='progress'){if(e.target===target.value)status(e.message||'Đang cài…');return;}
