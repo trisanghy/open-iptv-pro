@@ -7,41 +7,62 @@
  const captions=$('liveCaptionToggle'),translate=$('liveTranslateToggle'),output=$('liveCaptionOutput');
  if(!toggle||!target||!duck||!install||!info||!api?.ttsStatus||!video)return;
  let enabled=false,playing=null,previewAudio=null,taskId=0,busy=false,queued='',sourceId='',ducked=false,baseVolume=0.8,validSession=0;
+ const recentSpeech=new Map(),DEDUP_MS=45000;
+ function normalizeSpeech(value){
+  return String(value||'').normalize('NFKC').toLocaleLowerCase()
+   .replace(/[\\p{P}\\p{S}]/gu,' ').replace(/\\s+/g,' ').trim();
+ }
+ function acceptSpeech(value){
+  const key=normalizeSpeech(value);if(!key)return false;
+  const now=Date.now();
+  for(const [old,t] of recentSpeech){if(now-t>DEDUP_MS)recentSpeech.delete(old);}
+  for(const [old,t] of recentSpeech){
+   if(old===key||(now-t<18000&&Math.min(old.length,key.length)>=18&&
+      (old.includes(key)||key.includes(old))))return false;
+  }
+  recentSpeech.set(key,now);
+  if(recentSpeech.size>80)recentSpeech.delete(recentSpeech.keys().next().value);
+  return true;
+ }
  const selectedVoice=()=>target.value==='vi'?(voice?.value||'piper:25hours'):'piper:default';
  const updateVoiceVisibility=()=>{if(voice)voice.hidden=target.value!=='vi';if(preview)preview.hidden=target.value!=='vi';};
  const status=s=>{info.textContent=String(s||'').slice(0,170);info.title=info.textContent;};
  const volumeInput=$('volume');
  const source=()=>String(window.IPTVState?.getCurrent?.()?.lastPlayableUrl||window.IPTVState?.getCurrent?.()?.url||video.currentSrc||'');
+ const clamp=x=>Math.min(1,Math.max(0,x));
+ const duckRatio=()=>Math.min(100,Math.max(0,Number(duck.value)||0))/100;
+ function sliderBase(){
+  const n=Number(volumeInput?.value);
+  return volumeInput&&Number.isFinite(n)?clamp(n/100):clamp(video.volume);
+ }
+ function applyDuck(){
+  if(!enabled)return;
+  if(!ducked){baseVolume=sliderBase();ducked=true;}
+  const wanted=clamp(baseVolume*duckRatio());
+  if(Math.abs(video.volume-wanted)>0.003)video.volume=wanted;
+ }
  function restore(){
   if(!ducked)return;
   ducked=false;
-  try{video.volume=Math.max(0,Math.min(1,baseVolume));}catch{}
- }
- function attenuate(){
-  if(ducked)return;
-  baseVolume=Number.isFinite(video.volume)?video.volume:((Number(volumeInput?.value)||80)/100);
-  const percent=Math.max(0,Math.min(100,Number(duck.value)||0));
-  if(percent>=100)return;
-  ducked=true;
-  try{video.volume=baseVolume*percent/100;}catch{ducked=false;}
+  baseVolume=sliderBase();
+  if(Math.abs(video.volume-baseVolume)>0.003)video.volume=baseVolume;
  }
  volumeInput?.addEventListener('input',()=>{
-  if(!ducked)return;
-  baseVolume=(Number(volumeInput.value)||0)/100;
-  try{video.volume=baseVolume*Math.max(0,Math.min(100,Number(duck.value)||0))/100;}catch{}
+  baseVolume=sliderBase();
+  if(enabled)applyDuck();
  });
- duck.addEventListener('change',()=>{
-  if(ducked){
-   const percent=Math.max(0,Math.min(100,Number(duck.value)||0));
-   try{video.volume=baseVolume*percent/100;}catch{}
-  }
- });
+ duck.addEventListener('change',()=>{if(enabled)applyDuck();});
+ // Playback itself may reset volume during channel switches and media loading.
+ // Re-apply the selected ratio without changing the saved, user-selected master volume.
+ video.addEventListener('volumechange',()=>{if(enabled)applyDuck();});
+ video.addEventListener('playing',()=>{if(enabled)applyDuck();});
+ video.addEventListener('loadedmetadata',()=>{if(enabled)applyDuck();});
  function resetPlayback(){
   taskId++;queued='';busy=false;
   const audio=playing;playing=null;
   if(audio){try{audio.pause();audio.src='';audio.load();}catch{}}
   if(previewAudio){try{previewAudio.pause();previewAudio.src='';previewAudio.load();}catch{}previewAudio=null;}
-  restore();
+  // Keeping TTS enabled means source attenuation remains active between phrases.
   try{void api.ttsStop?.();}catch{}
  }
  async function refresh(){
@@ -70,11 +91,11 @@
    const url='data:audio/wav;base64,'+result.audioBase64;
    const audio=new Audio(url);playing=audio;
    audio.volume=1;
-   audio.addEventListener('ended',()=>{if(playing!==audio)return;playing=null;restore();
+   audio.addEventListener('ended',()=>{if(playing!==audio)return;playing=null;
     status('Đã đọc xong ('+lang+')');if(queued){const pending=queued;queued='';void speak(pending);}}, {once:true});
-   audio.addEventListener('error',()=>{if(playing!==audio)return;playing=null;restore();status('Lỗi phát âm thanh TTS');},{once:true});
+   audio.addEventListener('error',()=>{if(playing!==audio)return;playing=null;status('Lỗi phát âm thanh TTS');},{once:true});
    // Reduce only the IPTV source, never the separately generated speech.
-   attenuate();
+   applyDuck();
    await audio.play();
    if(output&&result.translatedText&&lang!=='en'){
     output.hidden=false;
@@ -82,18 +103,19 @@
    }
    status('Đang đọc '+lang+' · Tiếng gốc '+duck.value+'%');
   }catch(e){
-   restore();if(playing){try{playing.pause();}catch{}playing=null;}
+   if(playing){try{playing.pause();}catch{}playing=null;}
    if(enabled&&generation===taskId)status('TTS: '+String(e.message||e).slice(0,130));
   }finally{busy=false;}
  }
  function updateSession(){
   const id=source();
-  if(id!==sourceId){sourceId=id;validSession++;resetPlayback();}
+  if(id!==sourceId){sourceId=id;validSession++;recentSpeech.clear();resetPlayback();if(enabled)applyDuck();}
  }
  toggle.addEventListener('change',async()=>{
   enabled=toggle.checked;
-  if(!enabled){resetPlayback();status('Đã tắt TTS');return;}
-  updateSession();
+  if(!enabled){resetPlayback();recentSpeech.clear();restore();status('Đã tắt TTS');return;}
+  recentSpeech.clear();
+  updateSession();applyDuck();
   ensureTranslate();
   if(!await refresh())status('Nhấn “Cài mô hình tự động” để sử dụng giọng '+target.value);
  });
@@ -143,13 +165,14 @@
   // Whisper reports intermediate English even when displayed captions use a different target.
   const text=String(e.originalText||e.text).trim();
   if(!text)return;
+  if(!acceptSpeech(text))return;
   if(busy||playing){queued=text;return;}
   void speak(text);
  });
  document.addEventListener('openiptv:media-info',updateSession);
  video.addEventListener('emptied',()=>{if(enabled)resetPlayback();});
  video.addEventListener('pause',()=>{if(enabled)resetPlayback();});
- window.addEventListener('pagehide',resetPlayback);
- setInterval(updateSession,1800);
+ window.addEventListener('pagehide',()=>{enabled=false;resetPlayback();restore();});
+ setInterval(()=>{updateSession();if(enabled)applyDuck();},1800);
  updateVoiceVisibility();void refresh();
 })();
