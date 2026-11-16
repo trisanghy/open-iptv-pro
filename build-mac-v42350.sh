@@ -96,7 +96,7 @@ mv "$PROJECT" "$PROJECT_FINAL"
 PROJECT="$PROJECT_FINAL"
 node --check "$PROJECT/src/whisper-autoinstall.cjs"
 echo '[3/5] Fixing Live Translate and preserving working Live Caption...'
-V50_REV="0c05223a31d1f9725cb0e5eb09a9441716041aa2"
+V50_REV="f087dae3d8ccf1ca0d405b62497ae50b3d582651"
 V50_ASSETS="$WORK/overlays50"
 mkdir -p "$V50_ASSETS"
 for file in argos-bridge-v42350-fix.py caption-translator-v42350-repair.cjs local-ai-autoinstall-v42350-repair.cjs live-translate-recovery-v42350.cjs live-translate-v42350.test.cjs argos-runtime-v42350.test.py v4.23.50-apply.cjs; do
