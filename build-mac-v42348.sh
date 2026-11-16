@@ -77,7 +77,18 @@ PROJECT="$NEW_PROJECT"
 node --check "$PROJECT/src/whisper-autoinstall.cjs"
 ( cd "$WORK" && zip -q -r "$PATCH_SOURCE" "Open-IPTV-Pro-v4_23_48_Full_Desktop" -x '*/node_modules/*' '*/dist/*' '*/.git/*' )
 unzip -tq "$WORK/$PATCH_SOURCE" >/dev/null
-unzip -Z1 "$WORK/$PATCH_SOURCE" | grep -Fxq "Open-IPTV-Pro-v4_23_48_Full_Desktop/package.json" || { echo 'Patched source ZIP is missing package.json' >&2; exit 1; }
+# Avoid 'unzip -Z1 | grep -q' under pipefail: early grep exit can trigger SIGPIPE 141.
+# Read the exact ZIP member to a file and inspect its version instead.
+ZIP_PACKAGE="$WORK/verified-package.json"
+if ! unzip -p "$WORK/$PATCH_SOURCE" "Open-IPTV-Pro-v4_23_48_Full_Desktop/package.json" > "$ZIP_PACKAGE"; then
+  echo 'Patched source ZIP is missing package.json or ZIP is corrupted' >&2
+  exit 1
+fi
+node -e 'const fs=require("fs");const p=JSON.parse(fs.readFileSync(process.argv[1],"utf8"));if(p.version!=="4.23.48")process.exit(1)' "$ZIP_PACKAGE" || {
+  echo 'Patched source ZIP contains the wrong package version' >&2
+  exit 1
+}
+echo "Verified: ZIP contains Open IPTV Pro v4.23.48 package.json"
 echo "[4/5] Building v4.23.48 native Mac $ARCH DMG..."
 ( cd "$PROJECT" && OPENIPTV_ONE_COMMAND=1 bash ./BUILD_MAC.command ) 2>&1 | tee "$WORK/build.log"
 DMG="Open-IPTV-Pro-4.23.48-mac-${ARCH}.dmg"
