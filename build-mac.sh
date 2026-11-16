@@ -13,7 +13,7 @@ case "$(uname -m)" in
 esac
 DOWNLOADS="$HOME/Downloads"
 mkdir -p "$DOWNLOADS"
-WORK="$(mktemp -d "$DOWNLOADS/.openiptv-42340-${ARCH}.XXXXXXXX")"
+WORK="$(mktemp -d "$DOWNLOADS/.openiptv-42341-${ARCH}.XXXXXXXX")"
 OUT="$DOWNLOADS/OpenIPTVPro_Build_v4.23.41_${ARCH}"
 LOG="$DOWNLOADS/OpenIPTVPro_Build_v4.23.41_${ARCH}_ERROR.log"
 SUCCESS=0
@@ -24,7 +24,7 @@ cleanup() {
     [ ! -s "$WORK/build.log" ] || cp "$WORK/build.log" "$LOG" || true
     echo 'Build failed: previous output was preserved. Check error log in Downloads.' >&2
   fi
-  case "$WORK" in "$DOWNLOADS"/.openiptv-42340-*) rm -rf -- "$WORK" ;; esac
+  case "$WORK" in "$DOWNLOADS"/.openiptv-42341-*) rm -rf -- "$WORK" ;; esac
   exit "$code"
 }
 trap cleanup EXIT
@@ -35,9 +35,9 @@ curl -fL --retry 2 --connect-timeout 15 --max-time 300 --output "$WORK/$SOURCE" 
 echo "$SHA256  $WORK/$SOURCE" | shasum -a 256 -c - || { echo 'Source checksum mismatch.' >&2; exit 1; }
 echo '[2/4] Unpacking source...'
 unzip -q "$WORK/$SOURCE" -d "$WORK"
-PROJECT="$WORK/Open-IPTV-Pro-v4_23_40_Full_Desktop"
-[ -f "$PROJECT/package.json" ] || { echo 'Missing package.json' >&2; exit 1; }
-grep -Eq '"version"[[:space:]]*:[[:space:]]*"4[.]23[.]40"' "$PROJECT/package.json" || { echo 'Wrong source version' >&2; exit 1; }
+PROJECT="$WORK/Open-IPTV-Pro-v4_23_41_Full_Desktop"
+[ -f "$PROJECT/package.json" ] || { echo "Missing package.json at expected directory: $PROJECT" >&2; find "$WORK" -maxdepth 3 -name package.json -print >&2 || true; exit 1; }
+grep -Eq '"version"[[:space:]]*:[[:space:]]*"4[.]23[.]41"' "$PROJECT/package.json" || { echo 'Wrong source version' >&2; exit 1; }
 echo "[3/4] Building native Mac $ARCH DMG..."
 ( cd "$PROJECT" && OPENIPTV_ONE_COMMAND=1 bash ./BUILD_MAC.command ) 2>&1 | tee "$WORK/build.log"
 DMG="Open-IPTV-Pro-4.23.41-mac-${ARCH}.dmg"
