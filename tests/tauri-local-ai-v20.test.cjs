@@ -47,7 +47,16 @@ test('local speech is limited, volatile and ducking restored',()=>{
 test('v20 uses its own immutable tag without modifying main',()=>{
  const pkg=JSON.parse(read('package.json'));
  const sh=read('scripts/BUILD_RUSTLAB_MAC_ONE_ZIP_FAST.sh');
- assert.equal(pkg.version,'4.23.17-tauri.20');
- assert.ok(sh.includes('TAG="rust-lab/v20"'));
- assert.ok(sh.includes('archive/refs/tags/${TAG}.zip'));
+ assert.equal(pkg.version,'4.23.17-tauri.20.1');
+ assert.ok(sh.includes('TAG="rust-lab/v20"')||sh.includes('SOURCE_COMMIT="'));
+ assert.ok(sh.includes('archive/refs/tags/${TAG}.zip')||sh.includes('archive/${SOURCE_COMMIT}.zip'));
+});
+
+test('v20.1 auto-installer normalizes platform release file names to whisper-cli',()=>{
+ assert.match(native,/fn normalize_whisper_binary\(/);
+ assert.match(native,/asset\.strip_suffix\("\.zip"\)/);
+ assert.match(native,/find_named\(dir,packaged,0\)/);
+ assert.match(native,/fs::rename\(&source,&canonical\)/);
+ assert.match(native,/normalize_whisper_binary\(&dir,asset\)\?/);
+ assert.doesNotMatch(native,/ZIP Whisper không chứa công cụ phù hợp/);
 });

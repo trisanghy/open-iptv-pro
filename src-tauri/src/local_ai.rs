@@ -136,6 +136,37 @@ fn safe_unzip(archive:&Path,out:&Path)->Result<(),String>{
  }
  Ok(())
 }
+fn normalize_whisper_binary(dir:&Path,asset:&str)->Result<PathBuf,String>{
+ // OpenWhispr v1.0.0 ZIPs contain whisper-cpp-darwin-arm64/x64
+ // (or whisper-cpp-win32-x64-cpu.exe), NOT whisper-cli.
+ let packaged=asset.strip_suffix(".zip").ok_or("Tên gói Whisper không hợp lệ")?;
+ let canonical=dir.join(exec_name("whisper-cli"));
+ let source=find_named(dir,&exec_name("whisper-cli"),0)
+  .or_else(||find_named(dir,packaged,0))
+  .ok_or_else(||format!("ZIP Whisper không chứa bộ chạy {packaged}"))?;
+ if source!=canonical{fs::rename(&source,&canonical).map_err(error)?;}
+ #[cfg(unix)]{
+  use std::os::unix::fs::PermissionsExt;
+  fs::set_permissions(&canonical,fs::Permissions::from_mode(0o700)).map_err(error)?;
+ }
+ Ok(canonical)
+}
+#[cfg(test)]
+mod whisper_package_regression{
+ use super::*;
+ #[test]
+ fn renames_real_release_asset_to_whisper_cli(){
+  let dir=std::env::temp_dir().join(format!("openiptv-whisper-test-{}",Uuid::new_v4()));
+  fs::create_dir_all(&dir).unwrap();
+  let _cleanup=ScopedFolder(dir.clone());
+  let packaged=if cfg!(windows){"whisper-cpp-win32-x64-cpu.exe"}else{"whisper-cpp-darwin-arm64"};
+  fs::write(dir.join(packaged),vec![0u8;60_000]).unwrap();
+  let found=normalize_whisper_binary(&dir,&format!("{packaged}.zip")).unwrap();
+  assert_eq!(found,dir.join(exec_name("whisper-cli")));
+  assert!(exists(&found,50_000));
+  assert!(!dir.join(packaged).exists());
+ }
+}
 fn caption_progress(app:&AppHandle,message:&str){let _=app.emit("caption:event",json!({"type":"setup-progress","message":message}));}
 pub async fn caption_install(app:AppHandle,ai:Arc<LocalAi>)->Result<Value,String>{
  if ai.installing_caption.compare_exchange(false,true,Ordering::SeqCst,Ordering::SeqCst).is_err(){return Err("Whisper đang được cài".into());}
@@ -150,8 +181,7 @@ pub async fn caption_install(app:AppHandle,ai:Arc<LocalAi>)->Result<Value,String
    download_verified(&app,"caption:event",&url,&archive,sha,30*1024*1024).await?;
    let dir=root.join("binary");safe_unzip(&archive,&dir)?;
    let _=tokio::fs::remove_file(archive).await;
-   let found=find_named(&dir,&exec_name("whisper-cli"),0).ok_or("ZIP Whisper không chứa công cụ phù hợp")?;
-   #[cfg(unix)]{use std::os::unix::fs::PermissionsExt;fs::set_permissions(&found,fs::Permissions::from_mode(0o700)).map_err(error)?;}
+   normalize_whisper_binary(&dir,asset)?;
   }
   if model.is_none(){
    caption_progress(&app,"Đang tải mô hình Whisper đa ngôn ngữ (~148 MB)…");
