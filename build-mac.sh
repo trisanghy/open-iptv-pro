@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
-# Open IPTV Pro v4.23.38: fast single-ZIP macOS builder; retain one SHA-256 check.
+# Open IPTV Pro v4.23.39: fast single-ZIP macOS builder; retain one SHA-256 check.
 set -Eeuo pipefail
-VERSION="4.23.38"
+VERSION="4.23.39"
 ARCHIVE="OpenIPTVPro_Source_v$VERSION.zip"
-EXPECTED_SHA256="c55bbcfac141bcc0af6dd7b678dad7ace3fee90c20415c008111b9a97981943e"
+EXPECTED_SHA256="9fff925ca8bd5563ba1500bb579e0bc9aa6605f26f411e7b872a09686bc32aa3"
 RAW="https://raw.githubusercontent.com/trisanghy/open-iptv-pro/iptv-build-source"
 case "$(uname -s)-$(uname -m)" in
   Darwin-arm64) ARCH="arm64" ;;
@@ -20,7 +20,7 @@ if [ -n "$FREE_KIB" ] && [ "$FREE_KIB" -lt 6291456 ]; then
   echo "Insufficient free space: at least 6 GB; 10 GB recommended." >&2
   df -h "$DOWNLOADS" >&2; exit 1
 fi
-WORK="$(mktemp -d "$DOWNLOADS/.openiptv-42337-build.XXXXXXXX")"
+WORK="$(mktemp -d "$DOWNLOADS/.openiptv-42338-build.XXXXXXXX")"
 OUT="$DOWNLOADS/OpenIPTVPro_Build_v$VERSION"
 LOG="$DOWNLOADS/OpenIPTVPro_Build_v${VERSION}_ERROR.log"
 SUCCESS=0
@@ -31,7 +31,7 @@ cleanup() {
     echo "Build failed; previous output was preserved." >&2
     if [ -f "$WORK/build.log" ]; then cp "$WORK/build.log" "$LOG" || true; fi
   fi
-  case "$WORK" in "$DOWNLOADS"/.openiptv-42337-build.*) rm -rf -- "$WORK" ;; esac
+  case "$WORK" in "$DOWNLOADS"/.openiptv-42338-build.*) rm -rf -- "$WORK" ;; esac
   exit "$status"
 }
 trap cleanup EXIT
@@ -45,9 +45,9 @@ SHA="$(shasum -a 256 "$WORK/$ARCHIVE" | awk '{print $1}')"
 [ "$SHA" = "$EXPECTED_SHA256" ] || { echo "Source ZIP SHA-256 verification failed!" >&2; exit 1; }
 echo "[2/4] Extracting source (no redundant ZIP pre-scan)..."
 unzip -q "$WORK/$ARCHIVE" -d "$WORK"
-PROJECT="$WORK/Open-IPTV-Pro-v4_23_38_Full_Desktop"
+PROJECT="$WORK/Open-IPTV-Pro-v4_23_39_Full_Desktop"
 [ -f "$PROJECT/package.json" ] || { echo "Missing source package.json." >&2; exit 1; }
-grep -Eq '"version"[[:space:]]*:[[:space:]]*"4[.]23[.]37"' "$PROJECT/package.json" || { echo "Unexpected source version." >&2; exit 1; }
+grep -Eq '"version"[[:space:]]*:[[:space:]]*"4[.]23[.]39"' "$PROJECT/package.json" || { echo "Unexpected source version." >&2; exit 1; }
 [ -f "$PROJECT/BUILD_MAC.command" ] || { echo "Missing build script." >&2; exit 1; }
 echo "[3/4] Installing, testing and building macOS DMG..."
 if (cd "$PROJECT" && OPENIPTV_ONE_COMMAND=1 bash ./BUILD_MAC.command) 2>&1 | tee "$WORK/build.log"; then
