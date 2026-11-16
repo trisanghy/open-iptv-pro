@@ -32,7 +32,7 @@
   return {total:channels.length,alive:channels.filter(c=>c.status==='alive').length,dead:channels.filter(c=>c.status==='dead').length,uncertain:channels.filter(c=>c.status==='uncertain').length,missingEpgId:channels.filter(c=>!c.tvgId).length,duplicateUrls:duplicateUrls.length,duplicateNames:duplicateNames.length,epgMatches,issues:issueList.slice(0,500)};
  }
  function healthLine(history=[]){const valid=history.filter(e=>['alive','dead','uncertain'].includes(e.status));const n=valid.length;return {checks:n,uptime:n?Math.round(valid.filter(x=>x.status==='alive').length/n*100):null,latest:valid.at(-1)||null};}
- function seekRange(video,seconds=300){if(!video?.seekable?.length)return null;const end=video.seekable.end(video.seekable.length-1),start=video.seekable.start(0);return {start:Math.max(start,end-seconds),end,available:Math.max(0,Math.min(seconds,end-start))};}
+ function seekRange(video,seconds=600){if(!video?.seekable?.length)return null;const end=video.seekable.end(video.seekable.length-1),start=video.seekable.start(0);return {start:Math.max(start,end-seconds),end,available:Math.max(0,Math.min(seconds,end-start))};}
  function epgSearch(guide,query){const needle=clean(query);if(!needle)return [];return (guide?.programmes||[]).filter(p=>clean(p.title+' '+(p.description||'')).includes(needle)).slice(0,200);}
  const api={clean,validURL,alternatives,catchup,diagnostics,healthLine,seekRange,epgSearch};
  if(typeof module!=='undefined'&&module.exports)module.exports=api;

@@ -32,7 +32,7 @@ function planReplacement(oldChannels,newChannels,sourceId,otherChannels=[]){
    if(!usedIds.has(prev.id))result.id=prev.id;
    result.group=prev.group||result.group;
    // A changed URL may carry a different stream; old alive/dead evidence is invalid.
-   if(prev.url===result.url){for(const k of ['status','checkedAt','reason'])if(prev[k]!==undefined)result[k]=prev[k];}
+   if(prev.url===result.url){for(const k of ['status','checkedAt','reason','lastPlayableUrl','lastPlayableTransport','lastPlayableEngine','lastPlaybackAt','lastPlayableFormat','lastStartupDurationMs'])if(prev[k]!==undefined)result[k]=prev[k];}
   }
   if(!result.id||usedIds.has(result.id)){
    do{result.id=`${sourceId}|${counter++}`;}while(usedIds.has(result.id));

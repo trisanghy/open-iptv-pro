@@ -23,7 +23,7 @@ test('v4.20: do not offer a download when Release has no SHA256 manifest',async(
  assert.match(st.message,/SHA256SUMS/);
  await assert.rejects(()=>m.download(),/Hãy kiểm tra/);
 });
-test('v4.20: a failing native updater falls back to SHA256-verified installer',async()=>{
+test('v4.23.36: signed macOS uses SHA256-verified DMG instead of native zip updater',async()=>{
  class BadUpdater extends EventEmitter{
   setFeedURL(){} async checkForUpdates(){throw Error('latest-mac.yml failed');}
  }
@@ -32,7 +32,7 @@ test('v4.20: a failing native updater falls back to SHA256-verified installer',a
  const dir=await mkdtemp(path.join(os.tmpdir(),'open-iptv420-'));
  const m=make({updater:new BadUpdater(),signatureCheck:()=>true,downloadsDir:dir,fetcher:async(url)=>url.includes('SHA256SUMS')?new Response(`${sha}  ${name}\n`):new Response(payload)});
  try{
-  assert.equal((await m.checkForUpdates()).mode,'automatic');
+  assert.equal((await m.checkForUpdates()).mode,'manual');
   const st=await m.download();
   assert.equal(st.phase,'manual-ready');
   assert.equal(st.mode,'manual');

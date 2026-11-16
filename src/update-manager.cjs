@@ -100,7 +100,8 @@ class UpdateManager extends EventEmitter{
    this.asset=asset;
    if(!asset)return this.setState({phase:'source-only',latest:result.latest,mode:null,downloaded:false,message:'Chưa có bản cập nhật mới phù hợp cho hệ điều hành và kiến trúc máy này.'});
    const signed=this.signatureCheck({app:this.app,platform:this.platform,resourcesPath:this.resourcesPath,execPath:this.execPath});
-   const native=!!this.updater&&signed&&hasUpdateMetadata(result.assets,this.platform);
+   // macOS always opens the verified DMG; only Windows uses native auto-install.
+   const native=this.platform==='win32'&&!!this.updater&&signed&&hasUpdateMetadata(result.assets,this.platform);
    const checksum=!!(asset.digest&&/^sha256:[a-f0-9]{64}$/i.test(asset.digest))||(result.assets||[]).some(a=>a.name==='SHA256SUMS.txt'&&isOfficialAsset(a.url));
    if(!native&&!checksum)return this.setState({phase:'unverified-release',latest:result.latest,mode:null,downloaded:false,assetName:asset.name,message:'Đã thấy bản mới nhưng file phát hành thiếu SHA256SUMS.txt hoặc thông tin xác minh. Vui lòng dùng nút GitHub Releases để tải an toàn.'});
    return this.setState({phase:'available',latest:result.latest,mode:native?'automatic':'manual',assetName:asset.name,downloaded:false,
@@ -138,7 +139,7 @@ class UpdateManager extends EventEmitter{
    let expected=null;
    if(this.asset.digest?.startsWith('sha256:'))expected=this.asset.digest.slice(7).toLowerCase();
    if(!expected && checksumAsset){
-    const response=await this.fetcher(checksumAsset.url,{headers:{'User-Agent':'Open-IPTV-Pro/4.22.2'},signal:AbortSignal.timeout(15000)});
+    const response=await this.fetcher(checksumAsset.url,{headers:{'User-Agent':'Open-IPTV-Pro/4.23.8'},signal:AbortSignal.timeout(15000)});
     if(!response.ok||!isTrustedRedirect(response.url||checksumAsset.url))throw Error('Không đọc được bảng SHA256 từ GitHub');
     const sums=await response.text();if(sums.length>500_000)throw Error('Bảng SHA256 không hợp lệ');
     expected=extractSha256(sums,this.asset.name);
@@ -156,7 +157,7 @@ class UpdateManager extends EventEmitter{
    const armIdle=()=>{clearTimeout(idleTimer);idleTimer=setTimeout(()=>controller.abort(new Error('Tải xuống bị ngắt do quá lâu không nhận được dữ liệu')),IDLE_MS);/* Keep the timer referenced while a download is in flight. */};
    try{
     armIdle();
-    const response=await this.fetcher(this.asset.url,{headers:{'User-Agent':'Open-IPTV-Pro/4.22.2'},signal:controller.signal});
+    const response=await this.fetcher(this.asset.url,{headers:{'User-Agent':'Open-IPTV-Pro/4.23.8'},signal:controller.signal});
     if(!response.ok||!isTrustedRedirect(response.url||this.asset.url))throw Error('Không tải được từ GitHub Releases');
     if(!response.body)throw Error('Máy chủ không trả dữ liệu bộ cài');
     const total=Number(response.headers?.get?.('content-length'))||Number(this.asset.size)||0;
@@ -175,7 +176,7 @@ class UpdateManager extends EventEmitter{
    }catch(e){await fs.rm(tmp,{force:true}).catch(()=>{});throw controller.signal.aborted && controller.signal.reason instanceof Error ? controller.signal.reason : e;}
    finally{clearTimeout(idleTimer);}
    this.downloadedPath=finalPath;this.activeAbort=null;
-   return this.setState({phase:'manual-ready',downloaded:true,progress:100,downloadedFile:finalPath,message:'Đã tải bản cập nhật an toàn. Chọn Mở bộ cài để hoàn tất nâng cấp (giữ nguyên dữ liệu).'});
+   return this.setState({phase:'manual-ready',downloaded:true,progress:100,downloadedFile:finalPath,message:'Đã tải và xác minh SHA-256. Trên Mac, mở DMG rồi thoát Open IPTV Pro để cài phiên bản mới (giữ nguyên dữ liệu).'});
   }catch(e){return this.setState({phase:'error',mode:'manual',downloaded:false,message:'Tải cập nhật không thành công: '+String(e.message||e).slice(0,250)+'. Có thể bấm Kiểm tra phiên bản mới để thử lại.'});}
   finally{this.activeAbort=null;this.busy=false;}
  }

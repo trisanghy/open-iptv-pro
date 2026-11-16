@@ -6,7 +6,7 @@
  const $=id=>document.getElementById(id);
  const exportBtn=$('backupExportBtn'),importBtn=$('backupImportBtn'),status=$('backupStatus');
  if(!exportBtn||!importBtn||!status)return;
- const owned=k=>k.startsWith('open-iptv-pro-')||k.startsWith('open-iptv-doctor-v2-')||k==='streamleaf-3';
+ const owned=k=>k.startsWith('open-iptv-pro-')||(k.startsWith('open-iptv-doctor-v2-')||k.startsWith('open-iptv-doctor-v3-'))||k==='streamleaf-3';
  const collect=()=>{
   const entries=[];
   for(let i=0;i<localStorage.length;i++){
@@ -47,8 +47,8 @@
    const preview=await api.backupInspect();
    if(preview.canceled){message('Đã hủy chọn file.');return;}
    const time=preview.createdAt?new Date(preview.createdAt).toLocaleString():'Không rõ';
-   message(`Đã kiểm tra: ${preview.sourceCount} nguồn, ${preview.channelCount} kênh, ${preview.images} ảnh • ${format(preview.bytes)}.`);
-   if(!confirm(`KHÔI PHỤC DỮ LIỆU OPEN IPTV PRO?\n\nNgày sao lưu: ${time}\nPhiên bản: ${preview.appVersion||'Không rõ'}\nNguồn: ${preview.sourceCount} | Kênh: ${preview.channelCount} | Ảnh Snapshot: ${preview.images}\n\nToàn bộ playlist, kênh yêu thích, hồ sơ, thiết lập và dữ liệu hiện tại sẽ bị THAY THẾ.\n\nHãy sao lưu dữ liệu hiện tại trước khi tiếp tục.\n\nBạn đồng ý khôi phục và khởi động lại giao diện?`)){
+   message(`Đã kiểm tra: ${preview.sourceCount} nguồn, ${preview.channelCount} kênh, ${preview.images} ảnh • ${preview.recordingSchedules??0} lịch ghi tương lai • ${format(preview.bytes)}.`);
+   if(!confirm(`KHÔI PHỤC DỮ LIỆU OPEN IPTV PRO?\n\nNgày sao lưu: ${time}\nPhiên bản: ${preview.appVersion||'Không rõ'}\nNguồn: ${preview.sourceCount} | Kênh: ${preview.channelCount} | Ảnh Snapshot: ${preview.images}\nLịch ghi tương lai: ${preview.recordingSchedules??0} (chỉ khi file Backup hỗ trợ)\n\nToàn bộ playlist, kênh yêu thích, hồ sơ, thiết lập và dữ liệu hiện tại sẽ bị THAY THẾ.\n\nHãy sao lưu dữ liệu hiện tại trước khi tiếp tục.\n\nBạn đồng ý khôi phục và khởi động lại giao diện?`)){
     message('Đã hủy khôi phục, dữ liệu hiện tại không thay đổi.');return;
    }
    message('Đang nhập ảnh Snapshot và dữ liệu…');
@@ -78,9 +78,5 @@
    message('Không thể khôi phục: '+e.message,true);
    ctx.toast('Khôi phục thất bại; đã giữ lại dữ liệu trước đó','error');
   }finally{busy(false);}
- });
- $('backupNav')?.addEventListener('click',()=>{
-  ctx.setPage('settings');
-  $('backupSettings')?.scrollIntoView({block:'start',behavior:'smooth'});
  });
 })();

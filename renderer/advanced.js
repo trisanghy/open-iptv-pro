@@ -4,13 +4,14 @@
  const ctx=window.IPTVState,lib=window.OpenIPTVAdvancedCore;
  const $=q=>document.querySelector(q), esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
  const key='open-iptv-pro-advanced-v1';
- const defaults={alternates:{},health:{},reminders:[],optimizer:'balanced',autoTimeshift:false,profiles:[{id:'admin',name:'Người lớn',child:false,favorites:[]}],profileId:'admin',restrictedGroups:[],pin:null};
+ const defaults={alternates:{},health:{},reminders:[],optimizer:'balanced',replayMinutes:10,autoTimeshift:false,profiles:[{id:'admin',name:'Người lớn',child:false,favorites:[]}],profileId:'admin',restrictedGroups:[],pin:null};
  let state;try{state={...defaults,...JSON.parse(localStorage.getItem(key)||'{}')}}catch{state={...defaults}};
  if(!Array.isArray(state.profiles)||!state.profiles.length)state.profiles=defaults.profiles;
  if(!state.alternates||typeof state.alternates!=='object')state.alternates={};
  if(!state.health||typeof state.health!=='object')state.health={};
  if(!Array.isArray(state.reminders))state.reminders=[];
  state.autoTimeshift=state.autoTimeshift===true;
+ if(![5,10,15,30].includes(Number(state.replayMinutes)))state.replayMinutes=10;
  ctx.getStore().alternates=state.alternates;
  const save=()=>{if(window.__openIPTVRestoringBackup)return;ctx.getStore().alternates=state.alternates;try{localStorage.setItem(key,JSON.stringify(state))}catch{ctx.toast('Đầy bộ nhớ cấu hình nâng cao','warn')}};
  let pendingHealthSave=null;function scheduleHealthSave(){if(pendingHealthSave)return;pendingHealthSave=setTimeout(()=>{pendingHealthSave=null;save();},1500);}
@@ -53,16 +54,23 @@
  // ====== Hover preview: snapshot first, otherwise one muted video. ======
  let previewTimer=null,previewHls=null,previewVideo=null,previewId='',previousMainMuted=false;const preview=$('#channelPreview');
  function hidePreview(){clearTimeout(previewTimer);previewTimer=null;previewId='';if(previewVideo){previewVideo.pause();previewVideo.removeAttribute('src');previewVideo.load();}previewHls?.destroy();previewVideo=null;previewHls=null;preview.classList.add('hidden');preview.replaceChildren();}
- async function openPreview(ch,anchor){if(previewId!==ch.id)return;
-  const r=anchor.getBoundingClientRect();preview.style.left=Math.min(r.right+12,window.innerWidth-300)+'px';preview.style.top=Math.min(Math.max(75,r.top),window.innerHeight-235)+'px';
+ async function openPreview(ch,anchor){if(previewId!==ch.id||!anchor.isConnected)return;
+  const r=anchor.getBoundingClientRect();preview.style.left=Math.max(8,Math.min(r.right+12,window.innerWidth-290))+'px';preview.style.top=Math.max(8,Math.min(Math.max(75,r.top),window.innerHeight-235))+'px';
   preview.replaceChildren();const picture=snapshot(ch),title=document.createElement('b');title.textContent='Xem trước (không tiếng) · '+ch.name;preview.append(title);
-  const video=document.createElement('video');if(picture)video.poster=picture;video.muted=true;video.defaultMuted=true;video.volume=0;video.autoplay=true;video.playsInline=true;video.preload='metadata';preview.append(video);previewVideo=video;preview.classList.remove('hidden');
+  if(picture){
+   // Static poster prevents dozens of speculative HLS segment downloads on hover,
+   // which some providers rate-limit with HTTP 403.
+   const img=document.createElement('img');img.alt='Ảnh xem trước '+ch.name;img.loading='eager';img.src=picture;
+   img.addEventListener('error',()=>{if(previewId===ch.id){img.remove();const note=document.createElement('div');note.textContent='Không tải được ảnh xem trước';note.className='preview-unavailable';preview.append(note);}}, {once:true});
+   title.textContent='Ảnh xem trước · '+ch.name;preview.append(img);preview.classList.remove('hidden');return;
+  }
+  const video=document.createElement('video');video.muted=true;video.defaultMuted=true;video.volume=0;video.autoplay=true;video.playsInline=true;video.preload='metadata';video.addEventListener('error',()=>{if(previewVideo===video){title.textContent='Không xem trước được (nguồn lỗi hoặc bị chặn) · '+ch.name;video.style.display='none';}},{once:true});preview.append(video);previewVideo=video;preview.classList.remove('hidden');
   try{const url=window.streamleaf?.proxy?await window.streamleaf.proxy(ch.url):ch.url;if(previewId!==ch.id)return;
-   if(/\.m3u8?(?:$|\?)/i.test(ch.url)&&!video.canPlayType('application/vnd.apple.mpegurl')){const H=await ctx.loadHlsLib();if(previewId!==ch.id)return;previewHls=new H({enableWorker:true,lowLatencyMode:false,capLevelToPlayerSize:true,maxBufferLength:2,maxMaxBufferLength:5,backBufferLength:0,maxBufferSize:4*1000*1000});previewHls.loadSource(url);previewHls.attachMedia(video);}else video.src=url;
+   if(/\.m3u8?(?:$|\?)/i.test(ch.url)&&!video.canPlayType('application/vnd.apple.mpegurl')){const H=await ctx.loadHlsLib();if(previewId!==ch.id)return;previewHls=new H({enableWorker:true,lowLatencyMode:false,capLevelToPlayerSize:true,maxBufferLength:2,maxMaxBufferLength:5,backBufferLength:0,maxBufferSize:4*1000*1000});previewHls.on(H.Events.ERROR,(_e,data)=>{if(data.fatal&&previewVideo===video){title.textContent='Xem trước chưa khả dụng · '+ch.name;video.style.display='none';}});previewHls.loadSource(url);previewHls.attachMedia(video);}else video.src=url;
    video.play().catch(()=>{});
   }catch{title.textContent='Không xem trước được: '+ch.name;}
  }
- function decorateRow(c,row){if(!c||!row||row.dataset.previewAttached==='1')return;row.dataset.previewAttached='1';row.addEventListener('mouseenter',()=>{clearTimeout(previewTimer);hidePreview();previewId=c.id;previewTimer=setTimeout(()=>{if(!document.hidden&&!$('#page-multiview').classList.contains('active-page'))openPreview(c,row);},1250);});row.addEventListener('mouseleave',hidePreview);}
+ function decorateRow(c,row){if(!c||!/^https?:\/\//i.test(c.url||'')||!row||row.dataset.previewAttached==='1')return;row.dataset.previewAttached='1';row.addEventListener('mouseenter',()=>{clearTimeout(previewTimer);hidePreview();previewId=c.id;previewTimer=setTimeout(()=>{if(row.isConnected&&!document.hidden&&!$('#page-multiview').classList.contains('active-page'))openPreview(c,row);},1250);});row.addEventListener('mouseleave',hidePreview);}
  // ====== Auto Failover settings & Health ======
  function hlsOptions(){const len=({fast:7,balanced:12,stable:25})[state.optimizer]||12;return {maxBufferLength:len,maxMaxBufferLength:Math.max(len+8,Math.round(len*1.8)),backBufferLength:6,maxBufferSize:state.optimizer==='stable'?28*1000*1000:18*1000*1000,liveSyncDurationCount:3,manifestLoadingMaxRetry:2,levelLoadingMaxRetry:3,fragLoadingMaxRetry:3};}
  function record(ch,obj){if(!ch)return;const list=state.health[ch.url]||(state.health[ch.url]=[]);list.push({date:new Date().toISOString(),...obj});if(list.length>12)list.splice(0,list.length-12);scheduleHealthSave();}
@@ -85,15 +93,28 @@
   table.append(body);root.append(table);
  }
  $('#backupChannel').onchange=()=>{$('#backupURLs').value=(state.alternates[$('#backupChannel').value]||[]).join('\n');};
- $('#backupSave').onclick=()=>{const ch=channels().find(c=>c.id===$('#backupChannel').value);if(!ch)return ctx.toast('Chưa chọn kênh','warn');const raw=$('#backupURLs').value.split(/\r?\n/).map(x=>x.trim()).filter(Boolean);if(raw.length>9||raw.some(u=>!lib.validURL(u)))return ctx.toast('Tối đa 9 URL hợp lệ dùng HTTP(S)','warn');state.alternates[ch.id]=[...new Set(raw.filter(u=>u!==ch.url))];save();ctx.toast('Đã lưu '+state.alternates[ch.id].length+' link dự phòng');};
+ $('#backupSave').onclick=()=>{const ch=channels().find(c=>c.id===$('#backupChannel').value);if(!ch)return ctx.toast('Chưa chọn kênh','warn');const raw=$('#backupURLs').value.split(/\r?\n/).map(x=>x.trim()).filter(Boolean);if(raw.length>9||raw.some(u=>!lib.validURL(u)))return ctx.toast('Tối đa 9 URL hợp lệ dùng HTTP(S)','warn');state.alternates[ch.id]=[...new Set(raw.filter(u=>u!==ch.url))];save();ctx.refreshManualLinks?.();ctx.toast('Đã lưu '+state.alternates[ch.id].length+' link dự phòng');};
  $('#bufferPreset').onchange=e=>{state.optimizer=e.target.value;save();ctx.toast('Đã lưu chế độ bộ đệm');};
  $('#healthRefresh').onclick=renderHealth;
  // ====== Local timeshift / remote DVR ======
  let buffering=false,bufferId='',bufferStarting=false,bufferRequest=0;
  let activeChannelId='',autoAttemptedId='',autoSuppressedId='';
  const autoSetting=$('#autoTimeshiftSetting'),autoLabel=$('#autoTimeshiftState');
+ function replayMinutes(){return [5,10,15,30].includes(Number(state.replayMinutes))?Number(state.replayMinutes):10;}
+ function syncReplayUI(){const minutes=replayMinutes();
+  const select=$('#replayMinutesSelect');if(select)select.value=String(minutes);
+  for(const id of ['bufferWindowMinutes','bufferInfoMinutes','autoTimeshiftWindowMinutes']){const el=$('#'+id);if(el)el.textContent=String(minutes);}
+  const label=$('#replayMinutesState');if(label)label.textContent='Đang dùng: '+minutes+' phút'+(buffering?' · Bộ đệm đang chạy giữ thời gian cũ':'');
+ }
+ $('#replayMinutesSelect')?.addEventListener('change',event=>{
+  const chosen=Number(event.currentTarget.value);
+  if(![5,10,15,30].includes(chosen))return;
+  state.replayMinutes=chosen;save();syncReplayUI();
+  ctx.toast('Đã lưu tua lại '+replayMinutes()+' phút; áp dụng từ lần bật bộ đệm tiếp theo');
+ });
+ syncReplayUI();
  function describeAutoSetting(){autoSetting.checked=!!state.autoTimeshift;autoLabel.textContent=state.autoTimeshift?(window.streamleaf?.startTimeshift?'Đã bật: tự dùng bộ đệm khi mở kênh LIVE.':'Đã lưu: sẽ tự bật khi chạy bản desktop có FFmpeg.'):'Mặc định: tắt (bật thủ công trong Xem TV).';}
- autoSetting.addEventListener('change',()=>{state.autoTimeshift=autoSetting.checked;save();describeAutoSetting();ctx.toast(state.autoTimeshift?'Đã bật Timeshift mặc định cho các kênh LIVE tiếp theo':'Đã tắt Timeshift mặc định');});
+ autoSetting.addEventListener('change',()=>{state.autoTimeshift=autoSetting.checked;save();describeAutoSetting();ctx.toast(state.autoTimeshift?'Đã bật Tua lại mặc định cho các kênh LIVE tiếp theo':'Đã tắt Tua lại mặc định');});
  describeAutoSetting();
  function maybeAutoBuffer(ch){
   if(!state.autoTimeshift||!window.streamleaf?.startTimeshift||!ch||ctx.getPlayMode?.()!=='live'||buffering||bufferStarting)return;
@@ -107,14 +128,14 @@
   const ch=ctx.getCurrent();
   if(buffering){bufferRequest++;buffering=false;const oldId=bufferId;bufferId='';if(manual)autoSuppressedId=ch?.id||'';await safeStopOwned(oldId);setStatus('Đã tắt bộ đệm; trở về LIVE');$('#bufferToggle').textContent='Bật bộ đệm';if(ch)void ctx.playChannel(ch.id);return;}
   if(bufferStarting)return;
-  if(!ch)return ctx.toast('Chọn kênh trước khi bật Timeshift','warn');
-  if(ctx.getPlayMode?.()!=='live')return ctx.toast('Timeshift chỉ dùng với kênh đang phát LIVE','warn');
+  if(!ch)return ctx.toast('Chọn kênh trước khi bật Tua lại','warn');
+  if(ctx.getPlayMode?.()!=='live')return ctx.toast('Tua lại chỉ dùng với kênh đang phát LIVE','warn');
   if(!window.streamleaf?.startTimeshift)return ctx.toast('Bộ đệm cục bộ chỉ hỗ trợ ứng dụng desktop có FFmpeg','warn');
   if(manual){autoSuppressedId='';autoAttemptedId=ch.id;}
   const ticket=++bufferRequest;bufferStarting=true;let createdId='';
-  setStatus('Đang tạo bộ đệm 5 phút; cần đợi segment đầu tiên…');$('#bufferToggle').disabled=true;
+  setStatus('Đang tạo bộ đệm tua lại '+replayMinutes()+' phút; cần đợi segment đầu tiên…');$('#bufferToggle').disabled=true;
   try{
-   const out=await window.streamleaf.startTimeshift(ch.url);createdId=out.id;bufferId=out.id;
+   const out=await window.streamleaf.startTimeshift(ch.url,replayMinutes());createdId=out.id;bufferId=out.id;
    const stale=()=>ticket!==bufferRequest||ctx.getCurrent()?.id!==ch.id||ctx.getPlayMode?.()!=='live';
    if(stale())return;
    let ready=false;
@@ -127,8 +148,8 @@
    if(!ready)throw Error('Nguồn không tạo được segment, vẫn tiếp tục phát LIVE');
    buffering=true;$('#bufferToggle').textContent='Tắt bộ đệm';
    await ctx.playChannel(ch.id,out.url,{buffer:true,mode:'timeshift'});
-   setStatus('Đệm tối đa ~5 phút kể từ khi bật; có thể tua −30 giây.');
-  }catch(e){if(ticket===bufferRequest){buffering=false;ctx.toast('Timeshift: '+e.message,'warn');setStatus('Chưa thể bật bộ đệm, kênh vẫn phát LIVE');}}
+   setStatus('Đệm tối đa ~'+replayMinutes()+' phút kể từ khi bật; có thể tua −10 hoặc −30 giây.');
+  }catch(e){if(ticket===bufferRequest){buffering=false;ctx.toast('Tua lại: '+e.message,'warn');setStatus('Chưa thể bật bộ đệm, kênh vẫn phát LIVE');}}
   finally{
    if(!buffering)await safeStopOwned(createdId);
    if(ticket===bufferRequest){bufferStarting=false;$('#bufferToggle').disabled=false;}
@@ -136,8 +157,8 @@
   }
  }
  $('#bufferToggle').onclick=()=>toggleBuffer(true);
- $('#bufferRewind').onclick=()=>{const v=ctx.player,r=lib.seekRange(v,300);if(!r||r.available<2)return ctx.toast('Chưa có đủ dữ liệu DVR/Timeshift để tua','warn');v.currentTime=Math.max(r.start,v.currentTime-30);setStatus('Đang xem lại trong khoảng '+Math.round(r.available)+' giây đã có');};
- $('#bufferRewind5').onclick=()=>{const v=ctx.player,r=lib.seekRange(v,300);if(!r||r.available<2)return ctx.toast('Chưa có dữ liệu tua ngược','warn');v.currentTime=r.start;setStatus('Đã tua về mốc cũ nhất có sẵn (~'+Math.round(r.available)+' giây)');};
+ $('#bufferRewind').onclick=()=>{const v=ctx.player,r=lib.seekRange(v,replayMinutes()*60);if(!r||r.available<2)return ctx.toast('Chưa có đủ dữ liệu DVR/Tua lại để tua','warn');v.currentTime=Math.max(r.start,v.currentTime-30);setStatus('Đang xem lại trong khoảng '+Math.round(r.available)+' giây đã có');};
+ $('#bufferRewind10').onclick=()=>{const v=ctx.player,r=lib.seekRange(v,replayMinutes()*60);if(!r||r.available<2)return ctx.toast('Chưa có dữ liệu tua lại','warn');v.currentTime=Math.max(r.start,v.currentTime-10);setStatus('Tua lại 10 giây · có '+Math.round(r.available)+' giây dữ liệu');};
  $('#bufferLive').onclick=()=>{const ch=ctx.getCurrent();if(!ch)return;bufferRequest++;buffering=false;bufferStarting=false;autoSuppressedId=ch.id;const id=bufferId;bufferId='';void safeStopOwned(id);$('#bufferToggle').textContent='Bật bộ đệm';$('#bufferToggle').disabled=false;setStatus('Đang xem LIVE');void ctx.playChannel(ch.id);};
  function onStop(){bufferRequest++;buffering=false;bufferStarting=false;bufferId='';activeChannelId='';autoAttemptedId='';autoSuppressedId='';$('#bufferToggle').textContent='Bật bộ đệm';$('#bufferToggle').disabled=false;window.streamleaf?.stopTimeshift?.().catch(()=>{});}
  // ====== EPG search, reminders, catch-up and mapping ======
@@ -169,7 +190,7 @@
  async function hashPIN(pin,salt){if(!crypto?.subtle)throw Error('Máy không hỗ trợ WebCrypto');const data=new TextEncoder().encode(pin),input=await crypto.subtle.importKey('raw',data,'PBKDF2',false,['deriveBits']);const bits=await crypto.subtle.deriveBits({name:'PBKDF2',salt:new TextEncoder().encode(salt),iterations:120000,hash:'SHA-256'},input,256);return [...new Uint8Array(bits)].map(x=>x.toString(16).padStart(2,'0')).join('');}
  async function verifyPIN(){if(!state.pin)return false;const pin=prompt('Nhập PIN quản trị để mở khóa');if(pin===null)return false;return (await hashPIN(pin,state.pin.salt))===state.pin.hash;}
  async function allowChannel(ch){const prof=profile();if(!prof.child)return true;if(!(state.restrictedGroups||[]).includes(ch.group))return true;try{if(await verifyPIN())return true;}catch{}ctx.toast('Kênh thuộc nhóm bị khóa trong hồ sơ trẻ em','warn');return false;}
- function applyProfileUI(){const child=profile().child;const selectors=['.nav[data-page="sources"]','.nav[data-page="folders"]','.nav[data-page="settings"]','.nav[data-page="health"]','.nav[data-page="doctor"]','#backupNav','#backupExportBtn','#backupImportBtn','#exportNav','#fileBtn','#urlBtn','#newFolderFromList','#refreshAllBtn','#folderCreateBtn','#quickExport','#emptyFileBtn','#emptyUrlBtn','#sourcesFileBtn','#sourcesUrlBtn'];for(const selector of selectors){const el=$(selector);if(el){el.disabled=child;el.title=child?'Hãy nhập PIN và chuyển sang hồ sơ người lớn':'';}}for(const selector of ['#profileCreate','#pinSave','#profileName','#profileChild','#profilePin']){const el=$(selector);if(el)el.disabled=child;}$('#profileGroupLocks').querySelectorAll('input').forEach(x=>x.disabled=child);document.body.classList.toggle('child-profile',child);}
+ function applyProfileUI(){const child=profile().child;const selectors=['.nav[data-page="sources"]','.nav[data-page="folders"]','.nav[data-page="settings"]','.nav[data-page="health"]','.nav[data-page="doctor"]','#backupExportBtn','#backupImportBtn','#exportNav','#fileBtn','#urlBtn','#newFolderFromList','#refreshAllBtn','#folderCreateBtn','#quickExport','#emptyFileBtn','#emptyUrlBtn','#sourcesFileBtn','#sourcesUrlBtn'];for(const selector of selectors){const el=$(selector);if(el){el.disabled=child;el.title=child?'Hãy nhập PIN và chuyển sang hồ sơ người lớn':(el.dataset.navTooltip||'');}}for(const selector of ['#profileCreate','#pinSave','#profileName','#profileChild','#profilePin']){const el=$(selector);if(el)el.disabled=child;}$('#profileGroupLocks').querySelectorAll('input').forEach(x=>x.disabled=child);document.body.classList.toggle('child-profile',child);}
  function renderProfiles(){const sel=$('#profileChoice');sel.replaceChildren();for(const pr of state.profiles){const o=document.createElement('option');o.value=pr.id;o.textContent=pr.name+(pr.child?' · Trẻ em':' · Người lớn');sel.append(o);}sel.value=profile().id;
   $('#profileStatus').textContent='Đang dùng: '+profile().name+' · Các nhóm bị khóa: '+state.restrictedGroups.length;
   const root=$('#profileGroupLocks');root.replaceChildren();const legend=document.createElement('p');legend.textContent='Nhóm không cho trẻ xem:';root.append(legend);for(const g of [...new Set(channels().map(c=>c.group))].slice(0,120)){
@@ -209,7 +230,7 @@
  function onPage(p,last){hidePreview();if(last==='multiview'&&p!=='multiview'){stopMulti();ctx.player.muted=previousMainMuted;}if(p==='multiview'){previousMainMuted=ctx.player.muted;ctx.player.muted=true;renderMulti();}if(p==='health')renderHealth();if(p==='doctor')doctor();if(p==='profiles')renderProfiles();if(p==='epg')renderEpgSearch();applyProfileUI();}
  $('#epgSearchResults').textContent='Nhập tên chương trình để tìm và đặt nhắc lịch.';
  $('#bufferPreset').value=state.optimizer;
- window.IPTVProAdvanced={decorateRow,allowChannel,onCheck,onPlaying,onLoadStart,onQuality,onStreamError,onChannel,onStop,onPage,onFavoritesChanged,hlsOptions,recordHealth:record,doctor,playCatchup,remind,setAlternates:(id,urls)=>{state.alternates[id]=[...new Set(urls)].slice(0,15);save();},canEdit:()=>!profile().child,canEnterPage:p=>!profile().child||!['sources','folders','settings','health','doctor'].includes(p)};
+ window.IPTVProAdvanced={decorateRow,closePreview:hidePreview,allowChannel,onCheck,onPlaying,onLoadStart,onQuality,onStreamError,onChannel,onStop,onPage,onFavoritesChanged,hlsOptions,getReplayMinutes:replayMinutes,recordHealth:record,doctor,playCatchup,remind,setAlternates:(id,urls)=>{state.alternates[id]=[...new Set(urls)].slice(0,15);save();ctx.refreshManualLinks?.();},canEdit:()=>!profile().child,canEnterPage:p=>!profile().child||!['sources','discovery','folders','settings','health','doctor'].includes(p)};
  onFavoritesChanged();
  applyProfileUI();
  setInterval(checkReminders,30000);checkReminders();

@@ -1,0 +1,7 @@
+/* v4.23.36 compact native selects in Settings */
+#fullFeatureTools .settings-choice-group{display:flex;flex-direction:column;align-items:stretch;gap:12px;min-width:0}
+#fullFeatureTools .settings-choice-group legend{float:none;margin:0 0 5px;line-height:1.4}
+#fullFeatureTools .config-dropdown{display:block;box-sizing:border-box;width:100%;height:46px;padding:0 14px;border:1px solid var(--accent,#58e88b);border-radius:10px;background:color-mix(in srgb,var(--accent,#58e88b) 10%,var(--surface2,#142535));color:var(--text,#f1f5fb);font-size:14px;font-weight:650;cursor:pointer;appearance:auto}
+#fullFeatureTools .config-dropdown:focus-visible{outline:2px solid var(--accent,#58e88b);outline-offset:3px}
+#fullFeatureTools .settings-choice-group small{display:block;flex:none;margin-top:0}
+@media(max-width:1280px){#fullFeatureTools .configuration-choices{grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr))}}

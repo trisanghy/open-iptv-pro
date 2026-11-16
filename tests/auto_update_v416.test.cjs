@@ -49,7 +49,7 @@ test('signed packaged build supports intentional download and install with progr
   setFeedURL(feed){this.feed=feed;}
   quitAndInstall(silent,runAfter){this.installed=[silent,runAfter];}
  }
- const mock=new MockUpdater();const u=make({updater:mock,signatureCheck:()=>true});
+ const mock=new MockUpdater();const u=make({platform:'win32',arch:'x64',updater:mock,signatureCheck:()=>true});
  assert.equal((await u.checkForUpdates()).mode,'automatic');
  assert.equal((await u.download()).phase,'downloaded');
  assert.equal(u.snapshot().progress,100);
@@ -81,4 +81,11 @@ test('checksum parser accepts expected hash and exact file only',()=>{
  const hash='a'.repeat(64);
  assert.equal(extractSha256(`${hash}  ${mac}`,mac),hash);
  assert.equal(extractSha256(`${hash}  ${win}`,mac),null);
+});
+
+test('v4.23.36: signed macOS build still downloads verified DMG',async()=>{
+ class MockUpdater extends EventEmitter{setFeedURL(){throw Error('Native installer should not be used on macOS');}}
+ const u=make({updater:new MockUpdater(),signatureCheck:()=>true});
+ assert.equal((await u.checkForUpdates()).mode,'manual');
+ assert.equal(u.asset.name,mac);
 });

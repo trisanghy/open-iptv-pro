@@ -1,8 +1,13 @@
 #!/bin/bash
-# Open IPTV Pro 4.22.2 FULL: Tu tai Node.js vao thu muc rieng, KHONG cai vao macOS.
+# Open IPTV Pro Desktop macOS: read release version from package.json.
 set -Eeuo pipefail
 cd "$(dirname "$0")"
 PROJECT="$PWD"
+if [ ! -f "$PROJECT/package.json" ]; then
+  echo 'Khong tim thay package.json. Hay giai nen dung bo ma nguon FULL.'; exit 1
+fi
+PROJECT_VERSION=$(sed -nE 's/^[[:space:]]*"version":[[:space:]]*"([0-9]+\.[0-9]+\.[0-9]+)".*/\1/p' "$PROJECT/package.json" | head -1)
+if [ -z "$PROJECT_VERSION" ]; then echo 'Khong xac dinh duoc phien ban package.json'; exit 1; fi
 NODE_VER='22.16.0'
 ARCH=$(uname -m)
 case "$ARCH" in
@@ -48,7 +53,7 @@ pause_at_end() {
 trap pause_at_end EXIT
 
 printf '\n============================================\n'
-printf ' OPEN IPTV PRO 4.22.2 FULL - TAO DMG TU DONG\n'
+printf ' OPEN IPTV PRO %s FULL - TAO DMG TU DONG\n' "$PROJECT_VERSION"
 printf '============================================\n'
 printf 'Mac: %s | Node.js duoc su dung tu may neu phu hop, neu khong tu tai rieng.\n' "$ARCH"
 printf 'Khong yeu cau cai Node/Python/Qt/VLC thu cong.\n'
@@ -108,4 +113,8 @@ THANH CONG! DMG: %s
 ZIP: %s
 ' "$DMG" "$ZIP"
 
-open "$PROJECT/dist"
+if [ "${OPENIPTV_ONE_COMMAND:-0}" != "1" ]; then
+  if [ "${OPENIPTV_ONE_COMMAND:-0}" != "1" ]; then
+  open "$PROJECT/dist"
+fi
+fi
