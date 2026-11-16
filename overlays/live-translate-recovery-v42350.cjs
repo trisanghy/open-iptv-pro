@@ -14,12 +14,17 @@ const changes=[
   {
     "file": "renderer/live-captions-v42343.js",
     "from": "  if(ev.type==='status')message(ev.message||'Đang xử lý âm thanh…');",
-    "to": "  if(ev.type==='status')message(ev.message||'Đang xử lý âm thanh…');\n  if(ev.type==='translation-error')message('Live Translate: '+String(ev.message||'mô hình dịch lỗi').slice(0,180),true);"
+    "to": "  if(ev.type==='status'&&Date.now()-lastTranslationFailureAt>20000)message(ev.message||'Đang xử lý âm thanh…');\n  if(ev.type==='translation-error'){\n   lastTranslationFailureAt=Date.now();\n   message('Live Translate: '+String(ev.message||'mô hình dịch lỗi').slice(0,180),true);\n  }"
   },
   {
-    "file": "renderer/local-tts-v42344.js",
-    "from": "  if(!e||e.type!=='segment'||!enabled)return;",
-    "to": "  if(!e||e.type!=='segment'||!enabled)return;\n  if(translate?.checked&&!e.translated)return; // Keep captions; do not queue another failed translation in TTS."
+    "file": "renderer/live-captions-v42343.js",
+    "from": " let lastError='',lastLang=lang.value;",
+    "to": " let lastError='',lastLang=lang.value,lastTranslationFailureAt=0;"
+  },
+  {
+    "file": "renderer/live-captions-v42343.js",
+    "from": "   message(ev.translated?'Đang dịch → '+LANGUAGE_NAMES[ev.language||lang.value]:'Live Caption đang nhận diện');",
+    "to": "   if(ev.translated||Date.now()-lastTranslationFailureAt>20000)\n    message(ev.translated?'Đang dịch → '+LANGUAGE_NAMES[ev.language||lang.value]:'Live Caption đang nhận diện');"
   }
 ];
 for(const {file,from,to} of changes){
