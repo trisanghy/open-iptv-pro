@@ -20,7 +20,7 @@ if [ -n "$FREE_KIB" ] && [ "$FREE_KIB" -lt 6291456 ]; then
   echo "Insufficient free space: at least 6 GB; 10 GB recommended." >&2
   df -h "$DOWNLOADS" >&2; exit 1
 fi
-WORK="$(mktemp -d "$DOWNLOADS/.openiptv-42337-build.XXXXXXXX")"
+WORK="$(mktemp -d "$DOWNLOADS/.openiptv-42338-build.XXXXXXXX")"
 OUT="$DOWNLOADS/OpenIPTVPro_Build_v$VERSION"
 LOG="$DOWNLOADS/OpenIPTVPro_Build_v${VERSION}_ERROR.log"
 SUCCESS=0
@@ -31,7 +31,7 @@ cleanup() {
     echo "Build failed; previous output was preserved." >&2
     if [ -f "$WORK/build.log" ]; then cp "$WORK/build.log" "$LOG" || true; fi
   fi
-  case "$WORK" in "$DOWNLOADS"/.openiptv-42337-build.*) rm -rf -- "$WORK" ;; esac
+  case "$WORK" in "$DOWNLOADS"/.openiptv-42338-build.*) rm -rf -- "$WORK" ;; esac
   exit "$status"
 }
 trap cleanup EXIT
@@ -47,7 +47,7 @@ echo "[2/4] Extracting source (no redundant ZIP pre-scan)..."
 unzip -q "$WORK/$ARCHIVE" -d "$WORK"
 PROJECT="$WORK/Open-IPTV-Pro-v4_23_38_Full_Desktop"
 [ -f "$PROJECT/package.json" ] || { echo "Missing source package.json." >&2; exit 1; }
-grep -Eq '"version"[[:space:]]*:[[:space:]]*"4[.]23[.]37"' "$PROJECT/package.json" || { echo "Unexpected source version." >&2; exit 1; }
+grep -Eq '"version"[[:space:]]*:[[:space:]]*"4[.]23[.]38"' "$PROJECT/package.json" || { echo "Unexpected source version." >&2; exit 1; }
 [ -f "$PROJECT/BUILD_MAC.command" ] || { echo "Missing build script." >&2; exit 1; }
 echo "[3/4] Installing, testing and building macOS DMG..."
 if (cd "$PROJECT" && OPENIPTV_ONE_COMMAND=1 bash ./BUILD_MAC.command) 2>&1 | tee "$WORK/build.log"; then
