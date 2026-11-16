@@ -35,4 +35,4 @@ Script tải một ZIP từ nhánh thử nghiệm, xác nhận v19 trước buil
 
 Kiểm thử JavaScript của lần sửa được báo cáo: **30/30 nhanh**, **96/96 chính**. Chưa xác minh build DMG trên máy Mac thực hoặc tương thích nguồn IPTV/codec/Timeshift/DVR/Cast trên phần cứng thật. Windows cần công cụ MSVC/WebView2 theo tài liệu kỹ thuật.
 
-**Phạm vi:** Nhánh `experiment/rust-tauri-v2` בד. Không sửa `main`, không tự tạo release cho bản Electron chính.
+**Phạm vi:** Nhánh `experiment/rust-tauri-v2`. Không sửa `main`, không tự tạo release cho bản Electron chính.
