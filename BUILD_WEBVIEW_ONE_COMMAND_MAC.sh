@@ -29,6 +29,18 @@ if ! xcode-select -p >/dev/null 2>&1 || ! command -v git >/dev/null 2>&1; then
   xcode-select --install || true
   exit 10
 fi
+echo "[1/5] Downloading source (branch only; no main modifications)..."
+git clone --depth 1 --filter=blob:none --single-branch --branch "$BRANCH" --sparse "$REPO" "$TMP/repo"
+git -C "$TMP/repo" sparse-checkout set experiments/webview-full
+PROJECT="$TMP/repo/experiments/webview-full"
+[ -f "$PROJECT/package.json" ] || { echo "Git branch missing WebView source"; exit 15; }
+VERSION="$(node -p "require('$PROJECT/package.json').version")"
+if [ "$VERSION" != "$EXPECTED" ]; then
+  echo "STOP: GitHub branch contains WebView $VERSION, but this build requires $EXPECTED."
+  echo "The v4.23.35 source archive has not been uploaded to this GitHub branch. This script will not build an old version under a new name."
+  exit 16
+fi
+echo "Version confirmed: $VERSION. Preparing Node and Rust toolchains..."
 if ! command -v node >/dev/null 2>&1 || ! command -v npm >/dev/null 2>&1; then
   if command -v brew >/dev/null 2>&1; then
     brew install node
@@ -50,17 +62,7 @@ if ! command -v cargo >/dev/null 2>&1; then
 fi
 export PATH="$HOME/.cargo/bin:$PATH"
 command -v cargo >/dev/null || exit 14
-echo "[1/5] Downloading source (branch only; no main modifications)..."
-git clone --depth 1 --filter=blob:none --single-branch --branch "$BRANCH" --sparse "$REPO" "$TMP/repo"
-git -C "$TMP/repo" sparse-checkout set experiments/webview-full
-PROJECT="$TMP/repo/experiments/webview-full"
-[ -f "$PROJECT/package.json" ] || { echo "Git branch missing WebView source"; exit 15; }
-VERSION="$(node -p "require('$PROJECT/package.json').version")"
-if [ "$VERSION" != "$EXPECTED" ]; then
-  echo "STOP: branch version is $VERSION, but expected $EXPECTED."
-  echo "Source is not yet synchronized on GitHub; refusing to build an older version."
-  exit 16
-fi
+
 OUT="$HOME/Downloads/OpenIPTV_WebView_v${VERSION}_Build"
 mkdir -p "$OUT"
 ZIP="$OUT/Open_IPTV_Pro_WebView_v$VERSION_FULL_SOURCE.zip"
