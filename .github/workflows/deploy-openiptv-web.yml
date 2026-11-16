@@ -60,6 +60,8 @@ jobs:
           node --check _site/web-volume.js
           node --test web-online/tests/web-volume.test.cjs
           grep -q 'id="webVolumeMute"' _site/index.html
+          grep -q 'display:none!important' _site/web-only.css
+          grep -q 'playback-extra' _site/web-only.css
           test "$(grep -o 'id="volume"' _site/index.html | wc -l | tr -d ' ')" = 1
       - name: Cache Vietnam XMLTV for browsers (avoids CORS + gzip issues)
         shell: bash
