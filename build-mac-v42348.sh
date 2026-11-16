@@ -61,7 +61,7 @@ for file in argos-bridge-v42348.py local-ai-autoinstall-v42348.cjs caption-trans
   curl -fL --retry 2 --connect-timeout 15 --max-time 120 --output "$OVERLAY_DIR/$file" \
     "https://raw.githubusercontent.com/trisanghy/open-iptv-pro/$OVERLAY_REV/overlays/$file"
 done
-node "$OVERLAY_DIR/v4.23.48-apply.cjs" "$OVERLAY_DIR" || { echo 'Source patch failed' >&2; exit 1; }
+( cd "$PROJECT" && node "$OVERLAY_DIR/v4.23.48-apply.cjs" "$OVERLAY_DIR" ) || { echo 'Source patch failed' >&2; exit 1; }
 for js in src/local-ai-autoinstall.cjs src/caption-translator.cjs src/local-tts-service.cjs renderer/local-tts-v42344.js src/main.cjs src/preload.cjs; do
   node --check "$PROJECT/$js"
 done
@@ -75,8 +75,9 @@ mv "$PROJECT" "$NEW_PROJECT"
 PROJECT="$NEW_PROJECT"
 
 node --check "$PROJECT/src/whisper-autoinstall.cjs"
-( cd "$WORK" && zip -q -r "$PATCH_SOURCE" "Open-IPTV-Pro-v4_23_47_Full_Desktop" -x '*/node_modules/*' '*/dist/*' '*/.git/*' )
+( cd "$WORK" && zip -q -r "$PATCH_SOURCE" "Open-IPTV-Pro-v4_23_48_Full_Desktop" -x '*/node_modules/*' '*/dist/*' '*/.git/*' )
 unzip -tq "$WORK/$PATCH_SOURCE" >/dev/null
+unzip -Z1 "$WORK/$PATCH_SOURCE" | grep -Fxq "Open-IPTV-Pro-v4_23_48_Full_Desktop/package.json" || { echo 'Patched source ZIP is missing package.json' >&2; exit 1; }
 echo "[4/5] Building v4.23.48 native Mac $ARCH DMG..."
 ( cd "$PROJECT" && OPENIPTV_ONE_COMMAND=1 bash ./BUILD_MAC.command ) 2>&1 | tee "$WORK/build.log"
 DMG="Open-IPTV-Pro-4.23.48-mac-${ARCH}.dmg"
