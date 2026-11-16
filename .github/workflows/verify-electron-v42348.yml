@@ -2,7 +2,10 @@ name: Verify Electron v4.23.48 Argos and TTS voice fixes
 on:
   push:
     branches: [experiment/electron-whisper-cdnfix-v42347]
-    paths: [.github/workflows/verify-electron-v42348.yml]
+    paths:
+      - '.github/workflows/verify-electron-v42348.yml'
+      - 'overlays/v4.23.48-apply.cjs'
+      - 'overlays/*-v42348.*'
   workflow_dispatch:
 permissions:
   contents: read
