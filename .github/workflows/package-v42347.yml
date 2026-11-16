@@ -1,4 +1,5 @@
 name: Package v4.23.47 Whisper executable-name hotfix
+# Full source build and pinned-archive checks after correcting source test filename
 on:
   push:
     branches: [iptv-build-source]
@@ -59,7 +60,7 @@ jobs:
                       z.write(p,root.name+'/'+p.relative_to(root).as_posix())
           with zipfile.ZipFile(out) as z:
               assert z.testzip() is None
-              for f in ('package.json','src/live-caption-service.cjs','src/caption-translator.cjs','renderer/live-captions-v42343.js','renderer/index.html','tests/multilingual-captions-v42347.test.cjs'):
+              for f in ('package.json','src/live-caption-service.cjs','src/caption-translator.cjs','renderer/live-captions-v42343.js','renderer/index.html','tests/multilingual-captions-v42346.test.cjs'):
                   assert root.name+'/'+f in z.namelist(),f
           print('Source ZIP:',out,out.stat().st_size)
           PY
@@ -81,9 +82,9 @@ jobs:
           for source,dest in sources:
               data=Path(source).read_text()
               assert oldsha in data and old in data,source
-              for frm,to in [(oldsha,newsha),('4[.]23[.]45','4[.]23[.]46'),('4_23_45','4_23_46'),('42346','42347'),(old,new)]:
+              for frm,to in [(oldsha,newsha),('4[.]23[.]46','4[.]23[.]47'),('4_23_46','4_23_47'),('42346','42347'),(old,new)]:
                   data=data.replace(frm,to)
-              for stale in (oldsha,'4[.]23[.]45','4_23_45','42346',old):
+              for stale in (oldsha,'4[.]23[.]46','4_23_46','42346',old):
                   assert stale not in data,(source,stale)
               assert new in data and newsha in data,(source,'new source mismatch')
               Path(dest).write_text(data)
