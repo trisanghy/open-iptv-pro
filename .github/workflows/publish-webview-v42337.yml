@@ -1,0 +1,58 @@
+name: Publish WebView v4.23.37 single source ZIP
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - experiment/native-webview-ffmpeg
+    paths:
+      - .github/workflows/publish-webview-v42337.yml
+      - webview-sources/v4.23.37/v42337_update.patch
+
+permissions:
+  contents: write
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout isolated WebView branch
+        uses: actions/checkout@v4
+        with:
+          ref: experiment/native-webview-ffmpeg
+          persist-credentials: true
+      - name: Use Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Apply tested source fix, verify tests and assemble one ZIP
+        shell: bash
+        run: |
+          set -euo pipefail
+          SOURCE='https://raw.githubusercontent.com/trisanghy/open-iptv-pro/experiment/native-webview-ffmpeg/webview-sources/v4.23.36/Open_IPTV_Pro_WebView_v4_23_36_FULL_SOURCE.zip'
+          TEMP="$(mktemp -d)"
+          curl --fail --silent --show-error --location --retry 3 "$SOURCE" -o "$TEMP/base.zip"
+          unzip -q "$TEMP/base.zip" -d "$TEMP"
+          cd "$TEMP/Open_IPTV_Pro_WebView_v4_23_36_FULL"
+          patch --batch -p1 < "$GITHUB_WORKSPACE/webview-sources/v4.23.37/v42337_update.patch"
+          node --test --test-force-exit --test-timeout=16000 tests/*.test.cjs
+          node -e "const p=require('./package.json'); if(p.version!=='4.23.37')process.exit(2)"
+          cd "$TEMP"
+          mv Open_IPTV_Pro_WebView_v4_23_36_FULL Open_IPTV_Pro_WebView_v4_23_37_FULL
+          DEST="$GITHUB_WORKSPACE/webview-sources/v4.23.37"
+          mkdir -p "$DEST"
+          (cd "$TEMP" && zip -q -r -X "$DEST/Open_IPTV_Pro_WebView_v4_23_37_FULL_SOURCE.zip" Open_IPTV_Pro_WebView_v4_23_37_FULL -x '*/node_modules/*' '*/src-tauri/target/*')
+          unzip -tq "$DEST/Open_IPTV_Pro_WebView_v4_23_37_FULL_SOURCE.zip"
+          ls -lh "$DEST/Open_IPTV_Pro_WebView_v4_23_37_FULL_SOURCE.zip"
+      - name: Publish ZIP only on experiment branch
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add webview-sources/v4.23.37/Open_IPTV_Pro_WebView_v4_23_37_FULL_SOURCE.zip
+          if git diff --cached --quiet; then
+            echo 'Source ZIP already published'
+          else
+            git commit -m 'build(webview): publish v4.23.37 source ZIP with adaptive player aspect ratio'
+            git push origin HEAD:experiment/native-webview-ffmpeg
+          fi
