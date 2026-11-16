@@ -44,6 +44,22 @@ jobs:
           cp /tmp/iptv-web-deps/node_modules/hls.js/dist/hls.min.js _site/hls.min.js
           cp /tmp/iptv-web-deps/node_modules/dashjs/dist/modern/umd/dash.all.min.js _site/dash.all.min.js
           python3 web-online/prepare-web.py /tmp/openiptv-source/Open_IPTV_Pro_WebView_v4_23_37_FULL _site
+      - name: Cache Vietnam XMLTV for browsers (avoids CORS + gzip issues)
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m py_compile web-online/fetch-epg.py web-online/prepare-web.py
+          node --check _site/features.js
+          mkdir -p _site/epg
+          if python3 web-online/fetch-epg.py _site/epg/vn.xml; then
+            echo "Vietnam guide ready on same GitHub Pages origin."
+          elif test -s epg/vn.xml; then
+            cp -f epg/vn.xml _site/epg/vn.xml
+            if test -s epg/status.json; then cp -f epg/status.json _site/epg/status.json; fi
+            echo "::warning::EPG upstream failed. Retained previously published Vietnam guide."
+          else
+            echo "::warning::EPG upstream failed and no previous guide was available. Website will display a useful error until source is reachable."
+          fi
       - name: Preserve complete website as downloadable ZIP
         shell: bash
         run: |
