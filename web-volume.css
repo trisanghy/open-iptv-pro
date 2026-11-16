@@ -1,0 +1,38 @@
+/* Web-only inline volume in the approved TWO-ROW playback toolbar. */
+#page-tv .player-control-card .control-layout-top > .output-controls .web-volume-control {
+ display:flex!important;flex:1 1 110px!important;align-items:center!important;
+ justify-content:flex-start!important;gap:7px!important;min-width:0!important;
+ width:auto!important;max-width:190px!important;margin:0 auto 0 0!important;
+ padding:0 4px 0 0!important;white-space:nowrap!important;
+}
+#page-tv .player-control-card .output-controls .web-volume-mute {
+ display:inline-grid!important;place-items:center!important;flex:0 0 30px!important;
+ width:30px!important;height:32px!important;min-width:0!important;
+ margin:0!important;padding:0!important;border:0!important;border-radius:8px!important;
+ background:transparent!important;color:var(--text,#e3ebf0)!important;
+ font-size:17px!important;cursor:pointer;
+}
+#page-tv .player-control-card .output-controls .web-volume-mute:hover,
+#page-tv .player-control-card .output-controls .web-volume-mute:focus-visible {
+ background:color-mix(in srgb,var(--accent,#bd8aff) 18%,transparent)!important;
+ outline:2px solid transparent;
+}
+#page-tv .player-control-card .output-controls .web-volume-mute:focus-visible {outline:2px solid var(--accent,#bd8aff)!important;outline-offset:1px;}
+#page-tv .player-control-card .output-controls .web-volume-control > input#volume {
+ display:block!important;flex:1 1 auto!important;width:100%!important;min-width:0!important;
+ max-width:160px!important;height:22px!important;box-sizing:border-box!important;
+ margin:0!important;padding:0!important;cursor:pointer;accent-color:var(--accent,#bd8aff)!important;
+ touch-action:pan-y;
+}
+#page-tv .player-control-card .output-controls .web-volume-control > input#volume:focus-visible {
+ outline:2px solid var(--accent,#bd8aff);outline-offset:3px;border-radius:5px;
+}
+@container (max-width:680px) {
+ #page-tv .player-control-card .output-controls .web-volume-control {gap:3px!important;flex-basis:55px!important;padding-right:0!important;}
+ #page-tv .player-control-card .output-controls .web-volume-mute {flex-basis:24px!important;width:24px!important;height:28px!important;font-size:14px!important;}
+}
+@container (max-width:410px) {
+ /* Keep exactly two toolbar rows, with mute still available in tight spaces. */
+ #page-tv .player-control-card .output-controls .web-volume-control {flex-basis:25px!important;}
+ #page-tv .player-control-card .output-controls .web-volume-control > input#volume {max-width:42px!important;}
+}

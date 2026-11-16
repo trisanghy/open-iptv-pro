@@ -53,6 +53,14 @@ jobs:
           node --test web-online/tests/browser-channel-check.test.cjs
           node --test web-online/tests/resume-last.test.cjs
           grep -q 'id="webAutoResumeLast"' _site/index.html
+      - name: Verify Web player volume control
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --check _site/web-volume.js
+          node --test web-online/tests/web-volume.test.cjs
+          grep -q 'id="webVolumeMute"' _site/index.html
+          test "$(grep -o 'id="volume"' _site/index.html | wc -l | tr -d ' ')" = 1
       - name: Cache Vietnam XMLTV for browsers (avoids CORS + gzip issues)
         shell: bash
         run: |

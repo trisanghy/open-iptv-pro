@@ -25,7 +25,7 @@ replacement=(Path(__file__).resolve().parent/'epg-fetch-function.txt').read_text
 js=js[:start]+replacement+'\n'+js[end:]
 features.write_text(js,encoding='utf-8')
 
-for name in ('web-only.js','web-only.css','resume-last.js','resume-last.css','browser-channel-check.js'):
+for name in ('web-only.js','web-only.css','resume-last.js','resume-last.css','browser-channel-check.js','web-volume.css','web-volume.js'):
     copy2(Path(__file__).resolve().parent/name,out/name)
 # Patch the generated application from its WebView source on every deployment.
 app_file=out/'app.js'
@@ -40,8 +40,18 @@ html=(out/'index.html').read_text(encoding='utf-8')
 html=html.replace('<title>Open IPTV Pro 4.23.38 — WebView</title>','<title>Open IPTV Pro — Web Online</title>')
 html=html.replace('<script src="app.js"></script>','<script src="browser-channel-check.js"></script><script src="app.js"></script>',1)
 html=html.replace('<article class="settings-card" id="defaultBufferSettings">',"    <article class=\"settings-card\" id=\"webAutoResumeSettings\">\n      <h2>▶ Tự mở kênh khi vào website</h2>\n      <label class=\"check-line\" for=\"webAutoResumeLast\">\n        <input type=\"checkbox\" id=\"webAutoResumeLast\" checked/>\n        Tự động phát lại kênh xem cuối\n      </label>\n      <small id=\"webAutoResumeHint\" role=\"status\" aria-live=\"polite\">\n        Mặc định bật. Thử tự phát có tiếng; trình duyệt có thể yêu cầu nhấn Phát có tiếng một lần.\n      </small>\n    </article>\n"+'    <article class="settings-card" id="defaultBufferSettings">',1)
-html=html.replace('</head>','<link rel="stylesheet" href="web-only.css"/><link rel="stylesheet" href="resume-last.css"/><link rel="manifest" href="manifest.webmanifest"/></head>',1)
-html=html.replace('</body>','<script src="web-only.js"></script><script src="resume-last.js"></script></body>',1)
+# Relocate the SAME existing #volume slider out of the overflow popup.
+# Do not create a duplicate ID; desktop's main app.js still persists volume.
+if html.count("<div class=\"output-controls\" role=\"group\" aria-label=\"Thiết bị và toàn màn hình\">") != 1:
+    sys.exit('Volume toolbar: expected one output-controls group')
+if html.count("<label for=\"volume\">Âm lượng</label><input type=\"range\" min=\"0\" max=\"100\" value=\"80\" id=\"volume\" title=\"Âm lượng\"/>") != 1:
+    sys.exit('Volume toolbar: expected one native #volume range')
+html=html.replace("<div class=\"output-controls\" role=\"group\" aria-label=\"Thiết bị và toàn màn hình\">", "<div class=\"output-controls\" role=\"group\" aria-label=\"Thiết bị và toàn màn hình\">\n         <div class=\"web-volume-control\" role=\"group\" aria-label=\"Điều khiển âm lượng\"><button type=\"button\" id=\"webVolumeMute\" class=\"web-volume-mute\" aria-label=\"Tắt tiếng\" aria-pressed=\"false\" title=\"Tắt / bật tiếng\"><span aria-hidden=\"true\">🔊</span></button><label class=\"screen-reader-only\" for=\"volume\">Âm lượng</label><input type=\"range\" id=\"volume\" min=\"0\" max=\"100\" step=\"1\" value=\"80\" aria-label=\"Âm lượng\" title=\"Kéo để chỉnh âm lượng\" /></div>",1)
+html=html.replace("<label for=\"volume\">Âm lượng</label><input type=\"range\" min=\"0\" max=\"100\" value=\"80\" id=\"volume\" title=\"Âm lượng\"/>",'',1)
+html=html.replace('Công cụ khác: âm lượng, chụp ảnh, FFmpeg','Công cụ khác: chụp ảnh, FFmpeg')
+html=html.replace('Âm lượng, chụp ảnh và FFmpeg','Chụp ảnh và FFmpeg')
+html=html.replace('</head>','<link rel="stylesheet" href="web-only.css"/><link rel="stylesheet" href="resume-last.css"/><link rel="stylesheet" href="web-volume.css"/><link rel="manifest" href="manifest.webmanifest"/></head>',1)
+html=html.replace('</body>','<script src="web-only.js"></script><script src="resume-last.js"></script><script src="web-volume.js"></script></body>',1)
 (out/'index.html').write_text(html,encoding='utf-8')
 (out/'.nojekyll').write_text('')
 (out/'manifest.webmanifest').write_text(json.dumps({
