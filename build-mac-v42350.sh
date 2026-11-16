@@ -72,7 +72,7 @@ fi
 ( cd "$PROJECT" && node --test tests/argos-tts-voice-v42348.test.cjs tests/whisper-installer-hotfix-v42347.test.cjs ) || { echo 'Argos/TTS regression tests failed' >&2; exit 1; }
 # Apply additional direct language-routing patch on top of the verified 4.23.48 source.
 echo '[3.5/5] Applying source-aware direct translation and persistent audio ducking…'
-V50_REV="0d6c4123c2bb906b91c47bb9b6aa482b2703dcd5"
+V50_REV="d538b89c11b8c5c9c5b8f650b45375882a8ecb0a"
 for file in argos-bridge-v42350.py caption-translator-v42350.cjs live-caption-service-v42350.cjs live-captions-ui-v42350.js local-tts-service-v42350.cjs local-tts-ui-v42350.js direct-translation-v42350.test.cjs v4.23.50-apply.cjs; do
   curl -fL --retry 2 --connect-timeout 15 --max-time 120 --output "$OVERLAY_DIR/$file" \
     "https://raw.githubusercontent.com/trisanghy/open-iptv-pro/$V50_REV/overlays/$file"
