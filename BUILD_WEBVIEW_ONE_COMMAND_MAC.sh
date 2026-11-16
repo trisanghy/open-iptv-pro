@@ -34,7 +34,7 @@ git clone --depth 1 --filter=blob:none --single-branch --branch "$BRANCH" --spar
 git -C "$TMP/repo" sparse-checkout set experiments/webview-full
 PROJECT="$TMP/repo/experiments/webview-full"
 [ -f "$PROJECT/package.json" ] || { echo "Git branch missing WebView source"; exit 15; }
-VERSION="$(node -p "require('$PROJECT/package.json').version")"
+VERSION="$(/usr/bin/sed -nE 's/^[[:space:]]*"version"[[:space:]]*:[[:space:]]*"([^"]+)".*/\1/p' "$PROJECT/package.json" | /usr/bin/head -n 1)"
 if [ "$VERSION" != "$EXPECTED" ]; then
   echo "STOP: GitHub branch contains WebView $VERSION, but this build requires $EXPECTED."
   echo "The v4.23.35 source archive has not been uploaded to this GitHub branch. This script will not build an old version under a new name."
