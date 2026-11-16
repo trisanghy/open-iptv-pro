@@ -1,0 +1,90 @@
+/* v4.23.13: one-row settings navigation and shared accent-colored scrolling.
+   CSS-only; no changes to IPTV, playlist, DVR or user data. */
+:root {
+  --iptv-scroll-thumb: color-mix(in srgb, var(--ui-primary, var(--accent)) 72%, var(--edge));
+  --iptv-scroll-track: color-mix(in srgb, var(--surface) 90%, var(--edge));
+}
+/* Current/default theme follows the manually chosen accent. For other presets,
+   the chosen preset accent is used unless the user explicitly overrides it. */
+html[data-ui-style="current"] {
+  --iptv-scroll-thumb: color-mix(in srgb, var(--accent) 74%, var(--edge));
+}
+/* All vertical AND horizontal scrollable areas, including the TV channel strip,
+   source lists, settings and the task details popup. */
+html, html * {
+  scrollbar-width: thin;
+  scrollbar-color: var(--iptv-scroll-thumb) var(--iptv-scroll-track) !important;
+}
+html ::-webkit-scrollbar { width: 10px; height: 10px; }
+html ::-webkit-scrollbar-track {
+  background: var(--iptv-scroll-track);
+  border-radius: 20px;
+}
+html ::-webkit-scrollbar-thumb {
+  background: var(--iptv-scroll-thumb);
+  border: 2px solid var(--iptv-scroll-track);
+  border-radius: 20px;
+  min-height: 28px;
+}
+html ::-webkit-scrollbar-thumb:hover {
+  background: var(--ui-primary, var(--accent));
+}
+html ::-webkit-scrollbar-corner { background: var(--iptv-scroll-track); }
+/* The same accent is used by native horizontal sliders. */
+html :is(input[type="range"], progress) { accent-color: var(--ui-primary, var(--accent)); }
+html[data-ui-style="current"] :is(input[type="range"], progress) { accent-color: var(--accent); }
+
+/* One full-width collapsed setting per row, independent of window width and
+   Compact / Comfort and independent of all 11 theme preset layouts. */
+#page-settings .settings-grid {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) !important;
+  gap: 9px !important;
+  align-items: stretch !important;
+}
+#page-settings .settings-grid > .settings-accordion {
+  grid-column: 1 / -1 !important;
+  width: 100%;
+  max-width: none;
+  min-width: 0;
+}
+#page-settings .settings-accordion-heading {
+  display: flex !important;
+  align-items: center;
+  flex-wrap: nowrap !important;
+  min-height: 49px;
+  gap: 12px;
+  padding: 10px 16px;
+}
+#page-settings .settings-accordion-heading h2 {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  flex: 0 1 auto;
+  max-width: 66%;
+  overflow-wrap: normal;
+}
+#page-settings .settings-accordion-heading .settings-accordion-hint {
+  flex: 1 1 0;
+  min-width: 0;
+  width: auto;
+  text-align: right;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  order: 0;
+}
+#page-settings .settings-accordion-heading .settings-accordion-chevron {
+  flex: 0 0 auto;
+}
+html[data-ui-density="compact"] #page-settings .settings-accordion-heading {
+  min-height: 40px;
+  padding: 7px 13px;
+}
+html[data-ui-density="comfort"] #page-settings .settings-accordion-heading {
+  min-height: 49px;
+}
+@media (max-width: 650px) {
+  #page-settings .settings-accordion-heading { padding: 9px 11px; gap: 8px; }
+  #page-settings .settings-accordion-heading h2 { max-width: 65%; font-size: 13px; }
+}

@@ -1,0 +1,1 @@
+{"name": "Open IPTV Pro — Web Online", "short_name": "Open IPTV Pro", "start_url": "./", "scope": "./", "display": "standalone", "background_color": "#07111c", "theme_color": "#102030", "icons": [{"src": "assets/icon.png", "type": "image/png", "sizes": "any"}]}

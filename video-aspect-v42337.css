@@ -1,0 +1,43 @@
+/* v4.23.38 — follow the intrinsic display aspect ratio of the active video.
+   The default is 16:9 until media metadata is available. Avoid a hardcoded
+   16:9 stage and the wide empty side gutters shown with TV sources.
+   Place after every theme/layout stylesheet so all eleven presets agree. */
+#page-tv #playerBox:not(:fullscreen) {
+  --iptv-video-ratio: 16 / 9;
+  --iptv-video-ratio-number: 1.777778;
+  /* Keep the complete source-shaped stage inside the available screen height.
+     CSS min() lets portrait, square, and 4:3 streams remain centered. */
+  --iptv-video-height-cap: min(78vh, max(180px, calc(100vh - 210px)), 900px);
+  aspect-ratio: var(--iptv-video-ratio) !important;
+  width: min(100%, calc(var(--iptv-video-height-cap) * var(--iptv-video-ratio-number))) !important;
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  min-width: 0 !important;
+  flex: 0 0 auto !important;
+  align-self: start !important;
+  justify-self: center !important;
+  margin-inline: auto !important;
+  box-sizing: border-box;
+}
+#page-tv #playerBox:not(:fullscreen) > video {
+  width: 100% !important;
+  height: 100% !important;
+  inset: 0 !important;
+  object-position: center center;
+}
+#page-tv .view-mode .video-source-ratio {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 34px;
+  white-space: nowrap;
+  border-radius: 5px;
+  border: 1px solid var(--edge, #364351);
+  padding: 3px 5px;
+  font-size: 10px;
+  font-variant-numeric: tabular-nums;
+  color: var(--muted, #aab6c5);
+}
+/* Fullscreen remains full-screen; contain preserves the entire picture. */
+#playerBox:fullscreen { aspect-ratio: auto !important; width: 100vw !important; height: 100vh !important; margin: 0 !important; }
