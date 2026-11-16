@@ -1,0 +1,107 @@
+name: Publish Open IPTV Pro v4.23.38 source ZIP
+on:
+  push:
+    branches: [iptv-build-source]
+    paths:
+      - .github/workflows/package-v42338.yml
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout isolated build branch
+        uses: actions/checkout@v4
+      - name: Checkout verified desktop source from main v4.23.37
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          path: base-v42337
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Construct complete updated v4.23.38 source
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          mkdir -p /tmp/openiptv38/Open-IPTV-Pro-v4_23_38_Full_Desktop
+          rsync -a --exclude='.git/' base-v42337/ /tmp/openiptv38/Open-IPTV-Pro-v4_23_38_Full_Desktop/
+          python3 - <<'PY'
+          from pathlib import Path
+          base=Path('/tmp/openiptv38/Open-IPTV-Pro-v4_23_38_Full_Desktop')
+          branch=Path.cwd()
+          for folder in ['renderer','src','scripts','tests']:
+              for p in (base/folder).rglob('*'):
+                  if not p.is_file() or p.suffix.lower() not in {'.js','.cjs','.mjs','.html','.css','.json','.md','.ps1','.sh'}:continue
+                  try:s=p.read_text('utf-8')
+                  except UnicodeError:continue
+                  if '4.23.37' in s:p.write_text(s.replace('4.23.37','4.23.38'))
+          for file in ['package.json','README.md','BUILD_WINDOWS.bat']:
+              p=base/file
+              if p.exists():p.write_text(p.read_text().replace('4.23.37','4.23.38'))
+          source=base/'CAP_NHAT_GITHUB_V4_23_37_MAC.command'
+          if source.exists():
+              (base/'CAP_NHAT_GITHUB_V4_23_38_MAC.command').write_text(source.read_text().replace('4.23.37','4.23.38').replace('4_23_37','4_23_38'))
+          test=base/'tests/release_version_sync_v42332.test.cjs'
+          test.write_text(test.read_text().replace('CAP_NHAT_GITHUB_V4_23_37_MAC.command','CAP_NHAT_GITHUB_V4_23_38_MAC.command'))
+          for source,target in [
+              ('overlays/v4.23.38.css','renderer/video-source-aspect-v42338.css'),
+              ('overlays/v4.23.38.js','renderer/video-source-aspect-v42338.js'),
+              ('overlays/v4.23.38.test.cjs','tests/video_source_aspect_v42338.test.cjs')
+          ]:
+              (base/target).write_bytes((branch/source).read_bytes())
+          html=base/'renderer/index.html'
+          s=html.read_text()
+          needle='<link rel="stylesheet" href="config-dropdown-v42336.css"/>'
+          needle2='<script src="sidebar-channel-align-v42334.js"></script>'
+          assert needle in s and needle2 in s
+          s=s.replace(needle,needle+'<link rel="stylesheet" href="video-source-aspect-v42338.css"/>')
+          s=s.replace(needle2,needle2+'<script src="video-source-aspect-v42338.js"></script>')
+          html.write_text(s)
+          p=base/'CHANGELOG.md'
+          old=p.read_text() if p.exists() else ''
+          p.write_text('## v4.23.38 — Automatic video source aspect ratio\n\n- Default 16:9 frame; adapts to source videoWidth/videoHeight, including HLS/DASH resolution changes.\n- Supports 4:3, 16:9, portrait and ultrawide video without distorting the frame.\n- Resets to 16:9 when source changes. Existing fit/fullscreen modes remain unchanged.\n\n---\n\n'+old)
+          (base/'RELEASE_NOTES_V4_23_38.md').write_text('# Open IPTV Pro v4.23.38 — Native source aspect ratio\n\n- Player frame defaults to 16:9 and adapts when source metadata becomes available.\n- Handles 4:3, 16:9, portrait and 21:9 streams, plus adaptive-resolution changes.\n- Resets on source changes; keeps fit modes and fullscreen toolbar outside video.\n- No changes to channel lists or playback engine.\n')
+          import json
+          assert json.loads((base/'package.json').read_text())['version']=='4.23.38'
+          print('Prepared Open IPTV Pro 4.23.38',base)
+          PY
+      - name: Run all Node tests on generated source
+        working-directory: /tmp/openiptv38/Open-IPTV-Pro-v4_23_38_Full_Desktop
+        shell: bash
+        run: npm test
+      - name: ZIP source once, compute SHA256 and update Mac one-command builder
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          python3 - <<'PY'
+          import pathlib,zipfile,hashlib,re
+          base=pathlib.Path('/tmp/openiptv38/Open-IPTV-Pro-v4_23_38_Full_Desktop')
+          dest=pathlib.Path('source/OpenIPTVPro_Source_v4.23.38.zip')
+          excluded={'node_modules','dist','.git','.open-iptv-tools','__pycache__'}
+          with zipfile.ZipFile(dest,'w',compression=zipfile.ZIP_DEFLATED,compresslevel=8) as z:
+              for p in sorted(base.rglob('*')):
+                  if not p.is_file() or any(x in excluded for x in p.relative_to(base).parts):continue
+                  z.write(p,arcname=base.name+'/'+p.relative_to(base).as_posix())
+          with zipfile.ZipFile(dest) as z:
+              assert z.testzip() is None
+              assert base.name+'/package.json' in z.namelist()
+              assert base.name+'/renderer/video-source-aspect-v42338.js' in z.namelist()
+          sha=hashlib.sha256(dest.read_bytes()).hexdigest()
+          dest.with_suffix(dest.suffix+'.sha256').write_text(f'{sha}  source/{dest.name}\n')
+          script=pathlib.Path('build-mac.sh')
+          s=script.read_text()
+          assert '4.23.37' in s and 'EXPECTED_SHA256=' in s
+          s=s.replace('4.23.37','4.23.38').replace('4_23_37','4_23_38')
+          s=re.sub(r'EXPECTED_SHA256="[a-f0-9]{64}"','EXPECTED_SHA256="'+sha+'"',s)
+          script.write_text(s)
+          pathlib.Path('build-mac-v42338.sh').write_text(s)
+          print('ZIP file:',dest,'SHA256:',sha)
+          PY
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add source/OpenIPTVPro_Source_v4.23.38.zip source/OpenIPTVPro_Source_v4.23.38.zip.sha256 build-mac.sh build-mac-v42338.sh
+          git commit -m "build(source): publish verified single-ZIP desktop v4.23.38 with adaptive video frame"
+          git push origin HEAD:iptv-build-source
