@@ -1,0 +1,27 @@
+/* Rust Lab v13 — screenshot-matched native alternate link select.
+   Top row: [channel] [Link phát + dropdown] [favorite]. Bottom row unchanged. */
+.playing-info{position:relative;display:flex;align-items:center;gap:14px;flex-wrap:nowrap}
+.playing-info>.small-lcd{flex:0 0 auto}
+.playing-info>.playing-meta{flex:1 1 auto;min-width:0;overflow:hidden}
+.playing-info>.playing-meta>b,
+.playing-info>.playing-meta>small{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.playing-info>.manual-link-control{flex:0 1 auto;min-width:0;display:flex;align-items:center;gap:12px;margin-left:auto;z-index:21}
+.playing-info>.favorite-current{flex:0 0 auto;margin-left:0}
+.manual-link-caption{flex:0 0 auto;white-space:nowrap;font-size:13px;font-weight:650;color:var(--muted,#8d9bab)}
+.manual-link-select{flex:0 1 auto;width:clamp(220px,25vw,445px);max-width:100%;min-width:0;height:44px;padding:0 16px;color:var(--text,#eaf2f7);background:var(--surface2,#152230);border:1px solid var(--edge,#354957);border-radius:12px;font-size:13px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;color-scheme:dark}
+.manual-link-select:hover{border-color:color-mix(in srgb,var(--primary,#bc7cff) 55%,var(--edge,#354957))}
+.manual-link-select:focus-visible{outline:2px solid var(--primary,#bc7cff);outline-offset:2px}
+html[data-theme="light"] .manual-link-select{color-scheme:light;background:var(--surface2,#f3f6f9);color:var(--text,#172b3b)}
+/* Preserve a single header row on desktop; let narrow windows fit naturally. */
+@media(max-width:1150px){
+ .playing-info{gap:9px;flex-wrap:wrap}
+ .playing-info>.manual-link-control{margin-left:auto}
+ .manual-link-select{width:clamp(165px,26vw,360px)}
+}
+@media(max-width:800px){
+ .playing-info>.playing-meta{flex-basis:calc(100% - 74px)}
+ .playing-info>.manual-link-control{margin-left:0;flex:1 1 200px}
+ .manual-link-caption{font-size:12px}
+ .manual-link-select{width:100%}
+ .playing-info>.favorite-current{margin-left:auto}
+}

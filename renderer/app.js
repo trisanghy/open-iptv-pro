@@ -48,6 +48,38 @@
   shots:{running:false,cancel:false,visible:false,total:0,done:0,success:0,failed:0,skipped:0,latest:''}
  };
  const player=$('#video');
+ const manualPicker=window.IPTVManualLinkPicker;
+ function manualChoices(ch=currentChannel()){
+  return manualPicker?.choices(ch,enabledChannels(),store.alternates||{},window.OpenIPTVAdvancedCore?.alternatives,adaptive)||[];
+ }
+ function updateManualLinks(){
+  const control=$('#manualLinkControl'),select=$('#manualLinkSelect');
+  if(!control||!select)return;
+  const ch=currentChannel(),items=ch&&playMode==='live'?manualChoices(ch):[];
+  if(items.length<2){control.classList.add('hidden');select.replaceChildren();return;}
+  control.classList.remove('hidden');
+  const currentUrl=playCandidates[playCandidateIndex]||items[0].url;
+  const urls=items.map(item=>item.url);
+  // Preserve the native select DOM while the player updates, so its popup
+  // does not flicker or close when HLS emits events in rapid succession.
+  if(select.options.length!==items.length||items.some((item,i)=>select.options[i]?.value!==item.url||select.options[i]?.dataset.preferred!==String(!!item.preferred))){
+   const fragment=document.createDocumentFragment();
+   for(const item of items){
+    const opt=document.createElement('option');
+    opt.value=item.url;
+    opt.dataset.preferred=String(!!item.preferred);
+    const label=item.url===ch.url?'Link chính':item.label;
+    // item.host strips query strings and credentials; never show stream tokens.
+    opt.textContent=`${label} · ${item.host||'Nguồn phát'}${item.preferred?' ★':''}`;
+    fragment.append(opt);
+   }
+   select.replaceChildren(fragment);
+  }
+  const activeUrl=urls.includes(currentUrl)?currentUrl:items[0].url;
+  if(select.value!==activeUrl)select.value=activeUrl;
+  const active=items.find(item=>item.url===activeUrl);
+  select.title=active?`${active.url===ch.url?'Link chính':active.label} · ${active.host}`:'Chọn link phát';
+ }
  let lastFavoriteSignature='';
  function currentChannel(){
   if(!current)return null;
@@ -97,87 +129,70 @@
  function restoreListScroll(pos){const list=$('#channelList');if(!list||!pos)return;requestAnimationFrame(()=>{list.scrollTop=Math.min(pos.top,Math.max(0,list.scrollHeight-list.clientHeight));list.scrollLeft=Math.min(pos.left,Math.max(0,list.scrollWidth-list.clientWidth));});}
  function scrollGroupIntoView(group){requestAnimationFrame(()=>{document.querySelectorAll('.folder-header').forEach(x=>{if(x.dataset.group===group)x.scrollIntoView({block:'nearest'});});});}
  function reorderGroup(moved,target,after=false){
-  if(window.IPTVProAdvanced?.canEdit?.()===false)return;
-  if(!moved||!target||moved===target)return;
+  if(window.IPTVProAdvanced?.canEdit?.()===false)return false;
+  if(!moved||!target||moved===target)return false;
   const order=groupNames().filter(Boolean);const from=order.indexOf(moved),to=order.indexOf(target);
-  if(from<0||to<0)return;
+  if(from<0||to<0)return false;
   order.splice(from,1);const dest=order.indexOf(target)+(after?1:0);order.splice(dest,0,moved);
-  store.groupOrder=order;save();renderList(true);renderFolders();toast(`Đã thay đổi vị trí thư mục: ${moved}`);
+  store.groupOrder=order;save();renderList(true);renderFolders();toast(`Đã thay đổi vị trí thư mục: ${moved}`);return true;
  }
- const CHANNEL_DRAG_MIME='application/x-open-iptv-channel';
- let draggedChannelIds=[], selectedChannelIds=new Set(),lastSelectionAnchor='';
+ // v9: WebKit-friendly pointer drag. Native HTML drag/drop events on buttons
+ // and nested channel rows were unreliable in macOS WKWebView.
+ let selectedChannelIds=new Set();
  function selectionEditable(){return window.IPTVProAdvanced?.canEdit?.()!==false;}
- function hasChannelPayload(e){return draggedChannelIds.length>0||Array.from(e.dataTransfer?.types||[]).includes(CHANNEL_DRAG_MIME);}
- function displayedChannelIds(){
-  const byGroup=new Map();for(const c of channelView()){const group=groupName(c);if(!byGroup.has(group))byGroup.set(group,[]);byGroup.get(group).push(c);}
-  return groupNames().flatMap(group=>organizer.sorted(store,group,byGroup.get(group)||[]).map(c=>c.id));
- }
  function updateSelectionUI(){
-  const existing=new Set(store.channels.map(c=>c.id));selectedChannelIds=new Set([...selectedChannelIds].filter(id=>existing.has(id)));
-  const count=selectedChannelIds.size,toolbar=$('#channelBulkToolbar');
-  if(toolbar)toolbar.classList.toggle('has-selection',count>0);
-  const label=$('#channelSelectionCount');if(label)label.textContent=count?`Đã chọn ${count} kênh`:'Chọn kênh để chuyển nhiều';
-  const move=$('#bulkMoveBtn');if(move)move.disabled=!count;
-  const clear=$('#clearSelectionBtn');if(clear)clear.disabled=!count;
+  const existing=new Set(store.channels.map(c=>c.id));
+  selectedChannelIds=new Set([...selectedChannelIds].filter(id=>existing.has(id)));
   document.querySelectorAll('.channel-item[data-channel-id]').forEach(row=>{
    const checked=selectedChannelIds.has(row.dataset.channelId);
-   row.classList.toggle('channel-selected',checked);row.setAttribute('aria-selected',String(checked));
-   const input=row.querySelector('.channel-select');if(input)input.checked=checked;
+   row.classList.toggle('channel-selected',checked);
+   row.setAttribute('aria-selected',String(checked));
   });
+  const hint=$('.channel-drag-hint');
+  if(hint)hint.textContent=selectedChannelIds.size
+   ?`Đã chọn ${selectedChannelIds.size} kênh · kéo một kênh được chọn vào thư mục đích. Giữ Shift + bấm để chọn/bỏ chọn thêm; Esc để hủy.`
+   :'Kéo thả để sắp xếp kênh hoặc thư mục. Giữ Shift + bấm để chọn nhiều kênh, sau đó kéo vào thư mục đích.';
  }
- function selectChannel(id,checked,range=false){
+ function toggleShiftSelection(id){
   if(!selectionEditable())return toast('Hồ sơ trẻ em không được sắp xếp kênh','warn');
-  if(range&&lastSelectionAnchor){
-   const visible=displayedChannelIds(),from=visible.indexOf(lastSelectionAnchor),to=visible.indexOf(id);
-   if(from>=0&&to>=0){for(const value of visible.slice(Math.min(from,to),Math.max(from,to)+1)){if(checked)selectedChannelIds.add(value);else selectedChannelIds.delete(value);}}
-   else if(checked)selectedChannelIds.add(id);else selectedChannelIds.delete(id);
-  }else if(checked)selectedChannelIds.add(id);else selectedChannelIds.delete(id);
-  lastSelectionAnchor=id;updateSelectionUI();
+  if(selectedChannelIds.has(id))selectedChannelIds.delete(id);else selectedChannelIds.add(id);
+  updateSelectionUI();
  }
  function applyChannelMove(ids,group,beforeId=null){
   if(!selectionEditable()){toast('Hồ sơ trẻ em không được chuyển kênh','warn');return false;}
   if(!groupNames().includes(group)){toast('Thư mục đích không tồn tại','warn');return false;}
   const result=organizer.move(store,ids,group,beforeId);
   if(!result.changed)return false;
+  selectedChannelIds.clear();
   store.collapsedGroups=store.collapsedGroups.filter(g=>g!==group);
   save();renderList(true);renderFolders();
   if(page==='shots')renderShots();
-  toast(`Đã sắp xếp ${result.count} kênh → ${group}`);
+  toast(result.count===1?'Đã sắp xếp kênh':`Đã sắp xếp ${result.count} kênh`);
   return true;
  }
- function moveDroppedChannel(e,group,beforeId=null){
-  if(!hasChannelPayload(e))return false;
-  e.preventDefault();e.stopPropagation();
-  let ids=draggedChannelIds.slice();
-  if(!ids.length){try{const data=JSON.parse(e.dataTransfer?.getData(CHANNEL_DRAG_MIME)||'[]');ids=Array.isArray(data)?data:[];}catch{ids=[];}}
-  draggedChannelIds=[];
-  if(!ids.length){toast('Không tìm thấy kênh để chuyển','warn');return true;}
-  applyChannelMove(ids,group,beforeId);
-  return true;
- }
- function channelDragStart(e,c){
-  if(!selectionEditable()||e.target.closest('button,input')){e.preventDefault();return;}
-  draggedChannelIds=selectedChannelIds.has(c.id)?[...selectedChannelIds]:[c.id];
-  e.dataTransfer?.setData(CHANNEL_DRAG_MIME,JSON.stringify(draggedChannelIds));
-  e.dataTransfer.effectAllowed='move';e.currentTarget.classList.add('channel-dragging');
- }
- function folderChannelDragOver(e,element){
-  if(!hasChannelPayload(e))return false;
-  e.preventDefault();if(e.dataTransfer)e.dataTransfer.dropEffect='move';element.classList.add('channel-drop-target');return true;
- }
- function openMoveSelectionModal(ids){
-  if(!selectionEditable())return toast('Hồ sơ trẻ em không được chuyển kênh','warn');
-  const valid=ids.filter(id=>store.channels.some(c=>c.id===id));if(!valid.length)return;
-  const options=groupNames().map(n=>`<option value="${escape(n)}">${escape(n)}</option>`).join('');
-  openModal('Chuyển nhiều kênh',`<p class="hint">Đang chọn <b>${valid.length}</b> kênh. Có thể kéo cả nhóm đã chọn vào một thư mục hoặc chọn đích tại đây.</p><label class="modal-label" for="bulkFolderSelect">Chuyển tới thư mục</label><select class="modal-input" id="bulkFolderSelect">${options}</select>`,()=>{
-   const group=$('#bulkFolderSelect').value;if(!group)throw Error('Hãy chọn thư mục');
-   applyChannelMove(valid,group);selectedChannelIds.clear();updateSelectionUI();
-  },'Chuyển kênh');
+ function installChannelPointerDnD(){
+  window.IPTVPointerDnD.create({
+   document,host:$('#channelList'),folders:$('#folderManager'),
+   enabled:selectionEditable,
+   selectedIds:id=>selectedChannelIds.has(id)?[...selectedChannelIds]:[id],
+   onChannelDrop:({ids,group,targetId,after})=>{
+    if(!groupNames().includes(group))return false;
+    if(targetId){
+     const remaining=organizer.groupList(store,group).filter(id=>!ids.includes(id));
+     const at=remaining.indexOf(targetId);
+     if(at<0)return false;
+     const before=after?(remaining[at+1]||null):targetId;
+     return applyChannelMove(ids,group,before);
+    }
+    return applyChannelMove(ids,group);
+   },
+   onFolderDrop:({source,target,after})=>reorderGroup(source,target,after),
+   onSelectionCancelled:()=>updateSelectionUI()
+  });
  }
  function snapshotSrc(s){if(!s)return '';if(s.file)return snapshotBase?snapshotBase+encodeURIComponent(s.file):'';return s.data||'';}
  function channelThumb(c){const shot=store.snapshots[c.url];const url=snapshotSrc(shot);return url?`<img loading="lazy" src="${escape(url)}" alt="Ảnh chụp ${escape(c.name)}"/>`:icon(c);}
  function createFolder(){if(window.IPTVProAdvanced?.canEdit?.()===false)return toast('Hồ sơ trẻ em không được sửa thư mục','warn');openModal('Tạo thư mục kênh',`<label class="modal-label">Tên thư mục mới</label><input class="modal-input" id="folderName" maxlength="90" placeholder="Ví dụ: Kênh thể thao"/>`,()=>{const value=$('#folderName').value.trim();if(!value||value.length>90)throw Error('Nhập tên thư mục (tối đa 90 ký tự)');if(groupNames().includes(value))throw Error('Thư mục này đã tồn tại');store.folders.push(value);syncGroupOrder();save();render();},'Tạo thư mục');}
- function moveChannelToFolder(c){openMoveSelectionModal(selectedChannelIds.has(c.id)?[...selectedChannelIds]:[c.id]);}
  function renameFolder(old){
   if(!selectionEditable())return toast('Hồ sơ trẻ em không được đổi tên thư mục','warn');
   openModal('Đổi tên thư mục',`<label class="modal-label">Tên thư mục</label><input class="modal-input" id="folderRename" maxlength="90" value="${escape(old)}"/>`,()=>{
@@ -205,13 +220,8 @@
   const root=$('#folderManager');root.replaceChildren();const groups=groupNames();
   if(!groups.length){root.innerHTML='<div class="empty-list">Chưa có thư mục. Nhập M3U hoặc tạo thư mục mới.</div>';return;}
   groups.forEach((g,index)=>{
-   const card=document.createElement('div');card.className='folder-card';card.draggable=selectionEditable();card.dataset.group=g;
-   card.innerHTML=`<h3>▤ ${escape(g)}</h3><p>${groupCount(g)} kênh trong thư mục • Kéo thả để sắp xếp</p><div class="folder-card-actions"><button class="folder-open">▶ Xem kênh</button><button class="folder-up" ${index===0?'disabled':''} title="Lên một vị trí">↑</button><button class="folder-down" ${index===groups.length-1?'disabled':''} title="Xuống một vị trí">↓</button><button class="folder-rename">✎ Đổi tên</button><button class="folder-delete">✕ Xóa</button></div>`;
-   card.addEventListener('dragstart',e=>{if(!selectionEditable()||e.target.closest('button')){e.preventDefault();return;}card.classList.add('dragging');e.dataTransfer?.setData('text/plain',g);e.dataTransfer.effectAllowed='move';});
-   card.addEventListener('dragend',()=>card.classList.remove('dragging'));
-   card.addEventListener('dragover',e=>{if(folderChannelDragOver(e,card))return;e.preventDefault();card.classList.add('drag-over');});
-   card.addEventListener('dragleave',()=>card.classList.remove('drag-over','channel-drop-target'));
-   card.addEventListener('drop',e=>{card.classList.remove('drag-over','channel-drop-target');if(moveDroppedChannel(e,g))return;e.preventDefault();reorderGroup(e.dataTransfer?.getData('text/plain')||document.querySelector('.folder-card.dragging')?.dataset.group,g);});
+   const card=document.createElement('div');card.className='folder-card';card.dataset.group=g;
+   card.innerHTML=`<h3>▤ ${escape(g)}</h3><p>${groupCount(g)} kênh trong thư mục • Kéo thả tiêu đề thư mục để sắp xếp</p><div class="folder-card-actions"><button class="folder-open">▶ Xem kênh</button><button class="folder-up" ${index===0?'disabled':''} title="Lên một vị trí">↑</button><button class="folder-down" ${index===groups.length-1?'disabled':''} title="Xuống một vị trí">↓</button><button class="folder-rename">✎ Đổi tên</button><button class="folder-delete">✕ Xóa</button></div>`;
    card.querySelector('.folder-open').onclick=()=>{store.collapsedGroups=store.collapsedGroups.filter(x=>x!==g);save();setPage('tv');$('#searchBox').value='';renderList(true);scrollGroupIntoView(g);};
    card.querySelector('.folder-up').onclick=()=>reorderGroup(g,groups[index-1]);
    card.querySelector('.folder-down').onclick=()=>reorderGroup(g,groups[index+1],true);
@@ -238,42 +248,25 @@
   const f=document.createDocumentFragment();
   orderedGroups.forEach(group=>{
     const entries=organizer.sorted(store,group,groups.get(group)||[]),collapsed=store.collapsedGroups.includes(group)&&!$('#searchBox').value.trim();
-    const header=document.createElement('button');header.type='button';header.className='folder-header';header.dataset.group=group;header.draggable=!$('#searchBox').value.trim();
+    const header=document.createElement('button');header.type='button';header.className='folder-header';header.dataset.group=group;
     header.innerHTML=`<span class="folder-arrow">${collapsed?'▸':'▾'}</span><span class="folder-emoji">📁</span><span>${escape(group)}</span><span class="folder-size">${entries.length}</span>`;
     header.addEventListener('click',()=>{const pos=preserveListScroll();if(store.collapsedGroups.includes(group))store.collapsedGroups=store.collapsedGroups.filter(x=>x!==group);else store.collapsedGroups.push(group);save();renderList();restoreListScroll(pos)});
-    header.addEventListener('dragstart',e=>{header.classList.add('dragging');e.dataTransfer?.setData('text/plain',group);e.dataTransfer.effectAllowed='move';});
-    header.addEventListener('dragend',()=>header.classList.remove('dragging'));
-    header.addEventListener('dragover',e=>{if(folderChannelDragOver(e,header))return;if(!$('#searchBox').value.trim()){e.preventDefault();header.classList.add('drag-over');}});
-    header.addEventListener('dragleave',()=>header.classList.remove('drag-over','channel-drop-target'));
-    header.addEventListener('drop',e=>{header.classList.remove('drag-over','channel-drop-target');if(moveDroppedChannel(e,group))return;if($('#searchBox').value.trim())return;e.preventDefault();reorderGroup(e.dataTransfer?.getData('text/plain')||document.querySelector('.folder-header.dragging')?.dataset.group,group);});
     f.append(header);
     if(collapsed)return;
     entries.forEach(c=>{
       const row=document.createElement('div');const shot=store.snapshots[c.url];row.className='channel-item'+(current?.id===c.id?' current':'');row.dataset.channelId=c.id;
-      row.innerHTML=`<input class="channel-select" type="checkbox" aria-label="Chọn ${escape(c.name)} để chuyển nhóm" ${selectedChannelIds.has(c.id)?'checked':''}/><div class="chan-logo ${snapshotSrc(shot)?'snapshot-thumb':''}">${channelThumb(c)}</div><div class="channel-text"><b>${escape(c.name)}</b><small><i class="mini-pill ${escape(c.status||'')}"></i><span class="channel-health ${escape(c.status||'')}">${c.status==='alive'?'Sống · ':c.status==='dead'?'Die · ':c.status==='uncertain'?'Chưa rõ · ':''}</span>${shot?'📸 Đã có ảnh • ':''}${escape(groupName(c))}</small></div><button class="channel-move" title="Chuyển thư mục">▤</button><button type="button" class="channel-star ${favCore.has(store,c)?'marked':''}" aria-pressed="${favCore.has(store,c)}" title="${favCore.has(store,c)?'Bỏ yêu thích':'Thêm yêu thích'}">${favCore.has(store,c)?'★':'☆'}</button>`;
-      row.draggable=selectionEditable();row.title='Kéo đến kênh khác để đổi vị trí, hoặc thả vào tên thư mục để chuyển';
-      row.addEventListener('dragstart',e=>channelDragStart(e,c));
-      row.addEventListener('dragend',()=>{row.classList.remove('channel-dragging');draggedChannelIds=[];});
-      row.addEventListener('dragover',e=>{
-       if(!hasChannelPayload(e))return;e.preventDefault();e.stopPropagation();
-       row.classList.add('channel-drop-position');row.classList.toggle('channel-drop-after',e.clientY>row.getBoundingClientRect().top+row.offsetHeight/2);
-       if(e.dataTransfer)e.dataTransfer.dropEffect='move';
+      row.innerHTML=`<div class="chan-logo ${snapshotSrc(shot)?'snapshot-thumb':''}">${channelThumb(c)}</div><div class="channel-text"><b>${escape(c.name)}</b><small><i class="mini-pill ${escape(c.status||'')}"></i><span class="channel-health ${escape(c.status||'')}">${c.status==='alive'?'Sống · ':c.status==='dead'?'Die · ':c.status==='uncertain'?'Chưa rõ · ':''}</span>${shot?'📸 Đã có ảnh • ':''}${escape(groupName(c))}</small></div><button type="button" class="channel-star ${favCore.has(store,c)?'marked':''}" aria-pressed="${favCore.has(store,c)}" title="${favCore.has(store,c)?'Bỏ yêu thích':'Thêm yêu thích'}">${favCore.has(store,c)?'★':'☆'}</button>`;
+      row.title='Giữ Shift + bấm để chọn nhiều kênh; kéo thả để sắp xếp hoặc chuyển thư mục';
+      row.setAttribute('aria-selected',String(selectedChannelIds.has(c.id)));
+      row.classList.toggle('channel-selected',selectedChannelIds.has(c.id));
+      row.querySelectorAll('img').forEach(img=>{img.draggable=false;});
+      row.addEventListener('click',e=>{
+       if(e.shiftKey){e.preventDefault();toggleShiftSelection(c.id);return;}
+       if(selectedChannelIds.size){selectedChannelIds.clear();updateSelectionUI();}
+       playChannel(c.id);
       });
-      row.addEventListener('dragleave',e=>{if(!row.contains(e.relatedTarget))row.classList.remove('channel-drop-position','channel-drop-after');});
-      row.addEventListener('drop',e=>{
-       if(!hasChannelPayload(e))return;
-       const after=e.clientY>row.getBoundingClientRect().top+row.offsetHeight/2;
-       row.classList.remove('channel-drop-position','channel-drop-after');
-       const dest=groupName(c),moving=draggedChannelIds.slice();
-       if(moving.includes(c.id)){e.preventDefault();e.stopPropagation();return;}
-       const remaining=organizer.groupList(store,dest).filter(id=>!moving.includes(id));
-       const at=remaining.indexOf(c.id);
-       const beforeId=after?(remaining[at+1]||null):c.id;
-       moveDroppedChannel(e,dest,beforeId);
-      });
-      row.addEventListener('click',e=>{if(e.ctrlKey||e.metaKey||e.shiftKey){selectChannel(c.id,!selectedChannelIds.has(c.id),e.shiftKey);return;}playChannel(c.id);});
-      row.querySelector('.channel-select').addEventListener('click',e=>{e.stopPropagation();selectChannel(c.id,e.target.checked,e.shiftKey);});
-      row.querySelector('.channel-star').addEventListener('click',e=>{e.stopPropagation();favorite(c);});row.querySelector('.channel-move').addEventListener('click',e=>{e.stopPropagation();moveChannelToFolder(c);});window.IPTVExtras?.decorateRow?.(c,row);window.IPTVProAdvanced?.decorateRow?.(c,row);f.append(row);
+      row.querySelector('.channel-star').addEventListener('click',e=>{e.stopPropagation();favorite(c);});
+      window.IPTVExtras?.decorateRow?.(c,row);window.IPTVProAdvanced?.decorateRow?.(c,row);f.append(row);
     });
   });target.append(f);restoreListScroll(prev);updateSelectionUI();
  }
@@ -467,7 +460,7 @@
   $('#navCount').textContent=visible.length;$('#favCount').textContent=visibleFavorites.length;$('#sourceCount').textContent=store.sources.length;$('#footerCounts').textContent=`${store.channels.length} kênh • ${store.sources.length} nguồn`;
   if($('#activeSourceTag'))$('#activeSourceTag').textContent=store.sources.length?`${store.sources.length} nguồn M3U`:'Chưa có nguồn';
   renderList(preserveScroll);renderSources();renderShots();renderFavorites();renderFolders();$('#folderCount').textContent=groupNames().length;
-  updatePlayerFavorite();notifyFavorites();window.IPTVExtras?.render?.();
+  updatePlayerFavorite();updateManualLinks();notifyFavorites();window.IPTVExtras?.render?.();
  }
  function updateFavoriteButton(button,channel){
   const marked=favCore.has(store,channel);
@@ -805,6 +798,7 @@
   }
   playCandidateIndex++;
   const next=playCandidates[playCandidateIndex];
+  updateManualLinks();
   textStatus('Auto Failover: thử link '+(playCandidateIndex+1)+'/'+playCandidates.length+' của '+current.name);
   try{await tryPlayback(next,generation);}catch(e){recoverPlayback(generation,e.message);}
  }
@@ -820,9 +814,14 @@
   if(generation!==playGeneration||selection!==selectionSerial)return;
   playMode=opts.mode||(override?'catchup':'live');
   playCandidates=override?[override]:(adaptive?.candidates(found,enabledChannels(),store.alternates||{},window.OpenIPTVAdvancedCore?.alternatives)||[found.url]);
+  if(opts.manualUrl&&playMode==='live'&&manualPicker){
+   // Manual selection is scoped to the active channel and valid known alternatives.
+   // Keep other links available for automatic failover if the chosen one fails.
+   playCandidates=manualPicker.prioritize(opts.manualUrl,playCandidates);
+  }
   playCandidateIndex=0;
   current=found;store.current=chId;mediaInfo={hls:false,mode:'unknown',seekable:false};document.dispatchEvent(new CustomEvent('openiptv:media-info',{detail:mediaInfo}));save();window.OpenIPTVCastUI?.onChannelChanged?.(found);renderList(true);
-  $('#playingTitle').textContent=found.name;$('#playingSubtitle').textContent=found.group+' • '+(playMode==='catchup'?'Xem lại':playMode==='timeshift'?'Tua lại '+(window.IPTVProAdvanced?.getReplayMinutes?.()||10)+' phút':'Đang phát trực tiếp');$('#playingIcon').textContent=found.name.slice(0,2).toUpperCase();$('#emptyPlayer').classList.add('hidden');$('#streamInfo').textContent='Đang kết nối...';updatePlayerFavorite();
+  updateManualLinks();$('#playingTitle').textContent=found.name;$('#playingSubtitle').textContent=found.group+' • '+(playMode==='catchup'?'Xem lại':playMode==='timeshift'?'Tua lại '+(window.IPTVProAdvanced?.getReplayMinutes?.()||10)+' phút':'Đang phát trực tiếp');$('#playingIcon').textContent=found.name.slice(0,2).toUpperCase();$('#emptyPlayer').classList.add('hidden');$('#streamInfo').textContent='Đang kết nối...';updatePlayerFavorite();
   window.IPTVExtras?.onChannel?.(found);window.IPTVProAdvanced?.onChannel?.(found,playMode);
   try{await tryPlayback(playCandidates[0],generation);}catch(e){recoverPlayback(generation,e.message);}
  }
@@ -1014,13 +1013,15 @@
     const target=button.dataset.navTarget;
     if(target)document.getElementById(target)?.scrollIntoView({block:'start',behavior:'smooth'});
   }));
-  bind(['selectVisibleBtn'],()=>{if(!selectionEditable())return toast('Hồ sơ trẻ em không được sắp xếp','warn');for(const id of displayedChannelIds())selectedChannelIds.add(id);updateSelectionUI();});
-  bind(['bulkMoveBtn'],()=>openMoveSelectionModal([...selectedChannelIds]));
-  bind(['clearSelectionBtn'],()=>{selectedChannelIds.clear();lastSelectionAnchor='';updateSelectionUI();});
   bind(['folderCreateBtn','newFolderFromList'],createFolder);bind(['expandFolderBtn'],()=>{const pos=preserveListScroll();store.collapsedGroups=[];save();renderList();restoreListScroll(pos);});bind(['collapseFolderBtn'],()=>{const pos=preserveListScroll();store.collapsedGroups=groupNames();save();renderList();restoreListScroll(pos);});
   bind(['castBtn'],()=>{const ch=currentChannel();if(!ch)return toast('Chọn kênh trước khi phát lên TV','warn');window.OpenIPTVCastUI?.open?.(ch,playCandidates[playCandidateIndex]||ch.url);});
   bind(['refreshAllBtn'],refreshAll);bind(['prevBtn'],()=>switchChannel(-1));bind(['nextBtn'],()=>switchChannel(1));bind(['stopBtn'],stopPlayer);bind(['playBtn'],playToggle);
   bind(['favCurrentBtn'],()=>{const channel=currentChannel();if(channel)favorite(channel);});
+  $('#manualLinkSelect')?.addEventListener('change',e=>{
+   const channel=currentChannel(),url=e.target.value;
+   if(!channel||!manualChoices(channel).some(item=>item.url===url))return;
+   void playChannel(channel.id,null,{mode:'live',manualUrl:url});
+  });
   bind(['shotBtn'],async()=>{if(!current)return toast('Chưa chọn kênh','warn');try{await snapshotOne(current);}catch(e){toast(e.message,'error');}});
   bind(['fullscreenBtn'],()=>{if(!document.fullscreenElement)$('#playerBox').requestFullscreen?.();else document.exitFullscreen?.();});
   bind(['modalClose','modalCancel'],closeModal);bind(['modalConfirm'],modalSubmit);bind(['cancelCheckBtn'],()=>requestCancel('check'));bind(['cancelShotsBtn'],()=>requestCancel('shots'));const dock=$('#taskDock');
@@ -1032,11 +1033,9 @@
   $$('.nav[data-page]').forEach(x=>x.addEventListener('click',()=>setPage(x.dataset.page)));
   $$('[data-source-jump]').forEach(x=>x.addEventListener('click',()=>{const target=document.getElementById(x.dataset.sourceJump);target?.scrollIntoView({behavior:'smooth',block:'start'});}));
   $$('.filter-tab').forEach(x=>x.addEventListener('click',()=>{filter=x.dataset.filter;$$('.filter-tab').forEach(y=>y.classList.toggle('active',x===y));renderList();}));
-  $('#channelList').addEventListener('dragover',e=>{
-    if(!hasChannelPayload(e))return;
-    const list=e.currentTarget,rect=list.getBoundingClientRect(),edge=48;
-    if(e.clientY<rect.top+edge)list.scrollTop-=20;
-    else if(e.clientY>rect.bottom-edge)list.scrollTop+=20;
+  installChannelPointerDnD();
+  document.addEventListener('keydown',e=>{
+   if(e.key==='Escape'&&selectedChannelIds.size){selectedChannelIds.clear();updateSelectionUI();}
   });
   // Snapshot and health-check limits are independent, persistent, and bounded to 1–32.
   const concurrencyControls=[

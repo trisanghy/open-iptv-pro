@@ -1,0 +1,69 @@
+/* Rust Lab v16 — screenshot-matched two-row TV card; media engine untouched. */
+#page-tv .player-control-card.v16-two-row-controls{padding:8px 14px;min-width:0}
+#page-tv .v16-toolbar-top,
+#page-tv .v16-toolbar-bottom{display:grid;align-items:center;min-width:0;gap:12px;padding:9px 4px}
+#page-tv .v16-toolbar-top{grid-template-columns:minmax(145px,1.08fr) minmax(170px,.98fr) minmax(175px,.82fr);border-bottom:1px solid var(--edge,#293c4a)}
+#page-tv .v16-toolbar-bottom{grid-template-columns:minmax(185px,1.15fr) minmax(250px,1fr)}
+#page-tv .v16-toolbar-top .playing-info{display:flex!important;align-items:center!important;min-width:0!important;gap:10px!important;margin:0!important;padding:0!important;border:0!important;flex-wrap:nowrap!important}
+#page-tv .v16-toolbar-top .playing-info .playing-meta{flex:1 1 auto!important;min-width:0!important}
+#page-tv .v16-toolbar-top .controls{display:flex!important;align-items:center!important;justify-content:center!important;gap:clamp(5px,1vw,15px)!important;min-width:0!important;padding:0!important;margin:0!important;flex-wrap:nowrap!important}
+#page-tv .v16-toolbar-top .controls button{flex:0 0 auto}
+#page-tv .v16-toolbar-top .control-main{width:48px;min-width:46px;height:46px;border-radius:50%;background:var(--accent,#bc7cff);color:#130d1a}
+#page-tv .v16-cast-controls{display:flex;align-items:center;justify-content:flex-end;gap:8px;min-width:0}
+#page-tv .v16-cast-controls button{flex:0 0 auto;white-space:nowrap}
+#page-tv .v16-cast-controls #castBtn{font-size:12px!important;min-width:0!important}
+#page-tv .v16-epg-summary{display:flex;align-items:center;min-width:0;gap:0}
+#page-tv .v16-epg-program{min-width:0;max-width:50%;flex:1 1 50%;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:5px;text-align:left;padding:1px 12px;background:transparent;border:0;color:inherit;cursor:pointer}
+#page-tv .v16-epg-program:first-child{padding-left:2px;border-right:1px solid var(--edge,#293c4a)}
+#page-tv .v16-epg-program:hover .v16-epg-title{color:var(--accent,#bc7cff)}
+#page-tv .v16-epg-program .v16-epg-title{display:block;max-width:100%;font-size:12px;font-weight:740;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#page-tv .v16-epg-program .v16-epg-time{display:block;max-width:100%;font-size:11px;color:var(--muted,#93a6b6);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#page-tv .v16-stream-options{display:flex;align-items:center;justify-content:flex-end;gap:clamp(6px,.85vw,12px);min-width:0}
+#page-tv .v16-stream-options .view-mode{flex:0 0 auto;min-width:0;margin:0;white-space:nowrap;display:flex;align-items:center;gap:6px}
+#page-tv .v16-stream-options .view-mode select{max-width:130px;width:clamp(80px,10vw,130px);height:36px;font-size:11px}
+#page-tv .v16-stream-options .manual-link-control{display:flex;align-items:center;gap:7px;flex:1 1 160px;max-width:360px;min-width:0;margin:0!important;z-index:5}
+#page-tv .v16-stream-options .manual-link-control.hidden{display:none!important}
+#page-tv .v16-stream-options .manual-link-caption{font-size:11px;white-space:nowrap}
+#page-tv .v16-stream-options .manual-link-select{flex:1 1 auto!important;width:100%!important;min-width:0!important;max-width:none!important;height:38px!important;border-radius:9px!important;font-size:11px!important;padding:0 8px!important}
+#page-tv .v16-stream-options #favCurrentBtn{flex:0 0 auto;min-width:39px;min-height:39px;margin:0}
+#page-tv .epg-current-card{display:none!important}
+/* Retain volume and Snapshot features in the already-existing Quick Tools drawer. */
+#page-tv .v16-quick-audio{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:12px}
+#page-tv .v16-volume-label{display:flex;gap:8px;align-items:center;font-size:12px}
+#page-tv .v16-volume-label #volume{width:100px}
+#page-tv .v16-quick-audio #shotBtn{font-size:12px;border:1px solid var(--edge,#344353);border-radius:8px;padding:7px 10px}
+/* When narrow, keep complete controls via wrapping instead of hiding actions. */
+@container (max-width:980px){
+ #page-tv .v16-toolbar-top{grid-template-columns:minmax(0,1fr) auto!important}
+ #page-tv .v16-toolbar-top .controls{grid-column:1;grid-row:2;justify-content:flex-start!important}
+ #page-tv .v16-cast-controls{grid-column:2;grid-row:2;justify-content:flex-end}
+ #page-tv .v16-toolbar-bottom{grid-template-columns:minmax(0,1fr)!important}
+ #page-tv .v16-stream-options{justify-content:flex-end}
+}
+#page-tv .player-control-card.v16-two-row-controls{container-type:inline-size}
+@container (max-width:630px){
+ #page-tv .v16-toolbar-top{grid-template-columns:minmax(0,1fr)!important}
+ #page-tv .v16-toolbar-top .controls{grid-row:2;grid-column:1;justify-content:center!important}
+ #page-tv .v16-cast-controls{grid-row:3;grid-column:1;justify-content:space-between}
+ #page-tv .v16-stream-options{flex-wrap:wrap;justify-content:flex-start}
+ #page-tv .v16-stream-options .manual-link-control{flex:1 1 155px;max-width:none}
+}
+
+/* Match the previously approved slim edge tab instead of the duplicate menu icon.
+   It is centered on the app-sidebar border, aligned with the sidebar hamburger. */
+html[data-channel-panel-collapsed="true"]:not([data-ui-style="cinema"]) #page-tv .channel-panel-reopen{
+ position:fixed!important;top:26px!important;left:calc(242px - 2px)!important;
+ z-index:70!important;margin:0!important;width:30px!important;height:40px!important;
+ pointer-events:none!important;
+}
+html[data-channel-panel-collapsed="true"]:not([data-ui-style="cinema"]) #page-tv .channel-panel-reopen button{
+ display:grid!important;place-items:center!important;pointer-events:auto!important;
+ width:30px!important;height:40px!important;min-width:30px!important;min-height:40px!important;
+ border-radius:0 12px 12px 0!important;padding:0!important;font-size:20px!important;
+}
+@media(max-width:1100px){
+ html[data-channel-panel-collapsed="true"]:not([data-ui-style="cinema"]) #page-tv .channel-panel-reopen{left:calc(208px - 2px)!important}
+}
+html[data-sidebar-collapsed="true"][data-channel-panel-collapsed="true"]:not([data-ui-style="cinema"]) #page-tv .channel-panel-reopen{
+ top:14px!important;left:calc(72px - 2px)!important;
+}

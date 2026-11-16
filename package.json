@@ -1,14 +1,14 @@
 {
   "name": "open-iptv-pro-tauri-experiment",
   "private": true,
-  "version": "4.23.17-tauri.8",
-  "description": "Independent Tauri 2 + Rust Lab with channel/folder organizer, bulk drag/drop and collapsible navigation; Electron main untouched.",
+  "version": "4.23.17-tauri.16",
+  "description": "Rust Lab v16: two-row TV controls with live Now/Next EPG and compact playback/source controls.",
   "license": "MIT",
   "scripts": {
     "dev": "tauri dev",
     "build": "tauri build",
     "build:debug": "tauri build --debug",
-    "test": "node --test tests/tauri-bridge.test.cjs tests/tauri-playback.test.cjs tests/core.test.cjs tests/favorites.test.cjs tests/epg_update.test.cjs tests/backup.test.cjs tests/tauri-stability.test.cjs tests/tauri-ffmpeg-integration.test.cjs tests/tauri-evidence-storage-regression.test.cjs tests/tauri-adaptive-playback-v5.test.cjs tests/tauri-snapshot-fullscreen-v6.test.cjs tests/tauri-windows-bootstrap.test.cjs tests/tauri-windows-msvc-v63.test.cjs tests/tauri-playback-reentry-v7.test.cjs tests/tauri-channel-organizer-v8.test.cjs tests/tauri-sidebar-v8.test.cjs",
+    "test": "node --test tests/tauri-bridge.test.cjs tests/tauri-playback.test.cjs tests/core.test.cjs tests/favorites.test.cjs tests/epg_update.test.cjs tests/backup.test.cjs tests/tauri-stability.test.cjs tests/tauri-ffmpeg-integration.test.cjs tests/tauri-evidence-storage-regression.test.cjs tests/tauri-adaptive-playback-v5.test.cjs tests/tauri-snapshot-fullscreen-v6.test.cjs tests/tauri-windows-bootstrap.test.cjs tests/tauri-windows-msvc-v63.test.cjs tests/tauri-playback-reentry-v7.test.cjs tests/tauri-channel-organizer-v9.test.cjs tests/tauri-sidebar-v8.test.cjs",
     "test:migration": "node --test tests/tauri-bridge.test.cjs tests/tauri-playback.test.cjs",
     "check:rust": "cargo test --manifest-path src-tauri/Cargo.toml",
     "audit:bridge": "node scripts/audit-tauri-bridge.cjs",
@@ -16,7 +16,8 @@
     "predev": "node scripts/prepare-renderer.cjs",
     "prebuild": "node scripts/prepare-renderer.cjs",
     "prepare:renderer": "node scripts/prepare-renderer.cjs",
-    "test:legacy": "node --test tests/*.test.cjs"
+    "test:legacy": "node --test tests/*.test.cjs",
+    "test:quick": "node --test tests/tauri-control-bar-v16.test.cjs tests/tauri-playback-reentry-v7.test.cjs tests/tauri-link-dropdown-v13.test.cjs tests/tauri-channel-panel-v11.test.cjs"
   },
   "devDependencies": {
     "@tauri-apps/cli": "^2.0.0"

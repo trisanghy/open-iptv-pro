@@ -1,0 +1,119 @@
+/* Rust Lab v14: compact, edge-to-edge TV layout when the channel list is hidden.
+ * Only presentation changes. Do NOT resize/replace the <video> or reset HLS sessions.
+ * Keep user-selected object-fit (contain/cover/fill) intact. */
+html:not([data-ui-style="cinema"])[data-channel-panel-collapsed="true"] #page-tv{
+  width:100%!important;max-width:none!important;min-width:0!important;height:auto!important;
+}
+html:not([data-ui-style="cinema"])[data-channel-panel-collapsed="true"] #page-tv .tv-layout{
+  display:grid!important;grid-template-columns:minmax(0,1fr)!important;
+  grid-template-rows:auto!important;align-items:start!important;
+  width:100%!important;max-width:none!important;min-width:0!important;
+  margin:0!important;padding:0!important;height:auto!important;min-height:0!important;
+}
+html:not([data-ui-style="cinema"])[data-channel-panel-collapsed="true"] #page-tv .watch-panel{
+  display:flex!important;flex-direction:column!important;align-items:stretch!important;
+  width:100%!important;max-width:none!important;min-width:0!important;
+  height:auto!important;min-height:0!important;justify-self:stretch!important;
+}
+/* Root cause of the black right-hand gap: old max-height capped a 16:9
+   element's intrinsic width to (window height - 255px) × 16/9. */
+html:not([data-ui-style="cinema"])[data-channel-panel-collapsed="true"] #page-tv .player-box:not(:fullscreen){
+  display:block!important;box-sizing:border-box!important;
+  width:100%!important;min-width:0!important;max-width:none!important;
+  height:auto!important;min-height:0!important;max-height:none!important;
+  aspect-ratio:16/9!important;align-self:stretch!important;
+  margin:0!important;overflow:hidden!important;
+}
+html:not([data-ui-style="cinema"])[data-channel-panel-collapsed="true"] #page-tv .player-box:not(:fullscreen)>video{
+  width:100%!important;height:100%!important;
+  /* The user's Khung hình selection continues to set object-fit. */
+}
+html:not([data-ui-style="cinema"])[data-channel-panel-collapsed="true"] #page-tv :is(.player-control-card,.advanced-timebar,.epg-current-card,.compact-tools){
+  box-sizing:border-box!important;width:100%!important;max-width:none!important;min-width:0!important;
+  margin-inline:0!important;
+}
+html:not([data-ui-style="cinema"])[data-channel-panel-collapsed="true"] #page-tv .channel-panel-reopen{
+  position:absolute!important;top:12px!important;left:12px!important;z-index:7!important;
+  display:block!important;margin:0!important;min-height:0!important;pointer-events:none!important;
+}
+html:not([data-ui-style="cinema"])[data-channel-panel-collapsed="true"] #page-tv .channel-panel-reopen button{
+  pointer-events:auto!important;display:grid!important;place-items:center!important;
+  width:40px!important;height:40px!important;min-width:40px!important;min-height:40px!important;
+  padding:0!important;border-radius:12px!important;font-size:18px!important;font-weight:700!important;
+  box-shadow:0 10px 24px rgba(0,0,0,.22)!important;
+}
+html:not([data-ui-style="cinema"])[data-channel-panel-collapsed="true"] #page-tv .channel-panel-reopen button span{
+  display:block!important;line-height:1!important;
+}
+/* Every media theme still retains its guide/strip; neither can occupy a ghost
+   right column after the channel list disappears. */
+html[data-channel-panel-collapsed="true"][data-ui-style="glass"] #page-tv .tv-layout,
+html[data-channel-panel-collapsed="true"][data-ui-style="broadcast"] #page-tv .tv-layout{
+  grid-template-areas:"video" "guide" "strip" "time" "tools"!important;
+}
+/* Stacked compact control panels for a narrow app window like the reference. */
+@media (max-width:980px){
+ html:not([data-ui-style="cinema"])[data-channel-panel-collapsed="true"] .content{
+   padding:10px!important;
+ }
+ html:not([data-ui-style="cinema"])[data-channel-panel-collapsed="true"] #page-tv .channel-panel-reopen{
+   top:10px!important;left:10px!important;
+ }
+ html:not([data-ui-style="cinema"])[data-channel-panel-collapsed="true"] #page-tv .channel-panel-reopen button{
+   width:38px!important;height:38px!important;min-width:38px!important;min-height:38px!important;
+ }
+ html:not([data-ui-style="cinema"])[data-channel-panel-collapsed="true"] #page-tv .watch-panel{
+   gap:10px!important;
+ }
+ html:not([data-ui-style="cinema"])[data-channel-panel-collapsed="true"] #page-tv .player-control-card{
+   padding:13px 15px!important;border-radius:15px!important;
+ }
+ html:not([data-ui-style="cinema"])[data-channel-panel-collapsed="true"] #page-tv .playing-info{
+   display:flex!important;gap:9px!important;padding:0 0 11px!important;
+   align-items:center!important;flex-wrap:wrap!important;
+ }
+ html:not([data-ui-style="cinema"])[data-channel-panel-collapsed="true"] #page-tv .playing-info>.playing-meta{
+   flex:1 1 130px!important;min-width:0!important;
+ }
+ html:not([data-ui-style="cinema"])[data-channel-panel-collapsed="true"] #page-tv .playing-info>.manual-link-control{
+   flex:0 1 100%!important;order:3!important;margin:1px 0 0!important;gap:9px!important;
+ }
+ html:not([data-ui-style="cinema"])[data-channel-panel-collapsed="true"] #page-tv .manual-link-control .manual-link-select{
+   flex:1 1 150px!important;width:100%!important;max-width:none!important;
+ }
+ html:not([data-ui-style="cinema"])[data-channel-panel-collapsed="true"] #page-tv .playing-info>.favorite-current{
+   order:2!important;flex:0 0 auto!important;margin-left:auto!important;
+ }
+ html:not([data-ui-style="cinema"])[data-channel-panel-collapsed="true"] #page-tv .controls{
+   display:flex!important;align-items:center!important;justify-content:center!important;
+   flex-wrap:wrap!important;gap:9px 13px!important;padding:11px 0 0!important;
+ }
+ html:not([data-ui-style="cinema"])[data-channel-panel-collapsed="true"] #page-tv .controls .control-spacer{
+   flex-basis:100%!important;height:0!important;width:0!important;margin:0!important;
+ }
+ html:not([data-ui-style="cinema"])[data-channel-panel-collapsed="true"] #page-tv .controls .view-mode{
+   min-width:0!important;max-width:100%!important;
+ }
+ html:not([data-ui-style="cinema"])[data-channel-panel-collapsed="true"] #page-tv .advanced-timebar{
+   display:flex!important;flex-direction:column!important;align-items:stretch!important;
+   gap:9px!important;padding:12px!important;
+ }
+ html:not([data-ui-style="cinema"])[data-channel-panel-collapsed="true"] #page-tv .timeshift-actions{
+   display:flex!important;justify-content:flex-start!important;align-items:center!important;
+   gap:7px!important;flex-wrap:wrap!important;min-width:0!important;
+ }
+ html:not([data-ui-style="cinema"])[data-channel-panel-collapsed="true"] #page-tv .dvr-quick-bar{
+   display:flex!important;flex-wrap:wrap!important;
+ }
+}
+@media (max-width:600px){
+ html:not([data-ui-style="cinema"])[data-channel-panel-collapsed="true"] #page-tv .playing-info>.manual-link-control{
+   flex:1 1 100%!important;
+ }
+ html:not([data-ui-style="cinema"])[data-channel-panel-collapsed="true"] #page-tv .advanced-timebar .timeshift-actions>b{
+   flex:1 1 100%;
+ }
+ html:not([data-ui-style="cinema"])[data-channel-panel-collapsed="true"] #page-tv .controls{
+   gap:7px 10px!important;
+ }
+}

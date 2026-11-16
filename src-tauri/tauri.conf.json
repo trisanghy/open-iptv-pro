@@ -13,10 +13,10 @@
     "windows": [
       {
         "label": "main",
-        "title": "Open IPTV Pro · Rust Lab v8",
+        "title": "Open IPTV Pro · Rust Lab v16",
         "width": 1360,
         "height": 850,
-        "minWidth": 980,
+        "minWidth": 720,
         "minHeight": 640,
         "backgroundColor": "#101820"
       }

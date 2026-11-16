@@ -21,7 +21,7 @@ with sync_playwright() as p:
   window.IPTVPrimaryPersistence={initialRaw:JSON.stringify(input.state),nativeReady:false};
   window.streamleaf={snapshot:async()=>({data:input.green,method:'Mock-FFmpeg'}),capabilities:async()=>({snapshotBase:'',ffmpegExists:true}),dvrList:async()=>({jobs:[{id:'j1',status:'scheduled',title:'Bản tin',channelName:'VTV Test',startAt:Date.now()+3600000,endAt:Date.now()+7200000}]})};
  }''', {'state':state,'green':green})
- for mod in ['core-browser.js','favorites-core.js','source-edit.js','adaptive-playback.js','health-evidence.js','snapshot-freshness.js','app.js','player-ux.js','fullscreen-panels.js']:
+ for mod in ['core-browser.js','favorites-core.js','source-edit.js','adaptive-playback.js','health-evidence.js','snapshot-freshness.js','channel-organizer.js','channel-pointer-dnd.js','app.js','player-ux.js','fullscreen-panels.js']:
   page.add_script_tag(content=(root/mod).read_text())
  print('READY',page.evaluate('!!window.IPTVState && !!window.IPTVFullscreenPanels'))
  print('ERRORS_INITIAL',errors[:10])

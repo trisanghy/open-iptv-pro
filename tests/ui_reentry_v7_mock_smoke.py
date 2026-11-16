@@ -23,7 +23,7 @@ with sync_playwright() as p:
   Object.defineProperty(HTMLMediaElement.prototype,'currentSrc',{configurable:true,get(){return this.__mockCurrentSrc!==undefined?this.__mockCurrentSrc:this.getAttribute('src')||''}});
   Object.defineProperty(HTMLMediaElement.prototype,'error',{configurable:true,get(){return this.__mockError||null}});
  }''',state)
- for file in ['core-browser.js','advanced-core.js','epg.js','favorites-core.js','source-edit.js','adaptive-playback.js','playback-reentry.js','health-evidence.js','snapshot-freshness.js','app.js']:
+ for file in ['core-browser.js','advanced-core.js','epg.js','favorites-core.js','source-edit.js','adaptive-playback.js','playback-reentry.js','health-evidence.js','snapshot-freshness.js','channel-organizer.js','channel-pointer-dnd.js','app.js']:
   page.add_script_tag(content=(root/file).read_text())
  assert page.evaluate('!!window.IPTVState'),errors
  result=page.evaluate('''async()=>{

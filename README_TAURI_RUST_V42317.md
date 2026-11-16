@@ -139,3 +139,6 @@ không chạy script trên thư mục nguồn Electron đang phát triển.
 Xem `README_CHANNEL_ORGANIZER_V8.md` và `CHANGELOG_RUSTLAB_V8.md`.
 
 UI v8: header trên đã bỏ, sidebar có nút thu gọn 72px; xem `README_CHANNEL_ORGANIZER_V8.md`.
+
+
+- v15: Thu nhỏ nút mở lại Danh sách kênh khi panel đã thu gọn, hiển thị thành 1 icon nổi nhỏ ở góc trên trái, bỏ thanh rộng phía trên video.

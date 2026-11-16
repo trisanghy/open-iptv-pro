@@ -14,16 +14,16 @@ command -v git >/dev/null 2>&1 || die 'Git khong co tren Mac (cai Xcode Command 
 command -v node >/dev/null 2>&1 || die 'Khong tim thay Node.js (can de kiem thu truoc khi publish).'
 [ -f "$SCRIPT_DIR/package.json" ] || die 'Thieu package.json trong bo ma nguon.'
 [ -f "$SCRIPT_DIR/src-tauri/Cargo.toml" ] || die 'Thieu Rust Core (src-tauri/Cargo.toml).'
-[ -f "$SCRIPT_DIR/CHANGELOG_RUSTLAB_V8.md" ] || die 'Khong tim thay changelog organizer v8.'
-node -e 'const p=require(process.argv[1]); if(p.name!=="open-iptv-pro-tauri-experiment" || p.version!=="4.23.17-tauri.8") process.exit(2)' "$SCRIPT_DIR/package.json" || die 'Ten / phien ban project khong khop Rust Lab v8.'
+[ -f "$SCRIPT_DIR/CHANGELOG_RUSTLAB_V11.md" ] || die 'Khong tim thay changelog organizer v11.'
+node -e 'const p=require(process.argv[1]); if(p.name!=="open-iptv-pro-tauri-experiment" || p.version!=="4.23.17-tauri.11") process.exit(2)' "$SCRIPT_DIR/package.json" || die 'Ten / phien ban project khong khop Rust Lab v11.'
 
 # No user playlists, access tokens, certificates, recordings, or private app data can be published.
 for forbidden in '.env' '.env.local' 'secrets.json' 'settings.json'; do
   [ ! -e "$SCRIPT_DIR/$forbidden" ] || die "Phat hien file rieng tu $forbidden; khong publish."
 done
 
-info 'Chay kiem thu JS + soat bridge ngay tren bo nguon v8...'
-(cd "$SCRIPT_DIR" && npm test && npm run audit:bridge)
+info 'Chay kiem thu JS + soat bridge ngay tren bo nguon v11...'
+(cd "$SCRIPT_DIR" && npm run test:quick && npm run audit:bridge)
 
 if ! command -v gh >/dev/null 2>&1; then
   if command -v brew >/dev/null 2>&1; then
@@ -47,7 +47,7 @@ info "Tai khoan: $ACCOUNT | repo: $OWNER_REPO | chi nhanh: $BRANCH"
 
 # Always clone into a NEW disposable folder; no local worktrees or main are modified.
 mkdir -p "$HOME/Downloads"
-WORK="$(mktemp -d "$HOME/Downloads/OpenIPTVPro_RustLab_Git_v8_XXXXXX")"
+WORK="$(mktemp -d "$HOME/Downloads/OpenIPTVPro_RustLab_Git_v11_XXXXXX")"
 info "Clone vao thu muc rieng: $WORK"
 git clone --no-tags "$REMOTE" "$WORK/repo"
 DEST="$WORK/repo"
@@ -64,7 +64,7 @@ else
   BRANCH_ALREADY_EXISTS=0
 fi
 
-info 'Cap nhat bo ma nguon v8 chi trong nhanh thu nghiem (main khong thay doi).'
+info 'Cap nhat bo ma nguon v11 chi trong nhanh thu nghiem (main khong thay doi).'
 # All file deletions occur in the newly cloned experiment checkout only.
 if [ "$BRANCH_ALREADY_EXISTS" -eq 0 ]; then
   git -C "$DEST" rm -r -q -f -- .
@@ -94,8 +94,8 @@ else
     ACCOUNT_ID="$(gh api user --jq '.id')"
     git -C "$DEST" config user.email "${ACCOUNT_ID}+${ACCOUNT}@users.noreply.github.com"
   fi
-  git -C "$DEST" commit -m 'feat(rust-lab): v8 folder organizer and compact sidebar' \
-    -m 'Independent Rust Lab branch with 104 JS tests, channel ordering by folder, persistent grouping, multi-select drag/drop, compact navigation, and existing v7 playback fixes.'
+  git -C "$DEST" commit -m 'feat(rust-lab): v11 folder organizer and compact sidebar' \
+    -m 'Independent Rust Lab branch with fast JS regression tests, channel ordering by folder, persistent grouping, Shift-click selection and pointer drag/drop, compact navigation, and existing v7 playback fixes.'
 fi
 
 info "Push DUY NHAT $BRANCH (khong --force, khong tag, khong release)."
