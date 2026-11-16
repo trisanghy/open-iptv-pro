@@ -1,0 +1,62 @@
+name: Publish Open IPTV Pro Web
+on:
+  push:
+    branches: ['web/online']
+    paths:
+      - '.github/workflows/deploy-openiptv-web.yml'
+      - 'web-online/**'
+  workflow_dispatch:
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: pages-openiptv-web
+  cancel-in-progress: false
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout isolated web branch
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Download tested WebView source and two-row toolbar patch
+        shell: bash
+        run: |
+          set -euo pipefail
+          BASE='https://raw.githubusercontent.com/trisanghy/open-iptv-pro/experiment/native-webview-ffmpeg'
+          curl --fail --location --retry 3 --connect-timeout 20 --max-time 240 \
+            "$BASE/webview-sources/v4.23.37/Open_IPTV_Pro_WebView_v4_23_37_FULL_SOURCE.zip" -o /tmp/openiptv-webview.zip
+          curl --fail --location --retry 3 --connect-timeout 20 --max-time 90 \
+            "$BASE/webview-sources/v4.23.38/APPLY_WEBVIEW_TOOLBAR_V42338.cjs" -o /tmp/openiptv-toolbar.cjs
+          unzip -q /tmp/openiptv-webview.zip -d /tmp/openiptv-source
+          node /tmp/openiptv-toolbar.cjs /tmp/openiptv-source/Open_IPTV_Pro_WebView_v4_23_37_FULL
+          node -e "const v=require('/tmp/openiptv-source/Open_IPTV_Pro_WebView_v4_23_37_FULL/package.json').version;if(v!=='4.23.38')process.exit(2);"
+      - name: Prepare static frontend and bundled HLS/DASH
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/iptv-web-deps _site
+          npm install --prefix /tmp/iptv-web-deps --no-audit --no-fund --ignore-scripts --no-save --package-lock=false hls.js@1.6.15 dashjs@5.3.0
+          cp /tmp/iptv-web-deps/node_modules/hls.js/dist/hls.min.js _site/hls.min.js
+          cp /tmp/iptv-web-deps/node_modules/dashjs/dist/modern/umd/dash.all.min.js _site/dash.all.min.js
+          python3 web-online/prepare-web.py /tmp/openiptv-source/Open_IPTV_Pro_WebView_v4_23_37_FULL _site
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: _site
+  deploy:
+    needs: prepare
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy Open IPTV Pro Web
+        id: deployment
+        uses: actions/deploy-pages@v4
