@@ -1,0 +1,105 @@
+name: Package v4.23.46 fixed Live Caption and multilingual Live Translate
+on:
+  push:
+    branches: [iptv-build-source]
+    paths: [.github/workflows/package-v42346.yml]
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: source-v42346-live-translate
+  cancel-in-progress: false
+jobs:
+  source:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - name: Extract verified source, patch captions and run all regression tests
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          echo 'dd4edee5da5ed2042bbea1aaa5003eebbfdb6a032cfb78c7bf2c972329cde448  source/OpenIPTVPro_Source_v4.23.45.zip' | sha256sum -c -
+          mkdir -p "$RUNNER_TEMP/iptv"
+          unzip -q source/OpenIPTVPro_Source_v4.23.45.zip -d "$RUNNER_TEMP/iptv"
+          mv "$RUNNER_TEMP/iptv/Open-IPTV-Pro-v4_23_45_Full_Desktop" "$RUNNER_TEMP/iptv/Open-IPTV-Pro-v4_23_46_Full_Desktop"
+          cd "$RUNNER_TEMP/iptv/Open-IPTV-Pro-v4_23_46_Full_Desktop"
+          node "$GITHUB_WORKSPACE/overlays/v4.23.46-apply.cjs" "$GITHUB_WORKSPACE/overlays"
+          test "$(node -p 'require("./package.json").version')" = '4.23.46'
+          for js in src/live-caption-service.cjs src/caption-translator.cjs src/local-ai-autoinstall.cjs renderer/live-captions-v42343.js src/main.cjs src/preload.cjs; do node --check "$js"; done
+          node --test --test-concurrency=2 tests/*.test.cjs
+          echo "PROJECT=$PWD" >> "$GITHUB_ENV"
+      - name: Create one full source ZIP, correct version, SHA256
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          python3 - <<'PY'
+          import os,zipfile
+          from pathlib import Path
+          root=Path(os.environ['PROJECT']);out=Path('source/OpenIPTVPro_Source_v4.23.46.zip')
+          exclusions={'node_modules','dist','.git','.open-iptv-tools','__pycache__'}
+          with zipfile.ZipFile(out,'w',zipfile.ZIP_DEFLATED,compresslevel=8) as z:
+              for p in sorted(root.rglob('*')):
+                  if p.is_file() and not any(x in exclusions for x in p.relative_to(root).parts):
+                      z.write(p,root.name+'/'+p.relative_to(root).as_posix())
+          with zipfile.ZipFile(out) as z:
+              assert z.testzip() is None
+              for f in ('package.json','src/live-caption-service.cjs','src/caption-translator.cjs','renderer/live-captions-v42343.js','renderer/index.html','tests/multilingual-captions-v42346.test.cjs'):
+                  assert root.name+'/'+f in z.namelist(),f
+          print('Source ZIP:',out,out.stat().st_size)
+          PY
+          sha256sum source/OpenIPTVPro_Source_v4.23.46.zip > source/OpenIPTVPro_Source_v4.23.46.zip.sha256
+      - name: Generate matching Intel / Apple Silicon Mac and Windows one-command builders
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          old='4.23.45';new='4.23.46'
+          oldsha='dd4edee5da5ed2042bbea1aaa5003eebbfdb6a032cfb78c7bf2c972329cde448'
+          newsha=Path('source/OpenIPTVPro_Source_v4.23.46.zip.sha256').read_text().split()[0]
+          sources=[
+              ('build-mac-native-v42345.sh','build-mac-native-v42346.sh'),
+              ('build-mac-native-v42345.sh','build-mac.sh'),
+              ('build-windows-v42345.ps1','build-windows-v42346.ps1')
+          ]
+          for source,dest in sources:
+              data=Path(source).read_text()
+              assert oldsha in data and old in data,source
+              for frm,to in [(oldsha,newsha),('4[.]23[.]45','4[.]23[.]46'),('4_23_45','4_23_46'),('42345','42346'),(old,new)]:
+                  data=data.replace(frm,to)
+              for stale in (oldsha,'4[.]23[.]45','4_23_45','42345',old):
+                  assert stale not in data,(source,stale)
+              assert new in data and newsha in data,(source,'new source mismatch')
+              Path(dest).write_text(data)
+          PY
+          bash -n build-mac.sh
+          bash -n build-mac-native-v42346.sh
+          cmp -s build-mac.sh build-mac-native-v42346.sh
+          test -s build-windows-v42346.ps1
+      - name: Smoke test exact ZIP folder and build scripts
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          TEMP="$(mktemp -d)"
+          trap 'rm -rf "$TEMP"' EXIT
+          unzip -q source/OpenIPTVPro_Source_v4.23.46.zip -d "$TEMP"
+          ROOT="$TEMP/Open-IPTV-Pro-v4_23_46_Full_Desktop"
+          test -s "$ROOT/package.json"
+          test "$(node -p 'require(process.argv[1]).version' "$ROOT/package.json")" = '4.23.46'
+          grep -Fq 'Open-IPTV-Pro-v4_23_46_Full_Desktop' build-mac.sh
+          grep -Fq 'Open-IPTV-Pro-v4_23_46_Full_Desktop' build-windows-v42346.ps1
+          grep -Fq 'SOURCE=OpenIPTVPro_Source_v4.23.46.zip' build-mac.sh
+          grep -Fq 'caption:languageStatus' "$ROOT/src/main.cjs"
+          grep -Fq "englishText" "$ROOT/renderer/local-tts-v42344.js"
+          echo 'PASS: current ZIP, runtime translation IPC, and Mac/Windows build scripts'
+      - name: Commit fresh ZIP and builders only to isolated source branch
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add source/OpenIPTVPro_Source_v4.23.46.zip source/OpenIPTVPro_Source_v4.23.46.zip.sha256
+          git add build-mac.sh build-mac-native-v42346.sh build-windows-v42346.ps1
+          git commit -m 'fix(source): v4.23.46 real multilingual offline captions and robust Whisper controls'
+          git push origin HEAD:iptv-build-source
