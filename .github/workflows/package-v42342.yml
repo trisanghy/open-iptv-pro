@@ -1,0 +1,102 @@
+name: Package Open IPTV Pro v4.23.42 compact Cast and volume player
+on:
+  push:
+    branches: [iptv-build-source]
+    paths: [.github/workflows/package-v42342.yml]
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: package-v42342-compact-controls
+  cancel-in-progress: false
+jobs:
+  source:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify original ZIP and patch compact player
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          echo '469228cbd0bba63d3d9471a8d8e336f68fc24defa62d8b514f56257f53413e89  source/OpenIPTVPro_Source_v4.23.41.zip' | sha256sum -c -
+          mkdir -p "$RUNNER_TEMP/openiptv"
+          unzip -q source/OpenIPTVPro_Source_v4.23.41.zip -d "$RUNNER_TEMP/openiptv"
+          mv "$RUNNER_TEMP/openiptv/Open-IPTV-Pro-v4_23_41_Full_Desktop" "$RUNNER_TEMP/openiptv/Open-IPTV-Pro-v4_23_42_Full_Desktop"
+          cd "$RUNNER_TEMP/openiptv/Open-IPTV-Pro-v4_23_42_Full_Desktop"
+          node "$GITHUB_WORKSPACE/overlays/v4.23.42-apply.cjs" "$GITHUB_WORKSPACE/overlays/v4.23.42-compact-cast.css"
+          test "$(node -p 'require("./package.json").version')" = '4.23.42'
+          node --test --test-concurrency=2 tests/*.test.cjs
+          echo "PROJECT=$PWD" >> "$GITHUB_ENV"
+      - name: Package a single matching source ZIP and verify internal files
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          python3 - <<'PY'
+          import os,zipfile
+          from pathlib import Path
+          root=Path(os.environ['PROJECT'])
+          out=Path('source/OpenIPTVPro_Source_v4.23.42.zip')
+          skip={'dist','node_modules','.git','.open-iptv-tools','__pycache__'}
+          with zipfile.ZipFile(out,'w',compression=zipfile.ZIP_DEFLATED,compresslevel=8) as z:
+              for p in sorted(root.rglob('*')):
+                  if p.is_file() and not any(x in skip for x in p.relative_to(root).parts):
+                      z.write(p,arcname=f'{root.name}/{p.relative_to(root).as_posix()}')
+          with zipfile.ZipFile(out) as z:
+              assert z.testzip() is None
+              for p in ['package.json','renderer/index.html','renderer/player-compact-cast-v42342.css','tests/player_toolbar_v42341.test.cjs']:
+                  assert f'{root.name}/{p}' in z.namelist(),p
+          print(out, out.stat().st_size)
+          PY
+          sha256sum source/OpenIPTVPro_Source_v4.23.42.zip > source/OpenIPTVPro_Source_v4.23.42.zip.sha256
+      - name: Generate version-synchronized Mac and Windows one-command builders
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          old='4.23.41';new='4.23.42'
+          oldhash='469228cbd0bba63d3d9471a8d8e336f68fc24defa62d8b514f56257f53413e89'
+          newhash=Path('source/OpenIPTVPro_Source_v4.23.42.zip.sha256').read_text().split()[0]
+          pairs=[
+             ('build-mac-native-v42341.sh','build-mac-native-v42342.sh'),
+             ('build-mac-native-v42341.sh','build-mac.sh'),
+             ('build-windows-v42341.ps1','build-windows-v42342.ps1')
+          ]
+          for origin,dest in pairs:
+              data=Path(origin).read_text()
+              assert old in data and oldhash in data,origin
+              for a,b in [(oldhash,newhash),('4[.]23[.]41','4[.]23[.]42'),('4_23_41','4_23_42'),('42341','42342'),(old,new)]:
+                  data=data.replace(a,b)
+              for stale in [oldhash,old,'4_23_41','42341','4[.]23[.]41']:
+                  assert stale not in data, (origin,stale)
+              assert new in data and newhash in data
+              Path(dest).write_text(data)
+          PY
+          bash -n build-mac.sh
+          bash -n build-mac-native-v42342.sh
+          cmp -s build-mac.sh build-mac-native-v42342.sh
+          test -s build-windows-v42342.ps1
+      - name: Re-extract published ZIP to confirm exact expected directory and version
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          temp="$(mktemp -d)"
+          trap 'rm -rf "$temp"' EXIT
+          unzip -q source/OpenIPTVPro_Source_v4.23.42.zip -d "$temp"
+          test -f "$temp/Open-IPTV-Pro-v4_23_42_Full_Desktop/package.json"
+          test "$(node -p 'require(process.argv[1]).version' "$temp/Open-IPTV-Pro-v4_23_42_Full_Desktop/package.json")" = '4.23.42'
+          grep -Fq 'Open-IPTV-Pro-v4_23_42_Full_Desktop' build-mac.sh
+          grep -Fq 'Open-IPTV-Pro-v4_23_42_Full_Desktop' build-windows-v42342.ps1
+          grep -Fq 'SOURCE=OpenIPTVPro_Source_v4.23.42.zip' build-mac.sh
+          echo 'PASS: source contents, version, Mac/Windows build scripts and Bash syntax'
+      - name: Publish tested ZIP and builders to isolated branch
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add source/OpenIPTVPro_Source_v4.23.42.zip source/OpenIPTVPro_Source_v4.23.42.zip.sha256
+          git add build-mac.sh build-mac-native-v42342.sh build-windows-v42342.ps1
+          git commit -m 'build(v4.23.42): publish compact Cast+volume player source and one-command Mac/Windows builders'
+          git push origin HEAD:iptv-build-source
