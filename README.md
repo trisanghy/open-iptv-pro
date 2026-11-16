@@ -1,3 +1,33 @@
+# Open IPTV Pro — Desktop v4.23.37
+
+**Electron 38 / Chromium · macOS (Apple Silicon, Intel) · Windows**
+
+[**Source ZIP v4.23.37**](source/OpenIPTVPro_Source_v4.23.37.zip) · [Changelog / release notes](RELEASE_NOTES_V4_23_37.md) · [Automatic Mac source build](https://raw.githubusercontent.com/trisanghy/open-iptv-pro/iptv-build-source/build-mac.sh)
+
+This repository's `main` branch carries the desktop source for **4.23.37**, with a single downloadable source archive and screenshots of the latest two-row TV player layout.
+
+## Giao diện mới nhất / Latest screenshots
+
+![Player v4.23.37 — volume and playback controls](docs/images/OpenIPTVPro-v4.23.37-player-layout.jpg)
+
+![Player with channel list v4.23.37](docs/images/OpenIPTVPro-v4.23.37-channel-list.jpg)
+
+*Ảnh giao diện kiểm tra bằng Chromium, không phải ảnh xác nhận luồng truyền hình đang phát trực tiếp.*
+
+### Thay đổi nổi bật / Highlights
+
+- Trình phát có **hai hàng điều khiển**; âm lượng lên hàng trên cạnh điều khiển phát, Cast/AirPlay, PiP, fullscreen; EPG, khung hình, link dự phòng và yêu thích ở hàng dưới.
+- Nút mở lại danh sách kênh giảm còn **một nửa kích thước**, giảm khoảng trống và mở rộng tối đa vùng video.
+- Sidebar gộp có icon căn giữa và khoảng cách đồng đều; thu gọn danh sách kênh độc lập với sidebar.
+- Sắp xếp thư mục và kênh bằng kéo thả; giữ **Shift** để chọn nhiều kênh.
+- Cấu hình luồng kiểm tra, Snapshot, thời gian tua lại bằng các hộp chọn.
+- Trên macOS, bản cập nhật DMG tải và xác minh thành công được mở trước khi ứng dụng thoát hoàn toàn.
+- Giữ tính năng EPG, FFmpeg, Timeshift, DVR, Snapshot, Auto Failover và MultiView.
+
+**Test:** 264 passed, 0 failed, 2 skipped (source checks). Việc đưa source lên `main` không đồng nghĩa đã phát hành DMG/EXE hoặc Release GitHub.
+
+---
+
 ## v4.22.2 — Backup / Restore for Windows and macOS
 
 **Tiếng Việt:** Bổ sung Sao lưu / Khôi phục trong sidebar và Cài đặt. Xuất file `.iptvbackup` gồm playlist, yêu thích, thư mục, cấu hình, EPG và tùy chọn ảnh Snapshot. Khi khôi phục, ứng dụng kiểm tra dữ liệu, xem trước và xác nhận, tránh ghi đè ảnh cũ và rollback cấu hình nếu lỗi. File sao lưu chưa mã hóa. Xem `HUONG_DAN_BACKUP_RESTORE_V4_22_2.md`.
