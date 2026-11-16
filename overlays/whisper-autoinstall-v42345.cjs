@@ -9,7 +9,7 @@ const VERSION='v1.0.0';
 const BINARIES=Object.freeze({
  'darwin-arm64':['whisper-cpp-darwin-arm64.zip','d033bd3f590cad50f39957bf86354f87b44394cb001e3f78a7b47264358103e3'],
  'darwin-x64':['whisper-cpp-darwin-x64.zip','f0f2ab6c2e92b7022ac02f0759a7a38f3ea110764e00b05a6f0d6c1dcadd571c'],
- 'win32-x64':['whisper-cpp-win32-x64-cpu.zip','80f6b6481794825f65043001e408e70aea4257918b15906b7c205da5']
+ 'win32-x64':['whisper-cpp-win32-x64-cpu.zip','80f6b6481794825f65043001e408e70aea4257918b15906b7e070d2c7b205da5']
 });
 const MODEL_URL='https://huggingface.co/ggerganov/whisper.cpp/resolve/5359861c739e955e79d9a303bcbc70fb988958b1/ggml-base.bin';
 const MODEL_SHA='60ed5bc3dd14eea856493d334349b405782ddcaf0028d4b5df4088345fba2efe';
