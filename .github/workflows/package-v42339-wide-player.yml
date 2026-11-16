@@ -1,0 +1,75 @@
+name: Package Open IPTV Pro v4.23.39 full-width source ZIP
+on:
+  push:
+    branches:
+      - iptv-build-source
+    paths:
+      - .github/workflows/package-v42339-wide-player.yml
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: publish-source-v42339
+  cancel-in-progress: false
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - name: Extract verified v4.23.38 ZIP and apply v4.23.39 fix
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          echo "c55bbcfac141bcc0af6dd7b678dad7ace3fee90c20415c008111b9a97981943e  source/OpenIPTVPro_Source_v4.23.38.zip" | sha256sum -c -
+          WORK="$RUNNER_TEMP/iptv-source-42339"
+          mkdir -p "$WORK"
+          unzip -q source/OpenIPTVPro_Source_v4.23.38.zip -d "$WORK"
+          BASE="$WORK/Open-IPTV-Pro-v4_23_38_Full_Desktop"
+          PROJECT="$WORK/Open-IPTV-Pro-v4_23_39_Full_Desktop"
+          test -f "$BASE/package.json"
+          mv "$BASE" "$PROJECT"
+          (cd "$PROJECT"; node "$GITHUB_WORKSPACE/overlays/v4.23.39-apply.cjs")
+          node -e 'const p=require(process.argv[1]);if(p.version!=="4.23.39")process.exit(1)' "$PROJECT/package.json"
+          test -f "$PROJECT/renderer/video-source-aspect-v42338.css"
+          test -f "$PROJECT/renderer/video-source-aspect-v42338.js"
+          test -f "$PROJECT/BUILD_MAC.command"
+          echo "PROJECT=$PROJECT" >> "$GITHUB_ENV"
+      - name: Execute complete desktop source tests
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          cd "$PROJECT"
+          node --test --test-concurrency=2 tests/*.test.cjs
+      - name: Create exactly one verified v4.23.39 source ZIP
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import os,zipfile
+          root=Path(os.environ['PROJECT'])
+          output=Path('source/OpenIPTVPro_Source_v4.23.39.zip')
+          skip={'node_modules','dist','.git','.open-iptv-tools','__pycache__'}
+          with zipfile.ZipFile(output,'w',compression=zipfile.ZIP_DEFLATED,compresslevel=8) as z:
+              for p in sorted(root.rglob('*')):
+                  if p.is_file() and not any(x in skip for x in p.relative_to(root).parts):
+                      z.write(p,arcname=f'{root.name}/{p.relative_to(root).as_posix()}')
+          with zipfile.ZipFile(output) as z:
+              assert z.testzip() is None
+              assert f'{root.name}/package.json' in z.namelist()
+              assert f'{root.name}/renderer/video-source-aspect-v42338.css' in z.namelist()
+          print('ZIP',output, 'bytes',output.stat().st_size)
+          PY
+          sha256sum source/OpenIPTVPro_Source_v4.23.39.zip > source/OpenIPTVPro_Source_v4.23.39.zip.sha256
+      - name: Publish source ZIP and checksum on isolated branch
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add source/OpenIPTVPro_Source_v4.23.39.zip source/OpenIPTVPro_Source_v4.23.39.zip.sha256
+          git commit -m "build(source): publish tested full-width v4.23.39 single ZIP"
+          git push origin HEAD:iptv-build-source
