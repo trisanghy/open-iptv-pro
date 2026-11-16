@@ -25,8 +25,10 @@ jobs:
         run: |
           set -Eeuo pipefail
           bash -n build-mac-v42349.sh
-          grep -Fq 'V49_REV="2823022e2fce2a3bd54412be5c34a79651e59ee6"' build-mac-v42349.sh
+          grep -Fq 'V49_REV="a662e66219c6cd4a9778c28b7c5c16f4ae8ddb70"' build-mac-v42349.sh
           grep -Fq 'OpenIPTVPro_Source_v4.23.49.zip' build-mac-v42349.sh
+          grep -Fq 'direct-caption-routing-v42350.cjs' build-mac-v42349.sh
+          grep -Fq 'v42350-direct-routing.test.cjs' build-mac-v42349.sh
           grep -Fq 'unzip -p "$WORK/$PATCH_SOURCE"' build-mac-v42349.sh
           ! grep -Fq 'unzip -Z1 "$WORK/$PATCH_SOURCE" | grep -Fxq' build-mac-v42349.sh
       - name: Patch actual verified full Electron source and run all unit tests
