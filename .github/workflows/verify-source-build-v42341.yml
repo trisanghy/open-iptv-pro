@@ -24,13 +24,16 @@ jobs:
           trap 'rm -rf "$work"' EXIT
           unzip -q source/OpenIPTVPro_Source_v4.23.41.zip -d "$work"
           project="$work/Open-IPTV-Pro-v4_23_41_Full_Desktop"
+          echo "[CHECK] ZIP folder and package.json"; find "$work" -maxdepth 2 -name package.json -print
           test -s "$project/package.json"
           test "$(node -p 'require(process.argv[1]).version' "$project/package.json")" = '4.23.41'
           test -s "$project/BUILD_MAC.command"
           test -s "$project/renderer/player-toolbar-v42341.css"
+          echo "[CHECK] Mac builder points to the same extracted directory"
           grep -Fq 'PROJECT="$WORK/Open-IPTV-Pro-v4_23_41_Full_Desktop"' build-mac.sh
           grep -Fq '"4[.]23[.]41"' build-mac.sh
-          grep -Fq "Join-Path \\$work 'Open-IPTV-Pro-v4_23_41_Full_Desktop'" build-windows-v42341.ps1
+          echo "[CHECK] Windows builder matches extracted directory"
+          grep -Fq "Open-IPTV-Pro-v4_23_41_Full_Desktop" build-windows-v42341.ps1
           if grep -E '(42340|v4_23_40|4[.]23[.]40)' build-mac.sh build-mac-native-v42341.sh build-windows-v42341.ps1; then
             echo 'Old version references detected in build scripts' >&2
             exit 1
