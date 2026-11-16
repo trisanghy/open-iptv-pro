@@ -54,7 +54,7 @@ if ! command -v node >/dev/null 2>&1; then
     exit 1
   fi
 fi
-OVERLAY_REV="dc43bb1be407582f4b987161367344e032799752"
+OVERLAY_REV="1d34c7b8a0f2f61a902a66c7090224a39e7c08b4"
 OVERLAY_DIR="$WORK/overlays"
 mkdir -p "$OVERLAY_DIR"
 for file in argos-bridge-v42348.py local-ai-autoinstall-v42348.cjs caption-translator-v42348.cjs local-tts-service-v42348.cjs local-tts-ui-v42348.js argos-tts-voice-v42348.test.cjs v4.23.48-apply.cjs; do
@@ -66,6 +66,7 @@ for js in src/local-ai-autoinstall.cjs src/caption-translator.cjs src/local-tts-
   node --check "$PROJECT/$js"
 done
 python3 -m py_compile "$PROJECT/src/argos-bridge.py"
+find "$PROJECT/src" -type d -name __pycache__ -prune -exec rm -rf -- {} +
 ( cd "$PROJECT" && node --test tests/argos-tts-voice-v42348.test.cjs tests/whisper-installer-hotfix-v42347.test.cjs ) || { echo 'Argos/TTS regression tests failed' >&2; exit 1; }
 NEW_PROJECT="$WORK/Open-IPTV-Pro-v4_23_48_Full_Desktop"
 mv "$PROJECT" "$NEW_PROJECT"
