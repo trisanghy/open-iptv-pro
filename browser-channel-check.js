@@ -41,7 +41,11 @@
     const chunks=[]; let length=0;
     try {
       while (length < limit) {
-        const step = await reader.read();
+        let timeout;
+        const step = await Promise.race([
+          reader.read(),
+          new Promise((_,reject)=>{timeout=setTimeout(()=>reject(Error('Đọc dữ liệu quá thời gian')),5000);})
+        ]).finally(()=>clearTimeout(timeout));
         if (step.done) break;
         if (step.value?.length) {
           chunks.push(step.value.subarray(0,limit-length));
@@ -49,7 +53,10 @@
           if (onlyFirst) break;
         }
       }
-    } finally {try {await reader.cancel();} catch {} reader.releaseLock();}
+    } finally {
+      try {void reader.cancel().catch(()=>{});} catch {}
+      try {reader.releaseLock();} catch {}
+    }
     const output = new Uint8Array(length); let offset=0;
     for(const chunk of chunks){output.set(chunk,offset);offset+=chunk.length;}
     return output;
@@ -87,7 +94,7 @@
         if(done)return;done=true;
         clearTimeout(timer);signal?.removeEventListener('abort', cancelled);
         for(const event of ['loadeddata','canplay','playing','error','stalled'])video.removeEventListener?.(event,handlers[event]);
-        try{video.pause?.();video.removeAttribute?.('src');video.load?.();}catch{}
+        try{video.pause?.();video.removeAttribute?.('src');video.load?.();video.remove?.();}catch{}
         resolve(ok);
       };
       const cancelled=()=>clean(false);
