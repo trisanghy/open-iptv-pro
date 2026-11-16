@@ -45,8 +45,12 @@ PATCH_SOURCE="OpenIPTVPro_Source_v4.23.47_WhisperCDNFix1.zip"
 curl -fL --retry 2 --connect-timeout 15 --max-time 60 --output "$WORK/whisper-autoinstall.cjs" "$PATCH_URL"
 grep -Fq 'us.aws.cdn.hf.co' "$WORK/whisper-autoinstall.cjs" || { echo 'Invalid hotfix payload' >&2; exit 1; }
 cp "$WORK/whisper-autoinstall.cjs" "$PROJECT/src/whisper-autoinstall.cjs"
-node --check "$PROJECT/src/whisper-autoinstall.cjs"
-( cd "$PROJECT" && node --test tests/whisper-installer-hotfix-v42347.test.cjs ) || { echo 'Whisper regression tests failed' >&2; exit 1; }
+if command -v node >/dev/null 2>&1; then
+  node --check "$PROJECT/src/whisper-autoinstall.cjs"
+  ( cd "$PROJECT" && node --test tests/whisper-installer-hotfix-v42347.test.cjs ) || { echo 'Whisper regression tests failed' >&2; exit 1; }
+else
+  echo 'Node is not yet on PATH; delegating dependency setup to BUILD_MAC.command.'
+fi
 ( cd "$WORK" && zip -q -r "$PATCH_SOURCE" "Open-IPTV-Pro-v4_23_47_Full_Desktop" -x '*/node_modules/*' '*/dist/*' '*/.git/*' )
 unzip -tq "$WORK/$PATCH_SOURCE" >/dev/null
 echo "[4/5] Building native Mac $ARCH DMG..."
