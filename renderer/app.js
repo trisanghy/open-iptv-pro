@@ -9,9 +9,10 @@
  const adaptive=window.IPTVAdaptivePlayback;
  const reentry=window.IPTVPlaybackReentry;
  const shotPolicy=window.IPTVSnapshotPolicy;
+ const organizer=window.IPTVChannelOrganizer;
  const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
  const escape=s=>String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
- const seed={sources:[],channels:[],favorites:[],snapshots:{},folders:[],groupOrder:[],collapsedGroups:[],current:'',volume:.8,videoFit:'contain'};
+ const seed={sources:[],channels:[],favorites:[],snapshots:{},folders:[],groupOrder:[],channelOrder:{},collapsedGroups:[],current:'',volume:.8,videoFit:'contain'};
  let store;
  try{store={...seed,...JSON.parse(window.IPTVPrimaryPersistence?.initialRaw||localStorage.getItem('open-iptv-pro-4')||localStorage.getItem('streamleaf-3')||'{}')};}catch{store={...seed};}
  if(!Array.isArray(store.channels))store.channels=[];
@@ -20,6 +21,7 @@
  if(!store.snapshots||typeof store.snapshots!=='object')store.snapshots={};
  if(!Array.isArray(store.folders))store.folders=[];
  if(!Array.isArray(store.groupOrder))store.groupOrder=[];
+ organizer.ensure(store);
  if(!Array.isArray(store.collapsedGroups))store.collapsedGroups=[];
  // Each job has its own saved concurrency. Never trust stale/corrupt localStorage values.
  const safeConcurrency=(value,defaultValue=4)=>{
@@ -83,7 +85,7 @@
   const node=document.createElement('div');node.className='toast'+(type==='error'?' err':type==='warn'?' warn':'');node.textContent=message;
   const area=$('#toastArea');while(area.children.length>=3)area.firstElementChild?.remove();area.append(node);setTimeout(()=>node.remove(),5500);
  }
- function setPage(p){if(p==='collector'||p==='discovery')p='sources';if(window.IPTVProAdvanced?.canEnterPage?.(p)===false){toast('Trang này bị khóa trong hồ sơ trẻ em','warn');return;}const last=page;page=p;if(last!==p){const scrolling=$('.content');if(scrolling)scrolling.scrollTop=0;}$$('.nav[data-page]').forEach(x=>x.classList.toggle('active',x.dataset.page===p));$$('.page').forEach(x=>x.classList.remove('active-page'));$('#page-'+p)?.classList.add('active-page');$('#pageTitle').textContent=({tv:'Xem truyền hình',fav:'Kênh yêu thích',shots:'Ảnh chụp kênh',sources:'Quản lý nguồn',discovery:'Smart Discovery',doctor:'Smart IPTV Doctor 3.0',health:'Sức khỏe kênh',folders:'Thư mục kênh',epg:'Lịch phát sóng EPG',settings:'Cài đặt'})[p]||'Open IPTV Pro';render();window.IPTVExtras?.onPage?.(p);window.IPTVProAdvanced?.onPage?.(p,last);window.IPTVDVR?.onPage?.(p);window.IPTVCollectorUI?.refresh?.();}
+ function setPage(p){if(p==='collector'||p==='discovery')p='sources';if(window.IPTVProAdvanced?.canEnterPage?.(p)===false){toast('Trang này bị khóa trong hồ sơ trẻ em','warn');return;}const last=page;page=p;if(last!==p){const scrolling=$('.content');if(scrolling)scrolling.scrollTop=0;}$$('.nav[data-page]').forEach(x=>x.classList.toggle('active',x.dataset.page===p));$$('.page').forEach(x=>x.classList.remove('active-page'));$('#page-'+p)?.classList.add('active-page');if($('#pageTitle'))$('#pageTitle').textContent=({tv:'Xem truyền hình',fav:'Kênh yêu thích',shots:'Ảnh chụp kênh',sources:'Quản lý nguồn',discovery:'Smart Discovery',doctor:'Smart IPTV Doctor 3.0',health:'Sức khỏe kênh',folders:'Thư mục kênh',epg:'Lịch phát sóng EPG',settings:'Cài đặt'})[p]||'Open IPTV Pro';render();window.IPTVExtras?.onPage?.(p);window.IPTVProAdvanced?.onPage?.(p,last);window.IPTVDVR?.onPage?.(p);window.IPTVCollectorUI?.refresh?.();}
  function closeModal(){$('#modal').classList.add('hidden');modalHandler=null;}
  function openModal(title,html,onSubmit,confirmText='Xác nhận'){$('#modalTitle').textContent=title;$('#modalBody').innerHTML=html;$('#modalConfirm').textContent=confirmText;modalHandler=onSubmit;$('#modal').classList.remove('hidden');setTimeout(()=>$('#modalBody input:not([type=radio])')?.focus(),40);}
  function groupName(c){return core.cleanGroup?core.cleanGroup(c.group||'Khác'):(c.group||'Khác').replace(/\s*\|\s*Kiểm tra:.+$/i,'').trim()||'Khác';}
@@ -94,44 +96,130 @@
  function preserveListScroll(){const list=$('#channelList');return {top:list?.scrollTop||0,left:list?.scrollLeft||0};}
  function restoreListScroll(pos){const list=$('#channelList');if(!list||!pos)return;requestAnimationFrame(()=>{list.scrollTop=Math.min(pos.top,Math.max(0,list.scrollHeight-list.clientHeight));list.scrollLeft=Math.min(pos.left,Math.max(0,list.scrollWidth-list.clientWidth));});}
  function scrollGroupIntoView(group){requestAnimationFrame(()=>{document.querySelectorAll('.folder-header').forEach(x=>{if(x.dataset.group===group)x.scrollIntoView({block:'nearest'});});});}
- function reorderGroup(moved,target){if(window.IPTVProAdvanced?.canEdit?.()===false)return;if(!moved||!target||moved===target)return;const order=groupNames().filter(Boolean);const from=order.indexOf(moved),to=order.indexOf(target);if(from<0||to<0)return;order.splice(from,1);order.splice(to,0,moved);store.groupOrder=order.concat(store.groupOrder.filter(g=>!order.includes(g)));save();renderList(true);renderFolders();toast(`Đã sắp xếp: ${moved} → vị trí mới`);}
+ function reorderGroup(moved,target,after=false){
+  if(window.IPTVProAdvanced?.canEdit?.()===false)return;
+  if(!moved||!target||moved===target)return;
+  const order=groupNames().filter(Boolean);const from=order.indexOf(moved),to=order.indexOf(target);
+  if(from<0||to<0)return;
+  order.splice(from,1);const dest=order.indexOf(target)+(after?1:0);order.splice(dest,0,moved);
+  store.groupOrder=order;save();renderList(true);renderFolders();toast(`Đã thay đổi vị trí thư mục: ${moved}`);
+ }
  const CHANNEL_DRAG_MIME='application/x-open-iptv-channel';
- let draggedChannelId='';
- function hasChannelPayload(e){return !!draggedChannelId||Array.from(e.dataTransfer?.types||[]).includes(CHANNEL_DRAG_MIME);}
- function moveDroppedChannel(e,group){
-  if(!hasChannelPayload(e))return false;
-  e.preventDefault();e.stopPropagation();
-  const id=e.dataTransfer?.getData(CHANNEL_DRAG_MIME)||draggedChannelId;
-  draggedChannelId='';
-  const channel=store.channels.find(c=>c.id===id);
-  if(!channel){toast('Không tìm thấy kênh để chuyển','warn');return true;}
-  if(window.IPTVProAdvanced?.canEdit?.()===false){toast('Hồ sơ trẻ em không được chuyển kênh','warn');return true;}
-  if(!groupNames().includes(group)){toast('Thư mục đích không tồn tại','warn');return true;}
-  const from=groupName(channel);
-  if(from===group)return true;
-  channel.group=group;
+ let draggedChannelIds=[], selectedChannelIds=new Set(),lastSelectionAnchor='';
+ function selectionEditable(){return window.IPTVProAdvanced?.canEdit?.()!==false;}
+ function hasChannelPayload(e){return draggedChannelIds.length>0||Array.from(e.dataTransfer?.types||[]).includes(CHANNEL_DRAG_MIME);}
+ function displayedChannelIds(){
+  const byGroup=new Map();for(const c of channelView()){const group=groupName(c);if(!byGroup.has(group))byGroup.set(group,[]);byGroup.get(group).push(c);}
+  return groupNames().flatMap(group=>organizer.sorted(store,group,byGroup.get(group)||[]).map(c=>c.id));
+ }
+ function updateSelectionUI(){
+  const existing=new Set(store.channels.map(c=>c.id));selectedChannelIds=new Set([...selectedChannelIds].filter(id=>existing.has(id)));
+  const count=selectedChannelIds.size,toolbar=$('#channelBulkToolbar');
+  if(toolbar)toolbar.classList.toggle('has-selection',count>0);
+  const label=$('#channelSelectionCount');if(label)label.textContent=count?`Đã chọn ${count} kênh`:'Chọn kênh để chuyển nhiều';
+  const move=$('#bulkMoveBtn');if(move)move.disabled=!count;
+  const clear=$('#clearSelectionBtn');if(clear)clear.disabled=!count;
+  document.querySelectorAll('.channel-item[data-channel-id]').forEach(row=>{
+   const checked=selectedChannelIds.has(row.dataset.channelId);
+   row.classList.toggle('channel-selected',checked);row.setAttribute('aria-selected',String(checked));
+   const input=row.querySelector('.channel-select');if(input)input.checked=checked;
+  });
+ }
+ function selectChannel(id,checked,range=false){
+  if(!selectionEditable())return toast('Hồ sơ trẻ em không được sắp xếp kênh','warn');
+  if(range&&lastSelectionAnchor){
+   const visible=displayedChannelIds(),from=visible.indexOf(lastSelectionAnchor),to=visible.indexOf(id);
+   if(from>=0&&to>=0){for(const value of visible.slice(Math.min(from,to),Math.max(from,to)+1)){if(checked)selectedChannelIds.add(value);else selectedChannelIds.delete(value);}}
+   else if(checked)selectedChannelIds.add(id);else selectedChannelIds.delete(id);
+  }else if(checked)selectedChannelIds.add(id);else selectedChannelIds.delete(id);
+  lastSelectionAnchor=id;updateSelectionUI();
+ }
+ function applyChannelMove(ids,group,beforeId=null){
+  if(!selectionEditable()){toast('Hồ sơ trẻ em không được chuyển kênh','warn');return false;}
+  if(!groupNames().includes(group)){toast('Thư mục đích không tồn tại','warn');return false;}
+  const result=organizer.move(store,ids,group,beforeId);
+  if(!result.changed)return false;
+  store.collapsedGroups=store.collapsedGroups.filter(g=>g!==group);
   save();renderList(true);renderFolders();
   if(page==='shots')renderShots();
-  toast(`Đã chuyển ${channel.name} từ ${from} sang ${group}`);
+  toast(`Đã sắp xếp ${result.count} kênh → ${group}`);
+  return true;
+ }
+ function moveDroppedChannel(e,group,beforeId=null){
+  if(!hasChannelPayload(e))return false;
+  e.preventDefault();e.stopPropagation();
+  let ids=draggedChannelIds.slice();
+  if(!ids.length){try{const data=JSON.parse(e.dataTransfer?.getData(CHANNEL_DRAG_MIME)||'[]');ids=Array.isArray(data)?data:[];}catch{ids=[];}}
+  draggedChannelIds=[];
+  if(!ids.length){toast('Không tìm thấy kênh để chuyển','warn');return true;}
+  applyChannelMove(ids,group,beforeId);
   return true;
  }
  function channelDragStart(e,c){
-  if(window.IPTVProAdvanced?.canEdit?.()===false){e.preventDefault();return;}
-  if(e.target.closest('button')){e.preventDefault();return;}
-  draggedChannelId=c.id;e.dataTransfer?.setData(CHANNEL_DRAG_MIME,c.id);
+  if(!selectionEditable()||e.target.closest('button,input')){e.preventDefault();return;}
+  draggedChannelIds=selectedChannelIds.has(c.id)?[...selectedChannelIds]:[c.id];
+  e.dataTransfer?.setData(CHANNEL_DRAG_MIME,JSON.stringify(draggedChannelIds));
   e.dataTransfer.effectAllowed='move';e.currentTarget.classList.add('channel-dragging');
  }
  function folderChannelDragOver(e,element){
   if(!hasChannelPayload(e))return false;
   e.preventDefault();if(e.dataTransfer)e.dataTransfer.dropEffect='move';element.classList.add('channel-drop-target');return true;
  }
+ function openMoveSelectionModal(ids){
+  if(!selectionEditable())return toast('Hồ sơ trẻ em không được chuyển kênh','warn');
+  const valid=ids.filter(id=>store.channels.some(c=>c.id===id));if(!valid.length)return;
+  const options=groupNames().map(n=>`<option value="${escape(n)}">${escape(n)}</option>`).join('');
+  openModal('Chuyển nhiều kênh',`<p class="hint">Đang chọn <b>${valid.length}</b> kênh. Có thể kéo cả nhóm đã chọn vào một thư mục hoặc chọn đích tại đây.</p><label class="modal-label" for="bulkFolderSelect">Chuyển tới thư mục</label><select class="modal-input" id="bulkFolderSelect">${options}</select>`,()=>{
+   const group=$('#bulkFolderSelect').value;if(!group)throw Error('Hãy chọn thư mục');
+   applyChannelMove(valid,group);selectedChannelIds.clear();updateSelectionUI();
+  },'Chuyển kênh');
+ }
  function snapshotSrc(s){if(!s)return '';if(s.file)return snapshotBase?snapshotBase+encodeURIComponent(s.file):'';return s.data||'';}
  function channelThumb(c){const shot=store.snapshots[c.url];const url=snapshotSrc(shot);return url?`<img loading="lazy" src="${escape(url)}" alt="Ảnh chụp ${escape(c.name)}"/>`:icon(c);}
  function createFolder(){if(window.IPTVProAdvanced?.canEdit?.()===false)return toast('Hồ sơ trẻ em không được sửa thư mục','warn');openModal('Tạo thư mục kênh',`<label class="modal-label">Tên thư mục mới</label><input class="modal-input" id="folderName" maxlength="90" placeholder="Ví dụ: Kênh thể thao"/>`,()=>{const value=$('#folderName').value.trim();if(!value||value.length>90)throw Error('Nhập tên thư mục (tối đa 90 ký tự)');if(groupNames().includes(value))throw Error('Thư mục này đã tồn tại');store.folders.push(value);syncGroupOrder();save();render();},'Tạo thư mục');}
- function moveChannelToFolder(c){if(window.IPTVProAdvanced?.canEdit?.()===false)return toast('Hồ sơ trẻ em không được chuyển kênh','warn');const options=groupNames().map(n=>`<option value="${escape(n)}" ${groupName(c)===n?'selected':''}>${escape(n)}</option>`).join('');openModal('Chuyển kênh vào thư mục',`<p class="hint">Kênh: <b>${escape(c.name)}</b>. Thay đổi chỉ lưu trên máy cho tới khi xuất M3U.</p><label class="modal-label">Thư mục</label><select class="modal-input" id="folderSelect">${options}</select>`,()=>{const g=$('#folderSelect').value;if(!g)throw Error('Chọn thư mục');c.group=g;save();render();toast('Đã chuyển '+c.name+' tới '+g);},'Chuyển kênh');}
- function renameFolder(old){if(window.IPTVProAdvanced?.canEdit?.()===false)return toast('Hồ sơ trẻ em không được đổi tên thư mục','warn');openModal('Đổi tên thư mục',`<label class="modal-label">Tên thư mục</label><input class="modal-input" id="folderRename" maxlength="90" value="${escape(old)}"/>`,()=>{const name=$('#folderRename').value.trim();if(!name)throw Error('Nhập tên thư mục');if(name!==old&&groupNames().includes(name))throw Error('Tên thư mục đã tồn tại');store.channels.filter(c=>groupName(c)===old).forEach(c=>{c.group=name});store.folders=store.folders.filter(x=>x!==old);if(!store.folders.includes(name))store.folders.push(name);store.groupOrder=groupNames().map(x=>x===old?name:x);store.collapsedGroups=store.collapsedGroups.map(x=>x===old?name:x);save();render();},'Lưu');}
- function deleteFolder(group){if(window.IPTVProAdvanced?.canEdit?.()===false)return toast('Hồ sơ trẻ em không được xóa thư mục','warn');const count=groupCount(group);if(count&&!confirm(`Thư mục ${group} đang chứa ${count} kênh. Chuyển các kênh sang Khác rồi xóa thư mục?`))return;if(!count&&!confirm(`Xóa thư mục trống ${group}?`))return;store.channels.filter(c=>groupName(c)===group).forEach(c=>{c.group='Khác'});store.folders=store.folders.filter(x=>x!==group);store.groupOrder=groupNames().filter(x=>x!==group);store.collapsedGroups=store.collapsedGroups.filter(x=>x!==group);save();render();}
- function renderFolders(){const root=$('#folderManager');root.replaceChildren();const groups=groupNames();if(!groups.length){root.innerHTML='<div class="empty-list">Chưa có thư mục. Nhập M3U để lấy nhóm có sẵn hoặc tạo thư mục mới.</div>';return;}groups.forEach(g=>{const card=document.createElement('div');card.className='folder-card';card.draggable=true;card.dataset.group=g;card.innerHTML=`<h3>▤ ${escape(g)}</h3><p>${groupCount(g)} kênh trong thư mục</p><div class="folder-card-actions"><button class="folder-open">▶ Xem kênh</button><button class="folder-rename">✎ Đổi tên</button><button class="folder-delete">✕ Xóa</button></div>`;card.addEventListener('dragstart',e=>{card.classList.add('dragging');e.dataTransfer?.setData('text/plain',g);e.dataTransfer.effectAllowed='move';});card.addEventListener('dragend',()=>card.classList.remove('dragging'));card.addEventListener('dragover',e=>{if(folderChannelDragOver(e,card))return;e.preventDefault();card.classList.add('drag-over');});card.addEventListener('dragleave',()=>card.classList.remove('drag-over','channel-drop-target'));card.addEventListener('drop',e=>{card.classList.remove('drag-over','channel-drop-target');if(moveDroppedChannel(e,g))return;e.preventDefault();reorderGroup(e.dataTransfer?.getData('text/plain')||document.querySelector('.folder-card.dragging')?.dataset.group,g);});card.querySelector('.folder-open').onclick=()=>{store.collapsedGroups=store.collapsedGroups.filter(x=>x!==g);save();setPage('tv');$('#searchBox').value='';renderList(true);scrollGroupIntoView(g);};card.querySelector('.folder-rename').onclick=()=>renameFolder(g);card.querySelector('.folder-delete').onclick=()=>deleteFolder(g);root.append(card)});}
+ function moveChannelToFolder(c){openMoveSelectionModal(selectedChannelIds.has(c.id)?[...selectedChannelIds]:[c.id]);}
+ function renameFolder(old){
+  if(!selectionEditable())return toast('Hồ sơ trẻ em không được đổi tên thư mục','warn');
+  openModal('Đổi tên thư mục',`<label class="modal-label">Tên thư mục</label><input class="modal-input" id="folderRename" maxlength="90" value="${escape(old)}"/>`,()=>{
+   const name=$('#folderRename').value.trim();if(!name)throw Error('Nhập tên thư mục');
+   if(name!==old&&groupNames().includes(name))throw Error('Tên thư mục đã tồn tại');
+   if(name===old)return;
+   const order=groupNames().map(g=>g===old?name:g);
+   organizer.renameGroup(store,old,name);
+   store.folders=store.folders.filter(g=>g!==old);if(!store.folders.includes(name))store.folders.push(name);
+   store.groupOrder=order;store.collapsedGroups=store.collapsedGroups.map(g=>g===old?name:g);
+   save();render();
+  },'Lưu');
+ }
+ function deleteFolder(group){
+  if(!selectionEditable())return toast('Hồ sơ trẻ em không được xóa thư mục','warn');
+  const count=groupCount(group);
+  if(!confirm(count?`Thư mục ${group} chứa ${count} kênh. Chuyển sang Khác rồi xóa?`:`Xóa thư mục trống ${group}?`))return;
+  organizer.deleteGroup(store,group);
+  store.folders=store.folders.filter(g=>g!==group);
+  store.groupOrder=store.groupOrder.filter(g=>g!==group);
+  store.collapsedGroups=store.collapsedGroups.filter(g=>g!==group);
+  syncGroupOrder();save();render();
+ }
+ function renderFolders(){
+  const root=$('#folderManager');root.replaceChildren();const groups=groupNames();
+  if(!groups.length){root.innerHTML='<div class="empty-list">Chưa có thư mục. Nhập M3U hoặc tạo thư mục mới.</div>';return;}
+  groups.forEach((g,index)=>{
+   const card=document.createElement('div');card.className='folder-card';card.draggable=selectionEditable();card.dataset.group=g;
+   card.innerHTML=`<h3>▤ ${escape(g)}</h3><p>${groupCount(g)} kênh trong thư mục • Kéo thả để sắp xếp</p><div class="folder-card-actions"><button class="folder-open">▶ Xem kênh</button><button class="folder-up" ${index===0?'disabled':''} title="Lên một vị trí">↑</button><button class="folder-down" ${index===groups.length-1?'disabled':''} title="Xuống một vị trí">↓</button><button class="folder-rename">✎ Đổi tên</button><button class="folder-delete">✕ Xóa</button></div>`;
+   card.addEventListener('dragstart',e=>{if(!selectionEditable()||e.target.closest('button')){e.preventDefault();return;}card.classList.add('dragging');e.dataTransfer?.setData('text/plain',g);e.dataTransfer.effectAllowed='move';});
+   card.addEventListener('dragend',()=>card.classList.remove('dragging'));
+   card.addEventListener('dragover',e=>{if(folderChannelDragOver(e,card))return;e.preventDefault();card.classList.add('drag-over');});
+   card.addEventListener('dragleave',()=>card.classList.remove('drag-over','channel-drop-target'));
+   card.addEventListener('drop',e=>{card.classList.remove('drag-over','channel-drop-target');if(moveDroppedChannel(e,g))return;e.preventDefault();reorderGroup(e.dataTransfer?.getData('text/plain')||document.querySelector('.folder-card.dragging')?.dataset.group,g);});
+   card.querySelector('.folder-open').onclick=()=>{store.collapsedGroups=store.collapsedGroups.filter(x=>x!==g);save();setPage('tv');$('#searchBox').value='';renderList(true);scrollGroupIntoView(g);};
+   card.querySelector('.folder-up').onclick=()=>reorderGroup(g,groups[index-1]);
+   card.querySelector('.folder-down').onclick=()=>reorderGroup(g,groups[index+1],true);
+   card.querySelector('.folder-rename').onclick=()=>renameFolder(g);
+   card.querySelector('.folder-delete').onclick=()=>deleteFolder(g);
+   root.append(card);
+  });
+ }
  function icon(c){return c.logo?`<img loading="lazy" src="${escape(c.logo)}" alt="" onerror="this.style.display='none';this.parentNode.textContent='TV'" />`:'TV';}
  function channelView(){let a=filter==='fav'?favCore.visible(store):enabledChannels();
   const query=$('#searchBox').value.trim().toLowerCase();if(query)a=a.filter(c=>(c.name+' '+c.group).toLowerCase().includes(query));
@@ -143,13 +231,13 @@
   const prev=preserve?preserveListScroll():null;
   const result=channelView();$('#channelMeta').textContent=`${result.length} / ${store.channels.length} kênh`;
   const target=$('#channelList');target.replaceChildren();
-  if(!result.length){target.innerHTML=`<div class="empty-list">${store.channels.length?'Không thấy kênh phù hợp.':'Chưa có kênh. Dùng Mở file M3U hoặc Thêm URL để nhập danh sách.'}</div>`;restoreListScroll(prev);return;}
+  if(!result.length){target.innerHTML=`<div class="empty-list">${store.channels.length?'Không thấy kênh phù hợp.':'Chưa có kênh. Dùng Mở file M3U hoặc Thêm URL để nhập danh sách.'}</div>`;restoreListScroll(prev);updateSelectionUI();return;}
   const groups=new Map();result.forEach(c=>{const g=groupName(c);if(!groups.has(g))groups.set(g,[]);groups.get(g).push(c)});
   const showEmpty=filter==='all'&&!$('#searchBox').value.trim();
   const orderedGroups=groupNames().filter(g=>showEmpty||groups.has(g)).concat([...groups.keys()].filter(g=>!groupNames().includes(g)));
   const f=document.createDocumentFragment();
   orderedGroups.forEach(group=>{
-    const entries=groups.get(group)||[],collapsed=store.collapsedGroups.includes(group)&&!$('#searchBox').value.trim();
+    const entries=organizer.sorted(store,group,groups.get(group)||[]),collapsed=store.collapsedGroups.includes(group)&&!$('#searchBox').value.trim();
     const header=document.createElement('button');header.type='button';header.className='folder-header';header.dataset.group=group;header.draggable=!$('#searchBox').value.trim();
     header.innerHTML=`<span class="folder-arrow">${collapsed?'▸':'▾'}</span><span class="folder-emoji">📁</span><span>${escape(group)}</span><span class="folder-size">${entries.length}</span>`;
     header.addEventListener('click',()=>{const pos=preserveListScroll();if(store.collapsedGroups.includes(group))store.collapsedGroups=store.collapsedGroups.filter(x=>x!==group);else store.collapsedGroups.push(group);save();renderList();restoreListScroll(pos)});
@@ -162,13 +250,32 @@
     if(collapsed)return;
     entries.forEach(c=>{
       const row=document.createElement('div');const shot=store.snapshots[c.url];row.className='channel-item'+(current?.id===c.id?' current':'');row.dataset.channelId=c.id;
-      row.innerHTML=`<div class="chan-logo ${snapshotSrc(shot)?'snapshot-thumb':''}">${channelThumb(c)}</div><div class="channel-text"><b>${escape(c.name)}</b><small><i class="mini-pill ${escape(c.status||'')}"></i><span class="channel-health ${escape(c.status||'')}">${c.status==='alive'?'Sống · ':c.status==='dead'?'Die · ':c.status==='uncertain'?'Chưa rõ · ':''}</span>${shot?'📸 Đã có ảnh • ':''}${escape(groupName(c))}</small></div><button class="channel-move" title="Chuyển thư mục">▤</button><button type="button" class="channel-star ${favCore.has(store,c)?'marked':''}" aria-pressed="${favCore.has(store,c)}" title="${favCore.has(store,c)?'Bỏ yêu thích':'Thêm yêu thích'}">${favCore.has(store,c)?'★':'☆'}</button>`;
-      row.draggable=true;row.title='Kéo kênh thả vào tiêu đề thư mục khác để chuyển';
+      row.innerHTML=`<input class="channel-select" type="checkbox" aria-label="Chọn ${escape(c.name)} để chuyển nhóm" ${selectedChannelIds.has(c.id)?'checked':''}/><div class="chan-logo ${snapshotSrc(shot)?'snapshot-thumb':''}">${channelThumb(c)}</div><div class="channel-text"><b>${escape(c.name)}</b><small><i class="mini-pill ${escape(c.status||'')}"></i><span class="channel-health ${escape(c.status||'')}">${c.status==='alive'?'Sống · ':c.status==='dead'?'Die · ':c.status==='uncertain'?'Chưa rõ · ':''}</span>${shot?'📸 Đã có ảnh • ':''}${escape(groupName(c))}</small></div><button class="channel-move" title="Chuyển thư mục">▤</button><button type="button" class="channel-star ${favCore.has(store,c)?'marked':''}" aria-pressed="${favCore.has(store,c)}" title="${favCore.has(store,c)?'Bỏ yêu thích':'Thêm yêu thích'}">${favCore.has(store,c)?'★':'☆'}</button>`;
+      row.draggable=selectionEditable();row.title='Kéo đến kênh khác để đổi vị trí, hoặc thả vào tên thư mục để chuyển';
       row.addEventListener('dragstart',e=>channelDragStart(e,c));
-      row.addEventListener('dragend',()=>{row.classList.remove('channel-dragging');draggedChannelId='';});
-      row.addEventListener('click',()=>playChannel(c.id));row.querySelector('.channel-star').addEventListener('click',e=>{e.stopPropagation();favorite(c);});row.querySelector('.channel-move').addEventListener('click',e=>{e.stopPropagation();moveChannelToFolder(c);});window.IPTVExtras?.decorateRow?.(c,row);window.IPTVProAdvanced?.decorateRow?.(c,row);f.append(row);
+      row.addEventListener('dragend',()=>{row.classList.remove('channel-dragging');draggedChannelIds=[];});
+      row.addEventListener('dragover',e=>{
+       if(!hasChannelPayload(e))return;e.preventDefault();e.stopPropagation();
+       row.classList.add('channel-drop-position');row.classList.toggle('channel-drop-after',e.clientY>row.getBoundingClientRect().top+row.offsetHeight/2);
+       if(e.dataTransfer)e.dataTransfer.dropEffect='move';
+      });
+      row.addEventListener('dragleave',e=>{if(!row.contains(e.relatedTarget))row.classList.remove('channel-drop-position','channel-drop-after');});
+      row.addEventListener('drop',e=>{
+       if(!hasChannelPayload(e))return;
+       const after=e.clientY>row.getBoundingClientRect().top+row.offsetHeight/2;
+       row.classList.remove('channel-drop-position','channel-drop-after');
+       const dest=groupName(c),moving=draggedChannelIds.slice();
+       if(moving.includes(c.id)){e.preventDefault();e.stopPropagation();return;}
+       const remaining=organizer.groupList(store,dest).filter(id=>!moving.includes(id));
+       const at=remaining.indexOf(c.id);
+       const beforeId=after?(remaining[at+1]||null):c.id;
+       moveDroppedChannel(e,dest,beforeId);
+      });
+      row.addEventListener('click',e=>{if(e.ctrlKey||e.metaKey||e.shiftKey){selectChannel(c.id,!selectedChannelIds.has(c.id),e.shiftKey);return;}playChannel(c.id);});
+      row.querySelector('.channel-select').addEventListener('click',e=>{e.stopPropagation();selectChannel(c.id,e.target.checked,e.shiftKey);});
+      row.querySelector('.channel-star').addEventListener('click',e=>{e.stopPropagation();favorite(c);});row.querySelector('.channel-move').addEventListener('click',e=>{e.stopPropagation();moveChannelToFolder(c);});window.IPTVExtras?.decorateRow?.(c,row);window.IPTVProAdvanced?.decorateRow?.(c,row);f.append(row);
     });
-  });target.append(f);restoreListScroll(prev);
+  });target.append(f);restoreListScroll(prev);updateSelectionUI();
  }
  function renderSources(){const list=$('#sourcesList');list.replaceChildren();if(!store.sources.length){list.innerHTML='<div class="empty-list">Chưa có nguồn. Thêm URL playlist hoặc file M3U từ máy.</div>';return;}
   for(const s of store.sources){const n=store.channels.filter(c=>c.sourceId===s.id).length;const d=document.createElement('article');d.className='source-card';d.innerHTML=`<div class="source-top"><h3>${escape(s.name)}</h3><label title="Bật / tắt nguồn"><input class="toggle" type="checkbox" ${s.enabled!==false?'checked':''}/></label></div><div class="source-url" title="${escape(s.origin||'')}">${escape(s.origin||'File M3U')}</div><div class="source-meta">${n} kênh • ${s.type==='url'?'Nguồn URL':'File cục bộ'}</div><div class="source-actions"><button class="src-refresh" ${s.type!=='url'?'disabled':''}>↻ Tải lại</button><button class="src-edit" ${s.type!=='url'?'disabled title="Chỉ sửa được nguồn URL"':''}>✎ Sửa link</button><button class="src-rename">✎ Đổi tên</button><button class="src-delete remove">✕ Xóa</button></div>`;
@@ -358,7 +465,7 @@
   const visibleFavorites=favCore.sync(store);
   const enabled=store.sources.filter(s=>s.enabled!==false);const visible=store.channels.filter(c=>enabled.some(s=>s.id===c.sourceId));
   $('#navCount').textContent=visible.length;$('#favCount').textContent=visibleFavorites.length;$('#sourceCount').textContent=store.sources.length;$('#footerCounts').textContent=`${store.channels.length} kênh • ${store.sources.length} nguồn`;
-  $('#activeSourceTag').textContent=store.sources.length?`${store.sources.length} nguồn M3U`:'Chưa có nguồn';
+  if($('#activeSourceTag'))$('#activeSourceTag').textContent=store.sources.length?`${store.sources.length} nguồn M3U`:'Chưa có nguồn';
   renderList(preserveScroll);renderSources();renderShots();renderFavorites();renderFolders();$('#folderCount').textContent=groupNames().length;
   updatePlayerFavorite();notifyFavorites();window.IPTVExtras?.render?.();
  }
@@ -403,7 +510,7 @@
   try{
    store.sources=[...store.sources,src];store.channels=[...store.channels,...parsed];
    store.groupOrder=[...store.groupOrder];store.favorites=[...store.favorites];
-   syncGroupOrder();favCore.sync(store);
+   syncGroupOrder();organizer.reconcile(store);favCore.sync(store);
    if(!save())throw new Error('Bộ nhớ lưu trữ không đủ. Danh sách chưa được nhập; hãy xuất Backup và xóa bớt dữ liệu cũ.');
   }catch(e){Object.assign(store,before);throw e;}
   render();toast(`Đã thêm ${parsed.length} kênh từ ${name}`);textStatus(`Đã thêm ${parsed.length} kênh mới`);setPage('tv');}
@@ -438,7 +545,7 @@
   try{
    result=sourceEdit.replaceSourceInStore(store,source.id,url,fresh);
    source.name=String(newName||'').trim()||source.name;
-   syncGroupOrder();favCore.sync(store);
+   syncGroupOrder();organizer.reconcile(store);favCore.sync(store);
    if(!save())throw Error('Không đủ bộ nhớ lưu trữ để cập nhật nguồn. Đã giữ nguyên nguồn cũ.');
   }catch(e){store=JSON.parse(before);throw e;}
   source.lastRefreshedAt=new Date().toISOString();source.lastRefreshError='';
@@ -722,7 +829,7 @@
  async function playToggle(){if(!current){const first=enabledChannels()[0];if(first)await playChannel(first.id);else toast('Hãy thêm file M3U hoặc URL trước','warn');return;}
   if(player.paused){try{await player.play();$('#playBtn').textContent='Ⅱ';}catch(e){toast('Không thể phát: '+e.message,'error');}}
   else{player.pause();$('#playBtn').textContent='▶';}}
- function switchChannel(dir){const all=enabledChannels();if(!all.length)return;let index=all.findIndex(c=>c.id===current?.id);index=(index+dir+all.length)%all.length;playChannel(all[index].id);}
+ function switchChannel(dir){const active=enabledChannels();const all=groupNames().flatMap(g=>organizer.sorted(store,g,active.filter(c=>groupName(c)===g))); if(!all.length)return;let index=all.findIndex(c=>c.id===current?.id);index=(index+dir+all.length)%all.length;playChannel(all[index].id);}
  function updateTaskUI(type){
   const task=tasks[type],panel=$('#task-'+type);if(!panel)return;
   panel.classList.toggle('hidden',!task.visible);
@@ -893,7 +1000,7 @@
   try{await Promise.all(Array.from({length:workers},()=>worker()));save();}
   finally{backgroundShotsRunning=false;}
  }
- async function exportFile(){const all=enabledChannels();if(!all.length)return toast('Không có kênh để xuất','warn');const content=core.exportM3U(all);
+ async function exportFile(){const active=enabledChannels();const groups=groupNames();const all=groups.flatMap(g=>organizer.sorted(store,g,active.filter(c=>groupName(c)===g)));if(!all.length)return toast('Không có kênh để xuất','warn');const content=core.exportM3U(all);
   try{if(native){const dest=await window.streamleaf.export('iptv.m3u',content);if(dest)toast('Đã lưu: '+dest);}else{const blob=new Blob([content],{type:'audio/x-mpegurl;charset=utf-8'});const u=URL.createObjectURL(blob);const a=document.createElement('a');a.href=u;a.download='iptv.m3u';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),1500);toast('Đã tải file iptv.m3u');}}
   catch(e){toast('Không xuất được: '+e.message,'error');}}
  async function modalSubmit(){if(!modalHandler)return;const cb=modalHandler;const button=$('#modalConfirm');button.disabled=true;const old=button.textContent;button.textContent='Đang xử lý...';try{await cb();closeModal();}catch(e){toast(e.message||String(e),'error');}finally{button.disabled=false;button.textContent=old;}}
@@ -907,6 +1014,9 @@
     const target=button.dataset.navTarget;
     if(target)document.getElementById(target)?.scrollIntoView({block:'start',behavior:'smooth'});
   }));
+  bind(['selectVisibleBtn'],()=>{if(!selectionEditable())return toast('Hồ sơ trẻ em không được sắp xếp','warn');for(const id of displayedChannelIds())selectedChannelIds.add(id);updateSelectionUI();});
+  bind(['bulkMoveBtn'],()=>openMoveSelectionModal([...selectedChannelIds]));
+  bind(['clearSelectionBtn'],()=>{selectedChannelIds.clear();lastSelectionAnchor='';updateSelectionUI();});
   bind(['folderCreateBtn','newFolderFromList'],createFolder);bind(['expandFolderBtn'],()=>{const pos=preserveListScroll();store.collapsedGroups=[];save();renderList();restoreListScroll(pos);});bind(['collapseFolderBtn'],()=>{const pos=preserveListScroll();store.collapsedGroups=groupNames();save();renderList();restoreListScroll(pos);});
   bind(['castBtn'],()=>{const ch=currentChannel();if(!ch)return toast('Chọn kênh trước khi phát lên TV','warn');window.OpenIPTVCastUI?.open?.(ch,playCandidates[playCandidateIndex]||ch.url);});
   bind(['refreshAllBtn'],refreshAll);bind(['prevBtn'],()=>switchChannel(-1));bind(['nextBtn'],()=>switchChannel(1));bind(['stopBtn'],stopPlayer);bind(['playBtn'],playToggle);

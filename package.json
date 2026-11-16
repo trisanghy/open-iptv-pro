@@ -1,14 +1,14 @@
 {
   "name": "open-iptv-pro-tauri-experiment",
   "private": true,
-  "version": "4.23.17-tauri.7",
-  "description": "Independent Tauri 2 + Rust migration of Open IPTV Pro 4.23.17. Never publishes or updates the Electron stable app.",
+  "version": "4.23.17-tauri.8",
+  "description": "Independent Tauri 2 + Rust Lab with channel/folder organizer, bulk drag/drop and collapsible navigation; Electron main untouched.",
   "license": "MIT",
   "scripts": {
     "dev": "tauri dev",
     "build": "tauri build",
     "build:debug": "tauri build --debug",
-    "test": "node --test tests/tauri-bridge.test.cjs tests/tauri-playback.test.cjs tests/core.test.cjs tests/favorites.test.cjs tests/epg_update.test.cjs tests/backup.test.cjs tests/tauri-stability.test.cjs tests/tauri-ffmpeg-integration.test.cjs tests/tauri-evidence-storage-regression.test.cjs tests/tauri-adaptive-playback-v5.test.cjs tests/tauri-snapshot-fullscreen-v6.test.cjs tests/tauri-windows-bootstrap.test.cjs tests/tauri-windows-msvc-v63.test.cjs tests/tauri-playback-reentry-v7.test.cjs",
+    "test": "node --test tests/tauri-bridge.test.cjs tests/tauri-playback.test.cjs tests/core.test.cjs tests/favorites.test.cjs tests/epg_update.test.cjs tests/backup.test.cjs tests/tauri-stability.test.cjs tests/tauri-ffmpeg-integration.test.cjs tests/tauri-evidence-storage-regression.test.cjs tests/tauri-adaptive-playback-v5.test.cjs tests/tauri-snapshot-fullscreen-v6.test.cjs tests/tauri-windows-bootstrap.test.cjs tests/tauri-windows-msvc-v63.test.cjs tests/tauri-playback-reentry-v7.test.cjs tests/tauri-channel-organizer-v8.test.cjs tests/tauri-sidebar-v8.test.cjs",
     "test:migration": "node --test tests/tauri-bridge.test.cjs tests/tauri-playback.test.cjs",
     "check:rust": "cargo test --manifest-path src-tauri/Cargo.toml",
     "audit:bridge": "node scripts/audit-tauri-bridge.cjs",

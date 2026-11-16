@@ -1,31 +1,28 @@
 <!DOCTYPE html>
 <html lang="vi"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
 <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: blob:; script-src 'self' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; img-src * data: blob: file:; connect-src * data: blob:; media-src * data: blob:; worker-src 'self' blob:;"/>
-<title>Open IPTV Pro · Rust Lab 4.23.17</title><script src="tauri-bridge.js"></script><script src="theme-boot.js"></script><link rel="stylesheet" href="styles.css"/><link rel="stylesheet" href="ui-styles.css"/><link rel="stylesheet" href="ui-fullsync.css"/><link rel="stylesheet" href="ui-refined.css"/><link rel="stylesheet" href="ui-polish.css"/><link rel="stylesheet" href="player-ux.css"/><link rel="stylesheet" href="settings-v42317.css"/></head>
+<title>Open IPTV Pro · Rust Lab 4.23.17</title><script src="tauri-bridge.js"></script><script src="theme-boot.js"></script><link rel="stylesheet" href="styles.css"/><link rel="stylesheet" href="ui-styles.css"/><link rel="stylesheet" href="ui-fullsync.css"/><link rel="stylesheet" href="ui-refined.css"/><link rel="stylesheet" href="ui-polish.css"/><link rel="stylesheet" href="player-ux.css"/><link rel="stylesheet" href="settings-v42317.css"/><link rel="stylesheet" href="channel-organizer.css"/><link rel="stylesheet" href="sidebar-compact.css"/></head>
 <body>
 <div class="app-shell" id="appShell">
- <aside class="sidebar">
-  <div class="brand"><div class="brand-icon"><img src="assets/icon.png" alt="Open IPTV Pro"/></div><div><b>Open IPTV Pro</b><small>RUST LAB <span class="version">4.23.17</span></small></div></div>
+ <aside class="sidebar" id="appSidebar" aria-label="Điều hướng ứng dụng">
+  <div class="sidebar-head"><div class="brand"><div class="brand-icon"><img src="assets/icon.png" alt=""/></div><div class="brand-text"><b>Open IPTV Pro</b><small>RUST LAB <span class="version">4.23.17 · v8</span></small></div></div><button type="button" class="sidebar-toggle" id="sidebarToggle" aria-controls="appSidebar" aria-expanded="true" aria-label="Thu gọn sidebar" title="Thu gọn sidebar"><span aria-hidden="true">☰</span></button></div>
   <div class="aside-caption">THƯ VIỆN</div>
-  <button class="nav active" data-page="tv"><span>▣</span> Xem truyền hình <small id="navCount">0</small></button>
-  <button class="nav" data-page="fav"><span>★</span> Kênh yêu thích <small id="favCount">0</small></button>
-  <button class="nav" data-page="epg"><span>▤</span> Lịch phát sóng EPG</button>
-  <button class="nav" data-page="multiview"><span>⊞</span> MultiView · 4 kênh</button>
-  <button class="nav" data-page="shots"><span>▦</span> Ảnh chụp kênh</button>
-  <button class="nav" data-page="folders"><span>▤</span> Thư mục kênh <small id="folderCount">0</small></button>
+  <button class="nav active" data-page="tv" aria-label="Xem truyền hình" title="Xem truyền hình"><span>▣</span> <span class="nav-label">Xem truyền hình</span> <small id="navCount">0</small></button>
+  <button class="nav" data-page="fav" aria-label="Kênh yêu thích" title="Kênh yêu thích"><span>★</span> <span class="nav-label">Kênh yêu thích</span> <small id="favCount">0</small></button>
+  <button class="nav" data-page="epg" aria-label="Lịch phát sóng EPG" title="Lịch phát sóng EPG"><span>▤</span> <span class="nav-label">Lịch phát sóng EPG</span></button>
+  <button class="nav" data-page="multiview" aria-label="MultiView · 4 kênh" title="MultiView · 4 kênh"><span>⊞</span> <span class="nav-label">MultiView · 4 kênh</span></button>
+  <button class="nav" data-page="shots" aria-label="Ảnh chụp kênh" title="Ảnh chụp kênh"><span>▦</span> <span class="nav-label">Ảnh chụp kênh</span></button>
+  <button class="nav" data-page="folders" aria-label="Thư mục kênh" title="Thư mục kênh"><span>▤</span> <span class="nav-label">Thư mục kênh</span> <small id="folderCount">0</small></button>
   <div class="aside-caption aside-second">CÔNG CỤ</div>
-  <button class="nav" data-page="sources"><span>◈</span> Quản lý nguồn <small id="sourceCount">0</small></button>
-  <button class="nav" data-page="health" title="Sức khỏe kênh / Failover"><span>↗</span> Sức khỏe kênh / Failover</button>
-  <button class="nav" data-page="doctor"><span>✚</span> Smart IPTV Doctor</button>
-  <button class="nav" data-page="profiles"><span>♙</span> Hồ sơ / Khóa trẻ em</button>
-  <button class="nav" id="exportNav"><span>⇩</span> Xuất M3U</button>
-  <button class="nav" data-page="settings"><span>⚙</span> Cài đặt</button>
+  <button class="nav" data-page="sources" aria-label="Quản lý nguồn" title="Quản lý nguồn"><span>◈</span> <span class="nav-label">Quản lý nguồn</span> <small id="sourceCount">0</small></button>
+  <button class="nav" data-page="health" title="Sức khỏe kênh / Failover"><span>↗</span> <span class="nav-label">Sức khỏe kênh / Failover</span></button>
+  <button class="nav" data-page="doctor" aria-label="Smart IPTV Doctor" title="Smart IPTV Doctor"><span>✚</span> <span class="nav-label">Smart IPTV Doctor</span></button>
+  <button class="nav" data-page="profiles" aria-label="Hồ sơ / Khóa trẻ em" title="Hồ sơ / Khóa trẻ em"><span>♙</span> <span class="nav-label">Hồ sơ / Khóa trẻ em</span></button>
+  <button class="nav" id="exportNav" aria-label="Xuất M3U" title="Xuất M3U"><span>⇩</span> <span class="nav-label">Xuất M3U</span></button>
+  <button class="nav" data-page="settings" aria-label="Cài đặt" title="Cài đặt"><span>⚙</span> <span class="nav-label">Cài đặt</span></button>
   <div class="sidebar-bottom"><div class="online-dot"></div><div><b id="appMode">Bản mở nhanh</b><small id="miniStatus">Sẵn sàng</small></div></div>
  </aside>
  <main class="main">
-  <header class="topbar"><div class="top-title"><span class="crumb">OPEN IPTV PRO</span><span class="chevron">›</span><b id="pageTitle">Xem truyền hình</b></div>
-   <div class="top-actions"><span class="state-mark" id="activeSourceTag">Chưa có nguồn</span><button class="btn btn-subtle" id="fileBtn">＋ Mở file M3U</button><button class="btn btn-primary" id="urlBtn">↗ Thêm URL</button></div>
-  </header>
   <div class="content">
    <section id="page-tv" class="page active-page">
     <div class="tv-layout">
@@ -33,7 +30,7 @@
       <div class="panel-header"><div><h2>Danh sách kênh</h2><p id="channelMeta">Chưa có kênh</p></div><button class="icon-btn" id="refreshAllBtn" title="Làm mới các nguồn URL">↻</button></div>
       <div class="filter-box"><span>⌕</span><input type="search" placeholder="Tìm kênh, nhóm..." id="searchBox"/></div>
       <div class="folder-actions"><button id="newFolderFromList" title="Tạo thư mục mới">＋ Thư mục</button><button id="expandFolderBtn" title="Mở hết thư mục">▾ Mở hết</button><button id="collapseFolderBtn" title="Đóng hết thư mục">▸ Gập hết</button></div><div class="filter-tabs"><button class="filter-tab active" data-filter="all">Tất cả</button><button class="filter-tab" data-filter="fav">★ Yêu thích</button><button class="filter-tab" data-filter="alive">● Sống</button><button class="filter-tab" data-filter="dead">● Die</button><button class="filter-tab" data-filter="uncertain">● Chưa rõ</button></div>
-      <p class="channel-drag-hint">↔ Kéo một kênh và thả vào tên thư mục khác để chuyển kênh.</p><div class="channel-list" id="channelList"></div>
+      <p class="channel-drag-hint">↕ Kéo kênh để sắp xếp vị trí; thả vào thư mục để chuyển. Tích chọn nhiều kênh để chuyển cùng lúc.</p><div class="channel-bulk-toolbar" id="channelBulkToolbar"><span id="channelSelectionCount" aria-live="polite">Chọn kênh để chuyển nhiều</span><div class="channel-bulk-actions"><button type="button" id="selectVisibleBtn" title="Chọn tất cả kênh đang hiển thị">Chọn hiện có</button><button type="button" id="bulkMoveBtn" disabled>Chuyển thư mục</button><button type="button" id="clearSelectionBtn" disabled>Bỏ chọn</button></div></div><div class="channel-list" id="channelList"></div>
      </div>
      <div class="watch-panel">
       <div class="player-box" id="playerBox">
@@ -303,7 +300,7 @@
    </section>
    </section>
    <section id="page-shots" class="page"><div class="section-heading"><div><h1>Snapshot các kênh</h1><p>Ảnh chụp thực tế từ kênh, có thể chụp nhiều kênh đồng thời.</p></div><div><button class="btn btn-primary" id="shotsAllBtn">▣ Chụp toàn bộ</button></div></div><div class="snapshot-speedbar"><label for="snapshotWorkersQuick">Chụp song song <select id="snapshotWorkersQuick" class="snapshot-worker-select"><option value="1">1 luồng</option><option value="2">2 luồng</option><option value="3">3 luồng</option><option value="4">4 luồng</option><option value="5">5 luồng</option><option value="6">6 luồng</option><option value="7">7 luồng</option><option value="8">8 luồng</option><option value="9">9 luồng</option><option value="10">10 luồng</option><option value="11">11 luồng</option><option value="12">12 luồng</option><option value="13">13 luồng</option><option value="14">14 luồng</option><option value="15">15 luồng</option><option value="16">16 luồng</option><option value="17">17 luồng</option><option value="18">18 luồng</option><option value="19">19 luồng</option><option value="20">20 luồng</option><option value="21">21 luồng</option><option value="22">22 luồng</option><option value="23">23 luồng</option><option value="24">24 luồng</option><option value="25">25 luồng</option><option value="26">26 luồng</option><option value="27">27 luồng</option><option value="28">28 luồng</option><option value="29">29 luồng</option><option value="30">30 luồng</option><option value="31">31 luồng</option><option value="32">32 luồng</option></select></label><label class="snapshot-skip"><input type="checkbox" id="snapshotSkipQuick" checked/> Bỏ qua kênh đã có ảnh</label><span>Ảnh đã quá 6 giờ tự chụp lại trong nền (tối đa 2 luồng, giữ ảnh cũ nếu thất bại).</span></div><div class="shot-groups" id="shotList"></div></section>
-   <section id="page-folders" class="page"><div class="section-heading"><div><h1>Thư mục và nhóm kênh</h1><p>Giữ nhóm M3U gốc hoặc tạo nhóm riêng, đổi tên và chuyển kênh giữa các thư mục.</p></div><button class="btn btn-primary" id="folderCreateBtn">＋ Tạo thư mục</button></div><div class="folder-manager" id="folderManager"></div></section>
+   <section id="page-folders" class="page"><div class="section-heading"><div><h1>Thư mục và nhóm kênh</h1><p>Kéo thả để đổi vị trí thư mục, chuyển nhiều kênh hoặc sắp xếp vị trí trong từng nhóm.</p></div><button class="btn btn-primary" id="folderCreateBtn">＋ Tạo thư mục</button></div><div class="folder-manager" id="folderManager"></div></section>
    <section id="page-fav" class="page"><div class="section-heading"><div><h1>Kênh yêu thích</h1><p>Danh sách kênh đã đánh dấu sao.</p></div></div><div class="favorite-grid" id="favoriteList"></div></section>
   </div>
   <footer class="footer"><span><i class="status-dot"></i><span id="footerText">Sẵn sàng • Không yêu cầu Python / Qt / VLC</span></span>
@@ -345,5 +342,5 @@
 </div>
 <div id="channelPreview" class="channel-preview hidden"></div>
 <div class="toast-area" id="toastArea" aria-live="polite"></div>
-<script src="app-icons.js"></script><script src="vendor/hls.min.js"></script><script src="vendor/dash.all.min.js"></script><script src="languages.bundle.js"></script><script src="i18n.js"></script><script src="core-browser.js"></script><script src="collector-core.js"></script><script src="advanced-core.js"></script><script src="doctor-v2-core.js"></script><script src="doctor-v3-core.js"></script><script src="epg.js"></script><script src="favorites-core.js"></script><script src="source-edit.js"></script><script src="adaptive-playback.js"></script><script src="playback-reentry.js"></script><script src="health-evidence.js"></script><script src="primary-storage.js"></script><script src="snapshot-freshness.js"></script><script src="app-entry.js"></script>
+<script src="app-icons.js"></script><script src="vendor/hls.min.js"></script><script src="vendor/dash.all.min.js"></script><script src="languages.bundle.js"></script><script src="i18n.js"></script><script src="core-browser.js"></script><script src="collector-core.js"></script><script src="advanced-core.js"></script><script src="doctor-v2-core.js"></script><script src="doctor-v3-core.js"></script><script src="epg.js"></script><script src="favorites-core.js"></script><script src="source-edit.js"></script><script src="adaptive-playback.js"></script><script src="playback-reentry.js"></script><script src="health-evidence.js"></script><script src="primary-storage.js"></script><script src="snapshot-freshness.js"></script><script src="channel-organizer.js"></script><script src="sidebar-compact.js"></script><script src="app-entry.js"></script>
 </body></html>

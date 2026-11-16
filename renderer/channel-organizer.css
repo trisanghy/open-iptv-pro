@@ -1,0 +1,16 @@
+/* Rust Lab v8: multiselect and precise reorder targets. */
+.channel-bulk-toolbar{padding:8px 10px;display:flex;flex-direction:column;gap:7px;border-bottom:1px solid var(--edge);background:color-mix(in srgb,var(--panel,#13202d) 88%,var(--accent) 12%);font-size:11px;color:var(--muted)}
+.channel-bulk-toolbar.has-selection{background:color-mix(in srgb,var(--accent) 15%,var(--panel,#13202d))}
+.channel-bulk-actions{display:flex;flex-wrap:wrap;gap:5px}
+.channel-bulk-actions button{font-size:10px;border:1px solid var(--edge);color:var(--text);background:var(--panel,#162334);border-radius:7px;padding:6px 7px;cursor:pointer}
+.channel-bulk-actions button:disabled{opacity:.45;cursor:default}
+.channel-bulk-actions #bulkMoveBtn:not(:disabled){background:color-mix(in srgb,var(--accent) 22%,var(--panel,#182032));border-color:var(--accent)}
+.channel-item{position:relative;min-width:0}
+.channel-item .channel-select{width:16px;min-width:16px;height:16px;flex:0 0 16px;margin:0 3px 0 0;cursor:pointer;accent-color:var(--accent)}
+.channel-item.channel-selected{background:color-mix(in srgb,var(--accent) 20%,var(--panel,#111c29))!important;outline:1px solid color-mix(in srgb,var(--accent) 52%,transparent);outline-offset:-1px}
+.channel-item.channel-drop-position:before{content:'';position:absolute;z-index:5;left:0;right:0;top:0;height:3px;background:var(--accent);pointer-events:none}
+.channel-item.channel-drop-position.channel-drop-after:before{top:auto;bottom:0}
+.folder-card-actions .folder-up,.folder-card-actions .folder-down{font-size:17px;min-width:32px;line-height:1}
+.folder-card-actions button:disabled{opacity:.35;cursor:default}
+html[data-theme="light"] .channel-bulk-toolbar{background:#edf2fa;color:#47556d}
+html[data-theme="light"] .channel-bulk-actions button{background:#fff;color:#273b50}

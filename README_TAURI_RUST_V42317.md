@@ -133,3 +133,9 @@ copy bộ mã nguồn thử nghiệm vào clone đó, **không commit, không pu
 
 Bạn có thể xem `git status` và quyết định commit/push riêng. Không dùng force-push;
 không chạy script trên thư mục nguồn Electron đang phát triển.
+
+## v8 — Folder/channel organizer
+
+Xem `README_CHANNEL_ORGANIZER_V8.md` và `CHANGELOG_RUSTLAB_V8.md`.
+
+UI v8: header trên đã bỏ, sidebar có nút thu gọn 72px; xem `README_CHANNEL_ORGANIZER_V8.md`.
