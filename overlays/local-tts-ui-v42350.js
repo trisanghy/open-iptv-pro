@@ -115,7 +115,8 @@
   busy=true;const generation=taskId,lang=target.value,src=source();
   try{
    const result=await api.ttsSynthesize({target:lang,voice:voice.value,
-     text:payload.text.slice(0,360),alreadyTranslated:payload.alreadyTranslated===true});
+     text:payload.text.slice(0,360),sourceLanguage:payload.sourceLanguage,
+     alreadyTranslated:payload.alreadyTranslated===true});
    if(!enabled||generation!==taskId||source()!==src)return;
    if(!result?.audioBase64||result.mime!=='audio/wav')throw Error('Không nhận được WAV từ Piper');
    const url='data:audio/wav;base64,'+result.audioBase64;
@@ -190,12 +191,13 @@
  if(api.captionOnEvent)api.captionOnEvent(e=>{
   if(!enabled||!translate?.checked||!e||e.type!=='segment'||!e.translated||!e.text)return;
   updateSession();
-  const sameLanguage=e.translated&&e.language===target.value;
-  // If captions are already in the chosen voice language, avoid a redundant
-  // English -> target Argos pass (and do not read English out loud).
-  const text=String(sameLanguage?e.text:(e.englishText||e.text)).trim();
+  const sameLanguage=e.language===target.value;
+  const englishIntermediate=String(e.englishText||'').trim();
+  // Voice engine must know the ACTUAL language of the text it is speaking.
+  const sourceLanguage=sameLanguage?target.value:(englishIntermediate?'en':e.language);
+  const text=String(sameLanguage?e.text:(englishIntermediate||e.text)).trim();
   if(!text)return;
-  const payload={text,alreadyTranslated:!!sameLanguage};
+  const payload={text,sourceLanguage,alreadyTranslated:!!sameLanguage};
   if(!rememberOnce(e.utteranceKey||text))return;
   if(busy||playing){queued=payload;return;}
   void speak(payload);
