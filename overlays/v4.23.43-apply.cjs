@@ -35,8 +35,8 @@ const closingText=[
 '</div>',
 '</div>',
 '<div id="liveCaptionOutput" class="caption-third-output" role="status" aria-live="polite" hidden></div>'
-].join('\\n');
-html=html.slice(0,closingAt+'</details>'.length)+'\\n'+closingText+html.slice(closingAt+'</details>'.length);
+].join('\n');
+html=html.slice(0,closingAt+'</details>'.length)+'\n'+closingText+html.slice(closingAt+'</details>'.length);
 const sheet='live-caption-row-v42343.css',script='live-captions-v42343.js';
 assert(!html.includes(sheet)&&!html.includes(script));
 html=html.replace('</head>','<link rel="stylesheet" href="'+sheet+'"/></head>');
