@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
-# Open IPTV Pro v4.23.44 — one Mac command, automatically selects Apple Silicon or Intel.
+# Open IPTV Pro v4.23.45 — one Mac command, automatically selects Apple Silicon or Intel.
 set -Eeuo pipefail
-VERSION=4.23.44
-SOURCE=OpenIPTVPro_Source_v4.23.44.zip
-SHA256=4b09498f4fb28d30b26de511792194e27e8b7cad341c357d700235e5e1422183
+VERSION=4.23.45
+SOURCE=OpenIPTVPro_Source_v4.23.45.zip
+SHA256=dd4edee5da5ed2042bbea1aaa5003eebbfdb6a032cfb78c7bf2c972329cde448
 RAW=https://raw.githubusercontent.com/trisanghy/open-iptv-pro/iptv-build-source/source
 if [ "$(uname -s)" != Darwin ]; then echo 'This command requires macOS.' >&2; exit 1; fi
 case "$(uname -m)" in
@@ -13,9 +13,9 @@ case "$(uname -m)" in
 esac
 DOWNLOADS="$HOME/Downloads"
 mkdir -p "$DOWNLOADS"
-WORK="$(mktemp -d "$DOWNLOADS/.openiptv-42344-${ARCH}.XXXXXXXX")"
-OUT="$DOWNLOADS/OpenIPTVPro_Build_v4.23.44_${ARCH}"
-LOG="$DOWNLOADS/OpenIPTVPro_Build_v4.23.44_${ARCH}_ERROR.log"
+WORK="$(mktemp -d "$DOWNLOADS/.openiptv-42345-${ARCH}.XXXXXXXX")"
+OUT="$DOWNLOADS/OpenIPTVPro_Build_v4.23.45_${ARCH}"
+LOG="$DOWNLOADS/OpenIPTVPro_Build_v4.23.45_${ARCH}_ERROR.log"
 SUCCESS=0
 cleanup() {
   code=$?
@@ -24,7 +24,7 @@ cleanup() {
     [ ! -s "$WORK/build.log" ] || cp "$WORK/build.log" "$LOG" || true
     echo 'Build failed: previous output was preserved. Check error log in Downloads.' >&2
   fi
-  case "$WORK" in "$DOWNLOADS"/.openiptv-42344-*) rm -rf -- "$WORK" ;; esac
+  case "$WORK" in "$DOWNLOADS"/.openiptv-42345-*) rm -rf -- "$WORK" ;; esac
   exit "$code"
 }
 trap cleanup EXIT
@@ -35,12 +35,12 @@ curl -fL --retry 2 --connect-timeout 15 --max-time 300 --output "$WORK/$SOURCE" 
 echo "$SHA256  $WORK/$SOURCE" | shasum -a 256 -c - || { echo 'Source checksum mismatch.' >&2; exit 1; }
 echo '[2/4] Unpacking source...'
 unzip -q "$WORK/$SOURCE" -d "$WORK"
-PROJECT="$WORK/Open-IPTV-Pro-v4_23_44_Full_Desktop"
+PROJECT="$WORK/Open-IPTV-Pro-v4_23_45_Full_Desktop"
 [ -f "$PROJECT/package.json" ] || { echo "Missing package.json at expected directory: $PROJECT" >&2; find "$WORK" -maxdepth 3 -name package.json -print >&2 || true; exit 1; }
-grep -Eq '"version"[[:space:]]*:[[:space:]]*"4[.]23[.]44"' "$PROJECT/package.json" || { echo 'Wrong source version' >&2; exit 1; }
+grep -Eq '"version"[[:space:]]*:[[:space:]]*"4[.]23[.]45"' "$PROJECT/package.json" || { echo 'Wrong source version' >&2; exit 1; }
 echo "[3/4] Building native Mac $ARCH DMG..."
 ( cd "$PROJECT" && OPENIPTV_ONE_COMMAND=1 bash ./BUILD_MAC.command ) 2>&1 | tee "$WORK/build.log"
-DMG="Open-IPTV-Pro-4.23.44-mac-${ARCH}.dmg"
+DMG="Open-IPTV-Pro-4.23.45-mac-${ARCH}.dmg"
 [ -s "$PROJECT/dist/$DMG" ] || { echo "Missing $DMG" >&2; exit 1; }
 APP_DIR="mac-${ARCH}"
 if [ "$ARCH" = 'x64' ]; then APP_DIR='mac'; fi
