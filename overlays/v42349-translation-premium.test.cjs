@@ -6,7 +6,7 @@ const read=p=>fs.readFileSync(path.join(root,p),'utf8');
 const {VIENEU_VOICES,premiumName}=require('../src/premium-voices.cjs');
 const {createAutoModelInstaller}=require('../src/local-ai-autoinstall.cjs');
 test('v4.23.49: 24 approved high quality Vietnamese names, no invented Piper models',()=>{
- assert.equal(VIENEU_VOICES.length,24);
+ assert.equal(VIENEU_VOICES.length,25);
  assert.equal(new Set(VIENEU_VOICES).size,24);
  assert.equal(premiumName('vieneu:Mai Anh'),'Mai Anh');
  assert.throws(()=>premiumName('vieneu:fake voice'),/chưa được hỗ trợ/);
