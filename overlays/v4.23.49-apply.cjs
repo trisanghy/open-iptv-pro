@@ -16,6 +16,11 @@ const pkg=JSON.parse(read('package.json'));
 assert.equal(pkg.version,old,'Expected exact 4.23.48 patched source');
 pkg.version=next;
 pkg.description='Open IPTV Pro v4.23.49 — real Vietnamese Argos translation, 24 on-device premium VieNeu voices and TTS diagnostic';
+if(Array.isArray(pkg.build?.files)){
+ for(const pythonAsset of ['src/argos-bridge.py','src/vieneu-bridge.py']){
+  if(!pkg.build.files.includes(pythonAsset))pkg.build.files.push(pythonAsset);
+ }
+}
 write('package.json',JSON.stringify(pkg,null,2)+'\n');
 if(fs.existsSync(file('package-lock.json'))){
  const lock=JSON.parse(read('package-lock.json'));
@@ -31,6 +36,7 @@ swap('renderer/index.html','<title>Open IPTV Pro '+old+'</title>','<title>Open I
 swap('renderer/index.html','<span class="version">'+old+'</span>','<span class="version">'+next+'</span>');
 for(const [asset,dest] of [
  ['argos-bridge-v42349.py','src/argos-bridge.py'],
+ ['caption-translator-v42349.cjs','src/caption-translator.cjs'],
  ['premium-voices-v42349.cjs','src/premium-voices.cjs'],
  ['vieneu-bridge-v42349.py','src/vieneu-bridge.py'],
  ['local-ai-autoinstall-v42349.cjs','src/local-ai-autoinstall.cjs'],
