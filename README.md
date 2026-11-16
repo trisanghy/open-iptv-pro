@@ -77,3 +77,30 @@ Giới hạn đã biết của nhánh thử nghiệm: chưa hoàn thiện tươn
 ## Lưu phiên bản Rust Lab (từ v19)
 
 Mỗi lần đẩy thay đổi tạo commit mới; phiên bản chính thức có tag bất biến `rust-lab/v19`, `rust-lab/v20`, bản vá `rust-lab/v19.1`, `rust-lab/v19.2`. GitHub Actions chỉ tạo tag mới, không đổi tag cũ. Script build Mac tải ZIP theo tag cố định; nếu đã có bản build cùng tên, tự tạo thư mục `_2` để không ghi đè DMG/ZIP cũ. Xem [quy tắc phiên bản](VERSIONING_RUST_LAB.md).
+
+## Bản vá v19.1 — thanh điều khiển hai hàng theo thiết kế
+
+Khác với bố cục v16 được dựng lại bằng JavaScript di chuyển nút sau khi chạy, **v19.1 đặt các nút trực tiếp trong HTML**, giữ nguyên ID và hàm xử lý cũ:
+
+- **Hàng trên:** tên kênh; 4 nút Trước / Phát-Tạm dừng / Dừng / Sau ở giữa; Cast/AirPlay, PiP và fullscreen bên phải.
+- **Hàng dưới:** tên và thời gian của chương trình XMLTV hiện tại và kế tiếp; dropdown Khung hình (Vừa khung/Lấp đầy/...); dropdown Link phát và nút Yêu thích.
+- Âm lượng và chụp ảnh chuyển vào **Công cụ nhanh**, không xóa chức năng.
+- Video vẫn tự đổi tỷ lệ nguồn (mặc định 16:9); tab mở Danh sách kênh tiếp tục rộng 15 px.
+
+### Tự tạo bộ cài và phát hành bằng GitHub Actions
+
+Workflow riêng `.github/workflows/rust-lab-version-tags.yml` chạy sau mỗi lần đẩy bản mới lên `experiment/rust-tauri-v2`, tạo **tag bất biến** `rust-lab/v19.1`, kiểm thử nhanh và thực hiện:
+
+- **macOS Universal:** đóng gói DMG cho Intel x86_64 + Apple Silicon arm64, bao gồm FFmpeg universal được ghép từ 2 kiến trúc.
+- **Windows x64:** đóng gói NSIS Setup và ZIP portable có FFmpeg.
+- **Nguồn:** đính kèm ZIP của tag cùng `SHA256SUMS.txt` từ các tệp đã build.
+- **Release:** chỉ đăng nếu cả Mac và Windows đều build thành công; đặt **prerelease** và `make_latest: false` để không ảnh hưởng nhãn Latest của Electron chính. Không force-push hay ghi đè tag/bộ cài cũ.
+
+**Lưu ý:** Đây là workflow đã cấu hình, không phải xác nhận hai bộ cài đã build thành công. Kiểm tra tab Actions và Release tag v19.1 để biết trạng thái.
+
+Tải/build Mac một dòng (script tự lấy chính xác ZIP v19.1 từ tag):
+```bash
+curl -fsSL https://raw.githubusercontent.com/trisanghy/open-iptv-pro/experiment/rust-tauri-v2/scripts/BUILD_RUSTLAB_MAC_ONE_ZIP_FAST.sh | bash
+```
+
+Xem [changelog v19.1](CHANGELOG_RUSTLAB_V19_1.md) và [ghi chú phát hành v19.1](RELEASE_NOTES_RUST_LAB_V19_1.md).

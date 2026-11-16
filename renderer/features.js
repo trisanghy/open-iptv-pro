@@ -75,8 +75,18 @@
    row.querySelector('.del-epg')?.addEventListener('click',()=>{config.sources.splice(i,1);saveConfig();renderSources();});
    root.append(row);
  });}
- function renderNow(){const target=$('#epgNowText');if(!target)return;const c=ctx.getCurrent();if(!c){target.textContent='Chọn kênh để xem chương trình hiện tại';return;}
-  const {now,next}=guideLib.current(guide,c);target.textContent=now?`${today(now.start)}–${today(now.end)} · ${now.title}${next?'  |  Tiếp: '+next.title:''}`:'Chưa có EPG khớp với '+c.name;
+ function renderNow(){
+  const target=$('#epgNowText');if(!target)return;
+  const c=ctx.getCurrent(), current=c?guideLib.current(guide,c):{now:null,next:null};
+  const {now,next}=current;
+  target.textContent=!c?'Chọn kênh để xem chương trình hiện tại':now?`${today(now.start)}–${today(now.end)} · ${now.title}${next?'  |  Tiếp: '+next.title:''}`:'Chưa có EPG khớp với '+c.name;
+  const update=(titleId,timeId,item,fallback)=>{
+   const title=$(titleId),time=$(timeId);
+   if(title){title.textContent=item?.title||fallback;title.title=item?.title||fallback;}
+   if(time)time.textContent=item?`${today(item.start)} – ${today(item.end)}`:'—';
+  };
+  update('#ipvpNowTitle','#ipvpNowTime',now,c?'Chưa có EPG':'Chưa chọn kênh');
+  update('#ipvpNextTitle','#ipvpNextTime',next,'Chưa có chương trình tiếp theo');
  }
  function renderEPG(){const root=$('#epgGuide');root.replaceChildren();const channels=ctx.getChannels(),clock=Date.now();const filter=$('#epgSearch')?.value?.toLowerCase().trim()||'';
   const matched=channels.filter(c=>guideLib.find(guide,c).length>0).filter(c=>!filter||(c.name+' '+c.tvgId).toLowerCase().includes(filter)).slice(0,250);
@@ -186,6 +196,8 @@
  $('#epgSources')?.addEventListener('change',()=>{});
  $('#pipBtn').addEventListener('click',pictureInPicture);
  $('#openGuideBtn').addEventListener('click',()=>ctx.setPage('epg'));
+ $('#ipvpNowProgram')?.addEventListener('click',()=>ctx.setPage('epg'));
+ $('#ipvpNextProgram')?.addEventListener('click',()=>ctx.setPage('epg'));
  $('#epgSettingsBtn').addEventListener('click',()=>ctx.setPage('settings'));
  $('#epgRefreshBtn').addEventListener('click',()=>refreshEPG());
  $('#epgSearch').addEventListener('input',renderEPG);

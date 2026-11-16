@@ -1,8 +1,6 @@
 name: Tauri Rust Lab (experimental, no publishing)
+# Manual full diagnostic build; the release workflow now handles automatic CI.
 on:
-  push:
-    branches:
-      - experiment/rust-tauri-v2
   workflow_dispatch:
 permissions:
   contents: read

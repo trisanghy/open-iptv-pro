@@ -12,6 +12,12 @@ if [[ ! "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+-tauri\.([0-9]+(\.[0-9]+)*)$ ]]; th
 fi
 RELEASE="${BASH_REMATCH[1]}"
 TAG="rust-lab/v${RELEASE}"
+# Expose tag state to downstream CI builds; old tags remain immutable.
+report(){
+ if [[ -n "${GITHUB_OUTPUT:-}" ]]; then
+  printf 'tag=%s\nrelease=%s\npublish=%s\n' "$TAG" "$RELEASE" "$1" >> "$GITHUB_OUTPUT"
+ fi
+}
 echo "Tag policy: package=${VERSION}, tag=${TAG}, head=${GITHUB_SHA}"
 
 EXISTING="$(git ls-remote --refs --tags origin "refs/tags/${TAG}" | awk 'NR==1 {print $1}')"
@@ -20,6 +26,7 @@ if [[ -n "$EXISTING" ]]; then
   PINNED="$(git rev-parse "refs/tags/${TAG}^{commit}")"
   if [[ "$PINNED" == "$GITHUB_SHA" ]]; then
     echo "Existing tag ${TAG} already points to this commit."
+    report true
     exit 0
   fi
   # Allow documentation-only follow-up commits, but don't silently republish
@@ -30,6 +37,7 @@ if [[ -n "$EXISTING" ]]; then
     exit 1
   fi
   echo "Documentation-only commit. Keeping immutable ${TAG} unchanged."
+  report false
   exit 0
 fi
 
@@ -38,3 +46,4 @@ git -c user.name='github-actions[bot]' \
     tag -a "$TAG" "$GITHUB_SHA" -m "Open IPTV Pro Rust Lab ${TAG} (${VERSION})"
 git push origin "refs/tags/${TAG}"
 echo "Created immutable tag ${TAG} at ${GITHUB_SHA}."
+report true

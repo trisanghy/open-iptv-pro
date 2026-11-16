@@ -1,10 +1,10 @@
 #!/bin/bash
 set -Eeuo pipefail
-VERSION="4.23.17-tauri.19"
+VERSION="4.23.17-tauri.19.1"
 REPO="trisanghy/open-iptv-pro"
 BRANCH="experiment/rust-tauri-v2"
-TAG="rust-lab/v19"
-NAME="OpenIPTVPro_RustLab_v19"
+TAG="rust-lab/v19.1"
+NAME="OpenIPTVPro_RustLab_v19_1"
 DEST_BASE="$HOME/Downloads/${NAME}_Build"
 DEST="$DEST_BASE"
 INDEX=2
@@ -12,17 +12,17 @@ while [[ -e "$DEST" ]]; do
   DEST="${DEST_BASE}_${INDEX}"
   INDEX=$((INDEX + 1))
 done
-TMP="$(mktemp -d "${TMPDIR:-/tmp}/rustlab-v19.XXXXXX")"
+TMP="$(mktemp -d "${TMPDIR:-/tmp}/rustlab-v19-1.XXXXXX")"
 trap 'rm -rf "$TMP"' EXIT
 err(){ echo "LỖI: $*" >&2; exit 1; }
-echo "Open IPTV Pro Rust Lab v19 — immutable tag / one ZIP / fast build"
+echo "Open IPTV Pro Rust Lab v19.1 — immutable tag / one ZIP / fast build"
 # Download one immutable tagged ZIP; no git clone or per-file source download.
 curl -fLsS --retry 2 --connect-timeout 20 "https://github.com/${REPO}/archive/refs/tags/${TAG}.zip" -o "$TMP/source.zip" || err "Không tải được ZIP từ GitHub"
 mkdir -p "$TMP/extract"
 ditto -x -k "$TMP/source.zip" "$TMP/extract" || err "ZIP bị hỏng hoặc tải chưa hoàn tất"
 SOURCE="$(find "$TMP/extract" -maxdepth 1 -type d -name 'open-iptv-pro-*' -print -quit)"
 [[ -n "$SOURCE" && -f "$SOURCE/package.json" ]] || err "Không tìm thấy mã nguồn Rust Lab"
-grep -Eq '"version"[[:space:]]*:[[:space:]]*"4\.23\.17-tauri\.19"' "$SOURCE/package.json" || err "Tag không chứa đúng nguồn v19; dừng để tránh build nhầm"
+grep -Eq '"version"[[:space:]]*:[[:space:]]*"4\.23\.17-tauri\.19\.1"' "$SOURCE/package.json" || err "Tag không chứa đúng nguồn v19.1; dừng để tránh build nhầm"
 if ! xcode-select -p >/dev/null 2>&1; then
  xcode-select --install 2>/dev/null || true
  err "Cần hoàn tất Xcode Command Line Tools do macOS yêu cầu rồi chạy lại"

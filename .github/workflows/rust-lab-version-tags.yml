@@ -1,28 +1,233 @@
-name: Rust Lab - immutable version tags
+name: Rust Lab - immutable tags and automatic desktop releases
+
 on:
   push:
     branches:
       - experiment/rust-tauri-v2
+  workflow_dispatch:
 
 permissions:
   contents: write
 
 concurrency:
-  group: rust-lab-immutable-tags
+  group: rust-lab-release-${{ github.ref }}
   cancel-in-progress: false
 
 jobs:
   tag:
-    if: github.ref == 'refs/heads/experiment/rust-tauri-v2'
+    name: Freeze experimental version
     runs-on: ubuntu-latest
+    outputs:
+      publish: ${{ steps.freeze.outputs.publish }}
+      tag_name: ${{ steps.freeze.outputs.tag }}
+      release_number: ${{ steps.freeze.outputs.release }}
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 1
+          fetch-depth: 0
           persist-credentials: true
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - name: Create the next tag without changing existing tags
+      - name: Create immutable Rust Lab tag (never force update)
+        id: freeze
         shell: bash
         run: bash scripts/tag-rust-lab-release.sh
+
+  ffmpeg-arm64:
+    name: Build Apple Silicon FFmpeg resource
+    needs: tag
+    if: needs.tag.outputs.publish == 'true'
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm install --no-audit --no-fund
+      - name: Export arm64 FFmpeg to merge into universal DMG
+        shell: bash
+        run: |
+          set -euo pipefail
+          binary="$(node -p 'require("ffmpeg-static")')"
+          lipo -verify_arch arm64 "$binary"
+          mkdir -p prepared
+          cp "$binary" prepared/ffmpeg-arm64
+          chmod +x prepared/ffmpeg-arm64
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ffmpeg-rustlab-arm64
+          path: prepared/ffmpeg-arm64
+          retention-days: 1
+          if-no-files-found: error
+
+  macos:
+    name: Build macOS Universal DMG (Intel + Apple Silicon)
+    needs: [tag, ffmpeg-arm64]
+    if: needs.tag.outputs.publish == 'true'
+    runs-on: macos-15-intel
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: x86_64-apple-darwin,aarch64-apple-darwin
+      - run: npm install --no-audit --no-fund
+      - name: Fast renderer regression tests
+        run: npm run test:quick
+      - uses: actions/download-artifact@v4
+        with:
+          name: ffmpeg-rustlab-arm64
+          path: prepared
+      - name: Combine FFmpeg resources for both Mac architectures
+        shell: bash
+        run: |
+          set -euo pipefail
+          intel="$(node -p 'require("ffmpeg-static")')"
+          lipo -verify_arch x86_64 "$intel"
+          lipo -verify_arch arm64 prepared/ffmpeg-arm64
+          mkdir -p src-tauri/resources
+          lipo -create "$intel" prepared/ffmpeg-arm64 -output src-tauri/resources/ffmpeg
+          chmod +x src-tauri/resources/ffmpeg
+          lipo -verify_arch arm64 x86_64 src-tauri/resources/ffmpeg
+      - name: Compile Tauri Universal and DMG
+        shell: bash
+        env:
+          IPTV_FFMPEG_UNIVERSAL: '1'
+        run: |
+          set -euo pipefail
+          npm run build -- --target universal-apple-darwin --bundles dmg --ci --no-sign
+      - name: Verify true universal binaries and stage DMG
+        shell: bash
+        env:
+          RELEASE_NO: ${{ needs.tag.outputs.release_number }}
+        run: |
+          set -euo pipefail
+          app="$(find src-tauri/target/universal-apple-darwin/release/bundle/macos -maxdepth 1 -type d -name '*.app' -print -quit)"
+          test -n "$app"
+          exe="$(find "$app/Contents/MacOS" -maxdepth 1 -type f -print -quit)"
+          lipo -verify_arch arm64 x86_64 "$exe"
+          resource="$(find "$app/Contents/Resources" -type f -name ffmpeg -print -quit)"
+          test -n "$resource"
+          lipo -verify_arch arm64 x86_64 "$resource"
+          dmg="$(find src-tauri/target/universal-apple-darwin/release/bundle/dmg -maxdepth 1 -type f -name '*.dmg' -print -quit)"
+          test -s "$dmg"
+          mkdir -p dist
+          cp "$dmg" "dist/OpenIPTVPro-RustLab-v${RELEASE_NO}-mac-universal.dmg"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: rustlab-macos
+          path: dist/*.dmg
+          if-no-files-found: error
+          retention-days: 14
+
+  windows:
+    name: Build Windows x64 installer and portable ZIP
+    needs: tag
+    if: needs.tag.outputs.publish == 'true'
+    runs-on: windows-2022
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: x86_64-pc-windows-msvc
+      - run: npm install --no-audit --no-fund
+      - name: Fast renderer regression tests
+        run: npm run test:quick
+      - name: Compile Tauri NSIS installer
+        run: npm run build -- --bundles nsis --ci
+      - name: Stage Setup and portable folder (includes FFmpeg)
+        shell: pwsh
+        env:
+          RELEASE_NO: ${{ needs.tag.outputs.release_number }}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          New-Item -ItemType Directory -Force -Path dist | Out-Null
+          $setup = Get-ChildItem src-tauri/target/release/bundle/nsis -Filter '*.exe' | Select-Object -First 1
+          if (-not $setup) { throw 'Missing NSIS installer' }
+          Copy-Item $setup.FullName "dist/OpenIPTVPro-RustLab-v$env:RELEASE_NO-Windows-Setup-x64.exe"
+          $binary = Get-ChildItem src-tauri/target/release -Filter '*.exe' | Where-Object { $_.Name -notmatch 'setup|uninstall' } | Select-Object -First 1
+          if (-not $binary) { throw 'Missing portable application binary' }
+          if (-not (Test-Path src-tauri/resources/ffmpeg.exe)) { throw 'Missing bundled ffmpeg.exe' }
+          New-Item -ItemType Directory -Force -Path dist/portable/resources | Out-Null
+          Copy-Item $binary.FullName 'dist/portable/Open IPTV Pro Rust Lab.exe'
+          Copy-Item src-tauri/resources/ffmpeg.exe dist/portable/resources/ffmpeg.exe
+          Compress-Archive -Path dist/portable/* -DestinationPath "dist/OpenIPTVPro-RustLab-v$env:RELEASE_NO-Windows-Portable-x64.zip" -Force
+          Remove-Item dist/portable -Recurse -Force
+      - uses: actions/upload-artifact@v4
+        with:
+          name: rustlab-windows
+          path: |
+            dist/*Setup*.exe
+            dist/*Portable*.zip
+          if-no-files-found: error
+          retention-days: 14
+
+  release:
+    name: Publish Rust Lab prerelease without changing Electron Latest
+    needs: [tag, macos, windows]
+    if: needs.tag.outputs.publish == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Confirm immutable tag points to this commit
+        shell: bash
+        env:
+          TAG: ${{ needs.tag.outputs.tag_name }}
+        run: |
+          set -euo pipefail
+          git fetch --tags --force
+          test "$(git rev-parse "refs/tags/${TAG}^{commit}")" = "$GITHUB_SHA"
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: rustlab-*
+          merge-multiple: true
+          path: dist
+      - name: Download the exactly tagged source ZIP and checksums
+        shell: bash
+        env:
+          TAG: ${{ needs.tag.outputs.tag_name }}
+          RELEASE_NO: ${{ needs.tag.outputs.release_number }}
+        run: |
+          set -euo pipefail
+          curl --fail --location --retry 3 \
+            "https://github.com/${GITHUB_REPOSITORY}/archive/refs/tags/${TAG}.zip" \
+            --output "dist/OpenIPTVPro-RustLab-v${RELEASE_NO}-Source.zip"
+          (cd dist && sha256sum ./*.dmg ./*.exe ./*.zip > SHA256SUMS.txt)
+      - name: Check whether this version already has a release
+        id: check
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ needs.tag.outputs.tag_name }}
+        run: |
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            echo 'exists=true' >> "$GITHUB_OUTPUT"
+            echo "Release $TAG already exists. Won't replace its assets."
+          else
+            echo 'exists=false' >> "$GITHUB_OUTPUT"
+          fi
+      - name: Publish all verified desktop assets
+        if: steps.check.outputs.exists == 'false'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ needs.tag.outputs.tag_name }}
+          name: Open IPTV Pro Rust Lab v${{ needs.tag.outputs.release_number }} — macOS Universal + Windows x64
+          body_path: RELEASE_NOTES_RUST_LAB_V19_1.md
+          prerelease: true
+          make_latest: false
+          fail_on_unmatched_files: true
+          overwrite_files: false
+          files: |
+            dist/*.dmg
+            dist/*Setup*.exe
+            dist/*Portable*.zip
+            dist/*Source.zip
+            dist/SHA256SUMS.txt
