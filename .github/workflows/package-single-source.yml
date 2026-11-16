@@ -1,0 +1,63 @@
+name: Publish single verified desktop source ZIP
+on:
+  push:
+    branches:
+      - iptv-build-source
+    paths:
+      - .github/workflows/package-single-source.yml
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: open-iptv-source-archive
+  cancel-in-progress: false
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Assemble verified v4.23.37 source from existing release artifacts
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          mkdir -p /tmp/openiptv-build
+          for PART in 00 01 02 03 04 05 06 07 08 09 10; do
+            test -s "source/v4.23.36.part${PART}.b64"
+          done
+          cat source/v4.23.36.part{00,01,02,03,04,05,06,07,08,09,10}.b64 | base64 --decode > /tmp/openiptv-build/source-v4.23.36.zip
+          echo "ba1c9f35cb5dabbcf8bf73c4eca5a048ce3ad3b4ef7487633d4d4ba0246084ce  /tmp/openiptv-build/source-v4.23.36.zip" | sha256sum --check
+          unzip -tq /tmp/openiptv-build/source-v4.23.36.zip
+          unzip -q /tmp/openiptv-build/source-v4.23.36.zip -d /tmp/openiptv-build
+          project=/tmp/openiptv-build/Open-IPTV-Pro-v4_23_37_Full_Desktop
+          mv /tmp/openiptv-build/Open-IPTV-Pro-v4_23_36_Full_Desktop "$project"
+          cp overlays/v4.23.37-apply.cjs "$project/.apply-v42337.cjs"
+          cp overlays/v4.23.37.css "$project/.overlay-v42337.css"
+          (cd "$project"; node .apply-v42337.cjs)
+          rm -f "$project/.apply-v42337.cjs" "$project/.overlay-v42337.css"
+          node -e 'const p=require(process.argv[1]);if(p.version!=="4.23.37")process.exit(1)' "$project/package.json"
+          python3 - <<'PY'
+          from pathlib import Path
+          import zipfile
+          root=Path('/tmp/openiptv-build/Open-IPTV-Pro-v4_23_37_Full_Desktop')
+          target=Path('source/OpenIPTVPro_Source_v4.23.37.zip')
+          excluded={'node_modules','dist','.git','.open-iptv-tools','__pycache__'}
+          with zipfile.ZipFile(target,'w',compression=zipfile.ZIP_DEFLATED,compresslevel=8) as z:
+              for p in sorted(root.rglob('*')):
+                  if not p.is_file() or any(x in excluded for x in p.relative_to(root).parts):continue
+                  z.write(p,arcname=f'{root.name}/{p.relative_to(root).as_posix()}')
+          with zipfile.ZipFile(target) as z:
+              assert z.testzip() is None
+              assert f'{root.name}/package.json' in z.namelist()
+          print('Published source:',target, 'bytes:',target.stat().st_size)
+          PY
+          sha256sum source/OpenIPTVPro_Source_v4.23.37.zip | tee source/OpenIPTVPro_Source_v4.23.37.zip.sha256
+      - name: Push only generated source archive to isolated branch
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add source/OpenIPTVPro_Source_v4.23.37.zip source/OpenIPTVPro_Source_v4.23.37.zip.sha256
+          git commit -m "build(source): publish single verified v4.23.37 ZIP"
+          git push origin HEAD:iptv-build-source
