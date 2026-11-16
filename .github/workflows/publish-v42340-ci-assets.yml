@@ -1,0 +1,58 @@
+name: Publish verified Open IPTV Pro v4.23.40 installers
+on:
+  push:
+    branches: [iptv-build-source]
+    paths: [.github/workflows/publish-v42340-ci-assets.yml]
+  workflow_dispatch:
+permissions:
+  contents: write
+  actions: read
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - name: Retrieve verified Mac Universal and Windows CI artifacts
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          gh run view 43864276970 --repo "$GITHUB_REPOSITORY" --json conclusion --jq .conclusion | grep -qx success
+          mkdir -p "$RUNNER_TEMP/macos" "$RUNNER_TEMP/windows" release-files
+          gh run download 43864276970 --repo "$GITHUB_REPOSITORY" --name mac-universal-v42340 --dir "$RUNNER_TEMP/macos"
+          gh run download 43864276970 --repo "$GITHUB_REPOSITORY" --name windows-x64-v42340 --dir "$RUNNER_TEMP/windows"
+          cp "$RUNNER_TEMP/macos/Open-IPTV-Pro-4.23.40-mac-universal.dmg" release-files/
+          cp "$RUNNER_TEMP/windows/Open-IPTV-Pro-Setup-4.23.40-x64.exe" release-files/
+          cp "$RUNNER_TEMP/windows/Open-IPTV-Pro-4.23.40-x64.exe" release-files/
+          cp source/OpenIPTVPro_Source_v4.23.40.zip release-files/
+          echo 'd3fa103a7e8eea33e3d1ed384a166b7a2e36c103a8cc31b04e90b144e63e0e69  release-files/OpenIPTVPro_Source_v4.23.40.zip' | sha256sum -c -
+          (cd release-files; sha256sum *.dmg *.exe *.zip > SHA256SUMS.txt)
+          test -s release-files/Open-IPTV-Pro-4.23.40-mac-universal.dmg
+          test -s release-files/Open-IPTV-Pro-Setup-4.23.40-x64.exe
+          test -s release-files/Open-IPTV-Pro-4.23.40-x64.exe
+      - name: Publish official release with source and verified installers
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          cat > "$RUNNER_TEMP/notes.md" <<'EOF'
+          ## Open IPTV Pro v4.23.40 — Classic controls & Universal Desktop
+
+          - Restores the compact classic four transport buttons (previous, play/pause, stop, next) and aligns volume, Cast/AirPlay, PiP and fullscreen controls.
+          - Keeps buttons outside the video and supports a full-width source-aspect frame (default 16:9).
+          - Universal macOS DMG: Intel x86_64 + Apple Silicon arm64.
+          - Windows 64-bit: Setup installer + Portable executable.
+          - Full source ZIP for Windows/macOS, plus SHA256SUMS.txt.
+
+          **Provenance:** Both platform builds passed GitHub Actions workflow 43864276970. The release assets come from those completed artifacts, built from the same SHA-256-verified v4.23.40 source ZIP. Installers are unsigned and may show OS security warnings. Windows and macOS only; no iOS or Android changes.
+          EOF
+          if gh release view v4.23.40 --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            gh release upload v4.23.40 release-files/* --clobber --repo "$GITHUB_REPOSITORY"
+            gh release edit v4.23.40 --repo "$GITHUB_REPOSITORY" --title 'Open IPTV Pro v4.23.40 — Universal Mac + Windows' --notes-file "$RUNNER_TEMP/notes.md"
+          else
+            gh release create v4.23.40 release-files/* --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" --title 'Open IPTV Pro v4.23.40 — Universal Mac + Windows' --notes-file "$RUNNER_TEMP/notes.md"
+          fi
+          gh release view v4.23.40 --repo "$GITHUB_REPOSITORY" --json url,assets --jq '{url,assets:(.assets|map({name,size}))}'
