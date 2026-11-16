@@ -1,0 +1,35 @@
+name: Verify Electron v4.23.50 direct language routing
+on:
+  push:
+    branches: [experiment/electron-v42350-direct-translation-tts]
+  workflow_dispatch:
+jobs:
+  direct-routing:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify source ZIP checksum and apply both versioned overlays
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 2 "https://raw.githubusercontent.com/trisanghy/open-iptv-pro/iptv-build-source/source/OpenIPTVPro_Source_v4.23.47.zip" -o /tmp/iptv-v42347.zip
+          printf '%s  %s\n' '06e8123c768f41c14f47264fbc7220d1bdfa6ce5dc07e69eceba50e929abc783' '/tmp/iptv-v42347.zip' | sha256sum -c -
+          unzip -q /tmp/iptv-v42347.zip -d /tmp/iptv-source
+          cd /tmp/iptv-source/Open-IPTV-Pro-v4_23_47_Full_Desktop
+          node "$GITHUB_WORKSPACE/overlays/v4.23.48-apply.cjs" "$GITHUB_WORKSPACE/overlays"
+          node "$GITHUB_WORKSPACE/overlays/v4.23.50-apply.cjs" "$GITHUB_WORKSPACE/overlays"
+          node -e "const p=require('./package.json');if(p.version!=='4.23.50')process.exit(1)"
+          for js in src/argos-bridge.py src/main.cjs src/preload.cjs src/live-caption-service.cjs src/caption-translator.cjs src/local-tts-service.cjs renderer/live-captions-v42343.js renderer/local-tts-v42344.js; do
+            case "$js" in *.js|*.cjs) node --check "$js";; esac
+          done
+          python3 -m py_compile src/argos-bridge.py
+          node --test tests/direct-translation-v42350.test.cjs
+      - name: Verify Mac one-command build script shell syntax
+        shell: bash
+        run: |
+          bash -n build-mac-v42350.sh
