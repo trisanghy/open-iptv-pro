@@ -42,7 +42,9 @@ echo "[3/4] Building native Mac $ARCH DMG..."
 ( cd "$PROJECT" && OPENIPTV_ONE_COMMAND=1 bash ./BUILD_MAC.command ) 2>&1 | tee "$WORK/build.log"
 DMG="Open-IPTV-Pro-4.23.40-mac-${ARCH}.dmg"
 [ -s "$PROJECT/dist/$DMG" ] || { echo "Missing $DMG" >&2; exit 1; }
-EXE="$PROJECT/dist/mac-${ARCH}/Open IPTV Pro.app/Contents/MacOS/Open IPTV Pro"
+APP_DIR="mac-${ARCH}"
+if [ "$ARCH" = 'x64' ]; then APP_DIR='mac'; fi
+EXE="$PROJECT/dist/$APP_DIR/Open IPTV Pro.app/Contents/MacOS/Open IPTV Pro"
 if [ -f "$EXE" ]; then
   BUILT="$(lipo -archs "$EXE")"
   [ "$BUILT" = "$EXPECTED" ] || { echo "Wrong executable architecture: $BUILT" >&2; exit 1; }
