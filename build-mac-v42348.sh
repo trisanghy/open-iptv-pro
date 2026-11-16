@@ -65,8 +65,10 @@ node "$OVERLAY_DIR/v4.23.48-apply.cjs" "$OVERLAY_DIR" || { echo 'Source patch fa
 for js in src/local-ai-autoinstall.cjs src/caption-translator.cjs src/local-tts-service.cjs renderer/local-tts-v42344.js src/main.cjs src/preload.cjs; do
   node --check "$PROJECT/$js"
 done
-python3 -m py_compile "$PROJECT/src/argos-bridge.py"
-find "$PROJECT/src" -type d -name __pycache__ -prune -exec rm -rf -- {} +
+if command -v python3 >/dev/null 2>&1; then
+  python3 -m py_compile "$PROJECT/src/argos-bridge.py"
+  find "$PROJECT/src" -type d -name __pycache__ -prune -exec rm -rf -- {} +
+fi
 ( cd "$PROJECT" && node --test tests/argos-tts-voice-v42348.test.cjs tests/whisper-installer-hotfix-v42347.test.cjs ) || { echo 'Argos/TTS regression tests failed' >&2; exit 1; }
 NEW_PROJECT="$WORK/Open-IPTV-Pro-v4_23_48_Full_Desktop"
 mv "$PROJECT" "$NEW_PROJECT"
