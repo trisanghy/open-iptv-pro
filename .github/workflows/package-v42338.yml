@@ -64,6 +64,14 @@ jobs:
           old=p.read_text() if p.exists() else ''
           p.write_text('## v4.23.38 — Automatic video source aspect ratio\n\n- Default 16:9 frame; adapts to source videoWidth/videoHeight, including HLS/DASH resolution changes.\n- Supports 4:3, 16:9, portrait and ultrawide video without distorting the frame.\n- Resets to 16:9 when source changes. Existing fit/fullscreen modes remain unchanged.\n\n---\n\n'+old)
           (base/'RELEASE_NOTES_V4_23_38.md').write_text('# Open IPTV Pro v4.23.38 — Native source aspect ratio\n\n- Player frame defaults to 16:9 and adapts when source metadata becomes available.\n- Handles 4:3, 16:9, portrait and 21:9 streams, plus adaptive-resolution changes.\n- Resets on source changes; keeps fit modes and fullscreen toolbar outside video.\n- No changes to channel lists or playback engine.\n')
+          # Keep the desktop release workflow and its regression test on this version.
+          import re
+          release=base/'.github/workflows/release-desktop.yml'
+          release_content=release.read_text()
+          release_content=re.sub(r'--notes-file\\s+\\S+','--notes-file RELEASE_NOTES_V4_23_38.md',release_content)
+          release.write_text(release_content)
+          stable_test=base/'tests/stability_v4221.test.cjs'
+          stable_test.write_text(stable_test.read_text().replace('RELEASE_NOTES_V4_23_2_VI_EN','RELEASE_NOTES_V4_23_38'))
           import json
           assert json.loads((base/'package.json').read_text())['version']=='4.23.38'
           print('Prepared Open IPTV Pro 4.23.38',base)
