@@ -22,6 +22,7 @@ async function environment({state={},channels=[{id:'news'}],mutedInitially=false
   const elems={
     video:element('video'),playerBox:element('div'),
     webAutoResumeLast:element('input'),webAutoResumeHint:element('small'),
+    webAutoEnableAudio:element('input'),webAutoAudioHint:element('small'),
   };
   const video=elems.video;
   Object.assign(video,{
@@ -131,4 +132,51 @@ test('if web player is already handling a channel, do not replace it',async()=>{
   e.app.getCurrent=()=>({id:'other'});
   await e.start();
   assert.deepEqual(e.calls.play,[]);
+});
+
+test('audio startup toggle is independent of channel autoplay toggle',async()=>{
+  const e=await environment({state:{autoResumeLastChannel:false}});
+  assert.equal(e.elems.webAutoResumeLast.checked,false);
+  assert.equal(e.elems.webAutoEnableAudio.checked,true);
+  await e.start();assert.deepEqual(e.calls.play,[]);
+});
+test('audio preference is independently persisted to the browser',async()=>{
+  const e=await environment();
+  e.elems.webAutoEnableAudio.checked=false;e.elems.webAutoEnableAudio.dispatch('change');
+  assert.equal(e.data.autoEnableAudio,false);assert.equal(e.calls.save,1);
+  assert.equal(e.elems.webAutoResumeLast.checked,true);
+});
+test('audio disabled opens last channel muted and no unmute overlay on playing',async()=>{
+  const e=await environment({state:{autoEnableAudio:false}});
+  await e.start();assert.deepEqual(e.calls.play,['news']);
+  assert.equal(e.video.defaultMuted,true);assert.equal(e.video.muted,true);
+  e.video.paused=false;e.video.dispatch('playing');
+  assert.equal(e.elems.playerBox.children[0].hidden,true);
+});
+test('disabled audio uses silent playback action, not forced sound',async()=>{
+  const e=await environment({state:{autoEnableAudio:false}});
+  await e.start();e.video.dispatch('canplay');
+  const panel=e.elems.playerBox.children[0];
+  assert.equal(panel.children[1].textContent,'Phát kênh');
+  panel.children[1].dispatch('click');
+  await Promise.resolve();await Promise.resolve();
+  assert.equal(e.video.muted,true);
+});
+test('audio setting can be enabled without restarting the channel',async()=>{
+  const e=await environment({state:{autoEnableAudio:false}});
+  await e.start();
+  e.elems.webAutoEnableAudio.checked=true;e.elems.webAutoEnableAudio.dispatch('change');
+  assert.equal(e.video.muted,false);assert.equal(e.data.autoEnableAudio,true);
+  assert.deepEqual(e.calls.play,['news']);
+});
+test('audio toggle rolls back after failed save',async()=>{
+  const e=await environment({saveOK:false});
+  e.elems.webAutoEnableAudio.checked=false;e.elems.webAutoEnableAudio.dispatch('change');
+  assert.equal(e.elems.webAutoEnableAudio.checked,true);
+  assert.equal(e.data.autoEnableAudio,undefined);
+});
+test('audio preference remains configurable before any channel exists',async()=>{
+  const e=await environment({state:{current:''}});
+  e.elems.webAutoEnableAudio.checked=false;e.elems.webAutoEnableAudio.dispatch('change');
+  assert.equal(e.data.autoEnableAudio,false);assert.equal(e.calls.save,1);
 });

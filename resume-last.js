@@ -10,11 +10,14 @@
   const holder = $('playerBox');
   const toggle = $('webAutoResumeLast');
   const hint = $('webAutoResumeHint');
-  if (!app || !video || !holder || !toggle) return;
+  const audioToggle = $('webAutoEnableAudio');
+  const audioHint = $('webAutoAudioHint');
+  if (!app || !video || !holder || !toggle || !audioToggle) return;
   const store = app.getStore?.();
   if (!store || typeof store !== 'object') return;
 
   const enabled = () => store.autoResumeLastChannel !== false;
+  const audioEnabled = () => store.autoEnableAudio !== false;
   const explain = (message) => {
     if (hint) hint.textContent = message || (
       enabled()
@@ -22,8 +25,17 @@
         : 'Đã tắt. Lần mở website sau sẽ không tự phát kênh.'
     );
   };
+  const explainAudio = (message) => {
+    if (audioHint) audioHint.textContent = message || (
+      audioEnabled()
+        ? 'Mặc định bật. Nếu trình duyệt chặn tự phát có tiếng, hãy nhấn “Phát có tiếng” một lần.'
+        : 'Đã tắt. Kênh bắt đầu ở chế độ tắt tiếng; có thể bật lại bằng nút loa.'
+    );
+  };
   toggle.checked = enabled();
+  audioToggle.checked = audioEnabled();
   explain();
+  explainAudio();
 
   toggle.addEventListener('change', () => {
     const previous = store.autoResumeLastChannel;
@@ -36,6 +48,25 @@
     }
     explain();
     if (!enabled()) dismissPrompt();
+  });
+
+  audioToggle.addEventListener('change', () => {
+    const previous = store.autoEnableAudio;
+    store.autoEnableAudio = !!audioToggle.checked;
+    if (app.save?.() === false) {
+      store.autoEnableAudio = previous;
+      audioToggle.checked = audioEnabled();
+      explainAudio('Không lưu được lựa chọn âm thanh. Vui lòng kiểm tra bộ nhớ trình duyệt.');
+      return;
+    }
+    explainAudio();
+    if (app.getCurrent?.()) {
+      video.defaultMuted = !audioEnabled();
+      video.muted = !audioEnabled();
+      if (!audioEnabled() && panel) panel.hidden = true;
+      if (audioEnabled() && started && video.paused && !dismissed)
+        showPrompt('Trình duyệt yêu cầu nhấn Phát có tiếng để tiếp tục.');
+    }
   });
 
   let started = false;
@@ -54,7 +85,7 @@
   const showPrompt = (text) => {
     if (!started || dismissed || !enabled() || !isLast()) return;
     message.textContent = text;
-    action.textContent = video.muted ? 'Bật âm thanh' : 'Phát có tiếng';
+    action.textContent = !audioEnabled() ? 'Phát kênh' : video.muted ? 'Bật âm thanh' : 'Phát có tiếng';
     panel.hidden = false;
   };
 
@@ -76,8 +107,8 @@
   action.addEventListener('click', () => {
     if (!enabled() || !isLast()) { dismissPrompt(); return; }
     // Must run on the synchronous user-click stack to satisfy autoplay policy.
-    video.defaultMuted = false;
-    video.muted = false;
+    video.defaultMuted = !audioEnabled();
+    video.muted = !audioEnabled();
     video.autoplay = false;
     panel.hidden = true;
     if (!hasSource()) {
@@ -89,9 +120,9 @@
     }
     try {
       Promise.resolve(video.play()).then(() => {
-        if (!video.muted && !video.paused) dismissPrompt();
+        if (!video.paused && video.muted === !audioEnabled()) dismissPrompt();
         else showPrompt('Trình phát vẫn chưa phát có tiếng.');
-      }, () => showPrompt('Trình duyệt chưa cho phép phát có tiếng. Nhấn lại để thử.'));
+      }, () => showPrompt(audioEnabled() ? 'Trình duyệt chưa cho phép phát có tiếng. Nhấn lại để thử.' : 'Trình duyệt chưa cho phép phát kênh. Nhấn lại để thử.'));
     } catch {
       showPrompt('Không phát được nguồn này. Nhấn lại để thử.');
     }
@@ -99,12 +130,12 @@
 
   video.addEventListener('playing', () => {
     if (!started || dismissed || !isLast()) return;
-    if (video.muted) showPrompt('Kênh đang phát nhưng âm thanh bị tắt.');
+    if (video.muted && audioEnabled()) showPrompt('Kênh đang phát nhưng âm thanh bị tắt.');
     else dismissPrompt();
   });
   video.addEventListener('canplay', () => {
     if (started && !dismissed && isLast() && video.paused) {
-      showPrompt('Trình duyệt yêu cầu bạn nhấn Phát có tiếng.');
+      showPrompt(audioEnabled() ? 'Trình duyệt yêu cầu bạn nhấn Phát có tiếng.' : 'Trình duyệt yêu cầu nhấn Phát kênh.');
     }
   });
 
@@ -113,8 +144,8 @@
     if (!app.getChannels?.().some(ch => ch.id === lastId)) return;
     started = true;
     // The desktop version is untouched; this is web-only behavior.
-    video.defaultMuted = false;
-    video.muted = false;
+    video.defaultMuted = !audioEnabled();
+    video.muted = !audioEnabled();
     video.autoplay = false;
     video.playsInline = true;
     video.setAttribute('playsinline', '');
@@ -123,8 +154,8 @@
     });
     window.setTimeout(() => {
       if (dismissed || !enabled() || !isLast()) return;
-      if (video.muted) showPrompt('Kênh đang phát nhưng bị tắt tiếng.');
-      else if (video.paused) showPrompt('Trình duyệt đang chặn tự phát có tiếng. Nhấn Phát có tiếng.');
+      if (video.muted && audioEnabled()) showPrompt('Kênh đang phát nhưng bị tắt tiếng.');
+      else if (video.paused) showPrompt(audioEnabled() ? 'Trình duyệt đang chặn tự phát có tiếng. Nhấn Phát có tiếng.' : 'Trình duyệt chặn tự phát. Nhấn Phát kênh.');
       else dismissPrompt();
     }, 7000);
   };

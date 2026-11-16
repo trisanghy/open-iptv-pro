@@ -263,8 +263,15 @@
         <input type="checkbox" id="webAutoResumeLast" checked/>
         Tự động phát lại kênh xem cuối
       </label>
+      <label class="check-line" for="webAutoEnableAudio">
+        <input type="checkbox" id="webAutoEnableAudio" checked/>
+        Tự động bật tiếng khi mở kênh
+      </label>
+      <small id="webAutoAudioHint" role="status" aria-live="polite">
+        Mặc định bật. Nếu trình duyệt chặn tự phát có tiếng, hãy nhấn “Phát có tiếng” một lần.
+      </small>
       <small id="webAutoResumeHint" role="status" aria-live="polite">
-        Mặc định bật. Thử tự phát có tiếng; trình duyệt có thể yêu cầu nhấn Phát có tiếng một lần.
+        Mặc định bật. Tự mở lại kênh xem cuối khi truy cập website.
       </small>
     </article>
     <article class="settings-card" id="defaultBufferSettings"><h2>⏪ Tua lại mặc định</h2><label class="check-line buffer-default-line" for="autoTimeshiftSetting"><input type="checkbox" id="autoTimeshiftSetting"/> Tự bật bộ đệm tua lại <span id="autoTimeshiftWindowMinutes">10</span> phút khi mở kênh</label><p>FFmpeg được tích hợp sẵn. Bộ đệm tua lại theo số phút đã chọn được tạo cục bộ từ lúc mở kênh; Snapshot hàng loạt hoạt động mà không cần cài FFmpeg ngoài. Nguồn có DRM hoặc chặn truy cập có thể không hỗ trợ.</p><small id="autoTimeshiftState" aria-live="polite">Mặc định: tắt</small></article>
