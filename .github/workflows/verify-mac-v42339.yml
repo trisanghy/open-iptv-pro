@@ -24,7 +24,7 @@ jobs:
           ! grep -q '4[.]23[.]38' build-mac-v42339.sh
           grep -Fq 'VERSION="4.23.39"' build-mac-v42339.sh
           grep -Fq '4[.]23[.]39' build-mac-v42339.sh
-          grep -Fq 'v\${VERSION}_ERROR.log' build-mac-v42339.sh
+          grep -Fq 'v${VERSION}_ERROR.log' build-mac-v42339.sh
           sha256sum -c source/OpenIPTVPro_Source_v4.23.39.zip.sha256
           test "$(unzip -p source/OpenIPTVPro_Source_v4.23.39.zip Open-IPTV-Pro-v4_23_39_Full_Desktop/package.json | node -p 'JSON.parse(require("fs").readFileSync(0,"utf8")).version')" = '4.23.39'
           unzip -p source/OpenIPTVPro_Source_v4.23.39.zip Open-IPTV-Pro-v4_23_39_Full_Desktop/renderer/video-source-aspect-v42338.css | grep -Fq 'width: 100%!important'
