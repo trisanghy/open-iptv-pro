@@ -22,7 +22,11 @@ function downloadFile(url,out,sha,notify=()=>{},maxSize=170*1024*1024){
    if(n>8)return fail(Error('Quá nhiều chuyển hướng download'));
    let uri;try{uri=new URL(target);}catch(e){return fail(e);}
    const host=uri.hostname;
-   const approved=(host==='github.com'||host==='release-assets.githubusercontent.com'||host==='huggingface.co'||host==='cas-bridge.xethub.hf.co'||host==='cdn-lfs.hf.co'||host==='cdn-lfs-us-1.hf.co'||host==='objects.githubusercontent.com'||host.endsWith('.xethub.hf.co'));
+   const approved=(host==='github.com'||host==='release-assets.githubusercontent.com'||host==='huggingface.co'||host==='cas-bridge.xethub.hf.co'||host==='cdn-lfs.hf.co'||host==='cdn-lfs-us-1.hf.co'||host==='objects.githubusercontent.com'||host.endsWith('.xethub.hf.co')||[
+    'us.aws.cdn.hf.co','us.gcp.cdn.hf.co',
+    'cdn-lfs-eu-1.hf.co','cas-server.xethub-eu.hf.co',
+    'transfer.xethub.hf.co','transfer.xethub-eu.hf.co'
+   ].includes(host));
    if(uri.protocol!=='https:'||!approved)return fail(Error('Nguồn tải Whisper không được phép: '+host));
    const req=https.get(uri,{timeout:45000,headers:{'User-Agent':'OpenIPTVPro-Desktop'}},res=>{
     if([301,302,303,307,308].includes(res.statusCode)){
