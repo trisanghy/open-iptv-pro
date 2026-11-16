@@ -1,0 +1,31 @@
+name: Verify v4.23.39 single-command Mac builder
+on:
+  push:
+    branches:
+      - iptv-build-source
+    paths:
+      - .github/workflows/verify-mac-v42339.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify Bash syntax, exact version, SHA-256 and source contents
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          bash -n build-mac-v42339.sh
+          bash -n build-mac.sh
+          cmp -s build-mac-v42339.sh build-mac.sh
+          ! grep -q '4[.]23[.]38' build-mac-v42339.sh
+          grep -Fq 'VERSION="4.23.39"' build-mac-v42339.sh
+          grep -Fq '4[.]23[.]39' build-mac-v42339.sh
+          grep -Fq 'v\${VERSION}_ERROR.log' build-mac-v42339.sh
+          sha256sum -c source/OpenIPTVPro_Source_v4.23.39.zip.sha256
+          test "$(unzip -p source/OpenIPTVPro_Source_v4.23.39.zip Open-IPTV-Pro-v4_23_39_Full_Desktop/package.json | node -p 'JSON.parse(require("fs").readFileSync(0,"utf8")).version')" = '4.23.39'
+          unzip -p source/OpenIPTVPro_Source_v4.23.39.zip Open-IPTV-Pro-v4_23_39_Full_Desktop/renderer/video-source-aspect-v42338.css | grep -Fq 'width: 100%!important'
+          echo "PASS: one source ZIP, valid Bash, correct package version and full-width player"
