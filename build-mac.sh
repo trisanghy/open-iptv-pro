@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
-# Open IPTV Pro v4.23.37: fast single-ZIP macOS builder; retain one SHA-256 check.
+# Open IPTV Pro v4.23.38: fast single-ZIP macOS builder; retain one SHA-256 check.
 set -Eeuo pipefail
-VERSION="4.23.37"
+VERSION="4.23.38"
 ARCHIVE="OpenIPTVPro_Source_v$VERSION.zip"
-EXPECTED_SHA256="d312ed8e2f82ff9fe195b7f6e29a174949542258fd93d403019e9951a6241f7a"
+EXPECTED_SHA256="c55bbcfac141bcc0af6dd7b678dad7ace3fee90c20415c008111b9a97981943e"
 RAW="https://raw.githubusercontent.com/trisanghy/open-iptv-pro/iptv-build-source"
 case "$(uname -s)-$(uname -m)" in
   Darwin-arm64) ARCH="arm64" ;;
@@ -45,7 +45,7 @@ SHA="$(shasum -a 256 "$WORK/$ARCHIVE" | awk '{print $1}')"
 [ "$SHA" = "$EXPECTED_SHA256" ] || { echo "Source ZIP SHA-256 verification failed!" >&2; exit 1; }
 echo "[2/4] Extracting source (no redundant ZIP pre-scan)..."
 unzip -q "$WORK/$ARCHIVE" -d "$WORK"
-PROJECT="$WORK/Open-IPTV-Pro-v4_23_37_Full_Desktop"
+PROJECT="$WORK/Open-IPTV-Pro-v4_23_38_Full_Desktop"
 [ -f "$PROJECT/package.json" ] || { echo "Missing source package.json." >&2; exit 1; }
 grep -Eq '"version"[[:space:]]*:[[:space:]]*"4[.]23[.]37"' "$PROJECT/package.json" || { echo "Unexpected source version." >&2; exit 1; }
 [ -f "$PROJECT/BUILD_MAC.command" ] || { echo "Missing build script." >&2; exit 1; }
