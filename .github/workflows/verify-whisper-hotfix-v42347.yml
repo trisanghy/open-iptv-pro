@@ -1,0 +1,98 @@
+name: Verify v4.23.47 Whisper executable and Mac Windows installers
+on:
+  push:
+    branches: [iptv-build-source]
+    paths: [.github/workflows/verify-whisper-hotfix-v42347.yml]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  mac-apple-silicon:
+    runs-on: macos-15
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - name: Test genuine ARM64 Whisper executable and package native DMG
+        env: {CSC_IDENTITY_AUTO_DISCOVERY: 'false'}
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          echo '06e8123c768f41c14f47264fbc7220d1bdfa6ce5dc07e69eceba50e929abc783  source/OpenIPTVPro_Source_v4.23.47.zip' | shasum -a 256 -c -
+          curl -fLsS --retry 3 https://github.com/sjoerdteunisse/whisper.cpp/releases/download/v1.0.0/whisper-cpp-darwin-arm64.zip -o "$RUNNER_TEMP/whisper.zip"
+          echo "d033bd3f590cad50f39957bf86354f87b44394cb001e3f78a7b47264358103e3  $RUNNER_TEMP/whisper.zip" | shasum -a 256 -c -
+          unzip -q "$RUNNER_TEMP/whisper.zip" -d "$RUNNER_TEMP/whisper"
+          file "$RUNNER_TEMP/whisper/whisper-cpp-darwin-arm64"
+          test "$(lipo -archs "$RUNNER_TEMP/whisper/whisper-cpp-darwin-arm64")" = arm64
+          chmod +x "$RUNNER_TEMP/whisper/whisper-cpp-darwin-arm64"
+          "$RUNNER_TEMP/whisper/whisper-cpp-darwin-arm64" --help > "$RUNNER_TEMP/whisper-help.txt" 2>&1
+          test -s "$RUNNER_TEMP/whisper-help.txt"
+          unzip -q source/OpenIPTVPro_Source_v4.23.47.zip -d "$RUNNER_TEMP"
+          cd "$RUNNER_TEMP/Open-IPTV-Pro-v4_23_47_Full_Desktop"
+          npm install --no-audit --no-fund
+          npm test
+          npx electron-builder --mac dmg --arm64 --publish never
+          test -s 'dist/Open-IPTV-Pro-4.23.47-mac-arm64.dmg'
+          test "$(lipo -archs 'dist/mac-arm64/Open IPTV Pro.app/Contents/MacOS/Open IPTV Pro')" = arm64
+          echo 'PASS: Whisper ARM64 --help and full native Mac DMG build'
+  mac-intel:
+    runs-on: macos-15-intel
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - name: Test genuine Intel Whisper executable and package x64 DMG
+        env: {CSC_IDENTITY_AUTO_DISCOVERY: 'false'}
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          echo '06e8123c768f41c14f47264fbc7220d1bdfa6ce5dc07e69eceba50e929abc783  source/OpenIPTVPro_Source_v4.23.47.zip' | shasum -a 256 -c -
+          curl -fLsS --retry 3 https://github.com/sjoerdteunisse/whisper.cpp/releases/download/v1.0.0/whisper-cpp-darwin-x64.zip -o "$RUNNER_TEMP/whisper.zip"
+          echo "f0f2ab6c2e92b7022ac02f0759a7a38f3ea110764e00b05a6f0d6c1dcadd571c  $RUNNER_TEMP/whisper.zip" | shasum -a 256 -c -
+          unzip -q "$RUNNER_TEMP/whisper.zip" -d "$RUNNER_TEMP/whisper"
+          test "$(lipo -archs "$RUNNER_TEMP/whisper/whisper-cpp-darwin-x64")" = x86_64
+          chmod +x "$RUNNER_TEMP/whisper/whisper-cpp-darwin-x64"
+          "$RUNNER_TEMP/whisper/whisper-cpp-darwin-x64" --help > "$RUNNER_TEMP/whisper-help.txt" 2>&1
+          test -s "$RUNNER_TEMP/whisper-help.txt"
+          unzip -q source/OpenIPTVPro_Source_v4.23.47.zip -d "$RUNNER_TEMP"
+          cd "$RUNNER_TEMP/Open-IPTV-Pro-v4_23_47_Full_Desktop"
+          npm install --no-audit --no-fund
+          npm test
+          npx electron-builder --mac dmg --x64 --publish never
+          test -s 'dist/Open-IPTV-Pro-4.23.47-mac-x64.dmg'
+          test "$(lipo -archs 'dist/mac/Open IPTV Pro.app/Contents/MacOS/Open IPTV Pro')" = x86_64
+          echo 'PASS: Whisper Intel --help and full x64 Mac DMG build'
+  windows-x64:
+    runs-on: windows-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - name: Test genuine Windows Whisper EXE and build Setup/Portable
+        shell: pwsh
+        env: {CSC_IDENTITY_AUTO_DISCOVERY: 'false'}
+        run: |
+          $ErrorActionPreference='Stop'
+          $hash=(Get-FileHash source/OpenIPTVPro_Source_v4.23.47.zip -Algorithm SHA256).Hash.ToLowerInvariant()
+          if($hash -ne '06e8123c768f41c14f47264fbc7220d1bdfa6ce5dc07e69eceba50e929abc783'){throw 'Source SHA mismatch'}
+          Invoke-WebRequest https://github.com/sjoerdteunisse/whisper.cpp/releases/download/v1.0.0/whisper-cpp-win32-x64-cpu.zip -OutFile "$env:RUNNER_TEMP/whisper.zip"
+          $binarySha=(Get-FileHash "$env:RUNNER_TEMP/whisper.zip" -Algorithm SHA256).Hash.ToLowerInvariant()
+          if($binarySha -ne '80f6b6481794825f65043001e408e70aea4257918b15906b7e070d2c7b205da5'){throw 'Whisper SHA mismatch'}
+          Expand-Archive "$env:RUNNER_TEMP/whisper.zip" -DestinationPath "$env:RUNNER_TEMP/whisper" -Force
+          & "$env:RUNNER_TEMP/whisper/whisper-cpp-win32-x64-cpu.exe" --help | Out-File "$env:RUNNER_TEMP/whisper-help.txt"
+          if($LASTEXITCODE -ne 0){throw 'Whisper executable --help failed'}
+          Expand-Archive source/OpenIPTVPro_Source_v4.23.47.zip -DestinationPath $env:RUNNER_TEMP -Force
+          Set-Location (Join-Path $env:RUNNER_TEMP Open-IPTV-Pro-v4_23_47_Full_Desktop)
+          npm install --no-audit --no-fund
+          if($LASTEXITCODE -ne 0){throw 'npm install failed'}
+          npm test
+          if($LASTEXITCODE -ne 0){throw 'npm test failed'}
+          npx electron-builder --win --x64 --publish never
+          if($LASTEXITCODE -ne 0){throw 'Windows builder failed'}
+          foreach($f in @('Open-IPTV-Pro-Setup-4.23.47-x64.exe','Open-IPTV-Pro-4.23.47-x64.exe')){
+            if(-not (Test-Path (Join-Path dist $f))){throw "Missing $f"}
+          }
+          Write-Host 'PASS: Whisper Windows x64 --help and app installers'
