@@ -6,7 +6,7 @@ $sha256 = '469228cbd0bba63d3d9471a8d8e336f68fc24defa62d8b514f56257f53413e89'
 $url = 'https://raw.githubusercontent.com/trisanghy/open-iptv-pro/iptv-build-source/source/' + $sourceName
 $downloads = Join-Path ([Environment]::GetFolderPath('UserProfile')) 'Downloads'
 New-Item -ItemType Directory -Path $downloads -Force | Out-Null
-$work = Join-Path $downloads ('.openiptv-42340-windows-' + [Guid]::NewGuid().ToString('N'))
+$work = Join-Path $downloads ('.openiptv-42341-windows-' + [Guid]::NewGuid().ToString('N'))
 $output = Join-Path $downloads 'OpenIPTVPro_Build_v4.23.41_Windows'
 New-Item -ItemType Directory -Path $work -Force | Out-Null
 $success = $false
@@ -22,7 +22,7 @@ try {
 
   Write-Host '[2/4] Extracting verified full Windows/macOS source...'
   Expand-Archive -LiteralPath $archive -DestinationPath $work -Force
-  $project = Join-Path $work 'Open-IPTV-Pro-v4_23_40_Full_Desktop'
+  $project = Join-Path $work 'Open-IPTV-Pro-v4_23_41_Full_Desktop'
   $package = Join-Path $project 'package.json'
   if (-not (Test-Path -LiteralPath $package -PathType Leaf)) { throw 'Missing package.json in ZIP.' }
   $manifest = Get-Content -LiteralPath $package -Raw -Encoding UTF8 | ConvertFrom-Json
