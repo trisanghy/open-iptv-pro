@@ -1,10 +1,10 @@
 #!/bin/bash
 set -Eeuo pipefail
-VERSION="4.23.17-tauri.20.1"
+VERSION="4.23.17-tauri.20.2"
 REPO="trisanghy/open-iptv-pro"
 BRANCH="experiment/rust-tauri-v2"
-SOURCE_COMMIT="a887706f6617436061541d0088b78ad10cc93a3b" # Immutable v20.1 snapshot; original rust-lab/v20 tag untouched
-NAME="OpenIPTVPro_RustLab_v20_1"
+TAG="rust-lab/v20.2" # Automatically created by Rust Lab release workflow; original v20/v20.1 tags untouched
+NAME="OpenIPTVPro_RustLab_v20_2"
 DEST_BASE="$HOME/Downloads/${NAME}_Build"
 DEST="$DEST_BASE"
 INDEX=2
@@ -12,17 +12,17 @@ while [[ -e "$DEST" ]]; do
   DEST="${DEST_BASE}_${INDEX}"
   INDEX=$((INDEX + 1))
 done
-TMP="$(mktemp -d "${TMPDIR:-/tmp}/rustlab-v20-1.XXXXXX")"
+TMP="$(mktemp -d "${TMPDIR:-/tmp}/rustlab-v20-2.XXXXXX")"
 trap 'rm -rf "$TMP"' EXIT
 err(){ echo "LỖI: $*" >&2; exit 1; }
-echo "Open IPTV Pro Rust Lab v20.1 — pinned commit / one ZIP / fast build"
-# Download one immutable source ZIP by commit; no git clone or per-file downloads.
-curl -fLsS --retry 2 --connect-timeout 20 "https://github.com/${REPO}/archive/${SOURCE_COMMIT}.zip" -o "$TMP/source.zip" || err "Không tải được ZIP từ GitHub"
+echo "Open IPTV Pro Rust Lab v20.2 — immutable release tag / one ZIP / fast build"
+# Download exactly the auto-created immutable v20.2 tag; no git clone or per-file downloads.
+curl -fLsS --retry 2 --connect-timeout 20 "https://github.com/${REPO}/archive/refs/tags/${TAG}.zip" -o "$TMP/source.zip" || err "Không tải được ZIP từ GitHub"
 mkdir -p "$TMP/extract"
 ditto -x -k "$TMP/source.zip" "$TMP/extract" || err "ZIP bị hỏng hoặc tải chưa hoàn tất"
 SOURCE="$(find "$TMP/extract" -maxdepth 1 -type d -name 'open-iptv-pro-*' -print -quit)"
 [[ -n "$SOURCE" && -f "$SOURCE/package.json" ]] || err "Không tìm thấy mã nguồn Rust Lab"
-grep -Eq '"version"[[:space:]]*:[[:space:]]*"4[.]23[.]17-tauri[.]20[.]1"' "$SOURCE/package.json" || err "Snapshot không chứa đúng nguồn v20.1; dừng để tránh build nhầm"
+grep -Eq '"version"[[:space:]]*:[[:space:]]*"4[.]23[.]17-tauri[.]20[.]2"' "$SOURCE/package.json" || err "Tag không chứa đúng nguồn v20.2; dừng để tránh build nhầm"
 if ! xcode-select -p >/dev/null 2>&1; then
  xcode-select --install 2>/dev/null || true
  err "Cần hoàn tất Xcode Command Line Tools do macOS yêu cầu rồi chạy lại"

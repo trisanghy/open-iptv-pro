@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro-tauri-experiment",
   "private": true,
-  "version": "4.23.17-tauri.20.1",
-  "description": "Rust Lab v20.1: fixed OpenWhispr release ZIP executable names; Electron v4.23.45 offline Live Caption, English translation, Piper/Argos voice-over, SHA-256 verified one-click local model installs",
+  "version": "4.23.17-tauri.20.2",
+  "description": "Rust Lab v20.2: fixed OpenWhispr release ZIP executable names; Electron v4.23.45 offline Live Caption, English translation, Piper/Argos voice-over, SHA-256 verified one-click local model installs",
   "license": "MIT",
   "scripts": {
     "dev": "tauri dev",

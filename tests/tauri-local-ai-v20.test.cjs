@@ -44,12 +44,12 @@ test('local speech is limited, volatile and ducking restored',()=>{
  assert.match(native,/kill_on_drop\(true\)/);
  assert.match(native,/ScopedFolder/);
 });
-test('v20 uses its own immutable tag without modifying main',()=>{
+test('v20.2 uses an immutable tag without modifying main',()=>{
  const pkg=JSON.parse(read('package.json'));
  const sh=read('scripts/BUILD_RUSTLAB_MAC_ONE_ZIP_FAST.sh');
- assert.equal(pkg.version,'4.23.17-tauri.20.1');
- assert.ok(sh.includes('TAG="rust-lab/v20"')||sh.includes('SOURCE_COMMIT="'));
- assert.ok(sh.includes('archive/refs/tags/${TAG}.zip')||sh.includes('archive/${SOURCE_COMMIT}.zip'));
+ assert.equal(pkg.version,'4.23.17-tauri.20.2');
+ assert.ok(sh.includes('TAG="rust-lab/v20.2"'));
+ assert.ok(sh.includes('archive/refs/tags/${TAG}.zip'));
 });
 
 test('v20.1 auto-installer normalizes platform release file names to whisper-cli',()=>{
