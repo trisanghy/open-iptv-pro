@@ -1,0 +1,29 @@
+name: Verify Electron v4.23.48 Argos and TTS voice fixes
+on:
+  push:
+    branches: [experiment/electron-whisper-cdnfix-v42347]
+    paths: [.github/workflows/verify-electron-v42348.yml]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Extract pinned v4.23.47 source and apply fix
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          echo '06e8123c768f41c14f47264fbc7220d1bdfa6ce5dc07e69eceba50e929abc783  source/OpenIPTVPro_Source_v4.23.47.zip' | sha256sum -c -
+          unzip -q source/OpenIPTVPro_Source_v4.23.47.zip -d "$RUNNER_TEMP"
+          cd "$RUNNER_TEMP/Open-IPTV-Pro-v4_23_47_Full_Desktop"
+          cp "$GITHUB_WORKSPACE/overlays/whisper-autoinstall-v42347.cjs" src/whisper-autoinstall.cjs
+          node "$GITHUB_WORKSPACE/overlays/v4.23.48-apply.cjs" "$GITHUB_WORKSPACE/overlays"
+          for js in src/local-ai-autoinstall.cjs src/caption-translator.cjs src/local-tts-service.cjs renderer/local-tts-v42344.js src/main.cjs src/preload.cjs; do node --check "$js"; done
+          python3 -m py_compile src/argos-bridge.py
+          node --test --test-concurrency=2 tests/*.test.cjs
