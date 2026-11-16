@@ -59,7 +59,7 @@ if [ "$VERSION" != "$EXPECTED" ]; then
   echo "Source is not yet synchronized on GitHub; refusing to build an older version."
   exit 16
 fi
-OUT="$HOME/Downloads/OpenIPTV_WebView_v$VERSION_Build"
+OUT="$HOME/Downloads/OpenIPTV_WebView_v${VERSION}_Build"
 mkdir -p "$OUT"
 ZIP="$OUT/Open_IPTV_Pro_WebView_v$VERSION_FULL_SOURCE.zip"
 echo "[2/5] Creating exact-version source ZIP..."
