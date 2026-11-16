@@ -27,6 +27,8 @@ jobs:
           grep -Fq 'OpenIPTVPro_Source_v4.23.48.zip' build-mac-v42348.sh
           grep -Fq '( cd "$PROJECT" && node "$OVERLAY_DIR/v4.23.48-apply.cjs" "$OVERLAY_DIR" )' build-mac-v42348.sh
           grep -Fq 'zip -q -r "$PATCH_SOURCE" "Open-IPTV-Pro-v4_23_48_Full_Desktop"' build-mac-v42348.sh
+          grep -Fq 'unzip -p "$WORK/$PATCH_SOURCE" "Open-IPTV-Pro-v4_23_48_Full_Desktop/package.json"' build-mac-v42348.sh
+          ! grep -Fq 'unzip -Z1 "$WORK/$PATCH_SOURCE" | grep -Fxq' build-mac-v42348.sh
       - name: Extract pinned v4.23.47 source and apply fix
         shell: bash
         run: |
@@ -45,4 +47,13 @@ jobs:
           mv "$PROJECT" "$RUNNER_TEMP/Open-IPTV-Pro-v4_23_48_Full_Desktop"
           ( cd "$RUNNER_TEMP" && zip -q -r "OpenIPTVPro_Source_v4.23.48.zip" "Open-IPTV-Pro-v4_23_48_Full_Desktop" -x '*/node_modules/*' '*/dist/*' '*/.git/*' )
           unzip -tq "$RUNNER_TEMP/OpenIPTVPro_Source_v4.23.48.zip"
-          unzip -Z1 "$RUNNER_TEMP/OpenIPTVPro_Source_v4.23.48.zip" | grep -Fxq 'Open-IPTV-Pro-v4_23_48_Full_Desktop/package.json'
+          # Inspect member content without short-circuiting unzip under pipefail (Mac SIGPIPE 141).
+          unzip -p "$RUNNER_TEMP/OpenIPTVPro_Source_v4.23.48.zip" 'Open-IPTV-Pro-v4_23_48_Full_Desktop/package.json' > "$RUNNER_TEMP/extracted-package.json"
+          node -e 'const fs=require("fs");if(JSON.parse(fs.readFileSync(process.argv[1],"utf8")).version!=="4.23.48")process.exit(1)' "$RUNNER_TEMP/extracted-package.json"
+          # A large ZIP's member listing must never be relied on with a grep -q pipe.
+          mkdir -p "$RUNNER_TEMP/large-zip-regression"
+          echo '{"version":"4.23.48"}' > "$RUNNER_TEMP/large-zip-regression/package.json"
+          for i in $(seq 1 2500); do touch "$RUNNER_TEMP/large-zip-regression/long-placeholder-name-$(printf '%05d' "$i")-safe-entry.txt"; done
+          ( cd "$RUNNER_TEMP" && zip -q -r large-zip-regression.zip large-zip-regression )
+          unzip -p "$RUNNER_TEMP/large-zip-regression.zip" 'large-zip-regression/package.json' > "$RUNNER_TEMP/verified-large-package.json"
+          node -e 'const fs=require("fs");if(JSON.parse(fs.readFileSync(process.argv[1],"utf8")).version!=="4.23.48")process.exit(1)' "$RUNNER_TEMP/verified-large-package.json"
