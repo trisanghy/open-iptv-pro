@@ -1,0 +1,65 @@
+name: Verify v4.23.43 local captions desktop builds
+on:
+  push:
+    branches: [iptv-build-source]
+    paths: [.github/workflows/verify-caption-desktop-v42343.yml]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  mac-arm64:
+    runs-on: macos-15
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Test and build Apple Silicon DMG from published source ZIP
+        shell: bash
+        env:
+          CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+        run: |
+          set -Eeuo pipefail
+          echo '9a35559fe0e35108311afe3c7c966c54444812df15ec90397e6de77a66e1f8e5  source/OpenIPTVPro_Source_v4.23.43.zip' | shasum -a 256 -c -
+          mkdir -p "$RUNNER_TEMP/caption-check"
+          unzip -q source/OpenIPTVPro_Source_v4.23.43.zip -d "$RUNNER_TEMP/caption-check"
+          cd "$RUNNER_TEMP/caption-check/Open-IPTV-Pro-v4_23_43_Full_Desktop"
+          test "$(node -p 'require("./package.json").version')" = '4.23.43'
+          npm install --no-audit --no-fund
+          npm test
+          npx electron-builder --mac dmg --arm64 --publish never
+          test -s dist/Open-IPTV-Pro-4.23.43-mac-arm64.dmg
+          EXE='dist/mac-arm64/Open IPTV Pro.app/Contents/MacOS/Open IPTV Pro'
+          test -s "$EXE"
+          test "$(lipo -archs "$EXE")" = arm64
+          echo 'PASS: beta caption UI + IPC packaged for macOS arm64'
+  windows-x64:
+    runs-on: windows-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Test and build Windows x64 from published source ZIP
+        shell: pwsh
+        env:
+          CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $actual=(Get-FileHash 'source/OpenIPTVPro_Source_v4.23.43.zip' -Algorithm SHA256).Hash.ToLowerInvariant()
+          if($actual -ne '9a35559fe0e35108311afe3c7c966c54444812df15ec90397e6de77a66e1f8e5'){throw 'Source ZIP SHA256 mismatch'}
+          Expand-Archive 'source/OpenIPTVPro_Source_v4.23.43.zip' -DestinationPath $env:RUNNER_TEMP -Force
+          Set-Location (Join-Path $env:RUNNER_TEMP 'Open-IPTV-Pro-v4_23_43_Full_Desktop')
+          if((Get-Content package.json -Raw|ConvertFrom-Json).version -ne '4.23.43'){throw 'Wrong source version'}
+          npm install --no-audit --no-fund
+          if($LASTEXITCODE -ne 0){throw 'npm install failed'}
+          npm test
+          if($LASTEXITCODE -ne 0){throw 'npm test failed'}
+          npx electron-builder --win --x64 --publish never
+          if($LASTEXITCODE -ne 0){throw 'Windows electron-builder failed'}
+          foreach($f in @('Open-IPTV-Pro-Setup-4.23.43-x64.exe','Open-IPTV-Pro-4.23.43-x64.exe')){
+            if(-not (Test-Path (Join-Path 'dist' $f) -PathType Leaf)){throw ('Missing '+$f)}
+          }
+          Write-Host 'PASS: beta caption UI + IPC packaged for Windows x64'
