@@ -40,23 +40,23 @@ jobs:
             --exclude 'CHANGELOG.md' \
             --exclude 'RELEASE_NOTES_V4_23_39.md' \
             --exclude 'docs/images/'
-          # Match the source archive's release workflow instead of retaining a stale v4.22.2 workflow.
-          # Only the release.yml file is synchronized; main's own CI and publication workflows are preserved.
-          test -f "$ROOT/.github/workflows/release.yml"
-          cp "$ROOT/.github/workflows/release.yml" .github/workflows/release.yml
+          # Restore source archive's release workflow; the existing main workflow is outdated.
+          test -f "$ROOT/.github/workflows/release-desktop.yml"
+          cp "$ROOT/.github/workflows/release-desktop.yml" .github/workflows/release-desktop.yml
           python3 - <<'PY'
           from pathlib import Path
-          workflow=Path('.github/workflows/release.yml')
+          import re
+          workflow=Path('.github/workflows/release-desktop.yml')
           s=workflow.read_text()
-          s=s.replace('docs/RELEASE_NOTES_V4_22_2_VI_EN.md','RELEASE_NOTES_V4_23_39.md')
-          s=s.replace('RELEASE_NOTES_V4_23_38.md','RELEASE_NOTES_V4_23_39.md')
-          if 'RELEASE_NOTES_V4_23_39.md' not in s:
-              raise SystemExit('Release notes reference was not updated')
+          s,n=re.subn(r'(?:docs/)?RELEASE_NOTES_V[0-9A-Za-z_]+[.]md','RELEASE_NOTES_V4_23_39.md',s)
+          if n<1:
+              raise SystemExit('Release notes path missing in release-desktop.yml')
           workflow.write_text(s)
           test=Path('tests/stability_v4221.test.cjs')
-          t=test.read_text().replace('RELEASE_NOTES_V4_23_38.md','RELEASE_NOTES_V4_23_39.md')
-          if 'RELEASE_NOTES_V4_23_39.md' not in t:
-              raise SystemExit('Release test expected reference not found')
+          t=test.read_text()
+          t,n=re.subn(r'RELEASE_NOTES_V4_23_[0-9]+(?:_VI_EN)?','RELEASE_NOTES_V4_23_39',t)
+          if n<1:
+              raise SystemExit('Expected release-note assertion not found in source tests')
           test.write_text(t)
           PY
           grep -Eq '"version"[[:space:]]*:[[:space:]]*"4[.]23[.]39"' package.json
