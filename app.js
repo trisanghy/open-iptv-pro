@@ -866,22 +866,22 @@
   const cancelBtn=panel.querySelector('.task-cancel');cancelBtn.textContent=task.running?(task.cancel?'Đang dừng…':'Hủy tác vụ'):'Đóng';cancelBtn.disabled=task.running&&task.cancel;
   const status=panel.querySelector('.task-status');
   if(type==='check'){
-   status.textContent=`● Sống ${task.alive}  ·  ● Die ${task.dead}  ·  ● Chưa rõ ${task.uncertain}`;
+   status.textContent=`● Sống ${task.alive}  ·  ● Die ${task.dead}  ·  ● Chưa rõ ${task.uncertain}`+(task.blocked?'  ·  CORS/mạng '+task.blocked:'');
    const feed=panel.querySelector('.task-live-results');feed.replaceChildren();
    for(const item of task.results.slice(-12).reverse()){
     const row=document.createElement('div');row.className='check-result '+item.status;
-    const label=document.createElement('span');label.className='check-result-label';label.textContent=item.status==='alive'?'Sống':item.status==='dead'?'Die':'Chưa rõ';
+    const label=document.createElement('span');label.className='check-result-label';label.textContent=item.status==='alive'?'Sống':item.status==='dead'?'Die':/CORS|mạng/i.test(item.reason||'')?'CORS/mạng':'Chưa rõ';
     const name=document.createElement('span');name.className='check-result-name';name.textContent=item.name;name.title=item.name+' · '+(item.reason||'');
     row.append(label,name);feed.append(row);
    }
   }else{status.textContent=`✓ Mới ${task.success}  ·  ↻ Giữ ảnh ${task.skipped||0}  ·  ✕ Lỗi ${task.failed}`;panel.querySelector('.task-current').textContent=task.latest||'Đang chuẩn bị chụp ảnh…';}
-  panel.querySelector('.task-title').textContent=(type==='check'?'Kiểm tra link trực tiếp':'Chụp Snapshot')+(task.workers?' · '+task.workers+' luồng':'')+(task.running?' · Đang chạy':task.cancel?' · Đã dừng':' · Hoàn tất');
+  panel.querySelector('.task-title').textContent=(type==='check'?(native?'Kiểm tra link trực tiếp':'Kiểm tra Web HLS/DASH'):'Chụp Snapshot')+(task.workers?' · '+task.workers+' luồng':'')+(task.running?' · Đang chạy':task.cancel?' · Đã dừng':' · Hoàn tất');
   const summaries=Object.values(tasks).filter(t=>t.visible).map(t=>`${t.done}/${t.total} kênh${t.running?' · đang chạy':' · xong'}`);
   const summary=$('#taskDockSummary');if(summary)summary.textContent=summaries.join(' | ')||'Không có tác vụ';
  }
- function taskStart(type,total){const t=tasks[type];t.running=true;t.cancel=false;t.visible=true;t.total=total;t.done=0;t.alive=0;t.dead=0;t.uncertain=0;t.success=0;t.failed=0;t.skipped=0;t.results=[];t.latest='';t.workers=0;updateTaskUI(type);$('#taskDock').classList.remove('hidden');}
- function taskEnd(type){const t=tasks[type];t.running=false;updateTaskUI(type);if(!Object.values(tasks).some(x=>x.visible))$('#taskDock').classList.add('hidden');}
- function requestCancel(type){const t=tasks[type];if(t.running){t.cancel=true;textStatus(`Đã yêu cầu hủy ${type==='check'?'kiểm tra link':'chụp ảnh'} sau lượt hiện tại`);}else{t.visible=false;updateTaskUI(type);if(!Object.values(tasks).some(x=>x.visible))$('#taskDock').classList.add('hidden');}}
+ function taskStart(type,total){const t=tasks[type];t.running=true;t.cancel=false;t.visible=true;t.total=total;t.done=0;t.alive=0;t.dead=0;t.uncertain=0;t.blocked=0;t.abortController=type==='check'&&!native?new AbortController():null;t.success=0;t.failed=0;t.skipped=0;t.results=[];t.latest='';t.workers=0;updateTaskUI(type);$('#taskDock').classList.remove('hidden');}
+ function taskEnd(type){const t=tasks[type];t.running=false;t.abortController=null;updateTaskUI(type);if(!Object.values(tasks).some(x=>x.visible))$('#taskDock').classList.add('hidden');}
+ function requestCancel(type){const t=tasks[type];if(t.running){t.cancel=true;if(type==='check')t.abortController?.abort();textStatus(`Đã yêu cầu hủy ${type==='check'?'kiểm tra link':'chụp ảnh'} sau lượt hiện tại`);}else{t.visible=false;updateTaskUI(type);if(!Object.values(tasks).some(x=>x.visible))$('#taskDock').classList.add('hidden');}}
  function markPlaybackVerified(){
   const ch=current,url=playCandidates[playCandidateIndex];
   if(!ch||!url||player.readyState<2||player.paused||!(player.videoWidth>0||player.audioTracks?.length>0))return;
@@ -935,9 +935,21 @@
   save();onProgress?.(true);
   return {finished:true,cancelled:!!task.cancel,submitted};
  }
- async function checkOne(url){if(!native){try{const r=await fetch(url,{method:'GET',signal:AbortSignal.timeout(7000)});if(!r.ok)return {status:'uncertain',reason:'HTTP '+r.status+' • Trình duyệt không đủ bằng chứng để kết luận Die'};return {status:'uncertain',reason:'Trình duyệt không kiểm tra được segment do CORS'};}catch(e){return {status:'uncertain',reason:'CORS / mạng: '+e.message};}}return await window.streamleaf.check(url);}
+ async function checkOne(channel,task){
+  if(!native){
+   if(!window.OpenIPTVWebChannelCheck?.checkChannel)
+    return {status:'uncertain',reason:'Thiếu module kiểm tra Web. Hãy tải lại website.'};
+   return window.OpenIPTVWebChannelCheck.checkChannel(channel,{
+    links:currentAvailableLinks(channel),
+    timeoutMs:6500,
+    signal:task?.abortController?.signal,
+    makeVideo:()=>document.createElement('video')
+   });
+  }
+  return await window.streamleaf.check(channel.url);
+ }
  async function checkAll(){if(window.IPTVProAdvanced?.canEdit?.()===false)return toast('Hồ sơ trẻ em không được chạy kiểm tra nguồn','warn');const t=tasks.check;if(t.running)return toast('Kiểm tra link đang chạy rồi','warn');const all=enabledChannels().slice();if(!all.length)return toast('Chưa có kênh để kiểm tra','warn');
-  if(!native)toast('Kiểm tra sâu chỉ có trên bản cài. Trình duyệt có thể bị giới hạn CORS.','warn');
+  if(!native)toast('Kiểm tra Web: đọc HLS, segment và link dự phòng khi nguồn cho phép. CORS có thể khiến một số kênh không xác minh được.','warn');
   // Snapshot the configured limit at job start: modifying Settings affects only the next run.
   const concurrency=Math.min(safeConcurrency(store.checkConcurrency),all.length);
   taskStart('check',all.length);t.workers=concurrency;updateTaskUI('check');let cursor=0;
@@ -961,7 +973,7 @@
    return;
   }
   async function worker(){while(!t.cancel&&cursor<all.length){const ch=all[cursor++];let result;
-    try{result=await checkOne(ch.url);}catch(e){result={status:'uncertain',reason:e.message};}
+    try{result=await checkOne(ch,t);}catch(e){if(t.cancel)break;result={status:'uncertain',reason:e.message};}if(t.cancel)break;
     // Do not classify a failure as a dead stream unless the checker returns dead.
     const verifiedUrl=ch.lastPlayableUrl===ch.url;
     const recentPlayback=verifiedUrl&&ch.lastPlaybackAt&&Date.now()-Date.parse(ch.lastPlaybackAt)<5*60*1000;
@@ -970,6 +982,7 @@
     if(result.status==='dead'&&ch.status==='alive'&&!result.confirmedDead){result={...result,status:'uncertain',reason:'Nguồn từng phát được; kiểm tra lại trước khi kết luận Die: '+(result.reason||'')};}
     ch.status=['alive','dead'].includes(result.status)?result.status:'uncertain';ch.reason=result.reason||'';ch.checkedAt=new Date().toISOString();
     if(ch.status==='alive')t.alive++;else if(ch.status==='dead')t.dead++;else t.uncertain++;
+    if(result.blocked)t.blocked++;
     t.done++;t.results.push({name:ch.name,status:ch.status,reason:ch.reason});
     updateChannelStatus(ch);updateTaskUI('check');window.IPTVProAdvanced?.onCheck?.(ch,result);
     if(t.done%6===0){save();if(filter==='alive')renderList(true);}
