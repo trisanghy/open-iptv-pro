@@ -22,6 +22,8 @@ test('TTS source match bypasses Argos without losing volume or duplicate protect
  assert.match(rust,/let speech=if source_language==lang\{phrase\.clone\(\)\}/);
  assert.match(rust,/source_language=="vi"\{phrase\.clone\(\)\}/);
  assert.match(ui,/if\(visibleLang===to\)/);
+ assert.match(ui,/if\(!enabled\|\|!translate\?\.checked\|\|!e\|\|e\.type!==\'segment\'\|\|!e\.text\)return/);
+ assert.doesNotMatch(ui,/e\.type!==\'segment\'\|\|!e\.translated/);
  assert.match(ui,/sourceLanguage:payload\.sourceLanguage/);
  assert.match(ui,/function acceptSpeech\(/);
  assert.match(ui,/function applyDuck\(/);

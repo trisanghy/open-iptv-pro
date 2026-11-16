@@ -162,7 +162,7 @@
   if(e.type==='status'&&enabled)status(e.message||'TTS đang xử lý…');
  });
  if(api.captionOnEvent)api.captionOnEvent(e=>{
-  if(!enabled||!translate?.checked||!e||e.type!=='segment'||!e.translated||!e.text)return;
+  if(!enabled||!translate?.checked||!e||e.type!=='segment'||!e.text)return;
   updateSession();
   // Use the actual language of the text, bypass translation when the voice already matches.
   const to=String(target.value||'').toLowerCase(),spoken=String(e.sourceLanguage||'').toLowerCase();
