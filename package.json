@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro-tauri-experiment",
   "private": true,
-  "version": "4.23.17-tauri.19.1",
-  "description": "Rust Lab v19.1: static two-row player controls, XMLTV now/next, native fit and stream selectors; isolated desktop release",
+  "version": "4.23.17-tauri.19.2",
+  "description": "Rust Lab v19.2: screenshot-matched static two-row controls and repaired automated macOS Universal/Windows CI builds.",
   "license": "MIT",
   "scripts": {
     "dev": "tauri dev",

@@ -50,7 +50,7 @@ jobs:
         run: |
           set -euo pipefail
           binary="$(node -p 'require("ffmpeg-static")')"
-          lipo -verify_arch arm64 "$binary"
+          lipo "$binary" -verify_arch arm64
           mkdir -p prepared
           cp "$binary" prepared/ffmpeg-arm64
           chmod +x prepared/ffmpeg-arm64
@@ -86,12 +86,12 @@ jobs:
         run: |
           set -euo pipefail
           intel="$(node -p 'require("ffmpeg-static")')"
-          lipo -verify_arch x86_64 "$intel"
-          lipo -verify_arch arm64 prepared/ffmpeg-arm64
+          lipo "$intel" -verify_arch x86_64
+          lipo prepared/ffmpeg-arm64 -verify_arch arm64
           mkdir -p src-tauri/resources
           lipo -create "$intel" prepared/ffmpeg-arm64 -output src-tauri/resources/ffmpeg
           chmod +x src-tauri/resources/ffmpeg
-          lipo -verify_arch arm64 x86_64 src-tauri/resources/ffmpeg
+          lipo src-tauri/resources/ffmpeg -verify_arch arm64 x86_64
       - name: Compile Tauri Universal and DMG
         shell: bash
         env:
@@ -108,10 +108,10 @@ jobs:
           app="$(find src-tauri/target/universal-apple-darwin/release/bundle/macos -maxdepth 1 -type d -name '*.app' -print -quit)"
           test -n "$app"
           exe="$(find "$app/Contents/MacOS" -maxdepth 1 -type f -print -quit)"
-          lipo -verify_arch arm64 x86_64 "$exe"
+          lipo "$exe" -verify_arch arm64 x86_64
           resource="$(find "$app/Contents/Resources" -type f -name ffmpeg -print -quit)"
           test -n "$resource"
-          lipo -verify_arch arm64 x86_64 "$resource"
+          lipo "$resource" -verify_arch arm64 x86_64
           dmg="$(find src-tauri/target/universal-apple-darwin/release/bundle/dmg -maxdepth 1 -type f -name '*.dmg' -print -quit)"
           test -s "$dmg"
           mkdir -p dist
@@ -220,7 +220,7 @@ jobs:
         with:
           tag_name: ${{ needs.tag.outputs.tag_name }}
           name: Open IPTV Pro Rust Lab v${{ needs.tag.outputs.release_number }} — macOS Universal + Windows x64
-          body_path: RELEASE_NOTES_RUST_LAB_V19_1.md
+          body_path: RELEASE_NOTES_RUST_LAB_V19_2.md
           prerelease: true
           make_latest: false
           fail_on_unmatched_files: true

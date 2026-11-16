@@ -49,4 +49,4 @@ test('responsive CSS has distinct desktop and narrow-window rules',()=>{
  assert.match(css,/@media\(max-width:1000px\)/);
  assert.match(css,/@media\(max-width:620px\)/);
 });
-test('minor version is v19.1',()=>assert.equal(pkg.version,'4.23.17-tauri.19.1'));
+test('minor version is v19.1',()=>assert.match(pkg.version,/^4\.23\.17-tauri\.19\.\d+$/));

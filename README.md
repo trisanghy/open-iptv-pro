@@ -104,3 +104,8 @@ curl -fsSL https://raw.githubusercontent.com/trisanghy/open-iptv-pro/experiment/
 ```
 
 Xem [changelog v19.1](CHANGELOG_RUSTLAB_V19_1.md) và [ghi chú phát hành v19.1](RELEASE_NOTES_RUST_LAB_V19_1.md).
+
+
+### Bản vá v19.2 — tự động build sửa lỗi CI
+
+Bản v19.2 giữ nguyên hai hàng điều khiển và EPG thực tế của v19.1, chỉ khắc phục bước kiểm tra kiến trúc macOS Universal (lệnh `lipo`) và các bài kiểm thử cũ từng đóng đinh phiên bản v19. Tag mới `rust-lab/v19.2`; không ghi đè tag v19/v19.1. Bộ cài Windows và macOS chỉ được công bố nếu workflow GitHub Actions thực sự build thành công.

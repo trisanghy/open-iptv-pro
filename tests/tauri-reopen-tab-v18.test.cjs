@@ -20,8 +20,10 @@ test('tab position stays fixed for expanded and collapsed sidebar',()=>{
  assert.match(css,/top:14px!important;left:calc\(72px - 2px\)!important/);
  assert.match(index,/id="channelPanelReopen"[^>]*aria-label="Mở lại danh sách kênh"/);
 });
-test('one ZIP fast installer now requires v19',()=>{
- assert.match(script,/VERSION="4\.23\.17-tauri\.19"/);
- assert.match(script,/archive\/refs\/heads\/\$\{BRANCH\}\.zip/);
- assert.match(script,/OpenIPTVPro_RustLab_v19/);
+test('one ZIP fast installer pins the current immutable Rust Lab tag',()=>{
+ const version=require(path.join(root,'package.json')).version;
+ const release=version.split('-tauri.')[1];
+ assert.ok(script.includes('VERSION="'+version+'"'));
+ assert.ok(script.includes('TAG="rust-lab/v'+release+'"'));
+ assert.match(script,/archive\/refs\/tags\/\$\{TAG\}\.zip/);
 });
