@@ -25,15 +25,24 @@ jobs:
           bash -n build-mac-v42348.sh
           grep -Fq 'OVERLAY_REV="1d34c7b8a0f2f61a902a66c7090224a39e7c08b4"' build-mac-v42348.sh
           grep -Fq 'OpenIPTVPro_Source_v4.23.48.zip' build-mac-v42348.sh
+          grep -Fq '( cd "$PROJECT" && node "$OVERLAY_DIR/v4.23.48-apply.cjs" "$OVERLAY_DIR" )' build-mac-v42348.sh
+          grep -Fq 'zip -q -r "$PATCH_SOURCE" "Open-IPTV-Pro-v4_23_48_Full_Desktop"' build-mac-v42348.sh
       - name: Extract pinned v4.23.47 source and apply fix
         shell: bash
         run: |
           set -Eeuo pipefail
           echo '06e8123c768f41c14f47264fbc7220d1bdfa6ce5dc07e69eceba50e929abc783  source/OpenIPTVPro_Source_v4.23.47.zip' | sha256sum -c -
           unzip -q source/OpenIPTVPro_Source_v4.23.47.zip -d "$RUNNER_TEMP"
-          cd "$RUNNER_TEMP/Open-IPTV-Pro-v4_23_47_Full_Desktop"
-          cp "$GITHUB_WORKSPACE/overlays/whisper-autoinstall-v42347.cjs" src/whisper-autoinstall.cjs
-          node "$GITHUB_WORKSPACE/overlays/v4.23.48-apply.cjs" "$GITHUB_WORKSPACE/overlays"
-          for js in src/local-ai-autoinstall.cjs src/caption-translator.cjs src/local-tts-service.cjs renderer/local-tts-v42344.js src/main.cjs src/preload.cjs; do node --check "$js"; done
-          python3 -m py_compile src/argos-bridge.py
-          node --test --test-concurrency=2 tests/*.test.cjs
+          PROJECT="$RUNNER_TEMP/Open-IPTV-Pro-v4_23_47_Full_Desktop"
+          test -s "$PROJECT/package.json"
+          cp "$GITHUB_WORKSPACE/overlays/whisper-autoinstall-v42347.cjs" "$PROJECT/src/whisper-autoinstall.cjs"
+          # Reproduce macOS build: script starts OUTSIDE extracted project.
+          test "$PWD" = "$GITHUB_WORKSPACE"
+          ( cd "$PROJECT" && node "$GITHUB_WORKSPACE/overlays/v4.23.48-apply.cjs" "$GITHUB_WORKSPACE/overlays" )
+          ( cd "$PROJECT" && for js in src/local-ai-autoinstall.cjs src/caption-translator.cjs src/local-tts-service.cjs renderer/local-tts-v42344.js src/main.cjs src/preload.cjs; do node --check "$js"; done )
+          ( cd "$PROJECT" && python3 -m py_compile src/argos-bridge.py )
+          ( cd "$PROJECT" && node --test --test-concurrency=2 tests/*.test.cjs )
+          mv "$PROJECT" "$RUNNER_TEMP/Open-IPTV-Pro-v4_23_48_Full_Desktop"
+          ( cd "$RUNNER_TEMP" && zip -q -r "OpenIPTVPro_Source_v4.23.48.zip" "Open-IPTV-Pro-v4_23_48_Full_Desktop" -x '*/node_modules/*' '*/dist/*' '*/.git/*' )
+          unzip -tq "$RUNNER_TEMP/OpenIPTVPro_Source_v4.23.48.zip"
+          unzip -Z1 "$RUNNER_TEMP/OpenIPTVPro_Source_v4.23.48.zip" | grep -Fxq 'Open-IPTV-Pro-v4_23_48_Full_Desktop/package.json'
