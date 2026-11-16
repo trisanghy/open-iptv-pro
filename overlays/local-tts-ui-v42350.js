@@ -9,7 +9,7 @@
  const recentLines=new Map();
 
  const VIENEU_PRESETS=[
- 'Trúc Ly','Thiện Minh','Mai Anh','Hải Đăng','Thùy Dung','Thiền Tâm Đức',
+ 'Adam bựa','Trúc Ly','Thiện Minh','Mai Anh','Hải Đăng','Thùy Dung','Thiền Tâm Đức',
  'Ngọc Huyền','Quang Sơn','Ngọc Trân','Minh Đức','Phạm Tuyên',
  'Xuân Vĩnh','Thanh Bình','Ngọc Linh','Đoan Trang','Quỳnh Anh',
  'Quốc Tuấn','Adam','Thái Sơn','Thục Đoan','Minh Triết',
