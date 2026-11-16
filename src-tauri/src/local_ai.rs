@@ -234,9 +234,7 @@ pub async fn caption_start(app:AppHandle,ai:Arc<LocalAi>,url:&str,translate:bool
  let bin=bin.ok_or("Chưa cài whisper-cli")?;let model=model.ok_or("Chưa cài mô hình Whisper")?;
  let ffmpeg=ai.ffmpeg.clone().ok_or("Thiếu FFmpeg")?;
  let target=if translate{target}else{"en"};
- if translate&&translation_status(&ai,target)["ready"]!=true{
-  return Err(format!("Chưa có mô hình dịch {target}; mở ⚙ rồi chọn Cài mô hình dịch"));
- }
+ // Do not require any model until Whisper detects actual speech language; same-language is free.
  caption_stop(&ai).await;
  let id=ai.next.fetch_add(1,Ordering::SeqCst)+1;
  let ai_clone=ai.clone();let src=url.to_owned();let target=target.to_owned();let result_language=target.clone();
@@ -253,14 +251,51 @@ pub async fn caption_start(app:AppHandle,ai:Arc<LocalAi>,url:&str,translate:bool
    let cycle=async{
     output_timeout(&mut ff,35).await?;
     if !exists(&wav,25_000){return Err("Nguồn không có âm thanh".to_string());}
+    let output_stem=dir.join("recognized");
     let mut wh=Command::new(&bin);
-    wh.arg("-m").arg(&model).arg("-f").arg(&wav).args(["-l","auto","-nt","-np","-t","4"]);
-    if translate{wh.arg("-tr");}
-    let result=output_timeout(&mut wh,70).await?;
-    let phrase=caption_text(&result.stdout);
+    wh.arg("-m").arg(&model).arg("-f").arg(&wav)
+      .args(["-l","auto","-nt","-np","-t","4","-oj","-of"]).arg(&output_stem);
+    output_timeout(&mut wh,70).await?;
+    let json_file=output_stem.with_extension("json");
+    let report:Value=serde_json::from_slice(&tokio::fs::read(&json_file).await.map_err(error)?).map_err(error)?;
+    let source=report["result"]["language"].as_str().unwrap_or("").to_lowercase();
+    let phrase=report["transcription"].as_array().map(|a|a.iter()
+      .filter_map(|row|row["text"].as_str()).collect::<Vec<_>>().join(" ")).unwrap_or_default();
+    let phrase=caption_text(phrase.as_bytes());
     if !phrase.is_empty(){
-     let rendered=if translate{translate_caption_text(&ai_clone,&target,&phrase).await?}else{phrase.clone()};
-     let _=app.emit("caption:event",json!({"type":"segment","id":id,"text":rendered,"originalText":phrase,"translated":translate,"language":if translate{target.as_str()}else{"auto"},"target":target}));
+     if source.is_empty()||source=="auto"||!translation_supported(&source){
+      let _=app.emit("caption:event",json!({"type":"status","id":id,"message":"Không xác định được ngôn ngữ gốc; chưa dịch để tránh sai"}));
+     }else{
+      let mut route="same".to_string();let mut rendered=phrase.clone();let mut english=String::new();
+      if translate&&source!=target{
+       route=argos_plan(&ai_clone,&source,&target).await?;
+       match route.as_str(){
+        "direct"|"pivot"=>{
+         rendered=argos_translate(&ai_clone,&source,&target,&phrase).await?;
+        },
+        "whisper"=>{
+         // Only when direct Argos is not installed, fall back to Whisper English.
+         let mut en=Command::new(&bin);
+         en.arg("-m").arg(&model).arg("-f").arg(&wav)
+           .args(["-l","auto","-nt","-np","-t","4","-tr"]);
+         let result=output_timeout(&mut en,70).await?;
+         english=caption_text(&result.stdout);
+         if english.is_empty(){return Err("Whisper không tạo được bản dịch English dự phòng".into());}
+         rendered=if target=="en"{english.clone()}else{
+          argos_translate(&ai_clone,"en",&target,&english).await?
+         };
+        },
+        "needs-model"=>{
+         let _=app.emit("caption:event",json!({"type":"needs-model","id":id,"sourceLanguage":source,"target":target}));
+         return Ok::<(),String>(());
+        },
+        _=>return Err("Không có tuyến dịch offline hợp lệ".into())
+       }
+      }
+      let _=app.emit("caption:event",json!({"type":"segment","id":id,"text":rendered,"originalText":phrase,
+       "sourceLanguage":source,"englishText":english,"translated":translate&&source!=target,
+       "language":if translate{target.as_str()}else{source.as_str()},"target":target,"route":route}));
+     }
     }
     Ok::<(),String>(())
    }.await;
@@ -295,10 +330,10 @@ pub fn tts_status(ai:&LocalAi,lang:&str)->Value{
  let have_piper=exists(&tts_exe(ai,"piper"),1);
  let have_argos=exists(&tts_exe(ai,"argos-translate"),1);
  let have_pair=lang=="en"||pairs(ai)[lang]==true;
- let ready=have_voice&&have_piper&&(lang=="en"||(have_argos&&have_pair));
- let reason=if !have_piper{"Chưa cài Piper TTS"}else if !have_voice{"Chưa cài mô hình giọng đọc"}else if !have_argos&&lang!="en"{"Chưa cài Argos Translate"}else if !have_pair{"Chưa có mô hình dịch en → ngôn ngữ chọn"}else{""};
+ let ready=have_voice&&have_piper; // Same-language speech needs no Argos package.
+ let reason=if !have_piper{"Chưa cài Piper TTS"}else if !have_voice{"Chưa cài mô hình giọng đọc"}else{""};
  json!({"ready":ready,"reason":reason,"target":lang,"voiceName":model,"offline":true,
-  "piperReady":have_piper,"argosReady":have_argos,"voiceReady":have_voice,
+  "piperReady":have_piper,"argosReady":have_argos,"voiceReady":have_voice,"translationReady":have_pair&&have_argos,
   "installing":ai.installing_tts.load(Ordering::SeqCst),"engine":"Piper + Argos","availableLanguages":LANGS.iter().map(|x|x.0).collect::<Vec<_>>()})
 }
 fn uv_asset()->Option<(&'static str,&'static str)>{
@@ -368,46 +403,92 @@ pub fn translation_status(ai:&LocalAi,lang:&str)->Value{
    "availableLanguages":TRANSLATION_TARGETS,
    "reason":if !supported{"Ngôn ngữ chưa được hỗ trợ"}else if ready{""}else{"Chưa cài mô hình dịch offline cho ngôn ngữ này"}})
 }
-pub async fn translation_install(app:AppHandle,ai:Arc<LocalAi>,lang:&str)->Result<Value,String>{
- if !translation_supported(lang){return Err("Ngôn ngữ dịch chưa được hỗ trợ".into());}
- if lang=="en"{return Ok(json!({"installed":true,"target":"en","ready":true}));}
+// Canonical, offline-only language router with direct Argos pairs preferred over pivots.
+// Installer may contact the official Argos index ONLY after user explicitly enables/install models.
+async fn argos_command(ai:&LocalAi,action:&str,source:&str,target:&str,input:Option<&str>)->Result<String,String>{
+ let python=tts_python(ai);
+ if !exists(&python,1){return Err("Chưa cài Argos offline".into());}
+ let script=ai.tts_root().join("argos_direct_router.py");
+ tokio::fs::create_dir_all(ai.tts_root()).await.map_err(error)?;
+ if !exists(&script,100){
+  tokio::fs::write(&script,include_str!("../resources/argos_direct_router.py")).await.map_err(error)?;
+ }
+ let mut cmd=Command::new(&python);
+ cmd.arg(&script).args([action,source,target])
+  .env("ARGOS_PACKAGES_DIR",ai.tts_root().join("argos-packages"))
+  .env("ARGOS_DEVICE_TYPE","cpu").env("ARGOS_CHUNK_TYPE","NONE");
+ let output=if let Some(sentence)=input{
+  cmd.stdin(Stdio::piped()).stdout(Stdio::piped()).stderr(Stdio::piped()).kill_on_drop(true);
+  let mut child=cmd.spawn().map_err(error)?;
+  let mut stdin=child.stdin.take().ok_or("Argos stdin không sẵn sàng")?;
+  stdin.write_all(sentence.as_bytes()).await.map_err(error)?;
+  drop(stdin);
+  let out=tokio::time::timeout(Duration::from_secs(55),child.wait_with_output()).await
+   .map_err(|_|"Argos vượt thời gian dịch")?.map_err(error)?;
+  if !out.status.success(){return Err(format!("Argos: {}",String::from_utf8_lossy(&out.stderr).chars().take(250).collect::<String>()));}
+  out
+ }else{
+  output_timeout(&mut cmd,if action=="install"{900}else{55}).await?
+ };
+ Ok(String::from_utf8_lossy(&output.stdout).trim().to_owned())
+}
+async fn argos_plan(ai:&LocalAi,source:&str,target:&str)->Result<String,String>{
+ if source==target{return Ok("same".into());}
+ if !exists(&tts_python(ai),1){return Ok(if target=="en"{"whisper"}else{"needs-model"}.into());}
+ let output=argos_command(ai,"route",source,target,None).await?;
+ let line=output.lines().find_map(|l|l.strip_prefix("OIPTV_ROUTE:"))
+  .ok_or("Không nhận được kế hoạch dịch Argos")?;
+ let state:Value=serde_json::from_str(line).map_err(error)?;
+ let route=state["route"].as_str().ok_or("Tuyến Argos không hợp lệ")?;
+ if !matches!(route,"same"|"direct"|"pivot"|"whisper"|"needs-model"){
+  return Err("Tuyến Argos không được hỗ trợ".into());
+ }
+ Ok(route.to_owned())
+}
+async fn argos_translate(ai:&LocalAi,source:&str,target:&str,sentence:&str)->Result<String,String>{
+ if source==target{return Ok(sentence.to_owned());}
+ let text=argos_command(ai,"translate",source,target,Some(sentence)).await?;
+ if text.is_empty(){return Err("Argos không tạo được bản dịch".into());}
+ Ok(text.chars().take(1000).collect())
+}
+pub async fn translation_install(app:AppHandle,ai:Arc<LocalAi>,target:&str,source:&str)->Result<Value,String>{
+ if !translation_supported(target)||!translation_supported(source){return Err("Ngôn ngữ chưa hỗ trợ".into());}
+ if target==source{return Ok(json!({"installed":true,"target":target,"source":source,"route":"same","ready":true}));}
  if ai.installing_tts.compare_exchange(false,true,Ordering::SeqCst,Ordering::SeqCst).is_err(){
   return Err("Đang cài mô hình dịch hoặc giọng đọc khác".into());
  }
- let lang=lang.to_owned();
+ let src=source.to_owned();let dst=target.to_owned();
  let result=async{
-  caption_progress(&app,&format!("Đang chuẩn bị công cụ dịch {lang} offline…"));
-  ensure_argos_runtime(&app,&ai,&lang).await?;
-  let root=ai.tts_root();
-  if pairs(&ai)[lang.as_str()]!=true{
-   caption_progress(&app,&format!("Đang tải mô hình English → {lang}…"));
-   let pm=tts_exe(&ai,"argospm");
-   run_install(&app,&pm,&["update"],&lang,&root,350).await?;
-   run_install(&app,&pm,&["install",&format!("translate-en_{lang}")],&lang,&root,800).await?;
-   let mut value=pairs(&ai);value[lang.as_str()]=json!(true);
-   tokio::fs::write(root.join("installed-pairs.json"),serde_json::to_vec(&value).map_err(error)?).await.map_err(error)?;
+  caption_progress(&app,&format!("Kiểm tra cặp dịch {src} → {dst}, ưu tiên trực tiếp…"));
+  ensure_argos_runtime(&app,&ai,&dst).await?;
+  let raw=argos_command(&ai,"install",&src,&dst,None).await?;
+  let line=raw.lines().find_map(|l|l.strip_prefix("OIPTV_ROUTE:"))
+   .ok_or("Không nhận được kết quả cài mô hình dịch")?;
+  let report:Value=serde_json::from_str(line).map_err(error)?;
+  if report["ready"]!=true{return Err("Chưa cài được mô hình dịch phù hợp".into());}
+  // For legacy English->target TTS settings, keep the stored pair flag only when
+  // the installed route actually starts at English; never pretend a direct pair is en->target.
+  if src=="en"&&dst!="en"{
+   let mut value=pairs(&ai);value[dst.as_str()]=json!(true);
+   tokio::fs::write(ai.tts_root().join("installed-pairs.json"),serde_json::to_vec(&value).map_err(error)?).await.map_err(error)?;
   }
-  let status=translation_status(&ai,&lang);
-  if status["ready"]!=true{return Err("Mô hình dịch chưa sẵn sàng".into());}
-  caption_progress(&app,&format!("Đã cài mô hình dịch {lang}, có thể dùng offline."));
-  Ok(json!({"installed":true,"target":lang,"ready":true}))
+  caption_progress(&app,&format!("Sẵn sàng: {src} → {dst} ({})",report["route"].as_str().unwrap_or("offline")));
+  Ok(json!({"installed":true,"target":dst,"source":src,"route":report["route"],"ready":true}))
  }.await;
  ai.installing_tts.store(false,Ordering::SeqCst);
  result
 }
-async fn translate_caption_text(ai:&LocalAi,lang:&str,phrase:&str)->Result<String,String>{
- if lang=="en"{return Ok(phrase.to_owned());}
- if translation_status(ai,lang)["ready"]!=true{
-  return Err(format!("Chưa cài dịch {lang}; vào ⚙ và chọn Cài mô hình dịch"));
+async fn speech_translate(ai:&LocalAi,source:&str,target:&str,speech:&str,english_fallback:&str)->Result<String,String>{
+ if source==target{return Ok(speech.to_owned());}
+ let route=argos_plan(ai,source,target).await?;
+ if matches!(route.as_str(),"direct"|"pivot"){
+  return argos_translate(ai,source,target,speech).await;
  }
- let mut cmd=Command::new(tts_exe(ai,"argos-translate"));
- cmd.args(["--from-lang","en","--to-lang",lang,phrase])
-   .env("ARGOS_PACKAGES_DIR",ai.tts_root().join("argos-packages"))
-   .env("ARGOS_DEVICE_TYPE","cpu");
- let output=output_timeout(&mut cmd,55).await?;
- let text=String::from_utf8_lossy(&output.stdout).trim().chars().take(1000).collect::<String>();
- if text.is_empty(){return Err("Argos không trả về bản dịch".into());}
- Ok(text)
+ if !english_fallback.is_empty()&&source!="en"{
+  if target=="en"{return Ok(english_fallback.to_owned());}
+  return argos_translate(ai,"en",target,english_fallback).await;
+ }
+ Err(format!("Chưa có mô hình dịch {source} → {target} cho giọng đọc. Hãy cài cặp ngôn ngữ."))
 }
 pub async fn tts_install(app:AppHandle,ai:Arc<LocalAi>,lang:&str)->Result<Value,String>{
  lang_voice(lang).ok_or("Ngôn ngữ giọng đọc không được hỗ trợ")?;
@@ -578,18 +659,13 @@ pub async fn tts_stop(ai:&LocalAi)->Value{
  if let Some(task)=ai.tts.lock().await.take(){task.abort();}
  json!({"canceled":true})
 }
-async fn synthesize_internal(app:AppHandle,ai:Arc<LocalAi>,lang:String,phrase:String,voice:String,source_language:String)->Result<Value,String>{
+async fn synthesize_internal(app:AppHandle,ai:Arc<LocalAi>,lang:String,phrase:String,voice:String,source_language:String,english_fallback:String)->Result<Value,String>{
  let root=ai.tts_root();
  if tts_status(&ai,&lang)["ready"]!=true{return Err("Chưa cài đủ Piper, Argos hoặc giọng đọc".into());}
- let mut speech=phrase.clone();
- if lang!="en" && source_language!=lang{
-  let _=app.emit("tts:event",json!({"type":"status","message":"Đang dịch với Argos offline…"}));
-  let mut cmd=Command::new(tts_exe(&ai,"argos-translate"));
-  cmd.args(["--from-lang","en","--to-lang",&lang,&phrase]).env("ARGOS_PACKAGES_DIR",root.join("argos-packages"));
-  let out=output_timeout(&mut cmd,55).await?;
-  speech=String::from_utf8(out.stdout).map_err(error)?.trim().chars().take(600).collect();
-  if speech.is_empty(){return Err("Argos không trả về lời dịch".into());}
- }
+ let speech=if source_language==lang{phrase.clone()}else{
+  let _=app.emit("tts:event",json!({"type":"status","message":format!("Dịch {source_language} → {lang} nếu cần…")}));
+  speech_translate(&ai,&source_language,&lang,&phrase,&english_fallback).await?
+ };
  let dir=root.join("temp").join(Uuid::new_v4().to_string());tokio::fs::create_dir_all(&dir).await.map_err(error)?;
  let _cleanup=ScopedFolder(dir.clone());
  let result=async{
@@ -612,19 +688,14 @@ async fn synthesize_internal(app:AppHandle,ai:Arc<LocalAi>,lang:String,phrase:St
  let _=tokio::fs::remove_dir_all(dir).await;
  result
 }
-async fn synthesize_natural_internal(app:AppHandle,ai:Arc<LocalAi>,voice:String,phrase:String,source_language:String)->Result<Value,String>{
+async fn synthesize_natural_internal(app:AppHandle,ai:Arc<LocalAi>,voice:String,phrase:String,source_language:String,english_fallback:String)->Result<Value,String>{
  if tts_voice_status(&ai,&format!("vieneu:{voice}"))["ready"]!=true{
   return Err("Chưa cài mô hình VieNeu. Nhấn Cài mô hình tự động trước.".into());
  }
  let root=ai.tts_root();
- let mut speech=phrase.clone();
- if source_language!="vi"{
-  let mut cmd=Command::new(tts_exe(&ai,"argos-translate"));
-  cmd.args(["--from-lang","en","--to-lang","vi",&phrase]).env("ARGOS_PACKAGES_DIR",root.join("argos-packages"));
-  let out=output_timeout(&mut cmd,55).await?;
-  speech=String::from_utf8(out.stdout).map_err(error)?.trim().chars().take(600).collect();
-  if speech.is_empty(){return Err("Argos không trả về tiếng Việt".into());}
- }
+ let speech=if source_language=="vi"{phrase.clone()}else{
+  speech_translate(&ai,&source_language,"vi",&phrase,&english_fallback).await?
+ };
  let _=app.emit("tts:event",json!({"type":"status","message":format!("VieNeu đang đọc giọng {voice} offline…")}));
  let data=natural_request(&ai,&voice,&speech).await?;
  if data["mime"]!="audio/wav"||data["audioBase64"].as_str().is_none(){return Err("VieNeu không tạo được WAV".into());}
@@ -640,12 +711,14 @@ pub async fn tts_synthesize(app:AppHandle,ai:Arc<LocalAi>,value:&Value)->Result<
  if lang=="vi" && tts_voice_status(&ai,voice)["ready"]!=true{
   return Err("Giọng Việt chưa được cài. Nhấn Cài mô hình tự động.".into());
  }
- let source_language=if value["sourceLanguage"]=="vi" && lang=="vi"{"vi"}else{"en"};
+ let source_language=value["sourceLanguage"].as_str().unwrap_or("en");
+ if !translation_supported(source_language){return Err("Ngôn ngữ bản gốc không hợp lệ".into());}
+ let english_fallback=value["englishFallbackText"].as_str().unwrap_or("").chars().take(1000).collect::<String>();
  tts_stop(&ai).await;
  let task=if let Some(name)=voice.strip_prefix(NATURAL_PREFIX){
-  tokio::spawn(synthesize_natural_internal(app,ai.clone(),name.to_owned(),phrase,source_language.to_owned()))
+  tokio::spawn(synthesize_natural_internal(app,ai.clone(),name.to_owned(),phrase,source_language.to_owned(),english_fallback))
  }else{
-  tokio::spawn(synthesize_internal(app,ai.clone(),lang.to_owned(),phrase,voice.to_owned(),source_language.to_owned()))
+  tokio::spawn(synthesize_internal(app,ai.clone(),lang.to_owned(),phrase,voice.to_owned(),source_language.to_owned(),english_fallback))
  };
  *ai.tts.lock().await=Some(task.abort_handle());
  let result=task.await.map_err(|e|format!("TTS bị hủy: {e}"))?;

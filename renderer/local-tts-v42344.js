@@ -81,11 +81,13 @@
   if(captions&&!captions.checked){captions.checked=true;captions.dispatchEvent(new Event('change',{bubbles:true}));}
   if(translate&&!translate.checked){translate.checked=true;translate.dispatchEvent(new Event('change',{bubbles:true}));}
  }
- async function speak(text){
-  if(!enabled||busy||playing||!text)return;
+ async function speak(input){
+  if(!enabled||busy||playing||!input)return;
+  const payload=typeof input==='string'?{text:input,sourceLanguage:'en'}:input;
+  const text=String(payload.text||'').trim();if(!text)return;
   busy=true;const generation=taskId,lang=target.value,src=source();
   try{
-   const result=await api.ttsSynthesize({target:lang,voice:selectedVoice(),text:text.slice(0,360)});
+   const result=await api.ttsSynthesize({target:lang,voice:selectedVoice(),text:text.slice(0,360),sourceLanguage:payload.sourceLanguage,englishFallbackText:payload.englishFallbackText||''});
    if(!enabled||generation!==taskId||source()!==src)return;
    if(!result?.audioBase64||result.mime!=='audio/wav')throw Error('Không nhận được WAV từ Piper');
    const url='data:audio/wav;base64,'+result.audioBase64;
@@ -162,12 +164,20 @@
  if(api.captionOnEvent)api.captionOnEvent(e=>{
   if(!enabled||!translate?.checked||!e||e.type!=='segment'||!e.translated||!e.text)return;
   updateSession();
-  // Whisper reports intermediate English even when displayed captions use a different target.
-  const text=String(e.originalText||e.text).trim();
-  if(!text)return;
-  if(!acceptSpeech(text))return;
-  if(busy||playing){queued=text;return;}
-  void speak(text);
+  // Use the actual language of the text, bypass translation when the voice already matches.
+  const to=String(target.value||'').toLowerCase(),spoken=String(e.sourceLanguage||'').toLowerCase();
+  const visibleLang=String(e.language||'').toLowerCase(),original=String(e.originalText||'').trim();
+  const englishFallback=String(e.englishText||'').trim();
+  let text=String(e.text||'').trim(),sourceLanguage=visibleLang;
+  if(visibleLang===to){sourceLanguage=to;}
+  else if(spoken===to&&original){text=original;sourceLanguage=to;}
+  else if(spoken&&original){text=original;sourceLanguage=spoken;}
+  else if(englishFallback){text=englishFallback;sourceLanguage='en';}
+  if(!text||!sourceLanguage)return;
+  if(!acceptSpeech(sourceLanguage+' '+text))return;
+  const payload={text,sourceLanguage,englishFallbackText:englishFallback};
+  if(busy||playing){queued=payload;return;}
+  void speak(payload);
  });
  document.addEventListener('openiptv:media-info',updateSession);
  video.addEventListener('emptied',()=>{if(enabled)resetPlayback();});

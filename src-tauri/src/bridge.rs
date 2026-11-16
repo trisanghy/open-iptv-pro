@@ -150,7 +150,7 @@ pub async fn bridge(app:AppHandle,state:State<'_,Arc<AppState>>,local_ai_state:S
   },
   "caption:stop"=>Ok(local_ai::caption_stop(ai).await),
   "caption:translationStatus"=>Ok(local_ai::translation_status(ai,item(&args,0).as_str().unwrap_or("en"))),
-  "caption:translationInstall"=>local_ai::translation_install(app.clone(),ai.clone(),text(&args,0)?).await,
+  "caption:translationInstall"=>local_ai::translation_install(app.clone(),ai.clone(),text(&args,0)?,item(&args,1).as_str().unwrap_or("en")).await,
   "caption:chooseFile"=>{
    let kind=text(&args,0)?;
    let path=file_open(app.clone(),"").await?;

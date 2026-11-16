@@ -219,7 +219,7 @@ jobs:
         with:
           tag_name: ${{ needs.tag.outputs.tag_name }}
           name: Open IPTV Pro Rust Lab v${{ needs.tag.outputs.release_number }} — Windows x64 + macOS (when ready)
-          body_path: RELEASE_NOTES_RUST_LAB_V22_2.md
+          body_path: RELEASE_NOTES_RUST_LAB_V23.md
           prerelease: true
           make_latest: false
           fail_on_unmatched_files: true

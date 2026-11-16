@@ -7,7 +7,7 @@
  const api=window.streamleaf,ctx=window.IPTVState;
  const setup=$('liveCaptionSetup'),picker=$('liveCaptionSetupPanel');
  const pickWhisper=$('captionChooseBinary'),pickModel=$('captionChooseModel'),target=$('liveTranslateTarget'),installTranslation=$('captionTranslationInstall');
- let activeId=0,currentURL='',busy=false,captionTrack=null,lastTrackCue=null,lastText='',lastTranslate=false,lastTarget='en';
+ let activeId=0,currentURL='',busy=false,captionTrack=null,lastTrackCue=null,lastText='',lastTranslate=false,lastTarget='en',lastDetected='',installingPair='',failedPair='';
  const setStatus=s=>{status.textContent=String(s||'').slice(0,170);status.title=status.textContent;};
  const preferredURL=()=>{
   const c=ctx?.getCurrent?.();
@@ -66,13 +66,7 @@
   try{
    await api.captionStop();
    activeId=0;currentURL='';hideWords();
-   if(translate.checked&&lang!=='en'&&api.captionTranslationStatus){
-    const state=await api.captionTranslationStatus(lang);
-    if(!state.ready){
-     picker.hidden=false;setup?.setAttribute('aria-expanded','true');
-     throw Error('Cần cài mô hình dịch '+(target?.selectedOptions?.[0]?.textContent||lang)+' (nhấn Cài mô hình dịch)');
-    }
-   }
+   // Actual spoken language must be known before choosing a translation package.
    const result=await api.captionStart({url,translate:translate.checked,target:lang});
    activeId=result.id;currentURL=url;lastTranslate=translate.checked;lastTarget=lang;
    setStatus(translate.checked?'Đang dịch sang '+(target?.selectedOptions?.[0]?.textContent||lang)+'…':'Đang nhận diện giọng nói…');
@@ -90,14 +84,14 @@
   if(translate.checked)caption.checked=true;
   void reconcile(true);
  });
- target?.addEventListener('change',()=>{if(translate.checked)void reconcile(true);});
+ target?.addEventListener('change',()=>{lastDetected='';failedPair='';if(translate.checked)void reconcile(true);});
  installTranslation?.addEventListener('click',async()=>{
   if(!api?.captionTranslationInstall)return;
-  const lang=target?.value||'en';if(lang==='en'){setStatus('Dịch English đã có sẵn trong Whisper');return;}
+  const lang=target?.value||'en',source=lastDetected||'en';if(source===lang){setStatus('Cùng ngôn ngữ · không cần cài mô hình dịch');return;}
   installTranslation.disabled=true;installTranslation.textContent='Đang cài dịch…';
   try{
    setStatus('Đang tự cài mô hình dịch '+(target?.selectedOptions?.[0]?.textContent||lang)+'…');
-   const result=await api.captionTranslationInstall(lang);
+   const result=await api.captionTranslationInstall(lang,source);
    if(!result?.ready)throw Error('Mô hình chưa sẵn sàng');
    setStatus('Đã cài mô hình dịch '+lang+' · offline');
    if(translate.checked)await reconcile(true);
@@ -123,7 +117,30 @@
  if(api?.captionOnEvent){
   api.captionOnEvent(e=>{
    if(!e||!activeId||e.id!==activeId)return;
-   if(e.type==='segment'){showWords(e.text,e.translated,e.language);setStatus(e.translated?'Live Translate · '+(e.target||'en'):'Live Caption · Auto');}
+   if(e.type==='segment'){
+    lastDetected=e.sourceLanguage||'';
+    showWords(e.text,e.translated,e.language);
+    setStatus(e.route==='same'&&translate.checked
+      ?'Cùng ngôn ngữ '+lastDetected+' · không dịch'
+      :e.translated?'Live Translate · '+lastDetected+' → '+(e.target||'en')+' ('+(e.route||'offline')+')'
+      :'Live Caption · '+lastDetected);
+   }
+   if(e.type==='needs-model'){
+    const source=String(e.sourceLanguage||'').toLowerCase(),to=String(e.target||target?.value||'').toLowerCase();
+    if(!source||!to||source===to)return;
+    lastDetected=source;
+    const key=source+'→'+to;
+    if(installingPair===key||failedPair===key)return;
+    if(!api?.captionTranslationInstall){setStatus('Chưa có mô hình dịch '+key);return;}
+    installingPair=key;setStatus('Đang tự cài tuyến '+key+' trực tiếp nếu có…');
+    Promise.resolve(api.captionTranslationInstall(to,source)).then(()=>{
+      installingPair='';failedPair='';
+      if(translate.checked&&(target?.value===to))void reconcile(true);
+    }).catch(err=>{
+      installingPair='';failedPair=key;
+      setStatus('Cài mô hình '+key+' lỗi: '+String(err.message||err).slice(0,110));
+    });
+   }
    if(e.type==='status')setStatus(e.message||'');
    if(e.type==='error'){setStatus(e.message||'Lỗi nhận diện');activeId=0;caption.checked=false;translate.checked=false;}
    if(e.type==='stopped'&&e.id===activeId){activeId=0;}
