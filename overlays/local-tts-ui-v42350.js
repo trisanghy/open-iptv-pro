@@ -153,7 +153,7 @@
   if(e.type==='status'&&enabled)status(e.message||'TTS đang xử lý…');
  });
  if(api.captionOnEvent)api.captionOnEvent(e=>{
-  if(!enabled||!translate?.checked||!e||e.type!=='segment'||!e.translated||!e.text)return;
+  if(!enabled||!translate?.checked||!e||e.type!=='segment'||!e.text)return;
   updateSession();
   // Choose a text whose actual language is known; do not assume every caption is English.
   const language=String(target.value||'').toLowerCase();

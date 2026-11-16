@@ -40,3 +40,8 @@ test('regressions: persistent attenuation, no repeated speech, no premature Engl
  assert.match(c,/actual Whisper detection/);
  assert.match(c,/type==='needs-model'/);
 });
+
+test('same-language caption is still spoken when translated=false, without Argos',()=>{
+ assert.ok(ui.includes("if(!enabled||!translate?.checked||!e||e.type!=='segment'||!e.text)return;"));
+ assert.ok(!ui.includes("e.type!=='segment'||!e.translated"));
+});
