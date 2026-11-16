@@ -95,6 +95,13 @@ swap('tests/release_version_sync_v42332.test.cjs',oldHelper,newHelper);
 for(const p of ['tests/classic_controls_universal_v42340.test.cjs','tests/player_toolbar_v42341.test.cjs']){
  if(fs.existsSync(path.join(root,p))){const s=read(p),v=s.replaceAll(old,next);if(v!==s)write(p,v);}
 }
+const legacyCaptionTest='tests/live-caption-v42343.test.cjs';
+if(fs.existsSync(path.join(root,legacyCaptionTest))){
+ const raw=read(legacyCaptionTest);
+ const check=`assert.equal(JSON.parse(read('package.json')).version,'${old}')`;
+ assert(raw.includes(check),'Old caption test version assertion changed');
+ write(legacyCaptionTest,raw.replace(check,`assert.equal(JSON.parse(read('package.json')).version,'${next}')`));
+}
 const tests=[
 "'use strict';",
 "const {test}=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');",
