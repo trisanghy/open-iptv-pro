@@ -1,5 +1,6 @@
 name: Package v4.23.43 local Live Caption and Live Translate beta
 # Recheck robust third-row HTML insertion
+# Verify all Windows expectedVersion references for v4.23.43
 on:
   push:
     branches: [iptv-build-source]
