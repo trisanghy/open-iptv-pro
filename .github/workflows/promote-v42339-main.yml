@@ -40,6 +40,25 @@ jobs:
             --exclude 'CHANGELOG.md' \
             --exclude 'RELEASE_NOTES_V4_23_39.md' \
             --exclude 'docs/images/'
+          # Match the source archive's release workflow instead of retaining a stale v4.22.2 workflow.
+          # Only the release.yml file is synchronized; main's own CI and publication workflows are preserved.
+          test -f "$ROOT/.github/workflows/release.yml"
+          cp "$ROOT/.github/workflows/release.yml" .github/workflows/release.yml
+          python3 - <<'PY'
+          from pathlib import Path
+          workflow=Path('.github/workflows/release.yml')
+          s=workflow.read_text()
+          s=s.replace('docs/RELEASE_NOTES_V4_22_2_VI_EN.md','RELEASE_NOTES_V4_23_39.md')
+          s=s.replace('RELEASE_NOTES_V4_23_38.md','RELEASE_NOTES_V4_23_39.md')
+          if 'RELEASE_NOTES_V4_23_39.md' not in s:
+              raise SystemExit('Release notes reference was not updated')
+          workflow.write_text(s)
+          test=Path('tests/stability_v4221.test.cjs')
+          t=test.read_text().replace('RELEASE_NOTES_V4_23_38.md','RELEASE_NOTES_V4_23_39.md')
+          if 'RELEASE_NOTES_V4_23_39.md' not in t:
+              raise SystemExit('Release test expected reference not found')
+          test.write_text(t)
+          PY
           grep -Eq '"version"[[:space:]]*:[[:space:]]*"4[.]23[.]39"' package.json
           grep -Fq 'width: 100%!important' renderer/video-source-aspect-v42338.css
           test -f renderer/video-source-aspect-v42338.js
