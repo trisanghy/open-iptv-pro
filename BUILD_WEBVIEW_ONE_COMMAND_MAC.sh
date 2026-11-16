@@ -2,6 +2,8 @@
 # Open IPTV Pro WebView - one-command Mac source download/build
 # Read-only source: experiment/native-webview-ffmpeg; NEVER touches main.
 set -Eeuo pipefail
+# Terminal may start inside a deleted temporary build folder.
+cd "$HOME" || { echo 'Cannot access home directory' >&2; exit 9; }
 REPO='https://github.com/trisanghy/open-iptv-pro.git'
 BRANCH='experiment/native-webview-ffmpeg'
 EXPECTED='4.23.35'
