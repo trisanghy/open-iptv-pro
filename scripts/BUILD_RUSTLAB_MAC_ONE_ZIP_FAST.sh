@@ -41,9 +41,7 @@ DMG="$(find src-tauri/target/release/bundle/dmg -maxdepth 1 -name '*.dmg' -type 
 mkdir -p "$DEST"
 find "$DEST" -maxdepth 1 -type f \( -name '*.dmg' -o -name '*_Source.zip' \) -delete
 cp "$DMG" "$DEST/${NAME}.dmg"
-# ZIP the exact built sources, excluding all caches and build intermediates.
-cd "$TMP/extract"
-ditto -c -k --norsrc --keepParent "$SOURCE" "$TMP/output-source.zip" || err "Cannot pack sources"
-cp "$TMP/output-source.zip" "$DEST/${NAME}_Source.zip"
+# Reuse the same downloaded archive: no duplicate pack or redundant file scan.
+cp "$TMP/source.zip" "$DEST/${NAME}_Source.zip"
 echo "THANH CONG: $DEST"
 open "$DEST"
