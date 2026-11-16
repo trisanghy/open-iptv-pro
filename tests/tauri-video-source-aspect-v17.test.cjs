@@ -6,7 +6,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const base=path.resolve(__dirname,'../renderer');
 const js=fs.readFileSync(path.join(base,'video-source-aspect-v17.js'),'utf8');
-const css=fs.readFileSync(path.join(base,'control-bar-v16.css'),'utf8');
+const css=fs.readFileSync(path.join(base,'player-layout-rollback-v19.css'),'utf8');
 const collapsedCss=fs.readFileSync(path.join(base,'tv-compact-collapse-v14.css'),'utf8');
 function createHarness(){
  const handlers={};
