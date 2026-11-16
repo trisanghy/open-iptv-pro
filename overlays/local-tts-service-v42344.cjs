@@ -99,7 +99,7 @@ function createLocalSpeechService(options={}){
    const kill=setTimeout(()=>{try{child.kill('SIGKILL');}catch{}},timeout);
    function finish(e){if(done)return;done=true;clearTimeout(kill);if(task.child===child)task.child=null;
     if(e)reject(e);else resolve(result);}
-   child.stdout.on('data',b=>{size+=b.length;if(size>20000)try{child.kill('SIGKILL');}catch{};else result+=b.toString('utf8');});
+   child.stdout.on('data',b=>{size+=b.length;if(size>20000){try{child.kill('SIGKILL');}catch{}}else{result+=b.toString('utf8');}});
    child.stderr.on('data',b=>{errors=(errors+b.toString('utf8')).slice(-1300);});
    child.once('error',e=>finish(e));
    child.once('close',code=>{
