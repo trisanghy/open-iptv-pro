@@ -1,0 +1,112 @@
+name: Build v4.23.40 macOS Intel and Apple Silicon separately
+on:
+  push:
+    branches: [iptv-build-source]
+    paths: [.github/workflows/build-v42340-mac-split.yml]
+  workflow_dispatch:
+permissions:
+  contents: write
+  actions: read
+concurrency:
+  group: openiptv-v42340-mac-split
+  cancel-in-progress: false
+jobs:
+  mac-native:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: macos-15
+            arch: arm64
+          - os: macos-15-intel
+            arch: x64
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify source and build architecture-specific DMG
+        env:
+          CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+          BUILD_ARCH: ${{ matrix.arch }}
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          echo 'd3fa103a7e8eea33e3d1ed384a166b7a2e36c103a8cc31b04e90b144e63e0e69  source/OpenIPTVPro_Source_v4.23.40.zip' | shasum -a 256 -c -
+          unzip -q source/OpenIPTVPro_Source_v4.23.40.zip -d "$RUNNER_TEMP"
+          cd "$RUNNER_TEMP/Open-IPTV-Pro-v4_23_40_Full_Desktop"
+          test "$(node -p 'require("./package.json").version')" = '4.23.40'
+          if [ "$BUILD_ARCH" = 'arm64' ]; then test "$(uname -m)" = 'arm64'; fi
+          if [ "$BUILD_ARCH" = 'x64' ]; then test "$(uname -m)" = 'x86_64'; fi
+          if [ -f package-lock.json ]; then npm ci --no-audit --no-fund; else npm install --no-audit --no-fund; fi
+          npm test
+          npx electron-builder --mac dmg --"$BUILD_ARCH" --publish never
+          DMG="dist/Open-IPTV-Pro-4.23.40-mac-$BUILD_ARCH.dmg"
+          test -s "$DMG"
+          EXE="dist/mac-$BUILD_ARCH/Open IPTV Pro.app/Contents/MacOS/Open IPTV Pro"
+          test -s "$EXE"
+          ACTUAL="$(lipo -archs "$EXE")"
+          EXPECTED="$BUILD_ARCH"
+          if [ "$BUILD_ARCH" = 'x64' ]; then EXPECTED='x86_64'; fi
+          test "$ACTUAL" = "$EXPECTED" || { echo "Wrong architecture $ACTUAL (expected $EXPECTED)"; exit 1; }
+          mkdir -p "$GITHUB_WORKSPACE/out/$BUILD_ARCH"
+          cp "$DMG" "$GITHUB_WORKSPACE/out/$BUILD_ARCH/"
+          echo "PASS: $DMG ($ACTUAL)"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: mac-v42340-${{ matrix.arch }}
+          path: out/${{ matrix.arch }}/*.dmg
+          if-no-files-found: error
+  update-release:
+    needs: [mac-native]
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: mac-v42340-*
+          path: mac-assets
+          merge-multiple: true
+      - name: Update Release preserving Windows installers and source
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          RELEASE='v4.23.40'
+          test -s mac-assets/Open-IPTV-Pro-4.23.40-mac-arm64.dmg
+          test -s mac-assets/Open-IPTV-Pro-4.23.40-mac-x64.dmg
+          mkdir -p release-files
+          cp mac-assets/*.dmg release-files/
+          gh release download "$RELEASE" --repo "$GITHUB_REPOSITORY" --pattern '*.exe' --dir release-files
+          cp source/OpenIPTVPro_Source_v4.23.40.zip release-files/
+          echo 'd3fa103a7e8eea33e3d1ed384a166b7a2e36c103a8cc31b04e90b144e63e0e69  release-files/OpenIPTVPro_Source_v4.23.40.zip' | sha256sum -c -
+          test -s release-files/Open-IPTV-Pro-Setup-4.23.40-x64.exe
+          test -s release-files/Open-IPTV-Pro-4.23.40-x64.exe
+          (cd release-files && sha256sum *.dmg *.exe *.zip > SHA256SUMS.txt)
+          cat > "$RUNNER_TEMP/notes.md" <<'EOF'
+          ## Open IPTV Pro v4.23.40 — Separate Mac Intel & Apple Silicon installers
+
+          The larger Universal DMG has been replaced by two architecture-specific downloads.
+
+          - **Mac Apple Silicon (M1/M2/M3/M4 and later):** Open-IPTV-Pro-4.23.40-mac-arm64.dmg
+          - **Mac Intel:** Open-IPTV-Pro-4.23.40-mac-x64.dmg
+          - **Windows x64:** Setup installer and Portable EXE, unchanged
+          - **Source:** OpenIPTVPro_Source_v4.23.40.zip
+          - **SHA256SUMS.txt:** checksums for both DMGs, Windows installers and source
+
+          The UI retains its classic compact playback controls outside the full-width adaptive video region.
+
+          Both Mac DMGs are built on native GitHub macOS runners using exactly the same SHA256-verified v4.23.40 source. Each executable is checked to contain only its matching CPU architecture. The unsigned installers may require approval in macOS security settings.
+          EOF
+          gh release upload "$RELEASE" release-files/Open-IPTV-Pro-4.23.40-mac-arm64.dmg release-files/Open-IPTV-Pro-4.23.40-mac-x64.dmg release-files/SHA256SUMS.txt --clobber --repo "$GITHUB_REPOSITORY"
+          gh release edit "$RELEASE" --title 'Open IPTV Pro v4.23.40 — Mac Intel / Apple Silicon + Windows' --notes-file "$RUNNER_TEMP/notes.md" --repo "$GITHUB_REPOSITORY"
+          gh release view "$RELEASE" --repo "$GITHUB_REPOSITORY" --json assets --jq '.assets[].name' | grep -Fxq 'Open-IPTV-Pro-4.23.40-mac-arm64.dmg'
+          gh release view "$RELEASE" --repo "$GITHUB_REPOSITORY" --json assets --jq '.assets[].name' | grep -Fxq 'Open-IPTV-Pro-4.23.40-mac-x64.dmg'
+          if gh release view "$RELEASE" --repo "$GITHUB_REPOSITORY" --json assets --jq '.assets[].name' | grep -Fxq 'Open-IPTV-Pro-4.23.40-mac-universal.dmg'; then
+            gh release delete-asset "$RELEASE" 'Open-IPTV-Pro-4.23.40-mac-universal.dmg' --yes --repo "$GITHUB_REPOSITORY"
+          fi
+          gh release view "$RELEASE" --repo "$GITHUB_REPOSITORY" --json url,assets --jq '{url,assets:(.assets|map({name,size}))}'
