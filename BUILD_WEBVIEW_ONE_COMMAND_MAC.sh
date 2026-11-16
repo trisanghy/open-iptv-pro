@@ -1,87 +1,112 @@
 #!/usr/bin/env bash
-# Open IPTV Pro WebView - one-command Mac source download/build
-# Read-only source: experiment/native-webview-ffmpeg; NEVER touches main.
+# Open IPTV Pro WebView v4.23.35 - one command source download and build.
+# Downloads ONLY the dedicated experiment/native-webview-ffmpeg branch.
 set -Eeuo pipefail
-# Terminal may start inside a deleted temporary build folder.
-cd "$HOME" || { echo 'Cannot access home directory' >&2; exit 9; }
-REPO='https://github.com/trisanghy/open-iptv-pro.git'
-BRANCH='experiment/native-webview-ffmpeg'
-EXPECTED='4.23.35'
-mkdir -p "$HOME/Downloads"
-TMP="$(mktemp -d "$HOME/Downloads/.OpenIPTV-WebView-build.XXXXXXXX")"
+cd "$HOME" || { printf 'Cannot access home directory\n' >&2; exit 9; }
+VERSION='4.23.35'
+SOURCE_NAME='Open_IPTV_Pro_WebView_v4_23_35_FULL_SYNC_20261116.zip'
+SHA256='90348993b8c5184e8827b922a9e820d86158c96045c67789f9de4f8991738a2f'
+RAW_ROOT='https://raw.githubusercontent.com/trisanghy/open-iptv-pro/experiment/native-webview-ffmpeg/webview-sources/v4.23.35'
+ROOT='Open_IPTV_Pro_WebView_v4_23_35_FULL'
+DOWNLOADS="$HOME/Downloads"
+OUT="$DOWNLOADS/OpenIPTV_WebView_v${VERSION}_Build"
+mkdir -p "$DOWNLOADS"
+TMP="$(mktemp -d "$DOWNLOADS/.OpenIPTV-WebView-v42335.XXXXXXXX")"
 LOG="$TMP/build.log"
-on_exit() {
-  code=$?
-  if [ "$code" -ne 0 ]; then
-    cp "$LOG" "$HOME/Downloads/OpenIPTV_WebView_Build_ERROR.log" 2>/dev/null || true
-    echo "Build failed (code $code). Log: ~/Downloads/OpenIPTV_WebView_Build_ERROR.log" >&2
+cleanup() {
+  result=$?
+  if [ "$result" -ne 0 ]; then
+    cp -f "$LOG" "$DOWNLOADS/OpenIPTV_WebView_Build_ERROR.log" 2>/dev/null || true
+    printf '\nBuild FAILED (%s). Log: %s\n' "$result" "$DOWNLOADS/OpenIPTV_WebView_Build_ERROR.log" >&2
   else
-    rm -f "$HOME/Downloads/OpenIPTV_WebView_Build_ERROR.log"
+    rm -f "$DOWNLOADS/OpenIPTV_WebView_Build_ERROR.log"
   fi
   rm -rf -- "$TMP"
 }
-trap on_exit EXIT
+trap cleanup EXIT
 exec > >(tee -a "$LOG") 2>&1
-echo "== Open IPTV Pro WebView: GitHub branch -> DMG + Source ZIP =="
-echo "Source branch: $BRANCH"
-if ! xcode-select -p >/dev/null 2>&1 || ! command -v git >/dev/null 2>&1; then
-  echo "Install Apple Command Line Tools, then run the SAME command again."
+printf '\n=== Open IPTV Pro WebView v%s | macOS one-command build ===\n' "$VERSION"
+printf 'Source: GitHub branch experiment/native-webview-ffmpeg; main is untouched.\n'
+command -v curl >/dev/null || { echo 'Missing curl'; exit 1; }
+command -v unzip >/dev/null || { echo 'Missing unzip'; exit 1; }
+command -v shasum >/dev/null || { echo 'Missing shasum'; exit 1; }
+if ! xcode-select -p >/dev/null 2>&1; then
   xcode-select --install || true
+  echo 'Install Xcode Command Line Tools, then run this same command again.'
   exit 10
 fi
-echo "[1/5] Downloading source (branch only; no main modifications)..."
-git clone --depth 1 --filter=blob:none --single-branch --branch "$BRANCH" --sparse "$REPO" "$TMP/repo"
-git -C "$TMP/repo" sparse-checkout set experiments/webview-full
-PROJECT="$TMP/repo/experiments/webview-full"
-[ -f "$PROJECT/package.json" ] || { echo "Git branch missing WebView source"; exit 15; }
-VERSION="$(/usr/bin/sed -nE 's/^[[:space:]]*"version"[[:space:]]*:[[:space:]]*"([^"]+)".*/\1/p' "$PROJECT/package.json" | /usr/bin/head -n 1)"
-if [ "$VERSION" != "$EXPECTED" ]; then
-  echo "STOP: GitHub branch contains WebView $VERSION, but this build requires $EXPECTED."
-  echo "The v4.23.35 source archive has not been uploaded to this GitHub branch. This script will not build an old version under a new name."
-  exit 16
+FREE_KB="$(df -Pk "$DOWNLOADS" | awk 'NR == 2 {print $4}')"
+if [ "${FREE_KB:-0}" -lt 10485760 ]; then
+  echo 'Need at least 10 GB free to compile the Tauri WebView application.'
+  exit 11
 fi
-echo "Version confirmed: $VERSION. Preparing Node and Rust toolchains..."
+ARCHIVE="$TMP/$SOURCE_NAME"
+mkdir -p "$TMP/parts"
+printf '\n[1/6] Downloading 8 signed-by-checksum source parts...\n'
+for n in 0 1 2 3 4 5 6 7; do
+  printf -v suffix '%02d' "$n"
+  part="$TMP/parts/$suffix"
+  curl --fail --location --show-error --silent --retry 3 --retry-delay 2 --connect-timeout 20 --max-time 180 \
+    "$RAW_ROOT/$SOURCE_NAME.part$suffix" -o "$part"
+  [ -s "$part" ] || { echo "Empty part $suffix"; exit 12; }
+  printf 'Downloaded part %s/07 (%s bytes)\n' "$suffix" "$(wc -c < "$part" | tr -d ' ')"
+done
+cat "$TMP/parts/"* > "$ARCHIVE"
+ACTUAL_SHA="$(shasum -a 256 "$ARCHIVE" | awk '{print $1}')"
+[ "$ACTUAL_SHA" = "$SHA256" ] || { echo 'SOURCE ZIP SHA-256 mismatch; download rejected.'; exit 13; }
+unzip -tq "$ARCHIVE" >/dev/null || { echo 'Invalid ZIP source archive.'; exit 14; }
+mkdir -p "$TMP/source"
+unzip -q "$ARCHIVE" -d "$TMP/source"
+PROJECT="$TMP/source/$ROOT"
+[ -f "$PROJECT/package.json" ] || { echo 'Missing WebView package.json'; exit 15; }
+ACTUAL_VERSION="$(/usr/bin/sed -nE 's/^[[:space:]]*"version"[[:space:]]*:[[:space:]]*"([^"]+)".*/\1/p' "$PROJECT/package.json" | head -n 1)"
+[ "$ACTUAL_VERSION" = "$VERSION" ] || { echo "Unexpected source version: $ACTUAL_VERSION"; exit 16; }
+printf 'Source verified: v%s (SHA-256 %s)\n' "$VERSION" "$ACTUAL_SHA"
+
+printf '\n[2/6] Checking Node.js and build toolchain...\n'
 if ! command -v node >/dev/null 2>&1 || ! command -v npm >/dev/null 2>&1; then
   if command -v brew >/dev/null 2>&1; then
     brew install node
   else
-    case "$(uname -m)" in arm64) ARCH=arm64;; x86_64) ARCH=x64;; *) exit 11;; esac
-    NV='22.16.0'; NF="node-v$NV-darwin-$ARCH.tar.gz"
-    URL="https://nodejs.org/dist/v$NV"
-    curl -fL --retry 3 --connect-timeout 20 "$URL/SHASUMS256.txt" -o "$TMP/checksums"
-    SHA="$(awk -v f="$NF" '$2==f {print $1}' "$TMP/checksums")"
-    [ -n "$SHA" ] || { echo "Missing Node checksum"; exit 12; }
-    curl -fL --retry 3 --connect-timeout 20 "$URL/$NF" -o "$TMP/$NF"
-    [ "$(shasum -a 256 "$TMP/$NF" | awk '{print $1}')" = "$SHA" ] || { echo "Checksum mismatch"; exit 13; }
-    tar -xzf "$TMP/$NF" -C "$TMP"
-    export PATH="$TMP/node-v$NV-darwin-$ARCH/bin:$PATH"
+    case "$(uname -m)" in arm64) NARCH=arm64;; x86_64) NARCH=x64;; *) echo 'Unsupported Mac CPU'; exit 17;; esac
+    NODEVER='22.16.0'
+    NODEFILE="node-v$NODEVER-darwin-$NARCH.tar.gz"
+    NODEURL="https://nodejs.org/dist/v$NODEVER"
+    curl -fLsS --retry 3 --connect-timeout 20 "$NODEURL/SHASUMS256.txt" -o "$TMP/SHASUMS256.txt"
+    NODE_SHA="$(awk -v name="$NODEFILE" '$2==name {print $1}' "$TMP/SHASUMS256.txt")"
+    [ -n "$NODE_SHA" ] || { echo 'Node download checksum unavailable'; exit 18; }
+    curl -fLsS --retry 3 --connect-timeout 20 "$NODEURL/$NODEFILE" -o "$TMP/$NODEFILE"
+    [ "$(shasum -a 256 "$TMP/$NODEFILE" | awk '{print $1}')" = "$NODE_SHA" ] || { echo 'Node checksum mismatch'; exit 19; }
+    tar -xzf "$TMP/$NODEFILE" -C "$TMP"
+    export PATH="$TMP/node-v$NODEVER-darwin-$NARCH/bin:$PATH"
   fi
 fi
+node --version
+npm --version
 if ! command -v cargo >/dev/null 2>&1; then
   curl --proto '=https' --tlsv1.2 -fsSL https://sh.rustup.rs | sh -s -- -y --profile minimal
 fi
 export PATH="$HOME/.cargo/bin:$PATH"
-command -v cargo >/dev/null || exit 14
+command -v cargo >/dev/null || { echo 'Rust/Cargo not found'; exit 20; }
 
-OUT="$HOME/Downloads/OpenIPTV_WebView_v${VERSION}_Build"
-mkdir -p "$OUT"
-ZIP="$OUT/Open_IPTV_Pro_WebView_v$VERSION_FULL_SOURCE.zip"
-echo "[2/5] Creating exact-version source ZIP..."
-rm -f "$ZIP"
-(cd "$TMP/repo/experiments" && /usr/bin/zip -qr "$ZIP" webview-full -x '*/node_modules/*' '*/src-tauri/target/*' '*/src-tauri/binaries/*' '*/.DS_Store')
-[ -s "$ZIP" ] || exit 17
 cd "$PROJECT"
-echo "[3/5] Installing dependencies..."
 export npm_config_fetch_retries=1 npm_config_fetch_timeout=90000
-npm install --no-audit --no-fund --foreground-scripts
-echo "[4/5] Testing and preparing FFmpeg/Node..."
+printf '\n[3/6] Installing WebView dependencies...\n'
+npm install --no-audit --no-fund --foreground-scripts --loglevel=info
+printf '\n[4/6] Testing WebView & original desktop modules...\n'
 npm run test:bridge
+npm run test:original
+printf '\n[5/6] Bundling FFmpeg/FFprobe, Node and DASH/HLS...\n'
 npm run assets
-echo "[5/5] Building macOS DMG..."
+printf '\n[6/6] Compiling the macOS DMG...\n'
 npx --no-install tauri build --bundles dmg
-find "$OUT" -maxdepth 1 -type f -name '*.dmg' -delete
-find "$PROJECT/src-tauri/target" -type f -path '*/bundle/dmg/*.dmg' -size +0c -exec cp -f '{}' "$OUT/" \;
-find "$OUT" -maxdepth 1 -name '*.dmg' -size +0c | grep -q . || { echo "DMG missing"; exit 18; }
-echo "SUCCESS: $OUT"
-ls -lh "$OUT"/*.dmg "$ZIP"
+DMG="$(find "$PROJECT/src-tauri/target" -type f -path '*/bundle/dmg/*.dmg' -size +0c -print -quit)"
+[ -n "$DMG" ] && [ -s "$DMG" ] || { echo 'No valid DMG generated'; exit 21; }
+mkdir -p "$OUT"
+# Clean only old artifacts generated by this build, never unrelated user files.
+find "$OUT" -maxdepth 1 -type f \( -name '*.dmg' -o -name 'Open_IPTV_Pro_WebView_v*_FULL_SOURCE.zip' -o -name 'Open_IPTV_Pro_WebView_v*_FULL_SYNC_*.zip' \) -delete
+cp -f "$DMG" "$OUT/"
+cp -f "$ARCHIVE" "$OUT/$SOURCE_NAME"
+printf '\nSUCCESS: %s\n' "$OUT"
+ls -lh "$OUT"/*.dmg "$OUT/$SOURCE_NAME"
 open "$OUT" || true
