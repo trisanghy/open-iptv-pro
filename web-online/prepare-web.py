@@ -50,13 +50,6 @@ if html.count('<small id="webAutoResumeHint"') != 1:
     sys.exit('Missing Web resume card')
 html=html.replace('      <small id="webAutoResumeHint"',"      <label class=\"check-line\" for=\"webAutoEnableAudio\">\n        <input type=\"checkbox\" id=\"webAutoEnableAudio\" checked/>\n        Tự động bật tiếng khi mở kênh\n      </label>\n      <small id=\"webAutoAudioHint\" role=\"status\" aria-live=\"polite\">\n        Mặc định bật. Nếu trình duyệt chặn tự phát có tiếng, hãy nhấn “Phát có tiếng” một lần.\n      </small>\n"+'      <small id="webAutoResumeHint"',1)
 html=html.replace('Mặc định bật. Thử tự phát có tiếng; trình duyệt có thể yêu cầu nhấn Phát có tiếng một lần.','Mặc định bật. Tự mở lại kênh xem cuối khi truy cập website.',1)
-# Web-only toolbar: physically remove the old ellipsis menu from the DOM.
-# Keep nonvisible legacy buttons outside the control bar for existing app.js hooks.
-# The desktop source is unaffected.
-menu_pattern=r'\s*<details class="playback-extra" id="playbackExtra">[\s\S]*?</details>'
-if len(re.findall(menu_pattern,html)) != 1:
-    sys.exit('Expected exactly one old player ellipsis menu')
-html=re.sub(menu_pattern,'',html,count=1)
 # Relocate the SAME existing #volume slider out of the overflow popup.
 # Do not create a duplicate ID; desktop's main app.js still persists volume.
 if html.count("<div class=\"output-controls\" role=\"group\" aria-label=\"Thiết bị và toàn màn hình\">") != 1:
@@ -67,6 +60,13 @@ html=html.replace("<div class=\"output-controls\" role=\"group\" aria-label=\"Th
 html=html.replace("<label for=\"volume\">Âm lượng</label><input type=\"range\" min=\"0\" max=\"100\" value=\"80\" id=\"volume\" title=\"Âm lượng\"/>",'',1)
 html=html.replace('Công cụ khác: âm lượng, chụp ảnh, FFmpeg','Công cụ khác: chụp ảnh, FFmpeg')
 html=html.replace('Âm lượng, chụp ảnh và FFmpeg','Chụp ảnh và FFmpeg')
+# Web-only toolbar: physically remove the old ellipsis menu from the DOM.
+# Keep nonvisible legacy buttons outside the control bar for existing app.js hooks.
+# The desktop source is unaffected.
+menu_pattern=r'\s*<details class="playback-extra" id="playbackExtra">[\s\S]*?</details>'
+if len(re.findall(menu_pattern,html)) != 1:
+    sys.exit('Expected exactly one old player ellipsis menu')
+html=re.sub(menu_pattern,'',html,count=1)
 html=html.replace('</head>','<link rel="stylesheet" href="web-only.css"/><link rel="stylesheet" href="resume-last.css"/><link rel="stylesheet" href="web-volume.css"/><link rel="manifest" href="manifest.webmanifest"/></head>',1)
 html=html.replace('</body>','<script src="web-only.js"></script><script src="resume-last.js"></script><script src="web-volume.js"></script></body>',1)
 if 'id="playbackExtra"' in html:
