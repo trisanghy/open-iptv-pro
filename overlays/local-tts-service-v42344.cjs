@@ -25,7 +25,7 @@ function findTool({selected='',envVar='',names=[],platform=process.platform,env=
  return candidates.find(p=>fileOK(p))||null;
 }
 function createLocalSpeechService(options={}){
- const {dataDir,notify=()=>{},spawnProcess=spawn,environment=process.env,platform=process.platform}=options;
+ const {dataDir,notify=()=>{},spawnProcess=spawn,environment=process.env,platform=process.platform,managed=null}=options;
  if(!dataDir)throw Error('Local speech data directory is required');
  const base=path.join(dataDir,'local-tts');
  const settings=path.join(base,'config.json');
@@ -38,11 +38,11 @@ function createLocalSpeechService(options={}){
   const windows=platform==='win32';
   const names=which==='piper'?[windows?'piper.exe':'piper']:[windows?'argos-translate.exe':'argos-translate'];
   const envPath=which==='piper'?environment.OPEN_IPTV_PIPER_BIN:environment.OPEN_IPTV_ARGOS_BIN;
-  return findTool({selected:config[which],envVar:envPath,names,platform,env:environment});
+  return findTool({selected:config[which]||managed?.[which],envVar:envPath,names,platform,env:environment});
  }
  function voicePath(lang){
   if(!ALLOWED.includes(lang))return null;
-  const m=config.voices?.[lang];
+  const m=config.voices?.[lang]||managed?.voiceFile?.(lang);
   if(!fileOK(m,1000000)||!fileOK(m+'.json',20))return null;
   return languageCodeFromConfig(fs.readFileSync(m+'.json','utf8'))===lang?m:null;
  }
@@ -53,6 +53,7 @@ function createLocalSpeechService(options={}){
   if(!piper)reason='Chưa cài hoặc chưa chọn Piper TTS';
   else if(!model)reason='Chưa chọn giọng Piper đúng ngôn ngữ '+lang+' (.onnx và .onnx.json)';
   else if(needTranslation&&!argos)reason='Chưa cài hoặc chưa chọn Argos Translate';
+  else if(needTranslation&&managed?.pairReady&&!managed.pairReady(lang))reason='Chưa có gói dịch English → '+lang+' (nhấn Cài tự động)';
   return {ready:!reason,reason,target:lang,availableLanguages:[...ALLOWED],
    piperReady:!!piper,argosReady:!!argos,voiceReady:!!model,
    voiceName:model?path.basename(model):'',needsTranslation:needTranslation,
@@ -92,7 +93,7 @@ function createLocalSpeechService(options={}){
  function invokeProcess(executable,args,task,{stdin,timeout=30000}={}){
   return new Promise((resolve,reject)=>{
    if(running!==task)return reject(Error('Đã hủy đọc bản dịch.'));
-   let child;try{child=spawnProcess(executable,args,{windowsHide:true,shell:false,stdio:['pipe','pipe','pipe']});}catch(e){return reject(e);}
+   let child;try{child=spawnProcess(executable,args,{windowsHide:true,shell:false,stdio:['pipe','pipe','pipe'],env:{...environment,ARGOS_PACKAGES_DIR:managed?.argosDir||environment.ARGOS_PACKAGES_DIR||''}});}catch(e){return reject(e);}
    task.child=child;
    let result='',errors='',size=0,done=false;
    const kill=setTimeout(()=>{try{child.kill('SIGKILL');}catch{}},timeout);
