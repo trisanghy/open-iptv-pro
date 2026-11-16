@@ -199,8 +199,7 @@ function createAutoModelInstaller({dataDir,notify=()=>{},platform=process.platfo
     report('Đang kiểm tra mô hình Argos English → '+lang+' thực tế…',lang);
     await run(python,['-u',path.join(__dirname,'argos-bridge.py'),'install',lang],lang,480000);
     fs.mkdirSync(verifiedDir,{recursive:true});
-    fs.writeFileSync(path.join(verifiedDir,lang+'.ok'),'verified-v42349
-',{mode:0o600});
+    fs.writeFileSync(path.join(verifiedDir,lang+'.ok'),'verified-v42349\n',{mode:0o600});
    }
    if(!state(lang,selectedVoice).installed)throw Error('Mô hình chưa được cài hoàn chỉnh. Vui lòng xem trạng thái.');
    report('Đã cài xong mô hình '+selectedVoice+'. Có thể dùng ngoại tuyến.',lang);
