@@ -174,9 +174,51 @@
    card.innerHTML=`<header>▣ <b>${esc(c.name)}</b></header>${lines}`;card.querySelectorAll('.epg-catchup').forEach(button=>button.addEventListener('click',()=>window.IPTVProAdvanced?.playCatchup?.(c,items[Number(button.dataset.index)])));card.querySelectorAll('.epg-record').forEach(button=>button.addEventListener('click',()=>window.IPTVDVR?.scheduleFromEPG?.(c,items[Number(button.dataset.index)])));window.IPTVProAdvanced?.decorateRow?.(c,card);frag.append(card);
   });root.append(frag);
  }
- async function fetchXML(url){if(window.streamleaf?.fetchEPG)return (await window.streamleaf.fetchEPG(url)).xml;
-  const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),30000);
-  try{const resp=await fetch(url,{signal:controller.signal});if(!resp.ok)throw Error('HTTP '+resp.status);if(url.endsWith('.gz'))throw Error('XMLTV .gz cần bản desktop để giải nén; hãy chọn nguồn .xml trong bản web');const txt=await resp.text();if(txt.length>35*1024*1024)throw Error('EPG quá lớn');return txt;}finally{clearTimeout(timer);}
+ async function fetchXML(url){
+  // Desktop continues to use its native downloader. GitHub Pages has no
+  // reverse proxy; the curated Vietnam feed is mirrored at build time.
+  if(window.streamleaf?.fetchEPG)return (await window.streamleaf.fetchEPG(url)).xml;
+  const isVietnam=/^https:\/\/epgshare01\.online\/epgshare01\/epg_ripper_VN1\.xml\.gz(?:\?.*)?$/i.test(url);
+  const onPages=location.protocol==='https:' && /(^|\.)github\.io$/i.test(location.hostname);
+  const remote=(onPages&&isVietnam)?new URL('epg/vn.xml',document.baseURI).href:url;
+  const maxXML=35*1024*1024,maxCompressed=12*1024*1024;
+  const timerController=new AbortController(),timer=setTimeout(()=>timerController.abort(),30000);
+  async function readLimited(body,limit){
+   if(!body)throw Error('Nguồn EPG không có nội dung');
+   const reader=body.getReader(),decoder=new TextDecoder('utf-8');
+   let text='',count=0;
+   try{while(true){const part=await reader.read();if(part.done)break;
+    count+=part.value.byteLength;
+    if(count>limit)throw Error('EPG vượt giới hạn '+Math.round(limit/1048576)+' MB');
+    text+=decoder.decode(part.value,{stream:true});
+   }text+=decoder.decode();return text;}
+   finally{reader.releaseLock();}
+  }
+  try{
+   const resp=await fetch(remote,{signal:timerController.signal,cache:'no-cache'});
+   if(!resp.ok)throw Error('HTTP '+resp.status);
+   const gz=/\.gz(?:\?|$)/i.test(remote);
+   if(gz){
+    if(typeof DecompressionStream!=='function')throw Error('Trình duyệt không hỗ trợ giải nén XMLTV .gz; hãy sử dụng nguồn .xml');
+    const compressed=Number(resp.headers.get('content-length'));
+    if(compressed>maxCompressed)throw Error('EPG nén lớn hơn 12 MB');
+    const input=resp.body;
+    if(!input)throw Error('EPG không có dữ liệu');
+    // Bound compressed input before sending it through the gzip decoder.
+    let compressedBytes=0;
+    const capped=input.pipeThrough(new TransformStream({transform(chunk,controller){
+     compressedBytes+=chunk.byteLength;
+     if(compressedBytes>maxCompressed)throw Error('EPG nén lớn hơn 12 MB');
+     controller.enqueue(chunk);
+    }}));
+    return await readLimited(capped.pipeThrough(new DecompressionStream('gzip')),maxXML);
+   }
+   return await readLimited(resp.body,maxXML);
+  }catch(e){
+   if(onPages&&isVietnam)throw Error('EPG Việt Nam trên GitHub Pages chưa sẵn sàng. Dữ liệu cũ vẫn được giữ nguyên ('+e.message+')');
+   if(e instanceof TypeError)throw Error('Không truy cập được URL EPG do CORS hoặc lỗi kết nối; thử nhập file XMLTV thủ công');
+   throw e;
+  }finally{clearTimeout(timer);}
  }
  async function refreshEPG({startup=false}={}){if(loading)return;const active=config.sources.filter(s=>s.enabled);if(!active.length)return ctx.toast('Chưa bật nguồn EPG nào','warn');if(!ctx.getChannels().length){if(!startup)ctx.toast('Hãy nhập playlist M3U trước để ghép EPG với kênh','warn');return;}
   epgRequestedInSession=true;loading=true;$('#epgLoadBtn').disabled=true;$('#epgRefreshBtn').disabled=true;$('#epgLoadBtn').textContent='Đang tải XMLTV...';let sourcesLoaded=0,errors=[],combined={names:{},aliasesById:{},programmes:[]};const programmeKeys=new Set();
