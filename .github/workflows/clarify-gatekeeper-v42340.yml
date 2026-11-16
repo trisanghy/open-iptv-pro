@@ -1,0 +1,41 @@
+name: Add unsigned macOS Gatekeeper guidance to v4.23.40 Release
+on:
+  push:
+    branches: [iptv-build-source]
+    paths: [.github/workflows/clarify-gatekeeper-v42340.yml]
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  release-notes:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Update existing release notes with verified installer guidance
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -Eeuo pipefail
+          TAG='v4.23.40'
+          gh release view "$TAG" --repo "$GITHUB_REPOSITORY" --json body --jq .body > "$RUNNER_TEMP/notes.md"
+          if ! grep -Fq 'Gatekeeper warning for unsigned macOS builds' "$RUNNER_TEMP/notes.md"; then
+            cat >> "$RUNNER_TEMP/notes.md" <<'EOF'
+
+          ### Gatekeeper warning for unsigned macOS builds
+
+          Important: These DMGs are NOT signed with an Apple Developer ID and NOT notarized. macOS may say the app is damaged even when the downloaded file is intact. Build success is not Gatekeeper approval.
+
+          Before any workaround, verify the downloaded DMG with shasum -a 256 against:
+          - Apple Silicon SHA-256: 4fda42d49ce29a60f09e29b3c189d0f7e8e2cfa353cf88055e088052244d094b
+          - Intel SHA-256: e71caff563d04355ff4c13dca298a4fdf8f87ef4ea857c3d324c14f3dc94f9f2
+
+          Once the SHA matches and the app is moved to Applications, use Finder Control-click > Open, or the Open Anyway option in System Settings > Privacy & Security if available. For this trusted app only, Terminal alternative:
+          
+              xattr -dr com.apple.quarantine "/Applications/Open IPTV Pro.app" && open "/Applications/Open IPTV Pro.app"
+
+          Do not disable Gatekeeper globally. If the checksum does not match, delete the damaged download. The permanent solution is Developer ID signing and Apple notarization.
+          EOF
+          fi
+          gh release edit "$TAG" --repo "$GITHUB_REPOSITORY" --notes-file "$RUNNER_TEMP/notes.md"
+          gh release view "$TAG" --repo "$GITHUB_REPOSITORY" --json body --jq .body | grep -Fq 'Gatekeeper warning for unsigned macOS builds'
