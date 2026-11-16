@@ -34,6 +34,11 @@ test('v4.23.49: premium voice must be explicit opt-in, isolated install and real
   const ins=createAutoModelInstaller({dataDir:dir});
   assert.equal(ins.state('vi','vieneu:Mai Anh').installed,false);
   assert.equal(fs.existsSync(path.join(dir,'local-tts')),false);
+  const paths=ins.paths();
+  assert.ok(fs.existsSync(paths.argosBridge),'Python Argos must be materialized outside app.asar');
+  assert.ok(fs.existsSync(paths.vieneuBridge),'Python VieNeu must be materialized outside app.asar');
+  assert.ok(paths.argosBridge.startsWith(dir),'Argos script must be an actual local file');
+  assert.ok(paths.vieneuBridge.startsWith(dir),'VieNeu script must be an actual local file');
   assert.throws(()=>ins.state('vi','vieneu:unknown'),/chưa được hỗ trợ/);
   const code=read('src/local-ai-autoinstall.cjs');
   assert.match(code,/vieneu==3\.8\.4/);
@@ -48,6 +53,9 @@ test('v4.23.49: translated Vietnamese captions must not translate twice in TTS',
  assert.match(ui,/sameLanguage=e\.translated&&e\.language===target\.value/);
  assert.match(ui,/alreadyTranslated:payload\.alreadyTranslated===true/);
  assert.match(s,/vieneu-bridge\.py/);
+ assert.match(s,/managed\.vieneuBridge/);
+ assert.match(s,/managed\.argosBridge/);
+ assert.match(read('src/caption-translator.cjs'),/dirs\.argosBridge/);
  assert.match(ui,/liveTtsPreview/);
 });
 test('v4.23.49: UI adds a genuine offline translation health test, no English-only tooltip',()=>{
