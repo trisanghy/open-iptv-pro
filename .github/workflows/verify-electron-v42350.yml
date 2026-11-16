@@ -44,6 +44,10 @@ jobs:
           done
           python3 -m py_compile "$PROJECT/src/argos-bridge.py"
           python3 "$PROJECT/tests/argos-runtime-v42350.test.py"
+          echo '--- Prior packaging test assertions ---'
+          sed -n '1,55p' "$PROJECT/tests/optimization_v418.test.cjs"
+          echo '--- Prior version synchronization test assertions ---'
+          sed -n '1,55p' "$PROJECT/tests/release_version_sync_v42332.test.cjs"
           ( cd "$PROJECT" && node --test --test-concurrency=2 tests/*.test.cjs )
           test "$(node -p 'require(process.argv[1]).version' "$PROJECT/package.json")" = "4.23.50"
           mv "$PROJECT" "$RUNNER_TEMP/Open-IPTV-Pro-v4_23_50_Full_Desktop"
