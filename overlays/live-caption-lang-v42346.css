@@ -1,0 +1,37 @@
+/* v4.23.46 — language picker and persistent caption errors in row 3.
+   Does not affect video height or transport toolbar. */
+#page-tv .player-control-card .caption-third-controls #liveTranslateTarget{
+ width:132px!important;max-width:145px!important;min-width:112px!important;
+ height:30px!important;min-height:30px!important;
+ font-size:12px!important;line-height:1.15!important;
+ padding:4px 23px 4px 8px!important;border-radius:8px!important;
+ text-overflow:ellipsis!important;
+ flex:0 0 auto!important;
+}
+#page-tv .player-control-card .caption-third-controls #captionRetry{
+ display:inline-flex!important;justify-content:center!important;align-items:center!important;
+ height:29px!important;min-height:29px!important;
+ border-radius:7px!important;padding:4px 9px!important;font-size:11px!important;
+ white-space:nowrap!important;
+}
+#page-tv .player-control-card .caption-third-controls #captionRetry[hidden]{display:none!important;}
+#page-tv .player-control-card .caption-third-controls #liveCaptionStatus[data-error="true"]{
+ color:#ff9c8c!important;font-weight:600!important;max-width:330px!important;
+ flex:1 1 185px!important;
+}
+#page-tv .player-control-card .caption-third-controls #liveCaptionStatus{
+ max-width:330px!important;flex:1 1 140px!important;
+ white-space:normal!important;overflow-wrap:anywhere!important;
+ line-height:1.25!important;
+}
+#page-tv .player-control-card .caption-third-controls #liveTranslateTarget:focus-visible{
+ outline:2px solid #56d87a!important;outline-offset:2px!important;
+}
+@container (max-width:850px){
+ #page-tv .player-control-card .caption-third-controls #liveTranslateTarget{
+   max-width:125px!important;min-width:106px!important;
+ }
+ #page-tv .player-control-card .caption-third-controls #liveCaptionStatus{
+   flex:1 1 100%!important;max-width:100%!important;
+ }
+}
