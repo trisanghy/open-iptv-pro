@@ -23,5 +23,5 @@ test('Desktop release version stays aligned across installer scripts and UI',()=
  assert.match(ps,/Open-IPTV-Pro-\$\{expectedVersion\}-x64\.exe/);
  const bat=file('BUILD_WINDOWS.bat');
  assert.ok(bat.includes('v'+version));
- assert.ok(file('CAP_NHAT_GITHUB_V4_23_37_MAC.command').includes("TARGET_VERSION='"+version+"'"));
+ assert.ok(file('CAP_NHAT_GITHUB_V4_23_39_MAC.command').includes("TARGET_VERSION='"+version+"'"));
 });

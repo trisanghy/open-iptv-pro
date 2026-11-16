@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro",
-  "version": "4.23.37",
-  "description": "Open IPTV Pro v4.23.37 Full Desktop — independent collapsible channel list with persisted visibility, Rust-style collapsible icon sidebar, manual primary/backup stream selection and video controls kept outside picture; folder/channel reorder with Shift multi-select, HLS/DASH, FFmpeg, DVR and Timeshift for Windows/macOS.",
+  "version": "4.23.39",
+  "description": "Open IPTV Pro v4.23.39 Full Desktop — independent collapsible channel list with persisted visibility, Rust-style collapsible icon sidebar, manual primary/backup stream selection and video controls kept outside picture; folder/channel reorder with Shift multi-select, HLS/DASH, FFmpeg, DVR and Timeshift for Windows/macOS.",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

@@ -147,7 +147,7 @@ html[data-channel-panel-visible="false"] #page-tv .player-box {
   max-height:calc(100vh - 260px)!important;
 }
 
-/* v4.23.37: compact reopen tab and volume in upper control row */
+/* v4.23.38: compact reopen tab and volume in upper control row */
 :root{--channel-reopen-size:22px}
 html[data-channel-panel-visible="false"] #page-tv .tv-layout{padding-left:calc(var(--channel-reopen-size,22px) + 8px)!important}
 html[data-channel-panel-visible="false"] #channelPanelShowBtn{width:var(--channel-reopen-size,22px)!important;height:var(--channel-reopen-size,22px)!important;min-width:var(--channel-reopen-size,22px)!important;min-height:var(--channel-reopen-size,22px)!important;max-width:var(--channel-reopen-size,22px)!important;max-height:var(--channel-reopen-size,22px)!important;font-size:calc(var(--channel-reopen-size,22px)*.72)!important}
