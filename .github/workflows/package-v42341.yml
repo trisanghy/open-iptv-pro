@@ -1,0 +1,87 @@
+name: Package tested Open IPTV Pro v4.23.41 approved player layout
+on:
+  push:
+    branches: [iptv-build-source]
+    paths: [.github/workflows/package-v42341.yml]
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: package-v42341-approved-toolbar
+  cancel-in-progress: false
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify pinned source and apply toolbar fix
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          echo 'd3fa103a7e8eea33e3d1ed384a166b7a2e36c103a8cc31b04e90b144e63e0e69  source/OpenIPTVPro_Source_v4.23.40.zip' | sha256sum -c -
+          mkdir -p "$RUNNER_TEMP/source"
+          unzip -q source/OpenIPTVPro_Source_v4.23.40.zip -d "$RUNNER_TEMP/source"
+          mv "$RUNNER_TEMP/source/Open-IPTV-Pro-v4_23_40_Full_Desktop" "$RUNNER_TEMP/source/Open-IPTV-Pro-v4_23_41_Full_Desktop"
+          cd "$RUNNER_TEMP/source/Open-IPTV-Pro-v4_23_41_Full_Desktop"
+          node "$GITHUB_WORKSPACE/overlays/v4.23.41-apply.cjs" "$GITHUB_WORKSPACE/overlays/v4.23.41-toolbar.css"
+          test "$(node -p 'require("./package.json").version')" = '4.23.41'
+          test -s renderer/player-toolbar-v42341.css
+          node --test --test-concurrency=2 tests/*.test.cjs
+          echo "PROJECT=$PWD" >> "$GITHUB_ENV"
+      - name: Create exactly one v4.23.41 source ZIP and checksum
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import os,zipfile
+          root=Path(os.environ['PROJECT'])
+          output=Path('source/OpenIPTVPro_Source_v4.23.41.zip')
+          skip={'node_modules','.git','dist','.open-iptv-tools','__pycache__'}
+          with zipfile.ZipFile(output,'w',zipfile.ZIP_DEFLATED,compresslevel=8) as archive:
+              for p in sorted(root.rglob('*')):
+                  if p.is_file() and not any(x in skip for x in p.relative_to(root).parts):
+                      archive.write(p,f'{root.name}/{p.relative_to(root).as_posix()}')
+          with zipfile.ZipFile(output) as archive:
+              assert archive.testzip() is None
+              for required in ['package.json','renderer/index.html','renderer/player-toolbar-v42341.css','tests/player_toolbar_v42341.test.cjs']:
+                  assert f'{root.name}/{required}' in archive.namelist()
+          print('Zipped source:',output,output.stat().st_size)
+          PY
+          sha256sum source/OpenIPTVPro_Source_v4.23.41.zip > source/OpenIPTVPro_Source_v4.23.41.zip.sha256
+      - name: Create matching Mac and Windows one-command builders
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          old='4.23.40'; new='4.23.41'
+          oldhash='d3fa103a7e8eea33e3d1ed384a166b7a2e36c103a8cc31b04e90b144e63e0e69'
+          newhash=Path('source/OpenIPTVPro_Source_v4.23.41.zip.sha256').read_text().split()[0]
+          for source,destination in [
+              ('build-mac-native-v42340.sh','build-mac-native-v42341.sh'),
+              ('build-mac-native-v42340.sh','build-mac.sh'),
+              ('build-windows-v42340.ps1','build-windows-v42341.ps1')
+          ]:
+              text=Path(source).read_text()
+              assert old in text and oldhash in text,source
+              text=text.replace(oldhash,newhash).replace(old,new)
+              assert new in text and newhash in text and old not in text and oldhash not in text
+              Path(destination).write_text(text)
+          PY
+          bash -n build-mac-native-v42341.sh
+          bash -n build-mac.sh
+          cmp -s build-mac.sh build-mac-native-v42341.sh
+          grep -q 'SOURCE=OpenIPTVPro_Source_v4.23.41.zip' build-mac.sh
+          grep -q "4.23.41" build-windows-v42341.ps1
+      - name: Commit source, checksum and builders in isolated branch
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add source/OpenIPTVPro_Source_v4.23.41.zip source/OpenIPTVPro_Source_v4.23.41.zip.sha256
+          git add build-mac.sh build-mac-native-v42341.sh build-windows-v42341.ps1
+          git commit -m 'build(v4.23.41): publish verified player volume and two-row EPG desktop source'
+          git push origin HEAD:iptv-build-source
