@@ -62,6 +62,16 @@ jobs:
           grep -q 'id="webVolumeMute"' _site/index.html
           grep -q 'display:none!important' _site/web-only.css
           grep -q 'playback-extra' _site/web-only.css
+          if grep -q 'id="playbackExtra"' _site/index.html; then
+            echo "::error::Old ellipsis menu still present in published HTML"; exit 1
+          fi
+          if grep -q '>⋯</summary>' _site/index.html; then
+            echo "::error::Ellipsis summary remains in published HTML"; exit 1
+          fi
+          grep -q 'id="webLegacyPlayerActionHooks"' _site/index.html
+          grep -q 'id="pipBtn"' _site/index.html
+          grep -q 'id="fullscreenBtn"' _site/index.html
+          test "$(grep -o 'id="shotBtn"' _site/index.html | wc -l | tr -d ' ')" = 1
           test "$(grep -o 'id="volume"' _site/index.html | wc -l | tr -d ' ')" = 1
       - name: Cache Vietnam XMLTV for browsers (avoids CORS + gzip issues)
         shell: bash

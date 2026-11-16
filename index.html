@@ -74,14 +74,6 @@
          <button class="control-sm" id="castBtn" title="Cast / AirPlay lên TV" aria-label="Cast / AirPlay">▣ <span class="cast-label">Cast / AirPlay</span></button>
          <button class="control-sm" id="pipBtn" title="Cửa sổ nổi Picture-in-Picture" aria-label="PiP">▣ <span class="pip-label">PiP</span></button>
          <button class="control-sm" id="fullscreenBtn" title="Toàn màn hình">⛶</button>
-       <details class="playback-extra" id="playbackExtra">
-        <summary aria-label="Công cụ khác: chụp ảnh, FFmpeg" title="Chụp ảnh và FFmpeg">⋯</summary>
-        <div class="playback-extra-inner">
-         
-         <button class="control-sm" id="shotBtn" title="Chụp ảnh kênh">▣ Chụp ảnh</button>
-         <button type="button" class="control-sm player-ffmpeg-btn" id="tryFfmpegBtn" title="Thử trình phát dự phòng FFmpeg nếu không có hình">↻ FFmpeg</button>
-        </div>
-       </details>
         </div>
        </div>
        <div class="control-layout-bottom">
@@ -396,4 +388,5 @@
 <div id="channelPreview" class="channel-preview hidden"></div>
 <div class="toast-area" id="toastArea" aria-live="polite"></div>
 <script src="app-icons.js"></script><script src="hls.min.js"></script><script src="dash.all.min.js"></script><script src="webview-bridge.js"></script><script src="languages.bundle.js"></script><script src="i18n.js"></script><script src="core-browser.js"></script><script src="collector-core.js"></script><script src="advanced-core.js"></script><script src="doctor-v2-core.js"></script><script src="doctor-v3-core.js"></script><script src="epg.js"></script><script src="favorites-core.js"></script><script src="source-edit.js"></script><script src="channel-order.js"></script><script src="startup-policy.js"></script><script src="playback-route-policy.js"></script><script src="playback-preference.js"></script><script src="manual-stream-selection.js"></script><script src="browser-channel-check.js"></script><script src="app.js"></script><script src="cast-ui.js"></script><script src="features.js"></script><script src="advanced.js"></script><script src="collector.js"></script><script src="doctor-v2.js"></script><script src="smart-discovery-ui.js"></script><script src="doctor-v3.js"></script><script src="backup-ui.js"></script><script src="dvr-ui.js"></script><script src="settings-ui.js"></script><script src="ui-style.js"></script><script src="theme-stage.js"></script><script src="player-ux.js"></script><script src="sidebar-channel-align-v42334.js"></script><script src="video-aspect-v42337.js"></script>
-<script src="web-only.js"></script><script src="resume-last.js"></script><script src="web-volume.js"></script></body></html>
+<script src="web-only.js"></script><script src="resume-last.js"></script><script src="web-volume.js"></script><div id="webLegacyPlayerActionHooks" hidden aria-hidden="true" style="display:none!important"><button type="button" id="shotBtn" hidden tabindex="-1"></button><button type="button" id="tryFfmpegBtn" hidden tabindex="-1"></button></div>
+</body></html>
