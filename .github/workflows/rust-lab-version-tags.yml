@@ -1,0 +1,28 @@
+name: Rust Lab - immutable version tags
+on:
+  push:
+    branches:
+      - experiment/rust-tauri-v2
+
+permissions:
+  contents: write
+
+concurrency:
+  group: rust-lab-immutable-tags
+  cancel-in-progress: false
+
+jobs:
+  tag:
+    if: github.ref == 'refs/heads/experiment/rust-tauri-v2'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          persist-credentials: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Create the next tag without changing existing tags
+        shell: bash
+        run: bash scripts/tag-rust-lab-release.sh

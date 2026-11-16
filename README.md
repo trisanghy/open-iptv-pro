@@ -72,3 +72,8 @@ Giới hạn đã biết của nhánh thử nghiệm: chưa hoàn thiện tươn
 ---
 
 **Chính sách nhánh:** chỉ làm việc trên `experiment/rust-tauri-v2`; không tự chỉnh sửa `main`, không tự thay thế bản Electron ổn định.
+
+
+## Lưu phiên bản Rust Lab (từ v19)
+
+Mỗi lần đẩy thay đổi tạo commit mới; phiên bản chính thức có tag bất biến `rust-lab/v19`, `rust-lab/v20`, bản vá `rust-lab/v19.1`, `rust-lab/v19.2`. GitHub Actions chỉ tạo tag mới, không đổi tag cũ. Script build Mac tải ZIP theo tag cố định; nếu đã có bản build cùng tên, tự tạo thư mục `_2` để không ghi đè DMG/ZIP cũ. Xem [quy tắc phiên bản](VERSIONING_RUST_LAB.md).
