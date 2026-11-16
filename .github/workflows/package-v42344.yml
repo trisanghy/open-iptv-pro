@@ -1,5 +1,6 @@
 name: Package v4.23.44 multilingual local TTS and one-click installer
 # Verify child-process output bound fix
+# Synchronize legacy v4.23.43 caption test version to new package
 on:
   push:
     branches: [iptv-build-source]
