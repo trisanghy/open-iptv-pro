@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
-# Open IPTV Pro WebView v4.23.36: download ONE ZIP and build DMG on macOS.
+# Open IPTV Pro WebView v4.23.37: download ONE ZIP and build DMG on macOS.
 set -Eeuo pipefail
 cd "$HOME" || exit 9
-VERSION='4.23.36'
+VERSION='4.23.37'
 NAME='Open_IPTV_Pro_WebView_v4_23_36_FULL_SOURCE.zip'
-URL="https://raw.githubusercontent.com/trisanghy/open-iptv-pro/experiment/native-webview-ffmpeg/webview-sources/v4.23.36/$NAME"
+URL="https://raw.githubusercontent.com/trisanghy/open-iptv-pro/experiment/native-webview-ffmpeg/webview-sources/v4.23.37/$NAME"
 ROOT='Open_IPTV_Pro_WebView_v4_23_36_FULL'
 D="$HOME/Downloads"
 OUT="$D/OpenIPTV_WebView_v${VERSION}_Build"
