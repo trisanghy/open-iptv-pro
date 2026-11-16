@@ -90,6 +90,6 @@ if html.count('id="shotBtn"') != 1 or html.count('id="tryFfmpegBtn"') != 1:
 },ensure_ascii=False),encoding='utf-8')
 missing=[]
 for url in re.findall(r'<(?:script|link)[^>]+(?:src|href)="([^"]+)"',html):
-    if not url.startswith(('https:','http:','#')) and not (out/url).exists():missing.append(url)
+    if not url.startswith(('https:','http:','#')) and not (out/url.split('?',1)[0].split('#',1)[0]).exists():missing.append(url)
 if missing:sys.exit('Missing static assets: '+', '.join(missing))
 print('Web assets validated:',len(list(out.rglob('*'))))
