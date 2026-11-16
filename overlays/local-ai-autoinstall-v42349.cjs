@@ -75,6 +75,22 @@ function createAutoModelInstaller({dataDir,notify=()=>{},platform=process.platfo
  const pm=path.join(venv,platform==='win32'?'Scripts':'bin','argospm'+exe);
  const uv=path.join(uvDir,'uv'+exe);
  const pairsPath=path.join(root,'installed-pairs.json');
+ // Node/Electron can read scripts inside app.asar, but an external Python
+ // process cannot execute them from the virtual ASAR path. Copy bundled,
+ // trusted Python code to a real private on-disk path before spawn().
+ function bridgePath(name){
+  if(!['argos-bridge.py','vieneu-bridge.py'].includes(name))throw Error('Unsupported AI bridge');
+  const directory=path.join(root,'python-bridges');
+  fs.mkdirSync(directory,{recursive:true,mode:0o700});
+  const destination=path.join(directory,name);
+  const original=fs.readFileSync(path.join(__dirname,name));
+  const temp=destination+'.new-'+process.pid;
+  try{
+   fs.writeFileSync(temp,original,{mode:0o600});
+   fs.renameSync(temp,destination);
+  }finally{try{fs.rmSync(temp,{force:true});}catch{}}
+  return destination;
+ }
  const verifiedDir=path.join(root,'verified-language-pairs');
  const premiumVenv=path.join(root,'vieneu-python-env');
  const premiumPython=path.join(premiumVenv,platform==='win32'?'Scripts':'bin','python'+exe);
@@ -197,7 +213,7 @@ function createAutoModelInstaller({dataDir,notify=()=>{},platform=process.platfo
    }
    if(lang!=='en'){
     report('Đang kiểm tra mô hình Argos English → '+lang+' thực tế…',lang);
-    await run(python,['-u',path.join(__dirname,'argos-bridge.py'),'install',lang],lang,480000);
+    await run(python,['-u',bridgePath('argos-bridge.py'),'install',lang],lang,480000);
     fs.mkdirSync(verifiedDir,{recursive:true});
     fs.writeFileSync(path.join(verifiedDir,lang+'.ok'),'verified-v42349\n',{mode:0o600});
    }
@@ -225,7 +241,7 @@ function createAutoModelInstaller({dataDir,notify=()=>{},platform=process.platfo
     await run(uv,['pip','install','--python',python,'argostranslate==1.11.0'],lang,600000);
    }
    report('Xác thực mô hình dịch English → '+lang+' (không dựa vào trạng thái lưu cũ)…',lang);
-   await run(python,['-u',path.join(__dirname,'argos-bridge.py'),'install',lang],lang,480000);
+   await run(python,['-u',bridgePath('argos-bridge.py'),'install',lang],lang,480000);
    fs.mkdirSync(verifiedDir,{recursive:true});
    fs.writeFileSync(path.join(verifiedDir,lang+'.ok'),'verified-v42349\n',{mode:0o600});
    if(!pairReady(lang))throw Error('Không có gói dịch đã kiểm chứng English → '+lang);
@@ -253,7 +269,7 @@ function createAutoModelInstaller({dataDir,notify=()=>{},platform=process.platfo
    const sample=path.join(root,'vieneu-setup-check.wav');
    try{
     report('Đang tải mô hình 48 kHz, xác thực và tạo âm thanh mẫu…','vi');
-    await run(premiumPython,['-u',path.join(__dirname,'vieneu-bridge.py'),'warm',name,sample],'vi',900000);
+    await run(premiumPython,['-u',bridgePath('vieneu-bridge.py'),'warm',name,sample],'vi',900000);
     if(!hasFile(sample,44))throw Error('VieNeu chưa tạo ra tệp WAV thử nghiệm');
    }finally{await fs.promises.rm(sample,{force:true}).catch(()=>{});}
    let stamp={version:'3.8.4',voices:[]};
@@ -268,6 +284,6 @@ function createAutoModelInstaller({dataDir,notify=()=>{},platform=process.platfo
  }
  function cancel(){const old=active;active=null;try{old?.child?.kill('SIGKILL');}catch{};return !!old;}
  return Object.freeze({state,install,installTranslation,installPremium,premiumReady,cancel,paths:()=>({
-  piper,argos,pm,python,voices,argosDir,voiceFile,pairReady,voiceOptions,premiumPython,premiumCache,premiumReady})});
+  piper,argos,pm,python,voices,argosDir,voiceFile,pairReady,voiceOptions,premiumPython,premiumCache,premiumReady,argosBridge:bridgePath('argos-bridge.py'),vieneuBridge:bridgePath('vieneu-bridge.py')})});
 }
 module.exports={createAutoModelInstaller,VOICES,EXTRA_VOICES,voiceOptions,UV,uvReleaseFor,downloadPinned};
