@@ -1,0 +1,53 @@
+name: Validate actual v4.23.41 Mac and Windows one-command build scripts
+on:
+  push:
+    branches: [iptv-build-source]
+    paths: [.github/workflows/verify-source-build-v42341.yml]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  source-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check exact ZIP, script syntax, extracted version and directory
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          bash -n build-mac.sh
+          bash -n build-mac-native-v42341.sh
+          cmp -s build-mac.sh build-mac-native-v42341.sh
+          echo '469228cbd0bba63d3d9471a8d8e336f68fc24defa62d8b514f56257f53413e89  source/OpenIPTVPro_Source_v4.23.41.zip' | sha256sum -c -
+          work="$(mktemp -d)"
+          trap 'rm -rf "$work"' EXIT
+          unzip -q source/OpenIPTVPro_Source_v4.23.41.zip -d "$work"
+          project="$work/Open-IPTV-Pro-v4_23_41_Full_Desktop"
+          test -s "$project/package.json"
+          test "$(node -p 'require(process.argv[1]).version' "$project/package.json")" = '4.23.41'
+          test -s "$project/BUILD_MAC.command"
+          test -s "$project/renderer/player-toolbar-v42341.css"
+          grep -Fq 'PROJECT="$WORK/Open-IPTV-Pro-v4_23_41_Full_Desktop"' build-mac.sh
+          grep -Fq '"4[.]23[.]41"' build-mac.sh
+          grep -Fq "Join-Path \\$work 'Open-IPTV-Pro-v4_23_41_Full_Desktop'" build-windows-v42341.ps1
+          if grep -E '(42340|v4_23_40|4[.]23[.]40)' build-mac.sh build-mac-native-v42341.sh build-windows-v42341.ps1; then
+            echo 'Old version references detected in build scripts' >&2
+            exit 1
+          fi
+          echo 'PASS: actual ZIP contents and both build scripts match v4.23.41'
+  mac-build:
+    needs: source-smoke
+    runs-on: macos-15
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - name: Execute actual one-line Mac builder end-to-end
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          bash ./build-mac.sh
+          target="$HOME/Downloads/OpenIPTVPro_Build_v4.23.41_arm64"
+          test -s "$target/Open-IPTV-Pro-4.23.41-mac-arm64.dmg"
+          test -s "$target/OpenIPTVPro_Source_v4.23.41.zip"
+          echo 'PASS: actual one-command Apple Silicon Mac build completed'
