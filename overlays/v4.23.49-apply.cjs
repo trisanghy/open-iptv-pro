@@ -119,6 +119,33 @@ copy('v42349-translation-premium.test.cjs','tests/v42349-translation-premium.tes
 const fresh=read('tests/v42349-translation-premium.test.cjs')
  .replace("assert.match(s,/vieneu-bridge\\.py/);","assert.match(s,/managed\\.vieneuBridge/);");
 write('tests/v42349-translation-premium.test.cjs',fresh);
+const legacyAssertions={
+ 'tests/argos-tts-voice-v42348.test.cjs':[
+  ["assert.match(tts,/managed\\.argosBridge/)","assert.match(tts,/translateText\\(input,lang,sourceLanguage\\)/)"]
+ ],
+ 'tests/local-tts-v42344.test.cjs':[
+  ["assert.match(ui,/video.volume=baseVolume\\*percent\\/100/)","assert.match(ui,/setPlayerVolume\\(baseVolume\\*scale\\(\\)\\)/)"]
+ ],
+ 'tests/multilingual-captions-v42346.test.cjs':[
+  ["assert.match(s,/translateText\\(words,s.target\\)/)","assert.match(s,/translateText\\(original,s.target,source\\)/)"],
+  ["assert.match(s,/englishText:s.translate\\?words/)","assert.match(s,/englishText:source==='en'\\?original/)"],
+  ["await assert.rejects(t.translateEnglish('Hello','vi'),/Chưa/)","await assert.rejects(t.translateEnglish('Hello','vi'),/chưa/i)"],
+  ["assert.match(read('renderer/local-tts-v42344.js'),/e\\.englishText\\|\\|e\\.text/)","assert.match(read('renderer/local-tts-v42344.js'),/englishIntermediate\\|\\|e\\.text/)"]
+ ],
+ 'tests/v42349-translation-premium.test.cjs':[
+  ["assert.match(s,/lang!=='en'&&!alreadyTranslated/)","assert.match(s,/sourceLanguage!==lang/)"],
+  ["assert.match(ui,/sameLanguage=e\\.translated&&e\\.language===target\\.value/)","assert.match(ui,/sameLanguage=e\\.language===target\\.value/)"],
+  ["assert.match(s,/managed\\.argosBridge/)","assert.match(s,/translateText\\(input,lang,sourceLanguage\\)/)"]
+ ]
+};
+for(const [p,pairs] of Object.entries(legacyAssertions)){
+ let t=read(p);
+ for(const [before,after] of pairs){
+  assert(t.includes(before),'Legacy test anchor missing '+p+': '+before);
+  t=t.replace(before,after);
+ }
+ write(p,t);
+}
 copy('v42350-direct-routing.test.cjs','tests/v42350-direct-routing.test.cjs');
 const directPatch=require(path.join(assets,'direct-caption-routing-v42350.cjs'));
 write('RELEASE_NOTES_V4_23_49.md',[
