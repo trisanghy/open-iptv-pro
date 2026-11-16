@@ -99,7 +99,7 @@ function createAutoModelInstaller({dataDir,notify=()=>{},platform=process.platfo
   if(hasFile(uv))return;
   const asset=uvReleaseFor(platform,arch);if(!asset)throw Error('Không có bộ cài tự động cho CPU này.');
   fs.mkdirSync(uvDir,{recursive:true});
-  const file=path.join(uvDir,asset[0]+'.downloading');
+  const file=path.join(uvDir,asset[0]);
   report('Đang tải bộ cài AI (uv) được xác minh SHA-256…',lang);
   await download('https://github.com/astral-sh/uv/releases/download/'+UV_RELEASE+'/'+asset[0],file,asset[1],{
    onProgress:bytes=>{if(bytes%(2*1024*1024)<65536)report('Đã tải '+Math.round(bytes/1048576)+' MB…',lang);}
