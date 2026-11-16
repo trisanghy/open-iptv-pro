@@ -25,7 +25,7 @@ replacement=(Path(__file__).resolve().parent/'epg-fetch-function.txt').read_text
 js=js[:start]+replacement+'\n'+js[end:]
 features.write_text(js,encoding='utf-8')
 
-for name in ('web-only.js','web-only.css','resume-last.js','resume-last.css','browser-channel-check.js','web-volume.css','web-volume.js'):
+for name in ('web-only.js','web-only.css','resume-last.js','resume-last.css','browser-channel-check.js','web-autoplay.js','web-volume.css','web-volume.js'):
     copy2(Path(__file__).resolve().parent/name,out/name)
 # Patch the generated application from its WebView source on every deployment.
 app_file=out/'app.js'
@@ -39,11 +39,17 @@ audio_new="store.current=chId;if(!native&&!opts.buffer){player.defaultMuted=stor
 if app_text.count(audio_old) != 1:
     sys.exit('Missing audio playback insertion point')
 app_text=app_text.replace(audio_old,audio_new,1)
+web_autoplay_old="  const startPlaying=()=>{\n   if(!isCurrent())return;\n   const promise=player.play();\n   if(promise?.catch)promise.catch(e=>{\n    if(!isCurrent()||e?.name==='AbortError')return;\n    if(e?.name==='NotAllowedError'){\n     $('#streamInfo').textContent='Nhấn Phát để tiếp tục';\n     toast('Trình phát yêu cầu thao tác Phát của người dùng','warn');\n    }else recoverPlayback(generation,e.message||'Lỗi video',attempt);\n   });\n  };\n"
+web_autoplay_new="  const startPlaying=()=>{\n   if(!isCurrent())return;\n   // Chrome/Safari may block audible autoplay on first visit. Try sound\n   // first, then muted autoplay so the picture starts automatically.\n   if(!native && window.OpenIPTVWebAutoplay?.start){\n    void window.OpenIPTVWebAutoplay.start(player,{\n     isCurrent,\n     allowMutedFallback:true,\n     onMuted:()=>{\n      if(!isCurrent())return;\n      $('#streamInfo').textContent='● Đang phát (tắt tiếng)';\n      document.dispatchEvent(new CustomEvent('openiptv:autoplay-muted',{detail:{channelId:current?.id}}));\n     },\n     onBlocked:()=>{\n      if(!isCurrent()||!player.paused)return;\n      $('#streamInfo').textContent='Nhấn Phát để tiếp tục';\n      document.dispatchEvent(new CustomEvent('openiptv:autoplay-blocked',{detail:{channelId:current?.id}}));\n     },\n     onError:e=>{if(isCurrent())recoverPlayback(generation,e?.message||'Lỗi video',attempt);}\n    });\n    return;\n   }\n   const promise=player.play();\n   if(promise?.catch)promise.catch(e=>{\n    if(!isCurrent()||e?.name==='AbortError')return;\n    if(e?.name==='NotAllowedError'){\n     $('#streamInfo').textContent='Nhấn Phát để tiếp tục';\n     toast('Trình phát yêu cầu thao tác Phát của người dùng','warn');\n    }else recoverPlayback(generation,e.message||'Lỗi video',attempt);\n   });\n  };\n"
+if app_text.count(web_autoplay_old) != 1:
+    sys.exit('Web autoplay bootstrap changed in upstream app.js')
+app_text=app_text.replace(web_autoplay_old,web_autoplay_new,1)
 app_file.write_text(app_text,encoding='utf-8')
 
 html=(out/'index.html').read_text(encoding='utf-8')
 html=html.replace('<title>Open IPTV Pro 4.23.38 — WebView</title>','<title>Open IPTV Pro — Web Online</title>')
-html=html.replace('<script src="app.js"></script>','<script src="browser-channel-check.js"></script><script src="app.js"></script>',1)
+html=html.replace('<title>Open IPTV Pro — Web Online</title>','<title>Open IPTV Pro — Web Online</title>'+ "<link rel=\"icon\" type=\"image/png\" sizes=\"any\" href=\"assets/icon.png?v=20261116a\"/><link rel=\"apple-touch-icon\" href=\"assets/icon.png?v=20261116a\"/>",1)
+html=html.replace('<script src="app.js"></script>','<script src="browser-channel-check.js"></script><script src="web-autoplay.js"></script><script src="app.js"></script>',1)
 html=html.replace('<article class="settings-card" id="defaultBufferSettings">',"    <article class=\"settings-card\" id=\"webAutoResumeSettings\">\n      <h2>▶ Tự mở kênh khi vào website</h2>\n      <label class=\"check-line\" for=\"webAutoResumeLast\">\n        <input type=\"checkbox\" id=\"webAutoResumeLast\" checked/>\n        Tự động phát lại kênh xem cuối\n      </label>\n      <small id=\"webAutoResumeHint\" role=\"status\" aria-live=\"polite\">\n        Mặc định bật. Thử tự phát có tiếng; trình duyệt có thể yêu cầu nhấn Phát có tiếng một lần.\n      </small>\n    </article>\n"+'    <article class="settings-card" id="defaultBufferSettings">',1)
 # Independent web-only default-on audio setting.
 if html.count('<small id="webAutoResumeHint"') != 1:

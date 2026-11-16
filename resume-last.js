@@ -74,16 +74,20 @@
   let panel;
   let message;
   let action;
-  const lastId = typeof store.current === 'string' ? store.current : '';
+  const savedId = typeof store.current === 'string' ? store.current : '';
+  const available = app.getChannels?.() || [];
+  const lastId = available.some(ch=>ch.id===savedId) ? savedId : (available[0]?.id||'');
   const isLast = () => app.getCurrent?.()?.id === lastId;
   const hasSource = () => !!(video.currentSrc || video.getAttribute?.('src') || video.src);
+  const hidePrompt = () => { if (panel) panel.hidden = true; };
   const dismissPrompt = () => {
     dismissed = true;
-    if (panel) panel.hidden = true;
+    hidePrompt();
   };
   if (!lastId) return;
   const showPrompt = (text) => {
     if (!started || dismissed || !enabled() || !isLast()) return;
+    if (!video.paused && !video.muted) {hidePrompt();return;}
     message.textContent = text;
     action.textContent = !audioEnabled() ? 'Phát kênh' : video.muted ? 'Bật âm thanh' : 'Phát có tiếng';
     panel.hidden = false;
@@ -130,13 +134,22 @@
 
   video.addEventListener('playing', () => {
     if (!started || dismissed || !isLast()) return;
-    if (video.muted && audioEnabled()) showPrompt('Kênh đang phát nhưng âm thanh bị tắt.');
-    else dismissPrompt();
+    if (video.muted && audioEnabled()) showPrompt('Hình đang tự phát tắt tiếng. Nhấn Bật tiếng để nghe.');
+    else hidePrompt();
   });
-  video.addEventListener('canplay', () => {
-    if (started && !dismissed && isLast() && video.paused) {
-      showPrompt(audioEnabled() ? 'Trình duyệt yêu cầu bạn nhấn Phát có tiếng.' : 'Trình duyệt yêu cầu nhấn Phát kênh.');
-    }
+  video.addEventListener('volumechange', () => {
+    if (started && isLast() && !video.muted && video.volume>0) hidePrompt();
+  });
+  document.addEventListener('openiptv:autoplay-muted',event=>{
+    if (!started || dismissed || !enabled() || !audioEnabled() || !isLast())return;
+    if (event?.detail?.channelId!==lastId)return;
+    showPrompt('Video đã tự phát tắt tiếng. Nhấn Bật tiếng để nghe.');
+  });
+  document.addEventListener('openiptv:autoplay-blocked',event=>{
+    if (!started || dismissed || !enabled() || !isLast())return;
+    if (event?.detail?.channelId!==lastId)return;
+    if (!video.paused){hidePrompt();return;}
+    showPrompt(audioEnabled()?'Trình duyệt yêu cầu thao tác để phát có tiếng.':'Nhấn Phát kênh để tiếp tục.');
   });
 
   const resume = () => {
@@ -152,13 +165,10 @@
     Promise.resolve(app.playChannel(lastId)).catch(() => {
       showPrompt('Không thể tự mở kênh trước đó. Nhấn để thử phát.');
     });
-    window.setTimeout(() => {
-      if (dismissed || !enabled() || !isLast()) return;
-      if (video.muted && audioEnabled()) showPrompt('Kênh đang phát nhưng bị tắt tiếng.');
-      else if (video.paused) showPrompt(audioEnabled() ? 'Trình duyệt đang chặn tự phát có tiếng. Nhấn Phát có tiếng.' : 'Trình duyệt chặn tự phát. Nhấn Phát kênh.');
-      else dismissPrompt();
-    }, 7000);
+    // No speculative timeout: only report confirmed autoplay denials.
   };
-  if (document.readyState === 'complete') window.setTimeout(resume, 0);
-  else window.addEventListener('load', resume, {once:true});
+  // DOMContentLoaded does not wait for thumbnails, ads or slow network assets.
+  if (document.readyState === 'loading')
+    document.addEventListener('DOMContentLoaded',resume,{once:true});
+  else window.setTimeout(resume,0);
 })();

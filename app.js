@@ -683,6 +683,26 @@
   const isCurrent=()=>generation===playGeneration&&attempt===playAttemptSerial;
   const startPlaying=()=>{
    if(!isCurrent())return;
+   // Chrome/Safari may block audible autoplay on first visit. Try sound
+   // first, then muted autoplay so the picture starts automatically.
+   if(!native && window.OpenIPTVWebAutoplay?.start){
+    void window.OpenIPTVWebAutoplay.start(player,{
+     isCurrent,
+     allowMutedFallback:true,
+     onMuted:()=>{
+      if(!isCurrent())return;
+      $('#streamInfo').textContent='● Đang phát (tắt tiếng)';
+      document.dispatchEvent(new CustomEvent('openiptv:autoplay-muted',{detail:{channelId:current?.id}}));
+     },
+     onBlocked:()=>{
+      if(!isCurrent()||!player.paused)return;
+      $('#streamInfo').textContent='Nhấn Phát để tiếp tục';
+      document.dispatchEvent(new CustomEvent('openiptv:autoplay-blocked',{detail:{channelId:current?.id}}));
+     },
+     onError:e=>{if(isCurrent())recoverPlayback(generation,e?.message||'Lỗi video',attempt);}
+    });
+    return;
+   }
    const promise=player.play();
    if(promise?.catch)promise.catch(e=>{
     if(!isCurrent()||e?.name==='AbortError')return;
