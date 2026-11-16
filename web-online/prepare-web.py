@@ -66,7 +66,7 @@ html=html.replace('Âm lượng, chụp ảnh và FFmpeg','Chụp ảnh và FFmp
 menu_pattern=r'\s*<details class="playback-extra" id="playbackExtra">[\s\S]*?</details>'
 if len(re.findall(menu_pattern,html)) != 1:
     sys.exit('Expected exactly one old player ellipsis menu')
-html=re.sub(menu_pattern,'\n         '+${JSON.stringify(hidden)},html,count=1)
+html=re.sub(menu_pattern,'\n         '+"<div id=\"webLegacyPlayerActionHooks\" hidden aria-hidden=\"true\" style=\"display:none!important\"><button type=\"button\" id=\"shotBtn\" hidden tabindex=\"-1\"></button><button type=\"button\" id=\"tryFfmpegBtn\" hidden tabindex=\"-1\"></button></div>",html,count=1)
 html=html.replace('</head>','<link rel="stylesheet" href="web-only.css"/><link rel="stylesheet" href="resume-last.css"/><link rel="stylesheet" href="web-volume.css"/><link rel="manifest" href="manifest.webmanifest"/></head>',1)
 html=html.replace('</body>','<script src="web-only.js"></script><script src="resume-last.js"></script><script src="web-volume.js"></script></body>',1)
 if 'id="playbackExtra"' in html:
