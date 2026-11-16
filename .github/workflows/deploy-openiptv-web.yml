@@ -55,6 +55,10 @@ jobs:
           name: openiptv-web-static-site
           path: openiptv-web-site.zip
           if-no-files-found: error
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: _site
       # Also publish built files to the isolated branch root so GitHub Pages
       # can serve them using "Deploy from a branch", independent of setup-pages.
       # No desktop/main branch files are touched.
@@ -68,6 +72,7 @@ jobs:
           test -s _site/dash.all.min.js
           cp -R _site/. ./
           rm -rf _site
+          rm -f openiptv-web-site.zip
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -A
@@ -75,11 +80,7 @@ jobs:
             git commit -m "deploy(web): publish browser-ready static site to branch root"
             git push origin HEAD:refs/heads/web/online
           fi
-      # Upload an optional artifact only when GitHub Pages is enabled.
-      - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v4
-        with:
-          path: .
+
   deploy:
     needs: prepare
     runs-on: ubuntu-latest
