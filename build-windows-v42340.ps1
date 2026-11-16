@@ -10,6 +10,7 @@ $work = Join-Path $downloads ('.openiptv-42340-windows-' + [Guid]::NewGuid().ToS
 $output = Join-Path $downloads 'OpenIPTVPro_Build_v4.23.40_Windows'
 New-Item -ItemType Directory -Path $work -Force | Out-Null
 $success = $false
+$project = $null
 try {
   Write-Host '[1/4] Downloading ONE v4.23.40 source ZIP...'
   $archive = Join-Path $work $sourceName
@@ -55,8 +56,8 @@ try {
   Start-Process explorer.exe -ArgumentList ('"' + $output + '"')
 } catch {
   Write-Host ('BUILD FAILED: ' + $_.Exception.Message) -ForegroundColor Red
-  $log = Join-Path $project 'build-logs\BUILD_WINDOWS_LAST.log'
-  if ($project -and (Test-Path -LiteralPath $log -PathType Leaf)) {
+  $log = if ($project) { Join-Path $project 'build-logs\BUILD_WINDOWS_LAST.log' } else { $null }
+  if ($log -and (Test-Path -LiteralPath $log -PathType Leaf)) {
     Copy-Item -LiteralPath $log -Destination (Join-Path $downloads 'OpenIPTVPro_Build_v4.23.40_Windows_ERROR.log') -Force -ErrorAction SilentlyContinue
   }
   throw
