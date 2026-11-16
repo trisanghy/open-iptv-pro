@@ -3,9 +3,12 @@
 (()=>{
  const $=id=>document.getElementById(id),api=window.streamleaf,video=$('video'),toggle=$('liveTtsToggle');
  const target=$('liveTtsLanguage'),duck=$('liveTtsDuck'),install=$('liveTtsInstall'),info=$('liveTtsStatus');
+ const voice=$('liveTtsVoice'),preview=$('liveTtsVoicePreview');
  const captions=$('liveCaptionToggle'),translate=$('liveTranslateToggle'),output=$('liveCaptionOutput');
  if(!toggle||!target||!duck||!install||!info||!api?.ttsStatus||!video)return;
- let enabled=false,playing=null,taskId=0,busy=false,queued='',sourceId='',ducked=false,baseVolume=0.8,validSession=0;
+ let enabled=false,playing=null,previewAudio=null,taskId=0,busy=false,queued='',sourceId='',ducked=false,baseVolume=0.8,validSession=0;
+ const selectedVoice=()=>target.value==='vi'?(voice?.value||'piper:25hours'):'piper:default';
+ const updateVoiceVisibility=()=>{if(voice)voice.hidden=target.value!=='vi';if(preview)preview.hidden=target.value!=='vi';};
  const status=s=>{info.textContent=String(s||'').slice(0,170);info.title=info.textContent;};
  const volumeInput=$('volume');
  const source=()=>String(window.IPTVState?.getCurrent?.()?.lastPlayableUrl||window.IPTVState?.getCurrent?.()?.url||video.currentSrc||'');
@@ -37,14 +40,19 @@
   taskId++;queued='';busy=false;
   const audio=playing;playing=null;
   if(audio){try{audio.pause();audio.src='';audio.load();}catch{}}
+  if(previewAudio){try{previewAudio.pause();previewAudio.src='';previewAudio.load();}catch{}previewAudio=null;}
   restore();
   try{void api.ttsStop?.();}catch{}
  }
  async function refresh(){
   try{
-   const d=await api.ttsStatus(target.value);
+   updateVoiceVisibility();
+   const d=target.value==='vi'&&api.ttsVoiceStatus
+    ? await api.ttsVoiceStatus(selectedVoice()) : await api.ttsStatus(target.value);
    install.disabled=!!d.installing;install.textContent=d.installing?'Đang cài…':d.ready?'Đã cài ✓':'Cài mô hình tự động';
-   status(d.ready?'Giọng '+target.value+' sẵn sàng (offline)':d.reason||'Nhấn Cài mô hình tự động');
+   if(preview)preview.disabled=!!d.installing;
+   const selectedLabel=target.value==='vi'?(voice?.selectedOptions?.[0]?.textContent||'Tiếng Việt'):target.value;
+   status(d.ready?'Giọng '+selectedLabel+' sẵn sàng (offline)':d.reason||'Nhấn Cài mô hình tự động');
    return d.ready===true;
   }catch(e){status('Lỗi kiểm tra TTS: '+e.message);return false;}
  }
@@ -56,7 +64,7 @@
   if(!enabled||busy||playing||!text)return;
   busy=true;const generation=taskId,lang=target.value,src=source();
   try{
-   const result=await api.ttsSynthesize({target:lang,text:text.slice(0,360)});
+   const result=await api.ttsSynthesize({target:lang,voice:selectedVoice(),text:text.slice(0,360)});
    if(!enabled||generation!==taskId||source()!==src)return;
    if(!result?.audioBase64||result.mime!=='audio/wav')throw Error('Không nhận được WAV từ Piper');
    const url='data:audio/wav;base64,'+result.audioBase64;
@@ -90,15 +98,36 @@
   if(!await refresh())status('Nhấn “Cài mô hình tự động” để sử dụng giọng '+target.value);
  });
  target.addEventListener('change',()=>{
-  resetPlayback();if(enabled)ensureTranslate();void refresh();
+  resetPlayback();updateVoiceVisibility();if(enabled)ensureTranslate();void refresh();
+ });
+ voice?.addEventListener('change',()=>{resetPlayback();void refresh();});
+ preview?.addEventListener('click',async()=>{
+  if(target.value!=='vi'||!api.ttsSynthesize)return;
+  resetPlayback();
+  preview.disabled=true;
+  try{
+   const ready=await refresh();
+   if(!ready){status('Chọn Cài mô hình tự động để tải giọng trước');return;}
+   status('Đang tạo đoạn nghe thử giọng '+(voice.selectedOptions?.[0]?.textContent||'')+'…');
+   const sample='Xin chào bạn! Đây là giọng đọc tiếng Việt được tạo trực tiếp trên máy.';
+   const data=await api.ttsSynthesize({target:'vi',voice:selectedVoice(),text:sample,sourceLanguage:'vi'});
+   if(!data?.audioBase64||data.mime!=='audio/wav')throw Error('Không có âm thanh nghe thử');
+   const audio=new Audio('data:audio/wav;base64,'+data.audioBase64);
+   previewAudio=audio;
+   audio.addEventListener('ended',()=>{if(previewAudio===audio)previewAudio=null;},{once:true});
+   await audio.play();
+   status('Đang nghe thử '+(voice.selectedOptions?.[0]?.textContent||'giọng Việt'));
+  }catch(e){status('Nghe thử lỗi: '+String(e.message||e).slice(0,125));}
+  finally{preview.disabled=false;}
  });
  install.addEventListener('click',async()=>{
   if(install.disabled)return;
   install.disabled=true;install.textContent='Đang cài…';
   status('Đang tải công cụ và mô hình giọng '+target.value+' (cần internet một lần)…');
   try{
-   const result=await api.ttsInstall(target.value);
-   if(!result.installed)throw Error('Bộ mô hình chưa cài hoàn chỉnh');
+   const result=target.value==='vi'&&api.ttsVoiceInstall
+    ? await api.ttsVoiceInstall(selectedVoice()) : await api.ttsInstall(target.value);
+   if(!(result.installed||result.ready))throw Error('Bộ mô hình chưa cài hoàn chỉnh');
    status('Đã cài xong · Có thể dùng khi mất mạng');
   }catch(e){status('Cài TTS lỗi: '+String(e.message||e).slice(0,125));}
   finally{install.disabled=false;await refresh();}
@@ -122,5 +151,5 @@
  video.addEventListener('pause',()=>{if(enabled)resetPlayback();});
  window.addEventListener('pagehide',resetPlayback);
  setInterval(updateSession,1800);
- void refresh();
+ updateVoiceVisibility();void refresh();
 })();

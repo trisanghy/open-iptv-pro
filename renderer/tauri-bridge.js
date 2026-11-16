@@ -13,6 +13,7 @@
     captionAutoInstall: 'caption:install',
     captionTranslationStatus: 'caption:translationStatus', captionTranslationInstall: 'caption:translationInstall',
     ttsStatus: 'tts:status', ttsInstall: 'tts:install',
+    ttsVoiceStatus: 'tts:voiceStatus', ttsVoiceInstall: 'tts:voiceInstall',
     ttsSynthesize: 'tts:synthesize', ttsStop: 'tts:stop',
     castDiscover: 'cast:discover', airplayDiscover: 'airplay:discover',
     castPlay: 'cast:play', castStop: 'cast:stop', castStatus: 'cast:status',

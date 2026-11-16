@@ -103,6 +103,15 @@
   <option value="pt">Português</option><option value="it">Italiano</option>
   <option value="ru">Русский</option><option value="id">Indonesia</option>
  </select>
+ <select id="liveTtsVoice" aria-label="Chọn giọng đọc tiếng Việt" title="Chọn giọng Piper nhẹ hoặc giọng VieNeu tự nhiên">
+  <option value="piper:25hours" selected>Piper · 25hours (nhẹ)</option>
+  <option value="piper:vais1000">Piper · VAIS1000 (nét hơn)</option>
+  <option value="piper:vivos">Piper · VIVOS (siêu nhẹ)</option>
+  <optgroup label="⭐ VieNeu · Giọng tự nhiên"><option value="vieneu:Hải Đăng">Hải Đăng</option><option value="vieneu:Mai Anh">Mai Anh</option><option value="vieneu:Trúc Ly">Trúc Ly</option><option value="vieneu:Thiện Minh">Thiện Minh</option><option value="vieneu:Thùy Dung">Thùy Dung</option><option value="vieneu:Thiền Tâm Đức">Thiền Tâm Đức</option><option value="vieneu:Ngọc Huyền">Ngọc Huyền</option><option value="vieneu:Quang Sơn">Quang Sơn</option><option value="vieneu:Ngọc Trân">Ngọc Trân</option><option value="vieneu:Adam bựa">Adam bựa</option></optgroup>
+    <optgroup label="VieNeu · Giọng miền Bắc"><option value="vieneu:Minh Đức">Minh Đức</option><option value="vieneu:Phạm Tuyên">Phạm Tuyên</option><option value="vieneu:Xuân Vĩnh">Xuân Vĩnh</option><option value="vieneu:Thanh Bình">Thanh Bình</option><option value="vieneu:Ngọc Linh">Ngọc Linh</option><option value="vieneu:Đoan Trang">Đoan Trang</option><option value="vieneu:Quỳnh Anh">Quỳnh Anh</option><option value="vieneu:Quốc Tuấn">Quốc Tuấn</option></optgroup>
+    <optgroup label="VieNeu · Giọng miền Nam"><option value="vieneu:Adam">Adam</option><option value="vieneu:Thái Sơn">Thái Sơn</option><option value="vieneu:Thục Đoan">Thục Đoan</option><option value="vieneu:Minh Triết">Minh Triết</option><option value="vieneu:Mỹ Duyên">Mỹ Duyên</option><option value="vieneu:Đức Trí">Đức Trí</option><option value="vieneu:Kim Thanh">Kim Thanh</option></optgroup>
+ </select>
+ <button type="button" id="liveTtsVoicePreview" title="Nghe thử giọng đang chọn">▶ Thử giọng</button>
  <label class="tts-duck-label" for="liveTtsDuck" title="Âm lượng nguồn lúc phát giọng đọc">Tiếng gốc</label>
  <select id="liveTtsDuck" aria-label="Âm lượng nguồn khi TTS đọc">
   <option value="0">Tắt gốc</option><option value="15">15%</option>

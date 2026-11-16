@@ -39,3 +39,11 @@
 @container (max-width:680px){
  #page-tv .player-control-card #liveTtsStatus{flex:1 1 100%!important;max-width:100%!important;}
 }
+/* Rust Lab v22: compact Vietnamese voice selector and preview control. */
+#page-tv .player-control-card .caption-third-controls #liveTtsVoice{
+ width:170px!important;min-width:145px!important;max-width:200px!important;
+}
+#page-tv .player-control-card .caption-third-controls #liveTtsVoice[hidden],
+#page-tv .player-control-card .caption-third-controls #liveTtsVoicePreview[hidden]{
+ display:none!important;
+}

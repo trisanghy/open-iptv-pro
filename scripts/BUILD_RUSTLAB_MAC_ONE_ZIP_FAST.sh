@@ -1,10 +1,10 @@
 #!/bin/bash
 set -Eeuo pipefail
-VERSION="4.23.17-tauri.21.1"
+VERSION="4.23.17-tauri.22"
 REPO="trisanghy/open-iptv-pro"
 BRANCH="experiment/rust-tauri-v2"
-TAG="rust-lab/v21.1" # Immutable release tag; previous versions remain unchanged
-NAME="OpenIPTVPro_RustLab_v21_1"
+TAG="rust-lab/v22" # Immutable release tag; previous versions remain unchanged
+NAME="OpenIPTVPro_RustLab_v22"
 DEST_BASE="$HOME/Downloads/${NAME}_Build"
 DEST="$DEST_BASE"
 INDEX=2
@@ -12,17 +12,17 @@ while [[ -e "$DEST" ]]; do
   DEST="${DEST_BASE}_${INDEX}"
   INDEX=$((INDEX + 1))
 done
-TMP="$(mktemp -d "${TMPDIR:-/tmp}/rustlab-v21-1.XXXXXX")"
+TMP="$(mktemp -d "${TMPDIR:-/tmp}/rustlab-v22.XXXXXX")"
 trap 'rm -rf "$TMP"' EXIT
 err(){ echo "LỖI: $*" >&2; exit 1; }
-echo "Open IPTV Pro Rust Lab v21.1 — immutable release tag / one ZIP / fast build"
-# Download exactly the auto-created immutable v21.1 tag; no git clone or per-file downloads.
+echo "Open IPTV Pro Rust Lab v22 — immutable release tag / one ZIP / fast build"
+# Download exactly the auto-created immutable v22 tag; no git clone or per-file downloads.
 curl -fLsS --retry 2 --connect-timeout 20 "https://github.com/${REPO}/archive/refs/tags/${TAG}.zip" -o "$TMP/source.zip" || err "Không tải được ZIP từ GitHub"
 mkdir -p "$TMP/extract"
 ditto -x -k "$TMP/source.zip" "$TMP/extract" || err "ZIP bị hỏng hoặc tải chưa hoàn tất"
 SOURCE="$(find "$TMP/extract" -maxdepth 1 -type d -name 'open-iptv-pro-*' -print -quit)"
 [[ -n "$SOURCE" && -f "$SOURCE/package.json" ]] || err "Không tìm thấy mã nguồn Rust Lab"
-grep -Eq '"version"[[:space:]]*:[[:space:]]*"4[.]23[.]17-tauri[.]21[.]1"' "$SOURCE/package.json" || err "Tag không chứa đúng nguồn v21.1; dừng để tránh build nhầm"
+grep -Eq '"version"[[:space:]]*:[[:space:]]*"4[.]23[.]17-tauri[.]22"' "$SOURCE/package.json" || err "Tag không chứa đúng nguồn v22; dừng để tránh build nhầm"
 if ! xcode-select -p >/dev/null 2>&1; then
  xcode-select --install 2>/dev/null || true
  err "Cần hoàn tất Xcode Command Line Tools do macOS yêu cầu rồi chạy lại"

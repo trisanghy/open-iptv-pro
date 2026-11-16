@@ -2,7 +2,8 @@
 //! v20 port based on the user's Electron v4.23.45 source. No cloud speech API.
 //! Downloads require explicit UI action; pinned SHA-256 and app-private directories.
 use std::{fs, path::{Path,PathBuf}, sync::{Arc,atomic::{AtomicBool,AtomicU64,Ordering}}, time::Duration};
-use tokio::{process::Command, sync::Mutex, io::AsyncWriteExt};
+use tokio::{process::{Command,Child,ChildStdin}, sync::Mutex, io::{AsyncWriteExt,AsyncBufReadExt,BufReader}, process::ChildStdout};
+use std::process::Stdio;
 use serde_json::{json,Value};
 use sha2::{Digest,Sha256};
 use base64::Engine;
@@ -10,6 +11,18 @@ use tauri::{AppHandle,Emitter};
 use futures_util::StreamExt;
 use uuid::Uuid;
 
+const VIENEU_VOICES:[&str;25]=[
+ "Adam bựa","Trúc Ly","Thiện Minh","Mai Anh","Hải Đăng","Thùy Dung",
+ "Thiền Tâm Đức","Ngọc Huyền","Quang Sơn","Ngọc Trân","Minh Đức","Phạm Tuyên",
+ "Thái Sơn","Xuân Vĩnh","Thanh Bình","Ngọc Linh","Đoan Trang","Thục Đoan",
+ "Minh Triết","Mỹ Duyên","Quỳnh Anh","Đức Trí","Kim Thanh","Adam","Quốc Tuấn"];
+const NATURAL_PREFIX:&str="vieneu:";
+const NATIVE_PREFIX:&str="piper:";
+struct NaturalWorker{
+ child:Child,
+ input:ChildStdin,
+ output:BufReader<ChildStdout>,
+}
 struct ScopedFolder(PathBuf);
 impl Drop for ScopedFolder {fn drop(&mut self){let _=fs::remove_dir_all(&self.0);}}
 pub struct LocalAi {
@@ -17,13 +30,14 @@ pub struct LocalAi {
  pub ffmpeg: Option<String>,
  pub caption: Mutex<Option<tokio::task::JoinHandle<()>>>,
  pub tts: Mutex<Option<tokio::task::AbortHandle>>,
+ natural_worker: Mutex<Option<NaturalWorker>>,
  pub next: AtomicU64,
  pub installing_caption: AtomicBool,
  pub installing_tts: AtomicBool,
 }
 impl LocalAi {
  pub fn new(root:PathBuf,ffmpeg:Option<String>)->Self{
-  Self{root,ffmpeg,caption:Mutex::new(None),tts:Mutex::new(None),next:AtomicU64::new(0),installing_caption:AtomicBool::new(false),installing_tts:AtomicBool::new(false)}
+  Self{root,ffmpeg,caption:Mutex::new(None),tts:Mutex::new(None),natural_worker:Mutex::new(None),next:AtomicU64::new(0),installing_caption:AtomicBool::new(false),installing_tts:AtomicBool::new(false)}
  }
  fn caption_root(&self)->PathBuf{self.root.join("live-caption")}
  fn tts_root(&self)->PathBuf{self.root.join("local-tts")}
@@ -431,15 +445,144 @@ pub async fn tts_install(app:AppHandle,ai:Arc<LocalAi>,lang:&str)->Result<Value,
  ai.installing_tts.store(false,Ordering::SeqCst);
  result
 }
+fn vietnamese_piper_model(voice:&str)->Option<&'static str>{
+ match voice{
+  "piper:25hours"=>Some("vi_VN-25hours_single-low"),
+  "piper:vais1000"=>Some("vi_VN-vais1000-medium"),
+  "piper:vivos"=>Some("vi_VN-vivos-x_low"),
+  _=>None
+ }
+}
+fn voice_supported(voice:&str)->bool{
+ vietnamese_piper_model(voice).is_some() ||
+ voice.strip_prefix(NATURAL_PREFIX).is_some_and(|n|VIENEU_VOICES.contains(&n))
+}
+fn piper_voice_file(ai:&LocalAi,model:&str)->PathBuf{
+ ai.tts_root().join("voices").join(format!("{model}.onnx"))
+}
+fn natural_worker_script(ai:&LocalAi)->PathBuf{ai.tts_root().join("vieneu_worker.py")}
+fn natural_ready_file(ai:&LocalAi)->PathBuf{ai.tts_root().join("vieneu-ready.json")}
+fn natural_env(cmd:&mut Command,ai:&LocalAi,offline:bool){
+ let root=ai.tts_root();
+ cmd.env("HF_HOME",root.join("huggingface"))
+  .env("HUGGINGFACE_HUB_CACHE",root.join("huggingface/hub"))
+  .env("HF_HUB_DISABLE_TELEMETRY","1");
+ if offline{cmd.env("HF_HUB_OFFLINE","1");}
+}
+pub fn tts_voice_status(ai:&LocalAi,voice:&str)->Value{
+ let baseline=tts_status(ai,"vi");
+ if !voice_supported(voice){return json!({"ready":false,"reason":"Giọng Việt không được hỗ trợ","voice":voice});}
+ let ready=if let Some(model)=vietnamese_piper_model(voice){
+  let p=piper_voice_file(ai,model);
+  exists(&p,1_000_000)&&exists(&p.with_extension("onnx.json"),20)&&baseline["ready"]==true
+ }else{
+  let meta=fs::read(natural_ready_file(ai)).ok().and_then(|x|serde_json::from_slice::<Value>(&x).ok()).unwrap_or(Value::Null);
+  meta["ready"]==true&&meta["engine"]=="v3turbo"&&exists(&tts_python(ai),1)&&baseline["ready"]==true
+ };
+ json!({"ready":ready,"voice":voice,"engine":if voice.starts_with(NATURAL_PREFIX){"VieNeu v3 Turbo"}else{"Piper"},
+   "installing":ai.installing_tts.load(Ordering::SeqCst),
+   "reason":if ready{""}else if baseline["ready"]!=true{"Cần cài mô hình dịch tiếng Việt và giọng đọc nền"}else if voice.starts_with(NATURAL_PREFIX){"Chưa cài VieNeu v3 Turbo (25 giọng)"}else{"Chưa cài mô hình Piper đã chọn"}})
+}
+async fn natural_read(worker:&mut NaturalWorker,id:Option<&str>,seconds:u64)->Result<Value,String>{
+ let deadline=tokio::time::Instant::now()+Duration::from_secs(seconds);
+ loop{
+  let mut line=String::new();
+  let remaining=deadline.saturating_duration_since(tokio::time::Instant::now());
+  if remaining.is_zero(){return Err("Giọng VieNeu phản hồi quá lâu".into());}
+  let n=tokio::time::timeout(remaining,worker.output.read_line(&mut line)).await
+   .map_err(|_|"VieNeu hết thời gian phản hồi")?.map_err(error)?;
+  if n==0{return Err("Tiến trình VieNeu đã dừng".into());}
+  if let Some(payload)=line.trim().strip_prefix("OIPTV_RESULT:"){
+   let v:Value=serde_json::from_str(payload).map_err(error)?;
+   if let Some(fatal)=v["fatal"].as_str(){return Err(fatal.to_owned());}
+   if let Some(id)=id{if v["id"].as_str()!=Some(id){continue;}}
+   if let Some(msg)=v["error"].as_str(){return Err(msg.to_owned());}
+   return Ok(v);
+  }
+ }
+}
+async fn natural_request(ai:&LocalAi,voice:&str,speech:&str)->Result<Value,String>{
+ let mut slot=ai.natural_worker.lock().await;
+ if slot.is_none(){
+  let mut cmd=Command::new(tts_python(ai));
+  cmd.arg(natural_worker_script(ai)).arg("--stdio")
+   .stdin(Stdio::piped()).stdout(Stdio::piped()).stderr(Stdio::null()).kill_on_drop(true);
+  natural_env(&mut cmd,ai,true);
+  let mut child=cmd.spawn().map_err(error)?;
+  let input=child.stdin.take().ok_or("Không có stdin VieNeu")?;
+  let output=BufReader::new(child.stdout.take().ok_or("Không có stdout VieNeu")?);
+  let mut worker=NaturalWorker{child,input,output};
+  natural_read(&mut worker,None,180).await?;
+  *slot=Some(worker);
+ }
+ let id=Uuid::new_v4().to_string();
+ let request=json!({"id":id,"voice":voice,"text":speech}).to_string()+"\n";
+ let result=async{
+  let worker=slot.as_mut().ok_or("Không khởi động được VieNeu")?;
+  worker.input.write_all(request.as_bytes()).await.map_err(error)?;
+  worker.input.flush().await.map_err(error)?;
+  natural_read(worker,Some(&id),180).await
+ }.await;
+ if result.is_err(){
+  if let Some(mut worker)=slot.take(){let _=worker.child.start_kill();}
+ }
+ result
+}
+pub async fn tts_voice_install(app:AppHandle,ai:Arc<LocalAi>,voice:&str)->Result<Value,String>{
+ if !voice_supported(voice){return Err("Giọng Việt không nằm trong danh sách hỗ trợ".into());}
+ if tts_voice_status(&ai,voice)["ready"]==true{return Ok(json!({"ready":true,"voice":voice}));}
+ // Ensure the existing English->Vietnamese translation chain and app-private uv first.
+ if tts_status(&ai,"vi")["ready"]!=true{tts_install(app.clone(),ai.clone(),"vi").await?;}
+ if ai.installing_tts.compare_exchange(false,true,Ordering::SeqCst,Ordering::SeqCst).is_err(){
+  return Err("Đang cài đặt giọng đọc khác".into());
+ }
+ let result=async{
+  let root=ai.tts_root();let python=tts_python(&ai);
+  if let Some(model)=vietnamese_piper_model(voice){
+   let wav_model=piper_voice_file(&ai,model);
+   if !exists(&wav_model,1_000_000)||!exists(&wav_model.with_extension("onnx.json"),20){
+    tts_progress(&app,"vi",&format!("Đang tải giọng Piper {model}…"));
+    let data=root.join("voices").to_string_lossy().into_owned();
+    run_install(&app,&python,&["-m","piper.download_voices","--data-dir",&data,model],"vi",&root,900).await?;
+   }
+  }else{
+   let uv=root.join("uv").join(exec_name("uv"));
+   let pack=python.to_string_lossy().into_owned();
+   tts_progress(&app,"vi","Cài VieNeu v3 Turbo ONNX trong thư mục riêng…");
+   run_install(&app,&uv,&["pip","install","--python",&pack,"vieneu==3.8.3"],"vi",&root,1200).await?;
+   tokio::fs::write(natural_worker_script(&ai),include_str!("../resources/vieneu_worker.py")).await.map_err(error)?;
+   tts_progress(&app,"vi","Tải mô hình VieNeu và khởi tạo 25 giọng tự nhiên (lần đầu có thể khá lớn)…");
+   let mut cmd=Command::new(&python);
+   cmd.arg(natural_worker_script(&ai)).arg("--prepare");
+   natural_env(&mut cmd,&ai,false);
+   let output=output_timeout(&mut cmd,2400).await?;
+   let msg=String::from_utf8_lossy(&output.stdout);
+   let mut found=false;
+   for line in msg.lines(){
+    if let Some(payload)=line.strip_prefix("OIPTV_RESULT:"){
+     let report:Value=serde_json::from_str(payload).map_err(error)?;
+     if report["ready"]==true&&report["voices"].as_array().is_some_and(|a|a.len()>=20){found=true;}
+    }
+   }
+   if !found{return Err("Mô hình VieNeu chưa nạp đủ 25 giọng".into());}
+   tokio::fs::write(natural_ready_file(&ai),serde_json::to_vec(&json!({"ready":true,"engine":"v3turbo"})).map_err(error)?).await.map_err(error)?;
+  }
+  let status=tts_voice_status(&ai,voice);
+  if status["ready"]!=true{return Err("Giọng đọc chưa cài đầy đủ".into());}
+  Ok(status)
+ }.await;
+ ai.installing_tts.store(false,Ordering::SeqCst);
+ result
+}
 pub async fn tts_stop(ai:&LocalAi)->Value{
  if let Some(task)=ai.tts.lock().await.take(){task.abort();}
  json!({"canceled":true})
 }
-async fn synthesize_internal(app:AppHandle,ai:Arc<LocalAi>,lang:String,phrase:String)->Result<Value,String>{
+async fn synthesize_internal(app:AppHandle,ai:Arc<LocalAi>,lang:String,phrase:String,voice:String,source_language:String)->Result<Value,String>{
  let root=ai.tts_root();
  if tts_status(&ai,&lang)["ready"]!=true{return Err("Chưa cài đủ Piper, Argos hoặc giọng đọc".into());}
  let mut speech=phrase.clone();
- if lang!="en"{
+ if lang!="en" && source_language!=lang{
   let _=app.emit("tts:event",json!({"type":"status","message":"Đang dịch với Argos offline…"}));
   let mut cmd=Command::new(tts_exe(&ai,"argos-translate"));
   cmd.args(["--from-lang","en","--to-lang",&lang,&phrase]).env("ARGOS_PACKAGES_DIR",root.join("argos-packages"));
@@ -453,8 +596,14 @@ async fn synthesize_internal(app:AppHandle,ai:Arc<LocalAi>,lang:String,phrase:St
   let wav=dir.join("speech.wav");
   let _=app.emit("tts:event",json!({"type":"status","message":"Đang tạo WAV bằng Piper offline…"}));
   let mut cmd=Command::new(tts_exe(&ai,"piper"));
-  cmd.arg("-m").arg(tts_voice(&ai,&lang)?).arg("-f").arg(&wav).arg("--").arg(&speech);
-  output_timeout(&mut cmd,90).await?;
+  let model=if lang=="vi"{vietnamese_piper_model(&voice).ok_or("Giọng Piper Việt không hợp lệ").map(|m|piper_voice_file(&ai,m))?}else{tts_voice(&ai,&lang)?};
+  cmd.arg("--model").arg(model).arg("--output_file").arg(&wav)
+   .stdin(Stdio::piped()).stderr(Stdio::piped()).kill_on_drop(true);
+  let mut child=cmd.spawn().map_err(error)?;
+  if let Some(mut input)=child.stdin.take(){input.write_all(speech.as_bytes()).await.map_err(error)?;input.write_all(b"\n").await.map_err(error)?;}
+  let result=tokio::time::timeout(Duration::from_secs(90),child.wait_with_output()).await
+    .map_err(|_|"Piper hết thời gian tạo giọng đọc")?.map_err(error)?;
+  if !result.status.success(){return Err(format!("Piper: {}",String::from_utf8_lossy(&result.stderr).chars().take(200).collect::<String>()));}
   let bytes=tokio::fs::read(&wav).await.map_err(error)?;
   if bytes.len()<44||bytes.len()>7*1024*1024||!bytes.starts_with(b"RIFF")||&bytes[8..12]!=b"WAVE"{return Err("Piper không tạo WAV hợp lệ".into());}
   Ok(json!({"target":lang,"sourceText":phrase,"translatedText":speech,"mime":"audio/wav",
@@ -463,12 +612,41 @@ async fn synthesize_internal(app:AppHandle,ai:Arc<LocalAi>,lang:String,phrase:St
  let _=tokio::fs::remove_dir_all(dir).await;
  result
 }
+async fn synthesize_natural_internal(app:AppHandle,ai:Arc<LocalAi>,voice:String,phrase:String,source_language:String)->Result<Value,String>{
+ if tts_voice_status(&ai,&format!("vieneu:{voice}"))["ready"]!=true{
+  return Err("Chưa cài mô hình VieNeu. Nhấn Cài mô hình tự động trước.".into());
+ }
+ let root=ai.tts_root();
+ let mut speech=phrase.clone();
+ if source_language!="vi"{
+  let mut cmd=Command::new(tts_exe(&ai,"argos-translate"));
+  cmd.args(["--from-lang","en","--to-lang","vi",&phrase]).env("ARGOS_PACKAGES_DIR",root.join("argos-packages"));
+  let out=output_timeout(&mut cmd,55).await?;
+  speech=String::from_utf8(out.stdout).map_err(error)?.trim().chars().take(600).collect();
+  if speech.is_empty(){return Err("Argos không trả về tiếng Việt".into());}
+ }
+ let _=app.emit("tts:event",json!({"type":"status","message":format!("VieNeu đang đọc giọng {voice} offline…")}));
+ let data=natural_request(&ai,&voice,&speech).await?;
+ if data["mime"]!="audio/wav"||data["audioBase64"].as_str().is_none(){return Err("VieNeu không tạo được WAV".into());}
+ Ok(json!({"target":"vi","voice":format!("vieneu:{voice}"),"sourceText":phrase,
+  "translatedText":speech,"mime":"audio/wav","audioBase64":data["audioBase64"]}))
+}
 pub async fn tts_synthesize(app:AppHandle,ai:Arc<LocalAi>,value:&Value)->Result<Value,String>{
  let lang=value["target"].as_str().unwrap_or("vi");lang_voice(lang).ok_or("Ngôn ngữ không được hỗ trợ")?;
  let phrase=value["text"].as_str().ok_or("Thiếu đoạn văn cần đọc")?.chars().filter(|c|!c.is_control()).take(361).collect::<String>();
  if phrase.is_empty()||phrase.chars().count()>360{return Err("Văn bản phải dài 1–360 ký tự".into());}
+ let voice=if lang=="vi"{value["voice"].as_str().unwrap_or("piper:25hours")}else{"piper:default"};
+ if lang=="vi"&&!voice_supported(voice){return Err("Không nhận dạng được giọng Việt".into());}
+ if lang=="vi" && tts_voice_status(&ai,voice)["ready"]!=true{
+  return Err("Giọng Việt chưa được cài. Nhấn Cài mô hình tự động.".into());
+ }
+ let source_language=if value["sourceLanguage"]=="vi" && lang=="vi"{"vi"}else{"en"};
  tts_stop(&ai).await;
- let task=tokio::spawn(synthesize_internal(app,ai.clone(),lang.to_owned(),phrase));
+ let task=if let Some(name)=voice.strip_prefix(NATURAL_PREFIX){
+  tokio::spawn(synthesize_natural_internal(app,ai.clone(),name.to_owned(),phrase,source_language.to_owned()))
+ }else{
+  tokio::spawn(synthesize_internal(app,ai.clone(),lang.to_owned(),phrase,voice.to_owned(),source_language.to_owned()))
+ };
  *ai.tts.lock().await=Some(task.abort_handle());
  let result=task.await.map_err(|e|format!("TTS bị hủy: {e}"))?;
  *ai.tts.lock().await=None;

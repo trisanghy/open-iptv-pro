@@ -157,6 +157,8 @@ pub async fn bridge(app:AppHandle,state:State<'_,Arc<AppState>>,local_ai_state:S
    match path {Some(p)=>local_ai::caption_choose(ai,kind,&p),None=>Ok(json!({"canceled":true}))}
   },
   "tts:status"=>Ok(local_ai::tts_status(ai,item(&args,0).as_str().unwrap_or("vi"))),
+  "tts:voiceStatus"=>Ok(local_ai::tts_voice_status(ai,item(&args,0).as_str().unwrap_or("piper:25hours"))),
+  "tts:voiceInstall"=>local_ai::tts_voice_install(app.clone(),ai.clone(),text(&args,0)?).await,
   "tts:install"=>local_ai::tts_install(app.clone(),ai.clone(),text(&args,0)?).await,
   "tts:synthesize"=>local_ai::tts_synthesize(app.clone(),ai.clone(),item(&args,0)).await,
   "tts:stop"=>Ok(local_ai::tts_stop(ai).await),
