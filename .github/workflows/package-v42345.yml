@@ -1,0 +1,95 @@
+name: Package v4.23.45 one-click Whisper and multilingual TTS
+on:
+  push:
+    branches: [iptv-build-source]
+    paths: [.github/workflows/package-v42345.yml]
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: package-v42345-auto-models
+  cancel-in-progress: false
+jobs:
+  source:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify source ZIP, patch one-click Whisper and run complete regression tests
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          echo '4b09498f4fb28d30b26de511792194e27e8b7cad341c357d700235e5e1422183  source/OpenIPTVPro_Source_v4.23.44.zip' | sha256sum -c -
+          mkdir -p "$RUNNER_TEMP/openiptv"
+          unzip -q source/OpenIPTVPro_Source_v4.23.44.zip -d "$RUNNER_TEMP/openiptv"
+          mv "$RUNNER_TEMP/openiptv/Open-IPTV-Pro-v4_23_44_Full_Desktop" "$RUNNER_TEMP/openiptv/Open-IPTV-Pro-v4_23_45_Full_Desktop"
+          cd "$RUNNER_TEMP/openiptv/Open-IPTV-Pro-v4_23_45_Full_Desktop"
+          node "$GITHUB_WORKSPACE/overlays/v4.23.45-apply.cjs" "$GITHUB_WORKSPACE/overlays"
+          test "$(node -p 'require("./package.json").version')" = '4.23.45'
+          for js in src/whisper-autoinstall.cjs src/local-ai-autoinstall.cjs src/local-tts-service.cjs renderer/whisper-auto-v42345.js renderer/local-tts-v42344.js src/main.cjs src/preload.cjs; do node --check "$js"; done
+          node --test --test-concurrency=2 tests/*.test.cjs
+          echo "PROJECT=$PWD" >> "$GITHUB_ENV"
+      - name: Package full source ZIP including Whisper and TTS engines
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          python3 - <<'PY'
+          import os,zipfile
+          from pathlib import Path
+          root=Path(os.environ['PROJECT']);out=Path('source/OpenIPTVPro_Source_v4.23.45.zip')
+          exclude={'node_modules','dist','.git','.open-iptv-tools','__pycache__'}
+          with zipfile.ZipFile(out,'w',zipfile.ZIP_DEFLATED,compresslevel=8) as z:
+              for p in sorted(root.rglob('*')):
+                  if p.is_file() and not any(x in exclude for x in p.relative_to(root).parts):
+                      z.write(p,root.name+'/'+p.relative_to(root).as_posix())
+          with zipfile.ZipFile(out) as z:
+              assert z.testzip() is None
+              for f in ('package.json','renderer/index.html','renderer/whisper-auto-v42345.js','renderer/local-tts-v42344.js','src/whisper-autoinstall.cjs','src/local-ai-autoinstall.cjs','src/local-tts-service.cjs'):
+                  assert root.name+'/'+f in z.namelist(),f
+          print('source',out,out.stat().st_size)
+          PY
+          sha256sum source/OpenIPTVPro_Source_v4.23.45.zip > source/OpenIPTVPro_Source_v4.23.45.zip.sha256
+      - name: Generate synchronized native Mac/Windows one-command builds
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          old='4.23.44';new='4.23.45'
+          oldHash='4b09498f4fb28d30b26de511792194e27e8b7cad341c357d700235e5e1422183'
+          newHash=Path('source/OpenIPTVPro_Source_v4.23.45.zip.sha256').read_text().split()[0]
+          for a,b in [('build-mac-native-v42344.sh','build-mac-native-v42345.sh'),('build-mac-native-v42344.sh','build-mac.sh'),('build-windows-v42344.ps1','build-windows-v42345.ps1')]:
+              s=Path(a).read_text()
+              assert old in s and oldHash in s,a
+              for x,y in [(oldHash,newHash),('4[.]23[.]44','4[.]23[.]45'),('4_23_44','4_23_45'),('42344','42345'),(old,new)]:
+                  s=s.replace(x,y)
+              assert old not in s and oldHash not in s and new in s and newHash in s
+              Path(b).write_text(s)
+          PY
+          bash -n build-mac.sh
+          bash -n build-mac-native-v42345.sh
+          cmp -s build-mac.sh build-mac-native-v42345.sh
+          test -s build-windows-v42345.ps1
+      - name: Re-extract actual v4.23.45 ZIP to validate script assumptions
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          CHECK="$(mktemp -d)"
+          trap 'rm -rf "$CHECK"' EXIT
+          unzip -q source/OpenIPTVPro_Source_v4.23.45.zip -d "$CHECK"
+          test -s "$CHECK/Open-IPTV-Pro-v4_23_45_Full_Desktop/package.json"
+          test "$(node -p 'require(process.argv[1]).version' "$CHECK/Open-IPTV-Pro-v4_23_45_Full_Desktop/package.json")" = 4.23.45
+          grep -Fq 'Open-IPTV-Pro-v4_23_45_Full_Desktop' build-mac.sh
+          grep -Fq 'Open-IPTV-Pro-v4_23_45_Full_Desktop' build-windows-v42345.ps1
+          grep -Fq 'SOURCE=OpenIPTVPro_Source_v4.23.45.zip' build-mac.sh
+          echo 'PASS: source paths, Whisper/TTS model installer, Mac/Windows builder'
+      - name: Publish verified ZIP, checksum and Mac/Windows builders to isolated branch
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add source/OpenIPTVPro_Source_v4.23.45.zip source/OpenIPTVPro_Source_v4.23.45.zip.sha256
+          git add build-mac.sh build-mac-native-v42345.sh build-windows-v42345.ps1
+          git commit -m 'feat(source): v4.23.45 one-click local Whisper/Piper/Argos setup and multilingual TTS'
+          git push origin HEAD:iptv-build-source
