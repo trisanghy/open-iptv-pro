@@ -68,7 +68,7 @@ jobs:
           import re
           release=base/'.github/workflows/release-desktop.yml'
           release_content=release.read_text()
-          release_content=re.sub(r'--notes-file\\s+\\S+','--notes-file RELEASE_NOTES_V4_23_38.md',release_content)
+          release_content=re.sub(r'--notes-file\s+\S+','--notes-file RELEASE_NOTES_V4_23_38.md',release_content)
           release.write_text(release_content)
           stable_test=base/'tests/stability_v4221.test.cjs'
           stable_test.write_text(stable_test.read_text().replace('RELEASE_NOTES_V4_23_2_VI_EN','RELEASE_NOTES_V4_23_38'))
