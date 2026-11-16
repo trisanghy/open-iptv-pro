@@ -10,7 +10,7 @@
   if (root) root.OpenIPTVWebChannelCheck = api;
 })(typeof window !== 'undefined' ? window : null, function() {
   const LIMIT = 192 * 1024;
-  const MIME_MEDIA = /^(video\/|audio\/|application\/(?:octet-stream|mp4|vnd\.apple\.mpegurl|x-mpegurl|dash\+xml))/i;
+  const MIME_MEDIA = /^(video\/|audio\/|application\/(?:mp4|vnd\.apple\.mpegurl|x-mpegurl|dash\+xml))/i;
   const HLS_MIME = /mpegurl|vnd\.apple\.mpegurl/i;
   const DASH_MIME = /dash\+xml/i;
   const isMediaURL = url => /\.(?:mp4|m4v|webm|mp3|aac|m4a|ts|m2ts|flv|ogg|ogv)(?:[?#]|$)/i.test(url);
@@ -74,7 +74,10 @@
   };
   function mediaBytes(bytes,mime,url) {
     if (!bytes.length || htmlMime(mime)) return false;
+    const prefix=decode(bytes.subarray(0,Math.min(64,bytes.length))).trimStart().toLowerCase();
+    if(prefix.startsWith('<!doctype')||prefix.startsWith('<html')||prefix.startsWith('{"error"')||prefix.startsWith('{"message"'))return false;
     if (MIME_MEDIA.test(mime)) return true;
+    if(/application\/octet-stream/i.test(mime) && bytes[0]<32) return true;
     if (isMediaURL(url)) return true;
     if (bytes.length>12) {
       const header=decode(bytes.subarray(0,Math.min(30,bytes.length)));
@@ -93,14 +96,14 @@
       const clean=(ok)=>{
         if(done)return;done=true;
         clearTimeout(timer);signal?.removeEventListener('abort', cancelled);
-        for(const event of ['loadeddata','canplay','playing','error','stalled'])video.removeEventListener?.(event,handlers[event]);
+        for(const event of ['loadeddata','canplay','playing','error'])video.removeEventListener?.(event,handlers[event]);
         try{video.pause?.();video.removeAttribute?.('src');video.load?.();video.remove?.();}catch{}
         resolve(ok);
       };
       const cancelled=()=>clean(false);
       const handlers={
         loadeddata:()=>clean(true),canplay:()=>clean(true),playing:()=>clean(true),
-        error:()=>clean(false),stalled:()=>clean(false)
+        error:()=>clean(false)
       };
       signal?.addEventListener('abort',cancelled,{once:true});
       for(const [event,handler] of Object.entries(handlers))video.addEventListener?.(event,handler,{once:true});
@@ -191,11 +194,11 @@
       errors.push((index>0?'Dự phòng '+index+': ':'')+r.reason);
       anyResult=r;
     }
+    if(definiteDead===links.length)return result('dead','Tất cả '+links.length+' link đều trả HTTP 404/410',{confirmedDead:true});
     const lastVerified=channel?.lastPlaybackAt && Date.now()-Date.parse(channel.lastPlaybackAt)<20*60*1000;
     if(lastVerified && links.includes(channel.lastPlayableUrl)){
       return result('alive','Luồng đã phát hình thực tế trong 20 phút qua; kiểm tra mạng hiện không xác minh được',{confirmedAlive:true,fromRecentPlayback:true});
     }
-    if(definiteDead===links.length)return result('dead','Tất cả '+links.length+' link đều trả HTTP 404/410',{confirmedDead:true});
     return result('uncertain',errors.slice(0,2).join(' · ')||anyResult?.reason||'Chưa có bằng chứng video',{blocked});
   }
   return Object.freeze({checkChannel,checkURL,firstHLSMedia});
