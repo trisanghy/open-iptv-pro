@@ -64,6 +64,13 @@ for(const p of ['tests/player_toolbar_v42341.test.cjs','tests/classic_controls_u
   if(next!==text)put(p,next);
  }
 }
+const oldClassicTest='tests/classic_controls_universal_v42340.test.cjs';
+if(fs.existsSync(path.join(root,oldClassicTest))){
+ const raw=get(oldClassicTest);
+ const fromCheck=`assert.equal(JSON.parse(get('package.json')).version,'${from}')`;
+ const toCheck=`assert.equal(JSON.parse(get('package.json')).version,'${to}')`;
+ if(raw.includes(fromCheck))put(oldClassicTest,raw.replace(fromCheck,toCheck));
+}
 const test=[
  "'use strict';",
  "const {test}=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),os=require('node:os');",
