@@ -27,6 +27,11 @@ test('duplicate caption text is filtered before queueing or synthesis',()=>{
 test('one-command builder remains pinned to own immutable minor version',()=>{
  const pkg=JSON.parse(fs.readFileSync(path.join(root,'package.json'),'utf8'));
  const sh=fs.readFileSync(path.join(root,'scripts/BUILD_RUSTLAB_MAC_ONE_ZIP_FAST.sh'),'utf8');
- assert.equal(pkg.version,'4.23.17-tauri.22.1');
- assert.ok(sh.includes('TAG="rust-lab/v22.1"'));
+ assert.equal(pkg.version,'4.23.17-tauri.22.2');
+ assert.ok(sh.includes('TAG="rust-lab/v22.2"'));
+});
+
+test('Unicode punctuation and whitespace are folded before deduplication',()=>{
+ assert.ok(ui.includes(String.raw`[\p{P}\p{S}]`));
+ assert.ok(ui.includes(String.raw`\s+`));
 });

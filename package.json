@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro-tauri-experiment",
   "private": true,
-  "version": "4.23.17-tauri.22.1",
-  "description": "Rust Lab v22.1: permanent source ducking and repeated caption/TTS suppression; 25 VieNeu Vietnamese natural voices, 3 Piper voices, one-click offline install and previews; Electron v4.23.45 offline Live Caption, English translation, Piper/Argos voice-over, SHA-256 verified one-click local model installs",
+  "version": "4.23.17-tauri.22.2",
+  "description": "Rust Lab v22.2: permanent source ducking and repeated caption/TTS suppression; 25 VieNeu Vietnamese natural voices, 3 Piper voices, one-click offline install and previews; Electron v4.23.45 offline Live Caption, English translation, Piper/Argos voice-over, SHA-256 verified one-click local model installs",
   "license": "MIT",
   "scripts": {
     "dev": "tauri dev",

@@ -10,7 +10,7 @@
  const recentSpeech=new Map(),DEDUP_MS=45000;
  function normalizeSpeech(value){
   return String(value||'').normalize('NFKC').toLocaleLowerCase()
-   .replace(/[\\p{P}\\p{S}]/gu,' ').replace(/\\s+/g,' ').trim();
+   .replace(/[\p{P}\p{S}]/gu,' ').replace(/\s+/g,' ').trim();
  }
  function acceptSpeech(value){
   const key=normalizeSpeech(value);if(!key)return false;
