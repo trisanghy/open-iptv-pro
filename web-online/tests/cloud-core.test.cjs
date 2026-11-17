@@ -50,3 +50,23 @@ test('JSON snapshot preserves custom folder order and channel links',()=>{
  assert.deepEqual(b.channelOrder.Z,['z2','z1']);
  assert.equal(b.sources[0].url,'https://x.m3u');
 });
+
+test('web login email validation',()=>{
+ assert.equal(core.validEmail('  user@example.com '),true);
+ assert.equal(core.validEmail('broken-address'),false);
+ assert.equal(core.validEmail('x'.repeat(260)+'@example.com'),false);
+});
+test('recover fresh Supabase confirmation link with localhost redirect',()=>{
+ const link='https://project.supabase.co/auth/v1/verify?token=abc123&type=signup&redirect_to=http%3A%2F%2Flocalhost%3A3000';
+ assert.deepEqual(core.verificationLink(link,'https://project.supabase.co'),{token_hash:'abc123',type:'signup'});
+});
+test('reject foreign and malformed verification links',()=>{
+ assert.throws(()=>core.verificationLink('https://evil.example/auth/v1/verify?token=abc&type=email','https://project.supabase.co'),/Chỉ chấp nhận/);
+ assert.throws(()=>core.verificationLink('http://project.supabase.co/auth/v1/verify?token=abc&type=email','https://project.supabase.co'),/Chỉ chấp nhận/);
+ assert.throws(()=>core.verificationLink('https://project.supabase.co/auth/v1/verify?type=email','https://project.supabase.co'),/thiếu mã/);
+});
+test('auth errors show actionable messages',()=>{
+ assert.match(core.authErrorMessage({message:'Token has expired or is invalid'}),/hết hạn/);
+ assert.match(core.authErrorMessage({message:'Email rate limit exceeded'}),/quá nhiều/);
+ assert.match(core.authErrorMessage({message:'Redirect URL not allowed'}),/URL chuyển hướng/);
+});

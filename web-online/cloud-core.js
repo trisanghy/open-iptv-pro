@@ -21,6 +21,33 @@
   return Boolean((s?.sources?.length||0)+(s?.channels?.length||0)+(s?.favorites?.length||0)+(s?.folders?.length||0));
  }
  const same=(a,b)=>JSON.stringify(snapshot(a))===JSON.stringify(snapshot(b));
+ function validEmail(value){const v=String(value||'').trim();return v.length<=254 && /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(v);}
+ function verificationLink(value,projectUrl){
+  let url,project;
+  try{url=new URL(String(value||'').trim());project=new URL(projectUrl);}
+  catch{throw Error('Dán đầy đủ liên kết xác thực mới từ email.');}
+  if(url.protocol!=='https:'||url.origin!==project.origin||url.pathname!=='/auth/v1/verify')
+   throw Error('Chỉ chấp nhận liên kết xác thực của dự án Open IPTV Pro.');
+  const token_hash=url.searchParams.get('token_hash')||url.searchParams.get('token');
+  const type=String(url.searchParams.get('type')||'email').toLowerCase();
+  if(!token_hash||token_hash.length>2048||!['email','signup','magiclink','invite'].includes(type))
+   throw Error('Liên kết thiếu mã xác thực hợp lệ.');
+  return {token_hash,type};
+ }
+ function authErrorMessage(error){
+  const msg=String(error?.message||error||'').trim(),m=msg.toLowerCase();
+  if(/expired|invalid.*(?:token|otp)|token.*invalid|otp.*invalid/.test(m))
+   return 'Liên kết hoặc mã đã hết hạn, đã sử dụng hoặc sai. Hãy yêu cầu email mới.';
+  if(/rate.limit|too many requests|email rate|429/.test(m))
+   return 'Bạn đã gửi quá nhiều yêu cầu. Hãy chờ một lát rồi thử lại.';
+  if(/redirect.*not.allowed|redirect.*not.*whitelist|unsupported redirect/.test(m))
+   return 'Website chưa được cho phép làm URL chuyển hướng trong Supabase Authentication → URL Configuration.';
+  if(/email.*not.confirmed/.test(m))return 'Email chưa xác nhận. Hãy mở email mới nhất.';
+  if(/failed to fetch|network|fetch failed|load failed/.test(m))
+   return 'Không kết nối được Supabase. Kiểm tra mạng và thử lại.';
+  return msg.slice(0,170)||'Không thực hiện được. Hãy thử lại.';
+ }
+
  function validate(s){
   const json=JSON.stringify(snapshot(s));
   const len=new TextEncoder().encode(json).length;
@@ -36,5 +63,5 @@
   if(knownPayload&&same(knownPayload,local))return 'download';
   return 'conflict';
  }
- return Object.freeze({snapshot,isMeaningful,same,validate,decision,MAX_BYTES});
+ return Object.freeze({snapshot,isMeaningful,same,validate,decision,validEmail,verificationLink,authErrorMessage,MAX_BYTES});
 });
