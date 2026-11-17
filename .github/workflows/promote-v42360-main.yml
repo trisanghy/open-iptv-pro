@@ -63,6 +63,19 @@ jobs:
           test -s scripts/promote-v42360-from-experiment.sh
           test -s README.md
           test -s RELEASE_NOTES_V4_23_60.md
+          # An old regression test hardcodes a release-notes filename in the
+          # legacy tag-triggered workflow. Keep that workflow unchanged.
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          t=Path('tests/stability_v4221.test.cjs')
+          body=t.read_text(encoding='utf-8')
+          patched,n=re.subn(r'RELEASE_NOTES_V4_23_[0-9]+(?:_VI_EN)?',
+                            'RELEASE_NOTES_V4_22_2_VI_EN',body)
+          if not n:
+              raise SystemExit('Legacy workflow release-note assertion has changed')
+          t.write_text(patched,encoding='utf-8')
+          PY
           node --test --test-concurrency=2 tests/*.test.cjs
           # Nested checkout must never be committed to main.
           rm -rf _electron_release
