@@ -222,6 +222,7 @@ function setupIPC(){
   ipcMain.handle('ai:delete',(_e,id)=>
    Object.hasOwn(googleAI.MODELS,id)?googleAI.remove(id):localAIStorage.remove(id));
   ipcMain.handle('ai:openOllamaDownload',()=>shell.openExternal('https://ollama.com/download'));
+  ipcMain.handle('ai:openGemmaTerms',()=>shell.openExternal('https://ai.google.dev/gemma/terms'));
   ipcMain.handle('ai:testTranslation',async(_e,target,choice,mode)=>{
    if(!isValidTarget(target))throw Error('Invalid translation target');
    const engine=resolveAIEngine(choice,mode);
