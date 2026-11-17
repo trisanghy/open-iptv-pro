@@ -29,7 +29,10 @@
   localStorage.setItem(META(id),JSON.stringify({revision:rev,hash:contentHash(payload)}));
  }
  const guestBackup=()=>{
-  if(!localStorage.getItem(GUEST)){
+  // If this browser is already holding the signed-in user's state,
+  // never mistake it for a guest backup after a refresh.
+  if(localStorage.getItem(ACTIVE))return;
+  if(localStorage.getItem(GUEST)===null){
    const saved=localStorage.getItem(STORE);
    localStorage.setItem(GUEST,saved||'');
   }
@@ -63,7 +66,7 @@
  function prompt(reason,remote){
   ready=false;pendingRemote=remote;dirty=false;
   info.textContent=reason;
-  show(choices,true);syncControls();
+  show(choices,true);show(useCloud,!!remote);syncControls();
   label('Cần chọn bản dữ liệu để đồng bộ, chưa có dữ liệu nào bị ghi đè.');
  }
  async function uploadLocal(force=false){
@@ -93,7 +96,8 @@
     prompt('Thiết bị khác vừa cập nhật dữ liệu. Chọn giữ bản trên máy hoặc bản đám mây.',next);
     return;
    }
-   revision=newRev;saveMeta(uid,revision,local);ready=true;
+   revision=newRev;saveMeta(uid,revision,local);
+   localStorage.setItem(ACTIVE,uid);ready=true;
    show(choices,false);pendingRemote=null;
    label('Đã đồng bộ lúc '+new Date().toLocaleTimeString('vi-VN'));
   }catch(e){
@@ -142,6 +146,7 @@
    }
    if(core.same(remote.payload,local)){
     ready=true;saveMeta(id,revision,local);
+    localStorage.setItem(ACTIVE,id);
     label('Đã khôi phục kết nối · dữ liệu đồng bộ.');syncControls();return;
    }
    if(!core.isMeaningful(local)){swapIntoLocal(remote.payload,id,revision);return;}
