@@ -6,6 +6,7 @@ const path=require('node:path');
 const os=require('node:os');
 const {spawn}=require('node:child_process');
 const {premiumName}=require('./premium-voices.cjs');
+const {extraVietnameseVoice}=require('./extra-vietnamese-tts.cjs');
 const {createVieNeuSession}=require('./vieneu-session.cjs');
 const ALLOWED=Object.freeze(['vi','en','es','fr','de','zh','pt','it','ru','id']);
 const MAX_TEXT=360;
@@ -36,6 +37,45 @@ function createLocalSpeechService(options={}){
   if(data&&typeof data==='object')config={...config,...data,voices:{...(data.voices||{})}};
  }catch{}
  let running=null,sequence=0,premiumSession=null;
+ const extraSessions=new Map();
+ const sampleFile=path.join(base,'f5-reference.wav');
+ const sampleMeta=path.join(base,'f5-reference.json');
+ function referenceInfo(){
+  try{
+   const metadata=JSON.parse(fs.readFileSync(sampleMeta,'utf8'));
+   if(!metadata.consent||!fileOK(sampleFile,5000)||!metadata.text||metadata.text.length>600)return null;
+   return {audio:sampleFile,text:metadata.text,name:metadata.name};
+  }catch{return null;}
+ }
+ // Only native Electron's open-file dialog passes this pathname (never renderer input).
+ function setReference(file,transcript){
+  const text=String(transcript||'').trim();
+  if(text.length<5||text.length>500)throw Error('Nhập lời thoại mẫu chính xác (5–500 ký tự)');
+  if(!/\.wav$/i.test(String(file||''))||!fileOK(file,5000))
+   throw Error('Chọn bản ghi WAV hợp lệ; không tải giọng mẫu lên mạng');
+  const size=fs.statSync(file).size;
+  if(size>20*1024*1024)throw Error('Giọng mẫu vượt quá 20 MB');
+  const fd=fs.openSync(file,'r');const head=Buffer.alloc(44);
+  try{if(fs.readSync(fd,head,0,44,0)!==44)throw Error('Tệp WAV quá ngắn');}
+  finally{fs.closeSync(fd);}
+  if(head.toString('ascii',0,4)!=='RIFF'||head.toString('ascii',8,12)!=='WAVE')
+   throw Error('Đây không phải WAV hợp lệ');
+  const byteRate=head.readUInt32LE(28);
+  const duration=byteRate>0?(size-44)/byteRate:0;
+  if(duration<2.5||duration>20)throw Error('Giọng mẫu nên dài từ 3 đến 15 giây (tối đa 20 giây)');
+  fs.mkdirSync(base,{recursive:true,mode:0o700});
+  const newFile=sampleFile+'.new';
+  try{
+   fs.copyFileSync(file,newFile);fs.chmodSync(newFile,0o600);
+   fs.renameSync(newFile,sampleFile);
+   const metadata={name:path.basename(file).slice(0,100),text,consent:true};
+   const tempMeta=sampleMeta+'.new';
+   fs.writeFileSync(tempMeta,JSON.stringify(metadata),{mode:0o600});
+   fs.renameSync(tempMeta,sampleMeta);
+  }finally{fs.rmSync(newFile,{force:true});}
+  return {ready:true,name:path.basename(file),duration:Math.round(duration*10)/10};
+ }
+
  function tool(which){
   const windows=platform==='win32';
   const names=which==='piper'?[windows?'piper.exe':'piper']:[windows?'argos-translate.exe':'argos-translate'];
@@ -49,6 +89,19 @@ function createLocalSpeechService(options={}){
   return languageCodeFromConfig(fs.readFileSync(m+'.json','utf8'))===lang?m:null;
  }
  function availability(lang='vi',voiceId){
+  const extra=lang==='vi'&&extraVietnameseVoice(voiceId);
+  if(extra){
+   const installed=!!managed?.extraReady?.(extra.engine);
+   const reference=extra.requiresReference?referenceInfo():null;
+   const ready=installed&&(!extra.requiresReference||!!reference);
+   return {ready,installed,target:lang,voiceReady:installed,voiceName:voiceId,
+    engine:extra.engine,offline:true,running:!!running,
+    referenceReady:!!reference,referenceName:reference?.name||'',
+    license:extra.license,voiceOptions:[],
+    reason:!installed?'Chưa cài '+(extra.engine==='f5vi'?'F5-TTS Vietnamese':'VietVoice-TTS')+'. Nhấn Cài mô hình tự động.':
+     extra.requiresReference&&!reference?'F5 cần mẫu WAV 3–15 giây và lời thoại chính xác của người cho phép sử dụng giọng.':''
+   };
+  }
   if(lang==='vi'&&premiumName(voiceId)){
    const ready=!!managed?.premiumReady?.(voiceId);
    return {ready,target:lang,voiceReady:ready,premium:true,voiceName:voiceId,
@@ -106,10 +159,29 @@ function createLocalSpeechService(options={}){
   });
   return premiumSession;
  }
+ function getExtraSession(engine){
+  const cached=extraSessions.get(engine);
+  if(cached)return cached;
+  const p=managed?.extraPath?.(engine),bridge=managed?.extraBridge;
+  if(!p||!fileOK(p.python)||!fileOK(bridge))
+   throw Error('Thiếu bộ chạy '+engine+'; vui lòng cài lại mô hình trong Cài đặt');
+  const worker=createVieNeuSession({
+   python:p.python,bridge,spawnProcess,
+   env:{...environment,OPENIPTV_TTS_ENGINE:engine,
+    HF_HOME:path.join(p.base,'hf-home'),HF_HUB_OFFLINE:'1',
+    TRANSFORMERS_OFFLINE:'1',TOKENIZERS_PARALLELISM:'false'},
+   args:['serve',engine,p.cache],
+   onStatus:message=>notify({type:'status',message:engine+': '+message})
+  });
+  extraSessions.set(engine,worker);
+  return worker;
+ }
  function shutdown(){
   stop();
   try{premiumSession?.shutdown();}catch{}
   premiumSession=null;
+  for(const w of extraSessions.values()){try{w.shutdown();}catch{}}
+  extraSessions.clear();
  }
  function stop(){
   const task=running;
@@ -139,6 +211,7 @@ function createLocalSpeechService(options={}){
  }
  async function synthesize(request={}){
   const lang=String(request.target||'vi').toLowerCase(),voiceId=String(request.voice||'');
+  const extra=lang==='vi'&&extraVietnameseVoice(voiceId);
   const premium=lang==='vi'&&premiumName(voiceId),alreadyTranslated=request.alreadyTranslated===true;
   const sourceLanguage=String(request.sourceLanguage||'en').toLowerCase();
   if(!ALLOWED.includes(lang))throw Error('Ngôn ngữ không được hỗ trợ.');
@@ -165,7 +238,17 @@ function createLocalSpeechService(options={}){
    }
    if(running!==task)throw Error('Đã hủy.');
    const output=path.join(temp,'speak.wav');
-   if(premium){
+   if(extra){
+    notify({id:task.id,type:'status',
+     message:(extra.engine==='f5vi'?'F5-TTS Vietnamese':'VietVoice-TTS')+' đang tạo giọng tiếng Việt trên máy…'});
+    const reference=extra.requiresReference?referenceInfo():null;
+    if(extra.requiresReference&&!reference)throw Error('Chưa chọn mẫu giọng F5');
+    await getExtraSession(extra.engine).synthesize({
+     voice:extra.id,text:speakText,output,
+     reference:reference?.audio,referenceText:reference?.text,
+     timeout:extra.engine==='f5vi'?240000:180000
+    });
+   }else if(premium){
     notify({id:task.id,type:'status',message:'VieNeu 48 kHz đang tổng hợp giọng '+premium+' (offline)…'});
     if(!fileOK(managed?.premiumPython)||!fileOK(managed.vieneuBridge))
      throw Error('Thiếu môi trường giọng VieNeu hoặc mã nguồn tổng hợp');
@@ -187,6 +270,6 @@ function createLocalSpeechService(options={}){
    await fs.promises.rm(temp,{recursive:true,force:true}).catch(()=>{});
   }
  }
- return Object.freeze({availability,configure,synthesize,stop,shutdown});
+ return Object.freeze({availability,configure,synthesize,stop,shutdown,setReference});
 }
 module.exports={createLocalSpeechService,languageCodeFromConfig,findTool,ALLOWED};
