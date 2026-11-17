@@ -105,7 +105,7 @@
  setVoiceChoices();
  voice.addEventListener('change',()=>{
   try{localStorage.setItem('openiptv-tts-voice-'+target.value,voice.value);}catch{}
-  resetPlayback();referenceUI();void refresh();
+  resetForModelChange();referenceUI();void refresh();
  });
 
  const status=s=>{const message=String(s||'');info.textContent=message.slice(0,200);info.title=message;info.dataset.error=/lỗi|error|fail|không|thiếu/i.test(message)?'true':'false';};
@@ -154,9 +154,12 @@
   if(recentLines.size>250)recentLines.delete(recentLines.keys().next().value);
   return true;
  }
- function resetPlayback(){
-  speechQueue.reset();
-  if(enabled)applyDuck();
+ function resetPlayback({stopSynthesis=true}={}){speechQueue.reset({stopSynthesis});if(enabled)applyDuck();}
+ function resetForModelChange(){
+  const previewBusy=previewCoordinator?.isActive()||false;
+  if(previewBusy)void previewCoordinator.cancel();
+  resetPlayback({stopSynthesis:!previewBusy});
+  recentLines.clear();lastCaptionSeq=0;
  }
  async function refresh(){
   try{
@@ -226,13 +229,14 @@
    const audio=playing;playing=null;
    if(audio){try{audio.pause();audio.removeAttribute('src');audio.load();}catch{}}
   },
-  cancelSynthesis:()=>{try{void api.ttsStop?.();}catch{}}
+  cancelSynthesis:()=>api.ttsStop?.()
  });
  function updateSession(){
   const id=source();
   if(id!==sourceId){sourceId=id;validSession++;lastCaptionSeq=0;recentLines.clear();resetPlayback();}
  }
  toggle.addEventListener('change',async()=>{
+  if(!toggle.checked)void previewCoordinator.cancel();
   enabled=toggle.checked;
   speechQueue.setEnabled(enabled);
   if(!enabled){restore();status('Đã tắt TTS');return;}
@@ -242,7 +246,7 @@
   if(!await refresh())status('Nhấn “Cài mô hình tự động” để sử dụng giọng '+target.value);
  });
  target.addEventListener('change',()=>{
-  resetPlayback();setVoiceChoices();if(enabled)ensureTranslate();void refresh();
+  resetForModelChange();setVoiceChoices();if(enabled)ensureTranslate();void refresh();
  });
  install.addEventListener('click',async()=>{
   if(install.disabled)return;
@@ -256,33 +260,54 @@
   finally{install.disabled=false;await refresh();}
  });
  const preview=$('liveTtsPreview');
- preview?.addEventListener('click',async()=>{
-  if(preview.disabled)return;
-  preview.disabled=true;
-  status('Đang tạo một câu nghe thử giọng '+voice.value+'…');
-  resetPlayback(); // User explicitly requested preview: cancel ordinary speech.
-  try{
-   const ready=await api.ttsStatus(target.value,voice.value);
+ const previewCoordinator=window.OpenIPTVPreviewCoordinator.createPreviewCoordinator({
+  queue:speechQueue,stopSynthesis:()=>api.ttsStop?.(),timeoutMs:90000,
+  onState:state=>{
+   if(preview)preview.disabled=state!=='idle';
+   if(state==='synthesizing')status('Đang tổng hợp câu nghe thử (đổi mô hình sẽ hủy)…');
+   if(state==='playing')status('Đang nghe thử '+voice.value+' · '+playbackSpeed()+'×');
+  },
+  onError:error=>status('Nghe thử lỗi: '+String(error?.message||error).slice(0,160)),
+  synthesize:async ({language,voiceId})=>{
+   const ready=await api.ttsStatus(language,voiceId);
    if(!ready?.ready)throw Error(ready?.reason||'Giọng chưa được cài');
-   const phrase=target.value==='vi'?'Xin chào, đây là giọng đọc tiếng Việt của Open IPTV Pro.':
-     target.value==='en'?'Hello. This is your Open IPTV Pro voice test.':'Hello';
-   const res=await api.ttsSynthesize({target:target.value,voice:voice.value,
-     text:phrase,alreadyTranslated:true});
+   const phrase=language==='vi'?'Xin chào, đây là giọng đọc tiếng Việt của Open IPTV Pro.':
+    language==='en'?'Hello. This is your Open IPTV Pro voice test.':'Hello';
+   const res=await api.ttsSynthesize({target:language,voice:voiceId,text:phrase,alreadyTranslated:true});
    if(!res?.audioBase64||res.mime!=='audio/wav')throw Error('Chưa tạo được file WAV nghe thử');
-   if(previewAudio){try{previewAudio.pause();previewAudio.src='';}catch{}}
-   const audio=new Audio('data:audio/wav;base64,'+res.audioBase64);
-   previewAudio=audio;
-   applySpeechRate(audio);
-   audio.addEventListener('ended',()=>{if(previewAudio===audio)previewAudio=null;},{once:true});
-   await audio.play();
-   status('Đang nghe thử '+voice.value+' · '+playbackSpeed()+'× (offline)');
-  }catch(e){status('Nghe thử lỗi: '+String(e.message||e));}
-  finally{preview.disabled=false;}
+   return res;
+  },
+  play:(result,registerStop)=>new Promise((resolve,reject)=>{
+   if(previewAudio){try{previewAudio.pause();previewAudio.removeAttribute('src');previewAudio.load();}catch{}}
+   const audio=new Audio('data:audio/wav;base64,'+result.audioBase64);
+   previewAudio=audio;applySpeechRate(audio);
+   let done=false;
+   const finish=error=>{
+    if(done)return;done=true;
+    if(previewAudio===audio)previewAudio=null;
+    try{audio.pause();audio.removeAttribute('src');audio.load();}catch{}
+    error?reject(error):resolve();
+   };
+   registerStop(()=>finish());
+   audio.addEventListener('ended',()=>finish(),{once:true});
+   audio.addEventListener('error',()=>finish(Error('Không thể phát WAV nghe thử')),{once:true});
+   Promise.resolve(audio.play()).catch(finish);
+  })
+ });
+ preview?.addEventListener('click',()=>{
+  if(previewCoordinator.isActive())return;
+  // Wait for backend stop before starting sample; incoming subtitles remain queued.
+  resetPlayback({stopSynthesis:false});
+  void previewCoordinator.run({language:target.value,voiceId:voice.value});
+ });
+ window.addEventListener('openiptv:ai-translate-settings-changed',()=>{
+  resetForModelChange();
+  if(enabled)status('Đã đổi mô hình dịch · chờ phụ đề mới để đọc');
  });
  if(api.ttsOnEvent)api.ttsOnEvent(e=>{
   if(!e)return;
   if(e.type==='progress'){if(e.target===target.value)status(e.message||'Đang cài…');return;}
-  if(e.type==='status'&&enabled)status(e.message||'TTS đang xử lý…');
+  if(e.type==='status'&&enabled&&!previewCoordinator.isActive())status(e.message||'TTS đang xử lý…');
  });
  if(api.captionOnEvent)api.captionOnEvent(e=>{
   if(!enabled||!translate?.checked||!e||e.type!=='segment'||!e.text)return;
@@ -307,7 +332,7 @@
  document.addEventListener('openiptv:media-info',updateSession);
  video.addEventListener('emptied',()=>{if(enabled)resetPlayback();});
  video.addEventListener('pause',()=>{if(enabled)resetPlayback();});
- window.addEventListener('pagehide',()=>{enabled=false;resetPlayback();restore();if(previewAudio){try{previewAudio.pause();}catch{}previewAudio=null;}});
+ window.addEventListener('pagehide',()=>{enabled=false;void previewCoordinator.cancel();resetPlayback();restore();if(previewAudio){try{previewAudio.pause();}catch{}previewAudio=null;}});
  setInterval(()=>{updateSession();if(enabled)applyDuck();},700);
  void refresh();
 })();
