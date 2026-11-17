@@ -5,7 +5,7 @@ const root=path.resolve(__dirname,'..');
 const read=p=>fs.readFileSync(path.join(root,p),'utf8');
 const {VIENEU_VOICES,premiumName}=require('../src/premium-voices.cjs');
 const {createAutoModelInstaller}=require('../src/local-ai-autoinstall.cjs');
-test('v4.23.60: 24 approved high quality Vietnamese names, no invented Piper models',()=>{
+test('v4.23.61: 24 approved high quality Vietnamese names, no invented Piper models',()=>{
  assert.equal(VIENEU_VOICES.length,25);
  assert.equal(new Set(VIENEU_VOICES).size,25);
  assert.equal(premiumName('vieneu:Mai Anh'),'Mai Anh');
@@ -13,7 +13,7 @@ test('v4.23.60: 24 approved high quality Vietnamese names, no invented Piper mod
  const ui=read('renderer/local-tts-v42344.js');
  for(const name of VIENEU_VOICES)assert.ok(ui.includes("'"+name+"'"),'Missing UI voice '+name);
 });
-test('v4.23.60: Argos only marked ready after real verified marker and installed model metadata',()=>{
+test('v4.23.61: Argos only marked ready after real verified marker and installed model metadata',()=>{
  const dir=fs.mkdtempSync(path.join(os.tmpdir(),'iptv-verified-'));
  try{
   const installer=createAutoModelInstaller({dataDir:dir});
@@ -28,7 +28,7 @@ test('v4.23.60: Argos only marked ready after real verified marker and installed
   assert.equal(paths.pairReady('vi'),true);
  }finally{fs.rmSync(dir,{recursive:true,force:true});}
 });
-test('v4.23.60: premium voice must be explicit opt-in, isolated install and real WAV probe',()=>{
+test('v4.23.61: premium voice must be explicit opt-in, isolated install and real WAV probe',()=>{
  const dir=fs.mkdtempSync(path.join(os.tmpdir(),'iptv-premium-'));
  try{
   const ins=createAutoModelInstaller({dataDir:dir});
@@ -47,7 +47,7 @@ test('v4.23.60: premium voice must be explicit opt-in, isolated install and real
   assert.match(code,/HF_HOME/);
  }finally{fs.rmSync(dir,{recursive:true,force:true});}
 });
-test('v4.23.60: translated Vietnamese captions must not translate twice in TTS',()=>{
+test('v4.23.61: translated Vietnamese captions must not translate twice in TTS',()=>{
  const s=read('src/local-tts-service.cjs'),ui=read('renderer/local-tts-v42344.js');
  assert.match(s,/sourceLanguage!==lang/);
  assert.match(ui,/sameLanguage=e\.language===target\.value/);
@@ -58,7 +58,7 @@ test('v4.23.60: translated Vietnamese captions must not translate twice in TTS',
  assert.match(read('src/caption-translator.cjs'),/dirs\.argosBridge/);
  assert.match(ui,/liveTtsPreview/);
 });
-test('v4.23.60: UI adds a genuine offline translation health test, no English-only tooltip',()=>{
+test('v4.23.61: UI adds a genuine offline translation health test, no English-only tooltip',()=>{
  const s=read('renderer/live-captions-v42343.js'),h=read('renderer/index.html'),
  main=read('src/main.cjs'),pre=read('src/preload.cjs');
  assert.match(s,/captionTestTranslation/);
@@ -66,5 +66,5 @@ test('v4.23.60: UI adds a genuine offline translation health test, no English-on
  assert.match(main,/caption:testTranslation/);
  assert.match(pre,/captionTestTranslation/);
  assert.doesNotMatch(h,/Dịch sang tiếng Anh trên máy/);
- assert.equal(JSON.parse(read('package.json')).version,'4.23.60');
+ assert.equal(JSON.parse(read('package.json')).version,'4.23.61');
 });

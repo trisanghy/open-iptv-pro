@@ -34,9 +34,9 @@ test('Offline Argos direct routing and working captions are preserved',()=>{
  assert.match(caption,/type:'translation-error'/);
  assert.match(caption,/finalText=words;translated=false/);
 });
-test('Release version 4.23.60 and Mac DMG-only output are consistent',()=>{
+test('Release version 4.23.61 and Mac DMG-only output are consistent',()=>{
  const pkg=JSON.parse(read('package.json'));
- assert.equal(pkg.version,'4.23.60');
+ assert.equal(pkg.version,'4.23.61');
  assert.deepEqual(pkg.build.mac.target,['dmg']);
  assert.equal(pkg.build.dmg.writeUpdateInfo,false);
 });

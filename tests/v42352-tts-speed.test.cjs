@@ -7,7 +7,7 @@ const vm=require('node:vm');
 const root=path.resolve(__dirname,'..'),read=name=>fs.readFileSync(path.join(root,name),'utf8');
 const SPEEDS=['0.60','0.75','0.85','1.00','1.10','1.25','1.50','1.75','2.00'];
 
-test('v4.23.60: speed selector exists in TTS row with all nine allowed speeds',()=>{
+test('v4.23.61: speed selector exists in TTS row with all nine allowed speeds',()=>{
  const html=read('renderer/index.html'),css=read('renderer/local-tts-row-v42344.css');
  assert.equal((html.match(/id="liveTtsSpeed"/g)||[]).length,1);
  for(const rate of SPEEDS)assert.match(html,new RegExp('value="'+rate.replace('.','\\.')+'"'));
@@ -16,10 +16,10 @@ test('v4.23.60: speed selector exists in TTS row with all nine allowed speeds',(
  assert.ok(lang<row&&row<original,'Speed must be on same third-row TTS control strip');
  assert.match(css,/#liveTtsSpeed/);
  assert.match(css,/flex-wrap:wrap/);
- assert.equal(JSON.parse(read('package.json')).version,'4.23.60');
+ assert.equal(JSON.parse(read('package.json')).version,'4.23.61');
 });
 
-test('v4.23.60: live playback and preview use the same pitch-preserving rate, stored across sessions',async()=>{
+test('v4.23.61: live playback and preview use the same pitch-preserving rate, stored across sessions',async()=>{
  const listeners={},elements={},audio=[];
  function el(id){
   if(elements[id])return elements[id];

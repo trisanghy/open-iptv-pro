@@ -5,7 +5,7 @@ const {createAutoModelInstaller,voiceOptions}=require('../src/local-ai-autoinsta
 const {createCaptionTranslator}=require('../src/caption-translator.cjs');
 const {createLocalSpeechService}=require('../src/local-tts-service.cjs');
 const root=path.resolve(__dirname,'..'),read=p=>fs.readFileSync(path.join(root,p),'utf8');
-test('v4.23.60: stale Argos installed-pairs.json does not signal ready',()=>{
+test('v4.23.61: stale Argos installed-pairs.json does not signal ready',()=>{
  const dir=fs.mkdtempSync(path.join(os.tmpdir(),'iptv-argos-'));
  try{
   const installer=createAutoModelInstaller({dataDir:dir});
@@ -26,7 +26,7 @@ test('v4.23.60: stale Argos installed-pairs.json does not signal ready',()=>{
   assert.equal(dirs.pairReady('fr'),false);
  }finally{fs.rmSync(dir,{recursive:true,force:true});}
 });
-test('v4.23.60: Piper selects only approved real voice IDs',()=>{
+test('v4.23.61: Piper selects only approved real voice IDs',()=>{
  assert.ok(voiceOptions('vi').includes('vi_VN-vais1000-medium'));
  assert.ok(voiceOptions('vi').includes('vi_VN-vivos-x_low'));
  assert.ok(voiceOptions('en').includes('en_US-amy-medium'));
@@ -40,7 +40,7 @@ test('v4.23.60: Piper selects only approved real voice IDs',()=>{
   assert.throws(()=>service.availability('vi','bad-voice'),/Giọng đọc/);
  }finally{fs.rmSync(dir,{recursive:true,force:true});}
 });
-test('v4.23.60: offline bridge drives captions, translation and TTS',()=>{
+test('v4.23.61: offline bridge drives captions, translation and TTS',()=>{
  const bridge=read('src/argos-bridge.py'),model=read('src/local-ai-autoinstall.cjs'),
        caption=read('src/caption-translator.cjs'),tts=read('src/local-tts-service.cjs');
  assert.match(bridge,/get_installed_packages/);
@@ -52,7 +52,7 @@ test('v4.23.60: offline bridge drives captions, translation and TTS',()=>{
  assert.doesNotMatch(caption,/spawnProcess\(dirs\.argos/);
  assert.doesNotMatch(tts,/invokeProcess\(tool\('argos'\)/);
 });
-test('v4.23.60: row 3 voice dropdown is fully connected end to end',()=>{
+test('v4.23.61: row 3 voice dropdown is fully connected end to end',()=>{
  const html=read('renderer/index.html'),ui=read('renderer/local-tts-v42344.js');
  assert.match(html,/id="liveTtsVoice"/);
  assert.match(ui,/ttsInstall\(target\.value,voice\.value\)/);
@@ -60,5 +60,5 @@ test('v4.23.60: row 3 voice dropdown is fully connected end to end',()=>{
  assert.match(ui,/voice:payload\.voiceId/);
  assert.match(read('src/preload.cjs'),/ttsInstall:\(lang,voice\)/);
  assert.match(read('src/main.cjs'),/localModelInstaller\.install\(lang,voice\)/);
- assert.equal(JSON.parse(read('package.json')).version,'4.23.60');
+ assert.equal(JSON.parse(read('package.json')).version,'4.23.61');
 });
