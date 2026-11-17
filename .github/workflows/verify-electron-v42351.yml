@@ -1,0 +1,100 @@
+name: Verify Electron v4.23.51 Argos MINISBD, real translation and DMG-only build
+on:
+  push:
+    branches: [experiment/electron-v42349-vi-translation-premium-tts]
+    paths:
+      - '.github/workflows/verify-electron-v42351.yml'
+      - 'overlays/*v42351*'
+      - 'build-mac-v42351.sh'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  source:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Syntax and source overlay verification
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          bash -n build-mac-v42351.sh
+          bash -n overlays/BUILD_MAC_DMG_ONLY_v42351.command
+          grep -Fq 'V51_REV="424e4fcef9ffb4e778926ad58ee9420999545541"' build-mac-v42351.sh
+          grep -Fq 'OpenIPTVPro_Source_v4.23.51.zip' build-mac-v42351.sh
+          ! grep -Fq 'OPENIPTV_ONE_COMMAND=1 bash ./BUILD_MAC.command' build-mac-v42351.sh
+          echo '06e8123c768f41c14f47264fbc7220d1bdfa6ce5dc07e69eceba50e929abc783  source/OpenIPTVPro_Source_v4.23.47.zip' | sha256sum -c -
+          unzip -q source/OpenIPTVPro_Source_v4.23.47.zip -d "$RUNNER_TEMP"
+          PROJECT="$RUNNER_TEMP/Open-IPTV-Pro-v4_23_47_Full_Desktop"
+          cp overlays/whisper-autoinstall-v42347.cjs "$PROJECT/src/whisper-autoinstall.cjs"
+          ( cd "$PROJECT" && node "$GITHUB_WORKSPACE/overlays/v4.23.48-apply.cjs" "$GITHUB_WORKSPACE/overlays" )
+          ( cd "$PROJECT" && node "$GITHUB_WORKSPACE/overlays/v4.23.49-apply.cjs" "$GITHUB_WORKSPACE/overlays" )
+          ( cd "$PROJECT" && node "$GITHUB_WORKSPACE/overlays/v4.23.50-apply.cjs" "$GITHUB_WORKSPACE/overlays" )
+          ( cd "$PROJECT" && node "$GITHUB_WORKSPACE/overlays/dmg-only-v42350.cjs" )
+          ( cd "$PROJECT" && node "$GITHUB_WORKSPACE/overlays/v4.23.51-apply.cjs" "$GITHUB_WORKSPACE/overlays" )
+          cp overlays/BUILD_MAC_DMG_ONLY_v42351.command "$PROJECT/BUILD_MAC_DMG_ONLY.command"
+          for js in src/local-ai-autoinstall.cjs src/caption-translator.cjs src/local-tts-service.cjs; do node --check "$PROJECT/$js"; done
+          python3 -m py_compile "$PROJECT/src/argos-bridge.py"
+          ( cd "$PROJECT" && node --test --test-concurrency=2 tests/*.test.cjs )
+          test "$(node -p 'require(process.argv[1]).version' "$PROJECT/package.json")" = "4.23.51"
+          mv "$PROJECT" "$RUNNER_TEMP/Open-IPTV-Pro-v4_23_51_Full_Desktop"
+          ( cd "$RUNNER_TEMP" && zip -q -r OpenIPTVPro_Source_v4.23.51.zip Open-IPTV-Pro-v4_23_51_Full_Desktop -x '*/node_modules/*' '*/dist/*' '*/.git/*' '*/__pycache__/*' )
+          unzip -tq "$RUNNER_TEMP/OpenIPTVPro_Source_v4.23.51.zip"
+          unzip -p "$RUNNER_TEMP/OpenIPTVPro_Source_v4.23.51.zip" 'Open-IPTV-Pro-v4_23_51_Full_Desktop/package.json' > "$RUNNER_TEMP/version.json"
+          node -e 'const fs=require("fs");const p=JSON.parse(fs.readFileSync(process.argv[1],"utf8"));if(p.version!=="4.23.51"||JSON.stringify(p.build.mac.target)!=="[\"dmg\"]")process.exit(1)' "$RUNNER_TEMP/version.json"
+  mac_dmg:
+    runs-on: macos-15
+    timeout-minutes: 50
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Build real native arm64 DMG and verify no application ZIP
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          echo '06e8123c768f41c14f47264fbc7220d1bdfa6ce5dc07e69eceba50e929abc783  source/OpenIPTVPro_Source_v4.23.47.zip' | shasum -a 256 -c - || {
+            echo 'Pinned source checksum mismatch' >&2
+            exit 1
+          }
+          unzip -q source/OpenIPTVPro_Source_v4.23.47.zip -d "$RUNNER_TEMP"
+          PROJECT="$RUNNER_TEMP/Open-IPTV-Pro-v4_23_47_Full_Desktop"
+          cp overlays/whisper-autoinstall-v42347.cjs "$PROJECT/src/whisper-autoinstall.cjs"
+          ( cd "$PROJECT" && node "$GITHUB_WORKSPACE/overlays/v4.23.48-apply.cjs" "$GITHUB_WORKSPACE/overlays" )
+          ( cd "$PROJECT" && node "$GITHUB_WORKSPACE/overlays/v4.23.49-apply.cjs" "$GITHUB_WORKSPACE/overlays" )
+          ( cd "$PROJECT" && node "$GITHUB_WORKSPACE/overlays/v4.23.50-apply.cjs" "$GITHUB_WORKSPACE/overlays" )
+          ( cd "$PROJECT" && node "$GITHUB_WORKSPACE/overlays/dmg-only-v42350.cjs" )
+          ( cd "$PROJECT" && node "$GITHUB_WORKSPACE/overlays/v4.23.51-apply.cjs" "$GITHUB_WORKSPACE/overlays" )
+          cp overlays/BUILD_MAC_DMG_ONLY_v42351.command "$PROJECT/BUILD_MAC_DMG_ONLY.command"
+          ( cd "$PROJECT" && bash BUILD_MAC_DMG_ONLY.command arm64 )
+          DMG="$PROJECT/dist/Open-IPTV-Pro-4.23.51-mac-arm64.dmg"
+          test -s "$DMG"
+          test ! -e "$PROJECT/dist/Open-IPTV-Pro-4.23.51-mac-arm64.zip"
+          test ! -e "$PROJECT/dist/Open-IPTV-Pro-4.23.51-mac-arm64.dmg.blockmap"
+          lipo -archs "$PROJECT/dist/mac-arm64/Open IPTV Pro.app/Contents/MacOS/Open IPTV Pro" | grep -Fxq arm64
+          ls -lh "$DMG"
+  argos_real:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+      - name: Verify offline en-to-vi Argos using a REAL downloaded model
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          python -m pip install --disable-pip-version-check 'argostranslate==1.11.0'
+          export ARGOS_PACKAGES_DIR="$RUNNER_TEMP/argos-packages"
+          mkdir -p "$ARGOS_PACKAGES_DIR"
+          python overlays/argos-bridge-v42351.py install en vi
+          python overlays/argos-bridge-v42351.py probe en vi
+          printf 'What are you doing?' | python overlays/argos-bridge-v42351.py translate en vi | tee "$RUNNER_TEMP/vi.txt"
+          test -s "$RUNNER_TEMP/vi.txt"
