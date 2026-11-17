@@ -1,4 +1,3 @@
-GitHub About — Tiếng Việt trước, English sau (một dòng):
-Trình phát IPTV mã nguồn mở cho Windows và macOS: M3U, EPG, MultiView, ảnh kênh, kiểm tra và sửa luồng; hỗ trợ 8 ngôn ngữ. | Open-source IPTV player for Windows and macOS: M3U, EPG, MultiView, snapshots, stream diagnostics and repair; 8 languages.
+Open IPTV Pro v4.23.60 — Trình phát IPTV mã nguồn mở cho macOS/Windows: M3U, HLS/DASH, EPG, MultiView, FFmpeg, Timeshift, DVR, Live Caption Whisper 8 giây, dịch AI offline và TTS. Dùng Web: https://trisanghy.github.io/open-iptv-pro/ | Tải bộ cài: https://github.com/trisanghy/open-iptv-pro/releases/latest
 
-Lưu ý: GitHub About Description không hỗ trợ xuống dòng; README.md trình bày hai ngôn ngữ thành hai mục riêng.
+EN: Open-source IPTV desktop for Mac/Windows with offline captions, translation, voice dubbing and a separate browser-based Web Edition.
