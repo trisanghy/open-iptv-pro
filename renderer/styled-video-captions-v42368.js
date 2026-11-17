@@ -95,7 +95,6 @@
    prefs={...prefs,...options};
    if(last?.text&&!video.paused&&!video.ended)show(last.text,last.language,{sourceText:last.sourceText,translated:last.translated});
    else{base.clear();applyStyle();}
-   else applyStyle();
   };
   const setOriginalVisible=value=>{
    originalVisible=!!value;
