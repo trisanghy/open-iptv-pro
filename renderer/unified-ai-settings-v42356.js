@@ -8,6 +8,7 @@
  if(!panel||!trigger||!picker||!mode||!modelList||!warning||!status)return;
  const modelKeys=['hymt18','hymt18q8','hymt7','hymt7q8','qwen06','qwen17','qwen4','qwen8'];
  const modelSet=new Set(modelKeys);
+ const hardwareAdvice=window.OpenIPTVHardwareAdvice;
  const validEngines=new Set(['auto','argos',...modelKeys]);
  const validModes=new Set(['balanced','saver','quality']);
  const read=(key,fallback,allow)=>{
@@ -180,6 +181,16 @@
   const inventory=Array.isArray(latest?.storage)?latest.storage:[];
   const available=!!latest?.supported;
   const byId=Object.fromEntries(inventory.map(item=>[item.id,item]));
+  if(hardwareAdvice){
+   const hardware=document.createElement('div');
+   hardware.className='ai-hardware-header';
+   const machine=document.createElement('strong');
+   machine.textContent='Máy hiện tại: '+hardwareAdvice.hardwareLabel(latest?.hardware||{});
+   const explain=document.createElement('span');
+   explain.textContent=' · Các mức RAM/ổ trống là gợi ý tham khảo khi chạy cùng IPTV, không phải cấu hình tối thiểu chính thức. Hiệu năng còn phụ thuộc số AI chạy đồng thời.';
+   hardware.append(machine,explain);
+   modelList.append(hardware);
+  }
   const order=['whisper','argos','piper','vieneu','vietvoice','f5vi','f5sample',...modelKeys,'cache','runtimes'];
   for(const id of order){
    const item=byId[id];if(!item)continue;
@@ -199,7 +210,27 @@
    detail.textContent=(modelReady?'Đã cài':item.present?'Tải chưa hoàn chỉnh':'Chưa tải')+
      ' · hiện dùng '+human(item.bytes)+(modelSet.has(id)?hint:'')+
      (modelSet.has(id)&&!available?' · chỉ Mac Apple Silicon':'');
-   left.append(name,detail);line.append(left);
+   left.append(name,detail);
+   const spec=hardwareAdvice?.forModel(id,latest?.hardware||{});
+   if(spec){
+    const recommendations=document.createElement('div');
+    recommendations.className='ai-model-hardware';
+    const first=document.createElement('span');
+    first.className='ai-hardware-spec';
+    first.textContent=(spec.kind==='model'?'Gợi ý cấu hình: ':'Lưu ý: ')+spec.summary;
+    const second=document.createElement('span');
+    second.textContent=spec.detail;
+    recommendations.append(first,second);
+    if(spec.fit){
+     const fit=document.createElement('span');
+     fit.className='ai-hardware-fit';
+     fit.textContent=spec.fit;
+     fit.dataset.fit=spec.fit.startsWith('RAM máy thấp')||spec.fit.startsWith('Không hỗ trợ')?'limited':'normal';
+     recommendations.append(fit);
+    }
+    left.append(recommendations);
+   }
+   line.append(left);
    const right=document.createElement('div');right.className='ai-model-actions';
    const runtimeNeedsRepair=modelSet.has(id)&&modelReady&&!modelState?.runtimeReady;
    if(modelSet.has(id)&&(!modelReady||runtimeNeedsRepair)){

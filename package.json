@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro",
-  "version": "4.23.64",
-  "description": "Open IPTV Pro v4.23.64 — fixes Vietnamese TTS missing bundled FFprobe on Mac; retains auto PiP and app-only build",
+  "version": "4.23.65",
+  "description": "Open IPTV Pro v4.23.65 — personalized RAM/CPU/storage guidance for each local AI model; retains FFprobe, PiP and app-only build",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

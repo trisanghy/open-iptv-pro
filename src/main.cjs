@@ -1,6 +1,7 @@
 'use strict';
 const {app,BrowserWindow,dialog,ipcMain,shell,nativeTheme,net} = require('electron');
 const path=require('node:path');
+const os=require('node:os');
 const {pathToFileURL}=require('node:url');
 const fs=require('node:fs');
 const http=require('node:http');
@@ -219,6 +220,7 @@ function setupIPC(){
    return 'argos';
   };
   ipcMain.handle('ai:modelStatus',()=>({supported:process.platform==='darwin'&&process.arch==='arm64',
+    hardware:{platform:process.platform,arch:process.arch,ramGB:Math.round(os.totalmem()/1073741824),cpuThreads:os.cpus().length},
    storage:localAIStorage.inspect(),models:Object.fromEntries(Object.keys(localHyMT.MODELS).map(k=>[k,localHyMT.state(k)])),hyMT:{hymt18:localHyMT.state('hymt18'),hymt7:localHyMT.state('hymt7')}}));
   ipcMain.handle('ai:install',(_e,key)=>{if(!Object.hasOwn(localHyMT.MODELS,key))throw Error('Invalid AI model');return localHyMT.install(key);});
   ipcMain.handle('ai:delete',(_e,id)=>localAIStorage.remove(id));
