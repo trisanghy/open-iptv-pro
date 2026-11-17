@@ -21,8 +21,8 @@ test('v13 uses native labeled Link phát dropdown, before Favorite button',()=>{
  assert.doesNotMatch(html,/id="manualLinkToggle"|id="manualLinkMenu"/);
 });
 
-test('selector is conditional on >=2 candidates and keeps existing playback+failover',()=>{
- assert.match(app,/if\(items\.length<2\)\{control\.classList\.add\('hidden'\);select\.replaceChildren\(\);return;/);
+test('Electron parity selector appears for any available source and keeps playback+failover',()=>{
+ assert.match(app,/if\(!items\.length\)\{control\.classList\.add\('hidden'\);select\.replaceChildren\(\);return;/);
  assert.match(app,/\$\('#manualLinkSelect'\)\?\.addEventListener\('change'/);
  assert.match(app,/playChannel\(channel\.id,null,\{mode:'live',manualUrl:url\}\)/);
  assert.match(app,/const activeUrl=urls\.includes\(currentUrl\)\?currentUrl:items\[0\]\.url/);
