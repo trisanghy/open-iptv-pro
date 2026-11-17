@@ -19,6 +19,7 @@ contextBridge.exposeInMainWorld('streamleaf',Object.freeze({
   captionInstallLanguage:target=>ipcRenderer.invoke('caption:installLanguage',target),
   aiModelStatus:()=>ipcRenderer.invoke('ai:modelStatus'),
   aiInstallModel:key=>ipcRenderer.invoke('ai:install',key),
+  aiOpenOllamaDownload:()=>ipcRenderer.invoke('ai:openOllamaDownload'),
   aiDeleteModel:id=>ipcRenderer.invoke('ai:delete',id),
   aiTestTranslation:(target,engine,mode)=>ipcRenderer.invoke('ai:testTranslation',target,engine,mode),
   aiOnEvent:cb=>{const f=(_e,data)=>cb(data);ipcRenderer.on('ai:event',f);return ()=>ipcRenderer.removeListener('ai:event',f);},
