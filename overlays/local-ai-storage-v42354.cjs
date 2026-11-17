@@ -11,7 +11,7 @@ const ITEMS=Object.freeze({
  vieneu:{label:'VieNeu · giọng đọc cao cấp',paths:['local-tts/vieneu-model-cache','local-tts/vieneu-python-env','local-tts/vieneu-v3-turbo.ready.json']},
  hymt18:{label:'Hy-MT2 1.8B · nhanh',paths:['ai-translate/models/hymt18']},
  hymt7:{label:'Hy-MT2 7B · chất lượng',paths:['ai-translate/models/hymt7']},
- cache:{label:'Bộ đệm tải AI · tải lại khi cần',paths:['local-tts/uv-cache','ai-translate/uv-cache','ai-translate/models/hymt18/hub-cache','ai-translate/models/hymt7/hub-cache']},
+ cache:{label:'Bộ đệm tải AI · tải lại khi cần',paths:['local-tts/uv-cache','ai-translate/uv-cache']},
  runtimes:{label:'Môi trường Python AI · cài lại khi cần',paths:['local-tts/python-env','local-tts/vieneu-python-env','local-tts/python-managed','ai-translate/python-env','ai-translate/python-managed','ai-translate/mlx-runtime.ready']}
 });
 function createLocalModelStorage({dataDir,onBeforeDelete=async()=>{}}={}){
