@@ -52,8 +52,8 @@ for(const name of fs.readdirSync(file('tests')).filter(x=>x.endsWith('.test.cjs'
 }
 const legacy='tests/v42357-lowlatency.test.cjs';
 let text=read(legacy);
-const legacyStart=text.indexOf("test('v4.23.57: latest subtitle always wins;");
-const legacyEnd=text.indexOf("test('v4.23.57: stop can cancel",legacyStart);
+const legacyStart=text.indexOf("test('v4.23.59: latest subtitle always wins;");
+const legacyEnd=text.indexOf("test('v4.23.59: stop can cancel",legacyStart);
 assert(legacyStart>0&&legacyEnd>legacyStart,'Expected legacy interrupting-TTS test');
 text=text.slice(0,legacyStart)+[
  "test('v4.23.57: latest pending subtitle wins without interrupting audible speech',()=>{",
