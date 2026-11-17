@@ -30,9 +30,10 @@ function createVietnameseVoices({dataDir,installer,spawnProcess=spawn,platform=p
   }walk(p,0);return size;
  };
  const voiceFamily=id=>{if(!validVoice(id))throw Error('Giọng Việt không hợp lệ');return VOICES[id].family;};
- const ready=fam=>fam==='f5'?
+ const ready=fam=>present(python)&&present(path.join(root,fam+'.runtime.ready'))&&(
+  fam==='f5'?
    present(path.join(root,'f5.ready'))&&present(path.join(f5Model,'model_latest.safetensors'))&&present(path.join(f5Model,'vocab.txt')):
-   present(path.join(root,'vietvoice.ready'))&&dirSize(cache)>1000000000;
+   present(path.join(root,'vietvoice.ready'))&&dirSize(cache)>1000000000);
  const report=message=>{try{notify({type:'progress',target:'vi',message:String(message).slice(0,160)});}catch{}};
  function execute(bin,args,timeout=7200000,envExtra={}){
   return new Promise((resolve,reject)=>{
@@ -118,40 +119,45 @@ function createVietnameseVoices({dataDir,installer,spawnProcess=spawn,platform=p
   const family=voiceFamily(id);
   if(!ready(family))throw Error('Giọng '+family+' chưa cài');
   if(active)throw Error('Đang cài bộ đọc tiếng Việt');
-  const args=family==='vietvoice'?
-   [copiedBridge(),'vietvoice',text,output,cache,...id.split(':').slice(2),id.split(':')[1]]:
-   [copiedBridge(),'f5',text,output,f5Model,refAudio,refText];
   // VietVoice voiceId format: vietvoice:gender:area:group
-  if(family==='vietvoice'){
-   const [_,gender,area,group]=id.split(':');
-   args.splice(0,args.length,copiedBridge(),'vietvoice',text,output,cache,area,gender,group);
-  }else if(!refAudio||!refText.trim()){
+  const [_,gender,area,group]=id.split(':');
+  const args=family==='vietvoice'?
+   [copiedBridge(),'vietvoice',text,output,cache,area,gender,group]:
+   [copiedBridge(),'f5',text,output,f5Model,refAudio,refText];
+  if(family==='f5'&&(!refAudio||!refText.trim()))
    throw Error('F5 cần file giọng mẫu có sự đồng ý và bản chép lời mẫu');
-  }
   await execute(python,args,240000);
   if(!present(output))throw Error('Chưa tạo được WAV tiếng Việt');
   return output;
  }
  async function stop(){if(child){try{child.kill('SIGTERM');}catch{}}}
  async function remove(id){
-  const family=id==='f5vi'?'f5':id==='vietvoice'?'vietvoice':null;
+  const family=id==='f5vi'?'f5':id==='vietvoice'?'vietvoice':id==='viettts-runtime'?'runtime':null;
   if(!family)throw Error('Unknown Vietnamese TTS model');
   if(active===family)throw Error('Đang cài mô hình này');
   await stop();
-  const folder=family==='f5'?f5Model:cache;
+  const folder=family==='f5'?f5Model:family==='runtime'?venv:cache;
   const bytes=dirSize(folder);
   await fs.promises.rm(folder,{recursive:true,force:true});
   await fs.promises.rm(path.join(root,family+'.ready'),{force:true});
+  if(family==='runtime')
+   for(const name of ['f5.runtime.ready','vietvoice.runtime.ready'])
+    await fs.promises.rm(path.join(root,name),{force:true});
   return {id,freed:bytes,items:states()};
  }
  function state(id){return availability(id);}
  function states(){
-  const groups=['vietvoice','f5'];
-  return groups.map(family=>({id:family==='f5'?'f5vi':'vietvoice',label:family==='f5'?
-   'F5-TTS Vietnamese · phi thương mại':'VietVoice-TTS · ONNX',
-   bytes:dirSize(family==='f5'?f5Model:cache)+dirSize(venv)/groups.length,
-   present:ready(family),minRamGB:family==='f5'?16:8,recRamGB:family==='f5'?32:16,
-   installing:active===family,device:'macOS/Windows',family}));
+  const listed=['vietvoice','f5'].map(family=>{
+   const id=family==='f5'?'f5vi':'vietvoice';
+   const bytes=dirSize(family==='f5'?f5Model:cache);
+   return {id,label:family==='f5'?'F5-TTS Vietnamese · phi thương mại':'VietVoice-TTS · ONNX',
+    bytes,present:bytes>0,minRamGB:family==='f5'?16:8,recRamGB:family==='f5'?32:16,
+    installing:active===family,device:'macOS/Windows',family,installed:ready(family)};
+  });
+  const bytes=dirSize(venv);
+  listed.push({id:'viettts-runtime',label:'Bộ chạy VietVoice/F5 · cài lại khi cần',
+   bytes,present:bytes>0,device:'macOS/Windows',family:'runtime'});
+  return listed;
  }
  return Object.freeze({VOICES,validVoice,availability,state,states,install,speak,stop,remove,ready});
 }
