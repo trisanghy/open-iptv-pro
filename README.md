@@ -2,9 +2,17 @@
 
 **Trình phát IPTV mã nguồn mở cho macOS, Windows và Web.** Chọn đúng phiên bản tùy thiết bị; Rust Lab là nhánh thử nghiệm độc lập.
 
-**[TẢI DESKTOP v4.23.67](https://github.com/trisanghy/open-iptv-pro/releases/tag/v4.23.67) · [MỞ WEB ONLINE](https://trisanghy.github.io/open-iptv-pro/) · [RUST/TAURI LAB v23.4](https://github.com/trisanghy/open-iptv-pro/releases/tag/rust-lab/v23.4)**
+**[TẢI DESKTOP v4.23.67](https://github.com/trisanghy/open-iptv-pro/releases/tag/v4.23.67) · [MỞ WEB ONLINE](https://trisanghy.github.io/open-iptv-pro/) · [RUST/TAURI LAB v23.8.2](https://github.com/trisanghy/open-iptv-pro/releases/tag/rust-lab/v23.8.2)**
 
-**Latest stable:** Electron Desktop v4.23.67 (`main`) · **Web:** GitHub Pages (`web/online`) · **Rust Lab:** v23.4 (Beta, Windows x64).
+**Latest stable:** Electron Desktop v4.23.67 (`main`) · **Web:** GitHub Pages (`web/online`) · **Rust Lab:** v23.8.2 (Beta, Windows x64).
+
+### Rust Lab được cập nhật trong Stable Release v4.23.67
+
+**Gói Rust/Tauri đính kèm hiện là v23.8.2, thay thế các file cài Rust Lab v23.4 trước đây.** Đây vẫn là bản **Beta độc lập**; ứng dụng Electron Stable v4.23.67, bộ cài macOS/Windows Electron và mã nguồn Web không thay đổi.
+
+Rust Lab v23.8.2 sửa lỗi biên dịch module MLX, sửa xử lý Argos/MINISBD, thử nghiệm các mô hình Hy-MT2/Qwen3 MLX chạy trên Mac Apple Silicon và cải thiện luồng Live Caption/Translate/TTS. **Hiện chỉ có bản cài Windows x64 (Setup/Portable) cùng ZIP mã nguồn; chưa có DMG macOS v23.8.2.**
+
+Đã đối chiếu checksum gốc; `SHA256SUMS.txt` của Stable Release sẽ được cập nhật theo các file Rust mới. Tag `rust-lab/v23.4` độc lập vẫn được bảo tồn trong lịch sử GitHub và có thể tải lại khi cần.
 
 ## 1. Chọn nền tảng
 
@@ -12,7 +20,7 @@
 | --- | --- | --- |
 | **Desktop Electron v4.23.67 — bản chính** | Mac Apple Silicon, Mac Intel, Windows x64 | [Trang Release & bộ cài](https://github.com/trisanghy/open-iptv-pro/releases/tag/v4.23.67) |
 | **Web Online — mở trong trình duyệt** | Máy tính/điện thoại với trình duyệt tương thích | [Mở Web](https://trisanghy.github.io/open-iptv-pro/) · [Hướng dẫn Web](https://trisanghy.github.io/open-iptv-pro/huong-dan.html) |
-| **Rust/Tauri Lab v23.4 — thử nghiệm** | Windows x64 (Setup/Portable), mã nguồn Rust | [Release Rust Lab](https://github.com/trisanghy/open-iptv-pro/releases/tag/rust-lab/v23.4) · [Nhánh mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/experiment/rust-tauri-v2) |
+| **Rust/Tauri Lab v23.8.2 — thử nghiệm** | Windows x64 (Setup/Portable), mã nguồn Rust | [Release Rust Lab](https://github.com/trisanghy/open-iptv-pro/releases/tag/rust-lab/v23.8.2) · [Nhánh mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/experiment/rust-tauri-v2) |
 
 ### File cài đặt Desktop — bản chính
 
@@ -34,17 +42,17 @@ Trước khi cài: tải từ **GitHub chính thức**, chọn đúng CPU và đ
 - **Mã nguồn Web:** [nhánh web/online](https://github.com/trisanghy/open-iptv-pro/tree/web/online); việc phát hành Desktop không ghi đè nhánh này.
 - Phát HLS/DASH phụ thuộc codec, CORS, HTTPS, DRM và chính sách tự phát âm thanh của trình duyệt. Bản Web **không chạy** Electron IPC, FFmpeg native, Whisper/MLX hoặc TTS offline như bản Desktop.
 
-### Rust/Tauri Lab v23.4 (Beta độc lập)
+### Rust/Tauri Lab v23.8.2 (Beta độc lập)
 
-**[Tải Rust Lab v23.4](https://github.com/trisanghy/open-iptv-pro/releases/tag/rust-lab/v23.4)** — nhánh [experiment/rust-tauri-v2](https://github.com/trisanghy/open-iptv-pro/tree/experiment/rust-tauri-v2), không thay thế bản Electron.
+**[Tải Rust Lab v23.8.2](https://github.com/trisanghy/open-iptv-pro/releases/tag/rust-lab/v23.8.2)** — nhánh [experiment/rust-tauri-v2](https://github.com/trisanghy/open-iptv-pro/tree/experiment/rust-tauri-v2), không thay thế bản Electron.
 
-| Gói Rust Lab v23.4 | Đường dẫn |
+| Gói Rust Lab v23.8.2 | Đường dẫn |
 | --- | --- |
-| Windows x64 Setup | [OpenIPTVPro-RustLab-v23.4-Windows-Setup-x64.exe](https://github.com/trisanghy/open-iptv-pro/releases/download/rust-lab/v23.4/OpenIPTVPro-RustLab-v23.4-Windows-Setup-x64.exe) |
-| Windows x64 Portable | [OpenIPTVPro-RustLab-v23.4-Windows-Portable-x64.zip](https://github.com/trisanghy/open-iptv-pro/releases/download/rust-lab/v23.4/OpenIPTVPro-RustLab-v23.4-Windows-Portable-x64.zip) |
-| Mã nguồn Rust Lab | [OpenIPTVPro-RustLab-v23.4-Source.zip](https://github.com/trisanghy/open-iptv-pro/releases/download/rust-lab/v23.4/OpenIPTVPro-RustLab-v23.4-Source.zip) |
+| Windows x64 Setup | [OpenIPTVPro-RustLab-v23.8.2-Windows-Setup-x64.exe](https://github.com/trisanghy/open-iptv-pro/releases/download/rust-lab/v23.8.2/OpenIPTVPro-RustLab-v23.8.2-Windows-Setup-x64.exe) |
+| Windows x64 Portable | [OpenIPTVPro-RustLab-v23.8.2-Windows-Portable-x64.zip](https://github.com/trisanghy/open-iptv-pro/releases/download/rust-lab/v23.8.2/OpenIPTVPro-RustLab-v23.8.2-Windows-Portable-x64.zip) |
+| Mã nguồn Rust Lab | [OpenIPTVPro-RustLab-v23.8.2-Source.zip](https://github.com/trisanghy/open-iptv-pro/releases/download/rust-lab/v23.8.2/OpenIPTVPro-RustLab-v23.8.2-Source.zip) |
 
-**Chưa có DMG Mac cho Rust Lab v23.4** trong Release đã xác minh. Rust Lab sử dụng Tauri 2 + Rust, có thử nghiệm Whisper nhận biết ngôn ngữ nguồn, dịch Argos cục bộ theo cặp nguồn→đích và điều khiển TTS; tính năng/độ tương thích chưa ngang bản Electron ổn định.
+**Chưa có DMG Mac cho Rust Lab v23.8.2** trong Release đã xác minh. Rust Lab sử dụng Tauri 2 + Rust, thử nghiệm Whisper nhận diện ngôn ngữ nguồn, sửa định tuyến Argos/MINISBD, Hy-MT2/Qwen3 MLX trên Mac Apple Silicon và TTS; tính năng/độ tương thích chưa ngang bản Electron ổn định.
 
 ## 2. Desktop: những điểm mới từ v4.23.60 → v4.23.67
 
@@ -62,7 +70,7 @@ Trước khi cài: tải từ **GitHub chính thức**, chọn đúng CPU và đ
 
 ## 3. So sánh ba phiên bản
 
-| Khả năng | Desktop Electron (chính) | Web Online | Rust Lab v23.4 (Beta) |
+| Khả năng | Desktop Electron (chính) | Web Online | Rust Lab v23.8.2 (Beta) |
 | --- | --- | --- | --- |
 | Không cần cài | Không | **Có** | Không |
 | M3U, danh sách kênh, EPG | **Có** | Có, tùy nguồn/trình duyệt | Có, đang thử nghiệm |
@@ -70,7 +78,7 @@ Trước khi cài: tải từ **GitHub chính thức**, chọn đúng CPU và đ
 | FFmpeg, Timeshift, ghi hình native | **Có**, tùy codec/nguồn | Không tương đương | Một phần, cần kiểm thử |
 | Whisper/MLX, nhiều giọng TTS offline | **Có**, khi cài mô hình | Không tương đương | Một phần, Argos/Whisper/TTS thử nghiệm |
 | Chọn phiên bản và cập nhật | **Có** qua GitHub Release | Mở Web trực tiếp | Tag riêng của Rust Lab |
-| Hệ điều hành có file cài đã xác minh | Mac ARM64/Intel, Windows x64 | Trình duyệt | Windows x64 (v23.4) |
+| Hệ điều hành có file cài đã xác minh | Mac ARM64/Intel, Windows x64 | Trình duyệt | Windows x64 (v23.8.2) |
 
 ## 4. Sử dụng và build từ mã nguồn
 
@@ -90,4 +98,4 @@ bash -c 'set -o pipefail; curl -fsSL https://raw.githubusercontent.com/trisanghy
 
 ---
 
-**English:** Open IPTV Pro v4.23.67 is the main Electron Desktop release for macOS and Windows. Web Online remains separate, and Rust/Tauri Lab v23.4 is an independent Windows-only prerelease. Download verified installers and checksums in the official stable GitHub Release. Full notes: [v4.23.67](RELEASE_NOTES_V4_23_67.md).
+**English:** Open IPTV Pro v4.23.67 is the main Electron Desktop release for macOS and Windows. Web Online remains separate, and Rust/Tauri Lab v23.8.2 is an independent Windows-only prerelease. Download verified installers and checksums in the official stable GitHub Release. Full notes: [v4.23.67](RELEASE_NOTES_V4_23_67.md).
