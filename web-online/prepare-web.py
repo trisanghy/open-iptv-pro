@@ -116,6 +116,22 @@ if html.count('id="volume"') != 1:
     sys.exit('Web toolbar must have one volume range')
 if html.count('id="shotBtn"') != 1 or html.count('id="tryFfmpegBtn"') != 1:
     sys.exit('Player legacy hooks must remain singular for event bindings')
+# v4.23.60 public Web guide — keep this browser-only, never ship Electron IPC.
+guide_source=Path(__file__).resolve().parent/'huong-dan.html'
+if not guide_source.is_file():
+    sys.exit('Missing Web help page huong-dan.html')
+copy2(guide_source,out/'huong-dan.html')
+topbar='<div class="top-actions">'
+if html.count(topbar)!=1:
+    sys.exit('Cannot add Web user guide link: topbar changed')
+html=html.replace(topbar,topbar+'<a class="btn btn-subtle" href="huong-dan.html" target="_blank" rel="noopener noreferrer" title="Tính năng và hướng dẫn Open IPTV Pro bản Web">📖 Hướng dẫn Web</a>',1)
+if html.count('<title>Open IPTV Pro — Web Online</title>')!=1:
+    sys.exit('Browser page title changed')
+html=html.replace('<title>Open IPTV Pro — Web Online</title>',
+ '<title>Open IPTV Pro — Xem IPTV Online Miễn Phí</title><meta name="description" content="Open IPTV Pro Web Online: mở tệp và URL M3U, xem HLS/DASH, yêu thích, EPG, PiP và lưu dữ liệu trong trình duyệt. Hướng dẫn sử dụng và link tải bản desktop v4.23.60."/>',1)
+if 'href="huong-dan.html"' not in html:
+    sys.exit('Public Web instructions are not linked')
+
 (out/'index.html').write_text(html,encoding='utf-8')
 (out/'.nojekyll').write_text('')
 (out/'manifest.webmanifest').write_text(json.dumps({

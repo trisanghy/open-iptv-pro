@@ -1,29 +1,28 @@
 # Open IPTV Pro — Web Online
 
-Source branch: \`web/online\`; desktop \`main\` and WebView \`experiment/native-webview-ffmpeg\` remain unchanged.
+**Dùng trực tiếp:** https://trisanghy.github.io/open-iptv-pro/  
+**Hướng dẫn trên website:** https://trisanghy.github.io/open-iptv-pro/huong-dan.html  
+**Desktop v4.23.60:** https://github.com/trisanghy/open-iptv-pro/releases/tag/v4.23.60
 
-This is a browser-only adaptation of the WebView 4.23.38 frontend, with the original two-row player, channel/folder organization, favorites, M3U file/URL import, EPG and MultiView where supported by browsers. HLS.js and dash.js are included with the static website; no app installation is required.
+Bản Web là ứng dụng trình duyệt tĩnh trên nhánh **web/online**, khác bản desktop Electron mã nguồn chính tại `main`.
 
-## Hosting
+## Tính năng Web
 
-The workflow at \`.github/workflows/deploy-openiptv-web.yml\` downloads the WebView 4.23.37 source ZIP from the experimental branch, applies the v4.23.38 toolbar patch, copies only \`frontend/\`, bundles the HLS/DASH browser players, applies browser-only changes and uploads a GitHub Pages artifact.
+- Nhập file M3U hoặc URL danh sách kênh khi truy cập hợp lệ; sắp xếp nguồn/thư mục và kênh yêu thích.
+- Phát HLS, MPEG-DASH, MP4 nếu codec và HTTPS/CORS cho phép; chọn link dự phòng, âm lượng, fullscreen, PiP, đa màn hình khi hỗ trợ.
+- EPG/XMLTV, tìm kiếm kênh, Smart IPTV Doctor/kiểm tra nguồn trong giới hạn trình duyệt.
+- Ghi nhớ kênh xem gần nhất, thử tự phát kênh/âm thanh; trình duyệt có thể yêu cầu thao tác của người dùng.
+- Backup/Restore JSON bản Web; đồng bộ tài khoản chỉ khi Supabase được cấu hình, không đăng nhập vẫn có chế độ khách.
+- Truy cập hướng dẫn ngay từ thanh trên của ứng dụng hoặc đường dẫn `/huong-dan.html`.
 
-GitHub Pages must be enabled with **repository Settings → Pages → Build and deployment → Source: GitHub Actions** before the deployment action can publish. Subsequent pushes to \`web/online\` redeploy automatically.
+## Những chức năng KHÔNG có trên GitHub Pages
 
-Expected URL after a successful Pages deployment:
-https://trisanghy.github.io/open-iptv-pro/
+Không có FFmpeg native, ghi hình hẹn giờ, Timeshift native, CORS bypass, LAN discovery gốc, mô hình Whisper/MLX/Piper/VieNeu offline và đồng bộ tiếng gốc của Desktop v4.23.60. Web chỉ phát những luồng mà trình duyệt có quyền, không vượt DRM/hạn chế máy chủ. Backup JSON Web không đồng nhất với file .iptvbackup Desktop.
 
-## What works in the browser
+## Deploy
 
-- Import local M3U files and HTTPS playlist URLs **when CORS is permitted by the source**
-- Play browser-supported HLS, MPEG-DASH and MP4 (with supported codecs)
-- Search, favorites, folders, drag-and-drop ordering, themes, playlist export
-- XMLTV EPG when it can be retrieved by the browser; MultiView for supported streams
-- Browser PiP and fullscreen where available
-- Local JSON Backup/Restore. Data stays in this browser's localStorage, not on GitHub.
+Workflow `.github/workflows/deploy-openiptv-web.yml` dựng Web từ WebView frontend đã kiểm thử, chèn các bản vá riêng trong `web-online/prepare-web.py`, copy tài liệu `huong-dan.html`, kiểm tra JS/HTML rồi xuất GitHub Pages và đồng bộ bản static vào gốc nhánh `web/online`.
 
-## Differences from desktop
+Website: **https://trisanghy.github.io/open-iptv-pro/**.
 
-GitHub Pages serves **only static assets**. It cannot provide native FFmpeg remux, scheduled recording, Timeshift recording, LAN Cast/AirPlay discovery, stream proxy or a server-side CORS bypass. Some HTTP, DRM, MPEG-TS and access-restricted sources will not play. The Web Edition hides the DVR and native FFmpeg buttons.
-
-No playlists or channels are bundled. Use sources you are authorized to view. Backup JSON can include sensitive URLs/PIN, so store it privately.
+Chỉ sử dụng nội dung IPTV bạn có quyền truy cập; không kèm playlist trái phép.
