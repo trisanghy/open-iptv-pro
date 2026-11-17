@@ -364,9 +364,38 @@
   else if(wasBusy.busy)status('Đang tổng hợp giọng · ưu tiên phụ đề mới nhất');
  });
  document.addEventListener('openiptv:media-info',updateSession);
- video.addEventListener('emptied',()=>{if(enabled)resetPlayback();});
- video.addEventListener('pause',()=>{if(enabled)resetPlayback();});
- window.addEventListener('pagehide',()=>{enabled=false;void previewCoordinator.cancel();resetPlayback();restore();if(previewAudio){try{previewAudio.pause();}catch{}previewAudio=null;}});
- setInterval(()=>{updateSession();if(enabled)applyDuck();},700);
+ const haltSpeech=()=>{
+  if(!enabled)return;
+  resetPlayback();speechQueue.setPaused(true);restore();
+  void previewCoordinator.cancel();
+  status('Video đã dừng · TTS và phụ đề tạm ngừng');
+ };
+ let stallTimer=null;
+ const clearStall=()=>{if(stallTimer!==null){clearTimeout(stallTimer);stallTimer=null;}};
+ for(const event of ['pause','ended','emptied','seeking'])
+  video.addEventListener(event,()=>{clearStall();haltSpeech();});
+ for(const event of ['playing','seeked'])video.addEventListener(event,()=>{
+  clearStall();
+  if(enabled&&mediaActive()){speechQueue.setPaused(false);applyDuck();}
+ });
+ for(const event of ['waiting','stalled'])video.addEventListener(event,()=>{
+  clearStall();
+  stallTimer=setTimeout(()=>{
+   stallTimer=null;
+   if(!video.paused&&!video.ended&&video.readyState<3)haltSpeech();
+  },1500);
+ });
+ translate?.addEventListener('change',()=>{
+  // If users disable translation, TTS no longer has its prerequisite.
+  // Do not re-enable Translate or the separate original Caption switch.
+  if(!translate.checked&&toggle.checked){
+   toggle.checked=false;toggle.dispatchEvent(new Event('change',{bubbles:true}));
+  }
+ });
+ window.addEventListener('pagehide',()=>{
+  clearStall();enabled=false;void previewCoordinator.cancel();resetPlayback();restore();
+  if(previewAudio){try{previewAudio.pause();}catch{}previewAudio=null;}
+ });
+ setInterval(()=>{updateSession();if(enabled&&mediaActive())applyDuck();},700);
  void refresh();
 })();
