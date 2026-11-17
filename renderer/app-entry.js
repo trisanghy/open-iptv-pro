@@ -8,7 +8,7 @@
   'doctor-v2.js','smart-discovery-ui.js','doctor-v3.js','backup-ui.js',
   'dvr-ui.js','settings-ui.js','ui-style.js','theme-stage.js','player-ux.js','fullscreen-panels.js',
   'live-captions-v42343.js','local-tts-v42344.js','whisper-auto-v42345.js',
-  'ai-hardware-advice-v42365.js','rust-electron-parity-v23-4.js'
+  'ai-hardware-advice-v42365.js','rust-electron-parity-v23-4.js','rust-ai-settings-v23-6.js'
  ];
  for(const filename of modules){
   await new Promise((resolve,reject)=>{

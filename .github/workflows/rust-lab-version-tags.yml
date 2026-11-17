@@ -10,7 +10,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: rust-lab-release-${{ github.ref }}
+  group: rust-lab-release-${{ github.sha }}
   cancel-in-progress: false
 
 jobs:
@@ -200,6 +200,15 @@ jobs:
             "https://github.com/${GITHUB_REPOSITORY}/archive/refs/tags/${TAG}.zip" \
             --output "dist/OpenIPTVPro-RustLab-v${RELEASE_NO}-Source.zip"
           (cd dist && sha256sum ./*.exe ./*.zip > SHA256SUMS.txt)
+      - name: Prepare release notes matching the immutable version
+        shell: bash
+        env:
+          RELEASE_NO: ${{ needs.tag.outputs.release_number }}
+        run: |
+          set -euo pipefail
+          notes="RELEASE_NOTES_RUST_LAB_V${RELEASE_NO//./_}.md"
+          test -f "$notes" || { echo "::error::Missing release notes: $notes"; exit 1; }
+          cp "$notes" dist/RELEASE_NOTES_CURRENT.md
       - name: Check whether this version already has a release
         id: check
         shell: bash
@@ -219,7 +228,7 @@ jobs:
         with:
           tag_name: ${{ needs.tag.outputs.tag_name }}
           name: Open IPTV Pro Rust Lab v${{ needs.tag.outputs.release_number }} — Windows x64 + macOS (when ready)
-          body_path: RELEASE_NOTES_RUST_LAB_V23_3.md
+          body_path: dist/RELEASE_NOTES_CURRENT.md
           prerelease: true
           make_latest: false
           fail_on_unmatched_files: true

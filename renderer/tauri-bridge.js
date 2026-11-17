@@ -12,6 +12,7 @@
     captionStop: 'caption:stop', captionChooseFile: 'caption:chooseFile',
     captionAutoInstall: 'caption:install',
     captionTranslationStatus: 'caption:translationStatus', captionTranslationInstall: 'caption:translationInstall',
+    captionTestTranslation: 'caption:testTranslation', aiStorageStatus: 'ai:storage', aiRemoveModel: 'ai:removeModel',
     ttsStatus: 'tts:status', ttsInstall: 'tts:install',
     ttsVoiceStatus: 'tts:voiceStatus', ttsVoiceInstall: 'tts:voiceInstall',
     ttsSynthesize: 'tts:synthesize', ttsStop: 'tts:stop',

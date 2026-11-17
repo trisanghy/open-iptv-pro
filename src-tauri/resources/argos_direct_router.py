@@ -10,7 +10,7 @@ import os
 import sys
 from pathlib import Path
 
-LANGS={"vi","en","fr","es","de","zh","ja","ko","pt","it","ru","id","ar","hi","th"}
+LANGS={"vi","en","fr","es","de","zh","ja","ko","pt","it","ru","id","ar","hi","th","tr","nl","pl","uk","sv","ms"}
 MAGIC="OIPTV_ROUTE:"
 
 def codes(args):

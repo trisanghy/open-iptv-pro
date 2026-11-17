@@ -1,161 +1,182 @@
 'use strict';
-// v4.23.43: local Live Caption / English Live Translate controls in playback row 3.
+// v23.6: Electron-style durable Live Caption/Translate intent with real Argos route status.
 (()=>{
- const $=id=>document.getElementById(id);
- const caption=$('liveCaptionToggle'),translate=$('liveTranslateToggle'),status=$('liveCaptionStatus'),box=$('liveCaptionOutput'),video=$('video');
- if(!caption||!translate||!status||!box||!video)return;
- const api=window.streamleaf,ctx=window.IPTVState;
- const setup=$('liveCaptionSetup'),picker=$('liveCaptionSetupPanel');
- const pickWhisper=$('captionChooseBinary'),pickModel=$('captionChooseModel'),target=$('liveTranslateTarget'),installTranslation=$('captionTranslationInstall');
- let activeId=0,currentURL='',busy=false,captionTrack=null,lastTrackCue=null,lastText='',lastTranslate=false,lastTarget='en',lastDetected='',installingPair='',failedPair='';
- const setStatus=s=>{status.textContent=String(s||'').slice(0,170);status.title=status.textContent;};
- const preferredURL=()=>{
-  const c=ctx?.getCurrent?.();
-  return c&&String(c.lastPlayableUrl||c.url||'')||'';
+ const $=id=>document.getElementById(id),api=window.streamleaf,ctx=window.IPTVState;
+ const caption=$('liveCaptionToggle'),translate=$('liveTranslateToggle'),status=$('liveCaptionStatus');
+ const box=$('liveCaptionOutput'),video=$('video'),target=$('liveTranslateTarget');
+ const setup=$('liveCaptionSetup'),panel=$('liveCaptionSetupPanel');
+ const pickWhisper=$('captionChooseBinary'),pickModel=$('captionChooseModel');
+ const installTranslation=$('captionTranslationInstall'),retry=$('captionRetry');
+ const testTranslate=$('captionTestTranslate');
+ if(!api?.captionStart||!caption||!translate||!status||!box||!video||!target)return;
+ let activeId=0,currentURL='',busy=false,queued=false,lastTranslate=false,lastTarget='',lastDetected='';
+ let installingPair='',failedPair='',captionTrack=null,lastTrackCue=null;
+ const preference='rustlab:live-translate-target';
+ try{const saved=localStorage.getItem(preference);if([...target.options].some(o=>o.value===saved))target.value=saved;}catch{}
+ const setStatus=(s,error=false)=>{
+  status.textContent=String(s||'').slice(0,200);status.title=status.textContent;
+  status.dataset.error=error?'true':'false';
+  if(retry)retry.hidden=!error;
  };
+ const preferredURL=()=>{
+  const c=ctx?.getCurrent?.(),manual=$('manualLinkSelect');
+  const link=manual?.value&&/^https?:\/\//i.test(manual.value)?manual.value:
+   (c&&String(c.lastPlayableUrl||c.url||'')||'');
+  return /^https?:\/\//i.test(link)?link:'';
+ };
+ function hideWords(){
+  box.hidden=true;box.textContent='';
+  if(captionTrack&&lastTrackCue){try{captionTrack.removeCue(lastTrackCue);}catch{}lastTrackCue=null;}
+ }
  function showWords(value,translated,language){
   const cleaned=String(value||'').trim();if(!cleaned)return;
-  lastText=cleaned;lastTranslate=!!translated;
-  box.hidden=false;
-  const label=[...target.options].find(o=>o.value===language)?.textContent||language||'English';
+  box.hidden=!!translate.checked;
+  const label=[...target.options].find(o=>o.value===language)?.textContent||language||'';
   box.textContent=(translated?'Dịch '+label+': ':'Phụ đề: ')+cleaned;
-  // Native PiP may render dynamic text track cues if supported by the Chromium build.
-  // This is best-effort and never pretends to provide Chrome's proprietary caption UI.
+  // PiP VTT: live translated target only; no second caption line on the main player.
   if(!('VTTCue' in window)||!Number.isFinite(video.currentTime))return;
   try{
-   if(!captionTrack){captionTrack=video.addTextTrack('captions','Open IPTV Pro Live Caption',language||'en');}
+   if(!captionTrack)captionTrack=video.addTextTrack('captions','Open IPTV Pro Live Caption',language||'en');
    captionTrack.mode=translate.checked&&!document.pictureInPictureElement?'hidden':'showing';
    if(lastTrackCue)captionTrack.removeCue(lastTrackCue);
-   const t=Math.max(0,video.currentTime);
-   lastTrackCue=new window.VTTCue(t,t+13,cleaned);
-   captionTrack.addCue(lastTrackCue);
+   const time=Math.max(0,video.currentTime);
+   lastTrackCue=new window.VTTCue(time,time+13,cleaned);captionTrack.addCue(lastTrackCue);
   }catch{}
- }
- function hideWords(){
-  box.hidden=true;box.textContent='';lastText='';lastTranslate=false;
-  if(captionTrack&&lastTrackCue){try{captionTrack.removeCue(lastTrackCue);}catch{}lastTrackCue=null;}
  }
  async function stop(){
   activeId=0;currentURL='';hideWords();
-  try{await api?.captionStop?.();}catch{}
+  try{await api.captionStop();}catch(e){setStatus('Không dừng được Whisper: '+String(e.message||e),true);}
  }
  async function refreshState(){
-  if(!api?.captionStatus){
-   caption.disabled=true;translate.disabled=true;setup.disabled=true;
-   setStatus('Nhận diện giọng nói chỉ hỗ trợ bản desktop, không dùng tính năng Chrome.');
-   return false;
-  }
   try{
    const data=await api.captionStatus();
-   if(data.available){setStatus('Sẵn sàng · '+(data.modelName||'Whisper local'));return true;}
-   const msg=data.reason||'Cần thiết lập Whisper';
-   setStatus(msg+' · nhấn ⚙');
+   if(data?.available){setStatus('Whisper sẵn sàng · '+(data.modelName||'offline'));return true;}
+   setStatus((data?.reason||'Chưa có Whisper')+' · bật phụ đề để tự cài hoặc nhấn ⚙');
    return false;
-  }catch(e){setStatus(String(e.message||e));return false;}
+  }catch(e){setStatus('Lỗi trạng thái Whisper: '+String(e.message||e),true);return false;}
  }
  async function reconcile(force=false){
-  if(busy)return;
-  const want=caption.checked||translate.checked,url=preferredURL();
-  if(!want||!url){
-   if(activeId||currentURL)await stop();
-   if(want&&!url)setStatus('Chọn một kênh có tiếng để bật phụ đề');
-   return;
-  }
-  const lang=translate.checked?(target?.value||'en'):'en';
-  if(!force&&activeId&&currentURL===url&&translate.checked===lastTranslate&&lang===lastTarget)return;
+  if(busy){queued=true;return;}
+  const want=caption.checked||translate.checked;
+  const url=preferredURL(),lang=translate.checked?target.value:'auto';
+  if(!want){if(activeId||currentURL)await stop();else hideWords();setStatus('Đã tắt phụ đề');return;}
+  if(!url){setStatus('Chưa có URL phát, chọn kênh có tiếng trước',true);return;}
+  if(!force&&activeId&&currentURL===url&&lastTranslate===translate.checked&&lastTarget===lang)return;
   busy=true;
   try{
-   await api.captionStop();
-   activeId=0;currentURL='';hideWords();
-   // Actual spoken language must be known before choosing a translation package.
-   const result=await api.captionStart({url,translate:translate.checked,target:lang});
-   activeId=result.id;currentURL=url;lastTranslate=translate.checked;lastTarget=lang;
-   setStatus(translate.checked?'Đang dịch sang '+(target?.selectedOptions?.[0]?.textContent||lang)+'…':'Đang nhận diện giọng nói…');
+   if(activeId||currentURL)await stop();
+   let ready=await api.captionStatus();
+   if(!ready?.available){
+    if(!api.captionAutoInstall)throw Error(ready?.reason||'Thiếu Whisper local');
+    setStatus('Đang tự cài Whisper offline (chỉ tải lần đầu)…');
+    const installed=await api.captionAutoInstall();
+    ready=await api.captionStatus();
+    if(!installed?.installed||!ready?.available)throw Error(ready?.reason||'Cài Whisper chưa hoàn chỉnh');
+   }
+   if(!(caption.checked||translate.checked))return;
+   const actual=preferredURL(),selected=translate.checked?target.value:'auto';
+   if(!actual){setStatus('Kênh hiện tại không có URL âm thanh',true);return;}
+   const result=await api.captionStart({url:actual,translate:translate.checked,target:selected,engine:'argos'});
+   if(!(caption.checked||translate.checked)){await api.captionStop();return;}
+   activeId=result.id;currentURL=actual;lastTranslate=translate.checked;lastTarget=selected;
+   setStatus(translate.checked?'Đang nhận diện ngôn ngữ → dịch '+(target.selectedOptions?.[0]?.textContent||selected)+'…':'Đang nghe để tạo phụ đề…');
   }catch(e){
-   setStatus('Chưa bật: '+String(e.message||e));
-   // Keep the selected language on screen when only the offline pack is missing.
-   if(!String(e.message||e).includes('Cần cài mô hình dịch')){caption.checked=false;translate.checked=false;}
-  }finally{busy=false;}
+   activeId=0;currentURL='';
+   // Do not silently clear checkboxes; error and explicit retry match Electron behavior.
+   setStatus('Không bật được: '+String(e.message||e).slice(0,150),true);
+  }finally{
+   busy=false;
+   if(queued){queued=false;void reconcile(true);}
+  }
  }
- caption.addEventListener('change',()=>{
+ const changed=()=>{
+  if(translate.checked)caption.checked=true;
   if(!caption.checked)translate.checked=false;
   void reconcile(true);
+ };
+ caption.addEventListener('change',changed);translate.addEventListener('change',changed);
+ target.addEventListener('change',()=>{
+  try{localStorage.setItem(preference,target.value);}catch{}
+  failedPair='';lastDetected='';
+  if(translate.checked)void reconcile(true);
+  else setStatus('Ngôn ngữ đích: '+(target.selectedOptions?.[0]?.textContent||target.value));
  });
- translate.addEventListener('change',()=>{
-  if(translate.checked)caption.checked=true;
-  void reconcile(true);
- });
- target?.addEventListener('change',()=>{lastDetected='';failedPair='';if(translate.checked)void reconcile(true);});
- installTranslation?.addEventListener('click',async()=>{
-  if(!api?.captionTranslationInstall)return;
-  const lang=target?.value||'en',source=lastDetected||'en';if(source===lang){setStatus('Cùng ngôn ngữ · không cần cài mô hình dịch');return;}
-  installTranslation.disabled=true;installTranslation.textContent='Đang cài dịch…';
-  try{
-   setStatus('Đang tự cài mô hình dịch '+(target?.selectedOptions?.[0]?.textContent||lang)+'…');
-   const result=await api.captionTranslationInstall(lang,source);
-   if(!result?.ready)throw Error('Mô hình chưa sẵn sàng');
-   setStatus('Đã cài mô hình dịch '+lang+' · offline');
-   if(translate.checked)await reconcile(true);
-  }catch(e){setStatus('Cài dịch lỗi: '+String(e.message||e).slice(0,125));}
-  finally{installTranslation.disabled=false;installTranslation.textContent='Cài mô hình dịch';}
- });
+ retry?.addEventListener('click',()=>{failedPair='';void reconcile(true);});
  setup?.addEventListener('click',async()=>{
-  picker.hidden=!picker.hidden;
-  setup.setAttribute('aria-expanded',String(!picker.hidden));
-  await refreshState();
+  panel.hidden=!panel.hidden;setup.setAttribute('aria-expanded',String(!panel.hidden));
+  if(!panel.hidden)await refreshState();
  });
- async function choose(which){
+ async function choose(kind){
   try{
-   const data=await api.captionChooseFile(which);
-   if(data?.canceled)return;
-   setStatus('Đã chọn '+(which==='model'?'mô hình':'whisper-cli'));
-   await refreshState();
-   if(caption.checked)await reconcile(true);
-  }catch(e){setStatus('Thiết lập lỗi: '+String(e.message||e));}
+   const result=await api.captionChooseFile(kind);
+   if(result?.canceled)return;
+   await refreshState();if(caption.checked)void reconcile(true);
+  }catch(e){setStatus('Thiết lập Whisper lỗi: '+String(e.message||e),true);}
  }
  pickWhisper?.addEventListener('click',()=>void choose('binary'));
  pickModel?.addEventListener('click',()=>void choose('model'));
- if(api?.captionOnEvent){
-  api.captionOnEvent(e=>{
-   if(!e||!activeId||e.id!==activeId)return;
-   if(e.type==='segment'){
-    lastDetected=e.sourceLanguage||'';
-    showWords(e.text,e.translated,e.language);
-    setStatus(e.route==='same'&&translate.checked
-      ?'Cùng ngôn ngữ '+lastDetected+' · không dịch'
-      :e.translated?'Live Translate · '+lastDetected+' → '+(e.target||'en')+' ('+(e.route||'offline')+')'
-      :'Live Caption · '+lastDetected);
-   }
-   if(e.type==='needs-model'){
-    const source=String(e.sourceLanguage||'').toLowerCase(),to=String(e.target||target?.value||'').toLowerCase();
-    if(!source||!to||source===to)return;
-    lastDetected=source;
-    const key=source+'→'+to;
-    if(installingPair===key||failedPair===key)return;
-    if(!api?.captionTranslationInstall){setStatus('Chưa có mô hình dịch '+key);return;}
-    installingPair=key;setStatus('Đang tự cài tuyến '+key+' trực tiếp nếu có…');
-    Promise.resolve(api.captionTranslationInstall(to,source)).then(()=>{
-      installingPair='';failedPair='';
-      if(translate.checked&&(target?.value===to))void reconcile(true);
-    }).catch(err=>{
-      installingPair='';failedPair=key;
-      setStatus('Cài mô hình '+key+' lỗi: '+String(err.message||err).slice(0,110));
-    });
-   }
-   if(e.type==='status')setStatus(e.message||'');
-   if(e.type==='error'){setStatus(e.message||'Lỗi nhận diện');activeId=0;caption.checked=false;translate.checked=false;}
-   if(e.type==='stopped'&&e.id===activeId){activeId=0;}
-  });
- }
- // Do not leave a stale voice process on channel changes, stop, or window close.
+ installTranslation?.addEventListener('click',async()=>{
+  const to=target.value,from=lastDetected&&lastDetected!==to?lastDetected:(to==='en'?'vi':'en');
+  if(lastDetected===to){setStatus('Cùng ngôn ngữ, không cần bộ dịch');return;}
+  installTranslation.disabled=true;
+  try{
+   setStatus('Đang cài Argos '+from+' → '+to+' (tải một lần)…');
+   const result=await api.captionTranslationInstall(to,from);
+   if(!result?.ready)throw Error('Không cài được cặp ngôn ngữ');
+   failedPair='';setStatus('Sẵn sàng '+from+' → '+to+' ('+(result.route||'offline')+')');
+   if(translate.checked)void reconcile(true);
+  }catch(e){setStatus('Cài dịch lỗi: '+String(e.message||e).slice(0,150),true);}
+  finally{installTranslation.disabled=false;}
+ });
+ testTranslate?.addEventListener('click',async()=>{
+  if(!api.captionTestTranslation)return setStatus('Chưa có chức năng kiểm tra',true);
+  testTranslate.disabled=true;
+  try{
+   setStatus('Đang chạy bản dịch thử với Argos offline…');
+   const result=await api.captionTestTranslation(target.value);
+   if(!result?.translatedText)throw Error('Không có văn bản đầu ra');
+   setStatus('Dịch mẫu thành công ('+result.sourceLanguage+' → '+target.value+'): '+result.translatedText);
+  }catch(e){setStatus('Dịch mẫu lỗi: '+String(e.message||e).slice(0,140),true);}
+  finally{testTranslate.disabled=false;}
+ });
+ if(api.captionOnEvent)api.captionOnEvent(e=>{
+  if(!e||!activeId||e.id!==activeId)return;
+  if(e.type==='segment'){
+   lastDetected=String(e.sourceLanguage||'');
+   status.dataset.sourceLanguage=lastDetected;
+   showWords(e.text,e.translated,e.language);
+   setStatus(e.route==='same'&&translate.checked?'Đang nói tiếng '+lastDetected+' · không cần dịch':
+    e.translated?'Live Translate · '+lastDetected+' → '+(e.target||target.value)+' ('+(e.route||'offline')+')':
+    'Live Caption · '+lastDetected);
+  }
+  if(e.type==='needs-model'){
+   const from=String(e.sourceLanguage||'').toLowerCase(),to=String(e.target||target.value).toLowerCase();
+   if(!from||!to||from===to)return;
+   lastDetected=from;status.dataset.sourceLanguage=from;
+   const key=from+'→'+to;
+   if(installingPair===key||failedPair===key)return;
+   const auto=$('autoInstallTranslation');
+   if(auto&&!auto.checked){setStatus('Cần mô hình '+key+' · mở ⚙ để cài',true);return;}
+   installingPair=key;setStatus('Đang cài Argos '+key+' theo ngôn ngữ gốc thực tế…');
+   Promise.resolve(api.captionTranslationInstall(to,from)).then(result=>{
+    if(!result?.ready)throw Error('Bộ dịch chưa sẵn sàng');
+    installingPair='';failedPair='';
+    if(translate.checked&&target.value===to)void reconcile(true);
+   }).catch(err=>{
+    installingPair='';failedPair=key;
+    setStatus('Cài bộ dịch '+key+' lỗi: '+String(err.message||err).slice(0,110),true);
+   });
+  }
+  if(e.type==='status')setStatus(e.message||'');
+  if(e.type==='error'){activeId=0;setStatus(e.message||'Lỗi nhận diện',true);}
+  if(e.type==='stopped'&&e.id===activeId)activeId=0;
+ });
  let observed='';
  setInterval(()=>{
-  const u=preferredURL();
-  if(u!==observed){observed=u;if(caption.checked)void reconcile(true);else if(activeId)void stop();}
+  const url=preferredURL();
+  if(url!==observed){observed=url;if(caption.checked)void reconcile(true);else if(activeId)void stop();}
  },1400);
  window.addEventListener('pagehide',()=>{void stop();});
- document.addEventListener('openiptv:media-info',()=>{
-  if(!ctx?.getCurrent?.()&&activeId)void stop();
- });
+ document.addEventListener('openiptv:media-info',()=>{if(!ctx?.getCurrent?.()&&activeId)void stop();});
  void refreshState();
 })();

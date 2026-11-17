@@ -1,5 +1,5 @@
 //! Open IPTV Pro Rust Lab: optional local Whisper / Piper / Argos services.
-//! v20 port based on the user's Electron v4.23.45 source. No cloud speech API.
+//! v23.6 Electron parity: offline route probing, self-test and app-private AI inventory. No cloud speech API.
 //! Downloads require explicit UI action; pinned SHA-256 and app-private directories.
 use std::{fs, path::{Path,PathBuf}, sync::{Arc,atomic::{AtomicBool,AtomicU64,Ordering}}, time::Duration};
 use tokio::{process::{Command,Child,ChildStdin}, sync::Mutex, io::{AsyncWriteExt,AsyncBufReadExt,BufReader}, process::ChildStdout};
@@ -408,7 +408,7 @@ pub fn translation_status(ai:&LocalAi,lang:&str)->Value{
 async fn argos_command(ai:&LocalAi,action:&str,source:&str,target:&str,input:Option<&str>)->Result<String,String>{
  let python=tts_python(ai);
  if !exists(&python,1){return Err("Chưa cài Argos offline".into());}
- let script=ai.tts_root().join("argos_direct_router.py");
+ let script=ai.tts_root().join("argos_direct_router_v23_6.py");
  tokio::fs::create_dir_all(ai.tts_root()).await.map_err(error)?;
  if !exists(&script,100){
   tokio::fs::write(&script,include_str!("../resources/argos_direct_router.py")).await.map_err(error)?;
@@ -434,7 +434,9 @@ async fn argos_command(ai:&LocalAi,action:&str,source:&str,target:&str,input:Opt
 }
 async fn argos_plan(ai:&LocalAi,source:&str,target:&str)->Result<String,String>{
  if source==target{return Ok("same".into());}
- if !exists(&tts_python(ai),1){return Ok(if target=="en"{"whisper"}else{"needs-model"}.into());}
+ if !exists(&tts_python(ai),1)||!exists(&tts_exe(ai,"argos-translate"),1){
+  return Ok(if target=="en"{"whisper"}else{"needs-model"}.into());
+ }
  let output=argos_command(ai,"route",source,target,None).await?;
  let line=output.lines().find_map(|l|l.strip_prefix("OIPTV_ROUTE:"))
   .ok_or("Không nhận được kế hoạch dịch Argos")?;
@@ -473,10 +475,95 @@ pub async fn translation_install(app:AppHandle,ai:Arc<LocalAi>,target:&str,sourc
    tokio::fs::write(ai.tts_root().join("installed-pairs.json"),serde_json::to_vec(&value).map_err(error)?).await.map_err(error)?;
   }
   caption_progress(&app,&format!("Sẵn sàng: {src} → {dst} ({})",report["route"].as_str().unwrap_or("offline")));
-  Ok(json!({"installed":true,"target":dst,"source":src,"route":report["route"],"ready":true}))
+  Ok(json!({"installed":matches!(report["route"].as_str(),Some("direct"|"pivot")),"target":dst,"source":src,"route":report["route"],"ready":true}))
  }.await;
  ai.installing_tts.store(false,Ordering::SeqCst);
  result
+}
+/// Probe actual local routes instead of trusting legacy en→target install flags.
+pub async fn translation_pair_status(ai:&LocalAi,target:&str,source:&str)->Value{
+ let supported=translation_supported(target)&&translation_supported(source);
+ if !supported{return json!({"supported":false,"ready":false,"source":source,"target":target,"reason":"Ngôn ngữ chưa được bộ dịch Argos hỗ trợ"});}
+ if source==target{return json!({"supported":true,"ready":true,"source":source,"target":target,"route":"same","offline":true});}
+ match argos_plan(ai,source,target).await{
+  Ok(route)=>{
+   let ready=matches!(route.as_str(),"same"|"direct"|"pivot"|"whisper");
+   json!({"supported":true,"ready":ready,"source":source,"target":target,
+    "route":route,"installed":matches!(route.as_str(),"direct"|"pivot"),
+    "installing":ai.installing_tts.load(Ordering::SeqCst),"offline":true,
+    "reason":if ready{""}else{"Thiếu bộ dịch offline cho cặp ngôn ngữ này"}})
+  },
+  Err(e)=>json!({"supported":true,"ready":false,"source":source,"target":target,"reason":e})
+ }
+}
+/// Exercise a real installed Argos text route. Never report success for an unavailable MLX engine.
+pub async fn translation_test(app:AppHandle,ai:Arc<LocalAi>,target:&str)->Result<Value,String>{
+ if !translation_supported(target){return Err("Ngôn ngữ đích chưa được hỗ trợ".into());}
+ let (source,phrase)=if target=="en"{("vi","Xin chào, cảm ơn bạn đã đến.")}else{("en","Hello, welcome to our live channel.")};
+ let mut route=argos_plan(&ai,source,target).await?;
+ if route=="needs-model"{
+  let installed=translation_install(app,ai.clone(),target,source).await?;
+  if installed["ready"]!=true{return Err("Không cài được bộ dịch mẫu".into());}
+  route=argos_plan(&ai,source,target).await?;
+ }
+ if !matches!(route.as_str(),"direct"|"pivot"){
+  return Err("Dịch thử văn bản cần cặp Argos đã cài. Dự phòng Whisper chỉ áp dụng cho âm thanh đang phát.".into());
+ }
+ let translated=argos_translate(&ai,source,target,phrase).await?;
+ Ok(json!({"sourceLanguage":source,"target":target,"translatedText":translated,"sourceText":phrase,"engine":"argos","route":route}))
+}
+/// Only inspect app-managed assets; ignore external models and symbolic links.
+fn asset_bytes(path:&Path,depth:u8)->u64{
+ if depth>12{return 0;}
+ let meta=match fs::symlink_metadata(path){Ok(m)=>m,Err(_)=>return 0};
+ if meta.file_type().is_symlink(){return 0;}
+ if meta.is_file(){return meta.len();}
+ if !meta.is_dir(){return 0;}
+ fs::read_dir(path).map(|items|items.flatten().take(30000).map(|e|asset_bytes(&e.path(),depth+1)).sum()).unwrap_or(0)
+}
+fn ai_asset_location(ai:&LocalAi,id:&str)->Result<(PathBuf,&'static str),String>{
+ let root=ai.tts_root();
+ match id{
+  "whisper"=>Ok((ai.caption_root().join("auto"),"Whisper tự động")),
+  "argos"=>Ok((root.join("argos-packages"),"Bộ dịch Argos")),
+  "piper"=>Ok((root.join("voices"),"Giọng đọc Piper")),
+  "vieneu"=>Ok((root.join("huggingface"),"Giọng VieNeu")),
+  "runtimes"=>Ok((root.join("python-env"),"Môi trường AI Python")),
+  "cache"=>Ok((root.join("uv-cache"),"Bộ nhớ đệm AI")),
+  _=>Err("Chỉ được quản lý mô hình trong thư mục riêng Rust Lab".into())
+ }
+}
+pub fn ai_storage_status(ai:&LocalAi)->Value{
+ let mut storage=Vec::new();let mut total=0u64;
+ for id in ["whisper","argos","piper","vieneu","runtimes","cache"]{
+  if let Ok((path,label))=ai_asset_location(ai,id){
+   let bytes=asset_bytes(&path,0);total=total.saturating_add(bytes);
+   storage.push(json!({"id":id,"label":label,"bytes":bytes,"present":bytes>0}));
+  }
+ }
+ json!({"storage":storage,"totalBytes":total,"caption":caption_status(ai),
+  "argosInstalled":exists(&tts_exe(ai,"argos-translate"),1),
+  "supportedEngines":["auto","argos"],"mlxAvailable":false})
+}
+pub async fn ai_remove_model(ai:&LocalAi,id:&str)->Result<Value,String>{
+ if ai.installing_caption.load(Ordering::SeqCst)||ai.installing_tts.load(Ordering::SeqCst){
+  return Err("Đang cài AI; không thể xóa trong khi tải.".into());
+ }
+ let (path,_label)=ai_asset_location(ai,id)?;
+ if path.symlink_metadata().is_ok_and(|m|m.file_type().is_symlink()){
+  return Err("Không xóa đường dẫn liên kết tượng trưng".into());
+ }
+ caption_stop(ai).await;
+ tts_stop(ai).await;
+ if id=="vieneu"||id=="runtimes"{
+  let mut slot=ai.natural_worker.lock().await;
+  if let Some(mut worker)=slot.take(){let _=worker.child.start_kill();}
+ }
+ let freed=asset_bytes(&path,0);
+ if path.exists(){tokio::fs::remove_dir_all(&path).await.map_err(error)?;}
+ if id=="argos"||id=="runtimes"{let _=tokio::fs::remove_file(ai.tts_root().join("installed-pairs.json")).await;}
+ if id=="vieneu"||id=="runtimes"{let _=tokio::fs::remove_file(ai.tts_root().join("vieneu-ready.json")).await;}
+ Ok(json!({"removed":id,"freed":freed,"status":ai_storage_status(ai)}))
 }
 async fn speech_translate(ai:&LocalAi,source:&str,target:&str,speech:&str,english_fallback:&str)->Result<String,String>{
  if source==target{return Ok(speech.to_owned());}

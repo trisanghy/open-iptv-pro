@@ -104,7 +104,7 @@
    // Reduce only the IPTV source, never the separately generated speech.
    applyDuck();
    await audio.play();
-   if(output&&result.translatedText&&lang!=='en'){
+   if(output&&result.translatedText&&lang!=='en'&&!translate?.checked){
     output.hidden=false;
     output.textContent='Dịch '+lang+': '+result.translatedText.slice(0,320);
    }

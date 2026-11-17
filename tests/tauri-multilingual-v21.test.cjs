@@ -28,7 +28,7 @@ test('backend exposes offline translation status/install separate from TTS voice
 });
 test('Whisper English intermediate is retained for optional Piper voiceover',()=>{
  assert.match(bridge,/opts\["target"\]/);
- assert.ok(ui.includes('captionStart({url,translate:translate.checked,target:lang})'));
+ assert.match(ui,/await api\.captionStart\(\{url:actual,translate:translate\.checked,target:selected,engine:'argos'\}\)/);
  assert.match(rust,/originalText/);
  assert.ok(tts.includes('const payload={text,sourceLanguage,englishFallbackText:englishFallback}'));
  assert.match(rust,/argos_plan\(&ai_clone,&source,&target\)\.await\?/);

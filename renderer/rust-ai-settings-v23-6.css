@@ -1,0 +1,44 @@
+/* Rust Lab v23.6 — Electron-inspired compact local AI management */
+#page-tv .caption-third-row:has(.rust-ai-unified){position:relative}
+#page-tv #liveCaptionSetupPanel.rust-ai-unified:not([hidden]){
+ display:block!important;width:100%!important;flex:1 1 100%!important;min-width:0;
+ margin:5px 0 2px!important;padding:20px!important;border:1px solid #334d61;
+ border-radius:18px;background:#0e1e2b;color:#e8f2fa;box-shadow:0 8px 22px #050d1570;
+}
+#page-tv .rust-ai-heading{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:0 2px 16px;border-bottom:1px solid #344858}
+#page-tv .rust-ai-heading h3{margin:0 0 4px;font-size:19px;line-height:1.3}
+#page-tv .rust-ai-heading p{margin:0;font-size:13px;color:#a4bacb;line-height:1.5}
+#page-tv .rust-ai-privacy{color:#afc8d8;background:#1c3344;border:1px solid #3a586b;border-radius:20px;padding:7px 11px;white-space:nowrap;font-size:12px}
+#page-tv .rust-ai-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px;margin-top:16px}
+#page-tv .rust-ai-card{padding:17px;min-width:0;border:1px solid #344f61;border-radius:14px;background:#0b1b28;display:flex;flex-direction:column;gap:13px}
+#page-tv .rust-ai-recognition,#page-tv .rust-ai-storage{grid-column:1/-1}
+#page-tv .rust-ai-card-heading{display:flex;align-items:center;gap:10px;padding:0 0 12px;border-bottom:1px solid #314757}
+#page-tv .rust-ai-card-heading h4{font-size:15px!important;margin:0;font-weight:680;color:#eff7ff}
+#page-tv .rust-ai-index{padding:6px 8px;border-radius:8px;background:#223b4d;color:#bad2e1;font-size:12px;font-weight:700}
+#page-tv .rust-ai-actions{display:flex;flex-wrap:wrap;gap:9px;align-items:center}
+#page-tv .rust-ai-actions button,#page-tv button.rust-ai-action{
+ padding:10px 12px!important;height:auto!important;min-height:36px!important;
+ background:#1b3041;color:#edf4ff;border:1px solid #486176;border-radius:11px;
+ font-size:12px;font-weight:630;cursor:pointer;max-width:100%;white-space:normal;
+}
+#page-tv .rust-ai-actions button:hover,#page-tv button.rust-ai-action:hover{background:#28465b}
+#page-tv .rust-ai-actions button:disabled,#page-tv button.rust-ai-action:disabled{opacity:.6;cursor:wait}
+#page-tv .rust-ai-recognition #captionAutoInstall{background:#183c36;border-color:#3a806b}
+#page-tv .rust-ai-muted{margin:0!important;font-size:12px;line-height:1.65;color:#afc4d2}
+#page-tv .rust-ai-field{display:grid;gap:8px}
+#page-tv .rust-ai-field label{font-size:13px;font-weight:650;color:#d8e3ee}
+#page-tv .rust-ai-field select{width:100%!important;max-width:none!important;min-height:41px!important;padding:7px 10px!important;line-height:1.3;background:#192e3e;color:#f5faff;border:1px solid #49647a;border-radius:9px}
+#page-tv .rust-ai-checkbox{font-size:12px!important;color:#d3e4ee;display:flex;align-items:center;gap:8px;line-height:1.5}
+#page-tv .rust-ai-checkbox input{accent-color:#4ecca4}
+#page-tv .rust-ai-storage-total{font-size:13px;color:#bfd0df}
+#page-tv .rust-ai-storage-details summary{font-size:13px;cursor:pointer;padding:10px 0;color:#dce9f7}
+#page-tv .rust-ai-storage-list{display:grid;gap:8px;margin:8px 0}
+#page-tv .rust-ai-storage-item{border:1px solid #324a5a;border-radius:9px;background:#142838;padding:10px;display:flex;justify-content:space-between;align-items:center;gap:12px}
+#page-tv .rust-ai-storage-item strong{display:block;font-size:12px;color:#f0f6ff}
+#page-tv .rust-ai-storage-item small{display:block;margin-top:5px;font-size:11px;color:#a9becc}
+#page-tv .rust-ai-status{margin:15px 0 0!important;font-size:12px;color:#a8c3d7;padding:9px;background:#152b39;border-radius:9px}
+#page-tv .rust-ai-status[data-error="true"]{color:#ffccad}
+#page-tv #captionRetry:not([hidden]){background:#6d3b2b;color:#fff;border:1px solid #a76c48;border-radius:7px;padding:5px 9px;white-space:nowrap}
+#page-tv #liveCaptionStatus[data-error="true"]{color:#f3ae9c}
+@media(max-width:900px){#page-tv .rust-ai-grid{grid-template-columns:1fr}#page-tv .rust-ai-card{grid-column:1/-1}}
+@media(max-width:600px){#page-tv #liveCaptionSetupPanel.rust-ai-unified:not([hidden]){padding:12px!important}#page-tv .rust-ai-heading{align-items:flex-start;flex-wrap:wrap}#page-tv .rust-ai-storage-item{flex-wrap:wrap}}
