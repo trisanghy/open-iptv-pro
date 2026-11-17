@@ -33,3 +33,16 @@
  #page-tv .openiptv-video-translation-overlay,
  .openiptv-video-translation-overlay{font-size:clamp(14px,3.2vw,24px);bottom:5%}
 }
+
+/* The fullscreen toolbar occupies a separate bottom strip. Place CC above it,
+   and return CC to the true video bottom when fullscreen controls auto-hide. */
+#playerBox:fullscreen > .openiptv-video-translation-overlay {
+ z-index:120!important;
+ max-height:calc(100% - var(--fullscreen-toolbar-height,82px) - 24px);
+}
+#playerBox:fullscreen:not(.player-idle) > .openiptv-video-translation-overlay[data-cc-position="bottom"] {
+ bottom:calc(var(--fullscreen-toolbar-height,82px) + 3%)!important;
+}
+#playerBox:fullscreen.player-idle > .openiptv-video-translation-overlay[data-cc-position="bottom"] {
+ bottom:4%!important;
+}
