@@ -50,8 +50,13 @@ test('Live Caption switches OFF while Translate and TTS remain ON',async()=>{
  a.change('liveCaptionToggle',true);
  a.change('liveTranslateToggle',true);
  a.change('liveTtsToggle',true);
+ await settle();
+ const startsBefore=a.callbacks.captionStart.length;
+ const stopsBefore=a.callbacks.captionStop.length;
  a.change('liveCaptionToggle',false);
  await settle();
+ assert.equal(a.callbacks.captionStart.length,startsBefore,'Hiding original captions must not restart the translation worker');
+ assert.equal(a.callbacks.captionStop.length,stopsBefore,'Hiding original captions must not stop Whisper used by translation');
  assert.equal(a.nodes.liveCaptionToggle.checked,false,'Caption must stay OFF');
  assert.equal(a.nodes.liveTranslateToggle.checked,true,'Translation stays enabled');
  assert.equal(a.nodes.liveTtsToggle.checked,true,'Voice stays enabled');

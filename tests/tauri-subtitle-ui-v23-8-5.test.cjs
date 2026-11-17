@@ -17,12 +17,12 @@ test('CC settings are independently persisted and loaded with the renderer',()=>
 });
 test('Video pause terminates recognition, cancels old TTS audio and prevents new words',()=>{
  const cap=read('renderer/live-captions-v42343.js'),tts=read('renderer/local-tts-v42344.js');
- assert.ok(cap.includes("video.addEventListener(event,halt)"));
+ assert.ok(cap.includes("video.addEventListener(event,()=>{clearStall();halt();})"));
  assert.ok(cap.includes("video.addEventListener('playing'"));
  assert.ok(cap.includes('ticket!==lifecycle'));
  assert.ok(cap.includes('!mediaActive()'));
  assert.ok(cap.includes("new CustomEvent('rustlab:caption-clear')"));
- assert.ok(tts.includes("video.addEventListener(event,suspendSpeech)"));
+ assert.ok(tts.includes("video.addEventListener(event,()=>{clearStall();suspendSpeech();})"));
  assert.ok(tts.includes('video.paused||video.ended'));
  assert.ok(tts.includes('resetPlayback();recentSpeech.clear();restore()'));
  assert.ok(tts.includes('generation!==taskId'));

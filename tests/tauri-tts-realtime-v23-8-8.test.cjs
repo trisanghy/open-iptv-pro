@@ -17,13 +17,14 @@ test('VieNeu worker is preloaded without downloading and reused for successive p
 });
 test('TTS starts short chunks rapidly, drops stale backlog, resumes without ghost speech',()=>{
  const js=read('renderer/local-tts-v42344.js');
- for(const value of ['speechChunks=value=>','chunk.length+word.length>105','prewarm();',
+ for(const value of ['speechChunks=value=>','parts.length===0?60:105','prewarm();',
   'Date.now()-began>25000','generation!==taskId','if(i>0&&queued)break',
   "ttsEvent('tts-start'","ttsEvent('tts-end'",'releasePlayback=done','sourceLanguage:payload.sourceLanguage',
   'function applyDuck()', 'function acceptSpeech(', 'recentSpeech.clear()'])
   assert.ok(js.includes(value),value);
  assert.ok(js.includes('if(busy||playing||previewInFlight||previewAudio){queued=payload;return;}'));
  assert.match(js,/return parts; \/\/ Keep the whole phrase/);
+ assert.ok(js.includes('nextAudioResult=synthesizeChunk(chunks[i+1])'));
 });
 test('On-video caption follows the phrase being spoken, and restores normal overlay afterwards',()=>{
  const src=read('renderer/rust-subtitle-controls-v23-8-5.js');

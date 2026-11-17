@@ -1,8 +1,21 @@
 # Open IPTV Pro · Rust Lab
 
-**Phiên bản nguồn: `4.23.17-tauri.19` · Nhánh thử nghiệm: `experiment/rust-tauri-v2`**
+**Phiên bản nguồn: `4.23.17-tauri.23.8.11` · Nhánh thử nghiệm: `experiment/rust-tauri-v2`**
 
 > Đây là phiên bản thử nghiệm chuyển ứng dụng Open IPTV Pro từ Electron sang **Tauri 2 + Rust** trên Windows/macOS. Nhánh này độc lập với `main`; không thay thế bản Electron và không tự xóa/chuyển dữ liệu của bản chính. Một số tính năng chưa tương đương hoặc chưa được kiểm chứng trên thiết bị thực.
+
+
+## Rust Lab v23.8.11 · Bản sửa phụ đề và giọng đọc
+
+**Bảng CC:** Nút CC cạnh cài đặt Whisper mở giao diện phụ đề ngay trên video, chọn hiển thị/tắt, gốc/dịch/cả hai, vị trí trên/giữa/dưới, 4 cỡ chữ, 6 font hệ thống có fallback tiếng Trung/Việt, màu chữ, viền, nền và độ đậm nền. Tùy chọn được lưu lại.
+
+**Độc lập ba công tắc:** Live Caption chỉ bật/tắt dòng phụ đề gốc; tắt Caption trong khi Translate/TTS chạy không khởi động lại Whisper hoặc bật lại Caption.
+
+**Bám video:** Pause, ended, seeking, emptied hủy ngay phụ đề và TTS; waiting/stalled kéo dài hơn 1,4 giây hủy nội dung cũ và đợi playing mới nhận diện lại. Đổi nguồn hoặc đổi mô hình làm vô hiệu hóa tác vụ đọc cũ.
+
+**Giảm độ trễ TTS:** giọng VieNeu được prewarm, câu đầu chia khoảng 60 ký tự để đọc nhanh hơn, chuẩn bị WAV tiếp theo khi đang phát âm thanh đoạn trước; câu phụ đề mới được ưu tiên hơn nội dung cũ. Không đảm bảo độ trễ bằng 0 vì tốc độ phụ thuộc AI/hardware.
+
+**Build Mac cá nhân:** script duy nhất vẫn xuất `.app` và mở Finder; GitHub Release của Rust Lab tạo DMG + Source, không ảnh hưởng `main` hay Release Electron.
 
 ## Giới thiệu
 
