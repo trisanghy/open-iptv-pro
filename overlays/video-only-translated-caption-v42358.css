@@ -1,0 +1,28 @@
+/* v4.23.58: only one Live Caption/Translate overlay, over the VIDEO.
+   Hide the former transcript strip regardless of older !important rules. */
+#page-tv .player-control-card #liveCaptionOutput,
+#page-tv #liveCaptionOutput{
+ display:none!important;
+}
+#page-tv .openiptv-video-translation-anchor,
+.openiptv-video-translation-anchor {
+ position:relative;
+}
+#page-tv .openiptv-video-translation-overlay,
+.openiptv-video-translation-overlay {
+ display:flex!important;position:absolute!important;
+ z-index:80;left:3%;right:3%;bottom:4%;
+ justify-content:center;align-items:center;
+ pointer-events:none;box-sizing:border-box;
+ padding:0;overflow:visible;
+ font-size:clamp(16px,2.15vw,36px);font-weight:650;
+ line-height:1.32;text-align:center;white-space:pre-wrap;
+ color:#fff;overflow-wrap:anywhere;
+ text-shadow:0 1px 4px #000,0 2px 8px #000;
+}
+#page-tv .openiptv-video-translation-overlay[hidden],
+.openiptv-video-translation-overlay[hidden]{display:none!important}
+@media (max-width:660px){
+ #page-tv .openiptv-video-translation-overlay,
+ .openiptv-video-translation-overlay{font-size:clamp(14px,3.2vw,24px);bottom:5%}
+}
