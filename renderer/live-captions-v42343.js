@@ -23,7 +23,8 @@
   // This is best-effort and never pretends to provide Chrome's proprietary caption UI.
   if(!('VTTCue' in window)||!Number.isFinite(video.currentTime))return;
   try{
-   if(!captionTrack){captionTrack=video.addTextTrack('captions','Open IPTV Pro Live Caption',language||'en');captionTrack.mode='showing';}
+   if(!captionTrack){captionTrack=video.addTextTrack('captions','Open IPTV Pro Live Caption',language||'en');}
+   captionTrack.mode=translate.checked&&!document.pictureInPictureElement?'hidden':'showing';
    if(lastTrackCue)captionTrack.removeCue(lastTrackCue);
    const t=Math.max(0,video.currentTime);
    lastTrackCue=new window.VTTCue(t,t+13,cleaned);

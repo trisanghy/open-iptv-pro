@@ -1,0 +1,18 @@
+/* Rust v23.4: translated subtitles only over original video, compact AI row. */
+#page-tv .player-box{position:relative}
+#page-tv #rustTranslatedCaption.rust-translated-caption:not([hidden]){
+ display:block!important;position:absolute;left:7%;right:7%;bottom:8%;z-index:27;
+ pointer-events:none;box-sizing:border-box;margin:auto;padding:8px 16px;max-width:86%;width:max-content;
+ text-align:center;white-space:normal;overflow-wrap:anywhere;border-radius:10px;
+ background:rgba(0,0,0,.72);color:#fff;font-size:clamp(15px,1.65vw,26px);
+ line-height:1.4;font-weight:650;text-shadow:0 1px 2px #000;
+}
+#page-tv:has(#liveTranslateToggle:checked) #liveCaptionOutput{display:none!important}
+#page-tv .caption-third-controls #liveTtsVoice[hidden],
+#page-tv .caption-third-controls #liveTtsVoicePreview[hidden]{display:none!important}
+#page-tv .caption-third-controls #liveTtsInstall{flex:0 1 auto!important;max-width:155px!important}
+#page-tv .caption-third-controls .caption-ai-main,#page-tv .caption-third-controls .caption-tts-main{min-width:0!important}
+.rust-ai-hardware-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(175px,1fr));gap:9px;margin:12px 0}
+.rust-ai-hardware-item{display:grid;gap:5px;padding:10px 12px;border:1px solid var(--edge,#304354);border-radius:10px;background:var(--surface2,#162532)}
+.rust-ai-hardware-item strong{font-size:12px}.rust-ai-hardware-item small{font-size:11px;line-height:1.5}
+@media(max-width:800px){#page-tv #rustTranslatedCaption.rust-translated-caption:not([hidden]){font-size:15px;bottom:11%}}

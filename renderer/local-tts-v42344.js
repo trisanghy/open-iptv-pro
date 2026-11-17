@@ -3,11 +3,15 @@
 (()=>{
  const $=id=>document.getElementById(id),api=window.streamleaf,video=$('video'),toggle=$('liveTtsToggle');
  const target=$('liveTtsLanguage'),duck=$('liveTtsDuck'),install=$('liveTtsInstall'),info=$('liveTtsStatus');
- const voice=$('liveTtsVoice'),preview=$('liveTtsVoicePreview');
+ const voice=$('liveTtsVoice'),preview=$('liveTtsVoicePreview'),speed=$('liveTtsSpeed');
  const captions=$('liveCaptionToggle'),translate=$('liveTranslateToggle'),output=$('liveCaptionOutput');
  if(!toggle||!target||!duck||!install||!info||!api?.ttsStatus||!video)return;
- let enabled=false,playing=null,previewAudio=null,taskId=0,busy=false,queued='',sourceId='',ducked=false,baseVolume=0.8,validSession=0;
+ let enabled=false,playing=null,previewAudio=null,taskId=0,busy=false,queued='',sourceId='',ducked=false,baseVolume=0.8,validSession=0,previewInFlight=false,previewTicket=0;
  const recentSpeech=new Map(),DEDUP_MS=45000;
+ const bounded=async(promise,ms)=>{let timer;try{return await Promise.race([promise,new Promise((_,reject)=>{timer=setTimeout(()=>reject(Error('Quá thời gian tổng hợp giọng')),ms);})]);}finally{clearTimeout(timer);}};
+ const playbackSpeed=()=>{const n=Number(speed?.value||1);return Number.isFinite(n)?Math.max(.6,Math.min(2,n)):1;};
+ if(speed){try{const saved=localStorage.getItem('rustlab-tts-speed-v23-4');if([...speed.options].some(o=>o.value===saved))speed.value=saved;}catch{}}
+ speed?.addEventListener('change',()=>{try{localStorage.setItem('rustlab-tts-speed-v23-4',speed.value);}catch{}if(playing)playing.playbackRate=playbackSpeed();if(previewAudio)previewAudio.playbackRate=playbackSpeed();});
  function normalizeSpeech(value){
   return String(value||'').normalize('NFKC').toLocaleLowerCase()
    .replace(/[\p{P}\p{S}]/gu,' ').replace(/\s+/g,' ').trim();
@@ -58,7 +62,7 @@
  video.addEventListener('playing',()=>{if(enabled)applyDuck();});
  video.addEventListener('loadedmetadata',()=>{if(enabled)applyDuck();});
  function resetPlayback(){
-  taskId++;queued='';busy=false;
+  taskId++;previewTicket++;previewInFlight=false;queued='';busy=false;
   const audio=playing;playing=null;
   if(audio){try{audio.pause();audio.src='';audio.load();}catch{}}
   if(previewAudio){try{previewAudio.pause();previewAudio.src='';previewAudio.load();}catch{}previewAudio=null;}
@@ -82,17 +86,18 @@
   if(translate&&!translate.checked){translate.checked=true;translate.dispatchEvent(new Event('change',{bubbles:true}));}
  }
  async function speak(input){
-  if(!enabled||busy||playing||!input)return;
+  if(!enabled||busy||playing||previewInFlight||previewAudio||!input||input.enqueuedAt&&Date.now()-input.enqueuedAt>25000)return;
   const payload=typeof input==='string'?{text:input,sourceLanguage:'en'}:input;
   const text=String(payload.text||'').trim();if(!text)return;
-  busy=true;const generation=taskId,lang=target.value,src=source();
+  busy=true;const generation=taskId,lang=target.value,src=source(),began=Date.now();
   try{
-   const result=await api.ttsSynthesize({target:lang,voice:selectedVoice(),text:text.slice(0,360),sourceLanguage:payload.sourceLanguage,englishFallbackText:payload.englishFallbackText||''});
+   const result=await bounded(api.ttsSynthesize({target:lang,voice:selectedVoice(),text:text.slice(0,360),sourceLanguage:payload.sourceLanguage,englishFallbackText:payload.englishFallbackText||''}),45000);
+    if(Date.now()-began>25000)return;
    if(!enabled||generation!==taskId||source()!==src)return;
    if(!result?.audioBase64||result.mime!=='audio/wav')throw Error('Không nhận được WAV từ Piper');
    const url='data:audio/wav;base64,'+result.audioBase64;
    const audio=new Audio(url);playing=audio;
-   audio.volume=1;
+   audio.volume=1;audio.playbackRate=playbackSpeed();
    audio.addEventListener('ended',()=>{if(playing!==audio)return;playing=null;
     status('Đã đọc xong ('+lang+')');if(queued){const pending=queued;queued='';void speak(pending);}}, {once:true});
    audio.addEventListener('error',()=>{if(playing!==audio)return;playing=null;status('Lỗi phát âm thanh TTS');},{once:true});
@@ -107,7 +112,7 @@
   }catch(e){
    if(playing){try{playing.pause();}catch{}playing=null;}
    if(enabled&&generation===taskId)status('TTS: '+String(e.message||e).slice(0,130));
-  }finally{busy=false;}
+  }finally{busy=false;if(enabled&&!playing&&!previewAudio&&!previewInFlight&&queued){const next=queued;queued='';void speak(next);}}
  }
  function updateSession(){
   const id=source();
@@ -127,22 +132,24 @@
  voice?.addEventListener('change',()=>{resetPlayback();void refresh();});
  preview?.addEventListener('click',async()=>{
   if(target.value!=='vi'||!api.ttsSynthesize)return;
-  resetPlayback();
+  resetPlayback();const ticket=++previewTicket;previewInFlight=true;
   preview.disabled=true;
   try{
    const ready=await refresh();
    if(!ready){status('Chọn Cài mô hình tự động để tải giọng trước');return;}
    status('Đang tạo đoạn nghe thử giọng '+(voice.selectedOptions?.[0]?.textContent||'')+'…');
    const sample='Xin chào bạn! Đây là giọng đọc tiếng Việt được tạo trực tiếp trên máy.';
-   const data=await api.ttsSynthesize({target:'vi',voice:selectedVoice(),text:sample,sourceLanguage:'vi'});
+   const data=await bounded(api.ttsSynthesize({target:'vi',voice:selectedVoice(),text:sample,sourceLanguage:'vi'}),90000);
+   if(ticket!==previewTicket)return;
    if(!data?.audioBase64||data.mime!=='audio/wav')throw Error('Không có âm thanh nghe thử');
    const audio=new Audio('data:audio/wav;base64,'+data.audioBase64);
-   previewAudio=audio;
-   audio.addEventListener('ended',()=>{if(previewAudio===audio)previewAudio=null;},{once:true});
+   previewAudio=audio;audio.playbackRate=playbackSpeed();
+   audio.addEventListener('ended',()=>{if(previewAudio!==audio)return;previewAudio=null;if(enabled&&queued){const next=queued;queued='';void speak(next);}},{once:true});
+   audio.addEventListener('error',()=>{if(previewAudio!==audio)return;previewAudio=null;if(enabled&&queued){const next=queued;queued='';void speak(next);}},{once:true});
    await audio.play();
    status('Đang nghe thử '+(voice.selectedOptions?.[0]?.textContent||'giọng Việt'));
-  }catch(e){status('Nghe thử lỗi: '+String(e.message||e).slice(0,125));}
-  finally{preview.disabled=false;}
+  }catch(e){if(ticket===previewTicket){try{void api.ttsStop?.();}catch{}if(previewAudio){try{previewAudio.pause();}catch{}previewAudio=null;}status('Nghe thử lỗi: '+String(e.message||e).slice(0,125));}}
+  finally{if(ticket===previewTicket){previewInFlight=false;preview.disabled=false;if(enabled&&!previewAudio&&queued){const next=queued;queued='';void speak(next);}}}
  });
  install.addEventListener('click',async()=>{
   if(install.disabled)return;
@@ -176,7 +183,7 @@
   if(!text||!sourceLanguage)return;
   if(!acceptSpeech(sourceLanguage+' '+text))return;
   const payload={text,sourceLanguage,englishFallbackText:englishFallback};
-  if(busy||playing){queued=payload;return;}
+  if(busy||playing||previewInFlight||previewAudio){queued={...payload,enqueuedAt:Date.now()};return;}
   void speak(payload);
  });
  document.addEventListener('openiptv:media-info',updateSession);
