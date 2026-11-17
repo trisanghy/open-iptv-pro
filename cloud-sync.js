@@ -18,6 +18,30 @@
  const otpCode=el('cloudOtpCode'),otpVerify=el('cloudOtpVerify'),providersNote=el('cloudAuthProviders');
  const linkForm=el('cloudLinkForm'),linkInput=el('cloudLinkInput'),linkVerify=el('cloudLinkVerify');
  let enabledProviders={email:false,google:false,github:false};
+  let emailRequested=false,linkHelpOpen=false;
+  const linkHelp=document.createElement('button');
+  linkHelp.id='cloudLinkHelp';linkHelp.type='button';linkHelp.className='btn btn-subtle cloud-link-toggle';
+  linkHelp.textContent='Liên kết email không mở được?';
+  linkHelp.setAttribute('aria-controls','cloudLinkForm');
+  linkHelp.setAttribute('aria-expanded','false');
+  linkForm?.before(linkHelp);
+  linkHelp.addEventListener('click',()=>{
+   linkHelpOpen=!linkHelpOpen;linkHelp.setAttribute('aria-expanded',String(linkHelpOpen));
+   linkHelp.textContent=linkHelpOpen?'Ẩn hướng dẫn liên kết':'Liên kết email không mở được?';
+   syncControls();
+  });
+  if(emailForm){
+   const guide=document.createElement('p');guide.className='cloud-auth-guide';
+   guide.textContent='Đăng nhập không cần mật khẩu. Nhập email rồi xác thực để đồng bộ IPTV giữa các thiết bị.';
+   emailForm.before(guide);
+   const hint=emailForm.querySelector('.hint');
+   if(hint)hint.textContent='Kiểm tra Hộp thư đến và Spam. Bấm liên kết trong email hoặc nhập mã nếu có.';
+   const sendButton=el('cloudEmailSend');if(sendButton)sendButton.textContent='Gửi email đăng nhập';
+   const label=linkForm?.querySelector('label');
+   if(label)label.textContent='Dán liên kết xác thực MỚI, chưa nhấp';
+   const linkHint=linkForm?.querySelector('.hint');
+   if(linkHint)linkHint.textContent='Dùng khi liên kết mở localhost hoặc báo lỗi: gửi email mới, sao chép liên kết chưa nhấp và dán vào đây.';
+  }
  const logout=el('cloudLogout'),sync=el('cloudSyncNow');
  const account=el('cloudAccount'),choices=el('cloudSyncConflict');
  const useLocal=el('cloudUseLocal'),useCloud=el('cloudUseRemote'),later=el('cloudLater');
@@ -26,7 +50,7 @@
  const META=id=>'openiptv:sync-meta:'+id;
  let client=null,uid='',revision=0,ready=false,busy=false,dirty=false,timer=0,sessionSeq=0,pendingRemote=null;
  const show=(node,visible)=>{if(node)node.hidden=!visible;};
- const label=(message)=>{status.textContent=message;};
+ const label=(message,tone='info')=>{status.textContent=message;status.dataset.state=tone;};
  const current=()=>core.snapshot(app.getStore?.());
  const contentHash=data=>{
   const s=JSON.stringify(core.snapshot(data));let n=2166136261;
@@ -62,7 +86,7 @@
  };
  const report=(error,context)=>{
   console.warn('Open IPTV cloud sync',context,error);
-  label('Lỗi '+context+': '+String(error?.message||error||'Không rõ').slice(0,170));
+  label('Lỗi '+context+': '+core.authErrorMessage(error),'error');
  };
  const authName=user=>
   user?.user_metadata?.full_name||user?.user_metadata?.user_name||user?.email||'Tài khoản';
@@ -70,8 +94,10 @@
   show(google,!uid&&!!client&&enabledProviders.google);
   show(github,!uid&&!!client&&enabledProviders.github);
   show(emailForm,!uid&&!!client&&enabledProviders.email);
-  show(otpForm,!uid&&!!client&&enabledProviders.email);
-  show(linkForm,!uid&&!!client&&enabledProviders.email);
+  show(otpForm,!uid&&!!client&&enabledProviders.email&&emailRequested);
+  show(linkHelp,!uid&&!!client&&enabledProviders.email);
+   show(linkForm,!uid&&!!client&&enabledProviders.email&&linkHelpOpen);
+   card.dataset.authState=uid?'signed-in':'guest';
   show(logout,!!uid);show(sync,!!uid&&ready);
   account.textContent=uid?'Đã đăng nhập · '+(window.__iptvCloudUserName||'Tài khoản'):'Chế độ khách · lưu trên thiết bị';
   if(quick){
@@ -207,7 +233,7 @@
    const kind=url.searchParams.get('type')||'email';
    if(!token_hash||!['magiclink','email','signup','invite'].includes(kind))
     throw Error('Liên kết chưa có mã xác thực hợp lệ.');
-   parsed={token_hash,type:kind};
+   parsed=core.verificationLink(String(linkInput?.value||''),client.supabaseUrl);
   }catch(e){report(e,'kiểm tra liên kết');return;}
   linkVerify.disabled=true;
   try{
@@ -215,7 +241,7 @@
    if(error)throw error;
    if(data?.user)await reconcile(data.user);
    if(linkInput)linkInput.value='';
-   label('Xác thực liên kết thành công.');
+   if(!data?.user)label('Liên kết đã xác thực. Đang chờ phiên đăng nhập…');
   }catch(e){report(e,'xác thực liên kết');}
   finally{linkVerify.disabled=false;}
  });
@@ -226,7 +252,7 @@
   event.preventDefault();
   if(!client||!enabledProviders.email)return;
   const email=safeEmail();
-  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
+  if(!core.validEmail(email)){
    label('Địa chỉ email không hợp lệ.');return;
   }
   const send=el('cloudEmailSend');if(send)send.disabled=true;
@@ -234,11 +260,10 @@
    let reply=await client.auth.signInWithOtp({
     email,options:{emailRedirectTo:location.origin+location.pathname,shouldCreateUser:true}
    });
-   if(reply.error&&/redirect|not allowed/i.test(reply.error.message||'')){
-     reply=await client.auth.signInWithOtp({email,options:{shouldCreateUser:true}});
-   }
-   if(reply.error)throw reply.error;
-   label('Đã yêu cầu gửi email đăng nhập tới '+email+'. Nếu liên kết dẫn tới localhost, gửi lại email và sao chép liên kết mới vào ô bên dưới, không nhấp trước.');
+   // Never silently retry without redirect: that produces an email link to localhost.
+    if(reply.error)throw reply.error;
+   emailRequested=true;syncControls();
+    label('Đã yêu cầu email đăng nhập tới '+email+'. Nếu liên kết mở localhost, chọn “Liên kết email không mở được?” và dán liên kết MỚI chưa nhấp.');
   }catch(e){report(e,'gửi email đăng nhập');}
   finally{if(send)send.disabled=false;}
  });
@@ -251,7 +276,7 @@
    const {data,error}=await client.auth.verifyOtp({email,token,type:'email'});
    if(error)throw error;
    if(data?.user)await reconcile(data.user);
-   label('Xác thực email thành công.');
+   if(!data?.user)label('Mã đã xác thực. Đang chờ phiên đăng nhập…');
   }catch(e){report(e,'xác thực mã email');}
   finally{otpVerify.disabled=false;}
  });

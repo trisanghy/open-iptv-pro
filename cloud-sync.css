@@ -23,3 +23,12 @@
 #cloudSyncCard .cloud-email-form .cloud-email-input-line input{flex:1 1 220px}
 #cloudSyncCard .cloud-email-form label{font-weight:650}
 #cloudSyncCard #cloudLinkInput{flex:1 1 220px;min-width:120px}
+
+/* Login UX: one clear email step, expandable recovery and responsive layout. */
+#cloudSyncCard .cloud-auth-guide{max-width:740px;font-size:14px;line-height:1.6;margin:12px 0 5px;opacity:.9}
+#cloudSyncCard .cloud-link-toggle{display:inline-flex;margin:8px 0 12px;font-size:13px}
+#cloudSyncCard #cloudStatus{padding:10px 13px;line-height:1.5;border:1px solid var(--line,#506174);border-radius:10px;background:var(--surface,#131f2b)}
+#cloudSyncCard #cloudStatus[data-state="error"]{border-color:#d67b7b;background:rgba(198,62,62,.10)}
+#cloudSyncCard #cloudLinkForm{padding:12px;border:1px dashed var(--line,#506174);border-radius:12px}
+#cloudSyncCard #cloudOtpForm{padding:12px;background:rgba(140,160,185,.07);border-radius:12px}
+@media(max-width:550px){#cloudSyncCard .cloud-email-input-line{flex-direction:column;align-items:stretch}#cloudSyncCard .cloud-email-input-line input,#cloudSyncCard .cloud-email-input-line .btn{width:100%;box-sizing:border-box}}
