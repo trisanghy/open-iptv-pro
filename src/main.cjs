@@ -178,12 +178,19 @@ function setupIPC(){
   localTTS=createLocalSpeechService({dataDir:app.getPath('userData'),managed:localModelInstaller.paths(),translateText:(text,target,source)=>captionTranslator.translateText(text,target,source),vietnameseVoices:vietTTS,notify:data=>{if(webWindow&&!webWindow.isDestroyed())webWindow.webContents.send('tts:event',data);}});
   ipcMain.handle('tts:status',(_e,lang,voice)=>({...localTTS.availability(lang,voice),install:vietTTS.validVoice(voice)?vietTTS.state(voice):localModelInstaller.state(lang,voice)}));
   ipcMain.handle('tts:install',(_e,lang,voice)=>vietTTS.validVoice(voice)?vietTTS.install(voice):localModelInstaller.install(lang,voice));
-  ipcMain.handle('tts:synthesize',(_e,params)=>localTTS.synthesize(params));
+  let approvedF5ReferenceAudio='';
+  ipcMain.handle('tts:synthesize',(_e,params)=>{
+   if(params?.voice==='f5vi:reference'&&
+      (!approvedF5ReferenceAudio||params.referenceAudio!==approvedF5ReferenceAudio))
+    throw Error('F5 chỉ dùng tệp giọng mẫu đã chọn qua hộp thoại.');
+   return localTTS.synthesize(params);
+  });
   ipcMain.handle('tts:stop',()=>localTTS.stop());
   ipcMain.handle('tts:chooseReferenceAudio',async()=>{
    const result=await dialog.showOpenDialog(webWindow,{title:'Chọn giọng mẫu có quyền sử dụng (F5-TTS)',
     properties:['openFile'],filters:[{name:'Audio',extensions:['wav','mp3','m4a','flac']}]});
-   return result.canceled?'':String(result.filePaths?.[0]||'');
+   approvedF5ReferenceAudio=result.canceled?'':String(result.filePaths?.[0]||'');
+   return approvedF5ReferenceAudio;
   });
   whisperModelInstaller=createWhisperAutoInstaller({dataDir:app.getPath('userData'),notify:event=>{if(webWindow&&!webWindow.isDestroyed())webWindow.webContents.send('caption:event',event);}});
   ipcMain.handle('caption:install',async()=>{
