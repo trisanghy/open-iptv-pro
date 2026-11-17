@@ -43,6 +43,7 @@ for(const [src,dest] of [
 }
 require(path.join(assets,'v42357-streaming-apply.cjs'));
 swap('src/main.cjs','try{localTTS?.stop();}catch{}','try{localTTS?.shutdown?.();}catch{}');
+swap('src/main.cjs','try{await localTTS?.stop();}catch{}','try{await localTTS?.shutdown?.();}catch{}');
 const captionUI='renderer/live-captions-v42343.js';
 swap(captionUI," let lastError='',lastLang=lang.value,lastTranslationFailureAt=0;",
  " let lastError='',lastLang=lang.value,lastTranslationFailureAt=0,lastShownSequence=0;");
