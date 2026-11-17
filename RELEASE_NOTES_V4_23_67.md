@@ -4,11 +4,22 @@
 
 **[TẢI BỘ CÀI CHÍNH THỨC](https://github.com/trisanghy/open-iptv-pro/releases/tag/v4.23.67) | [MỞ WEB](https://trisanghy.github.io/open-iptv-pro/) | [RUST LAB v23.8.2](https://github.com/trisanghy/open-iptv-pro/releases/tag/rust-lab/v23.8.2)**
 
+### DMG Rust Lab v23.8.2 cho Mac Apple Silicon và Mac Intel đã được phát hành
+
+**Release chính [v4.23.67](https://github.com/trisanghy/open-iptv-pro/releases/tag/v4.23.67)** đã bổ sung **hai bộ cài Rust Lab Mac native riêng**:
+
+- **Mac Apple Silicon (ARM64):** [OpenIPTVPro-RustLab-v23.8.2-mac-arm64.dmg](https://github.com/trisanghy/open-iptv-pro/releases/download/v4.23.67/OpenIPTVPro-RustLab-v23.8.2-mac-arm64.dmg)
+- **Mac Intel (x64):** [OpenIPTVPro-RustLab-v23.8.2-mac-x64.dmg](https://github.com/trisanghy/open-iptv-pro/releases/download/v4.23.67/OpenIPTVPro-RustLab-v23.8.2-mac-x64.dmg)
+
+Mỗi DMG được build từ **tag mã nguồn Rust Lab bất biến `rust-lab/v23.8.2`** trên runner macOS đúng kiến trúc; hệ thống đã gắn DMG, kiểm tra `Contents/MacOS` và FFmpeg bằng `lipo`, xác minh hash SHA-256 từ GitHub sau khi tải lên. `SHA256SUMS.txt` trong Release được cập nhật để bao gồm cả hai DMG. Hai file chưa được Apple notarize/ký số.
+
+**Electron Stable v4.23.67 giữ nguyên DMG/EXE, mã nguồn và version.** Web Online và Rust Lab Windows cũng không thay đổi. Rust Lab vẫn là bản Beta độc lập và không thay thế Electron.
+
 ### Điều chỉnh tài sản Rust Lab trong bản phát hành ổn định (17-11-2026)
 
 **Đã thay ba file Rust Lab v23.4 bằng v23.8.2** (Windows Setup, Windows Portable và ZIP mã nguồn Rust), đồng thời thay `SHA256SUMS_RUSTLAB_v23.4.txt` bằng `SHA256SUMS_RUSTLAB_v23.8.2.txt` và làm mới bảng checksum chung. **Không thay bộ cài hoặc phiên bản Electron 4.23.67**, không cập nhật/ghi đè nhánh Web.
 
-**Rust Lab v23.8.2**: vá cú pháp Rust module MLX, cải thiện định tuyến Argos/MINISBD, giữ thử nghiệm Live Caption/Translate trên Whisper, tám mô hình Hy-MT2/Qwen3 MLX và các giọng TTS offline. Bộ cài vẫn chỉ xác minh Windows x64; không giới thiệu DMG Mac khi chưa có bản DMG v23.8.2 thật.
+**Rust Lab v23.8.2**: vá cú pháp Rust module MLX, cải thiện định tuyến Argos/MINISBD, giữ thử nghiệm Live Caption/Translate trên Whisper, tám mô hình Hy-MT2/Qwen3 MLX và các giọng TTS offline. Bản Windows x64 đã được xác minh trước đó; nay hai DMG Mac ARM64 và Intel cũng được build native, gắn kiểm tra kiến trúc, FFmpeg và SHA-256 thành công.
 
 **Trang Release chính:** https://github.com/trisanghy/open-iptv-pro/releases/tag/v4.23.67 · **Nguồn bản Rust:** https://github.com/trisanghy/open-iptv-pro/releases/tag/rust-lab/v23.8.2
 
@@ -90,14 +101,16 @@ Web không cần cài, thích hợp khi codec và bảo mật trình duyệt cho
 
 **Các file Rust Lab được đính kèm lại trong Release chính (không thay thế Electron):**
 
-| Rust Lab 23.4 | File |
+| Rust Lab v23.8.2 | File |
 | --- | --- |
+| Mac Apple Silicon ARM64 | `OpenIPTVPro-RustLab-v23.8.2-mac-arm64.dmg` |
+| Mac Intel x64 | `OpenIPTVPro-RustLab-v23.8.2-mac-x64.dmg` |
 | Windows x64 Setup | `OpenIPTVPro-RustLab-v23.8.2-Windows-Setup-x64.exe` |
 | Windows x64 Portable | `OpenIPTVPro-RustLab-v23.8.2-Windows-Portable-x64.zip` |
 | Source Rust Lab | `OpenIPTVPro-RustLab-v23.8.2-Source.zip` |
 | SHA-256 gốc Rust | `SHA256SUMS_RUSTLAB_v23.8.2.txt` |
 
-Rust Lab v23.8.2 hướng tới backend Tauri 2/Rust gọn hơn, vá cú pháp module MLX, sửa đường dịch Argos/MINISBD, có thử nghiệm Whisper nhận diện ngôn ngữ gốc và Hy-MT2/Qwen3 MLX trên Apple Silicon trước khi TTS. Đây là Beta, chức năng chưa đầy đủ/bảo đảm như Electron chính. **Release v23.8.2 hiện không có gói cài Mac**; không dùng DMG Rust đời cũ gắn tên v23.8.2.
+Rust Lab v23.8.2 hướng tới backend Tauri 2/Rust gọn hơn, vá cú pháp module MLX, sửa đường dịch Argos/MINISBD, có thử nghiệm Whisper nhận diện ngôn ngữ gốc và Hy-MT2/Qwen3 MLX trên Apple Silicon trước khi TTS. Đây là Beta, chức năng chưa đầy đủ/bảo đảm như Electron chính. **Release Stable v4.23.67 hiện có hai gói DMG Mac được build thực từ tag v23.8.2**, và các file Windows/Source. Không dùng DMG của một phiên bản Rust khác gắn nhãn v23.8.2.
 
 ## Kiểm thử / bảo mật / giới hạn
 
@@ -109,4 +122,4 @@ Rust Lab v23.8.2 hướng tới backend Tauri 2/Rust gọn hơn, vá cú pháp m
 
 ## English summary
 
-Stable v4.23.67 promotes the verified Electron desktop improvements to main: cleaner Live Caption / Translate / TTS control groups; cancelable Vietnamese multi-voice preview and local MLX crash recovery; PiP automation; bundled ffprobe; per-model hardware hints; and a selectable, SHA-256-verified GitHub release history with explicit downgrade consent. This Release provides macOS ARM64/Intel and Windows x64 installers, an exact main-commit source ZIP and checksums; links to the browser Web Edition; and clearly labels the independently maintained Rust/Tauri Lab v23.8.2 Windows beta, with verified downloadable assets.
+Stable v4.23.67 promotes the verified Electron desktop improvements to main: cleaner Live Caption / Translate / TTS control groups; cancelable Vietnamese multi-voice preview and local MLX crash recovery; PiP automation; bundled ffprobe; per-model hardware hints; and a selectable, SHA-256-verified GitHub release history with explicit downgrade consent. This Release provides macOS ARM64/Intel and Windows x64 installers, an exact main-commit source ZIP and checksums; links to the browser Web Edition; and clearly labels the independently maintained Rust/Tauri Lab v23.8.2 beta, with verified native Apple Silicon / Intel DMGs and Windows installers.

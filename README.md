@@ -4,13 +4,13 @@
 
 **[TẢI DESKTOP v4.23.67](https://github.com/trisanghy/open-iptv-pro/releases/tag/v4.23.67) · [MỞ WEB ONLINE](https://trisanghy.github.io/open-iptv-pro/) · [RUST/TAURI LAB v23.8.2](https://github.com/trisanghy/open-iptv-pro/releases/tag/rust-lab/v23.8.2)**
 
-**Latest stable:** Electron Desktop v4.23.67 (`main`) · **Web:** GitHub Pages (`web/online`) · **Rust Lab:** v23.8.2 (Beta, Windows x64).
+**Latest stable:** Electron Desktop v4.23.67 (`main`) · **Web:** GitHub Pages (`web/online`) · **Rust Lab:** v23.8.2 (Beta, Mac Apple Silicon / Intel + Windows x64).
 
 ### Rust Lab được cập nhật trong Stable Release v4.23.67
 
 **Gói Rust/Tauri đính kèm hiện là v23.8.2, thay thế các file cài Rust Lab v23.4 trước đây.** Đây vẫn là bản **Beta độc lập**; ứng dụng Electron Stable v4.23.67, bộ cài macOS/Windows Electron và mã nguồn Web không thay đổi.
 
-Rust Lab v23.8.2 sửa lỗi biên dịch module MLX, sửa xử lý Argos/MINISBD, thử nghiệm các mô hình Hy-MT2/Qwen3 MLX chạy trên Mac Apple Silicon và cải thiện luồng Live Caption/Translate/TTS. **Hiện chỉ có bản cài Windows x64 (Setup/Portable) cùng ZIP mã nguồn; chưa có DMG macOS v23.8.2.**
+Rust Lab v23.8.2 sửa lỗi biên dịch module MLX, sửa xử lý Argos/MINISBD, thử nghiệm các mô hình Hy-MT2/Qwen3 MLX chạy trên Mac Apple Silicon và cải thiện luồng Live Caption/Translate/TTS. **Đã có DMG macOS Apple Silicon (ARM64) và Mac Intel (x64) được build native, kiểm tra ứng dụng/FFmpeg trực tiếp trong DMG, cùng bản Windows x64 và ZIP mã nguồn.**
 
 Đã đối chiếu checksum gốc; `SHA256SUMS.txt` của Stable Release sẽ được cập nhật theo các file Rust mới. Tag `rust-lab/v23.4` độc lập vẫn được bảo tồn trong lịch sử GitHub và có thể tải lại khi cần.
 
@@ -20,7 +20,7 @@ Rust Lab v23.8.2 sửa lỗi biên dịch module MLX, sửa xử lý Argos/MINIS
 | --- | --- | --- |
 | **Desktop Electron v4.23.67 — bản chính** | Mac Apple Silicon, Mac Intel, Windows x64 | [Trang Release & bộ cài](https://github.com/trisanghy/open-iptv-pro/releases/tag/v4.23.67) |
 | **Web Online — mở trong trình duyệt** | Máy tính/điện thoại với trình duyệt tương thích | [Mở Web](https://trisanghy.github.io/open-iptv-pro/) · [Hướng dẫn Web](https://trisanghy.github.io/open-iptv-pro/huong-dan.html) |
-| **Rust/Tauri Lab v23.8.2 — thử nghiệm** | Windows x64 (Setup/Portable), mã nguồn Rust | [Release Rust Lab](https://github.com/trisanghy/open-iptv-pro/releases/tag/rust-lab/v23.8.2) · [Nhánh mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/experiment/rust-tauri-v2) |
+| **Rust/Tauri Lab v23.8.2 — thử nghiệm** | Mac Apple Silicon, Mac Intel, Windows x64 (Setup/Portable), mã nguồn Rust | [Release Rust Lab](https://github.com/trisanghy/open-iptv-pro/releases/tag/rust-lab/v23.8.2) · [Nhánh mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/experiment/rust-tauri-v2) |
 
 ### File cài đặt Desktop — bản chính
 
@@ -48,11 +48,13 @@ Trước khi cài: tải từ **GitHub chính thức**, chọn đúng CPU và đ
 
 | Gói Rust Lab v23.8.2 | Đường dẫn |
 | --- | --- |
+| **Mac Apple Silicon (ARM64)** | [Rust Lab DMG ARM64 · 26,7 MB](https://github.com/trisanghy/open-iptv-pro/releases/download/v4.23.67/OpenIPTVPro-RustLab-v23.8.2-mac-arm64.dmg) |
+| **Mac Intel (x64)** | [Rust Lab DMG Intel · 32,9 MB](https://github.com/trisanghy/open-iptv-pro/releases/download/v4.23.67/OpenIPTVPro-RustLab-v23.8.2-mac-x64.dmg) |
 | Windows x64 Setup | [OpenIPTVPro-RustLab-v23.8.2-Windows-Setup-x64.exe](https://github.com/trisanghy/open-iptv-pro/releases/download/rust-lab/v23.8.2/OpenIPTVPro-RustLab-v23.8.2-Windows-Setup-x64.exe) |
 | Windows x64 Portable | [OpenIPTVPro-RustLab-v23.8.2-Windows-Portable-x64.zip](https://github.com/trisanghy/open-iptv-pro/releases/download/rust-lab/v23.8.2/OpenIPTVPro-RustLab-v23.8.2-Windows-Portable-x64.zip) |
 | Mã nguồn Rust Lab | [OpenIPTVPro-RustLab-v23.8.2-Source.zip](https://github.com/trisanghy/open-iptv-pro/releases/download/rust-lab/v23.8.2/OpenIPTVPro-RustLab-v23.8.2-Source.zip) |
 
-**Chưa có DMG Mac cho Rust Lab v23.8.2** trong Release đã xác minh. Rust Lab sử dụng Tauri 2 + Rust, thử nghiệm Whisper nhận diện ngôn ngữ nguồn, sửa định tuyến Argos/MINISBD, Hy-MT2/Qwen3 MLX trên Mac Apple Silicon và TTS; tính năng/độ tương thích chưa ngang bản Electron ổn định.
+**Hai bộ cài Mac Rust Lab v23.8.2 đã được build native riêng trên hai loại máy Mac và xác minh kiến trúc app/FFmpeg bên trong DMG;** file được đính kèm trong Release **v4.23.67 Stable** bên cạnh bản Electron. Rust Lab sử dụng Tauri 2 + Rust, thử nghiệm Whisper nhận diện ngôn ngữ nguồn, sửa định tuyến Argos/MINISBD, Hy-MT2/Qwen3 MLX trên Mac Apple Silicon và TTS; tính năng/độ tương thích chưa ngang bản Electron ổn định.
 
 ## 2. Desktop: những điểm mới từ v4.23.60 → v4.23.67
 
@@ -78,7 +80,7 @@ Trước khi cài: tải từ **GitHub chính thức**, chọn đúng CPU và đ
 | FFmpeg, Timeshift, ghi hình native | **Có**, tùy codec/nguồn | Không tương đương | Một phần, cần kiểm thử |
 | Whisper/MLX, nhiều giọng TTS offline | **Có**, khi cài mô hình | Không tương đương | Một phần, Argos/Whisper/TTS thử nghiệm |
 | Chọn phiên bản và cập nhật | **Có** qua GitHub Release | Mở Web trực tiếp | Tag riêng của Rust Lab |
-| Hệ điều hành có file cài đã xác minh | Mac ARM64/Intel, Windows x64 | Trình duyệt | Windows x64 (v23.8.2) |
+| Hệ điều hành có file cài đã xác minh | Mac ARM64/Intel, Windows x64 | Trình duyệt | **Mac ARM64/Intel**, Windows x64 (v23.8.2) |
 
 ## 4. Sử dụng và build từ mã nguồn
 
@@ -98,4 +100,4 @@ bash -c 'set -o pipefail; curl -fsSL https://raw.githubusercontent.com/trisanghy
 
 ---
 
-**English:** Open IPTV Pro v4.23.67 is the main Electron Desktop release for macOS and Windows. Web Online remains separate, and Rust/Tauri Lab v23.8.2 is an independent Windows-only prerelease. Download verified installers and checksums in the official stable GitHub Release. Full notes: [v4.23.67](RELEASE_NOTES_V4_23_67.md).
+**English:** Open IPTV Pro v4.23.67 is the main Electron Desktop release for macOS and Windows. Web Online remains separate, and Rust/Tauri Lab v23.8.2 is an independent beta with separately verified native Apple Silicon and Intel Mac DMGs and Windows x64 installers. Download verified installers and checksums in the official stable GitHub Release. Full notes: [v4.23.67](RELEASE_NOTES_V4_23_67.md).

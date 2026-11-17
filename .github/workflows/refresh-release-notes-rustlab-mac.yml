@@ -1,0 +1,43 @@
+name: Refresh stable Release notes for verified Rust Lab v23.8.2 native Mac DMGs
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/refresh-release-notes-rustlab-mac.yml']
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  update-metadata:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify actual Rust Lab Mac assets and unchanged Electron installers
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -Eeuo pipefail
+          test "$(node -p 'require("./package.json").version')" = 4.23.67
+          grep -Fq 'OpenIPTVPro-RustLab-v23.8.2-mac-arm64.dmg' README.md
+          grep -Fq 'OpenIPTVPro-RustLab-v23.8.2-mac-x64.dmg' RELEASE_NOTES_V4_23_67.md
+          gh api "repos/$GITHUB_REPOSITORY/releases/tags/v4.23.67" > release.json
+          jq -e '.prerelease==false and .draft==false' release.json
+          test "$(jq '.assets|length' release.json)" -eq 13
+          for f in OpenIPTVPro-RustLab-v23.8.2-mac-arm64.dmg OpenIPTVPro-RustLab-v23.8.2-mac-x64.dmg Open-IPTV-Pro-4.23.67-mac-arm64.dmg Open-IPTV-Pro-4.23.67-mac-x64.dmg SHA256SUMS.txt; do
+            jq -e --arg name "$f" '[.assets[].name]|index($name)!=null' release.json >/dev/null
+            jq -er --arg name "$f" '.assets[]|select(.name==$name)|.digest' release.json | grep -Eq '^sha256:[a-f0-9]{64}$'
+          done
+      - name: Update release notes without changing any release assets, tag, or stable status
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -Eeuo pipefail
+          gh release edit v4.23.67 --repo "$GITHUB_REPOSITORY" \
+            --title 'Open IPTV Pro v4.23.67 Stable — Electron Desktop | Web Online | Rust/Tauri Lab v23.8.2 Mac + Windows' \
+            --notes-file RELEASE_NOTES_V4_23_67.md
+          gh api "repos/$GITHUB_REPOSITORY/releases/tags/v4.23.67" > final.json
+          jq -e '.prerelease==false and .draft==false and (.name|contains("Rust/Tauri Lab v23.8.2 Mac + Windows"))' final.json
+          test "$(jq '.assets|length' final.json)" -eq 13
+          jq -er '.body' final.json | grep -Fq 'OpenIPTVPro-RustLab-v23.8.2-mac-arm64.dmg'
+          jq -er '.body' final.json | grep -Fq 'OpenIPTVPro-RustLab-v23.8.2-mac-x64.dmg'
