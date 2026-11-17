@@ -1,355 +1,93 @@
-# Open IPTV Pro Electron v4.23.67 — Chọn phiên bản và giao diện gọn
+# Open IPTV Pro — v4.23.67
 
-**[TẢI BẢN THỬ NGHIỆM v4.23.67 — Mac ARM/Intel, Windows và ZIP nguồn](https://github.com/trisanghy/open-iptv-pro/releases/tag/electron-v4.23.67)**
+**Trình phát IPTV mã nguồn mở cho macOS, Windows và Web.** Chọn đúng phiên bản tùy thiết bị; Rust Lab là nhánh thử nghiệm độc lập.
 
-**Nhánh phát triển duy nhất:** [build-sources/electron-desktop](https://github.com/trisanghy/open-iptv-pro/tree/build-sources/electron-desktop).
+**[TẢI DESKTOP v4.23.67](https://github.com/trisanghy/open-iptv-pro/releases/tag/v4.23.67) · [MỞ WEB ONLINE](https://trisanghy.github.io/open-iptv-pro/) · [RUST/TAURI LAB v23.4](https://github.com/trisanghy/open-iptv-pro/releases/tag/rust-lab/v23.4)**
 
-- **Cập nhật phiên bản:** chọn trực tiếp bản Ổn định, Beta hoặc bản cũ trong Cài đặt, chỉ nhận file từ GitHub chính thức có SHA-256; hạ phiên bản luôn hỏi xác nhận.
-- **Live Caption / Translate / TTS:** gộp các điều khiển thành hai hàng căn đều, menu Công cụ nằm cùng hàng phụ đề; tương thích cửa sổ hẹp.
-- **[Changelog v4.23.67](RELEASE_NOTES_ELECTRON_V4_23_67.md)**
+**Latest stable:** Electron Desktop v4.23.67 (`main`) · **Web:** GitHub Pages (`web/online`) · **Rust Lab:** v23.4 (Beta, Windows x64).
 
-**Mac: build bản mới nhất, chỉ `.app` và tự mở Finder:**
+## 1. Chọn nền tảng
+
+| Phiên bản | Dành cho | Dùng ngay / tải về |
+| --- | --- | --- |
+| **Desktop Electron v4.23.67 — bản chính** | Mac Apple Silicon, Mac Intel, Windows x64 | [Trang Release & bộ cài](https://github.com/trisanghy/open-iptv-pro/releases/tag/v4.23.67) |
+| **Web Online — mở trong trình duyệt** | Máy tính/điện thoại với trình duyệt tương thích | [Mở Web](https://trisanghy.github.io/open-iptv-pro/) · [Hướng dẫn Web](https://trisanghy.github.io/open-iptv-pro/huong-dan.html) |
+| **Rust/Tauri Lab v23.4 — thử nghiệm** | Windows x64 (Setup/Portable), mã nguồn Rust | [Release Rust Lab](https://github.com/trisanghy/open-iptv-pro/releases/tag/rust-lab/v23.4) · [Nhánh mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/experiment/rust-tauri-v2) |
+
+### File cài đặt Desktop — bản chính
+
+| Hệ điều hành | Tải file v4.23.67 |
+| --- | --- |
+| **Mac Apple Silicon** (M1/M2/M3/M4…) | [Open-IPTV-Pro-4.23.67-mac-arm64.dmg](https://github.com/trisanghy/open-iptv-pro/releases/download/v4.23.67/Open-IPTV-Pro-4.23.67-mac-arm64.dmg) |
+| **Mac Intel** | [Open-IPTV-Pro-4.23.67-mac-x64.dmg](https://github.com/trisanghy/open-iptv-pro/releases/download/v4.23.67/Open-IPTV-Pro-4.23.67-mac-x64.dmg) |
+| **Windows x64 — bộ cài** | [Open-IPTV-Pro-Setup-4.23.67-x64.exe](https://github.com/trisanghy/open-iptv-pro/releases/download/v4.23.67/Open-IPTV-Pro-Setup-4.23.67-x64.exe) |
+| **Windows x64 — Portable** | [Open-IPTV-Pro-4.23.67-x64.exe](https://github.com/trisanghy/open-iptv-pro/releases/download/v4.23.67/Open-IPTV-Pro-4.23.67-x64.exe) |
+| **Mã nguồn Desktop đúng bản chính** | [OpenIPTVPro_Source_v4.23.67.zip](https://github.com/trisanghy/open-iptv-pro/releases/download/v4.23.67/OpenIPTVPro_Source_v4.23.67.zip) |
+| **Xác minh mã SHA-256** | [SHA256SUMS.txt](https://github.com/trisanghy/open-iptv-pro/releases/download/v4.23.67/SHA256SUMS.txt) |
+
+Trước khi cài: tải từ **GitHub chính thức**, chọn đúng CPU và đối chiếu `SHA256SUMS.txt`. Bộ cài có thể chưa được ký số/notarize nên hệ điều hành có thể hiện cảnh báo. Các mô hình AI tải riêng theo lựa chọn; DMG/EXE không bao gồm các checkpoint AI dung lượng lớn.
+
+### Web Online (bản Web vẫn được duy trì riêng)
+
+- **Mở trực tiếp:** https://trisanghy.github.io/open-iptv-pro/
+- **Hướng dẫn:** https://trisanghy.github.io/open-iptv-pro/huong-dan.html
+- **Mã nguồn Web:** [nhánh web/online](https://github.com/trisanghy/open-iptv-pro/tree/web/online); việc phát hành Desktop không ghi đè nhánh này.
+- Phát HLS/DASH phụ thuộc codec, CORS, HTTPS, DRM và chính sách tự phát âm thanh của trình duyệt. Bản Web **không chạy** Electron IPC, FFmpeg native, Whisper/MLX hoặc TTS offline như bản Desktop.
+
+### Rust/Tauri Lab v23.4 (Beta độc lập)
+
+**[Tải Rust Lab v23.4](https://github.com/trisanghy/open-iptv-pro/releases/tag/rust-lab/v23.4)** — nhánh [experiment/rust-tauri-v2](https://github.com/trisanghy/open-iptv-pro/tree/experiment/rust-tauri-v2), không thay thế bản Electron.
+
+| Gói Rust Lab v23.4 | Đường dẫn |
+| --- | --- |
+| Windows x64 Setup | [OpenIPTVPro-RustLab-v23.4-Windows-Setup-x64.exe](https://github.com/trisanghy/open-iptv-pro/releases/download/rust-lab/v23.4/OpenIPTVPro-RustLab-v23.4-Windows-Setup-x64.exe) |
+| Windows x64 Portable | [OpenIPTVPro-RustLab-v23.4-Windows-Portable-x64.zip](https://github.com/trisanghy/open-iptv-pro/releases/download/rust-lab/v23.4/OpenIPTVPro-RustLab-v23.4-Windows-Portable-x64.zip) |
+| Mã nguồn Rust Lab | [OpenIPTVPro-RustLab-v23.4-Source.zip](https://github.com/trisanghy/open-iptv-pro/releases/download/rust-lab/v23.4/OpenIPTVPro-RustLab-v23.4-Source.zip) |
+
+**Chưa có DMG Mac cho Rust Lab v23.4** trong Release đã xác minh. Rust Lab sử dụng Tauri 2 + Rust, có thử nghiệm Whisper nhận biết ngôn ngữ nguồn, dịch Argos cục bộ theo cặp nguồn→đích và điều khiển TTS; tính năng/độ tương thích chưa ngang bản Electron ổn định.
+
+## 2. Desktop: những điểm mới từ v4.23.60 → v4.23.67
+
+- **Phụ đề & giọng dịch:** hàng điều khiển gọn gồm Caption/Translate, nút AI/Công cụ; hàng tiếp theo gồm TTS, ngôn ngữ/giọng, tốc độ và % âm thanh gốc. Tự ngắt dòng khi cửa sổ hẹp.
+- **TTS tiếng Việt:** thêm VietVoice (nam/nữ, Bắc/Trung/Nam), F5-TTS Vietnamese mẫu WAV và lời thoại, bên cạnh Piper/VieNeu; mô hình được cài riêng. F5 Vietnamese checkpoint được phân phối dưới giấy phép **CC-BY-NC-4.0 (phi thương mại)**; chỉ dùng giọng mẫu có sự đồng ý.
+- **TTS ổn định hơn:** nghe thử có phiên riêng, timeout/hủy được, chuyển đổi mô hình không khiến hàng phụ đề mới bị kẹt; phát tiếp phụ đề mới nhất sau khi nghe thử kết thúc.
+- **Dịch AI:** xử lý an toàn khi tiến trình Hy-MT2/MLX thoát mà không có mã lỗi, có thể dùng Argos đã cài làm đường lui khi phù hợp; MLX dành cho Apple Silicon.
+- **PiP thông minh:** vào trang khác trong app sẽ chuyển video sang PiP khi có thể; quay lại Xem truyền hình đóng PiP. Có tùy chọn PiP khi thu nhỏ/chuyển ứng dụng; phụ thuộc nền tảng và WebView.
+- **FFmpeg + ffprobe:** đi kèm Desktop để các tác vụ phát/giọng đọc tìm được công cụ; không yêu cầu người dùng tự cài ffprobe qua Homebrew.
+- **AI gợi ý cấu hình:** RAM, CPU/GPU/MLX và dung lượng ổ đĩa tham khảo theo mô hình; hiển thị dung lượng AI đã tải và cho phép xóa riêng.
+- **Chọn phiên bản khi kiểm tra cập nhật:** các bản ổn định/Beta/cũ phù hợp Mac/Windows, có SHA-256. Hạ phiên bản hoặc cài lại phải xác nhận; không tự động downgrade.
+- **Giữ toàn bộ IPTV Full:** quản lý nguồn M3U, XMLTV/EPG, thư mục/yêu thích, MultiView, snapshot, kiểm tra sức khỏe/failover/Doctor, Timeshift, DVR, Cast/AirPlay, theme và Backup/Restore.
+
+**[Changelog đầy đủ v4.23.67](RELEASE_NOTES_V4_23_67.md)** · **[So sánh tính năng/các nền tảng](docs/COMPARE_EDITIONS_V4_23_67.md)** · [Lịch sử Desktop v4.23.60](RELEASE_NOTES_V4_23_60.md)
+
+## 3. So sánh ba phiên bản
+
+| Khả năng | Desktop Electron (chính) | Web Online | Rust Lab v23.4 (Beta) |
+| --- | --- | --- | --- |
+| Không cần cài | Không | **Có** | Không |
+| M3U, danh sách kênh, EPG | **Có** | Có, tùy nguồn/trình duyệt | Có, đang thử nghiệm |
+| PiP / đa màn hình | Có, tùy nền tảng | Phụ thuộc trình duyệt | Đang thử nghiệm |
+| FFmpeg, Timeshift, ghi hình native | **Có**, tùy codec/nguồn | Không tương đương | Một phần, cần kiểm thử |
+| Whisper/MLX, nhiều giọng TTS offline | **Có**, khi cài mô hình | Không tương đương | Một phần, Argos/Whisper/TTS thử nghiệm |
+| Chọn phiên bản và cập nhật | **Có** qua GitHub Release | Mở Web trực tiếp | Tag riêng của Rust Lab |
+| Hệ điều hành có file cài đã xác minh | Mac ARM64/Intel, Windows x64 | Trình duyệt | Windows x64 (v23.4) |
+
+## 4. Sử dụng và build từ mã nguồn
+
+**Sử dụng:** cài Desktop → nhập M3U (file hoặc URL) → chọn kênh. Muốn dùng AI thì mở Cài đặt AI, chỉ tải mô hình cần thiết, bật Caption/Translate rồi bật giọng TTS nếu cần. Trong **Cài đặt → Cập nhật phiên bản**, xem/chọn bản phát hành và tải file đúng kiến trúc đã xác minh.
+
+**Build Mac cá nhân (luôn tải nhánh Electron phát triển, chỉ tạo `.app` và tự mở thư mục Finder):**
 
 ```bash
 bash -c 'set -o pipefail; curl -fsSL https://raw.githubusercontent.com/trisanghy/open-iptv-pro/build-sources/electron-desktop/build-mac-electron.sh | bash'
 ```
 
----
-# Open IPTV Pro Electron — một nhánh phát triển duy nhất
+**Đối với nhà phát triển:** nhánh `main` là bản Desktop đã phát hành; thay đổi Electron tiếp theo thực hiện trên `build-sources/electron-desktop` rồi mới kiểm thử và đưa lên `main`. Web và Rust/Tauri giữ nhánh riêng. Chạy `npm install`, `npm test`, `npm start` với Node.js 22+.
 
-**Nhánh chính dành cho Electron:** [build-sources/electron-desktop](https://github.com/trisanghy/open-iptv-pro/tree/build-sources/electron-desktop).
+**Kiểm thử trước khi công bố:** 394 bài đạt, 0 lỗi, 5 bài được bỏ qua trên nhánh Electron; đã build xác minh Mac `.app` và các installer tại Electron Beta v4.23.67. Release chính chỉ dùng bộ cài được so khớp checksum với bản đã kiểm thử.
 
-**Build Mac bản mới nhất (chỉ một .app, tự mở Finder):**
-
-    bash -c 'set -o pipefail; curl -fsSL https://raw.githubusercontent.com/trisanghy/open-iptv-pro/build-sources/electron-desktop/build-mac-electron.sh | bash'
-
-**Phát hành công khai:** [build-mac-electron-public.sh](build-mac-electron-public.sh) tạo DMG + ZIP nguồn. [Lịch sử các nhánh đã hợp nhất](docs/ELECTRON_BRANCH_CONSOLIDATION.md).
-
-Không thay đổi main, Rust/Tauri, Mobile và web/online. Các thử nghiệm cũ được giữ lịch sử nhưng không tự động bật trong ứng dụng.
-
----
-# Open IPTV Pro Electron v4.23.66 — sửa MLX, TTS và giao diện gọn
-
-**[TẢI BẢN THỬ NGHIỆM v4.23.66: Mac / Windows / Source ZIP](https://github.com/trisanghy/open-iptv-pro/releases/tag/electron-v4.23.66)** · [Changelog chi tiết](RELEASE_NOTES_ELECTRON_V4_23_66.md) · [Hướng dẫn v4.23.66](docs/HUONG_DAN_V4_23_66.md) · [Bản ổn định v4.23.60](https://github.com/trisanghy/open-iptv-pro/releases/tag/v4.23.60)
-
-**Bản thử nghiệm Electron riêng**, không cập nhật `main`, Rust/Tauri, Web hoặc bản beta v4.23.65.
-
-### File tải cho người dùng
-
-| Hệ điều hành | File tải |
-| --- | --- |
-| Mac Apple Silicon (M1/M2/M3/M4…) | `Open-IPTV-Pro-4.23.66-mac-arm64.dmg` |
-| Mac Intel | `Open-IPTV-Pro-4.23.66-mac-x64.dmg` |
-| Windows x64 Setup | `Open-IPTV-Pro-Setup-4.23.66-x64.exe` |
-| Windows x64 Portable | `Open-IPTV-Pro-4.23.66-x64.exe` |
-| Mã nguồn cùng phiên bản | `OpenIPTVPro_Source_v4.23.66.zip` |
-| Kiểm tra file tải | `SHA256SUMS.txt` |
-
-Chỉ tải các tài sản hiện có trong trang GitHub Release chính thức. File DMG/EXE có thể chưa ký số; hãy đối chiếu SHA-256 trước khi cài.
-
-### Bản sửa mới
-
-- **Hết cửa sổ JavaScript Error** do Hy-MT2/MLX trả mã thoát tiến trình `null`: xử lý signal/exit, kết thúc yêu cầu đang chờ mà không làm crash Electron.
-- **Nghe thử TTS không chiếm bộ đọc vô hạn:** dừng tác vụ cũ trước khi phát WAV mẫu, giới hạn thời gian, hủy khi đổi model, trả quyền đọc cho phụ đề mới; chỉ giữ phụ đề chờ mới nhất.
-- **Live Translate phục hồi sau MLX lỗi** bằng bộ Argos đã cài khi phù hợp, không tự tải ngầm mô hình.
-- **Hai dòng điều khiển gọn:** Caption/Translate ở dòng đầu; TTS, giọng, tốc độ và tiếng gốc ở dòng sau. Nút Cài đặt nhỏ hơn, trạng thái ngắn gọn, Công cụ chứa Chụp ảnh và FFmpeg.
-- Giữ các tính năng IPTV, VieNeu, VietVoice, Piper, F5, PiP, ghi hình, gợi ý RAM/CPU và dữ liệu người dùng của v4.23.65.
-
-### Build Mac cá nhân — chỉ tạo `.app`
-
-Chạy lệnh sau trong Terminal (yêu cầu Node.js 22+ và npm):
-
-    bash -c 'set -o pipefail; curl -fsSL https://raw.githubusercontent.com/trisanghy/open-iptv-pro/experiment/electron-v42366-tts-translate-stability/build-mac-v42366.sh | bash'
-
-Khi build thành công, Finder tự mở `~/Downloads/Open_IPTV_Pro_APP_v4.23.66/` chỉ chứa `Open IPTV Pro.app`. Người dùng phổ thông nên tải DMG hoặc EXE trên trang Release thay vì tự build.
+**Giới hạn:** độ chính xác phụ đề/dịch và TTS phụ thuộc dữ liệu/thiết bị/mô hình; PiP và Cast có thể bị hạn chế bởi OS, nguồn phát, codec, DRM hoặc CORS. File `.iptvbackup` có thể chứa playlist/dữ liệu riêng và không được mã hóa; bảo quản cẩn thận. Chỉ dùng nguồn IPTV được phép.
 
 ---
 
-## Thông tin bản thử nghiệm trước (v4.23.65)
-# Open IPTV Pro Desktop v4.23.65 — bản thử nghiệm Electron
-
-**[TẢI v4.23.65 — Mac, Windows, Source ZIP](https://github.com/trisanghy/open-iptv-pro/releases/tag/electron-v4.23.65)** · [Bản ổn định v4.23.60](https://github.com/trisanghy/open-iptv-pro/releases/tag/v4.23.60) · [Web Online](https://trisanghy.github.io/open-iptv-pro/)
-
-**Đây là bản prerelease riêng trên nhánh experiment/electron-v42365-ai-model-hardware-hints. Không thay đổi main, Rust/Tauri, Android/iOS hoặc bản Web.** Trước khi tải hãy kiểm tra các tệp đã xuất hiện thật trong mục Assets của GitHub Release.
-
-## Tải file cho người dùng
-
-| Thiết bị | Tệp phát hành | Cách sử dụng |
-|---|---|---|
-| Mac Apple Silicon M1/M2/M3/M4 | **Open-IPTV-Pro-4.23.65-mac-arm64.dmg** | Mở DMG, kéo app vào Applications |
-| Mac Intel | **Open-IPTV-Pro-4.23.65-mac-x64.dmg** | Mở DMG, kéo app vào Applications |
-| Windows 10/11 x64 | **Open-IPTV-Pro-Setup-4.23.65-x64.exe** | Bộ cài có hướng dẫn |
-| Windows 10/11 x64 | **Open-IPTV-Pro-4.23.65-x64.exe** | Bản Portable |
-| Nhà phát triển | **OpenIPTVPro_Source_v4.23.65.zip** | Full source đúng commit phát hành |
-| Tất cả | **SHA256SUMS.txt** | Đối chiếu mã SHA-256 của tệp tải |
-
-Hướng dẫn: **[Cài đặt và sử dụng bản v4.23.65](docs/HUONG_DAN_V4_23_65.md)** · [Changelog đầy đủ](RELEASE_NOTES_ELECTRON_V4_23_65.md) · [Third-party licenses](THIRD_PARTY_NOTICES.md).
-
-## Những điểm mới (so với desktop ổn định v4.23.60)
-
-- **TTS offline tiếng Việt:** giữ Piper / VieNeu (48 kHz), thêm VietVoice (nam/nữ, Bắc/Trung/Nam) và F5-TTS Vietnamese với giọng mẫu WAV + lời thoại tương ứng. Mô hình nặng được tải riêng sau khi bạn chọn cài; không kèm checkpoint trong DMG/EXE.
-- **PiP theo điều hướng:** khi rời Xem truyền hình để vào EPG, Yêu thích, Quản lý nguồn hoặc Cài đặt, ứng dụng yêu cầu PiP cho video đang phát; quay lại Xem truyền hình sẽ đóng PiP. Tùy chọn tự PiP khi thu nhỏ hoặc chuyển ứng dụng được bật/tắt độc lập, mặc định tắt. Tùy OS/player, không bảo đảm phát hiện mọi trường hợp che cửa sổ.
-- **VietVoice đã sửa ffprobe:** FFmpeg và FFprobe được đóng gói trong bản desktop để tiến trình TTS tìm đúng công cụ, không yêu cầu Homebrew. Mô hình đã tải được giữ lại.
-- **Gợi ý cấu hình từng mô hình AI:** trong Bộ nhớ AI đã tải hiển thị RAM tham khảo, CPU/Apple Silicon/MLX, dung lượng đĩa gợi ý và mức phù hợp với máy hiện tại. Đây là ước lượng phục vụ sử dụng đồng thời với IPTV, không phải cấu hình tối thiểu chính thức.
-- **MLX chỉ dành cho Mac Apple Silicon** trong bản Electron này. Argos/Piper có thể hoạt động trên máy yếu. F5-TTS Vietnamese checkpoint được chọn chỉ dùng **phi thương mại** (CC-BY-NC-4.0); nhân bản giọng phải có sự đồng ý của người có giọng nói.
-- **Giữ IPTV Full:** nguồn M3U, EPG XMLTV, lọc/tìm kênh, Thư mục, Yêu thích, MultiView 4 kênh, Snapshot, kiểm tra kênh, Auto Failover, Doctor, Timeshift, DVR, Cast/AirPlay, sao lưu/khôi phục, theme.
-
-## Yêu cầu và lưu ý an toàn
-
-Mac cần đúng bộ cài ARM64 hoặc Intel; Windows cần x64. Bộ cài có thể chưa ký số / notarize, vì vậy hãy kiểm tra nguồn GitHub chính thức và SHA-256 trước khi mở. Mô hình AI không cài sẵn và có thể cần nhiều GB dung lượng trống. Các chức năng Live Caption/Translate/TTS không bảo đảm độ trễ hoặc chất lượng trên mọi nguồn. Không kèm luồng IPTV trả phí; chỉ sử dụng playlist bạn được phép truy cập.
-
-**Build cá nhân Mac (chỉ một app, tự mở thư mục Finder; không tạo DMG/Source trong Downloads):**
-
-bash -c 'set -o pipefail; curl -fsSL https://raw.githubusercontent.com/trisanghy/open-iptv-pro/experiment/electron-v42365-ai-model-hardware-hints/build-mac-v42365.sh | bash'
-
-Kết quả: ~/Downloads/Open_IPTV_Pro_APP_v4.23.65/Open IPTV Pro.app. File tải cho người dùng khác là DMG/EXE tại GitHub Release.
-
-### English
-
-Open IPTV Pro v4.23.65 is an **experimental Electron desktop prerelease**, separate from the stable main branch and from Rust/Tauri. Download the platform-specific Windows x64 installer/portable or macOS ARM64/Intel DMG from its GitHub Release. New functionality includes local Vietnamese VietVoice/F5-TTS, PiP on navigation/minimize/app switch (where supported), packaged FFprobe for VietVoice, and per-model advisory RAM/CPU/MLX/storage guidance. F5 Vietnamese weights are noncommercial and voice cloning requires speaker consent. Verify download checksums; signing and notarization may not be present. The browser Web Edition is separate.
-
----
-
-## Archive: earlier desktop releases
-
-## v4.22.2 — Backup / Restore for Windows and macOS
-
-**Tiếng Việt:** Bổ sung Sao lưu / Khôi phục trong sidebar và Cài đặt. Xuất file `.iptvbackup` gồm playlist, yêu thích, thư mục, cấu hình, EPG và tùy chọn ảnh Snapshot. Khi khôi phục, ứng dụng kiểm tra dữ liệu, xem trước và xác nhận, tránh ghi đè ảnh cũ và rollback cấu hình nếu lỗi. File sao lưu chưa mã hóa. Xem `HUONG_DAN_BACKUP_RESTORE_V4_22_2.md`.
-
-**English:** Desktop Backup/Restore exports playlists, favorites, groups, settings, EPG and optional Snapshot images into a local `.iptvbackup` file. Imports are validated and require confirmation; images are restored under non-colliding names and settings are rolled back on failure. Backup files are not encrypted.
-
-**Cập nhật mã nguồn GitHub trên Mac:** chạy `bash ~/Downloads/CAP_NHAT_GITHUB_V4_22_2_MAC.command` sau khi tải ZIP mã nguồn và script vào Downloads. Script kiểm tra test, đăng nhập GitHub qua `gh`, đồng bộ mã nguồn desktop lên repository `trisanghy/open-iptv-pro` sau xác nhận. Không force-push, không sửa iOS/Android, không tự tạo Release.
-
----
-
-## v4.22 Full – Cập nhật và bộ biểu tượng macOS
-
-**Tiếng Việt:** Repository phát hành chính thức `trisanghy/open-iptv-pro` được cố định, không cần nhập lại. Ứng dụng đọc phiên bản từ tên bộ cài / tag / tên Release, tìm bản mới đúng hệ điều hành & kiến trúc (Mac Apple Silicon, Mac Intel hoặc Windows), tự tải khi bật tùy chọn, xác minh trước khi cài. Mac chưa ký dùng bộ cài DMG thủ công; ứng dụng ký đúng chuẩn có thể dùng trình tự cài tự động. Menu thay bằng 12 icon SVG nét bo tròn đồng nhất, giữ logo ứng dụng và toàn bộ FFmpeg/Timeshift Full.
-
-**English:** The official release repository `trisanghy/open-iptv-pro` is built in. Version checks accept flexible release tag naming and locate a compatible newer installer for macOS ARM64, macOS Intel or Windows. Downloads are integrity-checked; signed eligible builds may install automatically after confirmation, while unsigned macOS builds open a verified DMG for manual installation. The sidebar now uses a consistent macOS-inspired SVG icon set. FFmpeg, Timeshift and all Full features remain included.
-
-**Important:** Pushing source to GitHub does not publish installers. Release assets are required for updates. macOS automatic in-place installation requires a properly signed application. No Apple-owned SF Symbols files or fonts are bundled.
-
-## Bản sửa v4.21.1: Phát hiện TV AirPlay trên macOS
-
-Mục Google Cast chỉ phát hiện Chromecast/Google TV hỗ trợ Google Cast. Mục AirPlay trên Mac giờ có nút **Tìm thiết bị AirPlay**, dùng Bonjour (`dns-sd`) của macOS để hiển thị thiết bị tương thích. Để phát AirPlay, vẫn nhấn **Mở AirPlay trong Safari** và chọn TV trong Safari. Xem `AIRPLAY_FIX_V4_21_1_VI_EN.md` để biết chi tiết. Tất cả tính năng Full, FFmpeg và Timeshift được giữ nguyên.
-
-## v4.21.1 AirPlay discovery fix (macOS)
-
-Chromecast discovery and AirPlay discovery are separate. The AirPlay section now lists macOS Bonjour video AirPlay receivers. To start playback, open Safari from the app and select the receiver in Safari. All Full Edition features are retained.
-
----
-
-## Mới trong v4.21 / New in v4.21
-
-**Tiếng Việt**
-
-- **Sửa link M3U đã nhập:** Quản lý nguồn → **Sửa link**. Ứng dụng tải và xác minh danh sách mới trước khi lưu; lỗi sẽ giữ nguyên URL cũ. Giữ nguồn, các kênh khớp, thư mục cá nhân và Yêu thích.
-- **Google Cast / Chromecast / Google TV:** Chọn kênh → **Cast / AirPlay** → **Tìm TV** → **Phát trên TV đã chọn**. TV và máy tính phải chung mạng LAN, mDNS không bị chặn. Một số video cần codec/DRM mà TV không hỗ trợ sẽ không phát được.
-- **AirPlay (Mac):** Chọn **Mở AirPlay trong Safari**, sau đó chọn AirPlay trong Safari hoặc dùng **Phản chiếu màn hình** trên macOS. Đây không phải cơ chế tự bắt tay AirPlay trong Electron; Windows không có lựa chọn này.
-- **TV có trình duyệt:** Chọn **Tạo liên kết xem**, mở địa chỉ LAN trên TV. Liên kết có mã ngẫu nhiên, hết hiệu lực khi dừng truyền hoặc đóng app. Máy phát và TV phải kết nối cùng LAN và tường lửa cho phép.
-- **Giữ bản Full:** FFmpeg nhúng, Timeshift, Snapshot 32 luồng, MultiView, Doctor, EPG và cập nhật vẫn có. Không thay Android/iOS.
-
-**English**
-
-- **Edit saved M3U URLs** under Manage Sources → Edit URL. Fetch and validate the replacement first; an error preserves the original source. Matching channel identities, favorites and custom folders are retained.
-- **Google Cast:** Select a channel → Cast / AirPlay → Find TVs → Cast. Devices must be on the same LAN with mDNS enabled. DRM, unsupported codecs, authentication and firewall rules may prevent playback.
-- **AirPlay on macOS:** Opens the current stream in Safari, where the user chooses an AirPlay destination or macOS Screen Mirroring. This is not automatic native AirPlay pairing in Electron; Windows does not offer Safari AirPlay.
-- **Browser on another device:** Generate a temporary signed LAN video page URL and open it on a TV browser. Same-network access required.
-- **Full features maintained:** bundled FFmpeg, Timeshift, 32-worker Snapshot, MultiView, Doctor, EPG and the updater. Android/iOS unchanged.
-
----
-
-> **Open IPTV Pro v4.20 Full / Sửa cập nhật** — FFmpeg được tích hợp vào ứng dụng; giữ nguyên Timeshift 5 phút, Snapshot hàng loạt, kiểm tra 32 luồng, MultiView, Doctor 2.0, EPG, PiP, Failover và cập nhật phiên bản. Giao diện được thu gọn, không cắt chức năng.
-> **English:** Full edition bundles FFmpeg and retains every desktop function; only the interface is simplified. macOS and Windows source; Android/iOS unchanged.
-
-> **v4.20 Full (Windows/macOS):** FFmpeg tích hợp trong bộ cài, Timeshift 5 phút và Snapshot 32 luồng đầy đủ. Cập nhật bằng GitHub Releases sẽ tải bộ cài đã xác minh hoặc tự cài khi có chữ ký phù hợp. Mac Apple Silicon và Intel được build riêng để FFmpeg đúng kiến trúc.
-
-# Open IPTV Pro
-
-## 🇻🇳 Tiếng Việt
-
-**Open IPTV Pro** là phần mềm xem và quản lý IPTV mã nguồn mở dành cho **Windows và macOS**. Ứng dụng hỗ trợ 8 ngôn ngữ, danh sách M3U, lịch phát sóng EPG, MultiView 4 kênh, ảnh xem trước, kiểm tra nhiều vòng và sửa link dự phòng.
-
-![Giao diện Open IPTV Pro](docs/images/interface-v4-1.png)
-
-### Tính năng chính
-
-- **Nguồn IPTV:** nhập file hoặc URL M3U, quản lý nhiều nguồn, thu thập M3U công khai, gộp kênh trùng và giữ link dự phòng.
-- **Xem truyền hình:** tìm kiếm, thư mục, kéo thả kênh, đồng bộ Yêu thích giữa các màn hình, chế độ cửa sổ nổi PiP khi được hỗ trợ.
-- **EPG:** lịch phát sóng XMLTV, ghép kênh, tìm chương trình và nhắc lịch khi ứng dụng đang chạy.
-- **MultiView:** xem 4 kênh cùng lúc; rê chuột vào ô nào thì ô đó phát tiếng.
-- **Snapshot:** chụp và hiển thị ảnh theo kênh, có thể chạy nhiều tác vụ cùng lúc bằng FFmpeg.
-- **Kiểm tra & sửa link:** phân loại Sống / Die / Chưa rõ, kiểm tra nhiều vòng, tự dùng link dự phòng đã xác minh. Hỗ trợ tối đa 32 tác vụ kiểm tra và 32 tác vụ chụp ảnh đồng thời.
-- **Timeshift:** lưu bộ đệm 5 phút kể từ khi bật ghi (không thể tua về trước thời điểm bắt đầu lưu nếu nhà cung cấp không hỗ trợ).
-- **Cá nhân hóa:** giao diện Sáng / Tối / Tự động, bánh xe chọn màu, hồ sơ riêng và khóa PIN cơ bản.
-
-### Smart IPTV Doctor 2.0 (giữ nguyên)
-
-- **Freeze Detector:** giám sát video chính theo thời gian thực, cảnh báo khung hình đứng hoặc màn hình đen nhưng không vội kết luận link Die. Tùy chọn thử link dự phòng khi đứng hình được xác nhận được **tắt mặc định**.
-- **Visual Channel Deduplication:** quét Snapshot đã lưu, đối chiếu dấu vân tay hình ảnh và metadata để đề xuất kênh nghi trùng; **không tự gộp** khi chỉ có một ảnh giống nhau.
-- **Doctor 2.0:** điểm ưu tiên đề xuất sửa, phát hiện kênh bị báo Die dù từng phát thành công, thêm dự phòng đã xác minh sau khi bạn chấp thuận, hoàn tác và xuất báo cáo JSON.
-
-![Smart IPTV Doctor 2.0 — ảnh giao diện thử](docs/images/doctor-v4-17.png)
-
-Chi tiết: [Hướng dẫn Doctor 2.0 (Việt/Anh)](docs/DOCTOR_V4_17_VI_EN.md). Phần mới chỉ dành cho Windows/macOS.
-
-### Cập nhật phiên bản tự động (sửa trong v4.20)
-
-Vào **Cài đặt → Cập nhật phiên bản** để kiểm tra GitHub Releases, tải phiên bản mới có tiến độ và xác nhận cài đặt. Mặc định bật **Tự kiểm tra khi mở ứng dụng** và **Tự tải bản mới**, có thể tắt riêng. Nếu bản cài chưa ký hoặc là Portable, app tải bộ cài có checksum SHA256 rồi yêu cầu mở thủ công; không tự thực thi file tải về. Nếu chỉ có mã nguồn hoặc chưa có Release, app hiển thị hướng dẫn rõ ràng.
-
-> **Lần nâng cấp đầu tiên:** v4.15 chưa có trình cập nhật tự tải/cài nên phải **cài v4.16 thủ công một lần**. Để bản Mac tự cài cập nhật về sau, cần ký bằng Apple Developer ID và notarize; bản Windows nên được ký. Xem [Hướng dẫn cập nhật và phát hành](docs/AUTO_UPDATE_VI.md).
-
-### 8 ngôn ngữ giao diện
-
-Vào **Cài đặt → Ngôn ngữ** để chọn: Tiếng Việt, English, Español, Português (Brasil), 简体中文, ไทย, ລາວ hoặc ភាសាខ្មែរ. Thiết lập được lưu sau khi đóng ứng dụng. Tên kênh, tên nhóm M3U và dữ liệu EPG không bị tự động dịch. Một số thông báo kỹ thuật chuyên sâu có thể chưa được dịch hết.
-
-### Sử dụng và cài đặt
-
-1. Mở ứng dụng và chọn **Mở file M3U** hoặc **Thêm URL**.
-2. Chọn kênh để phát; có thể đánh dấu Yêu thích và sắp xếp theo thư mục.
-3. Vào **Quản lý nguồn** để thu thập, gộp, kiểm tra và sửa link.
-4. Vào **Cài đặt** để chọn ngôn ngữ, màu giao diện, số luồng kiểm tra và Snapshot.
-
-**Tạo bộ cài từ mã nguồn:** cần Node.js 22+, npm và Internet cho lần cài gói đầu tiên. Trên Mac chạy `BUILD_MAC.command` (hoặc `npm run dist:mac:arm64` / `npm run dist:mac:x64`); trên Windows chạy `BUILD_WINDOWS.bat` (hoặc `npm run dist:win`). File build nằm trong `dist/`. Bộ cài chưa ký có thể gặp cảnh báo bảo mật; cần ký và notarize trước khi phát hành chính thức.
-
-**Lưu ý pháp lý và quyền riêng tư:** phần mềm không cung cấp kênh trả phí, tài khoản thuê bao hay quyền phát lại nội dung. Chỉ sử dụng luồng bạn có quyền truy cập; không đăng playlist riêng, thông tin đăng nhập hoặc token lên GitHub public. Giấy phép MIT áp dụng cho mã nguồn của ứng dụng, còn FFmpeg, Electron, hls.js và dữ liệu EPG có điều khoản riêng tại [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
-
-Bản **v4.20** chỉ cập nhật phần mềm **Windows/macOS**, không cập nhật Android/iOS. Có thể xem hướng dẫn chi tiết tại [Hướng dẫn tiếng Việt](docs/README_VI.md), [Hướng dẫn build](docs/BUILD.md) và [MIT License](LICENSE).
-
----
-
-## 🇬🇧 English
-
-**Open-source IPTV desktop player for macOS and Windows, featuring an 8-language interface, M3U playlists, XMLTV program guides, four-channel MultiView, snapshots, and multi-pass stream health checks.**
-
-![Open IPTV Pro desktop interface](docs/images/interface-v4-1.png)
-
-> **v4.20.0 · Desktop only.** Android and iOS source code are intentionally **not** included or updated in this release. The project is licensed under the MIT License; bundled dependencies have their own licenses (see [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)). This repository does **not** include commercial television streams, pirated playlists, or viewing rights.
-
-## Visual Stream Diagnostics (retained)
-
-**Smart IPTV Doctor 2.0** adds on-device video freeze/black-screen warnings, local perceptual comparison of saved channel snapshots (review only, no automatic merge), prioritized recommendations and undo for the last change. Recently verified backup URLs can be added after confirmation. These features never treat a static scene or one matching frame as proof a stream is dead or two channels are identical. See [Doctor 2.0 guide (Vietnamese/English)](docs/DOCTOR_V4_17_VI_EN.md).
-
-## In-app updates (v4.16)
-
-**Settings → Software Updates** checks the official GitHub Releases repository, reports available versions, downloads with progress and SHA256 validation, and automatically downloads an available verified update (configurable) and asks permission before installing/restarting. Signed installed desktop builds can update in-app when GitHub Releases includes proper metadata and installers. Unsigned/portable builds download a verified installer for **manual** installation. A source-code-only Release cannot be installed. See [Update instructions (Vietnamese)](docs/AUTO_UPDATE_VI.md).
-
-**Migration:** users of v4.15 must install v4.16 manually once, because the old version does not contain the new updater. macOS automatic installation requires Developer ID signing and notarization; Windows signing is recommended.
-
-## Languages
-
-In **Settings → Language**, choose from:
-
-| Language | Display name | Locale |
-| --- | --- | --- |
-| Vietnamese | Tiếng Việt | `vi` |
-| English | English | `en` |
-| Spanish | Español | `es` |
-| Portuguese (Brazil) | Português (Brasil) | `pt-BR` |
-| Simplified Chinese | 简体中文 | `zh-CN` |
-| Thai | ไทย | `th` |
-| Lao | ລາວ | `lo` |
-| Khmer (Cambodian) | ភាសាខ្មែរ | `km` |
-
-Language changes apply immediately and are saved locally. The application translates navigation, main controls, settings, tooltips, and key workflows; some technical messages may remain in their original wording while translations are being expanded. **Imported channel names, user-created folder names, EPG program names, and source metadata are not machine-translated or modified.** All translation files are available in [`renderer/locales/`](renderer/locales/) and can be improved through pull requests.
-
-![English-language settings screenshot](docs/images/i18n-english-v4-15.png)
-
-## Features
-
-- **Playlist management:** add local M3U files or URLs, refresh sources, import public M3U files from GitHub repositories, merge duplicates, and maintain backup streams.
-- **IPTV player:** HLS/MP4 playback, favorites synchronized between screens, channel folders, drag-and-drop channel organization, aspect-ratio controls, and picture-in-picture (where supported).
-- **EPG:** XMLTV program guide, mapping options, program search, and reminders while the app is running.
-- **MultiView:** watch four channels at once. Hover over a pane to hear its audio; other panes stay muted.
-- **Channel snapshots:** preview thumbnails, per-channel capture and bulk capture using bundled FFmpeg.
-- **Stream health:** multi-step verification, online/offline/uncertain classification, cautious failover, health history, and Smart IPTV Doctor diagnostics.
-- **Performance settings:** independently set up to **32 concurrent URL checks** and **32 snapshot jobs**. For reliability, start with four workers per task.
-- **Timeshift:** local five-minute rolling buffer when enabled. The buffer only contains data recorded **since buffering began**, unless the provider supplies DVR/catch-up support.
-- **Appearance:** Light, Dark, or automatic system mode; adjustable accent color.
-- **Profiles:** separate favorites and basic local parental controls.
-
-### What this app does not promise
-
-Streams may require permissions or provider-specific authentication. A URL can play in a video player yet be inaccessible to automated probes; ambiguous cases are labeled **Unknown**, rather than definitively Offline. EPG coverage and catch-up depend on external sources. Local parental PINs are convenience controls, not operating-system security. Multiview, snapshots, timeshift, and high concurrency may consume significant CPU, RAM, bandwidth and disk space.
-
-## Getting started
-
-1. Download the source ZIP or clone this repository.
-2. Import an `.m3u` file using **Open M3U File**, or use **Add URL** to fetch a playlist.
-3. Choose a channel to watch. Save channels to Favorites, group them into folders, or open **Manage Sources** for link checks and deduplication.
-4. Select **Settings → Language** for another interface language.
-
-**For end users:** install an unsigned `.dmg`/`.exe` built from this repository; builds still need validation on the target operating system. We do not claim to ship signed/notarized installers here.
-
-## Build from source
-
-**Prerequisites:** Git (optional), Node.js 22+ and npm. The provided Mac build script can fetch a verified Node.js copy locally. The Windows build helper may download its build tools. An internet connection is required for the initial `npm install` and build dependencies.
-
-```bash
-npm install
-npm test
-npm run start
-```
-
-### macOS
-
-Run `BUILD_MAC.command` from the project directory, or run one of:
-
-```bash
-npm run dist:mac:arm64  # Apple Silicon
-npm run dist:mac:x64    # Intel
-```
-
-The generated `.dmg` is placed in `dist/`. Builds created without a signing identity may be blocked by Gatekeeper; release builds should be signed and notarized.
-
-### Windows
-
-Run `BUILD_WINDOWS.bat`, or install Node.js 22+ and use:
-
-```powershell
-npm install
-npm test
-npm run dist:win
-```
-
-Setup and portable `.exe` outputs are placed under `dist/`. Unsigned installers can trigger SmartScreen warnings.
-
-### GitHub Actions
-
-The workflow at `.github/workflows/tao-bo-cai.yml` provides separate Windows x64, macOS Intel and Apple Silicon build jobs. Workflows build source code **without automatically publishing installers**; they upload unsigned artifacts to that workflow run. The repository does not upload your saved IPTV playlists, favorites, EPG, snapshots, or tokens.
-
-## Privacy and data
-
-Application settings and imported playlists are stored on the user's machine. Remote playlist, EPG, streaming and GitHub Release URL requests will contact the respective servers. Do not publish subscription tokens, private playlists, provider credentials, or copyrighted streams in a public Git repository. The **publish to GitHub/Gist** feature has been removed from the app.
-
-## Project structure
-
-```text
-renderer/                 Desktop user interface, translations and UI logic
-renderer/locales/         Editable JSON translation dictionaries
-renderer/i18n.js          Language switching and DOM translation
-src/                      Desktop native processes, streaming and FFmpeg integrations
-assets/                   Application icons
-examples/demo.m3u         Synthetic sample playlist
-scripts/                  Platform build helper scripts
-tests/                    Node and UI regression tests
-docs/                     Additional guides and screenshots
-.github/workflows/        CI and installer build jobs
-```
-
-## Documentation and contribution
-
-- [Build guide](docs/BUILD.md)
-- [Vietnamese guide](docs/README_VI.md)
-- [English user guide](docs/USER_GUIDE_EN.md)
-- [GitHub repository description](docs/GITHUB_DESCRIPTION_EN.md)
-- [Contributing](CONTRIBUTING.md)
-- [Security](SECURITY.md)
-- [MIT License](LICENSE)
-
-Translations are community-editable. Please preserve placeholders and technical identifiers such as `M3U`, `XMLTV`, `EPG`, `FFmpeg`, `HLS`, and `URL`. Before submitting a translation, run the UI language-switching smoke test and review text clipping on smaller screens.
-
-## Legal notice
-
-Open IPTV Pro is a player and playlist-management application. It does not provide pay-TV accounts, subscriptions or rebroadcasting rights. Use streams only when you have permission to view or redistribute them. This project's MIT license covers the application's own source code only, not the legal status of any third-party streams or EPG data.
+**English:** Open IPTV Pro v4.23.67 is the main Electron Desktop release for macOS and Windows. Web Online remains separate, and Rust/Tauri Lab v23.4 is an independent Windows-only prerelease. Download verified installers and checksums in the official stable GitHub Release. Full notes: [v4.23.67](RELEASE_NOTES_V4_23_67.md).
