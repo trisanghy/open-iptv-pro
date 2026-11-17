@@ -394,3 +394,18 @@
 @media(max-width:570px){
  #page-tv #liveCaptionSetupPanel .ai-ollama-setup{padding:10px}
 }
+
+/* Vietnamese TTS: optional F5 reference audio remains local on this machine. */
+#page-tv #liveCaptionSetupPanel .f5-reference-panel,
+#page-tv .f5-reference-panel{
+ display:flex;flex-wrap:wrap;align-items:center;gap:8px;width:100%;
+ padding:10px 12px;border:1px solid #4e6072;border-radius:10px;
+ background:#172534;color:#c5d9e5;box-sizing:border-box;font-size:12px;
+}
+#page-tv #liveCaptionSetupPanel .f5-reference-panel[hidden],
+#page-tv .f5-reference-panel[hidden]{display:none!important}
+#page-tv .f5-reference-panel small{flex-basis:100%;line-height:1.45}
+#page-tv .f5-reference-panel button{border:1px solid #476075;color:#f1f5f9;background:#1d3244;
+ border-radius:8px;padding:8px 11px;cursor:pointer}
+#page-tv .f5-reference-panel input{width:100%;min-height:39px;padding:8px;
+ border:1px solid #486178;border-radius:8px;background:#10212f;color:#f2f8fd}
