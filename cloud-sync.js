@@ -211,7 +211,13 @@
  logout.addEventListener('click',async()=>{
   try{
    clearTimeout(timer);
-   if(dirty&&ready)await uploadLocal();
+   if(dirty&&ready){
+    await uploadLocal();
+    if(dirty){
+      label('Đồng bộ chưa hoàn tất. Vui lòng thử lại trước khi đăng xuất để tránh mất dữ liệu.');
+      return;
+    }
+   }
    const {error}=await client.auth.signOut();
    if(error)throw error;
    const guest=localStorage.getItem(GUEST);
@@ -248,6 +254,14 @@
   const {data,error}=await client.auth.getSession();
   if(error)throw error;
   if(data.session?.user)await reconcile(data.session.user);
-  else label('Chế độ khách. Đăng nhập Google hoặc GitHub để đồng bộ dữ liệu.');
+  else if(localStorage.getItem(ACTIVE)){
+   // Session expired or was revoked: restore the saved guest state instead
+   // of exposing a signed-in user's IPTV data to the next visitor.
+   const backup=localStorage.getItem(GUEST);
+   if(backup)localStorage.setItem(STORE,backup);
+   else localStorage.removeItem(STORE);
+   localStorage.removeItem(ACTIVE);
+   location.reload();
+  }else label('Chế độ khách. Đăng nhập Google hoặc GitHub để đồng bộ dữ liệu.');
  }catch(e){report(e,'khởi tạo Cloud');}
 })();
