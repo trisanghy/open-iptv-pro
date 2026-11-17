@@ -1,3 +1,41 @@
+# Open IPTV Pro Electron v4.23.66 — sửa MLX, TTS và giao diện gọn
+
+**[TẢI BẢN THỬ NGHIỆM v4.23.66: Mac / Windows / Source ZIP](https://github.com/trisanghy/open-iptv-pro/releases/tag/electron-v4.23.66)** · [Changelog chi tiết](RELEASE_NOTES_ELECTRON_V4_23_66.md) · [Hướng dẫn v4.23.66](docs/HUONG_DAN_V4_23_66.md) · [Bản ổn định v4.23.60](https://github.com/trisanghy/open-iptv-pro/releases/tag/v4.23.60)
+
+**Bản thử nghiệm Electron riêng**, không cập nhật `main`, Rust/Tauri, Web hoặc bản beta v4.23.65.
+
+### File tải cho người dùng
+
+| Hệ điều hành | File tải |
+| --- | --- |
+| Mac Apple Silicon (M1/M2/M3/M4…) | `Open-IPTV-Pro-4.23.66-mac-arm64.dmg` |
+| Mac Intel | `Open-IPTV-Pro-4.23.66-mac-x64.dmg` |
+| Windows x64 Setup | `Open-IPTV-Pro-Setup-4.23.66-x64.exe` |
+| Windows x64 Portable | `Open-IPTV-Pro-4.23.66-x64.exe` |
+| Mã nguồn cùng phiên bản | `OpenIPTVPro_Source_v4.23.66.zip` |
+| Kiểm tra file tải | `SHA256SUMS.txt` |
+
+Chỉ tải các tài sản hiện có trong trang GitHub Release chính thức. File DMG/EXE có thể chưa ký số; hãy đối chiếu SHA-256 trước khi cài.
+
+### Bản sửa mới
+
+- **Hết cửa sổ JavaScript Error** do Hy-MT2/MLX trả mã thoát tiến trình `null`: xử lý signal/exit, kết thúc yêu cầu đang chờ mà không làm crash Electron.
+- **Nghe thử TTS không chiếm bộ đọc vô hạn:** dừng tác vụ cũ trước khi phát WAV mẫu, giới hạn thời gian, hủy khi đổi model, trả quyền đọc cho phụ đề mới; chỉ giữ phụ đề chờ mới nhất.
+- **Live Translate phục hồi sau MLX lỗi** bằng bộ Argos đã cài khi phù hợp, không tự tải ngầm mô hình.
+- **Hai dòng điều khiển gọn:** Caption/Translate ở dòng đầu; TTS, giọng, tốc độ và tiếng gốc ở dòng sau. Nút Cài đặt nhỏ hơn, trạng thái ngắn gọn, Công cụ chứa Chụp ảnh và FFmpeg.
+- Giữ các tính năng IPTV, VieNeu, VietVoice, Piper, F5, PiP, ghi hình, gợi ý RAM/CPU và dữ liệu người dùng của v4.23.65.
+
+### Build Mac cá nhân — chỉ tạo `.app`
+
+Chạy lệnh sau trong Terminal (yêu cầu Node.js 22+ và npm):
+
+    bash -c 'set -o pipefail; curl -fsSL https://raw.githubusercontent.com/trisanghy/open-iptv-pro/experiment/electron-v42366-tts-translate-stability/build-mac-v42366.sh | bash'
+
+Khi build thành công, Finder tự mở `~/Downloads/Open_IPTV_Pro_APP_v4.23.66/` chỉ chứa `Open IPTV Pro.app`. Người dùng phổ thông nên tải DMG hoặc EXE trên trang Release thay vì tự build.
+
+---
+
+## Thông tin bản thử nghiệm trước (v4.23.65)
 # Open IPTV Pro Desktop v4.23.65 — bản thử nghiệm Electron
 
 **[TẢI v4.23.65 — Mac, Windows, Source ZIP](https://github.com/trisanghy/open-iptv-pro/releases/tag/electron-v4.23.65)** · [Bản ổn định v4.23.60](https://github.com/trisanghy/open-iptv-pro/releases/tag/v4.23.60) · [Web Online](https://trisanghy.github.io/open-iptv-pro/)

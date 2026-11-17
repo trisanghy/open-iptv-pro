@@ -32,3 +32,21 @@ Public build: separate build-mac-v42366-public.sh for DMG and source ZIP.
 
 Automated Node tests cover null MLX exits, audio preview cancellation, timeout and queue recovery, and installed-only Argos fallback. CI builds native macOS app-only bundle.
 Actual inference latency and voice playback with large installed models need an on-device smoke test. This is a separate experimental version and is not yet a stable GitHub Release.
+## Tải bản v4.23.66 cho người dùng
+
+**[GitHub Release v4.23.66](https://github.com/trisanghy/open-iptv-pro/releases/tag/electron-v4.23.66)** (Beta/Prerelease).
+
+| Thiết bị | File |
+| --- | --- |
+| Mac Apple Silicon | `Open-IPTV-Pro-4.23.66-mac-arm64.dmg` |
+| Mac Intel | `Open-IPTV-Pro-4.23.66-mac-x64.dmg` |
+| Windows x64 Setup | `Open-IPTV-Pro-Setup-4.23.66-x64.exe` |
+| Windows x64 Portable | `Open-IPTV-Pro-4.23.66-x64.exe` |
+| Mã nguồn ZIP đúng commit | `OpenIPTVPro_Source_v4.23.66.zip` |
+| SHA-256 | `SHA256SUMS.txt` |
+
+Chỉ sử dụng các file đã thực sự được tải lên Release Assets. Gói beta có thể chưa ký số/notarize; kiểm tra checksum trước khi cài. Đây là bản sửa trên nhánh thử nghiệm, không phải bản stable mới.
+
+### English summary
+
+v4.23.66 experimental Electron hotfix prevents a main-process exception when a Hy-MT2 MLX worker exits with a null code; recovers pending translation requests with safe cleanup; falls back to already-installed Argos when possible; bounds and cancels preview synthesis so the latest live subtitle can resume; and reduces the AI subtitle/voice control row to a compact accessible layout. Includes separate unsigned Mac ARM64/Intel DMGs, Windows x64 Setup/Portable, source ZIP and SHA-256 checksum assets.
