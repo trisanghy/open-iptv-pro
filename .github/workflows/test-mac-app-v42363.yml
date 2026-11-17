@@ -1,0 +1,31 @@
+name: Verify personal macOS app-only build v4.23.63
+on:
+  push:
+    branches:
+      - experiment/electron-v42363-auto-pip
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  mac-app-only:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install node dependencies
+        run: npm install --no-audit --no-fund
+      - name: Build without DMG
+        run: |
+          export CSC_IDENTITY_AUTO_DISCOVERY=false
+          ARCH="$(uname -m)"
+          case "$ARCH" in arm64) ARCH='arm64';; x86_64) ARCH='x64';; *) exit 1;; esac
+          ./node_modules/.bin/electron-builder --mac --dir "--$ARCH" --publish never
+      - name: Assert valid native .app and NO DMG/ZIP output
+        run: |
+          APP="$(find dist -maxdepth 3 -type d -name 'Open IPTV Pro.app' -print -quit)"
+          [ -n "$APP" ] && [ -f "$APP/Contents/Info.plist" ]
+          test -z "$(find dist -maxdepth 1 -type f -name '*.dmg' -print -quit)"
+          test -z "$(find dist -maxdepth 1 -type f -name '*.zip' -print -quit)"
+          echo "Verified private .app bundle: $APP"
