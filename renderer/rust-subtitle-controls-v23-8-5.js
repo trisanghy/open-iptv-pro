@@ -32,6 +32,8 @@
  toggle.setAttribute('aria-expanded','false');gear.insertAdjacentElement('afterend',toggle);
  const panel=document.createElement('section');panel.id='rustSubtitleOptionsPanel';panel.className='rust-cc-panel';
  panel.hidden=true;panel.setAttribute('aria-label','Tuỳ chỉnh phụ đề trên video');
+ panel.setAttribute('role','dialog');
+ panel.setAttribute('tabindex','-1');
  panel.innerHTML='<header><strong>CC · Tuỳ chỉnh phụ đề</strong><button type="button" id="rustSubtitleClose" aria-label="Đóng">×</button></header>'+
  '<label>Hiển thị trên video<input type="checkbox" id="rustSubtitleShow"></label>'+
  '<label>Nội dung<span class="rust-cc-segmented" id="rustSubtitleDisplayButtons" role="group" aria-label="Chọn nội dung phụ đề"><button type="button" data-value="original">Chỉ gốc</button><button type="button" data-value="translated">Chỉ dịch</button><button type="button" data-value="both">Cả hai</button></span><select class="rust-cc-native-select" id="rustSubtitleDisplay" tabindex="-1" aria-hidden="true"><option value="original">Chỉ phụ đề gốc</option><option value="translated">Chỉ phụ đề dịch</option><option value="both">Gốc + dịch</option></select></label>'+
@@ -44,7 +46,10 @@
  '<label>Nền chữ<select id="rustSubtitleBackground"><option value="dark">Nền đen</option><option value="light">Nền trắng</option><option value="none">Không nền</option></select></label>'+
  '<label>Độ đậm nền<span class="rust-cc-opacity"><input type="range" min="0" max="90" step="5" id="rustSubtitleOpacity"><output id="rustSubtitleOpacityValue">50%</output></span></label>'+
  '<small>Tự ghi nhớ khi mở lại ứng dụng. Không ảnh hưởng TTS và bộ dịch.</small>';
- frame.append(panel);
+ // The player frame clips overflowing descendants. A CC popover must live in
+ // the document overlay layer, not inside the video frame's overflow:hidden.
+ // Fullscreen is special: only descendants of the fullscreen frame are visible.
+ document.body.append(panel);
  const orig=document.createElement('div'),trans=document.createElement('div');
  orig.className='rust-cc-original';trans.className='rust-cc-translation';overlay.replaceChildren(orig,trans);
  const els={enabled:$('rustSubtitleShow'),display:$('rustSubtitleDisplay'),position:$('rustSubtitlePosition'),
@@ -107,8 +112,63 @@
  for(const [key,el] of Object.entries(els))
   el.addEventListener(key==='opacity'?'input':'change',()=>change(key,key==='enabled'?el.checked:key==='opacity'?Number(el.value):el.value));
  custom.addEventListener('input',()=>{if(/^#[0-9a-f]{6}$/i.test(custom.value))change('color',custom.value);});
- function popup(open){panel.hidden=!open;toggle.setAttribute('aria-expanded',String(open));}
+ function placePanel(){
+  if(panel.hidden)return;
+  const fullscreen=document.fullscreenElement===frame;
+  const parent=fullscreen?frame:document.body;
+  if(panel.parentElement!==parent)parent.append(panel);
+  panel.dataset.fullscreen=String(fullscreen);
+  if(fullscreen){
+   panel.style.left='auto';
+   panel.style.top='12px';
+   panel.style.right='12px';
+   panel.style.maxHeight='calc(100% - 24px)';
+  }else{
+   const margin=12,rect=frame.getBoundingClientRect();
+   const vw=Math.max(0,window.innerWidth||document.documentElement.clientWidth);
+   const vh=Math.max(0,window.innerHeight||document.documentElement.clientHeight);
+   const width=Math.min(455,Math.max(160,vw-2*margin));
+   panel.style.width=width+'px';
+   panel.style.maxHeight=Math.max(140,vh-2*margin)+'px';
+   panel.style.left=Math.max(margin,Math.min(rect.right-width-8,vw-width-margin))+'px';
+   panel.style.right='auto';
+   // Keep the entire scroll container inside the visible app window.
+   const panelHeight=panel.getBoundingClientRect().height;
+   panel.style.top=Math.max(margin,Math.min(rect.top+12,vh-panelHeight-margin))+'px';
+  }
+ }
+ function popup(open){
+  panel.hidden=!open;toggle.setAttribute('aria-expanded',String(open));
+  if(open){placePanel();panel.scrollTop=0;panel.focus({preventScroll:true});}
+ }
  toggle.addEventListener('click',()=>popup(panel.hidden));
+ // Use one scroll container for all controls (also in WKWebView on macOS).
+ // Stop wheel chaining to the video/page; explicit scrollTop handles WebKit
+ // wheel/trackpad events even when native overflow scrolling is suppressed.
+ panel.addEventListener('wheel',event=>{
+  if(panel.hidden)return;
+  event.stopPropagation();
+  if(panel.scrollHeight<=panel.clientHeight||!event.deltaY)return;
+  const factor=event.deltaMode===1?16:event.deltaMode===2?panel.clientHeight:1;
+  panel.scrollTop+=event.deltaY*factor;
+  if(event.cancelable)event.preventDefault();
+ },{passive:false});
+ panel.addEventListener('keydown',event=>{
+  if(event.target!==panel)return;
+  const step=event.key==='PageDown'?panel.clientHeight*.85:
+   event.key==='PageUp'?-panel.clientHeight*.85:
+   event.key==='ArrowDown'?48:event.key==='ArrowUp'?-48:0;
+  if(step){panel.scrollTop+=step;event.preventDefault();}
+  else if(event.key==='Home'){panel.scrollTop=0;event.preventDefault();}
+  else if(event.key==='End'){panel.scrollTop=panel.scrollHeight;event.preventDefault();}
+ });
+ window.addEventListener('resize',placePanel);
+ document.addEventListener('fullscreenchange',()=>{
+  if(!panel.hidden)placePanel();
+ });
+ document.addEventListener('scroll',event=>{
+  if(event.target!==panel&&!panel.hidden)placePanel();
+ },true);
  $('rustSubtitleClose').addEventListener('click',()=>popup(false));
  document.addEventListener('keydown',e=>{if(e.key==='Escape')popup(false);});
  document.addEventListener('pointerdown',e=>{if(!panel.hidden&&!panel.contains(e.target)&&e.target!==toggle)popup(false);});
