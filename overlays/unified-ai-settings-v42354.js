@@ -78,11 +78,12 @@
      ((id==='hymt18'||id==='hymt7')&&!available?' · chỉ hỗ trợ Mac Apple Silicon':'');
    left.append(name,detail);line.append(left);
    const right=document.createElement('div');right.className='ai-model-actions';
-   if(['hymt18','hymt7'].includes(id)&&!item.present){
-    const install=button('Tải mô hình',async()=>{
+   const runtimeNeedsRepair=['hymt18','hymt7'].includes(id)&&item.present&&!latest?.hyMT?.[id]?.runtimeReady;
+   if(['hymt18','hymt7'].includes(id)&&(!item.present||runtimeNeedsRepair)){
+    const install=button(runtimeNeedsRepair?'Sửa bộ chạy MLX':'Tải mô hình',async()=>{
      if(busy)return;
      busy=true;install.disabled=true;
-     setStatus('Đang tải '+item.label+'; yêu cầu kết nối mạng và vài GB dung lượng trống…');
+     setStatus(runtimeNeedsRepair?'Đang cài lại môi trường MLX, giữ nguyên mô hình '+item.label+'…':'Đang tải '+item.label+'; yêu cầu kết nối mạng và vài GB dung lượng trống…');
      try{await api.aiInstallModel(id);await refresh();setStatus('Đã cài '+item.label);}
      catch(e){setStatus('Không cài được: '+String(e?.message||e),true);}
      finally{busy=false;install.disabled=false;}
