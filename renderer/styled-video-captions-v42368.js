@@ -41,18 +41,18 @@
  }
  function decorate(base,{video,doc}){
   let prefs={show:true,content:'both',position:'bottom',size:'medium',font:'system',color:'#facc15',outline:true,outlineStyle:'dark',background:true,backgroundStyle:'black',opacity:50};
-  let last=null,styleNode=null,originalVisible=true;
+  let last=null,styleNode=null,originalVisible=true,effectiveFontSize=21;
   const fontPx=()=>sizes[prefs.size]||21;
-  const wrapForVideo=text=>{
+  const wrapForVideo=(text,size=fontPx())=>{
    const rect=video.getBoundingClientRect?.();
    const width=rect?.width||video.clientWidth||video.parentElement?.clientWidth||640;
    let measure=null;
    try{
     const ctx=doc.createElement?.('canvas')?.getContext?.('2d');
-    if(ctx){ctx.font='650 '+fontPx()+'px '+(fonts[prefs.font]||fonts.system);
+    if(ctx){ctx.font='650 '+size+'px '+(fonts[prefs.font]||fonts.system);
      measure=value=>ctx.measureText(value).width;}
    }catch{}
-   return wrapCaptionText(text,width*.86,fontPx(),measure);
+   return wrapCaptionText(text,width*.86,size,measure);
   };
 
   const background=()=>{
@@ -71,7 +71,7 @@
      doc.head.appendChild(styleNode);
     }
     const prefix='video.openiptv-styled-video-cc::cue';
-    styleNode.textContent=prefix+'{font-size:'+(sizes[prefs.size]||21)+'px;font-family:'+
+    styleNode.textContent=prefix+'{font-size:'+effectiveFontSize+'px;font-family:'+
      (fonts[prefs.font]||fonts.system)+';font-weight:650;color:'+safeColor(prefs.color)+
      ';background:'+background()+';text-shadow:'+shadow()+';}'+
      prefix+'(.source){color:#fff;}'+prefix+'(.translated){color:'+safeColor(prefs.color)+';}';
@@ -81,7 +81,7 @@
    if(overlay?.style){
     overlay.style.color=safeColor(prefs.color);
     overlay.style.fontFamily=fonts[prefs.font]||fonts.system;
-    overlay.style.fontSize=(sizes[prefs.size]||21)+'px';
+    overlay.style.fontSize=effectiveFontSize+'px';
     overlay.style.backgroundColor=background();
     overlay.style.textShadow=shadow();
     overlay.style.borderRadius='9px';
@@ -95,8 +95,23 @@
    const original=originalVisible?rawOriginal:'';
    last={text:translatedLine,language,sourceText:rawOriginal,translated};
    if(!prefs.show||!translatedLine){base.clear();return 'off';}
-   const wrappedTranslated=wrapForVideo(translatedLine);
-   const wrappedOriginal=original?wrapForVideo(original):'';
+   // Keep every row visible even inside a small/letterboxed video: reduce
+   // only the effective font size for exceptionally long subtitles.
+   let size=fontPx(),wrappedTranslated='',wrappedOriginal='';
+   const frame=video.getBoundingClientRect?.();
+   const viewHeight=frame?.height||video.clientHeight||
+    (frame?.width||video.clientWidth||640)*9/16;
+   while(true){
+    wrappedTranslated=wrapForVideo(translatedLine,size);
+    wrappedOriginal=original?wrapForVideo(original,size):'';
+    const lines=(translated&&wrappedOriginal&&prefs.content==='both'
+     ?wrappedOriginal.split('\n').length+wrappedTranslated.split('\n').length
+     :translated&&wrappedOriginal&&prefs.content==='original'
+      ?wrappedOriginal.split('\n').length:wrappedTranslated.split('\n').length);
+    if(size<=12||lines*size*1.4<=viewHeight*.72)break;
+    size--;
+   }
+   effectiveFontSize=size;
    let display=wrappedTranslated;
    if(translated&&wrappedOriginal){
     if(prefs.content==='original')display=wrappedOriginal;
