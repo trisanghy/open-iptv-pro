@@ -1,0 +1,141 @@
+name: Publish Electron v4.23.67 Beta (Mac ARM/Intel, Windows, Source)
+on:
+  push:
+    branches:
+      - build-sources/electron-desktop
+    paths:
+      - '.github/workflows/publish-electron-v42367.yml'
+  workflow_dispatch:
+concurrency:
+  group: electron-v42367-public-release
+  cancel-in-progress: false
+permissions:
+  contents: read
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - name: Install, validate documentation, and test all desktop functionality
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          npm install --no-audit --no-fund
+          test "$(node -p 'require("./package.json").version')" = 4.23.67
+          test -s README.md
+          test -s RELEASE_NOTES_ELECTRON_V4_23_67.md
+          test -s docs/HUONG_DAN_V4_23_65.md
+          npm test
+
+  build:
+    needs: tests
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - {os: macos-15, platform: mac, arch: arm64, label: mac-arm64}
+          - {os: macos-15-intel, platform: mac, arch: x64, label: mac-intel}
+          - {os: windows-latest, platform: win, arch: x64, label: windows-x64}
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 75
+    env:
+      CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - name: Install platform-native packages
+        shell: bash
+        run: npm install --no-audit --no-fund
+      - name: Build actual user installers
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          npx electron-builder --${{ matrix.platform }} --${{ matrix.arch }} --publish never
+          if [[ "${{ matrix.platform }}" == mac ]]; then
+            test -s "dist/Open-IPTV-Pro-4.23.67-mac-${{ matrix.arch }}.dmg"
+            if [[ "${{ matrix.arch }}" == arm64 ]]; then
+              APP='dist/mac-arm64/Open IPTV Pro.app'
+              lipo -archs "$APP/Contents/MacOS/Open IPTV Pro" | grep -Fxq arm64
+            else
+              APP='dist/mac/Open IPTV Pro.app'
+              lipo -archs "$APP/Contents/MacOS/Open IPTV Pro" | grep -Fxq x86_64
+            fi
+            test -f "$APP/Contents/Info.plist"
+            PROBE="$(find "$APP/Contents/Resources/app.asar.unpacked/node_modules/@ffprobe-installer" -type f -name ffprobe -print -quit)"
+            test -n "$PROBE"
+            "$PROBE" -version >/dev/null
+          else
+            test -s dist/Open-IPTV-Pro-Setup-4.23.67-x64.exe
+            test -s dist/Open-IPTV-Pro-4.23.67-x64.exe
+          fi
+      - uses: actions/upload-artifact@v4
+        with:
+          name: user-v42367-${{ matrix.label }}
+          path: |
+            dist/*.dmg
+            dist/*.exe
+          if-no-files-found: error
+
+  publish:
+    needs: [tests, build]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 1}
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: user-v42367-*
+          path: release-stage
+          merge-multiple: true
+      - name: Check all assets and create full source ZIP + SHA256SUMS.txt
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          mkdir -p release-stage
+          git archive --format=zip --output=release-stage/OpenIPTVPro_Source_v4.23.67.zip HEAD
+          for name in \
+            Open-IPTV-Pro-4.23.67-mac-arm64.dmg \
+            Open-IPTV-Pro-4.23.67-mac-x64.dmg \
+            Open-IPTV-Pro-Setup-4.23.67-x64.exe \
+            Open-IPTV-Pro-4.23.67-x64.exe \
+            OpenIPTVPro_Source_v4.23.67.zip; do
+            test -s "release-stage/$name" || { echo "::error::Missing $name"; exit 1; }
+          done
+          (cd release-stage && sha256sum *.dmg *.exe *.zip > SHA256SUMS.txt)
+          test -s release-stage/SHA256SUMS.txt
+      - name: Create immutable experimental GitHub prerelease, never alter stable main
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -Eeuo pipefail
+          TAG=electron-v4.23.67
+          if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            tag_sha="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/tags/$TAG" --jq '.object.sha')"
+            test "$tag_sha" = "$GITHUB_SHA" || { echo "::error::Existing tag points to a different commit"; exit 1; }
+            echo 'Existing immutable release points to same commit.'
+          else
+            printf '\nSource commit: %s\n' "$GITHUB_SHA" >> RELEASE_NOTES_ELECTRON_V4_23_65.md
+            gh release create "$TAG" release-stage/* \
+              --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" \
+              --title 'Open IPTV Pro Electron v4.23.67 Beta — Compact Caption/TTS Toolbar + Version Picker' \
+              --notes-file RELEASE_NOTES_ELECTRON_V4_23_65.md \
+              --prerelease --latest=false
+          fi
+          gh release view "$TAG" --repo "$GITHUB_REPOSITORY" --json assets --jq '.assets[].name' > actual-assets.txt
+          for name in \
+            Open-IPTV-Pro-4.23.67-mac-arm64.dmg \
+            Open-IPTV-Pro-4.23.67-mac-x64.dmg \
+            Open-IPTV-Pro-Setup-4.23.67-x64.exe \
+            Open-IPTV-Pro-4.23.67-x64.exe \
+            OpenIPTVPro_Source_v4.23.67.zip \
+            SHA256SUMS.txt; do
+            grep -Fxq "$name" actual-assets.txt
+          done
+          echo "Verified public release: $TAG"

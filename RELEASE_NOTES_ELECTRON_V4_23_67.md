@@ -28,4 +28,8 @@ Nhánh dùng đường dẫn cố định nên các lần cập nhật sau khôn
 
 ## Kiểm thử và hạn chế
 
-Kiểm tra đường dẫn an toàn, phân loại stable/Beta, tương thích kiến trúc, mẫu SHA-256, lựa chọn bản cũ và không tự động cài. Kiểm thử đóng gói bảo đảm tài nguyên UI và trình cập nhật có trong app Mac. Đây là bản mã nguồn trên nhánh phát triển; chưa giả định đã đăng GitHub Release cho v4.23.67.
+Kiểm tra đường dẫn an toàn, phân loại stable/Beta, tương thích kiến trúc, mẫu SHA-256, lựa chọn bản cũ và không tự động cài. Kiểm thử đóng gói bảo đảm tài nguyên UI và trình cập nhật có trong app Mac. Bản Beta công khai sẽ có DMG cho Mac Apple Silicon/Intel, Windows Setup/Portable, source ZIP và SHA256SUMS.txt; chỉ tải các tệp đã được xác minh trên GitHub Release.
+
+## Tải bản Beta v4.23.67
+
+**[GitHub Release chính thức](https://github.com/trisanghy/open-iptv-pro/releases/tag/electron-v4.23.67)** (đây là Beta, không phải bản stable). Chọn DMG Mac ARM64/Intel hoặc EXE Windows x64 tương ứng, kiểm tra file `SHA256SUMS.txt`. Phiên bản đã tải từ GitHub Release có thể chưa được ký số/notarize; chỉ cài khi xác minh nguồn. Các phiên bản cũ vẫn có tag và Release riêng.

@@ -1,5 +1,7 @@
 # Open IPTV Pro Electron v4.23.67 — Chọn phiên bản và giao diện gọn
 
+**[TẢI BẢN THỬ NGHIỆM v4.23.67 — Mac ARM/Intel, Windows và ZIP nguồn](https://github.com/trisanghy/open-iptv-pro/releases/tag/electron-v4.23.67)**
+
 **Nhánh phát triển duy nhất:** [build-sources/electron-desktop](https://github.com/trisanghy/open-iptv-pro/tree/build-sources/electron-desktop).
 
 - **Cập nhật phiên bản:** chọn trực tiếp bản Ổn định, Beta hoặc bản cũ trong Cài đặt, chỉ nhận file từ GitHub chính thức có SHA-256; hạ phiên bản luôn hỏi xác nhận.
