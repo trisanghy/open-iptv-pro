@@ -1,0 +1,57 @@
+/* Rust Lab v23.8.5 — compact CC menu and legible, bounded video captions. */
+#page-tv #rustSubtitleOptionsButton{display:inline-flex!important;align-items:center;justify-content:center!important;
+ min-width:39px!important;height:32px!important;padding:4px 9px!important;border:1px solid #8f6bc7!important;
+ border-radius:9px!important;background:#32234d!important;color:#ecddff!important;font-weight:800!important}
+#page-tv #rustSubtitleOptionsButton[aria-expanded=true]{background:#7453bf!important;color:white!important}
+#page-tv #rustSubtitleOptionsPanel.rust-cc-panel:not([hidden]){display:grid!important;gap:10px;
+ position:absolute;z-index:70;top:12px;right:12px;width:min(395px,calc(100% - 24px));max-height:min(77vh,550px);
+ overflow-y:auto;box-sizing:border-box;padding:15px;border:1px solid #7155a2;border-radius:15px;
+ background:rgba(16,24,37,.96);box-shadow:0 16px 44px #0009;color:#f4f4fb;
+ font:500 13px/1.45 system-ui,-apple-system,sans-serif;backdrop-filter:blur(14px)}
+#page-tv #rustSubtitleOptionsPanel[hidden]{display:none!important}
+#page-tv .rust-cc-panel header{display:flex;align-items:center;justify-content:space-between;padding-bottom:8px;
+ font-size:16px;border-bottom:1px solid #394352}
+#page-tv .rust-cc-panel header button{width:27px;height:27px;border:0;border-radius:8px;color:#fff;
+ background:#25364a;font-size:21px;cursor:pointer}
+#page-tv .rust-cc-panel>label{display:grid;grid-template-columns:minmax(105px,1fr) minmax(140px,1.3fr);gap:10px;align-items:center}
+#page-tv .rust-cc-panel select{min-width:0;width:100%;padding:8px 10px;border:1px solid #4d5870;
+ border-radius:9px;background:#202b3c;color:#fff}
+#page-tv .rust-cc-panel input[type=checkbox]{justify-self:end;width:20px;height:20px;accent-color:#a475ed}
+#page-tv .rust-cc-panel .rust-cc-color{display:flex;align-items:center;gap:5px;flex-wrap:wrap}
+#page-tv .rust-cc-panel .rust-cc-swatch{min-width:21px!important;width:21px;height:21px;border-radius:50%;
+ border:1px solid #acb8c6;cursor:pointer;padding:0}
+#page-tv .rust-cc-panel .rust-cc-swatch[aria-pressed=true]{outline:2px solid #bb88ff;outline-offset:1px}
+#page-tv #rustSubtitleCustomColor{width:29px;height:24px;padding:0;border:0;background:none}
+#page-tv .rust-cc-opacity{display:flex;gap:8px;align-items:center;min-width:0}
+#page-tv .rust-cc-opacity input{flex:1;min-width:60px;accent-color:#9b70de}
+#page-tv .rust-cc-opacity output{min-width:35px}
+#page-tv .rust-cc-panel small{font-size:11px;color:#a8b7c7}
+#page-tv #rustTranslatedCaption.rust-translated-caption:not([hidden]){display:flex!important;flex-direction:column;
+ position:absolute;z-index:27;left:5%;right:5%;bottom:7%;top:auto;width:max-content;max-width:90%;
+ max-height:min(34%,210px);overflow:hidden;box-sizing:border-box;gap:3px;margin:0 auto;padding:7px 12px;
+ border-radius:10px;pointer-events:none;text-align:center;white-space:normal;overflow-wrap:anywhere;
+ color:var(--rust-cc-color,#ffe65b);background:rgba(0,0,0,var(--rust-cc-opacity,.5));
+ font-size:20px;line-height:1.32;font-weight:650}
+#page-tv #rustTranslatedCaption :is(.rust-cc-original,.rust-cc-translation){display:-webkit-box;
+ -webkit-box-orient:vertical;-webkit-line-clamp:2;line-clamp:2;overflow:hidden;white-space:normal}
+#page-tv #rustTranslatedCaption :is(.rust-cc-original,.rust-cc-translation)[hidden]{display:none!important}
+#page-tv #rustTranslatedCaption .rust-cc-original{color:white}
+#page-tv #playerBox[data-rust-subtitle-position=top] #rustTranslatedCaption{top:10%;bottom:auto}
+#page-tv #playerBox[data-rust-subtitle-position=middle] #rustTranslatedCaption{bottom:25%}
+#page-tv #playerBox[data-rust-subtitle-position=bottom] #rustTranslatedCaption{bottom:7%}
+#page-tv #playerBox[data-rust-subtitle-size=small] #rustTranslatedCaption{font-size:16px}
+#page-tv #playerBox[data-rust-subtitle-size=medium] #rustTranslatedCaption{font-size:20px}
+#page-tv #playerBox[data-rust-subtitle-size=large] #rustTranslatedCaption{font-size:25px}
+#page-tv #playerBox[data-rust-subtitle-size=xlarge] #rustTranslatedCaption{font-size:30px}
+#page-tv #playerBox[data-rust-subtitle-outline=black] #rustTranslatedCaption{
+ -webkit-text-stroke:.55px #0d0d0d;text-shadow:0 1px 3px #000,1px 1px 1px #000}
+#page-tv #playerBox[data-rust-subtitle-outline=white] #rustTranslatedCaption{
+ -webkit-text-stroke:.5px white;text-shadow:0 1px 2px #0007}
+#page-tv #playerBox[data-rust-subtitle-outline=none] #rustTranslatedCaption{-webkit-text-stroke:0;text-shadow:none}
+#page-tv #playerBox[data-rust-subtitle-background=light] #rustTranslatedCaption{background:rgba(250,250,250,var(--rust-cc-opacity,.5))}
+#page-tv #playerBox[data-rust-subtitle-background=none] #rustTranslatedCaption{background:transparent}
+@media(max-width:650px){
+ #page-tv #rustTranslatedCaption.rust-translated-caption:not([hidden]){font-size:16px;max-width:93%;padding:5px 8px}
+ #page-tv #rustSubtitleOptionsPanel.rust-cc-panel:not([hidden]){top:5px;right:5px;width:calc(100% - 10px);max-height:67vh}
+ #page-tv .rust-cc-panel>label{grid-template-columns:93px minmax(0,1fr)}
+}

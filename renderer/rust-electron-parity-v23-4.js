@@ -2,17 +2,8 @@
 // Rust Lab v23.4: Electron v4.23.66 player UX features adapted to Tauri.
 (()=>{
  const $=id=>document.getElementById(id),video=$('video'),translate=$('liveTranslateToggle'),target=$('liveTranslateTarget'),caption=$('liveCaptionToggle');
- const overlay=$('rustTranslatedCaption'),controller=window.OpenIPTVAutoPiP;let latest='';
- const clear=()=>{latest='';if(overlay){overlay.textContent='';overlay.hidden=true;}};
- window.streamleaf?.captionOnEvent?.(event=>{
-  if(event?.type==='segment'&&overlay&&translate?.checked){
-   const language=String(event.language||'').toLowerCase(),expected=String(target?.value||'').toLowerCase(),text=String(event.text||'').trim();
-   if(!text||language!==expected||text===latest)return; // target only; never interim/source text
-   latest=text;overlay.textContent=text.slice(0,520);overlay.hidden=false;
-  }else if(event?.type==='stopped'||event?.type==='error')clear();
- });
- for(const field of [translate,target,caption])field?.addEventListener('change',clear);
- video?.addEventListener('emptied',clear);video?.addEventListener('ended',clear);
+ // Single caption overlay is managed by RustSubtitleControls; legacy native segment renderer removed.
+ const controller=window.OpenIPTVAutoPiP;
  video?.addEventListener('enterpictureinpicture',()=>{
   for(const track of video.textTracks||[])if(track.label==='Open IPTV Pro Live Caption')track.mode='showing';
  });

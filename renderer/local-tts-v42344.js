@@ -40,7 +40,7 @@
   return volumeInput&&Number.isFinite(n)?clamp(n/100):clamp(video.volume);
  }
  function applyDuck(){
-  if(!enabled)return;
+  if(!enabled||video.paused||video.ended)return;
   if(!ducked){baseVolume=sliderBase();ducked=true;}
   const wanted=clamp(baseVolume*duckRatio());
   if(Math.abs(video.volume-wanted)>0.003)video.volume=wanted;
@@ -86,14 +86,14 @@
   if(translate&&!translate.checked){translate.checked=true;translate.dispatchEvent(new Event('change',{bubbles:true}));}
  }
  async function speak(input){
-  if(!enabled||busy||playing||previewInFlight||previewAudio||!input||input.enqueuedAt&&Date.now()-input.enqueuedAt>25000)return;
+  if(!enabled||video.paused||video.ended||busy||playing||previewInFlight||previewAudio||!input||input.enqueuedAt&&Date.now()-input.enqueuedAt>25000)return;
   const payload=typeof input==='string'?{text:input,sourceLanguage:'en'}:input;
   const text=String(payload.text||'').trim();if(!text)return;
   busy=true;const generation=taskId,lang=target.value,src=source(),began=Date.now();
   try{
    const result=await bounded(api.ttsSynthesize({target:lang,voice:selectedVoice(),text:text.slice(0,360),sourceLanguage:payload.sourceLanguage,englishFallbackText:payload.englishFallbackText||''}),45000);
     if(Date.now()-began>25000)return;
-   if(!enabled||generation!==taskId||source()!==src)return;
+   if(!enabled||video.paused||video.ended||generation!==taskId||source()!==src)return;
    if(!result?.audioBase64||result.mime!=='audio/wav')throw Error('Không nhận được WAV từ Piper');
    const url='data:audio/wav;base64,'+result.audioBase64;
    const audio=new Audio(url);playing=audio;
@@ -169,7 +169,7 @@
   if(e.type==='status'&&enabled)status(e.message||'TTS đang xử lý…');
  });
  if(api.captionOnEvent)api.captionOnEvent(e=>{
-  if(!enabled||!translate?.checked||!e||e.type!=='segment'||!e.text)return;
+  if(!enabled||video.paused||video.ended||!translate?.checked||!e||e.type!=='segment'||!e.text)return;
   if(e.route==='mlx-error')return; // Do not narrate untranslated source speech.
   updateSession();
   // Use the actual language of the text, bypass translation when the voice already matches.
@@ -188,9 +188,13 @@
   void speak(payload);
  });
  document.addEventListener('openiptv:media-info',updateSession);
- video.addEventListener('emptied',()=>{if(enabled)resetPlayback();});
- video.addEventListener('pause',()=>{if(enabled)resetPlayback();});
+ const suspendSpeech=()=>{
+  // Cancel outstanding synthesis, queued speech and the audio player, but remember the enabled preference.
+  resetPlayback();recentSpeech.clear();restore();
+  if(enabled)status('Video tạm dừng · TTS đã ngắt');
+ };
+ for(const event of ['pause','ended','emptied'])video.addEventListener(event,suspendSpeech);
  window.addEventListener('pagehide',()=>{enabled=false;resetPlayback();restore();});
- setInterval(()=>{updateSession();if(enabled)applyDuck();},1800);
+ setInterval(()=>{updateSession();if(enabled&&!video.paused&&!video.ended)applyDuck();},1800);
  updateVoiceVisibility();void refresh();
 })();
