@@ -53,7 +53,7 @@
  let f5ReferenceAudio='',f5LicenseConfirmAt=0;
  function toggleReference(){
   if(f5Panel)f5Panel.hidden=target.value!=='vi'||!['f5vi:reference','vietvoice:clone'].includes(voice.value);
-  const hint=f5Panel?.querySelector('small');
+  const hint=f5Panel?.querySelector?.('small');
   if(hint)hint.textContent=voice.value==='vietvoice:clone'?
     'VietVoice (MIT): chỉ dùng tệp giọng mẫu của chính bạn hoặc có sự đồng ý của người nói. Không gửi âm thanh ra dịch vụ đám mây.':
     'F5-TTS Vietnamese (CC-BY-NC-4.0): chỉ thử nghiệm phi thương mại và dùng giọng mẫu được phép sử dụng.';
