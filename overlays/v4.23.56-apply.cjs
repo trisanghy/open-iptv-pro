@@ -88,7 +88,11 @@ for(const filename of fs.readdirSync(at('tests')).filter(name=>name.endsWith('.t
  const old=read(f);
  const updated=old.replaceAll(previous,next)
   .replaceAll('unified-ai-settings-v42355.js','unified-ai-settings-v42356.js')
-  .replaceAll('unified-ai-settings-v42355.css','unified-ai-settings-v42356.css');
+  .replaceAll('unified-ai-settings-v42355.css','unified-ai-settings-v42356.css')
+  .replaceAll('unified-ai-settings-v42355\\.js','unified-ai-settings-v42356\\.js')
+  .replaceAll('unified-ai-settings-v42355\\.css','unified-ai-settings-v42356\\.css')
+  .replace("assert(!html.includes('unified-ai-settings-v42356.js'))",
+           "assert(!html.includes('unified-ai-settings-v42355.js'))");
  if(updated!==old)write(f,updated);
 }
 for(const [src,target] of [
