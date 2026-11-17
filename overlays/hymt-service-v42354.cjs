@@ -23,6 +23,8 @@ function createHyMTService({dataDir,installer,platform=process.platform,arch=pro
  const venv=path.join(root,'python-env');
  const python=path.join(venv,platform==='win32'?'Scripts':'bin',platform==='win32'?'python.exe':'python');
  const bridge=path.join(root,'hymt-bridge.py');
+ const runtimeMarker=path.join(root,'mlx-runtime.ready');
+ const runtimeReady=()=>fileOK(python)&&fs.existsSync(runtimeMarker);
  let activeInstall='',worker=null,workerKey='',nextId=1,readyPromise=null;
  const pending=new Map();
  const alive=()=>platform==='darwin'&&arch==='arm64';
@@ -46,7 +48,7 @@ function createHyMTService({dataDir,installer,platform=process.platform,arch=pro
  function state(key){
   if(!isValidKey(key))throw Error('Mô hình AI không hợp lệ');
   return {...MODELS[key],id:key,installed:installed(key),supported:alive(),
-   running:workerKey===key&&!!worker,installing:activeInstall===key,
+   running:workerKey===key&&!!worker,installing:activeInstall===key,runtimeReady:runtimeReady(),
    bytes:sizeOf(dir(key)),reason:alive()?'':'MLX cần máy Mac Apple Silicon (ARM64)'};
  }
  const progress=message=>{try{notify({type:'ai-progress',message:String(message).slice(0,200)});}catch{}};
@@ -74,7 +76,7 @@ function createHyMTService({dataDir,installer,platform=process.platform,arch=pro
   if(!isValidKey(key))throw Error('Mô hình AI không được hỗ trợ');
   if(!alive())throw Error('Hy-MT2 MLX chỉ hỗ trợ Mac Apple Silicon ở bản thử nghiệm');
   if(activeInstall)throw Error('Đang tải mô hình '+activeInstall+'; không thể tải đồng thời');
-  if(installed(key))return state(key);
+  if(installed(key)&&runtimeReady())return state(key);
   activeInstall=key;
   try{
    fs.mkdirSync(dir(key),{recursive:true});
@@ -85,14 +87,16 @@ function createHyMTService({dataDir,installer,platform=process.platform,arch=pro
     await run(uvPath,['python','install','3.11'],key,300000);
     await run(uvPath,['venv',venv,'--python','3.11','--python-preference','only-managed'],key,240000);
    }
-   if(!fs.existsSync(path.join(root,'mlx-runtime.ready'))){
+   if(!runtimeReady()){
     progress('Đang cài mlx-lm và huggingface-hub trong môi trường riêng…');
     await run(uvPath,['pip','install','--python',python,'mlx-lm','huggingface-hub'],key,900000);
     await run(python,['-c','import mlx_lm, huggingface_hub'],key,180000);
-    fs.writeFileSync(path.join(root,'mlx-runtime.ready'),'mlx-lm\n',{mode:0o600});
+    fs.writeFileSync(runtimeMarker,'mlx-lm\n',{mode:0o600});
    }
-   progress('Đang tải mô hình '+MODELS[key].label+' · có thể cần vài GB…');
-   await run(python,['-u',script(),'install',key,dir(key)],key,3600000);
+   if(!installed(key)){
+    progress('Đang tải mô hình '+MODELS[key].label+' · có thể cần vài GB…');
+    await run(python,['-u',script(),'install',key,dir(key)],key,3600000);
+   }else progress('Đã khôi phục runtime MLX; giữ nguyên mô hình '+MODELS[key].label);
    if(!installed(key))throw Error('Mô hình tải chưa hoàn chỉnh; có thể thử cài tiếp sau');
    progress('Đã tải '+MODELS[key].label+' vào bộ nhớ ứng dụng');
    return state(key);
@@ -112,6 +116,7 @@ function createHyMTService({dataDir,installer,platform=process.platform,arch=pro
  async function start(key){
   if(!alive())throw Error('Cần Mac Apple Silicon để chạy Hy-MT2 MLX');
   if(!installed(key))throw Error('Chưa tải '+MODELS[key]?.label+'. Mở ⚙ > Cài đặt để tải');
+  if(!runtimeReady())throw Error('Thiếu môi trường MLX. Mở ⚙ để cài lại runtime mà không tải lại mô hình.');
   if(worker&&workerKey===key&&readyPromise)return readyPromise;
   await stop();
   script();
