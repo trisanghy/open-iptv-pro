@@ -111,6 +111,35 @@ test('4.23.66: persistent Python voice can be cancelled during model warmup',asy
  await assert.rejects(promise,/Đã hủy/);
  assert.equal(session.isWarm(),false);
 });
+test('4.23.66: MLX failure falls back only to already installed Argos for English pivot',async()=>{
+ const {translateWithInstalledFallback}=require('../src/ai-translation-fallback.cjs');
+ const fail=async()=>{throw Error('worker exited without code');};
+ let notices=0,translated=0;
+ const argos={
+  status:()=>({ready:true}),
+  translateText:async(text,target,source)=>{translated++;return 'Chào buổi sáng';}
+ };
+ const result=await translateWithInstalledFallback({
+  engine:'hymt18',text:'Good morning',target:'vi',source:'en',
+  mlx:{translate:fail},argos,onFallback:()=>{notices++;}
+ });
+ assert.equal(result,'Chào buổi sáng');
+ assert.equal(translated,1);
+ assert.equal(notices,1);
+ const noInstaller={status:()=>({ready:false}),translateText:async()=>{throw Error('Unexpected install');}};
+ await assert.rejects(()=>translateWithInstalledFallback({
+  engine:'hymt7',text:'Good morning',target:'vi',source:'en',
+  mlx:{translate:fail},argos:noInstaller
+ }),/worker exited/);
+ await assert.rejects(()=>translateWithInstalledFallback({
+  engine:'hymt7',text:'Ni hao',target:'vi',source:'zh',
+  mlx:{translate:fail},argos
+ }),/worker exited/);
+ assert.equal(await translateWithInstalledFallback({
+  engine:'argos',text:'Hi',target:'vi',source:'en',mlx:{translate:fail},argos
+ }),'Chào buổi sáng');
+});
+
 test('4.23.66: updated UI wires cancel, locale changes, preview and compact lines',()=>{
  const ui=read('renderer/local-tts-v42344.js'),html=read('renderer/index.html');
  const css=read('renderer/compact-live-ai-controls-v42366.css');
