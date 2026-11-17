@@ -56,7 +56,7 @@
  function authErrorMessage(error){
   const msg=String(error?.message||error||'').trim(),m=msg.toLowerCase();
   if(isEmailRateLimited(error))
-   return 'Supabase giới hạn gửi email (HTTP 429). Dừng gửi liên tục, chờ hết hạn mức hoặc thiết lập SMTP riêng.';
+   return 'Supabase đã nhận quá nhiều yêu cầu gửi email (HTTP 429). Hãy chờ hết hạn mức hoặc cấu hình SMTP riêng.';
   if(/expired|invalid.*(?:token|otp)|token.*invalid|otp.*invalid/.test(m))
    return 'Liên kết hoặc mã đã hết hạn, đã sử dụng hoặc sai. Hãy yêu cầu email mới.';
   if(/rate.limit|too many requests|email rate|429/.test(m))
@@ -64,6 +64,8 @@
   if(/redirect.*not.allowed|redirect.*not.*whitelist|unsupported redirect/.test(m))
    return 'Website chưa được cho phép làm URL chuyển hướng trong Supabase Authentication → URL Configuration.';
   if(/code verifier|code_verifier|auth code.*invalid|invalid.*code/.test(m))return 'Không khôi phục được mã đăng nhập. Hãy mở cùng trình duyệt đã yêu cầu email hoặc gửi lại liên kết mới.';
+  if(error?.code==='email_address_not_authorized'||/email.address.not.authorized/i.test(msg))
+   return 'Email chưa được Supabase cho phép nhận thư. Dịch vụ gửi mặc định chỉ dành cho email của thành viên dự án; cần cấu hình SMTP riêng.';
   if(/email.*not.confirmed/.test(m))return 'Email chưa xác nhận. Hãy mở email mới nhất.';
   if(/failed to fetch|network|fetch failed|load failed/.test(m))
    return 'Không kết nối được Supabase. Kiểm tra mạng và thử lại.';

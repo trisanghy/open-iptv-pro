@@ -93,3 +93,7 @@ test('email rate-limit errors use HTTP status or Supabase code instead of generi
  assert.equal(core.isEmailRateLimited({message:'Failed to fetch'}),false);
  assert.match(core.authErrorMessage({status:429,message:'Failed to fetch'}),/HTTP 429/);
 });
+
+test('default Supabase mailer can reject non-team email addresses',()=>{
+ assert.match(core.authErrorMessage({code:'email_address_not_authorized',message:'Email address not authorized'}),/SMTP riêng/);
+});
