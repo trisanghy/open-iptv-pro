@@ -5,9 +5,18 @@
  const overlay=$('rustTranslatedCaption'),gear=$('liveCaptionSetup'),translate=$('liveTranslateToggle'),caption=$('liveCaptionToggle');
  if(!frame||!overlay||!gear||!video)return;
  const KEY='rustlab:subtitle-display-v1';
- const defaults={enabled:true,display:'both',size:'medium',position:'bottom',color:'#ffe65b',outline:'black',background:'dark',opacity:50};
- const allowed={display:['original','translated','both'],size:['small','medium','large','xlarge'],
+ const defaults={enabled:true,display:'both',size:'medium',position:'bottom',font:'system',color:'#ffe65b',outline:'black',background:'dark',opacity:50};
+ const allowed={font:['system','arial','tahoma','verdana','noto','serif'],display:['original','translated','both'],size:['small','medium','large','xlarge'],
  position:['top','middle','bottom'],outline:['black','white','none'],background:['dark','light','none']};
+ // Use OS fonts and CJK fallback stacks. No bundled or downloaded font files.
+ const fontStacks=Object.freeze({
+  system:'-apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", "Noto Sans CJK SC", Arial, sans-serif',
+  arial:'Arial, "PingFang SC", "Microsoft YaHei", "Noto Sans CJK SC", sans-serif',
+  tahoma:'Tahoma, "PingFang SC", "Microsoft YaHei", "Noto Sans CJK SC", sans-serif',
+  verdana:'Verdana, "PingFang SC", "Microsoft YaHei", "Noto Sans CJK SC", sans-serif',
+  noto:'"Noto Sans", "Noto Sans CJK SC", "PingFang SC", "Microsoft YaHei", Arial, sans-serif',
+  serif:'Georgia, "Songti SC", SimSun, "Noto Serif CJK SC", serif'
+ });
  let settings={...defaults},last=null,expiry,spoken=null;
  try{
   const saved=JSON.parse(localStorage.getItem(KEY)||'{}');
@@ -28,6 +37,8 @@
  '<label>Nội dung<select id="rustSubtitleDisplay"><option value="original">Chỉ phụ đề gốc</option><option value="translated">Chỉ phụ đề dịch</option><option value="both">Gốc + dịch</option></select></label>'+
  '<label>Vị trí<select id="rustSubtitlePosition"><option value="bottom">Dưới video</option><option value="middle">Giữa thấp</option><option value="top">Trên video</option></select></label>'+
  '<label>Cỡ chữ<select id="rustSubtitleSize"><option value="small">Nhỏ · 16px</option><option value="medium">Vừa · 20px</option><option value="large">Lớn · 25px</option><option value="xlarge">Rất lớn · 30px</option></select></label>'+
+ '<label>Phông chữ<select id="rustSubtitleFont"><option value="system">Mặc định · dễ đọc</option><option value="arial">Arial · gọn gàng</option><option value="tahoma">Tahoma · rõ nét</option><option value="verdana">Verdana · thoáng chữ</option><option value="noto">Noto Sans · đa ngôn ngữ</option><option value="serif">Georgia · có chân</option></select></label>'+
+ '<div class="rust-cc-font-preview" id="rustSubtitleFontPreview" aria-live="polite">Xin chào! Phụ đề dễ đọc · 你好世界</div>'+
  '<label>Màu chữ<span class="rust-cc-color" id="rustSubtitleColors"></span></label>'+
  '<label>Viền chữ<select id="rustSubtitleOutline"><option value="black">Đen</option><option value="white">Trắng</option><option value="none">Không viền</option></select></label>'+
  '<label>Nền chữ<select id="rustSubtitleBackground"><option value="dark">Nền đen</option><option value="light">Nền trắng</option><option value="none">Không nền</option></select></label>'+
@@ -37,7 +48,7 @@
  const orig=document.createElement('div'),trans=document.createElement('div');
  orig.className='rust-cc-original';trans.className='rust-cc-translation';overlay.replaceChildren(orig,trans);
  const els={enabled:$('rustSubtitleShow'),display:$('rustSubtitleDisplay'),position:$('rustSubtitlePosition'),
- size:$('rustSubtitleSize'),outline:$('rustSubtitleOutline'),background:$('rustSubtitleBackground'),
+ size:$('rustSubtitleSize'),font:$('rustSubtitleFont'),outline:$('rustSubtitleOutline'),background:$('rustSubtitleBackground'),
  opacity:$('rustSubtitleOpacity')};
  const colors=$('rustSubtitleColors'),presets=['#ffffff','#ffe65b','#49e961','#29d7ed','#2991ff','#ff86bb','#ff5555'];
  const swatches=[];
@@ -54,6 +65,9 @@
   toggle.setAttribute('aria-pressed',String(settings.enabled));
   for(const [color,b] of swatches)b.setAttribute('aria-pressed',String(color===settings.color));
   frame.dataset.rustSubtitlePosition=settings.position;frame.dataset.rustSubtitleSize=settings.size;
+  const stack=fontStacks[settings.font]||fontStacks.system;
+  overlay.style.setProperty('--rust-cc-font-stack',stack);
+  $('rustSubtitleFontPreview').style.fontFamily=stack;
   frame.dataset.rustSubtitleOutline=settings.outline;frame.dataset.rustSubtitleBackground=settings.background;
   overlay.style.setProperty('--rust-cc-color',settings.color);
   overlay.style.setProperty('--rust-cc-opacity',String(settings.opacity/100));

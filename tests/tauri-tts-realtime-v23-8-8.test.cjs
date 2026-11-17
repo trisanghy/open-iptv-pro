@@ -32,9 +32,10 @@ test('On-video caption follows the phrase being spoken, and restores normal over
  assert.ok(src.includes('const active=spoken||last;'));
  assert.ok(src.includes('if(!spoken)render()'));
 });
-test('Version 23.8.8 has a matching immutable tag and single .app Mac build',()=>{
+test('Version has a matching immutable tag and single .app Mac build',()=>{
  const p=JSON.parse(read('package.json')),builder=read('scripts/BUILD_RUSTLAB_MAC_ONE_ZIP_FAST.sh');
- assert.equal(p.version,'4.23.17-tauri.23.8.8');
- assert.ok(builder.includes('TAG="rust-lab/v23.8.8"'));
+ assert.match(p.version,/^4\.23\.17-tauri\.23\.8\.\d+$/);
+ const current=p.version.split('-tauri.')[1];
+ assert.ok(builder.includes('TAG="rust-lab/v'+current+'"'));
  assert.ok(builder.includes('npm run build -- --bundles app'));
 });
