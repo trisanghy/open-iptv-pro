@@ -5,7 +5,7 @@ const {EventEmitter}=require('node:events');
 const {PassThrough}=require('node:stream');
 const {createContinuousCapture}=require('../src/continuous-capture.cjs');
 const read=p=>fs.readFileSync(path.resolve(__dirname,'..',p),'utf8');
-test('v4.23.63: real FFmpeg argv requests 8 seconds per WAV, no 4-second rollover',()=>{
+test('v4.23.64: real FFmpeg argv requests 8 seconds per WAV, no 4-second rollover',()=>{
  const temp=fs.mkdtempSync(path.join(os.tmpdir(),'iptv-eight-window-'));
  let launches=0,captured;
  try{
@@ -28,7 +28,7 @@ test('v4.23.63: real FFmpeg argv requests 8 seconds per WAV, no 4-second rollove
   recorder.stop();
  }finally{fs.rmSync(temp,{recursive:true,force:true});}
 });
-test('v4.23.63: all successive 8s windows stay in sequence without lost chunks',async()=>{
+test('v4.23.64: all successive 8s windows stay in sequence without lost chunks',async()=>{
  const temp=fs.mkdtempSync(path.join(os.tmpdir(),'iptv-eight-sequences-'));
  try{
   const recorder=createContinuousCapture({
@@ -48,7 +48,7 @@ test('v4.23.63: all successive 8s windows stay in sequence without lost chunks',
   recorder.stop();
  }finally{fs.rmSync(temp,{recursive:true,force:true});}
 });
-test('v4.23.63: Whisper gets 8s recordings; -t 4 remains thread count not chunk time',()=>{
+test('v4.23.64: Whisper gets 8s recordings; -t 4 remains thread count not chunk time',()=>{
  const service=read('src/live-caption-service.cjs');
  assert.match(service,/ffmpeg:ff,url:s\.url,dir:temp,spawnProc,chunkSeconds:8/);
  assert.match(service,/Thu âm liên tục · nhận diện mỗi khoảng 8 giây/);
@@ -56,7 +56,7 @@ test('v4.23.63: Whisper gets 8s recordings; -t 4 remains thread count not chunk 
  assert.match(service,/conversion=conversion\.catch\(\(\)=>\{\}\)\.then\(work\)/);
  assert.match(service,/runContinuous\(s,getFFmpeg\(\),bin\(\),model\(\)\)/);
 });
-test('v4.23.63: translating target text and TTS complete playback stay intact',()=>{
+test('v4.23.64: translating target text and TTS complete playback stay intact',()=>{
  const caption=read('renderer/live-captions-v42343.js'),tts=read('renderer/local-tts-v42344.js');
  assert.match(caption,/if\(!ev\.translated\|\|ev\.language!==target\)/);
  assert.match(caption,/videoCaptions\.show/);
@@ -64,7 +64,7 @@ test('v4.23.63: translating target text and TTS complete playback stay intact',(
  assert.match(tts,/speechQueue\.enqueue\(payload\)/);
  assert.doesNotMatch(tts,/resetPlayback\(false\)/);
  const pkg=JSON.parse(read('package.json'));
- assert.equal(pkg.version,'4.23.63');
+ assert.equal(pkg.version,'4.23.64');
  assert.deepEqual(pkg.build.mac.target,['dmg']);
  assert.equal(pkg.build.dmg.writeUpdateInfo,false);
 });
