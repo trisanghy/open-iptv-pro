@@ -190,7 +190,7 @@
   const inventory=Array.isArray(latest?.storage)?latest.storage:[];
   const available=!!latest?.supported;
   const byId=Object.fromEntries(inventory.map(item=>[item.id,item]));
-  const order=['whisper','argos','piper','vieneu',...modelKeys,'cache','runtimes'];
+  const order=['whisper','argos','piper','vieneu','vietvoice','f5vi',...modelKeys,'cache','runtimes'];
   for(const id of order){
    const item=byId[id];if(!item)continue;
    if(['hymt18','qwen06','tg4','gem3_1','gem4_e2'].includes(id)){
@@ -212,7 +212,9 @@
    left.append(name,detail);
    const baseHardware={
     whisper:{minRamGB:4,recRamGB:8,device:'macOS/Windows'},argos:{minRamGB:4,recRamGB:8,device:'macOS/Windows'},
-    piper:{minRamGB:4,recRamGB:8,device:'macOS/Windows'},vieneu:{minRamGB:12,recRamGB:24,device:'Mac Apple Silicon'}
+    piper:{minRamGB:4,recRamGB:8,device:'macOS/Windows'},vieneu:{minRamGB:12,recRamGB:24,device:'Mac Apple Silicon'},
+    vietvoice:{minRamGB:8,recRamGB:16,device:'macOS/Windows · ONNX'},
+    f5vi:{minRamGB:16,recRamGB:32,device:'Mac Apple Silicon / Windows GPU'}
    };
    const hardware=modelState||baseHardware[id];
    if(hardware?.minRamGB){
@@ -226,6 +228,11 @@
     advice.textContent='Thiết bị: '+platform+' · RAM tối thiểu '+min+
       ' GB · khuyên dùng '+rec+' GB'+fit;
     left.append(advice);
+   }
+   if(id==='f5vi'){
+    const licensing=document.createElement('small');licensing.className='ai-model-license';
+    licensing.textContent='F5-TTS Vietnamese · CC-BY-NC-4.0 · chỉ phi thương mại; cần âm thanh mẫu có quyền sử dụng';
+    left.append(licensing);
    }
    if(googleSet.has(id)){
     const licensing=document.createElement('small');
