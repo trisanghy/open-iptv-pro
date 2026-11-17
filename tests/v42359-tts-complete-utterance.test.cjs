@@ -93,8 +93,8 @@ test('v4.23.67: actual Electron UI waits for natural ended, TTS never restores t
  assert.match(ui,/speechQueue\.enqueue\(payload\)/);
  assert.match(ui,/speechQueue\.setEnabled\(enabled\)/);
  assert.match(ui,/if\(!e\.translated\)return/);
- assert.match(ui,/maxPendingAgeMs:18000/);
- assert.match(ui,/maxSynthAgeMs:25000/);
+ assert.match(ui,/maxPendingAgeMs:5000/);
+ assert.match(ui,/maxSynthAgeMs:7000/);
  assert.match(ui,/applyDuck\(\)/);
  assert.match(ui,/applySpeechRate\(audio\)/);
  assert.doesNotMatch(ui,/resetPlayback\(false\)/);
