@@ -45,13 +45,14 @@
   ['vietvoice:male:central:story','VietVoice · nam Trung · kể chuyện'],
   ['vietvoice:female:southern:news','VietVoice · nữ Nam · tin tức'],
   ['vietvoice:male:southern:story','VietVoice · nam Nam · kể chuyện'],
+  ['vietvoice:clone','VietVoice · nhân bản từ giọng mẫu có quyền sử dụng'],
   ['f5vi:reference','F5-TTS Việt · thử nghiệm · giọng mẫu (phi thương mại)']
  ];
  const f5Panel=$('f5ReferencePanel'),f5Button=$('f5ChooseReference'),
   f5Label=$('f5ReferenceLabel'),f5Transcript=$('f5ReferenceText');
  let f5ReferenceAudio='',f5LicenseConfirmAt=0;
  function toggleReference(){
-  if(f5Panel)f5Panel.hidden=target.value!=='vi'||voice.value!=='f5vi:reference';
+  if(f5Panel)f5Panel.hidden=target.value!=='vi'||!['f5vi:reference','vietvoice:clone'].includes(voice.value);
  }
  f5Button?.addEventListener('click',async()=>{
   try{
@@ -172,8 +173,8 @@
     text:payload.text.slice(0,360),
     sourceLanguage:payload.sourceLanguage,
     alreadyTranslated:payload.alreadyTranslated===true,
-    referenceAudio:payload.voiceId==='f5vi:reference'?f5ReferenceAudio:'',
-    referenceText:payload.voiceId==='f5vi:reference'?String(f5Transcript?.value||'').trim():''
+    referenceAudio:['f5vi:reference','vietvoice:clone'].includes(payload.voiceId)?f5ReferenceAudio:'',
+    referenceText:['f5vi:reference','vietvoice:clone'].includes(payload.voiceId)?String(f5Transcript?.value||'').trim():''
    });
   },
   play:async(result,payload,onEnded)=>{
@@ -260,8 +261,8 @@
      target.value==='en'?'Hello. This is your Open IPTV Pro voice test.':'Hello';
    const res=await api.ttsSynthesize({target:target.value,voice:voice.value,
      text:phrase,alreadyTranslated:true,
-     referenceAudio:voice.value==='f5vi:reference'?f5ReferenceAudio:'',
-     referenceText:voice.value==='f5vi:reference'?String(f5Transcript?.value||'').trim():''});
+     referenceAudio:['f5vi:reference','vietvoice:clone'].includes(voice.value)?f5ReferenceAudio:'',
+     referenceText:['f5vi:reference','vietvoice:clone'].includes(voice.value)?String(f5Transcript?.value||'').trim():''});
    if(!res?.audioBase64||res.mime!=='audio/wav')throw Error('Chưa tạo được file WAV nghe thử');
    if(previewAudio){try{previewAudio.pause();previewAudio.src='';}catch{}}
    const audio=new Audio('data:audio/wav;base64,'+res.audioBase64);
