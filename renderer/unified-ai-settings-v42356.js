@@ -6,7 +6,9 @@
  const picker=$('aiTranslationEngine'),mode=$('aiResourceMode'),modelList=$('aiModelList');
  const warning=$('aiHeatWarning'),inlineWarning=$('aiHeatWarningInline'),status=$('aiSettingsStatus');
  if(!panel||!trigger||!picker||!mode||!modelList||!warning||!status)return;
- const modelKeys=['hymt18','hymt18q8','hymt7','hymt7q8','qwen06','qwen17','qwen4','qwen8'];
+ const googleKeys=['tg4','tg12','tg27','gem3_1','gem3_4','gem4_e2','gem4_e4','gem4_12','gem4_26'];
+ const googleSet=new Set(googleKeys);
+ const modelKeys=['hymt18','hymt18q8','hymt7','hymt7q8','qwen06','qwen17','qwen4','qwen8',...googleKeys];
  const modelSet=new Set(modelKeys);
  const validEngines=new Set(['auto','argos',...modelKeys]);
  const validModes=new Set(['balanced','saver','quality']);
@@ -116,7 +118,7 @@
   status.textContent=String(message||'').slice(0,400);
   status.dataset.error=failed?'true':'false';
  };
- let latest=null,busy=false,confirmKey='',confirmAt=0;
+ let latest=null,busy=false,confirmKey='',confirmAt=0,licenseKey='',licenseAt=0;
  const caption=$('liveCaptionToggle'),translate=$('liveTranslateToggle'),tts=$('liveTtsToggle');
  let heatTimer=null,heatFadeTimer=null,lastHeatSignature='';
  const heatNodes=[warning,inlineWarning].filter(Boolean);
@@ -138,7 +140,7 @@
   const activeSpeech=!!caption?.checked||!!translate?.checked;
   const localTranslate=!!translate?.checked;
   const localVoice=!!tts?.checked;
-  const heavy=['hymt7','hymt7q8','qwen8'].includes(getEngine())||(getEngine()==='auto'&&getMode()==='quality'&&(latest?.models?.hymt7?.installed||latest?.models?.hymt7q8?.installed));
+  const heavy=['hymt7','hymt7q8','qwen8','tg12','tg27','gem4_12','gem4_26'].includes(getEngine())||(getEngine()==='auto'&&getMode()==='quality'&&(latest?.models?.hymt7?.installed||latest?.models?.hymt7q8?.installed));
   const concurrent=(activeSpeech?1:0)+(localTranslate?1:0)+(localVoice?1:0);
   const intense=heavy&&(localTranslate||localVoice);
   const visible=intense||concurrent>=2;
@@ -177,16 +179,24 @@
  }
  function render(){
   modelList.replaceChildren();
+  if(latest?.googleRuntime&&!latest.googleRuntime.online){
+   const setup=document.createElement('div');
+   setup.className='ai-ollama-setup';
+   const help=document.createElement('div');
+   help.textContent='Google AI cần Ollama chạy trên máy. Nếu đã cài, nhấn Tải mô hình để ứng dụng thử khởi chạy. Chỉ tải model khi bạn yêu cầu; không có dịch vụ đám mây.';
+   const link=button('Cài Ollama miễn phí',()=>{void api.aiOpenOllamaDownload?.();});
+   setup.append(help,link);modelList.append(setup);
+  }
   const inventory=Array.isArray(latest?.storage)?latest.storage:[];
   const available=!!latest?.supported;
   const byId=Object.fromEntries(inventory.map(item=>[item.id,item]));
   const order=['whisper','argos','piper','vieneu',...modelKeys,'cache','runtimes'];
   for(const id of order){
    const item=byId[id];if(!item)continue;
-   if(id==='hymt18'||id==='qwen06'){
+   if(['hymt18','qwen06','tg4','gem3_1','gem4_e2'].includes(id)){
     const heading=document.createElement('div');
     heading.className='ai-model-category';
-    heading.textContent=id==='hymt18'?'Dịch chuyên dụng · Hy-MT2':'AI đa năng · Qwen3 (dịch theo chỉ dẫn)';
+    heading.textContent=({hymt18:'Dịch chuyên dụng · Hy-MT2',qwen06:'AI đa năng · Qwen3 (MLX)',tg4:'Google TranslateGemma · chuyên dịch (Ollama)',gem3_1:'Google Gemma 3 · đa ngữ (Ollama)',gem4_e2:'Google Gemma 4 · Apache 2.0 (Ollama)'})[id];
     modelList.append(heading);
    }
    const line=document.createElement('div');line.className='ai-model-card';
@@ -198,20 +208,55 @@
    const hint=modelState?.approxBytes?' · tải khoảng '+human(modelState.approxBytes):'';
    detail.textContent=(modelReady?'Đã cài':item.present?'Tải chưa hoàn chỉnh':'Chưa tải')+
      ' · hiện dùng '+human(item.bytes)+(modelSet.has(id)?hint:'')+
-     (modelSet.has(id)&&!available?' · chỉ Mac Apple Silicon':'');
-   left.append(name,detail);line.append(left);
+     (modelSet.has(id)&&!googleSet.has(id)&&!available?' · chỉ Mac Apple Silicon':'');
+   left.append(name,detail);
+   const baseHardware={
+    whisper:{minRamGB:4,recRamGB:8,device:'macOS/Windows'},argos:{minRamGB:4,recRamGB:8,device:'macOS/Windows'},
+    piper:{minRamGB:4,recRamGB:8,device:'macOS/Windows'},vieneu:{minRamGB:12,recRamGB:24,device:'Mac Apple Silicon'}
+   };
+   const hardware=modelState||baseHardware[id];
+   if(hardware?.minRamGB){
+    const advice=document.createElement('small');
+    advice.className='ai-hardware-hint';
+    const current=Number(latest?.system?.totalRamGB)||0;
+    const min=hardware.minRamGB,rec=hardware.recRamGB;
+    const platform=googleSet.has(id)?'macOS/Windows + Ollama':(hardware.device||'Mac Apple Silicon');
+    const fit=current?(current<min?' · Máy này có thể thiếu RAM':
+      current<rec?' · Máy này nên dùng mô hình nhẹ hơn':' · RAM máy đạt mức khuyên dùng'):'';
+    advice.textContent='Thiết bị: '+platform+' · RAM tối thiểu '+min+
+      ' GB · khuyên dùng '+rec+' GB'+fit;
+    left.append(advice);
+   }
+   if(googleSet.has(id)){
+    const licensing=document.createElement('small');
+    licensing.className='ai-model-license';
+    licensing.textContent=modelState?.license==='apache-2.0'?
+      'Giấy phép Apache 2.0 · lưu trong Ollama (các ứng dụng khác cũng có thể dùng)':
+      'Điều khoản Google Gemma · dữ liệu mô hình nằm trong Ollama dùng chung';
+    left.append(licensing);
+   }
+   line.append(left);
    const right=document.createElement('div');right.className='ai-model-actions';
-   const runtimeNeedsRepair=modelSet.has(id)&&modelReady&&!modelState?.runtimeReady;
+   const runtimeNeedsRepair=modelSet.has(id)&&!googleSet.has(id)&&modelReady&&!modelState?.runtimeReady;
    if(modelSet.has(id)&&(!modelReady||runtimeNeedsRepair)){
     const install=button(runtimeNeedsRepair?'Sửa bộ chạy MLX':item.present?'Tải tiếp':'Tải mô hình',async()=>{
      if(busy)return;
-     busy=true;install.disabled=true;
-     setStatus(runtimeNeedsRepair?'Đang cài lại môi trường MLX, giữ nguyên mô hình '+item.label+'…':'Đang tải '+item.label+'; yêu cầu kết nối mạng và vài GB dung lượng trống…');
+     if(googleSet.has(id)&&modelState?.license==='gemma-terms'&&
+        (licenseKey!==id||Date.now()-licenseAt>20000)){
+      licenseKey=id;licenseAt=Date.now();
+      install.textContent='Chấp nhận điều khoản & tải';
+      setStatus('Google Gemma có điều khoản sử dụng riêng. Xem và chấp nhận tại ai.google.dev/gemma/terms, sau đó bấm lần nữa trong 20 giây để tải '+item.label);
+      void api.aiOpenGemmaTerms?.();
+      return;
+     }
+     licenseKey='';busy=true;install.disabled=true;
+     setStatus(runtimeNeedsRepair?'Đang cài lại môi trường MLX, giữ nguyên mô hình '+item.label+'…':
+      'Đang tải '+item.label+' · yêu cầu mạng và dung lượng trống; Google AI dùng bộ chạy Ollama…');
      try{await api.aiInstallModel(id);await refresh();setStatus('Đã cài '+item.label);}
      catch(e){setStatus('Không cài được: '+String(e?.message||e),true);}
      finally{busy=false;install.disabled=false;}
     });
-    install.disabled=!available||busy;right.append(install);
+    install.disabled=(!googleSet.has(id)&&!available)||busy;right.append(install);
    }
    if(item.present&&item.bytes>=0){
     const remove=button('Xóa',async()=>{
@@ -219,7 +264,7 @@
      const now=Date.now();
      if(confirmKey!==id||now-confirmAt>12000){
       confirmKey=id;confirmAt=now;remove.textContent='Xác nhận xóa';
-      setStatus('Xóa '+item.label+' ('+human(item.bytes)+')? Bấm “Xác nhận xóa” lần nữa trong 12 giây. Không xóa danh sách IPTV.');
+      setStatus('Xóa '+item.label+' ('+human(item.bytes)+')? '+(googleSet.has(id)?'Mô hình nằm trong Ollama dùng chung, ứng dụng khác cũng có thể bị ảnh hưởng. ':'')+'Bấm Xác nhận xóa lần nữa trong 12 giây. Không xóa playlist IPTV.');
       return;
      }
      confirmKey='';busy=true;remove.disabled=true;
@@ -234,7 +279,7 @@
    line.append(right);modelList.append(line);
   }
   const used=inventory.reduce((sum,item)=>sum+(Number(item.bytes)||0),0);
-  const label=$('aiStorageTotal');if(label)label.textContent='Dung lượng AI đã tải: '+human(used);
+  const label=$('aiStorageTotal');if(label)label.textContent='Dung lượng AI đã tải: '+human(used)+' (gồm mô hình Google dùng chung trong Ollama)';
  }
  trigger.title='Cài đặt chung: Live Caption · Live Translate · TTS · Quản lý bộ nhớ AI';
  const originalClick=()=>{if(!panel.hidden)void refresh();};
