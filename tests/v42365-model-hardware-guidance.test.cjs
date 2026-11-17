@@ -40,7 +40,7 @@ test('v4.23.65: UI shows CPU/GPU, RAM, disk and actual machine info using the se
  const main=read('src/main.cjs'),ui=read('renderer/unified-ai-settings-v42356.js');
  const html=read('renderer/index.html');
  assert.match(main,/hardware:\{platform:process\.platform,arch:process\.arch,ramGB:/);
- assert.match(ui,/hardwareAdvice\.forModel\(id,latest\?\.hardware/);
+ assert.match(ui,/hardwareAdvice\?\.forModel\(id,latest\?\.hardware/);
  assert.match(ui,/Gợi ý cấu hình:/);
  assert.match(ui,/ai-model-hardware/);
  assert.match(html,/ai-hardware-advice-v42365\.js/);
