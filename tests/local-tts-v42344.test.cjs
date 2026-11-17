@@ -36,5 +36,5 @@ test('v4.23.44 desktop IPC only permits bounded operations, cleans processes on 
  const main=read('src/main.cjs'),pre=read('src/preload.cjs');
  for(const id of ['tts:status','tts:install','tts:synthesize','tts:stop']){assert.ok(main.includes(id));assert.ok(pre.includes(id));}
  assert.match(main,/localTTS\?\.stop\(\)/);assert.match(main,/localModelInstaller\?\.cancel\(\)/);
- assert.equal(JSON.parse(read('package.json')).version,'4.23.65');
+ assert.equal(JSON.parse(read('package.json')).version,'4.23.66');
 });

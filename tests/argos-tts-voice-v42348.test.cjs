@@ -60,5 +60,5 @@ test('v4.23.60: row 3 voice dropdown is fully connected end to end',()=>{
  assert.match(ui,/voice:payload\.voiceId/);
  assert.match(read('src/preload.cjs'),/ttsInstall:\(lang,voice\)/);
  assert.match(read('src/main.cjs'),/localModelInstaller\.install\(lang,voice\)/);
- assert.equal(JSON.parse(read('package.json')).version,'4.23.65');
+ assert.equal(JSON.parse(read('package.json')).version,'4.23.66');
 });
