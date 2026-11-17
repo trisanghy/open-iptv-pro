@@ -103,12 +103,32 @@
   void api.captionStop().catch(error=>console.warn('Pause: Whisper cancellation',error));
   setStatus('Video tạm dừng · nhận diện và dịch đã ngắt');
  };
- for(const event of ['pause','ended','emptied'])video.addEventListener(event,halt);
- video.addEventListener('playing',()=>{if(caption.checked||translate.checked)void reconcile(true);});
+ let stallTimer=null;
+ const clearStall=()=>{if(stallTimer){clearTimeout(stallTimer);stallTimer=null;}};
+ const scheduleStall=()=>{
+  clearStall();
+  // Short HLS buffering spikes should not restart Whisper. Cancel only when
+  // no future frames have arrived for 1400ms.
+  stallTimer=setTimeout(()=>{
+   stallTimer=null;
+   if(!video.paused&&!video.ended&&video.readyState<3)halt();
+  },1400);
+ };
+ for(const event of ['pause','ended','emptied','seeking'])
+  video.addEventListener(event,()=>{clearStall();halt();});
+ for(const event of ['waiting','stalled'])video.addEventListener(event,scheduleStall);
+ video.addEventListener('playing',()=>{clearStall();if(caption.checked||translate.checked)void reconcile(true);});
+ video.addEventListener('seeked',()=>{if(mediaActive()&&(caption.checked||translate.checked))void reconcile(true);});
  // Caption controls original subtitles; translation can continue using Whisper even
  // when the original caption checkbox is off. Never force Caption back on.
  const tts=$('liveTtsToggle');
  const changed=event=>{
+  // Original Caption visibility is independent of active translation.
+  // When Translate is ON, don't restart Whisper or force Caption checked.
+  if(event?.target===caption&&translate.checked){
+   document.dispatchEvent(new CustomEvent('rustlab:caption-visibility-changed',{detail:{enabled:caption.checked}}));
+   return;
+  }
   // Spoken translation requires translated segments. Switching translation off
   // also stops TTS, but must not alter the independent Caption preference.
   if(event?.target===translate&&!translate.checked&&tts?.checked){
@@ -210,7 +230,7 @@
   if(url!==observed){observed=url;if(mediaActive()&&(caption.checked||translate.checked))void reconcile(true);else if(activeId)void stop();}
  },1400);
  window.addEventListener('rustlab:ai-settings-changed',()=>{if(translate.checked)void reconcile(true);});
- window.addEventListener('pagehide',halt);
+ window.addEventListener('pagehide',()=>{clearStall();halt();});
  document.addEventListener('openiptv:media-info',()=>{if(!ctx?.getCurrent?.()&&activeId)void stop();});
  void refreshState();
 })();
