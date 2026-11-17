@@ -235,7 +235,7 @@ PROJECT_FINAL="$WORK/Open-IPTV-Pro-v4_23_55_Full_Desktop"
 mv "$PROJECT" "$PROJECT_FINAL"
 PROJECT="$PROJECT_FINAL"
 echo '[3/5] Adding 6 new offline MLX translation models (8 selectable MLX total)...'
-V56_REV="cdd2c7f8a61eb2f5b876503a0dd5b0cdc03e4186"
+V56_REV="4544dda7f073dfa7535d92d332cb715f36526302"
 V56_DIR="$WORK/overlays56"
 mkdir -p "$V56_DIR"
 for file in mlx-bridge-v42356.py mlx-service-v42356.cjs local-ai-storage-v42356.cjs unified-ai-settings-v42356.js unified-ai-settings-v42356.css v42356-mlx-model-catalog.test.cjs v42356-mlx-model-catalog.test.py v4.23.56-apply.cjs BUILD_MAC_DMG_ONLY_v42356.command; do
