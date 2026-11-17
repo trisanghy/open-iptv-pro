@@ -9,6 +9,7 @@ contextBridge.exposeInMainWorld('streamleaf',Object.freeze({
   castLan:url=>ipcRenderer.invoke('cast:lan',url),
   openAirplay:url=>ipcRenderer.invoke('airplay:open',url),
   ttsStatus:(lang,voice)=>ipcRenderer.invoke('tts:status',lang,voice),
+  ttsChooseReference:(transcript,consent)=>ipcRenderer.invoke('tts:reference:choose',transcript,consent),
   ttsInstall:(lang,voice)=>ipcRenderer.invoke('tts:install',lang,voice),
   ttsSynthesize:args=>ipcRenderer.invoke('tts:synthesize',args),
   ttsStop:()=>ipcRenderer.invoke('tts:stop'),
