@@ -53,8 +53,8 @@ test('CC stays in fullscreen playerBox and returns to native track after leaving
  }finally{globalThis.VTTCue=prior;}
 });
 
-function makeMock({caption=true,corsBlocked=false}={}){
- let doc;
+function makeMock({caption=true,corsBlocked=false,mirrorRejected=false}={}){
+ let doc,original=null;
  const listeners=(element,name,callback)=>((element.listeners[name]??=[]).push(callback));
  function node(tag){
   const item={
@@ -70,6 +70,7 @@ function makeMock({caption=true,corsBlocked=false}={}){
    pause(){this.paused=true;this.emit('pause')},
    load(){},
    requestPictureInPicture(){
+    if(mirrorRejected&&this!==original)return Promise.reject(Error('Canvas PiP unavailable'));
     doc.pictureInPictureElement=this;this.emit('enterpictureinpicture');
     return Promise.resolve(this);
    }
@@ -104,7 +105,7 @@ function makeMock({caption=true,corsBlocked=false}={}){
    old?.emit('leavepictureinpicture');return Promise.resolve();
   }};
  doc.body=node('body');doc.documentElement=doc.body;
- const original=node('video');
+ original=node('video');
  original.readyState=4;original.paused=false;original.videoWidth=1280;original.videoHeight=720;
  original.clientWidth=1000;original.clientHeight=562;doc.body.appendChild(original);
  const ctrl=createController({video:original,doc,storage:{getItem:()=>null,setItem(){}},
@@ -142,6 +143,16 @@ test('CORS-protected video retains original native PiP fallback',async()=>{
  try{
   assert.equal(await app.ctrl.manual(),true);
   assert.equal(app.doc.pictureInPictureElement,app.original);
+ }finally{await app.ctrl.dispose();}
+});
+
+
+test('If mirrored PiP request rejects, working native video PiP remains available',async()=>{
+ const app=makeMock({mirrorRejected:true});
+ try{
+  assert.equal(await app.ctrl.manual(),true);
+  assert.equal(app.doc.pictureInPictureElement,app.original);
+  assert.equal(app.ctrl.inPiP(),true);
  }finally{await app.ctrl.dispose();}
 });
 
