@@ -1,0 +1,32 @@
+name: Test Electron v4.23.64 FFprobe/TTS regression
+on:
+  push:
+    branches:
+      - experiment/electron-v42364-ffprobe-bundled
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  regression:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+      - name: Syntax check
+        run: |
+          node --check src/local-audio-toolchain.cjs
+          node --check src/local-ai-autoinstall.cjs
+          node --check src/local-tts-service.cjs
+          node --check src/main.cjs
+          python3 -m py_compile src/extra-vietnamese-tts-bridge.py
+          bash -n build-mac-v42364.sh
+          bash -n build-mac-v42364-public.sh
+      - name: FFprobe dependency and runtime
+        run: |
+          node -e "const p=require('@ffprobe-installer/ffprobe'); console.log(p.path); if(!p.path)process.exit(1)"
+          node --test tests/v42364-ffprobe-bundled.test.cjs
+      - name: Full Node regression suite
+        run: npm test

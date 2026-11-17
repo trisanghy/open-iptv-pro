@@ -1,0 +1,47 @@
+name: Verify bundled native FFprobe in macOS v4.23.64 app-only
+on:
+  push:
+    branches:
+      - experiment/electron-v42364-ffprobe-bundled
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  mac-app:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+      - name: Verify native FFmpeg and FFprobe before package
+        run: |
+          node -e "const p=require('@ffprobe-installer/ffprobe').path; require('node:child_process').execFileSync(p,['-version'],{stdio:'inherit'})"
+          node -e "const p=require('ffmpeg-static'); require('node:child_process').execFileSync(p,['-version'],{stdio:'inherit'})"
+      - name: Build native macOS .app only
+        run: |
+          export CSC_IDENTITY_AUTO_DISCOVERY=false
+          ARCH="$(uname -m)"
+          case "$ARCH" in arm64) ARCH='arm64';; x86_64) ARCH='x64';; *) exit 1;; esac
+          ./node_modules/.bin/electron-builder --mac --dir "--$ARCH" --publish never
+      - name: Verify bundled FFprobe works even with Finder-like PATH
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          APP="$(find dist -maxdepth 3 -type d -name 'Open IPTV Pro.app' -print -quit)"
+          test -n "$APP"
+          test -f "$APP/Contents/Info.plist"
+          RES="$APP/Contents/Resources/app.asar.unpacked"
+          test -d "$RES"
+          PROBE="$(find "$RES/node_modules/@ffprobe-installer" -type f -name ffprobe -print -quit)"
+          FFMPEG="$(find "$RES/node_modules/ffmpeg-static" -type f -name ffmpeg -print -quit)"
+          test -n "$PROBE" && test -n "$FFMPEG"
+          "$PROBE" -version
+          "$FFMPEG" -version
+          export PATH="$(dirname "$PROBE"):$(dirname "$FFMPEG"):/usr/bin:/bin"
+          /usr/bin/env ffprobe -version
+          /usr/bin/env ffmpeg -version
+          test -z "$(find dist -maxdepth 1 -type f -name '*.dmg' -print -quit)"
+          test -z "$(find dist -maxdepth 1 -type f -name '*.zip' -print -quit)"
+          echo "PASS: native FFprobe inside macOS .app and executable with sanitized PATH"

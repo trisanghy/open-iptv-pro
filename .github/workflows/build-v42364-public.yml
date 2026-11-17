@@ -1,0 +1,31 @@
+name: Build public DMG + source v4.23.64
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+      - name: Run regression tests
+        run: npm test
+      - name: Build native macOS DMG
+        run: |
+          export CSC_IDENTITY_AUTO_DISCOVERY=false
+          ARCH="$(uname -m)"
+          case "$ARCH" in arm64) ARCH='arm64';; x86_64) ARCH='x64';; *) exit 1;; esac
+          ./node_modules/.bin/electron-builder --mac dmg "--$ARCH" --publish never
+      - name: Export exact Git commit source
+        run: git archive --format=zip --output=dist/OpenIPTVPro_Source_v4.23.64.zip HEAD
+      - uses: actions/upload-artifact@v4
+        with:
+          name: OpenIPTVPro-v4.23.64-Public-Mac
+          path: |
+            dist/*.dmg
+            dist/OpenIPTVPro_Source_v4.23.64.zip
+          if-no-files-found: error
