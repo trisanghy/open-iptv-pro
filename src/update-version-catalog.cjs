@@ -51,7 +51,7 @@ function catalogFromReleases(releases,{platform,arch}={}){
 }
 async function fetchReleaseCatalog(fetcher=fetch,{platform=process.platform,arch=process.arch}={}){
  const response=await fetcher(API,{
-  headers:{Accept:'application/vnd.github+json','User-Agent':'Open-IPTV-Pro/4.23.66'},
+  headers:{Accept:'application/vnd.github+json','User-Agent':'Open-IPTV-Pro/4.23.67'},
   signal:AbortSignal.timeout(15000)
  });
  if(!response?.ok)throw Error('Không lấy được danh sách phiên bản từ GitHub (HTTP '+String(response?.status||'?')+')');
