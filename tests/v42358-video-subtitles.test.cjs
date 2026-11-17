@@ -5,7 +5,7 @@ const root=path.resolve(__dirname,'..');
 const read=p=>fs.readFileSync(path.join(root,p),'utf8');
 const {createVideoCaptionRenderer}=require('../renderer/video-only-translated-caption-v42358.js');
 
-test('v4.23.60: 1 translated native video cue replaces previous and clears on stop',()=>{
+test('v4.23.61: 1 translated native video cue replaces previous and clears on stop',()=>{
  class FakeCue{constructor(start,end,text){this.startTime=start;this.endTime=end;this.text=text;}}
  const previous=globalThis.VTTCue;
  globalThis.VTTCue=FakeCue;
@@ -35,7 +35,7 @@ test('v4.23.60: 1 translated native video cue replaces previous and clears on st
   assert.equal(renderer.getText(),'');
  }finally{globalThis.VTTCue=previous;}
 });
-test('v4.23.60: fallback is one overlay over VIDEO, never a transcript below controls',()=>{
+test('v4.23.61: fallback is one overlay over VIDEO, never a transcript below controls',()=>{
  const previous=globalThis.VTTCue;
  globalThis.VTTCue=undefined;
  const children=[];
@@ -62,7 +62,7 @@ test('v4.23.60: fallback is one overlay over VIDEO, never a transcript below con
   assert.equal(children.length,0);
  }finally{globalThis.VTTCue=previous;}
 });
-test('v4.23.60: event listener hides source/interim, shows ONLY chosen target, blocks stale results',()=>{
+test('v4.23.61: event listener hides source/interim, shows ONLY chosen target, blocks stale results',()=>{
  const src=read('renderer/live-captions-v42343.js');
  const start=src.indexOf("  if(ev.type==='segment'){");
  const end=src.indexOf("  if(ev.type==='status'",start);
@@ -94,7 +94,7 @@ test('v4.23.60: event listener hides source/interim, shows ONLY chosen target, b
  run({type:'segment',sequence:4,text:'English captions',language:'en',translated:false});
  assert.deepEqual(Array.from(updates[2]),['English captions','en',false]);
 });
-test('v4.23.60: no bottom transcript, and correct video script load ordering',()=>{
+test('v4.23.61: no bottom transcript, and correct video script load ordering',()=>{
  const html=read('renderer/index.html'),css=read('renderer/video-only-translated-caption-v42358.css');
  const ui=read('renderer/live-captions-v42343.js');
  const videoScript=html.indexOf('src="video-only-translated-caption-v42358.js"');
@@ -108,12 +108,12 @@ test('v4.23.60: no bottom transcript, and correct video script load ordering',()
  assert.match(ui,/if\(!ev\.translated\|\|ev\.language!==target\)/);
  assert.match(ui,/if\(ev\.type==='translation-error'\)\{\s*clearOutput\(\)/);
 });
-test('v4.23.60: retains continuous recognition and warm TTS; Mac DMG-only',()=>{
+test('v4.23.61: retains continuous recognition and warm TTS; Mac DMG-only',()=>{
  const service=read('src/live-caption-service.cjs'),tts=read('src/local-tts-service.cjs');
  assert.match(service,/runContinuous\(s,getFFmpeg\(\),bin\(\),model\(\)\)/);
  assert.match(tts,/getPremiumSession\(\)\.synthesize/);
  const pkg=JSON.parse(read('package.json'));
- assert.equal(pkg.version,'4.23.60');
+ assert.equal(pkg.version,'4.23.61');
  assert.deepEqual(pkg.build.mac.target,['dmg']);
  assert.equal(pkg.build.dmg.writeUpdateInfo,false);
 });

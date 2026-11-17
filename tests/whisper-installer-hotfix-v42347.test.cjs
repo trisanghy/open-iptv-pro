@@ -6,7 +6,7 @@ for(const [platform,arch,alias,expected] of [
  ['darwin','x64','whisper-cpp-darwin-x64','whisper-cli'],
  ['win32','x64','whisper-cpp-win32-x64-cpu.exe','whisper-cli.exe']
 ]){
- test('v4.23.60 recovers already extracted '+platform+' '+arch+' without network',async()=>{
+ test('v4.23.61 recovers already extracted '+platform+' '+arch+' without network',async()=>{
   const root=fs.mkdtempSync(path.join(os.tmpdir(),'whisper-repair-'));
   const folder=path.join(root,'live-caption','auto','binary');
   fs.mkdirSync(folder,{recursive:true});
@@ -24,15 +24,15 @@ for(const [platform,arch,alias,expected] of [
   }finally{fs.rmSync(root,{recursive:true,force:true});}
  });
 }
-test('v4.23.60 pins the correct architecture-specific original ZIP filenames',()=>{
+test('v4.23.61 pins the correct architecture-specific original ZIP filenames',()=>{
  for(const [key,filename] of [['darwin-arm64','whisper-cpp-darwin-arm64.zip'],['darwin-x64','whisper-cpp-darwin-x64.zip'],['win32-x64','whisper-cpp-win32-x64-cpu.zip']]){
   assert.equal(BINARIES[key][0],filename);assert.equal(BINARIES[key][1].length,64);
  }
 });
-test('v4.23.60 installer normalizes binary and source version is synchronized',()=>{
+test('v4.23.61 installer normalizes binary and source version is synchronized',()=>{
  const text=fs.readFileSync(path.join(__dirname,'../src/whisper-autoinstall.cjs'),'utf8');
  assert.match(text,/packagedBinaryName/);
  assert.match(text,/normalizeBinary/);
  assert.match(text,/fs\.renameSync\(source,destination\)/);
- assert.equal(JSON.parse(fs.readFileSync(path.join(__dirname,'../package.json'),'utf8')).version,'4.23.60');
+ assert.equal(JSON.parse(fs.readFileSync(path.join(__dirname,'../package.json'),'utf8')).version,'4.23.61');
 });

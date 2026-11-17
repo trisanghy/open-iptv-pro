@@ -5,7 +5,7 @@ const {createLocalModelStorage,ITEMS}=require('../src/local-ai-storage.cjs');
 const {createHyMTService}=require('../src/hymt-service.cjs');
 const root=path.resolve(__dirname,'..'),read=p=>fs.readFileSync(path.join(root,p),'utf8');
 
-test('v4.23.60: all 3 AI settings use one gear, no duplicate installer buttons',()=>{
+test('v4.23.61: all 3 AI settings use one gear, no duplicate installer buttons',()=>{
  const h=read('renderer/index.html');
  assert.equal((h.match(/id="liveCaptionSetup"/g)||[]).length,1);
  assert.equal((h.match(/id="liveCaptionSetupPanel"/g)||[]).length,1);
@@ -21,7 +21,7 @@ test('v4.23.60: all 3 AI settings use one gear, no duplicate installer buttons',
  assert.equal((h.match(/unified-ai-settings-v42356.js/g)||[]).length,1);
  assert.ok(h.indexOf('id="liveCaptionSetup"')<h.indexOf('id="aiModelList"'));
 });
-test('v4.23.60: 4 selectable real engines, 3 resource priorities and warning not claimed as thermometer',()=>{
+test('v4.23.61: 4 selectable real engines, 3 resource priorities and warning not claimed as thermometer',()=>{
  const html=read('renderer/index.html'),script=read('renderer/unified-ai-settings-v42356.js');
  for(const value of ['auto','argos','hymt18','hymt7','balanced','saver','quality'])
   assert.match(html,new RegExp('value="'+value+'"'));
@@ -32,7 +32,7 @@ test('v4.23.60: 4 selectable real engines, 3 resource priorities and warning not
  assert.match(cap,/window.AISettings\?\.getEngine/);
  assert.match(cap,/openiptv:ai-translate-settings-changed/);
 });
-test('v4.23.60: preload delegates only allowlisted model operations and app chooses engine',()=>{
+test('v4.23.61: preload delegates only allowlisted model operations and app chooses engine',()=>{
  const main=read('src/main.cjs'),preload=read('src/preload.cjs');
  for(const method of ['ai:modelStatus','ai:install','ai:delete','ai:testTranslation']){
   assert.ok(main.includes(method));
@@ -48,7 +48,7 @@ test('v4.23.60: preload delegates only allowlisted model operations and app choo
  assert.match(service,/engine:s.engine/);
  assert.match(service,/resourceMode:s.resourceMode/);
 });
-test('v4.23.60: storage enumeration lists own AI folders and prevents outside deletion',async()=>{
+test('v4.23.61: storage enumeration lists own AI folders and prevents outside deletion',async()=>{
  const dataDir=fs.mkdtempSync(path.join(os.tmpdir(),'openiptv-ai-delete-'));
  const outside=fs.mkdtempSync(path.join(os.tmpdir(),'openiptv-protected-'));
  try{
@@ -70,7 +70,7 @@ test('v4.23.60: storage enumeration lists own AI folders and prevents outside de
   assert.equal(fs.readFileSync(evil,'utf8'),'IMPORTANT');
  }finally{fs.rmSync(dataDir,{recursive:true,force:true});fs.rmSync(outside,{recursive:true,force:true});}
 });
-test('v4.23.60: refusing symlink for managed folder protects external files',async()=>{
+test('v4.23.61: refusing symlink for managed folder protects external files',async()=>{
  const dataDir=fs.mkdtempSync(path.join(os.tmpdir(),'openiptv-ai-link-'));
  const elsewhere=fs.mkdtempSync(path.join(os.tmpdir(),'openiptv-never-'));
  try{
@@ -82,7 +82,7 @@ test('v4.23.60: refusing symlink for managed folder protects external files',asy
   assert.equal(fs.readFileSync(path.join(elsewhere,'keep.txt'),'utf8'),'KEEP');
  }finally{fs.rmSync(dataDir,{recursive:true,force:true});fs.rmSync(elsewhere,{recursive:true,force:true});}
 });
-test('v4.23.60: supported hardware gated; weights validated correctly, model root isolated',()=>{
+test('v4.23.61: supported hardware gated; weights validated correctly, model root isolated',()=>{
  const dataDir=fs.mkdtempSync(path.join(os.tmpdir(),'openiptv-mlx-'));
  try{
   const svc=createHyMTService({dataDir,installer:{},platform:'darwin',arch:'arm64'});
@@ -101,7 +101,7 @@ test('v4.23.60: supported hardware gated; weights validated correctly, model roo
   assert.equal(svc.state('hymt18').bytes>10000000,true);
  }finally{fs.rmSync(dataDir,{recursive:true,force:true});}
 });
-test('v4.23.60: no global cache writes and app retains native DMG-only outputs',()=>{
+test('v4.23.61: no global cache writes and app retains native DMG-only outputs',()=>{
  const service=read('src/hymt-service.cjs'),bridge=read('src/hymt-bridge.py');
  assert.match(service,/HF_HOME:/);
  assert.match(service,/if\(installed\(key\)&&runtimeReady\(\)\)return state\(key\)/);
@@ -113,7 +113,7 @@ test('v4.23.60: no global cache writes and app retains native DMG-only outputs',
  assert.match(bridge,/mlx-community\/Hy-MT2-7B-4bit/);
  assert.match(read('src/local-ai-autoinstall.cjs'),/prepareUv/);
  const pkg=JSON.parse(read('package.json'));
- assert.equal(pkg.version,'4.23.60');
+ assert.equal(pkg.version,'4.23.61');
  assert.deepEqual(pkg.build.mac.target,['dmg']);
  assert.equal(pkg.build.dmg.writeUpdateInfo,false);
  for(const id of ['whisper','argos','piper','vieneu','hymt18','hymt7','cache','runtimes'])

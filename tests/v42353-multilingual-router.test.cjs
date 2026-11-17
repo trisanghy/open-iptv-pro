@@ -3,7 +3,7 @@ const {test}=require('node:test'),assert=require('node:assert/strict');
 const fs=require('node:fs'),path=require('node:path');
 const {routeLiveSegment,CODES}=require('../src/live-translate-router.cjs');
 const root=path.resolve(__dirname,'..'),read=p=>fs.readFileSync(path.join(root,p),'utf8');
-test('v4.23.60: 15 language choices share the same functional Whisper-English fallback',async()=>{
+test('v4.23.61: 15 language choices share the same functional Whisper-English fallback',async()=>{
  assert.equal(CODES.size,15);
  for(const target of CODES){
   const calls=[];let whisperCount=0;
@@ -34,7 +34,7 @@ test('v4.23.60: 15 language choices share the same functional Whisper-English fa
   }
  }
 });
-test('v4.23.60: installed direct translation wins over English intermediary',async()=>{
+test('v4.23.61: installed direct translation wins over English intermediary',async()=>{
  let whisperCount=0;
  const res=await routeLiveSegment({text:'你好',source:'zh',target:'vi',
   translateText:async(input,target,source,opts)=>{
@@ -44,7 +44,7 @@ test('v4.23.60: installed direct translation wins over English intermediary',asy
  assert.equal(res.text,'Xin chào');assert.equal(res.route,'direct');
  assert.equal(res.englishText,'');assert.equal(whisperCount,0);
 });
-test('v4.23.60: no extra model calls when input and output languages match',async()=>{
+test('v4.23.61: no extra model calls when input and output languages match',async()=>{
  for(const target of CODES){
   const result=await routeLiveSegment({text:'same',source:target,target,
    translateText:()=>{throw Error('Argos should never be called');},
@@ -52,7 +52,7 @@ test('v4.23.60: no extra model calls when input and output languages match',asyn
   assert.equal(result.text,'same');assert.equal(result.route,'same');
  }
 });
-test('v4.23.60: Whisper output also routes to English-origin target directly',async()=>{
+test('v4.23.61: Whisper output also routes to English-origin target directly',async()=>{
  const result=await routeLiveSegment({text:'Hello there',source:'en',target:'vi',
   translateText:async(input,target,from,opts)=>{
    assert.equal(input,'Hello there');assert.equal(from,'en');assert.equal(target,'vi');
@@ -61,7 +61,7 @@ test('v4.23.60: Whisper output also routes to English-origin target directly',as
  assert.equal(result.text,'Xin chào');
  assert.equal(result.englishText,'Hello there');
 });
-test('v4.23.60: unsupported translation engine yields error and does not pretend success',async()=>{
+test('v4.23.61: unsupported translation engine yields error and does not pretend success',async()=>{
  await assert.rejects(()=>routeLiveSegment({text:'你好',source:'zh',target:'vi',
   translateText:async()=>{throw Error('Argos en-vi model missing');},
   whisperToEnglish:async()=> 'Hello'}),/Argos en-vi model missing/);
@@ -71,7 +71,7 @@ test('v4.23.60: unsupported translation engine yields error and does not pretend
  assert.match(service,/routeLiveSegment/);
  assert.match(service,/translateText:\(input,target,source,options\)/);
 });
-test('v4.23.60: direct-only installer never marks pivot as a verified direct model',()=>{
+test('v4.23.61: direct-only installer never marks pivot as a verified direct model',()=>{
  const model=read('src/local-ai-autoinstall.cjs'),bridge=read('src/argos-bridge.py');
  assert.match(model,/async function installDirect\(from,to\)/);
  assert.match(model,/\.direct/);
@@ -79,5 +79,5 @@ test('v4.23.60: direct-only installer never marks pivot as a verified direct mod
  assert.match(bridge,/if command == "install-direct":/);
  assert.match(bridge,/print\("NO_DIRECT", flush=True\)/);
  assert.match(read('src/caption-translator.cjs'),/directOnly/);
- assert.equal(JSON.parse(read('package.json')).version,'4.23.60');
+ assert.equal(JSON.parse(read('package.json')).version,'4.23.61');
 });

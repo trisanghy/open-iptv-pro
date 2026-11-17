@@ -7,7 +7,7 @@ const {createContinuousCapture}=require('../src/continuous-capture.cjs');
 const {createVieNeuSession}=require('../src/vieneu-session.cjs');
 const read=p=>fs.readFileSync(path.join(__dirname,'..',p),'utf8');
 
-test('v4.23.60: continuous FFmpeg captures every audio chunk without reopening the input',async()=>{
+test('v4.23.61: continuous FFmpeg captures every audio chunk without reopening the input',async()=>{
  const dir=fs.mkdtempSync(path.join(os.tmpdir(),'iptv-segmentation-'));
  let launches=0,ffmpegArgs=null,killCount=0;
  const capture=createContinuousCapture({
@@ -39,7 +39,7 @@ test('v4.23.60: continuous FFmpeg captures every audio chunk without reopening t
  }finally{capture.stop();fs.rmSync(dir,{recursive:true,force:true});}
  assert.equal(killCount,1);
 });
-test('v4.23.60: recognizer displays source text immediately and translate runs independently',()=>{
+test('v4.23.61: recognizer displays source text immediately and translate runs independently',()=>{
  const s=read('src/live-caption-service.cjs');
  assert.match(s,/async function runContinuous\(s,ff,wh,md\)/);
  assert.match(s,/createContinuousCapture\(/);
@@ -51,7 +51,7 @@ test('v4.23.60: recognizer displays source text immediately and translate runs i
  assert.doesNotMatch(s,/Promise\.resolve\(\)\.then\(\(\)=>run\(s,getFFmpeg\(\),bin\(\),model\(\)\)\)/);
  assert.match(s,/c\.capture\?\.stop\(\)/);
 });
-test('v4.23.60: VieNeu uses a persistent child and never reloads weights per subtitle',async()=>{
+test('v4.23.61: VieNeu uses a persistent child and never reloads weights per subtitle',async()=>{
  let launches=0,kills=0;
  const spawned=[];
  const session=createVieNeuSession({
@@ -96,13 +96,13 @@ test('v4.23.57: latest pending subtitle wins without interrupting audible speech
  assert.match(service,/function shutdown\(\)/);
  assert.match(service,/return Object\.freeze\(\{availability,configure,synthesize,stop,shutdown\}\)/);
 });
-test('v4.23.60: stop can cancel both active FFmpeg and Whisper jobs; source remains untouched',()=>{
+test('v4.23.61: stop can cancel both active FFmpeg and Whisper jobs; source remains untouched',()=>{
  const c=read('src/live-caption-service.cjs');
  assert.match(c,/s\.children\?\?=new Set\(\)/);
  assert.match(c,/s\.children\?\.delete\(child\)/);
  assert.match(c,/for\(const proc of c\.children\|\|\[\]\)/);
  const pkg=JSON.parse(read('package.json'));
- assert.equal(pkg.version,'4.23.60');
+ assert.equal(pkg.version,'4.23.61');
  assert.deepEqual(pkg.build.mac.target,['dmg']);
  assert.equal(pkg.build.dmg.writeUpdateInfo,false);
 });

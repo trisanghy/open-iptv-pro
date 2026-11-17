@@ -3,17 +3,17 @@ const {test}=require('node:test'),assert=require('node:assert/strict');
 const fs=require('node:fs'),path=require('node:path'),vm=require('node:vm');
 const root=path.resolve(__dirname,'..'),read=p=>fs.readFileSync(path.join(root,p),'utf8');
 
-test('v4.23.60: active UI has one settings icon and one layout controller',()=>{
+test('v4.23.61: active UI has one settings icon and one layout controller',()=>{
  const html=read('renderer/index.html');
  assert.equal((html.match(/id="liveCaptionSetup"/g)||[]).length,1);
  assert.equal((html.match(/id="liveCaptionSetupPanel"/g)||[]).length,1);
  assert.equal((html.match(/unified-ai-settings-v42356\.js/g)||[]).length,1);
  assert.equal((html.match(/unified-ai-settings-v42356\.css/g)||[]).length,1);
  assert(!html.includes('unified-ai-settings-v42354.js'));
- assert.equal(JSON.parse(read('package.json')).version,'4.23.60');
+ assert.equal(JSON.parse(read('package.json')).version,'4.23.61');
 });
 
-test('v4.23.60: moves existing Whisper controls instead of cloning or recreating their click listeners',()=>{
+test('v4.23.61: moves existing Whisper controls instead of cloning or recreating their click listeners',()=>{
  const ui=read('renderer/unified-ai-settings-v42356.js');
  for(const id of ['captionAutoInstall','captionChooseBinary','captionChooseModel','captionTestTranslate']){
   assert(ui.includes("'"+id+"'"),id);
@@ -29,7 +29,7 @@ test('v4.23.60: moves existing Whisper controls instead of cloning or recreating
  assert.match(ui,/details\.append\(modelList\)/);
 });
 
-test('v4.23.60: responsive CSS aligns recognition buttons and pairs translation/TTS cards',()=>{
+test('v4.23.61: responsive CSS aligns recognition buttons and pairs translation/TTS cards',()=>{
  const css=read('renderer/unified-ai-settings-v42356.css');
  assert.match(css,/grid-template-columns:repeat\(2,minmax\(0,1fr\)\)!important/);
  assert.match(css,/\.ai-recognition-actions/);
@@ -44,7 +44,7 @@ test('v4.23.60: responsive CSS aligns recognition buttons and pairs translation/
  assert.match(css,/\.ai-alert-leaving/);
 });
 
-test('v4.23.60: the orange warning fades after 9.75 seconds and hides after 10',()=>{
+test('v4.23.61: the orange warning fades after 9.75 seconds and hides after 10',()=>{
  const source=read('renderer/unified-ai-settings-v42356.js');
  const i=source.indexOf(' let heatTimer=null');
  const j=source.indexOf(' for(const el of [caption,translate,tts])',i);
@@ -94,7 +94,7 @@ test('v4.23.60: the orange warning fades after 9.75 seconds and hides after 10',
  assert.equal(warning.hidden,false,'New workload activation should warn again');
 });
 
-test('v4.23.60: model buttons and source files remain intact; Mac output stays DMG plus source ZIP',()=>{
+test('v4.23.61: model buttons and source files remain intact; Mac output stays DMG plus source ZIP',()=>{
  const ui=read('renderer/unified-ai-settings-v42356.js');
  for(const marker of ['aiDeleteModel','aiInstallModel','Xác nhận xóa','aiStorageTotal','liveTtsPreview','aiResourceMode']){
   assert(ui.includes(marker)||read('renderer/index.html').includes(marker),marker);

@@ -5,7 +5,7 @@ const {createHyMTService,MODELS}=require('../src/hymt-service.cjs');
 const {createLocalModelStorage,ITEMS}=require('../src/local-ai-storage.cjs');
 const root=path.resolve(__dirname,'..'),read=p=>fs.readFileSync(path.join(root,p),'utf8');
 const catalog=['hymt18','hymt7','hymt18q8','hymt7q8','qwen06','qwen17','qwen4','qwen8'];
-test('v4.23.60: eight real Hugging Face MLX models with explicit variants and no arbitrary repo IDs',()=>{
+test('v4.23.61: eight real Hugging Face MLX models with explicit variants and no arbitrary repo IDs',()=>{
  assert.equal(Object.keys(MODELS).length,8);
  for(const id of catalog){
   assert.ok(Object.hasOwn(MODELS,id),id);
@@ -19,7 +19,7 @@ test('v4.23.60: eight real Hugging Face MLX models with explicit variants and no
  assert.match(html,/value="auto"/);
  assert.match(html,/value="argos"/);
 });
-test('v4.23.60: Qwen and Hy-MT allowlisted models are present in Python download worker',()=>{
+test('v4.23.61: Qwen and Hy-MT allowlisted models are present in Python download worker',()=>{
  const py=read('src/hymt-bridge.py');
  for(const id of catalog)assert.ok(py.includes('"'+id+'": "'+MODELS[id].repo+'"'),id);
  assert.match(py,/snapshot_download/);
@@ -28,7 +28,7 @@ test('v4.23.60: Qwen and Hy-MT allowlisted models are present in Python download
  assert.match(py,/no_think/);
  assert.doesNotMatch(py,/trust_remote_code=True/);
 });
-test('v4.23.60: sharded weights must be fully present to be considered installed',()=>{
+test('v4.23.61: sharded weights must be fully present to be considered installed',()=>{
  const dataDir=fs.mkdtempSync(path.join(os.tmpdir(),'openiptv-shard-check-'));
  try{
   const svc=createHyMTService({dataDir,installer:{},platform:'darwin',arch:'arm64'});
@@ -45,7 +45,7 @@ test('v4.23.60: sharded weights must be fully present to be considered installed
   assert.equal(svc.state('qwen8').installed,false);
  }finally{fs.rmSync(dataDir,{force:true,recursive:true});}
 });
-test('v4.23.60: each model folder has isolated deletion; media playlists stay untouched',async()=>{
+test('v4.23.61: each model folder has isolated deletion; media playlists stay untouched',async()=>{
  const dataDir=fs.mkdtempSync(path.join(os.tmpdir(),'openiptv-eight-models-'));
  try{
   fs.writeFileSync(path.join(dataDir,'playlists.json'),'PRESERVE');
@@ -64,7 +64,7 @@ test('v4.23.60: each model folder has isolated deletion; media playlists stay un
   await assert.rejects(manager.remove('not-allowed'),/Unknown managed AI item/);
  }finally{fs.rmSync(dataDir,{recursive:true,force:true});}
 });
-test('v4.23.60: engine selectors, Auto routing, runtime and UI status are end-to-end',()=>{
+test('v4.23.61: engine selectors, Auto routing, runtime and UI status are end-to-end',()=>{
  const main=read('src/main.cjs'),ui=read('renderer/unified-ai-settings-v42356.js');
  const voices=read('renderer/local-tts-v42344.js');
  assert.match(main,/Object\.hasOwn\(localHyMT\.MODELS,choice\)/);
@@ -82,9 +82,9 @@ test('v4.23.60: engine selectors, Auto routing, runtime and UI status are end-to
  assert.match(ui,/9750/);
  assert.match(voices,/openiptv-tts-playback-speed/);
 });
-test('v4.23.60: stays Mac-only MLX; no accidental commercial license restricted NLLB in installer',()=>{
+test('v4.23.61: stays Mac-only MLX; no accidental commercial license restricted NLLB in installer',()=>{
  const pkg=JSON.parse(read('package.json'));
- assert.equal(pkg.version,'4.23.60');
+ assert.equal(pkg.version,'4.23.61');
  assert.deepEqual(pkg.build.mac.target,['dmg']);
  assert.equal(pkg.build.dmg.writeUpdateInfo,false);
  const python=read('src/hymt-bridge.py');
