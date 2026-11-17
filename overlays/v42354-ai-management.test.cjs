@@ -25,7 +25,7 @@ test('v4.23.54: 4 selectable real engines, 3 resource priorities and warning not
  const html=read('renderer/index.html'),script=read('renderer/unified-ai-settings-v42354.js');
  for(const value of ['auto','argos','hymt18','hymt7','balanced','saver','quality'])
   assert.match(html,new RegExp('value="'+value+'"'));
- assert.match(script,/concurrent>=3/);
+ assert.match(script,/concurrent>=2/);
  assert.match(script,/không phải số đo nhiệt độ phần cứng/);
  assert.match(script,/openiptv:ai-translate-settings-changed/);
  const cap=read('renderer/live-captions-v42343.js');
