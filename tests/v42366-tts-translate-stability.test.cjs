@@ -158,3 +158,19 @@ test('4.23.66: updated UI wires cancel, locale changes, preview and compact line
  assert.match(css,/#liveCaptionStatus/);
  assert.equal(require('../package.json').version,'4.23.66');
 });
+
+
+test('4.23.66: private and public builders use the maintained Electron branch',()=>{
+ const ref="REF='experiment/electron-v42366-tts-translate-stability'";
+ const personal=read('build-mac-v42366.sh');
+ const publicBuilder=read('build-mac-v42366-public.sh');
+ for(const script of [personal,publicBuilder]){
+  assert.ok(script.includes(ref),'script must download the existing Electron branch');
+  assert.ok(script.includes('refs/heads/${REF}'),'Bash must expand the correct ref');
+  assert.doesNotMatch(script,/electron-v42366-ai-model-hardware-hints/);
+ }
+ assert.match(personal,/--dir/);
+ assert.match(personal,/open "\$OUT"/);
+ assert.doesNotMatch(personal,/electron-builder --mac dmg/);
+ assert.match(publicBuilder,/electron-builder --mac dmg/);
+});
