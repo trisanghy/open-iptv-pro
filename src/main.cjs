@@ -173,6 +173,18 @@ function setupIPC(){
   localTTS=createLocalSpeechService({dataDir:app.getPath('userData'),managed:localModelInstaller.paths(),translateText:(text,target,source)=>captionTranslator.translateText(text,target,source),notify:data=>{if(webWindow&&!webWindow.isDestroyed())webWindow.webContents.send('tts:event',data);}});
   ipcMain.handle('tts:status',(_e,lang,voice)=>({...localTTS.availability(lang,voice),install:localModelInstaller.state(lang,voice)}));
   ipcMain.handle('tts:install',(_e,lang,voice)=>localModelInstaller.install(lang,voice));
+  ipcMain.handle('tts:reference:choose',async(_e,transcript,consent)=>{
+   if(consent!==true)throw Error('Cần xác nhận có quyền sử dụng giọng nói của người trong mẫu');
+   if(typeof transcript!=='string'||transcript.trim().length<5||transcript.length>500)
+    throw Error('Nhập chính xác lời nói trong đoạn âm thanh mẫu (5–500 ký tự)');
+   const chosen=await dialog.showOpenDialog(webWindow,{
+    title:'Chọn giọng mẫu có sự đồng ý (WAV, khoảng 3–15 giây)',
+    properties:['openFile'],
+    filters:[{name:'Âm thanh WAV',extensions:['wav']}]
+   });
+   if(chosen.canceled||!chosen.filePaths?.length)return {canceled:true};
+   return localTTS.setReference(chosen.filePaths[0],transcript);
+  });
   ipcMain.handle('tts:synthesize',(_e,params)=>localTTS.synthesize(params));
   ipcMain.handle('tts:stop',()=>localTTS.stop());
   whisperModelInstaller=createWhisperAutoInstaller({dataDir:app.getPath('userData'),notify:event=>{if(webWindow&&!webWindow.isDestroyed())webWindow.webContents.send('caption:event',event);}});
