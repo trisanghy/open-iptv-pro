@@ -1,0 +1,88 @@
+/* Open IPTV Pro v4.23.66 — compact, responsive Live Caption / Translate / TTS panel.
+   Only the third player row is affected, never playback transport or video aspect. */
+#page-tv .player-control-card .caption-third-row{
+ padding:5px 10px!important;gap:7px!important;min-height:0!important;
+ align-items:flex-start!important;
+}
+#page-tv .player-control-card .caption-third-controls{
+ display:grid!important;
+ grid-template-columns:minmax(0,1fr)!important;
+ grid-template-rows:auto auto!important;
+ flex:1 1 920px!important;min-width:0!important;max-width:100%!important;
+ align-content:start!important;gap:5px!important;flex-wrap:nowrap!important;
+}
+#page-tv .player-control-card .caption-ai-main,
+#page-tv .player-control-card .caption-tts-main{
+ display:flex!important;align-items:center!important;
+ flex-wrap:wrap!important;gap:6px 9px!important;
+ width:100%!important;max-width:100%!important;min-width:0!important;
+ box-sizing:border-box!important;
+}
+#page-tv .player-control-card .caption-tts-main{
+ padding-top:5px!important;border-top:1px solid rgba(133,161,183,.16);
+}
+#page-tv .player-control-card .caption-third-controls :is(.caption-ai-main,.caption-tts-main) label{
+ font-size:12px!important;line-height:1.35!important;gap:5px!important;
+ font-weight:600!important;white-space:nowrap!important;
+}
+#page-tv .player-control-card .caption-third-controls input[type=checkbox]{
+ width:15px!important;min-width:15px!important;height:15px!important;min-height:15px!important;
+}
+#page-tv .player-control-card .caption-third-controls :is(select,button){
+ height:31px!important;min-height:31px!important;
+ border-radius:9px!important;font-size:12px!important;
+}
+#page-tv .player-control-card .caption-third-controls #liveCaptionSetup{
+ width:34px!important;min-width:34px!important;max-width:34px!important;
+ padding:0!important;display:inline-grid!important;place-items:center!important;font-size:16px!important;
+}
+#page-tv .player-control-card .caption-third-controls #liveTranslateTarget{
+ flex:0 0 124px!important;width:124px!important;min-width:112px!important;max-width:124px!important;
+}
+#page-tv .player-control-card .caption-third-controls #liveTtsLanguage{
+ flex:0 0 110px!important;width:110px!important;min-width:100px!important;max-width:110px!important;
+}
+#page-tv .player-control-card .caption-third-controls #liveTtsVoice{
+ flex:0 1 225px!important;width:210px!important;min-width:160px!important;max-width:225px!important;
+}
+#page-tv .player-control-card .caption-third-controls #liveTtsSpeed{
+ flex:0 0 76px!important;width:76px!important;min-width:76px!important;max-width:76px!important;
+}
+#page-tv .player-control-card .caption-third-controls #liveTtsDuck{
+ flex:0 0 77px!important;width:77px!important;min-width:77px!important;max-width:77px!important;
+}
+#page-tv .player-control-card .caption-third-controls :is(#liveCaptionStatus,#liveTtsStatus){
+ display:block!important;min-width:0!important;
+ max-width:176px!important;flex:0 1 176px!important;
+ white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;
+ font-size:11px!important;line-height:1.35!important;
+}
+#page-tv .player-control-card .caption-third-controls #liveTtsStatus{
+ max-width:205px!important;flex:1 1 130px!important;
+}
+#page-tv .player-control-card .caption-third-controls #aiHeatWarningInline:not([hidden]){
+ flex:1 1 100%!important;max-width:100%!important;
+}
+#page-tv .player-control-card .caption-third-controls #captionRetry[hidden]{display:none!important}
+#page-tv .player-control-card .caption-third-row .playback-extra{
+ margin-left:auto!important;flex:0 0 auto!important;
+}
+#page-tv .player-control-card .caption-third-row .playback-extra summary{
+ font-size:11px!important;height:29px!important;min-height:29px!important;
+ padding:6px 9px!important;
+}
+@container (max-width:900px){
+ #page-tv .player-control-card .caption-third-controls{flex:1 1 100%!important}
+ #page-tv .player-control-card .caption-third-row .playback-extra{margin-left:auto!important}
+}
+@container (max-width:620px){
+ #page-tv .player-control-card .caption-third-controls :is(#liveCaptionStatus,#liveTtsStatus){
+  max-width:100%!important;flex:1 1 120px!important;
+ }
+ #page-tv .player-control-card .caption-third-controls #liveTtsVoice{
+  flex:1 1 175px!important;max-width:100%!important;
+ }
+ #page-tv .player-control-card .caption-third-controls :is(.caption-ai-main,.caption-tts-main){
+  gap:6px!important;
+ }
+}
