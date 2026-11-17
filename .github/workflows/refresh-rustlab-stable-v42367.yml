@@ -108,6 +108,7 @@ jobs:
             stage/SHA256SUMS_RUSTLAB_v23.8.2.txt \
             --repo "$GITHUB_REPOSITORY" --clobber
           gh release edit v4.23.67 --repo "$GITHUB_REPOSITORY" \
+            --title "Open IPTV Pro v4.23.67 Stable — Desktop | Web Online | Rust/Tauri Lab v23.8.2" \
             --notes-file RELEASE_NOTES_V4_23_67.md
       - name: Delete old Rust Lab v23.4 attachments ONLY after new files have passed verification
         shell: bash
@@ -133,6 +134,7 @@ jobs:
           set -Eeuo pipefail
           gh api "repos/$GITHUB_REPOSITORY/releases/tags/v4.23.67" > stable-final.json
           jq -e '.prerelease==false and .draft==false' stable-final.json
+          jq -e '.name|contains("Rust/Tauri Lab v23.8.2")' stable-final.json
           test "$(jq '.assets|length' stable-final.json)" -eq 11
           for f in \
             Open-IPTV-Pro-4.23.67-mac-arm64.dmg \
