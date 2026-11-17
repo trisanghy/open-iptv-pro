@@ -84,7 +84,7 @@ function createHyMTService({dataDir,installer,platform=process.platform,arch=pro
     await run(uvPath,['python','install','3.11'],key,300000);
     await run(uvPath,['venv',venv,'--python','3.11','--python-preference','only-managed'],key,240000);
    }
-   if(!fileOK(path.join(root,'mlx-runtime.ready'))){
+   if(!fs.existsSync(path.join(root,'mlx-runtime.ready'))){
     progress('Đang cài mlx-lm và huggingface-hub trong môi trường riêng…');
     await run(uvPath,['pip','install','--python',python,'mlx-lm','huggingface-hub'],key,900000);
     await run(python,['-c','import mlx_lm, huggingface_hub'],key,180000);
