@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro",
-  "version": "4.23.65",
-  "description": "Open IPTV Pro v4.23.65 — personalized RAM/CPU/storage guidance for each local AI model; retains FFprobe, PiP and app-only build",
+  "version": "4.23.66",
+  "description": "Open IPTV Pro v4.23.66 — crash-safe MLX translator, bounded TTS voice preview, resume live subtitles and compact controls",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",
