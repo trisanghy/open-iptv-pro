@@ -42,11 +42,13 @@ test('Electron v4.23.68: native subtitles support dual lines, CC OFF, custom col
   assert.equal(c.show('Chúng ta đi thôi.','vi',{translated:true,sourceText:"Let's go."}),'native');
   assert.match(tracks[0].cues[0].text,/c\.source/);
   assert.match(tracks[0].cues[0].text,/Chúng ta đi thôi/);
-  assert.equal(tracks[0].cues[0].line,88);
+  assert.equal(tracks[0].cues[0].line,92);
+  assert.equal(tracks[0].cues[0].lineAlign,'end');
   assert.equal(c.getPreferences().color,'#32e344');
   c.setPreferences({position:'top',content:'original'});
   assert.equal(tracks[0].cues[0].text,"Let's go.");
-  assert.equal(tracks[0].cues[0].line,12);
+  assert.equal(tracks[0].cues[0].line,8);
+  assert.equal(tracks[0].cues[0].lineAlign,'start');
   c.setPreferences({show:false});
   assert.equal(c.getMode(),'off');
   assert.equal(tracks[0].cues.length,0);
@@ -69,9 +71,9 @@ test('Electron v4.23.68: Live Caption toggle no longer forces translation or cap
  const source=read('renderer/live-captions-v42343.js');
  const match=source.match(/const changed=event=>\{([\s\S]*?)\n \};/);
  assert.ok(match,'Change handler found');
- const translate={checked:true},caption={checked:false};
+ const translate={checked:true},caption={checked:false},tts={checked:false};
  let reconciles=0;
- const fn=vm.runInNewContext('(event)=>{'+match[1]+'}',{caption,translate,message:()=>{},reconcile:()=>{reconciles++;},clearOutput:()=>{},videoCaptions:{setOriginalVisible:()=>{}}});
+ const fn=vm.runInNewContext('(event)=>{'+match[1]+'}',{caption,translate,$:id=>id==='liveTtsToggle'?tts:undefined,message:()=>{},reconcile:()=>{reconciles++;},clearOutput:()=>{},videoCaptions:{setOriginalVisible:()=>{}}});
  fn({target:caption});
  assert.equal(caption.checked,false);
  assert.equal(translate.checked,true);
