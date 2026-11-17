@@ -60,6 +60,10 @@ assert(html.includes(panelOpen),'Missing shared gear panel');
 const install=html.match(/<button[^>]*id="liveTtsInstall"[^>]*>[\s\S]*?<\/button>/);
 assert(install,'Missing TTS installer action');
 html=html.replace(install[0],'');
+const existingStatus=html.match(/<small[^>]*id="liveTtsStatus"[^>]*>[\s\S]*?<\/small>/);
+assert(existingStatus,'Missing visible TTS status row');
+html=html.replace(existingStatus[0],existingStatus[0]+
+ '\n<small id="aiHeatWarningInline" role="alert" hidden></small>');
 const preview=html.match(/<button[^>]*id="liveTtsPreview"[^>]*>[\s\S]*?<\/button>/);
 assert(preview,'Missing voice preview action');
 html=html.replace(preview[0],'');
@@ -103,7 +107,7 @@ html=html.replace('Cần cài whisper.cpp và tải mô hình riêng. Dịch ch�
  'Whisper dùng để nhận diện tiếng nói trên máy; chọn bộ dịch offline và giọng TTS ngay tại đây.');
 html=html.replace('</head>','<link rel="stylesheet" href="unified-ai-settings-v42354.css"/></head>');
 html=html.replace('</body></html>','<script src="unified-ai-settings-v42354.js"></script></body></html>');
-for(const id of ['liveCaptionSetup','liveCaptionSetupPanel','liveTtsInstall','liveTtsPreview','aiTranslationEngine','aiResourceMode','aiModelList','aiHeatWarning','aiSettingsStatus']){
+for(const id of ['liveCaptionSetup','liveCaptionSetupPanel','liveTtsInstall','liveTtsPreview','aiTranslationEngine','aiResourceMode','aiModelList','aiHeatWarning','aiHeatWarningInline','aiSettingsStatus']){
  assert.equal((html.match(new RegExp('id="'+id+'"','g'))||[]).length,1,'Missing/duplicate AI UI id '+id);
 }
 write('renderer/index.html',html);
