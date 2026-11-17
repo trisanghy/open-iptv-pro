@@ -220,20 +220,90 @@
   else ctx.toast('Bộ điều khiển PiP chưa sẵn sàng','warn');
  }
  const officialRepo='trisanghy/open-iptv-pro';
- function setUpdateBusy(on){$('#updateCheckBtn').disabled=!!on;$('#updateDownloadBtn').disabled=!!on;}
+ let versionOptions=[],selectedVersionTag='',versionListBusy=false;
+ function setUpdateBusy(on){
+  const busy=!!on;
+  $('#updateCheckBtn').disabled=busy;
+  $('#updateDownloadBtn').disabled=busy;
+  $('#updateVersionSelect').disabled=busy||versionListBusy||!versionOptions.length;
+  $('#updateVersionsRefreshBtn').disabled=busy||versionListBusy;
+ }
+ async function refreshUpdateVersions(){
+  const picker=$('#updateVersionSelect'),hint=$('#updateVersionHint');
+  if(!window.streamleaf?.listUpdateVersions){
+   hint.textContent='Chỉ bản Desktop mới hỗ trợ chọn phiên bản.';return;
+  }
+  if(versionListBusy)return;
+  versionListBusy=true;picker.disabled=true;$('#updateVersionsRefreshBtn').disabled=true;
+  hint.textContent='Đang tải danh sách phiên bản từ GitHub chính thức…';
+  try{
+   const data=await window.streamleaf.listUpdateVersions();
+   versionOptions=Array.isArray(data?.releases)?data.releases:[];
+   picker.replaceChildren();
+   const choose=document.createElement('option');
+   choose.value='';choose.textContent='— Chọn phiên bản —';picker.append(choose);
+   for(const beta of [false,true]){
+    const group=document.createElement('optgroup');
+    group.label=beta?'BẢN THỬ NGHIỆM · Beta':'BẢN ỔN ĐỊNH';
+    for(const item of versionOptions.filter(v=>v.prerelease===beta)){
+     const o=document.createElement('option');
+     o.value=item.tag;
+     o.textContent=item.version+(item.installed?' · đang dùng':item.older?' · bản cũ':'')+
+      (item.size?' · '+(item.size/1048576).toFixed(0)+' MB':'');
+     group.append(o);
+    }
+    if(group.children.length)picker.append(group);
+   }
+   if(!versionOptions.some(v=>v.tag===selectedVersionTag))selectedVersionTag='';
+   picker.value=selectedVersionTag;
+   hint.textContent=versionOptions.length?'Có '+versionOptions.length+
+    ' bản phù hợp với máy. Bản cũ cần xác nhận; tất cả bộ cài được kiểm tra SHA-256.':
+    'Không tìm thấy bản phát hành có bộ cài phù hợp và SHA-256.';
+  }catch(e){
+   hint.textContent='Không lấy được danh sách: '+String(e?.message||e).slice(0,160);
+  }finally{
+   versionListBusy=false;
+   setUpdateBusy(['checking','downloading','installing'].includes($('#updateResult').dataset.phase));
+  }
+ }
+ async function chooseUpdateVersion(){
+  const picker=$('#updateVersionSelect'),tag=picker.value;
+  if(!tag)return;
+  const choice=versionOptions.find(x=>x.tag===tag);
+  if(!choice){picker.value=selectedVersionTag;return;}
+  if(choice.older&&!confirm('Quay về '+choice.version+'? Bản cũ có thể không đọc được dữ liệu đã lưu bằng bản mới. Hãy sao lưu dữ liệu IPTV trước khi cài. Tiếp tục?')){
+   picker.value=selectedVersionTag;return;
+  }
+  if(choice.installed&&!confirm('Cài lại '+choice.version+' hiện tại? Nên sao lưu dữ liệu trước khi cài lại.')){
+   picker.value=selectedVersionTag;return;
+  }
+  try{
+   const state=await window.streamleaf.selectUpdateVersion(tag);
+   selectedVersionTag=tag;drawUpdateState(state);
+   $('#updateVersionHint').textContent='Đã chọn '+choice.version+(choice.prerelease?' · Beta':' · Ổn định')+
+    (choice.older?' · hạ phiên bản':'')+'. Nhấn Tải bản đã chọn để tiếp tục.';
+  }catch(e){
+   picker.value=selectedVersionTag;
+   $('#updateVersionHint').textContent='Không chọn được phiên bản: '+String(e?.message||e).slice(0,160);
+  }
+ }
  function drawUpdateState(state){
   if(!state)return;
   const phase=state.phase||'idle';
   $('#updateResult').textContent=state.message||'Chưa có thông tin cập nhật';
   $('#updateResult').dataset.phase=phase;
   $('#updateDownloadBtn').hidden=phase!=='available';
-  $('#updateDownloadBtn').textContent=state.mode==='automatic'?'Tải và chuẩn bị cài đặt':'Tải bản cài đã xác minh';
+  $('#updateDownloadBtn').textContent=state.selectedTag?'Tải bản đã chọn':state.mode==='automatic'?'Tải và chuẩn bị cài đặt':'Tải bản cài đã xác minh';
   $('#updateInstallBtn').hidden=phase!=='downloaded';
   $('#updateManualBtn').hidden=phase!=='manual-ready';
   $('#updateProgressBox').hidden=!['downloading','downloaded','manual-ready','installing'].includes(phase);
   const progress=Number(state.progress)||0;
   $('#updateProgressBar').value=Math.max(0,Math.min(100,progress));
   $('#updateProgressLabel').textContent=phase==='downloading'?`Tiến độ tải: ${progress}%`:`${progress}%`;
+  if(Object.prototype.hasOwnProperty.call(state,'selectedTag')){
+   selectedVersionTag=state.selectedTag||'';
+   if(versionOptions.some(x=>x.tag===selectedVersionTag))$('#updateVersionSelect').value=selectedVersionTag;
+  }
   setUpdateBusy(phase==='checking'||phase==='downloading'||phase==='installing');
  }
  async function updateCheck({silent=false}={}){
@@ -244,9 +314,10 @@
   if(!silent)drawUpdateState({phase:'checking',message:'Đang kiểm tra GitHub Releases...'});
   try{
    const result=await window.streamleaf.checkUpdate();drawUpdateState(result);
+    if(!silent)await refreshUpdateVersions();
    if(result.phase==='available'){
     if(silent)ctx.toast(`Có bản cập nhật Open IPTV Pro ${result.latest}. Mở Cài đặt → Cập nhật phiên bản.`, 'success');
-    if(config.autoDownloadUpdates)await downloadNewVersion({background:silent});
+    if(config.autoDownloadUpdates&&silent)await downloadNewVersion({background:true});
    }
    if(result.phase==='manual-ready')ctx.toast('Bản cập nhật đã tải xong. Mở bộ cài để hoàn tất.', 'success');
   }catch(e){drawUpdateState({phase:'error',message:'Không kiểm tra được: '+e.message});}
@@ -259,7 +330,7 @@
     if(state.phase==='manual-ready'){
       const mac=!!state.downloadedFile && /\.dmg$/i.test(state.downloadedFile);
       if(mac){
-        if(!background||confirm('DMG đã tải và xác minh thành công. Mở bộ cài và thoát hoàn toàn Open IPTV Pro để cập nhật ngay?'))await openDownloadedInstaller();
+        if(!background&&confirm('DMG đã tải và xác minh SHA-256. Mở bộ cài và thoát Open IPTV Pro để cài phiên bản đã chọn?'))await openDownloadedInstaller();
         else ctx.toast('DMG đã tải xong. Có thể mở và thoát ứng dụng sau trong Cài đặt.', 'success');
       }else ctx.toast('Bộ cài đã tải xong. Bạn có thể mở từ Cài đặt.', 'success');
     }
@@ -339,6 +410,8 @@
  $('#autoCheckUpdates').addEventListener('change',e=>{config.autoCheckUpdates=!!e.target.checked;saveConfig();});
  $('#autoDownloadUpdates').addEventListener('change',e=>{config.autoDownloadUpdates=!!e.target.checked;saveConfig();});
  $('#updateCheckBtn').addEventListener('click',()=>updateCheck());
+ $('#updateVersionsRefreshBtn').addEventListener('click',()=>refreshUpdateVersions());
+ $('#updateVersionSelect').addEventListener('change',()=>chooseUpdateVersion());
  $('#updateDownloadBtn').addEventListener('click',downloadNewVersion);
  $('#updateInstallBtn').addEventListener('click',installNewVersion);
  $('#updateManualBtn').addEventListener('click',openDownloadedInstaller);
