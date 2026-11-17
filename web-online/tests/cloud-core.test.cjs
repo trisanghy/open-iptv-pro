@@ -85,3 +85,11 @@ test('PKCE recovery accepts configured website callback but no other hosts',()=>
  assert.equal(core.recoveryCode('http://localhost:3000/?code=short',site),null);
  assert.equal(core.recoveryCode('http://localhost:3000/?code=abcdef0123456789abcdef0123456789#ignored',site).code,'abcdef0123456789abcdef0123456789');
 });
+
+test('email rate-limit errors use HTTP status or Supabase code instead of generic network error',()=>{
+ assert.equal(core.isEmailRateLimited({status:429,code:'over_email_send_rate_limit',message:'Failed to fetch'}),true);
+ assert.equal(core.isEmailRateLimited({status:429,message:'Too Many Requests'}),true);
+ assert.equal(core.isEmailRateLimited({code:'over_email_send_rate_limit'}),true);
+ assert.equal(core.isEmailRateLimited({message:'Failed to fetch'}),false);
+ assert.match(core.authErrorMessage({status:429,message:'Failed to fetch'}),/HTTP 429/);
+});

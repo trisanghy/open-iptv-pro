@@ -47,8 +47,16 @@
   if(!code||code.length<16||code.length>512||!/^[A-Za-z0-9_-]+$/.test(code))return null;
   return {code,flowId:target.searchParams.get('sb_flow_id')||null};
  }
+ function isEmailRateLimited(error){
+  const code=String(error?.code||error?.error_code||'').toLowerCase();
+  const status=Number(error?.status||error?.statusCode||0);
+  const message=String(error?.message||error||'').toLowerCase();
+  return status===429||code==='over_email_send_rate_limit'||/email rate limit exceeded|over_email_send_rate_limit|too many requests/.test(message);
+ }
  function authErrorMessage(error){
   const msg=String(error?.message||error||'').trim(),m=msg.toLowerCase();
+  if(isEmailRateLimited(error))
+   return 'Supabase giới hạn gửi email (HTTP 429). Dừng gửi liên tục, chờ hết hạn mức hoặc thiết lập SMTP riêng.';
   if(/expired|invalid.*(?:token|otp)|token.*invalid|otp.*invalid/.test(m))
    return 'Liên kết hoặc mã đã hết hạn, đã sử dụng hoặc sai. Hãy yêu cầu email mới.';
   if(/rate.limit|too many requests|email rate|429/.test(m))
@@ -77,5 +85,5 @@
   if(knownPayload&&same(knownPayload,local))return 'download';
   return 'conflict';
  }
- return Object.freeze({snapshot,isMeaningful,same,validate,decision,validEmail,verificationLink,recoveryCode,authErrorMessage,MAX_BYTES});
+ return Object.freeze({snapshot,isMeaningful,same,validate,decision,validEmail,verificationLink,recoveryCode,isEmailRateLimited,authErrorMessage,MAX_BYTES});
 });

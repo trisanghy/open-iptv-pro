@@ -36,3 +36,6 @@
 /* Recover PKCE from browser localhost callback without leaking codes. */
 #cloudSyncCard #cloudLinkForm label{line-height:1.5}
 #cloudSyncCard #cloudLinkInput{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:12px}
+
+/* Rate-limit-safe email sign-in */
+#cloudSyncCard #cloudEmailSend:disabled{opacity:.65;cursor:not-allowed}

@@ -253,25 +253,57 @@
   finally{linkVerify.disabled=false;}
  });
 
+ const EMAIL_RETRY_KEY='openiptv:email-retry-after:v1';
+ const emailSendButton=el('cloudEmailSend');
+ let nextEmailSend=0;
+ try{nextEmailSend=Number(localStorage.getItem(EMAIL_RETRY_KEY))||0;}catch(_){}
+ const secondsToRetry=()=>Math.max(0,Math.ceil((nextEmailSend-Date.now())/1000));
+ const updateEmailSend=()=>{
+  if(!emailSendButton)return;
+  const remaining=secondsToRetry();
+  emailSendButton.disabled=remaining>0;
+  emailSendButton.textContent=remaining>0
+   ? 'Thử lại sau '+Math.ceil(remaining/60)+' phút'
+   : 'Gửi email đăng nhập';
+ };
+ const limitEmailRetry=seconds=>{
+  nextEmailSend=Math.max(nextEmailSend,Date.now()+seconds*1000);
+  try{localStorage.setItem(EMAIL_RETRY_KEY,String(nextEmailSend));}catch(_){}
+  updateEmailSend();
+ };
+ updateEmailSend();
+ const emailCooldownTimer=setInterval(updateEmailSend,15000);
+ window.addEventListener('pagehide',()=>clearInterval(emailCooldownTimer),{once:true});
  const safeEmail=()=>String(emailInput?.value||'').trim().toLowerCase();
  emailForm?.addEventListener('submit',async event=>{
   event.preventDefault();
   if(!client||!enabledProviders.email)return;
   const email=safeEmail();
   if(!core.validEmail(email)){
-   label('Địa chỉ email không hợp lệ.');return;
+   label('Địa chỉ email không hợp lệ.','error');return;
   }
-  const send=el('cloudEmailSend');if(send)send.disabled=true;
+  if(secondsToRetry()){
+   label('Đang tạm dừng gửi email để tránh vượt hạn mức Supabase. Thử lại sau '+Math.ceil(secondsToRetry()/60)+' phút.','error');
+   return;
+  }
+  if(emailSendButton)emailSendButton.disabled=true;
   try{
-   let reply=await client.auth.signInWithOtp({
+   const {error}=await client.auth.signInWithOtp({
     email,options:{emailRedirectTo:location.origin+location.pathname,shouldCreateUser:true}
    });
-   // Never silently retry without redirect: that produces an email link to localhost.
-    if(reply.error)throw reply.error;
+   if(error)throw error;
    emailRequested=true;syncControls();
-    label('Đã yêu cầu email đăng nhập tới '+email+'. Nhấp liên kết mới trong email. Nếu trình duyệt về localhost, sao chép địa chỉ localhost có ?code=... rồi quay lại web, chọn “Liên kết email không mở được?” để hoàn tất.');
-  }catch(e){report(e,'gửi email đăng nhập');}
-  finally{if(send)send.disabled=false;}
+   limitEmailRetry(60);
+   label('Đã yêu cầu email đăng nhập tới '+email+'. Kiểm tra Hộp thư đến hoặc Spam; nếu liên kết đưa tới localhost có ?code=..., sử dụng mục khôi phục bên dưới.');
+  }catch(e){
+   if(core.isEmailRateLimited(e)){
+    limitEmailRetry(600);
+    label(core.authErrorMessage(e)+' Trình duyệt tạm dừng thử lại trong 10 phút.','error');
+   }else if(/failed to fetch|network|load failed/i.test(String(e?.message||e||''))){
+    limitEmailRetry(120);
+    label('Không nhận được phản hồi gửi email. Có thể do trình duyệt/mạng, hoặc lỗi giới hạn gửi 429 bị che khuất. Thử lại sau 2 phút; không bấm gửi liên tục.','error');
+   }else report(e,'gửi email đăng nhập');
+  }finally{updateEmailSend();}
  });
  otpVerify?.addEventListener('click',async()=>{
   if(!client||!enabledProviders.email)return;
