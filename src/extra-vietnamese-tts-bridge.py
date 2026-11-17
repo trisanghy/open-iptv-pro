@@ -66,6 +66,13 @@ def prepare(engine, cache):
             filename=filename, local_dir=str(folder)
         )
         check_file(fetched, digest)
+    if engine == "f5vi":
+        # Download and cache the Vocos vocoder while the user explicitly opts in.
+        # Once installed, serve()/warm() run in strictly offline mode.
+        from f5_tts.api import F5TTS
+        _ = F5TTS(model="F5TTS_Base",
+                  ckpt_file=str(folder / "model_latest.safetensors"),
+                  vocab_file=str(folder / "vocab.txt"))
     print(json.dumps({"type": "prepared", "engine": engine}), flush=True)
 
 def open_engine(engine, cache):
