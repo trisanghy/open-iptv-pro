@@ -52,8 +52,9 @@ test('Old manual PiP and automatic controller restored, no fallback module',()=>
 });
 test('Release version matches immutable tag, Mac build creates exactly one app',()=>{
  const pkg=JSON.parse(read('package.json'));
- assert.equal(pkg.version,'4.23.17-tauri.23.8.15');
+ assert.match(pkg.version,/^4\.23\.17-tauri\.23\.8\.\d+$/);
+ const version=pkg.version.split('-tauri.')[1];
  const shell=read('scripts/BUILD_RUSTLAB_MAC_ONE_ZIP_FAST.sh');
- assert.ok(shell.includes('TAG="rust-lab/v23.8.15"'));
+ assert.ok(shell.includes('TAG="rust-lab/v'+version+'"'));
  assert.ok(shell.includes('npm run build -- --bundles app'));
 });

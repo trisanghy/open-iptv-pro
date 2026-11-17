@@ -39,9 +39,10 @@ test('After moving to document.body, all popup selectors still apply outside #pa
 });
 test('Release and local Mac builder have matching immutable tag',()=>{
  const pkg=JSON.parse(read('package.json'));
- assert.equal(pkg.version,'4.23.17-tauri.23.8.17');
+ assert.match(pkg.version,/^4\.23\.17-tauri\.23\.8\.\d+$/);
+ const version=pkg.version.split('-tauri.')[1];
  const shell=read('scripts/BUILD_RUSTLAB_MAC_ONE_ZIP_FAST.sh');
- assert.ok(shell.includes('TAG="rust-lab/v23.8.17"'));
+ assert.ok(shell.includes('TAG="rust-lab/v'+version+'"'));
  assert.ok(shell.includes('npm run build -- --bundles app'));
  assert.ok(read('renderer/auto-pip-v42363.js').includes('video.requestPictureInPicture()'));
 });
