@@ -79,6 +79,24 @@
    }
    const overlay=video.parentElement?.querySelector?.('.openiptv-video-translation-overlay');
    if(overlay?.style){
+    // Document-PiP has its own document: original document CSS cannot style
+    // nodes there. Inline layout ensures CC works in both floating/fullscreen.
+    overlay.style.display='flex';
+    overlay.style.flexDirection='column';
+    overlay.style.position='absolute';
+    overlay.style.zIndex='80';
+    overlay.style.left='3%';
+    overlay.style.right='3%';
+    overlay.style.maxWidth='94%';
+    overlay.style.boxSizing='border-box';
+    overlay.style.justifyContent='center';
+    overlay.style.alignItems='center';
+    overlay.style.textAlign='center';
+    overlay.style.lineHeight='1.32';
+    overlay.style.whiteSpace='pre-wrap';
+    overlay.style.overflowWrap='anywhere';
+    overlay.style.wordBreak='break-word';
+    overlay.style.pointerEvents='none';
     overlay.style.color=safeColor(prefs.color);
     overlay.style.fontFamily=fonts[prefs.font]||fonts.system;
     overlay.style.fontSize=effectiveFontSize+'px';
@@ -180,12 +198,14 @@
   };
   const view=doc.defaultView||((typeof window!=='undefined')?window:null);
   view?.addEventListener?.('resize',refreshLayout);
+  view?.addEventListener?.('openiptv:cc-surface-changed',refreshLayout);
   doc.addEventListener?.('fullscreenchange',refreshLayout);
   return Object.freeze({
    show,clear:()=>{last=null;base.clear();},
    destroy:()=>{
     last=null;
     view?.removeEventListener?.('resize',refreshLayout);
+    view?.removeEventListener?.('openiptv:cc-surface-changed',refreshLayout);
     doc.removeEventListener?.('fullscreenchange',refreshLayout);
     base.destroy();
     if(styleNode?.parentElement)styleNode.parentElement.removeChild(styleNode);
