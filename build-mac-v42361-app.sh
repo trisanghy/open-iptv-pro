@@ -23,13 +23,9 @@ trap 'exit 143' TERM
 
 REPO='trisanghy/open-iptv-pro'
 BRANCH='experiment/google-translate-gemma-v42361'
-echo '[1/5] Fetching experimental Electron source commit...'
-REF_JSON="$(curl -fsSL --retry 3 --connect-timeout 15 --max-time 90 \
- "https://api.github.com/repos/$REPO/git/refs/heads/$BRANCH")"
-COMMIT="$(printf '%s\n' "$REF_JSON" | sed -nE 's/.*"sha":[[:space:]]*"([0-9a-f]{40})".*/\1/p' | head -1)"
-[[ "$COMMIT" =~ ^[0-9a-f]{40}$ ]] || { echo 'Cannot verify experimental branch commit.' >&2; exit 1; }
+echo '[1/5] Fetching experimental Electron source from GitHub (no REST API rate limit)...'
 curl -fL --retry 3 --connect-timeout 15 --max-time 480 \
- -o "$TEMP/source.zip" "https://codeload.github.com/$REPO/zip/$COMMIT"
+ -o "$TEMP/source.zip" "https://codeload.github.com/$REPO/zip/refs/heads/$BRANCH"
 unzip -q "$TEMP/source.zip" -d "$TEMP/source"
 PROJECT="$(find "$TEMP/source" -mindepth 1 -maxdepth 1 -type d -print -quit)"
 test -f "$PROJECT/package.json"
@@ -52,7 +48,7 @@ if [ "$node_major" -lt 22 ]; then
  export PATH="$TEMP/node-v${NODE_VERSION}-${PLATFORM}/bin:$PATH"
 fi
 test "$(node -p "require('$PROJECT/package.json').version")" = '4.23.61'
-echo "[2/5] Verified source commit: $COMMIT"
+echo '[2/5] Verified source structure and exact 4.23.61 version'
 echo '[3/5] Installing local dependencies and running tests...'
 cd "$PROJECT"
 if [ -f package-lock.json ]; then npm ci --no-audit --no-fund
