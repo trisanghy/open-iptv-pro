@@ -14,7 +14,7 @@
  z-index:80;left:3%;right:3%;bottom:4%;max-width:94%;
  justify-content:center;align-items:center;min-width:0;
  pointer-events:none;box-sizing:border-box;
- padding:0;overflow-x:hidden;overflow-y:visible;
+ padding:0;overflow:visible;
  font-size:clamp(16px,2.15vw,36px);font-weight:650;
  line-height:1.32;text-align:center;white-space:pre-wrap;
  color:#fff;overflow-wrap:anywhere;word-break:break-word;
