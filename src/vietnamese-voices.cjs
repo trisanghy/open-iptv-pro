@@ -7,6 +7,7 @@ const VOICES=Object.freeze({
  'vietvoice:male:central:story':{name:'VietVoice · nam Trung · kể chuyện',family:'vietvoice',minRamGB:8,recRamGB:16},
  'vietvoice:female:southern:news':{name:'VietVoice · nữ Nam · tin tức',family:'vietvoice',minRamGB:8,recRamGB:16},
  'vietvoice:male:southern:story':{name:'VietVoice · nam Nam · kể chuyện',family:'vietvoice',minRamGB:8,recRamGB:16},
+ 'vietvoice:clone':{name:'VietVoice · giọng mẫu được phép sử dụng',family:'vietvoice',minRamGB:8,recRamGB:16},
  'f5vi:reference':{name:'F5-TTS Vietnamese · giọng mẫu (phi thương mại)',family:'f5',minRamGB:16,recRamGB:32}
 });
 const SOURCES=Object.freeze({
@@ -122,9 +123,13 @@ function createVietnameseVoices({dataDir,installer,spawnProcess=spawn,platform=p
   // VietVoice voiceId format: vietvoice:gender:area:group
   const [_,gender,area,group]=id.split(':');
   const args=family==='vietvoice'?
-   [copiedBridge(),'vietvoice',text,output,cache,area,gender,group]:
+   [copiedBridge(),'vietvoice',text,output,cache,
+    id==='vietvoice:clone'?'northern':area||'northern',
+    id==='vietvoice:clone'?'female':gender||'female',
+    id==='vietvoice:clone'?'news':group||'news',
+    ...(id==='vietvoice:clone'?[refAudio,refText]:[])]:
    [copiedBridge(),'f5',text,output,f5Model,refAudio,refText];
-  if(family==='f5'&&(!refAudio||!refText.trim()))
+  if((family==='f5'||id==='vietvoice:clone')&&(!refAudio||!refText.trim()))
    throw Error('F5 cần file giọng mẫu có sự đồng ý và bản chép lời mẫu');
   await execute(python,args,240000);
   if(!present(output))throw Error('Chưa tạo được WAV tiếng Việt');
