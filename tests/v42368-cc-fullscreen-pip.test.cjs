@@ -156,6 +156,20 @@ test('If mirrored PiP request rejects, working native video PiP remains availabl
  }finally{await app.ctrl.dispose();}
 });
 
+test('Automatic navigation PiP with CC exits when returning to TV',async()=>{
+ const app=makeMock();
+ try{
+  app.ctrl.onPageChange('other','tv');
+  await new Promise(resolve=>setImmediate(resolve));
+  assert.equal(app.ctrl.inPiP(),true);
+  assert.notEqual(app.doc.pictureInPictureElement,app.original);
+  app.ctrl.onPageChange('tv','other');
+  await new Promise(resolve=>setImmediate(resolve));
+  assert.equal(app.ctrl.inPiP(),false);
+  assert.equal(app.doc.pictureInPictureElement,null);
+ }finally{await app.ctrl.dispose();}
+});
+
 test('Pausing mirrored PiP also pauses original IPTV and resume remains possible',async()=>{
  const app=makeMock();
  try{
