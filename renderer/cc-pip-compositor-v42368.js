@@ -87,6 +87,7 @@
  }
  function createController({video,doc,getState=()=>null,onPiPEvent=()=>{}}){
   let canvas=null,ctx=null,mirror=null,stream=null,timer=null,failed=false;
+  let detachSourceListeners=[];
   const supported=()=>!!(doc?.createElement&&typeof doc.createElement('canvas')?.captureStream==='function');
   const ready=()=>!!mirror&&mirror.readyState>=2;
   function paint(){
@@ -95,6 +96,8 @@
    catch{failed=true;return false;}
   }
   function stop(){
+   for(const detach of detachSourceListeners)try{detach();}catch{}
+   detachSourceListeners=[];
    if(timer!==null){clearInterval(timer);timer=null;}
    if(mirror){
     try{mirror.pause();mirror.removeAttribute('src');mirror.srcObject=null;mirror.load();}catch{}
@@ -135,13 +138,19 @@
      if(doc.pictureInPictureElement===mirror&&video.paused)
       Promise.resolve(video.play()).catch(()=>{});
     });
-    video.addEventListener?.('pause',()=>{
-     if(doc.pictureInPictureElement===mirror&&!mirror.paused)mirror.pause();
-    });
-    video.addEventListener?.('playing',()=>{
-     if(doc.pictureInPictureElement===mirror&&mirror.paused)
+    const pauseMirror=()=>{
+     if(mirror&&doc.pictureInPictureElement===mirror&&!mirror.paused)mirror.pause();
+    };
+    const resumeMirror=()=>{
+     if(mirror&&doc.pictureInPictureElement===mirror&&mirror.paused)
       Promise.resolve(mirror.play()).catch(()=>{});
-    });
+    };
+    video.addEventListener?.('pause',pauseMirror);
+    video.addEventListener?.('playing',resumeMirror);
+    detachSourceListeners=[
+     ()=>video.removeEventListener?.('pause',pauseMirror),
+     ()=>video.removeEventListener?.('playing',resumeMirror)
+    ];
     (doc.body||doc.documentElement).appendChild(mirror);
     // Original IPTV video keeps its own audio. PiP video is video-only.
     Promise.resolve(mirror.play()).catch(()=>{});
