@@ -66,6 +66,18 @@ jobs:
           test -s _site/cloud-config.json
           test -s _site/supabase-sdk.js
           grep -q 'id="cloudSyncCard"' _site/index.html
+          python3 - <<'PY'
+          from pathlib import Path
+          h=Path('_site/index.html').read_text(encoding='utf-8')
+          page=h.index('<section id="page-settings"')
+          card=h.index('id="cloudSyncCard"',page)
+          grid=h.index('<div class="settings-grid">',page)
+          assert page<card<grid, 'Cloud must be above the settings accordion grid'
+          assert h.count('id="cloudSyncCard"')==1, 'Cloud card duplicated'
+          assert h.count('id="cloudAccountQuick"')==1, 'Topbar account shortcut missing'
+          assert h.index('id="cloudAccountQuick"') < page, 'Account shortcut not in the topbar'
+          assert 'id="cloudLoginGoogle"' in h and 'id="cloudLoginGithub"' in h
+          PY
           grep -q 'rel="icon"' _site/index.html
           grep -q 'src="web-autoplay.js"' _site/index.html
           grep -q 'id="webAutoResumeLast"' _site/index.html
