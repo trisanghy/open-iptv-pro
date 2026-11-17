@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="vi"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
 <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: blob:; script-src 'self' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; img-src * data: blob: file:; connect-src * data: blob:; media-src * data: blob:; worker-src 'self' blob:;"/>
-<title>Open IPTV Pro 4.23.65</title><script src="theme-boot.js"></script><link rel="stylesheet" href="styles.css"/><link rel="stylesheet" href="ui-styles.css"/><link rel="stylesheet" href="ui-fullsync.css"/><link rel="stylesheet" href="ui-refined.css"/><link rel="stylesheet" href="ui-polish.css"/><link rel="stylesheet" href="player-ux.css"/><link rel="stylesheet" href="settings-v42317.css"/><link rel="stylesheet" href="sidebar-link-picker-v42329.css"/><link rel="stylesheet" href="video-layout-fix-v42330.css"/><link rel="stylesheet" href="channel-panel-compact-v42333.css"/><link rel="stylesheet" href="sidebar-channel-align-v42334.css"/><link rel="stylesheet" href="player-two-row-v42335.css"/><link rel="stylesheet" href="config-dropdown-v42336.css"/><link rel="stylesheet" href="video-source-aspect-v42338.css"/><link rel="stylesheet" href="player-classic-controls-v42340.css"/><link rel="stylesheet" href="player-toolbar-v42341.css"/><link rel="stylesheet" href="player-compact-cast-v42342.css"/><link rel="stylesheet" href="live-caption-row-v42343.css"/><link rel="stylesheet" href="local-tts-row-v42344.css"/><link rel="stylesheet" href="whisper-auto-v42345.css"/><link rel="stylesheet" href="live-caption-lang-v42346.css"/><link rel="stylesheet" href="unified-ai-settings-v42356.css"/><link rel="stylesheet" href="video-only-translated-caption-v42358.css"/><link rel="stylesheet" href="ai-hardware-advice-v42365.css"/></head>
+<title>Open IPTV Pro 4.23.65</title><script src="theme-boot.js"></script><link rel="stylesheet" href="styles.css"/><link rel="stylesheet" href="ui-styles.css"/><link rel="stylesheet" href="ui-fullsync.css"/><link rel="stylesheet" href="ui-refined.css"/><link rel="stylesheet" href="ui-polish.css"/><link rel="stylesheet" href="player-ux.css"/><link rel="stylesheet" href="settings-v42317.css"/><link rel="stylesheet" href="sidebar-link-picker-v42329.css"/><link rel="stylesheet" href="video-layout-fix-v42330.css"/><link rel="stylesheet" href="channel-panel-compact-v42333.css"/><link rel="stylesheet" href="sidebar-channel-align-v42334.css"/><link rel="stylesheet" href="player-two-row-v42335.css"/><link rel="stylesheet" href="config-dropdown-v42336.css"/><link rel="stylesheet" href="video-source-aspect-v42338.css"/><link rel="stylesheet" href="player-classic-controls-v42340.css"/><link rel="stylesheet" href="player-toolbar-v42341.css"/><link rel="stylesheet" href="player-compact-cast-v42342.css"/><link rel="stylesheet" href="live-caption-row-v42343.css"/><link rel="stylesheet" href="local-tts-row-v42344.css"/><link rel="stylesheet" href="whisper-auto-v42345.css"/><link rel="stylesheet" href="live-caption-lang-v42346.css"/><link rel="stylesheet" href="unified-ai-settings-v42356.css"/><link rel="stylesheet" href="video-only-translated-caption-v42358.css"/><link rel="stylesheet" href="ai-hardware-advice-v42365.css"/><link rel="stylesheet" href="compact-live-ai-controls-v42366.css"/></head>
 <body>
 <div class="app-shell" id="appShell">
  <aside class="sidebar" id="appSidebar">
@@ -88,13 +88,15 @@
         <button class="icon-btn favorite-current" id="favCurrentBtn" title="Yêu thích" aria-label="Đánh dấu kênh yêu thích">☆</button>
        </div>
        <div class="caption-third-row" id="captionThirdRow">
- <div class="caption-third-controls" role="group" aria-label="Phụ đề và dịch trực tiếp">
+ <div class="caption-third-controls" role="group" aria-label="Phụ đề và đọc bản dịch trực tiếp">
+ <div class="caption-ai-main" role="group" aria-label="Bật phụ đề và dịch">
  <label title="Nhận diện tiếng nói từ luồng IPTV trên máy"><input type="checkbox" id="liveCaptionToggle"/>Live Caption</label>
  <label title="Nhận diện rồi dịch sang ngôn ngữ đã chọn (offline)"><input type="checkbox" id="liveTranslateToggle"/>Live Translate</label>
  <select id="liveTranslateTarget" aria-label="Ngôn ngữ dịch phụ đề"><option value="vi" selected>Tiếng Việt</option><option value="en">English</option><option value="fr">Français</option><option value="es">Español</option><option value="de">Deutsch</option><option value="zh">中文</option><option value="ja">日本語</option><option value="ko">한국어</option><option value="pt">Português</option><option value="it">Italiano</option><option value="ru">Русский</option><option value="id">Indonesia</option><option value="ar">العربية</option><option value="hi">हिन्दी</option><option value="th">ไทย</option></select>
  <button type="button" id="liveCaptionSetup" aria-expanded="false" aria-controls="liveCaptionSetupPanel" title="Cài đặt chung: Live Caption, Live Translate, TTS và AI đã tải">⚙</button>
  <small id="liveCaptionStatus" role="status" aria-live="polite">Đang kiểm tra Whisper…</small>
  <button type="button" id="captionRetry" hidden title="Thử bật lại Live Caption/Translate">↻ Thử lại</button>
+ </div><div class="caption-tts-main" role="group" aria-label="Giọng đọc bản dịch">
 <label class="tts-mode" title="Đọc bản dịch bằng giọng nói AI chạy trên máy">
  <input type="checkbox" id="liveTtsToggle"/>🔊 Giọng dịch TTS
 </label>
@@ -124,7 +126,7 @@
  <option value="1.75">1.75×</option>
  <option value="2.00">2×</option>
 </select>
-<label class="tts-duck-label" for="liveTtsDuck" title="Âm lượng gốc khi giọng dịch phát">Tiếng gốc</label>
+<label class="tts-duck-label" for="liveTtsDuck" title="Âm lượng tiếng gốc khi giọng dịch phát">Gốc</label>
 <select id="liveTtsDuck" aria-label="Âm lượng tiếng gốc trong khi TTS phát">
  <option value="0">Tắt gốc</option>
  <option value="15">15%</option>
@@ -137,9 +139,9 @@
 
 <small id="liveTtsStatus" role="status" aria-live="polite">Kiểm tra TTS…</small>
 <small id="aiHeatWarningInline" role="alert" hidden></small>
- </div>
+ </div></div>
 <details class="playback-extra" id="playbackExtra">
-        <summary title="Chụp ảnh và FFmpeg dự phòng">Chụp ảnh · FFmpeg <span aria-hidden="true">⌄</span></summary>
+        <summary title="Chụp ảnh và FFmpeg dự phòng" aria-label="Công cụ chụp ảnh và phát dự phòng">Công cụ <span aria-hidden="true">⌄</span></summary>
         <div class="playback-extra-inner">
          
          
@@ -491,4 +493,4 @@
 <div id="channelPreview" class="channel-preview hidden"></div>
 <div class="toast-area" id="toastArea" aria-live="polite"></div>
 <script src="app-icons.js"></script><script src="../node_modules/hls.js/dist/hls.min.js"></script><script src="../node_modules/dashjs/dist/modern/umd/dash.all.min.js"></script><script src="languages.bundle.js"></script><script src="i18n.js"></script><script src="core-browser.js"></script><script src="collector-core.js"></script><script src="advanced-core.js"></script><script src="doctor-v2-core.js"></script><script src="doctor-v3-core.js"></script><script src="epg.js"></script><script src="favorites-core.js"></script><script src="source-edit.js"></script><script src="channel-order.js"></script><script src="startup-policy.js"></script><script src="playback-route-policy.js"></script><script src="playback-preference.js"></script><script src="manual-stream-selection.js"></script><script src="app.js"></script><script src="auto-pip-v42363.js"></script><script src="cast-ui.js"></script><script src="features.js"></script><script src="advanced.js"></script><script src="collector.js"></script><script src="doctor-v2.js"></script><script src="smart-discovery-ui.js"></script><script src="doctor-v3.js"></script><script src="backup-ui.js"></script><script src="dvr-ui.js"></script><script src="settings-ui.js"></script><script src="ui-style.js"></script><script src="theme-stage.js"></script><script src="player-ux.js"></script><script src="sidebar-channel-align-v42334.js"></script><script src="video-source-aspect-v42338.js"></script>
-<script src="video-only-translated-caption-v42358.js"></script><script src="live-captions-v42343.js"></script><script src="tts-utterance-queue-v42359.js"></script><script src="local-tts-v42344.js"></script><script src="whisper-auto-v42345.js"></script><script src="ai-hardware-advice-v42365.js"></script><script src="unified-ai-settings-v42356.js"></script></body></html>
+<script src="video-only-translated-caption-v42358.js"></script><script src="live-captions-v42343.js"></script><script src="tts-utterance-queue-v42359.js"></script><script src="tts-preview-coordinator-v42366.js"></script><script src="local-tts-v42344.js"></script><script src="whisper-auto-v42345.js"></script><script src="ai-hardware-advice-v42365.js"></script><script src="unified-ai-settings-v42356.js"></script></body></html>
