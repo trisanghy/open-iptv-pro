@@ -36,14 +36,19 @@ jobs:
           node /tmp/openiptv-toolbar.cjs /tmp/openiptv-source/Open_IPTV_Pro_WebView_v4_23_37_FULL
           node -e "const v=require('/tmp/openiptv-source/Open_IPTV_Pro_WebView_v4_23_37_FULL/package.json').version;if(v!=='4.23.38')process.exit(2);"
       - name: Prepare static frontend and bundled HLS/DASH
+        env:
+          SUPABASE_URL: ${{ vars.SUPABASE_URL }}
+          SUPABASE_PUBLISHABLE_KEY: ${{ vars.SUPABASE_PUBLISHABLE_KEY }}
         shell: bash
         run: |
           set -euo pipefail
           mkdir -p /tmp/iptv-web-deps _site
-          npm install --prefix /tmp/iptv-web-deps --no-audit --no-fund --ignore-scripts --no-save --package-lock=false hls.js@1.6.15 dashjs@5.3.0
+          npm install --prefix /tmp/iptv-web-deps --no-audit --no-fund --ignore-scripts --no-save --package-lock=false hls.js@1.6.15 dashjs@5.3.0 @supabase/supabase-js@2.118.0
           cp /tmp/iptv-web-deps/node_modules/hls.js/dist/hls.min.js _site/hls.min.js
           cp /tmp/iptv-web-deps/node_modules/dashjs/dist/modern/umd/dash.all.min.js _site/dash.all.min.js
+          cp /tmp/iptv-web-deps/node_modules/@supabase/supabase-js/dist/umd/supabase.js _site/supabase-sdk.js
           python3 web-online/prepare-web.py /tmp/openiptv-source/Open_IPTV_Pro_WebView_v4_23_37_FULL _site
+          python3 web-online/write-cloud-config.py _site/cloud-config.json
       - name: Verify Web channel checker and browser build
         shell: bash
         run: |
@@ -54,6 +59,13 @@ jobs:
           node --test web-online/tests/resume-last.test.cjs
           node --check _site/web-autoplay.js
           node --test web-online/tests/web-autoplay.test.cjs
+          node --check _site/cloud-core.js
+          node --check _site/cloud-sync.js
+          node --test web-online/tests/cloud-core.test.cjs
+          python3 -m py_compile web-online/write-cloud-config.py
+          test -s _site/cloud-config.json
+          test -s _site/supabase-sdk.js
+          grep -q 'id="cloudSyncCard"' _site/index.html
           grep -q 'rel="icon"' _site/index.html
           grep -q 'src="web-autoplay.js"' _site/index.html
           grep -q 'id="webAutoResumeLast"' _site/index.html
