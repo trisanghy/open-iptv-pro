@@ -25,6 +25,13 @@ test('Model catalog matches Electron eight model IDs, with actual MLX setup and 
  assert.match(rust,/output_timeout/);
  assert.match(rust,/fn has_weights\(/);
  assert.match(rust,/async fn translate\(/);
+ assert.match(rust,/static CATALOG:/);
+ assert.match(rust,/let installed=has_weights\(ai,key\);/);
+ assert.match(rust,/let size=super::asset_bytes/);
+ assert.match(rust,/let base=root\(&ai\);/);
+ assert.match(rust,/let model=model_root\(&ai,&key\)\?;/);
+ assert.doesNotMatch(rust,/let installed=has_weights\(ai,key\),size=/);
+ assert.doesNotMatch(rust,/let base=root\(&ai\),model=/);
 });
 test('Rust bridge and model settings connect real backends and manage model files',()=>{
  const local=read('src-tauri/src/local_ai.rs'),bridge=read('src-tauri/src/bridge.rs'),shim=read('renderer/tauri-bridge.js');

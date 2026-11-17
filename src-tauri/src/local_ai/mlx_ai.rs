@@ -5,7 +5,7 @@
 use super::*;
 use std::collections::HashSet;
 
-const CATALOG: [(&str, &str, u64); 8] = [
+static CATALOG: [(&str, &str, u64); 8] = [
  ("hymt18", "Hy-MT2 1.8B · nhanh", 1_100_000_000),
  ("hymt18q8", "Hy-MT2 1.8B · 8-bit", 1_900_000_000),
  ("hymt7", "Hy-MT2 7B · chất lượng cao", 4_550_000_000),
@@ -83,7 +83,8 @@ pub(super) fn select_auto(ai:&LocalAi,mode:&str)->Option<&'static str>{
 pub(super) fn status(ai:&LocalAi)->Value{
  let mut models=serde_json::Map::new();
  for (key,label,approx) in CATALOG {
-  let installed=has_weights(ai,key),size=super::asset_bytes(&root(ai).join("models").join(key),0);
+  let installed=has_weights(ai,key);
+  let size=super::asset_bytes(&root(ai).join("models").join(key),0);
   models.insert(key.into(),json!({"id":key,"label":label,"installed":installed,
     "supported":supported(),"runtimeReady":runtime_ready(ai),"approxBytes":approx,
     "bytes":size,"installing":ai.mlx_installing.load(Ordering::SeqCst),
@@ -95,7 +96,7 @@ pub(super) fn status(ai:&LocalAi)->Value{
 fn notice(app:&AppHandle,message:&str){
  let _=app.emit("ai:event",json!({"type":"ai-progress","message":message}));
 }
-async fn exec(app:&AppHandle,ai:&LocalAi,key:&str,bin:&Path,args:&[&str],seconds:u64)->Result<String,String>{
+async fn exec(_app:&AppHandle,ai:&LocalAi,key:&str,bin:&Path,args:&[&str],seconds:u64)->Result<String,String>{
  let mut cmd=Command::new(bin);
  cmd.args(args);
  env(&mut cmd,ai,key);
@@ -140,7 +141,8 @@ pub(super) async fn install(app:AppHandle,ai:Arc<LocalAi>,key:&str)->Result<Valu
  }
  let key=key.to_string();
  let result=async{
-  let base=root(&ai),model=model_root(&ai,&key)?;
+  let base=root(&ai);
+  let model=model_root(&ai,&key)?;
   tokio::fs::create_dir_all(&model).await.map_err(error)?;
   write_bridge(&ai).await?;
   let uv=prepare_uv(&app,&ai).await?;
