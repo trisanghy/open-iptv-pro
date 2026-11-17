@@ -36,7 +36,7 @@ test('v4.23.46: translate-only installer never requires Piper voice model',()=>{
 test('v4.23.68: speech uses already-translated target, never running a second Argos/MLX pass',()=>{
  const code=read('renderer/local-tts-v42344.js');
  assert.match(code,/const sameLanguage=e\.language===target\.value/);
- assert.match(code,/text=String\(e\.text\|\|''\)/);
+ assert.match(code,/const text=String\(sameLanguage\?e\.text:/);
  assert.match(code,/alreadyTranslated:true/);
  assert.match(code,/alreadyTranslated:sourceLanguage===target\.value/);
 });
