@@ -41,26 +41,39 @@ def speak(engine, voices, voice, out, sentence):
 def serve():
     engine, voices=engine_ready()
     print(json.dumps({"type":"ready"}),flush=True)
-    # A single worker avoids reloading 1GB+ model on every subtitle.
-    # Requests arriving during inference are compacted to most recent before next synth.
-    import select
-    for line in sys.stdin:
-        if not line.strip():
-            continue
-        request=json.loads(line)
+    # A reader thread continues consuming requests while ONNX is synthesizing.
+    # Before each new inference, discard all queued captions except the newest.
+    from queue import Queue, Empty
+    from threading import Thread
+    incoming = Queue()
+    def receive():
+        for line in sys.stdin:
+            if not line.strip():
+                continue
+            try:
+                req=json.loads(line)
+                if isinstance(req,dict) and req.get("id") is not None:
+                    incoming.put(req)
+            except (ValueError,TypeError):
+                continue
+        incoming.put(None)
+    Thread(target=receive, daemon=True).start()
+    while True:
+        request=incoming.get()
+        if request is None:
+            return
+        while True:
+            try:
+                candidate=incoming.get_nowait()
+            except Empty:
+                break
+            if candidate is None:
+                return
+            print(json.dumps({"id":request.get("id"),"ok":False,
+                              "skipped":True,"error":"Phụ đề cũ đã bị thay thế"},
+                             ensure_ascii=False),flush=True)
+            request=candidate
         try:
-            while select.select([sys.stdin],[],[],0)[0]:
-                newer=sys.stdin.readline()
-                if not newer:
-                    return
-                try:
-                    candidate=json.loads(newer)
-                    if isinstance(candidate,dict) and candidate.get("id") is not None:
-                        print(json.dumps({"id":request.get("id"),"ok":False,
-                                          "skipped":True,"error":"Phụ đề cũ đã bị thay thế"}),flush=True)
-                        request=candidate
-                except (ValueError,TypeError):
-                    continue
             ident=request.get("id")
             speak(engine,voices,request.get("voice"),request.get("output"),request.get("text"))
             print(json.dumps({"id":ident,"ok":True}),flush=True)
