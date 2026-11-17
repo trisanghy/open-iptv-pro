@@ -10,9 +10,11 @@ function createVieNeuSession({python,bridge,spawnProcess=spawn,env=process.env,o
   pending.clear();
  }
  function shutdown(){
-  const old=child;child=null;ready=null;
+  const old=child,abortLoad=readyReject;
+  child=null;ready=null;readyResolve=null;readyReject=null;
+  if(abortLoad)abortLoad(Error('Đã hủy tải/tổng hợp giọng'));
   if(old){try{old.kill('SIGTERM');}catch{}}
-  failAll(Error('VieNeu session stopped'));
+  failAll(Error('Đã hủy yêu cầu tổng hợp giọng'));
  }
  function ensure(){
   if(child&&ready)return ready;
@@ -64,6 +66,8 @@ function createVieNeuSession({python,bridge,spawnProcess=spawn,env=process.env,o
    catch(error){clearTimeout(timer);pending.delete(id);reject(error);}
   });
  }
- return Object.freeze({synthesize,shutdown,isWarm:()=>!!child&&!!ready});
+ // Cancel in-flight local speech immediately; next request can rewarm model.
+ function cancel(){if(child){shutdown();return true;}return false;}
+ return Object.freeze({synthesize,shutdown,cancel,isWarm:()=>!!child&&!!ready});
 }
 module.exports={createVieNeuSession};
