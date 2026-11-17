@@ -48,7 +48,7 @@ test('v4.23.65 speech worker, installer and app bundle connect self-contained ff
  assert.match(file('src/main.cjs'),/resolveBundledFFprobe/);
  assert.match(file('src/local-tts-service.cjs'),/pythonAudioEnvironment/);
  assert.match(file('src/local-ai-autoinstall.cjs'),/pythonAudioEnvironment/);
- assert.match(file('renderer/index.html'),/4\.23\.64/);
- assert.match(file('build-mac-v42364.sh'),/--dir/);
+ assert.match(file('renderer/index.html'),/4\.23\.65/);
+ assert.match(file('build-mac-v42365.sh'),/--dir/);
  assert.match(file('.github/workflows/test-mac-ffprobe-v42364.yml'),/ffprobe/);
 });
