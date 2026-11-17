@@ -259,7 +259,7 @@ PROJECT_FINAL="$WORK/Open-IPTV-Pro-v4_23_56_Full_Desktop"
 mv "$PROJECT" "$PROJECT_FINAL"
 PROJECT="$PROJECT_FINAL"
 echo '[3/5] Applying continuous FFmpeg captions and newest-only warm VieNeu TTS...'
-V57_REV="25b4adc9cc2b75c141307d0857709e7e0bf2ba94"
+V57_REV="6bf25d8034b7d9712159d8b1b2905466d50c7a47"
 V57_DIR="$WORK/overlays57"
 mkdir -p "$V57_DIR"
 for file in continuous-capture-v42357.cjs vieneu-bridge-v42357.py vieneu-session-v42357.cjs local-tts-service-v42357.cjs local-tts-ui-v42357.js v42357-streaming-apply.cjs v42357-lowlatency.test.cjs v4.23.57-apply.cjs BUILD_MAC_DMG_ONLY_v42357.command; do
