@@ -119,18 +119,30 @@
  for(const event of ['waiting','stalled'])video.addEventListener(event,scheduleStall);
  video.addEventListener('playing',()=>{clearStall();if(caption.checked||translate.checked)void reconcile(true);});
  video.addEventListener('seeked',()=>{if(mediaActive()&&(caption.checked||translate.checked))void reconcile(true);});
- // Caption controls original subtitles; translation can continue using Whisper even
- // when the original caption checkbox is off. Never force Caption back on.
+ // Three-mode group: enabling TTS from OFF enables the whole pipeline;
+ // disabling its leading Caption switch shuts down Caption/Translate/TTS together.
+ // The visible Caption preference remains independent when only Translate changes.
  const tts=$('liveTtsToggle');
  const changed=event=>{
-  // Original Caption visibility is independent of active translation.
-  // When Translate is ON, don't restart Whisper or force Caption checked.
+  if(event?.target===caption&&!caption.checked){
+   const wasTranslated=translate.checked,wasSpeaking=!!tts?.checked;
+   // Set all values before sending events so observers/localStorage see the
+   // final consistent OFF state and TTS audio is stopped immediately.
+   translate.checked=false;
+   if(tts)tts.checked=false;
+   if(wasSpeaking)tts.dispatchEvent(new Event('change',{bubbles:true}));
+   if(wasTranslated)translate.dispatchEvent(new Event('change',{bubbles:true}));
+   document.dispatchEvent(new CustomEvent('rustlab:caption-visibility-changed',{detail:{enabled:false}}));
+   if(!wasTranslated)void reconcile(true);
+   return;
+  }
+  // When Translate is already running, showing original captions is a visual
+  // change only: don't restart the Whisper stream.
   if(event?.target===caption&&translate.checked){
    document.dispatchEvent(new CustomEvent('rustlab:caption-visibility-changed',{detail:{enabled:caption.checked}}));
    return;
   }
-  // Spoken translation requires translated segments. Switching translation off
-  // also stops TTS, but must not alter the independent Caption preference.
+  // Turning off Translate also turns off voice-over, but retains Caption.
   if(event?.target===translate&&!translate.checked&&tts?.checked){
    tts.checked=false;
    tts.dispatchEvent(new Event('change',{bubbles:true}));
@@ -138,6 +150,14 @@
   void reconcile(true);
  };
  caption.addEventListener('change',changed);translate.addEventListener('change',changed);
+ tts?.addEventListener('change',()=>{
+  if(!tts.checked)return;
+  // One-click TTS ON: enable the full recognition → translation → speech chain.
+  const needsCaption=!caption.checked,needsTranslate=!translate.checked;
+  caption.checked=true;translate.checked=true;
+  if(needsCaption)caption.dispatchEvent(new Event('change',{bubbles:true}));
+  if(needsTranslate)translate.dispatchEvent(new Event('change',{bubbles:true}));
+ });
  target.addEventListener('change',()=>{
   try{localStorage.setItem(preference,target.value);}catch{}
   failedPair='';lastDetected='';

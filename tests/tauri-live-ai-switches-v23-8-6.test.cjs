@@ -45,56 +45,65 @@ function app(){
  return {nodes,video,change,events,callbacks,win};
 }
 const settle=async()=>{for(let i=0;i<14;i++)await Promise.resolve();};
-test('Live Caption switches OFF while Translate and TTS remain ON',async()=>{
+test('From all OFF, enabling TTS enables Caption, Translate and TTS in one click',async()=>{
  const a=app();
- a.change('liveCaptionToggle',true);
- a.change('liveTranslateToggle',true);
+ assert.equal(a.nodes.liveCaptionToggle.checked,false);
+ assert.equal(a.nodes.liveTranslateToggle.checked,false);
+ assert.equal(a.nodes.liveTtsToggle.checked,false);
  a.change('liveTtsToggle',true);
- await settle();
- const startsBefore=a.callbacks.captionStart.length;
- const stopsBefore=a.callbacks.captionStop.length;
- a.change('liveCaptionToggle',false);
- await settle();
- assert.equal(a.callbacks.captionStart.length,startsBefore,'Hiding original captions must not restart the translation worker');
- assert.equal(a.callbacks.captionStop.length,stopsBefore,'Hiding original captions must not stop Whisper used by translation');
- assert.equal(a.nodes.liveCaptionToggle.checked,false,'Caption must stay OFF');
- assert.equal(a.nodes.liveTranslateToggle.checked,true,'Translation stays enabled');
- assert.equal(a.nodes.liveTtsToggle.checked,true,'Voice stays enabled');
- a.change('liveCaptionToggle',true);
  await settle();
  assert.equal(a.nodes.liveCaptionToggle.checked,true);
  assert.equal(a.nodes.liveTranslateToggle.checked,true);
+ assert.equal(a.nodes.liveTtsToggle.checked,true);
+ assert.ok(a.events.some(e=>e.id==='liveCaptionToggle'&&e.checked));
+ assert.ok(a.events.some(e=>e.id==='liveTranslateToggle'&&e.checked));
 });
-test('Turning Translate off stops dependent TTS but leaves Caption untouched',async()=>{
+test('From all ON, disabling Caption turns off all three and stops recognition',async()=>{
  const a=app();
- a.change('liveCaptionToggle',false);
- a.change('liveTranslateToggle',true);
  a.change('liveTtsToggle',true);
- a.change('liveTranslateToggle',false);
+ await settle();
+ const before=a.callbacks.captionStop.length;
+ a.change('liveCaptionToggle',false);
  await settle();
  assert.equal(a.nodes.liveCaptionToggle.checked,false);
  assert.equal(a.nodes.liveTranslateToggle.checked,false);
  assert.equal(a.nodes.liveTtsToggle.checked,false);
  assert.ok(a.events.some(e=>e.id==='liveTtsToggle'&&!e.checked));
+ assert.ok(a.events.some(e=>e.id==='liveTranslateToggle'&&!e.checked));
+ assert.ok(a.callbacks.captionStop.length>before,'Whisper must stop after disabling the entire pipeline');
+});
+test('Turning Translate off stops TTS but retains Caption',async()=>{
+ const a=app();a.change('liveTtsToggle',true);
+ a.change('liveTranslateToggle',false);
+ await settle();
+ assert.equal(a.nodes.liveCaptionToggle.checked,true);
+ assert.equal(a.nodes.liveTranslateToggle.checked,false);
+ assert.equal(a.nodes.liveTtsToggle.checked,false);
 });
 test('Turning TTS off alone does not alter Caption or Translate',()=>{
- const a=app();
- a.change('liveCaptionToggle',true);
- a.change('liveTranslateToggle',true);
- a.change('liveTtsToggle',true);
+ const a=app();a.change('liveTtsToggle',true);
  a.change('liveTtsToggle',false);
  assert.equal(a.nodes.liveCaptionToggle.checked,true);
  assert.equal(a.nodes.liveTranslateToggle.checked,true);
+ assert.equal(a.nodes.liveTtsToggle.checked,false);
 });
-test('TTS prerequisite never force-enables visible Live Caption',()=>{
+test('Re-enabling TTS recovers the full pipeline after partial configurations',()=>{
+ const a=app();a.change('liveCaptionToggle',true);
+ a.change('liveTtsToggle',true);
+ assert.equal(a.nodes.liveCaptionToggle.checked,true);
+ assert.equal(a.nodes.liveTranslateToggle.checked,true);
+ assert.equal(a.nodes.liveTtsToggle.checked,true);
+});
+test('Caption/TTS source code and persisted startup settings match requested cascades',()=>{
  const cap=read('renderer/live-captions-v42343.js');
  const speech=read('renderer/local-tts-v42344.js');
  const prefs=read('renderer/rust-ai-preferences-v23-8-4.js');
- assert.doesNotMatch(cap,/if\(translate\.checked\)caption\.checked=true/);
- assert.doesNotMatch(speech,/captions\.checked=true/);
- assert.doesNotMatch(prefs,/caption\.checked=true/);
+ assert.match(cap,/if\(event\?\.target===caption&&!caption\.checked\)/);
+ assert.match(cap,/if\(!tts\.checked\)return/);
+ assert.match(cap,/caption\.checked=true;translate\.checked=true/);
  assert.match(speech,/function ensureTranslate\(/);
- assert.match(prefs,/if\(tts\?\.checked&&translate&&!translate\.checked\)translate\.checked=true/);
+ assert.match(prefs,/if\(tts\?\.checked\)/);
+ assert.match(prefs,/if\(caption\)caption\.checked=true/);
 });
 test('Current release tag is immutable and matches the single-app Mac builder',()=>{
  const pkg=JSON.parse(read('package.json'));

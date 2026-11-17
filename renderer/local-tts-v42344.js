@@ -106,8 +106,9 @@
   }catch(e){status('Lỗi kiểm tra TTS: '+e.message);return false;}
  }
  function ensureTranslate(){
-  // TTS needs translated words, not the visible original Caption checkbox.
-  // Preserve Live Caption OFF while speech translation remains enabled.
+  // On the TTS switch itself, live-captions.js already enables all three modes.
+  // Also preserve the full pipeline if the TTS language is changed while active.
+  if(captions&&!captions.checked){captions.checked=true;captions.dispatchEvent(new Event('change',{bubbles:true}));}
   if(translate&&!translate.checked){translate.checked=true;translate.dispatchEvent(new Event('change',{bubbles:true}));}
  }
  async function speak(input){

@@ -15,11 +15,13 @@ test('CC options offer real segmented modes, sizes, positions, saved colors and 
  assert.match(css,/#rustSubtitleShow:checked/);
  assert.match(css,/rustSubtitleCustomColor/);
 });
-test('Caption can be switched off independently when Translate and TTS are enabled',()=>{
+test('TTS ON enables all three modes and Caption OFF disables all three',()=>{
  const js=read('renderer/live-captions-v42343.js');
- assert.ok(js.includes('if(event?.target===caption&&translate.checked)'));
+ assert.ok(js.includes('if(event?.target===caption&&!caption.checked)'));
+ assert.ok(js.includes('translate.checked=false;'));
+ assert.ok(js.includes('tts.checked=false;'));
+ assert.ok(js.includes('caption.checked=true;translate.checked=true;'));
  assert.ok(js.includes("rustlab:caption-visibility-changed"));
- assert.ok(!js.includes('if(translate.checked)caption.checked=true'));
 });
 test('Pause / seek / ended / prolonged buffering cancel Whisper and TTS',()=>{
  const caption=read('renderer/live-captions-v42343.js');
