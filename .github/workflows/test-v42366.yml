@@ -1,0 +1,30 @@
+name: Electron v4.23.66 TTS and MLX stability
+on:
+  push:
+    branches: [experiment/electron-v42366-tts-translate-stability]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  regression:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - name: Dependencies
+        run: npm install --no-audit --no-fund
+      - name: Syntax checks
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          for file in src/hymt-service.cjs src/vieneu-session.cjs src/local-tts-service.cjs src/ai-translation-fallback.cjs src/main.cjs renderer/local-tts-v42344.js renderer/tts-utterance-queue-v42359.js renderer/tts-preview-coordinator-v42366.js; do
+            node --check "$file"
+          done
+          bash -n build-mac-v42366.sh
+          bash -n build-mac-v42366-public.sh
+          test "$(node -p 'require("./package.json").version')" = '4.23.66'
+      - name: New preview and MLX recovery tests
+        run: node --test tests/v42366-tts-translate-stability.test.cjs
+      - name: Complete regression suite
+        run: npm test
