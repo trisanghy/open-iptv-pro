@@ -13,8 +13,8 @@ test('v4.23.62: seven extra Vietnamese voice choices are strictly allowlisted',(
  assert.equal(extraVietnameseVoice('vietvoice:female:northern').area,'northern');
  assert.equal(extraVietnameseVoice('f5vi:clone').requiresReference,true);
  assert.equal(extraVietnameseVoice('vieneu:Adam'),null);
- assert.throws(()=>extraVietnameseVoice('vietvoice:anything'),/không được hỗ trợ/);
- assert.throws(()=>extraVietnameseVoice('f5vi:malicious'),/không được hỗ trợ/);
+ assert.throws(()=>extraVietnameseVoice('vietvoice:anything'),/chưa được hỗ trợ/);
+ assert.throws(()=>extraVietnameseVoice('f5vi:malicious'),/chưa được hỗ trợ/);
  for(const [id] of [...VIETVOICE_VOICES,...F5_VOICES])
   assert.ok(read('renderer/local-tts-v42344.js').includes("'"+id+"'"),id);
 });
