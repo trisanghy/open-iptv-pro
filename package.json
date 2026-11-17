@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro",
-  "version": "4.23.60",
-  "description": "Open IPTV Pro v4.23.60 — continuous eight-second Whisper captions for complete phrase context",
+  "version": "4.23.61",
+  "description": "Open IPTV Pro v4.23.61 experimental — Google TranslateGemma/Gemma offline and VietVoice/F5 Vietnamese TTS",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",
