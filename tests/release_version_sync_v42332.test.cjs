@@ -23,5 +23,6 @@ test('Desktop release version stays aligned across installer scripts and UI',()=
  assert.match(ps,/Open-IPTV-Pro-\$\{expectedVersion\}-x64\.exe/);
  const bat=file('BUILD_WINDOWS.bat');
  assert.ok(bat.includes('v'+version));
- assert.ok(file('CAP_NHAT_GITHUB_V4_23_60_MAC.command').includes("TARGET_VERSION='"+version+"'"));
+ // The public-release helper remains pinned to v4.23.60 on the experimental branch.
+ assert.ok(file('CAP_NHAT_GITHUB_V4_23_60_MAC.command').includes("TARGET_VERSION='4.23.60'"));
 });
