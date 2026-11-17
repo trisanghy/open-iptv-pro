@@ -27,7 +27,7 @@ function findTool({selected='',envVar='',names=[],platform=process.platform,env=
  return candidates.find(p=>fileOK(p))||null;
 }
 function createLocalSpeechService(options={}){
- const {dataDir,notify=()=>{},spawnProcess=spawn,environment=process.env,platform=process.platform,managed=null,translateText=null}=options;
+ const {dataDir,notify=()=>{},spawnProcess=spawn,environment=process.env,platform=process.platform,managed=null,translateText=null,vietnameseVoices=null}=options;
  if(!dataDir)throw Error('Local speech data directory is required');
  const base=path.join(dataDir,'local-tts');
  const settings=path.join(base,'config.json');
@@ -49,6 +49,7 @@ function createLocalSpeechService(options={}){
   return languageCodeFromConfig(fs.readFileSync(m+'.json','utf8'))===lang?m:null;
  }
  function availability(lang='vi',voiceId){
+  if(lang==='vi'&&vietnameseVoices?.validVoice(voiceId))return vietnameseVoices.availability(voiceId);
   if(lang==='vi'&&premiumName(voiceId)){
    const ready=!!managed?.premiumReady?.(voiceId);
    return {ready,target:lang,voiceReady:ready,premium:true,voiceName:voiceId,
@@ -115,6 +116,7 @@ function createLocalSpeechService(options={}){
   const task=running;
   running=null;
   if(task?.child){try{task.child.kill('SIGKILL');}catch{}}
+  try{void vietnameseVoices?.stop();}catch{}
   return {canceled:!!task};
  }
  function invokeProcess(executable,args,task,{stdin,timeout=30000}={}){
@@ -139,7 +141,7 @@ function createLocalSpeechService(options={}){
  }
  async function synthesize(request={}){
   const lang=String(request.target||'vi').toLowerCase(),voiceId=String(request.voice||'');
-  const premium=lang==='vi'&&premiumName(voiceId),alreadyTranslated=request.alreadyTranslated===true;
+  const premium=lang==='vi'&&premiumName(voiceId),otherVoice=lang==='vi'&&vietnameseVoices?.validVoice(voiceId),alreadyTranslated=request.alreadyTranslated===true;
   const sourceLanguage=String(request.sourceLanguage||'en').toLowerCase();
   if(!ALLOWED.includes(lang))throw Error('Ngôn ngữ không được hỗ trợ.');
   const input=String(request.text||'').replace(/[\u0000-\u001f\u007f]/g,' ').trim();
@@ -165,7 +167,13 @@ function createLocalSpeechService(options={}){
    }
    if(running!==task)throw Error('Đã hủy.');
    const output=path.join(temp,'speak.wav');
-   if(premium){
+   if(otherVoice){
+    notify({id:task.id,type:'status',message:'Đang tổng hợp '+voiceId+' (offline)…'});
+    await vietnameseVoices.speak(voiceId,speakText,output,{
+     refAudio:String(request.referenceAudio||''),
+     refText:String(request.referenceText||'')
+    });
+   }else if(premium){
     notify({id:task.id,type:'status',message:'VieNeu 48 kHz đang tổng hợp giọng '+premium+' (offline)…'});
     if(!fileOK(managed?.premiumPython)||!fileOK(managed.vieneuBridge))
      throw Error('Thiếu môi trường giọng VieNeu hoặc mã nguồn tổng hợp');
