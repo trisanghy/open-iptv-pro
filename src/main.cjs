@@ -180,9 +180,9 @@ function setupIPC(){
   ipcMain.handle('tts:install',(_e,lang,voice)=>vietTTS.validVoice(voice)?vietTTS.install(voice):localModelInstaller.install(lang,voice));
   let approvedF5ReferenceAudio='';
   ipcMain.handle('tts:synthesize',(_e,params)=>{
-   if(params?.voice==='f5vi:reference'&&
+   if(['f5vi:reference','vietvoice:clone'].includes(params?.voice)&&
       (!approvedF5ReferenceAudio||params.referenceAudio!==approvedF5ReferenceAudio))
-    throw Error('F5 chỉ dùng tệp giọng mẫu đã chọn qua hộp thoại.');
+    throw Error('Chỉ sử dụng tệp giọng mẫu đã chọn qua hộp thoại của ứng dụng.');
    return localTTS.synthesize(params);
   });
   ipcMain.handle('tts:stop',()=>localTTS.stop());
