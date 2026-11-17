@@ -1,11 +1,11 @@
 # Open IPTV Pro · Rust Lab
 
-**Phiên bản nguồn: `4.23.17-tauri.23.8.11` · Nhánh thử nghiệm: `experiment/rust-tauri-v2`**
+**Phiên bản nguồn: `4.23.17-tauri.23.8.12` · Nhánh thử nghiệm: `experiment/rust-tauri-v2`**
 
 > Đây là phiên bản thử nghiệm chuyển ứng dụng Open IPTV Pro từ Electron sang **Tauri 2 + Rust** trên Windows/macOS. Nhánh này độc lập với `main`; không thay thế bản Electron và không tự xóa/chuyển dữ liệu của bản chính. Một số tính năng chưa tương đương hoặc chưa được kiểm chứng trên thiết bị thực.
 
 
-## Rust Lab v23.8.11 · Bản sửa phụ đề và giọng đọc
+## Rust Lab v23.8.12 · Bản sửa phụ đề và giọng đọc
 
 **Bảng CC:** Nút CC cạnh cài đặt Whisper mở giao diện phụ đề ngay trên video, chọn hiển thị/tắt, gốc/dịch/cả hai, vị trí trên/giữa/dưới, 4 cỡ chữ, 6 font hệ thống có fallback tiếng Trung/Việt, màu chữ, viền, nền và độ đậm nền. Tùy chọn được lưu lại.
 

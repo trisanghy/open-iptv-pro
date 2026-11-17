@@ -52,7 +52,7 @@ test('Low-latency first chunk and next audio prefetch do not lose queued subtitl
 test('Version / immutable build source match and no older tag is overwritten',()=>{
  const pkg=JSON.parse(read('package.json'));
  const shell=read('scripts/BUILD_RUSTLAB_MAC_ONE_ZIP_FAST.sh');
- assert.equal(pkg.version,'4.23.17-tauri.23.8.11');
- assert.ok(shell.includes('TAG="rust-lab/v23.8.11"'));
+ assert.equal(pkg.version,'4.23.17-tauri.23.8.12');
+ assert.ok(shell.includes('TAG="rust-lab/v23.8.12"'));
  assert.ok(shell.includes('npm run build -- --bundles app'));
 });
