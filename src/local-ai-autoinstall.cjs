@@ -4,6 +4,7 @@
 const fs=require('node:fs'),path=require('node:path'),os=require('node:os'),https=require('node:https'),crypto=require('node:crypto');
 const {spawn}=require('node:child_process');
 const {premiumName,VIENEU_VOICES}=require('./premium-voices.cjs');
+const {extraVietnameseVoice}=require('./extra-vietnamese-tts.cjs');
 const VOICES=Object.freeze({
  en:'en_US-lessac-low', vi:'vi_VN-25hours_single-low',
  es:'es_ES-mls_10246-low',fr:'fr_FR-siwis-low',de:'de_DE-thorsten-low',
@@ -79,7 +80,7 @@ function createAutoModelInstaller({dataDir,notify=()=>{},platform=process.platfo
  // process cannot execute them from the virtual ASAR path. Copy bundled,
  // trusted Python code to a real private on-disk path before spawn().
  function bridgePath(name){
-  if(!['argos-bridge.py','vieneu-bridge.py'].includes(name))throw Error('Unsupported AI bridge');
+  if(!['argos-bridge.py','vieneu-bridge.py','extra-vietnamese-tts-bridge.py'].includes(name))throw Error('Unsupported AI bridge');
   const directory=path.join(root,'python-bridges');
   fs.mkdirSync(directory,{recursive:true,mode:0o700});
   const destination=path.join(directory,name);
@@ -96,6 +97,25 @@ function createAutoModelInstaller({dataDir,notify=()=>{},platform=process.platfo
  const premiumPython=path.join(premiumVenv,platform==='win32'?'Scripts':'bin','python'+exe);
  const premiumMarker=path.join(root,'vieneu-v3-turbo.ready.json');
  const premiumCache=path.join(root,'vieneu-model-cache');
+ const extraRoot=path.join(root,'extra-vietnamese-engines');
+ const extraPath=engine=>{
+  if(!['vietvoice','f5vi'].includes(engine))throw Error('Invalid Vietnamese TTS engine');
+  const base=path.join(extraRoot,engine);
+  const engineVenv=path.join(base,'python-env');
+  return {base,engineVenv,
+   python:path.join(engineVenv,platform==='win32'?'Scripts':'bin','python'+exe),
+   cache:path.join(base,'models'),
+   marker:path.join(base,'verified-install.json')};
+ };
+ function extraReady(engine){
+  try{
+   const p=extraPath(engine),stamp=JSON.parse(fs.readFileSync(p.marker,'utf8'));
+   const needed=engine==='vietvoice'?[['model-bin.pt',1400000000]]:
+     [['model_latest.safetensors',1300000000],['vocab.txt',1000]];
+   return stamp.engine===engine&&stamp.verified===true&&hasFile(p.python)&&
+    needed.every(([name,size])=>hasFile(path.join(p.cache,name),size));
+  }catch{return false;}
+ }
  let active=null;
  const safeLang=lang=>{if(!Object.hasOwn(VOICES,lang))throw Error('Chưa hỗ trợ giọng đọc '+lang);return lang;};
  function voiceFile(lang,voiceId){return path.join(voices,voiceIdFor(safeLang(lang),voiceId)+'.onnx');}
@@ -126,6 +146,16 @@ function createAutoModelInstaller({dataDir,notify=()=>{},platform=process.platfo
  }
  function state(lang='vi',voiceId){
   safeLang(lang);
+  const extra=lang==='vi'&&extraVietnameseVoice(voiceId);
+  if(extra){
+   const p=extraPath(extra.engine),installed=extraReady(extra.engine);
+   return {installed,ready:installed,voiceInstalled:installed,
+    engineInstalled:hasFile(p.python),translatorInstalled:hasFile(argos),
+    translationModelInstalled:pairReady(lang),target:lang,
+    voiceName:voiceId,engine:extra.engine,installing:!!active,
+    supported:Object.keys(VOICES),model:p.cache,
+    message:installed?'Đã cài mô hình offline':'Chưa cài mô hình '+extra.engine};
+  }
   const premium=lang==='vi'&&premiumName(voiceId);
   if(premium){
    const ready=premiumReady(voiceId);
@@ -198,7 +228,11 @@ function createAutoModelInstaller({dataDir,notify=()=>{},platform=process.platfo
  }
  async function install(lang,voiceId){
   safeLang(lang);
-  if(lang==='vi'&&premiumName(voiceId))return installPremium(voiceId);
+  if(lang==='vi'){
+   const extra=extraVietnameseVoice(voiceId);
+   if(extra)return installExtra(extra);
+   if(premiumName(voiceId))return installPremium(voiceId);
+  }
   const selectedVoice=voiceIdFor(lang,voiceId);
   if(active)throw Error('Đang cài mô hình khác, vui lòng sử dụng tiến trình hiện tại.');
   active={child:null};
@@ -326,6 +360,46 @@ function createAutoModelInstaller({dataDir,notify=()=>{},platform=process.platfo
  async function installTranslation(lang){
   return installPair('en',lang);
  }
+
+ async function installExtra(spec){
+  if(active)throw Error('Đang cài mô hình khác');
+  active={child:null};
+  const p=extraPath(spec.engine);
+  try{
+   if(extraReady(spec.engine))return state('vi',spec.id);
+   fs.mkdirSync(p.cache,{recursive:true,mode:0o700});
+   report('Chuẩn bị '+spec.engine+' riêng biệt, cần nhiều GB trống và internet lần đầu…','vi');
+   await ensureUv('vi');
+   if(!hasFile(p.python)){
+    await run(uv,['python','install','3.11'],'vi',300000);
+    await run(uv,['venv',p.engineVenv,'--python','3.11','--python-preference','only-managed'],'vi',180000);
+   }
+   if(spec.engine==='vietvoice'){
+    report('Cài VietVoice-TTS ONNX (mô hình khoảng 1,51 GB)…','vi');
+    await run(uv,['pip','install','--python',p.python,
+     'vietvoicetts[cpu] @ https://github.com/nguyenvulebinh/VietVoice-TTS/archive/d4e8a22525437fc976ee9bc4dfd41ceb4b311248.zip',
+     'torch==2.8.0','librosa==0.11.0','huggingface-hub>=0.31,<1'],'vi',1200000);
+   }else{
+    report('Cài F5-TTS Vietnamese (cần RAM và dung lượng lớn; chỉ dùng phi thương mại)…','vi');
+    await run(uv,['pip','install','--python',p.python,'f5-tts==1.1.22','huggingface-hub>=0.31,<1'],'vi',1200000);
+   }
+   const bridge=bridgePath('extra-vietnamese-tts-bridge.py');
+   report('Tải trọng số chính thức, đối chiếu SHA-256…','vi');
+   await run(p.python,['-u',bridge,'prepare',spec.engine,p.cache],'vi',1800000);
+   report('Kiểm tra thực tế khả năng nạp mô hình trên máy…','vi');
+   await run(p.python,['-u',bridge,'warm',spec.engine,p.cache],'vi',900000);
+   const stamp={engine:spec.engine,verified:true,license:spec.license,
+    installedAt:new Date().toISOString()};
+   fs.writeFileSync(p.marker,JSON.stringify(stamp),{mode:0o600});
+   if(!extraReady(spec.engine))throw Error('Mô hình chưa sẵn sàng');
+   report('Đã cài '+spec.engine+'. Các lần đọc sau chạy hoàn toàn trên máy.','vi');
+   return state('vi',spec.id);
+  }catch(e){
+   try{fs.rmSync(p.marker,{force:true});}catch{}
+   report('Lỗi '+spec.engine+': '+String(e.message||e).slice(0,250),'vi');
+   throw e;
+  }finally{active=null;}
+ }
  async function installPremium(voiceId){
   const name=premiumName(voiceId);
   if(!name)throw Error('Cần chọn giọng VieNeu hợp lệ');
@@ -360,6 +434,7 @@ function createAutoModelInstaller({dataDir,notify=()=>{},platform=process.platfo
  }
  function cancel(){const old=active;active=null;try{old?.child?.kill('SIGKILL');}catch{};return !!old;}
  return Object.freeze({state,install,installTranslation,installPair,installDirect,directReady,pairReadyFor,installPremium,premiumReady,cancel,prepareUv:async()=>{if(active)throw Error('Bộ cài AI đang bận');active={child:null};try{await ensureUv('vi');return uv;}finally{active=null;}},paths:()=>({
-  piper,argos,pm,python,voices,argosDir,voiceFile,pairReady,pairReadyFor,directReady,voiceOptions,premiumPython,premiumCache,premiumReady,argosBridge:bridgePath('argos-bridge.py'),vieneuBridge:bridgePath('vieneu-bridge.py')})});
+  piper,argos,pm,python,voices,argosDir,voiceFile,pairReady,pairReadyFor,directReady,voiceOptions,premiumPython,premiumCache,premiumReady,extraReady,extraPath,extraBridge:bridgePath('extra-vietnamese-tts-bridge.py'),
+  argosBridge:bridgePath('argos-bridge.py'),vieneuBridge:bridgePath('vieneu-bridge.py')})});
 }
 module.exports={createAutoModelInstaller,VOICES,EXTRA_VOICES,voiceOptions,UV,uvReleaseFor,downloadPinned};
