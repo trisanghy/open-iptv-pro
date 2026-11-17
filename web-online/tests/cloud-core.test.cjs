@@ -97,3 +97,16 @@ test('email rate-limit errors use HTTP status or Supabase code instead of generi
 test('default Supabase mailer can reject non-team email addresses',()=>{
  assert.match(core.authErrorMessage({code:'email_address_not_authorized',message:'Email address not authorized'}),/SMTP riêng/);
 });
+
+test('pasted PKCE Magic Link is extracted without opening an external redirect',()=>{
+ const url='https://project.supabase.co/auth/v1/verify?token=pkce_0123456789abcdef&type=magiclink&redirect_to=http%3A%2F%2Flocalhost%3A3000';
+ assert.deepEqual(core.verificationLink(url,'https://project.supabase.co'),
+  {token_hash:'pkce_0123456789abcdef',type:'magiclink'});
+});
+test('Magic Link parser rejects a foreign project, even with a plausible PKCE token',()=>{
+ const url='https://evil.example/auth/v1/verify?token=pkce_0123456789abcdef&type=magiclink';
+ assert.throws(()=>core.verificationLink(url,'https://project.supabase.co'),/Chỉ chấp nhận/);
+});
+test('OTP expired error code provides a meaningful recovery hint',()=>{
+ assert.match(core.authErrorMessage({code:'otp_expired',message:'Email link is invalid or has expired'}),/hết hạn/);
+});

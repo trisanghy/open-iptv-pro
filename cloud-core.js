@@ -57,7 +57,7 @@
   const msg=String(error?.message||error||'').trim(),m=msg.toLowerCase();
   if(isEmailRateLimited(error))
    return 'Supabase đã nhận quá nhiều yêu cầu gửi email (HTTP 429). Hãy chờ hết hạn mức hoặc cấu hình SMTP riêng.';
-  if(/expired|invalid.*(?:token|otp)|token.*invalid|otp.*invalid/.test(m))
+  if(error?.code==='otp_expired'||/expired|invalid.*(?:token|otp)|token.*invalid|otp.*invalid/.test(m))
    return 'Liên kết hoặc mã đã hết hạn, đã sử dụng hoặc sai. Hãy yêu cầu email mới.';
   if(/rate.limit|too many requests|email rate|429/.test(m))
    return 'Bạn đã gửi quá nhiều yêu cầu. Hãy chờ một lát rồi thử lại.';

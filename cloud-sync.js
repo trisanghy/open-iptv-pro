@@ -21,13 +21,13 @@
   let emailRequested=false,linkHelpOpen=false;
   const linkHelp=document.createElement('button');
   linkHelp.id='cloudLinkHelp';linkHelp.type='button';linkHelp.className='btn btn-subtle cloud-link-toggle';
-  linkHelp.textContent='Liên kết email không mở được?';
+  linkHelp.textContent='Dán liên kết đăng nhập từ Gmail';
   linkHelp.setAttribute('aria-controls','cloudLinkForm');
   linkHelp.setAttribute('aria-expanded','false');
   linkForm?.before(linkHelp);
   linkHelp.addEventListener('click',()=>{
    linkHelpOpen=!linkHelpOpen;linkHelp.setAttribute('aria-expanded',String(linkHelpOpen));
-   linkHelp.textContent=linkHelpOpen?'Ẩn hướng dẫn liên kết':'Liên kết email không mở được?';
+   linkHelp.textContent=linkHelpOpen?'Ẩn xác thực liên kết':'Dán liên kết đăng nhập từ Gmail';
    syncControls();
   });
   if(emailForm){
@@ -35,12 +35,12 @@
    guide.textContent='Đăng nhập không cần mật khẩu. Nhập email rồi xác thực để đồng bộ IPTV giữa các thiết bị.';
    emailForm.before(guide);
    const hint=emailForm.querySelector('.hint');
-   if(hint)hint.textContent='Kiểm tra Hộp thư đến và Spam. Bấm liên kết trong email hoặc nhập mã nếu có.';
+   if(hint)hint.textContent='Supabase gửi email chứa nút Sign in (không có mã OTP). Nhấp chuột phải vào Sign in → Sao chép địa chỉ liên kết, rồi dán vào phần xác thực bên dưới. Đừng mở liên kết trước.';
    const sendButton=el('cloudEmailSend');if(sendButton)sendButton.textContent='Gửi email đăng nhập';
    const label=linkForm?.querySelector('label');
-   if(label)label.textContent='Dán địa chỉ localhost có ?code=... sau khi bấm liên kết email';
+   if(label)label.textContent='Liên kết Sign in mới từ Gmail (chưa nhấp), hoặc địa chỉ localhost có ?code=...';
    const linkHint=linkForm?.querySelector('.hint');
-   if(linkHint)linkHint.textContent='Sau khi bấm liên kết email và trình duyệt báo localhost không truy cập được, hãy sao chép URL trên thanh địa chỉ (chứa ?code=...), quay lại Open IPTV Pro trên CÙNG trình duyệt và dán vào đây. Mã chỉ dùng được một lần.';
+   if(linkHint)linkHint.textContent='Cách dễ nhất: trên Gmail, nhấp chuột phải nút Sign in → Sao chép địa chỉ liên kết (không mở). Dán vào đây và bấm Xác thực. Nếu đã nhấp và gặp localhost, có thể dán địa chỉ localhost chứa ?code=... trên cùng trình duyệt. Chỉ dùng liên kết mới, chưa hết hạn.';
   }
  const logout=el('cloudLogout'),sync=el('cloudSyncNow');
  const account=el('cloudAccount'),choices=el('cloudSyncConflict');
@@ -94,7 +94,7 @@
   show(google,!uid&&!!client&&enabledProviders.google);
   show(github,!uid&&!!client&&enabledProviders.github);
   show(emailForm,!uid&&!!client&&enabledProviders.email);
-  show(otpForm,!uid&&!!client&&enabledProviders.email&&emailRequested);
+  show(otpForm,false); // Current Supabase Magic Link template sends no numeric OTP.
   show(linkHelp,!uid&&!!client&&enabledProviders.email);
    show(linkForm,!uid&&!!client&&enabledProviders.email&&linkHelpOpen);
    card.dataset.authState=uid?'signed-in':'guest';
@@ -223,34 +223,32 @@
 
  linkVerify?.addEventListener('click',async()=>{
   if(!client||!enabledProviders.email)return;
-  const text=String(linkInput?.value||'').trim();
-  // A Supabase PKCE email link is consumed at /verify; after that Supabase
-  // redirects to localhost/?code=... when its Site URL is misconfigured.
-  // The code can be exchanged on the original browser origin, where the
-  // verifier is persisted. Never send this URL to third-party services.
-  const recovery=core.recoveryCode(text,location.origin+location.pathname);
+  const raw=String(linkInput?.value||'').trim();
+  // Fresh Supabase Magic Link: verify token_hash DIRECTLY with Supabase Auth
+  // in this browser, without following the redirect_to=localhost link.
+  // A previously clicked link instead leaves a one-time ?code=... on
+  // localhost; that can still be exchanged with the local PKCE verifier.
+  const callback=core.recoveryCode(raw,location.origin+location.pathname);
   let verification=null;
-  if(!recovery){
-   try{
-    verification=core.verificationLink(text,client.supabaseUrl);
-    if(verification.token_hash.startsWith('pkce_')){
-     label('Đây là liên kết PKCE chưa hoàn tất. Nhấp liên kết MỚI trong email, sau đó sao chép địa chỉ localhost có ?code=... từ thanh địa chỉ và dán vào đây. Không sử dụng liên kết đã nhấp lại.','error');
-     return;
-    }
-   }catch(e){report(e,'kiểm tra liên kết');return;}
+  if(!callback){
+   try{verification=core.verificationLink(raw,client.supabaseUrl);}
+   catch(e){report(e,'kiểm tra liên kết');return;}
   }
   linkVerify.disabled=true;
-  label('Đang hoàn tất xác thực email…');
+  label('Đang xác thực liên kết email với Supabase…');
   try{
-   const {data,error}=recovery
-    ? await client.auth.exchangeCodeForSession(recovery.code,recovery.flowId?{flowId:recovery.flowId}:undefined)
+   const {data,error}=callback
+    ? await client.auth.exchangeCodeForSession(callback.code,callback.flowId?{flowId:callback.flowId}:undefined)
     : await client.auth.verifyOtp(verification);
    if(error)throw error;
    if(linkInput)linkInput.value='';
    if(data?.user)await reconcile(data.user);
-   else label('Đã xác thực, đang khởi tạo phiên đăng nhập…');
-  }catch(e){report(e,'hoàn tất đăng nhập');}
-  finally{linkVerify.disabled=false;}
+   else label('Xác thực đã được chấp nhận, đang mở phiên đăng nhập…');
+  }catch(e){
+   report(e,'xác thực Magic Link');
+   if(/expired|invalid|otp_expired/i.test(String(e?.message||'')))
+    label('Liên kết đã hết hạn hoặc đã nhấp trước đó. Hãy yêu cầu email mới; trên Gmail chọn Sao chép địa chỉ liên kết, không bấm Sign in.','error');
+  }finally{linkVerify.disabled=false;}
  });
 
  const EMAIL_RETRY_KEY='openiptv:email-retry-after:v1';
@@ -292,9 +290,9 @@
     email,options:{emailRedirectTo:location.origin+location.pathname,shouldCreateUser:true}
    });
    if(error)throw error;
-   emailRequested=true;syncControls();
+   emailRequested=true;linkHelpOpen=true;syncControls();
    limitEmailRetry(60);
-   label('Đã yêu cầu email đăng nhập tới '+email+'. Kiểm tra Hộp thư đến hoặc Spam; nếu liên kết đưa tới localhost có ?code=..., sử dụng mục khôi phục bên dưới.');
+   label('Email đăng nhập đã được yêu cầu. Trên Gmail: nhấp chuột phải vào Sign in → Sao chép địa chỉ liên kết, dán vào ô bên dưới để xác thực (KHÔNG bấm mở liên kết trước).');
   }catch(e){
    if(core.isEmailRateLimited(e)){
     limitEmailRetry(600);
