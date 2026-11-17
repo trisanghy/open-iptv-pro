@@ -38,8 +38,41 @@
  'Quốc Tuấn','Adam','Thái Sơn','Thục Đoan','Minh Triết',
  'Mỹ Duyên','Đức Trí','Kim Thanh'
  ];
+ const EXTRA_VI_VOICES=[
+  ['vietvoice:female:northern','VietVoice · Nữ miền Bắc (ONNX)'],
+  ['vietvoice:female:central','VietVoice · Nữ miền Trung (ONNX)'],
+  ['vietvoice:female:southern','VietVoice · Nữ miền Nam (ONNX)'],
+  ['vietvoice:male:northern','VietVoice · Nam miền Bắc (ONNX)'],
+  ['vietvoice:male:central','VietVoice · Nam miền Trung (ONNX)'],
+  ['vietvoice:male:southern','VietVoice · Nam miền Nam (ONNX)'],
+  ['f5vi:clone','F5-TTS · Giọng mẫu riêng (phi thương mại)']
+ ];
+ const referenceBox=$('liveTtsReferenceConfig'),referenceText=$('liveTtsReferenceText'),
+  referenceConsent=$('liveTtsReferenceConsent'),referenceChoose=$('liveTtsChooseReference'),
+  referenceStatus=$('liveTtsReferenceStatus');
+ function referenceUI(){if(referenceBox)referenceBox.hidden=voice.value!=='f5vi:clone';}
+ referenceChoose?.addEventListener('click',async()=>{
+  if(!referenceConsent?.checked){
+   if(referenceStatus)referenceStatus.textContent='Vui lòng xác nhận có quyền sử dụng giọng mẫu.';
+   return;
+  }
+  const transcript=String(referenceText?.value||'').trim();
+  if(transcript.length<5){
+   if(referenceStatus)referenceStatus.textContent='Hãy nhập lời thoại mẫu trước khi chọn file WAV.';
+   return;
+  }
+  referenceChoose.disabled=true;
+  try{
+   const result=await api.ttsChooseReference(transcript,true);
+   if(result?.canceled)return;
+   if(referenceStatus)referenceStatus.textContent='Đã lưu mẫu giọng '+result.name+' ('+result.duration+' giây) trên máy.';
+   await refresh();
+  }catch(e){
+   if(referenceStatus)referenceStatus.textContent=String(e.message||e);
+  }finally{referenceChoose.disabled=false;}
+ });
  const VOICES=Object.freeze({
-  vi:[['vi_VN-25hours_single-low','25Hours · nhẹ'],['vi_VN-vais1000-medium','VAIS1000 · chất lượng vừa'],['vi_VN-vivos-x_low','VIVOS · siêu nhẹ']].concat(VIENEU_PRESETS.map(name=>['vieneu:'+name,'VieNeu · '+name+' (48 kHz)'])),
+  vi:[['vi_VN-25hours_single-low','25Hours · nhẹ'],['vi_VN-vais1000-medium','VAIS1000 · chất lượng vừa'],['vi_VN-vivos-x_low','VIVOS · siêu nhẹ']].concat(VIENEU_PRESETS.map(name=>['vieneu:'+name,'VieNeu · '+name+' (48 kHz)']),EXTRA_VI_VOICES),
   en:[['en_US-lessac-low','Lessac · nhẹ'],['en_US-amy-medium','Amy · chất lượng vừa']],
   es:[['es_ES-mls_10246-low','MLS 10246']],fr:[['fr_FR-siwis-low','Siwis']],
   de:[['de_DE-thorsten-low','Thorsten']],zh:[['zh_CN-huayan-x_low','Huayan']],
@@ -53,19 +86,26 @@
   const groups=[];
   const standard=document.createElement('optgroup');standard.label='Piper · tiết kiệm tài nguyên';
   const premium=document.createElement('optgroup');premium.label='VieNeu · chất lượng cao 48 kHz';
+  const vietvoice=document.createElement('optgroup');vietvoice.label='VietVoice · Bắc / Trung / Nam';
+  const f5=document.createElement('optgroup');f5.label='F5-TTS Vietnamese · cần giọng mẫu';
   for(const [id,title] of options){
    const opt=document.createElement('option');opt.value=id;opt.textContent=title;
-   (id.startsWith('vieneu:')?premium:standard).append(opt);
+   (id.startsWith('vieneu:')?premium:
+    id.startsWith('vietvoice:')?vietvoice:
+    id.startsWith('f5vi:')?f5:standard).append(opt);
   }
   if(standard.children.length)groups.push(standard);
   if(premium.children.length)groups.push(premium);
+  if(vietvoice.children.length)groups.push(vietvoice);
+  if(f5.children.length)groups.push(f5);
   voice.replaceChildren(...groups);
   if(options.some(([id])=>id===preferred))voice.value=preferred;
+  referenceUI();
  }
  setVoiceChoices();
  voice.addEventListener('change',()=>{
   try{localStorage.setItem('openiptv-tts-voice-'+target.value,voice.value);}catch{}
-  resetPlayback();void refresh();
+  resetPlayback();referenceUI();void refresh();
  });
 
  const status=s=>{const message=String(s||'');info.textContent=message.slice(0,200);info.title=message;info.dataset.error=/lỗi|error|fail|không|thiếu/i.test(message)?'true':'false';};
@@ -121,8 +161,14 @@
  async function refresh(){
   try{
    const d=await api.ttsStatus(target.value,voice.value);
-   install.disabled=!!d.installing;install.textContent=d.installing?'Đang cài…':d.ready?'Đã cài ✓':'Cài mô hình tự động';
-   status(d.ready?'Giọng '+target.value+' sẵn sàng (offline)':d.reason||'Nhấn Cài mô hình tự động');
+   const installed=!!(d.installed||d.install?.installed||d.ready);
+   install.disabled=!!d.install?.installing;
+   install.textContent=d.install?.installing?'Đang cài…':installed?'Đã cài ✓':'Cài mô hình tự động';
+   if(voice.value==='f5vi:clone'&&referenceStatus){
+    referenceStatus.textContent=d.referenceReady?'Giọng mẫu '+d.referenceName+' đã sẵn sàng.':
+     'Cần chọn mẫu WAV có quyền sử dụng và nhập lời thoại chính xác.';
+   }
+   status(d.ready?'Giọng '+voice.value+' sẵn sàng (offline)':d.reason||'Nhấn Cài mô hình tự động');
    return d.ready===true;
   }catch(e){status('Lỗi kiểm tra TTS: '+e.message);return false;}
  }
