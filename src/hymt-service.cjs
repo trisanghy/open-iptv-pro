@@ -23,6 +23,12 @@ function sizeOf(target){
  }
  walk(target,0);return total;
 }
+function childExitReason(stderr,code,signal){
+ const diagnostic=typeof stderr==='string'&&stderr.trim()?stderr.trim():
+  signal?'tín hiệu '+String(signal):
+  code===null||code===undefined?'không có mã thoát (tiến trình bị dừng)':'mã thoát '+String(code);
+ return String(diagnostic).slice(-200);
+}
 function createHyMTService({dataDir,installer,platform=process.platform,arch=process.arch,spawnProcess=spawn,notify=()=>{}}={}){
  if(!dataDir||!installer)throw Error('Hy-MT2 requires app-private dataDir and UV installer');
  const root=path.join(dataDir,'ai-translate'),models=path.join(root,'models');
@@ -127,7 +133,10 @@ function createHyMTService({dataDir,installer,platform=process.platform,arch=pro
   }finally{activeInstall='';}
  }
  function failAll(reason){
-  for(const item of pending.values())item.reject(Error(reason));
+  for(const item of pending.values()){
+   clearTimeout(item.timer);
+   item.reject(Error(reason));
+  }
   pending.clear();
  }
  async function stop(){
@@ -167,11 +176,20 @@ function createHyMTService({dataDir,installer,platform=process.platform,arch=pro
     }
    });
    child.stderr.on('data',data=>{err=(err+data.toString()).slice(-900);});
-   child.on('error',finalize);
-   child.on('exit',code=>{
-    finalize(Error((err||'Hy-MT2 exited '+code).slice(-350)));
-    if(worker===child){worker=null;workerKey='';readyPromise=null;}
-    failAll('Hy-MT2 đã dừng: '+(err||code).toString().slice(-200));
+   child.once('error',error=>{
+    finalize(error);
+    if(worker===child){
+     worker=null;workerKey='';readyPromise=null;
+     failAll('Hy-MT2 lỗi tiến trình: '+String(error?.message||error).slice(-200));
+    }
+   });
+   child.once('exit',(code,signal)=>{
+    const reason=childExitReason(err,code,signal);
+    finalize(Error('Hy-MT2 đã dừng: '+reason));
+    if(worker===child){
+     worker=null;workerKey='';readyPromise=null;
+     failAll('Hy-MT2 đã dừng: '+reason);
+    }
    });
   });
   return readyPromise;
@@ -210,4 +228,4 @@ function createHyMTService({dataDir,installer,platform=process.platform,arch=pro
  }
  return Object.freeze({MODELS,state,install,translate,stop,deleteModel,installed,sizeOf,root});
 }
-module.exports={createHyMTService,MODELS,sizeOf};
+module.exports={createHyMTService,MODELS,sizeOf,childExitReason};
