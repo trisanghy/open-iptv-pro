@@ -24,3 +24,20 @@ Open IPTV Pro includes **optional URLs** pointing to EPGShare01 and IPTV-EPG.org
 - `bonjour-service` 1.4.4 (MIT): local network service discovery for Google Cast.
 - `castv2-client` 1.2.0 (MIT): Cast V2 sender and Default Media Receiver control.
 - Their transitive dependencies are installed during `npm install` and retain their own licenses.
+
+
+## Desktop experimental v4.23.65 — bundled native utilities and AI models
+
+The application distributes ffmpeg-static 5.3.0 and @ffprobe-installer/ffprobe
+2.1.2 with platform-specific native executables in the Desktop DMG/EXE.
+FFmpeg/FFprobe binary redistribution may be subject to LGPL/GPL, nonfree build
+flags and codec patent restrictions depending on the exact binary build.
+The MIT license for Open IPTV Pro source does not override those terms.
+Distributors should audit the actual binaries and supply license texts/source
+offers where required before commercial redistribution.
+
+Piper, VieNeu, VietVoice, F5 and MLX model weights are downloaded separately
+only on user request, and each has its own model license. The selected F5-TTS
+Vietnamese checkpoint is CC-BY-NC-4.0 (noncommercial), and voice cloning
+requires the speaker's explicit permission. No model weights or voice samples
+are included in the public installer assets.
