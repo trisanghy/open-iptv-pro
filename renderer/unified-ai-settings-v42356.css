@@ -372,3 +372,25 @@
 #page-tv #liveCaptionSetupPanel .ai-model-card .ai-model-description small {
  font-size:11px;line-height:1.5;color:#a6bcce;
 }
+
+
+/* v4.23.61: Google model setup and realistic device requirements */
+#page-tv #liveCaptionSetupPanel .ai-storage-details .ai-ollama-setup{
+ grid-column:1/-1;
+ display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;
+ gap:12px;padding:13px 15px;border:1px solid #4c6a81;border-radius:10px;
+ background:#172b39;color:#d8e8f1;font-size:12px;line-height:1.5;
+}
+#page-tv #liveCaptionSetupPanel .ai-ollama-setup>div{flex:1 1 220px}
+#page-tv #liveCaptionSetupPanel .ai-model-description .ai-hardware-hint{
+ display:block;color:#b0d5df!important;font-size:11px!important;line-height:1.48;
+}
+#page-tv #liveCaptionSetupPanel .ai-model-description .ai-model-license{
+ display:block;color:#bdad91!important;font-size:10px!important;line-height:1.45;
+}
+#page-tv #liveCaptionSetupPanel .ai-model-card:has(.ai-hardware-hint){
+ align-items:start;
+}
+@media(max-width:570px){
+ #page-tv #liveCaptionSetupPanel .ai-ollama-setup{padding:10px}
+}
