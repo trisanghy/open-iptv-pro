@@ -1,0 +1,227 @@
+name: Replace Rust Lab files in Stable v4.23.67 with verified v23.8.15
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/promote-rustlab-v23815-stable.yml']
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: replace-rustlab-v23815-in-stable
+  cancel-in-progress: false
+jobs:
+  mac:
+    name: Native Rust Lab v23.8.15 Mac (${{ matrix.arch }})
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: macos-15
+            target: aarch64-apple-darwin
+            arch: arm64
+            suffix: arm64
+          - runner: macos-15-intel
+            target: x86_64-apple-darwin
+            arch: x86_64
+            suffix: x64
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: rust-lab/v23.8.15
+          path: rust
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.target }}
+      - name: Run exact tagged Rust Lab v23.8.15 tests
+        working-directory: rust
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          test "$(uname -m)" = "${{ matrix.arch }}"
+          test "$(node -p 'require("./package.json").version')" = '4.23.17-tauri.23.8.15'
+          npm install --no-audit --no-fund
+          npm run test:quick
+      - name: Package correct CPU native FFmpeg
+        working-directory: rust
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          bin="$(node -p 'require("ffmpeg-static")')"
+          test -s "$bin"
+          lipo "$bin" -verify_arch "${{ matrix.arch }}"
+          mkdir -p src-tauri/resources
+          cp "$bin" src-tauri/resources/ffmpeg
+          chmod +x src-tauri/resources/ffmpeg
+      - name: Compile native Tauri app and DMG
+        working-directory: rust
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          npm run build -- --target "${{ matrix.target }}" --bundles dmg --ci --no-sign
+      - name: Mount DMG, verify native app and ffmpeg, then stage
+        working-directory: rust
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          dmg="$(find src-tauri/target/"${{ matrix.target }}"/release/bundle/dmg -maxdepth 1 -type f -name '*.dmg' -print -quit)"
+          test -n "$dmg" && test -s "$dmg"
+          mount="$(mktemp -d "$RUNNER_TEMP/rustlab-verify.XXXXXX")"
+          attached=0
+          cleanup() { if [[ "$attached" -eq 1 ]]; then hdiutil detach "$mount" -quiet || true; fi; rmdir "$mount" 2>/dev/null || true; }
+          trap cleanup EXIT
+          hdiutil attach -readonly -nobrowse -quiet -mountpoint "$mount" "$dmg"
+          attached=1
+          app="$(find "$mount" -maxdepth 2 -type d -name '*.app' -print -quit)"
+          test -n "$app" && test -s "$app/Contents/Info.plist"
+          exe="$(find "$app/Contents/MacOS" -maxdepth 1 -type f -print -quit)"
+          test -n "$exe" && test -s "$exe"
+          lipo "$exe" -verify_arch "${{ matrix.arch }}"
+          ffmpeg="$(find "$app/Contents/Resources" -type f -name ffmpeg -print -quit)"
+          test -n "$ffmpeg" && test -s "$ffmpeg"
+          lipo "$ffmpeg" -verify_arch "${{ matrix.arch }}"
+          hdiutil detach "$mount" -quiet
+          attached=0
+          mkdir -p dist
+          cp "$dmg" "dist/OpenIPTVPro-RustLab-v23.8.15-mac-${{ matrix.suffix }}.dmg"
+          shasum -a 256 dist/*.dmg
+      - uses: actions/upload-artifact@v4
+        with:
+          name: rustlab-v23815-mac-${{ matrix.suffix }}
+          path: rust/dist/*.dmg
+          if-no-files-found: error
+          retention-days: 14
+
+  replace:
+    name: Replace old Rust attachments in stable Release without altering Electron
+    needs: [mac]
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: rustlab-v23815-mac-arm64
+          path: mac-new
+      - uses: actions/download-artifact@v4
+        with:
+          name: rustlab-v23815-mac-x64
+          path: mac-new
+      - name: Fetch both source releases and verify original SHA256
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -Eeuo pipefail
+          test "$(node -p 'require("./package.json").version')" = '4.23.67'
+          mkdir -p old rust-new staged
+          gh release download v4.23.67 --repo "$GITHUB_REPOSITORY" --dir old
+          gh release download rust-lab/v23.8.15 --repo "$GITHUB_REPOSITORY" --dir rust-new
+          (cd old && sha256sum -c SHA256SUMS.txt)
+          (cd rust-new && sha256sum -c SHA256SUMS.txt)
+          test -s mac-new/OpenIPTVPro-RustLab-v23.8.15-mac-arm64.dmg
+          test -s mac-new/OpenIPTVPro-RustLab-v23.8.15-mac-x64.dmg
+      - name: Compose and verify exact intended 13 assets
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          for file in \
+            Open-IPTV-Pro-4.23.67-mac-arm64.dmg \
+            Open-IPTV-Pro-4.23.67-mac-x64.dmg \
+            Open-IPTV-Pro-4.23.67-x64.exe \
+            Open-IPTV-Pro-Setup-4.23.67-x64.exe \
+            OpenIPTVPro_Source_v4.23.67.zip \
+            SHA256SUMS_ELECTRON_v4.23.67_BETA.txt; do
+            test -s "old/$file"
+            cp "old/$file" "staged/$file"
+            cmp "old/$file" "staged/$file"
+          done
+          for file in \
+            OpenIPTVPro-RustLab-v23.8.15-Windows-Setup-x64.exe \
+            OpenIPTVPro-RustLab-v23.8.15-Windows-Portable-x64.zip \
+            OpenIPTVPro-RustLab-v23.8.15-Source.zip; do
+            test -s "rust-new/$file"
+            cp "rust-new/$file" "staged/$file"
+          done
+          cp mac-new/*.dmg staged/
+          (cd staged && sha256sum OpenIPTVPro-RustLab-v23.8.15-* > SHA256SUMS_RUSTLAB_v23.8.15.txt)
+          (cd staged && sha256sum *.dmg *.exe *.zip SHA256SUMS_*.txt > SHA256SUMS.txt)
+          test "$(find staged -maxdepth 1 -type f | wc -l)" -eq 13
+          (cd staged && sha256sum -c SHA256SUMS.txt)
+          (cd staged && sha256sum -c SHA256SUMS_RUSTLAB_v23.8.15.txt)
+          ls -lh staged
+      - name: Upload new Rust files before removing any old one
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -Eeuo pipefail
+          for file in \
+            OpenIPTVPro-RustLab-v23.8.15-mac-arm64.dmg \
+            OpenIPTVPro-RustLab-v23.8.15-mac-x64.dmg \
+            OpenIPTVPro-RustLab-v23.8.15-Windows-Setup-x64.exe \
+            OpenIPTVPro-RustLab-v23.8.15-Windows-Portable-x64.zip \
+            OpenIPTVPro-RustLab-v23.8.15-Source.zip; do
+            gh release upload v4.23.67 "staged/$file" --repo "$GITHUB_REPOSITORY"
+          done
+          gh api "repos/$GITHUB_REPOSITORY/releases/tags/v4.23.67" > uploaded.json
+          for file in staged/OpenIPTVPro-RustLab-v23.8.15-*; do
+            name="$(basename "$file")"
+            hash="$(sha256sum "$file" | cut -d' ' -f1)"
+            jq -e --arg n "$name" --arg h "sha256:$hash" \
+              '.assets[] | select(.name==$n and .digest==$h)' uploaded.json >/dev/null
+          done
+      - name: Replace checksums and remove previous Rust Lab assets only
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -Eeuo pipefail
+          gh release upload v4.23.67 staged/SHA256SUMS.txt staged/SHA256SUMS_RUSTLAB_v23.8.15.txt \
+            --repo "$GITHUB_REPOSITORY" --clobber
+          gh api "repos/$GITHUB_REPOSITORY/releases/tags/v4.23.67" > before-delete.json
+          for file in SHA256SUMS.txt SHA256SUMS_RUSTLAB_v23.8.15.txt; do
+            hash="$(sha256sum "staged/$file" | cut -d' ' -f1)"
+            jq -e --arg n "$file" --arg h "sha256:$hash" \
+              '.assets[] | select(.name==$n and .digest==$h)' before-delete.json >/dev/null
+          done
+          for file in \
+            OpenIPTVPro-RustLab-v23.8.2-mac-arm64.dmg \
+            OpenIPTVPro-RustLab-v23.8.2-mac-x64.dmg \
+            OpenIPTVPro-RustLab-v23.8.2-Windows-Setup-x64.exe \
+            OpenIPTVPro-RustLab-v23.8.2-Windows-Portable-x64.zip \
+            OpenIPTVPro-RustLab-v23.8.2-Source.zip \
+            SHA256SUMS_RUSTLAB_v23.8.2.txt; do
+            if gh release view v4.23.67 --repo "$GITHUB_REPOSITORY" --json assets \
+              --jq '.assets[].name' | grep -Fxq "$file"; then
+              gh release delete-asset v4.23.67 "$file" --repo "$GITHUB_REPOSITORY" --yes
+            fi
+          done
+      - name: Verify final 13 assets, Electron digests unchanged, no old Rust packages
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -Eeuo pipefail
+          gh api "repos/$GITHUB_REPOSITORY/releases/tags/v4.23.67" > final.json
+          jq -e '.prerelease==false and .draft==false and .tag_name=="v4.23.67"' final.json
+          test "$(jq '.assets|length' final.json)" -eq 13
+          for file in staged/*; do
+            name="$(basename "$file")"
+            hash="$(sha256sum "$file" | cut -d' ' -f1)"
+            jq -e --arg n "$name" --arg h "sha256:$hash" \
+              '.assets[] | select(.name==$n and .digest==$h)' final.json >/dev/null || {
+                echo "::error::Unverified release asset: $name";exit 1;
+              }
+          done
+          if jq -e '[.assets[].name]|any(.[];contains("v23.8.2"))' final.json >/dev/null; then
+            echo "::error::Previous Rust Lab attachments remain";exit 1
+          fi
+          echo 'SUCCESS: Rust Lab v23.8.15 now replaces v23.8.2 in Stable; Electron unmodified.'
