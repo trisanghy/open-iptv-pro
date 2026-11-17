@@ -1,0 +1,99 @@
+'use strict';
+const {test}=require('node:test');
+const assert=require('node:assert/strict');
+const fs=require('node:fs'),path=require('node:path'),vm=require('node:vm');
+const read=p=>fs.readFileSync(path.join(__dirname,'..',p),'utf8');
+function app(){
+ const nodes={};
+ const events=[];
+ const names=['liveCaptionToggle','liveTranslateToggle','liveTtsToggle'];
+ for(const name of names){
+  nodes[name]={id:name,checked:false,listeners:new Map(),
+   addEventListener(type,fn){const a=this.listeners.get(type)||[];a.push(fn);this.listeners.set(type,a);},
+   dispatchEvent(ev){ev.target=this;for(const handler of this.listeners.get(ev.type)||[])handler(ev);events.push({id:this.id,checked:this.checked});}
+  };
+ }
+ const status={textContent:'',title:'',dataset:{}};
+ const video={paused:false,ended:false,currentSrc:'https://example.org/channel.m3u8',currentTime:0,
+  listeners:new Map(),addEventListener(type,fn){this.listeners.set(type,fn);}};
+ const target={options:[{value:'vi',textContent:'Tiếng Việt'}],selectedOptions:[{textContent:'Tiếng Việt'}],value:'vi',
+  addEventListener(){}};
+ const box={hidden:true,textContent:''};
+ const map={liveCaptionStatus:status,liveCaptionOutput:box,video,liveTranslateTarget:target};
+ const callbacks={captionStart:[],captionStop:[]};
+ const native={
+  captionStart:async args=>{callbacks.captionStart.push(args);return {id:callbacks.captionStart.length};},
+  captionStop:async()=>{callbacks.captionStop.push(true);},
+  captionStatus:async()=>({available:true,modelName:'Whisper'}),
+  captionOnEvent(){},captionTranslationStatus:async()=>({}),captionAutoInstall:async()=>({installed:true})
+ };
+ const local=new Map(),document={
+  getElementById:id=>nodes[id]||map[id]||null,
+  pictureInPictureElement:null,
+  dispatchEvent(){}
+ };
+ const win={streamleaf:native,IPTVState:{getCurrent:()=>({url:'https://example.org/channel.m3u8'})},
+  addEventListener(){}};
+ class Event{constructor(type,opts){this.type=type;this.bubbles=!!opts?.bubbles;}}
+ class CustomEvent extends Event{constructor(type,opts){super(type,opts);this.detail=opts?.detail;}}
+ vm.runInNewContext(read('renderer/live-captions-v42343.js'),{
+  document,window:win,localStorage:{getItem:k=>local.get(k)||null,setItem:(k,v)=>local.set(k,v)},
+  setInterval:()=>0,Event,CustomEvent,console
+ });
+ const change=(id,checked)=>{nodes[id].checked=checked;nodes[id].dispatchEvent(new Event('change',{bubbles:true}));};
+ return {nodes,video,change,events,callbacks,win};
+}
+const settle=async()=>{for(let i=0;i<14;i++)await Promise.resolve();};
+test('Live Caption switches OFF while Translate and TTS remain ON',async()=>{
+ const a=app();
+ a.change('liveCaptionToggle',true);
+ a.change('liveTranslateToggle',true);
+ a.change('liveTtsToggle',true);
+ a.change('liveCaptionToggle',false);
+ await settle();
+ assert.equal(a.nodes.liveCaptionToggle.checked,false,'Caption must stay OFF');
+ assert.equal(a.nodes.liveTranslateToggle.checked,true,'Translation stays enabled');
+ assert.equal(a.nodes.liveTtsToggle.checked,true,'Voice stays enabled');
+ a.change('liveCaptionToggle',true);
+ await settle();
+ assert.equal(a.nodes.liveCaptionToggle.checked,true);
+ assert.equal(a.nodes.liveTranslateToggle.checked,true);
+});
+test('Turning Translate off stops dependent TTS but leaves Caption untouched',async()=>{
+ const a=app();
+ a.change('liveCaptionToggle',false);
+ a.change('liveTranslateToggle',true);
+ a.change('liveTtsToggle',true);
+ a.change('liveTranslateToggle',false);
+ await settle();
+ assert.equal(a.nodes.liveCaptionToggle.checked,false);
+ assert.equal(a.nodes.liveTranslateToggle.checked,false);
+ assert.equal(a.nodes.liveTtsToggle.checked,false);
+ assert.ok(a.events.some(e=>e.id==='liveTtsToggle'&&!e.checked));
+});
+test('Turning TTS off alone does not alter Caption or Translate',()=>{
+ const a=app();
+ a.change('liveCaptionToggle',true);
+ a.change('liveTranslateToggle',true);
+ a.change('liveTtsToggle',true);
+ a.change('liveTtsToggle',false);
+ assert.equal(a.nodes.liveCaptionToggle.checked,true);
+ assert.equal(a.nodes.liveTranslateToggle.checked,true);
+});
+test('TTS prerequisite never force-enables visible Live Caption',()=>{
+ const cap=read('renderer/live-captions-v42343.js');
+ const speech=read('renderer/local-tts-v42344.js');
+ const prefs=read('renderer/rust-ai-preferences-v23-8-4.js');
+ assert.doesNotMatch(cap,/if\(translate\.checked\)caption\.checked=true/);
+ assert.doesNotMatch(speech,/captions\.checked=true/);
+ assert.doesNotMatch(prefs,/caption\.checked=true/);
+ assert.match(speech,/function ensureTranslate\(/);
+ assert.match(prefs,/if\(tts\?\.checked&&translate&&!translate\.checked\)translate\.checked=true/);
+});
+test('Current release tag is immutable and matches the single-app Mac builder',()=>{
+ const pkg=JSON.parse(read('package.json'));
+ assert.equal(pkg.version,'4.23.17-tauri.23.8.6');
+ const build=read('scripts/BUILD_RUSTLAB_MAC_ONE_ZIP_FAST.sh');
+ assert.ok(build.includes('TAG="rust-lab/v23.8.6"'));
+ assert.ok(build.includes('npm run build -- --bundles app'));
+});

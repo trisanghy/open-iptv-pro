@@ -105,9 +105,16 @@
  };
  for(const event of ['pause','ended','emptied'])video.addEventListener(event,halt);
  video.addEventListener('playing',()=>{if(caption.checked||translate.checked)void reconcile(true);});
- const changed=()=>{
-  if(translate.checked)caption.checked=true;
-  if(!caption.checked)translate.checked=false;
+ // Caption controls original subtitles; translation can continue using Whisper even
+ // when the original caption checkbox is off. Never force Caption back on.
+ const tts=$('liveTtsToggle');
+ const changed=event=>{
+  // Spoken translation requires translated segments. Switching translation off
+  // also stops TTS, but must not alter the independent Caption preference.
+  if(event?.target===translate&&!translate.checked&&tts?.checked){
+   tts.checked=false;
+   tts.dispatchEvent(new Event('change',{bubbles:true}));
+  }
   void reconcile(true);
  };
  caption.addEventListener('change',changed);translate.addEventListener('change',changed);

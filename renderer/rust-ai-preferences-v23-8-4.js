@@ -43,9 +43,10 @@
  function activate(){
   if(activated)return;activated=true;
   const caption=$('liveCaptionToggle'),translate=$('liveTranslateToggle'),tts=$('liveTtsToggle');
-  // Translate needs captions; TTS needs translated speech.
-  if(tts?.checked){if(caption)caption.checked=true;if(translate)translate.checked=true;}
-  else if(translate?.checked&&caption)caption.checked=true;
+  // Whisper is shared internally: a running translation never needs the
+  // *visible* Live Caption checkbox. Keep the three saved toggle values.
+  // Legacy stored speech=true, translate=false still needs translation enabled.
+  if(tts?.checked&&translate&&!translate.checked)translate.checked=true;
   // Start only after all AI providers are configured, and only when a playable URL exists.
   if(translate?.checked||caption?.checked)(translate?.checked?translate:caption).dispatchEvent(new Event('change',{bubbles:true}));
   if(tts?.checked)tts.dispatchEvent(new Event('change',{bubbles:true}));

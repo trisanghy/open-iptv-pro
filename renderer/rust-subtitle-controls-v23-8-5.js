@@ -2,7 +2,7 @@
 // Unified native caption UI. It never starts separate recognition or audio processes.
 (()=>{
  const $=id=>document.getElementById(id),frame=$('playerBox'),video=$('video');
- const overlay=$('rustTranslatedCaption'),gear=$('liveCaptionSetup'),translate=$('liveTranslateToggle');
+ const overlay=$('rustTranslatedCaption'),gear=$('liveCaptionSetup'),translate=$('liveTranslateToggle'),caption=$('liveCaptionToggle');
  if(!frame||!overlay||!gear||!video)return;
  const KEY='rustlab:subtitle-display-v1';
  const defaults={enabled:true,display:'both',size:'medium',position:'bottom',color:'#ffe65b',outline:'black',background:'dark',opacity:50};
@@ -68,8 +68,10 @@
   const original=String(last.originalText||last.text||'').trim(),result=String(last.text||'').trim();
   const hasTranslation=translate?.checked&&last.translated===true&&result&&result!==original;
   const showBoth=settings.display==='both'&&hasTranslation;
-  const showOriginal=settings.display==='original'||showBoth||!hasTranslation;
-  const showTranslated=(settings.display==='translated'||showBoth)&&hasTranslation;
+  // An unchecked Caption switch hides only original text, never the translated
+  // line or TTS. In single-original mode, show translation as a useful fallback.
+  const showOriginal=!!caption?.checked&&(settings.display==='original'||showBoth||!hasTranslation);
+  const showTranslated=!!hasTranslation&&(settings.display==='translated'||showBoth||!caption?.checked);
   orig.textContent=showOriginal?original.slice(0,500):'';
   trans.textContent=showTranslated?result.slice(0,500):'';
   orig.hidden=!orig.textContent;trans.hidden=!trans.textContent;
@@ -91,6 +93,7 @@
  document.addEventListener('rustlab:caption-clear',clear);
  for(const event of ['pause','ended','emptied'])video.addEventListener(event,clear);
  translate?.addEventListener('change',clear);
+ caption?.addEventListener('change',()=>{if(last)render();});
  window.addEventListener('pagehide',clear);
  sync();
  window.RustSubtitleControls=Object.freeze({clear,render,getSettings:()=>({...settings}),storageKey:KEY});

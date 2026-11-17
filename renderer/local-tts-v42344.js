@@ -82,7 +82,8 @@
   }catch(e){status('Lỗi kiểm tra TTS: '+e.message);return false;}
  }
  function ensureTranslate(){
-  if(captions&&!captions.checked){captions.checked=true;captions.dispatchEvent(new Event('change',{bubbles:true}));}
+  // TTS needs translated words, not the visible original Caption checkbox.
+  // Preserve Live Caption OFF while speech translation remains enabled.
   if(translate&&!translate.checked){translate.checked=true;translate.dispatchEvent(new Event('change',{bubbles:true}));}
  }
  async function speak(input){
@@ -124,7 +125,8 @@
   recentSpeech.clear();
   updateSession();applyDuck();
   ensureTranslate();
-  if(!await refresh())status('Nhấn “Cài mô hình tự động” để sử dụng giọng '+target.value);
+  const ready=await refresh();
+  if(enabled&&!ready)status('Nhấn “Cài mô hình tự động” để sử dụng giọng '+target.value);
  });
  target.addEventListener('change',()=>{
   resetPlayback();updateVoiceVisibility();if(enabled)ensureTranslate();void refresh();

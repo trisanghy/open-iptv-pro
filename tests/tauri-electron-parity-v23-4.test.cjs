@@ -7,8 +7,13 @@ test('v23.4 Electron compact AI and PiP adaptation wired',()=>{
  assert.match(entry,/auto-pip-v42363\.js/);assert.match(entry,/rust-electron-parity-v23-4\.js/);
  assert.match(read('renderer/app.js'),/OpenIPTVAutoPiP\?\.onPageChange/);
 });
-test('translated overlay only shows selected target and hides lower original line',()=>{
- assert.match(read('renderer/rust-electron-parity-v23-4.js'),/language!==expected/);
+test('exactly one subtitle overlay controls original and translated text',()=>{
+ const legacy=read('renderer/rust-electron-parity-v23-4.js');
+ const modern=read('renderer/rust-subtitle-controls-v23-8-5.js');
+ assert.doesNotMatch(legacy,/overlay\.textContent=text/);
+ assert.match(modern,/const hasTranslation=translate\?\.checked/);
+ assert.match(modern,/const showOriginal=!!caption\?\.checked/);
+ assert.match(modern,/const showTranslated=!!hasTranslation/);
  assert.match(read('renderer/rust-electron-parity-v23-4.css'),/#liveTranslateToggle:checked/);
 });
 test('TTS rate, timeout, preview and latest queued line',()=>{
