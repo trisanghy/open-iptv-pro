@@ -1,6 +1,7 @@
 'use strict';
 const {app,BrowserWindow,dialog,ipcMain,shell,nativeTheme,net} = require('electron');
 const path=require('node:path');
+const os=require('node:os');
 const {pathToFileURL}=require('node:url');
 const fs=require('node:fs');
 const http=require('node:http');
@@ -27,8 +28,9 @@ const {discoverAirplay}=require('./airplay-discovery.cjs');
 const backupService=require('./backup-service.cjs');
 const {createLiveCaptionService}=require('./live-caption-service.cjs');
 const {createHyMTService}=require('./hymt-service.cjs');
+const {createGoogleOllamaService}=require('./google-ollama.cjs');
 const {createLocalModelStorage}=require('./local-ai-storage.cjs');
-let localHyMT=null,localAIStorage=null;
+let localHyMT=null,localAIStorage=null,googleAI=null;
 const {createLocalSpeechService}=require('./local-tts-service.cjs');
 const {createAutoModelInstaller}=require('./local-ai-autoinstall.cjs');
 const {createCaptionTranslator,isValidTarget}=require('./caption-translator.cjs');
@@ -159,9 +161,10 @@ async function makeSnapshot(url,label){
  });
 }
 function setupIPC(){
-  liveCaptionService=createLiveCaptionService({dataDir:app.getPath('userData'),getFFmpeg:ffmpegPath,notify:data=>{if(webWindow&&!webWindow.isDestroyed())webWindow.webContents.send('caption:event',data);},translateText:(text,target,source,options)=>{const engine=resolveAIEngine(options?.engine,options?.resourceMode);return engine==='argos'?captionTranslator.translateText(text,target,source,options):localHyMT.translate(text,target,source,engine);}});
+  liveCaptionService=createLiveCaptionService({dataDir:app.getPath('userData'),getFFmpeg:ffmpegPath,notify:data=>{if(webWindow&&!webWindow.isDestroyed())webWindow.webContents.send('caption:event',data);},translateText:(text,target,source,options)=>{const engine=resolveAIEngine(options?.engine,options?.resourceMode);return engine==='argos'?captionTranslator.translateText(text,target,source,options):Object.hasOwn(googleAI.MODELS,engine)?googleAI.translate(text,target,source,engine):localHyMT.translate(text,target,source,engine);}});
   localModelInstaller=createAutoModelInstaller({dataDir:app.getPath('userData'),notify:data=>{if(webWindow&&!webWindow.isDestroyed())webWindow.webContents.send('tts:event',data);}});
   localHyMT=createHyMTService({dataDir:app.getPath('userData'),installer:localModelInstaller,notify:data=>{if(webWindow&&!webWindow.isDestroyed())webWindow.webContents.send('ai:event',data);}});
+  googleAI=createGoogleOllamaService({notify:data=>{if(webWindow&&!webWindow.isDestroyed())webWindow.webContents.send('ai:event',data);}});
   localAIStorage=createLocalModelStorage({dataDir:app.getPath('userData'),onBeforeDelete:async id=>{
    if(localModelInstaller?.state('vi')?.installing)throw Error('Đang cài mô hình AI; không thể xóa lúc này');
    if(Object.hasOwn(localHyMT.MODELS,id)&&localHyMT?.state(id)?.installing)throw Error('Mô hình đang tải, không thể xóa');
@@ -190,7 +193,7 @@ function setupIPC(){
   ipcMain.handle('caption:languageStatus',(_e,target)=>captionTranslator.status(target));
   ipcMain.handle('caption:installLanguage',(_e,target)=>captionTranslator.install(target));
   const resolveAIEngine=(choice,mode)=>{
-   const engine=choice==='auto'||choice==='argos'||Object.hasOwn(localHyMT.MODELS,choice)?choice:'auto';
+   const engine=choice==='auto'||choice==='argos'||Object.hasOwn(localHyMT.MODELS,choice)||Object.hasOwn(googleAI.MODELS,choice)?choice:'auto';
    const profile=['balanced','saver','quality'].includes(mode)?mode:'balanced';
    if(engine!=='auto')return engine;
    if(profile==='saver'||process.platform!=='darwin'||process.arch!=='arm64')return 'argos';
@@ -198,16 +201,34 @@ function setupIPC(){
    for(const key of ['hymt18','hymt18q8','qwen17','qwen06','qwen4'])if(localHyMT.state(key).installed)return key;
    return 'argos';
   };
-  ipcMain.handle('ai:modelStatus',()=>({supported:process.platform==='darwin'&&process.arch==='arm64',
-   storage:localAIStorage.inspect(),models:Object.fromEntries(Object.keys(localHyMT.MODELS).map(k=>[k,localHyMT.state(k)])),hyMT:{hymt18:localHyMT.state('hymt18'),hymt7:localHyMT.state('hymt7')}}));
-  ipcMain.handle('ai:install',(_e,key)=>{if(!Object.hasOwn(localHyMT.MODELS,key))throw Error('Invalid AI model');return localHyMT.install(key);});
-  ipcMain.handle('ai:delete',(_e,id)=>localAIStorage.remove(id));
+  ipcMain.handle('ai:modelStatus',async()=>{
+   const external=await googleAI.states();
+   const localModels=Object.fromEntries(Object.keys(localHyMT.MODELS).map(k=>[k,localHyMT.state(k)]));
+   const externalInventory=Object.entries(external.models).map(([id,state])=>({
+    id,label:state.label,bytes:state.bytes,present:state.installed,shared:true,managedBy:'ollama'
+   }));
+   return {supported:process.platform==='darwin'&&process.arch==='arm64',
+    system:{platform:process.platform,arch:process.arch,totalRamGB:Math.round(os.totalmem()/1073741824*10)/10},
+    googleRuntime:{online:external.online,downloadUrl:'https://ollama.com/download'},
+    storage:[...localAIStorage.inspect(),...externalInventory],
+    models:{...localModels,...external.models},
+    hyMT:{hymt18:localHyMT.state('hymt18'),hymt7:localHyMT.state('hymt7')}};
+  });
+  ipcMain.handle('ai:install',(_e,key)=>{
+   if(Object.hasOwn(googleAI.MODELS,key))return googleAI.install(key);
+   if(Object.hasOwn(localHyMT.MODELS,key))return localHyMT.install(key);
+   throw Error('Invalid AI model');
+  });
+  ipcMain.handle('ai:delete',(_e,id)=>
+   Object.hasOwn(googleAI.MODELS,id)?googleAI.remove(id):localAIStorage.remove(id));
+  ipcMain.handle('ai:openOllamaDownload',()=>shell.openExternal('https://ollama.com/download'));
   ipcMain.handle('ai:testTranslation',async(_e,target,choice,mode)=>{
    if(!isValidTarget(target))throw Error('Invalid translation target');
    const engine=resolveAIEngine(choice,mode);
    const source='en',text='Good morning, how are you today?';
    return {target,engine,translatedText:target==='en'?text:
      engine==='argos'?await captionTranslator.translateText(text,target,source):
+     Object.hasOwn(googleAI.MODELS,engine)?await googleAI.translate(text,target,source,engine):
      await localHyMT.translate(text,target,source,engine)};
   });
   ipcMain.handle('caption:status',()=>liveCaptionService.status());
@@ -368,4 +389,4 @@ app.whenReady().then(async()=>{
  setupIPC();createWindow();app.on('activate',()=>{if(BrowserWindow.getAllWindows().length===0)createWindow();});}).catch(e=>{dialog.showErrorBox('Open IPTV Pro lỗi khởi chạy',String(e.stack||e));app.quit();});
 // Closing the red macOS window button also quits instead of leaving an invisible app.
 app.on('window-all-closed',()=>app.quit());
-app.on('before-quit',()=>{try{localHyMT?.stop();}catch{}try{localTTS?.stop();}catch{}try{localTTS?.shutdown?.();}catch{}try{localModelInstaller?.cancel();}catch{}try{whisperModelInstaller?.cancel();}catch{}try{liveCaptionService?.stop();}catch{}try{dvr?.shutdown();}catch(e){console.warn('DVR shutdown',e);}castService.stop().catch(()=>{});try{timeshift?.stop();}catch{}try{playbackFallback?.stop();}catch{}try{server.close();}catch{}});
+app.on('before-quit',()=>{try{localHyMT?.stop();}catch{}try{googleAI?.stop();}catch{}try{localTTS?.stop();}catch{}try{localTTS?.shutdown?.();}catch{}try{localModelInstaller?.cancel();}catch{}try{whisperModelInstaller?.cancel();}catch{}try{liveCaptionService?.stop();}catch{}try{dvr?.shutdown();}catch(e){console.warn('DVR shutdown',e);}castService.stop().catch(()=>{});try{timeshift?.stop();}catch{}try{playbackFallback?.stop();}catch{}try{server.close();}catch{}});
