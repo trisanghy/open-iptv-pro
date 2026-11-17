@@ -38,7 +38,7 @@
   const heavy=getEngine()==='hymt7'||(getEngine()==='auto'&&getMode()==='quality'&&!!latest?.hyMT?.hymt7?.installed);
   const concurrent=(activeSpeech?1:0)+(localTranslate?1:0)+(localVoice?1:0);
   const intense=heavy&&(localTranslate||localVoice);
-  const visible=intense||concurrent>=3;
+  const visible=intense||concurrent>=2;
   warning.hidden=!visible;
   warning.textContent=visible?
    '⚠️ Đang bật nhiều tác vụ AI offline'+(heavy?' và mô hình 7B':'')+
