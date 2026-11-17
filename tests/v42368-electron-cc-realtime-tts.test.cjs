@@ -51,7 +51,7 @@ test('Electron v4.23.68: native subtitles support dual lines, CC OFF, custom col
   assert.equal(c.getMode(),'off');
   assert.equal(tracks[0].cues.length,0);
   c.setPreferences({show:true,content:'translated'});
-  assert.equal(tracks[0].cues[0].text,'Chúng ta đi thôi.');
+  assert.equal(tracks.at(-1).cues[0].text,'Chúng ta đi thôi.');
   c.clear();
   assert.equal(c.getText(),'');
  }finally{globalThis.VTTCue=previous;}
@@ -71,7 +71,7 @@ test('Electron v4.23.68: Live Caption toggle no longer forces translation or cap
  assert.ok(match,'Change handler found');
  const translate={checked:true},caption={checked:false};
  let reconciles=0;
- const fn=vm.runInNewContext('(event)=>{'+match[1]+'}',{caption,translate,message:()=>{},reconcile:()=>{reconciles++;},clearOutput:()=>{}});
+ const fn=vm.runInNewContext('(event)=>{'+match[1]+'}',{caption,translate,message:()=>{},reconcile:()=>{reconciles++;},clearOutput:()=>{},videoCaptions:{setOriginalVisible:()=>{}}});
  fn({target:caption});
  assert.equal(caption.checked,false);
  assert.equal(translate.checked,true);
