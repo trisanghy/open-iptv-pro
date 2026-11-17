@@ -86,7 +86,7 @@
   return frame;
  }
  function createController({video,doc,getState=()=>null,onPiPEvent=()=>{}}){
-  let canvas=null,ctx=null,mirror=null,stream=null,timer=null,failed=false;
+  let canvas=null,ctx=null,mirror=null,stream=null,timer=null,failed=false,stopping=false;
   let detachSourceListeners=[];
   const supported=()=>!!(doc?.createElement&&typeof doc.createElement('canvas')?.captureStream==='function');
   const ready=()=>!!mirror&&mirror.readyState>=2;
@@ -96,6 +96,7 @@
    catch{failed=true;return false;}
   }
   function stop(){
+   stopping=true;
    for(const detach of detachSourceListeners)try{detach();}catch{}
    detachSourceListeners=[];
    if(timer!==null){clearInterval(timer);timer=null;}
@@ -104,7 +105,7 @@
     try{mirror.remove();}catch{}
    }
    for(const track of stream?.getTracks?.()||[])try{track.stop();}catch{}
-   mirror=null;stream=null;canvas=null;ctx=null;failed=false;
+   mirror=null;stream=null;canvas=null;ctx=null;failed=false;stopping=false;
   }
   function prepare(){
    if(failed||video.readyState<2)return false;
@@ -132,10 +133,10 @@
     // Native PiP playback buttons should control the real IPTV video, not
     // just the muted canvas mirror; this also stops CC/TTS on pause.
     mirror.addEventListener?.('pause',()=>{
-     if(doc.pictureInPictureElement===mirror&&!video.paused)video.pause();
+     if(!stopping&&doc.pictureInPictureElement===mirror&&!video.paused)video.pause();
     });
     mirror.addEventListener?.('play',()=>{
-     if(doc.pictureInPictureElement===mirror&&video.paused)
+     if(!stopping&&doc.pictureInPictureElement===mirror&&video.paused)
       Promise.resolve(video.play()).catch(()=>{});
     });
     const pauseMirror=()=>{
@@ -147,9 +148,13 @@
     };
     video.addEventListener?.('pause',pauseMirror);
     video.addEventListener?.('playing',resumeMirror);
+    video.addEventListener?.('ended',pauseMirror);
+    video.addEventListener?.('emptied',pauseMirror);
     detachSourceListeners=[
      ()=>video.removeEventListener?.('pause',pauseMirror),
-     ()=>video.removeEventListener?.('playing',resumeMirror)
+     ()=>video.removeEventListener?.('playing',resumeMirror),
+     ()=>video.removeEventListener?.('ended',pauseMirror),
+     ()=>video.removeEventListener?.('emptied',pauseMirror)
     ];
     (doc.body||doc.documentElement).appendChild(mirror);
     // Original IPTV video keeps its own audio. PiP video is video-only.
