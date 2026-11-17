@@ -33,8 +33,12 @@ test('v4.23.46: translate-only installer never requires Piper voice model',()=>{
  assert.ok(a>0);const c=s.slice(a,s.indexOf('function cancel()',a));
  assert.match(c,/installPair\('en',lang\)/);assert.doesNotMatch(c,/voiceFile\(/);
 });
-test('v4.23.46: speech synthesis consumes English intermediate, no double-translate',()=>{
- assert.match(read('renderer/local-tts-v42344.js'),/englishIntermediate\|\|e\.text/);
+test('v4.23.68: speech uses already-translated target, never running a second Argos/MLX pass',()=>{
+ const code=read('renderer/local-tts-v42344.js');
+ assert.match(code,/if\(e\.language!==target\.value\)return/);
+ assert.match(code,/text=String\(e\.text\|\|''\)/);
+ assert.match(code,/alreadyTranslated:true/);
+ assert.doesNotMatch(code,/englishIntermediate\|\|e\.text/);
 });
 test('v4.23.46: bounded IPC plus app version is synchronized',()=>{
  const main=read('src/main.cjs'),pre=read('src/preload.cjs');

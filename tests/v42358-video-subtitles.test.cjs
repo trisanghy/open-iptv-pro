@@ -80,7 +80,7 @@ test('v4.23.60: event listener hides source/interim, shows ONLY chosen target, b
  assert.equal(setup.lastShownSequence,1);
  assert.equal(updates.length,0);assert.equal(clears,1);
  run({type:'segment',sequence:1,text:'Xin chào',language:'vi',translated:true});
- assert.deepEqual(Array.from(updates[0]),['Xin chào','vi',true]);
+ assert.deepEqual(Array.from(updates[0]),['Xin chào','vi',true,'']);
  run({type:'segment',sequence:2,text:'Goodbye',language:'en',translated:false});
  assert.equal(updates.length,1);assert.equal(clears,2);
  run({type:'segment',sequence:1,text:'Phụ đề cũ',language:'vi',translated:true});

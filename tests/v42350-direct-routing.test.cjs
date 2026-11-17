@@ -33,8 +33,8 @@ test('v4.23.60: original audio ducking persists while TTS is enabled',()=>{
 });
 test('v4.23.60: caption and voice source language independent of English intermediate',()=>{
  const tts=read('renderer/local-tts-v42344.js'),svc=read('src/local-tts-service.cjs');
- assert.match(tts,/const sourceLanguage=sameLanguage\?target.value/);
- assert.match(tts,/alreadyTranslated:!!sameLanguage/);
+ assert.match(tts,/sourceLanguage:target\.value,alreadyTranslated:true/);
+ assert.doesNotMatch(tts,/englishIntermediate\|\|e\.text/);
  assert.match(svc,/sourceLanguage!==lang/);
  assert.match(svc,/translateText\(input,lang,sourceLanguage\)/);
  assert.match(read('src/main.cjs'),/resolveAIEngine/);
