@@ -42,7 +42,7 @@ test('v4.23.60: language detection accepts names and ISO and direct pair preferr
 });
 test('v4.23.60: source version and user-selected DMG-only distribution',()=>{
  const pkg=JSON.parse(read('package.json'));
- assert.equal(pkg.version,'4.23.64');
+ assert.equal(pkg.version,'4.23.65');
  assert.deepEqual(pkg.build.mac.target,['dmg']);
  assert.equal(pkg.build.dmg.writeUpdateInfo,false);
 });

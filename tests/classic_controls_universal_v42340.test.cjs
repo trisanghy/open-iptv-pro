@@ -10,6 +10,6 @@ test('v4.23.44 player buttons retain previous ids and separate toolbar',()=>{
  assert.ok(html.indexOf('id="playerBox"')<html.indexOf('class="player-control-card"'));
 });
 test('v4.23.44 exact source version and universal Mac setting',()=>{
- assert.equal(JSON.parse(get('package.json')).version,'4.23.64');
+ assert.equal(JSON.parse(get('package.json')).version,'4.23.65');
  assert.match(get('BUILD_MAC.command'),/OPENIPTV_BUILD_ARCH/);
 });
