@@ -231,11 +231,14 @@
   }
   const send=el('cloudEmailSend');if(send)send.disabled=true;
   try{
-   const {error}=await client.auth.signInWithOtp({
+   let reply=await client.auth.signInWithOtp({
     email,options:{emailRedirectTo:location.origin+location.pathname,shouldCreateUser:true}
    });
-   if(error)throw error;
-   label('Đã yêu cầu gửi liên kết đăng nhập tới '+email+'. Kiểm tra cả thư rác; nếu có mã OTP, nhập bên dưới.');
+   if(reply.error&&/redirect|not allowed/i.test(reply.error.message||'')){
+     reply=await client.auth.signInWithOtp({email,options:{shouldCreateUser:true}});
+   }
+   if(reply.error)throw reply.error;
+   label('Đã yêu cầu gửi email đăng nhập tới '+email+'. Nếu liên kết dẫn tới localhost, gửi lại email và sao chép liên kết mới vào ô bên dưới, không nhấp trước.');
   }catch(e){report(e,'gửi email đăng nhập');}
   finally{if(send)send.disabled=false;}
  });
