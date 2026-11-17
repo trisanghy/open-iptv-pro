@@ -36,5 +36,7 @@ test('one-ZIP installer pins current minor version tag without replacing previou
  assert.ok(script.includes('TAG="rust-lab/v'+release+'"'));
  assert.match(script,/archive\/refs\/tags\/\$\{TAG\}\.zip/);
  assert.match(script,/while \[\[ -e "\$DEST" \]\]/);
- assert.match(script,/\$\{NAME\}_Source\.zip/);
+ assert.match(script,/npm run build -- --bundles app/);
+ assert.match(script,/APP_TARGET/);
+ assert.doesNotMatch(script,/cp "\$TMP\/source\.zip" "\$DEST/);
 });

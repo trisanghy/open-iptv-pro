@@ -29,7 +29,7 @@ test('Electron-like AI settings only offers working Argos and protects model rem
  assert.match(entry,/rust-ai-settings-v23-6\.js/);
  assert.match(html,/rust-ai-settings-v23-6\.css/);
  for(const id of ['rustTranslationEngine','autoInstallTranslation','rustAiStorageList'])assert.ok(ui.includes(id));
- assert.ok(ui.includes('disabled=disabled'));
+ assert.ok(ui.includes('option.disabled=!mlxAvailable'));
  assert.ok(ui.includes('confirm!==id||Date.now()-confirmedAt>12000'));
  assert.match(css,/rust-ai-grid/);
 });

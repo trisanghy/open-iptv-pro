@@ -13,7 +13,7 @@ test('Whisper detects source spoken language from JSON before translation',()=>{
 test('Direct pairs preferred, fallback only when no direct model installed',()=>{
  assert.match(rust,/async fn argos_plan\(/);
  assert.match(rust,/async fn argos_translate\(/);
- assert.match(rust,/match route\.as_str\(\)/);
+ assert.match(rust,/match (?:route|plan)\.as_str\(\)/);
  assert.match(rust,/"direct"\|"pivot"/);
  assert.match(rust,/"whisper"/);
  assert.match(rust,/include_str!\("\.\.\/resources\/argos_direct_router\.py"\)/);

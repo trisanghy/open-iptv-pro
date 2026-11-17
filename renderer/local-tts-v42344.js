@@ -170,6 +170,7 @@
  });
  if(api.captionOnEvent)api.captionOnEvent(e=>{
   if(!enabled||!translate?.checked||!e||e.type!=='segment'||!e.text)return;
+  if(e.route==='mlx-error')return; // Do not narrate untranslated source speech.
   updateSession();
   // Use the actual language of the text, bypass translation when the voice already matches.
   const to=String(target.value||'').toLowerCase(),spoken=String(e.sourceLanguage||'').toLowerCase();

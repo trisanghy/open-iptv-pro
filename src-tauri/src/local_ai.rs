@@ -1,5 +1,5 @@
 //! Open IPTV Pro Rust Lab: optional local Whisper / Piper / Argos services.
-//! v23.6 Electron parity: offline route probing, self-test and app-private AI inventory. No cloud speech API.
+//! v23.8: fixed Argos MINISBD + real MLX Hy-MT2/Qwen3 port (Electron v4.23.67).
 //! Downloads require explicit UI action; pinned SHA-256 and app-private directories.
 use std::{fs, path::{Path,PathBuf}, sync::{Arc,atomic::{AtomicBool,AtomicU64,Ordering}}, time::Duration};
 use tokio::{process::{Command,Child,ChildStdin}, sync::Mutex, io::{AsyncWriteExt,AsyncBufReadExt,BufReader}, process::ChildStdout};
@@ -10,6 +10,7 @@ use base64::Engine;
 use tauri::{AppHandle,Emitter};
 use futures_util::StreamExt;
 use uuid::Uuid;
+mod mlx_ai;
 
 const VIENEU_VOICES:[&str;25]=[
  "Adam bựa","Trúc Ly","Thiện Minh","Mai Anh","Hải Đăng","Thùy Dung",
@@ -31,13 +32,15 @@ pub struct LocalAi {
  pub caption: Mutex<Option<tokio::task::JoinHandle<()>>>,
  pub tts: Mutex<Option<tokio::task::AbortHandle>>,
  natural_worker: Mutex<Option<NaturalWorker>>,
+ mlx_worker: Mutex<Option<mlx_ai::MlxWorker>>,
+ mlx_installing: AtomicBool,
  pub next: AtomicU64,
  pub installing_caption: AtomicBool,
  pub installing_tts: AtomicBool,
 }
 impl LocalAi {
  pub fn new(root:PathBuf,ffmpeg:Option<String>)->Self{
-  Self{root,ffmpeg,caption:Mutex::new(None),tts:Mutex::new(None),natural_worker:Mutex::new(None),next:AtomicU64::new(0),installing_caption:AtomicBool::new(false),installing_tts:AtomicBool::new(false)}
+  Self{root,ffmpeg,caption:Mutex::new(None),tts:Mutex::new(None),natural_worker:Mutex::new(None),mlx_worker:Mutex::new(None),mlx_installing:AtomicBool::new(false),next:AtomicU64::new(0),installing_caption:AtomicBool::new(false),installing_tts:AtomicBool::new(false)}
  }
  fn caption_root(&self)->PathBuf{self.root.join("live-caption")}
  fn tts_root(&self)->PathBuf{self.root.join("local-tts")}
@@ -227,17 +230,23 @@ pub async fn caption_stop(ai:&LocalAi)->Value{
  if let Some(task)=ai.caption.lock().await.take(){task.abort();}
  json!(true)
 }
-pub async fn caption_start(app:AppHandle,ai:Arc<LocalAi>,url:&str,translate:bool,target:&str)->Result<Value,String>{
+pub async fn caption_start(app:AppHandle,ai:Arc<LocalAi>,url:&str,translate:bool,target:&str,engine:&str,resource_mode:&str)->Result<Value,String>{
  let parsed=reqwest::Url::parse(url).map_err(error)?;
  if !matches!(parsed.scheme(),"http"|"https"){return Err("Chỉ nhận URL http/https".into());}
  let (bin,model)=caption_files(&ai);
  let bin=bin.ok_or("Chưa cài whisper-cli")?;let model=model.ok_or("Chưa cài mô hình Whisper")?;
  let ffmpeg=ai.ffmpeg.clone().ok_or("Thiếu FFmpeg")?;
  let target=if translate{target}else{"en"};
- // Do not require any model until Whisper detects actual speech language; same-language is free.
+ if translate && !translation_supported(target){return Err("Ngôn ngữ dịch chưa được hỗ trợ".into());}
+ if !matches!(engine,"auto"|"argos")&&!mlx_ai::keys().any(|id|id==engine){
+  return Err("Bộ dịch không hợp lệ".into());
+ }
+ if !matches!(resource_mode,"balanced"|"saver"|"quality"){return Err("Chế độ AI không hợp lệ".into());}
+ // One Whisper loop serves Live Caption AND Live Translate.
  caption_stop(&ai).await;
  let id=ai.next.fetch_add(1,Ordering::SeqCst)+1;
  let ai_clone=ai.clone();let src=url.to_owned();let target=target.to_owned();let result_language=target.clone();
+ let engine=engine.to_owned();let resource_mode=resource_mode.to_owned();
  let task=tokio::spawn(async move{
   let dir=ai_clone.caption_root().join("temp").join(format!("session-{id}-{}",Uuid::new_v4()));
   if let Err(e)=tokio::fs::create_dir_all(&dir).await {let _=app.emit("caption:event",json!({"type":"error","id":id,"message":e.to_string()}));return;}
@@ -268,32 +277,48 @@ pub async fn caption_start(app:AppHandle,ai:Arc<LocalAi>,url:&str,translate:bool
      }else{
       let mut route="same".to_string();let mut rendered=phrase.clone();let mut english=String::new();
       if translate&&source!=target{
-       route=argos_plan(&ai_clone,&source,&target).await?;
-       match route.as_str(){
-        "direct"|"pivot"=>{
-         rendered=argos_translate(&ai_clone,&source,&target,&phrase).await?;
-        },
-        "whisper"=>{
-         // Only when direct Argos is not installed, fall back to Whisper English.
-         let mut en=Command::new(&bin);
-         en.arg("-m").arg(&model).arg("-f").arg(&wav)
-           .args(["-l","auto","-nt","-np","-t","4","-tr"]);
-         let result=output_timeout(&mut en,70).await?;
-         english=caption_text(&result.stdout);
-         if english.is_empty(){return Err("Whisper không tạo được bản dịch English dự phòng".into());}
-         rendered=if target=="en"{english.clone()}else{
-          argos_translate(&ai_clone,"en",&target,&english).await?
-         };
-        },
-        "needs-model"=>{
-         let _=app.emit("caption:event",json!({"type":"needs-model","id":id,"sourceLanguage":source,"target":target}));
-         return Ok::<(),String>(());
-        },
-        _=>return Err("Không có tuyến dịch offline hợp lệ".into())
+        let selected=if engine=="auto"{mlx_ai::select_auto(&ai_clone,&resource_mode)}
+         else if engine=="argos"{None}else{Some(engine.as_str())};
+        if let Some(key)=selected{
+         match mlx_ai::translate(&ai_clone,key,&source,&target,&phrase).await{
+          Ok(translated)=>{rendered=translated;route=format!("mlx-{key}");},
+          Err(reason)=>{
+           route="mlx-error".into();
+           let _=app.emit("caption:event",json!({"type":"status","id":id,
+            "message":format!("MLX {key}: {reason}. {}",if engine=="auto"{"Chuyển Argos offline."}else{"Mở ⚙ để cài/sửa mô hình."})}));
+           if engine=="auto"{route="argos-retry".into();}
+          }
+         }
+        }
+        if selected.is_none()||route=="argos-retry"{
+         let plan=argos_plan(&ai_clone,&source,&target).await?;
+         route=plan.clone();
+         match plan.as_str(){
+          "direct"|"pivot"=>{
+           rendered=argos_translate(&ai_clone,&source,&target,&phrase).await?;
+          },
+          "whisper"=>{
+           let mut en=Command::new(&bin);
+           en.arg("-m").arg(&model).arg("-f").arg(&wav)
+             .args(["-l","auto","-nt","-np","-t","4","-tr"]);
+           let result=output_timeout(&mut en,70).await?;
+           english=caption_text(&result.stdout);
+           if english.is_empty(){return Err("Whisper không tạo được bản English dự phòng".into());}
+           rendered=if target=="en"{english.clone()}else{
+            argos_translate(&ai_clone,"en",&target,&english).await?
+           };
+          },
+          "needs-model"=>{
+           let _=app.emit("caption:event",json!({"type":"needs-model","id":id,
+            "sourceLanguage":source,"target":target}));
+           return Ok::<(),String>(());
+          },
+          _=>return Err("Không có tuyến dịch offline hợp lệ".into())
+         }
+        }
        }
-      }
       let _=app.emit("caption:event",json!({"type":"segment","id":id,"text":rendered,"originalText":phrase,
-       "sourceLanguage":source,"englishText":english,"translated":translate&&source!=target,
+       "sourceLanguage":source,"englishText":english,"translated":translate&&source!=target&&route!="mlx-error",
        "language":if translate{target.as_str()}else{source.as_str()},"target":target,"route":route}));
      }
     }
@@ -408,7 +433,7 @@ pub fn translation_status(ai:&LocalAi,lang:&str)->Value{
 async fn argos_command(ai:&LocalAi,action:&str,source:&str,target:&str,input:Option<&str>)->Result<String,String>{
  let python=tts_python(ai);
  if !exists(&python,1){return Err("Chưa cài Argos offline".into());}
- let script=ai.tts_root().join("argos_direct_router_v23_6.py");
+ let script=ai.tts_root().join("argos_direct_router_v23_8.py");
  tokio::fs::create_dir_all(ai.tts_root()).await.map_err(error)?;
  if !exists(&script,100){
   tokio::fs::write(&script,include_str!("../resources/argos_direct_router.py")).await.map_err(error)?;
@@ -416,7 +441,7 @@ async fn argos_command(ai:&LocalAi,action:&str,source:&str,target:&str,input:Opt
  let mut cmd=Command::new(&python);
  cmd.arg(&script).args([action,source,target])
   .env("ARGOS_PACKAGES_DIR",ai.tts_root().join("argos-packages"))
-  .env("ARGOS_DEVICE_TYPE","cpu").env("ARGOS_CHUNK_TYPE","NONE");
+  .env("ARGOS_DEVICE_TYPE","cpu").env("ARGOS_CHUNK_TYPE","MINISBD").env("ARGOS_MODEL_PROVIDER","OPENNMT");
  let output=if let Some(sentence)=input{
   cmd.stdin(Stdio::piped()).stdout(Stdio::piped()).stderr(Stdio::piped()).kill_on_drop(true);
   let mut child=cmd.spawn().map_err(error)?;
@@ -541,12 +566,26 @@ pub fn ai_storage_status(ai:&LocalAi)->Value{
    storage.push(json!({"id":id,"label":label,"bytes":bytes,"present":bytes>0}));
   }
  }
+ let mlx=mlx_ai::status(ai);
+ for id in mlx_ai::keys(){
+  let state=&mlx["models"][id];
+  let bytes=state["bytes"].as_u64().unwrap_or(0);
+  total=total.saturating_add(bytes);
+  storage.push(json!({"id":id,"label":state["label"],"bytes":bytes,
+   "present":bytes>0,"installed":state["installed"],"runtimeReady":state["runtimeReady"],
+   "approxBytes":state["approxBytes"]}));
+ }
  json!({"storage":storage,"totalBytes":total,"caption":caption_status(ai),
   "argosInstalled":exists(&tts_exe(ai,"argos-translate"),1),
-  "supportedEngines":["auto","argos"],"mlxAvailable":false})
+  "supportedEngines":if mlx_ai::supported(){json!(["auto","argos","hymt18","hymt18q8","hymt7","hymt7q8","qwen06","qwen17","qwen4","qwen8"])}
+    else{json!(["auto","argos"])},
+  "mlxAvailable":mlx_ai::supported(),"models":mlx["models"],"runtimeReady":mlx["runtimeReady"],
+  "hardware":{"platform":if cfg!(target_os="macos"){"darwin"}else if cfg!(windows){"win32"}else{"linux"},
+   "arch":if cfg!(target_arch="aarch64"){"arm64"}else{"x64"}}})
 }
 pub async fn ai_remove_model(ai:&LocalAi,id:&str)->Result<Value,String>{
- if ai.installing_caption.load(Ordering::SeqCst)||ai.installing_tts.load(Ordering::SeqCst){
+ if mlx_ai::keys().any(|key|key==id){return mlx_ai::remove(ai,id).await;}
+ if ai.installing_caption.load(Ordering::SeqCst)||ai.installing_tts.load(Ordering::SeqCst)||ai.mlx_installing.load(Ordering::SeqCst){
   return Err("Đang cài AI; không thể xóa trong khi tải.".into());
  }
  let (path,_label)=ai_asset_location(ai,id)?;
@@ -564,6 +603,26 @@ pub async fn ai_remove_model(ai:&LocalAi,id:&str)->Result<Value,String>{
  if id=="argos"||id=="runtimes"{let _=tokio::fs::remove_file(ai.tts_root().join("installed-pairs.json")).await;}
  if id=="vieneu"||id=="runtimes"{let _=tokio::fs::remove_file(ai.tts_root().join("vieneu-ready.json")).await;}
  Ok(json!({"removed":id,"freed":freed,"status":ai_storage_status(ai)}))
+}
+pub fn mlx_status(ai:&LocalAi)->Value{mlx_ai::status(ai)}
+pub async fn mlx_install(app:AppHandle,ai:Arc<LocalAi>,key:&str)->Result<Value,String>{
+ mlx_ai::install(app,ai,key).await
+}
+pub async fn ai_test_translation(app:AppHandle,ai:Arc<LocalAi>,target:&str,engine:&str,mode:&str)->Result<Value,String>{
+ if !translation_supported(target){return Err("Ngôn ngữ đích không hỗ trợ".into());}
+ if !matches!(engine,"auto"|"argos")&&!mlx_ai::keys().any(|id|id==engine){
+  return Err("Mô hình dịch không hợp lệ".into());
+ }
+ let (source,text)=if target=="en"{("vi","Xin chào, chúc bạn một ngày tốt lành.")}
+  else{("en","Hello, welcome to this channel.")};
+ let model=if engine=="auto"{mlx_ai::select_auto(&ai,mode)}
+  else if engine=="argos"{None}else{Some(engine)};
+ if let Some(key)=model{
+  let translated=mlx_ai::translate(&ai,key,source,target,text).await?;
+  return Ok(json!({"sourceLanguage":source,"target":target,"sourceText":text,
+    "translatedText":translated,"engine":key,"route":"mlx"}));
+ }
+ translation_test(app,ai,target).await
 }
 async fn speech_translate(ai:&LocalAi,source:&str,target:&str,speech:&str,english_fallback:&str)->Result<String,String>{
  if source==target{return Ok(speech.to_owned());}

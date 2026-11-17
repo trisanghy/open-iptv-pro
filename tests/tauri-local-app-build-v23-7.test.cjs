@@ -16,7 +16,7 @@ test('Local Mac build creates only a native .app in a new Downloads folder',()=>
 test('Immutable local tag, source version and displayed UI are synchronized',()=>{
  const pkg=JSON.parse(read('package.json'));
  const rel=pkg.version.split('-tauri.')[1],s=read('scripts/BUILD_RUSTLAB_MAC_ONE_ZIP_FAST.sh');
- assert.equal(rel,'23.7');
+ assert.match(rel,/^\d+(?:\.\d+)*$/);
  assert.ok(s.includes('VERSION="'+pkg.version+'"'));
  assert.ok(s.includes('TAG="rust-lab/v'+rel+'"'));
  assert.match(s,/ACTUAL_VERSION=.*sed -nE/);

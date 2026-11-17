@@ -1,5 +1,5 @@
 'use strict';
-// v23.6: Electron-style durable Live Caption/Translate intent with real Argos route status.
+// v23.8: shared recognition, repaired Argos and selectable native MLX translate engines.
 (()=>{
  const $=id=>document.getElementById(id),api=window.streamleaf,ctx=window.IPTVState;
  const caption=$('liveCaptionToggle'),translate=$('liveTranslateToggle'),status=$('liveCaptionStatus');
@@ -76,7 +76,9 @@
    if(!(caption.checked||translate.checked))return;
    const actual=preferredURL(),selected=translate.checked?target.value:'auto';
    if(!actual){setStatus('Kênh hiện tại không có URL âm thanh',true);return;}
-   const result=await api.captionStart({url:actual,translate:translate.checked,target:selected,engine:'argos'});
+   const result=await api.captionStart({url:actual,translate:translate.checked,target:selected,
+    engine:window.AISettings?.getEngine?.()||'auto',
+    resourceMode:window.AISettings?.getMode?.()||'balanced'});
    if(!(caption.checked||translate.checked)){await api.captionStop();return;}
    activeId=result.id;currentURL=actual;lastTranslate=translate.checked;lastTarget=selected;
    setStatus(translate.checked?'Đang nhận diện ngôn ngữ → dịch '+(target.selectedOptions?.[0]?.textContent||selected)+'…':'Đang nghe để tạo phụ đề…');
@@ -132,8 +134,10 @@
   if(!api.captionTestTranslation)return setStatus('Chưa có chức năng kiểm tra',true);
   testTranslate.disabled=true;
   try{
-   setStatus('Đang chạy bản dịch thử với Argos offline…');
-   const result=await api.captionTestTranslation(target.value);
+   const engine=window.AISettings?.getEngine?.()||'auto';
+   setStatus('Đang chạy bản dịch thử với '+engine+' offline…');
+   const result=await api.captionTestTranslation(target.value,engine,
+    window.AISettings?.getMode?.()||'balanced');
    if(!result?.translatedText)throw Error('Không có văn bản đầu ra');
    setStatus('Dịch mẫu thành công ('+result.sourceLanguage+' → '+target.value+'): '+result.translatedText);
   }catch(e){setStatus('Dịch mẫu lỗi: '+String(e.message||e).slice(0,140),true);}
@@ -144,12 +148,19 @@
   if(e.type==='segment'){
    lastDetected=String(e.sourceLanguage||'');
    status.dataset.sourceLanguage=lastDetected;
+   if(e.route==='mlx-error'){
+    hideWords();setStatus('MLX chưa dịch được · mở ⚙ và tải/sửa mô hình đã chọn',true);return;
+   }
    showWords(e.text,e.translated,e.language);
    setStatus(e.route==='same'&&translate.checked?'Đang nói tiếng '+lastDetected+' · không cần dịch':
     e.translated?'Live Translate · '+lastDetected+' → '+(e.target||target.value)+' ('+(e.route||'offline')+')':
     'Live Caption · '+lastDetected);
   }
   if(e.type==='needs-model'){
+   const engine=window.AISettings?.getEngine?.()||'auto';
+   if(engine!=='auto'&&engine!=='argos'){
+    setStatus('Mô hình MLX đã chọn chưa hoạt động; mở ⚙ để cài/sửa',true);return;
+   }
    const from=String(e.sourceLanguage||'').toLowerCase(),to=String(e.target||target.value).toLowerCase();
    if(!from||!to||from===to)return;
    lastDetected=from;status.dataset.sourceLanguage=from;
@@ -176,6 +187,7 @@
   const url=preferredURL();
   if(url!==observed){observed=url;if(caption.checked)void reconcile(true);else if(activeId)void stop();}
  },1400);
+ window.addEventListener('rustlab:ai-settings-changed',()=>{if(translate.checked)void reconcile(true);});
  window.addEventListener('pagehide',()=>{void stop();});
  document.addEventListener('openiptv:media-info',()=>{if(!ctx?.getCurrent?.()&&activeId)void stop();});
  void refreshState();

@@ -13,6 +13,7 @@
     captionAutoInstall: 'caption:install',
     captionTranslationStatus: 'caption:translationStatus', captionTranslationInstall: 'caption:translationInstall',
     captionTestTranslation: 'caption:testTranslation', aiStorageStatus: 'ai:storage', aiRemoveModel: 'ai:removeModel',
+    aiModelStatus: 'ai:modelStatus', aiInstallModel: 'ai:installModel',
     ttsStatus: 'tts:status', ttsInstall: 'tts:install',
     ttsVoiceStatus: 'tts:voiceStatus', ttsVoiceInstall: 'tts:voiceInstall',
     ttsSynthesize: 'tts:synthesize', ttsStop: 'tts:stop',
@@ -54,6 +55,7 @@
   };
   api.captionOnEvent = cb => onNative('caption:event', cb);
   api.ttsOnEvent = cb => onNative('tts:event', cb);
+  api.aiOnEvent = cb => onNative('ai:event', cb);
   window.streamleaf = Object.freeze(api);
   document.documentElement.dataset.desktopRuntime = 'tauri2-rust';
 })();
