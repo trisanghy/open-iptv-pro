@@ -192,7 +192,7 @@ function createLiveCaptionService({dataDir,getFFmpeg,notify,spawnProc=spawn,plat
        if(current!==s||serial!==s.latestRecognized)return;
        const finalText=tidy(routed.text);
        if(!finalText)return;
-       notify({type:'segment',id:s.id,text:finalText,englishText:routed.englishText||'',
+       notify({type:'segment',id:s.id,text:finalText,sourceText:words,englishText:routed.englishText||'',
         sourceLanguage,translated:!!routed.translated,language:routed.language||s.target,
         sequence:serial,utteranceKey:key});
       }catch(error){
