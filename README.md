@@ -1,34 +1,65 @@
-# Open IPTV Pro — Desktop v4.23.39
+# Open IPTV Pro — Desktop v4.23.60 · Web Online
 
-**Một trải nghiệm IPTV hiện đại, linh hoạt và nhiều công cụ cho Windows & macOS.**  
-**A versatile, modern IPTV desktop experience — powered by Electron / Chromium.**
+**Mở trực tiếp bản Web:** **https://trisanghy.github.io/open-iptv-pro/**  
+**Tải bản Windows/macOS:** **https://github.com/trisanghy/open-iptv-pro/releases/tag/v4.23.60**  
+**English:** Open-source IPTV player for Windows, macOS and a separate, browser-based Web Edition.
 
-[**Mã nguồn ZIP v4.23.39**](source/OpenIPTVPro_Source_v4.23.39.zip) · [**Ghi chú phát hành / Release notes**](RELEASE_NOTES_V4_23_39.md) · [**Script build Mac một lệnh**](https://raw.githubusercontent.com/trisanghy/open-iptv-pro/iptv-build-source/build-mac-v42339.sh)
+[**Tải bản đã build sẵn**](https://github.com/trisanghy/open-iptv-pro/releases/tag/v4.23.60) · [**Dùng Web Online**](https://trisanghy.github.io/open-iptv-pro/) · [**Hướng dẫn Desktop**](docs/HUONG_DAN_V4_23_60.md) · [**Hướng dẫn Web**](https://trisanghy.github.io/open-iptv-pro/huong-dan.html) · [**Changelog v4.23.60**](RELEASE_NOTES_V4_23_60.md)
 
-## Điểm mới của v4.23.39
+## Chọn phiên bản / Choose your edition
 
-- **Khung video phủ toàn chiều ngang khả dụng** của khu vực xem, chỉ giữ viền giao diện; sửa hiện tượng hở khoảng đen lớn ở hai bên khi thu gọn danh sách kênh.
-- **Tỷ lệ khung tự thích nghi với nguồn phát**: mặc định 16:9, cập nhật theo kích thước video khi nhận metadata; hỗ trợ nguồn 4:3, siêu rộng và video dọc. Không ép méo tỷ lệ hình ảnh.
-- Giữ **các nút điều khiển tách khỏi vùng video**: hàng trên gồm kênh, phát/chuyển kênh, âm lượng, Cast/AirPlay, PiP và fullscreen; hàng dưới gồm EPG, khung hình, link chính/dự phòng và yêu thích.
-- Nút mở danh sách kênh thu nhỏ một nửa, giảm khoảng trống; sidebar icon vẫn căn giữa.
-- Tiếp tục hỗ trợ M3U, EPG, HLS/DASH, FFmpeg, Timeshift, DVR, Snapshot, MultiView, kéo thả quản lý kênh, chọn nhiều bằng Shift, Auto Failover và sao lưu/khôi phục.
+| | Desktop Electron v4.23.60 | Web Online (browser) |
+| --- | --- | --- |
+| Cài đặt | DMG (Mac) / EXE (Windows) | Không cần cài, mở URL |
+| Danh sách M3U, tìm kênh, yêu thích, EPG, PiP | Có | Có, tùy trình duyệt và nguồn |
+| HLS / DASH | Có, kèm engine desktop | Có, khi codec/HTTPS/CORS cho phép |
+| FFmpeg native, Timeshift, DVR, Snapshot nâng cao, Cast/AirPlay | Có, tùy hệ điều hành/nguồn | Giới hạn hoặc không có |
+| Live Caption Whisper, dịch AI local, TTS Piper/VieNeu | Có, sau khi cài mô hình phù hợp | Không có ở bản Web tĩnh |
+| Sao lưu dữ liệu | File .iptvbackup ở desktop | Backup JSON và đồng bộ tùy cấu hình |
+| Cấu hình & lưu trữ | Trên thiết bị | Browser storage; Cloud tùy dịch vụ |
 
-## Ảnh giao diện / Screenshots
+**Bản Web không tương đương desktop.** GitHub Pages không chạy được Electron IPC, FFmpeg native, Whisper/MLX hay dịch giọng VieNeu offline như trên máy. Nguồn phát web có thể bị CORS, DRM, tự phát âm thanh hoặc HTTP hỗn hợp chặn.
 
-![Bố cục trình phát hai hàng — ảnh từ v4.23.37](docs/images/OpenIPTVPro-v4.23.37-player-layout.jpg)
+## Điểm mới trong Desktop v4.23.60
 
-![Bố cục danh sách kênh — ảnh từ v4.23.37](docs/images/OpenIPTVPro-v4.23.37-channel-list.jpg)
+- **Live Caption:** Whisper với thu âm FFmpeg liên tục, cửa sổ **8 giây** nhằm giữ ngữ cảnh câu tốt hơn 4 giây; vẫn có độ trễ, không đảm bảo nhận diện đầy đủ mọi âm tiết.
+- **Live Translate:** chỉ hiển thị bản dịch đúng ngôn ngữ đích trên video (không lặp phụ đề gốc ở dưới). Không loại bỏ chữ được nhà đài ghép sẵn vào hình.
+- **Các lựa chọn bộ dịch local:** Argos; Hy-MT2 1.8B/7B 4-bit và 8-bit; Qwen3 0.6B, 1.7B, 4B, 8B 4-bit; Tự động. **MLX dành cho Mac Apple Silicon**, không dành cho Windows/Intel.
+- **Giọng dịch TTS:** Piper / VieNeu, tùy chọn tốc độ và % tiếng gốc. **Đọc hết câu đã bắt đầu**, chỉ giữ câu mới nhất còn chờ để không trễ quá xa.
+- **Quản lý AI:** một nút ⚙ cho Whisper, dịch, TTS và dung lượng; tải/xóa từng mô hình, nhắc có thể nóng và hao pin khi bật nhiều AI.
+- Giữ **EPG, M3U, các nhóm kênh, MultiView, ảnh chụp, phát nguồn dự phòng, theme, PiP, Timeshift, ghi hình và Backup/Restore**.
 
-*Hai ảnh trên là ảnh bố cục của v4.23.37 để tham khảo; thay đổi khung video phủ chiều ngang của v4.23.39 nằm trong mã nguồn. Không trình bày ảnh cũ như ảnh kiểm thử v4.23.39.*
+### File dựng sẵn (Release Assets)
 
-## Phát triển và kiểm thử
+| Hệ điều hành | File |
+| --- | --- |
+| Mac Apple Silicon | `Open-IPTV-Pro-4.23.60-mac-arm64.dmg` |
+| Mac Intel | `Open-IPTV-Pro-4.23.60-mac-x64.dmg` |
+| Windows x64 Setup | `Open-IPTV-Pro-Setup-4.23.60-x64.exe` |
+| Windows x64 Portable | `Open-IPTV-Pro-4.23.60-x64.exe` |
+| Mã nguồn ZIP | `OpenIPTVPro_Source_v4.23.60.zip` |
 
-- ZIP nguồn đầy đủ để phát triển Windows/macOS: `source/OpenIPTVPro_Source_v4.23.39.zip`.
-- SHA-256: `9fff925ca8bd5563ba1500bb579e0bc9aa6605f26f411e7b872a09686bc32aa3`.
-- Nhánh `iptv-build-source` có script build macOS bằng một lệnh, tự tải **một ZIP**, chạy kiểm thử, tạo DMG và giữ ZIP nguồn đúng phiên bản.
-- Các bài kiểm thử mã nguồn đã được GitHub Actions chạy khi đóng gói v4.23.39. **Đưa mã nguồn lên GitHub không đồng nghĩa đã phát hành installer DMG/EXE hay ký ứng dụng.**
+**Lưu ý:** tải tệp hiện có trong [Release Assets](https://github.com/trisanghy/open-iptv-pro/releases/tag/v4.23.60) và đối chiếu `SHA256SUMS.txt`. Mã nguồn được tái tạo có kiểm thử rồi đồng bộ đầy đủ sang `main`, không thay thế nhánh Rust/Tauri.
+
+## Cách sử dụng nhanh
+
+1. Dùng [Web](https://trisanghy.github.io/open-iptv-pro/) hoặc cài ứng dụng Desktop từ [GitHub Release](https://github.com/trisanghy/open-iptv-pro/releases/tag/v4.23.60).
+2. Nhập playlist M3U qua file hoặc URL; chọn kênh và điều chỉnh chất lượng/nguồn dự phòng.
+3. Desktop: bật Live Caption → Live Translate → chọn ngôn ngữ đích (như **Tiếng Việt**) → nhấn ⚙ để chọn bộ dịch và tải mô hình nếu cần.
+4. Nếu muốn nghe bản dịch, bật **Giọng dịch TTS**, chọn giọng, tốc độ và mức giảm âm thanh gốc.
+5. Nếu dùng Web, lưu Backup JSON hoặc đăng nhập đồng bộ nếu được cấu hình; các luồng không mở do CORS/DRM có thể cần ứng dụng Desktop.
+
+[Hướng dẫn desktop đầy đủ](docs/HUONG_DAN_V4_23_60.md) · [Ghi chú phát hành](RELEASE_NOTES_V4_23_60.md) · [Web Online](https://trisanghy.github.io/open-iptv-pro/)
+
+## Source and building
+
+The `main` branch contains the actual Electron application sources under `src/` and `renderer/`. Version-specific archive: GitHub Release `OpenIPTVPro_Source_v4.23.60.zip`. On Node.js 22+, run `npm install`, `npm test`, and `npm start`. Electron-builder can produce a native macOS DMG and Windows executable.
+
+**Known limitations:** on-device ASR and TTS add latency and machine load; unsigned macOS/Windows builds may show OS warnings; the Web Edition cannot bypass browser security/DRM or play all codec formats. Use only streams you are authorized to access.
 
 ---
+
+## Archive: earlier desktop releases
 
 ## v4.22.2 — Backup / Restore for Windows and macOS
 
