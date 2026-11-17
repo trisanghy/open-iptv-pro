@@ -17,9 +17,9 @@ for bin in curl unzip node npm; do
 done
 mkdir -p "$OUT"
 ZIP="$TMP/OpenIPTVPro_Source_v4.23.62.zip"
-echo "Đang lấy nhánh thử nghiệm $REF…"
+printf "Downloading experimental source branch: %s\n" "${REF}"
 curl --fail --location --silent --show-error --retry 3 \
-  "https://codeload.github.com/trisanghy/open-iptv-pro/zip/refs/heads/$REF" -o "$ZIP"
+  "https://codeload.github.com/trisanghy/open-iptv-pro/zip/refs/heads/${REF}" -o "$ZIP"
 unzip -q "$ZIP" -d "$TMP/src"
 ROOT="$(find "$TMP/src" -mindepth 1 -maxdepth 1 -type d | head -1)"
 [ -n "$ROOT" ] && [ -f "$ROOT/package.json" ] || { echo "Mã nguồn tải về không hợp lệ" >&2; exit 1; }
