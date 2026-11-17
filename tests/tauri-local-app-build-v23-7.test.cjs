@@ -32,3 +32,13 @@ test('GitHub release pipeline remains separate: DMG and source ZIP retained',()=
  assert.match(ci,/dist\/SHA256SUMS\.txt/);
  assert.match(ci,/--bundles nsis/);
 });
+
+test('macOS release verification mounts the finished universal DMG, not deleted staging app',()=>{
+ const ci=read('.github/workflows/rust-lab-version-tags.yml');
+ const stage=ci.split('      - name: Verify finished DMG contains Apple Silicon + Intel app and FFmpeg')[1]?.split('      - uses: actions/upload-artifact@v4')[0]||'';
+ assert.match(stage,/hdiutil attach -readonly -nobrowse/);
+ assert.match(stage,/find "\\$mount" -maxdepth 1 -type d -name '\\*\.app'/);
+ assert.match(stage,/lipo "\\$exe" -verify_arch arm64 x86_64/);
+ assert.match(stage,/lipo "\\$resource" -verify_arch arm64 x86_64/);
+ assert.doesNotMatch(stage,/find src-tauri\/target\/universal-apple-darwin\/release\/bundle\/macos/);
+});

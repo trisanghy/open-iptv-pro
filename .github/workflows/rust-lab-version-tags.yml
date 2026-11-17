@@ -99,21 +99,37 @@ jobs:
         run: |
           set -euo pipefail
           npm run build -- --target universal-apple-darwin --bundles dmg --ci --no-sign
-      - name: Verify true universal binaries and stage DMG
+      - name: Verify finished DMG contains Apple Silicon + Intel app and FFmpeg
         shell: bash
         env:
           RELEASE_NO: ${{ needs.tag.outputs.release_number }}
         run: |
           set -euo pipefail
-          app="$(find src-tauri/target/universal-apple-darwin/release/bundle/macos -maxdepth 1 -type d -name '*.app' -print -quit)"
-          test -n "$app"
+          # Tauri 2 deletes the staging .app after producing a DMG. Validate the
+          # finished, read-only disk image instead of the removed staging path.
+          dmg="$(find src-tauri/target/universal-apple-darwin/release/bundle/dmg -maxdepth 1 -type f -name '*.dmg' -print -quit)"
+          test -n "$dmg" && test -s "$dmg"
+          mount="$(mktemp -d "$RUNNER_TEMP/rustlab-dmg.XXXXXX")"
+          attached=0
+          cleanup() {
+            if [[ "$attached" == 1 ]]; then
+              hdiutil detach "$mount" -quiet || true
+            fi
+            rmdir "$mount" 2>/dev/null || true
+          }
+          trap cleanup EXIT
+          hdiutil attach -readonly -nobrowse -quiet -mountpoint "$mount" "$dmg"
+          attached=1
+          app="$(find "$mount" -maxdepth 1 -type d -name '*.app' -print -quit)"
+          test -n "$app" && test -s "$app/Contents/Info.plist"
           exe="$(find "$app/Contents/MacOS" -maxdepth 1 -type f -print -quit)"
+          test -n "$exe" && test -s "$exe"
           lipo "$exe" -verify_arch arm64 x86_64
           resource="$(find "$app/Contents/Resources" -type f -name ffmpeg -print -quit)"
-          test -n "$resource"
+          test -n "$resource" && test -s "$resource"
           lipo "$resource" -verify_arch arm64 x86_64
-          dmg="$(find src-tauri/target/universal-apple-darwin/release/bundle/dmg -maxdepth 1 -type f -name '*.dmg' -print -quit)"
-          test -s "$dmg"
+          hdiutil detach "$mount" -quiet
+          attached=0
           mkdir -p dist
           cp "$dmg" "dist/OpenIPTVPro-RustLab-v${RELEASE_NO}-mac-universal.dmg"
       - uses: actions/upload-artifact@v4
