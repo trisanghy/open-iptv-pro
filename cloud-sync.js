@@ -86,6 +86,7 @@
  async function uploadLocal(force=false){
   if(!uid||busy||!client)return;
   busy=true;clearTimeout(timer);
+  let reschedule=false;
   try{
    const local=core.validate(current()).payload;
    // Always compare revisions in DB; never silently clobber another device.
@@ -112,11 +113,13 @@
    }
    revision=newRev;saveMeta(uid,revision,local);
    localStorage.setItem(ACTIVE,uid);ready=true;
+   dirty=!core.same(current(),local);
+   reschedule=dirty;
    show(choices,false);pendingRemote=null;
    label('Đã đồng bộ lúc '+new Date().toLocaleTimeString('vi-VN'));
   }catch(e){
    report(e,'khi tải dữ liệu lên');dirty=true;
-  }finally{busy=false;syncControls();}
+  }finally{busy=false;syncControls();if(reschedule&&ready)schedule();}
  }
  const schedule=()=>{
   if(!ready||!uid)return;
@@ -210,6 +213,7 @@
  });
  logout.addEventListener('click',async()=>{
   try{
+   if(choices&&!choices.hidden){label('Hãy chọn dữ liệu cần giữ trước khi đăng xuất.');return;}
    clearTimeout(timer);
    if(dirty&&ready){
     await uploadLocal();
