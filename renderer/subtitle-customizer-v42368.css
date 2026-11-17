@@ -1,0 +1,116 @@
+/* Open IPTV Pro Electron 4.23.68 – CC configuration over the video. */
+#page-tv .openiptv-cc-trigger{
+ display:inline-flex!important;align-items:center;gap:5px;
+ min-width:0!important;max-width:150px!important;height:32px!important;
+ padding:4px 10px!important;border:1px solid #9575e6!important;
+ border-radius:9px!important;background:rgba(113,78,197,.20)!important;
+ color:#dcd0ff!important;font-size:12px!important;font-weight:650!important;
+ white-space:nowrap!important;cursor:pointer;
+}
+#page-tv .openiptv-cc-trigger:hover{background:rgba(113,78,197,.38)!important}
+#page-tv .openiptv-cc-panel{
+ position:fixed!important;z-index:2147483200!important;
+ top:clamp(18px,8vh,94px);right:clamp(12px,2vw,42px);
+ width:min(440px,calc(100vw - 24px));max-height:calc(100vh - 36px);
+ overflow:auto;box-sizing:border-box;
+ background:linear-gradient(165deg,rgba(17,28,42,.98),rgba(10,18,28,.98));
+ border:1px solid #976dd7;border-radius:18px;
+ box-shadow:0 23px 85px rgba(0,0,0,.75);
+ padding:16px 18px;color:#f0f2fa;font:13px/1.4 system-ui,-apple-system,sans-serif;
+}
+#page-tv .openiptv-cc-panel[hidden]{display:none!important}
+#page-tv .openiptv-cc-panel header{
+ display:flex;align-items:center;justify-content:space-between;
+ gap:14px;margin-bottom:14px;padding-bottom:10px;
+ border-bottom:1px solid #415267;font-size:15px;
+}
+#page-tv .openiptv-cc-panel header strong{display:flex;align-items:center;gap:9px}
+#page-tv .openiptv-cc-logo{
+ background:linear-gradient(135deg,#915ef5,#6448ce);border-radius:8px;
+ display:inline-flex;justify-content:center;align-items:center;
+ min-width:31px;height:31px;font-size:13px;color:#fff;
+}
+#page-tv .openiptv-cc-panel #subtitleClose{
+ width:32px;height:32px;line-height:25px;border:0;background:transparent;
+ color:#fff;font-size:25px;cursor:pointer;border-radius:7px;
+}
+#page-tv .openiptv-cc-panel .cc-row{
+ display:grid;grid-template-columns:minmax(125px,.85fr) minmax(0,1.7fr);
+ gap:9px;align-items:center;margin:9px 0;min-height:34px;
+}
+#page-tv .openiptv-cc-panel .cc-row>span,
+#page-tv .openiptv-cc-panel .cc-row>label{font-size:12px;font-weight:550;color:#edf0f8}
+#page-tv .openiptv-cc-panel .cc-row>select,
+#page-tv .openiptv-cc-panel .cc-combo select{
+ min-height:34px;min-width:0;width:100%;background:#142231;color:#eef1f8;
+ border:1px solid #53647a;border-radius:9px;padding:6px 10px;font-size:12px;
+}
+#page-tv .openiptv-cc-panel .cc-switch{
+ display:flex;justify-content:space-between;gap:12px;font-size:13px;
+ margin-bottom:15px;cursor:pointer;
+}
+#page-tv .openiptv-cc-panel input[type=checkbox]{accent-color:#9368f4;width:18px;height:18px;cursor:pointer}
+#page-tv .openiptv-cc-panel .cc-switch input{
+ appearance:none;width:46px;height:26px;border-radius:20px;
+ background:#38495f;border:1px solid #6c7699;position:relative;flex:none;
+}
+#page-tv .openiptv-cc-panel .cc-switch input:checked{background:#815be7}
+#page-tv .openiptv-cc-panel .cc-switch input::after{
+ content:"";position:absolute;top:3px;left:3px;background:white;
+ width:18px;height:18px;border-radius:50%;box-shadow:0 1px 4px #0005;
+ transition:transform .12s ease;
+}
+#page-tv .openiptv-cc-panel .cc-switch input:checked::after{transform:translateX(19px)}
+#page-tv .openiptv-cc-panel .cc-segments{
+ display:flex;border:1px solid #53647a;border-radius:9px;overflow:hidden;
+ min-width:0;min-height:35px;background:#0b1828;
+}
+#page-tv .openiptv-cc-panel .cc-segments button{
+ flex:1 1 0;min-width:0;border:0;border-right:1px solid #53647a;
+ border-radius:0;background:transparent;color:#dbe4f3;cursor:pointer;
+ padding:4px 5px;font-size:11px;font-weight:600;line-height:1.25;
+}
+#page-tv .openiptv-cc-panel .cc-segments button:last-child{border-right:0}
+#page-tv .openiptv-cc-panel .cc-segments button[aria-pressed=true]{
+ background:#8256e3;color:white;box-shadow:inset 0 0 0 1px #b394fd;
+}
+#page-tv .openiptv-cc-panel .cc-position button{font-size:24px}
+#page-tv .openiptv-cc-panel .cc-sizes button{
+ display:flex;flex-direction:column;align-items:center;justify-content:center;
+ gap:3px;font-size:18px;min-height:46px;
+}
+#page-tv .openiptv-cc-panel .cc-sizes button:first-child{font-size:15px}
+#page-tv .openiptv-cc-panel .cc-sizes button:nth-child(3){font-size:21px}
+#page-tv .openiptv-cc-panel .cc-sizes button:last-child{font-size:24px}
+#page-tv .openiptv-cc-panel .cc-sizes button small{font-size:10px;white-space:nowrap}
+#page-tv .openiptv-cc-panel .cc-colors{
+ display:flex;align-items:center;flex-wrap:wrap;gap:8px;
+}
+#page-tv .openiptv-cc-panel [data-subtitle-color]{
+ border:1px solid #8793a5;width:23px;height:23px;min-width:23px;
+ border-radius:50%;background:var(--swatch);padding:0;cursor:pointer;
+}
+#page-tv .openiptv-cc-panel [data-subtitle-color][aria-pressed=true]{
+ outline:2px solid #b98efa;outline-offset:3px;
+}
+#page-tv .openiptv-cc-panel .cc-picker{
+ display:inline-flex;align-items:center;position:relative;
+ width:24px;height:24px;font-size:20px;cursor:pointer;
+}
+#page-tv .openiptv-cc-panel .cc-picker input{
+ position:absolute;inset:0;opacity:0;width:24px;height:24px;cursor:pointer;
+}
+#page-tv .openiptv-cc-panel .cc-combo{display:flex;align-items:center;gap:10px;min-width:0}
+#page-tv .openiptv-cc-panel .cc-combo select{flex:1}
+#page-tv .openiptv-cc-panel .cc-combo input[type=range]{
+ min-width:0;flex:1;accent-color:#8b65f3;
+}
+#page-tv .openiptv-cc-panel .cc-combo output{flex:0 0 43px;text-align:right}
+#page-tv .openiptv-cc-panel .cc-note{
+ display:block;margin-top:15px;color:#9dadc1;line-height:1.5;font-size:11px;
+}
+@media(max-width:600px){
+ #page-tv .openiptv-cc-panel{top:10px;right:10px;width:calc(100vw - 20px);padding:12px}
+ #page-tv .openiptv-cc-panel .cc-row{grid-template-columns:minmax(90px,.7fr) minmax(0,1.7fr)}
+ #page-tv .openiptv-cc-panel .cc-segments button{font-size:10px;padding:4px 2px}
+}
