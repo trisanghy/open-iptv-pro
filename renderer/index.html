@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="vi"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
 <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: blob:; script-src 'self' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; img-src * data: blob: file:; connect-src * data: blob:; media-src * data: blob:; worker-src 'self' blob:;"/>
-<title>Open IPTV Pro 4.23.39</title><script src="theme-boot.js"></script><link rel="stylesheet" href="styles.css"/><link rel="stylesheet" href="ui-styles.css"/><link rel="stylesheet" href="ui-fullsync.css"/><link rel="stylesheet" href="ui-refined.css"/><link rel="stylesheet" href="ui-polish.css"/><link rel="stylesheet" href="player-ux.css"/><link rel="stylesheet" href="settings-v42317.css"/><link rel="stylesheet" href="sidebar-link-picker-v42329.css"/><link rel="stylesheet" href="video-layout-fix-v42330.css"/><link rel="stylesheet" href="channel-panel-compact-v42333.css"/><link rel="stylesheet" href="sidebar-channel-align-v42334.css"/><link rel="stylesheet" href="player-two-row-v42335.css"/><link rel="stylesheet" href="config-dropdown-v42336.css"/><link rel="stylesheet" href="video-source-aspect-v42338.css"/></head>
+<title>Open IPTV Pro 4.23.60</title><script src="theme-boot.js"></script><link rel="stylesheet" href="styles.css"/><link rel="stylesheet" href="ui-styles.css"/><link rel="stylesheet" href="ui-fullsync.css"/><link rel="stylesheet" href="ui-refined.css"/><link rel="stylesheet" href="ui-polish.css"/><link rel="stylesheet" href="player-ux.css"/><link rel="stylesheet" href="settings-v42317.css"/><link rel="stylesheet" href="sidebar-link-picker-v42329.css"/><link rel="stylesheet" href="video-layout-fix-v42330.css"/><link rel="stylesheet" href="channel-panel-compact-v42333.css"/><link rel="stylesheet" href="sidebar-channel-align-v42334.css"/><link rel="stylesheet" href="player-two-row-v42335.css"/><link rel="stylesheet" href="config-dropdown-v42336.css"/><link rel="stylesheet" href="video-source-aspect-v42338.css"/><link rel="stylesheet" href="player-classic-controls-v42340.css"/><link rel="stylesheet" href="player-toolbar-v42341.css"/><link rel="stylesheet" href="player-compact-cast-v42342.css"/><link rel="stylesheet" href="live-caption-row-v42343.css"/><link rel="stylesheet" href="local-tts-row-v42344.css"/><link rel="stylesheet" href="whisper-auto-v42345.css"/><link rel="stylesheet" href="live-caption-lang-v42346.css"/><link rel="stylesheet" href="unified-ai-settings-v42356.css"/><link rel="stylesheet" href="video-only-translated-caption-v42358.css"/></head>
 <body>
 <div class="app-shell" id="appShell">
  <aside class="sidebar" id="appSidebar">
-  <div class="brand"><div class="brand-icon"><img src="../assets/icon.png" alt="Open IPTV Pro"/></div><div><b>Open IPTV Pro</b><small>OPEN SOURCE <span class="version">4.23.39</span></small></div></div>
+  <div class="brand"><div class="brand-icon"><img src="../assets/icon.png" alt="Open IPTV Pro"/></div><div><b>Open IPTV Pro</b><small>OPEN SOURCE <span class="version">4.23.60</span></small></div></div>
   <button type="button" class="sidebar-edge-toggle" id="sidebarToggleBtn" aria-label="Thu gọn thanh bên" aria-expanded="true" aria-controls="appSidebar" title="Thu gọn sidebar">☰</button>
   <div class="aside-caption">THƯ VIỆN</div>
   <button class="nav active" data-page="tv"><span>▣</span> Xem truyền hình <small id="navCount">0</small></button>
@@ -69,8 +69,9 @@
          <button class="control-sm" id="stopBtn" title="Dừng" aria-label="Dừng phát">■</button>
          <button class="control-sm" id="nextBtn" title="Kênh sau" aria-label="Kênh sau">⏭</button>
         </div>
-        <div class="volume-controls" role="group" aria-label="Âm lượng phát"><label for="volume" class="volume-icon" title="Âm lượng">◖))</label><input type="range" min="0" max="100" value="80" id="volume" title="Âm lượng" aria-label="Âm lượng"/></div><div class="output-controls" role="group" aria-label="Thiết bị và toàn màn hình">
+        <div class="volume-controls" role="group" aria-label="Âm lượng phát"><label for="volume" class="volume-icon" title="Âm lượng">◖))</label><input type="range" min="0" max="100" value="80" id="volume" title="Âm lượng" aria-label="Âm lượng"/></div><div class="output-controls" role="group" aria-label="Cast / AirPlay, PiP và toàn màn hình">
          <button class="control-sm" id="castBtn" title="Cast / AirPlay lên TV">▣ Cast / AirPlay</button>
+         
          <button class="control-sm" id="pipBtn" title="Cửa sổ nổi Picture-in-Picture">▣ PiP</button>
          <button class="control-sm" id="fullscreenBtn" title="Toàn màn hình">⛶</button>
         </div>
@@ -82,18 +83,115 @@
          <span id="epgNowText" class="screen-reader-only" aria-live="polite">Chọn kênh để xem chương trình hiện tại</span>
          <button type="button" id="openGuideBtn" title="Xem toàn bộ lịch phát sóng EPG" aria-label="Xem lịch phát sóng EPG">▤</button>
         </div>
-        <label class="view-mode" title="Chế độ hiển thị video"><span>Khung hình</span><select id="videoFit" aria-label="Chế độ hiển thị video"><option value="contain">Vừa khung</option><option value="cover">Lấp đầy (cắt cạnh)</option><option value="fill">Kéo giãn</option><option value="none">Kích thước gốc</option></select></label>
+        <label class="view-mode" title="Chế độ hiển thị video"><select id="videoFit" aria-label="Chế độ hiển thị video"><option value="contain">Vừa khung</option><option value="cover">Lấp đầy (cắt cạnh)</option><option value="fill">Kéo giãn</option><option value="none">Kích thước gốc</option></select></label>
         <div class="manual-link-picker"><label for="manualStreamSelect">Link phát</label><select id="manualStreamSelect" aria-label="Chọn thủ công link phát chính hoặc dự phòng" title="Chọn link phát cho kênh đang xem" disabled><option value="">Chưa chọn kênh</option></select></div>
         <button class="icon-btn favorite-current" id="favCurrentBtn" title="Yêu thích" aria-label="Đánh dấu kênh yêu thích">☆</button>
        </div>
-       <details class="playback-extra" id="playbackExtra">
+       <div class="caption-third-row" id="captionThirdRow">
+ <div class="caption-third-controls" role="group" aria-label="Phụ đề và dịch trực tiếp">
+ <label title="Nhận diện tiếng nói từ luồng IPTV trên máy"><input type="checkbox" id="liveCaptionToggle"/>Live Caption</label>
+ <label title="Nhận diện rồi dịch sang ngôn ngữ đã chọn (offline)"><input type="checkbox" id="liveTranslateToggle"/>Live Translate</label>
+ <select id="liveTranslateTarget" aria-label="Ngôn ngữ dịch phụ đề"><option value="vi" selected>Tiếng Việt</option><option value="en">English</option><option value="fr">Français</option><option value="es">Español</option><option value="de">Deutsch</option><option value="zh">中文</option><option value="ja">日本語</option><option value="ko">한국어</option><option value="pt">Português</option><option value="it">Italiano</option><option value="ru">Русский</option><option value="id">Indonesia</option><option value="ar">العربية</option><option value="hi">हिन्दी</option><option value="th">ไทย</option></select>
+ <button type="button" id="liveCaptionSetup" aria-expanded="false" aria-controls="liveCaptionSetupPanel" title="Cài đặt chung: Live Caption, Live Translate, TTS và AI đã tải">⚙</button>
+ <small id="liveCaptionStatus" role="status" aria-live="polite">Đang kiểm tra Whisper…</small>
+ <button type="button" id="captionRetry" hidden title="Thử bật lại Live Caption/Translate">↻ Thử lại</button>
+<label class="tts-mode" title="Đọc lời dịch bằng Piper chạy trên máy">
+ <input type="checkbox" id="liveTtsToggle"/>🔊 Giọng dịch TTS
+</label>
+<select id="liveTtsLanguage" aria-label="Ngôn ngữ giọng đọc">
+ <option value="vi">Tiếng Việt</option>
+ <option value="en">English</option>
+ <option value="es">Español</option>
+ <option value="fr">Français</option>
+ <option value="de">Deutsch</option>
+ <option value="zh">中文</option>
+ <option value="pt">Português</option>
+ <option value="it">Italiano</option>
+ <option value="ru">Русский</option>
+ <option value="id">Indonesia</option>
+</select>
+<label class="tts-duck-label" for="liveTtsVoice">Giọng đọc</label>
+<select id="liveTtsVoice" aria-label="Chọn giọng đọc Piper theo ngôn ngữ"></select>
+<label class="tts-duck-label" for="liveTtsSpeed" title="Tốc độ đọc TTS, không thay đổi tốc độ kênh IPTV">Tốc độ</label>
+<select id="liveTtsSpeed" aria-label="Tốc độ đọc giọng dịch TTS" title="Áp dụng khi đọc phụ đề và nghe thử giọng">
+ <option value="0.60">0.6×</option>
+ <option value="0.75">0.75×</option>
+ <option value="0.85">0.85×</option>
+ <option value="1.00" selected>1×</option>
+ <option value="1.10">1.1×</option>
+ <option value="1.25">1.25×</option>
+ <option value="1.50">1.5×</option>
+ <option value="1.75">1.75×</option>
+ <option value="2.00">2×</option>
+</select>
+<label class="tts-duck-label" for="liveTtsDuck" title="Âm lượng gốc khi giọng dịch phát">Tiếng gốc</label>
+<select id="liveTtsDuck" aria-label="Âm lượng tiếng gốc trong khi TTS phát">
+ <option value="0">Tắt gốc</option>
+ <option value="15">15%</option>
+ <option value="25" selected>25%</option>
+ <option value="50">50%</option>
+ <option value="75">75%</option>
+ <option value="100">100%</option>
+</select>
+
+
+<small id="liveTtsStatus" role="status" aria-live="polite">Kiểm tra TTS…</small>
+<small id="aiHeatWarningInline" role="alert" hidden></small>
+ </div>
+<details class="playback-extra" id="playbackExtra">
         <summary title="Chụp ảnh và FFmpeg dự phòng">Chụp ảnh · FFmpeg <span aria-hidden="true">⌄</span></summary>
         <div class="playback-extra-inner">
+         
          
          <button class="control-sm" id="shotBtn" title="Chụp ảnh kênh">▣ Chụp ảnh</button>
          <button type="button" class="control-sm player-ffmpeg-btn" id="tryFfmpegBtn" title="Thử trình phát dự phòng FFmpeg nếu không có hình">↻ FFmpeg</button>
         </div>
        </details>
+<div class="caption-third-setup" id="liveCaptionSetupPanel" hidden>
+ <button type="button" id="captionAutoInstall" title="Tự tải công cụ Whisper và mô hình tiếng Việt/đa ngôn ngữ">Cài Whisper tự động</button>
+ <button type="button" id="captionChooseBinary">Chọn whisper-cli</button>
+ <button type="button" id="captionChooseModel">Chọn mô hình GGML (.bin)</button>
+<button type="button" id="captionTestTranslate" title="Kiểm tra dịch câu mẫu English → ngôn ngữ đã chọn">Kiểm tra dịch mẫu</button>
+ <small>Whisper dùng để nhận diện tiếng nói trên máy; chọn bộ dịch offline và giọng TTS ngay tại đây.</small>
+<div class="ai-settings-section" role="group" aria-label="Bộ dịch AI trên máy">
+ <h4>Live Translate · Bộ dịch offline</h4>
+ <label for="aiTranslationEngine">Bộ dịch mặc định</label>
+ <select id="aiTranslationEngine" aria-label="Chọn bộ dịch AI">
+  <option value="auto">Tự động · dùng mô hình đã cài</option>
+  <option value="argos">Argos · nhẹ, tiết kiệm</option>
+  <option value="hymt18">Hy-MT2 1.8B · nhanh (Mac Apple Silicon)</option>
+  <option value="hymt7">Hy-MT2 7B · chất lượng cao (Mac Apple Silicon)</option>
+<option value="hymt18q8">Hy-MT2 1.8B · 8-bit (~1.9 GB)</option>
+<option value="hymt7q8">Hy-MT2 7B · 8-bit (~8 GB, cần RAM lớn)</option>
+<option value="qwen06">Qwen3 0.6B · siêu nhẹ (~350 MB)</option>
+<option value="qwen17">Qwen3 1.7B · cân bằng (~1 GB)</option>
+<option value="qwen4">Qwen3 4B · đa năng (~2.3 GB)</option>
+<option value="qwen8">Qwen3 8B · nâng cao (~4.6 GB, cần RAM lớn)</option>
+ </select>
+ <label for="aiResourceMode">Ưu tiên tài nguyên khi chọn Tự động</label>
+ <select id="aiResourceMode" aria-label="Ưu tiên tài nguyên AI">
+  <option value="balanced">Cân bằng · Hy-MT2 1.8B nếu đã tải</option>
+  <option value="saver">Tiết kiệm RAM/pin · Argos</option>
+  <option value="quality">Chất lượng · 7B nếu đã tải</option>
+ </select>
+ <small>Mô hình Hy-MT2 và Qwen3 tải riêng khi bấm “Tải mô hình”, không tự tải vài GB khi mở ứng dụng; mọi bản dịch chạy offline sau khi cài.</small>
+</div>
+<div class="ai-settings-section" role="group" aria-label="Giọng đọc TTS">
+ <h4>TTS · Giọng đọc và thử giọng</h4>
+ <div class="ai-settings-actions"><button type="button" id="liveTtsInstall" title="Tự cài Piper, Argos và giọng đọc; tải một lần cần kết nối Internet">Cài mô hình tự động</button><button type="button" id="liveTtsPreview" title="Nghe thử giọng trên máy, không cần bật kênh IPTV">Nghe thử</button></div>
+ <small>Chọn Piper hoặc VieNeu ở hàng giọng đọc phía ngoài; tốc độ và mức tiếng gốc vẫn chỉnh được trực tiếp.</small>
+</div>
+<div class="ai-settings-section" role="group" aria-label="Quản lý dung lượng AI">
+ <h4>Bộ nhớ AI đã tải</h4>
+ <small id="aiStorageTotal" aria-live="polite">Đang kiểm tra dung lượng AI…</small>
+ <div id="aiModelList" class="ai-model-list" aria-label="Các mô hình AI và chức năng xóa"></div>
+ <small>Xóa mô hình chỉ ảnh hưởng các file AI trong thư mục dữ liệu ứng dụng; không xóa kênh, EPG, yêu thích hay mô hình ngoài ứng dụng.</small>
+</div>
+<p id="aiHeatWarning" role="alert" class="ai-heat-warning" hidden></p>
+<small id="aiSettingsStatus" role="status" aria-live="polite"></small>
+</div>
+</div>
+<div id="liveCaptionOutput" class="caption-third-output" role="status" aria-live="polite" hidden></div>
        <div class="video-seekbar" id="videoSeekWrap" hidden>
         <span id="videoElapsed">00:00</span><input type="range" id="videoSeek" min="0" max="1000" value="0" aria-label="Tua / chọn phân đoạn"/>
         <span id="videoDuration">00:00</span><span class="video-seek-hint" id="videoSeekHint">Video có thể tua</span>
@@ -377,4 +475,4 @@
 <div id="channelPreview" class="channel-preview hidden"></div>
 <div class="toast-area" id="toastArea" aria-live="polite"></div>
 <script src="app-icons.js"></script><script src="../node_modules/hls.js/dist/hls.min.js"></script><script src="../node_modules/dashjs/dist/modern/umd/dash.all.min.js"></script><script src="languages.bundle.js"></script><script src="i18n.js"></script><script src="core-browser.js"></script><script src="collector-core.js"></script><script src="advanced-core.js"></script><script src="doctor-v2-core.js"></script><script src="doctor-v3-core.js"></script><script src="epg.js"></script><script src="favorites-core.js"></script><script src="source-edit.js"></script><script src="channel-order.js"></script><script src="startup-policy.js"></script><script src="playback-route-policy.js"></script><script src="playback-preference.js"></script><script src="manual-stream-selection.js"></script><script src="app.js"></script><script src="cast-ui.js"></script><script src="features.js"></script><script src="advanced.js"></script><script src="collector.js"></script><script src="doctor-v2.js"></script><script src="smart-discovery-ui.js"></script><script src="doctor-v3.js"></script><script src="backup-ui.js"></script><script src="dvr-ui.js"></script><script src="settings-ui.js"></script><script src="ui-style.js"></script><script src="theme-stage.js"></script><script src="player-ux.js"></script><script src="sidebar-channel-align-v42334.js"></script><script src="video-source-aspect-v42338.js"></script>
-</body></html>
+<script src="video-only-translated-caption-v42358.js"></script><script src="live-captions-v42343.js"></script><script src="tts-utterance-queue-v42359.js"></script><script src="local-tts-v42344.js"></script><script src="whisper-auto-v42345.js"></script><script src="unified-ai-settings-v42356.js"></script></body></html>

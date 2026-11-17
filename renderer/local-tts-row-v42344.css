@@ -1,0 +1,71 @@
+/* v4.23.44: TTS on row 3; previous player rows remain unchanged. */
+#page-tv .player-control-card .caption-third-controls{
+ display:flex!important;align-items:center!important;gap:7px!important;
+ flex-wrap:wrap!important;flex:1 1 440px!important;
+}
+#page-tv .player-control-card .caption-third-controls .tts-mode{
+ display:inline-flex!important;align-items:center!important;gap:4px!important;
+ font-size:11px!important;font-weight:650!important;white-space:nowrap!important;
+}
+#page-tv .player-control-card #liveTtsLanguage{
+ width:112px!important;max-width:112px!important;min-width:96px!important;
+ padding:3px 21px 3px 7px!important;min-height:29px!important;height:29px!important;
+ font-size:11px!important;
+}
+#page-tv .player-control-card #liveTtsDuck{
+ width:85px!important;max-width:85px!important;min-width:68px!important;
+ padding:3px 19px 3px 7px!important;min-height:29px!important;height:29px!important;
+ font-size:11px!important;
+}
+#page-tv .player-control-card #liveTtsInstall{
+ flex:0 0 auto!important;height:29px!important;min-height:29px!important;
+ padding:4px 9px!important;font-size:11px!important;
+ background:var(--surface2,#1a2835)!important;
+ border:1px solid var(--edge,#344450)!important;border-radius:8px!important;
+}
+#page-tv .player-control-card #liveTtsStatus{
+ min-width:0!important;max-width:250px!important;flex:0 1 160px!important;
+ overflow:hidden!important;white-space:nowrap!important;text-overflow:ellipsis!important;
+ font-size:10px!important;color:var(--muted,#92a4b3)!important;
+}
+#page-tv .player-control-card .tts-duck-label{
+ display:inline-flex!important;align-items:center!important;gap:4px!important;
+ font-size:10px!important;white-space:nowrap!important;
+}
+@container (max-width:920px){
+ #page-tv .player-control-card .caption-third-controls{flex:1 1 100%!important;}
+ #page-tv .player-control-card #liveTtsStatus{max-width:130px!important;}
+}
+@container (max-width:680px){
+ #page-tv .player-control-card #liveTtsStatus{flex:1 1 100%!important;max-width:100%!important;}
+}
+
+/* v4.23.48 additional TTS voice picker */
+#page-tv .player-control-card #liveTtsVoice {
+ flex:0 1 180px!important;min-width:132px!important;max-width:200px!important;
+ height:29px!important;min-height:29px!important;padding:3px 21px 3px 7px!important;
+ font-size:11px!important;border-radius:8px!important;
+}
+@media (max-width:850px){
+ #page-tv .player-control-card #liveTtsVoice{flex:1 1 150px!important;max-width:100%!important;}
+}
+
+/* v4.23.49 · responsive premium voice picker, actionable TTS errors */
+#page-tv .player-control-card #liveTtsVoice { max-width:270px!important;min-width:175px!important; }
+#page-tv .player-control-card #liveTtsPreview {
+ min-height:29px!important;padding:4px 9px!important;border-radius:8px!important;
+ background:var(--surface2,#1a2835)!important;border:1px solid var(--edge,#344450)!important;
+ color:var(--fg,#eff4f9)!important;font-size:11px!important;
+}
+#page-tv .player-control-card #liveTtsStatus[data-error="true"]{color:#ff887f!important;}
+
+/* v4.23.52: pitch-preserving TTS speed picker in the existing wrapped third row */
+#page-tv .player-control-card #liveTtsSpeed {
+ flex:0 0 82px!important; width:82px!important; min-width:76px!important;max-width:90px!important;
+ min-height:29px!important;height:29px!important;padding:3px 19px 3px 7px!important;
+ border-radius:8px!important;font-size:11px!important;
+}
+#page-tv .player-control-card .caption-third-controls{flex-wrap:wrap!important;}
+@container (max-width:750px){
+ #page-tv .player-control-card #liveTtsSpeed{flex:0 0 76px!important;width:76px!important;}
+}

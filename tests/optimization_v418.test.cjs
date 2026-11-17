@@ -28,7 +28,7 @@ test('v4.22.1 Full: FFmpeg packaged and full desktop capabilities retained',()=>
  assert.equal(pkg.dependencies['ffmpeg-static'],'5.3.0');
  assert.ok(pkg.build.asarUnpack.includes('node_modules/ffmpeg-static/**'));
  assert.ok(pkg.build.files.includes('node_modules/**/*'));
- assert.equal(pkg.build.mac.target.includes('zip'),true);
+ assert.equal(pkg.build.mac.target.includes('zip'),false);
  assert.equal(pkg.build.mac.target.includes('dmg'),true);
  assert.equal(pkg.build.win.target.some(x=>x.target==='nsis'),true);
  assert.equal(pkg.build.win.target.some(x=>x.target==='portable'),true);

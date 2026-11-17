@@ -97,6 +97,7 @@ npm test
 
 printf '\n[4/4] Dang tao bo cai Mac (.dmg / .app) ...\n'
 if [ -z "${CSC_LINK:-}" ]; then export CSC_IDENTITY_AUTO_DISCOVERY=false; fi
+BUILD_ARCH="${OPENIPTV_BUILD_ARCH:-$BUILD_ARCH}"
 npx --no-install electron-builder --mac --"$BUILD_ARCH" --publish never
 
 # Do not report success unless both installer formats for this architecture exist.

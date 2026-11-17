@@ -25,9 +25,17 @@ const {createRecordingScheduler}=require('./recording-scheduler.cjs');
 const {CastService}=require('./cast-service.cjs');
 const {discoverAirplay}=require('./airplay-discovery.cjs');
 const backupService=require('./backup-service.cjs');
+const {createLiveCaptionService}=require('./live-caption-service.cjs');
+const {createHyMTService}=require('./hymt-service.cjs');
+const {createLocalModelStorage}=require('./local-ai-storage.cjs');
+let localHyMT=null,localAIStorage=null;
+const {createLocalSpeechService}=require('./local-tts-service.cjs');
+const {createAutoModelInstaller}=require('./local-ai-autoinstall.cjs');
+const {createCaptionTranslator,isValidTarget}=require('./caption-translator.cjs');
+const {createWhisperAutoInstaller}=require('./whisper-autoinstall.cjs');
 const secret=randomBytes(20).toString('hex');
 let webWindow, server, port, timeshift, playbackFallback, updates, dvr;
-let pendingBackup=null, pendingRestore=null;
+let pendingBackup=null, pendingRestore=null, liveCaptionService=null, localTTS=null, localModelInstaller=null, whisperModelInstaller=null, captionTranslator=null;
 const castService=new CastService();
 const mediaKindCache=new Map();
 // Chromium uses the operating system proxy/DNS/TLS configuration. Node fetch
@@ -151,6 +159,68 @@ async function makeSnapshot(url,label){
  });
 }
 function setupIPC(){
+  liveCaptionService=createLiveCaptionService({dataDir:app.getPath('userData'),getFFmpeg:ffmpegPath,notify:data=>{if(webWindow&&!webWindow.isDestroyed())webWindow.webContents.send('caption:event',data);},translateText:(text,target,source,options)=>{const engine=resolveAIEngine(options?.engine,options?.resourceMode);return engine==='argos'?captionTranslator.translateText(text,target,source,options):localHyMT.translate(text,target,source,engine);}});
+  localModelInstaller=createAutoModelInstaller({dataDir:app.getPath('userData'),notify:data=>{if(webWindow&&!webWindow.isDestroyed())webWindow.webContents.send('tts:event',data);}});
+  localHyMT=createHyMTService({dataDir:app.getPath('userData'),installer:localModelInstaller,notify:data=>{if(webWindow&&!webWindow.isDestroyed())webWindow.webContents.send('ai:event',data);}});
+  localAIStorage=createLocalModelStorage({dataDir:app.getPath('userData'),onBeforeDelete:async id=>{
+   if(localModelInstaller?.state('vi')?.installing)throw Error('Đang cài mô hình AI; không thể xóa lúc này');
+   if(Object.hasOwn(localHyMT.MODELS,id)&&localHyMT?.state(id)?.installing)throw Error('Mô hình đang tải, không thể xóa');
+   try{await liveCaptionService?.stop();}catch{}
+   try{await localTTS?.stop();}catch{}try{await localTTS?.shutdown?.();}catch{}
+   try{await localHyMT?.stop();}catch{}
+  }});
+  captionTranslator=createCaptionTranslator({installer:localModelInstaller});
+  localTTS=createLocalSpeechService({dataDir:app.getPath('userData'),managed:localModelInstaller.paths(),translateText:(text,target,source)=>captionTranslator.translateText(text,target,source),notify:data=>{if(webWindow&&!webWindow.isDestroyed())webWindow.webContents.send('tts:event',data);}});
+  ipcMain.handle('tts:status',(_e,lang,voice)=>({...localTTS.availability(lang,voice),install:localModelInstaller.state(lang,voice)}));
+  ipcMain.handle('tts:install',(_e,lang,voice)=>localModelInstaller.install(lang,voice));
+  ipcMain.handle('tts:synthesize',(_e,params)=>localTTS.synthesize(params));
+  ipcMain.handle('tts:stop',()=>localTTS.stop());
+  whisperModelInstaller=createWhisperAutoInstaller({dataDir:app.getPath('userData'),notify:event=>{if(webWindow&&!webWindow.isDestroyed())webWindow.webContents.send('caption:event',event);}});
+  ipcMain.handle('caption:install',async()=>{
+    const result=await whisperModelInstaller.install();
+    liveCaptionService.setFile('binary',result.binary);
+    liveCaptionService.setFile('model',result.model);
+    return {...result,caption:liveCaptionService.status()};
+  });
+  ipcMain.handle('caption:testTranslation',async(_e,target)=>{
+   if(!isValidTarget(target))throw Error('Ngôn ngữ dịch thử không hợp lệ');
+   const translatedText=await captionTranslator.translateEnglish('Good morning, how are you today?',target);
+   return {target,translatedText};
+  });
+  ipcMain.handle('caption:languageStatus',(_e,target)=>captionTranslator.status(target));
+  ipcMain.handle('caption:installLanguage',(_e,target)=>captionTranslator.install(target));
+  const resolveAIEngine=(choice,mode)=>{
+   const engine=choice==='auto'||choice==='argos'||Object.hasOwn(localHyMT.MODELS,choice)?choice:'auto';
+   const profile=['balanced','saver','quality'].includes(mode)?mode:'balanced';
+   if(engine!=='auto')return engine;
+   if(profile==='saver'||process.platform!=='darwin'||process.arch!=='arm64')return 'argos';
+   if(profile==='quality')for(const key of ['hymt7q8','hymt7','qwen8','qwen4','hymt18q8'])if(localHyMT.state(key).installed)return key;
+   for(const key of ['hymt18','hymt18q8','qwen17','qwen06','qwen4'])if(localHyMT.state(key).installed)return key;
+   return 'argos';
+  };
+  ipcMain.handle('ai:modelStatus',()=>({supported:process.platform==='darwin'&&process.arch==='arm64',
+   storage:localAIStorage.inspect(),models:Object.fromEntries(Object.keys(localHyMT.MODELS).map(k=>[k,localHyMT.state(k)])),hyMT:{hymt18:localHyMT.state('hymt18'),hymt7:localHyMT.state('hymt7')}}));
+  ipcMain.handle('ai:install',(_e,key)=>{if(!Object.hasOwn(localHyMT.MODELS,key))throw Error('Invalid AI model');return localHyMT.install(key);});
+  ipcMain.handle('ai:delete',(_e,id)=>localAIStorage.remove(id));
+  ipcMain.handle('ai:testTranslation',async(_e,target,choice,mode)=>{
+   if(!isValidTarget(target))throw Error('Invalid translation target');
+   const engine=resolveAIEngine(choice,mode);
+   const source='en',text='Good morning, how are you today?';
+   return {target,engine,translatedText:target==='en'?text:
+     engine==='argos'?await captionTranslator.translateText(text,target,source):
+     await localHyMT.translate(text,target,source,engine)};
+  });
+  ipcMain.handle('caption:status',()=>liveCaptionService.status());
+  ipcMain.handle('caption:start',(_e,options)=>{if(options?.translate===true&&!isValidTarget(options?.target||'en'))throw Error('Ngôn ngữ đích không hợp lệ');return liveCaptionService.start(options);});
+  ipcMain.handle('caption:stop',()=>liveCaptionService.stop());
+  ipcMain.handle('caption:chooseFile',async(_e,kind)=>{
+    if(!['binary','model'].includes(kind))throw Error('Invalid caption setting');
+    const options={title:kind==='binary'?'Chọn whisper-cli':'Chọn mô hình Whisper GGML',properties:['openFile']};
+    if(kind==='model')options.filters=[{name:'Whisper GGML',extensions:['bin']}];
+    const out=await dialog.showOpenDialog(webWindow,options);
+    if(out.canceled||!out.filePaths?.[0])return {canceled:true};
+    return {canceled:false,...liveCaptionService.setFile(kind,out.filePaths[0])};
+  });
  ipcMain.handle('cast:discover',async()=>castService.discover());
  ipcMain.handle('airplay:discover',async()=>discoverAirplay());
  ipcMain.handle('cast:play',async(_e,deviceId,url,title)=>castService.play(deviceId,url,title));
@@ -298,4 +368,4 @@ app.whenReady().then(async()=>{
  setupIPC();createWindow();app.on('activate',()=>{if(BrowserWindow.getAllWindows().length===0)createWindow();});}).catch(e=>{dialog.showErrorBox('Open IPTV Pro lỗi khởi chạy',String(e.stack||e));app.quit();});
 // Closing the red macOS window button also quits instead of leaving an invisible app.
 app.on('window-all-closed',()=>app.quit());
-app.on('before-quit',()=>{try{dvr?.shutdown();}catch(e){console.warn('DVR shutdown',e);}castService.stop().catch(()=>{});try{timeshift?.stop();}catch{}try{playbackFallback?.stop();}catch{}try{server.close();}catch{}});
+app.on('before-quit',()=>{try{localHyMT?.stop();}catch{}try{localTTS?.stop();}catch{}try{localTTS?.shutdown?.();}catch{}try{localModelInstaller?.cancel();}catch{}try{whisperModelInstaller?.cancel();}catch{}try{liveCaptionService?.stop();}catch{}try{dvr?.shutdown();}catch(e){console.warn('DVR shutdown',e);}castService.stop().catch(()=>{});try{timeshift?.stop();}catch{}try{playbackFallback?.stop();}catch{}try{server.close();}catch{}});
