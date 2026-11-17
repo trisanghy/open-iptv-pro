@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro-tauri-experiment",
   "private": true,
-  "version": "4.23.17-tauri.23.6",
-  "description": "Rust Lab v23.6: source-aware direct Argos translation with no-op same-language TTS, persistent audio ducking and repeated-caption suppression; 25 VieNeu Vietnamese natural voices, 3 Piper voices, one-click offline install and previews; Electron v4.23.45 offline Live Caption, English translation, Piper/Argos voice-over, SHA-256 verified one-click local model installs",
+  "version": "4.23.17-tauri.23.7",
+  "description": "Rust Lab v23.7: source-aware direct Argos translation with no-op same-language TTS, persistent audio ducking and repeated-caption suppression; 25 VieNeu Vietnamese natural voices, 3 Piper voices, one-click offline install and previews; Electron v4.23.45 offline Live Caption, English translation, Piper/Argos voice-over, SHA-256 verified one-click local model installs",
   "license": "MIT",
   "scripts": {
     "dev": "tauri dev",
@@ -17,7 +17,7 @@
     "prebuild": "node scripts/prepare-renderer.cjs",
     "prepare:renderer": "node scripts/prepare-renderer.cjs",
     "test:legacy": "node --test tests/*.test.cjs",
-    "test:quick": "node --test tests/tauri-control-bar-rollback-v19.test.cjs tests/tauri-playback-reentry-v7.test.cjs tests/tauri-link-dropdown-v13.test.cjs tests/tauri-channel-panel-v11.test.cjs tests/tauri-video-source-aspect-v17.test.cjs tests/tauri-reopen-tab-v18.test.cjs tests/tauri-player-layout-v19-1.test.cjs tests/tauri-local-ai-v20.test.cjs tests/tauri-multilingual-v21.test.cjs tests/tauri-voices-v22.test.cjs tests/tauri-tts-duck-dedup-v22-1.test.cjs tests/tauri-direct-translation-v23.test.cjs tests/tauri-electron-parity-v23-4.test.cjs tests/tauri-translate-reliability-v23-6.test.cjs"
+    "test:quick": "node --test tests/tauri-control-bar-rollback-v19.test.cjs tests/tauri-playback-reentry-v7.test.cjs tests/tauri-link-dropdown-v13.test.cjs tests/tauri-channel-panel-v11.test.cjs tests/tauri-video-source-aspect-v17.test.cjs tests/tauri-reopen-tab-v18.test.cjs tests/tauri-player-layout-v19-1.test.cjs tests/tauri-local-ai-v20.test.cjs tests/tauri-multilingual-v21.test.cjs tests/tauri-voices-v22.test.cjs tests/tauri-tts-duck-dedup-v22-1.test.cjs tests/tauri-direct-translation-v23.test.cjs tests/tauri-electron-parity-v23-4.test.cjs tests/tauri-translate-reliability-v23-6.test.cjs tests/tauri-local-app-build-v23-7.test.cjs"
   },
   "devDependencies": {
     "@tauri-apps/cli": "^2.0.0"

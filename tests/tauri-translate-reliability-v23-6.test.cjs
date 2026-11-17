@@ -35,8 +35,8 @@ test('Electron-like AI settings only offers working Argos and protects model rem
 });
 test('Immutable v23.6 build, new notes and release workflow select matching notes',()=>{
  const pkg=JSON.parse(read('package.json')),script=read('scripts/BUILD_RUSTLAB_MAC_ONE_ZIP_FAST.sh'),workflow=read('.github/workflows/rust-lab-version-tags.yml');
- assert.equal(pkg.version,'4.23.17-tauri.23.6');
- assert.ok(script.includes('TAG="rust-lab/v23.6"'));
+ assert.match(pkg.version,/^4\.23\.17-tauri\.\d+(?:\.\d+)*$/);
+ assert.ok(script.includes('TAG="rust-lab/v'+pkg.version.split('-tauri.')[1]+'"'));
  assert.ok(script.includes('VERSION="'+pkg.version+'"'));
  assert.match(script,/ACTUAL_VERSION=.*sed -nE/);
  assert.match(workflow,/body_path: dist\/RELEASE_NOTES_CURRENT\.md/);

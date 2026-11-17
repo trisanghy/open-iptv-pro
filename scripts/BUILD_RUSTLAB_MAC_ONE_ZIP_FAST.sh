@@ -1,10 +1,10 @@
 #!/bin/bash
 set -Eeuo pipefail
-VERSION="4.23.17-tauri.23.6"
+VERSION="4.23.17-tauri.23.7"
 REPO="trisanghy/open-iptv-pro"
 BRANCH="experiment/rust-tauri-v2"
-TAG="rust-lab/v23.6" # Immutable release tag; previous versions remain unchanged
-NAME="OpenIPTVPro_RustLab_v23_6"
+TAG="rust-lab/v23.7" # Immutable release tag; previous versions remain unchanged
+NAME="OpenIPTVPro_RustLab_v23_7"
 DEST_BASE="$HOME/Downloads/${NAME}_Build"
 DEST="$DEST_BASE"
 INDEX=2
@@ -12,11 +12,11 @@ while [[ -e "$DEST" ]]; do
   DEST="${DEST_BASE}_${INDEX}"
   INDEX=$((INDEX + 1))
 done
-TMP="$(mktemp -d "${TMPDIR:-/tmp}/rustlab-v23-6.XXXXXX")"
+TMP="$(mktemp -d "${TMPDIR:-/tmp}/rustlab-v23-7.XXXXXX")"
 trap 'rm -rf "$TMP"' EXIT
 err(){ echo "LỖI: $*" >&2; exit 1; }
-echo "Open IPTV Pro Rust Lab v23.6 — immutable release tag / one ZIP / fast build"
-# Download exactly the auto-created immutable v23.6 tag; no git clone or per-file downloads.
+echo "Open IPTV Pro Rust Lab v23.7 — Mac build .app only / keep GitHub Release DMG + ZIP"
+# Download the immutable v23.7 source tag into a TEMPORARY ZIP; never retain source archive in Downloads.
 curl -fLsS --retry 2 --connect-timeout 20 "https://github.com/${REPO}/archive/refs/tags/${TAG}.zip" -o "$TMP/source.zip" || err "Không tải được ZIP từ GitHub"
 mkdir -p "$TMP/extract"
 ditto -x -k "$TMP/source.zip" "$TMP/extract" || err "ZIP bị hỏng hoặc tải chưa hoàn tất"
@@ -44,13 +44,20 @@ if ! command -v cargo >/dev/null; then
 fi
 cd "$SOURCE"
 npm install --no-audit --no-fund --prefer-offline || err "npm install thất bại"
-# No repeated scans or full test suites. Release app, DMG only.
-npm run build -- --bundles dmg || err "Build Tauri DMG thất bại"
-DMG="$(find src-tauri/target/release/bundle/dmg -maxdepth 1 -name '*.dmg' -type f -print -quit)"
-[[ -n "$DMG" && -s "$DMG" ]] || err "Không tạo được DMG"
+# Local Mac: build ONLY a native .app. GitHub Actions independently retains DMG + source ZIP.
+npm run build -- --bundles app || err "Build Tauri .app thất bại"
+APP_DIR="src-tauri/target/release/bundle/macos"
+[[ -d "$APP_DIR" ]] || err "Không tìm thấy thư mục .app của Tauri"
+APP="$(find "$APP_DIR" -maxdepth 1 -type d -name '*.app' -print -quit)"
+[[ -n "$APP" && -f "$APP/Contents/Info.plist" && -d "$APP/Contents/MacOS" ]] || err "Không tạo được gói ứng dụng .app hợp lệ"
+EXECUTABLE="$(find "$APP/Contents/MacOS" -maxdepth 1 -type f -print -quit)"
+[[ -n "$EXECUTABLE" && -s "$EXECUTABLE" ]] || err ".app thiếu tệp thực thi"
 mkdir -p "$DEST"
-cp "$DMG" "$DEST/${NAME}.dmg"
-# Preserve the exact GitHub archive downloaded above (no second zip pass).
-cp "$TMP/source.zip" "$DEST/${NAME}_Source.zip"
-echo "THÀNH CÔNG: $DEST"
+APP_TARGET="$DEST/$(basename "$APP")"
+ditto "$APP" "$APP_TARGET" || err "Không sao chép được ứng dụng .app"
+[[ -f "$APP_TARGET/Contents/Info.plist" && -s "$APP_TARGET/Contents/MacOS/$(basename "$EXECUTABLE")" ]] || err "Sao chép .app không hoàn chỉnh"
+# Exactly one top-level item in the resulting Downloads folder: the .app bundle.
+OUTPUT_COUNT="$(find "$DEST" -mindepth 1 -maxdepth 1 -print | wc -l | tr -d '[:space:]')"
+[[ "$OUTPUT_COUNT" == 1 ]] || err "Thư mục đầu ra không chỉ chứa một ứng dụng .app"
+echo "THÀNH CÔNG: $APP_TARGET"
 open "$DEST"

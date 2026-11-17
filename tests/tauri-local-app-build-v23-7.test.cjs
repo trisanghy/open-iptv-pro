@@ -1,0 +1,34 @@
+'use strict';
+const {test}=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');
+const read=p=>fs.readFileSync(path.join(__dirname,'..',p),'utf8');
+test('Local Mac build creates only a native .app in a new Downloads folder',()=>{
+ const s=read('scripts/BUILD_RUSTLAB_MAC_ONE_ZIP_FAST.sh');
+ assert.match(s,/npm run build -- --bundles app/);
+ assert.match(s,/src-tauri\/target\/release\/bundle\/macos/);
+ assert.match(s,/ditto "\$APP" "\$APP_TARGET"/);
+ assert.match(s,/OUTPUT_COUNT/);
+ assert.match(s,/Contents\/Info\.plist/);
+ assert.match(s,/trap 'rm -rf "\$TMP"' EXIT/);
+ assert.doesNotMatch(s,/--bundles dmg/);
+ assert.doesNotMatch(s,/cp "\$TMP\/source\.zip" "\$DEST/);
+ assert.doesNotMatch(s,/\.dmg"\s*"\$DEST/);
+});
+test('Immutable local tag, source version and displayed UI are synchronized',()=>{
+ const pkg=JSON.parse(read('package.json'));
+ const rel=pkg.version.split('-tauri.')[1],s=read('scripts/BUILD_RUSTLAB_MAC_ONE_ZIP_FAST.sh');
+ assert.equal(rel,'23.7');
+ assert.ok(s.includes('VERSION="'+pkg.version+'"'));
+ assert.ok(s.includes('TAG="rust-lab/v'+rel+'"'));
+ assert.match(s,/ACTUAL_VERSION=.*sed -nE/);
+ assert.ok(read('renderer/index.html').includes('Rust Lab v'+rel));
+ assert.ok(read('src-tauri/tauri.conf.json').includes('Rust Lab v'+rel));
+});
+test('GitHub release pipeline remains separate: DMG and source ZIP retained',()=>{
+ const ci=read('.github/workflows/rust-lab-version-tags.yml');
+ assert.match(ci,/--target universal-apple-darwin --bundles dmg/);
+ assert.match(ci,/dist\/OpenIPTVPro-RustLab-v\$\{RELEASE_NO\}-Source\.zip/);
+ assert.match(ci,/dist\/\*Source\.zip/);
+ assert.match(ci,/dist\/\*\.dmg/);
+ assert.match(ci,/dist\/SHA256SUMS\.txt/);
+ assert.match(ci,/--bundles nsis/);
+});
