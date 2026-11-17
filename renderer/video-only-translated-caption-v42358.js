@@ -49,8 +49,10 @@
    // can vanish in element fullscreen; render inside the fullscreen element.
    // Document-PiP also needs a DOM overlay belonging to its new document.
    const fullscreenRoot=doc.fullscreenElement;
-   const overlayRequired=!!(fullscreenRoot&&(fullscreenRoot===video||
-    fullscreenRoot.contains?.(video)))||
+   // A fullscreen <video> cannot contain a sibling overlay: native cues
+   // must remain enabled there. PlayerBox fullscreen CAN host its overlay.
+   const overlayRequired=!!(fullscreenRoot&&fullscreenRoot!==video&&
+    fullscreenRoot.contains?.(video))||
     (!!video.ownerDocument&&video.ownerDocument!==doc);
    if(!overlayRequired&&Cue&&typeof video.addTextTrack==='function'&&Number.isFinite(video.currentTime)){
     try{
