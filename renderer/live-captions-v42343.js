@@ -36,6 +36,8 @@
   return /^https?:\/\//i.test(url)?url:'';
  };
  const videoCaptions=window.OpenIPTVVideoCaptions?.createVideoCaptionRenderer?.({video,doc:document});
+ // Read-only CC snapshot; PiP mirrors pixels without touching Whisper/TTS.
+ if(videoCaptions?.getPiPState)window.OpenIPTVCaptionSurface=videoCaptions;
  const ccPreferences=window.OpenIPTVSubtitlePreferences?.attach?.({doc:document,storage:localStorage,renderer:videoCaptions});
  videoCaptions?.setOriginalVisible?.(caption.checked);
  const mediaActive=()=>!video.paused&&!video.ended&&video.readyState>=2&&!!selectedUrl();
