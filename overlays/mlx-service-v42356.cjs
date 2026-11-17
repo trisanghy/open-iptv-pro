@@ -60,7 +60,8 @@ function createHyMTService({dataDir,installer,platform=process.platform,arch=pro
     const shards=new Set(Object.values(map||{}));
     return shards.size>0&&[...shards].every(filename=>
      typeof filename==='string'&&path.basename(filename)===filename&&
-     fileOK(path.join(weights,filename),1000000));
+     fileOK(path.join(weights,filename),1000000))&&
+     [...shards].reduce((sum,filename)=>sum+fs.statSync(path.join(weights,filename)).size,0)>10000000;
    }catch{return false;}
   }
   try{return fs.readdirSync(weights).some(filename=>
