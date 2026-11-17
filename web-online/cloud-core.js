@@ -21,7 +21,7 @@
   return Boolean((s?.sources?.length||0)+(s?.channels?.length||0)+(s?.favorites?.length||0)+(s?.folders?.length||0));
  }
  const same=(a,b)=>JSON.stringify(snapshot(a))===JSON.stringify(snapshot(b));
- function validEmail(value){const v=String(value||'').trim();return v.length<=254 && /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(v);}
+ function validEmail(value){const v=String(value||'').trim();return v.length<=254 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);}
  function verificationLink(value,projectUrl){
   let url,project;
   try{url=new URL(String(value||'').trim());project=new URL(projectUrl);}
