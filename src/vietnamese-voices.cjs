@@ -133,6 +133,17 @@ function createVietnameseVoices({dataDir,installer,spawnProcess=spawn,platform=p
   return output;
  }
  async function stop(){if(child){try{child.kill('SIGTERM');}catch{}}}
+ async function remove(id){
+  const family=id==='f5vi'?'f5':id==='vietvoice'?'vietvoice':null;
+  if(!family)throw Error('Unknown Vietnamese TTS model');
+  if(active===family)throw Error('Đang cài mô hình này');
+  await stop();
+  const folder=family==='f5'?f5Model:cache;
+  const bytes=dirSize(folder);
+  await fs.promises.rm(folder,{recursive:true,force:true});
+  await fs.promises.rm(path.join(root,family+'.ready'),{force:true});
+  return {id,freed:bytes,items:states()};
+ }
  function state(id){return availability(id);}
  function states(){
   const groups=['vietvoice','f5'];
@@ -142,6 +153,6 @@ function createVietnameseVoices({dataDir,installer,spawnProcess=spawn,platform=p
    present:ready(family),minRamGB:family==='f5'?16:8,recRamGB:family==='f5'?32:16,
    installing:active===family,device:'macOS/Windows',family}));
  }
- return Object.freeze({VOICES,validVoice,availability,state,states,install,speak,stop,ready});
+ return Object.freeze({VOICES,validVoice,availability,state,states,install,speak,stop,remove,ready});
 }
 module.exports={VOICES,createVietnameseVoices};
