@@ -6,18 +6,39 @@
  if(root)root.OpenIPTVSpeechQueue=exported;
 })(typeof window!=='undefined'?window:null,function(){
  function createSpeechQueue({synthesize,play,cancelAudio=()=>{},cancelSynthesis=()=>{},
-  notify=()=>{},now=()=>Date.now(),maxPendingAgeMs=18000,maxSynthAgeMs=25000}={}){
+  notify=()=>{},now=()=>Date.now(),maxPendingAgeMs=18000,maxSynthAgeMs=25000,maxSynthesisMs=45000}={}){
   if(typeof synthesize!=='function'||typeof play!=='function')throw Error('Speech queue requires synthesis and playback');
-  let pending=null,active=false,playing=false,epoch=0,serial=0,enabled=true,lastSeq=0;
-  const status=()=>({pending:!!pending,busy:active,playing,epoch,lastSeq});
+  let pending=null,active=false,playing=false,paused=false,epoch=0,serial=0,enabled=true,lastSeq=0;
+  const status=()=>({pending:!!pending,busy:active,playing,paused,epoch,lastSeq});
   const fresh=(job,limit)=>now()-job.createdAt<=limit;
   function pump(){
-   if(!enabled||active||playing||!pending)return;
+   if(!enabled||paused||active||playing||!pending)return;
    const job=pending;pending=null;
    if(!fresh(job,maxPendingAgeMs)){notify('Bỏ qua câu chờ quá lâu để theo kịp phụ đề');pump();return;}
    active=true;
    const generation=epoch;
-   Promise.resolve().then(()=>synthesize(job.payload)).then(async result=>{
+   // A stuck local model must not block all future subtitles forever.
+  // Wait for the backend stop acknowledgment before moving to the next job.
+  async function timedSynthesis(){
+   let timer=null;
+   try{
+    return await Promise.race([
+     Promise.resolve().then(()=>synthesize(job.payload)),
+     new Promise((_,reject)=>{
+      timer=setTimeout(()=>{
+       const error=Error('Tổng hợp giọng quá thời hạn; thử câu phụ đề mới nhất');
+       error.code='TTS_SYNTH_TIMEOUT';reject(error);
+      },Math.max(1000,maxSynthesisMs));
+     })
+    ]);
+   }catch(error){
+    if(error?.code==='TTS_SYNTH_TIMEOUT'){
+     try{await Promise.resolve(cancelSynthesis());}catch{}
+    }
+    throw error;
+   }finally{if(timer!==null)clearTimeout(timer);}
+  }
+  timedSynthesis().then(async result=>{
     if(generation!==epoch||!enabled)return;
     // When synthesis was slower than the next subtitle, use that next line;
     // do not start playing an obsolete sentence.
@@ -62,11 +83,15 @@
    try{cancelAudio();}catch{}
    if(stopSynthesis)try{cancelSynthesis();}catch{}
   }
+  function setPaused(value){
+   paused=!!value;
+   if(!paused)pump();
+  }
   function setEnabled(value){
    const next=!!value;
    if(!next){enabled=false;reset();}else enabled=true;
   }
-  return Object.freeze({enqueue,reset,setEnabled,status});
+  return Object.freeze({enqueue,reset,setEnabled,setPaused,status});
  }
  return {createSpeechQueue};
 });
