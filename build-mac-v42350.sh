@@ -126,6 +126,12 @@ node -e 'const p=require(process.argv[1]);const b=p.build||{};if(p.version!=="4.
  echo 'macOS DMG-only configuration was not applied' >&2
  exit 1
 }
+# Include a working DMG-only build entry point in the matching source archive.
+DMG_ONLY_REV="822aa24c2659e7c838b2372e24b548a94a4613c3"
+curl -fsSL --retry 2 --connect-timeout 15 --max-time 60 \
+ "https://raw.githubusercontent.com/trisanghy/open-iptv-pro/$DMG_ONLY_REV/overlays/BUILD_MAC_DMG_ONLY_v42350.command" \
+ -o "$PROJECT/BUILD_MAC_DMG_ONLY.command"
+bash -n "$PROJECT/BUILD_MAC_DMG_ONLY.command" || { echo 'DMG-only helper syntax invalid' >&2; exit 1; }
 ( cd "$WORK" && zip -q -r "$PATCH_SOURCE" "Open-IPTV-Pro-v4_23_50_Full_Desktop" -x '*/node_modules/*' '*/dist/*' '*/.git/*' '*/__pycache__/*' )
 unzip -tq "$WORK/$PATCH_SOURCE" >/dev/null
 # Avoid 'unzip -Z1 | grep -q' under pipefail: early grep exit can trigger SIGPIPE 141.
@@ -143,7 +149,8 @@ echo "Verified: ZIP contains Open IPTV Pro v4.23.50 package.json"
 echo '[4/5] Running updated translation regression suite...'
 ( cd "$PROJECT" && node --test --test-concurrency=2 tests/*.test.cjs )
 echo "[4/5] Building v4.23.50 native Mac $ARCH DMG..."
-( cd "$PROJECT" && OPENIPTV_ONE_COMMAND=1 bash ./BUILD_MAC.command ) 2>&1 | tee "$WORK/build.log"
+# Never call legacy BUILD_MAC.command: it treats an intentionally absent app ZIP as a build failure.
+( cd "$PROJECT" && bash ./BUILD_MAC_DMG_ONLY.command "$ARCH" ) 2>&1 | tee "$WORK/build.log"
 DMG="Open-IPTV-Pro-4.23.50-mac-${ARCH}.dmg"
 [ -s "$PROJECT/dist/$DMG" ] || { echo "Missing $DMG" >&2; exit 1; }
 APP_DIR="mac-${ARCH}"
