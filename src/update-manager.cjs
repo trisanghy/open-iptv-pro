@@ -9,7 +9,8 @@ const path=require('node:path');
 const {spawnSync}=require('node:child_process');
 const {Readable,Transform}=require('node:stream');
 const {pipeline}=require('node:stream/promises');
-const {checkUpdate}=require('./update-check.cjs');
+const {checkUpdate,compareVersions}=require('./update-check.cjs');
+const {fetchReleaseCatalog}=require('./update-version-catalog.cjs');
 
 const OFFICIAL_REPO='trisanghy/open-iptv-pro';
 const HTTPS_RELEASE=`https://github.com/${OFFICIAL_REPO}/releases/download/`;
@@ -73,7 +74,7 @@ class UpdateManager extends EventEmitter{
   this.updater=updater;this.check=check;this.fetcher=fetcher;this.now=now;this.signatureCheck=signatureCheck;
   this.maxInstallerBytes=maxInstallerBytes;this.downloadIdleMs=downloadIdleMs;
   this.downloadsDir=downloadsDir||path.join(app.getPath('downloads'),'Open-IPTV-Pro-Updates');
-  this.latestInfo=null;this.asset=null;this.downloadedPath=null;this.busy=false;this.lastProgress=0;this.activeAbort=null;this.nativeError=null;
+  this.latestInfo=null;this.asset=null;this.downloadedPath=null;this.versionCatalog=[];this.busy=false;this.lastProgress=0;this.activeAbort=null;this.nativeError=null;
   this.state={phase:'idle',version:app.getVersion(),latest:null,message:'Chưa kiểm tra cập nhật',mode:null,progress:0,downloaded:false};
   if(updater){
    updater.autoDownload=false;updater.autoInstallOnAppQuit=false;
@@ -93,7 +94,7 @@ class UpdateManager extends EventEmitter{
   this.busy=true;this.setState({phase:'checking',progress:0,downloaded:false,assetName:null,downloadedFile:null,message:'Đang tìm phiên bản mới phù hợp với thiết bị…'});
   try{
    const result=await this.check(OFFICIAL_REPO,this.app.getVersion(),this.fetcher,this.platform,this.arch);
-   this.latestInfo=result;this.downloadedPath=null;this.asset=null;
+   this.latestInfo=result;this.downloadedPath=null;this.asset=null;this.setState({selectedTag:null,isDowngrade:false,isSameVersion:false});
    if(result.noRelease)return this.setState({phase:'no-release',latest:null,mode:null,downloaded:false,message:'Chưa có bản cập nhật mới phù hợp cho thiết bị này.'});
    if(!result.newer)return this.setState({phase:'up-to-date',latest:result.latest,mode:null,downloaded:false,message:'Ứng dụng đang ở phiên bản mới nhất dành cho thiết bị này.'});
    const asset=identifyInstaller(result.assets,this.platform,this.arch);
@@ -109,9 +110,46 @@ class UpdateManager extends EventEmitter{
   }catch(e){return this.setState({phase:'error',message:'Không thể kiểm tra cập nhật lúc này. Vui lòng kiểm tra kết nối Internet rồi thử lại.',mode:null});}
   finally{this.busy=false;}
  }
+ async listVersions(){
+  if(this.busy)throw Error('Một thao tác cập nhật khác đang chạy');
+  const items=await fetchReleaseCatalog(this.fetcher,{platform:this.platform,arch:this.arch});
+  this.versionCatalog=items;
+  const current=this.app.getVersion();
+  return {current:'v'+current,releases:items.map(item=>({
+   tag:item.tag,version:item.version,prerelease:item.prerelease,
+   publishedAt:item.publishedAt,assetName:item.assetName,size:item.size,
+   releaseUrl:item.releaseUrl,
+   older:compareVersions(item.version,current)<0,
+   installed:compareVersions(item.version,current)===0
+  }))};
+ }
+ chooseVersion(tag){
+  if(this.busy)throw Error('Một thao tác cập nhật khác đang chạy');
+  if(typeof tag!=='string'||tag.length>100)throw Error('Mã phiên bản không hợp lệ');
+  const item=this.versionCatalog.find(x=>x.tag===tag);
+  if(!item)throw Error('Hãy tải lại danh sách phiên bản từ GitHub trước khi chọn');
+  const asset=identifyInstaller(item.assets,this.platform,this.arch);
+  if(!asset||asset.name!==item.assetName||!isOfficialAsset(asset.url))
+   throw Error('Phiên bản không có bộ cài phù hợp với máy');
+  const validHash=/^sha256:[a-f0-9]{64}$/i.test(asset.digest||'')||
+   item.assets.some(a=>a.name==='SHA256SUMS.txt'&&isOfficialAsset(a.url));
+  if(!validHash)throw Error('Bộ cài không có SHA-256 tin cậy');
+  const current=this.app.getVersion();
+  const comparison=compareVersions(item.version,current);
+  this.asset=asset;this.downloadedPath=null;
+  this.latestInfo={latest:item.version,newer:true,assets:item.assets,selected:true};
+  return this.setState({
+   phase:'available',mode:'manual',latest:item.version,assetName:asset.name,
+   selectedTag:item.tag,isDowngrade:comparison<0,isSameVersion:comparison===0,
+   downloaded:false,downloadedFile:null,progress:0,
+   message:'Đã chọn '+item.version+(item.prerelease?' · Beta':' · Ổn định')+
+    (comparison<0?' · quay về bản cũ':comparison===0?' · cài lại bản hiện tại':'')+
+    '. File được xác minh SHA-256 trước khi mở.'
+  });
+ }
  async download(){
   if(this.busy)throw Error('Một thao tác cập nhật khác đang chạy');
-  if(this.state.phase!=='available'||!this.asset||!this.latestInfo?.newer)throw Error('Hãy kiểm tra và chọn bản cập nhật mới trước khi tải');
+  if(this.state.phase!=='available'||!this.asset||!this.latestInfo?.newer)throw Error('Hãy kiểm tra hoặc chọn phiên bản trước khi tải');
   this.busy=true;this.setState({phase:'downloading',progress:0,message:'Đang chuẩn bị tải bản cập nhật…'});
   try{
    if(this.state.mode==='automatic'){
