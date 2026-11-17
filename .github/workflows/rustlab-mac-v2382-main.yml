@@ -1,0 +1,246 @@
+name: Build Rust Lab v23.8.2 macOS ARM64 + Intel DMGs and attach to stable v4.23.67
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/rustlab-mac-v2382-main.yml']
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: release-rustlab-v2382-mac-to-v42367
+  cancel-in-progress: false
+
+jobs:
+  mac-arm64:
+    name: Build and verify Rust Lab v23.8.2 Mac Apple Silicon
+    runs-on: macos-15
+    timeout-minutes: 80
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: rust-lab/v23.8.2
+          path: rust-source
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: aarch64-apple-darwin
+      - name: Install dependencies and check frozen version
+        working-directory: rust-source
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          test "$(node -p 'require("./package.json").version')" = '4.23.17-tauri.23.8.2'
+          test "$(uname -m)" = arm64
+          npm install --no-audit --no-fund
+      - name: Run actual Rust Lab playback/voice regression tests
+        working-directory: rust-source
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          # Snapshot test for a superseded workflow path is excluded; the separately
+          # maintained macOS package test below verifies the real DMG contents.
+          node - <<'JS'
+          const {execFileSync}=require('node:child_process');
+          const tests=require('./package.json').scripts['test:quick']
+            .split(/\s+/).filter(v=>v.endsWith('.test.cjs')&&!v.includes('tauri-local-app-build-v23-7'));
+          if(tests.length<10)throw Error('Missing tagged regression tests');
+          execFileSync(process.execPath,['--test',...tests],{stdio:'inherit'});
+          JS
+      - name: Package native Apple Silicon FFmpeg
+        working-directory: rust-source
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          FFMPEG="$(node -p 'require("ffmpeg-static")')"
+          test -s "$FFMPEG"
+          lipo "$FFMPEG" -verify_arch arm64
+          mkdir -p src-tauri/resources
+          cp "$FFMPEG" src-tauri/resources/ffmpeg
+          chmod +x src-tauri/resources/ffmpeg
+      - name: Compile Apple Silicon app and DMG from immutable v23.8.2
+        working-directory: rust-source
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          npm run build -- --target aarch64-apple-darwin --bundles dmg --ci --no-sign
+      - name: Mount DMG and verify actual Apple Silicon executable + FFmpeg
+        working-directory: rust-source
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          dmg="$(find src-tauri/target/aarch64-apple-darwin/release/bundle/dmg -maxdepth 1 -type f -name '*.dmg' -print -quit)"
+          test -n "$dmg" && test -s "$dmg"
+          mount="$(mktemp -d "$RUNNER_TEMP/verify-arm64.XXXXXX")"
+          mounted=0
+          finish() { if [ "$mounted" -eq 1 ]; then hdiutil detach "$mount" -quiet || true; fi; rmdir "$mount" 2>/dev/null || true; }
+          trap finish EXIT
+          hdiutil attach -readonly -nobrowse -quiet -mountpoint "$mount" "$dmg"
+          mounted=1
+          app="$(find "$mount" -maxdepth 2 -type d -name '*.app' -print -quit)"
+          test -n "$app" && test -s "$app/Contents/Info.plist"
+          exe="$(find "$app/Contents/MacOS" -maxdepth 1 -type f -print -quit)"
+          test -n "$exe" && test -s "$exe"
+          lipo "$exe" -verify_arch arm64
+          ffmpeg="$(find "$app/Contents/Resources" -type f -name ffmpeg -print -quit)"
+          test -n "$ffmpeg" && test -s "$ffmpeg"
+          lipo "$ffmpeg" -verify_arch arm64
+          hdiutil detach "$mount" -quiet; mounted=0
+          mkdir -p dist
+          cp "$dmg" dist/OpenIPTVPro-RustLab-v23.8.2-mac-arm64.dmg
+          shasum -a 256 dist/*.dmg
+      - uses: actions/upload-artifact@v4
+        with:
+          name: rustlab-v2382-mac-arm64
+          path: rust-source/dist/OpenIPTVPro-RustLab-v23.8.2-mac-arm64.dmg
+          if-no-files-found: error
+          retention-days: 14
+
+  mac-intel:
+    name: Build and verify Rust Lab v23.8.2 Mac Intel
+    runs-on: macos-15-intel
+    timeout-minutes: 80
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: rust-lab/v23.8.2
+          path: rust-source
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: x86_64-apple-darwin
+      - name: Install dependencies and check frozen version
+        working-directory: rust-source
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          test "$(node -p 'require("./package.json").version')" = '4.23.17-tauri.23.8.2'
+          test "$(uname -m)" = x86_64
+          npm install --no-audit --no-fund
+      - name: Run actual Rust Lab playback/voice regression tests
+        working-directory: rust-source
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          node - <<'JS'
+          const {execFileSync}=require('node:child_process');
+          const tests=require('./package.json').scripts['test:quick']
+            .split(/\s+/).filter(v=>v.endsWith('.test.cjs')&&!v.includes('tauri-local-app-build-v23-7'));
+          if(tests.length<10)throw Error('Missing tagged regression tests');
+          execFileSync(process.execPath,['--test',...tests],{stdio:'inherit'});
+          JS
+      - name: Package native Intel FFmpeg
+        working-directory: rust-source
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          FFMPEG="$(node -p 'require("ffmpeg-static")')"
+          test -s "$FFMPEG"
+          lipo "$FFMPEG" -verify_arch x86_64
+          mkdir -p src-tauri/resources
+          cp "$FFMPEG" src-tauri/resources/ffmpeg
+          chmod +x src-tauri/resources/ffmpeg
+      - name: Compile Intel app and DMG from immutable v23.8.2
+        working-directory: rust-source
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          npm run build -- --target x86_64-apple-darwin --bundles dmg --ci --no-sign
+      - name: Mount DMG and verify actual Intel executable + FFmpeg
+        working-directory: rust-source
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          dmg="$(find src-tauri/target/x86_64-apple-darwin/release/bundle/dmg -maxdepth 1 -type f -name '*.dmg' -print -quit)"
+          test -n "$dmg" && test -s "$dmg"
+          mount="$(mktemp -d "$RUNNER_TEMP/verify-intel.XXXXXX")"
+          mounted=0
+          finish() { if [ "$mounted" -eq 1 ]; then hdiutil detach "$mount" -quiet || true; fi; rmdir "$mount" 2>/dev/null || true; }
+          trap finish EXIT
+          hdiutil attach -readonly -nobrowse -quiet -mountpoint "$mount" "$dmg"
+          mounted=1
+          app="$(find "$mount" -maxdepth 2 -type d -name '*.app' -print -quit)"
+          test -n "$app" && test -s "$app/Contents/Info.plist"
+          exe="$(find "$app/Contents/MacOS" -maxdepth 1 -type f -print -quit)"
+          test -n "$exe" && test -s "$exe"
+          lipo "$exe" -verify_arch x86_64
+          ffmpeg="$(find "$app/Contents/Resources" -type f -name ffmpeg -print -quit)"
+          test -n "$ffmpeg" && test -s "$ffmpeg"
+          lipo "$ffmpeg" -verify_arch x86_64
+          hdiutil detach "$mount" -quiet; mounted=0
+          mkdir -p dist
+          cp "$dmg" dist/OpenIPTVPro-RustLab-v23.8.2-mac-x64.dmg
+          shasum -a 256 dist/*.dmg
+      - uses: actions/upload-artifact@v4
+        with:
+          name: rustlab-v2382-mac-x64
+          path: rust-source/dist/OpenIPTVPro-RustLab-v23.8.2-mac-x64.dmg
+          if-no-files-found: error
+          retention-days: 14
+
+  publish:
+    name: Attach verified Rust Lab Mac DMGs to main stable Release
+    needs: [mac-arm64, mac-intel]
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: rustlab-v2382-mac-arm64
+          path: new-dmgs
+      - uses: actions/download-artifact@v4
+        with:
+          name: rustlab-v2382-mac-x64
+          path: new-dmgs
+      - name: Verify exact file names and existing stable checksums
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -Eeuo pipefail
+          test -s new-dmgs/OpenIPTVPro-RustLab-v23.8.2-mac-arm64.dmg
+          test -s new-dmgs/OpenIPTVPro-RustLab-v23.8.2-mac-x64.dmg
+          mkdir -p original
+          gh release download v4.23.67 --repo "$GITHUB_REPOSITORY" --dir original
+          (cd original && sha256sum -c SHA256SUMS.txt)
+          test "$(find original -maxdepth 1 -type f | wc -l)" -eq 11
+          test ! -e original/OpenIPTVPro-RustLab-v23.4-Windows-Setup-x64.exe
+          cp new-dmgs/*.dmg original/
+          (cd original && sha256sum *.dmg *.exe *.zip SHA256SUMS_*.txt > SHA256SUMS.txt)
+          (cd original && sha256sum -c SHA256SUMS.txt)
+          test "$(find original -maxdepth 1 -type f | wc -l)" -eq 13
+      - name: Upload Mac DMGs first; verify GitHub returned SHA-256 digests
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -Eeuo pipefail
+          gh release upload v4.23.67 new-dmgs/*.dmg --repo "$GITHUB_REPOSITORY" --clobber
+          gh api "repos/$GITHUB_REPOSITORY/releases/tags/v4.23.67" > current-release.json
+          for f in OpenIPTVPro-RustLab-v23.8.2-mac-arm64.dmg OpenIPTVPro-RustLab-v23.8.2-mac-x64.dmg; do
+            actual="$(jq -r --arg name "$f" '.assets[]|select(.name==$name)|.digest' current-release.json)"
+            expected="sha256:$(sha256sum "original/$f" | cut -d' ' -f1)"
+            test "$actual" = "$expected" || { echo "::error::GitHub DMG digest does not match: $f"; exit 1; }
+          done
+      - name: Upload updated checksums, preserve stable version and README links
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -Eeuo pipefail
+          gh release upload v4.23.67 original/SHA256SUMS.txt --repo "$GITHUB_REPOSITORY" --clobber
+          gh api "repos/$GITHUB_REPOSITORY/releases/tags/v4.23.67" > final-release.json
+          jq -e '.prerelease==false and .draft==false' final-release.json
+          test "$(jq '.assets|length' final-release.json)" -eq 13
+          for f in OpenIPTVPro-RustLab-v23.8.2-mac-arm64.dmg OpenIPTVPro-RustLab-v23.8.2-mac-x64.dmg SHA256SUMS.txt; do
+            actual="$(jq -r --arg name "$f" '.assets[]|select(.name==$name)|.digest' final-release.json)"
+            expected="sha256:$(sha256sum "original/$f" | cut -d' ' -f1)"
+            test "$actual" = "$expected" || exit 1
+          done
+          echo 'PASS: Intel + Apple Silicon Rust Lab v23.8.2 DMGs attached to stable without changing Electron installers.'
