@@ -195,7 +195,7 @@ PROJECT_FINAL="$WORK/Open-IPTV-Pro-v4_23_53_Full_Desktop"
 mv "$PROJECT" "$PROJECT_FINAL"
 PROJECT="$PROJECT_FINAL"
 echo '[3/5] Adding unified Caption/Translate/TTS settings, Hy-MT2 MLX and safe model cleanup...'
-V54_REV="71b427e46188fe5bb72a254885f22c863bc289ce"
+V54_REV="3f23daf4636ea72552e7a283c0608c2445f58d89"
 V54_DIR="$WORK/overlays54"
 mkdir -p "$V54_DIR"
 for file in hymt-bridge-v42354.py hymt-service-v42354.cjs local-ai-storage-v42354.cjs local-ai-autoinstall-v42354.cjs unified-ai-settings-v42354.js unified-ai-settings-v42354.css v42354-ai-management.test.cjs v4.23.54-apply.cjs BUILD_MAC_DMG_ONLY_v42354.command; do
