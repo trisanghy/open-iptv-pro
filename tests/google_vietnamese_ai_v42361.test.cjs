@@ -80,7 +80,7 @@ test('Ollama translates with a pinned local model, no remote API',async()=>{
  assert.equal(requests[0].options.temperature,0.1);
 });
 test('Vietnamese TTS voice IDs permit regions/styles but reject arbitrary IDs',()=>{
- assert.equal(Object.keys(VOICES).length,7);
+ assert.equal(Object.keys(VOICES).length,8);
  const mgr=createVietnameseVoices({dataDir:'/tmp/openiptv-mocked-test',installer:{prepareUv:async()=>'/tmp/uv'}});
  for(const id of Object.keys(VOICES)){
   assert.equal(mgr.validVoice(id),true);
