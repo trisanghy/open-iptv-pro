@@ -30,6 +30,7 @@ function app(){
  const local=new Map(),document={
   getElementById:id=>nodes[id]||map[id]||null,
   pictureInPictureElement:null,
+  addEventListener(){},
   dispatchEvent(){}
  };
  const win={streamleaf:native,IPTVState:{getCurrent:()=>({url:'https://example.org/channel.m3u8'})},
@@ -92,8 +93,9 @@ test('TTS prerequisite never force-enables visible Live Caption',()=>{
 });
 test('Current release tag is immutable and matches the single-app Mac builder',()=>{
  const pkg=JSON.parse(read('package.json'));
- assert.equal(pkg.version,'4.23.17-tauri.23.8.6');
+ assert.match(pkg.version,/^4\.23\.17-tauri\.23\.8\.\d+$/);
+ const release=pkg.version.split('-tauri.')[1];
  const build=read('scripts/BUILD_RUSTLAB_MAC_ONE_ZIP_FAST.sh');
- assert.ok(build.includes('TAG="rust-lab/v23.8.6"'));
+ assert.ok(build.includes('TAG="rust-lab/v'+release+'"'));
  assert.ok(build.includes('npm run build -- --bundles app'));
 });

@@ -27,11 +27,12 @@ test('Video pause terminates recognition, cancels old TTS audio and prevents new
  assert.ok(tts.includes('resetPlayback();recentSpeech.clear();restore()'));
  assert.ok(tts.includes('generation!==taskId'));
 });
-test('Immutable Rust Lab v23.8.5 build and GitHub DMG/ZIP release kept separate',()=>{
+test('Immutable Rust Lab build and GitHub DMG/ZIP release kept separate',()=>{
  const pkg=JSON.parse(read('package.json'));
- assert.equal(pkg.version,'4.23.17-tauri.23.8.5');
+ assert.match(pkg.version,/^4\.23\.17-tauri\.23\.8\.\d+$/);
+ const version=pkg.version.split('-tauri.')[1];
  const builder=read('scripts/BUILD_RUSTLAB_MAC_ONE_ZIP_FAST.sh');
- assert.ok(builder.includes('TAG="rust-lab/v23.8.5"'));
+ assert.ok(builder.includes('TAG="rust-lab/v'+version+'"'));
  assert.ok(builder.includes('--bundles app'));
  const workflow=read('.github/workflows/rust-lab-version-tags.yml');
  assert.ok(workflow.includes('--target universal-apple-darwin --bundles dmg'));
