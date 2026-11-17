@@ -1,0 +1,91 @@
+name: Verify Electron v4.23.56 eight offline translation models, safe downloads and DMG-only build
+on:
+  push:
+    branches: [experiment/electron-v42349-vi-translation-premium-tts]
+    paths:
+      - '.github/workflows/verify-electron-v42356.yml'
+      - 'overlays/*v42356*'
+      - 'build-mac-v42356.sh'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  source:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Apply full exact-version desktop source and validate all offline AI settings
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          bash -n build-mac-v42356.sh
+          bash -n overlays/BUILD_MAC_DMG_ONLY_v42356.command
+          grep -Fq 'V56_REV="cdd2c7f8a61eb2f5b876503a0dd5b0cdc03e4186"' build-mac-v42356.sh
+          grep -Fq 'OpenIPTVPro_Source_v4.23.56.zip' build-mac-v42356.sh
+          ! grep -Fq 'OPENIPTV_ONE_COMMAND=1 bash ./BUILD_MAC.command' build-mac-v42356.sh
+          echo '06e8123c768f41c14f47264fbc7220d1bdfa6ce5dc07e69eceba50e929abc783  source/OpenIPTVPro_Source_v4.23.47.zip' | sha256sum -c -
+          unzip -q source/OpenIPTVPro_Source_v4.23.47.zip -d "$RUNNER_TEMP"
+          PROJECT="$RUNNER_TEMP/Open-IPTV-Pro-v4_23_47_Full_Desktop"
+          cp overlays/whisper-autoinstall-v42347.cjs "$PROJECT/src/whisper-autoinstall.cjs"
+          ( cd "$PROJECT" && node "$GITHUB_WORKSPACE/overlays/v4.23.48-apply.cjs" "$GITHUB_WORKSPACE/overlays" )
+          ( cd "$PROJECT" && node "$GITHUB_WORKSPACE/overlays/v4.23.49-apply.cjs" "$GITHUB_WORKSPACE/overlays" )
+          ( cd "$PROJECT" && node "$GITHUB_WORKSPACE/overlays/v4.23.50-apply.cjs" "$GITHUB_WORKSPACE/overlays" )
+          ( cd "$PROJECT" && node "$GITHUB_WORKSPACE/overlays/dmg-only-v42350.cjs" )
+          ( cd "$PROJECT" && node "$GITHUB_WORKSPACE/overlays/v4.23.51-apply.cjs" "$GITHUB_WORKSPACE/overlays" )
+          ( cd "$PROJECT" && node "$GITHUB_WORKSPACE/overlays/v4.23.52-apply.cjs" "$GITHUB_WORKSPACE/overlays" )
+          ( cd "$PROJECT" && node "$GITHUB_WORKSPACE/overlays/v4.23.53-apply.cjs" "$GITHUB_WORKSPACE/overlays" )
+          ( cd "$PROJECT" && node "$GITHUB_WORKSPACE/overlays/v4.23.54-apply.cjs" "$GITHUB_WORKSPACE/overlays" )
+          ( cd "$PROJECT" && node "$GITHUB_WORKSPACE/overlays/v4.23.55-apply.cjs" "$GITHUB_WORKSPACE/overlays" )
+          ( cd "$PROJECT" && node "$GITHUB_WORKSPACE/overlays/v4.23.56-apply.cjs" "$GITHUB_WORKSPACE/overlays" )
+          cp overlays/BUILD_MAC_DMG_ONLY_v42356.command "$PROJECT/BUILD_MAC_DMG_ONLY.command"
+          for js in src/hymt-service.cjs src/local-ai-storage.cjs src/local-ai-autoinstall.cjs src/live-caption-service.cjs src/main.cjs src/preload.cjs renderer/unified-ai-settings-v42356.js renderer/live-captions-v42343.js; do
+            node --check "$PROJECT/$js"
+          done
+          python3 -m py_compile "$PROJECT/src/hymt-bridge.py"
+          python3 "$PROJECT/tests/v42356-mlx-model-catalog.test.py"
+          ( cd "$PROJECT" && node --test --test-concurrency=2 tests/*.test.cjs )
+          test "$(node -p 'require(process.argv[1]).version' "$PROJECT/package.json")" = "4.23.56"
+          mv "$PROJECT" "$RUNNER_TEMP/Open-IPTV-Pro-v4_23_56_Full_Desktop"
+          ( cd "$RUNNER_TEMP" && zip -q -r OpenIPTVPro_Source_v4.23.56.zip Open-IPTV-Pro-v4_23_56_Full_Desktop -x '*/node_modules/*' '*/dist/*' '*/.git/*' '*/__pycache__/*' )
+          unzip -tq "$RUNNER_TEMP/OpenIPTVPro_Source_v4.23.56.zip"
+          unzip -p "$RUNNER_TEMP/OpenIPTVPro_Source_v4.23.56.zip" 'Open-IPTV-Pro-v4_23_56_Full_Desktop/package.json' > "$RUNNER_TEMP/version.json"
+          node -e 'const fs=require("fs");let p=JSON.parse(fs.readFileSync(process.argv[1]));if(p.version!=="4.23.56"||JSON.stringify(p.build.mac.target)!=="[\"dmg\"]")process.exit(1)' "$RUNNER_TEMP/version.json"
+  mac_dmg:
+    runs-on: macos-15
+    timeout-minutes: 50
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Build native arm64 DMG with polished unified AI layout
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          echo '06e8123c768f41c14f47264fbc7220d1bdfa6ce5dc07e69eceba50e929abc783  source/OpenIPTVPro_Source_v4.23.47.zip' | shasum -a 256 -c -
+          unzip -q source/OpenIPTVPro_Source_v4.23.47.zip -d "$RUNNER_TEMP"
+          PROJECT="$RUNNER_TEMP/Open-IPTV-Pro-v4_23_47_Full_Desktop"
+          cp overlays/whisper-autoinstall-v42347.cjs "$PROJECT/src/whisper-autoinstall.cjs"
+          ( cd "$PROJECT" && node "$GITHUB_WORKSPACE/overlays/v4.23.48-apply.cjs" "$GITHUB_WORKSPACE/overlays" )
+          ( cd "$PROJECT" && node "$GITHUB_WORKSPACE/overlays/v4.23.49-apply.cjs" "$GITHUB_WORKSPACE/overlays" )
+          ( cd "$PROJECT" && node "$GITHUB_WORKSPACE/overlays/v4.23.50-apply.cjs" "$GITHUB_WORKSPACE/overlays" )
+          ( cd "$PROJECT" && node "$GITHUB_WORKSPACE/overlays/dmg-only-v42350.cjs" )
+          ( cd "$PROJECT" && node "$GITHUB_WORKSPACE/overlays/v4.23.51-apply.cjs" "$GITHUB_WORKSPACE/overlays" )
+          ( cd "$PROJECT" && node "$GITHUB_WORKSPACE/overlays/v4.23.52-apply.cjs" "$GITHUB_WORKSPACE/overlays" )
+          ( cd "$PROJECT" && node "$GITHUB_WORKSPACE/overlays/v4.23.53-apply.cjs" "$GITHUB_WORKSPACE/overlays" )
+          ( cd "$PROJECT" && node "$GITHUB_WORKSPACE/overlays/v4.23.54-apply.cjs" "$GITHUB_WORKSPACE/overlays" )
+          ( cd "$PROJECT" && node "$GITHUB_WORKSPACE/overlays/v4.23.55-apply.cjs" "$GITHUB_WORKSPACE/overlays" )
+          ( cd "$PROJECT" && node "$GITHUB_WORKSPACE/overlays/v4.23.56-apply.cjs" "$GITHUB_WORKSPACE/overlays" )
+          cp overlays/BUILD_MAC_DMG_ONLY_v42356.command "$PROJECT/BUILD_MAC_DMG_ONLY.command"
+          ( cd "$PROJECT" && node --test tests/v42354-ai-management.test.cjs tests/v42355-ai-layout.test.cjs tests/v42356-mlx-model-catalog.test.cjs )
+          ( cd "$PROJECT" && bash BUILD_MAC_DMG_ONLY.command arm64 )
+          DMG="$PROJECT/dist/Open-IPTV-Pro-4.23.56-mac-arm64.dmg"
+          test -s "$DMG"
+          test ! -e "$PROJECT/dist/Open-IPTV-Pro-4.23.56-mac-arm64.zip"
+          test ! -e "$PROJECT/dist/Open-IPTV-Pro-4.23.56-mac-arm64.dmg.blockmap"
+          lipo -archs "$PROJECT/dist/mac-arm64/Open IPTV Pro.app/Contents/MacOS/Open IPTV Pro" | grep -Fxq arm64
+          ls -lh "$DMG"
