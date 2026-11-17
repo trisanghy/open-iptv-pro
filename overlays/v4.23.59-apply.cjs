@@ -81,6 +81,14 @@ assert(speedCode.includes(startup),'Expected v4.23.52 UI VM harness');
 speedCode=speedCode.replace(startup,
  " context.window.OpenIPTVSpeechQueue=require('../renderer/tts-utterance-queue-v42359.js');\n"+startup);
 write(speedTest,speedCode);
+const duckTest='tests/v42350-direct-routing.test.cjs';
+let duckCode=read(duckTest);
+const duckOld=String.raw`assert.match(ui,/if\(!enabled\)\{resetPlayback\(\);restore\(\)/);`;
+assert(duckCode.includes(duckOld),'Missing older TTS-off cleanup assertion');
+duckCode=duckCode.replace(duckOld,
+ String.raw`assert.match(ui,/speechQueue\.setEnabled\(enabled\)/);
+ assert.match(ui,/if\(!enabled\)\{restore\(\)/);`);
+write(duckTest,duckCode);
 const voiceTest='tests/argos-tts-voice-v42348.test.cjs';
 if(fs.existsSync(file(voiceTest))){
  const existing=read(voiceTest);
