@@ -1,7 +1,7 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro",
-  "version": "4.23.67",
+  "version": "4.23.68",
   "description": "Open IPTV Pro v4.23.67 — compact grouped Live Caption/TTS controls and manually selectable SHA256-verified releases",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
