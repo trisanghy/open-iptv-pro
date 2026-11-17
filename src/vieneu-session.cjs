@@ -1,7 +1,7 @@
 'use strict';
 const {spawn}=require('node:child_process');
 const readline=require('node:readline');
-function createVieNeuSession({python,bridge,spawnProcess=spawn,env=process.env,onStatus=()=>{}}){
+function createVieNeuSession({python,bridge,spawnProcess=spawn,env=process.env,onStatus=()=>{},args=['serve']}){
  if(!python||!bridge)throw Error('VieNeu needs validated Python and bridge paths');
  let child=null,ready=null,readyResolve=null,readyReject=null,seq=0;
  const pending=new Map();
@@ -17,7 +17,7 @@ function createVieNeuSession({python,bridge,spawnProcess=spawn,env=process.env,o
  function ensure(){
   if(child&&ready)return ready;
   let stderr='';
-  child=spawnProcess(python,['-u',bridge,'serve'],{windowsHide:true,shell:false,stdio:['pipe','pipe','pipe'],env});
+  child=spawnProcess(python,['-u',bridge,...args],{windowsHide:true,shell:false,stdio:['pipe','pipe','pipe'],env});
   const proc=child;
   ready=new Promise((resolve,reject)=>{
    let settled=false;
