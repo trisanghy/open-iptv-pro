@@ -94,7 +94,7 @@ test('v4.23.57: latest pending subtitle wins without interrupting audible speech
  const service=read('src/local-tts-service.cjs');
  assert.match(service,/getPremiumSession\(\)\.synthesize/);
  assert.match(service,/function shutdown\(\)/);
- assert.match(service,/return Object\.freeze\(\{availability,configure,synthesize,stop,shutdown\}\)/);
+ assert.match(service,/return Object\.freeze\(\{availability,configure,synthesize,stop,shutdown,setReference\}\)/);
 });
 test('v4.23.60: stop can cancel both active FFmpeg and Whisper jobs; source remains untouched',()=>{
  const c=read('src/live-caption-service.cjs');
@@ -102,7 +102,7 @@ test('v4.23.60: stop can cancel both active FFmpeg and Whisper jobs; source rema
  assert.match(c,/s\.children\?\.delete\(child\)/);
  assert.match(c,/for\(const proc of c\.children\|\|\[\]\)/);
  const pkg=JSON.parse(read('package.json'));
- assert.equal(pkg.version,'4.23.60');
+ assert.equal(pkg.version,'4.23.62');
  assert.deepEqual(pkg.build.mac.target,['dmg']);
  assert.equal(pkg.build.dmg.writeUpdateInfo,false);
 });
