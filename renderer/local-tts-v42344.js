@@ -194,7 +194,7 @@
    // second expensive Argos / MLX translation inside the voice worker.
    const result=await api.ttsSynthesize({
     target:payload.lang,voice:payload.voiceId,text:chunks[0],
-    sourceLanguage:payload.lang,alreadyTranslated:true
+    sourceLanguage:payload.sourceLanguage,alreadyTranslated:payload.alreadyTranslated===true
    });
    return {...result,followUpChunks:chunks.slice(1)};
   },
@@ -241,7 +241,7 @@
       const text=chunks[i];
       prefetch=Promise.resolve().then(()=>api.ttsSynthesize({
        target:payload.lang,voice:payload.voiceId,text,
-       sourceLanguage:payload.lang,alreadyTranslated:true
+       sourceLanguage:payload.sourceLanguage,alreadyTranslated:payload.alreadyTranslated===true
       })).then(value=>({ok:true,value}),error=>({ok:false,error}));
      }
      await playChunk(wav);
@@ -351,12 +351,16 @@
   if(number)lastCaptionSeq=Math.max(number,lastCaptionSeq);
   // Raw/interim recognition stays internal and NEVER cancels audible TTS.
   if(!e.translated)return;
-  // The translated segment is already final. Speaking the English pivot
-  // previously added an entire second translation before the first sound.
-  if(e.language!==target.value)return;
-  const text=String(e.text||'').trim();
+  // If spoken and subtitle languages match, the UI text is ALREADY translated:
+  // synthesize it directly without another Argos/MLX pass. If they differ,
+  // translate once into the requested voice language (prefer English pivot
+  // when the backend already provided one).
+  const sameLanguage=e.language===target.value;
+  const englishIntermediate=String(e.englishText||'').trim();
+  const sourceLanguage=sameLanguage?target.value:(englishIntermediate?'en':e.language);
+  const text=String(sameLanguage?e.text:(englishIntermediate||e.text)).trim();
   if(!text||!rememberOnce(e.utteranceKey||text))return;
-  const payload={text,sourceLanguage:target.value,alreadyTranslated:true,
+  const payload={text,sourceLanguage,alreadyTranslated:sourceLanguage===target.value,
    sequence:number,lang:target.value,voiceId:voice.value,streamUrl:source()};
   const wasBusy=speechQueue.status();
   speechQueue.enqueue(payload);
