@@ -172,7 +172,7 @@ PROJECT_FINAL="$WORK/Open-IPTV-Pro-v4_23_52_Full_Desktop"
 mv "$PROJECT" "$PROJECT_FINAL"
 PROJECT="$PROJECT_FINAL"
 echo '[3/5] Applying v4.23.53 universal direct-model and Whisper-English fallback...'
-V53_REV="28ad1d186f4b88921bc845de5bd369d4c69c24c8"
+V53_REV="067ffcc262bc8ee2e534dd8d5a37aee95ee03169"
 V53_DIR="$WORK/overlays53"
 mkdir -p "$V53_DIR"
 for file in argos-bridge-v42353.py local-ai-autoinstall-v42353.cjs caption-translator-v42353.cjs live-translate-router-v42353.cjs live-translate-routing-v42353-apply.cjs v42353-multilingual-router.test.cjs v4.23.53-apply.cjs BUILD_MAC_DMG_ONLY_v42353.command; do
