@@ -54,3 +54,9 @@ Supabase Free projects may pause for inactivity or hit quotas. For large
 channel collections, the 2 MiB JSON payload limit fails explicitly instead
 of silently truncating. Automatic sync is best effort, not guaranteed when
 a tab closes abruptly; offer manual sync/restore as well.
+
+## Fix: email links incorrectly redirect to localhost
+
+This cannot be repaired by changing frontend JavaScript alone. In Supabase Dashboard > Authentication > URL Configuration, set **Site URL** to `https://trisanghy.github.io/open-iptv-pro/` and add the exact same URL under **Redirect URLs** (save changes). Ensure any customized Magic Link/Confirmation email template uses `{{ .ConfirmationURL }}` or `{{ .RedirectTo }}` appropriately; avoid hard-coded localhost.
+
+**Temporary PKCE recovery:** if clicking an email link redirects to `http://localhost:3000/?code=...`, copy that full localhost URL from the address bar. Reopen Open IPTV Pro on the **same browser/profile** that requested the email, choose **Liên kết email không mở được?**, paste the localhost callback URL, and verify. This exchanges the one-time auth code using the local PKCE verifier. It does not work from another browser, after expiry, or when the code was already exchanged. Do not post callback codes or Supabase confirmation URLs publicly.

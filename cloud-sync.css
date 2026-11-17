@@ -32,3 +32,7 @@
 #cloudSyncCard #cloudLinkForm{padding:12px;border:1px dashed var(--line,#506174);border-radius:12px}
 #cloudSyncCard #cloudOtpForm{padding:12px;background:rgba(140,160,185,.07);border-radius:12px}
 @media(max-width:550px){#cloudSyncCard .cloud-email-input-line{flex-direction:column;align-items:stretch}#cloudSyncCard .cloud-email-input-line input,#cloudSyncCard .cloud-email-input-line .btn{width:100%;box-sizing:border-box}}
+
+/* Recover PKCE from browser localhost callback without leaking codes. */
+#cloudSyncCard #cloudLinkForm label{line-height:1.5}
+#cloudSyncCard #cloudLinkInput{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:12px}

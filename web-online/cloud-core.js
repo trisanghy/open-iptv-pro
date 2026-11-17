@@ -34,6 +34,19 @@
    throw Error('Liên kết thiếu mã xác thực hợp lệ.');
   return {token_hash,type};
  }
+ // PKCE completes at a browser redirect containing ?code=...; the previous app
+ // mistakenly accepted only /auth/v1/verify links, not localhost callback URLs.
+ function recoveryCode(value,siteUrl){
+  let target,site;
+  try{target=new URL(String(value||'').trim());site=new URL(siteUrl);}
+  catch{return null;}
+  const isLocal=target.protocol==='http:' && ['localhost','127.0.0.1'].includes(target.hostname) && target.port==='3000' && target.pathname==='/';
+  const isSite=target.protocol==='https:' && target.origin===site.origin && target.pathname===site.pathname;
+  if(!isLocal&&!isSite)return null;
+  const code=target.searchParams.get('code');
+  if(!code||code.length<16||code.length>512||!/^[A-Za-z0-9_-]+$/.test(code))return null;
+  return {code,flowId:target.searchParams.get('sb_flow_id')||null};
+ }
  function authErrorMessage(error){
   const msg=String(error?.message||error||'').trim(),m=msg.toLowerCase();
   if(/expired|invalid.*(?:token|otp)|token.*invalid|otp.*invalid/.test(m))
@@ -42,6 +55,7 @@
    return 'Bạn đã gửi quá nhiều yêu cầu. Hãy chờ một lát rồi thử lại.';
   if(/redirect.*not.allowed|redirect.*not.*whitelist|unsupported redirect/.test(m))
    return 'Website chưa được cho phép làm URL chuyển hướng trong Supabase Authentication → URL Configuration.';
+  if(/code verifier|code_verifier|auth code.*invalid|invalid.*code/.test(m))return 'Không khôi phục được mã đăng nhập. Hãy mở cùng trình duyệt đã yêu cầu email hoặc gửi lại liên kết mới.';
   if(/email.*not.confirmed/.test(m))return 'Email chưa xác nhận. Hãy mở email mới nhất.';
   if(/failed to fetch|network|fetch failed|load failed/.test(m))
    return 'Không kết nối được Supabase. Kiểm tra mạng và thử lại.';
@@ -63,5 +77,5 @@
   if(knownPayload&&same(knownPayload,local))return 'download';
   return 'conflict';
  }
- return Object.freeze({snapshot,isMeaningful,same,validate,decision,validEmail,verificationLink,authErrorMessage,MAX_BYTES});
+ return Object.freeze({snapshot,isMeaningful,same,validate,decision,validEmail,verificationLink,recoveryCode,authErrorMessage,MAX_BYTES});
 });

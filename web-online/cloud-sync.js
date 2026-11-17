@@ -38,9 +38,9 @@
    if(hint)hint.textContent='Kiểm tra Hộp thư đến và Spam. Bấm liên kết trong email hoặc nhập mã nếu có.';
    const sendButton=el('cloudEmailSend');if(sendButton)sendButton.textContent='Gửi email đăng nhập';
    const label=linkForm?.querySelector('label');
-   if(label)label.textContent='Dán liên kết xác thực MỚI, chưa nhấp';
+   if(label)label.textContent='Dán địa chỉ localhost có ?code=... sau khi bấm liên kết email';
    const linkHint=linkForm?.querySelector('.hint');
-   if(linkHint)linkHint.textContent='Dùng khi liên kết mở localhost hoặc báo lỗi: gửi email mới, sao chép liên kết chưa nhấp và dán vào đây.';
+   if(linkHint)linkHint.textContent='Sau khi bấm liên kết email và trình duyệt báo localhost không truy cập được, hãy sao chép URL trên thanh địa chỉ (chứa ?code=...), quay lại Open IPTV Pro trên CÙNG trình duyệt và dán vào đây. Mã chỉ dùng được một lần.';
   }
  const logout=el('cloudLogout'),sync=el('cloudSyncNow');
  const account=el('cloudAccount'),choices=el('cloudSyncConflict');
@@ -223,29 +223,35 @@
 
  linkVerify?.addEventListener('click',async()=>{
   if(!client||!enabledProviders.email)return;
-  let url,parsed;
-  try{
-   url=new URL(String(linkInput?.value||'').trim());
-   const ownHost=new URL(client.supabaseUrl).hostname;
-   if(url.protocol!=='https:'||url.hostname!==ownHost||url.pathname!=='/auth/v1/verify')
-    throw Error('Chỉ nhận liên kết xác thực của dự án Supabase này.');
-   const token_hash=url.searchParams.get('token_hash')||url.searchParams.get('token');
-   const kind=url.searchParams.get('type')||'email';
-   if(!token_hash||!['magiclink','email','signup','invite'].includes(kind))
-    throw Error('Liên kết chưa có mã xác thực hợp lệ.');
-   parsed=core.verificationLink(String(linkInput?.value||''),client.supabaseUrl);
-  }catch(e){report(e,'kiểm tra liên kết');return;}
+  const text=String(linkInput?.value||'').trim();
+  // A Supabase PKCE email link is consumed at /verify; after that Supabase
+  // redirects to localhost/?code=... when its Site URL is misconfigured.
+  // The code can be exchanged on the original browser origin, where the
+  // verifier is persisted. Never send this URL to third-party services.
+  const recovery=core.recoveryCode(text,location.origin+location.pathname);
+  let verification=null;
+  if(!recovery){
+   try{
+    verification=core.verificationLink(text,client.supabaseUrl);
+    if(verification.token_hash.startsWith('pkce_')){
+     label('Đây là liên kết PKCE chưa hoàn tất. Nhấp liên kết MỚI trong email, sau đó sao chép địa chỉ localhost có ?code=... từ thanh địa chỉ và dán vào đây. Không sử dụng liên kết đã nhấp lại.','error');
+     return;
+    }
+   }catch(e){report(e,'kiểm tra liên kết');return;}
+  }
   linkVerify.disabled=true;
+  label('Đang hoàn tất xác thực email…');
   try{
-   const {data,error}=await client.auth.verifyOtp(parsed);
+   const {data,error}=recovery
+    ? await client.auth.exchangeCodeForSession(recovery.code,recovery.flowId?{flowId:recovery.flowId}:undefined)
+    : await client.auth.verifyOtp(verification);
    if(error)throw error;
-   if(data?.user)await reconcile(data.user);
    if(linkInput)linkInput.value='';
-   if(!data?.user)label('Liên kết đã xác thực. Đang chờ phiên đăng nhập…');
-  }catch(e){report(e,'xác thực liên kết');}
+   if(data?.user)await reconcile(data.user);
+   else label('Đã xác thực, đang khởi tạo phiên đăng nhập…');
+  }catch(e){report(e,'hoàn tất đăng nhập');}
   finally{linkVerify.disabled=false;}
  });
-
 
  const safeEmail=()=>String(emailInput?.value||'').trim().toLowerCase();
  emailForm?.addEventListener('submit',async event=>{
@@ -263,7 +269,7 @@
    // Never silently retry without redirect: that produces an email link to localhost.
     if(reply.error)throw reply.error;
    emailRequested=true;syncControls();
-    label('Đã yêu cầu email đăng nhập tới '+email+'. Nếu liên kết mở localhost, chọn “Liên kết email không mở được?” và dán liên kết MỚI chưa nhấp.');
+    label('Đã yêu cầu email đăng nhập tới '+email+'. Nhấp liên kết mới trong email. Nếu trình duyệt về localhost, sao chép địa chỉ localhost có ?code=... rồi quay lại web, chọn “Liên kết email không mở được?” để hoàn tất.');
   }catch(e){report(e,'gửi email đăng nhập');}
   finally{if(send)send.disabled=false;}
  });

@@ -70,3 +70,18 @@ test('auth errors show actionable messages',()=>{
  assert.match(core.authErrorMessage({message:'Email rate limit exceeded'}),/quá nhiều/);
  assert.match(core.authErrorMessage({message:'Redirect URL not allowed'}),/URL chuyển hướng/);
 });
+
+test('PKCE recovery accepts localhost callback and preserves flow ID',()=>{
+ const u='http://localhost:3000/?code=abcdef0123456789abcdef0123456789&sb_flow_id=flow123';
+ assert.deepEqual(core.recoveryCode(u,'https://trisanghy.github.io/open-iptv-pro/'),
+ {code:'abcdef0123456789abcdef0123456789',flowId:'flow123'});
+});
+test('PKCE recovery accepts configured website callback but no other hosts',()=>{
+ const site='https://trisanghy.github.io/open-iptv-pro/';
+ const good=site+'?code=abcdef0123456789abcdef0123456789';
+ assert.equal(core.recoveryCode(good,site).code,'abcdef0123456789abcdef0123456789');
+ assert.equal(core.recoveryCode('https://attacker.example/?code=abcdef0123456789abcdef0123456789',site),null);
+ assert.equal(core.recoveryCode('http://localhost:4000/?code=abcdef0123456789abcdef0123456789',site),null);
+ assert.equal(core.recoveryCode('http://localhost:3000/?code=short',site),null);
+ assert.equal(core.recoveryCode('http://localhost:3000/?code=abcdef0123456789abcdef0123456789#ignored',site).code,'abcdef0123456789abcdef0123456789');
+});
