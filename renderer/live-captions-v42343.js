@@ -10,7 +10,7 @@
  const testTranslate=$('captionTestTranslate');
  if(!api?.captionStart||!caption||!translate||!status||!box||!video||!target)return;
  let activeId=0,currentURL='',busy=false,queued=false,lastTranslate=false,lastTarget='',lastDetected='';
- let installingPair='',failedPair='',captionTrack=null,lastTrackCue=null,lifecycle=0;
+ let installingPair='',failedPair='',lifecycle=0;
  const mediaActive=()=>!video.paused&&!video.ended&&!!video.currentSrc;
  const preference='rustlab:live-translate-target';
  try{const saved=localStorage.getItem(preference);if([...target.options].some(o=>o.value===saved))target.value=saved;}catch{}
@@ -28,22 +28,16 @@
  function hideWords(){
   document.dispatchEvent(new CustomEvent('rustlab:caption-clear'));
   box.hidden=true;box.textContent='';
-  if(captionTrack&&lastTrackCue){try{captionTrack.removeCue(lastTrackCue);}catch{}lastTrackCue=null;}
+  // The shared CC controller clears its own native video text track via the
+  // rustlab:caption-clear event above. Never create a competing track here.
  }
  function showWords(value,translated,language){
   const cleaned=String(value||'').trim();if(!cleaned)return;
   box.hidden=!!translate.checked;
   const label=[...target.options].find(o=>o.value===language)?.textContent||language||'';
   box.textContent=(translated?'Dịch '+label+': ':'Phụ đề: ')+cleaned;
-  // PiP VTT: live translated target only; no second caption line on the main player.
-  if(!('VTTCue' in window)||!Number.isFinite(video.currentTime))return;
-  try{
-   if(!captionTrack)captionTrack=video.addTextTrack('captions','Open IPTV Pro Live Caption',language||'en');
-   captionTrack.mode=document.pictureInPictureElement===video?'showing':'hidden'; // PiP only, avoid double subtitles in main player.
-   if(lastTrackCue)captionTrack.removeCue(lastTrackCue);
-   const time=Math.max(0,video.currentTime);
-   lastTrackCue=new window.VTTCue(time,time+13,cleaned);captionTrack.addCue(lastTrackCue);
-  }catch{}
+  // Native fullscreen/PiP cues are rendered by the unified CC controller;
+  // it knows original/translated/bilingual settings and handles transitions.
  }
  async function stop(){
   activeId=0;currentURL='';hideWords();

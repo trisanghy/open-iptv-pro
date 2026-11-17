@@ -213,3 +213,17 @@
  left:auto!important;
  max-height:calc(100% - 24px)!important;
 }
+
+/* Rust Lab v23.8.20: make CC visible above the fullscreen control bar.
+   Normal fullscreen on #playerBox keeps the HTML overlay (not native cues). */
+#page-tv #playerBox:fullscreen #rustTranslatedCaption.rust-translated-caption:not([hidden]){
+ z-index:285!important;
+ opacity:1!important;
+ visibility:visible!important;
+}
+#page-tv #playerBox:fullscreen:not(.player-idle)[data-rust-subtitle-position="bottom"] #rustTranslatedCaption.rust-translated-caption:not([hidden]){
+ bottom:max(120px,12vh)!important;
+}
+#page-tv #playerBox:fullscreen.player-idle[data-rust-subtitle-position="bottom"] #rustTranslatedCaption.rust-translated-caption:not([hidden]){
+ bottom:7%!important;
+}

@@ -4,6 +4,7 @@
  const $=id=>document.getElementById(id),frame=$('playerBox'),video=$('video');
  const overlay=$('rustTranslatedCaption'),gear=$('liveCaptionSetup'),translate=$('liveTranslateToggle'),caption=$('liveCaptionToggle');
  if(!frame||!overlay||!gear||!video)return;
+ const nativeCC=window.RustNativeCaptions?.createController?.({video,doc:document,win:window});
  const KEY='rustlab:subtitle-display-v1';
  const defaults={enabled:true,display:'both',size:'medium',position:'bottom',font:'system',color:'#ffe65b',outline:'black',background:'dark',opacity:50};
  const allowed={font:['system','arial','tahoma','verdana','noto','serif'],display:['original','translated','both'],size:['small','medium','large','xlarge'],
@@ -91,6 +92,7 @@
  function save(){try{localStorage.setItem(KEY,JSON.stringify(settings));}catch(error){console.warn('CC preferences:',error);}}
  function clear(){
   ++fitEpoch;
+  nativeCC?.clear();
   last=null;spoken=null;overlay.hidden=true;orig.textContent='';trans.textContent='';
   if(expiry)clearTimeout(expiry);expiry=null;
  }
@@ -124,7 +126,7 @@
  }
  function render(){
   if(!(last||spoken)||!settings.enabled||video.paused||video.ended){
-   ++fitEpoch;overlay.hidden=true;return;
+   ++fitEpoch;overlay.hidden=true;nativeCC?.clear();return;
   }
   const active=spoken||last;
   const original=String(active.originalText||active.text||'').trim(),result=String(active.text||'').trim();
@@ -139,7 +141,11 @@
   orig.textContent=showOriginal?original:'';
   trans.textContent=showTranslated?result:'';
   orig.hidden=!orig.textContent;trans.hidden=!trans.textContent;
-  overlay.hidden=orig.hidden&&trans.hidden;
+  const lines=[orig.hidden?'':orig.textContent,trans.hidden?'':trans.textContent].filter(Boolean);
+  // Native PiP / native video fullscreen cannot display an HTML overlay.
+  // Feed exactly the same selected original/translation lines into WebVTT.
+  nativeCC?.sync(lines.join('\n'),settings.enabled&&lines.length>0);
+  overlay.hidden=lines.length===0||!!nativeCC?.isNativePresentation();
   if(!overlay.hidden)fitSubtitle();
  }
  function change(key,value){settings[key]=value;sync();save();render();}
@@ -225,7 +231,17 @@
  caption?.addEventListener('change',()=>{if(last)render();});
  window.addEventListener('pagehide',clear);
  window.addEventListener('resize',()=>{if(!overlay.hidden)fitSubtitle();});
- document.addEventListener('fullscreenchange',()=>{if(!overlay.hidden)fitSubtitle();});
+ document.addEventListener('fullscreenchange',()=>{
+  // The playerBox uses HTML captions; fullscreen on <video> needs native cues.
+  render();
+ });
+ for(const event of ['enterpictureinpicture','leavepictureinpicture',
+  'webkitpresentationmodechanged','webkitbeginfullscreen','webkitendfullscreen']){
+  video.addEventListener(event,()=>{
+   render();
+   window.requestAnimationFrame(()=>render());
+  });
+ }
  video.addEventListener('resize',()=>{if(!overlay.hidden)fitSubtitle();});
  sync();
  window.RustSubtitleControls=Object.freeze({clear,render,getSettings:()=>({...settings}),storageKey:KEY});
