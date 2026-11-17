@@ -38,8 +38,32 @@
  'Quốc Tuấn','Adam','Thái Sơn','Thục Đoan','Minh Triết',
  'Mỹ Duyên','Đức Trí','Kim Thanh'
  ];
+ const NEW_VI_VOICES=[
+  ['vietvoice:female:northern:news','VietVoice · nữ Bắc · tin tức'],
+  ['vietvoice:male:northern:news','VietVoice · nam Bắc · tin tức'],
+  ['vietvoice:female:central:story','VietVoice · nữ Trung · kể chuyện'],
+  ['vietvoice:male:central:story','VietVoice · nam Trung · kể chuyện'],
+  ['vietvoice:female:southern:news','VietVoice · nữ Nam · tin tức'],
+  ['vietvoice:male:southern:story','VietVoice · nam Nam · kể chuyện'],
+  ['f5vi:reference','F5-TTS Việt · thử nghiệm · giọng mẫu (phi thương mại)']
+ ];
+ const f5Panel=$('f5ReferencePanel'),f5Button=$('f5ChooseReference'),
+  f5Label=$('f5ReferenceLabel'),f5Transcript=$('f5ReferenceText');
+ let f5ReferenceAudio='';
+ function toggleReference(){
+  if(f5Panel)f5Panel.hidden=target.value!=='vi'||voice.value!=='f5vi:reference';
+ }
+ f5Button?.addEventListener('click',async()=>{
+  try{
+   const result=await api.ttsChooseReferenceAudio?.();
+   if(!result)return;
+   f5ReferenceAudio=result;
+   if(f5Label)f5Label.textContent='Đã chọn tệp mẫu trong máy';
+   status('F5: nhập lời mẫu chính xác; chỉ sử dụng giọng có sự đồng ý.');
+  }catch(e){status('F5: không chọn được giọng mẫu '+String(e?.message||e).slice(0,90));}
+ });
  const VOICES=Object.freeze({
-  vi:[['vi_VN-25hours_single-low','25Hours · nhẹ'],['vi_VN-vais1000-medium','VAIS1000 · chất lượng vừa'],['vi_VN-vivos-x_low','VIVOS · siêu nhẹ']].concat(VIENEU_PRESETS.map(name=>['vieneu:'+name,'VieNeu · '+name+' (48 kHz)'])),
+  vi:[['vi_VN-25hours_single-low','25Hours · nhẹ'],['vi_VN-vais1000-medium','VAIS1000 · chất lượng vừa'],['vi_VN-vivos-x_low','VIVOS · siêu nhẹ']].concat(VIENEU_PRESETS.map(name=>['vieneu:'+name,'VieNeu · '+name+' (48 kHz)']),NEW_VI_VOICES),
   en:[['en_US-lessac-low','Lessac · nhẹ'],['en_US-amy-medium','Amy · chất lượng vừa']],
   es:[['es_ES-mls_10246-low','MLS 10246']],fr:[['fr_FR-siwis-low','Siwis']],
   de:[['de_DE-thorsten-low','Thorsten']],zh:[['zh_CN-huayan-x_low','Huayan']],
@@ -53,19 +77,24 @@
   const groups=[];
   const standard=document.createElement('optgroup');standard.label='Piper · tiết kiệm tài nguyên';
   const premium=document.createElement('optgroup');premium.label='VieNeu · chất lượng cao 48 kHz';
+  const regional=document.createElement('optgroup');regional.label='VietVoice · vùng miền và phong cách';
+  const cloning=document.createElement('optgroup');cloning.label='F5-TTS · giọng mẫu phi thương mại';
   for(const [id,title] of options){
    const opt=document.createElement('option');opt.value=id;opt.textContent=title;
-   (id.startsWith('vieneu:')?premium:standard).append(opt);
+   (id.startsWith('vieneu:')?premium:id.startsWith('vietvoice:')?regional:id.startsWith('f5vi:')?cloning:standard).append(opt);
   }
   if(standard.children.length)groups.push(standard);
   if(premium.children.length)groups.push(premium);
+  if(regional.children.length)groups.push(regional);
+  if(cloning.children.length)groups.push(cloning);
   voice.replaceChildren(...groups);
   if(options.some(([id])=>id===preferred))voice.value=preferred;
+  toggleReference();
  }
  setVoiceChoices();
  voice.addEventListener('change',()=>{
   try{localStorage.setItem('openiptv-tts-voice-'+target.value,voice.value);}catch{}
-  resetPlayback();void refresh();
+  resetPlayback();toggleReference();void refresh();
  });
 
  const status=s=>{const message=String(s||'');info.textContent=message.slice(0,200);info.title=message;info.dataset.error=/lỗi|error|fail|không|thiếu/i.test(message)?'true':'false';};
@@ -142,7 +171,9 @@
     target:payload.lang,voice:payload.voiceId,
     text:payload.text.slice(0,360),
     sourceLanguage:payload.sourceLanguage,
-    alreadyTranslated:payload.alreadyTranslated===true
+    alreadyTranslated:payload.alreadyTranslated===true,
+    referenceAudio:payload.voiceId==='f5vi:reference'?f5ReferenceAudio:'',
+    referenceText:payload.voiceId==='f5vi:reference'?String(f5Transcript?.value||'').trim():''
    });
   },
   play:async(result,payload,onEnded)=>{
@@ -221,7 +252,9 @@
    const phrase=target.value==='vi'?'Xin chào, đây là giọng đọc tiếng Việt của Open IPTV Pro.':
      target.value==='en'?'Hello. This is your Open IPTV Pro voice test.':'Hello';
    const res=await api.ttsSynthesize({target:target.value,voice:voice.value,
-     text:phrase,alreadyTranslated:true});
+     text:phrase,alreadyTranslated:true,
+     referenceAudio:voice.value==='f5vi:reference'?f5ReferenceAudio:'',
+     referenceText:voice.value==='f5vi:reference'?String(f5Transcript?.value||'').trim():''});
    if(!res?.audioBase64||res.mime!=='audio/wav')throw Error('Chưa tạo được file WAV nghe thử');
    if(previewAudio){try{previewAudio.pause();previewAudio.src='';}catch{}}
    const audio=new Audio('data:audio/wav;base64,'+res.audioBase64);
