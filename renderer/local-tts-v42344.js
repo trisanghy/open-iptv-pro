@@ -183,8 +183,9 @@
  // New text never interrupts a sentence that the user is already hearing.
  // Only the most recent NOT-YET-PLAYED subtitle is kept, to avoid old backlogs.
  const speechQueue=window.OpenIPTVSpeechQueue.createSpeechQueue({
-  maxPendingAgeMs:18000,
-  maxSynthAgeMs:25000,
+  // Prioritize fresh live subtitles to reduce audible speech lag.
+  maxPendingAgeMs:5000,
+  maxSynthAgeMs:7000,
   notify:message=>{if(enabled)status(message);},
   synthesize:async payload=>{
    if(!enabled||source()!==payload.streamUrl||!mediaActive())throw Error('Video không còn phát');
