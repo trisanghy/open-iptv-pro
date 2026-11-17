@@ -1,0 +1,12 @@
+/* Cloud Settings: follows existing theme and avoids toolbar reflow. */
+#cloudSyncCard .cloud-sync-actions {display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
+#cloudSyncCard .cloud-sync-actions [hidden],#cloudSyncCard [hidden]{display:none!important}
+#cloudSyncCard .cloud-sync-conflict {
+ border:1px solid var(--accent,#9e86eb);
+ border-radius:12px;padding:12px;margin-top:10px;
+}
+#cloudSyncCard #cloudAccount{font-weight:700;margin:6px 0}
+#cloudSyncCard #cloudStatus{overflow-wrap:anywhere}
+@media(max-width:550px){
+ #cloudSyncCard .cloud-sync-actions .btn{flex:1 1 150px;min-width:0}
+}

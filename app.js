@@ -50,7 +50,7 @@
   return replacement||null;
  }
  let lastStorageWarning=0;
- function save(){try{localStorage.setItem('open-iptv-pro-4',JSON.stringify(store));return true;}
+ function save(){try{localStorage.setItem('open-iptv-pro-4',JSON.stringify(store));if(!native)document.dispatchEvent(new CustomEvent('openiptv:local-saved'));return true;}
   catch(e){
    console.warn('Không thể lưu dữ liệu IPTV',e);
    if(Date.now()-lastStorageWarning>15000){

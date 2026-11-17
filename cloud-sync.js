@@ -165,9 +165,13 @@
  google.addEventListener('click',()=>login('google'));
  github.addEventListener('click',()=>login('github'));
  sync.addEventListener('click',async()=>{
-  if(!ready)return;
+  if(!uid)return;
   const live=await readRemote(uid).catch(e=>{report(e,'kiểm tra dữ liệu');return undefined});
   if(live===undefined)return;
+  if(!ready){
+   prompt('Đồng bộ đang tạm dừng. Chọn dữ liệu máy hoặc dữ liệu đám mây để tiếp tục.',live);
+   return;
+  }
   if((live?.revision||0)!==revision){
    prompt('Đã có thay đổi từ thiết bị khác. Hãy chọn bản muốn giữ.',live);
    return;

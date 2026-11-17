@@ -25,7 +25,7 @@ replacement=(Path(__file__).resolve().parent/'epg-fetch-function.txt').read_text
 js=js[:start]+replacement+'\n'+js[end:]
 features.write_text(js,encoding='utf-8')
 
-for name in ('web-only.js','web-only.css','resume-last.js','resume-last.css','browser-channel-check.js','web-autoplay.js','web-volume.css','web-volume.js'):
+for name in ('web-only.js','web-only.css','resume-last.js','resume-last.css','browser-channel-check.js','web-autoplay.js','cloud-core.js','cloud-sync.js','cloud-sync.css','web-volume.css','web-volume.js'):
     copy2(Path(__file__).resolve().parent/name,out/name)
 # Patch the generated application from its WebView source on every deployment.
 app_file=out/'app.js'
@@ -44,6 +44,11 @@ web_autoplay_new="  const startPlaying=()=>{\n   if(!isCurrent())return;\n   // 
 if app_text.count(web_autoplay_old) != 1:
     sys.exit('Web autoplay bootstrap changed in upstream app.js')
 app_text=app_text.replace(web_autoplay_old,web_autoplay_new,1)
+sync_event_before="function save(){try{localStorage.setItem('open-iptv-pro-4',JSON.stringify(store));return true;}"
+sync_event_after="function save(){try{localStorage.setItem('open-iptv-pro-4',JSON.stringify(store));if(!native)document.dispatchEvent(new CustomEvent('openiptv:local-saved'));return true;}"
+if app_text.count(sync_event_before) != 1:
+    sys.exit('Web cloud: upstream state-save method changed')
+app_text=app_text.replace(sync_event_before,sync_event_after,1)
 app_file.write_text(app_text,encoding='utf-8')
 
 html=(out/'index.html').read_text(encoding='utf-8')
@@ -73,8 +78,12 @@ menu_pattern=r'\s*<details class="playback-extra" id="playbackExtra">[\s\S]*?</d
 if len(re.findall(menu_pattern,html)) != 1:
     sys.exit('Expected exactly one old player ellipsis menu')
 html=re.sub(menu_pattern,'\n         '+"<div id=\"webLegacyPlayerActionHooks\" hidden aria-hidden=\"true\" style=\"display:none!important\"><button type=\"button\" id=\"shotBtn\" hidden tabindex=\"-1\"></button><button type=\"button\" id=\"tryFfmpegBtn\" hidden tabindex=\"-1\"></button></div>",html,count=1)
-html=html.replace('</head>','<link rel="stylesheet" href="web-only.css"/><link rel="stylesheet" href="resume-last.css"/><link rel="stylesheet" href="web-volume.css"/><link rel="manifest" href="manifest.webmanifest"/></head>',1)
-html=html.replace('</body>','<script src="web-only.js"></script><script src="resume-last.js"></script><script src="web-volume.js"></script></body>',1)
+# Cloud login is optional. Keep a visible disabled/guest state without config.
+if html.count("    <article class=\"settings-card\" id=\"defaultBufferSettings\">") != 1:
+    sys.exit('Web cloud: Settings insertion point changed')
+html=html.replace("    <article class=\"settings-card\" id=\"defaultBufferSettings\">","    <article class=\"settings-card\" id=\"cloudSyncCard\">\n      <h2>☁ Tài khoản &amp; Đồng bộ đám mây</h2>\n      <p id=\"cloudAccount\">Chế độ khách · lưu trên thiết bị</p>\n      <p class=\"hint\" id=\"cloudStatus\" role=\"status\" aria-live=\"polite\">Đang kiểm tra cấu hình đồng bộ…</p>\n      <div class=\"cloud-sync-actions\">\n        <button type=\"button\" class=\"btn btn-subtle\" id=\"cloudLoginGoogle\" hidden>Đăng nhập Google</button>\n        <button type=\"button\" class=\"btn btn-subtle\" id=\"cloudLoginGithub\" hidden>Đăng nhập GitHub</button>\n        <button type=\"button\" class=\"btn btn-primary\" id=\"cloudSyncNow\" hidden>Đồng bộ ngay</button>\n        <button type=\"button\" class=\"btn btn-subtle\" id=\"cloudLogout\" hidden>Đăng xuất</button>\n      </div>\n      <div id=\"cloudSyncConflict\" class=\"cloud-sync-conflict\" hidden>\n        <p id=\"cloudConflictReason\"></p>\n        <div class=\"cloud-sync-actions\">\n          <button type=\"button\" class=\"btn btn-primary\" id=\"cloudUseRemote\">Dùng dữ liệu đám mây</button>\n          <button type=\"button\" class=\"btn btn-subtle\" id=\"cloudUseLocal\">Giữ dữ liệu máy &amp; tải lên</button>\n          <button type=\"button\" class=\"btn btn-subtle\" id=\"cloudLater\">Để sau</button>\n        </div>\n      </div>\n      <p class=\"hint\">Mỗi tài khoản chỉ truy cập được dữ liệu của mình. Không đăng nhập vẫn sử dụng bình thường. Link M3U có token sẽ được lưu trong tài khoản Supabase của bạn.</p>\n    </article>\n"+"    <article class=\"settings-card\" id=\"defaultBufferSettings\">",1)
+html=html.replace('</head>','<link rel="stylesheet" href="web-only.css"/><link rel="stylesheet" href="resume-last.css"/><link rel="stylesheet" href="web-volume.css"/><link rel="stylesheet" href="cloud-sync.css"/><link rel="manifest" href="manifest.webmanifest"/></head>',1)
+html=html.replace('</body>','<script src="supabase-sdk.js"></script><script src="cloud-core.js"></script><script src="web-only.js"></script><script src="resume-last.js"></script><script src="web-volume.js"></script><script src="cloud-sync.js"></script></body>',1)
 if 'id="playbackExtra"' in html:
     sys.exit('Obsolete three-dots player menu still present')
 if html.count('id="volume"') != 1:
