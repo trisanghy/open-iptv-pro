@@ -12,6 +12,7 @@ contextBridge.exposeInMainWorld('streamleaf',Object.freeze({
   ttsInstall:(lang,voice)=>ipcRenderer.invoke('tts:install',lang,voice),
   ttsSynthesize:args=>ipcRenderer.invoke('tts:synthesize',args),
   ttsStop:()=>ipcRenderer.invoke('tts:stop'),
+  ttsChooseReferenceAudio:()=>ipcRenderer.invoke('tts:chooseReferenceAudio'),
   ttsOnEvent:cb=>{const on=(_e,data)=>cb(data);ipcRenderer.on('tts:event',on);return ()=>ipcRenderer.removeListener('tts:event',on);},
   captionAutoInstall:()=>ipcRenderer.invoke('caption:install'),
   captionTestTranslation:target=>ipcRenderer.invoke('caption:testTranslation',target),
