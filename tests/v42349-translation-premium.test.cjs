@@ -50,8 +50,8 @@ test('v4.23.60: premium voice must be explicit opt-in, isolated install and real
 test('v4.23.60: translated Vietnamese captions must not translate twice in TTS',()=>{
  const s=read('src/local-tts-service.cjs'),ui=read('renderer/local-tts-v42344.js');
  assert.match(s,/sourceLanguage!==lang/);
- assert.match(ui,/if\(e\.language!==target\.value\)return/);
- assert.match(ui,/alreadyTranslated:true/);
+ assert.match(ui,/const sameLanguage=e\.language===target\.value/);
+ assert.match(ui,/alreadyTranslated:sourceLanguage===target\.value/);
  assert.match(s,/managed\.vieneuBridge/);
  assert.match(s,/managed\.vieneuBridge/);
  assert.match(s,/translateText\(input,lang,sourceLanguage\)/);

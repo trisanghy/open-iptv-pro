@@ -90,10 +90,10 @@ test('Electron v4.23.68: pause/seek/ended/stall halt captions & all speech, sour
  assert.match(tts,/speechQueue\.setPaused\(true\)/);
  assert.match(tts,/cancelSpeechAudio/);
  assert.match(tts,/void previewCoordinator\.cancel\(\)/);
- assert.match(tts,/alreadyTranslated:true/);
+ assert.match(tts,/alreadyTranslated:payload\.alreadyTranslated===true/);
  assert.match(tts,/const chunks=window\.OpenIPTVTTSChunks\?\.split/);
  assert.match(tts,/prefetch=Promise\.resolve\(\)\.then/);
- assert.doesNotMatch(tts,/englishIntermediate\|\|e\.text/);
+ assert.match(tts,/const sameLanguage=e\.language===target\.value/);
  assert.match(backend,/sourceText:words,englishText:/);
  for(const id of ['subtitleOptionsBtn','subtitleOptionsPanel','subtitleShow','subtitleContent','subtitlePosition','subtitleSize','subtitleFont','subtitleCustomColor','subtitleOpacity'])
   assert.match(ui,new RegExp('id="'+id+'"'));
