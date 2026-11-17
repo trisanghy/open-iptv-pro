@@ -68,6 +68,36 @@ for(const [p,pairs] of Object.entries(migration)){
  }
  write(p,t);
 }
+const structuralAssertions={
+  "tests/live-translate-v42350.test.cjs": [
+    [
+      "assert.match(cap,/if\\(source===s.target\\)/);",
+      "assert.match(read('src/live-translate-router.cjs'),/if\\(source===target\\)/);"
+    ]
+  ],
+  "tests/v42350-direct-routing.test.cjs": [
+    [
+      "assert.match(cap,/if\\(source===s.target\\)/);",
+      "assert.match(read('src/live-translate-router.cjs'),/if\\(source===target\\)/);"
+    ],
+    [
+      "assert.match(main,/captionTranslator.translateText\\(text,target,source\\)/);",
+      "assert.match(main,/captionTranslator.translateText\\(text,target,source,options\\)/);"
+    ],
+    [
+      "assert.match(read('src/main.cjs'),/translateText:\\(text,target,source\\)=>captionTranslator.translateText/);",
+      "assert.match(read('src/main.cjs'),/translateText:\\(text,target,source,options\\)=>captionTranslator.translateText/);"
+    ]
+  ]
+};
+for(const [p,pairs] of Object.entries(structuralAssertions)){
+ let body=read(p);
+ for(const [oldValue,newValue] of pairs){
+  assert(body.includes(oldValue),'Stale test assertion missing: '+p+' => '+oldValue);
+  body=body.replace(oldValue,newValue);
+ }
+ write(p,body);
+}
 const test=path.join(assets,'v42353-multilingual-router.test.cjs');
 assert(fs.existsSync(test),'Missing comprehensive 15-language routing regression');
 fs.copyFileSync(test,full('tests/v42353-multilingual-router.test.cjs'));
