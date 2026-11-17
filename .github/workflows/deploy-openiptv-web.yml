@@ -98,7 +98,9 @@ jobs:
           grep -q 'id="cloudEmailForm"' _site/index.html
           grep -q 'id="cloudOtpVerify"' _site/index.html
           grep -q 'id="cloudLinkVerify"' _site/index.html
-          grep -q "client.auth.verifyOtp(parsed)" _site/cloud-sync.js
+          grep -q 'client.auth.verifyOtp(verification)' _site/cloud-sync.js
+          grep -q 'client.auth.exchangeCodeForSession(recovery.code' _site/cloud-sync.js
+          grep -q 'core.recoveryCode(text,location.origin+location.pathname)' _site/cloud-sync.js
           grep -q 'signInWithOtp' _site/cloud-sync.js
           grep -q 'verifyOtp' _site/cloud-sync.js
           python3 - <<'PY'
