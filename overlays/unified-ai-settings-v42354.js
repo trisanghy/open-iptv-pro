@@ -4,7 +4,7 @@
  const $=id=>document.getElementById(id),api=window.streamleaf;
  const panel=$('liveCaptionSetupPanel'),trigger=$('liveCaptionSetup');
  const picker=$('aiTranslationEngine'),mode=$('aiResourceMode'),modelList=$('aiModelList');
- const warning=$('aiHeatWarning'),status=$('aiSettingsStatus');
+ const warning=$('aiHeatWarning'),inlineWarning=$('aiHeatWarningInline'),status=$('aiSettingsStatus');
  if(!panel||!trigger||!picker||!mode||!modelList||!warning||!status)return;
  const validEngines=new Set(['auto','argos','hymt18','hymt7']);
  const validModes=new Set(['balanced','saver','quality']);
@@ -44,6 +44,10 @@
    '⚠️ Đang bật nhiều tác vụ AI offline'+(heavy?' và mô hình 7B':'')+
    ': máy có thể nóng hơn, dùng nhiều RAM/GPU, hao pin và chạy phụ đề chậm. '+
    'Nên chọn Argos hoặc Hy-MT2 1.8B và tắt các AI không dùng. Đây là cảnh báo tải xử lý, không phải số đo nhiệt độ phần cứng.':'';
+  if(inlineWarning){
+   inlineWarning.hidden=!visible;
+   inlineWarning.textContent=visible?'⚠️ Nhiều AI đang bật: máy có thể nóng và hao pin hơn. Nhấn ⚙ để chọn mô hình nhẹ.':'';
+  }
  }
  for(const el of [caption,translate,tts])el?.addEventListener('change',showHeatWarning);
  async function refresh(){
