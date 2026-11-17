@@ -13,6 +13,10 @@
  });
  function createController({video,doc,storage,getPage,notify=()=>{}}){
   let pending=null,sequence=0,reason='',floating=null;
+  const compositor=doc.defaultView?.OpenIPTVCCPiPCompositor?.createController?.({
+   video,doc,getState:()=>doc.defaultView?.OpenIPTVCaptionSurface?.getPiPState?.(),
+   onPiPEvent:type=>{if(type==='leave')reason='';notifyCC();}
+  });
   const enabled=type=>{
    try{
     const saved=storage?.getItem(KEYS[type]);
@@ -24,6 +28,7 @@
    storage?.setItem(KEYS[type],String(!!value));
   };
   const inPiP=()=>!!video&&(!!floating||doc.pictureInPictureElement===video||
+   (!!compositor?.getVideo?.()&&doc.pictureInPictureElement===compositor.getVideo())||
    video.webkitPresentationMode==='picture-in-picture');
   const eligible=()=>!!video&&video.readyState>=2&&!video.paused&&!video.ended;
   const captionsRequested=()=>!!(
@@ -33,7 +38,11 @@
   const notifyCC=()=>{
    try{doc.defaultView?.dispatchEvent?.(new Event('openiptv:cc-surface-changed'));}catch{}
   };
-  const docPiPAvailable=()=>typeof doc.defaultView?.documentPictureInPicture?.requestWindow==='function';
+  // Electron does not reliably create a visible Document-PiP window (#39633).
+  // Use a caption-composited native PiP video instead; leave Document PiP
+  // available only to non-Electron browser clients that actually support it.
+  const docPiPAvailable=()=>!doc.defaultView?.streamleaf&&
+   typeof doc.defaultView?.documentPictureInPicture?.requestWindow==='function';
   const restoreFloating=({close=true}={})=>{
    const entry=floating;
    if(!entry)return false;
@@ -83,8 +92,10 @@
    return true;
   };
   const requestNativePiP=()=>{
-   if(doc.pictureInPictureEnabled&&typeof video.requestPictureInPicture==='function')
-    return video.requestPictureInPicture();
+   if(captionsRequested())compositor?.prepare?.();
+   const target=captionsRequested()?compositor?.getVideo?.()||video:video;
+   if(doc.pictureInPictureEnabled&&typeof target.requestPictureInPicture==='function')
+    return target.requestPictureInPicture();
    if(typeof video.webkitSetPresentationMode==='function'){
     video.webkitSetPresentationMode('picture-in-picture');return true;
    }
@@ -94,7 +105,9 @@
    if(floating)return Promise.resolve(restoreFloating());
    if(!inPiP())return Promise.resolve(false);
    try{
-    if(doc.pictureInPictureElement===video&&typeof doc.exitPictureInPicture==='function')
+    if((doc.pictureInPictureElement===video||
+        doc.pictureInPictureElement===compositor?.getVideo?.())&&
+       typeof doc.exitPictureInPicture==='function')
      return Promise.resolve(doc.exitPictureInPicture()).then(()=>true);
     if(typeof video.webkitSetPresentationMode==='function'){
      video.webkitSetPresentationMode('inline');return Promise.resolve(true);
@@ -178,6 +191,15 @@
   }
   video?.addEventListener?.('enterpictureinpicture',notifyCC);
   video?.addEventListener?.('leavepictureinpicture',()=>{reason='';notifyCC();});
+  // Prewarm the mirrored video before PiP clicks: requestPictureInPicture
+  // requires transient user activation and cannot wait for mirror.play().
+  const warmMirror=()=>{if(captionsRequested()&&eligible())compositor?.prepare?.();};
+  video?.addEventListener?.('playing',warmMirror);
+  video?.addEventListener?.('loadeddata',warmMirror);
+  doc.getElementById?.('liveCaptionToggle')?.addEventListener?.('change',warmMirror);
+  doc.getElementById?.('liveTranslateToggle')?.addEventListener?.('change',warmMirror);
+  doc.getElementById?.('subtitleShow')?.addEventListener?.('change',warmMirror);
+  warmMirror();
   return Object.freeze({enter,exit,manual,onPageChange,onNativeEvent,
    getOption:enabled,setOption:saveOption,inPiP,hasPending:()=>!!pending});
  }
