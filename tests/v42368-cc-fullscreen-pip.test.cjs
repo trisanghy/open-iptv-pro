@@ -19,7 +19,8 @@ test('CC stays in fullscreen playerBox and returns to native track after leaving
   defaultView:{addEventListener(){}},
   addEventListener:(name,fn)=>handlers[name]=fn,
   createElement:tag=>({tagName:tag,style:{},setAttribute(){},
-   classList:{add(){}},appendChild(){},textContent:'',getContext:()=>null})
+   classList:{add(){}},children:[],appendChild(child){this.children.push(child);this.textContent+=child.textContent||'';},
+   textContent:'',getContext:()=>null})
  };
  const box={clientWidth:800,clientHeight:450,contains:child=>child===video,
   classList:{add(){}},
