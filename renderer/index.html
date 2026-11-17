@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="vi"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
 <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: blob:; script-src 'self' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; img-src * data: blob: file:; connect-src * data: blob:; media-src * data: blob:; worker-src 'self' blob:;"/>
-<title>Open IPTV Pro 4.23.66</title><script src="theme-boot.js"></script><link rel="stylesheet" href="styles.css"/><link rel="stylesheet" href="ui-styles.css"/><link rel="stylesheet" href="ui-fullsync.css"/><link rel="stylesheet" href="ui-refined.css"/><link rel="stylesheet" href="ui-polish.css"/><link rel="stylesheet" href="player-ux.css"/><link rel="stylesheet" href="settings-v42317.css"/><link rel="stylesheet" href="sidebar-link-picker-v42329.css"/><link rel="stylesheet" href="video-layout-fix-v42330.css"/><link rel="stylesheet" href="channel-panel-compact-v42333.css"/><link rel="stylesheet" href="sidebar-channel-align-v42334.css"/><link rel="stylesheet" href="player-two-row-v42335.css"/><link rel="stylesheet" href="config-dropdown-v42336.css"/><link rel="stylesheet" href="video-source-aspect-v42338.css"/><link rel="stylesheet" href="player-classic-controls-v42340.css"/><link rel="stylesheet" href="player-toolbar-v42341.css"/><link rel="stylesheet" href="player-compact-cast-v42342.css"/><link rel="stylesheet" href="live-caption-row-v42343.css"/><link rel="stylesheet" href="local-tts-row-v42344.css"/><link rel="stylesheet" href="whisper-auto-v42345.css"/><link rel="stylesheet" href="live-caption-lang-v42346.css"/><link rel="stylesheet" href="unified-ai-settings-v42356.css"/><link rel="stylesheet" href="video-only-translated-caption-v42358.css"/><link rel="stylesheet" href="ai-hardware-advice-v42365.css"/><link rel="stylesheet" href="compact-live-ai-controls-v42366.css"/></head>
+<title>Open IPTV Pro 4.23.66</title><script src="theme-boot.js"></script><link rel="stylesheet" href="styles.css"/><link rel="stylesheet" href="ui-styles.css"/><link rel="stylesheet" href="ui-fullsync.css"/><link rel="stylesheet" href="ui-refined.css"/><link rel="stylesheet" href="ui-polish.css"/><link rel="stylesheet" href="player-ux.css"/><link rel="stylesheet" href="settings-v42317.css"/><link rel="stylesheet" href="sidebar-link-picker-v42329.css"/><link rel="stylesheet" href="video-layout-fix-v42330.css"/><link rel="stylesheet" href="channel-panel-compact-v42333.css"/><link rel="stylesheet" href="sidebar-channel-align-v42334.css"/><link rel="stylesheet" href="player-two-row-v42335.css"/><link rel="stylesheet" href="config-dropdown-v42336.css"/><link rel="stylesheet" href="video-source-aspect-v42338.css"/><link rel="stylesheet" href="player-classic-controls-v42340.css"/><link rel="stylesheet" href="player-toolbar-v42341.css"/><link rel="stylesheet" href="player-compact-cast-v42342.css"/><link rel="stylesheet" href="live-caption-row-v42343.css"/><link rel="stylesheet" href="local-tts-row-v42344.css"/><link rel="stylesheet" href="whisper-auto-v42345.css"/><link rel="stylesheet" href="live-caption-lang-v42346.css"/><link rel="stylesheet" href="unified-ai-settings-v42356.css"/><link rel="stylesheet" href="video-only-translated-caption-v42358.css"/><link rel="stylesheet" href="ai-hardware-advice-v42365.css"/><link rel="stylesheet" href="compact-live-ai-controls-v42366.css"/><link rel="stylesheet" href="live-ai-toolbar-v42367.css"/></head>
 <body>
 <div class="app-shell" id="appShell">
  <aside class="sidebar" id="appSidebar">
@@ -96,9 +96,18 @@
  <button type="button" id="liveCaptionSetup" aria-expanded="false" aria-controls="liveCaptionSetupPanel" title="Cài đặt chung: Live Caption, Live Translate, TTS và AI đã tải">⚙</button>
  <small id="liveCaptionStatus" role="status" aria-live="polite">Đang kiểm tra Whisper…</small>
  <button type="button" id="captionRetry" hidden title="Thử bật lại Live Caption/Translate">↻ Thử lại</button>
+ <details class="playback-extra" id="playbackExtra">
+        <summary title="Chụp ảnh và FFmpeg dự phòng" aria-label="Công cụ chụp ảnh và phát dự phòng">Công cụ <span aria-hidden="true">⌄</span></summary>
+        <div class="playback-extra-inner">
+         
+         
+         <button class="control-sm" id="shotBtn" title="Chụp ảnh kênh">▣ Chụp ảnh</button>
+         <button type="button" class="control-sm player-ffmpeg-btn" id="tryFfmpegBtn" title="Thử trình phát dự phòng FFmpeg nếu không có hình">↻ FFmpeg</button>
+        </div>
+       </details>
  </div><div class="caption-tts-main" role="group" aria-label="Giọng đọc bản dịch">
 <label class="tts-mode" title="Đọc bản dịch bằng giọng nói AI chạy trên máy">
- <input type="checkbox" id="liveTtsToggle"/>🔊 Giọng dịch TTS
+ <input type="checkbox" id="liveTtsToggle"/>🔊 Giọng dịch
 </label>
 <select id="liveTtsLanguage" aria-label="Ngôn ngữ giọng đọc">
  <option value="vi">Tiếng Việt</option>
@@ -112,7 +121,7 @@
  <option value="ru">Русский</option>
  <option value="id">Indonesia</option>
 </select>
-<label class="tts-duck-label" for="liveTtsVoice">Giọng đọc</label>
+<label class="tts-duck-label" for="liveTtsVoice">Giọng</label>
 <select id="liveTtsVoice" aria-label="Chọn mô hình và giọng đọc AI theo ngôn ngữ"></select>
 <label class="tts-duck-label" for="liveTtsSpeed" title="Tốc độ đọc TTS, không thay đổi tốc độ kênh IPTV">Tốc độ</label>
 <select id="liveTtsSpeed" aria-label="Tốc độ đọc giọng dịch TTS" title="Áp dụng khi đọc phụ đề và nghe thử giọng">
@@ -140,15 +149,7 @@
 <small id="liveTtsStatus" role="status" aria-live="polite">Kiểm tra TTS…</small>
 <small id="aiHeatWarningInline" role="alert" hidden></small>
  </div></div>
-<details class="playback-extra" id="playbackExtra">
-        <summary title="Chụp ảnh và FFmpeg dự phòng" aria-label="Công cụ chụp ảnh và phát dự phòng">Công cụ <span aria-hidden="true">⌄</span></summary>
-        <div class="playback-extra-inner">
-         
-         
-         <button class="control-sm" id="shotBtn" title="Chụp ảnh kênh">▣ Chụp ảnh</button>
-         <button type="button" class="control-sm player-ffmpeg-btn" id="tryFfmpegBtn" title="Thử trình phát dự phòng FFmpeg nếu không có hình">↻ FFmpeg</button>
-        </div>
-       </details>
+
 <div class="caption-third-setup" id="liveCaptionSetupPanel" hidden>
  <button type="button" id="captionAutoInstall" title="Tự tải công cụ Whisper và mô hình tiếng Việt/đa ngôn ngữ">Cài Whisper tự động</button>
  <button type="button" id="captionChooseBinary">Chọn whisper-cli</button>
@@ -385,6 +386,12 @@
       <p class="update-publisher"><span class="update-publisher-icon" aria-hidden="true">✓</span> Nhà phát hành chính thức · Open IPTV Pro <small>trisanghy/open-iptv-pro</small></p>
       <label class="settings-label update-auto-check"><input id="autoCheckUpdates" type="checkbox" checked/> Tự kiểm tra khi mở ứng dụng và thông báo khi có bản mới</label>
       <label class="settings-label update-auto-check"><input id="autoDownloadUpdates" type="checkbox" checked/> Tự tải bản cập nhật khi có phiên bản mới (trên Mac sẽ hỏi trước khi thoát nếu tải nền)</label>
+      <div class="update-version-selector" role="group" aria-label="Chọn phiên bản Open IPTV Pro">
+       <label for="updateVersionSelect">Phiên bản</label>
+       <select id="updateVersionSelect" disabled aria-describedby="updateVersionHint"><option value="">Kiểm tra để tải danh sách</option></select>
+       <button type="button" class="btn btn-subtle" id="updateVersionsRefreshBtn">↻ Danh sách</button>
+       <small id="updateVersionHint" role="status" aria-live="polite">Chọn bản ổn định, Beta hoặc bản cũ có bộ cài phù hợp và SHA-256.</small>
+      </div>
       <div class="update-actions">
        <button class="btn btn-primary" id="updateCheckBtn" type="button">Kiểm tra phiên bản mới</button>
        <button class="btn btn-primary" id="updateDownloadBtn" type="button" hidden>Tải phiên bản mới</button>
