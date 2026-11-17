@@ -69,7 +69,7 @@ test('v4.23.53: unsupported translation engine yields error and does not pretend
  assert.match(service,/type:'translation-error'/);
  assert.match(service,/finalText=words;translated=false/);
  assert.match(service,/routeLiveSegment/);
- assert.match(service,/translateText:\(text,target,source,options\)/);
+ assert.match(service,/translateText:\(input,target,source,options\)/);
 });
 test('v4.23.53: direct-only installer never marks pivot as a verified direct model',()=>{
  const model=read('src/local-ai-autoinstall.cjs'),bridge=read('src/argos-bridge.py');
