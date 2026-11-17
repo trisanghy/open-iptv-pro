@@ -15,7 +15,7 @@
  const escapeCue=t=>t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
  function decorate(base,{video,doc}){
   let prefs={show:true,content:'both',position:'bottom',size:'medium',font:'system',color:'#facc15',outline:true,outlineStyle:'dark',background:true,backgroundStyle:'black',opacity:50};
-  let last=null,styleNode=null;
+  let last=null,styleNode=null,originalVisible=true;
   const background=()=>{
    if(!prefs.background||prefs.backgroundStyle==='none')return 'transparent';
    if(prefs.backgroundStyle==='solid')return 'rgba(0,0,0,0.9)';
@@ -52,7 +52,7 @@
    }
   };
   const show=(text,language,{sourceText='',translated=false}={})=>{
-   const translatedLine=safeText(text),original=safeText(sourceText);
+   const translatedLine=safeText(text),original=originalVisible?safeText(sourceText):'';
    last={text:translatedLine,language,sourceText:original,translated};
    if(!prefs.show||!translatedLine){base.clear();return 'off';}
    let display=translatedLine;
@@ -97,6 +97,12 @@
    else{base.clear();applyStyle();}
    else applyStyle();
   };
+  const setOriginalVisible=value=>{
+   originalVisible=!!value;
+   if(last?.text&&!video.paused&&!video.ended)
+    show(last.text,last.language,{sourceText:last.sourceText,translated:last.translated});
+   else base.clear();
+  };
   const windowOrDefaults=value=>{
    const v=value&&typeof value==='object'?value:{};
    const out={};
@@ -113,7 +119,7 @@
   return Object.freeze({
    show,clear:()=>{last=null;base.clear();},
    destroy:()=>{last=null;base.destroy();if(styleNode?.parentElement)styleNode.parentElement.removeChild(styleNode);},
-   setPreferences,getPreferences:()=>({...prefs}),
+   setPreferences,setOriginalVisible,getPreferences:()=>({...prefs}),
    getMode:base.getMode,getText:base.getText
   });
  }

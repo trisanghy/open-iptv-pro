@@ -37,6 +37,7 @@
  };
  const videoCaptions=window.OpenIPTVVideoCaptions?.createVideoCaptionRenderer?.({video,doc:document});
  const ccPreferences=window.OpenIPTVSubtitlePreferences?.attach?.({doc:document,storage:localStorage,renderer:videoCaptions});
+ videoCaptions?.setOriginalVisible?.(caption.checked);
  const mediaActive=()=>!video.paused&&!video.ended&&video.readyState>=2&&!!selectedUrl();
  const outputWords=(txt,target,translated,sourceText='')=>{
   const text=String(txt||'').trim();
@@ -131,6 +132,7 @@
   // These are independent user controls. Translate/TTS may continue with
   // original Caption hidden; do not auto-enable or restart its Whisper worker.
   if(event?.target===caption&&translate.checked){
+   videoCaptions?.setOriginalVisible?.(caption.checked);
    message(caption.checked?'Phụ đề gốc bật · dịch vẫn hoạt động':'Đã ẩn phụ đề gốc · dịch vẫn hoạt động');
    return;
   }
