@@ -15,7 +15,13 @@ test('TTS rate, timeout, preview and latest queued line',()=>{
  const src=read('renderer/local-tts-v42344.js');
  for(const term of ['45000','90000','previewInFlight','playbackSpeed()','enqueuedAt','Date.now()-began>25000'])assert.ok(src.includes(term));
 });
-test('immutable new version and Mac build source tag',()=>{
- assert.equal(JSON.parse(read('package.json')).version,'4.23.17-tauri.23.4');
- assert.match(read('scripts/BUILD_RUSTLAB_MAC_ONE_ZIP_FAST.sh'),/rust-lab\/v23\.4/);
+test('Mac builder version guard uses the package version and immutable matching tag',()=>{
+ const version=JSON.parse(read('package.json')).version;
+ const release=version.split('-tauri.')[1];
+ const script=read('scripts/BUILD_RUSTLAB_MAC_ONE_ZIP_FAST.sh');
+ assert.ok(script.includes('VERSION="'+version+'"'));
+ assert.ok(script.includes('TAG="rust-lab/v'+release+'"'));
+ assert.match(script,/ACTUAL_VERSION=.*sed -nE/);
+ assert.match(script,/ACTUAL_VERSION.*==.*VERSION/);
+ assert.doesNotMatch(script,/grep -Eq .*version/);
 });

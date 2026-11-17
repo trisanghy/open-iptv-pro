@@ -1,10 +1,10 @@
 #!/bin/bash
 set -Eeuo pipefail
-VERSION="4.23.17-tauri.23.4"
+VERSION="4.23.17-tauri.23.5"
 REPO="trisanghy/open-iptv-pro"
 BRANCH="experiment/rust-tauri-v2"
-TAG="rust-lab/v23.4" # Immutable release tag; previous versions remain unchanged
-NAME="OpenIPTVPro_RustLab_v23_4"
+TAG="rust-lab/v23.5" # Immutable release tag; previous versions remain unchanged
+NAME="OpenIPTVPro_RustLab_v23_5"
 DEST_BASE="$HOME/Downloads/${NAME}_Build"
 DEST="$DEST_BASE"
 INDEX=2
@@ -12,17 +12,20 @@ while [[ -e "$DEST" ]]; do
   DEST="${DEST_BASE}_${INDEX}"
   INDEX=$((INDEX + 1))
 done
-TMP="$(mktemp -d "${TMPDIR:-/tmp}/rustlab-v23-4.XXXXXX")"
+TMP="$(mktemp -d "${TMPDIR:-/tmp}/rustlab-v23-5.XXXXXX")"
 trap 'rm -rf "$TMP"' EXIT
 err(){ echo "LỖI: $*" >&2; exit 1; }
-echo "Open IPTV Pro Rust Lab v23.4 — immutable release tag / one ZIP / fast build"
-# Download exactly the auto-created immutable v23.4 tag; no git clone or per-file downloads.
+echo "Open IPTV Pro Rust Lab v23.5 — immutable release tag / one ZIP / fast build"
+# Download exactly the auto-created immutable v23.5 tag; no git clone or per-file downloads.
 curl -fLsS --retry 2 --connect-timeout 20 "https://github.com/${REPO}/archive/refs/tags/${TAG}.zip" -o "$TMP/source.zip" || err "Không tải được ZIP từ GitHub"
 mkdir -p "$TMP/extract"
 ditto -x -k "$TMP/source.zip" "$TMP/extract" || err "ZIP bị hỏng hoặc tải chưa hoàn tất"
 SOURCE="$(find "$TMP/extract" -maxdepth 1 -type d -name 'open-iptv-pro-*' -print -quit)"
 [[ -n "$SOURCE" && -f "$SOURCE/package.json" ]] || err "Không tìm thấy mã nguồn Rust Lab"
-grep -Eq '"version"[[:space:]]*:[[:space:]]*"4[.]23[.]17-tauri[.]23[.]3"' "$SOURCE/package.json" || err "Tag không chứa đúng nguồn v23.4; dừng để tránh build nhầm"
+# Verify the archive version against VERSION above; do not pin a stale regex.
+# macOS BSD sed is available before any Node or Rust bootstrap.
+ACTUAL_VERSION="$(sed -nE 's/^[[:space:]]*"version"[[:space:]]*:[[:space:]]*"([^"]+)".*/\1/p' "$SOURCE/package.json" | head -n 1)"
+[[ -n "$ACTUAL_VERSION" && "$ACTUAL_VERSION" == "$VERSION" ]] || err "Sai phiên bản source: cần $VERSION, tìm thấy ${ACTUAL_VERSION:-không rõ}. Không build nhầm."
 if ! xcode-select -p >/dev/null 2>&1; then
  xcode-select --install 2>/dev/null || true
  err "Cần hoàn tất Xcode Command Line Tools do macOS yêu cầu rồi chạy lại"
