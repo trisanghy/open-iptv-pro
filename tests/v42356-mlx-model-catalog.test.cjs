@@ -84,7 +84,7 @@ test('v4.23.60: engine selectors, Auto routing, runtime and UI status are end-to
 });
 test('v4.23.60: stays Mac-only MLX; no accidental commercial license restricted NLLB in installer',()=>{
  const pkg=JSON.parse(read('package.json'));
- assert.equal(pkg.version,'4.23.63');
+ assert.equal(pkg.version,'4.23.64');
  assert.deepEqual(pkg.build.mac.target,['dmg']);
  assert.equal(pkg.build.dmg.writeUpdateInfo,false);
  const python=read('src/hymt-bridge.py');

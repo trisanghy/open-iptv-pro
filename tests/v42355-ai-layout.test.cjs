@@ -10,7 +10,7 @@ test('v4.23.60: active UI has one settings icon and one layout controller',()=>{
  assert.equal((html.match(/unified-ai-settings-v42356\.js/g)||[]).length,1);
  assert.equal((html.match(/unified-ai-settings-v42356\.css/g)||[]).length,1);
  assert(!html.includes('unified-ai-settings-v42354.js'));
- assert.equal(JSON.parse(read('package.json')).version,'4.23.63');
+ assert.equal(JSON.parse(read('package.json')).version,'4.23.64');
 });
 
 test('v4.23.60: moves existing Whisper controls instead of cloning or recreating their click listeners',()=>{
