@@ -93,6 +93,7 @@ test('v4.23.54: supported hardware gated; weights validated correctly, model roo
   fs.writeFileSync(path.join(folder,'tokenizer.json'),Buffer.alloc(200000));
   fs.writeFileSync(path.join(folder,'model.safetensors'),Buffer.alloc(10010000));
   assert.equal(svc.state('hymt18').installed,true);
+  assert.equal(svc.state('hymt18').runtimeReady,false,'Model remains while separate runtime was deleted');
   assert.equal(svc.state('hymt7').installed,false);
   const intel=createHyMTService({dataDir,installer:{},platform:'darwin',arch:'x64'});
   assert.equal(intel.state('hymt18').supported,false);
@@ -103,6 +104,9 @@ test('v4.23.54: supported hardware gated; weights validated correctly, model roo
 test('v4.23.54: no global cache writes and app retains native DMG-only outputs',()=>{
  const service=read('src/hymt-service.cjs'),bridge=read('src/hymt-bridge.py');
  assert.match(service,/HF_HOME:/);
+ assert.match(service,/if\(installed\(key\)&&runtimeReady\(\)\)return state\(key\)/);
+ assert.match(service,/Đã khôi phục runtime MLX/);
+ assert.match(read('renderer/unified-ai-settings-v42354.js'),/Sửa bộ chạy MLX/);
  assert.match(bridge,/snapshot_download/);
  assert.match(bridge,/mlx_lm import generate, load/);
  assert.match(bridge,/mlx-community\/Hy-MT2-1\.8B-4bit/);
