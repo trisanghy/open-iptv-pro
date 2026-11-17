@@ -34,7 +34,12 @@
   if(localStorage.getItem(ACTIVE))return;
   if(localStorage.getItem(GUEST)===null){
    const saved=localStorage.getItem(STORE);
-   localStorage.setItem(GUEST,saved||'');
+   try{localStorage.setItem(GUEST,saved||'');}
+   catch(e){
+    // Large lists can exhaust localStorage quota. Never block sign-in,
+    // and never restore another user's data when signing out.
+    console.warn('Guest backup unavailable due to local storage quota',e);
+   }
   }
  };
  const isDifferentUser=id=>{const p=localStorage.getItem(ACTIVE);return p&&p!==id};
