@@ -300,7 +300,7 @@ PROJECT_FINAL="$WORK/Open-IPTV-Pro-v4_23_58_Full_Desktop"
 mv "$PROJECT" "$PROJECT_FINAL"
 PROJECT="$PROJECT_FINAL"
 echo '[3/5] Fixing TTS interrupting speech at every new subtitle — full sentences + newest queued...'
-V59_REV="1eb46b460e2f3dab92c046728af89463ddb9bb51"
+V59_REV="ccf3e48593bf525e06e70858ec2fdc1ef3e56751"
 V59_DIR="$WORK/overlays59"
 mkdir -p "$V59_DIR"
 for file in tts-utterance-queue-v42359.js local-tts-ui-v42359.js v42359-tts-complete-utterance.test.cjs v4.23.59-apply.cjs BUILD_MAC_DMG_ONLY_v42359.command; do
