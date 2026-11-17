@@ -194,6 +194,12 @@
 <div class="ai-settings-section" role="group" aria-label="Giọng đọc TTS">
  <h4>TTS · Giọng đọc và thử giọng</h4>
  <div class="ai-settings-actions"><button type="button" id="liveTtsInstall" title="Tự cài Piper, Argos và giọng đọc; tải một lần cần kết nối Internet">Cài mô hình tự động</button><button type="button" id="liveTtsPreview" title="Nghe thử giọng trên máy, không cần bật kênh IPTV">Nghe thử</button></div>
+ <div id="f5ReferencePanel" class="f5-reference-panel" hidden>
+  <small>F5-TTS tiếng Việt: dùng để thử nghiệm phi thương mại. Chỉ chọn giọng mẫu do bạn sở hữu hoặc được người nói cho phép. Mô hình không tải lên dịch vụ đám mây.</small>
+  <button type="button" id="f5ChooseReference">Chọn âm thanh mẫu</button>
+  <span id="f5ReferenceLabel">Chưa chọn giọng mẫu</span>
+  <input type="text" id="f5ReferenceText" maxlength="400" placeholder="Nhập chính xác câu nói trong tệp mẫu" aria-label="Bản chép lời mẫu giọng F5"/>
+ </div>
  <small>Chọn Piper hoặc VieNeu ở hàng giọng đọc phía ngoài; tốc độ và mức tiếng gốc vẫn chỉnh được trực tiếp.</small>
 </div>
 <div class="ai-settings-section" role="group" aria-label="Quản lý dung lượng AI">
