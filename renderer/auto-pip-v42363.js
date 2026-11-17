@@ -109,13 +109,20 @@
    return Promise.resolve(false);
   }
   video?.addEventListener?.('leavepictureinpicture',()=>{reason='';});
-  const warmMirror=()=>{if(captionsRequested()&&eligible())compositor?.prepare?.();};
+  const warmMirror=()=>{
+   if(captionsRequested()&&eligible())compositor?.prepare?.();
+   else if(!inPiP())compositor?.stop?.();
+  };
   video?.addEventListener?.('playing',warmMirror);
   video?.addEventListener?.('loadeddata',warmMirror);
   for(const id of ['liveCaptionToggle','liveTranslateToggle','subtitleShow'])
    doc.getElementById?.(id)?.addEventListener?.('change',warmMirror);
   warmMirror();
-  return Object.freeze({enter,exit,manual,onPageChange,onNativeEvent,
+  const dispose=()=>{
+   ++sequence;reason='';
+   return nativeExit().catch(()=>false).finally(()=>compositor?.stop?.());
+  };
+  return Object.freeze({enter,exit,manual,onPageChange,onNativeEvent,dispose,
    getOption:enabled,setOption:saveOption,inPiP,hasPending:()=>!!pending});
  }
  function bootstrap(win){
@@ -134,6 +141,7 @@
     if(status)status.textContent='Đã lưu thiết lập PiP tự động.';
    });
   }
+  win.addEventListener?.('pagehide',()=>{void control.dispose();});
   win.OpenIPTVAutoPiP=control;
  }
  return {createController,bootstrap,KEYS};
