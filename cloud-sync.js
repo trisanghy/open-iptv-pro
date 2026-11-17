@@ -323,9 +323,12 @@
    });
    if(providerReply.ok){
     const settings=await providerReply.json();
-    enabledProviders={email:settings.external_email!==false,
-      google:settings.external_google===true,
-      github:settings.external_github===true};
+    const external=settings.external||{};
+    enabledProviders={
+      email:(external.email??settings.external_email)!==false,
+      google:(external.google??settings.external_google)===true,
+      github:(external.github??settings.external_github)===true
+    };
    }else enabledProviders={email:true,google:false,github:false};
   }catch(e){
    console.warn('Could not verify enabled OAuth providers',e);
