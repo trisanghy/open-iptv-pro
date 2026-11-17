@@ -1,0 +1,66 @@
+name: Refresh Stable v4.23.67 Release text for Rust Lab v23.8.15
+on:
+  workflow_run:
+    workflows: ["Replace Rust Lab files in Stable v4.23.67 with verified v23.8.15"]
+    types: [completed]
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: stable-v42367-rustlab-v23815-release-notes
+  cancel-in-progress: false
+jobs:
+  notes:
+    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - name: Confirm final assets are correct and Electron remains stable
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -Eeuo pipefail
+          test "$(node -p 'require("./package.json").version')" = 4.23.67
+          grep -Fq 'Rust Lab v23.8.15' README.md
+          grep -Fq 'OpenIPTVPro-RustLab-v23.8.15-mac-arm64.dmg' RELEASE_NOTES_V4_23_67.md
+          grep -Fq 'OpenIPTVPro-RustLab-v23.8.15-mac-x64.dmg' RELEASE_NOTES_V4_23_67.md
+          gh api "repos/$GITHUB_REPOSITORY/releases/tags/v4.23.67" > before.json
+          jq -e '.draft==false and .prerelease==false' before.json
+          test "$(jq '.assets|length' before.json)" -eq 13
+          for file in \
+            Open-IPTV-Pro-4.23.67-mac-arm64.dmg \
+            Open-IPTV-Pro-4.23.67-mac-x64.dmg \
+            Open-IPTV-Pro-Setup-4.23.67-x64.exe \
+            Open-IPTV-Pro-4.23.67-x64.exe \
+            OpenIPTVPro_Source_v4.23.67.zip \
+            OpenIPTVPro-RustLab-v23.8.15-mac-arm64.dmg \
+            OpenIPTVPro-RustLab-v23.8.15-mac-x64.dmg \
+            OpenIPTVPro-RustLab-v23.8.15-Windows-Setup-x64.exe \
+            OpenIPTVPro-RustLab-v23.8.15-Windows-Portable-x64.zip \
+            OpenIPTVPro-RustLab-v23.8.15-Source.zip \
+            SHA256SUMS_RUSTLAB_v23.8.15.txt SHA256SUMS.txt; do
+            jq -e --arg n "$file" \
+              '.assets[]|select(.name==$n and (.digest|test("^sha256:[a-f0-9]{64}$")))' before.json >/dev/null
+          done
+          if jq -e '[.assets[].name]|any(.[];contains("v23.8.2"))' before.json >/dev/null; then
+            echo "::error::Outdated Rust Lab files remain";exit 1
+          fi
+      - name: Update Release title and complete changelog on stable GitHub Release
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -Eeuo pipefail
+          gh release edit v4.23.67 --repo "$GITHUB_REPOSITORY" \
+            --title "Open IPTV Pro v4.23.67 Stable — Electron Desktop | Web Online | Rust/Tauri Lab v23.8.15 Mac + Windows" \
+            --notes-file RELEASE_NOTES_V4_23_67.md
+          gh api "repos/$GITHUB_REPOSITORY/releases/tags/v4.23.67" > final.json
+          jq -e '.draft==false and .prerelease==false and (.name|contains("Rust/Tauri Lab v23.8.15 Mac + Windows"))' final.json
+          jq -er '.body' final.json | grep -Fq "OpenIPTVPro-RustLab-v23.8.15-mac-arm64.dmg"
+          jq -er '.body' final.json | grep -Fq "OpenIPTVPro-RustLab-v23.8.15-mac-x64.dmg"
+          test "$(jq '.assets|length' final.json)" -eq 13
+          echo "Stable release and main notes now consistently use Rust Lab v23.8.15."
