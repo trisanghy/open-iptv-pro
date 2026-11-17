@@ -7,7 +7,7 @@ const {createLocalSpeechService}=require('../src/local-tts-service.cjs');
 const root=path.join(__dirname,'..');
 const read=p=>fs.readFileSync(path.join(root,p),'utf8');
 
-test('v4.23.62: seven extra Vietnamese voice choices are strictly allowlisted',()=>{
+test('v4.23.63: seven extra Vietnamese voice choices are strictly allowlisted',()=>{
  assert.equal(VIETVOICE_VOICES.length,6);
  assert.equal(F5_VOICES.length,1);
  assert.equal(extraVietnameseVoice('vietvoice:female:northern').area,'northern');
@@ -19,7 +19,7 @@ test('v4.23.62: seven extra Vietnamese voice choices are strictly allowlisted',(
   assert.ok(read('renderer/local-tts-v42344.js').includes("'"+id+"'"),id);
 });
 
-test('v4.23.62: separate opt-in installers and no fabricated ready state',()=>{
+test('v4.23.63: separate opt-in installers and no fabricated ready state',()=>{
  const dir=fs.mkdtempSync(path.join(os.tmpdir(),'iptv-v42362-'));
  try{
   const mgr=createAutoModelInstaller({dataDir:dir});
@@ -36,7 +36,7 @@ test('v4.23.62: separate opt-in installers and no fabricated ready state',()=>{
  }finally{fs.rmSync(dir,{recursive:true,force:true});}
 });
 
-test('v4.23.62: F5 reference needs valid local WAV and actual transcript',()=>{
+test('v4.23.63: F5 reference needs valid local WAV and actual transcript',()=>{
  const dir=fs.mkdtempSync(path.join(os.tmpdir(),'iptv-f5sample-'));
  try{
   const wav=path.join(dir,'sample.wav'),data=Buffer.alloc(44+24000*2*4);
@@ -58,7 +58,7 @@ test('v4.23.62: F5 reference needs valid local WAV and actual transcript',()=>{
  }finally{fs.rmSync(dir,{recursive:true,force:true});}
 });
 
-test('v4.23.62: hashes, offline worker and consent IPC are connected',()=>{
+test('v4.23.63: hashes, offline worker and consent IPC are connected',()=>{
  const installer=read('src/local-ai-autoinstall.cjs');
  const bridge=read('src/extra-vietnamese-tts-bridge.py');
  const main=read('src/main.cjs'),pre=read('src/preload.cjs');
@@ -72,5 +72,5 @@ test('v4.23.62: hashes, offline worker and consent IPC are connected',()=>{
  assert.match(pre,/ttsChooseReference/);
  assert.match(ui,/referenceConsent/);
  assert.match(html,/id="liveTtsReferenceConsent"/);
- assert.equal(require('../package.json').version,'4.23.62');
+ assert.equal(require('../package.json').version,'4.23.63');
 });
