@@ -6,13 +6,14 @@ test('Rust translation list exactly matches Argos runtime language support',()=>
  const matches=rust.match(/const TRANSLATION_TARGETS:\[&str;21\]=\[([^\]]+)\]/);
  assert.ok(matches,'21 language source catalog');
  const langs=[...matches[1].matchAll(/"([^"]+)"/g)].map(m=>m[1]).sort();
- const py=router.match(/LANGS=\{([^}]+)\}/);
+ const py=router.match(/LANGS\s*=\s*\{([^}]+)\}/);
  const pyLangs=[...py[1].matchAll(/"([^"]+)"/g)].map(m=>m[1]).sort();
  assert.deepEqual(langs,pyLangs);
 });
 test('Tauri uses a native direct-route probe and real translation self-test',()=>{
  const backend=read('src-tauri/src/local_ai.rs'),commands=read('src-tauri/src/bridge.rs'),shim=read('renderer/tauri-bridge.js');
- for(const term of ['translation_pair_status','translation_test','ai_storage_status','ai_remove_model','argos_direct_router_v23_6.py'])assert.ok(backend.includes(term));
+ for(const term of ['translation_pair_status','translation_test','ai_storage_status','ai_remove_model'])assert.ok(backend.includes(term));
+ assert.match(backend,/argos_direct_router_v23_\d+(?:_\d+)*\.py/);
  for(const op of ['caption:testTranslation','ai:storage','ai:removeModel'])assert.ok(commands.includes('"'+op+'"'));
  for(const api of ['captionTestTranslation','aiStorageStatus','aiRemoveModel'])assert.ok(shim.includes(api));
  assert.match(backend,/asset_bytes\(/);

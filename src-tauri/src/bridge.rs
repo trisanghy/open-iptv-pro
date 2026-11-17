@@ -139,7 +139,7 @@ pub async fn bridge(app:AppHandle,state:State<'_,Arc<AppState>>,local_ai_state:S
  match op.as_str() {
   "app:capabilities"=>Ok(json!({"native":true,"platform":if cfg!(target_os="windows"){"win32"}else if cfg!(target_os="macos"){"darwin"}else{"linux"},
    "ffmpegExists":s.ffmpeg.is_some(),"snapshotBase":format!("http://127.0.0.1:{}/snapshot?key={}&file=",s.port,s.secret),
-   "version":"4.23.17-tauri.23.8","runtime":"tauri2-rust"})),
+   "version":"4.23.17-tauri.23.8.1","runtime":"tauri2-rust"})),
   // v20: Native, local-only AI services from Electron v4.23.45 feature port.
   "caption:status"=>Ok(local_ai::caption_status(ai)),
   "caption:install"=>local_ai::caption_install(app.clone(),ai.clone()).await,

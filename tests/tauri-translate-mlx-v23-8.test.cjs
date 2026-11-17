@@ -41,8 +41,8 @@ test('Rust bridge and model settings connect real backends and manage model file
 test('Only local Mac produces app and CI continues DMG + source ZIP',()=>{
  const pkg=JSON.parse(read('package.json')),builder=read('scripts/BUILD_RUSTLAB_MAC_ONE_ZIP_FAST.sh');
  const ci=read('.github/workflows/rust-lab-version-tags.yml');
- assert.equal(pkg.version,'4.23.17-tauri.23.8');
- assert.ok(builder.includes('TAG="rust-lab/v23.8"'));
+ assert.match(pkg.version,/^4\.23\.17-tauri\.\d+(?:\.\d+)*$/);
+ assert.ok(builder.includes('TAG="rust-lab/v'+pkg.version.split('-tauri.')[1]+'"'));
  assert.match(builder,/npm run build -- --bundles app/);
  assert.doesNotMatch(builder,/cp "\$TMP\/source\.zip" "\$DEST/);
  assert.match(ci,/--target universal-apple-darwin --bundles dmg/);

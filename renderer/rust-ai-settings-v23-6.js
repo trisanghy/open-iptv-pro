@@ -64,6 +64,14 @@
  translation.append(autoRow);
  const translationButtons=mk('div','rust-ai-actions');
  for(const id of ['captionTranslationInstall','captionTestTranslate']){const node=$(id);if(node)translationButtons.append(node);}
+ const installSelected=mk('button','rust-ai-action rust-ai-install-selected','Tải / sửa mô hình đang chọn');
+ installSelected.type='button';
+ installSelected.title='Tải đúng mô hình Hy-MT2/Qwen3 đã chọn hoặc cài bộ dịch Argos khi chọn Tự động';
+ installSelected.addEventListener('click',()=>{
+  const key=modelKeys.has(engine.value)?engine.value:'argos';
+  void installModel(key);
+ });
+ translationButtons.append(installSelected);
  translation.append(translationButtons);
  translation.append(mk('p','rust-ai-muted','Whisper xác định tiếng gốc. Argos dùng CPU, Hy-MT2/Qwen3 chạy MLX trên Mac Apple Silicon; tải mô hình một lần khi bấm cài, sau đó dịch offline. Nếu chọn Tự động, chỉ dùng mô hình đã cài.'));
  const voiceButtons=mk('div','rust-ai-actions');
