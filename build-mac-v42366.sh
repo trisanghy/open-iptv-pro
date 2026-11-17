@@ -2,7 +2,7 @@
 # Private/personal Mac build: ONLY one .app; open folder on success.
 set -Eeuo pipefail
 VERSION='4.23.66'
-REF='experiment/electron-v42366-ai-model-hardware-hints'
+REF='experiment/electron-v42366-tts-translate-stability'
 OUT="$HOME/Downloads/Open_IPTV_Pro_APP_v4.23.66"
 TMP="$(mktemp -d /tmp/openiptv-app-v42366.XXXXXXXX)"
 trap 'rm -rf "$TMP"' EXIT
@@ -17,7 +17,7 @@ done
 ZIP="$TMP/src.zip"
 printf 'Downloading source %s (%s)\n' "$VERSION" "$REF"
 curl --fail --location --show-error --silent --retry 3 \
- "https://codeload.github.com/trisanghy/open-iptv-pro/zip/refs/heads/$REF" -o "$ZIP"
+ "https://codeload.github.com/trisanghy/open-iptv-pro/zip/refs/heads/${REF}" -o "$ZIP"
 unzip -q "$ZIP" -d "$TMP/source"
 ROOT=''
 for candidate in "$TMP"/source/*; do
