@@ -31,9 +31,9 @@ with tempfile.TemporaryDirectory() as base:
     index = {"weight_map": {"a": "model-00001-of-00002.safetensors",
                             "b": "model-00002-of-00002.safetensors"}}
     (weights / "model.safetensors.index.json").write_text(json.dumps(index))
-    (weights / "model-00001-of-00002.safetensors").write_bytes(b"x" * 1600000)
+    (weights / "model-00001-of-00002.safetensors").write_bytes(b"x" * 6500000)
     assert not module.installed(weights), "Never treat partially downloaded 8GB model as complete"
-    (weights / "model-00002-of-00002.safetensors").write_bytes(b"x" * 1600000)
+    (weights / "model-00002-of-00002.safetensors").write_bytes(b"x" * 6500000)
     assert module.installed(weights)
     (weights / "model-00002-of-00002.safetensors").unlink()
     assert not module.installed(weights)
