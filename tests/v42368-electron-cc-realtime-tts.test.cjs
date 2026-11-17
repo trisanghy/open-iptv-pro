@@ -43,7 +43,7 @@ test('Electron v4.23.68: native subtitles support dual lines, CC OFF, custom col
   assert.match(tracks[0].cues[0].text,/c\.source/);
   assert.match(tracks[0].cues[0].text,/Chúng ta đi thôi/);
   assert.equal(tracks[0].cues[0].line,88);
-  assert.match(doc.head?c.getPreferences().color:'','#32e344');
+  assert.equal(c.getPreferences().color,'#32e344');
   c.setPreferences({position:'top',content:'original'});
   assert.equal(tracks[0].cues[0].text,"Let's go.");
   assert.equal(tracks[0].cues[0].line,12);

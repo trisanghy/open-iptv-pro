@@ -93,7 +93,8 @@
   const setPreferences=value=>{
    const options=windowOrDefaults(value);
    prefs={...prefs,...options};
-   if(last?.text)show(last.text,last.language,{sourceText:last.sourceText,translated:last.translated});
+   if(last?.text&&!video.paused&&!video.ended)show(last.text,last.language,{sourceText:last.sourceText,translated:last.translated});
+   else{base.clear();applyStyle();}
    else applyStyle();
   };
   const windowOrDefaults=value=>{
