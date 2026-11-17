@@ -31,6 +31,7 @@ const {createLocalModelStorage}=require('./local-ai-storage.cjs');
 let localHyMT=null,localAIStorage=null;
 const {createLocalSpeechService}=require('./local-tts-service.cjs');
 const {createAutoModelInstaller}=require('./local-ai-autoinstall.cjs');
+const {resolveBundledFFprobe}=require('./local-audio-toolchain.cjs');
 const {createCaptionTranslator,isValidTarget}=require('./caption-translator.cjs');
 const {createWhisperAutoInstaller}=require('./whisper-autoinstall.cjs');
 const secret=randomBytes(20).toString('hex');
@@ -134,6 +135,13 @@ function ffmpegPath(){
  }
  resolvedFfmpeg=null;return null;
 }
+let resolvedFFprobe;
+function ffprobePath(){
+ if(resolvedFFprobe!==undefined)return resolvedFFprobe;
+ resolvedFFprobe=resolveBundledFFprobe();
+ if(!resolvedFFprobe)console.warn('Bundled FFprobe missing; VietVoice/TTS decoding may fail.');
+ return resolvedFFprobe;
+}
 function requireFfmpeg(){
  const found=ffmpegPath();
  if(!found)throw Error('Không tìm thấy FFmpeg tích hợp. Hãy cài lại bản Open IPTV Pro Full đúng kiến trúc của máy.');
@@ -160,7 +168,7 @@ async function makeSnapshot(url,label){
 }
 function setupIPC(){
   liveCaptionService=createLiveCaptionService({dataDir:app.getPath('userData'),getFFmpeg:ffmpegPath,notify:data=>{if(webWindow&&!webWindow.isDestroyed())webWindow.webContents.send('caption:event',data);},translateText:(text,target,source,options)=>{const engine=resolveAIEngine(options?.engine,options?.resourceMode);return engine==='argos'?captionTranslator.translateText(text,target,source,options):localHyMT.translate(text,target,source,engine);}});
-  localModelInstaller=createAutoModelInstaller({dataDir:app.getPath('userData'),notify:data=>{if(webWindow&&!webWindow.isDestroyed())webWindow.webContents.send('tts:event',data);}});
+  localModelInstaller=createAutoModelInstaller({dataDir:app.getPath('userData'),audioTools:{ffmpeg:ffmpegPath(),ffprobe:ffprobePath()},notify:data=>{if(webWindow&&!webWindow.isDestroyed())webWindow.webContents.send('tts:event',data);}});
   localHyMT=createHyMTService({dataDir:app.getPath('userData'),installer:localModelInstaller,notify:data=>{if(webWindow&&!webWindow.isDestroyed())webWindow.webContents.send('ai:event',data);}});
   localAIStorage=createLocalModelStorage({dataDir:app.getPath('userData'),onBeforeDelete:async id=>{
    if(localModelInstaller?.state('vi')?.installing)throw Error('Đang cài mô hình AI; không thể xóa lúc này');
@@ -170,7 +178,7 @@ function setupIPC(){
    try{await localHyMT?.stop();}catch{}
   }});
   captionTranslator=createCaptionTranslator({installer:localModelInstaller});
-  localTTS=createLocalSpeechService({dataDir:app.getPath('userData'),managed:localModelInstaller.paths(),translateText:(text,target,source)=>captionTranslator.translateText(text,target,source),notify:data=>{if(webWindow&&!webWindow.isDestroyed())webWindow.webContents.send('tts:event',data);}});
+  localTTS=createLocalSpeechService({dataDir:app.getPath('userData'),managed:localModelInstaller.paths(),audioTools:{ffmpeg:ffmpegPath(),ffprobe:ffprobePath()},translateText:(text,target,source)=>captionTranslator.translateText(text,target,source),notify:data=>{if(webWindow&&!webWindow.isDestroyed())webWindow.webContents.send('tts:event',data);}});
   ipcMain.handle('tts:status',(_e,lang,voice)=>({...localTTS.availability(lang,voice),install:localModelInstaller.state(lang,voice)}));
   ipcMain.handle('tts:install',(_e,lang,voice)=>localModelInstaller.install(lang,voice));
   ipcMain.handle('tts:reference:choose',async(_e,transcript,consent)=>{

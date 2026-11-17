@@ -7,6 +7,7 @@ const os=require('node:os');
 const {spawn}=require('node:child_process');
 const {premiumName}=require('./premium-voices.cjs');
 const {extraVietnameseVoice}=require('./extra-vietnamese-tts.cjs');
+const {pythonAudioEnvironment}=require('./local-audio-toolchain.cjs');
 const {createVieNeuSession}=require('./vieneu-session.cjs');
 const ALLOWED=Object.freeze(['vi','en','es','fr','de','zh','pt','it','ru','id']);
 const MAX_TEXT=360;
@@ -28,7 +29,7 @@ function findTool({selected='',envVar='',names=[],platform=process.platform,env=
  return candidates.find(p=>fileOK(p))||null;
 }
 function createLocalSpeechService(options={}){
- const {dataDir,notify=()=>{},spawnProcess=spawn,environment=process.env,platform=process.platform,managed=null,translateText=null}=options;
+ const {dataDir,notify=()=>{},spawnProcess=spawn,environment=process.env,platform=process.platform,managed=null,translateText=null,audioTools=null}=options;
  if(!dataDir)throw Error('Local speech data directory is required');
  const base=path.join(dataDir,'local-tts');
  const settings=path.join(base,'config.json');
@@ -165,9 +166,15 @@ function createLocalSpeechService(options={}){
   const p=managed?.extraPath?.(engine),bridge=managed?.extraBridge;
   if(!p||!fileOK(p.python)||!fileOK(bridge))
    throw Error('Thiếu bộ chạy '+engine+'; vui lòng cài lại mô hình trong Cài đặt');
+  // Pydub uses ffprobe/ffmpeg by name; app launches omit the Homebrew PATH.
+  // Inject bundled binary folders only for this Python worker, not globally.
+  if(engine==='vietvoice'&&(!audioTools?.ffprobe||!audioTools?.ffmpeg)){
+   throw Error('Bản ứng dụng thiếu FFprobe hoặc FFmpeg tích hợp. Cập nhật Open IPTV Pro v4.23.64 rồi thử lại; không cần cài mô hình VietVoice lần nữa.');
+  }
   const worker=createVieNeuSession({
    python:p.python,bridge,spawnProcess,
-   env:{...environment,OPENIPTV_TTS_ENGINE:engine,
+   env:{...pythonAudioEnvironment({environment,ffmpeg:audioTools?.ffmpeg,
+     ffprobe:audioTools?.ffprobe}),OPENIPTV_TTS_ENGINE:engine,
     HF_HOME:managed?.premiumCache||environment.HF_HOME||'',HF_HUB_OFFLINE:'1',
     TRANSFORMERS_OFFLINE:'1',TOKENIZERS_PARALLELISM:'false'},
    args:['serve',engine,p.cache],
@@ -263,7 +270,7 @@ function createLocalSpeechService(options={}){
    const stat=await fs.promises.stat(output);
    if(stat.size<44||stat.size>MAX_WAV)throw Error('Tệp WAV của bộ đọc TTS có dung lượng không hợp lệ.');
    const bytes=await fs.promises.readFile(output);
-   if(bytes.toString('ascii',0,4)!=='RIFF'||bytes.toString('ascii',8,12)!=='WAVE')throw Error('Piper chưa tạo được WAV hợp lệ.');
+   if(bytes.toString('ascii',0,4)!=='RIFF'||bytes.toString('ascii',8,12)!=='WAVE')throw Error('Bộ đọc TTS chưa tạo được WAV hợp lệ.');
    return {id:task.id,target:lang,voice:voiceId,sourceText:input,translatedText:speakText,mime:'audio/wav',audioBase64:bytes.toString('base64')};
   }finally{
    if(running===task)running=null;

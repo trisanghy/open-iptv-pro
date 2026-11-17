@@ -5,6 +5,7 @@ const fs=require('node:fs'),path=require('node:path'),os=require('node:os'),http
 const {spawn}=require('node:child_process');
 const {premiumName,VIENEU_VOICES}=require('./premium-voices.cjs');
 const {extraVietnameseVoice}=require('./extra-vietnamese-tts.cjs');
+const {pythonAudioEnvironment}=require('./local-audio-toolchain.cjs');
 const VOICES=Object.freeze({
  en:'en_US-lessac-low', vi:'vi_VN-25hours_single-low',
  es:'es_ES-mls_10246-low',fr:'fr_FR-siwis-low',de:'de_DE-thorsten-low',
@@ -65,7 +66,7 @@ function downloadPinned(url,where,expected,{limit=40*1024*1024,onProgress=()=>{}
   follow(url);
  });
 }
-function createAutoModelInstaller({dataDir,notify=()=>{},platform=process.platform,arch=process.arch,spawnProcess=spawn,download=downloadPinned}={}){
+function createAutoModelInstaller({dataDir,notify=()=>{},platform=process.platform,arch=process.arch,spawnProcess=spawn,download=downloadPinned,audioTools=null}={}){
  if(!dataDir)throw Error('Installer dataDir is required');
  const root=path.join(dataDir,'local-tts'),uvDir=path.join(root,'uv'),venv=path.join(root,'python-env');
  const voices=path.join(root,'voices'),argosDir=path.join(root,'argos-packages');
@@ -171,10 +172,11 @@ function createAutoModelInstaller({dataDir,notify=()=>{},platform=process.platfo
    supported:Object.keys(VOICES),message:active?'Đang cài mô hình…':'',piper,argos,model:voice,argosDir};
  }
  const report=(message,lang)=>notify({type:'progress',target:lang,message});
- const env=()=>({...process.env,UV_CACHE_DIR:path.join(root,'uv-cache'),
+ const env=()=>pythonAudioEnvironment({environment:{...process.env,UV_CACHE_DIR:path.join(root,'uv-cache'),
   UV_PYTHON_INSTALL_DIR:path.join(root,'python-managed'),ARGOS_PACKAGES_DIR:argosDir,
   ARGOS_DEVICE_TYPE:'cpu',ARGOS_CHUNK_TYPE:'MINISBD',ARGOS_MODEL_PROVIDER:'OPENNMT',HF_HOME:premiumCache,
-  HF_HUB_DISABLE_TELEMETRY:'1',TOKENIZERS_PARALLELISM:'false'});
+  HF_HUB_DISABLE_TELEMETRY:'1',TOKENIZERS_PARALLELISM:'false'},
+   ffprobe:audioTools?.ffprobe,ffmpeg:audioTools?.ffmpeg});
  async function run(file,args,lang,timeout=240000){
   if(!active)throw Error('Installation canceled');
   const action=String(args[0]||'');
