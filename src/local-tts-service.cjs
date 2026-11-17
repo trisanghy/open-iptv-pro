@@ -194,6 +194,8 @@ function createLocalSpeechService(options={}){
   const task=running;
   running=null;
   if(task?.child){try{task.child.kill('SIGKILL');}catch{}}
+  // Stop persistent Python workers when old subtitles/previews become stale.
+  if(task?.session){try{task.session.cancel?.();}catch{}}
   return {canceled:!!task};
  }
  function invokeProcess(executable,args,task,{stdin,timeout=30000}={}){
@@ -228,7 +230,7 @@ function createLocalSpeechService(options={}){
   const info=availability(lang,voiceId);
   if(!info.ready)throw Error(info.reason);
   stop();
-  const task={id:++sequence,child:null};
+  const task={id:++sequence,child:null,session:null};
   running=task;
   const temp=await fs.promises.mkdtemp(path.join(os.tmpdir(),'openiptv-tts-'));
   try{
@@ -250,7 +252,8 @@ function createLocalSpeechService(options={}){
      message:(extra.engine==='f5vi'?'F5-TTS Vietnamese':'VietVoice-TTS')+' đang tạo giọng tiếng Việt trên máy…'});
     const reference=extra.requiresReference?referenceInfo():null;
     if(extra.requiresReference&&!reference)throw Error('Chưa chọn mẫu giọng F5');
-    await getExtraSession(extra.engine).synthesize({
+    task.session=getExtraSession(extra.engine);
+    await task.session.synthesize({
      voice:extra.id,text:speakText,output,
      reference:reference?.audio,referenceText:reference?.text,
      timeout:extra.engine==='f5vi'?240000:180000
@@ -260,7 +263,8 @@ function createLocalSpeechService(options={}){
     if(!fileOK(managed?.premiumPython)||!fileOK(managed.vieneuBridge))
      throw Error('Thiếu môi trường giọng VieNeu hoặc mã nguồn tổng hợp');
     // Keep ONNX weights warm; do not reload the large VieNeu model every subtitle.
-    await getPremiumSession().synthesize({voice:premium,text:speakText,output,timeout:210000});
+    task.session=getPremiumSession();
+    await task.session.synthesize({voice:premium,text:speakText,output,timeout:210000});
    }else{
     notify({id:task.id,type:'status',message:'Đang tạo giọng đọc Piper ('+lang+')…'});
     // piper-tts v1.8.0 CLI supports model absolute path and text after "--".
