@@ -50,6 +50,11 @@ test('CC stays in fullscreen playerBox and returns to native track after leaving
   assert.equal(captions.getMode(),'native');
   assert.equal(tracks.at(-1).mode,'showing');
   assert.equal(overlay.hidden,true);
+  // A native fullscreen <video> has no room for a sibling DOM overlay;
+  // keep native VTT instead of forcing an invisible fallback.
+  doc.fullscreenElement=video;handlers.fullscreenchange();
+  assert.equal(captions.getMode(),'native');
+  assert.equal(tracks.at(-1).mode,'showing');
  }finally{globalThis.VTTCue=prior;}
 });
 
