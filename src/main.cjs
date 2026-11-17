@@ -227,7 +227,7 @@ function setupIPC(){
    throw Error('Invalid AI model');
   });
   ipcMain.handle('ai:delete',(_e,id)=>
-   Object.hasOwn(googleAI.MODELS,id)?googleAI.remove(id):['vietvoice','f5vi'].includes(id)?vietTTS.remove(id):localAIStorage.remove(id));
+   Object.hasOwn(googleAI.MODELS,id)?googleAI.remove(id):['vietvoice','f5vi','viettts-runtime'].includes(id)?vietTTS.remove(id):localAIStorage.remove(id));
   ipcMain.handle('ai:openOllamaDownload',()=>shell.openExternal('https://ollama.com/download'));
   ipcMain.handle('ai:openGemmaTerms',()=>shell.openExternal('https://ai.google.dev/gemma/terms'));
   ipcMain.handle('ai:testTranslation',async(_e,target,choice,mode)=>{
