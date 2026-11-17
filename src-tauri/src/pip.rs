@@ -34,8 +34,9 @@ pub fn open(app:&AppHandle,v:&Value)->Result<Value,String>{
  Ok(json!({"opened":true,"id":id}))
 }
 pub fn session(app:&AppHandle)->Result<Value,String>{
- app.state::<PipState>().session.lock().map_err(|_|"PiP state lock".into())?
-  .clone().ok_or("Không tìm thấy phiên PiP".into())
+ let state=app.state::<PipState>();
+ let session=state.session.lock().map_err(|_|"PiP state lock".to_string())?;
+ session.clone().ok_or_else(||"Không tìm thấy phiên PiP".to_string())
 }
 pub fn notify(app:&AppHandle,kind:&str,v:&Value)->Result<Value,String>{
  let current=session(app)?;

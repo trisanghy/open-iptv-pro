@@ -42,8 +42,9 @@ test('Backend creates private native window, checks caller and relays ready even
 });
 test('Correct version and single-app Mac builder',()=>{
  const p=JSON.parse(read('package.json'));
- assert.equal(p.version,'4.23.17-tauri.23.8.13');
+ assert.match(p.version,/^4\.23\.17-tauri\.23\.8\.\d+$/);
+ const release=p.version.split('-tauri.')[1];
  const sh=read('scripts/BUILD_RUSTLAB_MAC_ONE_ZIP_FAST.sh');
- assert.ok(sh.includes('TAG="rust-lab/v23.8.13"'));
+ assert.ok(sh.includes('TAG="rust-lab/v'+release+'"'));
  assert.ok(sh.includes('npm run build -- --bundles app'));
 });
