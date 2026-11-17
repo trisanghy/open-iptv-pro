@@ -24,6 +24,8 @@ jobs:
           node --check src/vieneu-session.cjs
           node --check src/main.cjs
           node --check renderer/local-tts-v42344.js
+      - name: Validate one-command Mac build shell syntax
+        run: bash -n build-mac-v42362.sh
       - name: Python source syntax check
         run: python3 -m py_compile src/extra-vietnamese-tts-bridge.py
       - name: Automated regression tests
