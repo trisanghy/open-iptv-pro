@@ -1,14 +1,14 @@
 'use strict';
 const fs=require('node:fs'),path=require('node:path'),{spawn}=require('node:child_process');
 const MODELS=Object.freeze({
- hymt18:{repo:'mlx-community/Hy-MT2-1.8B-4bit',label:'Hy-MT2 1.8B · Nhanh',family:'hymt',approxBytes:1100000000},
- hymt7:{repo:'mlx-community/Hy-MT2-7B-4bit',label:'Hy-MT2 7B · Chất lượng',family:'hymt',approxBytes:4550000000},
- hymt18q8:{repo:'mlx-community/Hy-MT2-1.8B-8bit',label:'Hy-MT2 1.8B · 8-bit',family:'hymt',approxBytes:1900000000},
- hymt7q8:{repo:'mlx-community/Hy-MT2-7B-8bit',label:'Hy-MT2 7B · 8-bit',family:'hymt',approxBytes:8000000000},
- qwen06:{repo:'mlx-community/Qwen3-0.6B-4bit',label:'Qwen3 0.6B · Siêu nhẹ',family:'qwen',approxBytes:360000000},
- qwen17:{repo:'mlx-community/Qwen3-1.7B-4bit',label:'Qwen3 1.7B · Cân bằng',family:'qwen',approxBytes:980000000},
- qwen4:{repo:'mlx-community/Qwen3-4B-4bit',label:'Qwen3 4B · Linh hoạt',family:'qwen',approxBytes:2300000000},
- qwen8:{repo:'mlx-community/Qwen3-8B-4bit',label:'Qwen3 8B · Nâng cao',family:'qwen',approxBytes:4600000000}
+ hymt18:{repo:'mlx-community/Hy-MT2-1.8B-4bit',label:'Hy-MT2 1.8B · Nhanh',family:'hymt',approxBytes:1100000000,minRamGB:8,recRamGB:16,backend:'mlx',device:'Mac Apple Silicon'},
+ hymt7:{repo:'mlx-community/Hy-MT2-7B-4bit',label:'Hy-MT2 7B · Chất lượng',family:'hymt',approxBytes:4550000000,minRamGB:16,recRamGB:24,backend:'mlx',device:'Mac Apple Silicon'},
+ hymt18q8:{repo:'mlx-community/Hy-MT2-1.8B-8bit',label:'Hy-MT2 1.8B · 8-bit',family:'hymt',approxBytes:1900000000,minRamGB:8,recRamGB:16,backend:'mlx',device:'Mac Apple Silicon'},
+ hymt7q8:{repo:'mlx-community/Hy-MT2-7B-8bit',label:'Hy-MT2 7B · 8-bit',family:'hymt',approxBytes:8000000000,minRamGB:24,recRamGB:32,backend:'mlx',device:'Mac Apple Silicon'},
+ qwen06:{repo:'mlx-community/Qwen3-0.6B-4bit',label:'Qwen3 0.6B · Siêu nhẹ',family:'qwen',approxBytes:360000000,minRamGB:4,recRamGB:8,backend:'mlx',device:'Mac Apple Silicon'},
+ qwen17:{repo:'mlx-community/Qwen3-1.7B-4bit',label:'Qwen3 1.7B · Cân bằng',family:'qwen',approxBytes:980000000,minRamGB:8,recRamGB:12,backend:'mlx',device:'Mac Apple Silicon'},
+ qwen4:{repo:'mlx-community/Qwen3-4B-4bit',label:'Qwen3 4B · Linh hoạt',family:'qwen',approxBytes:2300000000,minRamGB:8,recRamGB:16,backend:'mlx',device:'Mac Apple Silicon'},
+ qwen8:{repo:'mlx-community/Qwen3-8B-4bit',label:'Qwen3 8B · Nâng cao',family:'qwen',approxBytes:4600000000,minRamGB:16,recRamGB:24,backend:'mlx',device:'Mac Apple Silicon'}
 });
 const LANGS=new Set(['en','vi','zh','fr','es','de','ja','ko','pt','it','ru','id','ar','hi','th']);
 const fileOK=(p,minBytes=0)=>{try{return fs.statSync(p).isFile()&&fs.statSync(p).size>minBytes;}catch{return false;}};
