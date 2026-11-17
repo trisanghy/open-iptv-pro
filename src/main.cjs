@@ -29,8 +29,9 @@ const backupService=require('./backup-service.cjs');
 const {createLiveCaptionService}=require('./live-caption-service.cjs');
 const {createHyMTService}=require('./hymt-service.cjs');
 const {createGoogleOllamaService}=require('./google-ollama.cjs');
+const {createVietnameseVoices}=require('./vietnamese-voices.cjs');
 const {createLocalModelStorage}=require('./local-ai-storage.cjs');
-let localHyMT=null,localAIStorage=null,googleAI=null;
+let localHyMT=null,localAIStorage=null,googleAI=null,vietTTS=null;
 const {createLocalSpeechService}=require('./local-tts-service.cjs');
 const {createAutoModelInstaller}=require('./local-ai-autoinstall.cjs');
 const {createCaptionTranslator,isValidTarget}=require('./caption-translator.cjs');
@@ -165,6 +166,7 @@ function setupIPC(){
   localModelInstaller=createAutoModelInstaller({dataDir:app.getPath('userData'),notify:data=>{if(webWindow&&!webWindow.isDestroyed())webWindow.webContents.send('tts:event',data);}});
   localHyMT=createHyMTService({dataDir:app.getPath('userData'),installer:localModelInstaller,notify:data=>{if(webWindow&&!webWindow.isDestroyed())webWindow.webContents.send('ai:event',data);}});
   googleAI=createGoogleOllamaService({notify:data=>{if(webWindow&&!webWindow.isDestroyed())webWindow.webContents.send('ai:event',data);}});
+  vietTTS=createVietnameseVoices({dataDir:app.getPath('userData'),installer:localModelInstaller,notify:data=>{if(webWindow&&!webWindow.isDestroyed())webWindow.webContents.send('tts:event',data);}});
   localAIStorage=createLocalModelStorage({dataDir:app.getPath('userData'),onBeforeDelete:async id=>{
    if(localModelInstaller?.state('vi')?.installing)throw Error('Đang cài mô hình AI; không thể xóa lúc này');
    if(Object.hasOwn(localHyMT.MODELS,id)&&localHyMT?.state(id)?.installing)throw Error('Mô hình đang tải, không thể xóa');
@@ -173,11 +175,16 @@ function setupIPC(){
    try{await localHyMT?.stop();}catch{}
   }});
   captionTranslator=createCaptionTranslator({installer:localModelInstaller});
-  localTTS=createLocalSpeechService({dataDir:app.getPath('userData'),managed:localModelInstaller.paths(),translateText:(text,target,source)=>captionTranslator.translateText(text,target,source),notify:data=>{if(webWindow&&!webWindow.isDestroyed())webWindow.webContents.send('tts:event',data);}});
-  ipcMain.handle('tts:status',(_e,lang,voice)=>({...localTTS.availability(lang,voice),install:localModelInstaller.state(lang,voice)}));
-  ipcMain.handle('tts:install',(_e,lang,voice)=>localModelInstaller.install(lang,voice));
+  localTTS=createLocalSpeechService({dataDir:app.getPath('userData'),managed:localModelInstaller.paths(),translateText:(text,target,source)=>captionTranslator.translateText(text,target,source),vietnameseVoices:vietTTS,notify:data=>{if(webWindow&&!webWindow.isDestroyed())webWindow.webContents.send('tts:event',data);}});
+  ipcMain.handle('tts:status',(_e,lang,voice)=>({...localTTS.availability(lang,voice),install:vietTTS.validVoice(voice)?vietTTS.state(voice):localModelInstaller.state(lang,voice)}));
+  ipcMain.handle('tts:install',(_e,lang,voice)=>vietTTS.validVoice(voice)?vietTTS.install(voice):localModelInstaller.install(lang,voice));
   ipcMain.handle('tts:synthesize',(_e,params)=>localTTS.synthesize(params));
   ipcMain.handle('tts:stop',()=>localTTS.stop());
+  ipcMain.handle('tts:chooseReferenceAudio',async()=>{
+   const result=await dialog.showOpenDialog(webWindow,{title:'Chọn giọng mẫu có quyền sử dụng (F5-TTS)',
+    properties:['openFile'],filters:[{name:'Audio',extensions:['wav','mp3','m4a','flac']}]});
+   return result.canceled?'':String(result.filePaths?.[0]||'');
+  });
   whisperModelInstaller=createWhisperAutoInstaller({dataDir:app.getPath('userData'),notify:event=>{if(webWindow&&!webWindow.isDestroyed())webWindow.webContents.send('caption:event',event);}});
   ipcMain.handle('caption:install',async()=>{
     const result=await whisperModelInstaller.install();
@@ -210,7 +217,7 @@ function setupIPC(){
    return {supported:process.platform==='darwin'&&process.arch==='arm64',
     system:{platform:process.platform,arch:process.arch,totalRamGB:Math.round(os.totalmem()/1073741824*10)/10},
     googleRuntime:{online:external.online,downloadUrl:'https://ollama.com/download'},
-    storage:[...localAIStorage.inspect(),...externalInventory],
+    storage:[...localAIStorage.inspect(),...vietTTS.states(),...externalInventory],
     models:{...localModels,...external.models},
     hyMT:{hymt18:localHyMT.state('hymt18'),hymt7:localHyMT.state('hymt7')}};
   });
@@ -220,7 +227,7 @@ function setupIPC(){
    throw Error('Invalid AI model');
   });
   ipcMain.handle('ai:delete',(_e,id)=>
-   Object.hasOwn(googleAI.MODELS,id)?googleAI.remove(id):localAIStorage.remove(id));
+   Object.hasOwn(googleAI.MODELS,id)?googleAI.remove(id):['vietvoice','f5vi'].includes(id)?vietTTS.remove(id):localAIStorage.remove(id));
   ipcMain.handle('ai:openOllamaDownload',()=>shell.openExternal('https://ollama.com/download'));
   ipcMain.handle('ai:openGemmaTerms',()=>shell.openExternal('https://ai.google.dev/gemma/terms'));
   ipcMain.handle('ai:testTranslation',async(_e,target,choice,mode)=>{
@@ -390,4 +397,4 @@ app.whenReady().then(async()=>{
  setupIPC();createWindow();app.on('activate',()=>{if(BrowserWindow.getAllWindows().length===0)createWindow();});}).catch(e=>{dialog.showErrorBox('Open IPTV Pro lỗi khởi chạy',String(e.stack||e));app.quit();});
 // Closing the red macOS window button also quits instead of leaving an invisible app.
 app.on('window-all-closed',()=>app.quit());
-app.on('before-quit',()=>{try{localHyMT?.stop();}catch{}try{googleAI?.stop();}catch{}try{localTTS?.stop();}catch{}try{localTTS?.shutdown?.();}catch{}try{localModelInstaller?.cancel();}catch{}try{whisperModelInstaller?.cancel();}catch{}try{liveCaptionService?.stop();}catch{}try{dvr?.shutdown();}catch(e){console.warn('DVR shutdown',e);}castService.stop().catch(()=>{});try{timeshift?.stop();}catch{}try{playbackFallback?.stop();}catch{}try{server.close();}catch{}});
+app.on('before-quit',()=>{try{localHyMT?.stop();}catch{}try{googleAI?.stop();}catch{}try{vietTTS?.stop();}catch{}try{localTTS?.stop();}catch{}try{localTTS?.shutdown?.();}catch{}try{localModelInstaller?.cancel();}catch{}try{whisperModelInstaller?.cancel();}catch{}try{liveCaptionService?.stop();}catch{}try{dvr?.shutdown();}catch(e){console.warn('DVR shutdown',e);}castService.stop().catch(()=>{});try{timeshift?.stop();}catch{}try{playbackFallback?.stop();}catch{}try{server.close();}catch{}});
