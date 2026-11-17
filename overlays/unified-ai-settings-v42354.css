@@ -71,3 +71,12 @@
  #page-tv #liveCaptionSetupPanel .ai-settings-section{padding:9px;gap:7px}
  #page-tv #liveCaptionSetupPanel .ai-model-list{grid-template-columns:1fr}
 }
+
+/* Always-visible compact warning when multiple AI engines are enabled. */
+#page-tv .player-control-card #aiHeatWarningInline {
+ display:block!important;flex-basis:100%;max-width:100%;box-sizing:border-box;
+ padding:8px 10px;margin:2px 0;border:1px solid #947039;
+ border-radius:8px;background:#2d2518;color:#ffdc99;
+ font-size:11px;font-weight:600;line-height:1.45;
+}
+#page-tv .player-control-card #aiHeatWarningInline[hidden]{display:none!important}
