@@ -155,7 +155,7 @@
   const originalId=uid;
   busy=true;clearTimeout(timer);dirty=false;
   label('Đang đồng bộ dữ liệu…');
-  let completed=false;
+  let completed=false,failed=false;
   try{
    for(let attempt=0;attempt<4;attempt++){
     const remote=await readRemote(originalId);
@@ -170,7 +170,8 @@
      completed=true;break;
     }
     if(outcome==='download'){
-     // First sign-in on a new browser, or remote-only changes since last sync.
+     // Preserve unsynced old-version local changes before cloud restore.
+     if(meta && meta.hash!==contentHash(local) && !saveRecoveryCopy(originalId,local,['legacy-conflict']))return false;
      completed=swapIntoLocal(remote.payload,originalId,remote.revision);
      return completed;
     }
@@ -225,13 +226,14 @@
    return true;
   }catch(e){
    if(uid===originalId){
+    failed=true;
     report(e,'đồng bộ tự động');
     dirty=true;queueRetry();
    }
    return false;
   }finally{
    busy=false;syncControls();
-   if(uid===originalId&&dirty&&ready){dirty=false;schedule(1600);}
+   if(!failed&&uid===originalId&&dirty&&ready){dirty=false;schedule(1600);}
   }
  }
  async function reconcile(user){
@@ -376,7 +378,7 @@
    if(choices&&!choices.hidden){label('Hãy chọn dữ liệu cần giữ trước khi đăng xuất.');return;}
    clearTimeout(timer);
    if(busy){label('Đang đồng bộ, hãy đăng xuất khi quá trình lưu hoàn tất.');return;}
-   if(dirty&&ready){
+   if(ready){
     const ok=await uploadLocal();
     if(!ok||dirty){
       label('Đồng bộ chưa hoàn tất. Vui lòng thử lại trước khi đăng xuất để tránh mất dữ liệu.');

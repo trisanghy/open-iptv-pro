@@ -155,3 +155,14 @@ test('deleted fields merge correctly when only local changed',()=>{
  assert.equal(Object.prototype.hasOwnProperty.call(merged.merged,'extra'),false);
  assert.equal(merged.merged.selectedPage,'tv');
 });
+
+test('legacy baseline downloads when old browser has no field hashes',()=>{
+ const local={sources:[{id:'unsynced'}]},previous={sources:[{id:'old'}]};
+ const remote={payload:{sources:[{id:'newer'}]},revision:3};
+ const meta={revision:2,hash:core.digest(previous)};
+ assert.equal(core.automaticDecision({local,remote,meta}),'download');
+});
+test('hash-based sync decision ignores identical cloud changes',()=>{
+ const local={sources:[{id:'a'}],theme:'light'};
+ assert.equal(core.automaticDecision({local,remote:{payload:local,revision:11},meta:null}),'synced');
+});
