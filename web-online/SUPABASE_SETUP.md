@@ -68,3 +68,12 @@ The project's current default Magic Link email only contains a **Sign in** link.
 **Browser workaround for misconfigured localhost redirects**: ask for a fresh email. In Gmail right-click **Sign in** and **Copy link address** without opening it. Paste the full `https://<project>.supabase.co/auth/v1/verify?token=pkce_...&type=magiclink...` URL into Open IPTV Pro's cloud sign-in link input. The website validates the exact Supabase origin and calls `supabase.auth.verifyOtp({token_hash,type:'magiclink'})` in-place instead of navigating to the broken localhost redirect. A used or expired link cannot be reused. If the link was clicked, use the existing `localhost:3000/?code=...` PKCE callback recovery on the same browser instead. The paste-token path has unit coverage and needs browser end-to-end verification.
 
 This is a workaround, **not** a substitute for configuring Supabase Auth > URL Configuration: set Site URL and allowlisted Redirect URLs to `https://trisanghy.github.io/open-iptv-pro/`. Confirm the Magic Link email template uses `{{ .ConfirmationURL }}` rather than a hard-coded localhost link. New emails are required after changing settings.
+
+## Automatic full-state sync, November 2026
+
+- On sign-in, if no remote row exists, automatically save all cloud-eligible serialized browser state (sources, channels, groups, favourites, EPG configuration, themes and preferences) without prompting.
+- On a new browser that has never synced this account, the existing cloud row is authoritative and is restored automatically; guest browser data is backed up before replacement.
+- Every local app save triggers debounced sync; a short local-state watcher covers silent saves. A 12-second remote polling interval plus focus/online checks retrieves updates made on other browsers.
+- Server revision compare-and-swap avoids simultaneous silent replacement. A compact per-top-level-field baseline merges independent edits; if both browsers change the same field, remote wins and the original local snapshot is retained in `localStorage` under `openiptv:autosync-recovery:<user-id>`. If the recovery copy cannot be saved, sync stops instead of losing it.
+- Snapshots, EPG cache, credentials and other transient large caches remain excluded by `cloud-core.js`; the Supabase payload limit remains 1.95 MB. Browsers may restrict localStorage quota, so oversized user data may require exporting JSON.
+- RLS continues to isolate account data. No additional tables, public policies or privileged credentials.

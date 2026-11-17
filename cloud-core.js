@@ -47,6 +47,50 @@
   if(!code||code.length<16||code.length>512||!/^[A-Za-z0-9_-]+$/.test(code))return null;
   return {code,flowId:target.searchParams.get('sb_flow_id')||null};
  }
+
+ // Hash only the serialized cloud fields: a compact baseline for three-way,
+ // field-level merges without duplicating multi-MB channel lists in storage.
+ function digest(value){
+  const input=JSON.stringify(value);if(input===undefined)return null;
+  let sum=2166136261;
+  for(let n=0;n<input.length;n++)sum=Math.imul(sum^input.charCodeAt(n),16777619);
+  return String(sum>>>0);
+ }
+ function fieldHashes(store){
+  const state=snapshot(store),out={};
+  for(const [key,value] of Object.entries(state))out[key]=digest(value);
+  return out;
+ }
+ function automaticDecision({local,remote,meta}){
+  if(!remote)return 'upload';
+  if(same(local,remote.payload))return 'synced';
+  if(!meta||!Number.isSafeInteger(Number(meta.revision)))return 'download';
+  if(Number(meta.revision)===Number(remote.revision))return 'upload';
+  if(meta.hash===digest(snapshot(local)))return 'download';
+  return meta.fields&&typeof meta.fields==='object'?'merge':'download';
+ }
+ function mergeFields({local,remote,baseline}){
+  const onMachine=snapshot(local),inCloud=snapshot(remote),merged={...inCloud};
+  const conflicts=[],applied=[];
+  const keys=new Set([...Object.keys(onMachine),...Object.keys(inCloud),...Object.keys(baseline||{})]);
+  for(const key of keys){
+   const localValue=Object.prototype.hasOwnProperty.call(onMachine,key)?onMachine[key]:undefined;
+   const remoteValue=Object.prototype.hasOwnProperty.call(inCloud,key)?inCloud[key]:undefined;
+   const original=Object.prototype.hasOwnProperty.call(baseline||{},key)?baseline[key]:null;
+   const localHash=digest(localValue),remoteHash=digest(remoteValue);
+   if(localHash===remoteHash)continue;
+   if(localHash===original)continue; // remote-only change
+   if(remoteHash===original){ // local-only change
+    if(localValue===undefined)delete merged[key];else merged[key]=localValue;
+    applied.push(key);continue;
+   }
+   // Both devices changed the same top-level field. The new server version
+   // wins and the entire local snapshot must be saved as a recovery copy.
+   conflicts.push(key);
+  }
+  return {merged,conflicts,applied};
+ }
+
  function isEmailRateLimited(error){
   const code=String(error?.code||error?.error_code||'').toLowerCase();
   const status=Number(error?.status||error?.statusCode||0);
@@ -87,5 +131,5 @@
   if(knownPayload&&same(knownPayload,local))return 'download';
   return 'conflict';
  }
- return Object.freeze({snapshot,isMeaningful,same,validate,decision,validEmail,verificationLink,recoveryCode,isEmailRateLimited,authErrorMessage,MAX_BYTES});
+ return Object.freeze({snapshot,isMeaningful,same,validate,decision,digest,fieldHashes,automaticDecision,mergeFields,validEmail,verificationLink,recoveryCode,isEmailRateLimited,authErrorMessage,MAX_BYTES});
 });

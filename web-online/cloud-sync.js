@@ -48,7 +48,8 @@
  const info=el('cloudConflictReason');
  const STORE='open-iptv-pro-4',GUEST='openiptv:guest-backup:v1',ACTIVE='openiptv:active-uid:v1';
  const META=id=>'openiptv:sync-meta:'+id;
- let client=null,uid='',revision=0,ready=false,busy=false,dirty=false,timer=0,sessionSeq=0,pendingRemote=null;
+ const RECOVERY=id=>'openiptv:autosync-recovery:'+id;
+ let client=null,uid='',revision=0,ready=false,busy=false,dirty=false,timer=0,sessionSeq=0,pendingRemote=null,lastObservedHash='',retryTimer=0;
  const show=(node,visible)=>{if(node)node.hidden=!visible;};
  const label=(message,tone='info')=>{status.textContent=message;status.dataset.state=tone;};
  const current=()=>core.snapshot(app.getStore?.());
@@ -59,30 +60,51 @@
  };
  const metaFor=id=>{try{return JSON.parse(localStorage.getItem(META(id))||'null')}catch{return null}};
  function saveMeta(id,rev,payload){
-  localStorage.setItem(META(id),JSON.stringify({revision:rev,hash:contentHash(payload)}));
+  localStorage.setItem(META(id),JSON.stringify({revision:rev,hash:contentHash(payload),fields:core.fieldHashes(payload)}));
  }
  const guestBackup=()=>{
-  // If this browser is already holding the signed-in user's state,
-  // never mistake it for a guest backup after a refresh.
-  if(localStorage.getItem(ACTIVE))return;
-  if(localStorage.getItem(GUEST)===null){
-   const saved=localStorage.getItem(STORE);
-   try{localStorage.setItem(GUEST,saved||'');}
-   catch(e){
-    // Large lists can exhaust localStorage quota. Never block sign-in,
-    // and never restore another user's data when signing out.
-    console.warn('Guest backup unavailable due to local storage quota',e);
-   }
+  if(localStorage.getItem(ACTIVE))return true;
+  if(localStorage.getItem(GUEST)!==null)return true;
+  const saved=localStorage.getItem(STORE);
+  try{localStorage.setItem(GUEST,saved||'');return true;}
+  catch(e){
+   console.warn('Guest IPTV backup failed: localStorage quota',e);
+   label('Bộ nhớ trình duyệt không đủ để sao lưu dữ liệu khách. Không thể tự ghi đè dữ liệu máy. Hãy xuất bản sao lưu JSON trước.','error');
+   return false;
   }
  };
  const isDifferentUser=id=>{const p=localStorage.getItem(ACTIVE);return p&&p!==id};
+ const saveRecoveryCopy=(id,state,fields)=>{
+  // Save an unmerged version locally when two devices edited the same field.
+  // If recovery storage is full, do not discard that unsynced local change.
+  try{
+   localStorage.setItem(RECOVERY(id),JSON.stringify({
+    savedAt:new Date().toISOString(),reason:'simultaneous-edit',
+    conflictedFields:fields,payload:core.snapshot(state)
+   }));
+   return true;
+  }catch(e){
+   console.warn('Cloud conflict backup quota reached',e);
+   label('Không đủ bộ nhớ lưu bản dự phòng khi hai thiết bị cùng sửa. Đồng bộ tạm dừng để tránh mất dữ liệu.','error');
+   return false;
+  }
+ };
  const swapIntoLocal=(state,id,rev)=>{
   core.validate(state);
   const from=core.snapshot(state);
-  localStorage.setItem(STORE,JSON.stringify(from));
-  localStorage.setItem(ACTIVE,id);
-  saveMeta(id,rev,from);
-  location.reload();
+  // Protect the anonymous user's state before restoring a cloud account.
+  if(!guestBackup())return false;
+  try{
+   localStorage.setItem(STORE,JSON.stringify(from));
+   localStorage.setItem(ACTIVE,id);
+   saveMeta(id,rev,from);
+   location.reload();
+   return true;
+  }catch(e){
+   console.warn('Cannot restore cloud snapshot',e);
+   label('Không thể tải dữ liệu đám mây vào bộ nhớ trình duyệt. Hãy kiểm tra dung lượng lưu trữ.','error');
+   return false;
+  }
  };
  const report=(error,context)=>{
   console.warn('Open IPTV cloud sync',context,error);
@@ -98,7 +120,8 @@
   show(linkHelp,!uid&&!!client&&enabledProviders.email);
    show(linkForm,!uid&&!!client&&enabledProviders.email&&linkHelpOpen);
    card.dataset.authState=uid?'signed-in':'guest';
-  show(logout,!!uid);show(sync,!!uid&&ready);
+  show(logout,!!uid);show(sync,!!uid);
+  if(sync)sync.textContent='Đồng bộ ngay';
   account.textContent=uid?'Đã đăng nhập · '+(window.__iptvCloudUserName||'Tài khoản'):'Chế độ khách · lưu trên thiết bị';
   if(quick){
    quick.textContent=uid?'☁ '+(window.__iptvCloudUserName||'Tài khoản'):'☁ Tài khoản';
@@ -111,104 +134,128 @@
   if(error)throw error;
   return data;
  }
- function prompt(reason,remote){
-  ready=false;pendingRemote=remote;dirty=false;
-  info.textContent=reason;
-  show(choices,true);show(useCloud,!!remote);syncControls();
-  label('Cần chọn bản dữ liệu để đồng bộ, chưa có dữ liệu nào bị ghi đè.');
- }
- async function uploadLocal(force=false){
-  if(!uid||busy||!client)return;
-  busy=true;clearTimeout(timer);
-  let reschedule=false;
-  try{
-   const local=core.validate(current()).payload;
-   // Always compare revisions in DB; never silently clobber another device.
-   const prior=force?await readRemote(uid):null;
-   const expected=prior?prior.revision:revision;
-   let error=null,newRev=null;
-   if(!expected){
-    const result=await client.from('openiptv_user_state')
-     .insert({user_id:uid,payload:local,revision:1})
-     .select('revision').single();
-    error=result.error;newRev=result.data?.revision;
-   }else{
-    const result=await client.from('openiptv_user_state')
-     .update({payload:local,revision:expected+1,updated_at:new Date().toISOString()})
-     .eq('user_id',uid).eq('revision',expected)
-     .select('revision').maybeSingle();
-    error=result.error;newRev=result.data?.revision;
-   }
-   if(error)throw error;
-   if(!newRev){
-    const next=await readRemote(uid);
-    prompt('Thiết bị khác vừa cập nhật dữ liệu. Chọn giữ bản trên máy hoặc bản đám mây.',next);
-    return;
-   }
-   revision=newRev;saveMeta(uid,revision,local);
-   localStorage.setItem(ACTIVE,uid);ready=true;
-   dirty=!core.same(current(),local);
-   reschedule=dirty;
-   show(choices,false);pendingRemote=null;
-   label('Đã đồng bộ lúc '+new Date().toLocaleTimeString('vi-VN'));
-  }catch(e){
-   report(e,'khi tải dữ liệu lên');dirty=true;
-  }finally{busy=false;syncControls();if(reschedule&&ready)schedule();}
- }
- const schedule=()=>{
-  if(!ready||!uid)return;
-  dirty=true;clearTimeout(timer);label('Đang chờ đồng bộ…');
-  timer=setTimeout(()=>{
-   if(!dirty||!ready)return;
-   dirty=false;
-   uploadLocal(false);
-  },1800);
+ // Automatic sync: the cloud is authoritative on a fresh browser, while
+ // recognized local edits are written using a server-revision CAS update.
+ const schedule=(delay=1100)=>{
+  if(!uid||!ready||!client)return;
+  dirty=true;
+  clearTimeout(timer);
+  label('Đã lưu trên máy · đang chờ đồng bộ…');
+  timer=setTimeout(()=>void uploadLocal(),delay);
  };
+ const queueRetry=()=>{
+  if(!uid||!ready||retryTimer)return;
+  retryTimer=setTimeout(()=>{
+   retryTimer=0;if(uid&&ready)void uploadLocal();
+  },12000);
+ };
+ async function uploadLocal(){
+  if(!uid||!client||!ready)return false;
+  if(busy){dirty=true;return false;}
+  const originalId=uid;
+  busy=true;clearTimeout(timer);dirty=false;
+  label('Đang đồng bộ dữ liệu…');
+  let completed=false;
+  try{
+   for(let attempt=0;attempt<4;attempt++){
+    const remote=await readRemote(originalId);
+    if(uid!==originalId)return false;
+    const local=core.validate(current()).payload;
+    const meta=metaFor(originalId);
+    const outcome=core.automaticDecision({local,remote,meta});
+    if(outcome==='synced'){
+     revision=remote.revision;saveMeta(originalId,revision,remote.payload);
+     localStorage.setItem(ACTIVE,originalId);
+     lastObservedHash=contentHash(local);
+     completed=true;break;
+    }
+    if(outcome==='download'){
+     // First sign-in on a new browser, or remote-only changes since last sync.
+     completed=swapIntoLocal(remote.payload,originalId,remote.revision);
+     return completed;
+    }
+    let desired=local,conflicts=[];
+    if(outcome==='merge'){
+     const merged=core.mergeFields({local,remote:remote.payload,baseline:meta.fields});
+     desired=core.validate(merged.merged).payload;
+     conflicts=merged.conflicts;
+     if(conflicts.length && !saveRecoveryCopy(originalId,local,conflicts))
+      return false;
+    }
+    const expected=remote?.revision||0;
+    let error=null,newRev=null;
+    if(!remote){
+     const reply=await client.from('openiptv_user_state')
+      .insert({user_id:originalId,payload:desired,revision:1})
+      .select('revision').single();
+     error=reply.error;newRev=reply.data?.revision;
+    }else if(!core.same(desired,remote.payload)){
+     const reply=await client.from('openiptv_user_state')
+      .update({payload:desired,revision:expected+1,updated_at:new Date().toISOString()})
+      .eq('user_id',originalId).eq('revision',expected)
+      .select('revision').maybeSingle();
+     error=reply.error;newRev=reply.data?.revision;
+    }else{
+     newRev=expected;
+    }
+    if(uid!==originalId)return false;
+    if(error){
+     // Another device inserted the first row before we did.
+     if(!remote && String(error.code)==='23505')continue;
+     throw error;
+    }
+    if(!newRev)continue; // CAS miss: fetch latest revision and merge again.
+    revision=newRev;
+    saveMeta(originalId,newRev,desired);
+    localStorage.setItem(ACTIVE,originalId);
+    lastObservedHash=contentHash(desired);
+    completed=true;
+    if(core.same(current(),local) && !core.same(desired,local)){
+     // The merged cloud view also belongs in this browser.
+     swapIntoLocal(desired,originalId,newRev);
+     return true;
+    }
+    if(!core.same(current(),desired)){dirty=true;}
+    if(conflicts.length)
+     label('Đã tự hợp nhất và đồng bộ. Một số mục được sửa đồng thời đã lưu bản dự phòng trên thiết bị.');
+    break;
+   }
+   if(!completed)throw Error('Dữ liệu thay đổi đồng thời nhiều lần, sẽ thử lại.');
+   if(!dirty)label('Đã tự đồng bộ lúc '+new Date().toLocaleTimeString('vi-VN'));
+   return true;
+  }catch(e){
+   if(uid===originalId){
+    report(e,'đồng bộ tự động');
+    dirty=true;queueRetry();
+   }
+   return false;
+  }finally{
+   busy=false;syncControls();
+   if(uid===originalId&&dirty&&ready){dirty=false;schedule(1600);}
+  }
+ }
  async function reconcile(user){
   const id=user.id;
   if(!id||uid===id)return;
   const ticket=++sessionSeq;
-  ready=false;clearTimeout(timer);
+  clearTimeout(timer);ready=false;
   if(isDifferentUser(id)){
-   // Never upload the previous account's browser state to a new account.
+   // Never upload the previous account's browser state to another account.
    const backup=localStorage.getItem(GUEST);
-   if(backup!==null) {
+   if(backup!==null){
     if(backup)localStorage.setItem(STORE,backup);
     else localStorage.removeItem(STORE);
    }
    localStorage.removeItem(ACTIVE);
    location.reload();return;
   }
-  guestBackup();
+  if(!guestBackup())return;
   uid=id;window.__iptvCloudUserName=authName(user);
-  syncControls();
-  label('Đang kiểm tra dữ liệu tài khoản…');
-  try{
-   const remote=await readRemote(id);
-   if(ticket!==sessionSeq)return;
-   revision=remote?.revision||0;
-   const local=current();
-   const meta=metaFor(id);
-   if(!remote){
-    if(core.isMeaningful(local))
-     prompt('Tài khoản chưa có bản sao. Tải dữ liệu đang có trên máy lên đám mây?',null);
-    else {ready=true;label('Đăng nhập thành công · chưa có dữ liệu.');syncControls();}
-    return;
-   }
-   if(core.same(remote.payload,local)){
-    ready=true;saveMeta(id,revision,local);
-    localStorage.setItem(ACTIVE,id);
-    label('Đã khôi phục kết nối · dữ liệu đồng bộ.');syncControls();return;
-   }
-   if(!core.isMeaningful(local)){swapIntoLocal(remote.payload,id,revision);return;}
-   if(meta?.hash===contentHash(local)&&remote.revision>meta.revision){
-    swapIntoLocal(remote.payload,id,revision);return;
-   }
-   if(meta?.revision===remote.revision && meta.hash!==contentHash(local)){
-    ready=true;syncControls();schedule();return;
-   }
-   prompt('Dữ liệu trên máy khác với bản đám mây. Chọn bản bạn muốn giữ; không tự ghi đè.',remote);
-  }catch(e){report(e,'khi tải dữ liệu tài khoản');}
+  ready=true;show(choices,false);syncControls();
+  label('Đăng nhập thành công · đang tự khôi phục và đồng bộ…');
+  // Do not wait for a button press: new accounts upload automatically, and
+  // previously saved accounts download automatically in a fresh browser.
+  if(ticket===sessionSeq)await uploadLocal();
  }
  async function login(provider){
   if(!client)return;
@@ -317,38 +364,21 @@
   finally{otpVerify.disabled=false;}
  });
 
- sync.addEventListener('click',async()=>{
-  if(!uid)return;
-  const live=await readRemote(uid).catch(e=>{report(e,'kiểm tra dữ liệu');return undefined});
-  if(live===undefined)return;
-  if(!ready){
-   prompt('Đồng bộ đang tạm dừng. Chọn dữ liệu máy hoặc dữ liệu đám mây để tiếp tục.',live);
-   return;
-  }
-  if((live?.revision||0)!==revision){
-   prompt('Đã có thay đổi từ thiết bị khác. Hãy chọn bản muốn giữ.',live);
-   return;
-  }
-  await uploadLocal();
- });
- useLocal.addEventListener('click',()=>{if(uid)void uploadLocal(true);});
- useCloud.addEventListener('click',()=>{
-  if(!uid)return;
-  if(!pendingRemote){label('Chưa có bản đám mây để khôi phục.');return;}
-  swapIntoLocal(pendingRemote.payload,uid,pendingRemote.revision);
- });
- later.addEventListener('click',()=>{
-  show(choices,false);pendingRemote=null;ready=false;
-  label('Đã giữ dữ liệu trên máy. Đồng bộ tạm dừng cho đến khi bạn chọn lại.');
-  show(sync,true);sync.textContent='Thiết lập đồng bộ';
- });
+ sync.addEventListener('click',()=>{if(uid)void uploadLocal();});
+ // Kept in the DOM for backward compatibility, but never require a manual
+ // choice in the new auto-sync workflow.
+ show(choices,false);
+ useLocal?.addEventListener('click',()=>{show(choices,false);if(uid)void uploadLocal();});
+ useCloud?.addEventListener('click',()=>{show(choices,false);if(uid)void uploadLocal();});
+ later?.addEventListener('click',()=>show(choices,false));
  logout.addEventListener('click',async()=>{
   try{
    if(choices&&!choices.hidden){label('Hãy chọn dữ liệu cần giữ trước khi đăng xuất.');return;}
    clearTimeout(timer);
+   if(busy){label('Đang đồng bộ, hãy đăng xuất khi quá trình lưu hoàn tất.');return;}
    if(dirty&&ready){
-    await uploadLocal();
-    if(dirty){
+    const ok=await uploadLocal();
+    if(!ok||dirty){
       label('Đồng bộ chưa hoàn tất. Vui lòng thử lại trước khi đăng xuất để tránh mất dữ liệu.');
       return;
     }
@@ -363,8 +393,29 @@
   }catch(e){report(e,'khi đăng xuất');}
  });
  document.addEventListener('openiptv:local-saved',()=>schedule());
- window.addEventListener('online',()=>{if(dirty&&ready)schedule();});
- window.addEventListener('focus',()=>{if(dirty&&ready)schedule();});
+ window.addEventListener('storage',e=>{
+  if(e.key===STORE && uid&&ready)schedule(350);
+ });
+ window.addEventListener('online',()=>{if(uid&&ready)void uploadLocal();});
+ window.addEventListener('focus',()=>{if(uid&&ready)void uploadLocal();});
+ // Catch any app save path that does not dispatch openiptv:local-saved.
+ // No need to watch only one feature: capture all serializable app settings.
+ const localMonitor=setInterval(()=>{
+  if(!uid||!ready||document.hidden)return;
+  try{
+   const hash=contentHash(current());
+   if(hash!==lastObservedHash){lastObservedHash=hash;schedule(800);}
+  }catch(e){report(e,'đọc dữ liệu trên máy');}
+ },3500);
+ // Pull changes made on a different logged-in browser even if this browser
+ // has no local edits. No Realtime subscription or publication required.
+ const remoteMonitor=setInterval(()=>{
+  if(uid&&ready&&!busy&&!document.hidden&&navigator.onLine)void uploadLocal();
+ },12000);
+ window.addEventListener('pagehide',()=>{
+  clearInterval(localMonitor);clearInterval(remoteMonitor);
+  clearTimeout(timer);clearTimeout(retryTimer);
+ },{once:true});
  syncControls();
  try{
   const reply=await fetch(new URL('cloud-config.json',document.baseURI),{cache:'no-cache'});
@@ -421,6 +472,6 @@
    else localStorage.removeItem(STORE);
    localStorage.removeItem(ACTIVE);
    location.reload();
-  }else label('Chế độ khách. Đăng nhập bằng email; Google/GitHub khả dụng khi được cấu hình.');
+  }else label('Chế độ khách · đăng nhập để tự sao lưu và khôi phục dữ liệu IPTV trên mọi trình duyệt.');
  }catch(e){report(e,'khởi tạo Cloud');}
 })();

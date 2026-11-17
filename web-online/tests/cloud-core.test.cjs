@@ -110,3 +110,48 @@ test('Magic Link parser rejects a foreign project, even with a plausible PKCE to
 test('OTP expired error code provides a meaningful recovery hint',()=>{
  assert.match(core.authErrorMessage({code:'otp_expired',message:'Email link is invalid or has expired'}),/hết hạn/);
 });
+
+test('autobootstrap uploads a populated browser when cloud has no record',()=>{
+ const local={sources:[{id:'one'}],favorites:['f']};
+ assert.equal(core.automaticDecision({local,remote:null,meta:null}),'upload');
+});
+test('new browser automatically restores remote even when it has unrelated local data',()=>{
+ const local={sources:[{id:'guest'}]},remote={payload:{sources:[{id:'cloud'}]},revision:3};
+ assert.equal(core.automaticDecision({local,remote,meta:null}),'download');
+});
+test('ordinary local edits upload against unchanged server revision',()=>{
+ const before={sources:[{id:'a'}]};
+ const meta={revision:5,hash:core.digest(before),fields:core.fieldHashes(before)};
+ const after={sources:[{id:'a'},{id:'b'}]};
+ assert.equal(core.automaticDecision({local:after,remote:{payload:before,revision:5},meta}),'upload');
+});
+test('remote changes download when local matches its last known snapshot',()=>{
+ const prev={sources:[{id:'a'}]},newer={sources:[{id:'b'}]};
+ const meta={revision:5,hash:core.digest(prev),fields:core.fieldHashes(prev)};
+ assert.equal(core.automaticDecision({local:prev,remote:{payload:newer,revision:6},meta}),'download');
+});
+test('unrelated simultaneous changes merge automatically without losing either setting',()=>{
+ const base={sources:[{id:'a'}],theme:'dark',autoPlay:true};
+ const local={...base,theme:'light'};
+ const remote={...base,autoPlay:false};
+ const merged=core.mergeFields({local,remote,baseline:core.fieldHashes(base)});
+ assert.deepEqual(merged.merged,{sources:[{id:'a'}],theme:'light',autoPlay:false});
+ assert.deepEqual(merged.conflicts,[]);
+ assert.deepEqual(merged.applied,['theme']);
+});
+test('simultaneous same-field edits mark conflict and preserve remote authority',()=>{
+ const base={sources:[{id:'old'}],theme:'dark'};
+ const local={...base,sources:[{id:'local'}]};
+ const remote={...base,sources:[{id:'remote'}]};
+ const merged=core.mergeFields({local,remote,baseline:core.fieldHashes(base)});
+ assert.deepEqual(merged.conflicts,['sources']);
+ assert.deepEqual(merged.merged.sources,[{id:'remote'}]);
+});
+test('deleted fields merge correctly when only local changed',()=>{
+ const base={theme:'dark',extra:'legacy'};
+ const local={theme:'dark'};
+ const remote={...base,selectedPage:'tv'};
+ const merged=core.mergeFields({local,remote,baseline:core.fieldHashes(base)});
+ assert.equal(Object.prototype.hasOwnProperty.call(merged.merged,'extra'),false);
+ assert.equal(merged.merged.selectedPage,'tv');
+});
