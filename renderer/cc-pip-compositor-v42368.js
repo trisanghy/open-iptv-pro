@@ -85,7 +85,7 @@
   }
   return frame;
  }
- function createController({video,doc,getState=()=>null}){
+ function createController({video,doc,getState=()=>null,onPiPEvent=()=>{}}){
   let canvas=null,ctx=null,mirror=null,stream=null,timer=null,failed=false;
   const supported=()=>!!(doc?.createElement&&typeof doc.createElement('canvas')?.captureStream==='function');
   const ready=()=>!!mirror&&mirror.readyState>=2;
@@ -124,6 +124,8 @@
     mirror.style.bottom='0';mirror.style.width='2px';mirror.style.height='2px';
     mirror.style.opacity='0';mirror.style.pointerEvents='none';
     mirror.setAttribute('aria-hidden','true');
+    mirror.addEventListener?.('enterpictureinpicture',()=>onPiPEvent('enter'));
+    mirror.addEventListener?.('leavepictureinpicture',()=>onPiPEvent('leave'));
     (doc.body||doc.documentElement).appendChild(mirror);
     // Original IPTV video keeps its own audio. PiP video is video-only.
     Promise.resolve(mirror.play()).catch(()=>{});
