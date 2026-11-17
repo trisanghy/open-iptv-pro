@@ -25,7 +25,7 @@
  </aside>
  <main class="main">
   <header class="topbar"><div class="top-title"><span class="crumb">OPEN IPTV PRO</span><span class="chevron">›</span><b id="pageTitle">Xem truyền hình</b></div>
-   <div class="top-actions"><span class="state-mark" id="activeSourceTag">Chưa có nguồn</span><button class="btn btn-subtle" id="fileBtn">＋ Mở file M3U</button><button class="btn btn-primary" id="urlBtn">↗ Thêm URL</button></div>
+   <div class="top-actions"><button type="button" class="btn btn-subtle" id="cloudAccountQuick" title="Đăng nhập và đồng bộ dữ liệu">☁ Tài khoản</button><span class="state-mark" id="activeSourceTag">Chưa có nguồn</span><button class="btn btn-subtle" id="fileBtn">＋ Mở file M3U</button><button class="btn btn-primary" id="urlBtn">↗ Thêm URL</button></div>
   </header>
   <div class="content">
    <section id="page-tv" class="page active-page">
@@ -157,7 +157,28 @@
     <div id="dvrStatus" role="status" aria-live="polite" class="dvr-status">Đang kiểm tra bộ ghi hình…</div>
     <div id="dvrJobs" class="dvr-jobs"></div>
    </div><div class="epg-guide" id="epgGuide"></div></section>
-   <section id="page-settings" class="page"><div class="section-heading"><div><h1>⚙ Cài đặt Open IPTV Pro</h1><p>Màu sắc, bộ đệm truyền hình, nguồn EPG và kiểm tra cập nhật.</p></div></div><div class="settings-grid">
+   <section id="page-settings" class="page"><div class="section-heading"><div><h1>⚙ Cài đặt Open IPTV Pro</h1><p>Màu sắc, bộ đệm truyền hình, nguồn EPG và kiểm tra cập nhật.</p></div></div>
+    <article class="settings-card" id="cloudSyncCard">
+      <h2>☁ Tài khoản &amp; Đồng bộ đám mây</h2>
+      <p id="cloudAccount">Chế độ khách · lưu trên thiết bị</p>
+      <p class="hint" id="cloudStatus" role="status" aria-live="polite">Đang kiểm tra cấu hình đồng bộ…</p>
+      <div class="cloud-sync-actions">
+        <button type="button" class="btn btn-subtle" id="cloudLoginGoogle" hidden>Đăng nhập Google</button>
+        <button type="button" class="btn btn-subtle" id="cloudLoginGithub" hidden>Đăng nhập GitHub</button>
+        <button type="button" class="btn btn-primary" id="cloudSyncNow" hidden>Đồng bộ ngay</button>
+        <button type="button" class="btn btn-subtle" id="cloudLogout" hidden>Đăng xuất</button>
+      </div>
+      <div id="cloudSyncConflict" class="cloud-sync-conflict" hidden>
+        <p id="cloudConflictReason"></p>
+        <div class="cloud-sync-actions">
+          <button type="button" class="btn btn-primary" id="cloudUseRemote">Dùng dữ liệu đám mây</button>
+          <button type="button" class="btn btn-subtle" id="cloudUseLocal">Giữ dữ liệu máy &amp; tải lên</button>
+          <button type="button" class="btn btn-subtle" id="cloudLater">Để sau</button>
+        </div>
+      </div>
+      <p class="hint">Mỗi tài khoản chỉ truy cập được dữ liệu của mình. Không đăng nhập vẫn sử dụng bình thường. Link M3U có token sẽ được lưu trong tài khoản Supabase của bạn.</p>
+    </article>
+    <div class="settings-grid">
     <article class="settings-card interface-style-card" id="uiStyleSettings">
       <h2>🖥 Phong cách giao diện</h2>
       <p>Thay đổi phong cách bố cục, bảng màu bề mặt, nút bấm và hiệu ứng ngay lập tức. Không ảnh hưởng nguồn IPTV, chức năng phát, ghi hình hoặc cài đặt Sáng/Tối/AMOLED.</p>
@@ -266,26 +287,6 @@
       <small id="webAutoResumeHint" role="status" aria-live="polite">
         Mặc định bật. Tự mở lại kênh xem cuối khi truy cập website.
       </small>
-    </article>
-    <article class="settings-card" id="cloudSyncCard">
-      <h2>☁ Tài khoản &amp; Đồng bộ đám mây</h2>
-      <p id="cloudAccount">Chế độ khách · lưu trên thiết bị</p>
-      <p class="hint" id="cloudStatus" role="status" aria-live="polite">Đang kiểm tra cấu hình đồng bộ…</p>
-      <div class="cloud-sync-actions">
-        <button type="button" class="btn btn-subtle" id="cloudLoginGoogle" hidden>Đăng nhập Google</button>
-        <button type="button" class="btn btn-subtle" id="cloudLoginGithub" hidden>Đăng nhập GitHub</button>
-        <button type="button" class="btn btn-primary" id="cloudSyncNow" hidden>Đồng bộ ngay</button>
-        <button type="button" class="btn btn-subtle" id="cloudLogout" hidden>Đăng xuất</button>
-      </div>
-      <div id="cloudSyncConflict" class="cloud-sync-conflict" hidden>
-        <p id="cloudConflictReason"></p>
-        <div class="cloud-sync-actions">
-          <button type="button" class="btn btn-primary" id="cloudUseRemote">Dùng dữ liệu đám mây</button>
-          <button type="button" class="btn btn-subtle" id="cloudUseLocal">Giữ dữ liệu máy &amp; tải lên</button>
-          <button type="button" class="btn btn-subtle" id="cloudLater">Để sau</button>
-        </div>
-      </div>
-      <p class="hint">Mỗi tài khoản chỉ truy cập được dữ liệu của mình. Không đăng nhập vẫn sử dụng bình thường. Link M3U có token sẽ được lưu trong tài khoản Supabase của bạn.</p>
     </article>
     <article class="settings-card" id="defaultBufferSettings"><h2>⏪ Tua lại mặc định</h2><label class="check-line buffer-default-line" for="autoTimeshiftSetting"><input type="checkbox" id="autoTimeshiftSetting"/> Tự bật bộ đệm tua lại <span id="autoTimeshiftWindowMinutes">10</span> phút khi mở kênh</label><p>FFmpeg được tích hợp sẵn. Bộ đệm tua lại theo số phút đã chọn được tạo cục bộ từ lúc mở kênh; Snapshot hàng loạt hoạt động mà không cần cài FFmpeg ngoài. Nguồn có DRM hoặc chặn truy cập có thể không hỗ trợ.</p><small id="autoTimeshiftState" aria-live="polite">Mặc định: tắt</small></article>
     <article class="settings-card" id="epgSettingsCard"><h2>▤ Nguồn lịch EPG</h2><p>Quản lý nguồn XMLTV (.xml / .xml.gz), cập nhật tự động hoặc nhập file từ máy. EPG cũ được giữ lại nếu cập nhật lỗi.</p>

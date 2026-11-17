@@ -7,7 +7,12 @@
  const app=window.IPTVState, core=window.OpenIPTVCloudCore;
  const el=id=>document.getElementById(id);
  const card=el('cloudSyncCard'),status=el('cloudStatus');
+ const quick=el('cloudAccountQuick');
  if(!app||!core||!card||!status)return;
+ if(quick)quick.addEventListener('click',()=>{
+   document.querySelector('.nav[data-page="settings"]')?.click();
+   requestAnimationFrame(()=>card.scrollIntoView({block:'start',behavior:'smooth'}));
+ });
  const google=el('cloudLoginGoogle'),github=el('cloudLoginGithub');
  const logout=el('cloudLogout'),sync=el('cloudSyncNow');
  const account=el('cloudAccount'),choices=el('cloudSyncConflict');
@@ -61,6 +66,10 @@
   show(google,!uid&&!!client);show(github,!uid&&!!client);
   show(logout,!!uid);show(sync,!!uid&&ready);
   account.textContent=uid?'Đã đăng nhập · '+(window.__iptvCloudUserName||'Tài khoản'):'Chế độ khách · lưu trên thiết bị';
+  if(quick){
+   quick.textContent=uid?'☁ '+(window.__iptvCloudUserName||'Tài khoản'):'☁ Tài khoản';
+   quick.title=uid?'Tài khoản đã đăng nhập và đồng bộ':'Đăng nhập và đồng bộ dữ liệu IPTV';
+  }
  };
  async function readRemote(id){
   const {data,error}=await client.from('openiptv_user_state')
@@ -222,7 +231,7 @@
   const cfg=await reply.json();
   if(!cfg.enabled||!/^https:\/\/[a-z0-9-]+\.supabase\.co\/?$/i.test(cfg.url||'')
       ||!cfg.publishableKey||!window.supabase?.createClient){
-   label('Cloud chưa được kích hoạt. Website tiếp tục lưu riêng trên trình duyệt.');
+   label('Đồng bộ chưa được kích hoạt: cần thiết lập dự án Supabase và OAuth. Dữ liệu vẫn lưu an toàn trong trình duyệt.');
    return;
   }
   client=window.supabase.createClient(cfg.url,cfg.publishableKey,{

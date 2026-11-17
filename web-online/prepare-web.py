@@ -82,6 +82,24 @@ html=re.sub(menu_pattern,'\n         '+"<div id=\"webLegacyPlayerActionHooks\" h
 if html.count("    <article class=\"settings-card\" id=\"defaultBufferSettings\">") != 1:
     sys.exit('Web cloud: Settings insertion point changed')
 html=html.replace("    <article class=\"settings-card\" id=\"defaultBufferSettings\">","    <article class=\"settings-card\" id=\"cloudSyncCard\">\n      <h2>☁ Tài khoản &amp; Đồng bộ đám mây</h2>\n      <p id=\"cloudAccount\">Chế độ khách · lưu trên thiết bị</p>\n      <p class=\"hint\" id=\"cloudStatus\" role=\"status\" aria-live=\"polite\">Đang kiểm tra cấu hình đồng bộ…</p>\n      <div class=\"cloud-sync-actions\">\n        <button type=\"button\" class=\"btn btn-subtle\" id=\"cloudLoginGoogle\" hidden>Đăng nhập Google</button>\n        <button type=\"button\" class=\"btn btn-subtle\" id=\"cloudLoginGithub\" hidden>Đăng nhập GitHub</button>\n        <button type=\"button\" class=\"btn btn-primary\" id=\"cloudSyncNow\" hidden>Đồng bộ ngay</button>\n        <button type=\"button\" class=\"btn btn-subtle\" id=\"cloudLogout\" hidden>Đăng xuất</button>\n      </div>\n      <div id=\"cloudSyncConflict\" class=\"cloud-sync-conflict\" hidden>\n        <p id=\"cloudConflictReason\"></p>\n        <div class=\"cloud-sync-actions\">\n          <button type=\"button\" class=\"btn btn-primary\" id=\"cloudUseRemote\">Dùng dữ liệu đám mây</button>\n          <button type=\"button\" class=\"btn btn-subtle\" id=\"cloudUseLocal\">Giữ dữ liệu máy &amp; tải lên</button>\n          <button type=\"button\" class=\"btn btn-subtle\" id=\"cloudLater\">Để sau</button>\n        </div>\n      </div>\n      <p class=\"hint\">Mỗi tài khoản chỉ truy cập được dữ liệu của mình. Không đăng nhập vẫn sử dụng bình thường. Link M3U có token sẽ được lưu trong tài khoản Supabase của bạn.</p>\n    </article>\n"+"    <article class=\"settings-card\" id=\"defaultBufferSettings\">",1)
+# Put Cloud at the VERY TOP of Settings, as a visible full-width card,
+# rather than inside the auto-collapsing settings accordion.
+cloud_card_match=re.search(r'\s*<article class="settings-card" id="cloudSyncCard">[\s\S]*?</article>',html)
+if cloud_card_match is None:
+    sys.exit('Cloud settings card not found for relocation')
+cloud_card=cloud_card_match.group(0).lstrip()
+html=html.replace(cloud_card_match.group(0),'',1)
+settings_at=html.find('<section id="page-settings"')
+settings_grid_at=html.find('<div class="settings-grid">',settings_at)
+if settings_at<0 or settings_grid_at<0:
+    sys.exit('Settings grid missing')
+html=html[:settings_grid_at]+'\n    '+cloud_card+'\n    '+html[settings_grid_at:]
+# Add persistent account shortcut in top bar, including on the TV page.
+topbar_old="<div class=\"top-actions\"><span class=\"state-mark\" id=\"activeSourceTag\">Chưa có nguồn</span>"
+topbar_new="<div class=\"top-actions\"><button type=\"button\" class=\"btn btn-subtle\" id=\"cloudAccountQuick\" title=\"Đăng nhập và đồng bộ dữ liệu\">☁ Tài khoản</button><span class=\"state-mark\" id=\"activeSourceTag\">Chưa có nguồn</span>"
+if html.count(topbar_old)!=1:
+    sys.exit('Cloud topbar shortcut insertion point changed')
+html=html.replace(topbar_old,topbar_new,1)
 html=html.replace('</head>','<link rel="stylesheet" href="web-only.css"/><link rel="stylesheet" href="resume-last.css"/><link rel="stylesheet" href="web-volume.css"/><link rel="stylesheet" href="cloud-sync.css"/><link rel="manifest" href="manifest.webmanifest"/></head>',1)
 html=html.replace('</body>','<script src="supabase-sdk.js"></script><script src="cloud-core.js"></script><script src="web-only.js"></script><script src="resume-last.js"></script><script src="web-volume.js"></script><script src="cloud-sync.js"></script></body>',1)
 if 'id="playbackExtra"' in html:
