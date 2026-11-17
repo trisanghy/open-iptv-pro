@@ -76,7 +76,8 @@ test('v4.23.58: event listener hides source/interim, shows ONLY chosen target, b
   message:()=>{}};
  const run=vm.runInNewContext('((ev)=>{'+handled+';return lastShownSequence;})',setup);
  // raw text recognized first; no source text should ever be visible
- assert.equal(run({type:'segment',sequence:1,text:'Hello',language:'en',translated:false}),1);
+ run({type:'segment',sequence:1,text:'Hello',language:'en',translated:false});
+ assert.equal(setup.lastShownSequence,1);
  assert.equal(updates.length,0);assert.equal(clears,1);
  run({type:'segment',sequence:1,text:'Xin chào',language:'vi',translated:true});
  assert.deepEqual(Array.from(updates[0]),['Xin chào','vi',true]);
