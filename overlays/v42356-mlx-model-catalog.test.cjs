@@ -38,9 +38,9 @@ test('v4.23.56: sharded weights must be fully present to be considered installed
   fs.writeFileSync(path.join(weights,'tokenizer.json'),Buffer.alloc(200000));
   const index={weight_map:{'layer.1':'model-00001-of-00002.safetensors','layer.2':'model-00002-of-00002.safetensors'}};
   fs.writeFileSync(path.join(weights,'model.safetensors.index.json'),JSON.stringify(index));
-  fs.writeFileSync(path.join(weights,'model-00001-of-00002.safetensors'),Buffer.alloc(1200000));
+  fs.writeFileSync(path.join(weights,'model-00001-of-00002.safetensors'),Buffer.alloc(6500000));
   assert.equal(svc.state('hymt7q8').installed,false,'Must reject half-downloaded sharded model');
-  fs.writeFileSync(path.join(weights,'model-00002-of-00002.safetensors'),Buffer.alloc(1300000));
+  fs.writeFileSync(path.join(weights,'model-00002-of-00002.safetensors'),Buffer.alloc(6500000));
   assert.equal(svc.state('hymt7q8').installed,true);
   assert.equal(svc.state('qwen8').installed,false);
  }finally{fs.rmSync(dataDir,{force:true,recursive:true});}
