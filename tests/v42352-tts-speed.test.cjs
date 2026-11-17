@@ -58,15 +58,19 @@ test('v4.23.60: live playback and preview use the same pitch-preserving rate, st
   localStorage:storage,Event:class{constructor(type){this.type=type;}},Audio:FakeAudio,
   setInterval:()=>0,console};
  context.window.OpenIPTVSpeechQueue=require('../renderer/tts-utterance-queue-v42359.js');
+ context.window.OpenIPTVPreviewCoordinator=require('../renderer/tts-preview-coordinator-v42366.js');
  vm.runInNewContext(read('renderer/local-tts-v42344.js'),context);
  assert.equal(el('liveTtsSpeed').value,'1.25');
- await el('liveTtsPreview').listeners.click();
+ el('liveTtsPreview').listeners.click();
+ for(let i=0;i<5;i++)await new Promise(resolve=>setImmediate(resolve));
  assert.equal(audio.length,1);
  assert.equal(audio[0].playbackRate,1.25);
  assert.equal(audio[0].preservesPitch,true);
  el('liveTtsSpeed').value='1.50';el('liveTtsSpeed').listeners.change();
  assert.equal(audio[0].playbackRate,1.5,'Preview speed should update immediately');
  assert.equal(stored['openiptv-tts-playback-speed'],'1.50');
+ audio[0].listeners.ended();
+ for(let i=0;i<5;i++)await new Promise(resolve=>setImmediate(resolve));
  el('liveTtsToggle').checked=true;
  await el('liveTtsToggle').listeners.change();
  captionCb({type:'segment',translated:true,language:'vi',text:'Xin chào',utteranceKey:'xin-chao'});
@@ -76,6 +80,6 @@ test('v4.23.60: live playback and preview use the same pitch-preserving rate, st
  assert.equal(audio[1].preservesPitch,true);
  el('liveTtsSpeed').value='0.75';el('liveTtsSpeed').listeners.change();
  assert.equal(audio[1].playbackRate,0.75,'Current TTS sentence should change speed in flight');
- assert.equal(audio[0].playbackRate,0.75,'Preview speed should track setting');
+ assert.equal(audio[0].playbackRate,1.5,'Completed preview should not follow subsequent live speech changes');
  assert.equal(el('video').playbackRate,undefined,'IPTV playback speed must never change');
 });

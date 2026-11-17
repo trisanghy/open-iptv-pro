@@ -111,7 +111,7 @@ test('v4.23.60: no bottom transcript, and correct video script load ordering',()
 test('v4.23.60: retains continuous recognition and warm TTS; Mac DMG-only',()=>{
  const service=read('src/live-caption-service.cjs'),tts=read('src/local-tts-service.cjs');
  assert.match(service,/runContinuous\(s,getFFmpeg\(\),bin\(\),model\(\)\)/);
- assert.match(tts,/getPremiumSession\(\)\.synthesize/);
+ assert.match(tts,/task\.session=getPremiumSession\(\)/);
  const pkg=JSON.parse(read('package.json'));
  assert.equal(pkg.version,'4.23.66');
  assert.deepEqual(pkg.build.mac.target,['dmg']);

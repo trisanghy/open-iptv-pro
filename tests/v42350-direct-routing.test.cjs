@@ -10,7 +10,7 @@ test('v4.23.60: Whisper detects original language and direct routing bypasses id
  assert.match(cap,/routeLiveSegment/);
  assert.match(cap,/sourceLanguage:detected/);
  assert.doesNotMatch(cap,/if\(s.translate\)args.push\('-tr'\)/);
- assert.match(main,/captionTranslator.translateText\(text,target,source,options\)/);
+ assert.match(main,/translateWithInstalledFallback\(/); assert.match(read('src/ai-translation-fallback.cjs'),/argos\.translateText\(text,target,source,options\)/);
 });
 test('v4.23.60: repeats suppressed in both caption service and TTS queue',()=>{
  const cap=read('src/live-caption-service.cjs'),tts=read('renderer/local-tts-v42344.js');

@@ -92,7 +92,7 @@ test('v4.23.57: latest pending subtitle wins without interrupting audible speech
  assert.doesNotMatch(ui,/void speak\(payload\)/);
  assert.match(ui,/audio\.addEventListener\('ended'/);
  const service=read('src/local-tts-service.cjs');
- assert.match(service,/getPremiumSession\(\)\.synthesize/);
+ assert.match(service,/task\.session=getPremiumSession\(\)/);
  assert.match(service,/function shutdown\(\)/);
  assert.match(service,/return Object\.freeze\(\{availability,configure,synthesize,stop,shutdown,setReference\}\)/);
 });
