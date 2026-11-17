@@ -90,11 +90,42 @@
  }
  function save(){try{localStorage.setItem(KEY,JSON.stringify(settings));}catch(error){console.warn('CC preferences:',error);}}
  function clear(){
+  ++fitEpoch;
   last=null;spoken=null;overlay.hidden=true;orig.textContent='';trans.textContent='';
   if(expiry)clearTimeout(expiry);expiry=null;
  }
+ // Fit full multiline text into the *actual* player dimensions. Scaling is
+ // visual only: do not mutate the user's chosen font-size preference.
+ let fitEpoch=0;
+ function fitSubtitle(){
+  const epoch=++fitEpoch;
+  if(overlay.hidden)return;
+  const base={small:16,medium:20,large:25,xlarge:30}[settings.size]||20;
+  overlay.style.setProperty('font-size',base+'px','important');
+  const apply=()=>{
+   if(epoch!==fitEpoch||overlay.hidden)return;
+   const height=frame.clientHeight||0;
+   if(!height)return;
+   const available=Math.max(48,Math.floor(height*(settings.position==='middle'?.67:.85)));
+   overlay.style.setProperty('max-height',available+'px','important');
+   let size=base;
+   // Long captions first wrap naturally; only reduce font if wrapped
+   // lines would extend beyond the available video height.
+   while(size>12&&(overlay.scrollHeight>available+1||overlay.scrollWidth>overlay.clientWidth+1)){
+    size--;
+    overlay.style.setProperty('font-size',size+'px','important');
+   }
+   const overflow=overlay.scrollHeight>available+1;
+   overlay.style.setProperty('overflow-y',overflow?'auto':'visible','important');
+   overlay.style.pointerEvents=overflow?'auto':'none';
+   overlay.dataset.rustAutoFit=String(size<base);
+  };
+  window.requestAnimationFrame(apply);
+ }
  function render(){
-  if(!(last||spoken)||!settings.enabled||video.paused||video.ended){overlay.hidden=true;return;}
+  if(!(last||spoken)||!settings.enabled||video.paused||video.ended){
+   ++fitEpoch;overlay.hidden=true;return;
+  }
   const active=spoken||last;
   const original=String(active.originalText||active.text||'').trim(),result=String(active.text||'').trim();
   const hasTranslation=translate?.checked&&(spoken||last.translated===true)&&result&&result!==original;
@@ -103,10 +134,13 @@
   // line or TTS. In single-original mode, show translation as a useful fallback.
   const showOriginal=!!caption?.checked&&(settings.display==='original'||showBoth||!hasTranslation);
   const showTranslated=!!hasTranslation&&(settings.display==='translated'||showBoth||!caption?.checked);
-  orig.textContent=showOriginal?original.slice(0,500):'';
-  trans.textContent=showTranslated?result.slice(0,500):'';
+  // Never cut translated/original speech to one line or a fixed character
+  // count. The CSS handles wrapping, while fitSubtitle handles long phrases.
+  orig.textContent=showOriginal?original:'';
+  trans.textContent=showTranslated?result:'';
   orig.hidden=!orig.textContent;trans.hidden=!trans.textContent;
   overlay.hidden=orig.hidden&&trans.hidden;
+  if(!overlay.hidden)fitSubtitle();
  }
  function change(key,value){settings[key]=value;sync();save();render();}
  for(const [key,el] of Object.entries(els))
@@ -190,6 +224,9 @@
  translate?.addEventListener('change',clear);
  caption?.addEventListener('change',()=>{if(last)render();});
  window.addEventListener('pagehide',clear);
+ window.addEventListener('resize',()=>{if(!overlay.hidden)fitSubtitle();});
+ document.addEventListener('fullscreenchange',()=>{if(!overlay.hidden)fitSubtitle();});
+ video.addEventListener('resize',()=>{if(!overlay.hidden)fitSubtitle();});
  sync();
  window.RustSubtitleControls=Object.freeze({clear,render,getSettings:()=>({...settings}),storageKey:KEY});
 })();

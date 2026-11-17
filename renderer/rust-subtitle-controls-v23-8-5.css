@@ -26,14 +26,27 @@
 .rust-cc-opacity input{flex:1;min-width:60px;accent-color:#9b70de}
 .rust-cc-opacity output{min-width:35px}
 .rust-cc-panel small{font-size:11px;color:#a8b7c7}
-#page-tv #rustTranslatedCaption.rust-translated-caption:not([hidden]){display:flex!important;flex-direction:column;
- position:absolute;z-index:27;left:5%;right:5%;bottom:7%;top:auto;width:max-content;max-width:90%;
- max-height:min(34%,210px);overflow:hidden;box-sizing:border-box;gap:3px;margin:0 auto;padding:7px 12px;
- border-radius:10px;pointer-events:none;text-align:center;white-space:normal;overflow-wrap:anywhere;
+#page-tv #rustTranslatedCaption.rust-translated-caption:not([hidden]){
+ display:flex!important;flex-direction:column;align-items:stretch;
+ position:absolute;z-index:27;left:4%;right:4%;bottom:7%;top:auto;
+ width:92%!important;min-width:0;max-width:92%!important;
+ max-height:85%;overflow-x:hidden;overflow-y:visible;
+ box-sizing:border-box;gap:4px;margin:0 auto;padding:7px 12px;
+ border-radius:10px;pointer-events:none;text-align:center;
+ white-space:normal!important;overflow-wrap:anywhere!important;word-break:normal;
  color:var(--rust-cc-color,#ffe65b);background:rgba(0,0,0,var(--rust-cc-opacity,.5));
- font-size:20px;line-height:1.32;font-weight:650}
-#page-tv #rustTranslatedCaption :is(.rust-cc-original,.rust-cc-translation){display:-webkit-box;
- -webkit-box-orient:vertical;-webkit-line-clamp:2;line-clamp:2;overflow:hidden;white-space:normal}
+ font-size:20px;line-height:1.32;font-weight:650;
+}
+/* No line clamping: both the original and translation must wrap as needed. */
+#page-tv #rustTranslatedCaption :is(.rust-cc-original,.rust-cc-translation){
+ display:block!important;flex:0 0 auto;
+ width:100%;min-width:0;max-width:100%;
+ -webkit-line-clamp:unset!important;line-clamp:unset!important;
+ -webkit-box-orient:initial!important;
+ overflow:visible!important;text-overflow:clip!important;
+ white-space:pre-line!important;overflow-wrap:anywhere!important;
+ word-break:normal!important;
+}
 #page-tv #rustTranslatedCaption :is(.rust-cc-original,.rust-cc-translation)[hidden]{display:none!important}
 #page-tv #rustTranslatedCaption .rust-cc-original{color:white}
 #page-tv #playerBox[data-rust-subtitle-position=top] #rustTranslatedCaption{top:10%;bottom:auto}

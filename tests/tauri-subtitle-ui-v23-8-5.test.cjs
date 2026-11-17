@@ -12,7 +12,12 @@ test('CC settings are independently persisted and loaded with the renderer',()=>
  assert.ok(js.includes("document.addEventListener('rustlab:caption-segment'"));
  assert.ok(entry.includes('rust-subtitle-controls-v23-8-5.js'));
  assert.ok(html.includes('rust-subtitle-controls-v23-8-5.css'));
- assert.ok(css.includes('-webkit-line-clamp:2'));
+ assert.ok(css.includes('-webkit-line-clamp:unset!important'));
+ assert.ok(!css.includes('-webkit-line-clamp:2'));
+ assert.ok(css.includes('white-space:pre-line!important'));
+ assert.ok(css.includes('overflow-wrap:anywhere!important'));
+ assert.ok(css.includes('width:92%!important'));
+ assert.ok(!css.includes('max-height:min(34%,210px)'));
  assert.ok(!read('renderer/rust-electron-parity-v23-4.js').includes('overlay.textContent=text'));
 });
 test('Video pause terminates recognition, cancels old TTS audio and prevents new words',()=>{
