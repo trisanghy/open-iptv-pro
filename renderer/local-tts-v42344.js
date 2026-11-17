@@ -48,7 +48,7 @@
    if(chunk.length>=45&&/[.!?…;:]\s*$/u.test(word)){parts.push(chunk.trim());chunk='';}
   }
   if(chunk.trim())parts.push(chunk.trim());
-  return parts.slice(0,5);
+  return parts; // Keep the whole phrase; newer captions may interrupt stale chunks.
  };
  const ttsEvent=(type,detail={})=>document.dispatchEvent(new CustomEvent('rustlab:'+type,{detail}));
  const volumeInput=$('volume');

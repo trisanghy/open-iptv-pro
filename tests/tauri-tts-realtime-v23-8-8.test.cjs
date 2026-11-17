@@ -23,6 +23,7 @@ test('TTS starts short chunks rapidly, drops stale backlog, resumes without ghos
   'function applyDuck()', 'function acceptSpeech(', 'recentSpeech.clear()'])
   assert.ok(js.includes(value),value);
  assert.ok(js.includes('if(busy||playing||previewInFlight||previewAudio){queued=payload;return;}'));
+ assert.match(js,/return parts; \/\/ Keep the whole phrase/);
 });
 test('On-video caption follows the phrase being spoken, and restores normal overlay afterwards',()=>{
  const src=read('renderer/rust-subtitle-controls-v23-8-5.js');

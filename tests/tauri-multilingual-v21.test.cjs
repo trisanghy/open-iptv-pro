@@ -30,7 +30,9 @@ test('Whisper English intermediate is retained for optional Piper voiceover',()=
  assert.match(bridge,/opts\["target"\]/);
  assert.match(ui,/await api\.captionStart\(\{url:actual,translate:translate\.checked,target:selected/);
  assert.match(rust,/originalText/);
- assert.ok(tts.includes('const payload={text,sourceLanguage,englishFallbackText:englishFallback}'));
+ assert.match(tts,/const payload=\{text,sourceLanguage,englishFallbackText:englishFallback,originalText:original,enqueuedAt:Date\.now\(\)\}/);
+ assert.match(tts,/sourceLanguage:payload\.sourceLanguage/);
+ assert.match(tts,/ttsEvent\('tts-start'/);
  assert.match(rust,/argos_plan\(&ai_clone,&source,&target\)\.await\?/);
 });
 
