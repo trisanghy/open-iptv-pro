@@ -28,6 +28,7 @@ const {discoverAirplay}=require('./airplay-discovery.cjs');
 const backupService=require('./backup-service.cjs');
 const {createLiveCaptionService}=require('./live-caption-service.cjs');
 const {createHyMTService}=require('./hymt-service.cjs');
+const {translateWithInstalledFallback}=require('./ai-translation-fallback.cjs');
 const {createLocalModelStorage}=require('./local-ai-storage.cjs');
 let localHyMT=null,localAIStorage=null;
 const {createLocalSpeechService}=require('./local-tts-service.cjs');
@@ -168,7 +169,25 @@ async function makeSnapshot(url,label){
  });
 }
 function setupIPC(){
-  liveCaptionService=createLiveCaptionService({dataDir:app.getPath('userData'),getFFmpeg:ffmpegPath,notify:data=>{if(webWindow&&!webWindow.isDestroyed())webWindow.webContents.send('caption:event',data);},translateText:(text,target,source,options)=>{const engine=resolveAIEngine(options?.engine,options?.resourceMode);return engine==='argos'?captionTranslator.translateText(text,target,source,options):localHyMT.translate(text,target,source,engine);}});
+  let lastFallbackNotice=0;
+  liveCaptionService=createLiveCaptionService({
+   dataDir:app.getPath('userData'),getFFmpeg:ffmpegPath,
+   notify:data=>{if(webWindow&&!webWindow.isDestroyed())webWindow.webContents.send('caption:event',data);},
+   translateText:(text,target,source,options)=>{
+    const engine=resolveAIEngine(options?.engine,options?.resourceMode);
+    return translateWithInstalledFallback({
+     engine,text,target,source,options,mlx:localHyMT,argos:captionTranslator,
+     onFallback:({engine,reason})=>{
+      if(Date.now()-lastFallbackNotice<30000)return;
+      lastFallbackNotice=Date.now();
+      if(webWindow&&!webWindow.isDestroyed())
+       webWindow.webContents.send('caption:event',{
+        type:'status',message:'Bộ dịch '+engine+' bị lỗi · tạm dùng Argos đã cài: '+reason
+       });
+     }
+    });
+   }
+  });
   localModelInstaller=createAutoModelInstaller({dataDir:app.getPath('userData'),audioTools:{ffmpeg:ffmpegPath(),ffprobe:ffprobePath()},notify:data=>{if(webWindow&&!webWindow.isDestroyed())webWindow.webContents.send('tts:event',data);}});
   localHyMT=createHyMTService({dataDir:app.getPath('userData'),installer:localModelInstaller,notify:data=>{if(webWindow&&!webWindow.isDestroyed())webWindow.webContents.send('ai:event',data);}});
   localAIStorage=createLocalModelStorage({dataDir:app.getPath('userData'),onBeforeDelete:async id=>{
