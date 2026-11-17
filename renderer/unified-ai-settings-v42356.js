@@ -180,7 +180,7 @@
   const inventory=Array.isArray(latest?.storage)?latest.storage:[];
   const available=!!latest?.supported;
   const byId=Object.fromEntries(inventory.map(item=>[item.id,item]));
-  const order=['whisper','argos','piper','vieneu',...modelKeys,'cache','runtimes'];
+  const order=['whisper','argos','piper','vieneu','vietvoice','f5vi','f5sample',...modelKeys,'cache','runtimes'];
   for(const id of order){
    const item=byId[id];if(!item)continue;
    if(id==='hymt18'||id==='qwen06'){
