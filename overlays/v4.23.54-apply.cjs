@@ -204,6 +204,15 @@ for(const file of fs.readdirSync(full('tests')).filter(x=>x.endsWith('.test.cjs'
  const p='tests/'+file,t=read(p),updated=t.replaceAll(base,next);
  if(updated!==t)write(p,updated);
 }
+const oldRoutingTest='tests/v42350-direct-routing.test.cjs';
+const oldRoutingAssertion=String.raw`assert.match(read('src/main.cjs'),/translateText:\(text,target,source,options\)=>captionTranslator.translateText/);`;
+const newRoutingAssertion=String.raw`assert.match(read('src/main.cjs'),/resolveAIEngine/);
+ assert.match(read('src/main.cjs'),/localHyMT\.translate/);`;
+if(fs.existsSync(full(oldRoutingTest))){
+ const body=read(oldRoutingTest);
+ assert(body.includes(oldRoutingAssertion),'Missing v4.23.53 obsolete routing test marker');
+ write(oldRoutingTest,body.replace(oldRoutingAssertion,newRoutingAssertion));
+}
 copy('v42354-ai-management.test.cjs','tests/v42354-ai-management.test.cjs');
 write('RELEASE_NOTES_V4_23_54.md',[
  '# Open IPTV Pro v4.23.54 — Unified Local AI Preferences',
