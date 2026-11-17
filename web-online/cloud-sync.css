@@ -16,3 +16,9 @@
 #page-settings > #cloudSyncCard h2{margin-top:0}
 .topbar #cloudAccountQuick{white-space:nowrap;max-width:180px;overflow:hidden;text-overflow:ellipsis}
 @media(max-width:700px){#page-settings > #cloudSyncCard{padding:14px;margin:10px 0 16px}.topbar #cloudAccountQuick{max-width:90px;font-size:12px;padding:7px}}
+
+#cloudSyncCard .cloud-email-form{margin:12px 0;display:grid;gap:8px}
+#cloudSyncCard .cloud-email-form input{min-width:0;min-height:38px;padding:10px 12px;border:1px solid var(--line,#506174);border-radius:10px;color:var(--text,#f0f5f9);background:var(--surface,#131f2b)}
+#cloudSyncCard .cloud-email-form .cloud-email-input-line{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+#cloudSyncCard .cloud-email-form .cloud-email-input-line input{flex:1 1 220px}
+#cloudSyncCard .cloud-email-form label{font-weight:650}

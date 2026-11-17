@@ -162,6 +162,23 @@
       <h2>☁ Tài khoản &amp; Đồng bộ đám mây</h2>
       <p id="cloudAccount">Chế độ khách · lưu trên thiết bị</p>
       <p class="hint" id="cloudStatus" role="status" aria-live="polite">Đang kiểm tra cấu hình đồng bộ…</p>
+      <form id="cloudEmailForm" class="cloud-email-form" hidden>
+        <label for="cloudEmailInput">Đăng nhập bằng email</label>
+        <div class="cloud-email-input-line">
+          <input id="cloudEmailInput" type="email" autocomplete="email" placeholder="ten@example.com" required/>
+          <button type="submit" class="btn btn-primary" id="cloudEmailSend">Gửi liên kết đăng nhập</button>
+        </div>
+        <p class="hint">Nhận liên kết qua email để đăng nhập; có thể nhập mã xác thực nếu email cung cấp mã.</p>
+      </form>
+      <div id="cloudOtpForm" class="cloud-email-form" hidden>
+        <label for="cloudOtpCode">Mã xác thực từ email (nếu có)</label>
+        <div class="cloud-email-input-line">
+          <input id="cloudOtpCode" inputmode="numeric" autocomplete="one-time-code" maxlength="8" placeholder="Mã 6–8 số"/>
+          <button type="button" class="btn btn-subtle" id="cloudOtpVerify">Xác thực</button>
+        </div>
+      </div>
+      <p id="cloudAuthProviders" class="hint" aria-live="polite"></p>
+
       <div class="cloud-sync-actions">
         <button type="button" class="btn btn-subtle" id="cloudLoginGoogle" hidden>Đăng nhập Google</button>
         <button type="button" class="btn btn-subtle" id="cloudLoginGithub" hidden>Đăng nhập GitHub</button>

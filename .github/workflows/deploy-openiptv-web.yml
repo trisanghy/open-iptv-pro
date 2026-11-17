@@ -66,6 +66,10 @@ jobs:
           test -s _site/cloud-config.json
           test -s _site/supabase-sdk.js
           grep -q 'id="cloudSyncCard"' _site/index.html
+          grep -q 'id="cloudEmailForm"' _site/index.html
+          grep -q 'id="cloudOtpVerify"' _site/index.html
+          grep -q 'signInWithOtp' _site/cloud-sync.js
+          grep -q 'verifyOtp' _site/cloud-sync.js
           python3 - <<'PY'
           from pathlib import Path
           h=Path('_site/index.html').read_text(encoding='utf-8')

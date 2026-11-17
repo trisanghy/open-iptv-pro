@@ -14,6 +14,9 @@
    requestAnimationFrame(()=>card.scrollIntoView({block:'start',behavior:'smooth'}));
  });
  const google=el('cloudLoginGoogle'),github=el('cloudLoginGithub');
+ const emailForm=el('cloudEmailForm'),emailInput=el('cloudEmailInput'),otpForm=el('cloudOtpForm');
+ const otpCode=el('cloudOtpCode'),otpVerify=el('cloudOtpVerify'),providersNote=el('cloudAuthProviders');
+ let enabledProviders={email:false,google:false,github:false};
  const logout=el('cloudLogout'),sync=el('cloudSyncNow');
  const account=el('cloudAccount'),choices=el('cloudSyncConflict');
  const useLocal=el('cloudUseLocal'),useCloud=el('cloudUseRemote'),later=el('cloudLater');
@@ -63,7 +66,10 @@
  const authName=user=>
   user?.user_metadata?.full_name||user?.user_metadata?.user_name||user?.email||'Tài khoản';
  const syncControls=()=>{
-  show(google,!uid&&!!client);show(github,!uid&&!!client);
+  show(google,!uid&&!!client&&enabledProviders.google);
+  show(github,!uid&&!!client&&enabledProviders.github);
+  show(emailForm,!uid&&!!client&&enabledProviders.email);
+  show(otpForm,!uid&&!!client&&enabledProviders.email);
   show(logout,!!uid);show(sync,!!uid&&ready);
   account.textContent=uid?'Đã đăng nhập · '+(window.__iptvCloudUserName||'Tài khoản'):'Chế độ khách · lưu trên thiết bị';
   if(quick){
@@ -186,6 +192,39 @@
  }
  google.addEventListener('click',()=>login('google'));
  github.addEventListener('click',()=>login('github'));
+
+ const safeEmail=()=>String(emailInput?.value||'').trim().toLowerCase();
+ emailForm?.addEventListener('submit',async event=>{
+  event.preventDefault();
+  if(!client||!enabledProviders.email)return;
+  const email=safeEmail();
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
+   label('Địa chỉ email không hợp lệ.');return;
+  }
+  const send=el('cloudEmailSend');if(send)send.disabled=true;
+  try{
+   const {error}=await client.auth.signInWithOtp({
+    email,options:{emailRedirectTo:location.origin+location.pathname,shouldCreateUser:true}
+   });
+   if(error)throw error;
+   label('Đã yêu cầu gửi liên kết đăng nhập tới '+email+'. Kiểm tra cả thư rác; nếu có mã OTP, nhập bên dưới.');
+  }catch(e){report(e,'gửi email đăng nhập');}
+  finally{if(send)send.disabled=false;}
+ });
+ otpVerify?.addEventListener('click',async()=>{
+  if(!client||!enabledProviders.email)return;
+  const email=safeEmail(),token=String(otpCode?.value||'').trim();
+  if(!email||!/^[0-9]{6,8}$/.test(token)){label('Nhập email và mã xác nhận hợp lệ.');return;}
+  otpVerify.disabled=true;
+  try{
+   const {data,error}=await client.auth.verifyOtp({email,token,type:'email'});
+   if(error)throw error;
+   if(data?.user)await reconcile(data.user);
+   label('Xác thực email thành công.');
+  }catch(e){report(e,'xác thực mã email');}
+  finally{otpVerify.disabled=false;}
+ });
+
  sync.addEventListener('click',async()=>{
   if(!uid)return;
   const live=await readRemote(uid).catch(e=>{report(e,'kiểm tra dữ liệu');return undefined});
@@ -248,6 +287,27 @@
    auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true,flowType:'pkce'},
    global:{headers:{'x-client-info':'open-iptv-pro-web'}}
   });
+  // Public GoTrue settings reveal which OAuth providers are actually enabled.
+  // Do not show a broken Google/GitHub button if its secret is not configured.
+  try{
+   const providerReply=await fetch(cfg.url+'/auth/v1/settings',{
+    headers:{apikey:cfg.publishableKey},cache:'no-store'
+   });
+   if(providerReply.ok){
+    const settings=await providerReply.json();
+    enabledProviders={email:settings.external_email!==false,
+      google:settings.external_google===true,
+      github:settings.external_github===true};
+   }else enabledProviders={email:true,google:false,github:false};
+  }catch(e){
+   console.warn('Could not verify enabled OAuth providers',e);
+   enabledProviders={email:true,google:false,github:false};
+  }
+  if(providersNote){
+   providersNote.textContent=enabledProviders.google||enabledProviders.github
+    ? 'Có thể đăng nhập bằng email hoặc nhà cung cấp đang khả dụng.'
+    : 'Đăng nhập bằng email. Google/GitHub sẽ xuất hiện khi bật OAuth trong Supabase.';
+  }
   syncControls();
   client.auth.onAuthStateChange((event,session)=>{
    if(event==='SIGNED_IN'||event==='INITIAL_SESSION'||event==='TOKEN_REFRESHED'){
@@ -266,6 +326,6 @@
    else localStorage.removeItem(STORE);
    localStorage.removeItem(ACTIVE);
    location.reload();
-  }else label('Chế độ khách. Đăng nhập Google hoặc GitHub để đồng bộ dữ liệu.');
+  }else label('Chế độ khách. Đăng nhập bằng email; Google/GitHub khả dụng khi được cấu hình.');
  }catch(e){report(e,'khởi tạo Cloud');}
 })();

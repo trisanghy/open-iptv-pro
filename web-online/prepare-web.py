@@ -100,6 +100,10 @@ topbar_new="<div class=\"top-actions\"><button type=\"button\" class=\"btn btn-s
 if html.count(topbar_old)!=1:
     sys.exit('Cloud topbar shortcut insertion point changed')
 html=html.replace(topbar_old,topbar_new,1)
+email_anchor="<p class=\"hint\" id=\"cloudStatus\" role=\"status\" aria-live=\"polite\">Đang kiểm tra cấu hình đồng bộ…</p>"
+if html.count(email_anchor)!=1:
+    sys.exit('Cloud email form anchor not found')
+html=html.replace(email_anchor,email_anchor+'\n'+"      <form id=\"cloudEmailForm\" class=\"cloud-email-form\" hidden>\n        <label for=\"cloudEmailInput\">Đăng nhập bằng email</label>\n        <div class=\"cloud-email-input-line\">\n          <input id=\"cloudEmailInput\" type=\"email\" autocomplete=\"email\" placeholder=\"ten@example.com\" required/>\n          <button type=\"submit\" class=\"btn btn-primary\" id=\"cloudEmailSend\">Gửi liên kết đăng nhập</button>\n        </div>\n        <p class=\"hint\">Nhận liên kết qua email để đăng nhập; có thể nhập mã xác thực nếu email cung cấp mã.</p>\n      </form>\n      <div id=\"cloudOtpForm\" class=\"cloud-email-form\" hidden>\n        <label for=\"cloudOtpCode\">Mã xác thực từ email (nếu có)</label>\n        <div class=\"cloud-email-input-line\">\n          <input id=\"cloudOtpCode\" inputmode=\"numeric\" autocomplete=\"one-time-code\" maxlength=\"8\" placeholder=\"Mã 6–8 số\"/>\n          <button type=\"button\" class=\"btn btn-subtle\" id=\"cloudOtpVerify\">Xác thực</button>\n        </div>\n      </div>\n      <p id=\"cloudAuthProviders\" class=\"hint\" aria-live=\"polite\"></p>\n",1)
 html=html.replace('</head>','<link rel="stylesheet" href="web-only.css"/><link rel="stylesheet" href="resume-last.css"/><link rel="stylesheet" href="web-volume.css"/><link rel="stylesheet" href="cloud-sync.css"/><link rel="manifest" href="manifest.webmanifest"/></head>',1)
 html=html.replace('</body>','<script src="supabase-sdk.js"></script><script src="cloud-core.js"></script><script src="web-only.js"></script><script src="resume-last.js"></script><script src="web-volume.js"></script><script src="cloud-sync.js"></script></body>',1)
 if 'id="playbackExtra"' in html:
