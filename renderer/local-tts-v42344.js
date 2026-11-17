@@ -271,6 +271,16 @@
  toggle.addEventListener('change',async()=>{
   if(!toggle.checked)void previewCoordinator.cancel();
   enabled=toggle.checked;
+  // Starting TTS with all AI switches previously OFF is a convenient
+  // one-click start for Caption + Translate + TTS. Set both prerequisites
+  // before dispatching events so recognition starts only in Translate mode.
+  // Do not change independently selected switches in any other state.
+  if(enabled&&captions&&!captions.checked&&translate&&!translate.checked){
+   captions.checked=true;
+   translate.checked=true;
+   captions.dispatchEvent(new Event('change',{bubbles:true}));
+   translate.dispatchEvent(new Event('change',{bubbles:true}));
+  }
   speechQueue.setEnabled(enabled);
   if(!enabled){restore();status('Đã tắt TTS');return;}
   speechQueue.setPaused(!mediaActive());
