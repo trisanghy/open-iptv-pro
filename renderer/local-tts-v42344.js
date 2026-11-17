@@ -43,7 +43,9 @@
   const parts=[],words=String(value||'').trim().match(/\S+\s*/gu)||[];
   let chunk='';
   for(const word of words){
-   if(chunk&&chunk.length+word.length>105){parts.push(chunk.trim());chunk='';}
+   // Start speaking with a short complete phrase; remaining chunks can be longer.
+   const limit=parts.length===0?60:105;
+   if(chunk&&chunk.length+word.length>limit){parts.push(chunk.trim());chunk='';}
    chunk+=word;
    if(chunk.length>=45&&/[.!?…;:]\s*$/u.test(word)){parts.push(chunk.trim());chunk='';}
   }
@@ -116,14 +118,21 @@
   busy=true;
   const generation=taskId,lang=target.value,src=source(),began=Date.now();
   try{
+   let nextAudioResult=null;
+   const synthesizeChunk=part=>bounded(api.ttsSynthesize({
+    target:lang,voice:selectedVoice(),text:part,
+    sourceLanguage:payload.sourceLanguage,englishFallbackText:payload.englishFallbackText||''
+   }),45000);
    for(let i=0;i<chunks.length;i++){
     if(!enabled||video.paused||video.ended||generation!==taskId||source()!==src)break;
     if(i>0&&queued)break; // New subtitle wins over an old phrase's remaining chunks.
     const chunk=chunks[i];
-    const result=await bounded(api.ttsSynthesize({
-     target:lang,voice:selectedVoice(),text:chunk,
-     sourceLanguage:payload.sourceLanguage,englishFallbackText:payload.englishFallbackText||''
-    }),45000);
+    // While speech audio plays, render the NEXT WAV concurrently to avoid
+    // pauses between words. A new subtitle always wins over old unfinished work.
+    const pending=nextAudioResult;nextAudioResult=null;
+    const response=pending?await pending:{ok:true,value:await synthesizeChunk(chunk)};
+    if(!response.ok)throw response.error;
+    const result=response.value;
     if(Date.now()-began>25000&&i===0)return;
     if(!enabled||video.paused||video.ended||generation!==taskId||source()!==src)return;
     if(!result?.audioBase64||result.mime!=='audio/wav')throw Error('Không nhận được WAV từ bộ đọc');
@@ -142,6 +151,10 @@
      applyDuck();
      audio.play().then(()=>{
       if(generation!==taskId||video.paused||video.ended){done();return;}
+      if(i+1<chunks.length&&!queued){
+       nextAudioResult=synthesizeChunk(chunks[i+1]).then(
+        value=>({ok:true,value}),error=>({ok:false,error}));
+      }
       const spoken=String(result.translatedText||chunk).trim();
       ttsEvent('tts-start',{text:spoken,originalText:payload.originalText||'',
        language:lang,sourceLanguage:payload.sourceLanguage});
@@ -243,8 +256,20 @@
   resetPlayback();recentSpeech.clear();restore();
   if(enabled)status('Video tạm dừng · TTS đã ngắt');
  };
- for(const event of ['pause','ended','emptied'])video.addEventListener(event,suspendSpeech);
- window.addEventListener('pagehide',()=>{enabled=false;resetPlayback();restore();});
+ let stallTimer=null;
+ const clearStall=()=>{if(stallTimer){clearTimeout(stallTimer);stallTimer=null;}};
+ const scheduleStall=()=>{
+  clearStall();
+  stallTimer=setTimeout(()=>{
+   stallTimer=null;
+   if(!video.paused&&!video.ended&&video.readyState<3)suspendSpeech();
+  },1400);
+ };
+ for(const event of ['pause','ended','emptied','seeking'])
+  video.addEventListener(event,()=>{clearStall();suspendSpeech();});
+ for(const event of ['waiting','stalled'])video.addEventListener(event,scheduleStall);
+ video.addEventListener('playing',clearStall);
+ window.addEventListener('pagehide',()=>{clearStall();enabled=false;resetPlayback();restore();});
  setInterval(()=>{updateSession();if(enabled&&!video.paused&&!video.ended)applyDuck();},1800);
  updateVoiceVisibility();void refresh();
 })();
