@@ -1,0 +1,65 @@
+name: Electron desktop v4.23.67 — update picker and compact controls
+on:
+  push:
+    branches: [build-sources/electron-desktop]
+    paths:
+      - 'src/update-manager.cjs'
+      - 'src/update-version-catalog.cjs'
+      - 'src/main.cjs'
+      - 'src/preload.cjs'
+      - 'renderer/features.js'
+      - 'renderer/index.html'
+      - 'renderer/live-ai-toolbar-v42367.css'
+      - 'tests/v42367-update-version-and-compact-controls.test.cjs'
+      - 'package.json'
+      - '.github/workflows/test-electron-v42367.yml'
+      - 'RELEASE_NOTES_ELECTRON_V4_23_67.md'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  regression:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+      - name: JavaScript syntax / updater check
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          for p in src/update-manager.cjs src/update-version-catalog.cjs src/main.cjs src/preload.cjs renderer/features.js; do node --check "$p"; done
+          test "$(node -p "require('./package.json').version")" = '4.23.67'
+          bash -n build-mac-electron.sh
+          bash -n build-mac-electron-public.sh
+      - name: Version picker and toolbar tests
+        run: node --test tests/v42367-update-version-and-compact-controls.test.cjs
+      - name: Complete regression
+        run: npm test
+  mac-app:
+    needs: regression
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+      - name: Build native app, not DMG
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          export CSC_IDENTITY_AUTO_DISCOVERY=false
+          npx electron-builder --mac --dir --arm64 --publish never
+      - name: Verify compact UI and updater in bundle
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          APP='dist/mac-arm64/Open IPTV Pro.app'
+          test -s "$APP/Contents/Resources/app.asar"
+          npx --yes asar list "$APP/Contents/Resources/app.asar" | grep -F 'renderer/live-ai-toolbar-v42367.css'
+          npx --yes asar list "$APP/Contents/Resources/app.asar" | grep -F 'src/update-version-catalog.cjs'
+          test -z "$(find dist -maxdepth 1 -type f -name '*.dmg' -print -quit)"
+          echo 'Native Mac .app packaging passed'
