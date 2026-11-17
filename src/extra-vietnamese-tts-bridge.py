@@ -85,6 +85,13 @@ def open_engine(engine, cache):
     os.environ["HF_HUB_OFFLINE"] = "1"
     os.environ["TRANSFORMERS_OFFLINE"] = "1"
     if engine == "vietvoice":
+        # Pydub launches ffmpeg/ffprobe by name; the Electron host injects its bundled PATH.
+        for tool in ("ffmpeg", "ffprobe"):
+            if shutil.which(tool) is None:
+                raise RuntimeError(
+                    f"VietVoice cần {tool} tích hợp. Hãy cập nhật Open IPTV Pro v4.23.64; "
+                    "không cần tải lại mô hình TTS."
+                )
         from vietvoicetts import ModelConfig, TTSApi
         cfg = ModelConfig(model_cache_dir=str(folder))
         client = TTSApi(cfg)
