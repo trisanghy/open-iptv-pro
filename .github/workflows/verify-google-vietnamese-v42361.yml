@@ -1,0 +1,55 @@
+name: Verify Google TranslateGemma and Vietnamese TTS experimental integration
+on:
+  push:
+    branches: [experiment/google-translate-gemma-v42361]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: JavaScript and Python syntax
+        run: |
+          node --check src/google-ollama.cjs
+          node --check src/vietnamese-voices.cjs
+          node --check src/main.cjs
+          node --check src/local-tts-service.cjs
+          node --check renderer/local-tts-v42344.js
+          node --check renderer/unified-ai-settings-v42356.js
+          python3 -m py_compile src/vietnamese-voices-bridge.py
+      - name: Validate new AI model features without downloading model weights
+        run: node --test tests/google_vietnamese_ai_v42361.test.cjs
+      - name: Full desktop regression suite
+        run: |
+          if test -f package-lock.json; then npm ci --no-audit --no-fund; else npm install --no-audit --no-fund; fi
+          npm test
+  mac_app:
+    runs-on: macos-15
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install build dependencies
+        run: |
+          if test -f package-lock.json; then npm ci --no-audit --no-fund; else npm install --no-audit --no-fund; fi
+      - name: Build unpacked experimental Mac application only
+        run: |
+          export CSC_IDENTITY_AUTO_DISCOVERY=false
+          npx electron-builder --dir --mac --arm64 --publish never
+          test -x "dist/mac-arm64/Open IPTV Pro.app/Contents/MacOS/Open IPTV Pro"
+          test -f "dist/mac-arm64/Open IPTV Pro.app/Contents/Resources/app.asar"
+      - name: Upload development APP (not a GitHub Release)
+        uses: actions/upload-artifact@v4
+        with:
+          name: OpenIPTVPro-Google-VNTTS-Experimental-MacAPP
+          path: dist/mac-arm64/Open IPTV Pro.app
+          if-no-files-found: error
+          retention-days: 7
