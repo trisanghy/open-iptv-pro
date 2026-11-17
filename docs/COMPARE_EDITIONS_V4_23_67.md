@@ -1,10 +1,10 @@
 # Open IPTV Pro v4.23.67 — Bảng so sánh Desktop / Web / Rust Lab
 
-**File Rust Lab đính kèm Stable Release đã được thay từ v23.4 lên v23.8.2.** Rust Lab Windows Setup/Portable/Source đã được cập nhật và bổ sung **hai DMG Mac ARM64/Intel build native riêng**; bản Electron và Web giữ nguyên. Bảng checksum được cập nhật để đối chiếu file mới.
+**File Rust Lab đính kèm Stable Release đã được nâng từ v23.8.2 lên v23.8.15.** Rust Lab Windows Setup/Portable/Source đã được cập nhật và bổ sung **hai DMG Mac ARM64/Intel build native riêng**; bản Electron và Web giữ nguyên. Bảng checksum được cập nhật để đối chiếu file mới.
 
-**Desktop Electron** là bản chính và được hỗ trợ qua tag `v4.23.67`. **Web Online** chạy trên GitHub Pages, còn **Rust Lab v23.8.2** là bản thử nghiệm có gói Mac ARM64, Mac Intel và Windows x64; không nhầm lẫn giữa các bản.
+**Desktop Electron** là bản chính và được hỗ trợ qua tag `v4.23.67`. **Web Online** chạy trên GitHub Pages, còn **Rust Lab v23.8.15** là bản thử nghiệm có gói Mac ARM64, Mac Intel và Windows x64; không nhầm lẫn giữa các bản.
 
-| Tiêu chí | Electron Desktop v4.23.67 | Web Online | Rust Lab v23.8.2 |
+| Tiêu chí | Electron Desktop v4.23.67 | Web Online | Rust Lab v23.8.15 |
 | --- | --- | --- | --- |
 | Kênh phát hành | Stable, `main` | GitHub Pages, `web/online` | Beta, `experiment/rust-tauri-v2` |
 | Thiết bị | macOS Apple Silicon/Intel, Windows x64 | Trình duyệt thiết bị tương thích | Mac ARM64/Intel DMG native + Windows x64 Setup/Portable |
@@ -23,10 +23,10 @@
 
 - **Muốn đầy đủ tính năng và ổn định:** dùng [Electron Desktop v4.23.67](https://github.com/trisanghy/open-iptv-pro/releases/tag/v4.23.67).
 - **Muốn mở ngay không cài:** [Web Online](https://trisanghy.github.io/open-iptv-pro/). Browser có thể chặn một số stream vì CORS/DRM/autoplay.
-- **Muốn thử kiến trúc gọn Rust/Tauri:** [Rust Lab v23.8.2](https://github.com/trisanghy/open-iptv-pro/releases/tag/rust-lab/v23.8.2), chọn DMG Apple Silicon/Intel hoặc Windows x64 phù hợp; giữ Electron để dự phòng.
+- **Muốn thử kiến trúc gọn Rust/Tauri:** [Rust Lab v23.8.15](https://github.com/trisanghy/open-iptv-pro/releases/tag/rust-lab/v23.8.15), chọn DMG Apple Silicon/Intel hoặc Windows x64 phù hợp; giữ Electron để dự phòng.
 
 ## Lưu ý về gói Release kết hợp
 
-File Desktop v4.23.67 và file Rust Lab v23.8.2 cùng có mặt trong Release ổn định nhằm tiện tải, nhưng **chúng là hai phần mềm khác nhau**. File Rust vẫn mang phiên bản 23.8.2 (không phải bản Electron 4.23.67) và không được dùng để cập nhật đè Electron. Các DMG Mac đã được kiểm tra thực tế với kiến trúc ARM64 hoặc x64 tương ứng. Web Online là liên kết trực tuyến, không phải bộ cài trong Release.
+File Desktop v4.23.67 và file Rust Lab v23.8.15 cùng có mặt trong Release ổn định nhằm tiện tải, nhưng **chúng là hai phần mềm khác nhau**. File Rust vẫn mang phiên bản 23.8.2 (không phải bản Electron 4.23.67) và không được dùng để cập nhật đè Electron. Hai DMG mới cần có kiến trúc ARM64 hoặc x64 và FFmpeg khớp; checksum phải xác minh trong GitHub Release. PiP Rust v23.8.15 dùng lại PiP WebView gốc, không có Tauri Mini Player. Web Online là liên kết trực tuyến, không phải bộ cài trong Release.
 
 Xem thêm [changelog chi tiết](../RELEASE_NOTES_V4_23_67.md).
