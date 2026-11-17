@@ -24,7 +24,7 @@ jobs:
           set -Eeuo pipefail
           bash -n build-mac-v42354.sh
           bash -n overlays/BUILD_MAC_DMG_ONLY_v42354.command
-          grep -Fq 'V54_REV="71b427e46188fe5bb72a254885f22c863bc289ce"' build-mac-v42354.sh
+          grep -Fq 'V54_REV="3f23daf4636ea72552e7a283c0608c2445f58d89"' build-mac-v42354.sh
           grep -Fq 'OpenIPTVPro_Source_v4.23.54.zip' build-mac-v42354.sh
           ! grep -Fq 'OPENIPTV_ONE_COMMAND=1 bash ./BUILD_MAC.command' build-mac-v42354.sh
           echo '06e8123c768f41c14f47264fbc7220d1bdfa6ce5dc07e69eceba50e929abc783  source/OpenIPTVPro_Source_v4.23.47.zip' | sha256sum -c -
