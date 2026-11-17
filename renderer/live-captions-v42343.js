@@ -129,8 +129,22 @@
   }
  }
  const changed=event=>{
-  // These are independent user controls. Translate/TTS may continue with
-  // original Caption hidden; do not auto-enable or restart its Whisper worker.
+  // When ALL THREE switches are on, turning off Live Caption is the
+  // explicit master-off shortcut. Turn off TTS first to stop speech NOW,
+  // then Translate to stop the recognition worker. Other combinations
+  // remain independently controllable.
+  const tts=$('liveTtsToggle');
+  if(event?.target===caption&&!caption.checked&&translate.checked&&tts?.checked){
+   videoCaptions?.setOriginalVisible?.(false);
+   tts.checked=false;
+   tts.dispatchEvent(new Event('change',{bubbles:true}));
+   translate.checked=false;
+   translate.dispatchEvent(new Event('change',{bubbles:true}));
+   clearOutput();
+   message('Đã tắt Live Caption, Live Translate và TTS');
+   return;
+  }
+  // In every other state, toggling Caption only changes source visibility.
   if(event?.target===caption&&translate.checked){
    videoCaptions?.setOriginalVisible?.(caption.checked);
    message(caption.checked?'Phụ đề gốc bật · dịch vẫn hoạt động':'Đã ẩn phụ đề gốc · dịch vẫn hoạt động');
