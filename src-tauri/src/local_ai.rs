@@ -256,7 +256,7 @@ pub async fn caption_start(app:AppHandle,ai:Arc<LocalAi>,url:&str,translate:bool
    let _=app.emit("caption:event",json!({"type":"status","id":id,"message":"Đang nhận diện giọng nói offline…"}));
    let mut ff=Command::new(&ffmpeg);
    ff.args(["-hide_banner","-nostdin","-loglevel","error","-y","-rw_timeout","8000000","-user_agent","Mozilla/5.0","-i",&src,
-    "-map","0:a:0","-vn","-sn","-dn","-ac","1","-ar","16000","-c:a","pcm_s16le","-t","8"]).arg(&wav);
+    "-map","0:a:0","-vn","-sn","-dn","-ac","1","-ar","16000","-c:a","pcm_s16le","-t","4"]).arg(&wav);
    let cycle=async{
     output_timeout(&mut ff,35).await?;
     if !exists(&wav,25_000){return Err("Nguồn không có âm thanh".to_string());}
@@ -728,20 +728,34 @@ async fn natural_read(worker:&mut NaturalWorker,id:Option<&str>,seconds:u64)->Re
   }
  }
 }
-async fn natural_request(ai:&LocalAi,voice:&str,speech:&str)->Result<Value,String>{
+// Warm the persistent VieNeu model while Whisper is still collecting the first
+// segment. The model must already be installed; this never downloads anything.
+async fn natural_warmup(ai:&LocalAi)->Result<(),String>{
  let mut slot=ai.natural_worker.lock().await;
- if slot.is_none(){
-  let mut cmd=Command::new(tts_python(ai));
-  cmd.arg(natural_worker_script(ai)).arg("--stdio")
-   .stdin(Stdio::piped()).stdout(Stdio::piped()).stderr(Stdio::null()).kill_on_drop(true);
-  natural_env(&mut cmd,ai,true);
-  let mut child=cmd.spawn().map_err(error)?;
-  let input=child.stdin.take().ok_or("Không có stdin VieNeu")?;
-  let output=BufReader::new(child.stdout.take().ok_or("Không có stdout VieNeu")?);
-  let mut worker=NaturalWorker{child,input,output};
-  natural_read(&mut worker,None,180).await?;
-  *slot=Some(worker);
+ if slot.is_some(){return Ok(());}
+ let mut cmd=Command::new(tts_python(ai));
+ cmd.arg(natural_worker_script(ai)).arg("--stdio")
+  .stdin(Stdio::piped()).stdout(Stdio::piped()).stderr(Stdio::null()).kill_on_drop(true);
+ natural_env(&mut cmd,ai,true);
+ let mut child=cmd.spawn().map_err(error)?;
+ let input=child.stdin.take().ok_or("Không có stdin VieNeu")?;
+ let output=BufReader::new(child.stdout.take().ok_or("Không có stdout VieNeu")?);
+ let mut worker=NaturalWorker{child,input,output};
+ natural_read(&mut worker,None,180).await?;
+ *slot=Some(worker);
+ Ok(())
+}
+pub async fn tts_prewarm(ai:&LocalAi,voice:&str)->Result<Value,String>{
+ if !voice_supported(voice){return Err("Giọng Việt không được hỗ trợ".into());}
+ if tts_voice_status(ai,voice)["ready"]!=true{
+  return Ok(json!({"ready":false,"reason":"Giọng chưa cài; không tự tải mô hình"}));
  }
+ if voice.starts_with(NATURAL_PREFIX){natural_warmup(ai).await?;}
+ Ok(json!({"ready":true,"voice":voice,"warm":true}))
+}
+async fn natural_request(ai:&LocalAi,voice:&str,speech:&str)->Result<Value,String>{
+ natural_warmup(ai).await?;
+ let mut slot=ai.natural_worker.lock().await;
  let id=Uuid::new_v4().to_string();
  let request=json!({"id":id,"voice":voice,"text":speech}).to_string()+"\n";
  let result=async{

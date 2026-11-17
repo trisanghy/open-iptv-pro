@@ -6,7 +6,7 @@
  const voice=$('liveTtsVoice'),preview=$('liveTtsVoicePreview'),speed=$('liveTtsSpeed');
  const captions=$('liveCaptionToggle'),translate=$('liveTranslateToggle'),output=$('liveCaptionOutput');
  if(!toggle||!target||!duck||!install||!info||!api?.ttsStatus||!video)return;
- let enabled=false,playing=null,previewAudio=null,taskId=0,busy=false,queued='',sourceId='',ducked=false,baseVolume=0.8,validSession=0,previewInFlight=false,previewTicket=0;
+ let enabled=false,playing=null,previewAudio=null,taskId=0,busy=false,queued='',sourceId='',ducked=false,baseVolume=0.8,validSession=0,previewInFlight=false,previewTicket=0,releasePlayback=null;
  const recentSpeech=new Map(),DEDUP_MS=45000;
  const bounded=async(promise,ms)=>{let timer;try{return await Promise.race([promise,new Promise((_,reject)=>{timer=setTimeout(()=>reject(Error('Quá thời gian tổng hợp giọng')),ms);})]);}finally{clearTimeout(timer);}};
  const playbackSpeed=()=>{const n=Number(speed?.value||1);return Number.isFinite(n)?Math.max(.6,Math.min(2,n)):1;};
@@ -31,6 +31,26 @@
  const selectedVoice=()=>target.value==='vi'?(voice?.value||'piper:25hours'):'piper:default';
  const updateVoiceVisibility=()=>{if(voice)voice.hidden=target.value!=='vi';if(preview)preview.hidden=target.value!=='vi';};
  const status=s=>{info.textContent=String(s||'').slice(0,170);info.title=info.textContent;};
+ // Unlike installing a model, prewarming never contacts a network or changes user choices.
+ const prewarm=()=>{
+  if(!enabled||target.value!=='vi'||!api.ttsPrewarm||video.ended)return;
+  const chosen=selectedVoice();
+  void api.ttsPrewarm(chosen).then(result=>{
+   if(enabled&&chosen===selectedVoice()&&result?.ready)status('Đã nạp sẵn giọng · sẵn sàng đọc nhanh');
+  }).catch(error=>{if(enabled)console.warn('TTS warmup:',error);});
+ };
+ const speechChunks=value=>{
+  const parts=[],words=String(value||'').trim().match(/\S+\s*/gu)||[];
+  let chunk='';
+  for(const word of words){
+   if(chunk&&chunk.length+word.length>105){parts.push(chunk.trim());chunk='';}
+   chunk+=word;
+   if(chunk.length>=45&&/[.!?…;:]\s*$/u.test(word)){parts.push(chunk.trim());chunk='';}
+  }
+  if(chunk.trim())parts.push(chunk.trim());
+  return parts.slice(0,5);
+ };
+ const ttsEvent=(type,detail={})=>document.dispatchEvent(new CustomEvent('rustlab:'+type,{detail}));
  const volumeInput=$('volume');
  const source=()=>String(window.IPTVState?.getCurrent?.()?.lastPlayableUrl||window.IPTVState?.getCurrent?.()?.url||video.currentSrc||'');
  const clamp=x=>Math.min(1,Math.max(0,x));
@@ -63,6 +83,8 @@
  video.addEventListener('loadedmetadata',()=>{if(enabled)applyDuck();});
  function resetPlayback(){
   taskId++;previewTicket++;previewInFlight=false;queued='';busy=false;
+  if(releasePlayback){const done=releasePlayback;releasePlayback=null;done();}
+  ttsEvent('tts-end');
   const audio=playing;playing=null;
   if(audio){try{audio.pause();audio.src='';audio.load();}catch{}}
   if(previewAudio){try{previewAudio.pause();previewAudio.src='';previewAudio.load();}catch{}previewAudio=null;}
@@ -87,33 +109,57 @@
   if(translate&&!translate.checked){translate.checked=true;translate.dispatchEvent(new Event('change',{bubbles:true}));}
  }
  async function speak(input){
-  if(!enabled||video.paused||video.ended||busy||playing||previewInFlight||previewAudio||!input||input.enqueuedAt&&Date.now()-input.enqueuedAt>25000)return;
+  if(!enabled||video.paused||video.ended||busy||playing||previewInFlight||previewAudio||!input||input.enqueuedAt&&Date.now()-input.enqueuedAt>12000)return;
   const payload=typeof input==='string'?{text:input,sourceLanguage:'en'}:input;
   const text=String(payload.text||'').trim();if(!text)return;
-  busy=true;const generation=taskId,lang=target.value,src=source(),began=Date.now();
+  const chunks=speechChunks(text.slice(0,360));if(!chunks.length)return;
+  busy=true;
+  const generation=taskId,lang=target.value,src=source(),began=Date.now();
   try{
-   const result=await bounded(api.ttsSynthesize({target:lang,voice:selectedVoice(),text:text.slice(0,360),sourceLanguage:payload.sourceLanguage,englishFallbackText:payload.englishFallbackText||''}),45000);
-    if(Date.now()-began>25000)return;
-   if(!enabled||video.paused||video.ended||generation!==taskId||source()!==src)return;
-   if(!result?.audioBase64||result.mime!=='audio/wav')throw Error('Không nhận được WAV từ Piper');
-   const url='data:audio/wav;base64,'+result.audioBase64;
-   const audio=new Audio(url);playing=audio;
-   audio.volume=1;audio.playbackRate=playbackSpeed();
-   audio.addEventListener('ended',()=>{if(playing!==audio)return;playing=null;
-    status('Đã đọc xong ('+lang+')');if(queued){const pending=queued;queued='';void speak(pending);}}, {once:true});
-   audio.addEventListener('error',()=>{if(playing!==audio)return;playing=null;status('Lỗi phát âm thanh TTS');},{once:true});
-   // Reduce only the IPTV source, never the separately generated speech.
-   applyDuck();
-   await audio.play();
-   if(output&&result.translatedText&&lang!=='en'&&!translate?.checked){
-    output.hidden=false;
-    output.textContent='Dịch '+lang+': '+result.translatedText.slice(0,320);
+   for(let i=0;i<chunks.length;i++){
+    if(!enabled||video.paused||video.ended||generation!==taskId||source()!==src)break;
+    if(i>0&&queued)break; // New subtitle wins over an old phrase's remaining chunks.
+    const chunk=chunks[i];
+    const result=await bounded(api.ttsSynthesize({
+     target:lang,voice:selectedVoice(),text:chunk,
+     sourceLanguage:payload.sourceLanguage,englishFallbackText:payload.englishFallbackText||''
+    }),45000);
+    if(Date.now()-began>25000&&i===0)return;
+    if(!enabled||video.paused||video.ended||generation!==taskId||source()!==src)return;
+    if(!result?.audioBase64||result.mime!=='audio/wav')throw Error('Không nhận được WAV từ bộ đọc');
+    const audio=new Audio('data:audio/wav;base64,'+result.audioBase64);
+    playing=audio;audio.volume=1;audio.playbackRate=playbackSpeed();
+    await new Promise((resolve,reject)=>{
+     let settled=false;
+     const done=()=>{
+      if(settled)return;settled=true;if(playing===audio)playing=null;
+      if(releasePlayback===done)releasePlayback=null;
+      ttsEvent('tts-end');resolve();
+     };
+     releasePlayback=done;
+     audio.addEventListener('ended',done,{once:true});
+     audio.addEventListener('error',()=>{done();status('Lỗi phát âm thanh TTS');},{once:true});
+     applyDuck();
+     audio.play().then(()=>{
+      if(generation!==taskId||video.paused||video.ended){done();return;}
+      const spoken=String(result.translatedText||chunk).trim();
+      ttsEvent('tts-start',{text:spoken,originalText:payload.originalText||'',
+       language:lang,sourceLanguage:payload.sourceLanguage});
+      status('Đang đọc đồng bộ phụ đề · Tiếng gốc '+duck.value+'%');
+     }).catch(error=>{done();reject(error);});
+    });
    }
-   status('Đang đọc '+lang+' · Tiếng gốc '+duck.value+'%');
-  }catch(e){
-   if(playing){try{playing.pause();}catch{}playing=null;}
-   if(enabled&&generation===taskId)status('TTS: '+String(e.message||e).slice(0,130));
-  }finally{busy=false;if(enabled&&!playing&&!previewAudio&&!previewInFlight&&queued){const next=queued;queued='';void speak(next);}}
+  }catch(error){
+   if(playing){try{playing.pause();playing.src='';playing.load();}catch{}playing=null;}
+   if(enabled&&generation===taskId)status('TTS: '+String(error.message||error).slice(0,130));
+  }finally{
+   if(generation===taskId){
+    busy=false;
+    if(enabled&&!video.paused&&!video.ended&&!playing&&!previewAudio&&!previewInFlight&&queued){
+     const next=queued;queued='';void speak(next);
+    }
+   }
+  }
  }
  function updateSession(){
   const id=source();
@@ -125,13 +171,15 @@
   recentSpeech.clear();
   updateSession();applyDuck();
   ensureTranslate();
+  // Launch model warmup without blocking recognition or waiting for the first caption.
+  prewarm();
   const ready=await refresh();
   if(enabled&&!ready)status('Nhấn “Cài mô hình tự động” để sử dụng giọng '+target.value);
  });
  target.addEventListener('change',()=>{
-  resetPlayback();updateVoiceVisibility();if(enabled)ensureTranslate();void refresh();
+  resetPlayback();updateVoiceVisibility();if(enabled){ensureTranslate();prewarm();}void refresh();
  });
- voice?.addEventListener('change',()=>{resetPlayback();void refresh();});
+ voice?.addEventListener('change',()=>{resetPlayback();if(enabled)prewarm();void refresh();});
  preview?.addEventListener('click',async()=>{
   if(target.value!=='vi'||!api.ttsSynthesize)return;
   resetPlayback();const ticket=++previewTicket;previewInFlight=true;
@@ -163,7 +211,7 @@
    if(!(result.installed||result.ready))throw Error('Bộ mô hình chưa cài hoàn chỉnh');
    status('Đã cài xong · Có thể dùng khi mất mạng');
   }catch(e){status('Cài TTS lỗi: '+String(e.message||e).slice(0,125));}
-  finally{install.disabled=false;await refresh();}
+  finally{install.disabled=false;await refresh();if(enabled)prewarm();}
  });
  if(api.ttsOnEvent)api.ttsOnEvent(e=>{
   if(!e)return;
@@ -185,8 +233,8 @@
   else if(englishFallback){text=englishFallback;sourceLanguage='en';}
   if(!text||!sourceLanguage)return;
   if(!acceptSpeech(sourceLanguage+' '+text))return;
-  const payload={text,sourceLanguage,englishFallbackText:englishFallback};
-  if(busy||playing||previewInFlight||previewAudio){queued={...payload,enqueuedAt:Date.now()};return;}
+  const payload={text,sourceLanguage,englishFallbackText:englishFallback,originalText:original,enqueuedAt:Date.now()};
+  if(busy||playing||previewInFlight||previewAudio){queued=payload;return;}
   void speak(payload);
  });
  document.addEventListener('openiptv:media-info',updateSession);

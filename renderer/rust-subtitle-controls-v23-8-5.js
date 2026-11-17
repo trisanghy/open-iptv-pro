@@ -8,7 +8,7 @@
  const defaults={enabled:true,display:'both',size:'medium',position:'bottom',color:'#ffe65b',outline:'black',background:'dark',opacity:50};
  const allowed={display:['original','translated','both'],size:['small','medium','large','xlarge'],
  position:['top','middle','bottom'],outline:['black','white','none'],background:['dark','light','none']};
- let settings={...defaults},last=null,expiry;
+ let settings={...defaults},last=null,expiry,spoken=null;
  try{
   const saved=JSON.parse(localStorage.getItem(KEY)||'{}');
   if(saved&&typeof saved==='object'){
@@ -60,13 +60,14 @@
  }
  function save(){try{localStorage.setItem(KEY,JSON.stringify(settings));}catch(error){console.warn('CC preferences:',error);}}
  function clear(){
-  last=null;overlay.hidden=true;orig.textContent='';trans.textContent='';
+  last=null;spoken=null;overlay.hidden=true;orig.textContent='';trans.textContent='';
   if(expiry)clearTimeout(expiry);expiry=null;
  }
  function render(){
-  if(!last||!settings.enabled||video.paused||video.ended){overlay.hidden=true;return;}
-  const original=String(last.originalText||last.text||'').trim(),result=String(last.text||'').trim();
-  const hasTranslation=translate?.checked&&last.translated===true&&result&&result!==original;
+  if(!(last||spoken)||!settings.enabled||video.paused||video.ended){overlay.hidden=true;return;}
+  const active=spoken||last;
+  const original=String(active.originalText||active.text||'').trim(),result=String(active.text||'').trim();
+  const hasTranslation=translate?.checked&&(spoken||last.translated===true)&&result&&result!==original;
   const showBoth=settings.display==='both'&&hasTranslation;
   // An unchecked Caption switch hides only original text, never the translated
   // line or TTS. In single-original mode, show translation as a useful fallback.
@@ -88,7 +89,16 @@
  document.addEventListener('pointerdown',e=>{if(!panel.hidden&&!panel.contains(e.target)&&e.target!==toggle)popup(false);});
  document.addEventListener('rustlab:caption-segment',e=>{
   if(!e.detail||video.paused||video.ended){clear();return;}
-  last=e.detail;render();if(expiry)clearTimeout(expiry);expiry=setTimeout(clear,14500);
+  last=e.detail;if(!spoken)render();if(expiry)clearTimeout(expiry);
+  expiry=setTimeout(()=>{if(!spoken)clear();},14500);
+ });
+ document.addEventListener('rustlab:tts-start',event=>{
+  if(!event.detail||video.paused||video.ended)return;
+  spoken={...event.detail,translated:true};render();
+ });
+ document.addEventListener('rustlab:tts-end',()=>{
+  if(!spoken)return;
+  spoken=null;render();
  });
  document.addEventListener('rustlab:caption-clear',clear);
  for(const event of ['pause','ended','emptied'])video.addEventListener(event,clear);

@@ -15,7 +15,7 @@
     captionTestTranslation: 'caption:testTranslation', aiStorageStatus: 'ai:storage', aiRemoveModel: 'ai:removeModel',
     aiModelStatus: 'ai:modelStatus', aiInstallModel: 'ai:installModel',
     ttsStatus: 'tts:status', ttsInstall: 'tts:install',
-    ttsVoiceStatus: 'tts:voiceStatus', ttsVoiceInstall: 'tts:voiceInstall',
+    ttsVoiceStatus: 'tts:voiceStatus', ttsVoiceInstall: 'tts:voiceInstall', ttsPrewarm: 'tts:prewarm',
     ttsSynthesize: 'tts:synthesize', ttsStop: 'tts:stop',
     castDiscover: 'cast:discover', airplayDiscover: 'airplay:discover',
     castPlay: 'cast:play', castStop: 'cast:stop', castStatus: 'cast:status',
