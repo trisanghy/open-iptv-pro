@@ -1,0 +1,28 @@
+name: Regression v4.23.65 AI model hardware hints
+on:
+  push:
+    branches:
+      - experiment/electron-v42365-ai-model-hardware-hints
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  regression:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+      - name: Static and shell syntax
+        run: |
+          node --check renderer/ai-hardware-advice-v42365.js
+          node --check renderer/unified-ai-settings-v42356.js
+          node --check src/main.cjs
+          bash -n build-mac-v42365.sh
+          bash -n build-mac-v42365-public.sh
+      - name: Check model guidance catalog and compatibility
+        run: node --test tests/v42365-model-hardware-guidance.test.cjs
+      - name: All regression tests
+        run: npm test
