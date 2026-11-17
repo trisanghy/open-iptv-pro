@@ -1,0 +1,52 @@
+name: Verify personal Mac APP-only command (public releases untouched)
+
+on:
+  push:
+    branches:
+      - personal/mac-app-only-one-command-v42360
+    paths:
+      - 'build-mac-app-only.sh'
+      - '.github/workflows/verify-personal-app-only.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check shell safety and ensure public build scripts unchanged
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          bash -n build-mac-app-only.sh
+          grep -Fq 'electron-builder --dir --mac' build-mac-app-only.sh
+          grep -Fq 'SHA256SUMS.txt' build-mac-app-only.sh
+          grep -Fq 'NODE_SHASUMS256.txt' build-mac-app-only.sh
+          grep -Fq 'Final folder is not APP-only' build-mac-app-only.sh
+          test "$(git diff --name-only origin/main...HEAD | grep -v -E '^(build-mac-app-only.sh|.github/workflows/verify-personal-app-only.yml)$' | wc -l | tr -d ' ')" = 0
+          echo 'Personal command isolated from main and public release workflows.'
+
+  mac_build:
+    runs-on: macos-15
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Run actual personal command against latest public Release source
+        shell: bash
+        env:
+          OPENIPTV_APP_VERSION: 4.23.60
+        run: |
+          set -Eeuo pipefail
+          bash build-mac-app-only.sh
+          case "$(uname -m)" in arm64) A=arm64;; x86_64) A=x64;; esac
+          F="$HOME/Downloads/OpenIPTVPro_Build_v4.23.60_APP_$A"
+          test -x "$F/Open IPTV Pro.app/Contents/MacOS/Open IPTV Pro"
+          test "$(find "$F" -mindepth 1 -maxdepth 1 -print)" = "$F/Open IPTV Pro.app"
+          test -z "$(find "$F" -maxdepth 1 -type f \( -name '*.dmg' -o -name '*.zip' -o -name '*.blockmap' \) -print)"
+          echo 'PASS: personal output contains exactly one .app and no DMG or ZIP.'
