@@ -14,16 +14,24 @@ def validate_dest(path):
     p.parent.mkdir(parents=True,exist_ok=True)
     return p
 
-def vietvoice(text, output, cache, area, gender, group):
+def vietvoice(text, output, cache, area, gender, group, ref_audio='', ref_text=''):
     if area not in ("northern","central","southern") or gender not in ("male","female"):
         raise ValueError("VietVoice region/gender not allowed")
     if group not in ("news","story","audiobook"):
         raise ValueError("VietVoice reading style not allowed")
+    if ref_audio:
+        reference=Path(ref_audio)
+        if not reference.is_file() or reference.suffix.lower() not in (".wav",".mp3",".m4a",".flac"):
+            raise ValueError("Only authorized local audio references are permitted")
+        if len(ref_text.strip()) < 5:
+            raise ValueError("A matching spoken reference transcript is required")
     from vietvoicetts import TTSApi, ModelConfig
     engine = TTSApi(ModelConfig(model_cache_dir=cache))
     try:
         engine.synthesize_to_file(text, output_path=str(validate_dest(output)),
-                                  gender=gender, area=area, group=group, emotion="neutral")
+                                  gender=gender, area=area, group=group, emotion="neutral",
+                                  reference_audio=ref_audio or None,
+                                  reference_text=ref_text or None)
     finally:
         engine.cleanup()
 
@@ -63,9 +71,9 @@ def main():
     if len(sys.argv)<2: raise ValueError("Missing command")
     command=sys.argv[1]
     if command=="vietvoice":
-        if len(sys.argv)!=8: raise ValueError("VietVoice expects text, wav, cache, area, gender, group")
-        _,_,text,output,cache,area,gender,group=sys.argv
-        vietvoice(text,output,cache,area,gender,group)
+        if len(sys.argv) not in (8,10): raise ValueError("VietVoice expects text, wav, cache, area, gender, group, optional ref audio/text")
+        _,_,text,output,cache,area,gender,group,*ref=sys.argv
+        vietvoice(text,output,cache,area,gender,group,*ref)
     elif command=="f5-install":
         if len(sys.argv)!=3: raise ValueError("F5 install expects model dir")
         f5_install(sys.argv[2])
