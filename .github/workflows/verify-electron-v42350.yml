@@ -25,6 +25,9 @@ jobs:
           bash -n build-mac-v42350.sh
           grep -Fq 'V50_REV="f087dae3d8ccf1ca0d405b62497ae50b3d582651"' build-mac-v42350.sh
           grep -Fq 'dmg-only-v42350.cjs' build-mac-v42350.sh
+          grep -Fq 'BUILD_MAC_DMG_ONLY.command' build-mac-v42350.sh
+          ! grep -Fq 'OPENIPTV_ONE_COMMAND=1 bash ./BUILD_MAC.command' build-mac-v42350.sh
+          bash -n overlays/BUILD_MAC_DMG_ONLY_v42350.command
           grep -Fq 'OpenIPTVPro_Source_v4.23.50.zip' build-mac-v42350.sh
           ! grep -Fq 'unzip -Z1 "$WORK/$PATCH_SOURCE" | grep -Fxq' build-mac-v42350.sh
       - name: Integrate against verified full desktop source and run tests
@@ -39,6 +42,8 @@ jobs:
           ( cd "$PROJECT" && node "$GITHUB_WORKSPACE/overlays/v4.23.49-apply.cjs" "$GITHUB_WORKSPACE/overlays" )
           ( cd "$PROJECT" && node "$GITHUB_WORKSPACE/overlays/v4.23.50-apply.cjs" "$GITHUB_WORKSPACE/overlays" )
           ( cd "$PROJECT" && node "$GITHUB_WORKSPACE/overlays/dmg-only-v42350.cjs" )
+          cp overlays/BUILD_MAC_DMG_ONLY_v42350.command "$PROJECT/BUILD_MAC_DMG_ONLY.command"
+          bash -n "$PROJECT/BUILD_MAC_DMG_ONLY.command"
           for js in src/live-caption-service.cjs src/local-ai-autoinstall.cjs src/caption-translator.cjs src/local-tts-service.cjs renderer/live-captions-v42343.js renderer/local-tts-v42344.js src/main.cjs src/preload.cjs; do
             node --check "$PROJECT/$js"
           done
@@ -55,3 +60,32 @@ jobs:
           unzip -tq "$RUNNER_TEMP/OpenIPTVPro_Source_v4.23.50.zip"
           unzip -p "$RUNNER_TEMP/OpenIPTVPro_Source_v4.23.50.zip" 'Open-IPTV-Pro-v4_23_50_Full_Desktop/package.json' > "$RUNNER_TEMP/verified.json"
           node -e 'const fs=require("fs");const p=JSON.parse(fs.readFileSync(process.argv[1],"utf8"));if(p.version!=="4.23.50"||JSON.stringify(p.build.mac.target)!=="[\"dmg\"]"||p.build.dmg.writeUpdateInfo!==false)process.exit(1)' "$RUNNER_TEMP/verified.json"
+
+  mac_dmg:
+    runs-on: macos-15
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Build real arm64 DMG without any updater ZIP
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          echo '06e8123c768f41c14f47264fbc7220d1bdfa6ce5dc07e69eceba50e929abc783  source/OpenIPTVPro_Source_v4.23.47.zip' | shasum -a 256 -c -
+          unzip -q source/OpenIPTVPro_Source_v4.23.47.zip -d "$RUNNER_TEMP"
+          PROJECT="$RUNNER_TEMP/Open-IPTV-Pro-v4_23_47_Full_Desktop"
+          cp overlays/whisper-autoinstall-v42347.cjs "$PROJECT/src/whisper-autoinstall.cjs"
+          ( cd "$PROJECT" && node "$GITHUB_WORKSPACE/overlays/v4.23.48-apply.cjs" "$GITHUB_WORKSPACE/overlays" )
+          ( cd "$PROJECT" && node "$GITHUB_WORKSPACE/overlays/v4.23.49-apply.cjs" "$GITHUB_WORKSPACE/overlays" )
+          ( cd "$PROJECT" && node "$GITHUB_WORKSPACE/overlays/v4.23.50-apply.cjs" "$GITHUB_WORKSPACE/overlays" )
+          ( cd "$PROJECT" && node "$GITHUB_WORKSPACE/overlays/dmg-only-v42350.cjs" )
+          cp overlays/BUILD_MAC_DMG_ONLY_v42350.command "$PROJECT/BUILD_MAC_DMG_ONLY.command"
+          ( cd "$PROJECT" && bash BUILD_MAC_DMG_ONLY.command arm64 )
+          DMG="$PROJECT/dist/Open-IPTV-Pro-4.23.50-mac-arm64.dmg"
+          test -s "$DMG"
+          lipo -archs "$PROJECT/dist/mac-arm64/Open IPTV Pro.app/Contents/MacOS/Open IPTV Pro" | grep -Fxq arm64
+          test ! -e "$PROJECT/dist/Open-IPTV-Pro-4.23.50-mac-arm64.zip"
+          test ! -e "$PROJECT/dist/Open-IPTV-Pro-4.23.50-mac-arm64.dmg.blockmap"
+          ls -lh "$DMG"
