@@ -282,7 +282,7 @@ PROJECT_FINAL="$WORK/Open-IPTV-Pro-v4_23_57_Full_Desktop"
 mv "$PROJECT" "$PROJECT_FINAL"
 PROJECT="$PROJECT_FINAL"
 echo '[3/5] Fixing Live Translate — ONLY target-language subtitles over the video...'
-V58_REV="82924d841fab2c668bac73dad0da987c07ad4de8"
+V58_REV="071812e0e7566c894c26ca5eddedfdcf4fa8ea2a"
 V58_DIR="$WORK/overlays58"
 mkdir -p "$V58_DIR"
 for file in video-only-translated-caption-v42358.js video-only-translated-caption-v42358.css v42358-video-subtitles.test.cjs v4.23.58-apply.cjs BUILD_MAC_DMG_ONLY_v42358.command; do
