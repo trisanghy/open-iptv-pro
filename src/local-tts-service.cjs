@@ -168,7 +168,7 @@ function createLocalSpeechService(options={}){
   const worker=createVieNeuSession({
    python:p.python,bridge,spawnProcess,
    env:{...environment,OPENIPTV_TTS_ENGINE:engine,
-    HF_HOME:path.join(p.base,'hf-home'),HF_HUB_OFFLINE:'1',
+    HF_HOME:managed?.premiumCache||environment.HF_HOME||'',HF_HUB_OFFLINE:'1',
     TRANSFORMERS_OFFLINE:'1',TOKENIZERS_PARALLELISM:'false'},
    args:['serve',engine,p.cache],
    onStatus:message=>notify({type:'status',message:engine+': '+message})
