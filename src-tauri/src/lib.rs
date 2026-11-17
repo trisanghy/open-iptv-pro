@@ -9,10 +9,11 @@ mod compat;
 mod primary_store;
 mod link_checker;
 mod local_ai;
+mod pip;
 
 use std::{path::PathBuf,sync::Arc};
 use tokio::sync::Mutex;
-use tauri::Manager;
+use tauri::{Manager,Emitter};
 use uuid::Uuid;
 
 pub struct AppState {
@@ -71,7 +72,15 @@ pub fn run() {
             tauri::async_runtime::spawn(async move { recordings::dvr_monitor(monitor).await; });
             app.manage(Arc::new(local_ai::LocalAi::new(data_dir.clone(),state.ffmpeg.clone())));
             app.manage(state);
+            app.manage(pip::PipState::default());
             Ok(())
+        })
+        .on_window_event(|window,event|{
+            if window.label()=="pip"&&matches!(event,tauri::WindowEvent::Destroyed){
+                let app=window.app_handle();
+                if let Ok(mut guard)=app.state::<pip::PipState>().session.lock(){*guard=None;}
+                let _=app.emit_to("main","pip:event",serde_json::json!({"type":"closed"}));
+            }
         })
         .invoke_handler(tauri::generate_handler![bridge::bridge])
         .run(tauri::generate_context!())

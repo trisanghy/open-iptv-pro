@@ -1,8 +1,8 @@
 //! Electron preload -> Tauri IPC compatibility. The frontend still calls
 //! window.streamleaf.*; all implemented native operations run in Rust.
-use crate::{AppState,stream,smart,backup,recordings,compat,primary_store,link_checker,local_ai};
+use crate::{AppState,stream,smart,backup,recordings,compat,primary_store,link_checker,local_ai,pip};
 use std::{sync::Arc,fs,path::PathBuf};
-use tauri::{AppHandle,State};
+use tauri::{AppHandle,State,WebviewWindow};
 use tauri_plugin_dialog::DialogExt;
 use serde_json::{json,Value};
 use uuid::Uuid;
@@ -133,7 +133,7 @@ async fn epg_import(app:AppHandle)->Result<Value,String>{
 fn version_status()->Value{json!({"phase":"disabled","message":"Nhánh thử nghiệm Tauri độc lập: đã tắt cập nhật từ bản Electron chính.","mode":"manual","progress":0})}
 
 #[tauri::command]
-pub async fn bridge(app:AppHandle,state:State<'_,Arc<AppState>>,local_ai_state:State<'_,Arc<local_ai::LocalAi>>,op:String,args:Vec<Value>)->Result<Value,String>{
+pub async fn bridge(app:AppHandle,window:WebviewWindow,state:State<'_,Arc<AppState>>,local_ai_state:State<'_,Arc<local_ai::LocalAi>>,op:String,args:Vec<Value>)->Result<Value,String>{
  let s=state.inner();
  let ai=local_ai_state.inner();
  match op.as_str() {
@@ -141,6 +141,11 @@ pub async fn bridge(app:AppHandle,state:State<'_,Arc<AppState>>,local_ai_state:S
    "ffmpegExists":s.ffmpeg.is_some(),"snapshotBase":format!("http://127.0.0.1:{}/snapshot?key={}&file=",s.port,s.secret),
    "version":"4.23.17-tauri.23.8.2","runtime":"tauri2-rust"})),
   // v20: Native, local-only AI services from Electron v4.23.45 feature port.
+  "pip:open"=>{if window.label()!="main"{return Err("Main window only".into());}pip::open(&app,item(&args,0))},
+  "pip:session"=>{if window.label()!="pip"{return Err("Mini window only".into());}pip::session(&app)},
+  "pip:playing"=>{if window.label()!="pip"{return Err("Mini window only".into());}pip::notify(&app,"playing",item(&args,0))},
+  "pip:failed"=>{if window.label()!="pip"{return Err("Mini window only".into());}pip::notify(&app,"failed",item(&args,0))},
+  "pip:close"=>pip::close(&app),
   "caption:status"=>Ok(local_ai::caption_status(ai)),
   "caption:install"=>local_ai::caption_install(app.clone(),ai.clone()).await,
   "caption:start"=>{

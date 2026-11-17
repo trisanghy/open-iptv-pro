@@ -138,6 +138,7 @@
  function renderGuidePages(){renderNow();renderEPG();$('#epgUpdatedLabel').textContent=updatedAt?'Cập nhật lần cuối: '+new Date(updatedAt).toLocaleString('vi-VN'):'Chưa tải EPG';}
  function decorateRow(c,row){const {now}=guideLib.current(guide,c);if(!now)return;const small=row.querySelector('.channel-text small');if(small){small.title=`EPG: ${now.title}`;const s=document.createElement('div');s.className='channel-epg';s.textContent='▤ '+now.title;small.after(s);}}
  async function pictureInPicture(){const video=ctx.player;
+  if(window.OpenIPTVAutoPiP?.manual){void window.OpenIPTVAutoPiP.manual();return;}
   try{if(document.pictureInPictureElement){await document.exitPictureInPicture();return;}
    if(video.readyState<2)throw Error('Chọn và phát một kênh trước khi mở PiP');
    if(document.pictureInPictureEnabled&&video.requestPictureInPicture){await video.requestPictureInPicture();return;}

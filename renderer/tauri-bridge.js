@@ -17,6 +17,7 @@
     ttsStatus: 'tts:status', ttsInstall: 'tts:install',
     ttsVoiceStatus: 'tts:voiceStatus', ttsVoiceInstall: 'tts:voiceInstall', ttsPrewarm: 'tts:prewarm',
     ttsSynthesize: 'tts:synthesize', ttsStop: 'tts:stop',
+    pipOpen: 'pip:open', pipClose: 'pip:close',
     castDiscover: 'cast:discover', airplayDiscover: 'airplay:discover',
     castPlay: 'cast:play', castStop: 'cast:stop', castStatus: 'cast:status',
     castLan: 'cast:lan', openAirplay: 'airplay:open', capabilities: 'app:capabilities',

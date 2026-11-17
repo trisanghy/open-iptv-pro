@@ -1,0 +1,13 @@
+<!doctype html><html lang="vi"><head><meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/><title>Open IPTV Pro · Mini Player</title>
+<style>:root{color-scheme:dark;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}*{box-sizing:border-box}
+body{margin:0;background:#060a13;color:#f0edfa}header{height:38px;padding:5px 9px;display:flex;align-items:center;gap:8px;background:#182034}
+#title{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;font-size:12px;font-weight:650}
+button{border:1px solid #52647a;border-radius:8px;background:#44335e;color:#fff;padding:4px 10px;cursor:pointer}
+button:hover{background:#7456ad}#frame{height:calc(100vh - 38px);background:#000;position:relative}
+video{display:block;width:100%;height:100%;object-fit:contain}#hint{position:absolute;left:8px;right:8px;bottom:10px;
+padding:9px;border-radius:8px;background:#131822eb;font-size:12px;line-height:1.5;text-align:center}
+#hint[hidden]{display:none}</style></head><body>
+<header><span id="title">Mini Player</span><button id="play">▶ Phát</button><button id="close">Trở lại</button></header>
+<div id="frame"><video id="mini" playsinline controls></video><div id="hint">Đang tải…</div></div>
+<script src="vendor/hls.min.js"></script><script src="vendor/dash.all.min.js"></script><script src="pip-player.js"></script></body></html>
