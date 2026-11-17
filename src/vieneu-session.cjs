@@ -48,7 +48,7 @@ function createVieNeuSession({python,bridge,spawnProcess=spawn,env=process.env,o
   });
   return ready;
  }
- async function synthesize({voice,text,output,timeout=210000}){
+ async function synthesize({voice,text,output,reference,referenceText,timeout=210000}){
   await ensure();
   if(!child)throw Error('VieNeu worker is not available');
   const id=++seq;
@@ -60,7 +60,7 @@ function createVieNeuSession({python,bridge,spawnProcess=spawn,env=process.env,o
     shutdown();
    },timeout);
    pending.set(id,{resolve,reject,timer});
-   try{child.stdin.write(JSON.stringify({id,voice,text,output})+'\n');}
+   try{child.stdin.write(JSON.stringify({id,voice,text,output,reference,referenceText})+'\n');}
    catch(error){clearTimeout(timer);pending.delete(id);reject(error);}
   });
  }
