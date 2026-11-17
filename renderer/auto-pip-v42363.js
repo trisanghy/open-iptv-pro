@@ -54,20 +54,29 @@
    if(inPiP())return Promise.resolve(true);
    if(pending)return pending;
    const ticket=++sequence;
-   let result;
+   let result,pipVideo=video;
    try{
     // Synchronous invocation preserves user gesture for sidebar/manual button;
     // native minimize/blur invokes this via executeJavaScript(userGesture=true).
     if(captionsRequested())compositor?.prepare?.();
-    const pipVideo=captionsRequested()?compositor?.getVideo?.()||video:video;
+    pipVideo=captionsRequested()?compositor?.getVideo?.()||video:video;
     if(doc.pictureInPictureEnabled&&typeof pipVideo.requestPictureInPicture==='function')
      result=pipVideo.requestPictureInPicture();
     else if(typeof video.webkitSetPresentationMode==='function'){
      video.webkitSetPresentationMode('picture-in-picture');result=true;
     }else throw Error('Trình phát hiện tại không hỗ trợ PiP');
    }catch(error){
-    if(!quiet)notify('PiP: '+String(error.message||error),'warn');
-    return Promise.resolve(false);
+    if(pipVideo!==video&&doc.pictureInPictureEnabled&&
+       typeof video.requestPictureInPicture==='function'){
+     try{result=video.requestPictureInPicture();pipVideo=video;}
+     catch(fallbackError){
+      if(!quiet)notify('PiP: '+String(fallbackError.message||fallbackError),'warn');
+      return Promise.resolve(false);
+     }
+    }else{
+     if(!quiet)notify('PiP: '+String(error.message||error),'warn');
+     return Promise.resolve(false);
+    }
    }
    const job=Promise.resolve(result).then(async()=>{
     if(ticket!==sequence || (kind==='navigation'&&getPage()==='tv')){
@@ -76,7 +85,12 @@
     }
     reason=kind;
     return inPiP();
-   }).catch(error=>{
+   }).catch(async error=>{
+    if(pipVideo!==video&&ticket===sequence&&doc.pictureInPictureEnabled&&
+       typeof video.requestPictureInPicture==='function'){
+     try{await video.requestPictureInPicture();reason=kind;return inPiP();}
+     catch(fallbackError){error=fallbackError;}
+    }
     if(!quiet)notify('PiP: '+String(error.message||error),'warn');
     return false;
    }).finally(()=>{if(pending===job)pending=null;});
