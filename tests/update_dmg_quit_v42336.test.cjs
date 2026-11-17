@@ -25,9 +25,9 @@ test('Windows manual EXE opens without quitting app',async()=>{
  const result=await openVerifiedInstaller({platform:'win32',phase:'manual-ready',downloadedPath:'C:/Downloads/setup.exe',openPath:async()=>'',quit:()=>quit=true});
  assert.equal(result.quitScheduled,false);assert.equal(quit,false);
 });
-test('background macOS download asks before closing the player',()=>{
+test('manual macOS download asks consent; background download never auto-closes the player',()=>{
  const fs=require('node:fs');const path=require('node:path');
  const js=fs.readFileSync(path.join(__dirname,'../renderer/features.js'),'utf8');
- assert.match(js,/if\(!background\|\|confirm\(/);
+ assert.match(js,/if\(!background&&confirm\(/);
  assert.match(js,/await openDownloadedInstaller\(\)/);
 });
