@@ -4,7 +4,7 @@ const fs=require('node:fs'),path=require('node:path');
 const {createSpeechQueue}=require('../renderer/tts-utterance-queue-v42359.js');
 const read=p=>fs.readFileSync(path.resolve(__dirname,'..',p),'utf8');
 const flush=()=>new Promise(r=>setImmediate(r));
-test('v4.23.64: speaking entire WAV even when two newer translated subtitles arrive',async()=>{
+test('v4.23.65: speaking entire WAV even when two newer translated subtitles arrive',async()=>{
  const spoken=[],completions=[];
  const q=createSpeechQueue({
   synthesize:async p=>({wav:p.text}),
@@ -27,7 +27,7 @@ test('v4.23.64: speaking entire WAV even when two newer translated subtitles arr
  await flush();
  assert.equal(q.status().playing,false);
 });
-test('v4.23.64: TTS synthesis finishing late skips obsolete audio before it starts',async()=>{
+test('v4.23.65: TTS synthesis finishing late skips obsolete audio before it starts',async()=>{
  let firstResolve;
  const requests=[],played=[],finish=[];
  const q=createSpeechQueue({
@@ -49,7 +49,7 @@ test('v4.23.64: TTS synthesis finishing late skips obsolete audio before it star
  finish[0]();
  await flush();
 });
-test('v4.23.64: a stopped stream cancels speech but a new subtitle alone does not',async()=>{
+test('v4.23.65: a stopped stream cancels speech but a new subtitle alone does not',async()=>{
  let stoppedAudio=0,stoppedSynthesis=0;
  const played=[],ends=[];
  const q=createSpeechQueue({
@@ -70,7 +70,7 @@ test('v4.23.64: a stopped stream cancels speech but a new subtitle alone does no
  q.enqueue({sequence:1,text:'new channel'});await flush();await flush();
  assert.deepEqual(played,['long sentence','new channel']);
 });
-test('v4.23.64: stale queued subtitles are dropped, no infinite voice backlog',async()=>{
+test('v4.23.65: stale queued subtitles are dropped, no infinite voice backlog',async()=>{
  let t=1000;let end;
  const played=[];
  const q=createSpeechQueue({
@@ -86,7 +86,7 @@ test('v4.23.64: stale queued subtitles are dropped, no infinite voice backlog',a
  assert.deepEqual(played,['first']);
  assert.equal(q.status().pending,false);
 });
-test('v4.23.64: actual Electron UI waits for natural ended, TTS never restores transcript row',()=>{
+test('v4.23.65: actual Electron UI waits for natural ended, TTS never restores transcript row',()=>{
  const ui=read('renderer/local-tts-v42344.js');
  assert.match(ui,/window\.OpenIPTVSpeechQueue\.createSpeechQueue/);
  assert.match(ui,/audio\.addEventListener\('ended'/);
@@ -105,6 +105,6 @@ test('v4.23.64: actual Electron UI waits for natural ended, TTS never restores t
   html.indexOf('src="local-tts-v42344.js"'));
  assert.match(read('renderer/video-only-translated-caption-v42358.css'),/#liveCaptionOutput/);
  const pkg=JSON.parse(read('package.json'));
- assert.equal(pkg.version,'4.23.64');
+ assert.equal(pkg.version,'4.23.65');
  assert.deepEqual(pkg.build.mac.target,['dmg']);
 });
