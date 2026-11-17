@@ -3,8 +3,12 @@
 import json,os,re,sys
 from pathlib import Path
 if len(sys.argv)!=2:sys.exit('Usage: write-cloud-config.py <site/cloud-config.json>')
-url=os.environ.get('SUPABASE_URL','').strip().rstrip('/')
-key=os.environ.get('SUPABASE_PUBLISHABLE_KEY','').strip()
+# Public frontend settings can be committed to this branch; secrets NEVER can.
+# The Actions variables override this file when both are supplied.
+defaults=Path(__file__).with_name('cloud-deployment.json')
+fallback=json.loads(defaults.read_text(encoding='utf-8')) if defaults.exists() else {}
+url=(os.environ.get('SUPABASE_URL') or fallback.get('url') or '').strip().rstrip('/')
+key=(os.environ.get('SUPABASE_PUBLISHABLE_KEY') or fallback.get('publishableKey') or '').strip()
 enabled=bool(url and key)
 if url or key:
     if not enabled:

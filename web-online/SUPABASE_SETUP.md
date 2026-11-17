@@ -22,6 +22,11 @@ configuration is supplied. **Never** publish a service-role/secret key.
 6. Re-run the \`Publish Open IPTV Pro Web\` workflow. It builds
    \`cloud-config.json\` and bundles the Supabase browser SDK from npm.
 
+For automatic setup from the repository (without adding GitHub Actions variables),
+you may instead fill **only** public values in `web-online/cloud-deployment.json`.
+The build uses those as defaults and variables take precedence. This file must
+never contain the service-role key or OAuth client secret.
+
 Only the project URL and *publishable* API key belong in website assets.
 The GitHub Pages frontend has no trust boundary: RLS and SQL permissions
 must be active *before* enabling the config.
