@@ -1,3 +1,16 @@
+# Open IPTV Pro Electron — một nhánh phát triển duy nhất
+
+**Nhánh chính dành cho Electron:** [build-sources/electron-desktop](https://github.com/trisanghy/open-iptv-pro/tree/build-sources/electron-desktop).
+
+**Build Mac bản mới nhất (chỉ một .app, tự mở Finder):**
+
+    bash -c 'set -o pipefail; curl -fsSL https://raw.githubusercontent.com/trisanghy/open-iptv-pro/build-sources/electron-desktop/build-mac-electron.sh | bash'
+
+**Phát hành công khai:** [build-mac-electron-public.sh](build-mac-electron-public.sh) tạo DMG + ZIP nguồn. [Lịch sử các nhánh đã hợp nhất](docs/ELECTRON_BRANCH_CONSOLIDATION.md).
+
+Không thay đổi main, Rust/Tauri, Mobile và web/online. Các thử nghiệm cũ được giữ lịch sử nhưng không tự động bật trong ứng dụng.
+
+---
 # Open IPTV Pro Electron v4.23.66 — sửa MLX, TTS và giao diện gọn
 
 **[TẢI BẢN THỬ NGHIỆM v4.23.66: Mac / Windows / Source ZIP](https://github.com/trisanghy/open-iptv-pro/releases/tag/electron-v4.23.66)** · [Changelog chi tiết](RELEASE_NOTES_ELECTRON_V4_23_66.md) · [Hướng dẫn v4.23.66](docs/HUONG_DAN_V4_23_66.md) · [Bản ổn định v4.23.60](https://github.com/trisanghy/open-iptv-pro/releases/tag/v4.23.60)

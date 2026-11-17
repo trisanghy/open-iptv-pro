@@ -160,17 +160,23 @@ test('4.23.66: updated UI wires cancel, locale changes, preview and compact line
 });
 
 
-test('4.23.66: private and public builders use the maintained Electron branch',()=>{
- const ref="REF='experiment/electron-v42366-tts-translate-stability'";
+test('4.23.66: versioned builders use immutable release tag',()=>{
+ const ref="REF='electron-v4.23.66'";
  const personal=read('build-mac-v42366.sh');
  const publicBuilder=read('build-mac-v42366-public.sh');
  for(const script of [personal,publicBuilder]){
   assert.ok(script.includes(ref),'script must download the existing Electron branch');
-  assert.ok(script.includes('refs/heads/${REF}'),'Bash must expand the correct ref');
+  assert.ok(script.includes('refs/tags/${REF}'),'Historical source uses immutable tag');
   assert.doesNotMatch(script,/electron-v42366-ai-model-hardware-hints/);
  }
  assert.match(personal,/--dir/);
  assert.match(personal,/open "\$OUT"/);
  assert.doesNotMatch(personal,/electron-builder --mac dmg/);
  assert.match(publicBuilder,/electron-builder --mac dmg/);
+});
+
+test('Permanent branch builds latest personal app and separate public DMG',()=>{
+ const app=read('build-mac-electron.sh'),pub=read('build-mac-electron-public.sh');
+ for(const s of [app,pub]){assert.match(s,/REF='build-sources\/electron-desktop'/);assert.match(s,/zip\/refs\/heads\/\$REF/);}
+ assert.match(app,/--dir/);assert.match(app,/open "\$OUT"/);assert.match(pub,/electron-builder --mac dmg/);
 });

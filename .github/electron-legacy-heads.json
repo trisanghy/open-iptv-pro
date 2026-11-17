@@ -1,0 +1,90 @@
+{
+  "destination": "build-sources/electron-desktop",
+  "source_head": "7e741a705d8dc6740f4837974724c4994f5a9a59",
+  "legacy_branches": [
+    {
+      "branch": "experiment/electron-v42348-1-tts-duck-dedup",
+      "sha": "94e1cf93040b3b28f204f55aebdf0729cadb50bf",
+      "archive_tag": "archive/electron-legacy/electron-v42348-1-tts-duck-dedup",
+      "status": "divergent"
+    },
+    {
+      "branch": "experiment/electron-v42349-vi-translation-premium-tts",
+      "sha": "0e728da8b16257a5fe43d4ae6182a3917943d0a0",
+      "archive_tag": "archive/electron-legacy/electron-v42349-vi-translation-premium-tts",
+      "status": "divergent"
+    },
+    {
+      "branch": "experiment/electron-v42350-direct-translation-tts",
+      "sha": "48bb846e719b483d4325c7ec86725e657b68c55e",
+      "archive_tag": "archive/electron-legacy/electron-v42350-direct-translation-tts",
+      "status": "divergent"
+    },
+    {
+      "branch": "experiment/electron-v42362-vietnamese-tts",
+      "sha": "fe608ab0ba1e178e6bcd3b0fee692b3dd43289b5",
+      "archive_tag": "archive/electron-legacy/electron-v42362-vietnamese-tts",
+      "status": "ancestor"
+    },
+    {
+      "branch": "experiment/electron-v42363-auto-pip",
+      "sha": "9d74e0692412e607ec077e8867044267020605bf",
+      "archive_tag": "archive/electron-legacy/electron-v42363-auto-pip",
+      "status": "ancestor"
+    },
+    {
+      "branch": "experiment/electron-v42364-ffprobe-bundled",
+      "sha": "11064b7ded3aef4e643f5440ad1f94e191919049",
+      "archive_tag": "archive/electron-legacy/electron-v42364-ffprobe-bundled",
+      "status": "ancestor"
+    },
+    {
+      "branch": "experiment/electron-v42365-ai-model-hardware-hints",
+      "sha": "01a1fdae0403d019006b4816315d52774c0dd3d7",
+      "archive_tag": "archive/electron-legacy/electron-v42365-ai-model-hardware-hints",
+      "status": "ancestor"
+    },
+    {
+      "branch": "experiment/electron-v42366-tts-translate-stability",
+      "sha": "7e741a705d8dc6740f4837974724c4994f5a9a59",
+      "archive_tag": "archive/electron-legacy/electron-v42366-tts-translate-stability",
+      "status": "active"
+    },
+    {
+      "branch": "experiment/electron-whisper-cdnfix-v42347",
+      "sha": "3109fc0980b8f4684929232d4b591cf995b41e63",
+      "archive_tag": "archive/electron-legacy/electron-whisper-cdnfix-v42347",
+      "status": "divergent"
+    },
+    {
+      "branch": "experiment/google-translate-gemma-v42361",
+      "sha": "1080d21be6229ca49d41ebb7c38f82927d7f1d7e",
+      "archive_tag": "archive/electron-legacy/google-translate-gemma-v42361",
+      "status": "divergent"
+    },
+    {
+      "branch": "experiment/native-webview-ffmpeg",
+      "sha": "165f77c7cfa33f4ccea3abd00fd79b333bfb3757",
+      "archive_tag": "archive/electron-legacy/native-webview-ffmpeg",
+      "status": "divergent"
+    },
+    {
+      "branch": "personal/mac-app-only-one-command-v42360",
+      "sha": "6d1fedbe72be4553bbd7ea2e1237c587b6618126",
+      "archive_tag": "archive/electron-legacy/mac-app-only-one-command-v42360",
+      "status": "divergent"
+    },
+    {
+      "branch": "iptv-build-source",
+      "sha": "326bb5ea6ac2f711c2bb36e0843adb9cb1f8ee92",
+      "archive_tag": "archive/electron-legacy/iptv-build-source",
+      "status": "divergent"
+    },
+    {
+      "branch": "release/promote-electron-v4.23.60-main-20261117",
+      "sha": "aa3a14eaea4d8c61c06611f0039c63a058db5c8b",
+      "archive_tag": "archive/electron-legacy/promote-electron-v4.23.60-main-20261117",
+      "status": "ancestor"
+    }
+  ]
+}
