@@ -113,7 +113,7 @@ test('v4.23.60: no global cache writes and app retains native DMG-only outputs',
  assert.match(bridge,/mlx-community\/Hy-MT2-7B-4bit/);
  assert.match(read('src/local-ai-autoinstall.cjs'),/prepareUv/);
  const pkg=JSON.parse(read('package.json'));
- assert.equal(pkg.version,'4.23.62');
+ assert.equal(pkg.version,'4.23.63');
  assert.deepEqual(pkg.build.mac.target,['dmg']);
  assert.equal(pkg.build.dmg.writeUpdateInfo,false);
  for(const id of ['whisper','argos','piper','vieneu','hymt18','hymt7','cache','runtimes'])
