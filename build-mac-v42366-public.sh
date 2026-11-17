@@ -2,7 +2,7 @@
 # Public/other users: native DMG plus matching source ZIP; no .app in output.
 set -Eeuo pipefail
 VERSION='4.23.66'
-REF='experiment/electron-v42366-ai-model-hardware-hints'
+REF='experiment/electron-v42366-tts-translate-stability'
 OUT="$HOME/Downloads/Open_IPTV_Pro_v4.23.66_release"
 TMP="$(mktemp -d /tmp/openiptv-release-v42366.XXXXXXXX)"
 trap 'rm -rf "$TMP"' EXIT
@@ -16,7 +16,7 @@ for bin in curl unzip node npm; do
 done
 ZIP="$TMP/OpenIPTVPro_Source_v4.23.66.zip"
 curl --fail --location --show-error --silent --retry 3 \
- "https://codeload.github.com/trisanghy/open-iptv-pro/zip/refs/heads/$REF" -o "$ZIP"
+ "https://codeload.github.com/trisanghy/open-iptv-pro/zip/refs/heads/${REF}" -o "$ZIP"
 unzip -q "$ZIP" -d "$TMP/source"
 ROOT=''
 for candidate in "$TMP"/source/*; do
