@@ -45,6 +45,8 @@ contextBridge.exposeInMainWorld('streamleaf',Object.freeze({
   dvrOpenDirectory:()=>ipcRenderer.invoke('dvr:openDirectory'),
   dvrReveal:id=>ipcRenderer.invoke('dvr:reveal',id),
   checkUpdate:()=>ipcRenderer.invoke('update:check'),
+  listUpdateVersions:()=>ipcRenderer.invoke('update:versions'),
+  selectUpdateVersion:tag=>ipcRenderer.invoke('update:selectVersion',tag),
   updateStatus:()=>ipcRenderer.invoke('update:status'),
   downloadUpdate:()=>ipcRenderer.invoke('update:download'),
   installUpdate:()=>ipcRenderer.invoke('update:install'),

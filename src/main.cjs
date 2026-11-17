@@ -308,6 +308,8 @@ function setupIPC(){
   return readGuideFile(result.filePaths[0]);
  });
  ipcMain.handle('update:check',async()=>await updates.checkForUpdates());
+ ipcMain.handle('update:versions',async()=>updates.listVersions());
+ ipcMain.handle('update:selectVersion',async(_event,tag)=>updates.chooseVersion(tag));
  ipcMain.handle('update:status',()=>updates.snapshot());
  ipcMain.handle('update:download',async()=>await updates.download());
  ipcMain.handle('update:install',()=>updates.install());
