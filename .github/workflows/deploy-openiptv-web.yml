@@ -68,6 +68,8 @@ jobs:
           grep -q 'id="cloudSyncCard"' _site/index.html
           grep -q 'id="cloudEmailForm"' _site/index.html
           grep -q 'id="cloudOtpVerify"' _site/index.html
+          grep -q 'id="cloudLinkVerify"' _site/index.html
+          grep -q "client.auth.verifyOtp(parsed)" _site/cloud-sync.js
           grep -q 'signInWithOtp' _site/cloud-sync.js
           grep -q 'verifyOtp' _site/cloud-sync.js
           python3 - <<'PY'

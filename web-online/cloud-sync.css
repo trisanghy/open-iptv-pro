@@ -22,3 +22,4 @@
 #cloudSyncCard .cloud-email-form .cloud-email-input-line{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
 #cloudSyncCard .cloud-email-form .cloud-email-input-line input{flex:1 1 220px}
 #cloudSyncCard .cloud-email-form label{font-weight:650}
+#cloudSyncCard #cloudLinkInput{flex:1 1 220px;min-width:120px}

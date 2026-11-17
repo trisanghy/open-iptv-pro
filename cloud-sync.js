@@ -16,6 +16,7 @@
  const google=el('cloudLoginGoogle'),github=el('cloudLoginGithub');
  const emailForm=el('cloudEmailForm'),emailInput=el('cloudEmailInput'),otpForm=el('cloudOtpForm');
  const otpCode=el('cloudOtpCode'),otpVerify=el('cloudOtpVerify'),providersNote=el('cloudAuthProviders');
+ const linkForm=el('cloudLinkForm'),linkInput=el('cloudLinkInput'),linkVerify=el('cloudLinkVerify');
  let enabledProviders={email:false,google:false,github:false};
  const logout=el('cloudLogout'),sync=el('cloudSyncNow');
  const account=el('cloudAccount'),choices=el('cloudSyncConflict');
@@ -70,6 +71,7 @@
   show(github,!uid&&!!client&&enabledProviders.github);
   show(emailForm,!uid&&!!client&&enabledProviders.email);
   show(otpForm,!uid&&!!client&&enabledProviders.email);
+  show(linkForm,!uid&&!!client&&enabledProviders.email);
   show(logout,!!uid);show(sync,!!uid&&ready);
   account.textContent=uid?'Đã đăng nhập · '+(window.__iptvCloudUserName||'Tài khoản'):'Chế độ khách · lưu trên thiết bị';
   if(quick){
@@ -192,6 +194,32 @@
  }
  google.addEventListener('click',()=>login('google'));
  github.addEventListener('click',()=>login('github'));
+
+ linkVerify?.addEventListener('click',async()=>{
+  if(!client||!enabledProviders.email)return;
+  let url,parsed;
+  try{
+   url=new URL(String(linkInput?.value||'').trim());
+   const ownHost=new URL(client.supabaseUrl).hostname;
+   if(url.protocol!=='https:'||url.hostname!==ownHost||url.pathname!=='/auth/v1/verify')
+    throw Error('Chỉ nhận liên kết xác thực của dự án Supabase này.');
+   const token_hash=url.searchParams.get('token_hash')||url.searchParams.get('token');
+   const kind=url.searchParams.get('type')||'email';
+   if(!token_hash||!['magiclink','email','signup','invite'].includes(kind))
+    throw Error('Liên kết chưa có mã xác thực hợp lệ.');
+   parsed={token_hash,type:kind};
+  }catch(e){report(e,'kiểm tra liên kết');return;}
+  linkVerify.disabled=true;
+  try{
+   const {data,error}=await client.auth.verifyOtp(parsed);
+   if(error)throw error;
+   if(data?.user)await reconcile(data.user);
+   if(linkInput)linkInput.value='';
+   label('Xác thực liên kết thành công.');
+  }catch(e){report(e,'xác thực liên kết');}
+  finally{linkVerify.disabled=false;}
+ });
+
 
  const safeEmail=()=>String(emailInput?.value||'').trim().toLowerCase();
  emailForm?.addEventListener('submit',async event=>{

@@ -177,7 +177,15 @@
           <button type="button" class="btn btn-subtle" id="cloudOtpVerify">Xác thực</button>
         </div>
       </div>
-      <p id="cloudAuthProviders" class="hint" aria-live="polite"></p>
+            <div id="cloudLinkForm" class="cloud-email-form" hidden>
+        <label for="cloudLinkInput">Nếu liên kết trong email không quay về website, hãy dán liên kết vào đây</label>
+        <div class="cloud-email-input-line">
+          <input id="cloudLinkInput" type="url" autocomplete="off" spellcheck="false" placeholder="Liên kết xác nhận của Supabase"/>
+          <button type="button" class="btn btn-subtle" id="cloudLinkVerify">Xác thực liên kết</button>
+        </div>
+        <p class="hint">Liên kết chỉ được dùng một lần và không được lưu vào playlist hoặc đám mây.</p>
+      </div>
+<p id="cloudAuthProviders" class="hint" aria-live="polite"></p>
 
       <div class="cloud-sync-actions">
         <button type="button" class="btn btn-subtle" id="cloudLoginGoogle" hidden>Đăng nhập Google</button>
