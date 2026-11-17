@@ -214,13 +214,10 @@
  }
  function renderGuidePages(){renderNow();renderEPG();$('#epgUpdatedLabel').textContent=updatedAt?'Cập nhật lần cuối: '+new Date(updatedAt).toLocaleString('vi-VN'):'Chưa tải EPG';}
  function decorateRow(c,row){const {now}=guideLib.current(guide,c);if(!now)return;const small=row.querySelector('.channel-text small');if(small){small.title=`EPG: ${now.title}`;const s=document.createElement('div');s.className='channel-epg';s.textContent='▤ '+now.title;small.after(s);}}
- async function pictureInPicture(){const video=ctx.player;
-  try{if(document.pictureInPictureElement){await document.exitPictureInPicture();return;}
-   if(video.readyState<2)throw Error('Chọn và phát một kênh trước khi mở PiP');
-   if(document.pictureInPictureEnabled&&video.requestPictureInPicture){await video.requestPictureInPicture();return;}
-   if(typeof video.webkitSetPresentationMode==='function'){video.webkitSetPresentationMode('picture-in-picture');return;}
-   throw Error('Thiết bị hoặc video hiện tại không hỗ trợ Picture-in-Picture');
-  }catch(e){ctx.toast('PiP: '+e.message,'warn');}
+ function pictureInPicture(){
+  // Centralized: same <video>, same native session used for auto-PiP.
+  if(window.OpenIPTVAutoPiP?.manual)void window.OpenIPTVAutoPiP.manual();
+  else ctx.toast('Bộ điều khiển PiP chưa sẵn sàng','warn');
  }
  const officialRepo='trisanghy/open-iptv-pro';
  function setUpdateBusy(on){$('#updateCheckBtn').disabled=!!on;$('#updateDownloadBtn').disabled=!!on;}

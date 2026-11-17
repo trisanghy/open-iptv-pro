@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro",
-  "version": "4.23.62",
-  "description": "Open IPTV Pro v4.23.62 — optional offline VietVoice and Vietnamese F5-TTS, preserving Piper and VieNeu",
+  "version": "4.23.63",
+  "description": "Open IPTV Pro v4.23.63 — automatic native Picture-in-Picture for navigation, minimize and app switching, plus offline Vietnamese TTS",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

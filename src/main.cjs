@@ -365,6 +365,19 @@ function createWindow(){
  webWindow.webContents.setWindowOpenHandler(()=>({action:'deny'}));
  const appEntry=pathToFileURL(path.join(__dirname,'../renderer/index.html')).href;
  webWindow.webContents.on('will-navigate',(event,url)=>{if(url!==appEntry)event.preventDefault();});
+ // Native events detect minimize/app switching even when document visibility is unchanged.
+ // Electron injects userGesture=true so Chromium accepts requestPictureInPicture().
+ const triggerPiP=kind=>{
+  if(!webWindow||webWindow.isDestroyed()||webWindow.webContents.isDestroyed()||
+     webWindow.webContents.isLoading())return;
+  const script='window.OpenIPTVAutoPiP?.onNativeEvent("'+kind+'")';
+  void webWindow.webContents.executeJavaScript(script,true).catch(e=>{
+   console.debug('Native PiP event rejected:',kind,String(e.message||e).slice(0,110));
+  });
+ };
+ webWindow.on('minimize',()=>triggerPiP('minimize'));
+ webWindow.on('blur',()=>triggerPiP('blur'));
+ webWindow.on('focus',()=>triggerPiP('focus'));
 }
 app.whenReady().then(async()=>{
  const dataDir=app.getPath('userData');
