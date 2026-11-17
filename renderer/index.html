@@ -95,7 +95,7 @@
  <button type="button" id="liveCaptionSetup" aria-expanded="false" aria-controls="liveCaptionSetupPanel" title="Cài đặt chung: Live Caption, Live Translate, TTS và AI đã tải">⚙</button>
  <small id="liveCaptionStatus" role="status" aria-live="polite">Đang kiểm tra Whisper…</small>
  <button type="button" id="captionRetry" hidden title="Thử bật lại Live Caption/Translate">↻ Thử lại</button>
-<label class="tts-mode" title="Đọc lời dịch bằng Piper chạy trên máy">
+<label class="tts-mode" title="Đọc bản dịch bằng giọng nói AI chạy trên máy">
  <input type="checkbox" id="liveTtsToggle"/>🔊 Giọng dịch TTS
 </label>
 <select id="liveTtsLanguage" aria-label="Ngôn ngữ giọng đọc">
@@ -111,7 +111,7 @@
  <option value="id">Indonesia</option>
 </select>
 <label class="tts-duck-label" for="liveTtsVoice">Giọng đọc</label>
-<select id="liveTtsVoice" aria-label="Chọn giọng đọc Piper theo ngôn ngữ"></select>
+<select id="liveTtsVoice" aria-label="Chọn mô hình và giọng đọc AI theo ngôn ngữ"></select>
 <label class="tts-duck-label" for="liveTtsSpeed" title="Tốc độ đọc TTS, không thay đổi tốc độ kênh IPTV">Tốc độ</label>
 <select id="liveTtsSpeed" aria-label="Tốc độ đọc giọng dịch TTS" title="Áp dụng khi đọc phụ đề và nghe thử giọng">
  <option value="0.60">0.6×</option>
@@ -178,8 +178,15 @@
 </div>
 <div class="ai-settings-section" role="group" aria-label="Giọng đọc TTS">
  <h4>TTS · Giọng đọc và thử giọng</h4>
- <div class="ai-settings-actions"><button type="button" id="liveTtsInstall" title="Tự cài Piper, Argos và giọng đọc; tải một lần cần kết nối Internet">Cài mô hình tự động</button><button type="button" id="liveTtsPreview" title="Nghe thử giọng trên máy, không cần bật kênh IPTV">Nghe thử</button></div>
- <small>Chọn Piper hoặc VieNeu ở hàng giọng đọc phía ngoài; tốc độ và mức tiếng gốc vẫn chỉnh được trực tiếp.</small>
+ <div class="ai-settings-actions"><button type="button" id="liveTtsInstall" title="Tự cài riêng mô hình TTS đã chọn; lần đầu cần kết nối Internet">Cài mô hình tự động</button><button type="button" id="liveTtsPreview" title="Nghe thử giọng trên máy, không cần bật kênh IPTV">Nghe thử</button></div>
+ <small>Chọn Piper, VieNeu, VietVoice hoặc F5-TTS ở hàng giọng đọc. VietVoice (~1,51 GB) và F5 (checkpoint ~1,35 GB cùng thư viện nặng) chỉ tải khi bạn bấm cài. F5 chỉ dùng phi thương mại.</small>
+  <div id="liveTtsReferenceConfig" class="tts-reference-config" hidden>
+   <label for="liveTtsReferenceText">Lời nói chính xác trong mẫu giọng F5 (WAV, 3–15 giây)</label>
+   <textarea id="liveTtsReferenceText" rows="2" maxlength="500" placeholder="Nhập đúng câu người nói đã đọc trong file WAV…"></textarea>
+   <label class="tts-reference-consent"><input type="checkbox" id="liveTtsReferenceConsent"/> Tôi có quyền sử dụng giọng trong mẫu này và được người nói đồng ý.</label>
+   <div class="ai-settings-actions"><button type="button" id="liveTtsChooseReference">Chọn WAV giọng mẫu…</button><small id="liveTtsReferenceStatus" role="status" aria-live="polite">Chưa chọn mẫu giọng.</small></div>
+   <small>Mẫu giọng và lời thoại chỉ được lưu trên máy này, không tải lên máy chủ. Sau khi chọn, hãy bấm “Nghe thử”.</small>
+  </div>
 </div>
 <div class="ai-settings-section" role="group" aria-label="Quản lý dung lượng AI">
  <h4>Bộ nhớ AI đã tải</h4>
