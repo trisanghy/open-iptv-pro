@@ -212,6 +212,10 @@
     if(styleNode?.parentElement)styleNode.parentElement.removeChild(styleNode);
    },
    setPreferences,setOriginalVisible,getPreferences:()=>({...prefs}),
+   // Read-only snapshot for the optional Canvas PiP compositor.
+   getPiPState:()=>({visible:!!(prefs.show&&last?.text),
+    text:last?.text||'',sourceText:originalVisible?last?.sourceText||'':'',
+    translated:!!last?.translated,settings:{...prefs}}),
    getMode:base.getMode,getText:base.getText
   });
  }
