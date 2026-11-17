@@ -199,37 +199,65 @@
    return {...result,followUpChunks:chunks.slice(1)};
   },
   play:async(result,payload,onEnded)=>{
-   if(!enabled||source()!==payload.streamUrl)return onEnded();
+   if(!enabled||source()!==payload.streamUrl||!mediaActive())return onEnded();
    if(!result?.audioBase64||result.mime!=='audio/wav')
     throw Error('Không nhận được tệp WAV hợp lệ từ bộ đọc');
-   const audio=new Audio('data:audio/wav;base64,'+result.audioBase64);
-   playing=audio;
-   audio.volume=1;applySpeechRate(audio);
+   const generation=validSession;
+   const chunks=Array.isArray(result.followUpChunks)?result.followUpChunks:[];
    let completed=false;
    const complete=()=>{
     if(completed)return;completed=true;
-    if(playing===audio)playing=null;
-    applyDuck();
-    onEnded();
+    if(generation===validSession){applyDuck();onEnded();}
    };
-   audio.addEventListener('ended',()=>{
-    // Audio ends naturally, even if 3 new subtitles have arrived meanwhile.
-    if(playing===audio)status('Đã đọc hết câu · tiếp tục câu phụ đề mới nhất');
-    complete();
-   },{once:true});
-   audio.addEventListener('error',()=>{
-    if(playing===audio)status('Lỗi phát giọng đọc');
-    complete();
-   },{once:true});
-   applyDuck();
+   const playChunk=wav=>new Promise((resolve,reject)=>{
+    if(!wav?.audioBase64||wav.mime!=='audio/wav')return reject(Error('WAV không hợp lệ'));
+    if(generation!==validSession||!mediaActive())return resolve(false);
+    const audio=new Audio('data:audio/wav;base64,'+wav.audioBase64);
+    playing=audio;audio.volume=1;applySpeechRate(audio);
+    let finished=false;
+    const finish=(error)=>{
+     if(finished)return;finished=true;
+     if(playing===audio)playing=null;
+     if(cancelSpeechAudio===cancel)cancelSpeechAudio=null;
+     try{audio.pause();audio.removeAttribute('src');audio.load();}catch{}
+     error?reject(error):resolve(true);
+    };
+    const cancel=()=>finish();
+    cancelSpeechAudio=cancel;
+    audio.addEventListener('ended',()=>finish(),{once:true});
+    audio.addEventListener('error',()=>finish(Error('Không thể phát giọng TTS')),{once:true});
+    applyDuck();
+    Promise.resolve(audio.play()).then(()=>{
+     if(generation===validSession&&playing===audio)
+      status('Đang đọc phụ đề '+payload.lang+' · '+playbackSpeed()+'× · Tiếng gốc '+duck.value+'%');
+    }).catch(finish);
+   });
    try{
-    await audio.play();
-    if(playing===audio){
-     status('Đang đọc trọn câu '+payload.lang+' · '+playbackSpeed()+'× · Tiếng gốc '+duck.value+'%');
+    let wav=result,prefetch=null;
+    for(let i=0;i<=chunks.length;i++){
+     if(generation!==validSession||!enabled||source()!==payload.streamUrl||!mediaActive())break;
+     // Start the next synthesized WAV while the current chunk plays.
+     if(i<chunks.length&&!speechQueue.status().pending){
+      const text=chunks[i];
+      prefetch=Promise.resolve().then(()=>api.ttsSynthesize({
+       target:payload.lang,voice:payload.voiceId,text,
+       sourceLanguage:payload.lang,alreadyTranslated:true
+      })).then(value=>({ok:true,value}),error=>({ok:false,error}));
+     }
+     await playChunk(wav);
+     // If translation is ahead, finish this audible phrase and speak the NEW
+     // subtitle rather than reading an old multi-chunk backlog.
+     if(i===chunks.length||speechQueue.status().pending)break;
+     if(!prefetch)break;
+     const next=await prefetch;
+     if(!next.ok)throw next.error;
+     wav=next.value;prefetch=null;
     }
-   }catch(error){complete();throw error;}
+   }finally{complete();}
   },
   cancelAudio:()=>{
+   const cancel=cancelSpeechAudio;cancelSpeechAudio=null;
+   if(cancel)try{cancel();}catch{}
    const audio=playing;playing=null;
    if(audio){try{audio.pause();audio.removeAttribute('src');audio.load();}catch{}}
   },
