@@ -1,0 +1,161 @@
+name: Replace older Rust Lab attachments in Stable v4.23.67
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/refresh-rustlab-stable-v42367.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: stable-v42367-rustlab-asset-refresh
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    name: Verify and replace only Rust Lab release assets
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Verify main documents and unmodified Electron version
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          test "$(node -p 'require("./package.json").version')" = '4.23.67'
+          grep -Fq 'Rust Lab v23.8.2' README.md
+          grep -Fq 'Rust Lab v23.8.2' RELEASE_NOTES_V4_23_67.md
+          grep -Fq 'Rust Lab v23.8.2' docs/COMPARE_EDITIONS_V4_23_67.md
+          test -f src/main.cjs
+          test -f src/update-version-catalog.cjs
+      - name: Download existing stable artifacts and verified Rust Lab v23.8.2 originals
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -Eeuo pipefail
+          mkdir -p stable-original rust-original stage
+          gh release download v4.23.67 --repo "$GITHUB_REPOSITORY" --dir stable-original
+          gh release download rust-lab/v23.8.2 --repo "$GITHUB_REPOSITORY" --dir rust-original
+          test -s stable-original/SHA256SUMS.txt
+          test -s rust-original/SHA256SUMS.txt
+          (cd stable-original && sha256sum -c SHA256SUMS.txt)
+          (cd rust-original && sha256sum -c SHA256SUMS.txt)
+          test -s rust-original/OpenIPTVPro-RustLab-v23.8.2-Windows-Setup-x64.exe
+          test -s rust-original/OpenIPTVPro-RustLab-v23.8.2-Windows-Portable-x64.zip
+          test -s rust-original/OpenIPTVPro-RustLab-v23.8.2-Source.zip
+      - name: Stage preserved Electron and source assets, replacing only the Rust Lab files
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          for f in \
+            Open-IPTV-Pro-4.23.67-mac-arm64.dmg \
+            Open-IPTV-Pro-4.23.67-mac-x64.dmg \
+            Open-IPTV-Pro-Setup-4.23.67-x64.exe \
+            Open-IPTV-Pro-4.23.67-x64.exe \
+            OpenIPTVPro_Source_v4.23.67.zip \
+            SHA256SUMS_ELECTRON_v4.23.67_BETA.txt; do
+            test -s "stable-original/$f"
+            cp "stable-original/$f" "stage/$f"
+          done
+          for f in \
+            OpenIPTVPro-RustLab-v23.8.2-Windows-Setup-x64.exe \
+            OpenIPTVPro-RustLab-v23.8.2-Windows-Portable-x64.zip \
+            OpenIPTVPro-RustLab-v23.8.2-Source.zip; do
+            cp "rust-original/$f" "stage/$f"
+            cmp "stage/$f" "rust-original/$f"
+          done
+          cp rust-original/SHA256SUMS.txt stage/SHA256SUMS_RUSTLAB_v23.8.2.txt
+          (cd stage && sha256sum *.dmg *.exe *.zip SHA256SUMS_*.txt > SHA256SUMS.txt)
+          (cd stage && sha256sum -c SHA256SUMS.txt)
+          test "$(find stage -maxdepth 1 -type f | wc -l)" -eq 11
+          for f in Open-IPTV-Pro-4.23.67-mac-arm64.dmg Open-IPTV-Pro-4.23.67-mac-x64.dmg Open-IPTV-Pro-Setup-4.23.67-x64.exe Open-IPTV-Pro-4.23.67-x64.exe OpenIPTVPro_Source_v4.23.67.zip; do
+            cmp "stage/$f" "stable-original/$f"
+          done
+          echo "All original Electron assets preserved byte-for-byte"
+          ls -lh stage
+      - name: Attach new Rust Lab files and verify their GitHub SHA-256 digests
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -Eeuo pipefail
+          gh release upload v4.23.67 \
+            stage/OpenIPTVPro-RustLab-v23.8.2-Windows-Setup-x64.exe \
+            stage/OpenIPTVPro-RustLab-v23.8.2-Windows-Portable-x64.zip \
+            stage/OpenIPTVPro-RustLab-v23.8.2-Source.zip \
+            --repo "$GITHUB_REPOSITORY" --clobber
+          gh api "repos/$GITHUB_REPOSITORY/releases/tags/v4.23.67" > stable-assets.json
+          for f in \
+            OpenIPTVPro-RustLab-v23.8.2-Windows-Setup-x64.exe \
+            OpenIPTVPro-RustLab-v23.8.2-Windows-Portable-x64.zip \
+            OpenIPTVPro-RustLab-v23.8.2-Source.zip; do
+            actual="$(jq -r --arg name "$f" '.assets[]|select(.name==$name)|.digest' stable-assets.json)"
+            expected="sha256:$(sha256sum "stage/$f" | cut -d' ' -f1)"
+            test "$actual" = "$expected" || { echo "::error::GitHub digest mismatch: $f"; exit 1; }
+            echo "Verified GitHub upload SHA256: $f"
+          done
+      - name: Publish corrected stable Release checksums and notes, preserving the existing tag
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -Eeuo pipefail
+          gh release upload v4.23.67 \
+            stage/SHA256SUMS.txt \
+            stage/SHA256SUMS_RUSTLAB_v23.8.2.txt \
+            --repo "$GITHUB_REPOSITORY" --clobber
+          gh release edit v4.23.67 --repo "$GITHUB_REPOSITORY" \
+            --notes-file RELEASE_NOTES_V4_23_67.md
+      - name: Delete old Rust Lab v23.4 attachments ONLY after new files have passed verification
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -Eeuo pipefail
+          for f in \
+            OpenIPTVPro-RustLab-v23.4-Windows-Setup-x64.exe \
+            OpenIPTVPro-RustLab-v23.4-Windows-Portable-x64.zip \
+            OpenIPTVPro-RustLab-v23.4-Source.zip \
+            SHA256SUMS_RUSTLAB_v23.4.txt; do
+            if gh release view v4.23.67 --repo "$GITHUB_REPOSITORY" --json assets --jq '.assets[].name' | grep -Fxq "$f"; then
+              gh release delete-asset v4.23.67 "$f" --repo "$GITHUB_REPOSITORY" --yes
+              echo "Removed superseded Rust asset: $f"
+            fi
+          done
+      - name: Final verification — 11 assets, Electron unchanged, Rust v23.8.2 only
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -Eeuo pipefail
+          gh api "repos/$GITHUB_REPOSITORY/releases/tags/v4.23.67" > stable-final.json
+          jq -e '.prerelease==false and .draft==false' stable-final.json
+          test "$(jq '.assets|length' stable-final.json)" -eq 11
+          for f in \
+            Open-IPTV-Pro-4.23.67-mac-arm64.dmg \
+            Open-IPTV-Pro-4.23.67-mac-x64.dmg \
+            Open-IPTV-Pro-Setup-4.23.67-x64.exe \
+            Open-IPTV-Pro-4.23.67-x64.exe \
+            OpenIPTVPro_Source_v4.23.67.zip \
+            OpenIPTVPro-RustLab-v23.8.2-Windows-Setup-x64.exe \
+            OpenIPTVPro-RustLab-v23.8.2-Windows-Portable-x64.zip \
+            OpenIPTVPro-RustLab-v23.8.2-Source.zip \
+            SHA256SUMS.txt \
+            SHA256SUMS_ELECTRON_v4.23.67_BETA.txt \
+            SHA256SUMS_RUSTLAB_v23.8.2.txt; do
+            jq -e --arg name "$f" '[.assets[].name]|index($name)!=null' stable-final.json >/dev/null
+            actual="$(jq -r --arg name "$f" '.assets[]|select(.name==$name)|.digest' stable-final.json)"
+            expected="sha256:$(sha256sum "stage/$f" | cut -d' ' -f1)"
+            test "$actual" = "$expected" || { echo "::error::Final SHA mismatch: $f"; exit 1; }
+          done
+          if jq -e '[.assets[].name]|any(.[];contains("RustLab-v23.4"))' stable-final.json >/dev/null; then
+            echo "::error::An old Rust Lab v23.4 installer remains"; exit 1
+          fi
+          if jq -e '[.assets[].name]|index("SHA256SUMS_RUSTLAB_v23.4.txt")!=null' stable-final.json >/dev/null; then
+            echo "::error::Old Rust Lab checksum remains"; exit 1
+          fi
+          grep -Fq 'v23.8.2' RELEASE_NOTES_V4_23_67.md
+          echo "PASS: stable Electron v4.23.67 unchanged; Rust Lab v23.8.2 now replaces v23.4"
