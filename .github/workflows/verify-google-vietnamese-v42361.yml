@@ -16,6 +16,7 @@ jobs:
           node-version: '22'
       - name: JavaScript and Python syntax
         run: |
+          bash -n build-mac-v42361-app.sh
           node --check src/google-ollama.cjs
           node --check src/vietnamese-voices.cjs
           node --check src/main.cjs
