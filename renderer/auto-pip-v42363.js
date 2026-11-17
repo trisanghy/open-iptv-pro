@@ -60,6 +60,8 @@
     // native minimize/blur invokes this via executeJavaScript(userGesture=true).
     if(captionsRequested())compositor?.prepare?.();
     pipVideo=captionsRequested()?compositor?.getVideo?.()||video:video;
+    if(captionsRequested()&&pipVideo===video&&!quiet)
+     notify('CC chưa thể ghép vào PiP của luồng này; đang dùng PiP gốc.','warn');
     if(doc.pictureInPictureEnabled&&typeof pipVideo.requestPictureInPicture==='function')
      result=pipVideo.requestPictureInPicture();
     else if(typeof video.webkitSetPresentationMode==='function'){
@@ -68,7 +70,8 @@
    }catch(error){
     if(pipVideo!==video&&doc.pictureInPictureEnabled&&
        typeof video.requestPictureInPicture==='function'){
-     try{result=video.requestPictureInPicture();pipVideo=video;}
+     try{result=video.requestPictureInPicture();pipVideo=video;
+      if(!quiet)notify('CC không tương thích PiP hiện tại; đã chuyển sang PiP gốc.','warn');}
      catch(fallbackError){
       if(!quiet)notify('PiP: '+String(fallbackError.message||fallbackError),'warn');
       return Promise.resolve(false);
@@ -88,7 +91,9 @@
    }).catch(async error=>{
     if(pipVideo!==video&&ticket===sequence&&doc.pictureInPictureEnabled&&
        typeof video.requestPictureInPicture==='function'){
-     try{await video.requestPictureInPicture();reason=kind;return inPiP();}
+     try{await video.requestPictureInPicture();reason=kind;
+      if(!quiet)notify('CC không tương thích PiP hiện tại; đã chuyển sang PiP gốc.','warn');
+      return inPiP();}
      catch(fallbackError){error=fallbackError;}
     }
     if(!quiet)notify('PiP: '+String(error.message||error),'warn');
