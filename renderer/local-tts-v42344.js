@@ -49,7 +49,7 @@
  ];
  const f5Panel=$('f5ReferencePanel'),f5Button=$('f5ChooseReference'),
   f5Label=$('f5ReferenceLabel'),f5Transcript=$('f5ReferenceText');
- let f5ReferenceAudio='';
+ let f5ReferenceAudio='',f5LicenseConfirmAt=0;
  function toggleReference(){
   if(f5Panel)f5Panel.hidden=target.value!=='vi'||voice.value!=='f5vi:reference';
  }
@@ -231,6 +231,13 @@
  });
  install.addEventListener('click',async()=>{
   if(install.disabled)return;
+  if(voice.value==='f5vi:reference'&&(Date.now()-f5LicenseConfirmAt>20000)){
+   f5LicenseConfirmAt=Date.now();
+   install.textContent='Xác nhận phi thương mại';
+   status('F5 tiếng Việt dùng checkpoint CC-BY-NC 4.0: chỉ dùng phi thương mại. Chỉ nhân bản giọng có sự đồng ý. Bấm lần nữa trong 20 giây để cài.');
+   return;
+  }
+  f5LicenseConfirmAt=0;
   install.disabled=true;install.textContent='Đang cài…';
   status('Đang tải công cụ và mô hình giọng '+target.value+' (cần internet một lần)…');
   try{
