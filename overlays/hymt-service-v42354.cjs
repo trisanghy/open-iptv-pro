@@ -5,7 +5,7 @@ const MODELS=Object.freeze({
  hymt7:{repo:'mlx-community/Hy-MT2-7B-4bit',label:'Hy-MT2 7B · Chất lượng',approxBytes:4550000000}
 });
 const LANGS=new Set(['en','vi','zh','fr','es','de','ja','ko','pt','it','ru','id','ar','hi','th']);
-const fileOK=p=>{try{return fs.statSync(p).isFile()&&fs.statSync(p).size>10000;}catch{return false;}};
+const fileOK=(p,minBytes=0)=>{try{return fs.statSync(p).isFile()&&fs.statSync(p).size>minBytes;}catch{return false;}};
 function sizeOf(target){
  let total=0;
  function walk(p,depth){
@@ -40,8 +40,9 @@ function createHyMTService({dataDir,installer,platform=process.platform,arch=pro
   finally{try{fs.rmSync(temporary,{force:true});}catch{}}
   return bridge;
  }
- const installed=key=>isValidKey(key)&&['config.json','tokenizer.json','model.safetensors']
-  .every(n=>fileOK(path.join(dir(key),'weights',n)));
+ const installed=key=>isValidKey(key)&&fileOK(path.join(dir(key),'weights','config.json'),500)&&
+  fileOK(path.join(dir(key),'weights','tokenizer.json'),100000)&&
+  fileOK(path.join(dir(key),'weights','model.safetensors'),10000000);
  function state(key){
   if(!isValidKey(key))throw Error('Mô hình AI không hợp lệ');
   return {...MODELS[key],id:key,installed:installed(key),supported:alive(),
