@@ -34,9 +34,9 @@
  panel.hidden=true;panel.setAttribute('aria-label','Tuỳ chỉnh phụ đề trên video');
  panel.innerHTML='<header><strong>CC · Tuỳ chỉnh phụ đề</strong><button type="button" id="rustSubtitleClose" aria-label="Đóng">×</button></header>'+
  '<label>Hiển thị trên video<input type="checkbox" id="rustSubtitleShow"></label>'+
- '<label>Nội dung<select id="rustSubtitleDisplay"><option value="original">Chỉ phụ đề gốc</option><option value="translated">Chỉ phụ đề dịch</option><option value="both">Gốc + dịch</option></select></label>'+
- '<label>Vị trí<select id="rustSubtitlePosition"><option value="bottom">Dưới video</option><option value="middle">Giữa thấp</option><option value="top">Trên video</option></select></label>'+
- '<label>Cỡ chữ<select id="rustSubtitleSize"><option value="small">Nhỏ · 16px</option><option value="medium">Vừa · 20px</option><option value="large">Lớn · 25px</option><option value="xlarge">Rất lớn · 30px</option></select></label>'+
+ '<label>Nội dung<span class="rust-cc-segmented" id="rustSubtitleDisplayButtons" role="group" aria-label="Chọn nội dung phụ đề"><button type="button" data-value="original">Chỉ gốc</button><button type="button" data-value="translated">Chỉ dịch</button><button type="button" data-value="both">Cả hai</button></span><select class="rust-cc-native-select" id="rustSubtitleDisplay" tabindex="-1" aria-hidden="true"><option value="original">Chỉ phụ đề gốc</option><option value="translated">Chỉ phụ đề dịch</option><option value="both">Gốc + dịch</option></select></label>'+
+ '<label>Vị trí<span class="rust-cc-segmented rust-cc-position" id="rustSubtitlePositionButtons" role="group" aria-label="Vị trí phụ đề"><button type="button" data-value="top" title="Trên video">▔</button><button type="button" data-value="middle" title="Giữa video">☷</button><button type="button" data-value="bottom" title="Dưới video">▁</button></span><select class="rust-cc-native-select" id="rustSubtitlePosition" tabindex="-1" aria-hidden="true"><option value="bottom">Dưới video</option><option value="middle">Giữa thấp</option><option value="top">Trên video</option></select></label>'+
+ '<label>Cỡ chữ<span class="rust-cc-segmented rust-cc-sizes" id="rustSubtitleSizeButtons" role="group" aria-label="Kích thước phụ đề"><button type="button" data-value="small">A<small>Nhỏ</small></button><button type="button" data-value="medium">A<small>Vừa</small></button><button type="button" data-value="large">A<small>Lớn</small></button><button type="button" data-value="xlarge">A<small>Rất lớn</small></button></span><select class="rust-cc-native-select" id="rustSubtitleSize" tabindex="-1" aria-hidden="true"><option value="small">Nhỏ · 16px</option><option value="medium">Vừa · 20px</option><option value="large">Lớn · 25px</option><option value="xlarge">Rất lớn · 30px</option></select></label>'+
  '<label>Phông chữ<select id="rustSubtitleFont"><option value="system">Mặc định · dễ đọc</option><option value="arial">Arial · gọn gàng</option><option value="tahoma">Tahoma · rõ nét</option><option value="verdana">Verdana · thoáng chữ</option><option value="noto">Noto Sans · đa ngôn ngữ</option><option value="serif">Georgia · có chân</option></select></label>'+
  '<div class="rust-cc-font-preview" id="rustSubtitleFontPreview" aria-live="polite">Xin chào! Phụ đề dễ đọc · 你好世界</div>'+
  '<label>Màu chữ<span class="rust-cc-color" id="rustSubtitleColors"></span></label>'+
@@ -50,6 +50,13 @@
  const els={enabled:$('rustSubtitleShow'),display:$('rustSubtitleDisplay'),position:$('rustSubtitlePosition'),
  size:$('rustSubtitleSize'),font:$('rustSubtitleFont'),outline:$('rustSubtitleOutline'),background:$('rustSubtitleBackground'),
  opacity:$('rustSubtitleOpacity')};
+ for(const [key,id] of [['display','rustSubtitleDisplayButtons'],['position','rustSubtitlePositionButtons'],['size','rustSubtitleSizeButtons']]){
+  $(id)?.addEventListener('click',event=>{
+   const button=event.target.closest('button[data-value]');
+   if(button&&$(id).contains(button)&&allowed[key].includes(button.dataset.value))
+    change(key,button.dataset.value);
+  });
+ }
  const colors=$('rustSubtitleColors'),presets=['#ffffff','#ffe65b','#49e961','#29d7ed','#2991ff','#ff86bb','#ff5555'];
  const swatches=[];
  for(const color of presets){
@@ -62,6 +69,10 @@
  function sync(){
   for(const key of Object.keys(els))els[key][key==='enabled'?'checked':'value']=key==='enabled'?settings.enabled:String(settings[key]);
   custom.value=settings.color;$('rustSubtitleOpacityValue').textContent=settings.opacity+'%';
+  for(const [key,id] of [['display','rustSubtitleDisplayButtons'],['position','rustSubtitlePositionButtons'],['size','rustSubtitleSizeButtons']]){
+   for(const button of $(id)?.querySelectorAll('button[data-value]')||[])
+    button.setAttribute('aria-pressed',String(button.dataset.value===settings[key]));
+  }
   toggle.setAttribute('aria-pressed',String(settings.enabled));
   for(const [color,b] of swatches)b.setAttribute('aria-pressed',String(color===settings.color));
   frame.dataset.rustSubtitlePosition=settings.position;frame.dataset.rustSubtitleSize=settings.size;
@@ -115,7 +126,7 @@
   spoken=null;render();
  });
  document.addEventListener('rustlab:caption-clear',clear);
- for(const event of ['pause','ended','emptied'])video.addEventListener(event,clear);
+ for(const event of ['pause','ended','emptied','seeking'])video.addEventListener(event,clear);
  translate?.addEventListener('change',clear);
  caption?.addEventListener('change',()=>{if(last)render();});
  window.addEventListener('pagehide',clear);
