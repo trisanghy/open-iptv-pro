@@ -56,7 +56,7 @@
   const control=$('#manualLinkControl'),select=$('#manualLinkSelect');
   if(!control||!select)return;
   const ch=currentChannel(),items=ch&&playMode==='live'?manualChoices(ch):[];
-  if(items.length<2){control.classList.add('hidden');select.replaceChildren();return;}
+  if(!items.length){control.classList.add('hidden');select.replaceChildren();return;}
   control.classList.remove('hidden');
   const currentUrl=playCandidates[playCandidateIndex]||items[0].url;
   const urls=items.map(item=>item.url);
@@ -802,6 +802,30 @@
   textStatus('Auto Failover: thử link '+(playCandidateIndex+1)+'/'+playCandidates.length+' của '+current.name);
   try{await tryPlayback(next,generation);}catch(e){recoverPlayback(generation,e.message);}
  }
+ async function tryFfmpegManually(){
+  if(!current||playMode!=='live'){toast('Chọn kênh trực tiếp trước khi thử FFmpeg','warn');return false;}
+  if(!isTauri||!window.streamleaf?.compatStart){toast('Chưa có bộ phát FFmpeg tích hợp','warn');return false;}
+  const original=playCandidates[playCandidateIndex]||current.url,generation=playGeneration;
+  if(!/^https?:\/\//i.test(String(original||''))){toast('URL nguồn phát không hợp lệ','warn');return false;}
+  compatAttempted=true;
+  textStatus('Đang khởi động FFmpeg H.264/AAC dự phòng…');
+  try{
+   const session=await window.streamleaf.compatStart(original);
+   if(generation!==playGeneration)return false;
+   if(!session?.url)throw Error('FFmpeg không trả về URL phát');
+   compatSource=original;
+   await tryPlayback(session.url,generation,{compat:true});
+   if(generation!==playGeneration)return false;
+   toast('Đã yêu cầu phát bằng FFmpeg dự phòng','ok');return true;
+  }catch(error){
+   if(generation===playGeneration){
+    compatSource='';compatAttempted=false;
+    toast('FFmpeg lỗi: '+String(error?.message||error).slice(0,130),'warn');
+    try{await tryPlayback(original,generation);}catch(restore){textStatus('Khôi phục nguồn lỗi: '+String(restore?.message||restore));}
+   }
+   return false;
+  }
+ }
  async function playChannel(chId,override=null,opts={}){
   const selection=++selectionSerial;
   const found=enabledChannels().find(c=>c.id===chId);if(!found){toast('Kênh không tồn tại hoặc nguồn đang tắt','warn');return;}
@@ -1090,7 +1114,7 @@
   document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();if(e.target.tagName==='INPUT')return;if(e.key===' '){e.preventDefault();playToggle();}});
   const chooser=document.createElement('input');chooser.type='file';chooser.id='fileInput';chooser.accept='.m3u,.m3u8,.txt';chooser.className='hidden';chooser.addEventListener('change',async()=>{await importFromInput(chooser.files?.[0]);chooser.value='';});document.body.append(chooser);
  }
- window.IPTVState=Object.freeze({getStore:()=>store,isBusy:()=>tasks.check.running||tasks.shots.running,getCurrent:()=>current,getChannels:()=>enabledChannels(),openSnapshotChannel,setPage,save,toast,textStatus,player,renderList,render,playChannel,stopPlayer,openModal,loadHlsLib,getPlayMode:()=>playMode,getMediaInfo:()=>mediaInfo,tryNextLink:()=>{if(playMode!=='live'||playCandidateIndex+1>=playCandidates.length)return false;void recoverPlayback(playGeneration,'Giám sát xác nhận đứng hình');return true;},importSource:addSource});
+ window.IPTVState=Object.freeze({getStore:()=>store,isBusy:()=>tasks.check.running||tasks.shots.running,getCurrent:()=>current,getChannels:()=>enabledChannels(),openSnapshotChannel,setPage,save,toast,textStatus,player,renderList,render,playChannel,stopPlayer,openModal,loadHlsLib,getPlayMode:()=>playMode,getMediaInfo:()=>mediaInfo,tryFfmpegManually,tryNextLink:()=>{if(playMode!=='live'||playCandidateIndex+1>=playCandidates.length)return false;void recoverPlayback(playGeneration,'Giám sát xác nhận đứng hình');return true;},importSource:addSource});
  wire();render();if(upgradedChecker)save();
  if(isTauri)setTimeout(()=>void refreshSourcesAtStartup(),2500);
  // Refresh only snapshots older than six hours; never pause video to do so.

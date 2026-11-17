@@ -113,6 +113,14 @@
  for(const event of ['waiting','stalled'])video.addEventListener(event,scheduleStall);
  video.addEventListener('playing',()=>{clearStall();if(caption.checked||translate.checked)void reconcile(true);});
  video.addEventListener('seeked',()=>{if(mediaActive()&&(caption.checked||translate.checked))void reconcile(true);});
+ // HLS can resume from a short stall without emitting another 'playing'.
+ let lastHlsRecovery=0;
+ video.addEventListener('timeupdate',()=>{
+  if(!mediaActive()||activeId||busy||!(caption.checked||translate.checked))return;
+  const now=Date.now();
+  if(now-lastHlsRecovery<2500)return;
+  lastHlsRecovery=now;void reconcile(true);
+ });
  // Three-mode group: enabling TTS from OFF enables the whole pipeline;
  // disabling its leading Caption switch shuts down Caption/Translate/TTS together.
  // The visible Caption preference remains independent when only Translate changes.

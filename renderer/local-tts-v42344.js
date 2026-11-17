@@ -81,6 +81,7 @@
  // Playback itself may reset volume during channel switches and media loading.
  // Re-apply the selected ratio without changing the saved, user-selected master volume.
  video.addEventListener('volumechange',()=>{if(enabled)applyDuck();});
+ video.addEventListener('playing',()=>{if(enabled)status('Đang chờ phụ đề để đọc giọng dịch…');});
  video.addEventListener('playing',()=>{if(enabled)applyDuck();});
  video.addEventListener('loadedmetadata',()=>{if(enabled)applyDuck();});
  function resetPlayback(){

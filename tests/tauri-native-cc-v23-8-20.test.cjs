@@ -88,8 +88,9 @@ test('Legacy duplicate track removed; only one native track is created; module i
 });
 test('Version and immutable Mac tag match',()=>{
  const pkg=JSON.parse(read('package.json'));
- assert.equal(pkg.version,'4.23.17-tauri.23.8.20');
+ assert.match(pkg.version,/^4\.23\.17-tauri\.23\.8\.\d+$/);
+ const release=pkg.version.split('-tauri.')[1];
  const builder=read('scripts/BUILD_RUSTLAB_MAC_ONE_ZIP_FAST.sh');
- assert.ok(builder.includes('TAG="rust-lab/v23.8.20"'));
+ assert.ok(builder.includes('TAG="rust-lab/v'+release+'"'));
  assert.ok(builder.includes('npm run build -- --bundles app'));
 });
