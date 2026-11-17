@@ -97,6 +97,7 @@
     overlay.style.overflowWrap='anywhere';
     overlay.style.wordBreak='break-word';
     overlay.style.pointerEvents='none';
+    if(overlay.dataset)overlay.dataset.ccPosition=prefs.position;
     overlay.style.color=safeColor(prefs.color);
     overlay.style.fontFamily=fonts[prefs.font]||fonts.system;
     overlay.style.fontSize=effectiveFontSize+'px';
