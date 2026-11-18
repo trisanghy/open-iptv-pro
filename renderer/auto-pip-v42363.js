@@ -16,7 +16,15 @@
   // Keep the original player/decoder. Only its already-decoded frames are
   // mirrored into native PiP when on-video CC is enabled.
   const compositor=doc.defaultView?.OpenIPTVCCPiPCompositor?.createController?.({
-   video,doc,getState:()=>doc.defaultView?.OpenIPTVCaptionSurface?.getPiPState?.()
+   video,doc,getState:()=>doc.defaultView?.OpenIPTVCaptionSurface?.getPiPState?.(),
+   onPiPEvent:type=>{
+    if(type==='leave'){
+     reason='';
+     // Native "Return to app" closes the PiP window by itself.
+     // Release mirrored capture so no hidden video/timer remains.
+     compositor?.stop?.();
+    }
+   }
   });
   const captionsRequested=()=>!!(
    doc.getElementById?.('liveCaptionToggle')?.checked||
@@ -32,15 +40,15 @@
    if(!Object.hasOwn(KEYS,type))throw Error('Unknown PiP setting');
    storage?.setItem(KEYS[type],String(!!value));
   };
-  const inPiP=()=>!!video&&(doc.pictureInPictureElement===video||
-   (!!compositor?.getVideo?.()&&doc.pictureInPictureElement===compositor.getVideo())||
+  const inPiP=()=>!!video&&(!!doc.pictureInPictureElement||
    video.webkitPresentationMode==='picture-in-picture');
   const eligible=()=>!!video&&video.readyState>=2&&!video.paused&&!video.ended;
   function nativeExit(){
    if(!inPiP())return Promise.resolve(false);
    try{
-    if((doc.pictureInPictureElement===video||
-        (!!compositor?.getVideo?.()&&doc.pictureInPictureElement===compositor.getVideo()))&&
+    // The native PiP element may be a canvas mirror whose readyState is
+    // no longer usable. Exit the actual PiP window regardless of element.
+    if(doc.pictureInPictureElement&&
        typeof doc.exitPictureInPicture==='function')
      return Promise.resolve(doc.exitPictureInPicture()).then(()=>true);
     if(typeof video.webkitSetPresentationMode==='function'){
@@ -107,7 +115,7 @@
    return nativeExit().catch(error=>{
     if(!quiet)notify('PiP: '+String(error.message||error),'warn');
     return false;
-   });
+   }).finally(()=>compositor?.stop?.());
   }
   function manual(){
    if(inPiP()||pending)return exit({quiet:false});
@@ -119,8 +127,9 @@
   }
   function onNativeEvent(type){
    if(type==='focus'){
-    // Only background-initiated PiP is dismissed on returning to TV.
-    if(getPage()==='tv'&&reason==='background')return exit();
+    // Returning to the main TV player must close ANY PiP, including
+    // manually opened, automatically opened and mirrored-caption PiP.
+    if(getPage()==='tv')return exit();
     return Promise.resolve(false);
    }
    if(type==='minimize'&&enabled('minimize'))return enter('background');
@@ -128,6 +137,11 @@
    return Promise.resolve(false);
   }
   video?.addEventListener?.('leavepictureinpicture',()=>{reason='';});
+  doc.addEventListener?.('fullscreenchange',()=>{
+   const fullscreen=doc.fullscreenElement;
+   if(fullscreen&&(fullscreen===video||fullscreen.contains?.(video)))
+    void exit();
+  });
   const warmMirror=()=>{
    if(captionsRequested()&&eligible())compositor?.prepare?.();
    else if(!inPiP())compositor?.stop?.();
