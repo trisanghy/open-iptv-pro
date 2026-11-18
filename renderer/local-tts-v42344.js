@@ -412,5 +412,9 @@
   if(previewAudio){try{previewAudio.pause();}catch{}previewAudio=null;}
  });
  setInterval(()=>{updateSession();if(enabled&&mediaActive())applyDuck();},700);
- void refresh();
+ // The persistence module restored checked state before this script loaded.
+ // Replay the normal change handler AFTER queue/events/voice are initialized:
+ // otherwise the checkbox looks ON while TTS remains internally disabled.
+ if(toggle.checked)toggle.dispatchEvent(new Event('change',{bubbles:true}));
+ else void refresh();
 })();
