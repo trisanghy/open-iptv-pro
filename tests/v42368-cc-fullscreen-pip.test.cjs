@@ -228,6 +228,36 @@ test('Returning to TV closes manual PiP even if app stayed on another page',asyn
  }finally{await app.ctrl.dispose();}
 });
 
+test('Focusing TV without active PiP does not break caption PiP prewarm',async()=>{
+ const app=makeMock();
+ try{
+  app.setPage('tv');
+  const mirror=app.doc.body.children.find(child=>child!==app.original&&child.tagName==='VIDEO');
+  assert.ok(mirror?.srcObject,'Prewarmed CC mirror should be available');
+  assert.equal(await app.ctrl.onNativeEvent('focus'),false);
+  assert.ok(mirror.srcObject,'No PiP was open, so keep the prewarmed mirror');
+  assert.equal(await app.ctrl.manual(),true);
+  assert.notEqual(app.doc.pictureInPictureElement,app.original);
+ }finally{await app.ctrl.dispose();}
+});
+
+test('Returning from fullscreen prepares CC PiP again for subsequent use',async()=>{
+ const app=makeMock();
+ try{
+  await app.ctrl.manual();
+  app.doc.fullscreenElement={contains:child=>child===app.original};
+  app.documentListeners.fullscreenchange();
+  await new Promise(resolve=>setImmediate(resolve));
+  assert.equal(app.ctrl.inPiP(),false);
+  app.doc.fullscreenElement=null;
+  app.documentListeners.fullscreenchange();
+  const mirror=app.doc.body.children.find(child=>child!==app.original&&child.tagName==='VIDEO'&&child.srcObject);
+  assert.ok(mirror,'CC mirror must recover after fullscreen');
+  assert.equal(await app.ctrl.manual(),true);
+  assert.notEqual(app.doc.pictureInPictureElement,app.original);
+ }finally{await app.ctrl.dispose();}
+});
+
 test('Going into player fullscreen automatically closes CC PiP and releases capture',async()=>{
  const app=makeMock();
  try{
