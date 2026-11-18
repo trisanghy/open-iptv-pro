@@ -59,7 +59,8 @@ test('CC stays in fullscreen playerBox and returns to native track after leaving
 });
 
 function makeMock({caption=true,corsBlocked=false,mirrorRejected=false}={}){
- let doc,original=null;
+ let doc,original=null,page='other';
+ const documentListeners={};
  const listeners=(element,name,callback)=>((element.listeners[name]??=[]).push(callback));
  function node(tag){
   const item={
@@ -103,6 +104,7 @@ function makeMock({caption=true,corsBlocked=false,mirrorRejected=false}={}){
   })}
  };
  doc={defaultView:win,createElement:node,getElementById:id=>switches[id]||null,
+  addEventListener:(name,cb)=>documentListeners[name]=cb,fullscreenElement:null,
   pictureInPictureEnabled:true,pictureInPictureElement:null,
   body:null,documentElement:null,
   exitPictureInPicture(){
@@ -114,8 +116,8 @@ function makeMock({caption=true,corsBlocked=false,mirrorRejected=false}={}){
  original.readyState=4;original.paused=false;original.videoWidth=1280;original.videoHeight=720;
  original.clientWidth=1000;original.clientHeight=562;doc.body.appendChild(original);
  const ctrl=createController({video:original,doc,storage:{getItem:()=>null,setItem(){}},
-  getPage:()=>'other'});
- return {ctrl,doc,original,switches};
+  getPage:()=>page});
+ return {ctrl,doc,original,switches,setPage:next=>{page=next},documentListeners};
 }
 
 test('CC native PiP uses composited mirror, preserves original video and exits cleanly',async()=>{
@@ -188,6 +190,69 @@ test('Automatic navigation PiP with CC exits when returning to TV',async()=>{
   await new Promise(resolve=>setImmediate(resolve));
   assert.equal(app.ctrl.inPiP(),false);
   assert.equal(app.doc.pictureInPictureElement,null);
+ }finally{await app.ctrl.dispose();}
+});
+
+test('Return to main TV app via macOS focus closes manually opened CC PiP',async()=>{
+ const app=makeMock();
+ try{
+  app.setPage('tv');
+  assert.equal(await app.ctrl.manual(),true);
+  assert.equal(app.ctrl.inPiP(),true);
+  assert.equal(await app.ctrl.onNativeEvent('focus'),true);
+  assert.equal(app.ctrl.inPiP(),false);
+  assert.equal(app.doc.pictureInPictureElement,null);
+ }finally{await app.ctrl.dispose();}
+});
+
+test('Return to main TV app via macOS focus closes native PiP without captions',async()=>{
+ const app=makeMock({caption:false});
+ try{
+  app.setPage('tv');
+  assert.equal(await app.ctrl.manual(),true);
+  assert.equal(app.doc.pictureInPictureElement,app.original);
+  assert.equal(await app.ctrl.onNativeEvent('focus'),true);
+  assert.equal(app.ctrl.inPiP(),false);
+ }finally{await app.ctrl.dispose();}
+});
+
+test('Returning to TV closes manual PiP even if app stayed on another page',async()=>{
+ const app=makeMock();
+ try{
+  await app.ctrl.manual();
+  assert.equal(app.ctrl.inPiP(),true);
+  app.setPage('tv');
+  app.ctrl.onPageChange('tv','other');
+  await new Promise(resolve=>setImmediate(resolve));
+  assert.equal(app.ctrl.inPiP(),false);
+ }finally{await app.ctrl.dispose();}
+});
+
+test('Going into player fullscreen automatically closes CC PiP and releases capture',async()=>{
+ const app=makeMock();
+ try{
+  await app.ctrl.manual();
+  const mirror=app.doc.pictureInPictureElement;
+  assert.notEqual(mirror,app.original);
+  app.doc.fullscreenElement={contains:child=>child===app.original};
+  app.documentListeners.fullscreenchange();
+  await new Promise(resolve=>setImmediate(resolve));
+  assert.equal(app.doc.pictureInPictureElement,null);
+  assert.equal(app.ctrl.inPiP(),false);
+  assert.equal(mirror.srcObject,null);
+ }finally{await app.ctrl.dispose();}
+});
+
+test('Native PiP return to app releases canvas compositor when PiP closes itself',async()=>{
+ const app=makeMock();
+ try{
+  await app.ctrl.manual();
+  const mirror=app.doc.pictureInPictureElement;
+  assert.ok(mirror?.srcObject);
+  await app.doc.exitPictureInPicture();
+  assert.equal(app.ctrl.inPiP(),false);
+  assert.equal(mirror.srcObject,null);
+  assert.equal(app.original.paused,false);
  }finally{await app.ctrl.dispose();}
 });
 
