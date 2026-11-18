@@ -144,3 +144,33 @@
 @media(prefers-reduced-motion:reduce){
  #page-tv :is(#prevBtn,#playBtn,#stopBtn,#nextBtn,#castBtn,#pipBtn,#fullscreenBtn,#webVolumeMute){transition:none!important;}
 }
+
+/* iPhone Cast control: perfectly center one vector icon; preserve desktop. */
+html[data-iptv-device="mobile"] body #page-tv .player-control-card .control-layout-top .output-controls #castBtn{
+ display:flex!important;position:relative!important;align-items:center!important;justify-content:center!important;
+ padding:0!important;gap:0!important;line-height:1!important;overflow:hidden!important;
+}
+html[data-iptv-device="mobile"] body #page-tv .player-control-card .control-layout-top .output-controls #castBtn::before{
+ display:block!important;position:absolute!important;left:50%!important;top:50%!important;
+ transform:translate(-50%,-50%)!important;width:24px!important;height:24px!important;
+ margin:0!important;flex:0 0 24px!important;
+ -webkit-mask-image:var(--ipc-cast)!important;mask-image:var(--ipc-cast)!important;
+ -webkit-mask-position:center!important;mask-position:center!important;
+ -webkit-mask-size:contain!important;mask-size:contain!important;
+}
+html[data-iptv-device="mobile"] body #page-tv .player-control-card .output-controls #castBtn>.cast-label{display:none!important}
+#castModal[data-airplay-mobile="true"] .cast-section:not(#airplaySection),
+#castModal[data-airplay-mobile="true"] #airplayScan,
+#castModal[data-airplay-mobile="true"] #airplayDeviceList,
+#castModal[data-airplay-mobile="true"] #castStop,
+#castModal[data-airplay-mobile="true"] #airplaySection .hint:not(#airplayMobileHelp){display:none!important}
+#castModal #airplayMobileHelp[hidden]{display:none!important}
+#castModal[data-airplay-mobile="true"] #airplayMobileHelp{display:block!important;line-height:1.6!important}
+html[data-iptv-device="mobile"] body #castModal[data-airplay-mobile="true"]{
+ z-index:11000!important;overflow-y:auto!important;
+ padding:12px 10px calc(16px + env(safe-area-inset-bottom,0px))!important;
+}
+html[data-iptv-device="mobile"] body #castModal[data-airplay-mobile="true"] .modal-box{
+ width:min(100%,480px)!important;max-height:calc(100dvh - 30px - env(safe-area-inset-bottom,0px))!important;
+ overflow-y:auto!important;-webkit-overflow-scrolling:touch!important;
+}
