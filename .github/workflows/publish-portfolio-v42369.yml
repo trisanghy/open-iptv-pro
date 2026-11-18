@@ -5,6 +5,7 @@ on:
     paths:
       - '.github/workflows/publish-portfolio-v42369.yml'
       - 'BUILD_MAC.command'
+      - 'build-mac-v42366-public.sh'
   workflow_dispatch:
 permissions:
   contents: read
