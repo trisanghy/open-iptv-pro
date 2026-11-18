@@ -47,7 +47,11 @@ jobs:
         shell: bash
         run: |
           set -Eeuo pipefail
-          node --test rust-lab/tests/source-use-consent-v1.test.cjs rust-lab/tests/tauri-ssrf-safe-mode-v23-8-28.test.cjs rust-lab/tests/smart_ui_v423.test.cjs
+          # Upstream Rust v23.8.30 retains one historical self-test hardcoded to
+          # v23.8.28. Exclude ONLY that old release-version assertion; the actual
+          # Rust 23.8.30 manifest is checked above and both installers are
+          # checksum-verified in the publish job. All SSRF behavior tests run.
+          node --test --test-name-pattern='^(?!New immutable version, one Mac app)' rust-lab/tests/source-use-consent-v1.test.cjs rust-lab/tests/tauri-ssrf-safe-mode-v23-8-28.test.cjs rust-lab/tests/smart_ui_v423.test.cjs
       - name: Web browser legal and playback regression
         shell: bash
         run: |
