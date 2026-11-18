@@ -34,7 +34,7 @@
  .topbar{height:auto!important;min-height:50px!important;padding:8px 11px!important;gap:5px!important;flex-wrap:wrap!important}
  .topbar .top-title{min-width:0!important}
  .topbar .top-title .crumb,.topbar .top-actions .state-mark{display:none!important}
- .topbar .top-actions{width:100%!important;max-width:100%!;min-width:0!important;display:flex!important;gap:6px!important;overflow-x:auto!important;scrollbar-width:none}
+ .topbar .top-actions{width:100%!important;max-width:100%!important;min-width:0!important;display:flex!important;gap:6px!important;overflow-x:auto!important;scrollbar-width:none}
  .topbar .top-actions::-webkit-scrollbar{display:none}
  .topbar .top-actions :is(.btn,a){flex:0 0 auto;min-height:44px!important;white-space:nowrap}
  #page-tv .tv-layout,

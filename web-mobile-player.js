@@ -75,8 +75,8 @@
   doc.addEventListener('fullscreenchange',()=>{
    const {box}=elements();update(doc.fullscreenElement===box);
   });
-  doc.getElementById('video')?.addEventListener('webkitendfullscreen',()=>update(false));
-  doc.getElementById('video')?.addEventListener('webkitbeginfullscreen',()=>update(true));
+  doc.getElementById('video')?.addEventListener?.('webkitendfullscreen',()=>update(false));
+  doc.getElementById('video')?.addEventListener?.('webkitbeginfullscreen',()=>update(true));
   // Existing Player UX exits standard fullscreen; intercept only our fallback.
   root.addEventListener?.('click',event=>{
    if(!event.target?.closest?.('#fsExit'))return;
