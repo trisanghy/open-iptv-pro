@@ -137,11 +137,14 @@
   for(const id of ['liveCaptionToggle','liveTranslateToggle','subtitleShow'])
    doc.getElementById?.(id)?.addEventListener?.('change',warmMirror);
   warmMirror();
-  const dispose=()=>{
+  const stopPlayback=()=>{
    ++sequence;reason='';
+   // Invalidate pending PiP entry, close any floating window, then stop
+   // the canvas capture tracks/timer so video cannot keep rendering secretly.
    return nativeExit().catch(()=>false).finally(()=>compositor?.stop?.());
   };
-  return Object.freeze({enter,exit,manual,onPageChange,onNativeEvent,dispose,
+  const dispose=()=>stopPlayback();
+  return Object.freeze({enter,exit,manual,onPageChange,onNativeEvent,dispose,stopPlayback,
    getOption:enabled,setOption:saveOption,inPiP,hasPending:()=>!!pending});
  }
  function bootstrap(win){
