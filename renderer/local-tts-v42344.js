@@ -5,7 +5,7 @@
  const target=$('liveTtsLanguage'),voice=$('liveTtsVoice'),speed=$('liveTtsSpeed'),duck=$('liveTtsDuck'),install=$('liveTtsInstall'),info=$('liveTtsStatus');
  const captions=$('liveCaptionToggle'),translate=$('liveTranslateToggle'),output=$('liveCaptionOutput');
  if(!toggle||!target||!voice||!speed||!duck||!install||!info||!api?.ttsStatus||!video)return;
- let enabled=false,playing=null,previewAudio=null,sourceId='',ducked=false,baseVolume=0.8,validSession=0,lastApplied=null,lastCaptionSeq=0;
+ let enabled=false,playing=null,previewAudio=null,sourceId='',ducked=false,baseVolume=0.8,validSession=0,lastApplied=null,lastCaptionSeq=0,cancelSpeechAudio=null;
  const recentLines=new Map();
  // Playback speed belongs to generated TTS audio only, never the IPTV video.
  // Preserve pitch so voices stay natural at faster/slower playback.
@@ -111,6 +111,7 @@
  const status=s=>{const message=String(s||'');info.textContent=message.slice(0,200);info.title=message;info.dataset.error=/lỗi|error|fail|không|thiếu/i.test(message)?'true':'false';};
  const volumeInput=$('volume');
  const source=()=>String(window.IPTVState?.getCurrent?.()?.lastPlayableUrl||window.IPTVState?.getCurrent?.()?.url||video.currentSrc||'');
+ const mediaActive=()=>!video.paused&&!video.ended&&video.readyState>=2;
  const clamp=v=>Math.max(0,Math.min(1,Number.isFinite(v)?v:0.8));
  const scale=()=>Math.max(0,Math.min(100,Number(duck.value)||0))/100;
  function setPlayerVolume(value){
@@ -154,7 +155,7 @@
   if(recentLines.size>250)recentLines.delete(recentLines.keys().next().value);
   return true;
  }
- function resetPlayback({stopSynthesis=true}={}){speechQueue.reset({stopSynthesis});if(enabled)applyDuck();}
+ function resetPlayback({stopSynthesis=true}={}){validSession++;speechQueue.reset({stopSynthesis});if(enabled&&mediaActive())applyDuck();}
  function resetForModelChange(){
   const previewBusy=previewCoordinator?.isActive()||false;
   if(previewBusy)void previewCoordinator.cancel();
@@ -176,56 +177,88 @@
   }catch(e){status('Lỗi kiểm tra TTS: '+e.message);return false;}
  }
  function ensureTranslate(){
-  if(captions&&!captions.checked){captions.checked=true;captions.dispatchEvent(new Event('change',{bubbles:true}));}
+  // Preserve user's independent original Caption visibility choice.
   if(translate&&!translate.checked){translate.checked=true;translate.dispatchEvent(new Event('change',{bubbles:true}));}
  }
  // New text never interrupts a sentence that the user is already hearing.
  // Only the most recent NOT-YET-PLAYED subtitle is kept, to avoid old backlogs.
  const speechQueue=window.OpenIPTVSpeechQueue.createSpeechQueue({
-  maxPendingAgeMs:18000,
-  maxSynthAgeMs:25000,
+  // Prioritize fresh live subtitles to reduce audible speech lag.
+  maxPendingAgeMs:5000,
+  maxSynthAgeMs:7000,
   notify:message=>{if(enabled)status(message);},
   synthesize:async payload=>{
-   if(!enabled||source()!==payload.streamUrl)throw Error('Đã đổi nguồn phát');
-   return api.ttsSynthesize({
-    target:payload.lang,voice:payload.voiceId,
-    text:payload.text.slice(0,360),
-    sourceLanguage:payload.sourceLanguage,
-    alreadyTranslated:payload.alreadyTranslated===true
+   if(!enabled||source()!==payload.streamUrl||!mediaActive())throw Error('Video không còn phát');
+   const chunks=window.OpenIPTVTTSChunks?.split?.(payload.text,{first:58,rest:105,max:360})||[payload.text.slice(0,360)];
+   if(!chunks.length)throw Error('Câu phụ đề trống');
+   // Live Translate has ALREADY produced target-language text. Do not run a
+   // second expensive Argos / MLX translation inside the voice worker.
+   const result=await api.ttsSynthesize({
+    target:payload.lang,voice:payload.voiceId,text:chunks[0],
+    sourceLanguage:payload.sourceLanguage,alreadyTranslated:payload.alreadyTranslated===true
    });
+   return {...result,followUpChunks:chunks.slice(1)};
   },
   play:async(result,payload,onEnded)=>{
-   if(!enabled||source()!==payload.streamUrl)return onEnded();
+   if(!enabled||source()!==payload.streamUrl||!mediaActive())return onEnded();
    if(!result?.audioBase64||result.mime!=='audio/wav')
     throw Error('Không nhận được tệp WAV hợp lệ từ bộ đọc');
-   const audio=new Audio('data:audio/wav;base64,'+result.audioBase64);
-   playing=audio;
-   audio.volume=1;applySpeechRate(audio);
+   const generation=validSession;
+   const chunks=Array.isArray(result.followUpChunks)?result.followUpChunks:[];
    let completed=false;
    const complete=()=>{
     if(completed)return;completed=true;
-    if(playing===audio)playing=null;
-    applyDuck();
-    onEnded();
+    if(generation===validSession){applyDuck();onEnded();}
    };
-   audio.addEventListener('ended',()=>{
-    // Audio ends naturally, even if 3 new subtitles have arrived meanwhile.
-    if(playing===audio)status('Đã đọc hết câu · tiếp tục câu phụ đề mới nhất');
-    complete();
-   },{once:true});
-   audio.addEventListener('error',()=>{
-    if(playing===audio)status('Lỗi phát giọng đọc');
-    complete();
-   },{once:true});
-   applyDuck();
+   const playChunk=wav=>new Promise((resolve,reject)=>{
+    if(!wav?.audioBase64||wav.mime!=='audio/wav')return reject(Error('WAV không hợp lệ'));
+    if(generation!==validSession||!mediaActive())return resolve(false);
+    const audio=new Audio('data:audio/wav;base64,'+wav.audioBase64);
+    playing=audio;audio.volume=1;applySpeechRate(audio);
+    let finished=false;
+    const finish=(error)=>{
+     if(finished)return;finished=true;
+     if(playing===audio)playing=null;
+     if(cancelSpeechAudio===cancel)cancelSpeechAudio=null;
+     try{audio.pause();audio.removeAttribute('src');audio.load();}catch{}
+     error?reject(error):resolve(true);
+    };
+    const cancel=()=>finish();
+    cancelSpeechAudio=cancel;
+    audio.addEventListener('ended',()=>finish(),{once:true});
+    audio.addEventListener('error',()=>finish(Error('Không thể phát giọng TTS')),{once:true});
+    applyDuck();
+    Promise.resolve(audio.play()).then(()=>{
+     if(generation===validSession&&playing===audio)
+      status('Đang đọc phụ đề '+payload.lang+' · '+playbackSpeed()+'× · Tiếng gốc '+duck.value+'%');
+    }).catch(finish);
+   });
    try{
-    await audio.play();
-    if(playing===audio){
-     status('Đang đọc trọn câu '+payload.lang+' · '+playbackSpeed()+'× · Tiếng gốc '+duck.value+'%');
+    let wav=result,prefetch=null;
+    for(let i=0;i<=chunks.length;i++){
+     if(generation!==validSession||!enabled||source()!==payload.streamUrl||!mediaActive())break;
+     // Start the next synthesized WAV while the current chunk plays.
+     if(i<chunks.length&&!speechQueue.status().pending){
+      const text=chunks[i];
+      prefetch=Promise.resolve().then(()=>api.ttsSynthesize({
+       target:payload.lang,voice:payload.voiceId,text,
+       sourceLanguage:payload.sourceLanguage,alreadyTranslated:payload.alreadyTranslated===true
+      })).then(value=>({ok:true,value}),error=>({ok:false,error}));
+     }
+     await playChunk(wav);
+     // If translation is ahead, finish this audible phrase and speak the NEW
+     // subtitle rather than reading an old multi-chunk backlog.
+     if(i===chunks.length||speechQueue.status().pending)break;
+     if(!prefetch)break;
+     const next=await prefetch;
+     if(!next.ok)throw next.error;
+     wav=next.value;prefetch=null;
     }
-   }catch(error){complete();throw error;}
+   }finally{complete();}
   },
   cancelAudio:()=>{
+   const cancel=cancelSpeechAudio;cancelSpeechAudio=null;
+   if(cancel)try{cancel();}catch{}
    const audio=playing;playing=null;
    if(audio){try{audio.pause();audio.removeAttribute('src');audio.load();}catch{}}
   },
@@ -238,9 +271,21 @@
  toggle.addEventListener('change',async()=>{
   if(!toggle.checked)void previewCoordinator.cancel();
   enabled=toggle.checked;
+  // Starting TTS with all AI switches previously OFF is a convenient
+  // one-click start for Caption + Translate + TTS. Set both prerequisites
+  // before dispatching events so recognition starts only in Translate mode.
+  // Do not change independently selected switches in any other state.
+  if(enabled&&captions&&!captions.checked&&translate&&!translate.checked){
+   captions.checked=true;
+   translate.checked=true;
+   captions.dispatchEvent(new Event('change',{bubbles:true}));
+   translate.dispatchEvent(new Event('change',{bubbles:true}));
+  }
   speechQueue.setEnabled(enabled);
   if(!enabled){restore();status('Đã tắt TTS');return;}
-  applyDuck();
+  speechQueue.setPaused(!mediaActive());
+  if(mediaActive())applyDuck();
+  else status('Video đang dừng · TTS chờ phát lại');
   updateSession();
   ensureTranslate();
   if(!await refresh())status('Nhấn “Cài mô hình tự động” để sử dụng giọng '+target.value);
@@ -310,19 +355,23 @@
   if(e.type==='status'&&enabled&&!previewCoordinator.isActive())status(e.message||'TTS đang xử lý…');
  });
  if(api.captionOnEvent)api.captionOnEvent(e=>{
-  if(!enabled||!translate?.checked||!e||e.type!=='segment'||!e.text)return;
+  if(!enabled||!translate?.checked||!mediaActive()||!e||e.type!=='segment'||!e.text)return;
   updateSession();
   const number=Number(e.sequence)||0;
   if(number&&number<lastCaptionSeq)return;
   if(number)lastCaptionSeq=Math.max(number,lastCaptionSeq);
   // Raw/interim recognition stays internal and NEVER cancels audible TTS.
   if(!e.translated)return;
+  // If spoken and subtitle languages match, the UI text is ALREADY translated:
+  // synthesize it directly without another Argos/MLX pass. If they differ,
+  // translate once into the requested voice language (prefer English pivot
+  // when the backend already provided one).
   const sameLanguage=e.language===target.value;
   const englishIntermediate=String(e.englishText||'').trim();
   const sourceLanguage=sameLanguage?target.value:(englishIntermediate?'en':e.language);
   const text=String(sameLanguage?e.text:(englishIntermediate||e.text)).trim();
   if(!text||!rememberOnce(e.utteranceKey||text))return;
-  const payload={text,sourceLanguage,alreadyTranslated:!!sameLanguage,
+  const payload={text,sourceLanguage,alreadyTranslated:sourceLanguage===target.value,
    sequence:number,lang:target.value,voiceId:voice.value,streamUrl:source()};
   const wasBusy=speechQueue.status();
   speechQueue.enqueue(payload);
@@ -330,9 +379,42 @@
   else if(wasBusy.busy)status('Đang tổng hợp giọng · ưu tiên phụ đề mới nhất');
  });
  document.addEventListener('openiptv:media-info',updateSession);
- video.addEventListener('emptied',()=>{if(enabled)resetPlayback();});
- video.addEventListener('pause',()=>{if(enabled)resetPlayback();});
- window.addEventListener('pagehide',()=>{enabled=false;void previewCoordinator.cancel();resetPlayback();restore();if(previewAudio){try{previewAudio.pause();}catch{}previewAudio=null;}});
- setInterval(()=>{updateSession();if(enabled)applyDuck();},700);
- void refresh();
+ const haltSpeech=()=>{
+  if(!enabled)return;
+  resetPlayback();speechQueue.setPaused(true);restore();
+  void previewCoordinator.cancel();
+  status('Video đã dừng · TTS và phụ đề tạm ngừng');
+ };
+ let stallTimer=null;
+ const clearStall=()=>{if(stallTimer!==null){clearTimeout(stallTimer);stallTimer=null;}};
+ for(const event of ['pause','ended','emptied','seeking'])
+  video.addEventListener(event,()=>{clearStall();haltSpeech();});
+ for(const event of ['playing','seeked'])video.addEventListener(event,()=>{
+  clearStall();
+  if(enabled&&mediaActive()){speechQueue.setPaused(false);applyDuck();}
+ });
+ for(const event of ['waiting','stalled'])video.addEventListener(event,()=>{
+  clearStall();
+  stallTimer=setTimeout(()=>{
+   stallTimer=null;
+   if(!video.paused&&!video.ended&&video.readyState<3)haltSpeech();
+  },1500);
+ });
+ translate?.addEventListener('change',()=>{
+  // If users disable translation, TTS no longer has its prerequisite.
+  // Do not re-enable Translate or the separate original Caption switch.
+  if(!translate.checked&&toggle.checked){
+   toggle.checked=false;toggle.dispatchEvent(new Event('change',{bubbles:true}));
+  }
+ });
+ window.addEventListener('pagehide',()=>{
+  clearStall();enabled=false;void previewCoordinator.cancel();resetPlayback();restore();
+  if(previewAudio){try{previewAudio.pause();}catch{}previewAudio=null;}
+ });
+ setInterval(()=>{updateSession();if(enabled&&mediaActive())applyDuck();},700);
+ // The persistence module restored checked state before this script loaded.
+ // Replay the normal change handler AFTER queue/events/voice are initialized:
+ // otherwise the checkbox looks ON while TTS remains internally disabled.
+ if(toggle.checked)toggle.dispatchEvent(new Event('change',{bubbles:true}));
+ else void refresh();
 })();

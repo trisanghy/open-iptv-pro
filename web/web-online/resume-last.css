@@ -1,0 +1,18 @@
+/* Last-watched playback gesture stays inside the video, not two-row controls. */
+.web-resume-panel {
+  position: absolute; right: 14px; top: 14px; z-index: 24;
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 8px;
+  max-width: calc(100% - 28px); padding: 8px 10px;
+  border: 1px solid rgba(255,255,255,.22); border-radius: 12px;
+  color: #fff; background: rgba(12,23,35,.88);
+  backdrop-filter: blur(10px); font-size: 12px;
+}
+.web-resume-panel[hidden] {display: none !important;}
+.web-resume-panel button {
+  cursor: pointer; border: 0; border-radius: 9px; padding: 7px 11px;
+  color: #172034; background: #d3a1ff; font: inherit; font-weight: 700;
+}
+.web-resume-panel button:focus-visible {outline: 2px solid #fff; outline-offset: 2px;}
+@media (max-width: 600px) {
+  .web-resume-panel {left: 8px; right: 8px; top: 8px; max-width: none; justify-content: center;}
+}

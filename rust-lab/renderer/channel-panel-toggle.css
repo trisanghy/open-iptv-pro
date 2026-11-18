@@ -1,0 +1,26 @@
+/* Rust Lab v11: independent TV channel-list collapse, no video overlay. */
+#page-tv .channel-panel-actions{display:flex;align-items:center;gap:8px;flex-shrink:0}
+#page-tv .channel-panel-close{display:grid;place-items:center;min-width:38px;min-height:38px;font-size:16px}
+#page-tv .channel-panel-reopen{display:none;align-items:center;justify-content:flex-start;margin:0 0 10px;min-height:37px}
+#page-tv .channel-panel-reopen button{display:inline-flex;gap:9px;align-items:center;border:1px solid var(--edge, #354656);background:var(--surface2, #142532);color:var(--text, #eaf2f7);border-radius:10px;padding:8px 13px;font:inherit;font-weight:700;cursor:pointer;max-width:100%}
+#page-tv .channel-panel-reopen button:hover,#page-tv .channel-panel-reopen button:focus-visible,#page-tv .channel-panel-close:hover,#page-tv .channel-panel-close:focus-visible{border-color:var(--accent,var(--primary,#bc7cff));outline-offset:2px}
+/* Cinema already uses an off-canvas channel drawer controlled by 'Tất cả kênh'.
+   Do not hide or replace that existing drawer. The preference remains stored
+   for other themes while cinema continues to work unchanged. */
+html:not([data-ui-style="cinema"])[data-channel-panel-collapsed="true"] #page-tv .channel-panel{display:none!important}
+html:not([data-ui-style="cinema"])[data-channel-panel-collapsed="true"] #page-tv .channel-panel-reopen{display:flex!important}
+html:not([data-ui-style="cinema"])[data-channel-panel-collapsed="true"] #page-tv .tv-layout{display:grid!important;grid-template-columns:minmax(0,1fr)!important;grid-template-areas:none!important;grid-template-rows:auto!important;height:auto!important;min-height:0!important}
+html:not([data-ui-style="cinema"])[data-channel-panel-collapsed="true"] #page-tv .watch-panel{grid-area:auto!important;grid-column:1/-1!important;width:100%!important;min-width:0!important}
+html:not([data-ui-style="cinema"])[data-channel-panel-collapsed="true"] #page-tv .theme-guide-panel,
+html:not([data-ui-style="cinema"])[data-channel-panel-collapsed="true"] #page-tv .theme-channel-strip{grid-column:1/-1!important;min-width:0!important}
+/* The cinematic glass and studio themes use display:contents for their watch
+   panel. Retain their named grid areas on ONE column after hiding channels. */
+html[data-channel-panel-collapsed="true"]:is([data-ui-style="glass"],[data-ui-style="broadcast"]) #page-tv .tv-layout{display:grid!important;grid-template-columns:minmax(0,1fr)!important;grid-template-areas:"video" "guide" "strip" "time" "tools"!important;grid-template-rows:auto!important}
+html[data-channel-panel-collapsed="true"][data-ui-style="bento"] #page-tv .tv-layout{grid-template-areas:"strip" "video"!important;grid-template-rows:auto auto!important}
+html[data-channel-panel-collapsed="true"][data-ui-style="bento"] #page-tv .theme-channel-strip{grid-area:strip!important;grid-column:1/-1!important;grid-row:1!important}
+html[data-channel-panel-collapsed="true"][data-ui-style="bento"] #page-tv .watch-panel{grid-area:video!important;grid-column:1/-1!important}
+html[data-ui-style="cinema"] #page-tv .channel-panel-close{display:none!important}
+html[data-ui-style="cinema"] #page-tv .channel-panel-reopen{display:none!important}
+@media(max-width:760px){
+ html:not([data-ui-style="cinema"])[data-channel-panel-collapsed="true"] #page-tv .tv-layout{display:grid!important;grid-template-columns:minmax(0,1fr)!important}
+}

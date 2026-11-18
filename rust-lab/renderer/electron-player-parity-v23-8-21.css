@@ -1,0 +1,85 @@
+/* Rust Lab 23.8.21 — Electron two-row player and Live AI toolbar parity. */
+#page-tv .player-control-card.electron-parity-player{display:flex!important;flex-direction:column!important;width:100%!important;min-width:0!important;padding:0!important;gap:0!important;overflow:visible!important;container-type:inline-size}
+#page-tv .electron-parity-player .ipvp-main-row{display:grid!important;grid-template-columns:minmax(150px,1.1fr) minmax(185px,1fr) minmax(80px,.43fr) max-content!important;align-items:center!important;gap:0!important;padding:5px 9px!important;min-height:70px!important;border-bottom:1px solid var(--edge,#30424c)!important}
+#page-tv .electron-parity-player .ipvp-main-row>.playing-info{grid-column:1!important;grid-row:1!important;display:flex!important;gap:9px!important;min-width:0!important;min-height:55px!important;padding:4px 10px!important;border-right:1px solid var(--edge,#30424c)!important}
+#page-tv .electron-parity-player .ipvp-main-row .small-lcd{width:44px!important;height:44px!important;flex:0 0 44px!important;border-radius:10px!important}
+#page-tv .electron-parity-player .ipvp-main-row .playing-meta{min-width:0!important}
+#page-tv .electron-parity-player .ipvp-main-row .playing-meta b{font-size:clamp(14px,1.15vw,18px)!important}
+#page-tv .electron-parity-player .ipvp-main-row .playing-meta small{font-size:clamp(10px,.9vw,12px)!important}
+#page-tv .electron-parity-player .ipvp-main-row>.controls{display:contents!important}
+#page-tv .electron-parity-player .ipvp-transport{grid-column:2!important;grid-row:1!important;display:flex!important;align-items:center!important;justify-content:space-evenly!important;gap:clamp(3px,.7vw,12px)!important;padding:4px 6px!important;min-height:55px!important;border-right:1px solid var(--edge,#30424c)!important}
+#page-tv .electron-parity-player .ipvp-transport :is(#prevBtn,#nextBtn,#stopBtn){display:grid!important;place-items:center!important;flex:0 0 33px!important;width:33px!important;height:33px!important;min-width:33px!important;min-height:33px!important;border:0!important;background:transparent!important;font-size:18px!important;padding:0!important}
+#page-tv .electron-parity-player .ipvp-transport #playBtn{flex:0 0 53px!important;width:53px!important;height:53px!important;min-width:53px!important;min-height:53px!important;border-radius:50%!important;background:var(--accent,var(--primary,#bd82ee))!important;border:2px solid color-mix(in srgb,var(--accent,#bd82ee) 77%,white)!important;color:#12151d!important;font-size:23px!important}
+#page-tv .electron-parity-player .electron-parity-volume{grid-column:3!important;grid-row:1!important;display:flex!important;align-items:center!important;justify-content:flex-end!important;gap:5px!important;min-width:0!important;padding:4px 6px!important}
+#page-tv .electron-parity-player .electron-parity-volume label{font-size:18px!important;white-space:nowrap!important}
+#page-tv .electron-parity-player .electron-parity-volume #volume{display:block!important;visibility:visible!important;opacity:1!important;flex:1 1 70px!important;min-width:50px!important;width:100%!important;max-width:110px!important;margin:0!important;padding:0!important;accent-color:var(--accent,var(--primary,#bd82ee))!important}
+#page-tv .electron-parity-player .ipvp-cast{grid-column:4!important;grid-row:1!important;display:flex!important;align-items:center!important;justify-content:flex-end!important;flex-wrap:nowrap!important;gap:4px!important;min-width:0!important;padding:4px!important}
+#page-tv .electron-parity-player .ipvp-cast :is(#castBtn,#pipBtn,#fullscreenBtn){display:inline-flex!important;align-items:center!important;justify-content:center!important;position:static!important;visibility:visible!important;opacity:1!important;min-height:35px!important;height:35px!important;min-width:34px!important;flex:0 0 auto!important;border:1px solid var(--edge,#30424c)!important;border-radius:9px!important;background:var(--surface2,#172532)!important;padding:5px 7px!important;font-size:clamp(11px,.85vw,14px)!important;white-space:nowrap!important}
+#page-tv .electron-parity-player .ipvp-cast #fullscreenBtn{min-width:35px!important;width:35px!important}
+#page-tv .electron-parity-player .ipvp-second-row{display:grid!important;grid-template-columns:minmax(195px,1.8fr) minmax(105px,.55fr) minmax(150px,.85fr) 43px!important;align-items:center!important;min-height:69px!important;gap:9px!important;padding:8px 12px!important;border-bottom:1px solid var(--edge,#30424c)!important}
+#page-tv .electron-parity-player .ipvp-second-row>.ipvp-options{display:contents!important}
+#page-tv .electron-parity-player .ipvp-programs.epg-current-card{grid-column:1!important;grid-row:1!important;display:grid!important;grid-template-columns:minmax(0,1fr) 36px!important;grid-template-rows:auto auto!important;gap:2px 9px!important;border:0!important;border-right:1px solid var(--edge,#30424c)!important;padding:0 10px 0 0!important;margin:0!important;background:transparent!important;box-shadow:none!important;min-width:0!important}
+#page-tv .electron-parity-player .ipvp-programs .ipvp-program{grid-column:1!important;display:grid!important;grid-template-columns:minmax(0,1fr) auto!important;align-items:center!important;width:100%!important;min-width:0!important;gap:7px!important;border:0!important;border-radius:0!important;background:transparent!important;padding:2px 0!important;text-align:left!important}
+#page-tv .electron-parity-player .ipvp-programs #ipvpNowProgram{grid-row:1!important}
+#page-tv .electron-parity-player .ipvp-programs #ipvpNextProgram{grid-row:2!important}
+#page-tv .electron-parity-player .ipvp-programs .ipvp-program b{font-size:clamp(11px,.96vw,14px)!important;min-width:0!important;max-width:100%!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
+#page-tv .electron-parity-player .ipvp-programs .ipvp-program small{font-size:11px!important;white-space:nowrap!important;text-align:right!important;color:var(--muted,#94a7b7)!important}
+#page-tv .electron-parity-player #openGuideBtn.electron-parity-guide{grid-column:2!important;grid-row:1 / 3!important;display:grid!important;place-items:center!important;position:static!important;visibility:visible!important;opacity:1!important;min-width:35px!important;min-height:39px!important;width:35px!important;height:39px!important;border:1px solid var(--edge,#30424c)!important;border-radius:9px!important;background:transparent!important;color:var(--text,#eaf2f7)!important;font-size:18px!important}
+#page-tv .electron-parity-player .ipvp-options .view-mode{grid-column:2!important;grid-row:1!important;display:flex!important;align-items:center!important;min-width:0!important;margin:0!important}
+#page-tv .electron-parity-player .ipvp-options .view-mode>span,#page-tv .electron-parity-player #manualLinkControl .manual-link-caption{display:none!important}
+#page-tv .electron-parity-player .ipvp-options #videoFit{width:100%!important;min-width:0!important;max-width:none!important;height:37px!important;border-radius:9px!important;font-size:12px!important;padding:6px 23px 6px 10px!important}
+#page-tv .electron-parity-player .ipvp-options #manualLinkControl{grid-column:3!important;grid-row:1!important;display:flex!important;min-width:0!important;padding:0!important;margin:0!important;position:static!important}
+#page-tv .electron-parity-player .ipvp-options #manualLinkControl.hidden{display:none!important}
+#page-tv .electron-parity-player .ipvp-options #manualLinkSelect{width:100%!important;min-width:0!important;max-width:none!important;height:37px!important;border-radius:9px!important;font-size:12px!important;padding:6px 23px 6px 10px!important}
+#page-tv .electron-parity-player .ipvp-options #favCurrentBtn{grid-column:4!important;grid-row:1!important;display:grid!important;place-items:center!important;width:40px!important;height:40px!important;min-width:40px!important;min-height:40px!important;margin:0!important;padding:0!important;border:1px solid #aa8640!important;color:#f5c161!important;border-radius:10px!important;font-size:24px!important}
+#page-tv .electron-parity-player .caption-third-row{display:block!important;width:100%!important;padding:7px 10px!important}
+#page-tv .electron-parity-player .caption-third-controls{display:grid!important;grid-template-columns:minmax(0,1fr)!important;grid-template-rows:auto auto!important;gap:5px!important;min-width:0!important}
+#page-tv .electron-parity-player .caption-third-controls :is(.caption-ai-main,.caption-tts-main){display:flex!important;align-items:center!important;justify-content:flex-start!important;flex-wrap:wrap!important;width:100%!important;min-height:38px!important;min-width:0!important;gap:6px 9px!important;padding:4px!important;box-sizing:border-box!important}
+#page-tv .electron-parity-player .caption-ai-main{border-bottom:1px solid var(--edge,#30424c)!important}
+#page-tv .electron-parity-player .caption-third-controls label{white-space:nowrap!important}
+#page-tv .electron-parity-player .caption-third-controls :is(select,button){min-height:35px!important;height:35px!important;border-radius:8px!important}
+#page-tv .electron-parity-player .caption-third-controls :is(#liveTranslateTarget,#liveTtsLanguage){flex:0 1 125px!important;width:125px!important;min-width:105px!important;max-width:135px!important}
+#page-tv .electron-parity-player .caption-third-controls #liveTtsVoice{flex:0 1 245px!important;width:245px!important;min-width:150px!important;max-width:245px!important}
+#page-tv .electron-parity-player .caption-third-controls :is(#liveTtsSpeed,#liveTtsDuck){flex:0 0 80px!important;width:80px!important;min-width:80px!important;max-width:86px!important}
+#page-tv .electron-parity-player .caption-third-controls #rustSubtitleOptionsButton{display:inline-flex!important;align-items:center!important;justify-content:center!important;width:auto!important;min-width:145px!important;max-width:none!important;padding:5px 10px!important;font-size:12px!important}
+#page-tv .electron-parity-player .caption-third-controls :is(#liveCaptionStatus,#liveTtsStatus){font-size:11px!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;color:var(--muted,#9cb0c1)!important;max-width:235px!important;flex:0 1 235px!important}
+#page-tv .electron-parity-player .caption-third-controls #liveTtsStatus{flex:1 1 100%!important;max-width:100%!important}
+#page-tv .electron-parity-player .electron-parity-tools{margin-left:auto!important;position:relative!important;flex:0 0 auto!important}
+#page-tv .electron-parity-player .electron-parity-tools summary{cursor:pointer!important;list-style:none!important;font-size:12px!important;color:var(--muted,#9cb0c1)!important;padding:7px 10px!important}
+#page-tv .electron-parity-player .electron-parity-tools summary::-webkit-details-marker{display:none}
+#page-tv .electron-parity-player .electron-parity-tools:not([open]) .electron-parity-tools-body{display:none!important}
+#page-tv .electron-parity-player .electron-parity-tools[open] .electron-parity-tools-body{position:absolute!important;top:100%!important;right:0!important;z-index:80!important;display:flex!important;flex-direction:column!important;gap:7px!important;width:min(260px,90vw)!important;padding:10px!important;background:var(--surface2,#172532)!important;border:1px solid var(--edge,#30424c)!important;border-radius:12px!important;box-shadow:0 15px 35px #0008!important}
+#page-tv .electron-parity-player .electron-parity-tools-body button{width:100%!important;white-space:nowrap!important;text-align:left!important}
+@container(max-width:980px){#page-tv .electron-parity-player .ipvp-main-row{grid-template-columns:minmax(115px,1fr) minmax(160px,.95fr) minmax(65px,.35fr) max-content!important}#page-tv .electron-parity-player .ipvp-cast{gap:3px!important}#page-tv .electron-parity-player .ipvp-cast #castBtn{font-size:11px!important;padding:4px!important}}
+@container(max-width:710px){#page-tv .electron-parity-player .ipvp-main-row{grid-template-columns:minmax(0,1fr) minmax(175px,1fr)!important;row-gap:5px!important}#page-tv .electron-parity-player .ipvp-main-row>.playing-info{grid-column:1!important;grid-row:1!important}#page-tv .electron-parity-player .ipvp-transport{grid-column:2!important;grid-row:1!important;border:0!important}#page-tv .electron-parity-player .electron-parity-volume{grid-column:1!important;grid-row:2!important;justify-content:flex-start!important}#page-tv .electron-parity-player .ipvp-cast{grid-column:2!important;grid-row:2!important}#page-tv .electron-parity-player .ipvp-second-row{grid-template-columns:minmax(0,1fr) minmax(95px,.6fr) 43px!important}#page-tv .electron-parity-player .ipvp-programs.epg-current-card{grid-column:1 / -1!important;grid-row:1!important;border-right:0!important}#page-tv .electron-parity-player .ipvp-options .view-mode{grid-column:1!important;grid-row:2!important}#page-tv .electron-parity-player .ipvp-options #manualLinkControl{grid-column:2!important;grid-row:2!important}#page-tv .electron-parity-player .ipvp-options #favCurrentBtn{grid-column:3!important;grid-row:2!important}}
+@container(max-width:450px){#page-tv .electron-parity-player .ipvp-main-row{grid-template-columns:minmax(0,1fr)!important}#page-tv .electron-parity-player .ipvp-main-row>.playing-info{grid-column:1!important;grid-row:1!important;border:0!important}#page-tv .electron-parity-player .ipvp-transport{grid-column:1!important;grid-row:2!important}#page-tv .electron-parity-player .electron-parity-volume{grid-column:1!important;grid-row:3!important}#page-tv .electron-parity-player .ipvp-cast{grid-column:1!important;grid-row:4!important;justify-content:center!important}}
+
+/* Rust Lab v23.8.23: Quick Tools stay expanded; obsolete volume tile removed. */
+#page-tv #quickTools.compact-tools.always-open{
+ display:block!important;min-width:0!important;overflow:hidden!important;
+}
+#page-tv #quickTools>.compact-tools-heading{
+ display:flex!important;align-items:center!important;justify-content:space-between!important;
+ gap:10px!important;padding:11px 15px!important;
+ font-size:12px!important;font-weight:700!important;
+ color:var(--text,#eaf2f7)!important;background:var(--surface2,#182431)!important;
+ border-bottom:1px solid var(--edge,#30424c)!important;cursor:default!important;
+}
+#page-tv #quickTools>.compact-tools-heading strong{font-size:12px!important;font-weight:750!important}
+#page-tv #quickTools>.compact-tools-heading small{
+ margin-left:auto!important;color:var(--muted,#90a4b7)!important;
+ font-size:10px!important;font-weight:500!important;
+}
+#page-tv #quickTools>.quick-grid{
+ display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;
+ gap:10px!important;padding:12px!important;
+}
+#page-tv #quickTools>.quick-grid>.quick-btn{
+ min-width:0!important;width:100%!important;min-height:60px!important;
+}
+@container(max-width:780px){
+ #page-tv #quickTools>.quick-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+}
+@container(max-width:480px){
+ #page-tv #quickTools>.quick-grid{grid-template-columns:minmax(0,1fr)!important}
+}

@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024" role="img" aria-label="Open IPTV Pro">
+<defs><linearGradient id="tri" x1="0" y1="0" x2=".95" y2=".95"><stop offset="0" stop-color="#00e6d4"/><stop offset=".4" stop-color="#22a6f8"/><stop offset=".74" stop-color="#5a60f7"/><stop offset="1" stop-color="#ba35fa"/></linearGradient></defs>
+<rect width="1024" height="1024" fill="#ffffff"/>
+<path d="M 197,266 Q 197,173 297,173 Q 315,173 343,192 L 796,462 Q 879,514 796,566 L 343,836 Q 197,928 197,758 Z" fill="url(#tri)"/>
+</svg>

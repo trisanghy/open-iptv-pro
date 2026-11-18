@@ -89,10 +89,10 @@ html[data-ui-style="broadcast"] #page-tv .theme-guide-panel{background:#0b1d15}
 html[data-ui-style="broadcast"] #page-tv .theme-guide-current{background:#0f3826}
 html[data-ui-style="bento"] #page-tv .tv-layout{grid-template-columns:minmax(200px,28%) minmax(0,1fr);gap:13px!important;height:auto;min-height:0}
 html[data-ui-style="bento"] #page-tv .watch-panel{display:flex}
-html[data-ui-style="bento"] #page-tv .theme-channel-strip{display:block;grid-column:1/-1;grid-row:2;background:#fff!important;border:1px solid #e9e3dd;border-radius:16px;padding:14px}
-html[data-ui-style="bento"] #page-tv .theme-channel-tile{background:#fff;border-color:#eee6db}
-html[data-ui-style="bento"] #page-tv .theme-strip-header{color:#251e17}
-html[data-ui-style="bento"] #page-tv .theme-strip-actions button{background:#fff;color:#382c1a}
+html[data-ui-style="bento"] #page-tv .theme-channel-strip{display:block;grid-column:1/-1;grid-row:2;background:var(--ui-card)!important;color:var(--text)!important;border:1px solid var(--ui-stroke);border-radius:16px;padding:14px}
+html[data-ui-style="bento"] #page-tv .theme-channel-tile{background:var(--ui-control)!important;color:var(--text)!important;border-color:var(--ui-stroke)!important}
+html[data-ui-style="bento"] #page-tv .theme-strip-header{color:var(--text)!important}
+html[data-ui-style="bento"] #page-tv .theme-strip-actions button{background:var(--ui-control)!important;color:var(--text)!important;border-color:var(--ui-stroke)}
 /* Custom color is authoritative, including when changing theme AFTER selecting a hue. */
 html[data-custom-accent="true"]:not([data-ui-style="current"]) :is(.nav.active,.filter-tab.active,.channel-item.current){background:color-mix(in srgb,var(--ui-primary) 25%,var(--ui-card))!important;border-color:color-mix(in srgb,var(--ui-primary) 55%,var(--ui-stroke))!important}
 html[data-custom-accent="true"]:not([data-ui-style="current"]) .nav.active span,
@@ -135,8 +135,7 @@ html[data-ui-style="broadcast"] #page-tv #themeAllChannels,html[data-ui-style="b
 html[data-ui-style="bento"] #page-tv .tv-layout{display:grid;grid-template-columns:minmax(195px,26%) minmax(0,1fr);grid-template-areas:"strip strip" "channels video";grid-template-rows:auto minmax(0,1fr);align-items:start}
 html[data-ui-style="bento"] #page-tv .channel-panel{grid-area:channels;max-height:calc(100vh - 300px)}
 html[data-ui-style="bento"] #page-tv .watch-panel{grid-area:video}
-html[data-ui-style="bento"] #page-tv .theme-channel-strip{grid-area:strip;grid-column:1/-1;grid-row:1;background:#fffdf9!important;position:relative}
-html[data-ui-style="bento"] #page-tv .theme-channel-strip::before{content:"CHÀO MỪNG ĐẾN VỚI  OPEN IPTV PRO";display:flex;align-items:center;background:linear-gradient(100deg,#ed8332,#ffc874);min-height:50px;color:white;border-radius:10px;margin-bottom:12px;padding:12px 18px;font-weight:850;letter-spacing:.03em}
+html[data-ui-style="bento"] #page-tv .theme-channel-strip{grid-area:strip;grid-column:1/-1;grid-row:1;background:var(--ui-card)!important;position:relative}
 html[data-ui-style="bento"] #page-tv .theme-strip-items{overflow-x:auto;max-height:105px}
 html[data-ui-style="bento"] #page-tv .theme-channel-tile{flex-basis:125px;padding:3px}
 html[data-ui-style="bento"] #page-tv .theme-tile-art{aspect-ratio:16/7}
@@ -153,6 +152,64 @@ html[data-ui-style="glass"] #page-tv .filter-box input::placeholder{color:#cde0f
 @media(max-width:1180px){
  html[data-ui-style="broadcast"] #page-tv .tv-layout{grid-template-areas:"channels strip" "channels video" "channels controls" "channels guide" "channels time" "channels tools";grid-template-rows:auto}
  html[data-ui-style="broadcast"] #page-tv .theme-strip-items{max-height:185px}
- html[data-ui-style="bento"] #page-tv .theme-channel-strip::before{min-height:42px;padding:10px}
+
 }
 @media(max-width:760px){html[data-ui-style="bento"] #page-tv .tv-layout{display:flex;flex-direction:column}html[data-ui-style="bento"] #page-tv .theme-channel-strip{width:100%}}
+
+/* Shared thumbnail/logo/initials rendering in all TV layouts. */
+#page-tv .theme-tile-art>img{position:absolute;inset:0;display:block;width:100%;height:100%;object-fit:contain}
+#page-tv .theme-tile-art.snapshot-thumb>img{object-fit:cover}
+#page-tv .theme-tile-art>.iptv-art-placeholder{
+ display:grid;place-items:center;min-width:0;max-width:100%;padding:0 7px;
+ font-size:clamp(12px,1.15vw,20px);font-weight:900;letter-spacing:.03em;
+ color:#f9fbff;line-height:1.1;text-shadow:0 2px 5px #0009;
+ overflow:hidden;text-overflow:ellipsis;white-space:nowrap
+}
+#page-tv .chan-logo>.iptv-art-placeholder,.fav-card .chan-logo>.iptv-art-placeholder{
+ display:grid;place-items:center;width:100%;height:100%;font-weight:800;
+ font-size:clamp(11px,1vw,15px);letter-spacing:.01em;overflow:hidden;
+ color:inherit;white-space:nowrap;text-overflow:ellipsis
+}
+#page-tv .chan-logo>img,.fav-card .chan-logo>img{display:block;width:100%;height:100%;object-fit:contain}
+#page-tv .chan-logo.snapshot-thumb>img,.fav-card .chan-logo.snapshot-thumb>img{object-fit:cover}
+/* Bento honours Light/Dark/AMOLED instead of hard-coded white. */
+html[data-ui-style="bento"] #page-tv .theme-channel-strip,
+html[data-ui-style="bento"] #page-tv .theme-strip-header,
+html[data-ui-style="bento"] #page-tv .theme-channel-tile{color:var(--text)!important}
+html[data-ui-style="bento"] #page-tv .theme-channel-strip::before{content:none!important;display:none!important}
+
+/* Shared contrast audit: keep real channel metadata legible in alternate
+   Light/Dark/AMOLED styles; no player or layout logic is modified. */
+html[data-theme="light"][data-ui-style="cinema"] #page-tv :is(.theme-channel-tile,.theme-guide-panel,.channel-panel){
+ background:var(--ui-card)!important;color:var(--text)!important;
+ border-color:var(--ui-stroke)!important
+}
+html[data-theme="light"][data-ui-style="cinema"] #page-tv :is(.theme-guide-current,.theme-guide-next,.theme-guide-open){
+ background:var(--ui-control)!important;color:var(--text)!important
+}
+html[data-theme="light"][data-ui-style="broadcast"] #page-tv :is(.theme-channel-tile,.theme-guide-panel){
+ background:var(--ui-card)!important;color:var(--text)!important
+}
+html[data-theme="light"][data-ui-style="broadcast"] #page-tv :is(.theme-guide-current,.theme-guide-next,.theme-guide-open){
+ background:var(--ui-control)!important;color:var(--text)!important
+}
+html[data-theme="light"][data-ui-style="glass"] #page-tv :is(.theme-guide-open,.filter-tab){
+ color:var(--text)!important;background:var(--ui-control)!important;
+ border-color:var(--ui-stroke)!important
+}
+html:is([data-theme="dark"],[data-theme="amoled"])[data-ui-style="swiss"] #page-tv :is(.player-control-card,.epg-current-card){
+ background:var(--ui-card)!important;color:var(--text)!important;
+ border-color:var(--ui-stroke)!important
+}
+html:is([data-theme="dark"],[data-theme="amoled"])[data-ui-style="swiss"] #page-tv .channel-panel::before{
+ color:var(--text)!important
+}
+html[data-theme="amoled"][data-ui-style="cinema"] #page-tv :is(.theme-channel-tile,.theme-guide-panel,.channel-panel){
+ background:var(--ui-card)!important;color:var(--text)!important;border-color:var(--ui-stroke)!important
+}
+html[data-theme="amoled"][data-ui-style="cinema"] #page-tv :is(.theme-guide-current,.theme-guide-next,.theme-guide-open){
+ background:var(--ui-control)!important;color:var(--text)!important
+}
+html[data-theme="amoled"][data-ui-style="broadcast"] #page-tv :is(.theme-guide-panel,.theme-channel-tile){
+ background:var(--ui-card)!important;color:var(--text)!important
+}

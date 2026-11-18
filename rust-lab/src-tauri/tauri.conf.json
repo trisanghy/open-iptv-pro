@@ -1,0 +1,52 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "Open IPTV Pro Rust Lab",
+  "version": "4.23.17",
+  "identifier": "org.openiptvpro.experiments.rustlab",
+  "build": {
+    "beforeDevCommand": "node scripts/devserver.cjs",
+    "devUrl": "http://127.0.0.1:1420",
+    "frontendDist": "../renderer"
+  },
+  "app": {
+    "withGlobalTauri": true,
+    "windows": [
+      {
+        "label": "main",
+        "title": "Open IPTV Pro · Rust Lab v23.8.26",
+        "width": 1360,
+        "height": 850,
+        "minWidth": 720,
+        "minHeight": 640,
+        "backgroundColor": "#101820"
+      }
+    ],
+    "security": {
+      "csp": null
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": "all",
+    "category": "Video",
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ],
+    "shortDescription": "Independent Rust + Tauri IPTV player experiment",
+    "windows": {
+      "nsis": {
+        "displayLanguageSelector": false
+      }
+    },
+    "macOS": {
+      "minimumSystemVersion": "11.0"
+    },
+    "resources": [
+      "resources/*"
+    ]
+  }
+}

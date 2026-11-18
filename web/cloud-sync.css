@@ -1,0 +1,41 @@
+/* Cloud Settings: follows existing theme and avoids toolbar reflow. */
+#cloudSyncCard .cloud-sync-actions {display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
+#cloudSyncCard .cloud-sync-actions [hidden],#cloudSyncCard [hidden]{display:none!important}
+#cloudSyncCard .cloud-sync-conflict {
+ border:1px solid var(--accent,#9e86eb);
+ border-radius:12px;padding:12px;margin-top:10px;
+}
+#cloudSyncCard #cloudAccount{font-weight:700;margin:6px 0}
+#cloudSyncCard #cloudStatus{overflow-wrap:anywhere}
+@media(max-width:550px){
+ #cloudSyncCard .cloud-sync-actions .btn{flex:1 1 150px;min-width:0}
+}
+
+/* Cloud is now a first-class settings section, not a collapsible accordion. */
+#page-settings > #cloudSyncCard{width:100%;box-sizing:border-box;margin:14px 0 20px;padding:20px 24px;display:block}
+#page-settings > #cloudSyncCard h2{margin-top:0}
+.topbar #cloudAccountQuick{white-space:nowrap;max-width:180px;overflow:hidden;text-overflow:ellipsis}
+@media(max-width:700px){#page-settings > #cloudSyncCard{padding:14px;margin:10px 0 16px}.topbar #cloudAccountQuick{max-width:90px;font-size:12px;padding:7px}}
+
+#cloudSyncCard .cloud-email-form{margin:12px 0;display:grid;gap:8px}
+#cloudSyncCard .cloud-email-form input{min-width:0;min-height:38px;padding:10px 12px;border:1px solid var(--line,#506174);border-radius:10px;color:var(--text,#f0f5f9);background:var(--surface,#131f2b)}
+#cloudSyncCard .cloud-email-form .cloud-email-input-line{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+#cloudSyncCard .cloud-email-form .cloud-email-input-line input{flex:1 1 220px}
+#cloudSyncCard .cloud-email-form label{font-weight:650}
+#cloudSyncCard #cloudLinkInput{flex:1 1 220px;min-width:120px}
+
+/* Login UX: one clear email step, expandable recovery and responsive layout. */
+#cloudSyncCard .cloud-auth-guide{max-width:740px;font-size:14px;line-height:1.6;margin:12px 0 5px;opacity:.9}
+#cloudSyncCard .cloud-link-toggle{display:inline-flex;margin:8px 0 12px;font-size:13px}
+#cloudSyncCard #cloudStatus{padding:10px 13px;line-height:1.5;border:1px solid var(--line,#506174);border-radius:10px;background:var(--surface,#131f2b)}
+#cloudSyncCard #cloudStatus[data-state="error"]{border-color:#d67b7b;background:rgba(198,62,62,.10)}
+#cloudSyncCard #cloudLinkForm{padding:12px;border:1px dashed var(--line,#506174);border-radius:12px}
+#cloudSyncCard #cloudOtpForm{padding:12px;background:rgba(140,160,185,.07);border-radius:12px}
+@media(max-width:550px){#cloudSyncCard .cloud-email-input-line{flex-direction:column;align-items:stretch}#cloudSyncCard .cloud-email-input-line input,#cloudSyncCard .cloud-email-input-line .btn{width:100%;box-sizing:border-box}}
+
+/* Recover PKCE from browser localhost callback without leaking codes. */
+#cloudSyncCard #cloudLinkForm label{line-height:1.5}
+#cloudSyncCard #cloudLinkInput{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:12px}
+
+/* Rate-limit-safe email sign-in */
+#cloudSyncCard #cloudEmailSend:disabled{opacity:.65;cursor:not-allowed}

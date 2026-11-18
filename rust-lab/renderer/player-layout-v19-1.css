@@ -1,0 +1,66 @@
+/* v19.1: static, two-row player layout; no runtime DOM moving. */
+#page-tv .player-control-card.ipvp19-ui{display:flex!important;flex-direction:column!important;gap:0!important;padding:0!important;min-width:0!important;overflow:visible!important}
+#page-tv .ipvp-main-row{display:grid!important;grid-template-columns:minmax(190px,1.16fr) minmax(225px,1fr) minmax(185px,.95fr);align-items:center;gap:13px;padding:12px 17px;border-bottom:1px solid var(--edge,#304252);min-width:0}
+#page-tv .ipvp-main-row .playing-info{margin:0!important;padding:0!important;min-width:0!important;min-height:0!important;gap:12px!important;flex-wrap:nowrap!important;border:0!important;background:none!important}
+#page-tv .ipvp-main-row .playing-meta{min-width:0!important;flex:1 1 auto}
+#page-tv .ipvp-main-row .playing-meta b,#page-tv .ipvp-main-row .playing-meta small{overflow:hidden;white-space:nowrap;text-overflow:ellipsis;max-width:100%;display:block}
+#page-tv .ipvp-main-row .controls{display:contents!important;padding:0!important;margin:0!important;border:0!important;min-height:0!important;background:transparent!important}
+#page-tv .ipvp-transport{display:flex!important;align-items:center;justify-content:space-evenly;gap:clamp(5px,1vw,17px);padding:0 13px;border-inline:1px solid var(--edge,#304252);min-width:0;min-height:57px}
+#page-tv .ipvp-transport .control-sm{flex:0 0 auto}
+#page-tv .ipvp-transport .control-main{flex:0 0 auto;width:57px!important;height:57px!important;min-height:57px!important;min-width:57px!important;border-radius:50%!important}
+#page-tv .ipvp-cast{display:flex!important;align-items:center;justify-content:flex-end;gap:clamp(5px,.7vw,14px);min-width:0}
+#page-tv .ipvp-cast button{flex:0 0 auto;white-space:nowrap}
+#page-tv .ipvp-cast #castBtn{font-size:clamp(11px,.84vw,14px);padding-inline:8px}
+#page-tv .ipvp-second-row{display:grid!important;grid-template-columns:minmax(280px,1.2fr) minmax(310px,1fr);align-items:center;gap:16px;min-width:0;padding:12px 17px}
+#page-tv .ipvp-programs.epg-current-card{display:grid!important;grid-template-columns:minmax(0,.44fr) minmax(0,.56fr);min-width:0;gap:0!important;padding:0!important;margin:0!important;border:0!important;background:none!important;box-shadow:none!important;align-items:stretch}
+#page-tv .ipvp-program{display:flex!important;flex-direction:column;align-items:flex-start!important;justify-content:center;min-width:0;gap:4px;padding:2px 12px 2px 8px;background:none!important;border:0!important;border-radius:0!important;color:var(--text,#eaf2f7)!important;text-align:left;cursor:pointer}
+#page-tv .ipvp-program+ .ipvp-program{border-left:1px solid var(--edge,#304252)!important;padding-left:17px}
+#page-tv .ipvp-program>b{font-weight:700;font-size:clamp(12px,1.05vw,16px);line-height:1.35;max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#page-tv .ipvp-program>small{font-size:clamp(11px,.9vw,13px);color:var(--muted,#8d9bab);white-space:nowrap;max-width:100%;overflow:hidden;text-overflow:ellipsis}
+#page-tv .ipvp-program:hover>b,#page-tv .ipvp-program:focus-visible>b{color:var(--primary,#bc7cff)}
+#page-tv .ipvp-options{display:flex!important;align-items:center;justify-content:flex-end;gap:clamp(7px,1.15vw,17px);min-width:0}
+#page-tv .ipvp-options .view-mode{min-width:0!important;flex:0 0 auto;display:flex!important;gap:7px!important;align-items:center;white-space:nowrap;margin:0!important}
+#page-tv .ipvp-options .view-mode>span{font-size:12px;white-space:nowrap}
+#page-tv .ipvp-options #videoFit{width:clamp(118px,10vw,166px);max-width:100%;min-width:110px;height:36px;padding:5px 9px}
+#page-tv .ipvp-options #manualLinkControl{display:flex;align-items:center;gap:7px;min-width:0;flex:1 1 160px;margin:0!important;z-index:5}
+#page-tv .ipvp-options #manualLinkControl.hidden{display:none!important}
+#page-tv .ipvp-options .manual-link-caption{font-size:12px}
+#page-tv .ipvp-options .manual-link-select{width:100%!important;min-width:0!important;flex:1 1 auto;max-width:none!important;height:40px;padding:0 10px;font-size:12px;white-space:nowrap;text-overflow:ellipsis}
+#page-tv .ipvp-options #favCurrentBtn{flex:0 0 auto!important;margin:0!important}
+#page-tv .ipvp-player-extras{display:flex;flex-wrap:wrap;align-items:center;gap:12px;padding:8px 12px;border:1px solid var(--edge,#304252);border-radius:10px}
+#page-tv .ipvp-player-extras>label{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted,#8d9bab)}
+#page-tv .ipvp-player-extras input[type=range]{width:clamp(90px,13vw,165px)}
+#page-tv .ipvp-player-extras .quick-btn{width:auto;min-height:35px;padding:7px 11px}
+#page-tv .player-control-card .video-seekbar[hidden]{display:none!important}
+@media(max-width:1280px){
+ #page-tv .ipvp-main-row{grid-template-columns:minmax(145px,1fr) minmax(200px,1fr) minmax(135px,.82fr);gap:7px;padding:9px 11px}
+ #page-tv .ipvp-cast{gap:4px}
+ #page-tv .ipvp-cast #castBtn{font-size:11px;padding:5px}
+ #page-tv .ipvp-transport{gap:4px;padding:0 7px}
+ #page-tv .ipvp-second-row{grid-template-columns:minmax(220px,1fr) minmax(285px,1.1fr);gap:8px;padding:11px}
+ #page-tv .ipvp-options{gap:7px}
+ #page-tv .ipvp-options .view-mode>span{font-size:11px}
+}
+@media(max-width:1000px){
+ #page-tv .ipvp-main-row{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+ #page-tv .ipvp-main-row .playing-info{grid-column:1;grid-row:1}
+ #page-tv .ipvp-transport{grid-column:1/-1;grid-row:2;justify-content:center;gap:28px;border-left:0;border-right:0;border-top:1px solid var(--edge,#304252);padding:8px 0 0}
+ #page-tv .ipvp-cast{grid-column:2;grid-row:1}
+ #page-tv .ipvp-second-row{grid-template-columns:minmax(0,1fr)}
+ #page-tv .ipvp-programs.epg-current-card{grid-column:1}
+ #page-tv .ipvp-options{grid-column:1;justify-content:space-between;flex-wrap:wrap}
+ #page-tv .ipvp-options #manualLinkControl{max-width:480px}
+}
+@media(max-width:620px){
+ #page-tv .ipvp-main-row{grid-template-columns:minmax(0,1fr)}
+ #page-tv .ipvp-main-row .playing-info{grid-column:1;grid-row:1}
+ #page-tv .ipvp-transport{grid-column:1;grid-row:2;gap:12px}
+ #page-tv .ipvp-cast{grid-column:1;grid-row:3;justify-content:center;flex-wrap:wrap}
+ #page-tv .ipvp-second-row{gap:10px}
+ #page-tv .ipvp-programs.epg-current-card{grid-template-columns:1fr 1fr}
+ #page-tv .ipvp-program{padding-right:5px}
+ #page-tv .ipvp-program+ .ipvp-program{padding-left:9px}
+ #page-tv .ipvp-options .view-mode{flex:1 1 100%;justify-content:space-between}
+ #page-tv .ipvp-options #manualLinkControl{flex:1 1 calc(100% - 55px)}
+ #page-tv .ipvp-options .manual-link-caption{display:none}
+}

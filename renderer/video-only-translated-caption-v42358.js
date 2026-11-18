@@ -45,8 +45,16 @@
    const lang=String(language||'und').slice(0,12);
    lastText=line;
    const Cue=(typeof VTTCue!=='undefined'?VTTCue:null);
-   // For Chromium HTMLVideoElement, VTT shows in video fullscreen too.
-   if(Cue&&typeof video.addTextTrack==='function'&&Number.isFinite(video.currentTime)){
+   // Fullscreen is the playerBox (not the <video>). Chromium's cue layer
+   // can vanish in element fullscreen; render inside the fullscreen element.
+   // Document-PiP also needs a DOM overlay belonging to its new document.
+   const fullscreenRoot=doc.fullscreenElement;
+   // A fullscreen <video> cannot contain a sibling overlay: native cues
+   // must remain enabled there. PlayerBox fullscreen CAN host its overlay.
+   const overlayRequired=!!(fullscreenRoot&&fullscreenRoot!==video&&
+    fullscreenRoot.contains?.(video))||
+    (!!video.ownerDocument&&video.ownerDocument!==doc);
+   if(!overlayRequired&&Cue&&typeof video.addTextTrack==='function'&&Number.isFinite(video.currentTime)){
     try{
      if(!track||currentLanguage!==lang){
       disable();
@@ -66,6 +74,8 @@
      disable();
     }
    }
+   // A previously active native cue must not double-render with the overlay.
+   disable();
    fallback(line);
    return mode;
   }

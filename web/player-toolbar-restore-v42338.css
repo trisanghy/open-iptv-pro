@@ -1,0 +1,222 @@
+/* Open IPTV Pro WebView v4.23.38 — restore approved compact TWO-row player bar.
+ * Fix: older @container queries turned each control row into multiple rows
+ * when the channel list or sidebar reduces available CSS width.
+ * The extra controls are a real accessible menu, not a permanent third row.
+ * Only toolbar selectors are touched: video-aspect-v42337 remains intact. */
+#page-tv .player-control-card {
+  position:relative!important;
+  min-width:0!important;
+  width:100%!important;
+  padding:0!important;
+  overflow:visible!important;
+  box-sizing:border-box!important;
+}
+#page-tv .player-control-card > .control-layout-top,
+#page-tv .player-control-card > .control-layout-bottom {
+  display:grid!important;
+  grid-auto-flow:row!important;
+  box-sizing:border-box!important;
+  width:100%!important;
+  min-width:0!important;
+  align-items:center!important;
+  gap:0!important;
+  margin:0!important;
+}
+#page-tv .player-control-card > .control-layout-top {
+  grid-template-columns:minmax(0,1.02fr) minmax(0,.98fr) minmax(0,1fr)!important;
+  grid-template-rows:minmax(0,1fr)!important;
+  min-height:68px!important;
+  padding:7px 11px!important;
+  border-bottom:1px solid var(--edge,#2c3e49)!important;
+}
+#page-tv .player-control-card .control-layout-top > .playing-info {
+  grid-area:1 / 1 / 2 / 2!important;
+  min-width:0!important;
+  width:100%!important;
+  flex-wrap:nowrap!important;
+  border-bottom:0!important;
+  border-right:1px solid var(--edge,#2c3e49)!important;
+  padding:5px 8px!important;
+  margin:0!important;
+  gap:8px!important;
+}
+#page-tv .player-control-card .control-layout-top > .controls.transport-controls {
+  grid-area:1 / 2 / 2 / 3!important;
+  display:flex!important;
+  flex-wrap:nowrap!important;
+  align-items:center!important;
+  justify-content:space-evenly!important;
+  min-width:0!important;
+  width:100%!important;
+  padding:0 5px!important;
+  gap:clamp(2px,.35vw,8px)!important;
+  border-bottom:0!important;
+  border-top:0!important;
+  border-right:1px solid var(--edge,#2c3e49)!important;
+  margin:0!important;
+}
+#page-tv .player-control-card .control-layout-top > .output-controls {
+  grid-area:1 / 3 / 2 / 4!important;
+  display:flex!important;
+  flex-wrap:nowrap!important;
+  align-items:center!important;
+  justify-content:flex-end!important;
+  min-width:0!important;
+  width:100%!important;
+  gap:clamp(3px,.4vw,8px)!important;
+  padding:2px 0 2px 6px!important;
+  border:0!important;
+  margin:0!important;
+}
+#page-tv .player-control-card .control-layout-top .playing-info .small-lcd {
+  flex:0 0 clamp(30px,3vw,42px)!important;
+  width:clamp(30px,3vw,42px)!important;
+  height:clamp(30px,3vw,42px)!important;
+}
+#page-tv .player-control-card .control-layout-top .playing-channel-text {min-width:0!important;overflow:hidden!important;white-space:nowrap!important;}
+#page-tv .player-control-card .control-layout-top .playing-channel-text :is(b,small) {display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;}
+#page-tv .player-control-card .control-layout-top .playing-channel-text b {font-size:clamp(12px,1.15vw,18px)!important;}
+#page-tv .player-control-card .control-layout-top .playing-channel-text small {font-size:clamp(9px,.9vw,12px)!important;}
+#page-tv .player-control-card .control-layout-top .transport-controls :is(#prevBtn,#stopBtn,#nextBtn) {
+  width:clamp(27px,2.9vw,39px)!important;
+  height:clamp(27px,2.9vw,39px)!important;
+  min-width:0!important;
+  min-height:0!important;
+  flex:0 0 clamp(27px,2.9vw,39px)!important;
+  font-size:clamp(14px,1.4vw,20px)!important;
+  margin:0!important;
+}
+#page-tv .player-control-card .control-layout-top .transport-controls #playBtn {
+  width:clamp(40px,4vw,54px)!important;
+  height:clamp(40px,4vw,54px)!important;
+  min-width:0!important;
+  min-height:0!important;
+  flex:0 0 clamp(40px,4vw,54px)!important;
+  font-size:clamp(17px,1.6vw,23px)!important;
+  margin:0!important;
+}
+#page-tv .player-control-card .control-layout-top .output-controls .control-sm {
+  flex:0 0 auto!important;
+  min-height:34px!important;
+  min-width:0!important;
+  max-width:100%!important;
+  padding:5px clamp(5px,.6vw,9px)!important;
+  font-size:clamp(10px,.9vw,13px)!important;
+  white-space:nowrap!important;
+}
+#page-tv .player-control-card .control-layout-top .output-controls :is(#pipBtn,#fullscreenBtn) {width:auto!important;min-width:34px!important;}
+#page-tv .player-control-card > .control-layout-bottom {
+  grid-template-columns:minmax(0,1.65fr) minmax(0,.8fr) minmax(0,1.15fr) 42px!important;
+  grid-template-rows:minmax(0,1fr)!important;
+  column-gap:clamp(5px,.65vw,11px)!important;
+  min-height:73px!important;
+  padding:9px 13px!important;
+}
+#page-tv .player-control-card .control-layout-bottom > #epgCurrent {
+  grid-area:1 / 1 / 2 / 2!important;
+  display:flex!important;
+  flex-wrap:nowrap!important;
+  align-items:center!important;
+  min-width:0!important;
+  width:100%!important;
+  gap:7px!important;
+  padding:0 9px 0 0!important;
+  margin:0!important;
+  border-right:1px solid var(--edge,#2c3e49)!important;
+}
+#page-tv .player-control-card .control-layout-bottom #epgCurrent :is(.epg-current-item,.epg-next-item) {
+  min-width:0!important;
+  flex-basis:0!important;
+  flex-grow:1!important;
+  overflow:hidden!important;
+}
+#page-tv .player-control-card .control-layout-bottom #epgCurrent :is(b,small) {overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important;}
+#page-tv .player-control-card .control-layout-bottom #openGuideBtn {position:static!important;flex:0 0 30px!important;padding:0!important;}
+#page-tv .player-control-card .control-layout-bottom > .view-mode {
+  grid-area:1 / 2 / 2 / 3!important;
+  display:flex!important;flex-wrap:nowrap!important;
+  align-items:center!important;min-width:0!important;width:100%!important;
+  gap:5px!important;margin:0!important;padding:0!important;
+}
+#page-tv .player-control-card .control-layout-bottom .view-mode > span {min-width:0;flex:0 0 auto;white-space:nowrap;}
+#page-tv .player-control-card .control-layout-bottom .view-mode > select {
+  flex:1 1 auto!important;min-width:0!important;width:100%!important;
+  height:36px!important;max-width:100%!important;padding-inline:4px!important;
+}
+#page-tv .player-control-card .control-layout-bottom > .manual-link-picker {
+  grid-area:1 / 3 / 2 / 4!important;
+  display:flex!important;flex-wrap:nowrap!important;
+  align-items:center!important;min-width:0!important;width:100%!important;
+  margin:0!important;padding:0!important;gap:5px!important;
+}
+#page-tv .player-control-card .control-layout-bottom .manual-link-picker > label {display:inline!important;flex:0 0 auto!important;white-space:nowrap;}
+#page-tv .player-control-card .control-layout-bottom #manualStreamSelect {
+  flex:1 1 auto!important;min-width:0!important;max-width:100%!important;width:100%!important;
+  height:38px!important;margin:0!important;
+}
+#page-tv .player-control-card .control-layout-bottom > #favCurrentBtn {
+  grid-area:1 / 4 / 2 / 5!important;
+  min-width:0!important;width:40px!important;height:40px!important;
+  padding:0!important;margin:0!important;
+  font-size:26px!important;
+}
+/* Accessibility-preserving popup keeps volume/snapshot/FFmpeg off the third row. */
+#page-tv .player-control-card .output-controls > .playback-extra {
+  position:relative!important;display:block!important;
+  flex:0 0 auto!important;min-width:0!important;
+  width:32px!important;height:34px!important;
+  margin:0!important;padding:0!important;
+  border:0!important;background:transparent!important;
+}
+#page-tv .player-control-card .output-controls .playback-extra > summary {
+  display:grid!important;place-items:center!important;
+  width:32px!important;height:34px!important;
+  padding:0!important;margin:0!important;
+  border:1px solid var(--edge,#2c3e49)!important;
+  border-radius:9px!important;
+  background:var(--surface2,#172432)!important;
+  color:var(--text,#eaf2f7)!important;
+  font-size:22px!important;line-height:1!important;
+  cursor:pointer;list-style:none;
+}
+#page-tv .player-control-card .output-controls .playback-extra > summary::-webkit-details-marker {display:none!important;}
+#page-tv .player-control-card .output-controls .playback-extra > summary:focus-visible {outline:2px solid var(--accent,#a56afb);outline-offset:2px;}
+#page-tv .player-control-card .output-controls .playback-extra-inner {
+  position:absolute!important;top:calc(100% + 9px)!important;right:0!important;
+  z-index:100!important;display:flex!important;
+  flex-direction:column!important;align-items:stretch!important;
+  gap:10px!important;width:min(245px,75vw)!important;
+  padding:14px!important;border:1px solid var(--edge,#2c3e49)!important;
+  border-radius:12px!important;background:var(--surface2,#172432)!important;
+  color:var(--text,#eaf2f7)!important;
+  box-shadow:0 12px 30px #0007!important;
+}
+#page-tv .player-control-card .output-controls .playback-extra-inner #volume {width:100%!important;max-width:100%!important;}
+#page-tv .player-control-card .output-controls .playback-extra-inner button {width:100%!important;}
+#page-tv .player-control-card .output-controls .playback-extra:not([open]) > .playback-extra-inner {display:none!important;}
+/* Compact layouts: only reduce labels and button sizes. NEVER stack toolbar groups. */
+@container (max-width:1050px) {
+ #page-tv .player-control-card .control-layout-bottom .view-mode .video-source-ratio {display:none!important;}
+ #page-tv .player-control-card .control-layout-bottom .manual-link-picker > label {display:none!important;}
+}
+@container (max-width:890px) {
+ #page-tv .player-control-card .control-layout-top .output-controls .cast-label {display:none!important;}
+ #page-tv .player-control-card .control-layout-bottom .view-mode > span:first-child {display:none!important;}
+ #page-tv .player-control-card .control-layout-top .output-controls #castBtn {width:36px!important;min-width:36px!important;text-align:center!important;}
+}
+@container (max-width:620px) {
+ #page-tv .player-control-card .control-layout-top .output-controls .pip-label {display:none!important;}
+ #page-tv .player-control-card .control-layout-top .output-controls {gap:2px!important;padding-left:2px!important;}
+ #page-tv .player-control-card .control-layout-top .output-controls :is(#castBtn,#pipBtn,#fullscreenBtn) {
+   padding:0!important;min-width:27px!important;width:27px!important;height:30px!important;
+ }
+ #page-tv .player-control-card > .control-layout-top {padding-inline:5px!important;}
+ #page-tv .player-control-card > .control-layout-bottom {padding-inline:5px!important;column-gap:4px!important;grid-template-columns:minmax(0,1.6fr) minmax(0,.65fr) minmax(0,1fr) 33px!important;}
+ #page-tv .player-control-card .control-layout-bottom > #favCurrentBtn {width:32px!important;height:35px!important;font-size:22px!important;}
+ #page-tv .player-control-card .control-layout-bottom .epg-next-item {padding-left:4px!important;}
+ #page-tv .player-control-card .control-layout-bottom #epgCurrent {gap:4px!important;padding-right:4px!important;}
+ #page-tv .player-control-card .control-layout-bottom #openGuideBtn {flex-basis:24px!important;min-width:24px!important;width:24px!important;font-size:14px!important;}
+ #page-tv .player-control-card .control-layout-top .playing-info {padding-inline:3px!important;gap:4px!important;}
+ #page-tv .player-control-card .control-layout-top .playing-info .small-lcd {width:29px!important;height:29px!important;flex-basis:29px!important;}
+ #page-tv .player-control-card .control-layout-top .transport-controls {padding-inline:0!important;gap:1px!important;}
+}

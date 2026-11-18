@@ -1,0 +1,34 @@
+/* Rust Lab v8 — remove the redundant top row and add a persistent icon rail. */
+/* Last stylesheet wins over every theme and nav-density preset. */
+.app-shell>.main>.topbar{display:none!important}
+.sidebar-head{display:flex;align-items:center;justify-content:space-between;gap:6px;min-width:0;padding:0 0 22px}
+.sidebar-head>.brand{padding:0!important;min-width:0;flex:1;display:flex;gap:8px;align-items:center}
+.sidebar-head>.brand .brand-icon{flex:none;width:34px;height:34px}
+.sidebar-head>.brand .brand-text{min-width:0;overflow:hidden}
+.sidebar-head>.brand .brand-text b{display:block;font-size:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sidebar-head>.brand .brand-text small{font-size:9px;letter-spacing:.8px;white-space:nowrap}
+.sidebar-toggle{flex:0 0 32px;height:34px;display:grid;place-items:center;border:1px solid var(--edge);border-radius:9px;color:var(--text);background:var(--surface2);cursor:pointer}
+.sidebar-toggle:hover,.sidebar-toggle:focus-visible{border-color:var(--accent);color:var(--accent);outline-offset:2px}
+.sidebar .nav .nav-label{flex:1 1 auto;min-width:0;width:auto!important;max-width:none;text-align:left;font-size:inherit;color:inherit;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+/* All layouts, including Cinema/Swiss/Glass when collapsed, become an accessible icon rail. */
+html[data-sidebar-collapsed="true"] .app-shell{flex-direction:row!important}
+html[data-sidebar-collapsed="true"] .app-shell>.sidebar{width:72px!important;min-width:72px!important;max-width:72px!important;height:100vh!important;min-height:0!important;flex:0 0 72px!important;flex-direction:column!important;align-items:stretch!important;overflow-x:hidden!important;overflow-y:auto!important;gap:0!important;padding:14px 7px!important;border-right:1px solid var(--edge)!important;border-bottom:0!important;scrollbar-width:none!important}
+html[data-sidebar-collapsed="true"] .app-shell>.sidebar::-webkit-scrollbar{display:none}
+html[data-sidebar-collapsed="true"] .app-shell>.sidebar .sidebar-head{justify-content:center;flex:none;padding:0 0 12px}
+html[data-sidebar-collapsed="true"] .app-shell>.sidebar .brand{display:none!important}
+html[data-sidebar-collapsed="true"] .app-shell>.sidebar .aside-caption,
+html[data-sidebar-collapsed="true"] .app-shell>.sidebar .sidebar-bottom{display:none!important}
+html[data-sidebar-collapsed="true"] .app-shell>.sidebar .sidebar-toggle{height:39px;flex:0 0 45px;min-width:45px}
+html[data-sidebar-collapsed="true"] .app-shell>.sidebar .nav{height:42px!important;min-height:42px!important;max-height:42px!important;flex:0 0 42px!important;width:100%!important;max-width:none!important;min-width:0!important;display:flex!important;align-items:center!important;justify-content:center!important;gap:0!important;margin:2px 0!important;padding:0!important;border-radius:10px!important;font-size:0!important;overflow:hidden!important}
+html[data-sidebar-collapsed="true"] .app-shell>.sidebar .nav .nav-label,
+html[data-sidebar-collapsed="true"] .app-shell>.sidebar .nav small{display:none!important}
+html[data-sidebar-collapsed="true"] .app-shell>.sidebar .nav .macos-nav-symbol{display:grid!important;place-items:center!important;flex:0 0 32px!important;width:32px!important;min-width:32px!important;height:32px!important;margin:0!important;font-size:19px!important}
+html[data-sidebar-collapsed="true"] .app-shell>.sidebar .nav .macos-nav-symbol svg{display:block!important}
+html[data-sidebar-collapsed="true"] .app-shell>.main{flex:1 1 auto!important;min-width:0!important;min-height:0!important;height:100vh!important;max-width:calc(100% - 72px)!important}
+/* On themes with a TV drawer, the drawer reaches the top when the horizontal nav is replaced by the rail. */
+html[data-sidebar-collapsed="true"][data-ui-style="cinema"] #page-tv .channel-panel{top:0!important}
+html[data-sidebar-collapsed="true"][data-ui-style="cinema"] #themeChannelScrim:not([hidden]){inset:0 0 44px!important}
+@media (max-width:800px){
+ .sidebar-head>.brand .brand-icon{width:30px;height:30px}
+ .sidebar-head>.brand .brand-text b{font-size:14px}
+}

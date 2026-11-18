@@ -1,0 +1,86 @@
+/* Cinema / Glass / Broadcast: hide the EPG card without blank grid space. */
+#page-tv .theme-guide-heading{
+ display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:7px;
+}
+#page-tv .theme-guide-heading .theme-guide-eyebrow{margin:0}
+#page-tv .theme-guide-hide-btn{
+ flex:0 0 auto;display:inline-grid;place-items:center;
+ width:34px;height:34px;padding:0;
+ border:1px solid var(--ui-stroke,var(--edge));
+ border-radius:9px;background:var(--ui-control,var(--surface2));
+ color:var(--text);font:700 22px/1 system-ui,sans-serif;cursor:pointer;
+ transition:background .15s ease,border-color .15s ease;
+}
+#page-tv .theme-guide-hide-btn:hover{
+ background:var(--ui-selection,var(--surface3));
+ border-color:var(--ui-primary,var(--accent));
+}
+#page-tv .theme-guide-hide-btn:focus-visible,
+#page-tv .theme-guide-restore-btn:focus-visible{
+ outline:2px solid var(--ui-primary,var(--accent));outline-offset:3px;
+}
+#page-tv .theme-guide-restore-btn{
+ display:none!important;position:absolute;right:12px;top:12px;z-index:45;
+ align-items:center;justify-content:center;gap:7px;
+ min-height:36px;padding:7px 12px;
+ border:1px solid var(--ui-stroke,var(--edge));
+ border-radius:10px;background:var(--ui-card,var(--surface));
+ color:var(--text);box-shadow:0 6px 20px #0007;
+ font:650 12px/1.2 system-ui,sans-serif;cursor:pointer;
+}
+html[data-tv-guide-hidden="true"] #page-tv #themeGuidePanel{display:none!important}
+html[data-tv-guide-hidden="true"]:is(
+ [data-ui-style="cinema"],[data-ui-style="glass"],[data-ui-style="broadcast"]
+) #page-tv:not(:fullscreen) .theme-guide-restore-btn{display:inline-flex!important}
+/* Keep the restore button out of actual video-only fullscreen. */
+#page-tv #playerBox:fullscreen .theme-guide-restore-btn{display:none!important}
+
+/* Cinema: expand video/controls to the full width formerly used by guide. */
+html[data-ui-style="cinema"][data-tv-guide-hidden="true"] #page-tv .tv-layout{
+ grid-template-columns:minmax(0,1fr)!important;
+ grid-template-areas:"video" "controls" "strip" "time" "tools"!important;
+}
+html[data-ui-style="cinema"][data-tv-guide-hidden="true"] #page-tv .player-box{
+ max-width:100%;max-height:min(76vh,820px)!important;
+}
+/* Glass: retain channel list, give the entire remaining width to video. */
+html[data-ui-style="glass"][data-tv-guide-hidden="true"] #page-tv .tv-layout{
+ grid-template-columns:minmax(185px,23%) minmax(0,1fr)!important;
+ grid-template-areas:"channels video" "channels controls" "channels time" "channels tools"!important;
+}
+html[data-ui-style="glass"][data-tv-guide-hidden="true"] #page-tv .player-box{
+ max-height:min(73vh,760px)!important;
+}
+/* Broadcast: retain the left channel list and featured-channel strip. */
+html[data-ui-style="broadcast"][data-tv-guide-hidden="true"] #page-tv .tv-layout{
+ grid-template-columns:minmax(195px,24%) minmax(0,1fr)!important;
+ grid-template-areas:"channels video" "channels controls" "channels strip" "channels time" "channels tools"!important;
+}
+html[data-ui-style="broadcast"][data-tv-guide-hidden="true"] #page-tv .player-box{
+ max-height:min(73vh,760px)!important;
+}
+@media(max-width:1180px){
+ html[data-ui-style="glass"][data-tv-guide-hidden="true"] #page-tv .tv-layout{
+  grid-template-columns:190px minmax(0,1fr)!important;
+ }
+ html[data-ui-style="broadcast"][data-tv-guide-hidden="true"] #page-tv .tv-layout{
+  grid-template-columns:180px minmax(0,1fr)!important;
+ }
+}
+@media(max-width:760px){
+ html[data-ui-style="cinema"][data-tv-guide-hidden="true"] #page-tv .tv-layout{
+  grid-template-columns:minmax(0,1fr)!important;
+ }
+ /* Glass and Broadcast use the existing mobile flex layout at this width. */
+ html[data-tv-guide-hidden="true"]:is(
+  [data-ui-style="glass"],[data-ui-style="broadcast"]
+ ) #page-tv .tv-layout{
+  display:flex!important;flex-direction:column!important;
+ }
+ html[data-ui-style="cinema"][data-tv-guide-hidden="true"] #page-tv .player-box{
+  max-height:70vh!important;
+ }
+}
+@media(prefers-reduced-motion:reduce){
+ #page-tv .theme-guide-hide-btn{transition:none}
+}

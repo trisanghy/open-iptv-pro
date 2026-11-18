@@ -10,19 +10,39 @@
 }
 #page-tv .openiptv-video-translation-overlay,
 .openiptv-video-translation-overlay {
- display:flex!important;position:absolute!important;
- z-index:80;left:3%;right:3%;bottom:4%;
- justify-content:center;align-items:center;
+ display:flex!important;flex-direction:column!important;position:absolute!important;
+ z-index:80;left:3%;right:3%;bottom:4%;max-width:94%;
+ justify-content:center;align-items:center;min-width:0;
  pointer-events:none;box-sizing:border-box;
  padding:0;overflow:visible;
  font-size:clamp(16px,2.15vw,36px);font-weight:650;
  line-height:1.32;text-align:center;white-space:pre-wrap;
- color:#fff;overflow-wrap:anywhere;
+ color:#fff;overflow-wrap:anywhere;word-break:break-word;
  text-shadow:0 1px 4px #000,0 2px 8px #000;
+}
+/* Each language gets its own wrapped block; never one horizontal flex row. */
+#page-tv .openiptv-video-translation-overlay > span,
+.openiptv-video-translation-overlay > span {
+ display:block!important;max-width:100%;min-width:0;
+ white-space:pre-wrap;overflow-wrap:anywhere;word-break:break-word;
+ text-align:center;
 }
 #page-tv .openiptv-video-translation-overlay[hidden],
 .openiptv-video-translation-overlay[hidden]{display:none!important}
 @media (max-width:660px){
  #page-tv .openiptv-video-translation-overlay,
  .openiptv-video-translation-overlay{font-size:clamp(14px,3.2vw,24px);bottom:5%}
+}
+
+/* The fullscreen toolbar occupies a separate bottom strip. Place CC above it,
+   and return CC to the true video bottom when fullscreen controls auto-hide. */
+#playerBox:fullscreen > .openiptv-video-translation-overlay {
+ z-index:120!important;
+ max-height:calc(100% - var(--fullscreen-toolbar-height,82px) - 24px);
+}
+#playerBox:fullscreen:not(.player-idle) > .openiptv-video-translation-overlay[data-cc-position="bottom"] {
+ bottom:calc(var(--fullscreen-toolbar-height,82px) + 3%)!important;
+}
+#playerBox:fullscreen.player-idle > .openiptv-video-translation-overlay[data-cc-position="bottom"] {
+ bottom:4%!important;
 }

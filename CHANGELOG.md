@@ -1,3 +1,18 @@
+## v4.23.68 — 18/11/2026: Electron Stable / Rust Beta / Web Online
+
+- **Electron:** Lưu và tự khôi phục ba công tắc Live Caption/Translate/TTS; CC dài tự xuống dòng, màu/cỡ chữ/vị trí/viền/nền; hiển thị CC trong fullscreen và PiP ghép hình khi nguồn cho phép; giảm trễ và đồng bộ phụ đề/TTS với video.
+- **Phát lại:** nút Tạm dừng giữ hình, ngừng tải HLS.js/DASH phù hợp; nút Dừng ngắt luồng và giải phóng PiP; ngăn các lỗi/sự kiện tải muộn tự phát lại; mở lại đúng kênh sau Stop.
+- **Giao diện:** sửa ảnh Snapshot/logo/monogram ở TV/Yêu thích/Cinema/Broadcast/Bento; sửa nền Bento và AMOLED; bỏ banner chào mừng; Công cụ nhanh luôn mở; panel Kênh hiện tại ẩn/hiện, tự lưu và mở rộng video.
+- **Rust Lab v23.8.26 (Beta):** CSS responsive theo chiều rộng player; nút phát/âm lượng/Cast/PiP/EPG/TTS không đè lên nhau ở màn hình hẹp; giữ ba hộp chọn 1–32 và trạng thái đã lưu.
+- **Web Online:** giữ đúng website đã triển khai và Cloud Sync tùy cấu hình; đóng gói source/static build đúng nhánh web/online.
+- **Release:** bộ cài Electron mới được build từ nguồn 4.23.68 trên main; file Rust Lab 23.8.26 đã công bố được xác minh SHA-256 trước khi đưa vào Release tổng hợp; kèm Web ZIP, Full Source, hướng dẫn và SHA-256; bảo tồn tất cả tag và release cũ.
+
+Nguồn Electron: c8a18e83f242246c7f93d4445765ee1f040b8f10. Rust: 04b0fd2e6110e3165bef62fb9b7155651f9dd4c9. Web: 787c73a00b1be51fd5970a204d50d8bc9fcfad91.
+
+Xem [Release notes chi tiết](RELEASE_NOTES_V4_23_68.md).
+
+---
+
 ## v4.23.39 — 2026-11-16 — Full-width adaptive video frame
 
 - **Fix:** Bỏ giới hạn chiều rộng `min(100%, calc(clamp(...) * aspect-ratio))` gây dư khoảng đen hai bên; khung trình phát nay sử dụng **100% bề ngang** vùng nội dung và chỉ chừa viền.

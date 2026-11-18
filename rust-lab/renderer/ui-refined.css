@@ -1,0 +1,158 @@
+/* v4.23.12 — reference-layout rebuild, not a recolor.
+   Video and controls use the existing player element, with no duplicate stream. */
+#page-tv .theme-guide-panel,#page-tv .theme-channel-strip{display:none}
+#page-tv .theme-channel-scrim[hidden]{display:none}
+#page-tv .theme-guide-panel{min-width:0;overflow:hidden}
+#page-tv .theme-guide-eyebrow{font-size:10px;letter-spacing:.13em;opacity:.7;font-weight:800}
+#page-tv .theme-guide-channel{display:block;font-size:clamp(18px,1.8vw,26px);margin:9px 0 20px;white-space:normal;overflow-wrap:anywhere}
+#page-tv .theme-guide-current,#page-tv .theme-guide-next{padding:15px;border-radius:12px;background:color-mix(in srgb,var(--ui-control) 74%,transparent);margin:0 0 12px;font-size:12px;line-height:1.6}
+#page-tv .theme-guide-current b,#page-tv .theme-guide-next b{display:block;margin:0 0 7px;font-size:12px}
+#page-tv #themeGuideNow,#page-tv #themeGuideNext{overflow-wrap:anywhere;color:var(--muted)}
+#page-tv .theme-onair-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:#f5494e;margin-right:7px}
+#page-tv .theme-guide-open{width:100%;border:1px solid var(--ui-stroke);background:var(--ui-control);color:var(--text);padding:12px 16px;border-radius:10px;cursor:pointer;text-align:center;font-weight:700}
+#page-tv .theme-strip-header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
+#page-tv .theme-strip-header strong{font-size:13px}
+#page-tv .theme-strip-actions{display:flex;gap:6px}
+#page-tv .theme-strip-actions button{color:var(--text);background:var(--ui-control);border:1px solid var(--ui-stroke);border-radius:9px;padding:5px 10px;cursor:pointer}
+#page-tv .theme-strip-items{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x proximity;scrollbar-width:thin;padding:2px 1px 10px}
+#page-tv .theme-channel-tile{display:flex;flex:0 0 clamp(110px,12vw,170px);min-width:0;flex-direction:column;gap:6px;background:var(--ui-card);color:var(--text);border:1px solid var(--ui-stroke);border-radius:11px;padding:4px;text-align:left;scroll-snap-align:start;cursor:pointer}
+#page-tv .theme-channel-tile:hover{border-color:var(--ui-primary)!important;transform:translateY(-2px)}
+#page-tv .theme-channel-tile strong{font-size:11px;padding:0 6px 5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#page-tv .theme-tile-art{position:relative;background:linear-gradient(145deg,color-mix(in srgb,var(--ui-primary) 30%,#10263d),#22313c);aspect-ratio:16/9;display:grid;place-items:center;overflow:hidden;border-radius:7px}
+#page-tv .theme-tile-art img{width:100%;height:100%;object-fit:cover}
+#page-tv .theme-tile-empty{opacity:.48;font-size:20px}
+#page-tv .theme-tile-health{position:absolute;top:6px;right:6px;width:7px;height:7px;border-radius:50%;background:#9ca3af;box-shadow:0 0 0 2px #0006}
+#page-tv .theme-tile-health.alive{background:#18cc8c}#page-tv .theme-tile-health.dead{background:#ef6262}
+#page-tv .theme-strip-empty{padding:22px;color:var(--muted);font-size:12px}
+/* Shared TV/player overlay: only in cinema, glass and studio modes. */
+html:is([data-ui-style="cinema"],[data-ui-style="glass"],[data-ui-style="broadcast"]) #page-tv .watch-panel{display:contents}
+html:is([data-ui-style="cinema"],[data-ui-style="glass"],[data-ui-style="broadcast"]) #page-tv .player-box{grid-area:video;align-self:stretch;width:100%;min-height:260px;max-height:none;aspect-ratio:16/9;border-radius:var(--ui-radius);position:relative}
+html:is([data-ui-style="cinema"],[data-ui-style="glass"],[data-ui-style="broadcast"]) #page-tv .player-control-card{position:absolute;z-index:4;left:0;right:0;bottom:0;background:linear-gradient(0deg,#090915f5,#090915aa 70%,transparent)!important;border:0!important;border-radius:0 0 var(--ui-radius) var(--ui-radius)!important;padding:12px 15px!important;box-shadow:none!important;color:#fff!important}
+html:is([data-ui-style="cinema"],[data-ui-style="glass"],[data-ui-style="broadcast"]) #page-tv .playing-info{border-color:#ffffff2a!important;padding-bottom:7px}
+html:is([data-ui-style="cinema"],[data-ui-style="glass"],[data-ui-style="broadcast"]) #page-tv .controls{gap:7px;align-items:center}
+html:is([data-ui-style="cinema"],[data-ui-style="glass"],[data-ui-style="broadcast"]) #page-tv :is(.controls .control-sm,.controls .control-main){min-height:28px!important;min-width:30px;width:auto;padding:5px 8px!important;background:#ffffff18!important;color:#fff!important;border-color:#ffffff2c!important}
+html:is([data-ui-style="cinema"],[data-ui-style="glass"],[data-ui-style="broadcast"]) #page-tv .controls #playBtn{background:var(--ui-primary)!important;color:var(--ui-on-primary)!important}
+html:is([data-ui-style="cinema"],[data-ui-style="glass"],[data-ui-style="broadcast"]) #page-tv .controls input[type="range"]{max-width:100px}
+html:is([data-ui-style="cinema"],[data-ui-style="glass"],[data-ui-style="broadcast"]) #page-tv :is(.controls .view-mode,.controls .view-mode span){color:#e3e2ec!important}
+html:is([data-ui-style="cinema"],[data-ui-style="glass"],[data-ui-style="broadcast"]) #page-tv .advanced-timebar{grid-area:time;align-self:start}
+html:is([data-ui-style="cinema"],[data-ui-style="glass"],[data-ui-style="broadcast"]) #page-tv .compact-tools{grid-area:tools}
+html:is([data-ui-style="cinema"],[data-ui-style="glass"],[data-ui-style="broadcast"]) #page-tv .epg-current-card{display:none}
+html:is([data-ui-style="cinema"],[data-ui-style="glass"],[data-ui-style="broadcast"]) #page-tv .theme-guide-panel{display:block;grid-area:guide;background:var(--ui-card);border:1px solid var(--ui-stroke);border-radius:var(--ui-radius);padding:clamp(13px,1.35vw,23px)}
+/* Cinema TV: black theatre, TV tabs, hero video left + now/next right + real channel carousel. */
+html[data-ui-style="cinema"]{--ui-navigation:#120f1a;--ui-card:#201a2b;--ui-primary:#b452ef;--ui-selection:#422451;--ui-stroke:#33283b}
+html[data-ui-style="cinema"] .topbar{display:none!important}
+html[data-ui-style="cinema"] .sidebar{height:61px!important;min-height:61px!important;background:#13101d!important;border-bottom:1px solid #30253b!important;gap:3px}
+html[data-ui-style="cinema"] .sidebar .nav{background:#ffffff0a;color:#e4dcee!important;border:1px solid transparent!important;border-radius:20px!important;font-weight:700;padding:8px 16px}
+html[data-ui-style="cinema"] .sidebar .nav.active{background:color-mix(in srgb,var(--ui-primary) 25%,#1c1526)!important;border-color:color-mix(in srgb,var(--ui-primary) 28%,transparent)!important;color:#fff!important}
+html[data-ui-style="cinema"] .sidebar .nav span{display:none}
+html[data-ui-style="cinema"] .content{padding:13px clamp(13px,1.6vw,24px)!important}
+html[data-ui-style="cinema"] #page-tv .tv-layout{display:grid!important;grid-template-columns:minmax(0,1fr) minmax(210px,25%);grid-template-areas:"video guide" "strip strip" "time time" "tools tools";grid-template-rows:minmax(290px,auto) auto auto auto;height:auto;min-height:0;gap:13px!important;align-items:start}
+html[data-ui-style="cinema"] #page-tv .theme-channel-strip{display:block;grid-area:strip;min-width:0}
+html[data-ui-style="cinema"] #page-tv .theme-channel-tile{background:#1d1625;border:1px solid #ffffff12}
+html[data-ui-style="cinema"] #page-tv .theme-tile-art{background:#20142e}
+html[data-ui-style="cinema"] #page-tv .player-box{border:0!important;box-shadow:0 20px 55px #0008!important;max-height:min(65vh,520px)}
+html[data-ui-style="cinema"] #page-tv .theme-guide-panel{background:#201a2b!important}
+html[data-ui-style="cinema"] #page-tv .theme-guide-current{background:#2a2338}
+html[data-ui-style="cinema"] #page-tv .theme-guide-next{background:#231d2e}
+html[data-ui-style="cinema"] #page-tv .theme-guide-open{background:#342941;color:#fff}
+html[data-ui-style="cinema"] #page-tv .channel-panel{position:fixed!important;z-index:110;right:0;top:61px;bottom:44px;width:min(420px,90vw);max-height:none!important;height:auto;background:#1a1424!important;border:1px solid #4a345d!important;border-radius:14px 0 0 14px;box-shadow:-25px 0 65px #0009;transform:translateX(105%);visibility:hidden;pointer-events:none;transition:transform .24s ease,visibility .24s}
+html[data-ui-style="cinema"][data-theme-channel-drawer="open"] #page-tv .channel-panel{transform:translateX(0);visibility:visible;pointer-events:auto}
+html[data-ui-style="cinema"] #themeChannelScrim:not([hidden]){display:block;position:fixed;inset:61px 0 44px;background:#0009;z-index:109}
+/* Glassmorphism: the three distinct functional zones in the supplied mockup. */
+html[data-ui-style="glass"]{--ui-navigation:#0b1732bb;--ui-card:#102b50a8;--ui-primary:#78a9ff;--ui-selection:#1c65b266;--ui-stroke:#c6c9ff36;--ui-gap:11px}
+html[data-ui-style="glass"] .sidebar{width:100%!important;height:56px!important;min-height:56px!important;flex-direction:row;align-items:center;overflow-x:auto;overflow-y:hidden;padding:5px 12px!important;border-right:0;border-bottom:1px solid #ffffff36;gap:2px}
+html[data-ui-style="glass"] .sidebar .brand{flex:none;padding:0 14px 0 0}
+html[data-ui-style="glass"] .sidebar .brand b{font-size:13px}
+html[data-ui-style="glass"] .sidebar .brand-icon{width:28px;height:28px}
+html[data-ui-style="glass"] .sidebar .aside-caption,html[data-ui-style="glass"] .sidebar-bottom{display:none}
+html[data-ui-style="glass"] .sidebar .nav{flex:none;min-height:34px!important;height:34px!important;white-space:nowrap;font-size:11px;border-radius:18px!important;padding:6px 10px}
+html[data-ui-style="glass"] .sidebar .nav span{display:none}
+html[data-ui-style="glass"] .app-shell{flex-direction:column;background:radial-gradient(ellipse at 80% 0%,#58328c 0,transparent 42%),radial-gradient(ellipse at 12% 90%,#04749b 0,transparent 50%),#091d3c!important}
+html[data-ui-style="glass"] .topbar{display:none!important}
+html[data-ui-style="glass"] .content{padding:12px 15px!important;background:transparent!important}
+html[data-ui-style="glass"] #page-tv .tv-layout{display:grid!important;grid-template-columns:minmax(185px,23%) minmax(0,1fr) minmax(195px,23%);grid-template-areas:"channels video guide" "channels time guide" "channels tools guide";gap:11px!important;align-items:start;min-height:0;height:auto}
+html[data-ui-style="glass"] #page-tv .channel-panel{grid-area:channels;max-height:calc(100vh - 130px);min-height:300px;backdrop-filter:blur(15px) saturate(1.6);background:linear-gradient(145deg,#ffffff21,#ffffff08)!important}
+html[data-ui-style="glass"] #page-tv .player-box{border:1px solid #fff5!important;box-shadow:0 14px 40px #00153688!important}
+html[data-ui-style="glass"] #page-tv .theme-guide-panel{background:linear-gradient(155deg,#ffffff25,#ffffff09)!important;backdrop-filter:blur(18px);border-color:#ffffff4a!important}
+html[data-ui-style="glass"] #page-tv .theme-guide-current{background:#8e4cda70}
+html[data-ui-style="glass"] #page-tv .theme-guide-next{background:#6576c048}
+html[data-ui-style="glass"] #page-tv .theme-guide-open{background:#ffffff17;color:#fff}
+html[data-ui-style="glass"] #page-tv .filter-tabs{display:grid;grid-template-columns:1fr 1fr;gap:5px}
+html[data-ui-style="glass"] #page-tv .filter-tab{justify-content:flex-start;text-align:left;background:#ffffff0d!important;color:#e0edff!important}
+html[data-ui-style="glass"] #page-tv .channel-item{background:#ffffff0b;border-bottom:1px solid #ffffff18;margin:3px 0;border-radius:7px!important}
+/* Broadcast and Bento are control rooms, not a copy of the default two-column app. */
+html[data-ui-style="broadcast"] #page-tv .tv-layout{display:grid!important;grid-template-columns:minmax(195px,24%) minmax(0,1fr) minmax(185px,22%);grid-template-areas:"channels video guide" "channels strip guide" "channels time time" "channels tools tools";gap:10px!important;height:auto;min-height:0}
+html[data-ui-style="broadcast"] #page-tv .channel-panel{grid-area:channels;max-height:calc(100vh - 170px)}
+html[data-ui-style="broadcast"] #page-tv .theme-channel-strip{display:block;grid-area:strip;min-width:0}
+html[data-ui-style="broadcast"] #page-tv .theme-channel-tile{flex-basis:125px;border-color:#235e42}
+html[data-ui-style="broadcast"] #page-tv .theme-guide-panel{background:#0b1d15}
+html[data-ui-style="broadcast"] #page-tv .theme-guide-current{background:#0f3826}
+html[data-ui-style="bento"] #page-tv .tv-layout{grid-template-columns:minmax(200px,28%) minmax(0,1fr);gap:13px!important;height:auto;min-height:0}
+html[data-ui-style="bento"] #page-tv .watch-panel{display:flex}
+html[data-ui-style="bento"] #page-tv .theme-channel-strip{display:block;grid-column:1/-1;grid-row:2;background:#fff!important;border:1px solid #e9e3dd;border-radius:16px;padding:14px}
+html[data-ui-style="bento"] #page-tv .theme-channel-tile{background:#fff;border-color:#eee6db}
+html[data-ui-style="bento"] #page-tv .theme-strip-header{color:#251e17}
+html[data-ui-style="bento"] #page-tv .theme-strip-actions button{background:#fff;color:#382c1a}
+/* Custom color is authoritative, including when changing theme AFTER selecting a hue. */
+html[data-custom-accent="true"]:not([data-ui-style="current"]) :is(.nav.active,.filter-tab.active,.channel-item.current){background:color-mix(in srgb,var(--ui-primary) 25%,var(--ui-card))!important;border-color:color-mix(in srgb,var(--ui-primary) 55%,var(--ui-stroke))!important}
+html[data-custom-accent="true"]:not([data-ui-style="current"]) .nav.active span,
+html[data-custom-accent="true"]:not([data-ui-style="current"]) :is(.channel-health.alive,.playing-info b){color:var(--ui-primary)!important}
+html[data-custom-accent="true"]:not([data-ui-style="current"]) :is(.btn-primary,.control-main,.progress-bar,.task-meter){background:var(--ui-primary)!important;color:var(--ui-on-primary)!important;border-color:var(--ui-primary)!important}
+html[data-custom-accent="true"] #page-tv .theme-guide-current{border-left:3px solid var(--ui-primary)}
+html[data-custom-accent="true"] #page-tv .theme-channel-tile:hover{border-color:var(--ui-primary)!important}
+/* Fix the inner wheel color from old inset-box-shadow painting over the gradient. */
+#colorWheel #wheelHole{box-shadow:0 0 0 5px #101923!important;pointer-events:none}
+/* Keyboard and small displays. Responsive isn't a truncated desktop screenshot. */
+@media(max-width:1180px){
+ html[data-ui-style="glass"] #page-tv .tv-layout{grid-template-columns:190px minmax(0,1fr);grid-template-areas:"channels video" "channels guide" "channels time" "channels tools"}
+ html[data-ui-style="glass"] #page-tv .theme-guide-panel{padding:12px}
+ html[data-ui-style="broadcast"] #page-tv .tv-layout{grid-template-columns:180px minmax(0,1fr);grid-template-areas:"channels video" "channels guide" "channels strip" "channels time" "channels tools"}
+ html[data-ui-style="cinema"] #page-tv .tv-layout{grid-template-columns:minmax(0,1fr) minmax(185px,29%)}
+}
+@media(max-width:760px){
+ html[data-ui-style="cinema"] #page-tv .tv-layout{grid-template-columns:1fr;grid-template-areas:"video" "guide" "strip" "time" "tools"}
+ html[data-ui-style="glass"] #page-tv .tv-layout,html[data-ui-style="broadcast"] #page-tv .tv-layout{display:flex!important;flex-direction:column}
+ html[data-ui-style="glass"] #page-tv .channel-panel,html[data-ui-style="broadcast"] #page-tv .channel-panel{width:100%;max-height:270px;min-height:180px}
+ html[data-ui-style="glass"] #page-tv .player-box,html[data-ui-style="broadcast"] #page-tv .player-box{width:100%}
+ html[data-ui-style="cinema"] #page-tv .player-box{min-height:220px}
+}
+@media(prefers-reduced-motion:reduce){#page-tv .theme-channel-tile{transition:none!important}}
+
+/* Studio 2×2 screenshot rack + one genuine active video; still images are not
+   presented as four additional live streams. The separate MultiView page has those. */
+html[data-ui-style="broadcast"] #page-tv .tv-layout{
+ grid-template-areas:"channels strip guide" "channels video guide" "channels time guide" "channels tools tools";
+ grid-template-rows:auto auto auto auto
+}
+html[data-ui-style="broadcast"] #page-tv .theme-strip-header strong::after{content:" · Ảnh chụp gần nhất";color:var(--muted);font-weight:450}
+html[data-ui-style="broadcast"] #page-tv .theme-strip-items{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-auto-rows:auto;max-height:220px;overflow:hidden;scroll-snap-type:none}
+html[data-ui-style="broadcast"] #page-tv .theme-channel-tile{width:100%;max-width:none;flex-basis:auto;background:#111e18!important}
+html[data-ui-style="broadcast"] #page-tv .theme-channel-tile:nth-child(n+5){display:none}
+html[data-ui-style="broadcast"] #page-tv .player-box{max-height:340px}
+html[data-ui-style="broadcast"] #page-tv #themeAllChannels,html[data-ui-style="broadcast"] #page-tv #themeStripPrev,html[data-ui-style="broadcast"] #page-tv #themeStripNext{display:none}
+/* Bento: welcome dashboard, shortcut-colored tiles above the player rather than
+   an unreachable channel strip below an oversized TV panel. */
+html[data-ui-style="bento"] #page-tv .tv-layout{display:grid;grid-template-columns:minmax(195px,26%) minmax(0,1fr);grid-template-areas:"strip strip" "channels video";grid-template-rows:auto minmax(0,1fr);align-items:start}
+html[data-ui-style="bento"] #page-tv .channel-panel{grid-area:channels;max-height:calc(100vh - 300px)}
+html[data-ui-style="bento"] #page-tv .watch-panel{grid-area:video}
+html[data-ui-style="bento"] #page-tv .theme-channel-strip{grid-area:strip;grid-column:1/-1;grid-row:1;background:#fffdf9!important;position:relative}
+html[data-ui-style="bento"] #page-tv .theme-channel-strip::before{content:"CHÀO MỪNG ĐẾN VỚI  OPEN IPTV PRO";display:flex;align-items:center;background:linear-gradient(100deg,#ed8332,#ffc874);min-height:50px;color:white;border-radius:10px;margin-bottom:12px;padding:12px 18px;font-weight:850;letter-spacing:.03em}
+html[data-ui-style="bento"] #page-tv .theme-strip-items{overflow-x:auto;max-height:105px}
+html[data-ui-style="bento"] #page-tv .theme-channel-tile{flex-basis:125px;padding:3px}
+html[data-ui-style="bento"] #page-tv .theme-tile-art{aspect-ratio:16/7}
+html[data-ui-style="bento"] #page-tv .watch-panel::before{display:none}
+html[data-ui-style="bento"] #page-tv .player-box{max-height:380px;min-height:170px}
+html[data-ui-style="bento"] #page-tv #themeAllChannels{display:none}
+/* Swiss layout uses editorial typography and a clear LIVE TV rail. */
+html[data-ui-style="swiss"] #page-tv .channel-panel::before{content:"LIVE\A TV";white-space:pre;font-size:clamp(32px,4vw,57px);letter-spacing:-.07em;font-weight:950;line-height:.85;padding:12px 11px;color:#141414;border-bottom:5px solid var(--ui-primary)}
+html[data-ui-style="swiss"] #page-tv .channel-panel .panel-header h2{font-size:12px;text-transform:uppercase}
+html[data-ui-style="swiss"] #page-tv .player-control-card{background:#fff!important;border-top:3px solid var(--ui-primary)!important}
+html[data-ui-style="swiss"] #page-tv .epg-current-card{background:#fff!important;border-radius:0!important;border-left:3px solid var(--ui-primary)!important}
+/* Text entered into glass inputs is readable, even when inactive. */
+html[data-ui-style="glass"] #page-tv .filter-box input::placeholder{color:#cde0ff!important;opacity:.75}
+@media(max-width:1180px){
+ html[data-ui-style="broadcast"] #page-tv .tv-layout{grid-template-areas:"channels strip" "channels video" "channels guide" "channels time" "channels tools";grid-template-rows:auto}
+ html[data-ui-style="broadcast"] #page-tv .theme-strip-items{max-height:185px}
+ html[data-ui-style="bento"] #page-tv .theme-channel-strip::before{min-height:42px;padding:10px}
+}
+@media(max-width:760px){html[data-ui-style="bento"] #page-tv .tv-layout{display:flex;flex-direction:column}html[data-ui-style="bento"] #page-tv .theme-channel-strip{width:100%}}

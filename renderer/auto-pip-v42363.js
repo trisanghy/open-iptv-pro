@@ -13,6 +13,23 @@
  });
  function createController({video,doc,storage,getPage,notify=()=>{}}){
   let pending=null,sequence=0,reason='';
+  // Keep the original player/decoder. Only its already-decoded frames are
+  // mirrored into native PiP when on-video CC is enabled.
+  const compositor=doc.defaultView?.OpenIPTVCCPiPCompositor?.createController?.({
+   video,doc,getState:()=>doc.defaultView?.OpenIPTVCaptionSurface?.getPiPState?.(),
+   onPiPEvent:type=>{
+    if(type==='leave'){
+     reason='';
+     // Native "Return to app" closes the PiP window by itself.
+     // Release mirrored capture so no hidden video/timer remains.
+     compositor?.stop?.();
+    }
+   }
+  });
+  const captionsRequested=()=>!!(
+   doc.getElementById?.('liveCaptionToggle')?.checked||
+   doc.getElementById?.('liveTranslateToggle')?.checked)&&
+   doc.getElementById?.('subtitleShow')?.checked!==false;
   const enabled=type=>{
    try{
     const saved=storage?.getItem(KEYS[type]);
@@ -23,13 +40,16 @@
    if(!Object.hasOwn(KEYS,type))throw Error('Unknown PiP setting');
    storage?.setItem(KEYS[type],String(!!value));
   };
-  const inPiP=()=>!!video&&(doc.pictureInPictureElement===video||
+  const inPiP=()=>!!video&&(!!doc.pictureInPictureElement||
    video.webkitPresentationMode==='picture-in-picture');
   const eligible=()=>!!video&&video.readyState>=2&&!video.paused&&!video.ended;
   function nativeExit(){
    if(!inPiP())return Promise.resolve(false);
    try{
-    if(doc.pictureInPictureElement===video&&typeof doc.exitPictureInPicture==='function')
+    // The native PiP element may be a canvas mirror whose readyState is
+    // no longer usable. Exit the actual PiP window regardless of element.
+    if(doc.pictureInPictureElement&&
+       typeof doc.exitPictureInPicture==='function')
      return Promise.resolve(doc.exitPictureInPicture()).then(()=>true);
     if(typeof video.webkitSetPresentationMode==='function'){
      video.webkitSetPresentationMode('inline');return Promise.resolve(true);
@@ -42,18 +62,32 @@
    if(inPiP())return Promise.resolve(true);
    if(pending)return pending;
    const ticket=++sequence;
-   let result;
+   let result,pipVideo=video;
    try{
     // Synchronous invocation preserves user gesture for sidebar/manual button;
     // native minimize/blur invokes this via executeJavaScript(userGesture=true).
-    if(doc.pictureInPictureEnabled&&typeof video.requestPictureInPicture==='function')
-     result=video.requestPictureInPicture();
+    if(captionsRequested())compositor?.prepare?.();
+    pipVideo=captionsRequested()?compositor?.getVideo?.()||video:video;
+    if(captionsRequested()&&pipVideo===video&&!quiet)
+     notify('CC chưa thể ghép vào PiP của luồng này; đang dùng PiP gốc.','warn');
+    if(doc.pictureInPictureEnabled&&typeof pipVideo.requestPictureInPicture==='function')
+     result=pipVideo.requestPictureInPicture();
     else if(typeof video.webkitSetPresentationMode==='function'){
      video.webkitSetPresentationMode('picture-in-picture');result=true;
     }else throw Error('Trình phát hiện tại không hỗ trợ PiP');
    }catch(error){
-    if(!quiet)notify('PiP: '+String(error.message||error),'warn');
-    return Promise.resolve(false);
+    if(pipVideo!==video&&doc.pictureInPictureEnabled&&
+       typeof video.requestPictureInPicture==='function'){
+     try{result=video.requestPictureInPicture();pipVideo=video;
+      if(!quiet)notify('CC không tương thích PiP hiện tại; đã chuyển sang PiP gốc.','warn');}
+     catch(fallbackError){
+      if(!quiet)notify('PiP: '+String(fallbackError.message||fallbackError),'warn');
+      return Promise.resolve(false);
+     }
+    }else{
+     if(!quiet)notify('PiP: '+String(error.message||error),'warn');
+     return Promise.resolve(false);
+    }
    }
    const job=Promise.resolve(result).then(async()=>{
     if(ticket!==sequence || (kind==='navigation'&&getPage()==='tv')){
@@ -62,7 +96,14 @@
     }
     reason=kind;
     return inPiP();
-   }).catch(error=>{
+   }).catch(async error=>{
+    if(pipVideo!==video&&ticket===sequence&&doc.pictureInPictureEnabled&&
+       typeof video.requestPictureInPicture==='function'){
+     try{await video.requestPictureInPicture();reason=kind;
+      if(!quiet)notify('CC không tương thích PiP hiện tại; đã chuyển sang PiP gốc.','warn');
+      return inPiP();}
+     catch(fallbackError){error=fallbackError;}
+    }
     if(!quiet)notify('PiP: '+String(error.message||error),'warn');
     return false;
    }).finally(()=>{if(pending===job)pending=null;});
@@ -70,10 +111,15 @@
    return job;
   }
   function exit({quiet=true}={}){
+   const hadPiP=inPiP()||!!pending;
    ++sequence;reason='';
    return nativeExit().catch(error=>{
     if(!quiet)notify('PiP: '+String(error.message||error),'warn');
     return false;
+   }).finally(()=>{
+    // Focus/TV events are frequent even without PiP. Avoid destroying
+    // a prewarmed CC mirror unless there was an actual PiP to close.
+    if(hadPiP)compositor?.stop?.();
    });
   }
   function manual(){
@@ -86,8 +132,9 @@
   }
   function onNativeEvent(type){
    if(type==='focus'){
-    // Only background-initiated PiP is dismissed on returning to TV.
-    if(getPage()==='tv'&&reason==='background')return exit();
+    // Returning to the main TV player must close ANY PiP, including
+    // manually opened, automatically opened and mirrored-caption PiP.
+    if(getPage()==='tv')return exit();
     return Promise.resolve(false);
    }
    if(type==='minimize'&&enabled('minimize'))return enter('background');
@@ -95,7 +142,33 @@
    return Promise.resolve(false);
   }
   video?.addEventListener?.('leavepictureinpicture',()=>{reason='';});
-  return Object.freeze({enter,exit,manual,onPageChange,onNativeEvent,
+  doc.addEventListener?.('fullscreenchange',()=>{
+   const fullscreen=doc.fullscreenElement;
+   if(fullscreen&&(fullscreen===video||fullscreen.contains?.(video))){
+    void exit();
+   }else if(!fullscreen&&captionsRequested()&&eligible()){
+    // The user can return from fullscreen and then open CC PiP again.
+    // Recreate the prewarmed mirror without waiting for a new play event.
+    compositor?.prepare?.();
+   }
+  });
+  const warmMirror=()=>{
+   if(captionsRequested()&&eligible())compositor?.prepare?.();
+   else if(!inPiP())compositor?.stop?.();
+  };
+  video?.addEventListener?.('playing',warmMirror);
+  video?.addEventListener?.('loadeddata',warmMirror);
+  for(const id of ['liveCaptionToggle','liveTranslateToggle','subtitleShow'])
+   doc.getElementById?.(id)?.addEventListener?.('change',warmMirror);
+  warmMirror();
+  const stopPlayback=()=>{
+   ++sequence;reason='';
+   // Invalidate pending PiP entry, close any floating window, then stop
+   // the canvas capture tracks/timer so video cannot keep rendering secretly.
+   return nativeExit().catch(()=>false).finally(()=>compositor?.stop?.());
+  };
+  const dispose=()=>stopPlayback();
+  return Object.freeze({enter,exit,manual,onPageChange,onNativeEvent,dispose,stopPlayback,
    getOption:enabled,setOption:saveOption,inPiP,hasPending:()=>!!pending});
  }
  function bootstrap(win){
@@ -114,6 +187,7 @@
     if(status)status.textContent='Đã lưu thiết lập PiP tự động.';
    });
   }
+  win.addEventListener?.('pagehide',()=>{void control.dispose();});
   win.OpenIPTVAutoPiP=control;
  }
  return {createController,bootstrap,KEYS};

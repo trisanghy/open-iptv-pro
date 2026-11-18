@@ -1,0 +1,90 @@
+/* v4.23.30 - zero-obstruction video surfaces and sidebar toggle adjacent to logo */
+/* A separate regular control panel for all presets, rather than controls on video. */
+#page-tv .player-control-card { position:relative!important; inset:auto!important; z-index:auto!important; flex:0 0 auto!important; min-width:0!important; max-width:100%!important; transform:none!important; }
+#page-tv .watch-panel { min-width:0!important; }
+#page-tv .player-box { isolation:isolate; }
+#page-tv .player-box > .player-control-card { display:none!important; } /* Guard against an older theme reparenting DOM. */
+#page-tv .player-control-card .controls { flex-wrap:wrap!important; gap:clamp(6px,.75vw,12px)!important; row-gap:8px!important; min-width:0!important; }
+#page-tv .player-control-card .view-mode {min-width:0; max-width:100%;}
+#page-tv .player-control-card .view-mode select {max-width:100%;}
+#page-tv .player-control-card .manual-link-picker { min-width:0!important; }
+#page-tv .player-control-card .manual-link-picker select { max-width:100%!important; }
+html:is([data-ui-style="cinema"],[data-ui-style="glass"],[data-ui-style="broadcast"]) #page-tv .player-control-card {
+ grid-area:controls!important; position:relative!important; inset:auto!important;
+ width:100%!important; height:auto!important; z-index:auto!important;
+ border-radius:var(--ui-radius,14px)!important;
+ background:var(--ui-card,#172030)!important; border:1px solid var(--ui-stroke,#354050)!important;
+ box-shadow:none!important; backdrop-filter:none!important; color:var(--text,#eaf2f7)!important;
+}
+html:is([data-ui-style="cinema"],[data-ui-style="glass"],[data-ui-style="broadcast"]) #page-tv .player-box { max-width:100%!important; min-width:0!important; overflow:hidden!important; }
+/* Horizontal-navigation presets: position ☰ immediately after logo, NOT at end/on top of a nav item. */
+html[data-sidebar-visible="true"]:is([data-ui-style="cinema"],[data-ui-style="glass"],[data-ui-style="swiss"]) #appSidebar > #sidebarToggleBtn {
+ position:relative!important;top:auto!important;left:auto!important;right:auto!important;bottom:auto!important;
+ transform:none!important;flex:0 0 42px!important;width:42px!important;height:42px!important;
+ margin:0 12px 0 0!important;order:0!important;align-self:center!important;
+}
+html[data-sidebar-visible="true"]:is([data-ui-style="cinema"],[data-ui-style="glass"],[data-ui-style="swiss"]) #appSidebar .brand {
+ flex:0 0 auto!important; min-width:0!important; padding-right:12px!important; padding-bottom:0!important; min-height:0!important;
+}
+html[data-sidebar-visible="true"]:is([data-ui-style="cinema"],[data-ui-style="glass"],[data-ui-style="swiss"]) #appSidebar .nav {flex:0 0 auto!important;}
+/* Fullscreen: video occupies its OWN zone above an auto-hiding bottom toolbar.
+   When the toolbar appears video is resized, never covered. */
+#playerBox:fullscreen {
+ --fullscreen-toolbar-height:clamp(64px,9vh,82px);
+ display:block!important; background:#000!important; border:0!important;
+ width:100vw!important;height:100vh!important;max-height:none!important;
+ min-height:0!important;aspect-ratio:auto!important;overflow:hidden!important;
+}
+#playerBox:fullscreen > video {
+ left:0!important;top:0!important;right:0!important;bottom:auto!important;
+ width:100%!important;height:calc(100% - var(--fullscreen-toolbar-height))!important;
+ max-height:none!important;object-fit:contain!important;transition:height .18s ease!important;
+}
+#playerBox:fullscreen > .fullscreen-ux {
+ position:absolute!important;left:0!important;right:0!important;top:auto!important;bottom:0!important;
+ width:100%!important;height:var(--fullscreen-toolbar-height)!important;min-height:0!important;
+ padding:8px clamp(12px,2vw,30px)!important;margin:0!important;border:0!important;
+ border-top:1px solid #ffffff2b!important;border-radius:0!important;background:#10151f!important;
+ box-shadow:none!important;backdrop-filter:none!important;transition:opacity .18s ease!important;
+}
+#playerBox:fullscreen.player-idle > .fullscreen-ux {opacity:0!important;visibility:hidden!important;pointer-events:none!important;transform:none!important;}
+#playerBox:fullscreen.player-idle > video {height:100%!important;}
+/* Fullscreen itself may be launched in any theme. Show only the ONE dedicated control strip. */
+#playerBox:fullscreen > .player-control-card {display:none!important;}
+#playerBox:fullscreen .empty-player {max-height:calc(100% - var(--fullscreen-toolbar-height))!important;}
+@media(max-width:720px){
+ #page-tv .player-control-card .controls {gap:7px!important;}
+ #playerBox:fullscreen .fullscreen-ux {gap:6px!important;padding-inline:10px!important;}
+ #playerBox:fullscreen .fullscreen-ux button {width:35px!important;height:35px!important;min-width:35px!important;}
+}
+/* Broadcast Studio historically redeclares its screenshot rack after base grid.
+   Its fifth row MUST include the control region, otherwise CSS creates a 4px
+   implicit grid column and the video effectively disappears. */
+html[data-ui-style="broadcast"] #page-tv .tv-layout {
+ grid-template-areas:
+  "channels strip guide"
+  "channels video guide"
+  "channels controls guide"
+  "channels time guide"
+  "channels tools tools"!important;
+ grid-template-rows:auto auto auto auto auto!important;
+}
+@media(max-width:1180px) and (min-width:761px){
+ html[data-ui-style="glass"] #page-tv .tv-layout {
+  grid-template-areas:"channels video" "channels controls" "channels guide" "channels time" "channels tools"!important;
+ }
+ html[data-ui-style="broadcast"] #page-tv .tv-layout {
+  grid-template-areas:"channels strip" "channels video" "channels controls" "channels guide" "channels time" "channels tools"!important;
+  grid-template-rows:auto auto auto auto auto auto!important;
+ }
+}
+@media(max-width:760px){
+ html[data-ui-style="cinema"] #page-tv .tv-layout {
+  grid-template-areas:"video" "controls" "guide" "strip" "time" "tools"!important;
+  grid-template-rows:auto!important;
+ }
+ html:is([data-ui-style="glass"],[data-ui-style="broadcast"]) #page-tv .tv-layout {display:flex!important;flex-direction:column!important;}
+ html:is([data-ui-style="glass"],[data-ui-style="broadcast"]) #page-tv :is(.channel-panel,.player-box,.player-control-card,.advanced-timebar,.theme-guide-panel,.compact-tools,.theme-channel-strip) {
+  width:100%!important;max-width:100%!important;flex:0 0 auto!important;
+ }
+}

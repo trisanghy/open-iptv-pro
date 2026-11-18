@@ -1,0 +1,14 @@
+/* GitHub Pages: preserve the two-row WebView player control layout. */
+.web-edition-tag{display:inline-flex;align-items:center;white-space:nowrap;padding:5px 9px;border-radius:8px;font-size:10px;font-weight:800;letter-spacing:.075em;color:#b8f7d5;background:#143c32;border:1px solid #246454}
+#castBtn,#tryFfmpegBtn,#dvrPanel,.dvr-quick-bar,#dvrQuickForm{display:none!important}
+#backupIncludeSnapshots{accent-color:var(--accent,#57dc68)}
+#backupStatus{min-height:2em;line-height:1.45}
+body .main{min-width:0}
+@media(max-width:920px){.web-edition-tag{display:none}.topbar .top-actions{gap:6px}}
+
+/* Hide the obsolete three-dots player menu on the Web edition.
+   Keep internal shot/FFmpeg elements mounted so existing event bindings remain safe. */
+#page-tv .player-control-card .output-controls > .playback-extra {
+  display:none!important;
+  visibility:hidden!important;
+}

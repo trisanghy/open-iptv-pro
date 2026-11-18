@@ -1,0 +1,227 @@
+name: Publish Open IPTV Pro v4.23.68 — Electron, Rust Lab, Web
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/publish-portfolio-v42368.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: publish-main-v42368
+  cancel-in-progress: false
+
+jobs:
+  regression:
+    name: Verify Electron source and complete test suite
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify exact promoted source and docs
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          test "$(node -p 'require("./package.json").version')" = '4.23.68'
+          test "$(node -p 'require("./rust-lab/package.json").version')" = '4.23.17-tauri.23.8.26'
+          for f in renderer/index.html renderer/tv-guide-panel-toggle-v42368.js renderer/channel-art-v42368.js renderer/ai-toggle-persistence-v42368.js src/main.cjs RELEASE_NOTES_V4_23_68.md docs/INSTALL_V4_23_68.md docs/COMPARE_EDITIONS_V4_23_68.md docs/RELEASE_SOURCE_MAP_V4_23_68.md web/index.html web/cloud-sync.js rust-lab/src-tauri/Cargo.toml; do
+            test -s "$f"
+          done
+          node --check src/main.cjs
+          node --check renderer/app.js
+          node --check renderer/tv-guide-panel-toggle-v42368.js
+          node --check renderer/channel-art-v42368.js
+      - name: Install dependencies and run full desktop regression
+        run: |
+          npm install --no-audit --no-fund
+          npm test
+
+  web:
+    name: Verify browser-ready Web Online snapshot
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validate self-contained website and source
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          for f in web/index.html web/web-only.js web/web-only.css web/hls.min.js web/dash.all.min.js web/supabase-sdk.js web/cloud-sync.js web/cloud-config.json web/web-autoplay.js web/web-volume.js web/web-online/prepare-web.py; do test -s "$f"; done
+          node --check web/app.js
+          node --check web/cloud-sync.js
+          node --check web/cloud-core.js
+          node --check web/web-autoplay.js
+          node --check web/web-volume.js
+          grep -Fq 'cloudSyncCard' web/index.html
+          grep -Fq 'id="video"' web/index.html
+          echo 'Web source and published static runtime verified'
+
+  rust:
+    name: Check official Rust Lab v23.8.26 assets and SHA-256
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify Rust snapshot manifest and exact version
+        run: |
+          test "$(node -p 'require("./rust-lab/package.json").version')" = '4.23.17-tauri.23.8.26'
+          test -s rust-lab/RELEASE_NOTES_RUST_LAB_V23_8_26.md
+          test -s rust-lab/src-tauri/Cargo.toml
+      - name: Fetch immutable Rust Lab release and validate every checksum
+        env:
+          GH_TOKEN: ${{ github.token }
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          mkdir -p rust-assets
+          gh release download 'rust-lab/v23.8.26' --repo "$GITHUB_REPOSITORY" --dir rust-assets
+          for f in OpenIPTVPro-RustLab-v23.8.26-mac-universal.dmg OpenIPTVPro-RustLab-v23.8.26-Windows-Setup-x64.exe OpenIPTVPro-RustLab-v23.8.26-Windows-Portable-x64.zip OpenIPTVPro-RustLab-v23.8.26-Source.zip SHA256SUMS.txt SHA256SUMS-macOS.txt; do test -s "rust-assets/$f"; done
+          (cd rust-assets && sha256sum -c SHA256SUMS.txt && sha256sum -c SHA256SUMS-macOS.txt)
+
+  electron:
+    name: Native Electron installer ${{ matrix.label }
+    needs: regression
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - {runner: macos-15, platform: mac, arch: arm64, label: mac-arm64}
+          - {runner: macos-15-intel, platform: mac, arch: x64, label: mac-intel}
+          - {runner: windows-2022, platform: win, arch: x64, label: windows-x64}
+    runs-on: ${{ matrix.runner }
+    timeout-minutes: 85
+    env:
+      CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install native dependencies for this architecture
+        shell: bash
+        run: npm install --no-audit --no-fund
+      - name: Compile actual installer files
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          npx electron-builder --${{ matrix.platform } --${{ matrix.arch } --publish never
+          if [[ '${{ matrix.platform }' == mac ]]; then
+            test -s "dist/Open-IPTV-Pro-4.23.68-mac-${{ matrix.arch }.dmg"
+            if [[ '${{ matrix.arch }' == arm64 ]]; then
+              APP='dist/mac-arm64/Open IPTV Pro.app'
+              lipo "$APP/Contents/MacOS/Open IPTV Pro" -verify_arch arm64
+            else
+              APP='dist/mac/Open IPTV Pro.app'
+              lipo "$APP/Contents/MacOS/Open IPTV Pro" -verify_arch x86_64
+            fi
+            test -s "$APP/Contents/Resources/app.asar"
+          else
+            test -s dist/Open-IPTV-Pro-Setup-4.23.68-x64.exe
+            test -s dist/Open-IPTV-Pro-4.23.68-x64.exe
+          fi
+      - uses: actions/upload-artifact@v4
+        with:
+          name: electron-v42368-${{ matrix.label }
+          path: |
+            dist/*.dmg
+            dist/*.exe
+          if-no-files-found: error
+          retention-days: 14
+
+  publish:
+    name: Publish immutable stable v4.23.68 with all 3 codebases
+    needs: [regression, web, rust, electron]
+    runs-on: ubuntu-latest
+    timeout-minutes: 55
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: electron-v42368-*
+          path: release-stage
+          merge-multiple: true
+      - name: Download Rust Lab artifacts from the verified immutable release
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }
+        run: |
+          set -Eeuo pipefail
+          mkdir -p rust-upstream
+          gh release download 'rust-lab/v23.8.26' --repo "$GITHUB_REPOSITORY" --dir rust-upstream
+          (cd rust-upstream && sha256sum -c SHA256SUMS.txt && sha256sum -c SHA256SUMS-macOS.txt)
+          for f in OpenIPTVPro-RustLab-v23.8.26-mac-universal.dmg OpenIPTVPro-RustLab-v23.8.26-Windows-Setup-x64.exe OpenIPTVPro-RustLab-v23.8.26-Windows-Portable-x64.zip OpenIPTVPro-RustLab-v23.8.26-Source.zip; do
+            test -s "rust-upstream/$f"
+            cp "rust-upstream/$f" "release-stage/$f"
+          done
+          cp rust-upstream/SHA256SUMS.txt release-stage/SHA256SUMS_RUSTLAB_WINDOWS_v23.8.26.txt
+          cp rust-upstream/SHA256SUMS-macOS.txt release-stage/SHA256SUMS_RUSTLAB_MAC_v23.8.26.txt
+      - name: Build website and complete-source archives with user docs
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          test -s web/index.html
+          test -s rust-lab/src-tauri/Cargo.toml
+          test -s renderer/index.html
+          zip -qr release-stage/OpenIPTVPro_Web_Online_2026-11-18.zip web
+          git archive --format=zip --output=release-stage/OpenIPTVPro_Full_Source_v4.23.68.zip HEAD
+          for f in RELEASE_NOTES_V4_23_68.md docs/INSTALL_V4_23_68.md docs/COMPARE_EDITIONS_V4_23_68.md docs/RELEASE_SOURCE_MAP_V4_23_68.md; do
+            cp "$f" "release-stage/$(basename "$f")"
+          done
+          for f in Open-IPTV-Pro-4.23.68-mac-arm64.dmg Open-IPTV-Pro-4.23.68-mac-x64.dmg Open-IPTV-Pro-Setup-4.23.68-x64.exe Open-IPTV-Pro-4.23.68-x64.exe OpenIPTVPro-RustLab-v23.8.26-mac-universal.dmg OpenIPTVPro-RustLab-v23.8.26-Windows-Setup-x64.exe OpenIPTVPro-RustLab-v23.8.26-Windows-Portable-x64.zip OpenIPTVPro-RustLab-v23.8.26-Source.zip OpenIPTVPro_Web_Online_2026-11-18.zip OpenIPTVPro_Full_Source_v4.23.68.zip RELEASE_NOTES_V4_23_68.md INSTALL_V4_23_68.md COMPARE_EDITIONS_V4_23_68.md RELEASE_SOURCE_MAP_V4_23_68.md; do
+            test -s "release-stage/$f"
+          done
+          (cd release-stage && sha256sum *.dmg *.exe *.zip *.md SHA256SUMS_RUSTLAB_*.txt > SHA256SUMS.txt)
+          (cd release-stage && sha256sum -c SHA256SUMS.txt)
+          unzip -tqq release-stage/OpenIPTVPro_Full_Source_v4.23.68.zip
+          unzip -p release-stage/OpenIPTVPro_Full_Source_v4.23.68.zip rust-lab/package.json >/dev/null
+          unzip -p release-stage/OpenIPTVPro_Full_Source_v4.23.68.zip web/index.html >/dev/null
+          unzip -p release-stage/OpenIPTVPro_Full_Source_v4.23.68.zip renderer/tv-guide-panel-toggle-v42368.js >/dev/null
+          ls -lh release-stage
+      - name: Publish a NEW stable release; never overwrite existing releases/tags
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }
+        run: |
+          set -Eeuo pipefail
+          TAG='v4.23.68'
+          test "$(node -p 'require("./package.json").version')" = 4.23.68
+          if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "::error::Existing release $TAG. Refusing to overwrite assets."; exit 1
+          fi
+          if git ls-remote --tags origin "refs/tags/$TAG" | grep -q .; then
+            echo "::error::Existing tag $TAG. Refusing to rewrite history."; exit 1
+          fi
+          gh release create "$TAG" release-stage/* \
+            --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" \
+            --title 'Open IPTV Pro v4.23.68 Stable — Electron Desktop | Web Online | Rust Lab v23.8.26 Beta' \
+            --notes-file RELEASE_NOTES_V4_23_68.md --latest
+      - name: Verify published assets and release properties
+        env:
+          GH_TOKEN: ${{ github.token }
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          test "$(gh release view v4.23.68 --repo "$GITHUB_REPOSITORY" --json isDraft --jq '.isDraft')" = false
+          test "$(gh release view v4.23.68 --repo "$GITHUB_REPOSITORY" --json isPrerelease --jq '.isPrerelease')" = false
+          names="$(gh release view v4.23.68 --repo "$GITHUB_REPOSITORY" --json assets --jq '.assets[].name')"
+          for f in Open-IPTV-Pro-4.23.68-mac-arm64.dmg Open-IPTV-Pro-4.23.68-mac-x64.dmg Open-IPTV-Pro-Setup-4.23.68-x64.exe Open-IPTV-Pro-4.23.68-x64.exe OpenIPTVPro-RustLab-v23.8.26-mac-universal.dmg OpenIPTVPro-RustLab-v23.8.26-Windows-Setup-x64.exe OpenIPTVPro-RustLab-v23.8.26-Windows-Portable-x64.zip OpenIPTVPro-RustLab-v23.8.26-Source.zip OpenIPTVPro_Web_Online_2026-11-18.zip OpenIPTVPro_Full_Source_v4.23.68.zip RELEASE_NOTES_V4_23_68.md INSTALL_V4_23_68.md COMPARE_EDITIONS_V4_23_68.md RELEASE_SOURCE_MAP_V4_23_68.md SHA256SUMS.txt; do
+            echo "$names" | grep -Fxq "$f" || { echo "::error::Missing uploaded $f"; exit 1; }
+          done
+          echo 'Stable release has all requested verified installers, source, website, notes and checksums.'

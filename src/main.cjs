@@ -391,7 +391,7 @@ function setupIPC(){
  ipcMain.handle('system:openVLC',()=>shell.openExternal('https://www.videolan.org/vlc/'));
 }
 function createWindow(){
- webWindow=new BrowserWindow({width:1360,height:850,minWidth:980,minHeight:640,backgroundColor:nativeTheme.shouldUseDarkColors?'#080e15':'#f3f6fb',title:`Open IPTV Pro ${app.getVersion()}`,icon:path.join(__dirname,'../assets/icon.png'),webPreferences:{preload:path.join(__dirname,'preload.cjs'),sandbox:true,contextIsolation:true,nodeIntegration:false,webSecurity:true}});
+ webWindow=new BrowserWindow({width:1360,height:850,minWidth:980,minHeight:640,backgroundColor:nativeTheme.shouldUseDarkColors?'#080e15':'#f3f6fb',title:`Open IPTV Pro ${app.getVersion()}`,icon:path.join(__dirname,'../assets/icon.png'),webPreferences:{preload:path.join(__dirname,'preload.cjs'),sandbox:true,contextIsolation:true,nodeIntegration:false,webSecurity:true,backgroundThrottling:false}});
  webWindow.loadFile(path.join(__dirname,'../renderer/index.html'));
  webWindow.webContents.setWindowOpenHandler(()=>({action:'deny'}));
  const appEntry=pathToFileURL(path.join(__dirname,'../renderer/index.html')).href;

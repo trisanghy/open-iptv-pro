@@ -93,8 +93,8 @@ test('v4.23.67: actual Electron UI waits for natural ended, TTS never restores t
  assert.match(ui,/speechQueue\.enqueue\(payload\)/);
  assert.match(ui,/speechQueue\.setEnabled\(enabled\)/);
  assert.match(ui,/if\(!e\.translated\)return/);
- assert.match(ui,/maxPendingAgeMs:18000/);
- assert.match(ui,/maxSynthAgeMs:25000/);
+ assert.match(ui,/maxPendingAgeMs:5000/);
+ assert.match(ui,/maxSynthAgeMs:7000/);
  assert.match(ui,/applyDuck\(\)/);
  assert.match(ui,/applySpeechRate\(audio\)/);
  assert.doesNotMatch(ui,/resetPlayback\(false\)/);
@@ -105,6 +105,6 @@ test('v4.23.67: actual Electron UI waits for natural ended, TTS never restores t
   html.indexOf('src="local-tts-v42344.js"'));
  assert.match(read('renderer/video-only-translated-caption-v42358.css'),/#liveCaptionOutput/);
  const pkg=JSON.parse(read('package.json'));
- assert.equal(pkg.version,'4.23.67');
+ assert.equal(pkg.version,'4.23.68');
  assert.deepEqual(pkg.build.mac.target,['dmg']);
 });

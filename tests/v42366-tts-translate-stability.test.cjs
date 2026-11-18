@@ -146,8 +146,8 @@ test('4.23.66: updated UI wires cancel, locale changes, preview and compact line
  assert.match(ui,/resetForModelChange/);
  assert.match(ui,/openiptv:ai-translate-settings-changed/);
  assert.match(ui,/previewCoordinator\.run/);
- assert.match(ui,/maxPendingAgeMs:18000/);
- assert.match(ui,/maxSynthAgeMs:25000/);
+ assert.match(ui,/maxPendingAgeMs:5000/);
+ assert.match(ui,/maxSynthAgeMs:7000/);
  assert.match(ui,/speechQueue\.enqueue\(payload\)/);
  assert.match(ui,/cancelSynthesis:\(\)=>api\.ttsStop/);
  assert.match(html,/class="caption-ai-main"/);
@@ -156,7 +156,7 @@ test('4.23.66: updated UI wires cancel, locale changes, preview and compact line
   html.indexOf('local-tts-v42344.js'));
  assert.match(css,/#liveTtsVoice/);
  assert.match(css,/#liveCaptionStatus/);
- assert.equal(require('../package.json').version,'4.23.67');
+ assert.equal(require('../package.json').version,'4.23.68');
 });
 
 

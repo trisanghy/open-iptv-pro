@@ -1,3 +1,35 @@
+# Open IPTV Pro v4.23.68 — Electron Desktop, Web Online, Rust Lab
+
+**Tổng hợp phát hành ngày 18/11/2026.** main chứa Electron 4.23.68 ở gốc, bản sao đầy đủ của Rust Lab 23.8.26 (Beta) tại rust-lab/ và Web Online tại web/. Các nhánh phát triển gốc và Release cũ không bị xóa hoặc force-update.
+
+| Phiên bản | Nền tảng | Liên kết |
+| --- | --- | --- |
+| Electron Desktop 4.23.68 — bản chính | macOS ARM64 / Intel, Windows x64 | [Release và installer](https://github.com/trisanghy/open-iptv-pro/releases/tag/v4.23.68) |
+| Rust Lab 23.8.26 — Beta độc lập | macOS Universal, Windows x64 | [Release Rust Lab](https://github.com/trisanghy/open-iptv-pro/releases/tag/rust-lab/v23.8.26) · [mã nguồn tại main](rust-lab/) |
+| Web Online | Trình duyệt | [Mở trang Web](https://trisanghy.github.io/open-iptv-pro/) · [mã nguồn Web tại main](web/) |
+
+**Chỉ coi bộ cài là đã phát hành khi Release đã xuất hiện đủ file và SHA-256 sau khi GitHub Actions hoàn thành.** Rust Lab vẫn là Beta, không cài đè lên ứng dụng Electron.
+
+Tài liệu: [Nhật ký thay đổi](RELEASE_NOTES_V4_23_68.md) · [Tính năng và giới hạn](docs/COMPARE_EDITIONS_V4_23_68.md) · [Hướng dẫn cài đặt](docs/INSTALL_V4_23_68.md) · [Bản đồ nguồn và commit](docs/RELEASE_SOURCE_MAP_V4_23_68.md).
+
+**Electron nổi bật:** M3U, EPG/XMLTV, link dự phòng, Timeshift/DVR, FFmpeg, snapshot, MultiView, Cast/AirPlay theo khả năng thiết bị; CC/Live Translate/TTS offline, lưu ba công tắc AI, CC nhiều dòng trong fullscreen/PiP khi cho phép; tạm dừng giữ hình, dừng hẳn ngắt stream, PiP tự đóng khi quay về video; 11 kiểu giao diện và panel Kênh hiện tại có thể ẩn/hiện.
+
+**Rust Lab mới:** v23.8.26 cải thiện responsive thực tế trên cửa sổ Mac nhỏ, giữ Công cụ nhanh luôn mở và ba hộp chọn 1–32; vẫn là Tauri 2 thử nghiệm.
+
+**Web:** Bản đang triển khai từ nhánh web/online, gồm trình phát web, EPG, Cloud Sync Supabase khi cấu hình và điều khiển âm lượng/autoplay. Trình duyệt có giới hạn riêng về CORS, codec, autoplay.
+
+**Lệnh build Mac Electron** (một file .app, không cần tải source):
+
+    bash -c 'set -o pipefail; curl -fsSL https://raw.githubusercontent.com/trisanghy/open-iptv-pro/build-sources/electron-desktop/build-mac-electron.sh | bash'
+
+**Lệnh build Mac Rust Lab** (một file .app, không cần tải source):
+
+    bash -c 'set -o pipefail; curl -fsSL https://raw.githubusercontent.com/trisanghy/open-iptv-pro/experiment/rust-tauri-v2/scripts/BUILD_RUSTLAB_MAC_ONE_ZIP_FAST.sh | bash'
+
+---
+
+## Tài liệu phiên bản v4.23.67 và trước đó
+
 # Open IPTV Pro — v4.23.67
 
 **Trình phát IPTV mã nguồn mở cho macOS, Windows và Web.** Chọn đúng phiên bản tùy thiết bị; Rust Lab là nhánh thử nghiệm độc lập.

@@ -36,12 +36,17 @@
   return /^https?:\/\//i.test(url)?url:'';
  };
  const videoCaptions=window.OpenIPTVVideoCaptions?.createVideoCaptionRenderer?.({video,doc:document});
- const outputWords=(txt,target,translated)=>{
+ // Read-only CC snapshot; PiP mirrors pixels without touching Whisper/TTS.
+ if(videoCaptions?.getPiPState)window.OpenIPTVCaptionSurface=videoCaptions;
+ const ccPreferences=window.OpenIPTVSubtitlePreferences?.attach?.({doc:document,storage:localStorage,renderer:videoCaptions});
+ videoCaptions?.setOriginalVisible?.(caption.checked);
+ const mediaActive=()=>!video.paused&&!video.ended&&video.readyState>=2&&!!selectedUrl();
+ const outputWords=(txt,target,translated,sourceText='')=>{
   const text=String(txt||'').trim();
   if(!text)return;
   out.hidden=true;out.textContent='';
   if(!videoCaptions){message('Không tải được bộ hiển thị phụ đề trên video',true);return;}
-  try{videoCaptions.show(text,target);}
+  try{videoCaptions.show(text,target,{translated,sourceText});}
   catch(e){message('Lỗi phụ đề trên video: '+String(e.message||e).slice(0,100),true);}
  };
  const clearOutput=()=>{
@@ -89,6 +94,13 @@
    message('Chưa có URL phát. Hãy chọn một kênh IPTV trước.',true);
    return;
   }
+  if(!mediaActive()){
+   ++epoch;
+   if(activeId)await stopCurrent();
+   else clearOutput();
+   message('Video đã dừng · phụ đề tạm ngừng');
+   return;
+  }
   const wanted=signature();
   if(!force&&activeId&&wanted===activeSignature)return;
   busy=true;
@@ -97,13 +109,13 @@
    if(activeId)await stopCurrent();
    message('Đang kiểm tra công cụ nhận diện…');
    await getWhisper();
-   if(seq!==epoch||!(caption.checked||translate.checked))return;
+   if(seq!==epoch||!mediaActive()||!(caption.checked||translate.checked))return;
    // Let Whisper detect source before choosing a direct source→target Argos model.
-   if(seq!==epoch||!(caption.checked||translate.checked))return;
+   if(seq!==epoch||!mediaActive()||!(caption.checked||translate.checked))return;
    const res=await api.captionStart({
     url:selectedUrl(),translate:translate.checked,target:translate.checked?lang.value:'auto',engine:window.AISettings?.getEngine?.()||'auto',resourceMode:window.AISettings?.getMode?.()||'balanced'
    });
-   if(seq!==epoch||!(caption.checked||translate.checked)){
+   if(seq!==epoch||!mediaActive()||!(caption.checked||translate.checked)){
     await api.captionStop();
     return;
    }
@@ -118,9 +130,29 @@
    if(queued){queued=false;void reconcile(true);}
   }
  }
- const changed=()=>{
-  if(translate.checked)caption.checked=true;
-  if(!caption.checked)translate.checked=false;
+ const changed=event=>{
+  // When ALL THREE switches are on, turning off Live Caption is the
+  // explicit master-off shortcut. Turn off TTS first to stop speech NOW,
+  // then Translate to stop the recognition worker. Other combinations
+  // remain independently controllable.
+  const tts=$('liveTtsToggle');
+  if(event?.target===caption&&!caption.checked&&translate.checked&&tts?.checked){
+   videoCaptions?.setOriginalVisible?.(false);
+   tts.checked=false;
+   tts.dispatchEvent(new Event('change',{bubbles:true}));
+   translate.checked=false;
+   translate.dispatchEvent(new Event('change',{bubbles:true}));
+   clearOutput();
+   message('Đã tắt Live Caption, Live Translate và TTS');
+   return;
+  }
+  // In every other state, toggling Caption only changes source visibility.
+  if(event?.target===caption&&translate.checked){
+   videoCaptions?.setOriginalVisible?.(caption.checked);
+   message(caption.checked?'Phụ đề gốc bật · dịch vẫn hoạt động':'Đã ẩn phụ đề gốc · dịch vẫn hoạt động');
+   return;
+  }
+  if(!caption.checked&&!translate.checked)clearOutput();
   void reconcile(true);
  };
  caption.addEventListener('change',changed);
@@ -176,6 +208,9 @@
   if(!ev)return;
   if(ev.type==='setup-progress'){message(ev.message||'Đang cài Whisper…');return;}
   if(ev.id!==activeId||!activeId)return;
+  // A running FFmpeg/Whisper worker can finish an old 8s window after Pause.
+  // Never resurrect captions while the actual video element isn't playing.
+  if(!mediaActive()){clearOutput();return;}
   if(ev.type==='segment'){
    const order=Number(ev.sequence)||0;
    if(order&&order<lastShownSequence)return;
@@ -190,7 +225,7 @@
      return;
     }
     if(order)lastShownSequence=order;
-    outputWords(ev.text,target,true);
+    outputWords(ev.text,target,true,ev.sourceText||'');
     message('Đã dịch → '+(LANGUAGE_NAMES[target]||target));
     return;
    }
@@ -216,6 +251,22 @@
    message(ev.message||'Đang cài gói dịch offline…');
  });
  let lastSource='';
+ let stallTimer=null;
+ const clearStall=()=>{if(stallTimer!==null){clearTimeout(stallTimer);stallTimer=null;}};
+ const haltMedia=()=>{
+  clearStall();++epoch;lastShownSequence=0;
+  clearOutput();
+  // The checkbox is a saved preference; pausing media must not uncheck it.
+  void stopCurrent();
+ };
+ const resumeMedia=()=>{clearStall();if(mediaActive()&&(caption.checked||translate.checked))void reconcile(true);};
+ for(const event of ['pause','ended','emptied','seeking'])
+  video.addEventListener(event,haltMedia);
+ for(const event of ['playing','seeked','canplay'])video.addEventListener(event,resumeMedia);
+ for(const event of ['waiting','stalled'])video.addEventListener(event,()=>{
+  clearStall();
+  stallTimer=setTimeout(()=>{stallTimer=null;if(!video.paused&&!video.ended&&video.readyState<3)haltMedia();},1500);
+ });
  const sourceWatcher=setInterval(()=>{
   const url=selectedUrl();
   if(url===lastSource)return;
@@ -225,6 +276,7 @@
  },1600);
  window.addEventListener('openiptv:ai-translate-settings-changed',()=>{if(translate.checked)void reconcile(true);});
  window.addEventListener('pagehide',()=>{
+  clearStall();
   clearInterval(sourceWatcher);
   void stopCurrent();
  });
@@ -235,7 +287,18 @@
   caption.disabled=true;translate.disabled=true;
   message('Phụ đề AI yêu cầu bản desktop (Electron)',true);
  }else{
-  api.captionStatus().then(s=>message(s.available?'Whisper sẵn sàng · chọn Live Caption/Translate':s.reason+' · bật để tự cài'))
-   .catch(e=>message('Lỗi: '+e.message,true));
+  api.captionStatus().then(s=>{
+   // Don't overwrite an active recognition/setup status with a generic prompt.
+   if(busy||activeId)return;
+   const restored=caption.checked||translate.checked;
+   if(restored)message(s.available
+    ?'Đã khôi phục Live Caption/Translate · tự chạy khi video phát'
+    :(s.reason||'Whisper chưa sẵn sàng')+' · lựa chọn đã được giữ',!s.available);
+   else message(s.available?'Whisper sẵn sàng · chọn Live Caption/Translate':s.reason+' · bật để tự cài');
+  }).catch(e=>message('Lỗi: '+e.message,true));
+  // A running channel can be restored before the AI scripts initialize.
+  // Start detection immediately in that case; otherwise the 'playing' event
+  // already registered above will start it when video playback resumes.
+  if((caption.checked||translate.checked)&&mediaActive())void reconcile(true);
  }
 })();

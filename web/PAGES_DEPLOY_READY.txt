@@ -1,0 +1,8 @@
+Open IPTV Pro Web — GitHub Pages branch publishing
+Web source: web/online
+Publishing folder: /(root)
+Required entry: /index.html
+Libraries: /hls.min.js and /dash.all.min.js
+Static frontend: /web-only.js and accompanying CSS/JS
+Website URL: https://trisanghy.github.io/open-iptv-pro/
+Do not publish main or experiment/native-webview-ffmpeg.

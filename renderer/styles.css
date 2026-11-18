@@ -371,18 +371,15 @@ html[data-theme="light"] .source-check-workers select{background:#fff;color:#223
 
 /* v4.19 Full UI: advanced tools stay available without cluttering the player. */
 .compact-tools{margin:0;border:1px solid var(--edge);border-radius:13px;background:var(--surface);overflow:hidden;flex-shrink:0}
-.compact-tools>summary{display:flex;align-items:center;justify-content:space-between;cursor:pointer;list-style:none;gap:10px;padding:11px 15px;font-weight:700;font-size:12px;color:var(--text)}
-.compact-tools>summary::-webkit-details-marker{display:none}
-.compact-tools>summary::after{content:'⌄';color:var(--muted);margin-left:6px}
-.compact-tools[open]>summary::after{content:'⌃'}
-.compact-tools>summary:hover{background:var(--surface2)}
-.compact-tools>summary small{margin-left:auto;font-size:10px;color:var(--muted);font-weight:500}
+/* Quick Tools is a permanent, non-collapsible tool group. */
+.compact-tools>.quick-tools-heading{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 15px;font-weight:700;font-size:12px;color:var(--text)}
+.compact-tools>.quick-tools-heading small{margin-left:auto;font-size:10px;color:var(--muted);font-weight:500}
 .compact-tools .quick-grid{padding:0 12px 12px;gap:9px}
 .compact-tools .quick-btn{padding:10px;min-height:58px}
 .full-tool-panel{grid-column:1/-1}
 .full-tools-links{display:flex;flex-wrap:wrap;gap:9px;margin-top:12px}
 .full-tools-links .btn{white-space:normal;text-align:left}
-@media(max-width:1120px){.compact-tools .quick-grid{grid-template-columns:1fr}.compact-tools>summary small{display:none}}
+@media(max-width:1120px){.compact-tools .quick-grid{grid-template-columns:1fr}.compact-tools>.quick-tools-heading small{display:none}}
 
 /* v4.21 – Cast and source URL editing, while preserving the full player. */
 .cast-modal-box{width:min(630px,96vw);max-height:90vh;overflow:auto}

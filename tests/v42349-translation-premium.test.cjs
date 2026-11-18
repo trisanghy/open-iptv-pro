@@ -50,8 +50,8 @@ test('v4.23.60: premium voice must be explicit opt-in, isolated install and real
 test('v4.23.60: translated Vietnamese captions must not translate twice in TTS',()=>{
  const s=read('src/local-tts-service.cjs'),ui=read('renderer/local-tts-v42344.js');
  assert.match(s,/sourceLanguage!==lang/);
- assert.match(ui,/sameLanguage=e\.language===target\.value/);
- assert.match(ui,/alreadyTranslated:payload\.alreadyTranslated===true/);
+ assert.match(ui,/const sameLanguage=e\.language===target\.value/);
+ assert.match(ui,/alreadyTranslated:sourceLanguage===target\.value/);
  assert.match(s,/managed\.vieneuBridge/);
  assert.match(s,/managed\.vieneuBridge/);
  assert.match(s,/translateText\(input,lang,sourceLanguage\)/);
@@ -66,5 +66,5 @@ test('v4.23.60: UI adds a genuine offline translation health test, no English-on
  assert.match(main,/caption:testTranslation/);
  assert.match(pre,/captionTestTranslation/);
  assert.doesNotMatch(h,/Dịch sang tiếng Anh trên máy/);
- assert.equal(JSON.parse(read('package.json')).version,'4.23.67');
+ assert.equal(JSON.parse(read('package.json')).version,'4.23.68');
 });

@@ -1,0 +1,29 @@
+# Local build/cache
+node_modules/
+dist/
+release/
+.open-iptv-tools/
+.streamleaf-tools/
+.cache/
+*.log
+*.tmp
+.DS_Store
+Thumbs.db
+# Local and personal data: NEVER publish
+.env
+.env.*
+!.env.example
+*.pem
+*.p12
+*.key
+*.mobileprovision
+*.token
+*.m3u
+*.m3u8
+snapshots/
+userData/
+private/
+settings.json
+**/IPTV_MAC_KIEM_TRA/
+# Non-sensitive demo fixtures with deliberately fake URLs only
+!examples/demo.m3u

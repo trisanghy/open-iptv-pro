@@ -1,0 +1,99 @@
+/* v4.23.33 — collapsed channel-list drawer: slim integrated edge tab.
+   Applied last so old style presets cannot reintroduce the 54px blank rail.
+   The video and playback controls remain separate DOM siblings. */
+#page-tv .tv-layout{position:relative;min-width:0;}
+#channelPanelShowBtn{
+  display:none; position:absolute; z-index:8; top:14px; left:0;
+  width:14px; height:118px; padding:0;
+  border-radius:0 10px 10px 0;
+  border:1px solid var(--edge,#324352); border-left:0;
+  background:var(--surface2,#142535);
+  color:var(--text,#eef6ff);
+  font-size:28px; font-weight:700; line-height:1;
+  box-shadow:none; transform:none;
+  align-items:center; justify-content:center;
+  transition:background-color .15s ease,border-color .15s ease;
+}
+#channelPanelShowBtn:hover{background:color-mix(in srgb,var(--accent,#bc7cff) 13%,var(--surface2,#142535));border-color:var(--accent,#bc7cff);}
+#channelPanelShowBtn:focus-visible{outline:2px solid var(--accent,#bc7cff);outline-offset:2px;}
+/* Critical: no extra grid column or width left behind by a hidden channel list. */
+html[data-channel-panel-visible="false"] #page-tv .channel-panel{display:none!important;}
+html[data-channel-panel-visible="false"] #page-tv .tv-layout{
+  grid-template-columns:minmax(0,1fr)!important;
+  padding-left:6px!important; /* only a slim reopening tab remains */
+  min-width:0!important;
+  gap:12px!important;
+}
+
+html[data-channel-panel-visible="false"] #page-tv .watch-panel{
+  min-width:0!important; max-width:100%!important; width:100%!important;
+}
+html[data-channel-panel-visible="false"] #page-tv .player-box{
+  width:100%!important;
+  max-width:none!important;
+  min-height:clamp(360px,58vh,680px)!important;
+  max-height:calc(100vh - 170px)!important;
+}
+html[data-channel-panel-visible="false"] #page-tv .player-control-card,
+html[data-channel-panel-visible="false"] #page-tv .advanced-timebar,
+html[data-channel-panel-visible="false"] #page-tv .theme-guide-panel{max-width:none!important;}
+
+html[data-channel-panel-visible="false"] #channelPanelShowBtn{display:flex!important;}
+/* Standard two-column skins: hidden panel goes away, video gets sole column. */
+html[data-channel-panel-visible="false"]:not([data-ui-style="cinema"]):not([data-ui-style="glass"]):not([data-ui-style="broadcast"]):not([data-ui-style="bento"]) #page-tv .tv-layout{
+  grid-template-areas:none!important;
+}
+html[data-channel-panel-visible="false"]:not([data-ui-style="cinema"]):not([data-ui-style="glass"]):not([data-ui-style="broadcast"]):not([data-ui-style="bento"]) #page-tv .watch-panel{
+  grid-column:1!important; grid-row:1!important;
+}
+/* Bento has a real strip above the video; keep it, without the absent channel column. */
+html[data-channel-panel-visible="false"][data-ui-style="bento"] #page-tv .tv-layout{
+  display:grid!important;grid-template-areas:"strip" "video"!important;
+  grid-template-rows:auto minmax(0,1fr)!important;
+}
+html[data-channel-panel-visible="false"][data-ui-style="bento"] #page-tv .theme-channel-strip{
+  grid-area:strip!important;grid-column:1!important;grid-row:1!important;
+}
+html[data-channel-panel-visible="false"][data-ui-style="bento"] #page-tv .watch-panel{
+  grid-area:video!important;grid-column:1!important;grid-row:2!important;
+}
+/* Cinema/Glass/Broadcast use display:contents for the watch-panel. Keep each
+   child in its own named area; NO extra empty tracks and NO control overlay. */
+html[data-channel-panel-visible="false"]:is([data-ui-style="cinema"],[data-ui-style="glass"],[data-ui-style="broadcast"]) #page-tv .tv-layout{
+  display:grid!important;
+  grid-template-areas:"video" "controls" "guide" "strip" "time" "tools"!important;
+  grid-template-rows:auto auto auto auto auto auto!important;
+  align-items:start!important;
+}
+html[data-channel-panel-visible="false"]:is([data-ui-style="cinema"],[data-ui-style="glass"],[data-ui-style="broadcast"]) #page-tv .watch-panel{
+  display:contents!important;
+}
+html[data-channel-panel-visible="false"]:is([data-ui-style="cinema"],[data-ui-style="glass"],[data-ui-style="broadcast"]) #page-tv .player-box{
+  grid-area:video!important; min-width:0!important; max-width:100%!important;
+}
+html[data-channel-panel-visible="false"]:is([data-ui-style="cinema"],[data-ui-style="glass"],[data-ui-style="broadcast"]) #page-tv .player-control-card{grid-area:controls!important;}
+html[data-channel-panel-visible="false"]:is([data-ui-style="cinema"],[data-ui-style="glass"],[data-ui-style="broadcast"]) #page-tv .advanced-timebar{grid-area:time!important;}
+html[data-channel-panel-visible="false"]:is([data-ui-style="cinema"],[data-ui-style="glass"],[data-ui-style="broadcast"]) #page-tv .theme-guide-panel{grid-area:guide!important;}
+html[data-channel-panel-visible="false"]:is([data-ui-style="cinema"],[data-ui-style="glass"],[data-ui-style="broadcast"]) #page-tv .theme-channel-strip{grid-area:strip!important;}
+/* Responsive: keep single-column layout even when old CSS switches to flex. */
+@media(max-width:760px){
+ html[data-channel-panel-visible="false"]:is([data-ui-style="cinema"],[data-ui-style="glass"],[data-ui-style="broadcast"]) #page-tv .tv-layout{display:grid!important;flex-direction:initial!important;}
+ html[data-channel-panel-visible="false"] #channelPanelShowBtn{height:54px;top:10px;}
+}
+/* Cinema's preexisting 'Tất cả kênh' drawer remains available, including
+   when the separate channel-panel preference is collapsed. */
+html[data-channel-panel-visible="false"][data-ui-style="cinema"][data-theme-channel-drawer="open"] #page-tv .channel-panel{
+  display:flex!important;
+}
+@media(prefers-reduced-motion:reduce){#channelPanelShowBtn{transition:none;}}
+
+/* v4.23.34 overrides: maximize playback area and keep only a hairline drawer tab */
+html[data-channel-panel-visible="false"] #page-tv .content,
+html[data-channel-panel-visible="false"] .content{padding-left:10px!important;}
+html[data-channel-panel-visible="false"] #channelPanelShowBtn{left:0!important;top:10px!important;}
+html[data-channel-panel-visible="false"] #page-tv .watch-panel > *{width:100%!important;max-width:none!important;}
+html[data-channel-panel-visible="false"] #page-tv .player-box video{width:100%!important;height:100%!important;}
+@media(max-width:760px){
+ html[data-channel-panel-visible="false"] #page-tv .player-box{min-height:280px!important;max-height:calc(100vh - 140px)!important;}
+ html[data-channel-panel-visible="false"] #channelPanelShowBtn{height:88px!important;width:12px!important;font-size:22px!important;}
+}

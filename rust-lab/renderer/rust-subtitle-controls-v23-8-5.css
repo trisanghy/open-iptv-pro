@@ -1,0 +1,229 @@
+/* Rust Lab v23.8.5 — compact CC menu and legible, bounded video captions. */
+#page-tv #rustSubtitleOptionsButton{display:inline-flex!important;align-items:center;justify-content:center!important;
+ min-width:39px!important;height:32px!important;padding:4px 9px!important;border:1px solid #8f6bc7!important;
+ border-radius:9px!important;background:#32234d!important;color:#ecddff!important;font-weight:800!important}
+#page-tv #rustSubtitleOptionsButton[aria-expanded=true]{background:#7453bf!important;color:white!important}
+#rustSubtitleOptionsPanel.rust-cc-panel:not([hidden]){display:grid!important;gap:10px;
+ position:absolute;z-index:70;top:12px;right:12px;width:min(395px,calc(100% - 24px));max-height:min(77vh,550px);
+ overflow-y:auto;box-sizing:border-box;padding:15px;border:1px solid #7155a2;border-radius:15px;
+ background:rgba(16,24,37,.96);box-shadow:0 16px 44px #0009;color:#f4f4fb;
+ font:500 13px/1.45 system-ui,-apple-system,sans-serif;backdrop-filter:blur(14px)}
+#rustSubtitleOptionsPanel[hidden]{display:none!important}
+.rust-cc-panel header{display:flex;align-items:center;justify-content:space-between;padding-bottom:8px;
+ font-size:16px;border-bottom:1px solid #394352}
+.rust-cc-panel header button{width:27px;height:27px;border:0;border-radius:8px;color:#fff;
+ background:#25364a;font-size:21px;cursor:pointer}
+.rust-cc-panel>label{display:grid;grid-template-columns:minmax(105px,1fr) minmax(140px,1.3fr);gap:10px;align-items:center}
+.rust-cc-panel select{min-width:0;width:100%;padding:8px 10px;border:1px solid #4d5870;
+ border-radius:9px;background:#202b3c;color:#fff}
+.rust-cc-panel input[type=checkbox]{justify-self:end;width:20px;height:20px;accent-color:#a475ed}
+.rust-cc-panel .rust-cc-color{display:flex;align-items:center;gap:5px;flex-wrap:wrap}
+.rust-cc-panel .rust-cc-swatch{min-width:21px!important;width:21px;height:21px;border-radius:50%;
+ border:1px solid #acb8c6;cursor:pointer;padding:0}
+.rust-cc-panel .rust-cc-swatch[aria-pressed=true]{outline:2px solid #bb88ff;outline-offset:1px}
+#rustSubtitleOptionsPanel #rustSubtitleCustomColor{width:29px;height:24px;padding:0;border:0;background:none}
+.rust-cc-opacity{display:flex;gap:8px;align-items:center;min-width:0}
+.rust-cc-opacity input{flex:1;min-width:60px;accent-color:#9b70de}
+.rust-cc-opacity output{min-width:35px}
+.rust-cc-panel small{font-size:11px;color:#a8b7c7}
+#page-tv #rustTranslatedCaption.rust-translated-caption:not([hidden]){
+ display:flex!important;flex-direction:column;align-items:stretch;
+ position:absolute;z-index:27;left:4%;right:4%;bottom:7%;top:auto;
+ width:92%!important;min-width:0;max-width:92%!important;
+ max-height:85%;overflow-x:hidden;overflow-y:visible;
+ box-sizing:border-box;gap:4px;margin:0 auto;padding:7px 12px;
+ border-radius:10px;pointer-events:none;text-align:center;
+ white-space:normal!important;overflow-wrap:anywhere!important;word-break:normal;
+ color:var(--rust-cc-color,#ffe65b);background:rgba(0,0,0,var(--rust-cc-opacity,.5));
+ font-size:20px;line-height:1.32;font-weight:650;
+}
+/* No line clamping: both the original and translation must wrap as needed. */
+#page-tv #rustTranslatedCaption :is(.rust-cc-original,.rust-cc-translation){
+ display:block!important;flex:0 0 auto;
+ width:100%;min-width:0;max-width:100%;
+ -webkit-line-clamp:unset!important;line-clamp:unset!important;
+ -webkit-box-orient:initial!important;
+ overflow:visible!important;text-overflow:clip!important;
+ white-space:pre-line!important;overflow-wrap:anywhere!important;
+ word-break:normal!important;
+}
+#page-tv #rustTranslatedCaption :is(.rust-cc-original,.rust-cc-translation)[hidden]{display:none!important}
+#page-tv #rustTranslatedCaption .rust-cc-original{color:white}
+#page-tv #playerBox[data-rust-subtitle-position=top] #rustTranslatedCaption{top:10%;bottom:auto}
+#page-tv #playerBox[data-rust-subtitle-position=middle] #rustTranslatedCaption{bottom:25%}
+#page-tv #playerBox[data-rust-subtitle-position=bottom] #rustTranslatedCaption{bottom:7%}
+#page-tv #playerBox[data-rust-subtitle-size=small] #rustTranslatedCaption{font-size:16px}
+#page-tv #playerBox[data-rust-subtitle-size=medium] #rustTranslatedCaption{font-size:20px}
+#page-tv #playerBox[data-rust-subtitle-size=large] #rustTranslatedCaption{font-size:25px}
+#page-tv #playerBox[data-rust-subtitle-size=xlarge] #rustTranslatedCaption{font-size:30px}
+#page-tv #playerBox[data-rust-subtitle-outline=black] #rustTranslatedCaption{
+ -webkit-text-stroke:.55px #0d0d0d;text-shadow:0 1px 3px #000,1px 1px 1px #000}
+#page-tv #playerBox[data-rust-subtitle-outline=white] #rustTranslatedCaption{
+ -webkit-text-stroke:.5px white;text-shadow:0 1px 2px #0007}
+#page-tv #playerBox[data-rust-subtitle-outline=none] #rustTranslatedCaption{-webkit-text-stroke:0;text-shadow:none}
+#page-tv #playerBox[data-rust-subtitle-background=light] #rustTranslatedCaption{background:rgba(250,250,250,var(--rust-cc-opacity,.5))}
+#page-tv #playerBox[data-rust-subtitle-background=none] #rustTranslatedCaption{background:transparent}
+@media(max-width:650px){
+ #page-tv #rustTranslatedCaption.rust-translated-caption:not([hidden]){font-size:16px;max-width:93%;padding:5px 8px}
+ #rustSubtitleOptionsPanel.rust-cc-panel:not([hidden]){top:5px;right:5px;width:calc(100% - 10px);max-height:67vh}
+ .rust-cc-panel>label{grid-template-columns:93px minmax(0,1fr)}
+}
+
+/* v23.8.10: readable font menu and multilingual live preview. */
+#rustSubtitleOptionsPanel .rust-cc-font-preview{
+ border:1px solid #43556a;border-radius:9px;padding:9px 11px;
+ background:#1c2a3a;color:#fbfcff;text-align:center;
+ font-size:15px;font-weight:500;line-height:1.55;overflow-wrap:anywhere;
+}
+#page-tv #rustTranslatedCaption.rust-translated-caption:not([hidden]){
+ font-family:var(--rust-cc-font-stack,-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei","Noto Sans CJK SC",Arial,sans-serif)!important;
+ font-weight:600!important;letter-spacing:0!important;line-height:1.42!important;
+}
+/* Fine Chinese strokes should not be filled in by an oversized black outline. */
+#page-tv #playerBox[data-rust-subtitle-outline=black] #rustTranslatedCaption{
+ -webkit-text-stroke:.28px rgba(5,9,13,.9)!important;
+ text-shadow:0 1px 2px rgba(0,0,0,.82)!important;
+}
+#page-tv #playerBox[data-rust-subtitle-outline=white] #rustTranslatedCaption{
+ -webkit-text-stroke:.25px rgba(255,255,255,.95)!important;
+ text-shadow:0 1px 2px rgba(0,0,0,.75)!important;
+}
+
+
+/* v23.8.10 — visual parity with the CC preferences reference: segmented selectors. */
+#rustSubtitleOptionsPanel.rust-cc-panel:not([hidden]){
+ width:min(455px,calc(100% - 24px));
+ border:1px solid #9567d9;
+ border-radius:18px;
+ background:rgba(12,20,32,.97);
+ box-shadow:0 22px 62px #000b;
+}
+.rust-cc-panel>label{
+ grid-template-columns:minmax(110px,.72fr) minmax(0,1.6fr);
+ gap:12px;
+}
+.rust-cc-panel .rust-cc-native-select{display:none!important}
+.rust-cc-panel .rust-cc-segmented{
+ display:flex;align-items:stretch;justify-content:stretch;
+ min-width:0;width:100%;
+ border:1px solid #536278;
+ border-radius:10px;overflow:hidden;
+ background:rgba(4,11,20,.55);
+}
+.rust-cc-panel .rust-cc-segmented>button{
+ flex:1 1 0;min-width:0;min-height:35px;
+ border:0;border-radius:0;padding:5px 6px;
+ background:transparent;color:#e5e9f3;
+ font:600 12px/1.25 system-ui,-apple-system,sans-serif;
+ cursor:pointer;white-space:normal;
+}
+.rust-cc-panel .rust-cc-segmented>button+button{
+ border-left:1px solid #46536a;
+}
+.rust-cc-panel .rust-cc-segmented>button[aria-pressed=true]{
+ background:#8056e5;color:#fff;box-shadow:inset 0 0 0 1px #a790ff;
+}
+.rust-cc-panel .rust-cc-segmented>button:focus-visible,
+.rust-cc-panel .rust-cc-swatch:focus-visible{
+ outline:2px solid #d4c0ff;outline-offset:-2px;z-index:1;
+}
+.rust-cc-panel .rust-cc-position>button{
+ font-size:24px;line-height:1;min-height:43px;
+}
+.rust-cc-panel .rust-cc-sizes>button{
+ min-height:48px;display:flex;flex-direction:column;
+ align-items:center;justify-content:center;
+ gap:3px;font-size:18px;
+}
+.rust-cc-panel .rust-cc-sizes>button:first-child{font-size:15px}
+.rust-cc-panel .rust-cc-sizes>button:nth-child(3){font-size:21px}
+.rust-cc-panel .rust-cc-sizes>button:last-child{font-size:23px}
+.rust-cc-panel .rust-cc-sizes>button small{
+ font-size:10px;white-space:nowrap;color:inherit;
+}
+#rustSubtitleOptionsPanel #rustSubtitleShow{
+ appearance:none;width:43px;height:25px;border-radius:999px;
+ border:1px solid #54617a;background:#314050;
+ position:relative;cursor:pointer;accent-color:auto;
+}
+#rustSubtitleOptionsPanel #rustSubtitleShow:checked{
+ background:#875eed;border-color:#ac8aff;
+}
+#rustSubtitleOptionsPanel #rustSubtitleShow::after{
+ content:"";position:absolute;left:2px;top:2px;width:19px;height:19px;
+ border-radius:50%;background:white;box-shadow:0 1px 5px #0006;
+ transition:transform .12s ease;
+}
+#rustSubtitleOptionsPanel #rustSubtitleShow:checked::after{transform:translateX(18px)}
+.rust-cc-panel .rust-cc-swatch{
+ min-width:25px!important;width:25px;height:25px;
+}
+.rust-cc-panel .rust-cc-swatch[aria-pressed=true]{
+ outline:2px solid #c995ff;outline-offset:3px;
+}
+.rust-cc-panel .rust-cc-opacity input{
+ accent-color:#9365fa;
+}
+@media(max-width:480px){
+ #rustSubtitleOptionsPanel.rust-cc-panel:not([hidden]){width:calc(100% - 10px);}
+ .rust-cc-panel>label{grid-template-columns:90px minmax(0,1fr);gap:8px}
+ .rust-cc-panel .rust-cc-segmented>button{font-size:11px;padding:5px 4px}
+}
+
+/* Rust Lab v23.8.17: CC popup is portalled above overflow:hidden player frame.
+   Its own vertical scroll works with macOS trackpad, wheel, keyboard and touch. */
+#rustSubtitleOptionsPanel.rust-cc-panel:not([hidden]){
+ position:fixed!important;
+ z-index:1000!important;
+ top:12px;right:auto;bottom:auto;
+ display:flex!important;
+ flex-direction:column;
+ align-items:stretch;
+ gap:11px;
+ min-height:0!important;
+ height:auto!important;
+ max-height:calc(100vh - 24px)!important;
+ overflow-y:auto!important;
+ overflow-x:hidden!important;
+ overscroll-behavior:contain;
+ touch-action:pan-y;
+ -webkit-overflow-scrolling:touch;
+ scrollbar-width:thin;
+ scrollbar-color:#8962ce #182331;
+}
+#rustSubtitleOptionsPanel.rust-cc-panel::-webkit-scrollbar{width:9px}
+#rustSubtitleOptionsPanel.rust-cc-panel::-webkit-scrollbar-thumb{
+ background:#8560cd;border-radius:10px;border:2px solid #17202f;
+}
+#rustSubtitleOptionsPanel.rust-cc-panel::-webkit-scrollbar-track{background:#17202f}
+#rustSubtitleOptionsPanel.rust-cc-panel>header{
+ position:sticky;
+ top:-15px;
+ z-index:2;
+ background:#101924;
+ padding-top:5px;
+}
+#rustSubtitleOptionsPanel.rust-cc-panel>label,
+#rustSubtitleOptionsPanel.rust-cc-panel>.rust-cc-font-preview,
+#rustSubtitleOptionsPanel.rust-cc-panel>small{flex-shrink:0}
+#playerBox:fullscreen #rustSubtitleOptionsPanel.rust-cc-panel:not([hidden]){
+ position:absolute!important;
+ top:12px!important;
+ right:12px!important;
+ left:auto!important;
+ max-height:calc(100% - 24px)!important;
+}
+
+/* Rust Lab v23.8.20: make CC visible above the fullscreen control bar.
+   Normal fullscreen on #playerBox keeps the HTML overlay (not native cues). */
+#page-tv #playerBox:fullscreen #rustTranslatedCaption.rust-translated-caption:not([hidden]){
+ z-index:285!important;
+ opacity:1!important;
+ visibility:visible!important;
+}
+#page-tv #playerBox:fullscreen:not(.player-idle)[data-rust-subtitle-position="bottom"] #rustTranslatedCaption.rust-translated-caption:not([hidden]){
+ bottom:max(120px,12vh)!important;
+}
+#page-tv #playerBox:fullscreen.player-idle[data-rust-subtitle-position="bottom"] #rustTranslatedCaption.rust-translated-caption:not([hidden]){
+ bottom:7%!important;
+}

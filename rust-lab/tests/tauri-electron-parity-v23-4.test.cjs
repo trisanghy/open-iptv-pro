@@ -1,0 +1,32 @@
+'use strict';
+const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');
+const read=p=>fs.readFileSync(path.join(__dirname,'..',p),'utf8');
+test('v23.4 Electron compact AI and PiP adaptation wired',()=>{
+ const html=read('renderer/index.html'),entry=read('renderer/app-entry.js');
+ for(const id of ['caption-ai-main','caption-tts-main','liveTtsSpeed','rustTranslatedCaption','pipAutoMinimize'])assert.ok(html.includes(id));
+ assert.match(entry,/auto-pip-v42363\.js/);assert.match(entry,/rust-electron-parity-v23-4\.js/);
+ assert.match(read('renderer/app.js'),/OpenIPTVAutoPiP\?\.onPageChange/);
+});
+test('exactly one subtitle overlay controls original and translated text',()=>{
+ const legacy=read('renderer/rust-electron-parity-v23-4.js');
+ const modern=read('renderer/rust-subtitle-controls-v23-8-5.js');
+ assert.doesNotMatch(legacy,/overlay\.textContent=text/);
+ assert.match(modern,/const hasTranslation=translate\?\.checked/);
+ assert.match(modern,/const showOriginal=!!caption\?\.checked/);
+ assert.match(modern,/const showTranslated=!!hasTranslation/);
+ assert.match(read('renderer/rust-electron-parity-v23-4.css'),/#liveTranslateToggle:checked/);
+});
+test('TTS rate, timeout, preview and latest queued line',()=>{
+ const src=read('renderer/local-tts-v42344.js');
+ for(const term of ['45000','90000','previewInFlight','playbackSpeed()','enqueuedAt','Date.now()-began>25000'])assert.ok(src.includes(term));
+});
+test('Mac builder version guard uses the package version and immutable matching tag',()=>{
+ const version=JSON.parse(read('package.json')).version;
+ const release=version.split('-tauri.')[1];
+ const script=read('scripts/BUILD_RUSTLAB_MAC_ONE_ZIP_FAST.sh');
+ assert.ok(script.includes('VERSION="'+version+'"'));
+ assert.ok(script.includes('TAG="rust-lab/v'+release+'"'));
+ assert.match(script,/ACTUAL_VERSION=.*sed -nE/);
+ assert.match(script,/ACTUAL_VERSION.*==.*VERSION/);
+ assert.doesNotMatch(script,/grep -Eq .*version/);
+});

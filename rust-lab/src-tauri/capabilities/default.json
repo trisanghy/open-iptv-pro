@@ -1,0 +1,7 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "main-only",
+  "description": "Only the Rust Lab main view receives its IPC commands.",
+  "windows": ["main"],
+  "permissions": ["core:default"]
+}

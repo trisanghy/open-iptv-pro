@@ -1,0 +1,15 @@
+'use strict';
+const {test}=require('node:test');const assert=require('node:assert/strict');
+const {parseM3U,exportM3U,rewriteHls,cleanGroup,dateLabel}=require('../src/core.cjs');
+const {isVideoData,isHls}=require('../src/stream-check.cjs');
+const input='#EXTM3U\n#EXTINF:-1 tvg-logo="https://logo" group-title="03 - LIVE EVENTS 🔴",VTV 1\nhttps://example.com/live.m3u8\n#EXTINF:-1 group-title="Tin tức",VTV 2\nhttps://example.com/a.ts\n';
+test('parse M3U metadata',()=>{const a=parseM3U(input,'s1');assert.equal(a.length,2);assert.equal(a[0].logo,'https://logo');assert.equal(a[1].group,'Tin tức');});
+test('parse rejects non-M3U',()=>assert.throws(()=>parseM3U('<html>bad</html>')));
+test('timestamp only group 03',()=>{const a=parseM3U(input);a[0].checkedAt='2026-11-07T15:20:00Z';const t=exportM3U(a,new Date('2026-11-07T15:20:00Z'));assert.match(t,/group-title="03 - LIVE EVENTS 🔴 \| Kiểm tra: 07\/11\/2026 22:20"/);assert.match(t,/group-title="Tin tức"/);});
+test('dead channels grouped 99',()=>{const a=parseM3U(input);a[0].status='dead';assert.match(exportM3U(a),/group-title="99 - KÊNH LỖI"/);});
+test('only alive export',()=>{const a=parseM3U(input);a[0].status='alive';a[1].status='dead';assert.equal((exportM3U(a,new Date(),{onlyAlive:true}).match(/#EXTINF:/g)||[]).length,1);});
+test('remove old timestamps',()=>assert.equal(cleanGroup('03 - LIVE EVENTS 🔴 | Kiểm tra: 01/01/2026 01:01'),'03 - LIVE EVENTS 🔴'));
+test('HLS relative segments and key rewritten',()=>{const s='#EXTM3U\n#EXT-X-KEY:METHOD=AES-128,URI="key.bin"\nabc.ts?x=1\n';const out=rewriteHls(s,'https://example.com/a/v.m3u8',x=>`PROXY(${x})`);assert.match(out,/PROXY\(https:\/\/example.com\/a\/key.bin\)/);assert.match(out,/PROXY\(https:\/\/example.com\/a\/abc.ts\?x=1\)/);});
+test('HTML not valid video',()=>assert.equal(isVideoData(Buffer.from('<html>not found</html>'),'text/html'),false));
+test('TS sync byte detection',()=>{const b=Buffer.alloc(400);b[0]=0x47;b[188]=0x47;b[376]=0x47;assert.equal(isVideoData(b),true);});
+test('m3u8 manifest detection',()=>assert.equal(isHls('#EXTM3U\n#EXT-X-TARGETDURATION:3\n','https://x/v.m3u8'),true));

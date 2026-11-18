@@ -1,0 +1,4 @@
+GitHub About — Tiếng Việt trước, English sau (một dòng):
+Trình phát IPTV mã nguồn mở cho Windows và macOS: M3U, EPG, MultiView, ảnh kênh, kiểm tra và sửa luồng; hỗ trợ 8 ngôn ngữ. | Open-source IPTV player for Windows and macOS: M3U, EPG, MultiView, snapshots, stream diagnostics and repair; 8 languages.
+
+Lưu ý: GitHub About Description không hỗ trợ xuống dòng; README.md trình bày hai ngôn ngữ thành hai mục riêng.

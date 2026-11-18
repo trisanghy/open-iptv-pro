@@ -16,7 +16,7 @@ test('v4.23.60: speed selector exists in TTS row with all nine allowed speeds',(
  assert.ok(lang<row&&row<original,'Speed must be on same third-row TTS control strip');
  assert.match(css,/#liveTtsSpeed/);
  assert.match(css,/flex-wrap:wrap/);
- assert.equal(JSON.parse(read('package.json')).version,'4.23.67');
+ assert.equal(JSON.parse(read('package.json')).version,'4.23.68');
 });
 
 test('v4.23.60: live playback and preview use the same pitch-preserving rate, stored across sessions',async()=>{
@@ -32,6 +32,7 @@ test('v4.23.60: live playback and preview use the same pitch-preserving rate, st
                   'liveTtsDuck','liveTtsInstall','liveTtsStatus','volume',
                   'liveCaptionToggle','liveTranslateToggle','liveCaptionOutput','liveTtsPreview'])el(id);
  el('video').volume=0.8;el('video').currentSrc='http://example.invalid/stream';
+ el('video').paused=false;el('video').ended=false;el('video').readyState=4;
  el('liveTtsLanguage').value='vi';el('liveTtsDuck').value='25';
  el('liveTtsSpeed').value='1.00';el('liveCaptionToggle').checked=true;el('liveTranslateToggle').checked=true;
  const stored={'openiptv-tts-playback-speed':'1.25'};

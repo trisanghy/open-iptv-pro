@@ -1,0 +1,113 @@
+/* v4.23.11: original preset styles for Electron/Chromium. All selectors are visual-only.
+   Content, playlist, playback, DVR and IPC logic is shared across all five styles. */
+.sr-only{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+#page-settings #uiStyleSettings{grid-column:1/-1}
+#uiStyleSettings .ui-style-choices{border:0;padding:0;margin:14px 0 8px;display:grid;grid-template-columns:repeat(auto-fit,minmax(146px,1fr));gap:10px}
+#uiStyleSettings .ui-style-option{display:flex;position:relative;min-width:0;flex-direction:column;gap:5px;cursor:pointer;padding:9px;border:1px solid var(--edge);border-radius:12px;background:var(--surface2);transition:border-color .15s,transform .15s,box-shadow .15s}
+#uiStyleSettings .ui-style-option:hover{border-color:var(--accent);transform:translateY(-2px)}
+#uiStyleSettings .ui-style-option:has(input:checked){border-color:var(--accent);box-shadow:0 0 0 2px color-mix(in srgb,var(--accent) 40%,transparent)}
+#uiStyleSettings .ui-style-option:has(input:focus-visible){outline:2px solid var(--accent);outline-offset:3px}
+#uiStyleSettings .ui-style-option input{position:absolute;right:12px;bottom:35px;width:16px;height:16px;accent-color:var(--accent);margin:0}
+#uiStyleSettings .ui-style-title{font-weight:750;font-size:12px;padding-right:22px;color:var(--text)}
+#uiStyleSettings .ui-style-option small{font-size:10px;color:var(--muted);line-height:1.4;min-height:28px;max-width:100%}
+#uiStyleSettings .ui-style-mock{height:80px;display:grid;grid-template-columns:29% 1fr;grid-template-rows:1fr 1fr;gap:5px;padding:8px;overflow:hidden;border:1px solid #536071;background:#111928;border-radius:8px}
+#uiStyleSettings .ui-style-mock i{grid-row:span 2;background:#273243;border-radius:5px}
+#uiStyleSettings .ui-style-mock b{background:#46536a;border-radius:5px}
+#uiStyleSettings .ui-style-mock em{background:#bc7cff;border-radius:5px}
+#uiStyleSettings [data-style-card="minimal"] .ui-style-mock{background:#f8f8f8;border:1px solid #d1d1d1;border-radius:2px}
+#uiStyleSettings [data-style-card="minimal"] .ui-style-mock i{background:#dedede;border-radius:0}
+#uiStyleSettings [data-style-card="minimal"] .ui-style-mock b{background:#eeeeee;border-radius:0}
+#uiStyleSettings [data-style-card="minimal"] .ui-style-mock em{background:#242424;border-radius:0}
+#uiStyleSettings [data-style-card="material3"] .ui-style-mock{background:#eae6f3;border:0;border-radius:17px}
+#uiStyleSettings [data-style-card="material3"] .ui-style-mock i{background:#d3c9e5;border-radius:13px}
+#uiStyleSettings [data-style-card="material3"] .ui-style-mock b{background:#f7f1ff;border-radius:12px}
+#uiStyleSettings [data-style-card="material3"] .ui-style-mock em{background:#71619e;border-radius:22px}
+#uiStyleSettings [data-style-card="hig"] .ui-style-mock{background:#e9e9ec;border:1px solid #bbbfc5;border-radius:10px}
+#uiStyleSettings [data-style-card="hig"] .ui-style-mock i{background:#d0d0d7;border-radius:6px}
+#uiStyleSettings [data-style-card="hig"] .ui-style-mock b{background:#fff;border-radius:7px}
+#uiStyleSettings [data-style-card="hig"] .ui-style-mock em{background:#0a84ff;border-radius:7px}
+#uiStyleSettings [data-style-card="liquid"] .ui-style-mock{background:radial-gradient(circle at 85% 12%,#a8c3e6a3,transparent 56%),linear-gradient(140deg,#312847,#15283b);border-color:#9fbddd9c;border-radius:16px}
+#uiStyleSettings [data-style-card="liquid"] .ui-style-mock i{background:#f6f9ff3d;border:1px solid #fff6;border-radius:12px;backdrop-filter:blur(5px)}
+#uiStyleSettings [data-style-card="liquid"] .ui-style-mock b{background:#efffff30;border:1px solid #fff5;border-radius:13px}
+#uiStyleSettings [data-style-card="liquid"] .ui-style-mock em{background:#c1dcff88;border:1px solid #fff8;border-radius:20px}
+#uiStyleSettings .ui-style-actions{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin:10px 0}
+#uiStyleStatus{font-size:12px;color:var(--accent);font-weight:700}
+@media(max-width:700px){#uiStyleSettings .ui-style-choices{grid-template-columns:repeat(2,minmax(0,1fr))}}
+/* Shared reset across each alternative design. Originating theme colors continue to apply. */
+html:not([data-ui-style="current"]) body{transition:background .2s,color .2s}
+html:not([data-ui-style="current"]) .sidebar,
+html:not([data-ui-style="current"]) .topbar,
+html:not([data-ui-style="current"]) .footer{background:var(--ui-navigation,var(--surface))!important;border-color:var(--ui-stroke,var(--edge))!important}
+html:not([data-ui-style="current"]) :is(.channel-panel,.player-control-card,.quick-btn,.task-box,.source-card,.shot-card,.fav-card,.settings-card,.folder-card,.multi-tile,.doctor-metrics article,.modal-box,.source-merge-panel,.update-result,.epg-current-card,.dvr-panel,.dvr-job,.epg-row,.collector-progress,.source-merge-summary){
+ background:var(--ui-card,var(--surface))!important;border-color:var(--ui-stroke,var(--edge))!important;border-radius:var(--ui-radius,12px)!important;box-shadow:var(--ui-shadow,none)
+}
+html:not([data-ui-style="current"]) :is(.btn,.icon-btn,.control-sm,.control-main,.quick-btn,.nav,.nav.active,.folder-header,.filter-tab,.modal-input,select,.task-dock,.task-panel,.source-actions button,.folder-actions button){border-radius:var(--ui-control-radius,10px)!important}
+html:not([data-ui-style="current"]) :is(.btn-primary,.control-main){background:var(--ui-primary,var(--accent))!important;border-color:var(--ui-primary,var(--accent))!important;color:var(--ui-on-primary,#101923)!important;box-shadow:var(--ui-button-shadow,none)}
+html:not([data-ui-style="current"]) .btn-subtle{background:var(--ui-control,var(--surface2))!important;color:var(--text)!important;border-color:var(--ui-stroke,var(--edge))!important}
+html:not([data-ui-style="current"]) :is(.nav.active,.filter-tab.active,.channel-item.current){background:var(--ui-selection,color-mix(in srgb,var(--accent) 15%,var(--surface)))!important;border-color:var(--ui-stroke,var(--edge))!important;color:var(--text)!important}
+html:not([data-ui-style="current"]) :is(.source-hub-heading h2,.settings-card h2,.section-heading h1){letter-spacing:var(--ui-heading-spacing,-.3px)}
+html:not([data-ui-style="current"]) :is(.settings-accordion-heading,.settings-accordion-content){background:transparent!important}
+html:not([data-ui-style="current"]) #uiStyleSettings .ui-style-option:has(input:checked){border-color:var(--accent)!important}
+html:not([data-ui-style="current"]) :is(.player-box,.player-box video){background-color:#020306!important}
+
+/* Minimalism: low-decoration, flat surfaces, subtle separators, compact controls. */
+html[data-ui-style="minimal"]{--ui-radius:3px;--ui-control-radius:3px;--ui-heading-spacing:-.65px;--ui-stroke:color-mix(in srgb,var(--text) 13%,transparent);--ui-shadow:none;--ui-control:var(--surface);--ui-primary:var(--text);--ui-on-primary:var(--bg);--ui-selection:color-mix(in srgb,var(--text) 7%,var(--surface));--ui-navigation:var(--bg);--ui-card:var(--surface)}
+html[data-ui-style="minimal"] :is(.brand b,.section-heading h1){font-weight:700;letter-spacing:-.8px}
+html[data-ui-style="minimal"] .sidebar{padding-top:21px!important}
+html[data-ui-style="minimal"] .nav{font-weight:500;border:0!important;border-bottom:1px solid transparent!important}
+html[data-ui-style="minimal"] .nav.active{border-left:3px solid var(--accent)!important}
+html[data-ui-style="minimal"] .btn,.ui-style-option{box-shadow:none!important}
+html[data-ui-style="minimal"] :is(.channel-item,.quick-btn,.shot-card){transition:none!important}
+html[data-ui-style="minimal"] .topbar{height:68px}
+html[data-ui-style="minimal"] .brand-icon{border-radius:4px;box-shadow:none!important}
+html[data-ui-style="minimal"] .footer{box-shadow:none!important}
+html[data-ui-style="minimal"] :is(.task-dock-head,.source-hub-heading){background:transparent!important}
+
+/* Material Design 3 inspired: tonal surface hierarchy, large radii, filled and tonal buttons. */
+html[data-ui-style="material3"]{--ui-radius:22px;--ui-control-radius:24px;--ui-heading-spacing:-.35px;--ui-stroke:color-mix(in srgb,var(--accent) 22%,var(--edge));--ui-card:color-mix(in srgb,var(--accent) 5%,var(--surface));--ui-navigation:color-mix(in srgb,var(--accent) 9%,var(--surface));--ui-control:color-mix(in srgb,var(--accent) 14%,var(--surface2));--ui-primary:var(--accent);--ui-on-primary:#111018;--ui-selection:color-mix(in srgb,var(--accent) 22%,var(--surface));--ui-shadow:0 1px 3px #0002}
+html[data-ui-style="material3"] :is(.sidebar,.topbar){box-shadow:0 2px 15px #0001}
+html[data-ui-style="material3"] .nav{font-weight:650;height:48px;margin-bottom:4px;padding-left:15px}
+html[data-ui-style="material3"] .nav.active{border-color:transparent!important}
+html[data-ui-style="material3"] :is(.btn,.control-main){font-weight:750;letter-spacing:.15px;min-height:38px}
+html[data-ui-style="material3"] .btn-subtle:hover{background:color-mix(in srgb,var(--accent) 23%,var(--surface))!important}
+html[data-ui-style="material3"] :is(.channel-item,.filter-box,.settings-accordion-heading){border-radius:15px}
+html[data-ui-style="material3"] :is(.state-mark,.chan-logo,.brand-icon){border-radius:17px}
+html[data-ui-style="material3"] :is(.progress-bar,.task-meter){border-radius:30px}
+html[data-ui-style="material3"] .btn-primary:hover{filter:brightness(1.08)}
+html[data-ui-style="material3"] .channel-panel{padding:3px}
+
+/* HIG inspired: macOS-like chrome and typography, understated separators and focus. */
+html[data-ui-style="hig"]{--ui-radius:12px;--ui-control-radius:9px;--ui-heading-spacing:-.6px;--ui-stroke:color-mix(in srgb,var(--text) 16%,transparent);--ui-card:var(--surface);--ui-navigation:color-mix(in srgb,var(--surface) 90%,var(--bg));--ui-control:color-mix(in srgb,var(--text) 7%,var(--surface));--ui-primary:#0a84ff;--ui-on-primary:#ffffff;--ui-selection:color-mix(in srgb,#0a84ff 15%,var(--surface));--ui-shadow:0 1px 2px #0002}
+html[data-ui-style="hig"][data-theme="light"]{--ui-primary:#007aff;--ui-navigation:#f4f4f6;--ui-card:#fff;--ui-control:#e9eaed;--ui-stroke:#dadce1;--ui-on-primary:white;--ui-selection:#dceafb}
+html[data-ui-style="hig"] :is(.sidebar,.topbar,.footer){backdrop-filter:blur(9px)}
+html[data-ui-style="hig"] .brand b{font-weight:720;letter-spacing:-.8px}
+html[data-ui-style="hig"] .nav{font-weight:550;height:39px}
+html[data-ui-style="hig"] :is(.btn,.control-sm,.nav){transition:background .14s,color .14s}
+html[data-ui-style="hig"] .btn-primary{background:var(--ui-primary)!important;color:#fff!important}
+html[data-ui-style="hig"] .nav.active{color:var(--text)!important}
+html[data-ui-style="hig"] :is(.modal-input,select){border-radius:8px!important}
+html[data-ui-style="hig"] .control-main{background:var(--ui-primary)!important;color:#fff!important}
+html[data-ui-style="hig"] :is(button,input,select):focus-visible{outline:2px solid #0a84ff!important;outline-offset:2px}
+html[data-ui-style="hig"] .task-dock{border-radius:12px!important}
+
+/* Liquid Glass inspired: translucent FUNCTIONAL layer, opaque readable content layer.
+   Native Liquid Glass is not available via Electron CSS. Blur intentionally limited. */
+html[data-ui-style="liquid"]{--ui-radius:19px;--ui-control-radius:28px;--ui-heading-spacing:-.45px;--ui-stroke:color-mix(in srgb,#bfddff 24%,var(--edge));--ui-card:color-mix(in srgb,var(--surface) 93%,var(--accent));--ui-navigation:color-mix(in srgb,var(--surface) 78%,transparent);--ui-control:color-mix(in srgb,var(--surface3) 83%,#afcaff);--ui-primary:var(--accent);--ui-on-primary:#11151c;--ui-selection:color-mix(in srgb,var(--accent) 16%,var(--surface));--ui-shadow:0 8px 24px #0002}
+html[data-ui-style="liquid"] .app-shell{position:relative;isolation:isolate}
+html[data-ui-style="liquid"] :is(.sidebar,.topbar,.footer){backdrop-filter:blur(18px) saturate(1.35);-webkit-backdrop-filter:blur(18px) saturate(1.35);box-shadow:inset 0 1px #ffffff12,0 8px 22px #0002}
+html[data-ui-style="liquid"] .sidebar{background:linear-gradient(150deg,color-mix(in srgb,var(--accent) 13%,var(--ui-navigation)),var(--ui-navigation))!important}
+html[data-ui-style="liquid"] .topbar{background:linear-gradient(120deg,color-mix(in srgb,var(--surface) 76%,transparent),color-mix(in srgb,var(--accent) 8%,var(--surface)))!important}
+html[data-ui-style="liquid"] :is(.nav,.btn,.filter-tab,.control-sm,.state-mark){box-shadow:inset 0 1px #ffffff14}
+html[data-ui-style="liquid"] .nav.active{border-color:color-mix(in srgb,var(--accent) 45%,transparent)!important;box-shadow:inset 0 1px #fff3,0 3px 14px #0002}
+html[data-ui-style="liquid"] :is(.btn-primary,.control-main){background:linear-gradient(145deg,color-mix(in srgb,#fff 25%,var(--accent)),var(--accent))!important;border-color:color-mix(in srgb,#fff 20%,var(--accent))!important;box-shadow:inset 0 1px #fff7,0 6px 20px color-mix(in srgb,var(--accent) 25%,transparent)}
+html[data-ui-style="liquid"] .task-dock .task-dock-body{backdrop-filter:blur(12px)}
+html[data-ui-style="liquid"] .modal-box{box-shadow:0 22px 60px #0007,inset 0 1px #fff3}
+html[data-ui-style="liquid"] :is(.btn-subtle,.state-mark){border:1px solid color-mix(in srgb,#fff 17%,var(--edge))!important}
+html[data-ui-style="liquid"] :is(.player-box,.player-box video){background:#020307!important}
+
+/* AMOLED wins when requested, irrespective of selected design. */
+html[data-theme="amoled"][data-ui-style="minimal"],html[data-theme="amoled"][data-ui-style="material3"],html[data-theme="amoled"][data-ui-style="hig"],html[data-theme="amoled"][data-ui-style="liquid"]{--ui-navigation:#000;--ui-card:#080808;--ui-stroke:#2b2b2b;--ui-control:#111;--ui-selection:#171717;--ui-shadow:none}
+html[data-theme="amoled"][data-ui-style="liquid"] :is(.sidebar,.topbar,.footer){background:#000!important;backdrop-filter:none!important}
+@media(prefers-reduced-motion:reduce){#uiStyleSettings .ui-style-option,html:not([data-ui-style="current"]) :is(.btn,.nav){transition:none!important}}
+@media(prefers-reduced-transparency:reduce){html[data-ui-style="liquid"] :is(.sidebar,.topbar,.footer){backdrop-filter:none!important;-webkit-backdrop-filter:none!important;background:var(--surface)!important}}
+@media(forced-colors:active){#uiStyleSettings .ui-style-option:has(input:checked){outline:2px solid Highlight}html:not([data-ui-style="current"]) :is(.btn,.nav){forced-color-adjust:auto}}
