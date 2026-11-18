@@ -35,7 +35,7 @@
  let mediaInfo={hls:false,mode:'unknown',seekable:false};
  let channelRequestedAt=0,firstFrameReported=false,firstFrameDurationMs=0,playbackStartStage='',playbackPreferenceUsed=false;
  let activeEngine='html5',nativeHlsTried=new Set(),startupNoteTimer=null;
- let playbackProofTimer=0,playbackProofUrl='',attemptedTransports=new Set(),playAttemptSerial=0,playRequestSerial=0,lastStoppedChannelId='',filter='all',page='tv',hls=null,dash=null,current=null,playGeneration=0,playCandidates=[],playCandidateIndex=0,playMode='live',failoverTimer=null,stallTimer=null,ffmpegTried=false,ffmpegFallbackId='',activeTransport='relay',modalHandler=null,snapshotBase='',mediaRecoveryCount=0;
+ let playbackProofTimer=0,playbackProofUrl='',attemptedTransports=new Set(),playAttemptSerial=0,playRequestSerial=0,lastStoppedChannelId='',pausedFallbackNeedsRestart=false,filter='all',page='tv',hls=null,dash=null,current=null,playGeneration=0,playCandidates=[],playCandidateIndex=0,playMode='live',failoverTimer=null,stallTimer=null,ffmpegTried=false,ffmpegFallbackId='',activeTransport='relay',modalHandler=null,snapshotBase='',mediaRecoveryCount=0;
  const tasks={
   check:{running:false,cancel:false,visible:false,total:0,done:0,alive:0,dead:0,uncertain:0,results:[]},
   shots:{running:false,cancel:false,visible:false,total:0,done:0,success:0,failed:0,skipped:0,latest:''}
@@ -539,6 +539,7 @@
  }
  function stopPlayer(){
   // A full stop must abort transport readers, not merely pause the <video>.
+  pausedFallbackNeedsRestart=false;
   if(current?.id)lastStoppedChannelId=current.id;
   ++playRequestSerial; // Invalidates any pending allowChannel decision.
   ++playGeneration;++playAttemptSerial;
@@ -796,7 +797,7 @@
   const found=enabledChannels().find(c=>c.id===chId);if(!found){toast('Kênh không tồn tại hoặc nguồn đang tắt','warn');return;}
   if(window.IPTVProAdvanced?.allowChannel && !(await window.IPTVProAdvanced.allowChannel(found)))return;
   if(intent!==playRequestSerial)return;
-  lastStoppedChannelId='';
+  lastStoppedChannelId='';pausedFallbackNeedsRestart=false;
   if(!opts.buffer)window.streamleaf?.stopTimeshift?.().catch(()=>{});
   playGeneration++;const generation=playGeneration;clearTimeout(failoverTimer);clearTimeout(stallTimer);clearTimeout(startupNoteTimer);ffmpegTried=false;
   const manualUrl=typeof opts.manualUrl==='string'?opts.manualUrl:'';
@@ -820,6 +821,7 @@
  }
  async function playToggle(){
   if(!current){
+   // Only the explicit Stop button clears the selected channel.
    const channels=sortedChannels(enabledChannels());
    const chosen=channels.find(ch=>ch.id===lastStoppedChannelId)||channels[0];
    if(chosen)await playChannel(chosen.id);
@@ -827,23 +829,42 @@
    return;
   }
   if(player.paused){
+   if(pausedFallbackNeedsRestart){
+    // FFmpeg's ingestion process was stopped while the current frame
+    // stayed frozen. Restart that same selected channel on user Play.
+    pausedFallbackNeedsRestart=false;
+    await playChannel(current.id);
+    return;
+   }
    try{
     hls?.startLoad?.(-1);
+    dash?.play?.();
     await player.play();
     $('#playBtn').textContent='Ⅱ';
    }catch(e){toast('Không thể phát: '+e.message,'error');}
    return;
   }
-  // Live HLS/DASH can keep downloading even after video.pause().
-  // Release the live session completely and reopen it on the next Play.
-  if(playMode==='live'&&!['vod','event'].includes(mediaInfo.mode)){
-   stopPlayer();
-   return;
-  }
+  // Pause is NOT Stop: keep HTMLVideoElement attached, leaving its decoded
+  // current frame visible and the channel selected. Never call load(),
+  // remove src, clear current, or show #emptyPlayer from this action.
   player.pause();
+  clearTimeout(stallTimer);clearTimeout(failoverTimer);clearTimeout(startupNoteTimer);
   try{hls?.stopLoad?.();}catch{}
-  try{dash?.pause?.();}catch{}
+  try{
+   // dash.js schedules segments WHILE paused by default. Opt out before pause.
+   dash?.updateSettings?.({streaming:{scheduling:{scheduleWhilePaused:false}}});
+   dash?.pause?.();
+  }catch(e){console.warn('Pause DASH:',e);}
+  // FFmpeg runs outside the browser video element. Stop that separate
+  // network/decoder process without destroying the paused MSE video frame.
+  if(playMode==='live'&&activeTransport==='ffmpeg'&&ffmpegFallbackId){
+   const oldId=ffmpegFallbackId;ffmpegFallbackId='';
+   pausedFallbackNeedsRestart=true;
+   window.streamleaf?.stopPlaybackFallback?.(oldId).catch(()=>{});
+  }
   $('#playBtn').textContent='▶';
+  $('#streamInfo').textContent='⏸ Đã tạm dừng · khung hình được giữ nguyên';
+  textStatus('Tạm dừng: '+(current?.name||'kênh')+' · bấm ▶ để tiếp tục');
  }
  function switchChannel(dir){const all=sortedChannels(enabledChannels());if(!all.length)return;let index=all.findIndex(c=>c.id===current?.id);index=(index+dir+all.length)%all.length;playChannel(all[index].id);}
  function updateTaskUI(type){
