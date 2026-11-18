@@ -152,3 +152,11 @@ test('mobile channel panel is exactly 75 percent taller in portrait and short la
  assert.match(css,/height:clamp\(630px,157\.5dvh,945px\)!important;min-height:630px!important/);
  assert.match(css,/body #page-tv \.channel-panel > #channelList\{[\s\S]*?overflow-y:scroll!important/);
 });
+
+test('mobile background tasks remain visible above the fixed bottom tabs',()=>{
+ assert.match(code,/function syncTaskDock\(\)/);
+ assert.match(code,/doc\.body\?\.appendChild\?\.\(dock\)/);
+ assert.match(code,/setupTaskDock\(\)/);
+ assert.match(css,/body > #taskDock:not\(\.hidden\)/);
+ assert.match(css,/body > #taskDock \.task-cancel/);
+});

@@ -41,7 +41,7 @@ jobs:
             test -d "$dir"
             cp -R "$dir" "_site/$dir"
           done
-          for f in index.html app.js web-only.js hls.min.js dash.all.min.js supabase-sdk.js cloud-core.js cloud-sync.js source-use-consent-v1.js source-use-consent-v1.css web-mobile-player.js web-mobile-player.css; do
+          for f in index.html app.js web-only.js hls.min.js dash.all.min.js supabase-sdk.js cloud-core.js cloud-sync.js source-use-consent-v1.js source-use-consent-v1.css web-mobile-player.js web-mobile-player.css web-channel-snapshot.js; do
             test -s "_site/$f"
           done
           grep -Fq 'src="source-use-consent-v1.js"' _site/index.html
@@ -89,6 +89,8 @@ jobs:
         run: |
           set -euo pipefail
           node --check _site/browser-channel-check.js
+          node --check _site/web-channel-snapshot.js
+          node --test web-online/tests/web-channel-snapshot.test.cjs
           node --check _site/app.js
           node --check _site/web-mobile-player.js
           node --test web-online/tests/web-mobile-player.test.cjs

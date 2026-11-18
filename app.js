@@ -914,9 +914,9 @@
   const summaries=Object.values(tasks).filter(t=>t.visible).map(t=>`${t.done}/${t.total} kênh${t.running?' · đang chạy':' · xong'}`);
   const summary=$('#taskDockSummary');if(summary)summary.textContent=summaries.join(' | ')||'Không có tác vụ';
  }
- function taskStart(type,total){const t=tasks[type];t.running=true;t.cancel=false;t.visible=true;t.total=total;t.done=0;t.alive=0;t.dead=0;t.uncertain=0;t.blocked=0;t.abortController=type==='check'&&!native?new AbortController():null;t.success=0;t.failed=0;t.skipped=0;t.results=[];t.latest='';t.workers=0;updateTaskUI(type);$('#taskDock').classList.remove('hidden');}
+ function taskStart(type,total){const t=tasks[type];t.running=true;t.cancel=false;t.visible=true;t.total=total;t.done=0;t.alive=0;t.dead=0;t.uncertain=0;t.blocked=0;t.abortController=!native&&(type==='check'||type==='shots')?new AbortController():null;t.success=0;t.failed=0;t.skipped=0;t.results=[];t.latest='';t.workers=0;updateTaskUI(type);$('#taskDock').classList.remove('hidden');}
  function taskEnd(type){const t=tasks[type];t.running=false;t.abortController=null;updateTaskUI(type);if(!Object.values(tasks).some(x=>x.visible))$('#taskDock').classList.add('hidden');}
- function requestCancel(type){const t=tasks[type];if(t.running){t.cancel=true;if(type==='check')t.abortController?.abort();textStatus(`Đã yêu cầu hủy ${type==='check'?'kiểm tra link':'chụp ảnh'} sau lượt hiện tại`);}else{t.visible=false;updateTaskUI(type);if(!Object.values(tasks).some(x=>x.visible))$('#taskDock').classList.add('hidden');}}
+ function requestCancel(type){const t=tasks[type];if(t.running){t.cancel=true;t.abortController?.abort();textStatus(`Đã yêu cầu hủy ${type==='check'?'kiểm tra link':'chụp ảnh'} sau lượt hiện tại`);}else{t.visible=false;updateTaskUI(type);if(!Object.values(tasks).some(x=>x.visible))$('#taskDock').classList.add('hidden');}}
  function markPlaybackVerified(){
   const ch=current,url=playCandidates[playCandidateIndex];
   if(!ch||!url||player.readyState<2||player.paused||!(player.videoWidth>0||player.audioTracks?.length>0))return;
@@ -986,7 +986,7 @@
  async function checkAll(){if(window.IPTVProAdvanced?.canEdit?.()===false)return toast('Hồ sơ trẻ em không được chạy kiểm tra nguồn','warn');const t=tasks.check;if(t.running)return toast('Kiểm tra link đang chạy rồi','warn');const all=enabledChannels().slice();if(!all.length)return toast('Chưa có kênh để kiểm tra','warn');
   if(!native)toast('Kiểm tra Web: đọc HLS, segment và link dự phòng khi nguồn cho phép. CORS có thể khiến một số kênh không xác minh được.','warn');
   // Snapshot the configured limit at job start: modifying Settings affects only the next run.
-  const concurrency=Math.min(safeConcurrency(store.checkConcurrency),all.length);
+  const concurrency=Math.min(safeConcurrency(store.checkConcurrency),native?32:(window.OpenIPTVMobilePlayer?.isMobile?.()?2:5),all.length);
   taskStart('check',all.length);t.workers=concurrency;updateTaskUI('check');let cursor=0;
   textStatus(`Kiểm tra ${all.length} kênh với ${concurrency} luồng song song`);
   if(window.streamleaf?.batchStart){
@@ -1024,9 +1024,15 @@
   }}
   try{await Promise.all(Array.from({length:concurrency},()=>worker()));save();renderList(true);updateTaskUI('check');toast(`Đã kiểm tra ${t.done} kênh: ${t.alive} sống • ${t.dead} die • ${t.uncertain} chưa rõ`);textStatus(`Link: ${t.alive} sống / ${t.dead} die / ${t.uncertain} chưa rõ`);}finally{taskEnd('check');}
  }
- async function snapshotOne(c,quiet=false){
+ async function snapshotOne(c,quiet=false,signal=null){
   let result=null,ffmpegError=null,canvasError=null;
   if(native){try{result=await window.streamleaf.snapshot(c.url,c.name);}catch(e){ffmpegError=e;}}
+   else if(window.OpenIPTVWebSnapshot?.capture){
+    result=await window.OpenIPTVWebSnapshot.capture(c,{
+     currentVideo:current?.id===c.id?player:null,
+     links:currentAvailableLinks(c),signal,timeoutMs:9500
+    });
+   }
   // Canvas is a fallback only for the currently playing, non-DRM, CORS-safe video.
   if(!result&&current?.id===c.id&&player.videoWidth){try{
    const cvs=document.createElement('canvas');cvs.width=480;
@@ -1046,16 +1052,17 @@
   const t=tasks.shots;
   if(t.running)return toast('Đang chụp toàn bộ kênh rồi','warn');
   const all=enabledChannels().slice();if(!all.length)return toast('Chưa có kênh để chụp','warn');
-  if(!native)return toast('Chụp hàng loạt chỉ hỗ trợ trong ứng dụng đã đóng gói (có FFmpeg).','warn');
+  if(!native&&!window.OpenIPTVWebSnapshot?.capture)return toast('Thiếu bộ chụp Snapshot Web; hãy tải lại ứng dụng.','error');
   const seen=new Set(),pending=[];let skipped=0;
   for(const c of all){
     if(seen.has(c.url)||(store.snapshotSkipExisting&&!!(store.snapshots[c.url]?.file||store.snapshots[c.url]?.data))){skipped++;continue;}
     seen.add(c.url);pending.push(c);
   }
   if(!pending.length)return toast(`Đã có đủ ảnh (${skipped} kênh). Tắt “Bỏ qua kênh đã có ảnh” nếu muốn chụp mới.`);
-  const workers=Math.min(safeConcurrency(store.snapshotConcurrency),pending.length);
+  if(!native&&pending.length>80){pending.length=80;toast('Web chỉ chụp tối đa 80 kênh/lượt để bảo vệ bộ nhớ. Chụp lại để tiếp tục kênh chưa có ảnh.','warn');}
+   const workers=Math.min(safeConcurrency(store.snapshotConcurrency),native?32:(window.OpenIPTVMobilePlayer?.isMobile?.()?1:2),pending.length);
   if(pending.length>70)toast(`Bắt đầu chụp ${pending.length} kênh bằng ${workers} tác vụ song song; có thể hủy ở bảng tiến độ.`, 'warn');
-  taskStart('shots',all.length);t.workers=workers;t.skipped=skipped;t.done=skipped;
+  taskStart('shots',native?all.length:pending.length+skipped);t.workers=workers;t.skipped=skipped;t.done=skipped;
   t.latest=`Đang chuẩn bị ${workers} tác vụ chụp ảnh`;updateTaskUI('shots');
   if(window.streamleaf?.batchStart){
    try{
@@ -1082,8 +1089,8 @@
   async function worker(){
     while(!t.cancel&&cursor<pending.length){
       const c=pending[cursor++];t.latest=`Đang chụp ${c.name} • ${workers} luồng song song`;
-      try{await snapshotOne(c,true);t.success++;}
-      catch(e){t.failed++;t.lastError=`${c.name}: ${String(e.message||e)}`;t.latest=`Lỗi ${t.failed}: ${t.lastError.slice(0,210)}`;console.warn('Snapshot:',c.name,String(e.message||e));}
+      try{await snapshotOne(c,true,t.abortController?.signal);if(t.cancel)break;t.success++;}
+      catch(e){if(t.cancel||e?.name==='AbortError')break;t.failed++;t.lastError=`${c.name}: ${String(e.message||e)}`;t.latest=`Lỗi ${t.failed}: ${t.lastError.slice(0,210)}`;console.warn('Snapshot:',c.name,String(e.message||e));}
       t.done++;updateTaskUI('shots');refreshProgress();
     }
   }
@@ -1222,5 +1229,5 @@
  $('#appMode').textContent=native?'Ứng dụng • Desktop':'Bản xem thử • Web';
  $('#miniStatus').textContent=native?'Không cần Python / VLC':'Safari phát HLS trực tiếp';
  if(native)window.streamleaf.capabilities().then(x=>{snapshotBase=x.snapshotBase||'';window.__snapshotBase=snapshotBase;render();textStatus('Sẵn sàng • FFmpeg tích hợp: '+(x.ffmpegExists?'đã sẵn sàng':'không khả dụng; vui lòng cài lại bản Full'));}).catch(()=>textStatus('Không đọc được thông tin môi trường'));
- else textStatus('Bản trình duyệt: URL/CORS và snapshot hàng loạt có giới hạn');
+ else textStatus('Bản Web: kiểm tra HLS/DASH và chụp video trong giới hạn CORS/thiết bị');
 })();

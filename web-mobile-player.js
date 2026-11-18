@@ -22,12 +22,40 @@
   }catch(_){}
   return phone || (tablet&&tabletPortrait) || (narrow&&(touch||!!root?.matchMedia?.('(pointer: coarse)')?.matches));
  }
+ // Move task progress outside the desktop footer hidden by mobile styles.
+ function syncTaskDock(){
+  if(!doc?.getElementById)return;
+  const dock=doc.getElementById('taskDock');if(!dock)return;
+  const footer=doc.querySelector?.('.footer');
+  if(isMobile()){
+   if(dock.parentNode!==doc.body)doc.body?.appendChild?.(dock);
+  }else if(footer&&dock.parentNode!==footer)footer.appendChild(dock);
+ }
+ function setupTaskDock(){
+  const dock=doc?.getElementById?.('taskDock');
+  if(!dock||dock.dataset?.mobileProgressReady)return;
+  if(dock.dataset)dock.dataset.mobileProgressReady='true';
+  syncTaskDock();
+  if(!root?.MutationObserver)return;
+  let hidden=dock.classList.contains('hidden');
+  new root.MutationObserver(()=>{
+   const next=dock.classList.contains('hidden');
+   if(hidden&&!next&&isMobile()){
+    dock.classList.remove('collapsed');
+    const button=doc.getElementById('taskDockMinimize');
+    button?.setAttribute('aria-expanded','true');
+    if(button)button.textContent='▾';
+   }
+   hidden=next;
+  }).observe(dock,{attributes:true,attributeFilter:['class']});
+ }
  function syncDevice(){
   if(!doc)return false;
   const mobile=isMobile();
   const element=doc.documentElement;
   element?.setAttribute?.('data-iptv-device',mobile?'mobile':'desktop');
   element?.classList?.toggle?.('iptv-mobile',mobile);
+  syncTaskDock();
   return mobile;
  }
  function isIOS(){
@@ -196,6 +224,7 @@
  if(doc){
   syncDevice();
   setupMobileNavigation();
+  setupTaskDock();
   if(isIOS())doc.documentElement?.classList.add('web-is-ios');
   root.addEventListener?.('resize',syncDevice,{passive:true});
   root.addEventListener?.('orientationchange',syncDevice,{passive:true});

@@ -64,3 +64,9 @@ Tăng kích thước danh sách kênh trên điện thoại (khung 570–780px, 
 ### Channel panel +75% height (18/11/2026)
 
 Đã tăng thêm chính xác 75% chiều cao của khung Danh sách kênh trên mobile: dọc từ `clamp(570px, 77dvh, 780px)` lên `clamp(997.5px, 134.75dvh, 1365px)`; với thiết bị thấp/ngang từ `clamp(360px, 90dvh, 540px)` lên `clamp(630px, 157.5dvh, 945px)`. Giữ hàng kênh, thư mục, vuốt danh sách, menu và chức năng desktop như trước. Nếu thư mục đang gập, cần nhấn tên thư mục để thấy các kênh trong đó.
+
+## Browser Channel Check and Snapshot (2026-11-18)
+
+Kiểm tra kênh dùng HLS/DASH/byte media và link dự phòng nếu CORS cho phép; không coi CORS hoặc timeout là kênh Die. Trên mobile, bảng tiến độ/hủy được chuyển ra khỏi footer (footer bị ẩn trong mobile UI), giới hạn kiểm tra ở 2 kết nối song song.
+
+Snapshot trên Web chỉ lưu **khung hình video thật**. Ứng dụng thử ảnh từ kênh đang phát hoặc video muted chạy ngầm, dùng Safari native HLS/HLS.js/DASH.js khi hỗ trợ; không vượt CORS/DRM hoặc quy định autoplay và không dùng logo làm ảnh chụp giả. Hàng loạt giới hạn 80 kênh/lượt, 1 luồng mobile hoặc 2 luồng desktop-web để giảm áp lực bộ nhớ. Bảng tiến độ hiển thị số thành công, thất bại, tên kênh và nút Hủy. Nếu Safari không cho video chạy ngầm, mở kênh để có hình rồi thử chụp riêng kênh đó hoặc dùng Desktop FFmpeg.
