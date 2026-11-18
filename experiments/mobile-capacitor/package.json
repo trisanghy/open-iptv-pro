@@ -1,7 +1,7 @@
 {
   "name": "open-iptv-pro-mobile",
   "private": true,
-  "version": "4.23.17-mobile.5",
+  "version": "4.23.17-mobile.6",
   "type": "module",
   "description": "Mobile web-parity layout: media controls, EPG, main/backup stream selector, More bottom sheet",
   "scripts": {
