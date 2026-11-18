@@ -11,13 +11,18 @@
  // Device mode is based on real mobile platforms as well as narrow touch
  // viewports. An iPhone requesting a desktop user agent still gets a usable UI.
  function isMobile(){
-  // A single source of truth shared by the early head bootstrap and runtime.
+  // The head bootstrap is authoritative, including desktop-site browser mode.
   if(typeof root?.OpenIPTVDevice?.isMobile==='function')
    return root.OpenIPTVDevice.isMobile();
+  const search=String(root?.location?.search||'');
+  if(/(?:^|[?&])(?:view|layout)=desktop(?:&|$)/i.test(search)||/(?:^|[?&])desktop=1(?:&|$)/i.test(search))return false;
+  if(/(?:^|[?&])(?:view|layout)=mobile(?:&|$)/i.test(search))return true;
   const ua=String(root?.navigator?.userAgent||'');
+  if(/(?:Macintosh|Windows NT|X11|Linux x86_64|CrOS)/i.test(ua)&&
+   !/iPhone|iPad|iPod|Android|Mobile|Windows Phone/i.test(ua))return false;
+  if(Number(root?.innerWidth||0)>=960)return false;
   return /iPhone|iPad|iPod|Android.+Mobile|Windows Phone|Opera Mini/i.test(ua)||
-   Number(root?.innerWidth||Infinity)<=820||
-   !!root?.matchMedia?.('(max-width: 820px)')?.matches;
+   Number(root?.innerWidth||Infinity)<=820;
  }
  // Move task progress outside the desktop footer hidden by mobile styles.
  function syncTaskDock(){
