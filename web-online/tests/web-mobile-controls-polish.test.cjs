@@ -28,13 +28,30 @@ test('Five bottom tabs fit narrow iPhones with no flex overflow',()=>{
  assert.ok(css.includes('.mobile-more-trigger'));
 });
 test('Polish stylesheet loads last in both Pages and generated Web builds',()=>{
- assert.match(html,/web-tv-wide\.css[^"]*"\/><link rel="stylesheet" href="web-mobile-controls-polish\.css\?v=mobile-controls-align-20261118l"/);
+ assert.match(html,/web-tv-wide\.css[^"]*"\/><link rel="stylesheet" href="web-mobile-controls-polish\.css\?v=mobile-pip-tabs-aligned-20261118m"/);
  assert.ok(builder.includes("'web-mobile-controls-polish.css'"));
- assert.ok(builder.includes('web-mobile-controls-polish.css?v=mobile-controls-align-20261118l'));
+ assert.ok(builder.includes('web-mobile-controls-polish.css?v=mobile-pip-tabs-aligned-20261118m'));
  assert.ok(workflow.includes('web-online/tests/web-mobile-controls-polish.test.cjs'));
 });
 test('Styles are mobile-scoped and leave desktop navigation intact',()=>{
  assert.doesNotMatch(css,/^\s*body #appShell>#appSidebar\{/m);
  assert.match(css,/html\[data-iptv-device="mobile"\] body #appShell>#appSidebar/);
  assert.match(css,/html\[data-iptv-device="mobile"\] body #page-tv/);
+});
+
+test('PiP stays a single 24px vector and has no legacy text overlap',()=>{
+ assert.match(html,/id="pipBtn"[^>]*aria-label="PiP"/);
+ assert.doesNotMatch(html,/id="pipBtn"[^>]*<span class="pip-label">PiP<\/span>/);
+ assert.match(css,/--iptv-pip-clean-icon:url\("data:image\/svg\+xml,/);
+ assert.match(css,/#pipBtn::before\{\s*--ipc-icon:var\(--iptv-pip-clean-icon\)/);
+ assert.match(css,/#pipBtn>\.pip-label\{\s*display:none!important/);
+ assert.ok(builder.includes("pip_caption='<span class=\"pip-label\">PiP</span>'"));
+});
+test('Bottom SVG minimum size and label are isolated to separate grid rows',()=>{
+ assert.match(css,/grid-template-rows:27px 16px!important/);
+ assert.match(css,/nav \.macos-nav-symbol>svg\.apple-ui-symbol\{/);
+ assert.match(css,/flex:none!important;flex-basis:auto!important/);
+ assert.match(css,/width:23px!important;min-width:0!important;max-width:23px!important/);
+ assert.match(css,/height:23px!important;min-height:0!important;max-height:23px!important/);
+ assert.match(css,/mobile-tab-caption\{[\s\S]*?grid-row:2!important/);
 });

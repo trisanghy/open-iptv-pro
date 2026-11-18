@@ -114,7 +114,7 @@ jobs:
           node --check _site/web-player-icons.js
           node --test web-online/tests/web-player-icons.test.cjs
           node --test web-online/tests/web-mobile-controls-polish.test.cjs
-          grep -Fq 'web-mobile-controls-polish.css?v=mobile-controls-align-20261118l' _site/index.html
+          grep -Fq 'web-mobile-controls-polish.css?v=mobile-pip-tabs-aligned-20261118m' _site/index.html
           node --check _site/cast-ui.js
           node --test web-online/tests/web-airplay.test.cjs
           grep -Fq 'x-webkit-airplay="allow"' _site/index.html

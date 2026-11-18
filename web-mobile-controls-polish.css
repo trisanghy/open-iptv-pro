@@ -138,3 +138,57 @@ html[data-iptv-device="mobile"] body #toastArea{
   column-gap:5px!important;
  }
 }
+
+/* v2: Safari must not render the old "PiP" label on top of the icon. */
+:root{--iptv-pip-clean-icon:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22black%22%20stroke-width%3D%221.9%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Crect%20x%3D%222.5%22%20y%3D%224%22%20width%3D%2219%22%20height%3D%2216%22%20rx%3D%222.5%22%2F%3E%3Crect%20x%3D%2212.5%22%20y%3D%2212.5%22%20width%3D%226%22%20height%3D%224.5%22%20rx%3D%221%22%20fill%3D%22black%22%20stroke%3D%22none%22%2F%3E%3C%2Fsvg%3E");}
+html[data-iptv-device="mobile"] body #page-tv .player-control-card
+ .control-layout-top>.output-controls #pipBtn::before{
+ --ipc-icon:var(--iptv-pip-clean-icon);
+}
+html[data-iptv-device="mobile"] body #page-tv .player-control-card
+ .control-layout-top>.output-controls #pipBtn>.pip-label{
+ display:none!important;visibility:hidden!important;
+ position:absolute!important;width:0!important;height:0!important;
+ overflow:hidden!important;font-size:0!important;line-height:0!important;
+}
+/* Prior mobile CSS gave the nested SVG a 38px *minimum* despite setting
+   width:24px. That made icons physically overflow their 29px slot and collide
+   with the labels. Fix min sizes and flex-basis on the SVG itself. */
+html[data-iptv-device="mobile"] body #appShell>#appSidebar
+ .nav:is([data-page="tv"],[data-page="fav"],[data-page="epg"],[data-page="sources"],.mobile-more-trigger){
+ display:grid!important;grid-template-columns:minmax(0,1fr)!important;
+ grid-template-rows:27px 16px!important;align-content:center!important;
+ justify-content:stretch!important;align-items:center!important;justify-items:center!important;
+ row-gap:3px!important;column-gap:0!important;
+ padding:3px 2px!important;line-height:1!important;
+}
+html[data-iptv-device="mobile"] body #appShell>#appSidebar
+ .nav:is([data-page="tv"],[data-page="fav"],[data-page="epg"],[data-page="sources"],.mobile-more-trigger)>.macos-nav-symbol{
+ display:grid!important;grid-row:1!important;grid-column:1!important;
+ align-self:center!important;justify-self:center!important;place-items:center!important;
+ box-sizing:border-box!important;flex:none!important;flex-basis:auto!important;
+ width:27px!important;min-width:0!important;max-width:27px!important;
+ height:27px!important;min-height:0!important;max-height:27px!important;
+ margin:0!important;padding:0!important;line-height:1!important;font-size:21px!important;
+}
+html[data-iptv-device="mobile"] body #appShell>#appSidebar
+ .nav .macos-nav-symbol>svg.apple-ui-symbol{
+ display:block!important;position:static!important;align-self:center!important;justify-self:center!important;
+ box-sizing:border-box!important;
+ flex:none!important;flex-basis:auto!important;
+ width:23px!important;min-width:0!important;max-width:23px!important;
+ height:23px!important;min-height:0!important;max-height:23px!important;
+ margin:0!important;padding:0!important;transform:none!important;
+}
+html[data-iptv-device="mobile"] body #appShell>#appSidebar
+ .nav .mobile-tab-caption{
+ display:block!important;grid-row:2!important;grid-column:1!important;
+ align-self:center!important;justify-self:stretch!important;
+ box-sizing:border-box!important;flex:none!important;flex-basis:auto!important;
+ width:100%!important;min-width:0!important;max-width:100%!important;
+ height:16px!important;min-height:16px!important;max-height:16px!important;
+ margin:0!important;padding:0 1px!important;
+ font-size:clamp(9px,2.6vw,11px)!important;line-height:16px!important;
+ white-space:nowrap!important;text-align:center!important;
+ overflow:hidden!important;text-overflow:ellipsis!important;
+}

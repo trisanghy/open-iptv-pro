@@ -107,3 +107,6 @@ Một số trình duyệt nhúng không đổi User-Agent khi chuyển chế đ�
 Căn đồng bộ bốn nút Âm lượng, AirPlay/Cast, PiP và Toàn màn hình trong cùng lưới 4 cột; icon SVG đồng kích thước 24px căn hình học chính giữa, vùng chạm 48px. Trên iPhone biểu tượng AirPlay hiển thị chính xác, trạng thái fullscreen vẫn đổi khi bật/tắt. Giữ nguyên API và click handler hiện có.
 
 Thanh điều hướng chân trang mobile chuyển sang CSS Grid 5 cột `minmax(0,1fr)` để loại bỏ tràn ngang do flex 20% cộng padding/khoảng cách. Giữ năm mục TV, Yêu thích, Lịch, Nguồn, Thêm; bảo vệ safe area iPhone và không che thông báo. Chỉ áp dụng chế độ mobile, không thay đổi desktop hay dữ liệu.
+
+### Sửa PiP và icon điều hướng sát nhãn (18/11/2026)
+Bỏ văn bản `PiP` nằm bên trong nút PiP Web (vẫn giữ `aria-label`), chuẩn hóa duy nhất SVG vector 24px. Sửa thuộc tính `min-width/min-height` cũ đang ép SVG ở thanh đáy lên 38px, khiến biểu tượng vượt khỏi khung 29px và đè nhãn. Các tab mobile dùng hai hàng lưới riêng (icon 27px, nhãn 16px), SVG thực 23px; desktop không bị ảnh hưởng.
