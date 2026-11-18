@@ -161,6 +161,22 @@ test('If mirrored PiP request rejects, working native video PiP remains availabl
  }finally{await app.ctrl.dispose();}
 });
 
+test('Hard Stop from player closes mirrored PiP and releases capture without pausing the source',async()=>{
+ const app=makeMock();
+ try{
+  assert.equal(await app.ctrl.manual(),true);
+  const mirrored=app.doc.pictureInPictureElement;
+  assert.ok(mirrored&&mirrored!==app.original);
+  assert.ok(mirrored.srcObject);
+  assert.equal(await app.ctrl.stopPlayback(),true);
+  assert.equal(app.ctrl.inPiP(),false);
+  assert.equal(app.doc.pictureInPictureElement,null);
+  assert.equal(mirrored.srcObject,null);
+  assert.equal(mirrored.paused,true);
+  assert.equal(app.original.paused,false);
+ }finally{await app.ctrl.dispose();}
+});
+
 test('Automatic navigation PiP with CC exits when returning to TV',async()=>{
  const app=makeMock();
  try{
