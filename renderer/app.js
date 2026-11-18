@@ -843,7 +843,14 @@
     dash?.play?.();
     await player.play();
     $('#playBtn').textContent='Ⅱ';
-   }catch(e){toast('Không thể phát: '+e.message,'error');}
+    if(playMode==='live')$('#playingSubtitle').textContent=(current?.group||'')+' • Đang phát trực tiếp';
+   }catch(e){
+    // Failed resume must not silently restart background segment downloading.
+    pausedByUser=true;
+    try{hls?.stopLoad?.();}catch{}
+    try{dash?.pause?.();}catch{}
+    toast('Không thể phát: '+e.message,'error');
+   }
    return;
   }
   // Pause is NOT Stop: keep HTMLVideoElement attached, leaving its decoded
@@ -866,6 +873,7 @@
    window.streamleaf?.stopPlaybackFallback?.(oldId).catch(()=>{});
   }
   $('#playBtn').textContent='▶';
+  if(playMode==='live')$('#playingSubtitle').textContent=(current?.group||'')+' • Tạm dừng';
   $('#streamInfo').textContent='⏸ Đã tạm dừng · khung hình được giữ nguyên';
   textStatus('Tạm dừng: '+(current?.name||'kênh')+' · bấm ▶ để tiếp tục');
  }
