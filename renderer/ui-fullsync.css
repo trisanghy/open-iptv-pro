@@ -314,5 +314,17 @@ html[data-theme="dark"][data-ui-style="swiss"] .topbar{border-color:#eee!importa
 html[data-theme="light"][data-ui-style="glass"] .app-shell{background:radial-gradient(ellipse at 90% 10%,#dfcef6 0,transparent 48%),radial-gradient(ellipse at 0% 90%,#b9e8f1 0,transparent 50%),#eaf7ff!important}
 html[data-theme="light"][data-ui-style="cinema"] .topbar{background:var(--ui-navigation)!important}
 html[data-theme="light"][data-ui-style="broadcast"] .sidebar{background:#e7f6ed!important}
+/* AMOLED surfaces share one true-black palette for all eleven layout skins.
+   Preserve each style's primary/accent; only neutral surfaces are overridden. */
+html[data-theme="amoled"][data-ui-style]{
+ --bg:#000;--surface:#000;--surface2:#0d0d0d;--surface3:#161616;
+ --edge:#2c2c2c;--text:#f6f6f6;--muted:#aeaeae;
+ --ui-navigation:#000;--ui-card:#0b0b0b;--ui-stroke:#303030;
+ --ui-control:#171717;--ui-selection:#252525;--ui-shadow:none;
+ color-scheme:dark
+}
+html[data-theme="amoled"][data-ui-style="bento"] :is(.sidebar,.player-control-card){
+ background:var(--ui-card)!important;color:var(--text)!important
+}
 /* AMOLED explicitly wins even if the user selects a light-preferring TV preset. */
 html[data-theme="amoled"][data-ui-style] :is(.app-shell,.main,.content,.sidebar,.topbar,.footer){background:#000!important}
