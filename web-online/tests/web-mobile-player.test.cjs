@@ -65,8 +65,8 @@ test('collapsed desktop sidebar cannot override the mobile bottom navigation',()
  assert.match(css,/height:calc\(69px \+ env\(safe-area-inset-bottom,0px\)\)!important/);
 });
 test('HTML loads versioned assets to invalidate iOS cached broken layout',()=>{
- assert.match(html,/web-mobile-player\.css\?v=mobile-recovery-20261118i/);
- assert.match(html,/web-mobile-player\.js\?v=mobile-recovery-20261118i/);
+ assert.match(html,/web-mobile-player\.css\?v=responsive-desktop-20261118j/);
+ assert.match(html,/web-mobile-player\.js\?v=responsive-desktop-20261118j/);
 });
 
 test('mobile has five focused bottom tabs with advanced functionality in More',()=>{
@@ -163,7 +163,7 @@ test('mobile background tasks remain visible above the fixed bottom tabs',()=>{
 
 test('critical mobile bootstrap runs before desktop CSS and saves layout from blank rail',()=>{
  const themeBoot=fs.readFileSync(path.join(root,'theme-boot.js'),'utf8');
- assert.ok(html.indexOf('src="theme-boot.js?v=mobile-recovery-20261118i"')<html.indexOf('href="styles.css"'));
+ assert.ok(html.indexOf('src="theme-boot.js?v=responsive-desktop-20261118j"')<html.indexOf('href="styles.css"'));
  assert.match(themeBoot,/iptv-mobile-critical-layout/);
  assert.match(themeBoot,/html\[data-iptv-device="mobile"\] body #appShell>\.main/);
  assert.match(themeBoot,/html\[data-iptv-device="mobile"\] body #appShell>#appSidebar/);
@@ -188,10 +188,51 @@ test('iPhone, desktop-website iPhone and narrow browser all switch before app st
  assert.equal(iphone.rootTag.attributes['data-iptv-device'],'mobile');
  assert.equal(iphone.appended[0].id,'iptv-mobile-critical-layout');
  const spoof=emulate({ua:'Mozilla/5.0 (Macintosh; Intel Mac OS X)',width:980,screenWidth:390,touch:5});
- assert.equal(spoof.rootTag.attributes['data-iptv-device'],'mobile');
+ assert.equal(spoof.rootTag.attributes['data-iptv-device'],'desktop');
  const narrow=emulate({ua:'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',width:390,screenWidth:1920,touch:0});
  assert.equal(narrow.rootTag.attributes['data-iptv-device'],'mobile');
  const desktop=emulate({ua:'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',width:1440,screenWidth:1920,touch:0});
  assert.equal(desktop.rootTag.attributes['data-iptv-device'],'desktop');
  assert.equal(desktop.api.isMobile(),false);
+});
+
+test('desktop website request takes precedence over physical phone dimensions',()=>{
+ const boot=fs.readFileSync(path.join(root,'theme-boot.js'),'utf8');
+ function simulate({ua,width,physical,touch=5,search=''}) {
+  const attr={},meta={value:'width=device-width,initial-scale=1',
+   getAttribute(){return this.value},setAttribute(k,v){this.value=v}};
+  const doc={documentElement:{dataset:{},classList:{toggle:()=>{}},style:{setProperty:()=>{}},
+    setAttribute(k,v){attr[k]=v}},querySelector:q=>q==='meta[name="viewport"]'?meta:null,
+   head:{appendChild:()=>{}},createElement:()=>({}),addEventListener:()=>{}};
+  const win={navigator:{userAgent:ua,maxTouchPoints:touch},innerWidth:width,
+   screen:{width:physical,height:844},location:{search},addEventListener:()=>{},
+   matchMedia:q=>({matches:q.includes('prefers-color-scheme')?true:width<=820})};
+  vm.runInNewContext(boot,{window:win,document:doc,localStorage:{getItem:()=>null}},{filename:'theme-boot.js'});
+  return {mode:attr['data-iptv-device'],viewport:meta.value,api:win.OpenIPTVDevice};
+ }
+ const iphone='Mozilla/5.0 (iPhone; CPU iPhone OS 18_5 like Mac OS X)';
+ const desktopUA='Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15';
+ const normal=simulate({ua:iphone,width:390,physical:390});
+ assert.equal(normal.mode,'mobile');
+ assert.equal(normal.viewport,'width=device-width,initial-scale=1');
+ const browserDesktop=simulate({ua:desktopUA,width:980,physical:390});
+ assert.equal(browserDesktop.mode,'desktop');
+ assert.equal(browserDesktop.viewport,'width=1024,initial-scale=1');
+ const forced=simulate({ua:iphone,width:390,physical:390,search:'?view=desktop'});
+ assert.equal(forced.mode,'desktop');
+ assert.equal(forced.viewport,'width=1024,initial-scale=1');
+ assert.equal(simulate({ua:desktopUA,width:980,physical:390,search:'?view=mobile'}).mode,'mobile');
+ const pc=simulate({ua:desktopUA,width:1440,physical:1920,touch:0});
+ assert.equal(pc.mode,'desktop');assert.equal(pc.viewport,'width=device-width,initial-scale=1');
+});
+test('mobile baseline CSS cannot leak into desktop website mode',()=>{
+ const first=css.indexOf('@media (max-width:760px), (pointer:coarse) and (max-width:1000px){');
+ const end=css.indexOf('/* Full-viewport CSS fallback',first);
+ assert.ok(first>=0&&end>first);
+ const initial=css.slice(first,end);
+ assert.match(initial,/html\[data-iptv-device="mobile"\] body \.app-shell/);
+ assert.match(initial,/html\[data-iptv-device="mobile"\] #page-tv \.tv-layout/);
+ assert.doesNotMatch(initial,/\n\s+html body \.app-shell/);
+ assert.doesNotMatch(initial,/\n\s+#page-tv \.tv-layout/);
+ assert.match(css,/\.mobile-tab-caption\{display:none!important\}/);
 });
