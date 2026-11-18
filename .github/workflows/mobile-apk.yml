@@ -12,8 +12,8 @@ concurrency:
   group: mobile-release-${{ github.ref }}
   cancel-in-progress: false
 env:
-  MOBILE_VERSION: 4.23.17-mobile.2
-  MOBILE_TAG: mobile/v4.23.17.2
+  MOBILE_VERSION: 4.23.17-mobile.3
+  MOBILE_TAG: mobile/v4.23.17.3
 jobs:
   android:
     name: Android debug APK
@@ -105,9 +105,47 @@ jobs:
           path: experiments/mobile-capacitor/release/*-unsigned.ipa
           if-no-files-found: error
           retention-days: 90
+  android_screenshot:
+    name: Capture actual Android emulator screen
+    needs: [android]
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: Mobile-Android-APK
+          path: release
+      - name: Allow hardware accelerated emulator
+        run: |
+          if [ -e /dev/kvm ]; then sudo chmod 666 /dev/kvm; fi
+      - name: Boot Android 35, install built APK, capture screen
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 35
+          target: google_apis
+          arch: x86_64
+          profile: pixel_6
+          disable-animations: true
+          emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim
+          script: |
+            adb install -r release/OpenIPTVPro-Mobile-4.23.17-mobile.3-debug.apk
+            adb shell am start -W -n com.trisanghy.openiptvpro.mobile/.MainActivity
+            sleep 12
+            mkdir -p release
+            adb exec-out screencap -p > release/OpenIPTVPro-Mobile-4.23.17-mobile.3-Android-screenshot.png
+            file release/OpenIPTVPro-Mobile-4.23.17-mobile.3-Android-screenshot.png | grep -q 'PNG image data'
+            test "$(stat -c%s release/OpenIPTVPro-Mobile-4.23.17-mobile.3-Android-screenshot.png)" -gt 20000
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Mobile-Android-Screenshot
+          path: release/*-Android-screenshot.png
+          if-no-files-found: error
+          retention-days: 90
+
   release:
     name: Publish immutable mobile beta only after both builds
-    needs: [android, ios]
+    needs: [android, ios, android_screenshot]
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -122,12 +160,17 @@ jobs:
         with:
           name: Mobile-iOS-unsigned-IPA
           path: release
+      - uses: actions/download-artifact@v4
+        with:
+          name: Mobile-Android-Screenshot
+          path: release
       - name: Archive source at exact commit and verify both binaries
         run: |
           git archive --format=zip --output="release/OpenIPTVPro-Mobile-${MOBILE_VERSION}-Source.zip" HEAD:experiments/mobile-capacitor
           unzip -tq "release/OpenIPTVPro-Mobile-${MOBILE_VERSION}-Source.zip"
           test -s "release/OpenIPTVPro-Mobile-${MOBILE_VERSION}-debug.apk"
           test -s "release/OpenIPTVPro-Mobile-${MOBILE_VERSION}-unsigned.ipa"
+          test -s "release/OpenIPTVPro-Mobile-4.23.17-mobile.3-Android-screenshot.png"
           sha256sum release/* > release/SHA256SUMS.txt
       - name: Publish isolated mobile prerelease (never overwrite tag)
         env:
@@ -138,7 +181,7 @@ jobs:
             exit 1
           fi
           cat > /tmp/mobile-release-notes.txt <<'NOTES'
-          Open IPTV Pro Mobile 4.23.17-mobile.2 (Beta, Capacitor 8).
+          Open IPTV Pro Mobile 4.23.17-mobile.3 (Beta, Capacitor 8).\n          Visual rollback to original v4.23-style header, player, controls, folders, and bottom navigation.\n          UI was recreated from user screenshot; original old v4.23 source was not found in GitHub.
           Rust Lab parity subset: M3U rights confirmation, local Smart Discovery terms,
           Smart Doctor with user-approved fallback suggestions, safe mobile JSON backup,
           bounded 1–32 checks / 1000 channels per batch, touch layout.
@@ -149,7 +192,7 @@ jobs:
           before installation. This is not an App Store-ready or installable signed IPA.
           Branch experiment/mobile-capacitor-4211 only; main unchanged.
           NOTES
-          gh release create "$MOBILE_TAG" release/*.apk release/*.ipa release/*.zip release/SHA256SUMS.txt \
+          gh release create "$MOBILE_TAG" release/*.apk release/*.ipa release/*.zip release/*.png release/SHA256SUMS.txt \
             --target "$GITHUB_SHA" \
-            --title "Open IPTV Pro Mobile 4.23.17-mobile.2 - Android APK + unsigned iOS IPA" \
+            --title "Open IPTV Pro Mobile 4.23.17-mobile.3 - Android APK + unsigned iOS IPA" \
             --notes-file /tmp/mobile-release-notes.txt --prerelease

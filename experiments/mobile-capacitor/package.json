@@ -1,9 +1,9 @@
 {
   "name": "open-iptv-pro-mobile",
   "private": true,
-  "version": "4.23.17-mobile.2",
+  "version": "4.23.17-mobile.3",
   "type": "module",
-  "description": "Open IPTV Pro Mobile / Rust Lab safe parity subset, Capacitor 8, native AVPlayer and ExoPlayer.",
+  "description": "Open IPTV Pro Mobile classic v4.23 UI restored; Rust Lab parity tools retained",
   "scripts": {
     "dev": "vite --host 127.0.0.1",
     "build": "vite build",
