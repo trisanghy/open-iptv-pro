@@ -65,8 +65,8 @@ test('collapsed desktop sidebar cannot override the mobile bottom navigation',()
  assert.match(css,/height:calc\(69px \+ env\(safe-area-inset-bottom,0px\)\)!important/);
 });
 test('HTML loads versioned assets to invalidate iOS cached broken layout',()=>{
- assert.match(html,/web-mobile-player\.css\?v=mobile-scroll-20261118e/);
- assert.match(html,/web-mobile-player\.js\?v=mobile-scroll-20261118e/);
+ assert.match(html,/web-mobile-player\.css\?v=mobile-channels-20261118f/);
+ assert.match(html,/web-mobile-player\.js\?v=mobile-channels-20261118f/);
 });
 
 test('mobile has five focused bottom tabs with advanced functionality in More',()=>{
@@ -127,4 +127,20 @@ test('notifications are above the fixed bottom tabs on iPhone',()=>{
 });
 test('mobile collapse state preserves the ability to hide the channel panel',()=>{
  assert.match(css,/data-channel-panel-visible="false"\] body #page-tv \.channel-panel\{\s*display:none!important/);
+});
+
+test('mobile channel rows are large and all controls stay touch accessible',()=>{
+ assert.match(css,/body #page-tv #channelList \.channel-item\{[\s\S]*?min-height:78px!important/);
+ assert.match(css,/body #page-tv #channelList \.chan-logo\{[\s\S]*?width:54px!important;height:52px!important/);
+ assert.match(css,/body #page-tv #channelList \.folder-header\{[\s\S]*?min-height:60px!important/);
+ assert.match(css,/body #page-tv #channelList \.channel-move,[\s\S]*?min-width:44px!important/);
+ assert.match(css,/body #page-tv #channelList \.channel-text b\{[\s\S]*?font-size:15px!important/);
+});
+test('channel list has independently scrollable space and drag hints are hidden on mobile',()=>{
+ assert.match(css,/body #page-tv \.channel-panel\{[\s\S]*?height:clamp\(570px,77dvh,780px\)!important/);
+ assert.match(css,/body #page-tv \.channel-panel > #channelList\{[\s\S]*?height:auto!important;min-height:0!important/);
+ assert.match(css,/body #page-tv \.channel-panel > #channelList\{[\s\S]*?overflow-y:scroll!important/);
+ assert.match(css,/body #page-tv \.channel-panel > #channelList\{[\s\S]*?touch-action:pan-y!important/);
+ assert.match(css,/body #page-tv \.channel-panel \.channel-drag-hint\{\s*display:none!important/);
+ assert.match(app,/if\(!\['mouse','pen'\]\.includes\(e\.pointerType\)\)return/);
 });

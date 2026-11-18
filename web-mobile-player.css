@@ -681,3 +681,123 @@ html[data-iptv-device="mobile"] body #toastArea>.toast{
   height:clamp(300px,52dvh,380px)!important;min-height:300px!important;
  }
 }
+
+/* Channel Touch v4 — iPhone / Android only. The screenshot exposed a 350px
+   panel with nearly all space consumed by filters. Increase the real scroll
+   region, not the entire TV page; leave desktop reorder logic untouched. */
+html[data-iptv-device="mobile"] body #page-tv .channel-panel{
+ height:clamp(570px,77dvh,780px)!important;min-height:570px!important;
+ max-height:none!important;display:flex!important;flex-direction:column!important;
+ overflow:hidden!important;overscroll-behavior:contain!important;
+}
+html[data-iptv-device="mobile"] body #page-tv .channel-panel .panel-header{
+ flex:0 0 auto!important;min-height:60px!important;padding:11px 12px 7px!important;
+}
+html[data-iptv-device="mobile"] body #page-tv .channel-panel .panel-header h2{
+ font-size:18px!important;line-height:1.3!important;
+}
+html[data-iptv-device="mobile"] body #page-tv .channel-panel .panel-header p{
+ font-size:12px!important;margin-top:2px!important;
+}
+html[data-iptv-device="mobile"] body #page-tv .channel-panel .filter-box{
+ margin:5px 11px 7px!important;min-height:46px!important;
+}
+html[data-iptv-device="mobile"] body #page-tv .channel-panel .folder-actions{
+ display:flex!important;align-items:center!important;flex:0 0 auto!important;
+ gap:6px!important;padding:3px 9px 7px!important;min-height:44px!important;
+ overflow-x:auto!important;overflow-y:hidden!important;
+ -webkit-overflow-scrolling:touch!important;
+}
+html[data-iptv-device="mobile"] body #page-tv .channel-panel .folder-actions button{
+ min-height:42px!important;flex-shrink:0!important;font-size:12px!important;
+ padding:7px 9px!important;touch-action:manipulation!important;
+}
+html[data-iptv-device="mobile"] body #page-tv .channel-panel .filter-tabs{
+ padding:3px 9px 7px!important;gap:5px!important;
+ min-height:46px!important;flex:0 0 auto!important;
+}
+html[data-iptv-device="mobile"] body #page-tv .channel-panel .filter-tab{
+ min-height:40px!important;min-width:max-content!important;font-size:12px!important;
+ padding:7px 10px!important;touch-action:pan-x!important;
+}
+html[data-iptv-device="mobile"] body #page-tv .channel-panel .channel-drag-hint{
+ display:none!important;
+}
+/* Give the scrollport real remaining height in a column flex container.
+   A 0px explicit height + 115px min-height previously cramped iPhone scrolling. */
+html[data-iptv-device="mobile"] body #page-tv .channel-panel > #channelList{
+ display:block!important;flex:1 1 auto!important;
+ height:auto!important;min-height:0!important;max-height:none!important;
+ width:100%!important;
+ overflow-x:hidden!important;overflow-y:scroll!important;
+ -webkit-overflow-scrolling:touch!important;
+ overscroll-behavior-y:contain!important;touch-action:pan-y!important;
+ padding:7px 8px 18px!important;
+ position:relative!important;isolation:isolate!important;
+ scrollbar-width:thin;scrollbar-color:var(--accent,#ab77e8) transparent;
+}
+html[data-iptv-device="mobile"] body #page-tv #channelList .folder-header{
+ display:flex!important;align-items:center!important;gap:9px!important;
+ min-height:60px!important;padding:10px 12px!important;margin-bottom:5px!important;
+ border-radius:12px!important;font-size:15px!important;line-height:1.3!important;
+ position:sticky!important;top:0!important;z-index:2!important;
+ touch-action:pan-y!important;
+}
+html[data-iptv-device="mobile"] body #page-tv #channelList .folder-header .folder-emoji{
+ font-size:22px!important;
+}
+html[data-iptv-device="mobile"] body #page-tv #channelList .folder-header .folder-size{
+ font-size:13px!important;
+}
+html[data-iptv-device="mobile"] body #page-tv #channelList .channel-item{
+ display:flex!important;align-items:center!important;
+ min-height:78px!important;height:auto!important;
+ width:100%!important;min-width:0!important;gap:7px!important;
+ padding:10px 9px!important;margin-bottom:5px!important;border-radius:12px!important;
+ touch-action:pan-y!important;cursor:pointer!important;
+ -webkit-user-select:none!important;user-select:none!important;
+}
+html[data-iptv-device="mobile"] body #page-tv #channelList .chan-logo{
+ width:54px!important;height:52px!important;min-width:54px!important;
+ flex:0 0 54px!important;border-radius:11px!important;font-size:15px!important;
+}
+html[data-iptv-device="mobile"] body #page-tv #channelList .channel-text{
+ flex:1 1 auto!important;min-width:0!important;
+}
+html[data-iptv-device="mobile"] body #page-tv #channelList .channel-text b{
+ font-size:15px!important;line-height:1.35!important;
+ white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;
+}
+html[data-iptv-device="mobile"] body #page-tv #channelList .channel-text small{
+ font-size:12px!important;line-height:1.35!important;margin-top:5px!important;
+ white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;
+}
+html[data-iptv-device="mobile"] body #page-tv #channelList .channel-move,
+html[data-iptv-device="mobile"] body #page-tv #channelList .channel-star{
+ display:grid!important;place-items:center!important;touch-action:manipulation!important;
+ min-width:44px!important;width:44px!important;flex:0 0 44px!important;
+ min-height:46px!important;height:46px!important;
+ margin:0!important;padding:0!important;border-radius:12px!important;
+ font-size:22px!important;
+}
+html[data-iptv-device="mobile"] body #page-tv #channelList .channel-star{
+ color:#e6b65c!important;
+}
+/* Narrow phones retain two usable control targets and a readable name. */
+@media(max-width:370px){
+ html[data-iptv-device="mobile"] body #page-tv #channelList .channel-item{
+  gap:5px!important;padding:9px 6px!important;
+ }
+ html[data-iptv-device="mobile"] body #page-tv #channelList .chan-logo{
+  width:48px!important;height:48px!important;min-width:48px!important;flex-basis:48px!important;
+ }
+ html[data-iptv-device="mobile"] body #page-tv #channelList .channel-move,
+ html[data-iptv-device="mobile"] body #page-tv #channelList .channel-star{
+  min-width:42px!important;width:42px!important;flex-basis:42px!important;
+ }
+}
+@media(max-height:600px){
+ html[data-iptv-device="mobile"] body #page-tv .channel-panel{
+  height:clamp(360px,90dvh,540px)!important;min-height:360px!important;
+ }
+}

@@ -56,3 +56,7 @@ Thanh công cụ phát trên điện thoại gồm một hàng 4 icon chạm t�
 ## Sửa cuộn danh sách và thông báo mobile (18/11/2026)
 
 Trên thiết bị mobile, danh sách kênh được đặt ngay sau video/khung điều khiển, **trước Tua lại và Công cụ nhanh**. Khung danh sách có chiều cao rõ ràng khoảng 350–520px; riêng danh sách kênh cuộn dọc bằng ngón tay, thanh bộ lọc cuộn ngang, không cản thao tác cuộn cả trang. Thu gọn danh sách vẫn được hỗ trợ. Thông báo hiện phía trên bottom navigation (bao gồm safe area iOS), không bị 5 tab che khuất. Tất cả áp dụng chỉ trong chế độ mobile, không thay đổi dữ liệu IPTV hay desktop.
+
+## Mobile Channel Touch — 18/11/2026
+
+Tăng kích thước danh sách kênh trên điện thoại (khung 570–780px, thư mục ít nhất 60px, mỗi kênh ít nhất 78px), logo 54×52px, nút yêu thích và chuyển thư mục có vùng chạm ít nhất 44×46px. Giảm chiều cao các bộ lọc và bỏ hướng dẫn kéo/Shift dành cho chuột để dành thêm chỗ cho kênh. Danh sách sử dụng riêng vùng cuộn dọc iOS (`overflow-y: scroll`, `touch-action: pan-y`, `-webkit-overflow-scrolling: touch`). Chỉ tác động giao diện mobile, không thay đổi hành vi desktop hay nguồn IPTV.
