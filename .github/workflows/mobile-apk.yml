@@ -9,7 +9,7 @@ on:
 permissions:
   contents: write
 concurrency:
-  group: mobile-release-${{ github.ref }}-mobile8
+  group: mobile-release-${{ github.ref }}-mobile8-fix1
   cancel-in-progress: false
 env:
   MOBILE_VERSION: 4.23.17-mobile.8
