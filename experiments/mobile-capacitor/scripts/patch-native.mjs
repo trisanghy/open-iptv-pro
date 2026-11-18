@@ -7,7 +7,13 @@ if(fs.existsSync(path.join(project,'android/app/src/main/AndroidManifest.xml')))
  const file=path.join(project,'android/app/src/main/AndroidManifest.xml');let xml=fs.readFileSync(file,'utf8');
  if(!xml.includes('android.permission.INTERNET'))xml=xml.replace(/<manifest([^>]*)>/,'<manifest$1>\n    <uses-permission android:name="android.permission.INTERNET" />');
  if(!xml.includes('android:usesCleartextTraffic='))xml=xml.replace(/<application\b/,'<application android:usesCleartextTraffic="true"');
- if(!xml.includes('android:supportsPictureInPicture'))xml=xml.replace(/<activity\b/,'<activity android:supportsPictureInPicture="true" android:launchMode="singleTask"');
+ // Capacitor already defines android:launchMode on MainActivity. Repeating it makes the manifest invalid XML.
+ if(!xml.includes('android:supportsPictureInPicture='))xml=xml.replace(/<activity\b/,'<activity android:supportsPictureInPicture="true"');
+ // Sanity check on the initial activity tag to prevent duplicate attributes in future updates.
+ const activityTag=xml.match(/<activity\b[^>]*>/)?.[0]||'';
+ for(const attribute of ['android:launchMode','android:supportsPictureInPicture','android:exported']){
+   if((activityTag.match(new RegExp(attribute+'=', 'g'))||[]).length>1)throw Error('Duplicate AndroidManifest activity attribute: '+attribute);
+ }
  fs.writeFileSync(file,xml);console.log('Android permissions and PiP patched');
 }
 if(fs.existsSync(path.join(project,'ios/App/App/Info.plist'))){
