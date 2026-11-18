@@ -144,8 +144,13 @@
   video?.addEventListener?.('leavepictureinpicture',()=>{reason='';});
   doc.addEventListener?.('fullscreenchange',()=>{
    const fullscreen=doc.fullscreenElement;
-   if(fullscreen&&(fullscreen===video||fullscreen.contains?.(video)))
+   if(fullscreen&&(fullscreen===video||fullscreen.contains?.(video))){
     void exit();
+   }else if(!fullscreen&&captionsRequested()&&eligible()){
+    // The user can return from fullscreen and then open CC PiP again.
+    // Recreate the prewarmed mirror without waiting for a new play event.
+    compositor?.prepare?.();
+   }
   });
   const warmMirror=()=>{
    if(captionsRequested()&&eligible())compositor?.prepare?.();
