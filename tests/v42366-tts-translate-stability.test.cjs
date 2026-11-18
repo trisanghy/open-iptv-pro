@@ -160,19 +160,20 @@ test('4.23.66: updated UI wires cancel, locale changes, preview and compact line
 });
 
 
-test('4.23.66: versioned builders use immutable release tag',()=>{
- const ref="REF='electron-v4.23.66'";
- const personal=read('build-mac-v42366.sh');
- const publicBuilder=read('build-mac-v42366-public.sh');
+test('Current Electron builders use the permanent branch, keeping old tags immutable',()=>{
+ const personal=read('build-mac-electron.sh');
+ const publicBuilder=read('build-mac-electron-public.sh');
  for(const script of [personal,publicBuilder]){
-  assert.ok(script.includes(ref),'script must download the existing Electron branch');
-  assert.ok(script.includes('refs/tags/${REF}'),'Historical source uses immutable tag');
-  assert.doesNotMatch(script,/electron-v42366-ai-model-hardware-hints/);
+  assert.match(script,/REF='build-sources\/electron-desktop'/);
+  assert.match(script,/zip\/refs\/heads\/\$REF/);
+  assert.doesNotMatch(script,/experiment\/electron-v42366/);
  }
  assert.match(personal,/--dir/);
  assert.match(personal,/open "\$OUT"/);
+ assert.match(personal,/rm -rf "\$TMP"/);
  assert.doesNotMatch(personal,/electron-builder --mac dmg/);
  assert.match(publicBuilder,/electron-builder --mac dmg/);
+ assert.match(read('README.md'),/releases\/tag\/v4\.23\.68/);
 });
 
 test('Permanent branch builds latest personal app and separate public DMG',()=>{

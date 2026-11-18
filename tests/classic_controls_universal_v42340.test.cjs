@@ -9,7 +9,11 @@ test('v4.23.44 player buttons retain previous ids and separate toolbar',()=>{
  assert.match(css,/@container \(max-width:560px\)/);
  assert.ok(html.indexOf('id="playerBox"')<html.indexOf('class="player-control-card"'));
 });
-test('v4.23.44 exact source version and universal Mac setting',()=>{
- assert.equal(JSON.parse(get('package.json')).version,'4.23.68');
- assert.match(get('BUILD_MAC.command'),/OPENIPTV_BUILD_ARCH/);
+test('Current Mac builders retain both architectures and the exact desktop version',()=>{
+ const pkg=JSON.parse(get('package.json')),dmgbuilder=get('BUILD_MAC_DMG_ONLY.command');
+ assert.equal(pkg.version,'4.23.68');
+ assert.match(dmgbuilder,/arm64\|aarch64/);
+ assert.match(dmgbuilder,/x64\|x86_64/);
+ assert.match(dmgbuilder,/p\.version/);
+ assert.match(get('build-mac-electron.sh'),/REF='build-sources\/electron-desktop'/);
 });
