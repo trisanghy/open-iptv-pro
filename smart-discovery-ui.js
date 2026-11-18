@@ -49,6 +49,8 @@
  }
  function render(){metrics();renderRows();controls(false);}
  async function choices(){
+  // No third-party catalog retrieval before explicit Smart Discovery consent.
+  if(!window.OpenIPTVSourceConsent?.isSmartAccepted?.())return;
   const kind=$('smartCatalog')?.value||'country';catalogKind=kind;
   const wrap=$('smartCountryWrap');if(wrap)wrap.hidden=kind==='global'||kind==='freetv';
   if(kind==='global'||kind==='freetv')return;
@@ -68,6 +70,7 @@
   if(window.IPTVProAdvanced?.canEdit?.()===false)return ctx.toast('Hồ sơ trẻ em không được nhập nguồn','warn');
   if(!window.streamleaf?.smartLoad&&!window.streamleaf?.smartCountry){say('Smart Discovery yêu cầu ứng dụng desktop Windows/macOS');return;}
   if(!(await window.OpenIPTVSourceConsent?.requireSmart?.())){say('Cần xác nhận điều khoản Smart Discovery trước khi khám phá nguồn.');return;}
+  await choices();
   controls(true);stop=false;discovery=null;candidates=[];visibleRows=150;const seq=++generation;
   const kind=$('smartCatalog')?.value||'country',code=$('smartCountry').value;
   say('Đang tải danh mục nguồn công khai…');$('smartProgressBar').style.width='0%';
@@ -156,5 +159,5 @@
  $('smartSearch')?.addEventListener('input',()=>{visibleRows=150;renderRows();});
  $('smartStatusFilter')?.addEventListener('change',()=>{visibleRows=150;renderRows();});
  window.IPTVSmartDiscovery={find,verify};
- void choices();
+ if(window.OpenIPTVSourceConsent?.isSmartAccepted?.())void choices();
 })();
