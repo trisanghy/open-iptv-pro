@@ -65,8 +65,8 @@ test('collapsed desktop sidebar cannot override the mobile bottom navigation',()
  assert.match(css,/height:calc\(69px \+ env\(safe-area-inset-bottom,0px\)\)!important/);
 });
 test('HTML loads versioned assets to invalidate iOS cached broken layout',()=>{
- assert.match(html,/web-mobile-player\.css\?v=mobile-channels-minus40-20261118h/);
- assert.match(html,/web-mobile-player\.js\?v=mobile-channels-minus40-20261118h/);
+ assert.match(html,/web-mobile-player\.css\?v=mobile-recovery-20261118i/);
+ assert.match(html,/web-mobile-player\.js\?v=mobile-recovery-20261118i/);
 });
 
 test('mobile has five focused bottom tabs with advanced functionality in More',()=>{
@@ -159,4 +159,39 @@ test('mobile background tasks remain visible above the fixed bottom tabs',()=>{
  assert.match(code,/setupTaskDock\(\)/);
  assert.match(css,/body > #taskDock:not\(\.hidden\)/);
  assert.match(css,/body > #taskDock \.task-cancel/);
+});
+
+test('critical mobile bootstrap runs before desktop CSS and saves layout from blank rail',()=>{
+ const themeBoot=fs.readFileSync(path.join(root,'theme-boot.js'),'utf8');
+ assert.ok(html.indexOf('src="theme-boot.js?v=mobile-recovery-20261118i"')<html.indexOf('href="styles.css"'));
+ assert.match(themeBoot,/iptv-mobile-critical-layout/);
+ assert.match(themeBoot,/html\[data-iptv-device="mobile"\] body #appShell>\.main/);
+ assert.match(themeBoot,/html\[data-iptv-device="mobile"\] body #appShell>#appSidebar/);
+ assert.match(code,/root\.OpenIPTVDevice\.isMobile\(\)/);
+});
+test('iPhone, desktop-website iPhone and narrow browser all switch before app starts',()=>{
+ const boot=fs.readFileSync(path.join(root,'theme-boot.js'),'utf8');
+ function emulate({ua,width,screenWidth,touch}){
+  const rootTag={dataset:{},attributes:{},classList:{toggle:()=>{}},style:{setProperty:()=>{}},
+   setAttribute(k,v){this.attributes[k]=v;}};
+  const appended=[];
+  const doc={documentElement:rootTag,hidden:false,head:{appendChild:x=>appended.push(x)},
+   createElement:()=>({id:'',textContent:''}),addEventListener:()=>{}};
+  const rootWindow={navigator:{userAgent:ua,maxTouchPoints:touch},
+   innerWidth:width,screen:{width:screenWidth,height:844},
+   matchMedia:()=>({matches:width<=820}),
+   addEventListener:()=>{}};
+  vm.runInNewContext(boot,{window:rootWindow,document:doc,localStorage:{getItem:()=>null},console},{filename:'theme-boot.js'});
+  return {rootTag,appended,api:rootWindow.OpenIPTVDevice};
+ }
+ const iphone=emulate({ua:'Mozilla/5.0 (iPhone; CPU iPhone OS 18_6 like Mac OS X)',width:390,screenWidth:390,touch:5});
+ assert.equal(iphone.rootTag.attributes['data-iptv-device'],'mobile');
+ assert.equal(iphone.appended[0].id,'iptv-mobile-critical-layout');
+ const spoof=emulate({ua:'Mozilla/5.0 (Macintosh; Intel Mac OS X)',width:980,screenWidth:390,touch:5});
+ assert.equal(spoof.rootTag.attributes['data-iptv-device'],'mobile');
+ const narrow=emulate({ua:'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',width:390,screenWidth:1920,touch:0});
+ assert.equal(narrow.rootTag.attributes['data-iptv-device'],'mobile');
+ const desktop=emulate({ua:'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',width:1440,screenWidth:1920,touch:0});
+ assert.equal(desktop.rootTag.attributes['data-iptv-device'],'desktop');
+ assert.equal(desktop.api.isMobile(),false);
 });
