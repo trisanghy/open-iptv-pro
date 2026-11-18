@@ -46,7 +46,7 @@ test('v4.23.67: UI shows CPU/GPU, RAM, disk and actual machine info using the se
  assert.match(html,/ai-hardware-advice-v42365\.js/);
  assert.match(html,/ai-hardware-advice-v42365\.css/);
  assert.ok(html.indexOf('ai-hardware-advice-v42365.js')<html.indexOf('unified-ai-settings-v42356.js'));
- assert.equal(require('../package.json').version,'4.23.68');
+ assert.equal(require('../package.json').version,'4.23.70');
 });
 test('v4.23.67: personal build still produces only native app, opens Finder and cleans source',()=>{
  const s=read('build-mac-v42366.sh');

@@ -102,7 +102,7 @@ test('v4.23.60: stop can cancel both active FFmpeg and Whisper jobs; source rema
  assert.match(c,/s\.children\?\.delete\(child\)/);
  assert.match(c,/for\(const proc of c\.children\|\|\[\]\)/);
  const pkg=JSON.parse(read('package.json'));
- assert.equal(pkg.version,'4.23.68');
+ assert.equal(pkg.version,'4.23.70');
  assert.deepEqual(pkg.build.mac.target,['dmg']);
  assert.equal(pkg.build.dmg.writeUpdateInfo,false);
 });

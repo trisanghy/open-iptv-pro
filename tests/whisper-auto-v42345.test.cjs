@@ -28,5 +28,5 @@ test('v4.23.45 Whisper setup IPC connects only to pinned installer and local mod
  assert.match(main,/liveCaptionService.setFile\('binary'/);assert.match(main,/liveCaptionService.setFile\('model'/);
  assert.match(main,/whisperModelInstaller\?\.cancel\(\)/);
  assert.match(pre,/captionAutoInstall/);
- assert.equal(JSON.parse(read('package.json')).version,'4.23.68');
+ assert.equal(JSON.parse(read('package.json')).version,'4.23.70');
 });

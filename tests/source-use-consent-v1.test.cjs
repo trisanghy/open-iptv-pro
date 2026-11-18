@@ -71,7 +71,7 @@ test('Source use: all UI flows are guarded before they fetch or save external ch
  assert.ok(point>0);assert.ok(point<html.indexOf('src="app.js"'));
  assert.match(html,/source-use-consent-v1\.css/);
  assert.match(html,/Kênh công khai hoặc có tín hiệu không đồng nghĩa có bản quyền/);
- assert.match(src,/không chịu trách nhiệm đối với dữ liệu người dùng trong phạm vi pháp luật cho phép/);
+ assert.match(src,/Tác giả không chịu trách nhiệm đối với nội dung người dùng tự nhập/);
  assert.doesNotMatch(src,/localStorage|sessionStorage/);
 });
 
