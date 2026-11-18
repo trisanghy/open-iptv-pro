@@ -49,6 +49,7 @@
  }
  function render(){metrics();renderRows();controls(false);}
  async function choices(){
+  if(!window.OpenIPTVSourceConsent?.isSmartAccepted?.())return;
   const kind=$('smartCatalog')?.value||'country';catalogKind=kind;
   const wrap=$('smartCountryWrap');if(wrap)wrap.hidden=kind==='global'||kind==='freetv';
   if(kind==='global'||kind==='freetv')return;
@@ -65,6 +66,7 @@
  }
  async function find(){
   if(busy)return;
+  await choices();
   if(window.IPTVProAdvanced?.canEdit?.()===false)return ctx.toast('Hồ sơ trẻ em không được nhập nguồn','warn');
   if(!window.streamleaf?.smartLoad&&!window.streamleaf?.smartCountry){say('Smart Discovery yêu cầu ứng dụng desktop Windows/macOS');return;}
   if(!(await window.OpenIPTVSourceConsent?.requireSmart?.())){say('Cần xác nhận điều khoản Smart Discovery trước khi khám phá nguồn.');return;}
@@ -147,6 +149,13 @@
  $('smartCancel').addEventListener('click',()=>{stop=true;say('Đang hủy, chờ các kết nối đang chạy kết thúc…');});
  $('smartImportAlive').addEventListener('click',()=>add(true));
  $('smartImportAll').addEventListener('click',()=>add(false));
+ $('smartRevokeTerms')?.addEventListener('click',()=>{
+  stop=true;++generation;discovery=null;candidates=[];visibleRows=150;
+  window.OpenIPTVSourceConsent?.revokeSmart?.();
+  $('smartProgressBar').style.width='0%';
+  say('Đã rút lại xác nhận điều khoản. Lần khám phá tới phải đồng ý lại.');
+  render();
+ });
  $('smartCatalog')?.addEventListener('change',()=>{
   // A filter change invalidates the previous preview; do not import it under
   // the newly selected catalog label by accident.
@@ -156,5 +165,5 @@
  $('smartSearch')?.addEventListener('input',()=>{visibleRows=150;renderRows();});
  $('smartStatusFilter')?.addEventListener('change',()=>{visibleRows=150;renderRows();});
  window.IPTVSmartDiscovery={find,verify};
- void choices();
+ if(window.OpenIPTVSourceConsent?.isSmartAccepted?.())void choices();
 })();
