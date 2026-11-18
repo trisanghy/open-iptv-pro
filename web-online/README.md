@@ -26,3 +26,13 @@ Workflow `.github/workflows/deploy-openiptv-web.yml` dựng Web từ WebView fro
 Website: **https://trisanghy.github.io/open-iptv-pro/**.
 
 Chỉ sử dụng nội dung IPTV bạn có quyền truy cập; không kèm playlist trái phép.
+
+## Cảnh báo quyền sử dụng và trách nhiệm người dùng
+
+**Open IPTV Pro là dự án cá nhân chỉ cung cấp phần mềm xem/quản lý IPTV.** Tác giả không phân phối kênh, nội dung có bản quyền, tài khoản dịch vụ hoặc quyền xem/phát lại bất kỳ nguồn nào.
+
+Người sử dụng phải tự xác minh quyền truy cập, bản quyền, giấy phép và điều khoản nhà cung cấp trước khi nhập hoặc xem bất cứ file/link M3U hay kênh từ Smart Discovery. **Nguồn công khai, tìm thấy trên mạng hoặc phát được không đồng nghĩa có giấy phép.** Người dùng tự chịu trách nhiệm về mọi nguồn, dữ liệu và nội dung mình nhập, lưu, phát, xem hay chia sẻ. Tác giả không kiểm soát, bảo đảm tính hợp pháp và **không chịu trách nhiệm về nội dung do người dùng đưa vào hoặc xem**, trong phạm vi pháp luật cho phép. Tuyên bố không thay thế các nghĩa vụ pháp luật và không trao thêm quyền sử dụng nội dung.
+
+- Trước khi mở hộp chọn file M3U, thêm/sửa URL M3U hoặc nhập playlist từ repository, người dùng phải tự tích ô xác nhận quyền hợp pháp trong hộp cảnh báo. Không đồng ý → hủy, không tải/nhập nguồn.
+- Trước khi sử dụng **Smart Discovery**, phải tự tích **hai ô riêng biệt** xác nhận đã kiểm tra điều khoản/nguồn gốc của nhà cung cấp và có quyền xem nội dung; việc nhập kết quả từ Smart Discovery yêu cầu xác nhận lại cho từng lượt.
+- Các ô mặc định trống. Xác nhận chỉ là cam kết do người dùng đưa ra, **không phải** ứng dụng kiểm chứng bản quyền hay cấp phép.

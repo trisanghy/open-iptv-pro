@@ -546,17 +546,23 @@
    if(!save())throw new Error('Bộ nhớ lưu trữ không đủ. Danh sách chưa được nhập; hãy xuất Backup và xóa bớt dữ liệu cũ.');
   }catch(e){Object.assign(store,before);throw e;}
   render();toast(`Đã thêm ${parsed.length} kênh từ ${name}`);textStatus(`Đã thêm ${parsed.length} kênh mới`);setPage('tv');}
+ let fileConsentForPicker=false;
  async function loadFile(){
-  // Native file picker must not open until explicit legal-use acknowledgment.
-  if(native&&!(await window.OpenIPTVSourceConsent?.requestImport?.('file')))return;
   if(window.IPTVProAdvanced?.canEdit?.()===false)return toast('Hồ sơ trẻ em không được thêm nguồn IPTV','warn');
-  if(native){try{const file=await window.streamleaf.openM3U();if(file)addSource(file.name,file.name,file.content,'file');}catch(e){toast(e.message,'error');}return;}
-  $('#fileInput').click();
- }
- async function importFromInput(file){if(!file)return;
-  // Browser file selection is not import consent. Ask before reading file bytes.
+  // Consent BEFORE opening the file picker. Require a new consent for each attempt.
   if(!(await window.OpenIPTVSourceConsent?.requestImport?.('file')))return;
-  try{addSource(file.name,file.name,await file.text(),'file');}catch(e){toast(e.message,'error');}}
+  if(native){try{const file=await window.streamleaf.openM3U();if(file)addSource(file.name,file.name,file.content,'file');}catch(e){toast(e.message,'error');}return;}
+  fileConsentForPicker=true;
+  try{$('#fileInput').click();}
+  catch(e){fileConsentForPicker=false;toast('Không mở được hộp chọn file: '+e.message,'error');}
+ }
+ async function importFromInput(file){
+  const approved=fileConsentForPicker;fileConsentForPicker=false;
+  if(!file)return;
+  // Alternative input events must not bypass the explicit acknowledgment.
+  if(!approved&&!(await window.OpenIPTVSourceConsent?.requestImport?.('file')))return;
+  try{addSource(file.name,file.name,await file.text(),'file');}catch(e){toast(e.message,'error');}
+ }
  async function openURL(){if(window.IPTVProAdvanced?.canEdit?.()===false)return toast('Hồ sơ trẻ em không được thêm URL IPTV','warn');
   if(!(await window.OpenIPTVSourceConsent?.requestImport?.('url')))return;
   openModal('Thêm playlist bằng URL',`<label class="modal-label">Tên nguồn</label><input class="modal-input" id="urlName" placeholder="Ví dụ: Kênh truyền hình Việt Nam" value="IPTV từ URL"/><label class="modal-label">Đường dẫn M3U</label><input class="modal-input" id="urlValue" placeholder="https://example.com/iptv.m3u" type="url"/><p class="hint">Nhập liên kết tới file M3U chứa nhiều kênh. Bản ứng dụng dùng trình tải tích hợp; bản trình duyệt có thể bị giới hạn CORS.</p>`,async()=>{
@@ -1203,7 +1209,7 @@
   player.addEventListener('waiting',()=>{const token=playGeneration,attempt=playAttemptSerial;const delay=playMode==='timeshift'?20000:12000;clearTimeout(stallTimer);stallTimer=setTimeout(()=>{if(token===playGeneration&&attempt===playAttemptSerial&&current&&!!player.currentSrc&&!player.paused&&player.readyState<3)recoverPlayback(token,'Đứng hình quá '+Math.round(delay/1000)+' giây',attempt);},delay);});
   $('#modal').addEventListener('click',e=>{if(e.target.id==='modal')closeModal();});
   document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeModal();return;}if(e.key!==' '||e.repeat||e.altKey||e.ctrlKey||e.metaKey||e.shiftKey)return;const target=e.target;if(target?.isContentEditable||target?.closest?.('input, textarea, select, button, a, [role=button], [contenteditable=true], [role=dialog], .modal-backdrop:not(.hidden)'))return;if(!$('#modal').classList.contains('hidden')||!$('#castModal').classList.contains('hidden'))return;e.preventDefault();void playToggle();});
-  const chooser=document.createElement('input');chooser.type='file';chooser.id='fileInput';chooser.accept='.m3u,.m3u8,.txt';chooser.className='hidden';chooser.addEventListener('change',async()=>{await importFromInput(chooser.files?.[0]);chooser.value='';});document.body.append(chooser);
+  const chooser=document.createElement('input');chooser.type='file';chooser.id='fileInput';chooser.accept='.m3u,.m3u8,.txt';chooser.className='hidden';chooser.addEventListener('change',async()=>{await importFromInput(chooser.files?.[0]);chooser.value='';});chooser.addEventListener('cancel',()=>{fileConsentForPicker=false;});document.body.append(chooser);
  }
  $('#manualStreamSelect')?.addEventListener('change',e=>{
   const ch=current,url=e.currentTarget.value;if(!ch||!url)return;

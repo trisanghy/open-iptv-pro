@@ -22,3 +22,7 @@ dialog.iptv-legal-consent::backdrop{background:rgba(0,0,0,.76);backdrop-filter:b
 .iptv-legal-actions button:disabled{cursor:not-allowed;opacity:.48}
 .iptv-legal-card :focus-visible{outline:2px solid var(--accent,#72baff);outline-offset:3px}
 @media(max-width:480px){.iptv-legal-actions>*{flex:1}.iptv-legal-actions button{white-space:normal}}
+
+/* Visible notice alongside the source import actions. */
+.source-legal-inline{margin:12px 0 14px;max-width:1100px;border-left:3px solid var(--accent,#72bbff);padding:10px 13px;border-radius:0 8px 8px 0;background:var(--ui-control,rgba(125,145,170,.10));color:var(--text,#f7f8fb);font-size:13px;line-height:1.6}
+.source-legal-inline strong{font-weight:750}

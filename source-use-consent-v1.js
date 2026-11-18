@@ -7,16 +7,16 @@
  if(root&&root.document)root.OpenIPTVSourceConsent=api;
 })(typeof window==='undefined'?null:window,function(root){
  let smartAccepted=false,opening=false;
- const NOTICE='Open IPTV Pro là phần mềm trình phát do cá nhân phát triển, không cung cấp hoặc cấp phép các kênh truyền hình. Bạn chịu trách nhiệm về nguồn, tài khoản, playlist và nội dung mình nhập, xem, lưu hoặc chia sẻ. Tác giả không kiểm soát hay bảo đảm tính hợp pháp của các nguồn này và không chịu trách nhiệm đối với dữ liệu người dùng trong phạm vi pháp luật cho phép.';
+ const NOTICE='Open IPTV Pro là dự án cá nhân, chỉ cung cấp phần mềm phát và quản lý IPTV; không cung cấp kênh, tài khoản hoặc giấy phép nội dung. File/link M3U và kết quả Smart Discovery do người dùng tự nhập, lựa chọn hoặc lấy từ bên thứ ba. Người dùng phải tự kiểm tra điều khoản nhà cung cấp, quyền truy cập và quyền xem; tự chịu trách nhiệm về mọi nội dung mình nhập, lưu, phát, xem hoặc chia sẻ. Tác giả không xác nhận tính hợp pháp, không kiểm soát và không chịu trách nhiệm về nội dung do người dùng lựa chọn và xem trong phạm vi pháp luật cho phép. Việc đánh dấu đồng ý không tạo ra quyền sử dụng nội dung.';
  const LABELS=Object.freeze({
   file:'Quyền sử dụng file M3U',
   url:'Quyền sử dụng đường dẫn M3U',
   'smart-start':'Điều khoản sử dụng Smart Discovery',
   'smart-import':'Xác nhận nhập kênh từ Smart Discovery'
  });
- const LEGAL='Tôi xác nhận có quyền hợp pháp để truy cập và sử dụng nội dung trong nguồn này, tự chịu trách nhiệm về playlist, dữ liệu và việc xem.';
- const DISCOVERY_TERMS='Tôi đã tự kiểm tra điều khoản sử dụng, nguồn gốc và quyền truy cập của danh mục/nhà cung cấp trước khi sử dụng Smart Discovery.';
- const DISCOVERY_RIGHTS='Tôi hiểu nguồn công khai hoặc được kiểm tra phát thành công KHÔNG đồng nghĩa được phép sử dụng; tôi tự chịu trách nhiệm về bản quyền, pháp luật, nội dung và dữ liệu.';
+ const LEGAL='Tôi đã kiểm tra và xác nhận có quyền hợp pháp để nhập, truy cập và xem nội dung từ nguồn này; tự chịu trách nhiệm về dữ liệu, bản quyền và việc sử dụng.';
+ const DISCOVERY_TERMS='Tôi xác nhận đã tự kiểm tra điều khoản, nguồn gốc, phạm vi cấp phép và quyền truy cập của nhà cung cấp trước khi sử dụng Smart Discovery.';
+ const DISCOVERY_RIGHTS='Tôi hiểu kênh công khai hoặc phát được KHÔNG chứng minh được phép xem; tôi xác nhận có quyền sử dụng nội dung mình chọn và tự chịu trách nhiệm về bản quyền, pháp luật và dữ liệu.';
  function isReady(kind,accepted){
   const checks=Array.isArray(accepted)?accepted:[];
   return kind==='smart-start'||kind==='smart-import'
@@ -47,11 +47,11 @@
     const input=doc.createElement('input');input.type='checkbox';input.checked=false;input.required=true;
     input.setAttribute('aria-label',line);
     const span=doc.createElement('span');span.textContent=line;
-    label.append(input,span);box.append();return {label,input};
+    label.append(input,span);return {label,input};
    });
    const actions=doc.createElement('div');actions.className='iptv-legal-actions';
    const link=doc.createElement('a');link.textContent='Đọc tuyên bố trách nhiệm trong README';
-   link.href='https://github.com/trisanghy/open-iptv-pro/blob/main/README.md';
+   link.href='https://github.com/trisanghy/open-iptv-pro/blob/web/online/web-online/README.md';
    link.target='_blank';link.rel='noopener noreferrer';
    const cancel=doc.createElement('button');cancel.type='button';cancel.className='btn btn-subtle';cancel.textContent='Hủy';
    const yes=doc.createElement('button');yes.type='button';yes.className='btn btn-primary';

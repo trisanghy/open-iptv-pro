@@ -271,3 +271,8 @@ Translations are community-editable. Please preserve placeholders and technical 
 ## Legal notice
 
 Open IPTV Pro is a player and playlist-management application. It does not provide pay-TV accounts, subscriptions or rebroadcasting rights. Use streams only when you have permission to view or redistribute them. This project's MIT license covers the application's own source code only, not the legal status of any third-party streams or EPG data.
+
+
+### Quyền sử dụng nội dung trong bản Web (`web/online`)
+
+Trước mỗi lần nhập file/link M3U, người dùng phải xác nhận quyền sử dụng hợp pháp. Smart Discovery yêu cầu xác nhận đã tự kiểm tra điều khoản nguồn và quyền truy cập trước khi bắt đầu, rồi xác nhận lại khi nhập kênh. Tác giả phát triển phần mềm, không cung cấp nội dung và không chịu trách nhiệm về dữ liệu/kênh do người dùng tự nhập hoặc xem trong phạm vi pháp luật cho phép. Xem [tuyên bố đầy đủ của Web Edition](web-online/README.md#cảnh-báo-quyền-sử-dụng-và-trách-nhiệm-người-dùng).

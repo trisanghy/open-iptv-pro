@@ -86,3 +86,26 @@ test('Smart Discovery never loads external catalog before the consent check',()=
  const catalog=find.indexOf('await choices();');
  assert.ok(approved>0&&catalog>approved,'The selected catalog must be loaded after rights confirmation');
 });
+
+test('notice explicitly assigns responsibility for user-selected IPTV content',()=>{
+ const h=harness();
+ assert.match(h.api.NOTICE,/dự án cá nhân/);
+ assert.match(h.api.NOTICE,/tự chịu trách nhiệm về mọi nội dung mình nhập, lưu, phát, xem hoặc chia sẻ/);
+ assert.match(h.api.NOTICE,/không chịu trách nhiệm về nội dung do người dùng lựa chọn/);
+});
+test('file picker requires acknowledgment before opening and cancel clears the attempt',()=>{
+ const start=app.indexOf('async function loadFile()');
+ const first=app.indexOf("requestImport?.('file')",start);
+ const picker=app.indexOf("$('#fileInput').click()",start);
+ assert.ok(start>=0&&first>start&&picker>first);
+ assert.match(app,/let fileConsentForPicker=false/);
+ assert.match(app,/const approved=fileConsentForPicker;fileConsentForPicker=false/);
+ assert.match(app,/if\(!approved&&!\(await window\.OpenIPTVSourceConsent\?\.requestImport\?\.\('file'\)\)\)return/);
+ assert.match(app,/chooser\.addEventListener\('cancel',\(\)=>\{fileConsentForPicker=false;\}\)/);
+});
+test('Source Management prominently displays usage notice and Smart Discovery terms',()=>{
+ assert.match(html,/class="source-legal-inline" role="note"/);
+ assert.match(html,/Mỗi lần nhập phải xác nhận trước khi tiếp tục/);
+ assert.match(html,/phải tích xác nhận riêng/);
+ assert.match(src,/blob\/web\/online\/web-online\/README\.md/);
+});
