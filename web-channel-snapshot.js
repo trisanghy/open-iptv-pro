@@ -89,7 +89,7 @@
     }else{
      video.src=url;video.load?.();
     }
-    if(!isHLS(url)||video.canPlayType?.('application/vnd.apple.mpegurl'))play();
+    if((!isHLS(url)&&!isDASH(url))||(isHLS(url)&&video.canPlayType?.('application/vnd.apple.mpegurl')))play();
    }catch(e){cleanup(e);}
   });
  }

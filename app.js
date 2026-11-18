@@ -1044,8 +1044,16 @@
    const why=ffmpegError?.message||String(ffmpegError||'');
    throw Error(why||('Không lấy được khung hình (DRM/CORS/không có tín hiệu)'+(canvasError?' · '+canvasError.message:'')));
   }
+  const previous=store.snapshots[c.url];
   store.snapshots[c.url]={...(result.file?{file:result.file}:{data:result.data}),name:c.name,date:new Date().toLocaleString('vi-VN'),method:result.method||'FFmpeg'};
-  if(!quiet)save();if(!quiet){renderShots();renderList();toast('Đã chụp ảnh kênh '+c.name);}return result;
+  if(!native&&!save()){
+   if(previous)store.snapshots[c.url]=previous;
+   else delete store.snapshots[c.url];
+   throw Error('Không đủ dung lượng lưu Snapshot trên Web. Hãy sao lưu và xóa bớt ảnh cũ.');
+  }
+  if(!quiet&&native)save();
+  if(!quiet){renderShots();renderList();toast('Đã chụp ảnh kênh '+c.name);}
+  return result;
  }
  async function snapshotAll(){
   if(window.IPTVProAdvanced?.canEdit?.()===false)return toast('Hồ sơ trẻ em không được chụp hàng loạt','warn');
@@ -1119,7 +1127,7 @@
   bind(['castBtn'],()=>{const ch=currentChannel();if(!ch)return toast('Chọn kênh trước khi phát lên TV','warn');window.OpenIPTVCastUI?.open?.(ch,playCandidates[playCandidateIndex]||ch.url);});
   bind(['refreshAllBtn'],refreshAll);bind(['prevBtn'],()=>switchChannel(-1));bind(['nextBtn'],()=>switchChannel(1));bind(['stopBtn'],stopPlayer);bind(['playBtn'],playToggle);
   bind(['favCurrentBtn'],()=>{const channel=currentChannel();if(channel)favorite(channel);});
-  bind(['shotBtn'],async()=>{if(!current)return toast('Chưa chọn kênh','warn');try{await snapshotOne(current);}catch(e){toast(e.message,'error');}});
+  bind(['shotBtn','quickShotCurrent'],async()=>{const ch=currentChannel();if(!ch)return toast('Chọn kênh và chờ hình trước khi chụp ảnh','warn');try{await snapshotOne(ch);}catch(e){toast(e.message,'error');}});
   bind(['fullscreenBtn'],()=>{if(window.OpenIPTVMobilePlayer?.toggle?.())return;if(!document.fullscreenElement)$('#playerBox').requestFullscreen?.();else document.exitFullscreen?.();});
   bind(['modalClose','modalCancel'],closeModal);bind(['modalConfirm'],modalSubmit);bind(['cancelCheckBtn'],()=>requestCancel('check'));bind(['cancelShotsBtn'],()=>requestCancel('shots'));const dock=$('#taskDock');
   function toggleTaskPopup(forceClosed=false){const collapsed=forceClosed?true:!dock.classList.contains('collapsed');dock.classList.toggle('collapsed',collapsed);const btn=$('#taskDockMinimize');btn.setAttribute('aria-expanded',String(!collapsed));btn.textContent=collapsed?'▴':'▾';}
