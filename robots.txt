@@ -1,0 +1,7 @@
+# Open IPTV Pro Web Online
+# Site-specific crawl rules live at the GitHub Pages hostname root;
+# this project-level file publishes the sitemap URL for convenience.
+User-agent: *
+Allow: /
+
+Sitemap: https://trisanghy.github.io/open-iptv-pro/sitemap.xml
