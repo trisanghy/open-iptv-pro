@@ -35,18 +35,21 @@
   if(!container)return null;
   const d=doc||container.ownerDocument;
   const sources=candidates({channel,snapshots,snapshotBase});
+  let img=null;
   const fallback=()=> {
    const span=d.createElement('span');
    span.className='iptv-art-placeholder';
    span.textContent=initials(channel);
    span.setAttribute?.('aria-hidden','true');
-   container.replaceChildren(span);
+   // Preserve health badge/sibling controls when an image fails late.
+   if(img?.parentElement===container)img.replaceWith(span);
+   else container.replaceChildren(span);
    container.classList?.remove?.('snapshot-thumb');
    container.classList?.add?.('art-placeholder');
    return span;
   };
   if(!sources.length)return fallback();
-  const img=d.createElement('img');
+  img=d.createElement('img');
   img.alt='';img.decoding='async';img.loading=eager?'eager':'lazy';
   img.referrerPolicy='no-referrer';
   let next=0;
