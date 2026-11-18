@@ -23,7 +23,7 @@ test('all mounted document IDs unique in restored layout',()=>{
 });
 test('keeps all original Mobile M3U / EPG / tools and parity mount identifiers',()=>{
  const html=oldStyleLayout('/assets/icon.png');
- for(const id of ['addURL','file','refresh','sources','sourceCount','favCount','favoritesList','epgURL','epgChannel','loadEPG','epgResults','threadCount','checkBtn','exportBtn','fallbackSource','fallbackURL','saveFallback','snapshot','startMulti','stopMulti','multiGrid','closePlayer','status']){
+ for(const id of ['addURL','file','refresh','sources','sourceCount','favCount','favoritesList','epgURL','epgChannel','loadEPG','epgResults','threadCount','checkBtn','exportBtn','fallbackSource','fallbackURL','saveFallback','snapshot','startMulti','stopMulti','multiGrid','webVideo','status']){
   assert.match(html,new RegExp('id="'+id+'"'));
  }
 });
@@ -44,4 +44,12 @@ test('Web media controls and EPG/fallback picker retain distinct IDs',()=>{
    assert.match(html,new RegExp('id="'+id+'"'));
  assert.match(html,/value="contain">Vừa khung/);
  assert.match(html,/Link phát/);
+});
+
+test('inline video exists within the 16:9 hero, never in a fullscreen overlay',()=>{
+ const html=oldStyleLayout();
+ const hero=html.match(/<div class="hero-player"[\s\S]*?<\/video>/)?.[0]||'';
+ assert.match(hero,/<video[^>]+id="webVideo"[^>]+playsinline[^>]+webkit-playsinline/);
+ assert.doesNotMatch(html,/id="webPlayer"|id="closePlayer"/);
+ assert.equal([...html.matchAll(/id="webVideo"/g)].length,1);
 });

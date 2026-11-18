@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
-VERSION=4.23.17-mobile.6
+VERSION=4.23.17-mobile.7
 PACKAGE=com.trisanghy.openiptvpro.mobile
 mkdir -p release
 adb install -r "release/OpenIPTVPro-Mobile-${VERSION}-debug.apk"

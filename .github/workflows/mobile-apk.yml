@@ -9,11 +9,11 @@ on:
 permissions:
   contents: write
 concurrency:
-  group: mobile-release-${{ github.ref }}-mobile6b
+  group: mobile-release-${{ github.ref }}-mobile7
   cancel-in-progress: false
 env:
-  MOBILE_VERSION: 4.23.17-mobile.6
-  MOBILE_TAG: mobile/v4.23.17.6
+  MOBILE_VERSION: 4.23.17-mobile.7
+  MOBILE_TAG: mobile/v4.23.17.7
 jobs:
   android:
     name: Android debug APK
@@ -166,8 +166,8 @@ jobs:
           unzip -tq "release/OpenIPTVPro-Mobile-${MOBILE_VERSION}-Source.zip"
           test -s "release/OpenIPTVPro-Mobile-${MOBILE_VERSION}-debug.apk"
           test -s "release/OpenIPTVPro-Mobile-${MOBILE_VERSION}-unsigned.ipa"
-          test -s "release/OpenIPTVPro-Mobile-4.23.17-mobile.6-Android-screenshot.png"
-          test -s "release/OpenIPTVPro-Mobile-4.23.17-mobile.6-Android-more.png"
+          test -s "release/OpenIPTVPro-Mobile-4.23.17-mobile.7-Android-screenshot.png"
+          test -s "release/OpenIPTVPro-Mobile-4.23.17-mobile.7-Android-more.png"
           sha256sum release/* > release/SHA256SUMS.txt
       - name: Publish isolated mobile prerelease (never overwrite tag)
         env:
@@ -178,7 +178,7 @@ jobs:
             exit 1
           fi
           cat > /tmp/mobile-release-notes.txt <<'NOTES'
-          Open IPTV Pro Mobile 4.23.17-mobile.6 (Beta, Capacitor 8).\n          Removed app header, moved all secondary features to a Web-style bottom More sheet. Media transport and output controls, selected channel EPG now-next, aspect select, and main/backup link picker mirror the Web layout.\n          UI was recreated from user screenshot; original old v4.23 source was not found in GitHub.
+          Open IPTV Pro Mobile 4.23.17-mobile.7 (Beta, Capacitor 8).\n          Default Play is now INLINE in the TV hero (iOS WKWebView native HLS, Android browser/hls.js). Native Capgo fullscreen is activated ONLY when the fullscreen button is pressed. Existing Web-style media/EPG/fallback layout preserved.\n          UI was recreated from user screenshot; original old v4.23 source was not found in GitHub.
           Rust Lab parity subset: M3U rights confirmation, local Smart Discovery terms,
           Smart Doctor with user-approved fallback suggestions, safe mobile JSON backup,
           bounded 1–32 checks / 1000 channels per batch, touch layout.
@@ -191,5 +191,5 @@ jobs:
           NOTES
           gh release create "$MOBILE_TAG" release/*.apk release/*.ipa release/*.zip release/*.png release/SHA256SUMS.txt \
             --target "$GITHUB_SHA" \
-            --title "Open IPTV Pro Mobile 4.23.17-mobile.6 - Android APK + unsigned iOS IPA" \
+            --title "Open IPTV Pro Mobile 4.23.17-mobile.7 - Android APK + unsigned iOS IPA" \
             --notes-file /tmp/mobile-release-notes.txt --prerelease

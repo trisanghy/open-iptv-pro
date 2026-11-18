@@ -27,6 +27,7 @@ state.fallbacks=state.fallbacks||{};
 state.manualStreams=state.manualStreams||{};
 let busy=false, playerHls=null;let multiPlayers=[];
 let mediaPlaying=false, mediaPaused=false, mediaMuted=false, epgItems=[];
+let nativeFullscreenActive=false;
 const native=Capacitor.isNativePlatform();
 function save(){const keep={...state};try{localStorage.setItem(KEY,JSON.stringify(keep));}catch(e){status('Bộ nhớ gần đầy; hãy xuất M3U sao lưu','error');}}
 function status(t,kind=''){const el=$('#status');if(!el)return;el.textContent=t;el.dataset.kind=kind;el.hidden=false;clearTimeout(status.hideTimer);status.hideTimer=setTimeout(()=>{el.hidden=true;},3800);}
@@ -166,67 +167,81 @@ function render(){
 }
 function toggleFavorite(c){state.favorites=state.favorites.includes(c.url)?state.favorites.filter(x=>x!==c.url):[...state.favorites,c.url];save();renderChannels();$('#favCount').textContent=String(state.favorites.length);renderNowPlaying();}
 
+// Capgo's native player supports only fullscreen on iOS/Android.
+// Default play must use the in-page HTML5 video; native is reserved for ⛶.
 function nativePlayOptions(c,url){return {mode:'fullscreen',playerId:'main-player',url,title:c.name,smallTitle:c.group,artwork:c.logo||undefined,showControls:true,chromecast:true,pipEnabled:true};}
+function showInline(visible){
+ const v=$('#webVideo'),ph=$('.hero-placeholder'),hero=$('.hero-player');
+ v.hidden=!visible;ph.hidden=visible;hero.classList.toggle('has-video',visible);
+}
 async function play(c,requestedURL){
  if(!c)throw Error('Chưa chọn kênh');
- state.selected=c.url;
- state.recentlyWatched=safeHistory(state.recentlyWatched,c.url);
- const configured=streamOptions(c,state.fallbacks);
+ state.selected=c.url;state.recentlyWatched=safeHistory(state.recentlyWatched,c.url);
+ const configured=streamOptions(c,state.fallbacks),allowed=new Set(configured.map(x=>x.url));
  const preferred=requestedURL||state.manualStreams[c.url];
- const alternatives=[...new Set([preferred,...configured.map(x=>x.url)].filter(Boolean))];
- // Only allow choices from this channel's configured primary/backup URLs.
- const permitted=new Set(configured.map(x=>x.url));
- const urls=alternatives.filter(url=>permitted.has(url));
+ const urls=[...new Set([preferred,...configured.map(x=>x.url)].filter(x=>allowed.has(x)))];
+ if(!urls.length)throw Error('Kênh chưa có URL phát hợp lệ');
  renderNowPlaying();$('#fallbackSource').value=c.url;save();
- status('Đang mở: '+c.name);
- if(native){
-   let last;
-   for(const url of urls){
-     try{
-       await VideoPlayer.stopAllPlayers().catch(()=>{});
-       await VideoPlayer.initPlayer(nativePlayOptions(c,url));
-       await VideoPlayer.play({playerId:'main-player'});
-       mediaPlaying=true;mediaPaused=false;syncMediaControls();
-       status('Đã gửi yêu cầu phát native: '+c.name,'ok');return;
-     }catch(e){last=e;}
-   }
-   mediaPlaying=false;syncMediaControls();
-   throw Error('Không thể phát bằng trình phát native: '+(last?.message||last||''));
+ const v=$('#webVideo');let last;
+ for(const url of urls){
+  try{
+   playerHls?.destroy();playerHls=null;
+   v.pause();v.removeAttribute('src');v.load();
+   v.playsInline=true;v.setAttribute('playsinline','');v.setAttribute('webkit-playsinline','');
+   v.controls=false;v.muted=mediaMuted;v.style.objectFit=state.settings.videoFit||'contain';
+   if(/\.m3u8(?:[?#]|$)/i.test(url)&&!v.canPlayType('application/vnd.apple.mpegurl')&&Hls.isSupported()){
+     playerHls=new Hls({lowLatencyMode:false,maxBufferLength:20});
+     playerHls.attachMedia(v);playerHls.loadSource(url);
+   }else{v.src=url;v.load();}
+   showInline(true);
+   await v.play();
+   mediaPlaying=true;mediaPaused=false;syncMediaControls();
+   status('Đang phát trong khung: '+c.name,'ok');return;
+  }catch(e){
+   last=e;playerHls?.destroy();playerHls=null;
+   v.pause();v.removeAttribute('src');v.load();
+  }
  }
- const url=urls[0],v=$('#webVideo');if(!url)throw Error('Kênh chưa có URL phát hợp lệ');
- $('#webPlayer').hidden=false;$('#webTitle').textContent=c.name;
- if(playerHls){playerHls.destroy();playerHls=null;}
- v.pause();v.removeAttribute('src');v.load();
- if(/\.m3u8(?:\?|$)/i.test(url)&&Hls.isSupported()){playerHls=new Hls({lowLatencyMode:false,maxBufferLength:20});playerHls.loadSource(url);playerHls.attachMedia(v);}else v.src=url;
- v.style.objectFit=state.settings.videoFit||'contain';
- try{await v.play();mediaPlaying=true;mediaPaused=false;syncMediaControls();}
- catch(e){mediaPlaying=false;syncMediaControls();throw Error('Không phát được (CORS/codec): '+e.message);}
+ showInline(false);mediaPlaying=false;mediaPaused=false;syncMediaControls();
+ throw Error('Không phát trong khung (CORS/codec): '+(last?.message||last||'')+'. Có thể thử ⛶.');
+}
+async function playFullscreen(){
+ const c=state.channels.find(x=>x.url===state.selected);if(!c)throw Error('Chọn kênh trước');
+ const v=$('#webVideo');
+ if(native){
+   const configured=streamOptions(c,state.fallbacks);
+   const requested=state.manualStreams[c.url]||c.url;
+   const url=configured.some(x=>x.url===requested)?requested:c.url;
+   const wasPlaying=!v.paused;v.pause();mediaPaused=true;syncMediaControls();
+   try{
+     await VideoPlayer.stopAllPlayers().catch(()=>{});
+     await VideoPlayer.initPlayer(nativePlayOptions(c,url));
+     nativeFullscreenActive=true;
+     await VideoPlayer.play({playerId:'main-player'});
+   }catch(e){
+     nativeFullscreenActive=false;
+     if(wasPlaying){await v.play().catch(()=>{});mediaPaused=v.paused;syncMediaControls();}
+     throw Error('Lỗi toàn màn hình: '+(e?.message||e));
+   }
+   return;
+ }
+ if(v.requestFullscreen){await v.requestFullscreen();return;}
+ if(typeof v.webkitEnterFullscreen==='function'){v.webkitEnterFullscreen();return;}
+ if($('.hero-player').requestFullscreen){await $('.hero-player').requestFullscreen();return;}
+ throw Error('Không hỗ trợ toàn màn hình');
 }
 async function pauseResumeCurrent(){
  const c=state.channels.find(x=>x.url===state.selected);if(!c)throw Error('Chưa chọn kênh');
  if(!mediaPlaying)return play(c);
- if(native){
-   if(!mediaPaused){
-     if(typeof VideoPlayer.pause!=='function')throw Error('Trình phát native không hỗ trợ Pause; dùng điều khiển trong video');
-     await VideoPlayer.pause({playerId:'main-player'});mediaPaused=true;
-   }else{await VideoPlayer.play({playerId:'main-player'});mediaPaused=false;}
- }else{
-   const v=$('#webVideo');
-   if(v.paused){await v.play();mediaPaused=false;}else{v.pause();mediaPaused=true;}
- }
+ const v=$('#webVideo');
+ if(v.paused){await v.play();mediaPaused=false;}else{v.pause();mediaPaused=true;}
  syncMediaControls();
 }
-async function muteUnmute(){
- const next=!mediaMuted;
- if(native){
-   if(typeof VideoPlayer.setVolume!=='function')throw Error('Âm lượng native được điều khiển trong trình phát; chưa hỗ trợ nút tắt tiếng tại đây');
-   await VideoPlayer.setVolume({playerId:'main-player',volume:next?0:1});
- }else{$('#webVideo').muted=next;}
- mediaMuted=next;syncMediaControls();
-}
+async function muteUnmute(){mediaMuted=!mediaMuted;$('#webVideo').muted=mediaMuted;syncMediaControls();}
 async function stop(){
- if(native)await VideoPlayer.stopAllPlayers();
- else{playerHls?.destroy();playerHls=null;$('#webVideo').pause();$('#webPlayer').hidden=true;}
+ if(nativeFullscreenActive){await VideoPlayer.stopAllPlayers().catch(()=>{});nativeFullscreenActive=false;}
+ playerHls?.destroy();playerHls=null;
+ const v=$('#webVideo');v.pause();v.removeAttribute('src');v.load();showInline(false);
  mediaPlaying=false;mediaPaused=false;syncMediaControls();status('Đã dừng phát');
 }
 async function checkOne(c){const url=c.url;try{
@@ -270,7 +285,7 @@ async function viewEPG(){
 }
 async function exportM3U(){const channels=state.channels.map(c=>({...c,status:state.checks[c.url]?.status||'unchecked'})).sort((a,b)=>Number(a.status==='dead')-Number(b.status==='dead'));await exportFile('OpenIPTV_Mobile_Channels.m3u',CORE.exportM3U(channels));}
 async function editFallback(){const url=$('#fallbackSource').value.trim();if(!url)throw Error('Chọn kênh/URL trước');const alt=$('#fallbackURL').value.trim();if(!alt){delete state.fallbacks[url];save();status('Đã xóa URL dự phòng');return;}state.fallbacks[url]=[normalizeHTTPURL(alt)];save();renderNowPlaying();status('Đã lưu link dự phòng','ok');}
-async function currentSnapshot(){if(native)throw Error('Snapshot native cần module FFmpegKitNext riêng; phiên bản mobile thử nghiệm chưa chụp được video DRM/HLS native.');const v=$('#webVideo');if(!v.videoWidth)throw Error('Chưa phát được video để chụp');const c=document.createElement('canvas');c.width=v.videoWidth;c.height=v.videoHeight;c.getContext('2d').drawImage(v,0,0);try{const blob=await new Promise(r=>c.toBlob(r,'image/jpeg',.86));if(!blob)throw Error('Không có ảnh');const b64=await new Promise(resolve=>{const rd=new FileReader();rd.onload=()=>resolve(rd.result.split(',')[1]);rd.readAsDataURL(blob)});await Filesystem.writeFile({path:'snapshot.jpg',data:b64,directory:Directory.Cache});const {uri}=await Filesystem.getUri({path:'snapshot.jpg',directory:Directory.Cache});await Share.share({title:'Snapshot IPTV',url:uri});}catch(e){throw Error('Snapshot lỗi (CORS/DRM): '+e.message);}}
+async function currentSnapshot(){const v=$('#webVideo');if(!v.videoWidth)throw Error('Chưa phát được video để chụp');const c=document.createElement('canvas');c.width=v.videoWidth;c.height=v.videoHeight;c.getContext('2d').drawImage(v,0,0);try{const blob=await new Promise(r=>c.toBlob(r,'image/jpeg',.86));if(!blob)throw Error('Không có ảnh');const b64=await new Promise(resolve=>{const rd=new FileReader();rd.onload=()=>resolve(rd.result.split(',')[1]);rd.readAsDataURL(blob)});await Filesystem.writeFile({path:'snapshot.jpg',data:b64,directory:Directory.Cache});const {uri}=await Filesystem.getUri({path:'snapshot.jpg',directory:Directory.Cache});await Share.share({title:'Snapshot IPTV',url:uri});}catch(e){throw Error('Snapshot lỗi (CORS/DRM): '+e.message);}}
 function stopMulti(){const wasPlaying=multiPlayers.length>0;for(const p of multiPlayers){try{p.hls?.destroy();p.v.pause();p.v.removeAttribute('src');p.v.load();}catch{}}multiPlayers=[];if(wasPlaying)status('Đã dừng MultiView');}
 async function startMulti(){stopMulti();const grid=$('#multiGrid');grid.replaceChildren();const list=dedupChannels(state.channels).filter(c=>/^https?:/.test(c.url));if(!list.length)throw Error('Chưa nhập M3U');for(let slot=0;slot<4;slot++){const cell=node('div','multi-cell');const sel=node('select');sel.append(new Option('Chọn kênh',''));for(const c of list.slice(0,1500)){sel.add(new Option(c.name,c.url));}const v=node('video');v.controls=true;v.muted=true;v.playsInline=true;v.preload='none';v.autoplay=false;const info=node('small','','');sel.onchange=async()=>{try{const old=multiPlayers.find(x=>x.v===v);old?.hls?.destroy();multiPlayers=multiPlayers.filter(x=>x.v!==v);v.pause();v.removeAttribute('src');v.load();if(!sel.value)return;const chosen=sel.value;if(/\.m3u8(?:\?|$)/i.test(chosen)&&Hls.isSupported()){const hls=new Hls({enableWorker:true,maxBufferLength:7,maxBackBufferLength:3});hls.loadSource(chosen);hls.attachMedia(v);multiPlayers.push({hls,v});}else{v.src=chosen;multiPlayers.push({v});}await v.play();info.textContent='Đang phát · chạm biểu tượng loa để nghe';}catch(e){info.textContent='Không thể phát trong WebView (CORS/codec): '+e.message;}};cell.append(sel,v,info);grid.append(cell);}status('MultiView thử nghiệm: chọn tối đa 4 kênh, tất cả mặc định tắt tiếng');}
 function showTab(tab){if(state.page==='multi'&&tab!=='multi')stopMulti();state.page=tab;save();render();window.scrollTo({top:0,behavior:'instant'});}
@@ -347,8 +362,14 @@ function init(){document.querySelector('#app').innerHTML=oldStyleLayout();
  $('#stopCurrent').onclick=()=>stop().catch(e=>status(e.message,'error'));
  $('#muteCurrent').onclick=()=>muteUnmute().catch(e=>status(e.message,'error'));
  $('#snapshotCurrent').onclick=()=>currentSnapshot().catch(e=>status(e.message,'error'));
- $('#fullScreenCurrent').onclick=()=>{const c=state.channels.find(x=>x.url===state.selected);if(c)play(c).catch(e=>status(e.message,'error'));else status('Hãy chọn kênh trước','error');};
- $('#pictureInPicture').onclick=()=>{const c=state.channels.find(x=>x.url===state.selected);if(c&&native)play(c).catch(e=>status(e.message,'error'));else if(c)$('#webVideo').requestPictureInPicture?.().catch(e=>status(e.message,'error'));else status('Chọn kênh trước','error');};$('#addURL').onclick=()=>addURL().catch(e=>status(e.message,'error'));
+ $('#fullScreenCurrent').onclick=()=>playFullscreen().catch(e=>status(e.message,'error'));
+ $('#pictureInPicture').onclick=()=>{
+  const v=$('#webVideo');
+  if(v.paused){status('Hãy phát trước khi bật PiP','error');return;}
+  if(typeof v.requestPictureInPicture==='function')v.requestPictureInPicture().catch(e=>status(e.message,'error'));
+  else if(typeof v.webkitSetPresentationMode==='function')v.webkitSetPresentationMode('picture-in-picture');
+  else status('PiP nội tuyến không hỗ trợ trên thiết bị này','error');
+ };$('#addURL').onclick=()=>addURL().catch(e=>status(e.message,'error'));
  $('#file').onchange=e=>addFile(e.target.files?.[0]).catch(err=>status(err.message,'error'));
  $('#refresh').onclick=()=>refreshSources().catch(e=>status(e.message,'error'));
  $('#checkBtn').onclick=()=>checkAll().catch(e=>status(e.message,'error'));
@@ -357,10 +378,15 @@ function init(){document.querySelector('#app').innerHTML=oldStyleLayout();
  $('#saveFallback').onclick=()=>editFallback().catch(e=>status(e.message,'error'));
  $('#snapshot').onclick=()=>currentSnapshot().catch(e=>status(e.message,'error'));
  $('#startMulti').onclick=()=>startMulti().catch(e=>status(e.message,'error'));$('#stopMulti').onclick=stopMulti;
- $('#closePlayer').onclick=()=>stop().catch(e=>status(e.message,'error'));
+
  
  $('#threadCount').replaceChildren(...Array.from({length:32},(_,i)=>new Option(String(i+1),String(i+1))));
- const video=$('#webVideo');video.addEventListener('playing',()=>{if(state.selected){try{appendEvidence(state.healthHistory,state.selected,'decoded-playback');save();}catch{}}});
+ const video=$('#webVideo');
+ video.playsInline=true;video.setAttribute('playsinline','');video.setAttribute('webkit-playsinline','');
+ video.addEventListener('playing',()=>{mediaPlaying=true;mediaPaused=false;syncMediaControls();if(state.selected){try{appendEvidence(state.healthHistory,state.selected,'decoded-playback');save();}catch{}}});
+ video.addEventListener('pause',()=>{if(mediaPlaying){mediaPaused=true;syncMediaControls();}});
+ video.addEventListener('ended',()=>{mediaPlaying=false;mediaPaused=false;syncMediaControls();});
+
  render();}
 init();
 installMobileParity({getState:()=>state,replaceState:next=>{state={...state,...next};flatten();},save,status,exportFile});

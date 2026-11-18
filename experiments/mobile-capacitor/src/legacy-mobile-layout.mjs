@@ -5,6 +5,7 @@ return `
  <section class="page active" id="page-tv">
   <div class="hero-player" aria-label="Khu vực trình phát">
    <div class="hero-placeholder"><div class="hero-play">▶</div><strong id="heroTitle">Chưa chọn kênh</strong><span id="heroSubtitle">Nhập M3U hoặc chọn kênh để xem</span></div>
+   <video id="webVideo" class="inline-video" playsinline webkit-playsinline preload="none" aria-label="Video IPTV phát trong khung" hidden></video>
   </div>
   <section class="player-control-card" aria-label="Điều khiển và lịch phát">
    <div class="now-playing"><span class="now-channel-icon">TV</span><div class="now-copy"><strong id="nowTitle">Chưa chọn kênh</strong><span id="nowGroup">Chọn một kênh trong danh sách</span></div></div>
@@ -82,7 +83,7 @@ return `
   </div>
  </section>
 </div>
-<section id="webPlayer" hidden><b id="webTitle"></b><video playsinline controls id="webVideo"></video><button id="closePlayer">Đóng trình phát</button></section>
+
 <footer id="status" role="status" aria-live="polite" hidden>Sẵn sàng</footer>
 `;
 }
