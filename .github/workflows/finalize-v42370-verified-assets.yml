@@ -1,0 +1,145 @@
+name: Finalize v4.23.70 — verified native installers and copyright notices
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/finalize-v42370-verified-assets.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: finalize-copyright-v42370
+  cancel-in-progress: false
+jobs:
+  audit:
+    name: Verify already-built Mac/Windows binaries and source provenance
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      actions: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Validate unchanged audited application sources
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          SOURCE_SHA='a305e56de779c6f63bf3eaf1ff8919c9ddd6e3af'
+          test "$(git rev-parse HEAD^)" = "$SOURCE_SHA"
+          test "$(node -p 'require("./package.json").version')" = 4.23.70
+          for f in README.md CHANGELOG.md COPYRIGHT_NOTICE_V4_23_70.md RELEASE_NOTES_V4_23_70.md docs/INSTALL_V4_23_70.md docs/COMPARE_EDITIONS_V4_23_70.md docs/RELEASE_SOURCE_MAP_V4_23_70.md renderer/source-use-consent-v1.js web/source-use-consent-v1.js; do test -s "$f"; done
+          grep -Fq 'Tác giả không chịu trách nhiệm đối với nội dung người dùng tự nhập' renderer/source-use-consent-v1.js
+          grep -Fq '## 9. TUYÊN BỐ DỰ ÁN CÁ NHÂN' README.md
+          grep -Fq 'Smart Discovery' COPYRIGHT_NOTICE_V4_23_70.md
+      - name: Verify 3 native installers and 3 regressions passed in original run
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -Eeuo pipefail
+          RUN='44312319280'
+          RUN_SHA="$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/$RUN" --jq '.head_sha')"
+          test "$RUN_SHA" = 'a305e56de779c6f63bf3eaf1ff8919c9ddd6e3af'
+          JOBS="$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/$RUN/jobs?per_page=100")"
+          for name in \
+            'Regression — verify source-rights prompts and full desktop test suite' \
+            'Rust Lab v23.8.30 — verify rights prompts and published SHA-256' \
+            'Web source — verify M3U and Smart Discovery rights prompts' \
+            'Native Electron installer windows-x64' \
+            'Native Electron installer mac-intel' \
+            'Native Electron installer mac-arm64'; do
+              printf '%s' "$JOBS" | jq -er --arg name "$name" \
+                '.jobs[] | select(.name==$name) | select(.conclusion=="success") | .conclusion' | grep -qx success
+          done
+          echo 'All three native ASAR checks and 472 desktop regression tests already succeeded.'
+
+  publish:
+    name: Publish new stable v4.23.70 after validating installer embedded notices
+    needs: audit
+    runs-on: ubuntu-latest
+    timeout-minutes: 55
+    permissions:
+      contents: write
+      actions: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: electron-v42370-*
+          run-id: 44312319280
+          github-token: ${{ github.token }}
+          path: release-stage
+          merge-multiple: true
+      - name: Download Rust Lab artifacts from the verified immutable release
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -Eeuo pipefail
+          mkdir -p rust-upstream
+          gh release download 'rust-lab/v23.8.30' --repo "$GITHUB_REPOSITORY" --dir rust-upstream
+          (cd rust-upstream && sha256sum -c SHA256SUMS.txt && sha256sum -c SHA256SUMS-macOS.txt)
+          for f in OpenIPTVPro-RustLab-v23.8.30-mac-universal.dmg OpenIPTVPro-RustLab-v23.8.30-Windows-Setup-x64.exe OpenIPTVPro-RustLab-v23.8.30-Windows-Portable-x64.zip OpenIPTVPro-RustLab-v23.8.30-Source.zip; do
+            test -s "rust-upstream/$f"
+            cp "rust-upstream/$f" "release-stage/$f"
+          done
+          cp rust-upstream/SHA256SUMS.txt release-stage/SHA256SUMS_RUSTLAB_WINDOWS_v23.8.30.txt
+          cp rust-upstream/SHA256SUMS-macOS.txt release-stage/SHA256SUMS_RUSTLAB_MAC_v23.8.30.txt
+      - name: Rebuild website and complete-source archives with copyright README and guides
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          test -s web/index.html
+          test -s rust-lab/src-tauri/Cargo.toml
+          test -s renderer/index.html
+          zip -qr release-stage/OpenIPTVPro_Web_Online_v4.23.70.zip web
+          unzip -tqq release-stage/OpenIPTVPro_Web_Online_v4.23.70.zip
+          git archive --format=zip --output=release-stage/OpenIPTVPro_Full_Source_v4.23.70.zip HEAD
+          for f in README.md CHANGELOG.md COPYRIGHT_NOTICE_V4_23_70.md RELEASE_NOTES_V4_23_70.md docs/INSTALL_V4_23_70.md docs/COMPARE_EDITIONS_V4_23_70.md docs/RELEASE_SOURCE_MAP_V4_23_70.md; do
+            cp "$f" "release-stage/$(basename "$f")"
+          done
+          for f in README.md CHANGELOG.md COPYRIGHT_NOTICE_V4_23_70.md Open-IPTV-Pro-4.23.70-mac-arm64.dmg Open-IPTV-Pro-4.23.70-mac-x64.dmg Open-IPTV-Pro-Setup-4.23.70-x64.exe Open-IPTV-Pro-4.23.70-x64.exe OpenIPTVPro-RustLab-v23.8.30-mac-universal.dmg OpenIPTVPro-RustLab-v23.8.30-Windows-Setup-x64.exe OpenIPTVPro-RustLab-v23.8.30-Windows-Portable-x64.zip OpenIPTVPro-RustLab-v23.8.30-Source.zip OpenIPTVPro_Web_Online_v4.23.70.zip OpenIPTVPro_Full_Source_v4.23.70.zip RELEASE_NOTES_V4_23_70.md INSTALL_V4_23_70.md COMPARE_EDITIONS_V4_23_70.md RELEASE_SOURCE_MAP_V4_23_70.md; do
+            test -s "release-stage/$f"
+          done
+          (cd release-stage && find . -maxdepth 1 -type f ! -name SHA256SUMS.txt -printf '%f\0' | sort -z | xargs -0 -r sha256sum > SHA256SUMS.txt)
+          (cd release-stage && sha256sum -c SHA256SUMS.txt)
+          unzip -tqq release-stage/OpenIPTVPro_Full_Source_v4.23.70.zip
+          unzip -p release-stage/OpenIPTVPro_Full_Source_v4.23.70.zip rust-lab/package.json >/dev/null
+          unzip -p release-stage/OpenIPTVPro_Full_Source_v4.23.70.zip web/index.html >/dev/null
+          unzip -p release-stage/OpenIPTVPro_Full_Source_v4.23.70.zip renderer/source-use-consent-v1.js >/dev/null
+          ls -lh release-stage
+      - name: Publish a NEW binary-verified release; preserve historical tags/installers
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -Eeuo pipefail
+          TAG='v4.23.70'
+          test "$(node -p 'require("./package.json").version')" = 4.23.70
+          if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "::error::Existing release $TAG. Refusing to overwrite assets."; exit 1
+          fi
+          if git ls-remote --tags origin "refs/tags/$TAG" | grep -q .; then
+            echo "::error::Existing tag $TAG. Refusing to rewrite history."; exit 1
+          fi
+          gh release create "$TAG" release-stage/* \
+            --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" \
+            --title 'Open IPTV Pro v4.23.70 — Copyright Verified Electron 4.23.70 Stable | Rust Lab 23.8.30 Beta | Web' \
+            --notes-file RELEASE_NOTES_V4_23_70.md --latest
+      - name: Verify published assets and release properties
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          test "$(gh release view v4.23.70 --repo "$GITHUB_REPOSITORY" --json isDraft --jq '.isDraft')" = false
+          test "$(gh release view v4.23.70 --repo "$GITHUB_REPOSITORY" --json isPrerelease --jq '.isPrerelease')" = false
+          names="$(gh release view v4.23.70 --repo "$GITHUB_REPOSITORY" --json assets --jq '.assets[].name')"
+          for f in README.md CHANGELOG.md COPYRIGHT_NOTICE_V4_23_70.md Open-IPTV-Pro-4.23.70-mac-arm64.dmg Open-IPTV-Pro-4.23.70-mac-x64.dmg Open-IPTV-Pro-Setup-4.23.70-x64.exe Open-IPTV-Pro-4.23.70-x64.exe OpenIPTVPro-RustLab-v23.8.30-mac-universal.dmg OpenIPTVPro-RustLab-v23.8.30-Windows-Setup-x64.exe OpenIPTVPro-RustLab-v23.8.30-Windows-Portable-x64.zip OpenIPTVPro-RustLab-v23.8.30-Source.zip OpenIPTVPro_Web_Online_v4.23.70.zip OpenIPTVPro_Full_Source_v4.23.70.zip RELEASE_NOTES_V4_23_70.md INSTALL_V4_23_70.md COMPARE_EDITIONS_V4_23_70.md RELEASE_SOURCE_MAP_V4_23_70.md SHA256SUMS.txt; do
+            echo "$names" | grep -Fxq "$f" || { echo "::error::Missing uploaded $f"; exit 1; }
+          done
+          echo 'Stable release has all requested verified installers, source, website, notes and checksums.'
