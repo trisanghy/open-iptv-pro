@@ -8,6 +8,7 @@ on:
       - 'index.html'
       - 'robots.txt'
       - 'sitemap.xml'
+      - 'sitemap.xsl'
       - '*.js'
       - '*.css'
       - 'cloud-config.json'
@@ -39,7 +40,7 @@ jobs:
           # The old external WebView v4.23.37 source ZIP no longer exists.
           # Deploy the exact versioned static website already committed here.
           find . -maxdepth 1 -type f \( -name '*.js' -o -name '*.css' -o -name '*.html' -o -name '*.json' -o -name '*.webmanifest' -o -name '.nojekyll' \) -exec cp -p {} _site/ \;
-          cp -p robots.txt sitemap.xml _site/
+          cp -p robots.txt sitemap.xml sitemap.xsl _site/
           for dir in assets locales epg; do
             test -d "$dir"
             cp -R "$dir" "_site/$dir"
@@ -47,12 +48,15 @@ jobs:
           for f in index.html huong-dan.html app.js web-only.js hls.min.js dash.all.min.js supabase-sdk.js cloud-core.js cloud-sync.js source-use-consent-v1.js source-use-consent-v1.css web-mobile-player.js web-mobile-player.css web-player-icons.js web-player-icons.css web-tv-wide.css web-mobile-controls-polish.css web-channel-snapshot.js; do
             test -s "_site/$f"
           done
-          test -s _site/robots.txt && test -s _site/sitemap.xml
+          test -s _site/robots.txt && test -s _site/sitemap.xml && test -s _site/sitemap.xsl
           grep -Fq 'https://trisanghy.github.io/open-iptv-pro/sitemap.xml' _site/robots.txt
           python3 - <<'PY'
           from pathlib import Path
           import xml.etree.ElementTree as ET
-          sitemap=ET.parse('_site/sitemap.xml').getroot()
+          raw=Path('_site/sitemap.xml').read_text(encoding='utf-8')
+          assert '<?xml-stylesheet type="text/xsl" href="sitemap.xsl"?>' in raw
+          ET.parse('_site/sitemap.xsl')
+          sitemap=ET.fromstring(raw)
           urls=[x.text for x in sitemap.findall('.//{http://www.sitemaps.org/schemas/sitemap/0.9}loc')]
           assert urls == ['https://trisanghy.github.io/open-iptv-pro/', 'https://trisanghy.github.io/open-iptv-pro/huong-dan.html'], urls
           assert 'rel="canonical"' in Path('_site/index.html').read_text(encoding='utf-8')
