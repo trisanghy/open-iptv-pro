@@ -30,11 +30,18 @@ test('now / next guide, fit dropdown and alternate link occupy bottom row',()=>{
 test('every original playback ID is retained exactly once',()=>{
  for(const id of ['playingIcon','playingTitle','playingSubtitle','prevBtn','playBtn','stopBtn','nextBtn','volume','shotBtn','videoFit','castBtn','pipBtn','fullscreenBtn','favCurrentBtn','manualLinkControl','manualLinkSelect','epgCurrent','epgNowText','openGuideBtn','videoSeekWrap'])assert.equal(one(id),1,id);
 });
-test('volume and snapshot remain accessible under quick tools',()=>{
- const tools=html.slice(html.indexOf('<details class="compact-tools"'),html.indexOf('</details>',html.indexOf('<details class="compact-tools"')));
- assert.match(tools,/class="ipvp-player-extras"/);
- assert.match(tools,/id="volume"/);
- assert.match(tools,/id="shotBtn"/);
+test('volume and snapshot remain accessible in Electron player toolbar while Quick Tools stay open',()=>{
+ const start=html.indexOf('<section class="compact-tools always-open" id="quickTools"');
+ const tools=html.slice(start,html.indexOf('</section>',start));
+ assert.ok(start>0,'Quick Tools are a permanent section');
+ assert.doesNotMatch(tools,/class="ipvp-player-extras"|id="volume"|id="shotBtn"/);
+ for(const id of ['quickChecks','quickShots','quickExport'])assert.match(tools,new RegExp('id="'+id+'"'));
+ const stage=html.slice(html.indexOf('<div id="playerToolbarControlStaging" hidden>'),start);
+ assert.match(stage,/id="volume"/);
+ assert.match(stage,/id="shotBtn"/);
+ const moved=fs.readFileSync(path.join(root,'renderer/electron-player-parity-v23-8-21.js'),'utf8');
+ assert.match(moved,/master\.append\(icon,volume\);top\.append\(master\)/);
+ assert.match(moved,/shot\.textContent='▣ Chụp ảnh';body\.append\(shot\)/);
 });
 test('EPG uses real guide current/next and escapes titles by textContent',()=>{
  assert.match(features,/guideLib\.current\(guide,c\)/);
