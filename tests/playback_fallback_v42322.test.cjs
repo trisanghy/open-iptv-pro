@@ -20,7 +20,8 @@ test('renderer controls manual and automatic FFmpeg and remembers successful tra
  assert.match(app,/shouldAutoFfmpeg\(/);
  assert.match(app,/ffmpegTried=true/);
  assert.match(app,/stopPlaybackFallback\?\.\(oldFallback\)/);
- assert.match(app,/player\.addEventListener\('error',\(\)=>\{if\(current&&player\.currentSrc&&\(hls\|\|dash\|\|player\.hasAttribute\('src'\)\)\)/);
+ // During user Pause, FFmpeg/HLS errors must NOT restart decoding or unfreeze video.
+ assert.match(app,/player\.addEventListener\('error',\(\)=>\{if\(pausedByUser\)return;if\(current&&player\.currentSrc&&\(hls\|\|dash\|\|player\.hasAttribute\('src'\)\)\)/);
  const html=fs.readFileSync(path.join(__dirname,'../renderer/index.html'),'utf8');
  assert.match(html,/id="tryFfmpegBtn"/);
 });
