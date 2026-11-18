@@ -176,6 +176,15 @@
  function snapshotSrc(s){if(!s)return '';if(s.file&&snapshotBase)return snapshotBase+encodeURIComponent(s.file);return s.data||'';}
  function attachSnapshotFallback(img,shot,logo=''){if(!img)return;const paths=[shot?.data,logo].filter(x=>typeof x==='string'&&/^(?:https?:|data:image\/)/i.test(x));let step=0;img.addEventListener('error',()=>{if(step<paths.length){img.src=paths[step++];img.closest?.('.chan-logo,.shot-card')?.classList?.add('snapshot-fallback');}else{img.style.display='none';if(img.parentNode?.classList?.contains('chan-logo'))img.parentNode.textContent='TV';}});}
  function channelThumb(c){const shot=store.snapshots[c.url];const url=snapshotSrc(shot);return url?`<img loading="lazy" src="${escape(url)}" alt="Ảnh chụp ${escape(c.name)}"/>`:icon(c);}
+ function mountChannelArt(container,channel){
+  if(window.OpenIPTVChannelArt?.mount){
+   window.OpenIPTVChannelArt.mount(container,{
+    channel,snapshots:store.snapshots,snapshotBase,doc:document,eager:false
+   });
+   return;
+  }
+  attachSnapshotFallback(container?.querySelector('img'),store.snapshots[channel.url],channel.logo);
+ }
  function createFolder(){if(window.IPTVProAdvanced?.canEdit?.()===false)return toast('Hồ sơ trẻ em không được sửa thư mục','warn');openModal('Tạo thư mục kênh',`<label class="modal-label">Tên thư mục mới</label><input class="modal-input" id="folderName" maxlength="90" placeholder="Ví dụ: Kênh thể thao"/>`,()=>{const value=$('#folderName').value.trim();if(!value||value.length>90)throw Error('Nhập tên thư mục (tối đa 90 ký tự)');if(groupNames().includes(value))throw Error('Thư mục này đã tồn tại');store.folders.push(value);syncGroupOrder();save();render();},'Tạo thư mục');}
  function moveChannelToFolder(c){
   if(window.IPTVProAdvanced?.canEdit?.()===false)return toast('Hồ sơ trẻ em không được chuyển kênh','warn');
@@ -266,7 +275,7 @@
       row.addEventListener('dragover',e=>{if(!hasChannelPayload(e))return;e.preventDefault();e.stopPropagation();row.classList.remove('channel-drop-before','channel-drop-after');row.classList.add(e.clientY<row.getBoundingClientRect().top+row.getBoundingClientRect().height/2?'channel-drop-before':'channel-drop-after');if(e.dataTransfer)e.dataTransfer.dropEffect='move';});
       row.addEventListener('dragleave',()=>row.classList.remove('channel-drop-before','channel-drop-after'));
       row.addEventListener('drop',e=>{const after=row.classList.contains('channel-drop-after');row.classList.remove('channel-drop-before','channel-drop-after');moveDroppedChannel(e,group,c.id,after);});
-      attachSnapshotFallback(row.querySelector('.chan-logo img'),shot,c.logo);
+      mountChannelArt(row.querySelector('.chan-logo'),c);
       // Shift+click marks a full range; click a selected row again with Shift to remove just that row.
       // Ctrl/Cmd+click toggles individual non-adjacent channels. A plain click still plays the channel.
       // Mousedown cancellation avoids OS text selection during Shift+click, without blocking drag normally.
@@ -391,7 +400,7 @@
   if(!favorites.length){target.innerHTML='<div class="empty-list">Không có kênh yêu thích từ các nguồn đang bật. Khi thêm lại một nguồn có kênh đã lưu, kênh sẽ tự xuất hiện.</div>';return;}
   favorites.forEach(c=>{const div=document.createElement('div');div.className='fav-card';div.dataset.channelId=c.id;
    div.innerHTML=`<div class="chan-logo ${snapshotSrc(store.snapshots[c.url])?'snapshot-thumb':''}">${channelThumb(c)}</div><div><h3>${escape(c.name)}</h3><small>${escape(c.group)} · ${escape(store.sources.find(s=>s.id===c.sourceId)?.name||'Nguồn IPTV')}</small></div><button>▶ Xem</button><button type="button" class="fav-unstar" aria-pressed="true" title="Bỏ yêu thích">★</button>`;
-   attachSnapshotFallback(div.querySelector('.chan-logo img'),store.snapshots[c.url]);
+   mountChannelArt(div.querySelector('.chan-logo'),c);
    div.querySelector('button:not(.fav-unstar)').onclick=()=>{setPage('tv');playChannel(c.id)};
    div.querySelector('.fav-unstar').onclick=()=>favorite(c);
    window.IPTVProAdvanced?.decorateRow?.(c,div);target.append(div);
