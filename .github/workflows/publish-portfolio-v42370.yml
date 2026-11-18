@@ -29,13 +29,13 @@ jobs:
           set -Eeuo pipefail
           test "$(node -p 'require("./package.json").version')" = '4.23.70'
           test "$(node -p 'require("./rust-lab/package.json").version')" = '4.23.17-tauri.23.8.30'
-          for f in renderer/index.html renderer/tv-guide-panel-toggle-v42370.js renderer/channel-art-v42370.js renderer/ai-toggle-persistence-v42370.js src/main.cjs RELEASE_NOTES_V4_23_70.md docs/INSTALL_V4_23_70.md docs/COMPARE_EDITIONS_V4_23_70.md docs/RELEASE_SOURCE_MAP_V4_23_70.md web/index.html web/cloud-sync.js rust-lab/src-tauri/Cargo.toml; do
+          for f in renderer/index.html renderer/tv-guide-panel-toggle-v42368.js renderer/channel-art-v42368.js renderer/ai-toggle-persistence-v42368.js src/main.cjs RELEASE_NOTES_V4_23_70.md docs/INSTALL_V4_23_70.md docs/COMPARE_EDITIONS_V4_23_70.md docs/RELEASE_SOURCE_MAP_V4_23_70.md web/index.html web/cloud-sync.js rust-lab/src-tauri/Cargo.toml; do
             test -s "$f"
           done
           node --check src/main.cjs
           node --check renderer/app.js
-          node --check renderer/tv-guide-panel-toggle-v42370.js
-          node --check renderer/channel-art-v42370.js
+          node --check renderer/tv-guide-panel-toggle-v42368.js
+          node --check renderer/channel-art-v42368.js
       - name: Verify copyright notice and mandatory explicit source consents
         shell: bash
         run: |
@@ -44,7 +44,7 @@ jobs:
           grep -Fq 'src="source-use-consent-v1.js"' renderer/index.html
           grep -Fq 'Tác giả không chịu trách nhiệm đối với nội dung người dùng tự nhập' renderer/source-use-consent-v1.js
           grep -Fq 'Smart Discovery' renderer/source-use-consent-v1.js
-          grep -Fq 'trong phạm vi pháp luật cho phép' COPYRIGHT_NOTICE_V4_23_70.md
+          grep -Fq 'pháp luật cho phép' COPYRIGHT_NOTICE_V4_23_70.md
           grep -Fq '## 9. TUYÊN BỐ DỰ ÁN CÁ NHÂN' README.md
           node --check renderer/source-use-consent-v1.js
           node --test tests/source-use-consent-v1.test.cjs

@@ -33,7 +33,7 @@ test('v4.23.46: translate-only installer never requires Piper voice model',()=>{
  assert.ok(a>0);const c=s.slice(a,s.indexOf('function cancel()',a));
  assert.match(c,/installPair\('en',lang\)/);assert.doesNotMatch(c,/voiceFile\(/);
 });
-test('v4.23.68: speech uses already-translated target, never running a second Argos/MLX pass',()=>{
+test('v4.23.70: speech uses already-translated target, never running a second Argos/MLX pass',()=>{
  const code=read('renderer/local-tts-v42344.js');
  assert.match(code,/const sameLanguage=e\.language===target\.value/);
  assert.match(code,/const text=String\(sameLanguage\?e\.text:/);
@@ -44,5 +44,5 @@ test('v4.23.46: bounded IPC plus app version is synchronized',()=>{
  const main=read('src/main.cjs'),pre=read('src/preload.cjs');
  assert.match(main,/caption:installLanguage/);assert.match(main,/caption:languageStatus/);
  assert.match(pre,/captionInstallLanguage/);assert.match(pre,/captionLanguageStatus/);
- assert.equal(JSON.parse(read('package.json')).version,'4.23.68');
+ assert.equal(JSON.parse(read('package.json')).version,'4.23.70');
 });
