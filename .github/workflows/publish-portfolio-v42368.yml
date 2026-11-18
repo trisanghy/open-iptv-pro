@@ -82,7 +82,7 @@ jobs:
           test -s rust-lab/src-tauri/Cargo.toml
       - name: Fetch immutable Rust Lab release and validate every checksum
         env:
-          GH_TOKEN: ${{ github.token }
+          GH_TOKEN: ${{ github.token }}
         shell: bash
         run: |
           set -Eeuo pipefail
@@ -92,7 +92,7 @@ jobs:
           (cd rust-assets && sha256sum -c SHA256SUMS.txt && sha256sum -c SHA256SUMS-macOS.txt)
 
   electron:
-    name: Native Electron installer ${{ matrix.label }
+    name: Native Electron installer ${{ matrix.label }}
     needs: regression
     strategy:
       fail-fast: false
@@ -101,7 +101,7 @@ jobs:
           - {runner: macos-15, platform: mac, arch: arm64, label: mac-arm64}
           - {runner: macos-15-intel, platform: mac, arch: x64, label: mac-intel}
           - {runner: windows-2022, platform: win, arch: x64, label: windows-x64}
-    runs-on: ${{ matrix.runner }
+    runs-on: ${{ matrix.runner }}
     timeout-minutes: 85
     env:
       CSC_IDENTITY_AUTO_DISCOVERY: 'false'
@@ -117,10 +117,10 @@ jobs:
         shell: bash
         run: |
           set -Eeuo pipefail
-          npx electron-builder --${{ matrix.platform } --${{ matrix.arch } --publish never
-          if [[ '${{ matrix.platform }' == mac ]]; then
-            test -s "dist/Open-IPTV-Pro-4.23.68-mac-${{ matrix.arch }.dmg"
-            if [[ '${{ matrix.arch }' == arm64 ]]; then
+          npx electron-builder --${{ matrix.platform }} --${{ matrix.arch }} --publish never
+          if [[ '${{ matrix.platform }}' == mac ]]; then
+            test -s "dist/Open-IPTV-Pro-4.23.68-mac-${{ matrix.arch }}.dmg"
+            if [[ '${{ matrix.arch }}' == arm64 ]]; then
               APP='dist/mac-arm64/Open IPTV Pro.app'
               lipo "$APP/Contents/MacOS/Open IPTV Pro" -verify_arch arm64
             else
@@ -134,7 +134,7 @@ jobs:
           fi
       - uses: actions/upload-artifact@v4
         with:
-          name: electron-v42368-${{ matrix.label }
+          name: electron-v42368-${{ matrix.label }}
           path: |
             dist/*.dmg
             dist/*.exe
@@ -160,7 +160,7 @@ jobs:
       - name: Download Rust Lab artifacts from the verified immutable release
         shell: bash
         env:
-          GH_TOKEN: ${{ github.token }
+          GH_TOKEN: ${{ github.token }}
         run: |
           set -Eeuo pipefail
           mkdir -p rust-upstream
@@ -197,7 +197,7 @@ jobs:
       - name: Publish a NEW stable release; never overwrite existing releases/tags
         shell: bash
         env:
-          GH_TOKEN: ${{ github.token }
+          GH_TOKEN: ${{ github.token }}
         run: |
           set -Eeuo pipefail
           TAG='v4.23.68'
@@ -214,7 +214,7 @@ jobs:
             --notes-file RELEASE_NOTES_V4_23_68.md --latest
       - name: Verify published assets and release properties
         env:
-          GH_TOKEN: ${{ github.token }
+          GH_TOKEN: ${{ github.token }}
         shell: bash
         run: |
           set -Eeuo pipefail
