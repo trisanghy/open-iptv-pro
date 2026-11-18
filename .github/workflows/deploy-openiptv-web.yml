@@ -100,11 +100,11 @@ jobs:
           grep -Fq 'web-player-icons.css?v=vectorplayer-airplay-20261118c' _site/index.html
           grep -Fq 'web-player-icons.js?v=vectorplayer-airplay-20261118c' _site/index.html
           node --check _site/theme-boot.js
-          grep -Fq 'src="theme-boot.js?v=mobile-recovery-20261118i"' _site/index.html
+          grep -Fq 'src="theme-boot.js?v=responsive-desktop-20261118j"' _site/index.html
           node --check _site/web-mobile-player.js
           node --test web-online/tests/web-mobile-player.test.cjs
-          grep -Fq 'src="web-mobile-player.js?v=mobile-recovery-20261118i"' _site/index.html
-          grep -Fq 'href="web-mobile-player.css?v=mobile-recovery-20261118i"' _site/index.html
+          grep -Fq 'src="web-mobile-player.js?v=responsive-desktop-20261118j"' _site/index.html
+          grep -Fq 'href="web-mobile-player.css?v=responsive-desktop-20261118j"' _site/index.html
           node --test web-online/tests/browser-channel-check.test.cjs
           node --test web-online/tests/source-use-consent-v1.test.cjs
           node --test web-online/tests/resume-last.test.cjs
