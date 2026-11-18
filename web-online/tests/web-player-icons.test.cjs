@@ -29,8 +29,8 @@ test('full screen, muted and favourite states use accessible correct icons',()=>
 test('only player buttons are decorated; no duplicates or handler rewrites',()=>{
  for(const id of ['prevBtn','playBtn','stopBtn','nextBtn','fullscreenBtn','castBtn','pipBtn'])
   assert.equal((html.match(new RegExp('id="'+id+'"','g'))||[]).length,1,id);
- assert.ok(html.includes('web-player-icons.css?v=vectorplayer-no-duplicates-20261118b'));
- assert.ok(html.includes('web-player-icons.js?v=vectorplayer-no-duplicates-20261118b'));
+ assert.ok(html.includes('web-player-icons.css?v=vectorplayer-airplay-20261118c'));
+ assert.ok(html.includes('web-player-icons.js?v=vectorplayer-airplay-20261118c'));
  assert.match(workflow,/node --test web-online\/tests\/web-player-icons.test.cjs/);
 });
 
@@ -73,4 +73,10 @@ test('live MutationObserver catches subsequent app.textContent replacements',()=
  button.childNodes=[{nodeType:3,nodeValue:'⏭'}];
  icons.stripLegacyGlyphs(button);
  assert.equal(button.childNodes[0].nodeValue,'');
+});
+
+test('Cast icon is centered on iPhone without old caption',()=>{
+ assert.match(css,/output-controls #castBtn\{[\s\S]*?justify-content:center!important/);
+ assert.match(css,/output-controls #castBtn::before\{[\s\S]*?transform:translate\(-50%,-50%\)!important/);
+ assert.match(css,/output-controls #castBtn>\.cast-label\{display:none!important/);
 });
