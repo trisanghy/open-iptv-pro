@@ -109,8 +109,9 @@ if html.count(link_anchor)!=1:
     sys.exit('Cloud link form anchor missing')
 html=html.replace(link_anchor,"      <div id=\"cloudLinkForm\" class=\"cloud-email-form\" hidden>\n        <label for=\"cloudLinkInput\">Nếu liên kết trong email không quay về website, hãy dán liên kết vào đây</label>\n        <div class=\"cloud-email-input-line\">\n          <input id=\"cloudLinkInput\" type=\"url\" autocomplete=\"off\" spellcheck=\"false\" placeholder=\"Liên kết xác nhận của Supabase\"/>\n          <button type=\"button\" class=\"btn btn-subtle\" id=\"cloudLinkVerify\">Xác thực liên kết</button>\n        </div>\n        <p class=\"hint\">Liên kết chỉ được dùng một lần và không được lưu vào playlist hoặc đám mây.</p>\n      </div>\n"+link_anchor,1)
 html=html.replace('</head>','<link rel="stylesheet" href="web-only.css"/><link rel="stylesheet" href="resume-last.css"/><link rel="stylesheet" href="web-volume.css"/><link rel="stylesheet" href="cloud-sync.css"/><link rel="manifest" href="manifest.webmanifest"/></head>',1)
-html=html.replace('<script src="app.js"></script>','<script src="web-mobile-player.js?v=mobile-channels-minus40-20261118h"></script><script src="app.js"></script>',1)
-html=html.replace('</head>','<link rel="stylesheet" href="web-mobile-player.css?v=mobile-channels-minus40-20261118h"/></head>',1)
+html=html.replace('<script src="app.js"></script>','<script src="web-mobile-player.js?v=mobile-recovery-20261118i"></script><script src="app.js"></script>',1)
+html=html.replace('</head>','<link rel="stylesheet" href="web-mobile-player.css?v=mobile-recovery-20261118i"/></head>',1)
+html=html.replace('src="theme-boot.js"','src="theme-boot.js?v=mobile-recovery-20261118i"',1)
 html=html.replace('</body>','<script src="supabase-sdk.js"></script><script src="cloud-core.js"></script><script src="web-only.js"></script><script src="resume-last.js"></script><script src="web-volume.js"></script><script src="cloud-sync.js"></script><script src="web-player-icons.js?v=vectorplayer-airplay-20261118c"></script></body>',1)
 html=html.replace('</head>','<link rel="stylesheet" href="web-player-icons.css?v=vectorplayer-airplay-20261118c"/></head>',1)
 if 'id="playbackExtra"' in html:
