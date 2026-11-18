@@ -101,3 +101,15 @@ test('Discovery consent is saved by version and can be revoked on the same devic
  assert.equal(h.localStorage.getItem(h.api.smartConsentKey),null);
  assert.equal(sandbox.module.exports.isSmartAccepted(),false);
 });
+
+test('Smart Discovery never loads external catalog before the consent check',()=>{
+ const choiceStart=smart.indexOf('async function choices()');
+ const findStart=smart.indexOf('async function find()');
+ assert.ok(choiceStart>0&&findStart>choiceStart);
+ const choices=smart.slice(choiceStart,findStart);
+ assert.match(choices,/if\(!window\.OpenIPTVSourceConsent\?\.isSmartAccepted\?\.\(\)\)return/);
+ const find=smart.slice(findStart,smart.indexOf('async function verify()',findStart));
+ const approved=find.indexOf('requireSmart?.()');
+ const catalog=find.indexOf('await choices();');
+ assert.ok(approved>0&&catalog>approved,'The selected catalog must be loaded after rights confirmation');
+});
