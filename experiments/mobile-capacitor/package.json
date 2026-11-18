@@ -1,9 +1,9 @@
 {
   "name": "open-iptv-pro-mobile",
   "private": true,
-  "version": "4.23.17-mobile.4",
+  "version": "4.23.17-mobile.5",
   "type": "module",
-  "description": "Open IPTV Pro Mobile: full screen safe-area fix, classic layout and fast navigation",
+  "description": "Mobile web-parity layout: media controls, EPG, main/backup stream selector, More bottom sheet",
   "scripts": {
     "dev": "vite --host 127.0.0.1",
     "build": "vite build",

@@ -12,8 +12,8 @@ concurrency:
   group: mobile-release-${{ github.ref }}
   cancel-in-progress: false
 env:
-  MOBILE_VERSION: 4.23.17-mobile.4
-  MOBILE_TAG: mobile/v4.23.17.4
+  MOBILE_VERSION: 4.23.17-mobile.5
+  MOBILE_TAG: mobile/v4.23.17.5
 jobs:
   android:
     name: Android debug APK
@@ -129,17 +129,22 @@ jobs:
           disable-animations: true
           emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim
           script: |
-            adb install -r release/OpenIPTVPro-Mobile-4.23.17-mobile.4-debug.apk
+            adb install -r release/OpenIPTVPro-Mobile-4.23.17-mobile.5-debug.apk
             adb shell am start -W -n com.trisanghy.openiptvpro.mobile/.MainActivity
             sleep 12
             mkdir -p release
-            adb exec-out screencap -p > release/OpenIPTVPro-Mobile-4.23.17-mobile.4-Android-screenshot.png
-            file release/OpenIPTVPro-Mobile-4.23.17-mobile.4-Android-screenshot.png | grep -q 'PNG image data'
-            test "$(stat -c%s release/OpenIPTVPro-Mobile-4.23.17-mobile.4-Android-screenshot.png)" -gt 20000
+            adb exec-out screencap -p > release/OpenIPTVPro-Mobile-4.23.17-mobile.5-Android-screenshot.png
+            # Open the bottom More sheet on Android and capture a second screen.
+            adb shell input tap 970 2260
+            sleep 2
+            adb exec-out screencap -p > release/OpenIPTVPro-Mobile-4.23.17-mobile.5-Android-more.png
+            file release/OpenIPTVPro-Mobile-4.23.17-mobile.5-Android-more.png | grep -q 'PNG image data'
+            file release/OpenIPTVPro-Mobile-4.23.17-mobile.5-Android-screenshot.png | grep -q 'PNG image data'
+            test "$(stat -c%s release/OpenIPTVPro-Mobile-4.23.17-mobile.5-Android-screenshot.png)" -gt 20000
       - uses: actions/upload-artifact@v4
         with:
           name: Mobile-Android-Screenshot
-          path: release/*-Android-screenshot.png
+          path: release/*-Android-*.png
           if-no-files-found: error
           retention-days: 90
 
@@ -170,7 +175,8 @@ jobs:
           unzip -tq "release/OpenIPTVPro-Mobile-${MOBILE_VERSION}-Source.zip"
           test -s "release/OpenIPTVPro-Mobile-${MOBILE_VERSION}-debug.apk"
           test -s "release/OpenIPTVPro-Mobile-${MOBILE_VERSION}-unsigned.ipa"
-          test -s "release/OpenIPTVPro-Mobile-4.23.17-mobile.4-Android-screenshot.png"
+          test -s "release/OpenIPTVPro-Mobile-4.23.17-mobile.5-Android-screenshot.png"
+          test -s "release/OpenIPTVPro-Mobile-4.23.17-mobile.5-Android-more.png"
           sha256sum release/* > release/SHA256SUMS.txt
       - name: Publish isolated mobile prerelease (never overwrite tag)
         env:
@@ -181,7 +187,7 @@ jobs:
             exit 1
           fi
           cat > /tmp/mobile-release-notes.txt <<'NOTES'
-          Open IPTV Pro Mobile 4.23.17-mobile.4 (Beta, Capacitor 8).\n          Mobile full-height viewport: remove iOS double safe-area inset, compact header and player. Swipe channels, restore last channel and paste M3U URL. Classic layout retained.\n          UI was recreated from user screenshot; original old v4.23 source was not found in GitHub.
+          Open IPTV Pro Mobile 4.23.17-mobile.5 (Beta, Capacitor 8).\n          Removed app header, moved all secondary features to a Web-style bottom More sheet. Media transport and output controls, selected channel EPG now-next, aspect select, and main/backup link picker mirror the Web layout.\n          UI was recreated from user screenshot; original old v4.23 source was not found in GitHub.
           Rust Lab parity subset: M3U rights confirmation, local Smart Discovery terms,
           Smart Doctor with user-approved fallback suggestions, safe mobile JSON backup,
           bounded 1–32 checks / 1000 channels per batch, touch layout.
@@ -194,5 +200,5 @@ jobs:
           NOTES
           gh release create "$MOBILE_TAG" release/*.apk release/*.ipa release/*.zip release/*.png release/SHA256SUMS.txt \
             --target "$GITHUB_SHA" \
-            --title "Open IPTV Pro Mobile 4.23.17-mobile.4 - Android APK + unsigned iOS IPA" \
+            --title "Open IPTV Pro Mobile 4.23.17-mobile.5 - Android APK + unsigned iOS IPA" \
             --notes-file /tmp/mobile-release-notes.txt --prerelease
