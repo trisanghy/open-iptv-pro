@@ -6,7 +6,14 @@
  if(typeof module==='object'&&module.exports)module.exports=api;
  if(root&&root.document)root.OpenIPTVSourceConsent=api;
 })(typeof window==='undefined'?null:window,function(root){
- let smartAccepted=false,opening=false;
+ const SMART_KEY='open-iptv-pro-discovery-consent-v1';
+ const SMART_REV='2026-11-18-v1';
+ function persistedSmartConsent(){
+  try{const data=JSON.parse(root?.localStorage?.getItem(SMART_KEY)||'null');
+   return data?.revision===SMART_REV&&data?.accepted===true;
+  }catch{return false;}
+ }
+ let smartAccepted=persistedSmartConsent(),opening=false;
  const NOTICE='Open IPTV Pro là phần mềm trình phát do cá nhân phát triển, không cung cấp hoặc cấp phép các kênh truyền hình. Bạn chịu trách nhiệm về nguồn, tài khoản, playlist và nội dung mình nhập, xem, lưu hoặc chia sẻ. Tác giả không kiểm soát hay bảo đảm tính hợp pháp của các nguồn này và không chịu trách nhiệm đối với dữ liệu người dùng trong phạm vi pháp luật cho phép.';
  const LABELS=Object.freeze({
   file:'Quyền sử dụng file M3U',
@@ -78,10 +85,20 @@
   });
  }
  async function requireSmart(){
-  if(smartAccepted)return true;
+  if(smartAccepted||persistedSmartConsent()){smartAccepted=true;return true;}
   const accepted=await request('smart-start');
-  if(accepted)smartAccepted=true;
-  return accepted;
+  if(!accepted)return false;
+  // Saved locally, not uploaded to any provider. A changed terms revision
+  // invalidates prior agreement and requires a fresh explicit confirmation.
+  try{root.localStorage.setItem(SMART_KEY,JSON.stringify({
+    revision:SMART_REV,accepted:true,acceptedAt:new Date().toISOString()
+   }));}catch{return false;}
+  smartAccepted=true;return true;
+ }
+ function revokeSmart(){
+  smartAccepted=false;
+  try{root?.localStorage?.removeItem(SMART_KEY);}catch{}
+  return true;
  }
  async function requestSmartImport(detail=''){
   if(!await requireSmart())return false;
@@ -90,7 +107,8 @@
  return Object.freeze({
   NOTICE,LABELS,isReady,
   requestImport:(kind)=>request(kind),
-  requireSmart,requestSmartImport,
-  isSmartAccepted:()=>smartAccepted
+  requireSmart,requestSmartImport,revokeSmart,
+  isSmartAccepted:()=>smartAccepted||persistedSmartConsent(),
+  smartConsentKey:SMART_KEY
  });
 });
