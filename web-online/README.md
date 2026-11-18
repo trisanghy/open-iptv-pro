@@ -91,3 +91,9 @@ Trên iOS, bấm nút Cast để yêu cầu bộ chọn AirPlay trực tiếp tr
 ## Mobile bootstrap fallback (18/11/2026)
 
 Khắc phục tình trạng trang trắng với sidebar desktop bên trái trên Safari/iOS và trình duyệt nhúng. Nhận diện mobile thực hiện ngay ở `theme-boot.js` trong `<head>`, trước khi tải CSS và trước khi đọc dữ liệu ứng dụng. Logic dự phòng xét iPhone/iPad, viewport nhỏ, thiết bị cảm ứng và cả iPhone giả lập user-agent desktop. Critical stylesheet được tạo cùng lúc để bảo toàn nội dung chính, thanh điều hướng phía dưới ngay cả khi CSS nâng cao bị tải lỗi/chưa sẵn sàng. `web-mobile-player.js` dùng cùng một nguồn nhận diện, tự đồng bộ khi xoay máy/quay lại trang. Đã đổi phiên bản tài nguyên `mobile-recovery-20261118i` để tránh cache cũ. Không sửa dữ liệu IPTV, main hoặc bản desktop.
+
+## Yêu cầu trang web máy tính trên iPhone (18/11/2026)
+
+Khi người dùng chọn `Yêu cầu trang web cho máy tính` trong Safari/Chrome iOS, Open IPTV Pro ưu tiên User-Agent desktop hoặc viewport >= 960px thay vì ép mobile theo kích thước vật lý hay cảm ứng. Trên điện thoại dùng desktop UA, trang áp dụng viewport 1024px để giữ bố cục desktop. Nhóm 63 quy tắc CSS mobile ban đầu đã được giới hạn bằng `data-iptv-device="mobile"`; chữ của thanh điều hướng 5 tab không tràn vào sidebar desktop.
+
+Một số trình duyệt nhúng không đổi User-Agent khi chuyển chế độ; `?view=desktop` ép hiển thị desktop, `?view=mobile` ép mobile. Khi chuyển lại trình duyệt sang chế độ di động, trang mặc định tự nhận diện lại. Không thay đổi dữ liệu IPTV, tài khoản, Electron hoặc Rust.
