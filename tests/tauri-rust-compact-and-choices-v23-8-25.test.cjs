@@ -60,7 +60,8 @@ test('PiP, Live Caption, TTS and persistent settings remain available',()=>{
 });
 test('Mac builder targets an immutable tag and one app only',()=>{
  const pkg=JSON.parse(read('package.json')),shell=read('scripts/BUILD_RUSTLAB_MAC_ONE_ZIP_FAST.sh');
- assert.equal(pkg.version,'4.23.17-tauri.23.8.25');
- assert.ok(shell.includes('TAG="rust-lab/v23.8.25"'));
+ assert.match(pkg.version,/^4\.23\.17-tauri\.23\.8\.\d+$/);
+ const release=pkg.version.split('-tauri.')[1];
+ assert.ok(shell.includes('TAG="rust-lab/v'+release+'"'));
  assert.ok(shell.includes('npm run build -- --bundles app'));
 });

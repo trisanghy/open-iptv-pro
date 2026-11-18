@@ -5,6 +5,10 @@
  if(typeof module==='object'&&module.exports)module.exports=api;
  if(root?.document)api.mount(root.document,root);
 })(typeof window!=='undefined'?window:null,function(){
+ function classifyWidth(width){
+  const w=Number(width)||1200;
+  return w<=450?'tiny':w<=720?'narrow':w<=1020?'compact':'wide';
+ }
  function mount(doc,win){
   if(doc.getElementById('electronParityTools'))return false;
   const $=id=>doc.getElementById(id);
@@ -72,7 +76,25 @@
    speechFooter.className='caption-tts-footer';
    speechFooter.append(speechStatus);tts.append(speechFooter);
   }
+  // The card can be 600–800px wide even inside a 1500px Mac window.
+  // ResizeObserver watches its width; all original event listeners remain.
+  const cast=$('castBtn'),fullCastLabel=cast?.textContent||'▣ Cast / AirPlay';
+  if(cast&&!cast.getAttribute('aria-label'))cast.setAttribute('aria-label','Cast / AirPlay lên TV');
+  function adaptPlayerWidth(){
+   const width=card.getBoundingClientRect?.().width||card.clientWidth||1200;
+   const compact=classifyWidth(width);
+   card.dataset.playerWidth=compact;
+   if(cast){
+    const label=compact==='wide'?fullCastLabel:'▣ Cast';
+    if(cast.textContent!==label)cast.textContent=label;
+   }
+  }
+  adaptPlayerWidth();
+  if(typeof win.ResizeObserver==='function'){
+   const resize=new win.ResizeObserver(adaptPlayerWidth);
+   resize.observe(card);
+  }else win.addEventListener?.('resize',adaptPlayerWidth);
   return true;
  }
- return {mount};
+ return {mount,classifyWidth};
 });

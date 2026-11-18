@@ -1,0 +1,191 @@
+/* v23.8.26: Responsive viewer controls scoped to actual player card width.
+   Loaded after the older compact styles; no disabled or duplicated controls. */
+#page-tv .electron-parity-player .ipvp-main-row,
+#page-tv .electron-parity-player .ipvp-second-row,
+#page-tv .electron-parity-player .caption-third-row,
+#page-tv .electron-parity-player .caption-third-controls,
+#page-tv .electron-parity-player .playing-info,
+#page-tv .electron-parity-player .playing-meta,
+#page-tv .electron-parity-player .ipvp-programs,
+#page-tv .electron-parity-player .ipvp-options .view-mode,
+#page-tv .electron-parity-player .ipvp-options #manualLinkControl,
+#page-tv .electron-parity-player .caption-ai-main,
+#page-tv .electron-parity-player .caption-tts-main{
+ box-sizing:border-box!important;min-width:0!important;max-width:100%!important;
+}
+#page-tv .electron-parity-player .playing-meta :is(b,small),
+#page-tv .electron-parity-player .ipvp-programs .ipvp-program b{
+ display:block!important;min-width:0!important;max-width:100%!important;
+ white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;
+}
+#page-tv .electron-parity-player .ipvp-transport,
+#page-tv .electron-parity-player .ipvp-cast{min-width:0!important;box-sizing:border-box!important}
+#page-tv .electron-parity-player .ipvp-main-row>.controls,
+#page-tv .electron-parity-player .ipvp-second-row>.ipvp-options{display:contents!important}
+#page-tv .electron-parity-player .ipvp-options :is(#manualLinkSelect,#videoFit),
+#page-tv .electron-parity-player .caption-third-controls select{
+ box-sizing:border-box!important;min-width:0!important;max-width:100%!important;text-overflow:ellipsis!important;
+}
+#page-tv .electron-parity-player .caption-tts-main>label{
+ white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;
+}
+#page-tv .electron-parity-player .caption-tts-main>label.tts-mode{overflow:visible!important}
+
+/* A moderate pane keeps one compact toolbar, instead of using screen size. */
+@container (max-width:1020px){
+ #page-tv .electron-parity-player .ipvp-main-row{
+  grid-template-columns:minmax(120px,1.1fr) minmax(165px,.95fr) minmax(76px,.36fr) max-content!important;
+  padding:4px 7px!important;gap:0!important;
+ }
+ #page-tv .electron-parity-player .ipvp-main-row>.playing-info{
+  min-width:0!important;gap:6px!important;padding:3px 6px!important;
+ }
+ #page-tv .electron-parity-player .ipvp-transport{
+  min-width:0!important;justify-content:space-evenly!important;gap:3px!important;padding:2px 4px!important;
+ }
+ #page-tv .electron-parity-player .ipvp-cast{
+  min-width:0!important;gap:3px!important;padding:2px!important;justify-content:flex-end!important;
+ }
+ #page-tv .electron-parity-player .ipvp-cast #castBtn{
+  max-width:72px!important;min-width:58px!important;padding:4px 5px!important;
+ }
+ #page-tv .electron-parity-player .ipvp-cast :is(#pipBtn,#fullscreenBtn){padding:4px 5px!important;min-width:33px!important}
+ #page-tv .electron-parity-player .electron-parity-volume{padding:2px 4px!important;gap:3px!important}
+ #page-tv .electron-parity-player .electron-parity-volume #volume{min-width:36px!important;max-width:90px!important}
+ #page-tv .electron-parity-player .ipvp-second-row{
+  grid-template-columns:minmax(0,1.8fr) minmax(95px,.58fr) minmax(112px,.87fr) 39px!important;
+  gap:6px!important;padding:6px 8px!important;
+ }
+ #page-tv .electron-parity-player .ipvp-options #favCurrentBtn{
+  min-width:37px!important;width:37px!important;min-height:38px!important;height:38px!important;
+ }
+ #page-tv .electron-parity-player .ipvp-options :is(#videoFit,#manualLinkSelect){
+  padding-left:7px!important;padding-right:19px!important;font-size:11px!important;
+ }
+}
+/* Narrow pane: two explicit rows, keeping the video controls accessible. */
+@container (max-width:720px){
+ #page-tv .electron-parity-player .ipvp-main-row{
+  grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;
+  grid-template-rows:auto auto!important;row-gap:3px!important;
+ }
+ #page-tv .electron-parity-player .ipvp-main-row>.playing-info{
+  grid-column:1!important;grid-row:1!important;border-right:0!important;
+ }
+ #page-tv .electron-parity-player .ipvp-transport{
+  grid-column:2!important;grid-row:1!important;border-right:0!important;
+ }
+ #page-tv .electron-parity-player .electron-parity-volume{
+  grid-column:1!important;grid-row:2!important;justify-content:flex-start!important;padding:3px 9px!important;
+ }
+ #page-tv .electron-parity-player .electron-parity-volume #volume{flex:0 1 130px!important;max-width:130px!important}
+ #page-tv .electron-parity-player .ipvp-cast{
+  grid-column:2!important;grid-row:2!important;justify-content:flex-end!important;
+ }
+ #page-tv .electron-parity-player .ipvp-second-row{
+  grid-template-columns:minmax(0,1fr) minmax(0,.85fr) 38px!important;
+  grid-template-rows:auto auto!important;gap:6px!important;
+ }
+ #page-tv .electron-parity-player .ipvp-programs.epg-current-card{
+  grid-column:1/-1!important;grid-row:1!important;border-right:0!important;padding-right:0!important;
+ }
+ #page-tv .electron-parity-player .ipvp-options .view-mode{grid-column:1!important;grid-row:2!important}
+ #page-tv .electron-parity-player .ipvp-options #manualLinkControl{grid-column:2!important;grid-row:2!important}
+ #page-tv .electron-parity-player .ipvp-options #favCurrentBtn{grid-column:3!important;grid-row:2!important}
+}
+/* At extreme widths, a single toolbar column prevents any collision. */
+@container (max-width:450px){
+ #page-tv .electron-parity-player .ipvp-main-row{
+  grid-template-columns:minmax(0,1fr)!important;grid-template-rows:repeat(4,auto)!important;
+ }
+ #page-tv .electron-parity-player .ipvp-main-row>.playing-info{grid-column:1!important;grid-row:1!important}
+ #page-tv .electron-parity-player .ipvp-transport{
+  grid-column:1!important;grid-row:2!important;justify-content:space-evenly!important;
+ }
+ #page-tv .electron-parity-player .electron-parity-volume{grid-column:1!important;grid-row:3!important}
+ #page-tv .electron-parity-player .ipvp-cast{grid-column:1!important;grid-row:4!important;justify-content:center!important}
+ #page-tv .electron-parity-player .ipvp-second-row{
+  grid-template-columns:minmax(0,1fr) 38px!important;grid-template-rows:repeat(3,auto)!important;
+ }
+ #page-tv .electron-parity-player .ipvp-options .view-mode{grid-column:1!important;grid-row:2!important}
+ #page-tv .electron-parity-player .ipvp-options #manualLinkControl{grid-column:1/-1!important;grid-row:3!important}
+ #page-tv .electron-parity-player .ipvp-options #favCurrentBtn{grid-column:2!important;grid-row:2!important}
+}
+/* Caption has a true status footer and adapts before its buttons collide. */
+@container (max-width:850px){
+ #page-tv .electron-parity-player .caption-third-controls .caption-ai-main{
+  display:flex!important;flex-wrap:wrap!important;gap:4px 7px!important;padding:3px!important;
+ }
+ #page-tv .electron-parity-player .caption-ai-main>label{font-size:11px!important;flex:0 0 auto!important}
+ #page-tv .electron-parity-player .caption-ai-main #liveTranslateTarget{
+  flex:0 1 125px!important;width:125px!important;min-width:100px!important;max-width:125px!important;
+ }
+ #page-tv .electron-parity-player .caption-ai-main #rustSubtitleOptionsButton{
+  flex:0 0 auto!important;min-width:123px!important;max-width:calc(100% - 8px)!important;
+  padding:4px 8px!important;
+ }
+ #page-tv .electron-parity-player .caption-ai-footer{
+  display:flex!important;flex:1 1 100%!important;width:100%!important;
+  justify-content:space-between!important;align-items:center!important;
+ }
+}
+/* One voice control row in wide view; separate only Gốc at medium sizes. */
+@container (max-width:1120px){
+ #page-tv .electron-parity-player .caption-third-controls .caption-tts-main{
+  display:grid!important;
+  grid-template-columns:max-content minmax(100px,122px) max-content minmax(118px,1fr) max-content minmax(70px,82px)!important;
+  grid-template-rows:34px 32px minmax(18px,auto)!important;
+  gap:3px 7px!important;align-items:center!important;max-width:100%!important;padding:4px 3px 0!important;
+ }
+ #page-tv .electron-parity-player .caption-tts-main>label.tts-mode{grid-column:1!important;grid-row:1!important}
+ #page-tv .electron-parity-player .caption-tts-main>#liveTtsLanguage{grid-column:2!important;grid-row:1!important}
+ #page-tv .electron-parity-player .caption-tts-main>label[for="liveTtsVoice"]{grid-column:3!important;grid-row:1!important}
+ #page-tv .electron-parity-player .caption-tts-main>#liveTtsVoice{grid-column:4!important;grid-row:1!important}
+ #page-tv .electron-parity-player .caption-tts-main>label[for="liveTtsSpeed"]{grid-column:5!important;grid-row:1!important}
+ #page-tv .electron-parity-player .caption-tts-main>#liveTtsSpeed{grid-column:6!important;grid-row:1!important}
+ #page-tv .electron-parity-player .caption-tts-main>label[for="liveTtsDuck"]{grid-column:1!important;grid-row:2!important}
+ #page-tv .electron-parity-player .caption-tts-main>#liveTtsDuck{grid-column:2!important;grid-row:2!important}
+ #page-tv .electron-parity-player .caption-tts-main>.caption-tts-footer{grid-column:1/-1!important;grid-row:3!important}
+ #page-tv .electron-parity-player .caption-tts-main :is(#liveTtsLanguage,#liveTtsVoice,#liveTtsSpeed,#liveTtsDuck){
+  min-width:0!important;width:100%!important;max-width:100%!important;height:32px!important;min-height:32px!important;
+  flex:none!important;font-size:12px!important;
+ }
+}
+/* Four paired columns at narrower player widths. */
+@container (max-width:685px){
+ #page-tv .electron-parity-player .caption-third-controls .caption-tts-main{
+  grid-template-columns:max-content minmax(95px,1fr) max-content minmax(114px,1.18fr)!important;
+  grid-template-rows:34px 34px minmax(20px,auto)!important;gap:4px 7px!important;
+ }
+ #page-tv .electron-parity-player .caption-tts-main>label.tts-mode{grid-column:1!important;grid-row:1!important}
+ #page-tv .electron-parity-player .caption-tts-main>#liveTtsLanguage{grid-column:2!important;grid-row:1!important}
+ #page-tv .electron-parity-player .caption-tts-main>label[for="liveTtsVoice"]{grid-column:3!important;grid-row:1!important}
+ #page-tv .electron-parity-player .caption-tts-main>#liveTtsVoice{grid-column:4!important;grid-row:1!important}
+ #page-tv .electron-parity-player .caption-tts-main>label[for="liveTtsSpeed"]{grid-column:1!important;grid-row:2!important}
+ #page-tv .electron-parity-player .caption-tts-main>#liveTtsSpeed{grid-column:2!important;grid-row:2!important}
+ #page-tv .electron-parity-player .caption-tts-main>label[for="liveTtsDuck"]{grid-column:3!important;grid-row:2!important}
+ #page-tv .electron-parity-player .caption-tts-main>#liveTtsDuck{grid-column:4!important;grid-row:2!important}
+ #page-tv .electron-parity-player .caption-tts-main>.caption-tts-footer{grid-row:3!important}
+}
+/* At minimum window size, each select keeps its own label, never overlaps. */
+@container (max-width:455px){
+ #page-tv .electron-parity-player .caption-third-controls .caption-tts-main{
+  display:grid!important;grid-template-columns:max-content minmax(0,1fr)!important;
+  grid-template-rows:repeat(4,34px) minmax(20px,auto)!important;gap:5px 8px!important;
+ }
+ #page-tv .electron-parity-player .caption-tts-main>label.tts-mode{grid-column:1!important;grid-row:1!important}
+ #page-tv .electron-parity-player .caption-tts-main>#liveTtsLanguage{grid-column:2!important;grid-row:1!important}
+ #page-tv .electron-parity-player .caption-tts-main>label[for="liveTtsVoice"]{grid-column:1!important;grid-row:2!important}
+ #page-tv .electron-parity-player .caption-tts-main>#liveTtsVoice{grid-column:2!important;grid-row:2!important}
+ #page-tv .electron-parity-player .caption-tts-main>label[for="liveTtsSpeed"]{grid-column:1!important;grid-row:3!important}
+ #page-tv .electron-parity-player .caption-tts-main>#liveTtsSpeed{grid-column:2!important;grid-row:3!important}
+ #page-tv .electron-parity-player .caption-tts-main>label[for="liveTtsDuck"]{grid-column:1!important;grid-row:4!important}
+ #page-tv .electron-parity-player .caption-tts-main>#liveTtsDuck{grid-column:2!important;grid-row:4!important}
+ #page-tv .electron-parity-player .caption-tts-main>.caption-tts-footer{grid-column:1/-1!important;grid-row:5!important}
+}
+/* Quick Tools permanently open, exactly three tasks on one row as requested. */
+#page-tv #quickTools>.quick-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+#page-tv #quickTools>.quick-grid>.quick-btn{
+ min-width:0!important;max-width:100%!important;white-space:normal!important;
+ box-sizing:border-box!important;overflow-wrap:anywhere!important;
+}
