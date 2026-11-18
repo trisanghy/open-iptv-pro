@@ -10,11 +10,13 @@ const AGENT:&str="Mozilla/5.0"; // Match actual Rust relay; do not trigger CDN a
 
 #[derive(Clone)]
 struct Probe{code:u16,final_url:Url,kind:String,bytes:Vec<u8>}
-async fn get(state:&Arc<AppState>,url:&Url)->Result<Probe,String>{
+async fn get(state:&Arc<AppState>,url:&Url,strict:bool)->Result<Probe,String>{
  // A normal GET, not a byte range, avoids false 404/403 on HLS manifests
  // and on CDNs that do not implement Range correctly.
- let mut resp=state.client.get(url.clone()).header(header::USER_AGENT,AGENT)
-    .timeout(Duration::from_secs(9)).send().await.map_err(|e|format!("Mạng: {}",e.to_string().chars().take(70).collect::<String>()))?;
+ let mut resp=if strict {crate::safe_network::get(url).await?}else{
+   state.client.get(url.clone()).header(header::USER_AGENT,AGENT)
+    .timeout(Duration::from_secs(9)).send().await.map_err(|e|format!("Mạng: {}",e.to_string().chars().take(70).collect::<String>()))?
+  };
  let code=resp.status().as_u16();
  let final_url=resp.url().clone();
  let kind=resp.headers().get(header::CONTENT_TYPE).and_then(|v|v.to_str().ok()).unwrap_or("").to_ascii_lowercase();
@@ -67,7 +69,7 @@ fn hls_master(content:&str)->bool{content.contains("#EXT-X-STREAM-INF:")}
 fn positive(reason:&str)->Value{json!({"status":"alive","positiveEvidence":true,"confirmedDead":false,"reason":reason})}
 fn unsure(reason:&str)->Value{json!({"status":"uncertain","positiveEvidence":false,"confirmedDead":false,"reason":reason})}
 
-async fn hls_media(state:&Arc<AppState>,playlist:&Probe)->Value{
+async fn hls_media(state:&Arc<AppState>,playlist:&Probe,strict:bool)->Value{
  let mut current=playlist.clone();
  for _ in 0..2{
   let text=String::from_utf8_lossy(&current.bytes);
@@ -76,7 +78,7 @@ async fn hls_media(state:&Arc<AppState>,playlist:&Probe)->Value{
   let mut next=None;
   for line in links.iter().take(2){
    if let Some(url)=absolute(&current.final_url,line){
-    if let Ok(probe)=get(state,&url).await{
+    if let Ok(probe)=get(state,&url,strict).await{
      if probe.code>=200&&probe.code<300&&is_hls(&probe){next=Some(probe);break;}
     }
    }
@@ -92,7 +94,7 @@ async fn hls_media(state:&Arc<AppState>,playlist:&Probe)->Value{
  let mut reason="Không lấy được segment video HLS mới nhất";
  for part in references.iter().rev().take(3){
   let Some(url)=absolute(&current.final_url,part) else {continue;};
-  match get(state,&url).await{
+  match get(state,&url,strict).await{
    Ok(p) if (200..300).contains(&p.code)=>{
     if signature(&p.bytes,&p.kind) || (encrypted&&p.bytes.len()>512&&
        !String::from_utf8_lossy(&p.bytes[..p.bytes.len().min(80)]).trim_start().starts_with('<')){
@@ -107,18 +109,18 @@ async fn hls_media(state:&Arc<AppState>,playlist:&Probe)->Value{
  unsure(reason)
 }
 
-pub async fn check(state:&Arc<AppState>,raw:&str)->Result<Value,String>{
+async fn check_inner(state:&Arc<AppState>,raw:&str,strict:bool)->Result<Value,String>{
  let url=stream::valid_http_url(raw)?;
  let mut fails=Vec::new();
  for attempt in 0..2{
-  let response=get(state,&url).await;
+  let response=get(state,&url,strict).await;
   match response{
    Err(_)=>{fails.push(0);},
    Ok(probe)=>{
     fails.push(probe.code);
     if (200..300).contains(&probe.code){
      if is_hls(&probe){
-      let mut result=hls_media(state,&probe).await;
+      let mut result=hls_media(state,&probe,strict).await;
       result["rounds"]=json!(attempt+1);
       return Ok(result);
      }
@@ -135,6 +137,14 @@ pub async fn check(state:&Arc<AppState>,raw:&str)->Result<Value,String>{
  }
  Ok(json!({"status":"uncertain","confirmedDead":false,"positiveEvidence":false,
   "reason":format!("Kết quả HTTP {:?} không đủ bằng chứng xác nhận Die",fails),"rounds":2}))
+}
+
+pub async fn check(state:&Arc<AppState>,raw:&str)->Result<Value,String>{
+ check_inner(state,raw,false).await
+}
+pub async fn check_discovery(state:&Arc<AppState>,raw:&str)->Result<Value,String>{
+ crate::smart::safe_stream_url(raw)?;
+ check_inner(state,raw,true).await
 }
 
 #[cfg(test)]
