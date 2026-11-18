@@ -9,7 +9,7 @@ test('classic layout has visible player and large controls like v4.23 mobile',()
  }
  assert.match(html,/<nav class="bottom-navigation"/);
  assert.match(html,/Chưa chọn kênh/);
- assert.match(html,/Xem TV/);
+ assert.match(html,/data-page="tv"/);
  assert.match(html,/4 kênh/);
  assert.doesNotMatch(html,/mobile-topbar|brand-logo|settingsBtn/);
  assert.match(html,/id="moreTrigger"/);
