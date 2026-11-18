@@ -65,6 +65,39 @@ test('collapsed desktop sidebar cannot override the mobile bottom navigation',()
  assert.match(css,/height:calc\(69px \+ env\(safe-area-inset-bottom,0px\)\)!important/);
 });
 test('HTML loads versioned assets to invalidate iOS cached broken layout',()=>{
- assert.match(html,/web-mobile-player\.css\?v=mobilefix-20261118b/);
- assert.match(html,/web-mobile-player\.js\?v=mobilefix-20261118b/);
+ assert.match(html,/web-mobile-player\.css\?v=mobilecompact-20261118d/);
+ assert.match(html,/web-mobile-player\.js\?v=mobilecompact-20261118d/);
+});
+
+test('mobile has five focused bottom tabs with advanced functionality in More',()=>{
+ assert.match(code,/function setupMobileNavigation\(\)/);
+ assert.match(code,/\['tv','TV'\]/);
+ assert.match(code,/\['fav','Yêu thích'\]/);
+ assert.match(code,/\['epg','Lịch'\]/);
+ assert.match(code,/\['sources','Nguồn'\]/);
+ assert.match(code,/iptvMobileMoreTrigger/);
+ for(const page of ['multiview','shots','folders','health','doctor','profiles','settings'])
+  assert.ok(code.includes('data-mobile-more-page="'+page+'"'),page);
+ for(const action of ['fileBtn','urlBtn','exportNav','cloudAccountQuick'])
+  assert.ok(code.includes('data-mobile-more-click="'+action+'"'),action);
+ assert.match(code,/destination\?\.click\(\)/);
+});
+test('mobile hides duplicate top toolbar while preserving desktop controls',()=>{
+ assert.match(css,/data-iptv-device="mobile"\] body #appShell > \.main > \.topbar\{\s*display:none!important/);
+ assert.match(css,/\.mobile-more-trigger,.mobile-more-overlay\{display:none\}/);
+});
+test('mobile volume mute, Cast, PiP and fullscreen share one compact touch row',()=>{
+ assert.match(css,/grid-template-columns:repeat\(4,minmax\(0,1fr\)\)!important/);
+ assert.match(css,/output-controls #webVolumeMute/);
+ assert.match(css,/output-controls #castBtn/);
+ assert.match(css,/output-controls #pipBtn/);
+ assert.match(css,/output-controls #fullscreenBtn/);
+ assert.match(css,/output-controls :is\(\.cast-label,\.pip-label,\.mobile-fullscreen-label\)/);
+ assert.match(css,/height:46px!important/);
+});
+test('mobile advanced menu has backdrop close and keyboard escape',()=>{
+ assert.match(code,/data-mobile-more-close/);
+ assert.match(code,/event.key==='Escape'/);
+ assert.match(code,/event.key!=='Tab'/);
+ assert.match(css,/mobile-more-overlay\[hidden\]\{display:none!important\}/);
 });

@@ -88,8 +88,114 @@
   // This covers the website viewport, but cannot remove Safari browser chrome.
   return enterTheater();
  }
+
+ // Mobile has five navigation destinations; all advanced pages remain reachable
+ // through a dialog, using the app's existing page and permission handlers.
+ function setupMobileNavigation(){
+  if(!doc?.createElement)return;
+  const sidebar=doc.getElementById('appSidebar');
+  if(!sidebar||doc.getElementById('iptvMobileMoreTrigger'))return;
+  const primary=[['tv','TV'],['fav','Yêu thích'],['epg','Lịch'],['sources','Nguồn']];
+  for(const [page,label] of primary){
+   const nav=sidebar.querySelector('.nav[data-page="'+page+'"]');
+   if(!nav)continue;
+   if(!nav.querySelector('.mobile-tab-caption')){
+    const caption=doc.createElement('span');
+    caption.className='mobile-tab-caption';
+    caption.textContent=label;
+    caption.setAttribute('aria-hidden','true');
+    nav.append(caption);
+   }
+   nav.setAttribute('aria-label',label);
+  }
+  const more=doc.createElement('button');
+  more.type='button';
+  more.id='iptvMobileMoreTrigger';
+  more.className='nav mobile-more-trigger';
+  more.setAttribute('aria-label','Thêm tính năng');
+  more.setAttribute('aria-controls','iptvMobileMoreOverlay');
+  more.setAttribute('aria-expanded','false');
+  more.innerHTML='<span class="macos-nav-symbol" aria-hidden="true">⋯</span><span class="mobile-tab-caption" aria-hidden="true">Thêm</span>';
+  sidebar.append(more);
+  const overlay=doc.createElement('div');
+  overlay.id='iptvMobileMoreOverlay';
+  overlay.className='mobile-more-overlay';
+  overlay.hidden=true;
+  overlay.innerHTML=`
+   <div class="mobile-more-backdrop" data-mobile-more-close="true"></div>
+   <section class="mobile-more-panel" role="dialog" aria-modal="true" aria-labelledby="iptvMobileMoreHeading">
+    <header class="mobile-more-heading"><h2 id="iptvMobileMoreHeading">Thêm tính năng</h2><button type="button" class="mobile-more-close" aria-label="Đóng menu" data-mobile-more-close="true">✕</button></header>
+    <div class="mobile-more-grid">
+     <button type="button" class="mobile-more-action" data-mobile-more-page="multiview"><span aria-hidden="true">▦</span>MultiView</button>
+     <button type="button" class="mobile-more-action" data-mobile-more-page="shots"><span aria-hidden="true">▣</span>Ảnh chụp</button>
+     <button type="button" class="mobile-more-action" data-mobile-more-page="folders"><span aria-hidden="true">▤</span>Thư mục</button>
+     <button type="button" class="mobile-more-action" data-mobile-more-page="health"><span aria-hidden="true">♡</span>Sức khỏe kênh</button>
+     <button type="button" class="mobile-more-action" data-mobile-more-page="doctor"><span aria-hidden="true">✚</span>IPTV Doctor</button>
+     <button type="button" class="mobile-more-action" data-mobile-more-page="profiles"><span aria-hidden="true">♙</span>Hồ sơ</button>
+     <button type="button" class="mobile-more-action" data-mobile-more-click="fileBtn"><span aria-hidden="true">＋</span>Mở file M3U</button>
+     <button type="button" class="mobile-more-action" data-mobile-more-click="urlBtn"><span aria-hidden="true">↗</span>Thêm URL</button>
+     <button type="button" class="mobile-more-action" data-mobile-more-click="exportNav"><span aria-hidden="true">⇩</span>Xuất M3U</button>
+     <button type="button" class="mobile-more-action" data-mobile-more-page="settings"><span aria-hidden="true">⚙</span>Cài đặt</button>
+     <button type="button" class="mobile-more-action" data-mobile-more-click="cloudAccountQuick"><span aria-hidden="true">☁</span>Tài khoản & đồng bộ</button>
+     <a class="mobile-more-action" href="huong-dan.html" target="_blank" rel="noopener noreferrer"><span aria-hidden="true">ⓘ</span>Hướng dẫn Web</a>
+    </div>
+   </section>`;
+  doc.body.append(overlay);
+  function syncActive(){
+   const active=sidebar.querySelector('.nav[data-page].active');
+   const page=active?.dataset?.page||'tv';
+   const isPrimary=primary.some(row=>row[0]===page);
+   more.classList.toggle('active',!isPrimary||!overlay.hidden);
+  }
+  function close(restoreFocus=true){
+   if(overlay.hidden)return;
+   overlay.hidden=true;
+   more.setAttribute('aria-expanded','false');
+   syncActive();
+   if(restoreFocus&&isMobile())more.focus();
+  }
+  function open(){
+   if(!isMobile())return;
+   overlay.hidden=false;
+   more.setAttribute('aria-expanded','true');
+   syncActive();
+   overlay.querySelector('.mobile-more-close')?.focus();
+  }
+  more.addEventListener('click',()=>overlay.hidden?open():close());
+  overlay.addEventListener('click',event=>{
+   if(event.target.closest('[data-mobile-more-close]')){close();return;}
+   const action=event.target.closest('[data-mobile-more-page],[data-mobile-more-click]');
+   if(!action)return;
+   const page=action.dataset.mobileMorePage;
+   const clickId=action.dataset.mobileMoreClick;
+   const destination=page?sidebar.querySelector('.nav[data-page="'+page+'"]'):doc.getElementById(clickId);
+   close(false);
+   destination?.click();
+   syncActive();
+  });
+  overlay.addEventListener('keydown',event=>{
+   if(event.key==='Escape'){event.preventDefault();close();return;}
+   if(event.key!=='Tab')return;
+   const focusable=[...overlay.querySelectorAll('button,a[href]')].filter(x=>!x.disabled);
+   if(!focusable.length)return;
+   const first=focusable[0],last=focusable[focusable.length-1];
+   if(event.shiftKey&&doc.activeElement===first){event.preventDefault();last.focus();}
+   else if(!event.shiftKey&&doc.activeElement===last){event.preventDefault();first.focus();}
+  });
+  sidebar.addEventListener('click',event=>{
+   if(event.target.closest('.nav[data-page]')){close(false);syncActive();}
+  });
+  if(typeof root.MutationObserver==='function'){
+   const observer=new root.MutationObserver(syncActive);
+   for(const nav of sidebar.querySelectorAll('.nav[data-page]'))
+    observer.observe(nav,{attributes:true,attributeFilter:['class']});
+  }
+  root.addEventListener?.('resize',()=>{if(!isMobile())close(false);});
+  syncActive();
+ }
  if(doc){
   syncDevice();
+  setupMobileNavigation();
   if(isIOS())doc.documentElement?.classList.add('web-is-ios');
   root.addEventListener?.('resize',syncDevice,{passive:true});
   root.addEventListener?.('orientationchange',syncDevice,{passive:true});
