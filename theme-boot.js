@@ -21,27 +21,47 @@
    Keeps the page accessible if the deferred mobile module or its CSS fails. */
 ;(function(root,doc){
  if(!root||!doc?.documentElement)return;
- function isMobile(){
+ // Respect desktop-site requests: a desktop UA or wide layout viewport
+ // takes precedence over physical screen size and touch capability.
+ function preferredMode(){
+  const search=String(root.location?.search||'');
+  if(/(?:^|[?&])(?:view|layout)=desktop(?:&|$)/i.test(search)||/(?:^|[?&])desktop=1(?:&|$)/i.test(search))return 'desktop';
+  if(/(?:^|[?&])(?:view|layout)=mobile(?:&|$)/i.test(search)||/(?:^|[?&])mobile=1(?:&|$)/i.test(search))return 'mobile';
   const nav=root.navigator||{},ua=String(nav.userAgent||'');
-  if(/iPhone|iPad|iPod|Android.+Mobile|Mobile.+Android|Windows Phone|Opera Mini/i.test(ua)||
-     nav.userAgentData?.mobile===true)return true;
-  const screenShort=Math.min(Number(root.screen?.width||Infinity),Number(root.screen?.height||Infinity));
-  const touch=Number(nav.maxTouchPoints||0)>0;
-  const inner=Number(root.innerWidth||Infinity);
-  // Responsive desktop windows deliberately use the compact layout too.
-  if(inner<=820)return true;
-  try{if(root.matchMedia?.('(max-width: 820px)')?.matches)return true;}catch{}
-  if(screenShort<=820&&touch)return true;
-  try{if(root.matchMedia?.('(max-width: 1024px) and (pointer: coarse)')?.matches)return true;}catch{}
-  return false;
+  const mobileUA=/iPhone|iPad|iPod|Android.+Mobile|Mobile.+Android|Windows Phone|Opera Mini/i.test(ua);
+  const desktopUA=/(?:Macintosh|Windows NT|X11|Linux x86_64|CrOS)/i.test(ua)&&
+   !/iPhone|iPad|iPod|Android|Mobile|Windows Phone|Opera Mini/i.test(ua);
+  const width=Number(root.innerWidth||Infinity);
+  if(desktopUA||(mobileUA&&width>=960))return 'desktop';
+  if(mobileUA||nav.userAgentData?.mobile===true)return 'mobile';
+  if(width<=820)return 'mobile';
+  try{if(root.matchMedia?.('(max-width: 820px)')?.matches)return 'mobile';}catch{}
+  return 'desktop';
+ }
+ function isMobile(){return preferredMode()==='mobile';}
+ function syncViewport(mode){
+  const meta=doc.querySelector?.('meta[name="viewport"]');
+  if(!meta)return;
+  const ua=String(root.navigator?.userAgent||'');
+  const touch=Number(root.navigator?.maxTouchPoints||0)>0;
+  const physical=Math.min(Number(root.screen?.width||Infinity),Number(root.screen?.height||Infinity));
+  const desktopUA=/(?:Macintosh|Windows NT|X11|Linux x86_64|CrOS)/i.test(ua)&&
+   !/iPhone|iPad|iPod|Android|Mobile|Windows Phone|Opera Mini/i.test(ua);
+  const search=String(root.location?.search||'');
+  const forced=/(?:^|[?&])(?:view|layout)=desktop(?:&|$)/i.test(search)||
+   /(?:^|[?&])desktop=1(?:&|$)/i.test(search);
+  const useDesktopWidth=mode==='desktop'&&physical<=820&&(touch||forced)&&(desktopUA||forced);
+  const wanted=useDesktopWidth?'width=1024,initial-scale=1':'width=device-width,initial-scale=1';
+  if(meta.getAttribute('content')!==wanted)meta.setAttribute('content',wanted);
  }
  function refresh(){
   const active=isMobile(),el=doc.documentElement;
+  syncViewport(active?'mobile':'desktop');
   el.setAttribute('data-iptv-device',active?'mobile':'desktop');
   el.classList.toggle('iptv-mobile',active);
   return active;
  }
- root.OpenIPTVDevice=Object.freeze({isMobile,refresh});
+ root.OpenIPTVDevice=Object.freeze({isMobile,preferredMode,refresh});
  refresh();
  // Fallback layout is intentionally small and scoped to phones. The full
  // web-mobile-player.css overrides these rules when loaded successfully.
