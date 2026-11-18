@@ -25,7 +25,7 @@ replacement=(Path(__file__).resolve().parent/'epg-fetch-function.txt').read_text
 js=js[:start]+replacement+'\n'+js[end:]
 features.write_text(js,encoding='utf-8')
 
-for name in ('web-only.js','web-only.css','resume-last.js','resume-last.css','browser-channel-check.js','web-autoplay.js','cloud-core.js','cloud-sync.js','cloud-sync.css','web-volume.css','web-volume.js','web-mobile-player.css','web-mobile-player.js','web-player-icons.css','web-player-icons.js'):
+for name in ('web-only.js','web-only.css','resume-last.js','resume-last.css','browser-channel-check.js','web-autoplay.js','cloud-core.js','cloud-sync.js','cloud-sync.css','web-volume.css','web-volume.js','web-mobile-player.css','web-mobile-player.js','web-player-icons.css','web-player-icons.js','web-tv-wide.css'):
     copy2(Path(__file__).resolve().parent/name,out/name)
 # Patch the generated application from its WebView source on every deployment.
 app_file=out/'app.js'
@@ -52,6 +52,12 @@ app_text=app_text.replace(sync_event_before,sync_event_after,1)
 app_file.write_text(app_text,encoding='utf-8')
 
 html=(out/'index.html').read_text(encoding='utf-8')
+# Retain hidden legacy markup for theme-stage hooks; remove only its visible EPG
+# sidebar, while preserving player EPG and the full Schedule page.
+guide_marker='<aside class="theme-guide-panel" id="themeGuidePanel" aria-label="Thông tin chương trình">'
+if html.count(guide_marker)!=1:
+    sys.exit('Web TV wide: cannot find the original EPG sidebar')
+html=html.replace(guide_marker,'<aside class="theme-guide-panel" id="themeGuidePanel" aria-hidden="true" hidden style="display:none!important">',1)
 html=html.replace('<title>Open IPTV Pro 4.23.38 — WebView</title>','<title>Open IPTV Pro — Web Online</title>')
 html=html.replace('<title>Open IPTV Pro — Web Online</title>','<title>Open IPTV Pro — Web Online</title>'+ "<link rel=\"icon\" type=\"image/png\" sizes=\"any\" href=\"assets/icon.png?v=20261116a\"/><link rel=\"apple-touch-icon\" href=\"assets/icon.png?v=20261116a\"/>",1)
 html=html.replace('<script src="app.js"></script>','<script src="browser-channel-check.js"></script><script src="web-autoplay.js"></script><script src="app.js"></script>',1)
@@ -113,7 +119,7 @@ html=html.replace('<script src="app.js"></script>','<script src="web-mobile-play
 html=html.replace('</head>','<link rel="stylesheet" href="web-mobile-player.css?v=responsive-desktop-20261118j"/></head>',1)
 html=html.replace('src="theme-boot.js"','src="theme-boot.js?v=responsive-desktop-20261118j"',1)
 html=html.replace('</body>','<script src="supabase-sdk.js"></script><script src="cloud-core.js"></script><script src="web-only.js"></script><script src="resume-last.js"></script><script src="web-volume.js"></script><script src="cloud-sync.js"></script><script src="web-player-icons.js?v=vectorplayer-airplay-20261118c"></script></body>',1)
-html=html.replace('</head>','<link rel="stylesheet" href="web-player-icons.css?v=vectorplayer-airplay-20261118c"/></head>',1)
+html=html.replace('</head>','<link rel="stylesheet" href="web-player-icons.css?v=vectorplayer-airplay-20261118c"/><link rel="stylesheet" href="web-tv-wide.css?v=tv-wide-no-side-epg-20261118k"/></head>',1)
 if 'id="playbackExtra"' in html:
     sys.exit('Obsolete three-dots player menu still present')
 if html.count('id="volume"') != 1:

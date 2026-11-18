@@ -1,0 +1,41 @@
+/* Open IPTV Pro Web TV Wide — no duplicate right-hand EPG sidebar.
+ * Keep the hidden legacy #themeGuidePanel node for theme-stage.js bindings.
+ * Existing EPG within player controls and on the Schedule page is untouched.
+ * Scoped to #page-tv; other pages and navigation layouts are unaffected. */
+#page-tv #themeGuidePanel,
+html[data-ui-style] #page-tv #themeGuidePanel{
+ display:none!important;
+ visibility:hidden!important;
+ pointer-events:none!important;
+}
+/* Cinema: give the entire right guide column back to the video and controls. */
+html[data-iptv-device="desktop"][data-ui-style="cinema"] #page-tv .tv-layout{
+ grid-template-columns:minmax(0,1fr)!important;
+ grid-template-areas:"video" "controls" "strip" "time" "tools"!important;
+ grid-template-rows:auto auto auto auto auto!important;
+}
+/* Lift the old 520px video cap so widening the player grows the picture. */
+html[data-iptv-device="desktop"][data-ui-style="cinema"] #page-tv .player-box{
+ min-width:0!important;
+ width:100%!important;
+ max-width:100%!important;
+ max-height:none!important;
+ aspect-ratio:16/9!important;
+}
+/* Glass: retain channel navigation at left, expand the player to the right. */
+html[data-iptv-device="desktop"][data-ui-style="glass"] #page-tv .tv-layout{
+ grid-template-columns:minmax(185px,23%) minmax(0,1fr)!important;
+ grid-template-areas:"channels video" "channels controls" "channels time" "channels tools"!important;
+ grid-template-rows:auto auto auto auto!important;
+}
+/* Broadcast: keep its channel grid and carousel, remove the EPG-only column. */
+html[data-iptv-device="desktop"][data-ui-style="broadcast"] #page-tv .tv-layout{
+ grid-template-columns:minmax(195px,24%) minmax(0,1fr)!important;
+ grid-template-areas:"channels strip" "channels video" "channels controls" "channels time" "channels tools"!important;
+ grid-template-rows:auto auto auto auto auto!important;
+}
+html[data-iptv-device="desktop"]:is([data-ui-style="glass"],[data-ui-style="broadcast"]) #page-tv .player-box{
+ min-width:0!important;
+ width:100%!important;
+ max-width:100%!important;
+}

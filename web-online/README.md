@@ -97,3 +97,7 @@ Khắc phục tình trạng trang trắng với sidebar desktop bên trái trên
 Khi người dùng chọn `Yêu cầu trang web cho máy tính` trong Safari/Chrome iOS, Open IPTV Pro ưu tiên User-Agent desktop hoặc viewport >= 960px thay vì ép mobile theo kích thước vật lý hay cảm ứng. Trên điện thoại dùng desktop UA, trang áp dụng viewport 1024px để giữ bố cục desktop. Nhóm 63 quy tắc CSS mobile ban đầu đã được giới hạn bằng `data-iptv-device="mobile"`; chữ của thanh điều hướng 5 tab không tràn vào sidebar desktop.
 
 Một số trình duyệt nhúng không đổi User-Agent khi chuyển chế độ; `?view=desktop` ép hiển thị desktop, `?view=mobile` ép mobile. Khi chuyển lại trình duyệt sang chế độ di động, trang mặc định tự nhận diện lại. Không thay đổi dữ liệu IPTV, tài khoản, Electron hoặc Rust.
+
+## Giao diện TV rộng không có EPG bên phải — 18/11/2026
+
+Đã ẩn riêng panel EPG bên phải (`#themeGuidePanel`) trên trang Xem truyền hình của tất cả phong cách, bao gồm Cinema, Glass và Broadcast. Các layout desktop được cập nhật: Cinema chỉ còn một cột video/điều khiển rộng đầy đủ; Glass và Broadcast giữ điều hướng kênh ở trái nhưng bỏ hẳn cột EPG bên phải. Bỏ giới hạn chiều cao 520px của video Cinema để khung video thực sự rộng hơn. **Giữ nguyên EPG ở nút Lịch, trong thanh điều khiển và trang Lịch EPG.** Phần tử EPG cũ chỉ giữ ẩn trong DOM để các chức năng của `theme-stage.js` không bị ngắt. Desktop Web được triển khai từ tệp `web-tv-wide.css` và builder WebView có cùng cấu hình để phát hành sau không khôi phục panel.
