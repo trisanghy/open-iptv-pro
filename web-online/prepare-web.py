@@ -111,8 +111,8 @@ html=html.replace(link_anchor,"      <div id=\"cloudLinkForm\" class=\"cloud-ema
 html=html.replace('</head>','<link rel="stylesheet" href="web-only.css"/><link rel="stylesheet" href="resume-last.css"/><link rel="stylesheet" href="web-volume.css"/><link rel="stylesheet" href="cloud-sync.css"/><link rel="manifest" href="manifest.webmanifest"/></head>',1)
 html=html.replace('<script src="app.js"></script>','<script src="web-mobile-player.js?v=mobile-channels-minus40-20261118h"></script><script src="app.js"></script>',1)
 html=html.replace('</head>','<link rel="stylesheet" href="web-mobile-player.css?v=mobile-channels-minus40-20261118h"/></head>',1)
-html=html.replace('</body>','<script src="supabase-sdk.js"></script><script src="cloud-core.js"></script><script src="web-only.js"></script><script src="resume-last.js"></script><script src="web-volume.js"></script><script src="cloud-sync.js"></script><script src="web-player-icons.js?v=vectorplayer-no-duplicates-20261118b"></script></body>',1)
-html=html.replace('</head>','<link rel="stylesheet" href="web-player-icons.css?v=vectorplayer-no-duplicates-20261118b"/></head>',1)
+html=html.replace('</body>','<script src="supabase-sdk.js"></script><script src="cloud-core.js"></script><script src="web-only.js"></script><script src="resume-last.js"></script><script src="web-volume.js"></script><script src="cloud-sync.js"></script><script src="web-player-icons.js?v=vectorplayer-airplay-20261118c"></script></body>',1)
+html=html.replace('</head>','<link rel="stylesheet" href="web-player-icons.css?v=vectorplayer-airplay-20261118c"/></head>',1)
 if 'id="playbackExtra"' in html:
     sys.exit('Obsolete three-dots player menu still present')
 if html.count('id="volume"') != 1:
