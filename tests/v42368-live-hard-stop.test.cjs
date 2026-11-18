@@ -12,7 +12,7 @@ const stopSource=between(' function stopPlayer(){','\n async function loadHlsLib
 const toggleSource=between(' async function playToggle(){','\n function switchChannel(');
 const channelSource=between(' async function playChannel(','\n async function playToggle()');
 
-function harness({mode='live',paused=false,withStream=true}={}){
+function harness({mode='live',paused=false,withStream=true,transport='relay'}={}){
  const calls=[],nodes=new Map(),channels=[{id:'BBC'},{id:'HBO'}];
  const $=id=>{
   if(!nodes.has(id))nodes.set(id,{
@@ -35,12 +35,14 @@ function harness({mode='live',paused=false,withStream=true}={}){
   destroy:()=>calls.push('hlsDestroy'),
   startLoad:num=>calls.push('hlsStart:'+num)
  };
- const dash={pause:()=>calls.push('dashPause'),reset:()=>calls.push('dashReset')};
+ const dash={pause:()=>calls.push('dashPause'),reset:()=>calls.push('dashReset'),
+  play:()=>calls.push('dashPlay'),updateSettings:options=>calls.push('dashSettings:'+String(options?.streaming?.scheduling?.scheduleWhilePaused))};
  const store={current:'HBO'};
  const scope={
   current:{id:'HBO',name:'HBO'},store,player,hls,dash,playMode:mode,
   mediaInfo:{mode},playRequestSerial:0,playGeneration:7,playAttemptSerial:3,
-  lastStoppedChannelId:'',playbackProofUrl:'test',playbackProofTimer:1,
+  lastStoppedChannelId:'',pausedFallbackNeedsRestart:false,activeTransport:transport,
+  playbackProofUrl:'test',playbackProofTimer:1,
   playCandidates:['mock://live'],playCandidateIndex:0,ffmpegFallbackId:'ffmpeg-1',
   failoverTimer:1,stallTimer:2,startupNoteTimer:3,
   attemptedTransports:new Set(),nativeHlsTried:new Set(),
@@ -64,7 +66,7 @@ function harness({mode='live',paused=false,withStream=true}={}){
  };
  const context=vm.createContext(scope);
  const script=new vm.Script('(()=>{'+stopSource+'\n'+toggleSource+
-  '\nreturn {stopPlayer,playToggle,state:()=>({current,playGeneration,playRequestSerial,lastStoppedChannelId,hls,dash})};})()');
+  '\nreturn {stopPlayer,playToggle,state:()=>({current,playGeneration,playRequestSerial,lastStoppedChannelId,pausedFallbackNeedsRestart,hls,dash})};})()');
  const api=script.runInContext(context);
  return {api,calls,nodes,scope,player,store};
 }
@@ -88,22 +90,58 @@ test('Electron: Stop fully shuts down HLS, DASH, FFmpeg, PiP, media stream and v
  assert.equal(h.nodes.get('#streamInfo').textContent,'Đã dừng hoàn toàn');
 });
 
-test('Electron: Pause on LIVE releases the entire stream, not just HTMLVideoElement.pause()',async()=>{
+test('Electron: LIVE Pause leaves decoded frame and selected channel in place',async()=>{
  const h=harness({mode:'live'});
+ const before=h.api.state();
  await h.api.playToggle();
- assert.ok(h.calls.includes('hlsDestroy'));
- assert.ok(h.calls.includes('stopPiP'));
- assert.ok(h.calls.includes('load'));
- assert.equal(h.api.state().current,null);
- assert.equal(h.api.state().lastStoppedChannelId,'HBO');
+ assert.ok(h.calls.includes('pause'),'Native video must freeze its current frame');
+ assert.ok(h.calls.includes('hlsStop'),'HLS segment fetching must pause');
+ assert.ok(h.calls.includes('dashPause'),'DASH must pause');
+ assert.ok(h.calls.includes('dashSettings:false'),'DASH may not fetch new segments while paused');
+ for(const forbidden of ['hlsDestroy','dashReset','remove:src','load','show:hidden','stopPiP'])
+  assert.ok(!h.calls.includes(forbidden),'Pause must not behave like Stop: '+forbidden);
+ assert.equal(h.player.src,'mock://live');
+ assert.equal(h.player.paused,true);
+ assert.equal(h.api.state().current.id,'HBO');
+ assert.equal(h.store.current,'HBO');
+ assert.equal(h.api.state().playGeneration,before.playGeneration);
+ assert.equal(h.api.state().playRequestSerial,before.playRequestSerial);
+ assert.equal(h.nodes.get('#playBtn').textContent,'▶');
+ assert.match(h.nodes.get('#streamInfo').textContent,/Đã tạm dừng/);
 });
 
-test('Electron: Play after stopping LIVE reopens the same channel, not the first playlist entry',async()=>{
- const h=harness();
+test('Electron: LIVE resume uses existing video and restarts HLS instead of reopening the channel',async()=>{
+ const h=harness({mode:'live'});
  await h.api.playToggle();
+ await h.api.playToggle();
+ assert.ok(h.calls.includes('hlsStart:-1'));
+ assert.ok(h.calls.includes('dashPlay'));
+ assert.ok(h.calls.includes('play'));
+ assert.ok(!h.calls.includes('restart:HBO'));
+ assert.equal(h.player.paused,false);
+ assert.equal(h.api.state().current.id,'HBO');
+});
+
+test('Electron: after explicit Stop, Play still selects the previously stopped channel',async()=>{
+ const h=harness();
+ h.api.stopPlayer();
  await h.api.playToggle();
  assert.ok(h.calls.includes('restart:HBO'));
  assert.ok(!h.calls.includes('restart:BBC'));
+});
+
+test('Electron: LIVE FFmpeg Pause stops backend but keeps picture; Play reconnects same channel',async()=>{
+ const h=harness({mode:'live',transport:'ffmpeg'});
+ await h.api.playToggle();
+ assert.ok(h.calls.includes('stopFFmpeg:ffmpeg-1'));
+ assert.ok(h.calls.includes('hlsStop'));
+ assert.ok(!h.calls.includes('load'));
+ assert.ok(!h.calls.includes('remove:src'));
+ assert.equal(h.api.state().current.id,'HBO');
+ assert.equal(h.api.state().pausedFallbackNeedsRestart,true);
+ await h.api.playToggle();
+ assert.ok(h.calls.includes('restart:HBO'));
+ assert.equal(h.api.state().pausedFallbackNeedsRestart,false);
 });
 
 test('Electron: paused VOD keeps position and renderer while stopping HLS fetching',async()=>{
