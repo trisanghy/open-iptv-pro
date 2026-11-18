@@ -11,16 +11,13 @@
  // Device mode is based on real mobile platforms as well as narrow touch
  // viewports. An iPhone requesting a desktop user agent still gets a usable UI.
  function isMobile(){
+  // A single source of truth shared by the early head bootstrap and runtime.
+  if(typeof root?.OpenIPTVDevice?.isMobile==='function')
+   return root.OpenIPTVDevice.isMobile();
   const ua=String(root?.navigator?.userAgent||'');
-  const phone=/iPhone|iPod|Android.+Mobile|Mobile.+Android|Windows Phone|Opera Mini/i.test(ua);
-  const tablet=/iPad|Android(?!.*Mobile)/i.test(ua);
-  const touch=Number(root?.navigator?.maxTouchPoints||0)>0;
-  let narrow=false,tabletPortrait=false;
-  try{
-   narrow=!!root?.matchMedia?.('(max-width: 760px)')?.matches;
-   tabletPortrait=!!root?.matchMedia?.('(max-width: 980px) and (pointer: coarse)')?.matches;
-  }catch(_){}
-  return phone || (tablet&&tabletPortrait) || (narrow&&(touch||!!root?.matchMedia?.('(pointer: coarse)')?.matches));
+  return /iPhone|iPad|iPod|Android.+Mobile|Windows Phone|Opera Mini/i.test(ua)||
+   Number(root?.innerWidth||Infinity)<=820||
+   !!root?.matchMedia?.('(max-width: 820px)')?.matches;
  }
  // Move task progress outside the desktop footer hidden by mobile styles.
  function syncTaskDock(){
@@ -53,8 +50,11 @@
   if(!doc)return false;
   const mobile=isMobile();
   const element=doc.documentElement;
-  element?.setAttribute?.('data-iptv-device',mobile?'mobile':'desktop');
-  element?.classList?.toggle?.('iptv-mobile',mobile);
+  if(typeof root?.OpenIPTVDevice?.refresh==='function')root.OpenIPTVDevice.refresh();
+  else{
+   element?.setAttribute?.('data-iptv-device',mobile?'mobile':'desktop');
+   element?.classList?.toggle?.('iptv-mobile',mobile);
+  }
   syncTaskDock();
   return mobile;
  }
@@ -227,6 +227,8 @@
   setupTaskDock();
   if(isIOS())doc.documentElement?.classList.add('web-is-ios');
   root.addEventListener?.('resize',syncDevice,{passive:true});
+  root.addEventListener?.('pageshow',syncDevice,{passive:true});
+  doc.addEventListener?.('DOMContentLoaded',syncDevice,{once:true});
   root.addEventListener?.('orientationchange',syncDevice,{passive:true});
   root.visualViewport?.addEventListener?.('resize',syncDevice,{passive:true});
   doc.addEventListener('fullscreenchange',()=>{
