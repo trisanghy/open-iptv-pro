@@ -27,6 +27,9 @@ features.write_text(js,encoding='utf-8')
 
 for name in ('web-only.js','web-only.css','resume-last.js','resume-last.css','browser-channel-check.js','web-autoplay.js','cloud-core.js','cloud-sync.js','cloud-sync.css','web-volume.css','web-volume.js','web-mobile-player.css','web-mobile-player.js','web-player-icons.css','web-player-icons.js','web-tv-wide.css','web-mobile-controls-polish.css'):
     copy2(Path(__file__).resolve().parent/name,out/name)
+# Keep Web's multi-source fallback matcher even if the originating WebView
+# frontend has an older name-only matcher. Do not change Electron/Rust source.
+copy2(Path(__file__).resolve().parent.parent/'advanced-core.js',out/'advanced-core.js')
 # Patch the generated application from its WebView source on every deployment.
 app_file=out/'app.js'
 app_text=app_file.read_text(encoding='utf-8')
@@ -61,6 +64,8 @@ html=html.replace(guide_marker,'<aside class="theme-guide-panel" id="themeGuideP
 html=html.replace('<title>Open IPTV Pro 4.23.38 — WebView</title>','<title>Open IPTV Pro — Web Online</title>')
 html=html.replace('<title>Open IPTV Pro — Web Online</title>','<title>Open IPTV Pro — Web Online</title>'+ "<link rel=\"icon\" type=\"image/png\" sizes=\"any\" href=\"assets/icon.png?v=20261116a\"/><link rel=\"apple-touch-icon\" href=\"assets/icon.png?v=20261116a\"/>",1)
 html=html.replace('<script src="app.js"></script>','<script src="browser-channel-check.js"></script><script src="web-autoplay.js"></script><script src="app.js"></script>',1)
+# Always refresh the Web's source matcher after a new build.
+html=html.replace('<script src="advanced-core.js"></script>','<script src="advanced-core.js?v=vtv-multisource-20261118n"></script>',1)
 html=html.replace('<article class="settings-card" id="defaultBufferSettings">',"    <article class=\"settings-card\" id=\"webAutoResumeSettings\">\n      <h2>▶ Tự mở kênh khi vào website</h2>\n      <label class=\"check-line\" for=\"webAutoResumeLast\">\n        <input type=\"checkbox\" id=\"webAutoResumeLast\" checked/>\n        Tự động phát lại kênh xem cuối\n      </label>\n      <small id=\"webAutoResumeHint\" role=\"status\" aria-live=\"polite\">\n        Mặc định bật. Thử tự phát có tiếng; trình duyệt có thể yêu cầu nhấn Phát có tiếng một lần.\n      </small>\n    </article>\n"+'    <article class="settings-card" id="defaultBufferSettings">',1)
 # Independent web-only default-on audio setting.
 if html.count('<small id="webAutoResumeHint"') != 1:

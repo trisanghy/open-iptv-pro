@@ -3,10 +3,26 @@
 (function(root){
  const clean=s=>String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/\b(hd|fhd|uhd|4k|1080p|720p)\b/g,'').replace(/[^a-z0-9]/g,'');
  const validURL=s=>{try{const u=new URL(s);return ['http:','https:'].includes(u.protocol)&&!u.username&&!u.password;}catch{return false;}};
+ // Multiple #EXTINF entries for a channel may use labels such as
+ // "VTV1 (Nguồn 1)" and "VTV1 (Nguồn 3)". First match tvg-id, then
+ // normalized names with only source-number suffixes removed.
+ const canonicalName=name=>clean(String(name||'')
+  .replace(/\s*[([{]\s*(?:nguồn|nguon|source|server|link)\s*(?:số|so|#|:|-)?\s*[\w.-]+\s*[)\]}]\s*$/iu,'')
+  .replace(/\s*[-–—|]\s*(?:nguồn|nguon|source|server|link)\s*(?:số|so|#|:|-)?\s*[\w.-]+\s*$/iu,''));
+ const channelKey=ch=>String(ch?.tvgId||'').trim().toLowerCase();
+ function sameChannel(a,b){
+  if(!a||!b)return false;
+  const aid=channelKey(a),bid=channelKey(b);
+  // Never mix two different EPG IDs even if their visible names coincide.
+  if(aid&&bid)return aid===bid;
+  const name=canonicalName(a.name);
+  return !!name&&name===canonicalName(b.name);
+ }
  function alternatives(channel,channels=[],manual={}){
   if(!channel)return [];
-  const primary=channel.url;const same=channels.filter(c=>c.id!==channel.id&&clean(c.name)===clean(channel.name)).map(c=>c.url);
-  return [...new Set([primary,...(manual[channel.id]||[]),...same].filter(validURL))].slice(0,10);
+  const saved=Array.isArray(manual?.[channel.id])?manual[channel.id]:[];
+  const discovered=channels.filter(c=>c.id!==channel.id&&sameChannel(channel,c)).map(c=>c.url);
+  return [...new Set([channel.url,...saved,...discovered].filter(validURL))].slice(0,10);
  }
  function catchup(channel,program){
   if(!channel||!program||!channel.catchupSource||!validURL(channel.catchupSource))return null;
@@ -34,7 +50,7 @@
  function healthLine(history=[]){const valid=history.filter(e=>['alive','dead','uncertain'].includes(e.status));const n=valid.length;return {checks:n,uptime:n?Math.round(valid.filter(x=>x.status==='alive').length/n*100):null,latest:valid.at(-1)||null};}
  function seekRange(video,seconds=600){if(!video?.seekable?.length)return null;const end=video.seekable.end(video.seekable.length-1),start=video.seekable.start(0);return {start:Math.max(start,end-seconds),end,available:Math.max(0,Math.min(seconds,end-start))};}
  function epgSearch(guide,query){const needle=clean(query);if(!needle)return [];return (guide?.programmes||[]).filter(p=>clean(p.title+' '+(p.description||'')).includes(needle)).slice(0,200);}
- const api={clean,validURL,alternatives,catchup,diagnostics,healthLine,seekRange,epgSearch};
+ const api={clean,canonicalName,sameChannel,validURL,alternatives,catchup,diagnostics,healthLine,seekRange,epgSearch};
  if(typeof module!=='undefined'&&module.exports)module.exports=api;
  root.OpenIPTVAdvancedCore=api;
 })(typeof window!=='undefined'?window:globalThis);

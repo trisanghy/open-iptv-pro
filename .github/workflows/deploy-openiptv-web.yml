@@ -110,6 +110,9 @@ jobs:
           node --check _site/browser-channel-check.js
           node --check _site/web-channel-snapshot.js
           node --test web-online/tests/web-channel-snapshot.test.cjs
+          node --check _site/advanced-core.js
+          node --test web-online/tests/web-vtv-fallback.test.cjs
+          grep -Fq 'advanced-core.js?v=vtv-multisource-20261118n' _site/index.html
           node --check _site/app.js
           node --check _site/web-player-icons.js
           node --test web-online/tests/web-player-icons.test.cjs

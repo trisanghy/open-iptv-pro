@@ -110,3 +110,7 @@ Thanh điều hướng chân trang mobile chuyển sang CSS Grid 5 cột `minmax
 
 ### Sửa PiP và icon điều hướng sát nhãn (18/11/2026)
 Bỏ văn bản `PiP` nằm bên trong nút PiP Web (vẫn giữ `aria-label`), chuẩn hóa duy nhất SVG vector 24px. Sửa thuộc tính `min-width/min-height` cũ đang ép SVG ở thanh đáy lên 38px, khiến biểu tượng vượt khỏi khung 29px và đè nhãn. Các tab mobile dùng hai hàng lưới riêng (icon 27px, nhãn 16px), SVG thực 23px; desktop không bị ảnh hưởng.
+
+## Nhận diện link dự phòng trong M3U hai nguồn (18/11/2026)
+
+Đã sửa bộ phát Web để nhận kênh trùng nhau bằng `tvg-id`, sau đó dự phòng bằng tên chuẩn hóa (bỏ riêng hậu tố `(Nguồn 1)`, `(Nguồn 3)`, `(Source 2)`...). Không gộp nhầm hai kênh có `tvg-id` khác nhau. File kiểm thử tái hiện danh sách VTV 25 mục của người dùng gồm 12 cặp VTV1–VTV10 và Vietnam Today; chỉ dùng URL ví dụ thay vì lưu các URL M3U có thể chứa token. Mỗi cặp giờ hiện link chính và ít nhất một link dự phòng trong trình phát, đồng thời có thể chuyển thủ công và dùng Auto Failover. Giữ nguyên 25 dòng danh sách và nguồn ban đầu. `web-online/prepare-web.py` lấy bộ matcher Web đã sửa để các bản dựng sau không làm mất tính năng.
