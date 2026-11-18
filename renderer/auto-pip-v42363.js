@@ -111,11 +111,16 @@
    return job;
   }
   function exit({quiet=true}={}){
+   const hadPiP=inPiP()||!!pending;
    ++sequence;reason='';
    return nativeExit().catch(error=>{
     if(!quiet)notify('PiP: '+String(error.message||error),'warn');
     return false;
-   }).finally(()=>compositor?.stop?.());
+   }).finally(()=>{
+    // Focus/TV events are frequent even without PiP. Avoid destroying
+    // a prewarmed CC mirror unless there was an actual PiP to close.
+    if(hadPiP)compositor?.stop?.();
+   });
   }
   function manual(){
    if(inPiP()||pending)return exit({quiet:false});
