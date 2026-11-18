@@ -682,15 +682,13 @@ html[data-iptv-device="mobile"] body #toastArea>.toast{
  }
 }
 
-/* Channel Touch v5 — mobile panel 75% taller than v4 (portrait + landscape).
-   Previous 570/77dvh/780 -> 997.5/134.75dvh/1365; landscape 360/90dvh/540 -> 630/157.5dvh/945. 
-   The user can still scroll the page to timeshift. Folder rows remain 60px and
-   channel rows 78px, both with their existing scroll and touch controls.
-   The screenshot exposed a 350px
-   panel with nearly all space consumed by filters. Increase the real scroll
-   region, not the entire TV page; leave desktop reorder logic untouched. */
+/* Mobile channel panel v6 — reduced 40% from the previous effective height.
+   997.5/134.75dvh/1365 -> 598.5/80.85dvh/819.
+   Short landscape: 630/157.5dvh/945 -> 378/94.5dvh/567.
+   Preserve the existing large 78px rows and independent iOS touch scrolling.
+   CSS is scoped to mobile; desktop styling and persisted data are unchanged. */
 html[data-iptv-device="mobile"] body #page-tv .channel-panel{
- height:clamp(997.5px,134.75dvh,1365px)!important;min-height:997.5px!important;
+ height:clamp(598.5px,80.85dvh,819px)!important;min-height:598.5px!important;
  max-height:none!important;display:flex!important;flex-direction:column!important;
  overflow:hidden!important;overscroll-behavior:contain!important;
 }
@@ -802,7 +800,7 @@ html[data-iptv-device="mobile"] body #page-tv #channelList .channel-star{
 }
 @media(max-height:600px){
  html[data-iptv-device="mobile"] body #page-tv .channel-panel{
-  height:clamp(630px,157.5dvh,945px)!important;min-height:630px!important;
+  height:clamp(378px,94.5dvh,567px)!important;min-height:378px!important;
  }
 }
 
