@@ -1,6 +1,6 @@
 # Build & Release — Open IPTV Pro
 
-Bản tổng hợp hiện tại: **Electron Desktop v4.23.68 Stable**, **Rust Lab v23.8.26 Beta** và **Web Online**.
+Bản tổng hợp hiện tại: **Electron Desktop v4.23.70 Stable**, **Rust Lab v23.8.30 Beta** và **Web Online**. Bản này có cảnh báo M3U/Smart Discovery và build lại Electron installer.
 
 ## Electron (mã chính tại gốc)
 
@@ -40,8 +40,8 @@ Build Mac tự động: [script trên nhánh Rust](https://raw.githubusercontent
 
 - `.github/workflows/test.yml`: kiểm thử tự động khi push `main`.
 - `.github/workflows/tao-bo-cai.yml`: build thủ công qua Actions.
-- `.github/workflows/publish-portfolio-v42368.yml`: workflow đã dùng tạo Release tổng hợp bất biến `v4.23.68` từ ba source; tự từ chối ghi đè Release trùng tag.
-- [Release Stable hiện có](https://github.com/trisanghy/open-iptv-pro/releases/tag/v4.23.68) có installer Mac/Windows, Rust Lab, Web ZIP, Full Source, release notes và SHA256SUMS.
+- `.github/workflows/publish-portfolio-v42370.yml`: workflow build lại Electron 4.23.70 cho Mac/Windows; kiểm thử hộp quyền sử dụng trong file cài đặt, đóng gói Rust/Web và tạo Release mới, không ghi đè tag cũ.
+- [Release có bản quyền trong installer](https://github.com/trisanghy/open-iptv-pro/releases/tag/v4.23.70) có installer Mac/Windows, Rust Lab, Web ZIP, Full Source, release notes và SHA256SUMS.
 
 **Không tạo/ghi đè tag release chỉ vì dọn mã nguồn.** Thay đổi tiếp theo sẽ có commit mới trên main; bản `v4.23.68` vẫn giữ đúng snapshot đã xuất bản. Giữ riêng `build-sources/electron-desktop`, `experiment/rust-tauri-v2`, `web/online`.
 

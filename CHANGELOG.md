@@ -1,3 +1,16 @@
+## v4.23.70 — 18/11/2026 — Bản phát hành mới có cảnh báo bản quyền trong file cài đặt Electron
+
+- **Electron 4.23.70 (Mac ARM64/Intel, Windows Setup/Portable):** build lại installer từ source chứa cảnh báo quyền sử dụng trước file/link M3U, xác nhận hai điều khoản trước Smart Discovery và xác nhận lại khi nhập kênh. Phiên bản gói v4.23.69 trước đó dùng binary Electron cũ v4.23.68, chỉ có cảnh báo trong source/README.
+- **Trách nhiệm nội dung và dữ liệu:** cảnh báo nêu rõ phần mềm là dự án cá nhân không cung cấp kênh, tài khoản hay giấy phép; người dùng tự chịu trách nhiệm về nguồn, nội dung nhập/xem, bản ghi hình và dữ liệu. Miễn trừ trách nhiệm tác giả trong phạm vi pháp luật cho phép.
+- **Rust Lab v23.8.30 (Beta):** tiếp tục dùng bộ cài đã có hai xác nhận Smart Discovery, nhập M3U và rút lại đồng ý. Không ghi đè tag.
+- **Web Online:** snapshot mới nhất có quyền sử dụng nguồn và cảnh báo Smart Discovery.
+- **Đóng gói:** cả 4 installer Electron được build mới, không sao chép từ v4.23.68; ZIP Web, ZIP Full Source, README, bản quyền, Release Notes, hướng dẫn, SHA256SUMS và checksum Rust được phát hành cùng nhau.
+- **Tính toàn vẹn:** GitHub Actions kiểm tra test, nguồn trong ASAR, checksum, kiến trúc Mac, file Windows và danh sách asset trước khi đánh dấu Latest. Giữ Release cũ để kiểm tra lịch sử.
+
+Xem [Release Notes v4.23.70](RELEASE_NOTES_V4_23_70.md) · [Thông báo bản quyền](COPYRIGHT_NOTICE_V4_23_70.md).
+
+---
+
 ## Gói tổng hợp v4.23.69 — 18/11/2026
 
 - Tập hợp ba nhánh đã kiểm thử trên `main`: Electron Desktop **v4.23.68** (`6ea66b51bd99`), Rust Lab Beta **v23.8.30** (`bfd03e86c643`), và Web Online (`713509deab7b`).

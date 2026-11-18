@@ -42,3 +42,33 @@ Người sử dụng phải tự xác minh quyền truy cập, bản quyền, gi
 Web Mobile UX: trên điện thoại, thanh điều khiển được chia thành nhóm rõ ràng (tên kênh, chuyển/phát/dừng, Cast/PiP/Toàn màn hình, âm lượng, EPG và nguồn phát) với mục tiêu vùng chạm từ 44px. Thanh điều hướng dưới cùng có thể vuốt ngang để truy cập các mục khác, giữ vùng video đủ rộng.
 
 **Toàn màn hình trên iOS:** Safari iPhone thường không cho `requestFullscreen()` trên một khung HTML tùy ý. Nút Toàn màn hình trên iPhone ưu tiên `video.webkitEnterFullscreen()` nếu video đã có metadata; các trình duyệt khác dùng Fullscreen API của khung video. Nếu trình duyệt nhúng không cấp quyền fullscreen, ứng dụng chuyển sang giao diện video phủ toàn bộ *viewport của website* với nút thoát (không thể ẩn thanh công cụ của Safari hoặc bắt buộc xoay màn hình). Do hạn chế nền tảng, âm lượng trong Safari iOS được điều chỉnh bằng phím vật lý của iPhone; nút tắt tiếng vẫn có sẵn.
+
+### Hotfix mobile 2026-11-18 (bản tự nhận diện)
+
+Ứng dụng gắn `data-iptv-device=mobile` theo iPhone, Android Mobile, thiết bị cảm ứng màn hình hẹp và tự cập nhật khi xoay màn hình. CSS mobile được cô lập vào nhánh này và đặt độ ưu tiên cao hơn `data-sidebar-visible=false` để menu đáy không bị menu desktop 78px ghi đè. Khôi phục vùng xem chính, thanh điều khiển chạm lớn, nav vuốt ngang; CSS và JS dùng query `?v=mobilefix-20261118b` để phá cache Safari. Không thay đổi desktop và dữ liệu IPTV.
+
+## Giao diện mobile gọn hơn (18/11/2026)
+
+Trên iPhone và Android: ẩn hoàn toàn topbar trùng lặp, gom thanh điều hướng dưới thành 5 tab TV/Yêu thích/Lịch/Nguồn/Thêm (không cần vuốt để tìm mục quan trọng). Mục Thêm mở bảng các chức năng phụ: MultiView, ảnh chụp, thư mục, sức khỏe kênh, Doctor, hồ sơ, nhập file/URL M3U, xuất M3U, Cài đặt, Tài khoản và hướng dẫn. Các tác vụ tiếp tục dùng handler cũ và vẫn yêu cầu xác nhận quyền sử dụng trước khi nhập nguồn.
+
+Thanh công cụ phát trên điện thoại gồm một hàng 4 icon chạm tối thiểu 46px: tắt/bật tiếng, Cast, PiP và toàn màn hình. Ẩn dòng hướng dẫn âm lượng iPhone và thanh âm lượng không tác dụng trên iOS. Giao diện desktop không bị ảnh hưởng; file CSS/JS có tham số phiên bản để Safari nạp lại bản mới.
+
+## Sửa cuộn danh sách và thông báo mobile (18/11/2026)
+
+Trên thiết bị mobile, danh sách kênh được đặt ngay sau video/khung điều khiển, **trước Tua lại và Công cụ nhanh**. Khung danh sách có chiều cao rõ ràng khoảng 350–520px; riêng danh sách kênh cuộn dọc bằng ngón tay, thanh bộ lọc cuộn ngang, không cản thao tác cuộn cả trang. Thu gọn danh sách vẫn được hỗ trợ. Thông báo hiện phía trên bottom navigation (bao gồm safe area iOS), không bị 5 tab che khuất. Tất cả áp dụng chỉ trong chế độ mobile, không thay đổi dữ liệu IPTV hay desktop.
+
+## Mobile Channel Touch — 18/11/2026
+
+Tăng kích thước danh sách kênh trên điện thoại (khung 570–780px, thư mục ít nhất 60px, mỗi kênh ít nhất 78px), logo 54×52px, nút yêu thích và chuyển thư mục có vùng chạm ít nhất 44×46px. Giảm chiều cao các bộ lọc và bỏ hướng dẫn kéo/Shift dành cho chuột để dành thêm chỗ cho kênh. Danh sách sử dụng riêng vùng cuộn dọc iOS (`overflow-y: scroll`, `touch-action: pan-y`, `-webkit-overflow-scrolling: touch`). Chỉ tác động giao diện mobile, không thay đổi hành vi desktop hay nguồn IPTV.
+
+### Channel panel +75% height (18/11/2026)
+
+Đã tăng thêm chính xác 75% chiều cao của khung Danh sách kênh trên mobile: dọc từ `clamp(570px, 77dvh, 780px)` lên `clamp(997.5px, 134.75dvh, 1365px)`; với thiết bị thấp/ngang từ `clamp(360px, 90dvh, 540px)` lên `clamp(630px, 157.5dvh, 945px)`. Giữ hàng kênh, thư mục, vuốt danh sách, menu và chức năng desktop như trước. Nếu thư mục đang gập, cần nhấn tên thư mục để thấy các kênh trong đó.
+
+## Browser Channel Check and Snapshot (2026-11-18)
+
+Kiểm tra kênh dùng HLS/DASH/byte media và link dự phòng nếu CORS cho phép; không coi CORS hoặc timeout là kênh Die. Trên mobile, bảng tiến độ/hủy được chuyển ra khỏi footer (footer bị ẩn trong mobile UI), giới hạn kiểm tra ở 2 kết nối song song.
+
+Snapshot trên Web chỉ lưu **khung hình video thật**. Ứng dụng thử ảnh từ kênh đang phát hoặc video muted chạy ngầm, dùng Safari native HLS/HLS.js/DASH.js khi hỗ trợ; không vượt CORS/DRM hoặc quy định autoplay và không dùng logo làm ảnh chụp giả. Hàng loạt giới hạn 80 kênh/lượt, 1 luồng mobile hoặc 2 luồng desktop-web để giảm áp lực bộ nhớ. Bảng tiến độ hiển thị số thành công, thất bại, tên kênh và nút Hủy. Nếu Safari không cho video chạy ngầm, mở kênh để có hình rồi thử chụp riêng kênh đó hoặc dùng Desktop FFmpeg.
+
+- Công cụ nhanh có thêm nút **Chụp kênh đang xem** để chụp video đang phát thực tế khi Safari chặn phát ngầm. Ảnh Web chỉ tính thành công khi lưu được vào localStorage; đầy bộ nhớ sẽ báo lỗi và hoàn nguyên ảnh cũ.

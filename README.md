@@ -1,12 +1,14 @@
 # Open IPTV Pro
 
-**Trình phát IPTV đa nền tảng · Electron Desktop v4.23.68 Stable · Rust Lab v23.8.30 Beta · Web Online**
+**Trình phát IPTV đa nền tảng · Electron Desktop v4.23.70 Stable · Rust Lab v23.8.30 Beta · Web Online**
 
-[**Tải bản cài đặt mới nhất**](https://github.com/trisanghy/open-iptv-pro/releases/tag/v4.23.69) · [**Mở Web Online**](https://trisanghy.github.io/open-iptv-pro/) · [**Xem mã nguồn**](https://github.com/trisanghy/open-iptv-pro) · [**Nhật ký thay đổi**](CHANGELOG.md)
+[**Tải bản cài đặt mới nhất**](https://github.com/trisanghy/open-iptv-pro/releases/tag/v4.23.70) · [**Mở Web Online**](https://trisanghy.github.io/open-iptv-pro/) · [**Xem mã nguồn**](https://github.com/trisanghy/open-iptv-pro) · [**Nhật ký thay đổi**](CHANGELOG.md)
 
 Open IPTV Pro là ứng dụng mã nguồn mở được phát triển như **một dự án cá nhân**, giúp người dùng phát và tự tổ chức các nguồn IPTV/M3U mà **chính họ cung cấp** trên macOS, Windows hoặc trình duyệt. Trọng tâm là xem kênh nhanh, quản lý danh sách hiệu quả, ưu tiên Yêu thích, sử dụng thuận tiện trên cửa sổ nhỏ hoặc màn hình lớn, và có thêm công cụ EPG, ghi hình, kiểm tra luồng cùng AI phụ đề ngoại tuyến.
 
 **Ứng dụng là phần mềm trình phát, không phải nhà cung cấp kênh truyền hình hoặc dịch vụ phân phối nội dung.** Người dùng cần có quyền truy cập hợp pháp đối với từng nguồn nội dung được nhập vào.
+
+> ⚠️ **CẢNH BÁO QUYỀN SỬ DỤNG / COPYRIGHT & CONTENT RIGHTS:** Trước khi mở **file M3U**, nhập **URL M3U** hoặc thêm playlist từ repository, ứng dụng yêu cầu người dùng tự tích ô xác nhận có quyền sử dụng nguồn. **Smart Discovery** yêu cầu xác nhận riêng **hai điều khoản về nguồn, bản quyền và trách nhiệm người dùng trước khi tìm/kiểm tra**, rồi xác nhận lại trước khi nhập kênh; có thể hủy. Kênh công khai hoặc kiểm tra phát thành công **không đồng nghĩa được cấp phép**. **Tác giả không cung cấp nội dung, không chịu trách nhiệm về nguồn, chương trình người dùng nhập và xem, hoặc dữ liệu do người dùng quản lý trong phạm vi pháp luật cho phép.** Xem [Thông báo bản quyền và trách nhiệm](COPYRIGHT_NOTICE_V4_23_70.md) và phần tuyên bố ở cuối README.
 
 ![Ảnh chụp màn hình giao diện chính Open IPTV Pro](https://raw.githubusercontent.com/trisanghy/open-iptv-pro/v4.23.68/docs/images/main-interface.png)
 
@@ -16,11 +18,11 @@ Open IPTV Pro là ứng dụng mã nguồn mở được phát triển như **m�
 
 | Phiên bản | Nền tảng | Đối tượng sử dụng | Trạng thái |
 | :--- | :--- | :--- | :--- |
-| **Electron Desktop 4.23.68** | macOS Apple Silicon / Intel; Windows x64 | Sử dụng hằng ngày, tính năng đầy đủ nhất | **Stable** |
+| **Electron Desktop 4.23.70** | macOS Apple Silicon / Intel; Windows x64 | Sử dụng hằng ngày, tính năng đầy đủ nhất | **Stable** |
 | **Rust Lab 23.8.30** | macOS, Windows x64 | Trải nghiệm ứng dụng Tauri/Rust nhẹ và các tính năng đang phát triển | **Beta độc lập** |
 | **Web Online** | Trình duyệt trên máy tính/thiết bị hỗ trợ | Xem trực tiếp không cài ứng dụng, đồng bộ tài khoản khi cấu hình | **Web** |
 
-**Gói phát hành chung [v4.23.69](https://github.com/trisanghy/open-iptv-pro/releases/tag/v4.23.69)** gồm Electron Desktop **v4.23.68 Stable**, Rust Lab **v23.8.30 Beta** và Web Online cập nhật từ nhánh `web/online` ngày 18/11/2026. Số v4.23.69 là **phiên bản gói tổng hợp**, không phải phiên bản ứng dụng Electron v4.23.69. Bộ cài từng engine giữ đúng số phiên bản và checksum gốc. Xem [hướng dẫn cài đặt](docs/INSTALL_V4_23_69.md), [so sánh ba bản](docs/COMPARE_EDITIONS_V4_23_69.md) và [bản đồ mã nguồn](docs/RELEASE_SOURCE_MAP_V4_23_69.md).
+**Gói phát hành chung [v4.23.70](https://github.com/trisanghy/open-iptv-pro/releases/tag/v4.23.70)** gồm Electron Desktop **v4.23.70 Stable**, Rust Lab **v23.8.30 Beta** và Web Online cập nhật từ nhánh `web/online` ngày 18/11/2026. Gói v4.23.70 bao gồm **4 bộ cài Electron được build lại từ mã có hộp cảnh báo bắt buộc**, không sử dụng các binary Electron v4.23.68 ở gói cũ; Rust Lab v23.8.30 và Web được xác nhận đã có kiểm soát quyền sử dụng. Mỗi file có checksum SHA-256. Xem [hướng dẫn cài đặt](docs/INSTALL_V4_23_70.md), [so sánh ba bản](docs/COMPARE_EDITIONS_V4_23_70.md) và [bản đồ mã nguồn](docs/RELEASE_SOURCE_MAP_V4_23_70.md).
 
 Mã nguồn Electron ở gốc repository (`renderer/`, `src/`); mã Rust/Tauri trong [`rust-lab/`](rust-lab/); và website trong [`web/`](web/). **Không cài Rust Lab đè lên Electron** hoặc mặc định coi dữ liệu hai ứng dụng là tương thích.
 
@@ -85,14 +87,14 @@ Electron cung cấp **11 kiểu giao diện**: Current, Minimal, Material 3, App
 
 ## 4. Tải và cài đặt
 
-**Nguồn tải chính thức:** [GitHub Releases — Open IPTV Pro v4.23.68](https://github.com/trisanghy/open-iptv-pro/releases/tag/v4.23.68). Chỉ tải file theo hệ điều hành và kiến trúc máy.
+**Nguồn tải chính thức:** [GitHub Releases — Open IPTV Pro v4.23.70](https://github.com/trisanghy/open-iptv-pro/releases/tag/v4.23.70). Chỉ tải file theo hệ điều hành và kiến trúc máy.
 
 | Thiết bị | Bản Electron Stable | Tệp cài đặt |
 | :--- | :--- | :--- |
-| **Mac Apple Silicon (M1/M2/M3/M4...)** | Desktop | [Open-IPTV-Pro-4.23.68-mac-arm64.dmg](https://github.com/trisanghy/open-iptv-pro/releases/download/v4.23.68/Open-IPTV-Pro-4.23.68-mac-arm64.dmg) |
-| **Mac Intel** | Desktop | [Open-IPTV-Pro-4.23.68-mac-x64.dmg](https://github.com/trisanghy/open-iptv-pro/releases/download/v4.23.68/Open-IPTV-Pro-4.23.68-mac-x64.dmg) |
-| **Windows 10/11 x64** | Setup | [Open-IPTV-Pro-Setup-4.23.68-x64.exe](https://github.com/trisanghy/open-iptv-pro/releases/download/v4.23.68/Open-IPTV-Pro-Setup-4.23.68-x64.exe) |
-| **Windows x64 — không muốn cài** | Portable | [Open-IPTV-Pro-4.23.68-x64.exe](https://github.com/trisanghy/open-iptv-pro/releases/download/v4.23.68/Open-IPTV-Pro-4.23.68-x64.exe) |
+| **Mac Apple Silicon (M1/M2/M3/M4...)** | Desktop | [Open-IPTV-Pro-4.23.70-mac-arm64.dmg](https://github.com/trisanghy/open-iptv-pro/releases/download/v4.23.70/Open-IPTV-Pro-4.23.70-mac-arm64.dmg) |
+| **Mac Intel** | Desktop | [Open-IPTV-Pro-4.23.70-mac-x64.dmg](https://github.com/trisanghy/open-iptv-pro/releases/download/v4.23.70/Open-IPTV-Pro-4.23.70-mac-x64.dmg) |
+| **Windows 10/11 x64** | Setup | [Open-IPTV-Pro-Setup-4.23.70-x64.exe](https://github.com/trisanghy/open-iptv-pro/releases/download/v4.23.70/Open-IPTV-Pro-Setup-4.23.70-x64.exe) |
+| **Windows x64 — không muốn cài** | Portable | [Open-IPTV-Pro-4.23.70-x64.exe](https://github.com/trisanghy/open-iptv-pro/releases/download/v4.23.70/Open-IPTV-Pro-4.23.70-x64.exe) |
 
 ### Cài trên macOS
 
@@ -170,14 +172,14 @@ Mở `http://localhost:8000/`. Mã Web có nhiều giới hạn trình duyệt k
 
 ## 7. Kiểm tra toàn vẹn và xử lý sự cố
 
-- **Xác minh tải xuống:** tải [SHA256SUMS.txt](https://github.com/trisanghy/open-iptv-pro/releases/download/v4.23.68/SHA256SUMS.txt) cùng installer. Trên Mac dùng `shasum -a 256 <ten-file>` rồi so với checksum công bố; Windows dùng `Get-FileHash <ten-file> -Algorithm SHA256`.
+- **Xác minh tải xuống:** tải [SHA256SUMS.txt](https://github.com/trisanghy/open-iptv-pro/releases/download/v4.23.70/SHA256SUMS.txt) cùng installer. Trên Mac dùng `shasum -a 256 <ten-file>` rồi so với checksum công bố; Windows dùng `Get-FileHash <ten-file> -Algorithm SHA256`.
 - **Không xem được kênh:** kiểm tra URL, quyền sử dụng, mạng/DNS, khả năng hỗ trợ codec, link dự phòng và giới hạn nguồn phát.
 - **Website không phát:** trình duyệt có thể chặn CORS, HTTP hỗn hợp, tự phát tiếng hoặc codec.
 - **Không có Live Caption/TTS:** kiểm tra mô hình đã cài, tài nguyên CPU/RAM, ngôn ngữ và quyền hệ điều hành.
 - **PiP không có phụ đề:** một số luồng bị hạn chế bởi CORS/DRM nên không thể ghép phụ đề vào hình.
 - **Dữ liệu mất sau khi cập nhật:** khôi phục từ backup tự tạo nếu có. Không thể bảo đảm tương thích dữ liệu giữa các phiên bản hoặc giữa Electron và Rust Lab.
 
-Tài liệu: [Hướng dẫn cài đặt](docs/INSTALL_V4_23_68.md) · [Build & Release](docs/BUILD.md) · [So sánh tính năng](docs/COMPARE_EDITIONS_V4_23_68.md) · [Ghi chú v4.23.68](RELEASE_NOTES_V4_23_68.md) · [Changelog](CHANGELOG.md) · [Bản đồ source](docs/RELEASE_SOURCE_MAP_V4_23_68.md).
+Tài liệu: [Hướng dẫn cài đặt](docs/INSTALL_V4_23_70.md) · [Build & Release](docs/BUILD.md) · [So sánh tính năng](docs/COMPARE_EDITIONS_V4_23_70.md) · [Release Notes v4.23.70](RELEASE_NOTES_V4_23_70.md) · [Changelog](CHANGELOG.md) · [Thông báo bản quyền](COPYRIGHT_NOTICE_V4_23_70.md) · [Bản đồ mã nguồn](docs/RELEASE_SOURCE_MAP_V4_23_70.md).
 
 ## 8. Giấy phép và đóng góp
 
