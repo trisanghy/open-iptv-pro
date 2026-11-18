@@ -65,8 +65,8 @@ test('collapsed desktop sidebar cannot override the mobile bottom navigation',()
  assert.match(css,/height:calc\(69px \+ env\(safe-area-inset-bottom,0px\)\)!important/);
 });
 test('HTML loads versioned assets to invalidate iOS cached broken layout',()=>{
- assert.match(html,/web-mobile-player\.css\?v=mobilecompact-20261118d/);
- assert.match(html,/web-mobile-player\.js\?v=mobilecompact-20261118d/);
+ assert.match(html,/web-mobile-player\.css\?v=mobile-scroll-20261118e/);
+ assert.match(html,/web-mobile-player\.js\?v=mobile-scroll-20261118e/);
 });
 
 test('mobile has five focused bottom tabs with advanced functionality in More',()=>{
@@ -100,4 +100,31 @@ test('mobile advanced menu has backdrop close and keyboard escape',()=>{
  assert.match(code,/event.key==='Escape'/);
  assert.match(code,/event.key!=='Tab'/);
  assert.match(css,/mobile-more-overlay\[hidden\]\{display:none!important\}/);
+});
+
+test('mobile channel list is placed before timebar and quick tools without DOM moves',()=>{
+ assert.match(css,/html\[data-iptv-device="mobile"\] body #page-tv \.watch-panel\{\s*display:contents!important/);
+ assert.match(css,/watch-panel>\.player-box\{\s*order:0!important/);
+ assert.match(css,/watch-panel>\.player-control-card\{\s*order:1!important/);
+ assert.match(css,/body #page-tv \.channel-panel\{[\s\S]*?order:2!important/);
+ assert.match(css,/watch-panel>\.advanced-timebar\{\s*order:4!important/);
+ assert.match(css,/watch-panel>\.compact-tools\{\s*order:5!important/);
+});
+test('iOS channel list has a bounded independent vertical touch scroller',()=>{
+ assert.match(css,/height:clamp\(350px,50dvh,520px\)!important/);
+ assert.match(css,/channel-panel>#channelList\{[\s\S]*?overflow-y:auto!important/);
+ assert.match(css,/-webkit-overflow-scrolling:touch!important/);
+ assert.match(css,/overscroll-behavior-y:contain!important/);
+ assert.match(css,/touch-action:pan-y!important/);
+ assert.match(css,/channel-panel \.filter-tabs\{[\s\S]*?touch-action:pan-x!important/);
+ assert.match(app,/if\(!\['mouse','pen'\]\.includes\(e\.pointerType\)\)return/);
+});
+test('notifications are above the fixed bottom tabs on iPhone',()=>{
+ assert.match(css,/body #toastArea\{[\s\S]*?bottom:calc\(84px \+ env\(safe-area-inset-bottom,0px\)\)!important/);
+ assert.match(css,/body #toastArea\{[\s\S]*?z-index:1800!important/);
+ assert.match(css,/body #toastArea>\.toast\{/);
+ assert.match(html,/class="toast-area" id="toastArea"/);
+});
+test('mobile collapse state preserves the ability to hide the channel panel',()=>{
+ assert.match(css,/data-channel-panel-visible="false"\] body #page-tv \.channel-panel\{\s*display:none!important/);
 });

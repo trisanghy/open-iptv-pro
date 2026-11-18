@@ -577,3 +577,107 @@ html[data-iptv-device="mobile"] :is(.mobile-more-action,.mobile-more-close,.mobi
  html[data-iptv-device="mobile"] .mobile-more-grid{gap:7px}
  html[data-iptv-device="mobile"] .mobile-more-action{font-size:12px;padding:7px}
 }
+
+/* Mobile list and notification hotfix 2026-11-18e.
+   Use flex order rather than moving DOM nodes: existing renderList and state
+   bindings continue to work, and desktop layout is entirely unchanged. */
+html[data-iptv-device="mobile"] body #page-tv .tv-layout{
+ display:flex!important;flex-direction:column!important;align-items:stretch!important;
+ width:100%!important;min-width:0!important;gap:11px!important;
+ padding-left:0!important;
+}
+html[data-iptv-device="mobile"] body #page-tv .watch-panel{
+ display:contents!important;
+}
+/* Video and its player controls stay first; channels now precede large
+   timeshift and quick-tool panels so users reach them without a long scroll. */
+html[data-iptv-device="mobile"] body #page-tv .watch-panel>.player-box{
+ order:0!important;flex:0 0 auto!important;
+ width:100%!important;min-width:0!important;
+}
+html[data-iptv-device="mobile"] body #page-tv .watch-panel>.player-control-card{
+ order:1!important;flex:0 0 auto!important;
+ width:100%!important;min-width:0!important;
+}
+html[data-iptv-device="mobile"] body #page-tv .channel-panel{
+ display:flex!important;flex-direction:column!important;
+ order:2!important;flex:0 0 auto!important;
+ position:relative!important;inset:auto!important;
+ top:auto!important;right:auto!important;bottom:auto!important;left:auto!important;
+ transform:none!important;visibility:visible!important;pointer-events:auto!important;
+ width:100%!important;min-width:0!important;max-width:100%!important;
+ height:clamp(350px,50dvh,520px)!important;
+ min-height:350px!important;max-height:none!important;
+ margin:0!important;padding:0!important;overflow:hidden!important;
+}
+html[data-iptv-device="mobile"] body #page-tv .channel-panel :is(.panel-header,.filter-box,.folder-actions,.filter-tabs,.channel-selection-bar,.channel-drag-hint){
+ flex-shrink:0!important;
+}
+html[data-iptv-device="mobile"] body #page-tv .channel-panel>.channel-list,
+html[data-iptv-device="mobile"] body #page-tv .channel-panel>#channelList{
+ display:block!important;flex:1 1 0!important;
+ height:0!important;min-height:115px!important;max-height:none!important;
+ width:100%!important;min-width:0!important;
+ overflow-x:hidden!important;overflow-y:auto!important;
+ -webkit-overflow-scrolling:touch!important;
+ overscroll-behavior-y:contain!important;touch-action:pan-y!important;
+ padding:6px 7px 11px!important;
+}
+html[data-iptv-device="mobile"] body #page-tv #channelList :is(.channel-item,.folder-header){
+ touch-action:pan-y!important;cursor:pointer!important;
+}
+html[data-iptv-device="mobile"] body #page-tv .channel-panel .filter-tabs{
+ flex-wrap:nowrap!important;overflow-x:auto!important;overflow-y:hidden!important;
+ -webkit-overflow-scrolling:touch;
+ touch-action:pan-x!important;
+}
+html[data-iptv-device="mobile"] body #page-tv .channel-panel .filter-box input{
+ font-size:16px!important;
+}
+/* Preserve the original show/hide behavior. The desktop-only open control
+   must never reserve 52px of padding in a narrow viewport. */
+html[data-iptv-device="mobile"][data-channel-panel-visible="false"] body #page-tv .channel-panel{
+ display:none!important;
+}
+html[data-iptv-device="mobile"] body #page-tv #channelPanelShowBtn{
+ order:3!important;flex:0 0 auto!important;
+}
+html[data-iptv-device="mobile"][data-channel-panel-visible="false"] body #page-tv .tv-layout{
+ padding-left:0!important;
+}
+html[data-iptv-device="mobile"] body #page-tv .watch-panel>.advanced-timebar{
+ order:4!important;flex:0 0 auto!important;width:100%!important;
+}
+html[data-iptv-device="mobile"] body #page-tv .watch-panel>.compact-tools{
+ order:5!important;flex:0 0 auto!important;width:100%!important;
+}
+html[data-iptv-device="mobile"] body #page-tv :is(.theme-guide-panel,.theme-channel-strip){
+ order:6!important;
+}
+/* Toasts are children of <body>, NOT #page-tv. Use the actual ID and
+   keep them above the fixed five-tab bottom nav, including iOS safe areas. */
+html[data-iptv-device="mobile"] body #toastArea{
+ position:fixed!important;
+ left:12px!important;right:12px!important;
+ top:auto!important;
+ bottom:calc(84px + env(safe-area-inset-bottom,0px))!important;
+ width:auto!important;max-width:none!important;
+ max-height:34dvh!important;overflow-y:auto!important;
+ margin:0!important;padding:0!important;
+ z-index:1800!important;pointer-events:none!important;
+ background:transparent!important;
+}
+html[data-iptv-device="mobile"] body #toastArea>.toast{
+ display:block!important;
+ width:100%!important;max-width:100%!important;
+ margin:6px 0 0!important;padding:12px 15px!important;
+ box-sizing:border-box!important;
+ overflow-wrap:anywhere!important;white-space:normal!important;
+ font-size:13px!important;line-height:1.4!important;
+ pointer-events:none!important;
+}
+@media(max-height:600px){
+ html[data-iptv-device="mobile"] body #page-tv .channel-panel{
+  height:clamp(300px,52dvh,380px)!important;min-height:300px!important;
+ }
+}

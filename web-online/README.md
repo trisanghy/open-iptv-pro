@@ -52,3 +52,7 @@ Web Mobile UX: trên điện thoại, thanh điều khiển được chia thành
 Trên iPhone và Android: ẩn hoàn toàn topbar trùng lặp, gom thanh điều hướng dưới thành 5 tab TV/Yêu thích/Lịch/Nguồn/Thêm (không cần vuốt để tìm mục quan trọng). Mục Thêm mở bảng các chức năng phụ: MultiView, ảnh chụp, thư mục, sức khỏe kênh, Doctor, hồ sơ, nhập file/URL M3U, xuất M3U, Cài đặt, Tài khoản và hướng dẫn. Các tác vụ tiếp tục dùng handler cũ và vẫn yêu cầu xác nhận quyền sử dụng trước khi nhập nguồn.
 
 Thanh công cụ phát trên điện thoại gồm một hàng 4 icon chạm tối thiểu 46px: tắt/bật tiếng, Cast, PiP và toàn màn hình. Ẩn dòng hướng dẫn âm lượng iPhone và thanh âm lượng không tác dụng trên iOS. Giao diện desktop không bị ảnh hưởng; file CSS/JS có tham số phiên bản để Safari nạp lại bản mới.
+
+## Sửa cuộn danh sách và thông báo mobile (18/11/2026)
+
+Trên thiết bị mobile, danh sách kênh được đặt ngay sau video/khung điều khiển, **trước Tua lại và Công cụ nhanh**. Khung danh sách có chiều cao rõ ràng khoảng 350–520px; riêng danh sách kênh cuộn dọc bằng ngón tay, thanh bộ lọc cuộn ngang, không cản thao tác cuộn cả trang. Thu gọn danh sách vẫn được hỗ trợ. Thông báo hiện phía trên bottom navigation (bao gồm safe area iOS), không bị 5 tab che khuất. Tất cả áp dụng chỉ trong chế độ mobile, không thay đổi dữ liệu IPTV hay desktop.
