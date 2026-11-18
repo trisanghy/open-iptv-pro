@@ -91,7 +91,8 @@
   const supported=()=>!!(doc?.createElement&&typeof doc.createElement('canvas')?.captureStream==='function');
   const ready=()=>!!mirror&&mirror.readyState>=2;
   function paint(){
-   if(!canvas||!ctx||video.readyState<2)return false;
+   // Never continue refreshing a hidden canvas while IPTV is paused/stopped.
+   if(!canvas||!ctx||video.paused||video.ended||video.readyState<2)return false;
    try{renderFrame({ctx,canvas,video,state:getState()});return true;}
    catch{failed=true;return false;}
   }
@@ -108,7 +109,7 @@
    mirror=null;stream=null;canvas=null;ctx=null;failed=false;stopping=false;
   }
   function prepare(){
-   if(failed||video.readyState<2)return false;
+   if(failed||video.paused||video.ended||video.readyState<2)return false;
    if(mirror)return !failed;
    try{
     canvas=doc.createElement('canvas');
