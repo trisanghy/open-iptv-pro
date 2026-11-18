@@ -41,7 +41,7 @@ function harness({mode='live',paused=false,withStream=true,transport='relay'}={}
  const scope={
   current:{id:'HBO',name:'HBO'},store,player,hls,dash,playMode:mode,
   mediaInfo:{mode},playRequestSerial:0,playGeneration:7,playAttemptSerial:3,
-  lastStoppedChannelId:'',pausedFallbackNeedsRestart:false,activeTransport:transport,
+  lastStoppedChannelId:'',pausedFallbackNeedsRestart:false,pausedByUser:false,activeTransport:transport,
   playbackProofUrl:'test',playbackProofTimer:1,
   playCandidates:['mock://live'],playCandidateIndex:0,ffmpegFallbackId:'ffmpeg-1',
   failoverTimer:1,stallTimer:2,startupNoteTimer:3,
@@ -66,7 +66,7 @@ function harness({mode='live',paused=false,withStream=true,transport='relay'}={}
  };
  const context=vm.createContext(scope);
  const script=new vm.Script('(()=>{'+stopSource+'\n'+toggleSource+
-  '\nreturn {stopPlayer,playToggle,state:()=>({current,playGeneration,playRequestSerial,lastStoppedChannelId,pausedFallbackNeedsRestart,hls,dash})};})()');
+  '\nreturn {stopPlayer,playToggle,state:()=>({current,playGeneration,playRequestSerial,lastStoppedChannelId,pausedFallbackNeedsRestart,pausedByUser,hls,dash})};})()');
  const api=script.runInContext(context);
  return {api,calls,nodes,scope,player,store};
 }
@@ -102,6 +102,7 @@ test('Electron: LIVE Pause leaves decoded frame and selected channel in place',a
   assert.ok(!h.calls.includes(forbidden),'Pause must not behave like Stop: '+forbidden);
  assert.equal(h.player.src,'mock://live');
  assert.equal(h.player.paused,true);
+ assert.equal(h.api.state().pausedByUser,true);
  assert.equal(h.api.state().current.id,'HBO');
  assert.equal(h.store.current,'HBO');
  assert.equal(h.api.state().playGeneration,before.playGeneration);
@@ -119,6 +120,7 @@ test('Electron: LIVE resume uses existing video and restarts HLS instead of reop
  assert.ok(h.calls.includes('play'));
  assert.ok(!h.calls.includes('restart:HBO'));
  assert.equal(h.player.paused,false);
+ assert.equal(h.api.state().pausedByUser,false);
  assert.equal(h.api.state().current.id,'HBO');
 });
 
@@ -139,9 +141,11 @@ test('Electron: LIVE FFmpeg Pause stops backend but keeps picture; Play reconnec
  assert.ok(!h.calls.includes('remove:src'));
  assert.equal(h.api.state().current.id,'HBO');
  assert.equal(h.api.state().pausedFallbackNeedsRestart,true);
+ assert.equal(h.api.state().pausedByUser,true);
  await h.api.playToggle();
  assert.ok(h.calls.includes('restart:HBO'));
  assert.equal(h.api.state().pausedFallbackNeedsRestart,false);
+ assert.equal(h.api.state().pausedByUser,false);
 });
 
 test('Electron: paused VOD keeps position and renderer while stopping HLS fetching',async()=>{
@@ -180,6 +184,14 @@ test('Electron: a stopped pending channel authorization cannot revive playback',
  await pending;
  assert.equal(context.current,null);
  assert.equal(context.playRequestSerial,2);
+});
+
+test('Electron: late HLS errors and callbacks cannot restart a deliberately paused video',()=>{
+ assert.match(app,/const startPlaying=\(\)=>\{\s*if\(!isCurrent\(\)\|\|pausedByUser\)return;/);
+ assert.match(app,/async function recoverPlayback\([^)]*\)\{\s*\/\/[^]*?if\(pausedByUser\|\|generation!==playGeneration/);
+ assert.match(app,/player\.addEventListener\('playing',\(\)=>\{if\(!current\)return;if\(pausedByUser\)\{player\.pause\(\);return;\}/);
+ assert.match(app,/player\.addEventListener\('error',\(\)=>\{if\(pausedByUser\)return;/);
+ assert.match(app,/player\.addEventListener\('waiting',\(\)=>\{if\(pausedByUser\)return;/);
 });
 
 test('Electron: legacy Play/Stop buttons still call the correct handlers',()=>{
