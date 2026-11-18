@@ -92,8 +92,8 @@ jobs:
           node --check _site/app.js
           node --check _site/web-mobile-player.js
           node --test web-online/tests/web-mobile-player.test.cjs
-          grep -Fq 'src="web-mobile-player.js"' _site/index.html
-          grep -Fq 'href="web-mobile-player.css"' _site/index.html
+          grep -Fq 'src="web-mobile-player.js?v=mobilefix-20261118b"' _site/index.html
+          grep -Fq 'href="web-mobile-player.css?v=mobilefix-20261118b"' _site/index.html
           node --test web-online/tests/browser-channel-check.test.cjs
           node --test web-online/tests/source-use-consent-v1.test.cjs
           node --test web-online/tests/resume-last.test.cjs

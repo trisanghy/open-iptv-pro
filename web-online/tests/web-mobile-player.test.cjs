@@ -14,8 +14,8 @@ function harness({mobile=true,ios=false,native=false,hasRequest=false}={}){
  if(hasRequest)box.requestFullscreen=()=>Promise.resolve();
  const button={setAttribute:()=>{}};
  const els={playerBox:box,video,fullscreenBtn:button};
- const doc={fullscreenElement:null,documentElement:{classList:{add:x=>d.add(x),remove:x=>d.delete(x)}},getElementById:id=>els[id],addEventListener:()=>{},querySelectorAll:()=>[]};
- const root={document:doc,navigator:{userAgent:ios?'iPhone':'Android'},matchMedia:()=>({matches:mobile}),addEventListener:(key,fn)=>{handlers[key]=fn}};
+ const doc={fullscreenElement:null,documentElement:{setAttribute:(k,v)=>{if(k==='data-iptv-device')d.mode=v;},classList:{add:x=>d.add(x),remove:x=>d.delete(x),toggle:(x,on)=>on?d.add(x):d.delete(x)}},getElementById:id=>els[id],addEventListener:()=>{},querySelectorAll:()=>[]};
+ const root={document:doc,navigator:{userAgent:ios?'iPhone':'Android Mobile',maxTouchPoints:mobile?5:0},matchMedia:()=>({matches:mobile}),addEventListener:(key,fn)=>{handlers[key]=fn}};
  const sandbox={window:root,module:{exports:{}},console};
  vm.runInNewContext(code,sandbox);
  return {api:sandbox.module.exports,box,video,c,d,root,handlers};
@@ -44,4 +44,27 @@ test('mobile CSS increases touch target sizes and removes forced 3-column toolba
  assert.match(css,/min-height:48px!important/);
  assert.match(css,/mobile-theater/);
  assert.match(css,/safe-area-inset-bottom/);
+});
+
+test('real iPhone automatically activates mobile mode without a manual toggle',()=>{
+ const h=harness({ios:true,mobile:false});
+ assert.equal(h.api.isMobile(),true);
+ assert.equal(h.d.mode,'mobile');
+});
+test('desktop remains isolated from mobile rules',()=>{
+ const h=harness({mobile:false,ios:false});
+ // A non-mobile desktop UA and a wide viewport must not activate mobile UI.
+ h.root.navigator.userAgent='Mozilla/5.0 (X11; Linux x86_64)';
+ h.api.syncDevice();
+ assert.equal(h.d.mode,'desktop');
+});
+test('collapsed desktop sidebar cannot override the mobile bottom navigation',()=>{
+ assert.match(css,/html\[data-iptv-device="mobile"\] body #appShell > #appSidebar/);
+ assert.match(css,/html\[data-iptv-device="mobile"\] body #appShell > \.main/);
+ assert.match(css,/html\[data-iptv-device="mobile"\] body #appShell > \.main > \.content/);
+ assert.match(css,/height:calc\(69px \+ env\(safe-area-inset-bottom,0px\)\)!important/);
+});
+test('HTML loads versioned assets to invalidate iOS cached broken layout',()=>{
+ assert.match(html,/web-mobile-player\.css\?v=mobilefix-20261118b/);
+ assert.match(html,/web-mobile-player\.js\?v=mobilefix-20261118b/);
 });

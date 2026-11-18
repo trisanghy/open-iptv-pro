@@ -8,9 +8,27 @@
  if(root?.document)root.OpenIPTVMobilePlayer=api;
 })(function(root){
  const doc=root?.document;
+ // Device mode is based on real mobile platforms as well as narrow touch
+ // viewports. An iPhone requesting a desktop user agent still gets a usable UI.
  function isMobile(){
-  return !!(root?.matchMedia?.('(max-width: 760px)')?.matches ||
-   root?.matchMedia?.('(pointer: coarse) and (max-width: 1000px)')?.matches);
+  const ua=String(root?.navigator?.userAgent||'');
+  const phone=/iPhone|iPod|Android.+Mobile|Mobile.+Android|Windows Phone|Opera Mini/i.test(ua);
+  const tablet=/iPad|Android(?!.*Mobile)/i.test(ua);
+  const touch=Number(root?.navigator?.maxTouchPoints||0)>0;
+  let narrow=false,tabletPortrait=false;
+  try{
+   narrow=!!root?.matchMedia?.('(max-width: 760px)')?.matches;
+   tabletPortrait=!!root?.matchMedia?.('(max-width: 980px) and (pointer: coarse)')?.matches;
+  }catch(_){}
+  return phone || (tablet&&tabletPortrait) || (narrow&&(touch||!!root?.matchMedia?.('(pointer: coarse)')?.matches));
+ }
+ function syncDevice(){
+  if(!doc)return false;
+  const mobile=isMobile();
+  const element=doc.documentElement;
+  element?.setAttribute?.('data-iptv-device',mobile?'mobile':'desktop');
+  element?.classList?.toggle?.('iptv-mobile',mobile);
+  return mobile;
  }
  function isIOS(){
   const ua=String(root?.navigator?.userAgent||'');
@@ -71,7 +89,11 @@
   return enterTheater();
  }
  if(doc){
+  syncDevice();
   if(isIOS())doc.documentElement?.classList.add('web-is-ios');
+  root.addEventListener?.('resize',syncDevice,{passive:true});
+  root.addEventListener?.('orientationchange',syncDevice,{passive:true});
+  root.visualViewport?.addEventListener?.('resize',syncDevice,{passive:true});
   doc.addEventListener('fullscreenchange',()=>{
    const {box}=elements();update(doc.fullscreenElement===box);
   });
@@ -89,5 +111,5 @@
    if(!nav.getAttribute('aria-label'))nav.setAttribute('aria-label',nav.textContent.trim());
   }
  }
- return Object.freeze({isMobile,isIOS,toggle,enterTheater,exitTheater});
+ return Object.freeze({isMobile,isIOS,syncDevice,toggle,enterTheater,exitTheater});
 });
