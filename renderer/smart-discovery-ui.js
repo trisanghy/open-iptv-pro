@@ -66,10 +66,10 @@
  }
  async function find(){
   if(busy)return;
-  await choices();
   if(window.IPTVProAdvanced?.canEdit?.()===false)return ctx.toast('Hồ sơ trẻ em không được nhập nguồn','warn');
   if(!window.streamleaf?.smartLoad&&!window.streamleaf?.smartCountry){say('Smart Discovery yêu cầu ứng dụng desktop Windows/macOS');return;}
   if(!(await window.OpenIPTVSourceConsent?.requireSmart?.())){say('Cần xác nhận điều khoản Smart Discovery trước khi khám phá nguồn.');return;}
+  await choices(); // load the selected country/language only AFTER consent
   controls(true);stop=false;discovery=null;candidates=[];visibleRows=150;const seq=++generation;
   const kind=$('smartCatalog')?.value||'country',code=$('smartCountry').value;
   say('Đang tải danh mục nguồn công khai…');$('smartProgressBar').style.width='0%';
