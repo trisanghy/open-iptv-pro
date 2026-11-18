@@ -102,7 +102,10 @@ test('Smart Discovery cancellation stops queueing new probes, retaining complete
  vm.runInNewContext(discoveryScript,{window:w,document,confirm:()=>true,setTimeout,console});
  await get('smartFind').callbacks.click();
  const pending=get('smartVerify').callbacks.click();
- await Promise.resolve(); // let the explicit consent guard resolve before cancelling running probes
+ // Wait for the real scan to enter its worker loop after async legal consent.
+ // Cancelling before that await returns would be cleared by stop=false.
+ for(let retry=0;retry<25&&starts===0;retry++)await new Promise(resolve=>setTimeout(resolve,0));
+ assert.ok(starts>0,'Scan must have started before the cancellation test');
  get('smartCancel').callbacks.click();
  await pending;
  assert.ok(starts<urls.length,`Cancelled scan should not start all ${urls.length} streams`);
