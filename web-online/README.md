@@ -60,3 +60,7 @@ Trên thiết bị mobile, danh sách kênh được đặt ngay sau video/khung
 ## Mobile Channel Touch — 18/11/2026
 
 Tăng kích thước danh sách kênh trên điện thoại (khung 570–780px, thư mục ít nhất 60px, mỗi kênh ít nhất 78px), logo 54×52px, nút yêu thích và chuyển thư mục có vùng chạm ít nhất 44×46px. Giảm chiều cao các bộ lọc và bỏ hướng dẫn kéo/Shift dành cho chuột để dành thêm chỗ cho kênh. Danh sách sử dụng riêng vùng cuộn dọc iOS (`overflow-y: scroll`, `touch-action: pan-y`, `-webkit-overflow-scrolling: touch`). Chỉ tác động giao diện mobile, không thay đổi hành vi desktop hay nguồn IPTV.
+
+### Channel panel +75% height (18/11/2026)
+
+Đã tăng thêm chính xác 75% chiều cao của khung Danh sách kênh trên mobile: dọc từ `clamp(570px, 77dvh, 780px)` lên `clamp(997.5px, 134.75dvh, 1365px)`; với thiết bị thấp/ngang từ `clamp(360px, 90dvh, 540px)` lên `clamp(630px, 157.5dvh, 945px)`. Giữ hàng kênh, thư mục, vuốt danh sách, menu và chức năng desktop như trước. Nếu thư mục đang gập, cần nhấn tên thư mục để thấy các kênh trong đó.

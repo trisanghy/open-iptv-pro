@@ -65,8 +65,8 @@ test('collapsed desktop sidebar cannot override the mobile bottom navigation',()
  assert.match(css,/height:calc\(69px \+ env\(safe-area-inset-bottom,0px\)\)!important/);
 });
 test('HTML loads versioned assets to invalidate iOS cached broken layout',()=>{
- assert.match(html,/web-mobile-player\.css\?v=mobile-channels-20261118f/);
- assert.match(html,/web-mobile-player\.js\?v=mobile-channels-20261118f/);
+ assert.match(html,/web-mobile-player\.css\?v=mobile-channels-plus75-20261118g/);
+ assert.match(html,/web-mobile-player\.js\?v=mobile-channels-plus75-20261118g/);
 });
 
 test('mobile has five focused bottom tabs with advanced functionality in More',()=>{
@@ -137,10 +137,18 @@ test('mobile channel rows are large and all controls stay touch accessible',()=>
  assert.match(css,/body #page-tv #channelList \.channel-text b\{[\s\S]*?font-size:15px!important/);
 });
 test('channel list has independently scrollable space and drag hints are hidden on mobile',()=>{
- assert.match(css,/body #page-tv \.channel-panel\{[\s\S]*?height:clamp\(570px,77dvh,780px\)!important/);
+ assert.match(css,/body #page-tv \.channel-panel\{[\s\S]*?height:clamp\(997\.5px,134\.75dvh,1365px\)!important/);
  assert.match(css,/body #page-tv \.channel-panel > #channelList\{[\s\S]*?height:auto!important;min-height:0!important/);
  assert.match(css,/body #page-tv \.channel-panel > #channelList\{[\s\S]*?overflow-y:scroll!important/);
  assert.match(css,/body #page-tv \.channel-panel > #channelList\{[\s\S]*?touch-action:pan-y!important/);
  assert.match(css,/body #page-tv \.channel-panel \.channel-drag-hint\{\s*display:none!important/);
  assert.match(app,/if\(!\['mouse','pen'\]\.includes\(e\.pointerType\)\)return/);
+});
+
+test('mobile channel panel is exactly 75 percent taller in portrait and short landscape',()=>{
+ // 1.75 * (570,77,780) = (997.5,134.75,1365)
+ assert.match(css,/height:clamp\(997\.5px,134\.75dvh,1365px\)!important;min-height:997\.5px!important/);
+ // 1.75 * (360,90,540) = (630,157.5,945)
+ assert.match(css,/height:clamp\(630px,157\.5dvh,945px\)!important;min-height:630px!important/);
+ assert.match(css,/body #page-tv \.channel-panel > #channelList\{[\s\S]*?overflow-y:scroll!important/);
 });
