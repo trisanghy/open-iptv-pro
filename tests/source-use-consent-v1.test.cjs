@@ -17,10 +17,15 @@ function harness(){
   focus(){}
  }
  const body=new El('body'),doc={body,createElement:tag=>new El(tag)};
- const sandbox={window:{document:doc},module:{exports:{}}};
+ const values=new Map(),localStorage={
+  getItem:key=>values.get(key)??null,
+  setItem:(key,value)=>values.set(key,String(value)),
+  removeItem:key=>values.delete(key)
+ };
+ const sandbox={window:{document:doc,localStorage},module:{exports:{}}};
  vm.runInNewContext(src,sandbox);
  const all=(node,tag)=>[...(node.tag===tag?[node]:[]),...node.children.flatMap(c=>all(c,tag))];
- return {api:sandbox.module.exports,body,all};
+ return {api:sandbox.module.exports,body,all,localStorage,values};
 }
 test('M3U import: checkbox is empty by default, accept is disabled until explicitly checked',async()=>{
  const h=harness(),pending=h.api.requestImport('file'),checks=h.all(h.body,'input'),buttons=h.all(h.body,'button');
@@ -72,5 +77,27 @@ test('Source use: all UI flows are guarded before they fetch or save external ch
  assert.match(html,/source-use-consent-v1\.css/);
  assert.match(html,/Kênh công khai hoặc có tín hiệu không đồng nghĩa có bản quyền/);
  assert.match(src,/không chịu trách nhiệm đối với dữ liệu người dùng trong phạm vi pháp luật cho phép/);
- assert.doesNotMatch(src,/localStorage|sessionStorage/);
+ assert.match(src,/SMART_KEY='open-iptv-pro-discovery-consent-v1'/);
+ assert.match(src,/SMART_REV='2026-11-18-v1'/);
+});
+
+test('Discovery consent is saved by version and can be revoked on the same device',async()=>{
+ const h=harness(),pending=h.api.requireSmart();
+ const checks=h.all(h.body,'input'),buttons=h.all(h.body,'button');
+ checks[0].checked=true;checks[0].emit('change');
+ checks[1].checked=true;checks[1].emit('change');buttons[1].emit('click');
+ assert.equal(await pending,true);
+ const stored=JSON.parse(h.localStorage.getItem(h.api.smartConsentKey));
+ assert.equal(stored.revision,'2026-11-18-v1');
+ assert.equal(stored.accepted,true);
+ assert.equal(typeof stored.acceptedAt,'string');
+ // Simulate reopening the app with the same device storage.
+ const body=h.body,doc={body,createElement:tag=>({})},window={document:doc,localStorage:h.localStorage};
+ const sandbox={window,module:{exports:{}}};
+ vm.runInNewContext(src,sandbox);
+ assert.equal(sandbox.module.exports.isSmartAccepted(),true);
+ assert.equal(await sandbox.module.exports.requireSmart(),true);
+ sandbox.module.exports.revokeSmart();
+ assert.equal(h.localStorage.getItem(h.api.smartConsentKey),null);
+ assert.equal(sandbox.module.exports.isSmartAccepted(),false);
 });
