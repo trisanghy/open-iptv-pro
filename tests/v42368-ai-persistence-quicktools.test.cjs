@@ -86,3 +86,79 @@ test('Playback stop or pause cannot uncheck AI preferences',()=>{
  const pref=read('renderer/ai-toggle-persistence-v42368.js');
  assert.doesNotMatch(pref,/pagehide[^;]*setItem/);
 });
+
+test('Saved three-way AI ON state rehydrates working TTS and Caption/Translate modules',()=>{
+ const vm=require('node:vm');
+ const values=new Map([[preferences.KEY,JSON.stringify({
+  caption:true,translate:true,tts:true
+ })]]);
+ const storage={getItem:key=>values.get(key)||null,
+  setItem:(key,value)=>values.set(key,String(value))};
+ const listeners={};const enabledQueue=[];
+ class ChangeEvent{
+  constructor(type,options={}){this.type=type;this.bubbles=!!options.bubbles;this.target=null;}
+ }
+ class Element{
+  constructor(id){
+   this.id=id;this.checked=false;this.value='';this.style={};this.children=[];
+   this.dataset={};this.listeners={};this.textContent='';
+   this.paused=true;this.ended=false;this.readyState=0;this.volume=1;
+  }
+  addEventListener(type,handler){(this.listeners[type]??=[]).push(handler);}
+  dispatchEvent(event){
+   event.target=this;
+   for(const callback of this.listeners[event.type]||[])callback(event);
+   if(event.bubbles)for(const callback of listeners[event.type]||[])callback(event);
+   return true;
+  }
+  setAttribute(){}
+  replaceChildren(...children){this.children=children;}
+  append(child){this.children.push(child);}
+ }
+ const elements=new Map();
+ const get=id=>{
+  if(!elements.has(id))elements.set(id,new Element(id));
+  return elements.get(id);
+ };
+ get('liveTranslateTarget').value='vi';
+ get('liveTtsLanguage').value='vi';
+ get('liveTtsSpeed').value='1.00';
+ get('liveTtsDuck').value='100';
+ const doc={
+  getElementById:get,createElement:tag=>new Element(tag),
+  addEventListener:(event,fn)=>(listeners[event]??=[]).push(fn),
+  removeEventListener(){}
+ };
+ const api={
+  captionStatus:async()=>({available:true}),captionStop:async()=>{},
+  captionStart:async()=>({id:1}),ttsStatus:async()=>({ready:true}),
+  ttsStop:async()=>{},captionOnEvent(){},ttsOnEvent(){}
+ };
+ const win={
+  document:doc,localStorage:storage,streamleaf:api,
+  IPTVState:{getCurrent:()=>null},
+  OpenIPTVVideoCaptions:{createVideoCaptionRenderer:()=>({
+   clear(){},show(){},setOriginalVisible(){}
+  })},
+  OpenIPTVSubtitlePreferences:{attach:()=>null},
+  OpenIPTVSpeechQueue:{createSpeechQueue:()=>({
+   setEnabled:value=>enabledQueue.push(value),
+   setPaused(){},reset(){},status(){return {playing:false,busy:false};}
+  })},
+  OpenIPTVPreviewCoordinator:{createPreviewCoordinator:()=>({
+   isActive:()=>false,cancel:async()=>{},run:async()=>{}
+  })},
+  addEventListener(){}
+ };
+ const source=read('renderer/ai-toggle-persistence-v42368.js')+'\n'+
+  read('renderer/live-captions-v42343.js')+'\n'+
+  read('renderer/local-tts-v42344.js');
+ vm.runInNewContext(source,{
+  window:win,document:doc,localStorage:storage,Event:ChangeEvent,
+  setTimeout:()=>1,clearTimeout(){},setInterval:()=>1,clearInterval(){}
+ });
+ assert.deepEqual(ids.map(id=>get(id).checked),[true,true,true]);
+ assert.deepEqual(enabledQueue,[true],'Restored TTS must start the speech queue');
+ assert.equal(win.OpenIPTVAIToggleState.restored,true);
+ assert.equal(JSON.parse(values.get(preferences.KEY)).tts,true);
+});
