@@ -177,3 +177,39 @@ html[data-ui-style="bento"] #page-tv .theme-channel-strip,
 html[data-ui-style="bento"] #page-tv .theme-strip-header,
 html[data-ui-style="bento"] #page-tv .theme-channel-tile{color:var(--text)!important}
 html[data-ui-style="bento"] #page-tv .theme-channel-strip::before{content:none!important;display:none!important}
+
+/* Shared contrast audit: keep real channel metadata legible in alternate
+   Light/Dark/AMOLED styles; no player or layout logic is modified. */
+html[data-theme="light"][data-ui-style="cinema"] #page-tv :is(.theme-channel-tile,.theme-guide-panel,.channel-panel){
+ background:var(--ui-card)!important;color:var(--text)!important;
+ border-color:var(--ui-stroke)!important
+}
+html[data-theme="light"][data-ui-style="cinema"] #page-tv :is(.theme-guide-current,.theme-guide-next,.theme-guide-open){
+ background:var(--ui-control)!important;color:var(--text)!important
+}
+html[data-theme="light"][data-ui-style="broadcast"] #page-tv :is(.theme-channel-tile,.theme-guide-panel){
+ background:var(--ui-card)!important;color:var(--text)!important
+}
+html[data-theme="light"][data-ui-style="broadcast"] #page-tv :is(.theme-guide-current,.theme-guide-next,.theme-guide-open){
+ background:var(--ui-control)!important;color:var(--text)!important
+}
+html[data-theme="light"][data-ui-style="glass"] #page-tv :is(.theme-guide-open,.filter-tab){
+ color:var(--text)!important;background:var(--ui-control)!important;
+ border-color:var(--ui-stroke)!important
+}
+html:is([data-theme="dark"],[data-theme="amoled"])[data-ui-style="swiss"] #page-tv :is(.player-control-card,.epg-current-card){
+ background:var(--ui-card)!important;color:var(--text)!important;
+ border-color:var(--ui-stroke)!important
+}
+html:is([data-theme="dark"],[data-theme="amoled"])[data-ui-style="swiss"] #page-tv .channel-panel::before{
+ color:var(--text)!important
+}
+html[data-theme="amoled"][data-ui-style="cinema"] #page-tv :is(.theme-channel-tile,.theme-guide-panel,.channel-panel){
+ background:var(--ui-card)!important;color:var(--text)!important;border-color:var(--ui-stroke)!important
+}
+html[data-theme="amoled"][data-ui-style="cinema"] #page-tv :is(.theme-guide-current,.theme-guide-next,.theme-guide-open){
+ background:var(--ui-control)!important;color:var(--text)!important
+}
+html[data-theme="amoled"][data-ui-style="broadcast"] #page-tv :is(.theme-guide-panel,.theme-channel-tile){
+ background:var(--ui-card)!important;color:var(--text)!important
+}
