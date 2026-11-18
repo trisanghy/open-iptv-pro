@@ -9,27 +9,16 @@ fn alpha_code(s:&str, uppercase:bool, count:usize)->Result<String,String>{
  if c.len()!=count||!c.chars().all(|x|x.is_ascii_alphabetic()) {return Err("Mã danh mục không hợp lệ".into());}
  Ok(c)
 }
-fn safe_public_host(url:&Url)->Result<(),String>{
- let host=url.host_str().ok_or("Thiếu host")?.to_lowercase();
- if host=="localhost"||host.ends_with(".localhost")||host.ends_with(".local")||host.ends_with(".internal") {return Err("Không cho phép kiểm tra mạng nội bộ".into());}
- if let Ok(ip)=host.parse::<std::net::IpAddr>(){
-  match ip {
-   std::net::IpAddr::V4(v) if v.is_private()||v.is_loopback()||v.is_link_local()||v.is_multicast()||v.is_unspecified()=>return Err("Địa chỉ riêng".into()),
-   std::net::IpAddr::V6(_)=>return Err("IPv6 literal chưa được hỗ trợ".into()),
-   _=>{}
-  }
- }
- Ok(())
+pub fn safe_stream_url(raw:&str)->Result<Url,String>{
+ let url=valid_http_url(raw)?;
+ crate::safe_network::validate_url(&url)?;
+ Ok(url)
 }
-pub fn safe_stream_url(raw:&str)->Result<Url,String>{let u=valid_http_url(raw)?;safe_public_host(&u)?;Ok(u)}
-async fn read_limited(state:&Arc<AppState>, url:&str,limit:usize)->Result<String,String>{
- let resp=state.client.get(url).timeout(std::time::Duration::from_secs(25)).send().await.map_err(|e|e.to_string())?;
- if !resp.status().is_success(){return Err(format!("HTTP {}",resp.status()));}
- if resp.content_length().is_some_and(|n|n>limit as u64){return Err("Danh mục vượt giới hạn".into());}
- let data=resp.bytes().await.map_err(|e|e.to_string())?;
- if data.len()>limit{return Err("Danh mục quá lớn".into());}
- Ok(String::from_utf8_lossy(&data).trim_start_matches('\u{feff}').into())
+async fn read_limited(_state:&Arc<AppState>,url:&str,limit:usize)->Result<String,String>{
+ let bytes=crate::safe_network::read_bounded(url,limit).await?;
+ Ok(String::from_utf8_lossy(&bytes).trim_start_matches('\u{feff}').into())
 }
+
 fn stats(body:&str)->Result<Value,String>{
  if !body.trim_start().starts_with("#EXTM3U"){return Err("Không phải playlist M3U".into());}
  let mut declared=0usize;let mut unique=std::collections::HashSet::new();
@@ -81,14 +70,12 @@ pub async fn repo_list(state:&Arc<AppState>,raw:&str)->Result<Value,String>{
  let seg:Vec<&str>=u.path_segments().ok_or("Repo không hợp lệ")?.filter(|p|!p.is_empty()).collect();
  if seg.len()<2||seg[0].len()>50||seg[1].len()>100||seg[..2].iter().any(|s|!s.chars().all(|c|c.is_ascii_alphanumeric()||matches!(c,'_'|'-'|'.'))){return Err("Đường dẫn repo không hợp lệ".into());}
  let (owner,repo)=(seg[0],seg[1]);
- let client=&state.client;
- let meta:Value=client.get(format!("https://api.github.com/repos/{owner}/{repo}")).header("User-Agent","Open-IPTV-Pro-Rust-Lab").send().await.map_err(|e|e.to_string())?
-   .error_for_status().map_err(|e|e.to_string())?.json().await.map_err(|e|e.to_string())?;
+ let meta_text=read_limited(state,&format!("https://api.github.com/repos/{owner}/{repo}"),1_000_000).await?;
+ let meta:Value=serde_json::from_str(&meta_text).map_err(|e|e.to_string())?;
  if meta["private"]==true{return Err("Repository private".into());}
  let branch=meta["default_branch"].as_str().unwrap_or("main");
- let tree:Value=client.get(format!("https://api.github.com/repos/{owner}/{repo}/git/trees/{branch}?recursive=1"))
-  .header("User-Agent","Open-IPTV-Pro-Rust-Lab").send().await.map_err(|e|e.to_string())?
-  .error_for_status().map_err(|e|e.to_string())?.json().await.map_err(|e|e.to_string())?;
+ let tree_text=read_limited(state,&format!("https://api.github.com/repos/{owner}/{repo}/git/trees/{branch}?recursive=1"),8_000_000).await?;
+ let tree:Value=serde_json::from_str(&tree_text).map_err(|e|e.to_string())?;
  if tree["truncated"]==true{return Err("GitHub tree truncated".into());}
  let files:Vec<Value>=tree["tree"].as_array().into_iter().flatten().filter_map(|f|{
   if f["type"]!="blob"{return None}
