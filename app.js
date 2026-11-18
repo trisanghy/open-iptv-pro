@@ -547,12 +547,19 @@
   }catch(e){Object.assign(store,before);throw e;}
   render();toast(`Đã thêm ${parsed.length} kênh từ ${name}`);textStatus(`Đã thêm ${parsed.length} kênh mới`);setPage('tv');}
  async function loadFile(){
+  // Native file picker must not open until explicit legal-use acknowledgment.
+  if(native&&!(await window.OpenIPTVSourceConsent?.requestImport?.('file')))return;
   if(window.IPTVProAdvanced?.canEdit?.()===false)return toast('Hồ sơ trẻ em không được thêm nguồn IPTV','warn');
   if(native){try{const file=await window.streamleaf.openM3U();if(file)addSource(file.name,file.name,file.content,'file');}catch(e){toast(e.message,'error');}return;}
   $('#fileInput').click();
  }
- async function importFromInput(file){if(!file)return;try{addSource(file.name,file.name,await file.text(),'file');}catch(e){toast(e.message,'error');}}
- function openURL(){if(window.IPTVProAdvanced?.canEdit?.()===false)return toast('Hồ sơ trẻ em không được thêm URL IPTV','warn');openModal('Thêm playlist bằng URL',`<label class="modal-label">Tên nguồn</label><input class="modal-input" id="urlName" placeholder="Ví dụ: Kênh truyền hình Việt Nam" value="IPTV từ URL"/><label class="modal-label">Đường dẫn M3U</label><input class="modal-input" id="urlValue" placeholder="https://example.com/iptv.m3u" type="url"/><p class="hint">Nhập liên kết tới file M3U chứa nhiều kênh. Bản ứng dụng dùng trình tải tích hợp; bản trình duyệt có thể bị giới hạn CORS.</p>`,async()=>{
+ async function importFromInput(file){if(!file)return;
+  // Browser file selection is not import consent. Ask before reading file bytes.
+  if(!(await window.OpenIPTVSourceConsent?.requestImport?.('file')))return;
+  try{addSource(file.name,file.name,await file.text(),'file');}catch(e){toast(e.message,'error');}}
+ async function openURL(){if(window.IPTVProAdvanced?.canEdit?.()===false)return toast('Hồ sơ trẻ em không được thêm URL IPTV','warn');
+  if(!(await window.OpenIPTVSourceConsent?.requestImport?.('url')))return;
+  openModal('Thêm playlist bằng URL',`<label class="modal-label">Tên nguồn</label><input class="modal-input" id="urlName" placeholder="Ví dụ: Kênh truyền hình Việt Nam" value="IPTV từ URL"/><label class="modal-label">Đường dẫn M3U</label><input class="modal-input" id="urlValue" placeholder="https://example.com/iptv.m3u" type="url"/><p class="hint">Nhập liên kết tới file M3U chứa nhiều kênh. Bản ứng dụng dùng trình tải tích hợp; bản trình duyệt có thể bị giới hạn CORS.</p>`,async()=>{
     const name=$('#urlName').value.trim()||'IPTV từ URL';const url=$('#urlValue').value.trim();if(!/^https?:\/\//i.test(url))throw Error('URL phải bắt đầu bằng http:// hoặc https://');
     textStatus('Đang tải danh sách từ URL...');const content=native?(await window.streamleaf.loadURL(url)).content:await (await fetch(url)).text();addSource(name,url,content,'url');},'Tải danh sách');}
  async function readSourceURL(url){
@@ -560,6 +567,8 @@
   const r=await fetch(url);if(!r.ok)throw Error('Máy chủ trả HTTP '+r.status);return r.text();
  }
  async function replaceURLSource(source,newUrl,newName,mode='edit'){
+  // Replacing a URL also introduces a new third-party playlist. Auto refresh does not.
+  if(mode==='edit'&&!(await window.OpenIPTVSourceConsent?.requestImport?.('url')))throw Error('Chưa xác nhận quyền sử dụng liên kết M3U mới');
   if(window.IPTVProAdvanced?.canEdit?.()===false)throw Error('Hồ sơ trẻ em không được sửa nguồn');
   if(tasks.check.running||tasks.shots.running)throw Error('Hãy đợi tác vụ kiểm tra/chụp ảnh hoàn thành rồi sửa nguồn');
   const url=sourceEdit.validatePlaylistUrl(newUrl);
