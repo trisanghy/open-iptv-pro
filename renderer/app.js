@@ -551,11 +551,13 @@
   window.OpenIPTVCastUI?.stopOnLocalStop?.();
   window.IPTVProAdvanced?.onStop?.();
   if(hls){
-   try{hls.stopLoad?.();hls.destroy();}catch(e){console.warn('Stop HLS:',e);}
+   try{hls.stopLoad?.();}catch(e){console.warn('Stop HLS loading:',e);}
+   try{hls.destroy();}catch(e){console.warn('Destroy HLS:',e);}
    hls=null;
   }
   if(dash){
-   try{dash.pause?.();dash.reset();}catch(e){console.warn('Stop DASH:',e);}
+   try{dash.pause?.();}catch(e){console.warn('Pause DASH:',e);}
+   try{dash.reset();}catch(e){console.warn('Destroy DASH:',e);}
    dash=null;
   }
   try{player.pause();}catch{}
@@ -839,7 +841,8 @@
    return;
   }
   player.pause();
-  try{hls?.stopLoad?.();dash?.pause?.();}catch{}
+  try{hls?.stopLoad?.();}catch{}
+  try{dash?.pause?.();}catch{}
   $('#playBtn').textContent='▶';
  }
  function switchChannel(dir){const all=sortedChannels(enabledChannels());if(!all.length)return;let index=all.findIndex(c=>c.id===current?.id);index=(index+dir+all.length)%all.length;playChannel(all[index].id);}
@@ -1052,9 +1055,9 @@
   $('#searchBox').addEventListener('input',renderList);$('#volume').addEventListener('input',e=>{player.volume=e.target.value/100;store.volume=player.volume;save();});
   player.volume=store.volume??.8;$('#volume').value=Math.round(player.volume*100);
   const fit=['contain','cover','fill','none'].includes(store.videoFit)?store.videoFit:'contain';$('#videoFit').value=fit;player.className='fit-'+fit;$('#videoFit').addEventListener('change',e=>{store.videoFit=e.target.value;player.className='fit-'+store.videoFit;save();});
-  player.addEventListener('playing',()=>{clearTimeout(failoverTimer);clearTimeout(stallTimer);clearTimeout(startupNoteTimer);markPlaybackVerified();window.IPTVProAdvanced?.onPlaying?.(current,playCandidates[playCandidateIndex]);$('#streamInfo').textContent='● Đang phát';$('#playBtn').textContent='Ⅱ';textStatus('Đang xem: '+(current?.name||''));});
+  player.addEventListener('playing',()=>{if(!current)return;clearTimeout(failoverTimer);clearTimeout(stallTimer);clearTimeout(startupNoteTimer);markPlaybackVerified();window.IPTVProAdvanced?.onPlaying?.(current,playCandidates[playCandidateIndex]);$('#streamInfo').textContent='● Đang phát';$('#playBtn').textContent='Ⅱ';textStatus('Đang xem: '+(current?.name||''));});
   player.addEventListener('timeupdate',markPlaybackVerified);
-  player.addEventListener('loadeddata',()=>{clearTimeout(startupNoteTimer);
+  player.addEventListener('loadeddata',()=>{if(!current)return;clearTimeout(startupNoteTimer);
    if(current&&!firstFrameReported&&channelRequestedAt){
     firstFrameReported=true;
     firstFrameDurationMs=performance.now()-channelRequestedAt;
