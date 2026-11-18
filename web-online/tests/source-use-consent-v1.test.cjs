@@ -43,6 +43,8 @@ test('Smart Discovery: must separately attest third-party terms and legal conten
  buttons[1].emit('click');assert.equal(await pending,true);assert.equal(h.api.isSmartAccepted(),true);
  assert.equal(await h.api.requireSmart(),true);
  const importPending=h.api.requestSmartImport('12 luồng');
+ // requestSmartImport awaits the earlier session acceptance before showing its modal.
+ await Promise.resolve();
  assert.equal(h.all(h.body,'input').length,2);assert.equal(h.all(h.body,'button')[1].disabled,true);
  h.all(h.body,'button')[0].emit('click');assert.equal(await importPending,false);
 });
