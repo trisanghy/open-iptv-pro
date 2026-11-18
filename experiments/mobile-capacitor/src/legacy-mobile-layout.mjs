@@ -29,7 +29,7 @@ export function oldStyleLayout(appIcon){
     </section>
     <section class="page" id="page-fav"><h2>★ Kênh yêu thích</h2><div id="favoritesList"></div></section>
     <section class="page" id="page-sources"><h2>Thêm nguồn M3U</h2>
-      <div class="add-row"><input type="url" id="newSource" placeholder="https://…/playlist.m3u"/><button id="addURL">+ Thêm</button></div>
+      <div class="add-row"><input type="url" id="newSource" placeholder="https://…/playlist.m3u"/><button id="pasteM3U" type="button" aria-label="Dán link M3U">Dán</button><button id="addURL">+ Thêm</button></div>
       <div class="add-row"><label class="file-label">📁 Mở tệp M3U<input type="file" id="file" accept=".m3u,.m3u8,text/plain"/></label><button id="refresh">↻ Làm mới</button></div>
       <p class="muted">Chỉ sử dụng nguồn IPTV mà bạn có quyền truy cập hợp pháp.</p><div id="sources"></div>
     </section>
