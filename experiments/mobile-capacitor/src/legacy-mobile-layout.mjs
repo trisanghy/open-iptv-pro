@@ -5,7 +5,7 @@ return `
  <section class="page active" id="page-tv">
   <div class="hero-player" aria-label="Khu vực trình phát">
    <div class="hero-placeholder"><div class="hero-play">▶</div><strong id="heroTitle">Chưa chọn kênh</strong><span id="heroSubtitle">Nhập M3U hoặc chọn kênh để xem</span></div>
-   <video id="webVideo" class="inline-video" playsinline webkit-playsinline preload="none" aria-label="Video IPTV phát trong khung" hidden></video>
+   <video id="webVideo" class="inline-video" playsinline webkit-playsinline preload="none" aria-label="Video IPTV phát trong khung" hidden></video><button type="button" id="unmuteAutoplay" class="unmute-autoplay" hidden>🔊 Bật tiếng</button>
   </div>
   <section class="player-control-card" aria-label="Điều khiển và lịch phát">
    <div class="now-playing"><span class="now-channel-icon">TV</span><div class="now-copy"><strong id="nowTitle">Chưa chọn kênh</strong><span id="nowGroup">Chọn một kênh trong danh sách</span></div></div>
@@ -45,10 +45,19 @@ return `
   <p class="muted">Chỉ nhập nguồn IPTV mà bạn có quyền sử dụng.</p><div id="sources"></div>
  </section>
  <section class="page" id="page-epg"><h2>Lịch phát sóng EPG</h2>
-  <input id="epgURL" placeholder="https://…/guide.xml"/><input id="epgChannel" placeholder="tvg-id (tự chọn theo kênh đang xem)"/><button id="loadEPG">Tải lịch phát sóng</button><div id="epgResults"></div>
+  <p class="muted">Các nguồn XMLTV Việt Nam giống bản Web/Rust Lab; tải lần lượt nguồn hoạt động, giữ EPG cũ nếu nguồn lỗi.</p>
+  <div id="epgSourcesList" class="epg-source-list"></div>
+  <label class="epg-auto-label"><input type="checkbox" id="epgAutoRefresh" checked/> Tự cập nhật EPG khi khởi động</label>
+  <div class="add-row epg-manual-row"><input id="epgURL" placeholder="https://…/guide.xml hoặc .gz"/><button id="addEPGSource" type="button">+ Nguồn</button></div>
+  <input id="epgChannel" placeholder="tvg-id (tự chọn theo kênh đang xem)"/>
+  <button id="loadEPG">↻ Tải EPG ngay</button><p id="epgStatus" class="muted" aria-live="polite">Chưa tải EPG</p>
+  <div id="epgResults"></div>
  </section>
  <section class="page" id="page-multi"><h2>MultiView 4 kênh</h2><p class="muted">Bốn luồng HLS/WebView thử nghiệm; phụ thuộc codec và CORS.</p><div class="add-row"><button id="startMulti">Tạo 4 khung</button><button id="stopMulti">Dừng tất cả</button></div><div id="multiGrid"></div></section>
  <section class="page" id="page-tools"><h2>Công cụ & cài đặt</h2>
+  <label class="epg-auto-label"><input type="checkbox" id="autoRefreshPlaylists" checked/> Tải lại tất cả danh sách M3U khi khởi động</label>
+  <label class="epg-auto-label"><input type="checkbox" id="autoResumeLast" checked/> Tự phát kênh đã xem ở phiên trước</label>
+  <p class="muted">iOS có thể tự phát tắt tiếng; nhấn Bật tiếng khi được yêu cầu.</p>
   <p class="muted">Sức khỏe kênh chỉ là đánh giá dựa trên phản hồi HTTP và bằng chứng phát.</p>
   <div class="add-row"><label>Luồng <select id="threadCount"><option>8</option><option selected>16</option><option>32</option></select></label><button id="checkBtn">✓ Kiểm tra kênh</button></div>
   <button id="exportBtn">⇩ Xuất M3U</button>

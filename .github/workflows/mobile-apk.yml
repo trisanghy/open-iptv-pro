@@ -9,11 +9,11 @@ on:
 permissions:
   contents: write
 concurrency:
-  group: mobile-release-${{ github.ref }}-mobile7
+  group: mobile-release-${{ github.ref }}-mobile8
   cancel-in-progress: false
 env:
-  MOBILE_VERSION: 4.23.17-mobile.7
-  MOBILE_TAG: mobile/v4.23.17.7
+  MOBILE_VERSION: 4.23.17-mobile.8
+  MOBILE_TAG: mobile/v4.23.17.8
 jobs:
   android:
     name: Android debug APK
@@ -50,6 +50,9 @@ jobs:
           npx cap add android
           npx cap sync android
           node scripts/patch-native.mjs
+          npx --yes @capacitor/assets@4.0.0 generate --android --assetPath resources --iconBackgroundColor '#ffffff' --iconBackgroundColorDark '#ffffff'
+          test -d android/app/src/main/res/mipmap-hdpi
+          find android/app/src/main/res -name 'ic_launcher*.png' | grep -q .
           (cd android && chmod +x gradlew && ./gradlew --no-daemon --max-workers=4 assembleDebug)
           test -s android/app/build/outputs/apk/debug/app-debug.apk
           mkdir -p release
@@ -89,6 +92,8 @@ jobs:
           npx cap add ios
           npx cap sync ios
           node scripts/patch-native.mjs
+          npx --yes @capacitor/assets@4.0.0 generate --ios --assetPath resources --iconBackgroundColor '#ffffff' --iconBackgroundColorDark '#ffffff'
+          test -s ios/App/App/Assets.xcassets/AppIcon.appiconset/Contents.json
           xcodebuild -project ios/App/App.xcodeproj -scheme App -configuration Release \
             -sdk iphoneos -destination 'generic/platform=iOS' -derivedDataPath ios/DerivedData \
             CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO build
@@ -166,8 +171,9 @@ jobs:
           unzip -tq "release/OpenIPTVPro-Mobile-${MOBILE_VERSION}-Source.zip"
           test -s "release/OpenIPTVPro-Mobile-${MOBILE_VERSION}-debug.apk"
           test -s "release/OpenIPTVPro-Mobile-${MOBILE_VERSION}-unsigned.ipa"
-          test -s "release/OpenIPTVPro-Mobile-4.23.17-mobile.7-Android-screenshot.png"
-          test -s "release/OpenIPTVPro-Mobile-4.23.17-mobile.7-Android-more.png"
+          test -s "release/OpenIPTVPro-Mobile-4.23.17-mobile.8-Android-screenshot.png"
+          test -s "release/OpenIPTVPro-Mobile-4.23.17-mobile.8-Android-more.png"
+          test -s "release/OpenIPTVPro-Mobile-4.23.17-mobile.8-Android-EPG.png"
           sha256sum release/* > release/SHA256SUMS.txt
       - name: Publish isolated mobile prerelease (never overwrite tag)
         env:
@@ -178,7 +184,7 @@ jobs:
             exit 1
           fi
           cat > /tmp/mobile-release-notes.txt <<'NOTES'
-          Open IPTV Pro Mobile 4.23.17-mobile.7 (Beta, Capacitor 8).\n          Default Play is now INLINE in the TV hero (iOS WKWebView native HLS, Android browser/hls.js). Native Capgo fullscreen is activated ONLY when the fullscreen button is pressed. Existing Web-style media/EPG/fallback layout preserved.\n          UI was recreated from user screenshot; original old v4.23 source was not found in GitHub.
+          Open IPTV Pro Mobile 4.23.17-mobile.8 (Beta, Capacitor 8).\n          Restored official gradient-play launcher icon on Android and iOS. Added Web/Rust Vietnam EPG defaults with automatic failover, cached EPG, auto refresh of all user-added M3U sources on launch, and automatic inline playback of last watched channel (muted if iOS requires). Existing fullscreen behavior unchanged.\n          UI was recreated from user screenshot; original old v4.23 source was not found in GitHub.
           Rust Lab parity subset: M3U rights confirmation, local Smart Discovery terms,
           Smart Doctor with user-approved fallback suggestions, safe mobile JSON backup,
           bounded 1–32 checks / 1000 channels per batch, touch layout.
@@ -191,5 +197,5 @@ jobs:
           NOTES
           gh release create "$MOBILE_TAG" release/*.apk release/*.ipa release/*.zip release/*.png release/SHA256SUMS.txt \
             --target "$GITHUB_SHA" \
-            --title "Open IPTV Pro Mobile 4.23.17-mobile.7 - Android APK + unsigned iOS IPA" \
+            --title "Open IPTV Pro Mobile 4.23.17-mobile.8 - Android APK + unsigned iOS IPA" \
             --notes-file /tmp/mobile-release-notes.txt --prerelease

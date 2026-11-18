@@ -5,6 +5,8 @@ import { VideoPlayer } from '@capgo/capacitor-video-player';
 import Hls from 'hls.js';
 import {oldStyleLayout} from './legacy-mobile-layout.mjs';
 import {streamOptions,epgNowNext} from './mobile-player-controls.mjs';
+import {installEPGAuto} from './mobile-epg-autosync.mjs';
+import {matchGuideChannel,resumeChannel} from './mobile-epg-auto.mjs';
 import {swipeChannelDelta,nextChannelIndex,safeHistory} from './mobile-ux.mjs';
 import {MOBILE_VERSION,MAX_BATCH,batchWindow,appendEvidence,rightsDialog,installMobileParity} from './mobile-rustlab-parity.mjs';
 import './core-browser.js';
@@ -14,7 +16,7 @@ import { stableId, dedupChannels, normalizeHTTPURL, textFromResponse, parseBasic
 const $ = x=>document.querySelector(x), $$=x=>[...document.querySelectorAll(x)];
 const CORE=window.StreamLeafCore;
 const KEY='openiptv_mobile_4211_v1';
-let state={sources:[],favorites:[],channels:[],checks:{},healthHistory:{},checkCursor:0,fallbacks:{},epgUrl:'',selected:null,filter:'',page:'tv',group:'',recentlyWatched:[],manualStreams:{},settings:{threads:16}};
+let state={sources:[],favorites:[],channels:[],checks:{},healthHistory:{},checkCursor:0,fallbacks:{},epgUrl:'',epgCache:null,epgSources:null,resumeUrl:null,selected:null,filter:'',page:'tv',group:'',recentlyWatched:[],manualStreams:{},settings:{threads:16,autoRefreshEPG:true,autoRefreshPlaylists:true,autoResumeLast:true}};
 try{const old=JSON.parse(localStorage.getItem(KEY)||'{}');state={...state,...old,settings:{...state.settings,...old.settings}};}catch{}
 state.channels=Array.isArray(state.channels)?state.channels:[];
 state.sources=Array.isArray(state.sources)?state.sources:[];
@@ -26,7 +28,8 @@ state.checkCursor=Number(state.checkCursor)||0;
 state.fallbacks=state.fallbacks||{};
 state.manualStreams=state.manualStreams||{};
 let busy=false, playerHls=null;let multiPlayers=[];
-let mediaPlaying=false, mediaPaused=false, mediaMuted=false, epgItems=[];
+let mediaPlaying=false, mediaPaused=false, mediaMuted=false, epgItems=state.epgCache?.items||[];
+let epgManager=null,startupPlaybackDone=false;
 let nativeFullscreenActive=false;
 const native=Capacitor.isNativePlatform();
 function save(){const keep={...state};try{localStorage.setItem(KEY,JSON.stringify(keep));}catch(e){status('Bộ nhớ gần đầy; hãy xuất M3U sao lưu','error');}}
@@ -45,7 +48,23 @@ function flatten(){let result=[];for(const src of state.sources.filter(s=>s.enab
 async function addURL(){const value=$('#newSource').value.trim();if(!value)throw Error('Nhập URL M3U');const url=normalizeHTTPURL(value);if(state.sources.some(x=>x.url===url))throw Error('Nguồn này đã có');if(!(await rightsFor('URL M3U')))return;busy=true;status('Đang tải M3U…');try{const txt=await getText(url,18000);const id='src-'+stableId(url);const rows=annotate(id,CORE.parseM3U(txt,id));if(!rows.length)throw Error('M3U không có kênh HTTP hợp lệ');state.sources.push({id,name:new URL(url).hostname,url,enabled:true,channels:rows,updatedAt:new Date().toISOString()});$('#newSource').value='';flatten();status('Đã thêm '+rows.length+' kênh từ '+url,'ok');}finally{busy=false;}}
 async function addFile(file){if(!file)return;if(file.size>25*1024*1024)throw Error('M3U vượt 25MB');if(!(await rightsFor('file M3U')))return;const content=await file.text();const id='file-'+stableId(file.name+'|'+Date.now());const rows=annotate(id,CORE.parseM3U(content,id));if(!rows.length)throw Error('M3U không có kênh');state.sources.push({id,name:file.name,enabled:true,channels:rows,updatedAt:new Date().toISOString()});flatten();status('Đã nhập '+rows.length+' kênh từ file','ok');}
 async function editSource(s){const next=prompt('URL M3U mới',s.url||'');if(next===null)return;const url=normalizeHTTPURL(next);if(!(await rightsFor('sửa URL M3U')))return;status('Đang kiểm tra URL mới…');const txt=await getText(url);const rows=annotate(s.id,CORE.parseM3U(txt,s.id));if(!rows.length)throw Error('Nguồn URL mới không có kênh hợp lệ. Giữ URL cũ');s.url=url;s.name=new URL(url).hostname;s.channels=rows;s.updatedAt=new Date().toISOString();flatten();status('Đã thay URL nguồn và tải '+rows.length+' kênh','ok');}
-async function refreshSources(){if(busy)return;busy=true;let n=0;for(const s of state.sources.filter(s=>s.url&&s.enabled!==false)){try{const text=await getText(s.url);s.channels=annotate(s.id,CORE.parseM3U(text,s.id));s.updatedAt=new Date().toISOString();n++;}catch(e){status(`Không tải được ${s.name}: ${e.message}`,'error');}}flatten();busy=false;status(`Đã làm mới ${n} nguồn. Các nguồn lỗi vẫn giữ dữ liệu cũ`,'ok');}
+async function refreshSources({quiet=false}={}){
+ if(busy)return;busy=true;
+ const sources=state.sources.filter(x=>x.url&&x.enabled!==false);let index=0,success=0,failed=0;
+ try{
+  await Promise.all(Array.from({length:Math.min(3,sources.length)},async()=>{while(index<sources.length){
+   const src=sources[index++];
+   try{const raw=await getText(src.url,20000);if(raw.length>25*1024*1024)throw Error('M3U quá 25MB');
+       const items=annotate(src.id,CORE.parseM3U(raw,src.id));
+       if(!items.length)throw Error('Danh sách mới không có kênh hợp lệ');
+       src.channels=items;src.updatedAt=new Date().toISOString();success++;
+   }catch(e){failed++;console.warn('Refresh playlist',src.name,e);}
+  }}));
+  flatten();
+  if(!quiet)status('Đã làm mới '+success+'/'+sources.length+' nguồn; '+failed+' lỗi giữ dữ liệu cũ',success?'ok':'error');
+  return {success,failed};
+ }finally{busy=false;}
+}
 function activeChannels(){let all=dedupChannels(state.channels);if(state.page==='fav')all=all.filter(c=>state.favorites.includes(c.url));if(state.group)all=all.filter(c=>c.group===state.group);const q=state.filter.toLowerCase().trim();if(q)all=all.filter(c=>(c.name+' '+c.group+' '+c.url).toLowerCase().includes(q));return all;}
 
 const groupOpened=new Set();
@@ -72,7 +91,7 @@ function formatProgramClock(value){
  return parsed?parsed.toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit'}):'—';
 }
 function renderCurrentEPG(channel){
- const id=channel?.tvgId||channel?.['tvg-id']||'';
+ const id=matchGuideChannel(state.epgCache,channel);
  const result=epgNowNext(epgItems,id,Date.now(),xmltvDate);
  const nowName=$('#epgNowName'),nextName=$('#epgNextName');
  if(!nowName)return;
@@ -159,7 +178,7 @@ function render(){
  renderChannels();renderSources();renderNowPlaying();
  const sources=$('#sourceCount');if(sources)sources.textContent=String(state.sources.length);
  const fav=$('#favCount');if(fav)fav.textContent=String(state.favorites.length);
- const epg=$('#epgURL');if(epg)epg.value=state.epgUrl||'';
+ epgManager?.render();
  const threads=$('#threadCount');if(threads)threads.value=String(state.settings.threads||16);
  $$('.tab').forEach(b=>b.classList.toggle('active',b.dataset.page===state.page));
  $$('.page').forEach(el=>el.classList.toggle('active',el.id==='page-'+state.page));
@@ -174,7 +193,7 @@ function showInline(visible){
  const v=$('#webVideo'),ph=$('.hero-placeholder'),hero=$('.hero-player');
  v.hidden=!visible;ph.hidden=visible;hero.classList.toggle('has-video',visible);
 }
-async function play(c,requestedURL){
+async function play(c,requestedURL,{startup=false}={}){
  if(!c)throw Error('Chưa chọn kênh');
  state.selected=c.url;state.recentlyWatched=safeHistory(state.recentlyWatched,c.url);
  const configured=streamOptions(c,state.fallbacks),allowed=new Set(configured.map(x=>x.url));
@@ -194,7 +213,12 @@ async function play(c,requestedURL){
      playerHls.attachMedia(v);playerHls.loadSource(url);
    }else{v.src=url;v.load();}
    showInline(true);
-   await v.play();
+   try{await v.play();}catch(e){
+    if(!startup||e?.name!=='NotAllowedError')throw e;
+    v.muted=true;mediaMuted=true;await v.play();
+    const unmute=$('#unmuteAutoplay');if(unmute)unmute.hidden=false;
+   }
+   state.resumeUrl=c.url;save();
    mediaPlaying=true;mediaPaused=false;syncMediaControls();
    status('Đang phát trong khung: '+c.name,'ok');return;
   }catch(e){
@@ -271,18 +295,7 @@ async function checkAll(){
   status('Xong lô '+(batch.start+1)+'–'+batch.end+'/'+all.length+' · LIVE '+live+', DIE '+dead+', UNKNOWN '+unknown+'. '+(state.checkCursor?'Bấm tiếp để kiểm tra lô kế':'Đã hết danh sách'),'ok');
  }finally{busy=false;$('#checkBtn').disabled=false;}
 }
-async function viewEPG(){
- const url=normalizeHTTPURL($('#epgURL').value);
- state.epgUrl=url;save();status('Đang tải XMLTV EPG…');
- const xml=await getText(url,24000);if(xml.length>12000000)throw Error('EPG lớn hơn 12 MB');
- const chosen=state.channels.find(c=>c.url===state.selected);
- const id=$('#epgChannel').value.trim()||chosen?.tvgId||'';
- const items=parseBasicEPG(xml,id,500);
- epgItems=items;renderCurrentEPG(chosen);
- const root=$('#epgResults');root.replaceChildren();
- for(const item of items){const row=node('article','epg-row');row.append(node('small','',item.channel+' · '+(xmltvDate(item.start)?.toLocaleString('vi-VN')||item.start)));row.append(node('b','',item.title));root.append(row);}
- status('Đã tải '+items.length+' chương trình EPG','ok');
-}
+async function viewEPG(){if(!epgManager)throw Error('EPG chưa khởi tạo');const custom=$('#epgURL').value.trim();if(custom)epgManager.addCustom();return epgManager.refresh(false);}
 async function exportM3U(){const channels=state.channels.map(c=>({...c,status:state.checks[c.url]?.status||'unchecked'})).sort((a,b)=>Number(a.status==='dead')-Number(b.status==='dead'));await exportFile('OpenIPTV_Mobile_Channels.m3u',CORE.exportM3U(channels));}
 async function editFallback(){const url=$('#fallbackSource').value.trim();if(!url)throw Error('Chọn kênh/URL trước');const alt=$('#fallbackURL').value.trim();if(!alt){delete state.fallbacks[url];save();status('Đã xóa URL dự phòng');return;}state.fallbacks[url]=[normalizeHTTPURL(alt)];save();renderNowPlaying();status('Đã lưu link dự phòng','ok');}
 async function currentSnapshot(){const v=$('#webVideo');if(!v.videoWidth)throw Error('Chưa phát được video để chụp');const c=document.createElement('canvas');c.width=v.videoWidth;c.height=v.videoHeight;c.getContext('2d').drawImage(v,0,0);try{const blob=await new Promise(r=>c.toBlob(r,'image/jpeg',.86));if(!blob)throw Error('Không có ảnh');const b64=await new Promise(resolve=>{const rd=new FileReader();rd.onload=()=>resolve(rd.result.split(',')[1]);rd.readAsDataURL(blob)});await Filesystem.writeFile({path:'snapshot.jpg',data:b64,directory:Directory.Cache});const {uri}=await Filesystem.getUri({path:'snapshot.jpg',directory:Directory.Cache});await Share.share({title:'Snapshot IPTV',url:uri});}catch(e){throw Error('Snapshot lỗi (CORS/DRM): '+e.message);}}
@@ -292,6 +305,7 @@ function showTab(tab){if(state.page==='multi'&&tab!=='multi')stopMulti();state.p
 function init(){document.querySelector('#app').innerHTML=oldStyleLayout();
  if(!['tv','fav','epg','sources','multi','tools'].includes(state.page))state.page='tv';
  document.documentElement.classList.add(native?'native-mobile':'web-mobile');
+ $('#unmuteAutoplay').onclick=()=>{const v=$('#webVideo');v.muted=false;mediaMuted=false;syncMediaControls();$('#unmuteAutoplay').hidden=true;};
  if(native && Capacitor.getPlatform()==='ios')document.documentElement.classList.add('ios-mobile');
  // Intentional swipe over the placeholder player only; does not steal list scrolling.
  const hero=$('.hero-player');let start=null;
@@ -388,5 +402,29 @@ function init(){document.querySelector('#app').innerHTML=oldStyleLayout();
  video.addEventListener('ended',()=>{mediaPlaying=false;mediaPaused=false;syncMediaControls();});
 
  render();}
+
+async function resumePreviousChannel(){
+ if(startupPlaybackDone||state.settings.autoResumeLast===false)return;
+ const url=state.resumeUrl||state.recentlyWatched?.[0],channel=resumeChannel(state.channels,url);
+ if(!channel)return;
+ startupPlaybackDone=true;
+ try{await play(channel,undefined,{startup:true});}
+ catch(e){status('Không tự phát được kênh trước: '+(e?.message||e),'error');}
+}
+async function startupSync(){
+ await resumePreviousChannel();
+ const tasks=[];
+ if(state.settings.autoRefreshPlaylists!==false&&state.sources.some(x=>x.url&&x.enabled!==false))
+   tasks.push(refreshSources({quiet:true}).catch(e=>console.warn('Startup playlist:',e)));
+ if(state.settings.autoRefreshEPG!==false)
+   tasks.push(epgManager?.refresh(true).catch(e=>console.warn('Startup EPG:',e)));
+ await Promise.allSettled(tasks);
+ await resumePreviousChannel();
+}
 init();
 installMobileParity({getState:()=>state,replaceState:next=>{state={...state,...next};flatten();},save,status,exportFile});
+epgManager=installEPGAuto({getState:()=>state,save,getText,parseDate:xmltvDate,
+ getSelectedChannel:()=>state.channels.find(x=>x.url===state.selected),
+ notify:status,onGuide:cache=>{epgItems=cache.items;renderCurrentEPG(state.channels.find(x=>x.url===state.selected));}});
+Promise.resolve().then(startupSync).catch(e=>console.warn('Auto refresh:',e));
+

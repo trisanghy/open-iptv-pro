@@ -1,9 +1,9 @@
 {
   "name": "open-iptv-pro-mobile",
   "private": true,
-  "version": "4.23.17-mobile.7",
+  "version": "4.23.17-mobile.8",
   "type": "module",
-  "description": "Mobile embedded HTML5 inline player; fullscreen only via explicit button",
+  "description": "Restored iOS/Android launcher icon, default Web/Rust XMLTV EPG sources, startup EPG/M3U refresh and autoplay of last channel",
   "scripts": {
     "dev": "vite --host 127.0.0.1",
     "build": "vite build",
