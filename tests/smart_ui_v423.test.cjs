@@ -32,7 +32,7 @@ test('Smart Discovery UI requires explicit import and preserves verification evi
   }};
  const coreParser={parseM3U:text=>text.split(/\r?\n/).filter(x=>x.startsWith('https://media.example/')).map(url=>({url,name:url,group:'Demo'})),
   exportM3U:items=>'#EXTM3U\n'+items.map(x=>`#EXTINF:-1,${x.name}\n${x.url}`).join('\n')};
- vm.runInNewContext(discoveryScript,{window:{IPTVSourceConsent:{requireSmart:async()=>true,requestSmartImport:async()=>true,isSmartAccepted:()=>true},IPTVState:ctx,StreamLeafCore:coreParser,streamleaf:iptv,IPTVProAdvanced:{canEdit:()=>true,onCheck:(c,e)=>backed.push([c.url,e])}},document,confirm:()=>true});
+ vm.runInNewContext(discoveryScript,{window:{OpenIPTVSourceConsent:{requireSmart:async()=>true,requestSmartImport:async()=>true,isSmartAccepted:()=>true},IPTVState:ctx,StreamLeafCore:coreParser,streamleaf:iptv,IPTVProAdvanced:{canEdit:()=>true,onCheck:(c,e)=>backed.push([c.url,e])}},document,confirm:()=>true});
  await get('smartFind').callbacks.click();
  assert.equal(sources.length,0,'Discovery must not import automatically');
  assert.equal(get('smartImportAlive').disabled,true,'Import verified is blocked until playback proof');
@@ -52,7 +52,7 @@ test('Doctor 3 requires confirmation for backup proposal, with reversible change
  const channels=[a,b],storage=new Map();let confirmations=0,changes=[];
  const localStorage={getItem:k=>storage.get(k)||null,setItem:(k,v)=>storage.set(k,v),removeItem:k=>storage.delete(k)};
  const ctx={getChannels:()=>channels,getStore:()=>({channels}),save(){},renderList(){},toast(){}};
- const window={IPTVSourceConsent:{requireSmart:async()=>true,requestSmartImport:async()=>true,isSmartAccepted:()=>true},IPTVState:ctx,OpenIPTVDoctorV3:core,IPTVProAdvanced:{canEdit:()=>true,setAlternates:(id,links)=>{
+ const window={OpenIPTVSourceConsent:{requireSmart:async()=>true,requestSmartImport:async()=>true,isSmartAccepted:()=>true},IPTVState:ctx,OpenIPTVDoctorV3:core,IPTVProAdvanced:{canEdit:()=>true,setAlternates:(id,links)=>{
   const x=JSON.parse(localStorage.getItem('open-iptv-pro-advanced-v1')||'{}');x.alternates={...(x.alternates||{}),[id]:links};localStorage.setItem('open-iptv-pro-advanced-v1',JSON.stringify(x));changes.push([id,links]);
  }}};
  vm.runInNewContext(doctorScript,{window,document,localStorage,confirm:()=>{confirmations++;return true;},Blob,URL,console});
@@ -75,7 +75,7 @@ test('Smart Discovery ALL scans every discovered channel (>1000) with bounded co
  const playlist='#EXTM3U\n'+channels.map((url,i)=>`#EXTINF:-1,Channel ${i}\n${url}`).join('\n');
  let checks=0,active=0,maxConcurrent=0,importCount=0;
  const ctx={getStore:()=>({sources:[],channels:[]}),save(){},render(){},toast(){},importSource(){importCount++}};
- const window={IPTVSourceConsent:{requireSmart:async()=>true,requestSmartImport:async()=>true,isSmartAccepted:()=>true},IPTVState:ctx,StreamLeafCore:{parseM3U:()=>channels.map((url,i)=>({url,name:'Channel '+i,group:'World'})),exportM3U:()=>playlist},IPTVProAdvanced:{canEdit:()=>true},streamleaf:{
+ const window={OpenIPTVSourceConsent:{requireSmart:async()=>true,requestSmartImport:async()=>true,isSmartAccepted:()=>true},IPTVState:ctx,StreamLeafCore:{parseM3U:()=>channels.map((url,i)=>({url,name:'Channel '+i,group:'World'})),exportM3U:()=>playlist},IPTVProAdvanced:{canEdit:()=>true},streamleaf:{
   smartCatalogOptions:async()=>[],smartLoad:async()=>({kind:'global',url:'https://iptv-org.github.io/iptv/index.m3u',provider:'iptv-org',content:playlist}),
   smartCheck:async url=>{checks++;active++;maxConcurrent=Math.max(active,maxConcurrent);await Promise.resolve();active--;return {status:'alive',positiveEvidence:true,reason:'HLS video segment'};}
  }};
@@ -95,7 +95,7 @@ test('Smart Discovery cancellation stops queueing new probes, retaining complete
  const urls=Array.from({length:100},(_,i)=>`https://media.example/c-${i}.m3u8`);
  let starts=0;
  const ctx={getStore:()=>({sources:[],channels:[]}),save(){},render(){},toast(){},importSource(){throw Error('Should not import')}};
- const w={IPTVSourceConsent:{requireSmart:async()=>true,requestSmartImport:async()=>true,isSmartAccepted:()=>true},IPTVState:ctx,StreamLeafCore:{parseM3U:()=>urls.map(url=>({url,name:url})),exportM3U:()=>''},IPTVProAdvanced:{canEdit:()=>true},streamleaf:{
+ const w={OpenIPTVSourceConsent:{requireSmart:async()=>true,requestSmartImport:async()=>true,isSmartAccepted:()=>true},IPTVState:ctx,StreamLeafCore:{parseM3U:()=>urls.map(url=>({url,name:url})),exportM3U:()=>''},IPTVProAdvanced:{canEdit:()=>true},streamleaf:{
   smartLoad:async()=>({kind:'global',url:'https://iptv-org.github.io/iptv/index.m3u',content:'#EXTM3U\n#EXTINF:-1,Demo\nhttps://media.example/live.m3u8'}),
   smartCheck:async()=>{starts++;await new Promise(resolve=>setTimeout(resolve,2));return {status:'alive',positiveEvidence:true};}
  }};
