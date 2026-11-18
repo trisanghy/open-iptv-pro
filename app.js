@@ -1113,7 +1113,7 @@
   bind(['refreshAllBtn'],refreshAll);bind(['prevBtn'],()=>switchChannel(-1));bind(['nextBtn'],()=>switchChannel(1));bind(['stopBtn'],stopPlayer);bind(['playBtn'],playToggle);
   bind(['favCurrentBtn'],()=>{const channel=currentChannel();if(channel)favorite(channel);});
   bind(['shotBtn'],async()=>{if(!current)return toast('Chưa chọn kênh','warn');try{await snapshotOne(current);}catch(e){toast(e.message,'error');}});
-  bind(['fullscreenBtn'],()=>{if(!document.fullscreenElement)$('#playerBox').requestFullscreen?.();else document.exitFullscreen?.();});
+  bind(['fullscreenBtn'],()=>{if(window.OpenIPTVMobilePlayer?.toggle?.())return;if(!document.fullscreenElement)$('#playerBox').requestFullscreen?.();else document.exitFullscreen?.();});
   bind(['modalClose','modalCancel'],closeModal);bind(['modalConfirm'],modalSubmit);bind(['cancelCheckBtn'],()=>requestCancel('check'));bind(['cancelShotsBtn'],()=>requestCancel('shots'));const dock=$('#taskDock');
   function toggleTaskPopup(forceClosed=false){const collapsed=forceClosed?true:!dock.classList.contains('collapsed');dock.classList.toggle('collapsed',collapsed);const btn=$('#taskDockMinimize');btn.setAttribute('aria-expanded',String(!collapsed));btn.textContent=collapsed?'▴':'▾';}
   bind(['taskDockMinimize'],()=>toggleTaskPopup());

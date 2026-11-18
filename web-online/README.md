@@ -36,3 +36,9 @@ Người sử dụng phải tự xác minh quyền truy cập, bản quyền, gi
 - Trước khi mở hộp chọn file M3U, thêm/sửa URL M3U hoặc nhập playlist từ repository, người dùng phải tự tích ô xác nhận quyền hợp pháp trong hộp cảnh báo. Không đồng ý → hủy, không tải/nhập nguồn.
 - Trước khi sử dụng **Smart Discovery**, phải tự tích **hai ô riêng biệt** xác nhận đã kiểm tra điều khoản/nguồn gốc của nhà cung cấp và có quyền xem nội dung; việc nhập kết quả từ Smart Discovery yêu cầu xác nhận lại cho từng lượt.
 - Các ô mặc định trống. Xác nhận chỉ là cam kết do người dùng đưa ra, **không phải** ứng dụng kiểm chứng bản quyền hay cấp phép.
+
+## Trải nghiệm trình phát trên iPhone/Android (11/2026)
+
+Web Mobile UX: trên điện thoại, thanh điều khiển được chia thành nhóm rõ ràng (tên kênh, chuyển/phát/dừng, Cast/PiP/Toàn màn hình, âm lượng, EPG và nguồn phát) với mục tiêu vùng chạm từ 44px. Thanh điều hướng dưới cùng có thể vuốt ngang để truy cập các mục khác, giữ vùng video đủ rộng.
+
+**Toàn màn hình trên iOS:** Safari iPhone thường không cho `requestFullscreen()` trên một khung HTML tùy ý. Nút Toàn màn hình trên iPhone ưu tiên `video.webkitEnterFullscreen()` nếu video đã có metadata; các trình duyệt khác dùng Fullscreen API của khung video. Nếu trình duyệt nhúng không cấp quyền fullscreen, ứng dụng chuyển sang giao diện video phủ toàn bộ *viewport của website* với nút thoát (không thể ẩn thanh công cụ của Safari hoặc bắt buộc xoay màn hình). Do hạn chế nền tảng, âm lượng trong Safari iOS được điều chỉnh bằng phím vật lý của iPhone; nút tắt tiếng vẫn có sẵn.
