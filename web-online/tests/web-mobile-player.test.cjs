@@ -15,7 +15,7 @@ function harness({mobile=true,ios=false,native=false,hasRequest=false}={}){
  const button={setAttribute:()=>{}};
  const els={playerBox:box,video,fullscreenBtn:button};
  const doc={fullscreenElement:null,documentElement:{setAttribute:(k,v)=>{if(k==='data-iptv-device')d.mode=v;},classList:{add:x=>d.add(x),remove:x=>d.delete(x),toggle:(x,on)=>on?d.add(x):d.delete(x)}},getElementById:id=>els[id],addEventListener:()=>{},querySelectorAll:()=>[]};
- const root={document:doc,navigator:{userAgent:ios?'iPhone':'Android Mobile',maxTouchPoints:mobile?5:0},matchMedia:()=>({matches:mobile}),addEventListener:(key,fn)=>{handlers[key]=fn}};
+ const root={document:doc,navigator:{userAgent:ios?'iPhone':mobile?'Android Mobile':'Mozilla/5.0 (X11; Linux x86_64)',maxTouchPoints:mobile?5:0},matchMedia:()=>({matches:mobile}),addEventListener:(key,fn)=>{handlers[key]=fn}};
  const sandbox={window:root,module:{exports:{}},console};
  vm.runInNewContext(code,sandbox);
  return {api:sandbox.module.exports,box,video,c,d,root,handlers};
