@@ -79,3 +79,7 @@ Khung Danh sách kênh trong giao diện mobile giảm đúng **40%** so với c
 
 ## Bộ icon trình phát Web (18/11/2026)
 Các nút trong trình phát dùng biểu tượng SVG đơn sắc dạng CSS mask (không phụ thuộc emoji, CDN, hay phông chữ ngoài): chuyển kênh, phát/tạm dừng, dừng, âm lượng/tắt tiếng, Cast, PiP, toàn màn hình, lịch EPG, yêu thích, tua lại, ghi hình và các công cụ nhanh. Màu sắc dùng biến theme hiện có; hỗ trợ `focus-visible`, trạng thái disabled, vùng chạm tối thiểu ~46px trên mobile, `prefers-reduced-motion`. Trạng thái play/pause và âm lượng phản ánh video thật; không thay các event handler, thay ID hay logic phát kênh. Browser cache được làm mới qua `?v=vectorplayer-20261118a`.
+
+### Sửa nút hiện hai icon trên iPhone (18/11/2026)
+
+Các phiên bản trước chỉ ẩn chữ cũ bằng CSS `font-size:0`; những bộ chọn desktop có độ ưu tiên cao vẫn khiến emoji/phím tắt hiện bên cạnh icon SVG. Bản sửa loại bỏ trực tiếp **text node trang trí** ở các nút điều khiển (không xóa phần tử button, ID, event listener, nhãn tiếp cận hay span mô tả). `MutationObserver` theo dõi những thay đổi `textContent` từ mã phát video/yêu thích để không tái xuất hiện icon đôi sau khi phát/tạm dừng/đổi kênh. Không ảnh hưởng điều khiển âm lượng và nguồn phát.

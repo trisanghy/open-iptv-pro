@@ -11,12 +11,48 @@
   playing:!!video&&!video.paused&&!video.ended,
   muted:!!video&&(!!video.muted||Number(video.volume)===0)
  });
+ // App legacy handlers still set button.textContent = '▶', 'Ⅱ', '★' etc.
+ // Scrub only direct decorative text nodes (not icon labels or aria attrs).
+ // Keep DOM elements and event listeners; observe future textContent writes.
+ const glyphButtons=Object.freeze([
+  'prevBtn','playBtn','stopBtn','nextBtn','castBtn','pipBtn',
+  'fullscreenBtn','fsPrev','fsPlay','fsNext','fsExit',
+  'openGuideBtn','favCurrentBtn'
+ ]);
+ function stripLegacyGlyphs(button){
+  if(!button)return false;
+  let changed=false;
+  for(const node of Array.from(button.childNodes||[])){
+   if(node.nodeType===3 && node.nodeValue){
+    node.nodeValue='';changed=true;
+   }
+  }
+  if(!button.getAttribute?.('aria-label')){
+   const title=button.getAttribute?.('title');
+   if(title)button.setAttribute?.('aria-label',title);
+  }
+  return changed;
+ }
+ function observeLegacyButtons(doc){
+  const observers=[];
+  for(const id of glyphButtons){
+   const button=doc.getElementById(id);if(!button)continue;
+   stripLegacyGlyphs(button);
+   if(typeof root?.MutationObserver==='function'){
+    const observer=new root.MutationObserver(()=>stripLegacyGlyphs(button));
+    observer.observe(button,{childList:true,characterData:true,subtree:true});
+    observers.push(observer);
+   }
+  }
+  return observers;
+ }
  function init(){
   const doc=root?.document;if(!doc)return;
   const video=doc.getElementById('video');if(!video)return;
   const play=doc.getElementById('playBtn');
   const full=doc.getElementById('fsPlay');
   const mute=doc.getElementById('webVolumeMute');
+  observeLegacyButtons(doc);
   function sync(){
    const state=derive(video);
    for(const button of [play,full]){
@@ -51,5 +87,5 @@
    root.document.addEventListener('DOMContentLoaded',init,{once:true});
   else init();
  }
- return Object.freeze({derive,init});
+ return Object.freeze({derive,init,stripLegacyGlyphs,glyphButtons,observeLegacyButtons});
 });
