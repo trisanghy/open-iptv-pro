@@ -1,3 +1,0 @@
-Open IPTV Pro v4.23.60 — Trình phát IPTV mã nguồn mở cho macOS/Windows: M3U, HLS/DASH, EPG, MultiView, FFmpeg, Timeshift, DVR, Live Caption Whisper 8 giây, dịch AI offline và TTS. Dùng Web: https://trisanghy.github.io/open-iptv-pro/ | Tải bộ cài: https://github.com/trisanghy/open-iptv-pro/releases/latest
-
-EN: Open-source IPTV desktop for Mac/Windows with offline captions, translation, voice dubbing and a separate browser-based Web Edition.

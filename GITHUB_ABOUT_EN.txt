@@ -1,1 +1,0 @@
-Open IPTV Pro v4.23.60 — Open-source IPTV desktop for macOS and Windows: M3U, HLS/DASH, EPG, MultiView, FFmpeg, Timeshift/DVR, 8-second continuous Whisper live captions, on-device translation and TTS. Browser Web Edition: https://trisanghy.github.io/open-iptv-pro/ | Prebuilt desktop downloads: https://github.com/trisanghy/open-iptv-pro/releases/latest

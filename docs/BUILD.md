@@ -1,26 +1,50 @@
-# Build guide / Hướng dẫn build
+# Build & Release — Open IPTV Pro
 
-## CI builds
+Bản tổng hợp hiện tại: **Electron Desktop v4.23.68 Stable**, **Rust Lab v23.8.26 Beta** và **Web Online**.
 
-- GitHub Actions workflows under `.github/workflows/`
-- `workflow_dispatch` creates separate development installers on Intel Mac, Apple Silicon and Windows 64-bit runners.
-- Pushing a `v*` tag triggers `release-desktop.yml`: tests, macOS arm64/x64 + Windows x64 builds, GitHub Release assets, update manifests and SHA256SUMS.txt.
-- `npm test` runs before building.
-- Development builds are uploaded as **artifacts**. The release workflow publishes binaries on tag pushes. No push to Gist.
-- **Automatic installation requires signed packages.** Configure `MAC_CSC_LINK`, `MAC_CSC_KEY_PASSWORD`, `APPLE_ID`, `APPLE_APP_SPECIFIC_PASSWORD`, `APPLE_TEAM_ID`, and Windows `WIN_CSC_LINK`, `WIN_CSC_KEY_PASSWORD` secrets where appropriate.
-- For update compatibility, the macOS release needs both `.dmg` and `.zip` plus `latest-mac.yml`; Windows requires NSIS Setup plus `latest.yml`. Never publish secrets or private keys.
+## Electron (mã chính tại gốc)
 
-## Runtime / Dependencies
+Node.js 22+, npm:
 
-- App code: Electron + browser renderer, local network proxy for HLS/CORS, FFmpeg snapshots.
-- No Python, Qt or VLC is required on end-user machines after packaging.
-- First build downloads npm packages; helpers can download a pinned Node archive locally, validating SHA-256 before executing it.
-- Development: Node.js 22+, npm, internet; `npm install`, `npm test`, `npm start`.
+```bash
+npm install --no-audit --no-fund
+npm test
+npm start
+```
 
-## Distribution
+**macOS, một lệnh build `.app` trên máy người dùng:**
 
-- Each Mac package must bundle a matching FFmpeg executable. Build locally on its target architecture, or use architecture-specific CI runners. The provided GitHub release workflow has not been validated with signed Intel/ARM FFmpeg binaries.
-- To publish a signed/notarized Mac app, arrange Apple Developer ID certificate credentials and configure electron-builder notarization.
-- To publish a trusted Windows setup, sign the installer using your own code-signing certificate.
-- FFmpeg license and codec compliance must be reviewed before distributing binaries.
-- Stream checks cannot guarantee that a stream will remain playable later.
+```bash
+bash -c 'set -o pipefail; curl -fsSL https://raw.githubusercontent.com/trisanghy/open-iptv-pro/build-sources/electron-desktop/build-mac-electron.sh | bash'
+```
+
+Để build DMG từ source: `BUILD_MAC_DMG_ONLY.command` hoặc `npm run dist:mac:arm64` / `npm run dist:mac:x64`. Windows: `BUILD_WINDOWS.bat` hoặc `npm run dist:win`. Chạy trên đúng kiến trúc để FFmpeg/FFprobe tương thích.
+
+## Rust Lab (mã riêng trong rust-lab/)
+
+Mã nguồn có `src-tauri/`, `renderer/`, `tests/`, `scripts/`. Dùng Node 22+, Rust stable và công cụ native của Tauri 2. Tại thư mục `rust-lab/`:
+
+```bash
+npm ci
+npm run test:quick
+npm run build
+```
+
+Build Mac tự động: [script trên nhánh Rust](https://raw.githubusercontent.com/trisanghy/open-iptv-pro/experiment/rust-tauri-v2/scripts/BUILD_RUSTLAB_MAC_ONE_ZIP_FAST.sh). Rust Lab là **Beta**; không thay thế Electron Stable.
+
+## Web Online (mã riêng trong web/)
+
+`web/index.html` và các file JS/CSS cùng cấp là site đã đóng gói. `web/web-online/` có scripts, tests, bản dựng nguồn. GitHub Pages triển khai từ nhánh [web/online](https://github.com/trisanghy/open-iptv-pro/tree/web/online). Tại `web/`: `python3 -m http.server 8000` để dùng local.
+
+## GitHub Actions & release
+
+- `.github/workflows/test.yml`: kiểm thử tự động khi push `main`.
+- `.github/workflows/tao-bo-cai.yml`: build thủ công qua Actions.
+- `.github/workflows/publish-portfolio-v42368.yml`: workflow đã dùng tạo Release tổng hợp bất biến `v4.23.68` từ ba source; tự từ chối ghi đè Release trùng tag.
+- [Release Stable hiện có](https://github.com/trisanghy/open-iptv-pro/releases/tag/v4.23.68) có installer Mac/Windows, Rust Lab, Web ZIP, Full Source, release notes và SHA256SUMS.
+
+**Không tạo/ghi đè tag release chỉ vì dọn mã nguồn.** Thay đổi tiếp theo sẽ có commit mới trên main; bản `v4.23.68` vẫn giữ đúng snapshot đã xuất bản. Giữ riêng `build-sources/electron-desktop`, `experiment/rust-tauri-v2`, `web/online`.
+
+## Thận trọng
+
+Trước khi phát hành tiếp: chạy `npm test`, build native trên từng OS, đối chiếu checksum, kiểm tra app tải được. Đừng vô hiệu Gatekeeper toàn hệ thống để chạy app chưa ký; đừng commit khóa Cloud Sync bí mật.
