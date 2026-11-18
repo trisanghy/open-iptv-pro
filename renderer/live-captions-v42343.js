@@ -287,7 +287,18 @@
   caption.disabled=true;translate.disabled=true;
   message('Phụ đề AI yêu cầu bản desktop (Electron)',true);
  }else{
-  api.captionStatus().then(s=>message(s.available?'Whisper sẵn sàng · chọn Live Caption/Translate':s.reason+' · bật để tự cài'))
-   .catch(e=>message('Lỗi: '+e.message,true));
+  api.captionStatus().then(s=>{
+   // Don't overwrite an active recognition/setup status with a generic prompt.
+   if(busy||activeId)return;
+   const restored=caption.checked||translate.checked;
+   if(restored)message(s.available
+    ?'Đã khôi phục Live Caption/Translate · tự chạy khi video phát'
+    :(s.reason||'Whisper chưa sẵn sàng')+' · lựa chọn đã được giữ',!s.available);
+   else message(s.available?'Whisper sẵn sàng · chọn Live Caption/Translate':s.reason+' · bật để tự cài');
+  }).catch(e=>message('Lỗi: '+e.message,true));
+  // A running channel can be restored before the AI scripts initialize.
+  // Start detection immediately in that case; otherwise the 'playing' event
+  // already registered above will start it when video playback resumes.
+  if((caption.checked||translate.checked)&&mediaActive())void reconcile(true);
  }
 })();
