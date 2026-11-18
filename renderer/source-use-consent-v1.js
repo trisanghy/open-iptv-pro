@@ -7,16 +7,16 @@
  if(root&&root.document)root.OpenIPTVSourceConsent=api;
 })(typeof window==='undefined'?null:window,function(root){
  let smartAccepted=false,opening=false;
- const NOTICE='Open IPTV Pro là phần mềm trình phát do cá nhân phát triển, không cung cấp hoặc cấp phép các kênh truyền hình. Bạn chịu trách nhiệm về nguồn, tài khoản, playlist và nội dung mình nhập, xem, lưu hoặc chia sẻ. Tác giả không kiểm soát hay bảo đảm tính hợp pháp của các nguồn này và không chịu trách nhiệm đối với dữ liệu người dùng trong phạm vi pháp luật cho phép.';
+ const NOTICE='Open IPTV Pro là phần mềm trình phát do cá nhân phát triển, không cung cấp hoặc cấp phép các kênh truyền hình. Bạn chịu trách nhiệm về nguồn, tài khoản, playlist và nội dung mình nhập, xem, lưu hoặc chia sẻ. Tác giả không cung cấp, kiểm soát hoặc bảo đảm tính hợp pháp hay bản quyền của bất kỳ nguồn, kênh hoặc chương trình nào. Tác giả không chịu trách nhiệm đối với nội dung người dùng tự nhập, tìm thấy, lựa chọn, phát hoặc xem, cũng như dữ liệu người dùng bị mất, hỏng hoặc lộ, trong phạm vi pháp luật cho phép. Xác nhận này không cấp giấy phép hay chứng nhận quyền sử dụng nội dung.';
  const LABELS=Object.freeze({
   file:'Quyền sử dụng file M3U',
   url:'Quyền sử dụng đường dẫn M3U',
   'smart-start':'Điều khoản sử dụng Smart Discovery',
   'smart-import':'Xác nhận nhập kênh từ Smart Discovery'
  });
- const LEGAL='Tôi xác nhận có quyền hợp pháp để truy cập và sử dụng nội dung trong nguồn này, tự chịu trách nhiệm về playlist, dữ liệu và việc xem.';
- const DISCOVERY_TERMS='Tôi đã tự kiểm tra điều khoản sử dụng, nguồn gốc và quyền truy cập của danh mục/nhà cung cấp trước khi sử dụng Smart Discovery.';
- const DISCOVERY_RIGHTS='Tôi hiểu nguồn công khai hoặc được kiểm tra phát thành công KHÔNG đồng nghĩa được phép sử dụng; tôi tự chịu trách nhiệm về bản quyền, pháp luật, nội dung và dữ liệu.';
+ const LEGAL='Tôi đã đọc cảnh báo; xác nhận có quyền hợp pháp truy cập, xem và sử dụng nội dung trong file/link M3U do mình cung cấp, đồng thời tự chịu trách nhiệm về nguồn, dữ liệu và nội dung xem.';
+ const DISCOVERY_TERMS='Tôi đã đọc và tự xác minh điều khoản của danh mục, nhà cung cấp và quyền sử dụng từng nguồn trước khi dùng Smart Discovery.';
+ const DISCOVERY_RIGHTS='Tôi hiểu kênh công khai hoặc kiểm tra phát thành công KHÔNG chứng minh có bản quyền hay giấy phép sử dụng; tôi tự chịu trách nhiệm về nội dung xem, dữ liệu và việc tuân thủ pháp luật.';
  function isReady(kind,accepted){
   const checks=Array.isArray(accepted)?accepted:[];
   return kind==='smart-start'||kind==='smart-import'
