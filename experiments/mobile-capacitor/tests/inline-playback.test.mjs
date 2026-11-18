@@ -6,7 +6,7 @@ const root=path.resolve(import.meta.dirname,'..');
 const main=fs.readFileSync(path.join(root,'src/main.js'),'utf8');
 const css=fs.readFileSync(path.join(root,'src/styles.css'),'utf8');
 test('regular Play uses inline video, not native fullscreen',()=>{
- const start=main.indexOf('async function play(c,requestedURL)');
+ const start=main.indexOf('async function play(c,requestedURL');
  const end=main.indexOf('async function playFullscreen()',start);
  assert.ok(start>0&&end>start);
  const inline=main.slice(start,end);
