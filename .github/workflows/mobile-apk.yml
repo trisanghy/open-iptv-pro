@@ -9,7 +9,7 @@ on:
 permissions:
   contents: write
 concurrency:
-  group: mobile-release-${{ github.ref }}-mobile6
+  group: mobile-release-${{ github.ref }}-mobile6b
   cancel-in-progress: false
 env:
   MOBILE_VERSION: 4.23.17-mobile.6
@@ -131,37 +131,7 @@ jobs:
           profile: pixel_6
           disable-animations: true
           emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim -memory 4096
-          script: |
-            adb install -r release/OpenIPTVPro-Mobile-4.23.17-mobile.6-debug.apk
-            adb shell am force-stop com.google.android.apps.nexuslauncher || true
-            adb shell am force-stop com.android.launcher3 || true
-            adb shell am start -W -n com.trisanghy.openiptvpro.mobile/.MainActivity
-            sleep 6
-            for attempt in 1 2; do
-              timeout 18s adb shell uiautomator dump /sdcard/window.xml >/dev/null 2>&1 || true
-              if adb shell cat /sdcard/window.xml 2>/dev/null | grep -Eqi 'responding'; then
-                adb shell input tap 310 1185
-                sleep 3
-                adb shell am start -W -n com.trisanghy.openiptvpro.mobile/.MainActivity
-              else
-                break
-              fi
-            done
-            mkdir -p release
-            adb exec-out screencap -p > release/OpenIPTVPro-Mobile-4.23.17-mobile.6-Android-screenshot.png
-            SIZE="$(adb shell wm size | grep -Eo '[0-9]+x[0-9]+' | tail -1)"
-            WIDTH="${SIZE%x*}"
-            HEIGHT="${SIZE#*x}"
-            adb shell input tap "$((WIDTH*9/10))" "$((HEIGHT-230))"
-            sleep 2
-            adb exec-out screencap -p > release/OpenIPTVPro-Mobile-4.23.17-mobile.6-Android-more.png
-            file release/OpenIPTVPro-Mobile-4.23.17-mobile.6-Android-screenshot.png | grep -q 'PNG image data'
-            file release/OpenIPTVPro-Mobile-4.23.17-mobile.6-Android-more.png | grep -q 'PNG image data'
-            if cmp -s release/OpenIPTVPro-Mobile-4.23.17-mobile.6-Android-screenshot.png release/OpenIPTVPro-Mobile-4.23.17-mobile.6-Android-more.png; then
-              echo "::error::More menu not opened or Android screenshot frozen"
-              exit 1
-            fi
-            test "$(stat -c%s release/OpenIPTVPro-Mobile-4.23.17-mobile.6-Android-screenshot.png)" -gt 20000
+          script: bash experiments/mobile-capacitor/scripts/capture-android-screens.sh
       - uses: actions/upload-artifact@v4
         with:
           name: Mobile-Android-Screenshot
