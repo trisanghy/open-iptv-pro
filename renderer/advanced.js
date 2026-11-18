@@ -11,7 +11,7 @@
  if(!state.health||typeof state.health!=='object')state.health={};
  if(!Array.isArray(state.reminders))state.reminders=[];
  state.autoTimeshift=state.autoTimeshift===true;
- if(![5,10,15,30].includes(Number(state.replayMinutes)))state.replayMinutes=10;
+ if(!Number.isInteger(Number(state.replayMinutes))||Number(state.replayMinutes)<1||Number(state.replayMinutes)>32)state.replayMinutes=10;
  ctx.getStore().alternates=state.alternates;
  // WebViews have a small per-origin storage quota. Detailed probes are ephemeral;
  // never let 1,000+ checked channels evict playlists, favorites, PINs or profiles.
@@ -143,16 +143,19 @@
  let buffering=false,bufferId='',bufferStarting=false,bufferRequest=0;
  let activeChannelId='',autoAttemptedId='',autoSuppressedId='';
  const autoSetting=$('#autoTimeshiftSetting'),autoLabel=$('#autoTimeshiftState');
- function replayMinutes(){return [5,10,15,30].includes(Number(state.replayMinutes))?Number(state.replayMinutes):10;}
+ function replayMinutes(){const value=Number(state.replayMinutes);return Number.isInteger(value)&&value>=1&&value<=32?value:10;}
+ const replayChoice=$('#replayMinutesChoice');
  function syncReplayUI(){const minutes=replayMinutes();
-  document.querySelectorAll('input[name="replayMinutesChoice"]').forEach(input=>{input.checked=Number(input.value)===minutes;});
+  if(replayChoice)replayChoice.value=String(minutes);
   for(const id of ['bufferWindowMinutes','bufferInfoMinutes','autoTimeshiftWindowMinutes']){const el=$('#'+id);if(el)el.textContent=String(minutes);}
   const label=$('#replayMinutesState');if(label)label.textContent='Đang dùng: '+minutes+' phút'+(buffering?' · Bộ đệm đang chạy giữ thời gian cũ':'');
  }
- document.querySelectorAll('input[name="replayMinutesChoice"]').forEach(input=>input.addEventListener('change',()=>{
-  if(!input.checked)return;state.replayMinutes=Number(input.value);save();syncReplayUI();
+ replayChoice?.addEventListener('change',()=>{
+  const n=Number(replayChoice.value);
+  if(!Number.isInteger(n)||n<1||n>32){syncReplayUI();return;}
+  state.replayMinutes=n;save();syncReplayUI();
   ctx.toast('Đã lưu tua lại '+replayMinutes()+' phút; áp dụng từ lần bật bộ đệm tiếp theo');
- }));
+ });
  syncReplayUI();
  function describeAutoSetting(){autoSetting.checked=!!state.autoTimeshift;autoLabel.textContent=state.autoTimeshift?(window.streamleaf?.startTimeshift?'Đã bật: tự dùng bộ đệm khi mở kênh LIVE.':'Đã lưu: sẽ tự bật khi chạy bản desktop có FFmpeg.'):'Mặc định: tắt (bật thủ công trong Xem TV).';}
  autoSetting.addEventListener('change',()=>{state.autoTimeshift=autoSetting.checked;save();describeAutoSetting();ctx.toast(state.autoTimeshift?'Đã bật Tua lại mặc định cho các kênh LIVE tiếp theo':'Đã tắt Tua lại mặc định');});

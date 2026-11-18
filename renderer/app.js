@@ -919,7 +919,7 @@
  async function checkAll(){const t=tasks.check;if(t.running)return toast('Kiểm tra link đang chạy rồi','warn');const all=enabledChannels().slice();if(!all.length)return toast('Chưa có kênh để kiểm tra','warn');
   if(!native)toast('Kiểm tra sâu chỉ có trên bản cài. Trình duyệt có thể bị giới hạn CORS.','warn');
   // Snapshot the configured limit at job start: modifying Settings affects only the next run.
-  const concurrency=Math.min(isTauri?8:32,safeConcurrency(store.checkConcurrency),all.length);
+  const concurrency=Math.min(32,safeConcurrency(store.checkConcurrency),all.length);
   taskStart('check',all.length);t.workers=concurrency;updateTaskUI('check');let cursor=0;
   textStatus(`Kiểm tra ${all.length} kênh với ${concurrency} luồng song song`);
   async function worker(){while(!t.cancel&&cursor<all.length){const ch=all[cursor++];let result;
@@ -1070,18 +1070,17 @@
     const controls=ids.map(id=>$('#'+id)).filter(Boolean);
     const choiceName=key==='snapshotConcurrency'?'snapshotConcurrencyChoice':'checkConcurrencyChoice';
     const statusId=key==='snapshotConcurrency'?'snapshotConcurrencyState':'checkConcurrencyState';
-    const radios=$$('input[name="'+choiceName+'"]');
+    const choice=$('#'+choiceName);
     function updateChoice(value){
-      radios.forEach(radio=>{radio.checked=Number(radio.value)===value;});
+      if(choice)choice.value=String(value);
       const label=$('#'+statusId);if(label)label.textContent='Đang dùng: '+value+' luồng';
     }
     updateChoice(store[key]);
-    radios.forEach(radio=>radio.addEventListener('change',()=>{
-      if(!radio.checked)return;
-      const n=safeConcurrency(radio.value);
+    choice?.addEventListener('change',()=>{
+      const n=safeConcurrency(choice.value);
       store[key]=n;controls.forEach(control=>{control.value=String(n);});
       updateChoice(n);save();
-    }));
+    });
     for(const el of controls){
       el.value=String(store[key]);
       el.addEventListener('change',()=>{

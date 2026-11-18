@@ -16,7 +16,7 @@ fn safe_file(s:&str)->String{
 fn validate_url(raw:&str)->Result<(),String>{crate::stream::valid_http_url(raw).map(|_|())}
 pub async fn start_timeshift(state:&Arc<AppState>,url:&str,minutes:u32)->Result<Value,String>{
  validate_url(url)?;
- if ![5,10,15,30].contains(&minutes){return Err("Tua lại chỉ hỗ trợ 5/10/15/30 phút".into());}
+ if !(1..=32).contains(&minutes){return Err("Tua lại hỗ trợ từ 1 đến 32 phút".into());}
  let bin=state.ffmpeg.as_ref().ok_or("Chưa cài FFmpeg: cần cài FFmpeg rồi mở lại ứng dụng")?;
  stop_timeshift(state).await;
  let id=Uuid::new_v4().simple().to_string();

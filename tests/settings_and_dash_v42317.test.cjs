@@ -26,8 +26,12 @@ test('4.23.17 appearance and accent are one card immediately after styles',()=>{
 test('check/Snapshot independent presets synchronize with existing worker selectors',()=>{
  const app=read('renderer/app.js');
  for(const field of ['checkConcurrencyChoice','snapshotConcurrencyChoice']){
-  assert.ok(html.includes('name="'+field+'"'));
-  for(const value of ['1','4','8','16','32'])assert.ok(html.includes('name="'+field+'" value="'+value+'"'));
+  const start=html.indexOf('<select id="'+field+'"');
+  const end=html.indexOf('</select>',start);
+  assert.ok(start>0&&end>start,field+' must be a native dropdown');
+  const select=html.slice(start,end);
+  for(let value=1;value<=32;value++)assert.ok(select.includes('<option value="'+value+'">'+value+'</option>'),field+': '+value);
+  assert.ok(!html.includes('type="radio" name="'+field+'"'));
   assert.ok(app.includes(field));
  }
  assert.match(app,/store\[key\]=n;controls\.forEach/);

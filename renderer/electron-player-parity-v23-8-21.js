@@ -57,6 +57,21 @@
    const el=$(id);if(el)body.append(el);
   }
   ai.append(menu);
+  // Keep recognition status and Tools on their own slim row, as in the
+  // confirmed Electron layout. Move original DOM nodes; do not clone handlers.
+  const aiFooter=doc.createElement('div');aiFooter.className='caption-ai-footer';
+  const recognitionStatus=$('liveCaptionStatus'),retry=$('captionRetry');
+  if(recognitionStatus)aiFooter.append(recognitionStatus);
+  if(retry)aiFooter.append(retry);
+  aiFooter.append(menu);ai.append(aiFooter);
+  // The whole TTS control set must fit on one row at desktop widths. The
+  // spoken-status message sits underneath, never forcing 'Gốc' to wrap.
+  const speechStatus=$('liveTtsStatus');
+  if(speechStatus){
+   const speechFooter=doc.createElement('div');
+   speechFooter.className='caption-tts-footer';
+   speechFooter.append(speechStatus);tts.append(speechFooter);
+  }
   return true;
  }
  return {mount};
