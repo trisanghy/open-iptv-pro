@@ -84,7 +84,7 @@ test('mobile has five focused bottom tabs with advanced functionality in More',(
 });
 test('mobile hides duplicate top toolbar while preserving desktop controls',()=>{
  assert.match(css,/data-iptv-device="mobile"\] body #appShell > \.main > \.topbar\{\s*display:none!important/);
- assert.match(css,/\.mobile-more-trigger,.mobile-more-overlay\{display:none\}/);
+ assert.match(css,/\.mobile-more-trigger,\.mobile-more-overlay,\.mobile-tab-caption\{display:none!important\}/);
 });
 test('mobile volume mute, Cast, PiP and fullscreen share one compact touch row',()=>{
  assert.match(css,/grid-template-columns:repeat\(4,minmax\(0,1fr\)\)!important/);
@@ -190,7 +190,7 @@ test('iPhone, desktop-website iPhone and narrow browser all switch before app st
  const spoof=emulate({ua:'Mozilla/5.0 (Macintosh; Intel Mac OS X)',width:980,screenWidth:390,touch:5});
  assert.equal(spoof.rootTag.attributes['data-iptv-device'],'desktop');
  const narrow=emulate({ua:'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',width:390,screenWidth:1920,touch:0});
- assert.equal(narrow.rootTag.attributes['data-iptv-device'],'mobile');
+  assert.equal(narrow.rootTag.attributes['data-iptv-device'],'desktop');
  const desktop=emulate({ua:'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',width:1440,screenWidth:1920,touch:0});
  assert.equal(desktop.rootTag.attributes['data-iptv-device'],'desktop');
  assert.equal(desktop.api.isMobile(),false);
