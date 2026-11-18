@@ -101,3 +101,9 @@ Một số trình duyệt nhúng không đổi User-Agent khi chuyển chế đ�
 ## Giao diện TV rộng không có EPG bên phải — 18/11/2026
 
 Đã ẩn riêng panel EPG bên phải (`#themeGuidePanel`) trên trang Xem truyền hình của tất cả phong cách, bao gồm Cinema, Glass và Broadcast. Các layout desktop được cập nhật: Cinema chỉ còn một cột video/điều khiển rộng đầy đủ; Glass và Broadcast giữ điều hướng kênh ở trái nhưng bỏ hẳn cột EPG bên phải. Bỏ giới hạn chiều cao 520px của video Cinema để khung video thực sự rộng hơn. **Giữ nguyên EPG ở nút Lịch, trong thanh điều khiển và trang Lịch EPG.** Phần tử EPG cũ chỉ giữ ẩn trong DOM để các chức năng của `theme-stage.js` không bị ngắt. Desktop Web được triển khai từ tệp `web-tv-wide.css` và builder WebView có cùng cấu hình để phát hành sau không khôi phục panel.
+
+## Mobile Controls Align (2026-11-18)
+
+Căn đồng bộ bốn nút Âm lượng, AirPlay/Cast, PiP và Toàn màn hình trong cùng lưới 4 cột; icon SVG đồng kích thước 24px căn hình học chính giữa, vùng chạm 48px. Trên iPhone biểu tượng AirPlay hiển thị chính xác, trạng thái fullscreen vẫn đổi khi bật/tắt. Giữ nguyên API và click handler hiện có.
+
+Thanh điều hướng chân trang mobile chuyển sang CSS Grid 5 cột `minmax(0,1fr)` để loại bỏ tràn ngang do flex 20% cộng padding/khoảng cách. Giữ năm mục TV, Yêu thích, Lịch, Nguồn, Thêm; bảo vệ safe area iPhone và không che thông báo. Chỉ áp dụng chế độ mobile, không thay đổi desktop hay dữ liệu.

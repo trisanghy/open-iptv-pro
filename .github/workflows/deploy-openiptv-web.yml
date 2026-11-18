@@ -44,7 +44,7 @@ jobs:
             test -d "$dir"
             cp -R "$dir" "_site/$dir"
           done
-          for f in index.html huong-dan.html app.js web-only.js hls.min.js dash.all.min.js supabase-sdk.js cloud-core.js cloud-sync.js source-use-consent-v1.js source-use-consent-v1.css web-mobile-player.js web-mobile-player.css web-player-icons.js web-player-icons.css web-tv-wide.css web-channel-snapshot.js; do
+          for f in index.html huong-dan.html app.js web-only.js hls.min.js dash.all.min.js supabase-sdk.js cloud-core.js cloud-sync.js source-use-consent-v1.js source-use-consent-v1.css web-mobile-player.js web-mobile-player.css web-player-icons.js web-player-icons.css web-tv-wide.css web-mobile-controls-polish.css web-channel-snapshot.js; do
             test -s "_site/$f"
           done
           test -s _site/robots.txt && test -s _site/sitemap.xml
@@ -109,6 +109,8 @@ jobs:
           node --check _site/app.js
           node --check _site/web-player-icons.js
           node --test web-online/tests/web-player-icons.test.cjs
+          node --test web-online/tests/web-mobile-controls-polish.test.cjs
+          grep -Fq 'web-mobile-controls-polish.css?v=mobile-controls-align-20261118l' _site/index.html
           node --check _site/cast-ui.js
           node --test web-online/tests/web-airplay.test.cjs
           grep -Fq 'x-webkit-airplay="allow"' _site/index.html
