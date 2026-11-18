@@ -1,3 +1,10 @@
+## Gói tổng hợp v4.23.69 — 18/11/2026
+
+- Tập hợp ba nhánh đã kiểm thử trên `main`: Electron Desktop **v4.23.68** (`6ea66b51bd99`), Rust Lab Beta **v23.8.30** (`bfd03e86c643`), và Web Online (`713509deab7b`).
+- Giữ nguyên bộ cài Electron v4.23.68; đưa Rust Lab v23.8.30 Windows/Mac và mã Web mới vào release chung với checksum và full-source ZIP.
+- Đồng bộ cảnh báo bản quyền M3U / quyền sử dụng Smart Discovery ở ba bản theo hành vi từng nền tảng; riêng Rust Lab bao gồm bảo vệ DNS/redirect SSRF.
+- Không thay các tag/release cũ, không đổi nhánh Electron, Rust hoặc Web. `v4.23.69` là phiên bản gói tổng hợp, không thay phiên bản ứng dụng Electron.
+
 ## v4.23.68 — 18/11/2026: Electron Stable / Rust Beta / Web Online
 
 - **Electron:** Lưu và tự khôi phục ba công tắc Live Caption/Translate/TTS; CC dài tự xuống dòng, màu/cỡ chữ/vị trí/viền/nền; hiển thị CC trong fullscreen và PiP ghép hình khi nguồn cho phép; giảm trễ và đồng bộ phụ đề/TTS với video.

@@ -49,7 +49,7 @@ test('v4.23.67: UI shows CPU/GPU, RAM, disk and actual machine info using the se
  assert.equal(require('../package.json').version,'4.23.68');
 });
 test('v4.23.67: personal build still produces only native app, opens Finder and cleans source',()=>{
- const s=read('build-mac-electron.sh');
+ const s=read('build-mac-v42366.sh');
  assert.match(s,/--dir/);
  assert.match(s,/open "\$OUT"/);
  assert.match(s,/rm -rf "\$TMP"/);

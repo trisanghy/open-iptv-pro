@@ -1,26 +1,11 @@
 # Open IPTV Pro — Web Online
 
-Bản mã nguồn và website đang phát hành từ nhánh [web/online](https://github.com/trisanghy/open-iptv-pro/tree/web/online), commit `787c73a00b1be51fd5970a204d50d8bc9fcfad91`.
+**Phiên bản Web đang được triển khai:** https://trisanghy.github.io/open-iptv-pro/
 
-**[MỞ WEB IPTV](https://trisanghy.github.io/open-iptv-pro/)** · [Hướng dẫn](huong-dan.html).
+Nguồn web trong thư mục này đồng bộ từ nhánh `web/online` tại commit `713509deab7bb4a7851f4db416949f67c7fb9f9f`. Website hỗ trợ nhập M3U, tìm kênh, yêu thích, EPG, hiển thị video, điều khiển trình phát và đồng bộ Supabase tùy cấu hình. Hạn chế CORS, codec, autoplay, fullscreen và PiP phụ thuộc trình duyệt; Web không có FFmpeg native, Whisper/TTS offline và tua lại native như Desktop.
 
-## Cấu trúc
+Trước khi nhập file/link M3U hoặc sử dụng Smart Discovery, người dùng phải chủ động xác nhận quyền sử dụng nội dung theo hộp thoại trong ứng dụng. Nguồn công khai hoặc phát được không có nghĩa đã có giấy phép bản quyền. Trong phạm vi pháp luật cho phép, người dùng chịu trách nhiệm với dữ liệu và nội dung mình tự thêm/xem; điều này không thay thế trách nhiệm pháp luật bắt buộc của tác giả.
 
-- `index.html`, các file `.js`/`.css` cùng cấp, `locales/`, `assets/`, `epg/`: **website đã đóng gói**, chạy từ thư mục này qua một HTTP server.
-- `web-online/`: mã nguồn chuyển đổi WebView → Web, script tạo site, kiểm tra EPG/Cloud Sync và tests.
-- `supabase/migrations/`: migration dùng cho Cloud Sync (chỉ chạy nếu chủ dự án cấu hình và cấp quyền).
-- `cloud-config.json`: cấu hình trình duyệt **public**, không chứa service-role secret.
+**Nhánh mã nguồn độc lập:** https://github.com/trisanghy/open-iptv-pro/tree/web/online
 
-Các bản sao code Electron legacy (renderer/, src/, tests/, scripts/) và source ZIP cũ không cần để chạy Website và đã được bỏ khỏi snapshot trên main; mã Electron chính hiện ở gốc repository.
-
-## Chạy & kiểm tra
-
-Dùng máy chủ HTTP tĩnh tại thư mục `web/`, không mở trực tiếp qua `file://` khi cần Fetch/Service Worker hoặc Cloud Sync.
-
-```bash
-python3 -m http.server 8000
-```
-
-Từ thư mục gốc `web/` (tại `http://localhost:8000/`). Có thể kiểm thử các module qua `node --test web-online/tests/*.test.cjs` (Node.js 22+).
-
-Web phụ thuộc CORS, autoplay, codec, DRM và cấu hình Supabase. Không thể đảm bảo mọi nguồn phát vốn hoạt động trên Electron sẽ chạy trên trình duyệt.
+**Hướng dẫn web:** https://trisanghy.github.io/open-iptv-pro/huong-dan.html

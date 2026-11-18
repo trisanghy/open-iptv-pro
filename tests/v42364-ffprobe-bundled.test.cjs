@@ -50,7 +50,6 @@ test('v4.23.67 speech worker, installer and app bundle connect self-contained ff
  assert.match(file('src/local-ai-autoinstall.cjs'),/pythonAudioEnvironment/);
  assert.ok(file('renderer/index.html').includes('<title>Open IPTV Pro '+pkg.version+'</title>'));
  assert.ok(file('renderer/index.html').includes('<span class="version">'+pkg.version+'</span>'));
- assert.match(file('build-mac-electron.sh'),/--dir/);
- assert.match(file('.github/workflows/publish-portfolio-v42368.yml'),/electron-builder/);
- assert.match(file('docs/BUILD.md'),/FFmpeg\/FFprobe/);
+ assert.match(file('build-mac-v42366.sh'),/--dir/);
+ assert.match(file('.github/workflows/test-mac-ffprobe-v42364.yml'),/ffprobe/);
 });

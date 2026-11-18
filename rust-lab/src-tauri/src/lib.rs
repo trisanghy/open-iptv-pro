@@ -8,6 +8,7 @@ mod recordings;
 mod compat;
 mod primary_store;
 mod link_checker;
+mod safe_network;
 mod local_ai;
 
 use std::{path::PathBuf,sync::Arc};

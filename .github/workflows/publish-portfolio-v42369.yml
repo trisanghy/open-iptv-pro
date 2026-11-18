@@ -1,0 +1,139 @@
+name: Publish portfolio v4.23.69 — Electron 4.23.68, Rust 23.8.30, Web
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/publish-portfolio-v42369.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: publish-main-portfolio-v42369
+  cancel-in-progress: false
+jobs:
+  verify:
+    name: Verify the three source trees before public release
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify exact versions and complete source layout
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          test "$(node -p 'require("./package.json").version')" = '4.23.68'
+          test "$(node -p 'require("./rust-lab/package.json").version')" = '4.23.17-tauri.23.8.30'
+          for f in renderer/index.html renderer/source-use-consent-v1.js src/main.cjs rust-lab/src-tauri/Cargo.toml rust-lab/src-tauri/src/safe_network.rs rust-lab/renderer/source-use-consent-v1.js web/index.html web/cloud-sync.js web/source-use-consent-v1.js web/web-only.js web/web-online/tests/source-use-consent-v1.test.cjs RELEASE_NOTES_V4_23_69.md docs/INSTALL_V4_23_69.md docs/COMPARE_EDITIONS_V4_23_69.md docs/RELEASE_SOURCE_MAP_V4_23_69.md; do test -s "$f"; done
+          test "$(grep -c 'smartRevokeTerms' rust-lab/renderer/index.html)" -gt 0
+          node --check renderer/app.js
+          node --check renderer/source-use-consent-v1.js
+          node --check rust-lab/renderer/source-use-consent-v1.js
+          node --check rust-lab/renderer/smart-discovery-ui.js
+          node --check web/source-use-consent-v1.js
+          node --check web/cloud-sync.js
+          node --check web/app.js
+      - name: Electron desktop regression
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          npm install --no-audit --no-fund
+          npm test
+      - name: Rust Lab legal, SSRF and Discovery regression
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          node --test rust-lab/tests/source-use-consent-v1.test.cjs rust-lab/tests/tauri-ssrf-safe-mode-v23-8-28.test.cjs rust-lab/tests/smart_ui_v423.test.cjs
+      - name: Web browser legal and playback regression
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          node --test web/web-online/tests/source-use-consent-v1.test.cjs web/web-online/tests/cloud-core.test.cjs web/web-online/tests/resume-last.test.cjs web/web-online/tests/web-autoplay.test.cjs web/web-online/tests/web-volume.test.cjs web/web-online/tests/browser-channel-check.test.cjs
+
+  publish:
+    name: Verify upstream installers, package full source and publish new immutable release
+    needs: verify
+    runs-on: ubuntu-latest
+    timeout-minutes: 50
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Download and verify immutable Electron v4.23.68 installers
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          mkdir -p electron-upstream rust-upstream release-stage
+          gh release download v4.23.68 --repo "$GITHUB_REPOSITORY" --dir electron-upstream -p 'Open-IPTV-Pro-*.dmg' -p 'Open-IPTV-Pro-*.exe' -p 'SHA256SUMS.txt'
+          (cd electron-upstream &&
+            awk '$2 ~ /^Open-IPTV-Pro-.*[.](dmg|exe)$/ {print}' SHA256SUMS.txt > ELECTRON_SHA256SUMS.txt &&
+            test "$(wc -l < ELECTRON_SHA256SUMS.txt)" -eq 4 &&
+            sha256sum -c ELECTRON_SHA256SUMS.txt)
+          cp electron-upstream/*.dmg electron-upstream/*.exe release-stage/
+          cp electron-upstream/ELECTRON_SHA256SUMS.txt release-stage/SHA256SUMS_ELECTRON_v4.23.68.txt
+      - name: Download and validate official Rust Lab v23.8.30 Mac/Windows artifacts
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          gh release download 'rust-lab/v23.8.30' --repo "$GITHUB_REPOSITORY" --dir rust-upstream
+          (cd rust-upstream &&
+           sha256sum -c SHA256SUMS.txt &&
+           sha256sum -c SHA256SUMS-macOS.txt)
+          for f in OpenIPTVPro-RustLab-v23.8.30-mac-universal.dmg OpenIPTVPro-RustLab-v23.8.30-Windows-Setup-x64.exe OpenIPTVPro-RustLab-v23.8.30-Windows-Portable-x64.zip OpenIPTVPro-RustLab-v23.8.30-Source.zip; do
+            test -s "rust-upstream/$f"
+            cp "rust-upstream/$f" "release-stage/$f"
+          done
+          cp rust-upstream/SHA256SUMS.txt release-stage/SHA256SUMS_RUSTLAB_WINDOWS_v23.8.30.txt
+          cp rust-upstream/SHA256SUMS-macOS.txt release-stage/SHA256SUMS_RUSTLAB_MAC_v23.8.30.txt
+      - name: Archive full main source and current Web Online
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          zip -qr release-stage/OpenIPTVPro_Web_Online_v4.23.69.zip web -x '*/__pycache__/*' '*.pyc'
+          git archive --format=zip --output=release-stage/OpenIPTVPro_Full_Source_v4.23.69.zip HEAD
+          unzip -tqq release-stage/OpenIPTVPro_Full_Source_v4.23.69.zip
+          unzip -p release-stage/OpenIPTVPro_Full_Source_v4.23.69.zip rust-lab/src-tauri/src/safe_network.rs >/dev/null
+          unzip -p release-stage/OpenIPTVPro_Full_Source_v4.23.69.zip web/source-use-consent-v1.js >/dev/null
+          unzip -p release-stage/OpenIPTVPro_Full_Source_v4.23.69.zip renderer/source-use-consent-v1.js >/dev/null
+          for f in RELEASE_NOTES_V4_23_69.md docs/INSTALL_V4_23_69.md docs/COMPARE_EDITIONS_V4_23_69.md docs/RELEASE_SOURCE_MAP_V4_23_69.md; do cp "$f" "release-stage/$(basename "$f")"; done
+          (cd release-stage &&
+            sha256sum *.dmg *.exe *.zip *.md *.txt > SHA256SUMS.txt &&
+            sha256sum -c SHA256SUMS.txt)
+          test "$(find release-stage -maxdepth 1 -name '*.dmg' | wc -l)" -eq 3
+          test "$(find release-stage -maxdepth 1 -name '*.exe' | wc -l)" -eq 3
+          ls -lh release-stage
+      - name: Create new v4.23.69 portfolio release without mutating old releases
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          TAG='v4.23.69'
+          if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "Release $TAG already exists; refusing to overwrite artifacts."
+            exit 0
+          fi
+          if git ls-remote --refs --tags origin "refs/tags/$TAG" | grep -q .; then
+            echo "::error::Existing immutable tag $TAG without release: manual audit required."
+            exit 1
+          fi
+          gh release create "$TAG" release-stage/*             --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA"             --title 'Open IPTV Pro v4.23.69 Bundle — Electron v4.23.68 Stable | Rust Lab v23.8.30 Beta | Web Online'             --notes-file RELEASE_NOTES_V4_23_69.md --latest
+      - name: Verify actual GitHub release file list
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          gh release view v4.23.69 --repo "$GITHUB_REPOSITORY" --json isDraft,isPrerelease,assets --jq '.isDraft==false and .isPrerelease==false' | grep -qx true
+          names="$(gh release view v4.23.69 --repo "$GITHUB_REPOSITORY" --json assets --jq '.assets[].name')"
+          for f in Open-IPTV-Pro-4.23.68-mac-arm64.dmg Open-IPTV-Pro-4.23.68-mac-x64.dmg Open-IPTV-Pro-Setup-4.23.68-x64.exe Open-IPTV-Pro-4.23.68-x64.exe OpenIPTVPro-RustLab-v23.8.30-mac-universal.dmg OpenIPTVPro-RustLab-v23.8.30-Windows-Setup-x64.exe OpenIPTVPro-RustLab-v23.8.30-Windows-Portable-x64.zip OpenIPTVPro-RustLab-v23.8.30-Source.zip OpenIPTVPro_Web_Online_v4.23.69.zip OpenIPTVPro_Full_Source_v4.23.69.zip RELEASE_NOTES_V4_23_69.md INSTALL_V4_23_69.md COMPARE_EDITIONS_V4_23_69.md RELEASE_SOURCE_MAP_V4_23_69.md SHA256SUMS.txt; do
+            echo "$names" | grep -Fxq "$f" || { echo "::error::Missing release asset: $f"; exit 1; }
+          done

@@ -49,6 +49,8 @@
  }
  function render(){metrics();renderRows();controls(false);}
  async function choices(){
+  // No third-party catalog retrieval before explicit Smart Discovery consent.
+  if(!window.OpenIPTVSourceConsent?.isSmartAccepted?.())return;
   const kind=$('smartCatalog')?.value||'country';catalogKind=kind;
   const wrap=$('smartCountryWrap');if(wrap)wrap.hidden=kind==='global'||kind==='freetv';
   if(kind==='global'||kind==='freetv')return;
@@ -67,6 +69,8 @@
   if(busy)return;
   if(window.IPTVProAdvanced?.canEdit?.()===false)return ctx.toast('Hồ sơ trẻ em không được nhập nguồn','warn');
   if(!window.streamleaf?.smartLoad&&!window.streamleaf?.smartCountry){say('Smart Discovery yêu cầu ứng dụng desktop Windows/macOS');return;}
+  if(!(await window.OpenIPTVSourceConsent?.requireSmart?.())){say('Cần xác nhận điều khoản Smart Discovery trước khi khám phá nguồn.');return;}
+  await choices();
   controls(true);stop=false;discovery=null;candidates=[];visibleRows=150;const seq=++generation;
   const kind=$('smartCatalog')?.value||'country',code=$('smartCountry').value;
   say('Đang tải danh mục nguồn công khai…');$('smartProgressBar').style.width='0%';
@@ -82,6 +86,7 @@
  }
  async function verify(){
   if(busy||!candidates.length||!window.streamleaf?.smartCheck)return;
+  if(!(await window.OpenIPTVSourceConsent?.requireSmart?.())){say('Chưa chấp nhận điều khoản Smart Discovery.');return;}
   controls(true);stop=false;
   const range=String($('smartLimit').value||'all');
   // All = every discovered channel, not a hidden 1000-channel cap.
@@ -115,12 +120,12 @@
    say(stop?`Đã hủy sau ${done}/${selected.length} kênh, giữ kết quả đã kiểm tra.`:`Hoàn tất ${done} kênh: ${alive} Sống, ${dead} Die, ${done-alive-dead} chưa rõ.`);
   }finally{render();}
  }
- function add(onlyAlive){if(busy||!discovery)return;
+ async function add(onlyAlive){if(busy||!discovery)return;
   if(window.IPTVProAdvanced?.canEdit?.()===false)return ctx.toast('Hồ sơ trẻ em không được nhập nguồn','warn');
   const chosen=onlyAlive?candidates.filter(c=>c.status==='alive'&&c.proof):candidates;
   if(!chosen.length)return ctx.toast('Không có kênh đã xác minh Sống','warn');
   const label=onlyAlive?'đã xác minh Sống':'chưa kiểm tra đầy đủ';
-  if(!confirm(`Nhập ${chosen.length} kênh ${label} từ ${selectionLabel}?\nDanh sách hiện tại sẽ được giữ nguyên, không thay thế URL nguồn cũ.`))return;
+  if(!(await window.OpenIPTVSourceConsent?.requestSmartImport?.(`Bạn sắp nhập ${chosen.length} kênh ${label} từ ${selectionLabel}. Danh sách hiện tại được giữ nguyên; bạn tự chịu trách nhiệm về quyền sử dụng nguồn.`))){say('Đã hủy nhập Smart Discovery do chưa xác nhận điều khoản.');return;}
   const origin=onlyAlive?discovery.url+'#verified':discovery.url;
   if(ctx.getStore().sources.some(s=>s.origin===origin))return ctx.toast('Nguồn này đã được nhập. Vào Quản lý nguồn để cập nhật hoặc xóa trước khi nhập lại.','warn');
   try{
@@ -154,5 +159,5 @@
  $('smartSearch')?.addEventListener('input',()=>{visibleRows=150;renderRows();});
  $('smartStatusFilter')?.addEventListener('change',()=>{visibleRows=150;renderRows();});
  window.IPTVSmartDiscovery={find,verify};
- void choices();
+ if(window.OpenIPTVSourceConsent?.isSmartAccepted?.())void choices();
 })();

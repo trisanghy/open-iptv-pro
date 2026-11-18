@@ -1,6 +1,6 @@
 //! Electron preload -> Tauri IPC compatibility. The frontend still calls
 //! window.streamleaf.*; all implemented native operations run in Rust.
-use crate::{AppState,stream,smart,backup,recordings,compat,primary_store,link_checker,local_ai};
+use crate::{AppState,stream,smart,backup,recordings,compat,primary_store,link_checker,local_ai,safe_network};
 use std::{sync::Arc,fs,path::PathBuf};
 use tauri::{AppHandle,State};
 use tauri_plugin_dialog::DialogExt;
@@ -180,7 +180,7 @@ pub async fn bridge(app:AppHandle,state:State<'_,Arc<AppState>>,local_ai_state:S
     Ok(json!({"name":file.file_name().and_then(|f|f.to_str()).unwrap_or(""),"content":content}))
   },
   "source:readUrl"=>{
-   let raw=text(&args,0)?;let bytes=fetch_limited(s,raw,25*1024*1024).await?;
+   let raw=text(&args,0)?;let bytes=safe_network::read_bounded(raw,25*1024*1024).await?;
    Ok(json!({"content":String::from_utf8(bytes).map_err(err)?.trim_start_matches('\u{feff}')}))
   },
   "media:proxy"=>{let raw=text(&args,0)?;stream::valid_http_url(raw)?;Ok(json!(stream::proxy_url(s,raw)))},
@@ -205,7 +205,7 @@ pub async fn bridge(app:AppHandle,state:State<'_,Arc<AppState>>,local_ai_state:S
   "smart:country"=>smart::load(s,&json!({"kind":"country","code":text(&args,0)?})).await,
   "smart:catalog-options"=>smart::catalog_options(s,text(&args,0)?).await,
   "smart:load"=>smart::load(s,item(&args,0)).await,
-  "smart:check"=>{smart::safe_stream_url(text(&args,0)?)?;check_link(s,text(&args,0)?).await},
+  "smart:check"=>link_checker::check_discovery(s,text(&args,0)?).await,
   "source:listRepo"=>smart::repo_list(s,text(&args,0)?).await,
   "timeshift:start"=>recordings::start_timeshift(s,text(&args,0)?,item(&args,1).as_u64().unwrap_or(10) as u32).await,
   "timeshift:stop"=>{recordings::stop_timeshift(s).await;Ok(json!(true))},

@@ -1,8 +1,8 @@
 # Open IPTV Pro
 
-**Trình phát IPTV đa nền tảng · Electron Desktop v4.23.68 Stable · Rust Lab v23.8.26 Beta · Web Online**
+**Trình phát IPTV đa nền tảng · Electron Desktop v4.23.68 Stable · Rust Lab v23.8.30 Beta · Web Online**
 
-[**Tải bản cài đặt mới nhất**](https://github.com/trisanghy/open-iptv-pro/releases/tag/v4.23.68) · [**Mở Web Online**](https://trisanghy.github.io/open-iptv-pro/) · [**Xem mã nguồn**](https://github.com/trisanghy/open-iptv-pro) · [**Nhật ký thay đổi**](CHANGELOG.md)
+[**Tải bản cài đặt mới nhất**](https://github.com/trisanghy/open-iptv-pro/releases/tag/v4.23.69) · [**Mở Web Online**](https://trisanghy.github.io/open-iptv-pro/) · [**Xem mã nguồn**](https://github.com/trisanghy/open-iptv-pro) · [**Nhật ký thay đổi**](CHANGELOG.md)
 
 Open IPTV Pro là ứng dụng mã nguồn mở được phát triển như **một dự án cá nhân**, giúp người dùng phát và tự tổ chức các nguồn IPTV/M3U mà **chính họ cung cấp** trên macOS, Windows hoặc trình duyệt. Trọng tâm là xem kênh nhanh, quản lý danh sách hiệu quả, ưu tiên Yêu thích, sử dụng thuận tiện trên cửa sổ nhỏ hoặc màn hình lớn, và có thêm công cụ EPG, ghi hình, kiểm tra luồng cùng AI phụ đề ngoại tuyến.
 
@@ -17,8 +17,10 @@ Open IPTV Pro là ứng dụng mã nguồn mở được phát triển như **m�
 | Phiên bản | Nền tảng | Đối tượng sử dụng | Trạng thái |
 | :--- | :--- | :--- | :--- |
 | **Electron Desktop 4.23.68** | macOS Apple Silicon / Intel; Windows x64 | Sử dụng hằng ngày, tính năng đầy đủ nhất | **Stable** |
-| **Rust Lab 23.8.26** | macOS, Windows x64 | Trải nghiệm ứng dụng Tauri/Rust nhẹ và các tính năng đang phát triển | **Beta độc lập** |
+| **Rust Lab 23.8.30** | macOS, Windows x64 | Trải nghiệm ứng dụng Tauri/Rust nhẹ và các tính năng đang phát triển | **Beta độc lập** |
 | **Web Online** | Trình duyệt trên máy tính/thiết bị hỗ trợ | Xem trực tiếp không cài ứng dụng, đồng bộ tài khoản khi cấu hình | **Web** |
+
+**Gói phát hành chung [v4.23.69](https://github.com/trisanghy/open-iptv-pro/releases/tag/v4.23.69)** gồm Electron Desktop **v4.23.68 Stable**, Rust Lab **v23.8.30 Beta** và Web Online cập nhật từ nhánh `web/online` ngày 18/11/2026. Số v4.23.69 là **phiên bản gói tổng hợp**, không phải phiên bản ứng dụng Electron v4.23.69. Bộ cài từng engine giữ đúng số phiên bản và checksum gốc. Xem [hướng dẫn cài đặt](docs/INSTALL_V4_23_69.md), [so sánh ba bản](docs/COMPARE_EDITIONS_V4_23_69.md) và [bản đồ mã nguồn](docs/RELEASE_SOURCE_MAP_V4_23_69.md).
 
 Mã nguồn Electron ở gốc repository (`renderer/`, `src/`); mã Rust/Tauri trong [`rust-lab/`](rust-lab/); và website trong [`web/`](web/). **Không cài Rust Lab đè lên Electron** hoặc mặc định coi dữ liệu hai ứng dụng là tương thích.
 
@@ -110,7 +112,7 @@ Electron cung cấp **11 kiểu giao diện**: Current, Minimal, Material 3, App
 
 ### Rust Lab (Tauri/Rust Beta)
 
-[**Release Rust Lab v23.8.26**](https://github.com/trisanghy/open-iptv-pro/releases/tag/rust-lab/v23.8.26) có **DMG Universal Mac**, **Windows Setup/Portable** và ZIP mã nguồn riêng. Bản này sử dụng Tauri 2/WebView, có thể yêu cầu **Microsoft Edge WebView2 Runtime** trên Windows. Các tính năng, tương thích stream và dữ liệu không nhất thiết tương đương Electron.
+[**Release Rust Lab v23.8.30**](https://github.com/trisanghy/open-iptv-pro/releases/tag/rust-lab/v23.8.30) có **DMG Universal Mac**, **Windows Setup/Portable** và ZIP mã nguồn riêng. Bản này sử dụng Tauri 2/WebView, có thể yêu cầu **Microsoft Edge WebView2 Runtime** trên Windows. Các tính năng, tương thích stream và dữ liệu không nhất thiết tương đương Electron.
 
 ### Web Online — không cần cài
 

@@ -1,0 +1,28 @@
+/* Legal-use confirmation: explicit checkbox required before any source import
+   or Smart Discovery action. Works with Light, Dark and AMOLED themes. */
+dialog.iptv-legal-consent{
+ position:fixed;inset:0;box-sizing:border-box;margin:auto;
+ width:min(560px,calc(100vw - 28px));max-width:560px;
+ max-height:min(90vh,820px);padding:0;
+ background:var(--ui-card,var(--surface,#171b24));
+ color:var(--text,#f7f8fb);border:1px solid var(--ui-stroke,var(--edge,#4b5260));
+ border-radius:18px;box-shadow:0 28px 85px #0009;overflow:auto;z-index:12000;
+}
+dialog.iptv-legal-consent::backdrop{background:rgba(0,0,0,.76);backdrop-filter:blur(5px)}
+.iptv-legal-card{display:flex;flex-direction:column;gap:14px;padding:clamp(18px,3vw,28px);}
+.iptv-legal-eyebrow{font:750 12px/1.4 system-ui,sans-serif;letter-spacing:.08em;color:var(--accent,#ffb854)}
+.iptv-legal-card h2{font-size:clamp(19px,2.5vw,24px);line-height:1.3;color:var(--text);margin:0}
+.iptv-legal-card p{margin:0;line-height:1.65;font-size:13.5px;color:var(--text)}
+.iptv-legal-card .iptv-legal-extra{padding:11px 13px;border:1px solid var(--ui-stroke,var(--edge,#4b5260));border-radius:10px;background:var(--ui-control,var(--surface2,#252a34))}
+.iptv-legal-check{display:flex;align-items:flex-start;gap:11px;padding:10px 12px;border-radius:11px;border:1px solid var(--ui-stroke,var(--edge,#4b5260));background:var(--ui-control,var(--surface2,#252a34));font-size:13px;line-height:1.55;cursor:pointer}
+.iptv-legal-check input{flex:0 0 17px;width:17px;height:17px;accent-color:var(--accent,#5bafff);margin:2px 0 0}
+.iptv-legal-card a{font-size:12px;color:var(--accent,#7bb7ff);text-decoration:underline;text-underline-offset:3px;align-self:flex-start}
+.iptv-legal-actions{display:flex;justify-content:flex-end;gap:10px;flex-wrap:wrap}
+.iptv-legal-actions button{min-height:39px}
+.iptv-legal-actions button:disabled{cursor:not-allowed;opacity:.48}
+.iptv-legal-card :focus-visible{outline:2px solid var(--accent,#72baff);outline-offset:3px}
+@media(max-width:480px){.iptv-legal-actions>*{flex:1}.iptv-legal-actions button{white-space:normal}}
+
+/* Visible notice alongside the source import actions. */
+.source-legal-inline{margin:12px 0 14px;max-width:1100px;border-left:3px solid var(--accent,#72bbff);padding:10px 13px;border-radius:0 8px 8px 0;background:var(--ui-control,rgba(125,145,170,.10));color:var(--text,#f7f8fb);font-size:13px;line-height:1.6}
+.source-legal-inline strong{font-weight:750}
