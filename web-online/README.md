@@ -83,3 +83,7 @@ Các nút trong trình phát dùng biểu tượng SVG đơn sắc dạng CSS ma
 ### Sửa nút hiện hai icon trên iPhone (18/11/2026)
 
 Các phiên bản trước chỉ ẩn chữ cũ bằng CSS `font-size:0`; những bộ chọn desktop có độ ưu tiên cao vẫn khiến emoji/phím tắt hiện bên cạnh icon SVG. Bản sửa loại bỏ trực tiếp **text node trang trí** ở các nút điều khiển (không xóa phần tử button, ID, event listener, nhãn tiếp cận hay span mô tả). `MutationObserver` theo dõi những thay đổi `textContent` từ mã phát video/yêu thích để không tái xuất hiện icon đôi sau khi phát/tạm dừng/đổi kênh. Không ảnh hưởng điều khiển âm lượng và nguồn phát.
+
+## AirPlay trên iPhone/iPad (18/11/2026)
+
+Trên iOS, bấm nút Cast để yêu cầu bộ chọn AirPlay trực tiếp trong lần chạm nếu Safari/WebKit cung cấp `webkitShowPlaybackTargetPicker()`; có phương án API Remote Playback khi được hỗ trợ. Thẻ video đã bật `x-webkit-airplay="allow"`. Nếu trình duyệt nhúng không hỗ trợ, ứng dụng hiển thị hướng dẫn sử dụng Safari hoặc Phản chiếu màn hình thay cho hộp thoại Cast desktop vô hiệu hóa. Icon Cast đã được căn chính giữa trên mobile. Khả năng phát lên TV còn phụ thuộc trình duyệt, nguồn video và khả năng tương thích của TV; không bảo đảm mọi luồng đều truyền được. Không đổi chức năng Cast desktop hay nội dung IPTV.
