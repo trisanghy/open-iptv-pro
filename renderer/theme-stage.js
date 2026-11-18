@@ -33,17 +33,25 @@
  document.addEventListener('keydown',e=>{if(e.key==='Escape')hideDrawer()});
  $('themeGuideOpen')?.addEventListener('click',()=>{$('openGuideBtn')?.click()});
  // Use current IPTV data directly; the tiles are navigation only, never fake video feeds.
- function createTile(ch,rowById){
+ function createTile(ch,{snapshots={},snapshotBase=''}={}){
   const button=document.createElement('button');button.type='button';button.className='theme-channel-tile';
   button.dataset.channelId=String(ch.id);button.title='Xem '+clean(ch.name);
-  const img=document.createElement('div');img.className='theme-tile-art';
-  const original=rowById.get(String(ch.id));
-  const image=original?.querySelector('.chan-logo img');
-  if(image?.getAttribute('src')){const copy=document.createElement('img');copy.src=image.getAttribute('src');copy.alt='';copy.loading='lazy';img.append(copy)}
-  else{const icon=document.createElement('span');icon.className='theme-tile-empty';icon.textContent='▶';img.append(icon)}
+  const art=document.createElement('div');art.className='theme-tile-art';
+  // Never clone an image out of the on-screen channel list: collapsed or
+  // virtualized channel groups have no visible <img> to clone.
+  const helper=window.OpenIPTVChannelArt;
+  if(helper?.mount){
+   helper.mount(art,{channel:ch,snapshots,snapshotBase,doc:document,eager:true});
+  }else{
+   const fallback=document.createElement('span');fallback.className='theme-tile-empty';
+   fallback.textContent=clean(ch.name).slice(0,4).toUpperCase()||'TV';
+   art.append(fallback);
+  }
   const title=document.createElement('strong');title.textContent=clean(ch.name)||'Kênh IPTV';
-  const badge=document.createElement('span');badge.className='theme-tile-health '+(ch.status||'');badge.title=ch.status==='alive'?'Kênh đã kiểm tra sống':ch.status==='dead'?'Kênh được đánh dấu Die':'Chưa xác minh';
-  img.append(badge);button.append(img,title);
+  const badge=document.createElement('span');badge.className='theme-tile-health '+(ch.status||'');
+  badge.title=ch.status==='alive'?'Kênh đã kiểm tra sống':
+   ch.status==='dead'?'Kênh được đánh dấu Die':'Chưa xác minh';
+  art.append(badge);button.append(art,title);
   button.addEventListener('click',()=>{hideDrawer();window.IPTVState?.playChannel?.(ch.id);});
   return button;
  }
@@ -51,13 +59,23 @@
   const channels=window.IPTVState?.getChannels?.()||[];
   const style=activeStyle();
   if(!['cinema','broadcast','bento'].includes(style)){return;}
-  const top=channels.slice(0,24),snapshots=window.IPTVState?.getStore?.()?.snapshots||{},signature=style+'|'+top.map(c=>String(c.id)+':'+c.name+':'+(c.status||'')+':'+(snapshots[c.url]?.file||snapshots[c.url]?.date||'')).join('|');
+  const top=channels.slice(0,24);
+  const snapshots=window.IPTVState?.getStore?.()?.snapshots||{};
+  const snapshotBase=window.__snapshotBase||'';
+  // React to playlist edits, new snapshots, updated logos and late FFmpeg
+  // capabilities. Never depend on a channel group being expanded.
+  const signature=style+'|'+snapshotBase+'|'+top.map(c=>{
+   const shot=snapshots[c.url]||{};
+   return [c.id,c.url,c.name,c.logo,c.status,shot.file,shot.date,
+    String(shot.data||'').slice(0,80)].join(':');
+  }).join('|');
   if(signature===previousSignature)return;
   previousSignature=signature;
   strip.replaceChildren();
   if(!top.length){const empty=document.createElement('div');empty.className='theme-strip-empty';empty.textContent='Chưa có kênh. Thêm M3U để xuất hiện kênh nổi bật tại đây.';strip.append(empty);return;}
-  const rowById=new Map([...list.querySelectorAll('.channel-item[data-channel-id]')].map(row=>[row.dataset.channelId,row]));
-  const frag=document.createDocumentFragment();top.forEach(ch=>frag.append(createTile(ch,rowById)));strip.append(frag);
+  const frag=document.createDocumentFragment();
+  top.forEach(ch=>frag.append(createTile(ch,{snapshots,snapshotBase})));
+  strip.append(frag);
  }
  $('themeStripPrev')?.addEventListener('click',()=>strip.scrollBy({left:-Math.max(220,strip.clientWidth*.7),behavior:'smooth'}));
  $('themeStripNext')?.addEventListener('click',()=>strip.scrollBy({left:Math.max(220,strip.clientWidth*.7),behavior:'smooth'}));
