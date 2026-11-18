@@ -87,3 +87,7 @@ Các phiên bản trước chỉ ẩn chữ cũ bằng CSS `font-size:0`; nhữn
 ## AirPlay trên iPhone/iPad (18/11/2026)
 
 Trên iOS, bấm nút Cast để yêu cầu bộ chọn AirPlay trực tiếp trong lần chạm nếu Safari/WebKit cung cấp `webkitShowPlaybackTargetPicker()`; có phương án API Remote Playback khi được hỗ trợ. Thẻ video đã bật `x-webkit-airplay="allow"`. Nếu trình duyệt nhúng không hỗ trợ, ứng dụng hiển thị hướng dẫn sử dụng Safari hoặc Phản chiếu màn hình thay cho hộp thoại Cast desktop vô hiệu hóa. Icon Cast đã được căn chính giữa trên mobile. Khả năng phát lên TV còn phụ thuộc trình duyệt, nguồn video và khả năng tương thích của TV; không bảo đảm mọi luồng đều truyền được. Không đổi chức năng Cast desktop hay nội dung IPTV.
+
+## Mobile bootstrap fallback (18/11/2026)
+
+Khắc phục tình trạng trang trắng với sidebar desktop bên trái trên Safari/iOS và trình duyệt nhúng. Nhận diện mobile thực hiện ngay ở `theme-boot.js` trong `<head>`, trước khi tải CSS và trước khi đọc dữ liệu ứng dụng. Logic dự phòng xét iPhone/iPad, viewport nhỏ, thiết bị cảm ứng và cả iPhone giả lập user-agent desktop. Critical stylesheet được tạo cùng lúc để bảo toàn nội dung chính, thanh điều hướng phía dưới ngay cả khi CSS nâng cao bị tải lỗi/chưa sẵn sàng. `web-mobile-player.js` dùng cùng một nguồn nhận diện, tự đồng bộ khi xoay máy/quay lại trang. Đã đổi phiên bản tài nguyên `mobile-recovery-20261118i` để tránh cache cũ. Không sửa dữ liệu IPTV, main hoặc bản desktop.
