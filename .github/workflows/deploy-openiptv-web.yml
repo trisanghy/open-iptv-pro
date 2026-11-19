@@ -28,6 +28,21 @@ jobs:
     steps:
       - name: Checkout isolated web branch
         uses: actions/checkout@v4
+      - name: Complete native localization for all 17 Web languages
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m py_compile web-online/build-web-native-locales.py
+          python3 web-online/build-web-native-locales.py --fill
+          node --check web-native-complete.js
+          node --test web-online/tests/web-native-full-coverage.test.cjs
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add web-online/web-native-complete.json web-native-complete.js
+          if ! git diff --cached --quiet; then
+            git commit -m 'i18n(web): persist complete native translations for all 17 languages'
+            git push origin HEAD:web/online
+          fi
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
@@ -65,6 +80,19 @@ jobs:
           PY
           grep -Fq 'src="source-use-consent-v1.js"' _site/index.html
           grep -Fq 'href="source-use-consent-v1.css"' _site/index.html
+          # Use a content-addressed translation asset on iPhone Safari/Chrome.
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib
+          page=Path('_site/index.html')
+          asset=Path('_site/web-native-complete.js')
+          text=page.read_text(encoding='utf-8')
+          old='web-native-complete.js?v=native-full-20261119a'
+          if text.count(old)!=1 or not asset.is_file():
+              raise SystemExit('Native Web dictionary script missing in staged build')
+          digest=hashlib.sha256(asset.read_bytes()).hexdigest()[:16]
+          page.write_text(text.replace(old,'web-native-complete.js?v='+digest),encoding='utf-8')
+          PY
           echo 'Deploying committed browser-ready source without overwriting source/legal prompts'
       - name: Write public Supabase browser configuration to staged site
         env:
