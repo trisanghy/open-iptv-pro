@@ -20,6 +20,10 @@ test('all screenshot-reported Vietnamese Web labels translate into English',()=>
  const t=makeEngine().t;
  const cases={
   'Thêm tính năng':'More features',
+  '🔊 Bật tiếng':'🔊 Enable sound',
+  'Bật tiếng':'Enable sound',
+  'Bật tiếng cho kênh đang phát':'Enable sound for the current channel',
+  'Tắt tiếng':'Mute',
   'Tải xuống phần mềm':'Download the app',
   'Tài khoản & Đồng bộ đám mây':'Account & Cloud Sync',
   '☁ Tài khoản & Đồng bộ đám mây':'☁ Account & Cloud Sync',
@@ -65,4 +69,20 @@ test('root UI language parser has 17 selectable options and never changes source
  assert.match(source,/skipSelector=.*#playingTitle/);
  assert.match(source,/Object\.assign\(dictionaries\.en/);
  assert.match(source,/MutationObserver/);
+});
+
+test('iPhone Chrome unmute overlay follows UI language without changing the one-tap recovery action',()=>{
+ const t=makeEngine().t;
+ const recovery=fs.readFileSync(path.join(root,'web-ios-audio-recovery.js'),'utf8');
+ assert.match(recovery,/assist\.textContent='🔊 Bật tiếng'/);
+ assert.match(recovery,/assist\.hidden=!\(silent&&live\)/);
+ assert.match(recovery,/assist\.addEventListener\('click'/);
+ assert.match(recovery,/video\.defaultMuted=false;video\.muted=false/);
+ assert.equal(t('🔊 Bật tiếng','en'),'🔊 Enable sound');
+ assert.equal(t('Bật tiếng cho kênh đang phát','en'),'Enable sound for the current channel');
+ assert.equal(t('🔊 Bật tiếng','vi'),'🔊 Bật tiếng');
+ const html=fs.readFileSync(path.join(root,'index.html'),'utf8');
+ assert.match(html,/src="i18n\.js\?v=unmute-language-20261119a"/);
+ const builder=fs.readFileSync(path.join(root,'web-online/prepare-web.py'),'utf8');
+ assert.match(builder,/html=html\.replace\(locale_script,'<script src="i18n\.js\?v=unmute-language-20261119a"><\/script>',1\)/);
 });

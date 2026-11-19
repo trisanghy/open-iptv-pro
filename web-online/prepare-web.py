@@ -302,6 +302,11 @@ fav_end=html.index('</button>',html.index(fav_marker))+len('</button>')
 html=html[:fav_end]+'\\n        '+compact_audio+html[fav_end:]
 html=html.replace('web-background-audio.js?v=lock-audio-20261119c','web-background-audio.js?v=ios-chrome-locktrack-20261119h',1)
 html=html.replace('</head>','<link rel="stylesheet" href="web-background-audio.css?v=lock-artwork-20261119e"/></head>',1)
+# Refresh the localization file URL so iOS/Chrome do not reuse the untranslated unmute control.
+locale_script='<script src="i18n.js"></script>'
+if html.count(locale_script)!=1:
+    sys.exit('Web i18n script anchor changed; cannot apply unmute translation cache version')
+html=html.replace(locale_script,'<script src="i18n.js?v=unmute-language-20261119a"></script>',1)
 (out/'index.html').write_text(html,encoding='utf-8')
 (out/'.nojekyll').write_text('')
 (out/'manifest.webmanifest').write_text(json.dumps({
