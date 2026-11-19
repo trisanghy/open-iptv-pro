@@ -13,7 +13,7 @@ function snapshot(){
  const dictionaryKeys=[];
  // Translation-source keys come from the app's own UI dictionary, never a user's playlist.
  for(const match of read('renderer/i18n.js').matchAll(/"((?:\\.|[^"\\])*)"\s*:/g)){
-   try{const phrase=JSON.parse('"'+match[1]+'"');if(typeof phrase==='string'&&phrase.length<500)dictionaryKeys.push(phrase);}
+   try{const phrase=JSON.parse('"'+match[1]+'"');if(typeof phrase==='string'&&phrase.length<500)dictionaryKeys.push(phrase.replace(/&amp;/g,'&'));}
    catch{}
  }
  return [...new Set([...labels,...attrs,...dictionaryKeys].filter(x=>decoder.test(x)&&!['Tiếng Việt','Português','Português (Brasil)'].includes(x)))];
