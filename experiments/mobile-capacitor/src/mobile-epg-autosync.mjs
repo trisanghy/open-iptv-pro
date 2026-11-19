@@ -1,5 +1,6 @@
 import {Capacitor,CapacitorHttp} from '@capacitor/core';
 import {guideSources,sanitizeGuideURL,matchGuideChannel,makeEPGCache,guideCoverage,epgKey} from './mobile-epg-auto.mjs';
+import {saveMobileEPG,loadMobileEPG} from './mobile-epg-cache.mjs';
 const native=Capacitor.isNativePlatform();
 const $=s=>document.querySelector(s);
 const elt=(tag,text,cls)=>{const n=document.createElement(tag);if(cls)n.className=cls;if(text!==undefined)n.textContent=text;return n;};
@@ -73,6 +74,23 @@ export function installEPGAuto({getState,save,getText,parseDate,getSelectedChann
     return new TextDecoder('utf-8').decode(bytes);
   }
   let downloading=false;
+  async function persist(guide){
+    try{return await saveMobileEPG(guide);}catch(e){console.warn('EPG IndexedDB',e);return false;}
+  }
+  async function restorePersistedEPG(){
+    try{
+      const stored=await loadMobileEPG();
+      if(downloading)return; // An active refresh has priority over old cache.
+      const local=state.epgCache;
+      if(stored && (!local||Date.parse(stored.updatedAt||'')>Date.parse(local.updatedAt||''))){
+        state.epgCache=stored;state.epgCacheSavedToIDB=true;
+        save();onGuide(stored);render();return;
+      }
+      if(local?.items?.length && await persist(local)){
+        state.epgCacheSavedToIDB=true;save();
+      }
+    }catch(e){console.warn('EPG restore',e);}
+  }
   async function refresh(quiet=false){
     if(downloading)return false;
     downloading=true;
@@ -85,22 +103,26 @@ export function installEPGAuto({getState,save,getText,parseDate,getSelectedChann
       for(const source of enabled){
         try{
           const xml=await getGuideText(source.url);
-          const guide=makeEPGCache(xml,parseDate,Date.now(),5000);
+          const guide=makeEPGCache(xml,parseDate,Date.now());
           const coverage=guideCoverage(guide,Date.now(),parseDate);
           if(!coverage.usable)throw Error('EPG đã quá hạn; không có chương trình hiện tại hoặc sắp tới');
           const id=matchGuideChannel(guide,current);
           const currentMatch=!current || !!id && guide.items.some(p=>p.channel===id && (parseDate(p.stop)?.getTime()||0)>Date.now());
           const accepted={...guide,sourceName:source.name,sourceId:source.id};
           if(!currentMatch){candidate??={cache:accepted,url:source.url};continue;}
-          state.epgCache=accepted;state.epgUrl=source.url;
+          const persisted=await persist(accepted);
+          state.epgCache=accepted;state.epgCacheSavedToIDB=persisted;state.epgUrl=source.url;
           save();onGuide(accepted);render();
+          if(!persisted&&!quiet)notify('EPG đã tải nhưng bộ nhớ dài hạn chưa lưu được; giữ trong phiên này','error');
           if(!quiet)notify('Đã tải '+guide.items.length+' lịch EPG từ '+source.name,'ok');
           return true;
         }catch(e){lastError=(e?.message||String(e));console.warn('XMLTV',source.name,lastError);}
       }
       if(candidate){
-        state.epgCache=candidate.cache;state.epgUrl=candidate.url;
+        const persisted=await persist(candidate.cache);
+        state.epgCache=candidate.cache;state.epgCacheSavedToIDB=persisted;state.epgUrl=candidate.url;
         save();onGuide(candidate.cache);render();
+        if(!persisted&&!quiet)notify('Bộ nhớ EPG dài hạn không khả dụng; giữ lịch phiên hiện tại','error');
         show('Đã tải lịch EPG nhưng chưa khớp kênh đang chọn; thử chọn tvg-id khác.');
         if(!quiet)notify('EPG đã tải, nhưng chưa khớp kênh đang chọn.','ok');
         return true;
@@ -121,6 +143,6 @@ export function installEPGAuto({getState,save,getText,parseDate,getSelectedChann
   $('#autoRefreshPlaylists').onchange=e=>{state.settings.autoRefreshPlaylists=e.target.checked;save();};
   $('#autoResumeLast').onchange=e=>{state.settings.autoResumeLast=e.target.checked;save();};
   $('#addEPGSource').onclick=()=>{try{addCustom();}catch(e){notify(e.message,'error');}};
-  render();
+  render();void restorePersistedEPG();
   return {render,renderRows,refresh,addCustom};
 }
