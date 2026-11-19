@@ -10,9 +10,9 @@ Open IPTV Pro là ứng dụng mã nguồn mở được phát triển như **m�
 
 > ⚠️ **CẢNH BÁO QUYỀN SỬ DỤNG / COPYRIGHT & CONTENT RIGHTS:** Trước khi mở **file M3U**, nhập **URL M3U** hoặc thêm playlist từ repository, ứng dụng yêu cầu người dùng tự tích ô xác nhận có quyền sử dụng nguồn. **Smart Discovery** yêu cầu xác nhận riêng **hai điều khoản về nguồn, bản quyền và trách nhiệm người dùng trước khi tìm/kiểm tra**, rồi xác nhận lại trước khi nhập kênh; có thể hủy. Kênh công khai hoặc kiểm tra phát thành công **không đồng nghĩa được cấp phép**. **Tác giả không cung cấp nội dung, không chịu trách nhiệm về nguồn, chương trình người dùng nhập và xem, hoặc dữ liệu do người dùng quản lý trong phạm vi pháp luật cho phép.** Xem [Thông báo bản quyền và trách nhiệm](COPYRIGHT_NOTICE_V4_23_70.md) và phần tuyên bố ở cuối README.
 
-![Ảnh chụp màn hình giao diện chính Open IPTV Pro](https://raw.githubusercontent.com/trisanghy/open-iptv-pro/v4.23.68/docs/images/main-interface.png)
+![Ảnh chụp màn hình Open IPTV Pro Web mới nhất — trình phát có nguồn demo nội bộ](docs/images/web-gallery/desktop-tv.png)
 
-> **Về ảnh minh họa:** Các ảnh bên dưới là ảnh chụp **thực tế từ những phiên bản trước của dự án** được lưu tại tag GitHub `v4.23.68`, không phải hình render quảng cáo. Bố cục, tên nút và màu có thể khác một phần so với v4.23.68. Ảnh được nhúng qua link tag bất biến để không đưa lại các ảnh nặng vào mã nguồn `main`.
+> **Ảnh cập nhật 19/11/2026:** Thư viện 12 ảnh dưới đây được chụp tự động từ **Web Online thực tế** trên nhánh `web/online` bằng Chromium trong GitHub Actions. Video/playlist minh họa tự tạo, không sử dụng nguồn IPTV riêng tư hay bản quyền bên thứ ba. Ảnh iOS và Android sử dụng **giả lập thiết bị trình duyệt**, không phải ảnh chụp Safari trên iPhone thật hoặc APK/IPA. Ảnh ứng dụng Electron/Rust Lab lịch sử được giữ trong `docs/images` và không bị gọi nhầm là giao diện hiện tại.
 
 ## 1. Các phiên bản
 
@@ -71,19 +71,37 @@ Mã nguồn Electron ở gốc repository (`renderer/`, `src/`); mã Rust/Tauri 
 
 Electron cung cấp **11 kiểu giao diện**: Current, Minimal, Material 3, Apple HIG, Liquid, Cinema, Fluent, Glass, Broadcast, Bento và Swiss. Các layout này dành cho nhu cầu xem kênh, điều khiển, EPG và Yêu thích khác nhau. Một số layout có thể thu gọn panel **Kênh hiện tại** để tăng diện tích video. Màu nền và độ tương phản thay đổi theo chế độ Sáng/Tối/AMOLED.
 
-## 3. Hình ảnh chụp màn hình
+## 3. Hình ảnh chụp màn hình mới nhất (Web Online)
 
-| Trình phát video | Danh sách và chuyển kênh |
+Toàn bộ ảnh chụp **từ website Open IPTV Pro Web đang được dựng và kiểm thử**. Mỗi ảnh có thể bấm để mở nguyên kích thước; video demo là video riêng tạo bằng FFmpeg, không phải chương trình IPTV thực tế.
+
+### Desktop Web — 1536 × 960
+
+| Trình phát Web desktop | Quản lý nguồn M3U |
 | :---: | :---: |
-| <img src="https://raw.githubusercontent.com/trisanghy/open-iptv-pro/v4.23.68/docs/images/OpenIPTVPro-v4.23.37-player-layout.jpg" width="460" alt="Ảnh chụp trình phát Open IPTV Pro"> | <img src="https://raw.githubusercontent.com/trisanghy/open-iptv-pro/v4.23.68/docs/images/OpenIPTVPro-v4.23.37-channel-list.jpg" width="460" alt="Ảnh chụp danh sách kênh IPTV"> |
-| **Yêu thích** | **EPG / Lịch chương trình** |
-| <img src="https://raw.githubusercontent.com/trisanghy/open-iptv-pro/v4.23.68/docs/images/favorites-v4-13.png" width="460" alt="Danh sách kênh yêu thích"> | <img src="https://raw.githubusercontent.com/trisanghy/open-iptv-pro/v4.23.68/docs/images/epg-v4-1.png" width="460" alt="Lịch phát sóng EPG"> |
-| **MultiView** | **Ảnh chụp kênh** |
-| <img src="https://raw.githubusercontent.com/trisanghy/open-iptv-pro/v4.23.68/docs/images/multiview-v4-4.png" width="460" alt="Chế độ MultiView"> | <img src="https://raw.githubusercontent.com/trisanghy/open-iptv-pro/v4.23.68/docs/images/snapshots-v4-3.png" width="460" alt="Chức năng tạo ảnh chụp kênh"> |
-| **Chế độ tối** | **Chế độ sáng** |
-| <img src="https://raw.githubusercontent.com/trisanghy/open-iptv-pro/v4.23.68/docs/images/settings-theme-dark-v4-8.png" width="460" alt="Giao diện tối"> | <img src="https://raw.githubusercontent.com/trisanghy/open-iptv-pro/v4.23.68/docs/images/settings-theme-light-v4-8.png" width="460" alt="Giao diện sáng"> |
+| [<img src="docs/images/web-gallery/desktop-tv.png" alt="Ảnh Open IPTV Pro Trình phát Web desktop" width="460">](docs/images/web-gallery/desktop-tv.png) | [<img src="docs/images/web-gallery/desktop-sources.png" alt="Ảnh Open IPTV Pro Quản lý nguồn M3U" width="460">](docs/images/web-gallery/desktop-sources.png) |
+| Lịch EPG | Cài đặt giao diện |
+| [<img src="docs/images/web-gallery/desktop-epg.png" alt="Ảnh Open IPTV Pro Lịch EPG" width="460">](docs/images/web-gallery/desktop-epg.png) | [<img src="docs/images/web-gallery/desktop-settings.png" alt="Ảnh Open IPTV Pro Cài đặt giao diện" width="460">](docs/images/web-gallery/desktop-settings.png) |
 
-Ảnh về các tính năng khác: [AirPlay / thiết bị phát](https://raw.githubusercontent.com/trisanghy/open-iptv-pro/v4.23.68/docs/images/airplay-devices-v4-21-1.png) · [Toàn bộ ảnh lịch sử](https://github.com/trisanghy/open-iptv-pro/tree/v4.23.68/docs/images).
+### Mobile Web — iOS giả lập (393 × 852)
+
+| iOS Web — trình phát | iOS Web — danh sách kênh |
+| :---: | :---: |
+| [<img src="docs/images/web-gallery/ios-tv.png" alt="Ảnh Open IPTV Pro iOS Web — trình phát" width="460">](docs/images/web-gallery/ios-tv.png) | [<img src="docs/images/web-gallery/ios-channels.png" alt="Ảnh Open IPTV Pro iOS Web — danh sách kênh" width="460">](docs/images/web-gallery/ios-channels.png) |
+| iOS Web — nguồn M3U | iOS Web — yêu thích |
+| [<img src="docs/images/web-gallery/ios-sources.png" alt="Ảnh Open IPTV Pro iOS Web — nguồn M3U" width="460">](docs/images/web-gallery/ios-sources.png) | [<img src="docs/images/web-gallery/ios-favorites.png" alt="Ảnh Open IPTV Pro iOS Web — yêu thích" width="460">](docs/images/web-gallery/ios-favorites.png) |
+
+### Mobile Web — Android giả lập (412 × 915)
+
+| Android Web — trình phát | Android Web — danh sách kênh |
+| :---: | :---: |
+| [<img src="docs/images/web-gallery/android-tv.png" alt="Ảnh Open IPTV Pro Android Web — trình phát" width="460">](docs/images/web-gallery/android-tv.png) | [<img src="docs/images/web-gallery/android-channels.png" alt="Ảnh Open IPTV Pro Android Web — danh sách kênh" width="460">](docs/images/web-gallery/android-channels.png) |
+| Android Web — EPG | Android Web — cài đặt |
+| [<img src="docs/images/web-gallery/android-epg.png" alt="Ảnh Open IPTV Pro Android Web — EPG" width="460">](docs/images/web-gallery/android-epg.png) | [<img src="docs/images/web-gallery/android-settings.png" alt="Ảnh Open IPTV Pro Android Web — cài đặt" width="460">](docs/images/web-gallery/android-settings.png) |
+
+> **Lưu ý:** Đây là ảnh chụp **Chromium với cấu hình viewport và user agent iOS/Android** trong CI, không phải kết quả đo trên Safari iPhone, Chrome Android thực tế hay ứng dụng mobile native. Ảnh không chứng minh AirPlay/Cast, codec, nguồn IPTV hoặc EPG hoạt động trên mọi thiết bị. Bộ ảnh 12 tệp và thông tin phương pháp nằm trong [thư mục ảnh hiện hành](docs/images/web-gallery/). 
+>
+> **Ảnh Electron/Rust Lab phiên bản lịch sử:** vẫn được bảo tồn ở [docs/images](docs/images) và [tag v4.23.68](https://github.com/trisanghy/open-iptv-pro/tree/v4.23.68/docs/images), nhưng không dùng những hình này để giới thiệu bản Web mới. Xem thêm [trang chủ với gallery cập nhật](https://trisanghy.github.io/#anh).
 
 ## 4. Tải và cài đặt
 
