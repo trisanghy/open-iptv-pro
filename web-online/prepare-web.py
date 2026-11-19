@@ -333,9 +333,9 @@ if 'web-ios-audio-recovery.js' not in html:
 # Web-only: remove live Timeshift from generated desktop and mobile website.
 # A WebView source refresh must never restore the rewind controls or settings.
 for pattern,label in (
-    (r'<div class="timeshift-actions">[\\s\\S]*?</div>\\s*<small id="bufferInfo">[\\s\\S]*?</small>','Timeshift buttons'),
-    (r'<fieldset class="settings-choice-group" aria-label="Thời gian tua lại">[\\s\\S]*?</fieldset>','Timeshift minutes'),
-    (r'<article class="settings-card" id="defaultBufferSettings">[\\s\\S]*?</article>','Timeshift automatic setting'),
+    (r'<div class="timeshift-actions">[\s\S]*?</div>\s*<small id="bufferInfo">[\s\S]*?</small>','Timeshift buttons'),
+    (r'<fieldset class="settings-choice-group" aria-label="Thời gian tua lại">[\s\S]*?</fieldset>','Timeshift minutes'),
+    (r'<article class="settings-card" id="defaultBufferSettings">[\s\S]*?</article>','Timeshift automatic setting'),
 ):
     html,count=re.subn(pattern,'',html,count=1)
     if count!=1:sys.exit('Missing Web Timeshift removal anchor: '+label)
