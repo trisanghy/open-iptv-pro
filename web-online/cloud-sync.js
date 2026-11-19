@@ -262,7 +262,7 @@
  async function login(provider){
   if(!client)return;
   try{
-   const url=location.origin+location.pathname;
+   const url=new URL('./',location.href).href;
    const {error}=await client.auth.signInWithOAuth({provider,options:{redirectTo:url}});
    if(error)throw error;
   }catch(e){report(e,'khi đăng nhập '+provider);}
@@ -277,7 +277,7 @@
   // in this browser, without following the redirect_to=localhost link.
   // A previously clicked link instead leaves a one-time ?code=... on
   // localhost; that can still be exchanged with the local PKCE verifier.
-  const callback=core.recoveryCode(raw,location.origin+location.pathname);
+  const callback=core.recoveryCode(raw,location.origin+location.pathname)||core.recoveryCode(raw,new URL('./',location.href).href);
   let verification=null;
   if(!callback){
    try{verification=core.verificationLink(raw,client.supabaseUrl);}
@@ -336,7 +336,7 @@
   if(emailSendButton)emailSendButton.disabled=true;
   try{
    const {error}=await client.auth.signInWithOtp({
-    email,options:{emailRedirectTo:location.origin+location.pathname,shouldCreateUser:true}
+    email,options:{emailRedirectTo:new URL('./',location.href).href,shouldCreateUser:true}
    });
    if(error)throw error;
    emailRequested=true;linkHelpOpen=true;syncControls();

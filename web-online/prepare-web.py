@@ -205,3 +205,6 @@ for url in re.findall(r'<(?:script|link)[^>]+(?:src|href)="([^"]+)"',html):
     if not url.startswith(('https:','http:','#')) and not (out/url.split('?',1)[0].split('#',1)[0]).exists():missing.append(url)
 if missing:sys.exit('Missing static assets: '+', '.join(missing))
 print('Web assets validated:',len(list(out.rglob('*'))))
+
+import subprocess
+subprocess.run([sys.executable, str(Path(__file__).with_name('publish-home.py')), str(out)], check=True)
