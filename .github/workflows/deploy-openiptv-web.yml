@@ -183,6 +183,10 @@ jobs:
           node --check _site/features.js
           node --test web-online/tests/web-mobile-channel-always-open.test.cjs
           node --test web-online/tests/web-tv-wide.test.cjs
+          node --check _site/web-fullscreen-controls.js
+          node --test web-online/tests/web-fullscreen-controls.test.cjs
+          grep -Fq 'web-fullscreen-controls.js?v=fullscreen-tools-20261119b' _site/index.html
+          grep -Fq 'web-fullscreen-controls.css?v=fullscreen-tools-20261119b' _site/index.html
           node --test web-online/tests/web-no-timeshift.test.cjs
           grep -Fq 'web-only.css?v=no-timeshift-20261119a' _site/index.html
           if grep -Eq 'id="bufferToggle"|id="bufferRewind"|id="bufferRewind10"|id="bufferLive"|id="autoTimeshiftSetting"|name="replayMinutesChoice"' _site/index.html; then

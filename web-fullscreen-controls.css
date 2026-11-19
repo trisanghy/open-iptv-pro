@@ -1,0 +1,97 @@
+/* Web fullscreen companion: only visible in HTML fullscreen or iOS theater fallback. */
+#page-tv #playerBox .fs-extra,#page-tv #playerBox .fs-action,#page-tv #playerBox .fs-volume{display:none!important}
+html body #page-tv #playerBox:is(:fullscreen,.mobile-theater)>.fullscreen-ux{
+ display:flex!important;flex-wrap:nowrap!important;align-items:center!important;
+ box-sizing:border-box!important;left:0!important;right:0!important;bottom:0!important;
+ min-height:var(--fullscreen-toolbar-height,76px)!important;height:auto!important;
+ margin:0!important;padding:10px max(10px,env(safe-area-inset-right,0px)) max(10px,env(safe-area-inset-bottom,0px)) max(10px,env(safe-area-inset-left,0px))!important;
+ gap:clamp(4px,.6vw,10px)!important;overflow:visible!important;
+ border:0!important;border-top:1px solid #ffffff30!important;border-radius:0!important;
+ background:linear-gradient(180deg,rgba(16,23,36,.94),rgba(10,18,30,.98))!important;color:#f4fafc!important;
+}
+html body #page-tv #playerBox:is(:fullscreen,.mobile-theater) .fs-extra{display:flex!important;align-items:center!important;gap:5px!important;min-width:0!important;margin-left:auto!important}
+html body #page-tv #playerBox:is(:fullscreen,.mobile-theater) .fs-action{display:flex!important;align-items:center!important;justify-content:center!important;flex:0 0 40px!important}
+html body #page-tv #playerBox:is(:fullscreen,.mobile-theater) .fs-volume{display:flex!important;align-items:center!important;gap:7px!important;flex:0 0 126px!important;min-width:0!important}
+html body #page-tv #playerBox:is(:fullscreen,.mobile-theater) .fs-volume input{width:80px!important;min-width:0!important;flex:1!important;accent-color:#4ee58c!important}
+html body #page-tv #playerBox:is(:fullscreen,.mobile-theater) .fullscreen-ux :is(.fs-tool,.fs-action,#fsMuteBtn){
+ display:inline-flex!important;align-items:center!important;justify-content:center!important;gap:7px!important;
+ width:auto!important;height:40px!important;min-width:40px!important;min-height:40px!important;
+ box-sizing:border-box!important;padding:0 10px!important;border:1px solid #ffffff28!important;
+ border-radius:10px!important;background:#ffffff11!important;color:#ecf5fb!important;
+ font:600 12px/1.2 system-ui,sans-serif!important;white-space:nowrap!important;cursor:pointer!important;
+}
+html body #page-tv #playerBox:is(:fullscreen,.mobile-theater) .fullscreen-ux :is(.fs-tool,.fs-action,#fsMuteBtn) svg{
+ display:block!important;width:19px!important;height:19px!important;flex:0 0 19px!important;
+}
+html body #page-tv #playerBox:is(:fullscreen,.mobile-theater) .fullscreen-ux :is(.fs-tool,.fs-action,#fsMuteBtn):is(:hover,[aria-expanded="true"],[aria-pressed="true"]){
+ color:#a2f9c5!important;border-color:#44d687!important;background:#23563d!important;
+}
+html body #page-tv #playerBox:is(:fullscreen,.mobile-theater) .fullscreen-ux #fsExit{
+ order:100!important;flex:0 0 46px!important;margin-left:4px!important;margin-right:0!important;
+ width:46px!important;min-width:46px!important;height:46px!important;min-height:46px!important;
+ border-radius:12px!important;border:1px solid #49e18a!important;
+ background:#12402b!important;color:#aaffcc!important;
+}
+html body #page-tv #playerBox:is(:fullscreen,.mobile-theater) .fullscreen-ux #fsExit::before{width:24px!important;height:24px!important}
+html body #page-tv #playerBox:is(:fullscreen,.mobile-theater) .fullscreen-ux .fs-popup{
+ position:absolute!important;z-index:10001!important;bottom:calc(100% + 12px)!important;top:auto!important;
+ right:clamp(12px,12vw,220px)!important;width:min(395px,calc(100vw - 22px))!important;
+ max-height:min(62vh,calc(100dvh - 115px))!important;overflow-y:auto!important;
+ padding:14px!important;border:1px solid #ffffff38!important;border-radius:16px!important;
+ background:rgba(12,24,38,.97)!important;color:#eaf3f8!important;
+ box-shadow:0 15px 55px #000b!important;backdrop-filter:blur(14px)!important;
+ box-sizing:border-box!important;
+}
+html body #page-tv #playerBox:is(:fullscreen,.mobile-theater) .fullscreen-ux .fs-popup[hidden]{display:none!important}
+html body #page-tv #playerBox:is(:fullscreen,.mobile-theater) .fullscreen-ux #fsEpgPanel{
+ left:clamp(10px,2vw,35px)!important;right:auto!important;width:min(500px,calc(100vw - 22px))!important;
+}
+html body #page-tv #playerBox:is(:fullscreen,.mobile-theater) .fs-popup header{
+ display:flex;align-items:center;justify-content:space-between;gap:10px;
+ margin:0 0 11px;padding-bottom:10px;border-bottom:1px solid #ffffff28;
+ font:700 14px/1.3 system-ui,sans-serif!important;
+}
+html body #page-tv #playerBox:is(:fullscreen,.mobile-theater) .fs-popup header small{
+ min-width:0;max-width:50%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:500;color:#b7c6d2;
+}
+html body #page-tv #playerBox:is(:fullscreen,.mobile-theater) .fs-epg-items,.fs-choices{display:flex;flex-direction:column;gap:4px}
+html body #page-tv #playerBox:is(:fullscreen,.mobile-theater) .fs-epg-item{
+ display:grid;grid-template-columns:108px minmax(0,1fr);gap:8px;align-items:center;
+ padding:9px;border-radius:8px;font:500 12px/1.3 system-ui,sans-serif!important;
+}
+html body #page-tv #playerBox:is(:fullscreen,.mobile-theater) .fs-epg-item[data-onair="true"]{background:#1a5d41!important;color:#c9ffdb!important}
+html body #page-tv #playerBox:is(:fullscreen,.mobile-theater) .fs-epg-item time{white-space:nowrap;color:#bacbd7;font-variant-numeric:tabular-nums}
+html body #page-tv #playerBox:is(:fullscreen,.mobile-theater) .fs-epg-item b{font-size:13px;white-space:nowrap;min-width:0;overflow:hidden;text-overflow:ellipsis}
+html body #page-tv #playerBox:is(:fullscreen,.mobile-theater) .fullscreen-ux .fs-guide-page{
+ display:block!important;width:100%!important;height:auto!important;min-height:40px!important;
+ margin:9px 0 0!important;padding:10px!important;border-radius:9px!important;
+ background:#24563e!important;border:1px solid #49ab72!important;color:#c4ffdd!important;
+ font:650 13px/1.2 system-ui,sans-serif!important;
+}
+html body #page-tv #playerBox:is(:fullscreen,.mobile-theater) .fullscreen-ux .fs-choice{
+ display:flex!important;align-items:center!important;justify-content:space-between!important;
+ width:100%!important;min-width:0!important;min-height:42px!important;height:auto!important;
+ padding:9px 10px!important;gap:8px!important;border:1px solid transparent!important;border-radius:9px!important;
+ color:#f0f7fb!important;background:transparent!important;text-align:left!important;
+ font:500 13px/1.4 system-ui,sans-serif!important;white-space:normal!important;overflow-wrap:anywhere!important;
+}
+html body #page-tv #playerBox:is(:fullscreen,.mobile-theater) .fullscreen-ux .fs-choice[aria-pressed="true"]{
+ border-color:#43996b!important;color:#b6ffd2!important;background:#1f5d43!important;
+}
+html body #page-tv #playerBox:is(:fullscreen,.mobile-theater) .fullscreen-ux button:focus-visible{outline:2px solid #b8ffd0!important;outline-offset:2px!important}
+html body #page-tv #playerBox:is(:fullscreen,.mobile-theater).player-idle:has(.fs-popup:not([hidden])) .fullscreen-ux{opacity:1!important;visibility:visible!important;pointer-events:auto!important;transform:none!important}
+@media(max-width:1050px){
+ html body #page-tv #playerBox:is(:fullscreen,.mobile-theater) .fs-tool{padding:0 8px!important}
+ html body #page-tv #playerBox:is(:fullscreen,.mobile-theater) .fs-tool span{display:none!important}
+ html body #page-tv #playerBox:is(:fullscreen,.mobile-theater) .fs-volume{flex-basis:75px!important}
+}
+@media(max-width:660px){
+ html body #page-tv #playerBox:is(:fullscreen,.mobile-theater)>.fullscreen-ux{padding-inline:7px!important;gap:3px!important}
+ html body #page-tv #playerBox:is(:fullscreen,.mobile-theater) .fullscreen-ux :is(.fs-channel,.fs-clock){display:none!important}
+ html body #page-tv #playerBox:is(:fullscreen,.mobile-theater) .fs-volume,
+ html body #page-tv #playerBox:is(:fullscreen,.mobile-theater) .fs-action{display:none!important}
+ html body #page-tv #playerBox:is(:fullscreen,.mobile-theater) .fullscreen-ux :is(#fsPrev,#fsNext){width:34px!important;min-width:34px!important;height:40px!important}
+ html body #page-tv #playerBox:is(:fullscreen,.mobile-theater) .fullscreen-ux #fsExit{min-width:43px!important;width:43px!important;height:43px!important;margin-left:auto!important}
+ html body #page-tv #playerBox:is(:fullscreen,.mobile-theater) .fs-extra{margin-left:auto!important;gap:3px!important}
+ html body #page-tv #playerBox:is(:fullscreen,.mobile-theater) .fullscreen-ux .fs-popup{left:9px!important;right:9px!important;width:auto!important;max-width:none!important}
+}
