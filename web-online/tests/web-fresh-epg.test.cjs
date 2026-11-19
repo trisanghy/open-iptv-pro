@@ -147,6 +147,7 @@ test('full EPG survives a simulated IndexedDB save/reload without localStorage q
    transaction:()=>{
     const tx={};
     tx.objectStore=()=>({
+     clear:()=>{stored=undefined;}, // atomic replacement removes old XMLTV keys first
      put:(value)=>{stored=structuredClone(value);queueMicrotask(()=>tx.oncomplete?.());},
      get:()=>{const req={};queueMicrotask(()=>{req.result=stored;req.onsuccess?.();});return req;}
     });
