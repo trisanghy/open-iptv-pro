@@ -139,7 +139,9 @@
     root.IPTVState?.toast?.(text(root,'playFirst'),'warn');
     return;
    }
-   if(type==='standalone-blocked'||type==='unsupported'){show(type);return;}
+   if(type==='standalone-blocked'){show(type);return;}
+   const warn=()=>root.IPTVState?.toast?.(text(root,'unsupported'),'warn');
+   if(type==='unsupported'){warn();return;}
    try{
     if(doc.pictureInPictureElement===video&&typeof doc.exitPictureInPicture==='function'){
      Promise.resolve(doc.exitPictureInPicture()).catch(()=>show('unsupported'));
@@ -153,8 +155,8 @@
      return;
     }
     const request=video.requestPictureInPicture();
-    Promise.resolve(request).catch(()=>show(isStandalone(root)?'standalone-blocked':'unsupported'));
-   }catch{show(isStandalone(root)?'standalone-blocked':'unsupported');}
+    Promise.resolve(request).catch(()=>{if(isStandalone(root))show('standalone-blocked');else warn();});
+   }catch{if(isStandalone(root))show('standalone-blocked');else warn();}
   },true);
   return true;
  }
