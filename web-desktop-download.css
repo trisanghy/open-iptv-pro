@@ -1,0 +1,54 @@
+/* Open IPTV Pro: latest desktop download (Web only) */
+.desktop-download-top{display:inline-flex!important;align-items:center;gap:7px;white-space:nowrap;flex:none}
+.desktop-download-top svg{width:18px;height:18px;flex:none;color:var(--accent,#be88f6)}
+.desktop-download-top [data-desktop-download-version]:empty{display:none}
+.desktop-download-top [data-desktop-download-version]{font-size:10px;color:var(--accent,#c39cff)}
+.desktop-download-banner{display:none!important}
+html[data-iptv-device="mobile"] .desktop-download-top{display:none!important}
+html[data-iptv-device="mobile"] #page-tv>.desktop-download-banner{
+ display:flex!important;align-items:center;gap:12px;width:100%;box-sizing:border-box;
+ min-height:60px;margin:0 0 10px!important;padding:10px 13px;text-align:left;
+ border-radius:16px;border:1px solid color-mix(in srgb,var(--accent,#b780ec) 43%,var(--edge,#354657));
+ background:linear-gradient(110deg,color-mix(in srgb,var(--accent,#ab79e7) 16%,var(--surface,#121d2b)),var(--surface,#121d2b));
+ color:var(--text,#eaf1fa);font:inherit;cursor:pointer
+}
+.desktop-download-banner-icon{display:grid;place-items:center;flex:0 0 40px;height:40px;border-radius:12px;
+ background:color-mix(in srgb,var(--accent,#b880f0) 16%,transparent);color:var(--accent,#bc89fa)}
+.desktop-download-banner-icon svg{width:22px;height:22px}
+.desktop-download-banner-copy{display:flex;flex:1 1 auto;min-width:0;flex-direction:column;gap:3px}
+.desktop-download-banner-copy strong{font-size:13px;font-weight:780;line-height:1.3}
+.desktop-download-banner-copy small{font-size:11px;line-height:1.3;color:var(--muted,#9caebf)}
+.desktop-download-banner>svg{width:18px;height:18px;flex:none;color:var(--muted,#95a8bd)}
+.desktop-download-banner:focus-visible,.desktop-download-top:focus-visible{outline:2px solid var(--accent,#c08bfa);outline-offset:3px}
+.desktop-download-overlay[hidden]{display:none!important}
+.desktop-download-overlay{position:fixed;inset:0;z-index:3600;display:grid;place-items:center;
+ background:#000b;backdrop-filter:blur(6px);box-sizing:border-box;padding:12px}
+.desktop-download-dialog{box-sizing:border-box;width:min(100%,500px);max-height:calc(100dvh - 35px);
+ overflow-y:auto;background:var(--surface,#101c29);color:var(--text,#eef4fb);
+ border:1px solid var(--edge,#35475c);border-radius:20px;padding:22px;box-shadow:0 24px 76px #0008}
+.desktop-download-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.desktop-download-eyebrow{font-size:11px;color:var(--accent,#c595f9);font-weight:850;letter-spacing:.09em}
+.desktop-download-title{font-size:21px;line-height:1.26;margin:5px 0 8px}
+.desktop-download-desc{font-size:13px;line-height:1.5;color:var(--muted,#abbac9);margin:0 0 14px}
+.desktop-download-close,.desktop-download-dismiss{background:var(--surface2,#1c2c3c);
+ border:1px solid var(--edge,#35485c);color:inherit;border-radius:10px;cursor:pointer}
+.desktop-download-close{width:37px;height:37px;font-size:22px;flex:none}
+.desktop-download-dismiss{padding:9px 14px;font:inherit}
+.desktop-download-status{font-size:12px;color:var(--muted,#a9b6c7);margin:0 0 11px;line-height:1.5}
+.desktop-download-options{display:grid;gap:9px}
+.desktop-download-option{display:flex;align-items:center;gap:12px;padding:12px;border-radius:13px;
+ border:1px solid var(--edge,#35485e);background:var(--surface2,#1a2a3b);
+ color:var(--text,#f0f3fb);text-decoration:none!important}
+.desktop-download-option:hover,.desktop-download-option:focus-visible{outline:0;border-color:var(--accent,#b988ef);
+ background:color-mix(in srgb,var(--accent,#b988ef) 12%,var(--surface2,#1a2a3b))}
+.desktop-download-os{display:grid;place-items:center;flex:0 0 40px;height:40px;border-radius:11px;
+ font-size:23px;color:var(--accent,#c29bff);background:color-mix(in srgb,var(--accent,#ba87f6) 12%,transparent)}
+.desktop-download-option-text{display:flex;flex:1 1 auto;min-width:0;flex-direction:column;gap:4px}
+.desktop-download-option-text strong{font-size:14px}
+.desktop-download-option-text small{font-size:11px;color:var(--muted,#9baec0)}
+.desktop-download-arrow{font-size:19px;color:var(--accent,#c29bff)}
+.desktop-download-actions{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;
+ margin-top:15px;padding-top:15px;border-top:1px solid var(--edge,#35485c)}
+.desktop-download-releases{color:var(--accent,#c59afa);font-size:12px;font-weight:730;text-decoration:none}
+.desktop-download-note{font-size:11px;line-height:1.4;color:var(--muted,#9aafc4);margin:14px 0 0}
+@media(max-width:560px){.desktop-download-dialog{padding:18px}.desktop-download-title{font-size:19px}}
