@@ -11,10 +11,23 @@
  const clock=t=>new Date(t).toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit'});
  let mode='',serial=0,lastChannel='',lastGuideMinute=-1;
  function el(tag,cls,txt){const node=document.createElement(tag);if(cls)node.className=cls;if(txt!==undefined)node.textContent=String(txt);return node;}
+
+ const tabs=el('div','fs-drawer-tabs');
+ const tabButtons={};
+ for(const [key,label] of [['epg','▤ EPG'],['info','ⓘ Thông tin'],['schedule','▣ Lịch phát']]){
+  const tab=button(label,()=>show(key),'fs-drawer-tab');tab.setAttribute('aria-selected','false');
+  tab.setAttribute('role','tab');tabButtons[key]=tab;tabs.append(tab);
+ }
+ tabs.setAttribute('role','tablist');drawer.querySelector('.fs-drawer-head')?.prepend(tabs);
+ function setTabs(){
+  tabs.hidden=mode==='dvr';
+  for(const [key,tab] of Object.entries(tabButtons))tab.setAttribute('aria-selected',String(mode===key));
+  title.hidden=mode!=='dvr';
+ }
  function isOpen(){return mode&&document.fullscreenElement===box&&!drawer.hidden;}
  function close(){
   mode='';serial++;drawer.hidden=true;box.classList.remove('fs-drawer-open');
-  epgButton.setAttribute('aria-expanded','false');dvrButton.setAttribute('aria-expanded','false');
+  epgButton.setAttribute('aria-expanded','false');dvrButton.setAttribute('aria-expanded','false');setTabs();
  }
  function button(text,handler,cls='fs-drawer-action'){
   const element=el('button',cls,text);element.type='button';element.addEventListener('click',handler);return element;
@@ -24,8 +37,8 @@
   close();const result=document.exitFullscreen?.();
   Promise.resolve(result).catch(()=>{}).finally(()=>context.setPage?.(page));
  }
- function renderEPG(){
-  if(mode!=='epg'||!isOpen())return;
+ function renderEPG(allToday=false){
+  if(!['epg','schedule'].includes(mode)||!isOpen())return;
   const channel=context.getCurrent?.(),guide=window.IPTVExtras?.getGuide?.();
   content.replaceChildren();lastChannel=channel?.id||'';
   lastGuideMinute=Math.floor(Date.now()/60000);
@@ -35,14 +48,21 @@
   try{programmes=window.IPTVGuide?.find?.(guide,channel)||[];}
   catch(error){console.warn('Fullscreen EPG:',error);}
   const now=Date.now();
-  programmes=programmes.filter(p=>Number.isFinite(p.start)&&Number.isFinite(p.end)&&p.end>now).sort((a,b)=>a.start-b.start).slice(0,10);
+  const todayStart=new Date(now);todayStart.setHours(0,0,0,0);
+  const todayEnd=todayStart.getTime()+86400000;
+  programmes=programmes.filter(p=>Number.isFinite(p.start)&&Number.isFinite(p.end)
+    &&(allToday?(p.start<todayEnd && p.end>todayStart.getTime()):p.end>now))
+   .sort((a,b)=>a.start-b.start).slice(0,allToday?32:12);
+  content.append(el('div','fs-epg-day',new Intl.DateTimeFormat(
+    window.OpenIPTVI18n?.getLanguage?.()||'vi',{weekday:'long',day:'numeric',month:'numeric'}
+  ).format(new Date(now))));
   if(!programmes.length){
    content.append(el('p','fs-drawer-empty','Chưa có EPG cho kênh này hoặc lịch đã hết hạn.'));
    content.append(button('Mở trang EPG để tải hoặc ghép lịch',()=>openPage('epg')));
    return;
   }
   for(const prog of programmes){
-   const row=el('article','fs-epg-row');
+   const row=el('article','fs-epg-row'+(prog.start<=now&&prog.end>now?' is-live':''));
    const time=el('time','fs-epg-time',clock(prog.start)+' – '+clock(prog.end));
    const details=el('div','fs-epg-details');
    const active=prog.start<=now&&prog.end>now;
@@ -60,6 +80,28 @@
    content.append(row);
   }
   content.append(button('Xem lịch phát sóng đầy đủ',()=>openPage('epg')));
+ }
+ function renderInfo(){
+  if(mode!=='info'||!isOpen())return;
+  const channel=context.getCurrent?.(),store=context.getStore?.(),video=context.player;
+  content.replaceChildren();lastChannel=channel?.id||'';
+  if(!channel){empty('Chọn một kênh để xem thông tin.');return;}
+  const source=(store?.sources||[]).find(item=>item.id===channel.sourceId);
+  const guide=window.IPTVExtras?.getGuide?.();
+  let nowProgram;
+  try{nowProgram=window.IPTVGuide?.find?.(guide,channel)?.find(p=>p.start<=Date.now()&&p.end>Date.now());}catch{}
+  const details=[
+   ['Kênh',channel.name],
+   ['Nguồn',source?.name||'Playlist M3U'],
+   ['Nhóm',channel.group||'—'],
+   ['Phát',context.getPlayMode?.()||'TV'],
+   ['Chương trình',nowProgram?.title||'Chưa có lịch phát'],
+   ['Độ phân giải',video?.videoWidth&&video?.videoHeight?video.videoWidth+' × '+video.videoHeight:'Chưa có dữ liệu']
+  ];
+  for(const [label,value] of details){
+   const item=el('div','fs-info-row');
+   item.append(el('span','',label),el('strong','',value));content.append(item);
+  }
  }
  const labels={scheduled:'Đã hẹn',recording:'ĐANG GHI',finalizing:'Đang lưu MP4',completed:'Hoàn tất',missed:'Bỏ lỡ',failed:'Lỗi',cancelled:'Đã hủy'};
  async function renderDVR(){
@@ -91,9 +133,12 @@
   if(document.fullscreenElement!==box)return;
   if(mode===next){close();return;}
   serial++;mode=next;drawer.hidden=false;box.classList.add('fs-drawer-open');box.classList.remove('player-idle');
-  epgButton.setAttribute('aria-expanded',String(next==='epg'));
-  dvrButton.setAttribute('aria-expanded',String(next==='dvr'));
-  if(next==='epg')renderEPG();else{lastDVRRefresh=Date.now();void renderDVR();}
+  epgButton.setAttribute('aria-expanded',String(['epg','info','schedule'].includes(next)));
+  dvrButton.setAttribute('aria-expanded',String(next==='dvr'));setTabs();
+  if(next==='epg')renderEPG();
+  else if(next==='schedule')renderEPG(true);
+  else if(next==='info')renderInfo();
+  else{lastDVRRefresh=Date.now();void renderDVR();}
  }
  epgButton.addEventListener('click',()=>show('epg'));
  dvrButton.addEventListener('click',()=>show('dvr'));
@@ -105,12 +150,19 @@
  let lastDVRRefresh=0;
  window.setInterval(()=>{
   if(!isOpen())return;
-  if(mode==='epg'){
-   if(lastChannel!==(context.getCurrent?.()?.id||'')||lastGuideMinute!==Math.floor(Date.now()/60000))renderEPG();
+  if(mode==='epg'||mode==='schedule'){
+   if(lastChannel!==(context.getCurrent?.()?.id||'')||lastGuideMinute!==Math.floor(Date.now()/60000))renderEPG(mode==='schedule');
+  }else if(mode==='info'){
+   if(lastChannel!==(context.getCurrent?.()?.id||''))renderInfo();
   }else if(mode==='dvr'&&Date.now()-lastDVRRefresh>=20000){
    lastDVRRefresh=Date.now();void renderDVR();
   }
  },5000);
  // Optional test hooks are deliberately read-only and cannot alter playlist state.
- window.IPTVFullscreenPanels=Object.freeze({getMode:()=>mode,close});
+ document.addEventListener('openiptv:languagechange',()=>{
+  if(!isOpen())return;
+  if(mode==='epg'||mode==='schedule')renderEPG(mode==='schedule');
+  else if(mode==='info')renderInfo();
+ });
+ window.IPTVFullscreenPanels=Object.freeze({getMode:()=>mode,close,show});
 })();

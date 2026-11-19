@@ -57,8 +57,8 @@
   box.classList.remove('player-idle');
   clearTimeout(hideTimer);
   hideTimer=setTimeout(()=>{
-   if(fs.matches(':focus-within')||fsDragging||box.classList.contains('fs-drawer-open'))return;
-   if(document.fullscreenElement===box&&!box.classList.contains('fs-drawer-open'))box.classList.add('player-idle');
+   if(fs.matches(':focus-within')||fsDragging||box.classList.contains('fs-drawer-open')||box.classList.contains('fs-web-menu-open'))return;
+   if(document.fullscreenElement===box&&!box.classList.contains('fs-drawer-open')&&!box.classList.contains('fs-web-menu-open'))box.classList.add('player-idle');
   },2800);
  };
  document.addEventListener('fullscreenchange',()=>{
@@ -80,7 +80,7 @@
   if(!document.getElementById('page-tv')?.classList.contains('active-page')&&document.fullscreenElement!==box)return;
   if(document.getElementById('modal')&&!document.getElementById('modal').classList.contains('hidden'))return;
   const focus=event.target;
-  if(focus?.closest?.('input,select,textarea,[contenteditable="true"],[role="slider"]'))return;
+  if(focus?.closest?.('input,select,textarea,[contenteditable="true"],[role="slider"],.fs-web-popover,.fs-drawer'))return;
   const key=event.key;
   if(key==='ArrowLeft'||key==='ArrowRight'){
    event.preventDefault();document.getElementById(key==='ArrowLeft'?'prevBtn':'nextBtn')?.click();
