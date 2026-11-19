@@ -1,0 +1,28 @@
+name: Electron locale translation service probe
+on:
+  push:
+    branches: [build-sources/electron-desktop]
+    paths:
+      - '.github/workflows/locale-translation-probe.yml'
+permissions:
+  contents: read
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Probe source-text translation without exposing user data
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          python - <<'PY'
+          import urllib.parse, urllib.request, json
+          for target in ("ko","ru","lo","zh-CN","ar"):
+              query=urllib.parse.urlencode({"client":"gtx","sl":"vi","tl":target,"dt":"t","q":"Danh sách kênh vừa xem"})
+              req=urllib.request.Request("https://translate.googleapis.com/translate_a/single?"+query,headers={"User-Agent":"Mozilla/5.0"})
+              with urllib.request.urlopen(req,timeout=15) as res:
+                  translation=json.load(res)
+              out="".join(x[0] or "" for x in translation[0])
+              if not out or out=="Danh sách kênh vừa xem":raise SystemExit("Translation missing for "+target)
+              print(target,repr(out))
+          PY
