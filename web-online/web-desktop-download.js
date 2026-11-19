@@ -100,6 +100,14 @@
    if(!loaded)void refresh();
   }
   function close(){overlay.hidden=true;previous?.focus?.();}
+  // Reuse the delegated mobile More-menu click handler, not a sixth tab.
+  const moreGrid=doc.querySelector('#iptvMobileMoreOverlay .mobile-more-grid');
+  if(moreGrid&&!moreGrid.querySelector('[data-mobile-more-click="desktopDownloadBtn"]')){
+   const button=doc.createElement('button');button.type='button';
+   button.className='mobile-more-action';button.setAttribute('data-mobile-more-click','desktopDownloadBtn');
+   button.innerHTML='<span aria-hidden="true">⇩</span>Tải bản Desktop';
+   moreGrid.append(button);
+  }
   for(const trigger of triggers)trigger.addEventListener('click',open);
   overlay.addEventListener('click',event=>{
    if(event.target===overlay||event.target.closest('[data-desktop-close]'))close();
