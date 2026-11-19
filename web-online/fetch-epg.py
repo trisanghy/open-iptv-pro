@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Fetch public Vietnam XMLTV safely during a GitHub Actions build.
+"""Fetch EPG.pw Vietnam XMLTV exclusively during a GitHub Actions build.
 
 The browser reads epg/vn.xml from the same GitHub Pages origin, avoiding CORS
 and gzip incompatibility. Does not proxy arbitrary user-provided URLs.
@@ -17,9 +17,7 @@ from datetime import datetime, timezone
 MAX_COMPRESSED = 12 * 1024 * 1024
 MAX_XML = 35 * 1024 * 1024
 FEEDS = (
-    ("EPGShare01", "https://epgshare01.online/epgshare01/epg_ripper_VN1.xml.gz"),
-    ("xmltv.live", "https://xmltv.live/epg/vn.xml.gz"),
-    ("Lịch Phát Sóng", "https://lichphatsong.io.vn/epg.xml"),
+    ("EPG.pw", "https://epg.pw/xmltv/epg_VN.xml"),
 )
 
 def download(url: str) -> tuple[bytes, int, int]:

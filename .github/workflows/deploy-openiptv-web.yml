@@ -310,14 +310,11 @@ jobs:
           node --test web-online/tests/web-fresh-epg.test.cjs
           EPG_LAYOUT_CHROME="$(command -v google-chrome)" node --test web-online/tests/web-epg-layout.test.cjs
           mkdir -p _site/epg
-          if python3 web-online/fetch-epg.py _site/epg/vn.xml; then
-            echo "Vietnam guide ready on same GitHub Pages origin."
-          elif test -s epg/vn.xml; then
-            cp -f epg/vn.xml _site/epg/vn.xml
-            if test -s epg/status.json; then cp -f epg/status.json _site/epg/status.json; fi
-            echo "::warning::EPG upstream failed. Retained previously published Vietnam guide."
+          # Never reuse the old EPGShare01 mirror as EPG.pw data.
+          if python3 web-online/fetch-epg.py _site/epg/epg-pw-vn.xml; then
+            echo "EPG.pw Vietnam guide available on the same Pages origin."
           else
-            echo "::warning::EPG upstream failed and no previous guide was available. Website will display a useful error until source is reachable."
+            echo "::warning::EPG.pw unavailable; keep browser's last cached guide and do not use other providers."
           fi
       - name: Keep IPTV player as project root and capture current screenshots
         run: |

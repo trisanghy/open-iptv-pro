@@ -36,6 +36,14 @@ if 'const parsed=await readFreshGuide(source.url,ctx.getChannels());' not in js:
 # Preserve mobile's always-expanded channel list when rebuilding WebView sources.
 # Take the reviewed Web-only function from the live project's features.js.
 web_features=(Path(__file__).resolve().parent.parent/'features.js').read_text(encoding='utf-8')
+# Restore the reviewed Web-only EPG source policy when WebView builds regenerate this file.
+source_start=web_features.find(' const defaultSources=[')
+source_end=web_features.find(' const presetEPGURLs=',source_start)
+target_start=js.find(' const defaultSources=[')
+target_end=js.find(' const presetEPGURLs=',target_start)
+if min(source_start,source_end,target_start,target_end)<0:
+    sys.exit('Cannot transplant Web-only EPG source settings')
+js=js[:target_start]+web_features[source_start:source_end]+js[target_end:]
 marker=' function isMobileChannelPanel(){'
 patch_start=web_features.find(marker)
 patch_end=web_features.find(' function updateAppearance(persist=true){',patch_start)
@@ -277,7 +285,7 @@ if 'href="huong-dan.html"' not in html:
 html=html.replace('src="app.js"','src="app.js?v=playlist-http-20261119d"').replace('collector.js?v=collector-merge-repair-20261119a','collector.js?v=playlist-url-20261119b')
 html=html.replace('src="source-edit.js"','src="source-edit.js?v=playlist-input-20261119c"')
 for name in ('features.js','epg.js'):
-    html=html.replace('src="'+name+'"','src="'+name+'?v=epg-live-20261119e"')
+    html=html.replace('src="'+name+'"','src="'+name+'?v=epgpw-20261119a"')
 # Reuse the source-controlled player EPG rows when regenerating the WebView layout.
 web_html=(Path(__file__).resolve().parent.parent/'index.html').read_text(encoding='utf-8')
 start='<div class="epg-current-item">'
