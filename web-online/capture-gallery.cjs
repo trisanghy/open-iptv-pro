@@ -36,7 +36,7 @@ function makeDemo(){
  }
  return true;
 }
-function demoStore(){
+function demoStore(base){
  const sourceId='gallery_demo_source';
  const channelSpecs=[
  ['DEMO 01 • Trình phát','01 · Demo','demo-01'],
@@ -49,9 +49,9 @@ function demoStore(){
  return {sources:[{id:sourceId,name:'Nguồn minh họa (video tự tạo)',origin:'Nguồn nội bộ phục vụ ảnh tài liệu',type:'file',enabled:true,addedAt:'2026-11-19T00:00:00Z'}],
  channels:channelSpecs.map(([name,group,id])=>({
   id,sourceId,name,group,tvgId:id,logo:'assets/icon.png',
-  url:'assets/gallery-demo.mp4',alternates:[],status:'uncertain'
+  url:base+'assets/gallery-demo.mp4',alternates:[],status:'uncertain'
  })),
- favorites:[],snapshots:{},folders:[],groupOrder:[],channelOrder:{},
+ favorites:[],favoriteKeys:['name:demo01trinhphat','name:demo04thiennhien'],snapshots:{},folders:[],groupOrder:[],channelOrder:{},
  collapsedGroups:[],current:'',volume:.75,videoFit:'contain',checkerVersion:2};
 }
 function deviceOptions(platform){
@@ -119,7 +119,7 @@ async function run(){
       JSON.stringify({appearanceMode:'dark',sidebarVisible:true,channelPanelVisible:true,
        autoRefreshEPGOnStartup:false,accent:'#bc7cff'}));
      localStorage.setItem('open-iptv-pro-mobile-intro-dismissed-v1','true');
-   },{store:demoStore()});
+   },{store:demoStore(url)});
    const page=await context.newPage();
    page.on('pageerror',e=>console.warn(platform,'page exception:',e.message.slice(0,250)));
    await page.goto(url+(platform==='desktop'?'?view=desktop':'?view=mobile'),{
@@ -134,6 +134,10 @@ async function run(){
        catch(e){console.warn('Demo play unavailable',e);}
    },hasDemoVideo);
    await page.waitForTimeout(1000);
+   if(!hasDemoVideo)throw Error('Original demonstration video was not generated');
+   const media=await page.locator('#video').evaluate(v=>({state:v.readyState,w:v.videoWidth,h:v.videoHeight,src:v.currentSrc}));
+   if(media.state<2||media.w<320||media.h<180)throw Error('Refusing gallery with nonplaying demonstration '+JSON.stringify(media));
+   if(await page.locator('#toastArea .toast.err').count())throw Error('Refusing gallery with a player error toast');
    if(platform==='desktop'){
     await capture(page,'desktop-tv');
     await select(page,'sources');await capture(page,'desktop-sources');
