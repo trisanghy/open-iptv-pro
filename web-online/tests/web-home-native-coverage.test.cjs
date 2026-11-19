@@ -40,10 +40,13 @@ test('all selectable home language packs are present before enabling complete co
   }
   for(const code of supported.filter(c=>!['vi','en'].includes(c)))
     assert.ok(home.includes('<option value="'+code+'">'),code+' absent from language selector');
-  const inline=home.match(/<script id="home-native-locales-data">([\\s\\S]*?)<\\/script>/);
-  assert.ok(inline,'Root homepage must embed translations because root-site sync copies HTML only');
+  const marker='<script id="home-native-locales-data">';
+  const start=home.indexOf(marker);
+  const end=home.indexOf('</script>',start+marker.length);
+  assert.ok(start>=0&&end>start,'Standalone homepage must embed a complete dictionary');
+  const inline=home.slice(start+marker.length,end);
   const inlineContext={window:{}};
-  vm.runInNewContext(inline[1],inlineContext,{timeout:5000});
+  vm.runInNewContext(inline,inlineContext,{timeout:5000});
   assert.equal(Object.keys(inlineContext.window.OpenIPTVHomeNativeLocales).length,15);
   assert.equal(
     inlineContext.window.OpenIPTVHomeNativeLocales.fr['Tính năng'],
