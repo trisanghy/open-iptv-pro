@@ -3,14 +3,16 @@
  const native=!!window.streamleaf;
  const core=window.StreamLeafCore;
  const favCore=window.OpenIPTVFavorites;
+ const recentCore=window.OpenIPTVRecentChannels;
  const sourceEdit=window.OpenIPTVSourceEdit;
  const channelOrderCore=window.OpenIPTVChannelOrder;
  const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
  const escape=s=>String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
- const seed={sources:[],channels:[],favorites:[],snapshots:{},folders:[],groupOrder:[],channelOrder:{},collapsedGroups:[],current:'',volume:.8,videoFit:'contain'};
+ const seed={sources:[],channels:[],favorites:[],snapshots:{},folders:[],groupOrder:[],channelOrder:{},collapsedGroups:[],current:'',recentChannelIds:[],volume:.8,videoFit:'contain'};
  let store;
  try{store={...seed,...JSON.parse(localStorage.getItem('open-iptv-pro-4')||localStorage.getItem('streamleaf-3')||'{}')};}catch{store={...seed};}
  if(!Array.isArray(store.channels))store.channels=[];
+ store.recentChannelIds=recentCore.normalize(store.recentChannelIds);
  if(!Array.isArray(store.favorites))store.favorites=[];
  if(!Array.isArray(store.sources))store.sources=[];
  if(!store.snapshots||typeof store.snapshots!=='object')store.snapshots={};
@@ -310,25 +312,26 @@
  }
  function icon(c){return c.logo?`<img loading="lazy" src="${escape(c.logo)}" alt="" onerror="this.style.display='none';this.parentNode.textContent='TV'" />`:'TV';}
  function channelView(){let a=filter==='fav'?favCore.visible(store):enabledChannels();
+  if(filter==='recent')a=recentCore.select(store.recentChannelIds,enabledChannels());
   const query=$('#searchBox').value.trim().toLowerCase();if(query)a=a.filter(c=>(c.name+' '+c.group).toLowerCase().includes(query));
   if(['alive','dead','uncertain'].includes(filter))a=a.filter(c=>c.status===filter);
-  return sortedChannels(a);
+  return filter==='recent'?a:sortedChannels(a);
  }
  function renderList(preserve=false){
   syncGroupOrder();
   const prev=preserve?preserveListScroll():null;
   const result=channelView();$('#channelMeta').textContent=`${result.length} / ${store.channels.length} kênh`;
   const target=$('#channelList');target.replaceChildren();
-  if(!result.length){updateSelectionBar();target.innerHTML=`<div class="empty-list">${store.channels.length?'Không thấy kênh phù hợp.':'Chưa có kênh. Dùng Mở file M3U hoặc Thêm URL để nhập danh sách.'}</div>`;restoreListScroll(prev);return;}
+  if(!result.length){updateSelectionBar();target.innerHTML=`<div class="empty-list">${filter==='recent'?'Chưa có kênh vừa xem. Mở một kênh để bắt đầu lưu lịch sử.':store.channels.length?'Không thấy kênh phù hợp.':'Chưa có kênh. Dùng Mở file M3U hoặc Thêm URL để nhập danh sách.'}</div>`;restoreListScroll(prev);return;}
   const groups=new Map();result.forEach(c=>{const g=groupName(c);if(!groups.has(g))groups.set(g,[]);groups.get(g).push(c)});
   const showEmpty=filter==='all'&&!$('#searchBox').value.trim();
-  const orderedGroups=groupNames().filter(g=>showEmpty||groups.has(g)).concat([...groups.keys()].filter(g=>!groupNames().includes(g)));
+  const orderedGroups=filter==='recent'?[...groups.keys()]:groupNames().filter(g=>showEmpty||groups.has(g)).concat([...groups.keys()].filter(g=>!groupNames().includes(g)));
   const f=document.createDocumentFragment();
   orderedGroups.forEach(group=>{
-    const entries=groups.get(group)||[],collapsed=store.collapsedGroups.includes(group)&&!$('#searchBox').value.trim();
+    const entries=groups.get(group)||[],collapsed=filter!=='recent'&&store.collapsedGroups.includes(group)&&!$('#searchBox').value.trim();
     const header=document.createElement('button');header.type='button';header.className='folder-header';header.dataset.group=group;header.draggable=!window.PointerEvent&&!$('#searchBox').value.trim();
     header.innerHTML=`<span class="folder-arrow">${collapsed?'▸':'▾'}</span><span class="folder-emoji">📁</span><span>${escape(group)}</span><span class="folder-size">${entries.length}</span>`;
-    header.addEventListener('click',()=>{const pos=preserveListScroll();if(store.collapsedGroups.includes(group))store.collapsedGroups=store.collapsedGroups.filter(x=>x!==group);else store.collapsedGroups.push(group);save();renderList();restoreListScroll(pos)});
+    header.addEventListener('click',()=>{if(filter==='recent')return;const pos=preserveListScroll();if(store.collapsedGroups.includes(group))store.collapsedGroups=store.collapsedGroups.filter(x=>x!==group);else store.collapsedGroups.push(group);save();renderList();restoreListScroll(pos)});
     header.addEventListener('dragstart',e=>{header.classList.add('dragging');draggedFolder=group;e.dataTransfer?.setData('text/plain',group);e.dataTransfer.effectAllowed='move';});
     header.addEventListener('dragend',()=>{header.classList.remove('dragging');draggedFolder='';});
     header.addEventListener('dragover',e=>{if(folderChannelDragOver(e,header))return;if(!$('#searchBox').value.trim()){e.preventDefault();header.classList.add('drag-over');}});
@@ -565,12 +568,33 @@
  }
  async function openURL(){if(window.IPTVProAdvanced?.canEdit?.()===false)return toast('Hồ sơ trẻ em không được thêm URL IPTV','warn');
   if(!(await window.OpenIPTVSourceConsent?.requestImport?.('url')))return;
-  openModal('Thêm playlist bằng URL',`<label class="modal-label">Tên nguồn</label><input class="modal-input" id="urlName" placeholder="Ví dụ: Kênh truyền hình Việt Nam" value="IPTV từ URL"/><label class="modal-label">Đường dẫn M3U</label><input class="modal-input" id="urlValue" placeholder="https://example.com/iptv.m3u" type="url"/><p class="hint">Nhập liên kết tới file M3U chứa nhiều kênh. Bản ứng dụng dùng trình tải tích hợp; bản trình duyệt có thể bị giới hạn CORS.</p>`,async()=>{
-    const name=$('#urlName').value.trim()||'IPTV từ URL';const url=$('#urlValue').value.trim();if(!/^https?:\/\//i.test(url))throw Error('URL phải bắt đầu bằng http:// hoặc https://');
-    textStatus('Đang tải danh sách từ URL...');const content=native?(await window.streamleaf.loadURL(url)).content:await (await fetch(url)).text();addSource(name,url,content,'url');},'Tải danh sách');}
+  openModal('Thêm playlist bằng URL',`<label class="modal-label">Tên nguồn</label><input class="modal-input" id="urlName" placeholder="Ví dụ: Kênh truyền hình Việt Nam" value="IPTV từ URL"/><label class="modal-label">Đường dẫn M3U</label><input class="modal-input" id="urlValue" placeholder="https://example.com/iptv.m3u" type="url"/><p class="hint">Nhập đường dẫn tới danh sách kênh M3U.</p><p id="urlImportError" role="alert" hidden></p>`,async()=>{
+    const name=$('#urlName').value.trim()||'IPTV từ URL';const url=sourceEdit.validatePlaylistUrl($('#urlValue').value);
+    $('#urlValue').value=url;
+    textStatus('Đang tải danh sách từ URL...');const content=await readSourceURL(url);addSource(name,url,content,'url');},'Tải danh sách');}
+
+ // These exact public short links redirect without Access-Control-Allow-Origin.
+ // Try the original first so a subsequently changed redirect can still work.
  async function readSourceURL(url){
   if(native)return (await window.streamleaf.loadURL(url)).content;
-  const r=await fetch(url);if(!r.ok)throw Error('Máy chủ trả HTTP '+r.status);return r.text();
+  const targets=new Map([
+   ['https://d.org.vn/listiptv','https://raw.githubusercontent.com/vuminhthanh12/vuminhthanh12/main/vmttv'],
+   ['https://nts12.s.gy/iptv','https://gist.githubusercontent.com/trisanghy/e63b2927598a4b932b3708ddd3183aaa/raw/iptv.m3u']
+  ]);
+  // HTTPS Pages cannot fetch an insecure short link. For an exact known alias,
+  // go straight to its verified HTTPS playlist while retaining the stored origin.
+  const secureTarget=/^http:\/\//i.test(url)?targets.get(url.replace(/^http:/i,'https:')):undefined;
+  const networkError='Không tải được danh sách. Hãy kiểm tra mạng, dùng URL trực tiếp tới tệp M3U hoặc nhập tệp từ thiết bị.';
+  let response;
+  try{
+   response=await fetch(secureTarget||url);
+  }catch(error){
+   const target=targets.get(url);
+   if(!target||error.name!=='TypeError')throw Error(networkError);
+   try{response=await fetch(target);}catch{throw Error(networkError);}
+  }
+  if(!response.ok)throw Error('Máy chủ danh sách trả HTTP '+response.status);
+  return response.text();
  }
  async function replaceURLSource(source,newUrl,newName,mode='edit'){
   // Replacing a URL also introduces a new third-party playlist. Auto refresh does not.
@@ -884,7 +908,7 @@
   playCandidateIndex=0;attemptedTransports.clear();nativeHlsTried.clear();
   if(pref?.remembered&&found.lastPlayableEngine==='hlsjs'&&found.lastPlayableUrl===playCandidates[0])nativeHlsTried.add(playCandidates[0]);
   playbackProofUrl='';playbackProofTimer=0;
-  current=found;channelRequestedAt=performance.now();firstFrameReported=false;firstFrameDurationMs=0;store.current=chId;if(!native&&!opts.buffer){player.defaultMuted=store.autoEnableAudio===false;player.muted=store.autoEnableAudio===false;}mediaInfo={hls:false,mode:'unknown',seekable:false};document.dispatchEvent(new CustomEvent('openiptv:media-info',{detail:mediaInfo}));save();window.OpenIPTVCastUI?.onChannelChanged?.(found);renderList(true);
+  current=found;channelRequestedAt=performance.now();firstFrameReported=false;firstFrameDurationMs=0;store.current=chId;store.recentChannelIds=recentCore.push(store.recentChannelIds,chId);if(!native&&!opts.buffer){player.defaultMuted=store.autoEnableAudio===false;player.muted=store.autoEnableAudio===false;}mediaInfo={hls:false,mode:'unknown',seekable:false};document.dispatchEvent(new CustomEvent('openiptv:media-info',{detail:mediaInfo}));save();window.OpenIPTVCastUI?.onChannelChanged?.(found);renderList(true);
   $('#playingTitle').textContent=found.name;$('#playingSubtitle').textContent=found.group+' • '+(playMode==='catchup'?'Xem lại':playMode==='timeshift'?'Tua lại '+(window.IPTVProAdvanced?.getReplayMinutes?.()||10)+' phút':'Đang phát trực tiếp');$('#playingIcon').textContent=found.name.slice(0,2).toUpperCase();$('#emptyPlayer').classList.add('hidden');$('#streamInfo').textContent='Đang kết nối...';updatePlayerFavorite();updateManualLinkPicker();
   window.IPTVExtras?.onChannel?.(found);window.IPTVProAdvanced?.onChannel?.(found,playMode);
   try{await tryPlayback(playCandidates[0],generation,preferredTransport);}catch(e){recoverPlayback(generation,e.message);}
@@ -1061,13 +1085,9 @@
   if(t.running)return toast('Đang chụp toàn bộ kênh rồi','warn');
   const all=enabledChannels().slice();if(!all.length)return toast('Chưa có kênh để chụp','warn');
   if(!native&&!window.OpenIPTVWebSnapshot?.capture)return toast('Thiếu bộ chụp Snapshot Web; hãy tải lại ứng dụng.','error');
-  const seen=new Set(),pending=[];let skipped=0;
-  for(const c of all){
-    if(seen.has(c.url)||(store.snapshotSkipExisting&&!!(store.snapshots[c.url]?.file||store.snapshots[c.url]?.data))){skipped++;continue;}
-    seen.add(c.url);pending.push(c);
-  }
+  if(!window.OpenIPTVSnapshotBatch?.plan)return toast('Thiếu mô-đun chụp toàn bộ Web. Hãy tải lại trang.','error');
+  const {pending,skipped}=window.OpenIPTVSnapshotBatch.plan(all,store.snapshots,store.snapshotSkipExisting);
   if(!pending.length)return toast(`Đã có đủ ảnh (${skipped} kênh). Tắt “Bỏ qua kênh đã có ảnh” nếu muốn chụp mới.`);
-  if(!native&&pending.length>80){pending.length=80;toast('Web chỉ chụp tối đa 80 kênh/lượt để bảo vệ bộ nhớ. Chụp lại để tiếp tục kênh chưa có ảnh.','warn');}
    const workers=Math.min(safeConcurrency(store.snapshotConcurrency),native?32:(window.OpenIPTVMobilePlayer?.isMobile?.()?1:2),pending.length);
   if(pending.length>70)toast(`Bắt đầu chụp ${pending.length} kênh bằng ${workers} tác vụ song song; có thể hủy ở bảng tiến độ.`, 'warn');
   taskStart('shots',native?all.length:pending.length+skipped);t.workers=workers;t.skipped=skipped;t.done=skipped;
@@ -1088,31 +1108,61 @@
    finally{save();taskEnd('shots');}
    return;
   }
-  let cursor=0,lastRefresh=0;
+  let cursor=0,lastRefresh=0,storageExhausted=false;
   function refreshProgress(force=false){
     const now=Date.now();if(force||now-lastRefresh>850){
-      save();if(page==='shots')renderShots();if(page==='tv')renderList(true);lastRefresh=now;
+      if(!storageExhausted)save();if(page==='shots')renderShots();if(page==='tv')renderList(true);lastRefresh=now;
     }
   }
   async function worker(){
     while(!t.cancel&&cursor<pending.length){
       const c=pending[cursor++];t.latest=`Đang chụp ${c.name} • ${workers} luồng song song`;
       try{await snapshotOne(c,true,t.abortController?.signal);if(t.cancel)break;t.success++;}
-      catch(e){if(t.cancel||e?.name==='AbortError')break;t.failed++;t.lastError=`${c.name}: ${String(e.message||e)}`;t.latest=`Lỗi ${t.failed}: ${t.lastError.slice(0,210)}`;console.warn('Snapshot:',c.name,String(e.message||e));}
+      catch(e){
+       if(e?.name==='AbortError')break;
+       t.failed++;t.lastError=`${c.name}: ${String(e.message||e)}`;
+       if(window.OpenIPTVSnapshotBatch.isStorageFull(e)){
+        storageExhausted=true;t.cancel=true;t.abortController?.abort();
+        t.latest='Đã tạm dừng: bộ nhớ Web đầy. Ảnh đã chụp vẫn được giữ lại.';
+        console.warn('Snapshot storage full:',t.lastError);
+       }else{
+        if(t.cancel)break;
+        t.latest=`Lỗi ${t.failed}: ${t.lastError.slice(0,210)}`;
+        console.warn('Snapshot:',c.name,String(e.message||e));
+       }
+      }
       t.done++;updateTaskUI('shots');refreshProgress();
     }
   }
   try{
     await Promise.all(Array.from({length:workers},()=>worker()));
     refreshProgress(true);updateTaskUI('shots');
-    toast(`${t.cancel?'Đã dừng':'Đã xong'}: ${t.success} ảnh mới • ${t.skipped} ảnh giữ nguyên • ${t.failed} lỗi`+(t.failed&&t.lastError?' · '+t.lastError.slice(0,130):''),t.failed&&!t.success?'error':'ok');
-    textStatus(`Snapshot ${t.done}/${t.total}: ${t.success} ảnh mới, ${t.skipped} giữ nguyên, ${t.failed} lỗi`);
+    if(storageExhausted){
+     toast('Đã dừng vì bộ nhớ trình duyệt đầy. Các ảnh đã lưu được giữ nguyên. Hãy giải phóng dung lượng rồi bấm Chụp toàn bộ để tiếp tục.','warn');
+     textStatus(`Snapshot tạm dừng do hết bộ nhớ: ${t.done}/${t.total} kênh · ${t.success} ảnh mới · ${t.skipped} ảnh cũ.`);
+    }else{
+     toast(`${t.cancel?'Đã dừng':'Đã xong'}: ${t.success} ảnh mới • ${t.skipped} ảnh giữ nguyên • ${t.failed} lỗi`+(t.failed&&t.lastError?' · '+t.lastError.slice(0,130):''),t.failed&&!t.success?'error':'ok');
+     textStatus(`Snapshot ${t.done}/${t.total}: ${t.success} ảnh mới, ${t.skipped} giữ nguyên, ${t.failed} lỗi`);
+    }
   }finally{taskEnd('shots');}
  }
  async function exportFile(){if(window.IPTVProAdvanced?.canEdit?.()===false)return toast('Hồ sơ trẻ em không được xuất playlist','warn');const all=enabledChannels();if(!all.length)return toast('Không có kênh để xuất','warn');const content=core.exportM3U(all);
   try{if(native){const dest=await window.streamleaf.export('iptv.m3u',content);if(dest)toast('Đã lưu: '+dest);}else{const blob=new Blob([content],{type:'audio/x-mpegurl;charset=utf-8'});const u=URL.createObjectURL(blob);const a=document.createElement('a');a.href=u;a.download='iptv.m3u';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),1500);toast('Đã tải file iptv.m3u');}}
   catch(e){toast('Không xuất được: '+e.message,'error');}}
- async function modalSubmit(){if(!modalHandler)return;const cb=modalHandler;const button=$('#modalConfirm');button.disabled=true;const old=button.textContent;button.textContent='Đang xử lý...';try{await cb();closeModal();}catch(e){toast(e.message||String(e),'error');}finally{button.disabled=false;button.textContent=old;}}
+ async function modalSubmit(){
+  const cb=modalHandler,button=$('#modalConfirm'),errorLine=$('#urlImportError');
+  if(!cb||button.disabled)return;
+  const old=button.textContent;
+  button.disabled=true;button.textContent='Đang xử lý...';
+  if(errorLine)errorLine.hidden=true;
+  try{await cb();if(cb===modalHandler)closeModal();}
+  catch(e){
+   if(cb!==modalHandler)return;
+   const message=e.message||String(e);
+   if(errorLine){errorLine.textContent=message;errorLine.hidden=false;textStatus(message);}
+   else toast(message,'error');
+  }finally{button.disabled=false;if(cb===modalHandler||!modalHandler)button.textContent=old;}
+ }
  function wire(){
   const bind=(ids,fn)=>ids.forEach(id=>$('#'+id)?.addEventListener('click',fn));
   bind(['fileBtn','emptyFileBtn','sourcesFileBtn'],loadFile);bind(['urlBtn','emptyUrlBtn','sourcesUrlBtn'],openURL);
@@ -1232,7 +1282,7 @@
   void playChannel(ch.id,null,{manualUrl:url,mode:'live'});
  });
  updateManualLinkPicker();
- window.IPTVState=Object.freeze({getStore:()=>store,isBusy:()=>tasks.check.running||tasks.shots.running,getCurrent:()=>current,getChannels:()=>enabledChannels(),openSnapshotChannel,setPage,save,toast,textStatus,player,renderList,render,playChannel,stopPlayer,refreshManualLinks:updateManualLinkPicker,openModal,loadHlsLib,getPlayMode:()=>playMode,getMediaInfo:()=>mediaInfo,tryNextLink:()=>{if(playMode!=='live'||playCandidateIndex+1>=playCandidates.length)return false;void recoverPlayback(playGeneration,'Giám sát xác nhận đứng hình');return true;},importSource:addSource});
+ window.IPTVState=Object.freeze({readSourceURL,getStore:()=>store,isBusy:()=>tasks.check.running||tasks.shots.running,getCurrent:()=>current,getChannels:()=>enabledChannels(),openSnapshotChannel,setPage,save,toast,textStatus,player,renderList,render,playChannel,stopPlayer,refreshManualLinks:updateManualLinkPicker,openModal,loadHlsLib,getPlayMode:()=>playMode,getMediaInfo:()=>mediaInfo,tryNextLink:()=>{if(playMode!=='live'||playCandidateIndex+1>=playCandidates.length)return false;void recoverPlayback(playGeneration,'Giám sát xác nhận đứng hình');return true;},importSource:addSource});
  wire();render();if(upgradedChecker)save();
  $('#appMode').textContent=native?'Ứng dụng • Desktop':'Bản xem thử • Web';
  $('#miniStatus').textContent=native?'Không cần Python / VLC':'Safari phát HLS trực tiếp';

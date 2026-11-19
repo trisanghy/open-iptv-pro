@@ -1,3 +1,9 @@
+## 19/11/2026 — Danh sách kênh vừa xem (mã nguồn)
+
+- Đồng bộ bộ lọc ◷ Vừa xem lên main từ Electron `12351a640550`, Rust `87dfb16f1211` và Web `81421ff4a289`.
+- Electron/Rust ghi sau khi xác nhận giải mã thành công; Web ghi khi chuyển kênh. Lịch sử được giới hạn, loại trùng, lưu cùng trạng thái kênh.
+- Không thay thế hoặc ghi đè tag v4.23.70, và không nhận bản cài cũ là bản có tính năng mới.
+
 ## v4.23.70 — 18/11/2026 — Bản phát hành mới có cảnh báo bản quyền trong file cài đặt Electron
 
 - **Electron 4.23.70 (Mac ARM64/Intel, Windows Setup/Portable):** build lại installer từ source chứa cảnh báo quyền sử dụng trước file/link M3U, xác nhận hai điều khoản trước Smart Discovery và xác nhận lại khi nhập kênh. Phiên bản gói v4.23.69 trước đó dùng binary Electron cũ v4.23.68, chỉ có cảnh báo trong source/README.

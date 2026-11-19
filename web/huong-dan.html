@@ -3,8 +3,15 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<meta name="description" content="Hướng dẫn chi tiết Open IPTV Pro Web Online: mở M3U, HLS/DASH, EPG, PiP, Backup JSON, Cloud Sync, giới hạn CORS và tải bản Desktop v4.23.60."/>
-<title>Hướng dẫn sử dụng — Open IPTV Pro Web Online</title>
+<meta name="description" content="Hướng dẫn chi tiết Open IPTV Pro Web Online: mở M3U, HLS/DASH, EPG, PiP, Backup JSON, Cloud Sync, giới hạn CORS và tải bản Desktop v4.23.70."/>
+<title>Hướng dẫn sử dụng Open IPTV Pro Web Online — M3U, EPG và PiP</title>
+<link rel="canonical" href="https://trisanghy.github.io/open-iptv-pro/huong-dan.html"/>
+<meta name="robots" content="index, follow"/>
+<meta property="og:type" content="article"/>
+<meta property="og:locale" content="vi_VN"/>
+<meta property="og:title" content="Hướng dẫn sử dụng Open IPTV Pro Web Online"/>
+<meta property="og:description" content="Cách thêm playlist M3U, xem HLS/DASH, quản lý kênh, EPG, PiP, sao lưu và xử lý lỗi trình duyệt."/>
+<meta property="og:url" content="https://trisanghy.github.io/open-iptv-pro/huong-dan.html"/>
 <style>
 :root{color-scheme:dark;font-family:system-ui,-apple-system,"Segoe UI",sans-serif;font-synthesis:none}
 *{box-sizing:border-box}body{background:#0b1521;color:#e9f3fa;margin:0;line-height:1.64}
@@ -36,13 +43,13 @@ footer{max-width:1040px;margin:0 auto;padding:15px 20px 40px;color:#90a9ba;borde
 </style>
 </head>
 <body>
-<header><nav><div class="brand">▶ Open IPTV Pro <span class="muted">/ Web Online</span></div><div class="links"><a href="./">Xem truyền hình</a><a href="https://github.com/trisanghy/open-iptv-pro">GitHub</a><a href="https://github.com/trisanghy/open-iptv-pro/releases/tag/v4.23.60">Bản Desktop</a></div></nav></header>
+<header><nav><div class="brand">▶ Open IPTV Pro <span class="muted">/ Web Online</span></div><div class="links"><a href="./">Xem truyền hình</a><a href="https://github.com/trisanghy/open-iptv-pro">GitHub</a><a href="https://github.com/trisanghy/open-iptv-pro/releases/tag/v4.23.70">Bản Desktop</a></div></nav></header>
 <main>
 <section class="hero">
 <p class="meta">HƯỚNG DẪN CHÍNH THỨC · TRÌNH DUYỆT</p>
 <h1>Xem IPTV ngay trên Web, không cần cài đặt</h1>
 <p>Open IPTV Pro Web Online hỗ trợ thêm tệp/URL M3U, phát nguồn tương thích HLS/DASH, tổ chức kênh, yêu thích, EPG, xem đa màn hình và sao lưu dữ liệu. Giao diện và danh sách kênh do bạn tự quản lý.</p>
-<div class="actions"><a class="action" href="./">Mở Open IPTV Pro Web</a><a class="action secondary" href="https://github.com/trisanghy/open-iptv-pro/releases/tag/v4.23.60">Tải Desktop v4.23.60</a></div>
+<div class="actions"><a class="action" href="./">Mở Open IPTV Pro Web</a><a class="action secondary" href="https://github.com/trisanghy/open-iptv-pro/releases/tag/v4.23.70">Tải Desktop v4.23.70</a></div>
 <p class="meta">Đường dẫn trực tiếp: <a href="https://trisanghy.github.io/open-iptv-pro/">https://trisanghy.github.io/open-iptv-pro/</a></p>
 </section>
 <div class="grid">
@@ -52,8 +59,8 @@ footer{max-width:1040px;margin:0 auto;padding:15px 20px 40px;color:#90a9ba;borde
 <section class="card"><h2>04 · Sao lưu và đồng bộ</h2><ul><li>Vào <b>Cài đặt → Xuất Backup JSON</b> để lưu dữ liệu trình duyệt của bạn. Nhập JSON từ chính bản Web để khôi phục.</li><li>Nếu Cloud Sync được cấu hình, có thể đăng nhập/đồng bộ bằng các phương thức được ứng dụng hiển thị.</li><li>Không cần đăng nhập vẫn dùng ở chế độ khách; dữ liệu có thể mất khi xóa dữ liệu trình duyệt.</li><li><b>Lưu ý bảo mật:</b> backup và đồng bộ có thể chứa URL với token hoặc mã PIN.</li></ul></section>
 </div>
 <section class="card"><h2>05 · Khi Web không phát được</h2><table><thead><tr><th>Hiện tượng</th><th>Khắc phục</th></tr></thead><tbody><tr><td>CORS / nguồn HTTP</td><td>Ưu tiên HTTPS và các URL máy chủ cho phép truy cập từ trình duyệt; không thể tự vượt CORS của dịch vụ.</td></tr><tr><td>Hình không phát / DRM</td><td>Kiểm tra codec, playlist, thời hạn link hoặc quyền xem. Với luồng cần FFmpeg/native player, dùng Desktop.</td></tr><tr><td>Không có tiếng khi tự mở</td><td>Nhấn nút Phát/Bật tiếng một lần. Chrome/Safari có thể hạn chế tự phát âm thanh.</td></tr><tr><td>EPG không tải</td><td>Đợi dữ liệu cập nhật hoặc nhập nguồn EPG khác khi được hỗ trợ.</td></tr></tbody></table></section>
-<section class="card"><h2>06 · Web so với Desktop v4.23.60</h2><table><thead><tr><th>Tính năng</th><th>Web Online</th><th>Desktop</th></tr></thead><tbody><tr><td>M3U, yêu thích, HLS/DASH, EPG</td><td>Có, tùy CORS/codec</td><td>Có, hỗ trợ rộng hơn</td></tr><tr><td>Whisper Live Caption, dịch Hy-MT2/Qwen3/Argos</td><td>Không có bộ chạy AI local native</td><td>Có, cần cài đúng model/nền tảng</td></tr><tr><td>TTS Piper / VieNeu, giảm tiếng gốc</td><td>Không có TTS offline tích hợp như Desktop</td><td>Có</td></tr><tr><td>FFmpeg native, Timeshift, DVR</td><td>Không có</td><td>Có, tùy nguồn/nền tảng</td></tr><tr><td>Backup</td><td>JSON của Web</td><td>Backup riêng của Desktop</td></tr></tbody></table><p class="note">**Không cài mã Electron trên GitHub Pages.** Trang Web là ứng dụng tĩnh độc lập; đừng nhầm các tính năng AI offline của bản Desktop là đã có trong trình duyệt.</p></section>
-<section class="card"><h2>Câu hỏi thường gặp</h2><h3>Website có cung cấp danh sách kênh không?</h3><p>Không. Bạn tự nhập danh sách nguồn M3U có quyền truy cập.</p><h3>Dùng được trên điện thoại không?</h3><p>Có thể mở trình duyệt di động, nhưng PiP, autoplay, codec và dung lượng lưu trữ tùy thiết bị.</p><h3>Tôi muốn phụ đề dịch giọng nói tiếng Việt trực tiếp?</h3><p>Dùng bản <a href="https://github.com/trisanghy/open-iptv-pro/releases/tag/v4.23.60">Open IPTV Pro Desktop v4.23.60</a> vì Whisper/MLX/VieNeu hiện triển khai ở Electron.</p></section>
+<section class="card"><h2>06 · Web so với Desktop v4.23.70</h2><table><thead><tr><th>Tính năng</th><th>Web Online</th><th>Desktop</th></tr></thead><tbody><tr><td>M3U, yêu thích, HLS/DASH, EPG</td><td>Có, tùy CORS/codec</td><td>Có, hỗ trợ rộng hơn</td></tr><tr><td>Whisper Live Caption, dịch Hy-MT2/Qwen3/Argos</td><td>Không có bộ chạy AI local native</td><td>Có, cần cài đúng model/nền tảng</td></tr><tr><td>TTS Piper / VieNeu, giảm tiếng gốc</td><td>Không có TTS offline tích hợp như Desktop</td><td>Có</td></tr><tr><td>FFmpeg native, Timeshift, DVR</td><td>Không có</td><td>Có, tùy nguồn/nền tảng</td></tr><tr><td>Backup</td><td>JSON của Web</td><td>Backup riêng của Desktop</td></tr></tbody></table><p class="note">**Không cài mã Electron trên GitHub Pages.** Trang Web là ứng dụng tĩnh độc lập; đừng nhầm các tính năng AI offline của bản Desktop là đã có trong trình duyệt.</p></section>
+<section class="card"><h2>Câu hỏi thường gặp</h2><h3>Website có cung cấp danh sách kênh không?</h3><p>Không. Bạn tự nhập danh sách nguồn M3U có quyền truy cập.</p><h3>Dùng được trên điện thoại không?</h3><p>Có thể mở trình duyệt di động, nhưng PiP, autoplay, codec và dung lượng lưu trữ tùy thiết bị.</p><h3>Tôi muốn phụ đề dịch giọng nói tiếng Việt trực tiếp?</h3><p>Dùng bản <a href="https://github.com/trisanghy/open-iptv-pro/releases/tag/v4.23.70">Open IPTV Pro Desktop v4.23.70</a> vì Whisper/MLX/VieNeu hiện triển khai ở Electron.</p></section>
 </main>
 <footer>Open IPTV Pro · <a href="./">Web Online</a> · <a href="https://github.com/trisanghy/open-iptv-pro/releases">Desktop Releases</a> · Mở các nguồn truyền hình mà bạn được phép truy cập.</footer>
 </body></html>

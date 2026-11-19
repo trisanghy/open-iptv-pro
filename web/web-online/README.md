@@ -2,7 +2,7 @@
 
 **Dùng trực tiếp:** https://trisanghy.github.io/open-iptv-pro/  
 **Hướng dẫn trên website:** https://trisanghy.github.io/open-iptv-pro/huong-dan.html  
-**Desktop v4.23.60:** https://github.com/trisanghy/open-iptv-pro/releases/tag/v4.23.60
+**Desktop mới nhất:** https://github.com/trisanghy/open-iptv-pro/releases/latest
 
 Bản Web là ứng dụng trình duyệt tĩnh trên nhánh **web/online**, khác bản desktop Electron mã nguồn chính tại `main`.
 
@@ -72,3 +72,53 @@ Kiểm tra kênh dùng HLS/DASH/byte media và link dự phòng nếu CORS cho p
 Snapshot trên Web chỉ lưu **khung hình video thật**. Ứng dụng thử ảnh từ kênh đang phát hoặc video muted chạy ngầm, dùng Safari native HLS/HLS.js/DASH.js khi hỗ trợ; không vượt CORS/DRM hoặc quy định autoplay và không dùng logo làm ảnh chụp giả. Hàng loạt giới hạn 80 kênh/lượt, 1 luồng mobile hoặc 2 luồng desktop-web để giảm áp lực bộ nhớ. Bảng tiến độ hiển thị số thành công, thất bại, tên kênh và nút Hủy. Nếu Safari không cho video chạy ngầm, mở kênh để có hình rồi thử chụp riêng kênh đó hoặc dùng Desktop FFmpeg.
 
 - Công cụ nhanh có thêm nút **Chụp kênh đang xem** để chụp video đang phát thực tế khi Safari chặn phát ngầm. Ảnh Web chỉ tính thành công khi lưu được vào localStorage; đầy bộ nhớ sẽ báo lỗi và hoàn nguyên ảnh cũ.
+
+## Mobile channel-height adjustment (18/11/2026)
+
+Khung Danh sách kênh trong giao diện mobile giảm đúng **40%** so với cấu hình v5 gần nhất: từ `clamp(997.5px,134.75dvh,1365px)` còn `clamp(598.5px,80.85dvh,819px)`; ở màn hình thấp từ `clamp(630px,157.5dvh,945px)` còn `clamp(378px,94.5dvh,567px)`. Không đổi chiều cao hàng kênh 78px, logo, nút thao tác, vuốt cuộn iOS và desktop. Phiên bản URL asset được cập nhật để tránh cache Safari.
+
+## Bộ icon trình phát Web (18/11/2026)
+Các nút trong trình phát dùng biểu tượng SVG đơn sắc dạng CSS mask (không phụ thuộc emoji, CDN, hay phông chữ ngoài): chuyển kênh, phát/tạm dừng, dừng, âm lượng/tắt tiếng, Cast, PiP, toàn màn hình, lịch EPG, yêu thích, tua lại, ghi hình và các công cụ nhanh. Màu sắc dùng biến theme hiện có; hỗ trợ `focus-visible`, trạng thái disabled, vùng chạm tối thiểu ~46px trên mobile, `prefers-reduced-motion`. Trạng thái play/pause và âm lượng phản ánh video thật; không thay các event handler, thay ID hay logic phát kênh. Browser cache được làm mới qua `?v=vectorplayer-20261118a`.
+
+### Sửa nút hiện hai icon trên iPhone (18/11/2026)
+
+Các phiên bản trước chỉ ẩn chữ cũ bằng CSS `font-size:0`; những bộ chọn desktop có độ ưu tiên cao vẫn khiến emoji/phím tắt hiện bên cạnh icon SVG. Bản sửa loại bỏ trực tiếp **text node trang trí** ở các nút điều khiển (không xóa phần tử button, ID, event listener, nhãn tiếp cận hay span mô tả). `MutationObserver` theo dõi những thay đổi `textContent` từ mã phát video/yêu thích để không tái xuất hiện icon đôi sau khi phát/tạm dừng/đổi kênh. Không ảnh hưởng điều khiển âm lượng và nguồn phát.
+
+## AirPlay trên iPhone/iPad (18/11/2026)
+
+Trên iOS, bấm nút Cast để yêu cầu bộ chọn AirPlay trực tiếp trong lần chạm nếu Safari/WebKit cung cấp `webkitShowPlaybackTargetPicker()`; có phương án API Remote Playback khi được hỗ trợ. Thẻ video đã bật `x-webkit-airplay="allow"`. Nếu trình duyệt nhúng không hỗ trợ, ứng dụng hiển thị hướng dẫn sử dụng Safari hoặc Phản chiếu màn hình thay cho hộp thoại Cast desktop vô hiệu hóa. Icon Cast đã được căn chính giữa trên mobile. Khả năng phát lên TV còn phụ thuộc trình duyệt, nguồn video và khả năng tương thích của TV; không bảo đảm mọi luồng đều truyền được. Không đổi chức năng Cast desktop hay nội dung IPTV.
+
+## Mobile bootstrap fallback (18/11/2026)
+
+Khắc phục tình trạng trang trắng với sidebar desktop bên trái trên Safari/iOS và trình duyệt nhúng. Nhận diện mobile thực hiện ngay ở `theme-boot.js` trong `<head>`, trước khi tải CSS và trước khi đọc dữ liệu ứng dụng. Logic dự phòng xét iPhone/iPad, viewport nhỏ, thiết bị cảm ứng và cả iPhone giả lập user-agent desktop. Critical stylesheet được tạo cùng lúc để bảo toàn nội dung chính, thanh điều hướng phía dưới ngay cả khi CSS nâng cao bị tải lỗi/chưa sẵn sàng. `web-mobile-player.js` dùng cùng một nguồn nhận diện, tự đồng bộ khi xoay máy/quay lại trang. Đã đổi phiên bản tài nguyên `mobile-recovery-20261118i` để tránh cache cũ. Không sửa dữ liệu IPTV, main hoặc bản desktop.
+
+## Yêu cầu trang web máy tính trên iPhone (18/11/2026)
+
+Khi người dùng chọn `Yêu cầu trang web cho máy tính` trong Safari/Chrome iOS, Open IPTV Pro ưu tiên User-Agent desktop hoặc viewport >= 960px thay vì ép mobile theo kích thước vật lý hay cảm ứng. Trên điện thoại dùng desktop UA, trang áp dụng viewport 1024px để giữ bố cục desktop. Nhóm 63 quy tắc CSS mobile ban đầu đã được giới hạn bằng `data-iptv-device="mobile"`; chữ của thanh điều hướng 5 tab không tràn vào sidebar desktop.
+
+Một số trình duyệt nhúng không đổi User-Agent khi chuyển chế độ; `?view=desktop` ép hiển thị desktop, `?view=mobile` ép mobile. Khi chuyển lại trình duyệt sang chế độ di động, trang mặc định tự nhận diện lại. Không thay đổi dữ liệu IPTV, tài khoản, Electron hoặc Rust.
+
+## Giao diện TV rộng không có EPG bên phải — 18/11/2026
+
+Đã ẩn riêng panel EPG bên phải (`#themeGuidePanel`) trên trang Xem truyền hình của tất cả phong cách, bao gồm Cinema, Glass và Broadcast. Các layout desktop được cập nhật: Cinema chỉ còn một cột video/điều khiển rộng đầy đủ; Glass và Broadcast giữ điều hướng kênh ở trái nhưng bỏ hẳn cột EPG bên phải. Bỏ giới hạn chiều cao 520px của video Cinema để khung video thực sự rộng hơn. **Giữ nguyên EPG ở nút Lịch, trong thanh điều khiển và trang Lịch EPG.** Phần tử EPG cũ chỉ giữ ẩn trong DOM để các chức năng của `theme-stage.js` không bị ngắt. Desktop Web được triển khai từ tệp `web-tv-wide.css` và builder WebView có cùng cấu hình để phát hành sau không khôi phục panel.
+
+## Mobile Controls Align (2026-11-18)
+
+Căn đồng bộ bốn nút Âm lượng, AirPlay/Cast, PiP và Toàn màn hình trong cùng lưới 4 cột; icon SVG đồng kích thước 24px căn hình học chính giữa, vùng chạm 48px. Trên iPhone biểu tượng AirPlay hiển thị chính xác, trạng thái fullscreen vẫn đổi khi bật/tắt. Giữ nguyên API và click handler hiện có.
+
+Thanh điều hướng chân trang mobile chuyển sang CSS Grid 5 cột `minmax(0,1fr)` để loại bỏ tràn ngang do flex 20% cộng padding/khoảng cách. Giữ năm mục TV, Yêu thích, Lịch, Nguồn, Thêm; bảo vệ safe area iPhone và không che thông báo. Chỉ áp dụng chế độ mobile, không thay đổi desktop hay dữ liệu.
+
+### Sửa PiP và icon điều hướng sát nhãn (18/11/2026)
+Bỏ văn bản `PiP` nằm bên trong nút PiP Web (vẫn giữ `aria-label`), chuẩn hóa duy nhất SVG vector 24px. Sửa thuộc tính `min-width/min-height` cũ đang ép SVG ở thanh đáy lên 38px, khiến biểu tượng vượt khỏi khung 29px và đè nhãn. Các tab mobile dùng hai hàng lưới riêng (icon 27px, nhãn 16px), SVG thực 23px; desktop không bị ảnh hưởng.
+
+## Nhận diện link dự phòng trong M3U hai nguồn (18/11/2026)
+
+Đã sửa bộ phát Web để nhận kênh trùng nhau bằng `tvg-id`, sau đó dự phòng bằng tên chuẩn hóa (bỏ riêng hậu tố `(Nguồn 1)`, `(Nguồn 3)`, `(Source 2)`...). Không gộp nhầm hai kênh có `tvg-id` khác nhau. File kiểm thử tái hiện danh sách VTV 25 mục của người dùng gồm 12 cặp VTV1–VTV10 và Vietnam Today; chỉ dùng URL ví dụ thay vì lưu các URL M3U có thể chứa token. Ứng dụng nhận diện đủ 12 cặp; trong file đính kèm có 8 cặp với URL phát khác nhau nên xuất hiện link dự phòng thực sự, còn VTV3, VTV5, VTV6 và VTV10 trùng URL giữa hai nguồn nên chỉ hiện một link (không tạo dự phòng giả). Với các link khác nhau, có thể chuyển thủ công hoặc dùng Auto Failover. Giữ nguyên 25 dòng danh sách và nguồn ban đầu. `web-online/prepare-web.py` lấy bộ matcher Web đã sửa để các bản dựng sau không làm mất tính năng.
+
+## Sửa lỗi gộp nguồn `Can't find variable: applied` (19/11/2026)
+
+Nguyên nhân: trình thu thập gọi biến `applied` chưa khai báo sau khi đã lưu nguồn, khiến người dùng nhìn thấy thông báo lỗi dù playlist có thể đã đổi. Đã xóa lỗi này, kiểm tra lưu thành công, hoàn tác thay đổi trong bộ nhớ khi lưu thất bại và ghi trạng thái chính xác sau khi lưu. Trình phát giờ đọc `channel.alternates` ngay từ playlist gộp ngay cả khi hai nguồn gốc đã được tắt, còn cấu hình nâng cao có API cập nhật link dự phòng theo lô. Có bài kiểm thử cho gộp thành công và lỗi lưu; không xóa các nguồn gốc.
+
+## Tải bản Desktop mới nhất từ web (19/11/2026)
+
+Trên máy tính: nút **Tải Desktop** ở thanh công cụ. Trên điện thoại: nút **Tải Open IPTV Pro Desktop** trước video và mục **Tải bản Desktop** bên trong menu **Thêm**. Hộp thoại truy vấn `api.github.com/repos/trisanghy/open-iptv-pro/releases/latest` khi người dùng nhấn nút, lọc bộ cài Electron cho Windows x64 (Setup và Portable), macOS Apple Silicon và macOS Intel, không nhầm bản Rust Lab/Web ZIP. Chỉ hiển thị URL tải có gốc `github.com/trisanghy/open-iptv-pro/releases/download/`. Khi API bị giới hạn, dùng trang `/releases/latest` thay vì hiển thị một phiên bản cũ. Không ảnh hưởng việc phát IPTV, dữ liệu nguồn và đồng bộ.

@@ -52,22 +52,32 @@
    if(persist)saveConfig();
  }
 
+ function isMobileChannelPanel(){
+   // theme-boot.js sets this before app styles and restores desktop-site mode.
+   return document.documentElement.dataset.iptvDevice==='mobile';
+ }
  function updateChannelPanelVisibility(persist=true){
-   document.documentElement.dataset.channelPanelVisible=config.channelPanelVisible?'true':'false';
+   const mobile=isMobileChannelPanel();
+   // Mobile always displays the list, regardless of the desktop preference.
+   // Do not overwrite that preference: a desktop-sized view can remain collapsed.
+   const visible=mobile||config.channelPanelVisible;
+   document.documentElement.dataset.channelPanelVisible=visible?'true':'false';
    const hideBtn=$('#channelPanelHideBtn'),showBtn=$('#channelPanelShowBtn');
    if(hideBtn){
+     hideBtn.hidden=mobile;
      hideBtn.textContent='⟨';
-     hideBtn.setAttribute('aria-expanded',String(config.channelPanelVisible));
+     hideBtn.setAttribute('aria-expanded',String(visible));
      hideBtn.title='Thu gọn danh sách kênh';
      hideBtn.setAttribute('aria-label',hideBtn.title);
    }
    if(showBtn){
-     showBtn.textContent=config.channelPanelVisible?'':'›';
-     showBtn.setAttribute('aria-expanded',String(config.channelPanelVisible));
-     showBtn.title=config.channelPanelVisible?'Ẩn nút mở danh sách kênh':'Mở danh sách kênh';
-     showBtn.setAttribute('aria-label',config.channelPanelVisible?'Danh sách kênh đang mở':'Mở danh sách kênh');
+     showBtn.hidden=mobile;
+     showBtn.textContent=visible?'':'›';
+     showBtn.setAttribute('aria-expanded',String(visible));
+     showBtn.title=visible?'Ẩn nút mở danh sách kênh':'Mở danh sách kênh';
+     showBtn.setAttribute('aria-label',visible?'Danh sách kênh đang mở':'Mở danh sách kênh');
    }
-   if(persist)saveConfig();
+   if(persist&&!mobile)saveConfig();
  }
  function updateAppearance(persist=true){
    const appearance=resolvedAppearance();
@@ -220,9 +230,23 @@
    throw e;
   }finally{clearTimeout(timer);}
  }
+ async function readFreshGuide(url,channels){
+  const candidates=[url];
+  if(url===defaultSources[0].url && !window.streamleaf?.fetchEPG)
+   candidates.push('https://lichphatsong.io.vn/epg.xml');
+  let failure;
+  for(const candidate of candidates){
+   try{
+    const parsed=guideLib.parse(await fetchXML(candidate),channels);
+    if(!parsed.programmes.some(p=>p.end>Date.now()))throw Error('Nguồn EPG đã hết lịch hoặc chưa có lịch mới');
+    return parsed;
+   }catch(error){failure=error;}
+  }
+  throw failure;
+ }
  async function refreshEPG({startup=false}={}){if(loading)return;const active=config.sources.filter(s=>s.enabled);if(!active.length)return ctx.toast('Chưa bật nguồn EPG nào','warn');if(!ctx.getChannels().length){if(!startup)ctx.toast('Hãy nhập playlist M3U trước để ghép EPG với kênh','warn');return;}
   epgRequestedInSession=true;loading=true;$('#epgLoadBtn').disabled=true;$('#epgRefreshBtn').disabled=true;$('#epgLoadBtn').textContent='Đang tải XMLTV...';let sourcesLoaded=0,errors=[],combined={names:{},aliasesById:{},programmes:[]};const programmeKeys=new Set();
-  try{for(const source of active){try{ctx.textStatus('Đang tải EPG: '+source.name);const xml=await fetchXML(source.url);const parsed=guideLib.parse(xml,ctx.getChannels());
+  try{for(const source of active){try{ctx.textStatus('Đang tải EPG: '+source.name);const parsed=await readFreshGuide(source.url,ctx.getChannels());
     for(const [key,id] of Object.entries(parsed.names))if(!combined.names[key])combined.names[key]=id;
     Object.assign(combined.aliasesById,parsed.aliasesById||{});
     // Earlier EPG sources take priority for same id and time window.
@@ -360,9 +384,13 @@
   applyColor(hsvToHex(h,s||.8,v),true,'wheel');
  });
  $('#sidebarToggleBtn')?.addEventListener('click',()=>{config.sidebarVisible=!config.sidebarVisible;updateSidebarVisibility();});
- $('#channelPanelHideBtn')?.addEventListener('click',()=>{config.channelPanelVisible=false;updateChannelPanelVisibility();});
- $('#channelPanelShowBtn')?.addEventListener('click',()=>{config.channelPanelVisible=true;updateChannelPanelVisibility();});
+ $('#channelPanelHideBtn')?.addEventListener('click',()=>{if(isMobileChannelPanel())return;config.channelPanelVisible=false;updateChannelPanelVisibility();});
+ $('#channelPanelShowBtn')?.addEventListener('click',()=>{if(isMobileChannelPanel())return;config.channelPanelVisible=true;updateChannelPanelVisibility();});
  window.addEventListener('resize',updateSidebarEdge);
+ // Keep the effective panel state in sync when an iPhone rotates or requests desktop mode.
+ window.addEventListener('resize',()=>updateChannelPanelVisibility(false));
+ window.addEventListener('pageshow',()=>updateChannelPanelVisibility(false));
+ window.addEventListener('orientationchange',()=>updateChannelPanelVisibility(false));
  document.addEventListener('openiptv:stylechange',updateSidebarEdge);
  if(window.ResizeObserver){const obs=new ResizeObserver(updateSidebarEdge);obs.observe($('#appSidebar'));obs.observe($('#appShell'));}
  $('#resetThemeBtn').onclick=()=>applyColor('#bc7cff',true,'reset');

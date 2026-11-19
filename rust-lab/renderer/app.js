@@ -4,6 +4,7 @@
  const isTauri=document.documentElement.dataset.desktopRuntime==='tauri2-rust';
  const core=window.StreamLeafCore;
  const favCore=window.OpenIPTVFavorites;
+ const recentCore=window.OpenIPTVRecentChannels;
  const sourceEdit=window.OpenIPTVSourceEdit;
  const evidence=window.IPTVHealthEvidence;
  const adaptive=window.IPTVAdaptivePlayback;
@@ -32,6 +33,7 @@
  if(typeof store.snapshotSkipExisting!=='boolean')store.snapshotSkipExisting=true;
  if(typeof store.autoRefreshM3UOnStart!=='boolean')store.autoRefreshM3UOnStart=true;
  favCore.migrate(store);
+ recentCore.migrate(store,favCore.key);
  // The previous checker produced false Die results for HLS streams and Range rejections.
  // Do not keep those historical negative classifications after this checker upgrade.
  const upgradedChecker=store.checkerVersion!==3;
@@ -173,7 +175,7 @@
  function installChannelPointerDnD(){
   window.IPTVPointerDnD.create({
    document,host:$('#channelList'),folders:$('#folderManager'),
-   enabled:selectionEditable,
+   enabled:()=>selectionEditable()&&filter!=='recent',
    selectedIds:id=>selectedChannelIds.has(id)?[...selectedChannelIds]:[id],
    onChannelDrop:({ids,group,targetId,after})=>{
     if(!groupNames().includes(group))return false;
@@ -231,7 +233,7 @@
   });
  }
  function icon(c){return c.logo?`<img loading="lazy" src="${escape(c.logo)}" alt="" onerror="this.style.display='none';this.parentNode.textContent='TV'" />`:'TV';}
- function channelView(){let a=filter==='fav'?favCore.visible(store):enabledChannels();
+ function channelView(){let a=filter==='recent'?recentCore.visible(store,enabledChannels(),favCore.key):filter==='fav'?favCore.visible(store):enabledChannels();
   const query=$('#searchBox').value.trim().toLowerCase();if(query)a=a.filter(c=>(c.name+' '+c.group).toLowerCase().includes(query));
   if(['alive','dead','uncertain'].includes(filter))a=a.filter(c=>c.status===filter);
   return a;
@@ -239,24 +241,24 @@
  function renderList(preserve=false){
   syncGroupOrder();
   const prev=preserve?preserveListScroll():null;
-  const result=channelView();$('#channelMeta').textContent=`${result.length} / ${store.channels.length} kênh`;
+  const result=channelView(),isRecent=filter==='recent';$('#channelMeta').textContent=isRecent?`${result.length} kênh vừa xem`:`${result.length} / ${store.channels.length} kênh`;
   const target=$('#channelList');target.replaceChildren();
-  if(!result.length){target.innerHTML=`<div class="empty-list">${store.channels.length?'Không thấy kênh phù hợp.':'Chưa có kênh. Dùng Mở file M3U hoặc Thêm URL để nhập danh sách.'}</div>`;restoreListScroll(prev);updateSelectionUI();return;}
-  const groups=new Map();result.forEach(c=>{const g=groupName(c);if(!groups.has(g))groups.set(g,[]);groups.get(g).push(c)});
+  if(!result.length){target.innerHTML=`<div class="empty-list">${isRecent?'Chưa có kênh vừa xem. Kênh phát thành công sẽ tự xuất hiện ở đây.':store.channels.length?'Không thấy kênh phù hợp.':'Chưa có kênh. Dùng Mở file M3U hoặc Thêm URL để nhập danh sách.'}</div>`;restoreListScroll(prev);updateSelectionUI();return;}
+  const groups=new Map();if(isRecent)groups.set('Kênh vừa xem',result);else result.forEach(c=>{const g=groupName(c);if(!groups.has(g))groups.set(g,[]);groups.get(g).push(c)});
   const showEmpty=filter==='all'&&!$('#searchBox').value.trim();
-  const orderedGroups=groupNames().filter(g=>showEmpty||groups.has(g)).concat([...groups.keys()].filter(g=>!groupNames().includes(g)));
+  const orderedGroups=isRecent?['Kênh vừa xem']:groupNames().filter(g=>showEmpty||groups.has(g)).concat([...groups.keys()].filter(g=>!groupNames().includes(g)));
   const f=document.createDocumentFragment();
   orderedGroups.forEach(group=>{
-    const entries=organizer.sorted(store,group,groups.get(group)||[]),collapsed=store.collapsedGroups.includes(group)&&!$('#searchBox').value.trim();
+    const entries=isRecent?(groups.get(group)||[]):organizer.sorted(store,group,groups.get(group)||[]),collapsed=!isRecent&&store.collapsedGroups.includes(group)&&!$('#searchBox').value.trim();
     const header=document.createElement('button');header.type='button';header.className='folder-header';header.dataset.group=group;
-    header.innerHTML=`<span class="folder-arrow">${collapsed?'▸':'▾'}</span><span class="folder-emoji">📁</span><span>${escape(group)}</span><span class="folder-size">${entries.length}</span>`;
-    header.addEventListener('click',()=>{const pos=preserveListScroll();if(store.collapsedGroups.includes(group))store.collapsedGroups=store.collapsedGroups.filter(x=>x!==group);else store.collapsedGroups.push(group);save();renderList();restoreListScroll(pos)});
+    header.innerHTML=`<span class="folder-arrow">${collapsed?'▸':'▾'}</span><span class="folder-emoji">${isRecent?'◷':'📁'}</span><span>${escape(group)}</span><span class="folder-size">${entries.length}</span>`;
+    header.addEventListener('click',()=>{if(isRecent)return;const pos=preserveListScroll();if(store.collapsedGroups.includes(group))store.collapsedGroups=store.collapsedGroups.filter(x=>x!==group);else store.collapsedGroups.push(group);save();renderList();restoreListScroll(pos)});
     f.append(header);
     if(collapsed)return;
     entries.forEach(c=>{
       const row=document.createElement('div');const shot=store.snapshots[c.url];row.className='channel-item'+(current?.id===c.id?' current':'');row.dataset.channelId=c.id;
       row.innerHTML=`<div class="chan-logo ${snapshotSrc(shot)?'snapshot-thumb':''}">${channelThumb(c)}</div><div class="channel-text"><b>${escape(c.name)}</b><small><i class="mini-pill ${escape(c.status||'')}"></i><span class="channel-health ${escape(c.status||'')}">${c.status==='alive'?'Sống · ':c.status==='dead'?'Die · ':c.status==='uncertain'?'Chưa rõ · ':''}</span>${shot?'📸 Đã có ảnh • ':''}${escape(groupName(c))}</small></div><button type="button" class="channel-star ${favCore.has(store,c)?'marked':''}" aria-pressed="${favCore.has(store,c)}" title="${favCore.has(store,c)?'Bỏ yêu thích':'Thêm yêu thích'}">${favCore.has(store,c)?'★':'☆'}</button>`;
-      row.title='Giữ Shift + bấm để chọn nhiều kênh; kéo thả để sắp xếp hoặc chuyển thư mục';
+      row.title=isRecent?'Bấm để xem lại kênh; bấm ★ để thêm yêu thích':'Giữ Shift + bấm để chọn nhiều kênh; kéo thả để sắp xếp hoặc chuyển thư mục';
       row.setAttribute('aria-selected',String(selectedChannelIds.has(c.id)));
       row.classList.toggle('channel-selected',selectedChannelIds.has(c.id));
       row.querySelectorAll('img').forEach(img=>{img.draggable=false;});
@@ -910,6 +912,7 @@
   if(playbackProofUrl===url&&Date.now()-playbackProofTimer<60000)return;
   playbackProofTimer=Date.now();playbackProofUrl=url;
   evidence.noteProof(ch,'playback',url);
+  recentCore.record(store,ch,favCore.key);
   if(ch.url===url){for(const other of store.channels){if(other!==ch&&other.url===url){evidence.noteProof(other,'playback',url);updateChannelStatus(other);}}}
   updateChannelStatus(ch);
   window.IPTVProAdvanced?.onCheck?.(ch,{status:ch.status,reason:ch.reason,positiveEvidence:true});

@@ -44,3 +44,17 @@
    throw e;
   }finally{clearTimeout(timer);}
  }
+ async function readFreshGuide(url,channels){
+  const candidates=[url];
+  if(url===defaultSources[0].url && !window.streamleaf?.fetchEPG)
+   candidates.push('https://lichphatsong.io.vn/epg.xml');
+  let failure;
+  for(const candidate of candidates){
+   try{
+    const parsed=guideLib.parse(await fetchXML(candidate),channels);
+    if(!parsed.programmes.some(p=>p.end>Date.now()))throw Error('Nguồn EPG đã hết lịch hoặc chưa có lịch mới');
+    return parsed;
+   }catch(error){failure=error;}
+  }
+  throw failure;
+ }

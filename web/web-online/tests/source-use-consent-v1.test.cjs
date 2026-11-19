@@ -68,7 +68,7 @@ test('Source use: all UI flows are guarded before they fetch or save external ch
  assert.match(smart,/requestSmartImport\?\.\(/);
  assert.match(collector,/requestImport\?\.\('url'\)/);
  const point=html.indexOf('src="source-use-consent-v1.js"');
- assert.ok(point>0);assert.ok(point<html.indexOf('src="app.js"'));
+ assert.ok(point>0);assert.ok(point<html.indexOf('src="app.js?'));
  assert.match(html,/source-use-consent-v1\.css/);
  assert.match(html,/kênh công khai hoặc phát được không đồng nghĩa có giấy phép/);
  assert.match(src,/không chịu trách nhiệm về nội dung do người dùng lựa chọn và xem trong phạm vi pháp luật cho phép/);

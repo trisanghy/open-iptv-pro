@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#10161d">
+<title>Open IPTV Pro — Trình phát IPTV M3U mã nguồn mở cho Web, Windows và macOS</title>
+<meta name="description" content="Khám phá Open IPTV Pro: trình phát IPTV/M3U cho trình duyệt và máy tính. Xem hình giao diện mới nhất, hướng dẫn nguồn M3U, EPG, phát dự phòng, tải bản Windows/macOS và mã nguồn GitHub.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://trisanghy.github.io/">
+<link rel="icon" type="image/png" href="https://trisanghy.github.io/open-iptv-pro/assets/icon.png">
+<meta property="og:type" content="website"><meta property="og:locale" content="vi_VN">
+<meta property="og:site_name" content="Open IPTV Pro">
+<meta property="og:title" content="Open IPTV Pro — Xem IPTV từ playlist của bạn">
+<meta property="og:description" content="Website chính thức: tính năng, ảnh giao diện mới nhất, hướng dẫn, mã nguồn và bộ cài Open IPTV Pro.">
+<meta property="og:url" content="https://trisanghy.github.io/">
+<meta property="og:image" content="https://trisanghy.github.io/open-iptv-pro/assets/player-desktop.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="sitemap" type="application/xml" href="https://trisanghy.github.io/sitemap.xml">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Open IPTV Pro","url":"https://trisanghy.github.io/","image":"https://trisanghy.github.io/open-iptv-pro/assets/player-desktop.png","description":"Trình phát và quản lý IPTV/M3U mã nguồn mở. Người dùng tự cung cấp những nguồn có quyền sử dụng.","applicationCategory":"MultimediaApplication","operatingSystem":"Web, Windows, macOS","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"codeRepository":"https://github.com/trisanghy/open-iptv-pro","softwareHelp":"https://trisanghy.github.io/open-iptv-pro/huong-dan.html","inLanguage":"vi-VN"}</script>
+<style>
+:root{font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;background:#0b1016;color:#f2f6f8;--muted:#aec0ca;--edge:#2a3a43;--panel:#121c25;--panel2:#192833;--accent:#70e4b4;--ink:#09170e}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;line-height:1.65;background:radial-gradient(ellipse 80% 650px at 70% -15%,#143d39 0%,transparent 80%),#0b1016}a{color:var(--accent);text-underline-offset:3px}a:hover{text-decoration-thickness:2px}.wrap{width:min(1180px,calc(100% - 36px));margin-inline:auto}
+.skip{position:absolute;left:-100vw;top:0;background:white;color:black;padding:12px;z-index:30}.skip:focus{left:12px}
+header{border-bottom:1px solid #2a393f;position:sticky;top:0;z-index:10;background:#0c1419e8;backdrop-filter:blur(16px)}
+.head{display:flex;align-items:center;justify-content:space-between;min-height:74px;gap:18px}.brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:#fff;font-size:16px;font-weight:850;white-space:nowrap}.brand img{width:38px;height:38px;border-radius:10px}.nav{display:flex;align-items:center;justify-content:flex-end;gap:clamp(8px,2vw,24px);flex-wrap:wrap}.nav a{color:#d5e2e8;text-decoration:none;font-size:13px;font-weight:650;white-space:nowrap}
+.eyebrow{color:var(--accent);font-size:12px;letter-spacing:.16em;font-weight:800;text-transform:uppercase}
+.hero{display:grid;grid-template-columns:.95fr 1.05fr;gap:42px;align-items:center;padding:90px 0 76px}.hero h1{font-size:clamp(46px,6vw,80px);letter-spacing:-.065em;line-height:1.04;margin:15px 0 22px}.hero h1 span{color:var(--accent)}.hero p{font-size:17px;color:#c1d2da;max-width:58ch;margin:0 0 22px}.tagline{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:24px}.pill{font-size:12px;font-weight:750;border:1px solid #365449;background:#162f2a;border-radius:100px;padding:6px 12px;color:#c5f9e1}
+.actions{display:flex;gap:11px;flex-wrap:wrap}.btn{padding:13px 18px;background:#1c2e38;border:1px solid #38505b;color:#f0f8fa;text-decoration:none;border-radius:12px;font-size:14px;font-weight:780;display:inline-flex;align-items:center;justify-content:center;min-height:48px}.btn:hover{filter:brightness(1.12);text-decoration:none}.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--ink)}.hero figure{margin:0;min-width:0}.device{padding:12px;background:linear-gradient(155deg,#1a3438,#14212c);border:1px solid #365058;border-radius:20px;box-shadow:0 22px 70px #0009}.device img{display:block;width:100%;border-radius:12px;background:#162734}.device figcaption,.caption{font-size:12px;color:#9fb2bb;padding:9px 5px}
+.section{padding:76px 0;border-top:1px solid #283842}.section h2{font-size:clamp(28px,4vw,45px);letter-spacing:-.04em;line-height:1.12;margin:8px 0 17px}.intro{max-width:790px;color:#c0d0d8;font-size:16px;margin:0 0 27px}.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}.card{background:linear-gradient(150deg,#17232d,#101b24);padding:23px;border:1px solid var(--edge);border-radius:17px;min-width:0}.card .number{display:inline-flex;align-items:center;justify-content:center;border-radius:10px;width:38px;height:38px;color:var(--accent);background:#203b36;font-weight:800;margin-bottom:8px}.card h3{font-size:17px;margin:8px 0 5px;letter-spacing:-.02em}.card p,.card li{font-size:14px;color:#aec0ca;margin:0}.card ul{padding-left:18px}
+.gallery{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(230px,.7fr);align-items:start;gap:18px}.gallery figure{margin:0;padding:10px;background:#16232c;border:1px solid #30434c;border-radius:16px}.gallery img{display:block;width:100%;height:auto;border-radius:9px;background:#0d131a}.gallery .mobile{max-width:380px;margin:auto}.gallery figcaption{font-size:13px;color:#c2d0d9;padding:10px 6px 4px}
+.steps{counter-reset:steps;display:grid;grid-template-columns:repeat(4,1fr);gap:14px}.step{border-left:3px solid #60ca9f;background:#14232c;border-radius:0 13px 13px 0;padding:18px}.step h3{margin:0 0 8px;font-size:15px}.step p{color:#b8c9d1;font-size:14px;margin:0}
+.platforms{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}.platform{display:flex;flex-direction:column;gap:8px;border:1px solid #2e4550;border-radius:16px;padding:21px;background:#15212a}.platform strong{font-size:17px}.platform small{color:#aebfca;min-height:40px}.platform a{margin-top:auto;display:block;text-align:center}.platform .version{color:var(--accent);font-size:12px;font-weight:750}
+.table-wrap{overflow-x:auto;border:1px solid var(--edge);border-radius:15px}table{border-collapse:collapse;width:100%;min-width:660px;background:#131e27}th,td{padding:15px 17px;text-align:left;border-bottom:1px solid #30404a;font-size:14px;vertical-align:top}th{background:#1b2b35;color:#e8f5f6}td{color:#c0cfd8}tr:last-child td{border-bottom:0}.note{border-left:3px solid #83c7db;background:#152833;padding:14px 18px;border-radius:0 10px 10px 0;color:#c6d9e1;margin-top:21px;font-size:14px}
+.faq{display:grid;grid-template-columns:1fr 1fr;gap:13px}.faq details{border:1px solid var(--edge);background:#15222b;border-radius:12px;padding:16px 19px}.faq summary{font-weight:760;cursor:pointer}.faq p{margin:10px 0 0;color:#b8c9d2;font-size:14px}
+.links{display:flex;flex-wrap:wrap;gap:12px;margin-top:22px}.links a{display:inline-flex;padding:10px 16px;border:1px solid #34505c;border-radius:10px;text-decoration:none;color:#d0fbe6;font-size:14px;font-weight:700}
+footer{border-top:1px solid var(--edge);padding:38px 0 58px;color:#a4b5bf;font-size:13px}footer .foot{display:flex;justify-content:space-between;gap:22px;flex-wrap:wrap}footer p{margin:0;max-width:760px}
+@media(max-width:930px){.hero,.gallery{grid-template-columns:1fr}.hero{padding:58px 0}.hero figure{max-width:850px}.grid{grid-template-columns:repeat(2,1fr)}.steps,.platforms{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:600px){.wrap{width:min(100% - 28px,1180px)}.head{flex-direction:column;justify-content:center;padding:12px 0;gap:5px}.nav{justify-content:center;gap:12px}.hero{padding:45px 0}.hero h1{font-size:46px}.section{padding:50px 0}.grid,.faq{grid-template-columns:1fr}.steps,.platforms{grid-template-columns:1fr}.step{padding:15px}.actions .btn{flex:1 1 100%}.device{padding:7px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+
+/* Current Web gallery: keep desktop readable and show device-native aspect. */
+.hero-preview img{max-height:650px;object-fit:contain}
+.gallery-group{margin:28px 0 38px}
+.gallery-label{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-bottom:14px}
+.gallery-label h3{font-size:21px;margin:0;letter-spacing:-.02em}
+.gallery-label span{font-size:12px;color:var(--muted)}
+.visual-gallery{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px}
+.visual-gallery figure{min-width:0;background:#14222d;border:1px solid #30434e;padding:10px;border-radius:16px;margin:0}
+.visual-gallery figure a{display:block;overflow:hidden;border-radius:10px;background:#0b151e}
+.visual-gallery img{display:block;width:100%;height:auto;object-fit:contain;border-radius:8px;transition:opacity .2s ease}
+.visual-gallery img:hover{opacity:.9}
+.visual-gallery figcaption{font-size:13px;color:#d1e0e7;padding:9px 3px 2px}
+.gallery-mobile{grid-template-columns:repeat(4,minmax(0,1fr))}
+.gallery-mobile figure{display:flex;flex-direction:column}
+.gallery-mobile img{max-height:410px}
+@media(max-width:830px){.gallery-mobile{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:600px){
+ .hero-preview img{max-height:520px}
+ .gallery-label{align-items:flex-start;flex-direction:column;gap:0}
+ .visual-gallery{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;overscroll-behavior-x:contain;padding:2px 0 15px}
+ .visual-gallery figure{scroll-snap-align:start;flex:0 0 min(78vw,310px)}
+ .gallery-desktop figure{flex-basis:min(88vw,570px)}
+ .gallery-desktop figure a{overflow-x:auto;overscroll-behavior-x:contain}
+ .gallery-desktop figure img{min-width:650px;max-height:460px;object-fit:contain}
+ .gallery-mobile figure img{max-height:480px}
+}
+</style>
+</head><body>
+<a class="skip" href="#main">Đi tới nội dung chính</a>
+<header><div class="wrap head"><a class="brand" href="https://trisanghy.github.io/"><img alt="" src="https://trisanghy.github.io/open-iptv-pro/assets/icon.png">Open IPTV Pro</a><nav class="nav" aria-label="Điều hướng"><a href="#tinh-nang">Tính năng</a><a href="#anh">Ảnh giao diện</a><a href="#tai-ve">Tải về</a><a href="#huong-dan">Hướng dẫn</a><a href="#ma-nguon">Mã nguồn</a></nav></div></header>
+<main id="main" class="wrap">
+<section class="hero" aria-labelledby="hero-title"><div>
+<div class="eyebrow">Dự án mã nguồn mở · Web và Desktop</div><h1 id="hero-title">Xem IPTV.<br><span>Theo cách của bạn.</span></h1>
+<p>Open IPTV Pro giúp quản lý danh sách M3U, phát truyền hình từ nguồn bạn có quyền truy cập, tra cứu lịch EPG và chuyển đổi đường truyền dự phòng — ngay trên trình duyệt hoặc ứng dụng máy tính.</p>
+<div class="tagline"><span class="pill">Không kèm danh sách kênh</span><span class="pill">Web trực tuyến</span><span class="pill">Windows · macOS</span><span class="pill">Mã nguồn mở</span></div>
+<div class="actions"><a class="btn primary" href="https://trisanghy.github.io/open-iptv-pro/">Mở trình phát Web</a><a class="btn" href="#tai-ve">Tải ứng dụng Desktop</a><a class="btn" href="https://github.com/trisanghy/open-iptv-pro">Xem GitHub</a></div>
+</div><figure class="device hero-preview"><a href="https://trisanghy.github.io/open-iptv-pro/assets/gallery/desktop-tv.png" title="Mở ảnh chụp kích thước đầy đủ"><picture><source media="(max-width: 760px)" srcset="https://trisanghy.github.io/open-iptv-pro/assets/gallery/ios-tv.png"><img width="1536" height="960" src="https://trisanghy.github.io/open-iptv-pro/assets/gallery/desktop-tv.png" alt="Giao diện Open IPTV Pro Web mới nhất với danh sách kênh và điều khiển TV" fetchpriority="high"></picture></a><figcaption>Desktop hoặc giao diện điện thoại (tùy màn hình) · Bấm để xem ảnh lớn.</figcaption></figure></section>
+
+<section class="section" id="tinh-nang"><div class="eyebrow">Tổng quan sản phẩm</div><h2>Một nơi để quản lý và xem IPTV</h2><p class="intro">Thay vì mở từng link rời rạc, bạn có thể tổ chức kênh theo thư mục, đánh dấu yêu thích, kiểm tra nguồn và điều khiển video. Khả năng phát phụ thuộc codec, máy chủ, CORS và thiết bị.</p>
+<div class="grid">
+<article class="card"><span class="number">01</span><h3>Nhập và quản lý M3U</h3><p>Mở file M3U hoặc thêm URL từ nhà cung cấp, tìm kiếm kênh, sắp xếp nhóm, chỉnh sửa nguồn và xuất danh sách.</p></article>
+<article class="card"><span class="number">02</span><h3>HLS, DASH và điều khiển video</h3><p>Chuyển kênh, thay đổi tỷ lệ hình, tắt tiếng, toàn màn hình, PiP và AirPlay nếu nền tảng hỗ trợ.</p></article>
+<article class="card"><span class="number">03</span><h3>Lịch phát sóng EPG/XMLTV</h3><p>Xem chương trình đang phát, tiếp theo và lịch ở trang riêng khi dữ liệu EPG có kênh khớp.</p></article>
+<article class="card"><span class="number">04</span><h3>Gộp nguồn và link dự phòng</h3><p>Nhận diện kênh trùng bằng ID hoặc tên chuẩn hóa; lưu link dự phòng thực và chuyển khi link chính gặp lỗi.</p></article>
+<article class="card"><span class="number">05</span><h3>Yêu thích và hồ sơ</h3><p>Lưu kênh hay xem, bộ nhớ thiết bị, sao lưu dữ liệu, và đồng bộ tài khoản khi dịch vụ được cấu hình.</p></article>
+<article class="card"><span class="number">06</span><h3>Kiểm tra và chẩn đoán</h3><p>Kiểm tra HLS/DASH và trạng thái phát trong giới hạn browser. Không nhầm lỗi CORS với việc nguồn đã chết.</p></article>
+<article class="card"><span class="number">07</span><h3>Giao diện tối ưu từng màn hình</h3><p>Chế độ TV desktop rộng, mobile có thanh điều hướng năm mục, vùng chạm lớn và danh sách kênh vuốt được.</p></article>
+<article class="card"><span class="number">08</span><h3>Desktop nâng cao</h3><p>Phiên bản Electron có khả năng tích hợp hệ điều hành và xử lý media mở rộng, không áp đặt các tính năng native cho Web.</p></article>
+<article class="card"><span class="number">09</span><h3>Quyền sử dụng nội dung rõ ràng</h3><p>Yêu cầu xác nhận quyền truy cập trước khi nhập nguồn và trước khi dùng Smart Discovery; không phân phối nội dung IPTV.</p></article>
+</div></section>
+
+<section class="section" id="anh"><div class="eyebrow">Thư viện ảnh phiên bản hiện tại · 19/11/2026</div><h2>Ảnh giao diện mới nhất — Desktop, iOS và Android</h2><p class="intro">12 ảnh được chụp trực tiếp từ bản Web xuất bản hiện tại bằng trình duyệt Chromium trong GitHub Actions. Ảnh chụp desktop và hai cấu hình màn hình điện thoại riêng, dùng bộ kênh demo và nguồn video tự tạo; không sử dụng playlist cá nhân. Bấm vào mỗi ảnh để phóng to, xem rõ từng nút thay vì cố thu nhỏ ảnh desktop vào màn hình điện thoại.</p>
+<section class="gallery-group" aria-label="Desktop Web"><div class="gallery-label"><h3>Desktop Web</h3><span>4 ảnh · Bấm để mở bản gốc</span></div><div class="visual-gallery gallery-desktop"><figure><a href="https://trisanghy.github.io/open-iptv-pro/assets/gallery/desktop-tv.png" target="_blank" rel="noopener" title="Xem ảnh màn hình desktop-tv kích thước đầy đủ"><img src="https://trisanghy.github.io/open-iptv-pro/assets/gallery/desktop-tv.png" alt="Màn hình xem TV và thư viện kênh — ảnh chụp giao diện Open IPTV Pro Web" loading="lazy" decoding="async" width="1536" height="960"></a><figcaption>Màn hình xem TV và thư viện kênh</figcaption></figure>
+<figure><a href="https://trisanghy.github.io/open-iptv-pro/assets/gallery/desktop-sources.png" target="_blank" rel="noopener" title="Xem ảnh màn hình desktop-sources kích thước đầy đủ"><img src="https://trisanghy.github.io/open-iptv-pro/assets/gallery/desktop-sources.png" alt="Quản lý nguồn M3U và gộp kênh — ảnh chụp giao diện Open IPTV Pro Web" loading="lazy" decoding="async" width="1536" height="960"></a><figcaption>Quản lý nguồn M3U và gộp kênh</figcaption></figure>
+<figure><a href="https://trisanghy.github.io/open-iptv-pro/assets/gallery/desktop-epg.png" target="_blank" rel="noopener" title="Xem ảnh màn hình desktop-epg kích thước đầy đủ"><img src="https://trisanghy.github.io/open-iptv-pro/assets/gallery/desktop-epg.png" alt="Lịch phát sóng EPG — ảnh chụp giao diện Open IPTV Pro Web" loading="lazy" decoding="async" width="1536" height="960"></a><figcaption>Lịch phát sóng EPG</figcaption></figure>
+<figure><a href="https://trisanghy.github.io/open-iptv-pro/assets/gallery/desktop-settings.png" target="_blank" rel="noopener" title="Xem ảnh màn hình desktop-settings kích thước đầy đủ"><img src="https://trisanghy.github.io/open-iptv-pro/assets/gallery/desktop-settings.png" alt="Giao diện và cài đặt — ảnh chụp giao diện Open IPTV Pro Web" loading="lazy" decoding="async" width="1536" height="960"></a><figcaption>Giao diện và cài đặt</figcaption></figure></div></section>
+<section class="gallery-group" aria-label="iOS — giao diện Web giả lập"><div class="gallery-label"><h3>iOS — giao diện Web giả lập</h3><span>4 ảnh · Bấm để mở bản gốc</span></div><div class="visual-gallery gallery-mobile"><figure><a href="https://trisanghy.github.io/open-iptv-pro/assets/gallery/ios-tv.png" target="_blank" rel="noopener" title="Xem ảnh màn hình ios-tv kích thước đầy đủ"><img src="https://trisanghy.github.io/open-iptv-pro/assets/gallery/ios-tv.png" alt="Trình phát TV trên iPhone — ảnh chụp giao diện Open IPTV Pro Web" loading="lazy" decoding="async" width="393" height="852"></a><figcaption>Trình phát TV trên iPhone</figcaption></figure>
+<figure><a href="https://trisanghy.github.io/open-iptv-pro/assets/gallery/ios-channels.png" target="_blank" rel="noopener" title="Xem ảnh màn hình ios-channels kích thước đầy đủ"><img src="https://trisanghy.github.io/open-iptv-pro/assets/gallery/ios-channels.png" alt="Danh sách kênh có thể cuộn — ảnh chụp giao diện Open IPTV Pro Web" loading="lazy" decoding="async" width="393" height="852"></a><figcaption>Danh sách kênh có thể cuộn</figcaption></figure>
+<figure><a href="https://trisanghy.github.io/open-iptv-pro/assets/gallery/ios-sources.png" target="_blank" rel="noopener" title="Xem ảnh màn hình ios-sources kích thước đầy đủ"><img src="https://trisanghy.github.io/open-iptv-pro/assets/gallery/ios-sources.png" alt="Quản lý nguồn trên điện thoại — ảnh chụp giao diện Open IPTV Pro Web" loading="lazy" decoding="async" width="393" height="852"></a><figcaption>Quản lý nguồn trên điện thoại</figcaption></figure>
+<figure><a href="https://trisanghy.github.io/open-iptv-pro/assets/gallery/ios-favorites.png" target="_blank" rel="noopener" title="Xem ảnh màn hình ios-favorites kích thước đầy đủ"><img src="https://trisanghy.github.io/open-iptv-pro/assets/gallery/ios-favorites.png" alt="Trang kênh yêu thích — ảnh chụp giao diện Open IPTV Pro Web" loading="lazy" decoding="async" width="393" height="852"></a><figcaption>Trang kênh yêu thích</figcaption></figure></div></section>
+<section class="gallery-group" aria-label="Android — giao diện Web giả lập"><div class="gallery-label"><h3>Android — giao diện Web giả lập</h3><span>4 ảnh · Bấm để mở bản gốc</span></div><div class="visual-gallery gallery-mobile"><figure><a href="https://trisanghy.github.io/open-iptv-pro/assets/gallery/android-tv.png" target="_blank" rel="noopener" title="Xem ảnh màn hình android-tv kích thước đầy đủ"><img src="https://trisanghy.github.io/open-iptv-pro/assets/gallery/android-tv.png" alt="Trình phát TV trên Android — ảnh chụp giao diện Open IPTV Pro Web" loading="lazy" decoding="async" width="412" height="915"></a><figcaption>Trình phát TV trên Android</figcaption></figure>
+<figure><a href="https://trisanghy.github.io/open-iptv-pro/assets/gallery/android-channels.png" target="_blank" rel="noopener" title="Xem ảnh màn hình android-channels kích thước đầy đủ"><img src="https://trisanghy.github.io/open-iptv-pro/assets/gallery/android-channels.png" alt="Danh sách kênh và nhóm — ảnh chụp giao diện Open IPTV Pro Web" loading="lazy" decoding="async" width="412" height="915"></a><figcaption>Danh sách kênh và nhóm</figcaption></figure>
+<figure><a href="https://trisanghy.github.io/open-iptv-pro/assets/gallery/android-epg.png" target="_blank" rel="noopener" title="Xem ảnh màn hình android-epg kích thước đầy đủ"><img src="https://trisanghy.github.io/open-iptv-pro/assets/gallery/android-epg.png" alt="Lịch phát sóng trên Android — ảnh chụp giao diện Open IPTV Pro Web" loading="lazy" decoding="async" width="412" height="915"></a><figcaption>Lịch phát sóng trên Android</figcaption></figure>
+<figure><a href="https://trisanghy.github.io/open-iptv-pro/assets/gallery/android-settings.png" target="_blank" rel="noopener" title="Xem ảnh màn hình android-settings kích thước đầy đủ"><img src="https://trisanghy.github.io/open-iptv-pro/assets/gallery/android-settings.png" alt="Các tùy chọn giao diện — ảnh chụp giao diện Open IPTV Pro Web" loading="lazy" decoding="async" width="412" height="915"></a><figcaption>Các tùy chọn giao diện</figcaption></figure></div></section>
+<p class="note"><strong>Phạm vi kiểm chứng:</strong> hai bộ ảnh iOS/Android sử dụng giả lập thiết bị và user agent trên Chromium (không phải ảnh chụp Safari iPhone thực tế hoặc ứng dụng APK/IPA). Không dùng ảnh demo để chứng minh việc phát kênh IPTV từ nhà cung cấp hay hỗ trợ AirPlay/Cast thực tế.</p></section>
+
+<section class="section" id="huong-dan"><div class="eyebrow">Hướng dẫn bắt đầu</div><h2>Bốn bước để xem kênh của bạn</h2>
+<div class="steps"><div class="step"><h3>1. Mở Web hoặc cài ứng dụng</h3><p>Truy cập trình phát trực tuyến, hoặc chọn bản Windows/macOS ở phần tải về.</p></div>
+<div class="step"><h3>2. Thêm nguồn hợp lệ</h3><p>Chọn File M3U hoặc URL M3U. Kiểm tra điều khoản nhà cung cấp và xác nhận quyền sử dụng.</p></div>
+<div class="step"><h3>3. Chọn nhóm và kênh</h3><p>Dùng tìm kiếm, thư mục hoặc Yêu thích; nếu có nhiều link phát thì lựa chọn nguồn phù hợp.</p></div>
+<div class="step"><h3>4. Thiết lập EPG và sao lưu</h3><p>Nhập nguồn XMLTV nếu cần, đặt tùy chọn phát và sao lưu hoặc đăng nhập đồng bộ.</p></div></div>
+<div class="links"><a href="https://trisanghy.github.io/open-iptv-pro/huong-dan.html">Hướng dẫn Web đầy đủ</a><a href="https://github.com/trisanghy/open-iptv-pro/blob/main/README.md">Tài liệu Desktop</a><a href="https://github.com/trisanghy/open-iptv-pro/issues">Báo lỗi và góp ý</a></div></section>
+
+<section class="section" id="tai-ve"><div class="eyebrow">Bản phát hành</div><h2>Tải Open IPTV Pro</h2><p class="intro">Bản Web mở trực tiếp, không cần cài đặt. Với máy tính, chọn đúng kiến trúc CPU. Liên kết bộ cài Desktop được đối chiếu với GitHub Releases chính thức; nếu không thể đọc bản mới nhất, hãy mở trang phát hành.</p>
+<div class="platforms">
+<article class="platform"><strong>Web Online</strong><small>Chrome, Edge, Safari, Firefox — phụ thuộc khả năng hỗ trợ video của trình duyệt.</small><span class="version">Trình phát trực tuyến</span><a class="btn primary" href="https://trisanghy.github.io/open-iptv-pro/">Mở Web</a></article>
+<article class="platform"><strong>Windows x64</strong><small>Ứng dụng Electron. Bản cài đặt Setup .exe cho Windows 64-bit.</small><span class="version" data-release-version>Bản phát hành mới nhất</span><a class="btn" id="download-win" href="https://github.com/trisanghy/open-iptv-pro/releases/latest">Tải Windows</a></article>
+<article class="platform"><strong>macOS Apple Silicon</strong><small>Mac dùng chip Apple M1, M2, M3, M4 hoặc dòng Apple Silicon tương thích.</small><span class="version" data-release-version>Bản phát hành mới nhất</span><a class="btn" id="download-arm" href="https://github.com/trisanghy/open-iptv-pro/releases/latest">Tải Mac Apple</a></article>
+<article class="platform"><strong>macOS Intel</strong><small>Mac dùng bộ xử lý Intel; tải file .dmg phiên bản x64.</small><span class="version" data-release-version>Bản phát hành mới nhất</span><a class="btn" id="download-mac-x64" href="https://github.com/trisanghy/open-iptv-pro/releases/latest">Tải Mac Intel</a></article>
+</div>
+<div class="links"><a href="https://github.com/trisanghy/open-iptv-pro/releases/latest">Tất cả bộ cài và ghi chú phát hành</a><a href="https://github.com/trisanghy/open-iptv-pro/releases">Lịch sử phiên bản</a><a href="https://github.com/trisanghy/open-iptv-pro/releases/latest">Windows Portable và Rust Lab</a></div>
+<p class="note">iOS/Android hiện dùng Web trực tiếp từ link dự án; không quảng cáo file IPA/APK nếu chưa có bản phát hành được xác nhận. Bản Rust Lab là một nhánh sản phẩm riêng với phạm vi tính năng khác Electron.</p></section>
+
+<section class="section"><div class="eyebrow">Chọn phiên bản</div><h2>Web và Desktop khác nhau ở đâu?</h2>
+<div class="table-wrap"><table><thead><tr><th>Khả năng</th><th>Web Online</th><th>Desktop Electron</th><th>Rust Lab</th></tr></thead><tbody>
+<tr><td>Chạy không cần cài</td><td>Có, trong trình duyệt</td><td>Không</td><td>Không</td></tr>
+<tr><td>Nhập M3U và quản lý kênh</td><td>Có</td><td>Có</td><td>Phụ thuộc bản Rust Lab</td></tr>
+<tr><td>HLS/DASH, EPG và yêu thích</td><td>Có khi nguồn/trình duyệt hỗ trợ</td><td>Có, theo bản phát hành</td><td>Theo tính năng bản thử nghiệm</td></tr>
+<tr><td>FFmpeg native, xử lý phát nâng cao</td><td>Không có native FFmpeg hoặc vượt CORS</td><td>Tích hợp trên desktop</td><td>Phụ thuộc môi trường và bản Rust Lab</td></tr>
+<tr><td>Giới hạn trình duyệt (CORS, DRM, autoplay)</td><td>Áp dụng</td><td>Không giống trình duyệt công khai</td><td>Không giống trình duyệt công khai</td></tr>
+</tbody></table></div></section>
+
+<section class="section" id="ma-nguon"><div class="eyebrow">Minh bạch và mã nguồn</div><h2>Mã nguồn, tài liệu và quyền sử dụng</h2><p class="intro">Open IPTV Pro là dự án phần mềm cá nhân công khai mã nguồn. Trang này chỉ giới thiệu trình phát và công cụ quản lý; dự án không bán gói truyền hình, không kèm tài khoản xem kênh, không bảo đảm bản quyền hay chất lượng của nguồn do người dùng cung cấp.</p>
+<div class="grid">
+<article class="card"><h3>Mã nguồn Web</h3><p>Nhánh phát triển riêng <code>web/online</code> cho trình phát GitHub Pages, giao diện mobile/desktop và kiểm thử Web.</p><div class="links"><a href="https://github.com/trisanghy/open-iptv-pro/tree/web/online">Xem nhánh Web</a></div></article>
+<article class="card"><h3>Mã nguồn Desktop</h3><p>Nhánh <code>main</code> chứa ứng dụng và tài liệu Desktop, lịch sử phát hành và hướng dẫn xây dựng bộ cài.</p><div class="links"><a href="https://github.com/trisanghy/open-iptv-pro">Xem repository</a></div></article>
+<article class="card"><h3>Giấy phép và trách nhiệm</h3><p>Chỉ sử dụng playlist, luồng, lịch EPG và dữ liệu bên thứ ba khi bạn có quyền truy cập. Giấy phép phần mềm không cấp quyền đối với nội dung.</p><div class="links"><a href="https://github.com/trisanghy/open-iptv-pro/blob/main/LICENSE">Giấy phép</a></div></article>
+</div></section>
+
+<section class="section"><div class="eyebrow">Câu hỏi thường gặp</div><h2>Những điều nên biết trước khi sử dụng</h2><div class="faq">
+<details><summary>Open IPTV Pro có cung cấp kênh truyền hình sẵn không?</summary><p>Không. Bạn tự thêm file hoặc link M3U từ nguồn mà mình có quyền sử dụng. Một playlist có thể chứa đường dẫn hết hạn hoặc cần chứng thực riêng.</p></details>
+<details><summary>Vì sao link phát được trên ứng dụng khác nhưng Web không phát?</summary><p>Trình duyệt có giới hạn CORS, hỗ trợ codec, HTTPS, DRM, cookie và chính sách autoplay. Không nên kết luận link đã chết chỉ vì Web không truy cập được.</p></details>
+<details><summary>AirPlay, PiP và tự phát có luôn hoạt động trên iPhone?</summary><p>Không bảo đảm. Những chức năng này phụ thuộc Safari/WebKit, chế độ trình duyệt nhúng, thao tác của người dùng và nguồn video.</p></details>
+<details><summary>Đăng nhập và đồng bộ có bắt buộc không?</summary><p>Không. Có thể sử dụng ở chế độ khách, lưu dữ liệu trong trình duyệt. Đồng bộ tài khoản chỉ hoạt động khi dịch vụ đám mây khả dụng và được cấu hình.</p></details>
+<details><summary>Ảnh chụp giao diện có phải ảnh video được phát thật?</summary><p>Ảnh được chụp tự động từ trình phát trong lúc dựng website; không sử dụng playlist riêng hoặc bảo đảm có kênh đang phát ở thời điểm chụp.</p></details>
+<details><summary>Làm thế nào để cập nhật hoặc báo lỗi?</summary><p>Mở trang GitHub Releases để xem phiên bản mới hoặc gửi issue trong repository, kèm hệ điều hành, trình duyệt và mô tả hiện tượng (không chia sẻ token/URL riêng tư).</p></details>
+</div></section>
+</main>
+<footer><div class="wrap foot"><p><strong>Open IPTV Pro</strong> · Công cụ xem và quản lý IPTV mã nguồn mở. Người dùng chịu trách nhiệm bảo đảm quyền sử dụng những nguồn nội dung mình thêm vào trong phạm vi pháp luật áp dụng.</p><p><a href="https://trisanghy.github.io/open-iptv-pro/">Trình phát Web</a> · <a href="https://github.com/trisanghy/open-iptv-pro">GitHub</a> · <a href="https://trisanghy.github.io/open-iptv-pro/huong-dan.html">Hướng dẫn</a></p></div></footer>
+<script>
+(function(){
+  const api='https://api.github.com/repos/trisanghy/open-iptv-pro/releases/latest';
+  const patterns={'download-win':/^Open-IPTV-Pro-Setup-[\d.]+-x64\.exe$/i,'download-arm':/^Open-IPTV-Pro-[\d.]+-mac-arm64\.dmg$/i,'download-mac-x64':/^Open-IPTV-Pro-[\d.]+-mac-x64\.dmg$/i};
+  fetch(api,{headers:{Accept:'application/vnd.github+json'},cache:'no-store'}).then(r=>{if(!r.ok)throw Error('GitHub API unavailable');return r.json()}).then(data=>{
+    if(!Array.isArray(data.assets))return;
+    let updated=0;
+    for(const [id,regex] of Object.entries(patterns)){
+      const asset=data.assets.find(a=>regex.test(a.name||''));
+      if(!asset)continue;
+      const url=new URL(asset.browser_download_url);
+      if(url.origin!=='https://github.com'||!/^\/trisanghy\/open-iptv-pro\/releases\/download\//.test(url.pathname))continue;
+      document.getElementById(id).href=url.href;updated++;
+    }
+    if(updated&&/^v?[\d.]+$/.test(data.tag_name||''))document.querySelectorAll('[data-release-version]').forEach(el=>el.textContent=data.tag_name);
+  }).catch(()=>{}); // Keep safe official releases/latest links on offline or rate-limited devices.
+})();
+</script>
+</body></html>

@@ -7,10 +7,47 @@
  const status=(message,error=false)=>{$('castStatus').textContent=message;$('castStatus').classList.toggle('cast-error',error);};
  const t=s=>window.OpenIPTVI18n?.t?.(s)||s;
  const close=()=>{$('castModal').classList.add('hidden');};
+ const isAppleMobile=()=>{
+  const ua=String(navigator.userAgent||'');
+  return /iPhone|iPad|iPod/i.test(ua)||(/Macintosh/i.test(ua)&&Number(navigator.maxTouchPoints||0)>1);
+ };
+ // Called synchronously inside the user's Cast tap; Safari requires activation.
+ function requestAirPlayPicker(){
+  const video=$('video');if(!video)return false;
+  video.disableRemotePlayback=false;
+  video.setAttribute?.('x-webkit-airplay','allow');
+  try{
+   if(typeof video.webkitShowPlaybackTargetPicker==='function'){
+    video.webkitShowPlaybackTargetPicker();return true;
+   }
+   if(typeof video.remote?.prompt==='function'){
+    const pending=video.remote.prompt();
+    pending?.catch?.(()=>showMobileAirPlayGuide());
+    return true;
+   }
+  }catch(e){console.warn('AirPlay picker unavailable',e);}
+  return false;
+ }
+ function showMobileAirPlayGuide(){
+  $('castModal').dataset.airplayMobile='true';
+  $('castTitle').textContent='AirPlay trên iPhone / iPad';
+  $('airplaySection').classList.remove('hidden');
+  $('airplayMobileHelp').hidden=false;
+  $('castAirplay').textContent='Thử mở AirPlay';
+  $('castAirplay').disabled=!(typeof $('video')?.webkitShowPlaybackTargetPicker==='function'||typeof $('video')?.remote?.prompt==='function');
+  $('castModal').classList.remove('hidden');
+  status('Trình duyệt hiện tại không mở được AirPlay. Hãy mở website trực tiếp trong Safari; nếu cần, dùng Phản chiếu màn hình trong Trung tâm điều khiển iPhone.',true);
+ }
  function open(ch,url){
   channel=ch;source=url||ch?.url;
   $('castChannel').textContent=(ch?.name||'')+' · '+(ch?.group||'');
   $('castUrl').value='';$('castCopy').disabled=true;
+  // AirPlay device selection is owned by WebKit, not the desktop Cast backend.
+  if(isAppleMobile()&&!hasNative){
+   if(requestAirPlayPicker())return;
+   showMobileAirPlayGuide();return;
+  }
+  $('castModal').dataset.airplayMobile='false';
   $('castModal').classList.remove('hidden');
   $('airplaySection').classList.toggle('hidden',navigator.platform?.toLowerCase().includes('mac')===false);
   if(!hasNative){status('Chức năng Cast chỉ có trong bản ứng dụng đã cài cho Windows hoặc Mac.',true);$('castScan').disabled=true;$('castPlay').disabled=true;$('castAirplay').disabled=true;$('castLink').disabled=true;return;}
@@ -48,7 +85,12 @@
   casting=true;selectedTarget='cast';status('Đã gửi luồng đến '+(response?.active?.name||'TV')+'. Nếu TV đen hình, hãy kiểm tra định dạng video hoặc mạng LAN.');
   document.getElementById('video')?.pause();
  });}
- async function airplay(){return action(async()=>{
+ async function airplay(){
+  if(isAppleMobile()&&!hasNative){
+   if(!requestAirPlayPicker())showMobileAirPlayGuide();
+   return;
+  }
+  return action(async()=>{
   status('Đang mở Safari trên Mac…');
   await api.openAirplay(source);casting=true;selectedTarget='airplay';
   status('Đã mở Safari. Chọn TV bằng nút AirPlay trong trình phát Safari; ứng dụng chưa chọn TV thay bạn.');
@@ -81,5 +123,5 @@
   try{await navigator.clipboard.writeText(input.value);status('Đã sao chép địa chỉ xem trên TV.');}
   catch{input.focus();input.select();try{document.execCommand('copy');status('Đã chọn địa chỉ. Sao chép để mở trên TV.');}catch{status('Hãy sao chép link trong ô phía trên.');}}
  });
- window.OpenIPTVCastUI=Object.freeze({open,stopOnLocalStop,onChannelChanged});
+ window.OpenIPTVCastUI=Object.freeze({open,stopOnLocalStop,onChannelChanged,isAppleMobile,requestAirPlayPicker});
 })();

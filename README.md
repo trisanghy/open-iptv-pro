@@ -14,6 +14,12 @@ Open IPTV Pro là ứng dụng mã nguồn mở được phát triển như **m�
 
 > **Ảnh cập nhật 19/11/2026:** Thư viện 12 ảnh dưới đây được chụp tự động từ **Web Online thực tế** trên nhánh `web/online` bằng Chromium trong GitHub Actions. Video/playlist minh họa tự tạo, không sử dụng nguồn IPTV riêng tư hay bản quyền bên thứ ba. Ảnh iOS và Android sử dụng **giả lập thiết bị trình duyệt**, không phải ảnh chụp Safari trên iPhone thật hoặc APK/IPA. Ảnh ứng dụng Electron/Rust Lab lịch sử được giữ trong `docs/images` và không bị gọi nhầm là giao diện hiện tại.
 
+## Tính năng mới trong mã nguồn — Vừa xem (19/11/2026)
+
+Trong **Xem truyền hình → Danh sách kênh**, bộ lọc **◷ Vừa xem** nằm cạnh **★ Yêu thích**. Kênh gần đây xuất hiện trước, không tạo mục trùng, nhấn vào kênh để phát lại và vẫn đánh dấu sao bình thường. Danh sách tự ẩn những kênh đã xóa hoặc thuộc nguồn đang tắt. Electron và Rust ghi nhận kênh sau khi phát thành công; Web ghi nhận kênh khi được mở. Lịch sử được lưu trong dữ liệu ứng dụng, khôi phục khi mở lại. Số mục tối đa do mỗi phiên bản quản lý riêng.
+
+**Lưu ý về phát hành:** Mã nguồn cập nhật có thể mới hơn bộ cài v4.23.70 hiện có. Không coi các tệp cài đặt cũ đã chứa tính năng này nếu chưa có bản build mới được xác minh.
+
 ## 1. Các phiên bản
 
 | Phiên bản | Nền tảng | Đối tượng sử dụng | Trạng thái |

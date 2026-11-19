@@ -1,7 +1,7 @@
 'use strict';
 // XMLTV parsing and matching. No remote HTML is injected into the page.
 (function(root){
- const tidy=s=>String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/\b(?:hd|fhd|uhd|4k|1080p|720p)\b/g,'').replace(/[^a-z0-9]/g,'').trim();
+ const tidy=s=>String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/\s*\((?:nguon|source)\s*\d+\)\s*$/,'').replace(/\b(?:hd|fhd|uhd|4k|1080p|720p)\b/g,'').replace(/[^a-z0-9]/g,'').trim();
  function when(raw){
   const m=String(raw||'').match(/^(\d{4})(\d\d)(\d\d)(\d\d)(\d\d)(\d\d)?\s*(Z|[+-]\d{4})?/);
   if(!m)return NaN;
