@@ -21,7 +21,8 @@
   const source=()=>String(video.currentSrc||video.src||'');
   function refresh(){
    const wantAudio=root.IPTVState?.getStore?.()?.autoEnableAudio!==false;
-   if(!video.paused&&!video.muted&&Number(video.volume)!==0)needsGesture=false;
+   // Do not dismiss on paused=false alone: a rejected Safari play() can
+   // leave that flag stale even though audible playback never started.
    banner.hidden=!(needsGesture&&wantAudio&&!root.OpenIPTVBackgroundAudio?.active&&!!source());
   }
   function retrySound(){
@@ -51,7 +52,11 @@
   doc.addEventListener('openiptv:autoplay-muted',restricted);
   doc.addEventListener('openiptv:autoplay-blocked',restricted);
   doc.addEventListener('openiptv:media-info',()=>{needsGesture=false;refresh()});
-  for(const type of ['playing','volumechange','emptied'])video.addEventListener(type,refresh);
+  video.addEventListener('playing',()=>{
+   if(!video.muted&&!video.paused&&Number(video.volume)!==0)needsGesture=false;
+   refresh();
+  });
+  for(const type of ['volumechange','emptied'])video.addEventListener(type,refresh);
  }
  if(doc.readyState==='loading')doc.addEventListener('DOMContentLoaded',init,{once:true});
  else init();
