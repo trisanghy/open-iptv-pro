@@ -1,0 +1,71 @@
+name: Generate complete offline Electron UI locale packs
+on:
+  push:
+    branches: [build-sources/electron-desktop]
+    paths:
+      - '.github/workflows/generate-electron-locales.yml'
+      - 'scripts/build-electron-native-locales.py'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  translate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      max-parallel: 4
+      fail-fast: false
+      matrix:
+        lang: [es, pt-BR, zh-CN, th, lo, km, fr, de, it, ja, ko, ru, id, hi, ar]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - name: Translate public UI phrases and verify every response
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          python3 scripts/build-electron-native-locales.py --lang '${{ matrix.lang }}'
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: native-ui-${{ matrix.lang }}
+          path: locale-output/${{ matrix.lang }}.json
+          if-no-files-found: warn
+          retention-days: 7
+  assemble:
+    needs: translate
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: true}
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: native-ui-*
+          path: locale-output/
+          merge-multiple: true
+      - name: Assemble fully offline native locale packs; fail closed unless 100 percent
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          python3 scripts/build-electron-native-locales.py --merge
+          node --check renderer/i18n.js
+          node --check renderer/i18n-full-locale-pack.js
+          node --test tests/i18n-*.test.cjs
+      - name: Publish verified generated dictionaries on the same Electron branch
+        shell: bash
+        env:
+          TARGET_BRANCH: build-sources/electron-desktop
+        run: |
+          set -Eeuo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add renderer/index.html renderer/i18n.js renderer/i18n-full-locale-pack.js scripts/audit-electron-i18n.cjs tests/i18n-100-percent-native.test.cjs
+          git diff --cached --quiet && { echo 'No changes to publish'; exit 0; }
+          git fetch origin "$TARGET_BRANCH"
+          test "$(git rev-parse HEAD)" = "$(git rev-parse FETCH_HEAD)" || { echo 'Branch moved: refusing to overwrite newer work'; exit 1; }
+          git commit -m 'feat(electron/i18n): ship fully pretranslated offline UI dictionaries for 17 languages'
+          git push origin "HEAD:$TARGET_BRANCH"
