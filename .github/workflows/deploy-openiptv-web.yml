@@ -28,21 +28,8 @@ jobs:
     steps:
       - name: Checkout isolated web branch
         uses: actions/checkout@v4
-      - name: Complete native localization for all 17 Web languages
-        shell: bash
-        run: |
-          set -euo pipefail
-          python3 -m py_compile web-online/build-web-native-locales.py
-          python3 web-online/build-web-native-locales.py --fill
-          node --check web-native-complete.js
-          node --test web-online/tests/web-native-full-coverage.test.cjs
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add web-online/web-native-complete.json web-native-complete.js
-          if ! git diff --cached --quiet; then
-            git commit -m 'i18n(web): persist complete native translations for all 17 languages'
-            git push origin HEAD:web/online
-          fi
+      # Offline dictionaries are committed separately. Never block a Web release
+      # on external translation providers, quota failures or writes to HEAD.
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
