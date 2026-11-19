@@ -19,7 +19,7 @@ Electron Desktop เป็นรุ่นเสถียรที่มีฟี
 - **Web Online — เบราว์เซอร์:** [เปิดเครื่องเล่น](https://trisanghy.github.io/open-iptv-pro/) ไม่ต้องติดตั้ง แต่มีข้อจำกัด CORS โคเดกและ DRM
 - **Electron Desktop — Windows/macOS:** [ตัวติดตั้งอย่างเป็นทางการ](https://github.com/trisanghy/open-iptv-pro/releases/latest)
 - **Rust Lab Beta — Windows/macOS:** [รุ่นแยกต่างหาก](https://github.com/trisanghy/open-iptv-pro/releases?q=rust-lab)
-- **Mobile Capacitor Beta — Android/iOS:** [APK debug / IPA ไม่ได้ลงลายเซ็น](https://github.com/trisanghy/open-iptv-pro/releases/tag/mobile/v4.23.17.10), [ซอร์สโค้ด](../../mobile/) และ[คู่มือติดตั้ง](../MOBILE_ANDROID_IOS.md)
+- **Mobile Capacitor Beta — Android/iOS:** [APK debug / IPA ไม่ได้ลงลายเซ็น](https://github.com/trisanghy/open-iptv-pro/releases/tag/mobile/v4.23.17.16), [ซอร์สโค้ด](../../mobile/) และ[คู่มือติดตั้ง](../MOBILE_ANDROID_IOS.md)
 
 ## ฟีเจอร์หลัก
 

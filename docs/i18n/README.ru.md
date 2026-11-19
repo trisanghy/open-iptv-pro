@@ -19,7 +19,7 @@ Electron Desktop — стабильная версия с расширенным
 - **Web Online — браузер:** [Открыть плеер](https://trisanghy.github.io/open-iptv-pro/), без установки, с ограничениями CORS, кодеков и DRM.
 - **Electron Desktop — Windows/macOS:** [Официальные установщики](https://github.com/trisanghy/open-iptv-pro/releases/latest).
 - **Rust Lab Beta — Windows/macOS:** [Отдельные выпуски](https://github.com/trisanghy/open-iptv-pro/releases?q=rust-lab).
-- **Mobile Capacitor Beta — Android/iOS:** [Отладочный APK / неподписанный IPA](https://github.com/trisanghy/open-iptv-pro/releases/tag/mobile/v4.23.17.10), [исходники Mobile](../../mobile/) и [инструкция](../MOBILE_ANDROID_IOS.md).
+- **Mobile Capacitor Beta — Android/iOS:** [Отладочный APK / неподписанный IPA](https://github.com/trisanghy/open-iptv-pro/releases/tag/mobile/v4.23.17.16), [исходники Mobile](../../mobile/) и [инструкция](../MOBILE_ANDROID_IOS.md).
 
 ## Основные функции
 

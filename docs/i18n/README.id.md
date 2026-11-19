@@ -19,7 +19,7 @@ Electron Desktop adalah edisi stabil yang lebih lengkap. Rust Lab merupakan beta
 - **Web Online — Peramban:** [Buka pemutar](https://trisanghy.github.io/open-iptv-pro/), tanpa instalasi; batas CORS, codec, dan DRM tetap berlaku.
 - **Electron Desktop — Windows/macOS:** [Installer resmi](https://github.com/trisanghy/open-iptv-pro/releases/latest).
 - **Rust Lab Beta — Windows/macOS:** [Rilis terpisah](https://github.com/trisanghy/open-iptv-pro/releases?q=rust-lab).
-- **Mobile Capacitor Beta — Android/iOS:** [APK debug / IPA belum ditandatangani](https://github.com/trisanghy/open-iptv-pro/releases/tag/mobile/v4.23.17.10), [kode sumber Mobile](../../mobile/) dan [panduan instalasi](../MOBILE_ANDROID_IOS.md).
+- **Mobile Capacitor Beta — Android/iOS:** [APK debug / IPA belum ditandatangani](https://github.com/trisanghy/open-iptv-pro/releases/tag/mobile/v4.23.17.16), [kode sumber Mobile](../../mobile/) dan [panduan instalasi](../MOBILE_ANDROID_IOS.md).
 
 ## Fitur utama
 
