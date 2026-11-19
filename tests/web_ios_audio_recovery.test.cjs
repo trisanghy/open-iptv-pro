@@ -6,9 +6,9 @@ const html=fs.readFileSync(path.join(root,'index.html'),'utf8');
 const recovery=fs.readFileSync(path.join(root,'web-ios-audio-recovery.js'),'utf8');
 const resume=fs.readFileSync(path.join(root,'resume-last.js'),'utf8');
 test('Web Mobile uses versioned top-only audio banner',()=>{
- assert.match(html,/web-ios-audio-recovery\.js\?v=top-only-20261119c/);
+ assert.match(html,/web-ios-audio-recovery\.js\?v=top-silent-20261119d/);
  assert.match(html,/resume-last\.js\?v=autoplay-clean-20261119a/);
- assert.match(html,/web-ios-audio-recovery\.css\?v=top-only-20261119c/);
+ assert.match(html,/web-ios-audio-recovery\.css\?v=top-silent-20261119d/);
  assert.doesNotMatch(html,/resume-last\.css/);
 });
 test('the only added sound button is inside the top video banner',()=>{

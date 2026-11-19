@@ -24,8 +24,8 @@ function fixture({chrome=true,sourceReady=true,reject=false}={}){
 }
 test('one upper video banner exists, no separate lower unmute button',()=>{
  for(const chrome of [true,false]){const e=fixture({chrome});assert.equal(e.doc.created,3);assert.equal(e.old.removed,2);
-  assert.equal(e.box.children.length,1);assert.equal(e.banner.id,'webAudioPermissionBanner');assert.equal(e.banner.hidden,true);}
- assert.match(html,/web-ios-audio-recovery\.css\?v=top-only-20261119c/);
+  assert.equal(e.box.children.length,1);assert.equal(e.banner.id,'webAudioPermissionBanner');assert.equal(e.banner.hidden,false);}
+ assert.match(html,/web-ios-audio-recovery\.css\?v=top-silent-20261119d/);
 });
 test('muted-autoplay permission event opens only upper banner; clicking unmutes and plays',async()=>{
  const e=fixture();e.doc.emit('openiptv:autoplay-muted',{detail:{channelId:'one'}});
@@ -39,7 +39,8 @@ test('permission error leaves upper banner visible for another user click',async
  assert.equal(e.banner.hidden,false);
 });
 test('other channels and missing source never show permission banner',()=>{
- const e=fixture();e.doc.emit('openiptv:autoplay-muted',{detail:{channelId:'not-one'}});
+ const e=fixture();e.video.muted=false;e.video.emit('volumechange');
+ e.doc.emit('openiptv:autoplay-muted',{detail:{channelId:'not-one'}});
  assert.equal(e.banner.hidden,true);
  const none=fixture({sourceReady:false});none.doc.emit('openiptv:autoplay-muted',{detail:{channelId:'one'}});
  assert.equal(none.banner.hidden,true);
@@ -57,5 +58,32 @@ test('legacy lower purple sound action is hidden by CSS while top banner remains
  assert.match(css,/#page-tv #web-resume-panel/);
  assert.match(css,/#playerBox \.web-audio-permission-banner>/);
  assert.match(source,/getElementById\?\.\('webAudioPermissionBanner'\)\)return/);
- assert.match(html,/web-ios-audio-recovery\.js\?v=top-only-20261119c/);
+ assert.match(html,/web-ios-audio-recovery\.js\?v=top-silent-20261119d/);
+});
+
+test('silent channel shows top audio banner without autoplay events and unlocks in one tap',async()=>{
+ const e=fixture();
+ assert.equal(e.banner.hidden,false,'muted native HLS must show the banner immediately');
+ e.button.emit('click');await Promise.resolve();
+ assert.equal(e.video.playCalls,1);
+ assert.equal(e.video.muted,false);
+ assert.equal(e.banner.hidden,true);
+});
+test('volume zero shows permission button even without muted flag',async()=>{
+ const e=fixture();e.video.muted=false;e.video.volume=0;e.video.emit('volumechange');
+ assert.equal(e.banner.hidden,false);
+ e.button.emit('click');await Promise.resolve();
+ assert.ok(e.video.volume>0);
+ assert.equal(e.banner.hidden,true);
+});
+test('an initially audible channel does not show a sound banner',()=>{
+ const e=fixture();e.video.muted=false;e.video.emit('playing');
+ assert.equal(e.banner.hidden,true);
+});
+test('newly loaded muted stream reveals the banner after a missing initial source',()=>{
+ const e=fixture({sourceReady:false});
+ assert.equal(e.banner.hidden,true);
+ e.video.src='https://example.org/later.m3u8';e.video.currentSrc=e.video.src;
+ e.video.emit('loadstart');
+ assert.equal(e.banner.hidden,false);
 });
