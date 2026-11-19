@@ -184,7 +184,7 @@ jobs:
           if grep -Fq 'startTimeshift(' _site/advanced.js; then
             echo 'Web must not invoke the removed Timeshift engine'; exit 1
           fi
-          grep -Fq 'web-tv-wide.css?v=tv-wide-no-side-epg-20261118k' _site/index.html
+          grep -Fq 'web-tv-wide.css?v=tv-wide-responsive-fill-20261119a' _site/index.html
           grep -Fq 'src="web-mobile-player.js?v=desktop-handheld-fs-20261119a"' _site/index.html
           grep -Fq 'href="web-mobile-player.css?v=desktop-handheld-fs-20261119a"' _site/index.html
           node --test web-online/tests/browser-channel-check.test.cjs

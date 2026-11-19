@@ -39,3 +39,19 @@ html[data-iptv-device="desktop"]:is([data-ui-style="glass"],[data-ui-style="broa
  width:100%!important;
  max-width:100%!important;
 }
+
+/* Web desktop: fill all available player width instead of limiting the stage
+   to viewport height. The intrinsic stream aspect ratio still comes from
+   video-aspect-v42337.js. Mobile and fullscreen layouts are unchanged. */
+html[data-iptv-device="desktop"] #page-tv #playerBox:not(:fullscreen) {
+ width:100%!important;
+ max-width:100%!important;
+ height:auto!important;
+ min-height:0!important;
+ max-height:none!important;
+ aspect-ratio:var(--iptv-video-ratio,16 / 9)!important;
+ flex:0 0 auto!important;
+ justify-self:stretch!important;
+ align-self:start!important;
+ margin-inline:0!important;
+}

@@ -31,6 +31,20 @@ test('full EPG access, favorites and channel carousel remain present',()=>{
  for(const id of ['page-epg','openGuideBtn','epgCurrent','favCurrentBtn','themeChannelStrip']){
   assert.ok(html.includes('id="'+id+'"'),id);
  }
- assert.ok(html.includes('web-tv-wide.css?v=tv-wide-no-side-epg-20261118k'));
+ assert.ok(html.includes('web-tv-wide.css?v=tv-wide-responsive-fill-20261119a'));
  assert.equal((html.match(/id="themeGuidePanel"/g)||[]).length,1);
+});
+
+test('desktop player fills its entire available width without distorting stream ratio or mobile view',()=>{
+ const rule=css.match(/html\\[data-iptv-device="desktop"\\] #page-tv #playerBox:not\\(:fullscreen\\) \\{([^}]+)\\}/);
+ assert.ok(rule,'full-width desktop rule must override the viewport-height cap');
+ assert.match(rule[1],/width:100%!important/);
+ assert.match(rule[1],/max-width:100%!important/);
+ assert.match(rule[1],/height:auto!important/);
+ assert.match(rule[1],/aspect-ratio:var\\(--iptv-video-ratio,16 \\/ 9\\)!important/);
+ assert.match(rule[1],/margin-inline:0!important/);
+ assert.doesNotMatch(rule[1],/height-cap|clamp\\(|min\\(100%/);
+ assert.ok(html.indexOf('video-aspect-v42337.css')<html.indexOf('web-tv-wide.css?v=tv-wide-responsive-fill-20261119a'));
+ assert.match(builder,/tv-wide-responsive-fill-20261119a/);
+ assert.doesNotMatch(rule[0],/object-fit|:fullscreen\\s*\\{/);
 });
