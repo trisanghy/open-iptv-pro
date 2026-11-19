@@ -268,6 +268,10 @@ jobs:
           set -euo pipefail
           node --check _site/web-volume.js
           node --test web-online/tests/web-volume.test.cjs
+          node --check _site/web-mobile-volume.js
+          node --test web-online/tests/web-mobile-volume-popover.test.cjs
+          grep -Fq 'web-mobile-volume.js?v=mobile-volume-popover-20261119a' _site/index.html
+          grep -Fq 'web-mobile-volume.css?v=mobile-volume-popover-20261119a' _site/index.html
           grep -q 'id="webVolumeMute"' _site/index.html
           grep -q 'display:none!important' _site/web-only.css
           grep -q 'playback-extra' _site/web-only.css

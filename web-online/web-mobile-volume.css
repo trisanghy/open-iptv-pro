@@ -1,0 +1,63 @@
+/* Open IPTV Pro: mobile-only expandable volume slider below the 4 SVG actions. */
+html[data-iptv-device="mobile"] body #page-tv .player-control-card
+ .control-layout-top>#webMobileVolumePanel{
+ display:grid!important;grid-area:4/1/5/2!important;
+ grid-template-columns:44px minmax(0,1fr) 46px!important;
+ align-items:center!important;column-gap:12px!important;row-gap:0!important;
+ position:relative!important;box-sizing:border-box!important;min-width:0!important;
+ width:100%!important;min-height:62px!important;padding:8px 12px!important;
+ margin:5px 0 0!important;border:1px solid var(--edge,#42576b)!important;
+ border-radius:13px!important;background:var(--surface2,#1c2938)!important;
+ box-shadow:0 5px 18px rgba(0,0,0,.18)!important;color:var(--text,#edf4fa)!important;
+}
+html[data-iptv-device="mobile"] body #page-tv .player-control-card
+ .control-layout-top>#webMobileVolumePanel[hidden]{display:none!important}
+html:not([data-iptv-device="mobile"]) #webMobileVolumePanel{display:none!important}
+html[data-iptv-device="mobile"] body #page-tv .player-control-card
+ .control-layout-top>#webMobileVolumePanel::before{
+ content:"";position:absolute;top:-6px;left:11%;width:10px;height:10px;
+ border-top:1px solid var(--edge,#42576b);border-left:1px solid var(--edge,#42576b);
+ background:var(--surface2,#1c2938);transform:rotate(45deg);
+}
+html[data-iptv-device="mobile"] body #page-tv .player-control-card
+ #webMobileVolumePanel .web-mobile-volume-mute{
+ display:grid!important;place-items:center!important;position:relative!important;
+ width:44px!important;height:44px!important;min-width:44px!important;
+ padding:0!important;margin:0!important;border:0!important;border-radius:10px!important;
+ color:var(--text,#eaf2f7)!important;background:transparent!important;font-size:0!important;
+ touch-action:manipulation!important;cursor:pointer!important;
+}
+html[data-iptv-device="mobile"] body #page-tv .player-control-card
+ #webMobileVolumePanel .web-mobile-volume-mute::before{
+ content:"";display:block;width:24px;height:24px;background:currentColor;
+ -webkit-mask:var(--ipc-volume) center/contain no-repeat;
+ mask:var(--ipc-volume) center/contain no-repeat;
+}
+html[data-iptv-device="mobile"] body #page-tv .player-control-card
+ #webMobileVolumePanel .web-mobile-volume-mute[aria-pressed="true"]::before{
+ -webkit-mask-image:var(--ipc-muted);mask-image:var(--ipc-muted);
+}
+html[data-iptv-device="mobile"] body #page-tv .player-control-card
+ #webMobileVolumePanel input#webMobileVolumeSlider{
+ display:block!important;width:100%!important;min-width:0!important;max-width:none!important;
+ height:44px!important;min-height:44px!important;box-sizing:border-box!important;
+ padding:0!important;margin:0!important;accent-color:var(--accent,#b880ef)!important;
+ cursor:pointer!important;touch-action:pan-x!important;
+}
+html[data-iptv-device="mobile"] body #page-tv .player-control-card
+ #webMobileVolumePanel .web-mobile-volume-percent{
+ display:block!important;width:46px!important;text-align:right!important;
+ font-size:14px!important;font-weight:700!important;white-space:nowrap!important;
+}
+html[data-iptv-device="mobile"] body #page-tv .player-control-card
+ .output-controls #webVolumeMute[aria-expanded="true"]{
+ border-color:var(--accent,#b880ef)!important;
+ background:color-mix(in srgb,var(--accent,#b880ef) 14%,var(--surface2,#1c2938))!important;
+}
+html[data-iptv-device="mobile"] body #page-tv .player-control-card
+ #webMobileVolumePanel .web-mobile-volume-ios-hint{display:none!important}
+html[data-iptv-device="mobile"].web-is-ios body #page-tv .player-control-card
+ #webMobileVolumePanel .web-mobile-volume-ios-hint{
+ display:block!important;grid-column:1/-1!important;
+ color:var(--muted,#9cadbb)!important;font-size:11px!important;line-height:1.35!important;
+}

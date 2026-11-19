@@ -56,7 +56,7 @@ for previous,next_value in (
     js=js.replace(previous,next_value,1)
 features.write_text(js,encoding='utf-8')
 
-for name in ('web-only.js','web-only.css','resume-last.js','resume-last.css','browser-channel-check.js','web-autoplay.js','cloud-core.js','cloud-sync.js','cloud-sync.css','web-volume.css','web-volume.js','web-mobile-player.css','web-mobile-player.js','web-player-icons.css','web-player-icons.js','web-tv-wide.css','web-mobile-controls-polish.css','web-desktop-download.css','web-desktop-download.js','web-recent-channels.js','web-compact-toolbar.css','web-snapshot-batch.js','web-background-audio.js','web-background-audio.css','web-ios-audio-recovery.js','web-ios-audio-recovery.css','web-fullscreen-controls.css','web-fullscreen-controls.js','web-mobile-tablet-controls.css'):
+for name in ('web-only.js','web-only.css','resume-last.js','resume-last.css','browser-channel-check.js','web-autoplay.js','cloud-core.js','cloud-sync.js','cloud-sync.css','web-volume.css','web-volume.js','web-mobile-player.css','web-mobile-player.js','web-player-icons.css','web-player-icons.js','web-tv-wide.css','web-mobile-controls-polish.css','web-mobile-volume.js','web-mobile-volume.css','web-desktop-download.css','web-desktop-download.js','web-recent-channels.js','web-compact-toolbar.css','web-snapshot-batch.js','web-background-audio.js','web-background-audio.css','web-ios-audio-recovery.js','web-ios-audio-recovery.css','web-fullscreen-controls.css','web-fullscreen-controls.js','web-mobile-tablet-controls.css'):
     source=Path(__file__).resolve().parent/name
     if not source.is_file():source=Path(__file__).resolve().parent.parent/name
     copy2(source,out/name)
@@ -228,7 +228,7 @@ html=html.replace('</head>','<link rel="stylesheet" href="web-only.css?v=no-time
 html=html.replace('<script src="app.js"></script>','<script src="web-mobile-player.js?v=desktop-handheld-fs-20261119a"></script><script src="app.js"></script>',1)
 html=html.replace('</head>','<link rel="stylesheet" href="web-mobile-player.css?v=desktop-handheld-fs-20261119a"/></head>',1)
 html=html.replace('src="theme-boot.js"','src="theme-boot.js?v=responsive-desktop-20261118j"',1)
-html=html.replace('</body>','<script src="supabase-sdk.js"></script><script src="cloud-core.js"></script><script src="web-only.js"></script><script src="resume-last.js?v=autoplay-clean-20261119a"></script><script src="web-volume.js"></script><script src="cloud-sync.js"></script><script src="web-player-icons.js?v=audio-state-sync-20261119a"></script></body>',1)
+html=html.replace('</body>','<script src="supabase-sdk.js"></script><script src="cloud-core.js"></script><script src="web-only.js"></script><script src="resume-last.js?v=autoplay-clean-20261119a"></script><script src="web-volume.js"></script><script src="web-mobile-volume.js?v=mobile-volume-popover-20261119a"></script><script src="cloud-sync.js"></script><script src="web-player-icons.js?v=audio-state-sync-20261119a"></script></body>',1)
 # Preserve Web fullscreen toolbar when generating static assets from legacy WebView.
 fs_exit='<button type="button" id="fsExit" title="Thoát toàn màn hình">⛶</button>'
 if html.count(fs_exit)!=1:sys.exit('Fullscreen exit button missing')
@@ -388,6 +388,7 @@ if html.count('web-tv-channel-hub.js?')!=1 or html.count('web-tv-channel-hub.css
 
 # Expanded mobile device mode uses tablet-sized controls even in wide browser windows.
 html=html.replace('</head>','<link rel="stylesheet" href="web-mobile-tablet-controls.css?v=tablet-controls-20261119a"/></head>',1)
+html=html.replace('web-mobile-controls-polish.css?v=quick-icons-unified-20261119b"/>','web-mobile-controls-polish.css?v=quick-icons-unified-20261119b"/><link rel="stylesheet" href="web-mobile-volume.css?v=mobile-volume-popover-20261119a"/>',1)
 (out/'index.html').write_text(html,encoding='utf-8')
 (out/'.nojekyll').write_text('')
 (out/'manifest.webmanifest').write_text(json.dumps({
