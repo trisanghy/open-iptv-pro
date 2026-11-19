@@ -67,7 +67,7 @@
     if(!out && language!=='vi'){
       const labels=nativeUnits[language]||nativeUnits.en;
       const units={kênh:labels[0],luồng:labels[1],phút:labels[2],giây:labels[3]};
-      let m=compact.match(/^(\d+(?:\s*\\/\s*\d+)?)\s+(kênh|luồng|phút|giây)$/);
+      let m=compact.match(/^(\d+(?:\s*\/\s*\d+)?)\s+(kênh|luồng|phút|giây)$/);
       if(m)out=m[1]+' '+units[m[2]];
       if(!out && (m=compact.match(/^Đang dùng:\s*(\d+)\s+(luồng|phút)$/)))
         out=labels[4]+' '+m[1]+' '+units[m[2]];
