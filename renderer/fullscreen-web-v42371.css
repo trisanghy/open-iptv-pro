@@ -21,3 +21,9 @@
 .player-box:not(:fullscreen) .fs-web-top,.player-box:not(:fullscreen) .fs-web-popover,.player-box:not(:fullscreen) .fs-web-button{display:none!important}
 .player-box:fullscreen.player-idle:has(.fs-web-popover.open) .fullscreen-ux{opacity:1!important;pointer-events:auto!important;transform:none!important}
 @media(max-width:900px){.player-box:fullscreen .fullscreen-ux{gap:6px!important;padding-inline:8px!important}.player-box:fullscreen .fs-web-button{min-width:38px!important;padding:0 5px!important;font-size:11px!important}.player-box:fullscreen .fs-channel{display:none}.player-box:fullscreen .fs-clock{display:none}.player-box:fullscreen .fullscreen-ux button{width:36px!important;height:36px!important;min-width:36px!important}}
+
+/* Preserve all existing saved video fit selections while fullscreen. */
+.player-box:fullscreen video.fit-contain{object-fit:contain!important}
+.player-box:fullscreen video.fit-cover{object-fit:cover!important}
+.player-box:fullscreen video.fit-fill{object-fit:fill!important}
+.player-box:fullscreen video.fit-none{object-fit:none!important}
