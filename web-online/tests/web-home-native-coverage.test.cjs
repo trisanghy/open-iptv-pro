@@ -40,7 +40,15 @@ test('all selectable home language packs are present before enabling complete co
   }
   for(const code of supported.filter(c=>!['vi','en'].includes(c)))
     assert.ok(home.includes('<option value="'+code+'">'),code+' absent from language selector');
-  const order=home.indexOf('src="home-native-locales.js?');
+  const inline=home.match(/<script id="home-native-locales-data">([\\s\\S]*?)<\\/script>/);
+  assert.ok(inline,'Root homepage must embed translations because root-site sync copies HTML only');
+  const inlineContext={window:{}};
+  vm.runInNewContext(inline[1],inlineContext,{timeout:5000});
+  assert.equal(Object.keys(inlineContext.window.OpenIPTVHomeNativeLocales).length,15);
+  assert.equal(
+    inlineContext.window.OpenIPTVHomeNativeLocales.fr['Tính năng'],
+    extras.fr['Tính năng'],'Embedded homepage must match the audited offline asset');
+  const order=home.indexOf('id="home-native-locales-data"');
   assert.ok(order>=0&&order<home.indexOf('id="homepage-language-controller"'),'Offline pack must load before controller');
   assert.ok(home.includes("document.documentElement.dir=code==='ar'?'rtl':'ltr'"),'Arabic must render right-to-left');
 });
