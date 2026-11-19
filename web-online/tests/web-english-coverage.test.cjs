@@ -100,6 +100,6 @@ test('Chrome iOS keeps the volume button and one top permission banner',()=>{
  assert.match(recovery,/video\.play\(\)/);
  const html=fs.readFileSync(path.join(root,'index.html'),'utf8');
  assert.match(html,/src="i18n\.js\?v=[a-f0-9]{16}"/);
- assert.match(html,/web-ios-audio-recovery\.css\?v=top-banner-20261119b/);
+ assert.match(html,/web-ios-audio-recovery\.css\?v=top-only-20261119c/);
  assert.doesNotMatch(html,/resume-last\.css/);
 });

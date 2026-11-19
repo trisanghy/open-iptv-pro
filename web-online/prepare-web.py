@@ -327,9 +327,9 @@ for asset in ('i18n.js','languages.bundle.js','web-language-supplement.js','web-
     if count!=1:sys.exit('Missing language resource script: '+asset)
 
 # Preserve exactly one user-gesture banner at the top of the video on iOS.
-html=html.replace('</head>','<link rel="stylesheet" href="web-ios-audio-recovery.css?v=top-banner-20261119b"/></head>',1)
+html=html.replace('</head>','<link rel="stylesheet" href="web-ios-audio-recovery.css?v=top-only-20261119c"/></head>',1)
 if 'web-ios-audio-recovery.js' not in html:
-    html=html.replace('</body>','<script src="web-ios-audio-recovery.js?v=top-banner-20261119b"></script></body>',1)
+    html=html.replace('</body>','<script src="web-ios-audio-recovery.js?v=top-only-20261119c"></script></body>',1)
 (out/'index.html').write_text(html,encoding='utf-8')
 (out/'.nojekyll').write_text('')
 (out/'manifest.webmanifest').write_text(json.dumps({

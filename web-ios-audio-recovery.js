@@ -6,8 +6,12 @@
  const doc=root.document;
  const chromeIOS=/CriOS\/\d+/i.test(String(root.navigator?.userAgent||''))&&/iPhone|iPad|iPod/i.test(String(root.navigator?.userAgent||''));
  function init(){
+  // Remove stale lower unmute actions left by earlier iPhone scripts.
   doc.getElementById?.('webUnmuteAssist')?.remove?.();
   doc.getElementById?.('web-resume-panel')?.remove?.();
+  doc.querySelectorAll?.('#page-tv .web-unmute-assist,#page-tv .web-unmute-assist-chrome-ios')?.forEach(node=>node.remove?.());
+  // Never duplicate the requested top banner on repeated script execution.
+  if(doc.getElementById?.('webAudioPermissionBanner'))return;
   const video=doc.getElementById?.('video'),mute=doc.getElementById?.('webVolumeMute'),box=doc.getElementById?.('playerBox');
   if(!video||!mute||!box)return;
   const banner=doc.createElement('div'),message=doc.createElement('span'),button=doc.createElement('button');

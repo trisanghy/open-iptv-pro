@@ -16,3 +16,14 @@
  cursor:pointer;touch-action:manipulation;
 }
 #playerBox .web-audio-permission-banner>button:focus-visible{outline:2px solid white;outline-offset:2px}
+
+/* Hide all legacy lower purple sound buttons, including late cached injections.
+   The new #webAudioPermissionBanner is deliberately NOT matched here. */
+#page-tv #webUnmuteAssist,
+#page-tv #web-resume-panel,
+#page-tv .web-unmute-assist,
+#page-tv .web-unmute-assist-chrome-ios,
+html #webUnmuteAssist,
+html #web-resume-panel{
+ display:none!important;visibility:hidden!important;pointer-events:none!important;
+}

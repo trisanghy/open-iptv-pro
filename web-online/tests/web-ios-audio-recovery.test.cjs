@@ -25,7 +25,7 @@ function fixture({chrome=true,sourceReady=true,reject=false}={}){
 test('one upper video banner exists, no separate lower unmute button',()=>{
  for(const chrome of [true,false]){const e=fixture({chrome});assert.equal(e.doc.created,3);assert.equal(e.old.removed,2);
   assert.equal(e.box.children.length,1);assert.equal(e.banner.id,'webAudioPermissionBanner');assert.equal(e.banner.hidden,true);}
- assert.match(html,/web-ios-audio-recovery\.css\?v=top-banner-20261119b/);
+ assert.match(html,/web-ios-audio-recovery\.css\?v=top-only-20261119c/);
 });
 test('muted-autoplay permission event opens only upper banner; clicking unmutes and plays',async()=>{
  const e=fixture();e.doc.emit('openiptv:autoplay-muted',{detail:{channelId:'one'}});
@@ -48,4 +48,14 @@ test('Chrome mute button resumes native video in the same click without duplicat
  const e=fixture();e.mute.emit('click');await Promise.resolve();
  assert.equal(e.video.paused,false);assert.equal(e.video.playCalls,1);
  const safari=fixture({chrome:false});safari.mute.emit('click');assert.equal(safari.video.playCalls,0);
+});
+
+test('legacy lower purple sound action is hidden by CSS while top banner remains usable',()=>{
+ const css=fs.readFileSync(path.join(root,'web-ios-audio-recovery.css'),'utf8');
+ assert.match(css,/#page-tv #webUnmuteAssist/);
+ assert.match(css,/#page-tv \.web-unmute-assist/);
+ assert.match(css,/#page-tv #web-resume-panel/);
+ assert.match(css,/#playerBox \.web-audio-permission-banner>/);
+ assert.match(source,/getElementById\?\.\('webAudioPermissionBanner'\)\)return/);
+ assert.match(html,/web-ios-audio-recovery\.js\?v=top-only-20261119c/);
 });
