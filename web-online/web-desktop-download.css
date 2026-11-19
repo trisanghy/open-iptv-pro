@@ -68,3 +68,22 @@ html[data-iptv-device="mobile"] #page-tv>.desktop-download-intro:not([hidden]){
 .desktop-download-group .desktop-download-option{min-height:54px;box-sizing:border-box}
 html[data-iptv-device="mobile"] .desktop-download-dialog{padding-bottom:max(18px,env(safe-area-inset-bottom,0px))}
 html[data-iptv-device="mobile"] .desktop-download-overlay{padding-bottom:max(12px,env(safe-area-inset-bottom,0px))}
+
+/* An iPhone Home Screen Web shortcut requires no IPA signing. */
+.desktop-download-ios-shortcut{margin:0 0 14px;border:1px solid color-mix(in srgb,var(--accent,#bd89f5) 38%,var(--edge,#35485c));background:color-mix(in srgb,var(--accent,#bd89f5) 7%,var(--surface2,#172737));border-radius:14px;overflow:hidden}
+.desktop-download-shortcut-summary{display:flex;align-items:center;gap:11px;padding:11px 12px;min-height:54px;box-sizing:border-box;cursor:pointer;list-style:none}
+.desktop-download-shortcut-summary::-webkit-details-marker{display:none}
+.desktop-download-shortcut-summary:focus-visible{outline:2px solid var(--accent,#bd89f5);outline-offset:-3px}
+.desktop-download-shortcut-icon{flex:0 0 42px;width:42px;height:42px;display:grid;place-items:center;border-radius:11px;background:color-mix(in srgb,var(--accent,#bd89f5) 16%,transparent);color:var(--accent,#bd89f5)}
+.desktop-download-shortcut-copy{flex:1;min-width:0;display:grid;gap:4px}
+.desktop-download-shortcut-copy strong{font-size:14px;line-height:1.35}
+.desktop-download-shortcut-copy small{font-size:11px;line-height:1.4;color:var(--muted,#adbacb)}
+.desktop-download-shortcut-chevron{font-size:21px;line-height:1;transform:rotate(0deg);transition:transform .15s}
+.desktop-download-ios-shortcut[open] .desktop-download-shortcut-chevron{transform:rotate(180deg)}
+.desktop-download-shortcut-steps{border-top:1px solid var(--edge,#35485c);padding:4px 15px 12px}
+.desktop-download-shortcut-steps ol{margin:7px 0 9px;padding-left:23px;display:grid;gap:9px;font-size:13px;line-height:1.55}
+.desktop-download-shortcut-steps li{padding-left:2px}
+.desktop-download-shortcut-steps a{color:var(--accent,#c49afb);font-weight:720;overflow-wrap:anywhere}
+.desktop-download-shortcut-note{font-size:11px;line-height:1.5;color:var(--muted,#b1c0ce);margin:8px 0 0}
+.desktop-download-share-symbol{display:inline-block;vertical-align:-3px;color:var(--accent,#c49afb)}
+@media(max-width:560px){.desktop-download-ios-shortcut{margin-bottom:12px}.desktop-download-shortcut-summary{padding:10px}.desktop-download-shortcut-steps{padding:4px 12px 12px}}
