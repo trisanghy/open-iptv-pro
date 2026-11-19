@@ -272,6 +272,9 @@
     }
     apply();
   };
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',setup,{once:true});
+  // Deferred scripts run at readyState=interactive before main.js creates
+  // the Mobile layout and language selector. Bind at DOMContentLoaded instead.
+  if(document.readyState==='loading'||document.readyState==='interactive')
+    document.addEventListener('DOMContentLoaded',setup,{once:true});
   else setup();
 })();

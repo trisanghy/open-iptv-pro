@@ -48,3 +48,30 @@ test('all Mobile language supplements load in order before the translation engin
   assert.notEqual(dictionary['Nhập M3U hoặc chọn kênh để xem'],'Import an M3U playlist or choose a channel to watch');
  }
 });
+
+test('deferred language selector is bound after the Mobile DOM is mounted',()=>{
+ let ready,control=null,onChange,stored={};
+ const makeElement=()=>({nodeType:1,closest:()=>null,hasAttribute:()=>false});
+ const documentElement=makeElement(),body=makeElement();
+ const doc={readyState:'interactive',documentElement,body,
+  addEventListener(name,callback){if(name==='DOMContentLoaded')ready=callback;},
+  getElementById(id){return id==='appLanguage'?control:null;},
+  createElement(name){return {tagName:name};},
+  createTreeWalker(){return {nextNode:()=>false};},
+  dispatchEvent(){}};
+ const context={window:{OPEN_IPTV_TRANSLATIONS:{}},document:doc,console,
+  MutationObserver:class {observe(){}},NodeFilter:{SHOW_ELEMENT:1,SHOW_TEXT:4},
+  localStorage:{getItem:()=>null,setItem(key,value){stored[key]=value;}},
+  CustomEvent:class {}};
+ vm.runInNewContext(i18n,context);
+ assert.equal(typeof ready,'function','must defer setup while readyState is interactive');
+ const options=[{value:'vi'}];
+ control={options,value:'vi',appendChild(option){options.push(option);},
+  addEventListener(event,cb){if(event==='change')onChange=cb;}};
+ ready();
+ assert.equal(options.length,17);
+ assert.equal(typeof onChange,'function');
+ onChange({target:{value:'ko'}});
+ assert.equal(stored['open-iptv-pro-language'],'ko');
+ assert.equal(documentElement.lang,'ko');
+});
