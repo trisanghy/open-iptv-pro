@@ -42,9 +42,9 @@ test('unbounded XMLTV captures 13,050 programmes and real VTV3 film episodes',as
  };}};
  try{
   const parse=raw=>new Date(raw);
-  const full=makeEPGCache('<tv/>',parse,clock);
+  const full=makeEPGCache('<tv></tv>',parse,clock);
   assert.equal(full.items.length,13050);
   assert.equal(full.items.at(-1).title,'Phim truyện: Kẻ mai mối xứng tầm - Tập 25');
-  assert.equal(makeEPGCache('<tv/>',parse,clock,5000).items.length,5000);
+  assert.equal(makeEPGCache('<tv></tv>',parse,clock,5000).items.length,5000);
  }finally{if(old===undefined)delete globalThis.DOMParser;else globalThis.DOMParser=old;}
 });
