@@ -220,9 +220,23 @@
    throw e;
   }finally{clearTimeout(timer);}
  }
+ async function readFreshGuide(url,channels){
+  const candidates=[url];
+  if(url===defaultSources[0].url && !window.streamleaf?.fetchEPG)
+   candidates.push('https://lichphatsong.io.vn/epg.xml');
+  let failure;
+  for(const candidate of candidates){
+   try{
+    const parsed=guideLib.parse(await fetchXML(candidate),channels);
+    if(!parsed.programmes.some(p=>p.end>Date.now()))throw Error('Nguồn EPG đã hết lịch hoặc chưa có lịch mới');
+    return parsed;
+   }catch(error){failure=error;}
+  }
+  throw failure;
+ }
  async function refreshEPG({startup=false}={}){if(loading)return;const active=config.sources.filter(s=>s.enabled);if(!active.length)return ctx.toast('Chưa bật nguồn EPG nào','warn');if(!ctx.getChannels().length){if(!startup)ctx.toast('Hãy nhập playlist M3U trước để ghép EPG với kênh','warn');return;}
   epgRequestedInSession=true;loading=true;$('#epgLoadBtn').disabled=true;$('#epgRefreshBtn').disabled=true;$('#epgLoadBtn').textContent='Đang tải XMLTV...';let sourcesLoaded=0,errors=[],combined={names:{},aliasesById:{},programmes:[]};const programmeKeys=new Set();
-  try{for(const source of active){try{ctx.textStatus('Đang tải EPG: '+source.name);const xml=await fetchXML(source.url);const parsed=guideLib.parse(xml,ctx.getChannels());
+  try{for(const source of active){try{ctx.textStatus('Đang tải EPG: '+source.name);const parsed=await readFreshGuide(source.url,ctx.getChannels());
     for(const [key,id] of Object.entries(parsed.names))if(!combined.names[key])combined.names[key]=id;
     Object.assign(combined.aliasesById,parsed.aliasesById||{});
     // Earlier EPG sources take priority for same id and time window.

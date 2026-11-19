@@ -19,9 +19,10 @@ MAX_XML = 35 * 1024 * 1024
 FEEDS = (
     ("EPGShare01", "https://epgshare01.online/epgshare01/epg_ripper_VN1.xml.gz"),
     ("xmltv.live", "https://xmltv.live/epg/vn.xml.gz"),
+    ("Lịch Phát Sóng", "https://lichphatsong.io.vn/epg.xml"),
 )
 
-def download(url: str) -> bytes:
+def download(url: str) -> tuple[bytes, int, int]:
     req = urllib.request.Request(url, headers={
         "User-Agent": "OpenIPTVPro-Web-EPG/1.0 (+https://github.com/trisanghy/open-iptv-pro)",
         "Accept": "application/gzip, application/xml, text/xml, */*",
@@ -48,6 +49,19 @@ def download(url: str) -> bytes:
     n_programmes = len(root.findall("programme"))
     if n_channels < 1 or n_programmes < 1:
         raise ValueError("XMLTV contains no channel/programme entries")
+    # A structurally valid historical schedule cannot populate the live player.
+    clock = datetime.now(timezone.utc)
+    for p in root.iter("programme"):
+        value = (p.get("stop") or "").strip()
+        try:
+            parts = value.split()
+            stop = datetime.strptime(parts[0] + (parts[1] if len(parts) > 1 else "+0000"), "%Y%m%d%H%M%S%z")
+        except (IndexError, ValueError):
+            continue
+        if stop > clock:
+            break
+    else:
+        raise ValueError("XMLTV has no remaining programme")
     return data, n_channels, n_programmes
 
 def main() -> int:

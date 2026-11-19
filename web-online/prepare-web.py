@@ -23,12 +23,15 @@ if start<0 or end<0:
     sys.exit('Cannot patch the EPG downloader: frontend API changed')
 replacement=(Path(__file__).resolve().parent/'epg-fetch-function.txt').read_text(encoding='utf-8').rstrip()
 js=js[:start]+replacement+'\n'+js[end:]
+js=js.replace('const xml=await fetchXML(source.url);const parsed=guideLib.parse(xml,ctx.getChannels());','const parsed=await readFreshGuide(source.url,ctx.getChannels());')
+if 'const parsed=await readFreshGuide(source.url,ctx.getChannels());' not in js: sys.exit('Cannot install fresh XMLTV reader')
 features.write_text(js,encoding='utf-8')
 
 for name in ('web-only.js','web-only.css','resume-last.js','resume-last.css','browser-channel-check.js','web-autoplay.js','cloud-core.js','cloud-sync.js','cloud-sync.css','web-volume.css','web-volume.js','web-mobile-player.css','web-mobile-player.js','web-player-icons.css','web-player-icons.js','web-tv-wide.css','web-mobile-controls-polish.css'):
     copy2(Path(__file__).resolve().parent/name,out/name)
 # Keep Web's multi-source fallback matcher even if the originating WebView
 # frontend has an older name-only matcher. Do not change Electron/Rust source.
+copy2(Path(__file__).resolve().parent.parent/'epg.js',out/'epg.js')
 copy2(Path(__file__).resolve().parent.parent/'source-edit.js',out/'source-edit.js')
 copy2(Path(__file__).resolve().parent.parent/'advanced-core.js',out/'advanced-core.js')
 for name in ('advanced.js','collector.js'):
@@ -170,6 +173,8 @@ if 'href="huong-dan.html"' not in html:
 
 html=html.replace('src="app.js"','src="app.js?v=playlist-http-20261119d"').replace('collector.js?v=collector-merge-repair-20261119a','collector.js?v=playlist-url-20261119b')
 html=html.replace('src="source-edit.js"','src="source-edit.js?v=playlist-input-20261119c"')
+for name in ('features.js','epg.js'):
+    html=html.replace('src="'+name+'"','src="'+name+'?v=epg-live-20261119e"')
 (out/'index.html').write_text(html,encoding='utf-8')
 (out/'.nojekyll').write_text('')
 (out/'manifest.webmanifest').write_text(json.dumps({
