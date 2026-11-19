@@ -19,7 +19,7 @@ Electron Desktop은 기능이 풍부한 안정판이며, Rust Lab은 별도의 T
 - **Web Online — 브라우저:** [플레이어 열기](https://trisanghy.github.io/open-iptv-pro/). 설치는 필요 없지만 CORS·코덱·DRM 제한이 있습니다.
 - **Electron Desktop — Windows/macOS:** [공식 설치 파일](https://github.com/trisanghy/open-iptv-pro/releases/latest).
 - **Rust Lab 베타 — Windows/macOS:** [별도 릴리스](https://github.com/trisanghy/open-iptv-pro/releases?q=rust-lab).
-- **Mobile Capacitor 베타 — Android/iOS:** [디버그 APK / 미서명 IPA](https://github.com/trisanghy/open-iptv-pro/releases/tag/mobile/v4.23.17.10), [모바일 소스](../../mobile/), [설치 안내](../MOBILE_ANDROID_IOS.md).
+- **Mobile Capacitor 베타 — Android/iOS:** [디버그 APK / 미서명 IPA](https://github.com/trisanghy/open-iptv-pro/releases/tag/mobile/v4.23.17.16), [모바일 소스](../../mobile/), [설치 안내](../MOBILE_ANDROID_IOS.md).
 
 ## 주요 기능
 

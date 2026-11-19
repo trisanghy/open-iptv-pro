@@ -19,7 +19,7 @@ Electron Desktop は高機能な安定版です。Rust Lab は独立した Tauri
 - **Web Online — ブラウザー：** [プレーヤーを開く](https://trisanghy.github.io/open-iptv-pro/)。インストール不要ですが CORS・コーデック・DRM の制限があります。
 - **Electron Desktop — Windows/macOS：** [公式インストーラー](https://github.com/trisanghy/open-iptv-pro/releases/latest)。
 - **Rust Lab ベータ版 — Windows/macOS：** [独立したリリース](https://github.com/trisanghy/open-iptv-pro/releases?q=rust-lab)。
-- **Mobile Capacitor ベータ版 — Android/iOS：** [テスト用 APK / 未署名 IPA](https://github.com/trisanghy/open-iptv-pro/releases/tag/mobile/v4.23.17.10)、[ソースコード](../../mobile/)、[インストールガイド](../MOBILE_ANDROID_IOS.md)。
+- **Mobile Capacitor ベータ版 — Android/iOS：** [テスト用 APK / 未署名 IPA](https://github.com/trisanghy/open-iptv-pro/releases/tag/mobile/v4.23.17.16)、[ソースコード](../../mobile/)、[インストールガイド](../MOBILE_ANDROID_IOS.md)。
 
 ## 主な機能
 
