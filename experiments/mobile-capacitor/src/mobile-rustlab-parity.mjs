@@ -1,6 +1,6 @@
 // Rust Lab mobile parity subset: rights, evidence-based diagnostics, bounded checks and safe local backup.
 // No automatic network discovery: Rust Lab's native DNS-pinned SSRF guard cannot be assumed on Capacitor.
-export const MOBILE_VERSION='4.23.17-mobile.25';
+export const MOBILE_VERSION='4.23.17-mobile.26';
 export const TERMS_REVISION='2026-11-18-v1';
 export const MAX_BATCH=1000;
 export function batchWindow(items,cursor=0,size=MAX_BATCH){

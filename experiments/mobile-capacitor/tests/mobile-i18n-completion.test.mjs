@@ -19,7 +19,14 @@ const publicFiles=scripts.filter(x=>x.endsWith('.js')&&x!=='/i18n.js'&&x!=='/src
 function buildDictionary(){
  const ctx={window:{},console};
  for(const file of publicFiles)vm.runInNewContext(fs.readFileSync(path.join(root,'public',file.slice(1)),'utf8'),ctx,{timeout:2000});
- return ctx.window.OPEN_IPTV_TRANSLATIONS;
+ const dictionaries=ctx.window.OPEN_IPTV_TRANSLATIONS;
+ const en=dictionaries.en||(dictionaries.en={});
+ // Mobile's English text also lives in i18n.js, not only public supplements.
+ for(const key of ['patchEnglish','webUiEnglish','collectionCastEnglish','advancedUiEnglish','appUiEnglish','finishUiEnglish','mobileUiEnglish']){
+  const match=source.match(new RegExp('const '+key+'=(\\{.*?\\});\\s*\\n'));
+  if(match)Object.assign(en,JSON.parse(match[1]));
+ }
+ return dictionaries;
 }
 function completionKeys(){
  const set=new Set();
