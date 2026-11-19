@@ -10,6 +10,8 @@ on:
       - 'renderer/features.js'
       - 'renderer/i18n.js'
       - 'renderer/i18n-full-locale-pack.js'
+      - 'renderer/i18n-dynamic-locales.js'
+      - 'scripts/build-electron-dynamic-locales.py'
       - 'renderer/i18n-multilingual-packs.js'
       - 'renderer/i18n-english-coverage.js'
       - 'renderer/languages.bundle.js'
@@ -41,7 +43,7 @@ jobs:
         shell: bash
         run: |
           set -Eeuo pipefail
-          for p in src/update-manager.cjs src/update-version-catalog.cjs src/main.cjs src/preload.cjs renderer/features.js renderer/i18n.js renderer/i18n-full-locale-pack.js renderer/i18n-multilingual-packs.js renderer/i18n-english-coverage.js; do node --check "$p"; done
+          for p in src/update-manager.cjs src/update-version-catalog.cjs src/main.cjs src/preload.cjs renderer/features.js renderer/i18n.js renderer/i18n-full-locale-pack.js renderer/i18n-dynamic-locales.js renderer/i18n-multilingual-packs.js renderer/i18n-english-coverage.js; do node --check "$p"; done
           test "$(node -p "require('./package.json').version")" = '4.23.70'
           bash -n build-mac-electron.sh
           bash -n build-mac-electron-public.sh
@@ -72,5 +74,6 @@ jobs:
           test -s "$APP/Contents/Resources/app.asar"
           npx --yes asar list "$APP/Contents/Resources/app.asar" | grep -F 'renderer/live-ai-toolbar-v42367.css'
           npx --yes asar list "$APP/Contents/Resources/app.asar" | grep -F 'src/update-version-catalog.cjs'
+          npx --yes asar list "$APP/Contents/Resources/app.asar" | grep -F 'renderer/i18n-dynamic-locales.js'
           test -z "$(find dist -maxdepth 1 -type f -name '*.dmg' -print -quit)"
           echo 'Native Mac .app packaging passed'

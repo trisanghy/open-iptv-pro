@@ -69,6 +69,15 @@
       if(!target[key]||target[key]===key||target[key]===english[key])target[key]=value;
     }
   }
+  // Offline locale text extracted from runtime-generated modals, notifications and templates.
+  const dynamicLocales=window.OpenIPTVDynamicLocales;
+  for(const [lang,items] of Object.entries(dynamicLocales?.static||{})){
+    const target=dictionaries[lang]||(dictionaries[lang]={});
+    const en=dictionaries.en||{};
+    for(const [source,text] of Object.entries(items)){
+      if(!target[source]||target[source]===source||target[source]===en[source])target[source]=text;
+    }
+  }
   const key='open-iptv-pro-language';
   let locale='vi';
   try{const stored=localStorage.getItem(key);if(stored && Object.hasOwn(locales,stored))locale=stored;}catch{}
@@ -91,6 +100,7 @@
       }
     }
     if(!out&&language!=='en')out=supplement?.dynamic?.(compact,language);
+    if(!out)out=dynamicLocales?.translate?.(compact,language);
     if(!out)out=english[compact];
     // Localized numeric statuses: only exact UI patterns, not channel or playlist names.
     if(!out && language!=='vi'){
