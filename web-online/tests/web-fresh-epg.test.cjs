@@ -181,3 +181,46 @@ test('Web merge and import never truncate schedules at 12,000 items',()=>{
  assert.match(builder,/uncapped EPG merge\/import/);
  assert.match(builder,/IndexedDB guide cache/);
 });
+
+test('generic VNEPG film label uses precise name and episode from XMLTV desc',()=>{
+ const env={};vm.runInNewContext(fs.readFileSync(path.join(root,'epg.js'),'utf8'),env);
+ const api=env.IPTVGuide;
+ assert.equal(api.detailedTitle('Phim truyện','Kẻ mai mối xứng tầm - Tập 25'),'Phim truyện: Kẻ mai mối xứng tầm - Tập 25');
+ assert.equal(api.detailedTitle('Phim truyện (20h00)','Bí mật của người chồng - Tập 38'),'Phim truyện (20h00): Bí mật của người chồng - Tập 38');
+ assert.equal(api.detailedTitle('Phim truyện','Câu chuyện về một gia đình đang đối diện với rất nhiều biến cố. Không có hồi kết.'),'Phim truyện');
+ assert.equal(api.detailedTitle('Cà phê sáng','Kẻ mai mối xứng tầm - Tập 25'),'Cà phê sáng');
+ assert.equal(api.detailedTitle('Phim truyện','Nội dung chung không ghi tên phim'),'Phim truyện');
+});
+test('old cached guides immediately show the detailed film title without changing the saved data',()=>{
+ const env={};vm.runInNewContext(fs.readFileSync(path.join(root,'epg.js'),'utf8'),env);
+ const api=env.IPTVGuide;
+ const start=api.when('20261120050000 +0700'),end=api.when('20261120060000 +0700');
+ const programme={id:'VTV3.vn',start,end,title:'Phim truyện',description:'Kẻ mai mối xứng tầm - Tập 25'};
+ const guide={names:{vtv3:'VTV3.vn'},programmes:[programme]};
+ const channel={id:'vtv3',tvgId:'vtv3',name:'VTV3 (Nguồn 1)'};
+ assert.equal(api.current(guide,channel,start+7*60000).now.title,'Phim truyện: Kẻ mai mối xứng tầm - Tập 25');
+ assert.equal(programme.title,'Phim truyện');
+});
+test('new XMLTV parsing retains the detailed episode in programme titles',()=>{
+ const env={
+  DOMParser:class{parseFromString(){return {
+   documentElement:{tagName:'tv'},querySelector:()=>null,
+   getElementsByTagName:type=>type==='channel'?[{
+    getAttribute:()=> 'VTV3.vn',
+    getElementsByTagName:()=>[{textContent:'VTV3'}]
+   }]:type==='programme'?[{
+    getAttribute:key=>({
+     channel:'VTV3.vn',
+     start:new Date(Date.now()-300000).toISOString().replace(/[-:T]/g,'').slice(0,14)+' +0000',
+     stop:new Date(Date.now()+3300000).toISOString().replace(/[-:T]/g,'').slice(0,14)+' +0000'
+    })[key],
+    getElementsByTagName:key=>key==='title'?[{textContent:'Phim truyện'}]:
+     key==='desc'?[{textContent:'Kẻ mai mối xứng tầm - Tập 25'}]:[]
+   }]:[]
+  };}}
+ };
+ vm.runInNewContext(fs.readFileSync(path.join(root,'epg.js'),'utf8'),env);
+ const guide=env.IPTVGuide.parse('<tv></tv>',[{id:'vtv3',tvgId:'vtv3',name:'VTV3'}]);
+ assert.equal(guide.programmes.length,1);
+ assert.equal(guide.programmes[0].title,'Phim truyện: Kẻ mai mối xứng tầm - Tập 25');
+});
