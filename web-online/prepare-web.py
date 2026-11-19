@@ -14,6 +14,8 @@ if not (src/'index.html').is_file() or not (src/'app.js').is_file():
 copytree(src,out,dirs_exist_ok=True)
 # Always ship the reviewed Web-only localization engine, not an outdated WebView copy.
 copy2(Path(__file__).resolve().parent.parent/'i18n.js',out/'i18n.js')
+# Preserve the complete native Web catalog in any regenerated browser bundle.
+copy2(Path(__file__).resolve().parent.parent/'web-native-complete.js',out/'web-native-complete.js')
 # Keep Web translations isolated from Electron/Rust renderer resources.
 copy2(Path(__file__).resolve().parent/'web-language-supplement.js',out/'web-language-supplement.js')
 
