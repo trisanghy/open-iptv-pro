@@ -149,8 +149,8 @@ jobs:
           node --test web-online/tests/web-tv-channel-hub.test.cjs
           cmp _site/web-tv-channel-hub.js web-online/web-tv-channel-hub.js
           cmp _site/web-tv-channel-hub.css web-online/web-tv-channel-hub.css
-          grep -Fq 'web-tv-channel-hub.js?v=tv-hub-20261119a' _site/index.html
-          grep -Fq 'web-tv-channel-hub.css?v=tv-hub-20261119a' _site/index.html
+          grep -Fq 'web-tv-channel-hub.js?v=tv-hub-20261119b' _site/index.html
+          grep -Fq 'web-tv-channel-hub.css?v=tv-hub-20261119b' _site/index.html
           grep -Fq 'data-filter="recent"' _site/index.html
           grep -Fq 'web-compact-toolbar.css?v=recent-controls-20261119a' _site/index.html
           grep -Fq 'web-recent-channels.js?v=recent-controls-20261119a' _site/index.html
