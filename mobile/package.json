@@ -1,7 +1,7 @@
 {
   "name": "open-iptv-pro-mobile",
   "private": true,
-  "version": "4.23.17-mobile.10",
+  "version": "4.23.17-mobile.11",
   "type": "module",
   "description": "Opt-in automatic PiP on app background (native Android, iOS WebKit best-effort), foreground restoration",
   "scripts": {
