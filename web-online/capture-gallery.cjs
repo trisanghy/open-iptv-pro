@@ -31,8 +31,10 @@ function makeDemo(){
    '-c:v','libx264','-preset','ultrafast','-movflags','+faststart',demoFile],
    {timeout:60000,stdio:'pipe'});
  if(r.status!==0||!fs.existsSync(demoFile)){
-  throw Error('Cannot generate a real original demo video: '+String(r.stderr||'').slice(0,700));
+  console.warn('Original demo video unavailable; using real UI without playback:',String(r.error?.message||r.stderr||'ffmpeg not installed').slice(0,500));
+  return false;
  }
+ return true;
 }
 function demoStore(){
  const sourceId='gallery_demo_source';
@@ -98,7 +100,7 @@ async function capture(page,name,position='top'){
 async function run(){
  if(!fs.existsSync(path.join(root,'index.html')))throw Error('Missing current Web player');
  fs.mkdirSync(gallery,{recursive:true});
- makeDemo();
+ const hasDemoVideo=makeDemo();
  const httpServer=server();
  await new Promise(resolve=>httpServer.listen(0,'127.0.0.1',resolve));
  const url='http://127.0.0.1:'+httpServer.address().port+'/';
@@ -125,11 +127,12 @@ async function run(){
    });
    await page.waitForFunction(()=>window.IPTVState&&window.IPTVState.getChannels().length===6,{timeout:16000});
    await page.waitForTimeout(1000);
-   await page.evaluate(async()=>{
+   await page.evaluate(async(hasDemoVideo)=>{
      const intro=document.querySelector('#softwareDownloadIntroClose');
      if(intro && intro.getClientRects().length)intro.click();
-     try{await window.IPTVState.playChannel('demo-01');}catch(e){console.warn('Demo play unavailable',e);}
-   });
+     if(hasDemoVideo)try{await window.IPTVState.playChannel('demo-01');}
+       catch(e){console.warn('Demo play unavailable',e);}
+   },hasDemoVideo);
    await page.waitForTimeout(1000);
    if(platform==='desktop'){
     await capture(page,'desktop-tv');
