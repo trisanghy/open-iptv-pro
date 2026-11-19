@@ -357,6 +357,11 @@ jobs:
           node --test web-online/tests/web-language-native-coverage.test.cjs
           node --check _site/web-language-supplement.js
           node --test web-online/tests/web-language-supplement.test.cjs
+          # Native Web labels must be complete across all 17 selected languages.
+          node --test web-online/tests/web-native-full-coverage.test.cjs
+          # Independent guide-localization gate becomes strict once the generated asset ships.
+          if [ -f guide-native-locales.js ]; then node --check _site/guide-native-locales.js; fi
+          node --test web-online/tests/web-guide-native-coverage.test.cjs
           grep -Eq 'src="web-language-supplement[.]js[?]v=[a-f0-9]{16}"' _site/index.html
           touch _user_site/.nojekyll
           python3 - <<'PY'
