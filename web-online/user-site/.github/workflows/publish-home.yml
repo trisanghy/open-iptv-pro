@@ -7,7 +7,7 @@ on:
   schedule:
     - cron: '7,37 * * * *'
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
 concurrency:
@@ -48,6 +48,25 @@ jobs:
           }
           for dst,src in sources.items():
               (out/dst).write_bytes(download(root+src))
+          # Archive screenshot files inside the root website to avoid
+          # broken cross-site assets from the project Pages deployment.
+          gallery=('desktop-tv','desktop-sources','desktop-epg','desktop-settings',
+                   'ios-tv','ios-channels','ios-sources','ios-favorites',
+                   'android-tv','android-channels','android-epg','android-settings')
+          main_ref=json.loads(download('https://api.github.com/repos/trisanghy/open-iptv-pro/branches/main',250000))['commit']['sha']
+          if not re.fullmatch('[0-9a-f]{40}',main_ref): raise ValueError('Invalid image source SHA')
+          images=out/'assets'/'gallery'
+          images.mkdir(parents=True,exist_ok=True)
+          import struct
+          for basename in gallery:
+              address='https://raw.githubusercontent.com/trisanghy/open-iptv-pro/'+main_ref+'/docs/images/web-gallery/'+basename+'.png'
+              data=download(address,2000000)
+              if len(data)<12000 or data[:8]!=b'\x89PNG\r\n\x1a\n':
+                  raise ValueError('Invalid or missing screenshot '+basename)
+              width,height=struct.unpack('>II',data[16:24])
+              if width<380 or height<800: raise ValueError('Screenshot too small '+basename)
+              (images/(basename+'.png')).write_bytes(data)
+          print('Bundled',len(gallery),'PNG screenshots at same origin; source main SHA',main_ref)
           (out/'.nojekyll').touch()
           html=(out/'index.html').read_text(encoding='utf-8')
           robots=(out/'robots.txt').read_text(encoding='utf-8')
@@ -69,6 +88,24 @@ jobs:
           (out/'source-revision.json').write_text(json.dumps({'repo':'trisanghy/open-iptv-pro','branch':'web/online','sha':sha},indent=2)+'\n',encoding='utf-8')
           print('Homepage synced and validated from commit',sha)
           PY
+      - name: Persist gallery files on the user-site main branch
+        shell: bash
+        env:
+          GH_TOKEN: \${{ github.token }}
+        run: |
+          set -euo pipefail
+          git clone -q --depth=1 --branch main \
+            "https://x-access-token:\${GH_TOKEN}@github.com/trisanghy/trisanghy.github.io.git" "$RUNNER_TEMP/site-root-repo"
+          mkdir -p "$RUNNER_TEMP/site-root-repo/assets/gallery"
+          cp -f _site/assets/gallery/*.png "$RUNNER_TEMP/site-root-repo/assets/gallery/"
+          cd "$RUNNER_TEMP/site-root-repo"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/gallery
+          if ! git diff --cached --quiet; then
+            git commit -qm "assets: refresh current Open IPTV Pro UI screenshots"
+            git push origin HEAD:main
+          fi
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
         with:
