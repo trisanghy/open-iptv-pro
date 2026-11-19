@@ -29,3 +29,30 @@ test('GitHub releases: newer version or missing releases',async()=>{
  assert.equal(noRelease.newer,false);
  await assert.rejects(()=>checkUpdate('owner/missing','4.15.0',async()=>({ok:false,status:404})),/không tồn tại/);
 });
+
+test('large XMLTV has no 12,000-programme ceiling and resolves later channels',()=>{
+ const fs=require('node:fs'),vm=require('node:vm'),path=require('node:path');
+ const renderer=fs.readFileSync(path.join(__dirname,'../renderer/epg.js'),'utf8');
+ const features=fs.readFileSync(path.join(__dirname,'../renderer/features.js'),'utf8');
+ const clock=Date.now(),stamp=ms=>new Date(ms).toISOString().replace(/[-:T]/g,'').slice(0,14)+' +0000';
+ const start=stamp(clock+60000),end=stamp(clock+3660000);
+ const channel=id=>({getAttribute:()=>id,getElementsByTagName:()=>[{textContent:id}]});
+ const programme=id=>({getAttribute:key=>key==='channel'?id:key==='start'?start:key==='stop'?end:'',
+  getElementsByTagName:key=>key==='title'?[{textContent:'Phim truyện'}]:key==='desc'?[{textContent:'Kẻ mai mối xứng tầm - Tập 25'}]:[]});
+ const dom={documentElement:{tagName:'tv'},querySelector:()=>null,
+  getElementsByTagName:key=>key==='channel'?[channel('VTV1'),channel('VTV3')]:
+  key==='programme'?[...Array(13005).fill(programme('VTV1')),programme('VTV3')]:[]};
+ const context={DOMParser:class{parseFromString(){return dom;}}};
+ vm.runInNewContext(renderer,context);
+ const guide=context.IPTVGuide.parse('<tv/>',[{name:'VTV3',tvgId:'VTV3',id:'ch3'}]);
+ assert.equal(guide.programmes.length,13006);
+ const now=context.IPTVGuide.current(guide,{name:'VTV3',tvgId:'VTV3',id:'ch3'},clock);
+ assert.equal(now.next.title,'Phim truyện: Kẻ mai mối xứng tầm - Tập 25');
+ assert.doesNotMatch(renderer,/out\\.length\\s*>=\\s*12000/);
+ assert.doesNotMatch(features,/programmes\\.slice\\(0,\\s*12000\\)/);
+ assert.match(features,/https:\/\/epg\\.io\\.vn\/epg\\.xml\\.gz/);
+ assert.match(features,/async function saveGuideInDatabase/);
+ assert.match(features,/encodeGuideSnapshot/);
+ assert.match(features,/void restoreGuideCache\\(\\)/);
+ assert.doesNotThrow(()=>new Function(features));
+});
