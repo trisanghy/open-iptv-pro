@@ -228,7 +228,19 @@
  function onPage(p,last){hidePreview();if(last==='multiview'&&p!=='multiview'){stopMulti();ctx.player.muted=previousMainMuted;}if(p==='multiview'&&last!=='multiview'){previousMainMuted=ctx.player.muted;ctx.player.muted=true;renderMulti();}if(p==='health')renderHealth();if(p==='doctor')doctor();if(p==='profiles')renderProfiles();if(p==='epg')renderEpgSearch();applyProfileUI();}
  $('#epgSearchResults').textContent='Nhập tên chương trình để tìm và đặt nhắc lịch.';
  $('#bufferPreset').value=state.optimizer;
- window.IPTVProAdvanced={decorateRow,closePreview:hidePreview,allowChannel,onCheck,onPlaying,onLoadStart,onQuality,onStreamError,onChannel,onStop,onPage,onFavoritesChanged,hlsOptions,getReplayMinutes:replayMinutes,recordHealth:record,doctor,playCatchup,remind,setAlternates:(id,urls)=>{state.alternates[id]=[...new Set(urls)].slice(0,15);save();ctx.refreshManualLinks?.();},canEdit:()=>!profile().child,canEnterPage:p=>!profile().child||!['sources','discovery','folders','settings','health','doctor'].includes(p)};
+ function setAlternatesBatch(entries){
+  if(!Array.isArray(entries)||!entries.length)return;
+  let changed=false;
+  for(const item of entries){
+   if(!Array.isArray(item)||item.length<2)continue;
+   const [id,urls]=item;if(typeof id!=='string'||!id)continue;
+   const next=[...new Set((Array.isArray(urls)?urls:[]).filter(lib.validURL))].slice(0,15);
+   if(JSON.stringify(state.alternates[id]||[])===JSON.stringify(next))continue;
+   state.alternates[id]=next;changed=true;
+  }
+  if(changed){save();ctx.refreshManualLinks?.();}
+ }
+ window.IPTVProAdvanced={decorateRow,closePreview:hidePreview,allowChannel,onCheck,onPlaying,onLoadStart,onQuality,onStreamError,onChannel,onStop,onPage,onFavoritesChanged,hlsOptions,getReplayMinutes:replayMinutes,recordHealth:record,doctor,playCatchup,remind,setAlternatesBatch,setAlternates:(id,urls)=>{state.alternates[id]=[...new Set(urls)].slice(0,15);save();ctx.refreshManualLinks?.();},canEdit:()=>!profile().child,canEnterPage:p=>!profile().child||!['sources','discovery','folders','settings','health','doctor'].includes(p)};
  onFavoritesChanged();
  applyProfileUI();
  setInterval(checkReminders,30000);checkReminders();
