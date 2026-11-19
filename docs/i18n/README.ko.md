@@ -4,22 +4,22 @@
 
 > International quick-start summary. The Vietnamese README is the complete technical reference; check current GitHub Releases for exact versions and capabilities.
 
-> **Mobile Beta:** [Android APK debug / iOS unsigned IPA](https://github.com/trisanghy/open-iptv-pro/releases/tag/mobile/v4.23.17.10). iOS IPA requires valid Apple signing and is not directly installable. [Mobile source in main](../../mobile/) · [Mobile setup and limitations](../../docs/MOBILE_ANDROID_IOS.md). Mobile is a separate Capacitor edition, not full Desktop feature parity.
+> **모바일 베타(Android/iOS):** Capacitor 버전은 Electron 및 Rust Lab과 별도로 개발되며 기능이 동일하지 않습니다. Android APK는 테스트용 디버그 서명 파일입니다. iOS IPA는 서명되지 않았으므로 유효한 Apple 인증서와 프로비저닝 없이는 설치할 수 없습니다.
 
 ## 개요
 
 Open IPTV Pro는 Web, Windows, macOS에서 사용하는 개인 오픈 소스 IPTV 플레이어 및 재생 목록 관리자입니다. M3U/EPG와 콘텐츠 이용 권한은 사용자가 직접 준비해야 하며 채널이나 구독 서비스는 제공하지 않습니다.
 
+Open IPTV Pro는 Web, Windows/macOS, Android/iOS용 별도 버전을 제공합니다. TV 채널이나 구독은 포함되지 않습니다.
+
 ## 버전 및 플랫폼
 
 Electron Desktop은 기능이 풍부한 안정판이며, Rust Lab은 별도의 Tauri/Rust 베타판입니다. Web Online은 설치가 필요 없지만 브라우저의 CORS, 코덱, DRM, 자동 재생 정책에 영향을 받습니다.
 
-| Edition | Platform | Official source |
-| --- | --- | --- |
-| Web Online | Browser | [Open Web player](https://trisanghy.github.io/open-iptv-pro/) |
-| Electron Desktop | Windows/macOS | [Latest release](https://github.com/trisanghy/open-iptv-pro/releases/latest) |
-| Rust Lab Beta | Windows/macOS (depending on release) | [Rust Lab releases](https://github.com/trisanghy/open-iptv-pro/releases?q=rust-lab) |
-| Mobile Capacitor Beta | Android 7+ debug APK / iOS 15+ unsigned IPA | [Mobile v4.23.17-mobile.10](https://github.com/trisanghy/open-iptv-pro/releases/tag/mobile/v4.23.17.10) |
+- **Web Online — 브라우저:** [플레이어 열기](https://trisanghy.github.io/open-iptv-pro/). 설치는 필요 없지만 CORS·코덱·DRM 제한이 있습니다.
+- **Electron Desktop — Windows/macOS:** [공식 설치 파일](https://github.com/trisanghy/open-iptv-pro/releases/latest).
+- **Rust Lab 베타 — Windows/macOS:** [별도 릴리스](https://github.com/trisanghy/open-iptv-pro/releases?q=rust-lab).
+- **Mobile Capacitor 베타 — Android/iOS:** [디버그 APK / 미서명 IPA](https://github.com/trisanghy/open-iptv-pro/releases/tag/mobile/v4.23.17.10), [모바일 소스](../../mobile/), [설치 안내](../MOBILE_ANDROID_IOS.md).
 
 ## 주요 기능
 

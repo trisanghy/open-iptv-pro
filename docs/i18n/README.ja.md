@@ -4,22 +4,22 @@
 
 > International quick-start summary. The Vietnamese README is the complete technical reference; check current GitHub Releases for exact versions and capabilities.
 
-> **Mobile Beta:** [Android APK debug / iOS unsigned IPA](https://github.com/trisanghy/open-iptv-pro/releases/tag/mobile/v4.23.17.10). iOS IPA requires valid Apple signing and is not directly installable. [Mobile source in main](../../mobile/) · [Mobile setup and limitations](../../docs/MOBILE_ANDROID_IOS.md). Mobile is a separate Capacitor edition, not full Desktop feature parity.
+> **モバイル・ベータ版（Android/iOS）：** Capacitor 版は Electron／Rust Lab と別の製品で、機能は同一ではありません。Android の APK はテスト用デバッグ署名版です。iOS の IPA は未署名のため、有効な Apple 証明書とプロビジョニングがないとインストールできません。
 
 ## 概要
 
 Open IPTV Pro は Web、Windows、macOS 向けの個人開発オープンソース IPTV プレーヤーです。M3U や EPG は利用権を持つユーザー自身が用意します。チャンネルや有料サービスは付属しません。
 
+Open IPTV Pro には Web、Windows/macOS、Android/iOS の別々のエディションがあります。テレビチャンネルや契約は付属しません。
+
 ## エディションとプラットフォーム
 
 Electron Desktop は高機能な安定版です。Rust Lab は独立した Tauri/Rust ベータ版です。Web Online はインストール不要ですが、CORS、コーデック、DRM、自動再生制限の影響を受けます。
 
-| Edition | Platform | Official source |
-| --- | --- | --- |
-| Web Online | Browser | [Open Web player](https://trisanghy.github.io/open-iptv-pro/) |
-| Electron Desktop | Windows/macOS | [Latest release](https://github.com/trisanghy/open-iptv-pro/releases/latest) |
-| Rust Lab Beta | Windows/macOS (depending on release) | [Rust Lab releases](https://github.com/trisanghy/open-iptv-pro/releases?q=rust-lab) |
-| Mobile Capacitor Beta | Android 7+ debug APK / iOS 15+ unsigned IPA | [Mobile v4.23.17-mobile.10](https://github.com/trisanghy/open-iptv-pro/releases/tag/mobile/v4.23.17.10) |
+- **Web Online — ブラウザー：** [プレーヤーを開く](https://trisanghy.github.io/open-iptv-pro/)。インストール不要ですが CORS・コーデック・DRM の制限があります。
+- **Electron Desktop — Windows/macOS：** [公式インストーラー](https://github.com/trisanghy/open-iptv-pro/releases/latest)。
+- **Rust Lab ベータ版 — Windows/macOS：** [独立したリリース](https://github.com/trisanghy/open-iptv-pro/releases?q=rust-lab)。
+- **Mobile Capacitor ベータ版 — Android/iOS：** [テスト用 APK / 未署名 IPA](https://github.com/trisanghy/open-iptv-pro/releases/tag/mobile/v4.23.17.10)、[ソースコード](../../mobile/)、[インストールガイド](../MOBILE_ANDROID_IOS.md)。
 
 ## 主な機能
 

@@ -4,22 +4,22 @@
 
 > International quick-start summary. The Vietnamese README is the complete technical reference; check current GitHub Releases for exact versions and capabilities.
 
-> **Mobile Beta:** [Android APK debug / iOS unsigned IPA](https://github.com/trisanghy/open-iptv-pro/releases/tag/mobile/v4.23.17.10). iOS IPA requires valid Apple signing and is not directly installable. [Mobile source in main](../../mobile/) · [Mobile setup and limitations](../../docs/MOBILE_ANDROID_IOS.md). Mobile is a separate Capacitor edition, not full Desktop feature parity.
+> **移动端测试版（Android/iOS）：** Capacitor 版本独立开发，功能不等同于 Electron 或 Rust Lab。Android 提供仅用于测试的调试签名 APK。iOS 提供未签名 IPA，必须使用有效 Apple 证书和 provisioning 配置才能安装。
 
 ## 项目简介
 
 Open IPTV Pro 是适用于网页、Windows 和 macOS 的个人开源 IPTV 播放器及播放列表管理工具。频道与 M3U/EPG 数据须由用户自行提供并确认拥有合法使用权；本项目不提供电视套餐或频道。
 
+Open IPTV Pro 分别提供 Web、Windows/macOS 和 Android/iOS 版本；不附带电视频道或订阅服务。
+
 ## 版本与平台
 
 Electron Desktop 是功能较完整的稳定版；Rust Lab 是独立的 Tauri/Rust 测试版。Web Online 无需安装，但受浏览器的 CORS、编解码器、DRM 与自动播放限制。
 
-| Edition | Platform | Official source |
-| --- | --- | --- |
-| Web Online | Browser | [Open Web player](https://trisanghy.github.io/open-iptv-pro/) |
-| Electron Desktop | Windows/macOS | [Latest release](https://github.com/trisanghy/open-iptv-pro/releases/latest) |
-| Rust Lab Beta | Windows/macOS (depending on release) | [Rust Lab releases](https://github.com/trisanghy/open-iptv-pro/releases?q=rust-lab) |
-| Mobile Capacitor Beta | Android 7+ debug APK / iOS 15+ unsigned IPA | [Mobile v4.23.17-mobile.10](https://github.com/trisanghy/open-iptv-pro/releases/tag/mobile/v4.23.17.10) |
+- **Web Online — 浏览器：** [打开播放器](https://trisanghy.github.io/open-iptv-pro/)，无需安装，但受 CORS、编解码器和 DRM 限制。
+- **Electron Desktop — Windows/macOS：** [官方安装包](https://github.com/trisanghy/open-iptv-pro/releases/latest)。
+- **Rust Lab 测试版 — Windows/macOS：** [独立版本发布页](https://github.com/trisanghy/open-iptv-pro/releases?q=rust-lab)。
+- **Mobile Capacitor 测试版 — Android/iOS：** [Android 调试 APK / iOS 未签名 IPA](https://github.com/trisanghy/open-iptv-pro/releases/tag/mobile/v4.23.17.10)、[移动端源码](../../mobile/)及[安装指南](../MOBILE_ANDROID_IOS.md)。
 
 ## 主要功能
 

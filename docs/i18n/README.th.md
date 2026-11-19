@@ -4,22 +4,22 @@
 
 > International quick-start summary. The Vietnamese README is the complete technical reference; check current GitHub Releases for exact versions and capabilities.
 
-> **Mobile Beta:** [Android APK debug / iOS unsigned IPA](https://github.com/trisanghy/open-iptv-pro/releases/tag/mobile/v4.23.17.10). iOS IPA requires valid Apple signing and is not directly installable. [Mobile source in main](../../mobile/) · [Mobile setup and limitations](../../docs/MOBILE_ANDROID_IOS.md). Mobile is a separate Capacitor edition, not full Desktop feature parity.
+> **Mobile Beta (Android/iOS):** รุ่น Capacitor พัฒนาแยกจาก Electron และ Rust Lab จึงไม่มีฟีเจอร์เหมือนกันทั้งหมด APK Android ลงลายเซ็นแบบ debug เพื่อทดสอบ ส่วน IPA ของ iOS ยังไม่ลงลายเซ็น ต้องมีใบรับรองและ provisioning ของ Apple ที่ถูกต้องก่อนติดตั้ง
 
 ## ภาพรวม
 
 Open IPTV Pro เป็นเครื่องเล่น IPTV และตัวจัดการรายการ M3U แบบโอเพนซอร์สสำหรับเว็บ Windows และ macOS ซึ่งพัฒนาเป็นโครงการส่วนบุคคล ผู้ใช้ต้องจัดหาแหล่ง M3U/EPG ที่มีสิทธิ์ใช้งานเอง แอปไม่มีช่องหรือแพ็กเกจทีวีให้
 
+Open IPTV Pro มีรุ่นแยกสำหรับ Web, Windows/macOS และ Android/iOS โดยไม่มีช่องทีวีหรือแพ็กเกจสมัครสมาชิกให้
+
 ## รุ่นและแพลตฟอร์ม
 
 Electron Desktop เป็นรุ่นเสถียรที่มีฟีเจอร์มากกว่า Rust Lab เป็นรุ่นเบต้า Tauri/Rust แยกต่างหาก ส่วน Web Online เปิดใช้ผ่านเบราว์เซอร์โดยไม่ต้องติดตั้ง แต่มีข้อจำกัดด้าน CORS โคเดก DRM และการเล่นอัตโนมัติ
 
-| Edition | Platform | Official source |
-| --- | --- | --- |
-| Web Online | Browser | [Open Web player](https://trisanghy.github.io/open-iptv-pro/) |
-| Electron Desktop | Windows/macOS | [Latest release](https://github.com/trisanghy/open-iptv-pro/releases/latest) |
-| Rust Lab Beta | Windows/macOS (depending on release) | [Rust Lab releases](https://github.com/trisanghy/open-iptv-pro/releases?q=rust-lab) |
-| Mobile Capacitor Beta | Android 7+ debug APK / iOS 15+ unsigned IPA | [Mobile v4.23.17-mobile.10](https://github.com/trisanghy/open-iptv-pro/releases/tag/mobile/v4.23.17.10) |
+- **Web Online — เบราว์เซอร์:** [เปิดเครื่องเล่น](https://trisanghy.github.io/open-iptv-pro/) ไม่ต้องติดตั้ง แต่มีข้อจำกัด CORS โคเดกและ DRM
+- **Electron Desktop — Windows/macOS:** [ตัวติดตั้งอย่างเป็นทางการ](https://github.com/trisanghy/open-iptv-pro/releases/latest)
+- **Rust Lab Beta — Windows/macOS:** [รุ่นแยกต่างหาก](https://github.com/trisanghy/open-iptv-pro/releases?q=rust-lab)
+- **Mobile Capacitor Beta — Android/iOS:** [APK debug / IPA ไม่ได้ลงลายเซ็น](https://github.com/trisanghy/open-iptv-pro/releases/tag/mobile/v4.23.17.10), [ซอร์สโค้ด](../../mobile/) และ[คู่มือติดตั้ง](../MOBILE_ANDROID_IOS.md)
 
 ## ฟีเจอร์หลัก
 
