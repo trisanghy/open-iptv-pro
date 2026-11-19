@@ -1,0 +1,62 @@
+name: Verify 100-percent Web localization (17 languages)
+on:
+  push:
+    branches: [web/online]
+    paths:
+      - '.github/workflows/verify-web-i18n.yml'
+      - 'web-native-complete.js'
+      - 'web-generated-locales.js'
+      - 'web-language-supplement.js'
+      - 'guide-native-locales.js'
+      - 'huong-dan.html'
+      - 'web-online/home-native-locales.js'
+      - 'web-online/project-home.html'
+      - 'web-online/i18n-audit.cjs'
+      - 'web-online/tests/web-home-native-coverage.test.cjs'
+      - 'web-online/tests/web-guide-native-coverage.test.cjs'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: web/online
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validate all 17 pretranslated Web dictionaries
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          for file in i18n.js web-native-complete.js web-generated-locales.js web-language-supplement.js guide-native-locales.js web-online/home-native-locales.js; do
+            node --check "$file"
+          done
+          node web-online/i18n-audit.cjs --require-complete
+          node --test web-online/tests/web-native-full-coverage.test.cjs
+          node --test web-online/tests/web-home-native-coverage.test.cjs
+          node --test web-online/tests/web-guide-native-coverage.test.cjs
+          node --test web-online/tests/web-home-languages.test.cjs
+          node --test web-online/tests/web-language-supplement.test.cjs
+      - name: Verify self-contained user homepage and guide HTML
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          python3 -m py_compile web-online/scripts/build-home-native-locales.py
+          python3 -m py_compile web-online/scripts/build-guide-native-locales.py
+          python3 - <<'PY'
+          from pathlib import Path
+          home=Path('web-online/project-home.html').read_text(encoding='utf8')
+          guide=Path('huong-dan.html').read_text(encoding='utf8')
+          assert home.count('<script id="home-native-locales-data">')==1
+          assert home.index('id="home-native-locales-data"')<home.index('id="homepage-language-controller"')
+          assert home.count('<option value=')>=17
+          assert guide.count('<option value=')>=17
+          assert 'guide-native-locales.js?v=' in guide
+          assert Path('web-online/home-native-locales.js').stat().st_size>100000
+          assert Path('guide-native-locales.js').stat().st_size>100000
+          print('All 17 locales: Web UI, standalone homepage and user guide verified')
+          PY
