@@ -40,10 +40,10 @@ table{border-collapse:collapse;width:100%;font-size:14px}th,td{border-bottom:1px
 th{color:#f0f7ff}td{color:#c4d4df}
 footer{max-width:1040px;margin:0 auto;padding:15px 20px 40px;color:#90a9ba;border-top:1px solid #25394a;font-size:13px}
 @media(max-width:760px){.grid{grid-template-columns:1fr}header{padding:14px 20px}main{padding:18px 14px 40px}}
-</style>
+.guide-locale{display:flex;align-items:center;gap:7px;font-size:12px}.guide-locale select{max-width:170px;border:1px solid #41617a;color:#fff;background:#172d3c;border-radius:7px;padding:7px}.guide-locale select:focus-visible{outline:2px solid #89d7ff}</style>
 </head>
 <body>
-<header><nav><div class="brand">▶ Open IPTV Pro <span class="muted">/ Web Online</span></div><div class="links"><a href="./">Xem truyền hình</a><a href="https://github.com/trisanghy/open-iptv-pro">GitHub</a><a href="https://github.com/trisanghy/open-iptv-pro/releases/tag/v4.23.70">Bản Desktop</a></div></nav></header>
+<header><nav><div class="brand">▶ Open IPTV Pro <span class="muted">/ Web Online</span></div><div class="links"><a href="./">Xem truyền hình</a><a href="https://github.com/trisanghy/open-iptv-pro">GitHub</a><a href="https://github.com/trisanghy/open-iptv-pro/releases/tag/v4.23.70">Bản Desktop</a></div><div class="guide-locale"><label for="guideLanguage">Ngôn ngữ</label><select id="guideLanguage" aria-label="Ngôn ngữ"><option value="vi">Tiếng Việt</option><option value="en">English</option><option value="fr">Français</option><option value="de">Deutsch</option><option value="es">Español</option><option value="pt-BR">Português (Brasil)</option><option value="zh-CN">简体中文</option><option value="ja">日本語</option><option value="ko">한국어</option><option value="th">ไทย</option><option value="id">Bahasa Indonesia</option><option value="ru">Русский</option><option value="lo">ລາວ</option><option value="km">ភាសាខ្មែរ</option><option value="it">Italiano</option><option value="hi">हिन्दी</option><option value="ar">العربية</option></select></div></nav></header>
 <main>
 <section class="hero">
 <p class="meta">HƯỚNG DẪN CHÍNH THỨC · TRÌNH DUYỆT</p>
@@ -63,4 +63,68 @@ footer{max-width:1040px;margin:0 auto;padding:15px 20px 40px;color:#90a9ba;borde
 <section class="card"><h2>Câu hỏi thường gặp</h2><h3>Website có cung cấp danh sách kênh không?</h3><p>Không. Bạn tự nhập danh sách nguồn M3U có quyền truy cập.</p><h3>Dùng được trên điện thoại không?</h3><p>Có thể mở trình duyệt di động, nhưng PiP, autoplay, codec và dung lượng lưu trữ tùy thiết bị.</p><h3>Tôi muốn phụ đề dịch giọng nói tiếng Việt trực tiếp?</h3><p>Dùng bản <a href="https://github.com/trisanghy/open-iptv-pro/releases/tag/v4.23.70">Open IPTV Pro Desktop v4.23.70</a> vì Whisper/MLX/VieNeu hiện triển khai ở Electron.</p></section>
 </main>
 <footer>Open IPTV Pro · <a href="./">Web Online</a> · <a href="https://github.com/trisanghy/open-iptv-pro/releases">Desktop Releases</a> · Mở các nguồn truyền hình mà bạn được phép truy cập.</footer>
+<script src="guide-native-locales.js?v=87449f0be29d825f"></script>
+<script id="guide-language-controller">
+(function(){
+'use strict';
+const dictionaries=window.OpenIPTVGuideLocales||{};
+const codes=['vi','en','fr','de','es','pt-BR','zh-CN','ja','ko','th','id','ru','lo','km','it','hi','ar'];
+const select=document.getElementById('guideLanguage');
+if(!select)return;
+const nodes=[];
+const walker=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT);
+let node;
+while((node=walker.nextNode())){
+ if(node.parentElement&&['SCRIPT','STYLE','OPTION','CODE','PRE'].includes(node.parentElement.tagName))continue;
+ const raw=node.nodeValue,word=raw.trim();
+ if(word)nodes.push({node,raw,word});
+}
+const meta=[];
+for(const element of document.querySelectorAll('[title],[aria-label],[alt],meta[content]')){
+ for(const attr of ['title','aria-label','alt','content']){
+  if(element.hasAttribute(attr))meta.push({element,attr,raw:element.getAttribute(attr)});
+ }
+}
+const initialTitle=document.title;
+function normalize(value){
+ const lower=String(value||'').toLowerCase();
+ if(lower.startsWith('pt'))return 'pt-BR';
+ if(lower.startsWith('zh'))return 'zh-CN';
+ const primary=lower.split(/[-_]/)[0];
+ return codes.find(code=>code.toLowerCase()===primary)||null;
+}
+function translate(value,code){
+ if(code==='vi'||!dictionaries[code])return value;
+ return dictionaries[code][value]||value;
+}
+function apply(code){
+ if(!codes.includes(code))code='vi';
+ const labels=dictionaries[code]||{};
+ for(const {node,raw,word} of nodes){
+  if(!node.isConnected)continue;
+  const changed=translate(word,code);
+  node.nodeValue=changed===word?raw:raw.replace(word,changed);
+ }
+ for(const {element,attr,raw} of meta){
+  if(element.isConnected)element.setAttribute(attr,translate(raw,code));
+ }
+ document.title=translate(initialTitle,code);
+ document.documentElement.lang=code;
+ document.documentElement.dir=code==='ar'?'rtl':'ltr';
+ select.value=code;
+}
+let wanted=null;
+try{wanted=normalize(new URL(window.location.href).searchParams.get('lang'));}catch(e){}
+try{wanted=wanted||normalize(localStorage.getItem('openiptv.home.language'));}catch(e){}
+if(!wanted)for(const code of (navigator.languages||[navigator.language])){wanted=normalize(code);if(wanted)break;}
+apply(wanted||'vi');
+select.addEventListener('change',()=>{
+ const code=normalize(select.value)||'vi';
+ apply(code);
+ try{localStorage.setItem('openiptv.home.language',code);}catch(e){}
+ try{const url=new URL(window.location.href);url.searchParams.set('lang',code);
+  history.replaceState(history.state,'',url.pathname+url.search+url.hash);}catch(e){}
+});
+})();
+</script>
 </body></html>
