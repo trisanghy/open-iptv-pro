@@ -22,7 +22,7 @@ test('Web builder removes redundant action without altering snapshot logic',()=>
  const builder=read('web-online/prepare-web.py');
  assert.match(builder,/html=html\.replace\(quick_shot_current,'',1\)/);
  assert.match(builder,/quick_shot_current/);
- assert.match(builder,/quick-icons-unified-20261119a/);
+ assert.match(builder,/quick-icons-unified-20261119b/);
  assert.doesNotMatch(builder,/snapshotOne\s*=\s*null/);
 });
 test('Quick Tool SVG colors use one accent and not separate snapshot-only colors',()=>{
@@ -42,5 +42,5 @@ test('Inactive mobile tabs share blue icons and the active tab keeps accent colo
 test('Production HTML requests versioned CSS to avoid stale mobile icons',()=>{
  const html=read('index.html');
  assert.match(html,/web-player-icons\.css\?v=single-icon-first-paint-20261119a/);
- assert.match(html,/web-mobile-controls-polish\.css\?v=quick-icons-unified-20261119a/);
+ assert.match(html,/web-mobile-controls-polish\.css\?v=quick-icons-unified-20261119b/);
 });
