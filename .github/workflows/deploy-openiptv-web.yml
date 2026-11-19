@@ -169,7 +169,7 @@ jobs:
           grep -Fq 'id="webBackgroundAudioToggle"' _site/index.html
           grep -Fq 'web-background-audio.css?v=lock-audio-20261119d' _site/index.html
           grep -Fq 'id="webBackgroundAudio"' _site/index.html
-          grep -Fq 'web-background-audio.js?v=lock-audio-20261119c' _site/index.html
+          grep -Fq 'web-background-audio.js?v=lock-audio-20261119d' _site/index.html
           node --check _site/web-autoplay.js
           node --test web-online/tests/web-autoplay.test.cjs
           node --check _site/cloud-core.js
