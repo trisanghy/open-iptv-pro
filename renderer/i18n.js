@@ -88,6 +88,14 @@
     // Strict app-owned popup patterns: interpolate data without translating channel/file names.
     if(!out && language!=='vi' && window.OpenIPTVDialogTemplates?.translate)
       out=window.OpenIPTVDialogTemplates.translate(raw,language)||'';
+    // Translate only recognized UI error prefixes; retain system diagnostics and user data.
+    if(!out && language!=='en' && language!=='vi'){
+      for(const prefix of ['Không sao lưu được:','Sao lưu thất bại:','Không thể khôi phục:']){
+        if(compact.startsWith(prefix) && compact.length>prefix.length && dict[prefix]){
+          out=dict[prefix]+' '+compact.slice(prefix.length).trimStart();break;
+        }
+      }
+    }
     if(!out)out=english[compact];
     // Localized numeric statuses: only exact UI patterns, not channel or playlist names.
     if(!out && language!=='vi'){
