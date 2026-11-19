@@ -30,6 +30,8 @@ function fixture({mobile=true,volume=.7}={}){
  const win=node({setTimeout(fn){let id=++counter;timers.set(id,fn);return id},
   clearTimeout(id){timers.delete(id)}});
  class Event{constructor(type){this.type=type}}
+ // Production receives window.document; mock the same browser contract.
+ win.document=doc;
  vm.runInNewContext(source,{window:win,document:doc,Event},{timeout:5000});
  const panel=top.children[0];
  return {video,old,speaker,doc,top,panel,inner:panel.children[0],slider:panel.children[1],percent:panel.children[2],timers,saved:()=>saved,
