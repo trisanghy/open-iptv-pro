@@ -1,0 +1,72 @@
+name: Complete offline homepage translations in 17 languages
+on:
+  push:
+    branches: [web/online]
+    paths:
+      - '.github/workflows/complete-home-locales.yml'
+      - 'web-online/scripts/build-home-native-locales.py'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: complete-web-home-locale-20261119
+  cancel-in-progress: false
+jobs:
+  translate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      max-parallel: 4
+      matrix:
+        lang: [fr, de, es, pt, zh, ja, ko, th, id, ru, lo, km, it, hi, ar]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: web/online
+      - name: Translate public homepage labels offline for the selected language
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          python3 -m py_compile web-online/scripts/build-home-native-locales.py
+          python3 web-online/scripts/build-home-native-locales.py --lang '${{ matrix.lang }}'
+      - uses: actions/upload-artifact@v4
+        with:
+          name: home-native-${{ matrix.lang }}
+          path: home-locales/${{ matrix.lang }}.json
+          retention-days: 14
+          if-no-files-found: error
+  assemble:
+    needs: translate
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: web/online
+          persist-credentials: true
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: home-native-*
+          path: home-locales/
+          merge-multiple: true
+      - name: Validate full native homepage text coverage before publishing
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          python3 web-online/scripts/build-home-native-locales.py --assemble
+          node --check web-online/home-native-locales.js
+          node --test web-online/tests/web-home-native-coverage.test.cjs
+          node --test web-online/tests/web-home-languages.test.cjs
+      - name: Commit and push only generated homepage translations to Web branch
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add web-online/project-home.html web-online/home-native-locales.js
+          git diff --cached --quiet && { echo 'Already up to date'; exit 0; }
+          git commit -m 'feat(web-home-i18n): complete native homepage translations for 17 languages'
+          git fetch origin web/online
+          git rebase FETCH_HEAD
+          git push origin HEAD:web/online
