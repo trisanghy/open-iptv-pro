@@ -49,6 +49,17 @@
   for(const [lang,label] of Object.entries({"en":"Waiting for video data from source •","zh-CN":"正在等待来源的视频数据 •","lo":"ກຳລັງລໍຖ້າຂໍ້ມູນວິດີໂອຈາກແຫຼ່ງ •","es":"Esperando datos de vídeo de la fuente •","pt-BR":"Aguardando dados de vídeo da fonte •","th":"กำลังรอข้อมูลวิดีโอจากแหล่ง •","km":"កំពុងរង់ចាំទិន្នន័យវីដេអូពីប្រភព •","fr":"En attente des données vidéo de la source •","de":"Warte auf Videodaten der Quelle •","it":"In attesa dei dati video dalla sorgente •","ja":"ソースから映像データを待機中 •","ko":"소스에서 영상 데이터를 기다리는 중 •","ru":"Ожидание видеоданных от источника •","id":"Menunggu data video dari sumber •","hi":"स्रोत से वीडियो डेटा की प्रतीक्षा •","ar":"بانتظار بيانات الفيديو من المصدر •"})){
     Object.assign(dictionaries[lang]||(dictionaries[lang]={}),{'Đang đợi dữ liệu video từ nguồn •':label});
   }
+  // Preserve all newer translations and supplement missing UI labels from installed language packs.
+  const coverage=window.OpenIPTVEnglishCoverage;
+  for(const [key,value] of Object.entries(coverage?.exact||{})){
+    const target=dictionaries.en||(dictionaries.en={});
+    if(!target[key])target[key]=value;
+  }
+  const supplement=window.OpenIPTVLocalePacks;
+  for(const [lang,entries] of Object.entries(supplement?.packs||{})){
+    const target=dictionaries[lang]||(dictionaries[lang]={});
+    for(const [key,value] of Object.entries(entries))if(!target[key])target[key]=value;
+  }
   const key='open-iptv-pro-language';
   let locale='vi';
   try{const stored=localStorage.getItem(key);if(stored && Object.hasOwn(locales,stored))locale=stored;}catch{}
@@ -68,6 +79,7 @@
         if(dict[sourceKey]){out=dict[sourceKey];break;}
       }
     }
+    if(!out&&language!=='en')out=supplement?.dynamic?.(compact,language);
     if(!out)out=english[compact];
     // Localized numeric statuses: only exact UI patterns, not channel or playlist names.
     if(!out && language!=='vi'){
@@ -183,6 +195,7 @@
         out=m[1]+' Browser will pause retries for 10 minutes.';
     }
 
+    if(!out)out=coverage?.dynamic?.(compact);
     if(!out)return raw;
     const leading=raw.match(/^\s*/)?.[0]||'',trailing=raw.match(/\s*$/)?.[0]||'';
     return leading+out+trailing;
@@ -256,6 +269,8 @@
     }
   });
   observer.observe(document.documentElement,{subtree:true,childList:true,characterData:true,attributes:true,attributeFilter:attributeList});
+  // Native dialogs bypass DOM mutation observation and require direct message translation.
+  for(const kind of ['alert','confirm']){const original=window[kind];if(typeof original==='function')window[kind]=function(message,...args){return original.call(window,translate(String(message)),...args);};}
   window.OpenIPTVI18n=Object.freeze({locales,getLanguage:()=>locale,setLanguage,t:translate,apply});
   const setup=()=>{
     const control=document.getElementById('appLanguage');
