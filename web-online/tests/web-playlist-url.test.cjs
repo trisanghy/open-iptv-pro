@@ -78,3 +78,25 @@ test('bare URL handling preserves ports, case-sensitive paths, query strings and
   assert.throws(()=>validatePlaylistUrl(value));
  }
 });
+
+for(const [url,target] of [
+ ['http://d.org.vn/listiptv','https://raw.githubusercontent.com/vuminhthanh12/vuminhthanh12/main/vmttv'],
+ ['http://nts12.s.gy/iptv','https://gist.githubusercontent.com/trisanghy/e63b2927598a4b932b3708ddd3183aaa/raw/iptv.m3u']
+]){
+ test('HTTP alias imports through one HTTPS request: '+url,async()=>{
+  const calls=[];
+  const read=reader(async request=>{
+   calls.push(request);
+   if(!request.startsWith('https://'))throw new TypeError('Mixed content');
+   return {ok:true,text:async()=>playlist};
+  });
+  assert.equal(await read(url),playlist);
+  assert.deepEqual(calls,[target]);
+ });
+}
+test('an HTTP source with a private query never uses the shared playlist',async()=>{
+ const url='http://d.org.vn/listiptv?token=private',calls=[];
+ const read=reader(async request=>{calls.push(request);throw new TypeError('Mixed content');});
+ await assert.rejects(read(url),/Không tải được/);
+ assert.deepEqual(calls,[url]);
+});

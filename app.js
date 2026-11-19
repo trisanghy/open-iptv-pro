@@ -578,10 +578,13 @@
    ['https://d.org.vn/listiptv','https://raw.githubusercontent.com/vuminhthanh12/vuminhthanh12/main/vmttv'],
    ['https://nts12.s.gy/iptv','https://gist.githubusercontent.com/trisanghy/e63b2927598a4b932b3708ddd3183aaa/raw/iptv.m3u']
   ]);
+  // HTTPS Pages cannot fetch an insecure short link. For an exact known alias,
+  // go straight to its verified HTTPS playlist while retaining the stored origin.
+  const secureTarget=/^http:\/\//i.test(url)?targets.get(url.replace(/^http:/i,'https:')):undefined;
   const networkError='Không tải được danh sách. Hãy kiểm tra mạng, dùng URL trực tiếp tới tệp M3U hoặc nhập tệp từ thiết bị.';
   let response;
   try{
-   response=await fetch(url);
+   response=await fetch(secureTarget||url);
   }catch(error){
    const target=targets.get(url);
    if(!target||error.name!=='TypeError')throw Error(networkError);

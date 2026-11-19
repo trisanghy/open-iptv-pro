@@ -168,7 +168,7 @@ html=html.replace('<title>Open IPTV Pro — Web Online</title>',
 if 'href="huong-dan.html"' not in html:
     sys.exit('Public Web instructions are not linked')
 
-html=html.replace('src="app.js"','src="app.js?v=playlist-input-20261119c"').replace('collector.js?v=collector-merge-repair-20261119a','collector.js?v=playlist-url-20261119b')
+html=html.replace('src="app.js"','src="app.js?v=playlist-http-20261119d"').replace('collector.js?v=collector-merge-repair-20261119a','collector.js?v=playlist-url-20261119b')
 html=html.replace('src="source-edit.js"','src="source-edit.js?v=playlist-input-20261119c"')
 (out/'index.html').write_text(html,encoding='utf-8')
 (out/'.nojekyll').write_text('')
