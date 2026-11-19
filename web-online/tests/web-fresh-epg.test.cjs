@@ -5,59 +5,67 @@ const fs=require('node:fs'),path=require('node:path'),vm=require('node:vm');
 const root=path.join(__dirname,'../..');
 const js=fs.readFileSync(path.join(root,'features.js'),'utf8');
 const reader=js.slice(js.indexOf(' async function readFreshGuide('),js.indexOf(' async function refreshEPG('));
-const primary='https://epg.pw/xmltv/epg_VN.xml';
-function harness(ends){
- const urls=[];
- const read=vm.runInNewContext(reader+';readFreshGuide',{window:{},
-  fetchXML:async url=>{urls.push(url);return ends.shift();},guideLib:{parse:end=>({programmes:[{end}]})}});
- return {urls,read};
+const primary='https://epgshare01.online/epgshare01/epg_ripper_VN1.xml.gz',standby='https://epg.pw/xmltv/epg_VN.xml';
+function configFor(previous){
+ const snippet=js.slice(js.indexOf(' const defaultSources=['),js.indexOf(' const saveConfig='));
+ return vm.runInNewContext('(()=>{'+snippet+';return config;})()',{
+  localStorage:{getItem:()=>previous?JSON.stringify(previous):null}});
 }
-test('EPG.pw is the only requested source; expired data never triggers another provider',async()=>{
- const future=Date.now()+60000,ok=harness([future]);
- assert.equal((await ok.read(primary,[])).programmes[0].end,future);
- assert.deepEqual(ok.urls,[primary]);
- const expired=harness([0,future]);
- await assert.rejects(expired.read(primary,[]),/hết lịch/);
- assert.deepEqual(expired.urls,[primary]);
+test('fresh installs use primary EPGShare01; EPG.pw remains disabled and last',()=>{
+ const c=configFor();
+ assert.equal(c.sources[0].url,primary);
+ assert.equal(c.sources[0].enabled,true);
+ assert.equal(c.sources.at(-1).url,standby);
+ assert.equal(c.sources.at(-1).enabled,false);
+ assert.equal(c.sources.filter(s=>s.url===standby).length,1);
+ assert.equal(c.autoRefreshEPGOnStartup,true);
 });
-test('old enabled feeds are disabled, still saved; tracking variant of EPG.pw is deduplicated',()=>{
- const snippet=js.slice(js.indexOf(' const defaultSources=['),js.indexOf(' const saveConfig='));
- const previous={sources:[
-  {name:'Legacy',url:'https://epgshare01.online/old.xml',enabled:true},
+test('exclusive EPG.pw upgrade restores primary, keeps former custom feeds and startup opt-out',()=>{
+ const c=configFor({epgSourcePolicy:'epg-pw-vn-only-20261119',sources:[
+  {name:'EPG.pw',url:standby,enabled:true},
+  {name:'Legacy',url:primary,enabled:false},
+  {name:'Custom',url:'https://example.test/my.xml',enabled:false},
+  {name:'Tracking',url:standby+'?utm_source=chatgpt.com',enabled:true}
+ ],autoRefreshEPGOnStartup:false});
+ assert.equal(c.sources[0].url,primary);
+ assert.equal(c.sources[0].enabled,true);
+ assert.equal(c.sources.find(s=>s.url==='https://example.test/my.xml').enabled,false);
+ assert.equal(c.sources.at(-1).url,standby);
+ assert.equal(c.sources.at(-1).enabled,false);
+ assert.equal(c.sources.filter(s=>s.url===standby).length,1);
+ assert.equal(c.sources.filter(s=>s.url.startsWith(standby)).length,1);
+ assert.equal(c.autoRefreshEPGOnStartup,false);
+});
+test('user-enabled alternate EPG is preserved while EPG.pw defaults off',()=>{
+ const c=configFor({sources:[
   {name:'Custom',url:'https://example.test/custom.xml',enabled:true},
-  {name:'EPG.pw tracking',url:primary+'?utm_source=chatgpt.com',enabled:false}
- ],autoRefreshEPGOnStartup:false};
- const cfg=vm.runInNewContext('(()=>{'+snippet+';return config;})()',{
-  localStorage:{getItem:()=>JSON.stringify(previous)}});
- assert.equal(cfg.sources.length,3);
- assert.equal(cfg.sources[0].url,primary);
- assert.equal(cfg.sources[0].enabled,true);
- assert.equal(cfg.sources.filter(s=>s.enabled).length,1);
- assert.equal(cfg.sources[1].url,previous.sources[0].url);
- assert.equal(cfg.sources[1].enabled,false);
- assert.equal(cfg.sources[2].url,previous.sources[1].url);
- assert.equal(cfg.sources[2].enabled,false);
- assert.equal(cfg.autoRefreshEPGOnStartup,false);
+  {name:'EPG.pw',url:standby,enabled:true}
+ ]});
+ assert.equal(c.sources.find(s=>s.url==='https://example.test/custom.xml').enabled,true);
+ assert.equal(c.sources.find(s=>s.url===standby).enabled,false);
+ assert.equal(c.sources.filter(s=>s.url===standby).length,1);
 });
-test('new installs enable EPG.pw and startup EPG refresh',()=>{
- const snippet=js.slice(js.indexOf(' const defaultSources=['),js.indexOf(' const saveConfig='));
- const cfg=vm.runInNewContext('(()=>{'+snippet+';return config;})()',{
-  localStorage:{getItem:()=>null}});
- assert.equal(cfg.sources.length,1);
- assert.equal(cfg.sources[0].url,primary);
- assert.equal(cfg.sources[0].enabled,true);
- assert.equal(cfg.autoRefreshEPGOnStartup,true);
+test('startup only requests enabled source; EPG.pw is never retried automatically',async()=>{
+ const urls=[];
+ const read=vm.runInNewContext(reader+';readFreshGuide',{
+  window:{},fetchXML:async url=>{urls.push(url);return 0;},
+  guideLib:{parse:end=>({programmes:[{end}]})}
+ });
+ await assert.rejects(read(primary,[]),/hết lịch/);
+ assert.deepEqual(urls,[primary]);
 });
-test('published mirror is fetched only from EPG.pw with a distinct filename',()=>{
- const fetcher=fs.readFileSync(path.join(root,'web-online/fetch-epg.py'),'utf8');
- const readerFile=fs.readFileSync(path.join(root,'web-online/epg-fetch-function.txt'),'utf8');
+test('main and backup have distinct GitHub Pages mirrors',()=>{
+ const python=fs.readFileSync(path.join(root,'web-online/fetch-epg.py'),'utf8');
+ const canonical=fs.readFileSync(path.join(root,'web-online/epg-fetch-function.txt'),'utf8');
  const workflow=fs.readFileSync(path.join(root,'.github/workflows/deploy-openiptv-web.yml'),'utf8');
- assert.match(fetcher,/\("EPG\.pw", "https:\/\/epg\.pw\/xmltv\/epg_VN\.xml"\)/);
- assert.doesNotMatch(fetcher,/epgshare01\.online|xmltv\.live|lichphatsong\.io\.vn/);
- assert.match(readerFile,/epg\/epg-pw-vn\.xml/);
- assert.match(workflow,/fetch-epg\.py _site\/epg\/epg-pw-vn\.xml/);
+ assert.match(python,/\("EPGShare01", "https:\/\/epgshare01\.online\//);
+ assert.match(python,/STANDBY_FEEDS = \(\("EPG\.pw", "https:\/\/epg\.pw\//);
+ assert.match(workflow,/fetch-epg\.py _site\/epg\/vn\.xml/);
+ assert.match(workflow,/fetch-epg\.py _site\/epg\/epg-pw-vn\.xml --standby-epgpw/);
+ assert.match(canonical,/epg\/vn\.xml/);
+ assert.match(canonical,/epg\/epg-pw-vn\.xml/);
 });
-test('VTV3 with playlist suffix resolves now and next entries',()=>{
+test('VTV3 with playlist suffix resolves current and following XMLTV entries',()=>{
  const env={};vm.runInNewContext(fs.readFileSync(path.join(root,'epg.js'),'utf8'),env);
  const g=env.IPTVGuide,clock=g.when('20261119080200 +0700');
  const guide={names:{vtv3:'VTV3.vn'},programmes:[

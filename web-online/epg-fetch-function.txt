@@ -2,9 +2,11 @@
   // Desktop continues to use its native downloader. GitHub Pages has no
   // reverse proxy; the curated Vietnam feed is mirrored at build time.
   if(window.streamleaf?.fetchEPG)return (await window.streamleaf.fetchEPG(url)).xml;
-  const isVietnam=/^https:\/\/epg\.pw\/xmltv\/epg_VN\.xml(?:\?.*)?$/i.test(url);
+  const isVietnam=/^https:\/\/epgshare01\.online\/epgshare01\/epg_ripper_VN1\.xml\.gz(?:\?.*)?$/i.test(url);
+  const isStandby=/^https:\/\/epg\.pw\/xmltv\/epg_VN\.xml(?:\?.*)?$/i.test(url);
   const onPages=location.protocol==='https:' && /(^|\.)github\.io$/i.test(location.hostname);
-  const remote=(onPages&&isVietnam)?new URL('epg/epg-pw-vn.xml',document.baseURI).href:url;
+  const remote=(onPages&&isVietnam)?new URL('epg/vn.xml',document.baseURI).href:
+   (onPages&&isStandby)?new URL('epg/epg-pw-vn.xml',document.baseURI).href:url;
   const maxXML=35*1024*1024,maxCompressed=12*1024*1024;
   const timerController=new AbortController(),timer=setTimeout(()=>timerController.abort(),30000);
   async function readLimited(body,limit){
@@ -39,7 +41,7 @@
    }
    return await readLimited(resp.body,maxXML);
   }catch(e){
-   if(onPages&&isVietnam)throw Error('EPG.pw trên GitHub Pages chưa sẵn sàng. Dữ liệu cũ vẫn được giữ nguyên ('+e.message+')');
+   if(onPages&&(isVietnam||isStandby))throw Error('Nguồn EPG trên GitHub Pages chưa sẵn sàng. Dữ liệu cũ vẫn được giữ nguyên ('+e.message+')');
    if(e instanceof TypeError)throw Error('Không truy cập được URL EPG do CORS hoặc lỗi kết nối; thử nhập file XMLTV thủ công');
    throw e;
   }finally{clearTimeout(timer);}

@@ -310,11 +310,21 @@ jobs:
           node --test web-online/tests/web-fresh-epg.test.cjs
           EPG_LAYOUT_CHROME="$(command -v google-chrome)" node --test web-online/tests/web-epg-layout.test.cjs
           mkdir -p _site/epg
-          # Never reuse the old EPGShare01 mirror as EPG.pw data.
-          if python3 web-online/fetch-epg.py _site/epg/epg-pw-vn.xml; then
-            echo "EPG.pw Vietnam guide available on the same Pages origin."
+          # Primary EPG is restored; EPG.pw is opt-in and cached separately.
+          if python3 web-online/fetch-epg.py _site/epg/vn.xml; then
+            echo "Primary Vietnam EPG ready on the Pages origin."
+          elif test -s epg/vn.xml; then
+            cp -f epg/vn.xml _site/epg/vn.xml
+            if test -s epg/status.json; then cp -f epg/status.json _site/epg/status.json; fi
+            echo "::warning::Primary EPG unavailable; kept previously published guide."
           else
-            echo "::warning::EPG.pw unavailable; keep browser's last cached guide and do not use other providers."
+            echo "::warning::No primary EPG mirror available; browser caches remain untouched."
+          fi
+          # A backup source is downloaded for opt-in use only; never enabled in settings.
+          if python3 web-online/fetch-epg.py _site/epg/epg-pw-vn.xml --standby-epgpw; then
+            echo "Optional EPG.pw backup cached."
+          else
+            echo "::warning::Optional EPG.pw backup unavailable; primary EPG unaffected."
           fi
       - name: Keep IPTV player as project root and capture current screenshots
         run: |

@@ -285,7 +285,7 @@ if 'href="huong-dan.html"' not in html:
 html=html.replace('src="app.js"','src="app.js?v=playlist-http-20261119d"').replace('collector.js?v=collector-merge-repair-20261119a','collector.js?v=playlist-url-20261119b')
 html=html.replace('src="source-edit.js"','src="source-edit.js?v=playlist-input-20261119c"')
 for name in ('features.js','epg.js'):
-    html=html.replace('src="'+name+'"','src="'+name+'?v=epgpw-20261119a"')
+    html=html.replace('src="'+name+'"','src="'+name+'?v=epg-backup-20261119b"')
 # Reuse the source-controlled player EPG rows when regenerating the WebView layout.
 web_html=(Path(__file__).resolve().parent.parent/'index.html').read_text(encoding='utf-8')
 start='<div class="epg-current-item">'

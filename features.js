@@ -5,7 +5,19 @@
  const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
  const today=(t)=>new Date(t).toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit'});
  const defaultSources=[
-  {name:'Việt Nam • EPG.pw (ưu tiên)',url:'https://epg.pw/xmltv/epg_VN.xml',enabled:true}
+  {name:'Việt Nam • EPGShare01',url:'https://epgshare01.online/epgshare01/epg_ripper_VN1.xml.gz',enabled:true},
+  {name:'Singapore • IPTV-EPG.org',url:'https://iptv-epg.org/files/epg-sg.xml',enabled:false},
+  {name:'Thái Lan • IPTV-EPG.org',url:'https://iptv-epg.org/files/epg-th.xml',enabled:false},
+  {name:'Anh • IPTV-EPG.org',url:'https://iptv-epg.org/files/epg-gb.xml',enabled:false},
+  {name:'Malaysia • EPGShare01',url:'https://epgshare01.online/epgshare01/epg_ripper_MY1.xml.gz',enabled:false},
+  {name:'Singapore • EPGShare01',url:'https://epgshare01.online/epgshare01/epg_ripper_SG1.xml.gz',enabled:false},
+  {name:'Nhật Bản • EPGShare01',url:'https://epgshare01.online/epgshare01/epg_ripper_JP1.xml.gz',enabled:false},
+  {name:'Hàn Quốc • EPGShare01',url:'https://epgshare01.online/epgshare01/epg_ripper_KR1.xml.gz',enabled:false},
+  {name:'Philippines • EPGShare01',url:'https://epgshare01.online/epgshare01/epg_ripper_PH2.xml.gz',enabled:false},
+  {name:'Úc • IPTV-EPG.org',url:'https://iptv-epg.org/files/epg-au.xml',enabled:false},
+  {name:'New Zealand • EPGShare01',url:'https://epgshare01.online/epgshare01/epg_ripper_NZ1.xml.gz',enabled:false},
+  {name:'Mỹ (Thể thao) • EPGShare01',url:'https://epgshare01.online/epgshare01/epg_ripper_US_SPORTS1.xml.gz',enabled:false},
+  {name:'Việt Nam • EPG.pw (dự phòng)',url:'https://epg.pw/xmltv/epg_VN.xml',enabled:false}
  ];
  let config;
  try{config=JSON.parse(localStorage.getItem('open-iptv-pro-settings-v1')||'{}')}catch{config={}};
@@ -14,13 +26,17 @@
   const known=new Set(config.sources.map(s=>s?.url).filter(Boolean));
   for(const preset of defaultSources)if(!known.has(preset.url))config.sources.push({...preset});
  }
- // EPG.pw is the only active feed. Keep old sources, but disabled, on first upgrade.
- const epgSourcePolicy='epg-pw-vn-only-20261119';
+ // Revert the exclusive EPG.pw policy: the feed is opt-in only.
+ // Retain every user-added feed and do not undo the user's startup preference.
+ const epgSourcePolicy='epg-pw-disabled-backup-20261119';
  if(config.epgSourcePolicy!==epgSourcePolicy){
+  const wasExclusive=config.epgSourcePolicy==='epg-pw-vn-only-20261119';
   const isEPGPW=url=>/^https:\/\/epg\.pw\/xmltv\/epg_VN\.xml(?:\?.*)?$/i.test(String(url||''));
-  const retained=config.sources.filter(s=>s&&typeof s.url==='string'&&!isEPGPW(s.url))
-   .map(s=>({...s,enabled:false}));
-  config.sources=[{...defaultSources[0]},...retained];
+  const others=config.sources.filter(s=>s&&typeof s.url==='string'&&!isEPGPW(s.url));
+  const main=others.find(s=>s.url===defaultSources[0].url);
+  // Previous exclusive migration switched off the old primary; enable it again.
+  if(main&&wasExclusive)main.enabled=true;
+  config.sources=[...(main?[main]:[]),...others.filter(s=>s!==main),{...defaultSources[defaultSources.length-1]}];
   config.epgSourcePolicy=epgSourcePolicy;
  }
  const presetEPGURLs=new Set(defaultSources.map(s=>s.url));
@@ -186,9 +202,11 @@
   // Desktop continues to use its native downloader. GitHub Pages has no
   // reverse proxy; the curated Vietnam feed is mirrored at build time.
   if(window.streamleaf?.fetchEPG)return (await window.streamleaf.fetchEPG(url)).xml;
-  const isVietnam=/^https:\/\/epg\.pw\/xmltv\/epg_VN\.xml(?:\?.*)?$/i.test(url);
+  const isVietnam=/^https:\/\/epgshare01\.online\/epgshare01\/epg_ripper_VN1\.xml\.gz(?:\?.*)?$/i.test(url);
+  const isStandby=/^https:\/\/epg\.pw\/xmltv\/epg_VN\.xml(?:\?.*)?$/i.test(url);
   const onPages=location.protocol==='https:' && /(^|\.)github\.io$/i.test(location.hostname);
-  const remote=(onPages&&isVietnam)?new URL('epg/epg-pw-vn.xml',document.baseURI).href:url;
+  const remote=(onPages&&isVietnam)?new URL('epg/vn.xml',document.baseURI).href:
+   (onPages&&isStandby)?new URL('epg/epg-pw-vn.xml',document.baseURI).href:url;
   const maxXML=35*1024*1024,maxCompressed=12*1024*1024;
   const timerController=new AbortController(),timer=setTimeout(()=>timerController.abort(),30000);
   async function readLimited(body,limit){
@@ -223,7 +241,7 @@
    }
    return await readLimited(resp.body,maxXML);
   }catch(e){
-   if(onPages&&isVietnam)throw Error('EPG.pw trên GitHub Pages chưa sẵn sàng. Dữ liệu cũ vẫn được giữ nguyên ('+e.message+')');
+   if(onPages&&(isVietnam||isStandby))throw Error('Nguồn EPG trên GitHub Pages chưa sẵn sàng. Dữ liệu cũ vẫn được giữ nguyên ('+e.message+')');
    if(e instanceof TypeError)throw Error('Không truy cập được URL EPG do CORS hoặc lỗi kết nối; thử nhập file XMLTV thủ công');
    throw e;
   }finally{clearTimeout(timer);}

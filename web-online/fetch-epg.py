@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""Fetch EPG.pw Vietnam XMLTV exclusively during a GitHub Actions build.
+"""Cache primary Vietnam XMLTV, with EPG.pw as an opt-in standby feed.
 
-The browser reads epg/vn.xml from the same GitHub Pages origin, avoiding CORS
+The browser reads a same-origin XMLTV cache from GitHub Pages, avoiding CORS
 and gzip incompatibility. Does not proxy arbitrary user-provided URLs.
 """
 from __future__ import annotations
@@ -17,8 +17,11 @@ from datetime import datetime, timezone
 MAX_COMPRESSED = 12 * 1024 * 1024
 MAX_XML = 35 * 1024 * 1024
 FEEDS = (
-    ("EPG.pw", "https://epg.pw/xmltv/epg_VN.xml"),
+    ("EPGShare01", "https://epgshare01.online/epgshare01/epg_ripper_VN1.xml.gz"),
+    ("xmltv.live", "https://xmltv.live/epg/vn.xml.gz"),
+    ("Lịch Phát Sóng", "https://lichphatsong.io.vn/epg.xml"),
 )
+STANDBY_FEEDS = (("EPG.pw", "https://epg.pw/xmltv/epg_VN.xml"),)
 
 def download(url: str) -> tuple[bytes, int, int]:
     req = urllib.request.Request(url, headers={
@@ -63,12 +66,13 @@ def download(url: str) -> tuple[bytes, int, int]:
     return data, n_channels, n_programmes
 
 def main() -> int:
-    if len(sys.argv) != 2:
-        print("Usage: fetch-epg.py <output-path>", file=sys.stderr)
+    if len(sys.argv) not in (2, 3) or (len(sys.argv) == 3 and sys.argv[2] != "--standby-epgpw"):
+        print("Usage: fetch-epg.py <output-path> [--standby-epgpw]", file=sys.stderr)
         return 2
+    standby = len(sys.argv) == 3
     output = pathlib.Path(sys.argv[1])
     output.parent.mkdir(parents=True, exist_ok=True)
-    for name, url in FEEDS:
+    for name, url in (STANDBY_FEEDS if standby else FEEDS):
         try:
             xml, channels, programmes = download(url)
             temp = output.with_suffix(".xml.tmp")
@@ -81,7 +85,7 @@ def main() -> int:
                 "channel_count": channels,
                 "programme_count": programmes,
             }
-            output.with_name("status.json").write_text(
+            output.with_name("epg-pw-status.json" if standby else "status.json").write_text(
                 json.dumps(metadata, ensure_ascii=False, indent=2) + "\n",
                 encoding="utf-8",
             )
@@ -89,7 +93,7 @@ def main() -> int:
             return 0
         except Exception as exc:
             print(f"EPG source {name} failed: {exc}", file=sys.stderr)
-    print("All Vietnam EPG sources failed; retain previously published guide, if any.", file=sys.stderr)
+    print("Requested Vietnam EPG feeds failed; retain previously published guide, if any.", file=sys.stderr)
     return 1
 
 if __name__ == "__main__":
