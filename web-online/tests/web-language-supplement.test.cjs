@@ -34,6 +34,17 @@ test('native Web supplement has all 28 labels for each of the 15 non-English loc
   assert.equal(dict.lo['Chưa có EPG cho kênh này'],'ບໍ່ມີ EPG ສຳລັບຊ່ອງນີ້');
   assert.equal(dict.fr['Chưa tìm thiết bị'],'Aucun appareil trouvé');
 });
+test('new EPG and player descriptions have an explicit native translation for every Web language',()=>{
+  const dict=loaded();
+  const keys=['EPG · Lịch phát sóng','Xem lịch phát sóng đầy đủ','Chế độ khung hình','Link phát chính / dự phòng'];
+  for(const lang of ['en','es','pt-BR','zh-CN','th','lo','km','fr','de','it','ja','ko','ru','id','hi','ar']){
+    for(const key of keys){
+      assert.equal(typeof dict[lang]?.[key],'string',lang+' '+key);
+      assert.ok(dict[lang][key].trim()&&dict[lang][key]!==key,lang+' missing native '+key);
+    }
+  }
+});
+
 test('runtime loads Web language supplements while keeping user IPTV metadata intact',()=>{
   const document={documentElement:{},readyState:'loading',addEventListener(){}};
   class MutationObserver{observe(){}}
