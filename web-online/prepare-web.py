@@ -309,7 +309,7 @@ if 'href="huong-dan.html"' not in html:
 html=html.replace('src="app.js"','src="app.js?v=playlist-http-20261119d"').replace('collector.js?v=collector-merge-repair-20261119a','collector.js?v=playlist-url-20261119b')
 html=html.replace('src="source-edit.js"','src="source-edit.js?v=playlist-input-20261119c"')
 for name in ('features.js','epg.js'):
-    cache_version='epg-atomic-gzip-20261120a' if name=='features.js' else 'epg-large-20261120a'
+    cache_version='epg-atomic-gzip-20261120a' if name=='features.js' else 'epg-film-titles-20261120a'
     html=html.replace('src=\"'+name+'\"','src=\"'+name+'?v='+cache_version+'\"')
 # Reuse the source-controlled player EPG rows when regenerating the WebView layout.
 web_html=(Path(__file__).resolve().parent.parent/'index.html').read_text(encoding='utf-8')
