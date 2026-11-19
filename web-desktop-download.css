@@ -1,16 +1,25 @@
-/* Open IPTV Pro: latest desktop download (Web only) */
+/* Open IPTV Pro: official Web software download picker for every platform */
 .desktop-download-top{display:inline-flex!important;align-items:center;gap:7px;white-space:nowrap;flex:none}
 .desktop-download-top svg{width:18px;height:18px;flex:none;color:var(--accent,#be88f6)}
 .desktop-download-top [data-desktop-download-version]:empty{display:none}
 .desktop-download-top [data-desktop-download-version]{font-size:10px;color:var(--accent,#c39cff)}
-.desktop-download-banner{display:none!important}
+.desktop-download-intro{display:none!important}
+.desktop-download-intro[hidden]{display:none!important}
+.desktop-download-banner{display:flex;align-items:center;gap:12px;flex:1 1 auto;min-width:0;box-sizing:border-box;padding:0;border:0;background:none;color:inherit;font:inherit;text-align:left;cursor:pointer}
 html[data-iptv-device="mobile"] .desktop-download-top{display:none!important}
-html[data-iptv-device="mobile"] #page-tv>.desktop-download-banner{
- display:flex!important;align-items:center;gap:12px;width:100%;box-sizing:border-box;
- min-height:60px;margin:0 0 10px!important;padding:10px 13px;text-align:left;
+html[data-iptv-device="mobile"] #page-tv>.desktop-download-intro:not([hidden]){
+ display:flex!important;align-items:center;gap:6px;width:100%;box-sizing:border-box;
+ min-height:60px;margin:0 0 10px!important;padding:8px 9px;text-align:left;
  border-radius:16px;border:1px solid color-mix(in srgb,var(--accent,#b780ec) 43%,var(--edge,#354657));
  background:linear-gradient(110deg,color-mix(in srgb,var(--accent,#ab79e7) 16%,var(--surface,#121d2b)),var(--surface,#121d2b));
- color:var(--text,#eaf1fa);font:inherit;cursor:pointer
+ color:var(--text,#eaf1fa)
+}
+.desktop-download-intro-dismiss{display:grid;place-items:center;flex:0 0 44px;width:44px;height:44px;
+ border:1px solid var(--edge,#35475b);border-radius:12px;background:var(--surface2,#172635);
+ color:var(--text,#eef4fa);cursor:pointer}
+.desktop-download-intro-dismiss svg{width:20px;height:20px}
+.desktop-download-intro-dismiss:focus-visible,.desktop-download-banner:focus-visible{
+ outline:2px solid var(--accent,#ba88f5);outline-offset:2px
 }
 .desktop-download-banner-icon{display:grid;place-items:center;flex:0 0 40px;height:40px;border-radius:12px;
  background:color-mix(in srgb,var(--accent,#b880f0) 16%,transparent);color:var(--accent,#bc89fa)}
@@ -52,3 +61,10 @@ html[data-iptv-device="mobile"] #page-tv>.desktop-download-banner{
 .desktop-download-releases{color:var(--accent,#c59afa);font-size:12px;font-weight:730;text-decoration:none}
 .desktop-download-note{font-size:11px;line-height:1.4;color:var(--muted,#9aafc4);margin:14px 0 0}
 @media(max-width:560px){.desktop-download-dialog{padding:18px}.desktop-download-title{font-size:19px}}
+
+/* Distinct editions; scroll the modal instead of overflowing iPhone viewports. */
+.desktop-download-group{display:grid;gap:8px;margin-bottom:16px}
+.desktop-download-group h3{font-size:12px;letter-spacing:.025em;color:var(--muted,#abbac9);margin:0 0 3px}
+.desktop-download-group .desktop-download-option{min-height:54px;box-sizing:border-box}
+html[data-iptv-device="mobile"] .desktop-download-dialog{padding-bottom:max(18px,env(safe-area-inset-bottom,0px))}
+html[data-iptv-device="mobile"] .desktop-download-overlay{padding-bottom:max(12px,env(safe-area-inset-bottom,0px))}

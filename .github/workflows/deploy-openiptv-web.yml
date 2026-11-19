@@ -137,9 +137,12 @@ jobs:
           grep -Fq 'src="theme-boot.js?v=responsive-desktop-20261118j"' _site/index.html
           node --check _site/web-desktop-download.js
           node --test web-online/tests/web-desktop-download.test.cjs
+          grep -Fq 'id="softwareDownloadNav"' _site/index.html
+          grep -Fq 'id="softwareDownloadIntroClose"' _site/index.html
+          grep -Fq 'web-desktop-download.css?v=software-download-20261119b' _site/index.html
           grep -Fq 'id="desktopDownloadBtn"' _site/index.html
           grep -Fq 'id="desktopDownloadMobileBtn"' _site/index.html
-          grep -Fq 'web-desktop-download.js?v=desktop-download-20261119a' _site/index.html
+          grep -Fq 'web-desktop-download.js?v=software-download-20261119b' _site/index.html
           node --check _site/web-mobile-player.js
           node --test web-online/tests/web-mobile-player.test.cjs
           grep -Fq 'features.js?v=channel-list-always-open-mobile-20261119h' _site/index.html
