@@ -1,0 +1,87 @@
+name: Sync Open IPTV Pro User Homepage
+# Lives in trisanghy/trisanghy.github.io, sources from web/online.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+  schedule:
+    - cron: '7,37 * * * *'
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: openiptv-user-pages
+  cancel-in-progress: false
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Synchronize a verified Web Online revision
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json
+          import pathlib
+          import re
+          import urllib.request
+          import xml.etree.ElementTree as ET
+          def download(url, size=1500000):
+              request=urllib.request.Request(url,headers={'User-Agent':'openiptv-user-homepage'})
+              with urllib.request.urlopen(request,timeout=40) as response:
+                  data=response.read(size+1)
+                  if len(data)>size:
+                      raise ValueError('Oversized source file')
+                  return data
+          api='https://api.github.com/repos/trisanghy/open-iptv-pro/branches/web/online'
+          sha=json.loads(download(api,250000))['commit']['sha']
+          if not re.fullmatch('[0-9a-f]{40}',sha):
+              raise ValueError('Untrusted branch revision')
+          root='https://raw.githubusercontent.com/trisanghy/open-iptv-pro/'+sha+'/'
+          out=pathlib.Path('_site')
+          out.mkdir(exist_ok=True)
+          sources={
+              'index.html':'web-online/project-home.html',
+              'robots.txt':'web-online/user-site/robots.txt',
+              'sitemap.xml':'web-online/user-site/sitemap.xml'
+          }
+          for dst,src in sources.items():
+              (out/dst).write_bytes(download(root+src))
+          (out/'.nojekyll').touch()
+          html=(out/'index.html').read_text(encoding='utf-8')
+          robots=(out/'robots.txt').read_text(encoding='utf-8')
+          if '<link rel="canonical" href="https://trisanghy.github.io/">' not in html:
+              raise ValueError('Wrong homepage canonical')
+          if 'content="index, follow"' not in html:
+              raise ValueError('Homepage unexpectedly noindex')
+          for section in ('tinh-nang','anh','tai-ve','huong-dan','ma-nguon'):
+              if 'id="'+section+'"' not in html:
+                  raise ValueError('Missing homepage section '+section)
+          for screenshot in ('player-desktop.png','player-mobile.png'):
+              if screenshot not in html:
+                  raise ValueError('Missing current player screenshot '+screenshot)
+          if 'Sitemap: https://trisanghy.github.io/sitemap.xml' not in robots:
+              raise ValueError('Root robots does not advertise sitemap')
+          urls=[node.text for node in ET.parse(out/'sitemap.xml').findall('.//{http://www.sitemaps.org/schemas/sitemap/0.9}loc')]
+          if urls!=['https://trisanghy.github.io/','https://trisanghy.github.io/open-iptv-pro/','https://trisanghy.github.io/open-iptv-pro/huong-dan.html']:
+              raise ValueError('Unexpected canonical sitemap URLs')
+          (out/'source-revision.json').write_text(json.dumps({'repo':'trisanghy/open-iptv-pro','branch':'web/online','sha':sha},indent=2)+'\n',encoding='utf-8')
+          print('Homepage synced and validated from commit',sha)
+          PY
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+        with:
+          enablement: true
+      - name: Upload user homepage
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: _site
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+    steps:
+      - name: Deploy user-site root
+        uses: actions/deploy-pages@v4

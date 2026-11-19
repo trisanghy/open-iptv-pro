@@ -1,18 +1,36 @@
-# Open IPTV Pro — GitHub Pages user-site homepage
+# Open IPTV Pro — User Homepage (trisanghy.github.io)
 
-This is **the separate homepage for https://trisanghy.github.io/**, NOT the Open IPTV player at /open-iptv-pro/.
+Trang này là **trang giới thiệu**, không phải trình phát IPTV. Các địa chỉ chính:
 
-GitHub requires a separate repository named `trisanghy.github.io` for this domain.
-At preparation time that repository does not exist, so the player repository cannot serve the user-root hostname.
+- Trang chủ: https://trisanghy.github.io/
+- Trình phát: https://trisanghy.github.io/open-iptv-pro/
+- Hướng dẫn: https://trisanghy.github.io/open-iptv-pro/huong-dan.html
+- Mã nguồn: https://github.com/trisanghy/open-iptv-pro/tree/web/online
+- Bộ cài: https://github.com/trisanghy/open-iptv-pro/releases/latest
 
-The Web branch retains a complete homepage at `web-online/project-home.html`.
-The workflow packages this source as `index.html`, plus this folder's `robots.txt` and `sitemap.xml`, into the build artifact `openiptv-user-homepage.zip`.
+## Một nguồn mã duy nhất
 
-- User-site root /: project introduction, current screenshots, installation guides, download links, repository links
-- Project-site /open-iptv-pro/: actual Open IPTV Pro player, NEVER replace its index.html with homepage
-- User-site /robots.txt and /sitemap.xml: crawler discovery for both the homepage and project routes
-- Project-site /open-iptv-pro/robots.txt and /sitemap.xml: supplementary crawler metadata (robots at the hostname root controls crawling)
+Nội dung trang chủ, ảnh Web, robots và sitemap do repository
+`trisanghy/open-iptv-pro`, nhánh `web/online` quản lý.
+Workflow `.github/workflows/publish-home.yml` lấy bộ tệp từ
+**cùng một SHA commit**, kiểm tra canonical, các mục chính và sơ đồ URL,
+sau đó triển khai bằng GitHub Pages.
 
-All images and actions on the homepage use absolute URLs on the project site so the separate domain root works.
-The preview `/open-iptv-pro/gioi-thieu.html` is `noindex` to avoid duplicating the canonical homepage.
-The owner repo must be provisioned before its root 404 can disappear. Never claim that preparing this archive deployed to the user-site.
+Workflow chạy khi đẩy lên `main` của repository này, chạy thủ công,
+và theo lịch phút 07/37 mỗi giờ. GitHub có thể trì hoãn lịch; không đồng
+bộ tức thì. Không cần PAT, không truy cập dữ liệu IPTV riêng tư.
+
+## Khởi tạo một lần
+
+Repository cần tồn tại tại `trisanghy/trisanghy.github.io`, là repository
+**Public**, nhánh mặc định `main`. Gói `openiptv-user-homepage.zip`
+do GitHub Actions nhánh `web/online` tạo có sẵn `index.html`,
+`robots.txt`, `sitemap.xml`, `.github/workflows/publish-home.yml`.
+Workflow cố gắng tự kích hoạt Pages bằng `enablement: true`; nếu chính
+sách tài khoản từ chối, bật Pages Source = GitHub Actions trong Settings.
+
+Dự án `trisanghy/open-iptv-pro` tiếp tục xuất bản trình phát ở
+`/open-iptv-pro/` mà không thay thế `index.html` bằng trang giới thiệu.
+
+Google có thể thu thập dữ liệu qua sitemap nhưng không bảo đảm lập chỉ mục.
+Người dùng tự chịu trách nhiệm đối với playlist/nội dung mình có quyền xem.
