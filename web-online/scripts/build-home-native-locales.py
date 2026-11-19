@@ -137,17 +137,22 @@ for(const [language,items] of Object.entries(nativeHome)){
       'id':'Bahasa Indonesia','ru':'Русский',**NEW_NAMES}
     html=re.sub(r'const preferredName=\{[^;]+;', 'const preferredName='+json.dumps(names,ensure_ascii=False)+';',html,count=1)
     oldlang="document.documentElement.lang=code==='zh'?'zh-CN':code;"
-    if oldlang not in html:raise RuntimeError('HTML lang setter moved')
-    html=html.replace(oldlang,"document.documentElement.lang=code==='zh'?'zh-CN':code==='pt'?'pt-BR':code;")
-    html=html.replace("document.documentElement.dir='ltr';","document.documentElement.dir=code==='ar'?'rtl':'ltr';")
+    newlang="document.documentElement.lang=code==='zh'?'zh-CN':code==='pt'?'pt-BR':code;"
+    if oldlang in html:html=html.replace(oldlang,newlang,1)
+    elif newlang not in html:raise RuntimeError('HTML language setter moved')
+    html=html.replace("document.documentElement.dir='ltr';","document.documentElement.dir=code==='ar'?'rtl':'ltr';",1)
     title_anchor="ru:'Open IPTV Pro — IPTV-плеер для веба и компьютера'};"
-    if title_anchor not in html:
-        raise RuntimeError('Homepage page title dictionary moved')
     added_titles=','.join(code+':'+json.dumps(title,ensure_ascii=False) for code,title in NEW_TITLES.items())
-    html=html.replace(title_anchor, "ru:'Open IPTV Pro — IPTV-плеер для веба и компьютера',"+added_titles+"};",1)
+    if title_anchor in html:
+        html=html.replace(title_anchor,"ru:'Open IPTV Pro — IPTV-плеер для веба и компьютера',"+added_titles+"};",1)
+    else:
+        titles=html.split('const titles=',1)[1].split(';',1)[0]
+        if any(code+':' not in titles for code in NEW_TITLES):
+            raise RuntimeError('Homepage page title dictionary missing a native language')
     oldmeta="if(desc&&code!=='vi')desc.content='Open IPTV Pro: open-source IPTV player and M3U playlist manager for Web, Windows and macOS. Features, screenshots, guides, source code and official downloads.';"
-    if oldmeta not in html:raise RuntimeError('Homepage description setter moved')
-    html=html.replace(oldmeta,"if(desc&&code!=='vi')desc.content=resolve("+json.dumps(META_KEY,ensure_ascii=False)+",code);",1)
+    newmeta="if(desc&&code!=='vi')desc.content=resolve("+json.dumps(META_KEY,ensure_ascii=False)+",code);"
+    if oldmeta in html:html=html.replace(oldmeta,newmeta,1)
+    elif newmeta not in html:raise RuntimeError('Homepage description setter moved')
     HOME.write_text(html,encoding='utf8')
     print('Complete 17-language homepage translations generated:',len(english),'labels × 17 locales')
     print('Asset',OUTPUT,'bytes',OUTPUT.stat().st_size)
