@@ -15,68 +15,164 @@
 <meta property="og:title" content="Open IPTV Pro — Xem IPTV từ playlist của bạn">
 <meta property="og:description" content="Website chính thức: tính năng, ảnh giao diện mới nhất, hướng dẫn, mã nguồn và bộ cài Open IPTV Pro.">
 <meta property="og:url" content="https://trisanghy.github.io/">
-<meta property="og:image" content="https://trisanghy.github.io/open-iptv-pro/assets/player-desktop.png">
+<meta property="og:image" content="https://trisanghy.github.io/assets/gallery/desktop-tv.png">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="sitemap" type="application/xml" href="https://trisanghy.github.io/sitemap.xml">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Open IPTV Pro","url":"https://trisanghy.github.io/","image":"https://trisanghy.github.io/open-iptv-pro/assets/player-desktop.png","description":"Trình phát và quản lý IPTV/M3U mã nguồn mở. Người dùng tự cung cấp những nguồn có quyền sử dụng.","applicationCategory":"MultimediaApplication","operatingSystem":"Web, Windows, macOS","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"codeRepository":"https://github.com/trisanghy/open-iptv-pro","softwareHelp":"https://trisanghy.github.io/open-iptv-pro/huong-dan.html","inLanguage":"vi-VN"}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Open IPTV Pro","url":"https://trisanghy.github.io/","image":"https://trisanghy.github.io/assets/gallery/desktop-tv.png","description":"Trình phát và quản lý IPTV/M3U mã nguồn mở. Người dùng tự cung cấp những nguồn có quyền sử dụng.","applicationCategory":"MultimediaApplication","operatingSystem":"Web, Windows, macOS","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"codeRepository":"https://github.com/trisanghy/open-iptv-pro","softwareHelp":"https://trisanghy.github.io/open-iptv-pro/huong-dan.html","inLanguage":"vi-VN"}</script>
 <style>
-:root{font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;background:#0b1016;color:#f2f6f8;--muted:#aec0ca;--edge:#2a3a43;--panel:#121c25;--panel2:#192833;--accent:#70e4b4;--ink:#09170e}
-*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;line-height:1.65;background:radial-gradient(ellipse 80% 650px at 70% -15%,#143d39 0%,transparent 80%),#0b1016}a{color:var(--accent);text-underline-offset:3px}a:hover{text-decoration-thickness:2px}.wrap{width:min(1180px,calc(100% - 36px));margin-inline:auto}
-.skip{position:absolute;left:-100vw;top:0;background:white;color:black;padding:12px;z-index:30}.skip:focus{left:12px}
-header{border-bottom:1px solid #2a393f;position:sticky;top:0;z-index:10;background:#0c1419e8;backdrop-filter:blur(16px)}
-.head{display:flex;align-items:center;justify-content:space-between;min-height:74px;gap:18px}.brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:#fff;font-size:16px;font-weight:850;white-space:nowrap}.brand img{width:38px;height:38px;border-radius:10px}.nav{display:flex;align-items:center;justify-content:flex-end;gap:clamp(8px,2vw,24px);flex-wrap:wrap}.nav a{color:#d5e2e8;text-decoration:none;font-size:13px;font-weight:650;white-space:nowrap}
-.eyebrow{color:var(--accent);font-size:12px;letter-spacing:.16em;font-weight:800;text-transform:uppercase}
-.hero{display:grid;grid-template-columns:.95fr 1.05fr;gap:42px;align-items:center;padding:90px 0 76px}.hero h1{font-size:clamp(46px,6vw,80px);letter-spacing:-.065em;line-height:1.04;margin:15px 0 22px}.hero h1 span{color:var(--accent)}.hero p{font-size:17px;color:#c1d2da;max-width:58ch;margin:0 0 22px}.tagline{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:24px}.pill{font-size:12px;font-weight:750;border:1px solid #365449;background:#162f2a;border-radius:100px;padding:6px 12px;color:#c5f9e1}
-.actions{display:flex;gap:11px;flex-wrap:wrap}.btn{padding:13px 18px;background:#1c2e38;border:1px solid #38505b;color:#f0f8fa;text-decoration:none;border-radius:12px;font-size:14px;font-weight:780;display:inline-flex;align-items:center;justify-content:center;min-height:48px}.btn:hover{filter:brightness(1.12);text-decoration:none}.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--ink)}.hero figure{margin:0;min-width:0}.device{padding:12px;background:linear-gradient(155deg,#1a3438,#14212c);border:1px solid #365058;border-radius:20px;box-shadow:0 22px 70px #0009}.device img{display:block;width:100%;border-radius:12px;background:#162734}.device figcaption,.caption{font-size:12px;color:#9fb2bb;padding:9px 5px}
-.section{padding:76px 0;border-top:1px solid #283842}.section h2{font-size:clamp(28px,4vw,45px);letter-spacing:-.04em;line-height:1.12;margin:8px 0 17px}.intro{max-width:790px;color:#c0d0d8;font-size:16px;margin:0 0 27px}.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}.card{background:linear-gradient(150deg,#17232d,#101b24);padding:23px;border:1px solid var(--edge);border-radius:17px;min-width:0}.card .number{display:inline-flex;align-items:center;justify-content:center;border-radius:10px;width:38px;height:38px;color:var(--accent);background:#203b36;font-weight:800;margin-bottom:8px}.card h3{font-size:17px;margin:8px 0 5px;letter-spacing:-.02em}.card p,.card li{font-size:14px;color:#aec0ca;margin:0}.card ul{padding-left:18px}
-.gallery{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(230px,.7fr);align-items:start;gap:18px}.gallery figure{margin:0;padding:10px;background:#16232c;border:1px solid #30434c;border-radius:16px}.gallery img{display:block;width:100%;height:auto;border-radius:9px;background:#0d131a}.gallery .mobile{max-width:380px;margin:auto}.gallery figcaption{font-size:13px;color:#c2d0d9;padding:10px 6px 4px}
-.steps{counter-reset:steps;display:grid;grid-template-columns:repeat(4,1fr);gap:14px}.step{border-left:3px solid #60ca9f;background:#14232c;border-radius:0 13px 13px 0;padding:18px}.step h3{margin:0 0 8px;font-size:15px}.step p{color:#b8c9d1;font-size:14px;margin:0}
-.platforms{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}.platform{display:flex;flex-direction:column;gap:8px;border:1px solid #2e4550;border-radius:16px;padding:21px;background:#15212a}.platform strong{font-size:17px}.platform small{color:#aebfca;min-height:40px}.platform a{margin-top:auto;display:block;text-align:center}.platform .version{color:var(--accent);font-size:12px;font-weight:750}
-.table-wrap{overflow-x:auto;border:1px solid var(--edge);border-radius:15px}table{border-collapse:collapse;width:100%;min-width:660px;background:#131e27}th,td{padding:15px 17px;text-align:left;border-bottom:1px solid #30404a;font-size:14px;vertical-align:top}th{background:#1b2b35;color:#e8f5f6}td{color:#c0cfd8}tr:last-child td{border-bottom:0}.note{border-left:3px solid #83c7db;background:#152833;padding:14px 18px;border-radius:0 10px 10px 0;color:#c6d9e1;margin-top:21px;font-size:14px}
-.faq{display:grid;grid-template-columns:1fr 1fr;gap:13px}.faq details{border:1px solid var(--edge);background:#15222b;border-radius:12px;padding:16px 19px}.faq summary{font-weight:760;cursor:pointer}.faq p{margin:10px 0 0;color:#b8c9d2;font-size:14px}
-.links{display:flex;flex-wrap:wrap;gap:12px;margin-top:22px}.links a{display:inline-flex;padding:10px 16px;border:1px solid #34505c;border-radius:10px;text-decoration:none;color:#d0fbe6;font-size:14px;font-weight:700}
-footer{border-top:1px solid var(--edge);padding:38px 0 58px;color:#a4b5bf;font-size:13px}footer .foot{display:flex;justify-content:space-between;gap:22px;flex-wrap:wrap}footer p{margin:0;max-width:760px}
-@media(max-width:930px){.hero,.gallery{grid-template-columns:1fr}.hero{padding:58px 0}.hero figure{max-width:850px}.grid{grid-template-columns:repeat(2,1fr)}.steps,.platforms{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:600px){.wrap{width:min(100% - 28px,1180px)}.head{flex-direction:column;justify-content:center;padding:12px 0;gap:5px}.nav{justify-content:center;gap:12px}.hero{padding:45px 0}.hero h1{font-size:46px}.section{padding:50px 0}.grid,.faq{grid-template-columns:1fr}.steps,.platforms{grid-template-columns:1fr}.step{padding:15px}.actions .btn{flex:1 1 100%}.device{padding:7px}}
-@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
 
-/* Current Web gallery: keep desktop readable and show device-native aspect. */
-.hero-preview img{max-height:650px;object-fit:contain}
-.gallery-group{margin:28px 0 38px}
-.gallery-label{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-bottom:14px}
-.gallery-label h3{font-size:21px;margin:0;letter-spacing:-.02em}
-.gallery-label span{font-size:12px;color:var(--muted)}
-.visual-gallery{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px}
-.visual-gallery figure{min-width:0;background:#14222d;border:1px solid #30434e;padding:10px;border-radius:16px;margin:0}
-.visual-gallery figure a{display:block;overflow:hidden;border-radius:10px;background:#0b151e}
-.visual-gallery img{display:block;width:100%;height:auto;object-fit:contain;border-radius:8px;transition:opacity .2s ease}
-.visual-gallery img:hover{opacity:.9}
-.visual-gallery figcaption{font-size:13px;color:#d1e0e7;padding:9px 3px 2px}
-.gallery-mobile{grid-template-columns:repeat(4,minmax(0,1fr))}
-.gallery-mobile figure{display:flex;flex-direction:column}
-.gallery-mobile img{max-height:410px}
-@media(max-width:830px){.gallery-mobile{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media(max-width:600px){
- .hero-preview img{max-height:520px}
- .gallery-label{align-items:flex-start;flex-direction:column;gap:0}
- .visual-gallery{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;overscroll-behavior-x:contain;padding:2px 0 15px}
- .visual-gallery figure{scroll-snap-align:start;flex:0 0 min(78vw,310px)}
- .gallery-desktop figure{flex-basis:min(88vw,570px)}
- .gallery-desktop figure a{overflow-x:auto;overscroll-behavior-x:contain}
- .gallery-desktop figure img{min-width:650px;max-height:460px;object-fit:contain}
- .gallery-mobile figure img{max-height:480px}
+:root{
+  color-scheme:dark;--bg:#080c18;--surface:#111827;--surface-2:#161f31;
+  --border:rgba(170,183,220,.15);--muted:#a3b2ca;--text:#f5f6ff;
+  --accent:#a78bfa;--mint:#5de1d1;--ink:#111120;
+  font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;
+  background:var(--bg);color:var(--text)
 }
+*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:95px}body{
+ margin:0;overflow-x:hidden;min-width:280px;line-height:1.65;
+ background:radial-gradient(ellipse 85% 470px at 80% 0%,rgba(102,77,219,.2),transparent 80%),
+ radial-gradient(ellipse 80% 420px at 0% 27%,rgba(32,126,153,.075),transparent 80%),var(--bg)
+}
+a{color:#d8cbff;text-underline-offset:4px}a:hover{color:#eae4ff}
+button,a{-webkit-tap-highlight-color:transparent}img{max-width:100%}
+.wrap{width:min(1160px,calc(100% - 48px));margin-inline:auto}
+.skip{position:absolute;left:-200vw;top:0;z-index:30;padding:12px;color:#111;background:#fff}
+.skip:focus{left:12px}
+header{position:sticky;top:0;z-index:40;background:rgba(8,12,24,.86);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);border-bottom:1px solid var(--border)}
+.head{display:flex;align-items:center;justify-content:space-between;gap:20px;min-height:76px}
+.brand{display:flex;align-items:center;gap:11px;color:#fff;text-decoration:none;font-size:19px;font-weight:820;letter-spacing:-.025em;white-space:nowrap}
+.brand:hover{color:#fff}.brand img{width:39px;height:39px;border-radius:12px}
+.nav{display:flex;align-items:center;justify-content:flex-end;gap:23px}
+.nav a{text-decoration:none;color:#b7c1d7;font-size:13px;font-weight:670;white-space:nowrap;transition:color .2s}
+.nav a:hover,.nav a:focus-visible{color:#fff}
+.eyebrow{display:inline-flex;align-items:center;gap:9px;color:#b4a3ff;letter-spacing:.12em;text-transform:uppercase;font-weight:790;font-size:11px}
+.hero{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);align-items:center;gap:50px;padding:99px 0 100px}
+.hero h1{font-size:clamp(51px,5.7vw,75px);line-height:1.05;letter-spacing:-.062em;margin:18px 0 26px;font-weight:860}
+.hero h1 span{background:linear-gradient(110deg,#c0a8ff,#8ba5ff 56%,#63dfd2);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero p{font-size:17px;color:#b9c5dc;max-width:55ch;margin:0 0 26px;line-height:1.85}
+.tagline{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 30px}
+.pill{display:inline-flex;align-items:center;padding:5px 12px;border-radius:99px;border:1px solid rgba(168,152,253,.18);color:#c5c9e9;background:rgba(142,122,240,.09);font-weight:670;font-size:12px}
+.actions{display:flex;flex-wrap:wrap;align-items:center;gap:12px}
+.btn{display:inline-flex;justify-content:center;align-items:center;min-height:48px;padding:13px 20px;
+ background:#1d2537;border:1px solid rgba(195,197,236,.18);border-radius:13px;color:#f4f4ff;
+ text-decoration:none;font-size:14px;font-weight:760;line-height:1.4;transition:transform .2s,box-shadow .2s,background .2s}
+.btn:hover{transform:translateY(-2px);background:#293146;color:#fff;text-decoration:none}
+.btn.primary{background:linear-gradient(120deg,#a88afc,#8279ff);border-color:#a58bff;color:#141124;box-shadow:0 13px 34px rgba(124,99,253,.2)}
+.btn.primary:hover{background:linear-gradient(120deg,#c1a7ff,#9c97ff);color:#141124}
+.hero .actions>a:last-child{padding:10px 4px;background:transparent;border-color:transparent;color:#b7c6de;box-shadow:none;font-weight:680}
+.device{position:relative;border:1px solid rgba(154,157,248,.22);border-radius:28px;
+ padding:20px;max-width:100%;min-width:0;overflow:hidden;background:linear-gradient(145deg,#20243c,#131b2d 68%);
+ box-shadow:0 25px 65px rgba(0,0,0,.38),0 0 70px rgba(118,91,239,.13);margin:0}
+.device:before{content:"";position:absolute;inset:0 0 auto;height:3px;background:linear-gradient(90deg,transparent,#a78bfa,#5de1d1,transparent);opacity:.65}
+.device>a{display:block;min-width:0}.device img{display:block;width:100%;height:auto;border:1px solid rgba(255,255,255,.075);border-radius:15px;background:#0c1525;object-fit:contain}
+.device figcaption{font-size:11px;color:#9baac5;padding:15px 4px 0;text-align:center}
+.hero-preview img{max-height:510px;object-fit:contain}
+.section{padding:85px 0;border-top:1px solid var(--border)}
+.section h2{font-size:clamp(29px,3.6vw,43px);letter-spacing:-.043em;line-height:1.16;margin:12px 0 18px}
+.intro{font-size:15px;line-height:1.85;color:#afc0d4;max-width:790px;margin:0 0 28px}
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:15px}
+.card{min-width:0;padding:24px;border:1px solid var(--border);border-radius:19px;
+ background:linear-gradient(155deg,#181f30,#101726);box-shadow:0 9px 32px rgba(1,6,18,.11)}
+.card .number{display:grid;place-items:center;width:38px;height:38px;border-radius:12px;background:#292442;color:#c2a9ff;font-weight:760;font-size:13px;margin-bottom:14px}
+.card h3{font-size:17px;line-height:1.42;letter-spacing:-.02em;margin:0 0 10px}
+.card p,.card li{color:#a7b8cf;font-size:14px;line-height:1.75;margin:0}.card ul{padding-left:18px}
+.gallery-group{margin:30px 0 46px}
+.gallery-label{display:flex;align-items:baseline;justify-content:space-between;gap:14px;margin:0 0 17px}
+.gallery-label h3{margin:0;font-size:21px;letter-spacing:-.025em}
+.gallery-label span{font-size:12px;color:#98a8c1}
+.visual-gallery{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;min-width:0}
+.visual-gallery figure{min-width:0;margin:0;display:flex;flex-direction:column;padding:12px;border:1px solid var(--border);border-radius:17px;background:var(--surface)}
+.visual-gallery figure a{display:block;position:relative;min-width:0;overflow:hidden;border-radius:11px;background:#0b1322;text-decoration:none}
+.visual-gallery img{display:block;width:100%;height:auto;object-fit:contain;border-radius:11px}
+.gallery-desktop img{aspect-ratio:16/10;object-fit:contain}
+.gallery-mobile{grid-template-columns:repeat(4,minmax(0,1fr))}
+.gallery-mobile figure a{width:100%;max-width:100%;margin:0 auto}
+.gallery-mobile img{aspect-ratio:393/852;object-fit:contain;max-height:450px}
+.visual-gallery figcaption{padding:12px 3px 2px;color:#d8e0f3;font-size:13px;line-height:1.5}
+.steps{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+.step{border:1px solid var(--border);background:var(--surface);padding:20px;border-radius:16px;min-width:0}
+.step h3{font-size:15px;line-height:1.45;margin:0 0 9px}
+.step p{font-size:13px;line-height:1.65;color:#a8b7cc;margin:0}
+.platforms{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+.platform{min-width:0;display:flex;flex-direction:column;gap:10px;background:var(--surface);border:1px solid var(--border);border-radius:19px;padding:22px}
+.platform strong{font-size:17px}.platform small{font-size:13px;color:#a8b7cf;line-height:1.7;min-height:64px}
+.platform .version{font-size:12px;color:#bcaaff}.platform a{margin-top:auto;display:flex}
+.table-wrap{overflow-x:auto;border:1px solid var(--border);border-radius:16px}
+table{border-collapse:collapse;width:100%;min-width:650px;background:var(--surface)}
+th,td{padding:16px;text-align:left;font-size:13px;vertical-align:top;border-bottom:1px solid var(--border)}
+th{background:#252940;color:#e9e9ff}td{color:#aebed2}tr:last-child td{border-bottom:none}
+.note{background:rgba(108,99,225,.075);border-left:3px solid #907afe;padding:14px 17px;border-radius:0 12px 12px 0;font-size:13px;color:#adbed6;margin:20px 0 0}
+.faq{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}
+.faq details{background:var(--surface);border:1px solid var(--border);padding:18px;border-radius:14px}
+.faq summary{font-size:14px;font-weight:700;cursor:pointer}
+.faq p{color:#acbad0;font-size:13px;margin:12px 0 0}
+.links{display:flex;flex-wrap:wrap;gap:10px;margin:21px 0}
+.links a{display:inline-flex;border:1px solid #34324f;background:#211e35;color:#c7beff;padding:10px 14px;border-radius:12px;text-decoration:none;font-size:13px;font-weight:720}
+footer{padding:36px 0 54px;color:#98a7c2;border-top:1px solid var(--border);font-size:13px}
+.foot{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
+.foot p{max-width:700px;margin:0}
+.image-fallback{display:none;min-height:170px;align-items:center;justify-content:center;flex-direction:column;gap:7px;text-align:center;padding:18px;color:#b4c0d6;background:radial-gradient(circle at 50% 25%,#242441,#0b1322);border-radius:12px}
+.image-fallback strong{color:#e4dfff}
+img.image-error{display:none!important}img.image-error+.image-fallback{display:flex}
+@media(max-width:980px){
+ .head{gap:14px}.nav{gap:14px}.nav a{font-size:12px}
+ .hero{grid-template-columns:1fr 1fr;gap:25px}.hero h1{font-size:50px}
+ .grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .steps,.platforms{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .gallery-mobile{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:700px){
+ html{scroll-padding-top:112px}
+ .wrap{width:calc(100% - 36px)}
+ .head{min-height:0;padding:12px 0 7px;flex-direction:column;gap:12px;align-items:stretch}
+ .brand{font-size:17px;justify-content:center}.brand img{width:34px;height:34px}
+ .nav{display:flex;width:100%;gap:4px;overflow-x:auto;justify-content:flex-start;padding:0 0 5px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+ .nav::-webkit-scrollbar{display:none}
+ .nav a{flex:0 0 auto;padding:7px 11px;background:rgba(121,110,186,.1);border-radius:9px;font-size:11px;letter-spacing:.01em}
+ .hero{display:flex;flex-direction:column;align-items:stretch;padding:45px 0 56px;gap:32px}
+ .hero h1{font-size:clamp(44px,11vw,58px);margin:15px 0 18px}
+ .hero p{font-size:15px;margin-bottom:20px;line-height:1.77}
+ .tagline{margin-bottom:22px;gap:6px}
+ .pill{font-size:10px;padding:5px 9px}
+ .actions{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+ .hero .actions .btn{padding:12px 9px;font-size:12px;min-height:48px}
+ .hero .actions>a:last-child{grid-column:1/-1;text-align:center;justify-content:center;min-height:34px;font-size:12px}
+ .hero-preview{width:100%;min-width:0;max-width:420px;align-self:center;margin:0;padding:12px;border-radius:23px}
+ .hero-preview img{width:100%;height:auto;max-height:375px;object-fit:contain}
+ .device figcaption{font-size:11px;line-height:1.5;padding:10px 2px 0}
+ .section{padding:58px 0}
+ .section h2{font-size:29px}.intro{font-size:14px}
+ .grid{grid-template-columns:1fr;gap:12px}
+ .card{padding:19px}.card .number{margin-bottom:10px}
+ .gallery-group{margin:27px 0 36px}
+ .gallery-label{flex-direction:column;align-items:flex-start;gap:3px;margin-bottom:12px}
+ .gallery-label h3{font-size:19px}
+ .visual-gallery,.gallery-mobile{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px;overflow:visible;padding:0}
+ .visual-gallery figure,.gallery-desktop figure{min-width:0;width:auto;flex:none;scroll-snap-align:none;padding:7px;border-radius:12px}
+ .visual-gallery figure a{overflow:hidden}
+ .visual-gallery img{display:block;width:100%;height:auto;min-width:0;max-height:none;border-radius:8px}
+ .gallery-desktop{grid-template-columns:1fr}
+ .gallery-desktop img{aspect-ratio:auto;max-height:none}
+ .gallery-mobile img{aspect-ratio:393/852}
+ .visual-gallery figcaption{padding:8px 2px 3px;font-size:11px;line-height:1.4}
+ .steps,.platforms,.faq{grid-template-columns:1fr;gap:11px}
+ .platform{padding:18px}
+ .platform small{min-height:0}
+ .note{font-size:12px}
+}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.btn{transition:none}}
+
 </style>
 </head><body>
 <a class="skip" href="#main">Đi tới nội dung chính</a>
 <header><div class="wrap head"><a class="brand" href="https://trisanghy.github.io/"><img alt="" src="https://trisanghy.github.io/open-iptv-pro/assets/icon.png">Open IPTV Pro</a><nav class="nav" aria-label="Điều hướng"><a href="#tinh-nang">Tính năng</a><a href="#anh">Ảnh giao diện</a><a href="#tai-ve">Tải về</a><a href="#huong-dan">Hướng dẫn</a><a href="#ma-nguon">Mã nguồn</a></nav></div></header>
 <main id="main" class="wrap">
 <section class="hero" aria-labelledby="hero-title"><div>
-<div class="eyebrow">Dự án mã nguồn mở · Web và Desktop</div><h1 id="hero-title">Xem IPTV.<br><span>Theo cách của bạn.</span></h1>
+<div class="eyebrow">OPEN SOURCE · WEB · DESKTOP</div><h1 id="hero-title">Truyền hình của bạn.<br><span>Một trải nghiệm mới.</span></h1>
 <p>Open IPTV Pro giúp quản lý danh sách M3U, phát truyền hình từ nguồn bạn có quyền truy cập, tra cứu lịch EPG và chuyển đổi đường truyền dự phòng — ngay trên trình duyệt hoặc ứng dụng máy tính.</p>
 <div class="tagline"><span class="pill">Không kèm danh sách kênh</span><span class="pill">Web trực tuyến</span><span class="pill">Windows · macOS</span><span class="pill">Mã nguồn mở</span></div>
-<div class="actions"><a class="btn primary" href="https://trisanghy.github.io/open-iptv-pro/">Mở trình phát Web</a><a class="btn" href="#tai-ve">Tải ứng dụng Desktop</a><a class="btn" href="https://github.com/trisanghy/open-iptv-pro">Xem GitHub</a></div>
-</div><figure class="device hero-preview"><a href="https://trisanghy.github.io/open-iptv-pro/assets/gallery/desktop-tv.png" title="Mở ảnh chụp kích thước đầy đủ"><picture><source media="(max-width: 760px)" srcset="https://trisanghy.github.io/open-iptv-pro/assets/gallery/ios-tv.png"><img width="1536" height="960" src="https://trisanghy.github.io/open-iptv-pro/assets/gallery/desktop-tv.png" alt="Giao diện Open IPTV Pro Web mới nhất với danh sách kênh và điều khiển TV" fetchpriority="high"></picture></a><figcaption>Desktop hoặc giao diện điện thoại (tùy màn hình) · Bấm để xem ảnh lớn.</figcaption></figure></section>
+<div class="actions"><a class="btn primary" href="https://trisanghy.github.io/open-iptv-pro/">Xem IPTV trên Web</a><a class="btn" href="#tai-ve">Tải bản Desktop</a><a class="btn" href="https://github.com/trisanghy/open-iptv-pro">Xem GitHub</a></div>
+</div><figure class="device hero-preview"><a href="#anh" title="Xem bộ 12 ảnh giao diện"><picture><source media="(max-width: 760px)" srcset="https://trisanghy.github.io/assets/gallery/ios-tv.png"><img width="1536" height="960" src="https://trisanghy.github.io/assets/gallery/desktop-tv.png" alt="Ảnh giao diện IPTV trên desktop và điện thoại" fetchpriority="high"></picture></a><figcaption>Giao diện Web · Ảnh thực tế từ bản dựng mới nhất</figcaption></figure></section>
 
 <section class="section" id="tinh-nang"><div class="eyebrow">Tổng quan sản phẩm</div><h2>Một nơi để quản lý và xem IPTV</h2><p class="intro">Thay vì mở từng link rời rạc, bạn có thể tổ chức kênh theo thư mục, đánh dấu yêu thích, kiểm tra nguồn và điều khiển video. Khả năng phát phụ thuộc codec, máy chủ, CORS và thiết bị.</p>
 <div class="grid">
@@ -91,19 +187,19 @@ footer{border-top:1px solid var(--edge);padding:38px 0 58px;color:#a4b5bf;font-s
 <article class="card"><span class="number">09</span><h3>Quyền sử dụng nội dung rõ ràng</h3><p>Yêu cầu xác nhận quyền truy cập trước khi nhập nguồn và trước khi dùng Smart Discovery; không phân phối nội dung IPTV.</p></article>
 </div></section>
 
-<section class="section" id="anh"><div class="eyebrow">Thư viện ảnh phiên bản hiện tại · 19/11/2026</div><h2>Ảnh giao diện mới nhất — Desktop, iOS và Android</h2><p class="intro">12 ảnh được chụp trực tiếp từ bản Web xuất bản hiện tại bằng trình duyệt Chromium trong GitHub Actions. Ảnh chụp desktop và hai cấu hình màn hình điện thoại riêng, dùng bộ kênh demo và nguồn video tự tạo; không sử dụng playlist cá nhân. Bấm vào mỗi ảnh để phóng to, xem rõ từng nút thay vì cố thu nhỏ ảnh desktop vào màn hình điện thoại.</p>
-<section class="gallery-group" aria-label="Desktop Web"><div class="gallery-label"><h3>Desktop Web</h3><span>4 ảnh · Bấm để mở bản gốc</span></div><div class="visual-gallery gallery-desktop"><figure><a href="https://trisanghy.github.io/open-iptv-pro/assets/gallery/desktop-tv.png" target="_blank" rel="noopener" title="Xem ảnh màn hình desktop-tv kích thước đầy đủ"><img src="https://trisanghy.github.io/open-iptv-pro/assets/gallery/desktop-tv.png" alt="Màn hình xem TV và thư viện kênh — ảnh chụp giao diện Open IPTV Pro Web" loading="lazy" decoding="async" width="1536" height="960"></a><figcaption>Màn hình xem TV và thư viện kênh</figcaption></figure>
-<figure><a href="https://trisanghy.github.io/open-iptv-pro/assets/gallery/desktop-sources.png" target="_blank" rel="noopener" title="Xem ảnh màn hình desktop-sources kích thước đầy đủ"><img src="https://trisanghy.github.io/open-iptv-pro/assets/gallery/desktop-sources.png" alt="Quản lý nguồn M3U và gộp kênh — ảnh chụp giao diện Open IPTV Pro Web" loading="lazy" decoding="async" width="1536" height="960"></a><figcaption>Quản lý nguồn M3U và gộp kênh</figcaption></figure>
-<figure><a href="https://trisanghy.github.io/open-iptv-pro/assets/gallery/desktop-epg.png" target="_blank" rel="noopener" title="Xem ảnh màn hình desktop-epg kích thước đầy đủ"><img src="https://trisanghy.github.io/open-iptv-pro/assets/gallery/desktop-epg.png" alt="Lịch phát sóng EPG — ảnh chụp giao diện Open IPTV Pro Web" loading="lazy" decoding="async" width="1536" height="960"></a><figcaption>Lịch phát sóng EPG</figcaption></figure>
-<figure><a href="https://trisanghy.github.io/open-iptv-pro/assets/gallery/desktop-settings.png" target="_blank" rel="noopener" title="Xem ảnh màn hình desktop-settings kích thước đầy đủ"><img src="https://trisanghy.github.io/open-iptv-pro/assets/gallery/desktop-settings.png" alt="Giao diện và cài đặt — ảnh chụp giao diện Open IPTV Pro Web" loading="lazy" decoding="async" width="1536" height="960"></a><figcaption>Giao diện và cài đặt</figcaption></figure></div></section>
-<section class="gallery-group" aria-label="iOS — giao diện Web giả lập"><div class="gallery-label"><h3>iOS — giao diện Web giả lập</h3><span>4 ảnh · Bấm để mở bản gốc</span></div><div class="visual-gallery gallery-mobile"><figure><a href="https://trisanghy.github.io/open-iptv-pro/assets/gallery/ios-tv.png" target="_blank" rel="noopener" title="Xem ảnh màn hình ios-tv kích thước đầy đủ"><img src="https://trisanghy.github.io/open-iptv-pro/assets/gallery/ios-tv.png" alt="Trình phát TV trên iPhone — ảnh chụp giao diện Open IPTV Pro Web" loading="lazy" decoding="async" width="393" height="852"></a><figcaption>Trình phát TV trên iPhone</figcaption></figure>
-<figure><a href="https://trisanghy.github.io/open-iptv-pro/assets/gallery/ios-channels.png" target="_blank" rel="noopener" title="Xem ảnh màn hình ios-channels kích thước đầy đủ"><img src="https://trisanghy.github.io/open-iptv-pro/assets/gallery/ios-channels.png" alt="Danh sách kênh có thể cuộn — ảnh chụp giao diện Open IPTV Pro Web" loading="lazy" decoding="async" width="393" height="852"></a><figcaption>Danh sách kênh có thể cuộn</figcaption></figure>
-<figure><a href="https://trisanghy.github.io/open-iptv-pro/assets/gallery/ios-sources.png" target="_blank" rel="noopener" title="Xem ảnh màn hình ios-sources kích thước đầy đủ"><img src="https://trisanghy.github.io/open-iptv-pro/assets/gallery/ios-sources.png" alt="Quản lý nguồn trên điện thoại — ảnh chụp giao diện Open IPTV Pro Web" loading="lazy" decoding="async" width="393" height="852"></a><figcaption>Quản lý nguồn trên điện thoại</figcaption></figure>
-<figure><a href="https://trisanghy.github.io/open-iptv-pro/assets/gallery/ios-favorites.png" target="_blank" rel="noopener" title="Xem ảnh màn hình ios-favorites kích thước đầy đủ"><img src="https://trisanghy.github.io/open-iptv-pro/assets/gallery/ios-favorites.png" alt="Trang kênh yêu thích — ảnh chụp giao diện Open IPTV Pro Web" loading="lazy" decoding="async" width="393" height="852"></a><figcaption>Trang kênh yêu thích</figcaption></figure></div></section>
-<section class="gallery-group" aria-label="Android — giao diện Web giả lập"><div class="gallery-label"><h3>Android — giao diện Web giả lập</h3><span>4 ảnh · Bấm để mở bản gốc</span></div><div class="visual-gallery gallery-mobile"><figure><a href="https://trisanghy.github.io/open-iptv-pro/assets/gallery/android-tv.png" target="_blank" rel="noopener" title="Xem ảnh màn hình android-tv kích thước đầy đủ"><img src="https://trisanghy.github.io/open-iptv-pro/assets/gallery/android-tv.png" alt="Trình phát TV trên Android — ảnh chụp giao diện Open IPTV Pro Web" loading="lazy" decoding="async" width="412" height="915"></a><figcaption>Trình phát TV trên Android</figcaption></figure>
-<figure><a href="https://trisanghy.github.io/open-iptv-pro/assets/gallery/android-channels.png" target="_blank" rel="noopener" title="Xem ảnh màn hình android-channels kích thước đầy đủ"><img src="https://trisanghy.github.io/open-iptv-pro/assets/gallery/android-channels.png" alt="Danh sách kênh và nhóm — ảnh chụp giao diện Open IPTV Pro Web" loading="lazy" decoding="async" width="412" height="915"></a><figcaption>Danh sách kênh và nhóm</figcaption></figure>
-<figure><a href="https://trisanghy.github.io/open-iptv-pro/assets/gallery/android-epg.png" target="_blank" rel="noopener" title="Xem ảnh màn hình android-epg kích thước đầy đủ"><img src="https://trisanghy.github.io/open-iptv-pro/assets/gallery/android-epg.png" alt="Lịch phát sóng trên Android — ảnh chụp giao diện Open IPTV Pro Web" loading="lazy" decoding="async" width="412" height="915"></a><figcaption>Lịch phát sóng trên Android</figcaption></figure>
-<figure><a href="https://trisanghy.github.io/open-iptv-pro/assets/gallery/android-settings.png" target="_blank" rel="noopener" title="Xem ảnh màn hình android-settings kích thước đầy đủ"><img src="https://trisanghy.github.io/open-iptv-pro/assets/gallery/android-settings.png" alt="Các tùy chọn giao diện — ảnh chụp giao diện Open IPTV Pro Web" loading="lazy" decoding="async" width="412" height="915"></a><figcaption>Các tùy chọn giao diện</figcaption></figure></div></section>
+<section class="section" id="anh"><div class="eyebrow">Thư viện ảnh phiên bản hiện tại · 19/11/2026</div><h2>Ảnh giao diện mới nhất — Desktop, iOS và Android</h2><p class="intro">12 ảnh chụp giao diện Web mới nhất, chia rõ theo máy tính và điện thoại; mỗi ảnh có thể mở kích thước gốc. Ảnh chụp desktop và hai cấu hình màn hình điện thoại riêng, dùng bộ kênh demo và nguồn video tự tạo; không sử dụng playlist cá nhân. Ảnh có tỷ lệ phù hợp từng thiết bị; không ép ảnh desktop thành dọc.</p>
+<section class="gallery-group" aria-label="Desktop Web"><div class="gallery-label"><h3>Desktop Web</h3><span>4 ảnh · Bấm để mở bản gốc</span></div><div class="visual-gallery gallery-desktop"><figure><a href="https://trisanghy.github.io/assets/gallery/desktop-tv.png" target="_blank" rel="noopener" title="Xem ảnh màn hình desktop-tv kích thước đầy đủ"><img src="https://trisanghy.github.io/assets/gallery/desktop-tv.png" alt="Màn hình xem TV và thư viện kênh — ảnh chụp giao diện Open IPTV Pro Web" loading="lazy" decoding="async" width="1536" height="960"></a><figcaption>Màn hình xem TV và thư viện kênh</figcaption></figure>
+<figure><a href="https://trisanghy.github.io/assets/gallery/desktop-sources.png" target="_blank" rel="noopener" title="Xem ảnh màn hình desktop-sources kích thước đầy đủ"><img src="https://trisanghy.github.io/assets/gallery/desktop-sources.png" alt="Quản lý nguồn M3U và gộp kênh — ảnh chụp giao diện Open IPTV Pro Web" loading="lazy" decoding="async" width="1536" height="960"></a><figcaption>Quản lý nguồn M3U và gộp kênh</figcaption></figure>
+<figure><a href="https://trisanghy.github.io/assets/gallery/desktop-epg.png" target="_blank" rel="noopener" title="Xem ảnh màn hình desktop-epg kích thước đầy đủ"><img src="https://trisanghy.github.io/assets/gallery/desktop-epg.png" alt="Lịch phát sóng EPG — ảnh chụp giao diện Open IPTV Pro Web" loading="lazy" decoding="async" width="1536" height="960"></a><figcaption>Lịch phát sóng EPG</figcaption></figure>
+<figure><a href="https://trisanghy.github.io/assets/gallery/desktop-settings.png" target="_blank" rel="noopener" title="Xem ảnh màn hình desktop-settings kích thước đầy đủ"><img src="https://trisanghy.github.io/assets/gallery/desktop-settings.png" alt="Giao diện và cài đặt — ảnh chụp giao diện Open IPTV Pro Web" loading="lazy" decoding="async" width="1536" height="960"></a><figcaption>Giao diện và cài đặt</figcaption></figure></div></section>
+<section class="gallery-group" aria-label="iOS — giao diện Web giả lập"><div class="gallery-label"><h3>iOS — giao diện Web giả lập</h3><span>4 ảnh · Bấm để mở bản gốc</span></div><div class="visual-gallery gallery-mobile"><figure><a href="https://trisanghy.github.io/assets/gallery/ios-tv.png" target="_blank" rel="noopener" title="Xem ảnh màn hình ios-tv kích thước đầy đủ"><img src="https://trisanghy.github.io/assets/gallery/ios-tv.png" alt="Trình phát TV trên iPhone — ảnh chụp giao diện Open IPTV Pro Web" loading="lazy" decoding="async" width="393" height="852"></a><figcaption>Trình phát TV trên iPhone</figcaption></figure>
+<figure><a href="https://trisanghy.github.io/assets/gallery/ios-channels.png" target="_blank" rel="noopener" title="Xem ảnh màn hình ios-channels kích thước đầy đủ"><img src="https://trisanghy.github.io/assets/gallery/ios-channels.png" alt="Danh sách kênh có thể cuộn — ảnh chụp giao diện Open IPTV Pro Web" loading="lazy" decoding="async" width="393" height="852"></a><figcaption>Danh sách kênh có thể cuộn</figcaption></figure>
+<figure><a href="https://trisanghy.github.io/assets/gallery/ios-sources.png" target="_blank" rel="noopener" title="Xem ảnh màn hình ios-sources kích thước đầy đủ"><img src="https://trisanghy.github.io/assets/gallery/ios-sources.png" alt="Quản lý nguồn trên điện thoại — ảnh chụp giao diện Open IPTV Pro Web" loading="lazy" decoding="async" width="393" height="852"></a><figcaption>Quản lý nguồn trên điện thoại</figcaption></figure>
+<figure><a href="https://trisanghy.github.io/assets/gallery/ios-favorites.png" target="_blank" rel="noopener" title="Xem ảnh màn hình ios-favorites kích thước đầy đủ"><img src="https://trisanghy.github.io/assets/gallery/ios-favorites.png" alt="Trang kênh yêu thích — ảnh chụp giao diện Open IPTV Pro Web" loading="lazy" decoding="async" width="393" height="852"></a><figcaption>Trang kênh yêu thích</figcaption></figure></div></section>
+<section class="gallery-group" aria-label="Android — giao diện Web giả lập"><div class="gallery-label"><h3>Android — giao diện Web giả lập</h3><span>4 ảnh · Bấm để mở bản gốc</span></div><div class="visual-gallery gallery-mobile"><figure><a href="https://trisanghy.github.io/assets/gallery/android-tv.png" target="_blank" rel="noopener" title="Xem ảnh màn hình android-tv kích thước đầy đủ"><img src="https://trisanghy.github.io/assets/gallery/android-tv.png" alt="Trình phát TV trên Android — ảnh chụp giao diện Open IPTV Pro Web" loading="lazy" decoding="async" width="412" height="915"></a><figcaption>Trình phát TV trên Android</figcaption></figure>
+<figure><a href="https://trisanghy.github.io/assets/gallery/android-channels.png" target="_blank" rel="noopener" title="Xem ảnh màn hình android-channels kích thước đầy đủ"><img src="https://trisanghy.github.io/assets/gallery/android-channels.png" alt="Danh sách kênh và nhóm — ảnh chụp giao diện Open IPTV Pro Web" loading="lazy" decoding="async" width="412" height="915"></a><figcaption>Danh sách kênh và nhóm</figcaption></figure>
+<figure><a href="https://trisanghy.github.io/assets/gallery/android-epg.png" target="_blank" rel="noopener" title="Xem ảnh màn hình android-epg kích thước đầy đủ"><img src="https://trisanghy.github.io/assets/gallery/android-epg.png" alt="Lịch phát sóng trên Android — ảnh chụp giao diện Open IPTV Pro Web" loading="lazy" decoding="async" width="412" height="915"></a><figcaption>Lịch phát sóng trên Android</figcaption></figure>
+<figure><a href="https://trisanghy.github.io/assets/gallery/android-settings.png" target="_blank" rel="noopener" title="Xem ảnh màn hình android-settings kích thước đầy đủ"><img src="https://trisanghy.github.io/assets/gallery/android-settings.png" alt="Các tùy chọn giao diện — ảnh chụp giao diện Open IPTV Pro Web" loading="lazy" decoding="async" width="412" height="915"></a><figcaption>Các tùy chọn giao diện</figcaption></figure></div></section>
 <p class="note"><strong>Phạm vi kiểm chứng:</strong> hai bộ ảnh iOS/Android sử dụng giả lập thiết bị và user agent trên Chromium (không phải ảnh chụp Safari iPhone thực tế hoặc ứng dụng APK/IPA). Không dùng ảnh demo để chứng minh việc phát kênh IPTV từ nhà cung cấp hay hỗ trợ AirPlay/Cast thực tế.</p></section>
 
 <section class="section" id="huong-dan"><div class="eyebrow">Hướng dẫn bắt đầu</div><h2>Bốn bước để xem kênh của bạn</h2>
@@ -166,5 +262,20 @@ footer{border-top:1px solid var(--edge);padding:38px 0 58px;color:#a4b5bf;font-s
     if(updated&&/^v?[\d.]+$/.test(data.tag_name||''))document.querySelectorAll('[data-release-version]').forEach(el=>el.textContent=data.tag_name);
   }).catch(()=>{}); // Keep safe official releases/latest links on offline or rate-limited devices.
 })();
+</script>
+<script>
+document.querySelectorAll('img[src*="/assets/gallery/"]').forEach(img=>{
+ const handle=()=>{
+   img.classList.add('image-error');
+   if(!img.nextElementSibling?.classList.contains('image-fallback')){
+     const label=document.createElement('span');label.className='image-fallback';
+     const strong=document.createElement('strong');strong.textContent='Không tải được ảnh xem trước';
+     const hint=document.createElement('span');hint.textContent='Xem ảnh gốc tại kho mã nguồn GitHub';
+     label.append(strong,hint);img.insertAdjacentElement('afterend',label);
+   }
+ };
+ img.addEventListener('error',handle,{once:true});
+ if(img.complete&&img.naturalWidth===0)handle();
+});
 </script>
 </body></html>
