@@ -14,6 +14,8 @@ if not (src/'index.html').is_file() or not (src/'app.js').is_file():
 copytree(src,out,dirs_exist_ok=True)
 # Always ship the reviewed Web-only localization engine, not an outdated WebView copy.
 copy2(Path(__file__).resolve().parent.parent/'i18n.js',out/'i18n.js')
+# Keep Web translations isolated from Electron/Rust renderer resources.
+copy2(Path(__file__).resolve().parent/'web-language-supplement.js',out/'web-language-supplement.js')
 
 # Web-only EPG downloader: native desktop frontend calls its own RPC.
 # Replace exactly one fetchXML implementation so a future build never undoes
@@ -307,9 +309,12 @@ locale_script='<script src="i18n.js"></script>'
 if html.count(locale_script)!=1:
     sys.exit('Web i18n script anchor changed; cannot apply unmute translation cache version')
 html=html.replace(locale_script,'<script src="i18n.js?v=unmute-language-20261119a"></script>',1)
+# Load native Web labels before the localization engine starts.
+html=html.replace('<script src="i18n.js?v=unmute-language-20261119a"></script>',
+    '<script src="web-language-supplement.js"></script><script src="i18n.js?v=unmute-language-20261119a"></script>',1)
 # Content-addressed language assets. Never reuse a stale 20261119 cache key on Safari/Chrome.
 import hashlib
-for asset in ('i18n.js','languages.bundle.js'):
+for asset in ('i18n.js','languages.bundle.js','web-language-supplement.js'):
     digest=hashlib.sha256((out/asset).read_bytes()).hexdigest()[:16]
     html,count=re.subn(r'<script src="'+re.escape(asset)+r'(?:\?[^"]*)?"></script>',
         '<script src="'+asset+'?v='+digest+'"></script>',html,count=1)
