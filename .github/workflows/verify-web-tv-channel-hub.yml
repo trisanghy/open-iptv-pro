@@ -31,7 +31,7 @@ jobs:
           set -euo pipefail
           node --check web-tv-channel-hub.js
           node --check web-online/web-tv-channel-hub.js
-          node --test web-online/tests/web-tv-channel-hub.test.cjs
+          CHANNEL_HUB_CHROME="$(command -v google-chrome || command -v chromium)" node --test web-online/tests/web-tv-channel-hub.test.cjs
           node --test web-online/tests/web-recent-channels.test.cjs
           node --test web-online/tests/web-tv-wide.test.cjs
           node --test web-online/tests/web-mobile-player.test.cjs
