@@ -204,3 +204,16 @@ html[data-iptv-device="mobile"] body #appShell>#appSidebar
 .nav:is([data-page="tv"],[data-page="fav"],[data-page="epg"],[data-page="sources"],.mobile-more-trigger).active>.macos-nav-symbol{
   color:var(--accent,#b980ed)!important;
 }
+
+/* Mobile first-paint regression: older WebView rules set font-size:23px/28px
+   with higher specificity than the base vector mask selector. The glyph must
+   be invisible even before web-player-icons.js removes legacy text nodes. */
+html[data-iptv-device="mobile"] body #page-tv .player-control-card
+ .control-layout-top>.output-controls:is(.output-controls)
+ :is(#webVolumeMute,#castBtn,#pipBtn,#fullscreenBtn){
+ font-size:0!important;
+}
+html[data-iptv-device="mobile"] body #page-tv .player-control-card
+ .control-layout-bottom :is(#openGuideBtn,#favCurrentBtn){
+ font-size:0!important;
+}
