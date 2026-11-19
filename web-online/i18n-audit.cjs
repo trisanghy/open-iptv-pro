@@ -10,6 +10,7 @@ const bundle=read('languages.bundle.js');
 const token='window.OPEN_IPTV_TRANSLATIONS=';
 const dictionary=JSON.parse(bundle.slice(bundle.indexOf(token)+token.length).replace(/;\s*$/,''));
 const window={OPEN_IPTV_TRANSLATIONS:dictionary};
+vm.runInNewContext(read('web-online/web-generated-locales.js'),{window},{timeout:5000});
 vm.runInNewContext(read('web-online/web-language-supplement.js'),{window},{timeout:5000});
 const document={documentElement:{},readyState:'loading',addEventListener(){}};
 class MutationObserver{observe(){}}
