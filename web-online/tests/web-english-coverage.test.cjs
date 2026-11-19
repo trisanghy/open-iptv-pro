@@ -62,6 +62,25 @@ test('Web HTML static labels are covered by English translations (excluding prop
  const missed=values.filter(v=>!names.has(v)&&t(v,'en')===v);
  assert.equal(missed.length,0,'Untranslated static Web UI: '+missed.join(' | '));
 });
+test('source collector, Cast, advanced player and app statuses also translate',()=>{
+ const t=makeEngine().t;
+ const pairs={
+  'Chưa có nguồn. Hãy mở file M3U, thêm URL hoặc nhập repo công khai.':'No sources yet. Open an M3U file, add a URL, or import a public repository.',
+  'Thu thập thất bại; dữ liệu cũ được giữ lại.':'Collection failed; previous data preserved.',
+  'Đã hủy áp dụng; playlist không đổi.':'Apply canceled; playlist unchanged.',
+  'Trình duyệt hiện tại không mở được AirPlay. Hãy mở website trực tiếp trong Safari; nếu cần, dùng Phản chiếu màn hình trong Trung tâm điều khiển iPhone.':'This browser cannot open AirPlay. Open the website directly in Safari. If needed, use Screen Mirroring in iPhone Control Center.',
+  'Đang tìm Chromecast / Google TV trong mạng nội bộ…':'Searching for Chromecast / Google TV on the local network…',
+  'Chưa có dữ liệu tua lại':'No timeshift data available',
+  'Kênh thuộc nhóm bị khóa trong hồ sơ trẻ em':'Channel belongs to a locked group in the child profile',
+  'Không lưu được dữ liệu (bộ nhớ ứng dụng có thể đã đầy). Hãy sao lưu và giảm số kênh/ảnh.':'Could not save data (app storage may be full). Back up data and reduce the number of channels/snapshots.',
+  'Thiếu module kiểm tra Web. Hãy tải lại website.':'Web channel checker module missing. Reload website.',
+  'Đang đợi dữ liệu video từ nguồn • ':'Waiting for video data from source • '
+ };
+ for(const [from,to] of Object.entries(pairs))assert.equal(t(from,'en'),to,from);
+ assert.equal(t('Auto Failover: thử link https://example.invalid/live','en'),'Auto Failover: trying URL https://example.invalid/live');
+ assert.equal(t('Đã lưu 3 link dự phòng','en'),'Saved 3 backup URLs');
+ assert.equal(t('VTV5 Tây Nguyên','en'),'VTV5 Tây Nguyên');
+});
 test('root UI language parser has 17 selectable options and never changes source data',()=>{
  const i=makeEngine();
  assert.equal(Object.keys(i.locales).length,17);
