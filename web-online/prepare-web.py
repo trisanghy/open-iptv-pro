@@ -51,7 +51,7 @@ for previous,next_value in (
     js=js.replace(previous,next_value,1)
 features.write_text(js,encoding='utf-8')
 
-for name in ('web-only.js','web-only.css','resume-last.js','resume-last.css','browser-channel-check.js','web-autoplay.js','cloud-core.js','cloud-sync.js','cloud-sync.css','web-volume.css','web-volume.js','web-mobile-player.css','web-mobile-player.js','web-player-icons.css','web-player-icons.js','web-tv-wide.css','web-mobile-controls-polish.css','web-desktop-download.css','web-desktop-download.js','web-recent-channels.js','web-compact-toolbar.css','web-snapshot-batch.js','web-background-audio.js','web-background-audio.css'):
+for name in ('web-only.js','web-only.css','resume-last.js','resume-last.css','browser-channel-check.js','web-autoplay.js','cloud-core.js','cloud-sync.js','cloud-sync.css','web-volume.css','web-volume.js','web-mobile-player.css','web-mobile-player.js','web-player-icons.css','web-player-icons.js','web-tv-wide.css','web-mobile-controls-polish.css','web-desktop-download.css','web-desktop-download.js','web-recent-channels.js','web-compact-toolbar.css','web-snapshot-batch.js','web-background-audio.js','web-background-audio.css','web-ios-audio-recovery.js','web-ios-audio-recovery.css'):
     source=Path(__file__).resolve().parent/name
     if not source.is_file():source=Path(__file__).resolve().parent.parent/name
     copy2(source,out/name)
@@ -307,6 +307,12 @@ locale_script='<script src="i18n.js"></script>'
 if html.count(locale_script)!=1:
     sys.exit('Web i18n script anchor changed; cannot apply unmute translation cache version')
 html=html.replace(locale_script,'<script src="i18n.js?v=unmute-language-20261119a"></script>',1)
+# Preserve one-tap iOS audio unlock in any future WebView-based rebuild.
+# Chrome iOS needs its sound action outside the native video surface.
+if 'web-ios-audio-recovery.js' not in html:
+    html=html.replace('</body>','<script src="web-ios-audio-recovery.js?v=chrome-ios-audio-20261119b"></script></body>',1)
+if 'web-ios-audio-recovery.css' not in html:
+    html=html.replace('</head>','<link rel="stylesheet" href="web-ios-audio-recovery.css?v=chrome-ios-audio-20261119b"/></head>',1)
 (out/'index.html').write_text(html,encoding='utf-8')
 (out/'.nojekyll').write_text('')
 (out/'manifest.webmanifest').write_text(json.dumps({

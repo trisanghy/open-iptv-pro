@@ -15,3 +15,23 @@ html[data-iptv-device="mobile"] #page-tv .player-control-card .output-controls #
 html[data-iptv-device="mobile"] #page-tv .player-control-card .output-controls #pipBtn{
  visibility:visible!important;opacity:1!important;pointer-events:auto!important
 }
+
+/* Chrome on iPhone: move the actionable unmute button out of the video layer.
+   Safari keeps the original inline overlay that already works. */
+#page-tv .watch-panel > #webUnmuteAssist.web-unmute-assist-chrome-ios{
+ position:relative!important;inset:auto!important;left:auto!important;bottom:auto!important;
+ transform:none!important;z-index:3!important;
+ display:flex;align-items:center;justify-content:center;gap:8px;
+ box-sizing:border-box;
+ width:max-content;max-width:calc(100% - 24px);
+ min-width:124px;min-height:44px;
+ margin:8px auto 3px;padding:8px 14px;
+ border:1px solid #d9b2f7;border-radius:12px;
+ background:#c184f3;color:#161f31;box-shadow:0 2px 12px #0004;
+ font:700 14px/1.3 system-ui,-apple-system,sans-serif;
+ cursor:pointer;pointer-events:auto!important;touch-action:manipulation!important;
+ -webkit-user-select:none;user-select:none;
+}
+#page-tv .watch-panel > #webUnmuteAssist.web-unmute-assist-chrome-ios[hidden]{
+ display:none!important;
+}
