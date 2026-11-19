@@ -16,7 +16,8 @@ test('the only added sound button is inside the top video banner',()=>{
  assert.match(recovery,/mute\.addEventListener\('click'/);
  assert.match(recovery,/webAudioPermissionBanner/);
  assert.match(recovery,/box\.append\(banner\)/);
- assert.doesNotMatch(recovery,/web-unmute-assist-chrome-ios/);
+ assert.match(recovery,/querySelectorAll\?\.\('#page-tv \.web-unmute-assist/);
+ assert.doesNotMatch(recovery,/className=['"]web-unmute-assist/);
  assert.doesNotMatch(resume,/web-resume-panel|showPrompt/);
 });
 test('one-tap Chrome unmute cannot change saved playlist data',()=>{

@@ -94,7 +94,8 @@ test('Chrome iOS keeps the volume button and one top permission banner',()=>{
  const recovery=fs.readFileSync(path.join(root,'web-ios-audio-recovery.js'),'utf8');
  const resume=fs.readFileSync(path.join(root,'resume-last.js'),'utf8');
  assert.match(recovery,/webAudioPermissionBanner/);
- assert.doesNotMatch(recovery,/web-unmute-assist-chrome-ios/);
+ assert.match(recovery,/querySelectorAll\?\.\('#page-tv \.web-unmute-assist/);
+ assert.doesNotMatch(recovery,/className=['"]web-unmute-assist/);
  assert.doesNotMatch(resume,/showPrompt|web-resume-panel/);
  assert.match(recovery,/mute\.addEventListener\('click'/);
  assert.match(recovery,/video\.play\(\)/);
