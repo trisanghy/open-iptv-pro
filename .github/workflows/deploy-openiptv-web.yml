@@ -187,6 +187,11 @@ jobs:
           node --check _site/web-mobile-player.js
           node --test web-online/tests/web-mobile-player.test.cjs
           node --test web-online/tests/web-mobile-favorites-interaction.test.cjs
+          node --check _site/web-mobile-touch-sort.js
+          node --test web-online/tests/web-mobile-touch-sort.test.cjs
+          TOUCH_SORT_CHROME="$(command -v google-chrome)" node --test web-online/tests/web-mobile-touch-sort-browser.test.cjs
+          grep -Fq 'web-mobile-touch-sort.css?v=mobile-touch-sort-20261120a' _site/index.html
+          grep -Fq 'web-mobile-touch-sort.js?v=mobile-touch-sort-20261120a' _site/index.html
           node --check _site/advanced.js
           node --check _site/app.js
           grep -Fq 'features.js?v=epg-player-details-20261120a' _site/index.html

@@ -469,6 +469,21 @@ for old,new in (
     if html.count(old)!=1:sys.exit('EPG subtitles asset cache version changed: '+old)
     html=html.replace(old,new,1)
 
+
+# Mobile-only touch drag handles preserve native scrolling/taps and the existing
+# app.js ordering + cloud-sync state. Do not modify Electron/Rust/Mobile builds.
+touch_sort_root=Path(__file__).resolve().parent.parent
+for asset in ('web-mobile-touch-sort.css','web-mobile-touch-sort.js'):
+    if not (touch_sort_root / asset).is_file():
+        sys.exit('Missing Web mobile touch-sort asset: '+asset)
+    copy2(touch_sort_root / asset,out / asset)
+if 'web-mobile-touch-sort.css' not in html:
+    html=html.replace('</head>','<link rel="stylesheet" href="web-mobile-touch-sort.css?v=mobile-touch-sort-20261120a"/></head>',1)
+if 'web-mobile-touch-sort.js' not in html:
+    html=html.replace('</body>','<script src="web-mobile-touch-sort.js?v=mobile-touch-sort-20261120a"></script></body>',1)
+if html.count('web-mobile-touch-sort.js?v=')!=1 or html.count('web-mobile-touch-sort.css?v=')!=1:
+    sys.exit('Duplicated Web touch-sort assets')
+
 (out/'index.html').write_text(html,encoding='utf-8')
 (out/'.nojekyll').write_text('')
 (out/'manifest.webmanifest').write_text(json.dumps({
