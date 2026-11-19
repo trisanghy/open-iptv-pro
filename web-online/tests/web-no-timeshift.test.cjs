@@ -39,7 +39,7 @@ test('Web builder strips legacy Timeshift controls from fresh WebView sources',(
 });
 
 test('live Timeshift removal uses versioned JS and CSS so Safari cannot reuse stale modules',()=>{
- assert.match(html,/advanced\.js\?v=no-timeshift-20261119a/);
+ assert.match(html,/advanced\.js\?v=favorites-tap-20261119a/);
  assert.match(html,/web-only\.css\?v=no-timeshift-20261119a/);
  const builder=read('web-online/prepare-web.py');
  assert.match(builder,/version='no-timeshift-20261119a'/);
