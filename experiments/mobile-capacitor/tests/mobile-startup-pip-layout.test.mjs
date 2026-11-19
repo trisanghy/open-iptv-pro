@@ -17,7 +17,7 @@ test('Mobile player fit, primary stream, background audio and favorite share one
  assert.ok(indices.every(n=>n>=0),'required controls missing');
  assert.deepEqual([...indices].sort((a,b)=>a-b),indices,'controls must follow same visual and accessibility order');
  assert.match(css,/MOBILE_COMPACT_PLAYER_ROW_V27/);
- assert.match(css,/grid-template-columns:minmax\(72px,\.85fr\) minmax\(100px,1\.35fr\) 46px 46px/);
+ assert.match(css,/grid-template-columns:minmax\(104px,1fr\) minmax\(105px,1\.1fr\) 42px 42px/);
  for(const id of ['videoFit','manualStreamSelect','backgroundAudioToggle','nowFavorite'])
   assert.equal((layout.match(new RegExp('id="'+id+'"','g'))||[]).length,1);
  assert.match(layout,/id="backgroundAudioStatus"/);
