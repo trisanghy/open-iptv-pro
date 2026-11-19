@@ -73,7 +73,7 @@
   const say=msg=>{if(modeState)modeState.textContent=msg;};
   const info=msg=>{if(statusText)statusText.textContent=msg;};
   let audio=null,hls=null,dash=null,active=false,transition=0,streamKey='',lastTitle='',lastArtworkRequest='',artworkRevision=0,ownsAudioSession=false,installed=false;
-  let pausedBeforeTransition=false,needsVideoRestore=false;
+  let pausedBeforeTransition=false,needsVideoRestore=false,retuning=false,lastRescue=null;
   const sourceFor=channel=>{
    if(!channel)return '';
    const select=doc.getElementById?.('manualStreamSelect');
@@ -128,6 +128,7 @@
   }
   function disposeAudio(){
    transition++;
+   retuning=false;lastRescue=null;
    const node=audio;audio=null;streamKey='';
    try{hls?.destroy?.();}catch{}hls=null;
    try{dash?.reset?.();}catch{}dash=null;
@@ -173,10 +174,112 @@
    }catch{say('Không thể phát từ màn hình khóa. Hãy mở trình duyệt.');}
    return true;
   }
+  function allowedLinks(channel){
+   const list=typeof app.getAudioLinks==='function'?app.getAudioLinks(channel):[channel?.url,...(Array.isArray(channel?.alternates)?channel.alternates:[])];
+   const urls=[...(Array.isArray(list)?list:[])].filter(url=>isAllowedStream(url,win?.location?.href||'https://localhost/'));
+   return [...new Set(urls)];
+  }
+  async function retune(node,url,token){
+   // A resolved play() is not evidence of a decodable stream. Verify the
+   // 'playing' signal, and fail cleanly on media error or a bounded timeout.
+   let timer=null,onPlaying,onError,settled=false;
+   const ready=new Promise((resolve,reject)=>{
+    const complete=error=>{
+     if(settled)return;
+     settled=true;
+     if(timer!==null)win.clearTimeout?.(timer);
+     node.removeEventListener?.('playing',onPlaying);
+     node.removeEventListener?.('error',onError);
+     if(error)reject(error);else resolve();
+    };
+    onPlaying=()=>{if(token===transition)complete();};
+    onError=()=>{if(token===transition)complete(Error('Không nhận được luồng âm thanh'));};
+    node.addEventListener?.('playing',onPlaying);
+    node.addEventListener?.('error',onError);
+    timer=win.setTimeout?.(()=>complete(Error('Kênh không có tín hiệu âm thanh')),10000)??null;
+   });
+   try{await Promise.all([ready,startAudio(node,url,token)]);}
+   finally{
+    if(timer!==null)win.clearTimeout?.(timer);
+    node.removeEventListener?.('playing',onPlaying);
+    node.removeEventListener?.('error',onError);
+   }
+  }
+  async function navigateAudio(dir){
+   const original=app.getCurrent?.();
+   if(!active||!audio||!original||retuning)return;
+   const order=typeof app.getPlaybackOrder==='function'?app.getPlaybackOrder():app.getChannels?.()||[];
+   if(order.length<2)return;
+   const originalKey=streamKey,separator=originalKey.indexOf('|');
+   const oldUrl=separator>=0?originalKey.slice(separator+1):sourceFor(original);
+   let index=order.findIndex(ch=>ch.id===original.id);
+   if(index<0)return;
+   retuning=true;
+   let probes=0,skipped=0,lastFailure='';
+   try{
+    for(let step=0;step<Math.min(order.length-1,60)&&probes<5;step++){
+     index=(index+dir+order.length)%order.length;
+     const candidate=order[index];
+     if(candidate.id===original.id)break;
+     const links=allowedLinks(candidate);
+     if(candidate.status==='dead'||!links.length){skipped++;continue;}
+     // Use remembered working source first without inventing a stream URL.
+     links.sort((a,b)=>(b===candidate.lastPlayableUrl?1:0)-(a===candidate.lastPlayableUrl?1:0));
+     for(const url of links.slice(0,3)){
+      if(probes>=5)break;
+      probes++;
+      transition++;
+      const token=transition;
+      try{hls?.destroy?.();}catch{}hls=null;
+      try{dash?.reset?.();}catch{}dash=null;
+      say('Đang kiểm tra kênh '+candidate.name+'…');
+      try{
+       await retune(audio,url,token);
+       if(token!==transition||!active||app.getCurrent?.()?.id!==original.id)return;
+       // Only commit the selected channel after audio is actually playing.
+       streamKey=candidate.id+'|'+url;
+       const result=await app.playChannel?.(candidate.id,null,{audioOnly:true,manualUrl:url});
+       if(app.getCurrent?.()?.id!==candidate.id)throw Error('Không chuyển được kênh');
+       lastRescue={id:original.id,url:oldUrl,at:Date.now()};
+       say(skipped?'Đã bỏ qua '+skipped+' kênh không có nguồn phát.':'Đang nghe '+candidate.name);
+       sync();refreshState();
+       return;
+      }catch(e){
+       lastFailure=String(e?.message||e).slice(0,90);
+       // Keep the media element (and therefore iOS lock-screen controls).
+       // The app's current channel is still the last working one.
+       if(app.getCurrent?.()?.id!==original.id){
+        try{await app.playChannel?.(original.id,null,{audioOnly:true,manualUrl:oldUrl});}catch{}
+       }
+      }
+     }
+    }
+    if(!active)return;
+    if(probes===0){
+     say('Không có kênh nào có nguồn phát phù hợp. Đang giữ '+original.name+'.');
+     return;
+    }
+    transition++;
+    const restoreToken=transition;
+    try{
+     hls?.destroy?.();hls=null;dash?.reset?.();dash=null;
+     await retune(audio,oldUrl,restoreToken);
+     streamKey=originalKey;sync();refreshState();
+     say('Đã giữ kênh '+original.name+' vì các kênh tiếp theo chưa phát được'+(skipped?' ('+skipped+' kênh bỏ qua)':'')+'.');
+    }catch(e){
+     streamKey=originalKey;refreshState();
+     say('Không đổi được kênh; hãy mở lại trang rồi nhấn Phát. '+(lastFailure||String(e?.message||e)).slice(0,80));
+    }
+   }finally{retuning=false;}
+  }
   function navigate(dir){
    if(!enabled()||!app.getCurrent?.())return false;
+   if(active&&audio&&typeof app.playChannel==='function'&&typeof app.getPlaybackOrder==='function'){
+    void navigateAudio(dir).catch(()=>say('Không chuyển được kênh; vẫn giữ chế độ Nghe nền.'));
+    return true;
+   }
    if(active&&typeof app.switchChannel==='function'){
-    try{Promise.resolve(app.switchChannel(dir,{audioOnly:true})).catch(e=>say('Không chuyển được kênh: '+String(e?.message||e).slice(0,100)));}catch(e){say('Không chuyển được kênh.');}
+    try{Promise.resolve(app.switchChannel(dir,{audioOnly:true})).catch(()=>say('Không chuyển được kênh.'));}catch{say('Không chuyển được kênh.');}
     return true;
    }
    doc.getElementById?.(dir<0?'prevBtn':'nextBtn')?.click?.();
@@ -247,11 +350,18 @@
    node.muted=Boolean(video.muted);
    for(const type of ['play','playing','pause','ended']){
     node.addEventListener?.(type,()=>{
-     if(active&&audio===node){
-      refreshState();
-     }
+     if(active&&audio===node)refreshState();
     });
    }
+   node.addEventListener?.('error',()=>{
+    if(!active||audio!==node||retuning)return;
+    const fallback=lastRescue;lastRescue=null;
+    if(fallback&&Date.now()-fallback.at<20000&&fallback.url&&typeof app.playChannel==='function'){
+     say('Kênh mới mất tín hiệu, đang trở về kênh trước…');
+     try{Promise.resolve(app.playChannel(fallback.id,null,{audioOnly:true,manualUrl:fallback.url})).catch(()=>say('Không khôi phục được kênh trước.'));}catch{}
+    }else{say('Nguồn phát âm thanh bị lỗi; thử chuyển sang kênh khác.');}
+    refreshState();
+   });
    doc.body?.append?.(node);
    return node;
   }
@@ -379,7 +489,7 @@
   }
   doc.addEventListener?.('openiptv:media-info',sync);
   doc.addEventListener?.('openiptv:audio-channel',event=>{
-   if(!active)return;
+   if(!active||retuning)return;
    const wanted=event?.detail;
    if(wanted?.channelId!==app.getCurrent?.()?.id)return;
    void activate({streamUrl:wanted.url});

@@ -9,7 +9,7 @@ function events(o){
  o.emit=(type,event={})=>{for(const fn of callbacks[type]||[])fn(event)};
  return o;
 }
-function fixture({playReject=false,chromeHls=false,initial={},allowAudio=true,withChannelSwitch=false}={}){
+function fixture({playReject=false,chromeHls=false,initial={},allowAudio=true,withChannelSwitch=false,transactionalChannels=null,brokenUrls=[]}={}){
  const audioElements=[],handlers={};
  const video=events({
   paused:false,pauseCalls:0,playCalls:0,volume:.7,muted:false,suspended:0,
@@ -49,7 +49,7 @@ function fixture({playReject=false,chromeHls=false,initial={},allowAudio=true,wi
     pause(){this.pauseCalls++;this.paused=true;this.emit('pause')},
     play(){
      this.playCalls++;
-     if(playReject)return Promise.reject(Object.assign(new Error('NotAllowedError'),{name:'NotAllowedError'}));
+     if(playReject||brokenUrls.includes(this.src))return Promise.reject(Object.assign(new Error('NotAllowedError'),{name:'NotAllowedError'}));
      this.paused=false;this.emit('play');this.emit('playing');return Promise.resolve();
     }
    });
@@ -65,9 +65,24 @@ function fixture({playReject=false,chromeHls=false,initial={},allowAudio=true,wi
   setTimeout(){},
   IPTVState:{
    getStore:()=>store,getCurrent:()=>channel,
-   getChannels:()=>channel?[channel]:[],
+   getChannels:()=>transactionalChannels|| (channel?[channel]:[]),
+   ...(transactionalChannels?{
+    getPlaybackOrder:()=>transactionalChannels,
+    getAudioLinks(ch){return [ch.url,...(Array.isArray(ch.alternates)?ch.alternates:[])].filter(Boolean);}
+   }:{}),
    save(){calls.save++;return true},
-   playChannel(id){calls.channels.push(id);return video.play()},
+   playChannel(id,_override,opts){
+    calls.channels.push(id);
+    if(transactionalChannels){
+     const match=transactionalChannels.find(ch=>ch.id===id);
+     if(!match)return Promise.reject(new Error('Unknown channel'));
+     channel=match;
+     doc.emit('openiptv:media-info');
+     doc.emit('openiptv:audio-channel',{detail:{channelId:id,url:opts?.manualUrl||match.url}});
+     return Promise.resolve();
+    }
+    return video.play();
+   },
    ...(withChannelSwitch?{
     suspendVideoForBackground(){calls.suspends++;video.pause();video.suspended++;},
     switchChannel(dir,opts){
@@ -95,7 +110,7 @@ function fixture({playReject=false,chromeHls=false,initial={},allowAudio=true,wi
  }
  const controller=mod.install({win,doc,nav});
  return {controller,doc,video,settings,status,toggle,label,els,audioElements,handlers,ms,nav,calls,hlsLog,
-  setChannel(c){channel=c},source,store};
+  setChannel(c){channel=c},getCurrent:()=>channel,source,store};
 }
 test('iOS native HLS: explicit Nghe nền switches from video to audio and stays playing when hidden',async()=>{
  const e=fixture();
@@ -182,7 +197,7 @@ test('Web files and builder preserve UI after rebuild without changing native br
  assert.equal(html.split('id="webBackgroundAudioToggle"').length,2);
  assert.equal(html.split('id="webBackgroundAudioBar"').length,1);
  assert.match(html,/id="favCurrentBtn"[\s\S]*?id="webBackgroundAudioToggle"/);
- assert.ok(html.includes('web-background-audio.js?v=lock-controls-20261119f'));
+ assert.ok(html.includes('web-background-audio.js?v=lock-rescue-20261119g'));
  assert.ok(html.includes('web-background-audio.css?v=lock-artwork-20261119e'));
  assert.ok(builder.includes('compact_audio=web_html['));
  assert.ok(builder.includes("'web-background-audio.css'"));
@@ -198,7 +213,7 @@ test('Web application uses audio-only route and never spins up the video decoder
  assert.match(app,/openiptv:audio-channel/);
  assert.match(app,/switchChannel\(dir,opts=\{\}\)/);
  assert.match(app,/OpenIPTVBackgroundAudio\?\.active\)return window\.OpenIPTVBackgroundAudio\.togglePlayback\(\)/);
- assert.match(app,/playChannel,switchChannel,suspendVideoForBackground,stopPlayer/);
+ assert.match(app,/playChannel,switchChannel,getPlaybackOrder:\(\)=>sortedChannels\(enabledChannels\(\)\),getAudioLinks:channel=>currentAvailableLinks\(channel\)/);
  assert.match(app,/if\(!window\.OpenIPTVBackgroundAudio\?\.active\)\$\('#playBtn'\)\.textContent='▶'/);
  assert.match(builder,/audio_begin=' function suspendVideoForBackground\(\)\{'/);
  assert.match(builder,/web_app\[web_app\.index\(audio_begin\):web_app\.index\(audio_end/);
@@ -258,4 +273,75 @@ test('audio-only mode routes the visible previous/next controls without double-s
  assert.equal(event.prevented,1);
  assert.equal(event.stopped,1);
  assert.equal(e.calls.switches.length,1);
+});
+
+test('lock-screen next skips channels without URL or marked dead and only commits the first audible channel',async()=>{
+ const channels=[
+  {id:'vtv1',name:'VTV1',url:'https://example.org/live.m3u8'},
+  {id:'vtv9',name:'VTV9',url:''},
+  {id:'vtv10',name:'VTV10',url:'https://example.org/broken.m3u8'},
+  {id:'vtv11',name:'VTV11',url:'https://example.org/working.m3u8'}];
+ const e=fixture({transactionalChannels:channels,brokenUrls:['https://example.org/broken.m3u8']});
+ assert.equal(await e.controller.activate(),true);
+ const originalAudio=e.audioElements[0];
+ e.doc.visibilityState='hidden';
+ e.handlers.nexttrack();
+ await new Promise(setImmediate);
+ assert.equal(e.audioElements.length,1);
+ assert.equal(e.audioElements[0],originalAudio);
+ assert.deepEqual(e.calls.channels,['vtv11']);
+ assert.equal(e.getCurrent().id,'vtv11');
+ assert.equal(e.ms.metadata.title,'VTV11');
+ assert.equal(e.ms.playbackState,'playing');
+ assert.equal(originalAudio.src,'https://example.org/working.m3u8');
+});
+test('all next channels without usable source keep current stream untouched',async()=>{
+ const channels=[
+  {id:'vtv1',name:'VTV1',url:'https://example.org/live.m3u8'},
+  {id:'vtv9',name:'VTV9',url:''},
+  {id:'vtv10',name:'VTV10',url:'http://mixed.invalid/stream.m3u8'},
+  {id:'vtv11',name:'VTV11',url:'https://example.org/dead.m3u8',status:'dead'}];
+ const e=fixture({transactionalChannels:channels});
+ assert.equal(await e.controller.activate(),true);
+ const audio=e.audioElements[0],beforePlays=audio.playCalls;
+ e.handlers.nexttrack();await new Promise(setImmediate);
+ assert.deepEqual(e.calls.channels,[]);
+ assert.equal(e.getCurrent().id,'vtv1');
+ assert.equal(audio.src,'https://example.org/live.m3u8');
+ assert.equal(audio.playCalls,beforePlays);
+ assert.equal(e.ms.playbackState,'playing');
+ assert.equal(e.ms.metadata.title,'VTV1');
+});
+test('failed audio candidate restores original channel and stream without removing the player',async()=>{
+ const channels=[
+  {id:'vtv1',name:'VTV1',url:'https://example.org/live.m3u8'},
+  {id:'vtv10',name:'VTV10',url:'https://example.org/broken.m3u8'}];
+ const e=fixture({transactionalChannels:channels,brokenUrls:['https://example.org/broken.m3u8']});
+ assert.equal(await e.controller.activate(),true);
+ const audio=e.audioElements[0];
+ e.doc.visibilityState='hidden';
+ e.handlers.nexttrack();await new Promise(setImmediate);
+ assert.deepEqual(e.calls.channels,[]);
+ assert.equal(e.getCurrent().id,'vtv1');
+ assert.equal(e.audioElements.length,1);
+ assert.equal(audio.removed,false);
+ assert.equal(audio.src,'https://example.org/live.m3u8');
+ assert.equal(e.ms.playbackState,'playing');
+ assert.equal(e.ms.metadata.title,'VTV1');
+});
+test('late playback error on newly committed channel triggers one rollback to last working stream',async()=>{
+ const channels=[
+  {id:'vtv1',name:'VTV1',url:'https://example.org/live.m3u8'},
+  {id:'vtv2',name:'VTV2',url:'https://example.org/next.m3u8'}];
+ const e=fixture({transactionalChannels:channels});
+ await e.controller.activate();const audio=e.audioElements[0];
+ e.handlers.nexttrack();await new Promise(setImmediate);
+ assert.equal(e.getCurrent().id,'vtv2');
+ audio.emit('error');
+ await new Promise(setImmediate);
+ assert.equal(e.getCurrent().id,'vtv1');
+ assert.equal(audio.src,'https://example.org/live.m3u8');
+ assert.equal(e.ms.metadata.title,'VTV1');
+ assert.equal(e.audioElements.length,1);
+ assert.equal(audio.removed,false);
 });

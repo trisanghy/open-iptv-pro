@@ -1300,7 +1300,7 @@
   void playChannel(ch.id,null,{manualUrl:url,mode:'live',audioOnly:!!window.OpenIPTVBackgroundAudio?.active});
  });
  updateManualLinkPicker();
- window.IPTVState=Object.freeze({readSourceURL,getStore:()=>store,isBusy:()=>tasks.check.running||tasks.shots.running,getCurrent:()=>current,getChannels:()=>enabledChannels(),openSnapshotChannel,setPage,save,toast,textStatus,player,renderList,render,playChannel,switchChannel,suspendVideoForBackground,stopPlayer,refreshManualLinks:updateManualLinkPicker,openModal,loadHlsLib,getPlayMode:()=>playMode,getMediaInfo:()=>mediaInfo,tryNextLink:()=>{if(playMode!=='live'||playCandidateIndex+1>=playCandidates.length)return false;void recoverPlayback(playGeneration,'Giám sát xác nhận đứng hình');return true;},importSource:addSource});
+ window.IPTVState=Object.freeze({readSourceURL,getStore:()=>store,isBusy:()=>tasks.check.running||tasks.shots.running,getCurrent:()=>current,getChannels:()=>enabledChannels(),openSnapshotChannel,setPage,save,toast,textStatus,player,renderList,render,playChannel,switchChannel,getPlaybackOrder:()=>sortedChannels(enabledChannels()),getAudioLinks:channel=>currentAvailableLinks(channel),suspendVideoForBackground,stopPlayer,refreshManualLinks:updateManualLinkPicker,openModal,loadHlsLib,getPlayMode:()=>playMode,getMediaInfo:()=>mediaInfo,tryNextLink:()=>{if(playMode!=='live'||playCandidateIndex+1>=playCandidates.length)return false;void recoverPlayback(playGeneration,'Giám sát xác nhận đứng hình');return true;},importSource:addSource});
  wire();render();if(upgradedChecker)save();
  $('#appMode').textContent=native?'Ứng dụng • Desktop':'Bản xem thử • Web';
  $('#miniStatus').textContent=native?'Không cần Python / VLC':'Safari phát HLS trực tiếp';
