@@ -52,6 +52,13 @@
   for(const [lang,label] of Object.entries({"en":"Waiting for video data from source •","zh-CN":"正在等待来源的视频数据 •","lo":"ກຳລັງລໍຖ້າຂໍ້ມູນວິດີໂອຈາກແຫຼ່ງ •","es":"Esperando datos de vídeo de la fuente •","pt-BR":"Aguardando dados de vídeo da fonte •","th":"กำลังรอข้อมูลวิดีโอจากแหล่ง •","km":"កំពុងរង់ចាំទិន្នន័យវីដេអូពីប្រភព •","fr":"En attente des données vidéo de la source •","de":"Warte auf Videodaten der Quelle •","it":"In attesa dei dati video dalla sorgente •","ja":"ソースから映像データを待機中 •","ko":"소스에서 영상 데이터를 기다리는 중 •","ru":"Ожидание видеоданных от источника •","id":"Menunggu data video dari sumber •","hi":"स्रोत से वीडियो डेटा की प्रतीक्षा •","ar":"بانتظار بيانات الفيديو من المصدر •"})){
     Object.assign(dictionaries[lang]||(dictionaries[lang]={}),{'Đang đợi dữ liệu video từ nguồn •':label});
   }
+  // Collector interface labels and generated playlist names only; never translate IPTV metadata.
+  const collectorUiKeys=["Tổng nguồn:","Kênh gộp:","Trùng:","Link dự phòng:","⧉ Playlist đã hợp nhất"];
+  const collectorUiLocales={"en":["Total sources:","Merged channels:","Duplicates:","Backup links:","⧉ Merged playlist","channels"],"es":["Fuentes totales:","Canales combinados:","Duplicados:","Enlaces de respaldo:","⧉ Lista de reproducción combinada","canales"],"pt-BR":["Total de fontes:","Canais mesclados:","Duplicados:","Links alternativos:","⧉ Lista de reprodução mesclada","canais"],"zh-CN":["来源总数:","合并频道:","重复项:","备用链接:","⧉ 已合并播放列表","个频道"],"th":["แหล่งข้อมูลทั้งหมด:","ช่องที่รวมแล้ว:","รายการซ้ำ:","ลิงก์สำรอง:","⧉ เพลย์ลิสต์ที่รวมแล้ว","ช่อง"],"lo":["ແຫຼ່ງທັງໝົດ:","ຊ່ອງທີ່ລວມ:","ລາຍການຊ້ຳ:","ລິ້ງສຳຮອງ:","⧉ ລາຍການຫຼິ້ນທີ່ລວມແລ້ວ","ຊ່ອງ"],"km":["ប្រភពសរុប:","ប៉ុស្តិ៍បានបញ្ចូល:","ស្ទួន:","តំណបម្រុង:","⧉ បញ្ជីចាក់ដែលបានបញ្ចូល","ប៉ុស្តិ៍"],"fr":["Sources au total :","Chaînes fusionnées :","Doublons :","Liens de secours :","⧉ Liste de lecture fusionnée","chaînes"],"de":["Quellen gesamt:","Zusammengeführte Sender:","Duplikate:","Ersatzlinks:","⧉ Zusammengeführte Wiedergabeliste","Sender"],"it":["Fonti totali:","Canali uniti:","Duplicati:","Link alternativi:","⧉ Playlist unificata","canali"],"ja":["ソース総数:","統合チャンネル:","重複:","代替リンク:","⧉ 統合済みプレイリスト","チャンネル"],"ko":["전체 소스:","병합된 채널:","중복:","백업 링크:","⧉ 병합된 재생목록","개 채널"],"ru":["Всего источников:","Объединённые каналы:","Дубликаты:","Резервные ссылки:","⧉ Объединённый плейлист","каналов"],"id":["Total sumber:","Saluran gabungan:","Duplikat:","Tautan cadangan:","⧉ Daftar putar gabungan","saluran"],"hi":["कुल स्रोत:","मर्ज किए गए चैनल:","डुप्लिकेट:","बैकअप लिंक:","⧉ मर्ज की गई प्लेलिस्ट","चैनल"],"ar":["إجمالي المصادر:","القنوات المدمجة:","المكررات:","روابط احتياطية:","⧉ قائمة التشغيل المدمجة","قنوات"]};
+  for(const [code,values] of Object.entries(collectorUiLocales)){
+    const dict=dictionaries[code]||(dictionaries[code]={});
+    collectorUiKeys.forEach((source,index)=>{if(!dict[source])dict[source]=values[index];});
+  }
   const key='open-iptv-pro-language';
   let locale='vi';
   try{const stored=localStorage.getItem(key);if(stored && Object.hasOwn(locales,stored))locale=stored;}catch{}
@@ -212,12 +219,18 @@
     }
 
     if(!out&&language==='en'){for(const [pattern,replacement] of dynamicEnglish){if(pattern.test(compact)){out=compact.replace(pattern,replacement);break;}}}
+    if(!out&&language!=='vi'){
+      // A generated source-count fragment; the neighboring user-defined source name is protected.
+      const count=compact.match(/^·\s*(\d+)\s+kênh\s*·\s*(URL|File M3U|File)$/);
+      if(count)out='· '+count[1]+' '+(collectorUiLocales[language]?.[5]||'channels')+' · '+count[2];
+    }
     if(!out)return raw;
     const leading=raw.match(/^\s*/)?.[0]||'',trailing=raw.match(/\s*$/)?.[0]||'';
     return leading+out+trailing;
   }
   function protectedNode(node){
     const parent=node.nodeType===3?node.parentElement:node;
+    if(parent?.closest?.('[data-i18n-ui="merged-playlist"]'))return false;
     return !parent||!!parent.closest?.(skipSelector)||!!parent.closest?.('[data-i18n-ignore="true"]');
   }
   function translateNode(node){
