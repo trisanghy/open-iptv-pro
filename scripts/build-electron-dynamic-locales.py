@@ -140,6 +140,22 @@ def generate(lang):
     if len(data["static"])!=len(todo_static):raise RuntimeError("Untranslated static labels")
     print(lang,"complete static",len(data["static"]),"dynamic",len(data["templates"]),flush=True)
 
+def repair_mangled_tokens(source,lang):
+    parts=re.split(r'(IPTVSLOT(?:ZERO|ONE|TWO|THREE|FOUR))',source)
+    rebuilt=[]
+    for part in parts:
+        if not part:continue
+        if part in MARKERS:rebuilt.append(part);continue
+        match=re.match(r'^(\s*)(.*?)(\s*)$',part,re.S)
+        before,wording,after=match.groups()
+        if VI.search(wording):
+            rebuilt.append(before+translate_group([wording],lang)[0]+after)
+        else:rebuilt.append(part)
+    result="".join(rebuilt)
+    if any(result.count(m)!=1 for m in MARKERS if m in source):
+        raise RuntimeError("Missing placeholder for "+lang+" in "+repr(source[:90]))
+    return result
+
 def merge():
     sources=extract()
     allpacks={"static":{},"templates":{}}
@@ -151,7 +167,11 @@ def merge():
         allpacks["static"][lang]=data["static"]
         allpacks["templates"][lang]=data["templates"]
         missing=set(sources["templates"])-set(data["templates"])
-        if missing:errors.append((lang,len(missing),list(missing)[:4]))
+        for source in sorted(missing):
+            data["templates"][source]=repair_mangled_tokens(source,lang)
+            print("REPAIRED TOKEN",lang,repr(source[:90]),flush=True)
+        remaining=set(sources["templates"])-set(data["templates"])
+        if remaining:errors.append((lang,len(remaining),list(remaining)[:4]))
     print("DYNAMIC AUDIT",len(sources["static"]),"static",len(sources["templates"]),"templates",flush=True)
     if errors:
         print("MISSING TRANSLATED DYNAMIC PATTERNS",errors,flush=True)
