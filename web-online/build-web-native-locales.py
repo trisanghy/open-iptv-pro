@@ -48,28 +48,21 @@ def catalogs():
     return data
 
 def remote_batch(phrases,lang):
-    body='\n'.join('[[[%04d]]] %s'%(i,s) for i,s in enumerate(phrases))
+    # The old translate.googleapis.com endpoint returns HTTP 429 on CI.
+    # Use the same public-label-only batch endpoint already verified by the
+    # repo's Electron locale job. This runs at build time, never in browsers.
     target={'pt-BR':'pt','zh-CN':'zh-CN'}.get(lang,lang)
-    query=urllib.parse.urlencode({'client':'gtx','sl':'en','tl':target,'dt':'t','q':body})
-    request=urllib.request.Request('https://translate.googleapis.com/translate_a/single?'+query,
-        headers={'User-Agent':'Mozilla/5.0 (Open IPTV Pro localization build)','Accept':'application/json'})
-    with urllib.request.urlopen(request,timeout=45) as response:
+    args=[('client','dict-chrome-ex'),('sl','en'),('tl',target)]
+    args.extend(('q',phrase) for phrase in phrases)
+    query=urllib.parse.urlencode(args)
+    request=urllib.request.Request('https://clients5.google.com/translate_a/t?'+query,
+        headers={'User-Agent':'Mozilla/5.0','Accept':'application/json'})
+    with urllib.request.urlopen(request,timeout=30) as response:
         data=json.loads(response.read().decode('utf-8'))
-    text=''.join(item[0] for item in data[0] if isinstance(item,list) and item and item[0])
-    pattern=re.compile(r'\[\[\[\s*0*(\d+)\s*\]\]\]')
-    marks=list(pattern.finditer(text))
-    if len(marks)!=len(phrases) or [int(m.group(1)) for m in marks]!=list(range(len(phrases))):
-        if len(phrases)==1:
-            value=pattern.sub('',text).strip()
-            if value:return [value]
-        raise ValueError('Translation API changed numbered boundaries')
-    translated=[]
-    for i,m in enumerate(marks):
-        end=marks[i+1].start() if i+1<len(marks) else len(text)
-        item=text[m.end():end].strip()
-        if not item or len(item)>len(phrases[i])*10+200:raise ValueError('Invalid translation item')
-        translated.append(item)
-    return translated
+    if (not isinstance(data,list) or len(data)!=len(phrases)
+        or any(not isinstance(value,str) or not value.strip() for value in data)):
+        raise ValueError('Translation provider returned an unexpected response')
+    return [value.strip() for value in data]
 
 def retry(phrases,lang):
     for attempt in range(5):
