@@ -67,10 +67,15 @@ def translate(lang):
 
 def merge():
     packs={}
+    previous=ROOT/"renderer/i18n-full-locale-pack.js"
+    if previous.exists():
+        matched=re.search(r"const packs=(\{.*\});root\.OpenIPTVCompletedLocales=",previous.read_text("utf-8"))
+        if not matched:raise RuntimeError("Existing locale pack is malformed")
+        packs=json.loads(matched.group(1))
     for lang in LANGS:
         path=OUTPUT/(lang+".json")
         if not path.exists():raise RuntimeError("Missing generated dictionary: "+lang)
-        packs[lang]=json.loads(path.read_text("utf-8"))
+        packs[lang]={**packs.get(lang,{}),**json.loads(path.read_text("utf-8"))}
         if not packs[lang]:raise RuntimeError("No translations for: "+lang)
     renderer=ROOT/"renderer"
     (renderer/"i18n-full-locale-pack.js").write_text(
@@ -81,8 +86,10 @@ def merge():
     index=renderer/"index.html"
     src=index.read_text("utf-8")
     anchor='<script src="i18n-multilingual-packs.js"></script><script src="i18n.js"></script>'
-    if src.count(anchor)!=1:raise RuntimeError("Unexpected index script order")
-    index.write_text(src.replace(anchor,'<script src="i18n-multilingual-packs.js"></script><script src="i18n-full-locale-pack.js"></script><script src="i18n.js"></script>',1),"utf-8")
+    if src.count(anchor)==1:
+        index.write_text(src.replace(anchor,'<script src="i18n-multilingual-packs.js"></script><script src="i18n-full-locale-pack.js"></script><script src="i18n.js"></script>',1),"utf-8")
+    elif '<script src="i18n-full-locale-pack.js"></script>' not in src:
+        raise RuntimeError("Unexpected index script order")
     path=renderer/"i18n.js"
     src=path.read_text("utf-8")
     anchor="  const key='open-iptv-pro-language';"
@@ -97,19 +104,21 @@ def merge():
     }
   }
 """
-    path.write_text(src.replace(anchor,addition+anchor,1),"utf-8")
+    if "const completedLocalePacks=" not in src:
+        path.write_text(src.replace(anchor,addition+anchor,1),"utf-8")
     audit_file=ROOT/"scripts/audit-electron-i18n.cjs"
     src=audit_file.read_text("utf-8")
     anchor="'renderer/i18n-multilingual-packs.js','renderer/i18n.js'"
-    if src.count(anchor)!=1:raise RuntimeError("Unexpected audit script load order")
-    audit_file.write_text(src.replace(anchor,"'renderer/i18n-multilingual-packs.js','renderer/i18n-full-locale-pack.js','renderer/i18n.js'",1),"utf-8")
+    if "'renderer/i18n-full-locale-pack.js'" not in src:
+        if src.count(anchor)!=1:raise RuntimeError("Unexpected audit script load order")
+        audit_file.write_text(src.replace(anchor,"'renderer/i18n-multilingual-packs.js','renderer/i18n-full-locale-pack.js','renderer/i18n.js'",1),"utf-8")
     test=ROOT/"tests/i18n-100-percent-native.test.cjs"
     test.write_text("""'use strict';
 const {test}=require('node:test'),assert=require('node:assert/strict');
 const {audit,engine}=require('../scripts/audit-electron-i18n.cjs');
 test('all 17 Electron languages translate every audited static UI label',()=>{
  const report=audit();
- assert.ok(report.total>=580);
+ assert.ok(report.total>=1100);
  for(const lang of report.results)
   assert.deepEqual(lang.untranslated,[],lang.code+' missing native UI strings');
 });

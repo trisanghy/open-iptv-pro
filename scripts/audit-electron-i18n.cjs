@@ -10,7 +10,13 @@ function snapshot(){
  const html=read('renderer/index.html');
  const labels=[...html.matchAll(/>([^<>]{2,300})</g)].map(x=>x[1].trim().replace(/&amp;/g,'&'));
  const attrs=[...html.matchAll(/\b(?:title|placeholder|aria-label)=["']([^"'<>]{2,500})["']/g)].map(x=>x[1].trim().replace(/&amp;/g,'&'));
- return [...new Set([...labels,...attrs].filter(x=>decoder.test(x)&&!['Tiếng Việt','Português','Português (Brasil)'].includes(x)))];
+ const dictionaryKeys=[];
+ // Translation-source keys come from the app's own UI dictionary, never a user's playlist.
+ for(const match of read('renderer/i18n.js').matchAll(/"((?:\\.|[^"\\])*)"\s*:/g)){
+   try{const phrase=JSON.parse('"'+match[1]+'"');if(typeof phrase==='string'&&phrase.length<500)dictionaryKeys.push(phrase);}
+   catch{}
+ }
+ return [...new Set([...labels,...attrs,...dictionaryKeys].filter(x=>decoder.test(x)&&!['Tiếng Việt','Português','Português (Brasil)'].includes(x)))];
 }
 function engine(){
  const bundle=read('renderer/languages.bundle.js');

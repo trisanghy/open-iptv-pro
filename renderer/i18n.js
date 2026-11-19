@@ -80,6 +80,8 @@
     if(typeof raw!=='string' || language==='vi')return raw;
     const dict=dictionaries[language]||{};
     const english=dictionaries.en||{};
+    // Preserve authored leading/trailing spaces in status-message fragments.
+    if(dict[raw])return dict[raw];
     const compact=raw.trim().replace(/\s+/g,' ');
     if(!compact)return raw;
     let out=dict[compact];
