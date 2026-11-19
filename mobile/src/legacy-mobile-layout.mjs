@@ -62,6 +62,12 @@ return `
  </section>
  <section class="page" id="page-multi"><h2>MultiView 4 kênh</h2><p class="muted">Bốn luồng HLS/WebView thử nghiệm; phụ thuộc codec và CORS.</p><div class="add-row"><button id="startMulti">Tạo 4 khung</button><button id="stopMulti">Dừng tất cả</button></div><div id="multiGrid"></div></section>
  <section class="page" id="page-tools"><h2>Công cụ & cài đặt</h2>
+  <section class="mobile-language-card" aria-labelledby="mobileLanguageTitle">
+    <h3 id="mobileLanguageTitle">🌐 Ngôn ngữ hiển thị</h3>
+    <label for="appLanguage">Ngôn ngữ giao diện</label>
+    <select id="appLanguage" aria-label="Ngôn ngữ giao diện"><option value="vi">Tiếng Việt</option></select>
+    <p class="muted">Chọn ngôn ngữ ứng dụng. Thay đổi có hiệu lực ngay, không cần khởi động lại.</p>
+  </section>
   <label class="epg-auto-label"><input type="checkbox" id="autoRefreshPlaylists" checked/> Tải lại tất cả danh sách M3U khi khởi động</label>
   <label class="epg-auto-label"><input type="checkbox" id="autoResumeLast" checked/> Tự phát kênh đã xem ở phiên trước</label>
   <label class="epg-auto-label auto-pip-setting"><input type="checkbox" id="autoPiPOnBackground"/>

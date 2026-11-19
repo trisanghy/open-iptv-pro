@@ -256,3 +256,10 @@ html.pip-mode .mobile-topbar{display:none!important}
 html.pip-mode .mobile-main,html.pip-mode #page-tv{display:block!important;margin:0!important;padding:0!important;width:100vw!important;height:100vh!important;min-height:0!important;max-width:none!important;overflow:hidden!important}
 html.pip-mode #page-tv>.hero-player{position:fixed!important;inset:0!important;margin:0!important;padding:0!important;width:100vw!important;height:100vh!important;max-height:none!important;min-height:0!important;aspect-ratio:auto!important;border:0!important;border-radius:0!important;background:#000!important}
 html.pip-mode #page-tv>.hero-player>video{object-fit:contain!important;border:0!important;border-radius:0!important}
+
+/* Offline UI language selector; exposed in the existing Settings/Tools tab. */
+.mobile-language-card{padding:15px;margin:12px 0 18px;background:var(--card,#132132);border:1px solid rgba(165,172,225,.24);border-radius:14px}
+.mobile-language-card h3{font-size:17px;margin:0 0 10px}
+.mobile-language-card label{display:block;margin:0 0 8px;font-weight:650}
+.mobile-language-card select{display:block;width:100%;min-height:48px;border-radius:10px;border:1px solid rgba(169,176,221,.45);padding:10px;background:#111c2a;color:#f4f5fc;font-size:16px}
+.mobile-language-card .muted{font-size:12px;line-height:1.55;margin:10px 0 0}
