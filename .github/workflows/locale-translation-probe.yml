@@ -1,4 +1,4 @@
-name: Electron locale translation provider probe
+name: Electron native translation provider capability probe
 on:
   push:
     branches: [build-sources/electron-desktop]
@@ -9,26 +9,17 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - name: Probe public translation providers with an open-source UI label only
+      - name: Verify batch translation service across all supported languages
         shell: bash
         run: |
           python - <<'PY'
-          import json, urllib.parse, urllib.request, urllib.error
-          q="Danh sách kênh vừa xem"
-          endpoints={
-            "mymemory": "https://api.mymemory.translated.net/get?"+urllib.parse.urlencode({"q":q,"langpair":"vi|ko"}),
-            "google-chrome": "https://clients5.google.com/translate_a/t?"+urllib.parse.urlencode({"client":"dict-chrome-ex","sl":"vi","tl":"ko","q":q}),
-            "lingva": "https://lingva.ml/api/v1/vi/ko/"+urllib.parse.quote(q),
-            "libre-host": "https://translate.terraprint.co/translate?q="+urllib.parse.quote(q)+"&source=vi&target=ko",
-          }
-          success=False
-          for name,url in endpoints.items():
-            try:
-              req=urllib.request.Request(url,headers={"User-Agent":"Mozilla/5.0","Accept":"application/json"})
-              with urllib.request.urlopen(req,timeout=12) as r:
-                body=r.read(1000).decode("utf-8",errors="replace")
-                print(name,"HTTP",r.status,repr(body[:300]),flush=True)
-                if name=="mymemory" and "translatedText" in body and any(c in body for c in "채널목록최근시청"):success=True
-            except Exception as e:print(name,type(e).__name__,str(e)[:110],flush=True)
-          if not success:raise SystemExit("No publicly accessible stable translation service for bulk generation")
+          import json, urllib.parse, urllib.request
+          phrases=["Danh sách kênh vừa xem","Tùy chỉnh phụ đề","Hẹn giờ ghi hình"]
+          for target in ["es","pt","zh-CN","th","lo","km","fr","de","it","ja","ko","ru","id","hi","ar"]:
+              args={"client":"dict-chrome-ex","sl":"vi","tl":target,"q":phrases}
+              query=urllib.parse.urlencode(args,doseq=True)
+              req=urllib.request.Request("https://clients5.google.com/translate_a/t?"+query,headers={"User-Agent":"Mozilla/5.0","Accept":"application/json"})
+              with urllib.request.urlopen(req,timeout=12) as res: v=json.load(res)
+              print(target,repr(v)[:450],flush=True)
+              if not isinstance(v,list) or not v:raise SystemExit("Missing response for "+target)
           PY
