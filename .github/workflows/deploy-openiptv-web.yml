@@ -140,8 +140,8 @@ jobs:
           node --test web-online/tests/web-playlist-url.test.cjs
           grep -Fq 'collector.js?v=playlist-url-20261119b' _site/index.html
           grep -Fq 'source-edit.js?v=playlist-input-20261119c' _site/index.html
-          grep -Fq 'app.js?v=ios-lockscreen-next-state-20261119a' _site/index.html
-          grep -Fq 'advanced.js?v=no-timeshift-20261119a' _site/index.html
+          grep -Fq 'app.js?v=favorites-tap-20261119a' _site/index.html
+          grep -Fq 'advanced.js?v=favorites-tap-20261119a' _site/index.html
           grep -Fq 'advanced-core.js?v=collector-merge-repair-20261119a' _site/index.html
           node --check _site/web-recent-channels.js
           node --test web-online/tests/web-recent-channels.test.cjs
@@ -205,7 +205,7 @@ jobs:
           fi
           grep -Fq 'web-tv-wide.css?v=tv-wide-responsive-fill-20261119a' _site/index.html
           grep -Fq 'src="web-mobile-player.js?v=desktop-handheld-fs-20261119a"' _site/index.html
-          grep -Fq 'href="web-mobile-player.css?v=desktop-handheld-fs-20261119a"' _site/index.html
+          grep -Fq 'href="web-mobile-player.css?v=favorites-tap-20261119a"' _site/index.html
           node --test web-online/tests/browser-channel-check.test.cjs
           node --test web-online/tests/source-use-consent-v1.test.cjs
           node --check _site/resume-last.js
