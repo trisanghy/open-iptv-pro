@@ -85,6 +85,9 @@
         if(dict[sourceKey]){out=dict[sourceKey];break;}
       }
     }
+    // Strict app-owned popup patterns: interpolate data without translating channel/file names.
+    if(!out && language!=='vi' && window.OpenIPTVDialogTemplates?.translate)
+      out=window.OpenIPTVDialogTemplates.translate(raw,language)||'';
     if(!out)out=english[compact];
     // Localized numeric statuses: only exact UI patterns, not channel or playlist names.
     if(!out && language!=='vi'){
