@@ -73,3 +73,15 @@ test('muted retry is suppressed if disabled by caller',async()=>{
  const done=await start(v,{allowMutedFallback:false});
  assert.equal(done.status,'blocked');assert.equal(v.calls,1);
 });
+
+test('native Safari/Chrome HLS uses the same audible-then-muted autoplay recovery path',()=>{
+ const fs=require('node:fs'),path=require('node:path');
+ const root=path.resolve(__dirname,'../..');
+ const app=fs.readFileSync(path.join(root,'app.js'),'utf8');
+ const builder=fs.readFileSync(path.join(root,'web-online/prepare-web.py'),'utf8');
+ assert.match(app,/if\(window\.OpenIPTVWebAutoplay\?\.start\)\{/);
+ assert.doesNotMatch(app,/if\(!native && window\.OpenIPTVWebAutoplay\?\.start\)/);
+ assert.match(builder,/web_autoplay_new=/);
+ assert.match(builder,/if\(window\.OpenIPTVWebAutoplay\?\.start\)\{/);
+ assert.doesNotMatch(builder,/if\(!native && window\.OpenIPTVWebAutoplay\?\.start\)/);
+});

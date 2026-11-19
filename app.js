@@ -724,7 +724,7 @@
    if(!isCurrent())return;
    // Chrome/Safari may block audible autoplay on first visit. Try sound
    // first, then muted autoplay so the picture starts automatically.
-   if(!native && window.OpenIPTVWebAutoplay?.start){
+   if(window.OpenIPTVWebAutoplay?.start){
     void window.OpenIPTVWebAutoplay.start(player,{
      isCurrent,
      allowMutedFallback:true,

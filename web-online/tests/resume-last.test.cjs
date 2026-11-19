@@ -63,170 +63,86 @@ async function environment({state={},channels=[{id:'news'}],mutedInitially=false
     async tick(){const fn=tasks.shift();fn?.();await Promise.resolve();}
   };
 }
-test('default setting is ON and persisted OFF is respected',async()=>{
-  const enabled=await environment();
-  assert.equal(enabled.elems.webAutoResumeLast.checked,true);
-  const disabled=await environment({state:{autoResumeLastChannel:false}});
-  assert.equal(disabled.elems.webAutoResumeLast.checked,false);
-  await disabled.start();
-  assert.deepEqual(disabled.calls.play,[]);
-});
-test('toggling setting persists to the same browser-specific store',async()=>{
-  const e=await environment();
-  e.elems.webAutoResumeLast.checked=false;e.elems.webAutoResumeLast.dispatch('change');
-  assert.equal(e.data.autoResumeLastChannel,false);
-  assert.equal(e.calls.save,1);
-  e.elems.webAutoResumeLast.checked=true;e.elems.webAutoResumeLast.dispatch('change');
-  assert.equal(e.data.autoResumeLastChannel,true);
-  assert.equal(e.calls.save,2);
-});
-test('failed save rolls the toggle back',async()=>{
-  const e=await environment({saveOK:false});
-  e.elems.webAutoResumeLast.checked=false;e.elems.webAutoResumeLast.dispatch('change');
-  assert.equal(e.elems.webAutoResumeLast.checked,true);
-  assert.equal(e.data.autoResumeLastChannel,undefined);
-});
-test('last channel auto-resumes with sound enabled',async()=>{
-  const e=await environment({mutedInitially:true});
-  await e.start();
-  assert.deepEqual(e.calls.play,['news']);
-  assert.equal(e.video.muted,false);
-  assert.equal(e.video.defaultMuted,false);
-  assert.equal(e.video.autoplay,false);
-});
-test('missing channel, disabled source, or prior manual playback does not auto-resume',async()=>{
-  const e=await environment({channels:[{id:'other'}]});await e.start();
-  assert.deepEqual(e.calls.play,['other']); // saved channel missing: choose first enabled channel
-  const noChannels=await environment({channels:[]});await noChannels.start();
-  assert.deepEqual(noChannels.calls.play,[]);
-  const missing=await environment({state:{current:''}});await missing.start();
-  assert.deepEqual(missing.calls.play,['news']);
-});
-test('blocked sound autoplay shows actionable button; click plays unmuted',async()=>{
-  const e=await environment();
-  await e.start();
-  // Simulate browser still blocking autoplay after source becomes ready
-  e.document.dispatch('openiptv:autoplay-blocked',{channelId:'news'});
-  const panel=e.elems.playerBox.children[0];
-  assert.equal(panel.hidden,false);
-  assert.match(panel.children[1].textContent,/Phát có tiếng/);
-  e.video.canPlay=true;
-  panel.children[1].dispatch('click');
-  await Promise.resolve();
-  await Promise.resolve();
-  assert.equal(e.video.muted,false);
-  assert.equal(e.video.playCalls,1);
-  assert.equal(panel.hidden,true);
-});
-test('browser NotAllowedError keeps the sound-enable prompt visible',async()=>{
-  const e=await environment();await e.start();e.document.dispatch('openiptv:autoplay-blocked',{channelId:'news'});
-  const panel=e.elems.playerBox.children[0];e.video.canPlay=false;
-  panel.children[1].dispatch('click');
-  await Promise.resolve();await Promise.resolve();
-  assert.equal(panel.hidden,false);
-  assert.match(panel.children[0].textContent,/chưa cho phép/);
-});
-test('switching OFF hides pending prompt without pausing playback',async()=>{
-  const e=await environment();await e.start();e.document.dispatch('openiptv:autoplay-blocked',{channelId:'news'});
-  const panel=e.elems.playerBox.children[0];
-  e.elems.webAutoResumeLast.checked=false;e.elems.webAutoResumeLast.dispatch('change');
-  assert.equal(panel.hidden,true);assert.equal(e.calls.save,1);
-});
-test('if web player is already handling a channel, do not replace it',async()=>{
-  const e=await environment();
-  e.app.getCurrent=()=>({id:'other'});
-  await e.start();
-  assert.deepEqual(e.calls.play,[]);
-});
 
-test('audio startup toggle is independent of channel autoplay toggle',async()=>{
-  const e=await environment({state:{autoResumeLastChannel:false}});
-  assert.equal(e.elems.webAutoResumeLast.checked,false);
-  assert.equal(e.elems.webAutoEnableAudio.checked,true);
-  await e.start();assert.deepEqual(e.calls.play,[]);
+test('auto resume defaults ON, and disabling it prevents playback',async()=>{
+ const e=await environment();
+ assert.equal(e.elems.webAutoResumeLast.checked,true);
+ await e.start();
+ assert.deepEqual(e.calls.play,['news']);
+ const disabled=await environment({state:{autoResumeLastChannel:false}});
+ await disabled.start();
+ assert.deepEqual(disabled.calls.play,[]);
 });
-test('audio preference is independently persisted to the browser',async()=>{
-  const e=await environment();
-  e.elems.webAutoEnableAudio.checked=false;e.elems.webAutoEnableAudio.dispatch('change');
-  assert.equal(e.data.autoEnableAudio,false);assert.equal(e.calls.save,1);
-  assert.equal(e.elems.webAutoResumeLast.checked,true);
+test('resume fires on page readiness without waiting for slow assets',async()=>{
+ const e=await environment({readyState:'loading'});
+ assert.deepEqual(e.calls.play,[]);
+ e.document.dispatch('DOMContentLoaded');
+ await Promise.resolve();
+ assert.deepEqual(e.calls.play,['news']);
+ assert.equal(e.video.preload,'auto');
+ assert.equal(e.video.playsInline,true);
+ assert.equal(e.video.attributes.playsinline,'');
+ assert.equal(e.video.autoplay,false,'web-autoplay.js alone owns the playback attempt');
 });
-test('audio disabled opens last channel muted and no unmute overlay on playing',async()=>{
-  const e=await environment({state:{autoEnableAudio:false}});
-  await e.start();assert.deepEqual(e.calls.play,['news']);
-  assert.equal(e.video.defaultMuted,true);assert.equal(e.video.muted,true);
-  e.video.paused=false;e.video.dispatch('playing');
-  assert.equal(e.elems.playerBox.children[0].hidden,true);
+test('autoload prefers audible playback when enabled and preserves explicit mute setting',async()=>{
+ const e=await environment({mutedInitially:true});
+ await e.start();
+ assert.equal(e.video.muted,false);
+ assert.equal(e.video.defaultMuted,false);
+ const silent=await environment({state:{autoEnableAudio:false}});
+ await silent.start();
+ assert.equal(silent.video.muted,true);
+ assert.equal(silent.video.defaultMuted,true);
 });
-test('disabled audio uses silent playback action, not forced sound',async()=>{
-  const e=await environment({state:{autoEnableAudio:false}});
-  await e.start();e.document.dispatch('openiptv:autoplay-blocked',{channelId:'news'});
-  const panel=e.elems.playerBox.children[0];
-  assert.equal(panel.children[1].textContent,'Phát kênh');
-  panel.children[1].dispatch('click');
-  await Promise.resolve();await Promise.resolve();
-  assert.equal(e.video.muted,true);
+test('no duplicate overlays, permission banners or unmute buttons after loading',async()=>{
+ const e=await environment();
+ await e.start();
+ e.video.muted=true;
+ e.video.paused=false;
+ e.video.dispatch('playing');
+ e.document.dispatch('openiptv:autoplay-muted',{channelId:'news'});
+ e.document.dispatch('openiptv:autoplay-blocked',{channelId:'news'});
+ assert.equal(e.elems.playerBox.children.length,0);
+ assert.deepEqual(e.calls.play,['news']);
+ assert.doesNotMatch(source,/createElement\(['"](?:button|div)['"]\)/);
+ assert.doesNotMatch(source,/web-resume-panel|webUnmuteAssist|showPrompt/);
 });
-test('audio setting can be enabled without restarting the channel',async()=>{
-  const e=await environment({state:{autoEnableAudio:false}});
-  await e.start();
-  e.elems.webAutoEnableAudio.checked=true;e.elems.webAutoEnableAudio.dispatch('change');
-  assert.equal(e.video.muted,false);assert.equal(e.data.autoEnableAudio,true);
-  assert.deepEqual(e.calls.play,['news']);
+test('audio preference remains independently configurable and persisted',async()=>{
+ const e=await environment();
+ e.elems.webAutoEnableAudio.checked=false;
+ e.elems.webAutoEnableAudio.dispatch('change');
+ assert.equal(e.data.autoEnableAudio,false);
+ assert.equal(e.calls.save,1);
+ assert.equal(e.video.muted,false,'no channel yet, do not change player');
+ e.elems.webAutoResumeLast.checked=false;
+ e.elems.webAutoResumeLast.dispatch('change');
+ assert.equal(e.data.autoResumeLastChannel,false);
+ assert.equal(e.calls.save,2);
 });
-test('audio toggle rolls back after failed save',async()=>{
-  const e=await environment({saveOK:false});
-  e.elems.webAutoEnableAudio.checked=false;e.elems.webAutoEnableAudio.dispatch('change');
-  assert.equal(e.elems.webAutoEnableAudio.checked,true);
-  assert.equal(e.data.autoEnableAudio,undefined);
+test('changing audio setting during playback uses existing video without reloading sources',async()=>{
+ const e=await environment({state:{autoEnableAudio:false}});
+ await e.start();
+ e.elems.webAutoEnableAudio.checked=true;
+ e.elems.webAutoEnableAudio.dispatch('change');
+ assert.equal(e.video.muted,false);
+ assert.equal(e.data.autoEnableAudio,true);
+ assert.deepEqual(e.calls.play,['news']);
 });
-test('audio preference remains configurable before any channel exists',async()=>{
-  const e=await environment({state:{current:''}});
-  e.elems.webAutoEnableAudio.checked=false;e.elems.webAutoEnableAudio.dispatch('change');
-  assert.equal(e.data.autoEnableAudio,false);assert.equal(e.calls.save,1);
+test('failed setting save restores checkbox state',async()=>{
+ const e=await environment({saveOK:false});
+ e.elems.webAutoResumeLast.checked=false;
+ e.elems.webAutoResumeLast.dispatch('change');
+ assert.equal(e.elems.webAutoResumeLast.checked,true);
+ e.elems.webAutoEnableAudio.checked=false;
+ e.elems.webAutoEnableAudio.dispatch('change');
+ assert.equal(e.elems.webAutoEnableAudio.checked,true);
 });
-
-test('DOMContentLoaded starts the last channel before all assets finish loading',async()=>{
-  const e=await environment({readyState:'loading'});
-  assert.deepEqual(e.calls.play,[]);
-  e.document.dispatch('DOMContentLoaded');
-  await Promise.resolve();
-  assert.deepEqual(e.calls.play,['news']);
-});
-test('canplay during slow stream loading does not invent an autoplay error',async()=>{
-  const e=await environment();await e.start();
-  e.video.dispatch('canplay');
-  const panel=e.elems.playerBox.children[0];
-  assert.equal(panel.hidden,true);
-});
-test('muted autoplay fallback starts video and offers one-click unmute',async()=>{
-  const e=await environment();await e.start();
-  e.video.muted=true;
-  e.video.paused=false;
-  e.video.dispatch('playing');
-  e.document.dispatch('openiptv:autoplay-muted',{channelId:'news'});
-  const panel=e.elems.playerBox.children[0];
-  assert.equal(panel.hidden,false);
-  assert.equal(panel.children[1].textContent,'Bật âm thanh');
-  panel.children[1].dispatch('click');
-  await Promise.resolve();await Promise.resolve();
-  assert.equal(e.video.muted,false);
-  assert.equal(panel.hidden,true);
-});
-test('unmuted successful autoplay has no popup',async()=>{
-  const e=await environment();await e.start();
-  e.video.muted=false;e.video.paused=false;
-  e.video.dispatch('playing');
-  assert.equal(e.elems.playerBox.children[0].hidden,true);
-});
-test('autoplay failure from another channel never triggers a popup',async()=>{
-  const e=await environment();await e.start();
-  e.document.dispatch('openiptv:autoplay-blocked',{channelId:'other'});
-  assert.equal(e.elems.playerBox.children[0].hidden,true);
-});
-test('when audio was explicitly disabled, muted fallback needs no popup',async()=>{
-  const e=await environment({state:{autoEnableAudio:false}});await e.start();
-  e.video.paused=false;e.video.muted=true;
-  e.document.dispatch('openiptv:autoplay-muted',{channelId:'news'});
-  assert.equal(e.elems.playerBox.children[0].hidden,true);
+test('does not replace an active channel or load when sources are missing',async()=>{
+ const e=await environment();
+ e.app.getCurrent=()=>({id:'other'});
+ await e.start();assert.deepEqual(e.calls.play,[]);
+ const noChannels=await environment({channels:[]});
+ await noChannels.start();assert.deepEqual(noChannels.calls.play,[]);
+ const fallback=await environment({channels:[{id:'other'}]});
+ await fallback.start();assert.deepEqual(fallback.calls.play,['other']);
 });

@@ -75,7 +75,7 @@ if app_text.count(audio_old) != 1:
     sys.exit('Missing audio playback insertion point')
 app_text=app_text.replace(audio_old,audio_new,1)
 web_autoplay_old="  const startPlaying=()=>{\n   if(!isCurrent())return;\n   const promise=player.play();\n   if(promise?.catch)promise.catch(e=>{\n    if(!isCurrent()||e?.name==='AbortError')return;\n    if(e?.name==='NotAllowedError'){\n     $('#streamInfo').textContent='Nhấn Phát để tiếp tục';\n     toast('Trình phát yêu cầu thao tác Phát của người dùng','warn');\n    }else recoverPlayback(generation,e.message||'Lỗi video',attempt);\n   });\n  };\n"
-web_autoplay_new="  const startPlaying=()=>{\n   if(!isCurrent())return;\n   // Chrome/Safari may block audible autoplay on first visit. Try sound\n   // first, then muted autoplay so the picture starts automatically.\n   if(!native && window.OpenIPTVWebAutoplay?.start){\n    void window.OpenIPTVWebAutoplay.start(player,{\n     isCurrent,\n     allowMutedFallback:true,\n     onMuted:()=>{\n      if(!isCurrent())return;\n      $('#streamInfo').textContent='● Đang phát (tắt tiếng)';\n      document.dispatchEvent(new CustomEvent('openiptv:autoplay-muted',{detail:{channelId:current?.id}}));\n     },\n     onBlocked:()=>{\n      if(!isCurrent()||!player.paused)return;\n      $('#streamInfo').textContent='Nhấn Phát để tiếp tục';\n      document.dispatchEvent(new CustomEvent('openiptv:autoplay-blocked',{detail:{channelId:current?.id}}));\n     },\n     onError:e=>{if(isCurrent())recoverPlayback(generation,e?.message||'Lỗi video',attempt);}\n    });\n    return;\n   }\n   const promise=player.play();\n   if(promise?.catch)promise.catch(e=>{\n    if(!isCurrent()||e?.name==='AbortError')return;\n    if(e?.name==='NotAllowedError'){\n     $('#streamInfo').textContent='Nhấn Phát để tiếp tục';\n     toast('Trình phát yêu cầu thao tác Phát của người dùng','warn');\n    }else recoverPlayback(generation,e.message||'Lỗi video',attempt);\n   });\n  };\n"
+web_autoplay_new="  const startPlaying=()=>{\n   if(!isCurrent())return;\n   // Chrome/Safari may block audible autoplay on first visit. Try sound\n   // first, then muted autoplay so the picture starts automatically.\n   if(window.OpenIPTVWebAutoplay?.start){\n    void window.OpenIPTVWebAutoplay.start(player,{\n     isCurrent,\n     allowMutedFallback:true,\n     onMuted:()=>{\n      if(!isCurrent())return;\n      $('#streamInfo').textContent='● Đang phát (tắt tiếng)';\n      document.dispatchEvent(new CustomEvent('openiptv:autoplay-muted',{detail:{channelId:current?.id}}));\n     },\n     onBlocked:()=>{\n      if(!isCurrent()||!player.paused)return;\n      $('#streamInfo').textContent='Nhấn Phát để tiếp tục';\n      document.dispatchEvent(new CustomEvent('openiptv:autoplay-blocked',{detail:{channelId:current?.id}}));\n     },\n     onError:e=>{if(isCurrent())recoverPlayback(generation,e?.message||'Lỗi video',attempt);}\n    });\n    return;\n   }\n   const promise=player.play();\n   if(promise?.catch)promise.catch(e=>{\n    if(!isCurrent()||e?.name==='AbortError')return;\n    if(e?.name==='NotAllowedError'){\n     $('#streamInfo').textContent='Nhấn Phát để tiếp tục';\n     toast('Trình phát yêu cầu thao tác Phát của người dùng','warn');\n    }else recoverPlayback(generation,e.message||'Lỗi video',attempt);\n   });\n  };\n"
 if app_text.count(web_autoplay_old) != 1:
     sys.exit('Web autoplay bootstrap changed in upstream app.js')
 app_text=app_text.replace(web_autoplay_old,web_autoplay_new,1)
@@ -212,11 +212,11 @@ link_anchor="<p id=\"cloudAuthProviders\" class=\"hint\" aria-live=\"polite\"></
 if html.count(link_anchor)!=1:
     sys.exit('Cloud link form anchor missing')
 html=html.replace(link_anchor,"      <div id=\"cloudLinkForm\" class=\"cloud-email-form\" hidden>\n        <label for=\"cloudLinkInput\">Nếu liên kết trong email không quay về website, hãy dán liên kết vào đây</label>\n        <div class=\"cloud-email-input-line\">\n          <input id=\"cloudLinkInput\" type=\"url\" autocomplete=\"off\" spellcheck=\"false\" placeholder=\"Liên kết xác nhận của Supabase\"/>\n          <button type=\"button\" class=\"btn btn-subtle\" id=\"cloudLinkVerify\">Xác thực liên kết</button>\n        </div>\n        <p class=\"hint\">Liên kết chỉ được dùng một lần và không được lưu vào playlist hoặc đám mây.</p>\n      </div>\n"+link_anchor,1)
-html=html.replace('</head>','<link rel="stylesheet" href="web-only.css?v=epg-rows-20261119f"/><link rel="stylesheet" href="resume-last.css"/><link rel="stylesheet" href="web-volume.css"/><link rel="stylesheet" href="cloud-sync.css"/><link rel="manifest" href="manifest.webmanifest"/></head>',1)
+html=html.replace('</head>','<link rel="stylesheet" href="web-only.css?v=epg-rows-20261119f"/><link rel="stylesheet" href="web-volume.css"/><link rel="stylesheet" href="cloud-sync.css"/><link rel="manifest" href="manifest.webmanifest"/></head>',1)
 html=html.replace('<script src="app.js"></script>','<script src="web-mobile-player.js?v=desktop-handheld-fs-20261119a"></script><script src="app.js"></script>',1)
 html=html.replace('</head>','<link rel="stylesheet" href="web-mobile-player.css?v=desktop-handheld-fs-20261119a"/></head>',1)
 html=html.replace('src="theme-boot.js"','src="theme-boot.js?v=responsive-desktop-20261118j"',1)
-html=html.replace('</body>','<script src="supabase-sdk.js"></script><script src="cloud-core.js"></script><script src="web-only.js"></script><script src="resume-last.js"></script><script src="web-volume.js"></script><script src="cloud-sync.js"></script><script src="web-player-icons.js?v=audio-state-sync-20261119a"></script></body>',1)
+html=html.replace('</body>','<script src="supabase-sdk.js"></script><script src="cloud-core.js"></script><script src="web-only.js"></script><script src="resume-last.js?v=autoplay-clean-20261119a"></script><script src="web-volume.js"></script><script src="cloud-sync.js"></script><script src="web-player-icons.js?v=audio-state-sync-20261119a"></script></body>',1)
 html=html.replace('</head>','<link rel="stylesheet" href="web-player-icons.css?v=vectorplayer-airplay-20261118c"/><link rel="stylesheet" href="web-tv-wide.css?v=tv-wide-no-side-epg-20261118k"/><link rel="stylesheet" href="web-mobile-controls-polish.css?v=mobile-pip-tabs-aligned-20261118m"/></head>',1)
 # The old PiP label overlaps the vector icon even with font-size:0 in Safari.
 # Preserve the button ID and its accessible aria-label.
@@ -315,12 +315,10 @@ for asset in ('i18n.js','languages.bundle.js'):
         '<script src="'+asset+'?v='+digest+'"></script>',html,count=1)
     if count!=1:sys.exit('Missing language resource script: '+asset)
 
-# Preserve one-tap iOS audio unlock in any future WebView-based rebuild.
-# Chrome iOS needs its sound action outside the native video surface.
+# Existing volume button is the only manual audio action in Chrome iOS.
+# Never inject an extra button, permission banner or overlay.
 if 'web-ios-audio-recovery.js' not in html:
-    html=html.replace('</body>','<script src="web-ios-audio-recovery.js?v=chrome-ios-audio-20261119b"></script></body>',1)
-if 'web-ios-audio-recovery.css' not in html:
-    html=html.replace('</head>','<link rel="stylesheet" href="web-ios-audio-recovery.css?v=chrome-ios-audio-20261119b"/></head>',1)
+    html=html.replace('</body>','<script src="web-ios-audio-recovery.js?v=autoplay-clean-20261119a"></script></body>',1)
 (out/'index.html').write_text(html,encoding='utf-8')
 (out/'.nojekyll').write_text('')
 (out/'manifest.webmanifest').write_text(json.dumps({

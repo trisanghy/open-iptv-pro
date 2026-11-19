@@ -162,7 +162,9 @@ jobs:
           grep -Fq 'href="web-mobile-player.css?v=desktop-handheld-fs-20261119a"' _site/index.html
           node --test web-online/tests/browser-channel-check.test.cjs
           node --test web-online/tests/source-use-consent-v1.test.cjs
+          node --check _site/resume-last.js
           node --test web-online/tests/resume-last.test.cjs
+          grep -Fq 'resume-last.js?v=autoplay-clean-20261119a' _site/index.html
           python3 -m py_compile web-online/prepare-web.py
           node --check _site/web-background-audio.js
           node --test web-online/tests/web-background-audio.test.cjs
@@ -175,8 +177,10 @@ jobs:
           grep -Fq 'web-background-audio.js?v=audio-state-sync-20261119a' _site/index.html
           node --check _site/web-ios-audio-recovery.js
           node --test web-online/tests/web-ios-audio-recovery.test.cjs
-          grep -Fq 'web-ios-audio-recovery.js?v=chrome-ios-audio-20261119b' _site/index.html
-          grep -Fq 'web-ios-audio-recovery.css?v=chrome-ios-audio-20261119b' _site/index.html
+          grep -Fq 'web-ios-audio-recovery.js?v=autoplay-clean-20261119a' _site/index.html
+          if grep -Eq 'web-ios-audio-recovery[.]css|resume-last[.]css|id="web-resume-panel"|id="webUnmuteAssist"' _site/index.html; then
+            echo 'Obsolete sound overlay still included'; exit 1
+          fi
           node --check _site/web-autoplay.js
           node --test web-online/tests/web-autoplay.test.cjs
           node --check _site/cloud-core.js
