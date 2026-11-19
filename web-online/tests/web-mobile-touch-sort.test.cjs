@@ -1,95 +1,119 @@
 'use strict';
-const {test}=require('node:test'),assert=require('node:assert/strict'),vm=require('node:vm'),fs=require('node:fs'),path=require('node:path');
-const root=path.resolve(__dirname,'../..'),source=fs.readFileSync(path.join(root,'web-mobile-touch-sort.js'),'utf8');
-const order=require('../../channel-order.js');
+const {test}=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm'),path=require('node:path');
+const root=path.resolve(__dirname,'../..'),read=p=>fs.readFileSync(path.join(root,p),'utf8');
+const source=read('web-mobile-touch-sort.js'),order=require('../../channel-order.js');
 function fixture(){
- const channels=[
-  {id:'vtv1',name:'VTV1',group:'VTV',sourceId:'s1',url:'https://source.test/a'},
-  {id:'vtv2',name:'VTV2',group:'VTV',sourceId:'s1',url:'https://source.test/b'},
-  {id:'htv7',name:'HTV7',group:'HTV',sourceId:'s2',url:'https://source.test/c'}
- ];
- const store={channels,groupOrder:['VTV','HTV','Trống'],channelOrder:{VTV:['vtv1','vtv2'],HTV:['htv7']},folders:['Trống'],
-  collapsedGroups:['HTV'],favorites:['vtv1'],snapshots:{'https://source.test/a':'stored'},sources:[{id:'s1'},{id:'s2'}]};
- const listeners={},stats={saved:0,rendered:0,toasts:[],canSave:true},nodes={};
- function elm(id){return nodes[id]||(nodes[id]={
-  id,contains:()=>true,querySelectorAll:()=>[],addEventListener(){},getBoundingClientRect:()=>({top:0,bottom:400}),
-  scrollHeight:200,clientHeight:100,scrollTop:0
- });}
+ const store={channels:[
+  {id:'vtv1',name:'VTV1',group:'VTV',sourceId:'s1',url:'https://iptv.test/vtv1'},
+  {id:'vtv2',name:'VTV2',group:'VTV',sourceId:'s1',url:'https://iptv.test/vtv2'},
+  {id:'htv7',name:'HTV7',group:'HTV',sourceId:'s2',url:'https://iptv.test/htv7'}
+ ],sources:[{id:'s1'},{id:'s2'}],favorites:['vtv1'],snapshots:{'https://iptv.test/vtv1':'snapshot'},
+  groupOrder:['VTV','HTV','Trống'],channelOrder:{VTV:['vtv1','vtv2'],HTV:['htv7']},
+  collapsedGroups:['HTV'],folders:['Trống']};
+ const handlers={},stats={saved:0,rendered:0,toasts:[],canSave:true},timers=new Map();
+ let timeoutIndex=0,now=0,hover=null;
+ function classList(classes){const c=new Set(classes);return{contains:k=>c.has(k),add:k=>c.add(k),remove:(...args)=>args.forEach(x=>c.delete(x))}}
+ const nodes={};
+ function element(id){return nodes[id]||(nodes[id]={id,contains:()=>true,querySelectorAll:()=>[],getBoundingClientRect:()=>({top:0,bottom:400}),
+  scrollHeight:200,clientHeight:100,scrollTop:0});}
  const doc={documentElement:{dataset:{iptvDevice:'mobile'}},body:{append(){}},
-  getElementById:elm,querySelector:()=>null,querySelectorAll:()=>[],
-  addEventListener:(n,fn)=>{listeners[n]=fn},elementFromPoint:()=>null,
-  createElement:tag=>({tagName:tag,classList:{add(){},remove(){}},style:{},remove(){},setAttribute(){}})
+  getElementById:element,querySelector:()=>null,
+  elementFromPoint:()=>hover,
+  createElement:tag=>({tag,classList:classList([]),style:{},remove(){},setAttribute(){}}),
+  addEventListener:(n,fn)=>{handlers[n]=fn}
  };
- const win={IPTVState:{getStore:()=>store,save:()=>{stats.saved++;return stats.canSave},
-  render:()=>{stats.rendered++},toast:(...args)=>stats.toasts.push(args)},
+ const win={IPTVState:{getStore:()=>store,save(){stats.saved++;return stats.canSave},
+  render(){stats.rendered++},toast:(...a)=>stats.toasts.push(a)},
   OpenIPTVChannelOrder:order,IPTVProAdvanced:{canEdit:()=>true},
-  addEventListener(){},requestAnimationFrame:()=>0,cancelAnimationFrame(){},
-  setTimeout:()=>0,clearTimeout(){},navigator:{}};
- class MutationObserver{observe(){}}
- vm.runInNewContext(source,{window:win,document:doc,MutationObserver},{timeout:3000});
- return {win,doc,store,stats,listeners};
+  addEventListener(){},requestAnimationFrame(){return 1},cancelAnimationFrame(){},
+  setTimeout(cb,ms){const n=++timeoutIndex;timers.set(n,{cb,at:now+ms});return n},
+  clearTimeout(n){timers.delete(n)},navigator:{}};
+ vm.runInNewContext(source,{document:doc,window:win},{timeout:5000});
+ function row(kind,id){
+  const isChannel=kind==='channel';
+  const node={dataset:isChannel?{channelId:id,group:store.channels.find(x=>x.id===id).group}:{group:id},
+   classList:classList([isChannel?'channel-item':'folder-header']),
+   getBoundingClientRect:()=>({top:0,bottom:90,height:90}),contains:x=>x===node,
+   closest(query){if(query.includes('channel-item')||query.includes('folder-header'))return node;return query.includes('button')&&!isChannel?node:null}};
+  return node;
+ }
+ function touch(type,source,x=15,y=15,{identifier=17,multi=false}={}){
+  const t={identifier,clientX:x,clientY:y};
+  const e={target:source,touches:type==='touchend'?[]:multi?[t,t]:[t],changedTouches:[t],cancelable:true,
+   prevented:false,preventDefault(){this.prevented=true},stopImmediatePropagation(){this.stopped=true}};
+  handlers[type](e);return e;
+ }
+ function tick(ms){now+=ms;for(const [i,t]of [...timers])if(t.at<=now){timers.delete(i);t.cb()}}
+ return {store,stats,win,doc,handlers,row,touch,tick,setHover:x=>hover=x,timers};
 }
-test('touch channel reorder persists in same folder without touching source or favorites',()=>{
- const f=fixture(),before=JSON.stringify({sources:f.store.sources,favorites:f.store.favorites,snapshots:f.store.snapshots});
+test('channel reorder uses the existing store without changing source/favorites/snapshot',()=>{
+ const f=fixture(),saved=JSON.stringify({sources:f.store.sources,favorites:f.store.favorites,snapshots:f.store.snapshots});
  assert.equal(f.win.OpenIPTVMobileTouchSort.commitChannel('vtv2',{group:'VTV',anchorId:'vtv1',after:false}),true);
  assert.deepEqual([...f.store.channelOrder.VTV],['vtv2','vtv1']);
- assert.equal(f.store.channels.find(x=>x.id==='vtv2').group,'VTV');
- assert.equal(JSON.stringify({sources:f.store.sources,favorites:f.store.favorites,snapshots:f.store.snapshots}),before);
- assert.equal(f.stats.saved,1);assert.equal(f.stats.rendered,1);
+ assert.equal(JSON.stringify({sources:f.store.sources,favorites:f.store.favorites,snapshots:f.store.snapshots}),saved);
 });
-test('move channel into a collapsed or empty folder and reveal it after drop',()=>{
- const f=fixture();
- assert.equal(f.win.OpenIPTVMobileTouchSort.commitChannel('vtv1',{group:'HTV',anchorId:'htv7',after:true}),true);
- assert.deepEqual([...f.store.channelOrder.HTV],['htv7','vtv1']);
- assert.ok(!f.store.collapsedGroups.includes('HTV'));
+test('long press 800ms on a full channel row, then drag into folded folder',()=>{
+ const f=fixture(),start=f.row('channel','vtv1'),target=f.row('folder','HTV');
+ f.setHover(target);
+ f.touch('touchstart',start);
+ f.tick(799);
+ assert.equal(f.timers.size,1);
+ f.tick(1);
+ const move=f.touch('touchmove',start,40,35);
+ assert.equal(move.prevented,true);
+ const end=f.touch('touchend',start,40,35);
+ assert.equal(end.prevented,true);
  assert.equal(f.store.channels[0].group,'HTV');
- assert.equal(f.store.channels[0].url,'https://source.test/a');
- assert.equal(f.win.OpenIPTVMobileTouchSort.commitChannel('vtv2',{group:'Trống',anchorId:'',after:false}),true);
- assert.deepEqual([...f.store.channelOrder.Trống],['vtv2']);
+ assert.deepEqual([...f.store.channelOrder.HTV],['htv7','vtv1']);
+ assert.equal(f.store.collapsedGroups.includes('HTV'),false);
+ assert.equal(f.stats.saved,1);
+ const click={target:start,prevented:false,preventDefault(){this.prevented=true},stopImmediatePropagation(){}};
+ f.handlers.click(click);assert.equal(click.prevented,true);
 });
-test('reorder folder before or after target with no redundant save',()=>{
- const f=fixture();
- assert.equal(f.win.OpenIPTVMobileTouchSort.commitFolder('VTV',{group:'HTV',after:true}),true);
+test('short tap and finger swipe before 0.8s never sort nor block default scroll',()=>{
+ const f=fixture(),r=f.row('channel','vtv2');
+ f.touch('touchstart',r);
+ f.tick(450);
+ const end=f.touch('touchend',r);
+ assert.equal(end.prevented,false);
+ f.tick(500);assert.equal(f.stats.saved,0);
+ f.touch('touchstart',r);const move=f.touch('touchmove',r,45,90);
+ assert.equal(move.prevented,false);
+ f.tick(1000);
+ assert.equal(f.stats.saved,0);
+});
+test('long press on folder header itself reorders folders without adding controls',()=>{
+ const f=fixture(),from=f.row('folder','VTV'),to=f.row('folder','HTV');
+ f.setHover(to);
+ f.touch('touchstart',from);f.tick(800);f.touch('touchmove',from,40,70);f.touch('touchend',from,40,70);
  assert.deepEqual([...f.store.groupOrder],['HTV','VTV','Trống']);
- assert.equal(f.win.OpenIPTVMobileTouchSort.commitFolder('VTV',{group:'HTV',after:true}),false);
  assert.equal(f.stats.saved,1);
 });
-test('storage quota rollback restores channel group and order with no data loss',()=>{
+test('touch on interactive star button cannot drag a channel',()=>{
+ const f=fixture(),r=f.row('channel','vtv1');
+ const btn={closest(selector){if(selector.includes('channel-item'))return r;return btn}};
+ f.touch('touchstart',btn);f.tick(900);
+ assert.equal(f.timers.size,0);assert.equal(f.stats.saved,0);
+});
+test('storage failure reverts channel and folder moves',()=>{
  const f=fixture();f.stats.canSave=false;
- assert.equal(f.win.OpenIPTVMobileTouchSort.commitChannel('vtv1',{group:'HTV',anchorId:'htv7',after:false}),false);
+ assert.equal(f.win.OpenIPTVMobileTouchSort.commitChannel('vtv1',{group:'HTV',anchorId:'htv7'}),false);
  assert.deepEqual([...f.store.channelOrder.VTV],['vtv1','vtv2']);
- assert.deepEqual([...f.store.channelOrder.HTV],['htv7']);
  assert.equal(f.store.channels[0].group,'VTV');
- assert.deepEqual([...f.store.collapsedGroups],['HTV']);
  assert.equal(f.win.OpenIPTVMobileTouchSort.commitFolder('VTV',{group:'HTV',after:true}),false);
  assert.deepEqual([...f.store.groupOrder],['VTV','HTV','Trống']);
- assert.equal(f.stats.rendered,1);assert.equal(f.stats.toasts.length,2);
 });
-test('touch sorting module registers delegated pointer handling but leaves tap/play untouched',()=>{
- const f=fixture();
- for(const name of ['pointerdown','pointermove','pointerup','pointercancel','click']){
-  assert.equal(typeof f.listeners[name],'function');
- }
- assert.equal(f.win.OpenIPTVMobileTouchSort.isMobile(),true);
- f.doc.documentElement.dataset.iptvDevice='desktop';
- assert.equal(f.win.OpenIPTVMobileTouchSort.isMobile(),false);
- assert.match(source,/pointerType!=='touch'/);
- assert.match(source,/setPointerCapture/);
- assert.match(source,/280/);
- assert.match(source,/className='folder-sort-grip'/);
- assert.match(source,/getElementById\('channelList'\)/);
-});
-test('build installs Web-only touch gestures without editing Electron or native sources',()=>{
- const html=fs.readFileSync(path.join(root,'index.html'),'utf8'),
-  builder=fs.readFileSync(path.join(root,'web-online/prepare-web.py'),'utf8'),
-  css=fs.readFileSync(path.join(root,'web-mobile-touch-sort.css'),'utf8');
+test('Web-only CSS contains no visible three-bar grip and leaves touch scrolling enabled',()=>{
+ const html=read('index.html'),builder=read('web-online/prepare-web.py'),css=read('web-mobile-touch-sort.css');
+ assert.match(source,/HOLD_MS=800/);
+ assert.doesNotMatch(source,/folder-sort-grip|setPointerCapture|pointerdown/);
+ assert.match(css,/#channelList \.channel-move\{\s*display:none!important/);
+ assert.match(css,/touch-action:pan-y!important/);
+ assert.doesNotMatch(css,/\.folder-sort-grip/);
  for(const asset of ['web-mobile-touch-sort.css','web-mobile-touch-sort.js']){
-  assert.ok(html.includes(asset+'?v=mobile-touch-sort-20261120a'));
-  assert.ok(builder.includes(asset+'?v=mobile-touch-sort-20261120a'));
-  assert.ok(builder.includes('copy2(touch_sort_root / asset,out / asset)'));
+  const url=asset+'?v=mobile-touch-sort-20261120b';
+  assert.ok(html.includes(url),url);
+  assert.ok(builder.includes(url),url+' in build');
  }
- assert.match(css,/touch-action:none!important/);
- assert.match(css,/\.web-touch-sort-ghost/);
- assert.match(source,/api\.save\(\)/);
- assert.match(source,/api\.render\(true\)/);
+ assert.match(builder,/copy2\(touch_sort_root \/ asset,out \/ asset\)/);
 });

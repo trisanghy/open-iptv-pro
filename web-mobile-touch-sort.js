@@ -1,37 +1,31 @@
 'use strict';
 /* Touch-only drag sorting for the Web player.
  * Existing desktop pointer + HTML5 drag support stays in app.js.
- * On iOS/Android only the dedicated grip captures touch, so scrolling the
- * channel list, tapping a channel and tapping Favorite work normally. */
+ * On iOS/Android long-press the folder/channel itself for 800ms.
+ * Short taps play/open, swipes scroll, and nested action buttons remain intact. */
 (function(w,d){
  const api=w.IPTVState,order=w.OpenIPTVChannelOrder;
  const channelList=d.getElementById('channelList'),folderManager=d.getElementById('folderManager');
  if(!api||!order||!channelList)return;
  const isMobile=()=>d.documentElement?.dataset?.iptvDevice==='mobile';
  const canEdit=()=>w.IPTVProAdvanced?.canEdit?.()!==false;
- const ICON='<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M5 7h14M5 12h14M5 17h14"/><circle cx="3" cy="7" r=".6" fill="currentColor"/><circle cx="3" cy="12" r=".6" fill="currentColor"/><circle cx="3" cy="17" r=".6" fill="currentColor"/></svg>';
  const selector='#channelList .folder-header[data-group],#folderManager .folder-card[data-group],#channelList .channel-item[data-channel-id]';
+ const HOLD_MS=800;
+ const CANCEL_SLOP=14;
  let gesture=null,ghost=null,highlight=null,scrollFrame=0,suppressClickUntil=0,suppressClickSource=null;
- function decorate(){
-  if(!isMobile())return;
-  for(const row of channelList.querySelectorAll('.channel-item[data-channel-id]')){
-   const grip=row.querySelector('.channel-move');
-   if(!grip||grip.dataset.touchSort)return;
-   grip.dataset.touchSort='channel';grip.innerHTML=ICON;
-   grip.title='Chạm để chọn thư mục · giữ rồi kéo để sắp xếp kênh';
-   grip.setAttribute('aria-label','Chuyển hoặc kéo để sắp xếp kênh');
-  }
-  for(const root of [channelList,folderManager].filter(Boolean)){
-   for(const item of root.querySelectorAll(root===channelList?'.folder-header[data-group]':'.folder-card[data-group]')){
-    if(item.querySelector('.folder-sort-grip'))continue;
-    const handle=d.createElement('span');
-    handle.className='folder-sort-grip';handle.dataset.touchSort='folder';
-    handle.tabIndex=0;handle.setAttribute('role','button');handle.setAttribute('aria-label','Giữ và kéo để sắp xếp thư mục '+item.dataset.group);
-    handle.title='Giữ và kéo để sắp xếp thư mục';handle.innerHTML=ICON;
-    if(item.classList.contains('folder-header'))item.insertBefore(handle,item.querySelector('.folder-size')||null);
-    else item.insertBefore(handle,item.firstChild);
-   }
-  }
+ // No extra drag icons: long press anywhere on a channel or folder.
+ // A short tap retains the existing play/expand behavior; normal scroll cancels
+ // the pending hold. Use cancellable touchmove for reliable iPhone Safari drag.
+ const decorate=()=>{};
+ const touchAt=(event,id)=>Array.from(event.changedTouches||[]).find(t=>t.identifier===id)||null;
+ function dragSource(element){
+  const row=element?.closest?.(selector);
+  if(!row)return null;
+  if(!channelList.contains(row)&&!folderManager?.contains(row))return null;
+  const interactive=element.closest('button,a,input,select,textarea,label,[contenteditable="true"]');
+  // The folder header itself is a button and must be a draggable surface.
+  if(interactive&&interactive!==row)return null;
+  return row;
  }
  function reset(){
   if(gesture?.timer)w.clearTimeout(gesture.timer);
@@ -60,7 +54,7 @@
   if(!target)return;
   const isRow=target.classList.contains('channel-item');
   if(g.kind==='folder'&&isRow)return;
-  const group=isRow?target.dataset.group:target.dataset.group;
+  const group=target.dataset.group;
   const store=api.getStore();
   const available=new Set([...store.groupOrder,...store.folders,...store.channels.map(c=>order.groupOf(c))]);
   if(!available.has(group))return;
@@ -120,54 +114,61 @@
   }
   api.render(true);api.toast('Đã sắp xếp thư mục: '+id);return true;
  }
- d.addEventListener('pointerdown',e=>{
-  if(!isMobile()||e.pointerType!=='touch'||e.isPrimary===false||gesture)return;
-  const grip=e.target.closest?.('[data-touch-sort]');
-  if(!grip||!channelList.contains(grip)&&!folderManager?.contains(grip))return;
-  const row=grip.closest('.channel-item[data-channel-id],.folder-header[data-group],.folder-card[data-group]');
-  if(!row)return;
-  const kind=grip.dataset.touchSort;
-  const id=kind==='channel'?row.dataset.channelId:row.dataset.group;
+ d.addEventListener('touchstart',e=>{
+  if(!isMobile()||gesture||e.touches.length!==1)return;
+  const source=dragSource(e.target);
+  if(!source)return;
+  const touch=e.changedTouches[0];
+  const kind=source.classList.contains('channel-item')?'channel':'folder';
+  const id=kind==='channel'?source.dataset.channelId:source.dataset.group;
   if(!id)return;
-  gesture={pointerId:e.pointerId,grip,source:row,kind,id,x:e.clientX,y:e.clientY,lastX:e.clientX,lastY:e.clientY,started:false,drop:null,timer:0};
-  try{grip.setPointerCapture(e.pointerId);}catch{}
-  gesture.timer=w.setTimeout(startDrag,280);
- },true);
- d.addEventListener('pointermove',e=>{
-  const g=gesture;if(!g||e.pointerId!==g.pointerId)return;
-  g.lastX=e.clientX;g.lastY=e.clientY;
+  gesture={identifier:touch.identifier,source,kind,id,x:touch.clientX,y:touch.clientY,
+   lastX:touch.clientX,lastY:touch.clientY,started:false,drop:null,timer:0};
+  gesture.timer=w.setTimeout(startDrag,HOLD_MS);
+ },{capture:true,passive:true});
+ d.addEventListener('touchmove',e=>{
+  const g=gesture;if(!g)return;
+  if(e.touches.length!==1){reset();return;}
+  const touch=touchAt(e,g.identifier);if(!touch)return;
+  g.lastX=touch.clientX;g.lastY=touch.clientY;
   if(!g.started){
-   if(Math.hypot(g.lastX-g.x,g.lastY-g.y)>14)reset();
+   // Finger movement before 0.8 s is a normal swipe/scroll, not a drag.
+   if(Math.hypot(g.lastX-g.x,g.lastY-g.y)>CANCEL_SLOP)reset();
    return;
   }
   if(e.cancelable)e.preventDefault();
-  positionGhost(e.clientX,e.clientY);dropTarget(e.clientX,e.clientY);
+  positionGhost(touch.clientX,touch.clientY);dropTarget(touch.clientX,touch.clientY);
   if(!scrollFrame)scrollFrame=w.requestAnimationFrame(scrollStep);
  },{capture:true,passive:false});
- d.addEventListener('pointerup',e=>{
-  const g=gesture;if(!g||e.pointerId!==g.pointerId)return;
-  const finished=g.started,id=g.id,kind=g.kind,drop=g.drop,source=g.grip;
+ d.addEventListener('touchend',e=>{
+  const g=gesture;if(!g)return;
+  const touch=touchAt(e,g.identifier);if(!touch)return;
+  const finished=g.started,id=g.id,kind=g.kind,source=g.source;
+  // Re-evaluate the drop where the finger was released, including after auto-scroll.
+  if(finished)dropTarget(touch.clientX,touch.clientY);
+  const drop=g.drop;
   reset();
   if(!finished)return;
   if(e.cancelable)e.preventDefault();
-  suppressClickUntil=Date.now()+800;suppressClickSource=source;
+  suppressClickUntil=Date.now()+900;suppressClickSource=source;
   if(drop){if(kind==='channel')commitChannel(id,drop);else commitFolder(id,drop);}
+ },{capture:true,passive:false});
+ d.addEventListener('touchcancel',reset,true);
+ d.addEventListener('contextmenu',e=>{
+  if(gesture?.started&&gesture.source.contains(e.target)){e.preventDefault();e.stopPropagation();}
  },true);
- d.addEventListener('pointercancel',reset,true);
  w.addEventListener('blur',reset);
+ // Long-press release must not subsequently play a channel or collapse a folder.
  d.addEventListener('click',e=>{
-  const grip=e.target?.closest?.('[data-touch-sort]');
-  if(!grip)return;
-  if(grip.classList.contains('folder-sort-grip')||Date.now()<suppressClickUntil&&grip===suppressClickSource){
-   e.preventDefault();e.stopImmediatePropagation();
+  if(Date.now()>=suppressClickUntil)return;
+  const source=e.target?.closest?.(selector);
+  if(source&&(
+   source===suppressClickSource||
+   source.dataset.channelId===suppressClickSource?.dataset?.channelId&&!!source.dataset.channelId||
+   source.dataset.group===suppressClickSource?.dataset?.group&&!!source.dataset.group
+  )){
+   e.preventDefault();e.stopImmediatePropagation();suppressClickUntil=0;
   }
  },true);
- d.addEventListener('keydown',e=>{
-  if(e.target.closest?.('.folder-sort-grip')&&['Enter',' '].includes(e.key)){e.preventDefault();}
- },true);
- const observer=new MutationObserver(decorate);
- observer.observe(channelList,{childList:true});
- if(folderManager)observer.observe(folderManager,{childList:true});
- decorate();
  w.OpenIPTVMobileTouchSort=Object.freeze({decorate,commitChannel,commitFolder,isMobile});
 })(window,document);

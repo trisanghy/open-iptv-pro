@@ -1,49 +1,64 @@
-/* Web mobile: drag grips that do not intercept normal vertical list scrolling. */
-.folder-sort-grip{display:none}
-html[data-iptv-device="mobile"] body #page-tv #channelList .channel-move[data-touch-sort="channel"]{
- touch-action:none!important;-webkit-user-select:none!important;user-select:none!important;
- -webkit-touch-callout:none!important;display:grid!important;place-items:center!important;
- color:var(--accent,#bb8eeb)!important;cursor:grab!important;
+/* Mobile-only: long press anywhere on a folder or channel for 800ms.
+   No drag handles, no extra three-line icons. A normal swipe still scrolls. */
+html[data-iptv-device="mobile"] body #page-tv #channelList .channel-move{
+ display:none!important;
 }
-html[data-iptv-device="mobile"] body #page-tv #channelList .channel-move[data-touch-sort="channel"] svg{
- pointer-events:none!important;width:21px!important;height:21px!important;flex:none!important;
+html[data-iptv-device="mobile"] body :is(
+ #channelList .folder-header,
+ #channelList .channel-item,
+ #folderManager .folder-card
+){
+ touch-action:pan-y!important;
+ -webkit-user-select:none!important;user-select:none!important;
+ -webkit-touch-callout:none!important;
 }
-html[data-iptv-device="mobile"] body :is(#channelList .folder-header,#folderManager .folder-card)>.folder-sort-grip{
- display:grid!important;place-items:center!important;width:38px!important;min-width:38px!important;
- height:44px!important;min-height:44px!important;border-radius:10px!important;flex:0 0 38px!important;
- color:var(--accent,#bf90ea)!important;border:1px solid color-mix(in srgb,var(--accent,#b48ddf) 35%,transparent)!important;
- background:color-mix(in srgb,var(--accent,#b48ddf) 10%,transparent)!important;
- touch-action:none!important;-webkit-user-select:none!important;user-select:none!important;
- -webkit-touch-callout:none!important;cursor:grab!important;
+html[data-iptv-device="mobile"] body :is(
+ #channelList .folder-header,
+ #channelList .channel-item,
+ #folderManager .folder-card
+) :is(img,svg,span,b,small,h3,p){
+ -webkit-touch-callout:none!important;
+ -webkit-user-select:none!important;user-select:none!important;
 }
-html[data-iptv-device="mobile"] body :is(#channelList .folder-header,#folderManager .folder-card)>.folder-sort-grip svg{
- pointer-events:none!important;width:21px!important;height:21px!important;
+html[data-iptv-device="mobile"] body :is(
+ #channelList .channel-item,
+ #channelList .folder-header,
+ #folderManager .folder-card
+).touch-sorting{
+ opacity:.72!important;
+ outline:2px dashed var(--accent,#be89eb)!important;
+ outline-offset:-2px!important;
 }
-html[data-iptv-device="mobile"] body #channelList .folder-header>.folder-sort-grip{margin-left:auto!important;margin-right:8px!important}
-html[data-iptv-device="mobile"] body #channelList .folder-header>.folder-size{margin-left:0!important}
-html[data-iptv-device="mobile"] body #folderManager .folder-card>.folder-sort-grip{float:right;margin-left:10px}
-html[data-iptv-device="mobile"] body :is(#channelList .channel-item,#channelList .folder-header,#folderManager .folder-card).touch-sorting{
- opacity:.7!important;outline:2px dashed var(--accent,#be89eb)!important;outline-offset:-2px!important;
-}
-html[data-iptv-device="mobile"] body :is(#channelList .channel-item,#channelList .folder-header,#folderManager .folder-card).touch-sort-before{
+html[data-iptv-device="mobile"] body :is(
+ #channelList .channel-item,
+ #channelList .folder-header,
+ #folderManager .folder-card
+).touch-sort-before{
  box-shadow:inset 0 4px 0 var(--accent,#c78bef)!important;
 }
-html[data-iptv-device="mobile"] body :is(#channelList .channel-item,#channelList .folder-header,#folderManager .folder-card).touch-sort-after{
+html[data-iptv-device="mobile"] body :is(
+ #channelList .channel-item,
+ #channelList .folder-header,
+ #folderManager .folder-card
+).touch-sort-after{
  box-shadow:inset 0 -4px 0 var(--accent,#c78bef)!important;
 }
-html[data-iptv-device="mobile"] body :is(#channelList .folder-header,#folderManager .folder-card).touch-sort-into{
- outline:3px solid var(--accent,#c78bef)!important;outline-offset:-3px!important;
+html[data-iptv-device="mobile"] body :is(
+ #channelList .folder-header,#folderManager .folder-card
+).touch-sort-into{
+ outline:3px solid var(--accent,#c78bef)!important;
+ outline-offset:-3px!important;
  background:color-mix(in srgb,var(--accent,#be89eb) 20%,var(--surface,#15212e))!important;
 }
 .web-touch-sort-ghost{
- position:fixed!important;z-index:2147483000!important;pointer-events:none!important;
- max-width:min(66vw,300px)!important;overflow:hidden!important;white-space:nowrap!important;text-overflow:ellipsis!important;
+ position:fixed!important;z-index:2147483000!important;
+ pointer-events:none!important;
+ max-width:min(66vw,300px)!important;
+ overflow:hidden!important;white-space:nowrap!important;text-overflow:ellipsis!important;
  padding:11px 14px!important;border:2px solid var(--accent,#bf8cde)!important;
  border-radius:12px!important;color:var(--text,#eef4ff)!important;
- background:var(--surface2,#192b3d)!important;box-shadow:0 12px 25px #0009!important;
+ background:var(--surface2,#192b3d)!important;
+ box-shadow:0 12px 25px #0009!important;
  font:650 14px/1.3 system-ui,sans-serif!important;
  transform:translateY(-50%)!important;
-}
-html[data-iptv-device="mobile"] body #channelList :is(.channel-item,.folder-header){
- -webkit-touch-callout:none;
 }

@@ -28,33 +28,40 @@ const fixture=[
  'render(){window.__case.rendered++},toast(msg){window.__case.errors.push(msg)}};',
  '</script><script src="web-mobile-touch-sort.js"></script>',
  '<script>',
- 'const send=(target,type,x,y)=>target.dispatchEvent(new PointerEvent(type,{bubbles:true,cancelable:true,pointerType:"touch",pointerId:71,isPrimary:true,clientX:x,clientY:y,button:0}));',
+ 'const send=(target,type,x,y)=>{',
+ ' const touch=new Touch({identifier:71,target:target,clientX:x,clientY:y});',
+ ' const active=type==="touchend"?[]:[touch];',
+ ' return target.dispatchEvent(new TouchEvent(type,{bubbles:true,cancelable:true,touches:active,targetTouches:active,changedTouches:[touch]}));',
+ '};',
  'window.addEventListener("load",async()=>{',
- 'try{const grip=document.querySelector(".channel-item[data-channel-id=vtv1] .channel-move");',
- 'const folderGrip=document.querySelector(".folder-header[data-group=VTV] .folder-sort-grip");',
- 'const dest=document.querySelector(".folder-header[data-group=HTV]");',
- 'if(!grip.dataset.touchSort||!folderGrip)throw Error("missing grips");',
- 'if(getComputedStyle(grip).touchAction!=="none"||getComputedStyle(folderGrip).touchAction!=="none")throw Error("incorrect touch-action");',
- 'const a=grip.getBoundingClientRect(),b=dest.getBoundingClientRect();',
- 'send(grip,"pointerdown",a.left+15,a.top+15);',
- 'await new Promise(resolve=>setTimeout(resolve,340));',
- 'send(document,"pointermove",b.left+40,b.top+b.height/2);',
- 'send(document,"pointerup",b.left+40,b.top+b.height/2);',
- 'if(store.channels[0].group!=="HTV"||!store.channelOrder.HTV.includes("vtv1"))throw Error("channel not moved");',
- 'if(!store.favorites.includes("vtv1")||store.channels[0].url!=="https://example.invalid/a")throw Error("data changed");',
- 'if(window.__case.saved!==1||window.__case.rendered!==1)throw Error("save/render missing");',
- 'document.body.dataset.touchSort="passed";',
+ 'try{',
+ ' const channel=document.querySelector(".channel-item[data-channel-id=vtv1]");',
+ ' const header=document.querySelector(".folder-header[data-group=VTV]");',
+ ' const destination=document.querySelector(".folder-header[data-group=HTV]");',
+ ' const oldMove=channel.querySelector(".channel-move");',
+ ' if(document.querySelector(".folder-sort-grip"))throw Error("unexpected extra folder grip");',
+ ' if(getComputedStyle(oldMove).display!=="none")throw Error("extra three-line channel box still shown");',
+ ' if(getComputedStyle(channel).touchAction!=="pan-y")throw Error("normal swipe scrolling disabled");',
+ ' const a=channel.getBoundingClientRect(),b=destination.getBoundingClientRect();',
+ ' send(channel,"touchstart",a.left+80,a.top+30);',
+ ' await new Promise(resolve=>setTimeout(resolve,830));',
+ ' send(document,"touchmove",b.left+50,b.top+b.height/2);',
+ ' send(document,"touchend",b.left+50,b.top+b.height/2);',
+ ' if(store.channels[0].group!=="HTV"||!store.channelOrder.HTV.includes("vtv1"))throw Error("channel not moved");',
+ ' if(!store.favorites.includes("vtv1")||store.channels[0].url!=="https://example.invalid/a")throw Error("data changed");',
+ ' if(window.__case.saved!==1||window.__case.rendered!==1)throw Error("save/render missing");',
+ ' document.body.dataset.touchSort="passed";',
  '}catch(e){document.body.dataset.touchSort="failed";document.body.dataset.error=String(e.message||e);}',
  '});',
  '</script></body></html>'
 ].join('\n');
 for(const width of [390,820]){
- test('Chromium mobile '+width+'px long press drag handle moves channel to another folder',{skip:!chrome},()=>{
+ test('Chromium mobile '+width+'px: 800ms hold on full row moves channel; no extra grips',{skip:!chrome},()=>{
   const file=path.join(root,'_site','test-touch-sort-'+width+'.html');
   fs.writeFileSync(file,fixture);
   try{
    const output=execFileSync(chrome,['--headless','--no-sandbox','--disable-gpu','--allow-file-access-from-files',
-    '--virtual-time-budget=1100','--window-size='+width+',900','--dump-dom','file://'+file],
+    '--virtual-time-budget=2200','--window-size='+width+',900','--dump-dom','file://'+file],
     {encoding:'utf8',stdio:['ignore','pipe','pipe'],timeout:30000});
    assert.match(output,/data-touch-sort="passed"/,output.match(/data-error="[^"]*"/)?.[0]||'No test status');
   }finally{fs.unlinkSync(file);}
