@@ -39,6 +39,8 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p _site
+          # A completed native homepage pack also serves the project intro preview.
+          if [ -f web-online/home-native-locales.js ]; then cp -p web-online/home-native-locales.js _site/home-native-locales.js; fi
           # The old external WebView v4.23.37 source ZIP no longer exists.
           # Deploy the exact versioned static website already committed here.
           find . -maxdepth 1 -type f \( -name '*.js' -o -name '*.css' -o -name '*.html' -o -name '*.json' -o -name '*.webmanifest' -o -name '.nojekyll' \) -exec cp -p {} _site/ \;
@@ -342,6 +344,8 @@ jobs:
           set -euo pipefail
           mkdir -p _user_site/.github/workflows
           cp -p web-online/project-home.html _user_site/index.html
+          if [ -f web-online/home-native-locales.js ]; then cp -p web-online/home-native-locales.js _user_site/home-native-locales.js; fi
+          node --test web-online/tests/web-home-native-coverage.test.cjs
           cp -p web-online/user-site/robots.txt web-online/user-site/sitemap.xml _user_site/
           cp -p web-online/user-site/.github/workflows/publish-home.yml _user_site/.github/workflows/publish-home.yml
           cp -p web-online/user-site/README.md _user_site/README.md
