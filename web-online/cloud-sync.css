@@ -39,3 +39,19 @@
 
 /* Rate-limit-safe email sign-in */
 #cloudSyncCard #cloudEmailSend:disabled{opacity:.65;cursor:not-allowed}
+
+/* iPhone/Safari: the desktop flex-basis (220px) becomes INPUT HEIGHT when
+   the sign-in row switches to flex-direction:column. Keep each field compact. */
+@media (max-width:550px){
+ #cloudSyncCard .cloud-email-form .cloud-email-input-line{flex-direction:column;align-items:stretch;gap:8px}
+ #cloudSyncCard #cloudEmailInput,
+ #cloudSyncCard #cloudOtpCode,
+ #cloudSyncCard #cloudLinkInput{
+  display:block;flex:0 0 44px!important;width:100%!important;
+  height:44px!important;min-height:44px!important;max-height:44px!important;
+  box-sizing:border-box;padding:10px 12px;font-size:16px;line-height:22px;
+ }
+ #cloudSyncCard .cloud-email-input-line > button{
+  flex:0 0 auto;align-self:stretch;width:100%;min-height:44px;height:auto;
+ }
+}
