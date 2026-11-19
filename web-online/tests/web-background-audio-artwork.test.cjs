@@ -33,7 +33,7 @@ test('Media Session updates artwork when a snapshot appears without changing cha
  const callbacks={},state={snapshots:{}};
  const video={paused:false,addEventListener(){}};
  const setting={checked:true,addEventListener(){}};
- const button={disabled:false,classList:{toggle(){}},setAttribute(){},querySelector(){return {textContent:''}}};
+ const button={disabled:false,classList:{toggle(){}},setAttribute(){},addEventListener(){},querySelector(){return {textContent:''}}};
  const els={video,webBackgroundAudio:setting,webBackgroundAudioToggle:button,webBackgroundAudioStatus:{textContent:''},webBackgroundAudioModeStatus:{textContent:''}};
  const doc={
   getElementById:id=>els[id]||null,
@@ -60,7 +60,7 @@ test('missing artwork falls back on image load error, without resetting active a
  const doc={getElementById:id=>({
   video:{paused:false,addEventListener(){}},
   webBackgroundAudio:{checked:true,addEventListener(){}},
-  webBackgroundAudioToggle:{disabled:false,classList:{toggle(){}},setAttribute(){},querySelector(){return null}},
+  webBackgroundAudioToggle:{disabled:false,classList:{toggle(){}},setAttribute(){},addEventListener(){},querySelector(){return null}},
   webBackgroundAudioStatus:{textContent:''},
   webBackgroundAudioModeStatus:{textContent:''}
  })[id]||null,addEventListener(t,f){cb[t]=f}};
