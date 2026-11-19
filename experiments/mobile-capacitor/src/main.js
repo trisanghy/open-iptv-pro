@@ -21,8 +21,14 @@ const $ = x=>document.querySelector(x), $$=x=>[...document.querySelectorAll(x)];
 const tMobile=key=>window.OpenIPTVI18n?.t?.(key)||key;
 const CORE=window.StreamLeafCore;
 const KEY='openiptv_mobile_4211_v1';
-let state={sources:[],favorites:[],channels:[],checks:{},healthHistory:{},checkCursor:0,fallbacks:{},epgUrl:'',epgCache:null,epgSources:null,resumeUrl:null,selected:null,filter:'',page:'tv',group:'',recentlyWatched:[],manualStreams:{},settings:{threads:16,autoRefreshEPG:true,autoRefreshPlaylists:true,autoResumeLast:true,autoPiPOnBackground:false,backgroundAudioEnabled:true}};
+let state={sources:[],favorites:[],channels:[],checks:{},healthHistory:{},checkCursor:0,fallbacks:{},epgUrl:'',epgCache:null,epgSources:null,resumeUrl:null,selected:null,filter:'',page:'tv',group:'',recentlyWatched:[],manualStreams:{},settings:{threads:16,autoRefreshEPG:true,autoRefreshPlaylists:true,autoResumeLast:true,autoPiPOnBackground:true,backgroundAudioEnabled:true}};
 try{const old=JSON.parse(localStorage.getItem(KEY)||'{}');state={...state,...old,settings:{...state.settings,...old.settings}};}catch{}
+// Old builds persisted their disabled-by-default PiP value. Enable PiP once
+// for this update, then preserve every explicit on/off choice from now on.
+if(!state.settings.autoPiPChoiceRecorded){
+ state.settings.autoPiPOnBackground=true;
+ state.settings.autoPiPChoiceRecorded=true;
+}
 state.channels=Array.isArray(state.channels)?state.channels:[];
 state.sources=Array.isArray(state.sources)?state.sources:[];
 state.favorites=Array.isArray(state.favorites)?state.favorites:[];
@@ -79,6 +85,7 @@ function activeChannels(){let all=dedupChannels(state.channels);if(state.page===
 const groupOpened=new Set();
 let showOnlyFavorites=false;
 function pickChannel(c){
+ startupPlaybackDone=true; // Explicit channel choice wins over any pending startup retry.
  state.selected=c.url;
  // Selection alone must not add an unplayed channel to watch history.
  const el=$('#fallbackSource');if(el)el.value=c.url;
@@ -268,6 +275,8 @@ async function play(c,requestedURL,{startup=false}={}){
    v.pause();v.removeAttribute('src');v.load();
    v.playsInline=true;v.setAttribute('playsinline','');v.setAttribute('webkit-playsinline','');
    v.controls=false;v.muted=mediaMuted;v.defaultMuted=mediaMuted;v.style.objectFit=state.settings.videoFit||'contain';
+   // Ask WebKit to start inline with sound first; native app config permits autoplay.
+   v.autoplay=startup;v.preload=startup?'auto':'metadata';
    v.setAttribute('x-webkit-airplay','allow');
    if(/\.m3u8(?:[?#]|$)/i.test(url)&&!v.canPlayType('application/vnd.apple.mpegurl')&&Hls.isSupported()){
      playerHls=new Hls({lowLatencyMode:false,maxBufferLength:20});
@@ -276,20 +285,29 @@ async function play(c,requestedURL,{startup=false}={}){
    showInline(true);
    try{await v.play();}catch(e){
     if(!startup||e?.name!=='NotAllowedError')throw e;
-    v.muted=true;mediaMuted=true;await v.play();
+    // Restricted WebKit may reject audible autoplay even with native settings.
+    // If muted also fails, keep the inline player loaded for a manual Play tap.
+    v.muted=true;mediaMuted=true;
+    try{await v.play();}
+    catch(blocked){v.muted=false;mediaMuted=false;throw Object.assign(new Error('Thiết bị chặn tự phát. Chạm Phát để mở kênh.'),{name:'AutoplayBlockedError',cause:blocked});}
    }
    state.resumeUrl=c.url;
    state.recentlyWatched=safeHistory(state.recentlyWatched,c.url,30);
    save();renderRecentChannels();
-   mediaPlaying=true;mediaPaused=false;syncMediaControls();syncAutoPiP();
+   mediaPlaying=true;mediaPaused=false;startupPlaybackDone=true;syncMediaControls();syncAutoPiP();
    status(isMuted(v)?'Đang phát hình. Chạm nút loa nhỏ dưới video để bật tiếng.':tMobile('Đang phát trong khung')+': '+c.name,'ok');return;
   }catch(e){
-   last=e;playerHls?.destroy();playerHls=null;
+   last=e;
+   if(e?.name==='AutoplayBlockedError'){
+     mediaPlaying=false;mediaPaused=true;syncMediaControls();syncAutoPiP();
+     throw e; // Do not replace a user-gesture error with a misleading CORS label.
+   }
+   playerHls?.destroy();playerHls=null;
    v.pause();v.removeAttribute('src');v.load();
   }
  }
  showInline(false);mediaPlaying=false;mediaPaused=false;syncMediaControls();syncAutoPiP();
- throw Error('Không phát trong khung (CORS/codec): '+(last?.message||last||'')+'. Có thể thử ⛶.');
+ throw Error('Không phát được luồng trong khung: '+(last?.message||last||'')+'. Hãy thử link dự phòng hoặc ⛶.');
 }
 async function playFullscreen(){
  if(backgroundAudio?.active)backgroundAudio.deactivate(false);
@@ -451,7 +469,7 @@ function init(){document.querySelector('#app').innerHTML=oldStyleLayout();
  $('#nowFavorite').onclick=()=>{const c=state.channels.find(x=>x.url===state.selected);if(c)toggleFavorite(c);};
  $('#previousChannel').onclick=()=>jumpChannel(-1);
  $('#nextChannel').onclick=()=>jumpChannel(1);
- $('#playCurrent').onclick=()=>pauseResumeCurrent().catch(e=>status(e.message,'error'));
+ $('#playCurrent').onclick=()=>{startupPlaybackDone=true;void pauseResumeCurrent().catch(e=>status(e.message,'error'));};
  $('#stopCurrent').onclick=()=>stop().catch(e=>status(e.message,'error'));
  $('#backgroundAudioToggle').onclick=()=>{void backgroundAudio?.toggle().catch(e=>status('Nghe nền: '+e.message,'error'));};
  $('#muteCurrent').onclick=()=>muteUnmute().catch(e=>status(e.message,'error'));
@@ -496,23 +514,29 @@ function init(){document.querySelector('#app').innerHTML=oldStyleLayout();
 
  render();}
 
-async function resumePreviousChannel(){
- if(startupPlaybackDone||state.settings.autoResumeLast===false)return;
- const url=state.resumeUrl||state.recentlyWatched?.[0],channel=resumeChannel(state.channels,url);
- if(!channel)return;
- startupPlaybackDone=true;
- try{await play(channel,undefined,{startup:true});}
- catch(e){status(tMobile('Không tự phát được kênh trước')+': '+tMobile(e?.message||String(e)),'error');}
+async function resumePreviousChannel({quiet=false}={}){
+ if(startupPlaybackDone||state.settings.autoResumeLast===false)return false;
+ const candidates=[state.resumeUrl,state.recentlyWatched?.[0],state.selected].filter(Boolean);
+ const channel=candidates.map(url=>resumeChannel(state.channels,url)).find(Boolean);
+ if(!channel)return false;
+ try{await play(channel,undefined,{startup:true});startupPlaybackDone=true;return true;}
+ catch(e){
+   // Retry after M3U refresh: the previous URL may have expired.
+   if(!quiet)status(tMobile('Không tự phát được kênh trước')+': '+tMobile(e?.message||String(e)),'error');
+   return false;
+ }
 }
 async function startupSync(){
+ await resumePreviousChannel({quiet:true});
+ const playlist=state.settings.autoRefreshPlaylists!==false&&state.sources.some(x=>x.url&&x.enabled!==false)
+  ?refreshSources({quiet:true}).catch(e=>{console.warn('Startup playlist:',e);return null;})
+  :Promise.resolve(null);
+ const guide=state.settings.autoRefreshEPG!==false
+  ?Promise.resolve().then(()=>epgManager?.refresh(true)).catch(e=>console.warn('Startup EPG:',e))
+  :Promise.resolve();
+ await playlist;
  await resumePreviousChannel();
- const tasks=[];
- if(state.settings.autoRefreshPlaylists!==false&&state.sources.some(x=>x.url&&x.enabled!==false))
-   tasks.push(refreshSources({quiet:true}).catch(e=>console.warn('Startup playlist:',e)));
- if(state.settings.autoRefreshEPG!==false)
-   tasks.push(epgManager?.refresh(true).catch(e=>console.warn('Startup EPG:',e)));
- await Promise.allSettled(tasks);
- await resumePreviousChannel();
+ await guide;
 }
 init();
 document.addEventListener('openiptv:languagechange',()=>{
@@ -565,7 +589,9 @@ pipController=createAutoPiPController({
 const pipToggle=$('#autoPiPOnBackground');
 pipToggle.checked=state.settings.autoPiPOnBackground===true;
 pipToggle.onchange=()=>{
- state.settings.autoPiPOnBackground=pipToggle.checked;save();syncAutoPiP();
+ state.settings.autoPiPOnBackground=pipToggle.checked;
+ state.settings.autoPiPChoiceRecorded=true;
+ save();syncAutoPiP();
  status(pipToggle.checked?'Đã bật tự động PiP (theo hỗ trợ của thiết bị)':'Đã tắt tự động PiP','ok');
 };
 epgManager=installEPGAuto({getState:()=>state,save,getText,parseDate:xmltvDate,

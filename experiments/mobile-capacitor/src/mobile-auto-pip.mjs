@@ -67,6 +67,10 @@ export function createAutoPiPController({getVideo,getSettings,isPlaying,isNative
  }
  if(platform==='ios'){
    document.addEventListener('visibilitychange',visibility);
+   // On iPhone blur often arrives before WKWebView is suspended/paused;
+   // request system PiP while the inline video is still playing.
+   window.addEventListener('blur',onBackground);
+   window.addEventListener('focus',onForeground);
    window.addEventListener('pagehide',onBackground);
    window.addEventListener('pageshow',onForeground);
  }

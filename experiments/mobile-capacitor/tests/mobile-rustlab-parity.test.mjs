@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {MOBILE_VERSION,TERMS_REVISION,MAX_BATCH,batchWindow,checkedURL,doctorReport,scoreChannel,appendEvidence,createBackup,parseBackup} from '../src/mobile-rustlab-parity.mjs';
 const channel=(url,id='tv-one')=>({id,name:'VTV Test Channel',group:'News',tvgId:id,url});
-test('versioned parity metadata',()=>{assert.equal(MOBILE_VERSION,'4.23.17-mobile.26');assert.equal(TERMS_REVISION,'2026-11-18-v1');});
+test('versioned parity metadata',()=>{assert.equal(MOBILE_VERSION,'4.23.17-mobile.27');assert.equal(TERMS_REVISION,'2026-11-18-v1');});
 test('channel checking uses non-overlapping bounded batches',()=>{const all=Array.from({length:2201},(_,i)=>i);const a=batchWindow(all,0);const b=batchWindow(all,a.nextCursor);const c=batchWindow(all,b.nextCursor);assert.equal(a.items.length,MAX_BATCH);assert.equal(b.items.length,MAX_BATCH);assert.equal(c.items.length,201);assert.equal(c.nextCursor,0);assert.equal(a.items[0],0);assert.equal(b.items[0],1000);assert.equal(c.items[0],2000);});
 test('HTTP or uncertain probe alone never counts as verified playback',()=>{const c=channel('https://example.org/one.m3u8');const res=scoreChannel(c,{[c.url]:{status:'uncertain',checkedAt:new Date().toISOString()}},{});assert.equal(res.verified,false);assert.match(res.confidence,/HTTP/);});
 test('decoded playback grants limited positive evidence only to same URL',()=>{const a=channel('https://example.org/1.m3u8');const b=channel('https://example.org/2.m3u8');const hist={};appendEvidence(hist,a.url,'decoded-playback');assert.equal(scoreChannel(a,{},hist).verified,true);assert.equal(scoreChannel(b,{},hist).verified,false);});

@@ -46,9 +46,39 @@ if(fs.existsSync(path.join(project,'ios/App/App/Info.plist'))){
    if(!swift.includes('OpenIPTV-AutoPiP AVAudioSession')){
      const match=/(func application\(_ application: UIApplication, didFinishLaunchingWithOptions[\s\S]*?-> Bool \{)/;
      if(!match.test(swift))throw Error('Unable to configure iOS AppDelegate audio session');
-     swift=swift.replace(match, m=>m+"\n        // OpenIPTV-AutoPiP AVAudioSession: allow legitimate media background playback.\n        try? AVAudioSession.sharedInstance().setCategory(.playback, mode: .moviePlayback, options: [.allowAirPlay])");
+     swift=swift.replace(match, m=>m+"\n        // OpenIPTV-AutoPiP AVAudioSession: allow legitimate media background playback.\n        try? AVAudioSession.sharedInstance().setCategory(.playback, mode: .moviePlayback, options: [.allowAirPlay])\n        try? AVAudioSession.sharedInstance().setActive(true)");
+   }
+   if(!swift.includes('OpenIPTVBridgeViewController')){
+     if(!swift.includes('import Capacitor'))swift=swift.replace('import UIKit','import UIKit\nimport Capacitor');
+     if(!swift.includes('import WebKit'))swift=swift.replace('import UIKit','import UIKit\nimport WebKit');
+     // Capacitor v8 supports overriding this before the WKWebView is created.
+     // No AVPlayer fullscreen view may be created when the user taps Play.
+     swift += `
+\n// Inline autoplay and system PiP for the existing HTML5 player.
+class OpenIPTVBridgeViewController: CAPBridgeViewController {
+    override func webViewConfiguration(for instanceConfiguration: InstanceConfiguration) -> WKWebViewConfiguration {
+        let configuration = super.webViewConfiguration(for: instanceConfiguration)
+        configuration.allowsInlineMediaPlayback = true
+        configuration.mediaTypesRequiringUserActionForPlayback = []
+        configuration.allowsPictureInPictureMediaPlayback = true
+        configuration.allowsAirPlayForMediaPlayback = true
+        return configuration
+    }
+}
+`;
    }
    fs.writeFileSync(delegate,swift);
+   const storyboard=path.join(project,'ios/App/App/Base.lproj/Main.storyboard');
+   if(!fs.existsSync(storyboard))throw Error('Capacitor iOS storyboard not found: cannot wire PiP-enabled controller');
+   let xml=fs.readFileSync(storyboard,'utf8');
+   const existing='customClass="CAPBridgeViewController" customModule="Capacitor"';
+   if(xml.includes(existing)){
+     xml=xml.replace(existing,'customClass="OpenIPTVBridgeViewController" customModule="App"');
+     fs.writeFileSync(storyboard,xml);
+   }else if(!xml.includes('customClass="OpenIPTVBridgeViewController"')){
+     throw Error('Unexpected Capacitor storyboard controller: cannot safely enable inline PiP');
+   }
+   console.log('iOS WKWebView inline autoplay and Picture-in-Picture enabled');
  }
 
 }

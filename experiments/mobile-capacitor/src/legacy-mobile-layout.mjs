@@ -31,9 +31,9 @@ return `
     <label class="view-mode"><span>Khung hình</span><select id="videoFit" aria-label="Chế độ hiển thị video">
       <option value="contain">Vừa khung</option><option value="cover">Lấp đầy</option><option value="fill">Kéo giãn</option><option value="none">Gốc</option>
     </select></label>
-    <button id="nowFavorite" class="favorite-current" type="button" aria-label="Yêu thích kênh">☆</button>
     <label class="manual-link-picker"><span>Link phát</span><select id="manualStreamSelect" aria-label="Chọn link phát chính hoặc dự phòng" disabled><option value="">Chưa chọn kênh</option></select></label>
-    <button id="backgroundAudioToggle" type="button" class="background-audio-toggle" aria-label="Nghe nền · khóa màn hình" aria-pressed="false">${playerSvg('headphones')}<span id="backgroundAudioLabel">Nghe nền</span></button>
+    <button id="backgroundAudioToggle" type="button" class="background-audio-toggle" aria-label="Nghe nền · khóa màn hình" title="Nghe nền" aria-pressed="false">${playerSvg('headphones')}<span id="backgroundAudioLabel">Nghe nền</span></button>
+    <button id="nowFavorite" class="favorite-current" type="button" aria-label="Yêu thích kênh">☆</button>
     <small id="backgroundAudioStatus" class="background-audio-status" role="status">Nhấn Nghe nền trước khi khóa màn hình.</small>
    </div>
   </section>
