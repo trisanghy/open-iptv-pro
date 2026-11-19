@@ -192,3 +192,15 @@ html[data-iptv-device="mobile"] body #appShell>#appSidebar
  white-space:nowrap!important;text-align:center!important;
  overflow:hidden!important;text-overflow:ellipsis!important;
 }
+
+/* Mobile tab bar: same blue for all inactive vector icons, selected tab uses
+   app accent. Previously per-section --nav-rgb made Favorite gold while
+   other tabs blue, even when none of them was selected. */
+html[data-iptv-device="mobile"] body #appShell>#appSidebar
+.nav:is([data-page="tv"],[data-page="fav"],[data-page="epg"],[data-page="sources"],.mobile-more-trigger):not(.active)>.macos-nav-symbol{
+  color:#95baf2!important;
+}
+html[data-iptv-device="mobile"] body #appShell>#appSidebar
+.nav:is([data-page="tv"],[data-page="fav"],[data-page="epg"],[data-page="sources"],.mobile-more-trigger).active>.macos-nav-symbol{
+  color:var(--accent,#b980ed)!important;
+}

@@ -151,6 +151,12 @@ for previous,updated in (
 app_file.write_text(app_text,encoding='utf-8')
 
 html=(out/'index.html').read_text(encoding='utf-8')
+# Remove redundant Quick Tools capture button only; preserve Snapshot page,
+# single-channel shotBtn and batch-capture workflows.
+quick_shot_current="<button class=\"quick-btn\" id=\"quickShotCurrent\"><span>▣</span><b>Chụp kênh đang xem</b><small>Chờ có hình rồi chụp</small></button>"
+if html.count(quick_shot_current)!=1:
+    sys.exit('Quick Tools current-channel action changed')
+html=html.replace(quick_shot_current,'',1)
 # Retain hidden legacy markup for theme-stage hooks; remove only its visible EPG
 # sidebar, while preserving player EPG and the full Schedule page.
 guide_marker='<aside class="theme-guide-panel" id="themeGuidePanel" aria-label="Thông tin chương trình">'
@@ -223,7 +229,7 @@ html=html.replace('<script src="app.js"></script>','<script src="web-mobile-play
 html=html.replace('</head>','<link rel="stylesheet" href="web-mobile-player.css?v=desktop-handheld-fs-20261119a"/></head>',1)
 html=html.replace('src="theme-boot.js"','src="theme-boot.js?v=responsive-desktop-20261118j"',1)
 html=html.replace('</body>','<script src="supabase-sdk.js"></script><script src="cloud-core.js"></script><script src="web-only.js"></script><script src="resume-last.js?v=autoplay-clean-20261119a"></script><script src="web-volume.js"></script><script src="cloud-sync.js"></script><script src="web-player-icons.js?v=audio-state-sync-20261119a"></script></body>',1)
-html=html.replace('</head>','<link rel="stylesheet" href="web-player-icons.css?v=vectorplayer-airplay-20261118c"/><link rel="stylesheet" href="web-tv-wide.css?v=tv-wide-no-side-epg-20261118k"/><link rel="stylesheet" href="web-mobile-controls-polish.css?v=mobile-pip-tabs-aligned-20261118m"/></head>',1)
+html=html.replace('</head>','<link rel="stylesheet" href="web-player-icons.css?v=quick-icons-unified-20261119a"/><link rel="stylesheet" href="web-tv-wide.css?v=tv-wide-no-side-epg-20261118k"/><link rel="stylesheet" href="web-mobile-controls-polish.css?v=quick-icons-unified-20261119a"/></head>',1)
 # The old PiP label overlaps the vector icon even with font-size:0 in Safari.
 # Preserve the button ID and its accessible aria-label.
 pip_caption='<span class="pip-label">PiP</span>'

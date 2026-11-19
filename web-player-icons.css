@@ -62,7 +62,6 @@
 #page-tv #dvrQuickManage::before{--ipc-icon:var(--ipc-calendar);}
 #page-tv #quickTools>summary::before{--ipc-icon:var(--ipc-sliders);}
 #page-tv #quickChecks::before{--ipc-icon:var(--ipc-check);}
-#page-tv #quickShotCurrent::before{--ipc-icon:var(--ipc-camera);}
 #page-tv #quickShots::before{--ipc-icon:var(--ipc-grid);}
 #page-tv #quickExport::before{--ipc-icon:var(--ipc-download);}
 
@@ -125,7 +124,7 @@
 #page-tv #quickTools>summary::before{width:18px;height:18px;}
 #page-tv .quick-grid .quick-btn>span{display:none!important;}
 #page-tv .quick-grid .quick-btn{gap:8px!important;}
-#page-tv #quickShots::before,#page-tv #quickShotCurrent::before{color:var(--accent,#b080e6);}
+
 @media(max-width:760px),(pointer:coarse) and (max-width:1000px){
  html[data-iptv-device="mobile"] body #page-tv .player-control-card .control-layout-top .transport-controls
  :is(#prevBtn,#stopBtn,#nextBtn){min-width:49px!important;width:49px!important;height:49px!important;min-height:49px!important;flex:0 0 49px!important;}
@@ -173,4 +172,13 @@ html[data-iptv-device="mobile"] body #castModal[data-airplay-mobile="true"]{
 html[data-iptv-device="mobile"] body #castModal[data-airplay-mobile="true"] .modal-box{
  width:min(100%,480px)!important;max-height:calc(100dvh - 30px - env(safe-area-inset-bottom,0px))!important;
  overflow-y:auto!important;-webkit-overflow-scrolling:touch!important;
+}
+
+/* Quick Tools: one coherent icon color across Check / All snapshots / Export.
+   Preserve color on selected/playing media controls and their SVG masks. */
+#page-tv #quickTools .quick-grid :is(#quickChecks,#quickShots,#quickExport)::before {
+  color:var(--accent,#b980ed)!important;
+}
+#page-tv #quickTools .quick-grid :is(#quickChecks,#quickShots,#quickExport) {
+  --iptv-quick-icon-color:var(--accent,#b980ed);
 }

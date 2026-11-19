@@ -152,11 +152,13 @@ jobs:
           node --check _site/web-player-icons.js
           node --test web-online/tests/web-player-icons.test.cjs
           node --test web-online/tests/web-mobile-controls-polish.test.cjs
-          grep -Fq 'web-mobile-controls-polish.css?v=mobile-pip-tabs-aligned-20261118m' _site/index.html
+          node --test web-online/tests/web-quick-tools-icons.test.cjs
+          if grep -Fq 'id="quickShotCurrent"' _site/index.html; then echo 'Redundant Quick Tools screenshot action remains'; exit 1; fi
+          grep -Fq 'web-mobile-controls-polish.css?v=quick-icons-unified-20261119a' _site/index.html
           node --check _site/cast-ui.js
           node --test web-online/tests/web-airplay.test.cjs
           grep -Fq 'x-webkit-airplay="allow"' _site/index.html
-          grep -Fq 'web-player-icons.css?v=vectorplayer-airplay-20261118c' _site/index.html
+          grep -Fq 'web-player-icons.css?v=quick-icons-unified-20261119a' _site/index.html
           grep -Fq 'web-player-icons.js?v=audio-state-sync-20261119a' _site/index.html
           node --check _site/theme-boot.js
           grep -Fq 'src="theme-boot.js?v=responsive-desktop-20261118j"' _site/index.html
