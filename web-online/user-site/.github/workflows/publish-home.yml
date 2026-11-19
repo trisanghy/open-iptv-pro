@@ -91,11 +91,11 @@ jobs:
       - name: Persist gallery files on the user-site main branch
         shell: bash
         env:
-          GH_TOKEN: \${{ github.token }}
+          GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
           git clone -q --depth=1 --branch main \
-            "https://x-access-token:\${GH_TOKEN}@github.com/trisanghy/trisanghy.github.io.git" "$RUNNER_TEMP/site-root-repo"
+            "https://x-access-token:${GH_TOKEN}@github.com/trisanghy/trisanghy.github.io.git" "$RUNNER_TEMP/site-root-repo"
           mkdir -p "$RUNNER_TEMP/site-root-repo/assets/gallery"
           cp -f _site/assets/gallery/*.png "$RUNNER_TEMP/site-root-repo/assets/gallery/"
           cd "$RUNNER_TEMP/site-root-repo"
