@@ -15,7 +15,15 @@ test('Capacitor Mobile exposes a display language chooser in Settings',()=>{
 });
 test('Mobile embeds offline translations, 17 language options and persistence',()=>{
  for(const c of ['vi','en','es','pt-BR','zh-CN','th','lo','km','fr','de','it','ja','ko','ru','id','hi','ar']) assert.ok(i18n.includes('"'+c+'":'),c);
- assert.match(i18n,/open-iptv-pro-language/);assert.match(i18n,/english\[compact\]/);
+ assert.match(i18n,/open-iptv-pro-language/);
+ assert.match(i18n,/const mobileUiEnglish=/);
+ assert.match(i18n,/const collectionCastEnglish=/);
+ assert.match(i18n,/const advancedUiEnglish=/);
+ assert.match(i18n,/const appUiEnglish=/);
+ assert.match(i18n,/const finishUiEnglish=/);
+ assert.match(i18n,/Account & Cloud Sync/);
+ assert.match(i18n,/Background audio/);
+ assert.match(i18n,/Import an M3U playlist or choose a channel/);assert.match(i18n,/english\[compact\]/);
  assert.match(i18n,/channel-card \.channel-name/);
  assert.match(bundle,/window.OPEN_IPTV_TRANSLATIONS/);
 });

@@ -1,10 +1,10 @@
 # Open IPTV Pro Mobile — Android & iOS
 
-**Trạng thái xác minh: 4.23.17-mobile.10 Beta (Capacitor 8)**
+**Trạng thái xác minh: 4.23.17-mobile.16 Beta (Capacitor 8)**
 
 - Nhánh nguồn độc lập: [`experiment/mobile-capacitor-4211`](https://github.com/trisanghy/open-iptv-pro/tree/experiment/mobile-capacitor-4211)
 - Snapshot mã nguồn đi kèm `main`: [`mobile/`](../mobile/) — từ commit `53f5c590fff4026eac06c249726c6b2e75f790b3`
-- Release riêng, bất biến: [`mobile/v4.23.17.10`](https://github.com/trisanghy/open-iptv-pro/releases/tag/mobile/v4.23.17.10)
+- Release riêng, bất biến: [`mobile/v4.23.17.16`](https://github.com/trisanghy/open-iptv-pro/releases/tag/mobile/v4.23.17.16)
 - Không ghi đè hoặc thay thế mã Electron (`renderer/`/`src/`), Rust Lab (`rust-lab/`) hay website (`web/`).
 
 ## Phân biệt các bản Mobile
@@ -17,14 +17,14 @@
 
 ### Android
 
-1. Mở [release mobile/v4.23.17.10](https://github.com/trisanghy/open-iptv-pro/releases/tag/mobile/v4.23.17.10); tải [APK debug](https://github.com/trisanghy/open-iptv-pro/releases/download/mobile/v4.23.17.10/OpenIPTVPro-Mobile-4.23.17-mobile.10-debug.apk).
-2. Đối chiếu [SHA256SUMS.txt](https://github.com/trisanghy/open-iptv-pro/releases/download/mobile/v4.23.17.10/SHA256SUMS.txt), chỉ tin tưởng tệp từ GitHub chính thức.
+1. Mở [release mobile/v4.23.17.16](https://github.com/trisanghy/open-iptv-pro/releases/tag/mobile/v4.23.17.16); tải [APK debug](https://github.com/trisanghy/open-iptv-pro/releases/download/mobile/v4.23.17.16/OpenIPTVPro-Mobile-4.23.17-mobile.16-debug.apk).
+2. Đối chiếu [SHA256SUMS.txt](https://github.com/trisanghy/open-iptv-pro/releases/download/mobile/v4.23.17.16/SHA256SUMS.txt), chỉ tin tưởng tệp từ GitHub chính thức.
 3. Nếu điện thoại cho phép cài từ nguồn ngoài, cài ứng dụng kiểm thử. APK **debug-signed**, không phải bản phát hành Play Store, không tự động cập nhật từ cửa hàng.
 4. Sau khi mở, chỉ nhập file M3U hoặc URL M3U bạn được cấp phép sử dụng.
 
 ### iOS / iPhone
 
-[IPA v4.23.17-mobile.10](https://github.com/trisanghy/open-iptv-pro/releases/download/mobile/v4.23.17.10/OpenIPTVPro-Mobile-4.23.17-mobile.10-unsigned.ipa) là **IPA chưa ký**. Không phải bộ cài có thể cài trực tiếp trên mọi iPhone; yêu cầu ký bằng chứng chỉ Apple hợp lệ, hồ sơ provisioning và thiết bị tương ứng. Không có xác nhận App Store hoặc TestFlight cho release này. Nếu chưa ký, hãy sử dụng [Web Online](https://trisanghy.github.io/open-iptv-pro/) hoặc tự build bằng Xcode theo điều khoản của Apple.
+[IPA v4.23.17-mobile.16](https://github.com/trisanghy/open-iptv-pro/releases/download/mobile/v4.23.17.16/OpenIPTVPro-Mobile-4.23.17-mobile.16-unsigned.ipa) là **IPA chưa ký**. Không phải bộ cài có thể cài trực tiếp trên mọi iPhone; yêu cầu ký bằng chứng chỉ Apple hợp lệ, hồ sơ provisioning và thiết bị tương ứng. Không có xác nhận App Store hoặc TestFlight cho release này. Nếu chưa ký, hãy sử dụng [Web Online](https://trisanghy.github.io/open-iptv-pro/) hoặc tự build bằng Xcode theo điều khoản của Apple.
 
 ## Chức năng trong mã Mobile và giới hạn
 
@@ -34,11 +34,11 @@ Mã nguồn có các thành phần quản lý M3U, nhóm và yêu thích, danh s
 
 ## Tải xuống chính thức
 
-- [Android APK debug](https://github.com/trisanghy/open-iptv-pro/releases/download/mobile/v4.23.17.10/OpenIPTVPro-Mobile-4.23.17-mobile.10-debug.apk)
-- [iOS IPA unsigned](https://github.com/trisanghy/open-iptv-pro/releases/download/mobile/v4.23.17.10/OpenIPTVPro-Mobile-4.23.17-mobile.10-unsigned.ipa)
-- [Source ZIP](https://github.com/trisanghy/open-iptv-pro/releases/download/mobile/v4.23.17.10/OpenIPTVPro-Mobile-4.23.17-mobile.10-Source.zip)
-- [SHA256SUMS.txt](https://github.com/trisanghy/open-iptv-pro/releases/download/mobile/v4.23.17.10/SHA256SUMS.txt)
-- [Ảnh Android từ emulator](https://github.com/trisanghy/open-iptv-pro/releases/tag/mobile/v4.23.17.10)
+- [Android APK debug](https://github.com/trisanghy/open-iptv-pro/releases/download/mobile/v4.23.17.16/OpenIPTVPro-Mobile-4.23.17-mobile.16-debug.apk)
+- [iOS IPA unsigned](https://github.com/trisanghy/open-iptv-pro/releases/download/mobile/v4.23.17.16/OpenIPTVPro-Mobile-4.23.17-mobile.16-unsigned.ipa)
+- [Source ZIP](https://github.com/trisanghy/open-iptv-pro/releases/download/mobile/v4.23.17.16/OpenIPTVPro-Mobile-4.23.17-mobile.16-Source.zip)
+- [SHA256SUMS.txt](https://github.com/trisanghy/open-iptv-pro/releases/download/mobile/v4.23.17.16/SHA256SUMS.txt)
+- [Ảnh Android từ emulator](https://github.com/trisanghy/open-iptv-pro/releases/tag/mobile/v4.23.17.16)
 
 ## Build và kiểm thử từ mã nguồn
 

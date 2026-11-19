@@ -7,9 +7,9 @@
 > README tiếng Việt là tài liệu kỹ thuật đầy đủ. Các bản dịch quốc tế là hướng dẫn tóm lược có liên kết đến mã nguồn, bộ cài, ảnh giao diện và thông báo bản quyền chính thức.
 
 
-**Trình phát IPTV đa nền tảng · Electron Desktop v4.23.70 Stable · Rust Lab v23.8.30 Beta · Mobile Capacitor 4.23.17-mobile.10 Beta · Web Online**
+**Trình phát IPTV đa nền tảng · Electron Desktop v4.23.70 Stable · Rust Lab v23.8.30 Beta · Mobile Capacitor 4.23.17-mobile.16 Beta · Web Online**
 
-[**Tải bản cài đặt mới nhất**](https://github.com/trisanghy/open-iptv-pro/releases/tag/v4.23.70) · [**Mở Web Online**](https://trisanghy.github.io/open-iptv-pro/) · [**Android/iOS Mobile Beta**](https://github.com/trisanghy/open-iptv-pro/releases/tag/mobile/v4.23.17.10) · [**Xem mã nguồn**](https://github.com/trisanghy/open-iptv-pro) · [**Nhật ký thay đổi**](CHANGELOG.md)
+[**Tải bản cài đặt mới nhất**](https://github.com/trisanghy/open-iptv-pro/releases/tag/v4.23.70) · [**Mở Web Online**](https://trisanghy.github.io/open-iptv-pro/) · [**Android/iOS Mobile Beta**](https://github.com/trisanghy/open-iptv-pro/releases/tag/mobile/v4.23.17.16) · [**Xem mã nguồn**](https://github.com/trisanghy/open-iptv-pro) · [**Nhật ký thay đổi**](CHANGELOG.md)
 
 Open IPTV Pro là ứng dụng mã nguồn mở được phát triển như **một dự án cá nhân**, giúp người dùng phát và tự tổ chức các nguồn IPTV/M3U mà **chính họ cung cấp** trên macOS, Windows, Android, iOS hoặc trình duyệt (tùy phiên bản). Trọng tâm là xem kênh nhanh, quản lý danh sách hiệu quả, ưu tiên Yêu thích, sử dụng thuận tiện trên cửa sổ nhỏ hoặc màn hình lớn, và có thêm công cụ EPG, ghi hình, kiểm tra luồng cùng AI phụ đề ngoại tuyến.
 
@@ -39,13 +39,13 @@ Trong **Xem truyền hình → Danh sách kênh**, bộ lọc **◷ Vừa xem** 
 
 **macOS và Windows x64.** Dự án Tauri/Rust nhẹ, có bộ tính năng và tương thích khác Electron. [Tải Rust Lab v23.8.32](https://github.com/trisanghy/open-iptv-pro/releases/tag/rust-lab/v23.8.32).
 
-### Mobile Capacitor — v4.23.17-mobile.10 Beta
+### Mobile Capacitor — v4.23.17-mobile.16 Beta
 
 **Android 7+ / iOS 15+** (theo yêu cầu công cụ và cấu hình build). Ứng dụng mobile riêng dùng Capacitor 8, tập trung vào giao diện cảm ứng, nguồn M3U, EPG, danh sách kênh và PiP trong giới hạn thiết bị.
 
 - **Android:** có file APK **debug-signed** để kiểm thử cá nhân; không phải bản Google Play.
 - **iOS:** có **IPA chưa ký**; cần chứng chỉ Apple và provisioning phù hợp trước khi cài lên iPhone, **không phải bản App Store**.
-- [Bản phát hành Mobile Beta 4.23.17-mobile.10](https://github.com/trisanghy/open-iptv-pro/releases/tag/mobile/v4.23.17.10) · [Mã nguồn Mobile trên main](mobile/) · [Hướng dẫn Android/iOS](docs/MOBILE_ANDROID_IOS.md).
+- [Bản phát hành Mobile Beta 4.23.17-mobile.16](https://github.com/trisanghy/open-iptv-pro/releases/tag/mobile/v4.23.17.16) · [Mã nguồn Mobile trên main](mobile/) · [Hướng dẫn Android/iOS](docs/MOBILE_ANDROID_IOS.md).
 - Bản Mobile **chưa tương đương toàn bộ Electron/Rust**. Hỗ trợ RTSP/UDP, FFmpeg native, DVR/Timeshift, Auto PiP, phát nền và Cast/AirPlay phụ thuộc giới hạn hoặc xác minh thiết bị; không được tự coi là hoạt động đầy đủ.
 
 ### Web Online — Trình duyệt
@@ -133,20 +133,20 @@ Toàn bộ ảnh chụp **từ website Open IPTV Pro Web đang được dựng v
 >
 > **Ảnh Electron/Rust Lab phiên bản lịch sử:** vẫn được bảo tồn ở [docs/images](docs/images) và [tag v4.23.68](https://github.com/trisanghy/open-iptv-pro/tree/v4.23.68/docs/images), nhưng không dùng những hình này để giới thiệu bản Web mới. Xem thêm [trang chủ với gallery cập nhật](https://trisanghy.github.io/#anh).
 
-### Ảnh ứng dụng Mobile Capacitor Android (Beta 4.23.17-mobile.10)
+### Ảnh ứng dụng Mobile Capacitor Android (Beta 4.23.17-mobile.16)
 
 Các ảnh dưới đây đi kèm **bộ APK Android được build trên GitHub Actions và chụp bằng Android Emulator**. Khác với ảnh Web iOS/Android giả lập trình duyệt ở trên; hiện chưa có bộ ảnh iOS native đã kiểm chứng.
 
 <details>
 <summary><strong>Xem ảnh ứng dụng Android Mobile Beta</strong></summary>
 
-[<img src="https://github.com/trisanghy/open-iptv-pro/releases/download/mobile/v4.23.17.10/OpenIPTVPro-Mobile-4.23.17-mobile.10-Android-screenshot.png" alt="Mobile Android Beta — trình phát" width="300">](https://github.com/trisanghy/open-iptv-pro/releases/download/mobile/v4.23.17.10/OpenIPTVPro-Mobile-4.23.17-mobile.10-Android-screenshot.png)
+[<img src="https://github.com/trisanghy/open-iptv-pro/releases/download/mobile/v4.23.17.16/OpenIPTVPro-Mobile-4.23.17-mobile.16-Android-screenshot.png" alt="Mobile Android Beta — trình phát" width="300">](https://github.com/trisanghy/open-iptv-pro/releases/download/mobile/v4.23.17.16/OpenIPTVPro-Mobile-4.23.17-mobile.16-Android-screenshot.png)
 
-[<img src="https://github.com/trisanghy/open-iptv-pro/releases/download/mobile/v4.23.17.10/OpenIPTVPro-Mobile-4.23.17-mobile.10-Android-Recent.png" alt="Mobile Android Beta — danh sách kênh vừa xem" width="300">](https://github.com/trisanghy/open-iptv-pro/releases/download/mobile/v4.23.17.10/OpenIPTVPro-Mobile-4.23.17-mobile.10-Android-Recent.png)
+[<img src="https://github.com/trisanghy/open-iptv-pro/releases/download/mobile/v4.23.17.16/OpenIPTVPro-Mobile-4.23.17-mobile.16-Android-Recent.png" alt="Mobile Android Beta — danh sách kênh vừa xem" width="300">](https://github.com/trisanghy/open-iptv-pro/releases/download/mobile/v4.23.17.16/OpenIPTVPro-Mobile-4.23.17-mobile.16-Android-Recent.png)
 
-[<img src="https://github.com/trisanghy/open-iptv-pro/releases/download/mobile/v4.23.17.10/OpenIPTVPro-Mobile-4.23.17-mobile.10-Android-PiP-Settings.png" alt="Mobile Android Beta — tùy chọn Picture-in-Picture" width="300">](https://github.com/trisanghy/open-iptv-pro/releases/download/mobile/v4.23.17.10/OpenIPTVPro-Mobile-4.23.17-mobile.10-Android-PiP-Settings.png)
+[<img src="https://github.com/trisanghy/open-iptv-pro/releases/download/mobile/v4.23.17.16/OpenIPTVPro-Mobile-4.23.17-mobile.16-Android-PiP-Settings.png" alt="Mobile Android Beta — tùy chọn Picture-in-Picture" width="300">](https://github.com/trisanghy/open-iptv-pro/releases/download/mobile/v4.23.17.16/OpenIPTVPro-Mobile-4.23.17-mobile.16-Android-PiP-Settings.png)
 
-[Thêm ảnh EPG và trang Thêm trong release Mobile](https://github.com/trisanghy/open-iptv-pro/releases/tag/mobile/v4.23.17.10).
+[Thêm ảnh EPG và trang Thêm trong release Mobile](https://github.com/trisanghy/open-iptv-pro/releases/tag/mobile/v4.23.17.16).
 
 </details>
 
@@ -183,9 +183,9 @@ Các ảnh dưới đây đi kèm **bộ APK Android được build trên GitHub
 
 ### Mobile Android / iOS — Beta riêng
 
-- **Android:** [tải APK debug 4.23.17-mobile.10](https://github.com/trisanghy/open-iptv-pro/releases/download/mobile/v4.23.17.10/OpenIPTVPro-Mobile-4.23.17-mobile.10-debug.apk). APK thử nghiệm có chữ ký debug; thiết bị có thể yêu cầu xác nhận cho phép cài từ nguồn ngoài. Chỉ cài nếu tin tưởng tệp từ GitHub chính thức, không phải Play Store.
-- **iOS:** [tải IPA chưa ký 4.23.17-mobile.10](https://github.com/trisanghy/open-iptv-pro/releases/download/mobile/v4.23.17.10/OpenIPTVPro-Mobile-4.23.17-mobile.10-unsigned.ipa). **Không thể cài trực tiếp** bằng cách bấm file trên iPhone; cần Apple Developer signing/provisioning hoặc build từ Xcode trên macOS theo quy định Apple.
-- [SHA256SUMS.txt](https://github.com/trisanghy/open-iptv-pro/releases/download/mobile/v4.23.17.10/SHA256SUMS.txt) · [Release Mobile đầy đủ](https://github.com/trisanghy/open-iptv-pro/releases/tag/mobile/v4.23.17.10) · [Hướng dẫn Mobile](docs/MOBILE_ANDROID_IOS.md).
+- **Android:** [tải APK debug 4.23.17-mobile.16](https://github.com/trisanghy/open-iptv-pro/releases/download/mobile/v4.23.17.16/OpenIPTVPro-Mobile-4.23.17-mobile.16-debug.apk). APK thử nghiệm có chữ ký debug; thiết bị có thể yêu cầu xác nhận cho phép cài từ nguồn ngoài. Chỉ cài nếu tin tưởng tệp từ GitHub chính thức, không phải Play Store.
+- **iOS:** [tải IPA chưa ký 4.23.17-mobile.16](https://github.com/trisanghy/open-iptv-pro/releases/download/mobile/v4.23.17.16/OpenIPTVPro-Mobile-4.23.17-mobile.16-unsigned.ipa). **Không thể cài trực tiếp** bằng cách bấm file trên iPhone; cần Apple Developer signing/provisioning hoặc build từ Xcode trên macOS theo quy định Apple.
+- [SHA256SUMS.txt](https://github.com/trisanghy/open-iptv-pro/releases/download/mobile/v4.23.17.16/SHA256SUMS.txt) · [Release Mobile đầy đủ](https://github.com/trisanghy/open-iptv-pro/releases/tag/mobile/v4.23.17.16) · [Hướng dẫn Mobile](docs/MOBILE_ANDROID_IOS.md).
 - Trên iPhone chưa có bản ký hợp lệ, dùng [Web Online](https://trisanghy.github.io/open-iptv-pro/) thay vì coi IPA unsigned là file cài được ngay.
 
 ### Web Online — không cần cài
