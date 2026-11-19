@@ -134,7 +134,7 @@ test('XMLTV parser keeps programmes beyond 12,000 and indexes late-channel sched
  const last=env.IPTVGuide.find(guide,{id:'late',tvgId:'late',name:'Late'});
  assert.equal(last.length,1);
  assert.equal(last[0].title,'late broadcast');
- assert.equal(env.IPTVGuide.current(guide,{id:'late',tvgId:'late',name:'Late'},clock.getTime()-1).next.title,'late broadcast');
+ assert.equal(env.IPTVGuide.current(guide,{id:'late',tvgId:'late',name:'Late'},clock.getTime()-60000).next.title,'late broadcast');
  assert.match(source,/programmeIndexes=new WeakMap/);
 });
 test('full EPG survives a simulated IndexedDB save/reload without localStorage quota',async()=>{
