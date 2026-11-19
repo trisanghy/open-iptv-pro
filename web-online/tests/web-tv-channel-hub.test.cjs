@@ -81,7 +81,7 @@ test('Web only channel hub loads after player and survives WebView rebuild',()=>
  assert.ok(css.includes('#page-tv #webChannelHub{'), 'Desktop hub styling preserved');
  assert.ok(css.includes('display:grid;grid-template-columns:'), 'Desktop hub remains visible');
  assert.ok(!css.includes('order:7!important'), 'Remove obsolete mobile grid order');
- assert.ok(read('web-tv-channel-hub.js').includes("getAttribute('data-iptv-device')==='mobile')return;"), 'Skip building channel tiles on mobile');
+ assert.ok(read('web-tv-channel-hub.js').includes("getAttribute('data-iptv-device')==='mobile'){"), 'Skip building channel tiles on mobile');
  assert.ok(read('web-tv-channel-hub.js').includes("addEventListener('resize',schedule"), 'Allow desktop view after resize');
  assert.ok(read('web-mobile-player.css').includes('#page-tv .channel-panel'), 'Keep original mobile channel list');
  assert.match(html,/class="nav active" data-page="tv"/);
