@@ -286,7 +286,7 @@ html=html.replace('<script src="web-recent-channels.js?v=recent-controls-2026111
 html=html.replace('</head>','<link rel="stylesheet" href="web-compact-toolbar.css?v=recent-controls-20261119a"/></head>',1)
 # Web background audio: same HTML5 media element, Android/Apple Media Session controls.
 background_start='<article class="settings-card" id="webBackgroundAudioSettings">'
-background_end='<article class="settings-card" id="defaultBufferSettings">'
+background_end='<article class="settings-card" id="epgSettingsCard">'
 if web_html.count(background_start)!=1 or web_html.count(background_end)!=1 or html.count(background_end)!=1:
     sys.exit('Background audio settings insertion point changed')
 background_card=web_html[web_html.index(background_start):web_html.index(background_end,web_html.index(background_start))]
@@ -330,6 +330,26 @@ for asset in ('i18n.js','languages.bundle.js','web-language-supplement.js','web-
 html=html.replace('</head>','<link rel="stylesheet" href="web-ios-audio-recovery.css?v=top-silent-20261119d"/></head>',1)
 if 'web-ios-audio-recovery.js' not in html:
     html=html.replace('</body>','<script src="web-ios-audio-recovery.js?v=top-silent-20261119d"></script></body>',1)
+# Web-only: remove live Timeshift from generated desktop and mobile website.
+# A WebView source refresh must never restore the rewind controls or settings.
+for pattern,label in (
+    (r'<div class="timeshift-actions">[\\s\\S]*?</div>\\s*<small id="bufferInfo">[\\s\\S]*?</small>','Timeshift buttons'),
+    (r'<fieldset class="settings-choice-group" aria-label="Thời gian tua lại">[\\s\\S]*?</fieldset>','Timeshift minutes'),
+    (r'<article class="settings-card" id="defaultBufferSettings">[\\s\\S]*?</article>','Timeshift automatic setting'),
+):
+    html,count=re.subn(pattern,'',html,count=1)
+    if count!=1:sys.exit('Missing Web Timeshift removal anchor: '+label)
+for old,new in (
+    ('aria-label="Tua lại và hẹn giờ ghi hình"','aria-label="Hẹn giờ ghi hình"'),
+    ('Lịch ghi chạy riêng với trình xem TV và Tua lại.','Lịch ghi chạy riêng với trình xem TV.'),
+    (' Không sao lưu bộ đệm Tua lại tạm thời hoặc chương trình đã cài.',' Không sao lưu chương trình đã cài.'),
+    (' Số phút tua lại áp dụng cho bộ đệm FFmpeg khi bắt đầu lần mới.',''),
+    (' Bộ đệm chỉ ghi từ lúc bật, không tua về trước khi bật.',''),
+):
+    html=html.replace(old,new)
+# Scheduled DVR nodes are kept for compatibility; web-only.css hides the
+# container. VOD/catch-up seek and normal playback are intentionally retained.
+
 (out/'index.html').write_text(html,encoding='utf-8')
 (out/'.nojekyll').write_text('')
 (out/'manifest.webmanifest').write_text(json.dumps({

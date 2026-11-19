@@ -176,16 +176,6 @@
   max-width:100%!important;font-size:16px!important;
  }
  html[data-iptv-device="mobile"] #page-tv .advanced-timebar{width:100%!important;min-width:0!important;padding:12px!important}
- html[data-iptv-device="mobile"] #page-tv .advanced-timebar .timeshift-actions{
-  display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;
-  align-items:center!important;gap:9px!important;
- }
- html[data-iptv-device="mobile"] #page-tv .advanced-timebar .timeshift-actions>b{grid-column:1/-1!important;line-height:1.5!important}
- html[data-iptv-device="mobile"] #page-tv .advanced-timebar .timeshift-actions>button{
-  min-height:46px!important;font-size:13px!important;padding:9px 11px!important;
-  white-space:normal!important;touch-action:manipulation;
- }
- html[data-iptv-device="mobile"] #page-tv .advanced-timebar #bufferToggle{grid-column:1/-1!important}
  html[data-iptv-device="mobile"] #page-tv .dvr-quick-bar :is(button,input){min-height:44px!important}
  html[data-iptv-device="mobile"] #page-tv .compact-tools>summary{min-height:48px!important;padding:12px 14px!important;font-size:14px!important}
  html[data-iptv-device="mobile"] #page-tv :is(.channel-item,.filter-tab,.folder-actions button,.panel-header-actions button){min-height:44px!important;touch-action:manipulation}
@@ -593,7 +583,7 @@ html[data-iptv-device="mobile"] body #page-tv .watch-panel{
  display:contents!important;
 }
 /* Video and its player controls stay first; channels now precede large
-   timeshift and quick-tool panels so users reach them without a long scroll. */
+   auxiliary panels so users reach channels without a long scroll. */
 html[data-iptv-device="mobile"] body #page-tv .watch-panel>.player-box{
  order:0!important;flex:0 0 auto!important;
  width:100%!important;min-width:0!important;

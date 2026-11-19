@@ -4,14 +4,12 @@
  const ctx=window.IPTVState,lib=window.OpenIPTVAdvancedCore;
  const $=q=>document.querySelector(q), esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
  const key='open-iptv-pro-advanced-v1';
- const defaults={alternates:{},health:{},reminders:[],optimizer:'balanced',replayMinutes:10,autoTimeshift:false,profiles:[{id:'admin',name:'Người lớn',child:false,favorites:[]}],profileId:'admin',restrictedGroups:[],pin:null};
+ const defaults={alternates:{},health:{},reminders:[],optimizer:'balanced',profiles:[{id:'admin',name:'Người lớn',child:false,favorites:[]}],profileId:'admin',restrictedGroups:[],pin:null};
  let state;try{state={...defaults,...JSON.parse(localStorage.getItem(key)||'{}')}}catch{state={...defaults}};
  if(!Array.isArray(state.profiles)||!state.profiles.length)state.profiles=defaults.profiles;
  if(!state.alternates||typeof state.alternates!=='object')state.alternates={};
  if(!state.health||typeof state.health!=='object')state.health={};
  if(!Array.isArray(state.reminders))state.reminders=[];
- state.autoTimeshift=state.autoTimeshift===true;
- if(![5,10,15,30].includes(Number(state.replayMinutes)))state.replayMinutes=10;
  ctx.getStore().alternates=state.alternates;
  const save=()=>{if(window.__openIPTVRestoringBackup)return;ctx.getStore().alternates=state.alternates;try{localStorage.setItem(key,JSON.stringify(state))}catch{ctx.toast('Đầy bộ nhớ cấu hình nâng cao','warn')}};
  let pendingHealthSave=null;function scheduleHealthSave(){if(pendingHealthSave)return;pendingHealthSave=setTimeout(()=>{pendingHealthSave=null;save();},1500);}
@@ -19,7 +17,6 @@
  const channels=()=>ctx.getChannels();
  const profile=()=>state.profiles.find(p=>p.id===state.profileId)||state.profiles[0];
  function snapshot(channel){const raw=ctx.getStore().snapshots[channel?.url];if(!raw)return '';if(raw.data)return raw.data;if(raw.file&&window.__snapshotBase)return window.__snapshotBase+encodeURIComponent(raw.file);return channel?.logo||'';}
- function setStatus(s){if($('#bufferInfo'))$('#bufferInfo').textContent=s;}
  // ====== Multiview: four independent players, only hovered tile is audible. ======
  const multi=[null,null,null,null];let audioTile=-1;
  function quietTiles(active=-1){audioTile=active;for(let i=0;i<4;i++){const v=multi[i]?.video;if(v){v.muted=i!==active;if(i===active)v.volume=Math.max(.05,ctx.player.volume||.8);}const card=multi[i]?.root;if(card)card.classList.toggle('audible',i===active);}}
@@ -76,7 +73,7 @@
  function record(ch,obj){if(!ch)return;const list=state.health[ch.url]||(state.health[ch.url]=[]);list.push({date:new Date().toISOString(),...obj});if(list.length>12)list.splice(0,list.length-12);scheduleHealthSave();}
  let loadStart=0,stallCount=0;
  function onLoadStart(ch,url,at){loadStart=at;stallCount=0;}
- function onPlaying(ch,url){if(!ch)return;record(ch,{status:'alive',type:'playback',startupMs:loadStart?Date.now()-loadStart:null,width:ctx.player.videoWidth||0,height:ctx.player.videoHeight||0,stalls:stallCount,url});maybeAutoBuffer(ch);}
+ function onPlaying(ch,url){if(!ch)return;record(ch,{status:'alive',type:'playback',startupMs:loadStart?Date.now()-loadStart:null,width:ctx.player.videoWidth||0,height:ctx.player.videoHeight||0,stalls:stallCount,url});}
  function onQuality(ch,quality){if(ch)record(ch,{status:'alive',type:'quality',bitrate:quality.bitrate,width:quality.width,height:quality.height});}
  let lastHealthRender=0;function onCheck(ch,res){record(ch,{status:res.status||'uncertain',type:'probe',reason:res.reason||'',latencyMs:res.latencyMs??null});if($('#page-health').classList.contains('active-page')&&Date.now()-lastHealthRender>1800){lastHealthRender=Date.now();renderHealth();}}
  function onStreamError(ch,reason){record(ch,{status:'uncertain',type:'error',reason});}
@@ -96,69 +93,9 @@
  $('#backupSave').onclick=()=>{const ch=channels().find(c=>c.id===$('#backupChannel').value);if(!ch)return ctx.toast('Chưa chọn kênh','warn');const raw=$('#backupURLs').value.split(/\r?\n/).map(x=>x.trim()).filter(Boolean);if(raw.length>9||raw.some(u=>!lib.validURL(u)))return ctx.toast('Tối đa 9 URL hợp lệ dùng HTTP(S)','warn');state.alternates[ch.id]=[...new Set(raw.filter(u=>u!==ch.url))];save();ctx.refreshManualLinks?.();ctx.toast('Đã lưu '+state.alternates[ch.id].length+' link dự phòng');};
  $('#bufferPreset').onchange=e=>{state.optimizer=e.target.value;save();ctx.toast('Đã lưu chế độ bộ đệm');};
  $('#healthRefresh').onclick=renderHealth;
- // ====== Local timeshift / remote DVR ======
- let buffering=false,bufferId='',bufferStarting=false,bufferRequest=0;
- let activeChannelId='',autoAttemptedId='',autoSuppressedId='';
- const autoSetting=$('#autoTimeshiftSetting'),autoLabel=$('#autoTimeshiftState');
- function replayMinutes(){return [5,10,15,30].includes(Number(state.replayMinutes))?Number(state.replayMinutes):10;}
- function syncReplayUI(){const minutes=replayMinutes();
-  document.querySelectorAll('input[name="replayMinutesChoice"]').forEach(input=>{input.checked=Number(input.value)===minutes;});
-  for(const id of ['bufferWindowMinutes','bufferInfoMinutes','autoTimeshiftWindowMinutes']){const el=$('#'+id);if(el)el.textContent=String(minutes);}
-  const label=$('#replayMinutesState');if(label)label.textContent='Đang dùng: '+minutes+' phút'+(buffering?' · Bộ đệm đang chạy giữ thời gian cũ':'');
- }
- document.querySelectorAll('input[name="replayMinutesChoice"]').forEach(input=>input.addEventListener('change',()=>{
-  if(!input.checked)return;state.replayMinutes=Number(input.value);save();syncReplayUI();
-  ctx.toast('Đã lưu tua lại '+replayMinutes()+' phút; áp dụng từ lần bật bộ đệm tiếp theo');
- }));
- syncReplayUI();
- function describeAutoSetting(){autoSetting.checked=!!state.autoTimeshift;autoLabel.textContent=state.autoTimeshift?(window.streamleaf?.startTimeshift?'Đã bật: tự dùng bộ đệm khi mở kênh LIVE.':'Đã lưu: sẽ tự bật khi chạy bản desktop có FFmpeg.'):'Mặc định: tắt (bật thủ công trong Xem TV).';}
- autoSetting.addEventListener('change',()=>{state.autoTimeshift=autoSetting.checked;save();describeAutoSetting();ctx.toast(state.autoTimeshift?'Đã bật Tua lại mặc định cho các kênh LIVE tiếp theo':'Đã tắt Tua lại mặc định');});
- describeAutoSetting();
- function maybeAutoBuffer(ch){
-  if(!state.autoTimeshift||!window.streamleaf?.startTimeshift||!ch||ctx.getPlayMode?.()!=='live'||buffering||bufferStarting)return;
-  if(autoAttemptedId===ch.id||autoSuppressedId===ch.id)return;
-  autoAttemptedId=ch.id;
-  // Start only after real playback begins; do not auto-start for catch-up, PiP or MultiView.
-  void toggleBuffer(false);
- }
- async function safeStopOwned(id){try{if(!id)return;const status=await window.streamleaf?.timeshiftStatus?.();if(status?.id===id)await window.streamleaf.stopTimeshift();}catch{}}
- async function toggleBuffer(manual=true){
-  const ch=ctx.getCurrent();
-  if(buffering){bufferRequest++;buffering=false;const oldId=bufferId;bufferId='';if(manual)autoSuppressedId=ch?.id||'';await safeStopOwned(oldId);setStatus('Đã tắt bộ đệm; trở về LIVE');$('#bufferToggle').textContent='Bật bộ đệm';if(ch)void ctx.playChannel(ch.id);return;}
-  if(bufferStarting)return;
-  if(!ch)return ctx.toast('Chọn kênh trước khi bật Tua lại','warn');
-  if(ctx.getPlayMode?.()!=='live')return ctx.toast('Tua lại chỉ dùng với kênh đang phát LIVE','warn');
-  if(!window.streamleaf?.startTimeshift)return ctx.toast('Bộ đệm cục bộ chỉ hỗ trợ ứng dụng desktop có FFmpeg','warn');
-  if(manual){autoSuppressedId='';autoAttemptedId=ch.id;}
-  const ticket=++bufferRequest;bufferStarting=true;let createdId='';
-  setStatus('Đang tạo bộ đệm tua lại '+replayMinutes()+' phút; cần đợi segment đầu tiên…');$('#bufferToggle').disabled=true;
-  try{
-   const out=await window.streamleaf.startTimeshift(ch.url,replayMinutes());createdId=out.id;bufferId=out.id;
-   const stale=()=>ticket!==bufferRequest||ctx.getCurrent()?.id!==ch.id||ctx.getPlayMode?.()!=='live';
-   if(stale())return;
-   let ready=false;
-   for(let tries=0;tries<25;tries++){
-    if(stale())return;
-    try{const r=await fetch(out.url,{cache:'no-store'});if(r.ok&&/#EXTINF:/.test(await r.text())){ready=true;break;}}catch(e){if(stale())return;}
-    await new Promise(ok=>setTimeout(ok,750));
-   }
-   if(stale())return;
-   if(!ready)throw Error('Nguồn không tạo được segment, vẫn tiếp tục phát LIVE');
-   buffering=true;$('#bufferToggle').textContent='Tắt bộ đệm';
-   await ctx.playChannel(ch.id,out.url,{buffer:true,mode:'timeshift'});
-   setStatus('Đệm tối đa ~'+replayMinutes()+' phút kể từ khi bật; có thể tua −10 hoặc −30 giây.');
-  }catch(e){if(ticket===bufferRequest){buffering=false;ctx.toast('Tua lại: '+e.message,'warn');setStatus('Chưa thể bật bộ đệm, kênh vẫn phát LIVE');}}
-  finally{
-   if(!buffering)await safeStopOwned(createdId);
-   if(ticket===bufferRequest){bufferStarting=false;$('#bufferToggle').disabled=false;}
-   else{bufferStarting=false;$('#bufferToggle').disabled=false;const next=ctx.getCurrent();if(next&&ctx.getPlayMode?.()==='live')maybeAutoBuffer(next);}
-  }
- }
- $('#bufferToggle').onclick=()=>toggleBuffer(true);
- $('#bufferRewind').onclick=()=>{const v=ctx.player,r=lib.seekRange(v,replayMinutes()*60);if(!r||r.available<2)return ctx.toast('Chưa có đủ dữ liệu DVR/Tua lại để tua','warn');v.currentTime=Math.max(r.start,v.currentTime-30);setStatus('Đang xem lại trong khoảng '+Math.round(r.available)+' giây đã có');};
- $('#bufferRewind10').onclick=()=>{const v=ctx.player,r=lib.seekRange(v,replayMinutes()*60);if(!r||r.available<2)return ctx.toast('Chưa có dữ liệu tua lại','warn');v.currentTime=Math.max(r.start,v.currentTime-10);setStatus('Tua lại 10 giây · có '+Math.round(r.available)+' giây dữ liệu');};
- $('#bufferLive').onclick=()=>{const ch=ctx.getCurrent();if(!ch)return;bufferRequest++;buffering=false;bufferStarting=false;autoSuppressedId=ch.id;const id=bufferId;bufferId='';void safeStopOwned(id);$('#bufferToggle').textContent='Bật bộ đệm';$('#bufferToggle').disabled=false;setStatus('Đang xem LIVE');void ctx.playChannel(ch.id);};
- function onStop(){bufferRequest++;buffering=false;bufferStarting=false;bufferId='';activeChannelId='';autoAttemptedId='';autoSuppressedId='';$('#bufferToggle').textContent='Bật bộ đệm';$('#bufferToggle').disabled=false;window.streamleaf?.stopTimeshift?.().catch(()=>{});}
+ // Web desktop/mobile: no live Timeshift controls or background recording buffer.
+ // Keep onStop API for independent player cleanup hooks.
+ function onStop(){}
  // ====== EPG search, reminders, catch-up and mapping ======
  const epg=()=>window.IPTVExtras?.getGuide?.()||{names:{},programmes:[]};
  function renderEpgSearch(){const root=$('#epgSearchResults'),q=$('#epgGlobalSearch').value.trim();root.replaceChildren();if(!q){root.textContent='Nhập tên chương trình để tìm trên lịch đã tải';return;}
@@ -224,7 +161,7 @@
   active.favoriteKeys=[...(store.favoriteKeys||[])];
   save();
  }
- function onChannel(ch,mode){if(mode==='timeshift')return;if(ch?.id!==activeChannelId){activeChannelId=ch?.id||'';autoAttemptedId='';autoSuppressedId='';}if(buffering||bufferStarting){bufferRequest++;buffering=false;bufferId='';$('#bufferToggle').textContent='Bật bộ đệm';setStatus('Bộ đệm bị dừng khi chuyển kênh');}}
+ function onChannel(){}
  function onPage(p,last){hidePreview();if(last==='multiview'&&p!=='multiview'){stopMulti();ctx.player.muted=previousMainMuted;}if(p==='multiview'&&last!=='multiview'){previousMainMuted=ctx.player.muted;ctx.player.muted=true;renderMulti();}if(p==='health')renderHealth();if(p==='doctor')doctor();if(p==='profiles')renderProfiles();if(p==='epg')renderEpgSearch();applyProfileUI();}
  $('#epgSearchResults').textContent='Nhập tên chương trình để tìm và đặt nhắc lịch.';
  $('#bufferPreset').value=state.optimizer;
@@ -240,7 +177,7 @@
   }
   if(changed){save();ctx.refreshManualLinks?.();}
  }
- window.IPTVProAdvanced={decorateRow,closePreview:hidePreview,allowChannel,onCheck,onPlaying,onLoadStart,onQuality,onStreamError,onChannel,onStop,onPage,onFavoritesChanged,hlsOptions,getReplayMinutes:replayMinutes,recordHealth:record,doctor,playCatchup,remind,setAlternatesBatch,setAlternates:(id,urls)=>{state.alternates[id]=[...new Set(urls)].slice(0,15);save();ctx.refreshManualLinks?.();},canEdit:()=>!profile().child,canEnterPage:p=>!profile().child||!['sources','discovery','folders','settings','health','doctor'].includes(p)};
+ window.IPTVProAdvanced={decorateRow,closePreview:hidePreview,allowChannel,onCheck,onPlaying,onLoadStart,onQuality,onStreamError,onChannel,onStop,onPage,onFavoritesChanged,hlsOptions,recordHealth:record,doctor,playCatchup,remind,setAlternatesBatch,setAlternates:(id,urls)=>{state.alternates[id]=[...new Set(urls)].slice(0,15);save();ctx.refreshManualLinks?.();},canEdit:()=>!profile().child,canEnterPage:p=>!profile().child||!['sources','discovery','folders','settings','health','doctor'].includes(p)};
  onFavoritesChanged();
  applyProfileUI();
  setInterval(checkReminders,30000);checkReminders();

@@ -55,7 +55,7 @@ Thanh công cụ phát trên điện thoại gồm một hàng 4 icon chạm t�
 
 ## Sửa cuộn danh sách và thông báo mobile (18/11/2026)
 
-Trên thiết bị mobile, danh sách kênh được đặt ngay sau video/khung điều khiển, **trước Tua lại và Công cụ nhanh**. Khung danh sách có chiều cao rõ ràng khoảng 350–520px; riêng danh sách kênh cuộn dọc bằng ngón tay, thanh bộ lọc cuộn ngang, không cản thao tác cuộn cả trang. Thu gọn danh sách vẫn được hỗ trợ. Thông báo hiện phía trên bottom navigation (bao gồm safe area iOS), không bị 5 tab che khuất. Tất cả áp dụng chỉ trong chế độ mobile, không thay đổi dữ liệu IPTV hay desktop.
+Trên thiết bị mobile, danh sách kênh được đặt ngay sau video/khung điều khiển, **trước Công cụ nhanh**. Khung danh sách có chiều cao rõ ràng khoảng 350–520px; riêng danh sách kênh cuộn dọc bằng ngón tay, thanh bộ lọc cuộn ngang, không cản thao tác cuộn cả trang. Thu gọn danh sách vẫn được hỗ trợ. Thông báo hiện phía trên bottom navigation (bao gồm safe area iOS), không bị 5 tab che khuất. Tất cả áp dụng chỉ trong chế độ mobile, không thay đổi dữ liệu IPTV hay desktop.
 
 ## Mobile Channel Touch — 18/11/2026
 
@@ -78,7 +78,7 @@ Snapshot trên Web chỉ lưu **khung hình video thật**. Ứng dụng thử �
 Khung Danh sách kênh trong giao diện mobile giảm đúng **40%** so với cấu hình v5 gần nhất: từ `clamp(997.5px,134.75dvh,1365px)` còn `clamp(598.5px,80.85dvh,819px)`; ở màn hình thấp từ `clamp(630px,157.5dvh,945px)` còn `clamp(378px,94.5dvh,567px)`. Không đổi chiều cao hàng kênh 78px, logo, nút thao tác, vuốt cuộn iOS và desktop. Phiên bản URL asset được cập nhật để tránh cache Safari.
 
 ## Bộ icon trình phát Web (18/11/2026)
-Các nút trong trình phát dùng biểu tượng SVG đơn sắc dạng CSS mask (không phụ thuộc emoji, CDN, hay phông chữ ngoài): chuyển kênh, phát/tạm dừng, dừng, âm lượng/tắt tiếng, Cast, PiP, toàn màn hình, lịch EPG, yêu thích, tua lại, ghi hình và các công cụ nhanh. Màu sắc dùng biến theme hiện có; hỗ trợ `focus-visible`, trạng thái disabled, vùng chạm tối thiểu ~46px trên mobile, `prefers-reduced-motion`. Trạng thái play/pause và âm lượng phản ánh video thật; không thay các event handler, thay ID hay logic phát kênh. Browser cache được làm mới qua `?v=vectorplayer-20261118a`.
+Các nút trong trình phát dùng biểu tượng SVG đơn sắc dạng CSS mask (không phụ thuộc emoji, CDN, hay phông chữ ngoài): chuyển kênh, phát/tạm dừng, dừng, âm lượng/tắt tiếng, Cast, PiP, toàn màn hình, lịch EPG, yêu thích và các công cụ xem truyền hình và các công cụ nhanh. Màu sắc dùng biến theme hiện có; hỗ trợ `focus-visible`, trạng thái disabled, vùng chạm tối thiểu ~46px trên mobile, `prefers-reduced-motion`. Trạng thái play/pause và âm lượng phản ánh video thật; không thay các event handler, thay ID hay logic phát kênh. Browser cache được làm mới qua `?v=vectorplayer-20261118a`.
 
 ### Sửa nút hiện hai icon trên iPhone (18/11/2026)
 

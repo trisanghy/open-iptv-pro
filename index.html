@@ -114,9 +114,8 @@
         <span id="videoDuration">00:00</span><span class="video-seek-hint" id="videoSeekHint">Video có thể tua</span>
        </div>
       </div>
-      <section class="advanced-timebar" aria-label="Tua lại và hẹn giờ ghi hình">
-        <div class="timeshift-actions"><b>⏪ Tua lại · <span id="bufferWindowMinutes">10</span> phút</b><button id="bufferToggle" class="btn btn-subtle">Bật bộ đệm</button><button id="bufferRewind10" class="btn btn-subtle">−10 giây</button><button id="bufferRewind" class="btn btn-subtle">−30 giây</button><button id="bufferLive" class="btn btn-subtle">Về LIVE</button></div>
-        <small id="bufferInfo">Bộ đệm <span id="bufferInfoMinutes">10</span> phút bắt đầu khi bật; các nút tua chỉ lùi trong phần đã ghi được.</small>
+      <section class="advanced-timebar" aria-label="Hẹn giờ ghi hình">
+        
         <div class="dvr-quick-bar"><button type="button" class="btn btn-primary" id="dvrQuickToggle" aria-controls="dvrQuickForm" aria-expanded="false">⏺ Hẹn giờ ghi hình</button><button type="button" class="btn btn-subtle" id="dvrQuickManage">▤ Xem lịch ghi</button><span id="dvrQuickStatus" class="dvr-quick-status" role="status" aria-live="polite">Đang tải trạng thái ghi hình…</span></div>
         <form id="dvrQuickForm" class="dvr-quick-form hidden">
           <span class="dvr-quick-channel" id="dvrQuickChannel">Chưa chọn kênh</span>
@@ -164,7 +163,7 @@
     </section></section>
    <section id="page-profiles" class="page"><div class="section-heading"><div><h1>♙ Hồ sơ người dùng & kiểm soát trẻ em</h1><p>Yêu thích theo hồ sơ, khóa theo thư mục và mã PIN cục bộ.</p></div></div><div class="settings-grid"><article class="settings-card"><h2>Chuyển hồ sơ</h2><select id="profileChoice" class="modal-input"></select><button class="btn btn-primary" id="profileSwitch">Chuyển hồ sơ</button><h2>Tạo hồ sơ</h2><input id="profileName" class="modal-input" placeholder="Tên hồ sơ"/><label class="check-line"><input type="checkbox" id="profileChild"/> Hồ sơ trẻ em</label><button class="btn btn-subtle" id="profileCreate">Tạo hồ sơ</button></article><article class="settings-card"><h2>Khóa PIN và nhóm hạn chế</h2><label class="settings-label">PIN quản trị (4–8 chữ số)</label><input id="profilePin" type="password" inputmode="numeric" class="modal-input" placeholder="PIN mới"/><button class="btn btn-subtle" id="pinSave">Đặt / đổi PIN</button><div id="profileGroupLocks"></div><p class="hint">PIN tại thiết bị giúp hạn chế thao tác thông thường, không thay thế biện pháp kiểm soát truy cập của hệ điều hành.</p></article></div><p id="profileStatus" class="hint"></p></section>
    <section id="page-epg" class="page"><div class="section-heading"><div><h1>▤ Lịch phát sóng (EPG)</h1><p>Chương trình đang chiếu, sắp chiếu và lịch trong ngày từ nguồn XMLTV.</p></div><div class="heading-actions"><button class="btn btn-subtle" id="epgRefreshBtn">↻ Tải lại EPG</button><button class="btn btn-primary" id="epgSettingsBtn">⚙ Nguồn EPG</button></div></div><div class="filter-box epg-filter"><span>⌕</span><input type="search" id="epgSearch" placeholder="Tìm kênh trong lịch EPG..."/></div><div class="epg-advanced"><input id="epgGlobalSearch" placeholder="Tìm tên chương trình và đặt nhắc lịch…"/><button id="epgSearchGo" class="btn btn-subtle">Tìm chương trình</button><button id="epgManualMap" class="btn btn-subtle">Ghép EPG thủ công</button><label>Chỉnh giờ (+/− phút) <input id="epgOffset" type="number" value="0" min="-720" max="720" step="15"/></label></div><div id="epgSearchResults" class="epg-search-results"></div><div class="epg-summary" id="epgSummary">Chưa có dữ liệu lịch phát sóng.</div><div class="dvr-panel" id="dvrPanel">
-    <div class="dvr-heading"><div><h2>⏺ Hẹn giờ ghi hình chương trình</h2><p>Lịch ghi chạy riêng với trình xem TV và Tua lại. Video hoàn tất lưu dưới dạng MP4; ứng dụng cần mở và máy không ngủ đúng giờ.</p></div><button type="button" id="dvrOpenDir" class="btn btn-subtle">▤ Mở thư mục ghi</button></div>
+    <div class="dvr-heading"><div><h2>⏺ Hẹn giờ ghi hình chương trình</h2><p>Lịch ghi chạy riêng với trình xem TV. Video hoàn tất lưu dưới dạng MP4; ứng dụng cần mở và máy không ngủ đúng giờ.</p></div><button type="button" id="dvrOpenDir" class="btn btn-subtle">▤ Mở thư mục ghi</button></div>
     <div class="dvr-folder"><span id="dvrDirectory" title="Thư mục ghi hình">Đang tải thư mục…</span><button id="dvrChooseDir" class="btn btn-subtle" type="button">Thay đổi nơi lưu</button></div>
     <form id="dvrForm" class="dvr-form">
       <label>Kênh<select id="dvrChannel" class="modal-input" required></select></label>
@@ -294,7 +293,7 @@
       <label class="check-line" for="backupIncludeSnapshots"><input type="checkbox" id="backupIncludeSnapshots" checked/> Kèm ảnh Snapshot đã lưu trên máy</label>
       <div class="backup-actions"><button id="backupExportBtn" class="btn btn-primary" type="button">⇩ Tạo file Backup</button><button id="backupImportBtn" class="btn btn-subtle" type="button">↶ Restore từ file</button></div>
       <p id="backupStatus" role="status" aria-live="polite" class="backup-status">Chưa có thao tác sao lưu hoặc khôi phục.</p>
-      <small>Backup không mã hóa, có thể chứa URL có tài khoản/mật khẩu và thông tin hồ sơ. Hãy giữ file ở nơi an toàn. Restore sẽ yêu cầu xác nhận trước khi thay dữ liệu hiện tại. Không sao lưu bộ đệm Tua lại tạm thời hoặc chương trình đã cài.</small>
+      <small>Backup không mã hóa, có thể chứa URL có tài khoản/mật khẩu và thông tin hồ sơ. Hãy giữ file ở nơi an toàn. Restore sẽ yêu cầu xác nhận trước khi thay dữ liệu hiện tại. Không sao lưu chương trình đã cài.</small>
     </article>
     <article class="settings-card language-card" id="languageSettings"><h2>🌐 Ngôn ngữ / Language</h2><p id="languageDescription">Chọn ngôn ngữ ứng dụng. Thay đổi có hiệu lực ngay, không cần khởi động lại.</p>
      <label class="settings-label" for="appLanguage">Ngôn ngữ giao diện</label>
@@ -303,7 +302,7 @@
      </select><small id="languageNote">Tên kênh, thư mục cá nhân và nội dung EPG từ nguồn sẽ không bị thay đổi.</small></article>
     <article class="settings-card" id="freezeMonitorSettings"><h2>▣ Giám sát hình ảnh đang phát</h2><label class="check-line"><input type="checkbox" id="freezeMonitorEnabled" checked/> Cảnh báo khung hình đứng, màn hình đen (chỉ kênh chính)</label><label class="check-line"><input type="checkbox" id="freezeAutoFailover"/> Thử link dự phòng khi đứng hình được xác nhận (tắt mặc định)</label><p id="freezeMonitorStatus" aria-live="polite">Chưa có kênh đang phát</p><small>Nghi đứng hình không đồng nghĩa link Die. Không tự chuyển nguồn chỉ dựa trên một khung hình tĩnh.</small></article>
     <article class="settings-card full-tool-panel" id="fullFeatureTools"><h2>☷ Chọn cấu hình kiểm tra</h2>
-      <p>Chọn mức song song cho kiểm tra link và Snapshot. Các nút này <b>lưu cấu hình</b>, không chuyển sang trang khác. Số phút tua lại áp dụng cho bộ đệm FFmpeg khi bắt đầu lần mới.</p>
+      <p>Chọn mức song song cho kiểm tra link và Snapshot. Các nút này <b>lưu cấu hình</b>, không chuyển sang trang khác.</p>
       <div class="configuration-choices">
        <fieldset class="settings-choice-group" aria-label="Số luồng kiểm tra link"><legend>✓ Luồng kiểm tra link</legend>
         <label><input type="radio" name="checkConcurrencyChoice" value="1"/>1</label><label><input type="radio" name="checkConcurrencyChoice" value="4"/>4</label><label><input type="radio" name="checkConcurrencyChoice" value="8"/>8</label><label><input type="radio" name="checkConcurrencyChoice" value="16"/>16</label><label><input type="radio" name="checkConcurrencyChoice" value="32"/>32</label>
@@ -311,10 +310,8 @@
        <fieldset class="settings-choice-group" aria-label="Số luồng chụp Snapshot"><legend>▦ Luồng chụp Snapshot</legend>
         <label><input type="radio" name="snapshotConcurrencyChoice" value="1"/>1</label><label><input type="radio" name="snapshotConcurrencyChoice" value="4"/>4</label><label><input type="radio" name="snapshotConcurrencyChoice" value="8"/>8</label><label><input type="radio" name="snapshotConcurrencyChoice" value="16"/>16</label><label><input type="radio" name="snapshotConcurrencyChoice" value="32"/>32</label>
         <small id="snapshotConcurrencyState" role="status">Đang dùng: 4 luồng</small></fieldset>
-       <fieldset class="settings-choice-group" aria-label="Thời gian tua lại"><legend>⏪ Thời lượng tua lại</legend>
-        <label><input type="radio" name="replayMinutesChoice" value="5"/>5 phút</label><label><input type="radio" name="replayMinutesChoice" value="10"/>10 phút</label><label><input type="radio" name="replayMinutesChoice" value="15"/>15 phút</label><label><input type="radio" name="replayMinutesChoice" value="30"/>30 phút</label>
-        <small id="replayMinutesState" role="status">Đang dùng: 10 phút</small></fieldset>
-      </div><small>Kiểm tra tối đa 32 luồng; tốc độ thực tế phụ thuộc máy, mạng và giới hạn từ nhà cung cấp. Bộ đệm chỉ ghi từ lúc bật, không tua về trước khi bật.</small>
+       
+      </div><small>Kiểm tra tối đa 32 luồng; tốc độ thực tế phụ thuộc máy, mạng và giới hạn từ nhà cung cấp.</small>
     </article>
         <article class="settings-card" id="webAutoResumeSettings">
       <h2>▶ Tự mở kênh khi vào website</h2>
@@ -338,7 +335,7 @@
       <label class="check-line" for="webBackgroundAudio"><input type="checkbox" id="webBackgroundAudio" checked/> Tiếp tục nghe và điều khiển khi màn hình tắt (nếu được hỗ trợ)</label>
       <small id="webBackgroundAudioStatus" role="status" aria-live="polite">Nhấn Nghe nền ở màn hình TV trước khi khóa máy. Chrome/Edge Android và Safari iOS chỉ phát tiếp nếu trình duyệt và luồng IPTV hỗ trợ.</small>
     </article>
-    <article class="settings-card" id="defaultBufferSettings"><h2>⏪ Tua lại mặc định</h2><label class="check-line buffer-default-line" for="autoTimeshiftSetting"><input type="checkbox" id="autoTimeshiftSetting"/> Tự bật bộ đệm tua lại <span id="autoTimeshiftWindowMinutes">10</span> phút khi mở kênh</label><p>FFmpeg được tích hợp sẵn. Bộ đệm tua lại theo số phút đã chọn được tạo cục bộ từ lúc mở kênh; Snapshot hàng loạt hoạt động mà không cần cài FFmpeg ngoài. Nguồn có DRM hoặc chặn truy cập có thể không hỗ trợ.</p><small id="autoTimeshiftState" aria-live="polite">Mặc định: tắt</small></article>
+    
     <article class="settings-card" id="epgSettingsCard"><h2>▤ Nguồn lịch EPG</h2><p>Quản lý nguồn XMLTV (.xml / .xml.gz), cập nhật tự động hoặc nhập file từ máy. EPG cũ được giữ lại nếu cập nhật lỗi.</p>
       <label class="check-line" for="epgAutoRefreshStart"><input type="checkbox" id="epgAutoRefreshStart"/> Tự tải EPG khi khởi động ứng dụng</label>
       <small id="epgAutoHint">Mặc định bật. Chỉ tự tải nguồn Việt Nam; chọn thêm nguồn quốc tế nếu cần. Có thể tắt bất cứ lúc nào.</small>

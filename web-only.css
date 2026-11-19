@@ -131,3 +131,9 @@ html body #page-tv .player-control-card #epgCurrent :is(#epgNowName,#epgNextName
     min-width:0!important;
   }
 }
+
+/* Web browser desktop + mobile: live Timeshift is discontinued.
+   Keep legacy DVR binding nodes mounted but never show the empty timebar. */
+#page-tv .advanced-timebar,
+#defaultBufferSettings,
+#fullFeatureTools [name="replayMinutesChoice"]{display:none!important}
