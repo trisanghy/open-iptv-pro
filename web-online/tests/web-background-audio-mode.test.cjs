@@ -56,7 +56,9 @@ function fixture({playReject=false,chromeHls=false,initial={},allowAudio=true,wi
    return audio;
   }
  });
- const ms={metadata:null,playbackState:'none',setActionHandler(name,fn){handlers[name]=fn}};
+ const ms={metadata:null,playbackState:'none',actions:[],setActionHandler(name,fn){
+  handlers[name]=fn;this.actions.push({name,bound:typeof fn==='function'});
+ }};
  const nav={mediaSession:ms,audioSession:{type:'auto'}};
  const hlsLog={attached:0,loaded:0,destroyed:0};
  const win=events({
@@ -197,7 +199,7 @@ test('Web files and builder preserve UI after rebuild without changing native br
  assert.equal(html.split('id="webBackgroundAudioToggle"').length,2);
  assert.equal(html.split('id="webBackgroundAudioBar"').length,1);
  assert.match(html,/id="favCurrentBtn"[\s\S]*?id="webBackgroundAudioToggle"/);
- assert.ok(html.includes('web-background-audio.js?v=lock-rescue-20261119g'));
+ assert.ok(html.includes('web-background-audio.js?v=ios-chrome-locktrack-20261119h'));
  assert.ok(html.includes('web-background-audio.css?v=lock-artwork-20261119e'));
  assert.ok(builder.includes('compact_audio=web_html['));
  assert.ok(builder.includes("'web-background-audio.css'"));
@@ -344,4 +346,47 @@ test('late playback error on newly committed channel triggers one rollback to la
  assert.equal(e.ms.metadata.title,'VTV1');
  assert.equal(e.audioElements.length,1);
  assert.equal(audio.removed,false);
+});
+
+test('Chrome on iPhone re-registers track controls only once audio is really playing, clearing +/-10s seeks',async()=>{
+ const e=fixture();
+ e.nav.userAgent='Mozilla/5.0 (iPhone) AppleWebKit/605.1.15 CriOS/132.0 Mobile/15E148';
+ const initial=e.ms.actions.filter(x=>x.name==='nexttrack'&&x.bound).length;
+ assert.equal(initial,1);
+ assert.equal(e.handlers.seekbackward,undefined);
+ assert.equal(await e.controller.activate(),true);
+ assert.equal(e.handlers.seekbackward,null);
+ assert.equal(e.handlers.seekforward,null);
+ assert.equal(e.handlers.seekto,null);
+ assert.equal(typeof e.handlers.nexttrack,'function');
+ assert.equal(typeof e.handlers.previoustrack,'function');
+ const bound=e.ms.actions.filter(x=>x.name==='nexttrack'&&x.bound).length;
+ assert.ok(bound>initial);
+ assert.equal(e.ms.playbackState,'playing');
+ e.handlers.nexttrack();
+ e.handlers.previoustrack();
+ assert.equal(e.els.nextBtn.clicked,1);
+ assert.equal(e.els.prevBtn.clicked,1);
+});
+test('lockscreen track actions are restored after pause/resume, live stream retune, and cleared on Stop',async()=>{
+ const e=fixture();
+ await e.controller.activate();
+ const node=e.audioElements[0];
+ const before=e.ms.actions.filter(x=>x.name==='previoustrack'&&x.bound).length;
+ e.handlers.pause();
+ assert.equal(e.ms.playbackState,'paused');
+ e.handlers.play();
+ await Promise.resolve();
+ assert.equal(e.ms.playbackState,'playing');
+ assert.ok(e.ms.actions.filter(x=>x.name==='previoustrack'&&x.bound).length>before);
+ const beforeRetune=e.ms.actions.filter(x=>x.name==='nexttrack'&&x.bound).length;
+ assert.equal(await e.controller.activate({streamUrl:'https://example.org/another.m3u8'}),true);
+ assert.equal(e.audioElements.length,1);
+ assert.equal(e.audioElements[0],node);
+ assert.ok(e.ms.actions.filter(x=>x.name==='nexttrack'&&x.bound).length>beforeRetune);
+ e.controller.clearSession();
+ for(const action of ['nexttrack','previoustrack','seekbackward','seekforward','seekto']){
+  assert.equal(e.handlers[action],null,action);
+ }
+ assert.equal(e.ms.playbackState,'none');
 });

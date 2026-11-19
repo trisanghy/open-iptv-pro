@@ -154,7 +154,10 @@
   }
   function clearSession(){
    deactivate(false);
-   if(installed){for(const action of ACTIONS)safeAction(action,null);}
+   if(installed){
+    for(const action of ACTIONS)safeAction(action,null);
+    for(const action of ['seekbackward','seekforward','seekto'])safeAction(action,null);
+   }
    installed=false;lastTitle='';lastArtworkRequest='';artworkRevision++;
    if(session)try{session.metadata=null;session.playbackState='none';}catch{}
    releaseAudioType();
@@ -294,9 +297,22 @@
     if(active&&typeof app.stopPlayer==='function')app.stopPlayer();
     else doc.getElementById?.('stopBtn')?.click?.();
    });
+   bindTrackControls();
+   installed=true;
+  }
+  function bindTrackControls(){
+   if(!session||!enabled()||!app.getCurrent?.())return;
+   // iOS/WebKit may ignore playlist commands registered before the native
+   // Now Playing session starts. Rebind on every real 'playing' event.
    safeAction('previoustrack',()=>navigate(-1));
    safeAction('nexttrack',()=>navigate(1));
-   installed=true;
+   if(active&&audio){
+    // Live IPTV should not offer +/-10 second seeking on the lock screen.
+    // Suppress default seek commands so WebKit can present track navigation.
+    safeAction('seekbackward',null);
+    safeAction('seekforward',null);
+    safeAction('seekto',null);
+   }
   }
   function sync(){
    const channel=app.getCurrent?.();
@@ -350,7 +366,12 @@
    node.muted=Boolean(video.muted);
    for(const type of ['play','playing','pause','ended']){
     node.addEventListener?.(type,()=>{
-     if(active&&audio===node)refreshState();
+     if(!active||audio!==node)return;
+     if(type==='playing'){
+      sync(); // channel metadata first
+      bindTrackControls(); // bind after iOS Now Playing is active
+     }
+     refreshState();
     });
    }
    node.addEventListener?.('error',()=>{
@@ -485,6 +506,7 @@
    video.addEventListener?.(type,()=>{
     if(active){if(type==='play')video.pause?.();refreshState();return;}
     sync();
+    if(type==='playing')bindTrackControls();
    });
   }
   doc.addEventListener?.('openiptv:media-info',sync);
