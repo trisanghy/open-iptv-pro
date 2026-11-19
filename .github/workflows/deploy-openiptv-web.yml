@@ -189,7 +189,7 @@ jobs:
           node --test web-online/tests/web-mobile-favorites-interaction.test.cjs
           node --check _site/advanced.js
           node --check _site/app.js
-          grep -Fq 'features.js?v=epgpw-20261119a' _site/index.html
+          grep -Fq 'features.js?v=epg-backup-20261119b' _site/index.html
           node --check _site/features.js
           node --test web-online/tests/web-mobile-channel-always-open.test.cjs
           node --test web-online/tests/web-tv-wide.test.cjs
