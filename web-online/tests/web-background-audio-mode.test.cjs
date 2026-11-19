@@ -439,3 +439,37 @@ test('Audio controller exposes listening playback state; keeps SVG labels and co
  await Promise.resolve();
  assert.deepEqual(e.controller.getPlaybackState(),{playing:true,muted:false});
 });
+
+test('lock-screen next channel cannot pause Now Playing by suspending an already idle video twice',()=>{
+ const vm=require('node:vm'),app=read('app.js');
+ const begin=' function suspendVideoForBackground(){',end=' async function playChannel(chId,override=null,opts={}){';
+ assert.equal(app.split(begin).length,2);
+ const body=app.slice(app.indexOf(begin),app.indexOf(end,app.indexOf(begin)));
+ const lockScreen={state:'playing'};
+ const video={
+  paused:false,currentSrc:'https://example.org/current.m3u8',attributes:new Set(['src']),
+  pauseCalls:0,loadCalls:0,
+  pause(){this.pauseCalls++;this.paused=true;lockScreen.state='paused';},
+  hasAttribute(name){return this.attributes.has(name)},
+  removeAttribute(name){this.attributes.delete(name)},
+  load(){this.loadCalls++;this.currentSrc=''}
+ };
+ const sandbox={video,lockScreen};
+ const harness=vm.runInNewContext('(function(){'+
+  'let playGeneration=0,playAttemptSerial=0,failoverTimer=null,stallTimer=null,startupNoteTimer=null,ffmpegFallbackId="",hls=null,dash=null;'+
+  'const player=video;const window={streamleaf:null};const clearTimeout=()=>{};'+body+
+  ';return {run:suspendVideoForBackground,counts:()=>[playGeneration,playAttemptSerial]};})()',sandbox);
+ harness.run(); // Initial explicit background-audio activation releases video once.
+ assert.equal(video.pauseCalls,1);
+ assert.equal(video.loadCalls,1);
+ lockScreen.state='playing'; // Independent audio has started and iOS shows Pause.
+ harness.run(); // Next-track channel selection must not call pause() on old video.
+ assert.equal(video.pauseCalls,1);
+ assert.equal(video.loadCalls,1);
+ assert.equal(lockScreen.state,'playing');
+ assert.deepEqual(Array.from(harness.counts()),[2,2],'stale video playback requests remain invalidated');
+ video.paused=false;video.currentSrc='https://example.org/new.m3u8';video.attributes.add('src');
+ harness.run(); // Returning to TV then re-enabling background audio still works.
+ assert.equal(video.pauseCalls,2);
+ assert.equal(video.loadCalls,2);
+});

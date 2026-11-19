@@ -898,7 +898,17 @@
   if(oldFallback)window.streamleaf?.stopPlaybackFallback?.(oldFallback).catch(()=>{});
   if(hls){try{hls.destroy();}catch{}hls=null;}
   if(dash){try{dash.reset();}catch{}dash=null;}
-  try{player.pause();player.removeAttribute('src');player.load();}catch(e){console.warn('Video suspend for audio mode:',e);}
+  // iOS Now Playing can treat a pause/load on an already suspended <video>
+  // as a new pause command, even while our separate <audio> plays normally.
+  // Only release the video decoder once; subsequent lock-screen Next/Previous
+  // must not disturb the active audio session or its Play/Pause indicator.
+  const videoNeedsRelease=!player.paused||!!player.currentSrc||!!player.hasAttribute?.('src');
+  if(!videoNeedsRelease)return;
+  try{
+   if(!player.paused)player.pause();
+   player.removeAttribute('src');
+   player.load();
+  }catch(e){console.warn('Video suspend for audio mode:',e);}
  }
  async function playChannel(chId,override=null,opts={}){
   const found=enabledChannels().find(c=>c.id===chId);if(!found){toast('Kênh không tồn tại hoặc nguồn đang tắt','warn');return;}

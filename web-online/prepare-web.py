@@ -276,7 +276,7 @@ if html.count('<div class="filter-tabs">')!=1:sys.exit('Recent channel filter sl
 html=html.replace('<div class="filter-tabs">','<div class="filter-tabs"><button class="filter-tab" data-filter="recent">Vừa xem</button>',1)
 app_script='<script src="app.js?v=playlist-http-20261119d"></script>'
 if html.count(app_script)!=1:sys.exit('Recent channel script slot changed')
-html=html.replace(app_script,'<script src="web-recent-channels.js?v=recent-controls-20261119a"></script><script src="app.js?v=playlist-http-20261119d-recent-controls-20261119a"></script>',1)
+html=html.replace(app_script,'<script src="web-recent-channels.js?v=recent-controls-20261119a"></script><script src="app.js?v=ios-lockscreen-next-state-20261119a"></script>',1)
 html=html.replace('<script src="web-recent-channels.js?v=recent-controls-20261119a"></script>','<script src="web-snapshot-batch.js?v=snapshot-all-20261119b"></script><script src="web-recent-channels.js?v=recent-controls-20261119a"></script>',1)
 html=html.replace('</head>','<link rel="stylesheet" href="web-compact-toolbar.css?v=recent-controls-20261119a"/></head>',1)
 # Web background audio: same HTML5 media element, Android/Apple Media Session controls.
