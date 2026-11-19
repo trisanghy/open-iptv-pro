@@ -476,14 +476,14 @@ test('lock-screen next channel cannot pause Now Playing by suspending an already
 
 test('iPhone lock-screen Next reaffirms the same playing audio after Now Playing metadata changes',async()=>{
  const channels=[
-  {id:'one',name:'VTV1',url:'https://example.org/one.m3u8'},
-  {id:'two',name:'VTV2',url:'https://example.org/two.m3u8'}];
- const e=fixture({transactionalChannels:channels});e.setChannel(channels[0]);
+  {id:'vtv1',name:'VTV1',url:'https://example.org/live.m3u8'},
+  {id:'vtv2',name:'VTV2',url:'https://example.org/two.m3u8'}];
+ const e=fixture({transactionalChannels:channels});
  assert.equal(await e.controller.activate(),true);
  const node=e.audioElements[0],before=node.playCalls;
  e.doc.visibilityState='hidden';
  e.handlers.nexttrack();await new Promise(setImmediate);
- assert.equal(e.getCurrent().id,'two');
+ assert.equal(e.getCurrent().id,'vtv2');
  assert.equal(e.audioElements[0],node);
  assert.equal(e.ms.metadata.title,'VTV2');
  assert.equal(e.ms.playbackState,'playing');
