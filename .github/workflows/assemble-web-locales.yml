@@ -1,0 +1,55 @@
+name: Assemble Web offline native locales
+on:
+  push:
+    branches: [web/online]
+    paths:
+      - '.github/workflows/assemble-web-locales.yml'
+      - 'web-online/scripts/assemble-web-locales.py'
+  workflow_dispatch:
+permissions:
+  actions: read
+  contents: write
+concurrency:
+  group: assemble-web-offline-locales
+  cancel-in-progress: false
+jobs:
+  assemble:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout current Web branch
+        uses: actions/checkout@v4
+        with:
+          ref: web/online
+          persist-credentials: true
+      - name: Load completed public UI translation artifacts
+        uses: actions/download-artifact@v4
+        with:
+          repository: trisanghy/open-iptv-pro
+          run-id: 44474053481
+          github-token: ${{ github.token }}
+          pattern: native-ui-*
+          merge-multiple: true
+          path: locale-input
+      - name: Assemble and audit offline Web locale packs
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 web-online/scripts/assemble-web-locales.py locale-input
+          node --check web-online/web-generated-locales.js
+          node web-online/i18n-audit.cjs
+      - name: Commit generated dictionaries to Web branch only
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add web-online/web-generated-locales.js
+          if git diff --cached --quiet; then
+            echo 'Web offline pack already matches verified assets.'
+            exit 0
+          fi
+          git commit -m 'feat(web-i18n): add pretranslated offline UI dictionaries for all 17 languages'
+          git fetch origin web/online
+          git rebase FETCH_HEAD
+          git push origin HEAD:web/online
