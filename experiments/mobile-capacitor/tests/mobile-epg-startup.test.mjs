@@ -20,7 +20,9 @@ test('startup refreshes EPG and all remote M3U sources and resumes previous play
 });
 test('iOS auto playback falls back to muted inline on NotAllowedError, never auto fullscreen',()=>{
  assert.match(main,/!startup\|\|e\?\.name!=='NotAllowedError'/);
- assert.match(main,/mediaMuted=true;await v\.play\(\)/);
+ assert.match(main,/v\.muted=true;mediaMuted=true;/);
+ assert.match(main,/try\{await v\.play\(\);\}/);
+ assert.match(main,/name:'AutoplayBlockedError'/);
  const play=main.slice(main.indexOf('async function play(c,requestedURL'),main.indexOf('async function playFullscreen()'));
  assert.doesNotMatch(play,/VideoPlayer\.initPlayer\(/);
 });

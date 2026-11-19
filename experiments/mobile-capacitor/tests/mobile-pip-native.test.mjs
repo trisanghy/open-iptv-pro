@@ -6,13 +6,16 @@ const main=fs.readFileSync(path.join(root,'src/main.js'),'utf8');
 const android=fs.readFileSync(path.join(root,'native/android/MainActivity.java'),'utf8');
 const plugin=fs.readFileSync(path.join(root,'native/android/OpenIPTVAutoPipPlugin.java'),'utf8');
 const patch=fs.readFileSync(path.join(root,'scripts/patch-native.mjs'),'utf8');
-test('Settings expose persisted opt-in switch, off by default',()=>{
+test('Settings default to auto PiP on with a saved explicit off option',()=>{
  const html=oldStyleLayout();
  assert.match(html,/id="autoPiPOnBackground"/);
  assert.doesNotMatch(html,/id="autoPiPOnBackground"[^>]+checked/);
- assert.match(main,/autoPiPOnBackground:false/);
+ assert.match(main,/autoPiPOnBackground:true/);
+ assert.match(main,/autoPiPChoiceRecorded/);
  assert.match(main,/pipToggle\.onchange/);
- assert.match(main,/state\.settings\.autoPiPOnBackground=pipToggle\.checked;save\(\)/);
+ assert.match(main,/state\.settings\.autoPiPOnBackground=pipToggle\.checked/);
+ assert.match(main,/state\.settings\.autoPiPChoiceRecorded=true/);
+ assert.match(main,/save\(\);syncAutoPiP\(\)/);
 });
 test('Android 12+ uses OS auto-enter when inline playing; pre-12 uses leave hint',()=>{
  assert.match(android,/setAutoEnterEnabled\(enabled && playing\)/);
