@@ -5,30 +5,37 @@ const fs=require('node:fs'),path=require('node:path'),vm=require('node:vm');
 const root=path.join(__dirname,'../..');
 const js=fs.readFileSync(path.join(root,'features.js'),'utf8');
 const reader=js.slice(js.indexOf(' async function readFreshGuide('),js.indexOf(' async function refreshEPG('));
-const primary='https://epgshare01.online/epgshare01/epg_ripper_VN1.xml.gz',standby='https://epg.pw/xmltv/epg_VN.xml';
+const primary='https://epg.io.vn/epg.xml.gz',standard='https://epg.io.vn/epg.xml',localized='https://epg.io.vn/epgu.xml.gz';
+const legacy='https://epgshare01.online/epgshare01/epg_ripper_VN1.xml.gz',standby='https://epg.pw/xmltv/epg_VN.xml';
 function configFor(previous){
  const snippet=js.slice(js.indexOf(' const defaultSources=['),js.indexOf(' const saveConfig='));
  return vm.runInNewContext('(()=>{'+snippet+';return config;})()',{
   localStorage:{getItem:()=>previous?JSON.stringify(previous):null}});
 }
-test('fresh installs use primary EPGShare01; EPG.pw remains disabled and last',()=>{
+test('fresh installs use VNEPG gzip; other presets stay opt-in',()=>{
  const c=configFor();
  assert.equal(c.sources[0].url,primary);
  assert.equal(c.sources[0].enabled,true);
+ assert.equal(c.sources[1].url,standard);
+ assert.equal(c.sources[1].enabled,false);
+ assert.equal(c.sources[2].url,localized);
+ assert.equal(c.sources[2].enabled,false);
+ assert.equal(c.sources.find(s=>s.url===legacy).enabled,false);
  assert.equal(c.sources.at(-1).url,standby);
  assert.equal(c.sources.at(-1).enabled,false);
- assert.equal(c.sources.filter(s=>s.url===standby).length,1);
+ for(const url of [primary,standard,localized,legacy,standby])assert.equal(c.sources.filter(s=>s.url===url).length,1);
  assert.equal(c.autoRefreshEPGOnStartup,true);
 });
 test('exclusive EPG.pw upgrade restores primary, keeps former custom feeds and startup opt-out',()=>{
  const c=configFor({epgSourcePolicy:'epg-pw-vn-only-20261119',sources:[
   {name:'EPG.pw',url:standby,enabled:true},
-  {name:'Legacy',url:primary,enabled:false},
+  {name:'Legacy',url:legacy,enabled:false},
   {name:'Custom',url:'https://example.test/my.xml',enabled:false},
   {name:'Tracking',url:standby+'?utm_source=chatgpt.com',enabled:true}
  ],autoRefreshEPGOnStartup:false});
  assert.equal(c.sources[0].url,primary);
  assert.equal(c.sources[0].enabled,true);
+ assert.equal(c.sources.find(s=>s.url===legacy).enabled,false);
  assert.equal(c.sources.find(s=>s.url==='https://example.test/my.xml').enabled,false);
  assert.equal(c.sources.at(-1).url,standby);
  assert.equal(c.sources.at(-1).enabled,false);
@@ -44,6 +51,35 @@ test('user-enabled alternate EPG is preserved while EPG.pw defaults off',()=>{
  assert.equal(c.sources.find(s=>s.url==='https://example.test/custom.xml').enabled,true);
  assert.equal(c.sources.find(s=>s.url===standby).enabled,false);
  assert.equal(c.sources.filter(s=>s.url===standby).length,1);
+});
+test('upgrade makes VNEPG gzip primary without losing custom feeds or auto-refresh opt-out',()=>{
+ const c=configFor({epgSourcePolicy:'epg-pw-disabled-backup-20261119',sources:[
+  {name:'EPGShare01',url:legacy,enabled:true},
+  {name:'Custom',url:'https://example.test/custom.xml',enabled:true},
+  {name:'VNEPG gzip old query',url:primary+'?x=1',enabled:false},
+  {name:'VNEPG XML',url:standard,enabled:true}
+ ],autoRefreshEPGOnStartup:false});
+ assert.equal(c.sources[0].url,primary);
+ assert.equal(c.sources[0].enabled,true);
+ assert.equal(c.sources.find(s=>s.url===legacy).enabled,false);
+ assert.equal(c.sources.find(s=>s.url==='https://example.test/custom.xml').enabled,true);
+ assert.equal(c.sources.filter(s=>s.url.startsWith(primary)).length,1);
+ assert.equal(c.sources.filter(s=>s.url===standard).length,1);
+ assert.equal(c.autoRefreshEPGOnStartup,false);
+ assert.equal(c.vnepgSourcePolicy,'vnepg-gzip-default-20261120');
+});
+test('later user-enabled sources remain enabled after one-time VNEPG migration',()=>{
+ const c=configFor({vnepgSourcePolicy:'vnepg-gzip-default-20261120',epgSourcePolicy:'epg-pw-disabled-backup-20261119',sources:[
+  {name:'VNEPG Gzip',url:primary,enabled:false},
+  {name:'VNEPG standard',url:standard,enabled:true},
+  {name:'VNEPG localized',url:localized,enabled:true},
+  {name:'EPGShare01',url:legacy,enabled:true}
+ ],autoRefreshEPGOnStartup:false});
+ assert.equal(c.sources.find(s=>s.url===primary).enabled,false);
+ assert.equal(c.sources.find(s=>s.url===standard).enabled,true);
+ assert.equal(c.sources.find(s=>s.url===localized).enabled,true);
+ assert.equal(c.sources.find(s=>s.url===legacy).enabled,true);
+ assert.equal(c.autoRefreshEPGOnStartup,false);
 });
 test('startup only requests enabled source; EPG.pw is never retried automatically',async()=>{
  const urls=[];
