@@ -1,0 +1,40 @@
+name: Verify iOS Home Screen PiP fallback
+on:
+  push:
+    branches: [web/online]
+    paths:
+      - '.github/workflows/verify-web-ios-pip.yml'
+      - 'web-ios-pip-compat.js'
+      - 'web-ios-pip-compat.css'
+      - 'web-online/web-ios-pip-compat.js'
+      - 'web-online/web-ios-pip-compat.css'
+      - 'web-online/tests/web-ios-pip-compat.test.cjs'
+      - 'web-online/prepare-web.py'
+      - 'index.html'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: web/online
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify iOS WebKit capability probe and Safari fallback
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --check web-ios-pip-compat.js
+          node --check web-online/web-ios-pip-compat.js
+          node --check web-online/tests/web-ios-pip-compat.test.cjs
+          node --test web-online/tests/web-ios-pip-compat.test.cjs
+          node --test web-online/tests/web-fullscreen-controls.test.cjs
+          node --test web-online/tests/web-mobile-player.test.cjs
+          python3 -m py_compile web-online/prepare-web.py
+          cmp web-ios-pip-compat.js web-online/web-ios-pip-compat.js
+          cmp web-ios-pip-compat.css web-online/web-ios-pip-compat.css
