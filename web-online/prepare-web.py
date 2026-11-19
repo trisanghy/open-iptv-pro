@@ -48,7 +48,7 @@ for previous,next_value in (
     js=js.replace(previous,next_value,1)
 features.write_text(js,encoding='utf-8')
 
-for name in ('web-only.js','web-only.css','resume-last.js','resume-last.css','browser-channel-check.js','web-autoplay.js','cloud-core.js','cloud-sync.js','cloud-sync.css','web-volume.css','web-volume.js','web-mobile-player.css','web-mobile-player.js','web-player-icons.css','web-player-icons.js','web-tv-wide.css','web-mobile-controls-polish.css','web-desktop-download.css','web-desktop-download.js','web-recent-channels.js','web-compact-toolbar.css','web-snapshot-batch.js','web-background-audio.js'):
+for name in ('web-only.js','web-only.css','resume-last.js','resume-last.css','browser-channel-check.js','web-autoplay.js','cloud-core.js','cloud-sync.js','cloud-sync.css','web-volume.css','web-volume.js','web-mobile-player.css','web-mobile-player.js','web-player-icons.css','web-player-icons.js','web-tv-wide.css','web-mobile-controls-polish.css','web-desktop-download.css','web-desktop-download.js','web-recent-channels.js','web-compact-toolbar.css','web-snapshot-batch.js','web-background-audio.js','web-background-audio.css'):
     source=Path(__file__).resolve().parent/name
     if not source.is_file():source=Path(__file__).resolve().parent.parent/name
     copy2(source,out/name)
@@ -262,6 +262,15 @@ if web_html.count(background_start)!=1 or web_html.count(background_end)!=1 or h
 background_card=web_html[web_html.index(background_start):web_html.index(background_end,web_html.index(background_start))]
 html=html.replace(background_end,background_card+background_end,1)
 html=html.replace('</body>','<script src="web-background-audio.js?v=lock-audio-20261119c"></script></body>',1)
+# Dedicated audio-only player for Android Chrome/Edge and iOS Safari.
+audio_bar_start='<div class="web-background-audio-bar" id="webBackgroundAudioBar">'
+audio_bar_end='<section class="advanced-timebar"'
+if web_html.count(audio_bar_start)!=1 or web_html.count(audio_bar_end)!=1 or html.count(audio_bar_end)!=1:
+    sys.exit('Web background listening action insertion point changed')
+audio_bar=web_html[web_html.index(audio_bar_start):web_html.index(audio_bar_end,web_html.index(audio_bar_start))]
+html=html.replace(audio_bar_end,audio_bar+audio_bar_end,1)
+html=html.replace('web-background-audio.js?v=lock-audio-20261119c','web-background-audio.js?v=lock-audio-20261119d',1)
+html=html.replace('</head>','<link rel="stylesheet" href="web-background-audio.css?v=lock-audio-20261119d"/></head>',1)
 (out/'index.html').write_text(html,encoding='utf-8')
 (out/'.nojekyll').write_text('')
 (out/'manifest.webmanifest').write_text(json.dumps({

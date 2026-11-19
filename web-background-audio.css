@@ -1,0 +1,36 @@
+/* Web TV: explicit foreground-started listening mode for lock screen.
+   Keep compact layout on iPhone; never overlay the video or five mobile tabs. */
+#page-tv .web-background-audio-bar{
+ display:flex;align-items:center;gap:12px;min-width:0;
+ margin:8px 0 10px;padding:9px 12px;border:1px solid var(--edge,#334454);
+ border-radius:13px;background:var(--surface,#101b29);
+ color:var(--text,#eaf1f8);box-sizing:border-box;
+}
+#page-tv .web-background-audio-button{
+ display:inline-flex;align-items:center;justify-content:center;gap:8px;
+ flex:0 0 auto;min-width:128px;min-height:40px;padding:8px 13px;
+ border-radius:11px;border:1px solid var(--edge,#48566b);
+ background:var(--surface2,#182b3b);color:var(--text,#eaf1f8);
+ font:inherit;font-size:13px;font-weight:700;cursor:pointer;
+}
+#page-tv .web-background-audio-button svg{width:19px;height:19px;flex:0 0 19px}
+#page-tv .web-background-audio-button.active{
+ background:color-mix(in srgb,var(--accent,#bb7af5) 21%,var(--surface2,#182b3b));
+ color:var(--text,#fff);border-color:var(--accent,#be7bef)
+}
+#page-tv .web-background-audio-button:focus-visible{outline:2px solid var(--accent,#bd7cf5);outline-offset:3px}
+#page-tv .web-background-audio-button:disabled{opacity:.58;cursor:not-allowed}
+#page-tv #webBackgroundAudioModeStatus{
+ display:block;min-width:0;flex:1 1 auto;
+ font-size:12px;line-height:1.4;color:var(--muted,#a9b6c9);
+}
+html[data-iptv-device="mobile"] #page-tv .web-background-audio-bar{
+ padding:8px 10px;margin:8px 0 10px;gap:8px;
+}
+html[data-iptv-device="mobile"] #page-tv .web-background-audio-button{
+ min-width:112px;min-height:44px;padding:8px 10px;font-size:13px
+}
+@media (max-width:390px){
+ #page-tv .web-background-audio-bar{flex-wrap:wrap}
+ #page-tv #webBackgroundAudioModeStatus{flex-basis:100%}
+}
