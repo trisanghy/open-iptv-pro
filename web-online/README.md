@@ -122,3 +122,8 @@ Nguyên nhân: trình thu thập gọi biến `applied` chưa khai báo sau khi 
 ## Tải bản Desktop mới nhất từ web (19/11/2026)
 
 Trên máy tính: nút **Tải Desktop** ở thanh công cụ. Trên điện thoại: nút **Tải Open IPTV Pro Desktop** trước video và mục **Tải bản Desktop** bên trong menu **Thêm**. Hộp thoại truy vấn `api.github.com/repos/trisanghy/open-iptv-pro/releases/latest` khi người dùng nhấn nút, lọc bộ cài Electron cho Windows x64 (Setup và Portable), macOS Apple Silicon và macOS Intel, không nhầm bản Rust Lab/Web ZIP. Chỉ hiển thị URL tải có gốc `github.com/trisanghy/open-iptv-pro/releases/download/`. Khi API bị giới hạn, dùng trang `/releases/latest` thay vì hiển thị một phiên bản cũ. Không ảnh hưởng việc phát IPTV, dữ liệu nguồn và đồng bộ.
+
+
+## Cài app cho iOS (không cần ký) — lối tắt Web
+
+Trong **Tải xuống phần mềm**, mục **Cài app cho iOS (không cần ký)** hướng dẫn trên iPhone/iPad dùng **Safari hoặc Chrome**: mở `https://trisanghy.github.io/open-iptv-pro/`, nhấn **Chia sẻ → Thêm vào Màn hình chính → Thêm**. Đây là phiên bản Web/lối tắt và không cần chứng chỉ ký ứng dụng, khác tệp IPA unsigned của phiên bản native.
