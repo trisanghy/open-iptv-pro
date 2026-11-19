@@ -8,6 +8,14 @@ on:
       - 'src/main.cjs'
       - 'src/preload.cjs'
       - 'renderer/features.js'
+      - 'renderer/i18n.js'
+      - 'renderer/i18n-full-locale-pack.js'
+      - 'renderer/i18n-multilingual-packs.js'
+      - 'renderer/i18n-english-coverage.js'
+      - 'renderer/languages.bundle.js'
+      - 'renderer/locales/**'
+      - 'scripts/audit-electron-i18n.cjs'
+      - 'scripts/build-electron-native-locales.py'
       - 'renderer/index.html'
       - 'renderer/live-ai-toolbar-v42367.css'
       - 'tests/**'
@@ -33,7 +41,7 @@ jobs:
         shell: bash
         run: |
           set -Eeuo pipefail
-          for p in src/update-manager.cjs src/update-version-catalog.cjs src/main.cjs src/preload.cjs renderer/features.js; do node --check "$p"; done
+          for p in src/update-manager.cjs src/update-version-catalog.cjs src/main.cjs src/preload.cjs renderer/features.js renderer/i18n.js renderer/i18n-full-locale-pack.js renderer/i18n-multilingual-packs.js renderer/i18n-english-coverage.js; do node --check "$p"; done
           test "$(node -p "require('./package.json').version")" = '4.23.70'
           bash -n build-mac-electron.sh
           bash -n build-mac-electron-public.sh

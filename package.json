@@ -119,7 +119,16 @@
       "zh-CN",
       "th",
       "lo",
-      "km"
+      "km",
+      "fr",
+      "de",
+      "it",
+      "ja",
+      "ko",
+      "ru",
+      "id",
+      "hi",
+      "ar"
     ],
     "asarUnpack": [
       "node_modules/ffmpeg-static/**",
