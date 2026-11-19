@@ -28,7 +28,7 @@ test('User site artifact can bootstrap a dedicated repository',()=>{
 test('Root homepage has comprehensive landing sections and valid SEO',()=>{
  const h=read('web-online/project-home.html');
  for(const id of ['tinh-nang','anh','tai-ve','huong-dan','ma-nguon'])assert.ok(h.includes('id="'+id+'"'));
- for(const name of ['player-desktop.png','player-mobile.png','EPG','M3U','Windows','macOS','GitHub'])assert.ok(h.includes(name),name);
+ for(const name of ['desktop-tv.png','ios-tv.png','android-tv.png','EPG','M3U','Windows','macOS','GitHub'])assert.ok(h.includes(name),name);
  assert.ok(h.includes('rel="canonical" href="https://trisanghy.github.io/"'));
  assert.ok(read('web-online/user-site/robots.txt').includes('Sitemap: https://trisanghy.github.io/sitemap.xml'));
  assert.ok(read('web-online/user-site/sitemap.xml').includes('<loc>https://trisanghy.github.io/</loc>'));

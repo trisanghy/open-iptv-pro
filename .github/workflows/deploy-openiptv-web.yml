@@ -310,7 +310,7 @@ jobs:
           assert '<meta name="robots" content="index, follow">' in home
           assert home.count('https://trisanghy.github.io/open-iptv-pro/') >= 8
           assert all(section in home for section in ('id="tinh-nang"', 'id="anh"', 'id="tai-ve"', 'id="huong-dan"', 'id="ma-nguon"'))
-          assert 'player-mobile.png' in home and 'player-desktop.png' in home
+          assert all(x in home for x in ('desktop-tv.png', 'ios-tv.png', 'android-tv.png'))
           assert 'Sitemap: https://trisanghy.github.io/sitemap.xml' in Path('_user_site/robots.txt').read_text()
           urls=[v.text for v in ET.parse('_user_site/sitemap.xml').findall('.//{http://www.sitemaps.org/schemas/sitemap/0.9}loc')]
           assert urls == ['https://trisanghy.github.io/', 'https://trisanghy.github.io/open-iptv-pro/', 'https://trisanghy.github.io/open-iptv-pro/huong-dan.html']

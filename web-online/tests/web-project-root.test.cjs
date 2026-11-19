@@ -33,7 +33,7 @@ test('Separate homepage source, preview and live screenshots stay in build',()=>
 test('Independent user homepage includes comprehensive copy and crawler setup',()=>{
  const home=read('web-online/project-home.html');
  for(const id of ['tinh-nang','anh','huong-dan','tai-ve','ma-nguon'])assert.match(home,new RegExp('id="'+id+'"'));
- for(const token of ['player-mobile.png','player-desktop.png','Open IPTV Pro','GitHub','M3U','EPG','CORS','sitemap.xml','releases/latest'])assert.ok(home.includes(token),token);
+ for(const token of ['ios-tv.png','android-tv.png','desktop-tv.png','Open IPTV Pro','GitHub','M3U','EPG','CORS','sitemap.xml','releases/latest'])assert.ok(home.includes(token),token);
  assert.match(home,/rel="canonical" href="https:\/\/trisanghy.github.io\/"/);
  assert.match(home,/<meta name="robots" content="index, follow">/);
  assert.match(read('web-online/user-site/robots.txt'),/Sitemap: https:\/\/trisanghy.github.io\/sitemap.xml/);
