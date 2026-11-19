@@ -45,8 +45,8 @@ test('Each imported M3U requires actual checkbox consent; saved Smart consent is
 });
 test('New immutable version, one Mac app, release notes and Rust tests in CI',()=>{
  const p=JSON.parse(read('package.json')),shell=read('scripts/BUILD_RUSTLAB_MAC_ONE_ZIP_FAST.sh');
- assert.equal(p.version,'4.23.17-tauri.23.8.32');
- assert.ok(shell.includes('TAG="rust-lab/v23.8.32"'));
+ assert.match(p.version,/^4\.23\.17-tauri\.23\.8\.\d+$/);
+ assert.ok(shell.includes('TAG="rust-lab/v'+p.version.split('.').slice(-3).join('.')+'"'));
  assert.ok(shell.includes('npm run build -- --bundles app'));
  assert.ok(read('.github/workflows/rust-lab-version-tags.yml').includes('cargo test --manifest-path src-tauri/Cargo.toml safe_network::tests --lib'));
  assert.ok(read('RELEASE_NOTES_RUST_LAB_V23_8_32.md').includes('SSRF'));

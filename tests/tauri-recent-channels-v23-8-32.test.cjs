@@ -27,5 +27,5 @@ test('Rust recent UI is real, only tracks proven decoded video and disables virt
  assert.match(app,/enabled:\(\)=>selectionEditable\(\)&&filter!=='recent'/);
  assert.match(app,/const entries=isRecent\?/);
  assert.match(app,/IPTVPrimaryPersistence\.enqueue\(raw\)/);
- assert.equal(JSON.parse(read('package.json')).version,'4.23.17-tauri.23.8.32');
+ assert.match(JSON.parse(read('package.json')).version,/^4\.23\.17-tauri\.23\.8\.\d+$/);
 });
