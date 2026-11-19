@@ -7,7 +7,7 @@
  if(typeof module==='object'&&module.exports)module.exports=api;
  if(root?.document){root.OpenIPTVChannelHub=api;api.mount(root);}
 })(typeof window!=='undefined'?window:null,function(){
- const LIMIT=48,MAX_VISIBLE=120;
+ const LIMIT=48,BATCH_SIZE=96;
  const langPack={
  vi:['Chọn kênh','Yêu thích','Xem gần đây','Tìm kênh…','Tất cả','Nhóm','Tất cả nhóm','Sắp xếp','Thứ tự nguồn','Tên A → Z','Tên Z → A','Xem tất cả','Kênh trước','Kênh sau','Chưa có kênh phù hợp.','Chưa có kênh yêu thích.','Chưa có lịch sử xem.','Hiển thị thêm','Dạng lưới','Dạng danh sách','Thêm yêu thích','Bỏ yêu thích','Chọn kênh để xem'],
  en:['Channels','Favorites','Recently watched','Search channels…','All','Group','All groups','Sort','Source order','Name A → Z','Name Z → A','View all','Previous channel','Next channel','No matching channels.','No favorite channels yet.','No recently watched channels.','Show more','Grid','List','Add to favorites','Remove favorite','Choose a channel to watch'],
@@ -28,7 +28,9 @@
  ar:['اختيار القناة','المفضلة','شوهد مؤخرًا','البحث عن قناة…','الكل','المجموعة','كل المجموعات','ترتيب','ترتيب المصادر','الاسم A → Z','الاسم Z → A','عرض الكل','القناة السابقة','القناة التالية','لا توجد قنوات مطابقة.','لا توجد قنوات مفضلة بعد.','لا توجد قنوات شوهدت مؤخرًا.','عرض المزيد','شبكة','قائمة','إضافة إلى المفضلة','إزالة من المفضلة','اختر قناة للمشاهدة']
  };
  const names=['channels','favorites','recent','search','all','group','allGroups','sort','source','az','za','viewAll','prev','next','empty','emptyFav','emptyRecent','more','grid','list','addFav','removeFav','choose'];
+ const collapseLabels={vi:'Thu gọn',en:'Collapse',es:'Contraer','pt-BR':'Recolher','zh-CN':'收起',th:'ย่อ',lo:'ຫຍໍ້ລົງ',km:'បង្រួម',fr:'Réduire',de:'Einklappen',it:'Riduci',ja:'折りたたむ',ko:'접기',ru:'Свернуть',id:'Ciutkan',hi:'समेटें',ar:'طيّ'};
  function label(lang,key){
+  if(key==='collapse')return collapseLabels[lang]||collapseLabels.en;
   const idx=names.indexOf(key),pack=langPack[lang]||langPack.en;
   return idx<0?'':pack[idx]||langPack.en[idx];
  }
@@ -41,6 +43,7 @@
  }
  function category(ch,chip){return chip==='all'||norm(ch?.name).includes(norm(chip))||norm(ch?.group).includes(norm(chip));}
  function group(ch){return String(ch?.group||'Khác').replace(/\s*\|\s*Kiểm tra:.+$/i,'').trim()||'Khác';}
+ function visible(channels,expanded=false){return expanded?channels:channels.slice(0,LIMIT);}
  function choose(channels,{tab='channels',search='',chip='all',groupName='',sort='source',store={},favCore,recentCore}={}){
   let a=section(channels,tab,store,favCore,recentCore);
   const query=norm(search).trim();
@@ -59,7 +62,8 @@
   const api=()=>root.IPTVState;
   const fav=()=>root.OpenIPTVFavorites;
   const rec=()=>root.OpenIPTVRecentChannels;
-  let tab='channels',chip='all',groupName='',sort='source',view='grid',search='',limit=LIMIT,lastSig='';
+  let tab='channels',chip='all',groupName='',sort='source',view='grid',search='',expanded=false;
+  let tileRenderId=0;
   let currentLang=()=>root.OpenIPTVI18n?.getLanguage?.()||doc.documentElement.lang||'vi';
   const t=key=>label(currentLang(),key);
   const hub=doc.createElement('section');hub.id='webChannelHub';hub.className='web-channel-hub';
@@ -101,7 +105,7 @@
   function store(){return api()?.getStore?.()||{sources:[],channels:[],recentChannelIds:[]};}
   function currentId(){return api()?.getCurrent?.()?.id||'';}
   function selectTab(next){
-   tab=next;limit=LIMIT;chip='all';groupName='';search='';find.value='';
+   tab=next;expanded=false;chip='all';groupName='';search='';find.value='';
    for(const [k,b]of Object.entries(tabs)){b.classList.toggle('active',k===tab);b.setAttribute('aria-selected',String(k===tab));}
    render();
   }
@@ -135,6 +139,33 @@
    for(const ch of channels)frag.append(tile(ch,!!small));
    node.replaceChildren(frag);
   }
+  // Render large M3U lists in bounded frames so Show more truly reveals every
+  // matching channel without freezing the player or silently capping at 120.
+  function renderTiles(channels){
+   const renderId=++tileRenderId;
+   const previousTop=tiles.scrollTop,previousLeft=tiles.scrollLeft;
+   tiles.replaceChildren();
+   if(!channels.length){
+    tiles.append(span(t(tab==='favorites'?'emptyFav':tab==='recent'?'emptyRecent':'empty'),'web-hub-empty'));
+    tiles.removeAttribute('aria-busy');
+    return;
+   }
+   let index=0;
+   tiles.setAttribute('aria-busy','true');
+   const appendBatch=()=>{
+    if(renderId!==tileRenderId)return;
+    const frag=doc.createDocumentFragment(),end=Math.min(index+BATCH_SIZE,channels.length);
+    for(;index<end;index++)frag.append(tile(channels[index]));
+    tiles.append(frag);
+    tiles.scrollTop=previousTop;
+    tiles.scrollLeft=previousLeft;
+    if(index<channels.length){
+     if(typeof root.requestAnimationFrame==='function')root.requestAnimationFrame(appendBatch);
+     else root.setTimeout(appendBatch,0);
+    }else tiles.removeAttribute('aria-busy');
+   };
+   appendBatch();
+  }
   function side(){
    const channels=allChannels(),s=store(),f=fav(),r=rec();
    for(const [key,els] of Object.entries(sideContent)){
@@ -147,7 +178,11 @@
   function render(){
    // Native mobile TV layout already has an always-available channel panel.
    // Skip building desktop-only cards (and expensive favorite/recent tiles).
-   if(doc.documentElement.getAttribute('data-iptv-device')==='mobile')return;
+   if(doc.documentElement.getAttribute('data-iptv-device')==='mobile'){
+    ++tileRenderId;
+    tiles.replaceChildren();
+    return;
+   }
    if(!api())return;
    const all=allChannels(),s=store();
    const ref=tab==='channels'?all:section(all,tab,s,fav(),rec());
@@ -158,7 +193,7 @@
    filters.replaceChildren();
    for(const key of chips){
     const button=btn(key==='all'?t('all'):key,'web-hub-chip'+(key===chip?' active':''));
-    button.setAttribute('aria-pressed',String(key===chip));button.addEventListener('click',()=>{chip=key;limit=LIMIT;render();});
+    button.setAttribute('aria-pressed',String(key===chip));button.addEventListener('click',()=>{chip=key;expanded=false;render();});
     filters.append(button);
    }
    const groups=[...new Set(ref.map(group))];groups.sort((a,b)=>a.localeCompare(b,undefined,{numeric:true}));
@@ -173,23 +208,33 @@
    order.setAttribute('aria-label',t('sort'));
    for(const opt of order.options)opt.textContent=t(opt.value);
    order.value=sort;gridBtn.title=t('grid');listBtn.title=t('list');back.title=t('prev');forward.title=t('next');
-   more.textContent=t('more');tiles.classList.toggle('list-mode',view==='list');toggle.querySelectorAll('button').forEach(b=>b.classList.toggle('active',b.dataset.view===view));
+   more.textContent=t(expanded?'collapse':'more');
+   more.setAttribute('aria-expanded',String(expanded));
+   tiles.classList.toggle('list-mode',view==='list');
+   tiles.classList.toggle('expanded',expanded);
+   tileWrap.classList.toggle('expanded',expanded);
+   toggle.querySelectorAll('button').forEach(b=>b.classList.toggle('active',b.dataset.view===view));
    const shown=choose(all,{tab,search,chip,groupName,sort,store:s,favCore:fav(),recentCore:rec()});
-   fill(tiles,shown.slice(0,Math.min(limit,MAX_VISIBLE)),null);
-   more.hidden=shown.length<=limit||limit>=MAX_VISIBLE;
+   tiles.dataset.totalChannels=String(shown.length);
+   renderTiles(visible(shown,expanded));
+   more.hidden=shown.length<=LIMIT;
    side();
   }
   let scheduled=false;
   function schedule(){if(scheduled)return;scheduled=true;Promise.resolve().then(()=>{scheduled=false;render();});}
   nav.addEventListener('click',event=>{const target=event.target.closest('[data-tab]');if(target)selectTab(target.dataset.tab);});
   aside.addEventListener('click',event=>{const target=event.target.closest('[data-open]');if(target)selectTab(target.dataset.open);});
-  find.addEventListener('input',()=>{search=find.value;limit=LIMIT;render();});
-  groupSelect.addEventListener('change',()=>{groupName=groupSelect.value;limit=LIMIT;render();});
+  find.addEventListener('input',()=>{search=find.value;expanded=false;render();});
+  groupSelect.addEventListener('change',()=>{groupName=groupSelect.value;expanded=false;render();});
   order.addEventListener('change',()=>{sort=order.value;render();});
   toggle.addEventListener('click',event=>{const button=event.target.closest('[data-view]');if(button){view=button.dataset.view;render();}});
   back.addEventListener('click',()=>{tiles.scrollBy({left:-Math.max(230,tiles.clientWidth*.75),behavior:'smooth'});});
   forward.addEventListener('click',()=>{tiles.scrollBy({left:Math.max(230,tiles.clientWidth*.75),behavior:'smooth'});});
-  more.addEventListener('click',()=>{limit=Math.min(MAX_VISIBLE,limit+LIMIT);render();});
+  more.addEventListener('click',()=>{
+   expanded=!expanded;
+   tiles.scrollTop=0;tiles.scrollLeft=0;
+   render();
+  });
   doc.addEventListener('openiptv:local-saved',schedule);
   root.addEventListener('openiptv:favorites-changed',schedule);
   // Recreate desktop cards when a viewport switches from mobile to desktop.
@@ -201,5 +246,5 @@
   if(meta&&root.MutationObserver)new root.MutationObserver(schedule).observe(meta,{childList:true,characterData:true,subtree:true});
   render();
  }
- return Object.freeze({LIMIT,MAX_VISIBLE,choose,category,section,group,label,mount});
+ return Object.freeze({LIMIT,BATCH_SIZE,visible,choose,category,section,group,label,mount});
 });
