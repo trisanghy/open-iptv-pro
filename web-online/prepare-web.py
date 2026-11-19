@@ -307,6 +307,14 @@ locale_script='<script src="i18n.js"></script>'
 if html.count(locale_script)!=1:
     sys.exit('Web i18n script anchor changed; cannot apply unmute translation cache version')
 html=html.replace(locale_script,'<script src="i18n.js?v=unmute-language-20261119a"></script>',1)
+# Content-addressed language assets. Never reuse a stale 20261119 cache key on Safari/Chrome.
+import hashlib
+for asset in ('i18n.js','languages.bundle.js'):
+    digest=hashlib.sha256((out/asset).read_bytes()).hexdigest()[:16]
+    html,count=re.subn(r'<script src="'+re.escape(asset)+r'(?:\?[^"]*)?"></script>',
+        '<script src="'+asset+'?v='+digest+'"></script>',html,count=1)
+    if count!=1:sys.exit('Missing language resource script: '+asset)
+
 # Preserve one-tap iOS audio unlock in any future WebView-based rebuild.
 # Chrome iOS needs its sound action outside the native video surface.
 if 'web-ios-audio-recovery.js' not in html:

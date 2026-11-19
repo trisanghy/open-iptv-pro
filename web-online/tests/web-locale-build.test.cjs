@@ -8,4 +8,6 @@ test('Web build retains current localization and dynamic language options',()=>{
  for(const locale of ['en','fr','de','it','ja','ko','ru','id','hi','ar']) assert.ok(i18n.includes('"'+locale+'":'),locale);
  assert.match(i18n,/const option=document.createElement\('option'\)/);
  assert.match(i18n,/english\[compact\]/);
+ assert.match(build,/hashlib\.sha256/);
+ assert.match(build,/Missing language resource script/);
 });
