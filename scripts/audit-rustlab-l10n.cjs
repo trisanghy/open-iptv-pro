@@ -4,7 +4,7 @@
 const fs=require('node:fs'),vm=require('node:vm'),path=require('node:path');
 const root=path.resolve(__dirname,'..');
 const read=p=>fs.readFileSync(path.join(root,p),'utf8');
-const scripts=['renderer/languages.bundle.js','renderer/locales/rustlab-expanded-v23-8-40.js','renderer/locales/rustlab-extra-v23-8-43.js','renderer/locales/rustlab-shared-actions-v23-8-45.js','renderer/locales/rustlab-shared-help-v23-8-45.js','renderer/locales/rustlab-secondary-v23-8-46.js','renderer/locales/rustlab-technical-priority-v23-8-47.js','renderer/locales/rustlab-technical-main-v23-8-47.js','renderer/locales/rustlab-technical-additional-v23-8-47.js','renderer/locales/rustlab-ai-pip-v23-8-48.js','renderer/i18n.js'];
+const scripts=['renderer/languages.bundle.js','renderer/locales/rustlab-expanded-v23-8-40.js','renderer/locales/rustlab-extra-v23-8-43.js','renderer/locales/rustlab-shared-actions-v23-8-45.js','renderer/locales/rustlab-shared-help-v23-8-45.js','renderer/locales/rustlab-secondary-v23-8-46.js','renderer/locales/rustlab-technical-priority-v23-8-47.js','renderer/locales/rustlab-technical-main-v23-8-47.js','renderer/locales/rustlab-technical-additional-v23-8-47.js','renderer/locales/rustlab-ai-pip-v23-8-48.js','renderer/locales/rustlab-extra-instructions-v23-8-49.js','renderer/i18n.js'];
 function engine(){
  const window={};const document={documentElement:{},readyState:'loading',addEventListener(){}};
  class MutationObserver{observe(){}}
