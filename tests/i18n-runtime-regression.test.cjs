@@ -34,6 +34,19 @@ test('untranslated settings text falls back to English, not Vietnamese',()=>{
  assert.equal(i.t('3 kênh','en'),'3 channels');
  assert.equal(i.t('M3U custom group','en'),'M3U custom group');
 });
+test('UI labels from Web and Mobile translate instead of leaving Vietnamese',()=>{
+ const i=engine();
+ const pairs={
+  'Tài khoản & Đồng bộ đám mây':'Account & Cloud Sync',
+  'Âm thanh khi khóa màn hình':'Audio on the lock screen',
+  'Thêm tính năng':'More features',
+  'Chưa có nguồn. Hãy mở file M3U, thêm URL hoặc nhập repo công khai.':'No sources yet. Open an M3U file, add a URL, or import a public repository.',
+  'Đã lưu 3 link dự phòng':'Saved 3 backup URLs',
+  'Đã đăng nhập · Someone':'Signed in · Someone'
+ };
+ for(const [vi,en] of Object.entries(pairs))assert.equal(i.t(vi,'en'),en,vi);
+ assert.equal(i.t('VTV5 Tây Nguyên','en'),'VTV5 Tây Nguyên');
+});
 test('at least 80 percent of static Vietnamese interface labels have a translation',()=>{
  const ui=fs.readFileSync(path.join(root,'renderer/index.html'),'utf8');
  const labels=[...new Set([...ui.matchAll(/>([^<>]{2,300})</g)].map(m=>m[1].trim()).filter(x=>/[À-ỹ]/.test(x)))];
