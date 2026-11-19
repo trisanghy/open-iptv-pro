@@ -12,7 +12,8 @@ test('channel chooser mounted under Quick Tools and loads scripts after IPTVStat
  assert.ok(html.includes('web-channel-chooser-v42371.css'));
  assert.ok(html.includes('web-channel-chooser-v42371.js'));
  assert.ok(html.indexOf('app.js')<html.indexOf('web-channel-chooser-v42371.js'));
- for(const id of ['webChooserSearch','webChooserGroup','webChooserSort','webChooserGrid','webChooserFavorites','webChooserRecent','webChooserPrev','webChooserNext'])assert.ok(html.includes('id="'+id+'"'),id);
+ const chooser=read('renderer/web-channel-chooser-v42371.js');
+ for(const id of ['webChooserSearch','webChooserGroup','webChooserSort','webChooserGrid','webChooserFavorites','webChooserRecent','webChooserPrev','webChooserNext'])assert.ok(chooser.includes('id=\\"'+id+'\\"'),id);
 });
 test('chooser uses enabled channels, existing favorites/recent keys, and real playChannel',()=>{
  const js=read('renderer/web-channel-chooser-v42371.js');
