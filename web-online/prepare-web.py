@@ -387,7 +387,7 @@ if html.count('web-tv-channel-hub.js?')!=1 or html.count('web-tv-channel-hub.css
     sys.exit('Web channel hub assets duplicated or missing')
 
 # Expanded mobile device mode uses tablet-sized controls even in wide browser windows.
-html=html.replace('</head>','<link rel="stylesheet" href="web-mobile-tablet-controls.css?v=tablet-controls-20261119b"/></head>',1)
+html=html.replace('</head>','<link rel="stylesheet" href="web-mobile-tablet-controls.css?v=tablet-controls-20261119c"/></head>',1)
 html=html.replace('web-mobile-controls-polish.css?v=quick-icons-unified-20261119b"/>','web-mobile-controls-polish.css?v=quick-icons-unified-20261119b"/><link rel="stylesheet" href="web-mobile-volume.css?v=mobile-volume-popover-20261119a"/>',1)
 (out/'index.html').write_text(html,encoding='utf-8')
 (out/'.nojekyll').write_text('')

@@ -26,7 +26,15 @@ test('all icons use normal flow rather than competing absolute offsets',()=>{
  assert.match(fix,/inset:auto!important/);
 });
 test('correct cache-busted asset is present in both published and generated Web',()=>{
- assert.match(html,/web-mobile-tablet-controls\.css\?v=tablet-controls-20261119b/);
- assert.match(builder,/web-mobile-tablet-controls\.css\?v=tablet-controls-20261119b/);
+ assert.match(html,/web-mobile-tablet-controls\.css\?v=tablet-controls-20261119c/);
+ assert.match(builder,/web-mobile-tablet-controls\.css\?v=tablet-controls-20261119c/);
  assert.match(builder,/'web-mobile-tablet-controls\.css'/);
+});
+
+test('expanded mobile Chrome must override legacy 46px tiles with matching specificity',()=>{
+ const override=css.slice(css.indexOf('Chrome regression: older mobile-player.css'));
+ assert.match(override,/\.output-controls:is\(\.output-controls\)/);
+ assert.match(override,/height:58px!important;min-height:58px!important;max-height:58px!important/);
+ assert.match(override,/position:static!important/);
+ assert.match(override,/align-items:center!important/);
 });

@@ -149,3 +149,29 @@
   margin:0!important;
  }
 }
+
+
+/* Chrome regression: older mobile-player.css uses
+ * .output-controls:is(.output-controls) (one additional class) and forces
+ * Cast / PiP / Fullscreen back to 46px. Equalize all four at 58px using
+ * matching-or-higher specificity, without affecting desktop or iPhone. */
+@media (min-width:761px) {
+ html[data-iptv-device="mobile"] body #page-tv .player-control-card .control-layout-top>.output-controls:is(.output-controls) :is(#webVolumeMute,#castBtn,#pipBtn,#fullscreenBtn) {
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  height:58px!important;min-height:58px!important;max-height:58px!important;
+  width:100%!important;min-width:0!important;max-width:none!important;
+  padding:0!important;margin:0!important;
+  font-size:0!important;line-height:0!important;
+ }
+ html[data-iptv-device="mobile"] body #page-tv .player-control-card .control-layout-top>.output-controls:is(.output-controls) :is(#webVolumeMute,#castBtn,#pipBtn,#fullscreenBtn)::before {
+  position:static!important;
+  inset:auto!important;left:auto!important;top:auto!important;
+  transform:none!important;
+  flex:0 0 27px!important;
+  width:27px!important;height:27px!important;
+  min-width:27px!important;min-height:27px!important;
+  margin:0!important;
+ }
+}
