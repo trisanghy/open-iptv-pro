@@ -27,7 +27,7 @@ js=js.replace('const xml=await fetchXML(source.url);const parsed=guideLib.parse(
 if 'const parsed=await readFreshGuide(source.url,ctx.getChannels());' not in js: sys.exit('Cannot install fresh XMLTV reader')
 features.write_text(js,encoding='utf-8')
 
-for name in ('web-only.js','web-only.css','resume-last.js','resume-last.css','browser-channel-check.js','web-autoplay.js','cloud-core.js','cloud-sync.js','cloud-sync.css','web-volume.css','web-volume.js','web-mobile-player.css','web-mobile-player.js','web-player-icons.css','web-player-icons.js','web-tv-wide.css','web-mobile-controls-polish.css'):
+for name in ('web-only.js','web-only.css','resume-last.js','resume-last.css','browser-channel-check.js','web-autoplay.js','cloud-core.js','cloud-sync.js','cloud-sync.css','web-volume.css','web-volume.js','web-mobile-player.css','web-mobile-player.js','web-player-icons.css','web-player-icons.js','web-tv-wide.css','web-mobile-controls-polish.css','web-desktop-download.css','web-desktop-download.js'):
     copy2(Path(__file__).resolve().parent/name,out/name)
 # Keep Web's multi-source fallback matcher even if the originating WebView
 # frontend has an older name-only matcher. Do not change Electron/Rust source.
@@ -180,6 +180,19 @@ web_html=(Path(__file__).resolve().parent.parent/'index.html').read_text(encodin
 start='<div class="epg-current-item">'
 end='<span id="epgNowText"'
 html=html[:html.index(start)]+web_html[web_html.index(start):web_html.index(end,web_html.index(start))]+html[html.index(end,html.index(start)):]
+
+# Latest Desktop installers: Web-only buttons for desktop and mobile.
+# Preserve source WebView isolation and keep these across Web rebuilds.
+desktop_button="<button type=\"button\" class=\"btn btn-subtle desktop-download-top\" id=\"desktopDownloadBtn\" aria-haspopup=\"dialog\" aria-controls=\"desktopDownloadDialog\" title=\"Tải bản Open IPTV Pro Desktop mới nhất\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M12 3v12m-4-4 4 4 4-4\"/><path d=\"M4 17v3h16v-3\"/></svg><span>Tải Desktop</span><span data-desktop-download-version></span></button>"
+mobile_button="<button type=\"button\" id=\"desktopDownloadMobileBtn\" class=\"desktop-download-banner\" aria-haspopup=\"dialog\" aria-controls=\"desktopDownloadDialog\"><span class=\"desktop-download-banner-icon\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M12 3v12m-4-4 4 4 4-4\"/><path d=\"M4 17v3h16v-3\"/></svg></span><span class=\"desktop-download-banner-copy\"><strong>Tải Open IPTV Pro Desktop <span data-desktop-download-version></span></strong><small>Windows và macOS · Phiên bản mới nhất</small></span><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"m9 5 7 7-7 7\"/></svg></button>"
+top_anchor='<button type="button" class="btn btn-subtle" id="cloudAccountQuick" title="Đăng nhập và đồng bộ dữ liệu">☁ Tài khoản</button>'
+tv_anchor='<section id="page-tv" class="page active-page">'
+if html.count(top_anchor)!=1 or html.count(tv_anchor)!=1:
+    sys.exit('Cannot insert Web Desktop download buttons')
+html=html.replace(top_anchor,top_anchor+desktop_button,1)
+html=html.replace(tv_anchor,tv_anchor+'\n    '+mobile_button,1)
+html=html.replace('</head>','<link rel="stylesheet" href="web-desktop-download.css?v=desktop-download-20261119a"/></head>',1)
+html=html.replace('</body>','<script src="web-desktop-download.js?v=desktop-download-20261119a"></script></body>',1)
 (out/'index.html').write_text(html,encoding='utf-8')
 (out/'.nojekyll').write_text('')
 (out/'manifest.webmanifest').write_text(json.dumps({
