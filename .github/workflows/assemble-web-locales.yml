@@ -15,7 +15,7 @@ concurrency:
 jobs:
   assemble:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 90
     steps:
       - name: Checkout current Web branch
         uses: actions/checkout@v4
@@ -38,13 +38,21 @@ jobs:
           python3 web-online/scripts/assemble-web-locales.py locale-input
           node --check web-online/web-generated-locales.js
           node web-online/i18n-audit.cjs
+      - name: Fill remaining native Web labels in all 15 additional locales
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m py_compile web-online/build-web-native-locales.py
+          python3 web-online/build-web-native-locales.py --fill
+          node --check web-native-complete.js
+          node --test web-online/tests/web-native-full-coverage.test.cjs
       - name: Commit generated dictionaries to Web branch only
         shell: bash
         run: |
           set -euo pipefail
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add web-online/web-generated-locales.js
+          git add web-online/web-generated-locales.js web-native-complete.js web-online/web-native-complete.json
           if git diff --cached --quiet; then
             echo 'Web offline pack already matches verified assets.'
             exit 0
