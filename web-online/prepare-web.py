@@ -367,6 +367,19 @@ for pattern,label in (
 # Scheduled DVR nodes are kept for compatibility; web-only.css hides the
 # container. VOD/catch-up seek and normal playback are intentionally retained.
 
+# Web-only channel hub must survive a rebuild of the original WebView frontend.
+# It reads the existing IPTVState after app.js and never changes Electron/Rust.
+for filename in ('web-tv-channel-hub.js','web-tv-channel-hub.css'):
+    copy2(Path(__file__).resolve().parent/filename,out/filename)
+hub_css='<link rel="stylesheet" href="web-tv-channel-hub.css?v=tv-hub-20261119a"/>'
+hub_js='<script src="web-tv-channel-hub.js?v=tv-hub-20261119a"></script>'
+if html.count('</head>')!=1 or html.count('</body>')!=1:
+    sys.exit('Web channel hub insertion points missing')
+html=html.replace('</head>',hub_css+'</head>',1)
+html=html.replace('</body>',hub_js+'</body>',1)
+if html.count('web-tv-channel-hub.js?')!=1 or html.count('web-tv-channel-hub.css?')!=1:
+    sys.exit('Web channel hub assets duplicated or missing')
+
 (out/'index.html').write_text(html,encoding='utf-8')
 (out/'.nojekyll').write_text('')
 (out/'manifest.webmanifest').write_text(json.dumps({
