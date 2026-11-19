@@ -9,7 +9,7 @@ function boot(){
   class MutationObserver{observe(){}}
   const window={};
   const ctx={window,document,MutationObserver,localStorage:{getItem:()=>null,setItem(){}},CustomEvent:class{}};
-  for(const file of ['languages.bundle.js','web-native-complete.js','i18n.js'])
+  for(const file of ['languages.bundle.js','web-generated-locales.js','web-language-supplement.js','web-native-complete.js','i18n.js'])
     vm.runInNewContext(read(file),ctx,{timeout:6000,filename:file});
   return window;
 }
@@ -38,8 +38,10 @@ test('language switching uses native text, preserves user channel names and neve
 test('the Web page loads native dictionaries between base catalog and localizer',()=>{
   const html=read('index.html');
   const a=html.indexOf('src="languages.bundle.js');
-  const b=html.indexOf('src="web-native-complete.js');
-  const c=html.indexOf('src="i18n.js');
-  assert.ok(a>=0&&b>a&&c>b,'Translation script loading order is incorrect');
+  const b=html.indexOf('src="web-generated-locales.js');
+  const c=html.indexOf('src="web-language-supplement.js');
+  const d=html.indexOf('src="web-native-complete.js');
+  const e=html.indexOf('src="i18n.js');
+  assert.ok(a>=0&&b>a&&c>b&&d>c&&e>d,'Translation script loading order is incorrect');
   assert.ok(read('web-online/build-web-native-locales.py').includes('Only built-in UI labels'));
 });
