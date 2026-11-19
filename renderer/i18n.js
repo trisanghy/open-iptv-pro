@@ -30,6 +30,9 @@
   // Per-locale supplement; keep preexisting native translations and user data.
   const supplement=window.OpenIPTVLocalePacks;
   for(const [language,items] of Object.entries(supplement?.packs||{})){const target=dictionaries[language]||(dictionaries[language]={});for(const [key,value] of Object.entries(items))if(!target[key])target[key]=value;}
+  // English UI coverage must coexist with updates from other sessions.
+  const coverage=window.OpenIPTVEnglishCoverage;
+  for(const [key,value] of Object.entries(coverage?.exact||{})){const target=dictionaries.en||(dictionaries.en={});if(!target[key])target[key]=value;}
   const key='open-iptv-pro-language';
   let locale='vi';
   try{const stored=localStorage.getItem(key);if(stored && Object.hasOwn(locales,stored))locale=stored;}catch{}
@@ -147,6 +150,7 @@
         out=m[1]+' Browser will pause retries for 10 minutes.';
     }
 
+    if(!out)out=coverage?.dynamic?.(compact);
     if(!out)return raw;
     const leading=raw.match(/^\s*/)?.[0]||'',trailing=raw.match(/\s*$/)?.[0]||'';
     return leading+out+trailing;
@@ -220,6 +224,8 @@
     }
   });
   observer.observe(document.documentElement,{subtree:true,childList:true,characterData:true,attributes:true,attributeFilter:attributeList});
+  // Native confirmation/alert dialogs are not observable DOM nodes.
+  for(const kind of ['alert','confirm']){const original=window[kind];if(typeof original==='function')window[kind]=function(message,...args){return original.call(window,translate(String(message)),...args);};}
   window.OpenIPTVI18n=Object.freeze({locales,getLanguage:()=>locale,setLanguage,t:translate,apply});
   const setup=()=>{
     const control=document.getElementById('appLanguage');
