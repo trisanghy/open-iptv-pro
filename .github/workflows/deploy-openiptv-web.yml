@@ -45,7 +45,7 @@ jobs:
             test -d "$dir"
             cp -R "$dir" "_site/$dir"
           done
-          for f in index.html huong-dan.html app.js web-only.js hls.min.js dash.all.min.js supabase-sdk.js cloud-core.js cloud-sync.js source-use-consent-v1.js source-use-consent-v1.css web-mobile-player.js web-mobile-player.css web-player-icons.js web-player-icons.css web-tv-wide.css web-mobile-controls-polish.css web-channel-snapshot.js; do
+          for f in index.html huong-dan.html app.js web-only.js hls.min.js dash.all.min.js supabase-sdk.js cloud-core.js cloud-sync.js source-use-consent-v1.js source-use-consent-v1.css web-mobile-player.js web-mobile-player.css web-player-icons.js web-player-icons.css web-tv-wide.css web-mobile-controls-polish.css web-desktop-download.js web-desktop-download.css web-channel-snapshot.js; do
             test -s "_site/$f"
           done
           test -s _site/robots.txt && test -s _site/sitemap.xml && test -s _site/sitemap.xsl
@@ -135,6 +135,11 @@ jobs:
           grep -Fq 'web-player-icons.js?v=vectorplayer-airplay-20261118c' _site/index.html
           node --check _site/theme-boot.js
           grep -Fq 'src="theme-boot.js?v=responsive-desktop-20261118j"' _site/index.html
+          node --check _site/web-desktop-download.js
+          node --test web-online/tests/web-desktop-download.test.cjs
+          grep -Fq 'id="desktopDownloadBtn"' _site/index.html
+          grep -Fq 'id="desktopDownloadMobileBtn"' _site/index.html
+          grep -Fq 'web-desktop-download.js?v=desktop-download-20261119a' _site/index.html
           node --check _site/web-mobile-player.js
           node --test web-online/tests/web-mobile-player.test.cjs
           node --test web-online/tests/web-tv-wide.test.cjs
