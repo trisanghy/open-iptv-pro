@@ -17,7 +17,7 @@ import './core-browser.js';
 import './styles.css';
 import { stableId, dedupChannels, normalizeHTTPURL, textFromResponse, parseBasicEPG, pool, xmltvDate } from './mobile-core.mjs';
 
-const $ = x=>document.querySelector(x), $=x=>[...document.querySelectorAll(x)];
+const $ = x=>document.querySelector(x), $$=x=>[...document.querySelectorAll(x)];
 const tMobile=key=>window.OpenIPTVI18n?.t?.(key)||key;
 const CORE=window.StreamLeafCore;
 const KEY='openiptv_mobile_4211_v1';

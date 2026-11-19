@@ -1,7 +1,7 @@
 {
   "name": "open-iptv-pro-mobile",
   "private": true,
-  "version": "4.23.17-mobile.21",
+  "version": "4.23.17-mobile.22",
   "type": "module",
   "description": "Web SVG player icons, no unmute overlay, audio-only background mode with lock-screen Media Session",
   "scripts": {
