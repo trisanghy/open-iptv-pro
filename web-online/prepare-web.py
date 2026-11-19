@@ -44,6 +44,22 @@ target_end=js.find(' const presetEPGURLs=',target_start)
 if min(source_start,source_end,target_start,target_end)<0:
     sys.exit('Cannot transplant Web-only EPG source settings')
 js=js[:target_start]+web_features[source_start:source_end]+js[target_end:]
+# Rebuilds must preserve large Web XMLTV guides and their persistent cache.
+for block_start,block_end,label in (
+    (' let guide={names:{},programmes:[]', ' function rgbToHsv(', 'IndexedDB guide cache'),
+    (' async function refreshEPG(', ' function renderGuidePages()', 'uncapped EPG merge/import'),
+):
+    reviewed_start=web_features.find(block_start)
+    reviewed_end=web_features.find(block_end,reviewed_start)
+    built_start=js.find(block_start)
+    built_end=js.find(block_end,built_start)
+    if min(reviewed_start,reviewed_end,built_start,built_end)<0:
+        sys.exit('Cannot preserve '+label+' during WebView build')
+    js=js[:built_start]+web_features[reviewed_start:reviewed_end]+js[built_end:]
+if js.count('renderSources();renderGuidePages();')!=1:
+    sys.exit('Cannot enable IndexedDB EPG restore after WebView build')
+js=js.replace('renderSources();renderGuidePages();',
+              'renderSources();renderGuidePages();void restoreGuideCache();',1)
 marker=' function isMobileChannelPanel(){'
 patch_start=web_features.find(marker)
 patch_end=web_features.find(' function updateAppearance(persist=true){',patch_start)
@@ -285,7 +301,7 @@ if 'href="huong-dan.html"' not in html:
 html=html.replace('src="app.js"','src="app.js?v=playlist-http-20261119d"').replace('collector.js?v=collector-merge-repair-20261119a','collector.js?v=playlist-url-20261119b')
 html=html.replace('src="source-edit.js"','src="source-edit.js?v=playlist-input-20261119c"')
 for name in ('features.js','epg.js'):
-    html=html.replace('src="'+name+'"','src="'+name+'?v=vnepg-gzip-default-20261120a"')
+    html=html.replace('src="'+name+'"','src="'+name+'?v=epg-large-20261120a"')
 # Reuse the source-controlled player EPG rows when regenerating the WebView layout.
 web_html=(Path(__file__).resolve().parent.parent/'index.html').read_text(encoding='utf-8')
 start='<div class="epg-current-item">'
