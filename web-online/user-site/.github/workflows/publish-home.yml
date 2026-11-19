@@ -98,10 +98,11 @@ jobs:
             "https://x-access-token:${GH_TOKEN}@github.com/trisanghy/trisanghy.github.io.git" "$RUNNER_TEMP/site-root-repo"
           mkdir -p "$RUNNER_TEMP/site-root-repo/assets/gallery"
           cp -f _site/assets/gallery/*.png "$RUNNER_TEMP/site-root-repo/assets/gallery/"
+          cp -f _site/index.html _site/robots.txt _site/sitemap.xml "$RUNNER_TEMP/site-root-repo/"
           cd "$RUNNER_TEMP/site-root-repo"
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add assets/gallery
+          git add index.html robots.txt sitemap.xml assets/gallery
           if ! git diff --cached --quiet; then
             git commit -qm "assets: refresh current Open IPTV Pro UI screenshots"
             git push origin HEAD:main
