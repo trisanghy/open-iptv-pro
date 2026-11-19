@@ -839,3 +839,24 @@ html[data-iptv-device="mobile"] body > #taskDock .task-panel{
 html[data-iptv-device="mobile"] body > #taskDock .task-cancel{
  min-width:90px!important;min-height:44px!important;touch-action:manipulation!important;
 }
+
+
+/* Always-open channel list on mobile, independent of a saved desktop collapse.
+   Stronger than legacy [data-channel-panel-visible=false] and theme drawers.
+   Keep the iOS scrollport rules above; never render the detached reopen tab. */
+html[data-iptv-device="mobile"] body #page-tv .channel-panel,
+html[data-iptv-device="mobile"][data-channel-panel-visible="false"] body #page-tv .channel-panel{
+ display:flex!important;
+ visibility:visible!important;
+ opacity:1!important;
+ transform:none!important;
+ pointer-events:auto!important;
+}
+html[data-iptv-device="mobile"] body #page-tv #channelPanelShowBtn,
+html[data-iptv-device="mobile"] body #page-tv #channelPanelHideBtn{
+ display:none!important;
+ visibility:hidden!important;
+}
+html[data-iptv-device="mobile"] body #page-tv .tv-layout{
+ padding-left:0!important;
+}

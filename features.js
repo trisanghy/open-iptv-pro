@@ -52,22 +52,32 @@
    if(persist)saveConfig();
  }
 
+ function isMobileChannelPanel(){
+   // theme-boot.js sets this before app styles and restores desktop-site mode.
+   return document.documentElement.dataset.iptvDevice==='mobile';
+ }
  function updateChannelPanelVisibility(persist=true){
-   document.documentElement.dataset.channelPanelVisible=config.channelPanelVisible?'true':'false';
+   const mobile=isMobileChannelPanel();
+   // Mobile always displays the list, regardless of the desktop preference.
+   // Do not overwrite that preference: a desktop-sized view can remain collapsed.
+   const visible=mobile||config.channelPanelVisible;
+   document.documentElement.dataset.channelPanelVisible=visible?'true':'false';
    const hideBtn=$('#channelPanelHideBtn'),showBtn=$('#channelPanelShowBtn');
    if(hideBtn){
+     hideBtn.hidden=mobile;
      hideBtn.textContent='⟨';
-     hideBtn.setAttribute('aria-expanded',String(config.channelPanelVisible));
+     hideBtn.setAttribute('aria-expanded',String(visible));
      hideBtn.title='Thu gọn danh sách kênh';
      hideBtn.setAttribute('aria-label',hideBtn.title);
    }
    if(showBtn){
-     showBtn.textContent=config.channelPanelVisible?'':'›';
-     showBtn.setAttribute('aria-expanded',String(config.channelPanelVisible));
-     showBtn.title=config.channelPanelVisible?'Ẩn nút mở danh sách kênh':'Mở danh sách kênh';
-     showBtn.setAttribute('aria-label',config.channelPanelVisible?'Danh sách kênh đang mở':'Mở danh sách kênh');
+     showBtn.hidden=mobile;
+     showBtn.textContent=visible?'':'›';
+     showBtn.setAttribute('aria-expanded',String(visible));
+     showBtn.title=visible?'Ẩn nút mở danh sách kênh':'Mở danh sách kênh';
+     showBtn.setAttribute('aria-label',visible?'Danh sách kênh đang mở':'Mở danh sách kênh');
    }
-   if(persist)saveConfig();
+   if(persist&&!mobile)saveConfig();
  }
  function updateAppearance(persist=true){
    const appearance=resolvedAppearance();
@@ -374,9 +384,13 @@
   applyColor(hsvToHex(h,s||.8,v),true,'wheel');
  });
  $('#sidebarToggleBtn')?.addEventListener('click',()=>{config.sidebarVisible=!config.sidebarVisible;updateSidebarVisibility();});
- $('#channelPanelHideBtn')?.addEventListener('click',()=>{config.channelPanelVisible=false;updateChannelPanelVisibility();});
- $('#channelPanelShowBtn')?.addEventListener('click',()=>{config.channelPanelVisible=true;updateChannelPanelVisibility();});
+ $('#channelPanelHideBtn')?.addEventListener('click',()=>{if(isMobileChannelPanel())return;config.channelPanelVisible=false;updateChannelPanelVisibility();});
+ $('#channelPanelShowBtn')?.addEventListener('click',()=>{if(isMobileChannelPanel())return;config.channelPanelVisible=true;updateChannelPanelVisibility();});
  window.addEventListener('resize',updateSidebarEdge);
+ // Keep the effective panel state in sync when an iPhone rotates or requests desktop mode.
+ window.addEventListener('resize',()=>updateChannelPanelVisibility(false));
+ window.addEventListener('pageshow',()=>updateChannelPanelVisibility(false));
+ window.addEventListener('orientationchange',()=>updateChannelPanelVisibility(false));
  document.addEventListener('openiptv:stylechange',updateSidebarEdge);
  if(window.ResizeObserver){const obs=new ResizeObserver(updateSidebarEdge);obs.observe($('#appSidebar'));obs.observe($('#appShell'));}
  $('#resetThemeBtn').onclick=()=>applyColor('#bc7cff',true,'reset');

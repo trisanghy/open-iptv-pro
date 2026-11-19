@@ -25,10 +25,33 @@ replacement=(Path(__file__).resolve().parent/'epg-fetch-function.txt').read_text
 js=js[:start]+replacement+'\n'+js[end:]
 js=js.replace('const xml=await fetchXML(source.url);const parsed=guideLib.parse(xml,ctx.getChannels());','const parsed=await readFreshGuide(source.url,ctx.getChannels());')
 if 'const parsed=await readFreshGuide(source.url,ctx.getChannels());' not in js: sys.exit('Cannot install fresh XMLTV reader')
+# Preserve mobile's always-expanded channel list when rebuilding WebView sources.
+# Take the reviewed Web-only function from the live project's features.js.
+web_features=(Path(__file__).resolve().parent.parent/'features.js').read_text(encoding='utf-8')
+marker=' function isMobileChannelPanel(){'
+patch_start=web_features.find(marker)
+patch_end=web_features.find(' function updateAppearance(persist=true){',patch_start)
+legacy_start=js.find(' function updateChannelPanelVisibility(persist=true){')
+legacy_end=js.find(' function updateAppearance(persist=true){',legacy_start)
+if min(patch_start,patch_end,legacy_start,legacy_end)<0:
+    sys.exit('Cannot protect mobile channel list visibility after WebView build')
+js=js[:legacy_start]+web_features[patch_start:patch_end]+js[legacy_end:]
+for previous,next_value in (
+ ("$('#channelPanelHideBtn')?.addEventListener('click',()=>{config.channelPanelVisible=false;updateChannelPanelVisibility();});",
+  "$('#channelPanelHideBtn')?.addEventListener('click',()=>{if(isMobileChannelPanel())return;config.channelPanelVisible=false;updateChannelPanelVisibility();});"),
+ ("$('#channelPanelShowBtn')?.addEventListener('click',()=>{config.channelPanelVisible=true;updateChannelPanelVisibility();});",
+  "$('#channelPanelShowBtn')?.addEventListener('click',()=>{if(isMobileChannelPanel())return;config.channelPanelVisible=true;updateChannelPanelVisibility();});"),
+ ("window.addEventListener('resize',updateSidebarEdge);",
+  "window.addEventListener('resize',updateSidebarEdge);\n window.addEventListener('resize',()=>updateChannelPanelVisibility(false));\n window.addEventListener('pageshow',()=>updateChannelPanelVisibility(false));\n window.addEventListener('orientationchange',()=>updateChannelPanelVisibility(false));")
+):
+    if js.count(previous)!=1: sys.exit('WebView channel visibility hook changed')
+    js=js.replace(previous,next_value,1)
 features.write_text(js,encoding='utf-8')
 
 for name in ('web-only.js','web-only.css','resume-last.js','resume-last.css','browser-channel-check.js','web-autoplay.js','cloud-core.js','cloud-sync.js','cloud-sync.css','web-volume.css','web-volume.js','web-mobile-player.css','web-mobile-player.js','web-player-icons.css','web-player-icons.js','web-tv-wide.css','web-mobile-controls-polish.css','web-desktop-download.css','web-desktop-download.js'):
-    copy2(Path(__file__).resolve().parent/name,out/name)
+    source=Path(__file__).resolve().parent/name
+    if not source.is_file():source=Path(__file__).resolve().parent.parent/name
+    copy2(source,out/name)
 # Keep Web's multi-source fallback matcher even if the originating WebView
 # frontend has an older name-only matcher. Do not change Electron/Rust source.
 copy2(Path(__file__).resolve().parent.parent/'epg.js',out/'epg.js')

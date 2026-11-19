@@ -142,10 +142,13 @@ jobs:
           grep -Fq 'web-desktop-download.js?v=desktop-download-20261119a' _site/index.html
           node --check _site/web-mobile-player.js
           node --test web-online/tests/web-mobile-player.test.cjs
+          grep -Fq 'features.js?v=channel-list-always-open-mobile-20261119h' _site/index.html
+          node --check _site/features.js
+          node --test web-online/tests/web-mobile-channel-always-open.test.cjs
           node --test web-online/tests/web-tv-wide.test.cjs
           grep -Fq 'web-tv-wide.css?v=tv-wide-no-side-epg-20261118k' _site/index.html
           grep -Fq 'src="web-mobile-player.js?v=responsive-desktop-20261118j"' _site/index.html
-          grep -Fq 'href="web-mobile-player.css?v=responsive-desktop-20261118j"' _site/index.html
+          grep -Fq 'href="web-mobile-player.css?v=channel-list-always-open-mobile-20261119h"' _site/index.html
           node --test web-online/tests/browser-channel-check.test.cjs
           node --test web-online/tests/source-use-consent-v1.test.cjs
           node --test web-online/tests/resume-last.test.cjs

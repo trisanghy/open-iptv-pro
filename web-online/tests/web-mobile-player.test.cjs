@@ -65,7 +65,7 @@ test('collapsed desktop sidebar cannot override the mobile bottom navigation',()
  assert.match(css,/height:calc\(69px \+ env\(safe-area-inset-bottom,0px\)\)!important/);
 });
 test('HTML loads versioned assets to invalidate iOS cached broken layout',()=>{
- assert.match(html,/web-mobile-player\.css\?v=responsive-desktop-20261118j/);
+ assert.match(html,/web-mobile-player\.css\?v=channel-list-always-open-mobile-20261119h/);
  assert.match(html,/web-mobile-player\.js\?v=responsive-desktop-20261118j/);
 });
 
@@ -125,8 +125,12 @@ test('notifications are above the fixed bottom tabs on iPhone',()=>{
  assert.match(css,/body #toastArea>\.toast\{/);
  assert.match(html,/class="toast-area" id="toastArea"/);
 });
-test('mobile collapse state preserves the ability to hide the channel panel',()=>{
- assert.match(css,/data-channel-panel-visible="false"\] body #page-tv \.channel-panel\{\s*display:none!important/);
+test('mobile list stays expanded despite desktop saved collapsed state',()=>{
+ const oldRule=css.indexOf('html[data-iptv-device="mobile"][data-channel-panel-visible="false"] body #page-tv .channel-panel{');
+ const override=css.lastIndexOf('html[data-iptv-device="mobile"][data-channel-panel-visible="false"] body #page-tv .channel-panel{');
+ assert.ok(override>oldRule,'late mobile override must win over old collapse rule');
+ assert.match(css.slice(override),/display:flex!important/);
+ assert.match(css.slice(override),/#channelPanelHideBtn\{[\s\S]*?display:none!important/);
 });
 
 test('mobile channel rows are large and all controls stay touch accessible',()=>{
