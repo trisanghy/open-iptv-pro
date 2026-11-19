@@ -238,6 +238,49 @@ jobs:
           if grep -q 'Trang chủ dự án</title>' _site/index.html; then exit 1; fi
           test -s _site/assets/player-desktop.png
           test -s _site/assets/player-mobile.png
+      - name: Capture up-to-date desktop, iOS and Android browser gallery
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --check web-online/capture-gallery.cjs
+          npm install --prefix "$RUNNER_TEMP/iptv-gallery-tools" --no-save --no-package-lock --ignore-scripts --no-audit --no-fund playwright-core@1.56.1
+          NODE_PATH="$RUNNER_TEMP/iptv-gallery-tools/node_modules" CAPTURE_CHROME="$(command -v google-chrome)" node web-online/capture-gallery.cjs _site
+          python3 - <<'PY'
+          from pathlib import Path
+          import struct
+          gallery=Path('_site/assets/gallery')
+          names=('desktop-tv','desktop-sources','desktop-epg','desktop-settings',
+                 'ios-tv','ios-channels','ios-sources','ios-favorites',
+                 'android-tv','android-channels','android-epg','android-settings')
+          for name in names:
+              path=gallery/(name+'.png')
+              data=path.read_bytes()
+              assert data[:8]==b'\x89PNG\r\n\x1a\n' and len(data)>12000,name
+              w,h=struct.unpack('>II',data[16:24])
+              assert w>=380 and h>=800,(name,w,h)
+          assert (gallery/'README.json').is_file()
+          assert not Path('_site/assets/gallery-demo.mp4').exists()
+          print('Capture validation passed for',len(names),'screenshots')
+          PY
+      - name: Archive current screenshots into main documentation
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          git clone --quiet --depth=1 --filter=blob:none --single-branch --branch main \
+            "https://x-access-token:${GH_TOKEN}@github.com/trisanghy/open-iptv-pro.git" "$RUNNER_TEMP/iptv-main-screens"
+          mkdir -p "$RUNNER_TEMP/iptv-main-screens/docs/images/web-gallery"
+          cp -f _site/assets/gallery/*.png "$RUNNER_TEMP/iptv-main-screens/docs/images/web-gallery/"
+          cp -f _site/assets/gallery/README.json "$RUNNER_TEMP/iptv-main-screens/docs/images/web-gallery/README.json"
+          cd "$RUNNER_TEMP/iptv-main-screens"
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add docs/images/web-gallery/
+          if ! git diff --cached --quiet; then
+            git commit -m "docs: refresh 12 captured Web UI screenshots for desktop iOS Android"
+            git push origin HEAD:main
+          fi
       - name: Preserve complete website as downloadable ZIP
         shell: bash
         run: |
