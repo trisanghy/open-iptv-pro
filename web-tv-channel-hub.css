@@ -145,7 +145,9 @@ html[data-theme="light"] #page-tv #webChannelHub .web-hub-side-card{
  #page-tv .web-hub-arrow{flex-basis:26px}
  #page-tv .web-hub-tile{flex-basis:90px}
 }
+/* The full channel/favorites/recent hub is desktop-only.
+ * Mobile already provides its own scrolling channel list and five-tab nav.
+ * Apply after the base display:grid and override it for all mobile themes. */
 html[data-iptv-device="mobile"] body #page-tv #webChannelHub{
- order:7!important;flex:0 0 auto!important;min-width:0!important;
- width:100%!important;margin:0 0 12px!important;
+ display:none!important;
 }
