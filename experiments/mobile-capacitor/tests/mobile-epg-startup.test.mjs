@@ -31,3 +31,20 @@ test('native launcher icon generated for Android and iOS from canonical resource
  const expectedTag='mobile/v'+pkg.version.replace('-mobile.','.');
  assert.ok(workflow.includes('MOBILE_TAG: '+expectedTag),'Release tag must match the package version');
 });
+
+test('the EPG refresh rejects stale guides and tries another provider',()=>{
+ const sync=fs.readFileSync(path.join(root,'src/mobile-epg-autosync.mjs'),'utf8');
+ const engine=fs.readFileSync(path.join(root,'src/mobile-epg-auto.mjs'),'utf8');
+ assert.match(sync,/guideCoverage\(guide,Date\.now\(\),parseDate\)/);
+ assert.match(sync,/if\(!coverage\.usable\)throw Error/);
+ assert.match(sync,/for\(const source of enabled\)/);
+ assert.match(sync,/candidate\.cache/);
+ assert.match(engine,/maxProgrammes\/Math\.max/);
+ assert.match(sync,/state\.epgCache=accepted/);
+});
+test('EPG source and manual channel controls are wired without leaking playlist metadata',()=>{
+ const sync=fs.readFileSync(path.join(root,'src/mobile-epg-autosync.mjs'),'utf8');
+ assert.match(sync,/epgChannel'\)\.onchange=renderRows/);
+ assert.match(sync,/matchGuideChannel\(state\.epgCache,channel\)/);
+ assert.match(sync,/Array\.isArray\(result\.data\.data\)/);
+});

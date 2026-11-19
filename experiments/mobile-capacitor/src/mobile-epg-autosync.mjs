@@ -1,5 +1,5 @@
 import {Capacitor,CapacitorHttp} from '@capacitor/core';
-import {guideSources,sanitizeGuideURL,matchGuideChannel,makeEPGCache} from './mobile-epg-auto.mjs';
+import {guideSources,sanitizeGuideURL,matchGuideChannel,makeEPGCache,guideCoverage,epgKey} from './mobile-epg-auto.mjs';
 const native=Capacitor.isNativePlatform();
 const $=s=>document.querySelector(s);
 const elt=(tag,text,cls)=>{const n=document.createElement(tag);if(cls)n.className=cls;if(text!==undefined)n.textContent=text;return n;};
@@ -27,9 +27,16 @@ export function installEPGAuto({getState,save,getText,parseDate,getSelectedChann
   function renderRows(){
     const root=$('#epgResults');if(!root)return;
     root.replaceChildren();
-    const channel=getSelectedChannel(),id=matchGuideChannel(state.epgCache,channel);
-    const programmes=(state.epgCache?.items||[]).filter(p=>!id||p.channel===id).slice(0,100);
-    if(!programmes.length){root.append(elt('p','Chưa có lịch cho kênh này. Thử nguồn khác hoặc kiểm tra tvg-id.','muted'));return;}
+    const channel=getSelectedChannel(),matched=matchGuideChannel(state.epgCache,channel);
+    const manual=($('#epgChannel')?.value||'').trim();
+    const override=manual && (state.epgCache?.aliases?.[epgKey(manual)] || (state.epgCache?.items||[]).find(p=>p.channel===manual)?.channel);
+    const id=override||matched;
+    const now=Date.now();
+    const programmes=(state.epgCache?.items||[])
+      .filter(p=>(!channel&&!manual||id&&p.channel===id)&&(parseDate(p.stop)?.getTime()||0)>now-3*3600000)
+      .sort((a,b)=>(parseDate(a.start)?.getTime()||0)-(parseDate(b.start)?.getTime()||0))
+      .slice(0,100);
+    if(!programmes.length){root.append(elt('p',!state.epgCache?'Chưa tải được EPG. Nhấn Tải EPG ngay để thử các nguồn khác.':!id&&channel?'Không tìm thấy tên hoặc tvg-id của kênh trong lịch EPG.':'Chưa có lịch hiện tại hoặc sắp tới của kênh này. Thử nguồn khác.','muted'));return;}
     for(const p of programmes){
       const row=elt('article',undefined,'epg-row');
       row.append(elt('small',p.channel+' · '+(parseDate(p.start)?.toLocaleString('vi-VN')||p.start)),elt('b',p.title));root.append(row);
@@ -49,6 +56,8 @@ export function installEPGAuto({getState,save,getText,parseDate,getSelectedChann
       if(result.status<200||result.status>=300)throw Error('HTTP '+result.status);
       if(typeof result.data==='string'){const raw=atob(result.data);bytes=Uint8Array.from(raw,c=>c.charCodeAt(0));}
       else if(Array.isArray(result.data))bytes=Uint8Array.from(result.data);
+      else if(result.data instanceof ArrayBuffer)bytes=new Uint8Array(result.data);
+      else if(result.data?.data && Array.isArray(result.data.data))bytes=Uint8Array.from(result.data.data);
       else throw Error('Không nhận được dữ liệu EPG nén');
     }else{
       const ctrl=new AbortController(),timer=setTimeout(()=>ctrl.abort(),28000);
@@ -71,18 +80,30 @@ export function installEPGAuto({getState,save,getText,parseDate,getSelectedChann
       const enabled=state.epgSources.filter(x=>x.enabled!==false);
       if(!enabled.length){if(!quiet)notify('Chưa chọn nguồn EPG','error');return false;}
       show('Đang cập nhật EPG từ '+enabled.length+' nguồn...');
-      let lastError='';
+      let lastError='',candidate=null;
+      const current=getSelectedChannel();
       for(const source of enabled){
         try{
           const xml=await getGuideText(source.url);
           const guide=makeEPGCache(xml,parseDate,Date.now(),5000);
-          if(!guide.items.length)throw Error('Không có chương trình trong khoảng thời gian hiện tại');
-          state.epgCache={...guide,sourceName:source.name,sourceId:source.id};
-          state.epgUrl=source.url;
-          save();onGuide(state.epgCache);render();
+          const coverage=guideCoverage(guide,Date.now(),parseDate);
+          if(!coverage.usable)throw Error('EPG đã quá hạn; không có chương trình hiện tại hoặc sắp tới');
+          const id=matchGuideChannel(guide,current);
+          const currentMatch=!current || !!id && guide.items.some(p=>p.channel===id && (parseDate(p.stop)?.getTime()||0)>Date.now());
+          const accepted={...guide,sourceName:source.name,sourceId:source.id};
+          if(!currentMatch){candidate??={cache:accepted,url:source.url};continue;}
+          state.epgCache=accepted;state.epgUrl=source.url;
+          save();onGuide(accepted);render();
           if(!quiet)notify('Đã tải '+guide.items.length+' lịch EPG từ '+source.name,'ok');
           return true;
         }catch(e){lastError=(e?.message||String(e));console.warn('XMLTV',source.name,lastError);}
+      }
+      if(candidate){
+        state.epgCache=candidate.cache;state.epgUrl=candidate.url;
+        save();onGuide(candidate.cache);render();
+        show('Đã tải lịch EPG nhưng chưa khớp kênh đang chọn; thử chọn tvg-id khác.');
+        if(!quiet)notify('EPG đã tải, nhưng chưa khớp kênh đang chọn.','ok');
+        return true;
       }
       show('Không tải được EPG mới; vẫn giữ lịch cũ. '+lastError);
       if(!quiet)notify('Không tải được nguồn EPG nào; giữ dữ liệu cũ','error');
@@ -95,6 +116,7 @@ export function installEPGAuto({getState,save,getText,parseDate,getSelectedChann
     state.epgSources.push({id:'custom-'+Date.now(),name:new URL(url).hostname,url,enabled:true});
     field.value='';save();render();notify('Đã thêm URL EPG','ok');
   }
+  $('#epgChannel').onchange=renderRows;
   $('#epgAutoRefresh').onchange=e=>{state.settings.autoRefreshEPG=e.target.checked;save();};
   $('#autoRefreshPlaylists').onchange=e=>{state.settings.autoRefreshPlaylists=e.target.checked;save();};
   $('#autoResumeLast').onchange=e=>{state.settings.autoResumeLast=e.target.checked;save();};
