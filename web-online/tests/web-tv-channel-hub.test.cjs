@@ -29,11 +29,32 @@ test('favorites and recently watched use original app data, keep history order',
  assert.deepEqual(hub.choose(channels,{tab:'recent',search:'VTV',store,recentCore:recent}).map(c=>c.id),['vtv1']);
  assert.deepEqual(hub.choose(channels,{sort:'az',store}).map(c=>c.id),['htv7','k1','vtv1','vtv3']);
  assert.equal(hub.LIMIT,48);
- assert.equal(hub.MAX_VISIBLE,120);
+ assert.equal(hub.BATCH_SIZE,96);
+ assert.equal(hub.MAX_VISIBLE,undefined);
+});
+test('Show more displays all channels in the currently filtered tab, beyond the old 120-channel cap',()=>{
+ const large=Array.from({length:1500},(_,n)=>({
+   id:'channel-'+n,name:(n%3===0?'VTV ':'HTV ')+n,group:n%3===0?'VTV':'HTV'
+ }));
+ assert.equal(hub.visible(large,false).length,48);
+ assert.equal(hub.visible(large,true).length,1500);
+ assert.equal(hub.visible(large,true)[1499],large[1499]);
+ const filtered=hub.choose(large,{search:'VTV',groupName:'VTV',store});
+ assert.equal(filtered.length,500);
+ assert.equal(hub.visible(filtered,true).length,500);
+ assert.deepEqual(hub.visible(filtered,true),filtered,'Keep exact channel order after expanding');
+ const f={visible:()=>large.filter((c,i)=>i%5===0)};
+ const favFiltered=hub.choose(large,{tab:'favorites',search:'VTV',store,favCore:f});
+ assert.ok(favFiltered.length>48);
+ assert.deepEqual(hub.visible(favFiltered,true),favFiltered,'Favorites must expand only favorites matching current search');
+ const rec={select:()=>large.slice().reverse().slice(0,250)};
+ const recentFiltered=hub.choose(large,{tab:'recent',groupName:'HTV',store,recentCore:rec});
+ assert.ok(recentFiltered.length>48);
+ assert.deepEqual(hub.visible(recentFiltered,true),recentFiltered,'Recently watched must keep history order and group filter');
 });
 test('channel hub labels exist for all 17 supported UI languages',()=>{
  const langs=['vi','en','es','pt-BR','zh-CN','th','lo','km','fr','de','it','ja','ko','ru','id','hi','ar'];
- const keys=['channels','favorites','recent','search','all','group','allGroups','sort','source','az','za','viewAll','prev','next','empty','emptyFav','emptyRecent','more','grid','list','addFav','removeFav','choose'];
+ const keys=['channels','favorites','recent','search','all','group','allGroups','sort','source','az','za','viewAll','prev','next','empty','emptyFav','emptyRecent','more','collapse','grid','list','addFav','removeFav','choose'];
  for(const lang of langs)for(const key of keys){
   const value=hub.label(lang,key);
   assert.equal(typeof value,'string',lang+':'+key);
@@ -75,6 +96,12 @@ test('Web only channel hub loads after player and survives WebView rebuild',()=>
  assert.match(read('web-tv-channel-hub.js'),/web-hub-side-card/);
  assert.match(read('web-tv-channel-hub.js'),/web-hub-view-toggle/);
  assert.match(css,/#page-tv \.web-hub-side-card/);
+ assert.match(css,/#page-tv \.web-hub-tiles\.expanded:not\(\.list-mode\)/);
+ assert.match(css,/max-height:min\(72vh,720px\)/);
+ assert.ok(read('web-tv-channel-hub.js').includes('renderTiles(visible(shown,expanded))'));
+ assert.ok(read('web-tv-channel-hub.js').includes('expanded=!expanded;'));
+ assert.ok(read('web-tv-channel-hub.js').includes('more.hidden=shown.length<=LIMIT'));
+ assert.ok(!read('web-tv-channel-hub.js').includes('MAX_VISIBLE'));
  assert.match(css,/min-width:0/);
 });
 
