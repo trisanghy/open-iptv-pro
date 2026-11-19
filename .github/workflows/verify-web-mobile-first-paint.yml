@@ -7,6 +7,9 @@ on:
       - 'web-player-icons.css'
       - 'web-mobile-player.css'
       - 'web-mobile-controls-polish.css'
+      - 'web-mobile-tablet-controls.css'
+      - 'web-online/tests/web-mobile-tablet-controls.test.cjs'
+      - 'web-online/tests/web-mobile-tablet-browser.test.cjs'
       - 'web-online/web-mobile-controls-polish.css'
       - 'web-online/tests/web-player-icons-first-paint.test.cjs'
       - 'index.html'
@@ -42,3 +45,6 @@ jobs:
           test -f _site/web-mobile-controls-polish.css
           ICON_FIRST_PAINT_CHROME="$(command -v google-chrome || command -v chromium)" node --test web-online/tests/web-player-icons-first-paint.test.cjs
           node --test web-online/tests/web-mobile-controls-polish.test.cjs
+          test -s _site/web-mobile-tablet-controls.css
+          node --test web-online/tests/web-mobile-tablet-controls.test.cjs
+          TABLET_LAYOUT_CHROME="$(command -v google-chrome || command -v chromium)" node --test web-online/tests/web-mobile-tablet-browser.test.cjs
