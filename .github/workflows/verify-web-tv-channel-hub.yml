@@ -36,7 +36,7 @@ jobs:
           node --test web-online/tests/web-tv-wide.test.cjs
           node --test web-online/tests/web-mobile-player.test.cjs
           python3 -m py_compile web-online/prepare-web.py
-          grep -Fq 'src="web-tv-channel-hub.js?v=tv-hub-20261119a"' index.html
-          grep -Fq 'href="web-tv-channel-hub.css?v=tv-hub-20261119a"' index.html
+          grep -Fq 'src="web-tv-channel-hub.js?v=tv-hub-20261119b"' index.html
+          grep -Fq 'href="web-tv-channel-hub.css?v=tv-hub-20261119b"' index.html
           cmp web-tv-channel-hub.js web-online/web-tv-channel-hub.js
           cmp web-tv-channel-hub.css web-online/web-tv-channel-hub.css
