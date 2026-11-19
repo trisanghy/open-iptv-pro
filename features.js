@@ -5,7 +5,10 @@
  const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
  const today=(t)=>new Date(t).toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit'});
  const defaultSources=[
-  {name:'Việt Nam • EPGShare01',url:'https://epgshare01.online/epgshare01/epg_ripper_VN1.xml.gz',enabled:true},
+  {name:'Việt Nam • VNEPG · Gzip (mặc định)',url:'https://epg.io.vn/epg.xml.gz',enabled:true},
+  {name:'Việt Nam • VNEPG · XML tiêu chuẩn',url:'https://epg.io.vn/epg.xml',enabled:false},
+  {name:'Việt Nam • VNEPG · Gzip Việt hóa',url:'https://epg.io.vn/epgu.xml.gz',enabled:false},
+  {name:'Việt Nam • EPGShare01 (dự phòng)',url:'https://epgshare01.online/epgshare01/epg_ripper_VN1.xml.gz',enabled:false},
   {name:'Singapore • IPTV-EPG.org',url:'https://iptv-epg.org/files/epg-sg.xml',enabled:false},
   {name:'Thái Lan • IPTV-EPG.org',url:'https://iptv-epg.org/files/epg-th.xml',enabled:false},
   {name:'Anh • IPTV-EPG.org',url:'https://iptv-epg.org/files/epg-gb.xml',enabled:false},
@@ -33,11 +36,25 @@
   const wasExclusive=config.epgSourcePolicy==='epg-pw-vn-only-20261119';
   const isEPGPW=url=>/^https:\/\/epg\.pw\/xmltv\/epg_VN\.xml(?:\?.*)?$/i.test(String(url||''));
   const others=config.sources.filter(s=>s&&typeof s.url==='string'&&!isEPGPW(s.url));
-  const main=others.find(s=>s.url===defaultSources[0].url);
+  const main=others.find(s=>s.url==='https://epgshare01.online/epgshare01/epg_ripper_VN1.xml.gz');
   // Previous exclusive migration switched off the old primary; enable it again.
   if(main&&wasExclusive)main.enabled=true;
   config.sources=[...(main?[main]:[]),...others.filter(s=>s!==main),{...defaultSources[defaultSources.length-1]}];
   config.epgSourcePolicy=epgSourcePolicy;
+ }
+ // One-time default switch for new and existing Web installations.
+ // Keep all user-added feeds, mappings, startup preferences and subsequent
+ // manual checkbox changes. Old EPGShare01 stays available as opt-in backup.
+ const vnepgSourcePolicy='vnepg-gzip-default-20261120';
+ if(config.vnepgSourcePolicy!==vnepgSourcePolicy){
+  const vnepgPresets=defaultSources.slice(0,3);
+  const vnepgURLs=new Set(vnepgPresets.map(s=>s.url));
+  const preserved=config.sources.filter(s=>s&&typeof s.url==='string'&&!vnepgURLs.has(s.url.split(/[?#]/,1)[0]));
+  for(const source of preserved){
+   if(source.url==='https://epgshare01.online/epgshare01/epg_ripper_VN1.xml.gz')source.enabled=false;
+  }
+  config.sources=[...vnepgPresets.map(s=>({...s})),...preserved];
+  config.vnepgSourcePolicy=vnepgSourcePolicy;
  }
  const presetEPGURLs=new Set(defaultSources.map(s=>s.url));
  if(!/^#[0-9a-fA-F]{6}$/.test(config.accent||''))config.accent='#bc7cff';
