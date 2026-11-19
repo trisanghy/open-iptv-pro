@@ -121,6 +121,28 @@ if app_text.count(snapshot_start)!=1 or web_app.count(snapshot_start)!=1:
 if app_text.count(snapshot_end)!=1 or web_app.count(snapshot_end)!=1:
     sys.exit('Web snapshot function end missing')
 app_text=app_text[:app_text.index(snapshot_start)]+web_app[web_app.index(snapshot_start):web_app.index(snapshot_end,web_app.index(snapshot_start))]+app_text[app_text.index(snapshot_end,app_text.index(snapshot_start)):]
+# Preserve the Web-only background audio route when regenerating from an older
+# desktop WebView frontend. Do not edit or ship changes to Electron/Rust.
+audio_begin=' function suspendVideoForBackground(){'
+audio_play=' async function playChannel(chId,override=null,opts={}){'
+audio_end=' function updateTaskUI('
+if web_app.count(audio_begin)!=1 or web_app.count(audio_play)!=1 or web_app.count(audio_end)!=1:
+    sys.exit('Background audio Web source functions changed')
+if app_text.count(audio_play)!=1 or app_text.count(audio_end)!=1:
+    sys.exit('Background audio WebView function anchors changed')
+app_text=app_text[:app_text.index(audio_play)]+web_app[web_app.index(audio_begin):web_app.index(audio_end,web_app.index(audio_begin))]+app_text[app_text.index(audio_end,app_text.index(audio_play)):]
+for previous,updated in (
+ ("player.addEventListener('playing',()=>{clearTimeout(failoverTimer);",
+  "player.addEventListener('playing',()=>{if(window.OpenIPTVBackgroundAudio?.active){player.pause();return;}clearTimeout(failoverTimer);"),
+ ("player.addEventListener('pause',()=>{clearTimeout(stallTimer);$('#playBtn').textContent='▶';});",
+  "player.addEventListener('pause',()=>{clearTimeout(stallTimer);if(!window.OpenIPTVBackgroundAudio?.active)$('#playBtn').textContent='▶';});"),
+ ("void playChannel(ch.id,null,{manualUrl:url,mode:'live'});",
+  "void playChannel(ch.id,null,{manualUrl:url,mode:'live',audioOnly:!!window.OpenIPTVBackgroundAudio?.active});"),
+ ("playChannel,stopPlayer,refreshManualLinks:",
+  "playChannel,switchChannel,suspendVideoForBackground,stopPlayer,refreshManualLinks:")
+):
+    if app_text.count(previous)!=1:sys.exit('Background audio build patch drift: '+previous[:95])
+    app_text=app_text.replace(previous,updated,1)
 app_file.write_text(app_text,encoding='utf-8')
 
 html=(out/'index.html').read_text(encoding='utf-8')

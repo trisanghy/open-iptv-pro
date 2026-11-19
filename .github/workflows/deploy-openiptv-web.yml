@@ -163,6 +163,7 @@ jobs:
           node --test web-online/tests/browser-channel-check.test.cjs
           node --test web-online/tests/source-use-consent-v1.test.cjs
           node --test web-online/tests/resume-last.test.cjs
+          python3 -m py_compile web-online/prepare-web.py
           node --check _site/web-background-audio.js
           node --test web-online/tests/web-background-audio.test.cjs
           node --test web-online/tests/web-background-audio-mode.test.cjs
