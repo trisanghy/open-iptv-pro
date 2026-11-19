@@ -48,11 +48,11 @@ test('large XMLTV has no 12,000-programme ceiling and resolves later channels',(
  assert.equal(guide.programmes.length,13006);
  const now=context.IPTVGuide.current(guide,{name:'VTV3',tvgId:'VTV3',id:'ch3'},clock);
  assert.equal(now.next.title,'Phim truyện: Kẻ mai mối xứng tầm - Tập 25');
- assert.doesNotMatch(renderer,/out\\.length\\s*>=\\s*12000/);
- assert.doesNotMatch(features,/programmes\\.slice\\(0,\\s*12000\\)/);
- assert.match(features,/https:\/\/epg\\.io\\.vn\/epg\\.xml\\.gz/);
+ assert.equal(renderer.includes('out.length>=12000'),false);
+ assert.equal(features.includes('programmes.slice(0,12000)'),false);
+ assert.ok(features.includes('https://epg.io.vn/epg.xml.gz'));
  assert.match(features,/async function saveGuideInDatabase/);
  assert.match(features,/encodeGuideSnapshot/);
- assert.match(features,/void restoreGuideCache\\(\\)/);
+ assert.ok(features.includes('void restoreGuideCache()'));
  assert.doesNotThrow(()=>new Function(features));
 });
