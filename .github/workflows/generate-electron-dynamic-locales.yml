@@ -1,0 +1,90 @@
+name: Generate offline Electron dynamic UI translations
+on:
+  push:
+    branches: [build-sources/electron-desktop]
+    paths:
+      - '.github/workflows/generate-electron-dynamic-locales.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - name: Check syntax and scan authored dynamic renderer strings
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          python3 -m py_compile scripts/build-electron-dynamic-locales.py
+          python3 scripts/build-electron-dynamic-locales.py --extract | python3 -c 'import sys,json; d=json.load(sys.stdin);print("Renderer modules:",d["files"],"Static:",len(d["static"]),"Dynamic templates:",len(d["templates"]));assert d["files"]>=35;assert len(d["templates"])>=45'
+  translate:
+    needs: prepare
+    strategy:
+      max-parallel: 4
+      fail-fast: false
+      matrix:
+        lang: [en, es, pt-BR, zh-CN, th, lo, km, fr, de, it, ja, ko, ru, id, hi, ar]
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - name: Generate native static and interpolation translations, offline for app
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          python3 scripts/build-electron-dynamic-locales.py --lang '${{ matrix.lang }}'
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: electron-dynamic-${{ matrix.lang }}
+          path: locale-output/dynamic-${{ matrix.lang }}.json
+          if-no-files-found: warn
+          retention-days: 7
+  assemble:
+    needs: translate
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: true}
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: electron-dynamic-*
+          path: locale-output/
+          merge-multiple: true
+      - name: Validate every interpolated token and full offline bundle
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          python3 scripts/build-electron-dynamic-locales.py --merge
+          node --check renderer/i18n-dynamic-locales.js
+          node --check renderer/i18n.js
+          node --test tests/i18n-*.test.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: electron-dynamic-assembled
+          path: renderer/i18n-dynamic-locales.js
+          retention-days: 7
+      - name: Publish verified dynamic locale bundles to the same Electron branch
+        shell: bash
+        env:
+          TARGET_BRANCH: build-sources/electron-desktop
+        run: |
+          set -Eeuo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add renderer/i18n-dynamic-locales.js
+          git diff --cached --quiet && { echo 'No new dynamic locale data'; exit 0; }
+          git fetch origin "$TARGET_BRANCH"
+          test "$(git rev-parse HEAD)" = "$(git rev-parse FETCH_HEAD)" || { echo 'HEAD advanced; not overwriting Electron commits'; exit 1; }
+          git commit -m 'feat(electron/i18n): pretranslate runtime popup and interpolated status templates for all 17 languages'
+          git push origin "HEAD:$TARGET_BRANCH"
