@@ -137,7 +137,7 @@ link_anchor="<p id=\"cloudAuthProviders\" class=\"hint\" aria-live=\"polite\"></
 if html.count(link_anchor)!=1:
     sys.exit('Cloud link form anchor missing')
 html=html.replace(link_anchor,"      <div id=\"cloudLinkForm\" class=\"cloud-email-form\" hidden>\n        <label for=\"cloudLinkInput\">Nếu liên kết trong email không quay về website, hãy dán liên kết vào đây</label>\n        <div class=\"cloud-email-input-line\">\n          <input id=\"cloudLinkInput\" type=\"url\" autocomplete=\"off\" spellcheck=\"false\" placeholder=\"Liên kết xác nhận của Supabase\"/>\n          <button type=\"button\" class=\"btn btn-subtle\" id=\"cloudLinkVerify\">Xác thực liên kết</button>\n        </div>\n        <p class=\"hint\">Liên kết chỉ được dùng một lần và không được lưu vào playlist hoặc đám mây.</p>\n      </div>\n"+link_anchor,1)
-html=html.replace('</head>','<link rel="stylesheet" href="web-only.css"/><link rel="stylesheet" href="resume-last.css"/><link rel="stylesheet" href="web-volume.css"/><link rel="stylesheet" href="cloud-sync.css"/><link rel="manifest" href="manifest.webmanifest"/></head>',1)
+html=html.replace('</head>','<link rel="stylesheet" href="web-only.css?v=epg-rows-20261119f"/><link rel="stylesheet" href="resume-last.css"/><link rel="stylesheet" href="web-volume.css"/><link rel="stylesheet" href="cloud-sync.css"/><link rel="manifest" href="manifest.webmanifest"/></head>',1)
 html=html.replace('<script src="app.js"></script>','<script src="web-mobile-player.js?v=responsive-desktop-20261118j"></script><script src="app.js"></script>',1)
 html=html.replace('</head>','<link rel="stylesheet" href="web-mobile-player.css?v=responsive-desktop-20261118j"/></head>',1)
 html=html.replace('src="theme-boot.js"','src="theme-boot.js?v=responsive-desktop-20261118j"',1)
@@ -175,6 +175,11 @@ html=html.replace('src="app.js"','src="app.js?v=playlist-http-20261119d"').repla
 html=html.replace('src="source-edit.js"','src="source-edit.js?v=playlist-input-20261119c"')
 for name in ('features.js','epg.js'):
     html=html.replace('src="'+name+'"','src="'+name+'?v=epg-live-20261119e"')
+# Reuse the source-controlled player EPG rows when regenerating the WebView layout.
+web_html=(Path(__file__).resolve().parent.parent/'index.html').read_text(encoding='utf-8')
+start='<div class="epg-current-item">'
+end='<span id="epgNowText"'
+html=html[:html.index(start)]+web_html[web_html.index(start):web_html.index(end,web_html.index(start))]+html[html.index(end,html.index(start)):]
 (out/'index.html').write_text(html,encoding='utf-8')
 (out/'.nojekyll').write_text('')
 (out/'manifest.webmanifest').write_text(json.dumps({

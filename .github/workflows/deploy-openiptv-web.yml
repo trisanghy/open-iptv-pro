@@ -206,6 +206,7 @@ jobs:
           node --check _site/features.js
           node --check _site/epg.js
           node --test web-online/tests/web-fresh-epg.test.cjs
+          EPG_LAYOUT_CHROME="$(command -v google-chrome)" node --test web-online/tests/web-epg-layout.test.cjs
           mkdir -p _site/epg
           if python3 web-online/fetch-epg.py _site/epg/vn.xml; then
             echo "Vietnam guide ready on same GitHub Pages origin."
