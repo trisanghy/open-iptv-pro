@@ -1,0 +1,69 @@
+name: Assemble verified Electron dynamic translations on macOS
+on:
+  push:
+    branches: [build-sources/electron-desktop]
+    paths:
+      - '.github/workflows/assemble-electron-dynamic-mac.yml'
+permissions:
+  contents: write
+  actions: read
+jobs:
+  assemble:
+    runs-on: macos-15
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: true}
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - uses: actions/download-artifact@v4
+        with:
+          run-id: 44483664848
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          pattern: electron-dynamic-*
+          path: locale-output/
+          merge-multiple: true
+      - name: Reassemble all sixteen native locale datasets, preserving variable markers
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          python3 scripts/build-electron-dynamic-locales.py --merge
+          node --check renderer/i18n-dynamic-locales.js
+          node --test tests/i18n-*.test.cjs
+      - name: Check all dynamic UI templates and native translations are present
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          node <<'JS'
+          const fs=require('node:fs'),vm=require('node:vm'),assert=require('node:assert/strict');
+          const sandbox={window:{}};
+          vm.runInNewContext(fs.readFileSync('renderer/i18n-dynamic-locales.js','utf8'),sandbox,{timeout:10000});
+          const api=sandbox.window.OpenIPTVDynamicLocales;
+          assert.ok(api.templateKeys.length>=120,'Missing dynamic popup templates');
+          const locales=['en','es','pt-BR','zh-CN','th','lo','km','fr','de','it','ja','ko','ru','id','hi','ar'];
+          for(const lang of locales){
+            assert.equal(Object.keys(api.static[lang]||{}).length>200,true,lang+' static coverage');
+            const result=api.translate('Đã chọn 12 kênh',lang);
+            assert.ok(result&&result.includes('12'),lang+' did not interpolate the channel count');
+            assert.notEqual(result,'Đã chọn 12 kênh',lang);
+          }
+          console.log('Verified',api.templateKeys.length,'source templates in',locales.length,'localized output sets');
+          JS
+      - uses: actions/upload-artifact@v4
+        with:
+          name: electron-verified-dynamic-locale-bundle
+          path: renderer/i18n-dynamic-locales.js
+          retention-days: 7
+      - name: Fast-forward commit checked runtime translation bundle on Electron only
+        shell: bash
+        env:
+          TARGET_BRANCH: build-sources/electron-desktop
+        run: |
+          set -Eeuo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add renderer/i18n-dynamic-locales.js
+          git fetch origin "$TARGET_BRANCH"
+          test "$(git rev-parse HEAD)" = "$(git rev-parse FETCH_HEAD)" || { echo 'HEAD advanced; no automatic overwrite'; exit 1; }
+          git commit -m 'feat(electron/i18n): ship verified offline native translations for dynamic popup templates'
+          git push origin "HEAD:$TARGET_BRANCH"
