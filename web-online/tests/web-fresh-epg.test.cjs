@@ -173,10 +173,10 @@ test('full EPG survives a simulated IndexedDB save/reload without localStorage q
  assert.equal(second.getGuide().offsetMinutes,30);
 });
 test('Web merge and import never truncate schedules at 12,000 items',()=>{
- assert.doesNotMatch(js,/programmes\\.slice\\(0,\\s*12000\\)/);
+ assert.doesNotMatch(js,/programmes\.slice\(0,\s*12000\)/);
  const source=fs.readFileSync(path.join(root,'epg.js'),'utf8');
- assert.doesNotMatch(source,/out\\.length\\s*>=\\s*12000/);
+ assert.doesNotMatch(source,/out\.length\s*>=\s*12000/);
  const builder=fs.readFileSync(path.join(root,'web-online/prepare-web.py'),'utf8');
- assert.match(builder,/uncapped EPG merge\\/import/);
+ assert.match(builder,/uncapped EPG merge\/import/);
  assert.match(builder,/IndexedDB guide cache/);
 });
