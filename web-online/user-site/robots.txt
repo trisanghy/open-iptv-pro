@@ -1,0 +1,6 @@
+# GitHub Pages user-site root: https://trisanghy.github.io/
+# Serve this file at /robots.txt from the separate trisanghy.github.io repository.
+User-agent: *
+Allow: /
+Sitemap: https://trisanghy.github.io/sitemap.xml
+Sitemap: https://trisanghy.github.io/open-iptv-pro/sitemap.xml

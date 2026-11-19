@@ -237,6 +237,35 @@ jobs:
         run: |
           cd _site
           zip -qr ../openiptv-web-site.zip .
+      - name: Package independent GitHub Pages user-site homepage
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p _user_site
+          cp -p web-online/project-home.html _user_site/index.html
+          cp -p web-online/user-site/robots.txt web-online/user-site/sitemap.xml _user_site/
+          touch _user_site/.nojekyll
+          python3 - <<'PY'
+          from pathlib import Path
+          from xml.etree import ElementTree as ET
+          home=Path('_user_site/index.html').read_text(encoding='utf-8')
+          assert '<link rel="canonical" href="https://trisanghy.github.io/">' in home
+          assert '<meta name="robots" content="index, follow">' in home
+          assert home.count('https://trisanghy.github.io/open-iptv-pro/') >= 8
+          assert all(section in home for section in ('id="tinh-nang"', 'id="anh"', 'id="tai-ve"', 'id="huong-dan"', 'id="ma-nguon"'))
+          assert 'player-mobile.png' in home and 'player-desktop.png' in home
+          assert 'Sitemap: https://trisanghy.github.io/sitemap.xml' in Path('_user_site/robots.txt').read_text()
+          urls=[v.text for v in ET.parse('_user_site/sitemap.xml').findall('.//{http://www.sitemaps.org/schemas/sitemap/0.9}loc')]
+          assert urls == ['https://trisanghy.github.io/', 'https://trisanghy.github.io/open-iptv-pro/', 'https://trisanghy.github.io/open-iptv-pro/huong-dan.html']
+          print('Standalone user-site HTML, crawler and navigation checks passed')
+          PY
+          (cd _user_site && zip -qr ../openiptv-user-homepage.zip .)
+      - name: Upload independent user-site homepage archive
+        uses: actions/upload-artifact@v4
+        with:
+          name: openiptv-user-homepage
+          path: openiptv-user-homepage.zip
+          if-no-files-found: error
       - name: Upload browser-ready static site
         uses: actions/upload-artifact@v4
         with:

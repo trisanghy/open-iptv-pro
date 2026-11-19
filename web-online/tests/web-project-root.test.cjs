@@ -29,3 +29,16 @@ test('Separate homepage source, preview and live screenshots stay in build',()=>
  assert.match(workflow,/test -s _site\/assets\/player-mobile.png/);
  assert.match(workflow,/grep -q 'id="appShell"' _site\/index.html/);
 });
+
+test('Independent user homepage includes comprehensive copy and crawler setup',()=>{
+ const home=read('web-online/project-home.html');
+ for(const id of ['tinh-nang','anh','huong-dan','tai-ve','ma-nguon'])assert.match(home,new RegExp('id="'+id+'"'));
+ for(const token of ['player-mobile.png','player-desktop.png','Open IPTV Pro','GitHub','M3U','EPG','CORS','sitemap.xml','releases/latest'])assert.ok(home.includes(token),token);
+ assert.match(home,/rel="canonical" href="https:\/\/trisanghy.github.io\/"/);
+ assert.match(home,/<meta name="robots" content="index, follow">/);
+ assert.match(read('web-online/user-site/robots.txt'),/Sitemap: https:\/\/trisanghy.github.io\/sitemap.xml/);
+ assert.match(read('web-online/user-site/sitemap.xml'),/<loc>https:\/\/trisanghy.github.io\/<\/loc>/);
+ const wf=read('.github/workflows/deploy-openiptv-web.yml');
+ assert.match(wf,/openiptv-user-homepage.zip/);
+ assert.match(wf,/cp -p web-online\/project-home.html _user_site\/index.html/);
+});
