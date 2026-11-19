@@ -316,6 +316,7 @@ jobs:
           cp -p web-online/user-site/.github/workflows/publish-home.yml _user_site/.github/workflows/publish-home.yml
           cp -p web-online/user-site/README.md _user_site/README.md
           node --test web-online/tests/web-user-site.test.cjs
+          node --test web-online/tests/web-home-languages.test.cjs
           touch _user_site/.nojekyll
           python3 - <<'PY'
           from pathlib import Path
