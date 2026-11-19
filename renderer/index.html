@@ -247,34 +247,7 @@
        <div class="quick-tools-heading">▤ Công cụ nhanh <small>Kiểm tra · Snapshot · Xuất M3U</small></div>
        <div class="quick-grid"><button class="quick-btn" id="quickChecks"><span>✓</span><b>Kiểm tra các kênh</b><small>Quét ngay tại đây</small></button><button class="quick-btn" id="quickShots"><span>▦</span><b>Chụp toàn bộ kênh</b><small>FFmpeg tích hợp</small></button><button class="quick-btn" id="quickExport"><span>⇩</span><b>Xuất playlist</b><small>Tạo file iptv.m3u</small></button></div>
       </section>
-      <section class="web-channel-chooser" id="webChannelChooser" aria-label="Chọn kênh nhanh">
-       <div class="web-chooser-main">
-        <div class="web-chooser-heading">
-         <div class="web-chooser-tabs" role="tablist" aria-label="Bộ lọc kênh">
-          <button type="button" class="active" data-chooser-tab="all" role="tab" aria-selected="true">▣ Chọn kênh</button>
-          <button type="button" data-chooser-tab="fav" role="tab" aria-selected="false">☆ Yêu thích</button>
-          <button type="button" data-chooser-tab="recent" role="tab" aria-selected="false">◷ Xem gần đây</button>
-         </div>
-         <div class="web-chooser-layout" role="group" aria-label="Chế độ hiển thị">
-          <button type="button" data-chooser-layout="grid" class="active" title="Dạng lưới">▦</button>
-          <button type="button" data-chooser-layout="list" title="Dạng danh sách">☷</button>
-         </div>
-        </div>
-        <div class="web-chooser-chips" id="webChooserGroups" aria-label="Nhóm kênh phổ biến"></div>
-        <div class="web-chooser-filters">
-         <input id="webChooserSearch" type="search" placeholder="Tìm kiếm kênh..." aria-label="Tìm kênh"/>
-         <label>Nhóm <select id="webChooserGroup" aria-label="Lọc theo nhóm"><option value="">Tất cả nhóm</option></select></label>
-         <label>Sắp xếp <select id="webChooserSort" aria-label="Sắp xếp kênh"><option value="asc">Tên A → Z</option><option value="desc">Tên Z → A</option></select></label>
-        </div>
-        <div id="webChooserStatus" class="screen-reader-only" role="status" aria-live="polite"></div>
-        <div id="webChooserGrid" class="web-chooser-grid" aria-label="Kênh có thể chọn"></div>
-        <div class="web-chooser-pager"><button id="webChooserPrev" type="button" aria-label="Trang trước">‹</button><span id="webChooserPage">1 / 1</span><button id="webChooserNext" type="button" aria-label="Trang tiếp">›</button></div>
-       </div>
-       <div class="web-chooser-side">
-        <section aria-label="Kênh yêu thích"><header><strong>★ Yêu thích</strong><button type="button" class="web-chooser-see" data-chooser-see="fav">Xem tất cả ›</button></header><div class="web-chooser-mini" id="webChooserFavorites"></div></section>
-        <section aria-label="Kênh vừa xem"><header><strong>◷ Xem gần đây</strong><button type="button" class="web-chooser-see" data-chooser-see="recent">Xem tất cả ›</button></header><div class="web-chooser-mini" id="webChooserRecent"></div></section>
-       </div>
-      </section>
+      <section class="web-channel-chooser" id="webChannelChooser"></section>
 
      </div>
      <aside class="theme-guide-panel" id="themeGuidePanel" aria-label="Thông tin chương trình">
