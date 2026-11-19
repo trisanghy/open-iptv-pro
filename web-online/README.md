@@ -2,7 +2,7 @@
 
 **Dùng trực tiếp:** https://trisanghy.github.io/open-iptv-pro/  
 **Hướng dẫn trên website:** https://trisanghy.github.io/open-iptv-pro/huong-dan.html  
-**Desktop v4.23.60:** https://github.com/trisanghy/open-iptv-pro/releases/tag/v4.23.60
+**Desktop mới nhất:** https://github.com/trisanghy/open-iptv-pro/releases/latest
 
 Bản Web là ứng dụng trình duyệt tĩnh trên nhánh **web/online**, khác bản desktop Electron mã nguồn chính tại `main`.
 
@@ -118,3 +118,7 @@ Bỏ văn bản `PiP` nằm bên trong nút PiP Web (vẫn giữ `aria-label`), 
 ## Sửa lỗi gộp nguồn `Can't find variable: applied` (19/11/2026)
 
 Nguyên nhân: trình thu thập gọi biến `applied` chưa khai báo sau khi đã lưu nguồn, khiến người dùng nhìn thấy thông báo lỗi dù playlist có thể đã đổi. Đã xóa lỗi này, kiểm tra lưu thành công, hoàn tác thay đổi trong bộ nhớ khi lưu thất bại và ghi trạng thái chính xác sau khi lưu. Trình phát giờ đọc `channel.alternates` ngay từ playlist gộp ngay cả khi hai nguồn gốc đã được tắt, còn cấu hình nâng cao có API cập nhật link dự phòng theo lô. Có bài kiểm thử cho gộp thành công và lỗi lưu; không xóa các nguồn gốc.
+
+## Tải bản Desktop mới nhất từ web (19/11/2026)
+
+Trên máy tính: nút **Tải Desktop** ở thanh công cụ. Trên điện thoại: nút **Tải Open IPTV Pro Desktop** trước video và mục **Tải bản Desktop** bên trong menu **Thêm**. Hộp thoại truy vấn `api.github.com/repos/trisanghy/open-iptv-pro/releases/latest` khi người dùng nhấn nút, lọc bộ cài Electron cho Windows x64 (Setup và Portable), macOS Apple Silicon và macOS Intel, không nhầm bản Rust Lab/Web ZIP. Chỉ hiển thị URL tải có gốc `github.com/trisanghy/open-iptv-pro/releases/download/`. Khi API bị giới hạn, dùng trang `/releases/latest` thay vì hiển thị một phiên bản cũ. Không ảnh hưởng việc phát IPTV, dữ liệu nguồn và đồng bộ.
