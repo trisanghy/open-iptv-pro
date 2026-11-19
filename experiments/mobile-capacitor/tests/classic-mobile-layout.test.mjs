@@ -70,3 +70,13 @@ test('Web mobile output controls are speaker, Cast/AirPlay, PiP and fullscreen o
  assert.doesNotMatch(block,/snapshotCurrent/);
  assert.match(html,/data-more="snapshot"/);
 });
+
+test('SVG player icons and separate background control replace large in-video unmute',()=>{
+ const html=oldStyleLayout();
+ for(const id of ['previousChannel','playCurrent','stopCurrent','nextChannel','muteCurrent','castCurrent','pictureInPicture','fullScreenCurrent','backgroundAudioToggle','backgroundAudioLabel','backgroundAudioStatus','backgroundAudioEnabled']){
+  assert.match(html,new RegExp('id="'+id+'"'));
+ }
+ assert.ok((html.match(/class="player-symbol"/g)||[]).length>=10);
+ assert.doesNotMatch(html,/id="unmuteAutoplay"/);
+ assert.match(html,/Nghe nền/);
+});

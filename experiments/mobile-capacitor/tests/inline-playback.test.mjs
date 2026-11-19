@@ -40,3 +40,19 @@ test('PiP action never opens native fullscreen',()=>{
  assert.ok(pip.includes('chooseCast'));
  assert.ok(!pip.includes('VideoPlayer.initPlayer'));
 });
+
+test('unmute never renders a large overlay in front of inline video',()=>{
+ const layout=fs.readFileSync(path.join(root,'src/legacy-mobile-layout.mjs'),'utf8');
+ assert.doesNotMatch(layout,/unmuteAutoplay/);
+ assert.doesNotMatch(css,/\.unmute-autoplay/);
+ assert.doesNotMatch(main,/unmuteAutoplay/);
+ assert.ok(main.includes("glyph.innerHTML=playerSvg(silent?'muted':'volume')"));
+});
+test('background audio is user initiated and does not invoke native fullscreen',()=>{
+ const background=fs.readFileSync(path.join(root,'src/mobile-background-audio.mjs'),'utf8');
+ assert.ok(background.includes('navigatorRef?.mediaSession'));
+ assert.ok(background.includes("documentRef.visibilityState==='hidden'"));
+ assert.ok(background.includes('getStreamURL'));
+ assert.doesNotMatch(background,/VideoPlayer\.initPlayer|requestFullscreen|webkitEnterFullscreen/);
+ assert.match(main,/backgroundAudio=createMobileBackgroundAudio/);
+});

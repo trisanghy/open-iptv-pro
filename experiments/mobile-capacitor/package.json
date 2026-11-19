@@ -1,9 +1,9 @@
 {
   "name": "open-iptv-pro-mobile",
   "private": true,
-  "version": "4.23.17-mobile.12",
+  "version": "4.23.17-mobile.13",
   "type": "module",
-  "description": "Fix iOS muted playback prompt and Web mobile-style Cast/AirPlay, PiP and fullscreen buttons",
+  "description": "Web SVG player icons, no unmute overlay, audio-only background mode with lock-screen Media Session",
   "scripts": {
     "dev": "vite --host 127.0.0.1",
     "build": "vite build",

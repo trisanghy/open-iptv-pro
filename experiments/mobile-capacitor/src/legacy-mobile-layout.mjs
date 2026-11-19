@@ -1,30 +1,31 @@
 // Mobile player-first layout matched to Open IPTV Pro Web controls and bottom navigation.
+import {playerSvg} from './mobile-player-icons.mjs';
 export function oldStyleLayout(){
 return `
 <main class="mobile-main">
  <section class="page active" id="page-tv">
   <div class="hero-player" aria-label="Khu vực trình phát">
    <div class="hero-placeholder"><div class="hero-play">▶</div><strong id="heroTitle">Chưa chọn kênh</strong><span id="heroSubtitle">Nhập M3U hoặc chọn kênh để xem</span></div>
-   <video id="webVideo" class="inline-video" playsinline webkit-playsinline x-webkit-airplay="allow" preload="none" aria-label="Video IPTV phát trong khung" hidden></video><button type="button" id="unmuteAutoplay" class="unmute-autoplay" hidden>🔊 Bật tiếng</button>
+   <video id="webVideo" class="inline-video" playsinline webkit-playsinline x-webkit-airplay="allow" preload="none" aria-label="Video IPTV phát trong khung" hidden></video>
   </div>
   <section class="player-control-card" aria-label="Điều khiển và lịch phát">
    <div class="now-playing"><span class="now-channel-icon">TV</span><div class="now-copy"><strong id="nowTitle">Chưa chọn kênh</strong><span id="nowGroup">Chọn một kênh trong danh sách</span></div></div>
    <div class="playback-actions transport-controls" role="group" aria-label="Điều khiển media">
-    <button id="previousChannel" aria-label="Kênh trước" type="button">⏮</button>
-    <button id="playCurrent" class="primary-play" aria-label="Phát hoặc tạm dừng" type="button">▶</button>
-    <button id="stopCurrent" aria-label="Dừng phát" type="button">■</button>
-    <button id="nextChannel" aria-label="Kênh tiếp theo" type="button">⏭</button>
+    <button id="previousChannel" aria-label="Kênh trước" type="button">${playerSvg('previous')}</button>
+    <button id="playCurrent" class="primary-play" aria-label="Phát hoặc tạm dừng" type="button">${playerSvg('play')}</button>
+    <button id="stopCurrent" aria-label="Dừng phát" type="button">${playerSvg('stop')}</button>
+    <button id="nextChannel" aria-label="Kênh tiếp theo" type="button">${playerSvg('next')}</button>
    </div>
    <div class="playback-actions output-controls" role="group" aria-label="Âm thanh và hiển thị">
-    <button id="muteCurrent" class="mobile-media-action" aria-label="Bật hoặc tắt âm thanh" type="button"><span class="media-icon" aria-hidden="true">🔊</span></button>
-    <button id="castCurrent" class="mobile-media-action" aria-label="Cast / AirPlay lên TV" title="Cast / AirPlay" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="14" rx="2"/><path d="m12 14-6.5 7h13L12 14Z" fill="currentColor" stroke-width="1"/></svg></button>
-    <button id="pictureInPicture" class="mobile-media-action" aria-label="Cửa sổ nổi PiP" title="PiP" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="3.5" width="19" height="17" rx="2"/><rect x="11.5" y="11.5" width="8" height="6.5" rx="1" fill="currentColor"/></svg></button>
-    <button id="fullScreenCurrent" class="mobile-media-action" aria-label="Toàn màn hình" title="Toàn màn hình" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 4H5a1 1 0 0 0-1 1v3m12-4h3a1 1 0 0 1 1 1v3m0 8v3a1 1 0 0 1-1 1h-3M8 20H5a1 1 0 0 1-1-1v-3"/></svg></button>
+    <button id="muteCurrent" class="mobile-media-action" aria-label="Bật hoặc tắt âm thanh" type="button"><span class="media-icon" aria-hidden="true">${playerSvg('volume')}</span></button>
+    <button id="castCurrent" class="mobile-media-action" aria-label="Cast / AirPlay lên TV" title="Cast / AirPlay" type="button">${playerSvg('cast')}</button>
+    <button id="pictureInPicture" class="mobile-media-action" aria-label="Cửa sổ nổi PiP" title="PiP" type="button">${playerSvg('pip')}</button>
+    <button id="fullScreenCurrent" class="mobile-media-action" aria-label="Toàn màn hình" title="Toàn màn hình" type="button">${playerSvg('fullscreen')}</button>
    </div>
    <div class="epg-current-card" id="epgCurrent" aria-label="Chương trình đang phát và tiếp theo">
     <div class="epg-current-item"><strong id="epgNowName">Chưa có lịch phát</strong><small id="epgNowTime">—</small></div>
     <div class="epg-next-item"><strong id="epgNextName">Chưa có chương trình tiếp theo</strong><small id="epgNextTime">—</small></div>
-    <button id="openGuideBtn" aria-label="Xem lịch EPG" type="button">▤</button>
+    <button id="openGuideBtn" aria-label="Xem lịch EPG" type="button">${playerSvg('guide')}</button>
    </div>
    <div class="playback-settings">
     <label class="view-mode"><span>Khung hình</span><select id="videoFit" aria-label="Chế độ hiển thị video">
@@ -32,6 +33,8 @@ return `
     </select></label>
     <button id="nowFavorite" class="favorite-current" type="button" aria-label="Yêu thích kênh">☆</button>
     <label class="manual-link-picker"><span>Link phát</span><select id="manualStreamSelect" aria-label="Chọn link phát chính hoặc dự phòng" disabled><option value="">Chưa chọn kênh</option></select></label>
+    <button id="backgroundAudioToggle" type="button" class="background-audio-toggle" aria-label="Nghe nền · khóa màn hình" aria-pressed="false">${playerSvg('headphones')}<span id="backgroundAudioLabel">Nghe nền</span></button>
+    <small id="backgroundAudioStatus" class="background-audio-status" role="status">Nhấn Nghe nền trước khi khóa màn hình.</small>
    </div>
   </section>
   <div class="search-row"><input id="search" type="search" placeholder="Tìm kênh, nhóm…"/><button id="quickFavorite">☆ Yêu thích</button></div>
@@ -75,7 +78,8 @@ return `
      <small>Đang phát TV: thu nhỏ thành cửa sổ nổi khi về màn hình chính; trở lại khung TV khi mở app.</small></span>
   </label>
   <p class="muted" id="autoPipSupportNote">Mặc định tắt. Android 8 trở lên hỗ trợ PiP tùy thiết bị; trên iPhone phụ thuộc iOS, nguồn phát và cài đặt PiP của hệ thống.</p>
-  <p class="muted">iOS có thể tự phát tắt tiếng; nhấn Bật tiếng khi được yêu cầu.</p>
+  <label class="epg-auto-label"><input type="checkbox" id="backgroundAudioEnabled" checked/> Cho phép nghe nền và điều khiển màn hình khóa</label>
+  <p class="muted">iOS tự phát tắt tiếng: chạm nút loa nhỏ dưới trình phát. Chế độ Nghe nền phụ thuộc hệ điều hành và codec nguồn.</p>
   <p class="muted">Sức khỏe kênh chỉ là đánh giá dựa trên phản hồi HTTP và bằng chứng phát.</p>
   <div class="add-row"><label>Luồng <select id="threadCount"><option>8</option><option selected>16</option><option>32</option></select></label><button id="checkBtn">✓ Kiểm tra kênh</button></div>
   <button id="exportBtn">⇩ Xuất M3U</button>

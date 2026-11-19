@@ -10,6 +10,8 @@ import {matchGuideChannel,resumeChannel} from './mobile-epg-auto.mjs';
 import {swipeChannelDelta,nextChannelIndex,safeHistory,recentChannelMatches} from './mobile-ux.mjs';
 import {createAutoPiPController} from './mobile-auto-pip.mjs';
 import {chooseCast,togglePiP,isMuted} from './mobile-media-controls.mjs';
+import {playerSvg} from './mobile-player-icons.mjs';
+import {createMobileBackgroundAudio} from './mobile-background-audio.mjs';
 import {MOBILE_VERSION,MAX_BATCH,batchWindow,appendEvidence,rightsDialog,installMobileParity} from './mobile-rustlab-parity.mjs';
 import './core-browser.js';
 import './styles.css';
@@ -18,7 +20,7 @@ import { stableId, dedupChannels, normalizeHTTPURL, textFromResponse, parseBasic
 const $ = x=>document.querySelector(x), $$=x=>[...document.querySelectorAll(x)];
 const CORE=window.StreamLeafCore;
 const KEY='openiptv_mobile_4211_v1';
-let state={sources:[],favorites:[],channels:[],checks:{},healthHistory:{},checkCursor:0,fallbacks:{},epgUrl:'',epgCache:null,epgSources:null,resumeUrl:null,selected:null,filter:'',page:'tv',group:'',recentlyWatched:[],manualStreams:{},settings:{threads:16,autoRefreshEPG:true,autoRefreshPlaylists:true,autoResumeLast:true,autoPiPOnBackground:false}};
+let state={sources:[],favorites:[],channels:[],checks:{},healthHistory:{},checkCursor:0,fallbacks:{},epgUrl:'',epgCache:null,epgSources:null,resumeUrl:null,selected:null,filter:'',page:'tv',group:'',recentlyWatched:[],manualStreams:{},settings:{threads:16,autoRefreshEPG:true,autoRefreshPlaylists:true,autoResumeLast:true,autoPiPOnBackground:false,backgroundAudioEnabled:true}};
 try{const old=JSON.parse(localStorage.getItem(KEY)||'{}');state={...state,...old,settings:{...state.settings,...old.settings}};}catch{}
 state.channels=Array.isArray(state.channels)?state.channels:[];
 state.sources=Array.isArray(state.sources)?state.sources:[];
@@ -34,6 +36,7 @@ let mediaPlaying=false, mediaPaused=false, mediaMuted=false, epgItems=state.epgC
 let epgManager=null,startupPlaybackDone=false;
 let nativeFullscreenActive=false;
 let pipController=null;
+let backgroundAudio=null;
 function syncAutoPiP(){void pipController?.sync();}
 const native=Capacitor.isNativePlatform();
 const androidPiP = native && Capacitor.getPlatform()==='android' ? registerPlugin('OpenIPTVAutoPiP'):null;
@@ -107,11 +110,11 @@ function renderCurrentEPG(channel){
 }
 function syncMediaControls(){
  const toggle=$('#playCurrent');
- if(toggle){toggle.textContent=mediaPlaying&&!mediaPaused?'Ⅱ':'▶';toggle.setAttribute('aria-label',mediaPlaying&&!mediaPaused?'Tạm dừng':'Phát');}
- const v=$('#webVideo'),silent=isMuted(v);
+ const playing=backgroundAudio?.active?!backgroundAudio.paused:mediaPlaying&&!mediaPaused;
+ if(toggle){toggle.innerHTML=playerSvg(playing?'pause':'play');toggle.setAttribute('aria-label',playing?'Tạm dừng':'Phát');}
+ const v=$('#webVideo'),silent=backgroundAudio?.active?backgroundAudio.muted:isMuted(v);
  const mute=$('#muteCurrent');
- if(mute){const glyph=mute.querySelector('.media-icon');if(glyph)glyph.textContent=silent?'🔇':'🔊';mute.setAttribute('aria-pressed',String(silent));mute.setAttribute('aria-label',silent?'Bật tiếng':'Tắt tiếng');}
- const unmute=$('#unmuteAutoplay');if(unmute)unmute.hidden=!silent||v.paused;
+ if(mute){const glyph=mute.querySelector('.media-icon');if(glyph)glyph.innerHTML=playerSvg(silent?'muted':'volume');mute.setAttribute('aria-pressed',String(silent));mute.setAttribute('aria-label',silent?'Bật tiếng':'Tắt tiếng');}
 }
 
 function renderNowPlaying(){
@@ -136,6 +139,15 @@ function jumpChannel(delta,autoplay=true){
  const rows=dedupChannels(state.channels);if(!rows.length)return;
  const at=nextChannelIndex(rows,state.selected,delta);
  const c=rows[at];if(!c)return;
+ if(autoplay&&backgroundAudio?.active){
+   void backgroundAudio.switchChannel(c).then(ok=>{
+     if(!ok)return;
+     pickChannel(c);state.resumeUrl=c.url;
+     state.recentlyWatched=safeHistory(state.recentlyWatched,c.url,30);
+     save();renderRecentChannels();
+   }).catch(e=>status('Nghe nền: '+(e.message||e),'error'));
+   return;
+ }
  pickChannel(c);
  if(autoplay)play(c).catch(e=>status('Chuyển kênh: '+(e.message||e),'error'));
 }
@@ -239,6 +251,7 @@ function showInline(visible){
 }
 async function play(c,requestedURL,{startup=false}={}){
  if(!c)throw Error('Chưa chọn kênh');
+ if(backgroundAudio?.active)backgroundAudio.deactivate(false);
  state.selected=c.url;
  const configured=streamOptions(c,state.fallbacks),allowed=new Set(configured.map(x=>x.url));
  const preferred=requestedURL||state.manualStreams[c.url];
@@ -261,13 +274,12 @@ async function play(c,requestedURL,{startup=false}={}){
    try{await v.play();}catch(e){
     if(!startup||e?.name!=='NotAllowedError')throw e;
     v.muted=true;mediaMuted=true;await v.play();
-    const unmute=$('#unmuteAutoplay');if(unmute)unmute.hidden=false;
    }
    state.resumeUrl=c.url;
    state.recentlyWatched=safeHistory(state.recentlyWatched,c.url,30);
    save();renderRecentChannels();
    mediaPlaying=true;mediaPaused=false;syncMediaControls();syncAutoPiP();
-   status(isMuted(v)?'Đang phát hình · Nhấn Bật tiếng để nghe':'Đang phát trong khung: '+c.name,'ok');return;
+   status(isMuted(v)?'Đang phát hình. Chạm nút loa nhỏ dưới video để bật tiếng.':'Đang phát trong khung: '+c.name,'ok');return;
   }catch(e){
    last=e;playerHls?.destroy();playerHls=null;
    v.pause();v.removeAttribute('src');v.load();
@@ -277,6 +289,7 @@ async function play(c,requestedURL,{startup=false}={}){
  throw Error('Không phát trong khung (CORS/codec): '+(last?.message||last||'')+'. Có thể thử ⛶.');
 }
 async function playFullscreen(){
+ if(backgroundAudio?.active)backgroundAudio.deactivate(false);
  const c=state.channels.find(x=>x.url===state.selected);if(!c)throw Error('Chọn kênh trước');
  const v=$('#webVideo');
  if(native){
@@ -303,12 +316,18 @@ async function playFullscreen(){
 }
 async function pauseResumeCurrent(){
  const c=state.channels.find(x=>x.url===state.selected);if(!c)throw Error('Chưa chọn kênh');
+ if(backgroundAudio?.active)return backgroundAudio.togglePlayback();
  if(!mediaPlaying)return play(c);
  const v=$('#webVideo');
  if(v.paused){await v.play();mediaPaused=false;}else{v.pause();mediaPaused=true;}
  syncMediaControls();syncAutoPiP();
 }
 async function muteUnmute(){
+ if(backgroundAudio?.active){
+   mediaMuted=!backgroundAudio.muted;backgroundAudio.setMuted(mediaMuted);
+   const video=$('#webVideo');video.muted=mediaMuted;video.defaultMuted=mediaMuted;
+   syncMediaControls();return;
+ }
  const v=$('#webVideo');
  mediaMuted=!isMuted(v);v.muted=mediaMuted;v.defaultMuted=mediaMuted;
  if(!mediaMuted&&v.currentSrc&&v.paused){try{await v.play();}catch(e){syncMediaControls();throw Error('Không thể bật tiếng cho luồng này: '+(e?.message||e));}}
@@ -316,6 +335,7 @@ async function muteUnmute(){
  if(!mediaMuted)status('Đã bật âm thanh. Nếu vẫn im lặng, kiểm tra âm lượng iPhone hoặc codec âm thanh của nguồn IPTV.','ok');
 }
 async function stop(){
+ if(backgroundAudio?.active)backgroundAudio.deactivate(false);
  if(nativeFullscreenActive){await VideoPlayer.stopAllPlayers().catch(()=>{});nativeFullscreenActive=false;}
  playerHls?.destroy();playerHls=null;
  const v=$('#webVideo');v.pause();v.removeAttribute('src');v.load();showInline(false);
@@ -358,7 +378,6 @@ function showTab(tab){if(state.page==='multi'&&tab!=='multi')stopMulti();state.p
 function init(){document.querySelector('#app').innerHTML=oldStyleLayout();
  if(!['tv','fav','epg','sources','multi','tools'].includes(state.page))state.page='tv';
  document.documentElement.classList.add(native?'native-mobile':'web-mobile');
- $('#unmuteAutoplay').onclick=()=>{const v=$('#webVideo');if(v.muted)muteUnmute().catch(e=>status(e.message,'error'));};
  if(native && Capacitor.getPlatform()==='ios')document.documentElement.classList.add('ios-mobile');
  // Intentional swipe over the placeholder player only; does not steal list scrolling.
  const hero=$('.hero-player');let start=null;
@@ -431,6 +450,7 @@ function init(){document.querySelector('#app').innerHTML=oldStyleLayout();
  $('#nextChannel').onclick=()=>jumpChannel(1);
  $('#playCurrent').onclick=()=>pauseResumeCurrent().catch(e=>status(e.message,'error'));
  $('#stopCurrent').onclick=()=>stop().catch(e=>status(e.message,'error'));
+ $('#backgroundAudioToggle').onclick=()=>{void backgroundAudio?.toggle().catch(e=>status('Nghe nền: '+e.message,'error'));};
  $('#muteCurrent').onclick=()=>muteUnmute().catch(e=>status(e.message,'error'));
 
  $('#fullScreenCurrent').onclick=()=>playFullscreen().catch(e=>status(e.message,'error'));
@@ -469,7 +489,7 @@ function init(){document.querySelector('#app').innerHTML=oldStyleLayout();
  video.addEventListener('playing',()=>{mediaPlaying=true;mediaPaused=false;syncMediaControls();syncAutoPiP();if(state.selected){try{appendEvidence(state.healthHistory,state.selected,'decoded-playback');save();}catch{}}});
  video.addEventListener('pause',()=>{if(mediaPlaying){mediaPaused=true;syncMediaControls();syncAutoPiP();}});
  video.addEventListener('ended',()=>{mediaPlaying=false;mediaPaused=false;syncMediaControls();syncAutoPiP();});
- video.addEventListener('volumechange',()=>{mediaMuted=isMuted(video);syncMediaControls();});
+ video.addEventListener('volumechange',()=>{if(!backgroundAudio?.active)mediaMuted=isMuted(video);syncMediaControls();});
 
  render();}
 
@@ -492,6 +512,36 @@ async function startupSync(){
  await resumePreviousChannel();
 }
 init();
+backgroundAudio=createMobileBackgroundAudio({
+ video:$('#webVideo'),getChannel:()=>state.channels.find(c=>c.url===state.selected),
+ getStreamURL:channel=>{
+   const options=streamOptions(channel,state.fallbacks);
+   const choice=$('#manualStreamSelect')?.value||state.manualStreams[channel?.url]||channel?.url;
+   return options.some(item=>item.url===choice)?choice:channel?.url;
+ },
+ getSettings:()=>state.settings,HlsImpl:Hls,onStatus:status,
+ onNavigate:delta=>jumpChannel(delta),
+ onStop:()=>{void stop().catch(e=>status(e.message,'error'));},
+ onStateChange:({active,paused})=>{
+   const button=$('#backgroundAudioToggle'),label=$('#backgroundAudioLabel'),note=$('#backgroundAudioStatus');
+   if(!button)return;
+   button.classList.toggle('active',active);button.setAttribute('aria-pressed',String(active));
+   button.setAttribute('aria-label',active?'Quay lại xem TV':'Nghe nền · khóa màn hình');
+   button.disabled=state.settings.backgroundAudioEnabled===false;
+   if(label)label.textContent=active?'Xem TV':'Nghe nền';
+   if(note)note.textContent=active?(paused?'Đã tạm dừng âm thanh nền.':'Đang nghe nền · khóa màn hình nếu thiết bị hỗ trợ.'):'Nhấn Nghe nền khi đang xem, sau đó khóa màn hình.';
+   syncMediaControls();
+ }
+});
+const backgroundEnabled=$('#backgroundAudioEnabled');
+backgroundEnabled.checked=state.settings.backgroundAudioEnabled!==false;
+backgroundEnabled.onchange=()=>{
+ state.settings.backgroundAudioEnabled=backgroundEnabled.checked;save();
+ if(!backgroundEnabled.checked)backgroundAudio.disable();
+ $('#backgroundAudioToggle').disabled=!backgroundEnabled.checked;
+ status(backgroundEnabled.checked?'Đã bật cho phép Nghe nền.':'Đã tắt Nghe nền.','ok');
+};
+if(!backgroundEnabled.checked)$('#backgroundAudioToggle').disabled=true;
 installMobileParity({getState:()=>state,replaceState:next=>{state={...state,...next};flatten();},save,status,exportFile});
 pipController=createAutoPiPController({
  getVideo:()=>$('#webVideo'),

@@ -213,8 +213,6 @@ body.more-open{overflow:hidden;touch-action:pan-y}
 .epg-manual-row input{min-width:0;flex:1 1 auto}
 .epg-manual-row button{flex:0 0 auto;white-space:nowrap}
 #epgStatus{line-height:1.5;overflow-wrap:anywhere;margin:12px 0}
-.hero-player>.unmute-autoplay{position:absolute;z-index:5;left:50%;transform:translateX(-50%);bottom:12px;background:#b78af0;color:#16172d;font-weight:700;border:0;white-space:nowrap;padding:9px 20px;border-radius:12px;min-height:44px;box-shadow:0 6px 20px #0007}
-.hero-player>.unmute-autoplay[hidden]{display:none!important}
 
 
 /* MOBILE_RECENT_CHANNELS_V9: recently watched shortcuts before channel folders */
@@ -276,5 +274,20 @@ html.pip-mode #page-tv>.hero-player>video{object-fit:contain!important;border:0!
 .player-control-card .mobile-media-action .media-icon{font-size:22px;line-height:1;pointer-events:none}
 .player-control-card .mobile-media-action:active{background:#2d4664;transform:scale(.98)}
 .player-control-card .mobile-media-action:focus-visible{outline:2px solid #60c8ff;outline-offset:2px}
-.hero-player .unmute-autoplay:not([hidden]){display:grid;place-items:center;min-width:125px;background:#c28bff;color:#142035;z-index:8}
 @media(max-width:380px){.player-control-card .output-controls{gap:6px}}
+
+/* MOBILE_PLAYER_WEB_SVG_V13 - unified 24px Web SVG controls, no unmute overlay */
+.player-control-card .player-symbol{display:block;width:24px;height:24px;stroke:currentColor;flex:0 0 24px;pointer-events:none}
+.player-control-card .mobile-media-action .media-icon{display:grid;place-items:center}
+.player-control-card .transport-controls .player-symbol{width:23px;height:23px}
+.player-control-card .transport-controls .primary-play .player-symbol{width:24px;height:24px}
+.player-control-card .playback-settings .background-audio-toggle{
+ grid-column:1/-1;grid-row:3;min-height:46px;padding:9px 12px;
+ display:flex;align-items:center;justify-content:center;gap:10px;
+ background:#1a3049;border:1px solid #4a6887;border-radius:12px;
+ color:#eaf3ff;font-weight:650;font-size:14px
+}
+.player-control-card .background-audio-toggle .player-symbol{width:20px;height:20px;flex:0 0 20px}
+.player-control-card .background-audio-toggle.active{color:#18293a;background:#8fe0e8;border-color:#8fe0e8}
+.player-control-card .background-audio-toggle:disabled{opacity:.45}
+.player-control-card .background-audio-status{grid-column:1/-1;grid-row:4;display:block;color:#9fb3cc;font-size:11.5px;line-height:1.4}
