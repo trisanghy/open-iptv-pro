@@ -80,6 +80,7 @@
  }
  async function collect(auto=false){if(busy)return;const selected=enabledInputs();if(!selected.length){ctx.toast('Chưa chọn nguồn thu thập','warn');return;}
   setBusy(true);cancel=false;progress(0,selected.length);msg('Đang thu thập các nguồn đã chọn…');const loaded=[],failures=[],sourceReplacements=new Map();
+  let committed=false,rollback=null;
   try{for(let i=0;i<selected.length;i++){if(cancel)break;const s=selected[i];try{const got=await loadSource(s);loaded.push(...got.channels);if(!got.stale)sourceReplacements.set(s.id,got.channels);log(`${s.name}: ${got.channels.length} kênh${got.stale?' (bản lưu vì tải lỗi: '+got.error+')':''}`);}catch(e){failures.push(s.name);log(s.name+': '+e.message,'error');}progress(i+1,selected.length);}
    if(cancel){msg('Đã hủy; không thay đổi playlist.');return;}if(!loaded.length){msg('Không có nguồn hợp lệ; playlist cũ được giữ lại.');return;}
    const merged=lib.merge(loaded);if(!merged.channels.length)throw Error('Không có URL phát hợp lệ');
@@ -88,6 +89,8 @@
    // Always require explicit acceptance for a manual destructive view change. Automatic refresh keeps last good list on severe shrinkage.
    if(auto&&old.length&&merged.channels.length<old.length*.7){msg('Nguồn giảm quá 30%; giữ playlist đã xác minh trước đó.');return;}
    if(!auto){const approved=await confirmInApp('Xác nhận áp dụng playlist gộp',`Gộp ${loaded.length} mục thành ${merged.channels.length} kênh, có ${merged.stats.alternates} link dự phòng?\n\nNguồn ban đầu được giữ lại nhưng tạm ẩn khỏi mục Xem TV. Không xóa kênh cũ.`);if(!approved||cancel){stats();$('sourceMergeSummary').textContent='Đã hủy áp dụng; dữ liệu cũ được giữ nguyên.';msg('Đã hủy áp dụng; playlist không đổi.');return;}}
+   rollback={channels:store.channels,sources:store.sources.map(s=>({...s})),favorites:[...store.favorites],
+    hadBackup:Object.prototype.hasOwnProperty.call(store,'collectorBackup'),collectorBackup:store.collectorBackup};
    store.collectorBackup={channels:old.map(c=>({...c})),originalSources:selected.map(src=>({id:src.id,channels:store.channels.filter(c=>c.sourceId===src.id).map(c=>({...c}))})),sourceEnabled:rawSources().map(s=>[s.id,s.enabled]),hadMerged:!!sameSource};
    for(const [id,list] of sourceReplacements){store.channels=store.channels.filter(c=>c.sourceId!==id).concat(list);}
    const previous=new Map(old.map(c=>[lib.keyFor(c),c]));
@@ -96,10 +99,21 @@
    if(!sameSource)store.sources.push({id:SOURCE,name:'⧉ Playlist đã hợp nhất',origin:'Các nguồn được chọn trong Thu thập',type:'file',enabled:true,collectEnabled:false});
    else sameSource.enabled=true;
    const mergedIds=new Set(selected.map(s=>s.id));rawSources().forEach(s=>{if(mergedIds.has(s.id))s.enabled=false;});
+   if(!ctx.save())throw Error('Không lưu được playlist gộp. Danh sách trước đó được giữ lại.');
+   committed=true;
    window.IPTVProAdvanced?.setAlternatesBatch?.(merged.channels.map(c=>[c.id,c.alternates||[]]));
-   ctx.save();applied=true;ctx.render();renderInputs();renderSourceMergeControls();stats(merged.stats);lastRun=Date.now();$('sourceMergeSummary').textContent=`Đã gộp ${loaded.length} thành ${merged.channels.length} kênh và ${merged.stats.alternates} link dự phòng. Có thể hoàn tác trong Quản lý nguồn.`;
+   ctx.refreshManualLinks?.();
+   ctx.render();renderInputs();renderSourceMergeControls();stats(merged.stats);lastRun=Date.now();$('sourceMergeSummary').textContent=`Đã gộp ${loaded.length} thành ${merged.channels.length} kênh và ${merged.stats.alternates} link dự phòng. Có thể hoàn tác trong Quản lý nguồn.`;
    msg(`Đã gộp ${merged.channels.length} kênh, ${merged.stats.alternates} dự phòng; link chưa được kiểm tra sẽ ở trạng thái Chưa xác minh.`);log(`Áp dụng danh sách gộp (${merged.channels.length} kênh). Các nguồn cũ vẫn được giữ.`);
-  }catch(e){log('Thu thập lỗi: '+e.message,'error');msg('Thu thập thất bại; dữ liệu cũ được giữ lại.');}finally{progress(1,1);setBusy(false);}}
+  }catch(e){
+   if(!committed&&rollback){
+    store.channels=rollback.channels;store.sources=rollback.sources;store.favorites=rollback.favorites;
+    if(rollback.hadBackup)store.collectorBackup=rollback.collectorBackup;else delete store.collectorBackup;
+    try{ctx.render();renderInputs();renderSourceMergeControls();stats();}catch(_){}
+   }
+   log('Thu thập lỗi: '+e.message,'error');
+   msg(committed?'Playlist đã lưu, nhưng giao diện chưa cập nhật. Hãy tải lại trang.':'Thu thập thất bại; dữ liệu cũ được giữ lại.');
+  }finally{progress(1,1);setBusy(false);}}
  async function repair(){if(busy)return;const channels=store.channels.filter(c=>c.sourceId===SOURCE);if(!channels.length)return ctx.toast('Hãy bấm Thu thập & gộp kênh trước','warn');
   if(!window.streamleaf?.check)return ctx.toast('Kiểm tra phát thực nhiều vòng yêu cầu bản desktop','warn');setBusy(true);cancel=false;msg('Kiểm tra luồng thực và chọn link dự phòng đã xác minh…');
   const n=Number(store.checkConcurrency);
