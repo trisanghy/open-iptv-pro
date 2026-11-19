@@ -74,6 +74,7 @@
   const info=msg=>{if(statusText)statusText.textContent=msg;};
   let audio=null,hls=null,dash=null,active=false,transition=0,streamKey='',lastTitle='',lastArtworkRequest='',artworkRevision=0,ownsAudioSession=false,installed=false;
   let pausedBeforeTransition=false,needsVideoRestore=false,retuning=false,lastRescue=null;
+  let metadataRevision=0;
   const sourceFor=channel=>{
    if(!channel)return '';
    const select=doc.getElementById?.('manualStreamSelect');
@@ -251,7 +252,7 @@
        if(app.getCurrent?.()?.id!==candidate.id)throw Error('Không chuyển được kênh');
        lastRescue={id:original.id,url:oldUrl,at:Date.now()};
        say(skipped?'Đã bỏ qua '+skipped+' kênh không có nguồn phát.':'Đang nghe '+candidate.name);
-       sync();refreshState();
+       sync();reaffirmLockScreenAudio(audio,candidate.id);
        return;
       }catch(e){
        lastFailure=String(e?.message||e).slice(0,90);
@@ -273,7 +274,7 @@
     try{
      hls?.destroy?.();hls=null;dash?.reset?.();dash=null;
      await retune(audio,oldUrl,restoreToken);
-     streamKey=originalKey;sync();refreshState();
+     streamKey=originalKey;sync();reaffirmLockScreenAudio(audio,original.id);
      say('Đã giữ kênh '+original.name+' vì các kênh tiếp theo chưa phát được'+(skipped?' ('+skipped+' kênh bỏ qua)':'')+'.');
     }catch(e){
      streamKey=originalKey;refreshState();
@@ -327,7 +328,8 @@
    const data=metadataFor(channel,store),key=channel.id+'|'+data.title+'|'+data.artist;
    const candidates=artworkCandidates(channel,store);
    const request=candidates[0]?.src||ICON_ART.src;
-   if(session&&(key!==lastTitle||request!==lastArtworkRequest)){
+   const metadataChanged=!!session&&(key!==lastTitle||request!==lastArtworkRequest);
+   if(metadataChanged){
     lastArtworkRequest=request;
     const revision=++artworkRevision;
     const setArtwork=index=>{
@@ -358,6 +360,30 @@
    // selection. Do not begin an outdated stream during its earlier metadata event.
    if(!media().paused)applyAudioType();
    refreshButton();refreshState();
+   if(metadataChanged){
+    // WebKit applies new title/artwork asynchronously, which can reset its
+    // lock-screen control to Play after the new channel already became audible.
+    const revision=++metadataRevision,now=media(),id=channel.id;
+    Promise.resolve().then(()=>{
+     if(revision===metadataRevision&&enabled()&&app.getCurrent?.()?.id===id
+       &&media()===now&&!now.paused&&!now.ended){
+      applyAudioType();refreshState();
+     }
+    });
+   }
+  }
+  function reaffirmLockScreenAudio(node,id){
+   if(!enabled()||!active||audio!==node||app.getCurrent?.()?.id!==id||node.paused||node.ended)return;
+   // Reaffirm native Now Playing ownership AFTER replacing metadata. Reusing
+   // the already audible element does not reload or duplicate an IPTV stream.
+   applyAudioType();bindTrackControls();refreshState();
+   if(doc.visibilityState!=='hidden')return;
+   try{
+    const result=node.play?.();
+    result?.then?.(()=>{
+     if(active&&audio===node&&app.getCurrent?.()?.id===id&&!node.paused)refreshState();
+    },()=>{if(!node.paused)refreshState();});
+   }catch{if(!node.paused)refreshState();}
   }
   function makeAudio(){
    const node=doc.createElement?.('audio');

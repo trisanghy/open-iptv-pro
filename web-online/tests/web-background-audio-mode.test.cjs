@@ -200,7 +200,7 @@ test('Web files and builder preserve UI after rebuild without changing native br
  assert.equal(html.split('id="webBackgroundAudioToggle"').length,2);
  assert.equal(html.split('id="webBackgroundAudioBar"').length,1);
  assert.match(html,/id="favCurrentBtn"[\s\S]*?id="webBackgroundAudioToggle"/);
- assert.ok(html.includes('web-background-audio.js?v=audio-state-sync-20261119a'));
+ assert.ok(html.includes('web-background-audio.js?v=lockscreen-state-20261119b'));
  assert.ok(html.includes('web-background-audio.css?v=lock-artwork-20261119e'));
  assert.ok(builder.includes('compact_audio=web_html['));
  assert.ok(builder.includes("'web-background-audio.css'"));
@@ -472,4 +472,22 @@ test('lock-screen next channel cannot pause Now Playing by suspending an already
  harness.run(); // Returning to TV then re-enabling background audio still works.
  assert.equal(video.pauseCalls,2);
  assert.equal(video.loadCalls,2);
+});
+
+test('iPhone lock-screen Next reaffirms the same playing audio after Now Playing metadata changes',async()=>{
+ const channels=[
+  {id:'one',name:'VTV1',url:'https://example.org/one.m3u8'},
+  {id:'two',name:'VTV2',url:'https://example.org/two.m3u8'}];
+ const e=fixture({transactionalChannels:channels});e.setChannel(channels[0]);
+ assert.equal(await e.controller.activate(),true);
+ const node=e.audioElements[0],before=node.playCalls;
+ e.doc.visibilityState='hidden';
+ e.handlers.nexttrack();await new Promise(setImmediate);
+ assert.equal(e.getCurrent().id,'two');
+ assert.equal(e.audioElements[0],node);
+ assert.equal(e.ms.metadata.title,'VTV2');
+ assert.equal(e.ms.playbackState,'playing');
+ assert.ok(node.playCalls>=before+2,'Real retune and post-metadata reassert required');
+ e.handlers.pause();
+ assert.equal(e.ms.playbackState,'paused','User pause must be respected');
 });

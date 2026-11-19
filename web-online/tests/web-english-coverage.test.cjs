@@ -90,14 +90,16 @@ test('root UI language parser has 17 selectable options and never changes source
  assert.match(source,/MutationObserver/);
 });
 
-test('Chrome iOS uses existing volume button with no extra language-specific prompt',()=>{
+test('Chrome iOS keeps the volume button and one top permission banner',()=>{
  const recovery=fs.readFileSync(path.join(root,'web-ios-audio-recovery.js'),'utf8');
  const resume=fs.readFileSync(path.join(root,'resume-last.js'),'utf8');
- assert.doesNotMatch(recovery,/createElement|web-unmute-assist/);
+ assert.match(recovery,/webAudioPermissionBanner/);
+ assert.doesNotMatch(recovery,/web-unmute-assist-chrome-ios/);
  assert.doesNotMatch(resume,/showPrompt|web-resume-panel/);
  assert.match(recovery,/mute\.addEventListener\('click'/);
  assert.match(recovery,/video\.play\(\)/);
  const html=fs.readFileSync(path.join(root,'index.html'),'utf8');
  assert.match(html,/src="i18n\.js\?v=[a-f0-9]{16}"/);
- assert.doesNotMatch(html,/web-ios-audio-recovery\.css|resume-last\.css/);
+ assert.match(html,/web-ios-audio-recovery\.css\?v=top-banner-20261119b/);
+ assert.doesNotMatch(html,/resume-last\.css/);
 });

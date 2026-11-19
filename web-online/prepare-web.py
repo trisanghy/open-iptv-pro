@@ -305,7 +305,7 @@ status_end=web_html.index('</small>',status_start)+len('</small>')
 compact_audio=web_html[button_start:button_end]+'\n        '+web_html[status_start:status_end]
 fav_end=html.index('</button>',html.index(fav_marker))+len('</button>')
 html=html[:fav_end]+'\\n        '+compact_audio+html[fav_end:]
-html=html.replace('web-background-audio.js?v=lock-audio-20261119c','web-background-audio.js?v=audio-state-sync-20261119a',1)
+html=html.replace('web-background-audio.js?v=lock-audio-20261119c','web-background-audio.js?v=lockscreen-state-20261119b',1)
 html=html.replace('</head>','<link rel="stylesheet" href="web-background-audio.css?v=lock-artwork-20261119e"/></head>',1)
 # Refresh the localization file URL so iOS/Chrome do not reuse the untranslated unmute control.
 locale_script='<script src="i18n.js"></script>'
@@ -326,10 +326,10 @@ for asset in ('i18n.js','languages.bundle.js','web-language-supplement.js','web-
         '<script src="'+asset+'?v='+digest+'"></script>',html,count=1)
     if count!=1:sys.exit('Missing language resource script: '+asset)
 
-# Existing volume button is the only manual audio action in Chrome iOS.
-# Never inject an extra button, permission banner or overlay.
+# Preserve exactly one user-gesture banner at the top of the video on iOS.
+html=html.replace('</head>','<link rel="stylesheet" href="web-ios-audio-recovery.css?v=top-banner-20261119b"/></head>',1)
 if 'web-ios-audio-recovery.js' not in html:
-    html=html.replace('</body>','<script src="web-ios-audio-recovery.js?v=autoplay-clean-20261119a"></script></body>',1)
+    html=html.replace('</body>','<script src="web-ios-audio-recovery.js?v=top-banner-20261119b"></script></body>',1)
 (out/'index.html').write_text(html,encoding='utf-8')
 (out/'.nojekyll').write_text('')
 (out/'manifest.webmanifest').write_text(json.dumps({
