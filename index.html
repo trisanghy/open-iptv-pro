@@ -163,7 +163,7 @@
     </section></section>
    <section id="page-profiles" class="page"><div class="section-heading"><div><h1>♙ Hồ sơ người dùng & kiểm soát trẻ em</h1><p>Yêu thích theo hồ sơ, khóa theo thư mục và mã PIN cục bộ.</p></div></div><div class="settings-grid"><article class="settings-card"><h2>Chuyển hồ sơ</h2><select id="profileChoice" class="modal-input"></select><button class="btn btn-primary" id="profileSwitch">Chuyển hồ sơ</button><h2>Tạo hồ sơ</h2><input id="profileName" class="modal-input" placeholder="Tên hồ sơ"/><label class="check-line"><input type="checkbox" id="profileChild"/> Hồ sơ trẻ em</label><button class="btn btn-subtle" id="profileCreate">Tạo hồ sơ</button></article><article class="settings-card"><h2>Khóa PIN và nhóm hạn chế</h2><label class="settings-label">PIN quản trị (4–8 chữ số)</label><input id="profilePin" type="password" inputmode="numeric" class="modal-input" placeholder="PIN mới"/><button class="btn btn-subtle" id="pinSave">Đặt / đổi PIN</button><div id="profileGroupLocks"></div><p class="hint">PIN tại thiết bị giúp hạn chế thao tác thông thường, không thay thế biện pháp kiểm soát truy cập của hệ điều hành.</p></article></div><p id="profileStatus" class="hint"></p></section>
    <section id="page-epg" class="page"><div class="section-heading"><div><h1>▤ Lịch phát sóng (EPG)</h1><p>Chương trình đang chiếu, sắp chiếu và lịch trong ngày từ nguồn XMLTV.</p></div><div class="heading-actions"><button class="btn btn-subtle" id="epgRefreshBtn">↻ Tải lại EPG</button><button class="btn btn-primary" id="epgSettingsBtn">⚙ Nguồn EPG</button></div></div><div class="filter-box epg-filter"><span>⌕</span><input type="search" id="epgSearch" placeholder="Tìm kênh trong lịch EPG..."/></div><div class="epg-advanced"><input id="epgGlobalSearch" placeholder="Tìm tên chương trình và đặt nhắc lịch…"/><button id="epgSearchGo" class="btn btn-subtle">Tìm chương trình</button><button id="epgManualMap" class="btn btn-subtle">Ghép EPG thủ công</button><label>Chỉnh giờ (+/− phút) <input id="epgOffset" type="number" value="0" min="-720" max="720" step="15"/></label></div><div id="epgSearchResults" class="epg-search-results"></div><div class="epg-summary" id="epgSummary">Chưa có dữ liệu lịch phát sóng.</div><div class="dvr-panel" id="dvrPanel">
-    <div class="dvr-heading"><div><h2>⏺ Hẹn giờ ghi hình chương trình</h2><p>Lịch ghi chạy riêng với trình xem TV. Video hoàn tất lưu dưới dạng MP4; ứng dụng cần mở và máy không ngủ đúng giờ.</p></div><button type="button" id="dvrOpenDir" class="btn btn-subtle">▤ Mở thư mục ghi</button></div>
+    <div class="dvr-heading"><div><h2>⏺ Hẹn giờ ghi hình chương trình</h2></div><button type="button" id="dvrOpenDir" class="btn btn-subtle">▤ Mở thư mục ghi</button></div>
     <div class="dvr-folder"><span id="dvrDirectory" title="Thư mục ghi hình">Đang tải thư mục…</span><button id="dvrChooseDir" class="btn btn-subtle" type="button">Thay đổi nơi lưu</button></div>
     <form id="dvrForm" class="dvr-form">
       <label>Kênh<select id="dvrChannel" class="modal-input" required></select></label>
@@ -293,7 +293,7 @@
       <label class="check-line" for="backupIncludeSnapshots"><input type="checkbox" id="backupIncludeSnapshots" checked/> Kèm ảnh Snapshot đã lưu trên máy</label>
       <div class="backup-actions"><button id="backupExportBtn" class="btn btn-primary" type="button">⇩ Tạo file Backup</button><button id="backupImportBtn" class="btn btn-subtle" type="button">↶ Restore từ file</button></div>
       <p id="backupStatus" role="status" aria-live="polite" class="backup-status">Chưa có thao tác sao lưu hoặc khôi phục.</p>
-      <small>Backup không mã hóa, có thể chứa URL có tài khoản/mật khẩu và thông tin hồ sơ. Hãy giữ file ở nơi an toàn. Restore sẽ yêu cầu xác nhận trước khi thay dữ liệu hiện tại. Không sao lưu chương trình đã cài.</small>
+      
     </article>
     <article class="settings-card language-card" id="languageSettings"><h2>🌐 Ngôn ngữ / Language</h2><p id="languageDescription">Chọn ngôn ngữ ứng dụng. Thay đổi có hiệu lực ngay, không cần khởi động lại.</p>
      <label class="settings-label" for="appLanguage">Ngôn ngữ giao diện</label>
@@ -302,7 +302,6 @@
      </select><small id="languageNote">Tên kênh, thư mục cá nhân và nội dung EPG từ nguồn sẽ không bị thay đổi.</small></article>
     <article class="settings-card" id="freezeMonitorSettings"><h2>▣ Giám sát hình ảnh đang phát</h2><label class="check-line"><input type="checkbox" id="freezeMonitorEnabled" checked/> Cảnh báo khung hình đứng, màn hình đen (chỉ kênh chính)</label><label class="check-line"><input type="checkbox" id="freezeAutoFailover"/> Thử link dự phòng khi đứng hình được xác nhận (tắt mặc định)</label><p id="freezeMonitorStatus" aria-live="polite">Chưa có kênh đang phát</p><small>Nghi đứng hình không đồng nghĩa link Die. Không tự chuyển nguồn chỉ dựa trên một khung hình tĩnh.</small></article>
     <article class="settings-card full-tool-panel" id="fullFeatureTools"><h2>☷ Chọn cấu hình kiểm tra</h2>
-      <p>Chọn mức song song cho kiểm tra link và Snapshot. Các nút này <b>lưu cấu hình</b>, không chuyển sang trang khác.</p>
       <div class="configuration-choices">
        <fieldset class="settings-choice-group" aria-label="Số luồng kiểm tra link"><legend>✓ Luồng kiểm tra link</legend>
         <label><input type="radio" name="checkConcurrencyChoice" value="1"/>1</label><label><input type="radio" name="checkConcurrencyChoice" value="4"/>4</label><label><input type="radio" name="checkConcurrencyChoice" value="8"/>8</label><label><input type="radio" name="checkConcurrencyChoice" value="16"/>16</label><label><input type="radio" name="checkConcurrencyChoice" value="32"/>32</label>
@@ -311,7 +310,7 @@
         <label><input type="radio" name="snapshotConcurrencyChoice" value="1"/>1</label><label><input type="radio" name="snapshotConcurrencyChoice" value="4"/>4</label><label><input type="radio" name="snapshotConcurrencyChoice" value="8"/>8</label><label><input type="radio" name="snapshotConcurrencyChoice" value="16"/>16</label><label><input type="radio" name="snapshotConcurrencyChoice" value="32"/>32</label>
         <small id="snapshotConcurrencyState" role="status">Đang dùng: 4 luồng</small></fieldset>
        
-      </div><small>Kiểm tra tối đa 32 luồng; tốc độ thực tế phụ thuộc máy, mạng và giới hạn từ nhà cung cấp.</small>
+      </div>
     </article>
         <article class="settings-card" id="webAutoResumeSettings">
       <h2>▶ Tự mở kênh khi vào website</h2>

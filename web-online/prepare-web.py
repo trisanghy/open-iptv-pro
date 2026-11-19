@@ -348,12 +348,22 @@ for pattern,label in (
     if count!=1:sys.exit('Missing Web Timeshift removal anchor: '+label)
 for old,new in (
     ('aria-label="Tua lại và hẹn giờ ghi hình"','aria-label="Hẹn giờ ghi hình"'),
-    ('Lịch ghi chạy riêng với trình xem TV và Tua lại.','Lịch ghi chạy riêng với trình xem TV.'),
-    (' Không sao lưu bộ đệm Tua lại tạm thời hoặc chương trình đã cài.',' Không sao lưu chương trình đã cài.'),
-    (' Số phút tua lại áp dụng cho bộ đệm FFmpeg khi bắt đầu lần mới.',''),
-    (' Bộ đệm chỉ ghi từ lúc bật, không tua về trước khi bật.',''),
 ):
     html=html.replace(old,new)
+
+# Remove explanatory paragraphs that belonged to the discontinued feature,
+# rather than ship new untranslated copy in the 17-language UI.
+for pattern,label in (
+    (r'(<div class="dvr-heading"><div><h2>[\s\S]*?</h2>)<p>[\s\S]*?</p>','DVR description'),
+    (r'<small>Backup không mã hóa,[\s\S]*?</small>','Old backup note'),
+    (r'(<article class="settings-card full-tool-panel" id="fullFeatureTools"><h2>[\s\S]*?</h2>)\s*<p>[\s\S]*?</p>','Old scan description'),
+    (r'<small>Kiểm tra tối đa 32 luồng;[\s\S]*?</small>','Old scan hint'),
+):
+    def strip_text(match):
+        return match.group(1) if label in ('DVR description','Old scan description') else ''
+    html,count=re.subn(pattern,strip_text,html,count=1)
+    if count!=1:sys.exit('Missing Web Timeshift description removal anchor: '+label)
+
 # Scheduled DVR nodes are kept for compatibility; web-only.css hides the
 # container. VOD/catch-up seek and normal playback are intentionally retained.
 
