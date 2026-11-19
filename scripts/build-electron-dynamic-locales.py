@@ -157,12 +157,12 @@ def merge():
         print("MISSING TRANSLATED DYNAMIC PATTERNS",errors,flush=True)
         raise RuntimeError("Unverified placeholder translations; cannot claim 100%")
     output=ROOT/"renderer/i18n-dynamic-locales.js"
-    source="""'use strict';
+    source=r"""'use strict';
 // Generated at build-time from authored UI text; never user playlist data.
 (function(root){
  const content=INSERT_DATA;
  const mark=/IPTVSLOT(?:ZERO|ONE|TWO|THREE|FOUR)/g;
- const escape=part=>part.replace(/[.*+?^$()[\\]{}|]/g,'\\$&');
+ const escape=part=>Array.from(part).map(c=>c.charCodeAt(0)===92||'.*+?^$(){}|[]'.includes(c)?String.fromCharCode(92)+c:c).join('');
  const sorted=Object.keys(content.templates.en||{}).sort((a,b)=>b.replace(mark,'').length-a.replace(mark,'').length);
  const rules=sorted.map(source=>{
   const chunks=source.split(mark),placeholders=source.match(mark)||[];
