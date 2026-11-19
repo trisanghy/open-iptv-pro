@@ -17,7 +17,8 @@ import './core-browser.js';
 import './styles.css';
 import { stableId, dedupChannels, normalizeHTTPURL, textFromResponse, parseBasicEPG, pool, xmltvDate } from './mobile-core.mjs';
 
-const $ = x=>document.querySelector(x), $$=x=>[...document.querySelectorAll(x)];
+const $ = x=>document.querySelector(x), $=x=>[...document.querySelectorAll(x)];
+const tMobile=key=>window.OpenIPTVI18n?.t?.(key)||key;
 const CORE=window.StreamLeafCore;
 const KEY='openiptv_mobile_4211_v1';
 let state={sources:[],favorites:[],channels:[],checks:{},healthHistory:{},checkCursor:0,fallbacks:{},epgUrl:'',epgCache:null,epgSources:null,resumeUrl:null,selected:null,filter:'',page:'tv',group:'',recentlyWatched:[],manualStreams:{},settings:{threads:16,autoRefreshEPG:true,autoRefreshPlaylists:true,autoResumeLast:true,autoPiPOnBackground:false,backgroundAudioEnabled:true}};
@@ -45,15 +46,15 @@ function status(t,kind=''){const el=$('#status');if(!el)return;el.textContent=t;
 function node(tag,cls,text){const n=document.createElement(tag);if(cls)n.className=cls;if(text!==undefined)n.textContent=String(text);return n;}
 function button(text,action,cls=''){const b=node('button',cls,text);b.type='button';b.onclick=()=>Promise.resolve().then(action).catch(e=>{status(e.message||e,'error');console.error(e);});return b;}
 function downloadFile(name,content,type='application/vnd.apple.mpegurl'){const a=document.createElement('a');a.download=name;a.href=URL.createObjectURL(new Blob([content],{type}));a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);}
-async function exportFile(name,content){if(native){await Filesystem.writeFile({path:name,data:content,directory:Directory.Cache,encoding:Encoding.UTF8});const {uri}=await Filesystem.getUri({path:name,directory:Directory.Cache});await Share.share({title:name,url:uri,dialogTitle:'Lưu hoặc gửi playlist M3U'});}else downloadFile(name,content);status('Đã xuất '+name,'ok');}
+async function exportFile(name,content){if(native){await Filesystem.writeFile({path:name,data:content,directory:Directory.Cache,encoding:Encoding.UTF8});const {uri}=await Filesystem.getUri({path:name,directory:Directory.Cache});await Share.share({title:name,url:uri,dialogTitle:'Lưu hoặc gửi playlist M3U'});}else downloadFile(name,content);status(tMobile('Đã xuất')+' '+name,'ok');}
 async function getText(url,timeoutMs=15000){const ctrl=new AbortController();const timer=setTimeout(()=>ctrl.abort(),timeoutMs);try{if(native){const response=await CapacitorHttp.request({url,method:'GET',connectTimeout:timeoutMs,readTimeout:timeoutMs,headers:{'Accept':'application/x-mpegURL,application/vnd.apple.mpegurl,text/plain,application/xml,*/*','User-Agent':'OpenIPTVProMobile/4.21.1'},responseType:'text'});if(response.status<200||response.status>=300)throw Error('HTTP '+response.status);return textFromResponse(response);}const r=await fetch(url,{signal:ctrl.signal});if(!r.ok)throw Error('HTTP '+r.status);return await r.text();}finally{clearTimeout(timer);}}
 async function headStatus(url,timeoutMs=7000){if(native){const r=await CapacitorHttp.request({url,method:'HEAD',connectTimeout:timeoutMs,readTimeout:timeoutMs});return r.status;}const c=new AbortController();const t=setTimeout(()=>c.abort(),timeoutMs);try{const r=await fetch(url,{method:'HEAD',signal:c.signal});return r.status;}finally{clearTimeout(t);}}
-async function rightsFor(kind){const consent=await rightsDialog({title:'Xác nhận quyền sử dụng · '+kind});if(!consent){status('Đã hủy nhập nguồn. Không thay đổi dữ liệu.');return false;}return true;}
+async function rightsFor(kind){const consent=await rightsDialog({title:tMobile('Xác nhận quyền sử dụng')+' · M3U'});if(!consent){status('Đã hủy nhập nguồn. Không thay đổi dữ liệu.');return false;}return true;}
 function annotate(sourceId,rows){return rows.map((c,i)=>({...c,sourceId,id:sourceId+'|'+i,group:c.group||'Khác'}));}
 function flatten(){let result=[];for(const src of state.sources.filter(s=>s.enabled!==false)){result.push(...(src.channels||[]));}state.channels=result;if(!state.selected && result.length)state.selected=result[0].url;
  if(state.selected&&!result.some(c=>c.url===state.selected))state.selected=result[0]?.url||null;
  save();render();}
-async function addURL(){const value=$('#newSource').value.trim();if(!value)throw Error('Nhập URL M3U');const url=normalizeHTTPURL(value);if(state.sources.some(x=>x.url===url))throw Error('Nguồn này đã có');if(!(await rightsFor('URL M3U')))return;busy=true;status('Đang tải M3U…');try{const txt=await getText(url,18000);const id='src-'+stableId(url);const rows=annotate(id,CORE.parseM3U(txt,id));if(!rows.length)throw Error('M3U không có kênh HTTP hợp lệ');state.sources.push({id,name:new URL(url).hostname,url,enabled:true,channels:rows,updatedAt:new Date().toISOString()});$('#newSource').value='';flatten();status('Đã thêm '+rows.length+' kênh từ '+url,'ok');}finally{busy=false;}}
+async function addURL(){const value=$('#newSource').value.trim();if(!value)throw Error('Nhập URL M3U');const url=normalizeHTTPURL(value);if(state.sources.some(x=>x.url===url))throw Error('Nguồn này đã có');if(!(await rightsFor('URL M3U')))return;busy=true;status('Đang tải M3U…');try{const txt=await getText(url,18000);const id='src-'+stableId(url);const rows=annotate(id,CORE.parseM3U(txt,id));if(!rows.length)throw Error('M3U không có kênh HTTP hợp lệ');state.sources.push({id,name:new URL(url).hostname,url,enabled:true,channels:rows,updatedAt:new Date().toISOString()});$('#newSource').value='';flatten();status(tMobile('Đã thêm')+' '+rows.length+' '+tMobile('kênh')+' '+tMobile('từ')+' '+url,'ok');}finally{busy=false;}}
 async function addFile(file){if(!file)return;if(file.size>25*1024*1024)throw Error('M3U vượt 25MB');if(!(await rightsFor('file M3U')))return;const content=await file.text();const id='file-'+stableId(file.name+'|'+Date.now());const rows=annotate(id,CORE.parseM3U(content,id));if(!rows.length)throw Error('M3U không có kênh');state.sources.push({id,name:file.name,enabled:true,channels:rows,updatedAt:new Date().toISOString()});flatten();status('Đã nhập '+rows.length+' kênh từ file','ok');}
 async function editSource(s){const next=prompt('URL M3U mới',s.url||'');if(next===null)return;const url=normalizeHTTPURL(next);if(!(await rightsFor('sửa URL M3U')))return;status('Đang kiểm tra URL mới…');const txt=await getText(url);const rows=annotate(s.id,CORE.parseM3U(txt,s.id));if(!rows.length)throw Error('Nguồn URL mới không có kênh hợp lệ. Giữ URL cũ');s.url=url;s.name=new URL(url).hostname;s.channels=rows;s.updatedAt=new Date().toISOString();flatten();status('Đã thay URL nguồn và tải '+rows.length+' kênh','ok');}
 async function refreshSources({quiet=false}={}){
@@ -103,6 +104,7 @@ function renderCurrentEPG(channel){
  const result=epgNowNext(epgItems,id,Date.now(),xmltvDate);
  const nowName=$('#epgNowName'),nextName=$('#epgNextName');
  if(!nowName)return;
+ nowName.dataset.i18nIgnore=result.current?'true':'false';nextName.dataset.i18nIgnore=result.following?'true':'false';
  nowName.textContent=result.current?.title||'Chưa có lịch hiện tại';
  nextName.textContent=result.following?.title||'Chưa có lịch tiếp theo';
  $('#epgNowTime').textContent=result.current?formatProgramClock(result.current.start)+' – '+formatProgramClock(result.current.stop):'—';
@@ -121,6 +123,7 @@ function renderNowPlaying(){
  const c=state.channels.find(x=>x.url===state.selected);
  const title=$('#nowTitle'),group=$('#nowGroup'),star=$('#nowFavorite');
  if(!title)return;
+ title.dataset.i18nIgnore=c?'true':'false';group.dataset.i18nIgnore=c?'true':'false';
  title.textContent=c?.name||'Chưa chọn kênh';
  group.textContent=c?.group||'Chọn một kênh trong danh sách';
  $('#heroTitle').textContent=c?'Sẵn sàng phát':'Chưa chọn kênh';
@@ -149,7 +152,7 @@ function jumpChannel(delta,autoplay=true){
    return;
  }
  pickChannel(c);
- if(autoplay)play(c).catch(e=>status('Chuyển kênh: '+(e.message||e),'error'));
+ if(autoplay)play(c).catch(e=>status(tMobile('Chuyển kênh')+': '+(e.message||e),'error'));
 }
 function channelCard(c){
  const item=node('article','channel');if(c.url===state.selected)item.classList.add('selected');
@@ -279,7 +282,7 @@ async function play(c,requestedURL,{startup=false}={}){
    state.recentlyWatched=safeHistory(state.recentlyWatched,c.url,30);
    save();renderRecentChannels();
    mediaPlaying=true;mediaPaused=false;syncMediaControls();syncAutoPiP();
-   status(isMuted(v)?'Đang phát hình. Chạm nút loa nhỏ dưới video để bật tiếng.':'Đang phát trong khung: '+c.name,'ok');return;
+   status(isMuted(v)?'Đang phát hình. Chạm nút loa nhỏ dưới video để bật tiếng.':tMobile('Đang phát trong khung')+': '+c.name,'ok');return;
   }catch(e){
    last=e;playerHls?.destroy();playerHls=null;
    v.pause();v.removeAttribute('src');v.load();
@@ -355,7 +358,7 @@ async function checkAll(){
  busy=true;$('#checkBtn').disabled=true;let live=0,dead=0,unknown=0;
  const limit=Math.max(1,Math.min(32,Number($('#threadCount').value)||16));
  state.settings.threads=limit;save();
- status('Đang kiểm tra '+(batch.start+1)+'–'+batch.end+'/'+all.length+' · '+limit+' luồng');
+ status(tMobile('Đang kiểm tra')+' '+(batch.start+1)+'–'+batch.end+'/'+all.length+' · '+limit+' luồng');
  try{
   const results=await pool(list,limit,checkOne,(done,total,res)=>{
    if(res?.status==='alive')live++;else if(res?.status==='dead')dead++;else unknown++;

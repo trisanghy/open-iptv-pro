@@ -1,6 +1,6 @@
 // Rust Lab mobile parity subset: rights, evidence-based diagnostics, bounded checks and safe local backup.
 // No automatic network discovery: Rust Lab's native DNS-pinned SSRF guard cannot be assumed on Capacitor.
-export const MOBILE_VERSION='4.23.17-mobile.19';
+export const MOBILE_VERSION='4.23.17-mobile.20';
 export const TERMS_REVISION='2026-11-18-v1';
 export const MAX_BATCH=1000;
 export function batchWindow(items,cursor=0,size=MAX_BATCH){
@@ -121,7 +121,7 @@ export function installMobileParity({getState,replaceState,save,status,exportFil
   input.addEventListener('change',async()=>{
     try{const f=input.files?.[0];if(!f)return;if(f.size>16*1024*1024)throw Error('File lớn hơn 16MB');
       const next=parseBackup(await f.text());
-      if(!confirm('Thay thế toàn bộ playlist, yêu thích và cài đặt Mobile hiện tại? Hãy sao lưu trước khi tiếp tục.'))return;
+      if(!confirm(window.OpenIPTVI18n?.t?.('Thay thế toàn bộ playlist, yêu thích và cài đặt Mobile hiện tại? Hãy sao lưu trước khi tiếp tục.')||'Thay thế toàn bộ playlist, yêu thích và cài đặt Mobile hiện tại? Hãy sao lưu trước khi tiếp tục.'))return;
       replaceState(next);status('Khôi phục thành công từ bản backup Mobile v2','ok');
     }catch(e){status('Không thể khôi phục: '+String(e.message||e),'error');}finally{input.value='';}
   });

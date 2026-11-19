@@ -55,7 +55,7 @@
   let locale='vi';
   try{const stored=localStorage.getItem(key);if(stored && Object.hasOwn(locales,stored))locale=stored;}catch{}
   const originalText=new WeakMap(), originalAttrs=new WeakMap();
-  const skipSelector='script,style,code,pre,.channel-text b,.folder-header .folder-name,.folder-card h3,.fav-card h3,.shot-card b,#playingTitle,.epg-program b,.epg-row header b,.source-top h3,.source-url,.source-card h3,.preview-title,.channel-preview b,.channel-card .channel-name,.channel-card .channel-title,.folder-name,#heroTitle,#channelList .folder-name,#sources .src-card b';
+  const skipSelector='script,style,code,pre,.ch-info b,.recent-channel-copy strong,.channel-text b,.folder-header .folder-name,.folder-card h3,.fav-card h3,.shot-card b,#playingTitle,.epg-program b,.epg-row header b,.source-top h3,.source-url,.source-card h3,.preview-title,.channel-preview b,.channel-card .channel-name,.channel-card .channel-title,.folder-name,#channelList .folder-name,#sources .src-card b';
   const attributeList=['title','placeholder','aria-label'];
   let inApply=false;
   function translate(raw,language=locale){
@@ -70,7 +70,7 @@
         if(dict[sourceKey]){out=dict[sourceKey];break;}
       }
     }
-    if(!out)out=english[compact];
+    if(!out && language==='en')out=english[compact];
     // Localized numeric statuses: only exact UI patterns, not channel or playlist names.
     if(!out && language!=='vi'){
       const labels=nativeUnits[language]||nativeUnits.en;
@@ -86,14 +86,14 @@
     }
     const prefixMatch=!out && compact.match(/^([^\p{L}\p{N}]+)(.+)$/u);
     if(!out && prefixMatch){const localized=dict[prefixMatch[2]];if(localized)out=prefixMatch[1]+localized;
-      else if(english[prefixMatch[2]])out=prefixMatch[1]+english[prefixMatch[2]];}
+      else if(language==='en'&&english[prefixMatch[2]])out=prefixMatch[1]+english[prefixMatch[2]];}
     if(!out){
       const n=compact.match(/^(\d+)\s+luồng$/);
       if(n)out=n[1]+' '+({en:'workers',es:'tareas', 'pt-BR':'tarefas','zh-CN':'个并发',th:'งาน',lo:'ວຽກ',km:'ការងារ'}[language]||'workers');
     }
     if(!out){
       const n=compact.match(/^(\d+)\s*·\s*(.+)$/);
-      if(n){const label=dict[n[2]]||english[n[2]];if(label)out=n[1]+' · '+label;}
+      if(n){const label=dict[n[2]]||(language==='en'?english[n[2]]:null);if(label)out=n[1]+' · '+label;}
     }
     if(!out){
       const n=compact.match(/^Tự động theo hệ thống\s*•\s*Hiện tại:\s*(Sáng|Tối)$/);
@@ -121,7 +121,7 @@
       if(v)out=(dict['Phiên bản hiện tại']||'Current version')+': '+v[1];
     }
 
-    if(!out && language!=='vi'){
+    if(!out && language==='en'){
       // Numeric/UI status patterns only; preserve arbitrary channel names, URLs and email addresses.
       let m=compact.match(/^(\d[\d.,]*)\s+(kênh|phút|giây|luồng)$/);
       if(m)out=m[1]+' '+({kênh:'channels',phút:'minutes',giây:'seconds',luồng:'workers'}[m[2]]);
@@ -137,13 +137,13 @@
     }
 
 
-    if(!out && language!=='vi'){
+    if(!out && language==='en'){
       const m=compact.match(/^Đã tìm thấy (\d+) TV\. Chọn TV rồi nhấn Phát\.$/);
       if(m)out='Found '+m[1]+' TVs. Select a TV and press Play.';
     }
 
 
-    if(!out && language!=='vi'){
+    if(!out && language==='en'){
       let x=compact.match(/^Đã lưu (\d+) link dự phòng$/);
       if(x)out='Saved '+x[1]+' backup URLs';
       if(!out && (x=compact.match(/^Đã lưu tua lại (\d+) phút; áp dụng từ lần bật bộ đệm tiếp theo$/)))out='Timeshift duration saved: '+x[1]+' minutes; applies next time buffering starts';
@@ -152,7 +152,7 @@
     }
 
 
-    if(!out && language!=='vi'){
+    if(!out && language==='en'){
       const prefixPairs=[
         ['Không sắp xếp được: ','Unable to reorder: '],
         ['Không mở được hộp chọn file: ','Could not open file picker: '],
@@ -173,7 +173,7 @@
     }
 
 
-    if(!out && language!=='vi'){
+    if(!out && language==='en'){
       let m=compact.match(/^Đã gửi luồng đến (.+)\. Nếu TV đen hình, hãy kiểm tra định dạng video hoặc mạng LAN\.$/);
       if(m)out='Stream sent to '+m[1]+'. If the TV shows a black screen, check the video format or LAN connection.';
       if(!out && (m=compact.match(/^Đã đăng nhập · (.+)$/)))out='Signed in · '+m[1];
@@ -236,6 +236,7 @@
     inApply=true;
     try{
       document.documentElement.lang=locale;
+      document.documentElement.dir=locale==='ar'?'rtl':'ltr';
       walk(root);
       const control=document.getElementById('appLanguage');
       if(control&&control.value!==locale)control.value=locale;
