@@ -95,12 +95,21 @@ def assemble():
     payload='/* Pretranslated public homepage UI; no runtime network or IPTV user data. */\n'
     payload+='window.OpenIPTVHomeNativeLocales='+json.dumps(packed,ensure_ascii=False,separators=(',',':'))+';\n'
     OUTPUT.write_text(payload,encoding='utf8')
-    digest=hashlib.sha256(OUTPUT.read_bytes()).hexdigest()[:16]
-    script='<script src="home-native-locales.js?v='+digest+'"></script>\n'
+    # Inline the pretranslated dictionary: the independent user-site workflow
+    # fetches only project-home.html, not companion JS files.
+    script='<script id="home-native-locales-data">\n'+OUTPUT.read_text(encoding='utf8').replace('</script','<\\/script')+'\n</script>\n'
     anchor='<script id="homepage-language-controller">'
     if html.count(anchor)!=1:raise RuntimeError('Homepage localization controller moved')
-    if 'src="home-native-locales.js?' not in html:html=html.replace(anchor,script+anchor)
-    else:html=re.sub(r'<script src="home-native-locales.js\?v=[^"]+"></script>\s*',script,html)
+    if 'id="home-native-locales-data"' in html:
+        html,count=re.subn(r'<script id="home-native-locales-data">[\s\S]*?</script>\s*',
+                           lambda match:script,html,count=1)
+        if count!=1:raise RuntimeError('Cannot update inline homepage translations')
+    elif 'src="home-native-locales.js?' in html:
+        html,count=re.subn(r'<script src="home-native-locales.js\?v=[^"]+"></script>\s*',
+                           lambda match:script,html,count=1)
+        if count!=1:raise RuntimeError('Cannot replace external homepage locale asset')
+    else:
+        html=html.replace(anchor,script+anchor,1)
     insertion='''const nativeHome=window.OpenIPTVHomeNativeLocales||{};
 for(const [language,items] of Object.entries(nativeHome)){
  const target=translations[language]||(translations[language]={});
