@@ -14,7 +14,7 @@ EN_SETS=['patchEnglish','extraUiEnglish','webUiEnglish','collectionCastEnglish',
 OTHER_SETS=['patchOther','localizedUiCore','localizedSourceCore','localizedPlayerUi']
 
 def object_from_js(text,name):
-    m=re.search(r'\\bconst\\s+'+re.escape(name)+r'\\s*=\\s*',text)
+    m=re.search(r'\bconst\s+'+re.escape(name)+r'\s*=\s*',text)
     if not m:raise RuntimeError('Missing localization dictionary: '+name)
     data,_=json.JSONDecoder().raw_decode(text[m.end():].lstrip())
     if not isinstance(data,dict):raise RuntimeError('Invalid dictionary: '+name)
@@ -33,7 +33,7 @@ def catalogs():
     return data
 
 def remote_batch(phrases,lang):
-    body='\\n'.join('[[[%04d]]] %s'%(i,s) for i,s in enumerate(phrases))
+    body='\n'.join('[[[%04d]]] %s'%(i,s) for i,s in enumerate(phrases))
     target={'pt-BR':'pt','zh-CN':'zh-CN'}.get(lang,lang)
     query=urllib.parse.urlencode({'client':'gtx','sl':'en','tl':target,'dt':'t','q':body})
     request=urllib.request.Request('https://translate.googleapis.com/translate_a/single?'+query,
@@ -41,7 +41,7 @@ def remote_batch(phrases,lang):
     with urllib.request.urlopen(request,timeout=45) as response:
         data=json.loads(response.read().decode('utf-8'))
     text=''.join(item[0] for item in data[0] if isinstance(item,list) and item and item[0])
-    pattern=re.compile(r'\\[\\[\\[\\s*0*(\\d+)\\s*\\]\\]\\]')
+    pattern=re.compile(r'\[\[\[\s*0*(\d+)\s*\]\]\]')
     marks=list(pattern.finditer(text))
     if len(marks)!=len(phrases) or [int(m.group(1)) for m in marks]!=list(range(len(phrases))):
         if len(phrases)==1:
@@ -68,11 +68,11 @@ def retry(phrases,lang):
     raise RuntimeError('Unreachable')
 
 def emit(cache):
-    CACHE.write_text(json.dumps(cache,ensure_ascii=False,sort_keys=True,separators=(',',':'))+'\\n',encoding='utf-8')
-    output='/* Native UI dictionaries generated from Open IPTV Pro English strings. */\\n'
+    CACHE.write_text(json.dumps(cache,ensure_ascii=False,sort_keys=True,separators=(',',':'))+'\n',encoding='utf-8')
+    output='/* Native UI dictionaries generated from Open IPTV Pro English strings. */\n'
     output+='(function(){"use strict";const extra='+json.dumps(cache,ensure_ascii=False,separators=(',',':'))+';'
     output+='const base=window.OPEN_IPTV_TRANSLATIONS||(window.OPEN_IPTV_TRANSLATIONS={});'
-    output+='for(const [lang,items] of Object.entries(extra))Object.assign(base[lang]||(base[lang]={}),items);})();\\n'
+    output+='for(const [lang,items] of Object.entries(extra))Object.assign(base[lang]||(base[lang]={}),items);})();\n'
     OUTPUT.write_text(output,encoding='utf-8')
 
 def main(fill):
