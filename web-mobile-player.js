@@ -68,6 +68,15 @@
   return /iPhone|iPad|iPod/.test(ua) ||
    (/Macintosh/.test(ua) && Number(root?.navigator?.maxTouchPoints||0)>1);
  }
+ // Fullscreen capability is independent of the selected desktop/mobile UI.
+ // Safari on iPhone can request Desktop Website, including a spoofed Mac UA.
+ function isHandheld(){
+  if(isMobile()||isIOS())return true;
+  const ua=String(root?.navigator?.userAgent||'');
+  if(/Android|Windows Phone|Opera Mini/i.test(ua))return true;
+  const narrowScreen=Math.min(Number(root?.screen?.width||Infinity),Number(root?.screen?.height||Infinity))<=820;
+  return narrowScreen&&Number(root?.navigator?.maxTouchPoints||0)>1;
+ }
  function elements(){return {box:doc?.getElementById('playerBox'),video:doc?.getElementById('video'),button:doc?.getElementById('fullscreenBtn')};}
  function update(active){
   const {button}=elements();
@@ -92,12 +101,15 @@
   update(false);return true;
  }
  function toggle(){
-  if(!doc||!isMobile())return false; // preserve desktop fullscreen code
+  if(!doc||!isHandheld())return false; // preserve real desktop fullscreen code
   const {box,video}=elements();if(!box||!video)return false;
   if(exitTheater())return true;
   if(doc.fullscreenElement||doc.webkitFullscreenElement){
    const exit=doc.exitFullscreen||doc.webkitExitFullscreen;
-   try{exit?.call(doc);}catch(e){console.warn('Fullscreen exit:',e);}
+   try{
+    const done=exit?.call(doc);
+    done?.catch?.(e=>console.warn('Fullscreen exit:',e));
+   }catch(e){console.warn('Fullscreen exit:',e);}
    update(false);return true;
   }
   if(isIOS() && video.webkitDisplayingFullscreen){
@@ -113,7 +125,7 @@
   if(typeof req==='function'){
    try{
     const p=req.call(box);
-    if(p?.catch)p.catch(()=>enterTheater());
+    if(p?.catch)p.catch(()=>{if(!doc.fullscreenElement&&!doc.webkitFullscreenElement)enterTheater();});
     update(true);return true;
    }catch(e){console.warn('Element fullscreen unavailable:',e);}
   }
@@ -253,5 +265,5 @@
    if(!nav.getAttribute('aria-label'))nav.setAttribute('aria-label',nav.textContent.trim());
   }
  }
- return Object.freeze({isMobile,isIOS,syncDevice,toggle,enterTheater,exitTheater});
+ return Object.freeze({isMobile,isIOS,isHandheld,syncDevice,toggle,enterTheater,exitTheater});
 });

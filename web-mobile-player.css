@@ -860,3 +860,24 @@ html[data-iptv-device="mobile"] body #page-tv #channelPanelHideBtn{
 html[data-iptv-device="mobile"] body #page-tv .tv-layout{
  padding-left:0!important;
 }
+
+/* Desktop-site mode requested on a phone: the fallback theater must not depend
+   on data-iptv-device="mobile". Keep desktop layout unchanged before tap. */
+html[data-iptv-device="desktop"].web-mobile-theater-open,
+html[data-iptv-device="desktop"].web-mobile-theater-open body{
+ overflow:hidden!important;
+}
+html[data-iptv-device="desktop"].web-mobile-theater-open body #page-tv #playerBox.mobile-theater{
+ position:fixed!important;inset:0!important;
+ width:100vw!important;height:100dvh!important;max-width:none!important;
+ min-width:0!important;min-height:0!important;margin:0!important;padding:0!important;
+ border:0!important;border-radius:0!important;z-index:99999!important;
+ background:#000!important;transform:none!important;
+}
+html[data-iptv-device="desktop"].web-mobile-theater-open body #page-tv #playerBox.mobile-theater video{
+ position:absolute!important;inset:0!important;width:100%!important;height:100%!important;
+ max-width:none!important;max-height:none!important;object-fit:contain!important;
+}
+html[data-iptv-device="desktop"].web-mobile-theater-open body #page-tv #playerBox.mobile-theater .fullscreen-ux{
+ display:flex!important;pointer-events:auto!important;opacity:1!important;
+}

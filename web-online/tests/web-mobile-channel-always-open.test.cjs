@@ -57,6 +57,6 @@ test('mobile preference changes and viewport lifecycle are synchronized without 
  assert.match(features,/window.addEventListener\('orientationchange',\(\)=>updateChannelPanelVisibility\(false\)\)/);
  assert.match(features,/if\(isMobileChannelPanel\(\)\)return;config.channelPanelVisible=false/);
  assert.match(html,/features\.js\?v=channel-list-always-open-mobile-20261119h/);
- assert.match(html,/web-mobile-player\.css\?v=channel-list-always-open-mobile-20261119h/);
+ assert.match(html,/web-mobile-player\.css\?v=desktop-handheld-fs-20261119a/);
  assert.match(fs.readFileSync(path.join(root,'web-online/prepare-web.py'),'utf8'),/Cannot protect mobile channel list visibility after WebView build/);
 });

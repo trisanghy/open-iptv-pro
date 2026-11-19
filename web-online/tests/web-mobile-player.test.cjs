@@ -7,18 +7,18 @@ const css=fs.readFileSync(path.join(root,'web-mobile-player.css'),'utf8');
 const app=fs.readFileSync(path.join(root,'app.js'),'utf8');
 const html=fs.readFileSync(path.join(root,'index.html'),'utf8');
 const vm=require('node:vm');
-function harness({mobile=true,ios=false,native=false,hasRequest=false}={}){
+function harness({mobile=true,ios=false,native=false,hasRequest=false,search='',physicalWidth=390}={}){
  const c=new Set(),d=new Set(),handlers={};
  const box={classList:{add:(...n)=>n.forEach(v=>c.add(v)),remove:(...n)=>n.forEach(v=>c.delete(v)),contains:x=>c.has(x)}};
  const video={readyState:2,webkitEnterFullscreen:native?()=>{video.nativeOpened=true;}:undefined};
- if(hasRequest)box.requestFullscreen=()=>Promise.resolve();
- const button={setAttribute:()=>{}};
+ if(hasRequest)box.requestFullscreen=()=>{box.requested=true;return Promise.resolve();};
+ const button={attrs:{},setAttribute(k,v){this.attrs[k]=v}};
  const els={playerBox:box,video,fullscreenBtn:button};
  const doc={fullscreenElement:null,documentElement:{setAttribute:(k,v)=>{if(k==='data-iptv-device')d.mode=v;},classList:{add:x=>d.add(x),remove:x=>d.delete(x),toggle:(x,on)=>on?d.add(x):d.delete(x)}},getElementById:id=>els[id],addEventListener:()=>{},querySelectorAll:()=>[]};
- const root={document:doc,navigator:{userAgent:ios?'iPhone':mobile?'Android Mobile':'Mozilla/5.0 (X11; Linux x86_64)',maxTouchPoints:mobile?5:0},matchMedia:()=>({matches:mobile}),addEventListener:(key,fn)=>{handlers[key]=fn}};
+ const root={document:doc,location:{search},screen:{width:physicalWidth,height:physicalWidth+200},navigator:{userAgent:ios?'iPhone':mobile?'Android Mobile':'Mozilla/5.0 (X11; Linux x86_64)',maxTouchPoints:mobile?5:0},matchMedia:()=>({matches:mobile}),addEventListener:(key,fn)=>{handlers[key]=fn}};
  const sandbox={window:root,module:{exports:{}},console};
  vm.runInNewContext(code,sandbox);
- return {api:sandbox.module.exports,box,video,c,d,root,handlers};
+ return {api:sandbox.module.exports,box,video,button,c,d,root,handlers};
 }
 test('fullscreen button delegates to the mobile adapter without removing desktop behavior',()=>{
  assert.match(app,/OpenIPTVMobilePlayer\?\.toggle\?\.\(\)/);
@@ -33,6 +33,60 @@ test('embedded browsers without native fullscreen get a reversible full viewport
  const h=harness();assert.equal(h.api.toggle(),true);assert.equal(h.c.has('mobile-theater'),true);
  assert.equal(h.d.has('web-mobile-theater-open'),true);
  assert.equal(h.api.toggle(),true);assert.equal(h.c.has('mobile-theater'),false);
+});
+test('iPhone can enter native fullscreen even when Desktop Website is requested',()=>{
+ const h=harness({ios:true,native:true,search:'?view=desktop'});
+ assert.equal(h.api.isMobile(),false);
+ assert.equal(h.d.mode,'desktop');
+ assert.equal(h.api.isHandheld(),true);
+ assert.equal(h.api.toggle(),true);
+ assert.equal(h.video.nativeOpened,true);
+ assert.equal(h.c.has('mobile-theater'),false);
+});
+test('iPhone in desktop layout falls back to theater when native fullscreen is unavailable',()=>{
+ const h=harness({ios:true,search:'?view=desktop'});
+ assert.equal(h.api.isMobile(),false);
+ assert.equal(h.api.toggle(),true);
+ assert.equal(h.c.has('mobile-theater'),true);
+ assert.equal(h.button.attrs['aria-pressed'],'true');
+ assert.equal(h.api.toggle(),true);
+ assert.equal(h.c.has('mobile-theater'),false);
+ assert.equal(h.button.attrs['aria-pressed'],'false');
+ assert.equal(h.d.mode,'desktop');
+});
+test('Android phone in desktop layout still uses browser fullscreen API',()=>{
+ const h=harness({mobile:true,search:'?view=desktop',hasRequest:true});
+ assert.equal(h.api.isMobile(),false);
+ assert.equal(h.api.isHandheld(),true);
+ assert.equal(h.api.toggle(),true);
+ assert.equal(h.box.requested,true);
+ assert.equal(h.c.has('mobile-theater'),false);
+});
+test('iOS Desktop Website spoofing a Mac UA is detected by touch capability',()=>{
+ const h=harness({mobile:false,search:'?view=desktop',physicalWidth:390,native:true});
+ h.root.navigator.userAgent='Mozilla/5.0 (Macintosh; Intel Mac OS X)';
+ h.root.navigator.maxTouchPoints=5;
+ assert.equal(h.api.isMobile(),false);
+ assert.equal(h.api.isIOS(),true);
+ assert.equal(h.api.isHandheld(),true);
+ assert.equal(h.api.toggle(),true);
+ assert.equal(h.video.nativeOpened,true);
+});
+test('desktop layout on a real touch laptop remains on the original fullscreen path',()=>{
+ const h=harness({mobile:false,search:'?view=desktop',physicalWidth:1280});
+ h.root.navigator.maxTouchPoints=10;
+ assert.equal(h.api.isHandheld(),false);
+ assert.equal(h.api.toggle(),false);
+});
+test('rejected fullscreen request on handheld desktop mode gets reversible theater fallback',async()=>{
+ const h=harness({mobile:true,search:'?view=desktop'});
+ h.box.requestFullscreen=()=>Promise.reject(new Error('NotAllowedError'));
+ assert.equal(h.api.toggle(),true);
+ await Promise.resolve();
+ await Promise.resolve();
+ assert.equal(h.c.has('mobile-theater'),true);
+ assert.equal(h.api.toggle(),true);
+ assert.equal(h.c.has('mobile-theater'),false);
 });
 test('desktop preserves original fullscreen path',()=>{
  const h=harness({mobile:false});
@@ -65,8 +119,8 @@ test('collapsed desktop sidebar cannot override the mobile bottom navigation',()
  assert.match(css,/height:calc\(69px \+ env\(safe-area-inset-bottom,0px\)\)!important/);
 });
 test('HTML loads versioned assets to invalidate iOS cached broken layout',()=>{
- assert.match(html,/web-mobile-player\.css\?v=channel-list-always-open-mobile-20261119h/);
- assert.match(html,/web-mobile-player\.js\?v=responsive-desktop-20261118j/);
+ assert.match(html,/web-mobile-player\.css\?v=desktop-handheld-fs-20261119a/);
+ assert.match(html,/web-mobile-player\.js\?v=desktop-handheld-fs-20261119a/);
 });
 
 test('mobile has five focused bottom tabs with advanced functionality in More',()=>{
@@ -239,4 +293,11 @@ test('mobile baseline CSS cannot leak into desktop website mode',()=>{
  assert.doesNotMatch(initial,/\n\s+html body \.app-shell/);
  assert.doesNotMatch(initial,/\n\s+#page-tv \.tv-layout/);
  assert.match(css,/\.mobile-tab-caption\{display:none!important\}/);
+});
+
+test('handheld desktop fullscreen CSS only applies while fullscreen fallback is active',()=>{
+ assert.match(css,/html\[data-iptv-device="desktop"\]\.web-mobile-theater-open body #page-tv #playerBox\.mobile-theater/);
+ assert.match(css,/html\.web-mobile-theater-open/);
+ assert.doesNotMatch(code,/if\(!doc\|\|!isMobile\(\)\)return false; \/\/ preserve desktop fullscreen code/);
+ assert.match(code,/if\(!doc\|\|!isHandheld\(\)\)return false/);
 });
