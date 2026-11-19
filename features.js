@@ -121,8 +121,72 @@
  }
 
  let guide={names:{},programmes:[],aliasesById:{},manualMappings:config.manualMappings,offsetMinutes:config.offsetMinutes},updatedAt='',loading=false,epgRequestedInSession=false,currentVersion='4.23.13';
- try{const cached=JSON.parse(localStorage.getItem('open-iptv-pro-epg-v1')||'null');if(cached&&cached.guide&&Array.isArray(cached.guide.programmes)){guide=cached.guide;guide.manualMappings=config.manualMappings;guide.offsetMinutes=config.offsetMinutes;updatedAt=cached.updatedAt||'';}}catch{}
- const cacheGuide=()=>{try{localStorage.setItem('open-iptv-pro-epg-v1',JSON.stringify({guide,updatedAt}));return true;}catch{ctx.toast('Bộ nhớ lịch EPG đã đầy; vẫn có thể xem lịch trong phiên hiện tại','warn');return false;}};
+ const legacyGuideKey='open-iptv-pro-epg-v1',largeGuideDB='open-iptv-pro-epg-cache-v2';
+ let guideCacheGeneration=0,guideCacheQueue=Promise.resolve();
+ // The existing localStorage cache remains a migration/fallback source.
+ // Large XMLTV guides are primarily stored in IndexedDB on mobile browsers.
+ try{const cached=JSON.parse(localStorage.getItem(legacyGuideKey)||'null');if(cached?.guide&&Array.isArray(cached.guide.programmes)){guide=cached.guide;guide.manualMappings=config.manualMappings;guide.offsetMinutes=config.offsetMinutes;updatedAt=cached.updatedAt||'';}}catch{}
+ function openGuideDatabase(){
+  return new Promise((resolve,reject)=>{
+   if(typeof indexedDB==='undefined'){reject(Error('IndexedDB không khả dụng'));return;}
+   let req;
+   try{req=indexedDB.open(largeGuideDB,1);}catch(e){reject(e);return;}
+   req.onupgradeneeded=()=>{if(!req.result.objectStoreNames.contains('guides'))req.result.createObjectStore('guides');};
+   req.onsuccess=()=>resolve(req.result);
+   req.onerror=()=>reject(req.error||Error('Không thể mở bộ nhớ EPG'));
+   req.onblocked=()=>reject(Error('Bộ nhớ EPG đang được sử dụng ở tab khác'));
+  });
+ }
+ async function saveGuideInDatabase(snapshot){
+  const db=await openGuideDatabase();
+  try{await new Promise((resolve,reject)=>{
+   let tx;
+   try{tx=db.transaction('guides','readwrite');tx.objectStore('guides').put(snapshot,'current');}
+   catch(e){reject(e);return;}
+   tx.oncomplete=()=>resolve();
+   tx.onabort=()=>reject(tx.error||Error('Không thể lưu lịch EPG'));
+   tx.onerror=()=>reject(tx.error||Error('Lỗi bộ nhớ lịch EPG'));
+  });}finally{db.close();}
+ }
+ async function loadGuideFromDatabase(){
+  const db=await openGuideDatabase();
+  try{return await new Promise((resolve,reject)=>{
+   let tx,req;
+   try{tx=db.transaction('guides','readonly');req=tx.objectStore('guides').get('current');}
+   catch(e){reject(e);return;}
+   req.onsuccess=()=>resolve(req.result||null);
+   req.onerror=()=>reject(req.error||Error('Không thể đọc lịch EPG'));
+   tx.onabort=()=>reject(tx.error||Error('Không thể đọc bộ nhớ EPG'));
+  });}finally{db.close();}
+ }
+ async function restoreGuideCache(){
+  const generation=guideCacheGeneration;
+  try{
+   const cached=await loadGuideFromDatabase();
+   // Do not overwrite a newer download or a manual change made during reading.
+   if(!cached?.guide||!Array.isArray(cached.guide.programmes)||generation!==guideCacheGeneration||epgRequestedInSession)return;
+   if(updatedAt&&Date.parse(cached.updatedAt||'')<Date.parse(updatedAt))return;
+   guide={...cached.guide,manualMappings:config.manualMappings,offsetMinutes:config.offsetMinutes};
+   updatedAt=cached.updatedAt||'';
+   renderGuidePages();ctx.renderList();
+  }catch{} // Private browsing may block IndexedDB; retain local fallback.
+ }
+ function cacheGuide(){
+  guideCacheGeneration++;
+  const snapshot={guide:{names:guide.names,aliasesById:guide.aliasesById,programmes:guide.programmes},updatedAt};
+  guideCacheQueue=guideCacheQueue.catch(()=>{}).then(async()=>{
+   try{
+    await saveGuideInDatabase(snapshot);
+    // Remove the old smaller cache ONLY once a durable write completes.
+    try{localStorage.removeItem(legacyGuideKey);}catch{}
+    return true;
+   }catch{
+    try{localStorage.setItem(legacyGuideKey,JSON.stringify(snapshot));return true;}
+    catch{ctx.toast('Không đủ bộ nhớ để lưu EPG lâu dài; lịch vẫn xem được trong phiên này','warn');return false;}
+   }
+  });
+  return guideCacheQueue;
+ }
  function rgbToHsv(r,g,b){r/=255;g/=255;b/=255;
   const max=Math.max(r,g,b),min=Math.min(r,g,b),delta=max-min;let h=0;
   if(delta){if(max===r)h=(60*((g-b)/delta)+360)%360;
@@ -277,7 +341,7 @@
     for(const p of parsed.programmes){const k=`${p.id}|${p.start}`;if(!programmeKeys.has(k)){combined.programmes.push(p);programmeKeys.add(k);}}
     sourcesLoaded++;
    }catch(e){errors.push(source.name+': '+e.message);}}
-   if(sourcesLoaded&&combined.programmes.length){guide={names:combined.names,aliasesById:combined.aliasesById,programmes:combined.programmes.slice(0,12000),manualMappings:config.manualMappings,offsetMinutes:config.offsetMinutes};updatedAt=new Date().toISOString();cacheGuide();ctx.toast(`Đã tải ${guide.programmes.length} lịch từ ${sourcesLoaded} nguồn`);}
+   if(sourcesLoaded&&combined.programmes.length){combined.programmes.sort((a,b)=>a.start-b.start);guide={names:combined.names,aliasesById:combined.aliasesById,programmes:combined.programmes,manualMappings:config.manualMappings,offsetMinutes:config.offsetMinutes};updatedAt=new Date().toISOString();const persisted=await cacheGuide();ctx.toast(`Đã tải ${guide.programmes.length} lịch từ ${sourcesLoaded} nguồn`+(persisted?'':' (chỉ phiên hiện tại)'),persisted?'ok':'warn');}
    else ctx.toast('Không có chương trình khớp. Dữ liệu EPG cũ được giữ nguyên. '+errors.join(' | '),'warn');
    if(errors.length)ctx.toast('Một số nguồn EPG lỗi: '+errors.join(' | ').slice(0,350),'warn');
    renderNow();renderGuidePages();ctx.renderList();
@@ -295,8 +359,8 @@
    if(!parsed.programmes?.length)throw Error('Không có chương trình hợp lệ trong khoảng 7 ngày trước/sau thời điểm hiện tại.');
    const msg=`Nhập ${parsed.programmes.length} chương trình từ file "${result.name}"?\nDữ liệu EPG hiện tại sẽ được thay thế. Danh sách kênh và lịch ghi hình đã đặt không thay đổi.`;
    if(!window.confirm(msg)){$('#epgImportStatus').textContent='Đã hủy nhập; giữ nguyên EPG hiện tại.';return;}
-   guide={names:parsed.names,aliasesById:parsed.aliasesById,programmes:parsed.programmes.slice(0,12000),manualMappings:config.manualMappings,offsetMinutes:config.offsetMinutes};
-   updatedAt=new Date().toISOString();const saved=cacheGuide();renderGuidePages();ctx.renderList();
+   guide={names:parsed.names,aliasesById:parsed.aliasesById,programmes:parsed.programmes,manualMappings:config.manualMappings,offsetMinutes:config.offsetMinutes};
+   updatedAt=new Date().toISOString();const saved=await cacheGuide();renderGuidePages();ctx.renderList();
    $('#epgImportStatus').textContent=saved?`Đã nhập ${guide.programmes.length} chương trình từ ${result.name}.`:`Đã mở ${guide.programmes.length} chương trình từ ${result.name}, nhưng bộ nhớ đầy: dữ liệu chỉ giữ trong phiên hiện tại.`;
    ctx.toast(saved?'Nhập file EPG thành công':'Đã nhập EPG nhưng chưa lưu bền vững vì bộ nhớ đầy',saved?'ok':'warn');
   }catch(e){$('#epgImportStatus').textContent='Nhập EPG thất bại: '+String(e?.message||e).slice(0,170);ctx.toast('Không thể nhập EPG: '+String(e?.message||e),'warn');}
@@ -433,7 +497,7 @@
  window.streamleaf?.onUpdateStatus?.(drawUpdateState);
  window.streamleaf?.updateStatus?.().then(drawUpdateState).catch(()=>{});
  if(config.autoCheckUpdates&&window.streamleaf?.checkUpdate)setTimeout(()=>updateCheck({silent:true}),3500);
- saveConfig();applyColor(config.accent,false,config.accentCustom?'custom':'reset');updateSidebarVisibility(false);updateChannelPanelVisibility(false);renderSources();renderGuidePages();
+ saveConfig();applyColor(config.accent,false,config.accentCustom?'custom':'reset');updateSidebarVisibility(false);updateChannelPanelVisibility(false);renderSources();renderGuidePages();void restoreGuideCache();
  // Once per launch, after playlist restoration. Avoid duplicate refresh if a manual request has already started.
  if(config.autoRefreshEPGOnStartup){window.setTimeout(()=>{
   if(epgRequestedInSession||loading||!config.autoRefreshEPGOnStartup)return;
@@ -441,6 +505,6 @@
   void refreshEPG({startup:true}).catch(e=>{ctx.toast('Tự tải EPG gặp lỗi: '+String(e?.message||e),'warn');});
  },2200);}
  window.setInterval(()=>{if($('#page-tv')?.classList.contains('active-page'))renderNow();},60_000);
- window.IPTVExtras={render:renderNow,onChannel:renderNow,onPage:p=>{if(p==='settings')renderSources();if(p==='epg')renderGuidePages();},decorateRow,getGuide:()=>guide,setMapping:(id,epgId)=>{if(epgId)config.manualMappings[id]=epgId;else delete config.manualMappings[id];guide.manualMappings=config.manualMappings;saveConfig();cacheGuide();renderGuidePages();ctx.renderList();},setOffset:minutes=>{config.offsetMinutes=Math.max(-720,Math.min(720,Number(minutes)||0));guide.offsetMinutes=config.offsetMinutes;saveConfig();cacheGuide();renderGuidePages();ctx.renderList();},getOffset:()=>config.offsetMinutes};
+ window.IPTVExtras={render:renderNow,onChannel:renderNow,onPage:p=>{if(p==='settings')renderSources();if(p==='epg')renderGuidePages();},decorateRow,getGuide:()=>guide,setMapping:(id,epgId)=>{if(epgId)config.manualMappings[id]=epgId;else delete config.manualMappings[id];guide.manualMappings=config.manualMappings;saveConfig();void cacheGuide();renderGuidePages();ctx.renderList();},setOffset:minutes=>{config.offsetMinutes=Math.max(-720,Math.min(720,Number(minutes)||0));guide.offsetMinutes=config.offsetMinutes;saveConfig();void cacheGuide();renderGuidePages();ctx.renderList();},getOffset:()=>config.offsetMinutes};
  window.setInterval(()=>{renderNow();if(document.querySelector('#page-epg').classList.contains('active-page'))renderEPG();},60000);
 })();
