@@ -363,6 +363,9 @@ jobs:
           # Independent guide-localization gate becomes strict once the generated asset ships.
           if [ -f guide-native-locales.js ]; then node --check _site/guide-native-locales.js; fi
           node --test web-online/tests/web-guide-native-coverage.test.cjs
+          test -s _site/guide-native-locales.js
+          grep -Eq 'src="guide-native-locales[.]js[?]v=[a-f0-9]{16}"' _site/huong-dan.html
+          test -s _user_site/home-native-locales.js || test -s web-online/home-native-locales.js
           grep -Eq 'src="web-language-supplement[.]js[?]v=[a-f0-9]{16}"' _site/index.html
           touch _user_site/.nojekyll
           python3 - <<'PY'
