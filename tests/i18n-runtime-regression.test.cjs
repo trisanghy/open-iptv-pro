@@ -27,7 +27,7 @@ test('all 17 locales selectable without network or data mutation',()=>{
 });
 test('untranslated settings text falls back to English, not Vietnamese',()=>{
  const i=engine();
- assert.equal(i.t('Chưa có chương trình','ja'),'番組なし');
+ assert.equal(i.t('Chưa có chương trình','ja'),'番組情報なし');
  assert.equal(i.t('Chưa có chương trình','en'),'No program available');
  assert.match(i.t('↻ Tải lại EPG','de'),/Reload EPG/);
  assert.match(i.t('Whisper dùng để nhận diện tiếng nói trên máy; chọn bộ dịch offline và giọng TTS ngay tại đây.','fr'),/Whisper transcribes audio locally/);
