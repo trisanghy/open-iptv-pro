@@ -871,3 +871,16 @@ html[data-iptv-device="desktop"].web-mobile-theater-open body #page-tv #playerBo
 html[data-iptv-device="desktop"].web-mobile-theater-open body #page-tv #playerBox.mobile-theater .fullscreen-ux{
  display:flex!important;pointer-events:auto!important;opacity:1!important;
 }
+
+/* Touch favorites never show the desktop hover preview; photos in the
+   channel list and the Snapshot gallery remain available as usual. */
+html[data-iptv-device="mobile"] body #channelPreview,
+html[data-iptv-device="mobile"] body .channel-preview {
+ display:none!important;visibility:hidden!important;pointer-events:none!important;
+}
+html[data-iptv-device="mobile"] body #page-fav .fav-card {
+ cursor:pointer;touch-action:manipulation;
+}
+html[data-iptv-device="mobile"] body #page-fav .fav-card:focus-visible {
+ outline:2px solid var(--accent,#b784ef)!important;outline-offset:2px;
+}

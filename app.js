@@ -475,8 +475,19 @@
   favorites.forEach(c=>{const div=document.createElement('div');div.className='fav-card';div.dataset.channelId=c.id;
    div.innerHTML=`<div class="chan-logo ${snapshotSrc(store.snapshots[c.url])?'snapshot-thumb':''}">${channelThumb(c)}</div><div><h3>${escape(c.name)}</h3><small>${escape(c.group)} · ${escape(store.sources.find(s=>s.id===c.sourceId)?.name||'Nguồn IPTV')}</small></div><button>▶ Xem</button><button type="button" class="fav-unstar" aria-pressed="true" title="Bỏ yêu thích">★</button>`;
    attachSnapshotFallback(div.querySelector('.chan-logo img'),store.snapshots[c.url]);
-   div.querySelector('button:not(.fav-unstar)').onclick=()=>{setPage('tv');playChannel(c.id)};
-   div.querySelector('.fav-unstar').onclick=()=>favorite(c);
+   // Tapping the channel name, thumbnail or card starts playback.
+   const watch=()=>{setPage('tv');void playChannel(c.id);};
+   div.tabIndex=0;div.setAttribute('role','group');div.setAttribute('aria-label','Xem '+c.name);
+   div.addEventListener('click',e=>{
+    if(e.target.closest('button,a,input,select,textarea,[role="button"]'))return;
+    watch();
+   });
+   div.addEventListener('keydown',e=>{
+    if(e.target!==div||(e.key!=='Enter'&&e.key!==' '))return;
+    e.preventDefault();watch();
+   });
+   div.querySelector('button:not(.fav-unstar)').onclick=e=>{e.stopPropagation();watch();};
+   div.querySelector('.fav-unstar').onclick=e=>{e.stopPropagation();favorite(c);};
    window.IPTVProAdvanced?.decorateRow?.(c,div);target.append(div);
   });
  }

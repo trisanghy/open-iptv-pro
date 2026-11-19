@@ -184,6 +184,9 @@ jobs:
           grep -Fq 'web-desktop-download.js?v=software-download-20261119b' _site/index.html
           node --check _site/web-mobile-player.js
           node --test web-online/tests/web-mobile-player.test.cjs
+          node --test web-online/tests/web-mobile-favorites-interaction.test.cjs
+          node --check _site/advanced.js
+          node --check _site/app.js
           grep -Fq 'features.js?v=channel-list-always-open-mobile-20261119h' _site/index.html
           node --check _site/features.js
           node --test web-online/tests/web-mobile-channel-always-open.test.cjs

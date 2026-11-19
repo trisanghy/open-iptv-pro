@@ -13,6 +13,9 @@ on:
       - 'web-online/web-mobile-controls-polish.css'
       - 'web-online/tests/web-player-icons-first-paint.test.cjs'
       - 'index.html'
+      - 'app.js'
+      - 'advanced.js'
+      - 'web-online/tests/web-mobile-favorites-interaction.test.cjs'
   workflow_dispatch:
 permissions:
   contents: read
@@ -45,6 +48,7 @@ jobs:
           test -f _site/web-mobile-controls-polish.css
           ICON_FIRST_PAINT_CHROME="$(command -v google-chrome || command -v chromium)" node --test web-online/tests/web-player-icons-first-paint.test.cjs
           node --test web-online/tests/web-mobile-controls-polish.test.cjs
+          node --test web-online/tests/web-mobile-favorites-interaction.test.cjs
           test -s _site/web-mobile-tablet-controls.css
           node --test web-online/tests/web-mobile-tablet-controls.test.cjs
           TABLET_LAYOUT_CHROME="$(command -v google-chrome || command -v chromium)" node --test web-online/tests/web-mobile-tablet-browser.test.cjs

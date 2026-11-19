@@ -126,6 +126,16 @@ if app_text.count(snapshot_start)!=1 or web_app.count(snapshot_start)!=1:
 if app_text.count(snapshot_end)!=1 or web_app.count(snapshot_end)!=1:
     sys.exit('Web snapshot function end missing')
 app_text=app_text[:app_text.index(snapshot_start)]+web_app[web_app.index(snapshot_start):web_app.index(snapshot_end,web_app.index(snapshot_start))]+app_text[app_text.index(snapshot_end,app_text.index(snapshot_start)):]
+
+# Preserve Web favorite card tap-to-play when rebuilding from old WebView sources.
+fav_start=' function renderFavorites(){'
+fav_end=' function updatePlayerFavorite(){'
+if app_text.count(fav_start)!=1 or web_app.count(fav_start)!=1:
+    sys.exit('Favorite renderer missing in source or WebView')
+if app_text.count(fav_end)!=1 or web_app.count(fav_end)!=1:
+    sys.exit('Favorite renderer end missing')
+app_text=app_text[:app_text.index(fav_start)]+web_app[web_app.index(fav_start):web_app.index(fav_end,web_app.index(fav_start))]+app_text[app_text.index(fav_end,app_text.index(fav_start)):]
+
 # Preserve the Web-only background audio route when regenerating from an older
 # desktop WebView frontend. Do not edit or ship changes to Electron/Rust.
 audio_begin=' function suspendVideoForBackground(){'
@@ -389,6 +399,16 @@ if html.count('web-tv-channel-hub.js?')!=1 or html.count('web-tv-channel-hub.css
 # Expanded mobile device mode uses tablet-sized controls even in wide browser windows.
 html=html.replace('</head>','<link rel="stylesheet" href="web-mobile-tablet-controls.css?v=tablet-controls-20261119c"/></head>',1)
 html=html.replace('web-mobile-controls-polish.css?v=quick-icons-unified-20261119b"/>','web-mobile-controls-polish.css?v=quick-icons-unified-20261119b"/><link rel="stylesheet" href="web-mobile-volume.css?v=mobile-volume-popover-20261119a"/>',1)
+
+# Keep the click-to-play, disabled mobile hover, and mobile CSS cache fresh.
+for previous,next_value in (
+    ('app.js?v=ios-lockscreen-next-state-20261119a','app.js?v=favorites-tap-20261119a'),
+    ('advanced.js?v=no-timeshift-20261119a','advanced.js?v=favorites-tap-20261119a'),
+    ('web-mobile-player.css?v=desktop-handheld-fs-20261119a','web-mobile-player.css?v=favorites-tap-20261119a'),
+):
+    if html.count(previous)!=1:sys.exit('Favorites cache key has changed: '+previous)
+    html=html.replace(previous,next_value,1)
+
 (out/'index.html').write_text(html,encoding='utf-8')
 (out/'.nojekyll').write_text('')
 (out/'manifest.webmanifest').write_text(json.dumps({
