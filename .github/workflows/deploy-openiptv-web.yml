@@ -327,6 +327,7 @@ jobs:
           node --check _site/i18n.js
           grep -Fq 'src="i18n.js?v=unmute-language-20261119a"' _site/index.html
           node --test web-online/tests/web-english-coverage.test.cjs
+          node --test web-online/tests/web-language-native-coverage.test.cjs
           touch _user_site/.nojekyll
           python3 - <<'PY'
           from pathlib import Path
