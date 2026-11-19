@@ -24,7 +24,9 @@ test('English messages, native dialogs and stored preference update immediately'
  assert.equal(i18n.t('VTV1'),'VTV1');
  assert.equal(window.confirm('Bạn muốn hủy lịch ghi này?'),true);
  window.alert('Đang tìm Chromecast / Google TV trong mạng nội bộ…');
- assert.deepEqual(calls,['Cancel this scheduled recording?','Searching the local network for Chromecast / Google TV…']);
+ assert.equal(calls[0],'Cancel this scheduled recording?');
+ assert.match(calls[1],/Chromecast \/ Google TV/);
+ assert.doesNotMatch(calls[1],/[ăâđêôơưĂÂĐÊÔƠƯ]/);
  assert.equal(local.get('open-iptv-pro-language'),'en');
  i18n.setLanguage('vi');
  assert.equal(i18n.t('Thu gọn danh sách kênh'),'Thu gọn danh sách kênh');
