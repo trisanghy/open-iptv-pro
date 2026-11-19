@@ -81,6 +81,21 @@ const mobileFormats=[
      <h2 id="desktopDownloadTitle" class="desktop-download-title">Tải xuống phần mềm</h2>
     </div><button type="button" class="desktop-download-close" data-desktop-close aria-label="Đóng">×</button></header>
     <p id="desktopDownloadDesc" class="desktop-download-desc">Chọn phiên bản Windows, macOS, Android hoặc iOS. Chỉ hiện tệp phát hành có thật trên GitHub.</p>
+    <details class="desktop-download-ios-shortcut" id="iosShortcutInstall">
+     <summary class="desktop-download-shortcut-summary">
+      <span class="desktop-download-shortcut-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="2" width="12" height="20" rx="3"/><path d="M10 18h4M12 14V7m-3 3 3-3 3 3"/></svg></span>
+      <span class="desktop-download-shortcut-copy"><strong>Cài app cho iOS (không cần ký)</strong><small>Safari hoặc Chrome · Đưa Web ra Màn hình chính</small></span>
+      <span class="desktop-download-shortcut-chevron" aria-hidden="true">⌄</span>
+     </summary>
+     <div class="desktop-download-shortcut-steps">
+      <ol>
+       <li>Mở <a href="https://trisanghy.github.io/open-iptv-pro/" class="desktop-download-web-link">Open IPTV Pro Web</a> bằng <strong>Safari hoặc Chrome</strong> trên iPhone/iPad.</li>
+       <li>Nhấn nút <strong>Chia sẻ</strong> <svg class="desktop-download-share-symbol" role="img" aria-label="Biểu tượng Chia sẻ" viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V3m-4 4 4-4 4 4"/><path d="M6 10H4v10h16V10h-2"/></svg> của trình duyệt.</li>
+       <li>Chọn <strong>Thêm vào Màn hình chính</strong> (Add to Home Screen), rồi nhấn <strong>Thêm</strong>.</li>
+      </ol>
+      <p class="desktop-download-shortcut-note">Đây là ứng dụng Web/lối tắt trên Màn hình chính, <strong>không phải file IPA</strong>. Không cần ký ứng dụng, chứng chỉ hay Apple Developer.</p>
+     </div>
+    </details>
     <p id="desktopDownloadStatus" class="desktop-download-status" role="status" aria-live="polite">Đang kiểm tra phiên bản…</p>
     <div id="desktopDownloadOptions" class="desktop-download-options"></div>
     <div class="desktop-download-actions">
@@ -94,6 +109,8 @@ const mobileFormats=[
   const list=overlay.querySelector('#desktopDownloadOptions');
   const status=overlay.querySelector('#desktopDownloadStatus');
   const cross=overlay.querySelector('.desktop-download-close');
+  const iosShortcut=overlay.querySelector('#iosShortcutInstall');
+  if(iosShortcut&&/iPhone|iPad|iPod/i.test(String(root.navigator?.userAgent||'')))iosShortcut.open=true;
   let loaded=false,loading=null,previous=null;
   function render(desktop,mobile){
    list.replaceChildren();
