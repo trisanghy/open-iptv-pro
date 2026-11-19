@@ -20,9 +20,12 @@
  }
  function alternatives(channel,channels=[],manual={}){
   if(!channel)return [];
+  const embedded=Array.isArray(channel.alternates)?channel.alternates:[];
   const saved=Array.isArray(manual?.[channel.id])?manual[channel.id]:[];
   const discovered=channels.filter(c=>c.id!==channel.id&&sameChannel(channel,c)).map(c=>c.url);
-  return [...new Set([channel.url,...saved,...discovered].filter(validURL))].slice(0,10);
+  // Original sources are hidden after merging; their distinct URLs survive
+  // in channel.alternates and must remain available for manual/auto failover.
+  return [...new Set([channel.url,...embedded,...saved,...discovered].filter(validURL))].slice(0,16);
  }
  function catchup(channel,program){
   if(!channel||!program||!channel.catchupSource||!validURL(channel.catchupSource))return null;
