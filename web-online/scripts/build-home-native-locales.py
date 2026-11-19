@@ -92,15 +92,15 @@ def assemble():
         missing=[key for key in english if not native.get(key)]
         if missing:raise RuntimeError('Missing homepage translations for '+language+': '+repr(missing[:5]))
         packed[language]={key:value for key,value in translations.items() if key in english}
-    payload='/* Pretranslated public homepage UI; no runtime network or IPTV user data. */\\n'
-    payload+='window.OpenIPTVHomeNativeLocales='+json.dumps(packed,ensure_ascii=False,separators=(',',':'))+';\\n'
+    payload='/* Pretranslated public homepage UI; no runtime network or IPTV user data. */\n'
+    payload+='window.OpenIPTVHomeNativeLocales='+json.dumps(packed,ensure_ascii=False,separators=(',',':'))+';\n'
     OUTPUT.write_text(payload,encoding='utf8')
     digest=hashlib.sha256(OUTPUT.read_bytes()).hexdigest()[:16]
-    script='<script src="home-native-locales.js?v='+digest+'"></script>\\n'
+    script='<script src="home-native-locales.js?v='+digest+'"></script>\n'
     anchor='<script id="homepage-language-controller">'
     if html.count(anchor)!=1:raise RuntimeError('Homepage localization controller moved')
     if 'src="home-native-locales.js?' not in html:html=html.replace(anchor,script+anchor)
-    else:html=re.sub(r'<script src="home-native-locales.js\\?v=[^"]+"></script>\\s*',script,html)
+    else:html=re.sub(r'<script src="home-native-locales.js\?v=[^"]+"></script>\s*',script,html)
     insertion='''const nativeHome=window.OpenIPTVHomeNativeLocales||{};
 for(const [language,items] of Object.entries(nativeHome)){
  const target=translations[language]||(translations[language]={});
@@ -126,15 +126,16 @@ for(const [language,items] of Object.entries(nativeHome)){
     names={'vi':'Tiếng Việt','en':'English','zh':'简体中文','ja':'日本語','ko':'한국어',
       'th':'ไทย','fr':'Français','de':'Deutsch','es':'Español','pt':'Português',
       'id':'Bahasa Indonesia','ru':'Русский',**NEW_NAMES}
-    html=re.sub(r'const preferredName=\\{[^;]+;', 'const preferredName='+json.dumps(names,ensure_ascii=False)+';',html,count=1)
+    html=re.sub(r'const preferredName=\{[^;]+;', 'const preferredName='+json.dumps(names,ensure_ascii=False)+';',html,count=1)
     oldlang="document.documentElement.lang=code==='zh'?'zh-CN':code;"
     if oldlang not in html:raise RuntimeError('HTML lang setter moved')
     html=html.replace(oldlang,"document.documentElement.lang=code==='zh'?'zh-CN':code==='pt'?'pt-BR':code;")
     html=html.replace("document.documentElement.dir='ltr';","document.documentElement.dir=code==='ar'?'rtl':'ltr';")
-    for code,title in NEW_TITLES.items():
-        if code+':' not in html.split('const titles=',1)[1].split(';',1)[0]:
-            html=html.replace("ru:'Open IPTV Pro — IPTV-плеер для веба и компьютера'};",
-              "ru:'Open IPTV Pro — IPTV-плеер для веба и компьютера',"+code+":"+repr(title)+"};")
+    title_anchor="ru:'Open IPTV Pro — IPTV-плеер для веба и компьютера'};"
+    if title_anchor not in html:
+        raise RuntimeError('Homepage page title dictionary moved')
+    added_titles=','.join(code+':'+json.dumps(title,ensure_ascii=False) for code,title in NEW_TITLES.items())
+    html=html.replace(title_anchor, "ru:'Open IPTV Pro — IPTV-плеер для веба и компьютера',"+added_titles+"};",1)
     oldmeta="if(desc&&code!=='vi')desc.content='Open IPTV Pro: open-source IPTV player and M3U playlist manager for Web, Windows and macOS. Features, screenshots, guides, source code and official downloads.';"
     if oldmeta not in html:raise RuntimeError('Homepage description setter moved')
     html=html.replace(oldmeta,"if(desc&&code!=='vi')desc.content=resolve("+json.dumps(META_KEY,ensure_ascii=False)+",code);",1)
