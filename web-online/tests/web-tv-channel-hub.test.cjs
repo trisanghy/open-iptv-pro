@@ -43,19 +43,26 @@ test('channel hub labels exist for all 17 supported UI languages',()=>{
 test('Web only channel hub loads after player and survives WebView rebuild',()=>{
  assert.equal(read('web-online/web-tv-channel-hub.js'),read('web-tv-channel-hub.js'));
  assert.equal(read('web-online/web-tv-channel-hub.css'),css);
- assert.equal((html.match(/src="web-tv-channel-hub[.]js[?]v=tv-hub-20261119a"/g)||[]).length,1);
- assert.equal((html.match(/href="web-tv-channel-hub[.]css[?]v=tv-hub-20261119a"/g)||[]).length,1);
+ assert.equal((html.match(/src="web-tv-channel-hub[.]js[?]v=tv-hub-20261119b"/g)||[]).length,1);
+ assert.equal((html.match(/href="web-tv-channel-hub[.]css[?]v=tv-hub-20261119b"/g)||[]).length,1);
  assert.ok(html.indexOf('web-tv-channel-hub.js?v=')>html.indexOf('app.js?v='));
  assert.ok(builder.includes("for filename in ('web-tv-channel-hub.js','web-tv-channel-hub.css')"));
- assert.ok(builder.includes("hub_js='<script src=\"web-tv-channel-hub.js?v=tv-hub-20261119a\"></script>'"));
- assert.ok(builder.includes("hub_css='<link rel=\"stylesheet\" href=\"web-tv-channel-hub.css?v=tv-hub-20261119a\"/>'"));
+ assert.ok(builder.includes("hub_js='<script src=\"web-tv-channel-hub.js?v=tv-hub-20261119b\"></script>'"));
+ assert.ok(builder.includes("hub_css='<link rel=\"stylesheet\" href=\"web-tv-channel-hub.css?v=tv-hub-20261119b\"/>'"));
  assert.match(read('web-tv-channel-hub.js'),/quick\.insertAdjacentElement\('afterend',hub\)/);
  assert.match(read('web-tv-channel-hub.js'),/api\(\)\?\.playChannel\?\.\(c\.id\)/);
  assert.match(read('web-tv-channel-hub.js'),/f\.toggle\(data,c\)/);
  assert.match(read('web-tv-channel-hub.js'),/ctx\.save\?\.\(\)===false/);
  assert.match(read('web-tv-channel-hub.js'),/getChannels\?\.\(\)/);
  assert.match(css,/html\[data-iptv-device="mobile"\] body #page-tv #webChannelHub/);
- assert.match(css,/order:7!important/);
+ assert.match(css,/html\\[data-iptv-device="mobile"\\] body #page-tv #webChannelHub\\{\\s*display:none!important/);
+ assert.match(css,/#page-tv #webChannelHub\\{[\\s\\S]*?display:grid/);
+ assert.doesNotMatch(css,/order:7!important/);
+ assert.match(read('web-tv-channel-hub.js'),/getAttribute\\('data-iptv-device'\\)==='mobile'\\)return/);
+ assert.match(read('web-tv-channel-hub.js'),/addEventListener\\('resize',schedule/);
+ assert.match(read('web-mobile-player.css'),/#page-tv \\.channel-panel/);
+ assert.match(html,/class="nav active" data-page="tv"/);
+ assert.match(html,/class="nav" data-page="fav"/);
  assert.ok(html.includes('id="quickTools"'));
  for(const id of ['appSidebar','channelList','page-fav','themeGuidePanel','themeChannelStrip','favCurrentBtn'])
   assert.ok(html.includes('id="'+id+'"'),'Original IPTV feature missing: '+id);
@@ -67,4 +74,28 @@ test('Web only channel hub loads after player and survives WebView rebuild',()=>
  assert.match(read('web-tv-channel-hub.js'),/web-hub-view-toggle/);
  assert.match(css,/#page-tv \.web-hub-side-card/);
  assert.match(css,/min-width:0/);
+});
+
+
+test('browser layout keeps desktop selector visible but hides it on mobile', {skip:!process.env.CHANNEL_HUB_CHROME},()=>{
+ const os=require('node:os');
+ const {execFileSync}=require('node:child_process');
+ const dir=fs.mkdtempSync(path.join(os.tmpdir(),'openiptv-hub-responsive-'));
+ try{
+  for(const device of ['mobile','desktop']){
+   const fixture='<!doctype html><html data-iptv-device="'+device+'"><head><meta name="viewport" content="width=device-width,initial-scale=1"><style>'
+    +css+'</style></head><body><section id="page-tv"><div class="watch-panel">'
+    +'<details id="quickTools"><summary>Tools</summary></details>'
+    +'<section id="webChannelHub"><div class="web-hub-main">Channel picker</div></section>'
+    +'</div><div class="channel-panel" id="originalChannels">Original channels</div></section>'
+    +'<script>window.addEventListener("load",()=>{document.body.dataset.hubDisplay=getComputedStyle(document.getElementById("webChannelHub")).display;document.body.dataset.listDisplay=getComputedStyle(document.getElementById("originalChannels")).display;});</script></body></html>';
+   const file=path.join(dir,'test-'+device+'.html');fs.writeFileSync(file,fixture);
+   const rendered=execFileSync(process.env.CHANNEL_HUB_CHROME,
+    ['--headless','--no-sandbox','--disable-gpu','--allow-file-access-from-files','--window-size='+(device==='mobile'?'390,840':'1440,900'),'--dump-dom','file://'+file],
+    {encoding:'utf8',timeout:30000,stdio:['ignore','pipe','pipe']});
+   const display=rendered.match(/data-hub-display="([^"]+)"/)?.[1];
+   assert.equal(display,device==='mobile'?'none':'grid',device+' channel hub display');
+   assert.match(rendered,/data-list-display="(?!none)[^"]+"/,device+' original channel panel remains available');
+  }
+ }finally{fs.rmSync(dir,{recursive:true,force:true});}
 });
