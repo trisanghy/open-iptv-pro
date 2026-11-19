@@ -168,10 +168,11 @@ test('safety: refuse javascript, invalid and mixed content sources on HTTPS',()=
 test('Web files and builder preserve UI after rebuild without changing native branches',()=>{
  const html=read('index.html'),builder=read('web-online/prepare-web.py'),code=read('web-background-audio.js');
  assert.equal(html.split('id="webBackgroundAudioToggle"').length,2);
- assert.equal(html.split('id="webBackgroundAudioBar"').length,2);
- assert.ok(html.includes('web-background-audio.js?v=lock-audio-20261119d'));
- assert.ok(html.includes('web-background-audio.css?v=lock-audio-20261119d'));
- assert.ok(builder.includes('audio_bar=web_html['));
+ assert.equal(html.split('id="webBackgroundAudioBar"').length,1);
+ assert.match(html,/id="favCurrentBtn"[\s\S]*?id="webBackgroundAudioToggle"/);
+ assert.ok(html.includes('web-background-audio.js?v=lock-artwork-20261119e'));
+ assert.ok(html.includes('web-background-audio.css?v=lock-artwork-20261119e'));
+ assert.ok(builder.includes('compact_audio=web_html['));
  assert.ok(builder.includes("'web-background-audio.css'"));
  assert.equal(read('web-online/web-background-audio.js'),code);
  assert.equal(read('web-online/web-background-audio.css'),read('web-background-audio.css'));

@@ -166,10 +166,12 @@ jobs:
           node --check _site/web-background-audio.js
           node --test web-online/tests/web-background-audio.test.cjs
           node --test web-online/tests/web-background-audio-mode.test.cjs
+          node --test web-online/tests/web-background-audio-artwork.test.cjs
+          if grep -Fq 'id="webBackgroundAudioBar"' _site/index.html; then exit 1; fi
           grep -Fq 'id="webBackgroundAudioToggle"' _site/index.html
-          grep -Fq 'web-background-audio.css?v=lock-audio-20261119d' _site/index.html
+          grep -Fq 'web-background-audio.css?v=lock-artwork-20261119e' _site/index.html
           grep -Fq 'id="webBackgroundAudio"' _site/index.html
-          grep -Fq 'web-background-audio.js?v=lock-audio-20261119d' _site/index.html
+          grep -Fq 'web-background-audio.js?v=lock-artwork-20261119e' _site/index.html
           node --check _site/web-autoplay.js
           node --test web-online/tests/web-autoplay.test.cjs
           node --check _site/cloud-core.js

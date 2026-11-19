@@ -14,10 +14,39 @@
 })(typeof window!=='undefined'?window:null,function(){
  const ACTIONS=['play','pause','stop','previoustrack','nexttrack'];
  const txt=(value,fallback)=>String(value==null?'':value).trim().slice(0,160)||fallback;
- function metadataFor(channel){
+ const ICON_ART={src:'assets/icon.png',sizes:'512x512',type:'image/png'};
+ // Web snapshots are keyed by channel URL, logos are parsed from the M3U.
+ function imageArt(raw){
+  if(typeof raw!=='string'||!raw)return null;
+  const src=raw.trim();
+  if(src.length>3000000)return null;
+  const encoded=/^data:image\/(jpeg|png|webp);base64,([a-z0-9+/]+={0,2})$/i.exec(src);
+  if(encoded)return {src,type:'image/'+encoded[1].toLowerCase()};
+  try{
+   const url=new URL(src);
+   if(url.protocol!=='https:'||url.username||url.password)return null;
+   const ext=url.pathname.match(/\.(png|jpe?g|webp)$/i)?.[1]?.toLowerCase();
+   const type=ext?'image/'+(ext==='jpg'?'jpeg':ext):null;
+   return type?{src:url.href,type}:{src:url.href};
+  }catch{return null;}
+ }
+ function artworkCandidates(channel,store){
+  if(!channel)return [ICON_ART];
+  const shots=store?.snapshots||{};
+  const snap=shots[channel.url]||shots[channel.lastPlayableUrl];
+  const images=[snap?.data,snap?.thumbnail,snap?.thumb,channel.thumbnail,channel.thumb,channel.logo];
+  const artwork=[],seen=new Set();
+  for(const raw of images){
+   const art=imageArt(raw);
+   if(art&&!seen.has(art.src)){seen.add(art.src);artwork.push(art);}
+  }
+  artwork.push(ICON_ART);
+  return artwork;
+ }
+ function metadataFor(channel,store){
   if(!channel||typeof channel!=='object')return null;
   return {title:txt(channel.name,'Kênh IPTV'),artist:txt(channel.group,'Open IPTV Pro'),
-   album:'Open IPTV Pro',artwork:[{src:'assets/icon.png',sizes:'512x512',type:'image/png'}]};
+   album:'Open IPTV Pro',artwork:[artworkCandidates(channel,store)[0]]};
  }
  function isAllowedStream(url,origin){
   try{
@@ -40,7 +69,7 @@
   const enabled=()=>store.backgroundAudioEnabled!==false;
   const say=msg=>{if(modeState)modeState.textContent=msg;};
   const info=msg=>{if(statusText)statusText.textContent=msg;};
-  let audio=null,hls=null,dash=null,active=false,transition=0,streamKey='',lastTitle='',ownsAudioSession=false,installed=false;
+  let audio=null,hls=null,dash=null,active=false,transition=0,streamKey='',lastTitle='',lastArtworkRequest='',artworkRevision=0,ownsAudioSession=false,installed=false;
   let pausedBeforeTransition=false,needsVideoRestore=false;
   const sourceFor=channel=>{
    if(!channel)return '';
@@ -77,6 +106,7 @@
    toggle.disabled=!enabled();
    const label=active?'Quay lại xem TV':'Nghe nền · khóa màn hình';
    toggle.setAttribute('aria-label',label);
+   toggle.title=label;
    const name=toggle.querySelector?.('.background-audio-name');
    if(name)name.textContent=active?'Xem TV':'Nghe nền';
   }
@@ -108,7 +138,7 @@
   function clearSession(){
    deactivate(false);
    if(installed){for(const action of ACTIONS)safeAction(action,null);}
-   installed=false;lastTitle='';
+   installed=false;lastTitle='';lastArtworkRequest='';artworkRevision++;
    if(session)try{session.metadata=null;session.playbackState='none';}catch{}
    releaseAudioType();
   }
@@ -129,9 +159,35 @@
    const channel=app.getCurrent?.();
    if(!enabled()||!channel){clearSession();if(enabled())applyAudioType();return;}
    register();
-   const data=metadataFor(channel),key=channel.id+'|'+data.title+'|'+data.artist;
-   if(session&&key!==lastTitle){
-    try{session.metadata=typeof win.MediaMetadata==='function'?new win.MediaMetadata(data):data;lastTitle=key;}catch{lastTitle='';}
+   const data=metadataFor(channel,store),key=channel.id+'|'+data.title+'|'+data.artist;
+   const candidates=artworkCandidates(channel,store);
+   const request=candidates[0]?.src||ICON_ART.src;
+   if(session&&(key!==lastTitle||request!==lastArtworkRequest)){
+    lastArtworkRequest=request;
+    const revision=++artworkRevision;
+    const setArtwork=index=>{
+     if(revision!==artworkRevision||!enabled()||app.getCurrent?.()?.id!==channel.id)return;
+     const art=candidates[index]||ICON_ART;
+     const updated={...data,artwork:[art]};
+     try{
+      session.metadata=typeof win.MediaMetadata==='function'?new win.MediaMetadata(updated):updated;
+      lastTitle=key;
+     }catch{
+      if(index+1<candidates.length)setArtwork(index+1);
+      else lastTitle='';
+      return;
+     }
+     // Broken snapshots can fall back to a channel logo, then to the app icon.
+     // Preload once per change, never poll/refresh media on background visibility.
+     if(index+1<candidates.length&&typeof win.Image==='function'){
+      try{
+       const img=new win.Image();
+       img.onerror=()=>setArtwork(index+1);
+       img.src=art.src;
+      }catch{setArtwork(index+1);}
+     }
+    };
+    setArtwork(0);
    }
    if(active&&audio){
     const nextKey=channel.id+'|'+sourceFor(channel);
@@ -232,7 +288,7 @@
     await startAudio(audio,url,token);
     if(token!==transition)return false;
     say('Đang nghe nền · có thể khóa màn hình. Nhấn Xem TV để trở lại hình ảnh.');
-    refreshState();
+    sync();refreshState();
     return true;
    }catch(e){
     if(token!==transition)return false;
@@ -289,5 +345,5 @@
   refreshButton();sync();
   return Object.freeze({sync,clearSession,activate,deactivate,get active(){return active;}});
  }
- return Object.freeze({metadataFor,isAllowedStream,install});
+ return Object.freeze({metadataFor,artworkCandidates,imageArt,isAllowedStream,install});
 });
