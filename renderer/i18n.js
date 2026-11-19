@@ -13,6 +13,8 @@
   for(const [lang,entries] of Object.entries(patchOther)){
     Object.assign(dictionaries[lang]||(dictionaries[lang]={}),entries);
   }
+  const coverage=window.OpenIPTVEnglishCoverage;
+  if(coverage?.exact)Object.assign(dictionaries.en||(dictionaries.en={}),coverage.exact);
   const key='open-iptv-pro-language';
   let locale='vi';
   try{const stored=localStorage.getItem(key);if(stored && Object.hasOwn(locales,stored))locale=stored;}catch{}
@@ -63,6 +65,7 @@
       const v=compact.match(/^Phiên bản hiện tại: (.+)$/);
       if(v)out=(dict['Phiên bản hiện tại']||'Current version')+': '+v[1];
     }
+    if(!out)out=coverage?.dynamic?.(compact);
     if(!out)return raw;
     const leading=raw.match(/^\s*/)?.[0]||'',trailing=raw.match(/\s*$/)?.[0]||'';
     return leading+out+trailing;
@@ -136,6 +139,11 @@
     }
   });
   observer.observe(document.documentElement,{subtree:true,childList:true,characterData:true,attributes:true,attributeFilter:attributeList});
+  // Native dialogs are outside DOM localization; translate the message, not its result.
+  for(const kind of ['alert','confirm']){
+    const original=window[kind];
+    if(typeof original==='function')window[kind]=function(message,...args){return original.call(window,translate(String(message)),...args);};
+  }
   window.OpenIPTVI18n=Object.freeze({locales,getLanguage:()=>locale,setLanguage,t:translate,apply});
   const setup=()=>{
     const control=document.getElementById('appLanguage');
