@@ -29,7 +29,7 @@ test('full screen, muted and favourite states use accessible correct icons',()=>
 test('only player buttons are decorated; no duplicates or handler rewrites',()=>{
  for(const id of ['prevBtn','playBtn','stopBtn','nextBtn','fullscreenBtn','castBtn','pipBtn'])
   assert.equal((html.match(new RegExp('id="'+id+'"','g'))||[]).length,1,id);
- assert.ok(html.includes('web-player-icons.css?v=quick-icons-unified-20261119a'));
+ assert.ok(html.includes('web-player-icons.css?v=single-icon-first-paint-20261119a'));
  assert.ok(html.includes('web-player-icons.js?v=audio-state-sync-20261119a'));
  assert.match(workflow,/node --test web-online\/tests\/web-player-icons.test.cjs/);
 });
@@ -102,4 +102,22 @@ test('SVG state reads the foreground audio controller and provides a sync hook',
  const source=fs.readFileSync(path.join(root,'web-player-icons.js'),'utf8');
  assert.match(source,/derive\(video,root\.OpenIPTVBackgroundAudio\)/);
  assert.match(source,/root\.OpenIPTVPlayerIcons=Object\.freeze\(\{sync\}\)/);
+});
+
+test('first paint hides Unicode glyphs with higher specificity than old toolbar rules',()=>{
+ const old=fs.readFileSync(path.join(root,'player-two-row-v42335.css'),'utf8');
+ assert.match(old,/#page-tv \.controls\.transport-controls #playBtn \{/);
+ assert.match(old,/font-size:22px!important/);
+ assert.match(old,/#page-tv \.player-control-card #favCurrentBtn/);
+ for(const rule of [
+  /html body #page-tv \.player-control-card \.control-layout-top \.controls\.transport-controls/,
+  /html body #page-tv \.player-control-card \.control-layout-top \.output-controls/,
+  /html body #page-tv \.player-control-card \.control-layout-bottom/,
+  /html body #page-tv \.watch-panel \.player-box \.fullscreen-ux/
+ ])assert.match(css,rule);
+ const last=css.slice(css.lastIndexOf('/* First-paint regression guard'));
+ assert.match(last,/font-size:0!important/);
+ assert.match(last,/line-height:0!important/);
+ assert.match(css,/#page-tv #playBtn\[data-iptv-playing="true"\]::before/);
+ assert.match(css,/#page-tv #favCurrentBtn\[aria-pressed="true"\]::before/);
 });

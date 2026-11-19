@@ -229,7 +229,7 @@ html=html.replace('<script src="app.js"></script>','<script src="web-mobile-play
 html=html.replace('</head>','<link rel="stylesheet" href="web-mobile-player.css?v=desktop-handheld-fs-20261119a"/></head>',1)
 html=html.replace('src="theme-boot.js"','src="theme-boot.js?v=responsive-desktop-20261118j"',1)
 html=html.replace('</body>','<script src="supabase-sdk.js"></script><script src="cloud-core.js"></script><script src="web-only.js"></script><script src="resume-last.js?v=autoplay-clean-20261119a"></script><script src="web-volume.js"></script><script src="cloud-sync.js"></script><script src="web-player-icons.js?v=audio-state-sync-20261119a"></script></body>',1)
-html=html.replace('</head>','<link rel="stylesheet" href="web-player-icons.css?v=quick-icons-unified-20261119a"/><link rel="stylesheet" href="web-tv-wide.css?v=tv-wide-responsive-fill-20261119a"/><link rel="stylesheet" href="web-mobile-controls-polish.css?v=quick-icons-unified-20261119a"/></head>',1)
+html=html.replace('</head>','<link rel="stylesheet" href="web-player-icons.css?v=single-icon-first-paint-20261119a"/><link rel="stylesheet" href="web-tv-wide.css?v=tv-wide-responsive-fill-20261119a"/><link rel="stylesheet" href="web-mobile-controls-polish.css?v=quick-icons-unified-20261119a"/></head>',1)
 # The old PiP label overlaps the vector icon even with font-size:0 in Safari.
 # Preserve the button ID and its accessible aria-label.
 pip_caption='<span class="pip-label">PiP</span>'

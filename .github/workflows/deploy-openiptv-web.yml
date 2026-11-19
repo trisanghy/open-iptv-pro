@@ -151,6 +151,7 @@ jobs:
           node --check _site/app.js
           node --check _site/web-player-icons.js
           node --test web-online/tests/web-player-icons.test.cjs
+          ICON_FIRST_PAINT_CHROME="$(command -v google-chrome)" node --test web-online/tests/web-player-icons-first-paint.test.cjs
           node --test web-online/tests/web-mobile-controls-polish.test.cjs
           node --test web-online/tests/web-quick-tools-icons.test.cjs
           if grep -Fq 'id="quickShotCurrent"' _site/index.html; then echo 'Redundant Quick Tools screenshot action remains'; exit 1; fi
@@ -158,7 +159,7 @@ jobs:
           node --check _site/cast-ui.js
           node --test web-online/tests/web-airplay.test.cjs
           grep -Fq 'x-webkit-airplay="allow"' _site/index.html
-          grep -Fq 'web-player-icons.css?v=quick-icons-unified-20261119a' _site/index.html
+          grep -Fq 'web-player-icons.css?v=single-icon-first-paint-20261119a' _site/index.html
           grep -Fq 'web-player-icons.js?v=audio-state-sync-20261119a' _site/index.html
           node --check _site/theme-boot.js
           grep -Fq 'src="theme-boot.js?v=responsive-desktop-20261118j"' _site/index.html

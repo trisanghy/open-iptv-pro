@@ -182,3 +182,19 @@ html[data-iptv-device="mobile"] body #castModal[data-airplay-mobile="true"] .mod
 #page-tv #quickTools .quick-grid :is(#quickChecks,#quickShots,#quickExport) {
   --iptv-quick-icon-color:var(--accent,#b980ed);
 }
+
+/* First-paint regression guard, desktop + iPhone:
+   Old toolbar rules restore 20-29px text with !important, exposing the
+   original Unicode glyph below the SVG CSS mask. Make text invisible from
+   the first stylesheet paint, before JS, without touching button handlers. */
+html body #page-tv .player-control-card .control-layout-top .controls.transport-controls
+:is(#prevBtn,#playBtn,#stopBtn,#nextBtn),
+html body #page-tv .player-control-card .control-layout-top .output-controls
+:is(#webVolumeMute,#castBtn,#pipBtn,#fullscreenBtn),
+html body #page-tv .player-control-card .control-layout-bottom
+:is(#openGuideBtn,#favCurrentBtn),
+html body #page-tv .watch-panel .player-box .fullscreen-ux
+:is(#fsPrev,#fsPlay,#fsNext,#fsExit){
+ font-size:0!important;
+ line-height:0!important;
+}
