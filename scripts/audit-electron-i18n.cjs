@@ -19,7 +19,7 @@ function engine(){
  class MutationObserver{observe(){}}
  const window={OPEN_IPTV_TRANSLATIONS:structuredClone(data)};
  const environment={window,document,MutationObserver,localStorage:{getItem:()=>null,setItem(){}},CustomEvent:class{}};
- for(const file of ['renderer/i18n-english-coverage.js','renderer/i18n-multilingual-packs.js','renderer/i18n.js'])
+ for(const file of ['renderer/i18n-english-coverage.js','renderer/i18n-multilingual-packs.js','renderer/i18n-full-locale-pack.js','renderer/i18n.js'])
   vm.runInNewContext(read(file),environment,{timeout:5000,filename:file});
  return window.OpenIPTVI18n;
 }

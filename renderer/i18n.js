@@ -60,6 +60,15 @@
     const target=dictionaries[lang]||(dictionaries[lang]={});
     for(const [key,value] of Object.entries(entries))if(!target[key])target[key]=value;
   }
+  // Generated labels supplement missing or English-equivalent native entries only.
+  const completedLocalePacks=window.OpenIPTVCompletedLocales?.packs||{};
+  for(const [lang,items] of Object.entries(completedLocalePacks)){
+    const target=dictionaries[lang]||(dictionaries[lang]={});
+    const english=dictionaries.en||{};
+    for(const [key,value] of Object.entries(items)){
+      if(!target[key]||target[key]===key||target[key]===english[key])target[key]=value;
+    }
+  }
   const key='open-iptv-pro-language';
   let locale='vi';
   try{const stored=localStorage.getItem(key);if(stored && Object.hasOwn(locales,stored))locale=stored;}catch{}
