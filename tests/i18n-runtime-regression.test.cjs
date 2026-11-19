@@ -13,7 +13,12 @@ function engine(){
  const doc={documentElement:el,readyState:'loading',addEventListener(){}};
  class MutationObserver{observe(){}}
  const window={OPEN_IPTV_TRANSLATIONS:structuredClone(dict)};
- vm.runInNewContext(code,{window,document:doc,MutationObserver,localStorage:{getItem:()=>null,setItem(){}},CustomEvent:class {}},{timeout:5000});
+ const context={window,document:doc,MutationObserver,localStorage:{getItem:()=>null,setItem(){}},CustomEvent:class {}};
+ for(const filename of ['renderer/locales/rustlab-expanded-v23-8-40.js','renderer/locales/rustlab-extra-v23-8-43.js']){
+  const script=fs.readFileSync(path.join(root,filename),'utf8');
+  vm.runInNewContext(script,context,{timeout:5000});
+ }
+ vm.runInNewContext(code,context,{timeout:5000});
  return window.OpenIPTVI18n;
 }
 test('all 17 locales selectable without network or data mutation',()=>{
