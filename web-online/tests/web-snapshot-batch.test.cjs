@@ -34,6 +34,6 @@ test('Web app and build both use the same unlimited queue and keep cancellation'
  assert.doesNotMatch(app,/pending\.length\s*=\s*80/);
  assert.match(html,/web-snapshot-batch\.js\?v=snapshot-all-20261119b/);
  assert.match(builder,/web-snapshot-batch\.js/);
- assert.match(builder,/web_app\[snapshot_start:web_app\.index\(snapshot_end,snapshot_start\)\]/);
+ assert.match(builder,/web_app\[web_app\.index\(snapshot_start\):web_app\.index\(snapshot_end,web_app\.index\(snapshot_start\)\)\]/);
  assert.equal(read('web-online/web-snapshot-batch.js'),read('web-snapshot-batch.js'));
 });
