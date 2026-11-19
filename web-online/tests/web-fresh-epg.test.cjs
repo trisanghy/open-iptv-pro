@@ -111,3 +111,72 @@ test('VTV3 with playlist suffix resolves current and following XMLTV entries',()
  assert.equal(pair.now.title,'A');assert.equal(pair.next.title,'B');
  assert.notEqual(g.tidy('VTV5 Tây Nguyên (Nguồn 3)'),g.tidy('VTV5'));
 });
+
+test('XMLTV parser keeps programmes beyond 12,000 and indexes late-channel schedules',()=>{
+ const source=fs.readFileSync(path.join(root,'epg.js'),'utf8');
+ const clock=new Date(Date.now()+3600000);
+ const stamp=date=>date.toISOString().replace(/[-:T]/g,'').slice(0,14)+' +0000';
+ const start=stamp(clock),stop=stamp(new Date(clock.getTime()+1800000));
+ const early={getAttribute:key=>key==='id'?'early':'',getElementsByTagName:()=>[{textContent:'Early'}]};
+ const late={getAttribute:key=>key==='id'?'late':'',getElementsByTagName:()=>[{textContent:'Late'}]};
+ const programme=ch=>({
+  getAttribute:key=>key==='channel'?ch:key==='start'?start:key==='stop'?stop:'',
+  getElementsByTagName:key=>[{textContent:key==='title'?ch+' broadcast':'Description'}]
+ });
+ const entries=Array.from({length:13015},()=>programme('early'));
+ entries.push(programme('late'));
+ const doc={documentElement:{tagName:'tv'},querySelector:()=>null,getElementsByTagName:key=>
+  key==='channel'?[early,late]:key==='programme'?entries:[]};
+ const env={DOMParser:class{parseFromString(){return doc;}}};
+ vm.runInNewContext(source,env);
+ const guide=env.IPTVGuide.parse('<tv/>',[{id:'late',tvgId:'late',name:'Late'}]);
+ assert.equal(guide.programmes.length,13016);
+ const last=env.IPTVGuide.find(guide,{id:'late',tvgId:'late',name:'Late'});
+ assert.equal(last.length,1);
+ assert.equal(last[0].title,'late broadcast');
+ assert.equal(env.IPTVGuide.current(guide,{id:'late',tvgId:'late',name:'Late'},clock.getTime()-1).next.title,'late broadcast');
+ assert.match(source,/programmeIndexes=new WeakMap/);
+});
+test('full EPG survives a simulated IndexedDB save/reload without localStorage quota',async()=>{
+ const cacheBlock=js.slice(js.indexOf(' let guide={names:{},programmes:[]'),js.indexOf(' function rgbToHsv('));
+ assert.match(cacheBlock,/async function saveGuideInDatabase/);
+ let stored;
+ const indexedDB={
+  open:()=>{const database={
+   objectStoreNames:{contains:()=>true},createObjectStore:()=>{},close:()=>{},
+   transaction:()=>{
+    const tx={};
+    tx.objectStore=()=>({
+     put:(value)=>{stored=structuredClone(value);queueMicrotask(()=>tx.oncomplete?.());},
+     get:()=>{const req={};queueMicrotask(()=>{req.result=stored;req.onsuccess?.();});return req;}
+    });
+    return tx;
+   }
+  };const req={result:database};queueMicrotask(()=>req.onsuccess?.());return req;}
+ };
+ const localStorage={getItem:()=>null,setItem:()=>{throw Error('QuotaExceededError');},removeItem:()=>{}};
+ function harness(){
+  return vm.runInNewContext('(()=>{'+cacheBlock+';return {cacheGuide,restoreGuideCache,setGuide:(g)=>{guide=g;updatedAt=new Date().toISOString();},getGuide:()=>guide};})()',{
+   indexedDB,localStorage,config:{manualMappings:{'user':'late'},offsetMinutes:30},
+   ctx:{toast:()=>{},renderList:()=>{}},renderGuidePages:()=>{},structuredClone,queueMicrotask
+  });
+ }
+ const first=harness();
+ const programmes=Array.from({length:13077},(_,i)=>({id:'late',start:i,end:i+1,title:'show '+i,description:''}));
+ first.setGuide({names:{late:'late'},aliasesById:{late:['Late']},programmes});
+ assert.equal(await first.cacheGuide(),true);
+ assert.equal(stored.guide.programmes.length,13077);
+ const second=harness();
+ await second.restoreGuideCache();
+ assert.equal(second.getGuide().programmes.length,13077);
+ assert.equal(second.getGuide().manualMappings.user,'late');
+ assert.equal(second.getGuide().offsetMinutes,30);
+});
+test('Web merge and import never truncate schedules at 12,000 items',()=>{
+ assert.doesNotMatch(js,/programmes\\.slice\\(0,\\s*12000\\)/);
+ const source=fs.readFileSync(path.join(root,'epg.js'),'utf8');
+ assert.doesNotMatch(source,/out\\.length\\s*>=\\s*12000/);
+ const builder=fs.readFileSync(path.join(root,'web-online/prepare-web.py'),'utf8');
+ assert.match(builder,/uncapped EPG merge\\/import/);
+ assert.match(builder,/IndexedDB guide cache/);
+});
