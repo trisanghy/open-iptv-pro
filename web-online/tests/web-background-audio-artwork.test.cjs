@@ -83,10 +83,10 @@ test('compact headphone icon shares EPG control row and source/favorite remain a
  assert.match(css,/grid-template-columns:minmax\(0,1fr\) minmax\(0,1fr\) 40px 44px!important/);
  assert.match(css,/#webBackgroundAudioToggle\.active/);
  assert.ok(html.includes('web-background-audio.css?v=lock-artwork-20261119e'));
- assert.ok(html.includes('web-background-audio.js?v=lock-artwork-20261119e'));
+ assert.ok(html.includes('web-background-audio.js?v=lock-controls-20261119f'));
  assert.ok(build.includes('compact_audio=web_html['));
  assert.ok(!build.includes("audio_bar_start="));
- assert.ok(build.includes('web-background-audio.js?v=lock-artwork-20261119e'));
+ assert.ok(build.includes('web-background-audio.js?v=lock-controls-20261119f'));
  assert.equal(read('web-online/web-background-audio.js'),read('web-background-audio.js'));
  assert.equal(read('web-online/web-background-audio.css'),css);
 });

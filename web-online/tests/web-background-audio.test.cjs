@@ -115,11 +115,11 @@ test('production build retains single controls and browser-only script',()=>{
  const count=(s,fragment)=>s.split(fragment).length-1;
  assert.equal(count(html,'id="webBackgroundAudio"'),1);
  assert.equal(count(html,'id="webBackgroundAudioStatus"'),1);
- assert.equal(count(html,'src="web-background-audio.js?v=lock-artwork-20261119e"'),1);
+ assert.equal(count(html,'src="web-background-audio.js?v=lock-controls-20261119f"'),1);
  assert.ok(html.indexOf('src="web-background-audio.js?')>html.indexOf('src="app.js?'));
  assert.ok(builder.includes("'web-background-audio.js'"));
  assert.ok(builder.includes('background_card=web_html['));
- assert.ok(builder.includes('web-background-audio.js?v=lock-artwork-20261119e'));
+ assert.ok(builder.includes('web-background-audio.js?v=lock-controls-20261119f'));
  assert.ok(code.includes('visibilitychange'));
  assert.doesNotMatch(code,/wakeLock\.request|setInterval\(|silent\.mp3|AudioContext\(/);
  assert.equal(read('web-online/web-background-audio.js'),code);

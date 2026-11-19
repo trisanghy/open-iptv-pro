@@ -9,10 +9,10 @@ function events(o){
  o.emit=(type,event={})=>{for(const fn of callbacks[type]||[])fn(event)};
  return o;
 }
-function fixture({playReject=false,chromeHls=false,initial={},allowAudio=true}={}){
+function fixture({playReject=false,chromeHls=false,initial={},allowAudio=true,withChannelSwitch=false}={}){
  const audioElements=[],handlers={};
  const video=events({
-  paused:false,pauseCalls:0,playCalls:0,volume:.7,muted:false,
+  paused:false,pauseCalls:0,playCalls:0,volume:.7,muted:false,suspended:0,
   pause(){this.paused=true;this.pauseCalls++;this.emit('pause');},
   play(){this.paused=false;this.playCalls++;this.emit('play');this.emit('playing');return Promise.resolve();}
  });
@@ -34,7 +34,7 @@ function fixture({playReject=false,chromeHls=false,initial={},allowAudio=true}={
   playBtn:events({textContent:'Ⅱ'}),
   stopBtn:stop,nextBtn:next,prevBtn:prev,manualStreamSelect:source};
  let channel={id:'vtv1',name:'VTV1',group:'Truyền hình',url:'https://example.org/live.m3u8'};
- const store={...initial},calls={save:0,channels:[]};
+ const store={...initial},calls={save:0,channels:[],switches:[],stops:0,suspends:0};
  const doc=events({
   visibilityState:'visible',body:{append(el){audioElements.push(el)}},
   getElementById:id=>els[id]||null,
@@ -67,7 +67,18 @@ function fixture({playReject=false,chromeHls=false,initial={},allowAudio=true}={
    getStore:()=>store,getCurrent:()=>channel,
    getChannels:()=>channel?[channel]:[],
    save(){calls.save++;return true},
-   playChannel(id){calls.channels.push(id);video.paused=false;return Promise.resolve()}
+   playChannel(id){calls.channels.push(id);return video.play()},
+   ...(withChannelSwitch?{
+    suspendVideoForBackground(){calls.suspends++;video.pause();video.suspended++;},
+    switchChannel(dir,opts){
+     calls.switches.push({dir,opts});
+     channel={id:dir>0?'vtv2':'vtv3',name:dir>0?'VTV2':'VTV3',group:'Truyền hình',url:dir>0?'https://example.org/next.m3u8':'https://example.org/previous.m3u8'};
+     doc.emit('openiptv:media-info');
+     doc.emit('openiptv:audio-channel',{detail:{channelId:channel.id,url:channel.url}});
+     return Promise.resolve();
+    },
+    stopPlayer(){calls.stops++;channel=null;doc.emit('openiptv:media-info');}
+   }:{})
   }
  });
  if(chromeHls){
@@ -114,8 +125,9 @@ test('lock-screen controls are linked to active audio, not the paused video',asy
  assert.equal(e.audioElements[0].paused,false);
  assert.equal(e.ms.playbackState,'playing');
  assert.equal(e.video.playCalls,0);
- e.els.playBtn.emit('click',{preventDefault(){},stopImmediatePropagation(){}});
+ e.controller.togglePlayback();
  assert.equal(e.audioElements[0].paused,true);
+ assert.equal(e.els.playBtn.textContent,'▶');
  e.handlers.nexttrack();e.handlers.previoustrack();e.handlers.stop();
  assert.equal(e.els.nextBtn.clicked,1);
  assert.equal(e.els.prevBtn.clicked,1);
@@ -170,11 +182,80 @@ test('Web files and builder preserve UI after rebuild without changing native br
  assert.equal(html.split('id="webBackgroundAudioToggle"').length,2);
  assert.equal(html.split('id="webBackgroundAudioBar"').length,1);
  assert.match(html,/id="favCurrentBtn"[\s\S]*?id="webBackgroundAudioToggle"/);
- assert.ok(html.includes('web-background-audio.js?v=lock-artwork-20261119e'));
+ assert.ok(html.includes('web-background-audio.js?v=lock-controls-20261119f'));
  assert.ok(html.includes('web-background-audio.css?v=lock-artwork-20261119e'));
  assert.ok(builder.includes('compact_audio=web_html['));
  assert.ok(builder.includes("'web-background-audio.css'"));
  assert.equal(read('web-online/web-background-audio.js'),code);
  assert.equal(read('web-online/web-background-audio.css'),read('web-background-audio.css'));
  assert.doesNotMatch(code,/AudioContext|wakeLock\.request|setInterval\(/);
+});
+
+test('Web application uses audio-only route and never spins up the video decoder for lock-screen next/previous',()=>{
+ const app=read('app.js'),builder=read('web-online/prepare-web.py');
+ assert.match(app,/function suspendVideoForBackground\(\)/);
+ assert.match(app,/if\(audioOnly\)\{\s*suspendVideoForBackground\(\)/);
+ assert.match(app,/openiptv:audio-channel/);
+ assert.match(app,/switchChannel\(dir,opts=\{\}\)/);
+ assert.match(app,/OpenIPTVBackgroundAudio\?\.active\)return window\.OpenIPTVBackgroundAudio\.togglePlayback\(\)/);
+ assert.match(app,/playChannel,switchChannel,suspendVideoForBackground,stopPlayer/);
+ assert.match(app,/if\(!window\.OpenIPTVBackgroundAudio\?\.active\)\$\('#playBtn'\)\.textContent='▶'/);
+ assert.match(builder,/audio_begin=' function suspendVideoForBackground\(\)\{'/);
+ assert.match(builder,/web_app\[web_app\.index\(audio_begin\):web_app\.index\(audio_end/);
+});
+test('video pause cannot override the audible Media Session or the Web play icon',async()=>{
+ const e=fixture({withChannelSwitch:true});
+ assert.equal(await e.controller.activate(),true);
+ assert.equal(e.calls.suspends,1);
+ assert.equal(e.els.playBtn.textContent,'Ⅱ');
+ assert.equal(e.ms.playbackState,'playing');
+ e.video.emit('pause');
+ assert.equal(e.els.playBtn.textContent,'Ⅱ');
+ assert.equal(e.ms.playbackState,'playing');
+ e.handlers.pause();
+ assert.equal(e.audioElements[0].paused,true);
+ assert.equal(e.els.playBtn.textContent,'▶');
+ assert.equal(e.ms.playbackState,'paused');
+ e.handlers.play();
+ assert.equal(e.audioElements[0].paused,false);
+ assert.equal(e.els.playBtn.textContent,'Ⅱ');
+ assert.equal(e.ms.playbackState,'playing');
+});
+test('lock-screen next and previous use audio-only channel switching while hidden, keeping one audio element',async()=>{
+ const e=fixture({withChannelSwitch:true});
+ assert.equal(await e.controller.activate(),true);
+ const audio=e.audioElements[0];
+ e.doc.visibilityState='hidden';
+ e.handlers.nexttrack();
+ await Promise.resolve();await Promise.resolve();await Promise.resolve();
+ assert.equal(e.calls.switches.length,1);
+ assert.equal(e.calls.switches[0].dir,1);
+ assert.equal(e.calls.switches[0].opts.audioOnly,true);
+ assert.equal(e.audioElements.length,1);
+ assert.equal(e.audioElements[0],audio);
+ assert.equal(audio.src,'https://example.org/next.m3u8');
+ assert.equal(e.ms.metadata.title,'VTV2');
+ assert.equal(e.ms.playbackState,'playing');
+ e.handlers.previoustrack();
+ await Promise.resolve();await Promise.resolve();await Promise.resolve();
+ assert.equal(e.calls.switches.length,2);
+ assert.equal(e.calls.switches[1].dir,-1);
+ assert.equal(e.audioElements.length,1);
+ assert.equal(audio.src,'https://example.org/previous.m3u8');
+ assert.equal(e.ms.metadata.title,'VTV3');
+ e.handlers.stop();
+ assert.equal(e.calls.stops,1);
+ assert.equal(e.controller.active,false);
+ assert.equal(e.ms.playbackState,'none');
+ assert.equal(audio.removed,true);
+});
+test('audio-only mode routes the visible previous/next controls without double-switching',async()=>{
+ const e=fixture({withChannelSwitch:true});
+ await e.controller.activate();
+ const event={prevented:0,stopped:0,preventDefault(){this.prevented++},stopImmediatePropagation(){this.stopped++}};
+ e.els.nextBtn.emit('click',event);
+ await Promise.resolve();await Promise.resolve();
+ assert.equal(event.prevented,1);
+ assert.equal(event.stopped,1);
+ assert.equal(e.calls.switches.length,1);
 });

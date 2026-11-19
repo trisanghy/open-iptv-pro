@@ -6,7 +6,10 @@
  const api=factory();
  if(typeof module==='object'&&module.exports)module.exports=api;
  if(root?.document){
-  const boot=()=>api.install({win:root,doc:root.document,nav:root.navigator});
+  const boot=()=>{
+   const controller=api.install({win:root,doc:root.document,nav:root.navigator});
+   if(controller)root.OpenIPTVBackgroundAudio=controller;
+  };
   if(root.document.readyState==='loading')
    root.document.addEventListener('DOMContentLoaded',boot,{once:true});
   else boot();
@@ -97,7 +100,20 @@
   const media=()=>active&&audio?audio:video;
   function refreshState(){
    if(!enabled())return;
-   if(session)try{session.playbackState=app.getCurrent?.()?(media().paused?'paused':'playing'):'none';}catch{}
+   const now=media(),playing=!!app.getCurrent?.()&&!!now&&!now.paused&&!now.ended;
+   if(active&&audio){
+    const b=doc.getElementById?.('playBtn');
+    if(b){
+     b.textContent=playing?'Ⅱ':'▶';
+     b.setAttribute?.('aria-label',playing?'Tạm dừng âm thanh':'Phát âm thanh');
+     b.title=playing?'Tạm dừng âm thanh':'Phát âm thanh';
+    }
+    const fs=doc.getElementById?.('fsPlay');
+    if(fs)fs.textContent=playing?'Ⅱ':'▶';
+    const note=doc.getElementById?.('streamInfo');
+    if(note)note.textContent=playing?'● Đang nghe nền':'● Nghe nền đang tạm dừng';
+   }
+   if(session)try{session.playbackState=app.getCurrent?.()?(playing?'playing':'paused'):'none';}catch{}
   }
   function refreshButton(){
    if(!toggle)return;
@@ -142,17 +158,41 @@
    if(session)try{session.metadata=null;session.playbackState='none';}catch{}
    releaseAudioType();
   }
+  function togglePlayback(force){
+   if(!enabled()||!app.getCurrent?.())return false;
+   const node=media();
+   if(!node)return false;
+   const play=typeof force==='boolean'?force:!!node.paused;
+   if(!play){try{node.pause?.();}catch{}refreshState();return true;}
+   applyAudioType();
+   try{
+    const task=node.play?.();
+    task?.then?.(()=>refreshState(),()=>say('Nhấn Phát trong trình duyệt để tiếp tục nghe.'));
+    task?.catch?.(()=>say('Nhấn Phát trong trình duyệt để tiếp tục nghe.'));
+    refreshState();
+   }catch{say('Không thể phát từ màn hình khóa. Hãy mở trình duyệt.');}
+   return true;
+  }
+  function navigate(dir){
+   if(!enabled()||!app.getCurrent?.())return false;
+   if(active&&typeof app.switchChannel==='function'){
+    try{Promise.resolve(app.switchChannel(dir,{audioOnly:true})).catch(e=>say('Không chuyển được kênh: '+String(e?.message||e).slice(0,100)));}catch(e){say('Không chuyển được kênh.');}
+    return true;
+   }
+   doc.getElementById?.(dir<0?'prevBtn':'nextBtn')?.click?.();
+   return true;
+  }
   function register(){
    if(installed||!session)return;
-   safeAction('play',()=>{
-    if(!enabled()||!app.getCurrent?.())return;
-    applyAudioType();
-    try{media().play?.()?.catch?.(()=>say('Hãy mở trình duyệt rồi nhấn Phát để tiếp tục nghe.'));}catch{}
+   safeAction('play',()=>togglePlayback(true));
+   safeAction('pause',()=>togglePlayback(false));
+   safeAction('stop',()=>{
+    if(!enabled())return;
+    if(active&&typeof app.stopPlayer==='function')app.stopPlayer();
+    else doc.getElementById?.('stopBtn')?.click?.();
    });
-   safeAction('pause',()=>{if(enabled())media().pause?.();});
-   safeAction('stop',()=>{if(enabled())doc.getElementById?.('stopBtn')?.click?.();});
-   safeAction('previoustrack',()=>{if(enabled())doc.getElementById?.('prevBtn')?.click?.();});
-   safeAction('nexttrack',()=>{if(enabled())doc.getElementById?.('nextBtn')?.click?.();});
+   safeAction('previoustrack',()=>navigate(-1));
+   safeAction('nexttrack',()=>navigate(1));
    installed=true;
   }
   function sync(){
@@ -189,15 +229,8 @@
     };
     setArtwork(0);
    }
-   if(active&&audio){
-    const nextKey=channel.id+'|'+sourceFor(channel);
-    if(nextKey!==streamKey){
-     // Playback has changed channel via the existing app. Restart dedicated audio,
-     // but do not touch the source/player when the page is hidden.
-     if(doc.visibilityState!=='hidden')void activate();
-     else say('Kênh mới cần mở lại trình duyệt trước khi tiếp tục nghe.');
-    }
-   }
+   // App dispatches openiptv:audio-channel after updating channel and link
+   // selection. Do not begin an outdated stream during its earlier metadata event.
    if(!media().paused)applyAudioType();
    refreshButton();refreshState();
   }
@@ -215,8 +248,6 @@
    for(const type of ['play','playing','pause','ended']){
     node.addEventListener?.(type,()=>{
      if(active&&audio===node){
-      const b=doc.getElementById?.('playBtn');
-      if(b)b.textContent=node.paused?'▶':'Ⅱ';
       refreshState();
      }
     });
@@ -263,28 +294,42 @@
    node.src=url;node.load?.();
    await play();
   }
-  async function activate(){
+  async function activate(options={}){
    if(!enabled()){say('Bật Âm thanh khi khóa màn hình trong Cài đặt trước.');return false;}
    const channel=app.getCurrent?.();
    if(!channel){say('Hãy phát một kênh có tiếng trước khi bật Nghe nền.');return false;}
-   const url=sourceFor(channel);
-   if(!url){say('Không tìm thấy link phát HLS/HTTPS thích hợp để nghe nền.');return false;}
-   // Prepare from a user gesture in the visible tab; background-starting fresh
-   // streams is forbidden or unreliable on iOS/Android.
-   if(doc.visibilityState==='hidden'){say('Mở lại trình duyệt để bắt đầu chế độ nghe nền.');return false;}
-   if(active&&streamKey===channel.id+'|'+url&&audio)return true;
+   const chosen=options.streamUrl;
+   const url=chosen&&isAllowedStream(chosen,win?.location?.href||'https://localhost/')?chosen:sourceFor(channel);
+   if(!url){say('Không tìm thấy link phát phù hợp để nghe nền.');return false;}
    const priorActive=active;
-   pausedBeforeTransition=Boolean(video.paused);
-   disposeAudio();
+   // iOS needs the first audio play() to originate from a user gesture.
+   // Once audio is active, Media Session next/previous may retune while locked.
+   if(doc.visibilityState==='hidden'&&!priorActive){
+    say('Mở trình duyệt và bật Nghe nền trước khi khóa máy.');return false;
+   }
+   const nextKey=channel.id+'|'+url;
+   if(priorActive&&streamKey===nextKey&&audio){refreshState();return true;}
+   if(!priorActive){
+    pausedBeforeTransition=Boolean(video.paused);
+    disposeAudio();
+    active=true;needsVideoRestore=true;
+   }else{
+    // Keep the same audible element: rebuilding it during a locked-screen
+    // command makes iOS lose the active audio session and buttons.
+    transition++;
+    if(hls){try{hls.destroy();}catch{}hls=null;}
+    if(dash){try{dash.reset();}catch{}dash=null;}
+   }
    const token=transition;
-   active=true;needsVideoRestore=!priorActive;
-   streamKey=channel.id+'|'+url;
+   streamKey=nextKey;
    refreshButton();applyAudioType();
    try{
-    audio=makeAudio();
-    // Only one audible media at a time. The video stays available for returning
-    // to TV, but does not continuously decode or play while audio mode is active.
-    video.pause?.();
+    if(!audio)audio=makeAudio();
+    if(!priorActive){
+     if(typeof app.suspendVideoForBackground==='function')app.suspendVideoForBackground();
+     else video.pause?.();
+    }
+    refreshState();
     await startAudio(audio,url,token);
     if(token!==transition)return false;
     say('Đang nghe nền · có thể khóa màn hình. Nhấn Xem TV để trở lại hình ảnh.');
@@ -293,14 +338,20 @@
    }catch(e){
     if(token!==transition)return false;
     const error=String(e?.message||e||'không rõ').slice(0,180);
-    const restoreVideo=needsVideoRestore&&!pausedBeforeTransition;
+    const restoreVideo=!priorActive&&needsVideoRestore&&!pausedBeforeTransition;
+    if(priorActive){
+     say('Không chuyển được kênh nghe nền: '+error+'. Hãy mở lại trình duyệt và nhấn Phát.');
+     refreshState();return false;
+    }
     active=false;disposeAudio();refreshButton();
     say('Không bật được Nghe nền: '+error+'. Hãy thử kênh khác hoặc nhấn Phát.');
     if(restoreVideo){
-     try{video.play?.()?.catch?.(()=>{});}catch{}
+     const ch=app.getCurrent?.();
+     if(ch&&typeof app.playChannel==='function'){
+      try{Promise.resolve(app.playChannel(ch.id)).catch(()=>{});}catch{}
+     }else{try{video.play?.()?.catch?.(()=>{});}catch{}}
     }
-    refreshState();
-    return false;
+    refreshState();return false;
    }
   }
   function toggleMode(){
@@ -320,20 +371,29 @@
    refreshButton();
   });
   toggle?.addEventListener('click',toggleMode);
-  const playButton=doc.getElementById?.('playBtn');
-  playButton?.addEventListener?.('click',event=>{
-   if(!active)return;
-   event.preventDefault?.();event.stopImmediatePropagation?.();
-   if(audio?.paused)audio.play?.()?.catch?.(()=>say('Mở lại trang để phát tiếng.'));
-   else audio?.pause?.();
-  },true);
   for(const type of ['play','playing','pause','ended']){
    video.addEventListener?.(type,()=>{
-    if(active&&type==='play'){video.pause?.();return;}
-    if(!active)sync();
+    if(active){if(type==='play')video.pause?.();refreshState();return;}
+    sync();
    });
   }
   doc.addEventListener?.('openiptv:media-info',sync);
+  doc.addEventListener?.('openiptv:audio-channel',event=>{
+   if(!active)return;
+   const wanted=event?.detail;
+   if(wanted?.channelId!==app.getCurrent?.()?.id)return;
+   void activate({streamUrl:wanted.url});
+  });
+  for(const id of ['prevBtn','nextBtn']){
+   doc.getElementById?.(id)?.addEventListener?.('click',event=>{
+    if(!active)return;
+    event.preventDefault?.();event.stopImmediatePropagation?.();
+    navigate(id==='prevBtn'?-1:1);
+   },true);
+  }
+  video.addEventListener?.('volumechange',()=>{
+   if(audio){audio.volume=video.volume;audio.muted=video.muted;}
+  });
   doc.addEventListener?.('visibilitychange',()=>{
    // Never start/stop media just because the screen locked.
    if(doc.visibilityState!=='hidden')sync();
@@ -343,7 +403,7 @@
   if(enabled())applyAudioType();
   info(!enabled()?'Đã tắt nghe nền.':session?'Đã bật. Nhấn Nghe nền khi đang xem TV, sau đó mới khóa màn hình. Trình duyệt/nguồn IPTV có thể giới hạn phát nền.':'Trình duyệt này không có Media Session; nút màn hình khóa có thể không hoạt động, nhưng vẫn có thể thử Nghe nền.');
   refreshButton();sync();
-  return Object.freeze({sync,clearSession,activate,deactivate,get active(){return active;}});
+  return Object.freeze({sync,clearSession,activate,deactivate,togglePlayback,navigate,get active(){return active;}});
  }
  return Object.freeze({metadataFor,artworkCandidates,imageArt,isAllowedStream,install});
 });

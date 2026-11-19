@@ -278,7 +278,7 @@ status_end=web_html.index('</small>',status_start)+len('</small>')
 compact_audio=web_html[button_start:button_end]+'\n        '+web_html[status_start:status_end]
 fav_end=html.index('</button>',html.index(fav_marker))+len('</button>')
 html=html[:fav_end]+'\\n        '+compact_audio+html[fav_end:]
-html=html.replace('web-background-audio.js?v=lock-audio-20261119c','web-background-audio.js?v=lock-artwork-20261119e',1)
+html=html.replace('web-background-audio.js?v=lock-audio-20261119c','web-background-audio.js?v=lock-controls-20261119f',1)
 html=html.replace('</head>','<link rel="stylesheet" href="web-background-audio.css?v=lock-artwork-20261119e"/></head>',1)
 (out/'index.html').write_text(html,encoding='utf-8')
 (out/'.nojekyll').write_text('')
