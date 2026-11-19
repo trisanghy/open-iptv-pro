@@ -26,4 +26,26 @@ public class OpenIPTVAutoPipPlugin extends Plugin {
             call.resolve(response);
         });
     }
+    @PluginMethod
+    public void enter(PluginCall call) {
+        if (!(getActivity() instanceof MainActivity)) {
+            call.reject("MainActivity unavailable");
+            return;
+        }
+        final MainActivity activity = (MainActivity) getActivity();
+        activity.runOnUiThread(() -> {
+            if (!activity.supportsAutoPip()) {
+                call.reject("Picture-in-Picture is unavailable on this Android device");
+                return;
+            }
+            if (activity.enterManualPiP()) {
+                JSObject response = new JSObject();
+                response.put("entered", true);
+                call.resolve(response);
+            } else {
+                call.reject("Android denied PiP transition");
+            }
+        });
+    }
+
 }

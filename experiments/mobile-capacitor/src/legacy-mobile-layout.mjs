@@ -5,7 +5,7 @@ return `
  <section class="page active" id="page-tv">
   <div class="hero-player" aria-label="Khu vực trình phát">
    <div class="hero-placeholder"><div class="hero-play">▶</div><strong id="heroTitle">Chưa chọn kênh</strong><span id="heroSubtitle">Nhập M3U hoặc chọn kênh để xem</span></div>
-   <video id="webVideo" class="inline-video" playsinline webkit-playsinline preload="none" aria-label="Video IPTV phát trong khung" hidden></video><button type="button" id="unmuteAutoplay" class="unmute-autoplay" hidden>🔊 Bật tiếng</button>
+   <video id="webVideo" class="inline-video" playsinline webkit-playsinline x-webkit-airplay="allow" preload="none" aria-label="Video IPTV phát trong khung" hidden></video><button type="button" id="unmuteAutoplay" class="unmute-autoplay" hidden>🔊 Bật tiếng</button>
   </div>
   <section class="player-control-card" aria-label="Điều khiển và lịch phát">
    <div class="now-playing"><span class="now-channel-icon">TV</span><div class="now-copy"><strong id="nowTitle">Chưa chọn kênh</strong><span id="nowGroup">Chọn một kênh trong danh sách</span></div></div>
@@ -16,10 +16,10 @@ return `
     <button id="nextChannel" aria-label="Kênh tiếp theo" type="button">⏭</button>
    </div>
    <div class="playback-actions output-controls" role="group" aria-label="Âm thanh và hiển thị">
-    <button id="muteCurrent" aria-label="Tắt hoặc bật âm thanh" type="button">🔊</button>
-    <button id="pictureInPicture" aria-label="Cửa sổ nổi PiP" type="button">▣</button>
-    <button id="snapshotCurrent" aria-label="Ảnh chụp video" type="button">▤</button>
-    <button id="fullScreenCurrent" aria-label="Toàn màn hình" type="button">⛶</button>
+    <button id="muteCurrent" class="mobile-media-action" aria-label="Bật hoặc tắt âm thanh" type="button"><span class="media-icon" aria-hidden="true">🔊</span></button>
+    <button id="castCurrent" class="mobile-media-action" aria-label="Cast / AirPlay lên TV" title="Cast / AirPlay" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="14" rx="2"/><path d="m12 14-6.5 7h13L12 14Z" fill="currentColor" stroke-width="1"/></svg></button>
+    <button id="pictureInPicture" class="mobile-media-action" aria-label="Cửa sổ nổi PiP" title="PiP" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="3.5" width="19" height="17" rx="2"/><rect x="11.5" y="11.5" width="8" height="6.5" rx="1" fill="currentColor"/></svg></button>
+    <button id="fullScreenCurrent" class="mobile-media-action" aria-label="Toàn màn hình" title="Toàn màn hình" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 4H5a1 1 0 0 0-1 1v3m12-4h3a1 1 0 0 1 1 1v3m0 8v3a1 1 0 0 1-1 1h-3M8 20H5a1 1 0 0 1-1-1v-3"/></svg></button>
    </div>
    <div class="epg-current-card" id="epgCurrent" aria-label="Chương trình đang phát và tiếp theo">
     <div class="epg-current-item"><strong id="epgNowName">Chưa có lịch phát</strong><small id="epgNowTime">—</small></div>

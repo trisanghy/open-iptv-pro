@@ -33,3 +33,5 @@ test('toggle is kept independent from fullscreen and normal play',()=>{
  assert.doesNotMatch(body,/VideoPlayer\.initPlayer/);
  assert.match(main,/syncAutoPiP\(\)/);
 });
+
+test('manual PiP call is wired to Android native plugin',()=>{assert.match(android,/enterManualPiP\(\)/);assert.match(plugin,/public void enter\(PluginCall call\)/);assert.match(main,/androidPiP\.enter\(\)/);});

@@ -1,9 +1,9 @@
 {
   "name": "open-iptv-pro-mobile",
   "private": true,
-  "version": "4.23.17-mobile.11",
+  "version": "4.23.17-mobile.12",
   "type": "module",
-  "description": "Opt-in automatic PiP on app background (native Android, iOS WebKit best-effort), foreground restoration",
+  "description": "Fix iOS muted playback prompt and Web mobile-style Cast/AirPlay, PiP and fullscreen buttons",
   "scripts": {
     "dev": "vite --host 127.0.0.1",
     "build": "vite build",

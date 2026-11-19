@@ -40,7 +40,7 @@ test('Web parity navigation has exactly five bottom actions and More sheet with 
 });
 test('Web media controls and EPG/fallback picker retain distinct IDs',()=>{
  const html=oldStyleLayout();
- for(const id of ['playCurrent','stopCurrent','muteCurrent','pictureInPicture','snapshotCurrent','fullScreenCurrent','epgNowName','epgNowTime','epgNextName','epgNextTime','openGuideBtn','videoFit','manualStreamSelect'])
+ for(const id of ['playCurrent','stopCurrent','muteCurrent','castCurrent','pictureInPicture','fullScreenCurrent','epgNowName','epgNowTime','epgNextName','epgNextTime','openGuideBtn','videoFit','manualStreamSelect'])
    assert.match(html,new RegExp('id="'+id+'"'));
  assert.match(html,/value="contain">Vừa khung/);
  assert.match(html,/Link phát/);
@@ -61,4 +61,12 @@ test('recently watched section is above standard folders and includes clear cont
  assert.match(html,/Kênh vừa xem/);
  assert.match(html,/id="clearRecent"/);
  assert.ok(html.indexOf('id="recentChannelsSection"')<html.indexOf('id="channelList"'));
+});
+
+test('Web mobile output controls are speaker, Cast/AirPlay, PiP and fullscreen only',()=>{
+ const html=oldStyleLayout();const block=html.match(/<div class="playback-actions output-controls"[\s\S]*?<\/div>/)?.[0]||'';
+ for(const id of ['muteCurrent','castCurrent','pictureInPicture','fullScreenCurrent'])assert.match(block,new RegExp('id="'+id+'"'));
+ assert.equal((block.match(/<button/g)||[]).length,4);
+ assert.doesNotMatch(block,/snapshotCurrent/);
+ assert.match(html,/data-more="snapshot"/);
 });

@@ -263,3 +263,18 @@ html.pip-mode #page-tv>.hero-player>video{object-fit:contain!important;border:0!
 .mobile-language-card label{display:block;margin:0 0 8px;font-weight:650}
 .mobile-language-card select{display:block;width:100%;min-height:48px;border-radius:10px;border:1px solid rgba(169,176,221,.45);padding:10px;background:#111c2a;color:#f4f5fc;font-size:16px}
 .mobile-language-card .muted{font-size:12px;line-height:1.55;margin:10px 0 0}
+
+
+/* MOBILE_MEDIA_BUTTON_PARITY_V12: same four actions as Web Mobile */
+.player-control-card .output-controls{grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.player-control-card .output-controls .mobile-media-action{
+ display:grid;place-items:center;position:relative;min-width:0;width:100%;min-height:47px;height:47px;
+ padding:0;margin:0;border:1px solid #354b68;border-radius:12px;background:#1a2e46;
+ color:#e4f1ff;touch-action:manipulation
+}
+.player-control-card .mobile-media-action svg{display:block;width:25px;height:25px;min-width:25px;min-height:25px;stroke:currentColor;pointer-events:none}
+.player-control-card .mobile-media-action .media-icon{font-size:22px;line-height:1;pointer-events:none}
+.player-control-card .mobile-media-action:active{background:#2d4664;transform:scale(.98)}
+.player-control-card .mobile-media-action:focus-visible{outline:2px solid #60c8ff;outline-offset:2px}
+.hero-player .unmute-autoplay:not([hidden]){display:grid;place-items:center;min-width:125px;background:#c28bff;color:#142035;z-index:8}
+@media(max-width:380px){.player-control-card .output-controls{gap:6px}}

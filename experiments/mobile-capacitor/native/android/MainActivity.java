@@ -35,6 +35,16 @@ public class MainActivity extends BridgeActivity {
         setPictureInPictureParams(params.build());
     }
 
+    public boolean enterManualPiP() {
+        if (!supportsAutoPip() || isInPictureInPictureMode()) return false;
+        try {
+            return enterPictureInPictureMode(new PictureInPictureParams.Builder()
+                .setAspectRatio(new Rational(16, 9)).build());
+        } catch (IllegalStateException | IllegalArgumentException ignored) {
+            return false;
+        }
+    }
+
     @Override
     protected void onUserLeaveHint() {
         if (supportsAutoPip()

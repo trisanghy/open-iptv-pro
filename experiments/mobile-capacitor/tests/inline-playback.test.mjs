@@ -35,6 +35,8 @@ test('PiP action never opens native fullscreen',()=>{
  const end=main.indexOf("$('#addURL').onclick",start);
  assert.ok(start>0&&end>start);
  const pip=main.slice(start,end);
- assert.ok(pip.includes('requestPictureInPicture'));
+ assert.ok(pip.includes('togglePiP'));
+ assert.ok(pip.includes('androidPiP.enter'));
+ assert.ok(pip.includes('chooseCast'));
  assert.ok(!pip.includes('VideoPlayer.initPlayer'));
 });

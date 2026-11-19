@@ -1,4 +1,4 @@
-import { Capacitor, CapacitorHttp } from '@capacitor/core';
+import { Capacitor, CapacitorHttp, registerPlugin } from '@capacitor/core';
 import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
 import { Share } from '@capacitor/share';
 import { VideoPlayer } from '@capgo/capacitor-video-player';
@@ -9,6 +9,7 @@ import {installEPGAuto} from './mobile-epg-autosync.mjs';
 import {matchGuideChannel,resumeChannel} from './mobile-epg-auto.mjs';
 import {swipeChannelDelta,nextChannelIndex,safeHistory,recentChannelMatches} from './mobile-ux.mjs';
 import {createAutoPiPController} from './mobile-auto-pip.mjs';
+import {chooseCast,togglePiP,isMuted} from './mobile-media-controls.mjs';
 import {MOBILE_VERSION,MAX_BATCH,batchWindow,appendEvidence,rightsDialog,installMobileParity} from './mobile-rustlab-parity.mjs';
 import './core-browser.js';
 import './styles.css';
@@ -35,6 +36,7 @@ let nativeFullscreenActive=false;
 let pipController=null;
 function syncAutoPiP(){void pipController?.sync();}
 const native=Capacitor.isNativePlatform();
+const androidPiP = native && Capacitor.getPlatform()==='android' ? registerPlugin('OpenIPTVAutoPiP'):null;
 function save(){const keep={...state};try{localStorage.setItem(KEY,JSON.stringify(keep));}catch(e){status('Bộ nhớ gần đầy; hãy xuất M3U sao lưu','error');}}
 function status(t,kind=''){const el=$('#status');if(!el)return;el.textContent=t;el.dataset.kind=kind;el.hidden=false;clearTimeout(status.hideTimer);status.hideTimer=setTimeout(()=>{el.hidden=true;},3800);}
 function node(tag,cls,text){const n=document.createElement(tag);if(cls)n.className=cls;if(text!==undefined)n.textContent=String(text);return n;}
@@ -106,8 +108,10 @@ function renderCurrentEPG(channel){
 function syncMediaControls(){
  const toggle=$('#playCurrent');
  if(toggle){toggle.textContent=mediaPlaying&&!mediaPaused?'Ⅱ':'▶';toggle.setAttribute('aria-label',mediaPlaying&&!mediaPaused?'Tạm dừng':'Phát');}
+ const v=$('#webVideo'),silent=isMuted(v);
  const mute=$('#muteCurrent');
- if(mute){mute.textContent=mediaMuted?'🔇':'🔊';mute.setAttribute('aria-pressed',String(mediaMuted));}
+ if(mute){const glyph=mute.querySelector('.media-icon');if(glyph)glyph.textContent=silent?'🔇':'🔊';mute.setAttribute('aria-pressed',String(silent));mute.setAttribute('aria-label',silent?'Bật tiếng':'Tắt tiếng');}
+ const unmute=$('#unmuteAutoplay');if(unmute)unmute.hidden=!silent||v.paused;
 }
 
 function renderNowPlaying(){
@@ -247,7 +251,8 @@ async function play(c,requestedURL,{startup=false}={}){
    playerHls?.destroy();playerHls=null;
    v.pause();v.removeAttribute('src');v.load();
    v.playsInline=true;v.setAttribute('playsinline','');v.setAttribute('webkit-playsinline','');
-   v.controls=false;v.muted=mediaMuted;v.style.objectFit=state.settings.videoFit||'contain';
+   v.controls=false;v.muted=mediaMuted;v.defaultMuted=mediaMuted;v.style.objectFit=state.settings.videoFit||'contain';
+   v.setAttribute('x-webkit-airplay','allow');
    if(/\.m3u8(?:[?#]|$)/i.test(url)&&!v.canPlayType('application/vnd.apple.mpegurl')&&Hls.isSupported()){
      playerHls=new Hls({lowLatencyMode:false,maxBufferLength:20});
      playerHls.attachMedia(v);playerHls.loadSource(url);
@@ -262,7 +267,7 @@ async function play(c,requestedURL,{startup=false}={}){
    state.recentlyWatched=safeHistory(state.recentlyWatched,c.url,30);
    save();renderRecentChannels();
    mediaPlaying=true;mediaPaused=false;syncMediaControls();syncAutoPiP();
-   status('Đang phát trong khung: '+c.name,'ok');return;
+   status(isMuted(v)?'Đang phát hình · Nhấn Bật tiếng để nghe':'Đang phát trong khung: '+c.name,'ok');return;
   }catch(e){
    last=e;playerHls?.destroy();playerHls=null;
    v.pause();v.removeAttribute('src');v.load();
@@ -303,7 +308,13 @@ async function pauseResumeCurrent(){
  if(v.paused){await v.play();mediaPaused=false;}else{v.pause();mediaPaused=true;}
  syncMediaControls();syncAutoPiP();
 }
-async function muteUnmute(){mediaMuted=!mediaMuted;$('#webVideo').muted=mediaMuted;syncMediaControls();}
+async function muteUnmute(){
+ const v=$('#webVideo');
+ mediaMuted=!isMuted(v);v.muted=mediaMuted;v.defaultMuted=mediaMuted;
+ if(!mediaMuted&&v.currentSrc&&v.paused){try{await v.play();}catch(e){syncMediaControls();throw Error('Không thể bật tiếng cho luồng này: '+(e?.message||e));}}
+ syncMediaControls();
+ if(!mediaMuted)status('Đã bật âm thanh. Nếu vẫn im lặng, kiểm tra âm lượng iPhone hoặc codec âm thanh của nguồn IPTV.','ok');
+}
 async function stop(){
  if(nativeFullscreenActive){await VideoPlayer.stopAllPlayers().catch(()=>{});nativeFullscreenActive=false;}
  playerHls?.destroy();playerHls=null;
@@ -347,7 +358,7 @@ function showTab(tab){if(state.page==='multi'&&tab!=='multi')stopMulti();state.p
 function init(){document.querySelector('#app').innerHTML=oldStyleLayout();
  if(!['tv','fav','epg','sources','multi','tools'].includes(state.page))state.page='tv';
  document.documentElement.classList.add(native?'native-mobile':'web-mobile');
- $('#unmuteAutoplay').onclick=()=>{const v=$('#webVideo');v.muted=false;mediaMuted=false;syncMediaControls();$('#unmuteAutoplay').hidden=true;};
+ $('#unmuteAutoplay').onclick=()=>{const v=$('#webVideo');if(v.muted)muteUnmute().catch(e=>status(e.message,'error'));};
  if(native && Capacitor.getPlatform()==='ios')document.documentElement.classList.add('ios-mobile');
  // Intentional swipe over the placeholder player only; does not steal list scrolling.
  const hero=$('.hero-player');let start=null;
@@ -421,14 +432,26 @@ function init(){document.querySelector('#app').innerHTML=oldStyleLayout();
  $('#playCurrent').onclick=()=>pauseResumeCurrent().catch(e=>status(e.message,'error'));
  $('#stopCurrent').onclick=()=>stop().catch(e=>status(e.message,'error'));
  $('#muteCurrent').onclick=()=>muteUnmute().catch(e=>status(e.message,'error'));
- $('#snapshotCurrent').onclick=()=>currentSnapshot().catch(e=>status(e.message,'error'));
+
  $('#fullScreenCurrent').onclick=()=>playFullscreen().catch(e=>status(e.message,'error'));
  $('#pictureInPicture').onclick=()=>{
-  const v=$('#webVideo');
-  if(v.paused){status('Hãy phát trước khi bật PiP','error');return;}
-  if(typeof v.requestPictureInPicture==='function')v.requestPictureInPicture().catch(e=>status(e.message,'error'));
-  else if(typeof v.webkitSetPresentationMode==='function')v.webkitSetPresentationMode('picture-in-picture');
-  else status('PiP nội tuyến không hỗ trợ trên thiết bị này','error');
+   const v=$('#webVideo');
+   if(!v.currentSrc||v.paused){status('Hãy phát kênh trước khi bật PiP','error');return;}
+   if(androidPiP){androidPiP.enter().catch(e=>status('PiP Android: '+(e?.message||e),'error'));return;}
+   togglePiP(v,document).catch(e=>status('PiP: '+(e?.message||e),'error'));
+ };
+ $('#castCurrent').onclick=()=>{
+   const v=$('#webVideo');
+   const ios=Capacitor.getPlatform()==='ios'||/iPhone|iPad|iPod/.test(navigator.userAgent);
+   chooseCast(v,{
+     isIOS:ios,
+     isAndroidNative:Capacitor.getPlatform()==='android',
+     openAndroidNativeCast:async()=>{
+       status('Đang mở trình phát native. Chọn biểu tượng Chromecast trong trình phát.','ok');
+       await playFullscreen();
+     },
+     onUnavailable:msg=>status(msg,'error')
+   }).catch(e=>status('Cast / AirPlay: '+(e?.message||e),'error'));
  };$('#addURL').onclick=()=>addURL().catch(e=>status(e.message,'error'));
  $('#file').onchange=e=>addFile(e.target.files?.[0]).catch(err=>status(err.message,'error'));
  $('#refresh').onclick=()=>refreshSources().catch(e=>status(e.message,'error'));
@@ -446,6 +469,7 @@ function init(){document.querySelector('#app').innerHTML=oldStyleLayout();
  video.addEventListener('playing',()=>{mediaPlaying=true;mediaPaused=false;syncMediaControls();syncAutoPiP();if(state.selected){try{appendEvidence(state.healthHistory,state.selected,'decoded-playback');save();}catch{}}});
  video.addEventListener('pause',()=>{if(mediaPlaying){mediaPaused=true;syncMediaControls();syncAutoPiP();}});
  video.addEventListener('ended',()=>{mediaPlaying=false;mediaPaused=false;syncMediaControls();syncAutoPiP();});
+ video.addEventListener('volumechange',()=>{mediaMuted=isMuted(video);syncMediaControls();});
 
  render();}
 
