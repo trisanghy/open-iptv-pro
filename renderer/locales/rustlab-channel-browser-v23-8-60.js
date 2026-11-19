@@ -10,5 +10,9 @@
  dict['☆ Yêu thích (']='☆ '+dict['Yêu thích']+' (';
  dict['◷ Xem gần đây (']='◷ '+dict['Xem gần đây']+' (';
  dict['Xem tất cả ›']=dict['Xem tất cả']+' ›';
+ if(lang==='de'){
+  dict['Tên A → Z']='Name aufsteigend';
+  dict['Tên Z → A']='Name absteigend';
+ }
 }
 })();
