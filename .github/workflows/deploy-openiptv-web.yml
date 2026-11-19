@@ -163,6 +163,10 @@ jobs:
           node --test web-online/tests/browser-channel-check.test.cjs
           node --test web-online/tests/source-use-consent-v1.test.cjs
           node --test web-online/tests/resume-last.test.cjs
+          node --check _site/web-background-audio.js
+          node --test web-online/tests/web-background-audio.test.cjs
+          grep -Fq 'id="webBackgroundAudio"' _site/index.html
+          grep -Fq 'web-background-audio.js?v=lock-audio-20261119c' _site/index.html
           node --check _site/web-autoplay.js
           node --test web-online/tests/web-autoplay.test.cjs
           node --check _site/cloud-core.js
