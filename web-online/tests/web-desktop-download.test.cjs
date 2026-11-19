@@ -66,8 +66,8 @@ test('desktop software entry is directly after Settings and mobile intro has rea
   assert.equal((html.match(new RegExp('id="'+id+'"','g'))||[]).length,1,id);
  assert.match(html,/data-page="settings"[^<]*<span>⚙<\/span> Cài đặt<\/button>\s*<button[^>]+id="softwareDownloadNav"/);
  assert.ok(html.includes('id="softwareDownloadIntro" class="desktop-download-intro" hidden'));
- assert.ok(html.includes('web-desktop-download.css?v=software-download-20261119b'));
- assert.ok(html.includes('web-desktop-download.js?v=software-download-20261119b'));
+ assert.ok(html.includes('web-desktop-download.css?v=ios-shortcut-20261119a'));
+ assert.ok(html.includes('web-desktop-download.js?v=ios-shortcut-20261119a'));
  assert.match(css,/\.desktop-download-intro\[hidden\]\{display:none!important\}/);
  assert.match(css,/html\[data-iptv-device="mobile"\] #page-tv>\.desktop-download-intro:not\(\[hidden\]\)/);
  assert.match(css,/html\[data-iptv-device="mobile"\] \.desktop-download-top\{display:none!important\}/);
@@ -83,7 +83,32 @@ test('More menu always retains software downloads even after intro is dismissed'
  assert.ok(builder.includes('sidebar_button='));
  assert.ok(builder.includes('desktop_button='));
  assert.ok(builder.includes('mobile_button='));
- assert.ok(builder.includes('web-desktop-download.js?v=software-download-20261119b'));
+ assert.ok(builder.includes('web-desktop-download.js?v=ios-shortcut-20261119a'));
  assert.equal(fs.readFileSync(path.join(root,'web-online/web-desktop-download.js'),'utf8'),js);
  assert.equal(fs.readFileSync(path.join(root,'web-online/web-desktop-download.css'),'utf8'),css);
+});
+
+test('download modal always offers iOS shortcut with Safari and Chrome Share steps',()=>{
+ assert.match(js,/id="iosShortcutInstall"/);
+ assert.match(js,/Cài app cho iOS \(không cần ký\)/);
+ assert.match(js,/Safari hoặc Chrome/);
+ assert.match(js,/Chia sẻ/);
+ assert.match(js,/Thêm vào Màn hình chính/);
+ assert.match(js,/Add to Home Screen/);
+ assert.match(js,/không phải file IPA/);
+ assert.match(js,/https:\/\/trisanghy\.github\.io\/open-iptv-pro\//);
+ assert.match(js,/iosShortcut\.open=true/);
+ assert.match(css,/desktop-download-ios-shortcut/);
+ assert.match(css,/min-height:54px/);
+});
+test('shortcut is separate from unsigned IPA and loads independently of GitHub API',()=>{
+ const start=js.indexOf('<details class="desktop-download-ios-shortcut"');
+ const end=js.indexOf('</details>',start);
+ assert.ok(start>=0&&end>start);
+ const card=js.slice(start,end);
+ assert.doesNotMatch(card,/\.ipa|releases\/download|await root\.fetch/);
+ assert.match(js,/IPA unsigned · cần ký để cài đặt/);
+ assert.match(js,/data-mobile-more-click="softwareDownloadNav"/);
+ assert.ok(js.indexOf('id="iosShortcutInstall"')<js.indexOf('id="desktopDownloadStatus"'));
+ assert.equal((js.match(/id="iosShortcutInstall"/g)||[]).length,1);
 });
