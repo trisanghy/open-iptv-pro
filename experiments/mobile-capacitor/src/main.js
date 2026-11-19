@@ -47,7 +47,12 @@ let backgroundAudio=null;
 function syncAutoPiP(){void pipController?.sync();}
 const native=Capacitor.isNativePlatform();
 const androidPiP = native && Capacitor.getPlatform()==='android' ? registerPlugin('OpenIPTVAutoPiP'):null;
-function save(){const keep={...state};try{localStorage.setItem(KEY,JSON.stringify(keep));}catch(e){status('Bộ nhớ gần đầy; hãy xuất M3U sao lưu','error');}}
+function save(){const keep={...state};
+ // Guide cache is in IndexedDB after a confirmed write; omit only then.
+ // Until migration commits successfully, keep the legacy local copy intact.
+ if(keep.epgCacheSavedToIDB)delete keep.epgCache;
+ delete keep.epgCacheSavedToIDB;
+ try{localStorage.setItem(KEY,JSON.stringify(keep));}catch(e){status('Không đủ bộ nhớ lưu cài đặt; EPG vẫn xem được trong phiên hiện tại','error');}}
 function status(t,kind=''){const el=$('#status');if(!el)return;el.textContent=tMobile(t);el.dataset.kind=kind;el.hidden=false;clearTimeout(status.hideTimer);status.hideTimer=setTimeout(()=>{el.hidden=true;},3800);}
 function node(tag,cls,text){const n=document.createElement(tag);if(cls)n.className=cls;if(text!==undefined)n.textContent=String(text);return n;}
 function button(text,action,cls=''){const b=node('button',cls,text);b.type='button';b.onclick=()=>Promise.resolve().then(action).catch(e=>{status(e.message||e,'error');console.error(e);});return b;}
