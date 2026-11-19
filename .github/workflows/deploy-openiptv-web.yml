@@ -332,6 +332,9 @@ jobs:
           grep -Eq 'src="i18n[.]js[?]v=[a-f0-9]{16}"' _site/index.html
           node --test web-online/tests/web-english-coverage.test.cjs
           node --test web-online/tests/web-language-native-coverage.test.cjs
+          node --check _site/web-language-supplement.js
+          node --test web-online/tests/web-language-supplement.test.cjs
+          grep -Eq 'src="web-language-supplement[.]js[?]v=[a-f0-9]{16}"' _site/index.html
           touch _user_site/.nojekyll
           python3 - <<'PY'
           from pathlib import Path
