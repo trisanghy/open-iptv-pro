@@ -8,8 +8,8 @@ const read=p=>fs.readFileSync(path.join(ROOT,p),'utf8');
 const decoder=/(?:[ăâđêôơưĂÂĐÊÔƠƯ]|[àáảãạằắẳẵặầấẩẫậèéẻẽẹềếểễệìíỉĩịòóỏõọồốổỗộờớởỡợùúủũụừứửữựỳýỷỹỵ])/;
 function snapshot(){
  const html=read('renderer/index.html');
- const labels=[...html.matchAll(/>([^<>]{2,300})</g)].map(x=>x[1].trim());
- const attrs=[...html.matchAll(/\b(?:title|placeholder|aria-label)=["']([^"'<>]{2,500})["']/g)].map(x=>x[1].trim());
+ const labels=[...html.matchAll(/>([^<>]{2,300})</g)].map(x=>x[1].trim().replace(/&amp;/g,'&'));
+ const attrs=[...html.matchAll(/\b(?:title|placeholder|aria-label)=["']([^"'<>]{2,500})["']/g)].map(x=>x[1].trim().replace(/&amp;/g,'&'));
  return [...new Set([...labels,...attrs].filter(x=>decoder.test(x)&&!['Tiếng Việt','Português','Português (Brasil)'].includes(x)))];
 }
 function engine(){

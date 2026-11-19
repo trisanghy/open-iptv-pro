@@ -17,3 +17,5 @@ test('native translations do not regress across priority and other supported lan
  for(const code of ['es','pt-BR','th','km'])assert.ok(langs[code]>=290,code+': '+langs[code]);
  for(const code of ['fr','de','it','ja','id','hi','ar'])assert.ok(langs[code]>=105,code+': '+langs[code]);
 });
+
+test('audit sees browser-decoded HTML entities, not raw amp entities',()=>{const {snapshot}=require('../scripts/audit-electron-i18n.cjs');assert.ok(snapshot().some(s=>s.includes('Hiển thị & Màu giao diện')));assert.ok(!snapshot().some(s=>s.includes('&amp;')));});
