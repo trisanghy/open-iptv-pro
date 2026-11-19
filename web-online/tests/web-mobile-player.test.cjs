@@ -119,7 +119,7 @@ test('collapsed desktop sidebar cannot override the mobile bottom navigation',()
  assert.match(css,/height:calc\(69px \+ env\(safe-area-inset-bottom,0px\)\)!important/);
 });
 test('HTML loads versioned assets to invalidate iOS cached broken layout',()=>{
- assert.match(html,/web-mobile-player\.css\?v=desktop-handheld-fs-20261119a/);
+ assert.match(html,/web-mobile-player\.css\?v=favorites-tap-20261119a/);
  assert.match(html,/web-mobile-player\.js\?v=desktop-handheld-fs-20261119a/);
 });
 
