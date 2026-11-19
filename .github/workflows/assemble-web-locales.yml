@@ -5,6 +5,7 @@ on:
     paths:
       - '.github/workflows/assemble-web-locales.yml'
       - 'web-online/scripts/assemble-web-locales.py'
+      - 'web-online/build-web-native-locales.py'
   workflow_dispatch:
 permissions:
   actions: read
