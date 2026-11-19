@@ -65,6 +65,23 @@
  display:flex;flex:1 1 auto;gap:9px;min-width:0;overflow-x:auto;overflow-y:hidden;
  scroll-behavior:smooth;scrollbar-width:thin;overscroll-behavior-x:contain;padding:4px 1px 6px;
 }
+/* After the user presses Show more, display the entire filtered set in a
+   scrollable multi-row grid instead of a 120-channel horizontal carousel. */
+#page-tv .web-hub-carousel.expanded{align-items:stretch;min-width:0;}
+#page-tv .web-hub-carousel.expanded .web-hub-arrow{display:none;}
+#page-tv .web-hub-tiles.expanded:not(.list-mode){
+ display:grid;grid-template-columns:repeat(auto-fill,minmax(98px,1fr));
+ align-content:start;align-items:stretch;gap:9px;
+ max-height:min(72vh,720px);overflow-x:hidden;overflow-y:auto;
+ scroll-behavior:auto;overscroll-behavior-y:contain;scrollbar-width:thin;
+ padding:6px 9px 12px;
+}
+#page-tv .web-hub-tiles.expanded:not(.list-mode) .web-hub-tile{
+ width:100%;min-height:96px;flex-basis:auto;
+}
+#page-tv .web-hub-tiles.expanded.list-mode{
+ max-height:min(72vh,720px);overflow-y:auto;scroll-behavior:auto;
+}
 #page-tv .web-hub-tile{
  position:relative;flex:0 0 94px;min-width:0;
  border:1px solid var(--hub-edge);border-radius:12px;
