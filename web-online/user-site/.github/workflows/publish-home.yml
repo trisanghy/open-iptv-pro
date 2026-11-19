@@ -58,7 +58,7 @@ jobs:
           for section in ('tinh-nang','anh','tai-ve','huong-dan','ma-nguon'):
               if 'id="'+section+'"' not in html:
                   raise ValueError('Missing homepage section '+section)
-          for screenshot in ('player-desktop.png','player-mobile.png'):
+          for screenshot in ('desktop-tv.png','ios-tv.png','android-tv.png'):
               if screenshot not in html:
                   raise ValueError('Missing current player screenshot '+screenshot)
           if 'Sitemap: https://trisanghy.github.io/sitemap.xml' not in robots:
