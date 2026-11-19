@@ -145,6 +145,9 @@
    }
   }
   function render(){
+   // Native mobile TV layout already has an always-available channel panel.
+   // Skip building desktop-only cards (and expensive favorite/recent tiles).
+   if(doc.documentElement.getAttribute('data-iptv-device')==='mobile')return;
    if(!api())return;
    const all=allChannels(),s=store();
    const ref=tab==='channels'?all:section(all,tab,s,fav(),rec());
@@ -189,6 +192,8 @@
   more.addEventListener('click',()=>{limit=Math.min(MAX_VISIBLE,limit+LIMIT);render();});
   doc.addEventListener('openiptv:local-saved',schedule);
   root.addEventListener('openiptv:favorites-changed',schedule);
+  // Recreate desktop cards when a viewport switches from mobile to desktop.
+  root.addEventListener('resize',schedule,{passive:true});
   doc.addEventListener('openiptv:languagechange',schedule);
   // M3U source additions update the existing channelMeta text after renderList.
   // Observe that stable element instead of watching the entire document tree.
