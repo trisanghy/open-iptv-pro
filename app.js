@@ -1085,13 +1085,9 @@
   if(t.running)return toast('Đang chụp toàn bộ kênh rồi','warn');
   const all=enabledChannels().slice();if(!all.length)return toast('Chưa có kênh để chụp','warn');
   if(!native&&!window.OpenIPTVWebSnapshot?.capture)return toast('Thiếu bộ chụp Snapshot Web; hãy tải lại ứng dụng.','error');
-  const seen=new Set(),pending=[];let skipped=0;
-  for(const c of all){
-    if(seen.has(c.url)||(store.snapshotSkipExisting&&!!(store.snapshots[c.url]?.file||store.snapshots[c.url]?.data))){skipped++;continue;}
-    seen.add(c.url);pending.push(c);
-  }
+  if(!window.OpenIPTVSnapshotBatch?.plan)return toast('Thiếu mô-đun chụp toàn bộ Web. Hãy tải lại trang.','error');
+  const {pending,skipped}=window.OpenIPTVSnapshotBatch.plan(all,store.snapshots,store.snapshotSkipExisting);
   if(!pending.length)return toast(`Đã có đủ ảnh (${skipped} kênh). Tắt “Bỏ qua kênh đã có ảnh” nếu muốn chụp mới.`);
-  if(!native&&pending.length>80){pending.length=80;toast('Web chỉ chụp tối đa 80 kênh/lượt để bảo vệ bộ nhớ. Chụp lại để tiếp tục kênh chưa có ảnh.','warn');}
    const workers=Math.min(safeConcurrency(store.snapshotConcurrency),native?32:(window.OpenIPTVMobilePlayer?.isMobile?.()?1:2),pending.length);
   if(pending.length>70)toast(`Bắt đầu chụp ${pending.length} kênh bằng ${workers} tác vụ song song; có thể hủy ở bảng tiến độ.`, 'warn');
   taskStart('shots',native?all.length:pending.length+skipped);t.workers=workers;t.skipped=skipped;t.done=skipped;
@@ -1112,25 +1108,42 @@
    finally{save();taskEnd('shots');}
    return;
   }
-  let cursor=0,lastRefresh=0;
+  let cursor=0,lastRefresh=0,storageExhausted=false;
   function refreshProgress(force=false){
     const now=Date.now();if(force||now-lastRefresh>850){
-      save();if(page==='shots')renderShots();if(page==='tv')renderList(true);lastRefresh=now;
+      if(!storageExhausted)save();if(page==='shots')renderShots();if(page==='tv')renderList(true);lastRefresh=now;
     }
   }
   async function worker(){
     while(!t.cancel&&cursor<pending.length){
       const c=pending[cursor++];t.latest=`Đang chụp ${c.name} • ${workers} luồng song song`;
       try{await snapshotOne(c,true,t.abortController?.signal);if(t.cancel)break;t.success++;}
-      catch(e){if(t.cancel||e?.name==='AbortError')break;t.failed++;t.lastError=`${c.name}: ${String(e.message||e)}`;t.latest=`Lỗi ${t.failed}: ${t.lastError.slice(0,210)}`;console.warn('Snapshot:',c.name,String(e.message||e));}
+      catch(e){
+       if(e?.name==='AbortError')break;
+       t.failed++;t.lastError=`${c.name}: ${String(e.message||e)}`;
+       if(window.OpenIPTVSnapshotBatch.isStorageFull(e)){
+        storageExhausted=true;t.cancel=true;t.abortController?.abort();
+        t.latest='Đã tạm dừng: bộ nhớ Web đầy. Ảnh đã chụp vẫn được giữ lại.';
+        console.warn('Snapshot storage full:',t.lastError);
+       }else{
+        if(t.cancel)break;
+        t.latest=`Lỗi ${t.failed}: ${t.lastError.slice(0,210)}`;
+        console.warn('Snapshot:',c.name,String(e.message||e));
+       }
+      }
       t.done++;updateTaskUI('shots');refreshProgress();
     }
   }
   try{
     await Promise.all(Array.from({length:workers},()=>worker()));
     refreshProgress(true);updateTaskUI('shots');
-    toast(`${t.cancel?'Đã dừng':'Đã xong'}: ${t.success} ảnh mới • ${t.skipped} ảnh giữ nguyên • ${t.failed} lỗi`+(t.failed&&t.lastError?' · '+t.lastError.slice(0,130):''),t.failed&&!t.success?'error':'ok');
-    textStatus(`Snapshot ${t.done}/${t.total}: ${t.success} ảnh mới, ${t.skipped} giữ nguyên, ${t.failed} lỗi`);
+    if(storageExhausted){
+     toast('Đã dừng vì bộ nhớ trình duyệt đầy. Các ảnh đã lưu được giữ nguyên. Hãy giải phóng dung lượng rồi bấm Chụp toàn bộ để tiếp tục.','warn');
+     textStatus(`Snapshot tạm dừng do hết bộ nhớ: ${t.done}/${t.total} kênh · ${t.success} ảnh mới · ${t.skipped} ảnh cũ.`);
+    }else{
+     toast(`${t.cancel?'Đã dừng':'Đã xong'}: ${t.success} ảnh mới • ${t.skipped} ảnh giữ nguyên • ${t.failed} lỗi`+(t.failed&&t.lastError?' · '+t.lastError.slice(0,130):''),t.failed&&!t.success?'error':'ok');
+     textStatus(`Snapshot ${t.done}/${t.total}: ${t.success} ảnh mới, ${t.skipped} giữ nguyên, ${t.failed} lỗi`);
+    }
   }finally{taskEnd('shots');}
  }
  async function exportFile(){if(window.IPTVProAdvanced?.canEdit?.()===false)return toast('Hồ sơ trẻ em không được xuất playlist','warn');const all=enabledChannels();if(!all.length)return toast('Không có kênh để xuất','warn');const content=core.exportM3U(all);
