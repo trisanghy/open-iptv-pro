@@ -30,6 +30,21 @@ def catalogs():
     for name in OTHER_SETS:
         for lang,items in object_from_js(engine,name).items():
             data.setdefault(lang,{}).update(items)
+    # Merge pretranslated, audited Web-only packs before generating the gaps.
+    # Hand-written i18n.js translations remain authoritative.
+    pretranslated=(ROOT/'web-generated-locales.js').read_text(encoding='utf-8')
+    for lang,items in object_from_js(pretranslated,'packs').items():
+        target=data.setdefault(lang,{})
+        for key,value in items.items():
+            if not target.get(key) or target[key]==data['en'].get(key):
+                target[key]=value
+    supplemental=(ROOT/'web-language-supplement.js').read_text(encoding='utf-8')
+    originals_match=re.search(r'\bconst\s+originals\s*=\s*',supplemental)
+    if not originals_match:raise RuntimeError('Missing curated Web originals')
+    originals,_=json.JSONDecoder().raw_decode(supplemental[originals_match.end():].lstrip())
+    for lang,translated in object_from_js(supplemental,'native').items():
+        if len(translated)!=len(originals):raise RuntimeError('Incomplete curated Web locale: '+lang)
+        data.setdefault(lang,{}).update(zip(originals,translated))
     return data
 
 def remote_batch(phrases,lang):
