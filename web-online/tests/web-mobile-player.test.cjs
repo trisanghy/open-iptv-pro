@@ -23,7 +23,7 @@ function harness({mobile=true,ios=false,native=false,hasRequest=false}={}){
 test('fullscreen button delegates to the mobile adapter without removing desktop behavior',()=>{
  assert.match(app,/OpenIPTVMobilePlayer\?\.toggle\?\.\(\)/);
  assert.match(html,/id="fullscreenBtn"[^>]+aria-label="Toàn màn hình video"/);
- assert.ok(html.indexOf('src="web-mobile-player.js"')<html.indexOf('src="app.js"'));
+ assert.ok(html.indexOf('src="web-mobile-player.js?')>=0 && html.indexOf('src="web-mobile-player.js?')<html.indexOf('src="app.js?'));
 });
 test('iPhone uses native video fullscreen when possible',()=>{
  const h=harness({ios:true,native:true});assert.equal(h.api.toggle(),true);

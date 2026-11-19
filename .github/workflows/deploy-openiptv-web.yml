@@ -115,7 +115,9 @@ jobs:
           node --check _site/collector.js
           node --check _site/advanced.js
           node --test web-online/tests/web-collector-merge-regression.test.cjs
-          for script in advanced-core.js advanced.js collector.js; do
+          node --test web-online/tests/web-playlist-url.test.cjs
+          for script in app.js collector.js; do grep -Fq "$script?v=playlist-url-20261119b" _site/index.html; done
+          for script in advanced-core.js advanced.js; do
             grep -Fq "$script?v=collector-merge-repair-20261119a" _site/index.html
           done
           grep -Fq 'advanced-core.js?v=collector-merge-repair-20261119a' _site/index.html

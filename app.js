@@ -565,12 +565,29 @@
  }
  async function openURL(){if(window.IPTVProAdvanced?.canEdit?.()===false)return toast('Hồ sơ trẻ em không được thêm URL IPTV','warn');
   if(!(await window.OpenIPTVSourceConsent?.requestImport?.('url')))return;
-  openModal('Thêm playlist bằng URL',`<label class="modal-label">Tên nguồn</label><input class="modal-input" id="urlName" placeholder="Ví dụ: Kênh truyền hình Việt Nam" value="IPTV từ URL"/><label class="modal-label">Đường dẫn M3U</label><input class="modal-input" id="urlValue" placeholder="https://example.com/iptv.m3u" type="url"/><p class="hint">Nhập liên kết tới file M3U chứa nhiều kênh. Bản ứng dụng dùng trình tải tích hợp; bản trình duyệt có thể bị giới hạn CORS.</p>`,async()=>{
+  openModal('Thêm playlist bằng URL',`<label class="modal-label">Tên nguồn</label><input class="modal-input" id="urlName" placeholder="Ví dụ: Kênh truyền hình Việt Nam" value="IPTV từ URL"/><label class="modal-label">Đường dẫn M3U</label><input class="modal-input" id="urlValue" placeholder="https://example.com/iptv.m3u" type="url"/><p class="hint">Nhập đường dẫn tới danh sách kênh M3U.</p><p id="urlImportError" role="alert" hidden></p>`,async()=>{
     const name=$('#urlName').value.trim()||'IPTV từ URL';const url=$('#urlValue').value.trim();if(!/^https?:\/\//i.test(url))throw Error('URL phải bắt đầu bằng http:// hoặc https://');
-    textStatus('Đang tải danh sách từ URL...');const content=native?(await window.streamleaf.loadURL(url)).content:await (await fetch(url)).text();addSource(name,url,content,'url');},'Tải danh sách');}
+    textStatus('Đang tải danh sách từ URL...');const content=await readSourceURL(url);addSource(name,url,content,'url');},'Tải danh sách');}
+
+ // These exact public short links redirect without Access-Control-Allow-Origin.
+ // Try the original first so a subsequently changed redirect can still work.
  async function readSourceURL(url){
   if(native)return (await window.streamleaf.loadURL(url)).content;
-  const r=await fetch(url);if(!r.ok)throw Error('Máy chủ trả HTTP '+r.status);return r.text();
+  const targets=new Map([
+   ['https://d.org.vn/listiptv','https://raw.githubusercontent.com/vuminhthanh12/vuminhthanh12/main/vmttv'],
+   ['https://nts12.s.gy/iptv','https://gist.githubusercontent.com/trisanghy/e63b2927598a4b932b3708ddd3183aaa/raw/iptv.m3u']
+  ]);
+  const networkError='Không tải được danh sách. Hãy kiểm tra mạng, dùng URL trực tiếp tới tệp M3U hoặc nhập tệp từ thiết bị.';
+  let response;
+  try{
+   response=await fetch(url);
+  }catch(error){
+   const target=targets.get(url);
+   if(!target||error.name!=='TypeError')throw Error(networkError);
+   try{response=await fetch(target);}catch{throw Error(networkError);}
+  }
+  if(!response.ok)throw Error('Máy chủ danh sách trả HTTP '+response.status);
+  return response.text();
  }
  async function replaceURLSource(source,newUrl,newName,mode='edit'){
   // Replacing a URL also introduces a new third-party playlist. Auto refresh does not.
@@ -1112,7 +1129,20 @@
  async function exportFile(){if(window.IPTVProAdvanced?.canEdit?.()===false)return toast('Hồ sơ trẻ em không được xuất playlist','warn');const all=enabledChannels();if(!all.length)return toast('Không có kênh để xuất','warn');const content=core.exportM3U(all);
   try{if(native){const dest=await window.streamleaf.export('iptv.m3u',content);if(dest)toast('Đã lưu: '+dest);}else{const blob=new Blob([content],{type:'audio/x-mpegurl;charset=utf-8'});const u=URL.createObjectURL(blob);const a=document.createElement('a');a.href=u;a.download='iptv.m3u';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),1500);toast('Đã tải file iptv.m3u');}}
   catch(e){toast('Không xuất được: '+e.message,'error');}}
- async function modalSubmit(){if(!modalHandler)return;const cb=modalHandler;const button=$('#modalConfirm');button.disabled=true;const old=button.textContent;button.textContent='Đang xử lý...';try{await cb();closeModal();}catch(e){toast(e.message||String(e),'error');}finally{button.disabled=false;button.textContent=old;}}
+ async function modalSubmit(){
+  const cb=modalHandler,button=$('#modalConfirm'),errorLine=$('#urlImportError');
+  if(!cb||button.disabled)return;
+  const old=button.textContent;
+  button.disabled=true;button.textContent='Đang xử lý...';
+  if(errorLine)errorLine.hidden=true;
+  try{await cb();if(cb===modalHandler)closeModal();}
+  catch(e){
+   if(cb!==modalHandler)return;
+   const message=e.message||String(e);
+   if(errorLine){errorLine.textContent=message;errorLine.hidden=false;textStatus(message);}
+   else toast(message,'error');
+  }finally{button.disabled=false;if(cb===modalHandler||!modalHandler)button.textContent=old;}
+ }
  function wire(){
   const bind=(ids,fn)=>ids.forEach(id=>$('#'+id)?.addEventListener('click',fn));
   bind(['fileBtn','emptyFileBtn','sourcesFileBtn'],loadFile);bind(['urlBtn','emptyUrlBtn','sourcesUrlBtn'],openURL);
@@ -1232,7 +1262,7 @@
   void playChannel(ch.id,null,{manualUrl:url,mode:'live'});
  });
  updateManualLinkPicker();
- window.IPTVState=Object.freeze({getStore:()=>store,isBusy:()=>tasks.check.running||tasks.shots.running,getCurrent:()=>current,getChannels:()=>enabledChannels(),openSnapshotChannel,setPage,save,toast,textStatus,player,renderList,render,playChannel,stopPlayer,refreshManualLinks:updateManualLinkPicker,openModal,loadHlsLib,getPlayMode:()=>playMode,getMediaInfo:()=>mediaInfo,tryNextLink:()=>{if(playMode!=='live'||playCandidateIndex+1>=playCandidates.length)return false;void recoverPlayback(playGeneration,'Giám sát xác nhận đứng hình');return true;},importSource:addSource});
+ window.IPTVState=Object.freeze({readSourceURL,getStore:()=>store,isBusy:()=>tasks.check.running||tasks.shots.running,getCurrent:()=>current,getChannels:()=>enabledChannels(),openSnapshotChannel,setPage,save,toast,textStatus,player,renderList,render,playChannel,stopPlayer,refreshManualLinks:updateManualLinkPicker,openModal,loadHlsLib,getPlayMode:()=>playMode,getMediaInfo:()=>mediaInfo,tryNextLink:()=>{if(playMode!=='live'||playCandidateIndex+1>=playCandidates.length)return false;void recoverPlayback(playGeneration,'Giám sát xác nhận đứng hình');return true;},importSource:addSource});
  wire();render();if(upgradedChecker)save();
  $('#appMode').textContent=native?'Ứng dụng • Desktop':'Bản xem thử • Web';
  $('#miniStatus').textContent=native?'Không cần Python / VLC':'Safari phát HLS trực tiếp';

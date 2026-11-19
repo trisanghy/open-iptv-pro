@@ -73,7 +73,7 @@
   }catch(e){msg('Không đọc được repo: '+e.message);log('Repo: '+e.message,'error');}finally{setBusy(false);}}
  async function loadSource(s){const cached=store.channels.filter(c=>c.sourceId===s.id),origin=s.origin||'';
   if(s.type!=='url')return {channels:cached,stale:false};
-  try{const txt=window.streamleaf?.loadURL?(await window.streamleaf.loadURL(origin)).content:await (async()=>{const r=await fetch(origin);if(!r.ok)throw Error('HTTP '+r.status);return r.text();})();
+  try{const txt=await ctx.readSourceURL(origin);
    const next=core.parseM3U(txt,s.id);if(!next.length)throw Error('M3U không có kênh');if(cached.length>=20&&next.length<cached.length*.5)throw Error('Số kênh giảm hơn 50%, giữ dữ liệu đã có');
    const states=new Map(cached.map(c=>[c.url,{status:c.status,checkedAt:c.checkedAt,reason:c.reason}]));next.forEach(c=>Object.assign(c,states.get(c.url)||{}));return {channels:next,stale:false};
   }catch(e){if(cached.length)return {channels:cached,stale:true,error:e.message};throw e;}

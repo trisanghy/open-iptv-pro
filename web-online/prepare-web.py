@@ -54,6 +54,16 @@ sync_event_after="function save(){try{localStorage.setItem('open-iptv-pro-4',JSO
 if app_text.count(sync_event_before) != 1:
     sys.exit('Web cloud: upstream state-save method changed')
 app_text=app_text.replace(sync_event_before,sync_event_after,1)
+# Keep import, refresh and merge on the same Web playlist reader.
+web_app=(Path(__file__).resolve().parent.parent/'app.js').read_text(encoding='utf-8')
+for start,end in [(' async function openURL()', ' async function replaceURLSource'),(' async function modalSubmit()', '\n function ')]:
+    left=app_text.index(start)
+    right=app_text.index(end,left)
+    first=web_app.index(start)
+    app_text=app_text[:left]+web_app[first:web_app.index(end,first)]+app_text[right:]
+marker='window.IPTVState=Object.freeze({'
+assert app_text.count(marker)==1
+app_text=app_text.replace(marker,marker+'readSourceURL,',1)
 app_file.write_text(app_text,encoding='utf-8')
 
 html=(out/'index.html').read_text(encoding='utf-8')
@@ -157,6 +167,7 @@ html=html.replace('<title>Open IPTV Pro — Web Online</title>',
 if 'href="huong-dan.html"' not in html:
     sys.exit('Public Web instructions are not linked')
 
+html=html.replace('src="app.js"','src="app.js?v=playlist-url-20261119b"').replace('collector.js?v=collector-merge-repair-20261119a','collector.js?v=playlist-url-20261119b')
 (out/'index.html').write_text(html,encoding='utf-8')
 (out/'.nojekyll').write_text('')
 (out/'manifest.webmanifest').write_text(json.dumps({
