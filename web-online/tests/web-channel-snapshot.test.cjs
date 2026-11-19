@@ -47,12 +47,15 @@ test('both quick actions run in browser without native FFmpeg',()=>{
  assert.match(html,/web-channel-snapshot\.js\?v=websnapshot-20261118b/);
 });
 
-test('one-tap current channel screenshot is present and requires real storage success',()=>{
- const fs=require('node:fs'),path=require('node:path');
- const html=fs.readFileSync(path.resolve(__dirname,'../../index.html'),'utf8');
- const app=fs.readFileSync(path.resolve(__dirname,'../../app.js'),'utf8');
- assert.match(html,/id="quickShotCurrent"/);
- assert.match(app,/bind\(\['shotBtn','quickShotCurrent'\]/);
- assert.match(app,/if\(!native&&!save\(\)\)/);
- assert.match(app,/Không đủ dung lượng lưu Snapshot trên Web/);
+test('current-channel Quick Tool is removed while Snapshot page keeps storage checks',()=>{
+  const fs=require('node:fs'),path=require('node:path');
+  const html=fs.readFileSync(path.resolve(__dirname,'../../index.html'),'utf8');
+  const app=fs.readFileSync(path.resolve(__dirname,'../../app.js'),'utf8');
+  assert.doesNotMatch(html,/id="quickShotCurrent"/);
+  assert.match(html,/id="shotBtn"/);
+  assert.match(html,/id="quickShots"/);
+  // The dedicated single-channel screenshot feature and persistence stay in place.
+  assert.match(app,/bind\(\['shotBtn','quickShotCurrent'\]/);
+  assert.match(app,/if\(!native&&!save\(\)\)/);
+  assert.match(app,/Không đủ dung lượng lưu Snapshot trên Web/);
 });
