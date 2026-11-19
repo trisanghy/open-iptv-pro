@@ -1,0 +1,2 @@
+/* Remaining English Mobile button and search accessibility strings. */
+(()=>{const dict=window.OPEN_IPTV_TRANSLATIONS||(window.OPEN_IPTV_TRANSLATIONS={});Object.assign(dict.en||(dict.en={}),{"Dừng phát":"Stop playback","Kênh tiếp theo":"Next channel","Cửa sổ nổi PiP":"Picture-in-picture window","Tìm kênh, nhóm…":"Search channels and groups…"});})();

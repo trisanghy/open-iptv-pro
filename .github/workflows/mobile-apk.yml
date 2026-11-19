@@ -9,11 +9,11 @@ on:
 permissions:
   contents: write
 concurrency:
-  group: mobile-release-${{ github.ref }}-mobile23
+  group: mobile-release-${{ github.ref }}-mobile24
   cancel-in-progress: false
 env:
-  MOBILE_VERSION: 4.23.17-mobile.23
-  MOBILE_TAG: mobile/v4.23.17.23
+  MOBILE_VERSION: 4.23.17-mobile.24
+  MOBILE_TAG: mobile/v4.23.17.24
 jobs:
   android:
     name: Android debug APK
@@ -171,11 +171,11 @@ jobs:
           unzip -tq "release/OpenIPTVPro-Mobile-${MOBILE_VERSION}-Source.zip"
           test -s "release/OpenIPTVPro-Mobile-${MOBILE_VERSION}-debug.apk"
           test -s "release/OpenIPTVPro-Mobile-${MOBILE_VERSION}-unsigned.ipa"
-          test -s "release/OpenIPTVPro-Mobile-4.23.17-mobile.23-Android-screenshot.png"
-          test -s "release/OpenIPTVPro-Mobile-4.23.17-mobile.23-Android-Recent.png"
-          test -s "release/OpenIPTVPro-Mobile-4.23.17-mobile.23-Android-PiP-Settings.png"
-          test -s "release/OpenIPTVPro-Mobile-4.23.17-mobile.23-Android-more.png"
-          test -s "release/OpenIPTVPro-Mobile-4.23.17-mobile.23-Android-EPG.png"
+          test -s "release/OpenIPTVPro-Mobile-4.23.17-mobile.24-Android-screenshot.png"
+          test -s "release/OpenIPTVPro-Mobile-4.23.17-mobile.24-Android-Recent.png"
+          test -s "release/OpenIPTVPro-Mobile-4.23.17-mobile.24-Android-PiP-Settings.png"
+          test -s "release/OpenIPTVPro-Mobile-4.23.17-mobile.24-Android-more.png"
+          test -s "release/OpenIPTVPro-Mobile-4.23.17-mobile.24-Android-EPG.png"
           sha256sum release/* > release/SHA256SUMS.txt
       - name: Publish isolated mobile prerelease (never overwrite tag)
         env:
@@ -186,7 +186,7 @@ jobs:
             exit 1
           fi
           cat > /tmp/mobile-release-notes.txt <<'NOTES'
-          Open IPTV Pro Mobile 4.23.17-mobile.23 (Beta, Capacitor 8).
+          Open IPTV Pro Mobile 4.23.17-mobile.24 (Beta, Capacitor 8).
           Complete 17-language mobile localization audit: native translations for Chinese, Lao, Korean, Russian and all other supported locales across player, source, settings and legal notices; protect external channel and EPG titles, avoid English fallback when non-English is selected; preserve existing EPG fixes.\n          Player SVG icons match Web (including Cast). The big in-video unmute overlay is removed; the small speaker button below video now handles audio. Explicit Nghe nen audio-only playback uses a dedicated audio element and Media Session playback, previous/next/pause/stop controls, persistent setting and restore-to-inline action. Native iOS background audio mode is configured; iOS/Android lock-screen behavior and available codecs are device dependent.\n          UI was recreated from user screenshot; original old v4.23 source was not found in GitHub.
           Rust Lab parity subset: M3U rights confirmation, local Smart Discovery terms,
           Smart Doctor with user-approved fallback suggestions, safe mobile JSON backup,
@@ -200,5 +200,5 @@ jobs:
           NOTES
           gh release create "$MOBILE_TAG" release/*.apk release/*.ipa release/*.zip release/*.png release/SHA256SUMS.txt \
             --target "$GITHUB_SHA" \
-            --title "Open IPTV Pro Mobile 4.23.17-mobile.23 - Android APK + unsigned iOS IPA" \
+            --title "Open IPTV Pro Mobile 4.23.17-mobile.24 - Android APK + unsigned iOS IPA" \
             --notes-file /tmp/mobile-release-notes.txt --prerelease

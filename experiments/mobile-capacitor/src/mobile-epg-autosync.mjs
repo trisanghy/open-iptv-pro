@@ -2,6 +2,8 @@ import {Capacitor,CapacitorHttp} from '@capacitor/core';
 import {guideSources,sanitizeGuideURL,matchGuideChannel,makeEPGCache,guideCoverage,epgKey} from './mobile-epg-auto.mjs';
 const native=Capacitor.isNativePlatform();
 const $=s=>document.querySelector(s);
+const t=key=>window.OpenIPTVI18n?.t?.(key)||key;
+const language=()=>window.OpenIPTVI18n?.getLanguage?.()||'vi';
 const elt=(tag,text,cls)=>{const n=document.createElement(tag);if(cls)n.className=cls;if(text!==undefined)n.textContent=text;return n;};
 export function installEPGAuto({getState,save,getText,parseDate,getSelectedChannel,notify,onGuide}){
   const state=getState();state.epgSources=guideSources(state.epgSources);
@@ -21,7 +23,7 @@ export function installEPGAuto({getState,save,getText,parseDate,getSelectedChann
     if($('#autoRefreshPlaylists'))$('#autoRefreshPlaylists').checked=state.settings.autoRefreshPlaylists!==false;
     if($('#autoResumeLast'))$('#autoResumeLast').checked=state.settings.autoResumeLast!==false;
     const c=state.epgCache;
-    show(c?'Đã lưu '+c.items.length+' lịch · '+new Date(c.updatedAt).toLocaleString('vi-VN')+' · '+(c.sourceName||'XMLTV'):'Chưa tải được EPG; ứng dụng sẽ thử tải tự động');
+    show(c?t('Đã tải')+' '+c.items.length+' EPG · '+new Date(c.updatedAt).toLocaleString(language())+' · '+(c.sourceName||'XMLTV'):t('Chưa tải được EPG; ứng dụng sẽ thử tải tự động'));
     renderRows();
   }
   function renderRows(){
@@ -36,10 +38,10 @@ export function installEPGAuto({getState,save,getText,parseDate,getSelectedChann
       .filter(p=>(!channel&&!manual||id&&p.channel===id)&&(parseDate(p.stop)?.getTime()||0)>now-3*3600000)
       .sort((a,b)=>(parseDate(a.start)?.getTime()||0)-(parseDate(b.start)?.getTime()||0))
       .slice(0,100);
-    if(!programmes.length){root.append(elt('p',!state.epgCache?'Chưa tải được EPG. Nhấn Tải EPG ngay để thử các nguồn khác.':!id&&channel?'Không tìm thấy tên hoặc tvg-id của kênh trong lịch EPG.':'Chưa có lịch hiện tại hoặc sắp tới của kênh này. Thử nguồn khác.','muted'));return;}
+    if(!programmes.length){root.append(elt('p',t(!state.epgCache?'Chưa tải được EPG. Nhấn Tải EPG ngay để thử các nguồn khác.':!id&&channel?'Không tìm thấy tên hoặc tvg-id của kênh trong lịch EPG.':'Chưa có lịch hiện tại hoặc sắp tới của kênh này. Thử nguồn khác.'),'muted'));return;}
     for(const p of programmes){
       const row=elt('article',undefined,'epg-row');
-      row.append(elt('small',p.channel+' · '+(parseDate(p.start)?.toLocaleString('vi-VN')||p.start)),elt('b',p.title));root.append(row);
+      row.append(elt('small',p.channel+' · '+(parseDate(p.start)?.toLocaleString(language())||p.start)),elt('b',p.title));root.append(row);
     }
   }
   async function getGuideText(url){
@@ -79,7 +81,7 @@ export function installEPGAuto({getState,save,getText,parseDate,getSelectedChann
     try{
       const enabled=state.epgSources.filter(x=>x.enabled!==false);
       if(!enabled.length){if(!quiet)notify('Chưa chọn nguồn EPG','error');return false;}
-      show('Đang cập nhật EPG từ '+enabled.length+' nguồn...');
+      show(t('Đang cập nhật EPG từ')+' '+enabled.length+' '+t('nguồn')+'…');
       let lastError='',candidate=null;
       const current=getSelectedChannel();
       for(const source of enabled){
@@ -94,18 +96,18 @@ export function installEPGAuto({getState,save,getText,parseDate,getSelectedChann
           if(!currentMatch){candidate??={cache:accepted,url:source.url};continue;}
           state.epgCache=accepted;state.epgUrl=source.url;
           save();onGuide(accepted);render();
-          if(!quiet)notify('Đã tải '+guide.items.length+' lịch EPG từ '+source.name,'ok');
+          if(!quiet)notify(t('Đã tải')+' '+guide.items.length+' '+t('lịch EPG từ')+' '+source.name,'ok');
           return true;
         }catch(e){lastError=(e?.message||String(e));console.warn('XMLTV',source.name,lastError);}
       }
       if(candidate){
         state.epgCache=candidate.cache;state.epgUrl=candidate.url;
         save();onGuide(candidate.cache);render();
-        show('Đã tải lịch EPG nhưng chưa khớp kênh đang chọn; thử chọn tvg-id khác.');
+        show(t('Đã tải lịch EPG nhưng chưa khớp kênh đang chọn; thử chọn tvg-id khác.'));
         if(!quiet)notify('EPG đã tải, nhưng chưa khớp kênh đang chọn.','ok');
         return true;
       }
-      show('Không tải được EPG mới; vẫn giữ lịch cũ. '+lastError);
+      show(t('Không tải được EPG mới; vẫn giữ lịch cũ.')+' '+t(lastError));
       if(!quiet)notify('Không tải được nguồn EPG nào; giữ dữ liệu cũ','error');
       return false;
     }finally{downloading=false;}
@@ -122,5 +124,6 @@ export function installEPGAuto({getState,save,getText,parseDate,getSelectedChann
   $('#autoResumeLast').onchange=e=>{state.settings.autoResumeLast=e.target.checked;save();};
   $('#addEPGSource').onclick=()=>{try{addCustom();}catch(e){notify(e.message,'error');}};
   render();
+  document.addEventListener('openiptv:languagechange',render);
   return {render,renderRows,refresh,addCustom};
 }

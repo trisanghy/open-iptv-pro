@@ -11,7 +11,10 @@ const source=fs.readFileSync(path.join(root,'public/languages.bundle.js'),'utf8'
 const scripts=['mobile-locales.js','mobile-core-locales.js',
  'mobile-locales-fr-de-it.js','mobile-locales-ja-id-hi-ar.js','mobile-locales-es-pt-th-km.js',
  'mobile-core-fr-de-it.js','mobile-core-ja-id-hi-ar.js','mobile-core-es-pt-th-km.js','mobile-rights-locales.js',
- 'mobile-rights-extra.js','mobile-rights-actions.js','mobile-rights-en.js','mobile-status-locales.js'];
+ 'mobile-rights-extra.js','mobile-rights-actions.js','mobile-rights-en.js','mobile-status-locales.js',
+ 'mobile-accessibility-complete.js','mobile-accessibility-rest.js','mobile-operation-locales.js',
+ 'mobile-operation-rest-a.js','mobile-operation-rest-b.js',
+ 'mobile-background-locales.js','mobile-background-rest.js','mobile-english-completion.js'];
 function load(){
  const ctx={window:{}};
  vm.runInNewContext(source,ctx,{timeout:1000});
@@ -20,7 +23,7 @@ function load(){
  return ctx.window.OPEN_IPTV_TRANSLATIONS;
 }
 
-test('all 13 offline supplement scripts load in guaranteed order before i18n and app main',()=>{
+test('all 21 offline supplement scripts load in guaranteed order before i18n and app main',()=>{
  const scriptsInHTML=[...html.matchAll(/<script[^>]*src="([^"]+)"/g)].map(x=>x[1]);
  const start=scriptsInHTML.indexOf('/languages.bundle.js'),end=scriptsInHTML.indexOf('/i18n.js');
  assert.ok(start>=0&&end>start);

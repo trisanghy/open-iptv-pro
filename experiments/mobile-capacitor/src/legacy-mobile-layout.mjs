@@ -58,7 +58,7 @@ return `
   <p class="muted">Các nguồn XMLTV Việt Nam giống bản Web/Rust Lab; tải lần lượt nguồn hoạt động, giữ EPG cũ nếu nguồn lỗi.</p>
   <div id="epgSourcesList" class="epg-source-list"></div>
   <label class="epg-auto-label"><input type="checkbox" id="epgAutoRefresh" checked/> Tự cập nhật EPG khi khởi động</label>
-  <div class="add-row epg-manual-row"><input id="epgURL" placeholder="https://…/guide.xml hoặc .gz"/><button id="addEPGSource" type="button">+ Nguồn</button></div>
+  <div class="add-row epg-manual-row"><input id="epgURL" placeholder="https://…/guide.xml(.gz)"/><button id="addEPGSource" type="button">+ Nguồn</button></div>
   <input id="epgChannel" placeholder="tvg-id (tự chọn theo kênh đang xem)"/>
   <button id="loadEPG">↻ Tải EPG ngay</button><p id="epgStatus" class="muted" aria-live="polite">Chưa tải EPG</p>
   <div id="epgResults"></div>
