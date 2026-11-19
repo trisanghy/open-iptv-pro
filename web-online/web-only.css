@@ -137,3 +137,28 @@ html body #page-tv .player-control-card #epgCurrent :is(#epgNowName,#epgNextName
 #page-tv .advanced-timebar,
 #defaultBufferSettings,
 #fullFeatureTools [name="replayMinutesChoice"]{display:none!important}
+
+
+/* Web player EPG: display the source-provided film/episode synopsis on both
+   current and following programmes. Keep the existing two-row compact grid. */
+html body #page-tv #epgCurrent .epg-program-copy {
+ display:flex!important;flex-direction:column!important;align-items:stretch!important;
+ min-width:0!important;max-width:100%!important;gap:2px!important;
+}
+html body #page-tv #epgCurrent .epg-program-copy > b {
+ display:block!important;white-space:nowrap!important;overflow:hidden!important;
+ text-overflow:ellipsis!important;min-width:0!important;
+}
+html body #page-tv #epgCurrent .epg-program-description {
+ display:-webkit-box!important;
+ -webkit-box-orient:vertical!important;-webkit-line-clamp:2;
+ max-height:2.9em!important;
+ overflow:hidden!important;overflow-wrap:anywhere!important;
+ white-space:normal!important;line-height:1.4!important;
+ min-width:0!important;color:var(--muted,#a3b5c6)!important;
+ font-size:12px!important;font-weight:450!important;
+}
+html body #page-tv #epgCurrent .epg-program-description[hidden] {display:none!important}
+html body #page-tv #epgCurrent .epg-program-copy > :is(b,small) {
+ max-width:100%!important;
+}

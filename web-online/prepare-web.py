@@ -86,6 +86,12 @@ for previous,next_value in (
 ):
     if js.count(previous)!=1: sys.exit('WebView channel visibility hook changed')
     js=js.replace(previous,next_value,1)
+# Preserve Web player film/episode description renderer when building from WebView.
+epg_now_start=' function renderNow(){'
+epg_now_end=' function renderEPG(){'
+if any(x.count(epg_now_start)!=1 or x.count(epg_now_end)!=1 for x in (js,web_features)):
+    sys.exit('EPG player renderNow source changed')
+js=js[:js.index(epg_now_start)]+web_features[web_features.index(epg_now_start):web_features.index(epg_now_end)]+js[js.index(epg_now_end):]
 features.write_text(js,encoding='utf-8')
 
 for name in ('web-only.js','web-only.css','resume-last.js','resume-last.css','browser-channel-check.js','web-autoplay.js','cloud-core.js','cloud-sync.js','cloud-sync.css','web-volume.css','web-volume.js','web-mobile-player.css','web-mobile-player.js','web-player-icons.css','web-player-icons.js','web-tv-wide.css','web-mobile-controls-polish.css','web-mobile-volume.js','web-mobile-volume.css','web-desktop-download.css','web-desktop-download.js','web-recent-channels.js','web-compact-toolbar.css','web-snapshot-batch.js','web-background-audio.js','web-background-audio.css','web-ios-audio-recovery.js','web-ios-audio-recovery.css','web-fullscreen-controls.css','web-fullscreen-controls.js','web-mobile-tablet-controls.css'):
@@ -452,6 +458,16 @@ html=html.replace('</head>','<link rel="stylesheet" href="web-ios-pip-compat.css
 html=html.replace('</body>','<script src="web-ios-pip-compat.js?v=ios-pwa-pip-20261119a"></script></body>',1)
 if html.count('web-ios-pip-compat.js?v=')!=1 or html.count('web-ios-pip-compat.css?v=')!=1:
     sys.exit('iOS PiP helper scripts duplicated or missing')
+
+# Keep player subtitles and fullscreen EPG across Safari cached PWA versions.
+for old,new in (
+    ('features.js?v=epg-atomic-gzip-20261120a','features.js?v=epg-player-details-20261120a'),
+    ('web-only.css?v=no-timeshift-20261119a','web-only.css?v=epg-player-details-20261120a'),
+    ('web-fullscreen-controls.js?v=fullscreen-tools-20261119b','web-fullscreen-controls.js?v=epg-player-details-20261120a'),
+    ('web-fullscreen-controls.css?v=fullscreen-tools-20261119b','web-fullscreen-controls.css?v=epg-player-details-20261120a'),
+):
+    if html.count(old)!=1:sys.exit('EPG subtitles asset cache version changed: '+old)
+    html=html.replace(old,new,1)
 
 (out/'index.html').write_text(html,encoding='utf-8')
 (out/'.nojekyll').write_text('')

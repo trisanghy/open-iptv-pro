@@ -11,7 +11,7 @@ test('player EPG has two time/title rows without redundant labels',()=>{
   assert.equal(html.split('id="epg'+kind+'Name"').length,2);
  }
  assert.doesNotMatch(html,/class="epg-row-label"/);
- assert.ok(html.includes('web-only.css?v=no-timeshift-20261119a'));
+ assert.ok(html.includes('web-only.css?v=epg-player-details-20261120a'));
  const css=fs.readFileSync(path.join(root,'web-only.css'),'utf8');
  assert.equal(css,fs.readFileSync(path.join(root,'web-online/web-only.css'),'utf8'));
  assert.match(css,/grid-template-rows:max-content max-content!important/);

@@ -290,17 +290,35 @@
   const target=$('#epgNowText');if(!target)return;
   const c=ctx.getCurrent(),time=ms=>Number.isFinite(ms)?today(ms):'—';
   const nowName=$('#epgNowName'),nowTime=$('#epgNowTime'),nextName=$('#epgNextName'),nextTime=$('#epgNextTime');
+  const nowDetails=$('#epgNowDescription'),nextDetails=$('#epgNextDescription');
+  // Show XMLTV episode/film details below the category. A decoded legacy EPG
+  // may already combine the genre and episode in title: do not repeat it.
+  const detailText=item=>{
+   const detail=String(item?.description||'').trim();
+   return detail&&detail.toLocaleLowerCase('vi-VN')!==String(item?.title||'').trim().toLocaleLowerCase('vi-VN')?detail:'';
+  };
+  const displayTitle=item=>{
+   const title=String(item?.title||'').trim();
+   const detail=detailText(item);
+   return detail&&title.toLocaleLowerCase('vi-VN').endsWith(': '+detail.toLocaleLowerCase('vi-VN'))
+    ?title.slice(0,-detail.length-2):title;
+  };
+  const renderDetail=(element,item)=>{
+   if(!element)return;const detail=detailText(item);
+   element.textContent=detail;element.hidden=!detail;element.title=detail;
+  };
   if(!c){
    target.textContent='Chọn kênh để xem chương trình hiện tại';
    if(nowName)nowName.textContent='Chưa chọn kênh';if(nowTime)nowTime.textContent='—';
-   if(nextName)nextName.textContent='Chưa có lịch tiếp theo';if(nextTime)nextTime.textContent='—';return;
+   if(nextName)nextName.textContent='Chưa có lịch tiếp theo';if(nextTime)nextTime.textContent='—';renderDetail(nowDetails,null);renderDetail(nextDetails,null);return;
   }
   const {now,next}=guideLib.current(guide,c);
-  target.textContent=now?`${time(now.start)}–${time(now.end)} · ${now.title}${next?'  |  Tiếp: '+next.title:''}`:'Chưa có EPG khớp với '+c.name;
-  if(nowName){nowName.textContent=now?.title||'Chưa có EPG';nowName.title=now?.title||'Chưa có thông tin chương trình';}
+  target.textContent=now?`${time(now.start)}–${time(now.end)} · ${displayTitle(now)}${detailText(now)?' — '+detailText(now):''}${next?'  |  Tiếp: '+displayTitle(next)+(detailText(next)?' — '+detailText(next):''):''}`:'Chưa có EPG khớp với '+c.name;
+  if(nowName){nowName.textContent=displayTitle(now)||'Chưa có EPG';nowName.title=now?.title||'Chưa có thông tin chương trình';}
   if(nowTime)nowTime.textContent=now?`${time(now.start)} – ${time(now.end)}`:'—';
-  if(nextName){nextName.textContent=next?.title||'Chưa có lịch tiếp theo';nextName.title=next?.title||'Chưa có lịch tiếp theo';}
+  if(nextName){nextName.textContent=displayTitle(next)||'Chưa có lịch tiếp theo';nextName.title=next?.title||'Chưa có lịch tiếp theo';}
   if(nextTime)nextTime.textContent=next?`${time(next.start)} – ${time(next.end)}`:'—';
+  renderDetail(nowDetails,now);renderDetail(nextDetails,next);
  }
  function renderEPG(){const root=$('#epgGuide');root.replaceChildren();const channels=ctx.getChannels(),clock=Date.now();const filter=$('#epgSearch')?.value?.toLowerCase().trim()||'';
   const matched=channels.filter(c=>guideLib.find(guide,c).length>0).filter(c=>!filter||(c.name+' '+c.tvgId).toLowerCase().includes(filter)).slice(0,250);

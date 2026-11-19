@@ -10,7 +10,7 @@
   let items=[];try{items=lib.find(guide,ch)||[];}catch{return [];}
   return items.filter(p=>Number.isFinite(p.start)&&Number.isFinite(p.end)&&p.end>now-120000)
    .sort((a,b)=>a.start-b.start).slice(0,8)
-   .map(p=>({start:p.start,end:p.end,title:String(p.title||'Chưa có tên'),onair:p.start<=now&&p.end>now}));
+   .map(p=>({start:p.start,end:p.end,title:String(p.title||'Chưa có tên'),description:String(p.description||'').trim(),onair:p.start<=now&&p.end>now}));
  }
  function listChoices(select){
   if(!select||select.disabled)return [];
@@ -39,10 +39,14 @@
    }
    const clock=ms=>new Date(ms).toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit'});
    for(const x of results){
-    const row=doc.createElement('div'),time=doc.createElement('time'),title=doc.createElement('b');
+    const row=doc.createElement('div'),time=doc.createElement('time'),copy=doc.createElement('div'),title=doc.createElement('b');
     row.className='fs-epg-item';row.dataset.onair=String(x.onair);row.setAttribute('role','listitem');
     time.textContent=clock(x.start)+' – '+clock(x.end);title.textContent=x.title;title.title=x.title;
-    row.append(time,title);list.append(row);
+    copy.className='fs-epg-program-copy';copy.append(title);
+    if(x.description&&x.description.toLocaleLowerCase('vi-VN')!==x.title.toLocaleLowerCase('vi-VN')){
+     const detail=doc.createElement('small');detail.className='fs-epg-description';detail.textContent=x.description;detail.title=x.description;copy.append(detail);
+    }
+    row.append(time,copy);list.append(row);
    }
   }
   function displayChoices(source,hostId,callback){

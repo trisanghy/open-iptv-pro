@@ -8,8 +8,8 @@ test('fullscreen toolbar augments the existing one without duplicate input or pl
   assert.equal((html.match(new RegExp('id="'+id+'"','g'))||[]).length,1,id);
  }
  assert.ok(html.indexOf('id="fsLinkBtn"')<html.indexOf('id="fsExit"'));
- assert.match(html,/web-fullscreen-controls\.css\?v=fullscreen-tools-20261119b/);
- assert.match(html,/web-fullscreen-controls\.js\?v=fullscreen-tools-20261119b/);
+ assert.match(html,/web-fullscreen-controls\.css\?v=epg-player-details-20261120a/);
+ assert.match(html,/web-fullscreen-controls\.js\?v=epg-player-details-20261120a/);
  assert.match(builder,/web-fullscreen-controls\.js/);
 });
 test('new tools only show in fullscreen or mobile theater; exit is on the far right',()=>{

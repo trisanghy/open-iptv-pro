@@ -95,3 +95,20 @@ html body #page-tv #playerBox:is(:fullscreen,.mobile-theater).player-idle:has(.f
  html body #page-tv #playerBox:is(:fullscreen,.mobile-theater) .fs-extra{margin-left:auto!important;gap:3px!important}
  html body #page-tv #playerBox:is(:fullscreen,.mobile-theater) .fullscreen-ux .fs-popup{left:9px!important;right:9px!important;width:auto!important;max-width:none!important}
 }
+
+
+/* Fullscreen EPG uses the same source <desc> details as the TV player. */
+html body #page-tv #playerBox:is(:fullscreen,.mobile-theater) .fs-epg-program-copy{
+ display:flex!important;flex-direction:column!important;min-width:0!important;
+ gap:2px!important;
+}
+html body #page-tv #playerBox:is(:fullscreen,.mobile-theater) .fs-epg-program-copy b{
+ display:block!important;max-width:100%!important;overflow:hidden!important;
+ white-space:nowrap!important;text-overflow:ellipsis!important;
+}
+html body #page-tv #playerBox:is(:fullscreen,.mobile-theater) .fs-epg-description{
+ display:-webkit-box!important;-webkit-box-orient:vertical!important;
+ -webkit-line-clamp:3;overflow:hidden!important;overflow-wrap:anywhere!important;
+ white-space:normal!important;max-height:4.2em!important;
+ color:#afc2d1!important;font:450 12px/1.4 system-ui,sans-serif!important;
+}

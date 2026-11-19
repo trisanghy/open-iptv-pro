@@ -189,16 +189,16 @@ jobs:
           node --test web-online/tests/web-mobile-favorites-interaction.test.cjs
           node --check _site/advanced.js
           node --check _site/app.js
-          grep -Fq 'features.js?v=epg-atomic-gzip-20261120a' _site/index.html
+          grep -Fq 'features.js?v=epg-player-details-20261120a' _site/index.html
           node --check _site/features.js
           node --test web-online/tests/web-mobile-channel-always-open.test.cjs
           node --test web-online/tests/web-tv-wide.test.cjs
           node --check _site/web-fullscreen-controls.js
           node --test web-online/tests/web-fullscreen-controls.test.cjs
-          grep -Fq 'web-fullscreen-controls.js?v=fullscreen-tools-20261119b' _site/index.html
-          grep -Fq 'web-fullscreen-controls.css?v=fullscreen-tools-20261119b' _site/index.html
+          grep -Fq 'web-fullscreen-controls.js?v=epg-player-details-20261120a' _site/index.html
+          grep -Fq 'web-fullscreen-controls.css?v=epg-player-details-20261120a' _site/index.html
           node --test web-online/tests/web-no-timeshift.test.cjs
-          grep -Fq 'web-only.css?v=no-timeshift-20261119a' _site/index.html
+          grep -Fq 'web-only.css?v=epg-player-details-20261120a' _site/index.html
           if grep -Eq 'id="bufferToggle"|id="bufferRewind"|id="bufferRewind10"|id="bufferLive"|id="autoTimeshiftSetting"|name="replayMinutesChoice"' _site/index.html; then
             echo 'Live Timeshift must not appear in Web desktop or mobile'; exit 1
           fi
@@ -311,6 +311,9 @@ jobs:
           node --test web-online/tests/web-epg-cache-replacement.test.cjs
           grep -Fq 'gzip-json-v1' _site/features.js
           EPG_LAYOUT_CHROME="$(command -v google-chrome)" node --test web-online/tests/web-epg-layout.test.cjs
+          node --test web-online/tests/web-epg-player-details.test.cjs
+          EPG_DETAILS_CHROME="$(command -v google-chrome)" node --test web-online/tests/web-epg-program-details-browser.test.cjs
+          cmp _site/web-only.css web-online/web-only.css
           mkdir -p _site/epg
           # Primary EPG is restored; EPG.pw is opt-in and cached separately.
           if python3 web-online/fetch-epg.py _site/epg/vn.xml; then
