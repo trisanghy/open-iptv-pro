@@ -23,11 +23,27 @@ function engine(){
   vm.runInNewContext(read(file),environment,{timeout:5000,filename:file});
  return window.OpenIPTVI18n;
 }
+function generatedPacks(){
+ const name='renderer/i18n-full-locale-pack.js';
+ if(!fs.existsSync(path.join(ROOT,name)))return {};
+ const source=read(name);
+ const match=source.match(/const packs=(\{.*\});root\.OpenIPTVCompletedLocales=/);
+ if(!match)throw new Error('Malformed generated locale pack');
+ return JSON.parse(match[1]);
+}
 function audit(){
- const strings=snapshot(),i18n=engine(),results=[];
+ const strings=snapshot(),i18n=engine(),results=[],generated=generatedPacks();
  for(const code of Object.keys(i18n.locales)){
   if(code==='vi')continue;
-  const notNative=strings.filter(v=>{const actual=i18n.t(v,code);return actual===v||actual===i18n.t(v,'en');});
+  const notNative=strings.filter(v=>{
+   const actual=i18n.t(v,code);
+   if(code==='en')return actual===v;
+   const native=generated[code]||{};
+   // Explicit locale entry with a genuine translation is not an English fallback,
+   // even if French/Indonesian happen to share a spelling with English.
+   if(Object.hasOwn(native,v)&&native[v]!==v)return false;
+   return actual===v||actual===i18n.t(v,'en');
+  });
   results.push({code,localized:strings.length-notNative.length,total:strings.length,pct:Math.round((strings.length-notNative.length)*100/strings.length),untranslated:notNative});
  }
  return {total:strings.length,results};

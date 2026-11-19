@@ -1,0 +1,56 @@
+name: Complete Electron native locale assembly from verified translation artifacts
+on:
+  push:
+    branches: [build-sources/electron-desktop]
+    paths: ['.github/workflows/assemble-electron-locales.yml']
+permissions:
+  contents: write
+  actions: read
+jobs:
+  assemble:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: true}
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - uses: actions/download-artifact@v4
+        with:
+          run-id: 44474053481
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          pattern: native-ui-*
+          path: locale-output/
+          merge-multiple: true
+      - name: Merge translated UI dictionaries; require every locale to pass native audit
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          python3 scripts/build-electron-native-locales.py --merge
+          node --check renderer/i18n.js
+          node --check renderer/i18n-full-locale-pack.js
+          node --test tests/i18n-*.test.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: assembled-electron-native-locale-files
+          path: |
+            renderer/i18n-full-locale-pack.js
+            renderer/index.html
+            renderer/i18n.js
+            scripts/audit-electron-i18n.cjs
+            tests/i18n-100-percent-native.test.cjs
+          retention-days: 7
+      - name: Publish verified native dictionaries on Electron only; no history rewrite
+        shell: bash
+        env:
+          TARGET_BRANCH: build-sources/electron-desktop
+        run: |
+          set -Eeuo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add renderer/index.html renderer/i18n.js renderer/i18n-full-locale-pack.js scripts/audit-electron-i18n.cjs tests/i18n-100-percent-native.test.cjs
+          git fetch origin "$TARGET_BRANCH"
+          test "$(git rev-parse HEAD)" = "$(git rev-parse FETCH_HEAD)" || { echo 'HEAD moved; refusing to overwrite'; exit 1; }
+          git commit -m 'feat(electron/i18n): bundle complete offline native translations for all 17 locales'
+          git push origin "HEAD:$TARGET_BRANCH"
