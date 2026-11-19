@@ -116,3 +116,36 @@
   display:none!important;
  }
 }
+
+
+/* Root fix: position SVG masks in normal flex flow, not absolute offsets.
+ * The previous tablet overrides conflicted with web-mobile-controls-polish
+ * (inset:auto!important), causing Cast/PiP/Fullscreen icons above the tiles. */
+@media (min-width:761px) {
+ html[data-iptv-device="mobile"] body #page-tv .player-control-card > .control-layout-top > .output-controls {
+  width:min(100%,960px)!important;
+  max-width:960px!important;
+  margin-inline:auto!important;
+  justify-self:center!important;
+ }
+ html[data-iptv-device="mobile"] body #page-tv .player-control-card .control-layout-top .transport-controls :is(#prevBtn,#stopBtn,#nextBtn) {
+  border:1px solid var(--edge,#34475a)!important;
+  background:var(--surface2,#1c2938)!important;
+ }
+ html[data-iptv-device="mobile"] body #page-tv .player-control-card .control-layout-top>.output-controls :is(#webVolumeMute,#castBtn,#pipBtn,#fullscreenBtn) {
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+ }
+ html[data-iptv-device="mobile"] body #page-tv .player-control-card .control-layout-top>.output-controls :is(#webVolumeMute,#castBtn,#pipBtn,#fullscreenBtn)::before {
+  position:static!important;
+  inset:auto!important;left:auto!important;top:auto!important;right:auto!important;bottom:auto!important;
+  transform:none!important;
+  display:block!important;
+  flex:0 0 27px!important;
+  width:27px!important;height:27px!important;
+  min-width:27px!important;min-height:27px!important;
+  max-width:27px!important;max-height:27px!important;
+  margin:0!important;
+ }
+}

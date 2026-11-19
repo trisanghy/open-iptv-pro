@@ -162,7 +162,7 @@ jobs:
           node --test web-online/tests/web-mobile-controls-polish.test.cjs
           node --test web-online/tests/web-mobile-tablet-controls.test.cjs
           cmp _site/web-mobile-tablet-controls.css web-mobile-tablet-controls.css
-          grep -Fq 'web-mobile-tablet-controls.css?v=tablet-controls-20261119a' _site/index.html
+          grep -Fq 'web-mobile-tablet-controls.css?v=tablet-controls-20261119b' _site/index.html
           node --test web-online/tests/web-quick-tools-icons.test.cjs
           if grep -Fq 'id="quickShotCurrent"' _site/index.html; then echo 'Redundant Quick Tools screenshot action remains'; exit 1; fi
           grep -Fq 'web-mobile-controls-polish.css?v=quick-icons-unified-20261119b' _site/index.html
