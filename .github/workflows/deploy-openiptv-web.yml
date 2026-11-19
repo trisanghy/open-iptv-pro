@@ -359,6 +359,7 @@ jobs:
           node --test web-online/tests/web-language-supplement.test.cjs
           # Native Web labels must be complete across all 17 selected languages.
           node --test web-online/tests/web-native-full-coverage.test.cjs
+          node web-online/i18n-audit.cjs --require-complete
           # Independent guide-localization gate becomes strict once the generated asset ships.
           if [ -f guide-native-locales.js ]; then node --check _site/guide-native-locales.js; fi
           node --test web-online/tests/web-guide-native-coverage.test.cjs
