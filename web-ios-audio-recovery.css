@@ -1,0 +1,17 @@
+
+/* Safari iPhone: expose the action required to unlock sound after muted autoplay. */
+html[data-iptv-device="mobile"] #playerBox{position:relative}
+html[data-iptv-device="mobile"] #playerBox .web-unmute-assist{
+ position:absolute;left:50%;bottom:12px;transform:translateX(-50%);z-index:20;
+ display:flex;align-items:center;justify-content:center;gap:7px;
+ width:max-content;max-width:calc(100% - 24px);min-width:118px;min-height:43px;
+ border:1px solid #d9b2f7;border-radius:12px;padding:9px 17px;
+ background:#c184f3;color:#161f31;box-shadow:0 4px 24px #0007;
+ font:700 14px/1.3 system-ui,-apple-system,sans-serif;cursor:pointer;
+ touch-action:manipulation
+}
+html[data-iptv-device="mobile"] #playerBox .web-unmute-assist[hidden]{display:none!important}
+html[data-iptv-device="mobile"] #page-tv .player-control-card .output-controls #castBtn,
+html[data-iptv-device="mobile"] #page-tv .player-control-card .output-controls #pipBtn{
+ visibility:visible!important;opacity:1!important;pointer-events:auto!important
+}
