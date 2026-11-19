@@ -49,6 +49,8 @@ test('runtime loads Web language supplements while keeping user IPTV metadata in
 test('Web pack is copied, loaded before i18n, and cache-busted on every content change',()=>{
   assert.match(builder,/copy2\(Path\(__file__\)\.resolve\(\)\.parent\/'web-language-supplement\.js',out\/'web-language-supplement\.js'\)/);
   assert.ok(builder.includes('<script src="web-language-supplement.js"></script>'));
-  assert.match(builder,/for asset in \('i18n\.js','languages\.bundle\.js','web-language-supplement\.js'\)/);
+  assert.match(builder,/for asset in \('i18n\.js','languages\.bundle\.js','web-language-supplement\.js','web-generated-locales\.js'\)/);
+  assert.ok(builder.includes('<script src="web-generated-locales.js"></script><script src="web-language-supplement.js"></script>'));
+  assert.match(builder,/copy2\(Path\(__file__\)\.resolve\(\)\.parent\/'web-generated-locales\.js',out\/'web-generated-locales\.js'\)/);
   assert.ok(!source.includes('web-language-supplement.js'),'Electron locale engine must stay separate');
 });
