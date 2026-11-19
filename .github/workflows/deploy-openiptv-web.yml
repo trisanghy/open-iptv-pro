@@ -58,7 +58,7 @@ jobs:
           ET.parse('_site/sitemap.xsl')
           sitemap=ET.fromstring(raw)
           urls=[x.text for x in sitemap.findall('.//{http://www.sitemaps.org/schemas/sitemap/0.9}loc')]
-          assert urls == ['https://trisanghy.github.io/open-iptv-pro/', 'https://trisanghy.github.io/open-iptv-pro/huong-dan.html', 'https://trisanghy.github.io/open-iptv-pro/player.html'], urls
+          assert urls == ['https://trisanghy.github.io/open-iptv-pro/', 'https://trisanghy.github.io/open-iptv-pro/huong-dan.html'], urls
           assert 'rel="canonical"' in Path('_site/index.html').read_text(encoding='utf-8')
           assert 'rel="canonical"' in Path('_site/huong-dan.html').read_text(encoding='utf-8')
           print('SEO publishing checks passed')
@@ -222,10 +222,16 @@ jobs:
           else
             echo "::warning::EPG upstream failed and no previous guide was available. Website will display a useful error until source is reachable."
           fi
-      - name: Publish project homepage and capture this player build
+      - name: Keep IPTV player as project root and capture current screenshots
         run: |
           node --test web-online/tests/web-home-route.test.cjs
+          node --test web-online/tests/web-project-root.test.cjs
           python3 web-online/publish-home.py _site
+          grep -q 'id="appShell"' _site/index.html
+          grep -q 'id="page-tv"' _site/index.html
+          if grep -q 'Trang chủ dự án</title>' _site/index.html; then exit 1; fi
+          test -s _site/assets/player-desktop.png
+          test -s _site/assets/player-mobile.png
       - name: Preserve complete website as downloadable ZIP
         shell: bash
         run: |
