@@ -248,7 +248,7 @@ jobs:
         run: |
           set -euo pipefail
           node --check web-online/capture-gallery.cjs
-          npm install --prefix "$RUNNER_TEMP/iptv-gallery-tools" --no-save --no-package-lock --ignore-scripts --no-audit --no-fund playwright-core@1.56.1 @ffmpeg-installer/linux-x64@4.4.1
+          npm install --prefix "$RUNNER_TEMP/iptv-gallery-tools" --no-save --no-package-lock --ignore-scripts --no-audit --no-fund playwright-core@1.56.1 @ffmpeg-installer/linux-x64@4.1.5
           NODE_PATH="$RUNNER_TEMP/iptv-gallery-tools/node_modules" CAPTURE_FFMPEG="$RUNNER_TEMP/iptv-gallery-tools/node_modules/@ffmpeg-installer/linux-x64/ffmpeg" CAPTURE_CHROME="$(command -v google-chrome)" node web-online/capture-gallery.cjs _site
           python3 - <<'PY'
           from pathlib import Path
