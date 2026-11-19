@@ -21,7 +21,8 @@
   }
   for(const c of playlist){if(c.tvgId && aliasesById[c.tvgId])matched.add(c.tvgId);}
   const now=Date.now(),min=now-7*86400000,max=now+7*86400000,out=[];const items=doc.getElementsByTagName('programme');
-  for(const p of items){if(out.length>=12000)break;const ch=p.getAttribute('channel')||'';
+  // Process the entire validated time window; XML ordering must not hide later channels.
+  for(const p of items){const ch=p.getAttribute('channel')||'';
    if(!matched.has(ch) && aliasesById[ch]===undefined)continue;
    const start=when(p.getAttribute('start')),end=when(p.getAttribute('stop'));
    if(!Number.isFinite(start)||!Number.isFinite(end)||end<=start||end<min||start>max)continue;
@@ -46,7 +47,27 @@
   }
   return bestId;
  }
- function find(guide,channel){if(!guide||!channel)return [];const id=guide.manualMappings?.[channel.id]||resolveId(guide,channel);const adjust=Math.max(-720,Math.min(720,Number(guide.offsetMinutes)||0))*60000;return (guide.programmes||[]).filter(p=>p.id===id).map(p=>adjust?{...p,start:p.start+adjust,end:p.end+adjust}:p);}
+ const programmeIndexes=new WeakMap();
+ function programmesByChannel(guide){
+  const programmes=guide.programmes||[];
+  const cached=programmeIndexes.get(guide);
+  if(cached&&cached.programmes===programmes&&cached.length===programmes.length)return cached.index;
+  const index=new Map();
+  for(const programme of programmes){
+   if(!index.has(programme.id))index.set(programme.id,[]);
+   index.get(programme.id).push(programme);
+  }
+  for(const list of index.values())list.sort((a,b)=>a.start-b.start);
+  programmeIndexes.set(guide,{programmes,length:programmes.length,index});
+  return index;
+ }
+ function find(guide,channel){
+  if(!guide||!channel)return [];
+  const id=guide.manualMappings?.[channel.id]||resolveId(guide,channel);
+  const adjust=Math.max(-720,Math.min(720,Number(guide.offsetMinutes)||0))*60000;
+  const programmes=programmesByChannel(guide).get(id)||[];
+  return adjust?programmes.map(p=>({...p,start:p.start+adjust,end:p.end+adjust})):programmes;
+ }
  function current(guide,channel,clock=Date.now()){const list=find(guide,channel);return {now:list.find(p=>p.start<=clock&&p.end>clock)||null,next:list.find(p=>p.start>clock)||null};}
  root.IPTVGuide={parse,find,current,when,tidy};
 })(typeof window!=='undefined'?window:globalThis);
