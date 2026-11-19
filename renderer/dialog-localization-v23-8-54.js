@@ -15,5 +15,5 @@
    const bound=original.bind(window);
    window[kind]=function(message,...rest){return bound(translateDialog(message),...rest);};
  }
- window.OpenIPTVI18n?.apply?.();
+ if(typeof document!=='undefined' && document.body && typeof document.getElementById==='function') window.OpenIPTVI18n?.apply?.();
 })();
