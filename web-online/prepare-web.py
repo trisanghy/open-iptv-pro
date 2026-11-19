@@ -12,6 +12,9 @@ out=Path(a.destination)
 if not (src/'index.html').is_file() or not (src/'app.js').is_file():
     sys.exit('Missing WebView frontend/index.html or app.js')
 copytree(src,out,dirs_exist_ok=True)
+# Always ship the reviewed Web-only localization engine, not an outdated WebView copy.
+copy2(Path(__file__).resolve().parent.parent/'i18n.js',out/'i18n.js')
+
 # Web-only EPG downloader: native desktop frontend calls its own RPC.
 # Replace exactly one fetchXML implementation so a future build never undoes
 # the same-origin EPG fix when regenerating the Pages website.
