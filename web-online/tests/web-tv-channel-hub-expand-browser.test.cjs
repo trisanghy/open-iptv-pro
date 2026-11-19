@@ -44,8 +44,8 @@ test('desktop Show more opens every channel in the selected group and collapses 
    +'more.click();'
    +'document.body.dataset.collapsed=String(tiles.querySelectorAll(".web-hub-tile").length);'
    +'document.body.dataset.complete="yes";'
-   '}inspect();'
-   '})();</script></body></html>';
+   +'}inspect();'
+   +'})();</script></body></html>';
   const file=path.join(dir,'all-channels.html');fs.writeFileSync(file,html,'utf8');
   const output=execFileSync(process.env.CHANNEL_HUB_CHROME,[
    '--headless','--no-sandbox','--disable-gpu','--disable-dev-shm-usage',
