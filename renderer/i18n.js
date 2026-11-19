@@ -74,7 +74,7 @@
   try{const stored=localStorage.getItem(key);if(stored && Object.hasOwn(locales,stored))locale=stored;}catch{}
   const originalText=new WeakMap(), originalAttrs=new WeakMap();
   const skipSelector='script,style,code,pre,.channel-text b,.folder-header .folder-name,.folder-card h3,.fav-card h3,.shot-card b,#playingTitle,.epg-program b,.epg-row header b,.source-top h3,.source-url,.source-card h3,.preview-title,.channel-preview b';
-  const attributeList=['title','placeholder','aria-label'];
+  const attributeList=['title','placeholder','aria-label','alt','data-tooltip','data-title','value'];
   let inApply=false;
   function translate(raw,language=locale){
     if(typeof raw!=='string' || language==='vi')return raw;
@@ -231,6 +231,8 @@
     let stored=originalAttrs.get(el);
     if(!stored){stored={};originalAttrs.set(el,stored);}
     for(const attr of attributeList){
+      // Never translate form values or user-entered playlist data.
+      if(attr==='value'&&!el.matches?.('input[type="button"],input[type="submit"],input[type="reset"]'))continue;
       if(!el.hasAttribute(attr))continue;
       const value=el.getAttribute(attr);
       let item=stored[attr];
@@ -281,7 +283,7 @@
   });
   observer.observe(document.documentElement,{subtree:true,childList:true,characterData:true,attributes:true,attributeFilter:attributeList});
   // Native dialogs bypass DOM mutation observation and require direct message translation.
-  for(const kind of ['alert','confirm']){const original=window[kind];if(typeof original==='function')window[kind]=function(message,...args){return original.call(window,translate(String(message)),...args);};}
+  for(const kind of ['alert','confirm','prompt']){const original=window[kind];if(typeof original==='function')window[kind]=function(message,...args){return original.call(window,translate(String(message)),...args);};}
   window.OpenIPTVI18n=Object.freeze({locales,getLanguage:()=>locale,setLanguage,t:translate,apply});
   const setup=()=>{
     const control=document.getElementById('appLanguage');

@@ -33,3 +33,19 @@ test('English messages, native dialogs and stored preference update immediately'
  window.alert('Đang tìm Chromecast / Google TV trong mạng nội bộ…');
  assert.equal(calls[2],'Đang tìm Chromecast / Google TV trong mạng nội bộ…');
 });
+
+test('prompt message translates, default input and returned user input remain untouched',()=>{
+ const {i18n,window}=environment();
+ let received=[];
+ window.prompt=function(message,initial){received.push([message,initial]);return 'Tên người dùng - VTV1';};
+ // Reinitialize prompt through engine's native-dialog installation.
+ const before=load('i18n.js');
+ const local={getItem:()=>null,setItem(){}};
+ const doc={documentElement:{},readyState:'loading',addEventListener(){},dispatchEvent(){},getElementById(){return null}};
+ const context={window,document:doc,MutationObserver:class{observe(){}},localStorage:local,CustomEvent:class {}};
+ vm.runInNewContext(before,context,{timeout:5000});
+ window.OpenIPTVI18n.setLanguage('en');
+ assert.equal(window.prompt('Nhập tên thư mục (tối đa 90 ký tự)','Giữ nguyên'),'Tên người dùng - VTV1');
+ assert.equal(received[0][1],'Giữ nguyên');
+ assert.notEqual(received[0][0],'Nhập tên thư mục (tối đa 90 ký tự)');
+});
