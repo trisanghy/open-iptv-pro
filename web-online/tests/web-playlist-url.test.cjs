@@ -52,3 +52,29 @@ test('repeat submissions share one visible URL error and never stack toasts',asy
  assert.equal(errorLine.hidden,false);
  assert.equal(button.disabled,false);
 });
+
+test('the Add URL dialog downloads and stores a bare domain with HTTPS',async()=>{
+ const sourceEdit=require('../../source-edit.js');
+ const inputs={'#urlName':{value:'IPTV'},'#urlValue':{value:' d.org.vn/listiptv '}};
+ let submit,requested,added;
+ const code=app.slice(app.indexOf(' async function openURL()'),app.indexOf(' async function readSourceURL'));
+ const open=vm.runInNewContext(code+';openURL',{
+  window:{OpenIPTVSourceConsent:{requestImport:async()=>true}},sourceEdit,
+  $:id=>inputs[id],openModal:(title,body,cb)=>{submit=cb;},textStatus(){},
+  readSourceURL:async url=>{requested=url;return playlist;},addSource:(...args)=>{added=args;}
+ });
+ await open();await submit();
+ assert.equal(requested,'https://d.org.vn/listiptv');
+ assert.equal(inputs['#urlValue'].value,requested);
+ assert.deepEqual(added,['IPTV',requested,playlist,'url']);
+});
+test('bare URL handling preserves ports, case-sensitive paths, query strings and explicit HTTP',()=>{
+ const {validatePlaylistUrl}=require('../../source-edit.js');
+ for(const value of ['nts12.s.gy/iptv','example.org:8443/Mixed?sig=A%2Fb']){
+  assert.equal(validatePlaylistUrl(value),'https://'+value);
+ }
+ assert.equal(validatePlaylistUrl('http://example.org/Mixed'),'http://example.org/Mixed');
+ for(const value of ['', '/playlist.m3u','file:///playlist','javascript:alert(1)','https://user:pass@example.org/']){
+  assert.throws(()=>validatePlaylistUrl(value));
+ }
+});

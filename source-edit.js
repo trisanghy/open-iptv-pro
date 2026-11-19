@@ -9,7 +9,10 @@ function indexUnique(rows, key){
  return result;
 }
 function validatePlaylistUrl(raw){
- const value=String(raw||'').trim();let u;
+ let value=String(raw||'').trim();
+ // Recognize a bare hostname before adding HTTPS. Leave explicit schemes to URL validation.
+ if(/^(?:[a-z0-9-]+\.)+[a-z0-9-]+(?::\d+)?(?:[/?#]|$)/i.test(value))value='https://'+value;
+ let u;
  try{u=new URL(value);}catch{throw Error('URL không hợp lệ');}
  if(!['https:','http:'].includes(u.protocol)||!u.hostname)throw Error('Nguồn M3U phải dùng HTTP hoặc HTTPS');
  if(u.username||u.password)throw Error('Không hỗ trợ mật khẩu đặt trực tiếp trong địa chỉ URL');

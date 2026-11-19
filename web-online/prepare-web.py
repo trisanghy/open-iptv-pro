@@ -29,6 +29,7 @@ for name in ('web-only.js','web-only.css','resume-last.js','resume-last.css','br
     copy2(Path(__file__).resolve().parent/name,out/name)
 # Keep Web's multi-source fallback matcher even if the originating WebView
 # frontend has an older name-only matcher. Do not change Electron/Rust source.
+copy2(Path(__file__).resolve().parent.parent/'source-edit.js',out/'source-edit.js')
 copy2(Path(__file__).resolve().parent.parent/'advanced-core.js',out/'advanced-core.js')
 for name in ('advanced.js','collector.js'):
     copy2(Path(__file__).resolve().parent.parent/name,out/name)
@@ -167,7 +168,8 @@ html=html.replace('<title>Open IPTV Pro — Web Online</title>',
 if 'href="huong-dan.html"' not in html:
     sys.exit('Public Web instructions are not linked')
 
-html=html.replace('src="app.js"','src="app.js?v=playlist-url-20261119b"').replace('collector.js?v=collector-merge-repair-20261119a','collector.js?v=playlist-url-20261119b')
+html=html.replace('src="app.js"','src="app.js?v=playlist-input-20261119c"').replace('collector.js?v=collector-merge-repair-20261119a','collector.js?v=playlist-url-20261119b')
+html=html.replace('src="source-edit.js"','src="source-edit.js?v=playlist-input-20261119c"')
 (out/'index.html').write_text(html,encoding='utf-8')
 (out/'.nojekyll').write_text('')
 (out/'manifest.webmanifest').write_text(json.dumps({

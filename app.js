@@ -566,7 +566,8 @@
  async function openURL(){if(window.IPTVProAdvanced?.canEdit?.()===false)return toast('Hồ sơ trẻ em không được thêm URL IPTV','warn');
   if(!(await window.OpenIPTVSourceConsent?.requestImport?.('url')))return;
   openModal('Thêm playlist bằng URL',`<label class="modal-label">Tên nguồn</label><input class="modal-input" id="urlName" placeholder="Ví dụ: Kênh truyền hình Việt Nam" value="IPTV từ URL"/><label class="modal-label">Đường dẫn M3U</label><input class="modal-input" id="urlValue" placeholder="https://example.com/iptv.m3u" type="url"/><p class="hint">Nhập đường dẫn tới danh sách kênh M3U.</p><p id="urlImportError" role="alert" hidden></p>`,async()=>{
-    const name=$('#urlName').value.trim()||'IPTV từ URL';const url=$('#urlValue').value.trim();if(!/^https?:\/\//i.test(url))throw Error('URL phải bắt đầu bằng http:// hoặc https://');
+    const name=$('#urlName').value.trim()||'IPTV từ URL';const url=sourceEdit.validatePlaylistUrl($('#urlValue').value);
+    $('#urlValue').value=url;
     textStatus('Đang tải danh sách từ URL...');const content=await readSourceURL(url);addSource(name,url,content,'url');},'Tải danh sách');}
 
  // These exact public short links redirect without Access-Control-Allow-Origin.
