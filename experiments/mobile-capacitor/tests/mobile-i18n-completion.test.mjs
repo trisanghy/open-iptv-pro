@@ -57,48 +57,7 @@ test('all static Mobile player accessibility labels and Vietnamese UI text have 
  }
  for(const m of layout.matchAll(/>([^<>]+)</g)){
   const value=m[1].trim();
-  if(/[ÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚÝàáâãèéêìíòóôõùúýĂăĐđĨĩŨũƠơƯưẠ-ỹ]/u.test(value)&&!value.includes('&&!/^0\s*\/\s*0\s+kênh$/.test(value)&&value!=='Tiếng Việt')strings.add(value);
- }
- for(const locale of languages){
-  const missing=[];
-  for(const original of strings){
-   const withoutDecoration=original.replace(/^[^\p{L}\p{N}]+/u,'');
-   const key=dict[locale]?.[original]?original:withoutDecoration;
-   if(!dict[locale]?.[key]||dict[locale][key]===key)missing.push(original);
-  }
-  assert.deepEqual(missing,[],'untranslated visible/accessibility layout content for '+locale);
- }
-});
-test('17 language choices localize complete player/EPG/error strings without translating user metadata',()=>{
- const dict=buildDictionary();
- const state={saved:{}};
- const element={nodeType:1,hasAttribute:()=>false,closest:()=>null};
- const dom={readyState:'interactive',documentElement:{...element},body:{...element},
-  getElementById(){return null;},
-  createTreeWalker(){return {nextNode:()=>false};},
-  addEventListener(){},dispatchEvent(){}};
- const context={window:{OPEN_IPTV_TRANSLATIONS:dict},document:dom,console,
-  NodeFilter:{SHOW_ELEMENT:1,SHOW_TEXT:4},MutationObserver:class {observe(){}},
-  localStorage:{getItem:()=>null,setItem(k,v){state.saved[k]=v;}},
-  CustomEvent:class {}};
- vm.runInNewContext(source,context,{timeout:2000});
- const i18n=context.window.OpenIPTVI18n;
- const samples=['Khu vực trình phát','Bật hoặc tắt âm thanh','URL M3U mới','Chưa chọn nguồn EPG',
-  'Không tải được nguồn EPG nào; giữ dữ liệu cũ','Âm thanh nền bị lỗi. Hãy thử kênh hoặc link khác.'];
- for(const locale of languages){
-  i18n.setLanguage(locale);
-  assert.equal(dom.documentElement.lang,locale);
-  assert.equal(dom.documentElement.dir,locale==='ar'?'rtl':'ltr');
-  for(const label of samples){
-   const output=i18n.t(label,locale);
-   assert.ok(output&&output!==label,locale+' failed translation: '+label);
-  }
- }
- assert.equal(state.saved['open-iptv-pro-language'],'ar');
- const arbitrary='My VTV custom - Épisode 第一集';
- assert.equal(i18n.t(arbitrary,'ko'),arbitrary,'do not machine-translate user channel/EPG metadata');
-});
-+'{')&&!/^0\s*\/\s*0\s+kênh$/.test(value)&&value!=='Tiếng Việt')strings.add(value);
+  if(/[ÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚÝàáâãèéêìíòóôõùúýĂăĐđĨĩŨũƠơƯưẠ-ỹ]/u.test(value)&&!value.includes(String.fromCharCode(36))&&!/^0\s*\/\s*0\s+kênh$/.test(value)&&value!=='Tiếng Việt')strings.add(value);
  }
  for(const locale of languages){
   const missing=[];
