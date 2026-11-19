@@ -27,6 +27,9 @@
   Object.assign(dictionaries.en||(dictionaries.en={}),appUiEnglish);
   const finishUiEnglish={"Lỗi kiểm tra":"Check error","Lỗi ":"Error ","Đã đăng nhập · ":"Signed in · ","Dữ liệu thay đổi đồng thời nhiều lần, sẽ thử lại.":"Data changed concurrently several times; retrying.","đồng bộ tự động":"automatic sync","khi đăng nhập ":"during sign-in ","kiểm tra liên kết":"link validation","xác thực Magic Link":"Magic Link verification","Thử lại sau ":"Try again in ","Đang tạm dừng gửi email để tránh vượt hạn mức Supabase. Thử lại sau ":"Email requests paused to avoid Supabase rate limits. Retry in "," phút.":" minutes."," Trình duyệt tạm dừng thử lại trong 10 phút.":" Browser will pause retries for 10 minutes.","gửi email đăng nhập":"sending sign-in email","xác thực mã email":"email code verification","khi đăng xuất":"during sign-out","đọc dữ liệu trên máy":"reading local data","xác thực":"verification","khởi tạo Cloud":"cloud initialization","Sống · ":"Live · ","Chưa rõ · ":"Unknown · ","Đang dùng: ":"In use: "};
   Object.assign(dictionaries.en||(dictionaries.en={}),finishUiEnglish);
+  // Per-locale supplement; keep preexisting native translations and user data.
+  const supplement=window.OpenIPTVLocalePacks;
+  for(const [language,items] of Object.entries(supplement?.packs||{})){const target=dictionaries[language]||(dictionaries[language]={});for(const [key,value] of Object.entries(items))if(!target[key])target[key]=value;}
   const key='open-iptv-pro-language';
   let locale='vi';
   try{const stored=localStorage.getItem(key);if(stored && Object.hasOwn(locales,stored))locale=stored;}catch{}
@@ -40,7 +43,9 @@
     const english=dictionaries.en||{};
     const compact=raw.trim().replace(/\s+/g,' ');
     if(!compact)return raw;
-    let out=dict[compact]||english[compact];
+    let out=dict[compact];
+    if(!out&&language!=='en')out=supplement?.dynamic?.(compact,language);
+    if(!out)out=english[compact];
     const prefixMatch=!out && compact.match(/^([^\p{L}\p{N}]+)(.+)$/u);
     if(!out && prefixMatch){const localized=dict[prefixMatch[2]];if(localized)out=prefixMatch[1]+localized;
       else if(english[prefixMatch[2]])out=prefixMatch[1]+english[prefixMatch[2]];}
