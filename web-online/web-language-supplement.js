@@ -12,4 +12,12 @@
       if(strings[index] && strings[index]!==originals[index])target[originals[index]]=strings[index];
     }
   }
+  // New player/EPG UI: fixed native labels; preserve the 17-language catalog.
+  const newPlayerKeys=["EPG · Lịch phát sóng","Xem lịch phát sóng đầy đủ","Chế độ khung hình","Link phát chính / dự phòng"];
+  const newPlayerTranslations={"en":["EPG · TV Guide","View full TV guide","Video display mode","Primary / backup stream"],"es":["EPG · Guía de TV","Ver la guía completa","Modo de visualización","Señal principal / de respaldo"],"pt-BR":["EPG · Guia de programação","Ver guia completo","Modo de exibição do vídeo","Transmissão principal / reserva"],"zh-CN":["EPG · 节目指南","查看完整节目表","画面显示模式","主用／备用播放线路"],"th":["EPG · ผังรายการ","ดูผังรายการทั้งหมด","โหมดแสดงภาพ","สตรีมหลัก / สำรอง"],"lo":["EPG · ຜັງລາຍການ","ເບິ່ງຜັງລາຍການທັງໝົດ","ໂໝດສະແດງພາບ","ສະຕຣີມຫຼັກ / ສຳຮອງ"],"km":["EPG · កម្មវិធីផ្សាយ","មើលកម្មវិធីផ្សាយពេញលេញ","របៀបបង្ហាញវីដេអូ","ស្ទ្រីមចម្បង / បម្រុង"],"fr":["EPG · Guide TV","Voir le guide complet","Mode d’affichage vidéo","Flux principal / de secours"],"de":["EPG · TV-Programm","Vollständiges TV-Programm anzeigen","Video-Anzeigemodus","Haupt- / Ersatzstream"],"it":["EPG · Guida TV","Visualizza guida completa","Modalità video","Flusso principale / di riserva"],"ja":["EPG · 番組表","番組表全体を見る","映像表示モード","メイン／予備ストリーム"],"ko":["EPG · 편성표","전체 편성표 보기","화면 표시 모드","기본 / 예비 스트림"],"ru":["EPG · Телепрограмма","Открыть полную телепрограмму","Режим отображения видео","Основной / резервный поток"],"id":["EPG · Panduan TV","Lihat panduan lengkap","Mode tampilan video","Aliran utama / cadangan"],"hi":["EPG · टीवी गाइड","पूरी टीवी गाइड देखें","वीडियो प्रदर्शन मोड","मुख्य / बैकअप स्ट्रीम"],"ar":["EPG · دليل البرامج","عرض دليل البرامج الكامل","وضع عرض الفيديو","البث الرئيسي / الاحتياطي"]};
+  for(const [language,strings] of Object.entries(newPlayerTranslations)){
+    const target=dictionaries[language]||(dictionaries[language]={});
+    for(let n=0;n<newPlayerKeys.length;n++)target[newPlayerKeys[n]]=strings[n];
+  }
+
 })();
