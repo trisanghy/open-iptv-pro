@@ -15,4 +15,13 @@
   dict['Tên Z → A']='Name absteigend';
  }
 }
+ /* Accessibility labels for the new channel picker use the same offline translation packs. */
+ const ariaKeys=["Danh sách chọn kênh","Nhóm kênh","Tìm kiếm kênh","Sắp xếp kênh","Kiểu hiển thị","Kênh truy cập nhanh"];
+ const ariaLocales={"en":["Channel selection list","Channel groups","Search channels","Sort channels","Display mode","Quick-access channels"],"es":["Lista para elegir canales","Grupos de canales","Buscar canales","Ordenar canales","Modo de visualización","Canales de acceso rápido"],"pt-BR":["Lista de seleção de canais","Grupos de canais","Pesquisar canais","Ordenar canais","Modo de exibição","Canais de acesso rápido"],"zh-CN":["频道选择列表","频道分组","搜索频道","频道排序","显示模式","快捷频道"],"th":["รายการเลือกช่อง","กลุ่มช่อง","ค้นหาช่อง","จัดเรียงช่อง","โหมดแสดงผล","ช่องที่เข้าถึงได้เร็ว"],"lo":["ລາຍການເລືອກຊ່ອງ","ກຸ່ມຊ່ອງ","ຄົ້ນຫາຊ່ອງ","ຈັດລຽງຊ່ອງ","ຮູບແບບສະແດງ","ຊ່ອງເຂົ້າເຖິງໄວ"],"km":["បញ្ជីជ្រើសប៉ុស្តិ៍","ក្រុមប៉ុស្តិ៍","ស្វែងរកប៉ុស្តិ៍","តម្រៀបប៉ុស្តិ៍","របៀបបង្ហាញ","ប៉ុស្តិ៍ចូលរហ័ស"],"fr":["Liste de sélection des chaînes","Groupes de chaînes","Rechercher des chaînes","Trier les chaînes","Mode d’affichage","Chaînes en accès rapide"],"de":["Kanalauswahlliste","Kanalgruppen","Kanäle suchen","Kanäle sortieren","Anzeigemodus","Schnellzugriff auf Kanäle"],"it":["Elenco di scelta dei canali","Gruppi di canali","Cerca canali","Ordina canali","Modalità di visualizzazione","Canali ad accesso rapido"],"ja":["チャンネル選択リスト","チャンネルグループ","チャンネルを検索","チャンネルを並べ替え","表示モード","クイックアクセスチャンネル"],"ko":["채널 선택 목록","채널 그룹","채널 검색","채널 정렬","표시 모드","빠른 접근 채널"],"ru":["Список выбора каналов","Группы каналов","Поиск каналов","Сортировка каналов","Режим отображения","Каналы быстрого доступа"],"id":["Daftar pilihan saluran","Grup saluran","Cari saluran","Urutkan saluran","Mode tampilan","Saluran akses cepat"],"hi":["चैनल चयन सूची","चैनल समूह","चैनल खोजें","चैनल क्रमबद्ध करें","प्रदर्शन मोड","त्वरित पहुँच चैनल"],"ar":["قائمة اختيار القنوات","مجموعات القنوات","البحث عن القنوات","ترتيب القنوات","وضع العرض","قنوات الوصول السريع"]};
+ for(const [lang,values] of Object.entries(ariaLocales)){
+   if(values.length!==ariaKeys.length)throw Error('Missing channel aria labels '+lang);
+   const d=table[lang]||(table[lang]={});
+   ariaKeys.forEach((key,i)=>{d[key]=values[i];});
+ }
+
 })();
