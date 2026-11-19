@@ -1,0 +1,34 @@
+name: Verify imported Mobile Capacitor source (main)
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'mobile/**'
+      - 'docs/MOBILE_ANDROID_IOS.md'
+      - '.github/workflows/verify-mobile-main.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  mobile:
+    name: Mobile JS tests & Vite build
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: mobile
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: mobile/package-lock.json
+      - name: Install Mobile source dependencies
+        run: npm ci --no-audit --no-fund
+      - name: Test Mobile Capacitor modules
+        run: npm test
+      - name: Build Mobile Web assets
+        run: npm run build
+      - name: Verify generated bundle
+        run: test -s dist/index.html

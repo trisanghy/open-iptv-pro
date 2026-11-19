@@ -1,0 +1,27 @@
+OPEN IPTV PRO MOBILE 4.21.1 — LỆNH BUILD
+
+1) TRÊN MAC: ANDROID APK (cần Node 22+, Android SDK/JDK 21)
+cd ~/Downloads && unzip -o Open_IPTV_Pro_Mobile_4_21_1_Build_Android_iOS.zip && bash Open_IPTV_Pro_Mobile_4_21_1/BUILD_ANDROID_APK_MAC.command
+
+2) TRÊN MAC: iOS IPA (cần Xcode 26+, Apple Team + ký iOS)
+cd ~/Downloads && unzip -o Open_IPTV_Pro_Mobile_4_21_1_Build_Android_iOS.zip && bash Open_IPTV_Pro_Mobile_4_21_1/BUILD_IOS_IPA_MAC.command
+
+3) BUILD IOS SAU KHI CHỌN TEAM TRONG XCODE
+cd ~/Downloads/Open_IPTV_Pro_Mobile_4_21_1 && APPLE_TEAM_ID=XXXXXXXXXX bash BUILD_IOS_IPA_MAC.command
+
+4) TẠO CẢ HAI TỪ MENU
+cd ~/Downloads/Open_IPTV_Pro_Mobile_4_21_1 && bash BUILD_ALL_MAC.command
+
+5) TRÊN WINDOWS: CHỈ ANDROID APK
+cd /d <duong-dan-giai-nen>\Open_IPTV_Pro_Mobile_4_21_1
+BUILD_ANDROID_WINDOWS.cmd
+
+6) ĐẨY MÃ NGUỒN LÊN NHÁNH GITHUB THỬ NGHIỆM
+bash ~/Downloads/Open_IPTV_Pro_Mobile_4_21_1/PUSH_MOBILE_GITHUB_MAC.command
+
+SẢN PHẨM KHI BUILD THÀNH CÔNG:
+Android: ~/Downloads/OpenIPTVPro-Mobile-4.21.1-debug.apk
+iOS: ~/Downloads/OpenIPTVPro-Mobile-4.21.1.ipa (nếu Apple signing/provisioning cho phép)
+
+CHƯA PHẢI BẢN FULL FEATURE PARITY ELECTRON 4.21.1.
+Snapshot FFmpeg mobile, Timeshift 5 phút và Smart Doctor nâng cao chưa được port native.

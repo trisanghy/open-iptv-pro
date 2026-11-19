@@ -1,0 +1,11 @@
+node_modules/
+dist/
+android/
+ios/
+*.ipa
+*.apk
+*.aab
+*.xcarchive
+.DS_Store
+*.log
+.env*
