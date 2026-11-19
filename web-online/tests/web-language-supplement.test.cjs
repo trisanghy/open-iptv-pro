@@ -10,7 +10,7 @@ const builder=fs.readFileSync(path.join(root,'web-online/prepare-web.py'),'utf8'
 const bundle=fs.readFileSync(path.join(root,'languages.bundle.js'),'utf8');
 const source=fs.readFileSync(path.join(root,'i18n.js'),'utf8');
 const marker='window.OPEN_IPTV_TRANSLATIONS=';
-const data=JSON.parse(bundle.slice(bundle.indexOf(marker)+marker.length).replace(/;\\s*$/,''));
+const data=JSON.parse(bundle.slice(bundle.indexOf(marker)+marker.length).replace(/;\s*$/,''));
 function loaded(){
   const ctx={window:{OPEN_IPTV_TRANSLATIONS:structuredClone(data)}};
   vm.runInNewContext(pack,ctx,{timeout:3000});
@@ -48,7 +48,7 @@ test('runtime loads Web language supplements while keeping user IPTV metadata in
 });
 test('Web pack is copied, loaded before i18n, and cache-busted on every content change',()=>{
   assert.match(builder,/copy2\(Path\(__file__\)\.resolve\(\)\.parent\/'web-language-supplement\.js',out\/'web-language-supplement\.js'\)/);
-  assert.match(builder,/<script src=\\"web-language-supplement\.js\\"><\\/script>/);
+  assert.ok(builder.includes('<script src="web-language-supplement.js"></script>'));
   assert.match(builder,/for asset in \('i18n\.js','languages\.bundle\.js','web-language-supplement\.js'\)/);
   assert.ok(!source.includes('web-language-supplement.js'),'Electron locale engine must stay separate');
 });
