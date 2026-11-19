@@ -4,7 +4,7 @@ import {oldStyleLayout} from '../src/legacy-mobile-layout.mjs';
 
 test('classic layout has visible player and large controls like v4.23 mobile',()=>{
  const html=oldStyleLayout('/assets/icon.png');
- for(const id of ['heroTitle','heroSubtitle','nowTitle','nowGroup','playCurrent','stopCurrent','muteCurrent','previousChannel','nextChannel','nowFavorite','manualStreamSelect','videoFit','epgNowName','epgNextName','openGuideBtn','moreTrigger','moreOverlay','channelList','quickFavorite','expandFolders','collapseFolders','webVideo']){
+ for(const id of ['heroTitle','heroSubtitle','nowTitle','nowGroup','playCurrent','stopCurrent','muteCurrent','previousChannel','nextChannel','nowFavorite','manualStreamSelect','videoFit','epgNowName','epgNextName','openGuideBtn','moreTrigger','moreOverlay','recentChannelsSection','recentChannelList','recentCount','clearRecent','channelList','quickFavorite','expandFolders','collapseFolders','webVideo']){
    assert.match(html,new RegExp('id="'+id+'"'));
  }
  assert.match(html,/<nav class="bottom-navigation"/);
@@ -52,4 +52,13 @@ test('inline video exists within the 16:9 hero, never in a fullscreen overlay',(
  assert.match(hero,/<video[^>]+id="webVideo"[^>]+playsinline[^>]+webkit-playsinline/);
  assert.doesNotMatch(html,/id="webPlayer"|id="closePlayer"/);
  assert.equal([...html.matchAll(/id="webVideo"/g)].length,1);
+});
+
+
+test('recently watched section is above standard folders and includes clear control',()=>{
+ const html=oldStyleLayout();
+ assert.match(html,/<section class="recent-channels" id="recentChannelsSection"/);
+ assert.match(html,/Kênh vừa xem/);
+ assert.match(html,/id="clearRecent"/);
+ assert.ok(html.indexOf('id="recentChannelsSection"')<html.indexOf('id="channelList"'));
 });

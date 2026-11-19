@@ -215,3 +215,27 @@ body.more-open{overflow:hidden;touch-action:pan-y}
 #epgStatus{line-height:1.5;overflow-wrap:anywhere;margin:12px 0}
 .hero-player>.unmute-autoplay{position:absolute;z-index:5;left:50%;transform:translateX(-50%);bottom:12px;background:#b78af0;color:#16172d;font-weight:700;border:0;white-space:nowrap;padding:9px 20px;border-radius:12px;min-height:44px;box-shadow:0 6px 20px #0007}
 .hero-player>.unmute-autoplay[hidden]{display:none!important}
+
+
+/* MOBILE_RECENT_CHANNELS_V9: recently watched shortcuts before channel folders */
+.recent-channels{margin:14px 0 16px;padding:12px 11px 13px;border:1px solid #314d70;background:linear-gradient(140deg,#182e48 0%,#14253d 100%);border-radius:16px;overflow:hidden}
+.recent-channels[hidden]{display:none!important}
+.recent-heading,.recent-title{display:flex;align-items:center;gap:9px}
+.recent-heading{justify-content:space-between;margin:0 1px 10px}
+.recent-title{min-width:0;gap:8px}
+.recent-title h2{font-size:15px;font-weight:750;margin:0;color:#f0f6ff}
+.recent-clock{font-size:24px;color:#50c5e7;line-height:1}
+.recent-count{background:#254464;border:1px solid #376184;border-radius:9px;font-size:11px;font-variant-numeric:tabular-nums;color:#bde2ee;padding:3px 7px;line-height:1.1}
+#clearRecent{font-size:12px;color:#b8c8da;white-space:nowrap;border:1px solid #3e5572;background:#1c314a;border-radius:9px;padding:5px 10px;min-height:33px}
+#clearRecent[hidden]{display:none!important}
+.recent-scroll{display:flex;align-items:stretch;gap:9px;overflow-x:auto;overflow-y:hidden;overscroll-behavior-x:contain;scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch;padding:2px 1px 4px;scrollbar-width:thin}
+.recent-channel{display:flex;align-items:center;gap:9px;flex:0 0 186px;max-width:72vw;min-height:66px;padding:9px 9px;background:#1e3855;border:1px solid #365579;border-radius:12px;text-align:left;scroll-snap-align:start}
+.recent-channel.selected{border-color:#4cc5e6;box-shadow:inset 0 0 0 1px #4cc5e652}
+.recent-channel:active{background:#2c4b6c}
+.recent-channel-logo{width:38px;height:38px;flex:0 0 38px;display:grid;place-items:center;background:#224d58;color:#7bdbef;border-radius:10px;font-size:17px;overflow:hidden}
+.recent-channel-logo img{width:100%;height:100%;object-fit:contain}
+.recent-channel-copy{display:flex;flex-direction:column;gap:5px;min-width:0}
+.recent-channel-copy strong{font-size:13px;color:#edf6ff;line-height:1.2;max-height:2.4em;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow-wrap:anywhere}
+.recent-channel-copy small{font-size:11px;color:#a0b9d3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.recent-empty{margin:0;padding:7px 2px;color:#aebfd5;font-size:12px;line-height:1.5}
+@media(max-width:380px){.recent-channels{padding:10px 9px}.recent-channel{flex-basis:170px}.recent-heading{margin-bottom:9px}}

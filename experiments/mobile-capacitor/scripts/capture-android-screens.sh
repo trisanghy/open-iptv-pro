@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
-VERSION=4.23.17-mobile.8
+VERSION=4.23.17-mobile.9
 PACKAGE=com.trisanghy.openiptvpro.mobile
 mkdir -p release
 adb install -r "release/OpenIPTVPro-Mobile-${VERSION}-debug.apk"
@@ -22,6 +22,14 @@ for attempt in 1 2; do
   fi
 done
 adb exec-out screencap -p > "release/OpenIPTVPro-Mobile-${VERSION}-Android-screenshot.png"
+# Scroll channel list into view and capture the newly added "Recently watched" section.
+adb shell input swipe 540 1700 540 850 470
+sleep 2
+adb exec-out screencap -p > "release/OpenIPTVPro-Mobile-${VERSION}-Android-Recent.png"
+file "release/OpenIPTVPro-Mobile-${VERSION}-Android-Recent.png" | grep -q 'PNG image data'
+test "$(stat -c%s "release/OpenIPTVPro-Mobile-${VERSION}-Android-Recent.png")" -gt 20000
+# Bottom navigation remains fixed while content scrolls.
+
 SIZE="$(adb shell wm size | grep -Eo '[0-9]+x[0-9]+' | tail -1)"
 WIDTH="${SIZE%x*}"
 HEIGHT="${SIZE#*x}"

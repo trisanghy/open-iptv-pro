@@ -7,7 +7,7 @@ import {oldStyleLayout} from './legacy-mobile-layout.mjs';
 import {streamOptions,epgNowNext} from './mobile-player-controls.mjs';
 import {installEPGAuto} from './mobile-epg-autosync.mjs';
 import {matchGuideChannel,resumeChannel} from './mobile-epg-auto.mjs';
-import {swipeChannelDelta,nextChannelIndex,safeHistory} from './mobile-ux.mjs';
+import {swipeChannelDelta,nextChannelIndex,safeHistory,recentChannelMatches} from './mobile-ux.mjs';
 import {MOBILE_VERSION,MAX_BATCH,batchWindow,appendEvidence,rightsDialog,installMobileParity} from './mobile-rustlab-parity.mjs';
 import './core-browser.js';
 import './styles.css';
@@ -71,7 +71,7 @@ const groupOpened=new Set();
 let showOnlyFavorites=false;
 function pickChannel(c){
  state.selected=c.url;
- state.recentlyWatched=safeHistory(state.recentlyWatched,c.url);
+ // Selection alone must not add an unplayed channel to watch history.
  const el=$('#fallbackSource');if(el)el.value=c.url;
  save();renderNowPlaying();renderChannels();
 }
@@ -146,7 +146,44 @@ function channelCard(c){
  item.onclick=e=>{if(!e.target.closest('button'))pickChannel(c);};
  return item;
 }
+
+function renderRecentChannels(){
+ const section=$('#recentChannelsSection'),root=$('#recentChannelList');
+ if(!root||!section)return;
+ const q=(state.filter||'').trim();
+ // The favorites-only toggle is independent of the watch history.
+ const visible=recentChannelMatches(dedupChannels(state.channels),state.recentlyWatched,{maxItems:10,query:q});
+ section.hidden=showOnlyFavorites||(Boolean(q)&&visible.length===0);
+ root.replaceChildren();
+ $('#recentCount').textContent=String(visible.length);
+ const clear=$('#clearRecent');clear.hidden=!state.recentlyWatched.length;
+ if(section.hidden)return;
+ if(!visible.length){
+   root.append(node('p','recent-empty',
+     state.recentlyWatched.length?'Kênh đã xem chưa có trong nguồn đang bật.':'Chưa có kênh vừa xem. Mở một kênh để lưu vào đây.'));
+   return;
+ }
+ const fragment=document.createDocumentFragment();
+ for(const c of visible){
+   const item=button('',()=>{pickChannel(c);return play(c);},'recent-channel');
+   item.setAttribute('aria-label','Phát lại '+c.name);
+   if(c.url===state.selected)item.classList.add('selected');
+   const imageWrap=node('span','recent-channel-logo');
+   if(c.logo&&/^https?:\/\//i.test(c.logo)){
+     const img=node('img');img.src=c.logo;img.alt='';img.loading='lazy';img.referrerPolicy='no-referrer';
+     img.onerror=()=>img.replaceWith(node('span','','▶'));
+     imageWrap.append(img);
+   }else imageWrap.textContent='▶';
+   const copy=node('span','recent-channel-copy');
+   copy.append(node('strong','',c.name),node('small','',c.group||'Kênh TV'));
+   item.append(imageWrap,copy);
+   fragment.append(item);
+ }
+ root.append(fragment);
+}
+
 function renderChannels(){
+ renderRecentChannels();
  const rows=dedupChannels(state.channels);
  const q=(state.filter||'').toLowerCase().trim();
  const all=rows.filter(c=>(!showOnlyFavorites||state.favorites.includes(c.url))&&(!q||(c.name+' '+c.group+' '+c.url).toLowerCase().includes(q)));
@@ -195,7 +232,7 @@ function showInline(visible){
 }
 async function play(c,requestedURL,{startup=false}={}){
  if(!c)throw Error('Chưa chọn kênh');
- state.selected=c.url;state.recentlyWatched=safeHistory(state.recentlyWatched,c.url);
+ state.selected=c.url;
  const configured=streamOptions(c,state.fallbacks),allowed=new Set(configured.map(x=>x.url));
  const preferred=requestedURL||state.manualStreams[c.url];
  const urls=[...new Set([preferred,...configured.map(x=>x.url)].filter(x=>allowed.has(x)))];
@@ -218,7 +255,9 @@ async function play(c,requestedURL,{startup=false}={}){
     v.muted=true;mediaMuted=true;await v.play();
     const unmute=$('#unmuteAutoplay');if(unmute)unmute.hidden=false;
    }
-   state.resumeUrl=c.url;save();
+   state.resumeUrl=c.url;
+   state.recentlyWatched=safeHistory(state.recentlyWatched,c.url,30);
+   save();renderRecentChannels();
    mediaPlaying=true;mediaPaused=false;syncMediaControls();
    status('Đang phát trong khung: '+c.name,'ok');return;
   }catch(e){
@@ -321,6 +360,10 @@ function init(){document.querySelector('#app').innerHTML=oldStyleLayout();
  };
 
   $$('.tab').forEach(b=>b.onclick=()=>showTab(b.dataset.page));$('#search').oninput=e=>{state.filter=e.target.value;renderChannels();};$('#quickFavorite').onclick=()=>{showOnlyFavorites=!showOnlyFavorites;renderChannels();};
+ $('#clearRecent').onclick=()=>{
+  if(!state.recentlyWatched.length||!confirm('Xóa danh sách kênh vừa xem?'))return;
+  state.recentlyWatched=[];state.resumeUrl=null;save();renderRecentChannels();status('Đã xóa lịch sử kênh vừa xem','ok');
+ };
  $('#expandFolders').onclick=()=>{for(const c of state.channels)groupOpened.add(c.group||'Khác');renderChannels();};
  $('#collapseFolders').onclick=()=>{groupOpened.clear();renderChannels();};
 

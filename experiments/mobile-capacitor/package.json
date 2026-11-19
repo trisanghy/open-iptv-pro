@@ -1,9 +1,9 @@
 {
   "name": "open-iptv-pro-mobile",
   "private": true,
-  "version": "4.23.17-mobile.8",
+  "version": "4.23.17-mobile.9",
   "type": "module",
-  "description": "Restored iOS/Android launcher icon, default Web/Rust XMLTV EPG sources, startup EPG/M3U refresh and autoplay of last channel",
+  "description": "Watch history shortcuts in channel list, resume from last played channel and clear local watch history",
   "scripts": {
     "dev": "vite --host 127.0.0.1",
     "build": "vite build",

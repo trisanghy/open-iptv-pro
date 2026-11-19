@@ -35,6 +35,13 @@ return `
    </div>
   </section>
   <div class="search-row"><input id="search" type="search" placeholder="Tìm kênh, nhóm…"/><button id="quickFavorite">☆ Yêu thích</button></div>
+  <section class="recent-channels" id="recentChannelsSection" aria-label="Kênh vừa xem">
+   <div class="recent-heading">
+     <div class="recent-title"><span class="recent-clock" aria-hidden="true">◷</span><h2>Kênh vừa xem</h2><span id="recentCount" class="recent-count" aria-label="Số kênh vừa xem">0</span></div>
+     <button type="button" id="clearRecent" aria-label="Xóa lịch sử xem" hidden>Xóa</button>
+   </div>
+   <div id="recentChannelList" class="recent-scroll" aria-live="polite"></div>
+  </section>
   <div class="channel-summary"><span id="count">0 / 0 kênh</span><div><button id="expandFolders">Mở hết</button><button id="collapseFolders">Gập hết</button></div></div>
   <div id="channelList" class="folders-list"></div>
  </section>

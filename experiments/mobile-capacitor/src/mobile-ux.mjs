@@ -15,3 +15,21 @@ export function safeHistory(items,url,maxItems=30){
   if(typeof url!=='string'||!/^https?:\/\//i.test(url))return Array.isArray(items)?items.slice(0,maxItems):[];
   return [url,...(Array.isArray(items)?items:[]).filter(x=>x!==url)].slice(0,maxItems);
 }
+
+
+// Keep the watch-history order while excluding deleted/disabled playlist channels.
+// A URL can only appear once; the most recently watched match comes first.
+export function recentChannelMatches(channels,history,{maxItems=10,query=''}={}){
+ const byUrl=new Map((Array.isArray(channels)?channels:[]).filter(c=>c&&typeof c.url==='string').map(c=>[c.url,c]));
+ const q=String(query||'').trim().toLocaleLowerCase('vi-VN');
+ const seen=new Set(),matched=[];
+ for(const url of Array.isArray(history)?history:[]){
+  if(typeof url!=='string'||seen.has(url))continue;
+  seen.add(url);const channel=byUrl.get(url);
+  if(!channel)continue;
+  if(q&&!String(channel.name+' '+(channel.group||'')).toLocaleLowerCase('vi-VN').includes(q))continue;
+  matched.push(channel);
+  if(matched.length>=maxItems)break;
+ }
+ return matched;
+}
