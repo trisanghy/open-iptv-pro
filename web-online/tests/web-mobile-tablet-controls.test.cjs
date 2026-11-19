@@ -34,3 +34,8 @@ test('Web pages and builder carry the responsive stylesheet without changing mob
  assert.doesNotMatch(css,/#appSidebar|#channelList|#playerBox:fullscreen/);
  assert.match(html,/web-mobile-controls-polish\.css\?v=quick-icons-unified-20261119b/);
 });
+
+test('SVG mask remains centered on iPad without inset overriding left/top',()=>{
+ assert.match(css,/position:absolute!important;left:50%!important;top:50%!important/);
+ assert.doesNotMatch(css,/inset:auto!important/);
+});

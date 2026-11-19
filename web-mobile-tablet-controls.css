@@ -101,7 +101,7 @@
  html[data-iptv-device="mobile"] body #page-tv .player-control-card .control-layout-top .output-controls :is(#webVolumeMute,#castBtn,#pipBtn,#fullscreenBtn)::before{
   content:""!important;display:block!important;
   position:absolute!important;left:50%!important;top:50%!important;
-  right:auto!important;bottom:auto!important;inset:auto!important;
+  right:auto!important;bottom:auto!important;
   transform:translate(-50%,-50%)!important;
   width:27px!important;height:27px!important;
   min-width:27px!important;min-height:27px!important;
