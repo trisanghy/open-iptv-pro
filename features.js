@@ -126,6 +126,26 @@
  // The existing localStorage cache remains a migration/fallback source.
  // Large XMLTV guides are primarily stored in IndexedDB on mobile browsers.
  try{const cached=JSON.parse(localStorage.getItem(legacyGuideKey)||'null');if(cached?.guide&&Array.isArray(cached.guide.programmes)){guide=cached.guide;guide.manualMappings=config.manualMappings;guide.offsetMinutes=config.offsetMinutes;updatedAt=cached.updatedAt||'';}}catch{}
+ // Keep only one persisted EPG guide; gzip reduces Safari IndexedDB usage.
+ async function encodeGuideSnapshot(snapshot){
+  if(typeof CompressionStream!=='function'||typeof DecompressionStream!=='function'
+   ||typeof Blob!=='function'||typeof Response!=='function')return snapshot;
+  try{
+   const bytes=new Uint8Array(await new Response(
+    new Blob([JSON.stringify(snapshot)]).stream().pipeThrough(new CompressionStream('gzip'))).arrayBuffer());
+   if(!bytes.byteLength)throw Error('EPG nén rỗng');
+   return {format:'gzip-json-v1',data:bytes,updatedAt:snapshot.updatedAt};
+  }catch{return snapshot;}
+ }
+ async function decodeGuideSnapshot(saved){
+  if(!saved||saved.format!=='gzip-json-v1')return saved;
+  if(typeof DecompressionStream!=='function'||typeof Blob!=='function'||typeof Response!=='function')
+   throw Error('Trình duyệt không hỗ trợ EPG nén');
+  const value=JSON.parse(await new Response(new Blob([saved.data])
+   .stream().pipeThrough(new DecompressionStream('gzip'))).text());
+  if(!Array.isArray(value?.guide?.programmes))throw Error('EPG cache không hợp lệ');
+  return value;
+ }
  function openGuideDatabase(){
   return new Promise((resolve,reject)=>{
    if(typeof indexedDB==='undefined'){reject(Error('IndexedDB không khả dụng'));return;}
@@ -138,26 +158,36 @@
   });
  }
  async function saveGuideInDatabase(snapshot){
+  if(!Array.isArray(snapshot?.guide?.programmes)||!snapshot.guide.programmes.length)
+   throw Error('Không lưu EPG rỗng');
+  const stored=await encodeGuideSnapshot(snapshot);
   const db=await openGuideDatabase();
   try{await new Promise((resolve,reject)=>{
    let tx;
-   try{tx=db.transaction('guides','readwrite');tx.objectStore('guides').put(snapshot,'current');}
-   catch(e){reject(e);return;}
+   try{
+    tx=db.transaction('guides','readwrite');
+    const onlyEPG=tx.objectStore('guides');
+    // Clear old XMLTV rows and write the valid new guide atomically.
+    // IDB abort rolls the deletion back when quota or writing fails.
+    onlyEPG.clear();
+    onlyEPG.put(stored,'current');
+   }catch(e){try{tx?.abort();}catch{}reject(e);return;}
    tx.oncomplete=()=>resolve();
-   tx.onabort=()=>reject(tx.error||Error('Không thể lưu lịch EPG'));
-   tx.onerror=()=>reject(tx.error||Error('Lỗi bộ nhớ lịch EPG'));
+   tx.onabort=()=>reject(tx.error||Error('Không thể thay thế EPG'));
+   tx.onerror=()=>reject(tx.error||Error('Lỗi bộ nhớ EPG'));
   });}finally{db.close();}
  }
  async function loadGuideFromDatabase(){
-  const db=await openGuideDatabase();
-  try{return await new Promise((resolve,reject)=>{
+  const db=await openGuideDatabase();let saved;
+  try{saved=await new Promise((resolve,reject)=>{
    let tx,req;
    try{tx=db.transaction('guides','readonly');req=tx.objectStore('guides').get('current');}
    catch(e){reject(e);return;}
    req.onsuccess=()=>resolve(req.result||null);
-   req.onerror=()=>reject(req.error||Error('Không thể đọc lịch EPG'));
-   tx.onabort=()=>reject(tx.error||Error('Không thể đọc bộ nhớ EPG'));
+   req.onerror=()=>reject(req.error||Error('Không thể đọc EPG'));
+   tx.onabort=()=>reject(tx.error||Error('Không thể đọc EPG'));
   });}finally{db.close();}
+  return decodeGuideSnapshot(saved);
  }
  async function restoreGuideCache(){
   const generation=guideCacheGeneration;
@@ -174,6 +204,8 @@
  function cacheGuide(){
   guideCacheGeneration++;
   const snapshot={guide:{names:guide.names,aliasesById:guide.aliasesById,programmes:guide.programmes},updatedAt};
+  // Never overwrite the last good cache with an invalid/empty XMLTV file.
+  if(!Array.isArray(snapshot.guide.programmes)||!snapshot.guide.programmes.length)return Promise.resolve(false);
   guideCacheQueue=guideCacheQueue.catch(()=>{}).then(async()=>{
    try{
     await saveGuideInDatabase(snapshot);
@@ -182,7 +214,7 @@
     return true;
    }catch{
     try{localStorage.setItem(legacyGuideKey,JSON.stringify(snapshot));return true;}
-    catch{ctx.toast('Không đủ bộ nhớ để lưu EPG lâu dài; lịch vẫn xem được trong phiên này','warn');return false;}
+    catch{ctx.toast('Bộ nhớ EPG đã đầy; lịch vẫn xem được trong phiên này. EPG cũ được giữ để khôi phục.','warn');return false;}
    }
   });
   return guideCacheQueue;

@@ -44,6 +44,14 @@ target_end=js.find(' const presetEPGURLs=',target_start)
 if min(source_start,source_end,target_start,target_end)<0:
     sys.exit('Cannot transplant Web-only EPG source settings')
 js=js[:target_start]+web_features[source_start:source_end]+js[target_end:]
+# Ensure a WebView rebuild cannot restore the old oversized IndexedDB cache.
+cache_src=web_features.find(' async function encodeGuideSnapshot(')
+cache_src_end=web_features.find(' function rgbToHsv(',cache_src)
+cache_dst=js.find(' function openGuideDatabase(){')
+cache_dst_end=js.find(' function rgbToHsv(',cache_dst)
+if min(cache_src,cache_src_end,cache_dst,cache_dst_end)<0:
+    sys.exit('Cannot copy atomic compressed EPG cache into Web build')
+js=js[:cache_dst]+web_features[cache_src:cache_src_end]+js[cache_dst_end:]
 # Rebuilds must preserve large Web XMLTV guides and their persistent cache.
 for block_start,block_end,label in (
     (' let guide={names:{},programmes:[]', ' function rgbToHsv(', 'IndexedDB guide cache'),
@@ -301,7 +309,8 @@ if 'href="huong-dan.html"' not in html:
 html=html.replace('src="app.js"','src="app.js?v=playlist-http-20261119d"').replace('collector.js?v=collector-merge-repair-20261119a','collector.js?v=playlist-url-20261119b')
 html=html.replace('src="source-edit.js"','src="source-edit.js?v=playlist-input-20261119c"')
 for name in ('features.js','epg.js'):
-    html=html.replace('src="'+name+'"','src="'+name+'?v=epg-large-20261120a"')
+    cache_version='epg-atomic-gzip-20261120a' if name=='features.js' else 'epg-large-20261120a'
+    html=html.replace('src=\"'+name+'\"','src=\"'+name+'?v='+cache_version+'\"')
 # Reuse the source-controlled player EPG rows when regenerating the WebView layout.
 web_html=(Path(__file__).resolve().parent.parent/'index.html').read_text(encoding='utf-8')
 start='<div class="epg-current-item">'

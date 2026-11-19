@@ -189,7 +189,7 @@ jobs:
           node --test web-online/tests/web-mobile-favorites-interaction.test.cjs
           node --check _site/advanced.js
           node --check _site/app.js
-          grep -Fq 'features.js?v=epg-large-20261120a' _site/index.html
+          grep -Fq 'features.js?v=epg-atomic-gzip-20261120a' _site/index.html
           node --check _site/features.js
           node --test web-online/tests/web-mobile-channel-always-open.test.cjs
           node --test web-online/tests/web-tv-wide.test.cjs
@@ -308,6 +308,8 @@ jobs:
           node --check _site/features.js
           node --check _site/epg.js
           node --test web-online/tests/web-fresh-epg.test.cjs
+          node --test web-online/tests/web-epg-cache-replacement.test.cjs
+          grep -Fq 'gzip-json-v1' _site/features.js
           EPG_LAYOUT_CHROME="$(command -v google-chrome)" node --test web-online/tests/web-epg-layout.test.cjs
           mkdir -p _site/epg
           # Primary EPG is restored; EPG.pw is opt-in and cached separately.
