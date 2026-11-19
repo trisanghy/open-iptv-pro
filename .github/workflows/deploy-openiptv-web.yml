@@ -141,9 +141,7 @@ jobs:
           grep -Fq 'collector.js?v=playlist-url-20261119b' _site/index.html
           grep -Fq 'source-edit.js?v=playlist-input-20261119c' _site/index.html
           grep -Fq 'app.js?v=ios-lockscreen-next-state-20261119a' _site/index.html
-          for script in advanced-core.js advanced.js; do
-            grep -Fq "$script?v=collector-merge-repair-20261119a" _site/index.html
-          done
+          grep -Fq 'advanced.js?v=no-timeshift-20261119a' _site/index.html
           grep -Fq 'advanced-core.js?v=collector-merge-repair-20261119a' _site/index.html
           node --check _site/web-recent-channels.js
           node --test web-online/tests/web-recent-channels.test.cjs
@@ -177,6 +175,7 @@ jobs:
           node --test web-online/tests/web-mobile-channel-always-open.test.cjs
           node --test web-online/tests/web-tv-wide.test.cjs
           node --test web-online/tests/web-no-timeshift.test.cjs
+          grep -Fq 'web-only.css?v=no-timeshift-20261119a' _site/index.html
           if grep -Eq 'id="bufferToggle"|id="bufferRewind"|id="bufferRewind10"|id="bufferLive"|id="autoTimeshiftSetting"|name="replayMinutesChoice"' _site/index.html; then
             echo 'Live Timeshift must not appear in Web desktop or mobile'; exit 1
           fi
