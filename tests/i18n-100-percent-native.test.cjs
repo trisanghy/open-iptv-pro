@@ -3,7 +3,7 @@ const {test}=require('node:test'),assert=require('node:assert/strict');
 const {audit,engine}=require('../scripts/audit-electron-i18n.cjs');
 test('all 17 Electron languages translate every audited static UI label',()=>{
  const report=audit();
- assert.ok(report.total>=580);
+ assert.ok(report.total>=1100);
  for(const lang of report.results)
   assert.deepEqual(lang.untranslated,[],lang.code+' missing native UI strings');
 });
