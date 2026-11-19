@@ -42,7 +42,7 @@
    const cb=document.createElement('input');cb.type='checkbox';cb.checked=s.collectEnabled!==false;cb.disabled=busy;
    cb.setAttribute('aria-label','Gộp nguồn '+s.name);
    cb.onchange=()=>{s.collectEnabled=cb.checked;ctx.save();renderInputs();$('sourceMergeSummary').textContent='Đã đổi nguồn chọn, bấm Phân tích để xem lại kết quả.';$('sourceMergeDuplicates').replaceChildren();};
-   const t=document.createElement('span');const count=store.channels.filter(c=>c.sourceId===s.id).length;t.textContent=`${s.name} · ${count} kênh · ${s.type==='url'?'URL':'File M3U'}`;
+   const t=document.createElement('span');const count=store.channels.filter(c=>c.sourceId===s.id).length;const nameNode=document.createElement('span');nameNode.textContent=s.name;nameNode.setAttribute('data-i18n-ignore','true');const countNode=document.createElement('span');countNode.textContent=` · ${count} kênh · ${s.type==='url'?'URL':'File M3U'}`;t.append(nameNode,countNode);
    label.append(cb,t);root.append(label);
   }
   $('sourceMergeUndo').disabled=busy||!store.collectorBackup;
