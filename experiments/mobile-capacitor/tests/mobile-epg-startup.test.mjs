@@ -27,5 +27,7 @@ test('iOS auto playback falls back to muted inline on NotAllowedError, never aut
 test('native launcher icon generated for Android and iOS from canonical resources',()=>{
  assert.match(workflow,/assets@4\.0\.0 generate --android --assetPath resources/);
  assert.match(workflow,/assets@4\.0\.0 generate --ios --assetPath resources/);
- assert.match(workflow,/mobile\/v4\.23\.17\.8/);
+ const pkg=JSON.parse(fs.readFileSync(path.join(root,'package.json'),'utf8'));
+ const expectedTag='mobile/v'+pkg.version.replace('-mobile.','.');
+ assert.ok(workflow.includes('MOBILE_TAG: '+expectedTag),'Release tag must match the package version');
 });
