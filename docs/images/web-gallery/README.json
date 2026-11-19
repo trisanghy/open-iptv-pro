@@ -1,0 +1,55 @@
+{
+  "source": "Open IPTV Pro Web Online build from web/online",
+  "screenshotMethod": "GitHub Actions headless Chromium device emulation; NOT Safari or native Android screenshots",
+  "channels": "Locally generated demo media; no third-party IPTV streams",
+  "files": [
+    {
+      "file": "assets/gallery/desktop-tv.png",
+      "viewport": "desktop"
+    },
+    {
+      "file": "assets/gallery/desktop-sources.png",
+      "viewport": "desktop"
+    },
+    {
+      "file": "assets/gallery/desktop-epg.png",
+      "viewport": "desktop"
+    },
+    {
+      "file": "assets/gallery/desktop-settings.png",
+      "viewport": "desktop"
+    },
+    {
+      "file": "assets/gallery/ios-tv.png",
+      "viewport": "ios"
+    },
+    {
+      "file": "assets/gallery/ios-channels.png",
+      "viewport": "ios"
+    },
+    {
+      "file": "assets/gallery/ios-sources.png",
+      "viewport": "ios"
+    },
+    {
+      "file": "assets/gallery/ios-favorites.png",
+      "viewport": "ios"
+    },
+    {
+      "file": "assets/gallery/android-tv.png",
+      "viewport": "android"
+    },
+    {
+      "file": "assets/gallery/android-channels.png",
+      "viewport": "android"
+    },
+    {
+      "file": "assets/gallery/android-epg.png",
+      "viewport": "android"
+    },
+    {
+      "file": "assets/gallery/android-settings.png",
+      "viewport": "android"
+    }
+  ]
+}
