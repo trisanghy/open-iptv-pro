@@ -67,18 +67,20 @@ jobs:
           PY
           grep -Fq 'src="source-use-consent-v1.js"' _site/index.html
           grep -Fq 'href="source-use-consent-v1.css"' _site/index.html
-          # Use a content-addressed translation asset on iPhone Safari/Chrome.
+          # Use content hashes for every offline dictionary on iPhone Safari/Chrome.
           python3 - <<'PY'
           from pathlib import Path
-          import hashlib
+          import hashlib,re
           page=Path('_site/index.html')
-          asset=Path('_site/web-native-complete.js')
           text=page.read_text(encoding='utf-8')
-          old='web-native-complete.js?v=native-full-20261119a'
-          if text.count(old)!=1 or not asset.is_file():
-              raise SystemExit('Native Web dictionary script missing in staged build')
-          digest=hashlib.sha256(asset.read_bytes()).hexdigest()[:16]
-          page.write_text(text.replace(old,'web-native-complete.js?v='+digest),encoding='utf-8')
+          for name in ('web-native-complete.js','web-generated-locales.js','web-language-supplement.js'):
+              asset=Path('_site')/name
+              if not asset.is_file():raise SystemExit('Web language pack missing: '+name)
+              digest=hashlib.sha256(asset.read_bytes()).hexdigest()[:16]
+              pattern=r'(<script src=")'+re.escape(name)+r'(?:\?[^"]*)?("></script>)'
+              text,count=re.subn(pattern,lambda m:m.group(1)+name+'?v='+digest+m.group(2),text,count=1)
+              if count!=1:raise SystemExit('Web language script reference missing: '+name)
+          page.write_text(text,encoding='utf-8')
           PY
           echo 'Deploying committed browser-ready source without overwriting source/legal prompts'
       - name: Write public Supabase browser configuration to staged site
