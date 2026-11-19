@@ -4,6 +4,8 @@
 
 > International quick-start summary. The Vietnamese README is the complete technical reference; check current GitHub Releases for exact versions and capabilities.
 
+> **Mobile Beta:** [Android APK debug / iOS unsigned IPA](https://github.com/trisanghy/open-iptv-pro/releases/tag/mobile/v4.23.17.10). iOS IPA requires valid Apple signing and is not directly installable. [Mobile source in main](../../mobile/) · [Mobile setup and limitations](../../docs/MOBILE_ANDROID_IOS.md). Mobile is a separate Capacitor edition, not full Desktop feature parity.
+
 ## ภาพรวม
 
 Open IPTV Pro เป็นเครื่องเล่น IPTV และตัวจัดการรายการ M3U แบบโอเพนซอร์สสำหรับเว็บ Windows และ macOS ซึ่งพัฒนาเป็นโครงการส่วนบุคคล ผู้ใช้ต้องจัดหาแหล่ง M3U/EPG ที่มีสิทธิ์ใช้งานเอง แอปไม่มีช่องหรือแพ็กเกจทีวีให้
@@ -17,6 +19,7 @@ Electron Desktop เป็นรุ่นเสถียรที่มีฟี
 | Web Online | Browser | [Open Web player](https://trisanghy.github.io/open-iptv-pro/) |
 | Electron Desktop | Windows/macOS | [Latest release](https://github.com/trisanghy/open-iptv-pro/releases/latest) |
 | Rust Lab Beta | Windows/macOS (depending on release) | [Rust Lab releases](https://github.com/trisanghy/open-iptv-pro/releases?q=rust-lab) |
+| Mobile Capacitor Beta | Android 7+ debug APK / iOS 15+ unsigned IPA | [Mobile v4.23.17-mobile.10](https://github.com/trisanghy/open-iptv-pro/releases/tag/mobile/v4.23.17.10) |
 
 ## ฟีเจอร์หลัก
 

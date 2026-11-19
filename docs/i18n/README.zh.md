@@ -4,6 +4,8 @@
 
 > International quick-start summary. The Vietnamese README is the complete technical reference; check current GitHub Releases for exact versions and capabilities.
 
+> **Mobile Beta:** [Android APK debug / iOS unsigned IPA](https://github.com/trisanghy/open-iptv-pro/releases/tag/mobile/v4.23.17.10). iOS IPA requires valid Apple signing and is not directly installable. [Mobile source in main](../../mobile/) · [Mobile setup and limitations](../../docs/MOBILE_ANDROID_IOS.md). Mobile is a separate Capacitor edition, not full Desktop feature parity.
+
 ## 项目简介
 
 Open IPTV Pro 是适用于网页、Windows 和 macOS 的个人开源 IPTV 播放器及播放列表管理工具。频道与 M3U/EPG 数据须由用户自行提供并确认拥有合法使用权；本项目不提供电视套餐或频道。
@@ -17,6 +19,7 @@ Electron Desktop 是功能较完整的稳定版；Rust Lab 是独立的 Tauri/Ru
 | Web Online | Browser | [Open Web player](https://trisanghy.github.io/open-iptv-pro/) |
 | Electron Desktop | Windows/macOS | [Latest release](https://github.com/trisanghy/open-iptv-pro/releases/latest) |
 | Rust Lab Beta | Windows/macOS (depending on release) | [Rust Lab releases](https://github.com/trisanghy/open-iptv-pro/releases?q=rust-lab) |
+| Mobile Capacitor Beta | Android 7+ debug APK / iOS 15+ unsigned IPA | [Mobile v4.23.17-mobile.10](https://github.com/trisanghy/open-iptv-pro/releases/tag/mobile/v4.23.17.10) |
 
 ## 主要功能
 

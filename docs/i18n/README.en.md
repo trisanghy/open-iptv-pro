@@ -4,6 +4,8 @@
 
 > This is the international quick-start guide. The Vietnamese README remains the complete technical reference; version numbers and features should always be confirmed against current Releases.
 
+> **Mobile Beta:** [Android APK debug / iOS unsigned IPA](https://github.com/trisanghy/open-iptv-pro/releases/tag/mobile/v4.23.17.10). iOS IPA requires valid Apple signing and is not directly installable. [Mobile source in main](../../mobile/) · [Mobile setup and limitations](../../docs/MOBILE_ANDROID_IOS.md). Mobile is a separate Capacitor edition, not full Desktop feature parity.
+
 ## Overview
 
 Open IPTV Pro is a personal, open-source IPTV player and playlist manager for Web, Windows, and macOS. You provide your own lawfully accessible M3U playlists and EPG sources; the app does not bundle channels or subscriptions.
@@ -17,6 +19,7 @@ Electron Desktop is the stable feature-rich edition. Rust Lab is a separate Taur
 | Web Online | Browser | [Open Web player](https://trisanghy.github.io/open-iptv-pro/) |
 | Electron Desktop | Windows/macOS | [Latest release](https://github.com/trisanghy/open-iptv-pro/releases/latest) |
 | Rust Lab Beta | Windows/macOS (depending on release) | [Rust Lab releases](https://github.com/trisanghy/open-iptv-pro/releases?q=rust-lab) |
+| Mobile Capacitor Beta | Android 7+ debug APK / iOS 15+ unsigned IPA | [Mobile v4.23.17-mobile.10](https://github.com/trisanghy/open-iptv-pro/releases/tag/mobile/v4.23.17.10) |
 
 ## Main features
 

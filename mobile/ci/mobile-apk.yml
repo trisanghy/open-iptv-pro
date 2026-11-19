@@ -1,0 +1,203 @@
+name: Mobile APK and IPA (isolated beta)
+on:
+  push:
+    branches: [experiment/mobile-capacitor-4211]
+    paths:
+      - 'experiments/mobile-capacitor/**'
+      - '.github/workflows/mobile-apk.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: mobile-release-${{ github.ref }}-mobile10
+  cancel-in-progress: false
+env:
+  MOBILE_VERSION: 4.23.17-mobile.10
+  MOBILE_TAG: mobile/v4.23.17.10
+jobs:
+  android:
+    name: Android debug APK
+    runs-on: ubuntu-latest
+    timeout-minutes: 50
+    defaults:
+      run:
+        working-directory: experiments/mobile-capacitor
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: experiments/mobile-capacitor/package-lock.json
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - name: Prepare Android SDK without obsolete tools package
+        run: |
+          SDKMANAGER="$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager"
+          if [ ! -x "$SDKMANAGER" ]; then
+            SDKMANAGER="$(find "$ANDROID_HOME/cmdline-tools" -type f -name sdkmanager | sort -V | tail -1)"
+          fi
+          test -x "$SDKMANAGER"
+          yes | "$SDKMANAGER" --licenses >/dev/null || true
+          "$SDKMANAGER" "platform-tools" "platforms;android-36" "build-tools;36.0.0"
+      - name: Build and test Android
+        run: |
+          npm ci --no-audit --no-fund
+          npm test
+          npm run build
+          npx cap add android
+          npx cap sync android
+          node scripts/patch-native.mjs
+          npx --yes @capacitor/assets@4.0.0 generate --android --assetPath resources --iconBackgroundColor '#ffffff' --iconBackgroundColorDark '#ffffff'
+          test -d android/app/src/main/res/mipmap-hdpi
+          find android/app/src/main/res -name 'ic_launcher*.png' | grep -q .
+          (cd android && chmod +x gradlew && ./gradlew --no-daemon --max-workers=4 assembleDebug)
+          test -s android/app/build/outputs/apk/debug/app-debug.apk
+          mkdir -p release
+          cp android/app/build/outputs/apk/debug/app-debug.apk "release/OpenIPTVPro-Mobile-${MOBILE_VERSION}-debug.apk"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Mobile-Android-APK
+          path: experiments/mobile-capacitor/release/*.apk
+          if-no-files-found: error
+          retention-days: 90
+  ios:
+    name: iOS unsigned device IPA (external signing required)
+    runs-on: macos-15
+    timeout-minutes: 65
+    defaults:
+      run:
+        working-directory: experiments/mobile-capacitor
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: experiments/mobile-capacitor/package-lock.json
+      - uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: '26'
+      - name: Verify Xcode 26 or later
+        run: |
+          xcodebuild -version
+          xcodebuild -version | grep -E '^Xcode (26|27|28)' || { echo 'Capacitor 8 requires Xcode 26+'; exit 1; }
+      - name: Build and test iOS without Apple signing
+        run: |
+          npm ci --no-audit --no-fund
+          npm test
+          npm run build
+          npx cap add ios
+          npx cap sync ios
+          node scripts/patch-native.mjs
+          npx --yes @capacitor/assets@4.0.0 generate --ios --assetPath resources --iconBackgroundColor '#ffffff' --iconBackgroundColorDark '#ffffff'
+          test -s ios/App/App/Assets.xcassets/AppIcon.appiconset/Contents.json
+          xcodebuild -project ios/App/App.xcodeproj -scheme App -configuration Release \
+            -sdk iphoneos -destination 'generic/platform=iOS' -derivedDataPath ios/DerivedData \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO build
+      - name: Package unsigned IPA for signing by user
+        run: |
+          APP=ios/DerivedData/Build/Products/Release-iphoneos/App.app
+          test -d "$APP"
+          test -s "$APP/Info.plist"
+          mkdir -p release ios/UnsignedPayload/Payload
+          ditto "$APP" ios/UnsignedPayload/Payload/App.app
+          (cd ios/UnsignedPayload && /usr/bin/zip -qry "../../release/OpenIPTVPro-Mobile-${MOBILE_VERSION}-unsigned.ipa" Payload)
+          test -s "release/OpenIPTVPro-Mobile-${MOBILE_VERSION}-unsigned.ipa"
+          unzip -tq "release/OpenIPTVPro-Mobile-${MOBILE_VERSION}-unsigned.ipa" >/dev/null
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Mobile-iOS-unsigned-IPA
+          path: experiments/mobile-capacitor/release/*-unsigned.ipa
+          if-no-files-found: error
+          retention-days: 90
+  android_screenshot:
+    name: Capture actual Android emulator screen
+    needs: [android]
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: Mobile-Android-APK
+          path: release
+      - name: Allow hardware accelerated emulator
+        run: |
+          if [ -e /dev/kvm ]; then sudo chmod 666 /dev/kvm; fi
+      - name: Boot Android 35, install built APK, capture screen
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 35
+          target: default
+          arch: x86_64
+          profile: pixel_6
+          disable-animations: true
+          emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim -memory 4096
+          script: bash experiments/mobile-capacitor/scripts/capture-android-screens.sh
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Mobile-Android-Screenshot
+          path: release/*-Android-*.png
+          if-no-files-found: error
+          retention-days: 90
+
+  release:
+    name: Publish immutable mobile beta only after both builds
+    needs: [android, ios, android_screenshot]
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - uses: actions/download-artifact@v4
+        with:
+          name: Mobile-Android-APK
+          path: release
+      - uses: actions/download-artifact@v4
+        with:
+          name: Mobile-iOS-unsigned-IPA
+          path: release
+      - uses: actions/download-artifact@v4
+        with:
+          name: Mobile-Android-Screenshot
+          path: release
+      - name: Archive source at exact commit and verify both binaries
+        run: |
+          git archive --format=zip --output="release/OpenIPTVPro-Mobile-${MOBILE_VERSION}-Source.zip" HEAD:experiments/mobile-capacitor
+          unzip -tq "release/OpenIPTVPro-Mobile-${MOBILE_VERSION}-Source.zip"
+          test -s "release/OpenIPTVPro-Mobile-${MOBILE_VERSION}-debug.apk"
+          test -s "release/OpenIPTVPro-Mobile-${MOBILE_VERSION}-unsigned.ipa"
+          test -s "release/OpenIPTVPro-Mobile-4.23.17-mobile.10-Android-screenshot.png"
+          test -s "release/OpenIPTVPro-Mobile-4.23.17-mobile.10-Android-Recent.png"
+          test -s "release/OpenIPTVPro-Mobile-4.23.17-mobile.10-Android-PiP-Settings.png"
+          test -s "release/OpenIPTVPro-Mobile-4.23.17-mobile.10-Android-more.png"
+          test -s "release/OpenIPTVPro-Mobile-4.23.17-mobile.10-Android-EPG.png"
+          sha256sum release/* > release/SHA256SUMS.txt
+      - name: Publish isolated mobile prerelease (never overwrite tag)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if gh release view "$MOBILE_TAG" >/dev/null 2>&1 || git ls-remote --exit-code --tags origin "refs/tags/$MOBILE_TAG" >/dev/null 2>&1; then
+            echo "::error::Mobile tag/release already exists, refusing to overwrite"
+            exit 1
+          fi
+          cat > /tmp/mobile-release-notes.txt <<'NOTES'
+          Open IPTV Pro Mobile 4.23.17-mobile.10 (Beta, Capacitor 8).\n          Opt-in Auto Picture-in-Picture: a saved Settings toggle (OFF by default). Android native PiP on leaving the app while inline TV is playing, restored on return; iOS WKWebView automatic PiP is attempted only when allowed by system and video source. Native background audio configuration is added, but actual lock-screen controls and iOS automatic PiP require device-specific verification.\n          UI was recreated from user screenshot; original old v4.23 source was not found in GitHub.
+          Rust Lab parity subset: M3U rights confirmation, local Smart Discovery terms,
+          Smart Doctor with user-approved fallback suggestions, safe mobile JSON backup,
+          bounded 1–32 checks / 1000 channels per batch, touch layout.
+          IMPORTANT: Automatic Smart Discovery, Rust DNS-pinned SSRF guard, native FFmpeg
+          snapshot, Whisper translation, DVR/timeshift have not been ported to Mobile.
+          Android artifact: debug-signed APK for personal testing, not Play Store release.
+          iOS artifact: UNSIGNED device IPA, requires Apple certificate/provisioning signing
+          before installation. This is not an App Store-ready or installable signed IPA.
+          Branch experiment/mobile-capacitor-4211 only; main unchanged.
+          NOTES
+          gh release create "$MOBILE_TAG" release/*.apk release/*.ipa release/*.zip release/*.png release/SHA256SUMS.txt \
+            --target "$GITHUB_SHA" \
+            --title "Open IPTV Pro Mobile 4.23.17-mobile.10 - Android APK + unsigned iOS IPA" \
+            --notes-file /tmp/mobile-release-notes.txt --prerelease

@@ -3,7 +3,7 @@ import {oldStyleLayout} from '../src/legacy-mobile-layout.mjs';
 const root=path.resolve(import.meta.dirname,'..');
 const main=fs.readFileSync(path.join(root,'src/main.js'),'utf8');
 const css=fs.readFileSync(path.join(root,'src/styles.css'),'utf8');
-const workflow=fs.readFileSync(path.join(root,'../../.github/workflows/mobile-apk.yml'),'utf8');
+const workflow=fs.readFileSync(path.join(root,'ci/mobile-apk.yml'),'utf8');
 test('EPG screen ships three checkbox sources and auto update without bundling any IPTV streams',()=>{
  const html=oldStyleLayout();
  for(const id of ['epgSourcesList','epgAutoRefresh','addEPGSource','loadEPG','autoRefreshPlaylists','autoResumeLast'])
