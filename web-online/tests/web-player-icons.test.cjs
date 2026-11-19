@@ -29,7 +29,7 @@ test('full screen, muted and favourite states use accessible correct icons',()=>
 test('only player buttons are decorated; no duplicates or handler rewrites',()=>{
  for(const id of ['prevBtn','playBtn','stopBtn','nextBtn','fullscreenBtn','castBtn','pipBtn'])
   assert.equal((html.match(new RegExp('id="'+id+'"','g'))||[]).length,1,id);
- assert.ok(html.includes('web-player-icons.css?v=vectorplayer-airplay-20261118c'));
+ assert.ok(html.includes('web-player-icons.css?v=quick-icons-unified-20261119a'));
  assert.ok(html.includes('web-player-icons.js?v=audio-state-sync-20261119a'));
  assert.match(workflow,/node --test web-online\/tests\/web-player-icons.test.cjs/);
 });
