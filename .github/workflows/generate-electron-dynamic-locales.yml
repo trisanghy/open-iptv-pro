@@ -1,10 +1,5 @@
 name: Generate offline Electron dynamic UI translations
 on:
-  push:
-    branches: [build-sources/electron-desktop]
-    paths:
-      - '.github/workflows/generate-electron-dynamic-locales.yml'
-      - 'scripts/build-electron-dynamic-locales.py'
   workflow_dispatch:
 permissions:
   contents: write
