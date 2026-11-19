@@ -30,7 +30,7 @@ test('all screenshot-reported Vietnamese Web labels translate into English',()=>
   'Âm thanh khi khóa màn hình':'Audio on the lock screen',
   'Tiếp tục nghe và điều khiển khi màn hình tắt (nếu được hỗ trợ)':'Continue listening and controlling playback while the screen is off (if supported)',
   'Ngôn ngữ giao diện':'Interface language',
-  'Cấu hình kiểm tra, Snapshot và thời gian tua':'Scan, snapshot & replay settings',
+  'Cấu hình kiểm tra, Snapshot và thời gian tua':'Scan settings, snapshots, and rewind duration',
   'Giám sát khung hình và link dự phòng':'Video freeze & backup streams',
   'Nhấn để mở các tùy chọn':'Tap to expand options',
   'Nhấn Nghe nền ở màn hình TV trước khi khóa máy. Chrome/Edge Android và Safari iOS chỉ phát tiếp nếu trình duyệt và luồng IPTV hỗ trợ.':'Tap Background audio on the TV screen before locking your device. Chrome/Edge on Android and Safari on iOS can continue only if the browser and stream support it.',
