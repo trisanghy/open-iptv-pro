@@ -112,7 +112,13 @@ jobs:
           node --test web-online/tests/web-channel-snapshot.test.cjs
           node --check _site/advanced-core.js
           node --test web-online/tests/web-vtv-fallback.test.cjs
-          grep -Fq 'advanced-core.js?v=vtv-multisource-20261118n' _site/index.html
+          node --check _site/collector.js
+          node --check _site/advanced.js
+          node --test web-online/tests/web-collector-merge-regression.test.cjs
+          for script in advanced-core.js advanced.js collector.js; do
+            grep -Fq "$script?v=collector-merge-repair-20261119a" _site/index.html
+          done
+          grep -Fq 'advanced-core.js?v=collector-merge-repair-20261119a' _site/index.html
           node --check _site/app.js
           node --check _site/web-player-icons.js
           node --test web-online/tests/web-player-icons.test.cjs

@@ -114,3 +114,7 @@ Bỏ văn bản `PiP` nằm bên trong nút PiP Web (vẫn giữ `aria-label`), 
 ## Nhận diện link dự phòng trong M3U hai nguồn (18/11/2026)
 
 Đã sửa bộ phát Web để nhận kênh trùng nhau bằng `tvg-id`, sau đó dự phòng bằng tên chuẩn hóa (bỏ riêng hậu tố `(Nguồn 1)`, `(Nguồn 3)`, `(Source 2)`...). Không gộp nhầm hai kênh có `tvg-id` khác nhau. File kiểm thử tái hiện danh sách VTV 25 mục của người dùng gồm 12 cặp VTV1–VTV10 và Vietnam Today; chỉ dùng URL ví dụ thay vì lưu các URL M3U có thể chứa token. Ứng dụng nhận diện đủ 12 cặp; trong file đính kèm có 8 cặp với URL phát khác nhau nên xuất hiện link dự phòng thực sự, còn VTV3, VTV5, VTV6 và VTV10 trùng URL giữa hai nguồn nên chỉ hiện một link (không tạo dự phòng giả). Với các link khác nhau, có thể chuyển thủ công hoặc dùng Auto Failover. Giữ nguyên 25 dòng danh sách và nguồn ban đầu. `web-online/prepare-web.py` lấy bộ matcher Web đã sửa để các bản dựng sau không làm mất tính năng.
+
+## Sửa lỗi gộp nguồn `Can't find variable: applied` (19/11/2026)
+
+Nguyên nhân: trình thu thập gọi biến `applied` chưa khai báo sau khi đã lưu nguồn, khiến người dùng nhìn thấy thông báo lỗi dù playlist có thể đã đổi. Đã xóa lỗi này, kiểm tra lưu thành công, hoàn tác thay đổi trong bộ nhớ khi lưu thất bại và ghi trạng thái chính xác sau khi lưu. Trình phát giờ đọc `channel.alternates` ngay từ playlist gộp ngay cả khi hai nguồn gốc đã được tắt, còn cấu hình nâng cao có API cập nhật link dự phòng theo lô. Có bài kiểm thử cho gộp thành công và lỗi lưu; không xóa các nguồn gốc.

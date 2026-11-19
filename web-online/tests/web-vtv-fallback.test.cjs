@@ -77,3 +77,12 @@ test('manual extra URLs remain preferred, validated, unique and limited',()=>{
  assert.deepEqual(engine.alternatives(source,channels,{[source.id]:[extra,extra,backup.url,'file:///bad']}),[source.url,extra,backup.url]);
  assert.deepEqual(engine.alternatives(source,channels,{[source.id]:'incorrect'}),[source.url,backup.url]);
 });
+
+test('merged channels keep direct backups when originals are disabled',()=>{
+ const merged={id:'merged|vtv1hd',sourceId:'collector_merged',name:'VTV1',
+  tvgId:'vtv1hd',url:'https://one.example.test/live.m3u8',
+  alternates:['https://two.example.test/live.m3u8','https://two.example.test/live.m3u8','file:///invalid']};
+ const urls=engine.alternatives(merged,[merged]);
+ assert.deepEqual(urls,[merged.url,'https://two.example.test/live.m3u8']);
+ assert.deepEqual(manual.prioritize(urls,urls[1]),[urls[1],urls[0]]);
+});
