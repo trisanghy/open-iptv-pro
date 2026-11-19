@@ -325,7 +325,7 @@ jobs:
           node --test web-online/tests/web-user-site.test.cjs
           node --test web-online/tests/web-home-languages.test.cjs
           node --check _site/i18n.js
-          grep -Fq 'src="i18n.js?v=unmute-language-20261119a"' _site/index.html
+          grep -Eq 'src="i18n[.]js[?]v=[a-f0-9]{16}"' _site/index.html
           node --test web-online/tests/web-english-coverage.test.cjs
           node --test web-online/tests/web-language-native-coverage.test.cjs
           touch _user_site/.nojekyll

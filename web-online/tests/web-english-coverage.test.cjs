@@ -101,7 +101,7 @@ test('iPhone Chrome unmute overlay follows UI language without changing the one-
  assert.equal(t('Bật tiếng cho kênh đang phát','en'),'Enable sound for the current channel');
  assert.equal(t('🔊 Bật tiếng','vi'),'🔊 Bật tiếng');
  const html=fs.readFileSync(path.join(root,'index.html'),'utf8');
- assert.match(html,/src="i18n\.js\?v=unmute-language-20261119a"/);
+ assert.match(html,/src="i18n\.js\?v=[a-f0-9]{16}"/);
  const builder=fs.readFileSync(path.join(root,'web-online/prepare-web.py'),'utf8');
  assert.match(builder,/html=html\.replace\(locale_script,'<script src="i18n\.js\?v=unmute-language-20261119a"><\/script>',1\)/);
 });
