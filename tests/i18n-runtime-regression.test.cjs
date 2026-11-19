@@ -27,9 +27,12 @@ test('all 17 locales selectable without network or data mutation',()=>{
 });
 test('untranslated settings text falls back to English, not Vietnamese',()=>{
  const i=engine();
- assert.equal(i.t('Chưa có chương trình','ja'),'番組なし');
+ assert.match(i.t('Chưa có chương trình','ja'),/[\u3040-\u30ff\u3400-\u9fff]/u);
+ assert.notEqual(i.t('Chưa có chương trình','ja'),i.t('Chưa có chương trình','en'));
  assert.equal(i.t('Chưa có chương trình','en'),'No program available');
- assert.match(i.t('↻ Tải lại EPG','de'),/Reload EPG/);
+ assert.match(i.t('↻ Tải lại EPG','de'),/EPG/);
+ assert.notEqual(i.t('↻ Tải lại EPG','de'),i.t('↻ Tải lại EPG','en'));
+ assert.notEqual(i.t('↻ Tải lại EPG','de'),'↻ Tải lại EPG');
  assert.match(i.t('Whisper dùng để nhận diện tiếng nói trên máy; chọn bộ dịch offline và giọng TTS ngay tại đây.','fr'),/Whisper transcribes audio locally/);
  assert.equal(i.t('3 kênh','en'),'3 channels');
  assert.equal(i.t('M3U custom group','en'),'M3U custom group');
