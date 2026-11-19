@@ -60,4 +60,11 @@ test('Web only channel hub loads after player and survives WebView rebuild',()=>
  for(const id of ['appSidebar','channelList','page-fav','themeGuidePanel','themeChannelStrip','favCurrentBtn'])
   assert.ok(html.includes('id="'+id+'"'),'Original IPTV feature missing: '+id);
  assert.doesNotMatch(read('web-tv-channel-hub.js'),/localStorage\.setItem|sessionStorage\.setItem|new URL\(/);
+ assert.match(read('web-tv-channel-hub.js'),/openiptv:local-saved/);
+ assert.match(read('web-tv-channel-hub.js'),/openiptv:favorites-changed/);
+ assert.match(read('web-tv-channel-hub.js'),/openiptv:languagechange/);
+ assert.match(read('web-tv-channel-hub.js'),/web-hub-side-card/);
+ assert.match(read('web-tv-channel-hub.js'),/web-hub-view-toggle/);
+ assert.match(css,/#page-tv \.web-hub-side-card/);
+ assert.match(css,/min-width:0/);
 });
