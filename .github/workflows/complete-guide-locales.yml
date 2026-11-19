@@ -1,0 +1,72 @@
+name: Complete offline Web guide translations in 17 languages
+on:
+  push:
+    branches: [web/online]
+    paths:
+      - '.github/workflows/complete-guide-locales.yml'
+      - 'web-online/scripts/build-guide-native-locales.py'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: complete-web-guide-locale-20261119
+  cancel-in-progress: false
+jobs:
+  translate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      max-parallel: 4
+      matrix:
+        lang: [en, fr, de, es, pt-BR, zh-CN, ja, ko, th, id, ru, lo, km, it, hi, ar]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: web/online
+      - name: Translate only the public guide HTML labels
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          python3 -m py_compile web-online/scripts/build-guide-native-locales.py
+          python3 web-online/scripts/build-guide-native-locales.py --lang '${{ matrix.lang }}'
+      - uses: actions/upload-artifact@v4
+        with:
+          name: guide-locale-${{ matrix.lang }}
+          path: guide-locale-output/${{ matrix.lang }}.json
+          if-no-files-found: error
+          retention-days: 14
+  assemble:
+    needs: translate
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: web/online
+          persist-credentials: true
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: guide-locale-*
+          path: guide-locale-output/
+          merge-multiple: true
+      - name: Verify the complete 17-language guide before publishing
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          python3 web-online/scripts/build-guide-native-locales.py --assemble
+          node --check guide-native-locales.js
+          node --test web-online/tests/web-guide-native-coverage.test.cjs
+          grep -q 'id="guide-language-controller"' huong-dan.html
+      - name: Commit only translated guide and its offline dictionary to Web branch
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add huong-dan.html guide-native-locales.js
+          git diff --cached --quiet && { echo 'Guide dictionaries already current'; exit 0; }
+          git commit -m 'feat(web-guide-i18n): complete offline guide localization for 17 languages'
+          git fetch origin web/online
+          git rebase FETCH_HEAD
+          git push origin HEAD:web/online
