@@ -90,7 +90,7 @@ process.stdout.write(JSON.stringify(miss));"""
 def batches(keys):
     part=[];length=180
     for k in keys:
-        n=len(urllib.parse.quote(k,safe=""))+5
+        n=len(urllib.parse.quote(k[1] if isinstance(k,tuple) else k,safe=""))+5
         if part and (len(part)>=8 or length+n>4300):
             yield part;part=[];length=180
         part.append(k);length+=n
