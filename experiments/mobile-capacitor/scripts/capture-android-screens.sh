@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
-VERSION=4.23.17-mobile.9
+VERSION=4.23.17-mobile.10
 PACKAGE=com.trisanghy.openiptvpro.mobile
 mkdir -p release
 adb install -r "release/OpenIPTVPro-Mobile-${VERSION}-debug.apk"
@@ -52,3 +52,30 @@ if cmp -s "release/OpenIPTVPro-Mobile-${VERSION}-Android-screenshot.png" "releas
   echo "::error::Android More sheet not opened; screenshots identical"
   exit 1
 fi
+
+
+# Open Settings via accessible text in the More sheet; fallback to its known grid position.
+timeout 18s adb shell uiautomator dump /sdcard/openiptv-more.xml >/dev/null 2>&1 || true
+adb exec-out cat /sdcard/openiptv-more.xml > /tmp/openiptv-more.xml 2>/dev/null || true
+POINT="$(python3 - <<'PY'
+import xml.etree.ElementTree as ET,re
+try:
+  root=ET.parse('/tmp/openiptv-more.xml').getroot()
+  nodes=[n for n in root.iter('node') if 'Cài đặt' in ((n.get('text') or '')+' '+(n.get('content-desc') or ''))]
+  for n in reversed(nodes):
+    b=re.findall(r'\d+',n.get('bounds',''))
+    if len(b)==4:
+      print((int(b[0])+int(b[2]))//2,(int(b[1])+int(b[3]))//2)
+      break
+except Exception: pass
+PY
+)"
+if [ -n "$POINT" ]; then
+  adb shell input tap $POINT
+else
+  adb shell input tap "$((WIDTH*3/4))" "$((HEIGHT*72/100))"
+fi
+sleep 3
+adb exec-out screencap -p > "release/OpenIPTVPro-Mobile-${VERSION}-Android-PiP-Settings.png"
+file "release/OpenIPTVPro-Mobile-${VERSION}-Android-PiP-Settings.png" | grep -q 'PNG image data'
+test "$(stat -c%s "release/OpenIPTVPro-Mobile-${VERSION}-Android-PiP-Settings.png")" -gt 20000

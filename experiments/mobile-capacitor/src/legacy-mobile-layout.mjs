@@ -64,6 +64,11 @@ return `
  <section class="page" id="page-tools"><h2>Công cụ & cài đặt</h2>
   <label class="epg-auto-label"><input type="checkbox" id="autoRefreshPlaylists" checked/> Tải lại tất cả danh sách M3U khi khởi động</label>
   <label class="epg-auto-label"><input type="checkbox" id="autoResumeLast" checked/> Tự phát kênh đã xem ở phiên trước</label>
+  <label class="epg-auto-label auto-pip-setting"><input type="checkbox" id="autoPiPOnBackground"/>
+   <span><strong>Tự động PiP khi rời ứng dụng</strong>
+     <small>Đang phát TV: thu nhỏ thành cửa sổ nổi khi về màn hình chính; trở lại khung TV khi mở app.</small></span>
+  </label>
+  <p class="muted" id="autoPipSupportNote">Mặc định tắt. Android 8 trở lên hỗ trợ PiP tùy thiết bị; trên iPhone phụ thuộc iOS, nguồn phát và cài đặt PiP của hệ thống.</p>
   <p class="muted">iOS có thể tự phát tắt tiếng; nhấn Bật tiếng khi được yêu cầu.</p>
   <p class="muted">Sức khỏe kênh chỉ là đánh giá dựa trên phản hồi HTTP và bằng chứng phát.</p>
   <div class="add-row"><label>Luồng <select id="threadCount"><option>8</option><option selected>16</option><option>32</option></select></label><button id="checkBtn">✓ Kiểm tra kênh</button></div>

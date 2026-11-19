@@ -9,11 +9,11 @@ on:
 permissions:
   contents: write
 concurrency:
-  group: mobile-release-${{ github.ref }}-mobile9
+  group: mobile-release-${{ github.ref }}-mobile10
   cancel-in-progress: false
 env:
-  MOBILE_VERSION: 4.23.17-mobile.9
-  MOBILE_TAG: mobile/v4.23.17.9
+  MOBILE_VERSION: 4.23.17-mobile.10
+  MOBILE_TAG: mobile/v4.23.17.10
 jobs:
   android:
     name: Android debug APK
@@ -171,10 +171,11 @@ jobs:
           unzip -tq "release/OpenIPTVPro-Mobile-${MOBILE_VERSION}-Source.zip"
           test -s "release/OpenIPTVPro-Mobile-${MOBILE_VERSION}-debug.apk"
           test -s "release/OpenIPTVPro-Mobile-${MOBILE_VERSION}-unsigned.ipa"
-          test -s "release/OpenIPTVPro-Mobile-4.23.17-mobile.9-Android-screenshot.png"
-          test -s "release/OpenIPTVPro-Mobile-4.23.17-mobile.9-Android-Recent.png"
-          test -s "release/OpenIPTVPro-Mobile-4.23.17-mobile.9-Android-more.png"
-          test -s "release/OpenIPTVPro-Mobile-4.23.17-mobile.9-Android-EPG.png"
+          test -s "release/OpenIPTVPro-Mobile-4.23.17-mobile.10-Android-screenshot.png"
+          test -s "release/OpenIPTVPro-Mobile-4.23.17-mobile.10-Android-Recent.png"
+          test -s "release/OpenIPTVPro-Mobile-4.23.17-mobile.10-Android-PiP-Settings.png"
+          test -s "release/OpenIPTVPro-Mobile-4.23.17-mobile.10-Android-more.png"
+          test -s "release/OpenIPTVPro-Mobile-4.23.17-mobile.10-Android-EPG.png"
           sha256sum release/* > release/SHA256SUMS.txt
       - name: Publish isolated mobile prerelease (never overwrite tag)
         env:
@@ -185,7 +186,7 @@ jobs:
             exit 1
           fi
           cat > /tmp/mobile-release-notes.txt <<'NOTES'
-          Open IPTV Pro Mobile 4.23.17-mobile.9 (Beta, Capacitor 8).\n          New 'Kênh vừa xem' horizontal shortcut row above channel folders, latest watched channels first, one-tap replay, clear history. Watch history persists locally, records successful playback only, and keeps the existing resume, IPTV source refresh and EPG behavior.\n          UI was recreated from user screenshot; original old v4.23 source was not found in GitHub.
+          Open IPTV Pro Mobile 4.23.17-mobile.10 (Beta, Capacitor 8).\n          Opt-in Auto Picture-in-Picture: a saved Settings toggle (OFF by default). Android native PiP on leaving the app while inline TV is playing, restored on return; iOS WKWebView automatic PiP is attempted only when allowed by system and video source. Native background audio configuration is added, but actual lock-screen controls and iOS automatic PiP require device-specific verification.\n          UI was recreated from user screenshot; original old v4.23 source was not found in GitHub.
           Rust Lab parity subset: M3U rights confirmation, local Smart Discovery terms,
           Smart Doctor with user-approved fallback suggestions, safe mobile JSON backup,
           bounded 1–32 checks / 1000 channels per batch, touch layout.
@@ -198,5 +199,5 @@ jobs:
           NOTES
           gh release create "$MOBILE_TAG" release/*.apk release/*.ipa release/*.zip release/*.png release/SHA256SUMS.txt \
             --target "$GITHUB_SHA" \
-            --title "Open IPTV Pro Mobile 4.23.17-mobile.9 - Android APK + unsigned iOS IPA" \
+            --title "Open IPTV Pro Mobile 4.23.17-mobile.10 - Android APK + unsigned iOS IPA" \
             --notes-file /tmp/mobile-release-notes.txt --prerelease

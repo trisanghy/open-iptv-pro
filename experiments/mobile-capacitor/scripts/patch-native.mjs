@@ -14,9 +14,41 @@ if(fs.existsSync(path.join(project,'android/app/src/main/AndroidManifest.xml')))
  for(const attribute of ['android:launchMode','android:supportsPictureInPicture','android:exported']){
    if((activityTag.match(new RegExp(attribute+'=', 'g'))||[]).length>1)throw Error('Duplicate AndroidManifest activity attribute: '+attribute);
  }
- fs.writeFileSync(file,xml);console.log('Android permissions and PiP patched');
+
+ // Preserve one MainActivity during PiP transition; no duplicate AndroidManifest attributes.
+ xml=xml.replace(/android:launchMode="[^"]*"/,'android:launchMode="singleTask"');
+ const activity=xml.match(/<activity\b[^>]*>/)?.[0]||'';
+ if(!activity.includes('android:resizeableActivity='))xml=xml.replace(/<activity\b/,'<activity android:resizeableActivity="true"');
+ if(activity.includes('android:configChanges=')){
+   xml=xml.replace(/android:configChanges="([^"]*)"/,(m,flags)=>{
+     const required=['screenSize','smallestScreenSize','screenLayout','orientation','uiMode'];
+     return 'android:configChanges="'+[...new Set([...flags.split('|'),...required])].join('|')+'"';
+   });
+ }
+ fs.writeFileSync(file,xml);
+ const pkg=path.join(project,'android/app/src/main/java/com/trisanghy/openiptvpro/mobile');
+ fs.mkdirSync(pkg,{recursive:true});
+ for(const name of ['MainActivity.java','OpenIPTVAutoPipPlugin.java']){
+   const src=path.join(project,'native/android',name);
+   if(!fs.existsSync(src))throw Error('Missing Android PiP native source: '+src);
+   fs.copyFileSync(src,path.join(pkg,name));
+ }
+ console.log('Android manifest and native automatic PiP plugin patched');
+
 }
 if(fs.existsSync(path.join(project,'ios/App/App/Info.plist'))){
  const plist=path.join(project,'ios/App/App/Info.plist');
- const code=`import plistlib, sys\np=sys.argv[1]\nwith open(p, 'rb') as f: d=plistlib.load(f)\nd['NSAppTransportSecurity']={'NSAllowsArbitraryLoads': True}\nd['NSLocalNetworkUsageDescription']='Open IPTV Pro tim thiet bi phat tren mang noi bo (Chromecast/AirPlay).';d['NSBonjourServices']=['_googlecast._tcp','_CC1AD845._googlecast._tcp']\nwith open(p,'wb') as f: plistlib.dump(d,f,sort_keys=False)\n`;const py=spawnSync('python3',['-c',code,plist],{stdio:'inherit'});if(py.status!==0)throw Error('Could not patch iOS Info.plist');console.log('iOS ATS / Bonjour patched');
+ const code=`import plistlib, sys\np=sys.argv[1]\nwith open(p, 'rb') as f: d=plistlib.load(f)\nd['NSAppTransportSecurity']={'NSAllowsArbitraryLoads': True}\nd['NSLocalNetworkUsageDescription']='Open IPTV Pro tim thiet bi phat tren mang noi bo (Chromecast/AirPlay).';d['NSBonjourServices']=['_googlecast._tcp','_CC1AD845._googlecast._tcp'];d['UIBackgroundModes']=list(dict.fromkeys(d.get('UIBackgroundModes',[])+['audio']))\nwith open(p,'wb') as f: plistlib.dump(d,f,sort_keys=False)\n`;const py=spawnSync('python3',['-c',code,plist],{stdio:'inherit'});if(py.status!==0)throw Error('Could not patch iOS Info.plist');console.log('iOS ATS / Bonjour / background audio patched');
+ const delegate=path.join(project,'ios/App/App/AppDelegate.swift');
+ if(fs.existsSync(delegate)){
+   let swift=fs.readFileSync(delegate,'utf8');
+   if(!swift.includes('import AVFoundation'))swift=swift.replace('import UIKit','import UIKit\nimport AVFoundation');
+   if(!swift.includes('OpenIPTV-AutoPiP AVAudioSession')){
+     const match=/(func application\(_ application: UIApplication, didFinishLaunchingWithOptions[\s\S]*?-> Bool \{)/;
+     if(!match.test(swift))throw Error('Unable to configure iOS AppDelegate audio session');
+     swift=swift.replace(match, m=>m+"\n        // OpenIPTV-AutoPiP AVAudioSession: allow legitimate media background playback.\n        try? AVAudioSession.sharedInstance().setCategory(.playback, mode: .moviePlayback, options: [.allowAirPlay])");
+   }
+   fs.writeFileSync(delegate,swift);
+ }
+
 }

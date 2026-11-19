@@ -1,9 +1,9 @@
 {
   "name": "open-iptv-pro-mobile",
   "private": true,
-  "version": "4.23.17-mobile.9",
+  "version": "4.23.17-mobile.10",
   "type": "module",
-  "description": "Watch history shortcuts in channel list, resume from last played channel and clear local watch history",
+  "description": "Opt-in automatic PiP on app background (native Android, iOS WebKit best-effort), foreground restoration",
   "scripts": {
     "dev": "vite --host 127.0.0.1",
     "build": "vite build",

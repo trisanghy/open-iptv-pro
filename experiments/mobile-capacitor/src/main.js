@@ -8,6 +8,7 @@ import {streamOptions,epgNowNext} from './mobile-player-controls.mjs';
 import {installEPGAuto} from './mobile-epg-autosync.mjs';
 import {matchGuideChannel,resumeChannel} from './mobile-epg-auto.mjs';
 import {swipeChannelDelta,nextChannelIndex,safeHistory,recentChannelMatches} from './mobile-ux.mjs';
+import {createAutoPiPController} from './mobile-auto-pip.mjs';
 import {MOBILE_VERSION,MAX_BATCH,batchWindow,appendEvidence,rightsDialog,installMobileParity} from './mobile-rustlab-parity.mjs';
 import './core-browser.js';
 import './styles.css';
@@ -16,7 +17,7 @@ import { stableId, dedupChannels, normalizeHTTPURL, textFromResponse, parseBasic
 const $ = x=>document.querySelector(x), $$=x=>[...document.querySelectorAll(x)];
 const CORE=window.StreamLeafCore;
 const KEY='openiptv_mobile_4211_v1';
-let state={sources:[],favorites:[],channels:[],checks:{},healthHistory:{},checkCursor:0,fallbacks:{},epgUrl:'',epgCache:null,epgSources:null,resumeUrl:null,selected:null,filter:'',page:'tv',group:'',recentlyWatched:[],manualStreams:{},settings:{threads:16,autoRefreshEPG:true,autoRefreshPlaylists:true,autoResumeLast:true}};
+let state={sources:[],favorites:[],channels:[],checks:{},healthHistory:{},checkCursor:0,fallbacks:{},epgUrl:'',epgCache:null,epgSources:null,resumeUrl:null,selected:null,filter:'',page:'tv',group:'',recentlyWatched:[],manualStreams:{},settings:{threads:16,autoRefreshEPG:true,autoRefreshPlaylists:true,autoResumeLast:true,autoPiPOnBackground:false}};
 try{const old=JSON.parse(localStorage.getItem(KEY)||'{}');state={...state,...old,settings:{...state.settings,...old.settings}};}catch{}
 state.channels=Array.isArray(state.channels)?state.channels:[];
 state.sources=Array.isArray(state.sources)?state.sources:[];
@@ -31,6 +32,8 @@ let busy=false, playerHls=null;let multiPlayers=[];
 let mediaPlaying=false, mediaPaused=false, mediaMuted=false, epgItems=state.epgCache?.items||[];
 let epgManager=null,startupPlaybackDone=false;
 let nativeFullscreenActive=false;
+let pipController=null;
+function syncAutoPiP(){void pipController?.sync();}
 const native=Capacitor.isNativePlatform();
 function save(){const keep={...state};try{localStorage.setItem(KEY,JSON.stringify(keep));}catch(e){status('Bộ nhớ gần đầy; hãy xuất M3U sao lưu','error');}}
 function status(t,kind=''){const el=$('#status');if(!el)return;el.textContent=t;el.dataset.kind=kind;el.hidden=false;clearTimeout(status.hideTimer);status.hideTimer=setTimeout(()=>{el.hidden=true;},3800);}
@@ -225,7 +228,7 @@ function toggleFavorite(c){state.favorites=state.favorites.includes(c.url)?state
 
 // Capgo's native player supports only fullscreen on iOS/Android.
 // Default play must use the in-page HTML5 video; native is reserved for ⛶.
-function nativePlayOptions(c,url){return {mode:'fullscreen',playerId:'main-player',url,title:c.name,smallTitle:c.group,artwork:c.logo||undefined,showControls:true,chromecast:true,pipEnabled:true};}
+function nativePlayOptions(c,url){return {mode:'fullscreen',playerId:'main-player',url,title:c.name,smallTitle:c.group,artwork:c.logo||undefined,showControls:true,chromecast:true,pipEnabled:state.settings.autoPiPOnBackground===true,bkmodeEnabled:true};}
 function showInline(visible){
  const v=$('#webVideo'),ph=$('.hero-placeholder'),hero=$('.hero-player');
  v.hidden=!visible;ph.hidden=visible;hero.classList.toggle('has-video',visible);
@@ -258,14 +261,14 @@ async function play(c,requestedURL,{startup=false}={}){
    state.resumeUrl=c.url;
    state.recentlyWatched=safeHistory(state.recentlyWatched,c.url,30);
    save();renderRecentChannels();
-   mediaPlaying=true;mediaPaused=false;syncMediaControls();
+   mediaPlaying=true;mediaPaused=false;syncMediaControls();syncAutoPiP();
    status('Đang phát trong khung: '+c.name,'ok');return;
   }catch(e){
    last=e;playerHls?.destroy();playerHls=null;
    v.pause();v.removeAttribute('src');v.load();
   }
  }
- showInline(false);mediaPlaying=false;mediaPaused=false;syncMediaControls();
+ showInline(false);mediaPlaying=false;mediaPaused=false;syncMediaControls();syncAutoPiP();
  throw Error('Không phát trong khung (CORS/codec): '+(last?.message||last||'')+'. Có thể thử ⛶.');
 }
 async function playFullscreen(){
@@ -279,10 +282,10 @@ async function playFullscreen(){
    try{
      await VideoPlayer.stopAllPlayers().catch(()=>{});
      await VideoPlayer.initPlayer(nativePlayOptions(c,url));
-     nativeFullscreenActive=true;
+     nativeFullscreenActive=true;syncAutoPiP();
      await VideoPlayer.play({playerId:'main-player'});
    }catch(e){
-     nativeFullscreenActive=false;
+     nativeFullscreenActive=false;syncAutoPiP();
      if(wasPlaying){await v.play().catch(()=>{});mediaPaused=v.paused;syncMediaControls();}
      throw Error('Lỗi toàn màn hình: '+(e?.message||e));
    }
@@ -298,14 +301,14 @@ async function pauseResumeCurrent(){
  if(!mediaPlaying)return play(c);
  const v=$('#webVideo');
  if(v.paused){await v.play();mediaPaused=false;}else{v.pause();mediaPaused=true;}
- syncMediaControls();
+ syncMediaControls();syncAutoPiP();
 }
 async function muteUnmute(){mediaMuted=!mediaMuted;$('#webVideo').muted=mediaMuted;syncMediaControls();}
 async function stop(){
  if(nativeFullscreenActive){await VideoPlayer.stopAllPlayers().catch(()=>{});nativeFullscreenActive=false;}
  playerHls?.destroy();playerHls=null;
  const v=$('#webVideo');v.pause();v.removeAttribute('src');v.load();showInline(false);
- mediaPlaying=false;mediaPaused=false;syncMediaControls();status('Đã dừng phát');
+ mediaPlaying=false;mediaPaused=false;syncMediaControls();syncAutoPiP();status('Đã dừng phát');
 }
 async function checkOne(c){const url=c.url;try{
  if(/\.m3u8(?:\?|$)/i.test(url)){const manifest=await getText(url,8000);if(!/#EXTM3U/i.test(manifest))return {status:'dead',reason:'HTTP 200 nhưng không phải HLS'};
@@ -440,9 +443,9 @@ function init(){document.querySelector('#app').innerHTML=oldStyleLayout();
  $('#threadCount').replaceChildren(...Array.from({length:32},(_,i)=>new Option(String(i+1),String(i+1))));
  const video=$('#webVideo');
  video.playsInline=true;video.setAttribute('playsinline','');video.setAttribute('webkit-playsinline','');
- video.addEventListener('playing',()=>{mediaPlaying=true;mediaPaused=false;syncMediaControls();if(state.selected){try{appendEvidence(state.healthHistory,state.selected,'decoded-playback');save();}catch{}}});
- video.addEventListener('pause',()=>{if(mediaPlaying){mediaPaused=true;syncMediaControls();}});
- video.addEventListener('ended',()=>{mediaPlaying=false;mediaPaused=false;syncMediaControls();});
+ video.addEventListener('playing',()=>{mediaPlaying=true;mediaPaused=false;syncMediaControls();syncAutoPiP();if(state.selected){try{appendEvidence(state.healthHistory,state.selected,'decoded-playback');save();}catch{}}});
+ video.addEventListener('pause',()=>{if(mediaPlaying){mediaPaused=true;syncMediaControls();syncAutoPiP();}});
+ video.addEventListener('ended',()=>{mediaPlaying=false;mediaPaused=false;syncMediaControls();syncAutoPiP();});
 
  render();}
 
@@ -466,6 +469,19 @@ async function startupSync(){
 }
 init();
 installMobileParity({getState:()=>state,replaceState:next=>{state={...state,...next};flatten();},save,status,exportFile});
+pipController=createAutoPiPController({
+ getVideo:()=>$('#webVideo'),
+ getSettings:()=>state.settings,
+ isPlaying:()=>mediaPlaying&&!mediaPaused&&!$('#webVideo').paused,
+ isNativeFullscreen:()=>nativeFullscreenActive,
+ onWarning:message=>status(message,'error')
+});
+const pipToggle=$('#autoPiPOnBackground');
+pipToggle.checked=state.settings.autoPiPOnBackground===true;
+pipToggle.onchange=()=>{
+ state.settings.autoPiPOnBackground=pipToggle.checked;save();syncAutoPiP();
+ status(pipToggle.checked?'Đã bật tự động PiP (theo hỗ trợ của thiết bị)':'Đã tắt tự động PiP','ok');
+};
 epgManager=installEPGAuto({getState:()=>state,save,getText,parseDate:xmltvDate,
  getSelectedChannel:()=>state.channels.find(x=>x.url===state.selected),
  notify:status,onGuide:cache=>{epgItems=cache.items;renderCurrentEPG(state.channels.find(x=>x.url===state.selected));}});
