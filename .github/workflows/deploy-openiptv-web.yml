@@ -161,6 +161,7 @@ jobs:
           ICON_FIRST_PAINT_CHROME="$(command -v google-chrome)" node --test web-online/tests/web-player-icons-first-paint.test.cjs
           node --test web-online/tests/web-mobile-controls-polish.test.cjs
           node --test web-online/tests/web-mobile-tablet-controls.test.cjs
+          TABLET_LAYOUT_CHROME="$(command -v google-chrome)" node --test web-online/tests/web-mobile-tablet-browser.test.cjs
           cmp _site/web-mobile-tablet-controls.css web-mobile-tablet-controls.css
           grep -Fq 'web-mobile-tablet-controls.css?v=tablet-controls-20261119b' _site/index.html
           node --test web-online/tests/web-quick-tools-icons.test.cjs
