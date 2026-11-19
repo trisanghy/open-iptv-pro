@@ -1,0 +1,44 @@
+name: Verify Web Mobile Vector Icons First Paint
+on:
+  push:
+    branches: [web/online]
+    paths:
+      - '.github/workflows/verify-web-mobile-first-paint.yml'
+      - 'web-player-icons.css'
+      - 'web-mobile-player.css'
+      - 'web-mobile-controls-polish.css'
+      - 'web-online/web-mobile-controls-polish.css'
+      - 'web-online/tests/web-player-icons-first-paint.test.cjs'
+      - 'index.html'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: web/online
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Inspect real desktop and mobile first paint in Chrome
+        shell: bash
+        run: |
+          set -euo pipefail
+          node - <<'JS'
+          const fs=require('node:fs'),path=require('node:path');
+          const html=fs.readFileSync('index.html','utf8');
+          fs.mkdirSync('_site',{recursive:true});
+          for(const match of html.matchAll(/<link rel="stylesheet" href="([^"]+)"\/>/g)){
+            const name=match[1].split('?')[0];
+            if(!name.includes('/')&&fs.existsSync(name))
+              fs.copyFileSync(name,path.join('_site',name));
+          }
+          JS
+          test -f _site/web-player-icons.css
+          test -f _site/web-mobile-controls-polish.css
+          ICON_FIRST_PAINT_CHROME="$(command -v google-chrome || command -v chromium)" node --test web-online/tests/web-player-icons-first-paint.test.cjs
+          node --test web-online/tests/web-mobile-controls-polish.test.cjs
