@@ -102,17 +102,23 @@
    if(!enabled())return;
    const now=media(),playing=!!app.getCurrent?.()&&!!now&&!now.paused&&!now.ended;
    if(active&&audio){
-    const b=doc.getElementById?.('playBtn');
-    if(b){
-     b.textContent=playing?'Ⅱ':'▶';
-     b.setAttribute?.('aria-label',playing?'Tạm dừng âm thanh':'Phát âm thanh');
-     b.title=playing?'Tạm dừng âm thanh':'Phát âm thanh';
+    const label=playing?'Tạm dừng âm thanh':'Phát âm thanh';
+    for(const id of ['playBtn','fsPlay']){
+     const button=doc.getElementById?.(id);
+     if(!button)continue;
+     // The SVG/CSS pseudo-icons use data-iptv-playing, not textContent.
+     // The audio element is now the single source of truth.
+     if(button.dataset)button.dataset.iptvPlaying=String(playing);
+     button.textContent=playing?'Ⅱ':'▶';
+     button.setAttribute?.('aria-label',label);
+     button.title=label;
     }
-    const fs=doc.getElementById?.('fsPlay');
-    if(fs)fs.textContent=playing?'Ⅱ':'▶';
     const note=doc.getElementById?.('streamInfo');
     if(note)note.textContent=playing?'● Đang nghe nền':'● Nghe nền đang tạm dừng';
    }
+   // Re-render vector icons on every background audio transition,
+   // including deactivation, when ownership returns to the video player.
+   win.OpenIPTVPlayerIcons?.sync?.();
    if(session)try{session.playbackState=app.getCurrent?.()?(playing?'playing':'paused'):'none';}catch{}
   }
   function refreshButton(){
@@ -535,7 +541,17 @@
   if(enabled())applyAudioType();
   info(!enabled()?'Đã tắt nghe nền.':session?'Đã bật. Nhấn Nghe nền khi đang xem TV, sau đó mới khóa màn hình. Trình duyệt/nguồn IPTV có thể giới hạn phát nền.':'Trình duyệt này không có Media Session; nút màn hình khóa có thể không hoạt động, nhưng vẫn có thể thử Nghe nền.');
   refreshButton();sync();
-  return Object.freeze({sync,clearSession,activate,deactivate,togglePlayback,navigate,get active(){return active;}});
+  return Object.freeze({
+   sync,clearSession,activate,deactivate,togglePlayback,navigate,
+   get active(){return active;},
+   getPlaybackState(){
+    if(!active)return null;
+    return {
+     playing:!!audio&&!audio.paused&&!audio.ended&&!!app.getCurrent?.(),
+     muted:!!audio&&(!!audio.muted||Number(audio.volume)===0)
+    };
+   }
+  });
  }
  return Object.freeze({metadataFor,artworkCandidates,imageArt,isAllowedStream,install});
 });

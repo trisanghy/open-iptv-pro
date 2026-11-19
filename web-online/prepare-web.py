@@ -216,7 +216,7 @@ html=html.replace('</head>','<link rel="stylesheet" href="web-only.css?v=epg-row
 html=html.replace('<script src="app.js"></script>','<script src="web-mobile-player.js?v=desktop-handheld-fs-20261119a"></script><script src="app.js"></script>',1)
 html=html.replace('</head>','<link rel="stylesheet" href="web-mobile-player.css?v=desktop-handheld-fs-20261119a"/></head>',1)
 html=html.replace('src="theme-boot.js"','src="theme-boot.js?v=responsive-desktop-20261118j"',1)
-html=html.replace('</body>','<script src="supabase-sdk.js"></script><script src="cloud-core.js"></script><script src="web-only.js"></script><script src="resume-last.js"></script><script src="web-volume.js"></script><script src="cloud-sync.js"></script><script src="web-player-icons.js?v=vectorplayer-airplay-20261118c"></script></body>',1)
+html=html.replace('</body>','<script src="supabase-sdk.js"></script><script src="cloud-core.js"></script><script src="web-only.js"></script><script src="resume-last.js"></script><script src="web-volume.js"></script><script src="cloud-sync.js"></script><script src="web-player-icons.js?v=audio-state-sync-20261119a"></script></body>',1)
 html=html.replace('</head>','<link rel="stylesheet" href="web-player-icons.css?v=vectorplayer-airplay-20261118c"/><link rel="stylesheet" href="web-tv-wide.css?v=tv-wide-no-side-epg-20261118k"/><link rel="stylesheet" href="web-mobile-controls-polish.css?v=mobile-pip-tabs-aligned-20261118m"/></head>',1)
 # The old PiP label overlaps the vector icon even with font-size:0 in Safari.
 # Preserve the button ID and its accessible aria-label.
@@ -300,7 +300,7 @@ status_end=web_html.index('</small>',status_start)+len('</small>')
 compact_audio=web_html[button_start:button_end]+'\n        '+web_html[status_start:status_end]
 fav_end=html.index('</button>',html.index(fav_marker))+len('</button>')
 html=html[:fav_end]+'\\n        '+compact_audio+html[fav_end:]
-html=html.replace('web-background-audio.js?v=lock-audio-20261119c','web-background-audio.js?v=ios-chrome-locktrack-20261119h',1)
+html=html.replace('web-background-audio.js?v=lock-audio-20261119c','web-background-audio.js?v=audio-state-sync-20261119a',1)
 html=html.replace('</head>','<link rel="stylesheet" href="web-background-audio.css?v=lock-artwork-20261119e"/></head>',1)
 # Refresh the localization file URL so iOS/Chrome do not reuse the untranslated unmute control.
 locale_script='<script src="i18n.js"></script>'

@@ -30,7 +30,7 @@ test('only player buttons are decorated; no duplicates or handler rewrites',()=>
  for(const id of ['prevBtn','playBtn','stopBtn','nextBtn','fullscreenBtn','castBtn','pipBtn'])
   assert.equal((html.match(new RegExp('id="'+id+'"','g'))||[]).length,1,id);
  assert.ok(html.includes('web-player-icons.css?v=vectorplayer-airplay-20261118c'));
- assert.ok(html.includes('web-player-icons.js?v=vectorplayer-airplay-20261118c'));
+ assert.ok(html.includes('web-player-icons.js?v=audio-state-sync-20261119a'));
  assert.match(workflow,/node --test web-online\/tests\/web-player-icons.test.cjs/);
 });
 
@@ -79,4 +79,27 @@ test('Cast icon is centered on iPhone without old caption',()=>{
  assert.match(css,/output-controls #castBtn\{[\s\S]*?justify-content:center!important/);
  assert.match(css,/output-controls #castBtn::before\{[\s\S]*?transform:translate\(-50%,-50%\)!important/);
  assert.match(css,/output-controls #castBtn>\.cast-label\{display:none!important/);
+});
+
+test('vector play/pause derives from background audio, not the intentionally paused video',()=>{
+ const video={paused:true,ended:false,muted:false,volume:0.8};
+ let audible=true;
+ const background={
+  active:true,
+  getPlaybackState:()=>({playing:audible,muted:false})
+ };
+ assert.deepEqual(icons.derive(video,background),{playing:true,muted:false});
+ audible=false;
+ assert.deepEqual(icons.derive(video,background),{playing:false,muted:false});
+ // Switching back to TV immediately restores the original video source.
+ background.active=false;
+ video.paused=false;
+ assert.deepEqual(icons.derive(video,background),{playing:true,muted:false});
+ video.paused=true;
+ assert.deepEqual(icons.derive(video,background),{playing:false,muted:false});
+});
+test('SVG state reads the foreground audio controller and provides a sync hook',()=>{
+ const source=fs.readFileSync(path.join(root,'web-player-icons.js'),'utf8');
+ assert.match(source,/derive\(video,root\.OpenIPTVBackgroundAudio\)/);
+ assert.match(source,/root\.OpenIPTVPlayerIcons=Object\.freeze\(\{sync\}\)/);
 });

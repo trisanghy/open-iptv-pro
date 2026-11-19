@@ -31,7 +31,8 @@ function fixture({playReject=false,chromeHls=false,initial={},allowAudio=true,wi
  const source={value:'https://example.org/live.m3u8'};
  const els={video,webBackgroundAudio:settings,webBackgroundAudioStatus:status,
   webBackgroundAudioToggle:toggle,webBackgroundAudioModeStatus:{textContent:''},
-  playBtn:events({textContent:'Ⅱ'}),
+  playBtn:events({textContent:'Ⅱ',dataset:{}}),
+  fsPlay:events({textContent:'Ⅱ',dataset:{}}),
   stopBtn:stop,nextBtn:next,prevBtn:prev,manualStreamSelect:source};
  let channel={id:'vtv1',name:'VTV1',group:'Truyền hình',url:'https://example.org/live.m3u8'};
  const store={...initial},calls={save:0,channels:[],switches:[],stops:0,suspends:0};
@@ -111,7 +112,7 @@ function fixture({playReject=false,chromeHls=false,initial={},allowAudio=true,wi
   };
  }
  const controller=mod.install({win,doc,nav});
- return {controller,doc,video,settings,status,toggle,label,els,audioElements,handlers,ms,nav,calls,hlsLog,
+ return {controller,win,doc,video,settings,status,toggle,label,els,audioElements,handlers,ms,nav,calls,hlsLog,
   setChannel(c){channel=c},getCurrent:()=>channel,source,store};
 }
 test('iOS native HLS: explicit Nghe nền switches from video to audio and stays playing when hidden',async()=>{
@@ -199,7 +200,7 @@ test('Web files and builder preserve UI after rebuild without changing native br
  assert.equal(html.split('id="webBackgroundAudioToggle"').length,2);
  assert.equal(html.split('id="webBackgroundAudioBar"').length,1);
  assert.match(html,/id="favCurrentBtn"[\s\S]*?id="webBackgroundAudioToggle"/);
- assert.ok(html.includes('web-background-audio.js?v=ios-chrome-locktrack-20261119h'));
+ assert.ok(html.includes('web-background-audio.js?v=audio-state-sync-20261119a'));
  assert.ok(html.includes('web-background-audio.css?v=lock-artwork-20261119e'));
  assert.ok(builder.includes('compact_audio=web_html['));
  assert.ok(builder.includes("'web-background-audio.css'"));
@@ -389,4 +390,52 @@ test('lockscreen track actions are restored after pause/resume, live stream retu
   assert.equal(e.handlers[action],null,action);
  }
  assert.equal(e.ms.playbackState,'none');
+});
+
+test('Web play/pause vector stays synchronized with real audio when video was suspended',async()=>{
+ const e=fixture();
+ const icons=require('../../web-player-icons.js');
+ e.win.OpenIPTVBackgroundAudio=e.controller;
+ let svgSyncs=0;
+ e.win.OpenIPTVPlayerIcons={sync(){
+  svgSyncs++;
+  const playing=icons.derive(e.video,e.controller).playing;
+  for(const id of ['playBtn','fsPlay'])e.els[id].dataset.iptvPlaying=String(playing);
+ }};
+ assert.equal(await e.controller.activate(),true);
+ assert.equal(e.video.paused,true,'Original video must be paused to avoid duplicate playback');
+ assert.equal(e.audioElements[0].paused,false);
+ for(const id of ['playBtn','fsPlay'])assert.equal(e.els[id].dataset.iptvPlaying,'true',id);
+ assert.equal(e.els.playBtn.textContent,'Ⅱ');
+ assert.equal(e.ms.playbackState,'playing');
+ e.video.emit('pause');
+ e.win.OpenIPTVPlayerIcons.sync();
+ assert.equal(e.els.playBtn.dataset.iptvPlaying,'true');
+ e.controller.togglePlayback();
+ assert.equal(e.audioElements[0].paused,true);
+ for(const id of ['playBtn','fsPlay'])assert.equal(e.els[id].dataset.iptvPlaying,'false',id);
+ assert.equal(e.els.playBtn.textContent,'▶');
+ assert.equal(e.ms.playbackState,'paused');
+ e.controller.togglePlayback();
+ await Promise.resolve();
+ assert.equal(e.audioElements[0].paused,false);
+ for(const id of ['playBtn','fsPlay'])assert.equal(e.els[id].dataset.iptvPlaying,'true',id);
+ assert.equal(e.els.playBtn.textContent,'Ⅱ');
+ assert.equal(e.ms.playbackState,'playing');
+ assert.ok(svgSyncs>=3);
+ e.controller.deactivate(false);
+ assert.equal(e.controller.active,false);
+ assert.equal(e.els.playBtn.dataset.iptvPlaying,'false');
+ assert.equal(icons.derive(e.video,e.controller).playing,false);
+});
+test('Audio controller exposes listening playback state; keeps SVG labels and controls aligned',async()=>{
+ const e=fixture();
+ assert.equal(e.controller.getPlaybackState(),null);
+ await e.controller.activate();
+ assert.deepEqual(e.controller.getPlaybackState(),{playing:true,muted:false});
+ e.handlers.pause();
+ assert.deepEqual(e.controller.getPlaybackState(),{playing:false,muted:false});
+ e.handlers.play();
+ await Promise.resolve();
+ assert.deepEqual(e.controller.getPlaybackState(),{playing:true,muted:false});
 });

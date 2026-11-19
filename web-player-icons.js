@@ -7,10 +7,17 @@
  const api=factory(root);
  if(typeof module==='object'&&module.exports)module.exports=api;
 })(function(root){
- const derive=video=>({
-  playing:!!video&&!video.paused&&!video.ended,
-  muted:!!video&&(!!video.muted||Number(video.volume)===0)
- });
+ // When background listening is enabled, the VIDEO is intentionally paused.
+ // The audio player must own the icon state; otherwise the controls appear
+ // stopped while the stream is audible and do not update on subsequent taps.
+ const derive=(video,background)=>{
+  const state=background?.active?background.getPlaybackState?.():null;
+  if(state)return {playing:!!state.playing,muted:!!state.muted};
+  return {
+   playing:!!video&&!video.paused&&!video.ended,
+   muted:!!video&&(!!video.muted||Number(video.volume)===0)
+  };
+ };
  // App legacy handlers still set button.textContent = '▶', 'Ⅱ', '★' etc.
  // Scrub only direct decorative text nodes (not icon labels or aria attrs).
  // Keep DOM elements and event listeners; observe future textContent writes.
@@ -54,7 +61,7 @@
   const mute=doc.getElementById('webVolumeMute');
   observeLegacyButtons(doc);
   function sync(){
-   const state=derive(video);
+   const state=derive(video,root.OpenIPTVBackgroundAudio);
    for(const button of [play,full]){
     if(!button)continue;
     button.dataset.iptvPlaying=String(state.playing);
@@ -80,6 +87,9 @@
   if(summary?.firstChild?.nodeType===3)
    summary.firstChild.nodeValue=summary.firstChild.nodeValue.replace(/^▤\s*/,'');
   sync();
+  // Background audio updates this hook on each actual play/pause event.
+  // Only icon state is modified; the existing playback handlers are untouched.
+  root.OpenIPTVPlayerIcons=Object.freeze({sync});
   return {sync};
  }
  if(root?.document){
