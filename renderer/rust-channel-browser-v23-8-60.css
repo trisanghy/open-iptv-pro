@@ -1,0 +1,82 @@
+/* Rust Lab v23.8.60: Web-style channel browser immediately below Quick Tools.
+   Scoped to #page-tv, responsive to actual watch-panel width. */
+#page-tv #rustChannelBrowser{display:block!important;width:100%;min-width:0;margin-top:12px;container:rustBrowser/inline-size;color:#edf4f8}
+#page-tv .rust-browser-layout{display:grid;grid-template-columns:minmax(0,1.9fr) minmax(235px,.82fr);gap:12px;align-items:stretch;min-width:0}
+#page-tv .rust-browser-main,#page-tv .rust-browser-side-card{min-width:0;background:linear-gradient(125deg,rgba(8,20,32,.96),rgba(13,27,42,.96));border:1px solid #245544;border-radius:16px;box-shadow:0 6px 25px #0002;overflow:hidden}
+#page-tv .rust-browser-tabs{display:flex;align-items:stretch;min-width:0;overflow-x:auto;gap:7px;padding:4px 15px 0;border-bottom:1px solid #ffffff24;scrollbar-width:thin}
+#page-tv .rust-browser-tab{display:flex;align-items:center;justify-content:center;gap:6px;flex:0 0 auto;min-height:48px;padding:10px 15px;border:0;border-bottom:3px solid transparent;background:transparent;color:#f0f3f8;font-size:13px;font-weight:750;white-space:nowrap}
+#page-tv .rust-browser-tab:hover,#page-tv .rust-browser-tab:focus-visible{color:#76eab1}
+#page-tv .rust-browser-tab.active{color:#34e783;border-bottom-color:#34e783}
+#page-tv .rust-browser-chips{display:flex;flex-wrap:nowrap;gap:7px;overflow-x:auto;scrollbar-width:thin;padding:13px 16px 11px}
+#page-tv .rust-browser-chip{background:#152538;border:1px solid #304358;border-radius:24px;color:#d7e3eb;font-size:11px;font-weight:700;padding:8px 13px;max-width:150px;min-width:0;flex:0 0 auto;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#page-tv .rust-browser-chip.active{background:linear-gradient(120deg,#35e780,#06b861);border-color:#21dd76;color:#002817}
+#page-tv .rust-browser-chip:hover:not(.active){border-color:#31d783;color:#f6fff9}
+#page-tv .rust-browser-filters{display:grid;grid-template-columns:minmax(160px,1.35fr) minmax(140px,.88fr) minmax(140px,.88fr) auto;gap:9px;padding:0 16px 12px;align-items:center;min-width:0}
+#page-tv .rust-browser-filters input,#page-tv .rust-browser-filters select{height:40px!important;min-width:0;width:100%!important;background:#132434!important;border:1px solid #29465b!important;color:#e1ebf2!important;padding:0 11px!important;border-radius:9px!important;font-size:12px!important}
+#page-tv .rust-browser-filters :is(input,select):focus-visible{outline:2px solid #2edb80;outline-offset:1px}
+#page-tv .rust-browser-view{display:flex;gap:0;border:1px solid #284d62;border-radius:9px;overflow:hidden;justify-content:flex-end;height:40px}
+#page-tv .rust-browser-view button{min-height:38px;min-width:40px;padding:0 8px;border:0;background:#142637;color:#b5cddd;font-size:19px}
+#page-tv .rust-browser-view button.active{background:#2de17a;color:#052a1c}
+#page-tv .rust-browser-cards{display:grid;grid-template-columns:repeat(10,minmax(0,1fr));gap:8px;padding:4px 15px 8px;min-height:108px;align-items:stretch}
+#page-tv .rust-browser-card{position:relative;display:flex;flex-direction:column;gap:8px;align-items:center;justify-content:center;min-width:0;min-height:98px;padding:12px 5px 9px;border:1px solid transparent;border-radius:12px;background:linear-gradient(155deg,#182a3c,#0d1d2f);color:#e9eff6;overflow:hidden;font-size:12px;font-weight:750}
+#page-tv .rust-browser-card:hover,#page-tv .rust-browser-card:focus-visible{border-color:#3deb90;background:#17372f;outline-offset:2px}
+#page-tv .rust-browser-card.selected{border-color:#25d97f;background:linear-gradient(125deg,#153f31,#112738);box-shadow:inset 0 0 0 1px #1cb85a}
+#page-tv .rust-browser-logo-holder{position:relative;display:grid;place-items:center;flex:0 0 auto;width:46px;height:40px;max-width:100%;border-radius:8px;color:#5fedb0;background:#15344a;border:1px solid #24475d;font-weight:900;font-size:12px;overflow:hidden}
+#page-tv .rust-browser-logo{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#122233}
+#page-tv .rust-browser-name{display:block;min-width:0;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:center;font-weight:650;font-size:11px}
+#page-tv .rust-browser-playing{position:absolute;right:5px;bottom:4px;color:#47ff9b;font-size:12px}
+#page-tv .rust-browser-card-group{color:#9eb4c5;font-size:10px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#page-tv .rust-browser-cards[data-view="list"]{grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+#page-tv .rust-browser-cards[data-view="list"] .rust-browser-card.as-list{min-height:51px;display:flex;flex-direction:row;justify-content:flex-start;padding:6px 10px;gap:12px}
+#page-tv .rust-browser-cards[data-view="list"] .rust-browser-card.as-list .rust-browser-logo-holder{width:42px;height:35px}
+#page-tv .rust-browser-cards[data-view="list"] .rust-browser-card.as-list .rust-browser-name{flex:1;text-align:left}
+#page-tv .rust-browser-footer{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:5px 16px 13px;color:#99b3c4;font-size:11px}
+#page-tv .rust-browser-pager{display:flex;align-items:center;gap:9px}
+#page-tv .rust-browser-pager button{display:grid;place-items:center;width:32px;height:32px;background:#142b39;border:1px solid #355568;border-radius:50%;color:#e6f1fc;font-size:18px}
+#page-tv .rust-browser-pager button:disabled{opacity:.32}
+#page-tv .rust-browser-empty{padding:18px 12px;margin:0;color:#a9bbcb;font-size:12px;line-height:1.5;grid-column:1/-1}
+#page-tv .rust-browser-side{display:grid;grid-template-rows:repeat(2,minmax(0,1fr));gap:12px;min-width:0}
+#page-tv .rust-browser-side-head{display:flex;justify-content:space-between;align-items:center;gap:10px;min-height:41px;padding:11px 13px 1px}
+#page-tv .rust-browser-side-head strong{font-weight:750;font-size:12px;white-space:nowrap}
+#page-tv .rust-browser-side-head button{border:0;background:transparent;color:#35ef95;font-size:10px;font-weight:700;padding:5px;white-space:nowrap}
+#page-tv .rust-browser-side-head button:hover{text-decoration:underline}
+#page-tv .rust-browser-side-items{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:7px;padding:8px 12px 12px}
+#page-tv .rust-browser-side-items .rust-browser-card.compact{min-height:76px;padding:7px 1px;gap:6px;border-radius:10px}
+#page-tv .rust-browser-side-items .rust-browser-card.compact .rust-browser-logo-holder{width:34px;height:29px;font-size:9px}
+#page-tv .rust-browser-side-items .rust-browser-card.compact .rust-browser-name{font-size:10px}
+#page-tv .rust-browser-side-items .rust-browser-card.compact .rust-browser-playing{right:2px;bottom:1px;font-size:10px}
+#page-tv .rust-browser-side-items .rust-browser-card:nth-child(n+6){display:none}
+#page-tv #rustChannelBrowser :is(button,input,select){font-family:inherit}
+#page-tv #rustChannelBrowser :is(button,input,select):focus-visible{outline:2px solid #36e990;outline-offset:2px}
+@container rustBrowser (max-width:1150px){
+ #page-tv .rust-browser-layout{grid-template-columns:minmax(0,1fr)}
+ #page-tv .rust-browser-side{grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:auto}
+ #page-tv .rust-browser-main{width:100%}
+}
+@container rustBrowser (max-width:870px){
+ #page-tv .rust-browser-cards{grid-template-columns:repeat(5,minmax(0,1fr))}
+ #page-tv .rust-browser-filters{grid-template-columns:minmax(150px,1fr) minmax(140px,1fr) auto}
+ #page-tv .rust-browser-filters #rustBrowserSort{grid-column:2}
+ #page-tv .rust-browser-filters #rustBrowserGroup{grid-column:2;grid-row:1}
+ #page-tv .rust-browser-filters #rustBrowserSearch{grid-column:1;grid-row:1}
+ #page-tv .rust-browser-filters #rustBrowserSort{grid-column:1;grid-row:2}
+ #page-tv .rust-browser-view{grid-column:3;grid-row:1/3}
+}
+@container rustBrowser (max-width:570px){
+ #page-tv .rust-browser-tabs{gap:3px;padding-left:8px}
+ #page-tv .rust-browser-tab{padding:9px 8px;font-size:11px}
+ #page-tv .rust-browser-chips{padding:9px;gap:5px}
+ #page-tv .rust-browser-chip{padding:7px 9px;font-size:10px}
+ #page-tv .rust-browser-filters{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);padding:0 9px 10px}
+ #page-tv .rust-browser-filters #rustBrowserSearch{grid-column:1/-1;grid-row:1}
+ #page-tv .rust-browser-filters #rustBrowserGroup{grid-column:1;grid-row:2}
+ #page-tv .rust-browser-filters #rustBrowserSort{grid-column:2;grid-row:2}
+ #page-tv .rust-browser-view{grid-column:1/-1;grid-row:3;justify-content:center}
+ #page-tv .rust-browser-cards{gap:6px;padding:0 9px 6px}
+ #page-tv .rust-browser-card{padding:6px 3px;min-height:80px}
+ #page-tv .rust-browser-logo-holder{width:34px;height:32px}
+ #page-tv .rust-browser-side{grid-template-columns:1fr;grid-template-rows:auto}
+ #page-tv .rust-browser-side-items{grid-template-columns:repeat(5,minmax(0,1fr))}
+ #page-tv .rust-browser-cards[data-view="list"]{grid-template-columns:1fr}
+}
+@media(prefers-reduced-motion:reduce){#page-tv #rustChannelBrowser *{scroll-behavior:auto!important;transition:none!important}}

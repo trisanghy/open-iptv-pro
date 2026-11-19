@@ -463,6 +463,7 @@
   if($('#activeSourceTag'))$('#activeSourceTag').textContent=store.sources.length?`${store.sources.length} nguồn M3U`:'Chưa có nguồn';
   renderList(preserveScroll);renderSources();renderShots();renderFavorites();renderFolders();$('#folderCount').textContent=groupNames().length;
   updatePlayerFavorite();updateManualLinks();notifyFavorites();window.IPTVExtras?.render?.();
+   window.dispatchEvent(new CustomEvent('openiptv:channel-browser-refresh'));
  }
  function updateFavoriteButton(button,channel){
   const marked=favCore.has(store,channel);
@@ -917,6 +918,7 @@
   updateChannelStatus(ch);
   window.IPTVProAdvanced?.onCheck?.(ch,{status:ch.status,reason:ch.reason,positiveEvidence:true});
   favCore.sync(store);save();
+  window.dispatchEvent(new CustomEvent('openiptv:channel-browser-refresh'));
   if(filter!=='all')renderList(true);
  }
  function updateChannelStatus(ch){
