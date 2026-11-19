@@ -3,14 +3,16 @@
  const native=!!window.streamleaf;
  const core=window.StreamLeafCore;
  const favCore=window.OpenIPTVFavorites;
+ const recentCore=window.OpenIPTVRecentChannels;
  const sourceEdit=window.OpenIPTVSourceEdit;
  const channelOrderCore=window.OpenIPTVChannelOrder;
  const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
  const escape=s=>String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
- const seed={sources:[],channels:[],favorites:[],snapshots:{},folders:[],groupOrder:[],channelOrder:{},collapsedGroups:[],current:'',volume:.8,videoFit:'contain'};
+ const seed={sources:[],channels:[],favorites:[],snapshots:{},folders:[],groupOrder:[],channelOrder:{},collapsedGroups:[],current:'',recentChannelIds:[],volume:.8,videoFit:'contain'};
  let store;
  try{store={...seed,...JSON.parse(localStorage.getItem('open-iptv-pro-4')||localStorage.getItem('streamleaf-3')||'{}')};}catch{store={...seed};}
  if(!Array.isArray(store.channels))store.channels=[];
+ store.recentChannelIds=recentCore.normalize(store.recentChannelIds);
  if(!Array.isArray(store.favorites))store.favorites=[];
  if(!Array.isArray(store.sources))store.sources=[];
  if(!store.snapshots||typeof store.snapshots!=='object')store.snapshots={};
@@ -310,25 +312,26 @@
  }
  function icon(c){return c.logo?`<img loading="lazy" src="${escape(c.logo)}" alt="" onerror="this.style.display='none';this.parentNode.textContent='TV'" />`:'TV';}
  function channelView(){let a=filter==='fav'?favCore.visible(store):enabledChannels();
+  if(filter==='recent')a=recentCore.select(store.recentChannelIds,enabledChannels());
   const query=$('#searchBox').value.trim().toLowerCase();if(query)a=a.filter(c=>(c.name+' '+c.group).toLowerCase().includes(query));
   if(['alive','dead','uncertain'].includes(filter))a=a.filter(c=>c.status===filter);
-  return sortedChannels(a);
+  return filter==='recent'?a:sortedChannels(a);
  }
  function renderList(preserve=false){
   syncGroupOrder();
   const prev=preserve?preserveListScroll():null;
   const result=channelView();$('#channelMeta').textContent=`${result.length} / ${store.channels.length} kênh`;
   const target=$('#channelList');target.replaceChildren();
-  if(!result.length){updateSelectionBar();target.innerHTML=`<div class="empty-list">${store.channels.length?'Không thấy kênh phù hợp.':'Chưa có kênh. Dùng Mở file M3U hoặc Thêm URL để nhập danh sách.'}</div>`;restoreListScroll(prev);return;}
+  if(!result.length){updateSelectionBar();target.innerHTML=`<div class="empty-list">${filter==='recent'?'Chưa có kênh vừa xem. Mở một kênh để bắt đầu lưu lịch sử.':store.channels.length?'Không thấy kênh phù hợp.':'Chưa có kênh. Dùng Mở file M3U hoặc Thêm URL để nhập danh sách.'}</div>`;restoreListScroll(prev);return;}
   const groups=new Map();result.forEach(c=>{const g=groupName(c);if(!groups.has(g))groups.set(g,[]);groups.get(g).push(c)});
   const showEmpty=filter==='all'&&!$('#searchBox').value.trim();
-  const orderedGroups=groupNames().filter(g=>showEmpty||groups.has(g)).concat([...groups.keys()].filter(g=>!groupNames().includes(g)));
+  const orderedGroups=filter==='recent'?[...groups.keys()]:groupNames().filter(g=>showEmpty||groups.has(g)).concat([...groups.keys()].filter(g=>!groupNames().includes(g)));
   const f=document.createDocumentFragment();
   orderedGroups.forEach(group=>{
-    const entries=groups.get(group)||[],collapsed=store.collapsedGroups.includes(group)&&!$('#searchBox').value.trim();
+    const entries=groups.get(group)||[],collapsed=filter!=='recent'&&store.collapsedGroups.includes(group)&&!$('#searchBox').value.trim();
     const header=document.createElement('button');header.type='button';header.className='folder-header';header.dataset.group=group;header.draggable=!window.PointerEvent&&!$('#searchBox').value.trim();
     header.innerHTML=`<span class="folder-arrow">${collapsed?'▸':'▾'}</span><span class="folder-emoji">📁</span><span>${escape(group)}</span><span class="folder-size">${entries.length}</span>`;
-    header.addEventListener('click',()=>{const pos=preserveListScroll();if(store.collapsedGroups.includes(group))store.collapsedGroups=store.collapsedGroups.filter(x=>x!==group);else store.collapsedGroups.push(group);save();renderList();restoreListScroll(pos)});
+    header.addEventListener('click',()=>{if(filter==='recent')return;const pos=preserveListScroll();if(store.collapsedGroups.includes(group))store.collapsedGroups=store.collapsedGroups.filter(x=>x!==group);else store.collapsedGroups.push(group);save();renderList();restoreListScroll(pos)});
     header.addEventListener('dragstart',e=>{header.classList.add('dragging');draggedFolder=group;e.dataTransfer?.setData('text/plain',group);e.dataTransfer.effectAllowed='move';});
     header.addEventListener('dragend',()=>{header.classList.remove('dragging');draggedFolder='';});
     header.addEventListener('dragover',e=>{if(folderChannelDragOver(e,header))return;if(!$('#searchBox').value.trim()){e.preventDefault();header.classList.add('drag-over');}});
@@ -905,7 +908,7 @@
   playCandidateIndex=0;attemptedTransports.clear();nativeHlsTried.clear();
   if(pref?.remembered&&found.lastPlayableEngine==='hlsjs'&&found.lastPlayableUrl===playCandidates[0])nativeHlsTried.add(playCandidates[0]);
   playbackProofUrl='';playbackProofTimer=0;
-  current=found;channelRequestedAt=performance.now();firstFrameReported=false;firstFrameDurationMs=0;store.current=chId;if(!native&&!opts.buffer){player.defaultMuted=store.autoEnableAudio===false;player.muted=store.autoEnableAudio===false;}mediaInfo={hls:false,mode:'unknown',seekable:false};document.dispatchEvent(new CustomEvent('openiptv:media-info',{detail:mediaInfo}));save();window.OpenIPTVCastUI?.onChannelChanged?.(found);renderList(true);
+  current=found;channelRequestedAt=performance.now();firstFrameReported=false;firstFrameDurationMs=0;store.current=chId;store.recentChannelIds=recentCore.push(store.recentChannelIds,chId);if(!native&&!opts.buffer){player.defaultMuted=store.autoEnableAudio===false;player.muted=store.autoEnableAudio===false;}mediaInfo={hls:false,mode:'unknown',seekable:false};document.dispatchEvent(new CustomEvent('openiptv:media-info',{detail:mediaInfo}));save();window.OpenIPTVCastUI?.onChannelChanged?.(found);renderList(true);
   $('#playingTitle').textContent=found.name;$('#playingSubtitle').textContent=found.group+' • '+(playMode==='catchup'?'Xem lại':playMode==='timeshift'?'Tua lại '+(window.IPTVProAdvanced?.getReplayMinutes?.()||10)+' phút':'Đang phát trực tiếp');$('#playingIcon').textContent=found.name.slice(0,2).toUpperCase();$('#emptyPlayer').classList.add('hidden');$('#streamInfo').textContent='Đang kết nối...';updatePlayerFavorite();updateManualLinkPicker();
   window.IPTVExtras?.onChannel?.(found);window.IPTVProAdvanced?.onChannel?.(found,playMode);
   try{await tryPlayback(playCandidates[0],generation,preferredTransport);}catch(e){recoverPlayback(generation,e.message);}

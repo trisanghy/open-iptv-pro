@@ -123,6 +123,11 @@ jobs:
             grep -Fq "$script?v=collector-merge-repair-20261119a" _site/index.html
           done
           grep -Fq 'advanced-core.js?v=collector-merge-repair-20261119a' _site/index.html
+          node --check _site/web-recent-channels.js
+          node --test web-online/tests/web-recent-channels.test.cjs
+          grep -Fq 'data-filter="recent"' _site/index.html
+          grep -Fq 'web-compact-toolbar.css?v=recent-controls-20261119a' _site/index.html
+          grep -Fq 'web-recent-channels.js?v=recent-controls-20261119a' _site/index.html
           node --check _site/app.js
           node --check _site/web-player-icons.js
           node --test web-online/tests/web-player-icons.test.cjs

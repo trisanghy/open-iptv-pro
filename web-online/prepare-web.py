@@ -48,7 +48,7 @@ for previous,next_value in (
     js=js.replace(previous,next_value,1)
 features.write_text(js,encoding='utf-8')
 
-for name in ('web-only.js','web-only.css','resume-last.js','resume-last.css','browser-channel-check.js','web-autoplay.js','cloud-core.js','cloud-sync.js','cloud-sync.css','web-volume.css','web-volume.js','web-mobile-player.css','web-mobile-player.js','web-player-icons.css','web-player-icons.js','web-tv-wide.css','web-mobile-controls-polish.css','web-desktop-download.css','web-desktop-download.js'):
+for name in ('web-only.js','web-only.css','resume-last.js','resume-last.css','browser-channel-check.js','web-autoplay.js','cloud-core.js','cloud-sync.js','cloud-sync.css','web-volume.css','web-volume.js','web-mobile-player.css','web-mobile-player.js','web-player-icons.css','web-player-icons.js','web-tv-wide.css','web-mobile-controls-polish.css','web-desktop-download.css','web-desktop-download.js','web-recent-channels.js','web-compact-toolbar.css'):
     source=Path(__file__).resolve().parent/name
     if not source.is_file():source=Path(__file__).resolve().parent.parent/name
     copy2(source,out/name)
@@ -83,7 +83,7 @@ if app_text.count(sync_event_before) != 1:
 app_text=app_text.replace(sync_event_before,sync_event_after,1)
 # Keep import, refresh and merge on the same Web playlist reader.
 web_app=(Path(__file__).resolve().parent.parent/'app.js').read_text(encoding='utf-8')
-for start,end in [(' async function openURL()', ' async function replaceURLSource'),(' async function modalSubmit()', '\n function ')]:
+for start,end in [(' async function openURL()', ' async function replaceURLSource'),(' async function modalSubmit()', '\n function '),(' function channelView()', ' function renderList(')]:
     left=app_text.index(start)
     right=app_text.index(end,left)
     first=web_app.index(start)
@@ -91,6 +91,24 @@ for start,end in [(' async function openURL()', ' async function replaceURLSourc
 marker='window.IPTVState=Object.freeze({'
 assert app_text.count(marker)==1
 app_text=app_text.replace(marker,marker+'readSourceURL,',1)
+# Keep the recent channels filter and automatic watch history in regenerated Web.
+# Never edit Electron source; copy only the approved browser behavior.
+for old,new in (
+ (" const favCore=window.OpenIPTVFavorites;"," const favCore=window.OpenIPTVFavorites;\n const recentCore=window.OpenIPTVRecentChannels;"),
+ (" if(!Array.isArray(store.channels))store.channels=[];"," if(!Array.isArray(store.channels))store.channels=[];\n store.recentChannelIds=recentCore.normalize(store.recentChannelIds);"),
+ ("store.current=chId;","store.current=chId;store.recentChannelIds=recentCore.push(store.recentChannelIds,chId);"),
+ ("const orderedGroups=groupNames().filter(g=>showEmpty||groups.has(g)).concat([...groups.keys()].filter(g=>!groupNames().includes(g)));","const orderedGroups=filter==='recent'?[...groups.keys()]:groupNames().filter(g=>showEmpty||groups.has(g)).concat([...groups.keys()].filter(g=>!groupNames().includes(g)));"),
+ ("const entries=groups.get(group)||[],collapsed=store.collapsedGroups.includes(group)&&!$('#searchBox').value.trim();","const entries=groups.get(group)||[],collapsed=filter!=='recent'&&store.collapsedGroups.includes(group)&&!$('#searchBox').value.trim();"),
+ ("header.addEventListener('click',()=>{const pos=preserveListScroll();if(store.collapsedGroups.includes(group))","header.addEventListener('click',()=>{if(filter==='recent')return;const pos=preserveListScroll();if(store.collapsedGroups.includes(group))")
+):
+    if app_text.count(old)!=1:sys.exit('Recent WebView patch marker not found: '+old[:80])
+    app_text=app_text.replace(old,new,1)
+old_empty="if(!result.length){updateSelectionBar();target.innerHTML=`<div class=\\\"empty-list\\\">${store.channels.length?'Không thấy kênh phù hợp.':'Chưa có kênh. Dùng Mở file M3U hoặc Thêm URL để nhập danh sách.'}</div>`;restoreListScroll(prev);return;}"
+# Apply a short anchor rather than changing the source's HTML structure.
+empty_anchor="${store.channels.length?'Không thấy kênh phù hợp.':'Chưa có kênh. Dùng Mở file M3U hoặc Thêm URL để nhập danh sách.'}"
+if app_text.count(empty_anchor)!=1:sys.exit('Recent filter empty state changed in WebView build')
+app_text=app_text.replace(empty_anchor,"${filter==='recent'?'Chưa có kênh vừa xem. Mở một kênh để bắt đầu lưu lịch sử.':store.channels.length?'Không thấy kênh phù hợp.':'Chưa có kênh. Dùng Mở file M3U hoặc Thêm URL để nhập danh sách.'}",1)
+
 app_file.write_text(app_text,encoding='utf-8')
 
 html=(out/'index.html').read_text(encoding='utf-8')
@@ -219,6 +237,13 @@ html=html.replace(sidebar_anchor,sidebar_anchor+'\n  '+sidebar_button,1)
 html=html.replace(tv_anchor,tv_anchor+'\n    '+mobile_button,1)
 html=html.replace('</head>','<link rel="stylesheet" href="web-desktop-download.css?v=software-download-20261119b"/></head>',1)
 html=html.replace('</body>','<script src="web-desktop-download.js?v=software-download-20261119b"></script></body>',1)
+# Stable Web controls + watched channels; preserve them through subsequent builds.
+if html.count('<div class="filter-tabs">')!=1:sys.exit('Recent channel filter slot changed')
+html=html.replace('<div class="filter-tabs">','<div class="filter-tabs"><button class="filter-tab" data-filter="recent">Vừa xem</button>',1)
+app_script='<script src="app.js?v=playlist-http-20261119d"></script>'
+if html.count(app_script)!=1:sys.exit('Recent channel script slot changed')
+html=html.replace(app_script,'<script src="web-recent-channels.js?v=recent-controls-20261119a"></script><script src="app.js?v=playlist-http-20261119d-recent-controls-20261119a"></script>',1)
+html=html.replace('</head>','<link rel="stylesheet" href="web-compact-toolbar.css?v=recent-controls-20261119a"/></head>',1)
 (out/'index.html').write_text(html,encoding='utf-8')
 (out/'.nojekyll').write_text('')
 (out/'manifest.webmanifest').write_text(json.dumps({
