@@ -9,11 +9,11 @@ on:
 permissions:
   contents: write
 concurrency:
-  group: mobile-release-${{ github.ref }}-mobile30
+  group: mobile-release-${{ github.ref }}-mobile33
   cancel-in-progress: false
 env:
-  MOBILE_VERSION: 4.23.17-mobile.32
-  MOBILE_TAG: mobile/v4.23.17.32
+  MOBILE_VERSION: 4.23.17-mobile.33
+  MOBILE_TAG: mobile/v4.23.17.33
 jobs:
   android:
     name: Android debug APK
@@ -66,7 +66,7 @@ jobs:
   ios:
     name: iOS unsigned device IPA (external signing required)
     runs-on: macos-15
-    timeout-minutes: 65
+    timeout-minutes: 100
     defaults:
       run:
         working-directory: experiments/mobile-capacitor
@@ -111,6 +111,14 @@ jobs:
         with:
           name: Mobile-iOS-unsigned-IPA
           path: experiments/mobile-capacitor/release/*-unsigned.ipa
+          if-no-files-found: error
+          retention-days: 90
+      - name: Install and capture actual iPhone Simulator screen
+        run: bash scripts/capture-ios-simulator.sh
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Mobile-iOS-Simulator-Screenshot
+          path: experiments/mobile-capacitor/release/*-iOS-Simulator.png
           if-no-files-found: error
           retention-days: 90
   android_screenshot:
@@ -165,6 +173,10 @@ jobs:
         with:
           name: Mobile-Android-Screenshot
           path: release
+      - uses: actions/download-artifact@v4
+        with:
+          name: Mobile-iOS-Simulator-Screenshot
+          path: release
       - name: Archive source at exact commit and verify both binaries
         run: |
           git archive --format=zip --output="release/OpenIPTVPro-Mobile-${MOBILE_VERSION}-Source.zip" HEAD:experiments/mobile-capacitor
@@ -176,6 +188,7 @@ jobs:
           test -s "release/OpenIPTVPro-Mobile-${MOBILE_VERSION}-Android-PiP-Settings.png"
           test -s "release/OpenIPTVPro-Mobile-${MOBILE_VERSION}-Android-more.png"
           test -s "release/OpenIPTVPro-Mobile-${MOBILE_VERSION}-Android-EPG.png"
+          test -s "release/OpenIPTVPro-Mobile-${MOBILE_VERSION}-iOS-Simulator.png"
           sha256sum release/* > release/SHA256SUMS.txt
       - name: Publish isolated mobile prerelease (never overwrite tag)
         env:
@@ -186,7 +199,7 @@ jobs:
             exit 1
           fi
           cat > /tmp/mobile-release-notes.txt <<'NOTES'
-          Open IPTV Pro Mobile 4.23.17-mobile.32 (Beta, Capacitor 8).
+          Open IPTV Pro Mobile 4.23.17-mobile.33 (Beta, Capacitor 8).
           Complete 17-language mobile localization audit: native translations for Chinese, Lao, Korean, Russian and all other supported locales across player, source, settings and legal notices; protect external channel and EPG titles, avoid English fallback when non-English is selected; preserve existing EPG fixes.\n          Player SVG icons match Web (including Cast). The big in-video unmute overlay is removed; the small speaker button below video now handles audio. Explicit Nghe nen audio-only playback uses a dedicated audio element and Media Session playback, previous/next/pause/stop controls, persistent setting and restore-to-inline action. Native iOS background audio mode is configured; iOS/Android lock-screen behavior and available codecs are device dependent.\n          UI was recreated from user screenshot; original old v4.23 source was not found in GitHub.
           Rust Lab parity subset: M3U rights confirmation, local Smart Discovery terms,
           Smart Doctor with user-approved fallback suggestions, safe mobile JSON backup,
@@ -194,11 +207,11 @@ jobs:
           IMPORTANT: Automatic Smart Discovery, Rust DNS-pinned SSRF guard, native FFmpeg
           snapshot, Whisper translation, DVR/timeshift have not been ported to Mobile.
           Android artifact: debug-signed APK for personal testing, not Play Store release.
-          iOS artifact: UNSIGNED device IPA, requires Apple certificate/provisioning signing
+          iOS Simulator screenshot: installed and opened on Xcode iPhone simulator, not a real-device test.\n          iOS artifact: UNSIGNED device IPA, requires Apple certificate/provisioning signing
           before installation. This is not an App Store-ready or installable signed IPA.
           Branch experiment/mobile-capacitor-4211 only; main unchanged.
           NOTES
           gh release create "$MOBILE_TAG" release/*.apk release/*.ipa release/*.zip release/*.png release/SHA256SUMS.txt \
             --target "$GITHUB_SHA" \
-            --title "Open IPTV Pro Mobile 4.23.17-mobile.32 - Android APK + unsigned iOS IPA" \
+            --title "Open IPTV Pro Mobile 4.23.17-mobile.33 - Android APK + unsigned iOS IPA" \
             --notes-file /tmp/mobile-release-notes.txt --prerelease

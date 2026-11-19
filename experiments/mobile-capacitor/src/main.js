@@ -4,6 +4,8 @@ import { Share } from '@capacitor/share';
 import { VideoPlayer } from '@capgo/capacitor-video-player';
 import Hls from 'hls.js';
 import {oldStyleLayout} from './legacy-mobile-layout.mjs';
+import {reconcileOrder,orderedChannels,moveChannel,moveFolder} from './mobile-channel-order.mjs';
+import {installChannelTouchSort} from './mobile-touch-sort.mjs';
 import {streamOptions,epgNowNext} from './mobile-player-controls.mjs';
 import {installEPGAuto} from './mobile-epg-autosync.mjs';
 import {matchGuideChannel,resumeChannel} from './mobile-epg-auto.mjs';
@@ -21,7 +23,7 @@ const $ = x=>document.querySelector(x), $$=x=>[...document.querySelectorAll(x)];
 const tMobile=key=>window.OpenIPTVI18n?.t?.(key)||key;
 const CORE=window.StreamLeafCore;
 const KEY='openiptv_mobile_4211_v1';
-let state={sources:[],favorites:[],channels:[],checks:{},healthHistory:{},checkCursor:0,fallbacks:{},epgUrl:'',epgCache:null,epgSources:null,resumeUrl:null,selected:null,filter:'',page:'tv',group:'',recentlyWatched:[],manualStreams:{},settings:{threads:16,autoRefreshEPG:true,autoRefreshPlaylists:true,autoResumeLast:true,autoPiPOnBackground:true,backgroundAudioEnabled:true}};
+let state={sources:[],favorites:[],channels:[],checks:{},healthHistory:{},checkCursor:0,fallbacks:{},epgUrl:'',epgCache:null,epgSources:null,resumeUrl:null,selected:null,filter:'',page:'tv',group:'',recentlyWatched:[],manualStreams:{},channelOrder:{},groupOrder:[],channelGroupOverrides:{},settings:{threads:16,autoRefreshEPG:true,autoRefreshPlaylists:true,autoResumeLast:true,autoPiPOnBackground:true,backgroundAudioEnabled:true}};
 try{const old=JSON.parse(localStorage.getItem(KEY)||'{}');state={...state,...old,settings:{...state.settings,...old.settings}};}catch{}
 // Old builds persisted their disabled-by-default PiP value. Enable PiP once
 // for this update, then preserve every explicit on/off choice from now on.
@@ -52,7 +54,7 @@ function save(){const keep={...state};
  // Until migration commits successfully, keep the legacy local copy intact.
  if(keep.epgCacheSavedToIDB)delete keep.epgCache;
  delete keep.epgCacheSavedToIDB;
- try{localStorage.setItem(KEY,JSON.stringify(keep));}catch(e){status('Không đủ bộ nhớ lưu cài đặt; EPG vẫn xem được trong phiên hiện tại','error');}}
+ try{localStorage.setItem(KEY,JSON.stringify(keep));return true;}catch(e){status('Không đủ bộ nhớ lưu cài đặt; EPG vẫn xem được trong phiên hiện tại','error');return false;}}
 function status(t,kind=''){const el=$('#status');if(!el)return;el.textContent=tMobile(t);el.dataset.kind=kind;el.hidden=false;clearTimeout(status.hideTimer);status.hideTimer=setTimeout(()=>{el.hidden=true;},3800);}
 function node(tag,cls,text){const n=document.createElement(tag);if(cls)n.className=cls;if(text!==undefined)n.textContent=String(text);return n;}
 function button(text,action,cls=''){const b=node('button',cls,text);b.type='button';b.onclick=()=>Promise.resolve().then(action).catch(e=>{status(e.message||e,'error');console.error(e);});return b;}
@@ -62,9 +64,18 @@ async function getText(url,timeoutMs=15000){const ctrl=new AbortController();con
 async function headStatus(url,timeoutMs=7000){if(native){const r=await CapacitorHttp.request({url,method:'HEAD',connectTimeout:timeoutMs,readTimeout:timeoutMs});return r.status;}const c=new AbortController();const t=setTimeout(()=>c.abort(),timeoutMs);try{const r=await fetch(url,{method:'HEAD',signal:c.signal});return r.status;}finally{clearTimeout(t);}}
 async function rightsFor(kind){const consent=await rightsDialog({title:tMobile('Xác nhận quyền sử dụng')+' · M3U'});if(!consent){status('Đã hủy nhập nguồn. Không thay đổi dữ liệu.');return false;}return true;}
 function annotate(sourceId,rows){return rows.map((c,i)=>({...c,sourceId,id:sourceId+'|'+i,group:c.group||'Khác'}));}
-function flatten(){let result=[];for(const src of state.sources.filter(s=>s.enabled!==false)){result.push(...(src.channels||[]));}state.channels=result;if(!state.selected && result.length)state.selected=result[0].url;
- if(state.selected&&!result.some(c=>c.url===state.selected))state.selected=result[0]?.url||null;
- save();render();}
+function allSourceChannels(){return state.sources.flatMap(src=>Array.isArray(src.channels)?src.channels:[]);}
+function rebuildOrderedChannels(){
+ const list=reconcileOrder(state,allSourceChannels());
+ const enabled=new Set(state.sources.filter(src=>src.enabled!==false).map(src=>src.id));
+ state.channels=list.filter(ch=>enabled.has(ch.sourceId));
+}
+function flatten(){
+ rebuildOrderedChannels();
+ if(!state.selected&&state.channels.length)state.selected=state.channels[0].url;
+ if(state.selected&&!state.channels.some(c=>c.url===state.selected))state.selected=state.channels[0]?.url||null;
+ save();render();
+}
 async function addURL(){const value=$('#newSource').value.trim();if(!value)throw Error('Nhập URL M3U');const url=normalizeHTTPURL(value);if(state.sources.some(x=>x.url===url))throw Error('Nguồn này đã có');if(!(await rightsFor('URL M3U')))return;busy=true;status('Đang tải M3U…');try{const txt=await getText(url,18000);const id='src-'+stableId(url);const rows=annotate(id,CORE.parseM3U(txt,id));if(!rows.length)throw Error('M3U không có kênh HTTP hợp lệ');state.sources.push({id,name:new URL(url).hostname,url,enabled:true,channels:rows,updatedAt:new Date().toISOString()});$('#newSource').value='';flatten();status(tMobile('Đã thêm')+' '+rows.length+' '+tMobile('kênh')+' '+tMobile('từ')+' '+url,'ok');}finally{busy=false;}}
 async function addFile(file){if(!file)return;if(file.size>25*1024*1024)throw Error('M3U vượt 25MB');if(!(await rightsFor('file M3U')))return;const content=await file.text();const id='file-'+stableId(file.name+'|'+Date.now());const rows=annotate(id,CORE.parseM3U(content,id));if(!rows.length)throw Error('M3U không có kênh');state.sources.push({id,name:file.name,enabled:true,channels:rows,updatedAt:new Date().toISOString()});flatten();status(tMobile('Đã nhập')+' '+rows.length+' '+tMobile('kênh')+' '+tMobile('từ')+' '+tMobile('tệp'),'ok');}
 async function editSource(s){const next=prompt(tMobile('URL M3U mới'),s.url||'');if(next===null)return;const url=normalizeHTTPURL(next);if(!(await rightsFor('sửa URL M3U')))return;status('Đang kiểm tra URL mới…');const txt=await getText(url);const rows=annotate(s.id,CORE.parseM3U(txt,s.id));if(!rows.length)throw Error('Nguồn URL mới không có kênh hợp lệ. Giữ URL cũ');s.url=url;s.name=new URL(url).hostname;s.channels=rows;s.updatedAt=new Date().toISOString();flatten();status(tMobile('Đã thay URL nguồn và tải')+' '+rows.length+' '+tMobile('kênh'),'ok');}
@@ -85,7 +96,7 @@ async function refreshSources({quiet=false}={}){
   return {success,failed};
  }finally{busy=false;}
 }
-function activeChannels(){let all=dedupChannels(state.channels);if(state.page==='fav')all=all.filter(c=>state.favorites.includes(c.url));if(state.group)all=all.filter(c=>c.group===state.group);const q=state.filter.toLowerCase().trim();if(q)all=all.filter(c=>(c.name+' '+c.group+' '+c.url).toLowerCase().includes(q));return all;}
+function activeChannels(){let all=orderedChannels(state,dedupChannels(state.channels));if(state.page==='fav')all=all.filter(c=>state.favorites.includes(c.url));if(state.group)all=all.filter(c=>c.group===state.group);const q=state.filter.toLowerCase().trim();if(q)all=all.filter(c=>(c.name+' '+c.group+' '+c.url).toLowerCase().includes(q));return all;}
 
 const groupOpened=new Set();
 let showOnlyFavorites=false;
@@ -151,7 +162,7 @@ function renderNowPlaying(){
  syncMediaControls();
 }
 function jumpChannel(delta,autoplay=true){
- const rows=dedupChannels(state.channels);if(!rows.length)return;
+ const rows=orderedChannels(state,dedupChannels(state.channels));if(!rows.length)return;
  const at=nextChannelIndex(rows,state.selected,delta);
  const c=rows[at];if(!c)return;
  if(autoplay&&backgroundAudio?.active){
@@ -167,7 +178,7 @@ function jumpChannel(delta,autoplay=true){
  if(autoplay)play(c).catch(e=>status(tMobile('Chuyển kênh')+': '+(e.message||e),'error'));
 }
 function channelCard(c){
- const item=node('article','channel');if(c.url===state.selected)item.classList.add('selected');
+ const item=node('article','channel');if(c.orderKey)item.dataset.orderKey=c.orderKey;if(c.url===state.selected)item.classList.add('selected');
  const logo=node('span','ch-logo');
  if(c.logo&&/^https?:\/\//i.test(c.logo)){const img=node('img');img.src=c.logo;img.loading='lazy';img.referrerPolicy='no-referrer';img.onerror=()=>img.replaceWith(node('span','','TV'));logo.append(img);}else logo.textContent='▶';
  item.append(logo);
@@ -218,7 +229,7 @@ function renderRecentChannels(){
 
 function renderChannels(){
  renderRecentChannels();
- const rows=dedupChannels(state.channels);
+ const rows=orderedChannels(state,dedupChannels(state.channels));
  const q=(state.filter||'').toLowerCase().trim();
  const all=rows.filter(c=>(!showOnlyFavorites||state.favorites.includes(c.url))&&(!q||(c.name+' '+c.group+' '+c.url).toLowerCase().includes(q)));
  const list=$('#channelList');list.replaceChildren();
@@ -235,6 +246,7 @@ function renderChannels(){
    const box=node('section','channel-folder');
    const open=Boolean(q)||groupOpened.has(group);
    const header=button('',()=>{if(groupOpened.has(group))groupOpened.delete(group);else groupOpened.add(group);renderChannels();},'folder-heading');
+   header.dataset.orderGroup=group;
    header.setAttribute('aria-expanded',String(open));
    header.append(node('span','folder-arrow',open?'▾':'▸'),node('span','folder-icon','📁'),node('strong','folder-name',group),node('span','folder-count',channels.length));
    box.append(header);
@@ -243,6 +255,34 @@ function renderChannels(){
  }
  list.append(fragment);
  const favBtn=$('#quickFavorite');if(favBtn){favBtn.textContent=showOnlyFavorites?'★ Tất cả':'☆ Yêu thích';favBtn.classList.toggle('active',showOnlyFavorites);}
+}
+function saveReorderTransaction(change){
+ const previous={
+  channelOrder:JSON.parse(JSON.stringify(state.channelOrder||{})),
+  groupOrder:[...(state.groupOrder||[])],
+  channelGroupOverrides:{...(state.channelGroupOverrides||{})}
+ };
+ const rollback=()=>{
+  state.channelOrder=previous.channelOrder;state.groupOrder=previous.groupOrder;
+  state.channelGroupOverrides=previous.channelGroupOverrides;
+  rebuildOrderedChannels();renderChannels();renderNowPlaying();
+ };
+ try{
+  if(!change(allSourceChannels()))return false;
+  rebuildOrderedChannels();
+  if(!save()){rollback();return false;}
+  renderChannels();renderNowPlaying();return true;
+ }catch(err){rollback();status('Không thể lưu thứ tự kênh: '+String(err?.message||err),'error');return false;}
+}
+function onSortChannel(key,drop){
+ const ok=saveReorderTransaction(channels=>moveChannel(state,channels,key,drop.group,{anchorKey:drop.anchorKey,after:drop.after}));
+ if(ok){groupOpened.add(drop.group);renderChannels();status('Đã lưu thứ tự kênh','ok');}
+ return ok;
+}
+function onSortFolder(key,drop){
+ const ok=saveReorderTransaction(()=>moveFolder(state,key,drop.group,drop.after));
+ if(ok)status('Đã lưu thứ tự thư mục','ok');
+ return ok;
 }
 function renderSources(){const root=$('#sources');root.replaceChildren();for(const s of state.sources){const box=node('article','src-card');const txt=node('div');txt.append(node('b','',s.name));txt.append(node('small','',`${s.channels?.length||0} ${tMobile('kênh')} · ${s.url||'File M3U'}`));box.append(txt);box.append(button(s.enabled===false?'Bật':'Tắt',()=>{s.enabled=s.enabled===false;flatten();},'tiny'));if(s.url)box.append(button('Sửa URL',()=>editSource(s),'tiny'));box.append(button('Xóa',()=>{if(!confirm(tMobile('Xóa nguồn')+' '+s.name+'?'))return;state.sources=state.sources.filter(x=>x.id!==s.id);flatten();},'tiny danger'));root.append(box);}}
 function render(){
@@ -543,7 +583,13 @@ async function startupSync(){
  await resumePreviousChannel();
  await guide;
 }
+// Restore a stable order from source rows (not transient M3U list indices).
+if(state.sources.length)rebuildOrderedChannels();
 init();
+installChannelTouchSort({
+ list:$('#channelList'),onMoveChannel:onSortChannel,onMoveFolder:onSortFolder,
+ onStatus:message=>status(message,'error')
+});
 document.addEventListener('openiptv:languagechange',()=>{
  // Refresh translated counts, link options and status without touching playback.
  render();syncMediaControls();
