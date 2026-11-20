@@ -171,4 +171,6 @@ test('server inventory reads confirmed payload and guards against mistaken local
  assert.match(source,/@media\(max-width:550px\)/);
  assert.match(html,/cloud-sync\.js\?v=server-channel-count-20261120a/);
  assert.match(html,/cloud-core\.js\?v=server-channel-count-20261120a/);
+ assert.match(builder,/server_stats_html/);
+ assert.match(builder,/id="cloudServerChannelCount"/);
 });
