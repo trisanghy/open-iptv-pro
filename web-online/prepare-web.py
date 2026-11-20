@@ -492,7 +492,7 @@ html=html.replace('web-mobile-controls-polish.css?v=quick-icons-unified-20261119
 # Keep the click-to-play, disabled mobile hover, and mobile CSS cache fresh.
 for previous,next_value in (
     ('app.js?v=ios-lockscreen-next-state-20261119a','app.js?v=web-perf-20261120a'),
-    ('advanced.js?v=no-timeshift-20261119a','advanced.js?v=favorites-tap-20261119a'),
+    ('advanced.js?v=no-timeshift-20261119a','advanced.js?v=advanced-health-compact-20261120a'),
     ('web-mobile-player.css?v=desktop-handheld-fs-20261119a','web-mobile-player.css?v=apple-more-20261120a'),
 ):
     if html.count(previous)!=1:sys.exit('Favorites cache key has changed: '+previous)
