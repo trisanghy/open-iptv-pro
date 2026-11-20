@@ -29,6 +29,17 @@ const sleep=n=>new Promise(resolve=>setTimeout(resolve,n));
   page.on('pageerror',e=>{jsErrors.push(String(e));});
   const pages=['tv','fav','epg','multiview','shots','folders','sources','health','doctor','profiles','settings'];
   const history=[];
+  // P4 intentionally collapses infrequent navigation pages. Exercise its actual
+  // expand control before clicking a hidden legacy page: do not bypass the UI.
+  async function navigateViaSidebar(target){
+    const item=page.locator('.nav[data-page="'+target+'"]');
+    if(!await item.isVisible()){
+      const more=page.locator('#positronMorePages');
+      if(await more.count()&&await more.isVisible())await more.click();
+    }
+    await item.click({timeout:6000});
+  }
+
   async function capture(file){
     await page.screenshot({path:path.join(out,file),fullPage:false,animations:'disabled'});
   }
@@ -43,7 +54,7 @@ const sleep=n=>new Promise(resolve=>setTimeout(resolve,n));
   await capture('positron-01-start-real.png');
   for(let round=1;round<=20;round++){
     const target=pages[(round-1)%pages.length];
-    await page.locator('.nav[data-page="'+target+'"]').click();
+    await navigateViaSidebar(target);
     const current=await page.locator('.page.active-page').first().getAttribute('id');
     assert.equal(current,'page-'+target,'navigation failed in round '+round);
     await page.keyboard.press('Control+k');
@@ -54,7 +65,7 @@ const sleep=n=>new Promise(resolve=>setTimeout(resolve,n));
     const opened=await page.locator('.page.active-page').first().getAttribute('id');
     assert.equal(opened,'page-doctor','palette navigation failed in round '+round);
     assert.equal(await page.locator('#positronPalette').isHidden(),true);
-    await page.locator('.nav[data-page="tv"]').click();
+    await navigateViaSidebar('tv');
     if(round%2===0){
       await page.locator('#positronFocus').click();
       assert.equal(await page.locator('#positronFocus').getAttribute('aria-pressed'),'true');
@@ -80,11 +91,11 @@ const sleep=n=>new Promise(resolve=>setTimeout(resolve,n));
     if([5,10,15].includes(round))await capture('positron-round-'+String(round).padStart(2,'0')+'-real.png');
     process.stdout.write('Positron audit '+round+'/20 PASS\n');
   }
-  await page.locator('.nav[data-page="settings"]').click();
+  await navigateViaSidebar('settings');
   await sleep(250);await capture('positron-final-settings-real.png');
-  await page.locator('.nav[data-page="doctor"]').click();
+  await navigateViaSidebar('doctor');
   await sleep(250);await capture('positron-final-doctor-real.png');
-  await page.locator('.nav[data-page="tv"]').click();
+  await navigateViaSidebar('tv');
   await page.locator('#positronOpen').click();
   await page.locator('#positronQuery').fill('');
   await capture('positron-final-command-real.png');
