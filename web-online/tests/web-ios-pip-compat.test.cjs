@@ -138,11 +138,11 @@ test('PiP compatibility module is Web-only, cache-busted and preserved by prepar
  const app=read('index.html'),builder=read('web-online/prepare-web.py');
  assert.equal(read('web-ios-pip-compat.js'),read('web-online/web-ios-pip-compat.js'));
  assert.equal(read('web-ios-pip-compat.css'),read('web-online/web-ios-pip-compat.css'));
- assert.ok(app.includes('src="web-ios-pip-compat.js?v=autopip-crossbrowser-20261120a"'));
- assert.ok(app.includes('href="web-ios-pip-compat.css?v=ios-pwa-pip-20261119a"'));
+ assert.ok(app.includes('src="web-ios-pip-compat.js?v=pip-tab-resume-20261120b"'));
+ assert.ok(app.includes('href="web-ios-pip-compat.css?v=pip-tab-resume-20261120b"'));
  assert.ok(builder.includes("for asset in ('web-ios-pip-compat.js','web-ios-pip-compat.css')"));
- assert.ok(builder.includes('web-ios-pip-compat.js?v=autopip-crossbrowser-20261120a'));
- assert.ok(builder.includes('web-ios-pip-compat.css?v=ios-pwa-pip-20261119a'));
+ assert.ok(builder.includes('web-ios-pip-compat.js?v=pip-tab-resume-20261120b'));
+ assert.ok(builder.includes('web-ios-pip-compat.css?v=pip-tab-resume-20261120b'));
  assert.ok(app.indexOf('web-ios-pip-compat.js?v=')>app.indexOf('features.js?v='));
  assert.match(read('web-fullscreen-controls.js'),/fsPipBtn[\s\S]{0,100}pipBtn/);
  assert.doesNotMatch(read('web-ios-pip-compat.js'),/localStorage\.setItem|sessionStorage\.setItem|new URL\(.*token/);
@@ -187,4 +187,49 @@ test('auto PiP skips paused, not-ready, audio-only and restricted playback',()=>
  for(const o of [{paused:true},{ready:false},{audio:true},{allowed:false}]){
   const f=autoFixture(o);pip.installAuto(f.win);f.click('epg');assert.equal(f.calls.standard,0,JSON.stringify(o));
  }
+});
+
+
+test('the TV video remains rendered, not display:none, on other app tabs',()=>{
+ const css=read('web-ios-pip-compat.css'),html=read('index.html');
+ assert.match(css,/#page-tv\.page:not\(\.active-page\)\s*\{[^}]*display:block!important/s);
+ assert.match(css,/#page-tv\.page:not\(\.active-page\) #video\s*\{[^}]*display:block!important/s);
+ for(const name of ['tv','fav','epg','sources'])assert.match(html,new RegExp('data-page="'+name+'"'));
+});
+test('return to TV resumes previously playing channel without retuning or reloading',async()=>{
+ for(const tab of ['epg','fav','sources','settings']){
+  const f=autoFixture();let calls=0;
+  f.video.src='https://example.invalid/live.m3u8';
+  f.video.play=()=>{calls++;f.video.paused=false;return Promise.resolve();};
+  pip.installAuto(f.win);
+  f.click(tab);f.video.paused=true;f.click('tv');
+  assert.equal(f.calls.standard,1);
+  assert.equal(f.calls.exit,1);
+  assert.equal(calls,1,tab+' must resume paused video during TV click');
+  assert.equal(f.video.src,'https://example.invalid/live.m3u8');
+  await Promise.resolve();
+ }
+});
+test('Safari WebKit PiP exit may pause video, but TV click resumes it',()=>{
+ const f=autoFixture({ios:true});let resumed=0;
+ f.video.play=()=>{resumed++;f.video.paused=false;return Promise.resolve();};
+ const native=f.video.webkitSetPresentationMode;
+ f.video.webkitSetPresentationMode=mode=>{native(mode);if(mode==='inline')f.video.paused=true;};
+ pip.installAuto(f.win);f.click('epg');f.click('tv');
+ assert.deepEqual(f.calls.native,['picture-in-picture','inline']);
+ assert.equal(resumed,1);assert.equal(f.video.paused,false);
+});
+test('an intentionally paused channel does not restart on navigation',()=>{
+ const f=autoFixture({paused:true});let count=0;
+ f.video.play=()=>{count++;return Promise.resolve();};
+ pip.installAuto(f.win);f.click('epg');f.click('tv');
+ assert.equal(f.calls.standard,0);assert.equal(count,0);
+});
+test('returning to TV while a Chromium PiP request is pending closes the late window',async()=>{
+ const f=autoFixture();let resolvePip;
+ f.video.requestPictureInPicture=()=>new Promise(resolve=>{resolvePip=resolve;});
+ pip.installAuto(f.win);f.click('epg');f.click('tv');
+ f.doc.pictureInPictureElement=f.video;resolvePip(f.video);
+ await Promise.resolve();await Promise.resolve();await Promise.resolve();
+ assert.equal(f.calls.exit,1);
 });

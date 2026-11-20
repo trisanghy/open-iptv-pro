@@ -39,3 +39,27 @@
  .web-pip-ios-card{padding:18px 14px}
  .web-pip-ios-action{flex-basis:100%}
 }
+
+/* Keep the TV video rendered for PiP when the EPG/Favorites/Sources page is open.
+   The original .page {display:none} suspends media after leaving the TV tab. */
+html body #page-tv.page:not(.active-page){
+ display:block!important;position:fixed!important;left:0!important;top:0!important;
+ width:64px!important;height:36px!important;min-height:0!important;max-height:36px!important;
+ overflow:hidden!important;pointer-events:none!important;opacity:.005!important;z-index:-1!important;
+}
+html body #page-tv.page:not(.active-page) .tv-layout{
+ display:block!important;position:relative!important;width:64px!important;
+ height:36px!important;min-height:0!important;overflow:hidden!important;
+}
+html body #page-tv.page:not(.active-page) .tv-layout>.channel-panel{display:none!important}
+html body #page-tv.page:not(.active-page) .watch-panel{
+ display:block!important;position:absolute!important;left:0!important;top:0!important;
+ width:64px!important;height:36px!important;min-width:0!important;min-height:0!important;overflow:hidden!important;
+}
+html body #page-tv.page:not(.active-page) #playerBox{
+ display:block!important;position:relative!important;width:64px!important;height:36px!important;
+ min-height:0!important;max-height:36px!important;aspect-ratio:auto!important;overflow:hidden!important;
+}
+html body #page-tv.page:not(.active-page) #video{
+ display:block!important;position:absolute!important;inset:0!important;width:64px!important;height:36px!important;
+}

@@ -250,8 +250,8 @@ jobs:
           node --test web-online/tests/web-ios-pip-compat.test.cjs
           cmp _site/web-ios-pip-compat.js web-online/web-ios-pip-compat.js
           cmp _site/web-ios-pip-compat.css web-online/web-ios-pip-compat.css
-          grep -Fq 'web-ios-pip-compat.js?v=autopip-crossbrowser-20261120a' _site/index.html
-          grep -Fq 'web-ios-pip-compat.css?v=ios-pwa-pip-20261119a' _site/index.html
+          grep -Fq 'web-ios-pip-compat.js?v=pip-tab-resume-20261120b' _site/index.html
+          grep -Fq 'web-ios-pip-compat.css?v=pip-tab-resume-20261120b' _site/index.html
           node --test tests/web_ios_audio_recovery.test.cjs
           grep -Fq 'web-ios-audio-recovery.js?v=top-silent-20261119d' _site/index.html
           grep -Fq 'web-ios-audio-recovery.css?v=top-silent-20261119d' _site/index.html

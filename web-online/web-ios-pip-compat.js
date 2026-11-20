@@ -121,7 +121,8 @@
   return overlay;
  }
 
- // Cross-platform auto PiP: activation may be denied by the user's browser.
+ // Auto PiP is best-effort: site permissions and a playing source are required.
+ // Keep the original video mounted while changing application tabs.
  function installAuto(root){
   const doc=root?.document;
   if(!doc?.addEventListener||doc.__openIPTVAutoPiPInstalled)return false;
@@ -130,65 +131,99 @@
   const page=()=>doc.querySelector?.('.sidebar .nav[data-page].active')?.dataset?.page||
     (doc.getElementById?.('page-tv')?.classList?.contains?.('active-page')?'tv':null);
   const moreOpen=()=>doc.getElementById?.('iptvMobileMoreOverlay')?.hidden===false;
-  const inPip=v=>!!v&&(doc.pictureInPictureElement===v||v.webkitPresentationMode==='picture-in-picture');
-  let pending=null;
-  function close(){
-   const v=video();if(!v)return false;
-   try{
-    if(doc.pictureInPictureElement===v&&typeof doc.exitPictureInPicture==='function'){
-     Promise.resolve(doc.exitPictureInPicture()).catch(()=>{});return true;
-    }
-    if(v.webkitPresentationMode==='picture-in-picture'&&typeof v.webkitSetPresentationMode==='function'){
-     v.webkitSetPresentationMode('inline');return true;
-    }
-   }catch{}
-   return false;
-  }
-  function open(){
+  const inPiP=v=>!!v&&(doc.pictureInPictureElement===v||v.webkitPresentationMode==='picture-in-picture');
+  const onTV=()=>page()==='tv'&&!moreOpen()&&doc.visibilityState!=='hidden';
+  let pending=null,routeIntent=null,resumeWhenBack=false;
+  function resume(gesture=false){
+   if(!resumeWhenBack||doc.visibilityState==='hidden'||root.OpenIPTVBackgroundAudio?.active)return false;
+   if(!gesture&&!onTV())return false;
    const v=video();
-   if(!v||v.readyState<2||v.paused||v.ended||pending||inPip(v)||root.OpenIPTVBackgroundAudio?.active)return false;
-   const type=capability(v,doc,root.navigator,root);
-   if(type!=='webkit'&&type!=='standard')return false;
+   if(!v||v.ended||v.readyState<1||!v.paused||typeof v.play!=='function')return false;
+   try{Promise.resolve(v.play()).catch(()=>{});return true;}catch{return false;}
+  }
+  function closePiP(){
+   const v=video();
    try{
-    if(type==='webkit'){v.webkitSetPresentationMode('picture-in-picture');return inPip(v);}
-    const result=v.requestPictureInPicture();
-    pending=Promise.resolve(result).then(()=>{
-     if(doc.visibilityState!=='hidden'&&page()==='tv'&&!moreOpen())close();
+    if(v&&doc.pictureInPictureElement===v&&typeof doc.exitPictureInPicture==='function')
+     return Promise.resolve(doc.exitPictureInPicture()).catch(()=>{});
+    if(v?.webkitPresentationMode==='picture-in-picture'&&typeof v.webkitSetPresentationMode==='function')
+     v.webkitSetPresentationMode('inline');
+   }catch{}
+   return Promise.resolve();
+  }
+  function returnToTV(gesture=false){
+   routeIntent='tv';
+   const leaving=closePiP();
+   // The inline video may be paused during native PiP teardown.
+   // Resume on the TV tap (user activation), then verify after the exit.
+   resume(gesture);
+   void Promise.resolve(leaving).then(()=>{if(routeIntent==='tv'&&onTV())resume();});
+   if(resumeWhenBack&&typeof root.setTimeout==='function')
+    root.setTimeout(()=>{
+     if(routeIntent==='tv'&&onTV()){resume();resumeWhenBack=false;}
+    },600);
+  }
+  function startPiP(){
+   const v=video();
+   if(!v||v.readyState<2||v.ended||root.OpenIPTVBackgroundAudio?.active)return false;
+   if(!v.paused)resumeWhenBack=true;
+   if(v.paused||inPiP(v)||pending)return false;
+   const mode=capability(v,doc,root.navigator,root);
+   if(mode!=='webkit'&&mode!=='standard')return false;
+   try{
+    if(mode==='webkit'){v.webkitSetPresentationMode('picture-in-picture');return inPiP(v);}
+    pending=Promise.resolve(v.requestPictureInPicture()).then(()=>{
+     // The user may return to TV before an async PiP request completes.
+     if(routeIntent==='tv'||onTV())returnToTV();
     }).catch(()=>{}).finally(()=>{pending=null;});
     return true;
    }catch{return false;}
   }
   doc.addEventListener('click',event=>{
-   const target=event.target?.closest?.('.nav[data-page], [data-mobile-more-page], #iptvMobileMoreTrigger');
-   if(!target)return;
-   if(target.id==='iptvMobileMoreTrigger'){
-    if(page()==='tv'){if(moreOpen())close();else open();}
+   const t=event.target?.closest?.('.nav[data-page], [data-mobile-more-page], #iptvMobileMoreTrigger');
+   if(!t)return;
+   if(t.id==='iptvMobileMoreTrigger'){
+    if(page()==='tv'){
+     if(moreOpen())returnToTV(true);
+     else{routeIntent='more';startPiP();}
+    }
     return;
    }
-   const destination=target.dataset?.page||target.dataset?.mobileMorePage;
+   const destination=t.dataset?.page||t.dataset?.mobileMorePage;
    if(!destination)return;
-   if(destination==='tv'){close();return;}
+   if(destination==='tv'){
+    if(page()!=='tv'||moreOpen()||inPiP(video())||resumeWhenBack)returnToTV(true);
+    return;
+   }
    if(destination===page()&&!moreOpen())return;
    if(root.IPTVProAdvanced?.canEnterPage?.(destination)===false)return;
-   open();
+   routeIntent=destination;
+   startPiP();
   },true);
   doc.addEventListener('visibilitychange',()=>{
-   if(doc.visibilityState==='hidden')open();
-   else if(page()==='tv'&&!moreOpen())close();
+   if(doc.visibilityState==='hidden'){routeIntent='background';startPiP();}
+   else if(onTV())returnToTV();
   });
+  root.addEventListener?.('pageshow',()=>{if(onTV())returnToTV();});
   const tv=doc.getElementById?.('page-tv');
   if(tv&&typeof root.MutationObserver==='function'){
    const observer=new root.MutationObserver(()=>{
     if(doc.visibilityState==='hidden')return;
-    if(page()==='tv'&&!moreOpen())close();
-    else if(page()!=='tv'||moreOpen())open();
+    if(onTV())returnToTV();
+    else{routeIntent=moreOpen()?'more':page();startPiP();}
    });
    observer.observe(tv,{attributes:true,attributeFilter:['class']});
    const overlay=doc.getElementById?.('iptvMobileMoreOverlay');
    if(overlay)observer.observe(overlay,{attributes:true,attributeFilter:['hidden']});
   }
   const v=video();
-  if(v)try{v.setAttribute?.('autopictureinpicture','');if('autoPictureInPicture' in v)v.autoPictureInPicture=true;}catch{}
+  if(v){
+   v.addEventListener?.('leavepictureinpicture',()=>{if(onTV())resume();});
+   v.addEventListener?.('webkitpresentationmodechanged',()=>{
+    if(v.webkitPresentationMode==='inline'&&onTV())resume();
+   });
+   try{v.setAttribute?.('autopictureinpicture','');if('autoPictureInPicture' in v)v.autoPictureInPicture=true;}catch{}
+  }
   return true;
  }
  function install(root){

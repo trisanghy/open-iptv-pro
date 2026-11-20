@@ -466,8 +466,8 @@ for asset in ('web-ios-pip-compat.js','web-ios-pip-compat.css'):
     copy2(Path(__file__).resolve().parent/asset,out/asset)
 if html.count('</head>')!=1 or html.count('</body>')!=1:
     sys.exit('iOS PiP helper insertion points missing')
-html=html.replace('</head>','<link rel="stylesheet" href="web-ios-pip-compat.css?v=ios-pwa-pip-20261119a"/></head>',1)
-html=html.replace('</body>','<script src="web-ios-pip-compat.js?v=autopip-crossbrowser-20261120a"></script></body>',1)
+html=html.replace('</head>','<link rel="stylesheet" href="web-ios-pip-compat.css?v=pip-tab-resume-20261120b"/></head>',1)
+html=html.replace('</body>','<script src="web-ios-pip-compat.js?v=pip-tab-resume-20261120b"></script></body>',1)
 if html.count('web-ios-pip-compat.js?v=')!=1 or html.count('web-ios-pip-compat.css?v=')!=1:
     sys.exit('iOS PiP helper scripts duplicated or missing')
 
