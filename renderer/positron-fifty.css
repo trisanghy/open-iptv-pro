@@ -24,3 +24,7 @@ html.p50-05 #appSidebar .nav:hover{filter:none!important}
 /* Iteration 6: Make selected sidebar page higher-contrast */
 html[data-positron=true].p50-06 #appSidebar .nav.active{background:var(--po-raised)!important;border:1px solid var(--po-line)!important;color:var(--po-ink)!important;box-shadow:inset 3px 0 var(--po-accent)!important}
 html.p50-06 #appSidebar .nav.active :is(span,.macos-nav-symbol){color:var(--po-accent)!important;filter:none!important}
+
+/* Iteration 7: Simplify navigation section labels */
+html[data-positron=true].p50-07 #appSidebar .aside-caption{font-size:9px!important;line-height:15px!important;letter-spacing:.8px!important;padding:0 9px!important;margin:8px 0 5px!important;color:var(--po-muted)!important;opacity:.8}
+html.p50-07 #appSidebar .aside-second{margin-top:11px!important}
