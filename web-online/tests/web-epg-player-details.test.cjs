@@ -67,7 +67,7 @@ test('Web builder retains player description, two rows and versioned CSS/JS afte
  assert.match(builder,/epg_now_start=' function renderNow\(\)\{'/);
  assert.match(builder,/web_features\[web_features\.index\(epg_now_start\):web_features\.index\(epg_now_end\)\]/);
  for(const asset of ['features.js','web-only.css','web-fullscreen-controls.js','web-fullscreen-controls.css']){
-  const url=asset+'?v='+(asset==='features.js'?'epg-logo-20261120b':'epg-player-details-20261120a');
+  const url=asset+'?v='+(asset==='features.js'?'web-perf-20261120a':'epg-player-details-20261120a');
   assert.ok(html.includes(url),url);
   assert.ok(builder.includes(url),url+' in build');
  }
