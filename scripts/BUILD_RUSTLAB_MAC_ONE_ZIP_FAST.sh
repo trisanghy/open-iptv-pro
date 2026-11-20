@@ -55,20 +55,20 @@ APP_TARGET="$STAGED/$(basename "$APP")"
 ditto "$APP" "$APP_TARGET" || err "Không sao chép được ứng dụng .app"
 # Replace only the dedicated build output directory after successful compilation.
 # Keep existing installed apps and other Downloads folders untouched.
+# Only the dedicated Rust Lab build folder may be emptied.
+# This intentionally deletes ALL old entries, including hidden .DS_Store and old .app bundles.
+[[ "$DEST" == "$HOME/Downloads/OpenIPTVPro_RustLab_Build" ]] || err "Từ chối dọn ngoài thư mục build Rust Lab: $DEST"
+[[ ! -L "$DEST" ]] || err "Từ chối dọn thư mục build dạng symlink: $DEST"
 if [[ -e "$DEST" && ! -d "$DEST" ]]; then err "Đường dẫn build tồn tại nhưng không phải thư mục: $DEST"; fi
-if [[ -d "$DEST" ]]; then
-  while IFS= read -r -d '' old_item; do
-    [[ -d "$old_item" && "$old_item" == *.app ]] || err "Thư mục build có tệp không phải .app; từ chối xóa: $old_item"
-  done < <(find "$DEST" -mindepth 1 -maxdepth 1 -print0)
-  find "$DEST" -mindepth 1 -maxdepth 1 -type d -name '*.app' -exec rm -rf {} +
-else
-  mkdir -p "$DEST"
-fi
+mkdir -p "$DEST"
+find "$DEST" -mindepth 1 -maxdepth 1 -exec rm -rf -- {} + || err "Không thể dọn sạch thư mục build"
 FINAL_APP="$DEST/$(basename "$APP")"
 ditto "$APP_TARGET" "$FINAL_APP" || err "Không chép được .app mới vào Downloads"
 APP_TARGET="$FINAL_APP"
 [[ -f "$APP_TARGET/Contents/Info.plist" && -s "$APP_TARGET/Contents/MacOS/$(basename "$EXECUTABLE")" ]] || err "Sao chép .app không hoàn chỉnh"
 # Exactly one top-level item in the resulting Downloads folder: the .app bundle.
+# Finder can write .DS_Store while copying the app; remove it before final validation.
+find "$DEST" -mindepth 1 -maxdepth 1 -name '.DS_Store' -exec rm -f -- {} +
 OUTPUT_COUNT="$(find "$DEST" -mindepth 1 -maxdepth 1 -print | wc -l | tr -d '[:space:]')"
 [[ "$OUTPUT_COUNT" == 1 ]] || err "Thư mục đầu ra không chỉ chứa một ứng dụng .app"
 echo "THÀNH CÔNG: $APP_TARGET"
