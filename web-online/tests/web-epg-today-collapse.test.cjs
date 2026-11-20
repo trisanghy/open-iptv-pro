@@ -87,7 +87,7 @@ test('unsupported Web EPG record controls are hidden but native DVR IDs remain',
 test('mobile/desktop share compact daily view with advanced search folded',()=>{
  assert.match(html,/id="epgToolsFold"/);
  assert.match(html,/web-epg-day\.css\?v=epg-logo-20261120b/);
- assert.match(html,/features\.js\?v=epg-logo-20261120b/);
+ assert.match(html,/features\.js\?v=web-perf-20261120a/);
  assert.match(css,/@media\(max-width:690px\)/);
  assert.match(css,/\.epg-channel-heading/);
  assert.match(builder,/Web EPG daily renderer anchors changed/);

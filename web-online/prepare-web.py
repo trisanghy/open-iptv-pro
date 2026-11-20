@@ -98,6 +98,30 @@ day_end=' async function fetchXML('
 if web_features.count(day_source)!=1 or web_features.count(day_end)!=1 or js.count(day_end)!=1 or js.count(' function renderEPG(){')!=1:
     sys.exit('Web EPG daily renderer anchors changed')
 js=js[:js.index(' function renderEPG(){')]+web_features[web_features.index(day_source):web_features.index(day_end)]+js[js.index(day_end):]
+# Web-only EPG performance: skip hidden-tab DOM and duplicate minute refresh.
+epg_lazy_old=" function renderGuidePages(){renderNow();renderEPG();"
+epg_lazy_new=" function renderGuidePages(){renderNow();if($('#page-epg')?.classList.contains('active-page'))renderEPG();"
+if js.count(epg_lazy_old)!=1:sys.exit('Web performance EPG lazy patch drift')
+js=js.replace(epg_lazy_old,epg_lazy_new,1)
+epg_search_old="$('#epgSearch').addEventListener('input',renderEPG);"
+epg_search_new="let pendingEPGSearch=0;$('#epgSearch').addEventListener('input',()=>{if(pendingEPGSearch)cancelAnimationFrame(pendingEPGSearch);pendingEPGSearch=requestAnimationFrame(()=>{pendingEPGSearch=0;renderEPG();});});"
+if js.count(epg_search_old)!=1:sys.exit('Web performance EPG filter patch drift')
+js=js.replace(epg_search_old,epg_search_new,1)
+timer_old=" window.setInterval(()=>{if($('#page-tv')?.classList.contains('active-page'))renderNow();},60_000);"
+timer_extra=" window.setInterval(()=>{renderNow();if(document.querySelector('#page-epg').classList.contains('active-page'))renderEPG();},60000);"
+timer_new=""" window.setInterval(()=>{
+  if(document.visibilityState==='hidden')return;
+  if($('#page-tv')?.classList.contains('active-page'))renderNow();
+  else if($('#page-epg')?.classList.contains('active-page'))renderGuidePages();
+ },60000);
+ document.addEventListener('visibilitychange',()=>{
+  if(document.visibilityState!=='visible')return;
+  if($('#page-tv')?.classList.contains('active-page'))renderNow();
+  else if($('#page-epg')?.classList.contains('active-page'))renderGuidePages();
+ });"""
+if js.count(timer_old)!=1 or js.count(timer_extra)!=1:sys.exit('Web performance EPG timer patch drift')
+js=js.replace(timer_old,timer_new,1).replace(timer_extra,'',1)
+
 features.write_text(js,encoding='utf-8')
 
 for name in ('web-only.js','web-only.css','resume-last.js','resume-last.css','browser-channel-check.js','web-autoplay.js','cloud-core.js','cloud-sync.js','cloud-sync.css','web-volume.css','web-volume.js','web-mobile-player.css','web-mobile-player.js','web-player-icons.css','web-player-icons.js','web-tv-wide.css','web-mobile-controls-polish.css','web-mobile-volume.js','web-mobile-volume.css','web-desktop-download.css','web-desktop-download.js','web-recent-channels.js','web-compact-toolbar.css','web-snapshot-batch.js','web-background-audio.js','web-background-audio.css','web-ios-audio-recovery.js','web-ios-audio-recovery.css','web-fullscreen-controls.css','web-fullscreen-controls.js','web-mobile-tablet-controls.css','web-epg-day.css','web-smart-discovery-compact.css','web-smart-discovery.js','smart-discovery-ui.js','source-use-consent-v1.js','source-use-consent-v1.css'):
@@ -202,6 +226,20 @@ for previous,updated in (
 ):
     if app_text.count(previous)!=1:sys.exit('Background audio build patch drift: '+previous[:95])
     app_text=app_text.replace(previous,updated,1)
+# Web-only performance: avoid full render() on every route.
+nav_call='render();window.IPTVExtras?.onPage?.(p);'
+nav_marker=' function closeModal(){'
+nav_start=' function renderOnNavigation(p){'
+if app_text.count(nav_call)!=1 or app_text.count(nav_marker)!=1 or web_app.count(nav_start)!=1:
+    sys.exit('Web performance route patch drift')
+app_text=app_text.replace(nav_call,'renderOnNavigation(p);window.IPTVExtras?.onPage?.(p);',1)
+nav_function=web_app[web_app.index(nav_start):web_app.index(nav_marker,web_app.index(nav_start))]
+app_text=app_text.replace(nav_marker,nav_function+nav_marker,1)
+channel_search_old="$('#searchBox').addEventListener('input',renderList);"
+channel_search_new="let pendingChannelSearch=0;$('#searchBox').addEventListener('input',()=>{if(pendingChannelSearch)cancelAnimationFrame(pendingChannelSearch);pendingChannelSearch=requestAnimationFrame(()=>{pendingChannelSearch=0;renderList();});});"
+if app_text.count(channel_search_old)!=1:sys.exit('Web performance search patch drift')
+app_text=app_text.replace(channel_search_old,channel_search_new,1)
+
 app_file.write_text(app_text,encoding='utf-8')
 
 html=(out/'index.html').read_text(encoding='utf-8')
@@ -453,7 +491,7 @@ html=html.replace('web-mobile-controls-polish.css?v=quick-icons-unified-20261119
 
 # Keep the click-to-play, disabled mobile hover, and mobile CSS cache fresh.
 for previous,next_value in (
-    ('app.js?v=ios-lockscreen-next-state-20261119a','app.js?v=favorites-direct-play-20261120a'),
+    ('app.js?v=ios-lockscreen-next-state-20261119a','app.js?v=web-perf-20261120a'),
     ('advanced.js?v=no-timeshift-20261119a','advanced.js?v=favorites-tap-20261119a'),
     ('web-mobile-player.css?v=desktop-handheld-fs-20261119a','web-mobile-player.css?v=apple-more-20261120a'),
 ):
@@ -473,7 +511,7 @@ if html.count('web-ios-pip-compat.js?v=')!=1 or html.count('web-ios-pip-compat.c
 
 # Keep player subtitles and fullscreen EPG across Safari cached PWA versions.
 for old,new in (
-    ('features.js?v=epg-atomic-gzip-20261120a','features.js?v=epg-logo-20261120b'),
+    ('features.js?v=epg-atomic-gzip-20261120a','features.js?v=web-perf-20261120a'),
     ('web-only.css?v=no-timeshift-20261119a','web-only.css?v=epg-player-details-20261120a'),
     ('web-fullscreen-controls.js?v=fullscreen-tools-20261119b','web-fullscreen-controls.js?v=epg-player-details-20261120a'),
     ('web-fullscreen-controls.css?v=fullscreen-tools-20261119b','web-fullscreen-controls.css?v=epg-player-details-20261120a'),

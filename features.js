@@ -517,7 +517,7 @@
   }catch(e){$('#epgImportStatus').textContent='Nhập EPG thất bại: '+String(e?.message||e).slice(0,170);ctx.toast('Không thể nhập EPG: '+String(e?.message||e),'warn');}
   finally{loading=false;$('#epgImportFileBtn').disabled=false;}
  }
- function renderGuidePages(){renderNow();renderEPG();$('#epgUpdatedLabel').textContent=updatedAt?'Cập nhật lần cuối: '+new Date(updatedAt).toLocaleString('vi-VN'):'Chưa tải EPG';}
+ function renderGuidePages(){renderNow();if($('#page-epg')?.classList.contains('active-page'))renderEPG();$('#epgUpdatedLabel').textContent=updatedAt?'Cập nhật lần cuối: '+new Date(updatedAt).toLocaleString('vi-VN'):'Chưa tải EPG';}
  function decorateRow(c,row){const {now}=guideLib.current(guide,c);if(!now)return;const small=row.querySelector('.channel-text small');if(small){small.title=`EPG: ${now.title}`;const s=document.createElement('div');s.className='channel-epg';s.textContent='▤ '+now.title;small.after(s);}}
  async function pictureInPicture(){const video=ctx.player;
   try{if(document.pictureInPictureElement){await document.exitPictureInPicture();return;}
@@ -580,7 +580,7 @@
  $('#openGuideBtn').addEventListener('click',()=>ctx.setPage('epg'));
  $('#epgSettingsBtn').addEventListener('click',()=>ctx.setPage('settings'));
  $('#epgRefreshBtn').addEventListener('click',()=>refreshEPG());
- $('#epgSearch').addEventListener('input',renderEPG);
+ let pendingEPGSearch=0;$('#epgSearch').addEventListener('input',()=>{if(pendingEPGSearch)cancelAnimationFrame(pendingEPGSearch);pendingEPGSearch=requestAnimationFrame(()=>{pendingEPGSearch=0;renderEPG();});});
  $('#epgLoadBtn').addEventListener('click',()=>refreshEPG());
  $('#epgImportFileBtn').addEventListener('click',importLocalEPG);
  $('#epgAutoRefreshStart').checked=config.autoRefreshEPGOnStartup;
@@ -655,7 +655,16 @@
   if(!ctx.getChannels().length){$('#epgAutoHint').textContent='Chưa có kênh M3U; EPG sẽ tải khi có danh sách kênh.';return;}
   void refreshEPG({startup:true}).catch(e=>{ctx.toast('Tự tải EPG gặp lỗi: '+String(e?.message||e),'warn');});
  },2200);}
- window.setInterval(()=>{if($('#page-tv')?.classList.contains('active-page'))renderNow();},60_000);
+ window.setInterval(()=>{
+  if(document.visibilityState==='hidden')return;
+  if($('#page-tv')?.classList.contains('active-page'))renderNow();
+  else if($('#page-epg')?.classList.contains('active-page'))renderGuidePages();
+ },60000);
+ document.addEventListener('visibilitychange',()=>{
+  if(document.visibilityState!=='visible')return;
+  if($('#page-tv')?.classList.contains('active-page'))renderNow();
+  else if($('#page-epg')?.classList.contains('active-page'))renderGuidePages();
+ });
  window.IPTVExtras={render:renderNow,onChannel:renderNow,onPage:p=>{if(p==='settings')renderSources();if(p==='epg')renderGuidePages();},decorateRow,getGuide:()=>guide,setMapping:(id,epgId)=>{if(epgId)config.manualMappings[id]=epgId;else delete config.manualMappings[id];guide.manualMappings=config.manualMappings;saveConfig();void cacheGuide();renderGuidePages();ctx.renderList();},setOffset:minutes=>{config.offsetMinutes=Math.max(-720,Math.min(720,Number(minutes)||0));guide.offsetMinutes=config.offsetMinutes;saveConfig();void cacheGuide();renderGuidePages();ctx.renderList();},getOffset:()=>config.offsetMinutes};
- window.setInterval(()=>{renderNow();if(document.querySelector('#page-epg').classList.contains('active-page'))renderEPG();},60000);
+
 })();

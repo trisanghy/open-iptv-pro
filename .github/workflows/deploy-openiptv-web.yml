@@ -333,6 +333,7 @@ jobs:
           EPG_LAYOUT_CHROME="$(command -v google-chrome)" node --test web-online/tests/web-epg-layout.test.cjs
           node --test web-online/tests/web-epg-player-details.test.cjs
           node --test web-online/tests/web-epg-today-collapse.test.cjs
+          node --test web-online/tests/web-performance-regression.test.cjs
           grep -Fq 'web-epg-day.css?v=epg-logo-20261120b' _site/index.html
           grep -Fq 'features.js?v=epg-logo-20261120b' _site/index.html
           grep -Fq 'expandedEPGChannels' _site/features.js
