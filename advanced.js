@@ -5,13 +5,38 @@
  const $=q=>document.querySelector(q), esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
  const key='open-iptv-pro-advanced-v1';
  const defaults={alternates:{},health:{},reminders:[],optimizer:'balanced',profiles:[{id:'admin',name:'Người lớn',child:false,favorites:[]}],profileId:'admin',restrictedGroups:[],pin:null};
+ const healthCodec=window.OpenIPTVAdvancedHealthCodec;
  let state;try{state={...defaults,...JSON.parse(localStorage.getItem(key)||'{}')}}catch{state={...defaults}};
+ // Decode historical health data or the compact, versioned format on startup.
+ state.health=healthCodec?.unpack(state.health)||{};
  if(!Array.isArray(state.profiles)||!state.profiles.length)state.profiles=defaults.profiles;
  if(!state.alternates||typeof state.alternates!=='object')state.alternates={};
  if(!state.health||typeof state.health!=='object')state.health={};
  if(!Array.isArray(state.reminders))state.reminders=[];
  ctx.getStore().alternates=state.alternates;
- const save=()=>{if(window.__openIPTVRestoringBackup)return;ctx.getStore().alternates=state.alternates;try{localStorage.setItem(key,JSON.stringify(state))}catch{ctx.toast('Đầy bộ nhớ cấu hình nâng cao','warn')}};
+ let lastSavedAdvanced='',lastQuotaWarning=0;
+ const save=()=>{
+  if(window.__openIPTVRestoringBackup)return true;
+  ctx.getStore().alternates=state.alternates;
+  // Compact only diagnostic event field names. Keep all records, settings and
+  // backups readable; never delete channel lists, snapshots or playlists.
+  const payload=JSON.stringify({...state,health:healthCodec?.pack(state.health)||state.health});
+  if(payload===lastSavedAdvanced)return true;
+  try{
+   localStorage.setItem(key,payload);
+   lastSavedAdvanced=payload;
+   return true;
+  }catch(error){
+   console.warn('Advanced settings could not be persisted',error);
+   // Recording live channel health is automatic. A failed background write
+   // must not stack three identical toasts every few seconds on iOS Safari.
+   if(Date.now()-lastQuotaWarning>300000){
+    lastQuotaWarning=Date.now();
+    ctx.toast('Bộ nhớ Safari gần đầy: chưa lưu được cấu hình. Hãy sao lưu dữ liệu và giảm ảnh chụp nếu lỗi còn tiếp diễn.','warn');
+   }
+   return false;
+  }
+ };
  let pendingHealthSave=null;function scheduleHealthSave(){if(pendingHealthSave)return;pendingHealthSave=setTimeout(()=>{pendingHealthSave=null;save();},1500);}
  window.addEventListener('beforeunload',()=>{if(pendingHealthSave){clearTimeout(pendingHealthSave);save();}});
  const channels=()=>ctx.getChannels();
