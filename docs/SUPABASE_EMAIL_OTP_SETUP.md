@@ -4,7 +4,7 @@ Mã nguồn web đã hỗ trợ `supabase.auth.signInWithOtp` và `supabase.auth
 
 ## Cấu hình mẫu email trên Supabase (bắt buộc)
 
-1. Mở [Authentication → Email Templates](https://supabase.com/dashboard/project/ehzfaragssjolojyswin/auth/templates).
+1. Mở [Authentication → Email Templates](https://supabase.com/dashboard/project/zjbsvqryaxtafuffpifu/auth/templates).
 2. Chọn **Magic Link / OTP** (không phải Reset Password hoặc Reauthentication).
 3. Đặt tiêu đề: **Mã đăng nhập Open IPTV Pro**.
 4. Đặt nội dung HTML:
@@ -40,3 +40,16 @@ Web vẫn hỗ trợ nhập Magic Link cũ qua nút **Dùng liên kết đăng n
 Chạy `node --test tests/web-email-otp-login.test.cjs`. Bài test xác nhận định dạng, mã bắt đầu bằng số 0, nhập mã từ Gmail, gọi `verifyOtp`, và giữ đường dẫn Magic Link dự phòng.
 
 **Trạng thái triển khai:** mã nguồn web riêng và email template Supabase là hai cấu hình độc lập. Cần xác nhận cả hai trước khi tuyên bố email OTP hoạt động từ đầu đến cuối.
+
+## Dự án mới (20/11/2026)
+
+- Project: `Open IPTV Pro`, ref `zjbsvqryaxtafuffpifu`, region Singapore.
+- Giao diện Web dùng publishable key (không lưu service-role/secret key trong GitHub).
+- Bảng `public.openiptv_user_state` đã khởi tạo với chính sách RLS tách biệt từng tài khoản.
+- Dự án mới không tự có tài khoản người dùng hoặc dữ liệu của dự án cũ.
+- Khi phát hiện dữ liệu tài khoản cũ trong trình duyệt, Web lưu bản sao cục bộ trước khi đổi phiên, rồi cho người dùng đang đăng nhập xác nhận thủ công khi muốn khôi phục. Không tự chuyển dữ liệu giữa hai tài khoản.
+
+**Chưa tự động cấu hình trên Dashboard:** mẫu thư OTP `{{ .Token }}`, các URL chuyển hướng và GitHub OAuth Client ID/Secret. Cần thiết lập bằng chủ dự án trong Supabase Authentication; kết nối GitHub repo không tự bật đăng nhập OAuth. Khi chưa có các cấu hình này, ứng dụng không nên tuyên bố GitHub/OTP đã kiểm thử thành công từ đầu đến cuối.
+
+Cấu hình URL: [Authentication → URL Configuration](https://supabase.com/dashboard/project/zjbsvqryaxtafuffpifu/auth/url-configuration): site URL `https://trisanghy.github.io/open-iptv-pro/` và redirect URL `https://trisanghy.github.io/open-iptv-pro/**`.
+GitHub: [Authentication → Providers](https://supabase.com/dashboard/project/zjbsvqryaxtafuffpifu/auth/providers); callback trên GitHub OAuth App: `https://zjbsvqryaxtafuffpifu.supabase.co/auth/v1/callback`.
