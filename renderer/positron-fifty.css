@@ -174,3 +174,9 @@ html.p50-35 #page-tv .advanced-timebar{background:var(--po-card)!important;borde
 html.p50-35 #page-tv .timeshift-actions{display:flex!important;align-items:center!important;gap:5px!important;flex-wrap:wrap!important}
 html.p50-35 #page-tv .timeshift-actions b{font-size:11px!important;color:var(--po-accent)!important;margin-right:5px!important}
 html.p50-35 #page-tv .timeshift-actions .btn{min-height:32px!important;font-size:10px!important;padding:5px 8px!important}
+
+/* Iteration 36: Collapse Timeshift and Quick Tools behind explicit button */
+html.p50-36 #positronToolsToggle{display:flex!important;align-items:center;justify-content:space-between;width:100%;min-height:36px!important;padding:7px 12px!important;text-align:left;background:var(--po-card)!important;color:var(--po-muted)!important;border:1px solid var(--po-line)!important;border-radius:10px!important;font-size:11px!important;font-weight:650!important}
+html.p50-36 #positronToolsToggle:hover{color:var(--po-ink)!important;border-color:var(--po-accent)!important}
+html.p50-36.p50-tools-closed #page-tv :is(.advanced-timebar,.compact-tools){display:none!important}
+html.p50-36 #positronToolsToggle[aria-expanded=true]{color:var(--po-ink)!important;border-color:var(--po-accent)!important}
