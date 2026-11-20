@@ -16,11 +16,12 @@
  });
  const LEGAL='Tôi đã kiểm tra và xác nhận có quyền hợp pháp để nhập, truy cập và xem nội dung từ nguồn này; tự chịu trách nhiệm về dữ liệu, bản quyền và việc sử dụng.';
  const DISCOVERY_TERMS='Tôi xác nhận đã tự kiểm tra điều khoản, nguồn gốc, phạm vi cấp phép và quyền truy cập của nhà cung cấp trước khi sử dụng Smart Discovery.';
- const DISCOVERY_RIGHTS='Tôi hiểu kênh công khai hoặc phát được KHÔNG chứng minh được phép xem; tôi xác nhận có quyền sử dụng nội dung mình chọn và tự chịu trách nhiệm về bản quyền, pháp luật và dữ liệu.';
+ const DISCOVERY_RIGHTS='Tôi hiểu kênh công khai hoặc phát được KHÔNG chứng minh được phép xem; tôi xác nhận có quyền hợp pháp để sử dụng nội dung mình chọn.';
+ const DISCOVERY_RESPONSIBILITY='Tôi đồng ý tự chịu trách nhiệm đối với việc tìm kiếm, kiểm tra, nhập, lưu, phát và chia sẻ các nguồn nội dung mình chọn; tôi hiểu tác giả không cung cấp giấy phép, không kiểm soát nội dung bên thứ ba và chỉ miễn trừ trách nhiệm trong phạm vi pháp luật cho phép.';
  function isReady(kind,accepted){
   const checks=Array.isArray(accepted)?accepted:[];
   return kind==='smart-start'||kind==='smart-import'
-   ?checks.length>=2&&checks[0]===true&&checks[1]===true
+   ?checks.length===3&&checks.every(value=>value===true)
    :kind==='file'||kind==='url'?checks.length>=1&&checks[0]===true:false;
  }
  function request(kind,detail=''){
@@ -41,7 +42,7 @@
    extra.textContent=detail|| (discovery
     ?'Smart Discovery chỉ tổng hợp liên kết từ bên thứ ba. Việc thấy kênh hoặc kiểm tra tín hiệu không chứng minh có giấy phép hoặc quyền xem.'
     :'Chỉ thêm file hoặc URL M3U mà bạn có quyền sử dụng. Không nhập nguồn trái phép hoặc dữ liệu bí mật của người khác.');
-   const checks=discovery?[DISCOVERY_TERMS,DISCOVERY_RIGHTS]:[LEGAL];
+   const checks=discovery?[DISCOVERY_TERMS,DISCOVERY_RIGHTS,DISCOVERY_RESPONSIBILITY]:[LEGAL];
    const inputs=checks.map((line,i)=>{
     const label=doc.createElement('label');label.className='iptv-legal-check';
     const input=doc.createElement('input');input.type='checkbox';input.checked=false;input.required=true;
@@ -55,7 +56,7 @@
    link.target='_blank';link.rel='noopener noreferrer';
    const cancel=doc.createElement('button');cancel.type='button';cancel.className='btn btn-subtle';cancel.textContent='Hủy';
    const yes=doc.createElement('button');yes.type='button';yes.className='btn btn-primary';
-   yes.textContent=kind==='smart-start'?'Tôi xác nhận, bắt đầu khám phá':'Tôi xác nhận và tiếp tục';
+   yes.textContent=kind==='smart-start'?'Tôi đồng ý, bắt đầu khám phá':'Tôi xác nhận và tiếp tục';
    yes.disabled=true;
    let finished=false;
    const finish=ok=>{
