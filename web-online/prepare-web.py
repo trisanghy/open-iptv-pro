@@ -100,7 +100,7 @@ if web_features.count(day_source)!=1 or web_features.count(day_end)!=1 or js.cou
 js=js[:js.index(' function renderEPG(){')]+web_features[web_features.index(day_source):web_features.index(day_end)]+js[js.index(day_end):]
 features.write_text(js,encoding='utf-8')
 
-for name in ('web-only.js','web-only.css','resume-last.js','resume-last.css','browser-channel-check.js','web-autoplay.js','cloud-core.js','cloud-sync.js','cloud-sync.css','web-volume.css','web-volume.js','web-mobile-player.css','web-mobile-player.js','web-player-icons.css','web-player-icons.js','web-tv-wide.css','web-mobile-controls-polish.css','web-mobile-volume.js','web-mobile-volume.css','web-desktop-download.css','web-desktop-download.js','web-recent-channels.js','web-compact-toolbar.css','web-snapshot-batch.js','web-background-audio.js','web-background-audio.css','web-ios-audio-recovery.js','web-ios-audio-recovery.css','web-fullscreen-controls.css','web-fullscreen-controls.js','web-mobile-tablet-controls.css','web-epg-day.css','web-smart-discovery.js','smart-discovery-ui.js','source-use-consent-v1.js','source-use-consent-v1.css'):
+for name in ('web-only.js','web-only.css','resume-last.js','resume-last.css','browser-channel-check.js','web-autoplay.js','cloud-core.js','cloud-sync.js','cloud-sync.css','web-volume.css','web-volume.js','web-mobile-player.css','web-mobile-player.js','web-player-icons.css','web-player-icons.js','web-tv-wide.css','web-mobile-controls-polish.css','web-mobile-volume.js','web-mobile-volume.css','web-desktop-download.css','web-desktop-download.js','web-recent-channels.js','web-compact-toolbar.css','web-snapshot-batch.js','web-background-audio.js','web-background-audio.css','web-ios-audio-recovery.js','web-ios-audio-recovery.css','web-fullscreen-controls.css','web-fullscreen-controls.js','web-mobile-tablet-controls.css','web-epg-day.css','web-smart-discovery-compact.css','web-smart-discovery.js','smart-discovery-ui.js','source-use-consent-v1.js','source-use-consent-v1.css'):
     source=Path(__file__).resolve().parent/name
     if not source.is_file():source=Path(__file__).resolve().parent.parent/name
     copy2(source,out/name)
@@ -533,6 +533,16 @@ if html.count('src="web-language-supplement.js"')!=1:
     sys.exit('Offline Web dictionary asset anchor changed')
 html=html.replace('src="web-language-supplement.js"',
     'src="web-language-supplement.js?v=drawer-native-epg-20261120a"',1)
+# Keep Web Discovery's compact markup when regenerating from desktop WebView sources.
+root_html=(Path(__file__).resolve().parent.parent/'index.html').read_text(encoding='utf-8')
+discovery_start='<section class="source-hub-section smart-discovery-section" id="smartDiscoverySection">'
+discovery_end='<section class="source-hub-section" id="collectorSection">'
+if not all(x in html and x in root_html for x in (discovery_start,discovery_end)):
+    sys.exit('Missing Web Discovery compact layout anchors')
+html=html[:html.index(discovery_start)]+root_html[root_html.index(discovery_start):root_html.index(discovery_end)]+html[html.index(discovery_end):]
+html=html.replace('</head>','<link rel="stylesheet" href="web-smart-discovery-compact.css?v=discovery-compact-20261120a"/></head>',1)
+if html.count('web-smart-discovery-compact.css?v=')!=1:
+    sys.exit('Missing compact Discovery stylesheet')
 (out/'index.html').write_text(html,encoding='utf-8')
 (out/'.nojekyll').write_text('')
 (out/'manifest.webmanifest').write_text(json.dumps({

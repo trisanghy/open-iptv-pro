@@ -5,7 +5,11 @@
  let discovery=null,candidates=[],busy=false,stop=false,selectionLabel='VN',catalogKind='country',generation=0,visibleRows=150;
  let loadingController=null,checkingController=null;
  const labels={unchecked:'Chưa kiểm tra',alive:'Sống',dead:'Die',uncertain:'Chưa rõ'};
- const say=s=>{$('smartStatus').textContent=s;};
+ const say=s=>{$('smartStatus').textContent=s;$('smartStatus').title=s;};
+ function updateAdvancedSummary(){
+  const select=$('smartLimit'),workers=$('smartWorkers'),summary=$('smartAdvancedSummary');
+  if(summary)summary.textContent=(select?.value==='all'?'Tất cả':select?.selectedOptions?.[0]?.textContent||select?.value||'Tất cả')+' · '+(workers?.value||3)+' luồng';
+ }
  function controls(isBusy){busy=isBusy;
   for(const id of ['smartFind','smartVerify','smartImportAlive','smartImportAll','smartCountry','smartLimit','smartCatalog','smartWorkers'])$(id).disabled=isBusy;
   $('smartVerify').disabled=isBusy||!candidates.length;
@@ -17,8 +21,11 @@
   const totals={alive:0,dead:0,uncertain:0,unchecked:0};
   for(const c of candidates)totals[c.status]=(totals[c.status]||0)+1;
   const el=$('smartMetrics');el.replaceChildren();
-  for(const [name,n] of [['Tìm thấy',candidates.length],['Sống',totals.alive],['Die',totals.dead],['Chưa rõ',totals.uncertain],['Chưa kiểm tra',totals.unchecked]]){
-   const badge=document.createElement('span');badge.textContent=name+': '+n;el.append(badge);
+  for(const [name,n,key] of [['Tổng',candidates.length,'total'],['Sống',totals.alive,'alive'],['Die',totals.dead,'dead'],['Chưa rõ',totals.uncertain,'uncertain'],['Chưa KT',totals.unchecked,'unchecked']]){
+   const badge=document.createElement('span');badge.dataset.status=key;
+   const title=document.createElement('small');title.textContent=name;
+   const value=document.createElement('strong');value.textContent=n.toLocaleString('vi-VN');
+   badge.append(title,value);el.append(badge);
   }
  }
  function renderRows(){
@@ -33,7 +40,10 @@
    matched++;if(displayed>=visibleRows)continue;displayed++;
    const row=document.createElement('article');row.className='smart-row';const details=document.createElement('div');
    const strong=document.createElement('strong');strong.textContent=c.name;
-   const hint=document.createElement('small');hint.textContent=(c.group||'Khác')+' · '+(c.reason||c.url);
+   const hint=document.createElement('small');
+   const group=String(c.group||'').trim();
+   hint.textContent=(group&&group.toLowerCase()!=='undefined'?group:'Khác')+' · '+(c.reason||c.url);
+   hint.title=hint.textContent;
    details.append(strong,hint);const pill=document.createElement('span');pill.className='smart-pill '+c.status;pill.textContent=labels[c.status]||labels.unchecked;
    row.append(details,pill);
    // Preview from the live candidate URL; this does not import the channel,
@@ -167,6 +177,9 @@
   discovery=null;candidates=[];visibleRows=150;$('smartProgressBar').style.width='0%';
   say('Đã đổi danh mục. Nhấn Khám phá nguồn để tải danh sách mới.');render();void choices();
  });
+ $('smartLimit')?.addEventListener('change',updateAdvancedSummary);
+ $('smartWorkers')?.addEventListener('change',updateAdvancedSummary);
+ updateAdvancedSummary();
  $('smartSearch')?.addEventListener('input',()=>{visibleRows=150;renderRows();});
  $('smartStatusFilter')?.addEventListener('change',()=>{visibleRows=150;renderRows();});
  window.IPTVSmartDiscovery={find,verify};

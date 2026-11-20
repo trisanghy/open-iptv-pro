@@ -91,3 +91,19 @@ test('Web scripts load before UI and keep builder deployment regeneration in syn
  assert.match(builder,/smart-discovery-ui\.js/);
  assert.match(builder,/source-use-consent-v1\.js/);
 });
+
+ test('Compact discovery markup retains every action, preserves legal confirmation, and deploys as Web only',()=>{
+  const css=fs.readFileSync(path.join(root,'web-smart-discovery-compact.css'),'utf8');
+  for(const id of ['smartCatalog','smartCountry','smartFind','smartVerify','smartCancel','smartLimit','smartWorkers','smartStatus','smartMetrics','smartSearch','smartStatusFilter','smartImportAlive','smartImportAll','smartResults']){
+   assert.match(html,new RegExp('id="'+id+'"'));
+  }
+  assert.match(html,/class="smart-main-filters"/);
+  assert.match(html,/class="smart-advanced-options"/);
+  assert.match(html,/class="smart-legal-info"/);
+  assert.match(html,/phải tích xác nhận riêng/);
+  assert.match(html,/web-smart-discovery-compact\.css\?v=discovery-compact-20261120a/);
+  assert.match(css,/@media\(max-width:700px\)/);
+  assert.match(css,/#smartDiscoverySection \.smart-row/);
+  assert.match(builder,/Missing Web Discovery compact layout anchors/);
+  assert.match(builder,/web-smart-discovery-compact\.css/);
+ });
