@@ -5,9 +5,8 @@ const app=read('app.js'),advanced=read('advanced.js'),css=read('web-mobile-playe
 function favorites(){
  const begin=app.indexOf(' function renderFavorites(){'),end=app.indexOf(' function updatePlayerFavorite(){',begin);
  assert.ok(begin>=0&&end>begin);
- const handlers={};const buttons={view:{},star:{}};
+ const handlers={};const buttons={star:{}};
  const card={dataset:{},attrs:{},addEventListener(n,cb){handlers[n]=cb},setAttribute(n,v){this.attrs[n]=v},querySelector(q){
-  if(q==='button:not(.fav-unstar)')return buttons.view;
   if(q==='.fav-unstar')return buttons.star;
   return null;
  }};
@@ -29,14 +28,20 @@ test('tapping favorite name, image or card plays immediately',()=>{
  assert.deepEqual(h.calls.pages,['tv','tv','tv']);
  assert.deepEqual(h.calls.play,['vtv1','vtv1','vtv1']);
 });
-test('star button cannot accidentally play, Xem button plays exactly once',()=>{
+test('star only toggles favorite; tapping title, image or row returns to TV and plays once',()=>{
  const h=favorites();let stopped=0;
  h.buttons.star.onclick({stopPropagation(){stopped++}});
  h.handlers.click({target:{closest:()=>h.buttons.star}});
  assert.deepEqual(h.calls.star,['vtv1']);assert.deepEqual(h.calls.play,[]);
- h.buttons.view.onclick({stopPropagation(){stopped++}});
- h.handlers.click({target:{closest:()=>h.buttons.view}});
- assert.deepEqual(h.calls.play,['vtv1']);assert.equal(stopped,2);
+ h.handlers.click({target:{closest:()=>null}});
+ assert.deepEqual(h.calls.play,['vtv1']);assert.deepEqual(h.calls.pages,['tv']);assert.equal(stopped,1);
+});
+test('renderer has no Xem button: only the independent star remains',()=>{
+ const h=favorites();
+ assert.doesNotMatch(h.card.innerHTML,/▶ Xem/);
+ assert.equal((h.card.innerHTML.match(/<button\b/g)||[]).length,1);
+ assert.match(h.card.innerHTML,/class="fav-unstar"/);
+ assert.equal(h.card.attrs['aria-label'],'Phát kênh VTV1 (Nguồn 1)');
 });
 test('favorite card keyboard supports Enter and Space, not nested key events',()=>{
  const h=favorites();let prevented=0;
@@ -67,7 +72,7 @@ test('iPhone synthesized mouseenter never schedules popup and desktop retains pr
 test('mobile preview overlay hidden, static build and latest script assets maintained',()=>{
  assert.match(css,/html\[data-iptv-device="mobile"\] body #channelPreview/);
  assert.match(css,/display:none!important;visibility:hidden!important;pointer-events:none!important/);
- assert.match(html,/app\.js\?v=favorites-tap-20261119a/);
+ assert.match(html,/app\.js\?v=favorites-direct-play-20261120a/);
  assert.match(html,/advanced\.js\?v=favorites-tap-20261119a/);
  assert.match(html,/web-mobile-player\.css\?v=favorites-tap-20261119a/);
  assert.match(builder,/Preserve Web favorite card tap-to-play/);
