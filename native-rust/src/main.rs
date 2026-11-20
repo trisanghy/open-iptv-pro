@@ -975,16 +975,22 @@ fn connect_callbacks(
         let weak=ui.as_weak(); let player=player.clone();
         ui.on_fullscreen_video(move || {
             if let Some(ui)=weak.upgrade() {
-                let result=player.borrow().as_ref().map(|p|{
-                    if p.video_backend()==VideoBackend::EmbeddedSoftware {
-                        let expanded=!ui.get_player_fullscreen();
-                        ui.set_active_page("tv".into());
-                        ui.set_player_fullscreen(expanded);
-                        Ok(if expanded {"Video Slint toàn màn hình"} else {"Đã thoát toàn màn hình"})
-                    } else {
-                        p.fullscreen().map(|_|"Đã chuyển chế độ toàn màn cửa sổ mpv")
+                // Fullscreen is a window/UI operation and must work even when
+                // no channel has been loaded (empty player or CI preview).
+                let external=player.borrow().as_ref().is_some_and(|p|
+                    p.video_backend()==VideoBackend::NativeWindow);
+                let result=if external {
+                    player.borrow().as_ref().unwrap().fullscreen()
+                        .map(|_|"Đã chuyển chế độ toàn màn cửa sổ mpv")
+                } else {
+                    let expanded=!ui.get_player_fullscreen();
+                    ui.set_active_page("tv".into());
+                    ui.set_player_fullscreen(expanded);
+                    if std::env::var("OPEN_IPTV_UI_SCREENSHOT_FIXTURE").as_deref()==Ok("1") {
+                        eprintln!("[UI_FULLSCREEN_TEST] enabled={expanded}");
                     }
-                }).unwrap_or_else(||Err("Chưa phát kênh".into()));
+                    Ok(if expanded {"Video Slint toàn màn hình"} else {"Đã thoát toàn màn hình"})
+                };
                 status(&ui,result.map(str::to_string).unwrap_or_else(|e|e));
             }
         });
