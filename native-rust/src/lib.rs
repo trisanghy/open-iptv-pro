@@ -4,6 +4,7 @@ pub mod failover;
 pub mod export;
 pub mod health;
 pub mod m3u;
+pub mod logo_cache;
 pub mod netguard;
 pub mod media;
 pub mod model;

@@ -1,7 +1,7 @@
-use open_iptv_pro_native::{epg, epg_cache, export, failover, health, m3u, media, model::{Channel, NativeData, Source}, mpv::{self, VideoBackend}, player::Player as Mpv, storage, netguard};
+use open_iptv_pro_native::{epg, epg_cache, export, failover, health, m3u, logo_cache, media, model::{Channel, NativeData, Source}, mpv::{self, VideoBackend}, player::Player as Mpv, storage, netguard};
 use slint::{ComponentHandle, ModelRc, VecModel};
 use std::cell::RefCell;
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 use std::path::PathBuf;
 use std::process::Child;
 use std::rc::Rc;
@@ -27,6 +27,8 @@ struct State {
     guide_day_offset: i32,
     folder_filter: Option<String>,
     selected_url: Option<String>,
+    logo_images: HashMap<String,slint::Image>,
+    logos_requested: HashSet<String>,
 }
 
 enum ImportGuard { New, ExistingAnyOrigin, ExistingOrigin(String) }
@@ -37,6 +39,7 @@ enum Background {
     Health(Vec<(String, health::Health)>),
     Snapshot(Result<(PathBuf, bool), String>),
     SnapshotBatch { ok: usize, cached: usize, fail: usize },
+    Logos(Vec<(String,Option<std::path::PathBuf>)>),
 }
 
 /// Download, parse and persist EPG on a worker thread, never serializing a
@@ -142,6 +145,8 @@ fn refresh(ui: &MainWindow, state: &mut State) {
         ChannelView {
             title: ch.name.clone().into(),
             subtitle: format!("{} · {}", ch.group, ch.tvg_id).into(),
+            logo: state.logo_images.get(&ch.logo).cloned().unwrap_or_default(),
+            has_logo: state.logo_images.contains_key(&ch.logo),
             epg: show.into(),
             favorite: state.data.favorite_urls.contains(&ch.url),
             health: state.data.health.get(&ch.url).cloned().unwrap_or_default().into(),
@@ -1202,6 +1207,7 @@ fn background_timer(ui: &MainWindow, shared: Rc<RefCell<State>>, rx: Receiver<Ba
     let mut last_frame_refresh=Instant::now();
     let mut last_player_status=Instant::now();
     let mut last_frame_error=Instant::now();
+    let mut last_logo_check=Instant::now()-Duration::from_secs(5);
     timer.start(slint::TimerMode::Repeated, Duration::from_millis(40), move || {
         let Some(ui)=weak.upgrade() else { return; };
         while let Ok(message)=rx.try_recv() {
@@ -1221,6 +1227,22 @@ fn background_timer(ui: &MainWindow, shared: Rc<RefCell<State>>, rx: Receiver<Ba
                     Err(e)=>status(&ui,format!("Snapshot lỗi: {e}")),
                 },
                 Background::SnapshotBatch{ok,cached,fail}=>status(&ui,format!("Snapshot hàng loạt: {ok} mới · {cached} cache · {fail} lỗi")),
+                Background::Logos(results)=>{
+                    let mut state=shared.borrow_mut();
+                    let mut changes=0;
+                    for (url,path) in results {
+                        if let Some(path)=path {
+                            if state.logo_images.len()>=300 {break;}
+                            if !state.logo_images.contains_key(&url) {
+                                if let Ok(image)=slint::Image::load_from_path(&path) {
+                                    state.logo_images.insert(url,image);
+                                    changes+=1;
+                                }
+                            }
+                        }
+                    }
+                    if changes>0 {refresh(&ui,&mut state);}
+                },
                 Background::Epg {source,result} => {
                     // A previous URL fetch must never replace a newly selected guide.
                     if source.as_ref().is_some_and(|url| shared.borrow().data.epg_url != *url) {
@@ -1240,6 +1262,44 @@ fn background_timer(ui: &MainWindow, shared: Rc<RefCell<State>>, rx: Receiver<Ba
                         Err(e) => status(&ui,format!("EPG lỗi, giữ lịch trước đó: {e}")),
                     }
                 }
+            }
+        }
+        // Fetch at most 16 new logos per batch on background workers and
+        // never block frame delivery or user input with network requests.
+        if last_logo_check.elapsed() >= Duration::from_secs(3) {
+            last_logo_check=Instant::now();
+            let todo={
+                let mut state=shared.borrow_mut();
+                let logos=state.visible.iter().filter_map(|idx|state.data.channels.get(*idx))
+                    .filter(|c|!c.logo.is_empty()).map(|c|c.logo.clone()).collect::<Vec<_>>();
+                let mut todo=Vec::new();
+                for url in logos {
+                    if todo.len()>=16 || state.logos_requested.len()>=300 {break;}
+                    if state.logo_images.contains_key(&url) ||
+                        !state.logos_requested.insert(url.clone()) {continue;}
+                    todo.push(url);
+                }
+                todo
+            };
+            if !todo.is_empty() {
+                let tx=tx.clone();
+                std::thread::spawn(move||{
+                    let results=std::sync::Mutex::new(Vec::new());
+                    std::thread::scope(|scope|{
+                        for chunk in todo.chunks(4) {
+                            for url in chunk {
+                                let output=&results;
+                                scope.spawn(move||{
+                                    let path=logo_cache::fetch(url).ok().flatten();
+                                    if let Ok(mut guard)=output.lock(){guard.push((url.clone(),path));}
+                                });
+                            }
+                        }
+                    });
+                    if let Ok(logo_results)=results.into_inner() {
+                        let _=tx.send(Background::Logos(logo_results));
+                    }
+                });
             }
         }
         // Limit refresh frequency and keep the last usable guide on errors.
@@ -1354,7 +1414,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let epg_source=saved.epg_url.clone();
     let state=Rc::new(RefCell::new(State {
         selected_url:if saved.last_channel_url.is_empty(){None}else{Some(saved.last_channel_url.clone())},
-        data:saved,visible:Vec::new(),total_matches:0,page:0,selected_source:None,favorites_only:false,recent_only:false,playback_candidates:Vec::new(),playback_index:0,pending_delete:None,normalized_epg:normalize_guide(&cached_epg),current_epg:cached_epg,epg_schedule:cached_schedule,guide_day_offset:0,folder_filter:None,
+        data:saved,visible:Vec::new(),total_matches:0,page:0,selected_source:None,favorites_only:false,recent_only:false,playback_candidates:Vec::new(),playback_index:0,pending_delete:None,normalized_epg:normalize_guide(&cached_epg),current_epg:cached_epg,epg_schedule:cached_schedule,guide_day_offset:0,folder_filter:None,logo_images:HashMap::new(),logos_requested:HashSet::new(),
     }));
     let ui=MainWindow::new()?;
     refresh(&ui,&mut state.borrow_mut());

@@ -6,6 +6,8 @@ import { Button, LineEdit, ListView, ScrollView, AboutSlint, CheckBox, ComboBox,
 export struct ChannelView {
     title: string,
     subtitle: string,
+    logo: image,
+    has-logo: bool,
     epg: string,
     favorite: bool,
     health: string,
@@ -466,7 +468,14 @@ export component MainWindow inherits Window {
                                             Rectangle {
                                                 width: 40px; height: 40px; border-radius: 7px;
                                                 background: #293d56;
-                                                Text { text: "TV"; color: #b4cbe7; font-size: 11px; vertical-alignment: center; horizontal-alignment: center; }
+                                                Image {
+                                                    source: ch.logo;
+                                                    width: parent.width;
+                                                    height: parent.height;
+                                                    image-fit: contain;
+                                                    visible: ch.has-logo;
+                                                }
+                                                Text { text: "TV"; visible: !ch.has-logo; color: #b4cbe7; font-size: 11px; vertical-alignment: center; horizontal-alignment: center; }
                                             }
                                             VerticalLayout {
                                                 spacing: 3px;
