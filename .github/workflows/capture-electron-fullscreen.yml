@@ -1,4 +1,4 @@
-name: Capture Electron fullscreen UI
+name: Capture Electron desktop main and fullscreen UI
 on:
   push:
     branches:
@@ -23,7 +23,7 @@ jobs:
           sudo apt-get install -y -qq xvfb libgtk-3-0 libnss3 libasound2t64 libgbm1 libxss1 libatk-bridge2.0-0 libdrm2
           npm install --no-audit --no-fund
           npm install --no-save --no-audit --no-fund playwright-core
-      - name: Launch actual Electron renderer and capture fullscreen
+      - name: Launch actual Electron renderer and capture main window plus fullscreen
         shell: bash
         run: |
           set -Eeuo pipefail
@@ -52,6 +52,11 @@ jobs:
            }
            if(!page)throw Error('Electron renderer not found: '+context.pages().map(p=>p.url()).join(','));
            await page.waitForSelector('#playerBox',{timeout:20000});
+           await page.waitForTimeout(800);
+           await page.screenshot({path:'screenshots/electron-main-window-real.png',fullPage:false});
+           const main=await page.evaluate(()=>({title:document.title,fullscreen:!!document.fullscreenElement,activePage:document.querySelector('.page.active-page')?.id||null,channelChooser:!!document.getElementById('webChannelChooser'),quickTools:!!document.getElementById('quickTools'),windowWidth:innerWidth,windowHeight:innerHeight}));
+           fs.writeFileSync('screenshots/main-inspection.json',JSON.stringify(main,null,2));
+           if(main.fullscreen||main.activePage!=='page-tv')throw Error('Not a real main TV window');
            await page.evaluate(async()=>{
             const box=document.getElementById('playerBox');
             const title=document.getElementById('playingTitle');
@@ -73,6 +78,6 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: actual-electron-fullscreen-screenshot
+          name: actual-electron-main-and-fullscreen-screenshots
           path: screenshots/
           retention-days: 7
