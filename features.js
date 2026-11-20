@@ -323,6 +323,29 @@
  // Expanded channels persist through the minute-by-minute EPG refresh.
  const expandedEPGChannels=new Set();
  let expandedEPGDay='';
+ function epgChannelLogo(channel,channels){
+  const usable=value=>{
+   const url=String(value||'').trim();
+   return /^(https?:\/\/|data:image\/(?:png|jpeg|webp|gif);base64,)/i.test(url)?url:'';
+  };
+  const own=usable(channel.logo);if(own)return own;
+  const id=String(channel.tvgId||'').trim().toLocaleLowerCase('vi-VN');
+  const name=value=>String(value||'').replace(/\s*\((?:Nguồn|Source)\s*\d+\)\s*$/i,'').trim().toLocaleLowerCase('vi-VN');
+  const channelName=name(channel.name);
+  for(const other of channels){
+   if(other===channel)continue;
+   const logo=usable(other.logo);
+   if(logo&&id&&String(other.tvgId||'').trim().toLocaleLowerCase('vi-VN')===id)return logo;
+  }
+  if(channelName)for(const other of channels){
+   if(other===channel||name(other.name)!==channelName)continue;
+   const otherId=String(other.tvgId||'').trim().toLocaleLowerCase('vi-VN');
+   const logo=usable(other.logo);
+   if(logo&&(!id||!otherId||id===otherId))return logo;
+  }
+  return '';
+ }
+
  function currentEPGDay(nowMs){
   const d=new Date(nowMs);
   return {start:new Date(d.getFullYear(),d.getMonth(),d.getDate()).getTime(),
@@ -333,7 +356,8 @@
   const clock=Date.now(),day=currentEPGDay(clock),dayKey=String(day.start);
   if(expandedEPGDay!==dayKey){expandedEPGChannels.clear();expandedEPGDay=dayKey;}
   const filter=String($('#epgSearch')?.value||'').trim().toLocaleLowerCase('vi-VN');
-  const matched=ctx.getChannels().filter(c=>!filter||(String(c.name||'')+' '+String(c.tvgId||'')).toLocaleLowerCase('vi-VN').includes(filter))
+  const channels=ctx.getChannels();
+  const matched=channels.filter(c=>!filter||(String(c.name||'')+' '+String(c.tvgId||'')).toLocaleLowerCase('vi-VN').includes(filter))
    .map(c=>({channel:c,items:guideLib.find(guide,c).filter(p=>Number.isFinite(p.start)&&Number.isFinite(p.end)&&p.start<day.end&&p.end>day.start)
     .sort((a,b)=>a.start-b.start)})).filter(x=>x.items.length);
   const count=matched.reduce((n,x)=>n+x.items.length,0);
@@ -354,10 +378,21 @@
    const current=items.find(p=>p.start<=clock&&p.end>clock);
    const hint=current?'Đang phát: '+String(current.title||'Chưa rõ'):'Chạm để xem lịch hôm nay';
    const card=document.createElement('details');card.className='epg-row epg-day-channel';card.dataset.channelKey=key;
-   card.innerHTML='<summary class="epg-channel-heading"><span class="epg-channel-badge" aria-hidden="true">▤</span>'
+   card.innerHTML='<summary class="epg-channel-heading"><span class="epg-channel-badge" aria-hidden="true"><span class="epg-channel-fallback">'+esc(String(c.name||'TV').replace(/\s*\((?:Nguồn|Source)\s*\d+\)\s*$/i,'').trim().slice(0,4).toUpperCase()||'TV')+'</span></span>'
     +'<span class="epg-channel-copy"><strong>'+esc(c.name)+'</strong><small>'+esc(hint)+'</small></span>'
     +'<span class="epg-channel-count">'+items.length+' chương trình</span><span class="epg-channel-chevron" aria-hidden="true"></span></summary>'
     +'<div class="epg-day-list"></div>';
+   const logoURL=epgChannelLogo(c,channels);
+   if(logoURL){
+    const badge=card.querySelector('.epg-channel-badge');
+    if(badge){
+     const img=document.createElement('img');
+     img.className='epg-channel-logo';img.alt='';img.loading='lazy';img.decoding='async';
+     img.addEventListener('load',()=>badge.classList.add('has-logo'));
+     img.addEventListener('error',()=>{badge.classList.remove('has-logo');img.remove();});
+     img.src=logoURL;badge.append(img);
+    }
+   }
    const list=card.querySelector('.epg-day-list');
    const show=()=>{
     // Render all programmes in the day ONLY when expanded.

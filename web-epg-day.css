@@ -27,7 +27,11 @@
 #page-epg .epg-channel-heading::-webkit-details-marker{display:none}
 #page-epg .epg-channel-heading:focus-visible{outline:2px solid var(--accent,#c18bf1);outline-offset:-3px}
 #page-epg .epg-day-channel[open]>.epg-channel-heading{background:color-mix(in srgb,var(--accent,#a875d0) 12%,var(--surface2,#152232))!important;border-bottom:1px solid var(--edge,#354356)!important}
-#page-epg .epg-channel-badge{flex:0 0 32px;display:grid;place-items:center;width:32px;height:32px;border-radius:8px;background:color-mix(in srgb,var(--accent,#ae81ed) 15%,transparent);color:var(--accent,#c899f0);font-size:16px;line-height:1}
+#page-epg .epg-channel-badge{position:relative;flex:0 0 40px;display:grid;place-items:center;width:40px;height:36px;overflow:hidden;border-radius:7px;background:transparent;color:var(--muted,#abb8c7);font-size:11px;font-weight:750;line-height:1;letter-spacing:-.2px}
+#page-epg .epg-channel-fallback{display:block;max-width:100%;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+#page-epg .epg-channel-logo{position:absolute;inset:0;width:100%;height:100%;display:block;object-fit:contain;object-position:center;opacity:0;transition:opacity .12s ease}
+#page-epg .epg-channel-badge.has-logo .epg-channel-logo{opacity:1}
+#page-epg .epg-channel-badge.has-logo .epg-channel-fallback{visibility:hidden}
 #page-epg .epg-channel-copy{flex:1 1 auto;min-width:0;display:grid;gap:4px}
 #page-epg .epg-channel-copy>strong{display:block;font-size:14px;color:var(--text,#eff4ff);font-weight:750;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 #page-epg .epg-channel-copy>small{display:block;font-size:11px;color:var(--muted,#a8b7ca);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
