@@ -112,3 +112,12 @@
   #page-tv .player-control-card .unified-ai-content .caption-third-controls .caption-tts-main>:is(#liveTtsVoicePreview,#liveTtsInstall,.caption-tts-footer){grid-column:1/-1!important;grid-row:5!important}
   #page-tv .player-control-card .unified-ai-content .caption-third-controls .caption-tts-main>:is(#liveTtsStatus,#aiHeatWarningInline){grid-column:1/-1!important;grid-row:6!important}
 }
+
+/* Heat warning follows status instead of sharing its grid cell. */
+#page-tv .player-control-card .unified-ai-content .caption-third-controls .caption-tts-main>#aiHeatWarningInline:not([hidden]){grid-column:1/-1!important;grid-row:4!important}
+@container (max-width:740px){
+ #page-tv .player-control-card .unified-ai-content .caption-third-controls .caption-tts-main>#aiHeatWarningInline:not([hidden]){grid-row:5!important}
+}
+@media(max-width:520px){
+ #page-tv .player-control-card .unified-ai-content .caption-third-controls .caption-tts-main>#aiHeatWarningInline:not([hidden]){grid-row:7!important}
+}
