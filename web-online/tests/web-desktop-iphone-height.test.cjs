@@ -73,8 +73,8 @@ test('CSS only changes vertical shell size for desktop on a phone; preserves pla
  assert.match(css,/#appShell/);
  assert.match(css,/overflow-y:auto!important/);
  assert.doesNotMatch(css,/aspect-ratio|#playerBox|\.player-box video/);
- assert.match(html,/web-desktop-viewport-fix\.js\?v=desktop-iphone-height-20261120a/);
- assert.match(html,/web-desktop-viewport-fix\.css\?v=desktop-iphone-height-20261120a/);
+ assert.match(html,/web-desktop-viewport-fix\.js\?v=desktop-iphone-drawer-20261120a/);
+ assert.match(html,/web-desktop-viewport-fix\.css\?v=desktop-iphone-drawer-20261120a/);
  assert.match(builder,/Desktop-on-iPhone viewport bootstrap marker changed/);
  assert.match(builder,/copy2\(source,out\/asset\)/);
 });
