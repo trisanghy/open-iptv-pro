@@ -72,8 +72,8 @@ test('iPhone synthesized mouseenter never schedules popup and desktop retains pr
 test('mobile preview overlay hidden, static build and latest script assets maintained',()=>{
  assert.match(css,/html\[data-iptv-device="mobile"\] body #channelPreview/);
  assert.match(css,/display:none!important;visibility:hidden!important;pointer-events:none!important/);
- assert.match(html,/app\.js\?v=favorites-direct-play-20261120a/);
- assert.match(html,/advanced\.js\?v=favorites-tap-20261119a/);
+ assert.match(html,/app\.js\?v=web-perf-20261120a/);
+ assert.match(html,/advanced\.js\?v=advanced-health-compact-20261120a/);
  assert.match(html,/web-mobile-player\.css\?v=apple-more-20261120a/);
  assert.match(builder,/Preserve Web favorite card tap-to-play/);
  assert.match(builder,/fav_start=' function renderFavorites\(\)\{'/);
