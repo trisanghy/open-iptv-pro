@@ -3,6 +3,7 @@ const test=require('node:test');
 const assert=require('node:assert/strict');
 const fs=require('node:fs');
 const path=require('node:path');
+const vm=require('node:vm');
 const root=path.resolve(__dirname,'../..');
 const template=fs.readFileSync(path.join(root,'web-online/huong-dan.html'),'utf8');
 const publicHtml=fs.readFileSync(path.join(root,'huong-dan.html'),'utf8');
@@ -12,8 +13,10 @@ const getAnchors=html=>[...html.matchAll(/href="#([^"]+)"/g)].map(m=>m[1]);
 
 test('guide follows the modern Web application design, not a desktop-only guide',()=>{
  for(const html of [template,publicHtml]){
-  assert.match(html,/--bg:#080e15/);
-  assert.match(html,/--accent:#bc7cff/);
+  assert.match(html,/--bg:#080c18/);
+  assert.match(html,/--accent:#a78bfa/);
+  assert.match(html,/--mint:#5de1d1/);
+  assert.match(html,/radial-gradient/);
   assert.match(html,/assets\/icon\.png/);
   assert.match(html,/class="guide-layout"/);
   assert.match(html,/class="site-header"/);
@@ -58,4 +61,40 @@ test('template remains the untranslated source; published page retains 17-langua
   assert.ok(publicHtml.includes('<option value="'+lang+'">'),lang);
  }
  assert.match(publicHtml,/rel="canonical"/);
+});
+
+test('home palette replaces old saturated green and Safari only highlights one tab',()=>{
+ for(const html of [template,publicHtml]){
+  const css=html.split('<style>')[1].split('</style>')[0];
+  assert.doesNotMatch(css,/#214534|#8cf0bc|#224837|#8cf1be|--bg:#080e15/);
+  assert.match(css,/\.mobile-tabs a\.is-current\{background:#292442/);
+  assert.match(css,/@media \(hover:hover\) and \(pointer:fine\)/);
+  assert.doesNotMatch(css,/\.mobile-tabs a:hover,\.mobile-tabs a.is-current/);
+  assert.match(html,/scheduleActive\(\)/);
+ }
+});
+test('scroll tracking never keeps two guide mobile tabs selected',()=>{
+ const script=publicHtml.match(/<script>\s*\(function\(\)\{[\s\S]*?<\/script>/)?.[0];
+ assert.ok(script,'guide nav runtime missing');
+ const ids=['bat-dau','nguon','tv','kenh','epg','mobile','cong-cu','cai-dat','su-co','faq'];
+ const positions=ids.map((_,i)=>i<=2?50-i*250:800+i*300);
+ const sections=ids.map((id,i)=>({id,getBoundingClientRect:()=>({top:positions[i]})}));
+ const clicked=['tv','kenh','epg','nguon','faq'];
+ const links=clicked.map(id=>({
+  href:'#'+id,active:false,attrs:{},
+  getAttribute(name){return name==='href'?this.href:this.attrs[name]},
+  setAttribute(name,value){this.attrs[name]=value},
+  removeAttribute(name){delete this.attrs[name]},
+  classList:{toggle(name,on){this.parent.active=on}}
+ }));
+ for(const link of links)link.classList.parent=link;
+ const listeners={};
+ const document={querySelectorAll(q){return q.startsWith('.side')?links:sections}};
+ const window={innerHeight:800,addEventListener(type,fn){listeners[type]=fn},requestAnimationFrame(fn){fn()}};
+ vm.runInNewContext(script.slice(8,-9),{document,window},{timeout:1000});
+ assert.deepEqual(links.filter(x=>x.active).map(x=>x.href),['#tv']);
+ positions[2]=-450;positions[3]=95;
+ listeners.scroll();
+ assert.deepEqual(links.filter(x=>x.active).map(x=>x.href),['#kenh']);
+ assert.equal(links.filter(x=>x.attrs['aria-current']==='location').length,1);
 });
