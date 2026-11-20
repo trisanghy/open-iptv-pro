@@ -287,3 +287,32 @@ html.p50-50 #positronBar :is(#positronStudioBtn,#positronFocus,#positronHelpBtn)
 html.p50-50 .main :is(.section-heading,.panel-header){min-width:0!important}
 @media(prefers-reduced-motion:reduce){html.p50-50 *:not(video){transition-duration:.01ms!important;animation-duration:.01ms!important;scroll-behavior:auto!important}}
 @media(max-width:960px){html.p50-50 #page-tv .channel-panel{min-height:200px!important}html.p50-50 #page-tv .watch-panel{width:100%!important}}
+
+/* Screenshot review repair: tool disclosure must never inherit Chromium's
+   light native button appearance before the Stage 36 toggle restyling. */
+html[data-positron="true"] #page-tv #positronToolsToggle{
+  appearance:none!important;
+  -webkit-appearance:none!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  min-height:34px!important;
+  width:100%!important;
+  padding:6px 12px!important;
+  background:var(--po-card)!important;
+  color:var(--po-muted)!important;
+  border:1px solid var(--po-line)!important;
+  border-radius:9px!important;
+  font-size:11px!important;
+  font-weight:650!important;
+  cursor:pointer!important;
+  text-align:center!important;
+}
+html[data-positron="true"] #page-tv #positronToolsToggle:hover,
+html[data-positron="true"] #page-tv #positronToolsToggle:focus-visible{
+  border-color:var(--po-accent)!important;
+  color:var(--po-ink)!important;
+}
+html[data-positron="true"] #page-tv #positronToolsToggle[aria-expanded="true"]{
+  color:var(--po-accent)!important;
+}
