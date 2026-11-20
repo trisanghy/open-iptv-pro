@@ -166,10 +166,7 @@ export component MainWindow inherits Window {
             VerticalLayout {
                 padding: root.rail-collapsed ? 6px : 12px;
                 spacing: 3px;
-                Rectangle { height: 38px; border-radius: 8px; background: false ? #264460 : (root.light-mode ? #edf2f7 : #172838);
-    Text { text: root.rail-collapsed ? "☰" : "☰  Thu gọn"; color: false ? #ffffff : (root.light-mode ? #1b3044 : #c6d7e9); font-size: root.rail-collapsed ? 19px : 13px; font-weight: 600; x: root.rail-collapsed ? 0px : 10px; width: parent.width - (root.rail-collapsed ? 0px : 14px); height: parent.height; horizontal-alignment: root.rail-collapsed ? center : left; vertical-alignment: center; overflow: elide; }
-    TouchArea { clicked => { root.rail-collapsed = !root.rail-collapsed; } }
-}
+                Button { text: root.rail-collapsed ? "☰" : "☰  Thu gọn"; height: 38px; clicked => { root.rail-collapsed = !root.rail-collapsed; } }
                 Rectangle {
                     height: root.rail-collapsed ? 50px : 64px;
                     HorizontalLayout {
@@ -191,67 +188,22 @@ export component MainWindow inherits Window {
                     }
                 }
                 Text { text: "THƯ VIỆN"; visible: !root.rail-collapsed; font-size: 10px; font-weight: 700; color: #718da8; height: 31px; vertical-alignment: bottom; }
-                Rectangle { height: 38px; border-radius: 8px; background: root.active-page == "tv" ? #264460 : (root.light-mode ? #edf2f7 : #172838);
-    Text { text: root.rail-collapsed ? "▣" : "▣  Xem truyền hình"; color: root.active-page == "tv" ? #ffffff : (root.light-mode ? #1b3044 : #c6d7e9); font-size: root.rail-collapsed ? 19px : 13px; font-weight: 600; x: root.rail-collapsed ? 0px : 10px; width: parent.width - (root.rail-collapsed ? 0px : 14px); height: parent.height; horizontal-alignment: root.rail-collapsed ? center : left; vertical-alignment: center; overflow: elide; }
-    TouchArea { clicked => { root.navigate("tv"); } }
-}
-                Rectangle { height: 38px; border-radius: 8px; background: root.active-page == "fav" ? #264460 : (root.light-mode ? #edf2f7 : #172838);
-    Text { text: root.rail-collapsed ? "★" : "★  Kênh yêu thích       " + root.favorites-count; color: root.active-page == "fav" ? #ffffff : (root.light-mode ? #1b3044 : #c6d7e9); font-size: root.rail-collapsed ? 19px : 13px; font-weight: 600; x: root.rail-collapsed ? 0px : 10px; width: parent.width - (root.rail-collapsed ? 0px : 14px); height: parent.height; horizontal-alignment: root.rail-collapsed ? center : left; vertical-alignment: center; overflow: elide; }
-    TouchArea { clicked => { root.navigate("fav"); } }
-}
-                Rectangle { height: 38px; border-radius: 8px; background: root.active-page == "recent" ? #264460 : (root.light-mode ? #edf2f7 : #172838);
-    Text { text: root.rail-collapsed ? "◷" : "◷  Xem gần đây            " + root.recent-count; color: root.active-page == "recent" ? #ffffff : (root.light-mode ? #1b3044 : #c6d7e9); font-size: root.rail-collapsed ? 19px : 13px; font-weight: 600; x: root.rail-collapsed ? 0px : 10px; width: parent.width - (root.rail-collapsed ? 0px : 14px); height: parent.height; horizontal-alignment: root.rail-collapsed ? center : left; vertical-alignment: center; overflow: elide; }
-    TouchArea { clicked => { root.navigate("recent"); } }
-}
-                Rectangle { height: 38px; border-radius: 8px; background: root.active-page == "epg" ? #264460 : (root.light-mode ? #edf2f7 : #172838);
-    Text { text: root.rail-collapsed ? "▤" : "▤  Lịch phát sóng EPG"; color: root.active-page == "epg" ? #ffffff : (root.light-mode ? #1b3044 : #c6d7e9); font-size: root.rail-collapsed ? 19px : 13px; font-weight: 600; x: root.rail-collapsed ? 0px : 10px; width: parent.width - (root.rail-collapsed ? 0px : 14px); height: parent.height; horizontal-alignment: root.rail-collapsed ? center : left; vertical-alignment: center; overflow: elide; }
-    TouchArea { clicked => { root.navigate("epg"); } }
-}
-                Rectangle { height: 38px; border-radius: 8px; background: root.active-page == "multiview" ? #264460 : (root.light-mode ? #edf2f7 : #172838);
-    Text { text: root.rail-collapsed ? "⊞" : "⊞  MultiView · 4 kênh"; color: root.active-page == "multiview" ? #ffffff : (root.light-mode ? #1b3044 : #c6d7e9); font-size: root.rail-collapsed ? 19px : 13px; font-weight: 600; x: root.rail-collapsed ? 0px : 10px; width: parent.width - (root.rail-collapsed ? 0px : 14px); height: parent.height; horizontal-alignment: root.rail-collapsed ? center : left; vertical-alignment: center; overflow: elide; }
-    TouchArea { clicked => { root.navigate("multiview"); } }
-}
-                Rectangle { height: 38px; border-radius: 8px; background: root.active-page == "shots" ? #264460 : (root.light-mode ? #edf2f7 : #172838);
-    Text { text: root.rail-collapsed ? "▦" : "▦  Ảnh chụp kênh"; color: root.active-page == "shots" ? #ffffff : (root.light-mode ? #1b3044 : #c6d7e9); font-size: root.rail-collapsed ? 19px : 13px; font-weight: 600; x: root.rail-collapsed ? 0px : 10px; width: parent.width - (root.rail-collapsed ? 0px : 14px); height: parent.height; horizontal-alignment: root.rail-collapsed ? center : left; vertical-alignment: center; overflow: elide; }
-    TouchArea { clicked => { root.navigate("shots"); } }
-}
-                Rectangle { height: 38px; border-radius: 8px; background: root.active-page == "folders" ? #264460 : (root.light-mode ? #edf2f7 : #172838);
-    Text { text: root.rail-collapsed ? "▥" : "▤  Thư mục kênh"; color: root.active-page == "folders" ? #ffffff : (root.light-mode ? #1b3044 : #c6d7e9); font-size: root.rail-collapsed ? 19px : 13px; font-weight: 600; x: root.rail-collapsed ? 0px : 10px; width: parent.width - (root.rail-collapsed ? 0px : 14px); height: parent.height; horizontal-alignment: root.rail-collapsed ? center : left; vertical-alignment: center; overflow: elide; }
-    TouchArea { clicked => { root.navigate("folders"); } }
-}
+                Button { text: root.rail-collapsed ? "▣" : "▣  Xem truyền hình"; height: 38px; clicked => { root.navigate("tv"); } }
+                Button { text: root.rail-collapsed ? "★" : "★  Kênh yêu thích       " + root.favorites-count; height: 38px; clicked => { root.navigate("fav"); } }
+                Button { text: root.rail-collapsed ? "◷" : "◷  Xem gần đây            " + root.recent-count; height: 38px; clicked => { root.navigate("recent"); } }
+                Button { text: root.rail-collapsed ? "▤" : "▤  Lịch phát sóng EPG"; height: 38px; clicked => { root.navigate("epg"); } }
+                Button { text: root.rail-collapsed ? "⊞" : "⊞  MultiView · 4 kênh"; height: 38px; clicked => { root.navigate("multiview"); } }
+                Button { text: root.rail-collapsed ? "▦" : "▦  Ảnh chụp kênh"; height: 38px; clicked => { root.navigate("shots"); } }
+                Button { text: root.rail-collapsed ? "▥" : "▤  Thư mục kênh"; height: 38px; clicked => { root.navigate("folders"); } }
                 Text { text: "CÔNG CỤ"; visible: !root.rail-collapsed; font-size: 10px; font-weight: 700; color: #718da8; height: 31px; vertical-alignment: bottom; }
-                Rectangle { height: 38px; border-radius: 8px; background: root.active-page == "sources" ? #264460 : (root.light-mode ? #edf2f7 : #172838);
-    Text { text: root.rail-collapsed ? "◇" : "◇  Quản lý nguồn       " + root.sources-count; color: root.active-page == "sources" ? #ffffff : (root.light-mode ? #1b3044 : #c6d7e9); font-size: root.rail-collapsed ? 19px : 13px; font-weight: 600; x: root.rail-collapsed ? 0px : 10px; width: parent.width - (root.rail-collapsed ? 0px : 14px); height: parent.height; horizontal-alignment: root.rail-collapsed ? center : left; vertical-alignment: center; overflow: elide; }
-    TouchArea { clicked => { root.navigate("sources"); } }
-}
-                Rectangle { height: 38px; border-radius: 8px; background: root.active-page == "health" ? #264460 : (root.light-mode ? #edf2f7 : #172838);
-    Text { text: root.rail-collapsed ? "↗" : "↗  Sức khỏe kênh / Failover"; color: root.active-page == "health" ? #ffffff : (root.light-mode ? #1b3044 : #c6d7e9); font-size: root.rail-collapsed ? 19px : 13px; font-weight: 600; x: root.rail-collapsed ? 0px : 10px; width: parent.width - (root.rail-collapsed ? 0px : 14px); height: parent.height; horizontal-alignment: root.rail-collapsed ? center : left; vertical-alignment: center; overflow: elide; }
-    TouchArea { clicked => { root.navigate("health"); } }
-}
-                Rectangle { height: 38px; border-radius: 8px; background: root.active-page == "doctor" ? #264460 : (root.light-mode ? #edf2f7 : #172838);
-    Text { text: root.rail-collapsed ? "✚" : "✚  Smart IPTV Doctor"; color: root.active-page == "doctor" ? #ffffff : (root.light-mode ? #1b3044 : #c6d7e9); font-size: root.rail-collapsed ? 19px : 13px; font-weight: 600; x: root.rail-collapsed ? 0px : 10px; width: parent.width - (root.rail-collapsed ? 0px : 14px); height: parent.height; horizontal-alignment: root.rail-collapsed ? center : left; vertical-alignment: center; overflow: elide; }
-    TouchArea { clicked => { root.navigate("doctor"); } }
-}
-                Rectangle { height: 38px; border-radius: 8px; background: root.active-page == "discovery" ? #264460 : (root.light-mode ? #edf2f7 : #172838);
-    Text { text: root.rail-collapsed ? "◎" : "◎  Khám phá IPTV"; color: root.active-page == "discovery" ? #ffffff : (root.light-mode ? #1b3044 : #c6d7e9); font-size: root.rail-collapsed ? 19px : 13px; font-weight: 600; x: root.rail-collapsed ? 0px : 10px; width: parent.width - (root.rail-collapsed ? 0px : 14px); height: parent.height; horizontal-alignment: root.rail-collapsed ? center : left; vertical-alignment: center; overflow: elide; }
-    TouchArea { clicked => { root.navigate("discovery"); } }
-}
-                Rectangle { height: 38px; border-radius: 8px; background: root.active-page == "profiles" ? #264460 : (root.light-mode ? #edf2f7 : #172838);
-    Text { text: root.rail-collapsed ? "♙" : "♙  Hồ sơ / Khóa trẻ em"; color: root.active-page == "profiles" ? #ffffff : (root.light-mode ? #1b3044 : #c6d7e9); font-size: root.rail-collapsed ? 19px : 13px; font-weight: 600; x: root.rail-collapsed ? 0px : 10px; width: parent.width - (root.rail-collapsed ? 0px : 14px); height: parent.height; horizontal-alignment: root.rail-collapsed ? center : left; vertical-alignment: center; overflow: elide; }
-    TouchArea { clicked => { root.navigate("profiles"); } }
-}
-                Rectangle { height: 38px; border-radius: 8px; background: false ? #264460 : (root.light-mode ? #edf2f7 : #172838);
-    Text { text: root.rail-collapsed ? "⇩" : "⇩  Xuất M3U"; color: false ? #ffffff : (root.light-mode ? #1b3044 : #c6d7e9); font-size: root.rail-collapsed ? 19px : 13px; font-weight: 600; x: root.rail-collapsed ? 0px : 10px; width: parent.width - (root.rail-collapsed ? 0px : 14px); height: parent.height; horizontal-alignment: root.rail-collapsed ? center : left; vertical-alignment: center; overflow: elide; }
-    TouchArea { clicked => { root.export-m3u(); } }
-}
-                Rectangle { height: 38px; border-radius: 8px; background: false ? #264460 : (root.light-mode ? #edf2f7 : #172838);
-    Text { text: root.rail-collapsed ? "★" : "★  Xuất M3U yêu thích"; color: false ? #ffffff : (root.light-mode ? #1b3044 : #c6d7e9); font-size: root.rail-collapsed ? 19px : 13px; font-weight: 600; x: root.rail-collapsed ? 0px : 10px; width: parent.width - (root.rail-collapsed ? 0px : 14px); height: parent.height; horizontal-alignment: root.rail-collapsed ? center : left; vertical-alignment: center; overflow: elide; }
-    TouchArea { clicked => { root.export-favorites-m3u(); } }
-}
-                Rectangle { height: 38px; border-radius: 8px; background: root.active-page == "settings" ? #264460 : (root.light-mode ? #edf2f7 : #172838);
-    Text { text: root.rail-collapsed ? "⚙" : "⚙  Cài đặt"; color: root.active-page == "settings" ? #ffffff : (root.light-mode ? #1b3044 : #c6d7e9); font-size: root.rail-collapsed ? 19px : 13px; font-weight: 600; x: root.rail-collapsed ? 0px : 10px; width: parent.width - (root.rail-collapsed ? 0px : 14px); height: parent.height; horizontal-alignment: root.rail-collapsed ? center : left; vertical-alignment: center; overflow: elide; }
-    TouchArea { clicked => { root.navigate("settings"); } }
-}
+                Button { text: root.rail-collapsed ? "◇" : "◇  Quản lý nguồn       " + root.sources-count; height: 38px; clicked => { root.navigate("sources"); } }
+                Button { text: root.rail-collapsed ? "↗" : "↗  Sức khỏe kênh / Failover"; height: 38px; clicked => { root.navigate("health"); } }
+                Button { text: root.rail-collapsed ? "✚" : "✚  Smart IPTV Doctor"; height: 38px; clicked => { root.navigate("doctor"); } }
+                Button { text: root.rail-collapsed ? "◎" : "◎  Khám phá IPTV"; height: 38px; clicked => { root.navigate("discovery"); } }
+                Button { text: root.rail-collapsed ? "♙" : "♙  Hồ sơ / Khóa trẻ em"; height: 38px; clicked => { root.navigate("profiles"); } }
+                Button { text: root.rail-collapsed ? "⇩" : "⇩  Xuất M3U"; height: 38px; clicked => { root.export-m3u(); } }
+                Button { text: root.rail-collapsed ? "★" : "★  Xuất M3U yêu thích"; height: 38px; clicked => { root.export-favorites-m3u(); } }
+                Button { text: root.rail-collapsed ? "⚙" : "⚙  Cài đặt"; height: 38px; clicked => { root.navigate("settings"); } }
                 Rectangle { vertical-stretch: 1; background: root.light-mode ? #ffffff : #101b29; }
                 Rectangle {
                     height: root.rail-collapsed ? 36px : 67px;

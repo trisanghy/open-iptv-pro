@@ -229,6 +229,7 @@ jobs:
           xdotool mousemove 35 146 click 1
           sleep 1
           import -display "$DISPLAY" -window root screenshot/07-tv-return.png
+          # Test bottom rail settings and source actions using native Buttons
           xdotool mousemove 35 716 click 1
           sleep 1
           import -display "$DISPLAY" -window root screenshot/08-settings-page.png
