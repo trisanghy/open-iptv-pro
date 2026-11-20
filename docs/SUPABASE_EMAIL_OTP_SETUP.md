@@ -1,5 +1,13 @@
 # Đăng nhập Open IPTV Pro Web bằng OTP email (đa trình duyệt)
 
+## Chỉnh số chữ số OTP do máy chủ gửi (không phải email template)
+
+Nếu email thực tế hiển thị **8 chữ số** dù giao diện nói 6, đó là cấu hình `Email OTP length` của **Supabase Auth**, không phải lỗi biến `{{ .Token }}`. Không cắt hai chữ số đầu/cuối của OTP; hãy nhập đầy đủ mã hiện tại.
+
+Để chuyển về **6 chữ số** cho email gửi mới: mở [Authentication → Sign In / Providers](https://supabase.com/dashboard/project/zjbsvqryaxtafuffpifu/auth/providers), mở **Email** trong danh sách Auth Providers, tìm **Email OTP length**, đổi thành **6** rồi **Save**. Supabase hỗ trợ độ dài email OTP 6–10 chữ số; ít chữ số hơn có độ khó đoán thấp hơn. Mẫu email chỉ cần `{{ .Token }}`, không ghi cứng “6-digit code”. Sau khi lưu, yêu cầu **email OTP mới** để xác nhận mã thực tế đúng 6 chữ số.
+
+Trang Open IPTV Pro chấp nhận mã 6–10 số do Supabase phát hành và không cắt mã khi người dùng dán; độ dài do máy chủ quyết định. Không thay đổi độ dài OTP bằng việc chỉ sửa giao diện hoặc cắt mã trong email.
+
 Mã nguồn web đã hỗ trợ `supabase.auth.signInWithOtp` và `supabase.auth.verifyOtp({email,token,type:'email'})`. **Phải bật mẫu email có mã số trong Supabase**: nếu mẫu đang chứa chỉ `{{ .ConfirmationURL }}`, Supabase vẫn gửi nút Sign in thay cho mã OTP.
 
 ## Sửa trường hợp email chỉ có "Confirm your email address" (đăng ký lần đầu)
