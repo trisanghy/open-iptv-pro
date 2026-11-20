@@ -130,7 +130,8 @@
  const META=id=>'openiptv:sync-meta:'+id;
  const RECOVERY=id=>'openiptv:autosync-recovery:'+id;
  let client=null,uid='',revision=0,ready=false,busy=false,dirty=false,timer=0,sessionSeq=0,pendingRemote=null,lastObservedHash='',retryTimer=0;
- const show=(node,visible)=>{if(node)node.hidden=!visible;};
+ // Avoid rewriting hidden on every background sync: iOS can reset focus/caret.
+ const show=(node,visible)=>{if(node&&node.hidden===visible)node.hidden=!visible;};
  const label=(message,tone='info')=>{status.textContent=message;status.dataset.state=tone;};
  const current=()=>core.snapshot(app.getStore?.());
  const contentHash=data=>{
