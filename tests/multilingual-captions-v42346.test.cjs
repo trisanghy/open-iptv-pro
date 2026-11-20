@@ -44,5 +44,5 @@ test('v4.23.46: bounded IPC plus app version is synchronized',()=>{
  const main=read('src/main.cjs'),pre=read('src/preload.cjs');
  assert.match(main,/caption:installLanguage/);assert.match(main,/caption:languageStatus/);
  assert.match(pre,/captionInstallLanguage/);assert.match(pre,/captionLanguageStatus/);
- assert.equal(JSON.parse(read('package.json')).version,'4.23.71');
+ assert.equal(JSON.parse(read('package.json')).version,'4.23.72');
 });

@@ -18,5 +18,5 @@ test('v4.23.43 Native IPC is bounded and captions stop before quit',()=>{
  const main=read('src/main.cjs'),pre=read('src/preload.cjs');
  for(const tag of ['caption:status','caption:start','caption:stop','caption:chooseFile']){assert.ok(main.includes(tag));assert.ok(pre.includes(tag));}
  assert.match(main,/liveCaptionService\?\.stop\(\)/);
- assert.equal(JSON.parse(read('package.json')).version,'4.23.71');
+ assert.equal(JSON.parse(read('package.json')).version,'4.23.72');
 });

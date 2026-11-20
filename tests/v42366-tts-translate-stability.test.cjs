@@ -156,7 +156,7 @@ test('4.23.66: updated UI wires cancel, locale changes, preview and compact line
   html.indexOf('local-tts-v42344.js'));
  assert.match(css,/#liveTtsVoice/);
  assert.match(css,/#liveCaptionStatus/);
- assert.equal(require('../package.json').version,'4.23.71');
+ assert.equal(require('../package.json').version,'4.23.72');
 });
 
 
