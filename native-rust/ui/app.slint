@@ -76,6 +76,7 @@ export component MainWindow inherits Window {
     in-out property <image> video-frame;
     in-out property <bool> has-video-frame: false;
     in-out property <bool> player-fullscreen: false;
+    in-out property <bool> rail-collapsed: true;
     in-out property <bool> video-paused: false;
     in-out property <bool> video-is-live: true;
     in-out property <bool> video-seekable: false;
@@ -156,15 +157,16 @@ export component MainWindow inherits Window {
         spacing: 0px;
         Rectangle {
             visible: !root.player-fullscreen;
-            width: 244px;
+            width: root.rail-collapsed ? 76px : 224px;
             background: root.amoled-mode ? #070707 : (root.light-mode ? #ffffff : #101b29);
             border-width: 1px;
             border-color: #223347;
             VerticalLayout {
-                padding: 13px;
-                spacing: 4px;
+                padding: root.rail-collapsed ? 6px : 12px;
+                spacing: 3px;
+                Button { text: root.rail-collapsed ? "☰" : "☰  Thu gọn"; clicked => { root.rail-collapsed = !root.rail-collapsed; } }
                 Rectangle {
-                    height: 68px;
+                    height: root.rail-collapsed ? 50px : 64px;
                     HorizontalLayout {
                         padding: 8px;
                         spacing: 10px;
@@ -176,39 +178,40 @@ export component MainWindow inherits Window {
                             Text { text: "▶"; color: #dbb4ff; font-size: 25px; horizontal-alignment: center; vertical-alignment: center; }
                         }
                         VerticalLayout {
+                            visible: !root.rail-collapsed;
                             spacing: 3px;
                             Text { text: "Open IPTV Pro"; font-size: 17px; font-weight: 700; color: root.light-mode ? #203249 : #f2f5ff; }
                             Text { text: "RUST NATIVE · C3"; font-size: 9px; color: #a788cf; }
                         }
                     }
                 }
-                Text { text: "THƯ VIỆN"; font-size: 10px; font-weight: 700; color: #718da8; height: 31px; vertical-alignment: bottom; }
-                Button { text: "▣  Xem truyền hình"; clicked => { root.navigate("tv"); } }
-                Button { text: "★  Kênh yêu thích       " + root.favorites-count; clicked => { root.navigate("fav"); } }
-                Button { text: "◷  Xem gần đây            " + root.recent-count; clicked => { root.navigate("recent"); } }
-                Button { text: "▤  Lịch phát sóng EPG"; clicked => { root.navigate("epg"); } }
-                Button { text: "⊞  MultiView · 4 kênh"; clicked => { root.navigate("multiview"); } }
-                Button { text: "▦  Ảnh chụp kênh"; clicked => { root.navigate("shots"); } }
-                Button { text: "▤  Thư mục kênh"; clicked => { root.navigate("folders"); } }
-                Text { text: "CÔNG CỤ"; font-size: 10px; font-weight: 700; color: #718da8; height: 31px; vertical-alignment: bottom; }
-                Button { text: "◇  Quản lý nguồn       " + root.sources-count; clicked => { root.navigate("sources"); } }
-                Button { text: "↗  Sức khỏe kênh / Failover"; clicked => { root.navigate("health"); } }
-                Button { text: "✚  Smart IPTV Doctor"; clicked => { root.navigate("doctor"); } }
-                Button { text: "◎  Khám phá IPTV"; clicked => { root.navigate("discovery"); } }
-                Button { text: "♙  Hồ sơ / Khóa trẻ em"; clicked => { root.navigate("profiles"); } }
-                Button { text: "⇩  Xuất M3U"; clicked => { root.export-m3u(); } }
-                Button { text: "★  Xuất M3U yêu thích"; clicked => { root.export-favorites-m3u(); } }
-                Button { text: "⚙  Cài đặt"; clicked => { root.navigate("settings"); } }
+                Text { text: "THƯ VIỆN"; visible: !root.rail-collapsed; font-size: 10px; font-weight: 700; color: #718da8; height: 31px; vertical-alignment: bottom; }
+                Button { text: root.rail-collapsed ? "▣" : "▣  Xem truyền hình"; clicked => { root.navigate("tv"); } }
+                Button { text: root.rail-collapsed ? "★" : "★  Kênh yêu thích       " + root.favorites-count; clicked => { root.navigate("fav"); } }
+                Button { text: root.rail-collapsed ? "◷" : "◷  Xem gần đây            " + root.recent-count; clicked => { root.navigate("recent"); } }
+                Button { text: root.rail-collapsed ? "▤" : "▤  Lịch phát sóng EPG"; clicked => { root.navigate("epg"); } }
+                Button { text: root.rail-collapsed ? "⊞" : "⊞  MultiView · 4 kênh"; clicked => { root.navigate("multiview"); } }
+                Button { text: root.rail-collapsed ? "▦" : "▦  Ảnh chụp kênh"; clicked => { root.navigate("shots"); } }
+                Button { text: root.rail-collapsed ? "▤" : "▤  Thư mục kênh"; clicked => { root.navigate("folders"); } }
+                Text { text: "CÔNG CỤ"; visible: !root.rail-collapsed; font-size: 10px; font-weight: 700; color: #718da8; height: 31px; vertical-alignment: bottom; }
+                Button { text: root.rail-collapsed ? "◇" : "◇  Quản lý nguồn       " + root.sources-count; clicked => { root.navigate("sources"); } }
+                Button { text: root.rail-collapsed ? "↗" : "↗  Sức khỏe kênh / Failover"; clicked => { root.navigate("health"); } }
+                Button { text: root.rail-collapsed ? "✚" : "✚  Smart IPTV Doctor"; clicked => { root.navigate("doctor"); } }
+                Button { text: root.rail-collapsed ? "◎" : "◎  Khám phá IPTV"; clicked => { root.navigate("discovery"); } }
+                Button { text: root.rail-collapsed ? "♙" : "♙  Hồ sơ / Khóa trẻ em"; clicked => { root.navigate("profiles"); } }
+                Button { text: root.rail-collapsed ? "⇩" : "⇩  Xuất M3U"; clicked => { root.export-m3u(); } }
+                Button { text: root.rail-collapsed ? "★" : "★  Xuất M3U yêu thích"; clicked => { root.export-favorites-m3u(); } }
+                Button { text: root.rail-collapsed ? "⚙" : "⚙  Cài đặt"; clicked => { root.navigate("settings"); } }
                 Rectangle { vertical-stretch: 1; background: root.light-mode ? #ffffff : #101b29; }
                 Rectangle {
-                    height: 67px;
+                    height: root.rail-collapsed ? 36px : 67px;
                     background: root.light-mode ? #e7eef8 : #192a3b;
                     border-radius: 10px;
                     VerticalLayout {
-                        padding: 11px;
-                        spacing: 4px;
-                        Text { text: "●  Bản Rust Native"; color: root.accent; font-weight: 700; font-size: 12px; }
-                        Text { text: "Nhánh thử nghiệm độc lập"; color: #9bb2c6; font-size: 11px; }
+                        padding: 3px;
+                        spacing: 1px;
+                        Text { text: "●  Bản Rust Native"; visible: !root.rail-collapsed; color: root.accent; font-weight: 700; font-size: 12px; }
+                        Text { text: "Nhánh thử nghiệm độc lập"; visible: !root.rail-collapsed; color: #9bb2c6; font-size: 11px; }
                     }
                 }
             }
@@ -217,7 +220,8 @@ export component MainWindow inherits Window {
             spacing: 0px;
             Rectangle {
                 visible: !root.player-fullscreen;
-                height: 70px;
+                height: 0px;
+                visible: false;
                 background: root.light-mode ? #ffffff : #121d2b;
                 border-width: 1px;
                 border-color: #243244;
@@ -237,70 +241,15 @@ export component MainWindow inherits Window {
                 VerticalLayout {
                     padding: 16px;
                     spacing: 12px;
-                    HorizontalLayout {
-                        spacing: root.player-fullscreen ? 0px : 14px;
+                    ScrollView {
                         visible: root.active-page == "tv" || root.active-page == "fav" || root.active-page == "recent";
-                        Rectangle {
-                            visible: !root.player-fullscreen;
-                            width: 327px;
-                            background: root.amoled-mode ? #101010 : (root.light-mode ? #ffffff : #142231);
-                            border-radius: 11px;
-                            border-width: 1px;
-                            border-color: #2a3b50;
-                            VerticalLayout {
-                                padding: 11px;
-                                spacing: 8px;
-                                HorizontalLayout {
-                                    Text { text: "Danh sách kênh"; color: root.light-mode ? #203249 : #f5f8ff; font-weight: 700; font-size: 17px; vertical-alignment: center; }
-                                    Rectangle { horizontal-stretch: 1; background: root.amoled-mode ? #101010 : (root.light-mode ? #ffffff : #142231); }
-                                    Button { text: "▶ Gần nhất"; clicked => { root.play-last-channel(); } }
-                                    Button { text: "↻"; clicked => { root.refresh-sources(); } }
-                                }
-                                Text { text: root.count-text; color: #9cb4cb; font-size: 11px; }
-                                HorizontalLayout { Button { text: "‹ Trang trước"; clicked => { root.page-prev(); } } Button { text: "Trang sau ›"; clicked => { root.page-next(); } } }
-                                LineEdit {
-                                    text <=> root.search-text;
-                                    placeholder-text: "⌕ Tìm kênh, nhóm, EPG...";
-                                    edited(value) => { root.filter-changed(value); }
-                                }
-                                HorizontalLayout {
-                                    spacing: 5px;
-                                    Button { text: "Tất cả"; clicked => { root.show-all(); } }
-                                    Button { text: "★ Yêu thích"; clicked => { root.show-favorites(); } }
-                                    Button { text: "◷ Gần đây"; clicked => { root.navigate("recent"); } }
-                                }
-                                Text { text: root.selected-source-text; color: root.accent; font-size: 11px; }
-                                ListView {
-                                    for ch[i] in root.channels: Rectangle {
-                                        height: 78px;
-                                        background: root.light-mode ? (Math.mod(i, 2) == 0 ? #edf2f9 : #f9fbfd) : (Math.mod(i, 2) == 0 ? #1a293b : #182436);
-                                        border-radius: 5px;
-                                        HorizontalLayout {
-                                            padding: 7px;
-                                            spacing: 6px;
-                                            Rectangle {
-                                                width: 37px; height: 37px; border-radius: 7px;
-                                                background: #293d56;
-                                                Text { text: "TV"; color: #b4cbe7; font-size: 11px; vertical-alignment: center; horizontal-alignment: center; }
-                                            }
-                                            VerticalLayout {
-                                                spacing: 3px;
-                                                Text { text: ch.title; color: root.light-mode ? #203249 : #f3f7ff; font-size: 13px; font-weight: 700; overflow: elide; }
-                                                Text { text: ch.subtitle; color: #9cb3c8; font-size: 10px; overflow: elide; }
-                                                Text { text: ch.health + "  " + ch.epg; color: #80cbbe; font-size: 10px; overflow: elide; }
-                                            }
-                                            Button { text: "▶"; width: 34px; clicked => { root.play-channel(i); } }
-                                            Button { text: ch.favorite ? "★" : "☆"; width: 34px; clicked => { root.toggle-favorite(i); } }
-                                            Button { text: "↑"; width: 24px; clicked => { root.reorder-channel(i, -1); } }
-                                            Button { text: "↓"; width: 24px; clicked => { root.reorder-channel(i, 1); } }
-                                        }
-                                    }
-                                }
-                            }
-                        }
+                        vertical-stretch: 1;
+                        VerticalLayout {
+                            spacing: 12px;
                         VerticalLayout {
                             spacing: 10px;
                             Rectangle {
+                                height: root.player-fullscreen ? 690px : 430px;
                                 background: #04070c;
                                 border-radius: root.player-fullscreen ? 0px : 12px;
                                 border-width: root.player-fullscreen ? 0px : 1px;
@@ -476,6 +425,65 @@ export component MainWindow inherits Window {
                                     Button { text: "■ Dừng ghi"; clicked => { root.stop-recording(); } }
                                 }
                             }
+                        }
+                        Rectangle {
+                            visible: !root.player-fullscreen;
+                            height: root.player-fullscreen ? 0px : 390px;
+                            background: root.amoled-mode ? #101010 : (root.light-mode ? #ffffff : #142231);
+                            border-radius: 11px;
+                            border-width: 1px;
+                            border-color: #2a3b50;
+                            VerticalLayout {
+                                padding: 11px;
+                                spacing: 8px;
+                                HorizontalLayout {
+                                    Text { text: "KHÁM PHÁ KÊNH · " + root.selected-source-text; color: root.light-mode ? #203249 : #f5f8ff; font-weight: 700; font-size: 17px; vertical-alignment: center; }
+                                    Rectangle { horizontal-stretch: 1; background: root.amoled-mode ? #101010 : (root.light-mode ? #ffffff : #142231); }
+                                    Button { text: "▶ Gần nhất"; clicked => { root.play-last-channel(); } }
+                                    Button { text: "↻"; clicked => { root.refresh-sources(); } }
+                                }
+                                Text { text: root.count-text; color: #9cb4cb; font-size: 11px; }
+                                HorizontalLayout { Button { text: "‹ Trang trước"; clicked => { root.page-prev(); } } Button { text: "Trang sau ›"; clicked => { root.page-next(); } } }
+                                LineEdit {
+                                    text <=> root.search-text;
+                                    placeholder-text: "⌕ Tìm kênh, nhóm, EPG...";
+                                    edited(value) => { root.filter-changed(value); }
+                                }
+                                HorizontalLayout {
+                                    spacing: 5px;
+                                    Button { text: "Tất cả"; clicked => { root.show-all(); } }
+                                    Button { text: "★ Yêu thích"; clicked => { root.show-favorites(); } }
+                                    Button { text: "◷ Gần đây"; clicked => { root.navigate("recent"); } }
+                                }
+                                Text { text: root.selected-source-text; color: root.accent; font-size: 11px; }
+                                ListView {
+                                    for ch[i] in root.channels: Rectangle {
+                                        height: 62px;
+                                        background: root.light-mode ? (Math.mod(i, 2) == 0 ? #edf2f9 : #f9fbfd) : (Math.mod(i, 2) == 0 ? #1a293b : #182436);
+                                        border-radius: 5px;
+                                        HorizontalLayout {
+                                            padding: 7px;
+                                            spacing: 6px;
+                                            Rectangle {
+                                                width: 40px; height: 40px; border-radius: 7px;
+                                                background: #293d56;
+                                                Text { text: "TV"; color: #b4cbe7; font-size: 11px; vertical-alignment: center; horizontal-alignment: center; }
+                                            }
+                                            VerticalLayout {
+                                                spacing: 3px;
+                                                Text { text: ch.title; color: root.light-mode ? #203249 : #f3f7ff; font-size: 13px; font-weight: 700; overflow: elide; }
+                                                Text { text: ch.subtitle; color: #9cb3c8; font-size: 10px; overflow: elide; }
+                                                Text { text: ch.health + "  " + ch.epg; color: #80cbbe; font-size: 10px; overflow: elide; }
+                                            }
+                                            Button { text: "▶"; width: 34px; clicked => { root.play-channel(i); } }
+                                            Button { text: ch.favorite ? "★" : "☆"; width: 34px; clicked => { root.toggle-favorite(i); } }
+                                            Button { text: "↑"; width: 24px; clicked => { root.reorder-channel(i, -1); } }
+                                            Button { text: "↓"; width: 24px; clicked => { root.reorder-channel(i, 1); } }
+                                        }
+                                    }
+                                }
+                            }
+                        }
                         }
                     }
                     Rectangle {
