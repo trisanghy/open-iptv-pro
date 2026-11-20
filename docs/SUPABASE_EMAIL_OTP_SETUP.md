@@ -2,24 +2,46 @@
 
 Mã nguồn web đã hỗ trợ `supabase.auth.signInWithOtp` và `supabase.auth.verifyOtp({email,token,type:'email'})`. **Phải bật mẫu email có mã số trong Supabase**: nếu mẫu đang chứa chỉ `{{ .ConfirmationURL }}`, Supabase vẫn gửi nút Sign in thay cho mã OTP.
 
-## Cấu hình mẫu email trên Supabase (bắt buộc)
+## Sửa trường hợp email chỉ có "Confirm your email address" (đăng ký lần đầu)
 
-1. Mở [Authentication → Email Templates](https://supabase.com/dashboard/project/zjbsvqryaxtafuffpifu/auth/templates).
-2. Chọn **Magic Link / OTP** (không phải Reset Password hoặc Reauthentication).
-3. Đặt tiêu đề: **Mã đăng nhập Open IPTV Pro**.
-4. Đặt nội dung HTML:
+**Dấu hiệu:** email có tiêu đề **Confirm your email address**, liên kết chứa `type=signup` và chuyển về `http://localhost:3000`. Đây là email **Confirm sign up**, không phải email **Magic Link / OTP**. Không có mã 6 số vì mẫu thư đang dùng `{{ .ConfirmationURL }}` thay vì `{{ .Token }}`. Việc đổi mẫu Magic Link *một mình* không sửa email đăng ký đầu tiên.
+
+### Bước 1 — Sửa cả hai mẫu thư
+
+Mở [Supabase Authentication → Email Templates](https://supabase.com/dashboard/project/zjbsvqryaxtafuffpifu/auth/templates). Lần lượt cấu hình:
+
+- **Confirm sign up** (quan trọng cho tài khoản mới, như email trong ảnh).
+- **Magic Link / OTP** (quan trọng cho tài khoản đã có).
+
+Với mỗi mẫu, có thể đặt tiêu đề tương ứng "Xác nhận đăng ký Open IPTV Pro" hoặc "Mã đăng nhập Open IPTV Pro". Nội dung HTML có thể dùng giống nhau:
 
 ```html
-<h2>Mã đăng nhập Open IPTV Pro</h2>
-<p>Mã xác thực của bạn:</p>
+<h2>Mã xác thực Open IPTV Pro</h2>
+<p>Nhập mã dưới đây vào mục Tài khoản &amp; Đồng bộ đám mây:</p>
 <p style="font-size:32px;font-weight:700;letter-spacing:6px">{{ .Token }}</p>
-<p>Nhập mã này trong mục Tài khoản &amp; Đồng bộ đám mây của Open IPTV Pro.</p>
-<p>Nếu bạn không yêu cầu đăng nhập, hãy bỏ qua email. Không chia sẻ mã với bất kỳ ai.</p>
+<p>Mã chỉ dùng một lần, sẽ hết hạn. Không chia sẻ mã với bất kỳ ai.</p>
+<p>Nếu bạn không yêu cầu đăng nhập, hãy bỏ qua email.</p>
 ```
 
-5. Lưu thay đổi. Ở **Authentication → Providers → Email**, xác nhận email OTP đang được bật và có hạn sử dụng phù hợp. Cấu hình SMTP riêng nếu cần gửi email ra ngoài nhóm thành viên dự án hoặc dùng trong môi trường thực tế.
+Supabase thay `{{ .Token }}` bằng mã dùng một lần; không điền mã giả, không thay bằng `{{ .ConfirmationURL }}`. Nếu bạn muốn giữ nút liên kết dự phòng, có thể cung cấp **cả** mã và nút, nhưng đừng để chỉ còn liên kết khi trang web đang yêu cầu OTP.
 
-Lưu ý: mẫu `Magic Link / OTP` quyết định nội dung email. Thêm trường nhập OTP vào web **không đủ** để Supabase gửi mã số.
+### Bước 2 — Sửa URL trả về localhost
+
+Mở [Authentication → URL Configuration](https://supabase.com/dashboard/project/zjbsvqryaxtafuffpifu/auth/url-configuration).
+
+- **Site URL**: `https://trisanghy.github.io/open-iptv-pro/`.
+- **Redirect URLs**: thêm `https://trisanghy.github.io/open-iptv-pro/**` (có thể thêm địa chỉ chính xác `https://trisanghy.github.io/open-iptv-pro/`).
+
+Không để `http://localhost:3000` làm Site URL của dự án production. Điều chỉnh URL chỉ ảnh hưởng **email mới**; các liên kết đã phát hành không tự đổi.
+
+### Bước 3 — Xác nhận từ đầu đến cuối
+
+1. Lưu **cả hai** mẫu và URL Configuration.
+2. Mở trang Web ở tab/thiết bị bạn muốn đăng nhập, nhập email và yêu cầu **email mới** (không tái sử dụng liên kết đã gửi trong chat).
+3. Xác nhận thư mới có mã số, sau đó nhập tại Bước 2 trên Web; Gmail có thể ở trình duyệt khác.
+4. Xác nhận tài khoản đã đăng nhập và dữ liệu được đồng bộ. Nếu email vẫn là liên kết, kiểm tra bạn đã sửa đúng **Confirm sign up** cho lần đầu.
+
+**Quyền công cụ:** Supabase connector dùng ở đây có thể quản lý cơ sở dữ liệu, Edge Functions và dự án, nhưng không có hành động chỉnh trực tiếp **Authentication → Email Templates** hoặc **URL Configuration**. Cấu hình dashboard phải được chủ dự án lưu. Không thể sửa hai mục này chỉ bằng commit frontend.
 
 ## Thử nghiệm trên Safari và trình duyệt khác
 
@@ -49,7 +71,7 @@ Chạy `node --test tests/web-email-otp-login.test.cjs`. Bài test xác nhận �
 - Dự án mới không tự có tài khoản người dùng hoặc dữ liệu của dự án cũ.
 - Khi phát hiện dữ liệu tài khoản cũ trong trình duyệt, Web lưu bản sao cục bộ trước khi đổi phiên, rồi cho người dùng đang đăng nhập xác nhận thủ công khi muốn khôi phục. Không tự chuyển dữ liệu giữa hai tài khoản.
 
-**Chưa tự động cấu hình trên Dashboard:** mẫu thư OTP `{{ .Token }}`, các URL chuyển hướng và GitHub OAuth Client ID/Secret. Cần thiết lập bằng chủ dự án trong Supabase Authentication; kết nối GitHub repo không tự bật đăng nhập OAuth. Khi chưa có các cấu hình này, ứng dụng không nên tuyên bố GitHub/OTP đã kiểm thử thành công từ đầu đến cuối.
+**Chưa tự động cấu hình trên Dashboard:** **cả hai** mẫu thư OTP (Confirm sign up và Magic Link / OTP), các URL chuyển hướng và GitHub OAuth Client ID/Secret. Cần thiết lập bằng chủ dự án trong Supabase Authentication; kết nối GitHub repo không tự bật đăng nhập OAuth. Khi chưa có các cấu hình này, ứng dụng không nên tuyên bố GitHub/OTP đã kiểm thử thành công từ đầu đến cuối.
 
 Cấu hình URL: [Authentication → URL Configuration](https://supabase.com/dashboard/project/zjbsvqryaxtafuffpifu/auth/url-configuration): site URL `https://trisanghy.github.io/open-iptv-pro/` và redirect URL `https://trisanghy.github.io/open-iptv-pro/**`.
 GitHub: [Authentication → Providers](https://supabase.com/dashboard/project/zjbsvqryaxtafuffpifu/auth/providers); callback trên GitHub OAuth App: `https://zjbsvqryaxtafuffpifu.supabase.co/auth/v1/callback`.
