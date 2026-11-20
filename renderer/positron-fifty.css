@@ -68,3 +68,7 @@ html.p50-14 #positronBar #positronFocus{background:var(--po-raised)!important;co
 html[data-positron=true].p50-15 .main .content{padding:12px 13px 16px!important}
 html.p50-15 #page-tv .watch-panel{gap:9px!important}
 html.p50-15 #page-tv .tv-layout{gap:11px!important}
+
+/* Iteration 16: Keep channel shelf 246px wide */
+html[data-positron=true].p50-16 #page-tv .tv-layout{grid-template-columns:minmax(215px,246px) minmax(0,1fr)!important;gap:11px!important}
+html[data-positron=true].p50-16[data-channel-panel-visible=false] #page-tv .tv-layout{grid-template-columns:minmax(0,1fr)!important}
