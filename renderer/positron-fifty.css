@@ -88,3 +88,8 @@ html.p50-18 #page-tv .channel-panel :is(#channelPanelHideBtn,#refreshAllBtn){hei
 html.p50-19 #page-tv .channel-panel .filter-box{margin:6px 10px 8px!important;min-height:36px!important;border-radius:9px!important;display:flex!important;align-items:center!important}
 html.p50-19 #page-tv #searchBox{min-height:32px!important;height:32px!important;font-size:12px!important;border:0!important;caret-color:var(--po-accent)!important}
 html.p50-19 #page-tv #searchBox::placeholder{color:var(--po-muted)!important}
+
+/* Iteration 20: Collapse secondary channel filters by default */
+html.p50-20 #positronFiltersToggle{display:block!important;width:calc(100% - 20px)!important;margin:0 10px 8px!important;min-height:29px!important;text-align:left!important;padding:5px 9px!important;background:var(--po-card)!important;color:var(--po-muted)!important;border:1px solid var(--po-line)!important;border-radius:8px!important;font-size:10px!important}
+html.p50-20.p50-filters-closed #page-tv .channel-panel :is(.folder-actions,.filter-tabs,.channel-drag-hint){display:none!important}
+html.p50-20 #page-tv .channel-panel .filter-tabs{padding:6px 10px!important;gap:4px!important}
