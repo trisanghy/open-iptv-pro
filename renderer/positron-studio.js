@@ -56,3 +56,14 @@ query.setAttribute('aria-expanded',String(document.getElementById('positronPalet
 new MutationObserver(sync).observe(results,{childList:true,subtree:true,attributes:true,attributeFilter:['aria-selected']});
 new MutationObserver(sync).observe(document.getElementById('positronPalette'),{attributes:true,attributeFilter:['hidden']});sync();
 })();
+/* 18 */(()=>{const bar=document.getElementById('positronBar');if(!bar)return;
+const area=bar.querySelector('.p-actions'),stream=bar.querySelector('.p-live');if(!area||!stream)return;
+const status=document.createElement('span');status.id='positronCounts';status.className='po-counts';status.setAttribute('aria-label','Tổng số kênh và nguồn đã nhập');
+area.insertBefore(status,stream);
+const sources=document.getElementById('sourceCount'),channels=document.getElementById('navCount');
+let cache='',scheduled=false;
+const update=()=>{scheduled=false;const ch=channels?.textContent?.trim()||'0',src=sources?.textContent?.trim()||'0';const next=ch+' kênh · '+src+' nguồn';if(next!==cache){cache=next;status.textContent=next;}};
+const schedule=()=>{if(scheduled)return;scheduled=true;requestAnimationFrame(update);};
+for(const x of [channels,sources])if(x)new MutationObserver(schedule).observe(x,{subtree:true,childList:true,characterData:true});
+update();
+})();
