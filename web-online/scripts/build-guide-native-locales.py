@@ -48,7 +48,7 @@ def groups(phrases):
     batch=[];total=0
     for phrase in phrases:
         length=len(urllib.parse.quote(phrase,safe=''))
-        if batch and (len(batch)>=6 or total+length>2450):
+        if batch and (len(batch)>=10 or total+length>2450):
             yield batch;batch=[];total=0
         batch.append(phrase);total+=length
     if batch:yield batch
@@ -73,7 +73,16 @@ def translate(lang):
     originals=keys()
     OUT.mkdir(exist_ok=True)
     dest=OUT/(lang+'.json')
-    existing=json.loads(dest.read_text(encoding='utf8')) if dest.exists() else {}
+    # Reuse already approved native translations to avoid re-requesting old
+    # guide labels. Only newly added public text reaches the CI translator.
+    seeded={}
+    if ASSET.is_file():
+        try:
+            raw=ASSET.read_text(encoding='utf8').split('window.OpenIPTVGuideLocales=',1)[1]
+            seeded=json.loads(raw.strip().rstrip(';')).get(lang,{})
+        except (IndexError,ValueError,TypeError):
+            seeded={}
+    existing=json.loads(dest.read_text(encoding='utf8')) if dest.exists() else seeded
     answers={key:value for key,value in existing.items() if key in originals and isinstance(value,str) and value.strip()}
     missing=[key for key in originals if key not in answers]
     for group in groups(missing):
