@@ -1,0 +1,502 @@
+// Experiment C3: native reinterpretation of Open IPTV Pro v4.23.17 desktop.
+// Layout and labels follow the Electron navigation, with an explicit distinction
+// between implemented controls and native video-render integration pending.
+import { Button, LineEdit, ListView, ScrollView, AboutSlint, CheckBox, ComboBox } from "std-widgets.slint";
+
+export struct ChannelView {
+    title: string,
+    subtitle: string,
+    epg: string,
+    favorite: bool,
+    health: string,
+}
+export struct SourceView {
+    title: string,
+    count: string,
+}
+export struct JobView {
+    title: string,
+    detail: string,
+}
+
+export component MainWindow inherits Window {
+    title: "Open IPTV Pro · Rust Native · Experiment C3";
+    preferred-width: 1420px;
+    preferred-height: 890px;
+    min-width: 980px;
+    min-height: 650px;
+    background: root.light-mode ? #eef3f9 : #0c1520;
+    default-font-family: "Arial";
+
+    in-out property <bool> light-mode: false;
+    in-out property <brush> accent: #bc7cff;
+    in-out property <string> active-page: "tv";
+    in-out property <string> page-title: "Xem truyền hình";
+    in-out property <string> url-input;
+    in-out property <string> epg-url-input;
+    in-out property <string> search-text;
+    in-out property <string> folder-input;
+    in-out property <string> selected-source-text: "Tất cả nguồn";
+    in-out property <string> playing-text: "Chưa chọn kênh";
+    in-out property <string> playing-subtitle: "Nhập danh sách để bắt đầu";
+    in-out property <string> status-text: "Sẵn sàng";
+    in-out property <string> count-text: "0 kênh";
+    in-out property <string> favorites-count: "0";
+    in-out property <string> recent-count: "0";
+    in-out property <string> alternate-input;
+    in-out property <string> alternates-text: "Chưa chọn kênh";
+    in-out property <string> auto-failover-text: "Đang bật";
+    in-out property <string> sources-count: "0";
+    in-out property <string> volume-text: "80%";
+    in-out property <string> selected-epg-text: "Chưa có dữ liệu EPG";
+    in-out property <string> selected-health-text: "Chưa kiểm tra";
+    in-out property <string> recording-text: "Chưa ghi hình";
+    in-out property <string> video-hint: "Chọn kênh bên trái để phát";
+    in-out property <string> source-hint: "Chưa có nguồn phát";
+    in-out property <string> current-theme: "Tối · Tím";
+    in-out property <int> selected-channel-index: -1;
+    in-out property <[ChannelView]> channels;
+    in-out property <[SourceView]> sources;
+    in-out property <[JobView]> jobs;
+
+    callback navigate(string);
+    callback add-url();
+    callback open-m3u();
+    callback import-electron-backup();
+    callback import-native-backup();
+    callback export-native-backup();
+    callback import-epg();
+    callback load-epg-url();
+    callback select-source(int);
+    callback show-all();
+    callback show-favorites();
+    callback remove-source();
+    callback refresh-sources();
+    callback filter-changed(string);
+    callback page-next();
+    callback page-prev();
+    callback play-channel(int);
+    callback play-last-channel();
+    callback toggle-favorite(int);
+    callback pause-video();
+    callback stop-video();
+    callback prev-video();
+    callback next-video();
+    callback seek-video(int);
+    callback volume-delta(int);
+    callback fullscreen-video();
+    callback snapshot-current();
+    callback snapshot-all();
+    callback export-m3u();
+    callback export-favorites-m3u();
+    callback check-channels();
+    callback check-selected-channel();
+    callback discover-vn();
+    callback multiview-four();
+    callback create-folder();
+    callback put-in-folder();
+    callback show-folder(string);
+    callback clear-folder();
+    callback start-recording();
+    callback stop-recording();
+    callback set-theme(string);
+    callback add-alternate();
+    callback remove-alternate();
+    callback next-alternate();
+    callback toggle-auto-failover();
+
+    HorizontalLayout {
+        spacing: 0px;
+        Rectangle {
+            width: 244px;
+            background: root.light-mode ? #ffffff : #101b29;
+            border-width: 1px;
+            border-color: #223347;
+            VerticalLayout {
+                padding: 13px;
+                spacing: 4px;
+                Rectangle {
+                    height: 68px;
+                    HorizontalLayout {
+                        padding: 8px;
+                        spacing: 10px;
+                        Rectangle {
+                            width: 42px;
+                            height: 42px;
+                            border-radius: 12px;
+                            background: #55277a;
+                            Text { text: "▶"; color: #dbb4ff; font-size: 25px; horizontal-alignment: center; vertical-alignment: center; }
+                        }
+                        VerticalLayout {
+                            spacing: 3px;
+                            Text { text: "Open IPTV Pro"; font-size: 17px; font-weight: 700; color: root.light-mode ? #203249 : #f2f5ff; }
+                            Text { text: "RUST NATIVE · C3"; font-size: 9px; color: #a788cf; }
+                        }
+                    }
+                }
+                Text { text: "THƯ VIỆN"; font-size: 10px; font-weight: 700; color: #718da8; height: 31px; vertical-alignment: bottom; }
+                Button { text: "▣  Xem truyền hình"; clicked => { root.navigate("tv"); } }
+                Button { text: "★  Kênh yêu thích       " + root.favorites-count; clicked => { root.navigate("fav"); } }
+                Button { text: "◷  Xem gần đây            " + root.recent-count; clicked => { root.navigate("recent"); } }
+                Button { text: "▤  Lịch phát sóng EPG"; clicked => { root.navigate("epg"); } }
+                Button { text: "⊞  MultiView · 4 kênh"; clicked => { root.navigate("multiview"); } }
+                Button { text: "▦  Ảnh chụp kênh"; clicked => { root.navigate("shots"); } }
+                Button { text: "▤  Thư mục kênh"; clicked => { root.navigate("folders"); } }
+                Text { text: "CÔNG CỤ"; font-size: 10px; font-weight: 700; color: #718da8; height: 31px; vertical-alignment: bottom; }
+                Button { text: "◇  Quản lý nguồn       " + root.sources-count; clicked => { root.navigate("sources"); } }
+                Button { text: "↗  Sức khỏe kênh / Failover"; clicked => { root.navigate("health"); } }
+                Button { text: "✚  Smart IPTV Doctor"; clicked => { root.navigate("doctor"); } }
+                Button { text: "◎  Khám phá IPTV"; clicked => { root.navigate("discovery"); } }
+                Button { text: "♙  Hồ sơ / Khóa trẻ em"; clicked => { root.navigate("profiles"); } }
+                Button { text: "⇩  Xuất M3U"; clicked => { root.export-m3u(); } }
+                Button { text: "★  Xuất M3U yêu thích"; clicked => { root.export-favorites-m3u(); } }
+                Button { text: "⚙  Cài đặt"; clicked => { root.navigate("settings"); } }
+                Rectangle { vertical-stretch: 1; background: root.light-mode ? #ffffff : #101b29; }
+                Rectangle {
+                    height: 67px;
+                    background: root.light-mode ? #e7eef8 : #192a3b;
+                    border-radius: 10px;
+                    VerticalLayout {
+                        padding: 11px;
+                        spacing: 4px;
+                        Text { text: "●  Bản Rust Native"; color: root.accent; font-weight: 700; font-size: 12px; }
+                        Text { text: "Nhánh thử nghiệm độc lập"; color: #9bb2c6; font-size: 11px; }
+                    }
+                }
+            }
+        }
+        VerticalLayout {
+            spacing: 0px;
+            Rectangle {
+                height: 70px;
+                background: root.light-mode ? #ffffff : #121d2b;
+                border-width: 1px;
+                border-color: #243244;
+                HorizontalLayout {
+                    padding-left: 20px;
+                    padding-right: 18px;
+                    spacing: 10px;
+                    Text { text: "OPEN IPTV PRO   ›   " + root.page-title; color: root.light-mode ? #203249 : #f4f7ff; font-size: 15px; font-weight: 700; vertical-alignment: center; }
+                    Rectangle { horizontal-stretch: 1; background: root.light-mode ? #ffffff : #121d2b; }
+                    Text { text: root.sources-count + " nguồn M3U"; color: #b5c4da; font-size: 12px; vertical-alignment: center; }
+                    Button { text: "+ Mở file M3U"; clicked => { root.open-m3u(); } }
+                    Button { text: "↗ Thêm URL"; clicked => { root.navigate("sources"); } }
+                }
+            }
+            Rectangle {
+                background: root.light-mode ? #eff4fa : #101825;
+                VerticalLayout {
+                    padding: 16px;
+                    spacing: 12px;
+                    HorizontalLayout {
+                        spacing: 14px;
+                        visible: root.active-page == "tv" || root.active-page == "fav" || root.active-page == "recent";
+                        Rectangle {
+                            width: 327px;
+                            background: root.light-mode ? #ffffff : #142231;
+                            border-radius: 11px;
+                            border-width: 1px;
+                            border-color: #2a3b50;
+                            VerticalLayout {
+                                padding: 11px;
+                                spacing: 8px;
+                                HorizontalLayout {
+                                    Text { text: "Danh sách kênh"; color: root.light-mode ? #203249 : #f5f8ff; font-weight: 700; font-size: 17px; vertical-alignment: center; }
+                                    Rectangle { horizontal-stretch: 1; background: root.light-mode ? #ffffff : #142231; }
+                                    Button { text: "▶ Gần nhất"; clicked => { root.play-last-channel(); } }
+                                    Button { text: "↻"; clicked => { root.refresh-sources(); } }
+                                }
+                                Text { text: root.count-text; color: #9cb4cb; font-size: 11px; }
+                                HorizontalLayout { Button { text: "‹ Trang trước"; clicked => { root.page-prev(); } } Button { text: "Trang sau ›"; clicked => { root.page-next(); } } }
+                                LineEdit {
+                                    text <=> root.search-text;
+                                    placeholder-text: "⌕ Tìm kênh, nhóm, EPG...";
+                                    edited(value) => { root.filter-changed(value); }
+                                }
+                                HorizontalLayout {
+                                    spacing: 5px;
+                                    Button { text: "Tất cả"; clicked => { root.show-all(); } }
+                                    Button { text: "★ Yêu thích"; clicked => { root.show-favorites(); } }
+                                    Button { text: "◷ Gần đây"; clicked => { root.navigate("recent"); } }
+                                }
+                                Text { text: root.selected-source-text; color: root.accent; font-size: 11px; }
+                                ListView {
+                                    for ch[i] in root.channels: Rectangle {
+                                        height: 78px;
+                                        background: root.light-mode ? (Math.mod(i, 2) == 0 ? #edf2f9 : #f9fbfd) : (Math.mod(i, 2) == 0 ? #1a293b : #182436);
+                                        border-radius: 5px;
+                                        HorizontalLayout {
+                                            padding: 7px;
+                                            spacing: 6px;
+                                            Rectangle {
+                                                width: 37px; height: 37px; border-radius: 7px;
+                                                background: #293d56;
+                                                Text { text: "TV"; color: #b4cbe7; font-size: 11px; vertical-alignment: center; horizontal-alignment: center; }
+                                            }
+                                            VerticalLayout {
+                                                spacing: 3px;
+                                                Text { text: ch.title; color: root.light-mode ? #203249 : #f3f7ff; font-size: 13px; font-weight: 700; overflow: elide; }
+                                                Text { text: ch.subtitle; color: #9cb3c8; font-size: 10px; overflow: elide; }
+                                                Text { text: ch.health + "  " + ch.epg; color: #80cbbe; font-size: 10px; overflow: elide; }
+                                            }
+                                            Button { text: "▶"; width: 34px; clicked => { root.play-channel(i); } }
+                                            Button { text: ch.favorite ? "★" : "☆"; width: 34px; clicked => { root.toggle-favorite(i); } }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        VerticalLayout {
+                            spacing: 10px;
+                            Rectangle {
+                                background: root.light-mode ? #152231 : #070c13;
+                                border-radius: 12px;
+                                border-width: 1px;
+                                border-color: #283c52;
+                                VerticalLayout {
+                                    padding: 20px;
+                                    spacing: 12px;
+                                    Text { text: "● TRUYỀN HÌNH TRỰC TIẾP"; color: #f87180; font-size: 12px; font-weight: 700; }
+                                    Rectangle { vertical-stretch: 1; background: root.light-mode ? #152231 : #070c13; }
+                                    Text { text: "▶"; font-size: 45px; color: root.accent; horizontal-alignment: center; }
+                                    Text { text: root.video-hint; font-size: 17px; font-weight: 700; color: #e8eff9; horizontal-alignment: center; }
+                                    Text { text: "libmpv phát trong cửa sổ riêng; nhúng GPU vào Slint đang phát triển"; color: #829eb7; font-size: 12px; horizontal-alignment: center; }
+                                    Rectangle { vertical-stretch: 1; background: root.light-mode ? #152231 : #070c13; }
+                                }
+                            }
+                            Rectangle {
+                                height: 132px;
+                                background: root.light-mode ? #ffffff : #142231;
+                                border-radius: 11px;
+                                VerticalLayout {
+                                    padding: 12px;
+                                    spacing: 9px;
+                                    Text { text: root.playing-text; font-size: 15px; font-weight: 700; color: root.light-mode ? #203249 : #f4f7ff; }
+                                    Text { text: root.playing-subtitle; color: #92adc4; font-size: 11px; }
+                                    HorizontalLayout {
+                                        spacing: 7px;
+                                        Button { text: "⏮"; clicked => { root.prev-video(); } }
+                                        Button { text: "▶ / ❚❚"; clicked => { root.pause-video(); } }
+                                        Button { text: "■"; clicked => { root.stop-video(); } }
+                                        Button { text: "⏭"; clicked => { root.next-video(); } }
+                                        Rectangle { horizontal-stretch: 1; background: root.light-mode ? #ffffff : #142231; }
+                                        Button { text: "−"; clicked => { root.volume-delta(-10); } }
+                                        Text { text: root.volume-text; color: #abc5dc; vertical-alignment: center; font-size: 11px; }
+                                        Button { text: "+"; clicked => { root.volume-delta(10); } }
+                                        Button { text: "▣"; clicked => { root.snapshot-current(); } }
+                                        Button { text: "⛶"; clicked => { root.fullscreen-video(); } }
+                                    }
+                                }
+                            }
+                            Rectangle {
+                                height: 88px;
+                                background: root.light-mode ? #ffffff : #142231;
+                                border-radius: 10px;
+                                VerticalLayout {
+                                    padding: 10px;
+                                    spacing: 6px;
+                                    HorizontalLayout {
+                                        spacing: 7px;
+                                        Text { text: "⏪ Tua / ghi hình"; color: #cfdcf1; font-weight: 700; vertical-alignment: center; }
+                                        Button { text: "−30s"; clicked => { root.seek-video(-30); } }
+                                        Button { text: "−10s"; clicked => { root.seek-video(-10); } }
+                                        Button { text: "Về LIVE"; clicked => { root.seek-video(999999); } }
+                                        Button { text: "⏺ Ghi 60 giây"; clicked => { root.start-recording(); } }
+                                    }
+                                    Text { text: root.recording-text; color: #8eafca; font-size: 11px; }
+                                }
+                            }
+                            HorizontalLayout {
+                                spacing: 7px;
+                                Button { text: "✓ Kiểm tra các kênh"; clicked => { root.check-channels(); } }
+                                Button { text: "▦ Snapshot hàng loạt"; clicked => { root.snapshot-all(); } }
+                                Button { text: "⇩ Xuất M3U"; clicked => { root.export-m3u(); } }
+                            }
+                        }
+                    }
+                    Rectangle {
+                        visible: root.active-page == "sources";
+                        background: root.light-mode ? #ffffff : #142231;
+                        border-radius: 12px;
+                        VerticalLayout {
+                            padding: 20px;
+                            spacing: 13px;
+                            Text { text: "◈ Quản lý nguồn M3U"; color: root.light-mode ? #203249 : #f3f6ff; font-size: 21px; font-weight: 700; }
+                            Text { text: "Thêm URL, mở file, làm mới playlist và quản lý nguồn độc lập với Electron."; color: #99b3cb; font-size: 12px; }
+                            LineEdit { text <=> root.url-input; placeholder-text: "https://.../playlist.m3u"; }
+                            HorizontalLayout {
+                                Button { text: "+ Thêm URL M3U"; clicked => { root.add-url(); } }
+                                Button { text: "Mở file M3U"; clicked => { root.open-m3u(); } }
+                                Button { text: "Làm mới tất cả URL"; clicked => { root.refresh-sources(); } }
+                                Button { text: "Khám phá Việt Nam"; clicked => { root.discover-vn(); } }
+                            }
+                            Text { text: "DANH SÁCH NGUỒN · " + root.sources-count; color: #b8a0ed; font-size: 12px; font-weight: 700; }
+                            ListView {
+                                for s[i] in root.sources: Rectangle {
+                                    height: 51px;
+                                    background: root.light-mode ? (Math.mod(i, 2) == 0 ? #edf2f9 : #f9fbfd) : (Math.mod(i, 2) == 0 ? #1c3046 : #17273a);
+                                    HorizontalLayout {
+                                        padding: 7px; spacing: 8px;
+                                        Text { text: s.title; color: root.light-mode ? #203249 : #f5f8ff; font-size: 13px; vertical-alignment: center; }
+                                        Rectangle { horizontal-stretch: 1; background: root.light-mode ? #eef3f9 : #17273a; }
+                                        Text { text: s.count; color: #abc1d7; font-size: 11px; vertical-alignment: center; }
+                                        Button { text: "Chọn"; clicked => { root.select-source(i); } }
+                                    }
+                                }
+                            }
+                            Text { text: root.selected-source-text; color: root.accent; font-size: 12px; }
+                            HorizontalLayout { Button { text: "Xem tất cả"; clicked => { root.show-all(); } } Button { text: "Xóa nguồn đang chọn (xác nhận 2 lần)"; clicked => { root.remove-source(); } } }
+                        }
+                    }
+                    Rectangle {
+                        visible: root.active-page == "epg";
+                        background: root.light-mode ? #ffffff : #142231; border-radius: 12px;
+                        VerticalLayout {
+                            padding: 20px; spacing: 13px;
+                            Text { text: "▤ Lịch phát sóng EPG / XMLTV"; color: root.light-mode ? #203249 : #f3f6ff; font-size: 21px; font-weight: 700; }
+                            Text { text: "Nhập XML / XML.GZ hoặc tải lịch XMLTV từ URL để tra cứu chương trình hiện tại. URL EPG sẽ được tự tải khi mở app; cache gần nhất 10 phút."; color: #99b3cb; font-size: 12px; }
+                            LineEdit { text <=> root.epg-url-input; placeholder-text: "https://example.org/epg.xml.gz"; }
+                            HorizontalLayout { Button { text: "Tải EPG từ URL"; clicked => { root.load-epg-url(); } } Button { text: "Nhập EPG trên máy"; clicked => { root.import-epg(); } } }
+                            Rectangle { height: 95px; background: root.light-mode ? #eef3f9 : #1b3046; border-radius: 8px;
+                                Text { text: root.selected-epg-text; color: #d7e7f5; font-size: 14px; wrap: word-wrap; vertical-alignment: center; horizontal-alignment: center; }
+                            }
+                        }
+                    }
+                    Rectangle {
+                        visible: root.active-page == "multiview";
+                        background: root.light-mode ? #ffffff : #142231; border-radius: 12px;
+                        VerticalLayout {
+                            padding: 20px; spacing: 12px;
+                            Text { text: "⊞ MultiView · 4 kênh"; color: root.light-mode ? #203249 : #f3f6ff; font-size: 21px; font-weight: 700; }
+                            Text { text: "Mở tối đa bốn nguồn phát thành các cửa sổ mpv độc lập; chỉ kênh đầu phát âm thanh."; color: #a8c1d6; font-size: 12px; }
+                            HorizontalLayout {
+                                Rectangle { background: root.light-mode ? #152231 : #070c13; border-radius: 9px; Text { text: "1  ▶"; color: #b68ae6; font-size: 25px; vertical-alignment: center; horizontal-alignment: center; } }
+                                Rectangle { background: root.light-mode ? #152231 : #070c13; border-radius: 9px; Text { text: "2  ▶"; color: #b68ae6; font-size: 25px; vertical-alignment: center; horizontal-alignment: center; } }
+                            }
+                            HorizontalLayout {
+                                Rectangle { background: root.light-mode ? #152231 : #070c13; border-radius: 9px; Text { text: "3  ▶"; color: #b68ae6; font-size: 25px; vertical-alignment: center; horizontal-alignment: center; } }
+                                Rectangle { background: root.light-mode ? #152231 : #070c13; border-radius: 9px; Text { text: "4  ▶"; color: #b68ae6; font-size: 25px; vertical-alignment: center; horizontal-alignment: center; } }
+                            }
+                            Button { text: "Phát 4 kênh đầu danh sách đang lọc"; clicked => { root.multiview-four(); } }
+                        }
+                    }
+                    Rectangle {
+                        visible: root.active-page == "shots";
+                        background: root.light-mode ? #ffffff : #142231; border-radius: 12px;
+                        VerticalLayout {
+                            padding: 20px; spacing: 15px;
+                            Text { text: "▦ Ảnh chụp kênh"; color: root.light-mode ? #203249 : #f5f7ff; font-size: 21px; font-weight: 700; }
+                            Text { text: "Chụp kênh đang chọn hoặc chụp theo lô với FFmpeg. Cache tự kiểm tra hạn 6 giờ."; color: #a9c0d8; font-size: 12px; }
+                            HorizontalLayout { Button { text: "Chụp kênh đang chọn"; clicked => { root.snapshot-current(); } } Button { text: "Chụp 10 kênh đầu danh sách"; clicked => { root.snapshot-all(); } } }
+                            Text { text: "Ảnh lưu trong thư mục dữ liệu của Rust Native; không ghi đè Snapshot Electron."; color: #96b6cb; font-size: 12px; }
+                        }
+                    }
+                    Rectangle {
+                        visible: root.active-page == "folders";
+                        background: root.light-mode ? #ffffff : #142231; border-radius: 12px;
+                        VerticalLayout {
+                            padding: 20px; spacing: 13px;
+                            Text { text: "▤ Thư mục kênh"; color: root.light-mode ? #203249 : #f3f6ff; font-size: 21px; font-weight: 700; }
+                            Text { text: "Tạo thư mục, gán kênh đang phát vào thư mục và xem nhóm kênh."; color: #a8c1d6; font-size: 12px; }
+                            LineEdit { text <=> root.folder-input; placeholder-text: "Tên thư mục (ví dụ: Truyền hình Việt)"; }
+                            HorizontalLayout { Button { text: "+ Tạo thư mục"; clicked => { root.create-folder(); } } Button { text: "+ Thêm kênh đang phát"; clicked => { root.put-in-folder(); } } Button { text: "Xem thư mục"; clicked => { root.show-folder(root.folder-input); } } Button { text: "Tất cả kênh"; clicked => { root.clear-folder(); } } }
+                            Text { text: "Thư mục này chỉ thuộc bản Rust Native."; color: #99afc2; font-size: 11px; }
+                        }
+                    }
+                    Rectangle {
+                        visible: root.active-page == "health" || root.active-page == "doctor";
+                        background: root.light-mode ? #ffffff : #142231; border-radius: 12px;
+                        ScrollView {
+                            VerticalLayout {
+                            padding: 20px; spacing: 14px;
+                            Text { text: root.active-page == "health" ? "↗ Sức khỏe kênh / Failover" : "✚ Smart IPTV Doctor"; color: root.light-mode ? #203249 : #f3f6ff; font-size: 21px; font-weight: 700; }
+                            Text { text: "Kiểm tra theo lô tối đa 1.000 kênh. Timeout, lỗi CDN và chặn HEAD chỉ đánh dấu Chưa rõ, không tự kết luận Die."; color: #a8c1d6; wrap: word-wrap; font-size: 12px; }
+                            HorizontalLayout { Button { text: "Kiểm tra kênh đang phát"; clicked => { root.check-selected-channel(); } } Button { text: "Kiểm tra tối đa 1.000 kênh"; clicked => { root.check-channels(); } } }
+                            Rectangle { height: 100px; background: root.light-mode ? #e8f0f9 : #192e43; border-radius: 9px;
+                                Text { text: root.selected-health-text; color: #b1dbcc; font-size: 14px; wrap: word-wrap; vertical-alignment: center; horizontal-alignment: center; }
+                            }
+                            Rectangle { height: 1px; background: #344157; }
+                            Text { text: "URL DỰ PHÒNG / FAILOVER"; color: root.accent; font-weight: 700; font-size: 13px; }
+                            Text { text: "Chọn kênh ở màn hình TV trước, sau đó thêm tối đa 8 URL dự phòng. Trình phát tự thử link tiếp theo chỉ khi libmpv báo lỗi phát."; color: #a8c1d6; font-size: 12px; wrap: word-wrap; }
+                            LineEdit { text <=> root.alternate-input; placeholder-text: "https://.../live.m3u8 (link dự phòng)"; }
+                            HorizontalLayout {
+                                Button { text: "+ Thêm link dự phòng"; clicked => { root.add-alternate(); } }
+                                Button { text: "Xóa link cuối"; clicked => { root.remove-alternate(); } }
+                                Button { text: "Chuyển link kế tiếp"; clicked => { root.next-alternate(); } }
+                            }
+                            HorizontalLayout {
+                                Text { text: "Tự chuyển khi mpv báo lỗi: " + root.auto-failover-text; color: #c4d5e8; font-size: 12px; vertical-alignment: center; }
+                                Button { text: "Bật / Tắt"; clicked => { root.toggle-auto-failover(); } }
+                            }
+                            ScrollView { height: 94px;
+                                Text { text: root.alternates-text; color: #b3d7cc; font-size: 11px; wrap: word-wrap; }
+                            }
+                            Text { text: "C3 chưa giám sát chất lượng giật/lag, chưa tự dò URL trên mạng, và không xác nhận luồng đã phát chỉ từ lệnh loadfile."; color: #91a9c3; font-size: 11px; wrap: word-wrap; }
+                            Text { text: "Chưa bao gồm toàn bộ tính năng tự sửa link / quét nguồn của Doctor 3.0."; color: #91a9c3; font-size: 11px; }
+                            }
+                        }
+                    }
+                    Rectangle {
+                        visible: root.active-page == "discovery";
+                        background: root.light-mode ? #ffffff : #142231; border-radius: 12px;
+                        VerticalLayout {
+                            padding: 20px; spacing: 13px;
+                            Text { text: "◎ Khám phá IPTV"; color: root.light-mode ? #203249 : #f3f6ff; font-size: 21px; font-weight: 700; }
+                            Text { text: "Nguồn danh sách kênh công khai từ iptv-org, cần kiểm chứng khả năng phát và quyền truy cập."; color: #a8c1d6; font-size: 12px; }
+                            Button { text: "Thêm danh sách quốc gia Việt Nam (VN)"; clicked => { root.discover-vn(); } }
+                        }
+                    }
+                    Rectangle {
+                        visible: root.active-page == "profiles";
+                        background: root.light-mode ? #ffffff : #142231; border-radius: 12px;
+                        VerticalLayout {
+                            padding: 20px; spacing: 13px;
+                            Text { text: "♙ Hồ sơ / Khóa trẻ em"; color: root.light-mode ? #203249 : #f3f6ff; font-size: 21px; font-weight: 700; }
+                            Text { text: "Chưa chuyển phần hồ sơ và PIN từ Electron. Không coi đây là tính năng bảo vệ trẻ em đang hoạt động."; color: #f3b7bd; wrap: word-wrap; font-size: 14px; }
+                        }
+                    }
+                    Rectangle {
+                        visible: root.active-page == "settings";
+                        background: root.light-mode ? #ffffff : #142231; border-radius: 12px;
+                        ScrollView {
+                            VerticalLayout {
+                                padding: 20px; spacing: 13px;
+                                Text { text: "⚙ Cài đặt Open IPTV Pro"; color: root.light-mode ? #203249 : #f3f6ff; font-size: 21px; font-weight: 700; }
+                                Text { text: "Bản thử nghiệm Slint sử dụng cùng bố cục sidebar/điều khiển; chưa sử dụng được toàn bộ CSS và 10 theme Electron."; color: #a8c1d6; wrap: word-wrap; font-size: 12px; }
+                                Text { text: "Giao diện: " + root.current-theme; color: root.accent; font-size: 13px; }
+                                HorizontalLayout { Button { text: "Tối · Tím"; clicked => { root.set-theme("Tối · Tím"); } } Button { text: "Tối · Xanh"; clicked => { root.set-theme("Tối · Xanh"); } } Button { text: "Sáng"; clicked => { root.set-theme("Sáng"); } } }
+                                Rectangle { height: 1px; background: #344157; }
+                                Text { text: "SAO LƯU / KHÔI PHỤC"; color: root.accent; font-weight: 700; font-size: 12px; }
+                                Button { text: "Nhập backup Electron (.iptvbackup)"; clicked => { root.import-electron-backup(); } }
+                                Button { text: "Nhập backup Rust (.json)"; clicked => { root.import-native-backup(); } }
+                                Button { text: "Xuất backup Rust (.json)"; clicked => { root.export-native-backup(); } }
+                                Rectangle { height: 1px; background: #344157; }
+                                Text { text: "VIDEO / GHI HÌNH"; color: root.accent; font-weight: 700; font-size: 12px; }
+                                Text { text: "Âm lượng: " + root.volume-text; color: #abc2d6; font-size: 13px; }
+                                HorizontalLayout { Button { text: "Giảm âm"; clicked => { root.volume-delta(-10); } } Button { text: "Tăng âm"; clicked => { root.volume-delta(10); } } Button { text: "Dừng ghi hình"; clicked => { root.stop-recording(); } } }
+                                Text { text: root.recording-text; color: #a9bdcf; font-size: 12px; }
+                                Rectangle { height: 1px; background: #344157; }
+                                Text { text: "Thông tin dự án"; color: #f2f6ff; font-weight: 700; font-size: 13px; }
+                                Text { text: "C3 experimental · Rust + Slint 1.18.1 + libmpv (cửa sổ riêng)"; color: #92adc6; font-size: 12px; }
+                                AboutSlint { height: 35px; }
+                            }
+                        }
+                    }
+                }
+            }
+            Rectangle {
+                height: 34px;
+                background: root.light-mode ? #f6f8fd : #152131;
+                border-width: 1px;
+                border-color: #24374c;
+                HorizontalLayout {
+                    padding-left: 18px;
+                    padding-right: 17px;
+                    Text { text: "● " + root.status-text; color: #a9bed7; font-size: 11px; overflow: elide; vertical-alignment: center; }
+                    Rectangle { horizontal-stretch: 1; background: root.light-mode ? #f6f8fd : #152131; }
+                    Text { text: root.count-text; color: #90a6bd; font-size: 11px; vertical-alignment: center; }
+                }
+            }
+        }
+    }
+}
