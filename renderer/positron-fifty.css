@@ -11,3 +11,7 @@ html.p50-02 #appSidebar .brand small{font-size:8px!important;letter-spacing:.05p
 
 /* Iteration 3: Place sidebar collapse button inside brand row */
 html[data-positron=true].p50-03:not([data-sidebar-visible=false]) #appSidebar .sidebar-edge-toggle{left:auto!important;right:8px!important;top:11px!important;width:31px!important;height:31px!important;min-width:31px!important;min-height:31px!important;border-radius:9px!important;font-size:15px!important;z-index:5}
+
+/* Iteration 4: Tighten sidebar navigation without tiny tap targets */
+html[data-positron=true].p50-04:not([data-sidebar-visible=false]) #appSidebar .nav{min-height:36px!important;height:36px!important;margin:1px 0!important;padding:0 8px!important;gap:8px!important;border-radius:9px!important;font-size:11.5px!important;line-height:1.2}
+html.p50-04 #appSidebar .nav .macos-nav-symbol{flex-shrink:0!important}
