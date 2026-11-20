@@ -23,6 +23,8 @@ struct State {
     pending_delete: Option<String>,
     current_epg: HashMap<String, String>,
     normalized_epg: HashMap<String, String>,
+    epg_schedule: Vec<epg::GuideEntry>,
+    guide_day_offset: i32,
     folder_filter: Option<String>,
     selected_url: Option<String>,
 }
@@ -31,7 +33,7 @@ enum ImportGuard { New, ExistingAnyOrigin, ExistingOrigin(String) }
 
 enum Background {
     Playlist { source: Source, result: Result<Vec<Channel>, String>, guard: ImportGuard },
-    Epg { source: Option<String>, result: Result<HashMap<String, String>, String> },
+    Epg { source: Option<String>, result: Result<epg::GuideData, String> },
     Health(Vec<(String, health::Health)>),
     Snapshot(Result<(PathBuf, bool), String>),
     SnapshotBatch { ok: usize, cached: usize, fail: usize },
@@ -54,6 +56,43 @@ fn guide_title<'a>(state: &'a State, tvg_id: &str, name: &str) -> Option<&'a Str
     state.current_epg.get(tvg_id).or_else(|| state.current_epg.get(name))
         .or_else(|| state.normalized_epg.get(&epg::channel_key(tvg_id)))
         .or_else(|| state.normalized_epg.get(&epg::channel_key(name)))
+}
+
+fn refresh_schedule(ui: &MainWindow, state: &State) {
+    let day = chrono::Local::now().date_naive()
+        + chrono::Duration::days(state.guide_day_offset as i64);
+    let phrase = ui.get_epg_search().trim().to_lowercase();
+    let mut by_id: HashMap<String, String> = HashMap::new();
+    for ch in &state.data.channels {
+        if !ch.tvg_id.trim().is_empty() {
+            by_id.entry(epg::channel_key(&ch.tvg_id)).or_insert_with(|| ch.name.clone());
+        }
+        by_id.entry(epg::channel_key(&ch.name)).or_insert_with(|| ch.name.clone());
+    }
+    let mut total = 0usize;
+    let mut visible = Vec::new();
+    for e in &state.epg_schedule {
+        let local_start = e.start.with_timezone(&chrono::Local);
+        let local_stop = e.stop.with_timezone(&chrono::Local);
+        if local_start.date_naive() != day { continue; }
+        let key = epg::channel_key(&e.channel);
+        let channel = by_id.get(&key).map(String::as_str).unwrap_or(&e.channel);
+        if !phrase.is_empty()
+            && !channel.to_lowercase().contains(&phrase)
+            && !e.channel.to_lowercase().contains(&phrase)
+            && !e.title.to_lowercase().contains(&phrase) { continue; }
+        total += 1;
+        if visible.len() < 250 {
+            visible.push(GuideView {
+                channel: channel.into(),
+                time: format!("{} – {}", local_start.format("%H:%M"), local_stop.format("%H:%M")).into(),
+                title: e.title.clone().into(),
+            });
+        }
+    }
+    ui.set_guide_rows(ModelRc::new(VecModel::from(visible)));
+    ui.set_guide_day_text(day.format("%d/%m/%Y").to_string().into());
+    ui.set_guide_count(format!("{} chương trình · hiển thị tối đa 250; tìm tên kênh để thu hẹp", total).into());
 }
 
 fn refresh(ui: &MainWindow, state: &mut State) {
@@ -150,6 +189,7 @@ fn refresh(ui: &MainWindow, state: &mut State) {
             state.data.sources.iter().find(|s| &s.id == id).map(|s| s.name.clone()).unwrap_or("Nguồn đã xóa".into())
         } else { "Tất cả nguồn".into() };
     ui.set_selected_source_text(selected.into());
+    refresh_schedule(ui, state);
 }
 
 fn status(ui: &MainWindow, msg: impl Into<String>) {
@@ -634,6 +674,23 @@ fn connect_callbacks(
             status(&ui, "Đang đọc EPG XMLTV trong luồng nền...");
         });
     }
+    {
+        let weak=ui.as_weak(); let shared=shared.clone();
+        ui.on_guide_filter_changed(move |_| {
+            let Some(ui)=weak.upgrade() else {return;};
+            refresh_schedule(&ui, &shared.borrow());
+        });
+    }
+    {
+        let weak=ui.as_weak(); let shared=shared.clone();
+        ui.on_guide_day(move |delta| {
+            let Some(ui)=weak.upgrade() else {return;};
+            let mut state=shared.borrow_mut();
+            state.guide_day_offset=if delta==0 {0}
+                else {(state.guide_day_offset + delta).clamp(0,6)};
+            refresh_schedule(&ui, &state);
+        });
+    }
     // Refresh online playlists without deleting source IDs, favorites or local Electron data.
     {
         let weak=ui.as_weak(); let shared=shared.clone(); let tx=tx.clone();
@@ -1041,15 +1098,20 @@ fn background_timer(ui: &MainWindow, shared: Rc<RefCell<State>>, rx: Receiver<Ba
                 },
                 Background::SnapshotBatch{ok,cached,fail}=>status(&ui,format!("Snapshot hàng loạt: {ok} mới · {cached} cache · {fail} lỗi")),
                 Background::Epg {source,result} => match result {
-                    Ok(map) => {
-                        let count=map.len();
+                    Ok(guide) => {
+                        let count=guide.now_next.len();
+                        let scheduled=guide.schedule.len();
                         if let Some(ref url)=source {
-                            if let Err(e)=epg_cache::save(url,&map) {
+                            if let Err(e)=epg_cache::save(url,&guide.now_next) {
                                 status(&ui,format!("EPG đã tải nhưng không lưu được cache: {e}"));
                             }
                         }
-                        let mut s=shared.borrow_mut(); s.normalized_epg=normalize_guide(&map); s.current_epg=map;
-                        refresh(&ui,&mut s);status(&ui,format!("Đã nạp EPG hiện tại cho {count} kênh. Cache 10 phút cho EPG online."));
+                        let mut s=shared.borrow_mut();
+                        s.normalized_epg=normalize_guide(&guide.now_next);
+                        s.current_epg=guide.now_next;
+                        s.epg_schedule=guide.schedule;
+                        refresh(&ui,&mut s);
+                        status(&ui,format!("Đã nạp EPG {count} kênh và {scheduled} chương trình. Cache 10 phút cho EPG online."));
                     }
                     Err(e) => status(&ui,format!("EPG lỗi: {e}")),
                 }
@@ -1112,7 +1174,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let epg_source=saved.epg_url.clone();
     let state=Rc::new(RefCell::new(State {
         selected_url:if saved.last_channel_url.is_empty(){None}else{Some(saved.last_channel_url.clone())},
-        data:saved,visible:Vec::new(),total_matches:0,page:0,selected_source:None,favorites_only:false,recent_only:false,playback_candidates:Vec::new(),playback_index:0,pending_delete:None,normalized_epg:normalize_guide(&cached_epg),current_epg:cached_epg,folder_filter:None,
+        data:saved,visible:Vec::new(),total_matches:0,page:0,selected_source:None,favorites_only:false,recent_only:false,playback_candidates:Vec::new(),playback_index:0,pending_delete:None,normalized_epg:normalize_guide(&cached_epg),current_epg:cached_epg,epg_schedule:Vec::new(),guide_day_offset:0,folder_filter:None,
     }));
     let ui=MainWindow::new()?;
     refresh(&ui,&mut state.borrow_mut());

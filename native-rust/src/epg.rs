@@ -8,6 +8,21 @@ use std::path::Path;
 const MAX_XML_BYTES: u64 = 35 * 1024 * 1024;
 const MAX_GZIP_BYTES: u64 = 12 * 1024 * 1024;
 
+
+#[derive(Clone, Debug)]
+pub struct GuideEntry {
+    pub channel: String,
+    pub title: String,
+    pub start: DateTime<Utc>,
+    pub stop: DateTime<Utc>,
+}
+
+#[derive(Clone, Debug)]
+pub struct GuideData {
+    pub now_next: HashMap<String, String>,
+    pub schedule: Vec<GuideEntry>,
+}
+
 #[derive(Clone, Debug)]
 struct Program {
     channel: String,
@@ -246,7 +261,101 @@ pub fn parse_now_and_next(xml: &str, now: DateTime<Utc>) -> Result<HashMap<Strin
     Ok(current)
 }
 
-pub fn from_file(path: &Path) -> Result<HashMap<String, String>, String> {
+
+/// One bounded XMLTV pass for the native programme guide. Keep entries within
+/// seven days of the current time; count all programmes and never stop after
+/// 12,000. Sort once to make day/filter views cheap and predictable.
+pub fn parse_schedule(xml: &str, now: DateTime<Utc>) -> Result<Vec<GuideEntry>, String> {
+    let mut rdr = Reader::from_str(xml.trim_start_matches('\u{feff}'));
+    rdr.config_mut().trim_text(true);
+    let mut buf = Vec::new();
+    let mut current: Option<Program> = None;
+    let mut field_name: Option<&'static str> = None;
+    let mut entries = Vec::new();
+    let mut seen = 0usize;
+    loop {
+        match rdr.read_event_into(&mut buf) {
+            Ok(Event::Start(e)) if e.name().as_ref() == b"programme" => {
+                seen += 1;
+                if seen > 1_000_000 { return Err("EPG vượt 1 triệu chương trình".into()); }
+                let id = field(&e, b"channel").unwrap_or_default();
+                let start = field(&e, b"start").and_then(|s| decode_time(&s));
+                let stop = field(&e, b"stop").and_then(|s| decode_time(&s));
+                current = match (start, stop) {
+                    (Some(a), Some(b)) if !id.is_empty() && a < b
+                        && b >= now - chrono::Duration::days(1)
+                        && a < now + chrono::Duration::days(8) => Some(Program {
+                            channel: id, title: String::new(), description: String::new(),
+                            subtitle: String::new(), start: a, stop: b,
+                        }),
+                    _ => None,
+                };
+                field_name = None;
+            }
+            Ok(Event::Start(e)) if e.name().as_ref() == b"title" => {
+                field_name = Some("title");
+            }
+            Ok(Event::Start(e)) if e.name().as_ref() == b"desc" => {
+                field_name = Some("desc");
+            }
+            Ok(Event::Start(e)) if e.name().as_ref() == b"sub-title" => {
+                field_name = Some("sub-title");
+            }
+            Ok(Event::Text(e)) if current.is_some() && field_name.is_some() => {
+                if let (Some(p), Ok(v)) = (current.as_mut(), e.unescape()) {
+                    match field_name {
+                        Some("title") => p.title.push_str(&v),
+                        Some("desc") => p.description.push_str(&v),
+                        Some("sub-title") => p.subtitle.push_str(&v),
+                        _ => {}
+                    }
+                }
+            }
+            Ok(Event::CData(e)) if current.is_some() && field_name.is_some() => {
+                if let Some(p) = current.as_mut() {
+                    let v = String::from_utf8_lossy(e.as_ref());
+                    match field_name {
+                        Some("title") => p.title.push_str(&v),
+                        Some("desc") => p.description.push_str(&v),
+                        Some("sub-title") => p.subtitle.push_str(&v),
+                        _ => {}
+                    }
+                }
+            }
+            Ok(Event::End(e)) if matches!(e.name().as_ref(), b"title" | b"desc" | b"sub-title") => {
+                field_name = None;
+            }
+            Ok(Event::End(e)) if e.name().as_ref() == b"programme" => {
+                if let Some(p) = current.take() {
+                    let title = detailed_title(&p.title, &p.subtitle, &p.description);
+                    if !title.is_empty() {
+                        if entries.len() >= 150_000 {
+                            return Err("EPG có hơn 150.000 chương trình trong 7 ngày; cần dữ liệu nguồn nhỏ hơn".into());
+                        }
+                        entries.push(GuideEntry { channel: p.channel, title, start: p.start, stop: p.stop });
+                    }
+                }
+                field_name = None;
+            }
+            Ok(Event::Eof) => break,
+            Err(e) => return Err(format!("XMLTV lỗi tại byte {}: {e}", rdr.buffer_position())),
+            _ => {}
+        }
+        buf.clear();
+    }
+    if seen == 0 { return Err("Không có chương trình trong XMLTV".into()); }
+    entries.sort_unstable_by(|a,b| a.start.cmp(&b.start).then(a.channel.cmp(&b.channel)));
+    Ok(entries)
+}
+
+pub fn parse_guide(xml: &str, now: DateTime<Utc>) -> Result<GuideData, String> {
+    Ok(GuideData {
+        now_next: parse_now_and_next(xml, now)?,
+        schedule: parse_schedule(xml, now)?,
+    })
+}
+
+pub fn from_file(path: &Path) -> Result<GuideData, String> {
     let limit = if path.extension().and_then(|e| e.to_str()).is_some_and(|e| e.eq_ignore_ascii_case("gz")) { MAX_GZIP_BYTES } else { MAX_XML_BYTES };
     let bytes = crate::storage::read_limited(path, limit)?;
     let xml_bytes = if bytes.starts_with(&[0x1f,0x8b]) {
@@ -257,12 +366,40 @@ pub fn from_file(path: &Path) -> Result<HashMap<String, String>, String> {
         decoded
     } else { bytes };
     let text = String::from_utf8(xml_bytes).map_err(|_| "EPG XMLTV không phải UTF-8".to_owned())?;
-    parse_now_and_next(&text, Utc::now())
+    parse_guide(&text, Utc::now())
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn full_guide_keeps_entries_beyond_12000_and_episode_details() {
+        let now = DateTime::parse_from_rfc3339("2026-11-20T05:00:00+07:00").unwrap().with_timezone(&Utc);
+        let mut xml = String::from("<tv>");
+        for _ in 0..12_005 {
+            xml.push_str(r#"<programme channel="VTV1" start="20261120060000 +0700" stop="20261120070000 +0700"><title>Thời sự</title></programme>"#);
+        }
+        xml.push_str(r#"<programme channel="VTV3" start="20261120080000 +0700" stop="20261120090000 +0700"><title>Phim truyện</title><sub-title>Biệt dược đen - Tập 12</sub-title></programme></tv>"#);
+        let schedule = parse_schedule(&xml, now).unwrap();
+        assert_eq!(schedule.len(), 12_006);
+        assert_eq!(schedule.last().unwrap().channel, "VTV3");
+        assert_eq!(schedule.last().unwrap().title, "Phim truyện: Biệt dược đen - Tập 12");
+    }
+    #[test]
+    fn guide_sorts_by_real_timezone_and_skips_expired_far_future() {
+        let now = DateTime::parse_from_rfc3339("2026-11-20T05:00:00+07:00").unwrap().with_timezone(&Utc);
+        let xml = r#"<tv>
+        <programme channel="A" start="20261120070000 +0700" stop="20261120080000 +0700"><title>A morning</title></programme>
+        <programme channel="B" start="20261119235900 +0000" stop="20261120003000 +0000"><title>B evening</title></programme>
+        <programme channel="C" start="20261020070000 +0700" stop="20261020080000 +0700"><title>Expired</title></programme>
+        <programme channel="D" start="20261220070000 +0700" stop="20261220080000 +0700"><title>Later</title></programme></tv>"#;
+        let schedule = parse_schedule(xml, now).unwrap();
+        assert_eq!(schedule.len(), 2);
+        assert_eq!(schedule[0].channel, "A");
+        assert_eq!(schedule[1].channel, "B");
+    }
+
+
     #[test]
     fn maps_vtv_ids_without_mixing_regional_or_similarly_numbered_channels() {
         assert_eq!(channel_key("VTV3 HD (Nguồn 1)"), channel_key("vtv3.vn"));
@@ -313,7 +450,7 @@ mod tests {
     }
 }
 
-pub fn from_url(url: &str) -> Result<HashMap<String, String>, String> {
+pub fn from_url(url: &str) -> Result<GuideData, String> {
     crate::netguard::validate_public_http_url(url)?;
     let agent = crate::netguard::public_http_agent(30, 8, 20);
     let response = agent.get(url)
@@ -331,5 +468,5 @@ pub fn from_url(url: &str) -> Result<HashMap<String, String>, String> {
         decoded
     } else { bytes };
     let text = String::from_utf8(expanded).map_err(|_| "EPG không phải UTF-8".to_owned())?;
-    parse_now_and_next(&text, Utc::now())
+    parse_guide(&text, Utc::now())
 }

@@ -18,7 +18,7 @@ This file documents **the actual native Slint + Rust + libmpv code** in `native-
 | MultiView four channels | Four separate libmpv windows | One Slint view with four embedded players, audio focus and tiling |
 | EPG XMLTV sources | Gzip default, standard/localized presets | Full source selection/priority UI and transparent per-source status |
 | EPG entries and episode titles | Beyond 12,000; generic-title detail parsing | Accurate tvg-id mapping across all channels and source verification |
-| EPG current/next | Display on TV page | Full-day/week guide, history and search/reminders |
+| EPG current/next | Display on TV page plus searchable 7-day programme list (250 visible rows at a time) in Slint | Programme reminders, search indexing and scheduled DVR handoff |
 | EPG startup and periodic refresh | Startup + configurable 10-minute refresh | Better scheduled persistence beyond current/next |
 | EPG local cache | 10-min native JSON cache, atomic writes | Compressed full-guide disk/indexed storage and live lifecycle |
 | Snapshot | Basic FFmpeg capture and short batch | Parallel 32-worker UI, image grid, preview, high-volume throttling |

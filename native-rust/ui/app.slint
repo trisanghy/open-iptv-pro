@@ -10,6 +10,11 @@ export struct ChannelView {
     favorite: bool,
     health: string,
 }
+export struct GuideView {
+    channel: string,
+    time: string,
+    title: string,
+}
 export struct SourceView {
     title: string,
     count: string,
@@ -36,6 +41,10 @@ export component MainWindow inherits Window {
     in-out property <string> source-edit-url;
     in-out property <string> source-edit-name;
     in-out property <string> epg-url-input;
+    in-out property <string> epg-search;
+    in-out property <string> guide-day-text: "Hôm nay";
+    in-out property <string> guide-count: "Chưa tải đầy đủ EPG";
+    in-out property <[GuideView]> guide-rows;
     in-out property <bool> epg-auto-refresh-enabled: true;
     in-out property <bool> source-auto-refresh-enabled: true;
     in-out property <bool> quick-tools-expanded: false;
@@ -79,6 +88,8 @@ export component MainWindow inherits Window {
     callback import-epg();
     callback load-epg-url();
     callback select-epg-preset(string);
+    callback guide-filter-changed(string);
+    callback guide-day(int);
     callback toggle-epg-auto-refresh();
     callback toggle-source-auto-refresh();
     callback toggle-quick-tools();
@@ -446,7 +457,7 @@ export component MainWindow inherits Window {
                         VerticalLayout {
                             padding: 20px; spacing: 13px;
                             Text { text: "▤ Lịch phát sóng EPG / XMLTV"; color: root.light-mode ? #203249 : #f3f6ff; font-size: 21px; font-weight: 700; }
-                            Text { text: "Nhập XML / XML.GZ hoặc tải lịch XMLTV từ URL để tra cứu chương trình hiện tại. URL EPG sẽ được tự tải khi mở app; cache gần nhất 10 phút."; color: #99b3cb; font-size: 12px; }
+                            Text { text: "XMLTV: đang phát, tiếp theo và lịch đầy đủ theo ngày. Tự tải EPG khi mở app; cache lịch hiện tại 10 phút."; color: #99b3cb; font-size: 12px; }
                             HorizontalLayout {
                                  Button { text: "Gzip · mặc định"; clicked => { root.select-epg-preset("gzip"); } }
                                  Button { text: "XML chuẩn"; clicked => { root.select-epg-preset("xml"); } }
@@ -458,6 +469,38 @@ export component MainWindow inherits Window {
                             HorizontalLayout { Button { text: "Tải EPG từ URL"; clicked => { root.load-epg-url(); } } Button { text: "Nhập EPG trên máy"; clicked => { root.import-epg(); } } }
                             Rectangle { height: 95px; background: root.light-mode ? #eef3f9 : #1b3046; border-radius: 8px;
                                 Text { text: root.selected-epg-text; color: #d7e7f5; font-size: 14px; wrap: word-wrap; vertical-alignment: center; horizontal-alignment: center; }
+                            }
+                            Rectangle { height: 1px; background: #344157; }
+                            HorizontalLayout {
+                                spacing: 8px;
+                                Button { text: "‹ Trước"; clicked => { root.guide-day(-1); } }
+                                Button { text: "Hôm nay"; clicked => { root.guide-day(0); } }
+                                Text { text: root.guide-day-text; color: root.accent; font-size: 15px; font-weight: 700; vertical-alignment: center; }
+                                Button { text: "Sau ›"; clicked => { root.guide-day(1); } }
+                            }
+                            LineEdit {
+                                text <=> root.epg-search;
+                                placeholder-text: "Tìm kênh, phim, tập phim trong EPG...";
+                                edited(value) => { root.guide-filter-changed(value); }
+                            }
+                            Text { text: root.guide-count; color: #a8c1d6; font-size: 11px; }
+                            ListView {
+                                height: 315px;
+                                for entry[i] in root.guide-rows: Rectangle {
+                                    height: 57px;
+                                    background: root.light-mode ? (Math.mod(i, 2) == 0 ? #eef3f9 : #ffffff) : (Math.mod(i, 2) == 0 ? #1c3044 : #182638);
+                                    border-radius: 5px;
+                                    HorizontalLayout {
+                                        padding: 7px;
+                                        spacing: 8px;
+                                        Text { text: entry.time; color: root.accent; font-size: 11px; min-width: 98px; vertical-alignment: center; }
+                                        VerticalLayout {
+                                            spacing: 3px;
+                                            Text { text: entry.channel; color: root.light-mode ? #203249 : #f3f7ff; font-size: 12px; font-weight: 700; overflow: elide; }
+                                            Text { text: entry.title; color: root.light-mode ? #394c5f : #afc7df; font-size: 11px; overflow: elide; }
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
