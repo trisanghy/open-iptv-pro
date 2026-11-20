@@ -141,3 +141,8 @@ html.p50-28 #page-tv #playingSubtitle{font-size:10px!important;overflow:hidden!i
 /* Iteration 29: Normalize Play to a 52px theme-aware control */
 html[data-positron=true].p50-29 #page-tv .player-control-card .controls.transport-controls #playBtn{flex:0 0 52px!important;width:52px!important;height:52px!important;min-width:52px!important;min-height:52px!important;border-radius:50%!important;background:var(--po-accent)!important;border:1px solid var(--po-accent)!important;color:var(--po-on)!important;box-shadow:0 0 0 3px var(--po-glow)!important;font-size:22px!important}
 html.p50-29 #page-tv #playBtn:hover{filter:brightness(1.09)!important}
+
+/* Iteration 30: Reduce oversized prev/stop/next spacing */
+html[data-positron=true].p50-30 #page-tv .player-control-card .controls.transport-controls{gap:5px!important;padding:5px!important;justify-content:center!important;min-height:56px!important}
+html[data-positron=true].p50-30 #page-tv .player-control-card .controls.transport-controls :is(#prevBtn,#stopBtn,#nextBtn){width:34px!important;height:34px!important;min-width:34px!important;min-height:34px!important;flex:0 0 34px!important;font-size:17px!important;border-radius:10px!important;color:var(--po-ink)!important}
+html.p50-30 #page-tv .controls.transport-controls :is(#prevBtn,#stopBtn,#nextBtn):hover{background:var(--po-raised)!important}
