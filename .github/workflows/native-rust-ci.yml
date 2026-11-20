@@ -226,25 +226,25 @@ jobs:
           xdotool mousemove 35 264 click 1
           sleep 1
           import -display "$DISPLAY" -window root screenshot/06-epg-page.png
-          xdotool mousemove 35 146 click 1
+          xdotool mousemove 35 120 click 1
           sleep 1
           import -display "$DISPLAY" -window root screenshot/07-tv-return.png
           # Capture both primary header navigation shortcuts, not only a
           # brittle point near the bottom rail. Position is relative to the
           # actual 1364x855 Slint window under the 1600x1000 virtual root.
-          xdotool mousemove 1322 36 click 1
+          xdotool mousemove 1318 36 click 1
           sleep 2
           import -display "$DISPLAY" -window root screenshot/08-settings-page.png
-          xdotool mousemove 35 146 click 1
+          xdotool mousemove 35 120 click 1
           sleep 1
-          xdotool mousemove 1255 36 click 1
+          xdotool mousemove 1239 36 click 1
           sleep 2
           import -display "$DISPLAY" -window root screenshot/09-sources-page.png
-          xdotool mousemove 35 146 click 1
+          xdotool mousemove 35 120 click 1
           sleep 1
           import -display "$DISPLAY" -window root screenshot/10-tv-return.png
           # Also verify the actual rail navigation independent of header.
-          xdotool mousemove 35 730 click 1
+          xdotool mousemove 35 826 click 1
           sleep 2
           import -display "$DISPLAY" -window root screenshot/11-settings-from-rail.png
           xdotool mousemove 35 453 click 1
@@ -268,6 +268,14 @@ jobs:
           sleep 4
           kill -0 "$pid"
           import -display "$DISPLAY" -window root screenshot/14-sources-render.png
+          echo "Real X11 UI navigation callbacks:" >&2
+          cat screenshot/app-stdout.log >&2
+          # Navigation is evaluated from actual callbacks, not image filenames.
+          for dest in tv epg sources settings; do
+            if ! grep -q "\\[UI_NAV_TEST\\] active-page requested: $dest" screenshot/app-stdout.log; then
+              echo "WARNING: X11 click sequence did not activate $dest" >&2
+            fi
+          done
           for file in screenshot/*.png; do test -s "$file"; identify "$file"; done
           CAPTURE
           chmod +x "$RUNNER_TEMP/capture-native-ui.sh"
