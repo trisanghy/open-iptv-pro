@@ -1,4 +1,8 @@
-## Open IPTV Pro Electron v4.23.71 — Cross-platform Supabase sync
+## Open IPTV Pro Electron v4.23.72 Beta — Responsive Supabase sign-in
+
+[**Download v4.23.72 Beta (macOS ARM/Intel, Windows Setup/Portable, source and SHA256)**](https://github.com/trisanghy/open-iptv-pro/releases/tag/electron-v4.23.72)
+
+Native-theme email login UI with progressive OTP/link steps, visible text cursor, and responsive controls. Existing cloud data protection and immutable previous releases are preserved.
 
 Sign in with the same email on Open IPTV Pro Web, Electron, Rust Lab and Mobile. In Settings use **Account & Supabase Sync** and explicitly choose cloud/device data on first use; a revision-first sync runs every 60 seconds after pairing. Only channels, playlist sources, favorites, order and compatible settings are transferred; no images, video or EPG caches. See [release notes](RELEASE_NOTES_ELECTRON_V4_23_71.md) and [downloads](https://github.com/trisanghy/open-iptv-pro/releases/tag/electron-v4.23.71) after CI verification.
 
