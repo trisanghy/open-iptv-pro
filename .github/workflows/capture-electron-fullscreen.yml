@@ -1,0 +1,78 @@
+name: Capture Electron fullscreen UI
+on:
+  push:
+    branches:
+      - build-sources/electron-desktop
+    paths:
+      - '.github/workflows/capture-electron-fullscreen.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  capture:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install Electron and screenshot tooling
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq xvfb libgtk-3-0 libnss3 libasound2t64 libgbm1 libxss1 libatk-bridge2.0-0 libdrm2
+          npm install --no-audit --no-fund
+          npm install --no-save --no-audit --no-fund playwright-core
+      - name: Launch actual Electron renderer and capture fullscreen
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          mkdir -p screenshots
+          Xvfb :99 -screen 0 1600x900x24 > screenshots/xvfb.log 2>&1 &
+          export DISPLAY=:99
+          export ELECTRON_DISABLE_SECURITY_WARNINGS=true
+          ./node_modules/.bin/electron . --no-sandbox --disable-gpu --remote-debugging-port=9222 > screenshots/electron.log 2>&1 &
+          echo $! > screenshots/electron.pid
+          node - <<'NODE'
+          const fs=require('node:fs');
+          const {chromium}=require('playwright-core');
+          (async()=>{
+           let browser,lastError;
+           for(let n=0;n<40;n++){
+            try{browser=await chromium.connectOverCDP('http://127.0.0.1:9222',{timeout:1500});break;}
+            catch(e){lastError=e;await new Promise(r=>setTimeout(r,1000));}
+           }
+           if(!browser)throw lastError;
+           const context=browser.contexts()[0];
+           let page;
+           for(let n=0;n<30;n++){
+            page=context.pages().find(p=>p.url().includes('index.html'));
+            if(page)break;
+            await new Promise(r=>setTimeout(r,1000));
+           }
+           if(!page)throw Error('Electron renderer not found: '+context.pages().map(p=>p.url()).join(','));
+           await page.waitForSelector('#playerBox',{timeout:20000});
+           await page.evaluate(async()=>{
+            const box=document.getElementById('playerBox');
+            const title=document.getElementById('playingTitle');
+            if(title)title.textContent='Open IPTV Pro · fullscreen preview';
+            await box.requestFullscreen();
+           });
+           await page.waitForTimeout(1000);
+           await page.screenshot({path:'screenshots/electron-fullscreen-real.png',fullPage:false});
+           const result=await page.evaluate(()=>({
+            fullscreen:document.fullscreenElement?.id||null,
+            dock:!!document.querySelector('#fullscreenUX'),
+            controls:[...document.querySelectorAll('#fullscreenUX button')].map(x=>({id:x.id,label:x.textContent,rect:{x:x.getBoundingClientRect().x,width:x.getBoundingClientRect().width}}))
+           }));
+           fs.writeFileSync('screenshots/inspection.json',JSON.stringify(result,null,2));
+           if(result.fullscreen!=='playerBox')throw Error('Player did not enter fullscreen');
+           await browser.close();
+          })().catch(e=>{console.error(e);process.exitCode=1});
+          NODE
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: actual-electron-fullscreen-screenshot
+          path: screenshots/
+          retention-days: 7
