@@ -1,31 +1,28 @@
 #!/bin/bash
 set -Eeuo pipefail
-VERSION="4.23.17-tauri.23.8.69"
+VERSION="" # Resolve package version from the checked-out branch archive
 REPO="trisanghy/open-iptv-pro"
 BRANCH="experiment/rust-tauri-v2"
-TAG="rust-lab/v23.8.69" # Immutable release tag; previous versions remain unchanged
-NAME="OpenIPTVPro_RustLab_v23_8_63"
-DEST_BASE="$HOME/Downloads/${NAME}_Build"
-DEST="$DEST_BASE"
-INDEX=2
-while [[ -e "$DEST" ]]; do
-  DEST="${DEST_BASE}_${INDEX}"
-  INDEX=$((INDEX + 1))
-done
-TMP="$(mktemp -d "${TMPDIR:-/tmp}/rustlab-v23-8-63.XXXXXX")"
+SOURCE_REF="refs/heads/${BRANCH}" # Track latest existing Rust Lab branch HEAD; never rewrite release tags
+DEST="$HOME/Downloads/OpenIPTVPro_RustLab_Build"
+TMP="$(mktemp -d "${TMPDIR:-/tmp}/rustlab-current.XXXXXX")"
 trap 'rm -rf "$TMP"' EXIT
 err(){ echo "LỖI: $*" >&2; exit 1; }
-echo "Open IPTV Pro Rust Lab v23.8.69 — Mac build .app only / keep GitHub Release DMG + ZIP"
-# Download the immutable v23.8.69 source tag into a TEMPORARY ZIP; never retain source archive in Downloads.
-curl -fLsS --retry 2 --connect-timeout 20 "https://github.com/${REPO}/archive/refs/tags/${TAG}.zip" -o "$TMP/source.zip" || err "Không tải được ZIP từ GitHub"
+echo "Open IPTV Pro Rust Lab — build current branch HEAD to one Mac .app"
+# Download the HEAD of the existing Rust Lab branch, not an older immutable release tag.
+# Release tags remain unchanged; this script builds fresh source independently of Releases.
+curl -fLsS --retry 2 --connect-timeout 20 "https://github.com/${REPO}/archive/${SOURCE_REF}.zip" -o "$TMP/source.zip" || err "Không tải được ZIP nhánh Rust Lab từ GitHub"
 mkdir -p "$TMP/extract"
 ditto -x -k "$TMP/source.zip" "$TMP/extract" || err "ZIP bị hỏng hoặc tải chưa hoàn tất"
 SOURCE="$(find "$TMP/extract" -maxdepth 1 -type d -name 'open-iptv-pro-*' -print -quit)"
 [[ -n "$SOURCE" && -f "$SOURCE/package.json" ]] || err "Không tìm thấy mã nguồn Rust Lab"
-# Verify the archive version against VERSION above; do not pin a stale regex.
+# Read the actual source version without a stale hard-coded release assertion.
 # macOS BSD sed is available before any Node or Rust bootstrap.
 ACTUAL_VERSION="$(sed -nE 's/^[[:space:]]*"version"[[:space:]]*:[[:space:]]*"([^"]+)".*/\1/p' "$SOURCE/package.json" | head -n 1)"
-[[ -n "$ACTUAL_VERSION" && "$ACTUAL_VERSION" == "$VERSION" ]] || err "Sai phiên bản source: cần $VERSION, tìm thấy ${ACTUAL_VERSION:-không rõ}. Không build nhầm."
+[[ -n "$ACTUAL_VERSION" ]] || err "Không đọc được phiên bản trong package.json"
+VERSION="$ACTUAL_VERSION"
+[[ -f "$SOURCE/renderer/unified-ai-inline-v1.js" && -f "$SOURCE/renderer/unified-ai-inline-v1.css" ]] || err "Mã nguồn tải về chưa chứa giao diện Phụ đề · Dịch · Giọng nói mới"
+echo "Đã tải Rust Lab ${VERSION} với giao diện AI hợp nhất"
 if ! xcode-select -p >/dev/null 2>&1; then
  xcode-select --install 2>/dev/null || true
  err "Cần hoàn tất Xcode Command Line Tools do macOS yêu cầu rồi chạy lại"
@@ -52,9 +49,24 @@ APP="$(find "$APP_DIR" -maxdepth 1 -type d -name '*.app' -print -quit)"
 [[ -n "$APP" && -f "$APP/Contents/Info.plist" && -d "$APP/Contents/MacOS" ]] || err "Không tạo được gói ứng dụng .app hợp lệ"
 EXECUTABLE="$(find "$APP/Contents/MacOS" -maxdepth 1 -type f -print -quit)"
 [[ -n "$EXECUTABLE" && -s "$EXECUTABLE" ]] || err ".app thiếu tệp thực thi"
-mkdir -p "$DEST"
-APP_TARGET="$DEST/$(basename "$APP")"
+STAGED="$TMP/output"
+mkdir -p "$STAGED"
+APP_TARGET="$STAGED/$(basename "$APP")"
 ditto "$APP" "$APP_TARGET" || err "Không sao chép được ứng dụng .app"
+# Replace only the dedicated build output directory after successful compilation.
+# Keep existing installed apps and other Downloads folders untouched.
+if [[ -e "$DEST" && ! -d "$DEST" ]]; then err "Đường dẫn build tồn tại nhưng không phải thư mục: $DEST"; fi
+if [[ -d "$DEST" ]]; then
+  while IFS= read -r -d '' old_item; do
+    [[ -d "$old_item" && "$old_item" == *.app ]] || err "Thư mục build có tệp không phải .app; từ chối xóa: $old_item"
+  done < <(find "$DEST" -mindepth 1 -maxdepth 1 -print0)
+  find "$DEST" -mindepth 1 -maxdepth 1 -type d -name '*.app' -exec rm -rf {} +
+else
+  mkdir -p "$DEST"
+fi
+FINAL_APP="$DEST/$(basename "$APP")"
+ditto "$APP_TARGET" "$FINAL_APP" || err "Không chép được .app mới vào Downloads"
+APP_TARGET="$FINAL_APP"
 [[ -f "$APP_TARGET/Contents/Info.plist" && -s "$APP_TARGET/Contents/MacOS/$(basename "$EXECUTABLE")" ]] || err "Sao chép .app không hoàn chỉnh"
 # Exactly one top-level item in the resulting Downloads folder: the .app bundle.
 OUTPUT_COUNT="$(find "$DEST" -mindepth 1 -maxdepth 1 -print | wc -l | tr -d '[:space:]')"
