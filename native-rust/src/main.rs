@@ -9,6 +9,10 @@ use std::sync::mpsc::{self, Receiver, Sender};
 use std::time::{Duration, Instant, SystemTime, UNIX_EPOCH};
 
 slint::include_modules!();
+const CHANNEL_PAGE_SIZE: usize = 60;
+fn has_next_channel_page(page:usize,total:usize)->bool {
+    page.saturating_add(1).saturating_mul(CHANNEL_PAGE_SIZE)<total
+}
 
 struct State {
     data: NativeData,
@@ -134,10 +138,9 @@ fn refresh(ui: &MainWindow, state: &mut State) {
         });
     }
     state.total_matches = all.len();
-    const PAGE_SIZE: usize = 200;
-    let max_page = all.len().saturating_sub(1) / PAGE_SIZE;
+    let max_page = all.len().saturating_sub(1) / CHANNEL_PAGE_SIZE;
     state.page = state.page.min(max_page);
-    state.visible = all.into_iter().skip(state.page * PAGE_SIZE).take(PAGE_SIZE).collect();
+    state.visible = all.into_iter().skip(state.page * CHANNEL_PAGE_SIZE).take(CHANNEL_PAGE_SIZE).collect();
     let rows: Vec<ChannelView> = state.visible.iter().filter_map(|index| state.data.channels.get(*index)).map(|ch| {
         let show = guide_title(state, &ch.tvg_id, &ch.name)
             .map(|t| format!("EPG đang chiếu: {t}"))
@@ -203,10 +206,10 @@ fn refresh(ui: &MainWindow, state: &mut State) {
         } else { "Chưa có link dự phòng cho kênh này".to_string() };
         ui.set_alternates_text(desc.into());
     }
-    ui.set_show_pagination(state.total_matches > PAGE_SIZE);
+    ui.set_show_pagination(state.total_matches > CHANNEL_PAGE_SIZE);
     ui.set_count_text(format!("{} / {} kết quả · trang {} / {} · {} nguồn",
         state.visible.len(), state.total_matches, state.page + 1,
-        state.total_matches.saturating_sub(1) / PAGE_SIZE + 1, state.data.sources.len()).into());
+        state.total_matches.saturating_sub(1) / CHANNEL_PAGE_SIZE + 1, state.data.sources.len()).into());
     let selected = if let Some(folder) = state.folder_filter.as_ref() { format!("Thư mục: {folder}") }
         else if state.favorites_only { "Kênh yêu thích".to_string() }
         else if state.recent_only { "Kênh xem gần đây".to_string() }
@@ -473,7 +476,7 @@ fn connect_callbacks(
         ui.on_page_next(move || {
             if let Some(ui)=weak.upgrade() {
                 let mut s=shared.borrow_mut();
-                if (s.page + 1) * 200 < s.total_matches { s.page += 1; }
+                if has_next_channel_page(s.page,s.total_matches) { s.page += 1; }
                 refresh(&ui, &mut s);
             }
         });
@@ -1496,4 +1499,18 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Stop sidecar recording when GUI exits to avoid orphan processes.
     if let Some((mut child,_))=recording.borrow_mut().take(){let _=child.kill();let _=child.wait();}
     Ok(())
+}
+
+#[cfg(test)]
+mod channel_paging_tests {
+    use super::*;
+    #[test]
+    fn channel_page_boundaries_are_consistent_with_ui() {
+        assert!(!has_next_channel_page(0,0));
+        assert!(!has_next_channel_page(0,60));
+        assert!(has_next_channel_page(0,61));
+        assert!(!has_next_channel_page(1,120));
+        assert!(has_next_channel_page(1,121));
+        assert!(!has_next_channel_page(usize::MAX,200_000));
+    }
 }
