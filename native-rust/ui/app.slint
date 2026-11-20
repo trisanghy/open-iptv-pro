@@ -517,7 +517,8 @@ if (root.active-page == "tv" || root.active-page == "fav" || root.active-page ==
                             }
                             Text { text: "DANH SÁCH NGUỒN · " + root.sources-count; color: #b8a0ed; font-size: 12px; font-weight: 700; }
                             ListView {
-                                height: 235px;
+                                // A single M3U source must not reserve a tall blank panel.
+                                height: root.sources-count == "0" ? 58px : (root.sources-count == "1" ? 62px : 235px);
                                 for s[i] in root.sources: Rectangle {
                                     height: 51px;
                                     background: root.light-mode ? (Math.mod(i, 2) == 0 ? #edf2f9 : #f9fbfd) : (Math.mod(i, 2) == 0 ? #1c3046 : #17273a);
