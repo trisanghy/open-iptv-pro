@@ -146,3 +146,8 @@ html.p50-29 #page-tv #playBtn:hover{filter:brightness(1.09)!important}
 html[data-positron=true].p50-30 #page-tv .player-control-card .controls.transport-controls{gap:5px!important;padding:5px!important;justify-content:center!important;min-height:56px!important}
 html[data-positron=true].p50-30 #page-tv .player-control-card .controls.transport-controls :is(#prevBtn,#stopBtn,#nextBtn){width:34px!important;height:34px!important;min-width:34px!important;min-height:34px!important;flex:0 0 34px!important;font-size:17px!important;border-radius:10px!important;color:var(--po-ink)!important}
 html.p50-30 #page-tv .controls.transport-controls :is(#prevBtn,#stopBtn,#nextBtn):hover{background:var(--po-raised)!important}
+
+/* Iteration 31: Make volume slider visible without crowding toolbar */
+html[data-positron=true].p50-31 #page-tv .player-control-card .volume-controls{padding:4px 9px!important;gap:7px!important;min-width:80px!important}
+html[data-positron=true].p50-31 #page-tv .player-control-card .volume-controls #volume{min-width:56px!important;max-width:180px!important;width:100%!important;accent-color:var(--po-accent)!important}
+html.p50-31 #page-tv .volume-controls .volume-icon{font-size:16px!important}
