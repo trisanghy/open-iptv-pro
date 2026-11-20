@@ -39,3 +39,40 @@ test('unknown cloud settings do not wipe an existing platform settings object',(
  assert.equal(result.settings.localOnly,true);
  assert.equal(result.settings.volume,.5);
 });
+
+
+test('sign-out clears account playlists without deleting device appearance preferences',()=>{
+ const old={sources:[{id:'secret',url:'https://private.invalid/file.m3u?token=abc'}],
+  channels:[{id:'one'}],favorites:['one'],collectorBackup:{channels:[{id:'one'}]},
+  snapshots:{secret:'data:image/png;base64,AAAA'},channelOrder:{all:['one']},
+  current:'one',volume:.7,videoFit:'contain',theme:'dark'};
+ const guest=api.guestState(old,'desktop');
+ assert.equal(guest.sources.length,0);
+ assert.equal(guest.channels.length,0);
+ assert.equal(guest.favorites.length,0);
+ assert.equal(guest.current,'');
+ assert.equal(Object.keys(guest.snapshots).length,0);
+ assert.equal(Object.keys(guest.collectorBackup).length,0);
+ assert.equal(guest.volume,.7);
+ assert.equal(guest.videoFit,'contain');
+ assert.equal(guest.theme,'dark');
+ assert.equal(old.sources.length,1,'never mutate the signed-in store before persistence succeeds');
+});
+test('Mobile logout clears account-owned sources and restores safe guest state',()=>{
+ const old={sources:[{id:'my-source',channels:[{id:'a'}]}],channels:[{id:'a'}],
+  favorites:['url-a'],recentlyWatched:['url-a'],selected:'url-a',
+  fallbacks:{'url-a':'https://secret.invalid'},epgCache:{programs:[1]},
+  epgUrl:'https://private.invalid/epg.xml',settings:{autoPiPOnBackground:true},
+  otherLocalOption:'kept'};
+ const guest=api.guestState(old,'mobile');
+ for(const field of ['sources','channels','favorites','recentlyWatched'])
+  assert.equal(guest[field].length,0);
+ assert.equal(guest.selected,null);
+ assert.equal(guest.resumeUrl,null);
+ assert.equal(guest.epgCache,null);
+ assert.equal(guest.epgUrl,'');
+ assert.equal(Object.keys(guest.fallbacks).length,0);
+ assert.equal(guest.settings.autoPiPOnBackground,true);
+ assert.equal(guest.otherLocalOption,'kept');
+ assert.equal(old.sources[0].id,'my-source');
+});
