@@ -1,8 +1,8 @@
-## Bản v4.23.17-mobile.34 — Đồng bộ Supabase
+## Bản v4.23.17-mobile.35 — Đồng bộ Supabase
 
 Mở **Công cụ → Tài khoản & đồng bộ Supabase** để đăng nhập bằng email, nhập OTP hoặc xác nhận liên kết email. Lần đầu chọn **Lấy dữ liệu đám mây** hoặc **Gửi dữ liệu thiết bị**. Sau khi ghép, app kiểm tra phiên bản dữ liệu mỗi 60 giây và chỉ cập nhật khi có thay đổi. Không đồng bộ ảnh chụp, video, thumbnail và cache EPG. Bản khôi phục được giữ trên thiết bị trước khi thay dữ liệu.
 
-Tải APK/IPA từ [mobile/v4.23.17.34](https://github.com/trisanghy/open-iptv-pro/releases/tag/mobile/v4.23.17.34) sau khi workflow tạo thành công. IPA **chưa ký**, không cài trực tiếp trên thiết bị iOS thương mại nếu chưa ký.
+Tải APK/IPA từ [mobile/v4.23.17.35](https://github.com/trisanghy/open-iptv-pro/releases/tag/mobile/v4.23.17.35) sau khi workflow tạo thành công. IPA **chưa ký**, không cài trực tiếp trên thiết bị iOS thương mại nếu chưa ký.
 
 # Open IPTV Pro v4.21.1 — Mobile (Android / iOS)
 

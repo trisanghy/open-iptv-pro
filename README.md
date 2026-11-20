@@ -1,6 +1,6 @@
-## Mobile cloud sync — v4.23.17-mobile.34
+## Mobile cloud sync — v4.23.17-mobile.35
 
-Same user account/project as Open IPTV Pro Web, Electron and Rust Lab. Portable Supabase sync of M3U sources, channels, favorites and settings; opt-in first upload/download, revision-first polling after pairing, local recovery before replacement. Image/video/EPG caches remain local. See [Mobile setup](experiments/mobile-capacitor/README_VI.md) and [release](https://github.com/trisanghy/open-iptv-pro/releases/tag/mobile/v4.23.17.34).
+Same user account/project as Open IPTV Pro Web, Electron and Rust Lab. Portable Supabase sync of M3U sources, channels, favorites and settings; opt-in first upload/download, revision-first polling after pairing, local recovery before replacement. Image/video/EPG caches remain local. See [Mobile setup](experiments/mobile-capacitor/README_VI.md) and [release](https://github.com/trisanghy/open-iptv-pro/releases/tag/mobile/v4.23.17.35).
 
 ## v4.22 Full – Cập nhật và bộ biểu tượng macOS
 

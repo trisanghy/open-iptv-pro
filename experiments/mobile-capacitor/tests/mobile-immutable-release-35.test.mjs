@@ -1,0 +1,23 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+const read=path=>fs.readFileSync(new URL(path,import.meta.url),'utf8');
+test('mobile 4.23.17.35 has a new immutable release tag and full cloud login UI',()=>{
+ const pkg=JSON.parse(read('../package.json'));
+ const lock=JSON.parse(read('../package-lock.json'));
+ const workflow=read('../../../.github/workflows/mobile-apk.yml');
+ const html=read('../index.html');
+ const js=read('../public/cloud-portable.js');
+ const css=read('../public/cloud-portable.css');
+ assert.equal(pkg.version,'4.23.17-mobile.35');
+ assert.equal(lock.version,pkg.version);
+ assert.equal(lock.packages[''].version,pkg.version);
+ assert.match(workflow,/MOBILE_TAG: mobile\/v4\.23\.17\.35/);
+ assert.match(workflow,/MOBILE_VERSION: 4\.23\.17-mobile\.35/);
+ assert.match(html,/cloud-portable\.css/);
+ assert.match(js,/class="oc-head"/);
+ assert.match(js,/portableCloudOTPForm/);
+ assert.match(css,/#openiptvPortableCloud \.oc-form input/);
+ assert.match(css,/caret-color:var\(--accent/);
+ assert.match(css,/font-size:16px/);
+});
