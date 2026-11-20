@@ -21,8 +21,8 @@ test('Web and build source ship the same compact Supabase form CSS',()=>{
   assert.match(source,/font-size:16px/);
   assert.match(source,/\.cloud-email-input-line > button/);
   assert.ok(!html.includes('href="cloud-sync.css"'),'Live page must invalidate old Safari CSS cache');
-  assert.ok(html.includes('href="cloud-sync.css?v=auth-input-compact-20261119a"'));
-  assert.ok(builder.includes('cloud-sync.css?v=auth-input-compact-20261119a'),
+  assert.ok(html.includes('href="cloud-sync.css?v=email-otp-20261120a"'));
+  assert.ok(builder.includes('cloud-sync.css?v=email-otp-20261120a'),
     'Web builder must retain the same versioned CSS on regenerated pages');
   for(const id of ['cloudEmailInput','cloudLinkInput','cloudOtpCode','cloudEmailSend','cloudLinkVerify'])
     assert.ok(html.includes('id="'+id+'"'),'Cloud auth input/button '+id+' missing');
