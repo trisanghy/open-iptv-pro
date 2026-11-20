@@ -104,6 +104,13 @@ const sleep=n=>new Promise(resolve=>setTimeout(resolve,n));
     await page.locator('[data-po-theme="'+theme+'"]').click();
     const selectedTheme=await page.evaluate(()=>document.documentElement.dataset.positronPalette);
     assert.equal(selectedTheme,theme,'P3 theme did not apply at round '+round);
+    const playVisual=await page.locator('#playBtn').evaluate(el=>({
+      background:getComputedStyle(el).backgroundColor,
+      volume:getComputedStyle(document.getElementById('volume')).accentColor
+    }));
+    const expectedPlay={'night':'rgb(170, 153, 255)','aurora':'rgb(101, 231, 207)','graphite':'rgb(227, 201, 151)'}[theme];
+    assert.equal(playVisual.background,expectedPlay,'P3.1 inherited neon play background in '+theme);
+
     await page.keyboard.press('Alt+p'); // close Studio panel
     assert.equal(await page.locator('#positronStudioMenu').isHidden(),true);
     await page.keyboard.press('Alt+2');
@@ -175,6 +182,7 @@ const sleep=n=>new Promise(resolve=>setTimeout(resolve,n));
   await page.setViewportSize({width:1360,height:823});
   await page.waitForTimeout(350);
   await capture('positron-p3-final-main-real.png');
+  await capture('positron-p31-final-main-real.png');
   fs.writeFileSync(path.join(out,'audit-positron-p3-20-rounds.json'),JSON.stringify({
     source:'actual Electron application via CDP, no mocked channel data',
     extraRounds:studioHistory.length,previousRounds:history.length,

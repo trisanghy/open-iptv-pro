@@ -83,3 +83,31 @@ html[data-positron=true] #positronStudioMenu .po-reset{display:block;width:100%;
 @media(max-width:1360px){html[data-positron=true] #positronBar .p-live{display:none}}
 @media(max-width:1140px){html[data-positron=true] #positronCounts{display:none}html[data-positron=true] #positronStudioBtn{padding-inline:8px}}
 @media(max-width:900px){html[data-positron=true] #positronBar .p-actions{gap:5px}html[data-positron=true] #positronBar .p-heading strong{max-width:18ch}html[data-positron=true] #positronBar .p-actions button{font-size:11px}}
+
+/* P3.1 screenshot-review hotfix: outrank the legacy Electron v4.23.41
+   transport selector, which forces a neon green Play button and volume thumb. */
+html[data-positron="true"] #page-tv .player-control-card .controls.transport-controls #playBtn{
+  background:var(--po-accent)!important;
+  color:var(--po-on)!important;
+  border:2px solid var(--po-accent)!important;
+  box-shadow:0 0 0 3px var(--po-glow)!important;
+}
+html[data-positron="true"] #page-tv .player-control-card .volume-controls #volume{
+  accent-color:var(--po-accent)!important;
+}
+html[data-positron="true"] #page-tv .player-control-card .controls.transport-controls :is(#prevBtn,#nextBtn){
+  color:var(--po-ink)!important;
+  font-family:"Segoe UI Symbol",Arial,system-ui!important;
+}
+html[data-positron="true"] #page-tv #emptyPlayer .empty-icon{
+  color:var(--po-accent)!important;
+  background:var(--po-raised)!important;
+  border:1px solid var(--po-line)!important;
+}
+html[data-positron="true"] #page-tv .player-control-card :is(#subtitleOptionsBtn,#videoEnhanceToggle){
+  color:var(--po-accent)!important;
+  background:var(--po-raised)!important;
+  border-color:var(--po-line)!important;
+}
+html[data-positron="true"] #page-tv .timeshift-actions b{color:var(--po-accent)!important}
+html[data-positron="true"] #appSidebar .online-dot{background:var(--po-accent)!important;box-shadow:0 0 8px var(--po-glow)!important}

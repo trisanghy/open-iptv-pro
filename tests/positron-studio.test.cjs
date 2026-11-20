@@ -41,3 +41,14 @@ test('P3 renderer audit and workflow include additional actual-electron screensh
  assert.ok(runner.includes('audit-positron-p3-20-rounds.json'));
  assert.ok(runner.includes('positron-p3-final-main-real.png'));
 });
+
+test('P3.1 removes the inherited neon-green player color at higher CSS specificity',()=>{
+ const css=read('renderer/positron-studio.css');
+ assert.match(css,/html\[data-positron="true"\] #page-tv \.player-control-card \.controls\.transport-controls #playBtn/);
+ assert.match(css,/accent-color:var\(--po-accent\)!important/);
+ const js=read('renderer/positron-studio.js');
+ assert.match(js,/prevBtn/);assert.match(js,/nextBtn/);
+ const runner=read('scripts/positron-capture.cjs');
+ assert.match(runner,/expectedPlay/);
+ assert.match(runner,/positron-p31-final-main-real\.png/);
+});

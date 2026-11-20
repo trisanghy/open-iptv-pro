@@ -92,3 +92,8 @@ if(studio?.menu.hidden===false)return;
 e.preventDefault();focus?.click();
 });
 })();
+
+/* P3.1: force text presentation (not OS colour emoji) for transport glyphs. */
+(()=>{for(const [id,text] of [['prevBtn','\u23ee\ufe0e'],['nextBtn','\u23ed\ufe0e']]){
+ const node=document.getElementById(id);if(node){node.textContent=text;node.setAttribute('aria-label',id==='prevBtn'?'Kênh trước':'Kênh sau');}
+}})();
