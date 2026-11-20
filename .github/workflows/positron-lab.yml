@@ -78,8 +78,8 @@ jobs:
           test -s positron-evidence/p4-50-rounds/positron-p4-50-real.png
           test -s positron-evidence/audit-p4-50-rounds.json
           test -s positron-evidence/audit-p5-20-rounds.json
-          test -s positron-evidence/p5-20-rounds/positron-p51-01-real.png
-          test -s positron-evidence/p5-20-rounds/positron-p51-20-real.png
+          test -s positron-evidence/p5-20-rounds/positron-p5-01-real.png
+          test -s positron-evidence/p5-20-rounds/positron-p5-20-real.png
           node -e "let a=require('./positron-evidence/audit-p4-50-rounds.json');if(a.newP4Rounds!==50||a.screenshotCount!==50||a.rounds.length!==50)process.exit(1);let p=require('./positron-evidence/audit-p5-20-rounds.json');if(p.screenshotCount!==20||p.upgradeChecks!==20||p.rounds.length!==20)process.exit(1)"
       - uses: actions/upload-artifact@v4
         if: always()

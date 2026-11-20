@@ -48,6 +48,8 @@ async function runTwenty(page){
     player:get('#playerBox'),sidebar:get('#appSidebar'),
     sources:get('#page-sources .sources-hub-nav'),sourceSection:get('#smartDiscoverySection'),epg:get('#page-epg .epg-filter'),
     controls:document.querySelectorAll('#page-tv button').length,
+    transportVectors:['prevBtn','stopBtn','nextBtn','fsPrev','fsNext'].every(id=>!!document.getElementById(id)?.querySelector('svg')),
+    brandIcon:get('#appSidebar .brand-icon'),
     searchShortcut:document.getElementById('searchBox')?.getAttribute('aria-keyshortcuts'),
     stage:document.documentElement.dataset.p20Stage};
   });
@@ -55,7 +57,11 @@ async function runTwenty(page){
   assert.equal(metrics.stage,String(round));
   assert.ok(metrics.sidebar&&metrics.sidebar.width<=285,'sidebar overflow: '+name);
   assert.ok(metrics.controls>=8,'native player controls missing');
-  if(target==='tv')assert.ok(metrics.player?.width>180&&metrics.player.height>100,'video collapsed: '+name);
+  if(target==='tv'){
+   assert.ok(metrics.player?.width>180&&metrics.player.height>100,'video collapsed: '+name);
+   assert.equal(metrics.transportVectors,true,'non-vector transport icons: '+name);
+   if(width<=800&&round>=6)assert.equal(metrics.brandIcon?.visible,false,'brand icon overlaps sidebar toggle: '+name);
+  }
   if(target==='sources'&&metrics.sources)assert.notEqual(metrics.sources.background,'rgb(255, 255, 255)','white source panel');
   if(target==='sources'){
    assert.ok(metrics.sourceSection,'Smart Discovery section missing');

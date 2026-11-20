@@ -32,3 +32,7 @@ This release preserves all P4.1 source data/feature logic. It adds **20 independ
 ## P5.1 real screenshot repair
 - Inspected real Electron screenshots 14 and 15 and found bright white strips around Smart Discovery.
 - The underlying `.source-hub-section` retained legacy light-theme background. Override only in Positron and test the computed surface luminance in both Sources screenshot rounds.
+
+- Repaired screenshot workflow artifact filename assertions for P5.1 without renaming the real PNG files.
+- Replaced OS-dependent orange emoji in Prev/Stop/Next (and fullscreen Prev/Next) with accessible monochrome inline SVG on the existing native buttons.
+- Hid the duplicate brand icon under the sidebar toggle in the 54px icon rail; added real Electron screenshot assertions for both fixes.

@@ -64,3 +64,15 @@
 html[data-positron="true"].p20-07 #page-sources .source-hub-section{
  background:var(--po-bg)!important;color:var(--po-ink)!important;border-color:var(--po-line)!important;
 }
+
+/* P5.1 real 450px screenshot review: do not stack the brand icon under
+   the sidebar hamburger on the compact navigation rail. */
+@media(max-width:800px){
+ html[data-positron="true"].p20-06 #appShell #appSidebar .brand-icon{display:none!important}
+}
+/* SVG transport glyphs inherit the Positron foreground; never use OS emoji. */
+html[data-positron="true"] #page-tv .transport-controls button svg,
+html[data-positron="true"] #fullscreenUX button svg{
+ display:block;width:19px;height:19px;flex:0 0 19px;stroke:currentColor;stroke-width:1.9;
+ stroke-linecap:round;stroke-linejoin:round;fill:none;pointer-events:none;
+}

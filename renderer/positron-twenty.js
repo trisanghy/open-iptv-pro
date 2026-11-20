@@ -54,6 +54,28 @@
   labelNav();
   new MutationObserver(labelNav).observe(sidebar,{childList:true,subtree:true});
  }
+
+ // P5.1 screenshot review: neutral monochrome SVGs replace platform-colored
+ // transport emoji without replacing button nodes, playback listeners or state.
+ const ns='http://www.w3.org/2000/svg';
+ const iconDefinitions=[
+  ['prevBtn','M6 5v14 M20 5 9 12l11 7V5z','Kênh trước'],
+  ['stopBtn','M6 6h12v12H6z','Dừng phát'],
+  ['nextBtn','M18 5v14 M4 5l11 7-11 7V5z','Kênh sau'],
+  ['fsPrev','M6 5v14 M20 5 9 12l11 7V5z','Kênh trước'],
+  ['fsNext','M18 5v14 M4 5l11 7-11 7V5z','Kênh sau']
+ ];
+ for(const [name,shape,label] of iconDefinitions){
+  const button=byId(name);if(!button)continue;
+  const svg=d.createElementNS(ns,'svg'),path=d.createElementNS(ns,'path');
+  svg.setAttribute('viewBox','0 0 24 24');svg.setAttribute('width','19');
+  svg.setAttribute('height','19');svg.setAttribute('aria-hidden','true');
+  svg.setAttribute('focusable','false');
+  path.setAttribute('d',shape);svg.append(path);
+  button.replaceChildren(svg);button.dataset.p20Vector='true';
+  button.setAttribute('aria-label',label);button.title=label;
+ }
+
  window.OpenIPTVPositronTwenty=Object.freeze({
   setStage,getStage:()=>stage,getFeedback:()=>previous
  });

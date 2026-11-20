@@ -11,6 +11,7 @@ test('P5 has twenty scoped improvements with independent stage gates',()=>{
  assert.equal((css.match(/\/\* Upgrade \d\d:/g)||[]).length,20);
  assert.ok(css.includes('page-sources')&&css.includes('page-doctor')&&css.includes('page-epg'));
  assert.ok(css.includes('#page-sources .source-hub-section'),'P5.1 parent background repair must persist');
+ assert.ok(css.includes('#appShell #appSidebar .brand-icon'),'P5.1 rail icon overlap repair must persist');
 });
 test('P5 companion is syntax safe and does not touch native streaming or persistence',()=>{
  const js=read('renderer/positron-twenty.js');
@@ -19,6 +20,7 @@ test('P5 companion is syntax safe and does not touch native streaming or persist
   assert.ok(!js.includes(unsafe),unsafe);
  assert.ok(js.includes('OpenIPTVPositronTwenty'));
  assert.ok(js.includes("event.key==='/'"));
+ assert.ok(js.includes("button.replaceChildren(svg)"),'P5.1 vector transport controls must not use OS emoji');
 });
 test('P5 assets are loaded after P4 without replacing it',()=>{
  const html=read('renderer/index.html');
