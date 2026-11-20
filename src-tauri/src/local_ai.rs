@@ -255,8 +255,9 @@ pub async fn caption_start(app:AppHandle,ai:Arc<LocalAi>,url:&str,translate:bool
   loop{
    let _=app.emit("caption:event",json!({"type":"status","id":id,"message":"Đang nhận diện giọng nói offline…"}));
    let mut ff=Command::new(&ffmpeg);
+   // Capture ten seconds of audio per Whisper recognition window; -t 4 in the Whisper command denotes CPU threads.
    ff.args(["-hide_banner","-nostdin","-loglevel","error","-y","-rw_timeout","8000000","-user_agent","Mozilla/5.0","-i",&src,
-    "-map","0:a:0","-vn","-sn","-dn","-ac","1","-ar","16000","-c:a","pcm_s16le","-t","4"]).arg(&wav);
+    "-map","0:a:0","-vn","-sn","-dn","-ac","1","-ar","16000","-c:a","pcm_s16le","-t","10"]).arg(&wav);
    let cycle=async{
     output_timeout(&mut ff,35).await?;
     if !exists(&wav,25_000){return Err("Nguồn không có âm thanh".to_string());}

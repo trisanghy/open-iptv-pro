@@ -1,3 +1,9 @@
+## Rust Lab v23.8.81 — Whisper thu âm 10 giây
+
+Đổi mỗi lượt lấy mẫu audio Whisper thành **10 giây**, chuẩn mono 16 kHz WAV, giữ nguyên 4 luồng CPU Whisper (tham số `-t 4`) và logic hủy nhận diện khi Pause/Stop/Ended hoặc đổi kênh. Không thay đổi TTS, PiP, phụ đề, lưu dữ liệu. Có kiểm thử hồi quy và giữ lệnh build Mac một lệnh.
+
+[Release notes](RELEASE_NOTES_RUST_LAB_V23_8_81.md)
+
 ## Rust Lab v23.8.80 — sửa nút Nâng cao video không xuất hiện
 
 Khởi tạo nút **Nâng cao video bằng AI** sau khi module **Phụ đề · Dịch · Giọng nói** sẵn sàng; giữ hai nút cạnh nhau, độ cao đồng bộ 32px và panel xổ không có khung/viền ngoài. Khi mở một nhóm, nhóm còn lại tự thu gọn để tiết kiệm diện tích. Thêm kiểm thử hồi quy thứ tự tải bất đồng bộ. Các tính năng video, PiP, CC và TTS không thay đổi. AI upscaling 1080p/2K/4K vẫn chưa có pipeline suy luận thực.
