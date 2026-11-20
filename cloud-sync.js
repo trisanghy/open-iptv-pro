@@ -38,7 +38,7 @@
    }
    const css=getComputedStyle(emailInput);
    const start=Math.max(0,emailInput.selectionStart||0);
-   const prefix=emailInput.value.slice(0,start).split('\\n').pop();
+   const prefix=emailInput.value.slice(0,start).split('\n').pop();
    if(ctx)ctx.font=css.font||[css.fontWeight,css.fontSize,css.fontFamily].join(' ');
    const width=ctx?ctx.measureText(prefix).width:prefix.length*8;
    const padding=parseFloat(css.paddingLeft)||12;
