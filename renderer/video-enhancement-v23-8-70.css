@@ -22,3 +22,8 @@
 @media(max-width:720px){#page-tv .video-enhance-toggle{margin:8px 0 0}}
 
 #page-tv .veh-limit{font-size:12px;color:#b8ccd9;margin:0;line-height:1.5}
+
+#page-tv .veh-ai-probe{display:flex;align-items:center;gap:10px;flex-wrap:wrap;border:1px solid #29485a;border-radius:10px;background:#092335;padding:11px 12px;color:#e7f1fa}
+#page-tv .veh-ai-probe strong{font-size:13px}
+#page-tv #veh-ai-hw-status{flex:1 1 250px;font-size:12px;color:#c0d4e6}
+#page-tv #veh-ai-probe{border:1px solid #477795;border-radius:8px;padding:8px 12px;background:#12354a;color:#fff;font-weight:600;cursor:pointer}

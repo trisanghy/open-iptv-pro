@@ -44,7 +44,7 @@
  let selectionSerial=0, activeMediaSrc="", activeMediaGeneration=0, activeMediaAttempt=0, activeMediaUsesMSE=false, activeMediaBlobSrc="";
  const compatFailureCooldown=new Map(); // Avoid respawning FFmpeg repeatedly for broken streams.
  let mediaInfo={hls:false,mode:'unknown',seekable:false};
- let playbackProofTimer=0,playbackProofUrl='',playAttemptSerial=0,waitingSerial=0,stablePlayback={attempt:0,startedAt:0,mediaAt:0},filter='all',page='tv',hls=null,dash=null,current=null,playGeneration=0,playCandidates=[],playCandidateIndex=0,playMode='live',failoverTimer=null,modalHandler=null,snapshotBase='',mediaRecoveryCount=0,compatAttempted=false,compatSource='',motionEnhanced=false;
+ let playbackProofTimer=0,playbackProofUrl='',playAttemptSerial=0,waitingSerial=0,stablePlayback={attempt:0,startedAt:0,mediaAt:0},filter='all',page='tv',hls=null,dash=null,current=null,playGeneration=0,playCandidates=[],playCandidateIndex=0,playMode='live',failoverTimer=null,modalHandler=null,snapshotBase='',mediaRecoveryCount=0,compatAttempted=false,compatSource='',motionEnhanced=false,motionGuardTimer=null;
  const tasks={
   check:{running:false,cancel:false,visible:false,total:0,done:0,alive:0,dead:0,uncertain:0,results:[]},
   shots:{running:false,cancel:false,visible:false,total:0,done:0,success:0,failed:0,skipped:0,latest:''}
@@ -600,7 +600,31 @@
  function renameSource(s){openModal('Đổi tên nguồn',`<label class="modal-label">Tên nguồn</label><input class="modal-input" id="renameValue" value="${escape(s.name)}"/>`,()=>{s.name=$('#renameValue').value.trim()||s.name;save();render();});}
  function deleteSource(s){if(!confirm(`Xóa nguồn "${s.name}" và tất cả kênh của nguồn này?`))return;store.sources=store.sources.filter(x=>x.id!==s.id);store.channels=store.channels.filter(c=>c.sourceId!==s.id);if(current?.sourceId===s.id)stopPlayer();syncGroupOrder();favCore.sync(store);save();render();toast('Đã xóa nguồn');}
  function enabledChannels(){const s=new Set(store.sources.filter(s=>s.enabled!==false).map(s=>s.id));return store.channels.filter(c=>s.has(c.sourceId));}
+
+ function stopMotionGuard(){if(motionGuardTimer!==null){clearInterval(motionGuardTimer);motionGuardTimer=null;}}
+ function startMotionGuard(generation){
+   stopMotionGuard();
+   if(!motionEnhanced||window.OpenIPTVVideoEnhancement?.getSettings?.()?.downshift===false)return;
+   if(typeof player.getVideoPlaybackQuality!=='function')return;
+   let last=player.getVideoPlaybackQuality(),bad=0;
+   motionGuardTimer=setInterval(()=>{
+     if(!motionEnhanced||generation!==playGeneration){stopMotionGuard();return;}
+     if(player.paused||player.ended){bad=0;return;}
+     const now=player.getVideoPlaybackQuality?.();
+     if(!now||!last)return;
+     const total=now.totalVideoFrames-last.totalVideoFrames;
+     const drops=now.droppedVideoFrames-last.droppedVideoFrames;
+     last=now;
+     bad=window.OpenIPTVVideoEnhancement?.severeDrop?.(total,drops)?bad+1:0;
+     if(bad>=2){
+       stopMotionGuard();
+       // Recover to original HLS once; never loop back into enhanced start.
+       void recoverPlayback(generation,'Nội suy quá tải: rớt nhiều khung hình',playAttemptSerial);
+     }
+   },4000);
+ }
  function disposeActiveMedia(){
+   stopMotionGuard();
   // Invalidate a previous player's queued error/waiting/playing events *before*
   // awaiting Rust IPC; otherwise the old VTV3 failure may fail over the new VTV3.
   activeMediaSrc='';activeMediaGeneration=0;activeMediaAttempt=0;activeMediaUsesMSE=false;activeMediaBlobSrc='';
@@ -1149,7 +1173,7 @@
   $('#searchBox').addEventListener('input',renderList);$('#volume').addEventListener('input',e=>{player.volume=e.target.value/100;store.volume=player.volume;save();});
   player.volume=store.volume??.8;$('#volume').value=Math.round(player.volume*100);
   const fit=['contain','cover','fill','none'].includes(store.videoFit)?store.videoFit:'contain';$('#videoFit').value=fit;player.className='fit-'+fit;$('#videoFit').addEventListener('change',e=>{store.videoFit=e.target.value;player.className='fit-'+store.videoFit;save();});
-  player.addEventListener('playing',()=>{if(!activeMediaEvent())return;waitingSerial++;clearTimeout(failoverTimer);if(stablePlayback.attempt===playAttemptSerial&&!stablePlayback.startedAt){stablePlayback.startedAt=Date.now();stablePlayback.mediaAt=Number(player.currentTime)||0;}const generation=playGeneration;setTimeout(()=>markPlaybackVerified(generation),1800);window.IPTVProAdvanced?.onPlaying?.(current,playCandidates[playCandidateIndex]);$('#streamInfo').textContent=motionEnhanced?'● Nội suy '+(window.OpenIPTVVideoEnhancement?.getSettings?.()?.fps||'')+' FPS · FFmpeg':compatSource?'● FFmpeg tương thích • Đang phát':'● Đang phát';$('#playBtn').textContent='Ⅱ';textStatus('Đang xem: '+(current?.name||''));});
+  player.addEventListener('playing',()=>{if(!activeMediaEvent())return;waitingSerial++;clearTimeout(failoverTimer);if(stablePlayback.attempt===playAttemptSerial&&!stablePlayback.startedAt){stablePlayback.startedAt=Date.now();stablePlayback.mediaAt=Number(player.currentTime)||0;}const generation=playGeneration;setTimeout(()=>markPlaybackVerified(generation),1800);window.IPTVProAdvanced?.onPlaying?.(current,playCandidates[playCandidateIndex]);if(motionEnhanced)startMotionGuard(playGeneration);$('#streamInfo').textContent=motionEnhanced?'● Nội suy '+(window.OpenIPTVVideoEnhancement?.getSettings?.()?.fps||'')+' FPS · FFmpeg':compatSource?'● FFmpeg tương thích • Đang phát':'● Đang phát';$('#playBtn').textContent='Ⅱ';textStatus('Đang xem: '+(current?.name||''));});
   // DOM listeners receive an Event argument. Passing markPlaybackVerified directly
   // mistakenly compared Event !== playGeneration and disabled all progress proofs.
   player.addEventListener('timeupdate',()=>markPlaybackVerified());

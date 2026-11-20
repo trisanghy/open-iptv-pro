@@ -1,3 +1,11 @@
+## Rust Lab v23.8.79 — kiểm tra AI phần cứng và bảo vệ khung hình
+
+- **Bù chuyển động:** FFmpeg nội suy 60/90/120 FPS khi người dùng bật và áp dụng trên kênh LIVE; đầu ra giới hạn tối đa 1280×720 trước nội suy. Khi WebView rớt nhiều khung hình trong hai chu kỳ giám sát, ứng dụng trở về luồng gốc nếu tùy chọn giảm tải được bật.
+- **Kiểm tra AI trên thiết bị:** macOS truy vấn trực tiếp VideoToolbox VTLowLatencySuperResolutionScalerConfiguration.isSupported (macOS 26+ khi khả dụng); không dựa chỉ vào tên GPU.
+- **Phân biệt:** VideoToolbox báo hỗ trợ phần cứng không có nghĩa AI Super Resolution đang chạy. Cấu hình AI 1080p/2K/4K được lưu, nhưng chưa nối model inference vào pipeline. Windows DirectML/Core ML/ONNX còn cần backend thực tế và benchmark.
+- Không tải model tự động. Giữ nguyên video gốc, native PiP, Caption/Translate/TTS và các release cũ.
+
+[Release notes v23.8.79](RELEASE_NOTES_RUST_LAB_V23_8_79.md)
 ## Cloud sync v23.8.73 (Tauri) — redesigned native login UI
 
 The account panel now matches the current Tauri Settings theme, offers clear email/OTP fields with responsive widths, accessible focus/caret and a collapsed confirmation-link option. Cloud sync still excludes snapshots, images, video and EPG caches. [Release notes](RELEASE_NOTES_RUST_LAB_V23_8_73.md).

@@ -16,7 +16,7 @@ test('Opt-in motion uses original player and reuses authenticated compat HLS',()
 });
 test('Process filter is constrained to 60/90/120 and synthetic benchmark measures 720p output',()=>{
  assert.match(rust,/60\|90\|120/);
- assert.match(rust,/scale=w=min\(720/);
+ assert.match(rust,/scale=w=min\(1280/);
  assert.match(rust,/minterpolate=fps=\{fps\}/);
  assert.match(rust,/testsrc2=size=1280x720:rate=30:duration=1\.5/);
  assert.match(rust,/aiUpscaleAvailable":false/);
