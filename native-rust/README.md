@@ -11,6 +11,8 @@ cargo run --manifest-path native-rust/Cargo.toml
 
 Use `brew install mpv ffmpeg` on macOS. `libmpv` is loaded dynamically at runtime. Use `bash scripts/BUILD_C3_MAC_AUTOFETCH.sh` to build the current isolated branch into an unsigned local DMG and accompanying source ZIP. The helper never updates Electron, Tauri, Mobile or main.
 
+For exact feature availability and outstanding native rewrite work, see [TAURI_PORT_MATRIX.md](TAURI_PORT_MATRIX.md).
+
 ## Current port status
 
 - Implemented in C3: native Slint shell, M3U file/URL import, source management, search and pagination, favourites/recent, EPG current programmes, URL backups/failover, FFmpeg snapshots, health checks, basic backup, limited recording, multiple mpv windows and simple theme controls.
