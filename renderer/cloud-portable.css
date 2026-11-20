@@ -78,6 +78,7 @@
   #openiptvPortableCloud .oc-heading h3 {font-size:16px}
   #openiptvPortableCloud .oc-form-row,#openiptvPortableCloud .oc-actions {grid-template-columns:minmax(0,1fr)}
   #openiptvPortableCloud .oc-form-row button {width:100%}
+  #openiptvPortableCloud .oc-form input:not([type=checkbox]) {font-size:16px}
   #openiptvPortableCloud .oc-actions .oc-logout {grid-column:auto}
 }
 @media(prefers-reduced-motion:reduce) {
