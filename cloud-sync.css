@@ -30,7 +30,16 @@
 #cloudSyncCard #cloudStatus{padding:10px 13px;line-height:1.5;border:1px solid var(--line,#506174);border-radius:10px;background:var(--surface,#131f2b)}
 #cloudSyncCard #cloudStatus[data-state="error"]{border-color:#d67b7b;background:rgba(198,62,62,.10)}
 #cloudSyncCard #cloudLinkForm{padding:12px;border:1px dashed var(--line,#506174);border-radius:12px}
-#cloudSyncCard #cloudOtpForm{padding:12px;background:rgba(140,160,185,.07);border-radius:12px}
+#cloudSyncCard #cloudOtpForm{
+ margin-top:0;padding:11px 12px;border:1px solid var(--line,#506174);
+ background:transparent;border-radius:12px;gap:8px;
+}
+#cloudSyncCard #cloudOtpCode{
+ letter-spacing:.18em;font-size:17px;font-variant-numeric:tabular-nums;
+}
+#cloudSyncCard #cloudOtpVerify{font-weight:650}
+#cloudSyncCard #cloudOtpForm .hint{font-size:12px;line-height:1.5;margin:1px 0 0}
+#cloudSyncCard .cloud-link-toggle{margin-top:5px}
 @media(max-width:550px){#cloudSyncCard .cloud-email-input-line{flex-direction:column;align-items:stretch}#cloudSyncCard .cloud-email-input-line input,#cloudSyncCard .cloud-email-input-line .btn{width:100%;box-sizing:border-box}}
 
 /* Recover PKCE from browser localhost callback without leaking codes. */
