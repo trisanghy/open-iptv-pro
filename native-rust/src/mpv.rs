@@ -284,6 +284,18 @@ impl Mpv {
     pub fn seek(&self, seconds:i32) -> Result<(),String> {
         self.execute(&["seek",&seconds.to_string(),"relative"])
     }
+    pub fn seek_percent(&self, value:f32) -> Result<(),String> {
+        if !value.is_finite() || !(0.0..=100.0).contains(&value) {
+            return Err("Vị trí tua không hợp lệ".into());
+        }
+        self.execute(&["seek",&format!("{value:.2}"),"absolute-percent"])
+    }
+    pub fn cycle_audio_track(&self) -> Result<(),String> {
+        self.execute(&["cycle","aid"])
+    }
+    pub fn cycle_subtitle_track(&self) -> Result<(),String> {
+        self.execute(&["cycle","sid"])
+    }
     pub fn seek_to_live(&self) -> Result<(),String> {
         // A bounded HLS timeshift/DVR implementation is separate. For seekable
         // streams mpv jumps to the latest position; unseekable streams report error.
