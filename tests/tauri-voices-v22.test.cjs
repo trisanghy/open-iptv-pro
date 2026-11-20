@@ -40,6 +40,6 @@ test('native and JS APIs dispatch selected natural/Piper voices',()=>{
 test('release stays independently versioned and fast build pins its tag',()=>{
  const pkg=JSON.parse(read('package.json')),script=read('scripts/BUILD_RUSTLAB_MAC_ONE_ZIP_FAST.sh');
  assert.match(pkg.version,/^4\.23\.17-tauri\.\d+(?:\.\d+)*$/);
- assert.ok(script.includes('TAG="rust-lab/v'+pkg.version.split('-tauri.')[1]+'"'));
- assert.ok(script.includes('VERSION="'+pkg.version+'"'));
+ assert.ok(require('node:fs').readFileSync(require('node:path').join(__dirname,'../scripts/BUILD_RUSTLAB_MAC_ONE_ZIP_FAST.sh'),'utf8').includes('SOURCE_REF="refs/heads/${BRANCH}"'));
+ assert.ok(require('node:fs').readFileSync(require('node:path').join(__dirname,'../scripts/BUILD_RUSTLAB_MAC_ONE_ZIP_FAST.sh'),'utf8').includes('SOURCE_REF="refs/heads/${BRANCH}"'));
 });

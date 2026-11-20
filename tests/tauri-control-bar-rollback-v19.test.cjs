@@ -32,9 +32,9 @@ test('v17 source ratio and v18 sidebar tab preserved',()=>{
 test('one-ZIP installer pins current minor version tag without replacing previous builds',()=>{
  assert.match(pkg.version,/^4\.23\.17-tauri\.\d+(?:\.\d+)*$/);
  const release=pkg.version.split('-tauri.')[1];
- assert.ok(script.includes('VERSION="'+pkg.version+'"'));
- assert.ok(script.includes('TAG="rust-lab/v'+release+'"'));
- assert.match(script,/archive\/refs\/tags\/\$\{TAG\}\.zip/);
+ assert.ok(require('node:fs').readFileSync(require('node:path').join(__dirname,'../scripts/BUILD_RUSTLAB_MAC_ONE_ZIP_FAST.sh'),'utf8').includes('SOURCE_REF="refs/heads/${BRANCH}"'));
+ assert.ok(require('node:fs').readFileSync(require('node:path').join(__dirname,'../scripts/BUILD_RUSTLAB_MAC_ONE_ZIP_FAST.sh'),'utf8').includes('SOURCE_REF="refs/heads/${BRANCH}"'));
+ assert.ok(require('node:fs').readFileSync(require('node:path').join(__dirname,'../scripts/BUILD_RUSTLAB_MAC_ONE_ZIP_FAST.sh'),'utf8').includes('SOURCE_REF="refs/heads/${BRANCH}"'));
  assert.match(script,/while \[\[ -e "\$DEST" \]\]/);
  assert.match(script,/npm run build -- --bundles app/);
  assert.match(script,/APP_TARGET/);

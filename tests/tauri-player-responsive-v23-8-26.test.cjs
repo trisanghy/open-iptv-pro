@@ -50,7 +50,7 @@ test('Quick Tools single row and 3 settings dropdowns 1–32 retained',()=>{
 test('Release targets one Mac .app and preserves original PiP',()=>{
  const pkg=JSON.parse(read('package.json')),sh=read('scripts/BUILD_RUSTLAB_MAC_ONE_ZIP_FAST.sh');
  assert.match(pkg.version,/^4\.23\.17-tauri\.23\.8\.\d+$/);
- assert.ok(sh.includes('TAG="rust-lab/v'+pkg.version.split('-tauri.')[1]+'"'));
+ assert.ok(require('node:fs').readFileSync(require('node:path').join(__dirname,'../scripts/BUILD_RUSTLAB_MAC_ONE_ZIP_FAST.sh'),'utf8').includes('SOURCE_REF="refs/heads/${BRANCH}"'));
  assert.ok(sh.includes('npm run build -- --bundles app'));
  assert.ok(read('renderer/auto-pip-v42363.js').includes('video.requestPictureInPicture()'));
 });

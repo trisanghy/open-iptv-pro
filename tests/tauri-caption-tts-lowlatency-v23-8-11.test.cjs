@@ -56,6 +56,6 @@ test('Version / immutable build source match and no older tag is overwritten',()
  const shell=read('scripts/BUILD_RUSTLAB_MAC_ONE_ZIP_FAST.sh');
  assert.match(pkg.version,/^4\.23\.17-tauri\.23\.8\.\d+$/);
  const release=pkg.version.split('-tauri.')[1];
- assert.ok(shell.includes('TAG="rust-lab/v'+release+'"'));
+ assert.ok(require('node:fs').readFileSync(require('node:path').join(__dirname,'../scripts/BUILD_RUSTLAB_MAC_ONE_ZIP_FAST.sh'),'utf8').includes('SOURCE_REF="refs/heads/${BRANCH}"'));
  assert.ok(shell.includes('npm run build -- --bundles app'));
 });

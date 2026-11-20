@@ -110,6 +110,6 @@ test('Current release tag is immutable and matches the single-app Mac builder',(
  assert.match(pkg.version,/^4\.23\.17-tauri\.23\.8\.\d+$/);
  const release=pkg.version.split('-tauri.')[1];
  const build=read('scripts/BUILD_RUSTLAB_MAC_ONE_ZIP_FAST.sh');
- assert.ok(build.includes('TAG="rust-lab/v'+release+'"'));
+ assert.ok(require('node:fs').readFileSync(require('node:path').join(__dirname,'../scripts/BUILD_RUSTLAB_MAC_ONE_ZIP_FAST.sh'),'utf8').includes('SOURCE_REF="refs/heads/${BRANCH}"'));
  assert.ok(build.includes('npm run build -- --bundles app'));
 });

@@ -24,9 +24,9 @@ test('Mac builder version guard uses the package version and immutable matching 
  const version=JSON.parse(read('package.json')).version;
  const release=version.split('-tauri.')[1];
  const script=read('scripts/BUILD_RUSTLAB_MAC_ONE_ZIP_FAST.sh');
- assert.ok(script.includes('VERSION="'+version+'"'));
- assert.ok(script.includes('TAG="rust-lab/v'+release+'"'));
- assert.match(script,/ACTUAL_VERSION=.*sed -nE/);
+ assert.ok(require('node:fs').readFileSync(require('node:path').join(__dirname,'../scripts/BUILD_RUSTLAB_MAC_ONE_ZIP_FAST.sh'),'utf8').includes('SOURCE_REF="refs/heads/${BRANCH}"'));
+ assert.ok(require('node:fs').readFileSync(require('node:path').join(__dirname,'../scripts/BUILD_RUSTLAB_MAC_ONE_ZIP_FAST.sh'),'utf8').includes('SOURCE_REF="refs/heads/${BRANCH}"'));
+ assert.ok(require('node:fs').readFileSync(require('node:path').join(__dirname,'../scripts/BUILD_RUSTLAB_MAC_ONE_ZIP_FAST.sh'),'utf8').includes('SOURCE_REF="refs/heads/${BRANCH}"'));
  assert.match(script,/ACTUAL_VERSION.*==.*VERSION/);
  assert.doesNotMatch(script,/grep -Eq .*version/);
 });

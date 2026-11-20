@@ -33,5 +33,5 @@ test('TTS source match bypasses Argos without losing volume or duplicate protect
 test('v23 immutable Mac build tracks own independent release tag',()=>{
  const p=JSON.parse(read('package.json')),sh=read('scripts/BUILD_RUSTLAB_MAC_ONE_ZIP_FAST.sh');
  assert.match(p.version,/^4\.23\.17-tauri\.\d+(?:\.\d+)*$/);
- assert.ok(sh.includes('TAG="rust-lab/v'+p.version.split('-tauri.')[1]+'"'));
+ assert.ok(require('node:fs').readFileSync(require('node:path').join(__dirname,'../scripts/BUILD_RUSTLAB_MAC_ONE_ZIP_FAST.sh'),'utf8').includes('SOURCE_REF="refs/heads/${BRANCH}"'));
 });

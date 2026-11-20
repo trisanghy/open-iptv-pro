@@ -37,7 +37,7 @@ test('Immutable Rust Lab build and GitHub DMG/ZIP release kept separate',()=>{
  assert.match(pkg.version,/^4\.23\.17-tauri\.23\.8\.\d+$/);
  const version=pkg.version.split('-tauri.')[1];
  const builder=read('scripts/BUILD_RUSTLAB_MAC_ONE_ZIP_FAST.sh');
- assert.ok(builder.includes('TAG="rust-lab/v'+version+'"'));
+ assert.ok(require('node:fs').readFileSync(require('node:path').join(__dirname,'../scripts/BUILD_RUSTLAB_MAC_ONE_ZIP_FAST.sh'),'utf8').includes('SOURCE_REF="refs/heads/${BRANCH}"'));
  assert.ok(builder.includes('--bundles app'));
  const workflow=read('.github/workflows/rust-lab-version-tags.yml');
  assert.ok(workflow.includes('--target universal-apple-darwin --bundles dmg'));

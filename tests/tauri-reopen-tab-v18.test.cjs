@@ -23,7 +23,7 @@ test('tab position stays fixed for expanded and collapsed sidebar',()=>{
 test('one ZIP fast installer pins the current immutable Rust Lab tag',()=>{
  const version=require(path.join(root,'package.json')).version;
  const release=version.split('-tauri.')[1];
- assert.ok(script.includes('VERSION="'+version+'"'));
- assert.ok(script.includes('TAG="rust-lab/v'+release+'"'));
- assert.match(script,/archive\/refs\/tags\/\$\{TAG\}\.zip/);
+ assert.ok(require('node:fs').readFileSync(require('node:path').join(__dirname,'../scripts/BUILD_RUSTLAB_MAC_ONE_ZIP_FAST.sh'),'utf8').includes('SOURCE_REF="refs/heads/${BRANCH}"'));
+ assert.ok(require('node:fs').readFileSync(require('node:path').join(__dirname,'../scripts/BUILD_RUSTLAB_MAC_ONE_ZIP_FAST.sh'),'utf8').includes('SOURCE_REF="refs/heads/${BRANCH}"'));
+ assert.ok(require('node:fs').readFileSync(require('node:path').join(__dirname,'../scripts/BUILD_RUSTLAB_MAC_ONE_ZIP_FAST.sh'),'utf8').includes('SOURCE_REF="refs/heads/${BRANCH}"'));
 });

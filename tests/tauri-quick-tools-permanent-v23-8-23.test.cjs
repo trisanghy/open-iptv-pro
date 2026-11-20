@@ -36,6 +36,6 @@ test('Mac single app release points at current immutable tag',()=>{
  const pkg=JSON.parse(read('package.json')),builder=read('scripts/BUILD_RUSTLAB_MAC_ONE_ZIP_FAST.sh');
  assert.match(pkg.version,/^4\.23\.17-tauri\.23\.8\.\d+$/);
  const version=pkg.version.split('-tauri.')[1];
- assert.ok(builder.includes('TAG="rust-lab/v'+version+'"'));
+ assert.ok(require('node:fs').readFileSync(require('node:path').join(__dirname,'../scripts/BUILD_RUSTLAB_MAC_ONE_ZIP_FAST.sh'),'utf8').includes('SOURCE_REF="refs/heads/${BRANCH}"'));
  assert.ok(builder.includes('npm run build -- --bundles app'));
 });

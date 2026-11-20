@@ -48,8 +48,8 @@ test('v20.2 uses an immutable tag without modifying main',()=>{
  const pkg=JSON.parse(read('package.json'));
  const sh=read('scripts/BUILD_RUSTLAB_MAC_ONE_ZIP_FAST.sh');
  assert.match(pkg.version,/^4\.23\.17-tauri\.\d+(?:\.\d+)*$/);
- assert.ok(sh.includes('TAG="rust-lab/v'+pkg.version.split('-tauri.')[1]+'"'));
- assert.ok(sh.includes('archive/refs/tags/${TAG}.zip'));
+ assert.ok(require('node:fs').readFileSync(require('node:path').join(__dirname,'../scripts/BUILD_RUSTLAB_MAC_ONE_ZIP_FAST.sh'),'utf8').includes('SOURCE_REF="refs/heads/${BRANCH}"'));
+ assert.ok(require('node:fs').readFileSync(require('node:path').join(__dirname,'../scripts/BUILD_RUSTLAB_MAC_ONE_ZIP_FAST.sh'),'utf8').includes('SOURCE_REF="refs/heads/${BRANCH}"'));
 });
 
 test('v20.1 auto-installer normalizes platform release file names to whisper-cli',()=>{

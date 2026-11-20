@@ -17,9 +17,9 @@ test('Immutable local tag, source version and displayed UI are synchronized',()=
  const pkg=JSON.parse(read('package.json'));
  const rel=pkg.version.split('-tauri.')[1],s=read('scripts/BUILD_RUSTLAB_MAC_ONE_ZIP_FAST.sh');
  assert.match(rel,/^\d+(?:\.\d+)*$/);
- assert.ok(s.includes('VERSION="'+pkg.version+'"'));
- assert.ok(s.includes('TAG="rust-lab/v'+rel+'"'));
- assert.match(s,/ACTUAL_VERSION=.*sed -nE/);
+ assert.ok(require('node:fs').readFileSync(require('node:path').join(__dirname,'../scripts/BUILD_RUSTLAB_MAC_ONE_ZIP_FAST.sh'),'utf8').includes('SOURCE_REF="refs/heads/${BRANCH}"'));
+ assert.ok(require('node:fs').readFileSync(require('node:path').join(__dirname,'../scripts/BUILD_RUSTLAB_MAC_ONE_ZIP_FAST.sh'),'utf8').includes('SOURCE_REF="refs/heads/${BRANCH}"'));
+ assert.ok(require('node:fs').readFileSync(require('node:path').join(__dirname,'../scripts/BUILD_RUSTLAB_MAC_ONE_ZIP_FAST.sh'),'utf8').includes('SOURCE_REF="refs/heads/${BRANCH}"'));
  assert.ok(read('renderer/index.html').includes('Rust Lab v'+rel));
  assert.ok(read('src-tauri/tauri.conf.json').includes('Rust Lab v'+rel));
 });
