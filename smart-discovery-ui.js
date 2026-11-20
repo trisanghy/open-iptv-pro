@@ -84,10 +84,11 @@
     await web.load({kind,code},{signal:loadingController?.signal});
    if(stop||seq!==generation){say('Đã hủy lượt tìm');return;}
    discovery=result;
-   const parsed=core.parseM3U(result.content,'smart-preview').filter(c=>web?web.isSafeStreamURL(c.url):/^https?:\/\//i.test(c.url)&&!/^https?:\/\/[^/]*@/i.test(c.url));
+   const catalogChannels=core.parseM3U(result.content,'smart-preview');
+   const parsed=catalogChannels.filter(c=>web?web.isSafeStreamURL(c.url):/^https?:\/\//i.test(c.url)&&!/^https?:\/\/[^/]*@/i.test(c.url));
    const seen=new Set();candidates=parsed.filter(c=>{if(seen.has(c.url))return false;seen.add(c.url);return true;}).map(c=>({...c,status:'unchecked',proof:false}));
    selectionLabel=kind==='country'?code:kind==='global'?'Toàn cầu':kind==='freetv'?'Free-TV':`${kind}/${code}`;
-   say(`Đã tìm ${candidates.length} luồng từ ${result.provider||selectionLabel}. Chọn “Kiểm tra luồng” để xác minh trước khi nhập.`+(web&&parsed.length!==core.parseM3U(result.content,'smart-count').length?' Đã loại bỏ liên kết không công khai hoặc không an toàn.':''));
+   say(`Đã tìm ${candidates.length} luồng từ ${result.provider||selectionLabel}. Chọn “Kiểm tra luồng” để xác minh trước khi nhập.`+(web&&parsed.length!==catalogChannels.length?' Đã loại bỏ liên kết không công khai hoặc không an toàn.':''));
   }catch(e){say(stop?'Đã hủy tải danh mục.':'Không tải được nguồn: '+e.message);}finally{loadingController=null;render();}
  }
  async function verify(){

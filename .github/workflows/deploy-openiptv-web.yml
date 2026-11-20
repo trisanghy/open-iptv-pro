@@ -49,7 +49,7 @@ jobs:
             test -d "$dir"
             cp -R "$dir" "_site/$dir"
           done
-          for f in index.html huong-dan.html app.js web-only.js hls.min.js dash.all.min.js supabase-sdk.js cloud-core.js cloud-sync.js source-use-consent-v1.js source-use-consent-v1.css web-mobile-player.js web-mobile-player.css web-player-icons.js web-player-icons.css web-tv-wide.css web-mobile-controls-polish.css web-desktop-download.js web-desktop-download.css web-channel-snapshot.js; do
+          for f in index.html huong-dan.html app.js web-only.js hls.min.js dash.all.min.js supabase-sdk.js cloud-core.js cloud-sync.js source-use-consent-v1.js source-use-consent-v1.css web-smart-discovery.js smart-discovery-ui.js web-mobile-player.js web-mobile-player.css web-player-icons.js web-player-icons.css web-tv-wide.css web-mobile-controls-polish.css web-desktop-download.js web-desktop-download.css web-channel-snapshot.js; do
             test -s "_site/$f"
           done
           test -s _site/robots.txt && test -s _site/sitemap.xml && test -s _site/sitemap.xsl
@@ -67,7 +67,9 @@ jobs:
           assert 'rel="canonical"' in Path('_site/huong-dan.html').read_text(encoding='utf-8')
           print('SEO publishing checks passed')
           PY
-          grep -Fq 'src="source-use-consent-v1.js"' _site/index.html
+          grep -Fq 'src="source-use-consent-v1.js?v=discovery-web-20261120a"' _site/index.html
+          grep -Fq 'src="web-smart-discovery.js?v=discovery-web-20261120a"' _site/index.html
+          grep -Fq 'src="smart-discovery-ui.js?v=discovery-web-20261120a"' _site/index.html
           grep -Fq 'href="source-use-consent-v1.css"' _site/index.html
           # Use content hashes for every offline dictionary on iPhone Safari/Chrome.
           python3 - <<'PY'
@@ -224,6 +226,9 @@ jobs:
           grep -Fq 'href="web-mobile-player.css?v=apple-more-20261120a"' _site/index.html
           node --test web-online/tests/browser-channel-check.test.cjs
           node --test web-online/tests/source-use-consent-v1.test.cjs
+          node --check _site/web-smart-discovery.js
+          node --check _site/smart-discovery-ui.js
+          node --test web-online/tests/web-smart-discovery.test.cjs
           node --check _site/resume-last.js
           node --test web-online/tests/resume-last.test.cjs
           grep -Fq 'resume-last.js?v=autoplay-clean-20261119a' _site/index.html
