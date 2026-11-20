@@ -502,7 +502,7 @@ if html.count('web-epg-day.css?v=')!=1:sys.exit('Duplicate EPG day CSS')
 # On iPhone "Request Desktop Website" uses a 1024px virtual width.
 # Keep the desktop UI but correct 100vh that visually occupies only the
 # upper part of the physical screen; do not modify Electron/WebView files.
-desktop_viewport_version='desktop-iphone-height-20261120a'
+desktop_viewport_version='desktop-iphone-drawer-20261120a'
 for asset in ('web-desktop-viewport-fix.js','web-desktop-viewport-fix.css'):
     source=Path(__file__).resolve().parent.parent/asset
     if not source.is_file():
