@@ -41,7 +41,7 @@ test('volume and snapshot remain accessible in Electron player toolbar while Qui
  assert.match(stage,/id="shotBtn"/);
  const moved=fs.readFileSync(path.join(root,'renderer/electron-player-parity-v23-8-21.js'),'utf8');
  assert.match(moved,/master\.append\(icon,volume\);top\.append\(master\)/);
- assert.match(moved,/shot\.textContent='▣ Chụp ảnh';body\.append\(shot\)/);
+ assert.match(moved,/shot\.textContent='Chụp ảnh';body\.append\(shot\)/);
 });
 test('EPG uses real guide current/next and escapes titles by textContent',()=>{
  assert.match(features,/guideLib\.current\(guide,c\)/);

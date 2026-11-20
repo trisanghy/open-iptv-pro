@@ -1,3 +1,7 @@
+## Rust Lab v23.8.91 — Bộ icon Web, bảo toàn bản dịch và kiểm thử
+
+Giữ bộ icon SVG từ v23.8.90 nhưng trả lại chuỗi nhãn có sẵn để tránh phá kiểm tra 17 ngôn ngữ, cập nhật hai kiểm thử bố cục để chấp nhận chữ Chụp ảnh không chứa ký tự ▣. Bổ sung CSS che ký tự trang trí của nút DVR và giữ nguyên nhãn cho trình đọc màn hình. Bản phát hành v23.8.91 có tag riêng bất biến, không sửa v23.8.89 hoặc v23.8.90. [Release notes](RELEASE_NOTES_RUST_LAB_V23_8_91.md).
+
 ## Rust Lab v23.8.90 — Đồng bộ icon trình phát theo Web
 
 Thay ký tự Unicode trong thanh điều khiển chính và toàn màn hình bằng bộ icon SVG mask từ `web/online`: phát/tạm dừng, kênh trước/sau, dừng, âm lượng, EPG, Cast, PiP, fullscreen, ghi hình, yêu thích và tùy chọn. Giữ nguyên video, event listeners, AI và cửa sổ CMD/PowerShell ẩn ngầm từ v23.8.89. Có regression test riêng. [Release notes](RELEASE_NOTES_RUST_LAB_V23_8_90.md).

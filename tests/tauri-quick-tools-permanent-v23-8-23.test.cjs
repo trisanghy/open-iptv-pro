@@ -24,7 +24,7 @@ test('No stale volume tile; single volume and snapshot controls remain movable',
  assert.equal((html.match(/id="shotBtn"/g)||[]).length,1);
  assert.ok(html.includes('id="playerToolbarControlStaging" hidden'));
  assert.ok(parity.includes('master.append(icon,volume);top.append(master)'));
- assert.ok(parity.includes("shot.textContent='▣ Chụp ảnh';body.append(shot)"));
+ assert.ok(parity.includes("shot.textContent='Chụp ảnh';body.append(shot)"));
  assert.ok(css.includes('grid-template-columns:repeat(3,minmax(0,1fr))!important'));
 });
 test('Channel checks, snapshots, export and volume persistence still use original handlers',()=>{

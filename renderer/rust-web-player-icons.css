@@ -71,3 +71,6 @@
  #page-tv .electron-parity-player .ipvp-transport button,
  #page-tv #playerBox:fullscreen .fs-web-transport button{transition:none!important;}
 }
+
+/* Preserve translated DVR text but show its SVG icon on the fullscreen surface. */
+#page-tv #playerBox:fullscreen #fsDVR{font-size:0!important;line-height:0!important;}
