@@ -20,3 +20,11 @@ html[data-positron=true] .sidebar .nav.active{background:var(--po-raised)!import
 html[data-positron=true] .sidebar .nav.active span{color:var(--po-accent)!important}
 html[data-positron=true] :is(.sidebar .nav,#positronBar button,.p-palette button):focus-visible{outline:2px solid var(--po-accent)!important;outline-offset:2px}
 html[data-positron=true] .sidebar-bottom{background:var(--po-card)!important;border-color:var(--po-line)!important}
+/* 04 */html[data-positron=true] .content{background:transparent!important;min-width:0}
+html[data-positron=true] #page-tv .tv-layout{grid-template-columns:minmax(238px,278px) minmax(0,1fr)!important;gap:14px!important;align-items:start}
+html[data-positron=true] #page-tv .watch-panel{min-width:0!important;max-width:100%;gap:12px}
+html[data-positron=true] #page-tv .player-box{border-color:var(--po-line)!important;border-radius:16px!important;box-shadow:0 12px 35px #0004!important;min-width:0}
+html[data-positron=true] #page-tv .player-control-card{background:var(--po-card)!important;border-color:var(--po-line)!important;box-shadow:none!important}
+html[data-positron=true] #page-tv .advanced-timebar{background:var(--po-card)!important;border-color:var(--po-line)!important}
+html[data-positron=true][data-channel-panel-visible=false] #page-tv .tv-layout{grid-template-columns:minmax(0,1fr)!important}
+html[data-positron=true] #page-tv .empty-player :is(h2,p){color:var(--po-ink)!important}
