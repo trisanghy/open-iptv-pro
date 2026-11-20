@@ -34,10 +34,10 @@
   if(emailForm){
    const guide=document.createElement('p');guide.className='cloud-auth-guide';
    authGuide=guide;
-   guide.textContent='Đăng nhập bằng email: nếu thư có mã OTP, nhập mã ở Bước 2. Nếu thư chỉ có nút xác nhận tài khoản, chọn phương án liên kết bên dưới. Gmail có thể mở trong trình duyệt khác.';
+   guide.textContent='Nhập email để nhận mã OTP. Bạn có thể xem Gmail trong trình duyệt hoặc thiết bị khác.';
    emailForm.before(guide);
    const hint=emailForm.querySelector('.hint');
-   if(hint)hint.textContent='Với email đăng ký lần đầu, Supabase có thể gửi thư Confirm your email address thay vì mã OTP nếu mẫu Confirm sign up chưa thiết lập.';
+   if(hint)hint.textContent='Mã OTP chỉ dùng một lần và có thời hạn.';
    const sendButton=el('cloudEmailSend');if(sendButton)sendButton.textContent='Gửi mã OTP qua email';
    const label=linkForm?.querySelector('label');
    if(label)label.textContent='Dán liên kết Confirm email address hoặc Sign in chưa mở từ Gmail';
@@ -147,7 +147,7 @@
   show(google,!uid&&!!client&&enabledProviders.google);
   show(github,!uid&&!!client&&enabledProviders.github);
   show(authGuide,!uid&&!!client&&enabledProviders.email);
-  show(providersNote,!uid&&!!client);
+  show(providersNote,!uid&&!!client&&(enabledProviders.google||enabledProviders.github));
   show(emailForm,!uid&&!!client&&enabledProviders.email);
   show(otpForm,!uid&&!!client&&enabledProviders.email); // OTP works across browsers when the mail template includes {{ .Token }}.
   show(linkHelp,!uid&&!!client&&enabledProviders.email);
@@ -525,8 +525,8 @@
   }
   if(providersNote){
    providersNote.textContent=enabledProviders.google||enabledProviders.github
-    ? 'Có thể đăng nhập bằng email hoặc nhà cung cấp đang khả dụng.'
-    : 'Đăng nhập bằng email. Google/GitHub sẽ xuất hiện khi bật OAuth trong Supabase.';
+    ? 'Hoặc sử dụng Google / GitHub để đăng nhập.'
+    : '';
   }
   syncControls();
   client.auth.onAuthStateChange((event,session)=>{
