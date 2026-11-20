@@ -67,3 +67,13 @@ const schedule=()=>{if(scheduled)return;scheduled=true;requestAnimationFrame(upd
 for(const x of [channels,sources])if(x)new MutationObserver(schedule).observe(x,{subtree:true,childList:true,characterData:true});
 update();
 })();
+/* 19 */(()=>{const studio=window.OpenIPTVPositronStudio;if(!studio)return;
+const help=studio.menu.querySelector('.po-help');if(help)help.textContent='Alt + P: mở chủ đề · Alt + Shift + T: đổi màu · Esc: đóng';
+const reset=document.createElement('button');reset.type='button';reset.id='positronResetTheme';reset.textContent='↺ Về màu Nebula';reset.className='po-reset';reset.addEventListener('click',()=>studio.choose('night'));studio.menu.append(reset);
+document.addEventListener('keydown',e=>{
+if(!e.altKey||e.metaKey||e.ctrlKey||e.target?.closest?.('input,textarea,select,[contenteditable="true"]'))return;
+if(document.getElementById('positronPalette')?.hidden===false)return;
+if(e.key.toLowerCase()==='p'&&!e.shiftKey){e.preventDefault();studio.toggle();}
+if(e.key.toLowerCase()==='t'&&e.shiftKey){e.preventDefault();const list=studio.choices.map(x=>x.id),idx=list.indexOf(document.documentElement.dataset.positronPalette);studio.choose(list[(idx+1)%list.length]);}
+});
+})();
