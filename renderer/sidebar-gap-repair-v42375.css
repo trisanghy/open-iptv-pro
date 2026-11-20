@@ -1,0 +1,47 @@
+/* v4.23.75 — eliminate the obsolete 52px channel-reopen rail.
+ * The channel-list opener overlays the watch layout without reserving width. */
+html[data-channel-panel-visible="false"] #page-tv .tv-layout {
+  position:relative!important;
+  padding-left:0!important;
+  grid-template-columns:minmax(0,1fr)!important;
+  min-width:0!important;
+}
+html[data-channel-panel-visible="false"] #page-tv .watch-panel {
+  min-width:0!important;
+  max-width:none!important;
+  width:100%!important;
+}
+html[data-channel-panel-visible="false"] #channelPanelShowBtn {
+  display:grid!important;
+  position:absolute!important;
+  z-index:19!important;
+  left:6px!important;
+  right:auto!important;
+  top:6px!important;
+  width:30px!important;
+  height:30px!important;
+  min-width:30px!important;
+  max-width:30px!important;
+  min-height:30px!important;
+  max-height:30px!important;
+  padding:0!important;
+  margin:0!important;
+  border-radius:9px!important;
+  font-size:20px!important;
+  opacity:.9;
+  transform:none!important;
+}
+html[data-sidebar-visible="false"][data-channel-panel-visible="false"] .app-shell>.main>.content,
+html[data-sidebar-visible="false"][data-channel-panel-visible="false"] #appShell>.main>.content {
+  padding-left:0!important;
+}
+html[data-sidebar-visible="false"][data-channel-panel-visible="false"] #page-tv .tv-layout {
+  padding-left:0!important;
+}
+@media(max-width:760px) {
+  html[data-channel-panel-visible="false"] #page-tv .tv-layout{padding-left:0!important}
+  html[data-channel-panel-visible="false"] #channelPanelShowBtn{
+    width:30px!important;height:30px!important;min-width:30px!important;min-height:30px!important;
+    max-width:30px!important;max-height:30px!important;
+  }
+}

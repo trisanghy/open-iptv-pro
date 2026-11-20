@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro",
-  "version": "4.23.74",
-  "description": "Open IPTV Pro Electron 4.23.74 — mandatory source-rights acceptance for M3U and Smart Discovery, offline captions/TTS",
+  "version": "4.23.75",
+  "description": "Open IPTV Pro Electron 4.23.75 — mandatory source-rights acceptance for M3U and Smart Discovery, offline captions/TTS",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

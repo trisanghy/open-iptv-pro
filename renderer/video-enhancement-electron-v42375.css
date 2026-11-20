@@ -1,0 +1,54 @@
+#page-tv .video-enhance-toggle{display:inline-flex!important;vertical-align:middle;margin-left:12px;padding:10px 16px;border:1px solid #c17fef;border-radius:12px;background:#332043;color:#fff;font-weight:700;cursor:pointer}
+#page-tv .video-enhance-panel[hidden]{display:none!important}
+#page-tv .video-enhance-panel{display:grid;grid-template-columns:220px 1fr;clear:both;width:100%;gap:15px;padding:16px 0 6px;background:transparent!important;border:0!important;box-shadow:none!important}
+#page-tv .veh-nav{display:flex;flex-direction:column;border-right:1px solid #38516a;gap:3px;padding-right:15px}
+#page-tv .veh-nav button{border:0;border-radius:9px;padding:12px;background:transparent;color:#fff;text-align:left;cursor:pointer}
+#page-tv .veh-nav button:first-child{background:#682a85;font-weight:700}
+#page-tv .veh-body{display:flex;flex-direction:column;gap:12px;min-width:0}
+#page-tv .veh-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+#page-tv .veh-card,#page-tv .veh-bench{background:#0c2030;border:1px solid #2e4a5e;border-radius:12px;padding:12px;color:#fff;min-width:0}
+#page-tv .veh-card label{display:flex;justify-content:space-between;gap:8px;font-size:14px}
+#page-tv .veh-card input,#page-tv .veh-safe input{accent-color:#0bd877}
+#page-tv .veh-card small{display:block;color:#bbc9d8;margin:6px 0 12px}
+#page-tv .veh-card span{display:block;font-size:13px;margin:6px 0;font-weight:700}
+#page-tv .veh-card select{width:100%;box-sizing:border-box;background:#132d40;border:1px solid #52738b;color:#fff;padding:10px;border-radius:8px}
+#page-tv .veh-bench{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+#page-tv .veh-bench strong{flex:1 1 150px}
+#page-tv .veh-bench button{padding:10px 12px;border:1px solid #ba79e4;border-radius:9px;background:#39234b;color:#fff;cursor:pointer}
+#page-tv .veh-bench button:disabled{opacity:.55}
+#page-tv .veh-safe{font-size:13px;color:#dde8f4}
+#page-tv #veh-status{font-size:12px;color:#bcd2df;background:#0b2231;padding:9px;border-radius:8px}
+@media(max-width:960px){#page-tv .video-enhance-panel{grid-template-columns:1fr}#page-tv .veh-nav{flex-direction:row;flex-wrap:wrap;border-right:0}#page-tv .veh-grid{grid-template-columns:1fr}}
+@media(max-width:720px){#page-tv .video-enhance-toggle{margin:8px 0 0}}
+
+#page-tv .veh-limit{font-size:12px;color:#b8ccd9;margin:0;line-height:1.5}
+
+#page-tv .veh-ai-probe{display:flex;align-items:center;gap:10px;flex-wrap:wrap;border:1px solid #29485a;border-radius:10px;background:#092335;padding:11px 12px;color:#e7f1fa}
+#page-tv .veh-ai-probe strong{font-size:13px}
+#page-tv #veh-ai-hw-status{flex:1 1 250px;font-size:12px;color:#c0d4e6}
+#page-tv #veh-ai-probe{border:1px solid #477795;border-radius:8px;padding:8px 12px;background:#12354a;color:#fff;font-weight:600;cursor:pointer}
+
+/* v4.23.75: match the 32px CC toggle and keep both actions inline.
+ * Only the buttons have accents; the expanded panel has no outer frame. */
+#page-tv .unified-ai-row .video-enhance-toggle{
+  display:inline-flex!important;align-items:center!important;justify-content:center!important;
+  width:auto!important;max-width:100%!important;min-height:32px!important;height:32px!important;
+  padding:4px 10px!important;margin:0 0 0 8px!important;
+  border:1px solid #bd83ec!important;border-radius:9px!important;
+  background:#332043!important;color:#f4e9ff!important;
+  font-size:12px!important;line-height:1.2!important;white-space:nowrap!important;
+  vertical-align:top!important;
+}
+#page-tv .unified-ai-row #videoEnhancePanel:not([hidden]){
+  display:grid!important;grid-template-columns: minmax(140px,200px) minmax(0,1fr)!important;
+  width:100%!important;margin:8px 0 0!important;padding:10px 0 0!important;
+  border:0!important;outline:0!important;box-shadow:none!important;
+  background:transparent!important;min-width:0!important;
+}
+#page-tv .unified-ai-row #videoEnhancePanel[hidden]{display:none!important}
+@container (max-width:750px){
+  #page-tv .unified-ai-row #videoEnhancePanel:not([hidden]){grid-template-columns:minmax(0,1fr)!important}
+}
+@media(max-width:500px){
+  #page-tv .unified-ai-row .video-enhance-toggle{margin:7px 0 0!important;max-width:100%!important;font-size:11px!important}
+}

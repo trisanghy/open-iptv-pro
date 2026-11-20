@@ -68,6 +68,8 @@
       || document.getElementById('rustSubtitleOptionsButton');
     if (existingCC) existingCC.setAttribute('title', 'Tuỳ chỉnh phụ đề (CC)');
     setOpen(false);
+    // Async video-enhancement tool is anchored to this button.
+    document.dispatchEvent(new Event('openiptv:unified-ai-ready'));
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initialize, {once:true});
   else initialize();

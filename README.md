@@ -1,3 +1,7 @@
+## Electron v4.23.75 — Sửa sidebar thừa khoảng trống, hiển thị nút AI
+
+Khi danh sách kênh thu gọn, loại bỏ phần trống 52px bên cạnh sidebar và giữ nút mở danh sách dưới dạng nút nổi nhỏ không chiếm cột. Bổ sung nút **Nâng cao video bằng AI** ngay cạnh **Phụ đề · Dịch · Giọng nói**; bấm mới xổ bảng thiết lập FPS 60/90/120 và độ phân giải 1080p/1440p/4K, không có viền tím bên ngoài. Cấu hình lưu trên từng thiết bị nhưng Electron **chưa có backend AI/nội suy video được xác minh**, nên không làm thay đổi video; giao diện hiển thị rõ giới hạn này. Bảo toàn live caption/Whisper 10 giây/TTS/PiP. [Release notes](RELEASE_NOTES_ELECTRON_V4_23_75.md).
+
 ## Electron v4.23.74 — Whisper 10s và TTS đọc trọn vẹn
 
 Giữ audio mẫu 10 giây liên tục và phát đủ từng câu TTS; phụ đề mới không được ngắt các WAV còn lại của câu đang đọc. Cập nhật ba bài kiểm thử CI bị cố định thông số cũ. [Ghi chú phát hành v4.23.74](RELEASE_NOTES_ELECTRON_V4_23_74.md).
