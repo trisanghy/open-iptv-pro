@@ -32,6 +32,7 @@ export component MainWindow inherits Window {
     min-height: 650px;
     background: root.amoled-mode ? #000000 : (root.light-mode ? #eef3f9 : #0c1520);
     default-font-family: "Arial";
+    full-screen: root.player-fullscreen;
 
     in-out property <bool> light-mode: false;
     in-out property <brush> accent: #bc7cff;
@@ -72,6 +73,14 @@ export component MainWindow inherits Window {
     in-out property <string> selected-health-text: "Chưa kiểm tra";
     in-out property <string> recording-text: "Chưa ghi hình";
     in-out property <string> video-hint: "Chọn kênh bên trái để phát";
+    in-out property <image> video-frame;
+    in-out property <bool> has-video-frame: false;
+    in-out property <bool> player-fullscreen: false;
+    in-out property <bool> video-paused: false;
+    in-out property <bool> video-is-live: true;
+    in-out property <string> video-status: "Chưa phát";
+    in-out property <string> playback-clock: "--:-- / --:--";
+    in-out property <float> playback-progress: 0;
     in-out property <string> source-hint: "Chưa có nguồn phát";
     in-out property <string> current-theme: "Tối · Tím";
     in-out property <int> selected-channel-index: -1;
@@ -140,6 +149,7 @@ export component MainWindow inherits Window {
     HorizontalLayout {
         spacing: 0px;
         Rectangle {
+            visible: !root.player-fullscreen;
             width: 244px;
             background: root.amoled-mode ? #070707 : (root.light-mode ? #ffffff : #101b29);
             border-width: 1px;
@@ -200,6 +210,7 @@ export component MainWindow inherits Window {
         VerticalLayout {
             spacing: 0px;
             Rectangle {
+                visible: !root.player-fullscreen;
                 height: 70px;
                 background: root.light-mode ? #ffffff : #121d2b;
                 border-width: 1px;
@@ -221,9 +232,10 @@ export component MainWindow inherits Window {
                     padding: 16px;
                     spacing: 12px;
                     HorizontalLayout {
-                        spacing: 14px;
+                        spacing: root.player-fullscreen ? 0px : 14px;
                         visible: root.active-page == "tv" || root.active-page == "fav" || root.active-page == "recent";
                         Rectangle {
+                            visible: !root.player-fullscreen;
                             width: 327px;
                             background: root.amoled-mode ? #101010 : (root.light-mode ? #ffffff : #142231);
                             border-radius: 11px;
@@ -283,23 +295,70 @@ export component MainWindow inherits Window {
                         VerticalLayout {
                             spacing: 10px;
                             Rectangle {
-                                background: root.light-mode ? #152231 : #070c13;
-                                border-radius: 12px;
-                                border-width: 1px;
-                                border-color: #283c52;
+                                background: #04070c;
+                                border-radius: root.player-fullscreen ? 0px : 12px;
+                                border-width: root.player-fullscreen ? 0px : 1px;
+                                border-color: #27394e;
+                                clip: true;
+                                // The mpv SW frame is populated from Rust using
+                                // mpv_render_context_render; no placeholder video.
+                                Image {
+                                    source: root.video-frame;
+                                    width: parent.width;
+                                    height: parent.height;
+                                    image-fit: contain;
+                                    visible: root.has-video-frame;
+                                }
                                 VerticalLayout {
-                                    padding: 20px;
-                                    spacing: 12px;
-                                    Text { text: "● TRUYỀN HÌNH TRỰC TIẾP"; color: #f87180; font-size: 12px; font-weight: 700; }
-                                    Rectangle { vertical-stretch: 1; background: root.light-mode ? #152231 : #070c13; }
-                                    Text { text: "▶"; font-size: 45px; color: root.accent; horizontal-alignment: center; }
-                                    Text { text: root.video-hint; font-size: 17px; font-weight: 700; color: #e8eff9; horizontal-alignment: center; }
-                                    Text { text: "libmpv phát trong cửa sổ riêng; nhúng GPU vào Slint đang phát triển"; color: #829eb7; font-size: 12px; horizontal-alignment: center; }
-                                    Rectangle { vertical-stretch: 1; background: root.light-mode ? #152231 : #070c13; }
+                                    padding: root.player-fullscreen ? 16px : 18px;
+                                    spacing: 7px;
+                                    Rectangle {
+                                        height: 30px;
+                                        background: #101b29;
+                                        border-radius: 7px;
+                                        HorizontalLayout {
+                                            padding-left: 10px;
+                                            padding-right: 8px;
+                                            spacing: 8px;
+                                            Text { text: "●"; color: root.video-is-live ? #f86b71 : #6ccaa2; font-size: 14px; vertical-alignment: center; }
+                                            Text { text: root.video-is-live ? "LIVE" : "VIDEO"; color: #f4f7fc; font-size: 11px; font-weight: 700; vertical-alignment: center; }
+                                            Text { text: root.video-status; color: #aec4d9; font-size: 11px; overflow: elide; vertical-alignment: center; }
+                                            Rectangle { horizontal-stretch: 1; background: transparent; }
+                                            Button { text: root.player-fullscreen ? "Thu nhỏ" : "Toàn màn"; clicked => { root.fullscreen-video(); } }
+                                        }
+                                    }
+                                    Rectangle { vertical-stretch: 1; background: transparent; }
+                                    VerticalLayout {
+                                        visible: !root.has-video-frame;
+                                        spacing: 10px;
+                                        Text { text: "▶"; font-size: 42px; color: root.accent; horizontal-alignment: center; }
+                                        Text { text: root.video-hint; font-size: 16px; font-weight: 700; color: #e7effa; horizontal-alignment: center; wrap: word-wrap; }
+                                        Text { text: "Nếu dùng chế độ cửa sổ mpv, video sẽ xuất hiện ngoài Slint."; font-size: 11px; color: #8ca8c4; horizontal-alignment: center; wrap: word-wrap; }
+                                    }
+                                    Rectangle { vertical-stretch: 1; background: transparent; }
+                                    HorizontalLayout {
+                                        spacing: 8px;
+                                        Button { text: "−10s"; clicked => { root.seek-video(-10); } }
+                                        Button { text: root.video-paused ? "▶ Phát" : "❚❚ Tạm dừng"; clicked => { root.pause-video(); } }
+                                        Button { text: "−30s"; clicked => { root.seek-video(-30); } }
+                                        Rectangle { horizontal-stretch: 1; background: transparent; }
+                                        Button { text: "Về LIVE"; clicked => { root.seek-video(999999); } }
+                                    }
+                                    Rectangle {
+                                        height: 3px;
+                                        background: #263344;
+                                        Rectangle {
+                                            width: parent.width * (root.playback-progress / 100);
+                                            height: parent.height;
+                                            background: root.accent;
+                                        }
+                                    }
+                                    Text { text: root.playback-clock; color: #b7d0e6; font-size: 11px; horizontal-alignment: right; }
                                 }
                             }
                             Rectangle {
                                 height: 132px;
+                                visible: !root.player-fullscreen;
                                 background: root.amoled-mode ? #101010 : (root.light-mode ? #ffffff : #142231);
                                 border-radius: 11px;
                                 VerticalLayout {
@@ -324,6 +383,7 @@ export component MainWindow inherits Window {
                             }
                             Rectangle {
                                 height: 80px;
+                                visible: !root.player-fullscreen;
                                 background: root.amoled-mode ? #101010 : (root.light-mode ? #ffffff : #142231);
                                 border-radius: 10px;
                                 VerticalLayout {
@@ -335,6 +395,7 @@ export component MainWindow inherits Window {
                             }
                             Rectangle {
                                 height: 48px;
+                                visible: !root.player-fullscreen;
                                 background: root.amoled-mode ? #101010 : (root.light-mode ? #ffffff : #142231);
                                 border-radius: 10px;
                                 HorizontalLayout {
@@ -347,7 +408,7 @@ export component MainWindow inherits Window {
                                 }
                             }
                             VerticalLayout {
-                                visible: root.quick-tools-expanded;
+                                visible: root.quick-tools-expanded && !root.player-fullscreen;
                                 spacing: 9px;
                                 Rectangle {
                                     height: 110px;
@@ -654,6 +715,7 @@ export component MainWindow inherits Window {
             }
             Rectangle {
                 height: 34px;
+                visible: !root.player-fullscreen;
                 background: root.light-mode ? #f6f8fd : #152131;
                 border-width: 1px;
                 border-color: #24374c;
