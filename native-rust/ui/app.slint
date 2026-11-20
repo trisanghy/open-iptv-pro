@@ -386,8 +386,7 @@ if (root.active-page == "tv" || root.active-page == "fav" || root.active-page ==
                                     Button { text: root.quick-tools-expanded ? "Thu gọn  ⌃" : "Mở rộng  ⌄"; clicked => { root.toggle-quick-tools(); } }
                                 }
                             }
-                            VerticalLayout {
-                                visible: root.quick-tools-expanded && !root.player-fullscreen;
+                            if root.quick-tools-expanded && !root.player-fullscreen : VerticalLayout {
                                 spacing: 9px;
                                 Rectangle {
                                     height: 110px;

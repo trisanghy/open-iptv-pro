@@ -1408,7 +1408,21 @@ fn background_timer(ui: &MainWindow, shared: Rc<RefCell<State>>, rx: Receiver<Ba
 }
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let saved = storage::load().map_err(|e| format!("Không đọc được dữ liệu Rust Native. Chưa sửa file cũ: {e}"))?;
+    let mut saved = storage::load().map_err(|e| format!("Không đọc được dữ liệu Rust Native. Chưa sửa file cũ: {e}"))?;
+    // Deterministic, opt-in screenshot fixture for CI. Never writes to disk,
+    // never enabled by normal builds, and never starts any network streams.
+    if std::env::var("OPEN_IPTV_UI_SCREENSHOT_FIXTURE").as_deref() == Ok("1") {
+        let id="screenshot-fixture";
+        saved.sources=vec![open_iptv_pro_native::model::Source {
+            id:id.into(), name:"DEMO — KIỂM THỬ GIAO DIỆN".into(), origin:String::new(),
+        }];
+        saved.channels=m3u::parse_m3u(include_str!("../examples/demo.m3u"), id)?;
+        saved.favorite_urls.insert(saved.channels[0].url.clone());
+        saved.recent_urls=vec![saved.channels[0].url.clone()];
+        saved.epg_url.clear();
+        saved.auto_refresh_sources=false;
+        saved.auto_resume_last_channel=false;
+    }
     let cached_epg=epg_cache::load(&saved.epg_url).unwrap_or_default();
     let cached_schedule=epg_cache::load_full(&saved.epg_url).unwrap_or_default();
     let epg_source=saved.epg_url.clone();

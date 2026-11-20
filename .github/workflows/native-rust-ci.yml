@@ -170,13 +170,14 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y pkg-config libxkbcommon-dev libfontconfig1-dev \
             libwayland-dev libegl1-mesa-dev libgl1-mesa-dev libasound2-dev \
-            libmpv2 xvfb xauth x11-utils libxkbcommon-x11-0 imagemagick libgl1-mesa-dri
+            libmpv2 xvfb xauth x11-utils xdotool libxkbcommon-x11-0 imagemagick libgl1-mesa-dri
       - name: Build actual Rust Native Slint executable
         run: cargo build --manifest-path native-rust/Cargo.toml --bin open-iptv-pro-native
       - name: Launch app and capture real GUI under Xvfb
         shell: bash
         env:
           LIBGL_ALWAYS_SOFTWARE: "1"
+          OPEN_IPTV_UI_SCREENSHOT_FIXTURE: "1"
           SLINT_BACKEND: "winit-femtovg"
           RUST_BACKTRACE: "1"
         run: |
@@ -206,19 +207,49 @@ jobs:
             cat screenshot/app-stdout.log >&2
             exit 1
           fi
+          # Ten real screen states on the same compiled executable. Capture
+          # desktop and navigation interactions for visual regression review.
           import -display "$DISPLAY" -window root screenshot/open-iptv-pro-rust-native-latest.png
-          test -s screenshot/open-iptv-pro-rust-native-latest.png
-          identify screenshot/open-iptv-pro-rust-native-latest.png
+          cp screenshot/open-iptv-pro-rust-native-latest.png screenshot/01-tv-default.png
+          xdotool mousemove 650 680 click --repeat 4 --delay 120 5
+          sleep 1
+          import -display "$DISPLAY" -window root screenshot/02-tv-scroll-down.png
+          xdotool mousemove 650 680 click --repeat 4 --delay 120 5
+          sleep 1
+          import -display "$DISPLAY" -window root screenshot/03-tv-scroll-end.png
+          xdotool mousemove 36 20 click 1
+          sleep 1
+          import -display "$DISPLAY" -window root screenshot/04-rail-expanded.png
+          xdotool mousemove 37 20 click 1
+          sleep 1
+          import -display "$DISPLAY" -window root screenshot/05-rail-collapsed.png
+          xdotool mousemove 35 264 click 1
+          sleep 1
+          import -display "$DISPLAY" -window root screenshot/06-epg-page.png
+          xdotool mousemove 35 146 click 1
+          sleep 1
+          import -display "$DISPLAY" -window root screenshot/07-tv-return.png
+          xdotool mousemove 35 730 click 1
+          sleep 1
+          import -display "$DISPLAY" -window root screenshot/08-settings-page.png
+          xdotool mousemove 35 146 click 1
+          sleep 1
+          import -display "$DISPLAY" -window root screenshot/09-tv-final.png
+          xdotool mousemove 650 680 click --repeat 5 --delay 100 4
+          sleep 1
+          import -display "$DISPLAY" -window root screenshot/10-tv-scroll-up.png
+          for file in screenshot/*.png; do test -s "$file"; identify "$file"; done
           CAPTURE
           chmod +x "$RUNNER_TEMP/capture-native-ui.sh"
           xvfb-run -a -s "-screen 0 1600x1000x24" "$RUNNER_TEMP/capture-native-ui.sh"
           echo "Captured real Rust Native GUI at commit $GITHUB_SHA" > screenshot/SOURCE.txt
           echo "OS: Ubuntu 24.04 virtual X11 display; this is not a macOS capture" >> screenshot/SOURCE.txt
+          echo "CI screenshot includes a clearly labeled DEMO fixture of four non-playing sample channels" >> screenshot/SOURCE.txt
       - uses: actions/upload-artifact@v4
         with:
           name: rust-native-actual-screen
           path: |
-            screenshot/open-iptv-pro-rust-native-latest.png
+            screenshot/*.png
             screenshot/SOURCE.txt
           if-no-files-found: error
           retention-days: 14
