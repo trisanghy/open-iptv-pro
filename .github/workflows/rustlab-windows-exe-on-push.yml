@@ -1,0 +1,67 @@
+name: Rust Lab Windows EXE (branch build)
+on:
+  push:
+    branches:
+      - experiment/rust-tauri-v2
+    paths:
+      - '.github/workflows/rustlab-windows-exe-on-push.yml'
+      - 'renderer/**'
+      - 'src-tauri/**'
+      - 'package.json'
+      - 'package-lock.json'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  windows-exe:
+    runs-on: windows-latest
+    timeout-minutes: 90
+    steps:
+      - name: Checkout exact Rust Lab revision
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Install Rust MSVC
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: x86_64-pc-windows-msvc
+      - name: Restore Rust compilation cache
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: src-tauri -> target
+      - name: Install npm dependencies
+        run: npm ci
+      - name: Run renderer and app regression tests
+        run: npm run test:quick
+      - name: Build Tauri Windows NSIS installer
+        run: npx tauri build --bundles nsis --target x86_64-pc-windows-msvc
+      - name: Stage actual Windows EXE installers
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          New-Item -ItemType Directory -Path dist-windows -Force | Out-Null
+          $installers = @(Get-ChildItem -Path src-tauri/target -Filter '*-setup.exe' -Recurse -File)
+          if ($installers.Count -eq 0) {
+            $installers = @(Get-ChildItem -Path src-tauri/target -Filter '*.exe' -Recurse -File | Where-Object { $_.FullName -match '[\\/]bundle[\\/]nsis[\\/]' })
+          }
+          if ($installers.Count -eq 0) { throw 'No built NSIS .exe found; refusing to publish empty or stale output.' }
+          foreach ($file in $installers) { Copy-Item $file.FullName -Destination dist-windows -Force }
+          Get-ChildItem dist-windows | Format-Table Name,Length
+      - name: Upload downloadable Windows EXE
+        uses: actions/upload-artifact@v4
+        with:
+          name: Open-IPTV-Pro-Rust-Lab-Windows-EXE
+          path: dist-windows/*.exe
+          if-no-files-found: error
+      - name: Publish unique immutable GitHub release with direct EXE link
+        if: success()
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $tag = 'rust-lab/windows-exe-' + $env:GITHUB_RUN_ID + '-' + $env:GITHUB_RUN_ATTEMPT
+          gh release create $tag dist-windows/*.exe --repo $env:GITHUB_REPOSITORY --target $env:GITHUB_SHA --title ('Rust Lab Windows EXE ' + $env:GITHUB_RUN_ID) --notes ('Windows NSIS installer built from branch experiment/rust-tauri-v2, commit ' + $env:GITHUB_SHA + '. Unsigned Windows installer; SmartScreen may require confirmation.')
