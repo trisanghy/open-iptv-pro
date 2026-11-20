@@ -167,6 +167,7 @@ fn refresh(ui: &MainWindow, state: &mut State) {
     ui.set_auto_failover_text(if state.data.auto_failover { "Đang bật".into() } else { "Đang tắt".into() });
     ui.set_volume_text(format!("{}%", state.data.volume).into());
     ui.set_current_theme(state.data.theme.clone().into());
+    ui.set_video_backend_mode(state.data.video_backend.clone().into());
     ui.set_light_mode(state.data.theme == "Sáng");
     ui.set_amoled_mode(state.data.theme == "AMOLED");
     let accent = match state.data.theme.as_str() {
@@ -340,11 +341,16 @@ fn play_logical(
         failover::candidates(&primary_url,s.data.alternate_links.get(&primary_url).map_or(&[],|x|x.as_slice()))
     };
     if candidates.is_empty() {status(ui,"Kênh không có URL hợp lệ");return;}
+    let mode=shared.borrow().data.video_backend.clone();
     let mut guard=player.borrow_mut();
     if guard.is_none() {
-        match Mpv::new() {
+        match Mpv::new_with_backend(&mode) {
             Ok(p)=>*guard=Some(p),
-            Err(e)=>{status(ui,format!("Không khởi động được libmpv: {e}"));return;}
+            Err(e)=>{
+                ui.set_video_status("Lỗi tải thư viện phát video".into());
+                ui.set_video_hint(format!("Không mở được video: {e}").into());
+                status(ui,format!("Không khởi động được libmpv: {e}"));return;
+            }
         }
     }
     let Some(p)=guard.as_ref() else{return;};
@@ -939,6 +945,46 @@ fn connect_callbacks(
                     }
                 }).unwrap_or_else(||Err("Chưa phát kênh".into()));
                 status(&ui,result.map(str::to_string).unwrap_or_else(|e|e));
+            }
+        });
+    }
+    {
+        let weak=ui.as_weak(); let shared=shared.clone(); let player=player.clone();
+        ui.on_select_video_backend(move |backend| {
+            let Some(ui)=weak.upgrade() else {return;};
+            let backend=backend.to_string();
+            if !open_iptv_pro_native::model::valid_video_backend(&backend) {
+                status(&ui,"Chế độ video không hợp lệ");
+                return;
+            }
+            let resume={
+                let mut state=shared.borrow_mut();
+                if state.data.video_backend==backend {
+                    status(&ui,"Đang sử dụng chế độ video đã chọn");return;
+                }
+                let previous=state.data.clone();
+                state.data.video_backend=backend.clone();
+                if let Err(e)=storage::save(&state.data) {
+                    state.data=previous;
+                    status(&ui,format!("Không lưu được đầu ra video: {e}"));return;
+                }
+                let selected=state.selected_url.as_ref().and_then(|url|
+                    state.data.channels.iter().find(|ch|&ch.url==url)
+                        .map(|ch|(ch.name.clone(),ch.url.clone(),state.data.volume))
+                );
+                refresh(&ui,&mut state);
+                selected
+            };
+            ui.set_player_fullscreen(false);
+            *player.borrow_mut()=None;
+            ui.set_has_video_frame(false);
+            ui.set_video_frame(slint::Image::default());
+            if let Some((name,url,volume))=resume {
+                play_logical(&ui,&shared,&player,name,url,volume);
+            } else {
+                status(&ui,if backend=="native" {
+                    "Đã chọn cửa sổ mpv riêng cho lần phát tiếp theo"
+                } else {"Đã chọn video nhúng trong Slint cho lần phát tiếp theo"});
             }
         });
     }
