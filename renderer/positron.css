@@ -167,3 +167,25 @@ html[data-positron="true"] .footer {background:#0c1929!important;border-top:1px 
   html[data-positron="true"] .content{padding:10px!important}
 }
 @media(prefers-reduced-motion:reduce){#positronPalette{backdrop-filter:none}}
+
+/* Positron P2: real screenshot-driven contrast correction. */
+html[data-positron="true"] .main .content :is(h1,h2,h3,h4,h5,.settings-accordion-heading,.quick-tools-heading,.playing-channel-text b,.playing-info b,.panel-header h2,.doctor-title){color:#edf2ff!important}
+html[data-positron="true"] .main .content :is(.section-heading p,.panel-header p,.source-hub-heading p,.settings-card p,.settings-accordion-summary,.channel-drag-hint,.playing-channel-text small,.channel-meta,.channel-list,.hint){color:#a7bdd7!important}
+html[data-positron="true"] .sidebar .nav.active{color:#f2edff!important;background:linear-gradient(105deg,#423577,#222b4c)!important;border:1px solid #8877d3!important;box-shadow:inset 3px 0 0 #b8a5ff!important}
+html[data-positron="true"] .sidebar .nav.active span{color:#d4c8ff!important}
+html[data-positron="true"] .sidebar-bottom{background:#17263b!important;border:1px solid #3d5270!important;color:#ecf3ff!important}
+html[data-positron="true"] .sidebar-bottom :is(b,small){color:#d1dfef!important}
+html[data-positron="true"] .main .content :is(input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]),select,textarea){background:#1c2d45!important;border:1px solid #445976!important;color:#eaf2ff!important;caret-color:#82ead8!important}
+html[data-positron="true"] .main .content input::placeholder{color:#91a9c3!important}
+html[data-positron="true"] .main .content :is(button.btn-subtle,button.control-sm,button.icon-btn,button.filter-tab,button.quick-btn,.folder-actions button,.source-actions button){background:#263a54!important;color:#e3eeff!important;border:1px solid #405678!important}
+html[data-positron="true"] .main .content :is(button.btn-subtle,button.control-sm,button.icon-btn,button.filter-tab,button.quick-btn,.folder-actions button):hover{background:#334c6c!important;border-color:#7488ba!important}
+html[data-positron="true"] .main .content button.filter-tab.active{background:#504683!important;color:#efeaff!important;border-color:#8a7cdb!important}
+html[data-positron="true"] #page-tv .controls #playBtn{background:linear-gradient(120deg,#b3a3ff,#8292fb)!important;color:#141c2d!important;border-color:#c9baff!important}
+html[data-positron="true"] .main .content :is(.doctor-metrics article,.doctor-metrics>div){background:#1d304a!important;border:1px solid #405775!important;color:#eaf1ff!important}
+html[data-positron="true"] .main .content .doctor-metrics :is(b,strong,small,span){color:#d7e4ff!important}
+html[data-positron="true"] .main .content .settings-card :is(label,legend,strong){color:#e7f0ff!important}
+html[data-positron="true"] .main .content .settings-card small{color:#a1b7d0!important}
+html[data-positron="true"] .main .content .settings-accordion-heading{background:#1a2b42!important;border-color:#3d506b!important}
+html[data-positron="true"] .main .content .settings-accordion-heading :is(span,b,strong){color:#eaf2ff!important}
+html[data-positron="true"] .main .content :is(.epg-current-card,.player-control-card) :is(b,strong){color:#eaf2ff!important}
+html[data-positron="true"] .main .content .channel-panel .panel-header-actions button{background:#283c5a!important;color:#d7e8ff!important}
