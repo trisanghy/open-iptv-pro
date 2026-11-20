@@ -84,7 +84,7 @@
    html.setAttribute('data-iptv-handheld-menu','closed');
  }
  function mount(){
-  if(opener)return;
+  if(opener||typeof doc.getElementById!=='function'||typeof doc.createElement!=='function')return;
   const shell=doc.getElementById('appShell');
   sidebar=doc.getElementById('appSidebar');
   edge=doc.getElementById('sidebarToggleBtn');
