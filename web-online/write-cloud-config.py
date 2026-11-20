@@ -3,12 +3,17 @@
 import json,os,re,sys
 from pathlib import Path
 if len(sys.argv)!=2:sys.exit('Usage: write-cloud-config.py <site/cloud-config.json>')
-# Public frontend settings can be committed to this branch; secrets NEVER can.
-# The Actions variables override this file when both are supplied.
+# Only public client configuration is checked in. The root cloud-config.json
+# is the source of truth for this Web branch: stale GitHub Actions variables
+# MUST NOT silently switch the live website back to an old Supabase project.
+source=Path(__file__).resolve().parent.parent/'cloud-config.json'
+committed=json.loads(source.read_text(encoding='utf-8')) if source.exists() else {}
 defaults=Path(__file__).with_name('cloud-deployment.json')
 fallback=json.loads(defaults.read_text(encoding='utf-8')) if defaults.exists() else {}
-url=(os.environ.get('SUPABASE_URL') or fallback.get('url') or '').strip().rstrip('/')
-key=(os.environ.get('SUPABASE_PUBLISHABLE_KEY') or fallback.get('publishableKey') or '').strip()
+url=(committed.get('url') or os.environ.get('SUPABASE_URL') or fallback.get('url') or '').strip().rstrip('/')
+key=(committed.get('publishableKey') or os.environ.get('SUPABASE_PUBLISHABLE_KEY') or fallback.get('publishableKey') or '').strip()
+if committed.get('url') and os.environ.get('SUPABASE_URL') and os.environ['SUPABASE_URL'].rstrip('/')!=url:
+    print('Ignoring stale SUPABASE_URL variable; deployed project matches committed web configuration.')
 enabled=bool(url and key)
 if url or key:
     if not enabled:
