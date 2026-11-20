@@ -29,7 +29,7 @@ This file documents **the actual native Slint + Rust + libmpv code** in `native-
 | Internationalization | Vietnamese primary UI | Tauri's 17-locale runtime translations for Slint components |
 | AI speech subtitles, translation, TTS | Not implemented | Whisper/model downloader, MLX, opt-in local AI pipeline, latency, privacy |
 | Auto-update and packaged installers | Native Mac developer build script | Isolated Windows installer/release, signed/notarized macOS and updater |
-| Security / SSRF | Basic media URL checks and rights gates | DNS-pinned network policy for M3U/EPG/HLS/redirects, Tauri-equivalent tests |
+| Security / SSRF | DNS-validated resolver with public-IP checks, redirect protection and proxy bypass for automatic M3U/EPG/health HTTP requests | Review local libmpv/FFmpeg stream URLs, OS-specific playback and Tauri-equivalent integration tests |
 | Casting and AirPlay | Not implemented | OS-specific device discovery and supported-device playback |
 | Supabase/cloud sync | Not implemented | Auth, consent, local conflict resolution, tests |
 

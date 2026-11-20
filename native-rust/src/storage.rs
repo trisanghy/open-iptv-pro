@@ -60,18 +60,8 @@ pub fn read_m3u_file(path: &Path) -> Result<String, String> {
 }
 
 pub fn download_m3u(url: &str) -> Result<String, String> {
-    if !(url.starts_with("https://") || url.starts_with("http://")) {
-        return Err("Nguồn URL phải bắt đầu bằng http:// hoặc https://".into());
-    }
-    if url.len() > 8192 || url.chars().any(char::is_whitespace) {
-        return Err("URL quá dài hoặc chứa khoảng trắng".into());
-    }
-    // ureq 2.x: configure total timeout through AgentBuilder.
-    let agent = ureq::AgentBuilder::new()
-        .timeout(std::time::Duration::from_secs(25))
-        .timeout_connect(std::time::Duration::from_secs(8))
-        .timeout_read(std::time::Duration::from_secs(20))
-        .build();
+    crate::netguard::validate_public_http_url(url)?;
+    let agent = crate::netguard::public_http_agent(25, 8, 20);
     let response = agent.get(url)
         .set("User-Agent", "Open-IPTV-Pro-Rust-Native/0.1")
         .call().map_err(|e| format!("Tải M3U thất bại: {e}"))?;

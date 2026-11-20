@@ -314,15 +314,8 @@ mod tests {
 }
 
 pub fn from_url(url: &str) -> Result<HashMap<String, String>, String> {
-    if !(url.starts_with("https://") || url.starts_with("http://")) || url.len() > 8192 {
-        return Err("EPG URL phải là địa chỉ HTTP(S) hợp lệ".into());
-    }
-    // ureq 2.x: timeouts belong to AgentBuilder, not Request.
-    let agent = ureq::AgentBuilder::new()
-        .timeout_connect(std::time::Duration::from_secs(8))
-        .timeout_read(std::time::Duration::from_secs(20))
-        .timeout(std::time::Duration::from_secs(30))
-        .build();
+    crate::netguard::validate_public_http_url(url)?;
+    let agent = crate::netguard::public_http_agent(30, 8, 20);
     let response = agent.get(url)
         .set("User-Agent", "OpenIPTVPro-Rust-Native/0.2")
         .call().map_err(|e| format!("Không tải được EPG: {e}"))?;

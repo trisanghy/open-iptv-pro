@@ -1,4 +1,4 @@
-use open_iptv_pro_native::{epg, epg_cache, export, failover, health, m3u, media, model::{Channel, NativeData, Source}, mpv::Mpv, storage};
+use open_iptv_pro_native::{epg, epg_cache, export, failover, health, m3u, media, model::{Channel, NativeData, Source}, mpv::Mpv, storage, netguard};
 use slint::{ComponentHandle, ModelRc, VecModel};
 use std::cell::RefCell;
 use std::collections::HashMap;
@@ -323,6 +323,7 @@ fn connect_callbacks(
             let Some(ui) = weak.upgrade() else { return; };
             let raw = ui.get_url_input().trim().to_string();
             if raw.is_empty() { status(&ui, "Nhập URL playlist trước khi thêm."); return; }
+            if let Err(e) = netguard::validate_public_http_url(&raw) { status(&ui, e); return; }
             if !ui.get_import_rights_confirmed() { status(&ui,"Hãy xác nhận quyền sử dụng nguồn M3U trước mỗi lần nhập.");return; }
             ui.set_import_rights_confirmed(false);
             let name = raw.split('/').filter(|part| !part.is_empty()).next_back().unwrap_or("M3U online");
@@ -422,8 +423,8 @@ fn connect_callbacks(
             let Some(ui)=weak.upgrade() else{return;};
             let new_url=ui.get_source_edit_url().trim().to_string();
             if !ui.get_import_rights_confirmed() {status(&ui,"Xác nhận có quyền sử dụng URL M3U trước khi cập nhật nguồn");return;}
-            if !(new_url.starts_with("https://") || new_url.starts_with("http://")) || new_url.len()>8192 || new_url.chars().any(char::is_whitespace) {
-                status(&ui,"URL M3U phải là HTTP(S) hợp lệ");return;
+            if let Err(e) = netguard::validate_public_http_url(&new_url) {
+                status(&ui, e); return;
             }
             let selected={
                 let s=shared.borrow();
@@ -675,7 +676,7 @@ fn connect_callbacks(
         ui.on_load_epg_url(move || {
             let Some(ui)=weak.upgrade() else {return;};
             let url=ui.get_epg_url_input().to_string();
-            if !url.starts_with("https://") && !url.starts_with("http://") { status(&ui,"URL EPG phải bắt đầu bằng HTTP(S)");return; }
+            if let Err(e) = netguard::validate_public_http_url(&url) { status(&ui, e); return; }
             let mut s=shared.borrow_mut();
             let previous=s.data.clone();
             s.data.epg_url=url.clone();
