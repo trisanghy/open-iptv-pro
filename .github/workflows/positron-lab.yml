@@ -17,7 +17,7 @@ on:
       - '.github/workflows/positron-lab.yml'
   workflow_dispatch:
 concurrency:
-  group: positron-p4-failfast-${{ github.ref }}
+  group: positron-p4-activepage-${{ github.ref }}
   cancel-in-progress: false
 permissions:
   contents: read

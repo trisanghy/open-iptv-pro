@@ -109,11 +109,15 @@ const wait=ms=>new Promise(r=>setTimeout(r,ms));
         moreOpen:document.getElementById('positronMorePages')?.getAttribute('aria-expanded')};
     });
     assert.ok(layout.bar?.visible,'toolbar disappeared on round '+n);
-    assert.ok(layout.video?.w>200&&layout.video?.h>100,'video surface collapsed on round '+n);
+    // Only the TV page should display the video surface. On other tabs,
+    // hiding it is correct, and requiring it would be a false regression.
+    if(layout.page==='page-tv')
+      assert.ok(layout.video?.w>200&&layout.video?.h>100,'video surface collapsed on TV round '+n);
+    else assert.ok(layout.page?.startsWith('page-'),'active content page missing on round '+n);
     assert.equal(layout.playerPresent,true,'real video element missing');
     assert.equal(layout.keyboardHelpPresent,true);
     assert.ok(layout.sidebar?.w<285,'sidebar width regression at round '+n);
-    if(n>=16&&viewport.width>=1000)assert.ok(layout.video.w>=520,'TV video too narrow at round '+n);
+    if(n>=16&&viewport.width>=1000&&layout.page==='page-tv')assert.ok(layout.video.w>=520,'TV video too narrow at round '+n);
     if(n===50)assert.equal(layout.page,'page-tv');
     const file='positron-p4-'+String(n).padStart(2,'0')+'-real.png';
     const png=await page.screenshot({path:path.join(out,file),fullPage:false,animations:'disabled'});
