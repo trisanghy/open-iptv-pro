@@ -246,9 +246,14 @@ jobs:
           fi
           xdotool mousemove 35 166 click 1
           sleep 1
-          xdotool mousemove 1239 36 click 1
+          xdotool mousemove 1290 36 click 1
           sleep 2
           import -display "$DISPLAY" -window root screenshot/09-sources-page.png
+          if ! grep -Fq '[UI_NAV_TEST] active-page requested: sources' screenshot/app-stdout.log; then
+            echo 'BUG: Thêm URL shortcut failed to navigate to Sources' >&2
+            cat screenshot/app-stdout.log >&2
+            exit 1
+          fi
           xdotool mousemove 35 166 click 1
           sleep 1
           import -display "$DISPLAY" -window root screenshot/10-tv-return.png
@@ -326,6 +331,31 @@ jobs:
             fi
           done
           for file in screenshot/*.png; do test -s "$file"; identify "$file"; done
+          # Visual-difference assertions catch views that silently stayed on
+          # the same page even if the screenshot filenames look correct.
+          shots=(screenshot/[0-9][0-9]-*.png)
+          if [ "${#shots[@]}" -ne 20 ]; then
+            echo "BUG: Expected 20 numbered real screenshot states; got ${#shots[@]}" >&2
+            exit 1
+          fi
+          : > screenshot/VISUAL_CHECKS.txt
+          for pair in \
+            '01-tv-default.png:06-epg-page.png' \
+            '01-tv-default.png:08-settings-page.png' \
+            '01-tv-default.png:09-sources-page.png' \
+            '01-tv-default.png:15-tv-fullscreen.png' \
+            '01-tv-default.png:18-multiview-render.png' \
+            '01-tv-default.png:20-profiles-render.png' \
+            '04-rail-expanded.png:05-rail-collapsed.png'; do
+            left="${pair%%:*}"; right="${pair##*:}"
+            result="$(compare -metric AE "screenshot/$left" "screenshot/$right" null: 2>&1 || true)"
+            pixels="${result%% *}"
+            if ! [[ "$pixels" =~ ^[0-9]+$ ]] || [ "$pixels" -lt 20000 ]; then
+              echo "BUG: visual page state not distinct: $pair ($result)" >&2
+              exit 1
+            fi
+            printf '%s changed_pixels=%s\n' "$pair" "$pixels" >> screenshot/VISUAL_CHECKS.txt
+          done
           CAPTURE
           chmod +x "$RUNNER_TEMP/capture-native-ui.sh"
           xvfb-run -a -s "-screen 0 1600x1000x24" "$RUNNER_TEMP/capture-native-ui.sh"
@@ -339,6 +369,7 @@ jobs:
           path: |
             screenshot/*.png
             screenshot/*stdout.log
+            screenshot/VISUAL_CHECKS.txt
             screenshot/SOURCE.txt
           if-no-files-found: error
           retention-days: 14
