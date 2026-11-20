@@ -76,3 +76,29 @@ test('Mobile logout clears account-owned sources and restores safe guest state',
  assert.equal(guest.otherLocalOption,'kept');
  assert.equal(old.sources[0].id,'my-source');
 });
+
+test('auth panel has labeled inputs, visible cursor, progressive OTP and separated actions',()=>{
+ const source=fs.readFileSync(new URL('../public/cloud-portable.js',import.meta.url),'utf8');
+ const stylesheet=fs.readFileSync(new URL('../public/cloud-portable.css',import.meta.url),'utf8');
+ const html=fs.readFileSync(new URL('../index.html',import.meta.url),'utf8');
+ assert.match(source,/class="oc-head"/);
+ assert.match(source,/class="oc-form-row"/);
+ for(const id of ['portableCloudEmail','portableCloudOTP','portableCloudLink'])
+  assert.match(source,new RegExp('for="'+id+'"'));
+ assert.match(source,/\$\('portableCloudOTPForm'\)\.hidden=signed\|\|!emailRequested/);
+ assert.match(source,/\$\('portableCloudLinkForm'\)\.hidden=signed\|\|!linkHelpOpen/);
+ assert.match(source,/emailRequested=true;[\s\S]*?\$\('portableCloudOTP'\)\.focus\(\)/);
+ assert.match(source,/aria-live="polite"/);
+ assert.match(stylesheet,/#openiptvPortableCloud \[hidden\] \{display:none!important\}/);
+ assert.match(stylesheet,/caret-color:var\(--accent/);
+ assert.match(stylesheet,/#openiptvPortableCloud \.oc-form input:focus/);
+ assert.match(stylesheet,/@media\(max-width:650px\)/);
+ assert.match(html,/cloud-portable\.css/);
+});
+test('cloud login stylesheet keeps its selectors scoped to the account panel',()=>{
+ const css=fs.readFileSync(new URL('../public/cloud-portable.css',import.meta.url),'utf8');
+ assert.match(css,/grid-column:1 \/ -1/);
+ assert.match(css,/#openiptvPortableCloud \.oc-actions/);
+ assert.match(css,/\.oc-actions \.oc-logout/);
+ assert.ok(!css.includes('input{')&&!css.includes('button{'), 'no global auth controls');
+});
