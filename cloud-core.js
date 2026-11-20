@@ -31,7 +31,7 @@
   // inside a nested object. Preserve playback URLs, logo links and settings.
   return JSON.parse(JSON.stringify(out,(key,value)=>{
    if(IMAGE_ONLY_FIELDS.has(key))return undefined;
-   if(typeof value==='string'&&/^data:image\/[a-z0-9.+-]+;base64,/i.test(value.trim()))
+   if(typeof value==='string'&&/^data:image\//i.test(value.trim()))
     return undefined;
    return value;
   }));
