@@ -147,3 +147,23 @@ test('iOS long-range tab taps skip expensive smooth scrolling and keep one activ
  listeners.scroll();
  assert.equal(tabs.find(x=>x.active).href,selected);
 });
+
+test('new guide mobile icon set is a consistent five-item SVG system',()=>{
+ for(const html of [template,publicHtml]){
+  const nav=html.match(/<nav class="mobile-tabs"[\s\S]*?<\/nav>/)?.[0]||'';
+  const expected=['tv','favorites','epg','sources','more'];
+  const names=[...nav.matchAll(/data-guide-tab="([^"]+)"/g)].map(m=>m[1]);
+  assert.deepEqual(names,expected,'five distinct nav icons in the correct order');
+  assert.equal((nav.match(/class="guide-tab-icon"/g)||[]).length,5);
+  assert.equal((nav.match(/viewBox="0 0 24 24"/g)||[]).length,5);
+  assert.equal((nav.match(/aria-hidden="true"/g)||[]).length,5);
+  assert.equal((nav.match(/focusable="false"/g)||[]).length,5);
+  assert.doesNotMatch(nav,/&#|<img|\bemoji\b/i);
+  const css=html.split('<style>')[1].split('</style>')[0];
+  assert.match(css,/\.mobile-tabs \.guide-tab-icon\{/);
+  assert.match(css,/stroke-width:1\.8/);
+  assert.match(css,/@media\(hover:none\)/);
+  assert.match(css,/\.mobile-tabs a\.is-current\{/);
+  for(const name of ['TV','Yêu thích','Lịch','Nguồn','Thêm'])assert.ok(nav.includes('<span>'+name+'</span>'),name);
+ }
+});
