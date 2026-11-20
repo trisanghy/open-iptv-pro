@@ -19,6 +19,24 @@ struct Program {
 }
 
 /// Prefer XMLTV's actual title; enrich generic "Phim truyện" using episode metadata.
+/// Normalize tvg-id/source suffix spellings without merging distinct VTV feeds.
+pub fn channel_key(value: &str) -> String {
+    let head = value.split('(').next().unwrap_or(value).trim();
+    let head = head.strip_suffix(".vn").unwrap_or(head);
+    let mut key: String = head.chars().filter(|c| c.is_alphanumeric())
+        .flat_map(|c| c.to_uppercase()).collect();
+    for suffix in ["FHD", "HD", "SD", "4K"] {
+        if key.starts_with("VTV") && key.ends_with(suffix) {
+            let stem = key.trim_end_matches(suffix);
+            if stem.strip_prefix("VTV").is_some_and(|rest| !rest.is_empty() && rest.chars().all(|c| c.is_ascii_digit())) {
+                key = stem.to_owned();
+                break;
+            }
+        }
+    }
+    key
+}
+
 pub fn detailed_title(title: &str, subtitle: &str, description: &str) -> String {
     let base = title.trim();
     if base.is_empty() { return String::new(); }
@@ -154,6 +172,13 @@ pub fn from_file(path: &Path) -> Result<HashMap<String, String>, String> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn maps_vtv_ids_without_mixing_regional_or_similarly_numbered_channels() {
+        assert_eq!(channel_key("VTV3 HD (Nguồn 1)"), channel_key("vtv3.vn"));
+        assert_eq!(channel_key("VTV10"), "VTV10");
+        assert_ne!(channel_key("VTV10"), channel_key("VTV1"));
+        assert_ne!(channel_key("VTV5 Tây Nam Bộ"), channel_key("VTV5"));
+    }
     #[test]
     fn enriches_generic_film_titles_but_preserves_specific_titles() {
         assert_eq!(detailed_title("Phim truyện", "", "Kẻ mai mối xứng tầm - Tập 25"),

@@ -22,6 +22,7 @@ struct State {
     playback_index: usize,
     pending_delete: Option<String>,
     current_epg: HashMap<String, String>,
+    normalized_epg: HashMap<String, String>,
     folder_filter: Option<String>,
     selected_url: Option<String>,
 }
@@ -37,6 +38,20 @@ enum Background {
 fn source_id() -> String {
     let ns = SystemTime::now().duration_since(UNIX_EPOCH).unwrap_or_default().as_nanos();
     format!("native_{ns:x}")
+}
+
+fn normalize_guide(map: &HashMap<String, String>) -> HashMap<String, String> {
+    let mut result = HashMap::with_capacity(map.len());
+    for (key, title) in map {
+        result.entry(epg::channel_key(key)).or_insert_with(|| title.clone());
+    }
+    result
+}
+
+fn guide_title<'a>(state: &'a State, tvg_id: &str, name: &str) -> Option<&'a String> {
+    state.current_epg.get(tvg_id).or_else(|| state.current_epg.get(name))
+        .or_else(|| state.normalized_epg.get(&epg::channel_key(tvg_id)))
+        .or_else(|| state.normalized_epg.get(&epg::channel_key(name)))
 }
 
 fn refresh(ui: &MainWindow, state: &mut State) {
@@ -67,7 +82,7 @@ fn refresh(ui: &MainWindow, state: &mut State) {
     state.page = state.page.min(max_page);
     state.visible = all.into_iter().skip(state.page * PAGE_SIZE).take(PAGE_SIZE).collect();
     let rows: Vec<ChannelView> = state.visible.iter().filter_map(|index| state.data.channels.get(*index)).map(|ch| {
-        let show = state.current_epg.get(&ch.tvg_id).or_else(|| state.current_epg.get(&ch.name))
+        let show = guide_title(state, &ch.tvg_id, &ch.name)
             .map(|t| format!("EPG đang chiếu: {t}"))
             .unwrap_or_default();
         ChannelView {
@@ -98,7 +113,7 @@ fn refresh(ui: &MainWindow, state: &mut State) {
     ui.set_source_hint(format!("{} nguồn đang lưu", state.data.sources.len()).into());
     if let Some(url) = &state.selected_url {
         let epg_now = state.data.channels.iter().find(|c| &c.url == url)
-            .and_then(|c| state.current_epg.get(&c.tvg_id).or_else(|| state.current_epg.get(&c.name)));
+            .and_then(|c| guide_title(state, &c.tvg_id, &c.name));
         ui.set_selected_epg_text(epg_now.cloned().unwrap_or("Chưa khớp chương trình EPG cho kênh đang chọn".into()).into());
         ui.set_selected_health_text(state.data.health.get(url).cloned().unwrap_or("Chưa kiểm tra kênh này".into()).into());
         let alternates = state.data.alternate_links.get(url);
@@ -861,7 +876,7 @@ fn background_timer(ui: &MainWindow, shared: Rc<RefCell<State>>, rx: Receiver<Ba
                                 status(&ui,format!("EPG đã tải nhưng không lưu được cache: {e}"));
                             }
                         }
-                        let mut s=shared.borrow_mut(); s.current_epg=map;
+                        let mut s=shared.borrow_mut(); s.normalized_epg=normalize_guide(&map); s.current_epg=map;
                         refresh(&ui,&mut s);status(&ui,format!("Đã nạp EPG hiện tại cho {count} kênh. Cache 10 phút cho EPG online."));
                     }
                     Err(e) => status(&ui,format!("EPG lỗi: {e}")),
@@ -912,7 +927,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let epg_source=saved.epg_url.clone();
     let state=Rc::new(RefCell::new(State {
         selected_url:if saved.last_channel_url.is_empty(){None}else{Some(saved.last_channel_url.clone())},
-        data:saved,visible:Vec::new(),total_matches:0,page:0,selected_source:None,favorites_only:false,recent_only:false,playback_candidates:Vec::new(),playback_index:0,pending_delete:None,current_epg:cached_epg,folder_filter:None,
+        data:saved,visible:Vec::new(),total_matches:0,page:0,selected_source:None,favorites_only:false,recent_only:false,playback_candidates:Vec::new(),playback_index:0,pending_delete:None,normalized_epg:normalize_guide(&cached_epg),current_epg:cached_epg,folder_filter:None,
     }));
     let ui=MainWindow::new()?;
     refresh(&ui,&mut state.borrow_mut());
