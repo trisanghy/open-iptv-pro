@@ -113,9 +113,14 @@ fn refresh(ui: &MainWindow, state: &mut State) {
     ui.set_volume_text(format!("{}%", state.data.volume).into());
     ui.set_current_theme(state.data.theme.clone().into());
     ui.set_light_mode(state.data.theme == "Sáng");
-    let accent = if state.data.theme == "Tối · Xanh" {
-        slint::Color::from_rgb_u8(98,198,107)
-    } else { slint::Color::from_rgb_u8(188,124,255) };
+    ui.set_amoled_mode(state.data.theme == "AMOLED");
+    let accent = match state.data.theme.as_str() {
+        "Tối · Xanh" => slint::Color::from_rgb_u8(98,198,107),
+        "Apple tối" => slint::Color::from_rgb_u8(100,176,252),
+        "Material 3" => slint::Color::from_rgb_u8(174,147,255),
+        "AMOLED" => slint::Color::from_rgb_u8(225,189,255),
+        _ => slint::Color::from_rgb_u8(188,124,255),
+    };
     ui.set_accent(accent.into());
     ui.set_source_hint(format!("{} nguồn đang lưu", state.data.sources.len()).into());
     if let Some(url) = &state.selected_url {
