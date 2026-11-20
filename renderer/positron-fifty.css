@@ -221,3 +221,13 @@ html.p50-43 #positronStudioMenu{border-radius:13px!important;padding:12px!import
 html.p50-43 #positronStudioMenu .po-themes{gap:6px!important}
 html.p50-43 #positronStudioMenu .po-theme{border-radius:10px!important;min-height:68px!important;gap:5px!important;align-items:center!important}
 html.p50-43 #positronStudioMenu .po-theme[aria-pressed=true]{outline:2px solid var(--po-accent)!important;outline-offset:-1px!important}
+
+/* Iteration 44: Add visible universal keyboard focus outlines */
+html.p50-44 :is(#positronMorePages,#positronFiltersToggle,#positronToolsToggle,#positronHelpBtn):focus-visible{outline:2px solid var(--po-accent)!important;outline-offset:3px!important}
+html.p50-44 #positronHelpDialog::backdrop{background:#050a17cf}
+html.p50-44 #positronHelpDialog{border:1px solid var(--po-line);border-radius:15px;background:var(--po-card);color:var(--po-ink);padding:24px;max-width:min(450px,calc(100vw - 24px));box-shadow:0 24px 80px #000b}
+html.p50-44 #positronHelpDialog :is(h2,p){margin:0 0 13px}
+html.p50-44 #positronHelpDialog dl{display:grid;grid-template-columns:120px 1fr;gap:9px;font-size:12px}
+html.p50-44 #positronHelpDialog dt{color:var(--po-accent);font-weight:750}
+html.p50-44 #positronHelpDialog dd{margin:0;color:var(--po-muted)}
+html.p50-44 #positronHelpDialog button{background:var(--po-accent);color:var(--po-on);border:0;border-radius:8px;padding:8px 20px;cursor:pointer}
