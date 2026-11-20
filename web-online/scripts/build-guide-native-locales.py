@@ -9,6 +9,7 @@ from html.parser import HTMLParser
 
 ROOT=pathlib.Path(__file__).resolve().parents[2]
 GUIDE=ROOT/'huong-dan.html'
+SOURCE=ROOT/'web-online'/'huong-dan.html'  # Editable guide template; published HTML is generated
 OUT=ROOT/'guide-locale-output'
 ASSET=ROOT/'guide-native-locales.js'
 LANGS={'en':'en','fr':'fr','de':'de','es':'es','pt-BR':'pt','zh-CN':'zh-CN',
@@ -39,7 +40,7 @@ class LabelParser(HTMLParser):
 
 def keys():
     parser=LabelParser()
-    parser.feed(GUIDE.read_text(encoding='utf8'))
+    parser.feed(SOURCE.read_text(encoding='utf8'))
     parser.labels.add('Ngôn ngữ')
     return sorted(parser.labels)
 
@@ -95,7 +96,7 @@ def assemble():
     ASSET.write_text('/* Pretranslated guide, public strings only. */\n'+
         'window.OpenIPTVGuideLocales='+json.dumps(packs,ensure_ascii=False,separators=(',',':'))+';\n',encoding='utf8')
     hash=hashlib.sha256(ASSET.read_bytes()).hexdigest()[:16]
-    html=GUIDE.read_text(encoding='utf8')
+    html=SOURCE.read_text(encoding='utf8')
     if 'id="guideLanguage"' in html:raise RuntimeError('Guide translation was already installed; refresh source before regenerating')
     selectors='<div class="guide-locale"><label for="guideLanguage">Ngôn ngữ</label>'
     selectors+='<select id="guideLanguage" aria-label="Ngôn ngữ">'
@@ -104,7 +105,7 @@ def assemble():
     anchor='</div></nav></header>'
     if html.count(anchor)!=1:raise RuntimeError('Guide navigation anchor changed')
     html=html.replace(anchor,'</div>'+selectors+'</nav></header>',1)
-    css='.guide-locale{display:flex;align-items:center;gap:7px;font-size:12px}.guide-locale select{max-width:170px;border:1px solid #41617a;color:#fff;background:#172d3c;border-radius:7px;padding:7px}.guide-locale select:focus-visible{outline:2px solid #89d7ff}'
+    css=''  # Modern guide template already owns responsive language-picker styles
     if html.count('</style>')!=1:raise RuntimeError('Guide style anchor missing')
     html=html.replace('</style>',css+'</style>',1)
     controller=r"""<script src="guide-native-locales.js?v=__HASH__"></script>
