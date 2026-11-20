@@ -177,3 +177,48 @@ test('serverChannelCount handles confirmed cloud playlists only',()=>{
  assert.equal(core.serverChannelCount(payload),1);
  assert.equal(payload.channels.length,1,'server count must never modify playlists');
 });
+
+
+test('cloud sync never uploads nested image bytes, thumbnails or frame captures',()=>{
+ const a={
+  channels:[{id:'a',name:'Demo',url:'https://iptv.example/stream.m3u8',
+   logo:'https://cdn.example/logo.png',
+   snapshot:'data:image/png;base64,'+'a'.repeat(10000),
+   previewImage:'data:image/webp;base64,aaaa',
+   thumbnail:{buffer:'large-file'},
+   nested:{imageData:'fake-base64',subtitle:'kept'},
+   lastFrame:'data:image/jpeg;base64,aaaa'}],
+  collectorBackup:{channels:[{id:'original',screenshot:'data:image/png;base64,bbbb'}]},
+  snapshots:{id:'local-only'},imageCache:{huge:'x'.repeat(50000)},
+  sources:[{id:'provider',url:'https://iptv.example/source.m3u'}],
+  favorites:['a'],snapshotConcurrency:8,snapshotSkipExisting:true,volume:0.4
+ };
+ const b=core.snapshot(a);
+ assert.equal(b.snapshots,undefined);
+ assert.equal(b.imageCache,undefined);
+ assert.equal(b.channels[0].snapshot,undefined);
+ assert.equal(b.channels[0].previewImage,undefined);
+ assert.equal(b.channels[0].thumbnail,undefined);
+ assert.equal(b.channels[0].lastFrame,undefined);
+ assert.deepEqual(b.channels[0].nested,{subtitle:'kept'});
+ assert.equal(b.collectorBackup.channels[0].screenshot,undefined);
+ assert.equal(b.channels[0].logo,'https://cdn.example/logo.png');
+ assert.equal(b.channels[0].url,'https://iptv.example/stream.m3u8');
+ assert.equal(b.snapshotConcurrency,8);
+ assert.equal(b.snapshotSkipExisting,true);
+ assert.equal(b.volume,0.4);
+ assert.ok(a.channels[0].snapshot.startsWith('data:image/png'));
+ assert.doesNotMatch(JSON.stringify(core.validate(a).payload),/data:image|fake-base64|large-file/);
+});
+test('image-only fields are dropped even if future app versions add them',()=>{
+ const b=core.snapshot({screenshots:[{jpeg:'huge'}],thumbnailBase64:'aaaa',
+  channels:[{id:'a',coverData:'embedded',logo:'data:image/png;base64,AAAA'}],
+  groupOrder:['News'],favoriteKeys:['a'],autoEnableAudio:true});
+ assert.equal(b.screenshots,undefined);
+ assert.equal(b.thumbnailBase64,undefined);
+ assert.equal(b.channels[0].coverData,undefined);
+ assert.equal(b.channels[0].logo,undefined);
+ assert.deepEqual(b.groupOrder,['News']);
+ assert.deepEqual(b.favoriteKeys,['a']);
+ assert.equal(b.autoEnableAudio,true);
+});
