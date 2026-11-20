@@ -15,3 +15,7 @@ const close=()=>{menu.hidden=true;btn.setAttribute('aria-expanded','false');};co
 btn.addEventListener('click',toggle);choose('night');
 window.OpenIPTVPositronStudio={choose,open,close,toggle,menu,button:btn,choices,subscribe:fn=>{if(typeof fn==='function')listeners.push(fn);}};
 })();
+/* 12 */(()=>{const studio=window.OpenIPTVPositronStudio;if(!studio)return;const key='open-iptv-positron-studio-palette-v1';
+try{const saved=localStorage.getItem(key);if(studio.choices.some(x=>x.id===saved))studio.choose(saved);}catch{}
+studio.subscribe(id=>{try{localStorage.setItem(key,id);}catch{ /* private storage can be unavailable */ }});
+})();
