@@ -21,11 +21,24 @@ test('Web and build source ship the same compact Supabase form CSS',()=>{
   assert.match(source,/font-size:16px/);
   assert.match(source,/\.cloud-email-input-line > button/);
   assert.ok(!html.includes('href="cloud-sync.css"'),'Live page must invalidate old Safari CSS cache');
-  assert.ok(html.includes('href="cloud-sync.css?v=server-channel-count-20261120a"'));
-  assert.ok(builder.includes('cloud-sync.css?v=server-channel-count-20261120a'),
+  assert.ok(html.includes('href="cloud-sync.css?v=plain-login-text-20261120a"'));
+  assert.ok(builder.includes('cloud-sync.css?v=plain-login-text-20261120a'),
     'Web builder must retain the same versioned CSS on regenerated pages');
   for(const id of ['cloudEmailInput','cloudLinkInput','cloudOtpCode','cloudEmailSend','cloudLinkVerify'])
     assert.ok(html.includes('id="'+id+'"'),'Cloud auth input/button '+id+' missing');
+});
+
+test('iPhone login uses an ordinary text input with visible caret and native selection',()=>{
+ const script=read('cloud-sync.js');
+ assert.match(html,/<input id="cloudEmailInput" type="text" autocomplete="email"[^>]+>/);
+ assert.doesNotMatch(html,/<input id="cloudEmailInput" type="email"/);
+ assert.match(script,/const safeEmail=\(\)=>String\(emailInput\?\.value\|\|''\)\.trim\(\)\.toLowerCase\(\)/);
+ assert.match(script,/core\.validEmail\(email\)/);
+ for(const property of ['-webkit-user-select:text!important','user-select:text!important','caret-color:var(--text,#f0f5f9)!important','letter-spacing:normal!important'])
+  assert.ok(source.includes(property),'Expected normal mobile text editing: '+property);
+ assert.match(source,/#cloudSyncCard #cloudEmailInput:focus/);
+ assert.match(source,/#cloudSyncCard #cloudOtpCode:focus/);
+ assert.match(builder,/type=\\?"text\\?" autocomplete=\\?"email\\?"/);
 });
 
 test('Chromium layout: iPhone email, magic link and OTP fields remain 44px high',()=>{
