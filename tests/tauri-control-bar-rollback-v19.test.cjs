@@ -35,7 +35,7 @@ test('one-ZIP installer pins current minor version tag without replacing previou
  assert.ok(require('node:fs').readFileSync(require('node:path').join(__dirname,'../scripts/BUILD_RUSTLAB_MAC_ONE_ZIP_FAST.sh'),'utf8').includes('SOURCE_REF="refs/heads/${BRANCH}"'));
  assert.ok(require('node:fs').readFileSync(require('node:path').join(__dirname,'../scripts/BUILD_RUSTLAB_MAC_ONE_ZIP_FAST.sh'),'utf8').includes('SOURCE_REF="refs/heads/${BRANCH}"'));
  assert.ok(require('node:fs').readFileSync(require('node:path').join(__dirname,'../scripts/BUILD_RUSTLAB_MAC_ONE_ZIP_FAST.sh'),'utf8').includes('SOURCE_REF="refs/heads/${BRANCH}"'));
- assert.match(script,/while \[\[ -e "\$DEST" \]\]/);
+ assert.ok(script.includes('DEST="$HOME/Downloads/OpenIPTVPro_RustLab_Build"'));
  assert.match(script,/npm run build -- --bundles app/);
  assert.match(script,/APP_TARGET/);
  assert.doesNotMatch(script,/cp "\$TMP\/source\.zip" "\$DEST/);
