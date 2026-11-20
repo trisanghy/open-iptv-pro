@@ -21,7 +21,8 @@ permissions:
   id-token: write
 concurrency:
   group: pages-openiptv-web
-  cancel-in-progress: false
+  # Supersede obsolete builds when the Web branch receives rapid successive pushes.
+  cancel-in-progress: true
 jobs:
   prepare:
     runs-on: ubuntu-latest
@@ -413,6 +414,9 @@ jobs:
           print('Capture validation passed for',len(names),'screenshots')
           PY
       - name: Archive current screenshots into main documentation
+        # Avoid writing to main on every Web push, especially when a later test fails.
+        # Manual run still refreshes main docs after the gallery is captured.
+        if: github.event_name == 'workflow_dispatch'
         shell: bash
         env:
           GH_TOKEN: ${{ github.token }}
