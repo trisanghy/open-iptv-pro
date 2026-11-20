@@ -96,7 +96,7 @@
    // exceeded its localStorage quota during otherwise valid merges.
    // Keep source rows EXACTLY as they were; fresh URL data is used only to build
    // the merged view. Older v1 backups remain readable by restore().
-   store.collectorBackup={version:2,channels:old,sourceEnabled:rawSources().map(s=>[s.id,s.enabled]),hadMerged:!!sameSource};
+   store.collectorBackup={version:2,channels:old,sourceEnabled:rawSources().map(s=>[s.id,s.enabled]),hadMerged:!!sameSource,mergedWasEnabled:!!sameSource?.enabled};
    const previous=new Map(old.map(c=>[lib.keyFor(c),c]));
    for(const c of merged.channels){const oldC=previous.get(lib.keyFor(c));if(oldC){c.id=oldC.id;c.status=oldC.status;c.checkedAt=oldC.checkedAt;c.reason=oldC.reason;if(oldFav.has(oldC.url)&&oldC.url!==c.url)store.favorites.push(c.url);}}
    store.favorites=[...new Set(store.favorites)];store.channels=store.channels.filter(c=>c.sourceId!==SOURCE).concat(merged.channels);
@@ -189,7 +189,12 @@
     if(src)src.enabled=enabled;
    }
    const mergedSource=store.sources.find(s=>s.id===SOURCE);
-   if(mergedSource)mergedSource.enabled=!!backup.hadMerged;
+   if(!backup.hadMerged){
+    // This merge created a new source; remove only that synthetic entry.
+    store.sources=store.sources.filter(s=>s.id!==SOURCE);
+   }else if(mergedSource){
+    mergedSource.enabled=backup.version===2?!!backup.mergedWasEnabled:true;
+   }
    delete store.collectorBackup;
    if(!ctx.save())throw Error('Không đủ bộ nhớ lưu thao tác hoàn tác.');
   }catch(e){
