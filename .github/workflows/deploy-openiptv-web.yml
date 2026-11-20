@@ -129,6 +129,10 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          # Fast-fail on missing translations before costly screenshot capture and packaging.
+          node --test web-online/tests/web-english-coverage.test.cjs
+          node --test web-online/tests/web-native-full-coverage.test.cjs
+          node web-online/i18n-audit.cjs --require-complete
           node --check _site/browser-channel-check.js
           node --check _site/web-channel-snapshot.js
           node --test web-online/tests/web-channel-snapshot.test.cjs
