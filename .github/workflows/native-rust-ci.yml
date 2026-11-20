@@ -76,7 +76,7 @@ jobs:
 
   macos-native:
     name: macOS Rust Native app + DMG (ad-hoc preview)
-    runs-on: macos-14
+    runs-on: macos-15
     timeout-minutes: 70
     steps:
       - uses: actions/checkout@v4
