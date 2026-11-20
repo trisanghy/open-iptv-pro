@@ -297,6 +297,20 @@ jobs:
             cat screenshot/fullscreen-stdout.log >&2
             exit 1
           fi
+          # Five more real app windows: complete 20 visual UI scenarios.
+          i=16
+          for page in fav recent multiview discovery profiles; do
+            kill "$pid" 2>/dev/null || true
+            wait "$pid" 2>/dev/null || true
+            export OPEN_IPTV_UI_SCREENSHOT_PAGE="$page"
+            native-rust/target/debug/open-iptv-pro-native > "screenshot/$page-stdout.log" 2>&1 &
+            pid=$!
+            sleep 3
+            kill -0 "$pid"
+            import -display "$DISPLAY" -window root "screenshot/$(printf '%02d' "$i")-$page-render.png"
+            grep -Fq "[UI_NAV_TEST] active-page requested: $page" "screenshot/$page-stdout.log"
+            i=$((i+1))
+          done
           echo "Real X11 UI navigation callbacks:" >&2
           cat screenshot/app-stdout.log >&2
           # Navigation is evaluated from actual callbacks, not image filenames.

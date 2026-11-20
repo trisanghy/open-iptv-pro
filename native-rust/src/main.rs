@@ -1444,15 +1444,6 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         data:saved,visible:Vec::new(),total_matches:0,page:0,selected_source:None,favorites_only:false,recent_only:false,playback_candidates:Vec::new(),playback_index:0,pending_delete:None,normalized_epg:normalize_guide(&cached_epg),current_epg:cached_epg,epg_schedule:cached_schedule,guide_day_offset:0,folder_filter:None,logo_images:HashMap::new(),logos_requested:HashSet::new(),
     }));
     let ui=MainWindow::new()?;
-    // Opt-in CI-only visual inspection of non-TV pages. No source/network
-    // actions happen, and no saved configuration is changed.
-    if std::env::var("OPEN_IPTV_UI_SCREENSHOT_FIXTURE").as_deref() == Ok("1") {
-        if let Ok(page)=std::env::var("OPEN_IPTV_UI_SCREENSHOT_PAGE") {
-            if matches!(page.as_str(),"tv"|"epg"|"sources"|"settings") {
-                ui.set_active_page(page.into());
-            }
-        }
-    }
     refresh(&ui,&mut state.borrow_mut());
     ui.set_epg_url_input(state.borrow().data.epg_url.clone().into());
     let player:Rc<RefCell<Option<Mpv>>>=Rc::new(RefCell::new(None));
@@ -1475,6 +1466,15 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let multiview: Rc<RefCell<Vec<Mpv>>> = Rc::new(RefCell::new(Vec::new()));
     let recording: Rc<RefCell<Option<(Child, PathBuf)>>> = Rc::new(RefCell::new(None));
     connect_callbacks(&ui,state.clone(),player.clone(),tx.clone(),multiview,recording.clone());
+    // In isolated screenshot mode, navigate through the *real* callback so
+    // favorites, recents and EPG use their actual filters and view state.
+    if std::env::var("OPEN_IPTV_UI_SCREENSHOT_FIXTURE").as_deref()==Ok("1") {
+        if let Ok(page)=std::env::var("OPEN_IPTV_UI_SCREENSHOT_PAGE") {
+            if matches!(page.as_str(),"tv"|"epg"|"sources"|"settings"|"fav"|"recent"|"multiview"|"shots"|"folders"|"health"|"doctor"|"discovery"|"profiles") {
+                ui.invoke_navigate(page.into());
+            }
+        }
+    }
     let resume = {
         let s=state.borrow();
         if s.data.auto_resume_last_channel {
