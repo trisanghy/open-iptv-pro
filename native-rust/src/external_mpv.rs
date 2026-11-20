@@ -7,12 +7,13 @@ use std::io::Write;
 use std::os::unix::net::UnixStream;
 use std::path::{Path, PathBuf};
 use std::process::{Child, Command, Stdio};
-use std::time::{SystemTime, UNIX_EPOCH};
+
 
 use crate::mpv::{PlaybackInfo, VideoBackend};
 
 pub struct ExternalMpv {
     binary: PathBuf,
+    _private_directory: tempfile::TempDir,
     socket: PathBuf,
     child: RefCell<Option<Child>>,
     volume: Cell<i32>,
@@ -24,18 +25,15 @@ impl ExternalMpv {
         let binary=resolve_binary().ok_or(
             "Không tìm thấy mpv độc lập. Cài 'brew install mpv' rồi khởi động lại."
         )?;
-        let nanos=SystemTime::now().duration_since(UNIX_EPOCH)
-            .unwrap_or_default().as_nanos();
-        // macOS TMPDIR often exceeds UNIX_PATH_MAX when the socket suffix is
-        // appended. /tmp is short, system-managed and private to this process
-        // through an unguessable nonce.
-        let socket=Path::new("/tmp").join(
-            format!("oip-{}-{:x}.sock",std::process::id(),nanos)
-        );
+        // A real private 0700 temporary directory prevents other local users
+        // from connecting to mpv's input socket, and avoids macOS UNIX_PATH_MAX.
+        let private_directory=tempfile::Builder::new().prefix("oip-")
+            .tempdir_in("/tmp").map_err(|e|format!("Không tạo được IPC mpv: {e}"))?;
+        let socket=private_directory.path().join("mpv.sock");
         if socket.to_string_lossy().len()>95 {
             return Err("Đường dẫn IPC mpv quá dài".into());
         }
-        Ok(Self {binary,socket,child:RefCell::new(None),volume:Cell::new(80),
+        Ok(Self {binary,_private_directory:private_directory,socket,child:RefCell::new(None),volume:Cell::new(80),
             muted:Cell::new(false),aspect:RefCell::new("fit".into())})
     }
     pub fn video_backend(&self)->VideoBackend {VideoBackend::NativeWindow}
@@ -170,8 +168,10 @@ mod tests{
     #[test]
     fn no_process_does_not_spawn_by_polling_or_commands() {
         // No binary required to validate deterministic command failures.
+        let directory=tempfile::tempdir().unwrap();
+        let socket=directory.path().join("mpv.sock");
         let p=ExternalMpv{
-            binary:"/nonexistent/mpv".into(),socket:std::env::temp_dir().join("no-mpv-test.sock"),
+            binary:"/nonexistent/mpv".into(),_private_directory:directory,socket,
             child:RefCell::new(None),volume:Cell::new(80),muted:Cell::new(false),
             aspect:RefCell::new("fit".into())};
         assert_eq!(p.poll_playback_failure(),None);
