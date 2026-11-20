@@ -316,7 +316,7 @@ link_anchor="<p id=\"cloudAuthProviders\" class=\"hint\" aria-live=\"polite\"></
 if html.count(link_anchor)!=1:
     sys.exit('Cloud link form anchor missing')
 html=html.replace(link_anchor,"      <div id=\"cloudLinkForm\" class=\"cloud-email-form\" hidden>\n        <label for=\"cloudLinkInput\">Nếu liên kết trong email không quay về website, hãy dán liên kết vào đây</label>\n        <div class=\"cloud-email-input-line\">\n          <input id=\"cloudLinkInput\" type=\"url\" autocomplete=\"off\" spellcheck=\"false\" placeholder=\"Liên kết xác nhận của Supabase\"/>\n          <button type=\"button\" class=\"btn btn-subtle\" id=\"cloudLinkVerify\">Xác thực liên kết</button>\n        </div>\n        <p class=\"hint\">Liên kết chỉ được dùng một lần và không được lưu vào playlist hoặc đám mây.</p>\n      </div>\n"+link_anchor,1)
-html=html.replace('</head>','<link rel="stylesheet" href="web-only.css?v=no-timeshift-20261119a"/><link rel="stylesheet" href="web-volume.css"/><link rel="stylesheet" href="cloud-sync.css?v=auth-input-compact-20261119a"/><link rel="manifest" href="manifest.webmanifest"/></head>',1)
+html=html.replace('</head>','<link rel="stylesheet" href="web-only.css?v=no-timeshift-20261119a"/><link rel="stylesheet" href="web-volume.css"/><link rel="stylesheet" href="cloud-sync.css?v=email-otp-20261120a"/><link rel="manifest" href="manifest.webmanifest"/></head>',1)
 html=html.replace('<script src="app.js"></script>','<script src="web-mobile-player.js?v=apple-more-20261120a"></script><script src="app.js"></script>',1)
 html=html.replace('</head>','<link rel="stylesheet" href="web-mobile-player.css?v=desktop-handheld-fs-20261119a"/></head>',1)
 html=html.replace('src="theme-boot.js"','src="theme-boot.js?v=responsive-desktop-20261118j"',1)
