@@ -266,3 +266,16 @@ html.p50-48 #positronMorePages::first-letter{font-size:16px}
 html.p50-48 #positronBar{flex-wrap:wrap!important;height:auto!important;min-height:58px!important;padding:8px!important;gap:5px!important}
 html.p50-48 #positronBar .p-title{flex:1 1 auto!important}
 html.p50-48 #positronBar .p-actions{gap:4px!important}}
+
+/* Iteration 49: Use stacked player controls below 600px */
+@media(max-width:600px){html.p50-49 #page-tv .control-layout-top{display:grid!important;grid-template-columns:minmax(0,1fr)!important;row-gap:0!important}
+html.p50-49 #page-tv .control-layout-top .playing-info{grid-column:1!important;grid-row:auto!important;border-right:0!important;border-bottom:1px solid var(--po-line)!important}
+html.p50-49 #page-tv .control-layout-top .controls.transport-controls{grid-column:1!important;grid-row:auto!important;border-right:0!important;padding:7px!important}
+html.p50-49 #page-tv .control-layout-top .volume-controls{grid-column:1!important;grid-row:auto!important;border-right:0!important}
+html.p50-49 #page-tv .control-layout-top .output-controls{grid-column:1!important;grid-row:auto!important;justify-content:center!important}
+html.p50-49 #page-tv .empty-player h2{font-size:15px!important}
+html.p50-49 #page-tv .empty-player p{font-size:11px!important;padding-inline:12px!important}
+html.p50-49 #positronBar #positronFocus{font-size:0!important;min-width:36px!important;padding:0!important;justify-content:center!important}
+html.p50-49 #positronBar #positronFocus::before{content:"▣";font-size:17px!important}
+html.p50-49 #positronStudioBtn{font-size:0!important}
+html.p50-49 #positronStudioBtn::before{content:"◈";font-size:17px!important}}
