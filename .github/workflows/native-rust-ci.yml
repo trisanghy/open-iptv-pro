@@ -250,14 +250,6 @@ jobs:
           xdotool mousemove 35 120 click 1
           sleep 1
           import -display "$DISPLAY" -window root screenshot/10-tv-return.png
-          # Real window fullscreen toggling is a separate visual regression:
-          xdotool mousemove 1282 94 click 1
-          sleep 2
-          import -display "$DISPLAY" -window root screenshot/15-tv-fullscreen.png
-          xdotool key Escape || true
-          sleep 1
-          xdotool mousemove 1540 96 click 1 || true
-          sleep 1
           # Also verify the actual rail navigation independent of header.
           xdotool mousemove 35 826 click 1
           sleep 2
@@ -283,6 +275,17 @@ jobs:
           sleep 4
           kill -0 "$pid"
           import -display "$DISPLAY" -window root screenshot/14-sources-render.png
+          # Dedicated fullscreen check at the end, from a fresh TV process.
+          kill "$pid" 2>/dev/null || true
+          wait "$pid" 2>/dev/null || true
+          export OPEN_IPTV_UI_SCREENSHOT_PAGE=tv
+          native-rust/target/debug/open-iptv-pro-native > screenshot/fullscreen-stdout.log 2>&1 &
+          pid=$!
+          sleep 3
+          kill -0 "$pid"
+          xdotool mousemove 1282 94 click 1
+          sleep 2
+          import -display "$DISPLAY" -window root screenshot/15-tv-fullscreen.png
           echo "Real X11 UI navigation callbacks:" >&2
           cat screenshot/app-stdout.log >&2
           # Navigation is evaluated from actual callbacks, not image filenames.

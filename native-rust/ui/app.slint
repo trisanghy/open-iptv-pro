@@ -247,7 +247,7 @@ export component MainWindow inherits Window {
                     spacing: 12px;
 if (root.active-page == "tv" || root.active-page == "fav" || root.active-page == "recent") : VerticalLayout {
     vertical-stretch: 1; spacing: 8px;
-    Rectangle {
+    if !root.player-fullscreen : Rectangle {
     height: 44px; background: #142536; border-radius: 9px;
     HorizontalLayout {
         padding-left: 12px; padding-right: 8px; spacing: 9px;
