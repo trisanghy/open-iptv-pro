@@ -25,7 +25,7 @@ export component MainWindow inherits Window {
     preferred-height: 890px;
     min-width: 980px;
     min-height: 650px;
-    background: root.light-mode ? #eef3f9 : #0c1520;
+    background: root.amoled-mode ? #000000 : (root.light-mode ? #eef3f9 : #0c1520);
     default-font-family: "Arial";
 
     in-out property <bool> light-mode: false;
@@ -35,6 +35,11 @@ export component MainWindow inherits Window {
     in-out property <string> url-input;
     in-out property <string> epg-url-input;
     in-out property <bool> epg-auto-refresh-enabled: true;
+    in-out property <bool> quick-tools-expanded: false;
+    in-out property <bool> muted: false;
+    in-out property <string> aspect-mode-text: "Vừa khung";
+    in-out property <bool> auto-resume-last-channel: false;
+    in-out property <bool> amoled-mode: false;
     in-out property <bool> import-rights-confirmed: false;
     in-out property <bool> discovery-rights-confirmed: false;
     in-out property <string> search-text;
@@ -72,6 +77,10 @@ export component MainWindow inherits Window {
     callback load-epg-url();
     callback select-epg-preset(string);
     callback toggle-epg-auto-refresh();
+    callback toggle-quick-tools();
+    callback set-aspect-mode(string);
+    callback toggle-mute();
+    callback toggle-resume-last-channel();
     callback select-source(int);
     callback show-all();
     callback show-favorites();
@@ -115,7 +124,7 @@ export component MainWindow inherits Window {
         spacing: 0px;
         Rectangle {
             width: 244px;
-            background: root.light-mode ? #ffffff : #101b29;
+            background: root.amoled-mode ? #070707 : (root.light-mode ? #ffffff : #101b29);
             border-width: 1px;
             border-color: #223347;
             VerticalLayout {
@@ -190,7 +199,7 @@ export component MainWindow inherits Window {
                 }
             }
             Rectangle {
-                background: root.light-mode ? #eff4fa : #101825;
+                background: root.amoled-mode ? #000000 : (root.light-mode ? #eff4fa : #101825);
                 VerticalLayout {
                     padding: 16px;
                     spacing: 12px;
@@ -199,7 +208,7 @@ export component MainWindow inherits Window {
                         visible: root.active-page == "tv" || root.active-page == "fav" || root.active-page == "recent";
                         Rectangle {
                             width: 327px;
-                            background: root.light-mode ? #ffffff : #142231;
+                            background: root.amoled-mode ? #101010 : (root.light-mode ? #ffffff : #142231);
                             border-radius: 11px;
                             border-width: 1px;
                             border-color: #2a3b50;
@@ -208,7 +217,7 @@ export component MainWindow inherits Window {
                                 spacing: 8px;
                                 HorizontalLayout {
                                     Text { text: "Danh sách kênh"; color: root.light-mode ? #203249 : #f5f8ff; font-weight: 700; font-size: 17px; vertical-alignment: center; }
-                                    Rectangle { horizontal-stretch: 1; background: root.light-mode ? #ffffff : #142231; }
+                                    Rectangle { horizontal-stretch: 1; background: root.amoled-mode ? #101010 : (root.light-mode ? #ffffff : #142231); }
                                     Button { text: "▶ Gần nhất"; clicked => { root.play-last-channel(); } }
                                     Button { text: "↻"; clicked => { root.refresh-sources(); } }
                                 }
@@ -274,7 +283,7 @@ export component MainWindow inherits Window {
                             }
                             Rectangle {
                                 height: 132px;
-                                background: root.light-mode ? #ffffff : #142231;
+                                background: root.amoled-mode ? #101010 : (root.light-mode ? #ffffff : #142231);
                                 border-radius: 11px;
                                 VerticalLayout {
                                     padding: 12px;
@@ -287,18 +296,18 @@ export component MainWindow inherits Window {
                                         Button { text: "▶ / ❚❚"; clicked => { root.pause-video(); } }
                                         Button { text: "■"; clicked => { root.stop-video(); } }
                                         Button { text: "⏭"; clicked => { root.next-video(); } }
-                                        Rectangle { horizontal-stretch: 1; background: root.light-mode ? #ffffff : #142231; }
+                                        Rectangle { horizontal-stretch: 1; background: root.amoled-mode ? #101010 : (root.light-mode ? #ffffff : #142231); }
                                         Button { text: "−"; clicked => { root.volume-delta(-10); } }
                                         Text { text: root.volume-text; color: #abc5dc; vertical-alignment: center; font-size: 11px; }
                                         Button { text: "+"; clicked => { root.volume-delta(10); } }
-                                        Button { text: "▣"; clicked => { root.snapshot-current(); } }
+                                        Button { text: root.muted ? "♫" : "♪̸"; clicked => { root.toggle-mute(); } }
                                         Button { text: "⛶"; clicked => { root.fullscreen-video(); } }
                                     }
                                 }
                             }
                             Rectangle {
                                 height: 80px;
-                                background: root.light-mode ? #ffffff : #142231;
+                                background: root.amoled-mode ? #101010 : (root.light-mode ? #ffffff : #142231);
                                 border-radius: 10px;
                                 VerticalLayout {
                                     padding: 9px;
@@ -308,34 +317,77 @@ export component MainWindow inherits Window {
                                 }
                             }
                             Rectangle {
-                                height: 88px;
-                                background: root.light-mode ? #ffffff : #142231;
+                                height: 48px;
+                                background: root.amoled-mode ? #101010 : (root.light-mode ? #ffffff : #142231);
                                 border-radius: 10px;
-                                VerticalLayout {
-                                    padding: 10px;
-                                    spacing: 6px;
-                                    HorizontalLayout {
-                                        spacing: 7px;
-                                        Text { text: "⏪ Tua / ghi hình"; color: #cfdcf1; font-weight: 700; vertical-alignment: center; }
-                                        Button { text: "−30s"; clicked => { root.seek-video(-30); } }
-                                        Button { text: "−10s"; clicked => { root.seek-video(-10); } }
-                                        Button { text: "Về LIVE"; clicked => { root.seek-video(999999); } }
-                                        Button { text: "⏺ Ghi 60 giây"; clicked => { root.start-recording(); } }
-                                    }
-                                    Text { text: root.recording-text; color: #8eafca; font-size: 11px; }
+                                HorizontalLayout {
+                                    padding-left: 14px;
+                                    padding-right: 10px;
+                                    spacing: 10px;
+                                    Text { text: "☷  Công cụ nhanh"; font-size: 14px; font-weight: 700; color: root.light-mode ? #203249 : #f3f7ff; vertical-alignment: center; }
+                                    Rectangle { horizontal-stretch: 1; background: transparent; }
+                                    Button { text: root.quick-tools-expanded ? "Thu gọn  ⌃" : "Mở rộng  ⌄"; clicked => { root.toggle-quick-tools(); } }
                                 }
                             }
-                            HorizontalLayout {
-                                spacing: 7px;
-                                Button { text: "✓ Kiểm tra các kênh"; clicked => { root.check-channels(); } }
-                                Button { text: "▦ Snapshot hàng loạt"; clicked => { root.snapshot-all(); } }
-                                Button { text: "⇩ Xuất M3U"; clicked => { root.export-m3u(); } }
+                            VerticalLayout {
+                                visible: root.quick-tools-expanded;
+                                spacing: 9px;
+                                Rectangle {
+                                    height: 110px;
+                                    background: root.amoled-mode ? #101010 : (root.light-mode ? #ffffff : #142231);
+                                    border-radius: 10px;
+                                    VerticalLayout {
+                                        padding: 10px;
+                                        spacing: 8px;
+                                        HorizontalLayout {
+                                            spacing: 8px;
+                                            Text { text: "Khung hình: " + root.aspect-mode-text; color: root.light-mode ? #203249 : #d7e7f5; font-size: 12px; vertical-alignment: center; }
+                                            Rectangle { horizontal-stretch: 1; background: transparent; }
+                                            Button { text: "Vừa khung"; clicked => { root.set-aspect-mode("fit"); } }
+                                            Button { text: "Lấp đầy"; clicked => { root.set-aspect-mode("fill"); } }
+                                            Button { text: "Gốc"; clicked => { root.set-aspect-mode("original"); } }
+                                        }
+                                        HorizontalLayout {
+                                            spacing: 8px;
+                                            Text { text: "Âm thanh: " + (root.muted ? "Đang tắt tiếng" : "Đang bật tiếng"); color: root.light-mode ? #203249 : #d7e7f5; font-size: 12px; vertical-alignment: center; }
+                                            Button { text: root.muted ? "Bật tiếng" : "Tắt tiếng"; clicked => { root.toggle-mute(); } }
+                                            Rectangle { horizontal-stretch: 1; background: transparent; }
+                                            Text { text: "Chỉnh trực tiếp libmpv"; color: #92aac5; font-size: 11px; vertical-alignment: center; }
+                                        }
+                                    }
+                                }
+                                Rectangle {
+                                    height: 90px;
+                                    background: root.amoled-mode ? #101010 : (root.light-mode ? #ffffff : #142231);
+                                    border-radius: 10px;
+                                    VerticalLayout {
+                                        padding: 10px;
+                                        spacing: 6px;
+                                        HorizontalLayout {
+                                            spacing: 7px;
+                                            Text { text: "Tua / ghi hình"; color: root.light-mode ? #203249 : #cfdcf1; font-weight: 700; vertical-alignment: center; }
+                                            Button { text: "−30s"; clicked => { root.seek-video(-30); } }
+                                            Button { text: "−10s"; clicked => { root.seek-video(-10); } }
+                                            Button { text: "Về LIVE"; clicked => { root.seek-video(999999); } }
+                                            Button { text: "Ghi 60 giây"; clicked => { root.start-recording(); } }
+                                        }
+                                        Text { text: root.recording-text; color: #8eafca; font-size: 11px; }
+                                    }
+                                }
+                                HorizontalLayout {
+                                    spacing: 7px;
+                                    Button { text: "✓ Kiểm tra kênh"; clicked => { root.check-channels(); } }
+                                    Button { text: "▦ Snapshot"; clicked => { root.snapshot-current(); } }
+                                    Button { text: "▦ Snapshot loạt"; clicked => { root.snapshot-all(); } }
+                                    Button { text: "⇩ Xuất M3U"; clicked => { root.export-m3u(); } }
+                                    Button { text: "■ Dừng ghi"; clicked => { root.stop-recording(); } }
+                                }
                             }
                         }
                     }
                     Rectangle {
                         visible: root.active-page == "sources";
-                        background: root.light-mode ? #ffffff : #142231;
+                        background: root.amoled-mode ? #101010 : (root.light-mode ? #ffffff : #142231);
                         border-radius: 12px;
                         VerticalLayout {
                             padding: 20px;
@@ -372,7 +424,7 @@ export component MainWindow inherits Window {
                     }
                     Rectangle {
                         visible: root.active-page == "epg";
-                        background: root.light-mode ? #ffffff : #142231; border-radius: 12px;
+                        background: root.amoled-mode ? #101010 : (root.light-mode ? #ffffff : #142231); border-radius: 12px;
                         VerticalLayout {
                             padding: 20px; spacing: 13px;
                             Text { text: "▤ Lịch phát sóng EPG / XMLTV"; color: root.light-mode ? #203249 : #f3f6ff; font-size: 21px; font-weight: 700; }
@@ -393,7 +445,7 @@ export component MainWindow inherits Window {
                     }
                     Rectangle {
                         visible: root.active-page == "multiview";
-                        background: root.light-mode ? #ffffff : #142231; border-radius: 12px;
+                        background: root.amoled-mode ? #101010 : (root.light-mode ? #ffffff : #142231); border-radius: 12px;
                         VerticalLayout {
                             padding: 20px; spacing: 12px;
                             Text { text: "⊞ MultiView · 4 kênh"; color: root.light-mode ? #203249 : #f3f6ff; font-size: 21px; font-weight: 700; }
@@ -411,7 +463,7 @@ export component MainWindow inherits Window {
                     }
                     Rectangle {
                         visible: root.active-page == "shots";
-                        background: root.light-mode ? #ffffff : #142231; border-radius: 12px;
+                        background: root.amoled-mode ? #101010 : (root.light-mode ? #ffffff : #142231); border-radius: 12px;
                         VerticalLayout {
                             padding: 20px; spacing: 15px;
                             Text { text: "▦ Ảnh chụp kênh"; color: root.light-mode ? #203249 : #f5f7ff; font-size: 21px; font-weight: 700; }
@@ -422,7 +474,7 @@ export component MainWindow inherits Window {
                     }
                     Rectangle {
                         visible: root.active-page == "folders";
-                        background: root.light-mode ? #ffffff : #142231; border-radius: 12px;
+                        background: root.amoled-mode ? #101010 : (root.light-mode ? #ffffff : #142231); border-radius: 12px;
                         VerticalLayout {
                             padding: 20px; spacing: 13px;
                             Text { text: "▤ Thư mục kênh"; color: root.light-mode ? #203249 : #f3f6ff; font-size: 21px; font-weight: 700; }
@@ -434,7 +486,7 @@ export component MainWindow inherits Window {
                     }
                     Rectangle {
                         visible: root.active-page == "health" || root.active-page == "doctor";
-                        background: root.light-mode ? #ffffff : #142231; border-radius: 12px;
+                        background: root.amoled-mode ? #101010 : (root.light-mode ? #ffffff : #142231); border-radius: 12px;
                         ScrollView {
                             VerticalLayout {
                             padding: 20px; spacing: 14px;
@@ -467,7 +519,7 @@ export component MainWindow inherits Window {
                     }
                     Rectangle {
                         visible: root.active-page == "discovery";
-                        background: root.light-mode ? #ffffff : #142231; border-radius: 12px;
+                        background: root.amoled-mode ? #101010 : (root.light-mode ? #ffffff : #142231); border-radius: 12px;
                         VerticalLayout {
                             padding: 20px; spacing: 13px;
                             Text { text: "◎ Khám phá IPTV"; color: root.light-mode ? #203249 : #f3f6ff; font-size: 21px; font-weight: 700; }
@@ -479,7 +531,7 @@ export component MainWindow inherits Window {
                     }
                     Rectangle {
                         visible: root.active-page == "profiles";
-                        background: root.light-mode ? #ffffff : #142231; border-radius: 12px;
+                        background: root.amoled-mode ? #101010 : (root.light-mode ? #ffffff : #142231); border-radius: 12px;
                         VerticalLayout {
                             padding: 20px; spacing: 13px;
                             Text { text: "♙ Hồ sơ / Khóa trẻ em"; color: root.light-mode ? #203249 : #f3f6ff; font-size: 21px; font-weight: 700; }
@@ -488,7 +540,7 @@ export component MainWindow inherits Window {
                     }
                     Rectangle {
                         visible: root.active-page == "settings";
-                        background: root.light-mode ? #ffffff : #142231; border-radius: 12px;
+                        background: root.amoled-mode ? #101010 : (root.light-mode ? #ffffff : #142231); border-radius: 12px;
                         ScrollView {
                             VerticalLayout {
                                 padding: 20px; spacing: 13px;
@@ -496,6 +548,7 @@ export component MainWindow inherits Window {
                                 Text { text: "Bản thử nghiệm Slint sử dụng cùng bố cục sidebar/điều khiển; chưa sử dụng được toàn bộ CSS và 10 theme Electron."; color: #a8c1d6; wrap: word-wrap; font-size: 12px; }
                                 Text { text: "Giao diện: " + root.current-theme; color: root.accent; font-size: 13px; }
                                 HorizontalLayout { Button { text: "Tối · Tím"; clicked => { root.set-theme("Tối · Tím"); } } Button { text: "Tối · Xanh"; clicked => { root.set-theme("Tối · Xanh"); } } Button { text: "Sáng"; clicked => { root.set-theme("Sáng"); } } }
+                                 HorizontalLayout { Button { text: "AMOLED"; clicked => { root.set-theme("AMOLED"); } } Button { text: "Apple tối"; clicked => { root.set-theme("Apple tối"); } } Button { text: "Material 3"; clicked => { root.set-theme("Material 3"); } } }
                                 Rectangle { height: 1px; background: #344157; }
                                 Text { text: "EPG / LỊCH PHÁT SÓNG"; color: root.accent; font-weight: 700; font-size: 12px; }
                                  HorizontalLayout {
@@ -503,6 +556,15 @@ export component MainWindow inherits Window {
                                      Button { text: "Bật / Tắt"; clicked => { root.toggle-epg-auto-refresh(); } }
                                  }
                                  Text { text: "Nguồn lịch tự tải khi khởi động; làm mới mỗi 10 phút khi bật. Giữ lịch cũ khi mạng lỗi."; color: #91a9c3; font-size: 11px; }
+                                 Rectangle { height: 1px; background: #344157; }
+                                 Text { text: "TRÌNH PHÁT / HIỂN THỊ"; color: root.accent; font-weight: 700; font-size: 12px; }
+                                 Text { text: "Khung hình mặc định: " + root.aspect-mode-text; color: #a9c2d6; font-size: 12px; }
+                                 HorizontalLayout { Button { text: "Vừa khung"; clicked => { root.set-aspect-mode("fit"); } } Button { text: "Lấp đầy"; clicked => { root.set-aspect-mode("fill"); } } Button { text: "Gốc"; clicked => { root.set-aspect-mode("original"); } } Button { text: root.muted ? "Bật tiếng" : "Tắt tiếng"; clicked => { root.toggle-mute(); } } }
+                                 HorizontalLayout {
+                                     Text { text: root.auto-resume-last-channel ? "Tự mở lại kênh khi khởi động: BẬT" : "Tự mở lại kênh khi khởi động: TẮT"; color: #a9c2d6; font-size: 12px; vertical-alignment: center; }
+                                     Button { text: "Bật / Tắt"; clicked => { root.toggle-resume-last-channel(); } }
+                                 }
+                                 Text { text: "Chế độ phát và trạng thái công cụ nhanh được lưu riêng trong Rust Native."; color: #91a9c3; font-size: 11px; }
                                  Rectangle { height: 1px; background: #344157; }
                                  Text { text: "SAO LƯU / KHÔI PHỤC"; color: root.accent; font-weight: 700; font-size: 12px; }
                                 Button { text: "Nhập backup Electron (.iptvbackup)"; clicked => { root.import-electron-backup(); } }
