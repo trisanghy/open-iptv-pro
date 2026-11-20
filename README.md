@@ -6,6 +6,22 @@
 
 > README tiếng Việt là tài liệu kỹ thuật đầy đủ. Các bản dịch quốc tế là hướng dẫn tóm lược có liên kết đến mã nguồn, bộ cài, ảnh giao diện và thông báo bản quyền chính thức.
 
+## Tải về — bản đã được xác minh (20/11/2026)
+
+| Nền tảng | Bản phát hành đã có tệp tải | Liên kết |
+|---|---|---|
+| **Electron Desktop** · Windows/macOS | v4.23.70 Stable | [Installer, DMG, source, SHA256](https://github.com/trisanghy/open-iptv-pro/releases/tag/v4.23.70) |
+| **Rust Lab / Tauri** · Windows/macOS | v23.8.67 Beta | [Universal DMG, Windows Setup/Portable, source](https://github.com/trisanghy/open-iptv-pro/releases/tag/rust-lab/v23.8.67) |
+| **Mobile Capacitor** · Android/iOS | 4.23.17-mobile.33 Beta | [Android debug APK, unsigned iOS IPA, source](https://github.com/trisanghy/open-iptv-pro/releases/tag/mobile/v4.23.17.33) |
+| **Web Online** · Desktop/iOS/Android browser | cập nhật theo nhánh `web/online` | [Mở Web](https://trisanghy.github.io/open-iptv-pro/) · [Hướng dẫn](https://trisanghy.github.io/open-iptv-pro/huong-dan.html) |
+
+**Đang kiểm tra bản đồng bộ Supabase:** Electron `4.23.71`, Rust Lab `23.8.69`, Mobile `4.23.17-mobile.34`. Các mốc này **chưa được coi là bản tải đã phát hành** cho đến khi kiểm thử và tệp cài đặt trên GitHub Releases hoàn tất. Không áp dụng lên Rust Native C3.
+
+### Đồng bộ nhiều nền tảng
+
+Web, Electron, Rust Lab/Tauri và Mobile dùng chung dự án Supabase `zjbsvqryaxtafuffpifu`, chỉ đồng bộ nguồn M3U hợp pháp, danh sách kênh, yêu thích, thứ tự và cài đặt tương thích. Lần đầu đăng nhập trên thiết bị mới cần chọn giữ **dữ liệu thiết bị** hoặc **dữ liệu đám mây**. Sau khi ghép thiết bị, bản ứng dụng mới kiểm tra phiên bản dữ liệu mỗi 60 giây để tránh kéo lại cả danh sách không thay đổi. Khi có xung đột, giữ bản phục hồi trước khi ghi đè. Ảnh chụp, video, thumbnail và cache EPG chỉ lưu tại thiết bị. Email OTP cần mẫu thư Auth Supabase đúng cấu hình; không có chứng nhận đã đăng nhập qua thiết bị thật cho đến khi kiểm thử trực tiếp.
+
+
 
 **Trình phát IPTV đa nền tảng · Electron Desktop v4.23.70 Stable · Rust Lab v23.8.30 Beta · Mobile Capacitor 4.23.17-mobile.16 Beta · Web Online**
 
