@@ -90,7 +90,7 @@ test('scroll tracking never keeps two guide mobile tabs selected',()=>{
  }));
  for(const link of links)link.classList.parent=link;
  const listeners={};
- const document={querySelectorAll(q){return q.startsWith('.side')?links:sections}};
+ const document={querySelectorAll(q){return q.startsWith('.side')||q.startsWith('.mobile-tabs')?links:sections}};
  const window={innerHeight:800,addEventListener(type,fn){listeners[type]=fn},requestAnimationFrame(fn){fn()}};
  vm.runInNewContext(script.slice(8,-9),{document,window},{timeout:1000});
  assert.deepEqual(links.filter(x=>x.active).map(x=>x.href),['#tv']);
@@ -124,7 +124,7 @@ test('iOS long-range tab taps skip expensive smooth scrolling and keep one activ
  const window={
   innerHeight:800,scrollY:0,location:{pathname:'/open-iptv-pro/huong-dan.html',search:'?v=test'},
   history:{state:null,replaceState(_s,_title,url){this.url=url}},
-  scrollTo(options){calls.push(options)},
+  scrollTo(options){calls.push(options);const delta=options.top-this.scrollY;this.scrollY=options.top;for(let i=0;i<positions.length;i++)positions[i]-=delta},
   addEventListener(name,fn){listeners[name]=fn},removeEventListener(){},
   clearTimeout(){},setTimeout(){return 1},requestAnimationFrame(fn){fn()},
   matchMedia(){return {matches:false}}
