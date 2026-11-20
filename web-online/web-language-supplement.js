@@ -20,4 +20,29 @@
     for(let n=0;n<newPlayerKeys.length;n++)target[newPlayerKeys[n]]=strings[n];
   }
 
+  // Compact EPG controls: verified native labels, kept offline and separate
+  // from channel/EPG names entered by users.
+  const epgToolsLabel='Tìm chương trình · Tùy chọn EPG';
+  const epgToolsTranslations={
+    'es':'Buscar programas · Opciones de EPG',
+    'pt-BR':'Buscar programas · Opções de EPG',
+    'zh-CN':'搜索节目 · 电子节目表选项',
+    'th':'ค้นหารายการ · ตัวเลือก EPG',
+    'lo':'ຄົ້ນຫາລາຍການ · ຕົວເລືອກ EPG',
+    'km':'ស្វែងរកកម្មវិធី · ជម្រើស EPG',
+    'fr':'Rechercher des programmes · Options EPG',
+    'de':'Sendungen suchen · EPG-Optionen',
+    'it':'Cerca programmi · Opzioni EPG',
+    'ja':'番組を検索 · EPG オプション',
+    'ko':'프로그램 검색 · EPG 옵션',
+    'ru':'Поиск программ · Настройки EPG',
+    'id':'Cari program · Opsi EPG',
+    'hi':'कार्यक्रम खोजें · EPG विकल्प',
+    'ar':'البحث عن البرامج · خيارات دليل البرامج'
+  };
+  for(const [lang,label] of Object.entries(epgToolsTranslations)){
+    const target=dictionaries[lang]||(dictionaries[lang]={});
+    target[epgToolsLabel]=label;
+  }
+
 })();
