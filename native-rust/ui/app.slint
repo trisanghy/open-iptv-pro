@@ -1,7 +1,7 @@
 // Experiment C3: native reinterpretation of Open IPTV Pro v4.23.17 desktop.
 // Layout and labels follow the Electron navigation, with an explicit distinction
 // between implemented controls and native video-render integration pending.
-import { Button, LineEdit, ListView, ScrollView, AboutSlint, CheckBox, ComboBox } from "std-widgets.slint";
+import { Button, LineEdit, ListView, ScrollView, AboutSlint, CheckBox, ComboBox, Slider } from "std-widgets.slint";
 
 export struct ChannelView {
     title: string,
@@ -78,6 +78,7 @@ export component MainWindow inherits Window {
     in-out property <bool> player-fullscreen: false;
     in-out property <bool> video-paused: false;
     in-out property <bool> video-is-live: true;
+    in-out property <bool> video-seekable: false;
     in-out property <string> video-status: "Chưa phát";
     in-out property <string> video-backend-mode: "embedded";
     in-out property <string> playback-clock: "--:-- / --:--";
@@ -125,6 +126,9 @@ export component MainWindow inherits Window {
     callback prev-video();
     callback next-video();
     callback seek-video(int);
+    callback seek-percent(float);
+    callback cycle-audio-track();
+    callback cycle-subtitle-track();
     callback volume-delta(int);
     callback fullscreen-video();
     callback select-video-backend(string);
@@ -350,14 +354,18 @@ export component MainWindow inherits Window {
                                         Rectangle { horizontal-stretch: 1; background: transparent; }
                                         Button { text: "Về LIVE"; clicked => { root.seek-video(999999); } }
                                     }
+                                    Slider {
+                                        visible: root.video-seekable;
+                                        height: 22px;
+                                        minimum: 0;
+                                        maximum: 100;
+                                        value: root.playback-progress;
+                                        released(value) => { root.seek-percent(value); }
+                                    }
                                     Rectangle {
+                                        visible: !root.video-seekable;
                                         height: 3px;
                                         background: #263344;
-                                        Rectangle {
-                                            width: parent.width * (root.playback-progress / 100);
-                                            height: parent.height;
-                                            background: root.accent;
-                                        }
                                     }
                                     Text { text: root.playback-clock; color: #b7d0e6; font-size: 11px; horizontal-alignment: right; }
                                 }
@@ -436,7 +444,8 @@ export component MainWindow inherits Window {
                                             Text { text: "Âm thanh: " + (root.muted ? "Đang tắt tiếng" : "Đang bật tiếng"); color: root.light-mode ? #203249 : #d7e7f5; font-size: 12px; vertical-alignment: center; }
                                             Button { text: root.muted ? "Bật tiếng" : "Tắt tiếng"; clicked => { root.toggle-mute(); } }
                                             Rectangle { horizontal-stretch: 1; background: transparent; }
-                                            Text { text: "Chỉnh trực tiếp libmpv"; color: #92aac5; font-size: 11px; vertical-alignment: center; }
+                                            Button { text: "Đổi audio"; clicked => { root.cycle-audio-track(); } }
+                                            Button { text: "Đổi phụ đề"; clicked => { root.cycle-subtitle-track(); } }
                                         }
                                     }
                                 }
