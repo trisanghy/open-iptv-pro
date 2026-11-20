@@ -1,4 +1,4 @@
-name: Positron P4 · 90 real UI rounds · Mac and Windows prerelease
+name: Positron P4 · retested 90 real UI rounds · Mac and Windows prerelease
 on:
   push:
     branches: [Positron]
@@ -17,7 +17,7 @@ on:
       - '.github/workflows/positron-lab.yml'
   workflow_dispatch:
 concurrency:
-  group: positron-p4-${{ github.ref }}
+  group: positron-p4-retested-${{ github.ref }}
   cancel-in-progress: false
 permissions:
   contents: read
