@@ -168,3 +168,9 @@ html.p50-34 #page-tv .player-control-card .caption-third-controls{padding:6px 9p
 html.p50-34 #page-tv .player-control-card .caption-third-controls :is(button,select){border-radius:8px!important;min-height:30px!important;font-size:11px!important}
 html.p50-34 #page-tv .player-control-card :is(.caption-ai-main,.caption-tts-main){background:var(--po-raised)!important;border-color:var(--po-line)!important}
 html.p50-34 #page-tv .player-control-card #subtitleOptionsBtn{color:var(--po-accent)!important}
+
+/* Iteration 35: Improve Timeshift button grouping and hint contrast */
+html.p50-35 #page-tv .advanced-timebar{background:var(--po-card)!important;border:1px solid var(--po-line)!important;border-radius:12px!important;padding:9px!important;box-shadow:none!important}
+html.p50-35 #page-tv .timeshift-actions{display:flex!important;align-items:center!important;gap:5px!important;flex-wrap:wrap!important}
+html.p50-35 #page-tv .timeshift-actions b{font-size:11px!important;color:var(--po-accent)!important;margin-right:5px!important}
+html.p50-35 #page-tv .timeshift-actions .btn{min-height:32px!important;font-size:10px!important;padding:5px 8px!important}
