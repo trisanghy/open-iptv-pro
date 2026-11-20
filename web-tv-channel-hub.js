@@ -123,7 +123,15 @@
    if(c.id===currentId())tile.classList.add('current');
    const play=btn('','web-hub-play');play.setAttribute('aria-label',t('choose')+': '+c.name);play.title=c.name;
    const art=doc.createElement('span');art.className='web-hub-art';art.textContent=String(c.name||'TV').slice(0,3).toUpperCase();
-   if(validImage(c.logo)){const img=doc.createElement('img');img.src=c.logo;img.alt='';img.loading='lazy';img.referrerPolicy='no-referrer';img.addEventListener('load',()=>{art.textContent='';art.append(img);});}
+   if(validImage(c.logo)){
+    const img=doc.createElement('img');
+    img.alt='';img.loading='lazy';img.decoding='async';img.referrerPolicy='no-referrer';
+    // Images with loading=lazy must be in the DOM to start fetching. Keeping
+    // the same <img> also prevents text/logo flashing during playback updates.
+    img.addEventListener('error',()=>{if(img.parentNode===art)art.textContent=String(c.name||'TV').slice(0,3).toUpperCase();});
+    art.replaceChildren(img);
+    img.src=c.logo;
+   }
    play.append(art,span(c.name,'web-hub-name'));play.addEventListener('click',()=>{void api()?.playChannel?.(c.id);schedule();});
    tile.append(play);
    if(!compact){
