@@ -40,6 +40,7 @@ if ! find /opt/homebrew/lib /usr/local/lib /opt/homebrew/opt/mpv/lib /usr/local/
 fi
 ffmpeg -hide_banner -loglevel error -f lavfi -i 'testsrc2=size=320x180:rate=15' -t 4 -an -c:v mpeg4 -q:v 5 -y "$WORK/video-smoke.mp4" || fail 'Synthetic test video creation failed'
 cargo run --manifest-path "$NATIVE/Cargo.toml" --bin video_smoke -- "$WORK/video-smoke.mp4" || fail 'Video decoder did not produce real embedded frames'
+mpv --no-config --vo=null --ao=null --no-terminal --really-quiet --frames=10 "$WORK/video-smoke.mp4" || fail 'Standalone mpv cannot decode a local test clip'
 cargo build --release --manifest-path "$NATIVE/Cargo.toml" || fail 'Native Rust build failed'
 BIN="$NATIVE/target/release/open-iptv-pro-native"
 [ -x "$BIN" ] || fail 'Native executable missing'

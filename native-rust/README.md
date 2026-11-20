@@ -31,3 +31,11 @@ curl -fsSL https://raw.githubusercontent.com/trisanghy/open-iptv-pro/experiment/
 
 The app is placed at `~/Downloads/OpenIPTVPro_RustNative_APP_v<version>_<commit>/Open IPTV Pro Rust Native C3.app`. The temporary checkout, test media and build intermediates are cleaned up. The script still runs tests and an actual local libmpv decoded-frame smoke check. Homebrew dependencies remain installed on the machine. Existing files are never overwritten.
 
+
+### Rust Lab-style player UI and macOS video reliability
+
+- Native Slint now starts with a compact 76px navigation rail; it can be expanded with the menu toggle. The main TV player comes first, followed by playback controls, EPG/quick tools and the channel browser below (rather than a 327px fixed left column). Existing channel/favorite/source state is unchanged.
+- Channel `tvg-logo` artwork is retrieved in bounded background batches (four simultaneous requests, max 256KiB each), cached locally and displayed in channel rows. Malformed or inaccessible artwork retains a compact placeholder.
+- Embedded playback now creates, controls, and destroys the libmpv software renderer on a dedicated Rust worker. A two-frame queue prevents the Slint thread from blocking on decoding, greatly reducing UI stalls; a genuine GPU-backed embedded renderer is **not yet implemented**.
+- On macOS/Linux, selecting **Cửa sổ mpv** uses a separate `mpv` executable with an IPC socket in a private temporary directory, not a Cocoa video window in the Slint process. This is designed to prevent cross-event-loop hangs; physical-device HLS testing is still required. Windows still uses in-process libmpv for native window output.
+- Both the macOS CI and app-only builder test real libmpv decoded frames and standalone mpv CLI decoding with a synthetic local clip. This checks local functionality, not availability or correctness of third-party IPTV streams.
