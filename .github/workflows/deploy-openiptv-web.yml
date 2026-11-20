@@ -279,7 +279,7 @@ jobs:
           grep -q 'core.recoveryCode(raw,location.origin+location.pathname)' _site/cloud-sync.js
           grep -q 'signInWithOtp' _site/cloud-sync.js
           grep -q 'verifyOtp' _site/cloud-sync.js
-          grep -q 'show(otpForm,false)' _site/cloud-sync.js
+          grep -Fq 'show(otpForm,!uid&&!!client&&enabledProviders.email)' _site/cloud-sync.js
           if grep -q "verification.token_hash.startsWith('pkce_')" _site/cloud-sync.js; then exit 1; fi
           python3 - <<'PY'
           from pathlib import Path
