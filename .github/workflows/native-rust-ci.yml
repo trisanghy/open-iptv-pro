@@ -250,6 +250,24 @@ jobs:
           xdotool mousemove 35 453 click 1
           sleep 2
           import -display "$DISPLAY" -window root screenshot/12-sources-from-rail.png
+          # Also launch real alternate UI pages directly in the same Slint binary,
+          # so layout defects can be reviewed separately from click-hit issues.
+          kill "$pid" 2>/dev/null || true
+          wait "$pid" 2>/dev/null || true
+          export OPEN_IPTV_UI_SCREENSHOT_PAGE=settings
+          native-rust/target/debug/open-iptv-pro-native > screenshot/settings-stdout.log 2>&1 &
+          pid=$!
+          sleep 4
+          kill -0 "$pid"
+          import -display "$DISPLAY" -window root screenshot/13-settings-render.png
+          kill "$pid" 2>/dev/null || true
+          wait "$pid" 2>/dev/null || true
+          export OPEN_IPTV_UI_SCREENSHOT_PAGE=sources
+          native-rust/target/debug/open-iptv-pro-native > screenshot/sources-stdout.log 2>&1 &
+          pid=$!
+          sleep 4
+          kill -0 "$pid"
+          import -display "$DISPLAY" -window root screenshot/14-sources-render.png
           for file in screenshot/*.png; do test -s "$file"; identify "$file"; done
           CAPTURE
           chmod +x "$RUNNER_TEMP/capture-native-ui.sh"
@@ -257,11 +275,13 @@ jobs:
           echo "Captured real Rust Native GUI at commit $GITHUB_SHA" > screenshot/SOURCE.txt
           echo "OS: Ubuntu 24.04 virtual X11 display; this is not a macOS capture" >> screenshot/SOURCE.txt
           echo "CI screenshot includes a clearly labeled DEMO fixture of four non-playing sample channels" >> screenshot/SOURCE.txt
+          echo "Settings/Sources direct-render screenshots 13-14 are captured from separate actual Slint app processes" >> screenshot/SOURCE.txt
       - uses: actions/upload-artifact@v4
         with:
           name: rust-native-actual-screen
           path: |
             screenshot/*.png
+            screenshot/*stdout.log
             screenshot/SOURCE.txt
           if-no-files-found: error
           retention-days: 14

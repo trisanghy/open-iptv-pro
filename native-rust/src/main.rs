@@ -413,6 +413,9 @@ fn connect_callbacks(
         ui.on_navigate(move |page| {
             let Some(ui) = weak.upgrade() else { return; };
             let page = page.to_string();
+            if std::env::var("OPEN_IPTV_UI_SCREENSHOT_FIXTURE").as_deref() == Ok("1") {
+                eprintln!("[UI_NAV_TEST] active-page requested: {page}");
+            }
             let title = match page.as_str() {
                 "tv" => "Xem truyền hình", "fav" => "Kênh yêu thích", "recent" => "Xem gần đây", "epg" => "Lịch phát sóng EPG",
                 "multiview" => "MultiView · 4 kênh", "shots" => "Ảnh chụp kênh", "folders" => "Thư mục kênh",
@@ -1431,6 +1434,15 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         data:saved,visible:Vec::new(),total_matches:0,page:0,selected_source:None,favorites_only:false,recent_only:false,playback_candidates:Vec::new(),playback_index:0,pending_delete:None,normalized_epg:normalize_guide(&cached_epg),current_epg:cached_epg,epg_schedule:cached_schedule,guide_day_offset:0,folder_filter:None,logo_images:HashMap::new(),logos_requested:HashSet::new(),
     }));
     let ui=MainWindow::new()?;
+    // Opt-in CI-only visual inspection of non-TV pages. No source/network
+    // actions happen, and no saved configuration is changed.
+    if std::env::var("OPEN_IPTV_UI_SCREENSHOT_FIXTURE").as_deref() == Ok("1") {
+        if let Ok(page)=std::env::var("OPEN_IPTV_UI_SCREENSHOT_PAGE") {
+            if matches!(page.as_str(),"tv"|"epg"|"sources"|"settings") {
+                ui.set_active_page(page.into());
+            }
+        }
+    }
     refresh(&ui,&mut state.borrow_mut());
     ui.set_epg_url_input(state.borrow().data.epg_url.clone().into());
     let player:Rc<RefCell<Option<Mpv>>>=Rc::new(RefCell::new(None));
