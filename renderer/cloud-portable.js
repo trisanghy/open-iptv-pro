@@ -83,24 +83,59 @@
   const host=container||document.querySelector(mode==='mobile'?'#page-tools':'#page-settings .settings-grid');
   if(!host)return;
   root.__openIPTVPortableCloudMounted=true;
-  const css='display:block;max-width:760px;padding:14px;margin:12px 0;border:1px solid #8885;border-radius:12px;background:var(--surface,#162127);color:inherit';
   const el=document.createElement('section');
-  el.id='openiptvPortableCloud';el.style.cssText=css;
-  el.innerHTML='<h3 style="margin:0 0 8px">☁ Tài khoản & đồng bộ Supabase</h3>'+
-   '<p id="portableCloudStatus" role="status" aria-live="polite">Đang kiểm tra tài khoản…</p>'+
-   '<form id="portableCloudEmailForm"><input id="portableCloudEmail" type="email" autocomplete="email" required placeholder="Email" style="min-width:150px;max-width:100%;padding:8px"/>'+
-   ' <button type="submit">Gửi mã OTP</button></form>'+
-   '<form id="portableCloudOTPForm"><input id="portableCloudOTP" type="text" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6,10}" maxlength="10" placeholder="Mã OTP"/>'+
-   ' <button type="submit">Xác nhận</button></form>'+
-   '<form id="portableCloudLinkForm"><input id="portableCloudLink" type="url" placeholder="Dán liên kết xác nhận email (nếu không có mã)" style="max-width:100%;min-width:240px;padding:8px"/>'+
-   ' <button type="submit">Xác thực liên kết</button></form>'+
-   '<div id="portableCloudActions" hidden><button id="portableCloudPull" type="button">↓ Lấy dữ liệu từ đám mây</button> '+
-   '<button id="portableCloudPush" type="button">↑ Gửi dữ liệu thiết bị</button> '+
-   '<button id="portableCloudLogout" type="button">Đăng xuất</button></div>'+
-   '<p style="font-size:12px;opacity:.8">Chỉ đồng bộ danh sách kênh, nguồn, yêu thích và cài đặt. Không tải ảnh, video, EPG hay cache. '+
-   'Lần đầu, chọn dữ liệu cần giữ; không tự ghi đè. Khi đã ghép thiết bị, tự đồng bộ thay đổi mỗi 60 giây.</p>';
+  el.id='openiptvPortableCloud';
+  el.className='oc-panel';
+  el.innerHTML=`
+   <div class="oc-head">
+    <div class="oc-symbol" aria-hidden="true">☁</div>
+    <div class="oc-heading"><h3>Tài khoản &amp; đồng bộ</h3>
+     <p>Supabase · Dùng chung tài khoản trên các thiết bị</p></div>
+   </div>
+   <p id="portableCloudStatus" class="oc-status" role="status" aria-live="polite">Đang kiểm tra phiên đăng nhập…</p>
+   <div id="portableCloudAccount" class="oc-account" hidden>
+    <div class="oc-account-label">Tài khoản hiện tại</div>
+    <div id="portableCloudAccountValue" class="oc-account-value"></div>
+   </div>
+   <form id="portableCloudEmailForm" class="oc-form">
+    <label class="oc-form-label" for="portableCloudEmail">Địa chỉ email</label>
+    <div class="oc-form-row">
+     <input id="portableCloudEmail" type="email" autocomplete="email" inputmode="email"
+      spellcheck="false" autocapitalize="none" required placeholder="you@example.com" aria-label="Địa chỉ email"/>
+     <button class="oc-primary" type="submit">Gửi mã OTP</button>
+    </div>
+   </form>
+   <form id="portableCloudOTPForm" class="oc-form" hidden>
+    <label class="oc-form-label" for="portableCloudOTP">Mã xác thực trong email</label>
+    <div class="oc-form-row">
+     <input id="portableCloudOTP" type="text" inputmode="numeric" autocomplete="one-time-code"
+      pattern="[0-9]{6,10}" maxlength="10" placeholder="Nhập mã OTP" aria-label="Mã OTP"/>
+     <button class="oc-primary" type="submit">Xác nhận</button>
+    </div>
+    <p class="oc-helper">Mở email trên thiết bị khác rồi nhập mã tại đây. Không cần mở liên kết.</p>
+   </form>
+   <button id="portableCloudLinkToggle" class="oc-link" type="button"
+     aria-controls="portableCloudLinkForm" aria-expanded="false">Email không có mã? Xác thực bằng liên kết</button>
+   <form id="portableCloudLinkForm" class="oc-form" hidden>
+    <label class="oc-form-label" for="portableCloudLink">Liên kết xác nhận email</label>
+    <div class="oc-form-row">
+     <input id="portableCloudLink" type="url" inputmode="url"
+      placeholder="Dán liên kết nhận được trong email" aria-label="Liên kết xác nhận"/>
+     <button class="oc-secondary" type="submit">Xác thực liên kết</button>
+    </div>
+   </form>
+   <div id="portableCloudActions" class="oc-actions" hidden>
+    <button id="portableCloudPull" class="oc-primary" type="button">↓ Lấy dữ liệu từ đám mây</button>
+    <button id="portableCloudPush" class="oc-secondary" type="button">↑ Gửi dữ liệu thiết bị</button>
+    <button id="portableCloudLogout" class="oc-logout" type="button">Đăng xuất khỏi thiết bị</button>
+   </div>
+   <p class="oc-footnote">Chỉ đồng bộ nguồn M3U, kênh, yêu thích và cài đặt tương thích.
+    Ảnh chụp, thumbnail, video và cache EPG chỉ lưu trên thiết bị.
+    Khi liên kết lần đầu, bạn tự chọn dữ liệu cần giữ.</p>
+  `;
   host.prepend(el);
   const $=id=>el.querySelector('#'+id),say=t=>{$('portableCloudStatus').textContent=t;};
+  let emailRequested=false,linkHelpOpen=false;
   const cli=root.supabase.createClient(URL,KEY,{auth:{
    storageKey:'openiptv-cross-platform-auth-v1',persistSession:true,
    autoRefreshToken:true,detectSessionInUrl:false,flowType:'pkce'
@@ -178,12 +213,21 @@
   function ui(){
    const signed=!!user;
    $('portableCloudEmailForm').hidden=signed;
-   $('portableCloudOTPForm').hidden=signed;
-   $('portableCloudLinkForm').hidden=signed;
+   $('portableCloudOTPForm').hidden=signed||!emailRequested;
+   $('portableCloudLinkForm').hidden=signed||!linkHelpOpen;
+   $('portableCloudLinkToggle').hidden=signed;
+   $('portableCloudLinkToggle').setAttribute('aria-expanded',String(linkHelpOpen));
+   $('portableCloudLinkToggle').textContent=linkHelpOpen
+    ?'Ẩn xác thực bằng liên kết':'Email không có mã? Xác thực bằng liên kết';
+   $('portableCloudAccount').hidden=!signed;
    $('portableCloudActions').hidden=!signed;
-   if(signed)say('Đã đăng nhập: '+(user.email||'Supabase')+(paired()?' · tự đồng bộ 60 giây':' · chọn tải lên hoặc tải xuống lần đầu'));
-   else say('Chế độ khách · dữ liệu vẫn lưu trên máy');
+   $('portableCloudAccountValue').textContent=signed?(user.email||'Tài khoản Supabase'):'';
+   if(signed)say('Đã đăng nhập'+(paired()?' · tự đồng bộ mỗi 60 giây':' · chọn dữ liệu cần giữ để bắt đầu đồng bộ'));
+   else say(emailRequested?'Đã yêu cầu mã · kiểm tra email và nhập OTP phía dưới':'Chưa đăng nhập · dữ liệu hiện lưu trên thiết bị');
   }
+  $('portableCloudLinkToggle').addEventListener('click',()=>{
+   linkHelpOpen=!linkHelpOpen;ui();
+  });
   $('portableCloudEmailForm').addEventListener('submit',async event=>{
    event.preventDefault();try{
     const email=$('portableCloudEmail').value.trim();
@@ -192,7 +236,10 @@
       shouldCreateUser:true,emailRedirectTo:'https://trisanghy.github.io/open-iptv-pro/'
     }});
     if(error)throw error;
-    say('Đã yêu cầu gửi mã. Nhập mã trong email; nếu thư chỉ có liên kết, quản trị viên cần bật mẫu OTP.');
+    emailRequested=true;
+    ui();
+    say('Đã yêu cầu gửi mã. Kiểm tra email rồi nhập mã OTP. Nếu thư chỉ có liên kết, mở tùy chọn bên dưới.');
+    $('portableCloudOTP').focus();
    }catch(e){say('Không thể gửi mã: '+e.message);}
   });
   $('portableCloudOTPForm').addEventListener('submit',async event=>{
@@ -203,7 +250,7 @@
     const {data,error}=await cli.auth.verifyOtp({email,token,type:'email'});
     if(error)throw error;
     user=data.user||data.session?.user;
-    $('portableCloudOTP').value='';ui();
+    $('portableCloudOTP').value='';emailRequested=false;linkHelpOpen=false;ui();
    }catch(e){say('Không thể xác thực: '+e.message);}
   });
   $('portableCloudLinkForm').addEventListener('submit',async event=>{
@@ -221,7 +268,7 @@
     const {data,error}=await cli.auth.verifyOtp({token_hash,type});
     if(error)throw error;
     $('portableCloudLink').value='';
-    user=data.user||data.session?.user;ui();
+    user=data.user||data.session?.user;emailRequested=false;linkHelpOpen=false;ui();
    }catch(e){say('Không xác thực được link: '+e.message);}
   });
   $('portableCloudPull').onclick=()=>void pull(true);
