@@ -44,6 +44,15 @@
  function category(ch,chip){return chip==='all'||norm(ch?.name).includes(norm(chip))||norm(ch?.group).includes(norm(chip));}
  function group(ch){return String(ch?.group||'Khác').replace(/\s*\|\s*Kiểm tra:.+$/i,'').trim()||'Khác';}
  function visible(channels,expanded=false){return expanded?channels:channels.slice(0,LIMIT);}
+ // Only UI-relevant changes invalidate tiles. Playback saves, resize events and
+ // health checks must not recreate every image/card.
+ function renderSignature(channels,data,controls,language){
+  return JSON.stringify([
+   controls,language,
+   channels.map(ch=>[ch.id,ch.name,ch.group,ch.logo,ch.url]),
+   data?.favoriteKeys||[],data?.favorites||[],data?.recentChannelIds||[]
+  ]);
+ }
  function choose(channels,{tab='channels',search='',chip='all',groupName='',sort='source',store={},favCore,recentCore}={}){
   let a=section(channels,tab,store,favCore,recentCore);
   const query=norm(search).trim();
@@ -63,7 +72,7 @@
   const fav=()=>root.OpenIPTVFavorites;
   const rec=()=>root.OpenIPTVRecentChannels;
   let tab='channels',chip='all',groupName='',sort='source',view='grid',search='',expanded=false;
-  let tileRenderId=0;
+  let tileRenderId=0,lastRenderSignature='',lastCurrentId='';
   let currentLang=()=>root.OpenIPTVI18n?.getLanguage?.()||doc.documentElement.lang||'vi';
   const t=key=>label(currentLang(),key);
   const hub=doc.createElement('section');hub.id='webChannelHub';hub.className='web-channel-hub';
@@ -114,7 +123,15 @@
    if(c.id===currentId())tile.classList.add('current');
    const play=btn('','web-hub-play');play.setAttribute('aria-label',t('choose')+': '+c.name);play.title=c.name;
    const art=doc.createElement('span');art.className='web-hub-art';art.textContent=String(c.name||'TV').slice(0,3).toUpperCase();
-   if(validImage(c.logo)){const img=doc.createElement('img');img.src=c.logo;img.alt='';img.loading='lazy';img.referrerPolicy='no-referrer';img.addEventListener('load',()=>{art.textContent='';art.append(img);});}
+   if(validImage(c.logo)){
+    const img=doc.createElement('img');
+    img.alt='';img.loading='lazy';img.decoding='async';img.referrerPolicy='no-referrer';
+    // Images with loading=lazy must be in the DOM to start fetching. Keeping
+    // the same <img> also prevents text/logo flashing during playback updates.
+    img.addEventListener('error',()=>{if(img.parentNode===art)art.textContent=String(c.name||'TV').slice(0,3).toUpperCase();});
+    art.replaceChildren(img);
+    img.src=c.logo;
+   }
    play.append(art,span(c.name,'web-hub-name'));play.addEventListener('click',()=>{void api()?.playChannel?.(c.id);schedule();});
    tile.append(play);
    if(!compact){
@@ -175,16 +192,29 @@
     fill(els.body,data.slice(0,key==='favorites'?6:5),key);
    }
   }
+  function updateCurrentSelection(){
+   const id=currentId();
+   if(id===lastCurrentId)return;
+   lastCurrentId=id;
+   for(const element of hub.querySelectorAll('.web-hub-tile[data-channel-id]')){
+    element.classList.toggle('current',element.dataset.channelId===String(id));
+   }
+  }
   function render(){
    // Native mobile TV layout already has an always-available channel panel.
    // Skip building desktop-only cards (and expensive favorite/recent tiles).
    if(doc.documentElement.getAttribute('data-iptv-device')==='mobile'){
     ++tileRenderId;
-    tiles.replaceChildren();
+    lastRenderSignature='';
+    if(tiles.childNodes.length)tiles.replaceChildren();
     return;
    }
    if(!api())return;
    const all=allChannels(),s=store();
+   const signature=renderSignature(all,s,[tab,chip,groupName,sort,view,search,expanded],currentLang());
+   if(signature===lastRenderSignature){updateCurrentSelection();return;}
+   lastRenderSignature=signature;
+   lastCurrentId=currentId();
    const ref=tab==='channels'?all:section(all,tab,s,fav(),rec());
    const chips=['all'];
    for(const brand of ['VTV','VTC','HTV','K+'])if(ref.some(c=>category(c,brand)))chips.push(brand);
@@ -221,7 +251,7 @@
    side();
   }
   let scheduled=false;
-  function schedule(){if(scheduled)return;scheduled=true;Promise.resolve().then(()=>{scheduled=false;render();});}
+  function schedule(){if(scheduled)return;scheduled=true;root.setTimeout(()=>{scheduled=false;render();},80);}
   nav.addEventListener('click',event=>{const target=event.target.closest('[data-tab]');if(target)selectTab(target.dataset.tab);});
   aside.addEventListener('click',event=>{const target=event.target.closest('[data-open]');if(target)selectTab(target.dataset.open);});
   find.addEventListener('input',()=>{search=find.value;expanded=false;render();});
@@ -246,5 +276,5 @@
   if(meta&&root.MutationObserver)new root.MutationObserver(schedule).observe(meta,{childList:true,characterData:true,subtree:true});
   render();
  }
- return Object.freeze({LIMIT,BATCH_SIZE,visible,choose,category,section,group,label,mount});
+ return Object.freeze({LIMIT,BATCH_SIZE,visible,choose,category,section,group,label,renderSignature,mount});
 });
