@@ -1,0 +1,85 @@
+/* Open IPTV Pro Cloud account panel — desktop and mobile, 2026-11-20.
+   Scoped to the portable login so existing player and settings UI are unaffected. */
+#openiptvPortableCloud {
+  box-sizing:border-box;
+  display:block;
+  grid-column:1 / -1;
+  width:100%;
+  min-width:0;
+  margin:10px 0 18px;
+  padding:clamp(16px,2.4vw,24px);
+  color:var(--text,var(--ink,#eaf2ff));
+  background:var(--surface,#14243a);
+  border:1px solid var(--edge,var(--border,#344b68));
+  border-radius:16px;
+  font:inherit;
+}
+#openiptvPortableCloud *,#openiptvPortableCloud *::before,#openiptvPortableCloud *::after {box-sizing:border-box}
+#openiptvPortableCloud [hidden] {display:none!important}
+#openiptvPortableCloud .oc-head {display:flex;align-items:center;gap:12px;min-width:0;margin-bottom:12px}
+#openiptvPortableCloud .oc-symbol {width:42px;height:42px;flex:0 0 42px;display:grid;place-items:center;border-radius:12px;background:color-mix(in srgb,var(--accent,#8f91ff) 17%,transparent);color:var(--accent,#9dc5ff);font-size:23px}
+#openiptvPortableCloud .oc-heading {flex:1;min-width:0}
+#openiptvPortableCloud .oc-heading h3 {font-size:17px;line-height:1.3;font-weight:700;margin:0 0 3px;color:inherit;letter-spacing:0}
+#openiptvPortableCloud .oc-heading p {font-size:12px;line-height:1.5;margin:0;color:var(--muted,var(--sub,#a4b5ca))}
+#openiptvPortableCloud .oc-status {font-size:12px;line-height:1.5;overflow-wrap:anywhere;background:color-mix(in srgb,var(--accent,#8f91ff) 8%,var(--surface2,var(--screen,#101b2b)));border:1px solid color-mix(in srgb,var(--accent,#8f91ff) 24%,var(--edge,var(--border,#344b68)));color:var(--text,var(--ink,#eaf2ff));border-radius:10px;padding:11px 12px;margin:0 0 14px}
+#openiptvPortableCloud .oc-status::before {content:"";display:inline-block;vertical-align:middle;width:7px;height:7px;border-radius:50%;background:var(--accent,#85baff);margin-right:9px}
+#openiptvPortableCloud .oc-form {display:grid;gap:9px;min-width:0;margin:12px 0 0}
+#openiptvPortableCloud .oc-form-label {display:block;font-size:12px;font-weight:600;color:var(--text,var(--ink,#eaf2ff));line-height:1.45;margin:0}
+#openiptvPortableCloud .oc-form-row {display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:stretch;min-width:0}
+#openiptvPortableCloud .oc-form input:not([type=checkbox]) {
+  display:block;width:100%;min-width:0;max-width:100%;height:44px;min-height:44px;
+  margin:0;padding:11px 13px;border-radius:10px;
+  border:1px solid var(--edge,var(--border,#344b68));
+  background:var(--surface2,var(--screen,#0f1e32));
+  color:var(--text,var(--ink,#eaf2ff));
+  -webkit-text-fill-color:currentColor;
+  caret-color:var(--accent,#9ac5ff);
+  font:inherit;font-size:14px;line-height:20px;outline:0;
+}
+#openiptvPortableCloud .oc-form input::placeholder {opacity:1;color:var(--muted,var(--sub,#91a7c0))}
+#openiptvPortableCloud .oc-form input:focus {
+  border-color:var(--accent,#8fb9ff);
+  box-shadow:0 0 0 3px color-mix(in srgb,var(--accent,#8fb9ff) 20%,transparent);
+}
+#openiptvPortableCloud button {
+  display:inline-flex;align-items:center;justify-content:center;gap:7px;
+  width:auto;max-width:100%;min-width:0;min-height:44px;padding:10px 14px;
+  border-radius:10px;border:1px solid var(--edge,var(--border,#344b68));
+  background:var(--surface2,var(--screen,#182a44));color:inherit;
+  cursor:pointer;white-space:normal;font:inherit;font-size:13px;font-weight:650;
+  text-align:center;line-height:1.35;transition:background .12s ease,border-color .12s ease,filter .12s ease;
+}
+#openiptvPortableCloud button:hover {border-color:var(--accent,#8fb9ff)}
+#openiptvPortableCloud button:focus-visible {outline:2px solid var(--accent,#8fb9ff);outline-offset:2px}
+#openiptvPortableCloud button:disabled {opacity:.55;cursor:wait}
+#openiptvPortableCloud .oc-primary {
+  border-color:var(--accent,#8fb9ff);
+  background:var(--accent,#8fb9ff);
+  color:#101826;
+}
+#openiptvPortableCloud .oc-primary:hover {filter:brightness(1.06)}
+#openiptvPortableCloud .oc-secondary {background:color-mix(in srgb,var(--accent,#8fb9ff) 9%,var(--surface2,var(--screen,#13253a)))}
+#openiptvPortableCloud .oc-link {
+  min-height:36px;padding:8px 0;border:0;background:transparent!important;
+  color:var(--accent,#a8bbff);font-size:12px;font-weight:600;text-align:left;justify-content:flex-start
+}
+#openiptvPortableCloud .oc-helper {font-size:12px;line-height:1.55;color:var(--muted,var(--sub,#a4b5ca));margin:6px 0 4px;overflow-wrap:anywhere}
+#openiptvPortableCloud .oc-account {padding:12px 14px;border-radius:10px;background:var(--surface2,var(--screen,#112138));border:1px solid var(--edge,var(--border,#344b68));margin-bottom:12px}
+#openiptvPortableCloud .oc-account-label {font-size:11px;margin-bottom:5px;color:var(--muted,var(--sub,#a4b5ca))}
+#openiptvPortableCloud .oc-account-value {font-size:14px;font-weight:650;overflow-wrap:anywhere;user-select:text}
+#openiptvPortableCloud .oc-actions {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:12px}
+#openiptvPortableCloud .oc-actions button {width:100%}
+#openiptvPortableCloud .oc-actions .oc-logout {grid-column:1 / -1;border:0;background:transparent;color:var(--muted,var(--sub,#a4b5ca));font-weight:500;min-height:38px}
+#openiptvPortableCloud .oc-footnote {border-top:1px solid var(--edge,var(--border,#344b68));margin:16px 0 0;padding:12px 0 0;color:var(--muted,var(--sub,#a4b5ca));font-size:11px;line-height:1.55}
+@media(max-width:650px) {
+  #openiptvPortableCloud {padding:15px;margin:10px 0 16px;border-radius:14px}
+  #openiptvPortableCloud .oc-head {gap:10px}
+  #openiptvPortableCloud .oc-symbol {width:38px;height:38px;flex-basis:38px}
+  #openiptvPortableCloud .oc-heading h3 {font-size:16px}
+  #openiptvPortableCloud .oc-form-row,#openiptvPortableCloud .oc-actions {grid-template-columns:minmax(0,1fr)}
+  #openiptvPortableCloud .oc-form-row button {width:100%}
+  #openiptvPortableCloud .oc-actions .oc-logout {grid-column:auto}
+}
+@media(prefers-reduced-motion:reduce) {
+  #openiptvPortableCloud button {transition:none}
+}
