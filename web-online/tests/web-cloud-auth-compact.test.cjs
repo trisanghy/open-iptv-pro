@@ -86,7 +86,7 @@ test('Chromium layout: iPhone email, magic link and OTP fields remain 44px high'
 test('signed-in account hides guest login copy and prevents restore button overflow',()=>{
  const script=read('cloud-sync.js');
  assert.match(script,/show\(authGuide,!uid&&!!client&&enabledProviders\.email\)/);
- assert.match(script,/show\(providersNote,!uid&&!!client\)/);
+ assert.match(script,/show\(providersNote,!uid&&!!client&&\(enabledProviders\.google\|\|enabledProviders\.github\)\)/);
  assert.match(script,/card\.dataset\.authState=uid\?'signed-in':'guest'/);
  assert.match(script,/card\.dataset\.hasMigration=hasMigration\?'true':'false'/);
  assert.match(script,/migrationRestore\.textContent='Khôi phục dữ liệu cũ'/);
