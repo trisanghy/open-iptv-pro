@@ -49,3 +49,7 @@ html.p50-10 #positronBar .p-title{gap:8px!important;min-width:100px!important;fl
 html.p50-11.p50-advanced-closed #appSidebar :is(.nav[data-page=multiview],.nav[data-page=shots],.nav[data-page=folders],.nav[data-page=health],.nav[data-page=doctor],.nav[data-page=profiles],#exportNav){display:none!important}
 html.p50-11 #positronMorePages{display:flex;align-items:center;justify-content:space-between;width:100%;min-height:34px;margin:4px 0!important;padding:0 10px!important;border-radius:9px!important;border:1px dashed var(--po-line)!important;background:var(--po-card)!important;color:var(--po-muted)!important;font-size:11px!important}
 html.p50-11 #positronMorePages:hover{border-color:var(--po-accent)!important;color:var(--po-ink)!important}
+
+/* Iteration 12: Optimize command search footprint */
+html.p50-12 #positronBar #positronOpen{min-width:170px!important;max-width:270px!important;height:36px!important;padding:6px 10px!important;flex:1 1 170px!important;justify-content:space-between!important;border-radius:10px!important}
+html.p50-12 #positronBar #positronOpen .p-command-label{font-size:11px!important;font-weight:550!important;max-width:170px;overflow:hidden;text-overflow:ellipsis}
