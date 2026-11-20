@@ -187,26 +187,38 @@ export component MainWindow inherits Window {
                         }
                     }
                 }
-                Text { text: "THƯ VIỆN"; visible: !root.rail-collapsed; font-size: 10px; font-weight: 700; color: #718da8; height: 31px; vertical-alignment: bottom; }
-                Button { text: root.rail-collapsed ? "▣" : "▣  Xem truyền hình"; height: 38px; clicked => { root.navigate("tv"); } }
-                Button { text: root.rail-collapsed ? "★" : "★  Kênh yêu thích       " + root.favorites-count; height: 38px; clicked => { root.navigate("fav"); } }
-                Button { text: root.rail-collapsed ? "◷" : "◷  Xem gần đây            " + root.recent-count; height: 38px; clicked => { root.navigate("recent"); } }
-                Button { text: root.rail-collapsed ? "▤" : "▤  Lịch phát sóng EPG"; height: 38px; clicked => { root.navigate("epg"); } }
-                Button { text: root.rail-collapsed ? "⊞" : "⊞  MultiView · 4 kênh"; height: 38px; clicked => { root.navigate("multiview"); } }
-                Button { text: root.rail-collapsed ? "▦" : "▦  Ảnh chụp kênh"; height: 38px; clicked => { root.navigate("shots"); } }
-                Button { text: root.rail-collapsed ? "▥" : "▤  Thư mục kênh"; height: 38px; clicked => { root.navigate("folders"); } }
-                Text { text: "CÔNG CỤ"; visible: !root.rail-collapsed; font-size: 10px; font-weight: 700; color: #718da8; height: 31px; vertical-alignment: bottom; }
-                Button { text: root.rail-collapsed ? "◇" : "◇  Quản lý nguồn       " + root.sources-count; height: 38px; clicked => { root.navigate("sources"); } }
-                Button { text: root.rail-collapsed ? "↗" : "↗  Sức khỏe kênh / Failover"; height: 38px; clicked => { root.navigate("health"); } }
-                Button { text: root.rail-collapsed ? "✚" : "✚  Smart IPTV Doctor"; height: 38px; clicked => { root.navigate("doctor"); } }
-                Button { text: root.rail-collapsed ? "◎" : "◎  Khám phá IPTV"; height: 38px; clicked => { root.navigate("discovery"); } }
-                Button { text: root.rail-collapsed ? "♙" : "♙  Hồ sơ / Khóa trẻ em"; height: 38px; clicked => { root.navigate("profiles"); } }
-                Button { text: root.rail-collapsed ? "⇩" : "⇩  Xuất M3U"; height: 38px; clicked => { root.export-m3u(); } }
-                Button { text: root.rail-collapsed ? "★" : "★  Xuất M3U yêu thích"; height: 38px; clicked => { root.export-favorites-m3u(); } }
-                Button { text: root.rail-collapsed ? "⚙" : "⚙  Cài đặt"; height: 38px; clicked => { root.navigate("settings"); } }
-                Rectangle { vertical-stretch: 1; background: root.light-mode ? #ffffff : #101b29; }
-                Rectangle {
-                    height: root.rail-collapsed ? 36px : 67px;
+                ScrollView {
+                    vertical-stretch: 1;
+                    VerticalLayout {
+                        spacing: 4px;
+                        padding: 0px;
+                if !root.rail-collapsed : Text { text: "THƯ VIỆN"; font-size: 10px; font-weight: 700; color: #718da8; height: 31px; vertical-alignment: bottom; }
+                Button { text: root.rail-collapsed ? "▣" : "▣  Xem truyền hình"; height: 44px; clicked => { root.navigate("tv"); } }
+                Button { text: root.rail-collapsed ? "★" : "★  Kênh yêu thích       " + root.favorites-count; height: 44px; clicked => { root.navigate("fav"); } }
+                Button { text: root.rail-collapsed ? "◷" : "◷  Xem gần đây            " + root.recent-count; height: 44px; clicked => { root.navigate("recent"); } }
+                Button { text: root.rail-collapsed ? "▤" : "▤  Lịch phát sóng EPG"; height: 44px; clicked => { root.navigate("epg"); } }
+                Button { text: root.rail-collapsed ? "⊞" : "⊞  MultiView · 4 kênh"; height: 44px; clicked => { root.navigate("multiview"); } }
+                Button { text: root.rail-collapsed ? "▦" : "▦  Ảnh chụp kênh"; height: 44px; clicked => { root.navigate("shots"); } }
+                Button { text: root.rail-collapsed ? "▥" : "▤  Thư mục kênh"; height: 44px; clicked => { root.navigate("folders"); } }
+                if !root.rail-collapsed : Text { text: "CÔNG CỤ"; font-size: 10px; font-weight: 700; color: #718da8; height: 31px; vertical-alignment: bottom; }
+                Button { text: root.rail-collapsed ? "◇" : "◇  Quản lý nguồn       " + root.sources-count; height: 44px; clicked => { root.navigate("sources"); } }
+                Button { text: root.rail-collapsed ? "↗" : "↗  Sức khỏe kênh / Failover"; height: 44px; clicked => { root.navigate("health"); } }
+                Button { text: root.rail-collapsed ? "✚" : "✚  Smart IPTV Doctor"; height: 44px; clicked => { root.navigate("doctor"); } }
+                Button { text: root.rail-collapsed ? "◎" : "◎  Khám phá IPTV"; height: 44px; clicked => { root.navigate("discovery"); } }
+                Button { text: root.rail-collapsed ? "♙" : "♙  Hồ sơ / Khóa trẻ em"; height: 44px; clicked => { root.navigate("profiles"); } }
+                Button { text: root.rail-collapsed ? "⇩" : "⇩  Xuất M3U"; height: 44px; clicked => { root.export-m3u(); } }
+                Button { text: root.rail-collapsed ? "★" : "★  Xuất M3U yêu thích"; height: 44px; clicked => { root.export-favorites-m3u(); } }
+                
+
+                    }
+                }
+                Button {
+                    text: root.rail-collapsed ? "⚙" : "⚙  Cài đặt";
+                    height: 44px;
+                    clicked => { root.navigate("settings"); }
+                }
+                if !root.rail-collapsed : Rectangle {
+                    height: 67px;
                     background: root.light-mode ? #e7eef8 : #192a3b;
                     border-radius: 10px;
                     VerticalLayout {
@@ -235,9 +247,17 @@ if (root.active-page == "tv" || root.active-page == "fav" || root.active-page ==
         Text { text: "OPEN IPTV PRO  /  TRUYỀN HÌNH"; color: #e9f0fb; font-weight: 700; font-size: 13px; vertical-alignment: center; }
         Rectangle { horizontal-stretch: 1; background: transparent; }
         Text { text: root.sources-count + " nguồn"; color: #9db8cb; font-size: 11px; vertical-alignment: center; }
-        Button { text: "Mở M3U"; clicked => { root.open-m3u(); } }
-        Button { text: "Thêm URL"; clicked => { root.navigate("sources"); } }
-        Button { text: "⚙"; width: 38px; clicked => { root.navigate("settings"); } }
+        Button { text: "Mở M3U"; width: 92px; clicked => { root.open-m3u(); } }
+        Rectangle {
+            width: 96px; height: 37px; border-radius: 6px; background: #24394d;
+            Text { text: "Thêm URL"; color: #e3edfa; font-size: 12px; horizontal-alignment: center; vertical-alignment: center; }
+            TouchArea { clicked => { root.navigate("sources"); } }
+        }
+        Rectangle {
+            width: 47px; height: 37px; border-radius: 6px; background: #24394d;
+            Text { text: "⚙"; color: #eef4ff; font-size: 19px; horizontal-alignment: center; vertical-alignment: center; }
+            TouchArea { clicked => { root.navigate("settings"); } }
+        }
     }
 }
     Rectangle {
