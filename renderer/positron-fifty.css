@@ -192,3 +192,9 @@ html.p50-38 #page-sources :is(.source-card,.settings-card,.source-hub-card){back
 html.p50-38 #page-sources .section-heading{gap:12px!important}
 html.p50-38 #page-sources .heading-actions{gap:6px!important;flex-wrap:wrap!important}
 html.p50-38 #page-sources .heading-actions button{min-height:35px!important;border-radius:9px!important}
+
+/* Iteration 39: Calm EPG timeline card spacing and readability */
+html.p50-39 #page-epg :is(.epg-row,.settings-card,.epg-current-card){background:var(--po-card)!important;border-color:var(--po-line)!important;border-radius:11px!important}
+html.p50-39 #page-epg :is(h2,h3,strong){color:var(--po-ink)!important}
+html.p50-39 #page-epg :is(small,.hint){color:var(--po-muted)!important}
+html.p50-39 #page-epg .section-heading{margin-bottom:12px!important}
