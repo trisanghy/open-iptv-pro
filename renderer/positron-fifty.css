@@ -77,3 +77,9 @@ html[data-positron=true].p50-16[data-channel-panel-visible=false] #page-tv .tv-l
 html[data-positron=true].p50-17 #page-tv .channel-panel{max-height:min(78vh,760px)!important;min-width:0!important;overflow:hidden!important;display:flex!important;flex-direction:column!important}
 html[data-positron=true].p50-17[data-channel-panel-visible=false] #page-tv .channel-panel{display:none!important}
 html.p50-17 #page-tv #channelList{overflow:auto;min-height:80px;flex:1 1 auto}
+
+/* Iteration 18: Improve channel panel heading hierarchy */
+html.p50-18 #page-tv .channel-panel .panel-header{padding:11px 11px 8px!important;min-height:57px!important;align-items:center!important}
+html.p50-18 #page-tv .panel-header h2{font-size:13px!important;font-weight:750!important;line-height:1.1!important}
+html.p50-18 #page-tv .panel-header p{font-size:10px!important;margin-top:3px!important}
+html.p50-18 #page-tv .channel-panel :is(#channelPanelHideBtn,#refreshAllBtn){height:32px!important;width:32px!important;min-height:32px!important;min-width:32px!important;flex-basis:32px!important;border-radius:9px!important}
