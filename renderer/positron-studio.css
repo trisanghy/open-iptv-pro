@@ -52,3 +52,12 @@ html[data-positron=true] .main .content :is(.settings-accordion-heading,.setting
 html[data-positron=true] .main .content :is(select,input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=color]),textarea){background:var(--po-raised)!important;color:var(--po-ink)!important;border:1px solid var(--po-line)!important;caret-color:var(--po-accent)!important}
 html[data-positron=true] .main .content input::placeholder{color:var(--po-muted)!important}
 html[data-positron=true] .main .content :is(.btn-primary,.control-main){background:var(--po-accent)!important;color:var(--po-on)!important;border-color:var(--po-accent)!important}
+/* 08 */html[data-positron=true] #positronPalette{background:#050811c9}
+html[data-positron=true] #positronPalette .p-palette{background:var(--po-card)!important;border-color:var(--po-line)!important;color:var(--po-ink)!important}
+html[data-positron=true] #positronPalette .p-search,html[data-positron=true] #positronPalette .p-foot{border-color:var(--po-line)!important}
+html[data-positron=true] #positronPalette :is(.p-hint,.p-foot,.p-result-copy small){color:var(--po-muted)!important}
+html[data-positron=true] #positronPalette #positronQuery{color:var(--po-ink)!important}
+html[data-positron=true] #positronPalette #positronResults button{color:var(--po-ink)!important}
+html[data-positron=true] #positronPalette #positronResults button[aria-selected=true]{background:var(--po-raised)!important;box-shadow:inset 3px 0 var(--po-accent)}
+html[data-positron=true] #positronPalette .p-glyph{background:var(--po-raised)!important;color:var(--po-accent)!important}
+html[data-positron=true] #positronPalette .p-result-copy strong{color:var(--po-ink)!important}
