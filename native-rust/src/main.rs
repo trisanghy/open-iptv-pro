@@ -345,6 +345,7 @@ fn play_logical(
     primary_url: String,
     volume: i32,
 ) {
+    ui.set_playback_controls_enabled(false);
     let candidates={
         let s=shared.borrow();
         failover::candidates(&primary_url,s.data.alternate_links.get(&primary_url).map_or(&[],|x|x.as_slice()))
@@ -390,6 +391,7 @@ fn play_logical(
     let Some((index,playing_url))=chosen else{
         status(ui,format!("Không gửi được lệnh phát tới libmpv: {last_error}"));return;
     };
+    ui.set_playback_controls_enabled(true);
     ui.set_playing_text(name.clone().into());
     ui.set_playing_subtitle(playing_url.into());
     ui.set_video_hint(format!("Đang nạp hình ảnh: {name}").into());
@@ -647,6 +649,7 @@ fn connect_callbacks(
                 let result=player.borrow().as_ref().map(|p| p.stop()).unwrap_or_else(|| Err("Chưa mở video".into()));
                 match result {
                     Ok(()) => {
+                        ui.set_playback_controls_enabled(false);
                         ui.set_playing_text("Đã dừng phát".into());
                         ui.set_video_frame(slint::Image::default());
                         ui.set_has_video_frame(false);
@@ -1389,6 +1392,7 @@ fn background_timer(ui: &MainWindow, shared: Rc<RefCell<State>>, rx: Receiver<Ba
                 (s.data.auto_failover, s.playback_candidates.clone(), failover::next_index(s.playback_index,s.playback_candidates.len()))
             };
             if !enabled || next.is_none() {
+                ui.set_playback_controls_enabled(false);
                 ui.set_video_status(format!("Lỗi phát mpv ({code})").into());
                 status(&ui,format!("libmpv báo lỗi phát ({code}); {}",if enabled {"không còn URL dự phòng"} else {"Auto Failover đã tắt"}));
             } else if let Some(first_next)=next {

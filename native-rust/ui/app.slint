@@ -80,6 +80,7 @@ export component MainWindow inherits Window {
     in-out property <bool> player-fullscreen: false;
     in-out property <bool> rail-collapsed: true;
     in-out property <bool> video-paused: false;
+    in-out property <bool> playback-controls-enabled: false;
     in-out property <bool> video-is-live: true;
     in-out property <bool> video-seekable: false;
     in-out property <string> video-status: "Chưa phát";
@@ -297,12 +298,12 @@ if (root.active-page == "tv" || root.active-page == "fav" || root.active-page ==
             padding: 7px; spacing: 4px;
             HorizontalLayout {
                 spacing: 8px;
-                Button { text: "−10s"; clicked => { root.seek-video(-10); } }
-                Button { text: root.video-paused ? "▶ Phát" : "❚❚ Tạm dừng"; clicked => { root.pause-video(); } }
-                Button { text: "−30s"; clicked => { root.seek-video(-30); } }
-                Button { text: "Dừng"; clicked => { root.stop-video(); } }
+                Button { text: "−10s"; enabled: root.playback-controls-enabled; clicked => { root.seek-video(-10); } }
+                Button { text: root.video-paused ? "▶ Phát" : "❚❚ Tạm dừng"; enabled: root.playback-controls-enabled; clicked => { root.pause-video(); } }
+                Button { text: "−30s"; enabled: root.playback-controls-enabled; clicked => { root.seek-video(-30); } }
+                Button { text: "Dừng"; enabled: root.playback-controls-enabled; clicked => { root.stop-video(); } }
                 Rectangle { horizontal-stretch: 1; background: transparent; }
-                Button { text: "Về LIVE"; clicked => { root.seek-video(999999); } }
+                Button { text: "Về LIVE"; enabled: root.playback-controls-enabled; clicked => { root.seek-video(999999); } }
             }
             Slider { visible: root.video-seekable; height: 14px; minimum: 0; maximum: 100; value: root.playback-progress; released(value) => { root.seek-percent(value); } }
             Rectangle { visible: !root.video-seekable; height: 3px; background: #34475c; }
@@ -326,8 +327,8 @@ if (root.active-page == "tv" || root.active-page == "fav" || root.active-page ==
                                     HorizontalLayout {
                                         spacing: 7px;
                                         Button { text: "⏮"; clicked => { root.prev-video(); } }
-                                        Button { text: "▶ / ❚❚"; clicked => { root.pause-video(); } }
-                                        Button { text: "■"; clicked => { root.stop-video(); } }
+                                        Button { text: "▶ / ❚❚"; enabled: root.playback-controls-enabled; clicked => { root.pause-video(); } }
+                                        Button { text: "■"; enabled: root.playback-controls-enabled; clicked => { root.stop-video(); } }
                                         Button { text: "⏭"; clicked => { root.next-video(); } }
                                         Rectangle { horizontal-stretch: 1; background: root.amoled-mode ? #101010 : (root.light-mode ? #ffffff : #142231); }
                                         Button { text: "−"; clicked => { root.volume-delta(-10); } }
@@ -401,9 +402,9 @@ if (root.active-page == "tv" || root.active-page == "fav" || root.active-page ==
                                         HorizontalLayout {
                                             spacing: 7px;
                                             Text { text: "Tua / ghi hình"; color: root.light-mode ? #203249 : #cfdcf1; font-weight: 700; vertical-alignment: center; }
-                                            Button { text: "−30s"; clicked => { root.seek-video(-30); } }
-                                            Button { text: "−10s"; clicked => { root.seek-video(-10); } }
-                                            Button { text: "Về LIVE"; clicked => { root.seek-video(999999); } }
+                                            Button { text: "−30s"; enabled: root.playback-controls-enabled; clicked => { root.seek-video(-30); } }
+                                            Button { text: "−10s"; enabled: root.playback-controls-enabled; clicked => { root.seek-video(-10); } }
+                                            Button { text: "Về LIVE"; enabled: root.playback-controls-enabled; clicked => { root.seek-video(999999); } }
                                             Button { text: "Ghi 60 giây"; clicked => { root.start-recording(); } }
                                         }
                                         Text { text: root.recording-text; color: #8eafca; font-size: 11px; }
