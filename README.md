@@ -1,4 +1,7 @@
-## Cloud sync v23.8.69 (Tauri)
+## Cloud sync v23.8.73 (Tauri) — redesigned native login UI
+
+The account panel now matches the current Tauri Settings theme, offers clear email/OTP fields with responsive widths, accessible focus/caret and a collapsed confirmation-link option. Cloud sync still excludes snapshots, images, video and EPG caches. [Release notes](RELEASE_NOTES_RUST_LAB_V23_8_73.md).
+
 
 Sign in to the same Supabase account on Web/Electron/Tauri/Mobile. Open Settings → Account & Supabase Sync and select cloud or device data on first pairing; later changes sync with revision checks. Images/video/EPG caches remain local. Supabase email OTP requires Auth email templates configured with a code. See [release notes](RELEASE_NOTES_RUST_LAB_V23_8_68.md).
 
