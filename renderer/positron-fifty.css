@@ -198,3 +198,9 @@ html.p50-39 #page-epg :is(.epg-row,.settings-card,.epg-current-card){background:
 html.p50-39 #page-epg :is(h2,h3,strong){color:var(--po-ink)!important}
 html.p50-39 #page-epg :is(small,.hint){color:var(--po-muted)!important}
 html.p50-39 #page-epg .section-heading{margin-bottom:12px!important}
+
+/* Iteration 40: Make diagnostic report and call-to-action easier to scan */
+html.p50-40 #page-doctor :is(.settings-card,.doctor-card,.doctor-metrics>div){background:var(--po-card)!important;border:1px solid var(--po-line)!important;border-radius:12px!important;box-shadow:none!important}
+html.p50-40 #page-doctor .section-heading{gap:12px!important}
+html.p50-40 #page-doctor .heading-actions{display:flex;gap:6px;flex-wrap:wrap!important}
+html.p50-40 #page-doctor .heading-actions button{min-height:34px!important;font-size:11px!important;border-radius:9px!important}
