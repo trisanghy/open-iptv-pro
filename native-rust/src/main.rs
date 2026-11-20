@@ -156,7 +156,11 @@ fn refresh(ui: &MainWindow, state: &mut State) {
         title: src.name.clone().into(),
         count: format!("{} kênh", state.data.channels.iter().filter(|ch| ch.source_id == src.id).count()).into(),
     }).collect();
+    let selected_visible_index=state.visible.iter()
+        .position(|index| state.data.channels.get(*index).map(|ch| &ch.url)==state.selected_url.as_ref())
+        .map_or(-1,|idx|idx as i32);
     ui.set_channels(ModelRc::new(VecModel::from(rows)));
+    ui.set_selected_channel_index(selected_visible_index);
     ui.set_sources(ModelRc::new(VecModel::from(sources)));
     ui.set_sources_count(state.data.sources.len().to_string().into());
     ui.set_favorites_count(state.data.favorite_urls.len().to_string().into());

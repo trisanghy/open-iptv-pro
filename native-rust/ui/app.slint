@@ -315,7 +315,7 @@ if (root.active-page == "tv" || root.active-page == "fav" || root.active-page ==
         vertical-stretch: 1;
         VerticalLayout { spacing: 9px;
             Rectangle {
-                                height: 132px;
+                                height: 108px;
                                 visible: !root.player-fullscreen;
                                 background: root.amoled-mode ? #101010 : (root.light-mode ? #ffffff : #142231);
                                 border-radius: 11px;
@@ -340,7 +340,7 @@ if (root.active-page == "tv" || root.active-page == "fav" || root.active-page ==
                                 }
                             }
                             Rectangle {
-                                height: 80px;
+                                height: 68px;
                                 visible: !root.player-fullscreen;
                                 background: root.amoled-mode ? #101010 : (root.light-mode ? #ffffff : #142231);
                                 border-radius: 10px;
@@ -458,7 +458,9 @@ if (root.active-page == "tv" || root.active-page == "fav" || root.active-page ==
                                 ListView {
                                     for ch[i] in root.channels: Rectangle {
                                         height: 62px;
-                                        background: root.light-mode ? (Math.mod(i, 2) == 0 ? #edf2f9 : #f9fbfd) : (Math.mod(i, 2) == 0 ? #1a293b : #182436);
+                                        background: root.selected-channel-index == i ? #304761 : (root.light-mode ? (Math.mod(i, 2) == 0 ? #edf2f9 : #f9fbfd) : (Math.mod(i, 2) == 0 ? #1a293b : #182436));
+                                        border-width: root.selected-channel-index == i ? 1px : 0px;
+                                        border-color: root.accent;
                                         border-radius: 5px;
                                         HorizontalLayout {
                                             padding: 7px;
