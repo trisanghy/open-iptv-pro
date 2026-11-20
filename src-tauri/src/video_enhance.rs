@@ -122,3 +122,129 @@ mod capability_tests {
    assert!(!motion_filter(60).contains("dnn_processing"));
  }
 }
+
+
+// GPU H.264 hardware-encoder benchmark. This is not AI super-resolution or GPU motion.
+fn gpu_encoder_names()->&'static [&'static str]{
+ if cfg!(target_os="macos"){&["h264_videotoolbox"]}
+ else if cfg!(target_os="windows"){&["h264_nvenc","h264_amf","h264_qsv","h264_mf"]}
+ else {&[]}
+}
+pub async fn gpu_prepare(ffmpeg:Option<&str>)->Value{
+ let names=gpu_encoder_names();
+ let Some(bin)=ffmpeg else{
+  return json!({"platform":std::env::consts::OS,"ready":false,"backends":[],"liveAiUpscale":false,
+   "modelReady":false,"message":"Thiếu FFmpeg đi kèm bản cài đặt; cần cập nhật bản đầy đủ"});
+ };
+ let mut probe=Command::new(bin);
+ probe.args(["-hide_banner","-encoders"]).stdin(Stdio::null()).kill_on_drop(true);
+ let text=match timeout(Duration::from_secs(5),probe.output()).await{
+  Ok(Ok(out)) if out.status.success()=>String::from_utf8_lossy(&out.stdout).into_owned(),
+  _=>String::new()
+ };
+ let list:Vec<&str>=names.iter().copied()
+  .filter(|name|text.split_whitespace().any(|word|word==*name)).collect();
+ json!({"platform":std::env::consts::OS,"architecture":std::env::consts::ARCH,
+  "ready":true,"backends":list,"automaticInstaller":"FFmpeg bundled with application",
+  "modelReady":false,"liveAiUpscale":false,
+  "message":"FFmpeg tích hợp; GPU encoder và GPU AI phải được xác minh riêng"})
+}
+async fn sample_gpu(ffmpeg:&str,encoder:&str,width:u32,height:u32,rate:u32,frames:u32)->Value{
+ let source=format!("testsrc2=size={}x{}:rate={}:duration={}",width,height,rate,frames as f64/rate as f64);
+ let count=frames.to_string();
+ let mut child=match Command::new(ffmpeg).args([
+  "-hide_banner","-nostdin","-loglevel","error","-f","lavfi","-i",source.as_str(),
+  "-an","-sn","-c:v",encoder,"-b:v","2500k","-frames:v",count.as_str(),
+  "-f","null","-"
+ ]).stdin(Stdio::null()).stdout(Stdio::null()).stderr(Stdio::null())
+ .kill_on_drop(true).spawn(){
+  Ok(v)=>v,
+  Err(e)=>return json!({"ok":false,"processingFps":0,"reason":e.to_string()})
+ };
+ let start=Instant::now();
+ let result=timeout(Duration::from_secs(12),child.wait()).await;
+ let good=matches!(result,Ok(Ok(ref status)) if status.success());
+ if !good{let _=child.kill().await;}
+ json!({"ok":good,"processingFps":if good {frames as f64/start.elapsed().as_secs_f64().max(0.01)}else{0.0}})
+}
+pub async fn gpu_benchmark(ffmpeg:Option<&str>)->Result<Value,String>{
+ let info=gpu_prepare(ffmpeg).await;
+ let options=info["backends"].as_array().ok_or("GPU backend list invalid")?;
+ let Some(bin)=ffmpeg else{return Ok(json!({"kind":"gpu-h264-encode-only","available":false,"encoder":null,
+  "tests":{},"aiUpscaleAvailable":false,"aiMotionAvailable":false}));};
+ for name in options.iter().filter_map(Value::as_str){
+  let p720=sample_gpu(bin,name,1280,720,60,90).await;
+  if p720["ok"]!=true{continue;}
+  let p1080=sample_gpu(bin,name,1920,1080,30,45).await;
+  return Ok(json!({"kind":"gpu-h264-encode-only","available":true,"encoder":name,
+   "tests":{"p720":p720,"p1080":p1080},
+   "aiUpscaleAvailable":false,"aiMotionAvailable":false}));
+ }
+ Ok(json!({"kind":"gpu-h264-encode-only","available":false,"encoder":null,
+  "tests":{},"aiUpscaleAvailable":false,"aiMotionAvailable":false}))
+}
+const GPU_OWNED:[(&str,&str);3]=[
+ ("cache","Bộ đệm xử lý video"),("models","Mô hình video đã tải"),("runtime","Thư viện video riêng")
+];
+fn gpu_managed(data:&std::path::Path,id:&str)->Result<std::path::PathBuf,String>{
+ if !GPU_OWNED.iter().any(|(key,_)|*key==id){return Err("Không được xóa ngoài kho video GPU".into());}
+ let root=data.join("video-gpu-assets");
+ let dest=root.join(id);
+ for p in [data,&root,&dest]{
+  match std::fs::symlink_metadata(p){
+   Ok(meta) if meta.file_type().is_symlink()=>return Err("Không thao tác trên symlink".into()),
+   Err(e) if e.kind()==std::io::ErrorKind::NotFound=>{},
+   Err(e)=>return Err(e.to_string()),
+   _=>{}
+  }
+ }
+ Ok(dest)
+}
+fn gpu_bytes(p:&std::path::Path,count:&mut usize)->Result<u64,String>{
+ *count+=1;
+ if *count>25000{return Err("Kho video có quá nhiều file".into());}
+ let meta=match std::fs::symlink_metadata(p){
+  Ok(m)=>m,Err(e) if e.kind()==std::io::ErrorKind::NotFound=>return Ok(0),
+  Err(e)=>return Err(e.to_string())
+ };
+ if meta.file_type().is_symlink(){return Ok(0);}
+ if meta.is_file(){return Ok(meta.len());}
+ let mut total=0u64;
+ if meta.is_dir(){
+  for entry in std::fs::read_dir(p).map_err(|e|e.to_string())?{
+   let entry=entry.map_err(|e|e.to_string())?;
+   total=total.saturating_add(gpu_bytes(&entry.path(),count)?);
+  }
+ }
+ Ok(total)
+}
+pub fn gpu_storage(data:&std::path::Path)->Result<Value,String>{
+ let mut items=Vec::new();let mut total=0u64;
+ for (id,label) in GPU_OWNED{
+  let p=gpu_managed(data,id)?;
+  let bytes=gpu_bytes(&p,&mut 0usize)?;
+  total=total.saturating_add(bytes);
+  items.push(json!({"id":id,"label":label,"bytes":bytes}));
+ }
+ Ok(json!({"totalBytes":total,"items":items}))
+}
+pub fn gpu_delete(data:&std::path::Path,id:&str)->Result<Value,String>{
+ let p=gpu_managed(data,id)?;
+ if p.exists(){std::fs::remove_dir_all(&p).map_err(|e|e.to_string())?;}
+ gpu_storage(data)
+}
+#[cfg(test)]
+mod gpu_backend_tests{
+ use super::*;
+ #[test] fn gpu_model_inference_is_never_faked(){
+  assert!(!motion_filter(60).contains("dnn_processing"));
+  assert!(gpu_encoder_names().iter().all(|name|name.starts_with("h264_")));
+ }
+ #[test] fn deletion_cannot_escape_owned_directories(){
+  let root=std::env::temp_dir().join(format!("openiptv-gpu-test-{}",std::process::id()));
+  let _=std::fs::create_dir_all(&root);
+  let forbidden=gpu_delete(&root,"../user-settings.json");
+  assert!(forbidden.is_err());
+  let _=std::fs::remove_dir_all(&root);
+ }
+}
