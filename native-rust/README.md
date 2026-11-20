@@ -9,7 +9,7 @@ cargo test --manifest-path native-rust/Cargo.toml
 cargo run --manifest-path native-rust/Cargo.toml
 ```
 
-Use `brew install mpv ffmpeg` on macOS. `libmpv` is loaded dynamically at runtime. Use `bash scripts/BUILD_C3_MAC_AUTOFETCH.sh` to build the current isolated branch into a locally ad-hoc-signed DMG and source ZIP. Artifacts are named with the current Rust package version and exact commit prefix in a unique folder under Downloads, without overwriting previous commits' builds. The helper never updates Electron, Tauri, Mobile or main.
+Use `brew install mpv ffmpeg` on macOS. The Mac auto-build script checks the shared libmpv dylib and decodes a locally generated video clip using the actual native frame path before packaging; it fails if playback initialization cannot be verified. `libmpv` is loaded dynamically at runtime. Use `bash scripts/BUILD_C3_MAC_AUTOFETCH.sh` to build the current isolated branch into a locally ad-hoc-signed DMG and source ZIP. Artifacts are named with the current Rust package version and exact commit prefix in a unique folder under Downloads, without overwriting previous commits' builds. The helper never updates Electron, Tauri, Mobile or main.
 
 For exact feature availability and outstanding native rewrite work, see [TAURI_PORT_MATRIX.md](TAURI_PORT_MATRIX.md).
 

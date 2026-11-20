@@ -95,6 +95,18 @@ jobs:
           workspaces: native-rust
       - name: Test native Rust on macOS
         run: cargo test --manifest-path native-rust/Cargo.toml
+      - name: Install actual macOS libmpv playback runtime
+        run: |
+          HOMEBREW_NO_AUTO_UPDATE=1 brew install mpv ffmpeg
+          brew list --versions mpv
+      - name: Verify macOS decoded video frames
+        shell: bash
+        env:
+          OPEN_IPTV_VIDEO_BACKEND: embedded
+        run: |
+          set -Eeuo pipefail
+          ffmpeg -hide_banner -loglevel error -f lavfi -i "testsrc2=size=320x180:rate=15" -t 4 -an -c:v mpeg4 -q:v 5 -y "$RUNNER_TEMP/native-video-smoke.mp4"
+          cargo run --manifest-path native-rust/Cargo.toml --bin video_smoke -- "$RUNNER_TEMP/native-video-smoke.mp4"
       - name: Build macOS native executable
         run: cargo build --manifest-path native-rust/Cargo.toml --release
       - name: Package actual Slint app + DMG

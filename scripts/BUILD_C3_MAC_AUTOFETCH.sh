@@ -34,6 +34,12 @@ DMG="OpenIPTVPro_RustNative_v${VERSION}_${SHORT_SHA}.dmg"
 SRC="OpenIPTVPro_RustNative_v${VERSION}_${SHORT_SHA}_Source.zip"
 echo "Rust Native HEAD: $FULL_SHA"
 cargo test --manifest-path "$NATIVE/Cargo.toml" || fail 'Native Rust tests failed'
+printf 'Testing the real native video frame path with a synthetic local clip...\n'
+if ! find /opt/homebrew/lib /usr/local/lib /opt/homebrew/opt/mpv/lib /usr/local/opt/mpv/lib -maxdepth 1 -name 'libmpv*.dylib' -print -quit 2>/dev/null | grep -q .; then
+  fail 'Homebrew mpv did not install the shared libmpv.dylib; playback cannot work'
+fi
+ffmpeg -hide_banner -loglevel error -f lavfi -i 'testsrc2=size=320x180:rate=15' -t 4 -an -c:v mpeg4 -q:v 5 -y "$WORK/video-smoke.mp4" || fail 'Synthetic test video creation failed'
+cargo run --manifest-path "$NATIVE/Cargo.toml" --bin video_smoke -- "$WORK/video-smoke.mp4" || fail 'Video decoder did not produce real embedded frames'
 cargo build --release --manifest-path "$NATIVE/Cargo.toml" || fail 'Native Rust build failed'
 BIN="$NATIVE/target/release/open-iptv-pro-native"
 [ -x "$BIN" ] || fail 'Native executable missing'
