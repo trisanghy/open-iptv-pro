@@ -3,7 +3,10 @@
 //! the winit event loop. Keep OS video windows and their event loops isolated.
 #![cfg(unix)]
 use std::cell::{Cell, RefCell};
-use std::io::Write;
+use std::io::{BufRead, BufReader, Write};
+use std::sync::{Arc, Mutex};
+use std::sync::atomic::{AtomicBool, AtomicU64, Ordering};
+use std::time::{Duration, Instant};
 use std::os::unix::net::UnixStream;
 use std::path::{Path, PathBuf};
 use std::process::{Child, Command, Stdio};
@@ -19,6 +22,10 @@ pub struct ExternalMpv {
     volume: Cell<i32>,
     muted: Cell<bool>,
     aspect: RefCell<String>,
+    playback_cache: Arc<Mutex<PlaybackInfo>>,
+    last_ipc_probe: Cell<Instant>,
+    ipc_probe_active: Arc<AtomicBool>,
+    generation: Arc<AtomicU64>,
 }
 impl ExternalMpv {
     pub fn new() -> Result<Self, String> {
@@ -34,12 +41,39 @@ impl ExternalMpv {
             return Err("Đường dẫn IPC mpv quá dài".into());
         }
         Ok(Self {binary,_private_directory:private_directory,socket,child:RefCell::new(None),volume:Cell::new(80),
-            muted:Cell::new(false),aspect:RefCell::new("fit".into())})
+            muted:Cell::new(false),aspect:RefCell::new("fit".into()),
+            playback_cache:Arc::new(Mutex::new(PlaybackInfo::default())),
+            last_ipc_probe:Cell::new(Instant::now()-Duration::from_secs(1)),
+            ipc_probe_active:Arc::new(AtomicBool::new(false)),generation:Arc::new(AtomicU64::new(0))})
     }
     pub fn video_backend(&self)->VideoBackend {VideoBackend::NativeWindow}
     pub fn render_embedded_frame(&self)->Result<Option<Vec<u8>>,String>{Ok(None)}
     pub fn playback_info(&self)->PlaybackInfo {
-        PlaybackInfo {idle:Some(self.child.borrow().is_none()),..Default::default()}
+        if self.child.borrow().is_none() {
+            return PlaybackInfo {idle:Some(true),..Default::default()};
+        }
+        // Never perform blocking UnixStream I/O from the Slint event loop.
+        // Only one bounded IPC probe may run at a time; old responses are
+        // discarded after switching streams (generation token).
+        if self.last_ipc_probe.get().elapsed() >= Duration::from_millis(500)
+            && !self.ipc_probe_active.swap(true,Ordering::AcqRel) {
+            self.last_ipc_probe.set(Instant::now());
+            let socket=self.socket.clone();
+            let cache=self.playback_cache.clone();
+            let pending=self.ipc_probe_active.clone();
+            let generation=self.generation.clone();
+            let expected=generation.load(Ordering::Acquire);
+            std::thread::spawn(move || {
+                if let Ok(data)=query_ipc_playback(&socket) {
+                    if generation.load(Ordering::Acquire)==expected {
+                        if let Ok(mut latest)=cache.lock(){*latest=data;}
+                    }
+                }
+                pending.store(false,Ordering::Release);
+            });
+        }
+        self.playback_cache.lock().map(|x|x.clone())
+            .unwrap_or_else(|_|PlaybackInfo::default())
     }
     pub fn play(&self,url:&str)->Result<(),String>{
         if !crate::m3u::is_media_url(url) {return Err("URL luồng không hợp lệ".into());}
@@ -67,6 +101,10 @@ impl ExternalMpv {
         let child=cmd.spawn().map_err(|e|format!(
             "Không mở được mpv độc lập {}: {e}",self.binary.display()))?;
         *self.child.borrow_mut()=Some(child);
+        self.last_ipc_probe.set(Instant::now()-Duration::from_secs(1));
+        if let Ok(mut latest)=self.playback_cache.lock() {
+            *latest=PlaybackInfo{idle:Some(false),..Default::default()};
+        }
         Ok(())
     }
     pub fn execute(&self,args:&[&str])->Result<(),String>{
@@ -78,6 +116,8 @@ impl ExternalMpv {
         stream.write_all(b"\n").map_err(|e|e.to_string())
     }
     pub fn stop(&self) {
+        self.generation.fetch_add(1,Ordering::AcqRel);
+        if let Ok(mut latest)=self.playback_cache.lock(){*latest=PlaybackInfo::default();}
         if let Some(mut child)=self.child.borrow_mut().take() {
             // Never wait on an OS video window while Slint handles input.
             std::thread::spawn(move||{let _=child.kill();let _=child.wait();});
@@ -147,6 +187,44 @@ impl ExternalMpv {
 impl Drop for ExternalMpv {
     fn drop(&mut self) {self.stop();}
 }
+
+fn query_ipc_playback(socket:&Path)->Result<PlaybackInfo,String>{
+    let stream=UnixStream::connect(socket).map_err(|e|e.to_string())?;
+    stream.set_read_timeout(Some(Duration::from_millis(180)))
+        .map_err(|e|e.to_string())?;
+    stream.set_write_timeout(Some(Duration::from_millis(180)))
+        .map_err(|e|e.to_string())?;
+    let mut reader=BufReader::new(stream);
+    let mut properties=serde_json::Map::new();
+    for (idx,key) in ["time-pos","duration","pause","video-params/w","idle-active"].iter().enumerate() {
+        let id=(idx+1) as u64;
+        let request=serde_json::json!({"command":["get_property",key],"request_id":id});
+        reader.get_mut().write_all(request.to_string().as_bytes())
+            .map_err(|e|e.to_string())?;
+        reader.get_mut().write_all(b"\n").map_err(|e|e.to_string())?;
+        // mpv may interleave event messages; only accept the matching reply.
+        for _ in 0..8 {
+            let mut line=String::new();
+            if reader.read_line(&mut line).map_err(|e|e.to_string())?==0 {
+                return Err("mpv IPC closed unexpectedly".into());
+            }
+            let reply:serde_json::Value=serde_json::from_str(&line).map_err(|e|e.to_string())?;
+            if reply.get("request_id").and_then(|v|v.as_u64())!=Some(id) {continue;}
+            if reply.get("error").and_then(|v|v.as_str())==Some("success"){
+                if let Some(value)=reply.get("data"){properties.insert((*key).into(),value.clone());}
+            }
+            break;
+        }
+    }
+    Ok(PlaybackInfo{
+        position_seconds:properties.get("time-pos").and_then(|v|v.as_f64()),
+        duration_seconds:properties.get("duration").and_then(|v|v.as_f64()),
+        paused:properties.get("pause").and_then(|v|v.as_bool()),
+        video_width:properties.get("video-params/w").and_then(|v|v.as_i64()),
+        idle:properties.get("idle-active").and_then(|v|v.as_bool()),
+    })
+}
+
 fn resolve_binary()->Option<PathBuf>{
     if let Ok(value)=std::env::var("OPEN_IPTV_MPV_EXECUTABLE") {
         let path=PathBuf::from(value);
@@ -173,10 +251,18 @@ mod tests{
         let p=ExternalMpv{
             binary:"/nonexistent/mpv".into(),_private_directory:directory,socket,
             child:RefCell::new(None),volume:Cell::new(80),muted:Cell::new(false),
-            aspect:RefCell::new("fit".into())};
+            aspect:RefCell::new("fit".into()),
+            playback_cache:Arc::new(Mutex::new(PlaybackInfo::default())),
+            last_ipc_probe:Cell::new(Instant::now()-Duration::from_secs(1)),
+            ipc_probe_active:Arc::new(AtomicBool::new(false)),
+            generation:Arc::new(AtomicU64::new(0))};
         assert_eq!(p.poll_playback_failure(),None);
         assert!(p.toggle_pause().is_err());
         assert!(p.set_volume(45).is_ok());
         assert_eq!(p.volume.get(),45);
+        assert_eq!(p.playback_info().idle,Some(true));
+        assert_eq!(p.generation.load(Ordering::Acquire),0);
+        p.stop();
+        assert_eq!(p.generation.load(Ordering::Acquire),1);
     }
 }
