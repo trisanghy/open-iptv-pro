@@ -43,19 +43,26 @@ pub struct NativeData {
     #[serde(default)] pub epg_url: String,
     #[serde(default = "default_epg_auto_refresh")] pub epg_auto_refresh: bool,
     #[serde(default = "default_theme")] pub theme: String,
+    #[serde(default)] pub quick_tools_expanded: bool,
+    #[serde(default = "default_aspect_mode")] pub aspect_mode: String,
+    #[serde(default)] pub muted: bool,
+    #[serde(default)] pub auto_resume_last_channel: bool,
 }
 
 fn default_volume() -> i32 { 80 }
 fn default_auto_failover() -> bool { true }
 fn default_epg_auto_refresh() -> bool { true }
 fn default_theme() -> String { "Tối · Tím".to_owned() }
+fn default_aspect_mode() -> String { "fit".to_owned() }
+pub fn valid_aspect_mode(mode: &str) -> bool { matches!(mode, "fit" | "fill" | "original") }
 
 impl Default for NativeData {
     fn default() -> Self {
         Self { format_version: 1, sources: vec![], channels: vec![], favorite_urls: BTreeSet::new(),
             volume: 80, folders: vec![], health: BTreeMap::new(), alternate_links: BTreeMap::new(),
             last_channel_url: String::new(), epg_url: "https://epg.io.vn/epg.xml.gz".into(), theme: default_theme(),
-            recent_urls: Vec::new(), auto_failover: true, epg_auto_refresh: true }
+            recent_urls: Vec::new(), auto_failover: true, epg_auto_refresh: true,
+            quick_tools_expanded: false, aspect_mode: default_aspect_mode(), muted: false, auto_resume_last_channel: false }
     }
 }
 
@@ -66,6 +73,7 @@ impl NativeData {
             return Err("Dữ liệu vượt giới hạn nguồn/kênh/thư mục".into());
         }
         if !(0..=100).contains(&self.volume) { return Err("Âm lượng ngoài 0–100".into()); }
+        if !valid_aspect_mode(&self.aspect_mode) { return Err("Chế độ khung hình không hợp lệ".into()); }
         if self.epg_url.len() > 8192 || self.last_channel_url.len() > 8192 || self.theme.len() > 128 {
             return Err("Cấu hình quá dài".into());
         }
@@ -262,6 +270,27 @@ mod tests {
         assert!(restored.auto_failover);
         assert!(restored.recent_urls.is_empty());
         restored.validate().unwrap();
+    }
+    #[test]
+    fn player_preferences_survive_json_roundtrip_and_old_state_migration() {
+        let mut original=NativeData::default();
+        original.aspect_mode="fill".into();
+        original.quick_tools_expanded=true;
+        original.muted=true;
+        original.auto_resume_last_channel=true;
+        let restored:NativeData=serde_json::from_slice(&serde_json::to_vec(&original).unwrap()).unwrap();
+        assert_eq!(restored.aspect_mode,"fill");
+        assert!(restored.quick_tools_expanded && restored.muted && restored.auto_resume_last_channel);
+        let mut old=serde_json::to_value(original).unwrap();
+        for field in ["aspect_mode","quick_tools_expanded","muted","auto_resume_last_channel"] {
+            old.as_object_mut().unwrap().remove(field);
+        }
+        let backward:NativeData=serde_json::from_value(old).unwrap();
+        assert_eq!(backward.aspect_mode,"fit");
+        assert!(!backward.quick_tools_expanded && !backward.muted && !backward.auto_resume_last_channel);
+        let mut bad=backward;
+        bad.aspect_mode="invalid".into();
+        assert!(bad.validate().is_err());
     }
     #[test]
     fn folder_validation() {

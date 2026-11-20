@@ -103,6 +103,12 @@ fn refresh(ui: &MainWindow, state: &mut State) {
     ui.set_favorites_count(state.data.favorite_urls.len().to_string().into());
     ui.set_recent_count(state.data.recent_urls.len().to_string().into());
     ui.set_epg_auto_refresh_enabled(state.data.epg_auto_refresh);
+    ui.set_quick_tools_expanded(state.data.quick_tools_expanded);
+    ui.set_aspect_mode_text(match state.data.aspect_mode.as_str() {
+        "fill" => "Lấp đầy (cắt cạnh)", "original" => "Kích thước gốc", _ => "Vừa khung"
+    }.into());
+    ui.set_muted(state.data.muted);
+    ui.set_auto_resume_last_channel(state.data.auto_resume_last_channel);
     ui.set_auto_failover_text(if state.data.auto_failover { "Đang bật".into() } else { "Đang tắt".into() });
     ui.set_volume_text(format!("{}%", state.data.volume).into());
     ui.set_current_theme(state.data.theme.clone().into());
@@ -238,6 +244,12 @@ fn play_logical(
     }
     let Some(p)=guard.as_ref() else{return;};
     if let Err(e)=p.set_volume(volume){status(ui,e);return;}
+    let (muted, aspect_mode) = {
+        let s=shared.borrow();
+        (s.data.muted, s.data.aspect_mode.clone())
+    };
+    if let Err(e)=p.set_mute(muted){status(ui,format!("Không đặt được âm thanh: {e}"));return;}
+    if let Err(e)=p.set_aspect_mode(&aspect_mode){status(ui,format!("Không đặt được khung hình: {e}"));return;}
     let mut chosen=None;
     let mut last_error=String::new();
     for (index,url) in candidates.iter().enumerate() {
@@ -675,6 +687,50 @@ fn connect_callbacks(
         });
     }
     {
+        let weak=ui.as_weak();let shared=shared.clone();
+        ui.on_toggle_quick_tools(move || {
+            let Some(ui)=weak.upgrade() else{return;};
+            let mut state=shared.borrow_mut();
+            let old=state.data.clone();
+            state.data.quick_tools_expanded=!state.data.quick_tools_expanded;
+            persist(&ui,&mut state,old,"Đã lưu trạng thái công cụ nhanh");
+        });
+    }
+    {
+        let weak=ui.as_weak();let shared=shared.clone();let player=player.clone();
+        ui.on_set_aspect_mode(move |mode| {
+            let Some(ui)=weak.upgrade() else{return;};
+            if !open_iptv_pro_native::model::valid_aspect_mode(mode.as_str()) {status(&ui,"Chế độ khung hình không hợp lệ");return;}
+            if let Some(p)=player.borrow().as_ref(){if let Err(e)=p.set_aspect_mode(mode.as_str()){
+                status(&ui,format!("Không áp dụng được khung hình: {e}"));return;
+            }}
+            let mut state=shared.borrow_mut();let old=state.data.clone();
+            state.data.aspect_mode=mode.to_string();
+            persist(&ui,&mut state,old,"Đã lưu cách hiển thị khung hình");
+        });
+    }
+    {
+        let weak=ui.as_weak();let shared=shared.clone();let player=player.clone();
+        ui.on_toggle_mute(move || {
+            let Some(ui)=weak.upgrade() else{return;};
+            let mut state=shared.borrow_mut();let old=state.data.clone();
+            let muted=!state.data.muted;
+            if let Some(p)=player.borrow().as_ref(){if let Err(e)=p.set_mute(muted){status(&ui,format!("Không chỉnh được tắt tiếng: {e}"));return;}}
+            state.data.muted=muted;
+            persist(&ui,&mut state,old,if muted {"Đã tắt tiếng"}else{"Đã bật tiếng"});
+        });
+    }
+    {
+        let weak=ui.as_weak();let shared=shared.clone();
+        ui.on_toggle_resume_last_channel(move || {
+            let Some(ui)=weak.upgrade() else{return;};
+            let mut state=shared.borrow_mut();let old=state.data.clone();
+            state.data.auto_resume_last_channel=!state.data.auto_resume_last_channel;
+            let enabled=state.data.auto_resume_last_channel;
+            persist(&ui,&mut state,old,if enabled {"Sẽ tự mở kênh cuối khi khởi động"}else{"Đã tắt tự mở kênh cuối"});
+        });
+    }
+    {
         let weak=ui.as_weak(); let shared=shared.clone();
         ui.on_set_theme(move |value| {
             let Some(ui)=weak.upgrade() else {return;};
@@ -983,6 +1039,16 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let multiview: Rc<RefCell<Vec<Mpv>>> = Rc::new(RefCell::new(Vec::new()));
     let recording: Rc<RefCell<Option<(Child, PathBuf)>>> = Rc::new(RefCell::new(None));
     connect_callbacks(&ui,state.clone(),player.clone(),tx.clone(),multiview,recording.clone());
+    let resume = {
+        let s=state.borrow();
+        if s.data.auto_resume_last_channel {
+            s.data.channels.iter().find(|c| c.url==s.data.last_channel_url)
+                .map(|c| (c.name.clone(),c.url.clone(),s.data.volume))
+        } else {None}
+    };
+    if let Some((name,url,volume))=resume {
+        play_logical(&ui,&state,&player,name,url,volume);
+    }
     let _poller=background_timer(&ui,state,rx,tx,recording.clone(),player);
     ui.run()?;
     // Stop sidecar recording when GUI exits to avoid orphan processes.

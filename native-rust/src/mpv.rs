@@ -124,6 +124,18 @@ impl Mpv {
         self.execute(&["loadfile", url, "replace"])
     }
     pub fn toggle_pause(&self) -> Result<(), String> { self.execute(&["cycle", "pause"]) }
+    pub fn set_mute(&self, muted: bool) -> Result<(), String> {
+        self.execute(&["set", "mute", if muted { "yes" } else { "no" }])
+    }
+    pub fn set_aspect_mode(&self, mode: &str) -> Result<(), String> {
+        if !crate::model::valid_aspect_mode(mode) {return Err("Khung hình không hợp lệ".into());}
+        match mode {
+            "fit" => { self.execute(&["set", "video-unscaled", "no"])?; self.execute(&["set", "panscan", "0"]) }
+            "fill" => { self.execute(&["set", "video-unscaled", "no"])?; self.execute(&["set", "panscan", "1.0"]) }
+            "original" => { self.execute(&["set", "panscan", "0"])?; self.execute(&["set", "video-unscaled", "yes"]) }
+            _ => Err("Khung hình không hợp lệ".into()),
+        }
+    }
     pub fn stop(&self) -> Result<(), String> { self.execute(&["stop"]) }
     pub fn fullscreen(&self) -> Result<(), String> { self.execute(&["cycle", "fullscreen"]) }
     pub fn seek(&self, seconds: i32) -> Result<(), String> {
