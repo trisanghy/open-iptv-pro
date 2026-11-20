@@ -285,7 +285,11 @@ jobs:
           pid=$!
           sleep 3
           kill -0 "$pid"
-          xdotool mousemove 1282 94 click 1
+          window_id="$(xdotool search --onlyvisible --name 'Open IPTV Pro' | head -n 1)"
+          if [ -z "$window_id" ]; then echo "Missing live Slint window" >&2; exit 1; fi
+          eval "$(xdotool getwindowgeometry --shell "$window_id")"
+          echo "Slint fullscreen test: window x=$X y=$Y width=$WIDTH height=$HEIGHT" >&2
+          xdotool mousemove "$((X + WIDTH - 57))" "$((Y + 94))" click 1
           sleep 2
           import -display "$DISPLAY" -window root screenshot/15-tv-fullscreen.png
           if ! grep -Fq '[UI_FULLSCREEN_TEST] enabled=true' screenshot/fullscreen-stdout.log; then
