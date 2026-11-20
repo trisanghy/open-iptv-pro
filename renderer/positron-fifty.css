@@ -186,3 +186,9 @@ html.p50-37 #page-settings .settings-grid{gap:12px!important}
 html.p50-37 #page-settings .settings-card{background:var(--po-card)!important;border:1px solid var(--po-line)!important;border-radius:12px!important;box-shadow:none!important}
 html.p50-37 #page-settings .settings-card :is(h2,h3){color:var(--po-ink)!important;line-height:1.35!important}
 html.p50-37 #page-settings .settings-card :is(p,.hint,small){line-height:1.55!important;color:var(--po-muted)!important}
+
+/* Iteration 38: Improve Source Manager panels and import actions */
+html.p50-38 #page-sources :is(.source-card,.settings-card,.source-hub-card){background:var(--po-card)!important;border:1px solid var(--po-line)!important;border-radius:12px!important;box-shadow:none!important}
+html.p50-38 #page-sources .section-heading{gap:12px!important}
+html.p50-38 #page-sources .heading-actions{gap:6px!important;flex-wrap:wrap!important}
+html.p50-38 #page-sources .heading-actions button{min-height:35px!important;border-radius:9px!important}
