@@ -68,7 +68,7 @@
   if(!active())html.removeAttribute('data-iptv-handheld-menu');
   else html.setAttribute('data-iptv-handheld-menu',next?'open':'closed');
   opener?.setAttribute('aria-expanded',String(next));
-  edge?.setAttribute('aria-expanded',String(next));
+  edge?.setAttribute('aria-expanded',active()?String(next):String(html.getAttribute('data-sidebar-visible')!=='false'));
   if(veil)veil.hidden=!next;
  }
  function sync(){
