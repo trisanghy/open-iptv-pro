@@ -76,3 +76,10 @@ html[data-positron=true] #positronStudioMenu .po-theme[aria-pressed=true]{outlin
 html[data-positron=true] #positronStudioMenu .po-swatch{width:22px;height:22px;border-radius:7px;background:linear-gradient(140deg,var(--sw1),var(--sw2));box-shadow:inset 0 0 0 1px #fff3}
 html[data-positron=true] #positronStudioMenu .po-help{margin-top:12px;color:var(--po-muted);font-size:10px}
 @media(prefers-reduced-motion:reduce){html[data-positron=true] :is(.sidebar .nav,#positronBar button,#positronPalette){animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+
+/* P3 audit polish: status and theme reset are visible at all sizes. */
+html[data-positron=true] #positronCounts{color:var(--po-muted);font-size:11px;white-space:nowrap;background:var(--po-raised);border:1px solid var(--po-line);border-radius:999px;padding:8px 10px}
+html[data-positron=true] #positronStudioMenu .po-reset{display:block;width:100%;margin-top:12px!important;border:1px solid var(--po-line)!important;background:var(--po-raised)!important;color:var(--po-ink)!important;justify-content:center;text-align:center}
+@media(max-width:1360px){html[data-positron=true] #positronBar .p-live{display:none}}
+@media(max-width:1140px){html[data-positron=true] #positronCounts{display:none}html[data-positron=true] #positronStudioBtn{padding-inline:8px}}
+@media(max-width:900px){html[data-positron=true] #positronBar .p-actions{gap:5px}html[data-positron=true] #positronBar .p-heading strong{max-width:18ch}html[data-positron=true] #positronBar .p-actions button{font-size:11px}}

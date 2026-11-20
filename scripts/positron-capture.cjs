@@ -93,6 +93,94 @@ const sleep=n=>new Promise(resolve=>setTimeout(resolve,n));
   await sleep(250);await capture('positron-final-focus-real.png');
   await page.locator('#positronFocus').click();
   await sleep(350);await capture('positron-final-main-real.png');
+  // Positron P3: 20 ADDITIONAL UI iterations, all on actual running Electron.
+  // Use only the app's existing state: no injected channels or simulated screenshots.
+  await page.waitForSelector('#positronStudioBtn',{timeout:12000});
+  const studioHistory=[];
+  const paletteIds=['night','aurora','graphite'];
+  for(let round=1;round<=20;round++){
+    const theme=paletteIds[(round-1)%paletteIds.length];
+    await page.locator('#positronStudioBtn').click();
+    await page.locator('[data-po-theme="'+theme+'"]').click();
+    const selectedTheme=await page.evaluate(()=>document.documentElement.dataset.positronPalette);
+    assert.equal(selectedTheme,theme,'P3 theme did not apply at round '+round);
+    await page.keyboard.press('Alt+p'); // close Studio panel
+    assert.equal(await page.locator('#positronStudioMenu').isHidden(),true);
+    await page.keyboard.press('Alt+2');
+    assert.equal(await page.locator('.page.active-page').first().getAttribute('id'),'page-fav');
+    await page.keyboard.press('Alt+1');
+    assert.equal(await page.locator('.page.active-page').first().getAttribute('id'),'page-tv');
+    await page.keyboard.press('Control+k');
+    assert.equal(await page.locator('#positronPalette').isVisible(),true);
+    await page.keyboard.press('ArrowDown');
+    await page.waitForFunction(()=>!!document.getElementById('positronQuery')?.getAttribute('aria-activedescendant'),{timeout:2000});
+    const search=await page.evaluate(()=>({
+      combo:document.getElementById('positronQuery')?.getAttribute('role'),
+      resultId:document.getElementById('positronQuery')?.getAttribute('aria-activedescendant')
+    }));
+    assert.equal(search.combo,'combobox');
+    assert.ok(search.resultId);
+    if(round===7){
+      await page.locator('#positronQuery').focus();
+      await page.keyboard.press('Shift+Tab');
+      const trapped=await page.evaluate(()=>document.getElementById('positronPalette').contains(document.activeElement));
+      assert.equal(trapped,true,'search focus escaped modal dialog');
+    }
+    await page.keyboard.press('Escape');
+    assert.equal(await page.locator('#positronPalette').isHidden(),true);
+    const geometry=await page.evaluate(()=>{
+      const screen=document.getElementById('playerBox').getBoundingClientRect();
+      const header=document.getElementById('positronBar').getBoundingClientRect();
+      return {videoWidth:Math.round(screen.width),videoHeight:Math.round(screen.height),
+        barHeight:Math.round(header.height),counts:document.getElementById('positronCounts')?.textContent||''};
+    });
+    assert.ok(geometry.videoWidth>200&&geometry.videoHeight>100);
+    assert.ok(geometry.barHeight>=50);
+    assert.ok(geometry.counts.includes('kênh')&&geometry.counts.includes('nguồn'));
+    studioHistory.push({round,theme,quickNavigation:'pass',keyboardSearch:'pass',geometry});
+    if(round===5||round===10||round===15){
+      await capture('positron-p3-round-'+String(round).padStart(2,'0')+'-real.png');
+    }
+    process.stdout.write('Positron Studio P3 '+round+'/20 PASS\\n');
+  }
+  assert.equal(studioHistory.length,20);
+  // Verify persisted theme survives a real renderer reload.
+  await page.reload({waitUntil:'domcontentloaded'});
+  await page.waitForSelector('#positronStudioBtn',{timeout:30000});
+  await page.waitForFunction(()=>document.documentElement.dataset.positronPalette==='aurora',{timeout:5000});
+  for(const theme of paletteIds){
+    await page.locator('#positronStudioBtn').click();
+    await page.locator('[data-po-theme="'+theme+'"]').click();
+    await page.keyboard.press('Escape');
+    if(theme==='night')await capture('positron-p3-nebula-real.png');
+    if(theme==='aurora')await capture('positron-p3-aurora-real.png');
+    if(theme==='graphite')await capture('positron-p3-graphite-real.png');
+  }
+  await page.locator('#positronStudioBtn').click();
+  await capture('positron-p3-studio-menu-real.png');
+  await page.keyboard.press('Escape');
+  await page.locator('#positronStudioBtn').click();
+  await page.locator('[data-po-theme="night"]').click();
+  await page.keyboard.press('Escape');
+  await page.setViewportSize({width:850,height:800});
+  await page.waitForTimeout(450);
+  const narrow=await page.evaluate(()=>{
+    const video=document.querySelector('#page-tv .watch-panel').getBoundingClientRect();
+    const list=document.querySelector('#page-tv .channel-panel').getBoundingClientRect();
+    return {width:innerWidth,videoTop:video.top,channelTop:list.top,playerWidth:video.width};
+  });
+  assert.ok(narrow.playerWidth>300,'narrow player is too small');
+  assert.ok(narrow.videoTop<narrow.channelTop,'responsive layout must lead with the video');
+  await capture('positron-p3-narrow-window-real.png');
+  await page.setViewportSize({width:1360,height:823});
+  await page.waitForTimeout(350);
+  await capture('positron-p3-final-main-real.png');
+  fs.writeFileSync(path.join(out,'audit-positron-p3-20-rounds.json'),JSON.stringify({
+    source:'actual Electron application via CDP, no mocked channel data',
+    extraRounds:studioHistory.length,previousRounds:history.length,
+    persistedPaletteReload:'pass',responsiveVideoFirst:'pass',narrow,
+    roundResults:studioHistory,rendererErrors:jsErrors
+  },null,2));
   fs.writeFileSync(path.join(out,'audit-20-rounds.json'),JSON.stringify({
     source:'actual Electron renderer via Chrome DevTools Protocol',
     realRounds:history.length,

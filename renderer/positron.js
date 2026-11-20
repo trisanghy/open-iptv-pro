@@ -11,7 +11,7 @@
   const brand=doc.querySelector('#appSidebar .brand b');
   const descriptor=doc.querySelector('#appSidebar .brand small');
   if(brand) brand.textContent='Positron';
-  if(descriptor) descriptor.textContent='OPEN IPTV PRO · LAB P1';
+  if(descriptor) descriptor.textContent='OPEN IPTV PRO · STUDIO P3';
   const navItems=[
     ['tv','▣','Xem truyền hình','Phát kênh và điều khiển video'],
     ['fav','★','Kênh yêu thích','Danh sách đã đánh dấu sao'],
