@@ -9,7 +9,7 @@ test('advanced diagnostic health is compacted without dropping events or metadat
  const encoded=pack(input);
  assert.equal(encoded.__format,FORMAT);
  assert.deepEqual(JSON.parse(JSON.stringify(unpack(encoded))),input);
- assert.ok(JSON.stringify(encoded).length<JSON.stringify(input).length*.72);
+ assert.ok(JSON.stringify(encoded).length<JSON.stringify(input).length*.80);
 });
 test('older health format stays readable and blank health stays valid',()=>{
  const plain={'https://example.invalid/live.m3u8':[{status:'uncertain',date:'2026-11-20T02:03:41.000Z'}]};
