@@ -1,4 +1,4 @@
-# Validated after v4.23.72 renderer and desktop regression tests passed; publish immutable new tag only.
+# Retry v4.23.72 after the complete 24-file version assertion migration; all legacy tests retained.
 name: Publish Electron v4.23.72 Beta (Mac ARM/Intel, Windows, Source)
 on:
   push:
