@@ -19,3 +19,8 @@ window.OpenIPTVPositronStudio={choose,open,close,toggle,menu,button:btn,choices,
 try{const saved=localStorage.getItem(key);if(studio.choices.some(x=>x.id===saved))studio.choose(saved);}catch{}
 studio.subscribe(id=>{try{localStorage.setItem(key,id);}catch{ /* private storage can be unavailable */ }});
 })();
+/* 13 */(()=>{const studio=window.OpenIPTVPositronStudio;if(!studio)return;
+document.addEventListener('pointerdown',e=>{if(!studio.menu.hidden&&!studio.menu.contains(e.target)&&e.target!==studio.button)studio.close();});
+document.addEventListener('keydown',e=>{if(studio.menu.hidden)return;if(e.key==='Escape'){e.preventDefault();e.stopImmediatePropagation();studio.close();studio.button.focus();return;}
+if(e.key==='ArrowRight'||e.key==='ArrowLeft'){const current=[...studio.menu.querySelectorAll('[data-po-theme]')];if(!current.includes(document.activeElement))return;e.preventDefault();const idx=current.indexOf(document.activeElement);current[(idx+(e.key==='ArrowRight'?1:-1)+current.length)%current.length].focus();}});
+})();
