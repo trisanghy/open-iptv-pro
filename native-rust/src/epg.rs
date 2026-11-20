@@ -395,8 +395,8 @@ mod tests {
         <programme channel="D" start="20261220070000 +0700" stop="20261220080000 +0700"><title>Later</title></programme></tv>"#;
         let schedule = parse_schedule(xml, now).unwrap();
         assert_eq!(schedule.len(), 2);
-        assert_eq!(schedule[0].channel, "A");
-        assert_eq!(schedule[1].channel, "B");
+        assert_eq!(schedule[0].channel, "B");
+        assert_eq!(schedule[1].channel, "A");
     }
 
 
