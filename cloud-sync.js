@@ -7,6 +7,8 @@
  const app=window.IPTVState, core=window.OpenIPTVCloudCore;
  const el=id=>document.getElementById(id);
  const card=el('cloudSyncCard'),status=el('cloudStatus');
+ const serverStats=el('cloudServerStats'),serverCount=el('cloudServerChannelCount');
+ const serverUpdated=el('cloudServerUpdatedAt');
  const quick=el('cloudAccountQuick');
  if(!app||!core||!card||!status)return;
  if(quick)quick.addEventListener('click',()=>{
@@ -154,6 +156,7 @@
    show(linkForm,!uid&&!!client&&enabledProviders.email&&linkHelpOpen);
    card.dataset.authState=uid?'signed-in':'guest';
   show(logout,!!uid);show(sync,!!uid);
+  show(serverStats,!!uid);
   const hasMigration=!!uid&&!!localStorage.getItem(MIGRATION_BACKUP);
   show(migrationRestore,hasMigration);
   card.dataset.hasMigration=hasMigration?'true':'false';
@@ -167,10 +170,25 @@
    quick.title=uid?'Tài khoản đã đăng nhập và đồng bộ':'Đăng nhập và đồng bộ dữ liệu IPTV';
   }
  };
+ // Only use the server-confirmed payload for this signed-in account.
+ function updateServerStats(id,row){
+  if(!id||id!==uid||!serverCount||!serverUpdated)return;
+  const display=core.serverChannelCount(row?.payload).toLocaleString('vi-VN');
+  if(serverCount.textContent!==display)serverCount.textContent=display;
+  let message='Chưa có bản lưu trên server';
+  if(row){
+   const stamp=row.updated_at?new Date(row.updated_at):null;
+   message=stamp&&Number.isFinite(stamp.getTime())
+    ? 'Server cập nhật: '+stamp.toLocaleString('vi-VN',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'})
+    : 'Đã xác nhận trên Supabase';
+  }
+  if(serverUpdated.textContent!==message)serverUpdated.textContent=message;
+ }
  async function readRemote(id){
   const {data,error}=await client.from('openiptv_user_state')
    .select('payload,revision,updated_at').eq('user_id',id).maybeSingle();
   if(error)throw error;
+  updateServerStats(id,data);
   return data;
  }
  // Automatic sync: the cloud is authoritative on a fresh browser, while
@@ -223,18 +241,18 @@
       return false;
     }
     const expected=remote?.revision||0;
-    let error=null,newRev=null;
+    let error=null,newRev=null,serverUpdatedAt=null;
     if(!remote){
      const reply=await client.from('openiptv_user_state')
       .insert({user_id:originalId,payload:desired,revision:1})
-      .select('revision').single();
-     error=reply.error;newRev=reply.data?.revision;
+      .select('revision,updated_at').single();
+     error=reply.error;newRev=reply.data?.revision;serverUpdatedAt=reply.data?.updated_at||null;
     }else if(!core.same(desired,remote.payload)){
      const reply=await client.from('openiptv_user_state')
       .update({payload:desired,revision:expected+1,updated_at:new Date().toISOString()})
       .eq('user_id',originalId).eq('revision',expected)
-      .select('revision').maybeSingle();
-     error=reply.error;newRev=reply.data?.revision;
+      .select('revision,updated_at').maybeSingle();
+     error=reply.error;newRev=reply.data?.revision;serverUpdatedAt=reply.data?.updated_at||null;
     }else{
      newRev=expected;
     }
@@ -246,6 +264,8 @@
     }
     if(!newRev)continue; // CAS miss: fetch latest revision and merge again.
     revision=newRev;
+    // A successful insert/update ACK is required before changing the count.
+    updateServerStats(originalId,{payload:desired,updated_at:serverUpdatedAt||remote?.updated_at||null});
     saveMeta(originalId,newRev,desired);
     localStorage.setItem(ACTIVE,originalId);
     lastObservedHash=contentHash(desired);
@@ -292,6 +312,8 @@
   }
   if(!guestBackup())return;
   uid=id;window.__iptvCloudUserName=authName(user);
+  if(serverCount)serverCount.textContent='—';
+  if(serverUpdated)serverUpdated.textContent='Đang kiểm tra bản lưu trên Supabase…';
   ready=true;show(choices,false);syncControls();
   label('Đăng nhập thành công · đang tự khôi phục và đồng bộ…');
   // Do not wait for a button press: new accounts upload automatically, and
