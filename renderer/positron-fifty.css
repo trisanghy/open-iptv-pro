@@ -83,3 +83,8 @@ html.p50-18 #page-tv .channel-panel .panel-header{padding:11px 11px 8px!importan
 html.p50-18 #page-tv .panel-header h2{font-size:13px!important;font-weight:750!important;line-height:1.1!important}
 html.p50-18 #page-tv .panel-header p{font-size:10px!important;margin-top:3px!important}
 html.p50-18 #page-tv .channel-panel :is(#channelPanelHideBtn,#refreshAllBtn){height:32px!important;width:32px!important;min-height:32px!important;min-width:32px!important;flex-basis:32px!important;border-radius:9px!important}
+
+/* Iteration 19: Promote channel search above ancillary filters */
+html.p50-19 #page-tv .channel-panel .filter-box{margin:6px 10px 8px!important;min-height:36px!important;border-radius:9px!important;display:flex!important;align-items:center!important}
+html.p50-19 #page-tv #searchBox{min-height:32px!important;height:32px!important;font-size:12px!important;border:0!important;caret-color:var(--po-accent)!important}
+html.p50-19 #page-tv #searchBox::placeholder{color:var(--po-muted)!important}
