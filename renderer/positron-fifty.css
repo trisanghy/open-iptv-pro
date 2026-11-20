@@ -98,3 +98,8 @@ html.p50-20 #page-tv .channel-panel .filter-tabs{padding:6px 10px!important;gap:
 html.p50-21.p50-empty #page-tv .channel-panel :is(.folder-actions,.filter-tabs,.channel-drag-hint){display:none!important}
 html.p50-21.p50-empty #positronFiltersToggle{font-size:10px!important;opacity:.82}
 html.p50-21.p50-empty #page-tv .channel-panel #channelSelectionBar.hidden{display:none!important}
+
+/* Iteration 22: Give no-source help a readable centered empty state */
+html.p50-22.p50-empty #page-tv .channel-panel :is(.channel-list,.channel-scroll){min-height:145px!important}
+html.p50-22.p50-empty #page-tv .channel-panel :is(.channel-empty,.empty-channels,.no-channels){padding:30px 15px!important;text-align:center!important;line-height:1.65!important;color:var(--po-muted)!important}
+html.p50-22.p50-empty #page-tv .channel-panel{min-height:265px!important}
