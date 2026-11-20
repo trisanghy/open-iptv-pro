@@ -58,6 +58,12 @@ details[open] summary{color:#c2a9ff}
  .mobile-tabs a.is-current{background:#292442;border-color:rgba(168,152,253,.15);color:#d7caff}
  .guide-main{padding-bottom:calc(112px + env(safe-area-inset-bottom,0px))}
 }
+
+/* Solid fixed layers cost fewer repaint passes on Safari while navigating. */
+@media(max-width:720px){
+ .mobile-tabs{background:#111827!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+ .site-header{background:#080c18!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+}
 </style>
 </head>
 <body>
@@ -191,31 +197,81 @@ details[open] summary{color:#c2a9ff}
 <script>
 (function(){
 'use strict';
+// Guide tabs jump to sections. Long native smooth scrolling on iOS repaints
+// every card and flickers the selected tab during the trip.
 const links=[...document.querySelectorAll('.side a[href^="#"],.mobile-tabs a[href^="#"]')];
+const tabs=[...document.querySelectorAll('.mobile-tabs a[href^="#"]')];
 const sections=[...document.querySelectorAll('.guide-main section[id]')];
-// Track a single section from the full viewport rather than a partial
-// IntersectionObserver entry batch; Safari can keep an old :hover on touch.
-let scheduled=false;
-function updateActive(){
- scheduled=false;
- const cutoff=Math.min(180,window.innerHeight*.33);
- let id=sections[0]?.id||'';
- for(const section of sections){
-  if(section.getBoundingClientRect().top<=cutoff)id=section.id;
-  else break;
- }
+const byId=new Map(sections.map(section=>[section.id,section]));
+let scheduled=false,jumping=false,unlockTimer=0;
+function tabForSection(id){
+ if(id==='nguon')return 'nguon';
+ if(id==='kenh')return 'kenh';
+ if(id==='epg')return 'epg';
+ if(['mobile','cong-cu','cai-dat','su-co','faq'].includes(id))return 'faq';
+ return 'tv';
+}
+function selectSection(id){
+ const tabId=tabForSection(id);
  for(const link of links){
-  const on=link.getAttribute('href')==='#'+id;
+  const requested=link.getAttribute('href').slice(1);
+  const on=tabs.includes(link)?requested===tabId:requested===id;
   link.classList.toggle('is-current',on);
   if(on)link.setAttribute('aria-current','location');
   else link.removeAttribute('aria-current');
  }
 }
-function scheduleActive(){
- if(scheduled)return;
- scheduled=true;
- window.requestAnimationFrame(updateActive);
+function activeFromScroll(){
+ scheduled=false;
+ if(jumping)return;
+ const cutoff=Math.min(180,window.innerHeight*.33);
+ let id=sections[0]?.id||'bat-dau';
+ for(const section of sections){
+  if(section.getBoundingClientRect().top<=cutoff)id=section.id;
+  else break;
+ }
+ selectSection(id);
 }
+function scheduleActive(){
+ if(jumping||scheduled)return;
+ scheduled=true;
+ window.requestAnimationFrame(activeFromScroll);
+}
+function jumpTo(event){
+ const link=event.currentTarget;
+ const id=link.getAttribute('href').slice(1);
+ const target=byId.get(id);
+ if(!target)return;
+ event.preventDefault();
+ window.clearTimeout(unlockTimer);
+ const start=window.scrollY||document.documentElement.scrollTop||0;
+ const end=Math.max(0,Math.min(
+  start+target.getBoundingClientRect().top-72,
+  Math.max(0,document.documentElement.scrollHeight-window.innerHeight)
+ ));
+ const distance=Math.abs(end-start);
+ const reduced=window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+ // Smooth within a viewport; immediately reach farther targets without
+ // animating through thousands of pixels and repainting the entire page.
+ const smooth=!reduced&&distance<=window.innerHeight*1.25;
+ jumping=true;
+ selectSection(id);
+ try{window.history.replaceState(window.history.state,'',window.location.pathname+window.location.search+'#'+id);}catch(_){}
+ window.scrollTo({top:end,behavior:smooth?'smooth':'instant'});
+ const release=()=>{
+  window.clearTimeout(unlockTimer);
+  jumping=false;
+  selectSection(id);
+ };
+ if(smooth){
+  if('onscrollend' in window){
+   const finish=()=>{window.removeEventListener('scrollend',finish);release();};
+   window.addEventListener('scrollend',finish,{once:true});
+   unlockTimer=window.setTimeout(()=>{window.removeEventListener('scrollend',finish);release();},850);
+  }else unlockTimer=window.setTimeout(release,550);
+ }else window.requestAnimationFrame(release);
+}
+for(const tab of tabs)tab.addEventListener('click',jumpTo);
 for(const event of ['scroll','resize','hashchange','pageshow']){
  window.addEventListener(event,scheduleActive,{passive:true});
 }
