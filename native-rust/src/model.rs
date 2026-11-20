@@ -220,6 +220,25 @@ mod tests {
         assert_eq!(restored.channels[1].name,"VTV3");
     }
     #[test]
+    fn update_source_reuses_id_and_preserves_matching_favorites() {
+        let mut d=NativeData::default();
+        let src=Source{id:"same".into(),name:"Nguồn A".into(),origin:"https://old.example/a.m3u".into()};
+        let make=|id:&str,name:&str,url:&str| Channel{
+            source_id:id.into(),name:name.into(),url:url.into(),group:"TV".into(),
+            tvg_id:name.into(),logo:String::new(),catchup:String::new(),catchup_source:String::new(),catchup_days:String::new()};
+        d.insert_source(src,vec![make("same","VTV1","https://example.org/vtv1.m3u8"),make("same","VTV2","https://example.org/vtv2.m3u8")]).unwrap();
+        d.favorite_urls.insert("https://example.org/vtv1.m3u8".into());
+        d.favorite_urls.insert("https://example.org/vtv2.m3u8".into());
+        d.insert_source(Source{id:"same".into(),name:"Nguồn A".into(),origin:"https://new.example/a.m3u".into()},
+            vec![make("same","VTV1","https://example.org/vtv1.m3u8"),make("same","VTV3","https://example.org/vtv3.m3u8")]).unwrap();
+        assert_eq!(d.sources.len(),1);
+        assert_eq!(d.sources[0].origin,"https://new.example/a.m3u");
+        assert_eq!(d.channels.len(),2);
+        assert!(d.favorite_urls.contains("https://example.org/vtv1.m3u8"));
+        assert!(!d.favorite_urls.contains("https://example.org/vtv2.m3u8"));
+        d.validate().unwrap();
+    }
+        #[test]
     fn insert_and_remove_source() {
         let mut d = NativeData::default();
         let s = Source { id: "one".into(), name: "A".into(), origin: "test".into() };

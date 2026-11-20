@@ -33,6 +33,8 @@ export component MainWindow inherits Window {
     in-out property <string> active-page: "tv";
     in-out property <string> page-title: "Xem truyền hình";
     in-out property <string> url-input;
+    in-out property <string> source-edit-url;
+    in-out property <string> source-edit-name;
     in-out property <string> epg-url-input;
     in-out property <bool> epg-auto-refresh-enabled: true;
     in-out property <bool> quick-tools-expanded: false;
@@ -82,6 +84,8 @@ export component MainWindow inherits Window {
     callback toggle-mute();
     callback toggle-resume-last-channel();
     callback select-source(int);
+    callback update-source-url();
+    callback rename-source();
     callback show-all();
     callback show-favorites();
     callback remove-source();
@@ -419,6 +423,18 @@ export component MainWindow inherits Window {
                                 }
                             }
                             Text { text: root.selected-source-text; color: root.accent; font-size: 12px; }
+                            Text { text: "SỬA NGUỒN ĐÃ CHỌN"; color: root.accent; font-weight: 700; font-size: 11px; }
+                            Text { text: "Đổi tên hoặc URL cho nguồn được chọn. URL mới sẽ được tải và kiểm tra trước khi thay thế; nếu lỗi vẫn giữ nguyên dữ liệu cũ. Cần xác nhận quyền M3U ở phía trên."; color: #a5bacd; font-size: 11px; wrap: word-wrap; }
+                            HorizontalLayout {
+                                spacing: 8px;
+                                LineEdit { text <=> root.source-edit-name; placeholder-text: "Tên nguồn"; }
+                                Button { text: "Đổi tên"; clicked => { root.rename-source(); } }
+                            }
+                            HorizontalLayout {
+                                spacing: 8px;
+                                LineEdit { text <=> root.source-edit-url; placeholder-text: "https://.../playlist.m3u"; }
+                                Button { text: "Kiểm tra & thay URL"; clicked => { root.update-source-url(); } }
+                            }
                             HorizontalLayout { Button { text: "Xem tất cả"; clicked => { root.show-all(); } } Button { text: "Xóa nguồn đang chọn (xác nhận 2 lần)"; clicked => { root.remove-source(); } } }
                         }
                     }

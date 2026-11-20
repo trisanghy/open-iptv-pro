@@ -169,13 +169,22 @@ fn import_playlist(ui: &MainWindow, state: &mut State, source: Source, result: R
         Ok(channels) => {
             let previous = state.data.clone();
             let name = source.name.clone();
+            let id = source.id.clone();
+            let origin = source.origin.clone();
+            let replacing = state.data.sources.iter().any(|s| s.id == id);
             let count = channels.len();
             match state.data.insert_source(source, channels) {
                 Ok(_) => {
-                    state.selected_source = None;
+                    state.selected_source = if replacing { Some(id) } else { None };
                     state.favorites_only = false;
                     state.recent_only = false;
-                    persist(ui, state, previous, format!("Đã thêm {count} kênh từ {name}."));
+                    if replacing {
+                        ui.set_source_edit_url(origin.into());
+                        ui.set_source_edit_name(name.clone().into());
+                    }
+                    persist(ui, state, previous,
+                        if replacing {format!("Đã kiểm tra và thay URL nguồn {name}, nạp {count} kênh; giữ dữ liệu kênh khớp.")}
+                        else {format!("Đã thêm {count} kênh từ {name}.")});
                 }
                 Err(e) => status(ui, format!("Lỗi nhập playlist: {e}")),
             }
@@ -383,12 +392,49 @@ fn connect_callbacks(
         ui.on_select_source(move |idx| {
             if let Some(ui)=weak.upgrade() {
                 let mut s=shared.borrow_mut();
-                let selected_id = s.data.sources.get(idx as usize).map(|src| src.id.clone());
-                if let Some(id)=selected_id {
-                    s.selected_source=Some(id); s.favorites_only=false; s.recent_only=false; s.pending_delete=None; s.folder_filter=None; s.page=0;
+                let selected = s.data.sources.get(idx as usize).cloned();
+                if let Some(src)=selected {
+                    ui.set_source_edit_url(src.origin.clone().into());
+                    ui.set_source_edit_name(src.name.clone().into());
+                    s.selected_source=Some(src.id); s.favorites_only=false; s.recent_only=false; s.pending_delete=None; s.folder_filter=None; s.page=0;
                     refresh(&ui, &mut s);
                 }
             }
+        });
+    }
+    {
+        let weak=ui.as_weak(); let shared=shared.clone();
+        ui.on_rename_source(move || {
+            let Some(ui)=weak.upgrade() else{return;};
+            let new_name=ui.get_source_edit_name().trim().to_string();
+            if new_name.is_empty() || new_name.len() > 1024 {status(&ui,"Tên nguồn phải có độ dài từ 1 đến 1024 byte");return;}
+            let mut state=shared.borrow_mut();
+            let Some(id)=state.selected_source.clone() else{status(&ui,"Chọn nguồn trước khi đổi tên");return;};
+            let old=state.data.clone();
+            let Some(src)=state.data.sources.iter_mut().find(|s|s.id==id) else{status(&ui,"Không tìm thấy nguồn đang chọn");return;};
+            src.name=new_name;
+            persist(&ui,&mut state,old,"Đã đổi tên nguồn và lưu dữ liệu");
+        });
+    }
+    {
+        let weak=ui.as_weak();let shared=shared.clone();let tx=tx.clone();
+        ui.on_update_source_url(move || {
+            let Some(ui)=weak.upgrade() else{return;};
+            let new_url=ui.get_source_edit_url().trim().to_string();
+            if !ui.get_import_rights_confirmed() {status(&ui,"Xác nhận có quyền sử dụng URL M3U trước khi cập nhật nguồn");return;}
+            if !(new_url.starts_with("https://") || new_url.starts_with("http://")) || new_url.len()>8192 || new_url.chars().any(char::is_whitespace) {
+                status(&ui,"URL M3U phải là HTTP(S) hợp lệ");return;
+            }
+            let selected={
+                let s=shared.borrow();
+                s.selected_source.as_ref().and_then(|id|s.data.sources.iter().find(|src|&src.id==id)).cloned()
+            };
+            let Some(mut src)=selected else{status(&ui,"Chọn nguồn trước khi cập nhật URL");return;};
+            if src.origin==new_url {status(&ui,"URL nguồn chưa thay đổi");return;}
+            src.origin=new_url.clone();
+            ui.set_import_rights_confirmed(false);
+            spawn_m3u(tx.clone(),src,new_url,None);
+            status(&ui,"Đang kiểm tra URL và playlist mới. Nguồn hiện tại được giữ nguyên nếu tải thất bại.");
         });
     }
     {
