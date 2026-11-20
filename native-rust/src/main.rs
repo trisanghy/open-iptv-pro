@@ -202,7 +202,10 @@ fn refresh(ui: &MainWindow, state: &mut State) {
             state.data.sources.iter().find(|s| &s.id == id).map(|s| s.name.clone()).unwrap_or("Nguồn đã xóa".into())
         } else { "Tất cả nguồn".into() };
     ui.set_selected_source_text(selected.into());
-    refresh_schedule(ui, state);
+    // Do not rebuild large EPG lists while a viewer is using other pages.
+    if ui.get_active_page().as_str() == "epg" {
+        refresh_schedule(ui, state);
+    }
 }
 
 fn status(ui: &MainWindow, msg: impl Into<String>) {
