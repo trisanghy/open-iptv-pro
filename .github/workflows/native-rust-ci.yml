@@ -1,0 +1,36 @@
+name: Rust Native C3 - Slint/libmpv checks
+on:
+  push:
+    branches:
+      - experiment/rust-native-slint-libmpv-c3-autobuild
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  native-test:
+    name: Build and test actual Rust Native source
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: native-rust
+      - name: Install Linux Slint requirements
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y pkg-config libxkbcommon-dev libfontconfig1-dev libwayland-dev libegl1-mesa-dev libgl1-mesa-dev libasound2-dev
+      - name: Verify editable native source exists
+        run: |
+          test -s native-rust/Cargo.toml
+          test -s native-rust/src/main.rs
+          test -s native-rust/ui/app.slint
+      - name: Check native Rust formatting
+        run: cargo fmt --manifest-path native-rust/Cargo.toml --all -- --check
+      - name: Native Rust regression tests
+        run: cargo test --manifest-path native-rust/Cargo.toml
+      - name: Verify Slint UI and native executable compile
+        run: cargo check --manifest-path native-rust/Cargo.toml --all-targets
