@@ -157,8 +157,7 @@ export component MainWindow inherits Window {
 
     HorizontalLayout {
         spacing: 0px;
-        Rectangle {
-            visible: !root.player-fullscreen;
+        if !root.player-fullscreen : Rectangle {
             width: root.rail-collapsed ? 76px : 224px;
             background: root.amoled-mode ? #070707 : (root.light-mode ? #ffffff : #101b29);
             border-width: 1px;
@@ -249,7 +248,6 @@ export component MainWindow inherits Window {
 if (root.active-page == "tv" || root.active-page == "fav" || root.active-page == "recent") : VerticalLayout {
     vertical-stretch: 1; spacing: 8px;
     Rectangle {
-    visible: !root.player-fullscreen;
     height: 44px; background: #142536; border-radius: 9px;
     HorizontalLayout {
         padding-left: 12px; padding-right: 8px; spacing: 9px;
@@ -267,7 +265,7 @@ if (root.active-page == "tv" || root.active-page == "fav" || root.active-page ==
     }
 }
     Rectangle {
-    height: root.player-fullscreen ? 760px : 322px;
+    height: root.player-fullscreen ? root.height - 96px : 322px;
     background: #050a11; border-radius: 11px;
     border-width: 1px; border-color: #30455b; clip: true;
     Image { source: root.video-frame; width: parent.width; height: parent.height; image-fit: contain; visible: root.has-video-frame; }
@@ -744,9 +742,8 @@ if (root.active-page == "tv" || root.active-page == "fav" || root.active-page ==
                     }
                 }
             }
-            Rectangle {
+            if !root.player-fullscreen : Rectangle {
                 height: 34px;
-                visible: !root.player-fullscreen;
                 background: root.light-mode ? #f6f8fd : #152131;
                 border-width: 1px;
                 border-color: #24374c;
