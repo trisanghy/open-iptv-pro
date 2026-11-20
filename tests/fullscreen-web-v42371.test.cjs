@@ -24,3 +24,25 @@ test('fullscreen fit settings and visibility are scoped to fullscreen',()=>{
  for(const fit of ['contain','cover','fill','none'])assert.ok(css.includes('video.fit-'+fit),fit);
  assert.match(css,/\.player-box:not\(:fullscreen\) \.fs-web-button/);
 });
+
+test('fullscreen toolbar uses separate flex groups instead of legacy 42px text buttons',()=>{
+ const script=read('renderer/fullscreen-web-v42371.js');
+ const css=read('renderer/fullscreen-web-v42371.css');
+ for(const key of ['fs-web-transport','fs-web-identity','fs-web-actions','fs-web-volume','fs-web-extras'])assert.ok(script.includes(key),key);
+ assert.match(script,/dock\.replaceChildren\(seek,transport,identity,actions,volume,extras,pop\)/);
+ assert.match(css,/\.fs-web-actions button\.fs-web-button\s*\{/);
+ assert.match(css,/width:auto!important/);
+ assert.match(css,/white-space:nowrap!important/);
+ assert.match(css,/@media\(max-width:870px\)/);
+});
+test('fullscreen stream choice never places a URL inside the bottom action button',()=>{
+ const script=read('renderer/fullscreen-web-v42371.js');
+ assert.match(script,/links\.textContent=.*Link dự phòng.*Link chính/);
+ assert.match(script,/links\.title=select\?\.selectedOptions/);
+});
+test('fullscreen volume slider uses existing persistent player volume control',()=>{
+ const script=read('renderer/fullscreen-web-v42371.js');
+ assert.match(script,/id='fsWebVolume'/);
+ assert.match(script,/mainVolume\.dispatchEvent\(new Event\('input'/);
+ assert.match(script,/mainVolume\?\.addEventListener\('input',syncVolume\)/);
+});
