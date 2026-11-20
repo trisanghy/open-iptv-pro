@@ -1,0 +1,15 @@
+/* Unified inline AI area: no floating modal frame. */
+#page-tv .unified-ai-row {display:block!important;position:relative;min-width:0;width:100%;padding:10px 14px!important;box-sizing:border-box}
+#page-tv .unified-ai-toggle{display:inline-flex!important;align-items:center;gap:11px;max-width:100%;padding:9px 14px!important;min-height:43px;border:1px solid #bd83ec!important;border-radius:12px!important;color:#f4e9ff!important;background:#322044!important;font-weight:700;font-size:14px;cursor:pointer}
+.unified-ai-mark{display:inline-flex;align-items:center;justify-content:center;padding:2px 5px;border-radius:5px;color:#22132e;background:#c587f2;font-weight:900}
+.unified-ai-arrow{margin-left:8px;font-size:19px;line-height:1}
+.unified-ai-open .unified-ai-arrow{transform:rotate(180deg)}
+#page-tv .unified-ai-content[hidden]{display:none!important}
+#page-tv .unified-ai-content{display:flex!important;flex-direction:column;gap:12px;width:100%;min-width:0;padding:15px 0 6px;box-sizing:border-box;background:transparent!important;box-shadow:none!important;border:0!important}
+#page-tv .unified-ai-content .caption-third-controls{display:flex!important;flex-wrap:wrap!important;gap:12px;width:100%;min-width:0}
+#page-tv .unified-ai-content .caption-ai-main,#page-tv .unified-ai-content .caption-tts-main{min-width:0;max-width:100%}
+#page-tv .unified-ai-content :is(.openiptv-cc-panel,.rust-cc-panel).unified-inline-cc:not([hidden]){position:static!important;inset:auto!important;display:grid!important;z-index:auto!important;transform:none!important;max-height:none!important;width:100%!important;max-width:100%!important;overflow:visible!important;border:0!important;border-radius:0!important;box-shadow:none!important;background:transparent!important;backdrop-filter:none!important;margin:0!important;padding:12px 0!important}
+#page-tv .unified-ai-content .unified-inline-cc[hidden]{display:none!important}
+#page-tv .unified-ai-tools{display:flex!important;gap:8px;flex-wrap:wrap;align-items:center;padding:4px 0}
+#page-tv #playbackExtra[hidden]{display:none!important}
+@media(max-width:720px){#page-tv .unified-ai-content .caption-third-controls{flex-direction:column!important}#page-tv .unified-ai-content :is(.caption-ai-main,.caption-tts-main){width:100%!important}#page-tv .unified-ai-row{padding:10px!important}}
