@@ -179,6 +179,7 @@ jobs:
           # height even when the desktop virtual viewport is 1024px wide.
           node --check _site/web-desktop-viewport-fix.js
           node --test web-online/tests/web-desktop-iphone-height.test.cjs
+          node --test web-online/tests/web-desktop-iphone-drawer.test.cjs
           cmp _site/web-desktop-viewport-fix.js web-desktop-viewport-fix.js
           cmp _site/web-desktop-viewport-fix.css web-desktop-viewport-fix.css
           grep -Fq 'web-desktop-viewport-fix.js?v=desktop-iphone-drawer-20261120a' _site/index.html
