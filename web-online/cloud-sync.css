@@ -110,3 +110,31 @@
  }
  #cloudSyncCard[data-auth-state="signed-in"] > .cloud-sync-actions > .btn {grid-column:1/-1}
 }
+
+/* Server-verified channel inventory: never a local channel counter. */
+#cloudSyncCard .cloud-server-stats{
+ display:flex;align-items:center;justify-content:space-between;
+ flex-wrap:wrap;column-gap:20px;row-gap:5px;
+ min-width:0;max-width:100%;box-sizing:border-box;
+ padding:12px 15px;margin:12px 0 6px;
+ border:1px solid var(--line,var(--edge,#506174));
+ border-radius:11px;background:rgba(127,155,180,.055);
+}
+#cloudSyncCard .cloud-server-metric{
+ display:flex;align-items:baseline;flex-wrap:wrap;gap:9px;min-width:0;
+}
+#cloudSyncCard .cloud-server-label{
+ font-size:13px;font-weight:600;color:var(--muted,#a2aec1);
+}
+#cloudSyncCard .cloud-server-count{
+ font-size:22px;line-height:1.25;font-weight:750;
+ color:var(--text,#eef1f8);font-variant-numeric:tabular-nums;
+}
+#cloudSyncCard .cloud-server-updated{
+ font-size:12px;line-height:1.45;color:var(--muted,#a2aec1);
+ overflow-wrap:anywhere;
+}
+@media(max-width:550px){
+ #cloudSyncCard .cloud-server-stats{padding:10px 12px;align-items:flex-start;flex-direction:column}
+ #cloudSyncCard .cloud-server-metric{align-items:center}
+}
