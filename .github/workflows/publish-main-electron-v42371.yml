@@ -28,7 +28,7 @@ jobs:
           test "$(node -p 'require("./package.json").version')" = 4.23.71
           test -s README.md
           test -s RELEASE_NOTES_ELECTRON_V4_23_71.md
-          test -s docs/HUONG_DAN_V4_23_65.md
+          test -s docs/INSTALL_V4_23_70.md
           npm test
 
   build:
