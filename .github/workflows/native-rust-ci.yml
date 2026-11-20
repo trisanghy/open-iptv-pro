@@ -28,6 +28,7 @@ jobs:
           test -s native-rust/Cargo.toml
           test -s native-rust/src/main.rs
           test -s native-rust/ui/app.slint
+          bash -n scripts/BUILD_C3_MAC_AUTOFETCH.sh
       - name: Check native Rust formatting
         run: cargo fmt --manifest-path native-rust/Cargo.toml --all
       - name: Native Rust regression tests
@@ -113,7 +114,7 @@ jobs:
           codesign --verify "$APP"
           hdiutil create -volname 'Open IPTV Pro Rust Native C3' -srcfolder "$APP" -ov -format UDZO OpenIPTVProRustNative-C3-macOS-preview.dmg
           hdiutil imageinfo OpenIPTVProRustNative-C3-macOS-preview.dmg
-          zip -qr OpenIPTVProRustNative-C3-source.zip native-rust scripts/BUILD_C3_MAC_AUTOFETCH.sh assets/icon.png
+          zip -qr OpenIPTVProRustNative-C3-source.zip native-rust scripts/BUILD_C3_MAC_AUTOFETCH.sh assets/icon.png -x 'native-rust/target/*' 'native-rust/.git/*'
           cat > RUST_NATIVE_MAC_PREVIEW_README.txt <<'README'
           Open IPTV Pro Rust Native C3 (real Slint + libmpv)
           This DMG contains an ad-hoc signed developer preview, not a notarized product.
