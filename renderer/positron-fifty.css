@@ -137,3 +137,7 @@ html.p50-28 #page-tv .control-layout-top .playing-info .small-lcd{width:36px!imp
 html.p50-28 #page-tv .control-layout-top .playing-channel-text{min-width:0!important;overflow:hidden!important}
 html.p50-28 #page-tv #playingTitle{font-size:13px!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
 html.p50-28 #page-tv #playingSubtitle{font-size:10px!important;overflow:hidden!important;text-overflow:ellipsis!important}
+
+/* Iteration 29: Normalize Play to a 52px theme-aware control */
+html[data-positron=true].p50-29 #page-tv .player-control-card .controls.transport-controls #playBtn{flex:0 0 52px!important;width:52px!important;height:52px!important;min-width:52px!important;min-height:52px!important;border-radius:50%!important;background:var(--po-accent)!important;border:1px solid var(--po-accent)!important;color:var(--po-on)!important;box-shadow:0 0 0 3px var(--po-glow)!important;font-size:22px!important}
+html.p50-29 #page-tv #playBtn:hover{filter:brightness(1.09)!important}
