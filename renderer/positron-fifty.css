@@ -1,0 +1,4 @@
+/* Positron P4 50 screenshot-grounded design iterations. */
+/* Iteration 01: Reduce sidebar width from 280px to 206px */
+html[data-positron="true"].p50-01:not([data-sidebar-visible="false"]) #appShell > #appSidebar{width:206px!important;min-width:206px!important;max-width:206px!important;flex:0 0 206px!important;padding:12px 9px 10px!important}
+html.p50-01 #appShell{min-width:0!important;overflow:hidden}
