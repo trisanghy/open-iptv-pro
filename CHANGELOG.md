@@ -1,3 +1,7 @@
+## Rust Lab v23.8.90 — Đồng bộ icon trình phát theo Web
+
+Thay ký tự Unicode trong thanh điều khiển chính và toàn màn hình bằng bộ icon SVG mask từ `web/online`: phát/tạm dừng, kênh trước/sau, dừng, âm lượng, EPG, Cast, PiP, fullscreen, ghi hình, yêu thích và tùy chọn. Giữ nguyên video, event listeners, AI và cửa sổ CMD/PowerShell ẩn ngầm từ v23.8.89. Có regression test riêng. [Release notes](RELEASE_NOTES_RUST_LAB_V23_8_90.md).
+
 ## 4.23.17 — Cấu hình kiểm tra, Sidebar màu và tua lại tùy chỉnh
 - Nút Snapshot/kiểm tra chuyển thành lựa chọn thật, tự lưu và đồng bộ.
 - Bảng màu chuyển từ bánh xe sang sidebar, gộp với chế độ hiển thị; lựa chọn Sidebar gọn/đầy đủ.
