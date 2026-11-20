@@ -34,6 +34,7 @@ export component MainWindow inherits Window {
     in-out property <string> page-title: "Xem truyền hình";
     in-out property <string> url-input;
     in-out property <string> epg-url-input;
+    in-out property <bool> epg-auto-refresh-enabled: true;
     in-out property <bool> import-rights-confirmed: false;
     in-out property <bool> discovery-rights-confirmed: false;
     in-out property <string> search-text;
@@ -70,6 +71,7 @@ export component MainWindow inherits Window {
     callback import-epg();
     callback load-epg-url();
     callback select-epg-preset(string);
+    callback toggle-epg-auto-refresh();
     callback select-source(int);
     callback show-all();
     callback show-favorites();
@@ -492,7 +494,14 @@ export component MainWindow inherits Window {
                                 Text { text: "Giao diện: " + root.current-theme; color: root.accent; font-size: 13px; }
                                 HorizontalLayout { Button { text: "Tối · Tím"; clicked => { root.set-theme("Tối · Tím"); } } Button { text: "Tối · Xanh"; clicked => { root.set-theme("Tối · Xanh"); } } Button { text: "Sáng"; clicked => { root.set-theme("Sáng"); } } }
                                 Rectangle { height: 1px; background: #344157; }
-                                Text { text: "SAO LƯU / KHÔI PHỤC"; color: root.accent; font-weight: 700; font-size: 12px; }
+                                Text { text: "EPG / LỊCH PHÁT SÓNG"; color: root.accent; font-weight: 700; font-size: 12px; }
+                                 HorizontalLayout {
+                                     Text { text: root.epg-auto-refresh-enabled ? "Tự cập nhật EPG khi ứng dụng đang mở: BẬT" : "Tự cập nhật EPG khi ứng dụng đang mở: TẮT"; color: #a9c2d6; font-size: 12px; }
+                                     Button { text: "Bật / Tắt"; clicked => { root.toggle-epg-auto-refresh(); } }
+                                 }
+                                 Text { text: "Nguồn lịch tự tải khi khởi động; làm mới mỗi 10 phút khi bật. Giữ lịch cũ khi mạng lỗi."; color: #91a9c3; font-size: 11px; }
+                                 Rectangle { height: 1px; background: #344157; }
+                                 Text { text: "SAO LƯU / KHÔI PHỤC"; color: root.accent; font-weight: 700; font-size: 12px; }
                                 Button { text: "Nhập backup Electron (.iptvbackup)"; clicked => { root.import-electron-backup(); } }
                                 Button { text: "Nhập backup Rust (.json)"; clicked => { root.import-native-backup(); } }
                                 Button { text: "Xuất backup Rust (.json)"; clicked => { root.export-native-backup(); } }

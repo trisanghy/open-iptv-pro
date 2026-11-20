@@ -41,11 +41,13 @@ pub struct NativeData {
     #[serde(default = "default_auto_failover")] pub auto_failover: bool,
     #[serde(default)] pub last_channel_url: String,
     #[serde(default)] pub epg_url: String,
+    #[serde(default = "default_epg_auto_refresh")] pub epg_auto_refresh: bool,
     #[serde(default = "default_theme")] pub theme: String,
 }
 
 fn default_volume() -> i32 { 80 }
 fn default_auto_failover() -> bool { true }
+fn default_epg_auto_refresh() -> bool { true }
 fn default_theme() -> String { "Tối · Tím".to_owned() }
 
 impl Default for NativeData {
@@ -53,7 +55,7 @@ impl Default for NativeData {
         Self { format_version: 1, sources: vec![], channels: vec![], favorite_urls: BTreeSet::new(),
             volume: 80, folders: vec![], health: BTreeMap::new(), alternate_links: BTreeMap::new(),
             last_channel_url: String::new(), epg_url: "https://epg.io.vn/epg.xml.gz".into(), theme: default_theme(),
-            recent_urls: Vec::new(), auto_failover: true }
+            recent_urls: Vec::new(), auto_failover: true, epg_auto_refresh: true }
     }
 }
 
@@ -212,6 +214,17 @@ mod tests {
         d.remove_source("s");
         assert!(d.recent_urls.is_empty());
         assert!(d.alternate_links.is_empty());
+    }
+    #[test]
+    fn old_profiles_default_to_epg_auto_refresh_without_losing_any_data() {
+        let mut raw = serde_json::to_value(NativeData::default()).unwrap();
+        raw.as_object_mut().unwrap().remove("epg_auto_refresh");
+        let restored: NativeData = serde_json::from_value(raw).unwrap();
+        assert!(restored.epg_auto_refresh);
+        assert_eq!(restored.epg_url, "https://epg.io.vn/epg.xml.gz");
+        let mut customized = restored;
+        customized.epg_auto_refresh = false;
+        assert!(!serde_json::from_slice::<NativeData>(&serde_json::to_vec(&customized).unwrap()).unwrap().epg_auto_refresh);
     }
     #[test]
     fn c2_json_backward_compatible() {

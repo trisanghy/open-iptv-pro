@@ -6,7 +6,7 @@ use std::path::PathBuf;
 use std::process::Child;
 use std::rc::Rc;
 use std::sync::mpsc::{self, Receiver, Sender};
-use std::time::{Duration, SystemTime, UNIX_EPOCH};
+use std::time::{Duration, Instant, SystemTime, UNIX_EPOCH};
 
 slint::include_modules!();
 
@@ -102,6 +102,7 @@ fn refresh(ui: &MainWindow, state: &mut State) {
     ui.set_sources_count(state.data.sources.len().to_string().into());
     ui.set_favorites_count(state.data.favorite_urls.len().to_string().into());
     ui.set_recent_count(state.data.recent_urls.len().to_string().into());
+    ui.set_epg_auto_refresh_enabled(state.data.epg_auto_refresh);
     ui.set_auto_failover_text(if state.data.auto_failover { "Đang bật".into() } else { "Đang tắt".into() });
     ui.set_volume_text(format!("{}%", state.data.volume).into());
     ui.set_current_theme(state.data.theme.clone().into());
@@ -651,6 +652,16 @@ fn connect_callbacks(
     }
     {
         let weak=ui.as_weak(); let shared=shared.clone();
+        ui.on_toggle_epg_auto_refresh(move || {
+            let Some(ui)=weak.upgrade() else {return;};
+            let mut s=shared.borrow_mut();let old=s.data.clone();
+            s.data.epg_auto_refresh=!s.data.epg_auto_refresh;
+            let enabled=s.data.epg_auto_refresh;
+            persist(&ui,&mut s,old,if enabled {"EPG sẽ tự cập nhật mỗi 10 phút"} else {"Đã tắt tự cập nhật EPG định kỳ"});
+        });
+    }
+    {
+        let weak=ui.as_weak(); let shared=shared.clone();
         ui.on_set_theme(move |value| {
             let Some(ui)=weak.upgrade() else {return;};
             let mut s=shared.borrow_mut();let old=s.data.theme.clone();s.data.theme=value.to_string();
@@ -846,9 +857,10 @@ fn connect_callbacks(
     }
 }
 
-fn background_timer(ui: &MainWindow, shared: Rc<RefCell<State>>, rx: Receiver<Background>, recording: Rc<RefCell<Option<(Child, PathBuf)>>>, player: Rc<RefCell<Option<Mpv>>>) -> slint::Timer {
+fn background_timer(ui: &MainWindow, shared: Rc<RefCell<State>>, rx: Receiver<Background>, tx: Sender<Background>, recording: Rc<RefCell<Option<(Child, PathBuf)>>>, player: Rc<RefCell<Option<Mpv>>>) -> slint::Timer {
     let weak=ui.as_weak();
     let timer=slint::Timer::default();
+    let mut last_epg_refresh=Instant::now();
     timer.start(slint::TimerMode::Repeated, Duration::from_millis(130), move || {
         let Some(ui)=weak.upgrade() else { return; };
         while let Ok(message)=rx.try_recv() {
@@ -881,6 +893,19 @@ fn background_timer(ui: &MainWindow, shared: Rc<RefCell<State>>, rx: Receiver<Ba
                     }
                     Err(e) => status(&ui,format!("EPG lỗi: {e}")),
                 }
+            }
+        }
+        // Limit refresh frequency and keep the last usable guide on errors.
+        if last_epg_refresh.elapsed() >= Duration::from_secs(600) {
+            last_epg_refresh=Instant::now();
+            let source={let s=shared.borrow();
+                if s.data.epg_auto_refresh && !s.data.epg_url.trim().is_empty() {Some(s.data.epg_url.clone())}else{None}};
+            if let Some(url)=source {
+                let epg_tx=tx.clone();
+                std::thread::spawn(move || {
+                    let result=epg::from_url(&url);
+                    let _=epg_tx.send(Background::Epg {source:Some(url),result});
+                });
             }
         }
         // Each mpv event is consumed only once. EOF/Stop are NOT playback failures.
@@ -943,8 +968,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     }
     let multiview: Rc<RefCell<Vec<Mpv>>> = Rc::new(RefCell::new(Vec::new()));
     let recording: Rc<RefCell<Option<(Child, PathBuf)>>> = Rc::new(RefCell::new(None));
-    connect_callbacks(&ui,state.clone(),player.clone(),tx,multiview,recording.clone());
-    let _poller=background_timer(&ui,state,rx,recording.clone(),player);
+    connect_callbacks(&ui,state.clone(),player.clone(),tx.clone(),multiview,recording.clone());
+    let _poller=background_timer(&ui,state,rx,tx,recording.clone(),player);
     ui.run()?;
     // Stop sidecar recording when GUI exits to avoid orphan processes.
     if let Some((mut child,_))=recording.borrow_mut().take(){let _=child.kill();let _=child.wait();}
