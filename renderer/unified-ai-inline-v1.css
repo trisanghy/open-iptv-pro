@@ -121,3 +121,45 @@
 @media(max-width:520px){
  #page-tv .player-control-card .unified-ai-content .caption-third-controls .caption-tts-main>#aiHeatWarningInline:not([hidden]){grid-row:7!important}
 }
+
+/* One-row TTS v3: the old 740px container breakpoint split four selects
+   into two rows even at typical Mac split-pane widths. Keep all four
+   select/label pairs on row 1; the status/actions remain below. */
+#page-tv .player-control-card .unified-ai-content .caption-third-controls .caption-tts-main{
+  display:grid!important;
+  grid-template-columns:max-content minmax(72px,.9fr) max-content minmax(118px,1.8fr) max-content minmax(62px,.65fr) max-content minmax(72px,.85fr)!important;
+  grid-template-rows:minmax(32px,auto) auto auto!important;
+  column-gap:4px!important;
+  row-gap:5px!important;
+  min-width:0!important;
+  max-width:100%!important;
+  width:100%!important;
+  overflow-x:auto!important;
+  overflow-y:auto!important;
+  scrollbar-width:thin;
+}
+#page-tv .player-control-card .unified-ai-content .caption-third-controls .caption-tts-main>label{
+  font-size:11px!important;
+  white-space:nowrap!important;
+  min-width:0!important;
+  padding:0!important;
+}
+#page-tv .player-control-card .unified-ai-content .caption-third-controls .caption-tts-main>label.tts-mode{grid-column:1!important;grid-row:1!important}
+#page-tv .player-control-card .unified-ai-content .caption-third-controls .caption-tts-main>#liveTtsLanguage{grid-column:2!important;grid-row:1!important}
+#page-tv .player-control-card .unified-ai-content .caption-third-controls .caption-tts-main>label[for="liveTtsVoice"]{grid-column:3!important;grid-row:1!important}
+#page-tv .player-control-card .unified-ai-content .caption-third-controls .caption-tts-main>#liveTtsVoice{grid-column:4!important;grid-row:1!important}
+#page-tv .player-control-card .unified-ai-content .caption-third-controls .caption-tts-main>label[for="liveTtsSpeed"]{grid-column:5!important;grid-row:1!important}
+#page-tv .player-control-card .unified-ai-content .caption-third-controls .caption-tts-main>#liveTtsSpeed{grid-column:6!important;grid-row:1!important}
+#page-tv .player-control-card .unified-ai-content .caption-third-controls .caption-tts-main>label[for="liveTtsDuck"]{grid-column:7!important;grid-row:1!important}
+#page-tv .player-control-card .unified-ai-content .caption-third-controls .caption-tts-main>#liveTtsDuck{grid-column:8!important;grid-row:1!important}
+#page-tv .player-control-card .unified-ai-content .caption-third-controls .caption-tts-main>:is(#liveTtsLanguage,#liveTtsVoice,#liveTtsSpeed,#liveTtsDuck){
+  width:100%!important;
+  min-width:0!important;
+  max-width:100%!important;
+  height:32px!important;
+  grid-row:1!important;
+}
+/* The footer must never take the space of a language or voice selector. */
+#page-tv .player-control-card .unified-ai-content .caption-third-controls .caption-tts-main>.caption-tts-footer{grid-column:1/-1!important;grid-row:2!important}
+#page-tv .player-control-card .unified-ai-content .caption-third-controls .caption-tts-main>#liveTtsStatus{grid-column:1/-1!important;grid-row:3!important}
+#page-tv .player-control-card .unified-ai-content .caption-third-controls .caption-tts-main>#aiHeatWarningInline:not([hidden]){grid-column:1/-1!important;grid-row:4!important}
