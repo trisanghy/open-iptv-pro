@@ -202,6 +202,7 @@ fn refresh(ui: &MainWindow, state: &mut State) {
         } else { "Chưa có link dự phòng cho kênh này".to_string() };
         ui.set_alternates_text(desc.into());
     }
+    ui.set_show_pagination(state.total_matches > PAGE_SIZE);
     ui.set_count_text(format!("{} / {} kết quả · trang {} / {} · {} nguồn",
         state.visible.len(), state.total_matches, state.page + 1,
         state.total_matches.saturating_sub(1) / PAGE_SIZE + 1, state.data.sources.len()).into());
