@@ -21,8 +21,8 @@ test('Web and build source ship the same compact Supabase form CSS',()=>{
   assert.match(source,/font-size:16px/);
   assert.match(source,/\.cloud-email-input-line > button/);
   assert.ok(!html.includes('href="cloud-sync.css"'),'Live page must invalidate old Safari CSS cache');
-  assert.ok(html.includes('href="cloud-sync.css?v=cloud-account-layout-20261120a"'));
-  assert.ok(builder.includes('cloud-sync.css?v=cloud-account-layout-20261120a'),
+  assert.ok(html.includes('href="cloud-sync.css?v=server-channel-count-20261120a"'));
+  assert.ok(builder.includes('cloud-sync.css?v=server-channel-count-20261120a'),
     'Web builder must retain the same versioned CSS on regenerated pages');
   for(const id of ['cloudEmailInput','cloudLinkInput','cloudOtpCode','cloudEmailSend','cloudLinkVerify'])
     assert.ok(html.includes('id="'+id+'"'),'Cloud auth input/button '+id+' missing');
@@ -152,4 +152,23 @@ test('Chromium regression: cloud account buttons and email input do not overflow
    }
   }
  }finally{fs.rmSync(dir,{recursive:true,force:true});}
+});
+
+test('server inventory reads confirmed payload and guards against mistaken local counts',()=>{
+ const script=read('cloud-sync.js');
+ for(const id of ['cloudServerStats','cloudServerChannelCount','cloudServerUpdatedAt'])
+  assert.match(html,new RegExp('id="'+id+'"'));
+ assert.match(script,/show\(serverStats,!!uid\)/);
+ assert.match(script,/core\.serverChannelCount\(row\?\.payload\)/);
+ assert.match(script,/\.select\('payload,revision,updated_at'\)\.eq\('user_id',id\)\.maybeSingle\(\)/);
+ assert.match(script,/updateServerStats\(id,data\)/);
+ assert.match(script,/\.select\('revision,updated_at'\)\.single\(\)/);
+ assert.match(script,/\.select\('revision,updated_at'\)\.maybeSingle\(\)/);
+ assert.match(script,/if\(!newRev\)continue/);
+ assert.match(script,/updateServerStats\(originalId,\{payload:desired,updated_at:/);
+ assert.match(script,/uid!==originalId/);
+ assert.match(source,/#cloudSyncCard \.cloud-server-stats/);
+ assert.match(source,/@media\(max-width:550px\)/);
+ assert.match(html,/cloud-sync\.js\?v=server-channel-count-20261120a/);
+ assert.match(html,/cloud-core\.js\?v=server-channel-count-20261120a/);
 });
