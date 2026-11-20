@@ -1,3 +1,4 @@
+# Validated after v4.23.71 renderer and desktop regression tests passed; publish immutable new tag only.
 name: Publish Electron v4.23.71 Beta (Mac ARM/Intel, Windows, Source)
 on:
   push:
