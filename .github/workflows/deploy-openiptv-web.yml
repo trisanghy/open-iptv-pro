@@ -264,6 +264,16 @@ jobs:
           node --test web-online/tests/web-autoplay.test.cjs
           node --check _site/cloud-core.js
           node --check _site/cloud-sync.js
+          node --test web-online/tests/web-supabase-cutover.test.cjs
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          committed=json.loads(Path('cloud-config.json').read_text(encoding='utf-8'))
+          staged=json.loads(Path('_site/cloud-config.json').read_text(encoding='utf-8'))
+          assert staged == committed, 'Deployment must use committed Supabase project; stale Actions vars not allowed'
+          assert staged['url'] == 'https://zjbsvqryaxtafuffpifu.supabase.co'
+          print('Verified: live bundle targets new Supabase project')
+          PY
           node --test web-online/tests/cloud-core.test.cjs
           node --check web-online/tests/web-cloud-auth-compact.test.cjs
           node --test web-online/tests/web-cloud-auth-compact.test.cjs
