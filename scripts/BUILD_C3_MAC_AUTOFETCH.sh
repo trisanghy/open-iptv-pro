@@ -61,6 +61,28 @@ cat > "$APP/Contents/Info.plist" <<PLIST
 PLIST
 cp "$WORK/project/assets/icon.png" "$APP/Contents/Resources/icon.png"
 codesign --force --sign - "$APP" || fail 'Ad-hoc code signing failed'
+if [ "${APP_ONLY:-0}" = "1" ]; then
+  # Only one .app bundle in the destination; DMG/ZIP/metadata stay disabled.
+  # A commit-scoped directory avoids overwriting any older build.
+  OUT="$HOME/Downloads/OpenIPTVPro_RustNative_APP_v${VERSION}_${SHORT_SHA}"
+  APP_NAME="Open IPTV Pro Rust Native C3.app"
+  mkdir -p "$OUT"
+  for item in "$OUT"/* "$OUT"/.[!.]*; do
+    [ -e "$item" ] || continue
+    case "$(basename "$item")" in "$APP_NAME"|'.DS_Store') ;; *)
+      fail "Output contains an unrelated item; leaving it untouched: $item"
+      ;;
+    esac
+  done
+  if [ -e "$OUT/$APP_NAME" ]; then
+    fail "This commit's .app already exists (will not overwrite): $OUT/$APP_NAME"
+  fi
+  ditto "$APP" "$OUT/$APP_NAME" || fail 'Could not copy the app bundle'
+  codesign --verify "$OUT/$APP_NAME" || fail 'App code-sign verification failed'
+  printf 'Build OK (APP ONLY) — %s\n' "$OUT/$APP_NAME"
+  open "$OUT"
+  exit 0
+fi
 hdiutil create -volname 'Open IPTV Pro Rust Native C3' -srcfolder "$APP" -ov -format UDZO "$WORK/$DMG" >/dev/null || fail 'DMG build failed'
 hdiutil imageinfo "$WORK/$DMG" >/dev/null || fail 'DMG verification failed'
 (cd "$WORK/project" && zip -qr "$WORK/$SRC" native-rust scripts/BUILD_C3_MAC_AUTOFETCH.sh assets/icon.png -x 'native-rust/target/*' 'native-rust/.git/*')

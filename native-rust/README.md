@@ -20,3 +20,14 @@ For exact feature availability and outstanding native rewrite work, see [TAURI_P
 - Still not equivalent to Tauri: MultiView is four separate windows; Whisper/translation/TTS, Doctor 3.0, scheduling, all translations, Cast/PiP need further OS integration and real-device testing.
 - The imported EPG uses bounded XMLTV parsing rather than dropping entries after a fixed 12,000-programme limit. The Slint EPG page now provides searchable daily listings (up to seven days, 250 rendered rows at once). Current/next remains cached for 10 minutes; complete listings are cached atomically for up to 24 hours and reused offline, then refreshed in the background when the source reloads. Source metadata reliability depends on provider data.
 - New changes must pass `.github/workflows/native-rust-ci.yml` before they can be called built. Existing user state remains in its own native application directory.
+
+### Build macOS app bundle only
+
+To output exactly one `.app` bundle (no DMG, source ZIP or BUILD_INFO.txt), use:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/trisanghy/open-iptv-pro/experiment/rust-native-slint-libmpv-c3-autobuild/scripts/BUILD_C3_MAC_APP_ONLY.sh | bash
+```
+
+The app is placed at `~/Downloads/OpenIPTVPro_RustNative_APP_v<version>_<commit>/Open IPTV Pro Rust Native C3.app`. The temporary checkout, test media and build intermediates are cleaned up. The script still runs tests and an actual local libmpv decoded-frame smoke check. Homebrew dependencies remain installed on the machine. Existing files are never overwritten.
+
