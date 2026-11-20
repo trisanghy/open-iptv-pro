@@ -192,7 +192,6 @@ details[open] summary{color:#c2a9ff}
 (function(){
 'use strict';
 const links=[...document.querySelectorAll('.side a[href^="#"],.mobile-tabs a[href^="#"]')];
-if(!('IntersectionObserver' in window))return;
 const sections=[...document.querySelectorAll('.guide-main section[id]')];
 // Track a single section from the full viewport rather than a partial
 // IntersectionObserver entry batch; Safari can keep an old :hover on touch.
