@@ -92,9 +92,15 @@ epg_now_end=' function renderEPG(){'
 if any(x.count(epg_now_start)!=1 or x.count(epg_now_end)!=1 for x in (js,web_features)):
     sys.exit('EPG player renderNow source changed')
 js=js[:js.index(epg_now_start)]+web_features[web_features.index(epg_now_start):web_features.index(epg_now_end)]+js[js.index(epg_now_end):]
+# Web-only EPG: local 00:00–24:00 day, collapsed channels, no Web record buttons.
+day_source=' const expandedEPGChannels=new Set();'
+day_end=' async function fetchXML('
+if web_features.count(day_source)!=1 or web_features.count(day_end)!=1 or js.count(day_end)!=1 or js.count(' function renderEPG(){')!=1:
+    sys.exit('Web EPG daily renderer anchors changed')
+js=js[:js.index(' function renderEPG(){')]+web_features[web_features.index(day_source):web_features.index(day_end)]+js[js.index(day_end):]
 features.write_text(js,encoding='utf-8')
 
-for name in ('web-only.js','web-only.css','resume-last.js','resume-last.css','browser-channel-check.js','web-autoplay.js','cloud-core.js','cloud-sync.js','cloud-sync.css','web-volume.css','web-volume.js','web-mobile-player.css','web-mobile-player.js','web-player-icons.css','web-player-icons.js','web-tv-wide.css','web-mobile-controls-polish.css','web-mobile-volume.js','web-mobile-volume.css','web-desktop-download.css','web-desktop-download.js','web-recent-channels.js','web-compact-toolbar.css','web-snapshot-batch.js','web-background-audio.js','web-background-audio.css','web-ios-audio-recovery.js','web-ios-audio-recovery.css','web-fullscreen-controls.css','web-fullscreen-controls.js','web-mobile-tablet-controls.css'):
+for name in ('web-only.js','web-only.css','resume-last.js','resume-last.css','browser-channel-check.js','web-autoplay.js','cloud-core.js','cloud-sync.js','cloud-sync.css','web-volume.css','web-volume.js','web-mobile-player.css','web-mobile-player.js','web-player-icons.css','web-player-icons.js','web-tv-wide.css','web-mobile-controls-polish.css','web-mobile-volume.js','web-mobile-volume.css','web-desktop-download.css','web-desktop-download.js','web-recent-channels.js','web-compact-toolbar.css','web-snapshot-batch.js','web-background-audio.js','web-background-audio.css','web-ios-audio-recovery.js','web-ios-audio-recovery.css','web-fullscreen-controls.css','web-fullscreen-controls.js','web-mobile-tablet-controls.css','web-epg-day.css'):
     source=Path(__file__).resolve().parent/name
     if not source.is_file():source=Path(__file__).resolve().parent.parent/name
     copy2(source,out/name)
@@ -323,6 +329,12 @@ start='<div class="epg-current-item">'
 end='<span id="epgNowText"'
 html=html[:html.index(start)]+web_html[web_html.index(start):web_html.index(end,web_html.index(start))]+html[html.index(end,html.index(start)):]
 
+# Replace only Web EPG markup; keep the DVR DOM hooks hidden for compatibility.
+epg_page='<section id="page-epg" class="page">'
+epg_next='<section id="page-settings" class="page">'
+if any(x.count(epg_page)!=1 or x.count(epg_next)!=1 for x in (html,web_html)):
+    sys.exit('Web EPG page markup anchors changed')
+html=html[:html.index(epg_page)]+web_html[web_html.index(epg_page):web_html.index(epg_next,web_html.index(epg_page))]+html[html.index(epg_next):]
 # Web-only software download picker: stable Electron, Rust Lab and Mobile builds.
 # All HTML comes from the versioned root Web source; desktop WebView is unchanged.
 desktop_button="<button type=\"button\" class=\"btn btn-subtle desktop-download-top\" id=\"desktopDownloadBtn\" aria-haspopup=\"dialog\" aria-controls=\"desktopDownloadDialog\" title=\"Tải phần mềm Open IPTV Pro mới nhất\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M12 3v12m-4-4 4 4 4-4\"/><path d=\"M4 17v3h16v-3\"/></svg><span>Tải phần mềm</span><span data-desktop-download-version></span></button>"
@@ -461,7 +473,7 @@ if html.count('web-ios-pip-compat.js?v=')!=1 or html.count('web-ios-pip-compat.c
 
 # Keep player subtitles and fullscreen EPG across Safari cached PWA versions.
 for old,new in (
-    ('features.js?v=epg-atomic-gzip-20261120a','features.js?v=epg-player-details-20261120a'),
+    ('features.js?v=epg-atomic-gzip-20261120a','features.js?v=epg-today-collapse-20261120a'),
     ('web-only.css?v=no-timeshift-20261119a','web-only.css?v=epg-player-details-20261120a'),
     ('web-fullscreen-controls.js?v=fullscreen-tools-20261119b','web-fullscreen-controls.js?v=epg-player-details-20261120a'),
     ('web-fullscreen-controls.css?v=fullscreen-tools-20261119b','web-fullscreen-controls.css?v=epg-player-details-20261120a'),
@@ -484,6 +496,9 @@ if 'web-mobile-touch-sort.js' not in html:
 if html.count('web-mobile-touch-sort.js?v=')!=1 or html.count('web-mobile-touch-sort.css?v=')!=1:
     sys.exit('Duplicated Web touch-sort assets')
 
+if html.count('</head>')!=1:sys.exit('EPG stylesheet insertion failed')
+html=html.replace('</head>','<link rel="stylesheet" href="web-epg-day.css?v=epg-today-collapse-20261120a"/></head>',1)
+if html.count('web-epg-day.css?v=')!=1:sys.exit('Duplicate EPG day CSS')
 (out/'index.html').write_text(html,encoding='utf-8')
 (out/'.nojekyll').write_text('')
 (out/'manifest.webmanifest').write_text(json.dumps({

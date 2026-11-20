@@ -320,14 +320,69 @@
   if(nextTime)nextTime.textContent=next?`${time(next.start)} – ${time(next.end)}`:'—';
   renderDetail(nowDetails,now);renderDetail(nextDetails,next);
  }
- function renderEPG(){const root=$('#epgGuide');root.replaceChildren();const channels=ctx.getChannels(),clock=Date.now();const filter=$('#epgSearch')?.value?.toLowerCase().trim()||'';
-  const matched=channels.filter(c=>guideLib.find(guide,c).length>0).filter(c=>!filter||(c.name+' '+c.tvgId).toLowerCase().includes(filter)).slice(0,250);
-  $('#epgSummary').innerHTML=updatedAt?`Dữ liệu cập nhật: <b>${esc(new Date(updatedAt).toLocaleString('vi-VN'))}</b> • ${guide.programmes.length} chương trình • ${matched.length} kênh khớp`:'Chưa tải EPG. Vào Cài đặt và bấm “Cập nhật EPG ngay”.';
-  if(!matched.length){root.innerHTML='<div class="empty-list">Không tìm thấy lịch khớp với kênh trong playlist. Thử nguồn EPG khác hoặc thêm tvg-id vào M3U.</div>';return;}
-  const frag=document.createDocumentFragment();matched.forEach(c=>{const items=guideLib.find(guide,c).filter(x=>x.end>clock-24*3600000).slice(-8);
-   const card=document.createElement('article');card.className='epg-row';const lines=items.map((p,i)=>`<div class="epg-program ${p.start<=clock&&p.end>clock?'on-air':''}"><time>${today(p.start)}–${today(p.end)}</time><div><b>${esc(p.title)}</b>${p.description?`<small>${esc(p.description)}</small>`:''}</div>${p.end>clock+60_000?`<button type="button" class="epg-record" data-index="${i}">⏺ Ghi</button>`:''}${p.end<clock&&c.catchupSource?`<button class="epg-catchup" data-index="${i}">↶ Xem lại</button>`:''}</div>`).join('')||'<div class="epg-program">Chưa có chương trình phù hợp</div>';
-   card.innerHTML=`<header>▣ <b>${esc(c.name)}</b></header>${lines}`;card.querySelectorAll('.epg-catchup').forEach(button=>button.addEventListener('click',()=>window.IPTVProAdvanced?.playCatchup?.(c,items[Number(button.dataset.index)])));card.querySelectorAll('.epg-record').forEach(button=>button.addEventListener('click',()=>window.IPTVDVR?.scheduleFromEPG?.(c,items[Number(button.dataset.index)])));window.IPTVProAdvanced?.decorateRow?.(c,card);frag.append(card);
-  });root.append(frag);
+ // Expanded channels persist through the minute-by-minute EPG refresh.
+ const expandedEPGChannels=new Set();
+ let expandedEPGDay='';
+ function currentEPGDay(nowMs){
+  const d=new Date(nowMs);
+  return {start:new Date(d.getFullYear(),d.getMonth(),d.getDate()).getTime(),
+   end:new Date(d.getFullYear(),d.getMonth(),d.getDate()+1).getTime()};
+ }
+ function renderEPG(){
+  const root=$('#epgGuide');if(!root)return;root.replaceChildren();
+  const clock=Date.now(),day=currentEPGDay(clock),dayKey=String(day.start);
+  if(expandedEPGDay!==dayKey){expandedEPGChannels.clear();expandedEPGDay=dayKey;}
+  const filter=String($('#epgSearch')?.value||'').trim().toLocaleLowerCase('vi-VN');
+  const matched=ctx.getChannels().filter(c=>!filter||(String(c.name||'')+' '+String(c.tvgId||'')).toLocaleLowerCase('vi-VN').includes(filter))
+   .map(c=>({channel:c,items:guideLib.find(guide,c).filter(p=>Number.isFinite(p.start)&&Number.isFinite(p.end)&&p.start<day.end&&p.end>day.start)
+    .sort((a,b)=>a.start-b.start)})).filter(x=>x.items.length);
+  const count=matched.reduce((n,x)=>n+x.items.length,0);
+  const dayLabel=new Intl.DateTimeFormat('vi-VN',{day:'2-digit',month:'2-digit',year:'numeric'}).format(new Date(clock));
+  const summary=$('#epgSummary');
+  if(summary){summary.textContent=updatedAt
+   ?'Hôm nay '+dayLabel+' · 00:00–24:00 · '+matched.length+' kênh · '+count+' chương trình'
+   :'Chưa tải EPG · Hôm nay '+dayLabel+' (00:00–24:00)';
+   summary.setAttribute('aria-label','Lịch 24 giờ trong ngày hiện tại');
+  }
+  if(!matched.length){
+   root.innerHTML='<div class="empty-list">Không có lịch phát sóng trong ngày hôm nay cho các kênh phù hợp. Hãy tải lại EPG hoặc đổi bộ lọc.</div>';return;
+  }
+  const time=ms=>new Date(ms).toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit',hour12:false});
+  const frag=document.createDocumentFragment();
+  matched.forEach(({channel:c,items})=>{
+   const key=String(c.id||c.url||c.tvgId||c.name);
+   const current=items.find(p=>p.start<=clock&&p.end>clock);
+   const hint=current?'Đang phát: '+String(current.title||'Chưa rõ'):'Chạm để xem lịch hôm nay';
+   const card=document.createElement('details');card.className='epg-row epg-day-channel';card.dataset.channelKey=key;
+   card.innerHTML='<summary class="epg-channel-heading"><span class="epg-channel-badge" aria-hidden="true">▤</span>'
+    +'<span class="epg-channel-copy"><strong>'+esc(c.name)+'</strong><small>'+esc(hint)+'</small></span>'
+    +'<span class="epg-channel-count">'+items.length+' chương trình</span><span class="epg-channel-chevron" aria-hidden="true"></span></summary>'
+    +'<div class="epg-day-list"></div>';
+   const list=card.querySelector('.epg-day-list');
+   const show=()=>{
+    // Render all programmes in the day ONLY when expanded.
+    list.innerHTML=items.map((p,i)=>{
+     const onAir=p.start<=clock&&p.end>clock;
+     const desc=p.description&&String(p.description).trim()!==String(p.title||'').trim()
+      ?'<small>'+esc(p.description)+'</small>':'';
+     const replay=p.end<clock&&c.catchupSource
+      ?'<button type="button" class="epg-catchup" data-index="'+i+'">↶ Xem lại</button>':'';
+     return '<div class="epg-program'+(onAir?' on-air':'')+'"><time>'+time(p.start)+'–'+time(p.end)+'</time>'
+      +'<div class="epg-program-info"><b>'+esc(p.title||'Chưa rõ')+'</b>'+desc+'</div>'
+      +(onAir?'<span class="epg-onair-label">Đang phát</span>':'')+replay+'</div>';
+    }).join('');
+    list.querySelectorAll('.epg-catchup').forEach(button=>button.addEventListener('click',()=>
+     window.IPTVProAdvanced?.playCatchup?.(c,items[Number(button.dataset.index)])));
+   };
+   card.addEventListener('toggle',()=>{
+    if(card.open){expandedEPGChannels.add(key);show();}
+    else{expandedEPGChannels.delete(key);list.replaceChildren();}
+   });
+   if(expandedEPGChannels.has(key)){card.open=true;show();}
+   window.IPTVProAdvanced?.decorateRow?.(c,card);
+   frag.append(card);
+  });
+  root.append(frag);
  }
  async function fetchXML(url){
   // Desktop continues to use its native downloader. GitHub Pages has no
