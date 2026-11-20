@@ -21,24 +21,27 @@ test('Web and build source ship the same compact Supabase form CSS',()=>{
   assert.match(source,/font-size:16px/);
   assert.match(source,/\.cloud-email-input-line > button/);
   assert.ok(!html.includes('href="cloud-sync.css"'),'Live page must invalidate old Safari CSS cache');
-  assert.ok(html.includes('href="cloud-sync.css?v=plain-login-text-20261120a"'));
-  assert.ok(builder.includes('cloud-sync.css?v=plain-login-text-20261120a'),
+  assert.ok(html.includes('href="cloud-sync.css?v=ios-native-textarea-caret-20261120a"'));
+  assert.ok(builder.includes('cloud-sync.css?v=ios-native-textarea-caret-20261120a'),
     'Web builder must retain the same versioned CSS on regenerated pages');
   for(const id of ['cloudEmailInput','cloudLinkInput','cloudOtpCode','cloudEmailSend','cloudLinkVerify'])
     assert.ok(html.includes('id="'+id+'"'),'Cloud auth input/button '+id+' missing');
 });
 
-test('iPhone login uses an ordinary text input with visible caret and native selection',()=>{
+test('iPhone uses a native one-row textarea for editable email cursor and selection',()=>{
  const script=read('cloud-sync.js');
- assert.match(html,/<input id="cloudEmailInput" type="text" autocomplete="email"[^>]+>/);
- assert.doesNotMatch(html,/<input id="cloudEmailInput" type="email"/);
+ assert.match(html,/<textarea id="cloudEmailInput" rows="1" wrap="off"[^>]+><\/textarea>/);
+ assert.doesNotMatch(html,/<input id="cloudEmailInput"/);
  assert.match(script,/const safeEmail=\(\)=>String\(emailInput\?\.value\|\|''\)\.trim\(\)\.toLowerCase\(\)/);
  assert.match(script,/core\.validEmail\(email\)/);
- for(const property of ['-webkit-user-select:text!important','user-select:text!important','caret-color:var(--text,#f0f5f9)!important','letter-spacing:normal!important'])
-  assert.ok(source.includes(property),'Expected normal mobile text editing: '+property);
- assert.match(source,/#cloudSyncCard #cloudEmailInput:focus/);
- assert.match(source,/#cloudSyncCard #cloudOtpCode:focus/);
- assert.match(builder,/type=\\?"text\\?" autocomplete=\\?"email\\?"/);
+ assert.match(script,/emailInput\?\.addEventListener\('keydown'/);
+ assert.match(script,/emailForm\?\.requestSubmit\(\)/);
+ assert.match(source,/#cloudSyncCard textarea#cloudEmailInput/);
+ assert.match(source,/touch-action:auto!important/);
+ assert.match(source,/-webkit-touch-callout:default!important/);
+ assert.match(source,/caret-color:currentColor!important/);
+ assert.match(source,/resize:none!important/);
+ assert.match(builder,/textarea id=\\?"cloudEmailInput\\?" rows=\\?"1\\?" wrap=\\?"off\\?"/);
 });
 
 test('Chromium layout: iPhone email, magic link and OTP fields remain 44px high',()=>{
@@ -58,7 +61,7 @@ test('Chromium layout: iPhone email, magic link and OTP fields remain 44px high'
      </head><body><div id="page-settings" class="active-page"><article id="cloudSyncCard" class="settings-card">
      <form id="cloudEmailForm" class="cloud-email-form">
        <label for="cloudEmailInput">Email</label><div class="cloud-email-input-line">
-         <input id="cloudEmailInput" type="email" placeholder="ten@example.com" />
+         <textarea id="cloudEmailInput" rows="1" wrap="off" placeholder="ten@example.com"></textarea>
          <button class="btn btn-primary" id="cloudEmailSend">Send sign-in email</button>
        </div></form>
      <div id="cloudLinkForm" class="cloud-email-form"><label for="cloudLinkInput">Link verification</label>
@@ -139,7 +142,7 @@ test('Chromium regression: cloud account buttons and email input do not overflow
    +'<button class="btn btn-subtle" id="cloudMigrationRestore">Khôi phục dữ liệu cũ</button>'
    +'<button class="btn btn-subtle" id="cloudLogout">Đăng xuất</button></div>'
    +'<form class="cloud-email-form"><div class="cloud-email-input-line">'
-   +'<input id="cloudEmailInput" type="email" placeholder="ten@example.com"/>'
+   +'<textarea id="cloudEmailInput" rows="1" wrap="off" placeholder="ten@example.com"></textarea>'
    +'<button class="btn btn-primary" id="cloudEmailSend">Gửi mã OTP qua email</button>'
    +'</div></form></article></section><pre id="test-result"></pre>'
    +'<script>const ids=["cloudSyncCard","cloudSyncNow","cloudMigrationRestore","cloudLogout","cloudEmailInput","cloudEmailSend"];'
