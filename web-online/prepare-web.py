@@ -528,6 +528,11 @@ html=html.replace(discovery_script,'<script src="web-smart-discovery.js?v=discov
 html=html.replace(legal_script,'<script src="source-use-consent-v1.js?v=discovery-web-20261120a"></script>',1)
 if html.count('web-smart-discovery.js?v=')!=1 or html.count('smart-discovery-ui.js?v=')!=1:
     sys.exit('Duplicate Web Smart Discovery module')
+# Version the offline EPG tools dictionary so Safari does not reuse the old cache.
+if html.count('src="web-language-supplement.js"')!=1:
+    sys.exit('Offline Web dictionary asset anchor changed')
+html=html.replace('src="web-language-supplement.js"',
+    'src="web-language-supplement.js?v=drawer-native-epg-20261120a"',1)
 (out/'index.html').write_text(html,encoding='utf-8')
 (out/'.nojekyll').write_text('')
 (out/'manifest.webmanifest').write_text(json.dumps({
