@@ -21,26 +21,26 @@
   let emailRequested=false,linkHelpOpen=false;
   const linkHelp=document.createElement('button');
   linkHelp.id='cloudLinkHelp';linkHelp.type='button';linkHelp.className='btn btn-subtle cloud-link-toggle';
-  linkHelp.textContent='Dùng liên kết đăng nhập (dự phòng)';
+  linkHelp.textContent='Email không có mã? Xác thực bằng liên kết';
   linkHelp.setAttribute('aria-controls','cloudLinkForm');
   linkHelp.setAttribute('aria-expanded','false');
   linkForm?.before(linkHelp);
   linkHelp.addEventListener('click',()=>{
    linkHelpOpen=!linkHelpOpen;linkHelp.setAttribute('aria-expanded',String(linkHelpOpen));
-   linkHelp.textContent=linkHelpOpen?'Ẩn đăng nhập bằng liên kết':'Dùng liên kết đăng nhập (dự phòng)';
+   linkHelp.textContent=linkHelpOpen?'Ẩn xác thực bằng liên kết':'Email không có mã? Xác thực bằng liên kết';
    syncControls();
   });
   if(emailForm){
    const guide=document.createElement('p');guide.className='cloud-auth-guide';
-   guide.textContent='Đăng nhập không cần mật khẩu: nhận mã OTP qua email và nhập ngay tại đây, dù Gmail mở trong trình duyệt khác.';
+   guide.textContent='Đăng nhập bằng email: nếu thư có mã OTP, nhập mã ở Bước 2. Nếu thư chỉ có nút xác nhận tài khoản, chọn phương án liên kết bên dưới. Gmail có thể mở trong trình duyệt khác.';
    emailForm.before(guide);
    const hint=emailForm.querySelector('.hint');
-   if(hint)hint.textContent='Nhận mã số từ Gmail rồi nhập vào ô Bước 2. Không cần mở email trên cùng trình duyệt.';
+   if(hint)hint.textContent='Với email đăng ký lần đầu, Supabase có thể gửi thư Confirm your email address thay vì mã OTP nếu mẫu Confirm sign up chưa thiết lập.';
    const sendButton=el('cloudEmailSend');if(sendButton)sendButton.textContent='Gửi mã OTP qua email';
    const label=linkForm?.querySelector('label');
-   if(label)label.textContent='Dùng liên kết Sign in mới (nếu email không có mã OTP)';
+   if(label)label.textContent='Dán liên kết Confirm email address hoặc Sign in chưa mở từ Gmail';
    const linkHint=linkForm?.querySelector('.hint');
-   if(linkHint)linkHint.textContent='Chỉ khi email cũ vẫn gửi liên kết: sao chép địa chỉ nút Sign in mà KHÔNG mở, rồi dán vào đây. Mã OTP được ưu tiên vì hoạt động độc lập với trình duyệt.';
+   if(linkHint)linkHint.textContent='Gmail gửi thư Confirm your email address vì mẫu xác nhận đăng ký chưa có mã OTP. Nhấn giữ nút Confirm email address → Sao chép địa chỉ liên kết (không mở), dán tại đây rồi xác thực. Nếu liên kết báo lỗi hoặc trỏ về localhost, hãy yêu cầu email mới sau khi người quản trị cập nhật cài đặt Supabase.';
   }
  const logout=el('cloudLogout'),sync=el('cloudSyncNow');
  const migrationRestore=document.createElement('button');
@@ -323,9 +323,9 @@
    if(data?.user)await reconcile(data.user);
    else label('Xác thực đã được chấp nhận, đang mở phiên đăng nhập…');
   }catch(e){
-   report(e,'xác thực Magic Link');
+   report(e,'xác thực liên kết email');
    if(/expired|invalid|otp_expired/i.test(String(e?.message||'')))
-    label('Liên kết đã hết hạn hoặc đã nhấp trước đó. Hãy yêu cầu email mới; trên Gmail chọn Sao chép địa chỉ liên kết, không bấm Sign in.','error');
+    label('Liên kết xác thực không hợp lệ hoặc đã dùng. Hãy yêu cầu email mới. Email xác nhận đăng ký có thể cần chỉnh mẫu Confirm sign up và địa chỉ chuyển hướng trên Supabase.','error');
   }finally{linkVerify.disabled=false;}
  });
 
@@ -370,7 +370,7 @@
    if(error)throw error;
    emailRequested=true;linkHelpOpen=false;syncControls();
    limitEmailRetry(60);
-   label('Đã yêu cầu gửi mã OTP. Kiểm tra Gmail (kể cả Spam), nhập mã số tại Bước 2. Nếu chỉ nhận nút Sign in, mở phương án liên kết dự phòng bên dưới.');
+   label('Đã yêu cầu email xác thực. Nếu thư có mã OTP, nhập vào Bước 2. Nếu thư ghi Confirm your email address và chỉ có liên kết, dùng mục “Email không có mã?” bên dưới.');
    otpCode?.focus();
   }catch(e){
    if(core.isEmailRateLimited(e)){
