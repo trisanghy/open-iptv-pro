@@ -204,3 +204,7 @@ html.p50-40 #page-doctor :is(.settings-card,.doctor-card,.doctor-metrics>div){ba
 html.p50-40 #page-doctor .section-heading{gap:12px!important}
 html.p50-40 #page-doctor .heading-actions{display:flex;gap:6px;flex-wrap:wrap!important}
 html.p50-40 #page-doctor .heading-actions button{min-height:34px!important;font-size:11px!important;border-radius:9px!important}
+
+/* Iteration 41: Unify Favorites and Folder cards */
+html.p50-41 #page-fav :is(.fav-card,.settings-card,.channel-card),html.p50-41 #page-folders :is(.folder-card,.settings-card){border-radius:12px!important;background:var(--po-card)!important;border:1px solid var(--po-line)!important;box-shadow:none!important}
+html.p50-41 #page-fav :is(h1,h2,h3),html.p50-41 #page-folders :is(h1,h2,h3){color:var(--po-ink)!important}
