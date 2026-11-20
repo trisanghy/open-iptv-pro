@@ -52,7 +52,7 @@ impl Default for NativeData {
     fn default() -> Self {
         Self { format_version: 1, sources: vec![], channels: vec![], favorite_urls: BTreeSet::new(),
             volume: 80, folders: vec![], health: BTreeMap::new(), alternate_links: BTreeMap::new(),
-            last_channel_url: String::new(), epg_url: String::new(), theme: default_theme(),
+            last_channel_url: String::new(), epg_url: "https://epg.io.vn/epg.xml.gz".into(), theme: default_theme(),
             recent_urls: Vec::new(), auto_failover: true }
     }
 }

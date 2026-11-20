@@ -12,8 +12,31 @@ const MAX_GZIP_BYTES: u64 = 12 * 1024 * 1024;
 struct Program {
     channel: String,
     title: String,
+    description: String,
+    subtitle: String,
     start: DateTime<Utc>,
     stop: DateTime<Utc>,
+}
+
+/// Prefer XMLTV's actual title; enrich generic "Phim truyện" using episode metadata.
+pub fn detailed_title(title: &str, subtitle: &str, description: &str) -> String {
+    let base = title.trim();
+    if base.is_empty() { return String::new(); }
+    let generic = matches!(base.to_lowercase().as_str(),
+        "phim truyện" | "phim truyền hình" | "phim" | "phim truyện việt nam" | "phim truyện nước ngoài" | "series");
+    let sub = subtitle.trim();
+    if !sub.is_empty() && sub != base && sub.chars().count() <= 140 {
+        return format!("{base}: {sub}");
+    }
+    if generic {
+        let detail = description.lines().next().unwrap_or("").trim();
+        let lower = detail.to_lowercase();
+        let episode = ["tập ", "tập:", "episode ", "ep. ", "phần "].iter().any(|term| lower.contains(term));
+        if episode && detail != base && detail.chars().count() <= 160 {
+            return format!("{base}: {detail}");
+        }
+    }
+    base.to_string()
 }
 
 fn decode_time(text: &str) -> Option<DateTime<Utc>> {
@@ -48,6 +71,8 @@ pub fn parse_now(xml: &str, now: DateTime<Utc>) -> Result<HashMap<String, String
     let mut buf = Vec::new();
     let mut current: Option<Program> = None;
     let mut inside_title = false;
+    let mut inside_description = false;
+    let mut inside_subtitle = false;
     let mut best: HashMap<String, (DateTime<Utc>, String)> = HashMap::new();
     let mut seen = 0usize;
     loop {
@@ -60,37 +85,47 @@ pub fn parse_now(xml: &str, now: DateTime<Utc>) -> Result<HashMap<String, String
                 let stop = field(&e, b"stop").and_then(|x| decode_time(&x));
                 current = match (start,stop) {
                     (Some(a),Some(b)) if !id.is_empty() && a <= now && b > now =>
-                        Some(Program { channel:id, title:String::new(), start:a, stop:b }),
+                        Some(Program { channel:id, title:String::new(), description:String::new(), subtitle:String::new(), start:a, stop:b }),
                     _ => None,
                 };
             }
             Ok(Event::Start(e)) if e.name().as_ref() == b"title" => {
                 inside_title = current.is_some();
             }
-            Ok(Event::Text(e)) if inside_title => {
+            Ok(Event::Start(e)) if e.name().as_ref() == b"desc" => { inside_description = current.is_some(); }
+            Ok(Event::Start(e)) if e.name().as_ref() == b"sub-title" => { inside_subtitle = current.is_some(); }
+            Ok(Event::Text(e)) if inside_title || inside_description || inside_subtitle => {
                 if let Some(ref mut p) = current {
                     if let Ok(v) = e.unescape() {
-                        p.title.push_str(&v);
+                        if inside_title { p.title.push_str(&v); }
+                        else if inside_description { p.description.push_str(&v); }
+                        else if inside_subtitle { p.subtitle.push_str(&v); }
                     }
                 }
             }
-            Ok(Event::CData(e)) if inside_title => {
+            Ok(Event::CData(e)) if inside_title || inside_description || inside_subtitle => {
                 if let Some(ref mut p) = current {
-                    p.title.push_str(&String::from_utf8_lossy(e.as_ref()));
+                    let text = String::from_utf8_lossy(e.as_ref());
+                    if inside_title { p.title.push_str(&text); }
+                    else if inside_description { p.description.push_str(&text); }
+                    else if inside_subtitle { p.subtitle.push_str(&text); }
                 }
             }
-            Ok(Event::End(e)) if e.name().as_ref() == b"title" => {
-                inside_title = false;
-            }
+            Ok(Event::End(e)) if e.name().as_ref() == b"title" => { inside_title = false; }
+            Ok(Event::End(e)) if e.name().as_ref() == b"desc" => { inside_description = false; }
+            Ok(Event::End(e)) if e.name().as_ref() == b"sub-title" => { inside_subtitle = false; }
             Ok(Event::End(e)) if e.name().as_ref() == b"programme" => {
                 if let Some(p) = current.take() {
-                    if !p.title.is_empty() {
+                    let title = detailed_title(&p.title, &p.subtitle, &p.description);
+                    if !title.is_empty() {
                         if best.get(&p.channel).is_none_or(|(a, _)| p.start > *a) {
-                            best.insert(p.channel, (p.start, p.title));
+                            best.insert(p.channel, (p.start, title));
                         }
                     }
                 }
                 inside_title = false;
+                inside_description = false;
+                inside_subtitle = false;
             }
             Ok(Event::Eof) => break,
             Err(e) => return Err(format!("XMLTV lỗi tại byte {}: {e}", rdr.buffer_position())),
@@ -119,6 +154,26 @@ pub fn from_file(path: &Path) -> Result<HashMap<String, String>, String> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn enriches_generic_film_titles_but_preserves_specific_titles() {
+        assert_eq!(detailed_title("Phim truyện", "", "Kẻ mai mối xứng tầm - Tập 25"),
+            "Phim truyện: Kẻ mai mối xứng tầm - Tập 25");
+        assert_eq!(detailed_title("Thời sự", "", "Thông tin thời tiết"), "Thời sự");
+        assert_eq!(detailed_title("Phim truyện", "Biệt dược đen - Tập 12", ""),
+            "Phim truyện: Biệt dược đen - Tập 12");
+    }
+    #[test]
+    fn handles_more_than_12000_programmes_and_keeps_vtv3_at_end() {
+        let now = DateTime::parse_from_rfc3339("2026-11-20T05:00:00+07:00").unwrap().with_timezone(&Utc);
+        let mut xml = String::from("<tv>");
+        for _ in 0..13005 {
+            xml.push_str(r#"<programme channel="VTV1" start="20261120040000 +0700" stop="20261120060000 +0700"><title>Chào buổi sáng</title></programme>"#);
+        }
+        xml.push_str(r#"<programme channel="VTV3" start="20261120040000 +0700" stop="20261120060000 +0700"><title>Phim truyện</title><desc>Kẻ mai mối xứng tầm - Tập 25</desc></programme></tv>"#);
+        let result = parse_now(&xml, now).unwrap();
+        assert_eq!(result["VTV1"], "Chào buổi sáng");
+        assert_eq!(result["VTV3"], "Phim truyện: Kẻ mai mối xứng tầm - Tập 25");
+    }
     #[test]
     fn parses_active_program() {
         let now = DateTime::parse_from_rfc3339("2026-11-11T14:00:00+07:00").unwrap().with_timezone(&Utc);
