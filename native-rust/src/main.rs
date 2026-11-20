@@ -1285,8 +1285,8 @@ fn background_timer(ui: &MainWindow, shared: Rc<RefCell<State>>, rx: Receiver<Ba
                 let tx=tx.clone();
                 std::thread::spawn(move||{
                     let results=std::sync::Mutex::new(Vec::new());
-                    std::thread::scope(|scope|{
-                        for chunk in todo.chunks(4) {
+                    for chunk in todo.chunks(4) {
+                        std::thread::scope(|scope|{
                             for url in chunk {
                                 let output=&results;
                                 scope.spawn(move||{
@@ -1294,8 +1294,8 @@ fn background_timer(ui: &MainWindow, shared: Rc<RefCell<State>>, rx: Receiver<Ba
                                     if let Ok(mut guard)=output.lock(){guard.push((url.clone(),path));}
                                 });
                             }
-                        }
-                    });
+                        });
+                    }
                     if let Ok(logo_results)=results.into_inner() {
                         let _=tx.send(Background::Logos(logo_results));
                     }
