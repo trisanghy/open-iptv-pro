@@ -9,6 +9,15 @@
  const top=mk('div','rust-ai-heading');
  const title=mk('div','');title.append(mk('h3','','Cài đặt AI trên thiết bị'),mk('p','','Nhận diện, dịch offline, giọng đọc và quản lý mô hình · Hy-MT2/Qwen3 dành cho Apple Silicon.'));
  top.append(title,mk('span','rust-ai-privacy','Chạy trên máy · chỉ tải khi dùng'));
+ const close=mk('button','rust-ai-close','×');
+ close.type='button';close.setAttribute('aria-label','Đóng cài đặt AI');
+ close.title='Đóng cài đặt AI';
+ close.addEventListener('click',()=>{
+  panel.hidden=true;
+  gear.setAttribute('aria-expanded','false');
+  gear.focus();
+ });
+ top.append(close);
  panel.prepend(top);
  const grid=mk('div','rust-ai-grid'),recognition=mk('section','rust-ai-card rust-ai-recognition');
  const translation=mk('section','rust-ai-card'),voice=mk('section','rust-ai-card'),storage=mk('section','rust-ai-card rust-ai-storage');
