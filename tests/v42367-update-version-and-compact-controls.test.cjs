@@ -25,7 +25,7 @@ test('v4.23.67: GitHub release catalog filters draft, wrong platform, unsigned a
  const draft=release('v4.23.99',false,[{name:macName('4.23.99')}],{draft:true});
  const noIntegrity=release('v4.23.55',false,[{name:macName('4.23.55'),digest:'nope'}]);
  noIntegrity.assets[0].digest='none';
- const malicious=release('v4.23.70',false,[{name:macName('4.23.70'),url:'https://evil.test/unsafe.dmg'}]);
+ const malicious=release('v4.23.70',false,[{name:macName('4.23.71'),url:'https://evil.test/unsafe.dmg'}]);
  const r=catalogFromReleases([draft,noIntegrity,malicious,beta,stable,old,release('rust-lab/v23.3',true,[{name:'Rust-Lab-Setup.exe'}])],{platform:'darwin',arch:'arm64'});
  assert.deepEqual(r.map(x=>x.version),['v4.23.66','v4.23.60','v4.23.40']);
  assert.equal(r[0].prerelease,true);
@@ -89,5 +89,5 @@ test('v4.23.67: UI version picker and compact two-row controls exist with safe I
  assert.match(main,/ipcMain\.handle\('update:selectVersion'/);
  assert.match(preload,/listUpdateVersions/);
  assert.match(preload,/selectUpdateVersion/);
- assert.equal(require('../package.json').version,'4.23.70');
+ assert.equal(require('../package.json').version,'4.23.71');
 });

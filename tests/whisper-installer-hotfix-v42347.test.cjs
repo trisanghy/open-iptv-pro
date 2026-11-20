@@ -34,5 +34,5 @@ test('v4.23.60 installer normalizes binary and source version is synchronized',(
  assert.match(text,/packagedBinaryName/);
  assert.match(text,/normalizeBinary/);
  assert.match(text,/fs\.renameSync\(source,destination\)/);
- assert.equal(JSON.parse(fs.readFileSync(path.join(__dirname,'../package.json'),'utf8')).version,'4.23.70');
+ assert.equal(JSON.parse(fs.readFileSync(path.join(__dirname,'../package.json'),'utf8')).version,'4.23.71');
 });

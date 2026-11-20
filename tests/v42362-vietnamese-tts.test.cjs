@@ -72,5 +72,5 @@ test('v4.23.67: hashes, offline worker and consent IPC are connected',()=>{
  assert.match(pre,/ttsChooseReference/);
  assert.match(ui,/referenceConsent/);
  assert.match(html,/id="liveTtsReferenceConsent"/);
- assert.equal(require('../package.json').version,'4.23.70');
+ assert.equal(require('../package.json').version,'4.23.71');
 });
