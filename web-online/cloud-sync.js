@@ -1,5 +1,5 @@
 'use strict';
-/* Open IPTV Pro Web — optional GitHub/Google OAuth and private Supabase sync.
+/* Open IPTV Pro Web — email OTP, optional OAuth and private Supabase sync.
  * No service-role keys, no OAuth provider tokens, no data uploaded as a guest.
  */
 (async()=>{
@@ -21,26 +21,26 @@
   let emailRequested=false,linkHelpOpen=false;
   const linkHelp=document.createElement('button');
   linkHelp.id='cloudLinkHelp';linkHelp.type='button';linkHelp.className='btn btn-subtle cloud-link-toggle';
-  linkHelp.textContent='Dán liên kết đăng nhập từ Gmail';
+  linkHelp.textContent='Dùng liên kết đăng nhập (dự phòng)';
   linkHelp.setAttribute('aria-controls','cloudLinkForm');
   linkHelp.setAttribute('aria-expanded','false');
   linkForm?.before(linkHelp);
   linkHelp.addEventListener('click',()=>{
    linkHelpOpen=!linkHelpOpen;linkHelp.setAttribute('aria-expanded',String(linkHelpOpen));
-   linkHelp.textContent=linkHelpOpen?'Ẩn xác thực liên kết':'Dán liên kết đăng nhập từ Gmail';
+   linkHelp.textContent=linkHelpOpen?'Ẩn đăng nhập bằng liên kết':'Dùng liên kết đăng nhập (dự phòng)';
    syncControls();
   });
   if(emailForm){
    const guide=document.createElement('p');guide.className='cloud-auth-guide';
-   guide.textContent='Đăng nhập không cần mật khẩu. Nhập email rồi xác thực để đồng bộ IPTV giữa các thiết bị.';
+   guide.textContent='Đăng nhập không cần mật khẩu: nhận mã OTP qua email và nhập ngay tại đây, dù Gmail mở trong trình duyệt khác.';
    emailForm.before(guide);
    const hint=emailForm.querySelector('.hint');
-   if(hint)hint.textContent='Supabase gửi email chứa nút Sign in (không có mã OTP). Nhấp chuột phải vào Sign in → Sao chép địa chỉ liên kết, rồi dán vào phần xác thực bên dưới. Đừng mở liên kết trước.';
-   const sendButton=el('cloudEmailSend');if(sendButton)sendButton.textContent='Gửi email đăng nhập';
+   if(hint)hint.textContent='Nhận mã số từ Gmail rồi nhập vào ô Bước 2. Không cần mở email trên cùng trình duyệt.';
+   const sendButton=el('cloudEmailSend');if(sendButton)sendButton.textContent='Gửi mã OTP qua email';
    const label=linkForm?.querySelector('label');
-   if(label)label.textContent='Liên kết Sign in mới từ Gmail (chưa nhấp), hoặc địa chỉ localhost có ?code=...';
+   if(label)label.textContent='Dùng liên kết Sign in mới (nếu email không có mã OTP)';
    const linkHint=linkForm?.querySelector('.hint');
-   if(linkHint)linkHint.textContent='Cách dễ nhất: trên Gmail, nhấp chuột phải nút Sign in → Sao chép địa chỉ liên kết (không mở). Dán vào đây và bấm Xác thực. Nếu đã nhấp và gặp localhost, có thể dán địa chỉ localhost chứa ?code=... trên cùng trình duyệt. Chỉ dùng liên kết mới, chưa hết hạn.';
+   if(linkHint)linkHint.textContent='Chỉ khi email cũ vẫn gửi liên kết: sao chép địa chỉ nút Sign in mà KHÔNG mở, rồi dán vào đây. Mã OTP được ưu tiên vì hoạt động độc lập với trình duyệt.';
   }
  const logout=el('cloudLogout'),sync=el('cloudSyncNow');
  const account=el('cloudAccount'),choices=el('cloudSyncConflict');
@@ -116,7 +116,7 @@
   show(google,!uid&&!!client&&enabledProviders.google);
   show(github,!uid&&!!client&&enabledProviders.github);
   show(emailForm,!uid&&!!client&&enabledProviders.email);
-  show(otpForm,false); // Current Supabase Magic Link template sends no numeric OTP.
+  show(otpForm,!uid&&!!client&&enabledProviders.email); // OTP works across browsers when the mail template includes {{ .Token }}.
   show(linkHelp,!uid&&!!client&&enabledProviders.email);
    show(linkForm,!uid&&!!client&&enabledProviders.email&&linkHelpOpen);
    card.dataset.authState=uid?'signed-in':'guest';
@@ -311,7 +311,7 @@
   emailSendButton.disabled=remaining>0;
   emailSendButton.textContent=remaining>0
    ? 'Thử lại sau '+Math.ceil(remaining/60)+' phút'
-   : 'Gửi email đăng nhập';
+   : 'Gửi mã OTP qua email';
  };
  const limitEmailRetry=seconds=>{
   nextEmailSend=Math.max(nextEmailSend,Date.now()+seconds*1000);
@@ -339,9 +339,10 @@
     email,options:{emailRedirectTo:new URL('./',location.href).href,shouldCreateUser:true}
    });
    if(error)throw error;
-   emailRequested=true;linkHelpOpen=true;syncControls();
+   emailRequested=true;linkHelpOpen=false;syncControls();
    limitEmailRetry(60);
-   label('Email đăng nhập đã được yêu cầu. Trên Gmail: nhấp chuột phải vào Sign in → Sao chép địa chỉ liên kết, dán vào ô bên dưới để xác thực (KHÔNG bấm mở liên kết trước).');
+   label('Đã yêu cầu gửi mã OTP. Kiểm tra Gmail (kể cả Spam), nhập mã số tại Bước 2. Nếu chỉ nhận nút Sign in, mở phương án liên kết dự phòng bên dưới.');
+   otpCode?.focus();
   }catch(e){
    if(core.isEmailRateLimited(e)){
     limitEmailRetry(600);
@@ -352,18 +353,32 @@
    }else report(e,'gửi email đăng nhập');
   }finally{updateEmailSend();}
  });
+ otpCode?.addEventListener('input',()=>{
+  // iOS OTP autofill and Gmail copy/paste may contain spaces or dashes.
+  const normalized=core.normalizeEmailOtp(otpCode.value);
+  if(otpCode.value!==normalized)otpCode.value=normalized;
+ });
+ otpCode?.addEventListener('keydown',event=>{
+  if(event.key==='Enter'){event.preventDefault();otpVerify?.click();}
+ });
  otpVerify?.addEventListener('click',async()=>{
-  if(!client||!enabledProviders.email)return;
-  const email=safeEmail(),token=String(otpCode?.value||'').trim();
-  if(!email||!/^[0-9]{6,8}$/.test(token)){label('Nhập email và mã xác nhận hợp lệ.');return;}
+  if(!client||!enabledProviders.email||otpVerify.disabled)return;
+  const email=safeEmail(),token=core.normalizeEmailOtp(otpCode?.value);
+  if(!core.validEmail(email)){label('Nhập email đã nhận mã OTP ở Bước 1.','error');emailInput?.focus();return;}
+  if(!core.validEmailOtp(token)){label('Nhập mã OTP gồm 6–8 chữ số trong email.','error');otpCode?.focus();return;}
   otpVerify.disabled=true;
+  const oldLabel=otpVerify.textContent;
+  otpVerify.textContent='Đang xác thực…';
+  label('Đang xác thực mã OTP, không cần mở liên kết email…');
   try{
    const {data,error}=await client.auth.verifyOtp({email,token,type:'email'});
    if(error)throw error;
+   if(otpCode)otpCode.value='';
+   emailRequested=false;
    if(data?.user)await reconcile(data.user);
-   if(!data?.user)label('Mã đã xác thực. Đang chờ phiên đăng nhập…');
-  }catch(e){report(e,'xác thực mã email');}
-  finally{otpVerify.disabled=false;}
+   else label('Mã được chấp nhận. Đang khởi tạo phiên đăng nhập…');
+  }catch(e){report(e,'xác thực mã OTP');}
+  finally{otpVerify.disabled=false;otpVerify.textContent=oldLabel;}
  });
 
  sync.addEventListener('click',()=>{if(uid)void uploadLocal();});
