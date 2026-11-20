@@ -42,3 +42,20 @@
 #page-tv #liveCaptionStatus[data-error="true"]{color:#f3ae9c}
 @media(max-width:900px){#page-tv .rust-ai-grid{grid-template-columns:1fr}#page-tv .rust-ai-card{grid-column:1/-1}}
 @media(max-width:600px){#page-tv #liveCaptionSetupPanel.rust-ai-unified:not([hidden]){padding:12px!important}#page-tv .rust-ai-heading{align-items:flex-start;flex-wrap:wrap}#page-tv .rust-ai-storage-item{flex-wrap:wrap}}
+/* Keep the native TTS actions visible after reparenting into the AI card. */
+#page-tv .rust-ai-card .rust-ai-actions #liveTtsInstall,
+#page-tv .rust-ai-card .rust-ai-actions #liveTtsVoicePreview{
+  display:inline-flex!important;align-items:center;justify-content:center;
+  visibility:visible!important;position:static!important;
+  width:auto!important;min-width:140px!important;min-height:40px!important;
+  opacity:1;pointer-events:auto;white-space:normal!important;
+}
+#page-tv .rust-ai-card .rust-ai-actions #liveTtsInstall:disabled,
+#page-tv .rust-ai-card .rust-ai-actions #liveTtsVoicePreview:disabled{opacity:.55;}
+#page-tv .rust-ai-heading .rust-ai-close{
+  flex:0 0 38px;align-self:flex-start;width:38px;height:38px;
+  border:1px solid #49647a;border-radius:10px;background:#193346;
+  color:#eaf5ff;font-size:27px;line-height:1;cursor:pointer;
+}
+#page-tv .rust-ai-heading .rust-ai-close:hover{background:#315369;}
+#page-tv .rust-ai-heading .rust-ai-close:focus-visible{outline:2px solid #8dd8ff;outline-offset:2px;}
