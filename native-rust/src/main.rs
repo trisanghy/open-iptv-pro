@@ -1202,7 +1202,7 @@ fn background_timer(ui: &MainWindow, shared: Rc<RefCell<State>>, rx: Receiver<Ba
     let mut last_frame_refresh=Instant::now();
     let mut last_player_status=Instant::now();
     let mut last_frame_error=Instant::now();
-    timer.start(slint::TimerMode::Repeated, Duration::from_millis(65), move || {
+    timer.start(slint::TimerMode::Repeated, Duration::from_millis(40), move || {
         let Some(ui)=weak.upgrade() else { return; };
         while let Ok(message)=rx.try_recv() {
             match message {
@@ -1258,7 +1258,7 @@ fn background_timer(ui: &MainWindow, shared: Rc<RefCell<State>>, rx: Receiver<Ba
         // Always drain the libmpv SW render queue, even when the guide or
         // settings page is active. Only publish image pixels when TV is visible,
         // preventing a frozen decoder and unnecessary Slint texture uploads.
-        if last_frame_refresh.elapsed() >= Duration::from_millis(90) {
+        if last_frame_refresh.elapsed() >= Duration::from_millis(40) {
             last_frame_refresh=Instant::now();
             let result={
                 let guard=player.borrow();

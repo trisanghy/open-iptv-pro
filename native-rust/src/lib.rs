@@ -9,5 +9,6 @@ pub mod media;
 pub mod model;
 pub mod mpv;
 pub mod player;
+pub mod video_worker;
 #[cfg(unix)] pub mod external_mpv;
 pub mod storage;
