@@ -1,4 +1,4 @@
-# Positron P4 — Desktop UX Rework (v4.23.81)
+# Positron P4.1 — Desktop UX (v4.23.82)
 
 Independent experimentation on the `Positron` branch only. The stable Electron branch, `main`, Web, Mobile and Rust/Tauri are not altered.
 
@@ -18,7 +18,7 @@ Refer to `POSITRON_P4_CHANGELOG.md` for a source-level table of each of the 50 G
 ## Test status and distribution
 The GitHub pipeline reruns Node regression tests and the 50 new screenshot-audited P4 stages before producing installers. The 40 historical P2/P3 Electron rounds were passed in earlier immutable releases, but are not re-executed by the P4 screenshot pipeline because P4 deliberately changes navigation visibility. The P4 report includes per-round PNG SHA-256, screenshot pixel statistics, rendered control visibility, window geometry and previous-round feedback fed into the next round.
 
-GitHub tag `positron/v4.23.81-p4` is a new immutable prerelease. Build targets: macOS ARM64 DMG, macOS x64 DMG, Windows x64 Setup/Portable; source ZIP, checksums and a ZIP of all 50 real screenshots.
+GitHub tag `positron/v4.23.82-p4.1` is a new immutable prerelease. Build targets: macOS ARM64 DMG, macOS x64 DMG, Windows x64 Setup/Portable; source ZIP, checksums and a ZIP of all 50 real screenshots.
 
 **Caveat:** These are Electron/Xvfb screenshot and interaction tests, not native-device GPU or IPTV live-playback benchmarks. No fake IPTV channels are injected. Unsigned binaries may trigger macOS Gatekeeper or Windows SmartScreen warnings.
 
@@ -26,3 +26,6 @@ GitHub tag `positron/v4.23.81-p4` is a new immutable prerelease. Build targets: 
 - WAI-ARIA patterns: https://www.w3.org/WAI/ARIA/apg/
 - WCAG 2.2: https://www.w3.org/TR/WCAG22/
 - Electron Security: https://www.electronjs.org/docs/latest/tutorial/security
+
+## P4.1 screenshot review
+Fixed white surfaces in the Source and EPG pages found while visually reviewing true Electron screenshots from P4 rounds 38–39. At narrow widths the sidebar becomes a compact icon rail with accessible names. The P4 50-round screenshot audit now checks computed colors and rail geometry on the actual app.
