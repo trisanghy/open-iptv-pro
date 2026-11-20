@@ -44,3 +44,8 @@ html[data-positron=true].p50-10 #positronBar .p-actions{gap:5px!important;min-wi
 html.p50-10 #positronBar :is(#positronCounts,.p-live){display:none!important}
 html.p50-10 #positronBar .p-heading small{display:none!important}
 html.p50-10 #positronBar .p-title{gap:8px!important;min-width:100px!important;flex:0 1 auto}
+
+/* Iteration 11: Make advanced navigation reversible */
+html.p50-11.p50-advanced-closed #appSidebar :is(.nav[data-page=multiview],.nav[data-page=shots],.nav[data-page=folders],.nav[data-page=health],.nav[data-page=doctor],.nav[data-page=profiles],#exportNav){display:none!important}
+html.p50-11 #positronMorePages{display:flex;align-items:center;justify-content:space-between;width:100%;min-height:34px;margin:4px 0!important;padding:0 10px!important;border-radius:9px!important;border:1px dashed var(--po-line)!important;background:var(--po-card)!important;color:var(--po-muted)!important;font-size:11px!important}
+html.p50-11 #positronMorePages:hover{border-color:var(--po-accent)!important;color:var(--po-ink)!important}
