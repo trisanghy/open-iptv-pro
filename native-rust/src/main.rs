@@ -1,4 +1,4 @@
-use open_iptv_pro_native::{epg, epg_cache, export, failover, health, m3u, media, model::{Channel, NativeData, Source}, mpv::{Mpv, VideoBackend}, storage, netguard};
+use open_iptv_pro_native::{epg, epg_cache, export, failover, health, m3u, media, model::{Channel, NativeData, Source}, mpv::{self, Mpv, VideoBackend}, storage, netguard};
 use slint::{ComponentHandle, ModelRc, VecModel};
 use std::cell::RefCell;
 use std::collections::HashMap;
@@ -385,7 +385,8 @@ fn play_logical(
     s.selected_url=Some(primary_url.clone());
     s.data.last_channel_url=primary_url.clone();
     s.data.remember_channel(&primary_url);
-    persist(ui,&mut s,prev,format!("Đang kết nối {name} (URL {}/{}); đợi libmpv xác nhận khung hình.", index+1,s.playback_candidates.len()));
+    let candidate_count=s.playback_candidates.len();
+    persist(ui,&mut s,prev,format!("Đang kết nối {name} (URL {}/{}); đợi libmpv xác nhận khung hình.", index+1,candidate_count));
 }
 
 fn connect_callbacks(
