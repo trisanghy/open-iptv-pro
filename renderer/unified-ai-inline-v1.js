@@ -58,6 +58,6 @@
     if (existingCC) existingCC.setAttribute('title', 'Tuỳ chỉnh phụ đề (CC)');
     setOpen(false);
   }
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initialize, {once:true});
-  else initialize();
+  // Rust modules load asynchronously from app-entry; attach after all modules finish.
+  document.addEventListener('openiptv:renderer-ready', initialize, {once:true});
 })();
