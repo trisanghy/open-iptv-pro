@@ -127,3 +127,11 @@ Trên máy tính: nút **Tải Desktop** ở thanh công cụ. Trên điện tho
 ## Cài app cho iOS (không cần ký) — lối tắt Web
 
 Trong **Tải xuống phần mềm**, mục **Cài app cho iOS (không cần ký)** hướng dẫn trên iPhone/iPad dùng **Safari hoặc Chrome**: mở `https://trisanghy.github.io/open-iptv-pro/`, nhấn **Chia sẻ → Thêm vào Màn hình chính → Thêm**. Đây là phiên bản Web/lối tắt và không cần chứng chỉ ký ứng dụng, khác tệp IPA unsigned của phiên bản native.
+
+## Smart IPTV Discovery trong trình duyệt
+
+Web Online hỗ trợ xem trước danh mục kênh theo quốc gia, thể loại, ngôn ngữ hoặc toàn cầu từ **iptv-org**, và playlist chọn lọc từ **Free-TV/IPTV**. Chỉ tải danh mục từ các địa chỉ HTTPS đã định trước; không tự dùng dịch vụ proxy của bên thứ ba. Trình duyệt sử dụng kiểm tra HLS/media dựa trên bằng chứng video và có thể báo **Chưa rõ** khi nguồn giới hạn CORS, mạng, địa lý hoặc HTTPS — tuyệt đối không xem đó là bằng chứng kênh chết.
+
+**Trước lần khám phá:** người dùng phải tích ba ô riêng: đã xem điều khoản nhà cung cấp, xác nhận quyền sử dụng nội dung, và đồng ý tự chịu trách nhiệm đối với các nguồn mình chọn. Đây là tự xác nhận, không cấp giấy phép. **Trước mỗi lần nhập kênh:** phải xác nhận lại cả ba ô. Khi nhập trên Web, kênh được lưu dưới dạng bản chụp danh sách đã chọn, không âm thầm thay nguồn cũ hoặc tự cập nhật playlist đó.
+
+Trình duyệt không thể vượt hạn chế CORS hoặc xác minh bản quyền. Phần mềm là công cụ độc lập; trách nhiệm của tác giả chỉ được loại trừ trong phạm vi pháp luật cho phép. Chỉ kiểm tra và sử dụng các nguồn mình có quyền hợp pháp.

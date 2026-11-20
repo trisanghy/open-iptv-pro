@@ -37,15 +37,16 @@ test('M3U URL: cancel stops import and each import requires fresh consent',async
 });
 test('Smart Discovery: must separately attest third-party terms and legal content rights',async()=>{
  const h=harness(),pending=h.api.requireSmart(),checks=h.all(h.body,'input'),buttons=h.all(h.body,'button');
- assert.equal(checks.length,2);assert.equal(buttons[1].disabled,true);
+ assert.equal(checks.length,3);assert.equal(buttons[1].disabled,true);
  checks[0].checked=true;checks[0].emit('change');assert.equal(buttons[1].disabled,true);
- checks[1].checked=true;checks[1].emit('change');assert.equal(buttons[1].disabled,false);
+ checks[1].checked=true;checks[1].emit('change');assert.equal(buttons[1].disabled,true);
+ checks[2].checked=true;checks[2].emit('change');assert.equal(buttons[1].disabled,false);
  buttons[1].emit('click');assert.equal(await pending,true);assert.equal(h.api.isSmartAccepted(),true);
  assert.equal(await h.api.requireSmart(),true);
  const importPending=h.api.requestSmartImport('12 luồng');
  // requestSmartImport awaits the earlier session acceptance before showing its modal.
  await Promise.resolve();
- assert.equal(h.all(h.body,'input').length,2);assert.equal(h.all(h.body,'button')[1].disabled,true);
+ assert.equal(h.all(h.body,'input').length,3);assert.equal(h.all(h.body,'button')[1].disabled,true);
  h.all(h.body,'button')[0].emit('click');assert.equal(await importPending,false);
 });
 test('Smart Discovery: rejecting the terms blocks use, including attempts to import',async()=>{
@@ -108,4 +109,16 @@ test('Source Management prominently displays usage notice and Smart Discovery te
  assert.match(html,/Mỗi lần nhập phải xác nhận trước khi tiếp tục/);
  assert.match(html,/phải tích xác nhận riêng/);
  assert.match(src,/blob\/web\/online\/web-online\/README\.md/);
+});
+
+test('Smart Discovery requires a separate acceptance of personal responsibility',async()=>{
+ const h=harness(),pending=h.api.requireSmart();
+ const inputs=h.all(h.body,'input'),confirm=h.all(h.body,'button')[1];
+ assert.equal(inputs.length,3);
+ assert.match(inputs[2]['aria-label'],/Tôi đồng ý tự chịu trách nhiệm/);
+ inputs[0].checked=true;inputs[1].checked=true;
+ inputs[0].emit('change');inputs[1].emit('change');
+ assert.equal(confirm.disabled,true);
+ h.all(h.body,'button')[0].emit('click');
+ assert.equal(await pending,false);
 });
