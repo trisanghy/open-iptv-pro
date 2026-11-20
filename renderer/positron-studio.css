@@ -45,3 +45,10 @@ html[data-positron=true] #page-tv :is(.epg-current-card,.manual-link-picker){bac
 html[data-positron=true] #page-tv :is(.control-layout-top,.control-layout-bottom){gap:12px!important}
 html[data-positron=true] #page-tv :is(.controls,.output-controls){flex-wrap:wrap;gap:6px!important}
 html[data-positron=true] #page-tv :is(.quick-tools-heading,.dvr-quick-bar b){color:var(--po-ink)!important}
+/* 07 */html[data-positron=true] .main .content :is(.settings-card,.source-card,.epg-row,.doctor-metrics article,.fav-card,.folder-card,.shot-card,.task-box){background:var(--po-card)!important;color:var(--po-ink)!important;border:1px solid var(--po-line)!important;box-shadow:none!important}
+html[data-positron=true] .main .content :is(h1,h2,h3,h4,h5,legend,.settings-accordion-heading){color:var(--po-ink)!important}
+html[data-positron=true] .main .content :is(p,small,.hint,.source-hub-heading p,.section-heading p){color:var(--po-muted)}
+html[data-positron=true] .main .content :is(.settings-accordion-heading,.settings-accordion-summary){background:var(--po-raised)!important;color:var(--po-ink)!important;border-color:var(--po-line)!important}
+html[data-positron=true] .main .content :is(select,input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=color]),textarea){background:var(--po-raised)!important;color:var(--po-ink)!important;border:1px solid var(--po-line)!important;caret-color:var(--po-accent)!important}
+html[data-positron=true] .main .content input::placeholder{color:var(--po-muted)!important}
+html[data-positron=true] .main .content :is(.btn-primary,.control-main){background:var(--po-accent)!important;color:var(--po-on)!important;border-color:var(--po-accent)!important}
