@@ -215,3 +215,9 @@ html.p50-42 #positronPalette .p-search{padding:10px 14px!important}
 html.p50-42 #positronResults button{padding:9px 11px!important;border-radius:9px!important;gap:10px!important}
 html.p50-42 #positronResults .p-glyph{height:28px!important;width:28px!important;border-radius:8px!important}
 html.p50-42 #positronResults button[aria-selected=true]{background:var(--po-raised)!important;outline:1px solid var(--po-line)!important}
+
+/* Iteration 43: Add clear selectable theme cards in Studio */
+html.p50-43 #positronStudioMenu{border-radius:13px!important;padding:12px!important;box-shadow:0 18px 60px #0009!important}
+html.p50-43 #positronStudioMenu .po-themes{gap:6px!important}
+html.p50-43 #positronStudioMenu .po-theme{border-radius:10px!important;min-height:68px!important;gap:5px!important;align-items:center!important}
+html.p50-43 #positronStudioMenu .po-theme[aria-pressed=true]{outline:2px solid var(--po-accent)!important;outline-offset:-1px!important}
