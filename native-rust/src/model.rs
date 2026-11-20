@@ -42,6 +42,7 @@ pub struct NativeData {
     #[serde(default)] pub last_channel_url: String,
     #[serde(default)] pub epg_url: String,
     #[serde(default = "default_epg_auto_refresh")] pub epg_auto_refresh: bool,
+    #[serde(default = "default_auto_refresh_sources")] pub auto_refresh_sources: bool,
     #[serde(default = "default_theme")] pub theme: String,
     #[serde(default)] pub quick_tools_expanded: bool,
     #[serde(default = "default_aspect_mode")] pub aspect_mode: String,
@@ -52,6 +53,7 @@ pub struct NativeData {
 fn default_volume() -> i32 { 80 }
 fn default_auto_failover() -> bool { true }
 fn default_epg_auto_refresh() -> bool { true }
+fn default_auto_refresh_sources() -> bool { true }
 fn default_theme() -> String { "Tối · Tím".to_owned() }
 fn default_aspect_mode() -> String { "fit".to_owned() }
 pub fn valid_aspect_mode(mode: &str) -> bool { matches!(mode, "fit" | "fill" | "original") }
@@ -61,7 +63,7 @@ impl Default for NativeData {
         Self { format_version: 1, sources: vec![], channels: vec![], favorite_urls: BTreeSet::new(),
             volume: 80, folders: vec![], health: BTreeMap::new(), alternate_links: BTreeMap::new(),
             last_channel_url: String::new(), epg_url: "https://epg.io.vn/epg.xml.gz".into(), theme: default_theme(),
-            recent_urls: Vec::new(), auto_failover: true, epg_auto_refresh: true,
+            recent_urls: Vec::new(), auto_failover: true, epg_auto_refresh: true, auto_refresh_sources: true,
             quick_tools_expanded: false, aspect_mode: default_aspect_mode(), muted: false, auto_resume_last_channel: false }
     }
 }
@@ -282,6 +284,21 @@ impl NativeData {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn source_refresh_preference_roundtrips_and_migrates() {
+        let mut state = NativeData::default();
+        assert!(state.auto_refresh_sources);
+        state.auto_refresh_sources = false;
+        let stored = serde_json::to_vec(&state).unwrap();
+        let restored: NativeData = serde_json::from_slice(&stored).unwrap();
+        assert!(!restored.auto_refresh_sources);
+        let mut old = serde_json::to_value(state).unwrap();
+        old.as_object_mut().unwrap().remove("auto_refresh_sources");
+        let migrated: NativeData = serde_json::from_value(old).unwrap();
+        assert!(migrated.auto_refresh_sources);
+        migrated.validate().unwrap();
+    }
+
 
     #[test]
     fn import_backup_is_lossless_and_never_overwrites_colliding_sources() {

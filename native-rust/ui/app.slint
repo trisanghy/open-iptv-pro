@@ -37,6 +37,7 @@ export component MainWindow inherits Window {
     in-out property <string> source-edit-name;
     in-out property <string> epg-url-input;
     in-out property <bool> epg-auto-refresh-enabled: true;
+    in-out property <bool> source-auto-refresh-enabled: true;
     in-out property <bool> quick-tools-expanded: false;
     in-out property <bool> muted: false;
     in-out property <string> aspect-mode-text: "Vừa khung";
@@ -79,6 +80,7 @@ export component MainWindow inherits Window {
     callback load-epg-url();
     callback select-epg-preset(string);
     callback toggle-epg-auto-refresh();
+    callback toggle-source-auto-refresh();
     callback toggle-quick-tools();
     callback set-aspect-mode(string);
     callback toggle-mute();
@@ -565,6 +567,13 @@ export component MainWindow inherits Window {
                                 Text { text: "Giao diện: " + root.current-theme; color: root.accent; font-size: 13px; }
                                 HorizontalLayout { Button { text: "Tối · Tím"; clicked => { root.set-theme("Tối · Tím"); } } Button { text: "Tối · Xanh"; clicked => { root.set-theme("Tối · Xanh"); } } Button { text: "Sáng"; clicked => { root.set-theme("Sáng"); } } }
                                  HorizontalLayout { Button { text: "AMOLED"; clicked => { root.set-theme("AMOLED"); } } Button { text: "Apple tối"; clicked => { root.set-theme("Apple tối"); } } Button { text: "Material 3"; clicked => { root.set-theme("Material 3"); } } }
+                                Rectangle { height: 1px; background: #344157; }
+                                Text { text: "NGUỒN M3U"; color: root.accent; font-weight: 700; font-size: 12px; }
+                                HorizontalLayout {
+                                    Text { text: root.source-auto-refresh-enabled ? "Làm mới nguồn khi mở ứng dụng: BẬT" : "Làm mới nguồn khi mở ứng dụng: TẮT"; color: #a9c2d6; font-size: 12px; vertical-alignment: center; }
+                                    Button { text: "Bật / Tắt"; clicked => { root.toggle-source-auto-refresh(); } }
+                                }
+                                Text { text: "Tối đa 30 nguồn/lượt, 4 tác vụ cùng lúc; nguồn lỗi không xóa danh sách đã lưu."; color: #91a9c3; font-size: 11px; }
                                 Rectangle { height: 1px; background: #344157; }
                                 Text { text: "EPG / LỊCH PHÁT SÓNG"; color: root.accent; font-weight: 700; font-size: 12px; }
                                  HorizontalLayout {

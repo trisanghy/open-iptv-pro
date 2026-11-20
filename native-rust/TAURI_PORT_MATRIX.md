@@ -7,7 +7,7 @@ This file documents **the actual native Slint + Rust + libmpv code** in `native-
 | Feature / UX | Native C3 status | Outstanding work for Tauri parity |
 |---|---|---|
 | Separate Slint desktop shell and channel sidebar | Implemented | Port responsive compact layouts, complete Tauri typography/icon system |
-| M3U URL/file ingestion, refresh, removal and source editor | Native URL editor and rename implemented with transactional fetch-before-replace | Tauri advanced collector/merge operations, batch per-source editor, and web-specific sync |
+| M3U URL/file ingestion, refresh, removal and source editor | Transactional URL editor/rename; optional startup refresh for up to 30 sources with 4 concurrent jobs and stale-source guard | Tauri advanced collector/merge operations, batch per-source editor, and web-specific sync |
 | Rights notice and per-import M3U confirmation | Implemented | Legal review of all remote providers |
 | Smart Discovery consent | Implemented gate | Consent storage/revocation and safe curated discovery; current provider still needs licence review |
 | Favorites and recently watched | Implemented | Tauri cross-device sync and expanded filtering |

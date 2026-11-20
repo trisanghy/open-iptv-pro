@@ -27,8 +27,10 @@ struct State {
     selected_url: Option<String>,
 }
 
+enum ImportGuard { New, ExistingAnyOrigin, ExistingOrigin(String) }
+
 enum Background {
-    Playlist { source: Source, result: Result<Vec<Channel>, String> },
+    Playlist { source: Source, result: Result<Vec<Channel>, String>, guard: ImportGuard },
     Epg { source: Option<String>, result: Result<HashMap<String, String>, String> },
     Health(Vec<(String, health::Health)>),
     Snapshot(Result<(PathBuf, bool), String>),
@@ -103,6 +105,7 @@ fn refresh(ui: &MainWindow, state: &mut State) {
     ui.set_favorites_count(state.data.favorite_urls.len().to_string().into());
     ui.set_recent_count(state.data.recent_urls.len().to_string().into());
     ui.set_epg_auto_refresh_enabled(state.data.epg_auto_refresh);
+    ui.set_source_auto_refresh_enabled(state.data.auto_refresh_sources);
     ui.set_quick_tools_expanded(state.data.quick_tools_expanded);
     ui.set_aspect_mode_text(match state.data.aspect_mode.as_str() {
         "fill" => "Lấp đầy (cắt cạnh)", "original" => "Kích thước gốc", _ => "Vừa khung"
@@ -164,7 +167,16 @@ fn persist(ui: &MainWindow, state: &mut State, previous: NativeData, success: im
     }
 }
 
-fn import_playlist(ui: &MainWindow, state: &mut State, source: Source, result: Result<Vec<Channel>, String>) {
+fn import_playlist(ui: &MainWindow, state: &mut State, source: Source, result: Result<Vec<Channel>, String>, guard: ImportGuard) {
+    // A background refresh/edit must not re-create a source removed by the user.
+    // An older refresh must not overwrite a source whose URL was edited meanwhile.
+    let existing = state.data.sources.iter().find(|s| s.id == source.id);
+    let still_current = match guard {
+        ImportGuard::New => true,
+        ImportGuard::ExistingAnyOrigin => existing.is_some(),
+        ImportGuard::ExistingOrigin(origin) => existing.is_some_and(|s| s.origin == origin),
+    };
+    if !still_current { return; }
     match result {
         Ok(channels) => {
             let previous = state.data.clone();
@@ -212,14 +224,49 @@ fn merge_import(ui: &MainWindow, state: &mut State, incoming: NativeData, prefix
     ));
 }
 
-fn spawn_m3u(tx: Sender<Background>, source: Source, location: String, file: Option<PathBuf>) {
+fn spawn_m3u(tx: Sender<Background>, source: Source, location: String, file: Option<PathBuf>, guard: ImportGuard) {
     std::thread::spawn(move || {
         let result = match file {
             Some(path) => storage::read_m3u_file(&path),
             None => storage::download_m3u(&location),
         }.and_then(|txt| m3u::parse_m3u(&txt, &source.id));
-        let _ = tx.send(Background::Playlist { source, result });
+        let _ = tx.send(Background::Playlist { source, result, guard });
     });
+}
+
+
+/// Refresh known playlist sources on a bounded background queue; never run
+/// network I/O on the Slint UI thread or spawn one thread per saved source.
+fn queue_sources_refresh(tx: Sender<Background>, sources: Vec<Source>) -> usize {
+    let todo: Vec<Source> = sources.into_iter()
+        .filter(|src| src.origin.starts_with("https://") || src.origin.starts_with("http://")
+            || std::path::Path::new(&src.origin).is_file())
+        .take(30).collect();
+    let count = todo.len();
+    if count == 0 { return 0; }
+    std::thread::spawn(move || {
+        for batch in todo.chunks(4) {
+            std::thread::scope(|scope| {
+                for source in batch {
+                    let tx = tx.clone();
+                    scope.spawn(move || {
+                        let origin = source.origin.clone();
+                        let text = if origin.starts_with("https://") || origin.starts_with("http://") {
+                            storage::download_m3u(&origin)
+                        } else {
+                            storage::read_m3u_file(std::path::Path::new(&origin))
+                        };
+                        let result = text.and_then(|content| m3u::parse_m3u(&content, &source.id));
+                        let _ = tx.send(Background::Playlist {
+                            source: source.clone(), result,
+                            guard: ImportGuard::ExistingOrigin(origin),
+                        });
+                    });
+                }
+            });
+        }
+    });
+    count
 }
 
 /// Select logical channel, then try its primary URL and saved alternates.
@@ -316,7 +363,7 @@ fn connect_callbacks(
             ui.set_import_rights_confirmed(false);
             let name = raw.split('/').filter(|part| !part.is_empty()).next_back().unwrap_or("M3U online");
             let src = Source { id: source_id(), name: name.chars().take(90).collect(), origin: raw.clone() };
-            spawn_m3u(tx.clone(), src, raw, None);
+            spawn_m3u(tx.clone(), src, raw, None, ImportGuard::New);
             status(&ui, "Đang tải playlist trên luồng nền...");
         });
     }
@@ -329,7 +376,7 @@ fn connect_callbacks(
             ui.set_import_rights_confirmed(false);
             let name = path.file_name().and_then(|x| x.to_str()).unwrap_or("Local M3U").to_string();
             let src = Source { id: source_id(), name, origin: path.to_string_lossy().to_string() };
-            spawn_m3u(tx.clone(), src, String::new(), Some(path));
+            spawn_m3u(tx.clone(), src, String::new(), Some(path), ImportGuard::New);
             status(&ui, "Đang phân tích playlist cục bộ...");
         });
     }
@@ -422,7 +469,7 @@ fn connect_callbacks(
             if src.origin==new_url {status(&ui,"URL nguồn chưa thay đổi");return;}
             src.origin=new_url.clone();
             ui.set_import_rights_confirmed(false);
-            spawn_m3u(tx.clone(),src,new_url,None);
+            spawn_m3u(tx.clone(),src,new_url,None,ImportGuard::ExistingAnyOrigin);
             status(&ui,"Đang kiểm tra URL và playlist mới. Nguồn hiện tại được giữ nguyên nếu tải thất bại.");
         });
     }
@@ -592,19 +639,9 @@ fn connect_callbacks(
         let weak=ui.as_weak(); let shared=shared.clone(); let tx=tx.clone();
         ui.on_refresh_sources(move || {
             let Some(ui)=weak.upgrade() else {return;};
-            let sources=shared.borrow().data.sources.clone();
-            let mut count=0;
-            for src in sources.into_iter().take(30) {
-                let origin=src.origin.clone();
-                if origin.starts_with("https://") || origin.starts_with("http://") {
-                    spawn_m3u(tx.clone(),src,origin,None);
-                    count+=1;
-                } else if std::path::Path::new(&origin).is_file() {
-                    spawn_m3u(tx.clone(),src,String::new(),Some(PathBuf::from(origin)));
-                    count+=1;
-                }
-            }
-            status(&ui,format!("Đang cập nhật {count} nguồn online/local, giới hạn 30 nguồn/lượt."));
+            let sources = shared.borrow().data.sources.clone();
+            let count = queue_sources_refresh(tx.clone(), sources);
+            status(&ui,format!("Đang làm mới {count} nguồn, tối đa 4 tác vụ tải cùng lúc."));
         });
     }
     {
@@ -615,7 +652,7 @@ fn connect_callbacks(
                 ui.set_discovery_rights_confirmed(false);
                 let url="https://iptv-org.github.io/iptv/countries/vn.m3u".to_string();
                 let src=Source {id:source_id(),name:"Khám phá công khai · Việt Nam".into(),origin:url.clone()};
-                spawn_m3u(tx.clone(),src,url,None);
+                spawn_m3u(tx.clone(),src,url,None,ImportGuard::New);
                 status(&ui,"Đang tải playlist công khai Việt Nam (không bảo đảm mọi link phát được)...");
             }
         });
@@ -724,6 +761,19 @@ fn connect_callbacks(
             s.data.epg_auto_refresh=!s.data.epg_auto_refresh;
             let enabled=s.data.epg_auto_refresh;
             persist(&ui,&mut s,old,if enabled {"EPG sẽ tự cập nhật mỗi 10 phút"} else {"Đã tắt tự cập nhật EPG định kỳ"});
+        });
+    }
+    {
+        let weak=ui.as_weak(); let shared=shared.clone();
+        ui.on_toggle_source_auto_refresh(move || {
+            let Some(ui)=weak.upgrade() else { return; };
+            let mut state=shared.borrow_mut();
+            let before=state.data.clone();
+            state.data.auto_refresh_sources=!state.data.auto_refresh_sources;
+            let enabled=state.data.auto_refresh_sources;
+            persist(&ui,&mut state,before,
+                if enabled {"Sẽ tự làm mới nguồn M3U khi mở ứng dụng"}
+                else {"Đã tắt tự làm mới M3U khi khởi động"});
         });
     }
     {
@@ -975,7 +1025,7 @@ fn background_timer(ui: &MainWindow, shared: Rc<RefCell<State>>, rx: Receiver<Ba
         let Some(ui)=weak.upgrade() else { return; };
         while let Ok(message)=rx.try_recv() {
             match message {
-                Background::Playlist {source,result} => import_playlist(&ui,&mut shared.borrow_mut(),source,result),
+                Background::Playlist {source,result,guard} => import_playlist(&ui,&mut shared.borrow_mut(),source,result,guard),
                 Background::Health(results) => {
                     let mut s=shared.borrow_mut();let prev=s.data.clone();
                     let mut alive=0;let mut dead=0;let mut unknown=0;
@@ -1069,6 +1119,14 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     ui.set_epg_url_input(state.borrow().data.epg_url.clone().into());
     let player:Rc<RefCell<Option<Mpv>>>=Rc::new(RefCell::new(None));
     let (tx,rx)=mpsc::channel();
+    let startup_sources={
+        let current=state.borrow();
+        if current.data.auto_refresh_sources {current.data.sources.clone()} else {Vec::new()}
+    };
+    let refresh_count=queue_sources_refresh(tx.clone(),startup_sources);
+    if refresh_count>0 {
+        status(&ui,format!("Đang cập nhật {refresh_count} nguồn M3U đã lưu trên luồng nền..."));
+    }
     if !epg_source.trim().is_empty() {
         let startup_tx=tx.clone();
         std::thread::spawn(move || {
