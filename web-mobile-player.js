@@ -134,6 +134,15 @@
   return enterTheater();
  }
 
+
+ // Flat SF-style vector symbols with distinct pastel strokes and no icon tiles.
+ const mobileMorePaths={"multiview":"<rect x=\"3\" y=\"3\" width=\"7.5\" height=\"7.5\" rx=\"1.6\"/><rect x=\"13.5\" y=\"3\" width=\"7.5\" height=\"7.5\" rx=\"1.6\"/><rect x=\"3\" y=\"13.5\" width=\"7.5\" height=\"7.5\" rx=\"1.6\"/><rect x=\"13.5\" y=\"13.5\" width=\"7.5\" height=\"7.5\" rx=\"1.6\"/>","folders":"<path d=\"M3 7.5V6a2 2 0 0 1 2-2h4l2.1 2.5H19a2 2 0 0 1 2 2v9.5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z\"/>","health":"<path d=\"M20.5 8.4c0 5-8.5 10.7-8.5 10.7S3.5 13.4 3.5 8.4a4.7 4.7 0 0 1 8.5-2.6 4.7 4.7 0 0 1 8.5 2.6Z\"/>","doctor":"<path d=\"M12 4v16M4 12h16\"/>","profiles":"<circle cx=\"12\" cy=\"7.5\" r=\"3.3\"/><path d=\"M5.3 21v-1.8a6.7 6.7 0 0 1 13.4 0V21Z\"/>","export":"<path d=\"M12 3v12m-4-4 4 4 4-4M4 17v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3\"/>","settings":"<circle cx=\"12\" cy=\"12\" r=\"3.3\"/><path d=\"M12 2v2.3M12 19.7V22M2 12h2.3M19.7 12H22M4.9 4.9l1.7 1.7m10.8 10.8 1.7 1.7m0-14.2-1.7 1.7M6.6 17.4l-1.7 1.7\"/>","download":"<path d=\"M12 3v12m-4-4 4 4 4-4M4 17v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3\"/>","cloud":"<path d=\"M7.8 18.7H6.6a4.5 4.5 0 0 1-.7-8.9 6.4 6.4 0 0 1 12.3 1.1 4 4 0 0 1-.7 7.8h-.8\"/><path d=\"M9 14l3-3 3 3M12 11v9\"/>","guide":"<circle cx=\"12\" cy=\"12\" r=\"9\"/><path d=\"M12 10.5v6.2\"/><circle cx=\"12\" cy=\"7.4\" r=\".5\" fill=\"currentColor\" stroke=\"none\"/>"};
+ function mobileMoreIcon(name){
+  const p=mobileMorePaths[name]||mobileMorePaths.guide;
+  return '<svg class="mobile-more-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round">'+p+'</svg>';
+ }
+ if(root)root.OpenIPTVMobileMoreIcon=mobileMoreIcon;
+
  // Mobile has five navigation destinations; all advanced pages remain reachable
  // through a dialog, using the app's existing page and permission handlers.
  function setupMobileNavigation(){
@@ -171,18 +180,15 @@
    <section class="mobile-more-panel" role="dialog" aria-modal="true" aria-labelledby="iptvMobileMoreHeading">
     <header class="mobile-more-heading"><h2 id="iptvMobileMoreHeading">Thêm tính năng</h2><button type="button" class="mobile-more-close" aria-label="Đóng menu" data-mobile-more-close="true">✕</button></header>
     <div class="mobile-more-grid">
-     <button type="button" class="mobile-more-action" data-mobile-more-page="multiview"><span aria-hidden="true">▦</span>MultiView</button>
-     <button type="button" class="mobile-more-action" data-mobile-more-page="shots"><span aria-hidden="true">▣</span>Ảnh chụp</button>
-     <button type="button" class="mobile-more-action" data-mobile-more-page="folders"><span aria-hidden="true">▤</span>Thư mục</button>
-     <button type="button" class="mobile-more-action" data-mobile-more-page="health"><span aria-hidden="true">♡</span>Sức khỏe kênh</button>
-     <button type="button" class="mobile-more-action" data-mobile-more-page="doctor"><span aria-hidden="true">✚</span>IPTV Doctor</button>
-     <button type="button" class="mobile-more-action" data-mobile-more-page="profiles"><span aria-hidden="true">♙</span>Hồ sơ</button>
-     <button type="button" class="mobile-more-action" data-mobile-more-click="fileBtn"><span aria-hidden="true">＋</span>Mở file M3U</button>
-     <button type="button" class="mobile-more-action" data-mobile-more-click="urlBtn"><span aria-hidden="true">↗</span>Thêm URL</button>
-     <button type="button" class="mobile-more-action" data-mobile-more-click="exportNav"><span aria-hidden="true">⇩</span>Xuất M3U</button>
-     <button type="button" class="mobile-more-action" data-mobile-more-page="settings"><span aria-hidden="true">⚙</span>Cài đặt</button>
-     <button type="button" class="mobile-more-action" data-mobile-more-click="cloudAccountQuick"><span aria-hidden="true">☁</span>Tài khoản & đồng bộ</button>
-     <a class="mobile-more-action" href="huong-dan.html" target="_blank" rel="noopener noreferrer"><span aria-hidden="true">ⓘ</span>Hướng dẫn Web</a>
+     <button type="button" class="mobile-more-action" data-mobile-more-page="multiview">${mobileMoreIcon('multiview')}MultiView</button>
+     <button type="button" class="mobile-more-action" data-mobile-more-page="folders">${mobileMoreIcon('folders')}Thư mục</button>
+     <button type="button" class="mobile-more-action" data-mobile-more-page="health">${mobileMoreIcon('health')}Sức khỏe kênh</button>
+     <button type="button" class="mobile-more-action" data-mobile-more-page="doctor">${mobileMoreIcon('doctor')}IPTV Doctor</button>
+     <button type="button" class="mobile-more-action" data-mobile-more-page="profiles">${mobileMoreIcon('profiles')}Hồ sơ</button>
+     <button type="button" class="mobile-more-action" data-mobile-more-click="exportNav">${mobileMoreIcon('export')}Xuất M3U</button>
+     <button type="button" class="mobile-more-action" data-mobile-more-page="settings">${mobileMoreIcon('settings')}Cài đặt</button>
+     <button type="button" class="mobile-more-action" data-mobile-more-click="cloudAccountQuick">${mobileMoreIcon('cloud')}Tài khoản & đồng bộ</button>
+     <a class="mobile-more-action" href="huong-dan.html" target="_blank" rel="noopener noreferrer">${mobileMoreIcon('guide')}Hướng dẫn Web</a>
     </div>
    </section>`;
   doc.body.append(overlay);

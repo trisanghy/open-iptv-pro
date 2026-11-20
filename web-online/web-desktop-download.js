@@ -179,7 +179,7 @@ const mobileFormats=[
   if(moreGrid&&!moreGrid.querySelector('[data-mobile-more-click="softwareDownloadNav"]')){
    const button=doc.createElement('button');button.type='button';button.className='mobile-more-action';
    button.setAttribute('data-mobile-more-click','softwareDownloadNav');
-   button.innerHTML='<span aria-hidden="true">⇩</span>Tải xuống phần mềm';
+   button.innerHTML=(root.OpenIPTVMobileMoreIcon?.('download')||'<svg class="mobile-more-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m-4-4 4 4 4-4M4 17v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/></svg>')+'Tải xuống phần mềm';
    const settings=moreGrid.querySelector('[data-mobile-more-page="settings"]');
    if(settings)settings.after(button);else moreGrid.append(button);
   }

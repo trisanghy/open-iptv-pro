@@ -119,8 +119,8 @@ test('collapsed desktop sidebar cannot override the mobile bottom navigation',()
  assert.match(css,/height:calc\(69px \+ env\(safe-area-inset-bottom,0px\)\)!important/);
 });
 test('HTML loads versioned assets to invalidate iOS cached broken layout',()=>{
- assert.match(html,/web-mobile-player\.css\?v=favorites-tap-20261119a/);
- assert.match(html,/web-mobile-player\.js\?v=desktop-handheld-fs-20261119a/);
+ assert.match(html,/web-mobile-player\.css\?v=apple-more-20261120a/);
+ assert.match(html,/web-mobile-player\.js\?v=apple-more-20261120a/);
 });
 
 test('mobile has five focused bottom tabs with advanced functionality in More',()=>{
@@ -130,9 +130,9 @@ test('mobile has five focused bottom tabs with advanced functionality in More',(
  assert.match(code,/\['epg','Lịch'\]/);
  assert.match(code,/\['sources','Nguồn'\]/);
  assert.match(code,/iptvMobileMoreTrigger/);
- for(const page of ['multiview','shots','folders','health','doctor','profiles','settings'])
+ for(const page of ['multiview','folders','health','doctor','profiles','settings'])
   assert.ok(code.includes('data-mobile-more-page="'+page+'"'),page);
- for(const action of ['fileBtn','urlBtn','exportNav','cloudAccountQuick'])
+ for(const action of ['exportNav','cloudAccountQuick'])
   assert.ok(code.includes('data-mobile-more-click="'+action+'"'),action);
  assert.match(code,/destination\?\.click\(\)/);
 });

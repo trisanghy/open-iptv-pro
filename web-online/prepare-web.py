@@ -279,7 +279,7 @@ if html.count(link_anchor)!=1:
     sys.exit('Cloud link form anchor missing')
 html=html.replace(link_anchor,"      <div id=\"cloudLinkForm\" class=\"cloud-email-form\" hidden>\n        <label for=\"cloudLinkInput\">Nếu liên kết trong email không quay về website, hãy dán liên kết vào đây</label>\n        <div class=\"cloud-email-input-line\">\n          <input id=\"cloudLinkInput\" type=\"url\" autocomplete=\"off\" spellcheck=\"false\" placeholder=\"Liên kết xác nhận của Supabase\"/>\n          <button type=\"button\" class=\"btn btn-subtle\" id=\"cloudLinkVerify\">Xác thực liên kết</button>\n        </div>\n        <p class=\"hint\">Liên kết chỉ được dùng một lần và không được lưu vào playlist hoặc đám mây.</p>\n      </div>\n"+link_anchor,1)
 html=html.replace('</head>','<link rel="stylesheet" href="web-only.css?v=no-timeshift-20261119a"/><link rel="stylesheet" href="web-volume.css"/><link rel="stylesheet" href="cloud-sync.css?v=auth-input-compact-20261119a"/><link rel="manifest" href="manifest.webmanifest"/></head>',1)
-html=html.replace('<script src="app.js"></script>','<script src="web-mobile-player.js?v=desktop-handheld-fs-20261119a"></script><script src="app.js"></script>',1)
+html=html.replace('<script src="app.js"></script>','<script src="web-mobile-player.js?v=apple-more-20261120a"></script><script src="app.js"></script>',1)
 html=html.replace('</head>','<link rel="stylesheet" href="web-mobile-player.css?v=desktop-handheld-fs-20261119a"/></head>',1)
 html=html.replace('src="theme-boot.js"','src="theme-boot.js?v=responsive-desktop-20261118j"',1)
 html=html.replace('</body>','<script src="supabase-sdk.js"></script><script src="cloud-core.js"></script><script src="web-only.js"></script><script src="resume-last.js?v=autoplay-clean-20261119a"></script><script src="web-volume.js"></script><script src="web-mobile-volume.js?v=mobile-volume-popover-20261119a"></script><script src="cloud-sync.js"></script><script src="web-player-icons.js?v=audio-state-sync-20261119a"></script></body>',1)
@@ -349,7 +349,7 @@ html=html.replace(top_anchor,top_anchor+desktop_button,1)
 html=html.replace(sidebar_anchor,sidebar_anchor+'\n  '+sidebar_button,1)
 html=html.replace(tv_anchor,tv_anchor+'\n    '+mobile_button,1)
 html=html.replace('</head>','<link rel="stylesheet" href="web-desktop-download.css?v=ios-shortcut-20261119a"/></head>',1)
-html=html.replace('</body>','<script src="web-desktop-download.js?v=ios-shortcut-20261119a"></script></body>',1)
+html=html.replace('</body>','<script src="web-desktop-download.js?v=apple-more-20261120a"></script></body>',1)
 # Stable Web controls + watched channels; preserve them through subsequent builds.
 if html.count('<div class="filter-tabs">')!=1:sys.exit('Recent channel filter slot changed')
 html=html.replace('<div class="filter-tabs">','<div class="filter-tabs"><button class="filter-tab" data-filter="recent">Vừa xem</button>',1)
@@ -455,7 +455,7 @@ html=html.replace('web-mobile-controls-polish.css?v=quick-icons-unified-20261119
 for previous,next_value in (
     ('app.js?v=ios-lockscreen-next-state-20261119a','app.js?v=favorites-direct-play-20261120a'),
     ('advanced.js?v=no-timeshift-20261119a','advanced.js?v=favorites-tap-20261119a'),
-    ('web-mobile-player.css?v=desktop-handheld-fs-20261119a','web-mobile-player.css?v=favorites-tap-20261119a'),
+    ('web-mobile-player.css?v=desktop-handheld-fs-20261119a','web-mobile-player.css?v=apple-more-20261120a'),
 ):
     if html.count(previous)!=1:sys.exit('Favorites cache key has changed: '+previous)
     html=html.replace(previous,next_value,1)
