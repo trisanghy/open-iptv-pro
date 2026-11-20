@@ -65,6 +65,7 @@ export component MainWindow inherits Window {
     in-out property <string> status-text: "Sẵn sàng";
     in-out property <string> count-text: "0 kênh";
     in-out property <bool> show-pagination: false;
+    in-out property <bool> has-visible-channels: false;
     in-out property <string> favorites-count: "0";
     in-out property <string> recent-count: "0";
     in-out property <string> alternate-input;
@@ -449,7 +450,15 @@ if (root.active-page == "tv" || root.active-page == "fav" || root.active-page ==
                                     Rectangle { horizontal-stretch: 1; background: transparent; }
                                 }
                                 Text { text: root.selected-source-text; color: root.accent; font-size: 11px; }
-                                ListView {
+                                if !root.has-visible-channels : Rectangle {
+                                    height: 105px; border-radius: 8px; background: #192b3e;
+                                    VerticalLayout {
+                                        padding: 12px; spacing: 7px;
+                                        Text { text: root.search-text == "" ? "Chưa có kênh trong bộ lọc này" : "Không tìm thấy kênh phù hợp"; color: #d9e7f5; font-size: 13px; font-weight: 700; horizontal-alignment: center; }
+                                        Button { text: "Mở file M3U"; clicked => { root.open-m3u(); } }
+                                    }
+                                }
+                                if root.has-visible-channels : ListView {
                                     for ch[i] in root.channels: Rectangle {
                                         height: 62px;
                                         background: root.selected-channel-index == i ? #304761 : (root.light-mode ? (Math.mod(i, 2) == 0 ? #edf2f9 : #f9fbfd) : (Math.mod(i, 2) == 0 ? #1a293b : #182436));

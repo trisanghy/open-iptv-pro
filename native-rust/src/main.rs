@@ -161,6 +161,7 @@ fn refresh(ui: &MainWindow, state: &mut State) {
         .map_or(-1,|idx|idx as i32);
     ui.set_channels(ModelRc::new(VecModel::from(rows)));
     ui.set_selected_channel_index(selected_visible_index);
+    ui.set_has_visible_channels(!state.visible.is_empty());
     ui.set_sources(ModelRc::new(VecModel::from(sources)));
     ui.set_sources_count(state.data.sources.len().to_string().into());
     ui.set_favorites_count(state.data.favorite_urls.len().to_string().into());
