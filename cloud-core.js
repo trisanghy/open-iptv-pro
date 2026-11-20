@@ -5,7 +5,19 @@
  if(typeof module==='object'&&module.exports)module.exports=api;
  if(root)root.OpenIPTVCloudCore=api;
 })(typeof window!=='undefined'?window:null,function(){
+ // Sync channel records, source/favorite lists and settings. Image frames and
+ // caches stay only on the device; channel logo HTTP(S) URLs are metadata, not files.
  const SKIP=new Set(['snapshots','epgCache','epgRaw','epgPrograms','cloudSession','cloudToken']);
+ const IMAGE_ONLY_FIELDS=new Set([
+  'snapshot','snapshotCache','snapshotData','snapshotImage','snapshotImages',
+  'snapshotBlob','snapshotBlobs','snapshotBase64','screenshot','screenshots',
+  'screenshotData','frameCapture','frameCaptures','captureImage','capturedImage',
+  'captures','image','images','imageCache','imageData','imageBytes','imageBlob',
+  'imageBase64','embeddedImage','logoData','thumbnail','thumbnails',
+  'thumbnailCache','thumbnailData','thumbnailBase64','previewImage',
+  'previewImages','previewFrame','previewFrames','posterData','coverData',
+  'artworkData'
+ ]);
  const MAX_BYTES=1950000;
  function snapshot(store){
   const src=store&&typeof store==='object'&&!Array.isArray(store)?store:{};
@@ -15,7 +27,14 @@
    if(typeof value==='function')continue;
    out[key]=value;
   }
-  return JSON.parse(JSON.stringify(out));
+  // Exclude image binaries even when a future channel or backup embeds them
+  // inside a nested object. Preserve playback URLs, logo links and settings.
+  return JSON.parse(JSON.stringify(out,(key,value)=>{
+   if(IMAGE_ONLY_FIELDS.has(key))return undefined;
+   if(typeof value==='string'&&/^data:image\/[a-z0-9.+-]+;base64,/i.test(value.trim()))
+    return undefined;
+   return value;
+  }));
  }
  // Only count channels in the payload acknowledged by Supabase, never local UI state.
  function serverChannelCount(payload){return Array.isArray(payload?.channels)?payload.channels.length:0;}
