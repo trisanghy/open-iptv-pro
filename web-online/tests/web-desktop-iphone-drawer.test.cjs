@@ -104,7 +104,10 @@ test('real desktop and actual Mobile mode are unaffected',()=>{
   a.openButton.fire('click');
   assert.equal(a.attrs.has('data-iptv-handheld-menu'),false);
   assert.equal(a.attrs.get('data-sidebar-visible'),'false');
+  assert.equal(a.edge.getAttribute('aria-expanded'),'false');
  }
+ const genuineExpanded=scene({phone:false,sidebarVisible:'true'});
+ assert.equal(genuineExpanded.edge.getAttribute('aria-expanded'),'true');
 });
 test('virtual 1024px layout makes overlay controls finger-sized after screen shrink',()=>{
  const a=scene();
