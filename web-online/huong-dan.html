@@ -2,58 +2,170 @@
 <html lang="vi">
 <head>
 <meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
-<meta name="description" content="Hướng dẫn chi tiết Open IPTV Pro Web Online: mở M3U, HLS/DASH, EPG, PiP, Backup JSON, Cloud Sync, giới hạn CORS và tải bản Desktop v4.23.60."/>
-<title>Hướng dẫn sử dụng — Open IPTV Pro Web Online</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
+<meta name="theme-color" content="#080e15"/>
+<meta name="description" content="Hướng dẫn Open IPTV Pro Web mới: nhập M3U, quản lý kênh và nguồn dự phòng, EPG theo ngày, PiP, AirPlay, nghe nền, 5 tab mobile, Smart Doctor, tài khoản và đồng bộ."/>
+<title>Hướng dẫn Web mới — Open IPTV Pro | TV, M3U, EPG, PiP</title>
+<link rel="canonical" href="https://trisanghy.github.io/open-iptv-pro/huong-dan.html"/>
+<link rel="icon" href="assets/icon.png" type="image/png"/>
+<meta name="robots" content="index, follow"/>
+<meta property="og:type" content="article"/>
+<meta property="og:locale" content="vi_VN"/>
+<meta property="og:title" content="Hướng dẫn Open IPTV Pro Web — Giao diện & tính năng mới"/>
+<meta property="og:description" content="Cách nhập M3U, chọn kênh, EPG, PiP, nghe nền, AirPlay và dùng giao diện 5 tab trên điện thoại."/>
+<meta property="og:url" content="https://trisanghy.github.io/open-iptv-pro/huong-dan.html"/>
 <style>
-:root{color-scheme:dark;font-family:system-ui,-apple-system,"Segoe UI",sans-serif;font-synthesis:none}
-*{box-sizing:border-box}body{background:#0b1521;color:#e9f3fa;margin:0;line-height:1.64}
-a{color:#89d7ff;text-underline-offset:3px}a:hover{color:#b7ecff}
-header{border-bottom:1px solid #294154;background:#111f2d;padding:15px max(18px,calc((100% - 1040px)/2))}
-header nav{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
-.brand{font-size:16px;font-weight:800;letter-spacing:.01em;color:#f1f8fd}
-nav .links{display:flex;gap:15px;flex-wrap:wrap}
-main{max-width:1040px;margin:0 auto;padding:28px 20px 64px}
-h1{font-size:clamp(27px,4vw,40px);line-height:1.18;margin:12px 0}
-h2{font-size:21px;line-height:1.3;margin:4px 0 12px}
-h3{font-size:16px;margin:12px 0 5px}
-small,.muted{color:#9fb4c5}
-.hero{border:1px solid #29475e;background:linear-gradient(140deg,#172d3c,#0e202b);border-radius:18px;padding:26px;margin-bottom:22px}
-.hero p{max-width:760px;color:#bad0df}
-.actions{display:flex;flex-wrap:wrap;gap:9px;margin-top:17px}
-.action{display:inline-block;text-decoration:none;background:#38df65;color:#082312;font-weight:750;border-radius:10px;padding:11px 17px}
-.action.secondary{background:#1e3446;border:1px solid #41617a;color:#ecf7ff}
-.meta{color:#a5becf;font-size:13px}
-.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
-.card{background:#111f2d;border:1px solid #2d4255;border-radius:14px;padding:18px;margin:0 0 14px}
-ul,ol{padding-left:22px}li{margin:7px 0}
-code{background:#223b4d;padding:2px 5px;border-radius:4px;overflow-wrap:anywhere}
-.note{border-left:3px solid #d5b56b;padding:11px 14px;background:#2c281e;color:#f3dfb3;border-radius:6px}
-table{border-collapse:collapse;width:100%;font-size:14px}th,td{border-bottom:1px solid #334657;text-align:left;vertical-align:top;padding:10px 8px}
-th{color:#f0f7ff}td{color:#c4d4df}
-footer{max-width:1040px;margin:0 auto;padding:15px 20px 40px;color:#90a9ba;border-top:1px solid #25394a;font-size:13px}
-@media(max-width:760px){.grid{grid-template-columns:1fr}header{padding:14px 20px}main{padding:18px 14px 40px}}
+:root{color-scheme:dark;--bg:#080e15;--surface:#101923;--surface2:#152230;--edge:#263745;--text:#eaf2f7;--muted:#98abba;--accent:#bc7cff;--green:#69e6b2;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Arial,sans-serif;font-synthesis:none}
+*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:84px}body{margin:0;background:var(--bg);color:var(--text);font-size:14px;line-height:1.7}a{color:#c9b3ff;text-underline-offset:3px}a:hover{color:#e2d7ff}button,input,select{font:inherit}a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:3px}h1,h2,h3,p{overflow-wrap:break-word}h1{font-size:clamp(26px,3.8vw,42px);letter-spacing:-.035em;line-height:1.22;margin:10px 0 14px}h2{font-size:21px;letter-spacing:-.025em;line-height:1.35;margin:0 0 10px}h3{font-size:15px;margin:16px 0 6px}p{margin:9px 0;color:#c0d0db}small,.muted{color:var(--muted)}strong{color:#edf7ff}ul,ol{padding-left:21px;margin:10px 0}li{padding-left:2px;margin:7px 0}code{background:#1c2d3a;border:1px solid #284052;padding:2px 5px;border-radius:5px;overflow-wrap:anywhere}
+.site-header{position:sticky;top:0;z-index:30;background:#0d1720f5;backdrop-filter:blur(18px);border-bottom:1px solid var(--edge)}.site-header nav{max-width:1400px;margin:auto;padding:11px 26px;display:flex;align-items:center;justify-content:space-between;gap:16px}.brand{display:flex;align-items:center;gap:11px;min-width:0;color:var(--text);text-decoration:none}.brand img{width:36px;height:36px;object-fit:contain}.brand b{font-size:17px;letter-spacing:-.4px;white-space:nowrap}.brand small{display:block;font-weight:700;font-size:10px;letter-spacing:1.4px;color:var(--green);line-height:1.25}.links{display:flex;gap:9px;align-items:center;flex-wrap:wrap;justify-content:flex-end}.links a{text-decoration:none;font-size:12px;font-weight:700;padding:9px 12px;border-radius:9px;border:1px solid #324352;color:#dceaf5}.links a.primary-link{background:#224837;border-color:#34765b;color:#8cf1be}
+.guide-layout{max-width:1400px;margin:auto;display:grid;grid-template-columns:244px minmax(0,1fr);gap:0;min-height:calc(100dvh - 62px)}.side{border-right:1px solid var(--edge);padding:26px 14px 36px;position:sticky;top:60px;align-self:start;height:calc(100dvh - 60px);overflow:auto}.side-title{font-size:10px;font-weight:800;letter-spacing:1.8px;color:#7893a7;margin:13px 14px}.side a{display:flex;align-items:center;gap:11px;color:#aabdc9;text-decoration:none;font-weight:600;font-size:12px;padding:10px 13px;border-radius:10px;margin-bottom:3px}.side a:hover,.side a:focus-visible{background:#182b39;color:#fff}.side a.is-current{background:#1b3e32;color:#8cf1be}.side .num{font-variant-numeric:tabular-nums;font-size:11px;color:#79bba7;width:20px}.side .aside-box{margin:28px 5px 0;background:#111f2b;border:1px solid #2b4250;border-radius:13px;padding:14px;font-size:12px}.side .aside-box p{font-size:12px;line-height:1.55}.guide-main{padding:27px clamp(16px,3.3vw,46px) 72px;min-width:0;max-width:1130px;width:100%;margin:0 auto}.breadcrumb{font-size:11px;font-weight:800;letter-spacing:1.4px;color:#8ca3b2;margin-bottom:15px}.breadcrumb span{color:var(--green)}.hero{position:relative;overflow:hidden;border:1px solid #364556;background:linear-gradient(117deg,#162837 0%,#131c2b 58%,#251b36 100%);border-radius:20px;padding:clamp(20px,3vw,36px);margin-bottom:22px}.hero:after{content:"";position:absolute;right:-70px;top:-140px;width:290px;height:290px;border-radius:100%;background:#bc7cff17;pointer-events:none}.eyebrow{font-weight:800;font-size:10px;letter-spacing:1.8px;color:#8be6bb}.hero p{max-width:750px}.cta{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px}.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:11px 15px;text-decoration:none;font-size:12px;font-weight:800;border-radius:10px;border:1px solid #385269;color:#e9f6ff;background:#1b2c3a;min-height:42px}.btn.green{background:linear-gradient(180deg,#83eec0,#53cda1);border-color:#63e4af;color:#103429}.btn:hover{filter:brightness(1.09)}.tag-row{display:flex;gap:7px;flex-wrap:wrap;margin-top:19px}.tag{display:inline-flex;align-items:center;border:1px solid #385063;border-radius:20px;padding:4px 10px;color:#b3c9d8;font-weight:650;font-size:11px;background:#122330}
+.section{scroll-margin-top:80px;margin:20px 0;border:1px solid var(--edge);background:var(--surface);border-radius:16px;padding:clamp(17px,2.4vw,26px)}.section-heading{display:flex;align-items:flex-start;gap:12px;margin-bottom:10px}.section-heading .index{width:38px;height:38px;flex:0 0 38px;display:grid;place-items:center;border-radius:11px;background:#1e3b34;border:1px solid #376150;color:#80e9b6;font-weight:850;font-size:13px}.section-heading h2{margin:3px 0 0}.cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.mini{background:#14222d;border:1px solid #293f4c;border-radius:12px;padding:15px;min-width:0}.mini h3{margin:0 0 8px}.mini p{font-size:13px;line-height:1.6;margin:0}.mini ul{font-size:13px;margin:5px 0}.step-list{counter-reset:steps;list-style:none;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:11px}.step-list li{counter-increment:steps;position:relative;background:#14232d;border:1px solid #2a414e;border-radius:12px;padding:15px 13px 13px;font-size:13px;margin:0}.step-list li:before{content:counter(steps,decimal-leading-zero);display:block;color:#7fe4b5;font-weight:850;margin-bottom:7px}.hint{border:1px solid #384c5a;border-left:3px solid #a58cf4;border-radius:9px;background:#1c2132;padding:12px 14px;font-size:13px;color:#d0d9ed;margin:14px 0}.warning{border-left-color:#e3be72;background:#2a251d}.muted-line{color:#9fb6c5;font-size:12px}.pill{color:#83e8b8;background:#19402f;padding:2px 7px;border-radius:5px;font-weight:700;white-space:nowrap}.table-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}table{border-collapse:collapse;width:100%;min-width:500px;text-align:left;font-size:13px}th,td{border-bottom:1px solid #2a3e4e;padding:11px 9px;vertical-align:top}th{color:#eef6fd}td{color:#b7cad7}details{border:1px solid #2a414e;border-radius:11px;background:#12212d;margin:9px 0;overflow:hidden}summary{padding:12px 14px;font-size:13px;font-weight:750;color:#e6f1f9;cursor:pointer}details p{padding:0 14px 12px;margin:0;font-size:13px}details[open] summary{color:#8deec0}footer{border-top:1px solid #263745;margin-top:25px;padding:20px 0 10px;font-size:12px;color:#91a9ba}.mobile-tabs{display:none}.mobile-tabs a{color:#93aabb;text-decoration:none}
+.guide-locale{display:flex;align-items:center;gap:6px;font-size:11px;color:#aebfc9;white-space:nowrap}.guide-locale select{max-width:155px;border:1px solid #3c5160;color:#f2f7fd;background:#1b2935;border-radius:8px;padding:8px}.guide-locale select:focus-visible{outline:2px solid var(--accent)}
+@media(max-width:1000px){.guide-layout{grid-template-columns:198px minmax(0,1fr)}.side{padding:20px 8px}.site-header nav{padding:9px 17px}.links a{padding:8px}.guide-main{padding:20px 16px 50px}}@media(max-width:720px){html{scroll-padding-top:66px}.guide-layout{display:block}.site-header nav{gap:8px;padding:8px 12px}.brand img{width:33px;height:33px}.brand b{font-size:14px}.brand small{font-size:9px}.links a{font-size:11px;padding:7px 9px}.links a:nth-child(2),.links a:nth-child(3){display:none}.guide-locale{font-size:0}.guide-locale select{width:108px;max-width:108px;font-size:11px;padding:7px}.side{display:none}.guide-main{padding:15px 11px calc(108px + env(safe-area-inset-bottom,0px))}.hero{border-radius:15px}.cards,.step-list{grid-template-columns:1fr}.section{scroll-margin-top:70px}.mobile-tabs{position:fixed;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));align-items:center;left:0;right:0;bottom:0;z-index:35;border:1px solid #304452;border-radius:17px 17px 0 0;background:#111d28f7;backdrop-filter:blur(16px);padding:6px 6px calc(5px + env(safe-area-inset-bottom,0px));box-shadow:0 -10px 28px #0007}.mobile-tabs a{min-width:0;min-height:49px;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:1px;border-radius:10px;font-size:10px;font-weight:750;line-height:1.25}.mobile-tabs a svg{width:21px;height:21px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}.mobile-tabs a:hover,.mobile-tabs a.is-current{background:#214534;color:#8cf0bc}.tag-row{gap:5px}.tag{font-size:10px}.section-heading .index{width:34px;height:34px;flex-basis:34px}}
+@media(max-width:390px){.brand small{display:none}.links a.primary-link{font-size:10px}.guide-locale select{width:96px}.site-header nav{padding:7px 8px}}@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}@media print{.site-header,.side,.mobile-tabs,.cta{display:none!important}.guide-layout{display:block}.guide-main{padding:0;max-width:none}.section,.mini,.hero{break-inside:avoid;color:#000;background:#fff;border-color:#ddd}body{color:#000;background:#fff}p,td,small{color:#333}}
 </style>
 </head>
 <body>
-<header><nav><div class="brand">▶ Open IPTV Pro <span class="muted">/ Web Online</span></div><div class="links"><a href="./">Xem truyền hình</a><a href="https://github.com/trisanghy/open-iptv-pro">GitHub</a><a href="https://github.com/trisanghy/open-iptv-pro/releases/tag/v4.23.60">Bản Desktop</a></div></nav></header>
-<main>
-<section class="hero">
-<p class="meta">HƯỚNG DẪN CHÍNH THỨC · TRÌNH DUYỆT</p>
-<h1>Xem IPTV ngay trên Web, không cần cài đặt</h1>
-<p>Open IPTV Pro Web Online hỗ trợ thêm tệp/URL M3U, phát nguồn tương thích HLS/DASH, tổ chức kênh, yêu thích, EPG, xem đa màn hình và sao lưu dữ liệu. Giao diện và danh sách kênh do bạn tự quản lý.</p>
-<div class="actions"><a class="action" href="./">Mở Open IPTV Pro Web</a><a class="action secondary" href="https://github.com/trisanghy/open-iptv-pro/releases/tag/v4.23.60">Tải Desktop v4.23.60</a></div>
-<p class="meta">Đường dẫn trực tiếp: <a href="https://trisanghy.github.io/open-iptv-pro/">https://trisanghy.github.io/open-iptv-pro/</a></p>
+<header class="site-header"><nav><a class="brand" href="./"><img src="assets/icon.png" alt="Open IPTV Pro"/><span><b>Open IPTV Pro</b><small>HƯỚNG DẪN WEB</small></span></a><div class="links"><a class="primary-link" href="./">Mở ứng dụng</a><a href="https://github.com/trisanghy/open-iptv-pro/releases/latest">Tải Desktop</a><a href="https://github.com/trisanghy/open-iptv-pro">GitHub</a></div></nav></header>
+<div class="guide-layout">
+<aside class="side" aria-label="Mục lục hướng dẫn">
+ <div class="side-title">HƯỚNG DẪN SỬ DỤNG</div>
+ <a href="#bat-dau"><span class="num">01</span> Bắt đầu nhanh</a>
+ <a href="#nguon"><span class="num">02</span> Nhập nguồn M3U</a>
+ <a href="#tv"><span class="num">03</span> Xem truyền hình</a>
+ <a href="#kenh"><span class="num">04</span> Kênh và yêu thích</a>
+ <a href="#epg"><span class="num">05</span> Lịch phát sóng EPG</a>
+ <a href="#mobile"><span class="num">06</span> Giao diện điện thoại</a>
+ <a href="#cong-cu"><span class="num">07</span> Công cụ mở rộng</a>
+ <a href="#cai-dat"><span class="num">08</span> Cài đặt và đồng bộ</a>
+ <a href="#su-co"><span class="num">09</span> Khắc phục sự cố</a>
+ <a href="#faq"><span class="num">10</span> Câu hỏi thường gặp</a>
+ <div class="aside-box"><strong>Ứng dụng Web</strong><p>Phát video bằng trình duyệt, không cài phần mềm. Hỗ trợ phụ thuộc nguồn IPTV và thiết bị.</p><a href="./" style="padding:7px 0;color:#85e5b6">Mở trang xem TV</a></div>
+</aside>
+<main class="guide-main">
+<div class="breadcrumb">OPEN IPTV PRO <span>›</span> HƯỚNG DẪN</div>
+<section class="hero" id="bat-dau">
+ <div class="eyebrow">GIAO DIỆN MỚI · WEB / MOBILE</div>
+ <h1>Tất cả về Open IPTV Pro Web</h1>
+ <p>Khám phá cách nhập danh sách M3U hợp pháp, xem kênh, chọn nguồn phát, đọc EPG và sử dụng các công cụ trên máy tính, iPhone và Android.</p>
+ <div class="cta"><a class="btn green" href="./">▶ Mở Web Online</a><a class="btn" href="#nguon">Xem cách bắt đầu</a><a class="btn" href="https://github.com/trisanghy/open-iptv-pro/releases/latest">Tải Desktop mới nhất</a></div>
+ <div class="tag-row"><span class="tag">TV &amp; Yêu thích</span><span class="tag">EPG theo ngày</span><span class="tag">PiP / AirPlay</span><span class="tag">Link dự phòng</span><span class="tag">Đồng bộ tài khoản</span></div>
 </section>
-<div class="grid">
-<section class="card"><h2>01 · Thêm danh sách M3U</h2><ol><li>Mở Web bằng Chrome, Edge, Firefox hoặc Safari hiện đại.</li><li>Nhấn <b>Mở file M3U</b> để chọn tệp trong máy, hoặc vào <b>Quản lý nguồn</b> để nhập URL playlist khi được hỗ trợ.</li><li>Chọn một kênh để phát. Có thể chọn link dự phòng nếu danh sách cung cấp.</li><li>Đổi tên nguồn, sắp xếp thư mục và đánh dấu kênh <b>Yêu thích</b> theo nhu cầu.</li></ol></section>
-<section class="card"><h2>02 · Xem TV và điều khiển</h2><ul><li><b>HLS/MPEG-DASH/MP4:</b> phát khi trình duyệt hỗ trợ codec và đường dẫn truy cập.</li><li>Chọn Phát/Tạm dừng, âm lượng, toàn màn hình và PiP khi trình duyệt cho phép.</li><li>Có thể mở lại kênh xem cuối; tự phát có tiếng đôi khi cần một lần nhấp do chính sách của trình duyệt.</li><li>MultiView, khung hình và các công cụ kiểm tra kênh hoạt động tùy luồng.</li></ul></section>
-<section class="card"><h2>03 · EPG và tìm kênh</h2><ul><li>Dùng thanh tìm kiếm để lọc theo tên/khu vực và mở các thư mục kênh.</li><li>Xem EPG/XMLTV nếu nguồn cung cấp dữ liệu. Bản Web có cơ chế lấy EPG Việt Nam từ cùng nguồn website khi dữ liệu có sẵn.</li><li>Khi kênh báo <b>CORS/mạng</b> hoặc <b>Chưa rõ</b>, đó không nhất thiết là nguồn đã ngừng hoạt động.</li></ul></section>
-<section class="card"><h2>04 · Sao lưu và đồng bộ</h2><ul><li>Vào <b>Cài đặt → Xuất Backup JSON</b> để lưu dữ liệu trình duyệt của bạn. Nhập JSON từ chính bản Web để khôi phục.</li><li>Nếu Cloud Sync được cấu hình, có thể đăng nhập/đồng bộ bằng các phương thức được ứng dụng hiển thị.</li><li>Không cần đăng nhập vẫn dùng ở chế độ khách; dữ liệu có thể mất khi xóa dữ liệu trình duyệt.</li><li><b>Lưu ý bảo mật:</b> backup và đồng bộ có thể chứa URL với token hoặc mã PIN.</li></ul></section>
-</div>
-<section class="card"><h2>05 · Khi Web không phát được</h2><table><thead><tr><th>Hiện tượng</th><th>Khắc phục</th></tr></thead><tbody><tr><td>CORS / nguồn HTTP</td><td>Ưu tiên HTTPS và các URL máy chủ cho phép truy cập từ trình duyệt; không thể tự vượt CORS của dịch vụ.</td></tr><tr><td>Hình không phát / DRM</td><td>Kiểm tra codec, playlist, thời hạn link hoặc quyền xem. Với luồng cần FFmpeg/native player, dùng Desktop.</td></tr><tr><td>Không có tiếng khi tự mở</td><td>Nhấn nút Phát/Bật tiếng một lần. Chrome/Safari có thể hạn chế tự phát âm thanh.</td></tr><tr><td>EPG không tải</td><td>Đợi dữ liệu cập nhật hoặc nhập nguồn EPG khác khi được hỗ trợ.</td></tr></tbody></table></section>
-<section class="card"><h2>06 · Web so với Desktop v4.23.60</h2><table><thead><tr><th>Tính năng</th><th>Web Online</th><th>Desktop</th></tr></thead><tbody><tr><td>M3U, yêu thích, HLS/DASH, EPG</td><td>Có, tùy CORS/codec</td><td>Có, hỗ trợ rộng hơn</td></tr><tr><td>Whisper Live Caption, dịch Hy-MT2/Qwen3/Argos</td><td>Không có bộ chạy AI local native</td><td>Có, cần cài đúng model/nền tảng</td></tr><tr><td>TTS Piper / VieNeu, giảm tiếng gốc</td><td>Không có TTS offline tích hợp như Desktop</td><td>Có</td></tr><tr><td>FFmpeg native, Timeshift, DVR</td><td>Không có</td><td>Có, tùy nguồn/nền tảng</td></tr><tr><td>Backup</td><td>JSON của Web</td><td>Backup riêng của Desktop</td></tr></tbody></table><p class="note">**Không cài mã Electron trên GitHub Pages.** Trang Web là ứng dụng tĩnh độc lập; đừng nhầm các tính năng AI offline của bản Desktop là đã có trong trình duyệt.</p></section>
-<section class="card"><h2>Câu hỏi thường gặp</h2><h3>Website có cung cấp danh sách kênh không?</h3><p>Không. Bạn tự nhập danh sách nguồn M3U có quyền truy cập.</p><h3>Dùng được trên điện thoại không?</h3><p>Có thể mở trình duyệt di động, nhưng PiP, autoplay, codec và dung lượng lưu trữ tùy thiết bị.</p><h3>Tôi muốn phụ đề dịch giọng nói tiếng Việt trực tiếp?</h3><p>Dùng bản <a href="https://github.com/trisanghy/open-iptv-pro/releases/tag/v4.23.60">Open IPTV Pro Desktop v4.23.60</a> vì Whisper/MLX/VieNeu hiện triển khai ở Electron.</p></section>
+<section class="section" aria-labelledby="start-heading">
+ <div class="section-heading"><span class="index">01</span><h2 id="start-heading">Bắt đầu trong 3 bước</h2></div>
+ <ol class="step-list"><li>Mở <a href="./">Open IPTV Pro Web</a> bằng trình duyệt hiện đại.</li><li>Nhấn <strong>Mở file M3U</strong> hoặc <strong>Thêm URL</strong>, rồi xác nhận quyền sử dụng nguồn.</li><li>Chọn kênh trong danh sách. Dùng nút <strong>Yêu thích</strong> để lưu kênh hay xem.</li></ol>
+ <p class="muted-line">Ứng dụng không kèm sẵn kênh truyền hình hay tài khoản xem nội dung.</p>
+</section>
+<section class="section" id="nguon">
+ <div class="section-heading"><span class="index">02</span><h2>Thêm và quản lý nguồn M3U</h2></div>
+ <div class="cards">
+  <div class="mini"><h3>Nhập từ thiết bị</h3><p>Trong trang TV, chọn <strong>Mở file M3U</strong> rồi chọn danh sách của bạn. Tệp phải có cấu trúc playlist hợp lệ.</p></div>
+  <div class="mini"><h3>Nhập URL</h3><p>Nhấn <strong>Thêm URL</strong> hoặc mở <strong>Quản lý nguồn</strong>. Nguồn trực tuyến cần cho phép trình duyệt tải nội dung.</p></div>
+  <div class="mini"><h3>Gộp và sửa nguồn</h3><p>Quản lý các playlist, thư mục, tên kênh; kênh trùng có thể được ghép theo <code>tvg-id</code> và tên chuẩn hóa, giữ link phát khác nhau làm dự phòng.</p></div>
+  <div class="mini"><h3>Chọn link dự phòng</h3><p>Trong trình phát, mở <strong>Link phát</strong> để chuyển thủ công. <strong>Auto Failover</strong> có thể thử nguồn khác khi phát lỗi.</p></div>
+ </div>
+ <p class="hint warning"><strong>Lưu ý bản quyền:</strong> Chỉ nhập và sử dụng playlist, URL hoặc kết quả Smart Discovery khi bạn có quyền truy cập. Nguồn tìm thấy công khai không đồng nghĩa được phép xem hay chia sẻ.</p>
+</section>
+<section class="section" id="tv">
+ <div class="section-heading"><span class="index">03</span><h2>Trình phát TV và điều khiển</h2></div>
+ <div class="cards">
+  <div class="mini"><h3>Điều khiển phát</h3><p>Chuyển kênh trước / sau, Phát / Tạm dừng, Dừng, âm lượng, <strong>Yêu thích</strong> và mở toàn màn hình.</p></div>
+  <div class="mini"><h3>EPG · Khung hình · Link phát</h3><p>Ngay dưới video và trong toàn màn hình có các lựa chọn lịch chương trình, tỷ lệ hiển thị và nguồn chính / dự phòng.</p></div>
+  <div class="mini"><h3>PiP và Cast / AirPlay</h3><p>Nhấn <strong>PiP</strong> để xem cửa sổ nổi hoặc <strong>Cast / AirPlay</strong> để phát lên thiết bị hỗ trợ. Tính năng phụ thuộc trình duyệt, hệ điều hành và nguồn phát.</p></div>
+  <div class="mini"><h3>Tự phát lại và nghe nền</h3><p>Có thể bật <strong>Tự mở kênh khi vào website</strong> trong Cài đặt; dùng <strong>Nghe nền</strong> trước khi khóa màn hình nếu thiết bị hỗ trợ.</p></div>
+ </div>
+ <p class="hint">Trình duyệt có thể chặn tự phát có tiếng. Nếu video không tự chạy hoặc bị tắt tiếng, hãy nhấn <strong>Phát</strong> hoặc <strong>Bật tiếng</strong>. Một số luồng live không có thanh tua.</p>
+</section>
+<section class="section" id="kenh">
+ <div class="section-heading"><span class="index">04</span><h2>Danh sách kênh, thư mục và yêu thích</h2></div>
+ <div class="cards">
+  <div class="mini"><h3>Tìm và lọc</h3><p>Nhập tên kênh hoặc nhóm trong ô tìm kiếm. Các bộ lọc gồm <strong>Tất cả</strong>, <strong>Yêu thích</strong>, <strong>Vừa xem</strong>, <strong>Sống</strong>, <strong>Die</strong> và <strong>Chưa rõ</strong>.</p></div>
+  <div class="mini"><h3>Sắp xếp nhanh</h3><p>Trên máy tính có thể kéo thả kênh giữa các thư mục, gập / mở nhóm và dùng <strong>Shift</strong> để chọn nhiều kênh.</p></div>
+ </div>
+ <p>Nhấn biểu tượng ngôi sao để đánh dấu Yêu thích. <strong>Vừa xem</strong> là nơi truy cập nhanh các kênh đã mở gần đây; không cần tìm lại từ đầu.</p>
+</section>
+<section class="section" id="epg">
+ <div class="section-heading"><span class="index">05</span><h2>Lịch phát sóng EPG theo ngày</h2></div>
+ <div class="cards">
+  <div class="mini"><h3>Lịch hiện tại và tiếp theo</h3><p>Trong màn hình TV, xem tên và giờ chương trình đang phát / sắp phát. Mở mục <strong>Lịch</strong> để xem chi tiết theo kênh và ngày.</p></div>
+  <div class="mini"><h3>Thêm nguồn XMLTV</h3><p>Vào <strong>Cài đặt → Nguồn lịch EPG</strong> để thêm URL hoặc nhập file <code>.xml</code>, <code>.xmltv</code>, <code>.xml.gz</code>. Có thể tải lại khi cần.</p></div>
+ </div>
+ <p>Ứng dụng hỗ trợ làm mới EPG lúc khởi động khi cài đặt đang bật, ghép lịch thủ công và điều chỉnh chênh lệch giờ. Tên phim / chương trình chỉ hiện đúng khi nguồn XMLTV có dữ liệu và khớp kênh.</p>
+ <p class="hint">EPG không phải danh sách kênh phát; lịch trống không nhất thiết có nghĩa video không hoạt động. Nếu lịch lệch, kiểm tra múi giờ và mã kênh.</p>
+</section>
+<section class="section" id="mobile">
+ <div class="section-heading"><span class="index">06</span><h2>Giao diện iPhone và Android</h2></div>
+ <p>Trên điện thoại, video và các nút điều khiển được ưu tiên hiển thị ở đầu trang, danh sách kênh có vùng cuộn riêng và thanh điều hướng cố định gồm <strong>5 tab</strong>:</p>
+ <div class="cards">
+  <div class="mini"><h3>TV · Yêu thích · Lịch</h3><p>Mở trình phát, các kênh đã đánh dấu và lịch phát sóng EPG nhanh chóng.</p></div>
+  <div class="mini"><h3>Nguồn · Thêm</h3><p>Quản lý danh sách M3U và mở các tiện ích như MultiView, Ảnh chụp, Doctor, Cài đặt, Tài khoản và trang Hướng dẫn.</p></div>
+ </div>
+ <p>Thanh công cụ video có các nút âm lượng, AirPlay/Cast, PiP và toàn màn hình. iPhone có thể cần dùng nút âm lượng vật lý; chế độ toàn màn hình có thể do Safari quyết định. Trên một số trình duyệt, PiP hoặc phát khi màn hình khóa không được hỗ trợ.</p>
+ <p class="hint">Bạn có thể thêm website vào Màn hình chính trên iPhone bằng Safari → Chia sẻ → Thêm vào Màn hình chính. Đây là lối tắt Web, không phải ứng dụng iOS native.</p>
+</section>
+<section class="section" id="cong-cu">
+ <div class="section-heading"><span class="index">07</span><h2>Công cụ và tiện ích mở rộng</h2></div>
+ <div class="cards">
+  <div class="mini"><h3>MultiView 4 kênh</h3><p>Mở nhiều kênh đồng thời để theo dõi. Có thể tốn thêm băng thông và bị giới hạn kết nối bởi nhà cung cấp.</p></div>
+  <div class="mini"><h3>Ảnh chụp kênh</h3><p>Chụp khung hình video thật khi nguồn cho phép. CORS, DRM và khả năng chạy video nền có thể ngăn ảnh chụp.</p></div>
+  <div class="mini"><h3>Sức khỏe kênh / Doctor</h3><p>Kiểm tra lỗi luồng, link dự phòng, metadata, EPG và nhận đề xuất. Trạng thái <strong>Chưa rõ</strong> không tự động đồng nghĩa <strong>Die</strong>.</p></div>
+  <div class="mini"><h3>Hồ sơ và khóa trẻ em</h3><p>Quản lý yêu thích theo hồ sơ, đặt mã PIN cục bộ và hạn chế nhóm kênh khi cần.</p></div>
+ </div>
+ <p class="muted-line">Những kết quả kiểm tra và ảnh chụp phụ thuộc khả năng truy cập của trình duyệt, không thể dùng để vượt bảo vệ nguồn nội dung.</p>
+</section>
+<section class="section" id="cai-dat">
+ <div class="section-heading"><span class="index">08</span><h2>Cài đặt, tài khoản và sao lưu</h2></div>
+ <div class="cards">
+  <div class="mini"><h3>Giao diện theo ý thích</h3><p>Vào <strong>Cài đặt</strong> để chọn phong cách hiển thị, Sáng / Tối / AMOLED / Tự động, màu nhấn và mật độ Compact / Comfort.</p></div>
+  <div class="mini"><h3>Tài khoản &amp; Cloud Sync</h3><p>Chọn <strong>Tài khoản</strong> để đăng nhập và đồng bộ dữ liệu khi dịch vụ được cấu hình. Có thể tiếp tục dùng chế độ khách không cần đăng nhập.</p></div>
+  <div class="mini"><h3>Sao lưu và khôi phục</h3><p>Dùng tùy chọn Backup / Restore của bản Web để lưu cấu hình và playlist vào tệp. Kiểm tra định dạng sao lưu được ứng dụng hiển thị.</p></div>
+  <div class="mini"><h3>Tải phần mềm máy tính</h3><p>Trên Web chọn <strong>Tải phần mềm</strong> hoặc <a href="https://github.com/trisanghy/open-iptv-pro/releases/latest">GitHub Releases mới nhất</a> để lấy bộ cài tương ứng Windows / macOS.</p></div>
+ </div>
+ <p class="hint warning"><strong>Quyền riêng tư:</strong> Backup và đồng bộ có thể chứa URL có token truy cập, nguồn cá nhân và thông tin cấu hình. Không chia sẻ tệp sao lưu công khai. Dữ liệu khách có thể mất nếu xóa dữ liệu trình duyệt.</p>
+</section>
+<section class="section" id="su-co">
+ <div class="section-heading"><span class="index">09</span><h2>Khắc phục sự cố thường gặp</h2></div>
+ <div class="table-scroll"><table><thead><tr><th>Hiện tượng</th><th>Cách xử lý</th></tr></thead><tbody>
+ <tr><td>Không tải được M3U / CORS</td><td>Kiểm tra URL, định dạng playlist, quyền truy cập và HTTPS. Website không thể vượt CORS do máy chủ đặt ra.</td></tr>
+ <tr><td>Hình đen, không phát</td><td>Kiểm tra codec, DRM, hạn link và thử link dự phòng hợp lệ. Một số định dạng chỉ chạy trên Desktop.</td></tr>
+ <tr><td>Không có tiếng hoặc không tự phát</td><td>Nhấn Phát / Bật tiếng một lần; kiểm tra chính sách autoplay của Safari, Chrome hoặc thiết bị.</td></tr>
+ <tr><td>EPG không có tên chương trình</td><td>Tải lại EPG; kiểm tra nguồn XMLTV, mã kênh, múi giờ và nội dung tên chương trình từ nhà cung cấp.</td></tr>
+ <tr><td>PiP / Cast / AirPlay không mở</td><td>Dùng trình duyệt tương thích, cấp quyền khi được hỏi, thử Safari trên iPhone; khả năng phụ thuộc luồng phát và thiết bị đích.</td></tr>
+ <tr><td>Kiểm tra kênh báo Chưa rõ</td><td>CORS, timeout hoặc chặn kiểm tra segment có thể khiến trình duyệt thiếu bằng chứng; hãy thử phát trực tiếp trước khi đánh giá nguồn.</td></tr>
+ </tbody></table></div>
+</section>
+<section class="section" id="faq">
+ <div class="section-heading"><span class="index">10</span><h2>Câu hỏi thường gặp</h2></div>
+ <details><summary>Open IPTV Pro có cung cấp danh sách kênh không?</summary><p>Không. Phần mềm chỉ phát và quản lý playlist do người dùng tự nhập. Bạn phải có quyền hợp pháp với các nguồn nội dung.</p></details>
+ <details><summary>Web có ghi hình DVR, Timeshift hoặc AI Whisper như Desktop không?</summary><p>Không có FFmpeg native, Timeshift / DVR native hay các mô hình AI offline như bản cài Desktop. Tính năng Web luôn phụ thuộc API trình duyệt.</p></details>
+ <details><summary>PiP có hoạt động khi chuyển tab hoặc ẩn trình duyệt không?</summary><p>PiP thủ công hoạt động khi trình duyệt hỗ trợ. Khả năng tự chuyển PiP lúc rời trang hoặc khóa màn hình phụ thuộc phiên bản trình duyệt, thiết bị và quyền tự động PiP; không thể đảm bảo trên mọi thiết bị.</p></details>
+ <details><summary>Tại sao URL kênh phát được trong app khác nhưng không chạy trên Web?</summary><p>Các app native có bộ giải mã hoặc quyền truy cập mạng khác. Trình duyệt có thể chặn HTTP, CORS, codec, DRM hoặc tự phát có âm thanh.</p></details>
+ <details><summary>Làm sao dùng trên nhiều thiết bị?</summary><p>Đăng nhập cùng tài khoản để đồng bộ khi Cloud Sync khả dụng, hoặc xuất và nhập bản sao lưu tương thích. Nguồn phát vẫn cần quyền truy cập riêng trên từng thiết bị.</p></details>
+ <p class="hint">Tài liệu dành cho <strong>Web Online</strong>. Đối với tính năng native, hãy xem <a href="https://github.com/trisanghy/open-iptv-pro/releases/latest">bản Desktop mới nhất</a> và tài liệu riêng của bản đó.</p>
+</section>
+<footer>Open IPTV Pro · <a href="./">Xem truyền hình</a> · <a href="https://github.com/trisanghy/open-iptv-pro">Mã nguồn GitHub</a> · <a href="https://github.com/trisanghy/open-iptv-pro/releases/latest">Tải Desktop</a><p>Open IPTV Pro không phân phối nội dung IPTV. Người dùng tự chịu trách nhiệm xác minh quyền sử dụng nguồn, trong phạm vi pháp luật cho phép.</p></footer>
 </main>
-<footer>Open IPTV Pro · <a href="./">Web Online</a> · <a href="https://github.com/trisanghy/open-iptv-pro/releases">Desktop Releases</a> · Mở các nguồn truyền hình mà bạn được phép truy cập.</footer>
+</div>
+<nav class="mobile-tabs" aria-label="Điều hướng hướng dẫn trên điện thoại">
+<a href="#tv"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M9 9l6 3-6 3z"/></svg><span>TV</span></a>
+<a href="#kenh"><svg viewBox="0 0 24 24"><path d="m12 2 3 6.4 7 1-5 4.8 1.1 7-6.1-3.3-6.1 3.3L6 14.2l-5-4.8 7-1z"/></svg><span>Yêu thích</span></a>
+<a href="#epg"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 3v4M17 3v4M3 10h18M7 14h6"/></svg><span>Lịch</span></a>
+<a href="#nguon"><svg viewBox="0 0 24 24"><path d="M4 7h7l2 2h7v10H4zM4 7V5h9"/></svg><span>Nguồn</span></a>
+<a href="#faq"><svg viewBox="0 0 24 24"><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></svg><span>Thêm</span></a>
+</nav>
+<script>
+(function(){
+'use strict';
+const links=[...document.querySelectorAll('.side a[href^="#"],.mobile-tabs a[href^="#"]')];
+if(!('IntersectionObserver' in window))return;
+const sections=[...document.querySelectorAll('.guide-main section[id]')];
+const obs=new IntersectionObserver(entries=>{
+ const visible=entries.filter(x=>x.isIntersecting).sort((a,b)=>b.intersectionRatio-a.intersectionRatio);
+ if(!visible.length)return;
+ const id=visible[0].target.id;
+ for(const link of links){const on=link.getAttribute('href')==='#'+id;link.classList.toggle('is-current',on);if(on)link.setAttribute('aria-current','location');else link.removeAttribute('aria-current');}
+},{rootMargin:'-75px 0px -56% 0px',threshold:[0,.1,.35]});
+for(const section of sections)obs.observe(section);
+})();
+</script>
 </body></html>
