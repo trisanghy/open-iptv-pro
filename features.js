@@ -323,6 +323,12 @@
  // Expanded channels persist through the minute-by-minute EPG refresh.
  const expandedEPGChannels=new Set();
  let expandedEPGDay='';
+ function epgKnownLogo(channel){
+  const name=String(channel.name||'').replace(/\s*\((?:Nguồn|Source)\s*\d+\)\s*$/i,'').trim().toLocaleLowerCase('vi-VN');
+  const known={"vtv1":"VTV1.png","vtv2":"VTV2.png","vtv3":"VTV3.png","vtv4":"VTV4.png","vtv5":"VTV5.png","vtv5 tây nam bộ":"VTV5_TNB.png","vtv5 tây nguyên":"VTV5_TN.png","vtv6":"VTV6.png","vtv7":"VTV7.png","vtv8":"VTV8.png","vtv9":"VTV9.png","vtv10":"VTV10.png","vietnam today":"VTV_VietnamToday.png"};
+  const file=Object.prototype.hasOwnProperty.call(known,name)?known[name]:'';
+  return file?'https://raw.githubusercontent.com/ntd249/logochannel/main/'+file:'';
+ }
  function epgChannelLogo(channel,channels){
   const usable=value=>{
    const url=String(value||'').trim();
@@ -343,7 +349,7 @@
    const logo=usable(other.logo);
    if(logo&&(!id||!otherId||id===otherId))return logo;
   }
-  return '';
+  return epgKnownLogo(channel);
  }
 
  function currentEPGDay(nowMs){
@@ -387,9 +393,14 @@
     const badge=card.querySelector('.epg-channel-badge');
     if(badge){
      const img=document.createElement('img');
+     const knownLogo=epgKnownLogo(c);
      img.className='epg-channel-logo';img.alt='';img.loading='lazy';img.decoding='async';
      img.addEventListener('load',()=>badge.classList.add('has-logo'));
-     img.addEventListener('error',()=>{badge.classList.remove('has-logo');img.remove();});
+     img.addEventListener('error',()=>{
+      badge.classList.remove('has-logo');
+      if(knownLogo&&!img.dataset.epgFallback&&img.src!==knownLogo){img.dataset.epgFallback='1';img.src=knownLogo;return;}
+      img.remove();
+     });
      img.src=logoURL;badge.append(img);
     }
    }

@@ -473,7 +473,7 @@ if html.count('web-ios-pip-compat.js?v=')!=1 or html.count('web-ios-pip-compat.c
 
 # Keep player subtitles and fullscreen EPG across Safari cached PWA versions.
 for old,new in (
-    ('features.js?v=epg-atomic-gzip-20261120a','features.js?v=epg-logo-20261120a'),
+    ('features.js?v=epg-atomic-gzip-20261120a','features.js?v=epg-logo-20261120b'),
     ('web-only.css?v=no-timeshift-20261119a','web-only.css?v=epg-player-details-20261120a'),
     ('web-fullscreen-controls.js?v=fullscreen-tools-20261119b','web-fullscreen-controls.js?v=epg-player-details-20261120a'),
     ('web-fullscreen-controls.css?v=fullscreen-tools-20261119b','web-fullscreen-controls.css?v=epg-player-details-20261120a'),
@@ -497,7 +497,7 @@ if html.count('web-mobile-touch-sort.js?v=')!=1 or html.count('web-mobile-touch-
     sys.exit('Duplicated Web touch-sort assets')
 
 if html.count('</head>')!=1:sys.exit('EPG stylesheet insertion failed')
-html=html.replace('</head>','<link rel="stylesheet" href="web-epg-day.css?v=epg-logo-20261120a"/></head>',1)
+html=html.replace('</head>','<link rel="stylesheet" href="web-epg-day.css?v=epg-logo-20261120b"/></head>',1)
 if html.count('web-epg-day.css?v=')!=1:sys.exit('Duplicate EPG day CSS')
 (out/'index.html').write_text(html,encoding='utf-8')
 (out/'.nojekyll').write_text('')

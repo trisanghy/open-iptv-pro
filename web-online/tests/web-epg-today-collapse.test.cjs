@@ -84,13 +84,13 @@ test('unsupported Web EPG record controls are hidden but native DVR IDs remain',
 });
 test('mobile/desktop share compact daily view with advanced search folded',()=>{
  assert.match(html,/id="epgToolsFold"/);
- assert.match(html,/web-epg-day\.css\?v=epg-logo-20261120a/);
- assert.match(html,/features\.js\?v=epg-logo-20261120a/);
+ assert.match(html,/web-epg-day\.css\?v=epg-logo-20261120b/);
+ assert.match(html,/features\.js\?v=epg-logo-20261120b/);
  assert.match(css,/@media\(max-width:690px\)/);
  assert.match(css,/\.epg-channel-heading/);
  assert.match(builder,/Web EPG daily renderer anchors changed/);
  assert.match(builder,/Web EPG page markup anchors changed/);
- assert.match(builder,/web-epg-day\.css\?v=epg-logo-20261120a/);
+ assert.match(builder,/web-epg-day\.css\?v=epg-logo-20261120b/);
 });
 
 test('daily EPG renders channel artwork rather than the old glyph',()=>{
@@ -100,4 +100,11 @@ test('daily EPG renders channel artwork rather than the old glyph',()=>{
  assert.match(renderer,/img\.addEventListener\('error'/);
  assert.doesNotMatch(renderer,/aria-hidden="true">▤/);
  assert.match(css,/#page-epg \.epg-channel-logo\{/);
+});
+
+test('known VTV logo fallback is used when M3U provides no artwork',()=>{
+ assert.match(renderer,/function epgKnownLogo\(/);
+ assert.match(renderer,/VTV5_TNB\.png/);
+ assert.match(renderer,/VTV5_TN\.png/);
+ assert.match(renderer,/img\.dataset\.epgFallback/);
 });
