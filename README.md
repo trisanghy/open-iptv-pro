@@ -11,11 +11,11 @@
 | Nền tảng | Phiên bản | Tải về |
 |---|---|---|
 | **Electron Desktop** · Windows/macOS | **v4.23.71 Stable**, **v4.23.72 Beta** (giao diện đăng nhập mới) | [Stable](https://github.com/trisanghy/open-iptv-pro/releases/tag/v4.23.71) · [Beta v4.23.72 (DMG ARM/Intel, Setup/Portable, ZIP, SHA256)](https://github.com/trisanghy/open-iptv-pro/releases/tag/electron-v4.23.72) |
-| **Rust Lab / Tauri** · Windows/macOS | **v23.8.73 Beta**, giao diện đăng nhập mới | [Universal DMG, Windows Setup/Portable, ZIP và SHA256](https://github.com/trisanghy/open-iptv-pro/releases/tag/rust-lab/v23.8.73) |
+| **Rust Lab / Tauri** · Windows/macOS | **v23.8.75 Beta**, giao diện đăng nhập mới | [Universal DMG, Windows Setup/Portable, ZIP và SHA256](https://github.com/trisanghy/open-iptv-pro/releases/tag/rust-lab/v23.8.75) |
 | **Mobile Capacitor** · Android/iOS | **4.23.17-mobile.35 Beta**, giao diện đăng nhập mới | [APK Android, IPA iOS chưa ký, ZIP nguồn và ảnh kiểm thử](https://github.com/trisanghy/open-iptv-pro/releases/tag/mobile/v4.23.17.35) |
 | **Web Online** · Desktop/iOS/Android browser | Nhánh \`web/online\`, không thay đổi trong đợt giao diện này | [Mở Web](https://trisanghy.github.io/open-iptv-pro/) · [Hướng dẫn](https://trisanghy.github.io/open-iptv-pro/huong-dan.html) |
 
-**Đã xác minh GitHub Release có tệp cài và checksum** cho Electron Beta v4.23.72, Rust Lab v23.8.73, Mobile .35. Electron Stable v4.23.71 vẫn giữ nguyên để tránh ghi đè tag. Chưa có xác nhận đăng nhập và đồng bộ trên toàn bộ thiết bị vật lý; Email OTP phụ thuộc mẫu email/SMTP của Supabase. **Không chỉnh sửa Web hoặc Rust Native C3.**
+**Đã xác minh GitHub Release có tệp cài và checksum** cho Electron Beta v4.23.72, Rust Lab v23.8.75, Mobile .35. Electron Stable v4.23.71 vẫn giữ nguyên để tránh ghi đè tag. Chưa có xác nhận đăng nhập và đồng bộ trên toàn bộ thiết bị vật lý; Email OTP phụ thuộc mẫu email/SMTP của Supabase. **Không chỉnh sửa Web hoặc Rust Native C3.**
 
 ### Đồng bộ nhiều nền tảng
 
@@ -51,9 +51,9 @@ Trong **Xem truyền hình → Danh sách kênh**, bộ lọc **◷ Vừa xem** 
 
 **macOS (Apple Silicon / Intel) và Windows x64.** Bản sử dụng hằng ngày, với công cụ native và tính năng desktop nâng cao. [Tải Electron v4.23.71 Stable](https://github.com/trisanghy/open-iptv-pro/releases/tag/v4.23.71), [Beta v4.23.71](https://github.com/trisanghy/open-iptv-pro/releases/tag/electron-v4.23.72) hoặc [Stable v4.23.70 lịch sử](https://github.com/trisanghy/open-iptv-pro/releases/tag/v4.23.70).
 
-### Rust Lab — v23.8.73 Beta độc lập
+### Rust Lab — v23.8.75 Beta độc lập
 
-**macOS và Windows x64.** Dự án Tauri/Rust nhẹ, có bộ tính năng và tương thích khác Electron. [Tải Rust Lab v23.8.69](https://github.com/trisanghy/open-iptv-pro/releases/tag/rust-lab/v23.8.73).
+**macOS và Windows x64.** Dự án Tauri/Rust nhẹ, có bộ tính năng và tương thích khác Electron. [Tải Rust Lab v23.8.69](https://github.com/trisanghy/open-iptv-pro/releases/tag/rust-lab/v23.8.75).
 
 ### Mobile Capacitor — v4.23.17-mobile.35 Beta
 
@@ -195,7 +195,7 @@ Các ảnh dưới đây đi kèm **bộ APK Android được build trên GitHub
 
 ### Rust Lab (Tauri/Rust Beta)
 
-[**Release Rust Lab v23.8.73 mới nhất**](https://github.com/trisanghy/open-iptv-pro/releases/tag/rust-lab/v23.8.73) có **DMG Universal Mac**, **Windows Setup/Portable** và ZIP mã nguồn riêng. Bản này sử dụng Tauri 2/WebView, có thể yêu cầu **Microsoft Edge WebView2 Runtime** trên Windows. Các tính năng, tương thích stream và dữ liệu không nhất thiết tương đương Electron.
+[**Release Rust Lab v23.8.75 mới nhất**](https://github.com/trisanghy/open-iptv-pro/releases/tag/rust-lab/v23.8.75) có **DMG Universal Mac**, **Windows Setup/Portable** và ZIP mã nguồn riêng. Bản này sử dụng Tauri 2/WebView, có thể yêu cầu **Microsoft Edge WebView2 Runtime** trên Windows. Các tính năng, tương thích stream và dữ liệu không nhất thiết tương đương Electron.
 
 ### Mobile Android / iOS — Beta riêng
 
