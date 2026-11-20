@@ -665,6 +665,35 @@ fn connect_callbacks(
         });
     }
     {
+        let weak=ui.as_weak(); let player=player.clone();
+        ui.on_seek_percent(move |percent| {
+            let Some(ui)=weak.upgrade() else {return;};
+            let result=player.borrow().as_ref().map(|p|p.seek_percent(percent))
+                .unwrap_or_else(||Err("Chưa có video để tua".into()));
+            if let Err(e)=result {status(&ui,format!("Không thể tua video: {e}"));}
+        });
+    }
+    {
+        let weak=ui.as_weak(); let player=player.clone();
+        ui.on_cycle_audio_track(move || {
+            let Some(ui)=weak.upgrade() else{return;};
+            let result=player.borrow().as_ref().map(|p|p.cycle_audio_track())
+                .unwrap_or_else(||Err("Chưa phát video".into()));
+            status(&ui,result.map(|_|"Đã yêu cầu chuyển track âm thanh".to_string())
+                .unwrap_or_else(|e|format!("Không thể đổi track âm thanh: {e}")));
+        });
+    }
+    {
+        let weak=ui.as_weak(); let player=player.clone();
+        ui.on_cycle_subtitle_track(move || {
+            let Some(ui)=weak.upgrade() else{return;};
+            let result=player.borrow().as_ref().map(|p|p.cycle_subtitle_track())
+                .unwrap_or_else(||Err("Chưa phát video".into()));
+            status(&ui,result.map(|_|"Đã yêu cầu chuyển track phụ đề".to_string())
+                .unwrap_or_else(|e|format!("Không thể đổi track phụ đề: {e}")));
+        });
+    }
+    {
         let weak=ui.as_weak(); let player=player.clone(); let shared=shared.clone();
         ui.on_volume_delta(move |delta| {
             if let Some(ui)=weak.upgrade() {
@@ -1256,6 +1285,7 @@ fn background_timer(ui: &MainWindow, shared: Rc<RefCell<State>>, rx: Receiver<Ba
             if let Some((backend,info))=info {
                 let is_live=info.duration_seconds.is_none_or(|v|v<=0.0);
                 ui.set_video_is_live(is_live);
+                ui.set_video_seekable(!is_live && info.position_seconds.is_some());
                 ui.set_video_paused(info.paused.unwrap_or(false));
                 ui.set_playback_progress(mpv::progress_percent(&info));
                 let position=info.position_seconds.map(mpv::clock).unwrap_or_else(||"--:--".into());
