@@ -43,10 +43,38 @@
    if(linkHint)linkHint.textContent='Chỉ khi email cũ vẫn gửi liên kết: sao chép địa chỉ nút Sign in mà KHÔNG mở, rồi dán vào đây. Mã OTP được ưu tiên vì hoạt động độc lập với trình duyệt.';
   }
  const logout=el('cloudLogout'),sync=el('cloudSyncNow');
+ const migrationRestore=document.createElement('button');
+ migrationRestore.id='cloudMigrationRestore';migrationRestore.type='button';
+ migrationRestore.className='btn btn-subtle';migrationRestore.hidden=true;
+ migrationRestore.textContent='Khôi phục bản sao dữ liệu từ Supabase cũ';
+ sync?.after(migrationRestore);
  const account=el('cloudAccount'),choices=el('cloudSyncConflict');
  const useLocal=el('cloudUseLocal'),useCloud=el('cloudUseRemote'),later=el('cloudLater');
  const info=el('cloudConflictReason');
  const STORE='open-iptv-pro-4',GUEST='openiptv:guest-backup:v1',ACTIVE='openiptv:active-uid:v1';
+ const OLD_CLOUD_REF='ehzfaragssjolojyswin',NEW_CLOUD_REF='zjbsvqryaxtafuffpifu';
+ const MIGRATION_BACKUP='openiptv:project-switch-backup:'+OLD_CLOUD_REF+':v1';
+ function preserveOldProjectData(){
+  try{
+   // Do not automatically move another account's playlists to a new identity.
+   // Keep a recovery copy before the old session is cleared on project switch.
+   const oldUid=localStorage.getItem(ACTIVE);
+   const raw=localStorage.getItem(STORE);
+   if(!oldUid||!raw||localStorage.getItem(MIGRATION_BACKUP)
+     ||localStorage.getItem('sb-'+NEW_CLOUD_REF+'-auth-token'))return true;
+   const payload=JSON.parse(raw);
+   if(!payload||typeof payload!=='object'||Array.isArray(payload))
+    throw Error('Invalid prior account snapshot');
+   localStorage.setItem(MIGRATION_BACKUP,JSON.stringify({
+    project:OLD_CLOUD_REF,userId:oldUid,savedAt:new Date().toISOString(),payload
+   }));
+   return true;
+  }catch(e){
+   console.warn('Could not preserve data during Supabase project switch',e);
+   label('Không đủ bộ nhớ sao lưu dữ liệu trước khi đổi Supabase. Hãy xuất bản sao lưu JSON; ứng dụng không tự xóa dữ liệu cũ.','error');
+   return false;
+  }
+ }
  const META=id=>'openiptv:sync-meta:'+id;
  const RECOVERY=id=>'openiptv:autosync-recovery:'+id;
  let client=null,uid='',revision=0,ready=false,busy=false,dirty=false,timer=0,sessionSeq=0,pendingRemote=null,lastObservedHash='',retryTimer=0;
@@ -121,6 +149,7 @@
    show(linkForm,!uid&&!!client&&enabledProviders.email&&linkHelpOpen);
    card.dataset.authState=uid?'signed-in':'guest';
   show(logout,!!uid);show(sync,!!uid);
+  show(migrationRestore,!!uid&&!!localStorage.getItem(MIGRATION_BACKUP));
   if(sync)sync.textContent='Đồng bộ ngay';
   account.textContent=uid?'Đã đăng nhập · '+(window.__iptvCloudUserName||'Tài khoản'):'Chế độ khách · lưu trên thiết bị';
   if(quick){
@@ -381,7 +410,24 @@
   finally{otpVerify.disabled=false;otpVerify.textContent=oldLabel;}
  });
 
- sync.addEventListener('click',()=>{if(uid)void uploadLocal();});
+ migrationRestore.addEventListener('click',async()=>{
+   if(!uid||busy)return;
+   try{
+    const saved=JSON.parse(localStorage.getItem(MIGRATION_BACKUP)||'null');
+    if(!saved||saved.project!==OLD_CLOUD_REF||!saved.payload)
+     throw Error('Không có bản sao dữ liệu hợp lệ từ Supabase cũ.');
+    const payload=core.validate(saved.payload).payload;
+    if(!confirm('Khôi phục dữ liệu đã lưu trên thiết bị từ dự án Supabase cũ vào tài khoản mới đang đăng nhập? Chỉ thực hiện nếu đây là dữ liệu của bạn.'))return;
+    const remote=await readRemote(uid);
+    if(remote&&core.isMeaningful(remote.payload)){
+     if(!confirm('Tài khoản Supabase mới đã có dữ liệu. Khôi phục sẽ thay thế dữ liệu đang đồng bộ bằng bản cũ. Tiếp tục?'))return;
+     if(!saveRecoveryCopy(uid,remote.payload,['before-project-switch-restore']))return;
+    }
+    // Seed a revision baseline, then the normal CAS upload runs after reload.
+    if(!swapIntoLocal(payload,uid,remote?.revision||0))return;
+   }catch(e){report(e,'khôi phục bản sao dữ liệu cũ');}
+  });
+  sync.addEventListener('click',()=>{if(uid)void uploadLocal();});
  // Kept in the DOM for backward compatibility, but never require a manual
  // choice in the new auto-sync workflow.
  show(choices,false);
@@ -443,7 +489,8 @@
    label('Đồng bộ chưa được kích hoạt: cần thiết lập dự án Supabase và OAuth. Dữ liệu vẫn lưu an toàn trong trình duyệt.');
    return;
   }
-  client=window.supabase.createClient(cfg.url,cfg.publishableKey,{
+  if(new URL(cfg.url).hostname===NEW_CLOUD_REF+'.supabase.co'&&!preserveOldProjectData())return;
+   client=window.supabase.createClient(cfg.url,cfg.publishableKey,{
    auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true,flowType:'pkce'},
    global:{headers:{'x-client-info':'open-iptv-pro-web'}}
   });
