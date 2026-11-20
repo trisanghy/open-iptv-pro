@@ -1,3 +1,7 @@
+## Mobile cloud sync — v4.23.17-mobile.34
+
+Same user account/project as Open IPTV Pro Web, Electron and Rust Lab. Portable Supabase sync of M3U sources, channels, favorites and settings; opt-in first upload/download, revision-first polling after pairing, local recovery before replacement. Image/video/EPG caches remain local. See [Mobile setup](experiments/mobile-capacitor/README_VI.md) and [release](https://github.com/trisanghy/open-iptv-pro/releases/tag/mobile/v4.23.17.34).
+
 ## v4.22 Full – Cập nhật và bộ biểu tượng macOS
 
 **Tiếng Việt:** Repository phát hành chính thức `trisanghy/open-iptv-pro` được cố định, không cần nhập lại. Ứng dụng đọc phiên bản từ tên bộ cài / tag / tên Release, tìm bản mới đúng hệ điều hành & kiến trúc (Mac Apple Silicon, Mac Intel hoặc Windows), tự tải khi bật tùy chọn, xác minh trước khi cài. Mac chưa ký dùng bộ cài DMG thủ công; ứng dụng ký đúng chuẩn có thể dùng trình tự cài tự động. Menu thay bằng 12 icon SVG nét bo tròn đồng nhất, giữ logo ứng dụng và toàn bộ FFmpeg/Timeshift Full.
