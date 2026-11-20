@@ -83,6 +83,7 @@ export component MainWindow inherits Window {
     callback play-channel(int);
     callback play-last-channel();
     callback toggle-favorite(int);
+    callback reorder-channel(int, int);
     callback pause-video();
     callback stop-video();
     callback prev-video();
@@ -246,6 +247,8 @@ export component MainWindow inherits Window {
                                             }
                                             Button { text: "▶"; width: 34px; clicked => { root.play-channel(i); } }
                                             Button { text: ch.favorite ? "★" : "☆"; width: 34px; clicked => { root.toggle-favorite(i); } }
+                                            Button { text: "↑"; width: 24px; clicked => { root.reorder-channel(i, -1); } }
+                                            Button { text: "↓"; width: 24px; clicked => { root.reorder-channel(i, 1); } }
                                         }
                                     }
                                 }

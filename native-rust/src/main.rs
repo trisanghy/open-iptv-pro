@@ -435,6 +435,20 @@ fn connect_callbacks(
         });
     }
     {
+        let weak=ui.as_weak(); let shared=shared.clone();
+        ui.on_reorder_channel(move |row, direction| {
+            let Some(ui)=weak.upgrade() else{return;};
+            let mut state=shared.borrow_mut();
+            if state.recent_only {status(&ui,"Danh sách gần đây luôn sắp xếp theo thời gian xem");return;}
+            let previous=state.data.clone();
+            let visible=state.visible.clone();
+            match state.data.move_visible_channel(&visible,row as usize,direction) {
+                Ok(())=>persist(&ui,&mut state,previous,"Đã thay đổi thứ tự kênh và lưu lại"),
+                Err(e)=>status(&ui,e),
+            }
+        });
+    }
+    {
         let weak=ui.as_weak(); let player=player.clone();
         ui.on_pause_video(move || {
             if let Some(ui)=weak.upgrade() {

@@ -165,6 +165,18 @@ impl NativeData {
         removed
     }
 
+    /// Reorder the currently filtered channel list without changing identities or favorites.
+    pub fn move_visible_channel(&mut self, visible: &[usize], row: usize, delta: i32) -> Result<(), String> {
+        if delta != -1 && delta != 1 { return Err("Chỉ hỗ trợ lên hoặc xuống một vị trí".into()); }
+        let next = if delta < 0 { row.checked_sub(1) } else { row.checked_add(1) };
+        let target = next.filter(|&p| p < visible.len()).ok_or("Kênh đã ở đầu/cuối danh sách")?;
+        let first = *visible.get(row).ok_or("Không tìm thấy kênh đang sắp xếp")?;
+        let second = *visible.get(target).ok_or("Không tìm thấy vị trí mới")?;
+        if first >= self.channels.len() || second >= self.channels.len() { return Err("Chỉ mục kênh không hợp lệ".into()); }
+        self.channels.swap(first, second);
+        Ok(())
+    }
+
     pub fn add_folder(&mut self, name: &str) -> Result<(), String> {
         let name = name.trim();
         if name.is_empty() || name.len() > 128 { return Err("Tên thư mục phải dài từ 1 đến 128 ký tự".into()); }
@@ -184,6 +196,21 @@ impl NativeData {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn reorder_visible_channels_keeps_favorites_and_channel_metadata() {
+        let mut d=NativeData::default();
+        let source=Source{id:"s".into(),name:"TV".into(),origin:"file".into()};
+        let mk=|name: &str| Channel{source_id:"s".into(),name:name.into(),url:format!("https://tv.example/{name}.m3u8"),group:"News".into(),tvg_id:name.into(),logo:String::new(),catchup:String::new(),catchup_source:String::new(),catchup_days:String::new()};
+        d.insert_source(source,vec![mk("VTV1"),mk("VTV2"),mk("VTV3")]).unwrap();
+        d.favorite_urls.insert("https://tv.example/VTV3.m3u8".into());
+        assert!(d.move_visible_channel(&[0,1,2],2,-1).is_ok());
+        assert_eq!(d.channels[1].name,"VTV3");
+        assert!(d.favorite_urls.contains("https://tv.example/VTV3.m3u8"));
+        assert!(d.move_visible_channel(&[0,1,2],0,-1).is_err());
+        d.validate().unwrap();
+        let restored:NativeData=serde_json::from_slice(&serde_json::to_vec(&d).unwrap()).unwrap();
+        assert_eq!(restored.channels[1].name,"VTV3");
+    }
     #[test]
     fn insert_and_remove_source() {
         let mut d = NativeData::default();
