@@ -1,3 +1,7 @@
+## Rust Lab v23.8.82 — Whisper 10s, sửa kiểm thử build
+
+Giữ thay đổi mẫu Whisper 10 giây của v23.8.81, cập nhật kiểm thử cũ từng cố định thời lượng 4 giây. Giữ TTS, PiP, Captions và tất cả bản phát hành trước. [Ghi chú v23.8.82](RELEASE_NOTES_RUST_LAB_V23_8_82.md).
+
 ## Rust Lab v23.8.81 — Whisper thu âm 10 giây
 
 Đổi mỗi lượt lấy mẫu audio Whisper thành **10 giây**, chuẩn mono 16 kHz WAV, giữ nguyên 4 luồng CPU Whisper (tham số `-t 4`) và logic hủy nhận diện khi Pause/Stop/Ended hoặc đổi kênh. Không thay đổi TTS, PiP, phụ đề, lưu dữ liệu. Có kiểm thử hồi quy và giữ lệnh build Mac một lệnh.

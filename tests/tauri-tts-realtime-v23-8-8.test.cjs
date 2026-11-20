@@ -1,10 +1,10 @@
 'use strict';
 const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');
 const read=p=>fs.readFileSync(path.join(__dirname,'..',p),'utf8');
-test('Whisper uses 4-second short windows instead of 8-second buffered segments',()=>{
+test('Whisper samples audio in 10-second windows and keeps 4 CPU threads',()=>{
  const src=read('src-tauri/src/local_ai.rs');
- assert.ok(src.includes('"pcm_s16le","-t","4"'));
- assert.ok(!src.includes('"pcm_s16le","-t","8"'));
+ assert.ok(src.includes('"pcm_s16le","-t","10"'));
+ assert.ok(src.includes('"-nt","-np","-t","4","-oj","-of"'));
 });
 test('VieNeu worker is preloaded without downloading and reused for successive phrases',()=>{
  const rust=read('src-tauri/src/local_ai.rs');
