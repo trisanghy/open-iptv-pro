@@ -236,3 +236,10 @@ html.p50-44 #positronHelpDialog button{background:var(--po-accent);color:var(--p
 html.p50-45 .main .content :is(.panel-header p,.channel-drag-hint,.dvr-quick-hint,.hint,.settings-card small,.source-hub-heading p){color:var(--po-muted)!important;opacity:1!important}
 html.p50-45 #page-tv :is(.playing-channel-text small,.epg-current-card small){color:var(--po-muted)!important}
 html.p50-45 #page-tv .channel-panel .filter-box input{color:var(--po-ink)!important;background:transparent!important}
+
+/* Iteration 46: Adaptive laptop sizing at 1280px */
+@media(max-width:1280px){html.p50-46 #positronBar #positronOpen{min-width:135px!important;max-width:200px!important}
+html.p50-46 #positronBar #positronOpen .p-command-label{max-width:110px!important}
+html.p50-46 #page-tv .tv-layout{grid-template-columns:minmax(190px,218px) minmax(0,1fr)!important}
+html.p50-46 #positronBar .p-title{min-width:0!important}
+html.p50-46 #positronBar .p-heading strong{max-width:17ch!important}}
