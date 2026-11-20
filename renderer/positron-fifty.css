@@ -53,3 +53,7 @@ html.p50-11 #positronMorePages:hover{border-color:var(--po-accent)!important;col
 /* Iteration 12: Optimize command search footprint */
 html.p50-12 #positronBar #positronOpen{min-width:170px!important;max-width:270px!important;height:36px!important;padding:6px 10px!important;flex:1 1 170px!important;justify-content:space-between!important;border-radius:10px!important}
 html.p50-12 #positronBar #positronOpen .p-command-label{font-size:11px!important;font-weight:550!important;max-width:170px;overflow:hidden;text-overflow:ellipsis}
+
+/* Iteration 13: Unify main action dimensions and keyboard focus */
+html.p50-13 #positronBar .p-actions button{min-height:35px!important;height:35px!important;min-width:36px;padding:6px 10px!important;font-size:11px!important;border-radius:9px!important;line-height:1.1!important}
+html.p50-13 #positronBar .p-actions button:focus-visible{outline:2px solid var(--po-accent)!important;outline-offset:2px!important}
