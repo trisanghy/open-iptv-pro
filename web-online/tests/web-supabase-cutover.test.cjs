@@ -38,7 +38,7 @@ test('old account data is backed up before the new project can clear the prior s
 
 test('web refreshes its cloud script and retains OTP and OAuth provider checks',()=>{
  const html=read('index.html'),script=read('cloud-sync.js');
- assert.match(html,/cloud-sync\.js\?v=server-channel-count-20261120a/);
+ assert.match(html,/cloud-sync\.js\?v=ios-visual-caret-20261121a/);
  assert.match(script,/client\.auth\.verifyOtp\(\{email,token,type:'email'\}\)/);
  assert.match(script,/signInWithOAuth\(\{provider/);
  assert.match(script,/enabledProviders\.github/);
