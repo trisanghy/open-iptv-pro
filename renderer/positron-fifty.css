@@ -8,3 +8,6 @@ html.p50-02 #appSidebar .brand{min-height:48px!important;padding:5px 34px 11px 7
 html.p50-02 #appSidebar .brand-icon{width:36px!important;height:36px!important;min-width:36px!important;border-radius:11px!important}
 html.p50-02 #appSidebar .brand b{font-size:18px!important;letter-spacing:-.6px!important;line-height:1.1}
 html.p50-02 #appSidebar .brand small{font-size:8px!important;letter-spacing:.05px!important;max-width:110px;overflow:hidden;text-overflow:ellipsis}
+
+/* Iteration 3: Place sidebar collapse button inside brand row */
+html[data-positron=true].p50-03:not([data-sidebar-visible=false]) #appSidebar .sidebar-edge-toggle{left:auto!important;right:8px!important;top:11px!important;width:31px!important;height:31px!important;min-width:31px!important;min-height:31px!important;border-radius:9px!important;font-size:15px!important;z-index:5}
