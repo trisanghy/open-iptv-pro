@@ -15,3 +15,8 @@ html[data-positron=true].p50-03:not([data-sidebar-visible=false]) #appSidebar .s
 /* Iteration 4: Tighten sidebar navigation without tiny tap targets */
 html[data-positron=true].p50-04:not([data-sidebar-visible=false]) #appSidebar .nav{min-height:36px!important;height:36px!important;margin:1px 0!important;padding:0 8px!important;gap:8px!important;border-radius:9px!important;font-size:11.5px!important;line-height:1.2}
 html.p50-04 #appSidebar .nav .macos-nav-symbol{flex-shrink:0!important}
+
+/* Iteration 5: Neutralize decorative rainbow sidebar accents */
+html.p50-05 #appSidebar .nav:not(.active) :is(span,.macos-nav-symbol){filter:saturate(.3)}
+html.p50-05 #appSidebar .nav:not(.active){box-shadow:none!important}
+html.p50-05 #appSidebar .nav:hover{filter:none!important}
