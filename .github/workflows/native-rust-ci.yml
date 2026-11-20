@@ -246,7 +246,7 @@ jobs:
           fi
           xdotool mousemove 35 166 click 1
           sleep 1
-          xdotool mousemove 1290 36 click 1
+          xdotool mousemove 527 36 click 1
           sleep 2
           import -display "$DISPLAY" -window root screenshot/09-sources-page.png
           if ! grep -Fq '[UI_NAV_TEST] active-page requested: sources' screenshot/app-stdout.log; then
@@ -364,6 +364,7 @@ jobs:
           echo "CI screenshot includes a clearly labeled DEMO fixture of four non-playing sample channels" >> screenshot/SOURCE.txt
           echo "Settings/Sources direct-render screenshots 13-14 are captured from separate actual Slint app processes" >> screenshot/SOURCE.txt
       - uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: rust-native-actual-screen
           path: |

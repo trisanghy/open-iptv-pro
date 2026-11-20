@@ -255,10 +255,10 @@ if (root.active-page == "tv" || root.active-page == "fav" || root.active-page ==
             height: 36px;
             clicked => { root.navigate("settings"); }
         }
+        Button { text: "Thêm URL"; width: 112px; clicked => { root.navigate("sources"); } }
         Rectangle { horizontal-stretch: 1; background: transparent; }
         Text { text: root.sources-count + " nguồn"; color: #9db8cb; font-size: 11px; vertical-alignment: center; }
         Button { text: "Mở M3U"; width: 92px; clicked => { root.open-m3u(); } }
-        Button { text: "Thêm URL"; width: 100px; clicked => { root.navigate("sources"); } }
     }
 }
     Rectangle {
