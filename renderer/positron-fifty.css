@@ -119,3 +119,9 @@ html.p50-24 #page-tv .watch-panel{max-width:100%!important}
 html.p50-25 #page-tv .empty-player .empty-icon{width:58px!important;height:58px!important;border-radius:18px!important;background:var(--po-card)!important;color:var(--po-accent)!important;border:1px solid var(--po-line)!important;box-shadow:none!important}
 html.p50-25 #page-tv .empty-player h2{font-size:19px!important;line-height:1.25!important;letter-spacing:-.3px!important}
 html.p50-25 #page-tv .empty-player p{font-size:12px!important;line-height:1.55!important;max-width:420px!important}
+
+/* Iteration 26: Make source import buttons clearly distinct */
+html.p50-26 #page-tv .empty-player .empty-actions{display:flex!important;gap:9px!important;justify-content:center!important;flex-wrap:wrap!important}
+html.p50-26 #page-tv .empty-player .empty-actions button{min-height:37px!important;border-radius:10px!important;font-size:12px!important;font-weight:650!important;padding:8px 13px!important}
+html.p50-26 #page-tv #emptyFileBtn{background:var(--po-accent)!important;color:var(--po-on)!important;border-color:var(--po-accent)!important}
+html.p50-26 #page-tv #emptyUrlBtn{background:var(--po-raised)!important;color:var(--po-ink)!important;border-color:var(--po-line)!important}
