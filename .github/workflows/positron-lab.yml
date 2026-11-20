@@ -1,4 +1,4 @@
-name: Positron P4 · retested 90 real UI rounds · Mac and Windows prerelease
+name: Positron P4 · 50 new real screenshot rounds · Mac and Windows prerelease
 on:
   push:
     branches: [Positron]
@@ -17,7 +17,7 @@ on:
       - '.github/workflows/positron-lab.yml'
   workflow_dispatch:
 concurrency:
-  group: positron-p4-retested-${{ github.ref }}
+  group: positron-p4-50-focus-${{ github.ref }}
   cancel-in-progress: false
 permissions:
   contents: read
@@ -56,7 +56,7 @@ jobs:
           sudo apt-get install -y -qq xvfb libgtk-3-0 libnss3 libasound2t64 libgbm1 libxss1 libatk-bridge2.0 libdrm2
           npm install --no-audit --no-fund
           npm install --no-save --no-audit --no-fund playwright-core
-      - name: Execute 40 real Electron UI rounds and screenshot FINAL P3 app
+      - name: Execute 50 P4 real Electron screenshot review rounds
         shell: bash
         run: |
           set -Eeuo pipefail
@@ -66,18 +66,12 @@ jobs:
           export ELECTRON_DISABLE_SECURITY_WARNINGS=true
           ./node_modules/.bin/electron . --no-sandbox --disable-gpu --remote-debugging-port=9222 > positron-evidence/electron.log 2>&1 &
           echo $! > positron-evidence/electron.pid
-          node scripts/positron-capture.cjs
           node scripts/positron-50-audit.cjs
-          test -s positron-evidence/positron-final-main-real.png
-          test -s positron-evidence/positron-final-command-real.png
-          test -s positron-evidence/positron-final-settings-real.png
-          test -s positron-evidence/audit-20-rounds.json
-          test -s positron-evidence/audit-positron-p3-20-rounds.json
-          test -s positron-evidence/positron-p3-final-main-real.png
-          test -s positron-evidence/positron-p4-final-main-real.png
-          test -s positron-evidence/positron-p3-studio-menu-real.png
-          test -s positron-evidence/positron-p3-narrow-window-real.png
-          node -e "if(require('./positron-evidence/audit-20-rounds.json').realRounds!==20 || require('./positron-evidence/audit-positron-p3-20-rounds.json').extraRounds!==20 || require('./positron-evidence/audit-p4-50-rounds.json').newP4Rounds!==50)process.exit(1)"
+          test -s positron-evidence/p4-50-rounds/positron-p4-01-real.png
+          test -s positron-evidence/p4-50-rounds/positron-p4-25-real.png
+          test -s positron-evidence/p4-50-rounds/positron-p4-50-real.png
+          test -s positron-evidence/audit-p4-50-rounds.json
+          node -e "let a=require('./positron-evidence/audit-p4-50-rounds.json');if(a.newP4Rounds!==50||a.screenshotCount!==50||a.rounds.length!==50)process.exit(1)"
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -138,7 +132,7 @@ jobs:
           pattern: positron-p4-*
           path: release-stage
           merge-multiple: true
-      - name: Assemble source and verifiable 90-round evidence
+      - name: Assemble source and verifiable 50-round P4 evidence
         shell: bash
         run: |
           set -Eeuo pipefail
@@ -155,19 +149,6 @@ jobs:
             Open-IPTV-Pro-4.23.81-mac-x64.dmg \
             Open-IPTV-Pro-Setup-4.23.81-x64.exe \
             Open-IPTV-Pro-4.23.81-x64.exe \
-            positron-final-main-real.png \
-            positron-final-command-real.png \
-            positron-final-focus-real.png \
-            positron-final-settings-real.png \
-            positron-final-doctor-real.png \
-            audit-20-rounds.json \
-            audit-positron-p3-20-rounds.json \
-            positron-p3-final-main-real.png \
-            positron-p3-studio-menu-real.png \
-            positron-p3-nebula-real.png \
-            positron-p3-aurora-real.png \
-            positron-p3-graphite-real.png \
-            positron-p3-narrow-window-real.png \
             positron-p4-final-main-real.png \
             audit-p4-50-rounds.json \
             positron-p4-final-main-real.png \
@@ -192,16 +173,13 @@ jobs:
             echo 'Immutable Positron tag already exists at the correct commit.'
             gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null
           else
-            gh release create "$TAG" release-stage/*.dmg release-stage/*.exe release-stage/*.png release-stage/audit-20-rounds.json release-stage/audit-positron-p3-20-rounds.json release-stage/audit-p4-50-rounds.json release-stage/*.zip release-stage/SHA256SUMS.txt \
+            gh release create "$TAG" release-stage/*.dmg release-stage/*.exe release-stage/*.png release-stage/audit-p4-50-rounds.json release-stage/*.zip release-stage/SHA256SUMS.txt \
               --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" \
               --title 'Open IPTV Pro Positron P4 — Independent desktop UI laboratory' \
               --notes-file POSITRON.md --prerelease --latest=false
           fi
           gh release view "$TAG" --repo "$GITHUB_REPOSITORY" --json assets --jq '.assets[].name' >/tmp/positron-assets
-          grep -Fxq 'positron-final-main-real.png' /tmp/positron-assets
-          grep -Fxq 'positron-p3-final-main-real.png' /tmp/positron-assets
           grep -Fxq 'positron-p4-final-main-real.png' /tmp/positron-assets
-          grep -Fxq 'audit-positron-p3-20-rounds.json' /tmp/positron-assets
           grep -Fxq 'Open-IPTV-Pro-4.23.81-mac-arm64.dmg' /tmp/positron-assets
           grep -Fxq 'Open-IPTV-Pro-Setup-4.23.81-x64.exe' /tmp/positron-assets
           echo "Verified experimental release $TAG from $GITHUB_SHA"

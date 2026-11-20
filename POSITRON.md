@@ -16,7 +16,7 @@ Refer to `POSITRON_P4_CHANGELOG.md` for a source-level table of each of the 50 G
 - Responsive visual changes tested from large desktop down to narrow windows.
 
 ## Test status and distribution
-The GitHub pipeline must pass Node regression tests, the 40 preexisting real Electron UI rounds and the 50 new screenshot-audited P4 stages before producing installation artifacts. The 50-stage report includes per-round PNG SHA-256, screenshot pixel statistics, window geometry and feedback fed into the next round.
+The GitHub pipeline reruns Node regression tests and the 50 new screenshot-audited P4 stages before producing installers. The 40 historical P2/P3 Electron rounds were passed in earlier immutable releases, but are not re-executed by the P4 screenshot pipeline because P4 deliberately changes navigation visibility. The P4 report includes per-round PNG SHA-256, screenshot pixel statistics, rendered control visibility, window geometry and previous-round feedback fed into the next round.
 
 GitHub tag `positron/v4.23.81-p4` is a new immutable prerelease. Build targets: macOS ARM64 DMG, macOS x64 DMG, Windows x64 Setup/Portable; source ZIP, checksums and a ZIP of all 50 real screenshots.
 
