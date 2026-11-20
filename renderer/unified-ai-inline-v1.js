@@ -20,6 +20,17 @@
     // Reparent, never clone: all original event handlers and saved values survive.
     while (row.firstChild) content.appendChild(row.firstChild);
     row.append(trigger, content);
+    // Rust Lab historically has no explicit voice label in its HTML.
+    // Add it once so both apps share the same eight-column desktop row.
+    const voice = content.querySelector('#liveTtsVoice');
+    const ttsRow = content.querySelector('.caption-tts-main');
+    if (voice && ttsRow && !ttsRow.querySelector('label[for="liveTtsVoice"]')) {
+      const label = document.createElement('label');
+      label.className = 'tts-duck-label unified-tts-voice-label';
+      label.htmlFor = 'liveTtsVoice';
+      label.textContent = 'Giọng';
+      voice.insertAdjacentElement('beforebegin', label);
+    }
     function setOpen(open) {
       content.hidden = !open;
       trigger.setAttribute('aria-expanded', String(open));
