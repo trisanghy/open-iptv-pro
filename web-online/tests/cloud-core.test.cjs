@@ -166,3 +166,14 @@ test('hash-based sync decision ignores identical cloud changes',()=>{
  const local={sources:[{id:'a'}],theme:'light'};
  assert.equal(core.automaticDecision({local,remote:{payload:local,revision:11},meta:null}),'synced');
 });
+
+test('serverChannelCount handles confirmed cloud playlists only',()=>{
+ assert.equal(core.serverChannelCount({channels:[{id:'a'},{id:'b'}]}),2);
+ assert.equal(core.serverChannelCount({channels:[]}),0);
+ assert.equal(core.serverChannelCount({sources:[{id:'source'}]}),0);
+ assert.equal(core.serverChannelCount(null),0);
+ assert.equal(core.serverChannelCount({channels:{length:1184}}),0);
+ const payload={channels:[{id:'a'}]};
+ assert.equal(core.serverChannelCount(payload),1);
+ assert.equal(payload.channels.length,1,'server count must never modify playlists');
+});
