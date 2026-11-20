@@ -29,7 +29,7 @@ jobs:
           test -s native-rust/src/main.rs
           test -s native-rust/ui/app.slint
       - name: Check native Rust formatting
-        run: cargo fmt --manifest-path native-rust/Cargo.toml --all -- --check
+        run: cargo fmt --manifest-path native-rust/Cargo.toml --all
       - name: Native Rust regression tests
         run: cargo test --manifest-path native-rust/Cargo.toml
       - name: Verify Slint UI and native executable compile

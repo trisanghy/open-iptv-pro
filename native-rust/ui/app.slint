@@ -34,6 +34,8 @@ export component MainWindow inherits Window {
     in-out property <string> page-title: "Xem truyền hình";
     in-out property <string> url-input;
     in-out property <string> epg-url-input;
+    in-out property <bool> import-rights-confirmed: false;
+    in-out property <bool> discovery-rights-confirmed: false;
     in-out property <string> search-text;
     in-out property <string> folder-input;
     in-out property <string> selected-source-text: "Tất cả nguồn";
@@ -67,6 +69,7 @@ export component MainWindow inherits Window {
     callback export-native-backup();
     callback import-epg();
     callback load-epg-url();
+    callback select-epg-preset(string);
     callback select-source(int);
     callback show-all();
     callback show-favorites();
@@ -323,7 +326,10 @@ export component MainWindow inherits Window {
                             spacing: 13px;
                             Text { text: "◈ Quản lý nguồn M3U"; color: root.light-mode ? #203249 : #f3f6ff; font-size: 21px; font-weight: 700; }
                             Text { text: "Thêm URL, mở file, làm mới playlist và quản lý nguồn độc lập với Electron."; color: #99b3cb; font-size: 12px; }
-                            LineEdit { text <=> root.url-input; placeholder-text: "https://.../playlist.m3u"; }
+                            Text { text: "Chỉ nhập nguồn mà bạn có quyền truy cập và sử dụng. Tác giả không cung cấp kênh và không chịu trách nhiệm về nội dung người dùng thêm."; color: #e5bdb0; font-size: 12px; wrap: word-wrap; }
+                             CheckBox { text: "Tôi xác nhận có quyền sử dụng nguồn M3U này (mỗi lần nhập)"; checked <=> root.import-rights-confirmed; }
+                             LineEdit { text <=> root.url-input; placeholder-text: "https://.../playlist.m3u"; }
+                             CheckBox { text: "Tôi đồng ý điều khoản và tự xác minh quyền với nguồn Smart Discovery"; checked <=> root.discovery-rights-confirmed; }
                             HorizontalLayout {
                                 Button { text: "+ Thêm URL M3U"; clicked => { root.add-url(); } }
                                 Button { text: "Mở file M3U"; clicked => { root.open-m3u(); } }
@@ -355,7 +361,14 @@ export component MainWindow inherits Window {
                             padding: 20px; spacing: 13px;
                             Text { text: "▤ Lịch phát sóng EPG / XMLTV"; color: root.light-mode ? #203249 : #f3f6ff; font-size: 21px; font-weight: 700; }
                             Text { text: "Nhập XML / XML.GZ hoặc tải lịch XMLTV từ URL để tra cứu chương trình hiện tại. URL EPG sẽ được tự tải khi mở app; cache gần nhất 10 phút."; color: #99b3cb; font-size: 12px; }
-                            LineEdit { text <=> root.epg-url-input; placeholder-text: "https://example.org/epg.xml.gz"; }
+                            HorizontalLayout {
+                                 Button { text: "Gzip · mặc định"; clicked => { root.select-epg-preset("gzip"); } }
+                                 Button { text: "XML chuẩn"; clicked => { root.select-epg-preset("xml"); } }
+                                 Button { text: "Gzip Việt hóa"; clicked => { root.select-epg-preset("gzip-vi"); } }
+                                 Button { text: "XML Việt hóa"; clicked => { root.select-epg-preset("xml-vi"); } }
+                             }
+                             Text { text: "EPG.pw chỉ là dự phòng, không bật mặc định. Hãy kiểm tra điều khoản của nguồn EPG."; color: #a8bacd; font-size: 11px; }
+                             LineEdit { text <=> root.epg-url-input; placeholder-text: "https://epg.io.vn/epg.xml.gz"; }
                             HorizontalLayout { Button { text: "Tải EPG từ URL"; clicked => { root.load-epg-url(); } } Button { text: "Nhập EPG trên máy"; clicked => { root.import-epg(); } } }
                             Rectangle { height: 95px; background: root.light-mode ? #eef3f9 : #1b3046; border-radius: 8px;
                                 Text { text: root.selected-epg-text; color: #d7e7f5; font-size: 14px; wrap: word-wrap; vertical-alignment: center; horizontal-alignment: center; }
@@ -443,7 +456,9 @@ export component MainWindow inherits Window {
                             padding: 20px; spacing: 13px;
                             Text { text: "◎ Khám phá IPTV"; color: root.light-mode ? #203249 : #f3f6ff; font-size: 21px; font-weight: 700; }
                             Text { text: "Nguồn danh sách kênh công khai từ iptv-org, cần kiểm chứng khả năng phát và quyền truy cập."; color: #a8c1d6; font-size: 12px; }
-                            Button { text: "Thêm danh sách quốc gia Việt Nam (VN)"; clicked => { root.discover-vn(); } }
+                            Text { text: "Nguồn của bên thứ ba. Chỉ dùng khi bạn có quyền; hãy kiểm chứng điều khoản và nội dung. Tác giả không chịu trách nhiệm về luồng người dùng thêm hoặc xem."; color: #e5bdb0; wrap: word-wrap; font-size: 12px; }
+                             CheckBox { text: "Tôi đã xem và đồng ý điều khoản Smart Discovery cho lần sử dụng này"; checked <=> root.discovery-rights-confirmed; }
+                             Button { text: "Thêm danh sách quốc gia Việt Nam (VN)"; clicked => { root.discover-vn(); } }
                         }
                     }
                     Rectangle {

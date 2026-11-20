@@ -10,4 +10,4 @@ cargo test
 cargo run
 ```
 
-libmpv is dynamically loaded at runtime (for macOS use `brew install mpv`). This client is **not yet fully equivalent to Tauri**: HTML renderer source cannot be used as proof of Slint layout parity; native video embedding, recording and AI captions need separate integration and validation.
+libmpv is dynamically loaded at runtime (for macOS use `brew install mpv`). This client now has the Tauri-style source rights gate (confirmation for each M3U import and each Discovery request), XMLTV gzip as new-profile default, episode title enrichment and EPG URL presets. It is **not yet fully equivalent to Tauri**: HTML renderer source cannot be used as proof of Slint layout parity; native video embedding, recording and AI captions need separate integration and validation.

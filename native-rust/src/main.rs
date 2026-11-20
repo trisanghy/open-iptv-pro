@@ -281,6 +281,8 @@ fn connect_callbacks(
             let Some(ui) = weak.upgrade() else { return; };
             let raw = ui.get_url_input().trim().to_string();
             if raw.is_empty() { status(&ui, "Nhập URL playlist trước khi thêm."); return; }
+            if !ui.get_import_rights_confirmed() { status(&ui,"Hãy xác nhận quyền sử dụng nguồn M3U trước mỗi lần nhập.");return; }
+            ui.set_import_rights_confirmed(false);
             let name = raw.split('/').filter(|part| !part.is_empty()).next_back().unwrap_or("M3U online");
             let src = Source { id: source_id(), name: name.chars().take(90).collect(), origin: raw.clone() };
             spawn_m3u(tx.clone(), src, raw, None);
@@ -291,7 +293,9 @@ fn connect_callbacks(
         let weak = ui.as_weak(); let tx = tx.clone();
         ui.on_open_m3u(move || {
             let Some(ui) = weak.upgrade() else { return; };
+            if !ui.get_import_rights_confirmed() { status(&ui,"Hãy xác nhận quyền sử dụng file M3U trước mỗi lần nhập.");return; }
             let Some(path) = rfd::FileDialog::new().add_filter("M3U", &["m3u", "m3u8", "txt"]).pick_file() else { return; };
+            ui.set_import_rights_confirmed(false);
             let name = path.file_name().and_then(|x| x.to_str()).unwrap_or("Local M3U").to_string();
             let src = Source { id: source_id(), name, origin: path.to_string_lossy().to_string() };
             spawn_m3u(tx.clone(), src, String::new(), Some(path));
@@ -525,6 +529,8 @@ fn connect_callbacks(
         let weak=ui.as_weak(); let tx=tx.clone();
         ui.on_discover_vn(move || {
             if let Some(ui)=weak.upgrade() {
+                if !ui.get_discovery_rights_confirmed() { status(&ui,"Hãy xác minh điều khoản Smart Discovery và quyền sử dụng nguồn trước khi tải.");return; }
+                ui.set_discovery_rights_confirmed(false);
                 let url="https://iptv-org.github.io/iptv/countries/vn.m3u".to_string();
                 let src=Source {id:source_id(),name:"Khám phá công khai · Việt Nam".into(),origin:url.clone()};
                 spawn_m3u(tx.clone(),src,url,None);
@@ -555,6 +561,20 @@ fn connect_callbacks(
                 Ok(())=>status(&ui,format!("Đã xuất {} kênh yêu thích: {}",all.len(),path.display())),
                 Err(e)=>status(&ui,format!("Xuất yêu thích thất bại: {e}"))
             }
+        });
+    }
+    {
+        let weak=ui.as_weak();
+        ui.on_select_epg_preset(move |preset| {
+            let Some(ui)=weak.upgrade() else {return;};
+            let url=match preset.as_str() {
+                "xml" => "https://epg.io.vn/epg.xml",
+                "gzip-vi" => "https://epg.io.vn/epgu.xml.gz",
+                "xml-vi" => "https://epg.io.vn/epgu.xml",
+                _ => "https://epg.io.vn/epg.xml.gz",
+            };
+            ui.set_epg_url_input(url.into());
+            status(&ui,"Đã chọn nguồn EPG. Nhấn Tải EPG từ URL để sử dụng.");
         });
     }
     {
