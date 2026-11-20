@@ -67,6 +67,24 @@ jobs:
             end tell
           end tell
           APPLESCRIPT
+          # WKWebView text buttons are not always reachable through macOS
+          # Accessibility names on hosted runners. Send actual pointer events
+          # to the visible channel-list collapse and sidebar hamburger instead.
+          cat > "$RUNNER_TEMP/rustlab-click.swift" <<'SWIFT'
+          import Foundation
+          import CoreGraphics
+          let points:[(CGFloat,CGFloat)] = [(815,144),(491,121)]
+          for (x,y) in points {
+            let p=CGPoint(x:x,y:y)
+            let down=CGEvent(mouseEventSource:nil,mouseType:.leftMouseDown,mouseCursorPosition:p,mouseButton:.left)
+            let up=CGEvent(mouseEventSource:nil,mouseType:.leftMouseUp,mouseCursorPosition:p,mouseButton:.left)
+            down?.post(tap:.cghidEventTap)
+            Thread.sleep(forTimeInterval:0.12)
+            up?.post(tap:.cghidEventTap)
+            Thread.sleep(forTimeInterval:1.2)
+          }
+          SWIFT
+          swift "$RUNNER_TEMP/rustlab-click.swift" >> screenshots/mouse-events.log 2>&1 || true
           sleep 2
           screencapture -x screenshots/rust-lab-v23.8.84-sidebar-click-attempt-real.png >> screenshots/screenshot.log 2>&1 || true
           test -s screenshots/rust-lab-v23.8.84-app-real.png
