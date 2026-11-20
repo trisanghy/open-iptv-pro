@@ -394,7 +394,7 @@
   if(!client||!enabledProviders.email||otpVerify.disabled)return;
   const email=safeEmail(),token=core.normalizeEmailOtp(otpCode?.value);
   if(!core.validEmail(email)){label('Nhập email đã nhận mã OTP ở Bước 1.','error');emailInput?.focus();return;}
-  if(!core.validEmailOtp(token)){label('Nhập mã OTP gồm 6–8 chữ số trong email.','error');otpCode?.focus();return;}
+  if(!core.validEmailOtp(token)){label('Nhập toàn bộ mã OTP trong email, không bỏ bớt chữ số. Nếu muốn mã 6 số, quản trị viên cần đặt Email OTP length = 6 trên Supabase.','error');otpCode?.focus();return;}
   otpVerify.disabled=true;
   const oldLabel=otpVerify.textContent;
   otpVerify.textContent='Đang xác thực…';
