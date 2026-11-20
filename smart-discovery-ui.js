@@ -3,6 +3,7 @@
  const ctx=window.IPTVState,core=window.StreamLeafCore,$=id=>document.getElementById(id);
  if(!ctx||!core)return;
  let discovery=null,candidates=[],busy=false,stop=false,selectionLabel='VN',catalogKind='country',generation=0,visibleRows=150;
+ let loadingController=null,checkingController=null;
  const labels={unchecked:'Chưa kiểm tra',alive:'Sống',dead:'Die',uncertain:'Chưa rõ'};
  const say=s=>{$('smartStatus').textContent=s;};
  function controls(isBusy){busy=isBusy;
@@ -59,6 +60,7 @@
    let items=[];
    if(window.streamleaf?.smartCatalogOptions)items=await window.streamleaf.smartCatalogOptions(kind);
    else if(kind==='country'&&window.streamleaf?.smartCountries)items=await window.streamleaf.smartCountries();
+   else if(window.OpenIPTVWebSmartDiscovery?.catalogOptions)items=await window.OpenIPTVWebSmartDiscovery.catalogOptions(kind);
    if(catalogKind!==kind||!Array.isArray(items)||!items.length)return;
    picker.replaceChildren();for(const item of items){const option=document.createElement('option');option.value=item.code;option.textContent=(item.flag||'')+' '+item.name+' ('+item.code+')';picker.append(option);}
    const preferred=kind==='country'?'VN':kind==='language'?'vie':'news';
@@ -68,26 +70,31 @@
  async function find(){
   if(busy)return;
   if(window.IPTVProAdvanced?.canEdit?.()===false)return ctx.toast('Hồ sơ trẻ em không được nhập nguồn','warn');
-  if(!window.streamleaf?.smartLoad&&!window.streamleaf?.smartCountry){say('Smart Discovery yêu cầu ứng dụng desktop Windows/macOS');return;}
-  if(!(await window.OpenIPTVSourceConsent?.requireSmart?.())){say('Cần xác nhận điều khoản Smart Discovery trước khi khám phá nguồn.');return;}
+  if(!(await window.OpenIPTVSourceConsent?.requireSmart?.())){say('Cần tích xác nhận điều khoản, quyền sử dụng và trách nhiệm cá nhân trước khi khám phá nguồn.');return;}
+  const web=!window.streamleaf?.smartLoad&&!window.streamleaf?.smartCountry?window.OpenIPTVWebSmartDiscovery:null;
+  if(!window.streamleaf?.smartLoad&&!window.streamleaf?.smartCountry&&!web?.load){say('Thiếu module Smart Discovery cho Web. Hãy tải lại trang.');return;}
   await choices();
   controls(true);stop=false;discovery=null;candidates=[];visibleRows=150;const seq=++generation;
   const kind=$('smartCatalog')?.value||'country',code=$('smartCountry').value;
+  loadingController=web?new AbortController():null;
   say('Đang tải danh mục nguồn công khai…');$('smartProgressBar').style.width='0%';
   try{
-   const result=window.streamleaf?.smartLoad?await window.streamleaf.smartLoad({kind,code}):await window.streamleaf.smartCountry(code);
+   const result=window.streamleaf?.smartLoad?await window.streamleaf.smartLoad({kind,code}):
+    window.streamleaf?.smartCountry?await window.streamleaf.smartCountry(code):
+    await web.load({kind,code},{signal:loadingController?.signal});
    if(stop||seq!==generation){say('Đã hủy lượt tìm');return;}
    discovery=result;
-   const parsed=core.parseM3U(result.content,'smart-preview').filter(c=>/^https?:\/\//i.test(c.url)&&!/^https?:\/\/[^/]*@/i.test(c.url));
+   const parsed=core.parseM3U(result.content,'smart-preview').filter(c=>web?web.isSafeStreamURL(c.url):/^https?:\/\//i.test(c.url)&&!/^https?:\/\/[^/]*@/i.test(c.url));
    const seen=new Set();candidates=parsed.filter(c=>{if(seen.has(c.url))return false;seen.add(c.url);return true;}).map(c=>({...c,status:'unchecked',proof:false}));
    selectionLabel=kind==='country'?code:kind==='global'?'Toàn cầu':kind==='freetv'?'Free-TV':`${kind}/${code}`;
-   say(`Đã tìm ${candidates.length} luồng từ ${result.provider||selectionLabel}. Chọn “Kiểm tra luồng” để xác minh trước khi nhập.`);
-  }catch(e){say('Không tải được nguồn: '+e.message);}finally{render();}
+   say(`Đã tìm ${candidates.length} luồng từ ${result.provider||selectionLabel}. Chọn “Kiểm tra luồng” để xác minh trước khi nhập.`+(web&&parsed.length!==core.parseM3U(result.content,'smart-count').length?' Đã loại bỏ liên kết không công khai hoặc không an toàn.':''));
+  }catch(e){say(stop?'Đã hủy tải danh mục.':'Không tải được nguồn: '+e.message);}finally{loadingController=null;render();}
  }
  async function verify(){
-  if(busy||!candidates.length||!window.streamleaf?.smartCheck)return;
+  const web=!window.streamleaf?.smartCheck?window.OpenIPTVWebSmartDiscovery:null;
+  if(busy||!candidates.length||(!window.streamleaf?.smartCheck&&!web?.check))return;
   if(!(await window.OpenIPTVSourceConsent?.requireSmart?.())){say('Chưa chấp nhận điều khoản Smart Discovery.');return;}
-  controls(true);stop=false;
+  controls(true);stop=false;checkingController=web?new AbortController():null;
   const range=String($('smartLimit').value||'all');
   // All = every discovered channel, not a hidden 1000-channel cap.
   // Bounded selections let users scan quickly without altering the full mode.
@@ -101,11 +108,13 @@
   say(`Đang kiểm tra ${selected.length} luồng${all?' (tất cả, không giới hạn)':''}, tối đa ${concurrency} kết nối đồng thời. Có thể hủy bất cứ lúc nào.`);
   async function worker(){while(!stop){
    const i=next++;if(i>=selected.length)return;const c=selected[i];
-   try{const started=Date.now(),res=await window.streamleaf.smartCheck(c.url);
-    // Keep evidence even if cancel was requested during an in-flight check.
+   try{const started=Date.now(),res=window.streamleaf?.smartCheck?
+    await window.streamleaf.smartCheck(c.url):await web.check(c.url,{signal:checkingController?.signal});
+    if(stop)return;
+    // Never infer Sống from HTTP 200 alone; require actual media evidence.
     c.status=res.status==='alive'&&res.positiveEvidence===true?'alive':res.status==='dead'&&res.confirmedDead===true?'dead':'uncertain';
     c.proof=c.status==='alive';c.latencyMs=Date.now()-started;c.reason=res.reason||'';
-   }catch(e){c.status='uncertain';c.proof=false;c.reason='Lỗi kiểm tra: '+e.message;}
+   }catch(e){if(stop||e?.name==='AbortError')return;c.status='uncertain';c.proof=false;c.reason='Lỗi kiểm tra: '+e.message;}
    if(c.status==='alive')alive++;if(c.status==='dead')dead++;done++;
    if(done%5===0||done===selected.length||stop){
     const percent=Math.round(done/Math.max(1,selected.length)*100);bar.style.width=percent+'%';
@@ -118,7 +127,7 @@
   try{await Promise.all(Array.from({length:Math.min(concurrency,selected.length)},worker));
    bar.style.width=(selected.length?Math.round(done/selected.length*100):0)+'%';
    say(stop?`Đã hủy sau ${done}/${selected.length} kênh, giữ kết quả đã kiểm tra.`:`Hoàn tất ${done} kênh: ${alive} Sống, ${dead} Die, ${done-alive-dead} chưa rõ.`);
-  }finally{render();}
+  }finally{checkingController=null;render();}
  }
  async function add(onlyAlive){if(busy||!discovery)return;
   if(window.IPTVProAdvanced?.canEdit?.()===false)return ctx.toast('Hồ sơ trẻ em không được nhập nguồn','warn');
@@ -129,7 +138,8 @@
   const origin=onlyAlive?discovery.url+'#verified':discovery.url;
   if(ctx.getStore().sources.some(s=>s.origin===origin))return ctx.toast('Nguồn này đã được nhập. Vào Quản lý nguồn để cập nhật hoặc xóa trước khi nhập lại.','warn');
   try{
-   ctx.importSource(`Smart Discovery ${selectionLabel} · ${label}`,origin,core.exportM3U(chosen),onlyAlive?'file':'url');
+   // Browser imports an exact reviewed snapshot, never an auto-refreshed remote URL.
+   ctx.importSource(`Smart Discovery ${selectionLabel} · ${label}`,origin,core.exportM3U(chosen),window.streamleaf?.smartLoad?(onlyAlive?'file':'url'):'file');
    const data=ctx.getStore(),added=data.sources.find(s=>s.origin===origin);
    if(added){
     added.collectEnabled=false;added.discoveryCountry=selectionLabel;added.discoveryCatalog=discovery.kind||'country';
@@ -147,7 +157,7 @@
  }
  $('smartFind').addEventListener('click',find);
  $('smartVerify').addEventListener('click',verify);
- $('smartCancel').addEventListener('click',()=>{stop=true;say('Đang hủy, chờ các kết nối đang chạy kết thúc…');});
+ $('smartCancel').addEventListener('click',()=>{stop=true;loadingController?.abort();checkingController?.abort();say('Đang hủy các yêu cầu mạng; giữ lại kết quả đã hoàn tất…');});
  $('smartImportAlive').addEventListener('click',()=>add(true));
  $('smartImportAll').addEventListener('click',()=>add(false));
  $('smartCatalog')?.addEventListener('change',()=>{
