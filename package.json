@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.79",
-  "description": "Positron P3: 20 further accessibility, layout, and Studio palette improvements",
+  "version": "4.23.80",
+  "description": "Positron Studio P3.1: 20 design iterations plus screenshot-derived color regression fix",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",
