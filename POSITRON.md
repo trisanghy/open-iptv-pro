@@ -1,4 +1,4 @@
-# Positron P3 — Experimental Desktop Lab
+# Positron P3.1 — Experimental Desktop Lab
 
 Based on the exact Electron branch commit `262374ef1d6ce6d3c8ff8dbea01103ef6da7a947` (Open IPTV Pro v4.23.76).
 
@@ -20,11 +20,14 @@ The Positron CI pipeline executes the existing unit tests plus **40 separate rea
 
 A completed green CI run proves the listed smoke checks, not 20 independent design revisions. Playback quality and streaming compatibility still require a real playable, authorized IPTV source and device-specific validation.
 
+## P3.1 screenshot-reviewed player color hotfix
+The inherited Electron player stylesheet used a higher-priority selector forcing a neon green Play control. P3.1 overrides that selector only within Positron, makes volume follow the chosen palette, normalizes prev/next glyphs, and adds an actual computed-style regression in the 20 Studio test rounds. P3 tags and downloads remain immutable.
+
 ## New P3 themes
 Choose Nebula (indigo), Aurora (teal) or Graphite (warm grey) from the **Chủ đề** button. Your choice is saved locally in the Positron installation. `Alt+P` opens Studio, `Alt+Shift+T` cycles color palettes and `Alt+1..5` navigates between TV, favorites, EPG, sources and settings. UI-only; no streaming settings are overwritten.
 
 ## Release policy
-Tag: `positron/v4.23.79-p3` — experimental prerelease, never replace an existing tag or stable Electron release.
+Tag: `positron/v4.23.80-p3.1` — experimental prerelease, never replace an existing tag or stable Electron release.
 Builds: Apple Silicon DMG, Intel Mac DMG, Windows x64 Setup + Portable, source ZIP, checksums, actual screenshots.
 
 Unsigned binaries may trigger Windows SmartScreen or macOS Gatekeeper warnings. New Positron app identity intentionally separates local app data from the stable installation; existing channel lists are not deleted. Back up or import playlists as required.

@@ -38,3 +38,6 @@ No network streams or protected broadcasts are injected into the QA environment.
 - W3C WCAG 2.2: https://www.w3.org/TR/WCAG22/
 - WAI-ARIA Dialog Pattern: https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/
 - Electron security recommendations: https://www.electronjs.org/docs/latest/tutorial/security
+
+## P3.1 follow-up fix
+After visually inspecting screenshots from all three themes, corrected the inherited Electron high-specificity neon-green Play and volume styles, switched transport glyphs to monochrome, and added per-theme computed-style assertions in the actual Electron UI rounds. The 20 improvement commits above are preserved; this fix is a separate follow-up, not counted as one of those 20 iterations.
