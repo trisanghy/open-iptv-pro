@@ -1,0 +1,33 @@
+name: Rust Lab — Cloud login UI regression
+on:
+  push:
+    branches:
+      - experiment/rust-tauri-v2
+    paths:
+      - renderer/cloud-portable.js
+      - renderer/cloud-portable.css
+      - renderer/index.html
+      - tests/cloud-portable.test.cjs
+      - .github/workflows/rust-lab-auth-ui-tests.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  cloud-login-ui:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out Rust Lab without rewriting release tags
+        uses: actions/checkout@v4
+      - name: Use Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validate login JavaScript and source regression tests
+        run: |
+          node --check renderer/cloud-portable.js
+          node --test tests/cloud-portable.test.cjs
+      - name: Verify scoped stylesheet is loaded by Tauri WebView
+        run: |
+          test -s renderer/cloud-portable.css
+          grep -Fq 'cloud-portable.css' renderer/index.html
+          grep -Fq '#openiptvPortableCloud' renderer/cloud-portable.css
