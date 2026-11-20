@@ -141,7 +141,7 @@ test('PiP compatibility module is Web-only, cache-busted and preserved by prepar
  assert.ok(app.includes('src="web-ios-pip-compat.js?v=autopip-crossbrowser-20261120a"'));
  assert.ok(app.includes('href="web-ios-pip-compat.css?v=ios-pwa-pip-20261119a"'));
  assert.ok(builder.includes("for asset in ('web-ios-pip-compat.js','web-ios-pip-compat.css')"));
- assert.ok(builder.includes('web-ios-pip-compat.js?v=ios-pwa-pip-20261119a'));
+ assert.ok(builder.includes('web-ios-pip-compat.js?v=autopip-crossbrowser-20261120a'));
  assert.ok(builder.includes('web-ios-pip-compat.css?v=ios-pwa-pip-20261119a'));
  assert.ok(app.indexOf('web-ios-pip-compat.js?v=')>app.indexOf('features.js?v='));
  assert.match(read('web-fullscreen-controls.js'),/fsPipBtn[\s\S]{0,100}pipBtn/);
