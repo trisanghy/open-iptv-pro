@@ -65,3 +65,11 @@ test('Web pack is copied, loaded before i18n, and cache-busted on every content 
   assert.match(builder,/copy2\(Path\(__file__\)\.resolve\(\)\.parent\/'web-generated-locales\.js',out\/'web-generated-locales\.js'\)/);
   assert.ok(!source.includes('web-language-supplement.js'),'Electron locale engine must stay separate');
 });
+
+test('compact Discovery controls and responsibility notice are localized in every Web language',()=>{
+ const dict=loaded();
+ const keys=["Khám phá và kiểm tra kênh từ bộ sưu tập công khai.","Quyền sử dụng và trách nhiệm","Trước khi sử dụng Smart Discovery, phải tích xác nhận riêng rằng đã kiểm tra điều khoản nhà cung cấp và có quyền hợp pháp với nội dung. Khi nhập kênh phải xác nhận lại; kênh công khai hoặc phát được không đồng nghĩa có giấy phép. Bạn tự chịu trách nhiệm về các nguồn mình lựa chọn, trong phạm vi pháp luật cho phép.","⌕ Khám phá","Tùy chọn kiểm tra","Tất cả · 3 luồng","Kiểm tra tất cả không giới hạn số kênh; chạy 2–8 kết nối đồng thời. Kênh chặn CORS hoặc khu vực có thể báo “Chưa rõ”.","Chọn danh mục rồi nhấn Khám phá.","＋ Nhập kênh sống","＋ Nhập tất cả"];
+ for(const lang of ['en','es','pt-BR','zh-CN','th','lo','km','fr','de','it','ja','ko','ru','id','hi','ar']){
+  for(const key of keys){assert.equal(typeof dict[lang]?.[key],'string',lang+': '+key);assert.notEqual(dict[lang][key],key,lang+' unchanged: '+key);}
+ }
+});
