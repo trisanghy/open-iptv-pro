@@ -169,3 +169,52 @@
 #cloudSyncCard #cloudLinkInput::selection {
  background:rgba(152,118,239,.38);
 }
+
+/* iPhone browser edit fix: a native one-line textarea supports iOS's
+   text-insertion caret/handles even when third-party webviews mishandle input.
+   Never intercept touch or long-press selection, and keep its native editor. */
+#cloudSyncCard textarea#cloudEmailInput {
+ appearance:auto!important;
+ -webkit-appearance:auto!important;
+ display:block!important;
+ box-sizing:border-box!important;
+ width:100%!important;
+ min-width:0!important;
+ max-width:100%!important;
+ height:48px!important;
+ min-height:48px!important;
+ max-height:48px!important;
+ padding:11px 12px!important;
+ margin:0!important;
+ overflow-x:auto!important;
+ overflow-y:hidden!important;
+ white-space:pre!important;
+ resize:none!important;
+ border:1px solid var(--line,#506174)!important;
+ border-radius:10px!important;
+ background:var(--surface,#131f2b)!important;
+ color:var(--text,#f0f5f9)!important;
+ -webkit-text-fill-color:currentColor!important;
+ caret-color:currentColor!important;
+ font:400 16px/24px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif!important;
+ letter-spacing:normal!important;
+ -webkit-user-select:text!important;
+ user-select:text!important;
+ touch-action:auto!important;
+ -webkit-touch-callout:default!important;
+}
+#cloudSyncCard textarea#cloudEmailInput:focus {
+ border-color:var(--accent,#a478f4)!important;
+ outline:2px solid var(--accent,#a478f4)!important;
+ outline-offset:1px;
+}
+#cloudSyncCard textarea#cloudEmailInput::placeholder {
+ color:var(--muted,#95a6bc);
+ opacity:1;
+}
+@media(max-width:550px){
+ #cloudSyncCard textarea#cloudEmailInput {
+  flex:0 0 48px!important;
+  align-self:stretch;
+ }
+}
