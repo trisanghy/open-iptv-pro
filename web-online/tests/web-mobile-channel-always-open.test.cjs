@@ -56,7 +56,7 @@ test('mobile preference changes and viewport lifecycle are synchronized without 
  assert.match(features,/window.addEventListener\('pageshow',\(\)=>updateChannelPanelVisibility\(false\)\)/);
  assert.match(features,/window.addEventListener\('orientationchange',\(\)=>updateChannelPanelVisibility\(false\)\)/);
  assert.match(features,/if\(isMobileChannelPanel\(\)\)return;config.channelPanelVisible=false/);
- assert.match(html,/features\.js\?v=epg-logo-20261120b/);
+ assert.match(html,/features\.js\?v=web-perf-20261120a/);
  assert.match(html,/web-mobile-player\.css\?v=apple-more-20261120a/);
  assert.match(fs.readFileSync(path.join(root,'web-online/prepare-web.py'),'utf8'),/Cannot protect mobile channel list visibility after WebView build/);
 });
