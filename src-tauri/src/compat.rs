@@ -1,7 +1,7 @@
 //! Optional FFmpeg compatibility renderer for sources WKWebView/WebView2 cannot decode.
 //! A single low-resolution H.264/AAC HLS session is allowed at a time, and it is
 //! scoped to the running app's loopback listener (not the LAN).
-use crate::{stream, AppState};
+use crate::{stream, AppState, video_enhance};
 use serde_json::{json, Value};
 use std::{fs, path::PathBuf, sync::Arc, process::Stdio};
 use regex::Regex;
@@ -54,6 +54,15 @@ pub fn url(state: &AppState, id: &str, file: &str) -> String {
 }
 
 pub async fn start(state: &Arc<AppState>, raw: &str) -> Result<Value, String> {
+    start_with_motion(state, raw, None).await
+}
+
+/// Reuse the single original-player HLS relay; never create a second player.
+pub async fn start_enhanced(state: &Arc<AppState>, raw: &str, options:&Value)->Result<Value,String>{
+    let fps=video_enhance::motion_target(options)?;
+    start_with_motion(state,raw,Some(fps)).await
+}
+async fn start_with_motion(state:&Arc<AppState>,raw:&str,motion:Option<u32>)->Result<Value,String>{
     stream::valid_http_url(raw)?;
     let bin = state.ffmpeg.as_ref().ok_or("Thiếu FFmpeg, không thể bật bộ phát tương thích")?;
     stop(state).await;
@@ -63,13 +72,19 @@ pub async fn start(state: &Arc<AppState>, raw: &str) -> Result<Value, String> {
     let manifest = folder.join("live.m3u8");
 
     // No shell, no user-supplied flags or filenames. Only HTTP/HTTPS URLs.
-    // Transcoding is a fallback only: normally the original URL is played directly.
+    // Requested interpolation is opt-in; this is not an AI super-resolution filter.
+    let filter=match motion {
+      Some(fps)=>video_enhance::motion_filter(fps),
+      None=>"scale=w=min(720\\,iw):h=min(406\\,ih):force_original_aspect_ratio=decrease:force_divisible_by=2".into()
+    };
+    let filter_threads=if motion.is_some(){"2"}else{"1"};
+    // Transcoding remains a fallback unless motion is explicitly enabled.
     let mut command = Command::new(bin);
     command.args([
         "-hide_banner", "-nostdin", "-loglevel", "error", "-rw_timeout", "12000000",
         "-fflags", "+genpts", "-i", raw,
         "-map", "0:v:0", "-map", "0:a:0?",
-        "-filter_threads", "1", "-vf", "scale=w=min(720\\,iw):h=min(406\\,ih):force_original_aspect_ratio=decrease:force_divisible_by=2",
+        "-filter_threads", filter_threads, "-vf", filter.as_str(),
         "-c:v", "libx264", "-threads", "2", "-preset", "ultrafast", "-crf", "30", "-pix_fmt", "yuv420p",
         "-force_key_frames", "expr:gte(t,n_forced*2)",
         "-c:a", "aac", "-b:a", "96k", "-ac", "2",
@@ -124,7 +139,13 @@ pub async fn start(state: &Arc<AppState>, raw: &str) -> Result<Value, String> {
                     p.file_name().to_string_lossy().starts_with("segment_") &&
                     p.metadata().is_ok_and(|m| m.len() > 188)
                 }));
-                if has_segment { return Ok(json!({"url":url(state,&id,"live.m3u8"), "mode":"compat-hls", "notice":"Đang dùng FFmpeg chuyển mã H.264/AAC để tương thích WebView"})); }
+                if has_segment {
+                    let notice=match motion {
+                      Some(fps)=>format!("FFmpeg đang bù chuyển động {fps} FPS · tối đa 720p · không phải AI upscaling"),
+                      None=>"Đang dùng FFmpeg chuyển mã H.264/AAC để tương thích WebView".to_string()
+                    };
+                    return Ok(json!({"url":url(state,&id,"live.m3u8"),"mode":"compat-hls","notice":notice,"motionFps":motion,"aiUpscaleActive":false}));
+                }
             }
         }
         sleep(Duration::from_millis(250)).await;

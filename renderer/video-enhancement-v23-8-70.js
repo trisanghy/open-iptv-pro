@@ -23,9 +23,9 @@
    '<small>Yêu cầu AI model và backend GPU tương thích</small><span>Độ phân giải</span>',
    '<select id="veh-resolution"><option value="1080">1080p (FHD)</option><option value="1440">2K (1440p)</option><option value="2160">4K (2160p)</option></select></div></div>',
    '<div class="veh-bench" id="veh-bench"><strong>Benchmark & Tự chọn cấu hình</strong><button type="button" id="veh-run">▶ Chạy Benchmark</button>',
-   '<button type="button" id="veh-auto">✧ Tự chọn cấu hình</button></div>',
+   '<button type="button" id="veh-auto">✧ Tự chọn cấu hình</button><button type="button" id="veh-apply">Áp dụng cho kênh này</button></div>',
    '<label class="veh-safe" id="veh-safe"><input type="checkbox" id="veh-downshift"> Tự giảm chất lượng khi quá tải</label>',
-   '<p id="veh-status" role="status" aria-live="polite">Chưa benchmark · Video nguyên bản</p></div>'
+   '<p class="veh-limit">Bù chuyển động FFmpeg tối đa 720p; AI 1080p/2K/4K vẫn cần mô hình chuyên dụng và chưa hoạt động.</p><p id="veh-status" role="status" aria-live="polite">Chưa benchmark · Video nguyên bản</p></div>'
   ].join('');
   row.append(panel);
   const el=id=>doc.getElementById(id);let config=api.load(root.localStorage),result;
@@ -38,8 +38,22 @@
   doc.addEventListener('keydown',e=>{if(e.key==='Escape'&&!panel.hidden){panel.hidden=true;trigger.setAttribute('aria-expanded','false');trigger.focus();}});
   panel.querySelectorAll('[data-target]').forEach(b=>b.addEventListener('click',()=>el(b.dataset.target)?.scrollIntoView({block:'nearest',behavior:'smooth'})));
   el('veh-run').addEventListener('click',async()=>{const b=el('veh-run');if(!root.streamleaf?.videoEnhanceBenchmark){status('Không có backend benchmark.');return;}b.disabled=true;status('Đang benchmark FFmpeg cục bộ (không phải AI)...');try{result=await root.streamleaf.videoEnhanceBenchmark();status(api.summary(result));}catch(e){status('Lỗi benchmark: '+String(e?.message||e).slice(0,120));}finally{b.disabled=false;}});
-  el('veh-auto').addEventListener('click',()=>{if(!result){status('Cần chạy benchmark trước.');return;}const fps=api.recommend(result);if(fps===null){status('Máy chưa đạt kiểm tra sơ bộ; giữ video gốc.');return;}config={...config,fps,motion:false,upscale:false};render();api.save(root.localStorage,config);status('Gợi ý sơ bộ '+fps+' FPS; chưa kích hoạt xử lý video hoặc AI.');});
-  root.OpenIPTVVideoEnhancement={getSettings:()=>({...config}),getBenchmark:()=>result};
+  el('veh-auto').addEventListener('click',()=>{if(!result){status('Cần chạy benchmark trước.');return;}const fps=api.recommend(result);if(fps===null){status('Máy chưa đạt kiểm tra sơ bộ; giữ video gốc.');return;}config={...config,fps,motion:true,upscale:false};render();api.save(root.localStorage,config);status('Đã chọn '+fps+' FPS theo benchmark. Nhấn Áp dụng cho kênh này để thử; AI upscale chưa khả dụng.');});
+  el('veh-apply').addEventListener('click',()=>{
+    const state=root.IPTVState, current=state?.getCurrent?.();
+    if(!current){status('Hãy chọn kênh LIVE trước khi áp dụng.');return;}
+    if(state.getPlayMode?.()!=='live'){status('Bù chuyển động hiện chỉ hỗ trợ kênh trực tiếp.');return;}
+    status('Đang chuyển kênh để áp dụng cấu hình; nếu quá tải sẽ trở về video gốc…');
+    Promise.resolve(state.playChannel(current.id)).catch(e=>status('Không áp dụng được: '+String(e?.message||e).slice(0,100)));
+  });
+  root.OpenIPTVVideoEnhancement={
+    getSettings:()=>({...config}),getBenchmark:()=>result,
+    setPlaybackState:({active,error,fps}={})=>{
+      if(error)status(error);
+      else if(active)status('Đang chạy FFmpeg nội suy '+fps+' FPS · tối đa 720p · AI upscale chưa hoạt động.');
+      else status('Video nguyên bản · AI upscale chưa có backend được xác minh.');
+    }
+  };
  }
  if(doc.readyState==='loading')doc.addEventListener('DOMContentLoaded',init,{once:true});else init();
 })(typeof window!=='undefined'?window:null,function(){
@@ -48,6 +62,6 @@
  function load(s){try{return normalize(JSON.parse(s.getItem(key)||'{}'));}catch{return {...defaults};}}
  function save(s,v){try{s.setItem(key,JSON.stringify(normalize(v)));return true;}catch{return false;}}
  function recommend(r){const a=Array.isArray(r?.motion)?r.motion:[];const o=a.filter(x=>[60,90,120].includes(x.targetFps)&&x.ok===true&&Number.isFinite(x.processingFps)&&x.processingFps>=x.targetFps*1.3);return o.length?Math.max(...o.map(x=>x.targetFps)):null;}
- function summary(r){return Array.isArray(r?.motion)?'Kết quả nội suy 320×180: '+r.motion.map(x=>x.targetFps+' FPS: '+(x.ok?Math.round(x.processingFps)+' fps xử lý':'lỗi')).join(' · ')+'. AI upscaling chưa được đo.':'Kết quả không hợp lệ';}
+ function summary(r){return Array.isArray(r?.motion)?'Kết quả nội suy (đầu ra tối đa 720p): '+r.motion.map(x=>x.targetFps+' FPS: '+(x.ok?Math.round(x.processingFps)+' fps xử lý':'lỗi')).join(' · ')+'. AI upscaling chưa được đo.':'Kết quả không hợp lệ';}
  return {key,defaults,normalize,load,save,recommend,summary};
 });

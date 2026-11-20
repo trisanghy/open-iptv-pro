@@ -188,6 +188,7 @@ pub async fn bridge(app:AppHandle,state:State<'_,Arc<AppState>>,local_ai_state:S
   "media:compatStart"=>compat::start(s,text(&args,0)?).await,
   "media:compatStop"=>{compat::stop(s).await;Ok(json!(true))},
   "video:enhancementBenchmark"=>video_enhance::benchmark(s.ffmpeg.as_deref()).await,
+  "video:enhancementStart"=>compat::start_enhanced(s,text(&args,0)?,item(&args,1)).await,
   "link:check"=>check_link(s,text(&args,0)?).await,
   "snapshot:make"=>snapshot(s,text(&args,0)?,item(&args,1).as_str().unwrap_or("channel")).await,
   "snapshot:delete"=>remove_retired_snapshot(s,text(&args,0)?).await,

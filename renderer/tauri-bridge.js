@@ -28,7 +28,7 @@
     downloadUpdate: 'update:download', installUpdate: 'update:install',
     openDownloadedUpdate: 'update:openDownloaded', openRelease: 'update:openRelease', openReleases: 'update:openReleases',
     backupExport: 'backup:export', backupInspect: 'backup:inspect', backupRestore: 'backup:restore', backupFinish: 'backup:finish',
-    openM3U: 'source:readFile', loadURL: 'source:readUrl', proxy: 'media:proxy', mediaKind: 'media:kind', compatStart: 'media:compatStart', compatStop: 'media:compatStop', videoEnhanceBenchmark: 'video:enhancementBenchmark',
+    openM3U: 'source:readFile', loadURL: 'source:readUrl', proxy: 'media:proxy', mediaKind: 'media:kind', compatStart: 'media:compatStart', compatStop: 'media:compatStop', videoEnhanceBenchmark: 'video:enhancementBenchmark', videoEnhanceStart: 'video:enhancementStart',
     check: 'link:check', snapshot: 'snapshot:make', snapshotDelete: 'snapshot:delete', export: 'file:export',
     storeRead: 'storage:read', storeWrite: 'storage:write',
     smartCountries: 'smart:countries', smartCountry: 'smart:country', smartCatalogOptions: 'smart:catalog-options',

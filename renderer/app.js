@@ -44,7 +44,7 @@
  let selectionSerial=0, activeMediaSrc="", activeMediaGeneration=0, activeMediaAttempt=0, activeMediaUsesMSE=false, activeMediaBlobSrc="";
  const compatFailureCooldown=new Map(); // Avoid respawning FFmpeg repeatedly for broken streams.
  let mediaInfo={hls:false,mode:'unknown',seekable:false};
- let playbackProofTimer=0,playbackProofUrl='',playAttemptSerial=0,waitingSerial=0,stablePlayback={attempt:0,startedAt:0,mediaAt:0},filter='all',page='tv',hls=null,dash=null,current=null,playGeneration=0,playCandidates=[],playCandidateIndex=0,playMode='live',failoverTimer=null,modalHandler=null,snapshotBase='',mediaRecoveryCount=0,compatAttempted=false,compatSource='';
+ let playbackProofTimer=0,playbackProofUrl='',playAttemptSerial=0,waitingSerial=0,stablePlayback={attempt:0,startedAt:0,mediaAt:0},filter='all',page='tv',hls=null,dash=null,current=null,playGeneration=0,playCandidates=[],playCandidateIndex=0,playMode='live',failoverTimer=null,modalHandler=null,snapshotBase='',mediaRecoveryCount=0,compatAttempted=false,compatSource='',motionEnhanced=false;
  const tasks={
   check:{running:false,cancel:false,visible:false,total:0,done:0,alive:0,dead:0,uncertain:0,results:[]},
   shots:{running:false,cancel:false,visible:false,total:0,done:0,success:0,failed:0,skipped:0,latest:''}
@@ -614,7 +614,7 @@
   const actual=player.currentSrc||'';
   return actual===activeMediaSrc||(activeMediaUsesMSE&&!!activeMediaBlobSrc&&actual===activeMediaBlobSrc);
  }
- function stopPlayer(){window.OpenIPTVCastUI?.stopOnLocalStop?.();selectionSerial++;playGeneration++;transientRetryKeys.clear();reentryRetryKeys.clear();compatAttempted=false;compatSource='';disposeActiveMedia();if(isTauri)window.streamleaf?.compatStop?.().catch(()=>{});window.IPTVProAdvanced?.onStop?.();current=null;mediaInfo={hls:false,mode:'unknown',seekable:false};document.dispatchEvent(new CustomEvent('openiptv:media-info',{detail:mediaInfo}));$('#playingTitle').textContent='Chưa chọn kênh';$('#playingSubtitle').textContent='Chọn kênh để phát';$('#playBtn').textContent='▶';$('#emptyPlayer').classList.remove('hidden');$('#playingIcon').textContent='TV';updatePlayerFavorite();renderList();window.IPTVExtras?.onChannel?.(null);}
+ function stopPlayer(){window.OpenIPTVCastUI?.stopOnLocalStop?.();selectionSerial++;playGeneration++;transientRetryKeys.clear();reentryRetryKeys.clear();compatAttempted=false;compatSource='';motionEnhanced=false;window.OpenIPTVVideoEnhancement?.setPlaybackState?.({active:false});disposeActiveMedia();if(isTauri)window.streamleaf?.compatStop?.().catch(()=>{});window.IPTVProAdvanced?.onStop?.();current=null;mediaInfo={hls:false,mode:'unknown',seekable:false};document.dispatchEvent(new CustomEvent('openiptv:media-info',{detail:mediaInfo}));$('#playingTitle').textContent='Chưa chọn kênh';$('#playingSubtitle').textContent='Chọn kênh để phát';$('#playBtn').textContent='▶';$('#emptyPlayer').classList.remove('hidden');$('#playingIcon').textContent='TV';updatePlayerFavorite();renderList();window.IPTVExtras?.onChannel?.(null);}
  async function loadHlsLib(){if(window.Hls)return window.Hls;if(native)throw Error('Ứng dụng chưa đóng gói hls.js. Hãy chạy npm install rồi đóng gói lại.');return new Promise((resolve,reject)=>{const script=document.createElement('script');script.src='https://cdn.jsdelivr.net/npm/hls.js@1.6.15/dist/hls.min.js';script.onload=()=>window.Hls?resolve(window.Hls):reject(Error('Thiếu thư viện hls.js'));script.onerror=()=>reject(Error('Không tải được hls.js từ CDN để phát HLS trên trình duyệt này'));document.head.append(script);});}
  async function tryPlayback(url,generation,options={}){
   if(generation!==playGeneration)return;
@@ -748,6 +748,18 @@
   playAttemptSerial++;
   clearTimeout(failoverTimer);
   window.IPTVProAdvanced?.onStreamError?.(current,reason);
+  // Motion HLS is optional. On decoder/segment failure, retire FFmpeg and
+  // return to the original source once, without enabling a second player.
+  if(motionEnhanced){
+    motionEnhanced=false;compatSource='';compatAttempted=false;
+    window.OpenIPTVVideoEnhancement?.setPlaybackState?.({active:false,error:'Không phát được luồng bù chuyển động; đã trở lại video gốc'});
+    await window.streamleaf?.compatStop?.().catch(()=>{});
+    if(generation!==playGeneration)return;
+    textStatus('Đang khôi phục video gốc sau lỗi bù chuyển động');
+    try{await tryPlayback(playCandidates[playCandidateIndex],generation);}
+    catch(error){void recoverPlayback(generation,String(error?.message||error));}
+    return;
+  }
   // Live CDN connections occasionally time out or drop one segment. One quiet
   // retry of this exact URL is cheaper than instantly moving to another feed.
   // Never retry explicitly denied HTTP codes or unsupported codecs endlessly.
@@ -843,7 +855,7 @@
   if(window.IPTVProAdvanced?.allowChannel && !(await window.IPTVProAdvanced.allowChannel(found)))return;
   if(selection!==selectionSerial)return; // A pending permission prompt must not revive an old selection.
   if(!opts.buffer)window.streamleaf?.stopTimeshift?.().catch(()=>{});
-  playGeneration++;transientRetryKeys.clear();reentryRetryKeys.clear();const generation=playGeneration;compatAttempted=false;compatSource='';
+  playGeneration++;transientRetryKeys.clear();reentryRetryKeys.clear();const generation=playGeneration;compatAttempted=false;compatSource='';motionEnhanced=false;window.OpenIPTVVideoEnhancement?.setPlaybackState?.({active:false});
   disposeActiveMedia(); // Release the old decoder immediately, BEFORE slow Rust IPC.
   if(isTauri)await window.streamleaf?.compatStop?.().catch(()=>{});
   if(generation!==playGeneration||selection!==selectionSerial)return;
@@ -858,6 +870,29 @@
   current=found;store.current=chId;mediaInfo={hls:false,mode:'unknown',seekable:false};document.dispatchEvent(new CustomEvent('openiptv:media-info',{detail:mediaInfo}));save();window.OpenIPTVCastUI?.onChannelChanged?.(found);renderList(true);
   updateManualLinks();$('#playingTitle').textContent=found.name;$('#playingSubtitle').textContent=found.group+' • '+(playMode==='catchup'?'Xem lại':playMode==='timeshift'?'Tua lại '+(window.IPTVProAdvanced?.getReplayMinutes?.()||10)+' phút':'Đang phát trực tiếp');$('#playingIcon').textContent=found.name.slice(0,2).toUpperCase();$('#emptyPlayer').classList.add('hidden');$('#streamInfo').textContent='Đang kết nối...';updatePlayerFavorite();
   window.IPTVExtras?.onChannel?.(found);window.IPTVProAdvanced?.onChannel?.(found,playMode);
+  // Explicit opt-in; both native and enhanced playback use the SAME player.
+  const profile=window.OpenIPTVVideoEnhancement?.getSettings?.();
+  if(isTauri && playMode==='live' && !override && !opts.buffer &&
+      profile?.motion && window.streamleaf?.videoEnhanceStart){
+    const original=playCandidates[0];
+    if(/^https?:\/\//i.test(String(original||''))){
+      textStatus('Đang thử bù chuyển động '+profile.fps+' FPS bằng FFmpeg…');
+      try{
+        const session=await window.streamleaf.videoEnhanceStart(original,{motion:true,fps:profile.fps});
+        if(generation!==playGeneration||selection!==selectionSerial)return;
+        if(!session?.url||session.motionFps!==profile.fps)throw Error('Bộ xử lý không trả về luồng FPS hợp lệ');
+        compatSource=original;compatAttempted=true;motionEnhanced=true;
+        window.OpenIPTVVideoEnhancement?.setPlaybackState?.({active:true,fps:profile.fps});
+        await tryPlayback(session.url,generation,{compat:true});
+        return;
+      }catch(error){
+        if(generation!==playGeneration)return;
+        await window.streamleaf?.compatStop?.().catch(()=>{});
+        motionEnhanced=false;compatSource='';compatAttempted=false;
+        window.OpenIPTVVideoEnhancement?.setPlaybackState?.({active:false,error:'FFmpeg không khởi động được, đang dùng video gốc'});
+      }
+    }
+  }
   try{await tryPlayback(playCandidates[0],generation);}catch(e){recoverPlayback(generation,e.message);}
  }
  async function playToggle(){if(!current){const first=enabledChannels()[0];if(first)await playChannel(first.id);else toast('Hãy thêm file M3U hoặc URL trước','warn');return;}
@@ -1114,7 +1149,7 @@
   $('#searchBox').addEventListener('input',renderList);$('#volume').addEventListener('input',e=>{player.volume=e.target.value/100;store.volume=player.volume;save();});
   player.volume=store.volume??.8;$('#volume').value=Math.round(player.volume*100);
   const fit=['contain','cover','fill','none'].includes(store.videoFit)?store.videoFit:'contain';$('#videoFit').value=fit;player.className='fit-'+fit;$('#videoFit').addEventListener('change',e=>{store.videoFit=e.target.value;player.className='fit-'+store.videoFit;save();});
-  player.addEventListener('playing',()=>{if(!activeMediaEvent())return;waitingSerial++;clearTimeout(failoverTimer);if(stablePlayback.attempt===playAttemptSerial&&!stablePlayback.startedAt){stablePlayback.startedAt=Date.now();stablePlayback.mediaAt=Number(player.currentTime)||0;}const generation=playGeneration;setTimeout(()=>markPlaybackVerified(generation),1800);window.IPTVProAdvanced?.onPlaying?.(current,playCandidates[playCandidateIndex]);$('#streamInfo').textContent=compatSource?'● FFmpeg tương thích • Đang phát':'● Đang phát';$('#playBtn').textContent='Ⅱ';textStatus('Đang xem: '+(current?.name||''));});
+  player.addEventListener('playing',()=>{if(!activeMediaEvent())return;waitingSerial++;clearTimeout(failoverTimer);if(stablePlayback.attempt===playAttemptSerial&&!stablePlayback.startedAt){stablePlayback.startedAt=Date.now();stablePlayback.mediaAt=Number(player.currentTime)||0;}const generation=playGeneration;setTimeout(()=>markPlaybackVerified(generation),1800);window.IPTVProAdvanced?.onPlaying?.(current,playCandidates[playCandidateIndex]);$('#streamInfo').textContent=motionEnhanced?'● Nội suy '+(window.OpenIPTVVideoEnhancement?.getSettings?.()?.fps||'')+' FPS · FFmpeg':compatSource?'● FFmpeg tương thích • Đang phát':'● Đang phát';$('#playBtn').textContent='Ⅱ';textStatus('Đang xem: '+(current?.name||''));});
   // DOM listeners receive an Event argument. Passing markPlaybackVerified directly
   // mistakenly compared Event !== playGeneration and disabled all progress proofs.
   player.addEventListener('timeupdate',()=>markPlaybackVerified());
