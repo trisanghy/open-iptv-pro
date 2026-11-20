@@ -168,6 +168,14 @@ export component MainWindow inherits Window {
                 padding: root.rail-collapsed ? 6px : 12px;
                 spacing: 3px;
                 Button { text: root.rail-collapsed ? "☰" : "☰  Thu gọn"; height: 38px; clicked => { root.rail-collapsed = !root.rail-collapsed; } }
+                // Persistent, accessible settings button in the clickable
+                // upper rail. Avoid bottom-edge hit-testing and status overlap.
+                Button {
+                    text: root.rail-collapsed ? "⚙" : "⚙  Cài đặt";
+                    height: 38px;
+                    primary: root.active-page == "settings";
+                    clicked => { root.navigate("settings"); }
+                }
                 Rectangle {
                     height: root.rail-collapsed ? 50px : 64px;
                     HorizontalLayout {
@@ -213,14 +221,6 @@ export component MainWindow inherits Window {
 
                     }
                 }
-                Button {
-                    text: root.rail-collapsed ? "⚙" : "⚙  Cài đặt";
-                    height: 44px;
-                    primary: root.active-page == "settings";
-                    clicked => { root.navigate("settings"); }
-                }
-                // Keep the persistent control above the status/footer edge.
-                Rectangle { height: 38px; background: transparent; }
                 if !root.rail-collapsed : Rectangle {
                     height: 67px;
                     background: root.light-mode ? #e7eef8 : #192a3b;
@@ -232,15 +232,6 @@ export component MainWindow inherits Window {
                         Text { text: "Nhánh thử nghiệm độc lập"; visible: !root.rail-collapsed; color: #9bb2c6; font-size: 11px; }
                     }
                 }
-            }
-            // Persistent Settings hot zone above the navigation scroller.
-            // The actual button remains visible for keyboard interaction.
-            TouchArea {
-                x: 0px;
-                y: root.rail-collapsed ? parent.height - 93px : parent.height - 160px;
-                width: parent.width;
-                height: 54px;
-                clicked => { root.navigate("settings"); }
             }
         }
         VerticalLayout {
