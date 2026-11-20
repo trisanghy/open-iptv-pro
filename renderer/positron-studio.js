@@ -38,3 +38,13 @@ if(window.OpenIPTVPositronStudio?.menu.hidden===false)return;
 if(!window.IPTVState?.setPage)return;
 event.preventDefault();window.IPTVState.setPage(page);});
 })();
+/* 16 */(()=>{const overlay=document.getElementById('positronPalette'),open=document.getElementById('positronOpen');if(!overlay||!open)return;
+open.setAttribute('aria-controls',overlay.id);open.setAttribute('aria-expanded','false');
+new MutationObserver(()=>open.setAttribute('aria-expanded',String(!overlay.hidden))).observe(overlay,{attributes:true,attributeFilter:['hidden']});
+document.addEventListener('keydown',e=>{if(overlay.hidden||e.key!=='Tab')return;
+const list=[...overlay.querySelectorAll('input:not([disabled]),button:not([disabled])')].filter(el=>el.getClientRects().length>0);
+if(!list.length)return;const first=list[0],last=list[list.length-1];
+if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}
+else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}
+},true);
+})();
