@@ -648,5 +648,19 @@ pipToggle.onchange=()=>{
 epgManager=installEPGAuto({getState:()=>state,save,getText,parseDate:xmltvDate,
  getSelectedChannel:()=>state.channels.find(x=>x.url===state.selected),
  notify:status,onGuide:cache=>{epgItems=cache.items;renderCurrentEPG(state.channels.find(x=>x.url===state.selected));}});
+// Shared Supabase account UI in the Mobile Tools tab. Keep the local Capacitor
+// playlist as the source of truth until the user pairs this device explicitly.
+window.OpenIPTVPortableCloud?.mount({
+ mode:'mobile',
+ container:document.getElementById('page-tools'),
+ getState:()=>state,
+ saveState:next=>{
+  const before=state;
+  state={...state,...next,settings:{...state.settings,...next.settings}};
+  rebuildOrderedChannels();
+  if(!save()){state=before;throw Error('Không thể lưu bản khôi phục trên thiết bị');}
+  render();
+ }
+});
 Promise.resolve().then(startupSync).catch(e=>console.warn('Auto refresh:',e));
 
