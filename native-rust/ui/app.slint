@@ -285,6 +285,7 @@ if (root.active-page == "tv" || root.active-page == "fav" || root.active-page ==
         Text { text: root.sources-count + " nguồn"; color: #9db8cb; font-size: 11px; vertical-alignment: center; }
         Button { text: "Mở M3U"; clicked => { root.open-m3u(); } }
         Button { text: "Thêm URL"; clicked => { root.navigate("sources"); } }
+        Button { text: "⚙"; width: 38px; clicked => { root.navigate("settings"); } }
     }
 }
     Rectangle {

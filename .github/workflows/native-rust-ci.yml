@@ -229,15 +229,15 @@ jobs:
           xdotool mousemove 35 146 click 1
           sleep 1
           import -display "$DISPLAY" -window root screenshot/07-tv-return.png
-          xdotool mousemove 35 730 click 1
+          xdotool mousemove 35 716 click 1
           sleep 1
           import -display "$DISPLAY" -window root screenshot/08-settings-page.png
+          xdotool mousemove 35 453 click 1
+          sleep 1
+          import -display "$DISPLAY" -window root screenshot/09-sources-page.png
           xdotool mousemove 35 146 click 1
           sleep 1
-          import -display "$DISPLAY" -window root screenshot/09-tv-final.png
-          xdotool mousemove 650 680 click --repeat 5 --delay 100 4
-          sleep 1
-          import -display "$DISPLAY" -window root screenshot/10-tv-scroll-up.png
+          import -display "$DISPLAY" -window root screenshot/10-tv-return.png
           for file in screenshot/*.png; do test -s "$file"; identify "$file"; done
           CAPTURE
           chmod +x "$RUNNER_TEMP/capture-native-ui.sh"
