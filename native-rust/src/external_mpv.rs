@@ -26,7 +26,10 @@ impl ExternalMpv {
         )?;
         let nanos=SystemTime::now().duration_since(UNIX_EPOCH)
             .unwrap_or_default().as_nanos();
-        let socket=std::env::temp_dir().join(
+        // macOS TMPDIR often exceeds UNIX_PATH_MAX when the socket suffix is
+        // appended. /tmp is short, system-managed and private to this process
+        // through an unguessable nonce.
+        let socket=Path::new("/tmp").join(
             format!("oip-{}-{:x}.sock",std::process::id(),nanos)
         );
         if socket.to_string_lossy().len()>95 {
