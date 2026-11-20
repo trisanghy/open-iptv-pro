@@ -125,3 +125,8 @@ html.p50-26 #page-tv .empty-player .empty-actions{display:flex!important;gap:9px
 html.p50-26 #page-tv .empty-player .empty-actions button{min-height:37px!important;border-radius:10px!important;font-size:12px!important;font-weight:650!important;padding:8px 13px!important}
 html.p50-26 #page-tv #emptyFileBtn{background:var(--po-accent)!important;color:var(--po-on)!important;border-color:var(--po-accent)!important}
 html.p50-26 #page-tv #emptyUrlBtn{background:var(--po-raised)!important;color:var(--po-ink)!important;border-color:var(--po-line)!important}
+
+/* Iteration 27: Flatten transport toolbar and remove extra borders */
+html.p50-27 #page-tv .player-control-card{border:1px solid var(--po-line)!important;border-radius:13px!important;background:var(--po-card)!important;box-shadow:none!important;overflow:hidden!important}
+html.p50-27 #page-tv .control-layout-top{min-height:66px!important;padding:3px 9px!important;column-gap:0!important;border-bottom:1px solid var(--po-line)!important}
+html.p50-27 #page-tv .control-layout-bottom{padding:5px 10px!important;row-gap:7px!important}
