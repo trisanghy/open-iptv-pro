@@ -153,3 +153,72 @@ jobs:
             RUST_NATIVE_MAC_PREVIEW_README.txt
           if-no-files-found: error
           retention-days: 14
+
+
+  linux-native-ui-screenshot:
+    name: Actual Slint GUI screenshot (Linux, virtual display)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: native-rust
+      - name: Install Slint GUI screenshot prerequisites
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y pkg-config libxkbcommon-dev libfontconfig1-dev \
+            libwayland-dev libegl1-mesa-dev libgl1-mesa-dev libasound2-dev \
+            libmpv2 xvfb xauth imagemagick libgl1-mesa-dri
+      - name: Build actual Rust Native Slint executable
+        run: cargo build --manifest-path native-rust/Cargo.toml --bin open-iptv-pro-native
+      - name: Launch app and capture real GUI under Xvfb
+        shell: bash
+        env:
+          LIBGL_ALWAYS_SOFTWARE: "1"
+          SLINT_BACKEND: "winit-femtovg"
+          RUST_BACKTRACE: "1"
+        run: |
+          set -Eeuo pipefail
+          mkdir -p screenshot
+          cat > "$RUNNER_TEMP/capture-native-ui.sh" <<'CAPTURE'
+          #!/usr/bin/env bash
+          set -Eeuo pipefail
+          export XDG_SESSION_TYPE=x11
+          native-rust/target/debug/open-iptv-pro-native > screenshot/app-stdout.log 2>&1 &
+          pid=$!
+          trap 'kill "$pid" 2>/dev/null || true' EXIT
+          for i in $(seq 1 30); do
+            if ! kill -0 "$pid" 2>/dev/null; then
+              echo "App terminated before screenshot:" >&2
+              cat screenshot/app-stdout.log >&2
+              exit 1
+            fi
+            sleep 1
+            if xwininfo -root -tree | grep -q 'Open IPTV Pro'; then
+              sleep 3
+              break
+            fi
+          done
+          if ! xwininfo -root -tree | grep -q 'Open IPTV Pro'; then
+            echo "No actual Slint app window found" >&2
+            cat screenshot/app-stdout.log >&2
+            exit 1
+          fi
+          import -display "$DISPLAY" -window root screenshot/open-iptv-pro-rust-native-latest.png
+          test -s screenshot/open-iptv-pro-rust-native-latest.png
+          identify screenshot/open-iptv-pro-rust-native-latest.png
+          CAPTURE
+          chmod +x "$RUNNER_TEMP/capture-native-ui.sh"
+          xvfb-run -a -s "-screen 0 1600x1000x24" "$RUNNER_TEMP/capture-native-ui.sh"
+          echo "Captured real Rust Native GUI at commit $GITHUB_SHA" > screenshot/SOURCE.txt
+          echo "OS: Ubuntu 24.04 virtual X11 display; this is not a macOS capture" >> screenshot/SOURCE.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: rust-native-actual-screen
+          path: |
+            screenshot/open-iptv-pro-rust-native-latest.png
+            screenshot/SOURCE.txt
+          if-no-files-found: error
+          retention-days: 14
