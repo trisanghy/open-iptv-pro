@@ -28,3 +28,8 @@ html.p50-06 #appSidebar .nav.active :is(span,.macos-nav-symbol){color:var(--po-a
 /* Iteration 7: Simplify navigation section labels */
 html[data-positron=true].p50-07 #appSidebar .aside-caption{font-size:9px!important;line-height:15px!important;letter-spacing:.8px!important;padding:0 9px!important;margin:8px 0 5px!important;color:var(--po-muted)!important;opacity:.8}
 html.p50-07 #appSidebar .aside-second{margin-top:11px!important}
+
+/* Iteration 8: Compact connection footer and prevent clipped status */
+html[data-positron=true].p50-08 #appSidebar .sidebar-bottom{margin:8px 2px 0!important;padding:8px!important;border-radius:10px!important;min-height:42px!important;gap:7px!important}
+html.p50-08 #appSidebar .sidebar-bottom div:last-child{min-width:0!important;overflow:hidden}
+html.p50-08 #appSidebar .sidebar-bottom :is(b,small){display:block!important;max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:10px!important}
