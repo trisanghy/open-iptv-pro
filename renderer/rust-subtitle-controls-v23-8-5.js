@@ -155,6 +155,15 @@
  function placePanel(){
   if(panel.hidden)return;
   const fullscreen=document.fullscreenElement===frame;
+  // In the unified AI section, CC settings are inline rather than a floating popup.
+  // Keep the historical fullscreen portal only while the video is fullscreen.
+  if(panel.classList.contains('unified-inline-cc') && !fullscreen){
+   const inlineHost=document.getElementById('unifiedAiContent');
+   if(inlineHost && panel.parentElement!==inlineHost)inlineHost.append(panel);
+   panel.dataset.fullscreen='false';
+   for(const property of ['left','top','right','width','max-height'])panel.style.removeProperty(property);
+   return;
+  }
   const parent=fullscreen?frame:document.body;
   if(panel.parentElement!==parent)parent.append(panel);
   panel.dataset.fullscreen=String(fullscreen);
