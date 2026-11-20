@@ -37,3 +37,11 @@ html[data-positron=true] #page-tv .filter-box input::placeholder{color:var(--po-
 html[data-positron=true] #page-tv :is(.filter-tab,.folder-actions button){background:var(--po-raised)!important;border-color:var(--po-line)!important;color:var(--po-ink)!important;min-height:30px}
 html[data-positron=true] #page-tv .filter-tab.active{background:var(--po-accent)!important;color:var(--po-on)!important}
 html[data-positron=true] #page-tv .channel-drag-hint{color:var(--po-muted)!important;font-size:11px;line-height:1.45}
+/* 06 */html[data-positron=true] #page-tv .player-control-card :is(.control-sm,.icon-btn,.btn-subtle),html[data-positron=true] #page-tv .advanced-timebar :is(.btn-subtle,button:not(.btn-primary)){color:var(--po-ink)!important;background:var(--po-raised)!important;border:1px solid var(--po-line)!important}
+html[data-positron=true] #page-tv #playBtn{background:var(--po-accent)!important;color:var(--po-on)!important;border:1px solid var(--po-accent)!important;border-radius:50%!important;box-shadow:0 0 0 5px var(--po-glow)!important}
+html[data-positron=true] #page-tv .playing-info b{color:var(--po-ink)!important}
+html[data-positron=true] #page-tv .playing-info small{color:var(--po-muted)!important}
+html[data-positron=true] #page-tv :is(.epg-current-card,.manual-link-picker){background:var(--po-card)!important;border-color:var(--po-line)!important}
+html[data-positron=true] #page-tv :is(.control-layout-top,.control-layout-bottom){gap:12px!important}
+html[data-positron=true] #page-tv :is(.controls,.output-controls){flex-wrap:wrap;gap:6px!important}
+html[data-positron=true] #page-tv :is(.quick-tools-heading,.dvr-quick-bar b){color:var(--po-ink)!important}
