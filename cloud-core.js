@@ -23,8 +23,8 @@
  const same=(a,b)=>JSON.stringify(snapshot(a))===JSON.stringify(snapshot(b));
  function validEmail(value){const v=String(value||'').trim();return v.length<=254 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);}
  // Preserve leading zeros; OTP codes are strings, never numeric quantities.
- function normalizeEmailOtp(value){return String(value||'').replace(/[^0-9]/g,'').slice(0,8);}
- function validEmailOtp(value){return typeof value==='string'&&/^[0-9]{6,8}$/.test(value);}
+ function normalizeEmailOtp(value){return String(value||'').replace(/[^0-9]/g,'').slice(0,10);}
+ function validEmailOtp(value){return typeof value==='string'&&/^[0-9]{6,10}$/.test(value);}
 
  function verificationLink(value,projectUrl){
   let url,project;
