@@ -27,3 +27,28 @@
 #page-tv .veh-ai-probe strong{font-size:13px}
 #page-tv #veh-ai-hw-status{flex:1 1 250px;font-size:12px;color:#c0d4e6}
 #page-tv #veh-ai-probe{border:1px solid #477795;border-radius:8px;padding:8px 12px;background:#12354a;color:#fff;font-weight:600;cursor:pointer}
+
+/* v23.8.80: match the 32px CC toggle and keep both actions inline.
+ * Only the buttons have accents; the expanded panel has no outer frame. */
+#page-tv .unified-ai-row .video-enhance-toggle{
+  display:inline-flex!important;align-items:center!important;justify-content:center!important;
+  width:auto!important;max-width:100%!important;min-height:32px!important;height:32px!important;
+  padding:4px 10px!important;margin:0 0 0 8px!important;
+  border:1px solid #bd83ec!important;border-radius:9px!important;
+  background:#332043!important;color:#f4e9ff!important;
+  font-size:12px!important;line-height:1.2!important;white-space:nowrap!important;
+  vertical-align:top!important;
+}
+#page-tv .unified-ai-row #videoEnhancePanel:not([hidden]){
+  display:grid!important;grid-template-columns: minmax(140px,200px) minmax(0,1fr)!important;
+  width:100%!important;margin:8px 0 0!important;padding:10px 0 0!important;
+  border:0!important;outline:0!important;box-shadow:none!important;
+  background:transparent!important;min-width:0!important;
+}
+#page-tv .unified-ai-row #videoEnhancePanel[hidden]{display:none!important}
+@container (max-width:750px){
+  #page-tv .unified-ai-row #videoEnhancePanel:not([hidden]){grid-template-columns:minmax(0,1fr)!important}
+}
+@media(max-width:500px){
+  #page-tv .unified-ai-row .video-enhance-toggle{margin:7px 0 0!important;max-width:100%!important;font-size:11px!important}
+}

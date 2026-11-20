@@ -1,3 +1,9 @@
+## Rust Lab v23.8.80 — sửa nút Nâng cao video không xuất hiện
+
+Khởi tạo nút **Nâng cao video bằng AI** sau khi module **Phụ đề · Dịch · Giọng nói** sẵn sàng; giữ hai nút cạnh nhau, độ cao đồng bộ 32px và panel xổ không có khung/viền ngoài. Khi mở một nhóm, nhóm còn lại tự thu gọn để tiết kiệm diện tích. Thêm kiểm thử hồi quy thứ tự tải bất đồng bộ. Các tính năng video, PiP, CC và TTS không thay đổi. AI upscaling 1080p/2K/4K vẫn chưa có pipeline suy luận thực.
+
+[Release notes v23.8.80](RELEASE_NOTES_RUST_LAB_V23_8_80.md)
+
 ## Rust Lab v23.8.79 — kiểm tra AI phần cứng và bảo vệ khung hình
 
 - **Bù chuyển động:** FFmpeg nội suy 60/90/120 FPS khi người dùng bật và áp dụng trên kênh LIVE; đầu ra giới hạn tối đa 1280×720 trước nội suy. Khi WebView rớt nhiều khung hình trong hai chu kỳ giám sát, ứng dụng trở về luồng gốc nếu tùy chọn giảm tải được bật.

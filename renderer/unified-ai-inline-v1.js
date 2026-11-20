@@ -68,6 +68,8 @@
       || document.getElementById('rustSubtitleOptionsButton');
     if (existingCC) existingCC.setAttribute('title', 'Tuỳ chỉnh phụ đề (CC)');
     setOpen(false);
+    // Notify separately loaded enhancement tools that their anchor now exists.
+    document.dispatchEvent(new Event('openiptv:unified-ai-ready'));
   }
   // Rust modules load asynchronously from app-entry; attach after all modules finish.
   document.addEventListener('openiptv:renderer-ready', initialize, {once:true});

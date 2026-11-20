@@ -35,7 +35,16 @@
   function status(s){el('veh-status').textContent=s;}
   function persist(){config=api.normalize({motion:keys.motion.checked,upscale:keys.upscale.checked,fps:Number(keys.fps.value),resolution:Number(keys.resolution.value),downshift:keys.downshift.checked});api.save(root.localStorage,config);status('Đã lưu lựa chọn; chưa áp dụng bộ lọc lên video khi backend AI chưa sẵn sàng.');}
   Object.values(keys).forEach(x=>x.addEventListener('change',persist));render();
-  trigger.addEventListener('click',()=>{panel.hidden=!panel.hidden;trigger.setAttribute('aria-expanded',String(!panel.hidden));});
+  trigger.addEventListener('click',()=>{
+    const open=panel.hidden;
+    // Only one expanded tool section at a time; keep the player compact.
+    if(open && caption.getAttribute('aria-expanded')==='true')caption.click();
+    panel.hidden=!open;
+    trigger.setAttribute('aria-expanded',String(open));
+  });
+  caption.addEventListener('click',()=>{
+    if(!panel.hidden){panel.hidden=true;trigger.setAttribute('aria-expanded','false');}
+  });
   doc.addEventListener('keydown',e=>{if(e.key==='Escape'&&!panel.hidden){panel.hidden=true;trigger.setAttribute('aria-expanded','false');trigger.focus();}});
   panel.querySelectorAll('[data-target]').forEach(b=>b.addEventListener('click',()=>el(b.dataset.target)?.scrollIntoView({block:'nearest',behavior:'smooth'})));
   let probed=false;
@@ -77,6 +86,11 @@
     }
   };
  }
+ // DOMContentLoaded may precede creation of #unifiedAiToggle: that button
+ // is added only when app-entry dispatches openiptv:renderer-ready.
+ // Retry when both module lifecycles finish instead of silently returning.
+ doc.addEventListener('openiptv:renderer-ready',init);
+ doc.addEventListener('openiptv:unified-ai-ready',init);
  if(doc.readyState==='loading')doc.addEventListener('DOMContentLoaded',init,{once:true});else init();
 })(typeof window!=='undefined'?window:null,function(){
  const key='rustlab:video-enhance-v1',defaults=Object.freeze({motion:false,upscale:false,fps:60,resolution:1080,downshift:true});
