@@ -56,6 +56,6 @@ test('v3: all four TTS selects occupy the first grid row, including narrow playe
  for(const id of ['liveTtsLanguage','liveTtsVoice','liveTtsSpeed','liveTtsDuck']){
    assert.match(part,new RegExp('>#'+id+'\\{grid-column:[2-8]!important;grid-row:1!important\\}'));
  }
- assert.match(part,/>#liveTtsStatus\\{grid-column:1\/-1!important;grid-row:3!important\\}/);
- assert.doesNotMatch(part,/@container\\s*\\(max-width:740px\\)/);
+ assert.ok(part.includes('>#liveTtsStatus{grid-column:1/-1!important;grid-row:3!important}'));
+ assert.ok(!part.includes('@container (max-width:740px)'));
 });
