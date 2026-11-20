@@ -103,3 +103,9 @@ html.p50-21.p50-empty #page-tv .channel-panel #channelSelectionBar.hidden{displa
 html.p50-22.p50-empty #page-tv .channel-panel :is(.channel-list,.channel-scroll){min-height:145px!important}
 html.p50-22.p50-empty #page-tv .channel-panel :is(.channel-empty,.empty-channels,.no-channels){padding:30px 15px!important;text-align:center!important;line-height:1.65!important;color:var(--po-muted)!important}
 html.p50-22.p50-empty #page-tv .channel-panel{min-height:265px!important}
+
+/* Iteration 23: Harmonize channels with theme surfaces */
+html.p50-23 #page-tv .channel-panel{background:var(--po-card)!important;border:1px solid var(--po-line)!important;border-radius:13px!important;box-shadow:none!important}
+html.p50-23 #page-tv .channel-list{background:transparent!important}
+html.p50-23 #page-tv .channel-panel .panel-header{border-bottom:1px solid var(--po-line)!important}
+html.p50-23 #page-tv .channel-panel :is(.filter-tabs,.folder-actions){background:transparent!important}
