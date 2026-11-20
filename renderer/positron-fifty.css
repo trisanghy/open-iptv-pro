@@ -109,3 +109,8 @@ html.p50-23 #page-tv .channel-panel{background:var(--po-card)!important;border:1
 html.p50-23 #page-tv .channel-list{background:transparent!important}
 html.p50-23 #page-tv .channel-panel .panel-header{border-bottom:1px solid var(--po-line)!important}
 html.p50-23 #page-tv .channel-panel :is(.filter-tabs,.folder-actions){background:transparent!important}
+
+/* Iteration 24: Preserve original video aspect while sharpening frame edge */
+html.p50-24 #page-tv .player-box{border:1px solid var(--po-line)!important;border-radius:14px!important;box-shadow:none!important;background:radial-gradient(ellipse at 50% 40%,var(--po-raised),#070d17 88%)!important;overflow:hidden!important}
+html.p50-24 #page-tv #video{object-fit:contain!important}
+html.p50-24 #page-tv .watch-panel{max-width:100%!important}
