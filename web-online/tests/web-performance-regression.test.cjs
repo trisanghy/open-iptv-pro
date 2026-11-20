@@ -13,7 +13,8 @@ test('navigation refreshes only relevant page, never rebuilding all lists',()=>{
  const ctx={renderSources(){calls.sources++},renderShots(){calls.shots++},renderFavorites(){calls.fav++},renderFolders(){calls.folders++}};
  vm.runInNewContext(fn+";renderOnNavigation('tv');renderOnNavigation('epg');renderOnNavigation('sources');renderOnNavigation('shots');renderOnNavigation('fav');renderOnNavigation('folders');",ctx);
  assert.deepEqual(calls,{sources:1,shots:1,fav:1,folders:1});
- assert.doesNotMatch(fn,/renderList\(|\brender\(\)/);
+ const executable=fn.replace(/\/\/[^\n]*/g,'').replace(/\/\*[\s\S]*?\*\//g,'');
+ assert.doesNotMatch(executable,/renderList\(|\brender\(\)/);
 });
 test('changing channel highlights the existing 1200 rows without rebuilding DOM',()=>{
  const fn=slice(app,' function highlightPlayingChannel(){',' async function playChannel(chId,override=null,opts={}){');
