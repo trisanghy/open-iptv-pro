@@ -61,6 +61,22 @@
   }else for(const k of CHANNEL_KEYS)if(Object.hasOwn(cloud,k))out[k]=copy(cloud[k]);
   return out;
  }
+ // Never leave a paired account's playlists visible after explicit sign-out.
+ // Preserve device-only appearance preferences, but clear account-owned content.
+ function guestState(local,mode){
+  const out=JSON.parse(JSON.stringify(local||{}));
+  if(mode==='mobile'){
+   for(const key of ['sources','channels','favorites','recentlyWatched'])out[key]=[];
+   for(const key of ['fallbacks','checks','healthHistory'])out[key]={};
+   out.selected=null;out.resumeUrl=null;out.epgCache=null;out.epgSources=null;out.epgUrl='';
+  }else{
+   for(const key of ['sources','channels','favorites','favoriteKeys','folders','groupOrder',
+    'collapsedGroups','recentChannelIds'])out[key]=[];
+   for(const key of ['channelOrder','collectorBackup','collectorConfig','snapshots'])out[key]={};
+   out.alternates=[];out.current='';
+  }
+  return out;
+ }
  function mount({getState,saveState,mode='desktop',container}){
   if(root.__openIPTVPortableCloudMounted)return;
   if(typeof getState!=='function'||typeof saveState!=='function'||!root.supabase?.createClient)return;
@@ -211,10 +227,34 @@
   $('portableCloudPull').onclick=()=>void pull(true);
   $('portableCloudPush').onclick=()=>void push(true);
   $('portableCloudLogout').onclick=async()=>{
-   if(busy)return;
-   const {error}=await cli.auth.signOut();
-   if(error){say('Lỗi đăng xuất: '+error.message);return;}
-   user=null;localStorage.removeItem(STATE_KEY);ui();
+   if(busy||!user)return;
+   const pair=paired();
+   if(pair&&hash()!==pair.hash){
+    say('Có dữ liệu chưa đồng bộ. Hãy bấm Gửi dữ liệu thiết bị hoặc Lấy dữ liệu đám mây trước khi đăng xuất.');
+    return;
+   }
+   if(!confirm('Đăng xuất và ẩn danh sách kênh của tài khoản trên thiết bị này? Dữ liệu đã đồng bộ trên Supabase không bị xóa.'))return;
+   busy=true;
+   let previous=null,cleared=false;
+   try{
+    if(pair){
+     previous=JSON.parse(JSON.stringify(getState()));
+     await Promise.resolve(saveState(guestState(previous,mode)));
+     cleared=true;
+    }
+    const {error}=await cli.auth.signOut();
+    if(error)throw error;
+    user=null;localStorage.removeItem(STATE_KEY);
+    ui();
+    // Clear in-memory channel lists, player state and any rendered previews.
+    location.reload();
+   }catch(e){
+    if(cleared){
+     try{await Promise.resolve(saveState(previous));}
+     catch(rollbackError){say('Không thể khôi phục dữ liệu cục bộ: '+rollbackError.message);busy=false;return;}
+    }
+    say('Lỗi đăng xuất: '+e.message);
+   }finally{busy=false;}
   };
   cli.auth.onAuthStateChange((event,session)=>{
    if(['SIGNED_IN','INITIAL_SESSION','TOKEN_REFRESHED'].includes(event)){user=session?.user||null;ui();}
@@ -227,5 +267,5 @@
   root.addEventListener('pagehide',()=>clearInterval(interval),{once:true});
   root.OpenIPTVCloudPortableInstance={pull,push,autosync};
  }
- root.OpenIPTVPortableCloud=Object.freeze({mount,canonical,applyCloud});
+ root.OpenIPTVPortableCloud=Object.freeze({mount,canonical,applyCloud,guestState});
 })(typeof window!=='undefined'?window:globalThis);
