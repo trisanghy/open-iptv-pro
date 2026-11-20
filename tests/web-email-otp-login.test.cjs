@@ -39,3 +39,19 @@ test('email OTP does not serialize or log the secret in app state',()=>{
  assert.doesNotMatch(script,/localStorage\.setItem\([^\n]*token/);
  assert.doesNotMatch(script,/console\.log\([^\n]*token/);
 });
+
+test('first-time sign-up confirmation has a clear no-code fallback',()=>{
+ assert.match(script,/Confirm your email address/);
+ assert.match(script,/Email không có mã\? Xác thực bằng liên kết/);
+ assert.match(script,/type:'email'/);
+ assert.match(script,/core\.verificationLink\(raw,client\.supabaseUrl\)/);
+});
+test('documented production setup fixes both signup and Magic Link templates',()=>{
+ const guide=fs.readFileSync(path.join(__dirname,'../docs/SUPABASE_EMAIL_OTP_SETUP.md'),'utf8');
+ assert.match(guide,/Confirm sign up/);
+ assert.match(guide,/Magic Link \/ OTP/);
+ assert.match(guide,/\{\{ \.Token \}\}/);
+ assert.match(guide,/Site URL/);
+ assert.match(guide,/https:\/\/trisanghy\.github\.io\/open-iptv-pro\//);
+ assert.match(guide,/localhost:3000/);
+});
