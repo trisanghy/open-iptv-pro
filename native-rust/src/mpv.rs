@@ -101,6 +101,16 @@ pub struct Mpv {
 
 impl Mpv {
     pub fn new() -> Result<Self, String> {
+        let wants_native=std::env::var("OPEN_IPTV_VIDEO_BACKEND")
+            .is_ok_and(|v| v.eq_ignore_ascii_case("native"));
+        Self::new_for_backend(wants_native)
+    }
+    /// MultiView opens separate native windows until four Slint render targets
+    /// are implemented. Never create four invisible software render contexts.
+    pub fn new_native_window() -> Result<Self, String> {
+        Self::new_for_backend(true)
+    }
+    fn new_for_backend(wants_native: bool) -> Result<Self, String> {
         let mut candidates: Vec<PathBuf> = Vec::new();
         if let Ok(custom) = std::env::var("OPEN_IPTV_LIBMPV") {
             let path = PathBuf::from(custom);
@@ -135,12 +145,12 @@ impl Mpv {
                 Ok(lib) => lib,
                 Err(e) => { failures.push(format!("{}: {e}", candidate.display())); continue; }
             };
-            return Self::from_library(library);
+            return Self::from_library(library, wants_native);
         }
         Err(format!("Chưa tìm thấy thư viện libmpv. Mac: brew install mpv; Windows: đặt mpv-2.dll cạnh EXE. Hoặc đặt OPEN_IPTV_LIBMPV tới đường dẫn tuyệt đối. {}", failures.join(" | ")))
     }
 
-    fn from_library(library: Library) -> Result<Self, String> {
+    fn from_library(library: Library, wants_native: bool) -> Result<Self, String> {
         // SAFETY: typed symbols use mpv/client.h and mpv/render.h C ABI.
         unsafe {
             let create: Create = *library.get(b"mpv_create\0").map_err(|e|e.to_string())?;
@@ -160,8 +170,6 @@ impl Mpv {
             let set = |key: &str, value: &str| {
                 option(ctx, CString::new(key).unwrap().as_ptr(), CString::new(value).unwrap().as_ptr())
             };
-            let wants_native = std::env::var("OPEN_IPTV_VIDEO_BACKEND")
-                .is_ok_and(|v| v.eq_ignore_ascii_case("native"));
             let prefer_embed = !wants_native && render_create.is_some()
                 && render_update.is_some() && render_frame.is_some() && render_free.is_some();
             let vo = if prefer_embed { "libmpv" } else { "gpu" };
