@@ -180,8 +180,14 @@
    }catch{return false;}
   }
   doc.addEventListener('click',event=>{
-   const t=event.target?.closest?.('.nav[data-page], [data-mobile-more-page], #iptvMobileMoreTrigger');
+   const t=event.target?.closest?.('.nav[data-page], [data-mobile-more-page], [data-mobile-more-close], [data-mobile-more-click], #iptvMobileMoreTrigger');
    if(!t)return;
+   // The More backdrop, close button and utility actions also return to TV.
+   // Resume during their *click* so Safari retains user activation.
+   if(t.dataset?.mobileMoreClose!==undefined||t.dataset?.mobileMoreClick!==undefined){
+    if(page()==='tv'&&moreOpen())returnToTV(true);
+    return;
+   }
    if(t.id==='iptvMobileMoreTrigger'){
     if(page()==='tv'){
      if(moreOpen())returnToTV(true);

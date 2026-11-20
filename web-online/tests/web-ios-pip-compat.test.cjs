@@ -138,10 +138,10 @@ test('PiP compatibility module is Web-only, cache-busted and preserved by prepar
  const app=read('index.html'),builder=read('web-online/prepare-web.py');
  assert.equal(read('web-ios-pip-compat.js'),read('web-online/web-ios-pip-compat.js'));
  assert.equal(read('web-ios-pip-compat.css'),read('web-online/web-ios-pip-compat.css'));
- assert.ok(app.includes('src="web-ios-pip-compat.js?v=pip-tab-resume-20261120b"'));
+ assert.ok(app.includes('src="web-ios-pip-compat.js?v=pip-tab-resume-20261120c"'));
  assert.ok(app.includes('href="web-ios-pip-compat.css?v=pip-tab-resume-20261120b"'));
  assert.ok(builder.includes("for asset in ('web-ios-pip-compat.js','web-ios-pip-compat.css')"));
- assert.ok(builder.includes('web-ios-pip-compat.js?v=pip-tab-resume-20261120b'));
+ assert.ok(builder.includes('web-ios-pip-compat.js?v=pip-tab-resume-20261120c'));
  assert.ok(builder.includes('web-ios-pip-compat.css?v=pip-tab-resume-20261120b'));
  assert.ok(app.indexOf('web-ios-pip-compat.js?v=')>app.indexOf('features.js?v='));
  assert.match(read('web-fullscreen-controls.js'),/fsPipBtn[\s\S]{0,100}pipBtn/);
@@ -232,4 +232,26 @@ test('returning to TV while a Chromium PiP request is pending closes the late wi
  f.doc.pictureInPictureElement=f.video;resolvePip(f.video);
  await Promise.resolve();await Promise.resolve();await Promise.resolve();
  assert.equal(f.calls.exit,1);
+});
+
+
+test('closing mobile More via backdrop or utility returns PiP to inline and resumes TV on the tap',()=>{
+ for(const key of ['mobileMoreClose','mobileMoreClick']){
+  const f=autoFixture();
+  const handlers={},originalAdd=f.doc.addEventListener.bind(f.doc);
+  f.doc.addEventListener=(name,fn,capture)=>{handlers[name]=fn;originalAdd(name,fn,capture);};
+  let more=false;
+  const originalGet=f.doc.getElementById.bind(f.doc);
+  f.doc.getElementById=id=>id==='iptvMobileMoreOverlay'?{hidden:!more}:originalGet(id);
+  let plays=0;
+  f.video.play=()=>{plays++;f.video.paused=false;return Promise.resolve();};
+  pip.installAuto(f.win);
+  handlers.click({target:{closest:()=>({id:'iptvMobileMoreTrigger',dataset:{}})}});
+  more=true;
+  assert.equal(f.calls.standard,1);
+  f.video.paused=true;
+  handlers.click({target:{closest:()=>({dataset:{[key]:'true'}})}});
+  assert.equal(f.calls.exit,1);
+  assert.equal(plays,1);
+ }
 });
