@@ -1,7 +1,7 @@
 name: Test
 on:
   push:
-    branches: ['main']
+    branches: ['main', 'experiment/rust-native-slint-libmpv-c3-autobuild']
   pull_request:
 permissions:
   contents: read
