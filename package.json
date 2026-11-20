@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
-  "productName": "Open IPTV Pro",
-  "version": "4.23.76",
-  "description": "Open IPTV Pro Electron 4.23.75 — mandatory source-rights acceptance for M3U and Smart Discovery, offline captions/TTS",
+  "productName": "Open IPTV Pro Positron",
+  "version": "4.23.76-positron.1",
+  "description": "Independent Positron desktop research lab based on Open IPTV Pro Electron 4.23.76",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",
@@ -31,8 +31,8 @@
     "electron-builder": "26.0.0"
   },
   "build": {
-    "appId": "org.openiptvpro.desktop",
-    "productName": "Open IPTV Pro",
+    "appId": "org.openiptvpro.positron",
+    "productName": "Open IPTV Pro Positron",
     "asar": true,
     "files": [
       "renderer/**/*",
@@ -75,7 +75,7 @@
       }
     },
     "dmg": {
-      "title": "Open IPTV Pro ${version}",
+      "title": "Open IPTV Pro Positron ${version}",
       "writeUpdateInfo": false
     },
     "win": {
@@ -108,7 +108,7 @@
         "provider": "github",
         "owner": "trisanghy",
         "repo": "open-iptv-pro",
-        "releaseType": "release"
+        "channel": "positron"
       }
     ],
     "electronLanguages": [
