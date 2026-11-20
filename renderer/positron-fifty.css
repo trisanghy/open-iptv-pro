@@ -2,3 +2,9 @@
 /* Iteration 01: Reduce sidebar width from 280px to 206px */
 html[data-positron="true"].p50-01:not([data-sidebar-visible="false"]) #appShell > #appSidebar{width:206px!important;min-width:206px!important;max-width:206px!important;flex:0 0 206px!important;padding:12px 9px 10px!important}
 html.p50-01 #appShell{min-width:0!important;overflow:hidden}
+
+/* Iteration 2: Compact brand and free first-screen space */
+html.p50-02 #appSidebar .brand{min-height:48px!important;padding:5px 34px 11px 7px!important;gap:9px!important;max-width:100%}
+html.p50-02 #appSidebar .brand-icon{width:36px!important;height:36px!important;min-width:36px!important;border-radius:11px!important}
+html.p50-02 #appSidebar .brand b{font-size:18px!important;letter-spacing:-.6px!important;line-height:1.1}
+html.p50-02 #appSidebar .brand small{font-size:8px!important;letter-spacing:.05px!important;max-width:110px;overflow:hidden;text-overflow:ellipsis}
