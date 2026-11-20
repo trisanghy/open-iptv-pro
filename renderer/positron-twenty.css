@@ -58,3 +58,9 @@
 
 /* Upgrade 20: Protect compact viewports without hiding features */
 @media(max-width:600px){html[data-positron="true"].p20-20 #page-tv .output-controls{justify-content:center!important} html[data-positron="true"].p20-20 #page-tv #manualStreamSelect{max-width:100%!important} html[data-positron="true"].p20-20 #page-tv .manual-link-picker{min-width:0!important;max-width:100%!important} html[data-positron="true"].p20-20 #positronBar .p-actions{flex-wrap:wrap!important;justify-content:flex-end!important}}@media(prefers-reduced-motion:reduce){html[data-positron="true"].p20-20 #positronFiltersToggle{transition:none!important}}
+
+/* P5.1 visual repair: screenshot rounds 14 and 15 exposed light-theme white bands
+   inherited by Smart Discovery from .source-hub-section. */
+html[data-positron="true"].p20-07 #page-sources .source-hub-section{
+ background:var(--po-bg)!important;color:var(--po-ink)!important;border-color:var(--po-line)!important;
+}

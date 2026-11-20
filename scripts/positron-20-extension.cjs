@@ -46,7 +46,7 @@ async function runTwenty(page){
    return {page:document.querySelector('.page.active-page')?.id,
     viewport:innerWidth,overflow:document.documentElement.scrollWidth>innerWidth+6,
     player:get('#playerBox'),sidebar:get('#appSidebar'),
-    sources:get('#page-sources .sources-hub-nav'),epg:get('#page-epg .epg-filter'),
+    sources:get('#page-sources .sources-hub-nav'),sourceSection:get('#smartDiscoverySection'),epg:get('#page-epg .epg-filter'),
     controls:document.querySelectorAll('#page-tv button').length,
     searchShortcut:document.getElementById('searchBox')?.getAttribute('aria-keyshortcuts'),
     stage:document.documentElement.dataset.p20Stage};
@@ -57,6 +57,12 @@ async function runTwenty(page){
   assert.ok(metrics.controls>=8,'native player controls missing');
   if(target==='tv')assert.ok(metrics.player?.width>180&&metrics.player.height>100,'video collapsed: '+name);
   if(target==='sources'&&metrics.sources)assert.notEqual(metrics.sources.background,'rgb(255, 255, 255)','white source panel');
+  if(target==='sources'){
+   assert.ok(metrics.sourceSection,'Smart Discovery section missing');
+   const channels=(metrics.sourceSection.background.match(/[0-9]+/g)||[]).map(Number).slice(0,3);
+   assert.ok(channels.length===3&&channels.reduce((a,b)=>a+b,0)/3<110,
+    'P5.1 regression: light Smart Discovery background '+metrics.sourceSection.background);
+  }
   if(target==='epg'&&metrics.epg)assert.notEqual(metrics.epg.background,'rgb(255, 255, 255)','white EPG search');
   if(target==='tv')assert.equal(metrics.searchShortcut,'/');
   // Preserve an explicit metric for overflow; fail rather than concealing a layout regression.
