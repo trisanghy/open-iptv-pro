@@ -108,3 +108,48 @@ test('email inputs grow within available width on phone and tablet',()=>{
  assert.match(html,/id="cloudEmailInput"/);
  assert.match(html,/id="cloudOtpCode"/);
 });
+
+test('Chromium regression: cloud account buttons and email input do not overflow',()=>{
+ const browser=['google-chrome','chromium','chromium-browser'].find(bin=>
+  spawnSync('which',[bin],{encoding:'utf8'}).status===0);
+ if(!browser)return; // CI runs this with Chrome; local static checks still apply.
+ const dir=fs.mkdtempSync(path.join(os.tmpdir(),'openiptv-cloud-layout-'));
+ try{
+  const css=path.join(root,'cloud-sync.css');
+  const base=path.join(root,'styles.css');
+  const htmlFixture='<!doctype html><html><head><meta name="viewport" content="width=device-width,initial-scale=1">'
+   +'<link rel="stylesheet" href="file://'+base+'"><link rel="stylesheet" href="file://'+css+'">'
+   +'<style>body{margin:0;padding:16px}#page-settings{display:block;width:100%}#cloudSyncCard{width:100%}</style></head><body>'
+   +'<section id="page-settings"><article class="settings-card" id="cloudSyncCard" data-auth-state="signed-in" data-has-migration="true">'
+   +'<h2>Cloud account</h2><div class="cloud-sync-actions">'
+   +'<button class="btn btn-primary" id="cloudSyncNow">Đồng bộ ngay</button>'
+   +'<button class="btn btn-subtle" id="cloudMigrationRestore">Khôi phục dữ liệu cũ</button>'
+   +'<button class="btn btn-subtle" id="cloudLogout">Đăng xuất</button></div>'
+   +'<form class="cloud-email-form"><div class="cloud-email-input-line">'
+   +'<input id="cloudEmailInput" type="email" placeholder="ten@example.com"/>'
+   +'<button class="btn btn-primary" id="cloudEmailSend">Gửi mã OTP qua email</button>'
+   +'</div></form></article></section><pre id="test-result"></pre>'
+   +'<script>const ids=["cloudSyncCard","cloudSyncNow","cloudMigrationRestore","cloudLogout","cloudEmailInput","cloudEmailSend"];'
+   +'document.getElementById("test-result").textContent=JSON.stringify(Object.fromEntries(ids.map(id=>{'
+   +'const r=document.getElementById(id).getBoundingClientRect();return [id,{left:r.left,right:r.right,width:r.width,height:r.height}]})));'
+   +'</script></body></html>';
+  const filename=path.join(dir,'account-layout.html');fs.writeFileSync(filename,htmlFixture);
+  for(const width of [390,430,900]){
+   const proc=spawnSync(browser,['--headless','--no-sandbox','--disable-gpu','--disable-dev-shm-usage',
+    '--window-size='+width+',900','--dump-dom','file://'+filename],{
+    encoding:'utf8',timeout:30000,maxBuffer:2*1024*1024
+   });
+   assert.equal(proc.status,0,'Chrome viewport '+width+' failed: '+(proc.stderr||'').slice(-500));
+   const result=proc.stdout.match(/<pre id="test-result">([^<]+)<\/pre>/);
+   assert.ok(result,'Missing cloud layout dimensions at '+width);
+   const data=JSON.parse(result[1].replace(/&quot;/g,'"'));
+   const card=data.cloudSyncCard;
+   for(const name of ['cloudSyncNow','cloudMigrationRestore','cloudLogout','cloudEmailInput','cloudEmailSend']){
+    const rect=data[name];
+    assert.ok(rect.left>=card.left-1&&rect.right<=card.right+1,
+     width+'px: '+name+' overflows cloud card ('+rect.left+'..'+rect.right+' vs '+card.left+'..'+card.right+')');
+    assert.ok(rect.height>=35,name+' should be touch friendly at '+width+'px');
+   }
+  }
+ }finally{fs.rmSync(dir,{recursive:true,force:true});}
+});
