@@ -231,3 +231,8 @@ html.p50-44 #positronHelpDialog dl{display:grid;grid-template-columns:120px 1fr;
 html.p50-44 #positronHelpDialog dt{color:var(--po-accent);font-weight:750}
 html.p50-44 #positronHelpDialog dd{margin:0;color:var(--po-muted)}
 html.p50-44 #positronHelpDialog button{background:var(--po-accent);color:var(--po-on);border:0;border-radius:8px;padding:8px 20px;cursor:pointer}
+
+/* Iteration 45: Unify text contrast and avoid unreadable small hints */
+html.p50-45 .main .content :is(.panel-header p,.channel-drag-hint,.dvr-quick-hint,.hint,.settings-card small,.source-hub-heading p){color:var(--po-muted)!important;opacity:1!important}
+html.p50-45 #page-tv :is(.playing-channel-text small,.epg-current-card small){color:var(--po-muted)!important}
+html.p50-45 #page-tv .channel-panel .filter-box input{color:var(--po-ink)!important;background:transparent!important}
