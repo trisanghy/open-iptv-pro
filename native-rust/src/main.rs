@@ -1,4 +1,4 @@
-use open_iptv_pro_native::{epg, epg_cache, export, failover, health, m3u, media, model::{Channel, NativeData, Source}, mpv::Mpv, storage, netguard};
+use open_iptv_pro_native::{epg, epg_cache, export, failover, health, m3u, media, model::{Channel, NativeData, Source}, mpv::{Mpv, VideoBackend}, storage, netguard};
 use slint::{ComponentHandle, ModelRc, VecModel};
 use std::cell::RefCell;
 use std::collections::HashMap;
@@ -348,6 +348,15 @@ fn play_logical(
         }
     }
     let Some(p)=guard.as_ref() else{return;};
+    ui.set_has_video_frame(false);
+    ui.set_video_frame(slint::Image::default());
+    ui.set_video_paused(false);
+    ui.set_playback_progress(0.0);
+    ui.set_playback_clock("--:-- / LIVE".into());
+    ui.set_video_status(match p.video_backend() {
+        VideoBackend::EmbeddedSoftware => "Đang kết nối video trong Slint...",
+        VideoBackend::NativeWindow => "Đang mở cửa sổ mpv riêng...",
+    }.into());
     if let Err(e)=p.set_volume(volume){status(ui,e);return;}
     let (muted, aspect_mode) = {
         let s=shared.borrow();
@@ -368,7 +377,7 @@ fn play_logical(
     };
     ui.set_playing_text(name.clone().into());
     ui.set_playing_subtitle(playing_url.into());
-    ui.set_video_hint(name.clone().into());
+    ui.set_video_hint(format!("Đang nạp hình ảnh: {name}").into());
     let mut s=shared.borrow_mut();
     let prev=s.data.clone();
     s.playback_candidates=candidates;
@@ -376,7 +385,7 @@ fn play_logical(
     s.selected_url=Some(primary_url.clone());
     s.data.last_channel_url=primary_url.clone();
     s.data.remember_channel(&primary_url);
-    persist(ui,&mut s,prev,format!("Đã gửi lệnh phát: {name} (luồng {}). Nếu mất kết nối, mpv sẽ thông báo lỗi.", index+1));
+    persist(ui,&mut s,prev,format!("Đang kết nối {name} (URL {}/{}); đợi libmpv xác nhận khung hình.", index+1,s.playback_candidates.len()));
 }
 
 fn connect_callbacks(
@@ -618,7 +627,16 @@ fn connect_callbacks(
             if let Some(ui)=weak.upgrade() {
                 let result=player.borrow().as_ref().map(|p| p.stop()).unwrap_or_else(|| Err("Chưa mở video".into()));
                 match result {
-                    Ok(()) => {ui.set_playing_text("Đã dừng phát".into()); let mut s=shared.borrow_mut();s.playback_candidates.clear();s.playback_index=0; status(&ui, "Đã gửi lệnh dừng video");}
+                    Ok(()) => {
+                        ui.set_playing_text("Đã dừng phát".into());
+                        ui.set_video_frame(slint::Image::default());
+                        ui.set_has_video_frame(false);
+                        ui.set_video_status("Đã dừng".into());
+                        ui.set_playback_clock("--:-- / --:--".into());
+                        ui.set_playback_progress(0.0);
+                        let mut s=shared.borrow_mut();s.playback_candidates.clear();s.playback_index=0;
+                        status(&ui, "Đã dừng video");
+                    }
                     Err(e) => status(&ui, e),
                 }
             }
@@ -628,12 +646,14 @@ fn connect_callbacks(
         let weak=ui.as_weak(); let player=player.clone();
         ui.on_seek_video(move |secs| {
             if let Some(ui)=weak.upgrade() {
-                if secs == 999999 {
-                    status(&ui, "Chưa có bộ đệm Timeshift native. Không thể tua về LIVE khi chưa bật buffer.");
-                    return;
-                }
-                let result=player.borrow().as_ref().map(|p| p.seek(secs)).unwrap_or_else(|| Err("Chưa mở video".into()));
-                status(&ui, result.map(|_| format!("Đã yêu cầu tua {secs}s (chỉ hoạt động nếu luồng hỗ trợ seek)")).unwrap_or_else(|e| e));
+                let result=player.borrow().as_ref().map(|p|
+                    if secs==999999 {p.seek_to_live()} else {p.seek(secs)})
+                    .unwrap_or_else(|| Err("Chưa mở video".into()));
+                status(&ui,result.map(|_| if secs==999999 {
+                    "Đã yêu cầu chuyển tới vị trí mới nhất (nếu luồng hỗ trợ seek)".to_string()
+                } else {
+                    format!("Đã yêu cầu tua {secs}s (nếu luồng hỗ trợ seek)")
+                }).unwrap_or_else(|e|e));
             }
         });
     }
@@ -907,8 +927,17 @@ fn connect_callbacks(
         let weak=ui.as_weak(); let player=player.clone();
         ui.on_fullscreen_video(move || {
             if let Some(ui)=weak.upgrade() {
-                let result=player.borrow().as_ref().map(|p|p.fullscreen()).unwrap_or_else(||Err("Chưa phát kênh".into()));
-                status(&ui,result.map(|_|"Đã yêu cầu chuyển fullscreen cửa sổ mpv".to_string()).unwrap_or_else(|e|e));
+                let result=player.borrow().as_ref().map(|p|{
+                    if p.video_backend()==VideoBackend::EmbeddedSoftware {
+                        let expanded=!ui.get_player_fullscreen();
+                        ui.set_active_page("tv".into());
+                        ui.set_player_fullscreen(expanded);
+                        Ok(if expanded {"Video Slint toàn màn hình"} else {"Đã thoát toàn màn hình"})
+                    } else {
+                        p.fullscreen().map(|_|"Đã chuyển chế độ toàn màn cửa sổ mpv")
+                    }
+                }).unwrap_or_else(||Err("Chưa phát kênh".into()));
+                status(&ui,result.map(str::to_string).unwrap_or_else(|e|e));
             }
         });
     }
@@ -1094,7 +1123,10 @@ fn background_timer(ui: &MainWindow, shared: Rc<RefCell<State>>, rx: Receiver<Ba
     let weak=ui.as_weak();
     let timer=slint::Timer::default();
     let mut last_epg_refresh=Instant::now();
-    timer.start(slint::TimerMode::Repeated, Duration::from_millis(130), move || {
+    let mut last_frame_refresh=Instant::now();
+    let mut last_player_status=Instant::now();
+    let mut last_frame_error=Instant::now();
+    timer.start(slint::TimerMode::Repeated, Duration::from_millis(65), move || {
         let Some(ui)=weak.upgrade() else { return; };
         while let Ok(message)=rx.try_recv() {
             match message {
@@ -1147,6 +1179,60 @@ fn background_timer(ui: &MainWindow, shared: Rc<RefCell<State>>, rx: Receiver<Ba
                 });
             }
         }
+        // The first true video frame is rendered into the Slint Image property.
+        // Restrict SW video updates to the TV page to avoid CPU/RAM churn while
+        // navigating large source/EPG lists. No fake image or background player.
+        if last_frame_refresh.elapsed() >= Duration::from_millis(90) {
+            last_frame_refresh=Instant::now();
+            if matches!(ui.get_active_page().as_str(),"tv"|"fav"|"recent") {
+                let result={
+                    let guard=player.borrow();
+                    guard.as_ref().map(|p|p.render_embedded_frame())
+                };
+                match result {
+                    Some(Ok(Some(frame))) => {
+                        let pixels=slint::SharedPixelBuffer::<slint::Rgba8Pixel>::clone_from_slice(
+                            &frame,mpv::FRAME_WIDTH as u32,mpv::FRAME_HEIGHT as u32
+                        );
+                        ui.set_video_frame(slint::Image::from_rgba8(pixels));
+                        ui.set_has_video_frame(true);
+                    }
+                    Some(Err(error)) if last_frame_error.elapsed() >= Duration::from_secs(4) => {
+                        last_frame_error=Instant::now();
+                        status(&ui,format!("Lỗi khung hình: {error}"));
+                    }
+                    _ => {}
+                }
+            }
+        }
+        if last_player_status.elapsed() >= Duration::from_millis(350) {
+            last_player_status=Instant::now();
+            let info=player.borrow().as_ref().map(|p|(p.video_backend(),p.playback_info()));
+            if let Some((backend,info))=info {
+                let is_live=info.duration_seconds.is_none_or(|v|v<=0.0);
+                ui.set_video_is_live(is_live);
+                ui.set_video_paused(info.paused.unwrap_or(false));
+                ui.set_playback_progress(mpv::progress_percent(&info));
+                let position=info.position_seconds.map(mpv::clock).unwrap_or_else(||"--:--".into());
+                let duration=info.duration_seconds.filter(|d|*d>0.0)
+                    .map(mpv::clock).unwrap_or_else(||"LIVE".into());
+                ui.set_playback_clock(format!("{position} / {duration}").into());
+                ui.set_video_status(if info.idle==Some(true) {
+                    "Chưa có luồng đang phát"
+                } else if info.paused==Some(true) {
+                    "Đang tạm dừng"
+                } else if info.is_video_loaded() {
+                    match backend {
+                        VideoBackend::EmbeddedSoftware=>"Đang phát trong Slint",
+                        VideoBackend::NativeWindow=>"Đang phát ở cửa sổ mpv",
+                    }
+                } else if backend==VideoBackend::NativeWindow {
+                    "Đang tải vào cửa sổ mpv"
+                } else {
+                    "Đang kết nối / đệm video"
+                }.into());
+            }
+        }
         // Each mpv event is consumed only once. EOF/Stop are NOT playback failures.
         let failure=player.borrow().as_ref().and_then(|p|p.poll_playback_failure());
         if let Some(code)=failure {
@@ -1155,6 +1241,7 @@ fn background_timer(ui: &MainWindow, shared: Rc<RefCell<State>>, rx: Receiver<Ba
                 (s.data.auto_failover, s.playback_candidates.clone(), failover::next_index(s.playback_index,s.playback_candidates.len()))
             };
             if !enabled || next.is_none() {
+                ui.set_video_status(format!("Lỗi phát mpv ({code})").into());
                 status(&ui,format!("libmpv báo lỗi phát ({code}); {}",if enabled {"không còn URL dự phòng"} else {"Auto Failover đã tắt"}));
             } else if let Some(first_next)=next {
                 let mut accepted=None;
