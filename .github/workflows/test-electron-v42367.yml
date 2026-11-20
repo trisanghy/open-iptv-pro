@@ -1,4 +1,4 @@
-name: Electron desktop v4.23.72 — update picker and compact controls
+name: Electron desktop v4.23.73 — update picker and compact controls
 on:
   push:
     branches: [build-sources/electron-desktop]
@@ -44,7 +44,7 @@ jobs:
         run: |
           set -Eeuo pipefail
           for p in src/update-manager.cjs src/update-version-catalog.cjs src/main.cjs src/preload.cjs renderer/features.js renderer/i18n.js renderer/i18n-full-locale-pack.js renderer/i18n-dynamic-locales.js renderer/i18n-multilingual-packs.js renderer/i18n-english-coverage.js; do node --check "$p"; done
-          test "$(node -p "require('./package.json').version")" = '4.23.72'
+          test "$(node -p "require('./package.json').version")" = '4.23.73'
           bash -n build-mac-electron.sh
           bash -n build-mac-electron-public.sh
       - name: Version picker and toolbar tests

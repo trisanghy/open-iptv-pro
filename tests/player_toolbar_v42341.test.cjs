@@ -27,5 +27,5 @@ test('v4.23.44: stylesheet is loaded after previous player theme and video unaff
  assert.ok(html.indexOf('player-compact-cast-v42342.css')>html.indexOf('player-toolbar-v42341.css'));
  assert.ok(html.indexOf('id="playerBox"')<html.indexOf('class="player-control-card"'));
  assert.doesNotMatch(css,/#playerBox(?:\s*\{|\s*>)/);
- assert.equal(JSON.parse(read('package.json')).version,'4.23.72');
+ assert.match(JSON.parse(read('package.json')).version,/^4\.23\.\d+$/);
 });

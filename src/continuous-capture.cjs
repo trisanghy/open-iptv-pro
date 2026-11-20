@@ -1,11 +1,11 @@
 'use strict';
-// 8-second continuous FFmpeg chunks for longer, more coherent phrases (v4.23.60).
+// 10-second continuous FFmpeg audio windows for Whisper; persistent recorder avoids gaps.
 // Read closed segment entries from FFmpeg's segment_list (not growing WAV files).
 const fs=require('node:fs'),path=require('node:path'),{spawn}=require('node:child_process');
 const delay=ms=>new Promise(resolve=>setTimeout(resolve,ms));
-function createContinuousCapture({ffmpeg,url,dir,spawnProc=spawn,chunkSeconds=8,notify=()=>{},pollMs=180}={}){
+function createContinuousCapture({ffmpeg,url,dir,spawnProc=spawn,chunkSeconds=10,notify=()=>{},pollMs=180}={}){
  if(!ffmpeg||!/^https?:\/\//i.test(String(url||''))||!dir)throw Error('Invalid continuous caption source');
- const seconds=Math.max(3,Math.min(8,Math.round(chunkSeconds)));
+ const seconds=Math.max(3,Math.min(10,Math.round(chunkSeconds)));
  const list=path.join(dir,'segments.csv');
  const args=['-hide_banner','-nostdin','-loglevel','error','-y','-rw_timeout','8000000',
   '-user_agent','Mozilla/5.0','-i',url,'-map','0:a:0','-vn','-sn','-dn',

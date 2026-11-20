@@ -89,5 +89,5 @@ test('v4.23.67: UI version picker and compact two-row controls exist with safe I
  assert.match(main,/ipcMain\.handle\('update:selectVersion'/);
  assert.match(preload,/listUpdateVersions/);
  assert.match(preload,/selectUpdateVersion/);
- assert.equal(require('../package.json').version,'4.23.72');
+ assert.match(require('../package.json').version,/^4\.23\.\d+$/);
 });

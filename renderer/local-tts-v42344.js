@@ -184,8 +184,8 @@
  // Only the most recent NOT-YET-PLAYED subtitle is kept, to avoid old backlogs.
  const speechQueue=window.OpenIPTVSpeechQueue.createSpeechQueue({
   // Prioritize fresh live subtitles to reduce audible speech lag.
-  maxPendingAgeMs:5000,
-  maxSynthAgeMs:7000,
+  maxPendingAgeMs:14000,
+  maxSynthAgeMs:12000,
   notify:message=>{if(enabled)status(message);},
   synthesize:async payload=>{
    if(!enabled||source()!==payload.streamUrl||!mediaActive())throw Error('Video không còn phát');
@@ -238,7 +238,7 @@
     for(let i=0;i<=chunks.length;i++){
      if(generation!==validSession||!enabled||source()!==payload.streamUrl||!mediaActive())break;
      // Start the next synthesized WAV while the current chunk plays.
-     if(i<chunks.length&&!speechQueue.status().pending){
+     if(i<chunks.length){
       const text=chunks[i];
       prefetch=Promise.resolve().then(()=>api.ttsSynthesize({
        target:payload.lang,voice:payload.voiceId,text,
@@ -246,9 +246,10 @@
       })).then(value=>({ok:true,value}),error=>({ok:false,error}));
      }
      await playChunk(wav);
-     // If translation is ahead, finish this audible phrase and speak the NEW
-     // subtitle rather than reading an old multi-chunk backlog.
-     if(i===chunks.length||speechQueue.status().pending)break;
+     // The incoming subtitle may replace the one WAITING in the queue, but
+     // must never truncate any WAV chunk of the currently audible subtitle.
+     // Complete its full text before starting the latest fresh next line.
+     if(i===chunks.length)break;
      if(!prefetch)break;
      const next=await prefetch;
      if(!next.ok)throw next.error;

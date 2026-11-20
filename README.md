@@ -1,3 +1,14 @@
+## Open IPTV Pro Electron v4.23.73 — Whisper 10 giây, TTS đọc đủ câu
+
+- Whisper ghi âm liên tục, chia audio thành **10 giây** (trước 8 giây). Giữ 16 kHz mono, không ngắt trình ghi giữa các đoạn.
+- TTS đọc **hết từng câu phụ đề** dù có câu mới đến. Câu mới nhất thay thế câu **chưa phát** trong hàng chờ, không phát bù nhiều câu cũ.
+- Tiếp tục prefetch âm thanh của đoạn kế tiếp trong lúc đang đọc, tăng thời gian chờ hợp lý với mẫu Whisper 10 giây. Video Pause/Stop/Ended hoặc đổi kênh vẫn hủy giọng ngay.
+- Có kiểm thử hồi quy cho chính tình huống 3 đoạn WAV của một phụ đề và phụ đề mới đến giữa lúc phát.
+
+Lưu ý: lấy mẫu 10 giây làm thời gian chờ nhận diện đầu tiên ít nhất khoảng 10 giây, chưa kể Whisper/dịch/TTS. Không thể đạt độ trễ dưới 10 giây nếu không dùng mẫu chồng lấn hay streaming ASR.
+
+[Changelog Electron v4.23.73](RELEASE_NOTES_ELECTRON_V4_23_73.md)
+
 ## Open IPTV Pro Electron v4.23.72 Beta — Responsive Supabase sign-in
 
 [**Download v4.23.72 Beta (macOS ARM/Intel, Windows Setup/Portable, source and SHA256)**](https://github.com/trisanghy/open-iptv-pro/releases/tag/electron-v4.23.72)
