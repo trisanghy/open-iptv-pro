@@ -11,6 +11,6 @@ test('collapsed Rust sidebar uses no empty left gutter for TV but preserves full
  assert.match(style,/padding-left:4px!important/);
  assert.match(style,/#page-tv \.tv-layout/);
  assert.match(html,/sidebar-gap-repair-v23-8-83\.css/);
- assert.match(html,/video-enhancement-v23-8-70\.js/);
+ assert.match(read('renderer/app-entry.js'),/video-enhancement-v23-8-70\.js/);
  assert.match(html,/unified-ai-inline-v1\.js/);
 });

@@ -1,3 +1,7 @@
+## Rust Lab v23.8.84 — Hoàn tất kiểm thử hồi quy sidebar
+
+Giữ sửa lỗi khoảng trống sidebar từ v23.8.83. Sửa bài test để xác minh nút AI được nạp qua `renderer/app-entry.js` đúng như kiến trúc hiện hành, thay vì tìm file trực tiếp trong HTML. Không thay đổi logic phát video/Whisper/PiP/CC. [Ghi chú](RELEASE_NOTES_RUST_LAB_V23_8_84.md).
+
 ## Rust Lab v23.8.83 — Sửa khoảng trống sidebar khi thu gọn
 
 Trong trang Xem truyền hình, khi thu gọn sidebar thành thanh icon, bỏ khoảng đệm trái không cần thiết của vùng nội dung và cho phép danh sách kênh, video tận dụng chiều rộng. Nút **Nâng cao video bằng AI** đã có từ v23.8.80, không thay đổi đường phát; giữ nguyên PiP gốc, Live Caption/Translate/TTS, Whisper 10 giây, bù chuyển động. Thêm kiểm thử hồi quy CSS. [Release notes](RELEASE_NOTES_RUST_LAB_V23_8_83.md).
