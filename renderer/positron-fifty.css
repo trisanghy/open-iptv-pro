@@ -114,3 +114,8 @@ html.p50-23 #page-tv .channel-panel :is(.filter-tabs,.folder-actions){background
 html.p50-24 #page-tv .player-box{border:1px solid var(--po-line)!important;border-radius:14px!important;box-shadow:none!important;background:radial-gradient(ellipse at 50% 40%,var(--po-raised),#070d17 88%)!important;overflow:hidden!important}
 html.p50-24 #page-tv #video{object-fit:contain!important}
 html.p50-24 #page-tv .watch-panel{max-width:100%!important}
+
+/* Iteration 25: Enlarge and simplify player empty state illustration */
+html.p50-25 #page-tv .empty-player .empty-icon{width:58px!important;height:58px!important;border-radius:18px!important;background:var(--po-card)!important;color:var(--po-accent)!important;border:1px solid var(--po-line)!important;box-shadow:none!important}
+html.p50-25 #page-tv .empty-player h2{font-size:19px!important;line-height:1.25!important;letter-spacing:-.3px!important}
+html.p50-25 #page-tv .empty-player p{font-size:12px!important;line-height:1.55!important;max-width:420px!important}
