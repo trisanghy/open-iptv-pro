@@ -17,7 +17,7 @@ on:
       - '.github/workflows/positron-lab.yml'
   workflow_dispatch:
 concurrency:
-  group: positron-p4-50-focus-${{ github.ref }}
+  group: positron-p4-failfast-${{ github.ref }}
   cancel-in-progress: false
 permissions:
   contents: read
@@ -66,7 +66,7 @@ jobs:
           export ELECTRON_DISABLE_SECURITY_WARNINGS=true
           ./node_modules/.bin/electron . --no-sandbox --disable-gpu --remote-debugging-port=9222 > positron-evidence/electron.log 2>&1 &
           echo $! > positron-evidence/electron.pid
-          node scripts/positron-50-audit.cjs
+          timeout --signal=TERM --kill-after=10s 260s node scripts/positron-50-audit.cjs
           test -s positron-evidence/p4-50-rounds/positron-p4-01-real.png
           test -s positron-evidence/p4-50-rounds/positron-p4-25-real.png
           test -s positron-evidence/p4-50-rounds/positron-p4-50-real.png

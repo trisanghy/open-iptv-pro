@@ -164,4 +164,13 @@ const wait=ms=>new Promise(r=>setTimeout(r,ms));
     rounds:screenshots};
   fs.writeFileSync(path.join('positron-evidence','audit-p4-50-rounds.json'),JSON.stringify(report,null,2));
   await browser.close();
-})().catch(e=>{console.error(e);process.exitCode=1;});
+})().catch(e=>{
+  console.error('P4 50-round audit failed: '+(e&&e.stack||e));
+  try{
+    fs.mkdirSync('positron-evidence',{recursive:true});
+    fs.writeFileSync('positron-evidence/p4-audit-error.txt',String(e&&e.stack||e)+'\n');
+  }catch{}
+  // Failed CDP tests must exit. Otherwise an open Electron socket can keep Node
+  // alive until the GitHub job timeout, masking the real assertion failure.
+  process.exit(1);
+});
