@@ -74,7 +74,7 @@ test('mobile preview overlay hidden, static build and latest script assets maint
  assert.match(css,/display:none!important;visibility:hidden!important;pointer-events:none!important/);
  assert.match(html,/app\.js\?v=favorites-direct-play-20261120a/);
  assert.match(html,/advanced\.js\?v=favorites-tap-20261119a/);
- assert.match(html,/web-mobile-player\.css\?v=favorites-tap-20261119a/);
+ assert.match(html,/web-mobile-player\.css\?v=apple-more-20261120a/);
  assert.match(builder,/Preserve Web favorite card tap-to-play/);
  assert.match(builder,/fav_start=' function renderFavorites\(\)\{'/);
  assert.match(builder,/favorites-tap-20261119a/);
