@@ -113,7 +113,7 @@ test('v4.23.60: retains continuous recognition and warm TTS; Mac DMG-only',()=>{
  assert.match(service,/runContinuous\(s,getFFmpeg\(\),bin\(\),model\(\)\)/);
  assert.match(tts,/task\.session=getPremiumSession\(\)/);
  const pkg=JSON.parse(read('package.json'));
- assert.equal(pkg.version,'4.23.70');
+ assert.equal(pkg.version,'4.23.71');
  assert.deepEqual(pkg.build.mac.target,['dmg']);
  assert.equal(pkg.build.dmg.writeUpdateInfo,false);
 });

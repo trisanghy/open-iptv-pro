@@ -105,6 +105,6 @@ test('v4.23.67: actual Electron UI waits for natural ended, TTS never restores t
   html.indexOf('src="local-tts-v42344.js"'));
  assert.match(read('renderer/video-only-translated-caption-v42358.css'),/#liveCaptionOutput/);
  const pkg=JSON.parse(read('package.json'));
- assert.equal(pkg.version,'4.23.70');
+ assert.equal(pkg.version,'4.23.71');
  assert.deepEqual(pkg.build.mac.target,['dmg']);
 });
