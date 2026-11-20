@@ -243,3 +243,11 @@ html.p50-46 #positronBar #positronOpen .p-command-label{max-width:110px!importan
 html.p50-46 #page-tv .tv-layout{grid-template-columns:minmax(190px,218px) minmax(0,1fr)!important}
 html.p50-46 #positronBar .p-title{min-width:0!important}
 html.p50-46 #positronBar .p-heading strong{max-width:17ch!important}}
+
+/* Iteration 47: Reflow small laptop windows at 960px */
+@media(max-width:960px){html.p50-47 #page-tv .tv-layout{display:flex!important;flex-direction:column!important;align-items:stretch!important;gap:10px!important}
+html.p50-47 #page-tv .watch-panel{order:0!important;width:100%!important}
+html.p50-47 #page-tv .channel-panel{order:1!important;width:100%!important;max-height:330px!important;min-height:185px!important}
+html.p50-47 #page-tv .player-box{min-width:0!important}
+html.p50-47 #positronBar #positronOpen{min-width:36px!important;max-width:44px!important;width:42px!important;flex:0 0 42px!important;justify-content:center!important}
+html.p50-47 #positronBar #positronOpen :is(.p-command-label,kbd){display:none!important}}
