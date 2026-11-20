@@ -107,7 +107,8 @@ test('compact merge retains original channel metadata and undo restores source v
  await h.restore();
  assert.equal(h.store.channels.length,4);
  assert.equal(h.store.channels.find(ch=>ch.id==='srcA|1').customNote,'do not delete');
- assert.ok(h.store.sources.filter(s=>s.id!=='collector_merged').every(s=>s.enabled===true));
+ assert.equal(h.store.sources.length,2,'undo removes only the newly created synthetic merged source');
+ assert.ok(h.store.sources.every(s=>s.enabled===true));
  assert.equal(h.store.collectorBackup,undefined);
  assert.match(h.messages.at(-1),/Đã hoàn tác/);
 });
@@ -124,4 +125,19 @@ test('failed undo save rolls back in-memory state rather than displaying false s
  canPersist=true;
  await h.restore();
  assert.equal(h.store.collectorBackup,undefined);
+});
+
+test('undo preserves an existing merged source and its prior disabled state',async()=>{
+ const h=harness(true);
+ const existing={id:'collector_merged',name:'Previous merge',type:'file',enabled:false};
+ const oldChannel={id:'merged|old',sourceId:'collector_merged',name:'Old TV',tvgId:'old-tv',url:'https://old.example.test/live.m3u8'};
+ h.store.sources.push(existing);
+ h.store.channels.push(oldChannel);
+ await h.collect();
+ assert.equal(h.store.sources.find(s=>s.id==='collector_merged').enabled,true);
+ assert.equal(h.store.collectorBackup.mergedWasEnabled,false);
+ await h.restore();
+ assert.equal(h.store.sources.length,3);
+ assert.equal(h.store.sources.find(s=>s.id==='collector_merged').enabled,false);
+ assert.equal(h.store.channels.find(c=>c.id==='merged|old')?.url,oldChannel.url);
 });
