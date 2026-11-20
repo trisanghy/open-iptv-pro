@@ -185,6 +185,84 @@ impl NativeData {
         Ok(())
     }
 
+
+    /// Transactional import: never overwrite an existing source with a colliding
+    /// backup ID, and preserve links, folders, favorites and recents. The
+    /// incoming profile's global settings do not replace user preferences.
+    pub fn merge_backup(&mut self, incoming: NativeData, prefix: &str) -> Result<usize, String> {
+        incoming.validate()?;
+        let count = incoming.channels.len();
+        let mut merged = self.clone();
+        for src in &incoming.sources {
+            let mut base = prefix.to_string();
+            for ch in src.id.chars() {
+                if base.len() + ch.len_utf8() > 96 { break; }
+                base.push(ch);
+            }
+            let mut id = base.clone();
+            let mut suffix = 1usize;
+            while merged.sources.iter().any(|current| current.id == id) {
+                id = format!("{base}_{suffix}");
+                suffix += 1;
+            }
+            let mut new_source = src.clone();
+            new_source.id = id.clone();
+            merged.channels.extend(
+                incoming.channels.iter().filter(|ch| ch.source_id == src.id)
+                    .cloned().map(|mut ch| { ch.source_id = id.clone(); ch })
+            );
+            merged.sources.push(new_source);
+        }
+        let known: BTreeSet<String> = merged.channels.iter().map(|ch| ch.url.clone()).collect();
+        merged.favorite_urls.extend(
+            incoming.favorite_urls.into_iter().filter(|url| known.contains(url))
+        );
+        for (url, links) in incoming.alternate_links {
+            if !known.contains(&url) { continue; }
+            let existing = merged.alternate_links.entry(url.clone()).or_default();
+            for link in links {
+                if existing.len() >= 8 { break; }
+                if link != url && crate::m3u::is_media_url(&link) && !existing.contains(&link) {
+                    existing.push(link);
+                }
+            }
+        }
+        let mut recent = Vec::new();
+        for url in incoming.recent_urls.into_iter().chain(merged.recent_urls.iter().cloned()) {
+            if recent.len() == 30 { break; }
+            if known.contains(&url) && !recent.contains(&url) { recent.push(url); }
+        }
+        merged.recent_urls = recent;
+        for mut folder in incoming.folders {
+            folder.urls.retain(|url| known.contains(url));
+            if merged.folders.iter().any(|f| f.name.eq_ignore_ascii_case(&folder.name)) {
+                let mut base = String::new();
+                for ch in folder.name.chars() {
+                    if base.len() + ch.len_utf8() > 96 { break; }
+                    base.push(ch);
+                }
+                let mut suffix = 1usize;
+                loop {
+                    let candidate = format!("{base} ({prefix}{suffix})");
+                    if !merged.folders.iter().any(|f| f.name.eq_ignore_ascii_case(&candidate)) {
+                        folder.name = candidate;
+                        break;
+                    }
+                    suffix += 1;
+                }
+            }
+            merged.folders.push(folder);
+        }
+        for (url, label) in incoming.health {
+            if known.contains(&url) && !merged.health.contains_key(&url) {
+                merged.health.insert(url, label);
+            }
+        }
+        merged.validate()?;
+        *self = merged;
+        Ok(count)
+    }
+
     pub fn add_folder(&mut self, name: &str) -> Result<(), String> {
         let name = name.trim();
         if name.is_empty() || name.len() > 128 { return Err("Tên thư mục phải dài từ 1 đến 128 ký tự".into()); }
@@ -204,6 +282,63 @@ impl NativeData {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn import_backup_is_lossless_and_never_overwrites_colliding_sources() {
+        let make_channel = |id: &str, name: &str, url: &str| Channel {
+            source_id: id.into(), name: name.into(), url: url.into(),
+            group: "News".into(), tvg_id: name.into(), logo: String::new(),
+            catchup: String::new(), catchup_source: String::new(), catchup_days: String::new(),
+        };
+        let mut local = NativeData::default();
+        local.insert_source(
+            Source { id: "import_tv".into(), name: "Existing".into(), origin: "local".into() },
+            vec![make_channel("import_tv", "Local", "https://example.org/local")],
+        ).unwrap();
+        local.favorite_urls.insert("https://example.org/local".into());
+        local.add_folder("My TV").unwrap();
+        local.folder_add_url("My TV", "https://example.org/local").unwrap();
+        local.recent_urls.push("https://example.org/local".into());
+        let mut backup = NativeData::default();
+        backup.insert_source(
+            Source { id: "tv".into(), name: "Backup".into(), origin: "https://example.org/m3u".into() },
+            vec![make_channel("tv", "New", "https://example.org/new")],
+        ).unwrap();
+        backup.favorite_urls.insert("https://example.org/new".into());
+        backup.recent_urls.push("https://example.org/new".into());
+        backup.add_alternate("https://example.org/new", "https://example.org/new-backup").unwrap();
+        backup.add_folder("My TV").unwrap();
+        backup.folder_add_url("My TV", "https://example.org/new").unwrap();
+        backup.health.insert("https://example.org/new".into(), "Sống".into());
+
+        assert_eq!(local.merge_backup(backup.clone(), "import_").unwrap(), 1);
+        assert_eq!(local.sources.len(), 2);
+        assert!(local.sources.iter().any(|s| s.id == "import_tv"));
+        assert!(local.sources.iter().any(|s| s.id == "import_tv_1"));
+        assert_eq!(local.channels.len(), 2);
+        assert_eq!(local.favorite_urls.len(), 2);
+        assert_eq!(local.recent_urls, vec!["https://example.org/new", "https://example.org/local"]);
+        assert_eq!(local.alternate_links["https://example.org/new"][0], "https://example.org/new-backup");
+        assert_eq!(local.health["https://example.org/new"], "Sống");
+        assert_eq!(local.folders.len(), 2);
+        assert!(local.folders[1].name.starts_with("My TV (import_"));
+        assert!(local.folders[1].urls.contains("https://example.org/new"));
+        assert_eq!(local.merge_backup(backup, "import_").unwrap(), 1);
+        assert_eq!(local.sources.len(), 3);
+        assert_eq!(local.channels.len(), 3);
+        local.validate().unwrap();
+    }
+    #[test]
+    fn invalid_backup_does_not_mutate_live_profile() {
+        let mut current = NativeData::default();
+        let mut backup = NativeData::default();
+        backup.volume = 999;
+        assert!(current.merge_backup(backup, "import_").is_err());
+        assert_eq!(current.volume, 80);
+        assert!(current.sources.is_empty());
+    }
+
+
     #[test]
     fn reorder_visible_channels_keeps_favorites_and_channel_metadata() {
         let mut d=NativeData::default();

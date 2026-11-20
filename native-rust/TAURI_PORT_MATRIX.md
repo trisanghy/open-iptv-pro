@@ -24,7 +24,7 @@ This file documents **the actual native Slint + Rust + libmpv code** in `native-
 | Snapshot | Basic FFmpeg capture and short batch | Parallel 32-worker UI, image grid, preview, high-volume throttling |
 | DVR/recording | Basic 60-second MKV via FFmpeg | Timeshift 10-minute buffer, MP4, scheduling, state/progress |
 | Health / Smart IPTV Doctor | Basic bounded 1,000-channel probes | Doctor 3.0 and advanced diagnostics/safe repair |
-| Backup and restore | Native JSON; limited Electron backup import | Full compatible Tauri backup and screenshot/media data |
+| Backup and restore | Native JSON + Electron metadata; transactional merge preserves favorites, recent, folders, alternate URLs, health and handles ID collisions | Full compatible Tauri backup plus snapshot/media binary data |
 | App theme | 3 basic colors/themes | AMOLED, Apple HIG, Material 3, TV, spacing and desktop/mobile layouts |
 | Internationalization | Vietnamese primary UI | Tauri's 17-locale runtime translations for Slint components |
 | AI speech subtitles, translation, TTS | Not implemented | Whisper/model downloader, MLX, opt-in local AI pipeline, latency, privacy |

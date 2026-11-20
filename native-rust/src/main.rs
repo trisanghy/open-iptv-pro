@@ -193,35 +193,23 @@ fn import_playlist(ui: &MainWindow, state: &mut State, source: Source, result: R
     }
 }
 
-fn merge_import(ui: &MainWindow, state: &mut State, mut incoming: NativeData, prefix: &str) {
+fn merge_import(ui: &MainWindow, state: &mut State, incoming: NativeData, prefix: &str) {
     let previous = state.data.clone();
-    let count = incoming.channels.len();
-    let sources = std::mem::take(&mut incoming.sources);
-    for mut src in sources {
-        let orig_id = src.id.clone();
-        src.id = format!("{prefix}{orig_id}");
-        let channels: Vec<Channel> = incoming.channels.iter().filter(|ch| ch.source_id == orig_id)
-            .map(|ch| { let mut copied = ch.clone(); copied.source_id = src.id.clone(); copied }).collect();
-        if let Err(e) = state.data.insert_source(src, channels) {
-            state.data = previous;
-            refresh(ui, state);
-            status(ui, format!("Không thể gộp backup: {e}"));
+    let count = match state.data.merge_backup(incoming, prefix) {
+        Ok(count) => count,
+        Err(e) => {
+            status(ui, format!("Không thể gộp backup (đã giữ nguyên dữ liệu): {e}"));
             return;
         }
-    }
-    state.data.favorite_urls.extend(incoming.favorite_urls);
-    for mut folder in incoming.folders { 
-        if state.data.folders.iter().any(|f| f.name == folder.name) { folder.name = format!("{} ({prefix})", folder.name); }
-        state.data.folders.push(folder);
-    }
-    let valid_urls: std::collections::BTreeSet<String> = state.data.channels.iter().map(|c| c.url.clone()).collect();
-    state.data.favorite_urls.retain(|url| valid_urls.contains(url));
+    };
     state.selected_source = None;
     state.favorites_only = false;
     state.recent_only = false;
     state.pending_delete = None;
     state.folder_filter = None;
-    persist(ui, state, previous, format!("Đã gộp {count} kênh từ backup; dữ liệu Electron không bị thay đổi."));
+    persist(ui, state, previous, format!(
+        "Đã gộp {count} kênh và giữ link dự phòng, yêu thích, lịch sử xem, thư mục từ backup."
+    ));
 }
 
 fn spawn_m3u(tx: Sender<Background>, source: Source, location: String, file: Option<PathBuf>) {
