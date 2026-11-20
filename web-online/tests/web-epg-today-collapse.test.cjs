@@ -31,8 +31,10 @@ function fixture(now,items){
    createDocumentFragment(){return {children:[],append(node){this.children.push(node)}};},
    createElement(tag){
     const list={innerHTML:'',replaceChildren(){this.innerHTML='';},querySelectorAll(){return []}};
-    return {tag,className:'',dataset:{},open:false,innerHTML:'',listeners:{},list,
-     querySelector(){return list;},addEventListener(event,fn){this.listeners[event]=fn;}};
+    const badge={children:[],classList:{add(){},remove(){}},append(img){this.children.push(img);}};
+    return {tag,className:'',dataset:{},open:false,innerHTML:'',listeners:{},list,badge,
+     querySelector(selector){return selector==='.epg-channel-badge'?badge:list;},
+     addEventListener(event,fn){this.listeners[event]=fn;}};
    }
   }
  };
