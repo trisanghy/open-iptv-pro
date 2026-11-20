@@ -167,7 +167,7 @@ export component MainWindow inherits Window {
                 padding: root.rail-collapsed ? 6px : 12px;
                 spacing: 3px;
                 Rectangle { height: 38px; border-radius: 8px; background: false ? #264460 : (root.light-mode ? #edf2f7 : #172838);
-    Text { text: root.rail-collapsed ? "☰" : "☰  Thu gọn"; color: false ? #ffffff : (root.light-mode ? #1b3044 : #c6d7e9); font-size: root.rail-collapsed ? 12px : 13px; font-weight: 600; x: root.rail-collapsed ? 0px : 10px; width: parent.width - (root.rail-collapsed ? 0px : 14px); height: parent.height; horizontal-alignment: root.rail-collapsed ? center : left; vertical-alignment: center; overflow: elide; }
+    Text { text: root.rail-collapsed ? "☰" : "☰  Thu gọn"; color: false ? #ffffff : (root.light-mode ? #1b3044 : #c6d7e9); font-size: root.rail-collapsed ? 19px : 13px; font-weight: 600; x: root.rail-collapsed ? 0px : 10px; width: parent.width - (root.rail-collapsed ? 0px : 14px); height: parent.height; horizontal-alignment: root.rail-collapsed ? center : left; vertical-alignment: center; overflow: elide; }
     TouchArea { clicked => { root.rail-collapsed = !root.rail-collapsed; } }
 }
                 Rectangle {
@@ -192,64 +192,64 @@ export component MainWindow inherits Window {
                 }
                 Text { text: "THƯ VIỆN"; visible: !root.rail-collapsed; font-size: 10px; font-weight: 700; color: #718da8; height: 31px; vertical-alignment: bottom; }
                 Rectangle { height: 38px; border-radius: 8px; background: root.active-page == "tv" ? #264460 : (root.light-mode ? #edf2f7 : #172838);
-    Text { text: root.rail-collapsed ? "TV" : "▣  Xem truyền hình"; color: root.active-page == "tv" ? #ffffff : (root.light-mode ? #1b3044 : #c6d7e9); font-size: root.rail-collapsed ? 12px : 13px; font-weight: 600; x: root.rail-collapsed ? 0px : 10px; width: parent.width - (root.rail-collapsed ? 0px : 14px); height: parent.height; horizontal-alignment: root.rail-collapsed ? center : left; vertical-alignment: center; overflow: elide; }
+    Text { text: root.rail-collapsed ? "▣" : "▣  Xem truyền hình"; color: root.active-page == "tv" ? #ffffff : (root.light-mode ? #1b3044 : #c6d7e9); font-size: root.rail-collapsed ? 19px : 13px; font-weight: 600; x: root.rail-collapsed ? 0px : 10px; width: parent.width - (root.rail-collapsed ? 0px : 14px); height: parent.height; horizontal-alignment: root.rail-collapsed ? center : left; vertical-alignment: center; overflow: elide; }
     TouchArea { clicked => { root.navigate("tv"); } }
 }
                 Rectangle { height: 38px; border-radius: 8px; background: root.active-page == "fav" ? #264460 : (root.light-mode ? #edf2f7 : #172838);
-    Text { text: root.rail-collapsed ? "★" : "★  Kênh yêu thích       " + root.favorites-count; color: root.active-page == "fav" ? #ffffff : (root.light-mode ? #1b3044 : #c6d7e9); font-size: root.rail-collapsed ? 12px : 13px; font-weight: 600; x: root.rail-collapsed ? 0px : 10px; width: parent.width - (root.rail-collapsed ? 0px : 14px); height: parent.height; horizontal-alignment: root.rail-collapsed ? center : left; vertical-alignment: center; overflow: elide; }
+    Text { text: root.rail-collapsed ? "★" : "★  Kênh yêu thích       " + root.favorites-count; color: root.active-page == "fav" ? #ffffff : (root.light-mode ? #1b3044 : #c6d7e9); font-size: root.rail-collapsed ? 19px : 13px; font-weight: 600; x: root.rail-collapsed ? 0px : 10px; width: parent.width - (root.rail-collapsed ? 0px : 14px); height: parent.height; horizontal-alignment: root.rail-collapsed ? center : left; vertical-alignment: center; overflow: elide; }
     TouchArea { clicked => { root.navigate("fav"); } }
 }
                 Rectangle { height: 38px; border-radius: 8px; background: root.active-page == "recent" ? #264460 : (root.light-mode ? #edf2f7 : #172838);
-    Text { text: root.rail-collapsed ? "H" : "◷  Xem gần đây            " + root.recent-count; color: root.active-page == "recent" ? #ffffff : (root.light-mode ? #1b3044 : #c6d7e9); font-size: root.rail-collapsed ? 12px : 13px; font-weight: 600; x: root.rail-collapsed ? 0px : 10px; width: parent.width - (root.rail-collapsed ? 0px : 14px); height: parent.height; horizontal-alignment: root.rail-collapsed ? center : left; vertical-alignment: center; overflow: elide; }
+    Text { text: root.rail-collapsed ? "◷" : "◷  Xem gần đây            " + root.recent-count; color: root.active-page == "recent" ? #ffffff : (root.light-mode ? #1b3044 : #c6d7e9); font-size: root.rail-collapsed ? 19px : 13px; font-weight: 600; x: root.rail-collapsed ? 0px : 10px; width: parent.width - (root.rail-collapsed ? 0px : 14px); height: parent.height; horizontal-alignment: root.rail-collapsed ? center : left; vertical-alignment: center; overflow: elide; }
     TouchArea { clicked => { root.navigate("recent"); } }
 }
                 Rectangle { height: 38px; border-radius: 8px; background: root.active-page == "epg" ? #264460 : (root.light-mode ? #edf2f7 : #172838);
-    Text { text: root.rail-collapsed ? "EPG" : "▤  Lịch phát sóng EPG"; color: root.active-page == "epg" ? #ffffff : (root.light-mode ? #1b3044 : #c6d7e9); font-size: root.rail-collapsed ? 12px : 13px; font-weight: 600; x: root.rail-collapsed ? 0px : 10px; width: parent.width - (root.rail-collapsed ? 0px : 14px); height: parent.height; horizontal-alignment: root.rail-collapsed ? center : left; vertical-alignment: center; overflow: elide; }
+    Text { text: root.rail-collapsed ? "▤" : "▤  Lịch phát sóng EPG"; color: root.active-page == "epg" ? #ffffff : (root.light-mode ? #1b3044 : #c6d7e9); font-size: root.rail-collapsed ? 19px : 13px; font-weight: 600; x: root.rail-collapsed ? 0px : 10px; width: parent.width - (root.rail-collapsed ? 0px : 14px); height: parent.height; horizontal-alignment: root.rail-collapsed ? center : left; vertical-alignment: center; overflow: elide; }
     TouchArea { clicked => { root.navigate("epg"); } }
 }
                 Rectangle { height: 38px; border-radius: 8px; background: root.active-page == "multiview" ? #264460 : (root.light-mode ? #edf2f7 : #172838);
-    Text { text: root.rail-collapsed ? "4X" : "⊞  MultiView · 4 kênh"; color: root.active-page == "multiview" ? #ffffff : (root.light-mode ? #1b3044 : #c6d7e9); font-size: root.rail-collapsed ? 12px : 13px; font-weight: 600; x: root.rail-collapsed ? 0px : 10px; width: parent.width - (root.rail-collapsed ? 0px : 14px); height: parent.height; horizontal-alignment: root.rail-collapsed ? center : left; vertical-alignment: center; overflow: elide; }
+    Text { text: root.rail-collapsed ? "⊞" : "⊞  MultiView · 4 kênh"; color: root.active-page == "multiview" ? #ffffff : (root.light-mode ? #1b3044 : #c6d7e9); font-size: root.rail-collapsed ? 19px : 13px; font-weight: 600; x: root.rail-collapsed ? 0px : 10px; width: parent.width - (root.rail-collapsed ? 0px : 14px); height: parent.height; horizontal-alignment: root.rail-collapsed ? center : left; vertical-alignment: center; overflow: elide; }
     TouchArea { clicked => { root.navigate("multiview"); } }
 }
                 Rectangle { height: 38px; border-radius: 8px; background: root.active-page == "shots" ? #264460 : (root.light-mode ? #edf2f7 : #172838);
-    Text { text: root.rail-collapsed ? "IMG" : "▦  Ảnh chụp kênh"; color: root.active-page == "shots" ? #ffffff : (root.light-mode ? #1b3044 : #c6d7e9); font-size: root.rail-collapsed ? 12px : 13px; font-weight: 600; x: root.rail-collapsed ? 0px : 10px; width: parent.width - (root.rail-collapsed ? 0px : 14px); height: parent.height; horizontal-alignment: root.rail-collapsed ? center : left; vertical-alignment: center; overflow: elide; }
+    Text { text: root.rail-collapsed ? "▦" : "▦  Ảnh chụp kênh"; color: root.active-page == "shots" ? #ffffff : (root.light-mode ? #1b3044 : #c6d7e9); font-size: root.rail-collapsed ? 19px : 13px; font-weight: 600; x: root.rail-collapsed ? 0px : 10px; width: parent.width - (root.rail-collapsed ? 0px : 14px); height: parent.height; horizontal-alignment: root.rail-collapsed ? center : left; vertical-alignment: center; overflow: elide; }
     TouchArea { clicked => { root.navigate("shots"); } }
 }
                 Rectangle { height: 38px; border-radius: 8px; background: root.active-page == "folders" ? #264460 : (root.light-mode ? #edf2f7 : #172838);
-    Text { text: root.rail-collapsed ? "DIR" : "▤  Thư mục kênh"; color: root.active-page == "folders" ? #ffffff : (root.light-mode ? #1b3044 : #c6d7e9); font-size: root.rail-collapsed ? 12px : 13px; font-weight: 600; x: root.rail-collapsed ? 0px : 10px; width: parent.width - (root.rail-collapsed ? 0px : 14px); height: parent.height; horizontal-alignment: root.rail-collapsed ? center : left; vertical-alignment: center; overflow: elide; }
+    Text { text: root.rail-collapsed ? "▥" : "▤  Thư mục kênh"; color: root.active-page == "folders" ? #ffffff : (root.light-mode ? #1b3044 : #c6d7e9); font-size: root.rail-collapsed ? 19px : 13px; font-weight: 600; x: root.rail-collapsed ? 0px : 10px; width: parent.width - (root.rail-collapsed ? 0px : 14px); height: parent.height; horizontal-alignment: root.rail-collapsed ? center : left; vertical-alignment: center; overflow: elide; }
     TouchArea { clicked => { root.navigate("folders"); } }
 }
                 Text { text: "CÔNG CỤ"; visible: !root.rail-collapsed; font-size: 10px; font-weight: 700; color: #718da8; height: 31px; vertical-alignment: bottom; }
                 Rectangle { height: 38px; border-radius: 8px; background: root.active-page == "sources" ? #264460 : (root.light-mode ? #edf2f7 : #172838);
-    Text { text: root.rail-collapsed ? "SRC" : "◇  Quản lý nguồn       " + root.sources-count; color: root.active-page == "sources" ? #ffffff : (root.light-mode ? #1b3044 : #c6d7e9); font-size: root.rail-collapsed ? 12px : 13px; font-weight: 600; x: root.rail-collapsed ? 0px : 10px; width: parent.width - (root.rail-collapsed ? 0px : 14px); height: parent.height; horizontal-alignment: root.rail-collapsed ? center : left; vertical-alignment: center; overflow: elide; }
+    Text { text: root.rail-collapsed ? "◇" : "◇  Quản lý nguồn       " + root.sources-count; color: root.active-page == "sources" ? #ffffff : (root.light-mode ? #1b3044 : #c6d7e9); font-size: root.rail-collapsed ? 19px : 13px; font-weight: 600; x: root.rail-collapsed ? 0px : 10px; width: parent.width - (root.rail-collapsed ? 0px : 14px); height: parent.height; horizontal-alignment: root.rail-collapsed ? center : left; vertical-alignment: center; overflow: elide; }
     TouchArea { clicked => { root.navigate("sources"); } }
 }
                 Rectangle { height: 38px; border-radius: 8px; background: root.active-page == "health" ? #264460 : (root.light-mode ? #edf2f7 : #172838);
-    Text { text: root.rail-collapsed ? "NET" : "↗  Sức khỏe kênh / Failover"; color: root.active-page == "health" ? #ffffff : (root.light-mode ? #1b3044 : #c6d7e9); font-size: root.rail-collapsed ? 12px : 13px; font-weight: 600; x: root.rail-collapsed ? 0px : 10px; width: parent.width - (root.rail-collapsed ? 0px : 14px); height: parent.height; horizontal-alignment: root.rail-collapsed ? center : left; vertical-alignment: center; overflow: elide; }
+    Text { text: root.rail-collapsed ? "↗" : "↗  Sức khỏe kênh / Failover"; color: root.active-page == "health" ? #ffffff : (root.light-mode ? #1b3044 : #c6d7e9); font-size: root.rail-collapsed ? 19px : 13px; font-weight: 600; x: root.rail-collapsed ? 0px : 10px; width: parent.width - (root.rail-collapsed ? 0px : 14px); height: parent.height; horizontal-alignment: root.rail-collapsed ? center : left; vertical-alignment: center; overflow: elide; }
     TouchArea { clicked => { root.navigate("health"); } }
 }
                 Rectangle { height: 38px; border-radius: 8px; background: root.active-page == "doctor" ? #264460 : (root.light-mode ? #edf2f7 : #172838);
-    Text { text: root.rail-collapsed ? "DOC" : "✚  Smart IPTV Doctor"; color: root.active-page == "doctor" ? #ffffff : (root.light-mode ? #1b3044 : #c6d7e9); font-size: root.rail-collapsed ? 12px : 13px; font-weight: 600; x: root.rail-collapsed ? 0px : 10px; width: parent.width - (root.rail-collapsed ? 0px : 14px); height: parent.height; horizontal-alignment: root.rail-collapsed ? center : left; vertical-alignment: center; overflow: elide; }
+    Text { text: root.rail-collapsed ? "✚" : "✚  Smart IPTV Doctor"; color: root.active-page == "doctor" ? #ffffff : (root.light-mode ? #1b3044 : #c6d7e9); font-size: root.rail-collapsed ? 19px : 13px; font-weight: 600; x: root.rail-collapsed ? 0px : 10px; width: parent.width - (root.rail-collapsed ? 0px : 14px); height: parent.height; horizontal-alignment: root.rail-collapsed ? center : left; vertical-alignment: center; overflow: elide; }
     TouchArea { clicked => { root.navigate("doctor"); } }
 }
                 Rectangle { height: 38px; border-radius: 8px; background: root.active-page == "discovery" ? #264460 : (root.light-mode ? #edf2f7 : #172838);
-    Text { text: root.rail-collapsed ? "DISC" : "◎  Khám phá IPTV"; color: root.active-page == "discovery" ? #ffffff : (root.light-mode ? #1b3044 : #c6d7e9); font-size: root.rail-collapsed ? 12px : 13px; font-weight: 600; x: root.rail-collapsed ? 0px : 10px; width: parent.width - (root.rail-collapsed ? 0px : 14px); height: parent.height; horizontal-alignment: root.rail-collapsed ? center : left; vertical-alignment: center; overflow: elide; }
+    Text { text: root.rail-collapsed ? "◎" : "◎  Khám phá IPTV"; color: root.active-page == "discovery" ? #ffffff : (root.light-mode ? #1b3044 : #c6d7e9); font-size: root.rail-collapsed ? 19px : 13px; font-weight: 600; x: root.rail-collapsed ? 0px : 10px; width: parent.width - (root.rail-collapsed ? 0px : 14px); height: parent.height; horizontal-alignment: root.rail-collapsed ? center : left; vertical-alignment: center; overflow: elide; }
     TouchArea { clicked => { root.navigate("discovery"); } }
 }
                 Rectangle { height: 38px; border-radius: 8px; background: root.active-page == "profiles" ? #264460 : (root.light-mode ? #edf2f7 : #172838);
-    Text { text: root.rail-collapsed ? "PIN" : "♙  Hồ sơ / Khóa trẻ em"; color: root.active-page == "profiles" ? #ffffff : (root.light-mode ? #1b3044 : #c6d7e9); font-size: root.rail-collapsed ? 12px : 13px; font-weight: 600; x: root.rail-collapsed ? 0px : 10px; width: parent.width - (root.rail-collapsed ? 0px : 14px); height: parent.height; horizontal-alignment: root.rail-collapsed ? center : left; vertical-alignment: center; overflow: elide; }
+    Text { text: root.rail-collapsed ? "♙" : "♙  Hồ sơ / Khóa trẻ em"; color: root.active-page == "profiles" ? #ffffff : (root.light-mode ? #1b3044 : #c6d7e9); font-size: root.rail-collapsed ? 19px : 13px; font-weight: 600; x: root.rail-collapsed ? 0px : 10px; width: parent.width - (root.rail-collapsed ? 0px : 14px); height: parent.height; horizontal-alignment: root.rail-collapsed ? center : left; vertical-alignment: center; overflow: elide; }
     TouchArea { clicked => { root.navigate("profiles"); } }
 }
                 Rectangle { height: 38px; border-radius: 8px; background: false ? #264460 : (root.light-mode ? #edf2f7 : #172838);
-    Text { text: root.rail-collapsed ? "M3U" : "⇩  Xuất M3U"; color: false ? #ffffff : (root.light-mode ? #1b3044 : #c6d7e9); font-size: root.rail-collapsed ? 12px : 13px; font-weight: 600; x: root.rail-collapsed ? 0px : 10px; width: parent.width - (root.rail-collapsed ? 0px : 14px); height: parent.height; horizontal-alignment: root.rail-collapsed ? center : left; vertical-alignment: center; overflow: elide; }
+    Text { text: root.rail-collapsed ? "⇩" : "⇩  Xuất M3U"; color: false ? #ffffff : (root.light-mode ? #1b3044 : #c6d7e9); font-size: root.rail-collapsed ? 19px : 13px; font-weight: 600; x: root.rail-collapsed ? 0px : 10px; width: parent.width - (root.rail-collapsed ? 0px : 14px); height: parent.height; horizontal-alignment: root.rail-collapsed ? center : left; vertical-alignment: center; overflow: elide; }
     TouchArea { clicked => { root.export-m3u(); } }
 }
                 Rectangle { height: 38px; border-radius: 8px; background: false ? #264460 : (root.light-mode ? #edf2f7 : #172838);
-    Text { text: root.rail-collapsed ? "★" : "★  Xuất M3U yêu thích"; color: false ? #ffffff : (root.light-mode ? #1b3044 : #c6d7e9); font-size: root.rail-collapsed ? 12px : 13px; font-weight: 600; x: root.rail-collapsed ? 0px : 10px; width: parent.width - (root.rail-collapsed ? 0px : 14px); height: parent.height; horizontal-alignment: root.rail-collapsed ? center : left; vertical-alignment: center; overflow: elide; }
+    Text { text: root.rail-collapsed ? "★" : "★  Xuất M3U yêu thích"; color: false ? #ffffff : (root.light-mode ? #1b3044 : #c6d7e9); font-size: root.rail-collapsed ? 19px : 13px; font-weight: 600; x: root.rail-collapsed ? 0px : 10px; width: parent.width - (root.rail-collapsed ? 0px : 14px); height: parent.height; horizontal-alignment: root.rail-collapsed ? center : left; vertical-alignment: center; overflow: elide; }
     TouchArea { clicked => { root.export-favorites-m3u(); } }
 }
                 Rectangle { height: 38px; border-radius: 8px; background: root.active-page == "settings" ? #264460 : (root.light-mode ? #edf2f7 : #172838);
-    Text { text: root.rail-collapsed ? "SET" : "⚙  Cài đặt"; color: root.active-page == "settings" ? #ffffff : (root.light-mode ? #1b3044 : #c6d7e9); font-size: root.rail-collapsed ? 12px : 13px; font-weight: 600; x: root.rail-collapsed ? 0px : 10px; width: parent.width - (root.rail-collapsed ? 0px : 14px); height: parent.height; horizontal-alignment: root.rail-collapsed ? center : left; vertical-alignment: center; overflow: elide; }
+    Text { text: root.rail-collapsed ? "⚙" : "⚙  Cài đặt"; color: root.active-page == "settings" ? #ffffff : (root.light-mode ? #1b3044 : #c6d7e9); font-size: root.rail-collapsed ? 19px : 13px; font-weight: 600; x: root.rail-collapsed ? 0px : 10px; width: parent.width - (root.rail-collapsed ? 0px : 14px); height: parent.height; horizontal-alignment: root.rail-collapsed ? center : left; vertical-alignment: center; overflow: elide; }
     TouchArea { clicked => { root.navigate("settings"); } }
 }
                 Rectangle { vertical-stretch: 1; background: root.light-mode ? #ffffff : #101b29; }
@@ -457,17 +457,23 @@ if (root.active-page == "tv" || root.active-page == "fav" || root.active-page ==
                                     Button { text: "↻"; clicked => { root.refresh-sources(); } }
                                 }
                                 Text { text: root.count-text; color: #9cb4cb; font-size: 11px; }
-                                HorizontalLayout { Button { text: "‹ Trang trước"; clicked => { root.page-prev(); } } Button { text: "Trang sau ›"; clicked => { root.page-next(); } } }
+                                HorizontalLayout {
+                                    spacing: 8px;
+                                    Rectangle { horizontal-stretch: 1; background: transparent; }
+                                    Button { text: "‹ Trước"; width: 105px; clicked => { root.page-prev(); } }
+                                    Button { text: "Sau ›"; width: 105px; clicked => { root.page-next(); } }
+                                }
                                 LineEdit {
                                     text <=> root.search-text;
                                     placeholder-text: "⌕ Tìm kênh, nhóm, EPG...";
                                     edited(value) => { root.filter-changed(value); }
                                 }
                                 HorizontalLayout {
-                                    spacing: 5px;
-                                    Button { text: "Tất cả"; clicked => { root.show-all(); } }
-                                    Button { text: "★ Yêu thích"; clicked => { root.show-favorites(); } }
-                                    Button { text: "◷ Gần đây"; clicked => { root.navigate("recent"); } }
+                                    spacing: 8px;
+                                    Button { text: "Tất cả"; width: 92px; clicked => { root.show-all(); } }
+                                    Button { text: "★ Yêu thích"; width: 116px; clicked => { root.show-favorites(); } }
+                                    Button { text: "◷ Gần đây"; width: 108px; clicked => { root.navigate("recent"); } }
+                                    Rectangle { horizontal-stretch: 1; background: transparent; }
                                 }
                                 Text { text: root.selected-source-text; color: root.accent; font-size: 11px; }
                                 ListView {
