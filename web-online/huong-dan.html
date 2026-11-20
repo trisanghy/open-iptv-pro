@@ -64,6 +64,30 @@ details[open] summary{color:#c2a9ff}
  .mobile-tabs{background:#111827!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
  .site-header{background:#080c18!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
 }
+
+/* Cohesive five-icon set: crisp monochrome vector linework, no icon font. */
+.mobile-tabs .guide-tab-icon{
+ width:24px;height:24px;display:block;flex:none;fill:none;
+ stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;
+ overflow:visible;pointer-events:none;
+}
+.mobile-tabs a span{display:block;max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+@media(max-width:720px){
+ .mobile-tabs{column-gap:3px;padding:7px 8px calc(6px + env(safe-area-inset-bottom,0px))}
+ .mobile-tabs a{min-height:55px;gap:4px;font-size:10.5px;line-height:1.2;font-weight:650;
+  color:#a3b2ca;border:1px solid transparent;border-radius:11px;transition:background-color .16s,color .16s}
+ .mobile-tabs a .guide-tab-icon{width:24px;height:24px;stroke-width:1.8}
+ .mobile-tabs a.is-current{
+  background:rgba(167,139,250,.15)!important;color:#ded2ff!important;
+  border-color:rgba(167,139,250,.24)!important;box-shadow:none
+ }
+ .mobile-tabs a.is-current .guide-tab-icon{stroke-width:2}
+ .mobile-tabs a:active{transform:none}
+}
+@media(hover:none){
+ .mobile-tabs a:hover:not(.is-current){background:transparent!important;color:#a3b2ca!important}
+}
+@media(prefers-reduced-motion:reduce){.mobile-tabs a{transition:none!important}}
 </style>
 </head>
 <body>
@@ -188,11 +212,11 @@ details[open] summary{color:#c2a9ff}
 </main>
 </div>
 <nav class="mobile-tabs" aria-label="Điều hướng hướng dẫn trên điện thoại">
-<a href="#tv"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M9 9l6 3-6 3z"/></svg><span>TV</span></a>
-<a href="#kenh"><svg viewBox="0 0 24 24"><path d="m12 2 3 6.4 7 1-5 4.8 1.1 7-6.1-3.3-6.1 3.3L6 14.2l-5-4.8 7-1z"/></svg><span>Yêu thích</span></a>
-<a href="#epg"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 3v4M17 3v4M3 10h18M7 14h6"/></svg><span>Lịch</span></a>
-<a href="#nguon"><svg viewBox="0 0 24 24"><path d="M4 7h7l2 2h7v10H4zM4 7V5h9"/></svg><span>Nguồn</span></a>
-<a href="#faq"><svg viewBox="0 0 24 24"><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></svg><span>Thêm</span></a>
+<a href="#tv" data-guide-tab="tv" aria-label="Xem truyền hình"><svg class="guide-tab-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="2.75" y="4.5" width="18.5" height="14.5" rx="3"/><path d="M9.5 19v2m5-2v2M10.25 8.75l4.5 3-4.5 3z"/></svg><span>TV</span></a>
+<a href="#kenh" data-guide-tab="favorites" aria-label="Kênh yêu thích"><svg class="guide-tab-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m12 3.3 2.73 5.53 6.11.89-4.42 4.31 1.04 6.09L12 17.25l-5.46 2.87 1.04-6.09-4.42-4.31 6.11-.89L12 3.3z" stroke-linejoin="round"/></svg><span>Yêu thích</span></a>
+<a href="#epg" data-guide-tab="epg" aria-label="Lịch phát sóng"><svg class="guide-tab-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="3.25" y="5.5" width="17.5" height="15" rx="2.75"/><path d="M7.75 3.5v4M16.25 3.5v4M3.5 10.25h17M8 14.25h3.5M8 17.25h7.5"/></svg><span>Lịch</span></a>
+<a href="#nguon" data-guide-tab="sources" aria-label="Quản lý nguồn"><svg class="guide-tab-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3.25 7.25a2 2 0 0 1 2-2h4.5l2.25 2.5h6.75a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5.25a2 2 0 0 1-2-2V7.25z"/><path d="M3.5 10.75h16.75"/></svg><span>Nguồn</span></a>
+<a href="#faq" data-guide-tab="more" aria-label="Các chức năng khác"><svg class="guide-tab-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="3.25" y="3.25" width="7.5" height="7.5" rx="2"/><rect x="13.25" y="3.25" width="7.5" height="7.5" rx="2"/><rect x="3.25" y="13.25" width="7.5" height="7.5" rx="2"/><rect x="13.25" y="13.25" width="7.5" height="7.5" rx="2"/></svg><span>Thêm</span></a>
 </nav>
 <script>
 (function(){
