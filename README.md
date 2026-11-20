@@ -1,3 +1,7 @@
+## Rust Lab v23.8.88 — Whisper Windows x64 Setup: sửa kiểm thử hồi quy
+
+Giữ nguyên sửa bộ chạy Whisper Windows `.exe`, tiến độ tải theo phần trăm thật và thông báo lỗi chi tiết trong v23.8.87. Sửa bài kiểm thử v20 cũ: kiểm tra lời gọi `normalize_whisper_binary` có `map_err` chứa chẩn đoán thay vì ép phải là toán tử `?`. Không sửa Electron, main, video, dữ liệu hay các tag cũ. [Release notes](RELEASE_NOTES_RUST_LAB_V23_8_88.md).
+
 ## Rust Lab v23.8.87 — Sửa Whisper Windows x64 và tiến độ cài đặt
 
 - Nhận diện đúng `whisper-cpp-win32-x64-cpu.exe` nằm trong `whisper-cpp-win32-x64-cpu.zip`, chuyển thành `whisper-cli.exe` ngay tại thư mục giải nén để bảo toàn các DLL đi kèm, kiểm tra khả năng chạy thực tế.

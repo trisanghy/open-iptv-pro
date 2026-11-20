@@ -57,6 +57,6 @@ test('v20.1 auto-installer normalizes platform release file names to whisper-cli
  assert.match(native,/asset\.strip_suffix\("\.zip"\)/);
  assert.match(native,/find_named\(dir,packaged,0\)/);
  assert.match(native,/fs::rename\(&source,&canonical\)/);
- assert.match(native,/normalize_whisper_binary\(&dir,asset\)\?/);
+ assert.match(native,/normalize_whisper_binary\(&dir,asset\)\.map_err/);
  assert.doesNotMatch(native,/ZIP Whisper không chứa công cụ phù hợp/);
 });
