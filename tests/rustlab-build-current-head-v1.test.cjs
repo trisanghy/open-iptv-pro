@@ -22,6 +22,9 @@ test('Rust inline CC waits for all async renderer modules',()=>{
 
 
 test('Mac builder clears all old and hidden entries only inside its dedicated folder',()=>{
+ const sh=fs.readFileSync(path.join(root,'scripts/BUILD_RUSTLAB_MAC_ONE_ZIP_FAST.sh'),'utf8');
+ assert.match(sh,/find "\$DEST" -mindepth 1 -maxdepth 1 -exec rm -rf -- \{\} \+/);
+ if(process.platform==='win32')return; // Git Bash path and symlink permissions differ from the Mac builder.
  const {spawnSync}=require('node:child_process');
  const os=require('node:os');
  const tmp=fs.mkdtempSync(path.join(os.tmpdir(),'rustlab-output-cleanup-'));
