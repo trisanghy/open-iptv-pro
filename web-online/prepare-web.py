@@ -499,6 +499,26 @@ if html.count('web-mobile-touch-sort.js?v=')!=1 or html.count('web-mobile-touch-
 if html.count('</head>')!=1:sys.exit('EPG stylesheet insertion failed')
 html=html.replace('</head>','<link rel="stylesheet" href="web-epg-day.css?v=epg-logo-20261120b"/></head>',1)
 if html.count('web-epg-day.css?v=')!=1:sys.exit('Duplicate EPG day CSS')
+# On iPhone "Request Desktop Website" uses a 1024px virtual width.
+# Keep the desktop UI but correct 100vh that visually occupies only the
+# upper part of the physical screen; do not modify Electron/WebView files.
+desktop_viewport_version='desktop-iphone-height-20261120a'
+for asset in ('web-desktop-viewport-fix.js','web-desktop-viewport-fix.css'):
+    source=Path(__file__).resolve().parent.parent/asset
+    if not source.is_file():
+        sys.exit('Missing desktop-on-iPhone viewport asset: '+asset)
+    copy2(source,out/asset)
+bootstrap='src="theme-boot.js?v=responsive-desktop-20261118j"></script>'
+if html.count(bootstrap)!=1:
+    sys.exit('Desktop-on-iPhone viewport bootstrap marker changed')
+html=html.replace(bootstrap,bootstrap+
+ '<script src="web-desktop-viewport-fix.js?v='+desktop_viewport_version+'"></script>',1)
+if html.count('</head>')!=1:
+    sys.exit('Desktop viewport stylesheet insertion failed')
+html=html.replace('</head>',
+ '<link rel="stylesheet" href="web-desktop-viewport-fix.css?v='+desktop_viewport_version+'"/></head>',1)
+if html.count('web-desktop-viewport-fix.js?v=')!=1 or html.count('web-desktop-viewport-fix.css?v=')!=1:
+    sys.exit('Desktop viewport helper assets duplicated')
 (out/'index.html').write_text(html,encoding='utf-8')
 (out/'.nojekyll').write_text('')
 (out/'manifest.webmanifest').write_text(json.dumps({
