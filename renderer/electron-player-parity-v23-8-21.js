@@ -19,19 +19,19 @@
   card.classList.add('electron-parity-player');
   const master=doc.createElement('div');master.className='electron-parity-volume';
   master.setAttribute('role','group');master.setAttribute('aria-label','Âm lượng kênh');
-  const icon=doc.createElement('label');icon.htmlFor='volume';icon.textContent='◖))';
+  const icon=doc.createElement('label');icon.htmlFor='volume';icon.textContent='';icon.setAttribute('aria-label','Âm lượng');
   icon.title='Điều chỉnh âm lượng kênh';master.append(icon,volume);top.append(master);
   const epg=$('epgCurrent'),guide=$('openGuideBtn');
   if(epg&&guide){
    guide.classList.remove('screen-reader-only');guide.removeAttribute('tabindex');
-   guide.classList.add('electron-parity-guide');guide.textContent='▤';
+   guide.classList.add('electron-parity-guide');guide.textContent='';
    guide.title='Xem EPG';guide.setAttribute('aria-label','Mở lịch phát sóng');
    epg.append(guide);
   }
   const source=$('manualLinkSelect');
   if(source)source.title='Chọn link gốc hoặc dự phòng của kênh đang phát';
   const cc=$('rustSubtitleOptionsButton');
-  if(cc){cc.textContent='▣ CC · Tùy chỉnh';cc.title='Chỉnh phụ đề trên video';}
+  if(cc){cc.textContent='CC · Tùy chỉnh';cc.title='Chỉnh phụ đề trên video';}
   const voice=$('liveTtsVoice');
   if(voice&&!tts.querySelector('label[for="liveTtsVoice"]')){
    const label=doc.createElement('label');label.htmlFor='liveTtsVoice';
@@ -45,9 +45,9 @@
   const heading=doc.createElement('summary');heading.textContent='Công cụ  ⌄';
   heading.title='Chụp ảnh, FFmpeg, nghe thử và cài giọng';menu.append(heading);
   const body=doc.createElement('div');body.className='electron-parity-tools-body';menu.append(body);
-  shot.textContent='▣ Chụp ảnh';body.append(shot);
+  shot.textContent='Chụp ảnh';body.append(shot);
   const btn=doc.createElement('button');btn.type='button';btn.id='electronParityFfmpeg';
-  btn.textContent='↻ FFmpeg dự phòng';btn.title='Thử bộ phát FFmpeg H.264/AAC';
+  btn.textContent='FFmpeg dự phòng';btn.title='Thử bộ phát FFmpeg H.264/AAC';
   btn.addEventListener('click',()=>{
    if(typeof win.IPTVState?.tryFfmpegManually!=='function')
     return win.IPTVState?.toast?.('FFmpeg chưa sẵn sàng','warn');

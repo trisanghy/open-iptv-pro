@@ -1,0 +1,73 @@
+/* Rust Lab adapter. Icons below reuse the exact --ipc-* SVG masks from web/online.
+   Never replace existing controls: keep playback, volume, source and PiP listeners. */
+:root{
+ --ipc-fit:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='5' width='18' height='14' rx='2'/%3E%3Cpath d='M8 9h8v6H8z'/%3E%3C/svg%3E");
+ --ipc-link:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m9 14 6-6M11 7H7a4 4 0 0 0 0 8h3M13 17h4a4 4 0 0 0 0-8h-3'/%3E%3C/svg%3E");
+ --ipc-settings:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 3v3m0 12v3M3 12h3m12 0h3m-15.4-6.4 2.1 2.1m8.6 8.6 2.1 2.1M18.4 5.6l-2.1 2.1m-8.6 8.6-2.1 2.1'/%3E%3Ccircle cx='12' cy='12' r='3'/%3E%3C/svg%3E");
+ --ipc-refresh:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 11a8 8 0 1 0-2.1 5.5M20 5v6h-6'/%3E%3C/svg%3E");
+}
+#page-tv .electron-parity-player .ipvp-transport :is(#prevBtn,#playBtn,#stopBtn,#nextBtn),
+#page-tv .electron-parity-player .ipvp-cast :is(#castBtn,#pipBtn,#fullscreenBtn){
+ display:inline-flex!important;align-items:center!important;justify-content:center!important;gap:7px!important;
+ font-size:0!important;line-height:0!important;
+}
+#page-tv .electron-parity-player .electron-parity-volume label[for="volume"]{
+ display:inline-flex!important;align-items:center!important;justify-content:center!important;
+ width:24px!important;min-width:24px!important;height:24px!important;font-size:0!important;line-height:0!important;
+}
+#page-tv .electron-parity-player .electron-parity-volume label[for="volume"]::before,
+#page-tv .electron-parity-player .electron-parity-tools-body :is(#shotBtn,#electronParityFfmpeg)::before,
+#page-tv .electron-parity-player #rustSubtitleOptionsButton::before,
+#page-tv #playerBox:fullscreen .fs-web-transport .fs-web-mute::before,
+#page-tv #playerBox:fullscreen .fs-web-actions :is(#fsWebFavorite,#fsWebSettings,#fsWebPiP,#fsExit)::before,
+#page-tv #playerBox:fullscreen .fs-web-actions :is(#fsWebFitButton,#fsWebLinkButton,#fsEPG,#fsDVR)::before,
+#page-tv #playerBox:fullscreen .fs-web-popover .fs-web-option::before{
+ content:"";display:inline-block!important;flex:0 0 20px!important;
+ width:20px!important;height:20px!important;background-color:currentColor!important;
+ -webkit-mask:var(--ipc-icon) center/contain no-repeat!important;
+ mask:var(--ipc-icon) center/contain no-repeat!important;
+}
+#page-tv .electron-parity-player .electron-parity-volume label::before{--ipc-icon:var(--ipc-volume);}
+#page-tv .electron-parity-player .electron-parity-volume label[data-iptv-muted="true"]::before{--ipc-icon:var(--ipc-muted);}
+#page-tv .electron-parity-player .electron-parity-tools-body #shotBtn::before{--ipc-icon:var(--ipc-camera);}
+#page-tv .electron-parity-player .electron-parity-tools-body #electronParityFfmpeg::before{--ipc-icon:var(--ipc-refresh);}
+#page-tv .electron-parity-player #rustSubtitleOptionsButton::before{--ipc-icon:var(--ipc-sliders);}
+#page-tv .electron-parity-player #openGuideBtn.electron-parity-guide{font-size:0!important;line-height:0!important;}
+#page-tv .electron-parity-player .electron-parity-tools-body :is(#shotBtn,#electronParityFfmpeg),
+#page-tv .electron-parity-player #rustSubtitleOptionsButton{
+ display:inline-flex!important;align-items:center!important;justify-content:center!important;gap:8px!important;
+}
+#page-tv #playerBox:fullscreen .fs-web-transport .fs-web-mute,
+#page-tv #playerBox:fullscreen .fs-web-actions :is(#fsWebFavorite,#fsWebSettings,#fsWebPiP,#fsExit){
+ display:inline-flex!important;align-items:center!important;justify-content:center!important;
+ font-size:0!important;line-height:0!important;
+}
+#page-tv #playerBox:fullscreen .fs-web-transport .fs-web-mute::before{--ipc-icon:var(--ipc-volume);}
+#page-tv #playerBox:fullscreen .fs-web-transport .fs-web-mute[data-iptv-muted="true"]::before{--ipc-icon:var(--ipc-muted);}
+#page-tv #playerBox:fullscreen #fsWebFavorite::before{--ipc-icon:var(--ipc-star);}
+#page-tv #playerBox:fullscreen #fsWebFavorite[aria-pressed="true"]::before{--ipc-icon:var(--ipc-starfill);}
+#page-tv #playerBox:fullscreen #fsWebSettings::before{--ipc-icon:var(--ipc-settings);}
+#page-tv #playerBox:fullscreen #fsWebPiP::before{--ipc-icon:var(--ipc-pip);}
+#page-tv #playerBox:fullscreen #fsExit::before{--ipc-icon:var(--ipc-shrink);}
+#page-tv #playerBox:fullscreen :is(#fsWebFitButton,#fsWebLinkButton,#fsEPG,#fsDVR){
+ display:inline-flex!important;align-items:center!important;justify-content:center!important;gap:7px!important;
+}
+#page-tv #playerBox:fullscreen #fsWebFitButton::before{--ipc-icon:var(--ipc-fit);}
+#page-tv #playerBox:fullscreen #fsWebLinkButton::before{--ipc-icon:var(--ipc-link);}
+#page-tv #playerBox:fullscreen #fsEPG::before{--ipc-icon:var(--ipc-calendar);}
+#page-tv #playerBox:fullscreen #fsDVR::before{--ipc-icon:var(--ipc-record);}
+#page-tv #playerBox:fullscreen .fs-web-popover .fs-web-option{
+ display:flex!important;align-items:center!important;gap:9px!important;
+}
+#page-tv #playerBox:fullscreen .fs-web-fit .fs-web-option::before,
+#page-tv #playerBox:fullscreen .fs-web-links .fs-web-option::before{--ipc-icon:var(--ipc-check);opacity:.2;}
+#page-tv #playerBox:fullscreen .fs-web-popover .fs-web-option[aria-pressed="true"]::before{opacity:1!important;}
+#page-tv #playerBox:fullscreen .fs-web-settings .fs-web-option:nth-child(1)::before{--ipc-icon:var(--ipc-record);}
+#page-tv #playerBox:fullscreen .fs-web-settings .fs-web-option:nth-child(2)::before{--ipc-icon:var(--ipc-camera);}
+#page-tv #playerBox:fullscreen .fs-web-settings .fs-web-option:nth-child(3)::before{--ipc-icon:var(--ipc-sliders);}
+#page-tv #playerBox:fullscreen .fs-web-settings .fs-web-option:nth-child(4)::before{--ipc-icon:var(--ipc-settings);}
+#page-tv #playerBox:fullscreen :is(#fsPrev,#fsPlay,#fsNext,#fsExit){font-size:0!important;line-height:0!important;}
+@media(prefers-reduced-motion:reduce){
+ #page-tv .electron-parity-player .ipvp-transport button,
+ #page-tv #playerBox:fullscreen .fs-web-transport button{transition:none!important;}
+}

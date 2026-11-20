@@ -37,24 +37,24 @@
   details.append(controls.fsChannel,subtitle);current.append(logo,details);
   const volume=doc.createElement('input');volume.type='range';volume.min='0';volume.max='100';volume.step='1';
   volume.id='fsWebVolume';volume.setAttribute('aria-label','Âm lượng');volume.title='Âm lượng';
-  const mute=button('fs-web-mute','◖))','Bật / tắt tiếng');
+  const mute=button('fs-web-mute','','Bật / tắt tiếng');
   const media=wrap('fs-web-transport',controls.fsPrev,controls.fsPlay,controls.fsNext,mute,volume);
-  const fitBtn=button('fs-web-action','▣ Khung hình ⌄','Chọn tỷ lệ khung hình');
+  const fitBtn=button('fs-web-action','Khung hình ⌄','Chọn tỷ lệ khung hình');
   fitBtn.id='fsWebFitButton';fitBtn.setAttribute('aria-expanded','false');
   const fitPop=create('div','fs-web-popover fs-web-fit');fitPop.id='fsWebFitPopup';fitPop.hidden=true;
   fitPop.setAttribute('role','group');fitPop.setAttribute('aria-label','Tỷ lệ khung hình');
   const fitMenu=wrap('fs-web-menu',fitBtn,fitPop);
-  const linkBtn=button('fs-web-action','♧ Link chính ⌄','Chọn link chính hoặc dự phòng');
+  const linkBtn=button('fs-web-action','Link chính ⌄','Chọn link chính hoặc dự phòng');
   linkBtn.id='fsWebLinkButton';linkBtn.setAttribute('aria-expanded','false');
   const linkPop=create('div','fs-web-popover fs-web-links');linkPop.id='fsWebLinkPopup';linkPop.hidden=true;
   linkPop.setAttribute('role','group');linkPop.setAttribute('aria-label','Nguồn phát');
   const linkMenu=wrap('fs-web-menu',linkBtn,linkPop);
-  const favorite=button('fs-web-icon','☆','Yêu thích');favorite.id='fsWebFavorite';
-  const cog=button('fs-web-icon','⚙','Tùy chọn');cog.id='fsWebSettings';
+  const favorite=button('fs-web-icon','','Yêu thích');favorite.id='fsWebFavorite';
+  const cog=button('fs-web-icon','','Tùy chọn');cog.id='fsWebSettings';
   cog.setAttribute('aria-expanded','false');
   const settingsPop=create('div','fs-web-popover fs-web-settings');settingsPop.id='fsWebSettingsPopup';settingsPop.hidden=true;
   const settingsMenu=wrap('fs-web-menu',cog,settingsPop);
-  const pip=button('fs-web-icon','▣','Cửa sổ nổi Picture-in-Picture');pip.id='fsWebPiP';
+  const pip=button('fs-web-icon','','Cửa sổ nổi Picture-in-Picture');pip.id='fsWebPiP';
   controls.fsExit.classList.add('fs-web-exit');
   const actions=wrap('fs-web-actions',controls.fsEPG,fitMenu,linkMenu,favorite,settingsMenu,pip,controls.fsExit);
   const bottom=wrap('fs-web-bottom',media,current,actions);
@@ -86,7 +86,7 @@
   function renderFits(){
    fitPop.replaceChildren();
    for(const [value,label] of fitItems){
-    const selected=screenFit===value,btn=button('fs-web-option'+(selected?' selected':''),(selected?'☑  ':'□  ')+label,label);
+    const selected=screenFit===value,btn=button('fs-web-option'+(selected?' selected':''),label,label);
     btn.setAttribute('aria-pressed',String(selected));
     btn.addEventListener('click',()=>{screenFit=value;try{win.localStorage?.setItem(fitStorageKey,value);}catch{}renderFits();updateVideoFit();closeMenus();});
     fitPop.append(btn);
@@ -97,12 +97,12 @@
    const enabled=!!win.IPTVState?.getCurrent?.()&&available;
    linkBtn.disabled=!enabled;
    linkPop.replaceChildren();
-   if(!enabled){linkBtn.textContent='♧ Link phát';return;}
+   if(!enabled){linkBtn.textContent='Link phát';return;}
    const options=Array.from(original.options).filter(option=>option.value&&!option.disabled);
    const active=original.value;
-   linkBtn.textContent='♧ '+(options.find(o=>o.value===active)?.textContent||options[0]?.textContent||'Link chính')+' ⌄';
+   linkBtn.textContent=(options.find(o=>o.value===active)?.textContent||options[0]?.textContent||'Link chính')+' ⌄';
    for(const [i,option] of options.entries()){
-    const selected=option.value===active,btn=button('fs-web-option'+(selected?' selected':''),(selected?'▥  ':'▧  ')+(option.textContent||('Dự phòng '+i)),option.textContent);
+    const selected=option.value===active,btn=button('fs-web-option'+(selected?' selected':''),(option.textContent||('Dự phòng '+i)),option.textContent);
     btn.setAttribute('aria-pressed',String(selected));
     btn.addEventListener('click',()=>{
      // The source picker owns validation, persistence and playback; invoke that original handler.
@@ -121,13 +121,13 @@
    settingsPop.append(btn);
   };
   settingsPop.replaceChildren();
-  addSetting('⏺ Lịch ghi hình',()=>controls.fsDVR.click());
-  addSetting('▣ Chụp ảnh kênh',()=>{$('shotBtn')?.click();});
-  addSetting('▣ Phụ đề trên video',()=>{
+  addSetting('Lịch ghi hình',()=>controls.fsDVR.click());
+  addSetting('Chụp ảnh kênh',()=>{$('shotBtn')?.click();});
+  addSetting('Phụ đề trên video',()=>{
    const cc=$('rustSubtitleOptionsButton');if(cc)cc.click();
    else win.IPTVState?.toast?.('Không tìm thấy cài đặt phụ đề','warn');
   });
-  addSetting('⚙ Cài đặt ứng dụng',()=>{
+  addSetting('Cài đặt ứng dụng',()=>{
    Promise.resolve(doc.exitFullscreen?.()).catch(()=>{}).finally(()=>win.IPTVState?.setPage?.('settings'));
   });
   fitBtn.addEventListener('click',()=>{renderFits();toggleMenu(fitBtn,fitPop);});
@@ -147,8 +147,8 @@
    favorite.disabled=!ch;
    const original=$('favCurrentBtn');
    const selected=original?.getAttribute('aria-pressed')==='true';
-   favorite.textContent=selected?'★':'☆';favorite.setAttribute('aria-pressed',String(selected));
-   mute.textContent=video.muted||video.volume===0?'◖×':'◖))';
+   favorite.textContent='';favorite.setAttribute('aria-pressed',String(selected));
+   mute.dataset.iptvMuted=String(video.muted||video.volume===0);
    volume.value=String(Math.round((video.muted?0:video.volume)*100));
    pip.disabled=!ch;
    controls.fsPlay.setAttribute('aria-label',playing?'Tạm dừng':'Phát');
