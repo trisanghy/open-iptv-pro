@@ -6,13 +6,16 @@ const source=fs.readFileSync(path.join(root,'collector.js'),'utf8');
 const advanced=fs.readFileSync(path.join(root,'advanced.js'),'utf8');
 const core=require(path.join(root,'advanced-core.js'));
 const merger=require(path.join(root,'collector-core.js'));
-function harness(saveOk=true){
+function harness(saveOk=true,extraChannels=0){
  const channels=[
   {id:'srcA|1',sourceId:'srcA',name:'VTV1 (Nguồn 1)',tvgId:'vtv1hd',group:'VTV',url:'https://a.example.test/live.m3u8'},
   {id:'srcB|1',sourceId:'srcB',name:'VTV1 (Nguồn 3)',tvgId:'vtv1hd',group:'VTV',url:'https://b.example.test/live.m3u8'},
   {id:'srcA|2',sourceId:'srcA',name:'VTV2 (Nguồn 1)',tvgId:'vtv2hd',group:'VTV',url:'https://same.example.test/live.m3u8'},
   {id:'srcB|2',sourceId:'srcB',name:'VTV2 (Nguồn 3)',tvgId:'vtv2hd',group:'VTV',url:'https://same.example.test/live.m3u8'}
  ];
+ for(let i=0;i<extraChannels;i++){
+  channels.push({id:'srcA|'+(i+100),sourceId:'srcA',name:'Synthetic '+i,tvgId:'synthetic-'+i,group:'Testing',url:'https://stream.example.test/'+i+'/live.m3u8?quality=1080p',logo:'https://img.example.test/logo/'+i+'.png'});
+ }
  const sources=[{id:'srcA',name:'Nguồn 1',type:'file',enabled:true},{id:'srcB',name:'Nguồn 3',type:'file',enabled:true}];
  const store={channels:[...channels],sources:[...sources],favorites:[],collectorConfig:{enabled:false}};
  const elements=new Map(),messages=[],events={};let batch=null,saves=0;
@@ -44,11 +47,11 @@ function harness(saveOk=true){
  };
  // Calling click listeners synchronously simulates explicit user acceptance.
  document.createElement=tag=>{const el=node(tag);el.addEventListener=(type,fn)=>{if(type==='click')el.onclick=fn};return el};
- const ctx={getStore:()=>store,save:()=>{saves++;return saveOk},render(){},textStatus:msg=>messages.push(msg),
+ const ctx={getStore:()=>store,save:()=>{saves++;return typeof saveOk==='function'?saveOk(store):saveOk},render(){},textStatus:msg=>messages.push(msg),
    toast(){},refreshManualLinks(){},renderList(){},stopPlayer(){}};
  const window={IPTVState:ctx,OpenIPTVCollector:merger,StreamLeafCore:{},IPTVProAdvanced:{setAlternatesBatch:arr=>{batch=arr}},streamleaf:null};
  vm.runInNewContext(source,{window,document,setInterval:()=>0,Date,Math,console,URL,Blob,Promise,setTimeout}, {filename:'collector.js'});
- return {store,originalChannels:channels,originalSources:sources,messages,saves:()=>saves,collect:()=>window.IPTVCollectorUI.collect(false),batch:()=>batch};
+ return {store,originalChannels:channels,originalSources:sources,messages,saves:()=>saves,collect:()=>window.IPTVCollectorUI.collect(false),restore:()=>window.IPTVCollectorUI.restore(),batch:()=>batch};
 }
 test('successful manual merge reports success and keeps real alternate URL',async()=>{
  const h=harness(true);await h.collect();
@@ -77,4 +80,48 @@ test('collector no longer references an undeclared applied variable',()=>{
  assert.match(source,/let committed=false,rollback=null/);
  assert.match(advanced,/function setAlternatesBatch\(entries\)/);
  assert.match(advanced,/setAlternatesBatch,setAlternates:/);
+});
+
+test('collector persists a small undo record, not a second complete copy of every original playlist',async()=>{
+ const baseline=harness(true,300);await baseline.collect();
+ const compactBytes=JSON.stringify(baseline.store).length;
+ const legacyDuplicateBytes=JSON.stringify(baseline.originalChannels).length;
+ // A realistic quota budget between compact and old duplicated layouts.
+ const quota=compactBytes+Math.floor(legacyDuplicateBytes/2);
+ const h=harness(state=>JSON.stringify(state).length<=quota,300);
+ await h.collect();
+ assert.equal(h.store.channels.filter(ch=>ch.sourceId==='collector_merged').length,302);
+ assert.equal(h.store.collectorBackup.version,2);
+ assert.ok(!Object.prototype.hasOwnProperty.call(h.store.collectorBackup,'originalSources'));
+ assert.equal(h.store.channels.filter(ch=>ch.sourceId==='srcA').length,302);
+ assert.ok(JSON.stringify(h.store).length<=quota);
+ assert.ok(JSON.stringify(h.store).length+legacyDuplicateBytes>quota);
+ assert.match(h.messages.at(-1),/Đã gộp 302 kênh/);
+});
+test('compact merge retains original channel metadata and undo restores source visibility',async()=>{
+ const h=harness(true);
+ h.store.channels[0].customNote='do not delete';
+ await h.collect();
+ assert.equal(h.store.channels.find(ch=>ch.id==='srcA|1').customNote,'do not delete');
+ assert.ok(h.store.collectorBackup);
+ await h.restore();
+ assert.equal(h.store.channels.length,4);
+ assert.equal(h.store.channels.find(ch=>ch.id==='srcA|1').customNote,'do not delete');
+ assert.ok(h.store.sources.filter(s=>s.id!=='collector_merged').every(s=>s.enabled===true));
+ assert.equal(h.store.collectorBackup,undefined);
+ assert.match(h.messages.at(-1),/Đã hoàn tác/);
+});
+test('failed undo save rolls back in-memory state rather than displaying false success',async()=>{
+ let canPersist=true;
+ const h=harness(()=>canPersist);
+ await h.collect();
+ const before=JSON.stringify(h.store);
+ canPersist=false;
+ await h.restore();
+ assert.equal(JSON.stringify(h.store),before);
+ assert.match(h.messages.at(-1),/Không thể hoàn tác/);
+ assert.ok(h.store.collectorBackup,'previous undo remains available for retry');
+ canPersist=true;
+ await h.restore();
+ assert.equal(h.store.collectorBackup,undefined);
 });

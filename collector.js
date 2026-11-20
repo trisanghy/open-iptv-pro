@@ -79,9 +79,9 @@
   }catch(e){if(cached.length)return {channels:cached,stale:true,error:e.message};throw e;}
  }
  async function collect(auto=false){if(busy)return;const selected=enabledInputs();if(!selected.length){ctx.toast('Chưa chọn nguồn thu thập','warn');return;}
-  setBusy(true);cancel=false;progress(0,selected.length);msg('Đang thu thập các nguồn đã chọn…');const loaded=[],failures=[],sourceReplacements=new Map();
+  setBusy(true);cancel=false;progress(0,selected.length);msg('Đang thu thập các nguồn đã chọn…');const loaded=[],failures=[];
   let committed=false,rollback=null;
-  try{for(let i=0;i<selected.length;i++){if(cancel)break;const s=selected[i];try{const got=await loadSource(s);loaded.push(...got.channels);if(!got.stale)sourceReplacements.set(s.id,got.channels);log(`${s.name}: ${got.channels.length} kênh${got.stale?' (bản lưu vì tải lỗi: '+got.error+')':''}`);}catch(e){failures.push(s.name);log(s.name+': '+e.message,'error');}progress(i+1,selected.length);}
+  try{for(let i=0;i<selected.length;i++){if(cancel)break;const s=selected[i];try{const got=await loadSource(s);loaded.push(...got.channels);log(`${s.name}: ${got.channels.length} kênh${got.stale?' (bản lưu vì tải lỗi: '+got.error+')':''}`);}catch(e){failures.push(s.name);log(s.name+': '+e.message,'error');}progress(i+1,selected.length);}
    if(cancel){msg('Đã hủy; không thay đổi playlist.');return;}if(!loaded.length){msg('Không có nguồn hợp lệ; playlist cũ được giữ lại.');return;}
    const merged=lib.merge(loaded);if(!merged.channels.length)throw Error('Không có URL phát hợp lệ');
    stats(merged.stats);const bad=failures.length;if(bad&&loaded.length<2){log('Có nguồn tải lỗi; chỉ sử dụng kênh đã tải thành công','warn');}
@@ -91,8 +91,12 @@
    if(!auto){const approved=await confirmInApp('Xác nhận áp dụng playlist gộp',`Gộp ${loaded.length} mục thành ${merged.channels.length} kênh, có ${merged.stats.alternates} link dự phòng?\n\nNguồn ban đầu được giữ lại nhưng tạm ẩn khỏi mục Xem TV. Không xóa kênh cũ.`);if(!approved||cancel){stats();$('sourceMergeSummary').textContent='Đã hủy áp dụng; dữ liệu cũ được giữ nguyên.';msg('Đã hủy áp dụng; playlist không đổi.');return;}}
    rollback={channels:store.channels,sources:store.sources.map(s=>({...s})),favorites:[...store.favorites],
     hadBackup:Object.prototype.hasOwnProperty.call(store,'collectorBackup'),collectorBackup:store.collectorBackup};
-   store.collectorBackup={channels:old.map(c=>({...c})),originalSources:selected.map(src=>({id:src.id,channels:store.channels.filter(c=>c.sourceId===src.id).map(c=>({...c}))})),sourceEnabled:rawSources().map(s=>[s.id,s.enabled]),hadMerged:!!sameSource};
-   for(const [id,list] of sourceReplacements){store.channels=store.channels.filter(c=>c.sourceId!==id).concat(list);}
+   // The original playlist rows already remain in store.channels. Copying every
+   // selected source into collectorBackup doubled the data stored by Safari and
+   // exceeded its localStorage quota during otherwise valid merges.
+   // Keep source rows EXACTLY as they were; fresh URL data is used only to build
+   // the merged view. Older v1 backups remain readable by restore().
+   store.collectorBackup={version:2,channels:old,sourceEnabled:rawSources().map(s=>[s.id,s.enabled]),hadMerged:!!sameSource};
    const previous=new Map(old.map(c=>[lib.keyFor(c),c]));
    for(const c of merged.channels){const oldC=previous.get(lib.keyFor(c));if(oldC){c.id=oldC.id;c.status=oldC.status;c.checkedAt=oldC.checkedAt;c.reason=oldC.reason;if(oldFav.has(oldC.url)&&oldC.url!==c.url)store.favorites.push(c.url);}}
    store.favorites=[...new Set(store.favorites)];store.channels=store.channels.filter(c=>c.sourceId!==SOURCE).concat(merged.channels);
@@ -168,8 +172,40 @@
    }}
    await Promise.all(Array.from({length:workers},worker));ctx.save();ctx.render();msg(`Đã kiểm tra ${done} kênh: ${live} sống, ${dead} lỗi, ${uncertain} chưa rõ; đổi ${replaced} link đã xác minh.`);
   }catch(e){log('Kiểm tra lỗi: '+e.message,'error');msg('Lỗi kiểm tra. Kết quả đã chạy được giữ lại.');}finally{setBusy(false);}}
- async function restore(){if(busy)return;const b=store.collectorBackup;if(!b)return ctx.toast('Chưa có phiên gộp trước để hoàn tác','warn');if(!await confirmInApp('Xác nhận hoàn tác','Khôi phục nguồn đang hiển thị và playlist gộp trước lần áp dụng gần nhất?'))return;
-  store.channels=store.channels.filter(c=>c.sourceId!==SOURCE).concat(b.channels||[]);for(const original of b.originalSources||[]){store.channels=store.channels.filter(c=>c.sourceId!==original.id).concat(original.channels||[]);}for(const [id,v] of b.sourceEnabled||[]){const s=store.sources.find(x=>x.id===id);if(s)s.enabled=v;}let src=store.sources.find(s=>s.id===SOURCE);if(src)src.enabled=!!b.hadMerged;delete store.collectorBackup;ctx.stopPlayer();ctx.save();ctx.render();stats();renderSourceMergeControls();$('sourceMergeSummary').textContent='Đã hoàn tác; các nguồn và kênh cũ được khôi phục.';msg('Đã hoàn tác lần gộp; nguồn cũ hiển thị trở lại.');}
+ async function restore(){
+  if(busy)return;
+  const backup=store.collectorBackup;
+  if(!backup)return ctx.toast('Chưa có phiên gộp trước để hoàn tác','warn');
+  if(!await confirmInApp('Xác nhận hoàn tác','Khôi phục nguồn đang hiển thị và playlist gộp trước lần áp dụng gần nhất?'))return;
+  const previous={channels:store.channels,sources:store.sources.map(s=>({...s})),backup};
+  try{
+   store.channels=store.channels.filter(c=>c.sourceId!==SOURCE).concat(backup.channels||[]);
+   // Compatibility for saved backups made before compact collectorBackup v2.
+   for(const original of backup.originalSources||[]){
+    store.channels=store.channels.filter(c=>c.sourceId!==original.id).concat(original.channels||[]);
+   }
+   for(const [id,enabled] of backup.sourceEnabled||[]){
+    const src=store.sources.find(s=>s.id===id);
+    if(src)src.enabled=enabled;
+   }
+   const mergedSource=store.sources.find(s=>s.id===SOURCE);
+   if(mergedSource)mergedSource.enabled=!!backup.hadMerged;
+   delete store.collectorBackup;
+   if(!ctx.save())throw Error('Không đủ bộ nhớ lưu thao tác hoàn tác.');
+  }catch(e){
+   store.channels=previous.channels;
+   store.sources=previous.sources;
+   store.collectorBackup=previous.backup;
+   log('Hoàn tác lỗi: '+e.message,'error');
+   msg('Không thể hoàn tác vì chưa lưu được. Danh sách trước đó được giữ nguyên.');
+   try{ctx.render();renderInputs();renderSourceMergeControls();stats();}catch(_){}
+   return;
+  }
+  ctx.stopPlayer();
+  ctx.render();renderInputs();stats();renderSourceMergeControls();
+  $('sourceMergeSummary').textContent='Đã hoàn tác; các nguồn và kênh cũ được khôi phục.';
+  msg('Đã hoàn tác lần gộp; nguồn cũ hiển thị trở lại.');
+ }
  function exportClean(){const channels=store.channels.filter(c=>c.sourceId===SOURCE&&c.status==='alive');if(!channels.length)return ctx.toast('Chưa có kênh nào đã được xác minh sống','warn');const text=core.exportM3U(channels);const name='iptv_verified.m3u';
   if(window.streamleaf?.export){window.streamleaf.export(name,text).then(dest=>{if(dest)ctx.toast('Đã xuất '+dest);}).catch(e=>ctx.toast(e.message,'warn'));return;}
   const a=document.createElement('a');const url=URL.createObjectURL(new Blob([text],{type:'audio/x-mpegurl'}));a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1200);
