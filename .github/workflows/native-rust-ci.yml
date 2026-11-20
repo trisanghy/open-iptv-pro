@@ -349,7 +349,7 @@ jobs:
             '04-rail-expanded.png:05-rail-collapsed.png'; do
             left="${pair%%:*}"; right="${pair##*:}"
             result="$(compare -metric AE "screenshot/$left" "screenshot/$right" null: 2>&1 || true)"
-            pixels="${result%% *}"
+            pixels="$(printf '%s\n' "$result" | awk '{printf "%.0f", $1}')"
             if ! [[ "$pixels" =~ ^[0-9]+$ ]] || [ "$pixels" -lt 20000 ]; then
               echo "BUG: visual page state not distinct: $pair ($result)" >&2
               exit 1
