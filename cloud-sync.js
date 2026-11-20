@@ -30,8 +30,10 @@
    linkHelp.textContent=linkHelpOpen?'Ẩn xác thực bằng liên kết':'Email không có mã? Xác thực bằng liên kết';
    syncControls();
   });
+  let authGuide=null;
   if(emailForm){
    const guide=document.createElement('p');guide.className='cloud-auth-guide';
+   authGuide=guide;
    guide.textContent='Đăng nhập bằng email: nếu thư có mã OTP, nhập mã ở Bước 2. Nếu thư chỉ có nút xác nhận tài khoản, chọn phương án liên kết bên dưới. Gmail có thể mở trong trình duyệt khác.';
    emailForm.before(guide);
    const hint=emailForm.querySelector('.hint');
@@ -46,9 +48,10 @@
  const migrationRestore=document.createElement('button');
  migrationRestore.id='cloudMigrationRestore';migrationRestore.type='button';
  migrationRestore.className='btn btn-subtle';migrationRestore.hidden=true;
- migrationRestore.textContent='Khôi phục bản sao dữ liệu từ Supabase cũ';
+ migrationRestore.textContent='Khôi phục dữ liệu cũ';
+ migrationRestore.title='Khôi phục bản sao dữ liệu từ Supabase cũ';
  sync?.after(migrationRestore);
- const account=el('cloudAccount'),choices=el('cloudSyncConflict');
+ const account=el('cloudAccount'),choices=el('cloudSyncConflict'),privacyNote=el('cloudPrivacyNote');
  const useLocal=el('cloudUseLocal'),useCloud=el('cloudUseRemote'),later=el('cloudLater');
  const info=el('cloudConflictReason');
  const STORE='open-iptv-pro-4',GUEST='openiptv:guest-backup:v1',ACTIVE='openiptv:active-uid:v1';
@@ -143,14 +146,21 @@
  const syncControls=()=>{
   show(google,!uid&&!!client&&enabledProviders.google);
   show(github,!uid&&!!client&&enabledProviders.github);
+  show(authGuide,!uid&&!!client&&enabledProviders.email);
+  show(providersNote,!uid&&!!client);
   show(emailForm,!uid&&!!client&&enabledProviders.email);
   show(otpForm,!uid&&!!client&&enabledProviders.email); // OTP works across browsers when the mail template includes {{ .Token }}.
   show(linkHelp,!uid&&!!client&&enabledProviders.email);
    show(linkForm,!uid&&!!client&&enabledProviders.email&&linkHelpOpen);
    card.dataset.authState=uid?'signed-in':'guest';
   show(logout,!!uid);show(sync,!!uid);
-  show(migrationRestore,!!uid&&!!localStorage.getItem(MIGRATION_BACKUP));
+  const hasMigration=!!uid&&!!localStorage.getItem(MIGRATION_BACKUP);
+  show(migrationRestore,hasMigration);
+  card.dataset.hasMigration=hasMigration?'true':'false';
   if(sync)sync.textContent='Đồng bộ ngay';
+  if(privacyNote)privacyNote.textContent=uid
+   ? 'Dữ liệu IPTV được đồng bộ riêng với tài khoản này. Liên kết M3U chứa token cũng được lưu trong Supabase của bạn.'
+   : 'Mỗi tài khoản chỉ truy cập dữ liệu của mình. Không đăng nhập vẫn sử dụng được IPTV. Liên kết M3U chứa token sẽ được lưu trong Supabase khi bạn đồng bộ.';
   account.textContent=uid?'Đã đăng nhập · '+(window.__iptvCloudUserName||'Tài khoản'):'Chế độ khách · lưu trên thiết bị';
   if(quick){
    quick.textContent=uid?'☁ '+(window.__iptvCloudUserName||'Tài khoản'):'☁ Tài khoản';
