@@ -1,4 +1,4 @@
-use open_iptv_pro_native::{epg, epg_cache, export, failover, health, m3u, media, model::{Channel, NativeData, Source}, mpv::{self, Mpv, VideoBackend}, storage, netguard};
+use open_iptv_pro_native::{epg, epg_cache, export, failover, health, m3u, media, model::{Channel, NativeData, Source}, mpv::{self, VideoBackend}, player::Player as Mpv, storage, netguard};
 use slint::{ComponentHandle, ModelRc, VecModel};
 use std::cell::RefCell;
 use std::collections::HashMap;

@@ -8,4 +8,6 @@ pub mod netguard;
 pub mod media;
 pub mod model;
 pub mod mpv;
+pub mod player;
+#[cfg(unix)] pub mod external_mpv;
 pub mod storage;
