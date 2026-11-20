@@ -1,4 +1,4 @@
-# v4.23.76: restore AI video controls and close sidebar blank gutter, preserve 10s Whisper/TTS.
+# v4.23.76: GPU hardware encoding benchmarks and version-aligned Windows build.
 name: Publish Electron v4.23.76 Beta (Mac ARM/Intel, Windows, Source)
 on:
   push:
