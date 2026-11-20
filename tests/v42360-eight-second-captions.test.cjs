@@ -64,7 +64,7 @@ test('v4.23.67: translating target text and TTS complete playback stay intact',(
  assert.match(tts,/speechQueue\.enqueue\(payload\)/);
  assert.doesNotMatch(tts,/resetPlayback\(false\)/);
  const pkg=JSON.parse(read('package.json'));
- assert.equal(pkg.version,'4.23.70');
+ assert.equal(pkg.version,'4.23.71');
  assert.deepEqual(pkg.build.mac.target,['dmg']);
  assert.equal(pkg.build.dmg.writeUpdateInfo,false);
 });

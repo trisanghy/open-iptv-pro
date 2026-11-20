@@ -49,6 +49,35 @@
   for(const [lang,label] of Object.entries({"en":"Waiting for video data from source •","zh-CN":"正在等待来源的视频数据 •","lo":"ກຳລັງລໍຖ້າຂໍ້ມູນວິດີໂອຈາກແຫຼ່ງ •","es":"Esperando datos de vídeo de la fuente •","pt-BR":"Aguardando dados de vídeo da fonte •","th":"กำลังรอข้อมูลวิดีโอจากแหล่ง •","km":"កំពុងរង់ចាំទិន្នន័យវីដេអូពីប្រភព •","fr":"En attente des données vidéo de la source •","de":"Warte auf Videodaten der Quelle •","it":"In attesa dei dati video dalla sorgente •","ja":"ソースから映像データを待機中 •","ko":"소스에서 영상 데이터를 기다리는 중 •","ru":"Ожидание видеоданных от источника •","id":"Menunggu data video dari sumber •","hi":"स्रोत से वीडियो डेटा की प्रतीक्षा •","ar":"بانتظار بيانات الفيديو من المصدر •"})){
     Object.assign(dictionaries[lang]||(dictionaries[lang]={}),{'Đang đợi dữ liệu video từ nguồn •':label});
   }
+  // Preserve all newer translations and supplement missing UI labels from installed language packs.
+  const coverage=window.OpenIPTVEnglishCoverage;
+  for(const [key,value] of Object.entries(coverage?.exact||{})){
+    const target=dictionaries.en||(dictionaries.en={});
+    if(!target[key])target[key]=value;
+  }
+  const supplement=window.OpenIPTVLocalePacks;
+  for(const [lang,entries] of Object.entries(supplement?.packs||{})){
+    const target=dictionaries[lang]||(dictionaries[lang]={});
+    for(const [key,value] of Object.entries(entries))if(!target[key])target[key]=value;
+  }
+  // Generated labels supplement missing or English-equivalent native entries only.
+  const completedLocalePacks=window.OpenIPTVCompletedLocales?.packs||{};
+  for(const [lang,items] of Object.entries(completedLocalePacks)){
+    const target=dictionaries[lang]||(dictionaries[lang]={});
+    const english=dictionaries.en||{};
+    for(const [key,value] of Object.entries(items)){
+      if(!target[key]||target[key]===key||target[key]===english[key])target[key]=value;
+    }
+  }
+  // Offline locale text extracted from runtime-generated modals, notifications and templates.
+  const dynamicLocales=window.OpenIPTVDynamicLocales;
+  for(const [lang,items] of Object.entries(dynamicLocales?.static||{})){
+    const target=dictionaries[lang]||(dictionaries[lang]={});
+    const en=dictionaries.en||{};
+    for(const [source,text] of Object.entries(items)){
+      if(!target[source]||target[source]===source||target[source]===en[source])target[source]=text;
+    }
+  }
   // Collector interface labels and generated playlist names only; never translate IPTV metadata.
   const collectorUiKeys=["Tổng nguồn:","Kênh gộp:","Trùng:","Link dự phòng:","⧉ Playlist đã hợp nhất"];
   const collectorUiLocales={"en":["Total sources:","Merged channels:","Duplicates:","Backup links:","⧉ Merged playlist","channels"],"es":["Fuentes totales:","Canales combinados:","Duplicados:","Enlaces de respaldo:","⧉ Lista de reproducción combinada","canales"],"pt-BR":["Total de fontes:","Canais mesclados:","Duplicados:","Links alternativos:","⧉ Lista de reprodução mesclada","canais"],"zh-CN":["来源总数:","合并频道:","重复项:","备用链接:","⧉ 已合并播放列表","个频道"],"th":["แหล่งข้อมูลทั้งหมด:","ช่องที่รวมแล้ว:","รายการซ้ำ:","ลิงก์สำรอง:","⧉ เพลย์ลิสต์ที่รวมแล้ว","ช่อง"],"lo":["ແຫຼ່ງທັງໝົດ:","ຊ່ອງທີ່ລວມ:","ລາຍການຊ້ຳ:","ລິ້ງສຳຮອງ:","⧉ ລາຍການຫຼິ້ນທີ່ລວມແລ້ວ","ຊ່ອງ"],"km":["ប្រភពសរុប:","ប៉ុស្តិ៍បានបញ្ចូល:","ស្ទួន:","តំណបម្រុង:","⧉ បញ្ជីចាក់ដែលបានបញ្ចូល","ប៉ុស្តិ៍"],"fr":["Sources au total :","Chaînes fusionnées :","Doublons :","Liens de secours :","⧉ Liste de lecture fusionnée","chaînes"],"de":["Quellen gesamt:","Zusammengeführte Sender:","Duplikate:","Ersatzlinks:","⧉ Zusammengeführte Wiedergabeliste","Sender"],"it":["Fonti totali:","Canali uniti:","Duplicati:","Link alternativi:","⧉ Playlist unificata","canali"],"ja":["ソース総数:","統合チャンネル:","重複:","代替リンク:","⧉ 統合済みプレイリスト","チャンネル"],"ko":["전체 소스:","병합된 채널:","중복:","백업 링크:","⧉ 병합된 재생목록","개 채널"],"ru":["Всего источников:","Объединённые каналы:","Дубликаты:","Резервные ссылки:","⧉ Объединённый плейлист","каналов"],"id":["Total sumber:","Saluran gabungan:","Duplikat:","Tautan cadangan:","⧉ Daftar putar gabungan","saluran"],"hi":["कुल स्रोत:","मर्ज किए गए चैनल:","डुप्लिकेट:","बैकअप लिंक:","⧉ मर्ज की गई प्लेलिस्ट","चैनल"],"ar":["إجمالي المصادر:","القنوات المدمجة:","المكررات:","روابط احتياطية:","⧉ قائمة التشغيل المدمجة","قنوات"]};
@@ -61,12 +90,14 @@
   try{const stored=localStorage.getItem(key);if(stored && Object.hasOwn(locales,stored))locale=stored;}catch{}
   const originalText=new WeakMap(), originalAttrs=new WeakMap();
   const skipSelector='script,style,code,pre,.channel-text b,.folder-header .folder-name,.folder-card h3,.fav-card h3,.shot-card b,#playingTitle,.epg-program b,.epg-row header b,.source-top h3,.source-url,.source-card h3,.preview-title,.channel-preview b';
-  const attributeList=['title','placeholder','aria-label'];
+  const attributeList=['title','placeholder','aria-label','alt','data-tooltip','data-title','value'];
   let inApply=false;
   function translate(raw,language=locale){
     if(typeof raw!=='string' || language==='vi')return raw;
     const dict=dictionaries[language]||{};
     const english=dictionaries.en||{};
+    // Preserve authored leading/trailing spaces in status-message fragments.
+    if(dict[raw])return dict[raw];
     const compact=raw.trim().replace(/\s+/g,' ');
     if(!compact)return raw;
     let out=dict[compact];
@@ -75,6 +106,8 @@
         if(dict[sourceKey]){out=dict[sourceKey];break;}
       }
     }
+    if(!out&&language!=='en')out=supplement?.dynamic?.(compact,language);
+    if(!out)out=dynamicLocales?.translate?.(compact,language);
     if(!out)out=english[compact];
     // Localized numeric statuses: only exact UI patterns, not channel or playlist names.
     if(!out && language!=='vi'){
@@ -190,6 +223,7 @@
         out=m[1]+' Browser will pause retries for 10 minutes.';
     }
 
+    if(!out)out=coverage?.dynamic?.(compact);
     if(!out&&language!=='vi'){
       // A generated source-count fragment; the neighboring user-defined source name is protected.
       const count=compact.match(/^·\s*(\d+)\s+kênh\s*·\s*(URL|File M3U|File)$/);
@@ -220,6 +254,8 @@
     let stored=originalAttrs.get(el);
     if(!stored){stored={};originalAttrs.set(el,stored);}
     for(const attr of attributeList){
+      // Never translate form values or user-entered playlist data.
+      if(attr==='value'&&!el.matches?.('input[type="button"],input[type="submit"],input[type="reset"]'))continue;
       if(!el.hasAttribute(attr))continue;
       const value=el.getAttribute(attr);
       let item=stored[attr];
@@ -269,6 +305,8 @@
     }
   });
   observer.observe(document.documentElement,{subtree:true,childList:true,characterData:true,attributes:true,attributeFilter:attributeList});
+  // Native dialogs bypass DOM mutation observation and require direct message translation.
+  for(const kind of ['alert','confirm','prompt']){const original=window[kind];if(typeof original==='function')window[kind]=function(message,...args){return original.call(window,translate(String(message)),...args);};}
   window.OpenIPTVI18n=Object.freeze({locales,getLanguage:()=>locale,setLanguage,t:translate,apply});
   const setup=()=>{
     const control=document.getElementById('appLanguage');

@@ -42,7 +42,7 @@ test('v4.23.67 speech worker, installer and app bundle connect self-contained ff
  const root=path.resolve(__dirname,'..');
  const file=p=>fs.readFileSync(path.join(root,p),'utf8');
  const pkg=require('../package.json');
- assert.equal(pkg.version,'4.23.70');
+ assert.equal(pkg.version,'4.23.71');
  assert.equal(pkg.dependencies['@ffprobe-installer/ffprobe'],'2.1.2');
  assert.ok(pkg.build.asarUnpack.some(p=>p.includes('@ffprobe-installer')));
  assert.match(file('src/main.cjs'),/resolveBundledFFprobe/);

@@ -8,7 +8,7 @@ test('interface languages include 17 locales, independent of voice translation',
  assert.match(file,/const option=document.createElement\('option'\)/);
 });
 test('translations fall back to English instead of untranslated Vietnamese when missing',()=>{
- assert.match(file,/if\(!out\)out=english\[compact\]/);
+ assert.match(file,/let out=dict\[compact\]/);assert.match(file,/if\(!out\)out=english\[compact\]/);
  assert.match(file,/if\(english\[prefixMatch\[2\]\]\)/);
  assert.match(file,/Object\.assign\(dictionaries\.en/);
  for(const item of ['Chưa có chương trình','Link phát','Tùy chỉnh phụ đề (CC)','Chọn ngôn ngữ ứng dụng.'])assert.ok(file.includes(item),item);

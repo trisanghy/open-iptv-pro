@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro",
-  "version": "4.23.70",
-  "description": "Open IPTV Pro Electron 4.23.70 — mandatory source-rights acceptance for M3U and Smart Discovery, offline captions/TTS",
+  "version": "4.23.71",
+  "description": "Open IPTV Pro Electron 4.23.71 — mandatory source-rights acceptance for M3U and Smart Discovery, offline captions/TTS",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",
@@ -119,7 +119,16 @@
       "zh-CN",
       "th",
       "lo",
-      "km"
+      "km",
+      "fr",
+      "de",
+      "it",
+      "ja",
+      "ko",
+      "ru",
+      "id",
+      "hi",
+      "ar"
     ],
     "asarUnpack": [
       "node_modules/ffmpeg-static/**",

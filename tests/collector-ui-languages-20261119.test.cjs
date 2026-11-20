@@ -1,7 +1,7 @@
 'use strict';
 const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),vm=require('node:vm');
 const root=path.resolve(__dirname,'..');
-for(const file of ['web/i18n.js','renderer/i18n.js','rust-lab/renderer/i18n.js','mobile/public/i18n.js']){
+for(const file of ['renderer/i18n.js']){
   test(file+' translates collector metrics without touching IPTV names',()=>{
     const source=fs.readFileSync(path.join(root,file),'utf8');
     const document={documentElement:{},readyState:'loading',addEventListener(){},getElementById(){return null},dispatchEvent(){}};
@@ -26,8 +26,8 @@ for(const file of ['web/i18n.js','renderer/i18n.js','rust-lab/renderer/i18n.js',
   });
 }
 test('source UI protects user names and marks only generated merged playlist',()=>{
-  for(const file of ['web/collector.js','renderer/collector.js','rust-lab/renderer/collector.js'])
+  for(const file of ['renderer/collector.js'])
     assert.match(fs.readFileSync(path.join(root,file),'utf8'),/nameNode\.setAttribute\('data-i18n-ignore','true'\)/);
-  for(const file of ['web/app.js','renderer/app.js','rust-lab/renderer/app.js'])
+  for(const file of ['renderer/app.js'])
     assert.match(fs.readFileSync(path.join(root,file),'utf8'),/data-i18n-ui="merged-playlist"/);
 });

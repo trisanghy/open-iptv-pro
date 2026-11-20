@@ -79,5 +79,5 @@ test('v4.23.60: direct-only installer never marks pivot as a verified direct mod
  assert.match(bridge,/if command == "install-direct":/);
  assert.match(bridge,/print\("NO_DIRECT", flush=True\)/);
  assert.match(read('src/caption-translator.cjs'),/directOnly/);
- assert.equal(JSON.parse(read('package.json')).version,'4.23.70');
+ assert.equal(JSON.parse(read('package.json')).version,'4.23.71');
 });
