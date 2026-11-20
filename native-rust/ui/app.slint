@@ -758,7 +758,7 @@ if (root.active-page == "tv" || root.active-page == "fav" || root.active-page ==
                     padding-right: 17px;
                     Text { text: "● " + root.status-text; color: #a9bed7; font-size: 11px; overflow: elide; vertical-alignment: center; }
                     Rectangle { horizontal-stretch: 1; background: root.light-mode ? #f6f8fd : #152131; }
-                    Text { text: root.count-text; color: #90a6bd; font-size: 11px; vertical-alignment: center; }
+                    Text { text: (root.active-page == "tv" || root.active-page == "fav" || root.active-page == "recent") ? root.count-text : root.page-title; color: #90a6bd; font-size: 11px; vertical-alignment: center; }
                 }
             }
         }
