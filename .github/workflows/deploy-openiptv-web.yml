@@ -195,7 +195,7 @@ jobs:
           grep -Fq 'web-mobile-touch-sort.js?v=mobile-touch-sort-20261120b' _site/index.html
           node --check _site/advanced.js
           node --check _site/app.js
-          grep -Fq 'features.js?v=epg-today-collapse-20261120a' _site/index.html
+          grep -Fq 'features.js?v=epg-logo-20261120b' _site/index.html
           node --check _site/features.js
           node --test web-online/tests/web-mobile-channel-always-open.test.cjs
           node --test web-online/tests/web-tv-wide.test.cjs
@@ -319,8 +319,8 @@ jobs:
           EPG_LAYOUT_CHROME="$(command -v google-chrome)" node --test web-online/tests/web-epg-layout.test.cjs
           node --test web-online/tests/web-epg-player-details.test.cjs
           node --test web-online/tests/web-epg-today-collapse.test.cjs
-          grep -Fq 'web-epg-day.css?v=epg-today-collapse-20261120a' _site/index.html
-          grep -Fq 'features.js?v=epg-today-collapse-20261120a' _site/index.html
+          grep -Fq 'web-epg-day.css?v=epg-logo-20261120b' _site/index.html
+          grep -Fq 'features.js?v=epg-logo-20261120b' _site/index.html
           grep -Fq 'expandedEPGChannels' _site/features.js
           if grep -q 'class="epg-record"' _site/features.js; then
             echo "::error::Unsupported Web EPG recording action remains"; exit 1
