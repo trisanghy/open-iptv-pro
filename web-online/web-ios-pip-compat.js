@@ -9,6 +9,7 @@
  if(typeof module==='object'&&module.exports)module.exports=api;
  if(typeof window!=='undefined'&&window.document){
   window.OpenIPTVIOSPiP=api;
+  api.installAuto(window);
   api.install(window);
  }
 })(function(){
@@ -119,6 +120,77 @@
   };
   return overlay;
  }
+
+ // Cross-platform auto PiP: activation may be denied by the user's browser.
+ function installAuto(root){
+  const doc=root?.document;
+  if(!doc?.addEventListener||doc.__openIPTVAutoPiPInstalled)return false;
+  doc.__openIPTVAutoPiPInstalled=true;
+  const video=()=>doc.getElementById?.('video');
+  const page=()=>doc.querySelector?.('.sidebar .nav[data-page].active')?.dataset?.page||
+    (doc.getElementById?.('page-tv')?.classList?.contains?.('active-page')?'tv':null);
+  const moreOpen=()=>doc.getElementById?.('iptvMobileMoreOverlay')?.hidden===false;
+  const inPip=v=>!!v&&(doc.pictureInPictureElement===v||v.webkitPresentationMode==='picture-in-picture');
+  let pending=null;
+  function close(){
+   const v=video();if(!v)return false;
+   try{
+    if(doc.pictureInPictureElement===v&&typeof doc.exitPictureInPicture==='function'){
+     Promise.resolve(doc.exitPictureInPicture()).catch(()=>{});return true;
+    }
+    if(v.webkitPresentationMode==='picture-in-picture'&&typeof v.webkitSetPresentationMode==='function'){
+     v.webkitSetPresentationMode('inline');return true;
+    }
+   }catch{}
+   return false;
+  }
+  function open(){
+   const v=video();
+   if(!v||v.readyState<2||v.paused||v.ended||pending||inPip(v)||root.OpenIPTVBackgroundAudio?.active)return false;
+   const type=capability(v,doc,root.navigator,root);
+   if(type!=='webkit'&&type!=='standard')return false;
+   try{
+    if(type==='webkit'){v.webkitSetPresentationMode('picture-in-picture');return inPip(v);}
+    const result=v.requestPictureInPicture();
+    pending=Promise.resolve(result).then(()=>{
+     if(doc.visibilityState!=='hidden'&&page()==='tv'&&!moreOpen())close();
+    }).catch(()=>{}).finally(()=>{pending=null;});
+    return true;
+   }catch{return false;}
+  }
+  doc.addEventListener('click',event=>{
+   const target=event.target?.closest?.('.nav[data-page], [data-mobile-more-page], #iptvMobileMoreTrigger');
+   if(!target)return;
+   if(target.id==='iptvMobileMoreTrigger'){
+    if(page()==='tv'){if(moreOpen())close();else open();}
+    return;
+   }
+   const destination=target.dataset?.page||target.dataset?.mobileMorePage;
+   if(!destination)return;
+   if(destination==='tv'){close();return;}
+   if(destination===page()&&!moreOpen())return;
+   if(root.IPTVProAdvanced?.canEnterPage?.(destination)===false)return;
+   open();
+  },true);
+  doc.addEventListener('visibilitychange',()=>{
+   if(doc.visibilityState==='hidden')open();
+   else if(page()==='tv'&&!moreOpen())close();
+  });
+  const tv=doc.getElementById?.('page-tv');
+  if(tv&&typeof root.MutationObserver==='function'){
+   const observer=new root.MutationObserver(()=>{
+    if(doc.visibilityState==='hidden')return;
+    if(page()==='tv'&&!moreOpen())close();
+    else if(page()!=='tv'||moreOpen())open();
+   });
+   observer.observe(tv,{attributes:true,attributeFilter:['class']});
+   const overlay=doc.getElementById?.('iptvMobileMoreOverlay');
+   if(overlay)observer.observe(overlay,{attributes:true,attributeFilter:['hidden']});
+  }
+  const v=video();
+  if(v)try{v.setAttribute?.('autopictureinpicture','');if('autoPictureInPicture' in v)v.autoPictureInPicture=true;}catch{}
+  return true;
+ }
  function install(root){
   const doc=root?.document;
   if(!doc||!isIOS(root.navigator))return false;
@@ -160,5 +232,5 @@
   },true);
   return true;
  }
- return Object.freeze({isIOS,isStandalone,nativeSupport,capability,safeBrowserURL,locale,text,install});
+ return Object.freeze({isIOS,isStandalone,nativeSupport,capability,safeBrowserURL,locale,text,install,installAuto});
 });

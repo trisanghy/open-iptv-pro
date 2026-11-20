@@ -138,7 +138,7 @@ test('PiP compatibility module is Web-only, cache-busted and preserved by prepar
  const app=read('index.html'),builder=read('web-online/prepare-web.py');
  assert.equal(read('web-ios-pip-compat.js'),read('web-online/web-ios-pip-compat.js'));
  assert.equal(read('web-ios-pip-compat.css'),read('web-online/web-ios-pip-compat.css'));
- assert.ok(app.includes('src="web-ios-pip-compat.js?v=ios-pwa-pip-20261119a"'));
+ assert.ok(app.includes('src="web-ios-pip-compat.js?v=autopip-crossbrowser-20261120a"'));
  assert.ok(app.includes('href="web-ios-pip-compat.css?v=ios-pwa-pip-20261119a"'));
  assert.ok(builder.includes("for asset in ('web-ios-pip-compat.js','web-ios-pip-compat.css')"));
  assert.ok(builder.includes('web-ios-pip-compat.js?v=ios-pwa-pip-20261119a'));
@@ -147,4 +147,44 @@ test('PiP compatibility module is Web-only, cache-busted and preserved by prepar
  assert.match(read('web-fullscreen-controls.js'),/fsPipBtn[\s\S]{0,100}pipBtn/);
  assert.doesNotMatch(read('web-ios-pip-compat.js'),/localStorage\.setItem|sessionStorage\.setItem|new URL\(.*token/);
  assert.match(read('web-ios-pip-compat.css'),/web-pip-ios-help\[hidden\]/);
+});
+
+
+function autoFixture({ios=false,standalone=false,ready=true,paused=false,audio=false,allowed=true}={}){
+ const events={},calls={standard:0,native:[],exit:0};let page='tv';
+ const video={readyState:ready?4:0,paused,ended:false,webkitPresentationMode:'inline',
+  setAttribute(name,v){this[name]=v;},
+  requestPictureInPicture(){calls.standard++;doc.pictureInPictureElement=video;return Promise.resolve(video);},
+  webkitSupportsPresentationMode:ios?()=>allowed:undefined,
+  webkitSetPresentationMode:ios?mode=>{calls.native.push(mode);video.webkitPresentationMode=mode;}:undefined};
+ const doc={pictureInPictureEnabled:allowed,pictureInPictureElement:null,visibilityState:'visible',
+  addEventListener(n,fn){(events[n]??=[]).push(fn);},
+  getElementById(id){return id==='video'?video:null;},
+  querySelector(){return {dataset:{page}};},
+  exitPictureInPicture(){calls.exit++;doc.pictureInPictureElement=null;return Promise.resolve();}};
+ const win={document:doc,navigator:{userAgent:ios?'Mozilla/5.0 (iPhone; CPU iPhone OS 26_1 like Mac OS X)':'Mozilla/5.0 (Linux; Android 16)',standalone},
+  matchMedia:()=>({matches:standalone}),OpenIPTVBackgroundAudio:{active:audio},
+  IPTVProAdvanced:{canEnterPage:()=>allowed}};
+ function click(targetPage){for(const fn of events.click||[])fn({target:{closest:()=>({dataset:{page:targetPage}})}});page=targetPage;}
+ function visibility(state){doc.visibilityState=state;for(const fn of events.visibilitychange||[])fn();}
+ return {win,doc,video,calls,click,visibility};
+}
+test('auto PiP opens when leaving TV and closes when returning on Android and desktop',async()=>{
+ const f=autoFixture();assert.equal(pip.installAuto(f.win),true);assert.equal(pip.installAuto(f.win),false);
+ f.click('epg');assert.equal(f.calls.standard,1);f.click('tv');assert.equal(f.calls.exit,1);await Promise.resolve();
+});
+test('auto PiP on browser hidden and return visible TV',async()=>{
+ const f=autoFixture();pip.installAuto(f.win);f.visibility('hidden');assert.equal(f.calls.standard,1);
+ f.visibility('visible');assert.equal(f.calls.exit,1);await Promise.resolve();
+});
+test('auto PiP uses iOS Safari WebKit and avoids unsupported iOS Home Screen PWA',()=>{
+ const f=autoFixture({ios:true});pip.installAuto(f.win);f.click('epg');f.click('tv');
+ assert.deepEqual(f.calls.native,['picture-in-picture','inline']);assert.equal(f.calls.standard,0);
+ const pwa=autoFixture({ios:true,standalone:true,allowed:false});pip.installAuto(pwa.win);pwa.click('epg');
+ assert.equal(pwa.calls.standard,0);assert.deepEqual(pwa.calls.native,[]);
+});
+test('auto PiP skips paused, not-ready, audio-only and restricted playback',()=>{
+ for(const o of [{paused:true},{ready:false},{audio:true},{allowed:false}]){
+  const f=autoFixture(o);pip.installAuto(f.win);f.click('epg');assert.equal(f.calls.standard,0,JSON.stringify(o));
+ }
 });
