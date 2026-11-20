@@ -110,6 +110,12 @@ impl Mpv {
     pub fn new_native_window() -> Result<Self, String> {
         Self::new_for_backend(true)
     }
+    pub fn new_with_backend(mode: &str) -> Result<Self, String> {
+        if !crate::model::valid_video_backend(mode) {
+            return Err("Backend video không hợp lệ".into());
+        }
+        Self::new_for_backend(mode == "native")
+    }
     fn new_for_backend(wants_native: bool) -> Result<Self, String> {
         let mut candidates: Vec<PathBuf> = Vec::new();
         if let Ok(custom) = std::env::var("OPEN_IPTV_LIBMPV") {
