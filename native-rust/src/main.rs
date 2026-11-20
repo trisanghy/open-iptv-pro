@@ -39,6 +39,19 @@ enum Background {
     SnapshotBatch { ok: usize, cached: usize, fail: usize },
 }
 
+/// Download, parse and persist EPG on a worker thread, never serializing a
+/// multi-day guide in Slint's UI thread.
+fn load_online_epg(url: &str) -> Result<epg::GuideData, String> {
+    let guide=epg::from_url(url)?;
+    if let Err(e)=epg_cache::save(url, &guide.now_next) {
+        eprintln!("EPG current cache: {e}");
+    }
+    if let Err(e)=epg_cache::save_full(url, &guide.schedule) {
+        eprintln!("EPG full cache: {e}");
+    }
+    Ok(guide)
+}
+
 fn source_id() -> String {
     let ns = SystemTime::now().duration_since(UNIX_EPOCH).unwrap_or_default().as_nanos();
     format!("native_{ns:x}")
@@ -763,7 +776,7 @@ fn connect_callbacks(
             let previous=s.data.clone();
             s.data.epg_url=url.clone();
             persist(&ui,&mut s,previous,"Đang tải EPG online...");
-            std::thread::spawn({let tx=tx.clone(); move || {let _=tx.send(Background::Epg { source: Some(url.clone()), result: epg::from_url(&url) });}});
+            std::thread::spawn({let tx=tx.clone(); move || {let _=tx.send(Background::Epg { source: Some(url.clone()), result: load_online_epg(&url) });}});
         });
     }
     {
@@ -1097,23 +1110,24 @@ fn background_timer(ui: &MainWindow, shared: Rc<RefCell<State>>, rx: Receiver<Ba
                     Err(e)=>status(&ui,format!("Snapshot lỗi: {e}")),
                 },
                 Background::SnapshotBatch{ok,cached,fail}=>status(&ui,format!("Snapshot hàng loạt: {ok} mới · {cached} cache · {fail} lỗi")),
-                Background::Epg {source,result} => match result {
-                    Ok(guide) => {
-                        let count=guide.now_next.len();
-                        let scheduled=guide.schedule.len();
-                        if let Some(ref url)=source {
-                            if let Err(e)=epg_cache::save(url,&guide.now_next) {
-                                status(&ui,format!("EPG đã tải nhưng không lưu được cache: {e}"));
-                            }
-                        }
-                        let mut s=shared.borrow_mut();
-                        s.normalized_epg=normalize_guide(&guide.now_next);
-                        s.current_epg=guide.now_next;
-                        s.epg_schedule=guide.schedule;
-                        refresh(&ui,&mut s);
-                        status(&ui,format!("Đã nạp EPG {count} kênh và {scheduled} chương trình. Cache 10 phút cho EPG online."));
+                Background::Epg {source,result} => {
+                    // A previous URL fetch must never replace a newly selected guide.
+                    if source.as_ref().is_some_and(|url| shared.borrow().data.epg_url != *url) {
+                        continue;
                     }
-                    Err(e) => status(&ui,format!("EPG lỗi: {e}")),
+                    match result {
+                        Ok(guide) => {
+                            let count=guide.now_next.len();
+                            let scheduled=guide.schedule.len();
+                            let mut s=shared.borrow_mut();
+                            s.normalized_epg=normalize_guide(&guide.now_next);
+                            s.current_epg=guide.now_next;
+                            s.epg_schedule=guide.schedule;
+                            refresh(&ui,&mut s);
+                            status(&ui,format!("Đã nạp EPG {count} kênh và {scheduled} chương trình; lưu cache nếu còn dung lượng."));
+                        }
+                        Err(e) => status(&ui,format!("EPG lỗi, giữ lịch trước đó: {e}")),
+                    }
                 }
             }
         }
@@ -1125,7 +1139,7 @@ fn background_timer(ui: &MainWindow, shared: Rc<RefCell<State>>, rx: Receiver<Ba
             if let Some(url)=source {
                 let epg_tx=tx.clone();
                 std::thread::spawn(move || {
-                    let result=epg::from_url(&url);
+                    let result=load_online_epg(&url);
                     let _=epg_tx.send(Background::Epg {source:Some(url),result});
                 });
             }
@@ -1171,10 +1185,11 @@ fn background_timer(ui: &MainWindow, shared: Rc<RefCell<State>>, rx: Receiver<Ba
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let saved = storage::load().map_err(|e| format!("Không đọc được dữ liệu Rust Native. Chưa sửa file cũ: {e}"))?;
     let cached_epg=epg_cache::load(&saved.epg_url).unwrap_or_default();
+    let cached_schedule=epg_cache::load_full(&saved.epg_url).unwrap_or_default();
     let epg_source=saved.epg_url.clone();
     let state=Rc::new(RefCell::new(State {
         selected_url:if saved.last_channel_url.is_empty(){None}else{Some(saved.last_channel_url.clone())},
-        data:saved,visible:Vec::new(),total_matches:0,page:0,selected_source:None,favorites_only:false,recent_only:false,playback_candidates:Vec::new(),playback_index:0,pending_delete:None,normalized_epg:normalize_guide(&cached_epg),current_epg:cached_epg,epg_schedule:Vec::new(),guide_day_offset:0,folder_filter:None,
+        data:saved,visible:Vec::new(),total_matches:0,page:0,selected_source:None,favorites_only:false,recent_only:false,playback_candidates:Vec::new(),playback_index:0,pending_delete:None,normalized_epg:normalize_guide(&cached_epg),current_epg:cached_epg,epg_schedule:cached_schedule,guide_day_offset:0,folder_filter:None,
     }));
     let ui=MainWindow::new()?;
     refresh(&ui,&mut state.borrow_mut());
@@ -1192,7 +1207,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     if !epg_source.trim().is_empty() {
         let startup_tx=tx.clone();
         std::thread::spawn(move || {
-            let result=epg::from_url(&epg_source);
+            let result=load_online_epg(&epg_source);
             let _=startup_tx.send(Background::Epg{source:Some(epg_source),result});
         });
     }

@@ -20,7 +20,7 @@ This file documents **the actual native Slint + Rust + libmpv code** in `native-
 | EPG entries and episode titles | Beyond 12,000; generic-title detail parsing | Accurate tvg-id mapping across all channels and source verification |
 | EPG current/next | Display on TV page plus searchable 7-day programme list (250 visible rows at a time) in Slint | Programme reminders, search indexing and scheduled DVR handoff |
 | EPG startup and periodic refresh | Startup + configurable 10-minute refresh | Better scheduled persistence beyond current/next |
-| EPG local cache | 10-min native JSON cache, atomic writes | Compressed full-guide disk/indexed storage and live lifecycle |
+| EPG local cache | Atomic short 10-minute now/next cache and source-specific 24-hour full-guide JSON offline cache; serialization on worker threads | Compressed/indexed full-guide disk storage, guided refresh and live lifecycle |
 | Snapshot | Basic FFmpeg capture and short batch | Parallel 32-worker UI, image grid, preview, high-volume throttling |
 | DVR/recording | Basic 60-second MKV via FFmpeg | Timeshift 10-minute buffer, MP4, scheduling, state/progress |
 | Health / Smart IPTV Doctor | Basic bounded 1,000-channel probes | Doctor 3.0 and advanced diagnostics/safe repair |

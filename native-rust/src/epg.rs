@@ -1,5 +1,6 @@
 use chrono::{DateTime, Local, NaiveDateTime, TimeZone, Utc};
 use quick_xml::events::{BytesStart, Event};
+use serde::{Deserialize, Serialize};
 use quick_xml::Reader;
 use std::collections::HashMap;
 use std::io::Read;
@@ -9,7 +10,7 @@ const MAX_XML_BYTES: u64 = 35 * 1024 * 1024;
 const MAX_GZIP_BYTES: u64 = 12 * 1024 * 1024;
 
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct GuideEntry {
     pub channel: String,
     pub title: String,
