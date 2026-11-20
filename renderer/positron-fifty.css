@@ -162,3 +162,9 @@ html.p50-33 #page-tv .control-layout-bottom :is(.epg-current-card,.epg-next-card
 html.p50-33 #page-tv .control-layout-bottom :is(b,strong){font-size:11px!important}
 html.p50-33 #page-tv .control-layout-bottom :is(small,span){font-size:10px!important}
 html.p50-33 #page-tv .control-layout-bottom :is(.epg-current-card,.epg-next-card){background:transparent!important;border-color:var(--po-line)!important}
+
+/* Iteration 34: De-emphasize AI captions without hiding subtitle controls */
+html.p50-34 #page-tv .player-control-card .caption-third-controls{padding:6px 9px!important;gap:7px!important;background:transparent!important}
+html.p50-34 #page-tv .player-control-card .caption-third-controls :is(button,select){border-radius:8px!important;min-height:30px!important;font-size:11px!important}
+html.p50-34 #page-tv .player-control-card :is(.caption-ai-main,.caption-tts-main){background:var(--po-raised)!important;border-color:var(--po-line)!important}
+html.p50-34 #page-tv .player-control-card #subtitleOptionsBtn{color:var(--po-accent)!important}
