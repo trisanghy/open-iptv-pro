@@ -79,6 +79,7 @@ export component MainWindow inherits Window {
     in-out property <bool> video-paused: false;
     in-out property <bool> video-is-live: true;
     in-out property <string> video-status: "Chưa phát";
+    in-out property <string> video-backend-mode: "embedded";
     in-out property <string> playback-clock: "--:-- / --:--";
     in-out property <float> playback-progress: 0;
     in-out property <string> source-hint: "Chưa có nguồn phát";
@@ -126,6 +127,7 @@ export component MainWindow inherits Window {
     callback seek-video(int);
     callback volume-delta(int);
     callback fullscreen-video();
+    callback select-video-backend(string);
     callback snapshot-current();
     callback snapshot-all();
     callback export-m3u();
@@ -324,6 +326,10 @@ export component MainWindow inherits Window {
                                             Text { text: root.video-is-live ? "LIVE" : "VIDEO"; color: #f4f7fc; font-size: 11px; font-weight: 700; vertical-alignment: center; }
                                             Text { text: root.video-status; color: #aec4d9; font-size: 11px; overflow: elide; vertical-alignment: center; }
                                             Rectangle { horizontal-stretch: 1; background: transparent; }
+                                            Button {
+                                                text: root.video-backend-mode == "embedded" ? "Cửa sổ mpv" : "Nhúng Slint";
+                                                clicked => { root.select-video-backend(root.video-backend-mode == "embedded" ? "native" : "embedded"); }
+                                            }
                                             Button { text: root.player-fullscreen ? "Thu nhỏ" : "Toàn màn"; clicked => { root.fullscreen-video(); } }
                                         }
                                     }
@@ -687,6 +693,13 @@ export component MainWindow inherits Window {
                                  Text { text: "Nguồn lịch tự tải khi khởi động; làm mới mỗi 10 phút khi bật. Giữ lịch cũ khi mạng lỗi."; color: #91a9c3; font-size: 11px; }
                                  Rectangle { height: 1px; background: #344157; }
                                  Text { text: "TRÌNH PHÁT / HIỂN THỊ"; color: root.accent; font-weight: 700; font-size: 12px; }
+                                HorizontalLayout {
+                                    spacing: 8px;
+                                    Text { text: "Đầu ra video: " + (root.video-backend-mode == "native" ? "Cửa sổ mpv riêng" : "Nhúng vào Slint"); color: #a9c2d6; font-size: 12px; vertical-alignment: center; }
+                                    Button { text: "Nhúng Slint"; clicked => { root.select-video-backend("embedded"); } }
+                                    Button { text: "Cửa sổ mpv"; clicked => { root.select-video-backend("native"); } }
+                                }
+                                Text { text: "Đổi đầu ra sẽ tải lại kênh đang phát. Nếu chưa có hình trong Slint, chọn Cửa sổ mpv."; color: #91a9c3; font-size: 11px; }
                                  Text { text: "Khung hình mặc định: " + root.aspect-mode-text; color: #a9c2d6; font-size: 12px; }
                                  HorizontalLayout { Button { text: "Vừa khung"; clicked => { root.set-aspect-mode("fit"); } } Button { text: "Lấp đầy"; clicked => { root.set-aspect-mode("fill"); } } Button { text: "Gốc"; clicked => { root.set-aspect-mode("original"); } } Button { text: root.muted ? "Bật tiếng" : "Tắt tiếng"; clicked => { root.toggle-mute(); } } }
                                  HorizontalLayout {
