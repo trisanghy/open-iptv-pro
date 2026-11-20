@@ -73,3 +73,61 @@ jobs:
           path: OpenIPTVProRustNative-C3-Windows-preview.zip
           if-no-files-found: error
           retention-days: 14
+
+  macos-native:
+    name: macOS Rust Native app + DMG (ad-hoc preview)
+    runs-on: macos-14
+    timeout-minutes: 70
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: native-rust
+      - name: Test native Rust on macOS
+        run: cargo test --manifest-path native-rust/Cargo.toml
+      - name: Build macOS native executable
+        run: cargo build --manifest-path native-rust/Cargo.toml --release
+      - name: Package actual Slint app + DMG
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          APP="Open IPTV Pro Rust Native C3.app"
+          mkdir -p "$APP/Contents/MacOS" "$APP/Contents/Resources"
+          install -m 755 native-rust/target/release/open-iptv-pro-native "$APP/Contents/MacOS/OpenIPTVProRustNative"
+          cat > "$APP/Contents/Info.plist" <<'PLIST'
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0"><dict>
+          <key>CFBundleIdentifier</key><string>com.trisanghy.openiptvpro.rustnative.c3</string>
+          <key>CFBundleName</key><string>Open IPTV Pro Rust Native C3</string>
+          <key>CFBundleExecutable</key><string>OpenIPTVProRustNative</string>
+          <key>CFBundlePackageType</key><string>APPL</string>
+          <key>CFBundleShortVersionString</key><string>0.3.0</string>
+          <key>CFBundleVersion</key><string>1</string>
+          <key>NSHighResolutionCapable</key><true/>
+          </dict></plist>
+          PLIST
+          cp assets/icon.png "$APP/Contents/Resources/icon.png"
+          codesign --force --sign - "$APP"
+          codesign --verify "$APP"
+          hdiutil create -volname 'Open IPTV Pro Rust Native C3' -srcfolder "$APP" -ov -format UDZO OpenIPTVProRustNative-C3-macOS-preview.dmg
+          hdiutil imageinfo OpenIPTVProRustNative-C3-macOS-preview.dmg
+          zip -qr OpenIPTVProRustNative-C3-source.zip native-rust scripts/BUILD_C3_MAC_AUTOFETCH.sh assets/icon.png
+          cat > RUST_NATIVE_MAC_PREVIEW_README.txt <<'README'
+          Open IPTV Pro Rust Native C3 (real Slint + libmpv)
+          This DMG contains an ad-hoc signed developer preview, not a notarized product.
+          Install compatible libmpv via Homebrew: brew install mpv
+          For snapshots and recording: brew install ffmpeg
+          This preview has a separate libmpv video window and lacks full Tauri parity.
+          Only use playlist/streams for which you have the necessary rights.
+          README
+      - uses: actions/upload-artifact@v4
+        with:
+          name: rust-native-c3-macos-preview
+          path: |
+            OpenIPTVProRustNative-C3-macOS-preview.dmg
+            OpenIPTVProRustNative-C3-source.zip
+            RUST_NATIVE_MAC_PREVIEW_README.txt
+          if-no-files-found: error
+          retention-days: 14
