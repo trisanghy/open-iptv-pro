@@ -139,3 +139,9 @@
     getState:()=>({stage,expanded,filtersOpen,toolsOpen,empty:root.classList.contains('p50-empty')})
   });
 })();
+
+/* P4.1: Preserve accessible full labels when labels are icon-only at narrow widths. */
+(()=>{const sidebar=document.getElementById('appSidebar');if(!sidebar)return;
+ for(const b of sidebar.querySelectorAll('button.nav')){const name=(b.textContent||'').replace(/\s+/g,' ').trim();if(name){if(!b.getAttribute('aria-label'))b.setAttribute('aria-label',name);if(!b.title)b.title=name;}}
+ const more=document.getElementById('positronMorePages');if(more){more.setAttribute('aria-label','Hiện hoặc ẩn công cụ khác');more.title='Công cụ khác';}
+})();

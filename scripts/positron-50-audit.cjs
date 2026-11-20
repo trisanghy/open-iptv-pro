@@ -142,13 +142,27 @@ const wait=ms=>new Promise(r=>setTimeout(r,ms));
       assert.notEqual(legibility.disclosureBackground,'rgb(255, 255, 255)',
         'Timeshift disclosure unexpectedly inherits white background');
     }
+    let visualSurfaces=null;
+    if([38,39,48,49].includes(n)){
+      visualSurfaces=await page.evaluate(()=>{
+        const bg=selector=>{const el=document.querySelector(selector);return el?getComputedStyle(el).backgroundColor:null;};
+        const rail=document.querySelector('#appSidebar .nav[data-page="tv"]');
+        return {sourceNav:bg('#page-sources .sources-hub-nav'),sourceHeading:bg('#page-sources .source-hub-heading'),
+          epgSearch:bg('#page-epg .epg-filter'),epgInput:bg('#epgSearch'),railFont:rail?getComputedStyle(rail).fontSize:null,
+          sidebarWidth:Math.round(document.getElementById('appSidebar')?.getBoundingClientRect().width||0)};
+      });
+      const checked=n===38?[visualSurfaces.sourceNav,visualSurfaces.sourceHeading]:n===39?[visualSurfaces.epgSearch,visualSurfaces.epgInput]:[];
+      for(const color of checked)assert.ok(color&&!['rgb(255, 255, 255)','rgb(248, 249, 253)','rgb(245, 247, 251)'].includes(color),
+        'light surface leaked onto P4 page in round '+n+': '+color);
+      if(n===48||n===49){assert.equal(visualSurfaces.railFont,'0px','narrow sidebar must be icon-only');assert.ok(visualSurfaces.sidebarWidth<=60,'narrow sidebar too wide');}
+    }
     const sha256=crypto.createHash('sha256').update(png).digest('hex');
     const feedback={round:n,screenBytes:png.length,overflow:layout.horizontalOverflow,
       contrast:pixels.variance,sha256,page:layout.page};
     const ownErrors=errors.filter(e=>/positron-(?:fifty|studio|\.js)/i.test(e));
     assert.equal(ownErrors.length,0,'Positron renderer errors in round '+n+': '+ownErrors.join('; '));
     screenshots.push({round:n,improvement:featureNames[n-1],file,source:'ACTUAL Electron screenshot via CDP',
-      viewport,layout,pixels,legibility,sha256,feedbackUsedFrom:n===1?null:n-1,
+      viewport,layout,pixels,legibility,visualSurfaces,sha256,feedbackUsedFrom:n===1?null:n-1,
       feedbackForNext:feedback,passed:true});
     previousFeedback=feedback;
     if(n===11)await page.locator('#positronMorePages').click();
