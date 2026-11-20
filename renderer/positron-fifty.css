@@ -93,3 +93,8 @@ html.p50-19 #page-tv #searchBox::placeholder{color:var(--po-muted)!important}
 html.p50-20 #positronFiltersToggle{display:block!important;width:calc(100% - 20px)!important;margin:0 10px 8px!important;min-height:29px!important;text-align:left!important;padding:5px 9px!important;background:var(--po-card)!important;color:var(--po-muted)!important;border:1px solid var(--po-line)!important;border-radius:8px!important;font-size:10px!important}
 html.p50-20.p50-filters-closed #page-tv .channel-panel :is(.folder-actions,.filter-tabs,.channel-drag-hint){display:none!important}
 html.p50-20 #page-tv .channel-panel .filter-tabs{padding:6px 10px!important;gap:4px!important}
+
+/* Iteration 21: Eliminate empty-list filtering clutter */
+html.p50-21.p50-empty #page-tv .channel-panel :is(.folder-actions,.filter-tabs,.channel-drag-hint){display:none!important}
+html.p50-21.p50-empty #positronFiltersToggle{font-size:10px!important;opacity:.82}
+html.p50-21.p50-empty #page-tv .channel-panel #channelSelectionBar.hidden{display:none!important}
