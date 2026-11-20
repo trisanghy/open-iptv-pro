@@ -356,7 +356,7 @@ html=html.replace('<title>Open IPTV Pro — Web Online</title>',
 if 'href="huong-dan.html"' not in html:
     sys.exit('Public Web instructions are not linked')
 
-html=html.replace('src="app.js"','src="app.js?v=playlist-http-20261119d"').replace('collector.js?v=collector-merge-repair-20261119a','collector.js?v=collector-quota-20261120a')
+html=html.replace('src="app.js"','src="app.js?v=playlist-http-20261119d"').replace('collector.js?v=collector-merge-repair-20261119a','collector.js?v=collector-quota-20261120b')
 html=html.replace('src="source-edit.js"','src="source-edit.js?v=playlist-input-20261119c"')
 for name in ('features.js','epg.js'):
     cache_version='epg-atomic-gzip-20261120a' if name=='features.js' else 'epg-film-titles-20261120a'
