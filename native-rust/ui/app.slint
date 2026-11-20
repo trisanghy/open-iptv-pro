@@ -261,7 +261,7 @@ if (root.active-page == "tv" || root.active-page == "fav" || root.active-page ==
     }
 }
     Rectangle {
-    height: root.player-fullscreen ? root.height - 96px : 322px;
+    height: root.player-fullscreen ? root.height - 96px : 280px;
     background: #050a11; border-radius: 11px;
     border-width: 1px; border-color: #30455b; clip: true;
     Image { source: root.video-frame; width: parent.width; height: parent.height; image-fit: contain; visible: root.has-video-frame; }
@@ -309,13 +309,13 @@ if (root.active-page == "tv" || root.active-page == "fav" || root.active-page ==
         vertical-stretch: 1;
         VerticalLayout { spacing: 9px;
             Rectangle {
-                                height: 108px;
+                                height: 92px;
                                 visible: !root.player-fullscreen;
                                 background: root.amoled-mode ? #101010 : (root.light-mode ? #ffffff : #142231);
                                 border-radius: 11px;
                                 VerticalLayout {
-                                    padding: 12px;
-                                    spacing: 9px;
+                                    padding: 8px;
+                                    spacing: 4px;
                                     Text { text: root.playing-text; font-size: 15px; font-weight: 700; color: root.light-mode ? #203249 : #f4f7ff; }
                                     Text { text: root.playing-subtitle; color: #92adc4; font-size: 11px; }
                                     HorizontalLayout {
@@ -334,7 +334,7 @@ if (root.active-page == "tv" || root.active-page == "fav" || root.active-page ==
                                 }
                             }
                             Rectangle {
-                                height: 68px;
+                                height: 55px;
                                 visible: !root.player-fullscreen;
                                 background: root.amoled-mode ? #101010 : (root.light-mode ? #ffffff : #142231);
                                 border-radius: 10px;
@@ -346,7 +346,7 @@ if (root.active-page == "tv" || root.active-page == "fav" || root.active-page ==
                                 }
                             }
                             Rectangle {
-                                height: 48px;
+                                height: 42px;
                                 visible: !root.player-fullscreen;
                                 background: root.amoled-mode ? #101010 : (root.light-mode ? #ffffff : #142231);
                                 border-radius: 10px;
