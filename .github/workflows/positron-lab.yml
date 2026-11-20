@@ -1,0 +1,168 @@
+name: Positron P1 · 20 real UI rounds · Mac and Windows prerelease
+on:
+  push:
+    branches: [Positron]
+    paths:
+      - 'renderer/positron.*'
+      - 'renderer/index.html'
+      - 'package.json'
+      - 'scripts/positron-capture.cjs'
+      - 'tests/positron.test.cjs'
+      - '.github/workflows/positron-lab.yml'
+  workflow_dispatch:
+concurrency:
+  group: positron-p1-${{ github.ref }}
+  cancel-in-progress: false
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - name: Install packages and run all Electron tests
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          npm install --no-audit --no-fund
+          node --check renderer/positron.js
+          node --check scripts/positron-capture.cjs
+          npm test
+
+  capture:
+    needs: test
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - name: Install actual Electron and screenshot tooling
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq xvfb libgtk-3-0 libnss3 libasound2t64 libgbm1 libxss1 libatk-bridge2.0 libdrm2
+          npm install --no-audit --no-fund
+          npm install --no-save --no-audit --no-fund playwright-core
+      - name: Execute 20 real Electron UI rounds and screenshot FINAL app
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          mkdir -p positron-evidence
+          Xvfb :99 -screen 0 1600x900x24 > positron-evidence/xvfb.log 2>&1 &
+          export DISPLAY=:99
+          export ELECTRON_DISABLE_SECURITY_WARNINGS=true
+          ./node_modules/.bin/electron . --no-sandbox --disable-gpu --remote-debugging-port=9222 > positron-evidence/electron.log 2>&1 &
+          echo $! > positron-evidence/electron.pid
+          node scripts/positron-capture.cjs
+          test -s positron-evidence/positron-final-main-real.png
+          test -s positron-evidence/positron-final-command-real.png
+          test -s positron-evidence/positron-final-settings-real.png
+          test -s positron-evidence/audit-20-rounds.json
+          node -e "if(require('./positron-evidence/audit-20-rounds.json').realRounds!==20)process.exit(1)"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: positron-p1-real-desktop-screenshots
+          path: positron-evidence/
+          retention-days: 30
+          if-no-files-found: warn
+
+  build:
+    needs: [test, capture]
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - {os: macos-15, platform: mac, arch: arm64, label: mac-arm64}
+          - {os: macos-15-intel, platform: mac, arch: x64, label: mac-x64}
+          - {os: windows-latest, platform: win, arch: x64, label: win-x64}
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 80
+    env:
+      CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - name: Install native dependencies
+        shell: bash
+        run: npm install --no-audit --no-fund
+      - name: Package real Positron installers
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          test "$(node -p 'require("./package.json").version')" = "4.23.76-positron.1"
+          npx electron-builder --${{ matrix.platform }} --${{ matrix.arch }} --publish never
+          if [[ "${{ matrix.platform }}" == mac ]]; then
+            test -s "dist/Open-IPTV-Pro-4.23.76-positron.1-mac-${{ matrix.arch }}.dmg"
+          else
+            test -s "dist/Open-IPTV-Pro-4.23.76-positron.1-x64.exe"
+            test -s "dist/Open-IPTV-Pro-Setup-4.23.76-positron.1-x64.exe"
+          fi
+      - uses: actions/upload-artifact@v4
+        with:
+          name: positron-p1-${{ matrix.label }}
+          path: |
+            dist/*.dmg
+            dist/*.exe
+          if-no-files-found: error
+
+  release:
+    needs: [test, capture, build]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: positron-p1-*
+          path: release-stage
+          merge-multiple: true
+      - name: Assemble source and verifiable 20-round evidence
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          mkdir -p release-stage
+          git archive --format=zip --output=release-stage/OpenIPTVPro-Positron-P1-Source.zip HEAD
+          for name in \
+            Open-IPTV-Pro-4.23.76-positron.1-mac-arm64.dmg \
+            Open-IPTV-Pro-4.23.76-positron.1-mac-x64.dmg \
+            Open-IPTV-Pro-Setup-4.23.76-positron.1-x64.exe \
+            Open-IPTV-Pro-4.23.76-positron.1-x64.exe \
+            positron-final-main-real.png \
+            positron-final-command-real.png \
+            positron-final-focus-real.png \
+            positron-final-settings-real.png \
+            positron-final-doctor-real.png \
+            audit-20-rounds.json \
+            OpenIPTVPro-Positron-P1-Source.zip; do
+              test -s "release-stage/$name" || { echo "::error::Missing $name"; exit 1; }
+          done
+          (cd release-stage && sha256sum *.dmg *.exe *.png *.json *.zip > SHA256SUMS.txt)
+      - name: Publish immutable Positron prerelease without affecting stable
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -Eeuo pipefail
+          TAG=positron/v4.23.76-p1
+          if gh api "repos/$GITHUB_REPOSITORY/git/ref/tags/$TAG" --jq '.object.sha' >/tmp/tag-sha 2>/dev/null; then
+            test "$(cat /tmp/tag-sha)" = "$GITHUB_SHA" || { echo "::error::Positron tag exists at a different SHA"; exit 1; }
+            echo 'Immutable Positron tag already exists at the correct commit.'
+            gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null
+          else
+            gh release create "$TAG" release-stage/* \
+              --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" \
+              --title 'Open IPTV Pro Positron P1 — Independent desktop UI laboratory' \
+              --notes-file POSITRON.md --prerelease --latest=false
+          fi
+          gh release view "$TAG" --repo "$GITHUB_REPOSITORY" --json assets --jq '.assets[].name' >/tmp/positron-assets
+          grep -Fxq 'positron-final-main-real.png' /tmp/positron-assets
+          grep -Fxq 'Open-IPTV-Pro-4.23.76-positron.1-mac-arm64.dmg' /tmp/positron-assets
+          grep -Fxq 'Open-IPTV-Pro-Setup-4.23.76-positron.1-x64.exe' /tmp/positron-assets
+          echo "Verified experimental release $TAG from $GITHUB_SHA"
