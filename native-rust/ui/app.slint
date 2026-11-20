@@ -218,6 +218,8 @@ export component MainWindow inherits Window {
                     primary: root.active-page == "settings";
                     clicked => { root.navigate("settings"); }
                 }
+                // Keep the persistent control above the status/footer edge.
+                Rectangle { height: 38px; background: transparent; }
                 if !root.rail-collapsed : Rectangle {
                     height: 67px;
                     background: root.light-mode ? #e7eef8 : #192a3b;
@@ -234,7 +236,7 @@ export component MainWindow inherits Window {
             // The actual button remains visible for keyboard interaction.
             TouchArea {
                 x: 0px;
-                y: root.rail-collapsed ? parent.height - 55px : parent.height - 122px;
+                y: root.rail-collapsed ? parent.height - 93px : parent.height - 160px;
                 width: parent.width;
                 height: 54px;
                 clicked => { root.navigate("settings"); }
