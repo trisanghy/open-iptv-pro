@@ -311,7 +311,15 @@ html=html.replace(topbar_old,topbar_new,1)
 email_anchor="<p class=\"hint\" id=\"cloudStatus\" role=\"status\" aria-live=\"polite\">Đang kiểm tra cấu hình đồng bộ…</p>"
 if html.count(email_anchor)!=1:
     sys.exit('Cloud email form anchor not found')
-html=html.replace(email_anchor,email_anchor+'\n'+"      <form id=\"cloudEmailForm\" class=\"cloud-email-form\" hidden>\n        <label for=\"cloudEmailInput\">Đăng nhập bằng email</label>\n        <div class=\"cloud-email-input-line\">\n          <input id=\"cloudEmailInput\" type=\"email\" autocomplete=\"email\" placeholder=\"ten@example.com\" required/>\n          <button type=\"submit\" class=\"btn btn-primary\" id=\"cloudEmailSend\">Gửi liên kết đăng nhập</button>\n        </div>\n        <p class=\"hint\">Nhận liên kết qua email. Nếu liên kết dẫn tới localhost, gửi lại email rồi sao chép liên kết mới vào ô xác thực bên dưới, không nhấp vào liên kết.</p>\n      </form>\n      <div id=\"cloudOtpForm\" class=\"cloud-email-form\" hidden>\n        <label for=\"cloudOtpCode\">Mã xác thực từ email (nếu có)</label>\n        <div class=\"cloud-email-input-line\">\n          <input id=\"cloudOtpCode\" inputmode=\"numeric\" autocomplete=\"one-time-code\" maxlength=\"10\" placeholder=\"Nhập mã trong email\"/>\n          <button type=\"button\" class=\"btn btn-subtle\" id=\"cloudOtpVerify\">Xác thực</button>\n        </div>\n      </div>\n      <p id=\"cloudAuthProviders\" class=\"hint\" aria-live=\"polite\"></p>\n",1)
+server_stats_html='''
+      <div id="cloudServerStats" class="cloud-server-stats" hidden>
+        <div class="cloud-server-metric">
+          <span class="cloud-server-label">Kênh đã lưu trên Supabase</span>
+          <strong id="cloudServerChannelCount" class="cloud-server-count" aria-live="polite">—</strong>
+        </div>
+        <span id="cloudServerUpdatedAt" class="cloud-server-updated">Đang kiểm tra bản lưu trên server…</span>
+      </div>'''
+html=html.replace(email_anchor,email_anchor+server_stats_html+'\n'+"      <form id=\"cloudEmailForm\" class=\"cloud-email-form\" hidden>\n        <label for=\"cloudEmailInput\">Đăng nhập bằng email</label>\n        <div class=\"cloud-email-input-line\">\n          <input id=\"cloudEmailInput\" type=\"email\" autocomplete=\"email\" placeholder=\"ten@example.com\" required/>\n          <button type=\"submit\" class=\"btn btn-primary\" id=\"cloudEmailSend\">Gửi liên kết đăng nhập</button>\n        </div>\n        <p class=\"hint\">Nhận liên kết qua email. Nếu liên kết dẫn tới localhost, gửi lại email rồi sao chép liên kết mới vào ô xác thực bên dưới, không nhấp vào liên kết.</p>\n      </form>\n      <div id=\"cloudOtpForm\" class=\"cloud-email-form\" hidden>\n        <label for=\"cloudOtpCode\">Mã xác thực từ email (nếu có)</label>\n        <div class=\"cloud-email-input-line\">\n          <input id=\"cloudOtpCode\" inputmode=\"numeric\" autocomplete=\"one-time-code\" maxlength=\"10\" placeholder=\"Nhập mã trong email\"/>\n          <button type=\"button\" class=\"btn btn-subtle\" id=\"cloudOtpVerify\">Xác thực</button>\n        </div>\n      </div>\n      <p id=\"cloudAuthProviders\" class=\"hint\" aria-live=\"polite\"></p>\n",1)
 link_anchor="<p id=\"cloudAuthProviders\" class=\"hint\" aria-live=\"polite\"></p>"
 if html.count(link_anchor)!=1:
     sys.exit('Cloud link form anchor missing')
