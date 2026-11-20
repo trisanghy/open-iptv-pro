@@ -265,7 +265,7 @@ jobs:
           node --test web-online/tests/cloud-core.test.cjs
           node --check web-online/tests/web-cloud-auth-compact.test.cjs
           node --test web-online/tests/web-cloud-auth-compact.test.cjs
-          grep -Fq 'cloud-sync.css?v=auth-input-compact-20261119a' _site/index.html
+          grep -Fq 'cloud-sync.css?v=email-otp-20261120a' _site/index.html
           cmp _site/cloud-sync.css web-online/cloud-sync.css
           python3 -m py_compile web-online/write-cloud-config.py
           test -s _site/cloud-config.json
