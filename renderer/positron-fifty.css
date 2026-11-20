@@ -279,3 +279,11 @@ html.p50-49 #positronBar #positronFocus{font-size:0!important;min-width:36px!imp
 html.p50-49 #positronBar #positronFocus::before{content:"▣";font-size:17px!important}
 html.p50-49 #positronStudioBtn{font-size:0!important}
 html.p50-49 #positronStudioBtn::before{content:"◈";font-size:17px!important}}
+
+/* Iteration 50: Finalize accessible focus, reduced motion and responsive media */
+html.p50-50 :is(button,input,select,textarea):focus-visible{outline:2px solid var(--po-accent)!important;outline-offset:2px!important}
+html.p50-50 #page-tv .player-control-card .controls.transport-controls #playBtn{color:var(--po-on)!important;background:var(--po-accent)!important;border-color:var(--po-accent)!important}
+html.p50-50 #positronBar :is(#positronStudioBtn,#positronFocus,#positronHelpBtn){flex:0 0 auto!important}
+html.p50-50 .main :is(.section-heading,.panel-header){min-width:0!important}
+@media(prefers-reduced-motion:reduce){html.p50-50 *:not(video){transition-duration:.01ms!important;animation-duration:.01ms!important;scroll-behavior:auto!important}}
+@media(max-width:960px){html.p50-50 #page-tv .channel-panel{min-height:200px!important}html.p50-50 #page-tv .watch-panel{width:100%!important}}
