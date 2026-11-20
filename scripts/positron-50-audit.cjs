@@ -181,6 +181,7 @@ const wait=ms=>new Promise(r=>setTimeout(r,ms));
     originalState:data,finalState:await page.evaluate(()=>window.OpenIPTVPositronFifty.getState()),
     rounds:screenshots};
   fs.writeFileSync(path.join('positron-evidence','audit-p4-50-rounds.json'),JSON.stringify(report,null,2));
+  await require('./positron-20-extension.cjs').runTwenty(page);
   await browser.close();
 })().catch(e=>{
   console.error('P4 50-round audit failed: '+(e&&e.stack||e));

@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.82",
-  "description": "Positron P4.1 screenshot-reviewed contrast and responsive layout",
+  "version": "4.23.83",
+  "description": "Positron P5: twenty responsive and accessibility upgrades",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",
