@@ -13,8 +13,8 @@ This file documents **the actual native Slint + Rust + libmpv code** in `native-
 | Favorites and recently watched | Implemented | Tauri cross-device sync and expanded filtering |
 | Channel sort/reorder | Implemented native ↑/↓ with persistence | Pointer drag/drop parity, folder organization enhancements |
 | Source-specific alternate URLs and auto failover | Implemented on explicit libmpv errors | Advanced health-based failover, per-source scoring |
-| Video playback | Separate libmpv video window | **Critical:** embedded libmpv video texture in Slint window, no second player window |
-| Fullscreen/playback transport | Basic libmpv controls | Integrated fullscreen transport, PiP, video aspect mode, keyboard/remote accessibility |
+| Video playback | Portable software libmpv render API publishes actual RGB frames to Slint; native mpv window fallback when SW unavailable; optional Linux runtime synthetic-video smoke | Full accelerated GPU texture on all OSes, real IPTV codec/device testing |
+| Fullscreen/playback transport | Fullscreen Slint player, real playback telemetry, pause, audio, relative seek, seek-to-live where supported and aspect modes | PiP, 10-minute timeshift for unseekable live sources, keyboard/remote accessibility |
 | MultiView four channels | Four separate libmpv windows | One Slint view with four embedded players, audio focus and tiling |
 | EPG XMLTV sources | Gzip default, standard/localized presets | Full source selection/priority UI and transparent per-source status |
 | EPG entries and episode titles | Beyond 12,000; generic-title detail parsing | Accurate tvg-id mapping across all channels and source verification |

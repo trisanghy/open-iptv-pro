@@ -22,7 +22,7 @@ jobs:
       - name: Install Linux Slint requirements
         run: |
           sudo apt-get update
-          sudo apt-get install -y pkg-config libxkbcommon-dev libfontconfig1-dev libwayland-dev libegl1-mesa-dev libgl1-mesa-dev libasound2-dev
+          sudo apt-get install -y pkg-config libxkbcommon-dev libfontconfig1-dev libwayland-dev libegl1-mesa-dev libgl1-mesa-dev libasound2-dev libmpv2 ffmpeg
       - name: Verify editable native source exists
         run: |
           test -s native-rust/Cargo.toml
@@ -35,6 +35,14 @@ jobs:
         run: cargo test --manifest-path native-rust/Cargo.toml
       - name: Verify Slint UI and native executable compile
         run: cargo check --manifest-path native-rust/Cargo.toml --all-targets
+      - name: Real libmpv synthetic frame smoke test
+        shell: bash
+        env:
+          OPEN_IPTV_VIDEO_BACKEND: embedded
+        run: |
+          set -Eeuo pipefail
+          ffmpeg -hide_banner -loglevel error -f lavfi -i "testsrc2=size=320x180:rate=15" -t 4 -an -c:v mpeg4 -q:v 5 -y "$RUNNER_TEMP/native-video-smoke.mp4"
+          cargo run --manifest-path native-rust/Cargo.toml --bin video_smoke -- "$RUNNER_TEMP/native-video-smoke.mp4"
 
   windows-native:
     name: Windows Rust Native binary (unsigned preview)
