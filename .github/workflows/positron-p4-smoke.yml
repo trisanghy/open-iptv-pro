@@ -84,9 +84,19 @@ jobs:
             console.log('Actual P4 Electron screenshots PASS',JSON.stringify({desktop,narrow}));
           })().catch(err=>{console.error(err);process.exitCode=1});
           NODE
+      - name: Diagnostic 50-stage screenshot audit, bounded to 6 minutes
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          echo "Starting the 50-step screenshot chain on actual Electron"
+          timeout --signal=TERM --kill-after=10s 360s node scripts/positron-50-audit.cjs
+          test -s positron-evidence/audit-p4-50-rounds.json
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: positron-p4-fast-real-screenshots
-          path: p4-smoke/
+          path: |
+            p4-smoke/
+            positron-evidence/p4-50-rounds/
+            positron-evidence/audit-p4-50-rounds.json
           retention-days: 20
