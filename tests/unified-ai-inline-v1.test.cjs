@@ -32,3 +32,17 @@ test('fullscreen CC portal is retained on Rust Lab',()=>{
  assert.match(cc,/unified-inline-cc/);
  assert.match(cc,/const parent=fullscreen\?frame:document\.body/);
 });
+
+test('compact unified trigger and one-row desktop TTS keep all controls without cloning',()=>{
+ assert.match(css,/Unified AI compact desktop TTS layout v2/);
+ assert.match(css,/#page-tv \.unified-ai-row \.unified-ai-toggle/);
+ assert.match(css,/min-height:32px!important;height:32px!important/);
+ assert.match(css,/grid-template-columns:max-content minmax\(105px,132px\)/);
+ for (const id of ['liveTtsLanguage','liveTtsVoice','liveTtsSpeed','liveTtsDuck']) {
+   assert.match(css,new RegExp('caption-tts-main>\\#'+id+'\\{grid-column:'));
+ }
+ assert.match(code,/unified-tts-voice-label/);
+ assert.match(code,/voice\.insertAdjacentElement\('beforebegin', label\)/);
+ assert.match(code,/content\.appendChild\(row\.firstChild\)/);
+ assert.match(css,/@container \(max-width:740px\)/);
+});
