@@ -20,6 +20,7 @@
  }
  // Resume saved modes after Whisper, TTS, Argos/MLX modules have loaded.
  window.RustAiPreferences?.activate?.();
+ document.dispatchEvent(new Event('openiptv:renderer-ready'));
 })().catch(error=>{
  console.error('IPTV renderer startup error:',error);
  const el=document.createElement('div');el.textContent='Không thể mở giao diện IPTV: '+error.message;
