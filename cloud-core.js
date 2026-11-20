@@ -17,6 +17,8 @@
   }
   return JSON.parse(JSON.stringify(out));
  }
+ // Only count channels in the payload acknowledged by Supabase, never local UI state.
+ function serverChannelCount(payload){return Array.isArray(payload?.channels)?payload.channels.length:0;}
  function isMeaningful(s){
   return Boolean((s?.sources?.length||0)+(s?.channels?.length||0)+(s?.favorites?.length||0)+(s?.folders?.length||0));
  }
@@ -135,5 +137,5 @@
   if(knownPayload&&same(knownPayload,local))return 'download';
   return 'conflict';
  }
- return Object.freeze({snapshot,isMeaningful,same,validate,decision,digest,fieldHashes,automaticDecision,mergeFields,validEmail,normalizeEmailOtp,validEmailOtp,verificationLink,recoveryCode,isEmailRateLimited,authErrorMessage,MAX_BYTES});
+ return Object.freeze({snapshot,serverChannelCount,isMeaningful,same,validate,decision,digest,fieldHashes,automaticDecision,mergeFields,validEmail,normalizeEmailOtp,validEmailOtp,verificationLink,recoveryCode,isEmailRateLimited,authErrorMessage,MAX_BYTES});
 });
