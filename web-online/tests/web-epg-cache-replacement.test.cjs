@@ -101,5 +101,5 @@ test('new cache touches only EPG storage keys, not playlist or user preferences'
  assert.doesNotMatch(codeUnderTest,/localStorage\.clear\(|indexedDB\.deleteDatabase\(/);
  assert.match(builder,/Cannot copy atomic compressed EPG cache into Web build/);
  assert.match(builder,/web_features\[cache_src:cache_src_end\]/);
- assert.match(html,/features\.js\?v=epg-today-collapse-20261120a/);
+ assert.match(html,/features\.js\?v=epg-logo-20261120b/);
 });
