@@ -18,6 +18,53 @@
  const google=el('cloudLoginGoogle'),github=el('cloudLoginGithub');
  const emailForm=el('cloudEmailForm'),emailInput=el('cloudEmailInput'),otpForm=el('cloudOtpForm');
  const otpCode=el('cloudOtpCode'),otpVerify=el('cloudOtpVerify'),providersNote=el('cloudAuthProviders');
+ // WebKit on some iPhone embedded browsers does not paint a native
+ // insertion caret even when the textarea remains editable. Draw a passive
+ // visual caret that follows the actual text selection; do not replace,
+ // refocus, blur, or intercept native text-edit gestures.
+ const emailVisualCaret=el('cloudEmailVisualCaret');
+ function attachMobileEmailCaret(){
+  if(!emailInput||!emailVisualCaret)return;
+  const touchBrowser=/(iPhone|iPad|iPod|Android)/i.test(navigator.userAgent)
+   ||(navigator.maxTouchPoints>0&&window.matchMedia?.('(pointer:coarse)').matches);
+  if(!touchBrowser)return;
+  const canvas=document.createElement('canvas'),ctx=canvas.getContext('2d');
+  let pending=0;
+  const paint=()=>{
+   pending=0;
+   const focused=document.activeElement===emailInput;
+   if(!focused||emailInput.selectionStart!==emailInput.selectionEnd){
+    emailVisualCaret.hidden=true;return;
+   }
+   const css=getComputedStyle(emailInput);
+   const start=Math.max(0,emailInput.selectionStart||0);
+   const prefix=emailInput.value.slice(0,start).split('\\n').pop();
+   if(ctx)ctx.font=css.font||[css.fontWeight,css.fontSize,css.fontFamily].join(' ');
+   const width=ctx?ctx.measureText(prefix).width:prefix.length*8;
+   const padding=parseFloat(css.paddingLeft)||12;
+   const border=parseFloat(css.borderLeftWidth)||0;
+   const x=padding+border+width-emailInput.scrollLeft;
+   const end=Math.max(10,emailInput.clientWidth-10);
+   emailVisualCaret.style.left=Math.round(Math.max(8,Math.min(end,x)))+'px';
+   emailVisualCaret.hidden=false;
+  };
+  const schedule=()=>{
+   if(pending)cancelAnimationFrame(pending);
+   pending=requestAnimationFrame(paint);
+  };
+  for(const event of ['focus','blur','input','keyup','click','scroll','select','compositionend'])
+   emailInput.addEventListener(event,schedule);
+  // WebKit commits touch selection after touchend; observe both frames.
+  emailInput.addEventListener('touchend',()=>{
+   schedule();setTimeout(schedule,80);
+  },{passive:true});
+  document.addEventListener('selectionchange',()=>{
+   if(document.activeElement===emailInput)schedule();
+  });
+  window.addEventListener('resize',schedule);
+ }
+ attachMobileEmailCaret();
+
  const linkForm=el('cloudLinkForm'),linkInput=el('cloudLinkInput'),linkVerify=el('cloudLinkVerify');
  let enabledProviders={email:false,google:false,github:false};
   let emailRequested=false,linkHelpOpen=false;
