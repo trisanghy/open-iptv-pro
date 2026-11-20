@@ -57,3 +57,9 @@ html.p50-12 #positronBar #positronOpen .p-command-label{font-size:11px!important
 /* Iteration 13: Unify main action dimensions and keyboard focus */
 html.p50-13 #positronBar .p-actions button{min-height:35px!important;height:35px!important;min-width:36px;padding:6px 10px!important;font-size:11px!important;border-radius:9px!important;line-height:1.1!important}
 html.p50-13 #positronBar .p-actions button:focus-visible{outline:2px solid var(--po-accent)!important;outline-offset:2px!important}
+
+/* Iteration 14: Remove duplicate add-source toolbar action */
+html.p50-14 #positronHelpBtn{width:35px!important;min-width:35px!important;justify-content:center;font-weight:800!important;font-size:15px!important}
+html.p50-14 #positronBar #positronStudioBtn{background:var(--po-card)!important;color:var(--po-ink)!important}
+html.p50-14 #positronBar #positronAdd{display:none!important}
+html.p50-14 #positronBar #positronFocus{background:var(--po-raised)!important;color:var(--po-ink)!important}
