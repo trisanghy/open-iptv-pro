@@ -4,3 +4,10 @@ html[data-positron=true][data-positron-palette=aurora]{--po-bg:#071b1b;--po-card
 html[data-positron=true][data-positron-palette=graphite]{--po-bg:#131820;--po-card:#232d39;--po-raised:#2d3947;--po-line:#4b5b6b;--po-ink:#f6f8ff;--po-muted:#c3ccd8;--po-accent:#e3c997;--po-on:#2e261a;--po-glow:#c9a87521}
 html[data-positron=true]{--bg:var(--po-bg);--surface:var(--po-card);--surface2:var(--po-raised);--edge:var(--po-line);--text:var(--po-ink);--muted:var(--po-muted);--accent:var(--po-accent);--ui-primary:var(--po-accent);--ui-on-primary:var(--po-on)}
 html[data-positron=true] body{background:var(--po-bg)!important;color:var(--po-ink)!important}
+/* 02 */html[data-positron=true] #positronBar{background:var(--po-card)!important;border-color:var(--po-line)!important;min-height:68px;height:auto;flex-wrap:wrap;row-gap:10px}
+html[data-positron=true] #positronBar .p-orb{box-shadow:0 0 24px var(--po-glow)}
+html[data-positron=true] #positronBar .p-heading strong{color:var(--po-ink);font-size:16px;max-width:27ch;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+html[data-positron=true] #positronBar .p-heading small{color:var(--po-muted);font-size:10px}
+html[data-positron=true] #positronBar #positronOpen{background:var(--po-raised)!important;color:var(--po-ink)!important;border-color:var(--po-line)!important}
+html[data-positron=true] #positronBar #positronAdd{background:var(--po-accent)!important;color:var(--po-on)!important;border-color:var(--po-accent)!important}
+html[data-positron=true] #positronBar .p-live{background:var(--po-raised);border-color:var(--po-line);color:var(--po-ink)}
