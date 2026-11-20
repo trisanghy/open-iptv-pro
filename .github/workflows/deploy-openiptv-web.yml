@@ -265,6 +265,8 @@ jobs:
           node --check _site/cloud-core.js
           node --check _site/cloud-sync.js
           node --test web-online/tests/web-supabase-cutover.test.cjs
+          # Keep cross-browser email OTP working during every Supabase deployment.
+          node --test tests/web-email-otp-login.test.cjs
           python3 - <<'PY'
           import json
           from pathlib import Path
