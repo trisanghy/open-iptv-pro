@@ -170,7 +170,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y pkg-config libxkbcommon-dev libfontconfig1-dev \
             libwayland-dev libegl1-mesa-dev libgl1-mesa-dev libasound2-dev \
-            libmpv2 xvfb xauth imagemagick libgl1-mesa-dri
+            libmpv2 xvfb xauth x11-utils libxkbcommon-x11-0 imagemagick libgl1-mesa-dri
       - name: Build actual Rust Native Slint executable
         run: cargo build --manifest-path native-rust/Cargo.toml --bin open-iptv-pro-native
       - name: Launch app and capture real GUI under Xvfb
