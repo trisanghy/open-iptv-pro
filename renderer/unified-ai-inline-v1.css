@@ -13,3 +13,102 @@
 #page-tv .unified-ai-tools{display:flex!important;gap:8px;flex-wrap:wrap;align-items:center;padding:4px 0}
 #page-tv #playbackExtra[hidden]{display:none!important}
 @media(max-width:720px){#page-tv .unified-ai-content .caption-third-controls{flex-direction:column!important}#page-tv .unified-ai-content :is(.caption-ai-main,.caption-tts-main){width:100%!important}#page-tv .unified-ai-row{padding:10px!important}}
+
+/* Unified AI compact desktop TTS layout v2 — same layout on Rust and Electron. */
+#page-tv .unified-ai-row{padding:8px 10px!important}
+#page-tv .unified-ai-row .unified-ai-toggle{
+  width:max-content!important;max-width:100%!important;min-width:0!important;
+  min-height:32px!important;height:32px!important;padding:4px 9px!important;
+  gap:7px!important;border-radius:9px!important;font-size:12px!important;
+  line-height:1.2!important;white-space:nowrap!important
+}
+#page-tv .unified-ai-row .unified-ai-mark{
+  min-width:23px!important;height:21px!important;padding:1px 4px!important;
+  border-radius:5px!important;font-size:11px!important;line-height:1.2!important
+}
+#page-tv .unified-ai-row .unified-ai-arrow{font-size:14px!important;margin-left:3px!important}
+#page-tv .unified-ai-row .unified-ai-content{padding:10px 0 4px!important;gap:9px!important}
+/* Override older Rust responsive rules that forced Speed and Original to row two
+   even when the whole AI section has enough width for a single TTS row. */
+#page-tv .player-control-card .unified-ai-content .caption-third-controls{
+  display:flex!important;flex-direction:column!important;flex-wrap:nowrap!important;
+  align-items:stretch!important;gap:8px!important;min-width:0!important;width:100%!important
+}
+#page-tv .player-control-card .unified-ai-content .caption-third-controls .caption-ai-main{
+  display:flex!important;flex-wrap:wrap!important;align-items:center!important;
+  gap:5px 9px!important;max-width:100%!important;min-width:0!important;width:100%!important
+}
+#page-tv .player-control-card .unified-ai-content .caption-third-controls .caption-tts-main{
+  display:grid!important;
+  grid-template-columns:max-content minmax(105px,132px) max-content minmax(130px,1fr) max-content minmax(70px,80px) max-content minmax(77px,100px)!important;
+  grid-template-rows:minmax(32px,auto) auto auto!important;
+  column-gap:7px!important;row-gap:5px!important;
+  align-items:center!important;align-content:start!important;
+  width:100%!important;min-width:0!important;max-width:100%!important;
+  flex:none!important;flex-wrap:nowrap!important;padding-top:7px!important
+}
+#page-tv .player-control-card .unified-ai-content .caption-third-controls .caption-tts-main>label{
+  min-width:0!important;margin:0!important;white-space:nowrap!important;
+  overflow:visible!important;text-overflow:clip!important;font-size:12px!important
+}
+#page-tv .player-control-card .unified-ai-content .caption-third-controls .caption-tts-main>label.tts-mode{
+  grid-column:1!important;grid-row:1!important;display:inline-flex!important;align-items:center!important;
+  justify-self:start!important;gap:5px!important
+}
+#page-tv .player-control-card .unified-ai-content .caption-third-controls .caption-tts-main>#liveTtsLanguage{grid-column:2!important;grid-row:1!important}
+#page-tv .player-control-card .unified-ai-content .caption-third-controls .caption-tts-main>label[for="liveTtsVoice"]{grid-column:3!important;grid-row:1!important}
+#page-tv .player-control-card .unified-ai-content .caption-third-controls .caption-tts-main>#liveTtsVoice{grid-column:4!important;grid-row:1!important}
+#page-tv .player-control-card .unified-ai-content .caption-third-controls .caption-tts-main>label[for="liveTtsSpeed"]{grid-column:5!important;grid-row:1!important}
+#page-tv .player-control-card .unified-ai-content .caption-third-controls .caption-tts-main>#liveTtsSpeed{grid-column:6!important;grid-row:1!important}
+#page-tv .player-control-card .unified-ai-content .caption-third-controls .caption-tts-main>label[for="liveTtsDuck"]{grid-column:7!important;grid-row:1!important}
+#page-tv .player-control-card .unified-ai-content .caption-third-controls .caption-tts-main>#liveTtsDuck{grid-column:8!important;grid-row:1!important}
+#page-tv .player-control-card .unified-ai-content .caption-third-controls .caption-tts-main>:is(#liveTtsLanguage,#liveTtsVoice,#liveTtsSpeed,#liveTtsDuck){
+  box-sizing:border-box!important;display:block!important;width:100%!important;
+  min-width:0!important;max-width:100%!important;height:32px!important;
+  min-height:32px!important;flex:none!important;margin:0!important
+}
+#page-tv .player-control-card .unified-ai-content .caption-third-controls .caption-tts-main>#liveTtsVoicePreview{
+  grid-column:1/3!important;grid-row:2!important;justify-self:start!important
+}
+#page-tv .player-control-card .unified-ai-content .caption-third-controls .caption-tts-main>#liveTtsInstall{
+  grid-column:3/6!important;grid-row:2!important;justify-self:start!important
+}
+#page-tv .player-control-card .unified-ai-content .caption-third-controls .caption-tts-main>:is(#liveTtsStatus,#aiHeatWarningInline){
+  grid-column:1/-1!important;grid-row:3!important;max-width:100%!important;
+  min-width:0!important;margin:0!important;white-space:normal!important
+}
+#page-tv .player-control-card .unified-ai-content .caption-third-controls .caption-tts-main>.caption-tts-footer{
+  grid-column:1/-1!important;grid-row:2!important;min-width:0!important;
+  display:flex!important;flex-wrap:wrap!important;gap:5px 9px!important
+}
+#page-tv .unified-ai-content #playbackExtra[hidden]{display:none!important}
+/* Narrow player pane: wrap deliberately, rather than squeezing controls offscreen. */
+@container (max-width:740px){
+  #page-tv .player-control-card .unified-ai-content .caption-third-controls .caption-tts-main{
+    grid-template-columns:max-content minmax(98px,1fr) max-content minmax(122px,1.3fr)!important;
+    grid-template-rows:minmax(32px,auto) minmax(32px,auto) auto!important
+  }
+  #page-tv .player-control-card .unified-ai-content .caption-third-controls .caption-tts-main>label[for="liveTtsSpeed"]{grid-column:1!important;grid-row:2!important}
+  #page-tv .player-control-card .unified-ai-content .caption-third-controls .caption-tts-main>#liveTtsSpeed{grid-column:2!important;grid-row:2!important}
+  #page-tv .player-control-card .unified-ai-content .caption-third-controls .caption-tts-main>label[for="liveTtsDuck"]{grid-column:3!important;grid-row:2!important}
+  #page-tv .player-control-card .unified-ai-content .caption-third-controls .caption-tts-main>#liveTtsDuck{grid-column:4!important;grid-row:2!important}
+  #page-tv .player-control-card .unified-ai-content .caption-third-controls .caption-tts-main>:is(#liveTtsVoicePreview,#liveTtsInstall,.caption-tts-footer){grid-row:3!important}
+  #page-tv .player-control-card .unified-ai-content .caption-third-controls .caption-tts-main>:is(#liveTtsStatus,#aiHeatWarningInline){grid-row:4!important}
+}
+@media(max-width:520px){
+  #page-tv .unified-ai-row .unified-ai-toggle{font-size:11px!important}
+  #page-tv .player-control-card .unified-ai-content .caption-third-controls .caption-tts-main{
+    grid-template-columns:max-content minmax(0,1fr)!important;
+    grid-template-rows:none!important
+  }
+  #page-tv .player-control-card .unified-ai-content .caption-third-controls .caption-tts-main>label.tts-mode{grid-column:1!important;grid-row:1!important}
+  #page-tv .player-control-card .unified-ai-content .caption-third-controls .caption-tts-main>#liveTtsLanguage{grid-column:2!important;grid-row:1!important}
+  #page-tv .player-control-card .unified-ai-content .caption-third-controls .caption-tts-main>label[for="liveTtsVoice"]{grid-column:1!important;grid-row:2!important}
+  #page-tv .player-control-card .unified-ai-content .caption-third-controls .caption-tts-main>#liveTtsVoice{grid-column:2!important;grid-row:2!important}
+  #page-tv .player-control-card .unified-ai-content .caption-third-controls .caption-tts-main>label[for="liveTtsSpeed"]{grid-column:1!important;grid-row:3!important}
+  #page-tv .player-control-card .unified-ai-content .caption-third-controls .caption-tts-main>#liveTtsSpeed{grid-column:2!important;grid-row:3!important}
+  #page-tv .player-control-card .unified-ai-content .caption-third-controls .caption-tts-main>label[for="liveTtsDuck"]{grid-column:1!important;grid-row:4!important}
+  #page-tv .player-control-card .unified-ai-content .caption-third-controls .caption-tts-main>#liveTtsDuck{grid-column:2!important;grid-row:4!important}
+  #page-tv .player-control-card .unified-ai-content .caption-third-controls .caption-tts-main>:is(#liveTtsVoicePreview,#liveTtsInstall,.caption-tts-footer){grid-column:1/-1!important;grid-row:5!important}
+  #page-tv .player-control-card .unified-ai-content .caption-third-controls .caption-tts-main>:is(#liveTtsStatus,#aiHeatWarningInline){grid-column:1/-1!important;grid-row:6!important}
+}
