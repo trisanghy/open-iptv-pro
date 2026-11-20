@@ -1,0 +1,70 @@
+/* Web Source Repair: focused layout only; never alter other pages or components. */
+#sourceRepairSection{min-width:0;scroll-margin-top:12px}
+#sourceRepairSection .source-hub-heading{margin-bottom:14px}
+#sourceRepairSection .source-hub-heading h2{font-size:clamp(18px,2vw,23px);line-height:1.25;overflow-wrap:anywhere}
+#sourceRepairSection .source-hub-heading p{font-size:13px;line-height:1.5;max-width:780px}
+#sourceRepairSection .source-repair-action-card,
+#sourceRepairSection .source-repair-progress,
+#sourceRepairSection .source-repair-log-card{background:color-mix(in srgb,var(--surface,#182331) 72%,var(--bg,#07121d));border:1px solid var(--edge,#35475b);border-radius:14px;padding:16px;margin:0 0 14px;min-width:0}
+#sourceRepairSection .source-repair-card-title{display:flex;align-items:center;gap:9px;margin:0 0 14px;color:var(--text,#e8edf3);font-size:17px;line-height:1.4;font-weight:700}
+#sourceRepairSection .source-repair-title-icon{display:inline-grid;place-items:center;width:23px;height:25px;flex:0 0 23px;color:var(--accent,#c28afa);font-size:21px}
+#sourceRepairSection .collector-actions{display:grid!important;gap:9px!important;margin:0!important}
+#sourceRepairSection .source-repair-primary-row,
+#sourceRepairSection .source-repair-secondary-row,
+#sourceRepairSection .source-repair-tertiary-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:9px;align-items:stretch;min-width:0}
+#sourceRepairSection .source-repair-primary-row{grid-template-columns:minmax(0,1.12fr) minmax(0,.88fr)}
+#sourceRepairSection .source-check-workers{box-sizing:border-box;display:flex!important;align-items:center;justify-content:space-between;gap:8px;min-width:0;margin:0;padding:7px 8px;border:1px solid var(--edge,#3a4d60);border-radius:10px;white-space:normal;line-height:1.3;font-size:12px}
+#sourceRepairSection .source-check-workers select{box-sizing:border-box;width:auto;max-width:110px;min-width:76px;height:34px;flex:0 1 110px;font-size:12px;padding:5px 6px}
+#sourceRepairSection .collector-actions button{box-sizing:border-box;display:flex!important;justify-content:center;align-items:center;min-width:0;min-height:46px;height:auto;width:100%;padding:9px 10px;border-radius:10px;line-height:1.35;white-space:normal;text-wrap:balance;text-align:center;font-size:13px;font-weight:650}
+#sourceRepairSection .collector-actions button:disabled{opacity:.45;cursor:not-allowed}
+#sourceRepairSection .collector-progress{display:block}
+#sourceRepairSection .source-repair-progress .progress-track{margin:0!important;height:7px!important;border-radius:99px;overflow:hidden}
+#sourceRepairSection .source-repair-progress .progress-bar{border-radius:99px;transition:width .16s linear}
+#sourceRepairSection #collectorStatus{margin:10px 0 0;font-size:13px;line-height:1.55;overflow-wrap:anywhere}
+#sourceRepairSection .source-repair-help{margin:-2px 0 16px;border:0;min-width:0}
+#sourceRepairSection .source-repair-help summary{display:list-item;cursor:pointer;width:max-content;max-width:100%;color:var(--muted,#a8b7c8);padding:4px 1px;font-size:12px}
+#sourceRepairSection .source-repair-help p{margin:5px 0 0;max-width:800px;font-size:12px;line-height:1.5}
+#sourceRepairSection .source-repair-statistics{margin:3px 0 16px;min-width:0}
+#sourceRepairSection .source-repair-statistics .source-repair-card-title{margin-bottom:10px}
+#sourceRepairSection .collector-metrics{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:0!important;min-width:0}
+#sourceRepairSection .collector-metrics span{position:relative;box-sizing:border-box;display:block;min-width:0;min-height:76px;padding:12px 8px 11px 55px;background:color-mix(in srgb,var(--surface,#1a2636) 89%,transparent);border:1px solid var(--edge,#33485b);border-radius:11px;color:var(--text,#e7ebf0);font-size:12px;line-height:1.2;overflow:hidden}
+#sourceRepairSection .collector-metrics span::before{content:'▣';position:absolute;left:11px;top:50%;transform:translateY(-50%);width:35px;height:38px;border-radius:10px;display:grid;place-items:center;background:color-mix(in srgb,var(--accent,#b680f1) 14%,transparent);color:var(--accent,#c38ff7);font-size:20px}
+#sourceRepairSection .collector-metrics span:nth-child(1)::before{content:'▤'}
+#sourceRepairSection .collector-metrics span:nth-child(2)::before{content:'▣'}
+#sourceRepairSection .collector-metrics span:nth-child(3)::before{content:'▢'}
+#sourceRepairSection .collector-metrics span:nth-child(4)::before{content:'↗'}
+#sourceRepairSection .collector-metrics span b{display:block;margin-top:3px;font-size:22px;font-weight:750;font-variant-numeric:tabular-nums;line-height:1.1;color:var(--text,#edf3fa)}
+#sourceRepairSection .source-repair-log-card{margin-bottom:0}
+#sourceRepairSection .source-repair-log-card summary{list-style:none;cursor:pointer;margin:0!important}
+#sourceRepairSection .source-repair-log-card summary::-webkit-details-marker{display:none}
+#sourceRepairSection .source-repair-log-card summary::after{content:'⌄';font-size:18px;font-weight:400;margin-left:auto;opacity:.55}
+#sourceRepairSection .source-repair-log-card:not([open]) summary::after{transform:rotate(-90deg)}
+#sourceRepairSection .source-repair-log-card .collector-results{box-sizing:border-box;height:auto;max-height:190px;min-height:0;overflow:auto;display:flex;flex-direction:column;gap:0;margin:10px 0 0;padding:0 1px;overscroll-behavior:contain}
+#sourceRepairSection .source-repair-log-card .collector-log{padding:9px 0;font-size:12px;line-height:1.5;overflow-wrap:anywhere}
+#sourceRepairSection .source-repair-log-card .collector-log:first-child{padding-top:0}
+@media(max-width:700px){
+ #sourceRepairSection .source-hub-heading{margin-bottom:12px}
+ #sourceRepairSection .source-hub-heading h2{font-size:19px}
+ #sourceRepairSection .source-hub-heading p{font-size:12px}
+ #sourceRepairSection .source-repair-action-card,
+ #sourceRepairSection .source-repair-progress,
+ #sourceRepairSection .source-repair-log-card{padding:12px;border-radius:12px;margin-bottom:12px}
+ #sourceRepairSection .source-repair-card-title{font-size:15px;margin-bottom:10px}
+ #sourceRepairSection .collector-actions button{padding:7px 6px;min-height:47px;font-size:11.5px}
+ #sourceRepairSection .source-repair-primary-row,
+ #sourceRepairSection .source-repair-secondary-row,
+ #sourceRepairSection .source-repair-tertiary-row{gap:7px}
+ #sourceRepairSection .source-repair-primary-row{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+ #sourceRepairSection .source-check-workers{display:flex!important;flex-direction:column;align-items:stretch;gap:3px;font-size:11px;min-height:47px;padding:5px 8px}
+ #sourceRepairSection .source-check-workers select{max-width:none;width:100%;height:27px;min-height:27px;flex:0 0 auto;padding:2px 6px;font-size:12px}
+ #sourceRepairSection .collector-metrics{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+ #sourceRepairSection .collector-metrics span{min-height:70px;padding:11px 5px 9px 52px;font-size:11px}
+ #sourceRepairSection .collector-metrics span::before{width:31px;height:33px;left:10px;font-size:17px}
+ #sourceRepairSection .collector-metrics span b{font-size:20px}
+ #sourceRepairSection .source-repair-log-card .collector-results{max-height:155px}
+}
+@media(max-width:350px){
+ #sourceRepairSection .collector-actions button{font-size:10.5px}
+ #sourceRepairSection .collector-metrics span{padding-left:45px}
+ #sourceRepairSection .collector-metrics span::before{left:6px;width:31px}
+}
