@@ -1,0 +1,26 @@
+/* iPhone Safari/Chrome desktop-site request: virtual 1024px layout must
+   occupy the phone's usable *visual* height, not just unscaled 100vh.
+   Restricted to an explicit runtime-detected desktop-on-phone state. */
+html[data-iptv-device="desktop"][data-iptv-handheld-desktop="true"],
+html[data-iptv-device="desktop"][data-iptv-handheld-desktop="true"] body{
+ min-height:var(--iptv-desktop-usable-height,100dvh)!important;
+}
+html[data-iptv-device="desktop"][data-iptv-handheld-desktop="true"] body #appShell{
+ height:var(--iptv-desktop-usable-height,100dvh)!important;
+ min-height:var(--iptv-desktop-usable-height,100dvh)!important;
+ max-height:none!important;
+ overflow:hidden!important;
+}
+html[data-iptv-device="desktop"][data-iptv-handheld-desktop="true"] body #appShell>.main{
+ min-height:0!important;
+ height:100%!important;
+ overflow:hidden!important;
+}
+html[data-iptv-device="desktop"][data-iptv-handheld-desktop="true"] body #appShell>.main>.content{
+ min-height:0!important;
+ overflow-x:hidden!important;
+ overflow-y:auto!important;
+ -webkit-overflow-scrolling:touch!important;
+ overscroll-behavior-y:contain;
+}
+/* Protect Safari's native video fullscreen. Never resize the media surface. */
