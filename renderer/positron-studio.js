@@ -77,3 +77,18 @@ if(e.key.toLowerCase()==='p'&&!e.shiftKey){e.preventDefault();studio.toggle();}
 if(e.key.toLowerCase()==='t'&&e.shiftKey){e.preventDefault();const list=studio.choices.map(x=>x.id),idx=list.indexOf(document.documentElement.dataset.positronPalette);studio.choose(list[(idx+1)%list.length]);}
 });
 })();
+/* 20 */(()=>{const studio=window.OpenIPTVPositronStudio;
+document.addEventListener('fullscreenchange',()=>{
+if(!document.fullscreenElement)return;
+studio?.close();window.OpenIPTVPositron?.close?.();
+});
+const theme=studio?.button;if(theme){theme.setAttribute('aria-keyshortcuts','Alt+P');theme.setAttribute('aria-label','Chọn chủ đề màu Positron');}
+const focus=document.getElementById('positronFocus');if(focus)focus.setAttribute('aria-keyshortcuts','Alt+F');
+document.addEventListener('keydown',e=>{
+if(e.key.toLowerCase()!=='f'||!e.altKey||e.metaKey||e.ctrlKey||e.shiftKey)return;
+if(e.target?.closest?.('input,textarea,select,[contenteditable="true"]'))return;
+if(document.getElementById('positronPalette')?.hidden===false)return;
+if(studio?.menu.hidden===false)return;
+e.preventDefault();focus?.click();
+});
+})();
