@@ -1,0 +1,19 @@
+/* v23.8.83 — remove the leftover empty gutter alongside the icon rail.
+ * Keep full-width navigation unaffected; only shrink TV left padding when
+ * the persistent sidebar has been collapsed by the user. */
+html[data-sidebar-collapsed="true"] .app-shell>.main>.content:has(#page-tv.active-page) {
+  padding-left:4px!important;
+}
+html[data-sidebar-collapsed="true"] #page-tv .tv-layout {
+  margin-left:0!important;
+  min-width:0!important;
+}
+html[data-sidebar-collapsed="true"] #page-tv .watch-panel {
+  min-width:0!important;
+  max-width:100%!important;
+}
+@media(max-width:800px){
+ html[data-sidebar-collapsed="true"] .app-shell>.main>.content:has(#page-tv.active-page){
+   padding-left:3px!important;
+ }
+}

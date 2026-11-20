@@ -1,3 +1,7 @@
+## Rust Lab v23.8.83 — Sửa khoảng trống sidebar khi thu gọn
+
+Trong trang Xem truyền hình, khi thu gọn sidebar thành thanh icon, bỏ khoảng đệm trái không cần thiết của vùng nội dung và cho phép danh sách kênh, video tận dụng chiều rộng. Nút **Nâng cao video bằng AI** đã có từ v23.8.80, không thay đổi đường phát; giữ nguyên PiP gốc, Live Caption/Translate/TTS, Whisper 10 giây, bù chuyển động. Thêm kiểm thử hồi quy CSS. [Release notes](RELEASE_NOTES_RUST_LAB_V23_8_83.md).
+
 ## Rust Lab v23.8.82 — Whisper 10s, sửa kiểm thử build
 
 Giữ thay đổi mẫu Whisper 10 giây của v23.8.81, cập nhật kiểm thử cũ từng cố định thời lượng 4 giây. Giữ TTS, PiP, Captions và tất cả bản phát hành trước. [Ghi chú v23.8.82](RELEASE_NOTES_RUST_LAB_V23_8_82.md).
