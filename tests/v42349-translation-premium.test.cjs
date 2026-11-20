@@ -66,5 +66,5 @@ test('v4.23.60: UI adds a genuine offline translation health test, no English-on
  assert.match(main,/caption:testTranslation/);
  assert.match(pre,/captionTestTranslation/);
  assert.doesNotMatch(h,/Dịch sang tiếng Anh trên máy/);
- assert.equal(JSON.parse(read('package.json')).version,'4.23.70');
+ assert.equal(JSON.parse(read('package.json')).version,'4.23.71');
 });
