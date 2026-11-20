@@ -1,0 +1,28 @@
+name: Verify refreshed Web guide
+on:
+  push:
+    branches: [web/online]
+    paths:
+      - 'huong-dan.html'
+      - 'web-online/huong-dan.html'
+      - 'web-online/scripts/build-guide-native-locales.py'
+      - 'web-online/tests/web-guide-current-interface.test.cjs'
+      - 'web-online/tests/web-guide-native-coverage.test.cjs'
+      - '.github/workflows/verify-web-guide.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  guide:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify latest Web guide, anchors, mobile tabs and 17-language picker
+        run: |
+          node --test web-online/tests/web-guide-current-interface.test.cjs
+          node --test web-online/tests/web-guide-native-coverage.test.cjs
+          python3 -m py_compile web-online/scripts/build-guide-native-locales.py
