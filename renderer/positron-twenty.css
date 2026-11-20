@@ -6,7 +6,7 @@
  html[data-positron="true"].p20-02 #page-tv #channelList{scrollbar-width:thin;scrollbar-color:var(--po-line) transparent;overscroll-behavior:contain}
 
 /* Upgrade 03: Prevent long channel labels breaking shelves */
- html[data-positron="true"].p20-03 #page-tv #channelList :is(.channel-name,html[data-positron="true"].p20-03 .channel-title,html[data-positron="true"].p20-03 .channel-item){min-width:0;overflow-wrap:anywhere}
+ html[data-positron="true"].p20-03 #page-tv #channelList :is(.channel-name,.channel-title,.channel-item){min-width:0;overflow-wrap:anywhere}
 
 /* Upgrade 04: Clarify secondary-filter disclosure */
  html[data-positron="true"].p20-04 #positronFiltersToggle{transition:border-color .14s ease,color .14s ease} html[data-positron="true"].p20-04 #positronFiltersToggle:hover,html[data-positron="true"].p20-04 #positronFiltersToggle:focus-visible{border-color:var(--po-accent)!important;color:var(--po-ink)!important}
@@ -18,31 +18,31 @@
  html[data-positron="true"].p20-06 #appSidebar button.nav{touch-action:manipulation} html[data-positron="true"].p20-06 #appSidebar button.nav:focus-visible{outline-offset:-2px!important}
 
 /* Upgrade 07: Unify source-hub row surfaces */
- html[data-positron="true"].p20-07 #page-sources :is(.source-card,html[data-positron="true"].p20-07 .source-hub-heading,html[data-positron="true"].p20-07 .sources-hub-nav){border-color:var(--po-line)!important;box-shadow:none!important} html[data-positron="true"].p20-07 #page-sources button:focus-visible{outline:2px solid var(--po-accent)!important;outline-offset:2px!important}
+ html[data-positron="true"].p20-07 #page-sources :is(.source-card,.source-hub-heading,.sources-hub-nav){border-color:var(--po-line)!important;box-shadow:none!important} html[data-positron="true"].p20-07 #page-sources button:focus-visible{outline:2px solid var(--po-accent)!important;outline-offset:2px!important}
 
 /* Upgrade 08: Keep EPG search clear on dark themes */
  html[data-positron="true"].p20-08 #page-epg .epg-filter{min-height:38px!important;border-radius:10px!important} html[data-positron="true"].p20-08 #page-epg #epgSearch:focus-visible{outline:2px solid var(--po-accent)!important;outline-offset:-2px!important}
 
 /* Upgrade 09: Improve Doctor diagnostic readability */
- html[data-positron="true"].p20-09 #page-doctor :is(.doctor-v3-panel,html[data-positron="true"].p20-09 .doctor-v2-panel){background:var(--po-card)!important;border:1px solid var(--po-line)!important;border-radius:12px!important} html[data-positron="true"].p20-09 #page-doctor :is(.doctor-v2-results,html[data-positron="true"].p20-09 .doctor-v3-results){min-width:0;overflow-wrap:anywhere}
+ html[data-positron="true"].p20-09 #page-doctor :is(.doctor-v3-panel,.doctor-v2-panel){background:var(--po-card)!important;border:1px solid var(--po-line)!important;border-radius:12px!important} html[data-positron="true"].p20-09 #page-doctor :is(.doctor-v2-results,.doctor-v3-results){min-width:0;overflow-wrap:anywhere}
 
 /* Upgrade 10: Make Settings controls easier to navigate */
- html[data-positron="true"].p20-10 #page-settings :is(button,html[data-positron="true"].p20-10 input,html[data-positron="true"].p20-10 select,html[data-positron="true"].p20-10 textarea):focus-visible{outline:2px solid var(--po-accent)!important;outline-offset:2px!important} html[data-positron="true"].p20-10 #page-settings .settings-card{min-width:0!important}
+ html[data-positron="true"].p20-10 #page-settings :is(button,input,select,textarea):focus-visible{outline:2px solid var(--po-accent)!important;outline-offset:2px!important} html[data-positron="true"].p20-10 #page-settings .settings-card{min-width:0!important}
 
 /* Upgrade 11: Keep Favorite cards within viewport */
- html[data-positron="true"].p20-11 #page-fav :is(.favorite-grid,html[data-positron="true"].p20-11 .fav-card){min-width:0!important} html[data-positron="true"].p20-11 #page-fav .favorite-grid{overflow-wrap:anywhere}
+ html[data-positron="true"].p20-11 #page-fav :is(.favorite-grid,.fav-card){min-width:0!important} html[data-positron="true"].p20-11 #page-fav .favorite-grid{overflow-wrap:anywhere}
 
 /* Upgrade 12: Refine player control focus and grouping */
  html[data-positron="true"].p20-12 #page-tv .player-control-card button:focus-visible{outline:2px solid var(--po-accent)!important;outline-offset:2px!important} html[data-positron="true"].p20-12 #page-tv .transport-controls{align-items:center!important}
 
 /* Upgrade 13: Distinguish disabled actions safely */
- html[data-positron="true"].p20-13 #page-tv :is(button,html[data-positron="true"].p20-13 select):disabled{cursor:not-allowed!important;opacity:.57!important} html[data-positron="true"].p20-13 #page-tv .output-controls{min-width:0!important}
+ html[data-positron="true"].p20-13 #page-tv :is(button,select):disabled{cursor:not-allowed!important;opacity:.57!important} html[data-positron="true"].p20-13 #page-tv .output-controls{min-width:0!important}
 
 /* Upgrade 14: Make volume navigation keyboard-friendly */
  html[data-positron="true"].p20-14 #page-tv #volume{accent-color:var(--po-accent)!important;min-width:44px!important} html[data-positron="true"].p20-14 #page-tv #volume:focus-visible{outline:2px solid var(--po-accent)!important;outline-offset:3px!important}
 
 /* Upgrade 15: Avoid caption toolbar clipping */
- html[data-positron="true"].p20-15 #page-tv .caption-third-controls{min-width:0!important;max-width:100%!important} html[data-positron="true"].p20-15 #page-tv .caption-third-row :is(button,html[data-positron="true"].p20-15 select){max-width:100%!important}
+ html[data-positron="true"].p20-15 #page-tv .caption-third-controls{min-width:0!important;max-width:100%!important} html[data-positron="true"].p20-15 #page-tv .caption-third-row :is(button,select){max-width:100%!important}
 
 /* Upgrade 16: Keep status and subtitles readable */
  html[data-positron="true"].p20-16 #page-tv #liveCaptionStatus{overflow-wrap:anywhere;color:var(--po-muted)!important} html[data-positron="true"].p20-16 #page-tv .playing-channel-text{min-width:0!important}
@@ -51,10 +51,10 @@
  html[data-positron="true"].p20-17 #modal .modal-box,html[data-positron="true"].p20-17 #castModal .modal-box{max-width:calc(100vw - 20px)!important} html[data-positron="true"].p20-17 #modal button:focus-visible,html[data-positron="true"].p20-17 #castModal button:focus-visible{outline:2px solid var(--po-accent)!important}
 
 /* Upgrade 18: Prevent advanced tools horizontal overflow */
- html[data-positron="true"].p20-18 #page-tv :is(.advanced-timebar,html[data-positron="true"].p20-18 .quick-tools,html[data-positron="true"].p20-18 .dvr-quick-bar){max-width:100%!important;min-width:0!important} html[data-positron="true"].p20-18 #page-tv :is(.advanced-timebar,html[data-positron="true"].p20-18 .quick-tools){overflow-wrap:anywhere}
+ html[data-positron="true"].p20-18 #page-tv :is(.advanced-timebar,.quick-tools,.dvr-quick-bar){max-width:100%!important;min-width:0!important} html[data-positron="true"].p20-18 #page-tv :is(.advanced-timebar,.quick-tools){overflow-wrap:anywhere}
 
 /* Upgrade 19: Adapt forms at tablet widths */
 @media(max-width:800px){html[data-positron="true"].p20-19 #page-settings .settings-grid,html[data-positron="true"].p20-19 #page-sources .settings-grid,html[data-positron="true"].p20-19 #page-doctor .settings-grid{grid-template-columns:minmax(0,1fr)!important} html[data-positron="true"].p20-19 #page-epg .dvr-form{max-width:100%!important} html[data-positron="true"].p20-19 #positronBar .p-heading{min-width:0!important}}
 
 /* Upgrade 20: Protect compact viewports without hiding features */
-@media(max-width:600px){html[data-positron="true"].p20-20 #page-tv .output-controls{justify-content:center!important} html[data-positron="true"].p20-20 #page-tv #manualStreamSelect{max-width:100%!important} html[data-positron="true"].p20-20 #page-tv .manual-link-picker{min-width:0!important;max-width:100%!important} html[data-positron="true"].p20-20 #positronBar .p-actions{flex-wrap:wrap!important;justify-content:flex-end!important}}@media(prefers-reduced-motion:reduce){#positronFiltersToggle{transition:none!important}}
+@media(max-width:600px){html[data-positron="true"].p20-20 #page-tv .output-controls{justify-content:center!important} html[data-positron="true"].p20-20 #page-tv #manualStreamSelect{max-width:100%!important} html[data-positron="true"].p20-20 #page-tv .manual-link-picker{min-width:0!important;max-width:100%!important} html[data-positron="true"].p20-20 #positronBar .p-actions{flex-wrap:wrap!important;justify-content:flex-end!important}}@media(prefers-reduced-motion:reduce){html[data-positron="true"].p20-20 #positronFiltersToggle{transition:none!important}}

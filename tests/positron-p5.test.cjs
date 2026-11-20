@@ -36,6 +36,6 @@ test('P5 release is immutable and versioned separately from P4.1',()=>{
  const flow=read('.github/workflows/positron-lab.yml');
  assert.equal(pkg.version,'4.23.83');
  assert.ok(flow.includes('positron/v4.23.83-p5'));
- assert.ok(flow.includes('runTwenty'));
+ assert.ok(read('scripts/positron-50-audit.cjs').includes('runTwenty(page)'));
  assert.ok(flow.includes('Positron-P5-20-Real-Screenshots.zip'));
 });
