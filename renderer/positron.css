@@ -1,0 +1,169 @@
+/* Positron Lab P1 — separate visual layer over Electron 4.23.76.
+   UI-only: never restyle the actual video, captions or native fullscreen overlay. */
+html[data-positron="true"] {
+  --positron-ink:#eaf1ff;
+  --positron-subtle:#a6b6cb;
+  --positron-line:#2a3b52;
+  --positron-purple:#a794ff;
+  --positron-teal:#50e3cb;
+  --bg:#09111e;
+  --surface:#101e2e;
+  --surface2:#16283b;
+  --surface3:#1e3146;
+  --edge:var(--positron-line);
+  --muted:var(--positron-subtle);
+  --text:var(--positron-ink);
+  --accent:var(--positron-purple);
+  --ui-primary:var(--positron-purple);
+  --ui-on-primary:#111528;
+}
+html[data-positron="true"] body {background:#09111e; color:var(--positron-ink)}
+html[data-positron="true"] .app-shell {
+  min-height:560px;
+  background:radial-gradient(ellipse at 70% -30%,#31406c99,transparent 54%),linear-gradient(140deg,#090f1d,#0e1b2b 65%,#0e1725);
+}
+html[data-positron="true"] .sidebar {
+  width:230px;
+  padding:22px 12px 14px;
+  background:linear-gradient(180deg,#111b30 0%,#0d192b 72%,#0d1725 100%)!important;
+  border-right:1px solid #40517155!important;
+}
+html[data-positron="true"] .brand {
+  align-items:center;
+  padding:4px 12px 22px;
+  gap:11px;
+}
+html[data-positron="true"] .brand-icon {
+  border:1px solid #7968bc;
+  background:linear-gradient(140deg,#5847a1,#273d5a);
+  box-shadow:0 8px 25px #060b2180;
+}
+html[data-positron="true"] .brand b {font-size:25px;font-weight:820;letter-spacing:-1.25px}
+html[data-positron="true"] .brand small {font-size:9px;letter-spacing:1.1px;white-space:nowrap;color:#aeb6d9}
+html[data-positron="true"] .brand small .version {color:var(--positron-teal)}
+html[data-positron="true"] .aside-caption {font-size:10px;letter-spacing:1.6px;color:#889ab2;padding:0 12px}
+html[data-positron="true"] .aside-second {margin-top:18px}
+html[data-positron="true"] .sidebar .nav {
+  min-height:38px;
+  height:38px;
+  margin:2px 0;
+  padding:0 11px;
+  border:1px solid transparent;
+  border-radius:11px!important;
+  font-weight:570;
+  font-size:12px;
+  color:#afbdd4;
+  background:transparent;
+}
+html[data-positron="true"] .sidebar .nav span {color:#9aafd3;font-size:17px;flex:0 0 22px}
+html[data-positron="true"] .sidebar .nav:hover {background:#20344b;color:#fff}
+html[data-positron="true"] .sidebar .nav.active {
+  background:linear-gradient(105deg,#51458d8c,#222f52);
+  border-color:#8f80e851;
+  color:white;
+  box-shadow:inset 3px 0 0 var(--positron-purple);
+}
+html[data-positron="true"] .sidebar .nav.active span {color:#cbbfff}
+html[data-positron="true"] .sidebar-bottom {border-color:#3b5068;background:#18293d;border-radius:13px}
+html[data-positron="true"] .sidebar-edge-toggle {left:215px}
+html[data-positron="true"][data-sidebar-visible="false"] .sidebar-edge-toggle {left:0}
+html[data-positron="true"] .main {min-width:0}
+html[data-positron="true"] .content {padding:16px 18px 20px!important}
+html[data-positron="true"] #page-tv .tv-layout {
+  grid-template-columns:minmax(230px,284px) minmax(0,1fr);
+  gap:14px;
+  min-width:0;
+}
+html[data-positron="true"] .channel-panel,
+html[data-positron="true"] #page-tv .player-control-card,
+html[data-positron="true"] #page-tv .advanced-timebar,
+html[data-positron="true"] #page-tv .compact-tools,
+html[data-positron="true"] .settings-card,
+html[data-positron="true"] .source-card {
+  background:#152338ee!important;
+  border:1px solid #334763!important;
+  border-radius:16px!important;
+  box-shadow:0 10px 26px #02081633!important;
+}
+html[data-positron="true"] #page-tv .player-box {
+  background:radial-gradient(circle at 50% 30%,#24354e,#070d17 75%)!important;
+  border:1px solid #435775!important;
+  border-radius:16px!important;
+  overflow:hidden;
+  min-width:0;
+}
+html[data-positron="true"] #page-tv .watch-panel {min-width:0}
+html[data-positron="true"] #page-tv .empty-player h2 {letter-spacing:-.04em}
+html[data-positron="true"] .filter-box {border-color:#3c4e67!important;border-radius:10px!important}
+html[data-positron="true"] :is(.btn-primary,.control-main) {
+  background:linear-gradient(120deg,#ad9aff,#7c89f5)!important;
+  color:#131528!important;
+  border-color:#b7a8ff!important;
+}
+html[data-positron="true"] button:focus-visible,
+html[data-positron="true"] input:focus-visible {
+  outline:2px solid var(--positron-teal)!important;
+  outline-offset:2px;
+}
+html[data-positron="true"] .footer {background:#0c1929!important;border-top:1px solid #2a3b52!important}
+#positronBar {
+  box-sizing:border-box;
+  display:flex;
+  flex:0 0 auto;
+  height:68px;
+  padding:11px 20px 11px 22px;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+  border-bottom:1px solid #35476680;
+  background:linear-gradient(90deg,#101b30 0%,#122239ec 65%,#132237);
+  color:#edf2ff;
+}
+#positronBar .p-title {display:flex;min-width:0;gap:12px;align-items:center}
+#positronBar .p-orb {width:34px;height:34px;border-radius:12px;flex:none;display:grid;place-items:center;background:radial-gradient(circle at 35% 28%,#ffffffaa,#9879ee 23%,#4c66a9 62%,#26334e 90%);box-shadow:0 0 20px #927cff44;font-size:0}
+#positronBar .p-orb::after {content:"";height:18px;width:18px;border-radius:50%;border:2px solid #e3d9ffac;transform:rotate(-25deg) skew(-10deg)}
+#positronBar .p-heading {display:flex;flex-direction:column;gap:2px;min-width:0}
+#positronBar .p-heading strong {font-size:15px;letter-spacing:-.3px;white-space:nowrap}
+#positronBar .p-heading small {font-size:10px;letter-spacing:.8px;color:#94aac7;white-space:nowrap}
+#positronBar .p-actions {display:flex;align-items:center;gap:8px;min-width:0}
+#positronBar .p-live {border:1px solid #46635e;background:#172f34;border-radius:999px;padding:7px 11px;display:inline-flex;align-items:center;gap:7px;font-size:11px;color:#b1dacc;max-width:210px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#positronBar .p-live::before {content:"";height:7px;width:7px;border-radius:100%;background:#50e3cb;box-shadow:0 0 8px #50e3cb}
+#positronBar button {min-height:34px;border:1px solid #405474;border-radius:10px;color:#eaf1ff;background:#233550;display:inline-flex;align-items:center;gap:8px;padding:7px 12px;font-weight:650;font-size:12px;white-space:nowrap}
+#positronBar button:hover {background:#304768}
+#positronBar #positronOpen {min-width:208px;justify-content:space-between;background:#1c2c45}
+#positronBar #positronAdd {background:#6255ab;border-color:#8074ce;color:white}
+#positronBar kbd {font:10px ui-monospace,SFMono-Regular,monospace;color:#a4b7d1;border:1px solid #51627f;border-radius:5px;padding:3px 5px}
+#positronPalette[hidden] {display:none!important}
+#positronPalette {position:fixed;inset:0;z-index:9999;background:#060a14b9;backdrop-filter:blur(8px);display:flex;justify-content:center;align-items:flex-start;padding:clamp(72px,14vh,144px) 16px 32px}
+#positronPalette .p-palette {width:min(620px,100%);max-height:80vh;display:flex;flex-direction:column;overflow:hidden;border-radius:20px;background:#142137;border:1px solid #5b6890;box-shadow:0 28px 90px #020610c9;color:#eaf1ff}
+#positronPalette .p-search {display:flex;align-items:center;gap:11px;border-bottom:1px solid #364665;padding:14px 17px}
+#positronPalette .p-search span {font-size:21px;color:#ad9aff}
+#positronPalette input {border:0;background:transparent;outline:none!important;color:#fff;font-size:16px;min-width:0;width:100%}
+#positronPalette input::placeholder {color:#8999b1}
+#positronPalette #positronClose {font-size:11px;border:1px solid #536584;background:#263953;color:#dce8ff;border-radius:7px;padding:5px 8px;cursor:pointer}
+#positronPalette .p-hint {font-size:11px;color:#9daec6;padding:12px 17px 6px}
+#positronResults {list-style:none;margin:0;padding:3px 8px 12px;overflow:auto}
+#positronResults li {margin:0}
+#positronResults button {width:100%;display:flex;align-items:center;gap:12px;text-align:left;padding:12px 13px;border:0;background:transparent;color:#ebf0ff;border-radius:12px;cursor:pointer}
+#positronResults button[aria-selected="true"],#positronResults button:hover {background:#354366}
+#positronResults .p-glyph {display:grid;place-items:center;width:32px;height:32px;flex:none;border-radius:9px;background:#2b3b59;color:#a9e6e6;font-size:16px}
+#positronResults .p-result-copy {flex:1;min-width:0}
+#positronResults strong {display:block;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#positronResults small {display:block;margin-top:3px;color:#a4b4cb;font-size:11px}
+#positronResults .p-end {color:#8395b1;font-size:11px}
+#positronResults .p-empty {padding:25px;text-align:center;color:#a6b6cb}
+#positronPalette .p-foot {padding:11px 18px;border-top:1px solid #354763;display:flex;justify-content:space-between;gap:10px;font-size:10px;color:#91a4c0}
+@media(max-width:1200px) {
+  #positronBar .p-live{display:none}
+  html[data-positron="true"] #page-tv .tv-layout{grid-template-columns:minmax(218px,265px) minmax(0,1fr)}
+}
+@media(max-width:900px) {
+  #positronBar{height:59px;padding:8px 12px}
+  #positronBar .p-heading small{display:none}
+  #positronBar #positronOpen{min-width:0}
+  #positronBar #positronOpen .p-command-label,#positronBar kbd{display:none}
+  #positronBar #positronAdd{display:none}
+  html[data-positron="true"] #page-tv .tv-layout{grid-template-columns:minmax(0,1fr)}
+  html[data-positron="true"] .content{padding:10px!important}
+}
+@media(prefers-reduced-motion:reduce){#positronPalette{backdrop-filter:none}}
