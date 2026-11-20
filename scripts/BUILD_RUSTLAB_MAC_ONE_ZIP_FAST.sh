@@ -1,9 +1,9 @@
 #!/bin/bash
 set -Eeuo pipefail
-VERSION="4.23.17-tauri.23.8.67"
+VERSION="4.23.17-tauri.23.8.69"
 REPO="trisanghy/open-iptv-pro"
 BRANCH="experiment/rust-tauri-v2"
-TAG="rust-lab/v23.8.67" # Immutable release tag; previous versions remain unchanged
+TAG="rust-lab/v23.8.69" # Immutable release tag; previous versions remain unchanged
 NAME="OpenIPTVPro_RustLab_v23_8_63"
 DEST_BASE="$HOME/Downloads/${NAME}_Build"
 DEST="$DEST_BASE"
@@ -15,8 +15,8 @@ done
 TMP="$(mktemp -d "${TMPDIR:-/tmp}/rustlab-v23-8-63.XXXXXX")"
 trap 'rm -rf "$TMP"' EXIT
 err(){ echo "LỖI: $*" >&2; exit 1; }
-echo "Open IPTV Pro Rust Lab v23.8.67 — Mac build .app only / keep GitHub Release DMG + ZIP"
-# Download the immutable v23.8.67 source tag into a TEMPORARY ZIP; never retain source archive in Downloads.
+echo "Open IPTV Pro Rust Lab v23.8.69 — Mac build .app only / keep GitHub Release DMG + ZIP"
+# Download the immutable v23.8.69 source tag into a TEMPORARY ZIP; never retain source archive in Downloads.
 curl -fLsS --retry 2 --connect-timeout 20 "https://github.com/${REPO}/archive/refs/tags/${TAG}.zip" -o "$TMP/source.zip" || err "Không tải được ZIP từ GitHub"
 mkdir -p "$TMP/extract"
 ditto -x -k "$TMP/source.zip" "$TMP/extract" || err "ZIP bị hỏng hoặc tải chưa hoàn tất"
