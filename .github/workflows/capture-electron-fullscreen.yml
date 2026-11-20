@@ -1,4 +1,4 @@
-name: Capture all Electron desktop navigation screens
+name: Capture actual Electron UI and sidebar AI regression
 on:
   push:
     branches:
@@ -57,6 +57,57 @@ jobs:
            const main=await page.evaluate(()=>({title:document.title,fullscreen:!!document.fullscreenElement,activePage:document.querySelector('.page.active-page')?.id||null,channelChooser:!!document.getElementById('webChannelChooser'),quickTools:!!document.getElementById('quickTools'),windowWidth:innerWidth,windowHeight:innerHeight}));
            fs.writeFileSync('screenshots/main-inspection.json',JSON.stringify(main,null,2));
            if(main.fullscreen||main.activePage!=='page-tv')throw Error('Not a real main TV window');
+           // Regression captures on the ACTUAL Electron app running under Xvfb.
+           // No fake channel data or simulated screenshot rendering.
+           await page.evaluate(()=>{
+             if(document.documentElement.dataset.sidebarVisible!=='false')
+               document.querySelector('#sidebarToggleBtn')?.click();
+             if(document.documentElement.dataset.channelPanelVisible!=='false')
+               document.querySelector('#channelPanelHideBtn')?.click();
+           });
+           await page.waitForTimeout(550);
+           const geometry=await page.evaluate(()=>{
+             const root=document.documentElement;
+             const row=document.querySelector('#page-tv .tv-layout')?.getBoundingClientRect();
+             const video=document.querySelector('#page-tv .watch-panel')?.getBoundingClientRect();
+             const sidebar=document.querySelector('#appSidebar')?.getBoundingClientRect();
+             return {
+               sidebarVisible:root.dataset.sidebarVisible,
+               channelPanelVisible:root.dataset.channelPanelVisible,
+               sidebarWidth:sidebar?.width,layoutLeft:row?.left,watchLeft:video?.left,
+               unusedGutter:video&&row?Math.round(video.left-row.left):null,
+               aiButtonPresent:!!document.querySelector('#videoEnhanceToggle'),
+               aiPanelInitiallyHidden:document.querySelector('#videoEnhancePanel')?.hidden,
+               appTitle:document.title
+             };
+           });
+           fs.writeFileSync('screenshots/collapsed-sidebar-inspection.json',JSON.stringify(geometry,null,2));
+           await page.screenshot({path:'screenshots/electron-v42375-sidebar-collapsed-real.png',fullPage:false});
+           if(geometry.sidebarVisible!=='false'||geometry.channelPanelVisible!=='false')
+             throw Error('Could not collapse sidebar and channel list: '+JSON.stringify(geometry));
+           if(geometry.unusedGutter===null||geometry.unusedGutter>24)
+             throw Error('Unnecessary gutter remains: '+JSON.stringify(geometry));
+           if(!geometry.aiButtonPresent||!geometry.aiPanelInitiallyHidden)
+             throw Error('AI video toggle not initialized correctly: '+JSON.stringify(geometry));
+           await page.locator('#videoEnhanceToggle').click();
+           await page.waitForTimeout(350);
+           const aiDetails=await page.evaluate(()=>({
+             expanded:document.querySelector('#videoEnhanceToggle')?.getAttribute('aria-expanded'),
+             panelHidden:document.querySelector('#videoEnhancePanel')?.hidden,
+             motionVisible:!!document.querySelector('#veh-fps'),
+             upscaleVisible:!!document.querySelector('#veh-resolution'),
+             benchmarkVisible:!!document.querySelector('#veh-run')
+           }));
+           fs.writeFileSync('screenshots/ai-panel-inspection.json',JSON.stringify(aiDetails,null,2));
+           await page.screenshot({path:'screenshots/electron-v42375-ai-panel-expanded-real.png',fullPage:false});
+           if(aiDetails.expanded!=='true'||aiDetails.panelHidden||!aiDetails.motionVisible||!aiDetails.upscaleVisible||!aiDetails.benchmarkVisible)
+             throw Error('AI video panel failed to expand: '+JSON.stringify(aiDetails));
+           await page.evaluate(()=>{
+             document.querySelector('#videoEnhanceToggle')?.click();
+             if(document.documentElement.dataset.sidebarVisible==='false')document.querySelector('#sidebarToggleBtn')?.click();
+             if(document.documentElement.dataset.channelPanelVisible==='false')document.querySelector('#channelPanelShowBtn')?.click();
+           });
+           await page.waitForTimeout(200);
            // Capture each real Electron navigation page without generating mock data.
            const targets=[
             ['tv','01-tv'],['fav','02-favorites'],['epg','03-epg'],
