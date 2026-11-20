@@ -180,3 +180,9 @@ html.p50-36 #positronToolsToggle{display:flex!important;align-items:center;justi
 html.p50-36 #positronToolsToggle:hover{color:var(--po-ink)!important;border-color:var(--po-accent)!important}
 html.p50-36.p50-tools-closed #page-tv :is(.advanced-timebar,.compact-tools){display:none!important}
 html.p50-36 #positronToolsToggle[aria-expanded=true]{color:var(--po-ink)!important;border-color:var(--po-accent)!important}
+
+/* Iteration 37: Simplify Settings card chrome without altering toggles */
+html.p50-37 #page-settings .settings-grid{gap:12px!important}
+html.p50-37 #page-settings .settings-card{background:var(--po-card)!important;border:1px solid var(--po-line)!important;border-radius:12px!important;box-shadow:none!important}
+html.p50-37 #page-settings .settings-card :is(h2,h3){color:var(--po-ink)!important;line-height:1.35!important}
+html.p50-37 #page-settings .settings-card :is(p,.hint,small){line-height:1.55!important;color:var(--po-muted)!important}
