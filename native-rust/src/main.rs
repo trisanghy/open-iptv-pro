@@ -1180,30 +1180,28 @@ fn background_timer(ui: &MainWindow, shared: Rc<RefCell<State>>, rx: Receiver<Ba
                 });
             }
         }
-        // The first true video frame is rendered into the Slint Image property.
-        // Restrict SW video updates to the TV page to avoid CPU/RAM churn while
-        // navigating large source/EPG lists. No fake image or background player.
+        // Always drain the libmpv SW render queue, even when the guide or
+        // settings page is active. Only publish image pixels when TV is visible,
+        // preventing a frozen decoder and unnecessary Slint texture uploads.
         if last_frame_refresh.elapsed() >= Duration::from_millis(90) {
             last_frame_refresh=Instant::now();
-            if matches!(ui.get_active_page().as_str(),"tv"|"fav"|"recent") {
-                let result={
-                    let guard=player.borrow();
-                    guard.as_ref().map(|p|p.render_embedded_frame())
-                };
-                match result {
-                    Some(Ok(Some(frame))) => {
-                        let pixels=slint::SharedPixelBuffer::<slint::Rgba8Pixel>::clone_from_slice(
-                            &frame,mpv::FRAME_WIDTH as u32,mpv::FRAME_HEIGHT as u32
-                        );
-                        ui.set_video_frame(slint::Image::from_rgba8(pixels));
-                        ui.set_has_video_frame(true);
-                    }
-                    Some(Err(error)) if last_frame_error.elapsed() >= Duration::from_secs(4) => {
-                        last_frame_error=Instant::now();
-                        status(&ui,format!("Lỗi khung hình: {error}"));
-                    }
-                    _ => {}
+            let result={
+                let guard=player.borrow();
+                guard.as_ref().map(|p|p.render_embedded_frame())
+            };
+            match result {
+                Some(Ok(Some(frame))) if matches!(ui.get_active_page().as_str(),"tv"|"fav"|"recent") => {
+                    let pixels=slint::SharedPixelBuffer::<slint::Rgba8Pixel>::clone_from_slice(
+                        &frame,mpv::FRAME_WIDTH as u32,mpv::FRAME_HEIGHT as u32
+                    );
+                    ui.set_video_frame(slint::Image::from_rgba8(pixels));
+                    ui.set_has_video_frame(true);
                 }
+                Some(Err(error)) if last_frame_error.elapsed() >= Duration::from_secs(4) => {
+                    last_frame_error=Instant::now();
+                    status(&ui,format!("Lỗi khung hình: {error}"));
+                }
+                _ => {}
             }
         }
         if last_player_status.elapsed() >= Duration::from_millis(350) {
