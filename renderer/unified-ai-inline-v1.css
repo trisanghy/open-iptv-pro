@@ -164,3 +164,57 @@
 #page-tv .player-control-card .unified-ai-content .caption-third-controls .caption-tts-main>.caption-tts-footer{grid-column:1/-1!important;grid-row:2!important}
 #page-tv .player-control-card .unified-ai-content .caption-third-controls .caption-tts-main>#liveTtsStatus{grid-column:1/-1!important;grid-row:3!important}
 #page-tv .player-control-card .unified-ai-content .caption-third-controls .caption-tts-main>#aiHeatWarningInline:not([hidden]){grid-column:1/-1!important;grid-row:4!important}
+
+
+/* Rust Lab v23.8.86 — ROOT FIX for huge blank region on expanding CC.
+ * The legacy compact-live-ai-controls stylesheet assigns
+ * .caption-third-controls { flex: 1 1 920px!important }.
+ * The old row was horizontal, but after Unified CC moves these controls
+ * into a VERTICAL flex container, 920px becomes HEIGHT (not width).
+ * Explicitly reset the column flex basis to intrinsic content height.
+ * Keep old component nodes, IDs, listeners and saved settings unchanged. */
+#page-tv .player-control-card .unified-ai-row > .unified-ai-content:not([hidden]) {
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:stretch!important;
+  justify-content:flex-start!important;
+  flex:0 0 auto!important;
+  flex-basis:auto!important;
+  height:auto!important;
+  min-height:0!important;
+  max-height:none!important;
+}
+#page-tv .player-control-card .unified-ai-row > .unified-ai-content > :is(.caption-third-controls,.caption-third-setup,.unified-ai-tools) {
+  flex:0 0 auto!important;
+  flex-grow:0!important;
+  flex-shrink:0!important;
+  flex-basis:auto!important;
+  align-self:stretch!important;
+  height:auto!important;
+  min-height:0!important;
+  max-height:none!important;
+}
+#page-tv .player-control-card .unified-ai-row > .unified-ai-content > .caption-third-controls {
+  width:100%!important;
+  margin:0!important;
+  padding:0!important;
+  align-content:start!important;
+}
+#page-tv .player-control-card .unified-ai-row > .unified-ai-content > .caption-third-setup[hidden] {
+  display:none!important;
+}
+/* The separate CC customization panel may contain dozens of controls.
+ * It scrolls inside the inline panel instead of expanding the entire TV page
+ * or being clipped by the video. Mouse, trackpad and keyboard scrolling work. */
+#page-tv .player-control-card .unified-ai-content > #rustSubtitleOptionsPanel.rust-cc-panel.unified-inline-cc:not([hidden]) {
+  flex:0 0 auto!important;
+  flex-basis:auto!important;
+  height:auto!important;
+  min-height:0!important;
+  max-height:min(70vh,570px)!important;
+  overflow-y:auto!important;
+  overflow-x:hidden!important;
+  align-content:start!important;
+  grid-auto-rows:max-content!important;
+  overscroll-behavior:contain;
+}

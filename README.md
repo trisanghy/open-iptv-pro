@@ -1,3 +1,9 @@
+## Rust Lab v23.8.86 — sửa lỗi CC xổ ra vùng trống khổng lồ
+
+Khi mở **Phụ đề · Dịch · Giọng nói**, layout flex dọc trước đây kế thừa `flex:1 1 920px` của kiểu bố cục ngang cũ. Trình duyệt hiểu 920px là **chiều cao tối thiểu dành cho điều khiển**, nên tạo khoảng trống rất lớn và đẩy toàn bộ công cụ xuống dưới. Phiên bản này đặt lại `flex-basis:auto`, `flex:0 0 auto`, `height:auto` trên các thành phần đã chuyển vào panel CC. Tùy chỉnh CC vẫn có cuộn riêng, tối đa 70vh/570px.
+
+Không thay đổi nội dung điều khiển, native PiP, Whisper 10 giây, Live Caption/Translate/TTS, chức năng video, cài đặt đã lưu hoặc dữ liệu người dùng. Đã bổ sung kiểm thử hồi quy để phát hiện lại lỗi `920px`. [Ghi chú v23.8.86](RELEASE_NOTES_RUST_LAB_V23_8_86.md).
+
 ## Rust Lab v23.8.84 — Hoàn tất kiểm thử hồi quy sidebar
 
 Giữ sửa lỗi khoảng trống sidebar từ v23.8.83. Sửa bài test để xác minh nút AI được nạp qua `renderer/app-entry.js` đúng như kiến trúc hiện hành, thay vì tìm file trực tiếp trong HTML. Không thay đổi logic phát video/Whisper/PiP/CC. [Ghi chú](RELEASE_NOTES_RUST_LAB_V23_8_84.md).
