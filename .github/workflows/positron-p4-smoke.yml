@@ -1,0 +1,92 @@
+name: Positron P4 · fast real screenshot triage
+on:
+  push:
+    branches: [Positron]
+    paths: ['.github/workflows/positron-p4-smoke.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - name: Install real Electron and Xvfb
+        run: |
+          set -Eeuo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq xvfb libgtk-3-0 libnss3 libasound2t64 libgbm1 libxss1 libatk-bridge2.0 libdrm2
+          npm install --no-audit --no-fund
+          npm install --no-save --no-audit --no-fund playwright-core
+      - name: Open P4 in Electron and inspect key screens
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          mkdir -p p4-smoke
+          Xvfb :99 -screen 0 1600x900x24 > p4-smoke/xvfb.log 2>&1 &
+          export DISPLAY=:99
+          export ELECTRON_DISABLE_SECURITY_WARNINGS=true
+          ./node_modules/.bin/electron . --no-sandbox --disable-gpu --remote-debugging-port=9222 > p4-smoke/electron.log 2>&1 &
+          node <<'NODE'
+          'use strict';
+          const fs=require('node:fs'),assert=require('node:assert/strict');
+          const {chromium}=require('playwright-core');
+          const delay=t=>new Promise(r=>setTimeout(r,t));
+          (async()=>{
+            let browser;
+            for(let tries=0;tries<45;tries++){
+              try{browser=await chromium.connectOverCDP('http://127.0.0.1:9222',{timeout:1500});break;}
+              catch{await delay(1000);}
+            }
+            assert.ok(browser,'Electron CDP must connect');
+            const context=browser.contexts()[0];
+            let page;
+            for(let tries=0;tries<30;tries++){
+              page=context.pages().find(p=>p.url().includes('index.html'));
+              if(page)break;await delay(1000);
+            }
+            assert.ok(page,'real Electron app');
+            await page.waitForSelector('#positronHelpBtn',{timeout:30000});
+            await page.setViewportSize({width:1360,height:823});
+            await page.waitForTimeout(300);
+            const desktop=await page.evaluate(()=>{
+              const sidebar=document.getElementById('appSidebar').getBoundingClientRect(),
+                video=document.getElementById('playerBox').getBoundingClientRect();
+              return {side:sidebar.width,video:video.width,stage:window.OpenIPTVPositronFifty?.getStage()};
+            });
+            assert.equal(desktop.stage,50);
+            assert.ok(desktop.side<240,'sidebar too wide');
+            assert.ok(desktop.video>500,'player too narrow');
+            await page.screenshot({path:'p4-smoke/positron-p4-desktop-real.png'});
+            await page.locator('#positronMorePages').click();
+            await page.screenshot({path:'p4-smoke/positron-p4-advanced-real.png'});
+            await page.locator('#positronMorePages').click();
+            await page.locator('#positronToolsToggle').click();
+            await page.screenshot({path:'p4-smoke/positron-p4-timeshift-real.png'});
+            await page.locator('#positronToolsToggle').click();
+            await page.locator('#positronHelpBtn').click();
+            await page.screenshot({path:'p4-smoke/positron-p4-help-real.png'});
+            await page.locator('#positronHelpDialog button').click();
+            await page.setViewportSize({width:850,height:800});
+            await page.waitForTimeout(250);
+            const narrow=await page.evaluate(()=>{
+              const v=document.querySelector('#page-tv .watch-panel').getBoundingClientRect(),
+                ch=document.querySelector('#page-tv .channel-panel').getBoundingClientRect();
+              return {playerWidth:v.width,videoTop:v.top,channelTop:ch.top};
+            });
+            assert.ok(narrow.playerWidth>300&&narrow.videoTop<narrow.channelTop,'video first on narrow screens');
+            await page.screenshot({path:'p4-smoke/positron-p4-narrow-real.png'});
+            fs.writeFileSync('p4-smoke/geometry.json',JSON.stringify({desktop,narrow},null,2));
+            await browser.close();
+            console.log('Actual P4 Electron screenshots PASS',JSON.stringify({desktop,narrow}));
+          })().catch(err=>{console.error(err);process.exitCode=1});
+          NODE
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: positron-p4-fast-real-screenshots
+          path: p4-smoke/
+          retention-days: 20
