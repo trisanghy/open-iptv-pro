@@ -156,3 +156,9 @@ html.p50-31 #page-tv .volume-controls .volume-icon{font-size:16px!important}
 html[data-positron=true].p50-32 #page-tv .player-control-card .output-controls{gap:5px!important;padding:5px 7px!important;justify-content:flex-end!important;min-width:0!important}
 html.p50-32 #page-tv .player-control-card .output-controls :is(#castBtn,#pipBtn,#fullscreenBtn){min-height:32px!important;height:32px!important;border-radius:8px!important;padding:5px 7px!important;font-size:10px!important;background:var(--po-raised)!important;border:1px solid var(--po-line)!important;color:var(--po-ink)!important}
 html.p50-32 #page-tv .player-control-card .output-controls :is(#castBtn,#pipBtn,#fullscreenBtn):focus-visible{outline:2px solid var(--po-accent)!important}
+
+/* Iteration 33: Reduce current EPG strip to two clear lines */
+html.p50-33 #page-tv .control-layout-bottom :is(.epg-current-card,.epg-next-card,.epg-live-info){padding:5px 7px!important}
+html.p50-33 #page-tv .control-layout-bottom :is(b,strong){font-size:11px!important}
+html.p50-33 #page-tv .control-layout-bottom :is(small,span){font-size:10px!important}
+html.p50-33 #page-tv .control-layout-bottom :is(.epg-current-card,.epg-next-card){background:transparent!important;border-color:var(--po-line)!important}
