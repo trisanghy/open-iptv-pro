@@ -21,8 +21,8 @@ test('Web and build source ship the same compact Supabase form CSS',()=>{
   assert.match(source,/font-size:16px/);
   assert.match(source,/\.cloud-email-input-line > button/);
   assert.ok(!html.includes('href="cloud-sync.css"'),'Live page must invalidate old Safari CSS cache');
-  assert.ok(html.includes('href="cloud-sync.css?v=ios-native-textarea-caret-20261120a"'));
-  assert.ok(builder.includes('cloud-sync.css?v=ios-native-textarea-caret-20261120a'),
+  assert.ok(html.includes('href="cloud-sync.css?v=ios-visual-caret-20261121a"'));
+  assert.ok(builder.includes('cloud-sync.css?v=ios-visual-caret-20261121a'),
     'Web builder must retain the same versioned CSS on regenerated pages');
   for(const id of ['cloudEmailInput','cloudLinkInput','cloudOtpCode','cloudEmailSend','cloudLinkVerify'])
     assert.ok(html.includes('id="'+id+'"'),'Cloud auth input/button '+id+' missing');
@@ -44,6 +44,27 @@ test('iPhone uses a native one-row textarea for editable email cursor and select
  assert.match(builder,/textarea id=\\?"cloudEmailInput\\?" rows=\\?"1\\?" wrap=\\?"off\\?"/);
 });
 
+test('iOS visual cursor follows textarea selection without intercepting native edits',()=>{
+ const script=read('cloud-sync.js');
+ assert.match(html,/<span id="cloudEmailVisualCaret" class="cloud-email-visual-caret" aria-hidden="true" hidden><\/span>/);
+ assert.match(html,/cloud-sync\.js\?v=ios-visual-caret-20261121a/);
+ assert.match(script,/function attachMobileEmailCaret\(\)/);
+ assert.match(script,/emailInput\.selectionStart!==emailInput\.selectionEnd/);
+ assert.match(script,/emailInput\.value\.slice\(0,start\)/);
+ assert.match(script,/ctx\.measureText\(prefix\)\.width/);
+ assert.match(script,/emailInput\.scrollLeft/);
+ assert.match(script,/document\.addEventListener\('selectionchange'/);
+ assert.match(script,/emailInput\.addEventListener\('touchend'/);
+ assert.match(script,/requestAnimationFrame\(paint\)/);
+ assert.match(script,/node\.hidden===visible/);
+ assert.match(source,/\.cloud-email-editor \{/);
+ assert.match(source,/\.cloud-email-visual-caret \{/);
+ assert.match(source,/pointer-events:none!important/);
+ assert.match(source,/@keyframes cloud-email-caret-blink/);
+ assert.match(source,/animation:cloud-email-caret-blink 1s step-end infinite/);
+ assert.match(builder,/cloudEmailVisualCaret/);
+});
+
 test('Chromium layout: iPhone email, magic link and OTP fields remain 44px high',()=>{
  const available=['google-chrome','chromium','chromium-browser'].find(bin=>{
    const result=spawnSync('which',[bin],{encoding:'utf8'});return result.status===0;
@@ -61,7 +82,7 @@ test('Chromium layout: iPhone email, magic link and OTP fields remain 44px high'
      </head><body><div id="page-settings" class="active-page"><article id="cloudSyncCard" class="settings-card">
      <form id="cloudEmailForm" class="cloud-email-form">
        <label for="cloudEmailInput">Email</label><div class="cloud-email-input-line">
-         <textarea id="cloudEmailInput" rows="1" wrap="off" placeholder="ten@example.com"></textarea>
+         <div class="cloud-email-editor"><textarea id="cloudEmailInput" rows="1" wrap="off" placeholder="ten@example.com"></textarea><span id="cloudEmailVisualCaret" class="cloud-email-visual-caret" hidden></span></div>
          <button class="btn btn-primary" id="cloudEmailSend">Send sign-in email</button>
        </div></form>
      <div id="cloudLinkForm" class="cloud-email-form"><label for="cloudLinkInput">Link verification</label>
@@ -107,7 +128,7 @@ test('signed-in account hides guest login copy and prevents restore button overf
  assert.match(script,/card\.dataset\.hasMigration=hasMigration\?'true':'false'/);
  assert.match(script,/migrationRestore\.textContent='Khôi phục dữ liệu cũ'/);
  assert.match(html,/id="cloudPrivacyNote"/);
- assert.match(html,/cloud-sync\.js\?v=server-channel-count-20261120a/);
+ assert.match(html,/cloud-sync\.js\?v=ios-visual-caret-20261121a/);
  assert.match(source,/#cloudSyncCard\[data-auth-state="signed-in"\] > \.cloud-sync-actions/);
  assert.match(source,/grid-template-columns:repeat\(2,minmax\(0,1fr\)\)/);
  assert.match(source,/white-space:normal!important/);
@@ -142,7 +163,7 @@ test('Chromium regression: cloud account buttons and email input do not overflow
    +'<button class="btn btn-subtle" id="cloudMigrationRestore">Khôi phục dữ liệu cũ</button>'
    +'<button class="btn btn-subtle" id="cloudLogout">Đăng xuất</button></div>'
    +'<form class="cloud-email-form"><div class="cloud-email-input-line">'
-   +'<textarea id="cloudEmailInput" rows="1" wrap="off" placeholder="ten@example.com"></textarea>'
+   +'<div class="cloud-email-editor"><textarea id="cloudEmailInput" rows="1" wrap="off" placeholder="ten@example.com"></textarea><span id="cloudEmailVisualCaret" class="cloud-email-visual-caret" hidden></span></div>'
    +'<button class="btn btn-primary" id="cloudEmailSend">Gửi mã OTP qua email</button>'
    +'</div></form></article></section><pre id="test-result"></pre>'
    +'<script>const ids=["cloudSyncCard","cloudSyncNow","cloudMigrationRestore","cloudLogout","cloudEmailInput","cloudEmailSend"];'
@@ -185,7 +206,7 @@ test('server inventory reads confirmed payload and guards against mistaken local
  assert.match(script,/uid!==originalId/);
  assert.match(source,/#cloudSyncCard \.cloud-server-stats/);
  assert.match(source,/@media\(max-width:550px\)/);
- assert.match(html,/cloud-sync\.js\?v=server-channel-count-20261120a/);
+ assert.match(html,/cloud-sync\.js\?v=ios-visual-caret-20261121a/);
  assert.match(html,/cloud-core\.js\?v=exclude-images-20261120b/);
  assert.match(builder,/server_stats_html/);
  assert.match(builder,/id="cloudServerChannelCount"/);
