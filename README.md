@@ -1,3 +1,10 @@
+## Rust Lab v23.8.87 — Sửa Whisper Windows x64 và tiến độ cài đặt
+
+- Nhận diện đúng `whisper-cpp-win32-x64-cpu.exe` nằm trong `whisper-cpp-win32-x64-cpu.zip`, chuyển thành `whisper-cli.exe` ngay tại thư mục giải nén để bảo toàn các DLL đi kèm, kiểm tra khả năng chạy thực tế.
+- Tiến trình tải Whisper, mô hình và bộ công cụ TTS hiển thị **% thực dựa trên dung lượng tải** (nếu máy chủ cung cấp Content-Length), không giả lập phần trăm khi cài pip/uv.
+- Hiển thị chi tiết lỗi cài Whisper/Piper/Argos, mã thoát và log stderr; khung lỗi có thể mở để xem toàn bộ. Không tự xóa model hoặc cài đặt người dùng.
+- Giữ phụ đề, dịch, giọng đọc, PiP, bộ đệm video và các bản release cũ. [Ghi chú phát hành](RELEASE_NOTES_RUST_LAB_V23_8_87.md).
+
 ## Rust Lab v23.8.86 — sửa lỗi CC xổ ra vùng trống khổng lồ
 
 Khi mở **Phụ đề · Dịch · Giọng nói**, layout flex dọc trước đây kế thừa `flex:1 1 920px` của kiểu bố cục ngang cũ. Trình duyệt hiểu 920px là **chiều cao tối thiểu dành cho điều khiển**, nên tạo khoảng trống rất lớn và đẩy toàn bộ công cụ xuống dưới. Phiên bản này đặt lại `flex-basis:auto`, `flex:0 0 auto`, `height:auto` trên các thành phần đã chuyển vào panel CC. Tùy chỉnh CC vẫn có cuộn riêng, tối đa 70vh/570px.

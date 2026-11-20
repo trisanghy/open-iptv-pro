@@ -115,22 +115,32 @@ async fn download_verified(app:&AppHandle,event:&str,url:&str,target:&Path,sha:&
  if resp.content_length().is_some_and(|n|n>limit){return Err("Tệp vượt giới hạn tải".into());}
  let temp=target.with_extension("download-part");
  if let Some(parent)=temp.parent(){tokio::fs::create_dir_all(parent).await.map_err(error)?;}
+ let total=resp.content_length().filter(|n|*n>0);
+ let filename=target.file_name().map(|v|v.to_string_lossy().to_string()).unwrap_or_else(||"model".to_owned());
+ let kind=if event=="caption:event"{"setup-progress"}else{"progress"};
  let result=async{
   let mut file=tokio::fs::File::create(&temp).await.map_err(error)?;
   let mut stream=resp.bytes_stream();let mut hash=Sha256::new();let mut bytes=0u64;let mut last_report=0u64;
   while let Some(chunk)=stream.next().await{
    let chunk=chunk.map_err(error)?;bytes+=chunk.len() as u64;
-   if bytes>limit{return Err("Tệp tải vượt giới hạn".into());}
+   if bytes>limit{return Err(format!("{filename}: quá giới hạn tải {limit} byte"));}
    hash.update(&chunk);file.write_all(&chunk).await.map_err(error)?;
-   if bytes-last_report>8*1024*1024{
-    last_report=bytes;let _=app.emit(event,json!({"type":if event=="caption:event"{"setup-progress"}else{"progress"},
-      "target":"vi","message":format!("Đã tải {} MB…",bytes/1048576)}));
+   if last_report==0||bytes-last_report>=1024*1024{
+    last_report=bytes;let percent=total.map(|n|((bytes.saturating_mul(100)/n).min(100)) as u8);
+    let message=match percent{Some(p)=>format!("Tải {filename}: {p}% ({} MB)",bytes/1048576),
+     None=>format!("Tải {filename}: {} MB (không biết tổng)",bytes/1048576)};
+    let _=app.emit(event,json!({"type":kind,"phase":"download","target":"vi","file":filename,
+      "receivedBytes":bytes,"totalBytes":total,"percent":percent,"message":message}));
    }
   }
   file.flush().await.map_err(error)?;drop(file);
+  if let Some(n)=total{if n!=bytes{return Err(format!("{filename}: tải thiếu {bytes}/{n} byte"));}}
   let actual=format!("{:x}",hash.finalize());
-  if actual!=sha{return Err("SHA-256 không khớp, đã hủy cài đặt".into());}
-  tokio::fs::rename(&temp,target).await.map_err(error)?;Ok(())
+  if actual!=sha{return Err(format!("{filename}: SHA-256 không khớp (dự kiến {sha}; thực tế {actual})"));}
+  tokio::fs::rename(&temp,target).await.map_err(error)?;
+  let _=app.emit(event,json!({"type":kind,"phase":"download","target":"vi","file":filename,
+    "receivedBytes":bytes,"totalBytes":total,"percent":100,"message":format!("Đã tải và xác minh SHA-256: {filename}")}));
+  Ok(())
  }.await;
  if result.is_err(){let _=tokio::fs::remove_file(temp).await;}
  result
@@ -155,18 +165,17 @@ fn safe_unzip(archive:&Path,out:&Path)->Result<(),String>{
  Ok(())
 }
 fn normalize_whisper_binary(dir:&Path,asset:&str)->Result<PathBuf,String>{
- // OpenWhispr v1.0.0 ZIPs contain whisper-cpp-darwin-arm64/x64
- // (or whisper-cpp-win32-x64-cpu.exe), NOT whisper-cli.
+ // Asset .zip contains an .exe on Windows. Do not separate the CLI from DLLs.
  let packaged=asset.strip_suffix(".zip").ok_or("Tên gói Whisper không hợp lệ")?;
- let canonical=dir.join(exec_name("whisper-cli"));
+ let actual_name=if cfg!(windows){format!("{packaged}.exe")}else{packaged.to_owned()};
  let source=find_named(dir,&exec_name("whisper-cli"),0)
-  .or_else(||find_named(dir,packaged,0))
-  .ok_or_else(||format!("ZIP Whisper không chứa bộ chạy {packaged}"))?;
+   .or_else(||find_named(dir,&actual_name,0))
+   .or_else(||find_named(dir,packaged,0))
+   .ok_or_else(||format!("ZIP {asset} không chứa whisper-cli hoặc {actual_name}"))?;
+ let canonical=source.parent().ok_or("Thiếu thư mục bộ chạy Whisper")?.join(exec_name("whisper-cli"));
  if source!=canonical{fs::rename(&source,&canonical).map_err(error)?;}
- #[cfg(unix)]{
-  use std::os::unix::fs::PermissionsExt;
-  fs::set_permissions(&canonical,fs::Permissions::from_mode(0o700)).map_err(error)?;
- }
+ #[cfg(unix)]{use std::os::unix::fs::PermissionsExt;fs::set_permissions(&canonical,fs::Permissions::from_mode(0o700)).map_err(error)?;}
+ if !exists(&canonical,50_000){return Err(format!("Bộ chạy Whisper không hợp lệ: {}",canonical.display()));}
  Ok(canonical)
 }
 #[cfg(test)]
@@ -177,12 +186,17 @@ mod whisper_package_regression{
   let dir=std::env::temp_dir().join(format!("openiptv-whisper-test-{}",Uuid::new_v4()));
   fs::create_dir_all(&dir).unwrap();
   let _cleanup=ScopedFolder(dir.clone());
+  let asset=if cfg!(windows){"whisper-cpp-win32-x64-cpu.zip"}else{"whisper-cpp-darwin-arm64.zip"};
   let packaged=if cfg!(windows){"whisper-cpp-win32-x64-cpu.exe"}else{"whisper-cpp-darwin-arm64"};
-  fs::write(dir.join(packaged),vec![0u8;60_000]).unwrap();
-  let found=normalize_whisper_binary(&dir,&format!("{packaged}.zip")).unwrap();
-  assert_eq!(found,dir.join(exec_name("whisper-cli")));
+  let nested=dir.join("release").join("bin");fs::create_dir_all(&nested).unwrap();
+  fs::write(nested.join(packaged),vec![0u8;60_000]).unwrap();
+  fs::write(nested.join("whisper-dependency.dll"),b"preserve").unwrap();
+  let found=normalize_whisper_binary(&dir,asset).unwrap();
+  assert_eq!(found,nested.join(exec_name("whisper-cli")));
   assert!(exists(&found,50_000));
-  assert!(!dir.join(packaged).exists());
+  assert!(!nested.join(packaged).exists());
+  assert!(nested.join("whisper-dependency.dll").exists());
+  assert_eq!(normalize_whisper_binary(&dir,asset).unwrap(),found);
  }
 }
 fn caption_progress(app:&AppHandle,message:&str){let _=app.emit("caption:event",json!({"type":"setup-progress","message":message}));}
@@ -197,9 +211,13 @@ pub async fn caption_install(app:AppHandle,ai:Arc<LocalAi>)->Result<Value,String
    let archive=root.join(asset);
    let url=format!("https://github.com/sjoerdteunisse/whisper.cpp/releases/download/v1.0.0/{asset}");
    download_verified(&app,"caption:event",&url,&archive,sha,30*1024*1024).await?;
-   let dir=root.join("binary");safe_unzip(&archive,&dir)?;
+   caption_progress(&app,"Giải nén Whisper và kiểm tra các DLL đi kèm…");
+   let dir=root.join("binary");safe_unzip(&archive,&dir).map_err(|e|format!("Giải nén Whisper lỗi: {e}"))?;
+   let exe=normalize_whisper_binary(&dir,asset).map_err(|e|format!("Tìm bộ chạy Whisper lỗi: {e}"))?;
+   caption_progress(&app,"Kiểm tra whisper-cli --help…");
+   let mut check=Command::new(&exe);check.arg("--help");
+   output_timeout(&mut check,45).await.map_err(|e|format!("Whisper không chạy được (thiếu DLL hoặc runtime?): {e}"))?;
    let _=tokio::fs::remove_file(archive).await;
-   normalize_whisper_binary(&dir,asset)?;
   }
   if model.is_none(){
    caption_progress(&app,"Đang tải mô hình Whisper đa ngôn ngữ (~148 MB)…");
@@ -211,6 +229,8 @@ pub async fn caption_install(app:AppHandle,ai:Arc<LocalAi>)->Result<Value,String
   caption_progress(&app,"Whisper đã cài xong và có thể chạy offline.");
   Ok(json!({"installed":true,"caption":status}))
  }.await;
+ if let Err(ref e)=result{let _=app.emit("caption:event",json!({"type":"setup-error","phase":"failed","message":e,"details":e}));}
+ else{let _=app.emit("caption:event",json!({"type":"setup-progress","phase":"complete","percent":100,"message":"Whisper cài đặt hoàn tất"}));}
  ai.installing_caption.store(false,Ordering::SeqCst);
  result
 }
@@ -223,7 +243,9 @@ fn caption_text(raw:&[u8])->String{
 async fn output_timeout(command:&mut Command,duration:u64)->Result<std::process::Output,String>{
  command.kill_on_drop(true);
  let output=tokio::time::timeout(Duration::from_secs(duration),command.output()).await.map_err(|_|"Tiến trình AI quá thời gian")?.map_err(error)?;
- if !output.status.success(){return Err(format!("Tiến trình AI lỗi: {}",String::from_utf8_lossy(&output.stderr).chars().take(230).collect::<String>()));}
+ if !output.status.success(){return Err(format!("Lỗi tiến trình (exit={:?}), stderr: {}, stdout: {}",output.status.code(),
+ String::from_utf8_lossy(&output.stderr).chars().take(1100).collect::<String>(),
+ String::from_utf8_lossy(&output.stdout).chars().take(280).collect::<String>()));}
  Ok(output)
 }
 pub async fn caption_stop(ai:&LocalAi)->Value{
@@ -372,11 +394,14 @@ fn uv_asset()->Option<(&'static str,&'static str)>{
  }
 }
 async fn run_install(app:&AppHandle,cmd:&Path,args:&[&str],lang:&str,root:&Path,limit:u64)->Result<(),String>{
- let _=app.emit("tts:event",json!({"type":"progress","target":lang,"message":format!("{} {}",cmd.file_name().map(|x|x.to_string_lossy().to_string()).unwrap_or_default(),args.join(" ")).chars().take(150).collect::<String>()}));
+ let step=format!("{} {}",cmd.file_name().map(|v|v.to_string_lossy().to_string()).unwrap_or_else(||"installer".to_owned()),args.join(" "));
+ let _=app.emit("tts:event",json!({"type":"progress","target":lang,"phase":"install","percent":null,
+  "message":format!("Đang thực thi: {}",step.chars().take(170).collect::<String>())}));
  let mut proc=Command::new(cmd);proc.args(args).env("ARGOS_PACKAGES_DIR",root.join("argos-packages"))
   .env("ARGOS_DEVICE_TYPE","cpu").env("UV_CACHE_DIR",root.join("uv-cache"))
   .env("UV_PYTHON_INSTALL_DIR",root.join("python-managed"));
- output_timeout(&mut proc,limit).await?;Ok(())
+ output_timeout(&mut proc,limit).await.map_err(|e|format!("Cài '{}' thất bại: {e}",step.chars().take(145).collect::<String>()))?;
+ Ok(())
 }
 fn find_small_file(dir:&Path,name:&str,depth:u8)->Option<PathBuf>{
  if depth>4{return None;}
@@ -670,6 +695,8 @@ pub async fn tts_install(app:AppHandle,ai:Arc<LocalAi>,lang:&str)->Result<Value,
   tts_progress(&app,&lang,"Giọng đọc và mô hình dịch đã sẵn sàng offline.");
   Ok(json!({"installed":true,"target":lang,"ready":true}))
  }.await;
+ if let Err(ref e)=result{let _=app.emit("tts:event",json!({"type":"install-error","phase":"failed","target":lang,"message":e,"details":e}));}
+ else{let _=app.emit("tts:event",json!({"type":"progress","phase":"complete","target":lang,"percent":100,"message":"Piper/Argos đã cài xong"}));}
  ai.installing_tts.store(false,Ordering::SeqCst);
  result
 }
@@ -813,6 +840,8 @@ pub async fn tts_voice_install(app:AppHandle,ai:Arc<LocalAi>,voice:&str)->Result
   if status["ready"]!=true{return Err("Giọng đọc chưa cài đầy đủ".into());}
   Ok(status)
  }.await;
+ if let Err(ref e)=result{let _=app.emit("tts:event",json!({"type":"install-error","phase":"failed","target":"vi","voice":voice,"message":e,"details":e}));}
+ else{let _=app.emit("tts:event",json!({"type":"progress","phase":"complete","target":"vi","percent":100,"message":"Giọng tiếng Việt đã sẵn sàng"}));}
  ai.installing_tts.store(false,Ordering::SeqCst);
  result
 }

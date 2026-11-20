@@ -1,0 +1,16 @@
+/* Rust Lab v23.8.87: narrow, readable install status with honest % and detailed failures. */
+#page-tv .local-ai-install-diagnostics:not([hidden]){
+ display:flex;flex-direction:column;gap:5px;
+ flex:1 1 100%;min-width:min(220px,100%);max-width:100%;width:100%;
+ margin:5px 0 8px;padding:8px 10px;border:1px solid var(--edge,#30414e);
+ border-radius:8px;background:rgba(24,36,49,.65);font-size:12px;line-height:1.5;
+}
+#page-tv .local-ai-install-line{display:flex;justify-content:space-between;align-items:start;gap:12px}
+#page-tv .local-ai-install-phase{overflow-wrap:anywhere;color:var(--text,#eaf2f7);flex:1;min-width:0}
+#page-tv .local-ai-install-percent{white-space:nowrap;color:#dca8ff;font-variant-numeric:tabular-nums}
+#page-tv .local-ai-install-bar{display:block;width:100%;height:9px;accent-color:#b678e0}
+#page-tv .local-ai-install-diagnostics[data-state="error"]{border-color:#d77878}
+#page-tv .local-ai-install-error{min-width:0;max-width:100%}
+#page-tv .local-ai-install-error summary{cursor:pointer;color:#ffc4bd}
+#page-tv .local-ai-install-error pre{white-space:pre-wrap;overflow-wrap:anywhere;max-height:180px;overflow:auto;
+ border-radius:6px;background:rgba(0,0,0,.22);padding:8px;color:var(--text,#eaf2f7);font-size:11px}
