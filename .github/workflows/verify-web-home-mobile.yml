@@ -1,0 +1,26 @@
+name: Verify Web Project Homepage Mobile UI
+on:
+  push:
+    branches: [web/online]
+    paths:
+      - 'web-online/project-home.html'
+      - 'web-online/tests/web-home-mobile-navigation.test.cjs'
+      - '.github/workflows/verify-web-home-mobile.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  mobile-home:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validate mobile homepage layout, animations, icons, and languages
+        run: |
+          node --test web-online/tests/web-home-mobile-navigation.test.cjs
+          node --test web-online/tests/web-home-languages.test.cjs
+          node --test web-online/tests/web-home-native-coverage.test.cjs
+          node --test web-online/tests/web-user-site.test.cjs
