@@ -229,6 +229,15 @@ export component MainWindow inherits Window {
                     }
                 }
             }
+            // Persistent Settings hot zone above the navigation scroller.
+            // The actual button remains visible for keyboard interaction.
+            TouchArea {
+                x: 0px;
+                y: root.rail-collapsed ? parent.height - 55px : parent.height - 122px;
+                width: parent.width;
+                height: 54px;
+                clicked => { root.navigate("settings"); }
+            }
         }
         VerticalLayout {
             spacing: 0px;
@@ -251,13 +260,23 @@ if (root.active-page == "tv" || root.active-page == "fav" || root.active-page ==
         Rectangle {
             width: 96px; height: 37px; border-radius: 6px; background: #24394d;
             Text { text: "Thêm URL"; color: #e3edfa; font-size: 12px; horizontal-alignment: center; vertical-alignment: center; }
-            TouchArea { clicked => { root.navigate("sources"); } }
         }
         Rectangle {
             width: 47px; height: 37px; border-radius: 6px; background: #24394d;
             Text { text: "⚙"; color: #eef4ff; font-size: 19px; horizontal-alignment: center; vertical-alignment: center; }
-            TouchArea { clicked => { root.navigate("settings"); } }
         }
+    }
+    // Absolute click regions are placed ABOVE the laid-out widgets to
+    // prevent Slint's adjacent default controls from stealing pointer events.
+    TouchArea {
+        x: parent.width - 157px; y: 0px;
+        width: 102px; height: 44px;
+        clicked => { root.navigate("sources"); }
+    }
+    TouchArea {
+        x: parent.width - 53px; y: 0px;
+        width: 53px; height: 44px;
+        clicked => { root.navigate("settings"); }
     }
 }
     Rectangle {
