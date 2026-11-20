@@ -38,3 +38,9 @@ html.p50-08 #appSidebar .sidebar-bottom :is(b,small){display:block!important;max
 html[data-positron=true].p50-09 #positronBar{height:56px!important;min-height:56px!important;padding:7px 15px!important;gap:9px!important;align-items:center!important;flex-wrap:nowrap!important}
 html.p50-09 #positronBar .p-orb{width:28px!important;height:28px!important;border-radius:10px!important}
 html.p50-09 #positronBar .p-heading strong{font-size:14px!important;line-height:1.15!important}
+
+/* Iteration 10: Prioritize title, search and essential actions */
+html[data-positron=true].p50-10 #positronBar .p-actions{gap:5px!important;min-width:0!important;margin-left:auto!important}
+html.p50-10 #positronBar :is(#positronCounts,.p-live){display:none!important}
+html.p50-10 #positronBar .p-heading small{display:none!important}
+html.p50-10 #positronBar .p-title{gap:8px!important;min-width:100px!important;flex:0 1 auto}
