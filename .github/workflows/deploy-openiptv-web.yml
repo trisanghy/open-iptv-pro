@@ -173,6 +173,14 @@ jobs:
           grep -Fq 'web-player-icons.css?v=single-icon-first-paint-20261119a' _site/index.html
           grep -Fq 'web-player-icons.js?v=audio-state-sync-20261119a' _site/index.html
           node --check _site/theme-boot.js
+          # iPhone Safari Request Desktop Website must fill the real visible
+          # height even when the desktop virtual viewport is 1024px wide.
+          node --check _site/web-desktop-viewport-fix.js
+          node --test web-online/tests/web-desktop-iphone-height.test.cjs
+          cmp _site/web-desktop-viewport-fix.js web-desktop-viewport-fix.js
+          cmp _site/web-desktop-viewport-fix.css web-desktop-viewport-fix.css
+          grep -Fq 'web-desktop-viewport-fix.js?v=desktop-iphone-height-20261120a' _site/index.html
+          grep -Fq 'web-desktop-viewport-fix.css?v=desktop-iphone-height-20261120a' _site/index.html
           grep -Fq 'src="theme-boot.js?v=responsive-desktop-20261118j"' _site/index.html
           node --check _site/web-desktop-download.js
           node --test web-online/tests/web-desktop-download.test.cjs
