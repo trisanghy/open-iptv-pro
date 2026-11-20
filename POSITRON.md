@@ -16,7 +16,7 @@ The Positron CI pipeline executes the existing unit tests plus **20 separate rea
 A completed green CI run proves the listed smoke checks, not 20 independent design revisions. Playback quality and streaming compatibility still require a real playable, authorized IPTV source and device-specific validation.
 
 ## Release policy
-Tag: `positron/v4.23.76-p1` — experimental prerelease, never replace an existing tag or stable Electron release.
+Tag: `positron/v4.23.77-p1` — experimental prerelease, never replace an existing tag or stable Electron release.
 Builds: Apple Silicon DMG, Intel Mac DMG, Windows x64 Setup + Portable, source ZIP, checksums, actual screenshots.
 
 Unsigned binaries may trigger Windows SmartScreen or macOS Gatekeeper warnings. New Positron app identity intentionally separates local app data from the stable installation; existing channel lists are not deleted. Back up or import playlists as required.

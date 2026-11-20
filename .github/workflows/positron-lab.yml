@@ -95,13 +95,13 @@ jobs:
         shell: bash
         run: |
           set -Eeuo pipefail
-          test "$(node -p 'require("./package.json").version')" = "4.23.76-positron.1"
+          test "$(node -p 'require("./package.json").version')" = "4.23.77"
           npx electron-builder --${{ matrix.platform }} --${{ matrix.arch }} --publish never
           if [[ "${{ matrix.platform }}" == mac ]]; then
-            test -s "dist/Open-IPTV-Pro-4.23.76-positron.1-mac-${{ matrix.arch }}.dmg"
+            test -s "dist/Open-IPTV-Pro-4.23.77-mac-${{ matrix.arch }}.dmg"
           else
-            test -s "dist/Open-IPTV-Pro-4.23.76-positron.1-x64.exe"
-            test -s "dist/Open-IPTV-Pro-Setup-4.23.76-positron.1-x64.exe"
+            test -s "dist/Open-IPTV-Pro-4.23.77-x64.exe"
+            test -s "dist/Open-IPTV-Pro-Setup-4.23.77-x64.exe"
           fi
       - uses: actions/upload-artifact@v4
         with:
@@ -130,10 +130,10 @@ jobs:
           mkdir -p release-stage
           git archive --format=zip --output=release-stage/OpenIPTVPro-Positron-P1-Source.zip HEAD
           for name in \
-            Open-IPTV-Pro-4.23.76-positron.1-mac-arm64.dmg \
-            Open-IPTV-Pro-4.23.76-positron.1-mac-x64.dmg \
-            Open-IPTV-Pro-Setup-4.23.76-positron.1-x64.exe \
-            Open-IPTV-Pro-4.23.76-positron.1-x64.exe \
+            Open-IPTV-Pro-4.23.77-mac-arm64.dmg \
+            Open-IPTV-Pro-4.23.77-mac-x64.dmg \
+            Open-IPTV-Pro-Setup-4.23.77-x64.exe \
+            Open-IPTV-Pro-4.23.77-x64.exe \
             positron-final-main-real.png \
             positron-final-command-real.png \
             positron-final-focus-real.png \
@@ -150,7 +150,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -Eeuo pipefail
-          TAG=positron/v4.23.76-p1
+          TAG=positron/v4.23.77-p1
           if gh api "repos/$GITHUB_REPOSITORY/git/ref/tags/$TAG" --jq '.object.sha' >/tmp/tag-sha 2>/dev/null; then
             test "$(cat /tmp/tag-sha)" = "$GITHUB_SHA" || { echo "::error::Positron tag exists at a different SHA"; exit 1; }
             echo 'Immutable Positron tag already exists at the correct commit.'
@@ -163,6 +163,6 @@ jobs:
           fi
           gh release view "$TAG" --repo "$GITHUB_REPOSITORY" --json assets --jq '.assets[].name' >/tmp/positron-assets
           grep -Fxq 'positron-final-main-real.png' /tmp/positron-assets
-          grep -Fxq 'Open-IPTV-Pro-4.23.76-positron.1-mac-arm64.dmg' /tmp/positron-assets
-          grep -Fxq 'Open-IPTV-Pro-Setup-4.23.76-positron.1-x64.exe' /tmp/positron-assets
+          grep -Fxq 'Open-IPTV-Pro-4.23.77-mac-arm64.dmg' /tmp/positron-assets
+          grep -Fxq 'Open-IPTV-Pro-Setup-4.23.77-x64.exe' /tmp/positron-assets
           echo "Verified experimental release $TAG from $GITHUB_SHA"

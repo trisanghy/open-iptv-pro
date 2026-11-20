@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.76-positron.1",
-  "description": "Independent Positron desktop research lab based on Open IPTV Pro Electron 4.23.76",
+  "version": "4.23.77",
+  "description": "Open IPTV Pro Positron P1 experimental desktop UI based on Electron 4.23.76",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",
