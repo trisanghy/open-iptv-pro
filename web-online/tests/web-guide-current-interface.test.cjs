@@ -103,7 +103,7 @@ function guideHarness({reducedMotion=false}={}){
  const docListeners={};
  const document={
   documentElement:root,
-  querySelectorAll(q){return q.startsWith('.side')?sidebar:q.startsWith('.mobile-tabs')?tabs:sections},
+  querySelectorAll(q){return q.includes(',')?[...sidebar,...tabs]:q.startsWith('.side')?sidebar:q.startsWith('.mobile-tabs')?tabs:sections},
   addEventListener(name,fn){docListeners[name]=fn}
  };
  vm.runInNewContext(script.slice(8,-9),{document,window},{timeout:1000});
