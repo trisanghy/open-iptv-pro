@@ -1,0 +1,79 @@
+name: Capture Rust Lab real macOS app screen (v23.8.84)
+on:
+  push:
+    branches: [experiment/rust-tauri-v2]
+    paths: [.github/workflows/capture-rust-lab-real-macos.yml]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  capture:
+    runs-on: macos-15-intel
+    timeout-minutes: 25
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download immutable built DMG for the current Rust Lab version
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p screenshots
+          tag="rust-lab/v23.8.84"
+          asset="OpenIPTVPro-RustLab-v23.8.84-mac-universal.dmg"
+          echo "Using actual release $tag"
+          for i in $(seq 1 90); do
+            if gh release download "$tag" --repo "$GITHUB_REPOSITORY" --pattern "$asset" --dir "$RUNNER_TEMP" --clobber >/dev/null 2>&1; then
+              if test -s "$RUNNER_TEMP/$asset"; then break; fi
+            fi
+            echo "DMG not published yet; check $i" >> screenshots/download-status.log
+            sleep 10
+          done
+          test -s "$RUNNER_TEMP/$asset"
+          echo "$RUNNER_TEMP/$asset" > screenshots/dmg-path.txt
+      - name: Launch actual installed Tauri app, capture macOS desktop
+        shell: bash
+        run: |
+          set -euo pipefail
+          dmg="$(cat screenshots/dmg-path.txt)"
+          mount="$RUNNER_TEMP/rustlab-mounted"
+          mkdir -p "$mount"
+          hdiutil attach -readonly -nobrowse -quiet -mountpoint "$mount" "$dmg"
+          app="$(find "$mount" -maxdepth 1 -type d -name '*.app' -print -quit)"
+          test -n "$app"
+          ditto "$app" "$RUNNER_TEMP/Open IPTV Pro Rust Lab.app"
+          hdiutil detach "$mount" -quiet || true
+          target="$RUNNER_TEMP/Open IPTV Pro Rust Lab.app"
+          xattr -dr com.apple.quarantine "$target" 2>/dev/null || true
+          ls -la "$target/Contents/MacOS" > screenshots/executable-files.txt
+          defaults read "$target/Contents/Info.plist" CFBundleIdentifier >> screenshots/executable-files.txt || true
+          open -a "$target" || true
+          sleep 15
+          pgrep -fl "Open IPTV Pro|open-iptv|rust-lab" > screenshots/processes.txt || true
+          osascript -e 'tell application "Open IPTV Pro Rust Lab" to activate' >>screenshots/osascript.log 2>&1 || true
+          sleep 3
+          screencapture -x screenshots/rust-lab-v23.8.84-app-real.png > screenshots/screenshot.log 2>&1 || true
+          if test -s screenshots/rust-lab-v23.8.84-app-real.png; then
+            sips -g pixelWidth -g pixelHeight screenshots/rust-lab-v23.8.84-app-real.png >> screenshots/screenshot.log 2>&1 || true
+          fi
+          # Best effort accessibility click; still capture first image if permissions block this.
+          osascript <<'APPLESCRIPT' >> screenshots/osascript.log 2>&1 || true
+          tell application "System Events"
+            tell process "Open IPTV Pro Rust Lab"
+              set frontmost to true
+              tell window 1
+                click button "Thu gọn sidebar"
+              end tell
+            end tell
+          end tell
+          APPLESCRIPT
+          sleep 2
+          screencapture -x screenshots/rust-lab-v23.8.84-sidebar-click-attempt-real.png >> screenshots/screenshot.log 2>&1 || true
+          test -s screenshots/rust-lab-v23.8.84-app-real.png
+      - name: Upload actual on-device screenshots and logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: rustlab-v23-8-84-real-macos-captures
+          path: screenshots/
+          retention-days: 7
