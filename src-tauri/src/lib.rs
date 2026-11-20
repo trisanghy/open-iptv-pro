@@ -10,6 +10,7 @@ mod primary_store;
 mod link_checker;
 mod safe_network;
 mod local_ai;
+mod video_enhance;
 
 use std::{path::PathBuf,sync::Arc};
 use tokio::sync::Mutex;

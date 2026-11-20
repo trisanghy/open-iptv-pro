@@ -9,7 +9,7 @@
   'dvr-ui.js','settings-ui.js','ui-style.js','theme-stage.js','player-ux.js','fullscreen-panels.js','fullscreen-web-parity-v23-8-59.js','rust-channel-browser-v23-8-60.js',
   'rust-ai-preferences-v23-8-4.js','live-captions-v42343.js','local-tts-v42344.js','whisper-auto-v42345.js',
   'ai-hardware-advice-v42365.js','rust-electron-parity-v23-4.js','rust-ai-settings-v23-6.js','rust-native-cc-v23-8-20.js','rust-subtitle-controls-v23-8-5.js','electron-player-parity-v23-8-21.js',
-  'supabase-sdk.js','cloud-portable.js','cloud-portable-init.js'
+  'video-enhancement-v23-8-70.js','supabase-sdk.js','cloud-portable.js','cloud-portable-init.js'
  ];
  for(const filename of modules){
   await new Promise((resolve,reject)=>{

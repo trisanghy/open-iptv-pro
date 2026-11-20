@@ -1,0 +1,22 @@
+#page-tv .video-enhance-toggle{display:inline-flex!important;vertical-align:middle;margin-left:12px;padding:10px 16px;border:1px solid #c17fef;border-radius:12px;background:#332043;color:#fff;font-weight:700;cursor:pointer}
+#page-tv .video-enhance-panel[hidden]{display:none!important}
+#page-tv .video-enhance-panel{display:grid;grid-template-columns:220px 1fr;clear:both;width:100%;gap:15px;padding:16px 0 6px;background:transparent!important;border:0!important;box-shadow:none!important}
+#page-tv .veh-nav{display:flex;flex-direction:column;border-right:1px solid #38516a;gap:3px;padding-right:15px}
+#page-tv .veh-nav button{border:0;border-radius:9px;padding:12px;background:transparent;color:#fff;text-align:left;cursor:pointer}
+#page-tv .veh-nav button:first-child{background:#682a85;font-weight:700}
+#page-tv .veh-body{display:flex;flex-direction:column;gap:12px;min-width:0}
+#page-tv .veh-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+#page-tv .veh-card,#page-tv .veh-bench{background:#0c2030;border:1px solid #2e4a5e;border-radius:12px;padding:12px;color:#fff;min-width:0}
+#page-tv .veh-card label{display:flex;justify-content:space-between;gap:8px;font-size:14px}
+#page-tv .veh-card input,#page-tv .veh-safe input{accent-color:#0bd877}
+#page-tv .veh-card small{display:block;color:#bbc9d8;margin:6px 0 12px}
+#page-tv .veh-card span{display:block;font-size:13px;margin:6px 0;font-weight:700}
+#page-tv .veh-card select{width:100%;box-sizing:border-box;background:#132d40;border:1px solid #52738b;color:#fff;padding:10px;border-radius:8px}
+#page-tv .veh-bench{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+#page-tv .veh-bench strong{flex:1 1 150px}
+#page-tv .veh-bench button{padding:10px 12px;border:1px solid #ba79e4;border-radius:9px;background:#39234b;color:#fff;cursor:pointer}
+#page-tv .veh-bench button:disabled{opacity:.55}
+#page-tv .veh-safe{font-size:13px;color:#dde8f4}
+#page-tv #veh-status{font-size:12px;color:#bcd2df;background:#0b2231;padding:9px;border-radius:8px}
+@media(max-width:960px){#page-tv .video-enhance-panel{grid-template-columns:1fr}#page-tv .veh-nav{flex-direction:row;flex-wrap:wrap;border-right:0}#page-tv .veh-grid{grid-template-columns:1fr}}
+@media(max-width:720px){#page-tv .video-enhance-toggle{margin:8px 0 0}}

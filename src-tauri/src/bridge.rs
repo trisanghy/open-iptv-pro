@@ -1,6 +1,6 @@
 //! Electron preload -> Tauri IPC compatibility. The frontend still calls
 //! window.streamleaf.*; all implemented native operations run in Rust.
-use crate::{AppState,stream,smart,backup,recordings,compat,primary_store,link_checker,local_ai,safe_network};
+use crate::{AppState,stream,smart,backup,recordings,compat,primary_store,link_checker,local_ai,safe_network,video_enhance};
 use std::{sync::Arc,fs,path::PathBuf};
 use tauri::{AppHandle,State};
 use tauri_plugin_dialog::DialogExt;
@@ -187,6 +187,7 @@ pub async fn bridge(app:AppHandle,state:State<'_,Arc<AppState>>,local_ai_state:S
   "media:kind"=>media_kind(s,text(&args,0)?).await,
   "media:compatStart"=>compat::start(s,text(&args,0)?).await,
   "media:compatStop"=>{compat::stop(s).await;Ok(json!(true))},
+  "video:enhancementBenchmark"=>video_enhance::benchmark(s.ffmpeg.as_deref()).await,
   "link:check"=>check_link(s,text(&args,0)?).await,
   "snapshot:make"=>snapshot(s,text(&args,0)?,item(&args,1).as_str().unwrap_or("channel")).await,
   "snapshot:delete"=>remove_retired_snapshot(s,text(&args,0)?).await,
