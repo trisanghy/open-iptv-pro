@@ -91,7 +91,7 @@ test('signed-in account hides guest login copy and prevents restore button overf
  assert.match(script,/card\.dataset\.hasMigration=hasMigration\?'true':'false'/);
  assert.match(script,/migrationRestore\.textContent='Khôi phục dữ liệu cũ'/);
  assert.match(html,/id="cloudPrivacyNote"/);
- assert.match(html,/cloud-sync\.js\?v=cloud-account-layout-20261120a/);
+ assert.match(html,/cloud-sync\.js\?v=server-channel-count-20261120a/);
  assert.match(source,/#cloudSyncCard\[data-auth-state="signed-in"\] > \.cloud-sync-actions/);
  assert.match(source,/grid-template-columns:repeat\(2,minmax\(0,1fr\)\)/);
  assert.match(source,/white-space:normal!important/);
