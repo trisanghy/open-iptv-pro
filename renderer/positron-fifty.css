@@ -63,3 +63,8 @@ html.p50-14 #positronHelpBtn{width:35px!important;min-width:35px!important;justi
 html.p50-14 #positronBar #positronStudioBtn{background:var(--po-card)!important;color:var(--po-ink)!important}
 html.p50-14 #positronBar #positronAdd{display:none!important}
 html.p50-14 #positronBar #positronFocus{background:var(--po-raised)!important;color:var(--po-ink)!important}
+
+/* Iteration 15: Reduce external padding and enlarge player */
+html[data-positron=true].p50-15 .main .content{padding:12px 13px 16px!important}
+html.p50-15 #page-tv .watch-panel{gap:9px!important}
+html.p50-15 #page-tv .tv-layout{gap:11px!important}
