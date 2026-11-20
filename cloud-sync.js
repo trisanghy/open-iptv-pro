@@ -382,6 +382,14 @@
  updateEmailSend();
  const emailCooldownTimer=setInterval(updateEmailSend,15000);
  window.addEventListener('pagehide',()=>clearInterval(emailCooldownTimer),{once:true});
+ // The iOS email editor is a one-row textarea so native selection handles work.
+ // Enter submits as a single line; don't intercept taps, long-presses or caret movement.
+ emailInput?.addEventListener('keydown',event=>{
+  if(event.key==='Enter'&&!event.isComposing){
+   event.preventDefault();
+   emailForm?.requestSubmit();
+  }
+ });
  const safeEmail=()=>String(emailInput?.value||'').trim().toLowerCase();
  emailForm?.addEventListener('submit',async event=>{
   event.preventDefault();
