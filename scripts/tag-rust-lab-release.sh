@@ -12,6 +12,13 @@ if [[ ! "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+-tauri\.([0-9]+(\.[0-9]+)*)$ ]]; th
 fi
 RELEASE="${BASH_REMATCH[1]}"
 TAG="rust-lab/v${RELEASE}"
+# Fail before freezing a tag if its source release notes are missing.
+# This must run before any git tag/push: release artifacts come from the immutable tag.
+NOTES="RELEASE_NOTES_RUST_LAB_V${RELEASE//./_}.md"
+if [[ ! -s "$NOTES" ]]; then
+  echo "::error::Missing release notes before tagging: $NOTES"
+  exit 1
+fi
 # Expose tag state to downstream CI builds; old tags remain immutable.
 report(){
  if [[ -n "${GITHUB_OUTPUT:-}" ]]; then

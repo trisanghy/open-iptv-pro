@@ -42,3 +42,16 @@ test('macOS release verification mounts finished universal DMG, not deleted stag
  assert.ok(stage.includes("lipo \"$resource\" -verify_arch arm64 x86_64"));
  assert.ok(!stage.includes('find src-tauri/target/universal-apple-darwin/release/bundle/macos'));
 });
+
+
+test('immutable Rust Lab releases require versioned notes before tag creation',()=>{
+ const pkg=JSON.parse(read('package.json'));
+ const rel=pkg.version.split('-tauri.')[1];
+ const notePath='RELEASE_NOTES_RUST_LAB_V'+rel.replaceAll('.','_')+'.md';
+ assert.ok(fs.existsSync(path.join(__dirname,'..',notePath)),`Missing ${notePath}`);
+ assert.ok(read(notePath).includes('Rust Lab v'+rel));
+ const tagging=read('scripts/tag-rust-lab-release.sh');
+ assert.ok(tagging.includes('NOTES="RELEASE_NOTES_RUST_LAB_V${RELEASE//./_}.md"'));
+ assert.ok(tagging.includes('[[ ! -s "$NOTES" ]]'));
+ assert.ok(tagging.indexOf('Missing release notes before tagging')<tagging.indexOf('git push origin'));
+});
