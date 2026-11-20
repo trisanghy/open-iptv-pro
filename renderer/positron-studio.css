@@ -1,0 +1,6 @@
+/* POSITRON P3 — modular visual improvements, video and fullscreen remain untouched. */
+/* 01 */html[data-positron=true]{--po-bg:#090f1e;--po-card:#142138;--po-raised:#1c2d48;--po-line:#344765;--po-ink:#eef3ff;--po-muted:#aec0d8;--po-accent:#aa99ff;--po-on:#17172a;--po-glow:#7975dc38}
+html[data-positron=true][data-positron-palette=aurora]{--po-bg:#071b1b;--po-card:#102e31;--po-raised:#1a3c40;--po-line:#32605d;--po-ink:#e8fff6;--po-muted:#a3d2ca;--po-accent:#65e7cf;--po-on:#0d292a;--po-glow:#2cd7b533}
+html[data-positron=true][data-positron-palette=graphite]{--po-bg:#131820;--po-card:#232d39;--po-raised:#2d3947;--po-line:#4b5b6b;--po-ink:#f6f8ff;--po-muted:#c3ccd8;--po-accent:#e3c997;--po-on:#2e261a;--po-glow:#c9a87521}
+html[data-positron=true]{--bg:var(--po-bg);--surface:var(--po-card);--surface2:var(--po-raised);--edge:var(--po-line);--text:var(--po-ink);--muted:var(--po-muted);--accent:var(--po-accent);--ui-primary:var(--po-accent);--ui-on-primary:var(--po-on)}
+html[data-positron=true] body{background:var(--po-bg)!important;color:var(--po-ink)!important}
