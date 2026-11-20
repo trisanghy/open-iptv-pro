@@ -1085,7 +1085,7 @@ fn connect_callbacks(
             let mut four=multiview.borrow_mut();four.clear();
             let mut succeeded=0;
             for (i,ch) in channels.iter().enumerate() {
-                if let Ok(p)=Mpv::new(){
+                if let Ok(p)=Mpv::new_native_window(){
                     let _=p.set_volume(if i==0 {shared.borrow().data.volume}else{0});
                     if p.play(&ch.url).is_ok(){four.push(p);succeeded+=1;}
                 }
