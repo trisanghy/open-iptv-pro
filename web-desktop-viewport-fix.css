@@ -62,7 +62,7 @@ html[data-iptv-device="desktop"][data-iptv-handheld-desktop="true"] body #appShe
  box-sizing:border-box!important;flex:1 1 auto!important;
  width:100%!important;min-width:0!important;max-width:100%!important;
  height:auto!important;min-height:0!important;margin:0!important;
- padding-top:calc(var(--iptv-phone-tap,115px) + 2 * var(--iptv-phone-gap,30px))!important;
+ padding-top:calc(var(--iptv-phone-tap,115px) + var(--iptv-phone-gap,30px) + var(--iptv-phone-gap,30px))!important;
  overflow-x:hidden!important;overflow-y:auto!important;-webkit-overflow-scrolling:touch!important;
 }
 html[data-iptv-device="desktop"][data-iptv-handheld-desktop="true"] body #appShell>.main>.content>.page.active-page{
