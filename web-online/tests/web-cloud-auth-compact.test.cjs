@@ -21,8 +21,8 @@ test('Web and build source ship the same compact Supabase form CSS',()=>{
   assert.match(source,/font-size:16px/);
   assert.match(source,/\.cloud-email-input-line > button/);
   assert.ok(!html.includes('href="cloud-sync.css"'),'Live page must invalidate old Safari CSS cache');
-  assert.ok(html.includes('href="cloud-sync.css?v=email-otp-20261120a"'));
-  assert.ok(builder.includes('cloud-sync.css?v=email-otp-20261120a'),
+  assert.ok(html.includes('href="cloud-sync.css?v=cloud-account-layout-20261120a"'));
+  assert.ok(builder.includes('cloud-sync.css?v=cloud-account-layout-20261120a'),
     'Web builder must retain the same versioned CSS on regenerated pages');
   for(const id of ['cloudEmailInput','cloudLinkInput','cloudOtpCode','cloudEmailSend','cloudLinkVerify'])
     assert.ok(html.includes('id="'+id+'"'),'Cloud auth input/button '+id+' missing');
@@ -81,4 +81,30 @@ test('Chromium layout: iPhone email, magic link and OTP fields remain 44px high'
        assert.ok(measurements[id].height>=40, id+' should remain touch-friendly');
    }
  }finally{fs.rmSync(dir,{recursive:true,force:true});}
+});
+
+test('signed-in account hides guest login copy and prevents restore button overflow',()=>{
+ const script=read('cloud-sync.js');
+ assert.match(script,/show\(authGuide,!uid&&!!client&&enabledProviders\.email\)/);
+ assert.match(script,/show\(providersNote,!uid&&!!client\)/);
+ assert.match(script,/card\.dataset\.authState=uid\?'signed-in':'guest'/);
+ assert.match(script,/card\.dataset\.hasMigration=hasMigration\?'true':'false'/);
+ assert.match(script,/migrationRestore\.textContent='Khôi phục dữ liệu cũ'/);
+ assert.match(html,/id="cloudPrivacyNote"/);
+ assert.match(html,/cloud-sync\.js\?v=cloud-account-layout-20261120a/);
+ assert.match(source,/#cloudSyncCard\[data-auth-state="signed-in"\] > \.cloud-sync-actions/);
+ assert.match(source,/grid-template-columns:repeat\(2,minmax\(0,1fr\)\)/);
+ assert.match(source,/white-space:normal!important/);
+ assert.match(source,/#cloudLogout \{grid-column:1\/-1\}/);
+ assert.match(source,/#cloudSyncCard\[data-auth-state="signed-in"\]\[data-has-migration="false"\] #cloudSyncNow/);
+});
+
+test('email inputs grow within available width on phone and tablet',()=>{
+ assert.match(source,/#cloudSyncCard \.cloud-email-form \.cloud-email-input-line \{/);
+ assert.match(source,/display:grid;grid-template-columns:minmax\(0,1fr\) auto/);
+ assert.match(source,/width:100%!important;min-width:0!important/);
+ assert.match(source,/@media \(max-width:760px\)/);
+ assert.match(source,/grid-template-columns:minmax\(0,1fr\);gap:8px/);
+ assert.match(html,/id="cloudEmailInput"/);
+ assert.match(html,/id="cloudOtpCode"/);
 });
