@@ -140,10 +140,10 @@ jobs:
           node --check _site/advanced.js
           node --test web-online/tests/web-collector-merge-regression.test.cjs
           node --test web-online/tests/web-playlist-url.test.cjs
-          grep -Fq 'collector.js?v=playlist-url-20261119b' _site/index.html
+          grep -Fq 'collector.js?v=collector-quota-20261120a' _site/index.html
           grep -Fq 'source-edit.js?v=playlist-input-20261119c' _site/index.html
           grep -Fq 'app.js?v=web-perf-20261120a' _site/index.html
-          grep -Fq 'advanced.js?v=favorites-tap-20261119a' _site/index.html
+          grep -Fq 'advanced.js?v=advanced-health-compact-20261120a' _site/index.html
           grep -Fq 'advanced-core.js?v=collector-merge-repair-20261119a' _site/index.html
           node --check _site/web-recent-channels.js
           node --test web-online/tests/web-recent-channels.test.cjs
