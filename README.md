@@ -10,12 +10,12 @@
 
 | Nền tảng | Bản phát hành đã có tệp tải | Liên kết |
 |---|---|---|
-| **Electron Desktop** · Windows/macOS | v4.23.70 Stable | [Installer, DMG, source, SHA256](https://github.com/trisanghy/open-iptv-pro/releases/tag/v4.23.70) |
-| **Rust Lab / Tauri** · Windows/macOS | v23.8.67 Beta | [Universal DMG, Windows Setup/Portable, source](https://github.com/trisanghy/open-iptv-pro/releases/tag/rust-lab/v23.8.67) |
-| **Mobile Capacitor** · Android/iOS | 4.23.17-mobile.33 Beta | [Android debug APK, unsigned iOS IPA, source](https://github.com/trisanghy/open-iptv-pro/releases/tag/mobile/v4.23.17.33) |
+| **Electron Desktop** · Windows/macOS | v4.23.71 Beta (đã có bộ cài) | [DMG Intel/Apple Silicon, Setup/Portable Windows, source, SHA256](https://github.com/trisanghy/open-iptv-pro/releases/tag/electron-v4.23.71) |
+| **Rust Lab / Tauri** · Windows/macOS | v23.8.69 Beta | [Universal DMG, Windows Setup/Portable, source, SHA256](https://github.com/trisanghy/open-iptv-pro/releases/tag/rust-lab/v23.8.69) |
+| **Mobile Capacitor** · Android/iOS | 4.23.17-mobile.34 Beta | [Android debug APK, unsigned iOS IPA, source, screenshots](https://github.com/trisanghy/open-iptv-pro/releases/tag/mobile/v4.23.17.34) |
 | **Web Online** · Desktop/iOS/Android browser | cập nhật theo nhánh `web/online` | [Mở Web](https://trisanghy.github.io/open-iptv-pro/) · [Hướng dẫn](https://trisanghy.github.io/open-iptv-pro/huong-dan.html) |
 
-**Đang kiểm tra bản đồng bộ Supabase:** Electron `4.23.71`, Rust Lab `23.8.69`, Mobile `4.23.17-mobile.34`. Các mốc này **chưa được coi là bản tải đã phát hành** cho đến khi kiểm thử và tệp cài đặt trên GitHub Releases hoàn tất. Không áp dụng lên Rust Native C3.
+**Đồng bộ Supabase đã có trong bộ cài Beta mới nhất** Electron `4.23.71`, Rust Lab `23.8.69`, Mobile `4.23.17-mobile.34` (đã kiểm tra GitHub Release có tệp tải và checksum). **Electron Stable từ `main`** đang xuất bản riêng dưới tag `v4.23.71`; chỉ dùng link stable sau khi xác minh. Chưa xác thực đăng nhập chéo trên thiết bị thật. **Không áp dụng lên Rust Native C3.**
 
 ### Đồng bộ nhiều nền tảng
 
@@ -23,9 +23,9 @@ Web, Electron, Rust Lab/Tauri và Mobile dùng chung dự án Supabase `zjbsvqry
 
 
 
-**Trình phát IPTV đa nền tảng · Electron Desktop v4.23.70 Stable · Rust Lab v23.8.30 Beta · Mobile Capacitor 4.23.17-mobile.16 Beta · Web Online**
+**Trình phát IPTV đa nền tảng · Electron v4.23.71 Beta · Rust Lab v23.8.69 Beta · Mobile Capacitor v4.23.17-mobile.34 Beta · Web Online**
 
-[**Tải bản cài đặt mới nhất**](https://github.com/trisanghy/open-iptv-pro/releases/tag/v4.23.70) · [**Mở Web Online**](https://trisanghy.github.io/open-iptv-pro/) · [**Android/iOS Mobile Beta**](https://github.com/trisanghy/open-iptv-pro/releases/tag/mobile/v4.23.17.16) · [**Xem mã nguồn**](https://github.com/trisanghy/open-iptv-pro) · [**Nhật ký thay đổi**](CHANGELOG.md)
+[**Electron mới nhất**](https://github.com/trisanghy/open-iptv-pro/releases/tag/electron-v4.23.71) · [**Rust Lab mới nhất**](https://github.com/trisanghy/open-iptv-pro/releases/tag/rust-lab/v23.8.69) · [**Android/iOS Mobile Beta**](https://github.com/trisanghy/open-iptv-pro/releases/tag/mobile/v4.23.17.34) · [**Mở Web Online**](https://trisanghy.github.io/open-iptv-pro/) · [**Xem mã nguồn**](https://github.com/trisanghy/open-iptv-pro) · [**Nhật ký thay đổi**](CHANGELOG.md)
 
 Open IPTV Pro là ứng dụng mã nguồn mở được phát triển như **một dự án cá nhân**, giúp người dùng phát và tự tổ chức các nguồn IPTV/M3U mà **chính họ cung cấp** trên macOS, Windows, Android, iOS hoặc trình duyệt (tùy phiên bản). Trọng tâm là xem kênh nhanh, quản lý danh sách hiệu quả, ưu tiên Yêu thích, sử dụng thuận tiện trên cửa sổ nhỏ hoặc màn hình lớn, và có thêm công cụ EPG, ghi hình, kiểm tra luồng cùng AI phụ đề ngoại tuyến.
 
@@ -41,34 +41,34 @@ Open IPTV Pro là ứng dụng mã nguồn mở được phát triển như **m�
 
 Trong **Xem truyền hình → Danh sách kênh**, bộ lọc **◷ Vừa xem** nằm cạnh **★ Yêu thích**. Kênh gần đây xuất hiện trước, không tạo mục trùng, nhấn vào kênh để phát lại và vẫn đánh dấu sao bình thường. Danh sách tự ẩn những kênh đã xóa hoặc thuộc nguồn đang tắt. Electron và Rust ghi nhận kênh sau khi phát thành công; Web ghi nhận kênh khi được mở. Lịch sử được lưu trong dữ liệu ứng dụng, khôi phục khi mở lại. Số mục tối đa do mỗi phiên bản quản lý riêng.
 
-**Lưu ý về phát hành:** Mã nguồn cập nhật có thể mới hơn bộ cài v4.23.70 hiện có. Không coi các tệp cài đặt cũ đã chứa tính năng này nếu chưa có bản build mới được xác minh.
+**Lưu ý về phát hành:** Các build Beta mới (Electron v4.23.71, Rust Lab v23.8.69, Mobile .34) có tệp tải thật trên GitHub Releases. Tính năng liên quan đăng nhập/chuyển dữ liệu đa thiết bị vẫn cần kiểm thử trên thiết bị thật trước khi triển khai rộng.
 
 ## 1. Các phiên bản
 
 > **Đọc trên điện thoại:** mỗi phiên bản có mục riêng thay vì bảng bốn cột gây xuống dòng và khó đọc trên GitHub Mobile.
 
-### Electron Desktop — v4.23.70 Stable
+### Electron Desktop — v4.23.71 Beta (v4.23.70 Stable vẫn lưu lại)
 
-**macOS (Apple Silicon / Intel) và Windows x64.** Bản sử dụng hằng ngày, với công cụ native và tính năng desktop nâng cao. [Tải Electron v4.23.70](https://github.com/trisanghy/open-iptv-pro/releases/tag/v4.23.70).
+**macOS (Apple Silicon / Intel) và Windows x64.** Bản sử dụng hằng ngày, với công cụ native và tính năng desktop nâng cao. [Tải Electron v4.23.71 Beta](https://github.com/trisanghy/open-iptv-pro/releases/tag/electron-v4.23.71) hoặc [Stable v4.23.70 lịch sử](https://github.com/trisanghy/open-iptv-pro/releases/tag/v4.23.70).
 
-### Rust Lab — v23.8.32 Beta độc lập
+### Rust Lab — v23.8.69 Beta độc lập
 
-**macOS và Windows x64.** Dự án Tauri/Rust nhẹ, có bộ tính năng và tương thích khác Electron. [Tải Rust Lab v23.8.32](https://github.com/trisanghy/open-iptv-pro/releases/tag/rust-lab/v23.8.32).
+**macOS và Windows x64.** Dự án Tauri/Rust nhẹ, có bộ tính năng và tương thích khác Electron. [Tải Rust Lab v23.8.69](https://github.com/trisanghy/open-iptv-pro/releases/tag/rust-lab/v23.8.69).
 
-### Mobile Capacitor — v4.23.17-mobile.16 Beta
+### Mobile Capacitor — v4.23.17-mobile.34 Beta
 
 **Android 7+ / iOS 15+** (theo yêu cầu công cụ và cấu hình build). Ứng dụng mobile riêng dùng Capacitor 8, tập trung vào giao diện cảm ứng, nguồn M3U, EPG, danh sách kênh và PiP trong giới hạn thiết bị.
 
 - **Android:** có file APK **debug-signed** để kiểm thử cá nhân; không phải bản Google Play.
 - **iOS:** có **IPA chưa ký**; cần chứng chỉ Apple và provisioning phù hợp trước khi cài lên iPhone, **không phải bản App Store**.
-- [Bản phát hành Mobile Beta 4.23.17-mobile.16](https://github.com/trisanghy/open-iptv-pro/releases/tag/mobile/v4.23.17.16) · [Mã nguồn Mobile trên main](mobile/) · [Hướng dẫn Android/iOS](docs/MOBILE_ANDROID_IOS.md).
+- [Bản phát hành Mobile Beta 4.23.17-mobile.34](https://github.com/trisanghy/open-iptv-pro/releases/tag/mobile/v4.23.17.34) · [Nhánh mã nguồn Mobile](https://github.com/trisanghy/open-iptv-pro/tree/experiment/mobile-capacitor-4211) · [Hướng dẫn Android/iOS](docs/MOBILE_ANDROID_IOS.md).
 - Bản Mobile **chưa tương đương toàn bộ Electron/Rust**. Hỗ trợ RTSP/UDP, FFmpeg native, DVR/Timeshift, Auto PiP, phát nền và Cast/AirPlay phụ thuộc giới hạn hoặc xác minh thiết bị; không được tự coi là hoạt động đầy đủ.
 
 ### Web Online — Trình duyệt
 
 Không cần cài đặt. Hỗ trợ máy tính và trình duyệt di động, với giới hạn CORS/codec/autoplay và khả năng đồng bộ tài khoản khi dịch vụ hoạt động. [Mở trình phát Web](https://trisanghy.github.io/open-iptv-pro/).
 
-**Lưu ý về phiên bản:** [Gói phát hành chung v4.23.70](https://github.com/trisanghy/open-iptv-pro/releases/tag/v4.23.70) dành cho Electron v4.23.70, Rust Lab v23.8.30 và Web tại thời điểm phát hành; **Mobile không nằm trong gói chung này** mà có release riêng. Rust Lab v23.8.32 cũng là release độc lập mới hơn. Không mặc định các bản cài khác nhau có cùng tính năng hoặc lưu trữ dữ liệu tương thích.
+**Lưu ý về phiên bản:** [Gói chung v4.23.70](https://github.com/trisanghy/open-iptv-pro/releases/tag/v4.23.70) là bản lịch sử. Electron v4.23.71, Rust Lab v23.8.69 và Mobile v4.23.17-mobile.34 phát hành mới riêng, không giả định gói cũ chứa các cải tiến sau này. Không mặc định các bản cài khác nhau có cùng tính năng hoặc lưu trữ dữ liệu tương thích.
 
 **Tổ chức mã nguồn:** Electron ở `renderer/` và `src/`; Rust Lab ở [`rust-lab/`](rust-lab/); Mobile Capacitor ở [`mobile/`](mobile/) (bản sao có kiểm soát từ nhánh [`experiment/mobile-capacitor-4211`](https://github.com/trisanghy/open-iptv-pro/tree/experiment/mobile-capacitor-4211)); Web Online ở [`web/`](web/). Các nền tảng được phát triển và phát hành độc lập, không trộn mã nguồn hoặc bộ cài với nhau.
 
