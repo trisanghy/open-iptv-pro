@@ -48,3 +48,11 @@ if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}
 else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}
 },true);
 })();
+/* 17 */(()=>{const query=document.getElementById('positronQuery'),results=document.getElementById('positronResults');if(!query||!results)return;
+query.setAttribute('role','combobox');query.setAttribute('aria-autocomplete','list');query.setAttribute('aria-controls','positronResults');
+const sync=()=>{const options=[...results.querySelectorAll('[role=option]')];options.forEach((opt,i)=>{if(!opt.id)opt.id='positron-option-'+i;});
+const selected=options.find(x=>x.getAttribute('aria-selected')==='true');if(selected)query.setAttribute('aria-activedescendant',selected.id);else query.removeAttribute('aria-activedescendant');
+query.setAttribute('aria-expanded',String(document.getElementById('positronPalette')?.hidden===false));};
+new MutationObserver(sync).observe(results,{childList:true,subtree:true,attributes:true,attributeFilter:['aria-selected']});
+new MutationObserver(sync).observe(document.getElementById('positronPalette'),{attributes:true,attributeFilter:['hidden']});sync();
+})();
