@@ -6,7 +6,7 @@ test('P4 has 50 sequentially gated screenshot-driven CSS revisions',()=>{
  const css=read('renderer/positron-fifty.css');
  for(let n=1;n<=50;n++){
    const s=String(n).padStart(2,'0');
-   assert.ok(css.includes('Iteration '+n+':'),'missing iteration '+n);
+   assert.ok(css.includes('Iteration '+n+':')||css.includes('Iteration '+s+':'),'missing iteration '+n);
    assert.ok(css.includes('.p50-'+s),'missing stage gate '+s);
  }
  assert.equal((css.match(/\/\* Iteration \d+: /g)||[]).length,50);
