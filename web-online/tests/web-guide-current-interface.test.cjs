@@ -85,6 +85,7 @@ test('scroll tracking never keeps two guide mobile tabs selected',()=>{
   getAttribute(name){return name==='href'?this.href:this.attrs[name]},
   setAttribute(name,value){this.attrs[name]=value},
   removeAttribute(name){delete this.attrs[name]},
+  addEventListener(name,fn){this.handlers??={};this.handlers[name]=fn},
   classList:{toggle(name,on){this.parent.active=on}}
  }));
  for(const link of links)link.classList.parent=link;
@@ -97,4 +98,52 @@ test('scroll tracking never keeps two guide mobile tabs selected',()=>{
  listeners.scroll();
  assert.deepEqual(links.filter(x=>x.active).map(x=>x.href),['#kenh']);
  assert.equal(links.filter(x=>x.attrs['aria-current']==='location').length,1);
+});
+
+test('iOS long-range tab taps skip expensive smooth scrolling and keep one active tab',()=>{
+ const script=publicHtml.match(/<script>\s*\(function\(\)\{[\s\S]*?<\/script>/)?.[0];
+ assert.ok(script,'guide mobile navigation controller missing');
+ const ids=['bat-dau','nguon','tv','kenh','epg','mobile','cong-cu','cai-dat','su-co','faq'];
+ const positions=ids.map((_,i)=>i*560);
+ const sections=ids.map((id,i)=>({id,getBoundingClientRect:()=>({top:positions[i]})}));
+ const tabIds=['tv','kenh','epg','nguon','faq'];
+ const tabs=tabIds.map(id=>({
+  href:'#'+id,handlers:{},attrs:{},active:false,
+  getAttribute(name){return name==='href'?this.href:this.attrs[name]},
+  setAttribute(name,value){this.attrs[name]=value},
+  removeAttribute(name){delete this.attrs[name]},
+  addEventListener(name,fn){this.handlers[name]=fn},
+  classList:{toggle(name,on){this.link.active=on}}
+ }));
+ for(const tab of tabs)tab.classList.link=tab;
+ const document={
+  documentElement:{scrollHeight:16000,scrollTop:0},
+  querySelectorAll(q){if(q.startsWith('.side'))return tabs;if(q.startsWith('.mobile-tabs'))return tabs;return sections;}
+ };
+ const calls=[],listeners={};
+ const window={
+  innerHeight:800,scrollY:0,location:{pathname:'/open-iptv-pro/huong-dan.html',search:'?v=test'},
+  history:{state:null,replaceState(_s,_title,url){this.url=url}},
+  scrollTo(options){calls.push(options)},
+  addEventListener(name,fn){listeners[name]=fn},removeEventListener(){},
+  clearTimeout(){},setTimeout(){return 1},requestAnimationFrame(fn){fn()},
+  matchMedia(){return {matches:false}}
+ };
+ vm.runInNewContext(script.slice(8,-9),{window,document},{timeout:1000});
+ for(const id of tabIds){
+  let prevented=false;
+  const tab=tabs.find(x=>x.href==='#'+id);
+  tab.handlers.click({currentTarget:tab,preventDefault(){prevented=true}});
+  assert.ok(prevented,'should stop native hash jump for '+id);
+  assert.equal(tabs.filter(x=>x.active).length,1,'only one highlighted tab for '+id);
+  assert.equal(tabs.find(x=>x.active).href,'#'+id);
+  assert.equal(tabs.filter(x=>x.attrs['aria-current']==='location').length,1);
+  assert.ok(window.history.url.endsWith('#'+id),'hash persisted without native jump');
+ }
+ assert.ok(calls.some(x=>x.behavior==='instant'),'far sections should not run long smooth animations');
+ assert.ok(calls.some(x=>x.behavior==='smooth'),'short navigation keeps a smooth transition');
+ // A delayed scroll listener cannot override an explicit in-flight selection.
+ const selected=tabs.find(x=>x.active).href;
+ listeners.scroll();
+ assert.equal(tabs.find(x=>x.active).href,selected);
 });
