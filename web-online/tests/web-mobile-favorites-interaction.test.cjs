@@ -77,5 +77,5 @@ test('mobile preview overlay hidden, static build and latest script assets maint
  assert.match(html,/web-mobile-player\.css\?v=apple-more-20261120a/);
  assert.match(builder,/Preserve Web favorite card tap-to-play/);
  assert.match(builder,/fav_start=' function renderFavorites\(\)\{'/);
- assert.match(builder,/favorites-tap-20261119a/);
+ assert.match(builder,/advanced-health-compact-20261120a/);
 });
