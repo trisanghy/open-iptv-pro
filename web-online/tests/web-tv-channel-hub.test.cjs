@@ -64,11 +64,11 @@ test('channel hub labels exist for all 17 supported UI languages',()=>{
 test('Web only channel hub loads after player and survives WebView rebuild',()=>{
  assert.equal(read('web-online/web-tv-channel-hub.js'),read('web-tv-channel-hub.js'));
  assert.equal(read('web-online/web-tv-channel-hub.css'),css);
- assert.equal((html.match(/src="web-tv-channel-hub[.]js[?]v=tv-hub-20261119c"/g)||[]).length,1);
+ assert.equal((html.match(/src="web-tv-channel-hub[.]js[?]v=tv-hub-stability-20261120a"/g)||[]).length,1);
  assert.equal((html.match(/href="web-tv-channel-hub[.]css[?]v=tv-hub-20261119c"/g)||[]).length,1);
  assert.ok(html.indexOf('web-tv-channel-hub.js?v=')>html.indexOf('app.js?v='));
  assert.ok(builder.includes("for filename in ('web-tv-channel-hub.js','web-tv-channel-hub.css')"));
- assert.ok(builder.includes("hub_js='<script src=\"web-tv-channel-hub.js?v=tv-hub-20261119c\"></script>'"));
+ assert.ok(builder.includes("hub_js='<script src=\"web-tv-channel-hub.js?v=tv-hub-stability-20261120a\"></script>'"));
  assert.ok(builder.includes("hub_css='<link rel=\"stylesheet\" href=\"web-tv-channel-hub.css?v=tv-hub-20261119c\"/>'"));
  assert.match(read('web-tv-channel-hub.js'),/quick\.insertAdjacentElement\('afterend',hub\)/);
  assert.match(read('web-tv-channel-hub.js'),/api\(\)\?\.playChannel\?\.\(c\.id\)/);
