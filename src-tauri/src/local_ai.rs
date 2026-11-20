@@ -215,7 +215,7 @@ pub async fn caption_install(app:AppHandle,ai:Arc<LocalAi>)->Result<Value,String
    let dir=root.join("binary");safe_unzip(&archive,&dir).map_err(|e|format!("Giải nén Whisper lỗi: {e}"))?;
    let exe=normalize_whisper_binary(&dir,asset).map_err(|e|format!("Tìm bộ chạy Whisper lỗi: {e}"))?;
    caption_progress(&app,"Kiểm tra whisper-cli --help…");
-   let mut check=Command::new(&exe);check.arg("--help");
+   let mut check=crate::hidden_process::tokio(&exe);check.arg("--help");
    output_timeout(&mut check,45).await.map_err(|e|format!("Whisper không chạy được (thiếu DLL hoặc runtime?): {e}"))?;
    let _=tokio::fs::remove_file(archive).await;
   }
@@ -276,7 +276,7 @@ pub async fn caption_start(app:AppHandle,ai:Arc<LocalAi>,url:&str,translate:bool
   let wav=dir.join("speech.wav");let mut errors=0;
   loop{
    let _=app.emit("caption:event",json!({"type":"status","id":id,"message":"Đang nhận diện giọng nói offline…"}));
-   let mut ff=Command::new(&ffmpeg);
+   let mut ff=crate::hidden_process::tokio(&ffmpeg);
    // Capture ten seconds of audio per Whisper recognition window; -t 4 in the Whisper command denotes CPU threads.
    ff.args(["-hide_banner","-nostdin","-loglevel","error","-y","-rw_timeout","8000000","-user_agent","Mozilla/5.0","-i",&src,
     "-map","0:a:0","-vn","-sn","-dn","-ac","1","-ar","16000","-c:a","pcm_s16le","-t","10"]).arg(&wav);
@@ -284,7 +284,7 @@ pub async fn caption_start(app:AppHandle,ai:Arc<LocalAi>,url:&str,translate:bool
     output_timeout(&mut ff,35).await?;
     if !exists(&wav,25_000){return Err("Nguồn không có âm thanh".to_string());}
     let output_stem=dir.join("recognized");
-    let mut wh=Command::new(&bin);
+    let mut wh=crate::hidden_process::tokio(&bin);
     wh.arg("-m").arg(&model).arg("-f").arg(&wav)
       .args(["-l","auto","-nt","-np","-t","4","-oj","-of"]).arg(&output_stem);
     output_timeout(&mut wh,70).await?;
@@ -321,7 +321,7 @@ pub async fn caption_start(app:AppHandle,ai:Arc<LocalAi>,url:&str,translate:bool
            rendered=argos_translate(&ai_clone,&source,&target,&phrase).await?;
           },
           "whisper"=>{
-           let mut en=Command::new(&bin);
+           let mut en=crate::hidden_process::tokio(&bin);
            en.arg("-m").arg(&model).arg("-f").arg(&wav)
              .args(["-l","auto","-nt","-np","-t","4","-tr"]);
            let result=output_timeout(&mut en,70).await?;
@@ -397,7 +397,7 @@ async fn run_install(app:&AppHandle,cmd:&Path,args:&[&str],lang:&str,root:&Path,
  let step=format!("{} {}",cmd.file_name().map(|v|v.to_string_lossy().to_string()).unwrap_or_else(||"installer".to_owned()),args.join(" "));
  let _=app.emit("tts:event",json!({"type":"progress","target":lang,"phase":"install","percent":null,
   "message":format!("Đang thực thi: {}",step.chars().take(170).collect::<String>())}));
- let mut proc=Command::new(cmd);proc.args(args).env("ARGOS_PACKAGES_DIR",root.join("argos-packages"))
+ let mut proc=crate::hidden_process::tokio(cmd);proc.args(args).env("ARGOS_PACKAGES_DIR",root.join("argos-packages"))
   .env("ARGOS_DEVICE_TYPE","cpu").env("UV_CACHE_DIR",root.join("uv-cache"))
   .env("UV_PYTHON_INSTALL_DIR",root.join("python-managed"));
  output_timeout(&mut proc,limit).await.map_err(|e|format!("Cài '{}' thất bại: {e}",step.chars().take(145).collect::<String>()))?;
@@ -422,7 +422,7 @@ async fn ensure_argos_runtime(app:&AppHandle,ai:&LocalAi,lang:&str)->Result<(),S
    download_verified(&app,"tts:event",&format!("https://github.com/astral-sh/uv/releases/download/0.12.24/{asset}"),&archive,sha,40*1024*1024).await?;
    let dst=root.join("uv").join("unpacked");tokio::fs::create_dir_all(&dst).await.map_err(error)?;
    if cfg!(windows){safe_unzip(&archive,&dst)?;}else{
-    let mut cmd=Command::new("tar");cmd.arg("-xzf").arg(&archive).arg("-C").arg(&dst);output_timeout(&mut cmd,90).await?;
+    let mut cmd=crate::hidden_process::tokio("tar");cmd.arg("-xzf").arg(&archive).arg("-C").arg(&dst);output_timeout(&mut cmd,90).await?;
    }
    let extracted=find_small_file(&dst,&exec_name("uv"),0).ok_or("Không tìm được uv trong gói")?;
    tokio::fs::copy(extracted,&uv).await.map_err(error)?;
@@ -464,7 +464,7 @@ async fn argos_command(ai:&LocalAi,action:&str,source:&str,target:&str,input:Opt
  if !exists(&script,100){
   tokio::fs::write(&script,include_str!("../resources/argos_direct_router.py")).await.map_err(error)?;
  }
- let mut cmd=Command::new(&python);
+ let mut cmd=crate::hidden_process::tokio(&python);
  cmd.arg(&script).args([action,source,target])
   .env("ARGOS_PACKAGES_DIR",ai.tts_root().join("argos-packages"))
   .env("ARGOS_DEVICE_TYPE","cpu").env("ARGOS_CHUNK_TYPE","MINISBD").env("ARGOS_MODEL_PROVIDER","OPENNMT");
@@ -761,7 +761,7 @@ async fn natural_read(worker:&mut NaturalWorker,id:Option<&str>,seconds:u64)->Re
 async fn natural_warmup(ai:&LocalAi)->Result<(),String>{
  let mut slot=ai.natural_worker.lock().await;
  if slot.is_some(){return Ok(());}
- let mut cmd=Command::new(tts_python(ai));
+ let mut cmd=crate::hidden_process::tokio(tts_python(ai));
  cmd.arg(natural_worker_script(ai)).arg("--stdio")
   .stdin(Stdio::piped()).stdout(Stdio::piped()).stderr(Stdio::null()).kill_on_drop(true);
  natural_env(&mut cmd,ai,true);
@@ -821,7 +821,7 @@ pub async fn tts_voice_install(app:AppHandle,ai:Arc<LocalAi>,voice:&str)->Result
    run_install(&app,&uv,&["pip","install","--python",&pack,"vieneu==3.8.3"],"vi",&root,1200).await?;
    tokio::fs::write(natural_worker_script(&ai),include_str!("../resources/vieneu_worker.py")).await.map_err(error)?;
    tts_progress(&app,"vi","Tải mô hình VieNeu và khởi tạo 25 giọng tự nhiên (lần đầu có thể khá lớn)…");
-   let mut cmd=Command::new(&python);
+   let mut cmd=crate::hidden_process::tokio(&python);
    cmd.arg(natural_worker_script(&ai)).arg("--prepare");
    natural_env(&mut cmd,&ai,false);
    let output=output_timeout(&mut cmd,2400).await?;
@@ -861,7 +861,7 @@ async fn synthesize_internal(app:AppHandle,ai:Arc<LocalAi>,lang:String,phrase:St
  let result=async{
   let wav=dir.join("speech.wav");
   let _=app.emit("tts:event",json!({"type":"status","message":"Đang tạo WAV bằng Piper offline…"}));
-  let mut cmd=Command::new(tts_exe(&ai,"piper"));
+  let mut cmd=crate::hidden_process::tokio(tts_exe(&ai,"piper"));
   let model=if lang=="vi"{vietnamese_piper_model(&voice).ok_or("Giọng Piper Việt không hợp lệ").map(|m|piper_voice_file(&ai,m))?}else{tts_voice(&ai,&lang)?};
   cmd.arg("--model").arg(model).arg("--output_file").arg(&wav)
    .stdin(Stdio::piped()).stderr(Stdio::piped()).kill_on_drop(true);

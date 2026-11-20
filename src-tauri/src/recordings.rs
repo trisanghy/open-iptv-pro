@@ -23,7 +23,7 @@ pub async fn start_timeshift(state:&Arc<AppState>,url:&str,minutes:u32)->Result<
  let folder=state.data_dir.join("timeshift").join(&id);
  fs::create_dir_all(&folder).map_err(|e|e.to_string())?;
  let dest=folder.join("rolling.m3u8");
- let mut cmd=Command::new(bin);
+ let mut cmd=crate::hidden_process::tokio(bin);
  cmd.args(["-hide_banner","-nostdin","-loglevel","error","-rw_timeout","10000000","-i",url,
        "-map","0:v:0","-map","0:a:0?","-c","copy","-f","hls","-hls_time","5",
        "-hls_list_size",&(minutes*12).to_string(),"-hls_delete_threshold","3",
@@ -176,7 +176,7 @@ pub async fn dvr_monitor(state:Arc<AppState>){
     let temp=final_path.with_extension("partial.mp4");
     let duration=((j.end_at-now)/1000).max(1).to_string();
     let url=j.url.clone();let id=j.id.clone();
-    let mut cmd=Command::new(bin);
+    let mut cmd=crate::hidden_process::tokio(bin);
     cmd.args(["-hide_banner","-nostdin","-loglevel","error","-y","-i",&url,"-t",&duration,
        "-map","0:v:0?","-map","0:a:0?","-c","copy","-movflags","+faststart","-f","mp4"])
      .arg(&temp).stdin(std::process::Stdio::null()).stdout(std::process::Stdio::null())

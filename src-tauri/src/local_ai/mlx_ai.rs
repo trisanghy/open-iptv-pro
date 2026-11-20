@@ -97,7 +97,7 @@ fn notice(app:&AppHandle,message:&str){
  let _=app.emit("ai:event",json!({"type":"ai-progress","message":message}));
 }
 async fn exec(_app:&AppHandle,ai:&LocalAi,key:&str,bin:&Path,args:&[&str],seconds:u64)->Result<String,String>{
- let mut cmd=Command::new(bin);
+ let mut cmd=crate::hidden_process::tokio(bin);
  cmd.args(args);
  env(&mut cmd,ai,key);
  let output=output_timeout(&mut cmd,seconds).await?;
@@ -115,7 +115,7 @@ async fn prepare_uv(app:&AppHandle,ai:&LocalAi)->Result<PathBuf,String>{
  download_verified(app,"ai:event",&format!("https://github.com/astral-sh/uv/releases/download/0.12.24/{asset}"),&archive,hash,40*1024*1024).await?;
  let extracted=dir.join("mlx-unpacked");
  tokio::fs::create_dir_all(&extracted).await.map_err(error)?;
- let mut unpack=Command::new("tar");
+ let mut unpack=crate::hidden_process::tokio("tar");
  unpack.arg("-xzf").arg(&archive).arg("-C").arg(&extracted);
  output_timeout(&mut unpack,90).await?;
  let found=find_small_file(&extracted,"uv",0).ok_or("Không tìm thấy uv trong bản tải")?;
@@ -180,7 +180,7 @@ async fn start_locked(ai:&LocalAi,slot:&mut Option<MlxWorker>,key:&str)->Result<
  if let Some(mut old)=slot.take(){let _=old.child.start_kill();}
  write_bridge(ai).await?;
  let dir=model_root(ai,key)?;
- let mut cmd=Command::new(python(ai));
+ let mut cmd=crate::hidden_process::tokio(python(ai));
  cmd.arg("-u").arg(bridge(ai)).arg("worker").arg(key).arg(&dir)
   .stdin(Stdio::piped()).stdout(Stdio::piped()).stderr(Stdio::null()).kill_on_drop(true);
  env(&mut cmd,ai,key);

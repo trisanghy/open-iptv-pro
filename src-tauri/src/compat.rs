@@ -79,7 +79,7 @@ async fn start_with_motion(state:&Arc<AppState>,raw:&str,motion:Option<u32>)->Re
     };
     let filter_threads=if motion.is_some(){"2"}else{"1"};
     // Transcoding remains a fallback unless motion is explicitly enabled.
-    let mut command = Command::new(bin);
+    let mut command = crate::hidden_process::tokio(bin);
     command.args([
         "-hide_banner", "-nostdin", "-loglevel", "error", "-rw_timeout", "12000000",
         "-fflags", "+genpts", "-i", raw,

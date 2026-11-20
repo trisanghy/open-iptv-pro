@@ -11,6 +11,7 @@ mod link_checker;
 mod safe_network;
 mod local_ai;
 mod video_enhance;
+mod hidden_process;
 
 use std::{path::PathBuf,sync::Arc};
 use tokio::sync::Mutex;
@@ -36,7 +37,7 @@ fn resolve_ffmpeg(resources: &std::path::Path) -> Option<String> {
       Some(resources.join("resources").join(name).to_string_lossy().into_owned()),
       Some(name.to_string())];
     options.into_iter().flatten().find(|bin|{
-        std::process::Command::new(bin).args(["-version"]).output()
+        crate::hidden_process::standard(bin).args(["-version"]).output()
            .is_ok_and(|result|result.status.success())
     })
 }

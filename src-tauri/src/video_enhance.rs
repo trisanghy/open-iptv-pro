@@ -4,7 +4,7 @@ use std::{process::Stdio,time::Instant};
 use tokio::{process::Command,time::{timeout,Duration}};
 async fn sample(ffmpeg:&str,fps:u32)->Value{
  let filter=motion_filter(fps);
- let mut c=match Command::new(ffmpeg).args(["-hide_banner","-nostdin","-loglevel","error","-f","lavfi","-i","testsrc2=size=1280x720:rate=30:duration=1.5","-vf",&filter,"-an","-f","null","-"]).stdin(Stdio::null()).stdout(Stdio::null()).stderr(Stdio::null()).kill_on_drop(true).spawn(){Ok(c)=>c,Err(_)=>return json!({"targetFps":fps,"ok":false})};
+ let mut c=match crate::hidden_process::tokio(ffmpeg).args(["-hide_banner","-nostdin","-loglevel","error","-f","lavfi","-i","testsrc2=size=1280x720:rate=30:duration=1.5","-vf",&filter,"-an","-f","null","-"]).stdin(Stdio::null()).stdout(Stdio::null()).stderr(Stdio::null()).kill_on_drop(true).spawn(){Ok(c)=>c,Err(_)=>return json!({"targetFps":fps,"ok":false})};
  let start=Instant::now();let run=timeout(Duration::from_secs(15),c.wait()).await;let secs=start.elapsed().as_secs_f64();
  match run{Ok(Ok(s)) if s.success()&&secs>0.0=>json!({"targetFps":fps,"ok":true,"processingFps":1.5*fps as f64/secs}),_=>{let _=c.kill().await;json!({"targetFps":fps,"ok":false})}}
 }
@@ -136,7 +136,7 @@ pub async fn gpu_prepare(ffmpeg:Option<&str>)->Value{
   return json!({"platform":std::env::consts::OS,"ready":false,"backends":[],"liveAiUpscale":false,
    "modelReady":false,"message":"Thiếu FFmpeg đi kèm bản cài đặt; cần cập nhật bản đầy đủ"});
  };
- let mut probe=Command::new(bin);
+ let mut probe=crate::hidden_process::tokio(bin);
  probe.args(["-hide_banner","-encoders"]).stdin(Stdio::null()).kill_on_drop(true);
  let text=match timeout(Duration::from_secs(5),probe.output()).await{
   Ok(Ok(out)) if out.status.success()=>String::from_utf8_lossy(&out.stdout).into_owned(),
@@ -152,7 +152,7 @@ pub async fn gpu_prepare(ffmpeg:Option<&str>)->Value{
 async fn sample_gpu(ffmpeg:&str,encoder:&str,width:u32,height:u32,rate:u32,frames:u32)->Value{
  let source=format!("testsrc2=size={}x{}:rate={}:duration={}",width,height,rate,frames as f64/rate as f64);
  let count=frames.to_string();
- let mut child=match Command::new(ffmpeg).args([
+ let mut child=match crate::hidden_process::tokio(ffmpeg).args([
   "-hide_banner","-nostdin","-loglevel","error","-f","lavfi","-i",source.as_str(),
   "-an","-sn","-c:v",encoder,"-b:v","2500k","-frames:v",count.as_str(),
   "-f","null","-"

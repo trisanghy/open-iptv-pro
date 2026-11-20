@@ -1,3 +1,7 @@
+## Rust Lab v23.8.89 — Ẩn toàn bộ CMD/PowerShell khi chạy công cụ nội bộ
+
+Khắc phục hàng loạt cửa sổ CMD xuất hiện khi xử lý Whisper, Python, Piper, FFmpeg, ghi hình, kiểm tra kênh và benchmark trên Windows. Tất cả các tiến trình nội bộ dùng `CREATE_NO_WINDOW` qua module Rust chung, vẫn giữ tiến độ cài đặt và stderr trong ứng dụng. Thêm kiểm thử quét toàn bộ Rust Lab để ngăn mở cửa sổ console trong bản mới. [Ghi chú phát hành](RELEASE_NOTES_RUST_LAB_V23_8_89.md).
+
 ## Rust Lab v23.8.88 — Whisper Windows x64 Setup: sửa kiểm thử hồi quy
 
 Giữ nguyên sửa bộ chạy Whisper Windows `.exe`, tiến độ tải theo phần trăm thật và thông báo lỗi chi tiết trong v23.8.87. Sửa bài kiểm thử v20 cũ: kiểm tra lời gọi `normalize_whisper_binary` có `map_err` chứa chẩn đoán thay vì ép phải là toán tử `?`. Không sửa Electron, main, video, dữ liệu hay các tag cũ. [Release notes](RELEASE_NOTES_RUST_LAB_V23_8_88.md).

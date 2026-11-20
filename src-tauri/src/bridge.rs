@@ -88,7 +88,7 @@ async fn snapshot(state:&Arc<AppState>,url:&str,label:&str)->Result<Value,String
  let dir=state.data_dir.join("snapshots");fs::create_dir_all(&dir).map_err(err)?;
  let label:String=label.chars().map(|c|if c.is_alphanumeric()||matches!(c,'_'|'-'){c}else{'_'}).take(70).collect();
  let name=format!("{}_{}.jpg",label,Uuid::new_v4().simple());let path=dir.join(&name);
- let mut child=tokio::process::Command::new(bin).args(["-hide_banner","-nostdin","-loglevel","error","-y",
+ let mut child=crate::hidden_process::tokio(bin).args(["-hide_banner","-nostdin","-loglevel","error","-y",
    "-rw_timeout","7500000","-probesize","1048576","-analyzeduration","1600000","-i",url,
    "-an","-sn","-dn","-threads","1","-frames:v","1","-vf","scale=384:-2","-q:v","5"])
   .arg(&path).stdin(std::process::Stdio::null()).stdout(std::process::Stdio::null()).stderr(std::process::Stdio::null())
@@ -259,7 +259,7 @@ pub async fn bridge(app:AppHandle,state:State<'_,Arc<AppState>>,local_ai_state:S
   "airplay:open"=>{
     let url=text(&args,0)?;stream::valid_http_url(url)?;
     #[cfg(target_os="macos")]
-    {std::process::Command::new("open").args(["-a","Safari",url]).spawn().map_err(err)?;Ok(json!(true))}
+    {crate::hidden_process::standard("open").args(["-a","Safari",url]).spawn().map_err(err)?;Ok(json!(true))}
     #[cfg(not(target_os="macos"))]
     {Err("AirPlay qua Safari chỉ hỗ trợ macOS".into())}
   },
