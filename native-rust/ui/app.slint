@@ -254,29 +254,16 @@ if (root.active-page == "tv" || root.active-page == "fav" || root.active-page ==
     HorizontalLayout {
         padding-left: 12px; padding-right: 8px; spacing: 9px;
         Text { text: "OPEN IPTV PRO  /  TRUYỀN HÌNH"; color: #e9f0fb; font-weight: 700; font-size: 13px; vertical-alignment: center; }
+        Button {
+            text: "⚙ Cài đặt";
+            width: 122px;
+            height: 36px;
+            clicked => { root.navigate("settings"); }
+        }
         Rectangle { horizontal-stretch: 1; background: transparent; }
         Text { text: root.sources-count + " nguồn"; color: #9db8cb; font-size: 11px; vertical-alignment: center; }
         Button { text: "Mở M3U"; width: 92px; clicked => { root.open-m3u(); } }
-        Rectangle {
-            width: 96px; height: 37px; border-radius: 6px; background: #24394d;
-            Text { text: "Thêm URL"; color: #e3edfa; font-size: 12px; horizontal-alignment: center; vertical-alignment: center; }
-        }
-        Rectangle {
-            width: 47px; height: 37px; border-radius: 6px; background: #24394d;
-            Text { text: "⚙"; color: #eef4ff; font-size: 19px; horizontal-alignment: center; vertical-alignment: center; }
-        }
-    }
-    // Absolute click regions are placed ABOVE the laid-out widgets to
-    // prevent Slint's adjacent default controls from stealing pointer events.
-    TouchArea {
-        x: parent.width - 157px; y: 0px;
-        width: 102px; height: 44px;
-        clicked => { root.navigate("sources"); }
-    }
-    TouchArea {
-        x: parent.width - 53px; y: 0px;
-        width: 53px; height: 44px;
-        clicked => { root.navigate("settings"); }
+        Button { text: "Thêm URL"; width: 100px; clicked => { root.navigate("sources"); } }
     }
 }
     Rectangle {

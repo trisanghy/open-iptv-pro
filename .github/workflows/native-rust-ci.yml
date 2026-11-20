@@ -232,9 +232,16 @@ jobs:
           # Capture both primary header navigation shortcuts, not only a
           # brittle point near the bottom rail. Position is relative to the
           # actual 1364x855 Slint window under the 1600x1000 virtual root.
-          xdotool mousemove 1318 36 click 1
+          # The independent settings control is left of the spacer, far away
+          # from the M3U source buttons. Verify its actual event after click.
+          xdotool mousemove 378 36 click 1
           sleep 2
           import -display "$DISPLAY" -window root screenshot/08-settings-page.png
+          if ! grep -Fq '[UI_NAV_TEST] active-page requested: settings' screenshot/app-stdout.log; then
+            echo 'BUG: Settings shortcut did not activate the settings page' >&2
+            cat screenshot/app-stdout.log >&2
+            exit 1
+          fi
           xdotool mousemove 35 120 click 1
           sleep 1
           xdotool mousemove 1239 36 click 1
