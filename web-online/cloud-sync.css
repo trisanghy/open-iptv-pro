@@ -218,3 +218,50 @@
   align-self:stretch;
  }
 }
+
+/* iOS embedded browsers can accept keyboard input without painting a native
+   insertion caret. Render a passive visual caret at the real textarea
+   selectionStart. The textarea still owns all taps, copy, paste and selection. */
+#cloudSyncCard .cloud-email-editor {
+ position:relative!important;
+ display:block!important;
+ width:100%!important;
+ min-width:0!important;
+ max-width:100%!important;
+ box-sizing:border-box!important;
+ isolation:isolate;
+}
+#cloudSyncCard .cloud-email-editor textarea#cloudEmailInput {
+ position:relative!important;
+ z-index:1;
+ width:100%!important;
+}
+#cloudSyncCard .cloud-email-editor .cloud-email-visual-caret {
+ position:absolute;
+ z-index:2;
+ top:12px;
+ left:12px;
+ width:2px;
+ height:23px;
+ border-radius:1px;
+ background:#4d95ff;
+ box-shadow:0 0 0 1px rgba(77,149,255,.12);
+ pointer-events:none!important;
+ touch-action:none!important;
+ user-select:none!important;
+ -webkit-user-select:none!important;
+ animation:cloud-email-caret-blink 1s step-end infinite;
+}
+#cloudSyncCard .cloud-email-editor .cloud-email-visual-caret[hidden] {
+ display:none!important;
+}
+@keyframes cloud-email-caret-blink {
+ 0%,49% {opacity:1}
+ 50%,100% {opacity:0}
+}
+/* Retain a visible caret for users who request reduced animation. */
+@media(prefers-reduced-motion:reduce) {
+ #cloudSyncCard .cloud-email-editor .cloud-email-visual-caret{
+  animation:none!important;opacity:1!important;
+ }
+}
