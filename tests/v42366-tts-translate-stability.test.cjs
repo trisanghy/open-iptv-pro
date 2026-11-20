@@ -146,8 +146,8 @@ test('4.23.66: updated UI wires cancel, locale changes, preview and compact line
  assert.match(ui,/resetForModelChange/);
  assert.match(ui,/openiptv:ai-translate-settings-changed/);
  assert.match(ui,/previewCoordinator\.run/);
- assert.match(ui,/maxPendingAgeMs:5000/);
- assert.match(ui,/maxSynthAgeMs:7000/);
+ assert.match(ui,/maxPendingAgeMs:14000/);
+ assert.match(ui,/maxSynthAgeMs:12000/);
  assert.match(ui,/speechQueue\.enqueue\(payload\)/);
  assert.match(ui,/cancelSynthesis:\(\)=>api\.ttsStop/);
  assert.match(html,/class="caption-ai-main"/);

@@ -16,7 +16,7 @@ test('Whisper Electron records continuous complete 10s WAV windows, threads rema
 test('full current subtitle plays ALL WAV chunks even with a newer pending subtitle',async()=>{
  const source=read('renderer/local-tts-v42344.js');
  const start=source.indexOf('play:async(result,payload,onEnded)=>{');
- const end=source.indexOf('   cancelAudio:()=>{',start);
+ const end=source.indexOf('cancelAudio:()=>{',start);
  assert.ok(start>0&&end>start);
  const expression=source.slice(start,end).trim().replace(/^play:/,'').replace(/,\s*$/,'');
  const heard=[],synthesized=[];

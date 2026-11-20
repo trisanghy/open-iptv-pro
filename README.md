@@ -1,3 +1,7 @@
+## Electron v4.23.74 — Whisper 10s và TTS đọc trọn vẹn
+
+Giữ audio mẫu 10 giây liên tục và phát đủ từng câu TTS; phụ đề mới không được ngắt các WAV còn lại của câu đang đọc. Cập nhật ba bài kiểm thử CI bị cố định thông số cũ. [Ghi chú phát hành v4.23.74](RELEASE_NOTES_ELECTRON_V4_23_74.md).
+
 ## Open IPTV Pro Electron v4.23.73 — Whisper 10 giây, TTS đọc đủ câu
 
 - Whisper ghi âm liên tục, chia audio thành **10 giây** (trước 8 giây). Giữ 16 kHz mono, không ngắt trình ghi giữa các đoạn.
