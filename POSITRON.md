@@ -1,33 +1,28 @@
-# Positron P3.1 — Experimental Desktop Lab
+# Positron P4 — Desktop UX Rework (v4.23.81)
 
-Based on the exact Electron branch commit `262374ef1d6ce6d3c8ff8dbea01103ef6da7a947` (Open IPTV Pro v4.23.76).
+Independent experimentation on the `Positron` branch only. The stable Electron branch, `main`, Web, Mobile and Rust/Tauri are not altered.
 
-## Research and 20 new engineering iterations
-The 20 sequential Git commits in P3 are recorded in `POSITRON_P3_CHANGELOG.md`. This is 20 code-change iterations plus 20 new real-interface test cycles; it is not 20 separate cross-platform performance certifications.
+## Why P4 exists
+Screenshot review of P3.1 revealed a 280px sidebar, over-dense channel filters, too many visible management pages, crowded transport rows and Timeshift tools below the fold. Positron P4 reorganizes the existing desktop frontend without replacing actual playback or changing channel data.
 
-## What changes
-- Independent Positron identity, application ID and prerelease update channel; stable Electron installers remain untouched.
-- Workspace topbar with current-channel indicator.
-- Keyboard command palette: `Ctrl+K` (Windows/Linux) or `⌘+K` (macOS), or `/` outside text inputs. Search existing channels and navigate to all desktop pages.
-- One-click focus mode hides sidebar and channel list with the original application controls and restores prior visibility.
-- Fresh navy/purple/teal sidebar, cards and control hierarchy with a compact responsive breakpoint.
-- No alteration to existing IPTV parsing, playback, rights confirmation, EPG, DVR, Whisper/TTS, Supabase or settings storage code.
+## 50 engineering iterations
+Refer to `POSITRON_P4_CHANGELOG.md` for a source-level table of each of the 50 Git commits, the real screenshot name for each iteration and the screenshot-derived feedback methodology.
 
-## Evidence
-P2 repairs real screenshot-discovered contrast errors and excludes ephemeral log files from GitHub Release uploads.
+## New interface behavior
+- Sidebar reduced to a more appropriate width; **Công cụ khác** reveals less-frequently-used pages and keeps their original handlers.
+- Secondary channel filters under **Bộ lọc và thư mục**. Empty playlists no longer take up multiple rows of filter and drag instructions.
+- Advanced Timeshift, DVR and quick tools remain available under **Timeshift · Ghi hình · Công cụ**; transport, volume, subtitles, Cast, PiP and fullscreen stay directly accessible.
+- Added `?` shortcut help dialog. Original `Ctrl/⌘+K`, `Alt+1..5`, `Alt+P` and `Alt+F` remain.
+- Responsive visual changes tested from large desktop down to narrow windows.
 
-The Positron CI pipeline executes the existing unit tests plus **40 separate real Electron UI interaction rounds (20 inherited + 20 new Studio tests)**, running the actual app under Xvfb and Chromium DevTools Protocol. It captures final main, command palette, focus, settings and Smart Doctor screenshots, together with `audit-20-rounds.json` and `audit-positron-p3-20-rounds.json`.
+## Test status and distribution
+The GitHub pipeline must pass Node regression tests, the 40 preexisting real Electron UI rounds and the 50 new screenshot-audited P4 stages before producing installation artifacts. The 50-stage report includes per-round PNG SHA-256, screenshot pixel statistics, window geometry and feedback fed into the next round.
 
-A completed green CI run proves the listed smoke checks, not 20 independent design revisions. Playback quality and streaming compatibility still require a real playable, authorized IPTV source and device-specific validation.
+GitHub tag `positron/v4.23.81-p4` is a new immutable prerelease. Build targets: macOS ARM64 DMG, macOS x64 DMG, Windows x64 Setup/Portable; source ZIP, checksums and a ZIP of all 50 real screenshots.
 
-## P3.1 screenshot-reviewed player color hotfix
-The inherited Electron player stylesheet used a higher-priority selector forcing a neon green Play control. P3.1 overrides that selector only within Positron, makes volume follow the chosen palette, normalizes prev/next glyphs, and adds an actual computed-style regression in the 20 Studio test rounds. P3 tags and downloads remain immutable.
+**Caveat:** These are Electron/Xvfb screenshot and interaction tests, not native-device GPU or IPTV live-playback benchmarks. No fake IPTV channels are injected. Unsigned binaries may trigger macOS Gatekeeper or Windows SmartScreen warnings.
 
-## New P3 themes
-Choose Nebula (indigo), Aurora (teal) or Graphite (warm grey) from the **Chủ đề** button. Your choice is saved locally in the Positron installation. `Alt+P` opens Studio, `Alt+Shift+T` cycles color palettes and `Alt+1..5` navigates between TV, favorites, EPG, sources and settings. UI-only; no streaming settings are overwritten.
-
-## Release policy
-Tag: `positron/v4.23.80-p3.1` — experimental prerelease, never replace an existing tag or stable Electron release.
-Builds: Apple Silicon DMG, Intel Mac DMG, Windows x64 Setup + Portable, source ZIP, checksums, actual screenshots.
-
-Unsigned binaries may trigger Windows SmartScreen or macOS Gatekeeper warnings. New Positron app identity intentionally separates local app data from the stable installation; existing channel lists are not deleted. Back up or import playlists as required.
+## Relevant references
+- WAI-ARIA patterns: https://www.w3.org/WAI/ARIA/apg/
+- WCAG 2.2: https://www.w3.org/TR/WCAG22/
+- Electron Security: https://www.electronjs.org/docs/latest/tutorial/security
