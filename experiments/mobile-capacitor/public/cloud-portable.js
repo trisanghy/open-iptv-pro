@@ -44,7 +44,7 @@
   return copy(out);
  }
  function applyCloud(local,cloud,mode){
-  const out=copy(local);
+  const out=JSON.parse(JSON.stringify(local)); // local-only EPG and snapshot caches remain on device
   if(mode==='mobile'){
    const channels=Array.isArray(cloud.channels)?cloud.channels:[];
    if(Array.isArray(cloud.sources))out.sources=cloud.sources.map(s=>({
@@ -76,6 +76,8 @@
    ' <button type="submit">Gửi mã OTP</button></form>'+
    '<form id="portableCloudOTPForm"><input id="portableCloudOTP" type="text" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6,10}" maxlength="10" placeholder="Mã OTP"/>'+
    ' <button type="submit">Xác nhận</button></form>'+
+   '<form id="portableCloudLinkForm"><input id="portableCloudLink" type="url" placeholder="Dán liên kết xác nhận email (nếu không có mã)" style="max-width:100%;min-width:240px;padding:8px"/>'+
+   ' <button type="submit">Xác thực liên kết</button></form>'+
    '<div id="portableCloudActions" hidden><button id="portableCloudPull" type="button">↓ Lấy dữ liệu từ đám mây</button> '+
    '<button id="portableCloudPush" type="button">↑ Gửi dữ liệu thiết bị</button> '+
    '<button id="portableCloudLogout" type="button">Đăng xuất</button></div>'+
@@ -119,22 +121,25 @@
    }catch(e){say('Không thể tải/khôi phục: '+e.message);}
    finally{busy=false;}
   }
-  async function push(confirmFirst=true){
+  async function push(confirmFirst=true,expectedRevision=null){
    if(!user||busy)return;
    busy=true;try{
     const row=await remote();
+    if(expectedRevision!==null&&(row?.revision||0)!==expectedRevision)
+     throw Error('Server vừa đổi phiên bản, tải lại để tránh ghi đè');
     if(confirmFirst&&row?.payload&&
        !confirm('Ghi dữ liệu kênh và cài đặt trên máy lên tài khoản Supabase? Dữ liệu chung sẽ thay thế phiên bản cũ; một bản phục hồi được giữ trên thiết bị.'))return;
     const mine=canonical(getState(),mode);
     // Keep fields from Web/newer apps that this platform cannot represent.
     const desired={...(row?.payload||{}),...mine};
-    const serialized=JSON.stringify(desired);
+    const safeDesired=copy(desired);
+   const serialized=JSON.stringify(safeDesired);
     if(new TextEncoder().encode(serialized).length>1950000)throw Error('Bản đồng bộ vượt 1,95 MB; hãy giảm số kênh');
     if(row)secureBackup(row.payload,'before-cloud-push');
     const query=row
-      ?cli.from(TABLE).update({payload:desired,revision:row.revision+1,updated_at:new Date().toISOString()})
+      ?cli.from(TABLE).update({payload:safeDesired,revision:row.revision+1,updated_at:new Date().toISOString()})
           .eq('user_id',user.id).eq('revision',row.revision).select('revision').maybeSingle()
-      :cli.from(TABLE).insert({user_id:user.id,payload:desired,revision:1}).select('revision').single();
+      :cli.from(TABLE).insert({user_id:user.id,payload:safeDesired,revision:1}).select('revision').single();
     const {data,error}=await query;
     if(error)throw error;
     if(!data?.revision)throw Error('Có thiết bị khác đã cập nhật; không ghi đè. Hãy kiểm tra lại.');
@@ -147,9 +152,9 @@
    const pair=paired();if(!pair)return;
    try{
     const latest=await head(),localHash=hash();
-    if(!latest){if(localHash!==pair.hash)await push(false);return;}
+    if(!latest){if(localHash!==pair.hash)await push(false,pair.revision);return;}
     if(latest.revision===pair.revision){
-     if(localHash!==pair.hash)await push(false);
+     if(localHash!==pair.hash)await push(false,pair.revision);
     }else if(localHash===pair.hash)await pull(false);
     else say('Hai thiết bị đã thay đổi dữ liệu cùng lúc. Chọn Tải lên hoặc Tải xuống để giải quyết.');
    }catch(e){say('Tạm dừng đồng bộ tự động: '+e.message);}
@@ -158,6 +163,7 @@
    const signed=!!user;
    $('portableCloudEmailForm').hidden=signed;
    $('portableCloudOTPForm').hidden=signed;
+   $('portableCloudLinkForm').hidden=signed;
    $('portableCloudActions').hidden=!signed;
    if(signed)say('Đã đăng nhập: '+(user.email||'Supabase')+(paired()?' · tự đồng bộ 60 giây':' · chọn tải lên hoặc tải xuống lần đầu'));
    else say('Chế độ khách · dữ liệu vẫn lưu trên máy');
@@ -183,6 +189,24 @@
     user=data.user||data.session?.user;
     $('portableCloudOTP').value='';ui();
    }catch(e){say('Không thể xác thực: '+e.message);}
+  });
+  $('portableCloudLinkForm').addEventListener('submit',async event=>{
+   event.preventDefault();
+   try{
+    const raw=$('portableCloudLink').value.trim();
+    const u=new URL(raw);
+    if(u.origin!==URL||u.pathname!=='/auth/v1/verify'||u.protocol!=='https:')
+     throw Error('Chỉ chấp nhận link xác thực Open IPTV Pro');
+    const type=u.searchParams.get('type')||'email';
+    if(!['email','magiclink','signup','invite'].includes(type))
+     throw Error('Kiểu link không được hỗ trợ');
+    const token_hash=u.searchParams.get('token_hash')||u.searchParams.get('token');
+    if(!token_hash||token_hash.length>2048)throw Error('Liên kết thiếu mã hợp lệ');
+    const {data,error}=await cli.auth.verifyOtp({token_hash,type});
+    if(error)throw error;
+    $('portableCloudLink').value='';
+    user=data.user||data.session?.user;ui();
+   }catch(e){say('Không xác thực được link: '+e.message);}
   });
   $('portableCloudPull').onclick=()=>void pull(true);
   $('portableCloudPush').onclick=()=>void push(true);
