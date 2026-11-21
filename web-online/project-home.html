@@ -296,7 +296,7 @@ img.image-error{display:none!important}img.image-error+.image-fallback{display:f
 <article class="platform"><strong>macOS Apple Silicon</strong><small>Mac dùng chip Apple M1, M2, M3, M4 hoặc dòng Apple Silicon tương thích.</small><span class="version" data-release-version>Bản phát hành mới nhất</span><a class="btn" id="download-arm" href="https://github.com/trisanghy/open-iptv-pro/releases/latest">Tải Mac Apple</a></article>
 <article class="platform"><strong>macOS Intel</strong><small>Mac dùng bộ xử lý Intel; tải file .dmg phiên bản x64.</small><span class="version" data-release-version>Bản phát hành mới nhất</span><a class="btn" id="download-mac-x64" href="https://github.com/trisanghy/open-iptv-pro/releases/latest">Tải Mac Intel</a></article>
 </div>
-<details class="macos-install-help" id="macos-install-help"><summary>Mac báo “is damaged and can’t be opened”? Xem cách xử lý</summary>
+<details class="macos-install-help" id="macos-install-help" open><summary>HƯỚNG DẪN MAC: Sửa lỗi “is damaged and can’t be opened” sau khi tải DMG</summary>
 <p>Trước hết, chỉ tải DMG từ <a href="https://github.com/trisanghy/open-iptv-pro/releases" target="_blank" rel="noopener noreferrer">GitHub Releases chính thức</a>, kiểm tra SHA-256 theo bản phát hành và kéo <strong>Open IPTV Pro.app</strong> vào thư mục <strong>Applications</strong>. Nếu macOS có tùy chọn, mở <strong>System Settings → Privacy &amp; Security → Open Anyway</strong>.</p>
 <p>Chỉ khi đã xác minh file không bị thay đổi và tin tưởng ứng dụng nhưng macOS vẫn chặn do quarantine, mở Terminal rồi chạy lệnh dành riêng cho ứng dụng:</p>
 <pre><code>xattr -dr com.apple.quarantine "/Applications/Open IPTV Pro.app"</code></pre>
