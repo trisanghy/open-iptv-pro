@@ -1210,3 +1210,17 @@ html[data-positron="true"].po-horizon #page-tv #webChooserGrid .web-chooser-remi
 
 /* P5.1.148: visibly distinguish a saved 10-minute reminder from an unsaved bell. */
 html[data-positron="true"].po-horizon #page-tv #webChooserGrid .web-chooser-remind[aria-pressed="true"]{background:var(--po-accent,#5ee4b3)!important;color:#072b24!important;border-color:var(--po-accent,#5ee4b3)!important}
+
+/* P5.1.149: compact reminder lead selection beside native EPG filters. */
+html[data-positron="true"].po-horizon #webChooserAdvanced .web-chooser-reminder-lead[hidden]{display:none!important}
+html[data-positron="true"].po-horizon #webChooserAdvanced .web-chooser-reminder-lead:not([hidden]){
+ display:flex;align-items:center;justify-content:space-between;gap:12px;
+ min-height:36px;font-size:12px;color:var(--po-muted,#adc2cd)
+}
+html[data-positron="true"].po-horizon #webChooserReminderLead{
+ min-width:105px;color:var(--po-ink,#edf7f9);background:var(--po-card,#101a23);
+ border:1px solid var(--po-line,#243742);border-radius:9px
+}
+html[data-positron="true"].po-horizon #webChooserReminderLead:focus-visible{
+ outline:2px solid var(--po-accent,#67d4c0);outline-offset:2px
+}

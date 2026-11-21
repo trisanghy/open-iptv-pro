@@ -3409,9 +3409,68 @@ async function runTwenty(page){
  for(const [key,value] of Object.entries(cancelReminderQA))
   assert.equal(value,true,'P5.1.148 Electron cancel reminders '+key+': '+JSON.stringify(cancelReminderQA));
 
+
+ // P5.1.149: native Electron verifies a user's 30-minute reminder.
+ await page.click('[data-chooser-layout="grid"]');
+ await page.selectOption('#webChooserSort','asc');
+ await page.fill('#webChooserSearch','QA Channel 002');
+ const reminderLeadFixture=await page.evaluate(()=>{
+  const ch=window.IPTVState.getChannels().find(c=>c.name==='QA Channel 002');
+  if(!ch)throw Error('P149 missing local QA channel');
+  window.__p149OriginalGuide=window.IPTVExtras.getGuide;
+  window.__p149OriginalLead=localStorage.getItem('open-iptv-positron-reminder-lead-v1');
+  const start=Date.now()+43*60000,id='qa149-lead';
+  window.__p149Start=start;
+  window.IPTVExtras.getGuide=()=>({
+   names:{[window.IPTVGuide.tidy(ch.name)]:id},aliasesById:{[id]:[ch.name]},
+   programmes:[{id,start,end:start+25*60000,title:'Chương trình chọn nhắc QA'}],offsetMinutes:0
+  });
+  const soon=document.getElementById('webChooserSoonOnly');
+  soon.checked=true;soon.dispatchEvent(new Event('change',{bubbles:true}));
+  document.getElementById('webChooserAdvanced').open=true;
+  return {channels:window.IPTVState.getChannels().length};
+ });
+ await page.waitForFunction(()=>document.querySelector('#webChooserGrid .web-chooser-remind')!==null,{timeout:5000});
+ await page.selectOption('#webChooserReminderLead','30');
+ const reminderBeforeQA=await page.evaluate(()=>({
+  selectionVisible:document.getElementById('webChooserReminderLead')?.getBoundingClientRect().height>0,
+  selectionThirty:document.getElementById('webChooserReminderLead')?.value==='30',
+  bellDescribesThirty:document.querySelector('#webChooserGrid .web-chooser-remind')?.getAttribute('aria-label')?.includes('30 phút')===true,
+  preferencePersisted:localStorage.getItem('open-iptv-positron-reminder-lead-v1')==='30'
+ }));
+ for(const [key,value] of Object.entries(reminderBeforeQA))
+  assert.equal(value,true,'P149 reminder before '+key+': '+JSON.stringify(reminderBeforeQA));
+ await page.screenshot({path:path.join(out,'positron-p51149-reminder-lead-before-450-real.png'),animations:'disabled'});
+ await page.click('#webChooserGrid .web-chooser-remind');
+ const reminderLeadQA=await page.evaluate(original=>{
+  const all=JSON.parse(localStorage.getItem('open-iptv-pro-advanced-v1')||'{}').reminders||[];
+  const matches=all.filter(r=>r.id==='qa149-lead|'+window.__p149Start);
+  return {
+   oneReminder:matches.length===1,
+   selectedThirtySaved:matches[0]?.leadMinutes===30,
+   bellPressed:document.querySelector('#webChooserGrid .web-chooser-remind')?.getAttribute('aria-pressed')==='true',
+   playlistUnchanged:window.IPTVState.getChannels().length===original.channels,
+   noAutoplay:window.IPTVState.getCurrent()===null,
+   noOverflow:document.documentElement.scrollWidth<=innerWidth+1
+  };
+ },reminderLeadFixture);
+ await page.screenshot({path:path.join(out,'positron-p51149-reminder-lead-after-450-real.png'),animations:'disabled'});
+ await page.evaluate(()=>{
+  window.IPTVProAdvanced.cancelReminder({id:'qa149-lead',start:window.__p149Start});
+  window.IPTVExtras.getGuide=window.__p149OriginalGuide;
+  const soon=document.getElementById('webChooserSoonOnly');
+  soon.checked=false;soon.dispatchEvent(new Event('change',{bubbles:true}));
+  const old=window.__p149OriginalLead;
+  if(old===null)localStorage.removeItem('open-iptv-positron-reminder-lead-v1');
+  else localStorage.setItem('open-iptv-positron-reminder-lead-v1',old);
+ });
+ await page.fill('#webChooserSearch','');
+ for(const [key,value] of Object.entries(reminderLeadQA))
+  assert.equal(value,true,'P149 reminder after '+key+': '+JSON.stringify(reminderLeadQA));
+
  await page.setViewportSize({width:1360,height:820});
   const report={type:'Positron P5 twenty distinct desktop screenshot cases',realElectron:true,syntheticChannels:false,
-  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA,chooserQa,toastLayoutQA,nativeToastQA,compactIdleQA,channelChipRailQA,advancedFilterQA,readableCardsQA,keyboardTabQA,favoriteEmptyQA,duplicateEmptyQA,categoryFilterQA,categoryFixtureQA,compactSingleQA,directFavoriteQA,favoriteCountQA,compactToastStackQA,toastDismissQA,toastFocusReturnQA,toastDockQA,wheelQA,pinnedAllQA,pinnedMaskQA,categoryKeyQA,dropdownChipQA,pinnedRightMaskQA,pinnedBorderMaskQA,asciiDSearchQA,emptySearchActionQA,readableCardTitleQA,favoriteSvgQA,keyboardFavoriteQA,multiTermSearchQA,keyboardSearchQA,arrowNavigationQA,pageNavigationQA,favoriteSortQA,onAirFilterQA,programmeSearchQA,upcomingProgrammeQA,soonProgrammeQA,earliestEpgSortQA,timeWindowQA,scheduleProgressQA:scheduleProgressQA,nativeReminderQA,cancelReminderQA};
+  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA,chooserQa,toastLayoutQA,nativeToastQA,compactIdleQA,channelChipRailQA,advancedFilterQA,readableCardsQA,keyboardTabQA,favoriteEmptyQA,duplicateEmptyQA,categoryFilterQA,categoryFixtureQA,compactSingleQA,directFavoriteQA,favoriteCountQA,compactToastStackQA,toastDismissQA,toastFocusReturnQA,toastDockQA,wheelQA,pinnedAllQA,pinnedMaskQA,categoryKeyQA,dropdownChipQA,pinnedRightMaskQA,pinnedBorderMaskQA,asciiDSearchQA,emptySearchActionQA,readableCardTitleQA,favoriteSvgQA,keyboardFavoriteQA,multiTermSearchQA,keyboardSearchQA,arrowNavigationQA,pageNavigationQA,favoriteSortQA,onAirFilterQA,programmeSearchQA,upcomingProgrammeQA,soonProgrammeQA,earliestEpgSortQA,timeWindowQA,scheduleProgressQA:scheduleProgressQA,nativeReminderQA,cancelReminderQA,reminderLeadQA};
  fs.writeFileSync(path.resolve('positron-evidence','audit-p5-20-rounds.json'),JSON.stringify(report,null,2));
  return report;
 }

@@ -97,6 +97,21 @@
  }
  soonWindowLabel.append(soonWindowText,soonWindow);
  chooserAdvanced.append(soonWindowLabel);
+ // P5.1.149: persist optional EPG lead time separately from each reminder.
+ const reminderLeadLabel=document.createElement('label');
+ reminderLeadLabel.className='web-chooser-reminder-lead';reminderLeadLabel.hidden=true;
+ const reminderLeadText=document.createElement('span');reminderLeadText.textContent='Nhắc trước';
+ const reminderLead=document.createElement('select');reminderLead.id='webChooserReminderLead';
+ reminderLead.setAttribute('aria-label','Nhắc chương trình EPG trước bao nhiêu phút');
+ for(const minutes of [5,10,15,30]){
+  const option=document.createElement('option');option.value=String(minutes);
+  option.textContent=minutes+' phút';reminderLead.append(option);
+ }
+ try{const saved=Number(localStorage.getItem('open-iptv-positron-reminder-lead-v1'));
+  if([5,10,15,30].includes(saved))reminderLead.value=String(saved);
+ }catch{}
+ reminderLeadLabel.append(reminderLeadText,reminderLead);
+ chooserAdvanced.append(reminderLeadLabel);
  [...filterControls.querySelectorAll('label')].forEach(label=>chooserAdvanced.append(label));
  filterControls.append(chooserAdvanced);
  const compactFilterMedia=window.matchMedia('(max-width:600px)');
@@ -306,9 +321,10 @@
    // Reflect the saved reminder immediately and on subsequent chooser renders.
    const initial={id:nextReminderProgramme.id,start:nextReminderProgramme.start};
    const reminderActive=window.IPTVProAdvanced?.hasReminder?.(initial)===true;
+   const lead=Number(reminderLead.value)||10;
    reminder.setAttribute('aria-pressed',String(reminderActive));
-   reminder.setAttribute('aria-label',(reminderActive?'Hủy nhắc lịch: ':'Nhắc trước 10 phút: ')+nextReminderProgramme.title);
-   reminder.title=(reminderActive?'Hủy nhắc lịch: ':'Nhắc trước 10 phút cho ')+nextReminderProgramme.title;
+   reminder.setAttribute('aria-label',(reminderActive?'Hủy nhắc lịch: ':'Nhắc trước '+lead+' phút: ')+nextReminderProgramme.title);
+   reminder.title=(reminderActive?'Hủy nhắc lịch: ':'Nhắc trước '+lead+' phút cho ')+nextReminderProgramme.title;
    reminder.innerHTML='<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 21h4"/></svg>';
    reminder.addEventListener('click',()=>{
     if(!state.getChannels?.().some(c=>String(c.id)===String(ch.id)))return;
@@ -324,11 +340,11 @@
      return state.toast?.('Không thể mở chức năng nhắc lịch.','warn');
     const item={id:next.id,title:next.title,start:next.start};
     if(hasReminder(item))cancelReminder(item);
-    else remind({id:next.id,title:next.title,start:next.start},ch);
+    else remind({id:next.id,title:next.title,start:next.start},ch,Number(reminderLead.value));
     const saved=hasReminder(item);
     reminder.setAttribute('aria-pressed',String(saved));
-    reminder.setAttribute('aria-label',(saved?'Hủy nhắc lịch: ':'Nhắc trước 10 phút: ')+next.title);
-    reminder.title=(saved?'Hủy nhắc lịch: ':'Nhắc trước 10 phút cho ')+next.title;
+    reminder.setAttribute('aria-label',(saved?'Hủy nhắc lịch: ':'Nhắc trước '+reminderLead.value+' phút: ')+next.title);
+    reminder.title=(saved?'Hủy nhắc lịch: ':'Nhắc trước '+reminderLead.value+' phút cho ')+next.title;
    });
    frame.append(reminder);
   }
@@ -560,12 +576,18 @@
  onAirOnly.addEventListener('change',()=>{
   if(onAirOnly.checked)soonOnly.checked=false;
   soonWindowLabel.hidden=!soonOnly.checked;
+  reminderLeadLabel.hidden=!(soonOnly.checked||onAirOnly.checked);
   syncEpgSearch();page=0;render();
  });
  soonOnly.addEventListener('change',()=>{
   if(soonOnly.checked)onAirOnly.checked=false;
   soonWindowLabel.hidden=!soonOnly.checked;
+  reminderLeadLabel.hidden=!(soonOnly.checked||onAirOnly.checked);
   syncEpgSearch();page=0;render();
+ });
+ reminderLead.addEventListener('change',()=>{
+  try{localStorage.setItem('open-iptv-positron-reminder-lead-v1',reminderLead.value)}catch{}
+  render();
  });
  soonWindow.addEventListener('change',()=>{
   soonCaption.textContent='Sắp chiếu trong '+soonWindow.value+' phút (EPG)';

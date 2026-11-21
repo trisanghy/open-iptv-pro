@@ -177,6 +177,7 @@
   }root.append(table);
  }
  // P5.1.148: locally reversible reminders; never remove any other schedule.
+ const normalizeReminderLead=v=>[5,10,15,30].includes(Number(v))?Number(v):10;
  const reminderKey=p=>p?.id&&Number.isFinite(p?.start)?String(p.id)+'|'+String(p.start):'';
  const hasReminder=p=>Boolean(reminderKey(p)&&state.reminders.some(r=>r.id===reminderKey(p)&&r.done!==true));
  function cancelReminder(p){
@@ -187,9 +188,9 @@
   const [entry]=state.reminders.splice(at,1);save();
   ctx.toast('Đã hủy nhắc lịch: '+(entry.title||'Chương trình'));return true;
  }
- function remind(p,c){if(state.reminders.some(x=>x.id===`${p.id}|${p.start}`))return ctx.toast('Đã có nhắc lịch này');state.reminders.push({id:`${p.id}|${p.start}`,title:p.title,channel:c?.name||p.id,start:p.start,done:false});save();ctx.toast('Đã lưu lịch nhắc: '+p.title);if('Notification' in window&&Notification.permission==='default')Notification.requestPermission().catch(()=>{});}
+ function remind(p,c,leadMinutes=10){if(state.reminders.some(x=>x.id===`${p.id}|${p.start}`))return ctx.toast('Đã có nhắc lịch này');state.reminders.push({id:`${p.id}|${p.start}`,title:p.title,channel:c?.name||p.id,start:p.start,leadMinutes:normalizeReminderLead(leadMinutes),done:false});save();ctx.toast('Đã lưu lịch nhắc: '+p.title);if('Notification' in window&&Notification.permission==='default')Notification.requestPermission().catch(()=>{});}
  async function playCatchup(c,p){const url=lib.catchup(c,p);if(!url)return ctx.toast('Nguồn không có mẫu catchup-source hợp lệ','warn');ctx.setPage('tv');ctx.playChannel(c.id,url,{mode:'catchup'});}
- async function checkReminders(){const now=Date.now();let edited=false;for(const r of state.reminders){if(r.done)continue;if(r.start-10*60000<=now&&r.start>=now-60000){r.done=true;edited=true;try{if(window.streamleaf?.notifyReminder)await window.streamleaf.notifyReminder('Open IPTV Pro · Sắp chiếu',r.channel+' · '+r.title);else if('Notification' in window&&Notification.permission==='granted')new Notification('Open IPTV Pro · Sắp chiếu',{body:r.channel+' · '+r.title});else ctx.toast('Sắp chiếu: '+r.channel+' · '+r.title,'warn');}catch{ctx.toast('Sắp chiếu: '+r.title,'warn');}}if(r.start<now-86400000){r.done=true;edited=true;}}if(edited)save();}
+ async function checkReminders(){const now=Date.now();let edited=false;for(const r of state.reminders){if(r.done)continue;if(r.start-normalizeReminderLead(r.leadMinutes)*60000<=now&&r.start>=now-60000){r.done=true;edited=true;try{if(window.streamleaf?.notifyReminder)await window.streamleaf.notifyReminder('Open IPTV Pro · Sắp chiếu',r.channel+' · '+r.title);else if('Notification' in window&&Notification.permission==='granted')new Notification('Open IPTV Pro · Sắp chiếu',{body:r.channel+' · '+r.title});else ctx.toast('Sắp chiếu: '+r.channel+' · '+r.title,'warn');}catch{ctx.toast('Sắp chiếu: '+r.title,'warn');}}if(r.start<now-86400000){r.done=true;edited=true;}}if(edited)save();}
  $('#epgSearchGo').onclick=renderEpgSearch;$('#epgGlobalSearch').onkeydown=e=>{if(e.key==='Enter')renderEpgSearch();};
  $('#epgOffset').value=window.IPTVExtras?.getOffset?.()||0;
  $('#epgOffset').onchange=e=>{window.IPTVExtras?.setOffset?.(e.target.value);ctx.toast('Đã lưu độ lệch EPG');renderEpgSearch();};

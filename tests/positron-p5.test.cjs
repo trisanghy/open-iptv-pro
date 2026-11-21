@@ -37,7 +37,7 @@ test('P5 assets are loaded after P4 without replacing it',()=>{
 test('P5 release is immutable and versioned separately from P4.1',()=>{
  const pkg=JSON.parse(read('package.json'));
  const flow=read('.github/workflows/positron-lab.yml');
- assert.equal(pkg.version,'4.23.232');
+ assert.equal(pkg.version,'4.23.233');
  const label=pkg.description.match(/Positron\s+(P\d+\.\d+\.\d+)/)?.[1];
  assert.ok(label,'product P-label must accompany SemVer');
  assert.ok(flow.includes('TAG=positron/v'+pkg.version+'-'+label.toLowerCase()),'release tag and app version must match');
@@ -1413,4 +1413,19 @@ test('P5.1.148 hủy nhắc lịch EPG độc lập, biểu tượng phản ánh
   'positron-p51148-cancel-reminder-after-450-real.png',
   'positron-p51148-cancel-reminder-canceled-450-real.png'])
   assert.ok(qa.includes(token),'Thiếu kiểm thử Electron '+token);
+});
+
+test('P5.1.149 reminders can use 5, 10, 15 or 30 minutes, old records default to 10',()=>{
+ const adv=read('renderer/advanced.js'),ui=read('renderer/web-channel-chooser-v42371.js');
+ const css=read('renderer/positron-horizon-v4.css'),qa=read('scripts/positron-20-extension.cjs');
+ for(const token of ['const normalizeReminderLead=v=>[5,10,15,30].includes(Number(v))?Number(v):10',
+  'leadMinutes:normalizeReminderLead(leadMinutes)','r.start-normalizeReminderLead(r.leadMinutes)*60000<=now'])
+  assert.ok(adv.includes(token),'advanced reminder missing '+token);
+ for(const token of ["reminderLead.id='webChooserReminderLead'","for(const minutes of [5,10,15,30])",
+  'ch,Number(reminderLead.value)','open-iptv-positron-reminder-lead-v1'])
+  assert.ok(ui.includes(token),'chooser missing '+token);
+ assert.ok(css.includes('.web-chooser-reminder-lead[hidden]'));
+ for(const token of ['selectedThirtySaved:','playlistUnchanged:','noAutoplay:','noOverflow:',
+  'positron-p51149-reminder-lead-before-450-real.png','positron-p51149-reminder-lead-after-450-real.png'])
+  assert.ok(qa.includes(token),'native QA missing '+token);
 });

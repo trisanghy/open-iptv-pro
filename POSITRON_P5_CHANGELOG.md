@@ -1,3 +1,12 @@
+## P5.1.149 — Chọn nhắc EPG trước 5/10/15/30 phút / Electron v4.23.233
+
+- Feature priority: NEW — Chọn thông báo XMLTV trước 5, 10, 15 hoặc 30 phút; mỗi lịch giữ thời điểm riêng. Lịch cũ không có leadMinutes vẫn mặc định 10 phút; không đụng nguồn và không autoplay.
+- User action: Trong Chọn kênh, bật lọc Sắp chiếu hoặc Đang chiếu (EPG), mở Bộ lọc, chọn Nhắc trước 5/10/15/30 phút rồi bấm chuông trên thẻ kênh. Bấm lại để hủy như P5.1.148.
+- Electron screenshot: positron-p51149-reminder-lead-after-450-real.png
+- Before: positron-p51149-reminder-lead-before-450-real.png. Baseline P5.1.148 Electron 450px đã được tải và trực tiếp mở.
+- QA: Node regression + Electron thật 450px dùng EPG metadata cục bộ; chọn 30 phút, lưu đúng leadMinutes, chuông trạng thái đã lưu, playlist không đổi, không autoplay, không overflow. 6 CI jobs, manual screenshot review và immutable release.
+- Trạng thái: CANDIDATE đến khi CI, ảnh và Release xác minh.
+
 ## P5.1.148 — Hủy hoặc bật lại lịch nhắc EPG ngay bằng chuông / Electron v4.23.232
 
 - Feature priority: NEW — Nút chuông nhắc lịch ngay trên thẻ kênh nay thể hiện rõ đã lưu/chưa lưu, và cho phép bấm lần nữa để hủy đúng một chương trình đã nhắc; sử dụng lịch XMLTV đã nhập và dịch vụ nhắc nội bộ hiện có, không tự phát và không tác động lịch khác.
