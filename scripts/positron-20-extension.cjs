@@ -2666,9 +2666,37 @@ async function runTwenty(page){
   assert.equal(value,true,'P5.1.135 native reordered local search '+key+': '+JSON.stringify(multiTermSearchQA));
  await page.fill('#webChooserSearch','');
 
+ // P5.1.136: native Enter-to-select shortcut, no autoplay.
+ await page.fill('#webChooserSearch','001 Channel QA');
+ await page.waitForFunction(()=>document.querySelectorAll('#webChooserGrid button.web-chooser-card').length===1
+  &&document.querySelector('#webChooserGrid .web-chooser-name')?.textContent==='QA Channel 001',{timeout:4000});
+ await page.screenshot({path:path.join(out,'positron-p51136-search-enter-before-450-real.png'),animations:'disabled'});
+ await page.keyboard.press('Enter');
+ const keyboardSearchQA=await page.evaluate(()=>{
+  const selected=document.activeElement;
+  return {
+   focusMovedToMatch:selected?.matches?.('#webChooserGrid button.web-chooser-card')===true,
+   correctChannel:selected?.querySelector('.web-chooser-name')?.textContent==='QA Channel 001',
+   queryPreserved:document.getElementById('webChooserSearch').value==='001 Channel QA',
+   noAutoplay:window.IPTVState.getCurrent()===null,
+   noHorizontalOverflow:document.documentElement.scrollWidth<=innerWidth+1
+  };
+ });
+ await page.screenshot({path:path.join(out,'positron-p51136-search-enter-after-450-real.png'),animations:'disabled'});
+ await page.fill('#webChooserSearch','zz-khong-co-kenh-phu-hop');
+ await page.waitForFunction(()=>document.querySelectorAll('#webChooserGrid button.web-chooser-card').length===0,{timeout:4000});
+ await page.keyboard.press('Enter');
+ Object.assign(keyboardSearchQA,await page.evaluate(()=>({
+  noMatchKeepsSearchFocus:document.activeElement===document.getElementById('webChooserSearch'),
+  noMatchNeverPlays:window.IPTVState.getCurrent()===null
+ })));
+ for(const [key,value] of Object.entries(keyboardSearchQA))
+  assert.equal(value,true,'P5.1.136 Electron keyboard '+key+': '+JSON.stringify(keyboardSearchQA));
+ await page.fill('#webChooserSearch','');
+
  await page.setViewportSize({width:1360,height:820});
   const report={type:'Positron P5 twenty distinct desktop screenshot cases',realElectron:true,syntheticChannels:false,
-  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA,chooserQa,toastLayoutQA,nativeToastQA,compactIdleQA,channelChipRailQA,advancedFilterQA,readableCardsQA,keyboardTabQA,favoriteEmptyQA,duplicateEmptyQA,categoryFilterQA,categoryFixtureQA,compactSingleQA,directFavoriteQA,favoriteCountQA,compactToastStackQA,toastDismissQA,toastFocusReturnQA,toastDockQA,wheelQA,pinnedAllQA,pinnedMaskQA,categoryKeyQA,dropdownChipQA,pinnedRightMaskQA,pinnedBorderMaskQA,asciiDSearchQA,emptySearchActionQA,readableCardTitleQA,favoriteSvgQA,keyboardFavoriteQA,multiTermSearchQA};
+  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA,chooserQa,toastLayoutQA,nativeToastQA,compactIdleQA,channelChipRailQA,advancedFilterQA,readableCardsQA,keyboardTabQA,favoriteEmptyQA,duplicateEmptyQA,categoryFilterQA,categoryFixtureQA,compactSingleQA,directFavoriteQA,favoriteCountQA,compactToastStackQA,toastDismissQA,toastFocusReturnQA,toastDockQA,wheelQA,pinnedAllQA,pinnedMaskQA,categoryKeyQA,dropdownChipQA,pinnedRightMaskQA,pinnedBorderMaskQA,asciiDSearchQA,emptySearchActionQA,readableCardTitleQA,favoriteSvgQA,keyboardFavoriteQA,multiTermSearchQA,keyboardSearchQA};
  fs.writeFileSync(path.resolve('positron-evidence','audit-p5-20-rounds.json'),JSON.stringify(report,null,2));
  return report;
 }

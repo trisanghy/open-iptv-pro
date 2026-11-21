@@ -300,6 +300,19 @@
   target.click();target.focus();
  });
  root.querySelectorAll('[data-chooser-layout]').forEach(b=>b.addEventListener('click',()=>{layout=b.dataset.chooserLayout;render();}));
+ // P5.1.136: Enter selects the first matching native channel button by focus.
+ // Playback still requires an explicit second Enter on the focused button.
+ search.addEventListener('keydown',event=>{
+  if(event.key!=='Enter'||event.isComposing||event.repeat||
+   event.ctrlKey||event.metaKey||event.altKey||event.shiftKey||!search.value.trim())return;
+  event.preventDefault();
+  render(); // Flush pending search input and find the actual first match.
+  const first=grid.querySelector('button.web-chooser-card');
+  if(!first)return; // No match: keep keyboard focus in search.
+  first.focus({preventScroll:true});
+  first.scrollIntoView({block:'nearest',inline:'nearest'});
+ });
+ search.title='Nhập tên kênh rồi nhấn Enter để chọn kết quả đầu tiên';
  search.addEventListener('input',()=>{page=0;schedule();});
  // P5.1.128: when the user selects a group from the native advanced dropdown,
  // reveal its matching quick chip instead of leaving the active state offscreen.

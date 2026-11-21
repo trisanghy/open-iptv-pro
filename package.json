@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.219",
-  "description": "Positron P5.1.135: tìm kênh nhiều từ không cần đúng thứ tự",
+  "version": "4.23.220",
+  "description": "Positron P5.1.136: nhấn Enter để chọn kênh sau khi tìm kiếm",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

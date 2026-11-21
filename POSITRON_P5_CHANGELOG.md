@@ -1,3 +1,12 @@
+## P5.1.136 — Enter chọn kết quả tìm kênh / Electron v4.23.220
+
+- Feature priority: NEW — Chuyển tiêu điểm bàn phím tới thẻ kênh phù hợp đầu tiên sau khi tìm kiếm, tránh phải dùng chuột và không tự phát hoặc thay đổi dữ liệu người dùng.
+- User action: Mở Chọn kênh ở TV, nhập tên kênh vào Tìm kiếm rồi nhấn Enter để chọn thẻ đầu tiên; nhấn Enter thêm lần nữa trên thẻ mới phát kênh nếu muốn.
+- Electron screenshot: positron-p51136-search-enter-after-450-real.png
+- Ảnh đầu vào: positron-p51135-reordered-search-450-real.png đã mở xem trực tiếp, hiển thị đúng kết quả lọc nhưng chưa có thao tác Enter chọn nhanh.
+- Kiểm thử: Node regression, QA Electron 450px có kênh được nhập cục bộ; xác minh focus đúng, không autoplay, không khớp giữ focus ở tìm kiếm, không tràn ngang.
+- Trạng thái: CANDIDATE — cần xác minh CI, mở ảnh thực tế mới và bộ cài trước khi tính hoàn tất.
+
 ## P5.1.135 — Tìm kênh nhiều từ không đúng thứ tự / Electron v4.23.219
 
 - Feature priority: NEW — Tìm được kênh bằng nhiều từ khóa trong tên và nhóm dù đảo thứ tự, có khoảng trắng lặp hoặc gõ tiếng Việt không dấu; không truy cập URL, không tự phát video và không đổi dữ liệu.
