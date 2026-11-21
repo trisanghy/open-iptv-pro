@@ -37,7 +37,7 @@ test('P5 assets are loaded after P4 without replacing it',()=>{
 test('P5 release is immutable and versioned separately from P4.1',()=>{
  const pkg=JSON.parse(read('package.json'));
  const flow=read('.github/workflows/positron-lab.yml');
- assert.equal(pkg.version,'4.23.210');
+ assert.equal(pkg.version,'4.23.211');
  const label=pkg.description.match(/Positron\s+(P\d+\.\d+\.\d+)/)?.[1];
  assert.ok(label,'product P-label must accompany SemVer');
  assert.ok(flow.includes('TAG=positron/v'+pkg.version+'-'+label.toLowerCase()),'release tag and app version must match');
@@ -1029,4 +1029,17 @@ test('P5.1.126 pinned All reset blocks clipped underlying chip text and clicks',
  assert.ok(css.includes('pointer-events:auto!important'));
  for(const token of ['maskOpaque:mask.backgroundColor===','maskCapturesTap:hit===all||all.contains(hit)','positron-p51126-pinned-all-masked-450-real.png'])
   assert.ok(qa.includes(token),'missing native Electron mask regression '+token);
+});
+
+test('P5.1.127 category keys navigate hidden chips without selecting until Enter',()=>{
+ const src=read('renderer/web-channel-chooser-v42371.js');
+ const qa=read('scripts/positron-20-extension.cjs');
+ assert.ok(src.includes("groups.addEventListener('keydown',event=>"));
+ assert.ok(src.includes("['ArrowLeft','ArrowRight','Home','End'].includes(event.key)"));
+ assert.ok(src.includes("target.focus({preventScroll:true})"));
+ assert.ok(src.includes("target.scrollIntoView({block:'nearest',inline:'nearest'})"));
+ for(const token of ['endFocus:last===document.activeElement','selectionUnchanged:!group.value',
+  'homeFocus:first===document.activeElement','enterApplied:!!group.value',
+  "enterReset:group.value===''",'positron-p51127-category-keys-450-real.png'])
+  assert.ok(qa.includes(token),'missing genuine Electron category-key regression '+token);
 });

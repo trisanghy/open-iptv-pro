@@ -885,3 +885,9 @@ P5.1.81 follow-up: real Electron capture found nav overflow; replace flexible no
 - Root cause: sticky chip overlays only its own border box, while the 10px scroll-lane padding shows clipped neighboring labels.
 - Fix: add a scoped 22px dark mask using the original first chip's own ::before and let it capture pointer events, preventing invisible category selection in the masked region. Do not remove native group controls or modify playlists/playback.
 - Regression: Node source test; real Electron computed pseudo style, masked hit-test, no-overflow, new screenshot `positron-p51126-pinned-all-masked-450-real.png`. Pending full CI and immutable Release.
+
+## P5.1.127 / Electron v4.23.211 — Native keyboard navigation across compact channel groups
+- Input: directly opened genuine P5.1.126 450px Electron screenshot `positron-p51126-pinned-all-masked-450-real.png`. The long horizontal quick-group row has several hidden choices but supports only Tab and pointer/wheel, not expected left/right/Home/End navigation for keyboard and remote-style controls.
+- Root: each category is a button and event handlers cover click only; the keyboard arrow handlers implemented earlier serve the separate All/Favorites/Recent tabs, not the group row.
+- Fix: add an event listener scoped to the native category row to focus previous/next/start/end buttons and scroll their target into view; changes no filters until explicit Enter/Space, preserves All button, no auto-play or source mutation.
+- Regression: Node source test plus real Electron 450px End/Enter/Home/Enter sequence; focus, selection deferral, native group apply/reset, no overflow, screenshot `positron-p51127-category-keys-450-real.png`. Candidate until full CI/manual after-image and immutable installer release.

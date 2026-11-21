@@ -183,3 +183,8 @@ Not yet started. Choose each new repair from the preceding real screenshot, with
 - Root: category rail has 10px left padding and overlay only spans the sticky button's own rectangle, so scrolled-away text peeks around it.
 - Fix: original All chip gains an opaque interactive ::before overhang, scoped to compact window only, preserving filtering/wheel/keyboard and storage.
 - Native evidence: `positron-p51126-pinned-all-masked-450-real.png`, computed pseudo sizing and click-hit target, unique P5.1.126 version/CI/release if verified; do not count until full checks complete.
+
+## New file-triggered batch round 04/20 — P5.1.127 / Electron v4.23.211 — CANDIDATE
+- Baseline P5.1.126 `positron-p51126-pinned-all-masked-450-real.png` directly inspected: opaque mask fixed left-clipped text. Long group row still hard to navigate with keyboard/remote: no ArrowLeft/Right/Home/End.
+- Fix native group-row keydown only, focus navigation without applying selection, scroll focused group into view; Enter/Space retains original explicit selection.
+- Regression: Electron 450px focus/selection behavior + image `positron-p51127-category-keys-450-real.png`, Node source test; count only after six CI jobs, actual opened screenshot and verified tag/installers.

@@ -134,6 +134,19 @@
   groups.scrollLeft=next;
   event.preventDefault();
  },{passive:false});
+ // P5.1.127: Use arrow/Home/End keys on native quick-group chips.
+ // Only focus moves; user must press Enter/Space to select a channel group.
+ groups.addEventListener('keydown',event=>{
+  const buttons=[...groups.querySelectorAll('button[data-po-quick-group]')];
+  const index=buttons.indexOf(document.activeElement);
+  if(index<0||!['ArrowLeft','ArrowRight','Home','End'].includes(event.key))return;
+  event.preventDefault();
+  const nextIndex=event.key==='Home'?0:event.key==='End'?buttons.length-1:
+   (index+(event.key==='ArrowRight'?1:-1)+buttons.length)%buttons.length;
+  const target=buttons[nextIndex];
+  target.focus({preventScroll:true});
+  target.scrollIntoView({block:'nearest',inline:'nearest'});
+ });
  function renderGroups(){
   const existing=group.value;
   const groupNames=[...new Set(channels().map(c=>String(c.group||'Khác').trim()).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'vi'));

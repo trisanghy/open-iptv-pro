@@ -2324,9 +2324,42 @@ async function runTwenty(page){
  for(const [key,value] of Object.entries(pinnedMaskQA))
   assert.equal(value,true,'P5.1.126 Electron pinned mask '+key+': '+JSON.stringify(pinnedMaskQA));
 
+ 
+ // P5.1.127: Real Electron keyboard/remote-style group navigation.
+ await page.locator('#webChooserGroups button[data-po-quick-group="all"]').focus();
+ await page.keyboard.press('End');
+ const endKeyboardQA=await page.evaluate(()=>{
+  const rail=document.getElementById('webChooserGroups');
+  const buttons=[...rail.querySelectorAll('button[data-po-quick-group]')];
+  const last=buttons[buttons.length-1],group=document.getElementById('webChooserGroup');
+  const b=last.getBoundingClientRect(),r=rail.getBoundingClientRect();
+  return {endFocus:last===document.activeElement,
+   selectionUnchanged:!group.value,
+   lastVisible:b.right<=r.right+1&&b.left>=r.left-1,
+   scrolledToLast:rail.scrollLeft>40,
+   noOverflow:document.documentElement.scrollWidth<=innerWidth+1};
+ });
+ await page.screenshot({path:path.join(out,'positron-p51127-category-keys-450-real.png'),animations:'disabled'});
+ await page.keyboard.press('Enter');
+ const enterApplied=await page.evaluate(()=>!!document.getElementById('webChooserGroup').value);
+ await page.keyboard.press('Home');
+ const homeKeyboardQA=await page.evaluate(()=>{
+  const rail=document.getElementById('webChooserGroups');
+  const first=rail.querySelector('button[data-po-quick-group="all"]');
+  return {homeFocus:first===document.activeElement};
+ });
+ await page.keyboard.press('Enter');
+ const resetKeyboardQA=await page.evaluate(()=>{
+  const group=document.getElementById('webChooserGroup');
+  return {enterReset:group.value==='',resetFocused:document.activeElement?.dataset?.poQuickGroup==='all'};
+ });
+ const categoryKeyQA={...endKeyboardQA,...homeKeyboardQA,enterApplied,...resetKeyboardQA};
+ for(const [key,value] of Object.entries(categoryKeyQA))
+  assert.equal(value,true,'P5.1.127 keyboard group chips '+key+': '+JSON.stringify(categoryKeyQA));
+
  await page.setViewportSize({width:1360,height:820});
   const report={type:'Positron P5 twenty distinct desktop screenshot cases',realElectron:true,syntheticChannels:false,
-  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA,chooserQa,toastLayoutQA,nativeToastQA,compactIdleQA,channelChipRailQA,advancedFilterQA,readableCardsQA,keyboardTabQA,favoriteEmptyQA,duplicateEmptyQA,categoryFilterQA,categoryFixtureQA,compactSingleQA,directFavoriteQA,favoriteCountQA,compactToastStackQA,toastDismissQA,toastFocusReturnQA,toastDockQA,wheelQA,pinnedAllQA,pinnedMaskQA};
+  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA,chooserQa,toastLayoutQA,nativeToastQA,compactIdleQA,channelChipRailQA,advancedFilterQA,readableCardsQA,keyboardTabQA,favoriteEmptyQA,duplicateEmptyQA,categoryFilterQA,categoryFixtureQA,compactSingleQA,directFavoriteQA,favoriteCountQA,compactToastStackQA,toastDismissQA,toastFocusReturnQA,toastDockQA,wheelQA,pinnedAllQA,pinnedMaskQA,categoryKeyQA};
  fs.writeFileSync(path.resolve('positron-evidence','audit-p5-20-rounds.json'),JSON.stringify(report,null,2));
  return report;
 }
