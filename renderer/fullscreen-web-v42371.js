@@ -5,9 +5,9 @@
  if(!box||!dock||!video||!window.IPTVState)return;
  const get=id=>document.getElementById(id),state=window.IPTVState;
  const add=(id,label,title)=>{const b=document.createElement('button');b.type='button';b.id=id;b.className='fs-web-button';b.textContent=label;b.title=title||label;return b;};
- const epg=add('fsWebEPG','▤ EPG','Lịch phát sóng');
- const aspect=add('fsWebAspect','▭ Khung hình','Tỷ lệ khung hình');
- const links=add('fsWebLinks','↗ Link phát','Chọn link chính / dự phòng');
+ const epg=add('fsWebEPG','EPG','Lịch phát sóng');
+ const aspect=add('fsWebAspect','Khung hình','Tỷ lệ khung hình');
+ const links=add('fsWebLinks','Link phát','Chọn link chính / dự phòng');
  const favorite=add('fsWebFav','☆','Yêu thích');
  const pip=add('fsWebPiP','▣','Picture-in-Picture');
  const pop=document.createElement('section');pop.className='fs-web-popover';pop.id='fsWebPopover';pop.setAttribute('aria-label','Tùy chọn toàn màn hình');
@@ -42,7 +42,7 @@
  epg.addEventListener('click',()=>open('epg',epg));aspect.addEventListener('click',()=>open('aspect',aspect));links.addEventListener('click',()=>open('links',links));
  favorite.addEventListener('click',()=>{get('favCurrentBtn')?.click();sync();});
  pip.addEventListener('click',()=>{get('pipBtn')?.click();close();});
- function sync(){const ch=state.getCurrent?.();top.textContent=(video.paused?'●':'🔴')+' '+(video.paused?'TẠM DỪNG':'LIVE')+'  '+(ch?.name||'Open IPTV Pro');favorite.textContent=get('favCurrentBtn')?.getAttribute('aria-pressed')==='true'?'★':'☆';const select=get('manualStreamSelect');links.textContent=select?.disabled?'↗ Link phát':('↗ '+((select?.selectedIndex||0)>0?'Link dự phòng':'Link chính'));links.title=select?.selectedOptions?.[0]?.textContent||'Chọn link phát';}
+ function sync(){const ch=state.getCurrent?.();top.textContent=(video.paused?'●':'🔴')+' '+(video.paused?'TẠM DỪNG':'LIVE')+'  '+(ch?.name||'Open IPTV Pro');favorite.textContent=get('favCurrentBtn')?.getAttribute('aria-pressed')==='true'?'★':'☆';favorite.setAttribute('aria-pressed',get('favCurrentBtn')?.getAttribute('aria-pressed')||'false');const select=get('manualStreamSelect');links.textContent=select?.disabled?'Link phát':((select?.selectedIndex||0)>0?'Link dự phòng':'Link chính');links.title=select?.selectedOptions?.[0]?.textContent||'Chọn link phát';}
  document.addEventListener('fullscreenchange',()=>{close();if(document.fullscreenElement===box)sync();});
  video.addEventListener('playing',sync);video.addEventListener('pause',sync);
  dock.addEventListener('pointerdown',event=>event.stopPropagation());
