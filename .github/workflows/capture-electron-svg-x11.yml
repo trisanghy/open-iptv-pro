@@ -1,0 +1,43 @@
+name: Electron SVG patch direct X11 screenshot
+on:
+  push:
+    branches: [build-sources/electron-desktop]
+    paths: ['.github/workflows/capture-electron-svg-x11.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  capture:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - name: Install Electron and X11 capture
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq xvfb imagemagick libgtk-3-0 libnss3 libasound2t64 libgbm1 libxss1 libatk-bridge2.0-0 libdrm2
+          npm install --no-audit --no-fund
+      - name: Screenshot actual Electron app without CDP
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          mkdir -p screenshots
+          Xvfb :99 -screen 0 1600x900x24 >screenshots/xvfb.log 2>&1 &
+          export DISPLAY=:99
+          sleep 2
+          timeout 80s ./node_modules/.bin/electron . --no-sandbox --disable-gpu > screenshots/electron.log 2>&1 &
+          sleep 14
+          import -display :99 -window root screenshots/electron-svg-main-x11.png
+          test -s screenshots/electron-svg-main-x11.png
+          identify screenshots/electron-svg-main-x11.png
+          ls -lh screenshots/electron-svg-main-x11.png
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: electron-svg-final-x11-real-screenshot
+          path: screenshots/
+          retention-days: 7
