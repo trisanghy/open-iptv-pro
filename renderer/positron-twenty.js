@@ -233,6 +233,21 @@
  // P5.1.25: the actual P5.1.24 EPG 720px screenshot shows a blank
  // enabled DVR channel select even though no playlists/channels exist.
  // Preserve native DVR scheduling, but clearly expose no-channel state.
+ // P5.1.35: P5.1.34 actual Electron EPG screenshot still rendered a tiny
+ // OS-dependent record glyph on the disabled submit. Replace only the
+ // decorative glyph, preserving native form submission and channel guards.
+ const nativeDvrSubmit=byId('dvrAdd');
+ if(nativeDvrSubmit&&!nativeDvrSubmit.querySelector('svg')){
+  const icon=d.createElementNS(ns,'svg');icon.setAttribute('viewBox','0 0 24 24');
+  icon.setAttribute('class','positron-dvr-record-icon');
+  icon.setAttribute('aria-hidden','true');icon.setAttribute('focusable','false');
+  const outer=d.createElementNS(ns,'circle');outer.setAttribute('cx','12');outer.setAttribute('cy','12');outer.setAttribute('r','9');
+  const center=d.createElementNS(ns,'circle');center.setAttribute('cx','12');center.setAttribute('cy','12');center.setAttribute('r','4');center.setAttribute('class','record-dot');
+  icon.append(outer,center);
+  const label=d.createElement('span');
+  label.textContent=(nativeDvrSubmit.textContent||'').replace(/^[\s⏺🔴🟠•]+/u,'').trim()||'Đặt lịch ghi';
+  nativeDvrSubmit.replaceChildren(icon,label);
+ }
  const dvrChannel=byId('dvrChannel');
  if(dvrChannel){
   const syncDvrChannel=()=>{
