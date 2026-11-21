@@ -1801,9 +1801,29 @@ async function runTwenty(page){
  for(const key of ['closed','expands','collapses','nativeControlsPreserved','searchVisible','gridEarlier','documentNoOverflow'])
   assert.equal(advancedFilterQA[key],true,'P5.1.111 native advanced filtering '+key+': '+JSON.stringify(advancedFilterQA));
  await page.screenshot({path:path.join(out,'positron-p51111-compact-filters-450-real.png'),animations:'disabled'});
+ // P5.1.112: genuine previous 450px Electron screenshot showed three tiny
+ // channel cards with ellipsized text. Verify 2-column tiles and 2-line names.
+ const readableCardsQA=await page.evaluate(()=>{
+  const grid=document.getElementById('webChooserGrid');
+  const cards=[...grid.querySelectorAll('button.web-chooser-card')];
+  const r=cards.slice(0,3).map(c=>c.getBoundingClientRect());
+  const names=cards.slice(0,3).map(c=>c.querySelector('.web-chooser-name'));
+  const style=names[0]?getComputedStyle(names[0]):null;
+  return {twoAcross:r.length===3&&Math.abs(r[0].top-r[1].top)<=2&&r[2].top>=r[0].bottom+4,
+   readableWidths:r.length>=2&&r[0].width>=145&&r[1].width>=145,
+   twoLineNames:style?.whiteSpace==='normal'&&style?.webkitLineClamp==='2',
+   sourceCards:cards.length>=6,
+   buttonsIntact:cards.slice(0,3).every(c=>c.tagName==='BUTTON'&&!c.disabled&&c.tabIndex>=0),
+   noOverflow:document.documentElement.scrollWidth<=innerWidth+1,
+   noAutoplay:window.IPTVState.getCurrent()===null};
+ });
+ for(const key of ['twoAcross','readableWidths','twoLineNames','sourceCards','buttonsIntact','noOverflow','noAutoplay'])
+  assert.equal(readableCardsQA[key],true,'P5.1.112 450px channel-card regression '+key+': '+JSON.stringify(readableCardsQA));
+ await page.evaluate(()=>document.getElementById('webChooserGrid').scrollIntoView({block:'center',behavior:'instant'}));
+ await page.screenshot({path:path.join(out,'positron-p51112-readable-channel-cards-450-real.png'),animations:'disabled'});
  await page.setViewportSize({width:1360,height:820});
   const report={type:'Positron P5 twenty distinct desktop screenshot cases',realElectron:true,syntheticChannels:false,
-  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA,chooserQa,toastLayoutQA,nativeToastQA,compactIdleQA,channelChipRailQA,advancedFilterQA};
+  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA,chooserQa,toastLayoutQA,nativeToastQA,compactIdleQA,channelChipRailQA,advancedFilterQA,readableCardsQA};
  fs.writeFileSync(path.resolve('positron-evidence','audit-p5-20-rounds.json'),JSON.stringify(report,null,2));
  return report;
 }

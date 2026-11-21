@@ -773,3 +773,11 @@ P5.1.81 follow-up: real Electron capture found nav overflow; replace flexible no
 - Fix: Positron <=600px horizontal overflow strip with native buttons all present + focus accessible; `renderGroups()` saves/restores scrollLeft to prevent jumping to the start after selecting a chip near the right side. Group filtering and playlist never altered.
 - QA: Node regression and real Electron 450px single row, scrollable, rightmost selection position retained, search and channel grid higher in viewport, no horizontal document overflow/autoplay. Screenshot `positron-p51111-single-row-chips-450-real.png` must be opened before counting completion.
 - Status: candidate until CI/installer assets and screenshot reviewed.
+
+
+## P5.1.112 / v4.23.196 — Two readable channel cards per row on 450px (new batch round 05/20)
+- Input: genuine manually opened P5.1.111 Electron `positron-p51111-compact-filters-450-real.png`: at 450px the grid renders three 100px cards across the content column, each with large generic TV art and a channel name forced onto one truncated line.
+- Cause: legacy `web-channel-chooser-v42371.css` uses 80px minimum columns at <=650px and single-line ellipsis for labels, making channel titles hard to identify.
+- Fix: narrow <=500x900 unplayed/regular grid (not list mode) uses 2 equal columns with min 145px card width and two-line names; original native channel button, click, logo, pagination, stream logic and responsive desktop layout stay untouched.
+- Tests: Node source/assertion + actual Electron 450px measured two-column placement, label wrap, keyboard buttons, no document overflow, no autoplay and real screenshot `positron-p51112-readable-channel-cards-450-real.png` to open/review.
+- Release status: candidate until verified full CI, screenshot review and immutable installers.

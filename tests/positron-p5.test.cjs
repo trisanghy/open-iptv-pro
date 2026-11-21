@@ -37,7 +37,7 @@ test('P5 assets are loaded after P4 without replacing it',()=>{
 test('P5 release is immutable and versioned separately from P4.1',()=>{
  const pkg=JSON.parse(read('package.json'));
  const flow=read('.github/workflows/positron-lab.yml');
- assert.equal(pkg.version,'4.23.195');
+ assert.equal(pkg.version,'4.23.196');
  const label=pkg.description.match(/Positron\s+(P\d+\.\d+\.\d+)/)?.[1];
  assert.ok(label,'product P-label must accompany SemVer');
  assert.ok(flow.includes('TAG=positron/v'+pkg.version+'-'+label.toLowerCase()),'release tag and app version must match');
@@ -831,4 +831,17 @@ test('P5.1.111 narrow chooser advanced disclosure preserves source group and sor
  assert.ok(css.includes('.web-chooser-filters:has(#webChooserAdvanced[open])'));
  assert.ok(qa.includes("nativeControlsPreserved:group.closest('details')===details"));
  assert.ok(qa.includes('positron-p51111-compact-filters-450-real.png'));
+});
+
+
+test('P5.1.112 narrow native channel grid uses two readable columns without modifying list view',()=>{
+ const css=read('renderer/positron-horizon-v4.css');
+ const audit=read('scripts/positron-20-extension.cjs');
+ assert.ok(css.includes('P5.1.112: real P5.1.111 Electron 450px image'));
+ assert.ok(css.includes('#webChooserGrid.web-chooser-grid:not(.list)'));
+ assert.ok(css.includes('grid-template-columns:repeat(2,minmax(0,1fr))!important'));
+ assert.ok(css.includes('-webkit-line-clamp:2!important'));
+ assert.ok(audit.includes('readableWidths:r.length>=2&&r[0].width>=145'));
+ assert.ok(audit.includes('twoAcross:r.length===3'));
+ assert.ok(audit.includes('positron-p51112-readable-channel-cards-450-real.png'));
 });

@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.195",
-  "description": "Positron P5.1.111: single-row scrollable mobile category rail and persistent chip scroll",
+  "version": "4.23.196",
+  "description": "Positron P5.1.112: readable two-column compact channel grid with two-line titles",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

@@ -57,3 +57,12 @@ Not yet started. Choose each new repair from the preceding real screenshot, with
 ### Same-round correction for P5.1.111 (do not count as another cycle)
 - Run `44930713949`: Node passed and 50 P4 + 20 P5 Electron scenarios passed, but new 450px QA failed `channelGridEarlier`. Single-row chip lane and horizontal position preservation all passed. The native Group/Sort selects were still adding vertical rows under search.
 - Correction: keep Group and Sort select elements and behavior intact inside native keyboard-accessible details disclosure, default collapsed <=600px but expanded on larger windows; mobile search and 'Bộ lọc' share one row. Adds real Electron open/collapse checks and additional screenshot `positron-p51111-compact-filters-450-real.png`. No test removed. Repeat CI/review before releasing P5.1.111.
+
+### Completed round 04 evidence
+- Positron P5.1.111 / v4.23.195 final commit `ba5a3f4b282ad68a4d5c270fe523935dbf35b00e`, immutable tag `positron/v4.23.195-p5.1.111`, Actions `44931301124` 6/6 success and four EXE/DMG assets API-verified.
+- Actual Electron after-image `positron-p51111-compact-filters-450-real.png` manually opened: all category buttons remain horizontal and scrollable, native group/sort disclosure intact, search and first channel row visible, no overflow. Earlier capture failure was corrected in the same round.
+
+## New round 05/20 — P5.1.112 / v4.23.196 — CANDIDATE
+- Baseline: genuine manually opened P5.1.111 450px screenshot: channel cards are three very narrow tiles, with title truncation.
+- Cause: original 80px grid min size + one-line ellipsis under 650px.
+- Fix candidate: two readable columns, two-line names at <=500px width, only grid display; preserves list mode and playback. Require real Electron screenshot review and own immutable release/CI before counting round.
