@@ -223,7 +223,7 @@
     hint.textContent=hasChannels?(first?
      'Đã có '+channels.length+' kênh. Chọn trong danh sách bên trái hoặc bắt đầu với kênh đầu tiên.':
      'Đã có '+channels.length+' kênh, nhưng chưa tìm thấy link có thể thử phát. Hãy kiểm tra nguồn.'):originalHint;
-    fileAction.hidden=hasChannels;urlAction.hidden=hasChannels;
+    fileAction.hidden=hasChannels&&!!first;urlAction.hidden=hasChannels&&!!first;
     start.hidden=!first;
    };
    new MutationObserver(syncPlayerIntro).observe(nativeChannelMeta,{childList:true,characterData:true,subtree:true});

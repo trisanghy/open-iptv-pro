@@ -1009,6 +1009,7 @@ async function runTwenty(page){
  for(const key of ['firstAction','fileHidden','urlHidden','nativeImportsKept','noPlaying'])
   assert.equal(populatedPlayerQa[key],true,'Populated-player onboarding failed: '+key);
  assert.equal(populatedPlayerQa.ready,'true');
+ assert.equal(populatedPlayerQa.noPlaying,true,'Native source onboarding must never autoplay during metadata QA');
  await page.screenshot({path:path.join(out,'positron-p5188-player-ready-552-metadata-real.png'),animations:'disabled'});
  // P5.1.76: the no-source Doctor simplification must disappear when native
  // metadata-only channels are imported, without touching any live URL.

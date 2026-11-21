@@ -728,7 +728,7 @@ test('P5.1.88 populated native player replaces redundant import prompts with exp
  assert.ok(ui.includes('window.IPTVState.playChannel(first.id)'));
  assert.ok(ui.includes('new MutationObserver(syncPlayerIntro)'));
  assert.ok(ui.includes("heading.textContent=hasChannels?'Chọn kênh để xem'"));
- assert.ok(ui.includes('fileAction.hidden=hasChannels;urlAction.hidden=hasChannels'));
+ assert.ok(ui.includes('fileAction.hidden=hasChannels&&!!first;urlAction.hidden=hasChannels&&!!first'),'import actions must remain when all known streams are unusable');
  assert.ok(css.includes('#poFirstChannelAction,#emptyFileBtn,#emptyUrlBtn'));
  assert.ok(qa.includes("populatedPlayerQa.title,'Chọn kênh để xem'"));
  assert.ok(qa.includes("populatedPlayerQa.noPlaying"));
