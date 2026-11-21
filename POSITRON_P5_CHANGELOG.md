@@ -56,3 +56,8 @@ This release preserves all P4.1 source data/feature logic. It adds **20 independ
 - Issue: TV header at 450px rendered `Xem tr...`; root cause is desktop page name being shortened via CSS ellipsis in narrow heading container.
 - Add semantic short page titles at narrow viewport while retaining the full title as text; add screenshot audit assertions and unit regression. No data or playback routines touched.
 - Round completion pending actual GitHub Actions test/capture, visual after-screenshot inspection, and independent release verification.
+
+## NEW 20-round series · round 02/20 · P5.1.5 / v4.23.89
+- Input is real Electron `positron-p5-15-real.png` from P5.1.4 Sources at width 720px; toolbar page label `Nguồn...` was cut.
+- Extend the original accessible full-text page title + short visible caption treatment to 760px (icon-rail breakpoint), preserving all page actions and native player controls.
+- Add screenshot audit checks for Sources at 720px and the existing compact TV view. Release pending independent test, visual screenshot review, and CI results.

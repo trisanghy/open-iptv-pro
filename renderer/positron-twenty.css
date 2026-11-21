@@ -82,7 +82,9 @@ html[data-positron="true"] #page-tv #fullscreenBtn svg{display:block;width:19px;
 
 /* P5.1.4: 450px real screenshot showed the active-page header clipped ("Xem tr...").
    Preserve the full accessible text in DOM; show deliberate short titles below 560px. */
-@media(max-width:560px){html[data-positron="true"] #positronBar .p-heading strong[data-short-title]{font-size:0!important;white-space:nowrap;overflow:visible!important;text-overflow:clip!important}html[data-positron="true"] #positronBar .p-heading strong[data-short-title]::after{content:attr(data-short-title);font-size:13px!important;font-weight:700;letter-spacing:0;display:inline-block;white-space:nowrap;max-width:100%;overflow:visible}}
+@media(max-width:760px){html[data-positron="true"] #positronBar .p-heading strong[data-short-title]{font-size:0!important;white-space:nowrap;overflow:visible!important;text-overflow:clip!important}html[data-positron="true"] #positronBar .p-heading strong[data-short-title]::after{content:attr(data-short-title);font-size:13px!important;font-weight:700;letter-spacing:0;display:inline-block;white-space:nowrap;max-width:100%;overflow:visible}}
 
 /* P5.1.4 follow-up: earlier P4 `max-width:17ch!important` becomes zero-width when font-size is zero. Allow the short glyph to claim intrinsic width. */
-@media(max-width:560px){html[data-positron="true"] #positronBar .p-heading strong[data-short-title]{max-width:none!important;width:max-content!important;min-width:max-content!important;flex-shrink:0!important}html[data-positron="true"] #positronBar .p-heading{min-width:max-content!important}}
+@media(max-width:760px){html[data-positron="true"] #positronBar .p-heading strong[data-short-title]{max-width:none!important;width:max-content!important;min-width:max-content!important;flex-shrink:0!important}html[data-positron="true"] #positronBar .p-heading{min-width:max-content!important}}
+
+/* P5.1.5: Source page title screenshot at 720px had the same visible ellipsis; reuse compact titles through sidebar-rail breakpoint 760px. */

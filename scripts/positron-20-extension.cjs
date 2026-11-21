@@ -65,8 +65,8 @@ async function runTwenty(page){
    assert.equal(metrics.transportVectors,true,'non-vector transport icons: '+name);
    if(width<=800&&round>=6)assert.equal(metrics.brandIcon?.visible,false,'brand icon overlaps sidebar toggle: '+name);
   }
-  if(width<=540&&target==='tv'){
-   assert.equal(metrics.heading?.shortTitle,'TV','missing compact page title: '+name);
+  if(width<=720&&(target==='tv'||target==='sources')){
+   assert.equal(metrics.heading?.shortTitle,target==='sources'?'Nguồn':'TV','missing compact page title: '+name);
    assert.equal(metrics.heading?.clipped,false,'page header text clipped: '+name);
   }
   if(width>=900&&metrics.badge?.visible){
