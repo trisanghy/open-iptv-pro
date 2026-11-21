@@ -42,7 +42,7 @@ html[data-theme="amoled"] :is(.sidebar,.topbar,.footer){
 }
 /* Semantic surfaces for legacy feature panels. Do not style the actual
    video element, custom style thumbnails or video fullscreen overlays. */
-html:is([data-theme="dark"],[data-theme="amoled"]) :is(
+html:is([data-theme="dark"]:is([data-ui-style="current"],:not([data-ui-style])),[data-theme="amoled"]) :is(
  .epg-summary,.epg-row,.epg-source-card,.epg-search-results,.epg-result,
  .epg-advanced,.epg-guide .epg-program,.dvr-panel,.dvr-job,
  .dvr-quick-form,.settings-card,.settings-accordion-heading,
@@ -61,7 +61,7 @@ html:is([data-theme="dark"],[data-theme="amoled"]) :is(
  color:var(--rust-night-ink)!important;
  border-color:var(--rust-night-border)!important;
 }
-html:is([data-theme="dark"],[data-theme="amoled"]) :is(
+html:is([data-theme="dark"]:is([data-ui-style="current"],:not([data-ui-style])),[data-theme="amoled"]) :is(
  .source-hub-heading,.smart-metrics span,.sources-hub-nav,.dvr-folder,
  .epg-row header,.epg-tools-fold,.health-table th,.multi-head,.multi-bottom,
  .task-dock-head,.settings-accordion-heading,.collector-metrics span
@@ -71,7 +71,7 @@ html:is([data-theme="dark"],[data-theme="amoled"]) :is(
  border-color:var(--rust-night-border)!important;
  color:var(--rust-night-ink)!important;
 }
-html:is([data-theme="dark"],[data-theme="amoled"]) :is(
+html:is([data-theme="dark"]:is([data-ui-style="current"],:not([data-ui-style])),[data-theme="amoled"]) :is(
  .epg-summary,.epg-program time,.epg-program small,.dvr-heading p,
  .dvr-quick-hint,.dvr-job-meta,.dvr-status,.smart-panel .hint,
  .collector-progress p,.collector-log,.source-hub-heading p,
@@ -81,14 +81,14 @@ html:is([data-theme="dark"],[data-theme="amoled"]) :is(
 ){
  color:var(--rust-night-muted)!important;
 }
-html:is([data-theme="dark"],[data-theme="amoled"]) :is(
+html:is([data-theme="dark"]:is([data-ui-style="current"],:not([data-ui-style])),[data-theme="amoled"]) :is(
  .epg-source-card h2,.epg-row h3,.epg-program b,.dvr-heading h2,
  .source-hub-heading h2,.health-table th,.health-table td,
  .doctor-v2-panel strong,.doctor-v3-panel strong,.settings-card h2,
  .settings-accordion-heading h2,.multi-head strong
 ){color:var(--rust-night-ink)!important}
 /* Native form controls and secondary actions in dark feature cards. */
-html:is([data-theme="dark"],[data-theme="amoled"]) :is(
+html:is([data-theme="dark"]:is([data-ui-style="current"],:not([data-ui-style])),[data-theme="amoled"]) :is(
  .dvr-panel input,.dvr-panel select,.dvr-quick-form input,
  .epg-advanced input,.epg-advanced select,.epg-source-card select,
  .health-overview select,.source-hub input,.source-hub select,
@@ -102,7 +102,7 @@ html:is([data-theme="dark"],[data-theme="amoled"]) :is(
  border-color:var(--rust-night-border)!important;
  color-scheme:dark;
 }
-html:is([data-theme="dark"],[data-theme="amoled"]) :is(
+html:is([data-theme="dark"]:is([data-ui-style="current"],:not([data-ui-style])),[data-theme="amoled"]) :is(
  .dvr-panel button:not(.btn-primary),.epg-advanced button,
  .source-hub button:not(.btn-primary),.smart-panel button:not(.btn-primary),
  .source-merge-panel button:not(.btn-primary),
@@ -114,12 +114,12 @@ html:is([data-theme="dark"],[data-theme="amoled"]) :is(
  color:var(--rust-night-ink)!important;
  border-color:var(--rust-night-border)!important;
 }
-html:is([data-theme="dark"],[data-theme="amoled"]) :is(
+html:is([data-theme="dark"]:is([data-ui-style="current"],:not([data-ui-style])),[data-theme="amoled"]) :is(
  .dvr-quick-form,.epg-tools-fold,.settings-accordion-content
 ){box-shadow:none!important}
 /* AI Caption / translation / voice, video enhancement and GPU acceleration
    must share the same surface as other TV tools — no isolated navy cards. */
-html:is([data-theme="dark"],[data-theme="amoled"]) #page-tv :is(
+html:is([data-theme="dark"]:is([data-ui-style="current"],:not([data-ui-style])),[data-theme="amoled"]) #page-tv :is(
  .unified-ai-content,.caption-third-controls,.caption-third-setup,
  .rust-ai-card,.video-enhance-panel .veh-card,.video-enhance-panel .veh-bench,
  .video-enhance-panel .veh-ai-probe,#veh-status,#videoGpuManager
@@ -129,15 +129,15 @@ html:is([data-theme="dark"],[data-theme="amoled"]) #page-tv :is(
  color:var(--rust-night-ink)!important;
  border-color:var(--rust-night-border)!important;
 }
-html:is([data-theme="dark"],[data-theme="amoled"]) #page-tv :is(
+html:is([data-theme="dark"]:is([data-ui-style="current"],:not([data-ui-style])),[data-theme="amoled"]) #page-tv :is(
  .video-enhance-panel .veh-nav,.video-enhance-panel .veh-safe,
  .veh-gpu-storage-row,#veh-gpu-storage
 ){border-color:var(--rust-night-border)!important;color:var(--rust-night-ink)!important}
-html:is([data-theme="dark"],[data-theme="amoled"]) #page-tv :is(
+html:is([data-theme="dark"]:is([data-ui-style="current"],:not([data-ui-style])),[data-theme="amoled"]) #page-tv :is(
  .veh-card small,.veh-limit,.veh-gpu-note,#veh-gpu-state,
  #veh-ai-hw-status,#veh-status,.caption-tts-main small,.caption-ai-main small
 ){color:var(--rust-night-muted)!important}
-html:is([data-theme="dark"],[data-theme="amoled"]) #page-tv :is(
+html:is([data-theme="dark"]:is([data-ui-style="current"],:not([data-ui-style])),[data-theme="amoled"]) #page-tv :is(
  .veh-card select,.veh-bench button,#veh-ai-probe,
  .veh-gpu-actions button,.veh-gpu-storage-row button,#veh-gpu-refresh,
  .caption-third-controls select,.caption-third-controls button,
@@ -149,46 +149,46 @@ html:is([data-theme="dark"],[data-theme="amoled"]) #page-tv :is(
  border-color:var(--rust-night-border)!important;
  color-scheme:dark;
 }
-html:is([data-theme="dark"],[data-theme="amoled"]) #page-tv :is(
+html:is([data-theme="dark"]:is([data-ui-style="current"],:not([data-ui-style])),[data-theme="amoled"]) #page-tv :is(
  .unified-ai-toggle,.video-enhance-toggle
 ){
  background:var(--rust-night-select)!important;
  border-color:color-mix(in srgb,var(--accent) 46%,var(--rust-night-border))!important;
  color:var(--rust-night-ink)!important;
 }
-html:is([data-theme="dark"],[data-theme="amoled"]) #page-tv .veh-nav button{
+html:is([data-theme="dark"]:is([data-ui-style="current"],:not([data-ui-style])),[data-theme="amoled"]) #page-tv .veh-nav button{
  color:var(--rust-night-ink)!important;
  background:transparent!important;
 }
-html:is([data-theme="dark"],[data-theme="amoled"]) #page-tv .veh-nav button:first-child{
+html:is([data-theme="dark"]:is([data-ui-style="current"],:not([data-ui-style])),[data-theme="amoled"]) #page-tv .veh-nav button:first-child{
  background:var(--rust-night-select)!important;
  color:var(--rust-night-ink)!important;
 }
-html:is([data-theme="dark"],[data-theme="amoled"]) #page-tv :is(
+html:is([data-theme="dark"]:is([data-ui-style="current"],:not([data-ui-style])),[data-theme="amoled"]) #page-tv :is(
  .veh-card input[type="checkbox"],.veh-safe input[type="checkbox"],
  .unified-ai-content input[type="checkbox"]
 ){accent-color:var(--accent)!important}
-html:is([data-theme="dark"],[data-theme="amoled"]) .veh-gpu-modal{
+html:is([data-theme="dark"]:is([data-ui-style="current"],:not([data-ui-style])),[data-theme="amoled"]) .veh-gpu-modal{
  background:var(--rust-night-card)!important;
  background-image:none!important;
  color:var(--rust-night-ink)!important;
  border-color:var(--rust-night-border)!important;
  color-scheme:dark;
 }
-html:is([data-theme="dark"],[data-theme="amoled"]) .veh-gpu-modal :is(
+html:is([data-theme="dark"]:is([data-ui-style="current"],:not([data-ui-style])),[data-theme="amoled"]) .veh-gpu-modal :is(
  h3,#veh-gpu-result
 ){color:var(--rust-night-ink)!important}
-html:is([data-theme="dark"],[data-theme="amoled"]) .veh-gpu-modal .veh-gpu-note{
+html:is([data-theme="dark"]:is([data-ui-style="current"],:not([data-ui-style])),[data-theme="amoled"]) .veh-gpu-modal .veh-gpu-note{
  color:var(--rust-night-muted)!important;
 }
-html:is([data-theme="dark"],[data-theme="amoled"]) .veh-gpu-modal .veh-gpu-actions button{
+html:is([data-theme="dark"]:is([data-ui-style="current"],:not([data-ui-style])),[data-theme="amoled"]) .veh-gpu-modal .veh-gpu-actions button{
  background:var(--rust-night-control)!important;
  color:var(--rust-night-ink)!important;
  border-color:var(--rust-night-border)!important;
 }
 /* The channel browser was added after the main theme system: its legacy
    background remains blue in AMOLED. Reuse the selected appearance tokens. */
-html:is([data-theme="dark"],[data-theme="amoled"]) #page-tv :is(
+html:is([data-theme="dark"]:is([data-ui-style="current"],:not([data-ui-style])),[data-theme="amoled"]) #page-tv :is(
  .rust-browser-main,.rust-browser-side-card,.rust-browser-card,
  .rust-browser-logo-holder,.rust-browser-pager button,.rust-browser-view button
 ){
@@ -197,7 +197,7 @@ html:is([data-theme="dark"],[data-theme="amoled"]) #page-tv :is(
  color:var(--rust-night-ink)!important;
  border-color:var(--rust-night-border)!important;
 }
-html:is([data-theme="dark"],[data-theme="amoled"]) #page-tv :is(
+html:is([data-theme="dark"]:is([data-ui-style="current"],:not([data-ui-style])),[data-theme="amoled"]) #page-tv :is(
  .rust-browser-filters input,.rust-browser-filters select,
  .rust-browser-chip
 ){
@@ -207,13 +207,13 @@ html:is([data-theme="dark"],[data-theme="amoled"]) #page-tv :is(
  border-color:var(--rust-night-border)!important;
  color-scheme:dark;
 }
-html:is([data-theme="dark"],[data-theme="amoled"]) #page-tv :is(
+html:is([data-theme="dark"]:is([data-ui-style="current"],:not([data-ui-style])),[data-theme="amoled"]) #page-tv :is(
  .rust-browser-tab.active,.rust-browser-side-head button
 ){color:var(--accent)!important}
-html:is([data-theme="dark"],[data-theme="amoled"]) #page-tv .rust-browser-tab.active{
+html:is([data-theme="dark"]:is([data-ui-style="current"],:not([data-ui-style])),[data-theme="amoled"]) #page-tv .rust-browser-tab.active{
  border-bottom-color:var(--accent)!important;
 }
-html:is([data-theme="dark"],[data-theme="amoled"]) #page-tv :is(
+html:is([data-theme="dark"]:is([data-ui-style="current"],:not([data-ui-style])),[data-theme="amoled"]) #page-tv :is(
  .rust-browser-chip.active,.rust-browser-view button.active,
  .rust-browser-card.selected
 ){
@@ -221,10 +221,10 @@ html:is([data-theme="dark"],[data-theme="amoled"]) #page-tv :is(
  border-color:color-mix(in srgb,var(--accent) 65%,var(--rust-night-border))!important;
  color:var(--rust-night-ink)!important;
 }
-html:is([data-theme="dark"],[data-theme="amoled"]) #page-tv :is(
+html:is([data-theme="dark"]:is([data-ui-style="current"],:not([data-ui-style])),[data-theme="amoled"]) #page-tv :is(
  .rust-browser-card:hover,.rust-browser-chip:hover:not(.active)
 ){border-color:var(--accent)!important}
-html:is([data-theme="dark"],[data-theme="amoled"]) #page-tv :is(
+html:is([data-theme="dark"]:is([data-ui-style="current"],:not([data-ui-style])),[data-theme="amoled"]) #page-tv :is(
  .rust-browser-playing,.rust-browser-logo-holder
 ){color:var(--accent)!important}
 /* AMOLED retains literally black canvas: no blue shader behind the TV, EPG,
@@ -250,7 +250,7 @@ html[data-theme="amoled"] :is(button,input,select,textarea):focus-visible{
  outline-offset:2px;
 }
 @media(prefers-reduced-motion:reduce){
- html:is([data-theme="dark"],[data-theme="amoled"]) #page-tv :is(
+ html:is([data-theme="dark"]:is([data-ui-style="current"],:not([data-ui-style])),[data-theme="amoled"]) #page-tv :is(
  .rust-browser-card,.rust-browser-chip,.veh-nav button
  ){transition:none!important;}
 }
