@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.213",
-  "description": "Positron P5.1.129: hide ghost category text next to pinned All chip",
+  "version": "4.23.214",
+  "description": "Positron P5.1.130: conceal clipped chip outline beside pinned All reset",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

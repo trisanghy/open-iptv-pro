@@ -37,7 +37,7 @@ test('P5 assets are loaded after P4 without replacing it',()=>{
 test('P5 release is immutable and versioned separately from P4.1',()=>{
  const pkg=JSON.parse(read('package.json'));
  const flow=read('.github/workflows/positron-lab.yml');
- assert.equal(pkg.version,'4.23.213');
+ assert.equal(pkg.version,'4.23.214');
  const label=pkg.description.match(/Positron\s+(P\d+\.\d+\.\d+)/)?.[1];
  assert.ok(label,'product P-label must accompany SemVer');
  assert.ok(flow.includes('TAG=positron/v'+pkg.version+'-'+label.toLowerCase()),'release tag and app version must match');
@@ -1076,4 +1076,15 @@ test('P5.1.129 compact sticky reset masks trailing category glyph only when scro
  assert.ok(qa.includes("resetClearsMask:rail.scrollLeft<=1"));
  assert.ok(qa.includes("masksGhostTap:hit===all||all.contains(hit)"));
  assert.ok(qa.includes('positron-p51129-right-mask-450-real.png'));
+});
+
+test('P5.1.130 real screenshot revealed clipped curved category border; scoped mask must not conceal next chip',()=>{
+ const css=read('renderer/positron-horizon-v4.css');
+ const qa=read('scripts/positron-20-extension.cjs');
+ assert.ok(css.includes('P5.1.130: after manually opening the ACTUAL P5.1.129 450px Electron'));
+ assert.ok(css.includes('right:-30px!important;width:30px!important'));
+ assert.ok(qa.includes('ghostStrokeNotClickable:behind===all||all.contains(behind)'));
+ assert.ok(qa.includes('nextChipUnmasked:!!child&&!!n'));
+ assert.ok(qa.includes('nextChipClickable:atNext===child||child?.contains(atNext)'));
+ assert.ok(qa.includes('positron-p51130-border-mask-450-real.png'));
 });

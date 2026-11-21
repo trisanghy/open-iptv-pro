@@ -1,3 +1,11 @@
+## P5.1.130 — Cover clipped category-chip outline alongside sticky reset / Electron v4.23.214
+
+- Input: actual P5.1.129 450px Electron screenshot `positron-p51129-right-mask-450-real.png` opened and enlarged. The ghost letter is gone but a detached curved chip border remains visible immediately RIGHT of the pinned "Tất cả" chip.
+- Root: the conditional 18px pseudo-mask from P5.1.129 removes text, but stops before the neighboring chip's border at about 23–27px.
+- Fix: adjust conditional right mask to 30px; leave mask completely off at scrollLeft=0. Native group chips, selection, playlist, keyboard, play controls and local state unchanged.
+- Test: Node asset/code assertions and real Electron 450px screenshot; verify span and pointer hit test across curved border, native "Thiếu nhi" chip remains visible/clickable, filter active, no overflow and no autoplay. New real screenshot `positron-p51130-border-mask-450-real.png`.
+- CANDIDATE until CI, genuine after-image review, release assets and checksums.
+
 ## P5.1.129 — Repair clipped group-chip text in compact Electron / v4.23.213
 
 - Baseline: opened genuine P5.1.128 450px Electron screenshot `positron-p51128-dropdown-chip-450-real.png` from Actions #44948172418, revealing a stray clipped letter RIGHT of sticky "Tất cả" after selecting "Tin tức".

@@ -26,3 +26,7 @@ Evaluate defects revealed by real screenshot of previous build before making cha
 - Opened genuine Electron baseline `p5-20-rounds/positron-p51128-dropdown-chip-450-real.png`.
 - Defect: clipped neighbour-group letter visible to RIGHT of sticky "Tất cả" after selecting "Tin tức" on 450px.
 - Proposed P5.1.129: conditional right-hand mask and real screenshot regression; count only after verified release and manual after-image review.
+
+## Follow-up round 02 — input P5.1.129
+- Directly opened P5.1.129 real screenshot `positron-p51129-right-mask-450-real.png` and enlarged the category rail. The text ghost is fixed, but a detached curved border still appears to the right of pinned "Tất cả".
+- Planned P5.1.130 v4.23.214: widen conditional right mask to 30px; check "Thiếu nhi" remains independently hit-testable; genuine 450px Electron after PNG, Node test and immutable release required for completion.

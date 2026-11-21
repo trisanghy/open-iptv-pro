@@ -1119,3 +1119,13 @@ html[data-positron="true"].po-horizon #toastArea.toast-area .toast .po-toast-dis
   background:#0a1b29!important;pointer-events:auto!important;
  }
 }
+
+/* P5.1.130: after manually opening the ACTUAL P5.1.129 450px Electron
+   PNG, the ghost category lettering is gone but a detached curved border
+   still shows at the right edge of pinned "Tất cả". Widen only the
+   temporary clip mask without blocking the next usable "Thiếu nhi" chip. */
+@media(max-width:600px){
+ html[data-positron="true"].po-horizon #page-tv #webChooserGroups.web-chooser-chips.po-groups-scrolled>.web-chooser-chip:first-child::after{
+  right:-30px!important;width:30px!important;
+ }
+}

@@ -2427,9 +2427,38 @@ async function runTwenty(page){
  for(const [key,value] of Object.entries(pinnedRightMaskQA))
   assert.equal(value,true,'P5.1.129 real Electron right-chip mask '+key+': '+JSON.stringify(pinnedRightMaskQA));
 
+ // P5.1.130: a thin curved border from the previous scrolled chip remained
+ // beside pinned All after P5.1.129. The mask must cover that border without
+ // hiding or intercepting the next useful visible group button.
+ await page.evaluate(()=>{document.getElementById('webChooserAdvanced').open=true;document.getElementById('webChooserGroups').scrollLeft=0;});
+ await page.locator('#webChooserGroup').selectOption('Tin tức');
+ await page.evaluate(()=>{document.getElementById('webChooserAdvanced').open=false;});
+ await page.waitForTimeout(100);
+ const pinnedBorderMaskQA=await page.evaluate(()=>{
+  const rail=document.getElementById('webChooserGroups');
+  const all=rail.querySelector('button[data-po-quick-group="all"]');
+  const child=rail.querySelector('button[data-po-quick-group="Thiếu nhi"]');
+  const b=all.getBoundingClientRect(),r=rail.getBoundingClientRect();
+  const mask=getComputedStyle(all,'::after');
+  const x=b.right+24,y=b.top+b.height/2;
+  const behind=document.elementFromPoint(x,y);
+  const n=child?.getBoundingClientRect(),atNext=n&&document.elementFromPoint(n.left+n.width/2,n.top+n.height/2);
+  return {scroll:rail.scrollLeft>40,
+   borderMaskSpan:parseFloat(mask.width)>=29&&Math.abs(parseFloat(mask.right)+30)<1,
+   ghostStrokeNotClickable:behind===all||all.contains(behind),
+   nextChipUnmasked:!!child&&!!n&&n.left>Math.min(b.right+29,r.right-1),
+   nextChipClickable:atNext===child||child?.contains(atNext),
+   activeGroupCorrect:!!rail.querySelector('button[data-po-quick-group="Tin tức"].active'),
+   noAutoplay:window.IPTVState.getCurrent()===null,
+   noOverflow:document.documentElement.scrollWidth<=innerWidth+1};
+ });
+ await page.screenshot({path:path.join(out,'positron-p51130-border-mask-450-real.png'),animations:'disabled'});
+ for(const [key,value] of Object.entries(pinnedBorderMaskQA))
+  assert.equal(value,true,'P5.1.130 real Electron curved-border mask '+key+': '+JSON.stringify(pinnedBorderMaskQA));
+
  await page.setViewportSize({width:1360,height:820});
   const report={type:'Positron P5 twenty distinct desktop screenshot cases',realElectron:true,syntheticChannels:false,
-  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA,chooserQa,toastLayoutQA,nativeToastQA,compactIdleQA,channelChipRailQA,advancedFilterQA,readableCardsQA,keyboardTabQA,favoriteEmptyQA,duplicateEmptyQA,categoryFilterQA,categoryFixtureQA,compactSingleQA,directFavoriteQA,favoriteCountQA,compactToastStackQA,toastDismissQA,toastFocusReturnQA,toastDockQA,wheelQA,pinnedAllQA,pinnedMaskQA,categoryKeyQA,dropdownChipQA,pinnedRightMaskQA};
+  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA,chooserQa,toastLayoutQA,nativeToastQA,compactIdleQA,channelChipRailQA,advancedFilterQA,readableCardsQA,keyboardTabQA,favoriteEmptyQA,duplicateEmptyQA,categoryFilterQA,categoryFixtureQA,compactSingleQA,directFavoriteQA,favoriteCountQA,compactToastStackQA,toastDismissQA,toastFocusReturnQA,toastDockQA,wheelQA,pinnedAllQA,pinnedMaskQA,categoryKeyQA,dropdownChipQA,pinnedRightMaskQA,pinnedBorderMaskQA};
  fs.writeFileSync(path.resolve('positron-evidence','audit-p5-20-rounds.json'),JSON.stringify(report,null,2));
  return report;
 }
