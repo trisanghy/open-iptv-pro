@@ -1,0 +1,36 @@
+name: Attach verified Electron SVG screenshot to release
+on:
+  push:
+    branches: [build-sources/electron-desktop]
+    paths: ['.github/workflows/publish-electron-svg-screenshot.yml']
+  workflow_dispatch:
+permissions:
+  actions: read
+  contents: write
+jobs:
+  upload:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download screenshot from real Electron X11 capture
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -Eeuo pipefail
+          gh run download 44905533563 --repo "$GITHUB_REPOSITORY" --name electron-svg-final-x11-real-screenshot --dir images
+          test -s images/electron-svg-main-x11.png
+          file images/electron-svg-main-x11.png | grep -q PNG
+          cp images/electron-svg-main-x11.png images/Electron-v4.23.76-SVG-Player-Actual-Screenshot.png
+      - name: Append actual screenshot as new immutable release asset
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -Eeuo pipefail
+          TAG=electron-v4.23.76-svg.3
+          if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" --json assets --jq '.assets[].name' | grep -Fxq Electron-v4.23.76-SVG-Player-Actual-Screenshot.png; then
+            echo "Screenshot asset already exists; preserving it"
+          else
+            gh release upload "$TAG" images/Electron-v4.23.76-SVG-Player-Actual-Screenshot.png --repo "$GITHUB_REPOSITORY"
+          fi
+          gh release view "$TAG" --repo "$GITHUB_REPOSITORY" --json assets --jq '.assets[].name' | grep -Fxq Electron-v4.23.76-SVG-Player-Actual-Screenshot.png
