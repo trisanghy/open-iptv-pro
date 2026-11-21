@@ -16,6 +16,8 @@ test('Dark/AMOLED overrides load last, without changing video or app data',()=>{
  assert.match(css,/html\[data-theme="amoled"\]/);
  assert.doesNotMatch(css,/html\[data-theme="light"\]/);
  assert.doesNotMatch(css,/localStorage|sessionStorage|playChannel|fetch\(|innerHTML|window\.streamleaf/);
+ assert.match(css,/data-ui-style="current"/);
+ assert.match(css,/:not\(\[data-ui-style\]\)/);
 });
 test('AMOLED canvas is true black and feature panels are grey-neutral, not navy',()=>{
  const css=read('renderer/rust-dark-amoled-coherence-v23-8-98.css');
