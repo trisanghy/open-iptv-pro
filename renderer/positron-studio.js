@@ -27,7 +27,7 @@ if(e.key==='ArrowRight'||e.key==='ArrowLeft'){const current=[...studio.menu.quer
 /* 14 */(()=>{const bar=document.getElementById('positronBar'),nav=document.getElementById('appSidebar');if(!bar||!nav)return;
 const title=bar.querySelector('.p-heading strong'),subtitle=bar.querySelector('.p-heading small');if(!title||!subtitle)return;
 const names={tv:'Xem truyền hình',fav:'Kênh yêu thích',epg:'Lịch phát sóng',multiview:'MultiView',shots:'Ảnh chụp kênh',folders:'Thư mục kênh',sources:'Nguồn IPTV',health:'Sức khỏe kênh',doctor:'Smart Doctor',profiles:'Hồ sơ',settings:'Cài đặt'};
-let prev='';const sync=()=>{const active=nav.querySelector('.nav.active[data-page]');const page=active?.dataset.page||'tv';if(page===prev)return;prev=page;title.textContent=names[page]||'Trung tâm phát sóng';subtitle.textContent='POSITRON STUDIO · '+page.toUpperCase();bar.dataset.positronPage=page;};
+let prev='';const sync=()=>{const active=nav.querySelector('.nav.active[data-page]');const page=active?.dataset.page||'tv';if(page===prev)return;prev=page;title.textContent=names[page]||'Trung tâm phát sóng';title.dataset.shortTitle=({tv:'TV',fav:'Yêu thích',epg:'EPG',sources:'Nguồn',settings:'Cài đặt',doctor:'Doctor',health:'Sức khỏe',folders:'Thư mục',multiview:'MultiView',shots:'Ảnh chụp',profiles:'Hồ sơ'})[page]||'Positron';subtitle.textContent='POSITRON STUDIO · '+page.toUpperCase();bar.dataset.positronPage=page;};
 for(const el of nav.querySelectorAll('.nav[data-page]'))new MutationObserver(sync).observe(el,{attributes:true,attributeFilter:['class']});
 sync();})();
 /* 15 */(()=>{const shortcuts={'1':'tv','2':'fav','3':'epg','4':'sources','5':'settings'};

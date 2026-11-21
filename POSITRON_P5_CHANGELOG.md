@@ -50,3 +50,9 @@ This release preserves all P4.1 source data/feature logic. It adds **20 independ
 - From real P5.1.2 Electron TV screenshot at 450px: the fullscreen control appeared as a tiny unclear glyph beside Cast/PiP.
 - Replace its content with a clear stroke SVG while retaining the original button node and playback/fullscreen event handlers.
 - Add real-Electron audit assertion that fullscreen button carries its SVG, and a source regression test. Maintain independent version/build/release tag and unchanged user data.
+
+## NEW 20-round series · round 01/20 · P5.1.4 / v4.23.88
+- Baseline is immutable P5.1.3, verified HEAD `d654707cd3b8440f6218814fd1b9dff6333c8da6` and real Electron screenshots from release.
+- Issue: TV header at 450px rendered `Xem tr...`; root cause is desktop page name being shortened via CSS ellipsis in narrow heading container.
+- Add semantic short page titles at narrow viewport while retaining the full title as text; add screenshot audit assertions and unit regression. No data or playback routines touched.
+- Round completion pending actual GitHub Actions test/capture, visual after-screenshot inspection, and independent release verification.
