@@ -559,3 +559,5 @@ P5.1.46 same-version CI repair: run 44866650681 failed 2/611 because historical 
 - Actual P5.1.80 Electron mix screenshot showed the new five modes wrapped awkwardly into two rows, covering player content and reducing the visible card list.
 - Shorten only the visual button captions and preserve complete localized names via aria-label/title. Force one logical row at desktop and allow horizontal scrolling for very narrow screens; maintain all five mode buttons, Smart Zap manual-only playback and keyboard controls.
 - Add CDP actual layout assertions and a 450px Electron screenshot, plus Node regression; version tag/CI prerelease remain subject to Actions verification.
+
+P5.1.81 follow-up: real Electron capture found nav overflow; replace flexible nowrap with five measured grid tracks, shorter text plus full aria, and richer screenshot/overflow assertions. Preserve the same version while retrying.

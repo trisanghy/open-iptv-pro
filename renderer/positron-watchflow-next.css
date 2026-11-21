@@ -56,3 +56,25 @@
  #poWatchFlowPanel .po-flowplus-nav{overflow-x:auto!important;scrollbar-width:thin!important;scrollbar-color:#44655e transparent!important}
  #poWatchFlowPanel .po-flowplus-nav button{padding:7px 6px!important}
 }
+
+/* P5.1.81 review repair: 1360px Electron QA exposed ~scrollWidth overflow
+   despite nowrap. Five fixed equal minmax(0,1fr) tracks fit inside the
+   existing panel; text ellipsizes only on sub-400px panel, aria/title stay full. */
+#poWatchFlowPanel .po-flowplus-nav{
+ display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr))!important;
+ gap:4px!important;overflow:hidden!important;min-width:0!important;
+}
+#poWatchFlowPanel .po-flowplus-nav button,
+#poWatchFlowPanel .po-flowplus-nav #poFlowPluszap{
+ width:100%!important;min-width:0!important;max-width:none!important;
+ margin-left:0!important;justify-content:center!important;
+ font-size:10px!important;gap:3px!important;padding:7px 3px!important;
+}
+#poWatchFlowPanel .po-flowplus-nav button span{
+ display:block!important;overflow:hidden!important;text-overflow:ellipsis!important;
+ white-space:nowrap!important;min-width:0!important;
+}
+@media(max-width:560px){
+ #poWatchFlowPanel .po-flowplus-nav{overflow:hidden!important}
+ #poWatchFlowPanel .po-flowplus-nav button{padding:7px 2px!important}
+}
