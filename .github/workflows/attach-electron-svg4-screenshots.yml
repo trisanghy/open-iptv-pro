@@ -1,0 +1,45 @@
+name: Publish actual SVG4 Cast PiP and channel filter screenshots
+on:
+  push:
+    branches: [build-sources/electron-desktop]
+    paths: ['.github/workflows/attach-electron-svg4-screenshots.yml']
+  workflow_dispatch:
+permissions:
+  actions: read
+  contents: write
+jobs:
+  attach:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - name: Download actual X11 images
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -Eeuo pipefail
+          gh run download 44909527770 --repo "$GITHUB_REPOSITORY" --name electron-svg4-real-screenshots --dir images
+          test -s images/electron-svg4-main.png
+          test -s images/electron-svg4-channel-filter.png
+          cp images/electron-svg4-main.png images/Electron-SVG4-Cast-PiP-Actual.png
+          cp images/electron-svg4-channel-filter.png images/Electron-SVG4-Channel-Filter-Actual.png
+      - name: Attach screenshots to SVG4 immutable release
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -Eeuo pipefail
+          TAG=electron-v4.23.76-svg.4
+          for n in $(seq 1 40); do
+            if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then break; fi
+            sleep 10
+          done
+          gh release view "$TAG" --repo "$GITHUB_REPOSITORY"
+          for img in Electron-SVG4-Cast-PiP-Actual.png Electron-SVG4-Channel-Filter-Actual.png; do
+            if ! gh release view "$TAG" --repo "$GITHUB_REPOSITORY" --json assets --jq '.assets[].name' | grep -Fxq "$img"; then
+              gh release upload "$TAG" "images/$img" --repo "$GITHUB_REPOSITORY"
+            fi
+          done
+          for img in Electron-SVG4-Cast-PiP-Actual.png Electron-SVG4-Channel-Filter-Actual.png; do
+            gh release view "$TAG" --repo "$GITHUB_REPOSITORY" --json assets --jq '.assets[].name' | grep -Fxq "$img"
+          done
