@@ -839,3 +839,10 @@ P5.1.81 follow-up: real Electron capture found nav overflow; replace flexible no
 
 ### Verified previous round P5.1.118
 - Final HEAD `9751d3c02c2a293c63301f066b16b079a2d884ff`, immutable tag `positron/v4.23.202-p5.1.118`, GitHub Actions `44935525440` 6/6 success. Node 718: 713 passed, 5 skipped, no failure. Real screenshot opened, 13/13 direct Favorite assertions true including stored key, remove/reverse, focus and no playback; 4 binary release assets verified.
+
+## P5.1.120 / v4.23.204 — Compact success notification stack (new file-triggered 01/20)
+- Baseline: actual Electron P5.1.119 screenshot `positron-p51119-favorite-count-badge-450-real.png`, directly opened: three green confirmation banners obscure channel tiles at 450px.
+- Root: distinct native success notifications all remain visible for 5.5s; duplicate guard only suppresses identical messages.
+- Fix: compact Positron-only CSS shows latest success while retaining warning/error notices, expiry timers and desktop behavior.
+- Real Electron 450px regression with three benign fixture notices, warning visibility, sidebar clearance and no overflow; after screenshot `positron-p51120-compact-toast-stack-450-real.png`.
+- Candidate until CI, direct image review, immutable release and installers are verified.

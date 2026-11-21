@@ -37,7 +37,7 @@ test('P5 assets are loaded after P4 without replacing it',()=>{
 test('P5 release is immutable and versioned separately from P4.1',()=>{
  const pkg=JSON.parse(read('package.json'));
  const flow=read('.github/workflows/positron-lab.yml');
- assert.equal(pkg.version,'4.23.203');
+ assert.equal(pkg.version,'4.23.204');
  const label=pkg.description.match(/Positron\s+(P\d+\.\d+\.\d+)/)?.[1];
  assert.ok(label,'product P-label must accompany SemVer');
  assert.ok(flow.includes('TAG=positron/v'+pkg.version+'-'+label.toLowerCase()),'release tag and app version must match');
@@ -941,4 +941,15 @@ test('P5.1.119 favorite count badge updates through native Favorites visibility 
  assert.ok(css.includes('.po-favorite-count[hidden]'));
  assert.ok(qa.includes("positron-p51119-favorite-count-badge-450-real.png"));
  assert.ok(qa.includes("const favoriteCountQA={...badgeOnQA,...badgeOffQA}"));
+});
+
+test('P5.1.120 compact success toast remains visible without hiding warnings',()=>{
+ const css=read('renderer/positron-horizon-v4.css');
+ const audit=read('scripts/positron-20-extension.cjs');
+ assert.ok(css.includes('P5.1.120: Real P5.1.119 450px Electron screenshot'));
+ assert.ok(css.includes('.toast:not(.err):not(.warn):has(~ .toast:not(.err):not(.warn))'));
+ assert.ok(css.includes('display:none!important'));
+ assert.ok(audit.includes('positron-p51120-compact-toast-stack-450-real.png'));
+ assert.ok(audit.includes('onlyNewestVisible:shown.length===1'));
+ assert.ok(audit.includes('warningVisible,successStillVisible'));
 });

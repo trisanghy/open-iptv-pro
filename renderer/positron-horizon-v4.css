@@ -1019,3 +1019,13 @@ html[data-positron="true"].po-horizon #page-tv .web-chooser-tabs button[data-cho
 html[data-positron="true"].po-horizon #page-tv .web-chooser-tabs button[data-chooser-tab="fav"] .po-favorite-count[hidden]{
  display:none!important;
 }
+
+/* P5.1.120: Real P5.1.119 450px Electron screenshot showed three
+   green success banners covering the channels. On compact windows show
+   only the latest success; preserve warning/error messages and timers. */
+@media(max-width:600px){
+ html[data-positron="true"].po-horizon #toastArea.toast-area
+ .toast:not(.err):not(.warn):has(~ .toast:not(.err):not(.warn)){
+  display:none!important;
+ }
+}

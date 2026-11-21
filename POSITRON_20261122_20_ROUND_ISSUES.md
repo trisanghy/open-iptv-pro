@@ -134,3 +134,11 @@ Not yet started. Choose each new repair from the preceding real screenshot, with
 
 ### Round 06 verified
 - P5.1.118 HEAD `9751d3c02c2a293c63301f066b16b079a2d884ff`, release `positron/v4.23.202-p5.1.118`, Actions `44935525440` 6/6 success. Node 718 tests 713 pass/5 skipped/0 fail; real Electron screenshot opened and 13/13 new assertions pass. Windows Setup/Portable & macOS Intel/ARM assets present.
+
+## File-triggered new batch 01/20 — P5.1.120 / v4.23.204 — CANDIDATE
+- Directly opened real P5.1.119 450x820 Electron screenshot: three green success toasts overlap channel grid.
+- Root: distinct notifications all stack on compact viewport; old native dedupe handles only identical messages.
+- Fix: scoped <=600px success-toast selector; latest success visible; warnings/errors, native timers and persisted user data unchanged.
+- Before: `positron-p51119-favorite-count-badge-450-real.png`; after candidate `positron-p51120-compact-toast-stack-450-real.png`.
+- Acceptance: Node tests, actual Electron screenshot geometry, manual opening, independent version/commit and six CI jobs, verified release binaries.
+- Not counted until all evidence is verified.

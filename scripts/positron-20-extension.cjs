@@ -2115,9 +2115,45 @@ async function runTwenty(page){
 
 
 
+
+ // P5.1.120: The real P5.1.119 Electron after-image had three stacked
+ // success banners hiding a 450px channel card. Use benign UI-only
+ // notices in actual Electron; no playlist, media, or network mutation.
+ const compactToastStackQA=await page.evaluate(()=>{
+  const tray=document.getElementById('toastArea');
+  for(const [i,msg] of ['QA: Đã thêm nguồn','QA: Đã thêm yêu thích','QA: Đã bỏ yêu thích'].entries()){
+   const n=document.createElement('div');n.className='toast';
+   n.textContent=msg;n.dataset.poRound120='true';
+   if(i===2)n.dataset.poRound120Last='true';
+   tray.append(n);
+  }
+  const successes=[...tray.querySelectorAll('.toast:not(.err):not(.warn)')];
+  const shown=successes.filter(n=>getComputedStyle(n).display!=='none');
+  const latest=tray.querySelector('[data-po-round-120-last="true"]');
+  const t=tray.getBoundingClientRect();
+  return {threeSuccesses:successes.length>=3,
+   onlyNewestVisible:shown.length===1&&shown[0]===latest,
+   latestReadable:latest.getBoundingClientRect().height>=30,
+   railClear:t.left>=66,noOverflow:document.documentElement.scrollWidth<=innerWidth+1};
+ });
+ await page.screenshot({path:path.join(out,'positron-p51120-compact-toast-stack-450-real.png'),animations:'disabled'});
+ const warningStackQA=await page.evaluate(()=>{
+  const tray=document.getElementById('toastArea');
+  const warning=document.createElement('div');warning.className='toast warn';
+  warning.dataset.poRound120='true';warning.textContent='QA: Cảnh báo quan trọng';
+  tray.append(warning);
+  const visibleSuccess=[...tray.querySelectorAll('.toast:not(.err):not(.warn)')].filter(n=>getComputedStyle(n).display!=='none');
+  const warningVisible=getComputedStyle(warning).display!=='none'&&warning.getBoundingClientRect().height>=20;
+  [...tray.querySelectorAll('[data-po-round-120]')].forEach(n=>n.remove());
+  return {warningVisible,successStillVisible:visibleSuccess.length===1};
+ });
+ Object.assign(compactToastStackQA,warningStackQA);
+ for(const [key,value] of Object.entries(compactToastStackQA))
+  assert.equal(value,true,'P5.1.120 mobile success toast stack '+key+': '+JSON.stringify(compactToastStackQA));
+
  await page.setViewportSize({width:1360,height:820});
   const report={type:'Positron P5 twenty distinct desktop screenshot cases',realElectron:true,syntheticChannels:false,
-  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA,chooserQa,toastLayoutQA,nativeToastQA,compactIdleQA,channelChipRailQA,advancedFilterQA,readableCardsQA,keyboardTabQA,favoriteEmptyQA,duplicateEmptyQA,categoryFilterQA,categoryFixtureQA,compactSingleQA,directFavoriteQA,favoriteCountQA};
+  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA,chooserQa,toastLayoutQA,nativeToastQA,compactIdleQA,channelChipRailQA,advancedFilterQA,readableCardsQA,keyboardTabQA,favoriteEmptyQA,duplicateEmptyQA,categoryFilterQA,categoryFixtureQA,compactSingleQA,directFavoriteQA,favoriteCountQA,compactToastStackQA};
  fs.writeFileSync(path.resolve('positron-evidence','audit-p5-20-rounds.json'),JSON.stringify(report,null,2));
  return report;
 }
