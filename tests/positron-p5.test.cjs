@@ -1260,10 +1260,13 @@ test('P5.1.140 lọc theo chương trình hiện tại chỉ từ EPG/XMLTV đã
   assert.ok(qa.includes(token),'Thiếu QA Electron: '+token);
 });
 
-test('P5.1.140 kiểm thử P5.1.139 so danh sách nguồn theo tập ID, không theo thứ tự giao diện',()=>{
+test('P5.1.141 hồi quy: sắp xếp yêu thích không thay playlist và nguồn đã lưu',()=>{
  const qa=read('scripts/positron-20-extension.cjs');
- assert.ok(qa.includes("JSON.stringify([...current].sort())===JSON.stringify([...original.channels].sort())"));
- assert.ok(qa.includes('current.length===originalCount'));
+ assert.ok(qa.includes('const stored=window.IPTVState.getStore()'));
+ assert.ok(qa.includes("stored.channels.map(ch=>JSON.stringify(["));
+ assert.ok(qa.includes("stored.sources.map(s=>JSON.stringify(["));
+ assert.ok(qa.includes('JSON.stringify(channelEntries)===JSON.stringify(original.channelEntries)'));
+ assert.ok(qa.includes('sourceActivationUnchanged:JSON.stringify(sourceEntries)===JSON.stringify(original.sourceEntries)'));
  assert.ok(qa.includes('noAutoplay:window.IPTVState.getCurrent()===null'));
 });
 

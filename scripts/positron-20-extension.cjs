@@ -2795,6 +2795,13 @@ async function runTwenty(page){
   &&document.querySelectorAll('#webChooserGrid button.web-chooser-card').length===18,{timeout:5000});
  const favoriteSortBefore=await page.evaluate(()=>{
   const names=window.IPTVState.getChannels().map(ch=>String(ch.id));
+  // Compare the canonical stored playlist, not the derived enabledChannels()
+  // projection, which can be recomputed during native source refresh.
+  // Metadata-only fixture: no stream is opened or sent to CI logs.
+  const stored=window.IPTVState.getStore();
+  const channelEntries=stored.channels.map(ch=>JSON.stringify([
+   String(ch.id),String(ch.sourceId),String(ch.url||''),String(ch.name||''),String(ch.group||'')])).sort();
+  const sourceEntries=stored.sources.map(s=>JSON.stringify([String(s.id),s.enabled!==false])).sort();
   const tile=[...document.querySelectorAll('#webChooserGrid .web-chooser-card-wrap')]
    .find(w=>w.querySelector('.web-chooser-name')?.textContent==='QA Channel 005');
   const star=tile?.querySelector('button.web-chooser-favorite');
@@ -2802,7 +2809,7 @@ async function runTwenty(page){
   const alreadySaved=star.getAttribute('aria-pressed')==='true';
   const id=star.dataset.channelId;
   if(!alreadySaved)star.click();
-  return {id,alreadySaved,channels:names};
+  return {id,alreadySaved,channels:names,channelEntries,sourceEntries};
  });
  await page.waitForFunction(id=>{
   const star=[...document.querySelectorAll('#webChooserGrid button.web-chooser-favorite')]
@@ -2821,20 +2828,27 @@ async function runTwenty(page){
   const wrappers=[...document.querySelectorAll('#webChooserGrid .web-chooser-card-wrap')];
   const flags=wrappers.map(w=>w.querySelector('button.web-chooser-favorite')?.getAttribute('aria-pressed')==='true');
   const firstUnmarked=flags.findIndex(x=>!x);
-  const originalCount=original.channels.length;
   const current=window.IPTVState.getChannels().map(c=>String(c.id));
+  const stored=window.IPTVState.getStore();
+  const channelEntries=stored.channels.map(ch=>JSON.stringify([
+   String(ch.id),String(ch.sourceId),String(ch.url||''),String(ch.name||''),String(ch.group||'')])).sort();
+  const sourceEntries=stored.sources.map(s=>JSON.stringify([String(s.id),s.enabled!==false])).sort();
   return {
    selectedFavoriteSort:document.getElementById('webChooserSort').value==='fav-first',
    readableVietnameseLabel:[...document.getElementById('webChooserSort').options].some(o=>o.value==='fav-first'&&o.textContent==='Yêu thích lên đầu'),
    markedCardAppearsFirst:flags[0]===true,
    favoritesBeforeOtherChannels:firstUnmarked===-1||flags.slice(firstUnmarked).every(x=>!x),
-   channelsNotAltered:current.length===originalCount&&JSON.stringify([...current].sort())===JSON.stringify([...original.channels].sort()),
+   channelsNotAltered:channelEntries.length===original.channelEntries.length
+    &&JSON.stringify(channelEntries)===JSON.stringify(original.channelEntries),
+   sourceActivationUnchanged:JSON.stringify(sourceEntries)===JSON.stringify(original.sourceEntries),
    eighteenResults:wrappers.length===18,
    noAutoplay:window.IPTVState.getCurrent()===null,
    noHorizontalOverflow:document.documentElement.scrollWidth<=innerWidth+1
   };
  },favoriteSortBefore);
  await page.screenshot({path:path.join(out,'positron-p51139-favorites-first-after-450-real.png'),animations:'disabled'});
+ // Display membership may refresh independently; verify stored playlist
+ // identities and source enablement were not changed by presentation sorting.
  for(const [key,value] of Object.entries(favoriteSortQA))
   assert.equal(value,true,'P5.1.139 real Electron favorite sort '+key+': '+JSON.stringify(favoriteSortQA));
  await page.selectOption('#webChooserSort','asc');
