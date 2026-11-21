@@ -4,7 +4,7 @@
  const api=factory(root);
  if(typeof module==='object'&&module.exports)module.exports=api;
 })(function(root){
- const RELEASES='https://github.com/trisanghy/open-iptv-pro/releases/tag/v4.23.71';
+ const RELEASES='https://github.com/trisanghy/open-iptv-pro/releases/tag/v4.23.76';
  const API='https://api.github.com/repos/trisanghy/open-iptv-pro/releases/tags/v4.23.71';
  const NEW_STABLE_API='https://api.github.com/repos/trisanghy/open-iptv-pro/releases/tags/v4.23.76';
  const ELECTRON_PREVIEW_API='https://api.github.com/repos/trisanghy/open-iptv-pro/releases/tags/electron-v4.23.76';
