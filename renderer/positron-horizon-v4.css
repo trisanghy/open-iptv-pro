@@ -1,0 +1,387 @@
+/* POSITRON HORIZON v4 — cohesive TV operating system, not an icon theme.
+   Last Positron visual layer; original playback, AI, settings, auth and import
+   controls remain mounted and functional. One restrained turquoise accent. */
+html[data-positron="true"].po-v3.po-horizon{
+ --po-bg:#090e14;--po-card:#101a23;--po-raised:#1b2934;--po-line:#243742;
+ --po-ink:#ecf4f7;--po-muted:#a1b4bf;--po-accent:#67d4c0;
+ --po-on:#072820;--po-glow:transparent;--po-v3-bg:#090e14;
+ --po-v3-surface:#101a23;--po-v3-raised:#1b2934;--po-v3-text:#ecf4f7;
+ --po-v3-edge:#243742;--po-v3-muted:#9cb3be;--po-v3-focus:#8ae9d5;
+ --po-v3-button:#182933;--po-v3-active:#193934;
+ font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+html[data-positron="true"].po-horizon body,
+html[data-positron="true"].po-horizon #appShell{background:#090e14!important;color:#eaf2f5!important}
+html[data-positron="true"].po-horizon .main{background:#090e14!important;min-width:0!important}
+html[data-positron="true"].po-horizon .main .content{
+ background:#090e14!important;padding:16px 19px 24px!important;max-width:none!important;
+}
+html[data-positron="true"].po-horizon #appSidebar.sidebar{
+ width:68px!important;min-width:68px!important;max-width:68px!important;flex:0 0 68px!important;
+ padding:14px 6px 8px!important;background:#0c141c!important;
+ border-right:1px solid #1b2b35!important;box-shadow:none!important;
+}
+html[data-positron="true"].po-horizon #appSidebar .brand{
+ margin:0 0 43px!important;padding:0!important;height:44px!important;align-items:center!important;
+}
+html[data-positron="true"].po-horizon #appSidebar .brand-icon{
+ width:36px!important;height:36px!important;min-width:36px!important;
+ border-radius:11px!important;overflow:hidden!important;
+}
+html[data-positron="true"].po-horizon #appSidebar #poRailExpand{
+ top:63px!important;left:calc(50% - 16px)!important;width:32px!important;height:28px!important;
+ font-size:15px!important;background:transparent!important;border:0!important;color:#8fa8b4!important;
+}
+html[data-positron="true"].po-horizon #appSidebar .nav,
+html[data-positron="true"].po-horizon #appSidebar #positronMorePages{
+ width:49px!important;max-width:49px!important;min-height:44px!important;height:44px!important;
+ margin:3px auto!important;border-radius:12px!important;border:1px solid transparent!important;
+ background:transparent!important;color:#92a7b3!important;transition:background .12s ease,color .12s ease!important;
+}
+html[data-positron="true"].po-horizon #appSidebar .nav.active{
+ background:#183a37!important;border-color:#2f625a!important;color:#8de5d3!important;
+ box-shadow:inset 3px 0 0 #67d4c0!important;
+}
+html[data-positron="true"].po-horizon #appSidebar .nav:hover,
+html[data-positron="true"].po-horizon #appSidebar #positronMorePages:hover{
+ color:#f1f7f8!important;background:#16252e!important;border-color:#28404b!important;
+}
+html[data-positron="true"].po-horizon[data-po-rail-expanded="true"] #appSidebar.sidebar{
+ width:206px!important;min-width:206px!important;max-width:206px!important;flex:0 0 206px!important;
+}
+html[data-positron="true"].po-horizon[data-po-rail-expanded="true"] #appSidebar .nav{
+ width:100%!important;max-width:none!important;justify-content:flex-start!important;
+ font-size:12px!important;padding:0 10px!important;
+}
+html[data-positron="true"].po-horizon[data-po-rail-expanded="true"] #appSidebar #poRailExpand{
+ left:auto!important;right:10px!important;
+}
+html[data-positron="true"].po-horizon #positronBar{
+ min-height:61px!important;height:61px!important;background:#0f1921!important;
+ border-bottom:1px solid #22323a!important;padding:9px 17px!important;gap:12px!important;
+}
+html[data-positron="true"].po-horizon #positronBar .p-heading strong{
+ color:#f5f9fa!important;font-size:13px!important;font-weight:680!important;letter-spacing:-.12px!important;
+}
+html[data-positron="true"].po-horizon #positronBar .p-actions{display:flex!important;gap:7px!important;align-items:center!important}
+html[data-positron="true"].po-horizon #positronBar .p-actions button{
+ min-height:34px!important;height:34px!important;border-radius:9px!important;
+ background:#172632!important;border:1px solid #2a414c!important;color:#c6d9e0!important;
+ padding:5px 9px!important;box-shadow:none!important;
+}
+html[data-positron="true"].po-horizon #positronBar button:hover:not(:disabled){
+ color:#fff!important;background:#203641!important;border-color:#3a5961!important;
+}
+html[data-positron="true"].po-horizon #positronBar #positronOpen{min-width:130px!important}
+html[data-positron="true"].po-horizon #positronBar .p-live{color:#b0c3c9!important;font-size:11px!important}
+html[data-positron="true"].po-horizon #positronBar .p-live::before{background:#67d4c0!important}
+html[data-positron="true"].po-horizon #positronBar #poWatchFlowToggle{
+ background:#18392f!important;border:1px solid #367765!important;color:#a9f2da!important;
+ font-weight:730!important;min-width:112px!important;display:inline-flex!important;
+ align-items:center!important;justify-content:center!important;gap:7px!important;
+ letter-spacing:.05px!important;
+}
+html[data-positron="true"].po-horizon #positronBar #poWatchFlowToggle:hover{
+ background:#225344!important;border-color:#5aa58f!important;
+}
+html[data-positron="true"].po-horizon .footer{
+ background:#0d171f!important;border-top:1px solid #22313b!important;
+ color:#819ba8!important;min-height:25px!important;
+}
+/* TV: library rail alongside an uninterrupted cinematic stage. */
+html[data-positron="true"].po-horizon #page-tv .tv-layout{
+ display:grid!important;grid-template-columns:minmax(242px,270px) minmax(0,1fr)!important;
+ align-items:start!important;gap:17px!important;
+}
+html[data-positron="true"].po-horizon #page-tv .channel-panel{
+ background:#111c25!important;border:1px solid #24353f!important;
+ box-shadow:none!important;border-radius:16px!important;overflow:hidden!important;
+ min-width:0!important;max-height:calc(100vh - 142px)!important;
+}
+html[data-positron="true"].po-horizon #page-tv .channel-panel .panel-header{
+ padding:16px 14px 12px!important;background:#111c25!important;
+ border-bottom:0!important;align-items:center!important;
+}
+html[data-positron="true"].po-horizon #page-tv .channel-panel .panel-header h2{
+ font-size:15px!important;font-weight:750!important;letter-spacing:-.25px!important;
+}
+html[data-positron="true"].po-horizon #page-tv #channelMeta{color:#90a8b4!important;font-size:11px!important}
+html[data-positron="true"].po-horizon #page-tv .channel-panel .filter-box{
+ margin:5px 11px 12px!important;background:#1a2b35!important;
+ border:1px solid #2c4850!important;border-radius:11px!important;
+ min-height:42px!important;color:#a8bfca!important;
+}
+html[data-positron="true"].po-horizon #page-tv #searchBox{
+ font-size:12px!important;color:#e8f3f5!important;
+}
+html[data-positron="true"].po-horizon #page-tv #positronFiltersToggle{
+ background:#213943!important;color:#d5e9eb!important;border-radius:9px!important;
+}
+html[data-positron="true"].po-horizon #page-tv .folder-actions,
+html[data-positron="true"].po-horizon #page-tv .filter-tabs{
+ padding:5px 11px!important;gap:5px!important;background:#111c25!important;
+}
+html[data-positron="true"].po-horizon #page-tv .folder-actions button,
+html[data-positron="true"].po-horizon #page-tv .filter-tabs button{
+ background:#1b2c37!important;border:1px solid #2a424b!important;
+ color:#a9c1ca!important;font-size:11px!important;border-radius:8px!important;
+ padding:6px 8px!important;box-shadow:none!important;
+}
+html[data-positron="true"].po-horizon #page-tv .filter-tabs button.active{
+ background:#255345!important;border-color:#427865!important;color:#d9f8e9!important;
+}
+html[data-positron="true"].po-horizon #page-tv .channel-drag-hint{
+ font-size:10px!important;line-height:1.45!important;color:#7e9aa7!important;
+ margin:3px 10px 8px!important;
+}
+html[data-positron="true"].po-horizon #page-tv #channelList{
+ padding:6px 7px 12px!important;max-height:calc(100vh - 414px)!important;
+ overflow-y:auto!important;scrollbar-color:#405b65 transparent;
+}
+html[data-positron="true"].po-horizon #page-tv #channelList .channel-item{
+ border:1px solid transparent!important;border-radius:12px!important;
+ min-height:59px!important;padding:8px 9px!important;margin:2px 0!important;
+ background:transparent!important;
+}
+html[data-positron="true"].po-horizon #page-tv #channelList .channel-item:hover{
+ background:#1b3139!important;border-color:#2d4952!important;
+}
+html[data-positron="true"].po-horizon #page-tv #channelList .channel-item.current{
+ background:#224a40!important;border-color:#3e816e!important;
+ box-shadow:inset 3px 0 0 #71dec9!important;
+}
+html[data-positron="true"].po-horizon #page-tv #channelList .channel-item .chan-logo{
+ width:39px!important;height:39px!important;flex:0 0 39px!important;
+ background:#263842!important;border-radius:10px!important;object-fit:contain!important;
+}
+html[data-positron="true"].po-horizon #page-tv #channelList .channel-text b{
+ color:#e9f2f5!important;font-size:12px!important;line-height:1.45!important;
+}
+html[data-positron="true"].po-horizon #page-tv #channelList .channel-text small{color:#8facb9!important;font-size:10px!important}
+html[data-positron="true"].po-horizon #page-tv .watch-panel{
+ min-width:0!important;gap:10px!important;max-width:none!important;
+}
+html[data-positron="true"].po-horizon #page-tv #playerBox{
+ width:100%!important;min-width:0!important;aspect-ratio:16/9!important;
+ border-radius:17px!important;border:1px solid #30434b!important;
+ background:#02080b!important;box-shadow:0 15px 55px rgba(0,0,0,.22)!important;
+ overflow:hidden!important;position:relative!important;
+}
+html[data-positron="true"].po-horizon #page-tv #playerBox #video{
+ background:#010508!important;
+}
+html[data-positron="true"].po-horizon #page-tv #emptyPlayer{
+ background:radial-gradient(ellipse at 50% 27%,#18352f 0%,#0b1b1b 38%,#03090c 76%)!important;
+ color:#eaf7f5!important;display:flex;flex-direction:column;align-items:center;justify-content:center;
+ padding:30px 26px!important;
+}
+html[data-positron="true"].po-horizon #page-tv #emptyPlayer .empty-icon{
+ width:68px!important;height:68px!important;border-radius:22px!important;
+ background:#1b473c!important;color:#9ce8ce!important;border:1px solid #3c806e!important;
+ box-shadow:0 14px 40px rgba(0,0,0,.3)!important;margin-bottom:18px!important;
+}
+html[data-positron="true"].po-horizon #page-tv #emptyPlayer h2{
+ font-size:clamp(18px,2vw,26px)!important;letter-spacing:-.65px!important;
+ font-weight:780!important;margin:0 0 8px!important;
+}
+html[data-positron="true"].po-horizon #page-tv #emptyPlayer p{
+ max-width:430px!important;text-align:center!important;color:#a3bcc1!important;
+ font-size:13px!important;line-height:1.6!important;
+}
+html[data-positron="true"].po-horizon #page-tv #emptyPlayer .empty-actions{gap:10px!important;margin-top:15px!important}
+html[data-positron="true"].po-horizon #page-tv #emptyPlayer .empty-actions button{
+ height:42px!important;padding:8px 18px!important;border-radius:10px!important;font-weight:680!important;
+}
+html[data-positron="true"].po-horizon #page-tv #emptyPlayer #emptyFileBtn{
+ background:#77e1c5!important;color:#07271f!important;border:1px solid #94f3d9!important;
+}
+html[data-positron="true"].po-horizon #page-tv .player-control-card{
+ overflow:hidden!important;background:#111c25!important;border:1px solid #2a3d46!important;
+ border-radius:14px!important;box-shadow:none!important;
+}
+html[data-positron="true"].po-horizon #page-tv .player-control-card .control-layout-top{
+ background:#111c25!important;border-bottom:1px solid #233640!important;
+ grid-template-columns:minmax(100px,1fr) auto minmax(72px,.5fr) auto!important;
+ min-height:64px!important;gap:6px!important;padding:7px 12px!important;
+}
+html[data-positron="true"].po-horizon #page-tv .player-control-card .playing-channel-text b{
+ color:#f1f9fa!important;font-size:14px!important;font-weight:740!important;
+}
+html[data-positron="true"].po-horizon #page-tv .player-control-card .playing-channel-text small{color:#91aab5!important;font-size:11px!important}
+html[data-positron="true"].po-horizon.p50-29 #page-tv .player-control-card .controls.transport-controls #playBtn{
+ background:#81e6cb!important;color:#063126!important;
+ border:0!important;border-radius:10px!important;
+ width:44px!important;min-width:44px!important;max-width:44px!important;
+ height:44px!important;min-height:44px!important;max-height:44px!important;
+ box-shadow:none!important;
+}
+html[data-positron="true"].po-horizon.p50-29 #page-tv .player-control-card .controls.transport-controls #playBtn:disabled{
+ background:#294039!important;color:#839c96!important;opacity:.54!important;
+}
+html[data-positron="true"].po-horizon #page-tv .player-control-card .controls.transport-controls :is(#prevBtn,#nextBtn,#stopBtn){
+ color:#b2c7cb!important;border-radius:10px!important;
+}
+html[data-positron="true"].po-horizon #page-tv .player-control-card .controls.transport-controls button:hover:not(:disabled){
+ background:#24443d!important;color:#dcfff1!important;
+}
+html[data-positron="true"].po-horizon #page-tv .player-control-card .control-layout-bottom{
+ background:#14242e!important;min-height:52px!important;border-top:0!important;
+ padding:8px 12px!important;gap:10px!important;
+}
+html[data-positron="true"].po-horizon #page-tv .player-control-card .control-layout-bottom :is(#manualStreamSelect,#videoFit){
+ background:#1c323d!important;border:1px solid #30515b!important;
+ color:#dceef0!important;border-radius:9px!important;font-size:11px!important;
+}
+html[data-positron="true"].po-horizon #page-tv .player-control-card #favCurrentBtn{
+ background:transparent!important;color:#9ab6bf!important;border:0!important;
+}
+html[data-positron="true"].po-horizon #page-tv .player-control-card #favCurrentBtn.marked{color:#f7c976!important}
+html[data-positron="true"].po-horizon #page-tv .player-control-card .output-controls button:hover:not(:disabled){
+ background:#24443d!important;color:#e9fff5!important;
+}
+html[data-positron="true"].po-horizon #page-tv .player-control-card #volume{accent-color:#77e1c5!important}
+html[data-positron="true"].po-horizon.p50-tools-closed #page-tv :is(.advanced-timebar,.compact-tools){display:none!important}
+html[data-positron="true"].po-horizon #page-tv .advanced-timebar,
+html[data-positron="true"].po-horizon #page-tv .compact-tools{
+ background:#13222a!important;border:1px solid #2b424a!important;border-radius:12px!important;
+}
+/* Consistent secondary pages: reduced chrome, clear hierarchy, never hide features. */
+html[data-positron="true"].po-horizon .page:not(#page-tv){
+ max-width:none!important;color:#deeaed!important;
+}
+html[data-positron="true"].po-horizon .page:not(#page-tv) .section-heading{
+ margin:3px 0 20px!important;padding:4px 0 16px!important;
+ border-bottom:1px solid #283944!important;
+}
+html[data-positron="true"].po-horizon .page:not(#page-tv) .section-heading h1{
+ color:#f1f8fa!important;font-size:clamp(20px,2vw,27px)!important;
+ font-weight:770!important;letter-spacing:-.6px!important;
+}
+html[data-positron="true"].po-horizon .page:not(#page-tv) .section-heading p{
+ color:#a1b6c0!important;font-size:13px!important;line-height:1.65!important;
+}
+html[data-positron="true"].po-horizon .page:not(#page-tv) :is(.settings-card,.source-hub-section,.doctor-v3-panel,.doctor-v2-panel,.dvr-panel,.epg-filter,.epg-summary,.sources-hub-nav){
+ background:#111d26!important;border:1px solid #293c45!important;
+ border-radius:15px!important;box-shadow:none!important;color:#dce9ec!important;
+}
+html[data-positron="true"].po-horizon .page:not(#page-tv) :is(.settings-card,.source-hub-section,.dvr-panel){
+ padding:18px!important;
+}
+html[data-positron="true"].po-horizon .page:not(#page-tv) :is(h2,h3){
+ color:#eaf5f5!important;letter-spacing:-.25px!important;
+}
+html[data-positron="true"].po-horizon .page:not(#page-tv) :is(.hint,small){
+ color:#9eb4bc!important;line-height:1.55!important;
+}
+html[data-positron="true"].po-horizon :is(.btn,.modal-input,button,select,input,textarea){
+ font-family:inherit;
+}
+html[data-positron="true"].po-horizon .page:not(#page-tv) :is(input,select,textarea,.modal-input){
+ background:#1a2b35!important;color:#eef7f7!important;
+ border:1px solid #36505b!important;border-radius:9px!important;
+}
+html[data-positron="true"].po-horizon .page:not(#page-tv) :is(.btn,.source-hub-section button){
+ border-radius:9px!important;box-shadow:none!important;font-weight:640!important;
+}
+html[data-positron="true"].po-horizon .page:not(#page-tv) .btn-primary{
+ background:#78ddc4!important;color:#0a2a24!important;border-color:#78ddc4!important;
+}
+html[data-positron="true"].po-horizon .page:not(#page-tv) .btn-subtle{
+ background:#20323d!important;color:#c8dce2!important;border-color:#39515c!important;
+}
+html[data-positron="true"].po-horizon :is(button,input,select,textarea):focus-visible{
+ outline:2px solid #79e3c9!important;outline-offset:2px!important;
+}
+html[data-positron="true"].po-horizon :is(button,.btn):disabled{cursor:not-allowed!important}
+/* WatchFlow — a focused, opt-in workspace; no extra dock in the video stage. */
+.po-watchflow-panel[hidden]{display:none!important}
+.po-watchflow-panel{
+ position:fixed;top:72px;right:24px;width:min(440px,calc(100vw - 32px));
+ max-height:min(78vh,740px);overflow:auto;z-index:30000;
+ background:linear-gradient(157deg,#172a31 0%,#0e1b25 65%,#101c25 100%);
+ border:1px solid #42655f;border-radius:19px;padding:18px;
+ box-shadow:0 24px 95px rgba(0,0,0,.65);color:#eef8f6;font-family:inherit;
+}
+.po-watchflow-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.po-watchflow-kicker{font-size:10px;font-weight:800;letter-spacing:1.5px;color:#83dbc4}
+.po-watchflow-head h2{font-size:22px;line-height:1.2;letter-spacing:-.7px;margin:7px 0 7px;color:#effbf7}
+.po-watchflow-head p{font-size:12px;color:#a6c0c5;line-height:1.55;margin:0 0 14px;max-width:355px}
+.po-watchflow-head #poWatchFlowClose{
+ background:transparent;color:#bdcfd1;border:1px solid #405a61;border-radius:9px;
+ width:30px;height:30px;flex:0 0 30px;font-size:22px;cursor:pointer;
+}
+.po-watchflow-modes{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 15px}
+.po-watchflow-modes button{
+ min-height:31px;border:1px solid #324e55;background:#1d3039;
+ color:#b6cbd0;border-radius:9px;font-size:11px;padding:6px 10px;cursor:pointer;
+}
+.po-watchflow-modes button[aria-pressed="true"]{
+ background:#275144;border-color:#5caa8b;color:#e0ffef;font-weight:700;
+}
+.po-watchflow-subhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.po-watchflow-subhead strong{font-size:12px;color:#d6e9e8}
+.po-watchflow-subhead button{
+ background:transparent;border:0;color:#8ce5cc;font-size:12px;cursor:pointer;
+}
+.po-watchflow-subhead button:disabled{opacity:.4}
+.po-watchflow-results{display:grid;gap:8px}
+.po-watchflow-card{
+ display:grid;grid-template-columns:32px minmax(0,1fr) 56px;gap:9px;align-items:center;
+ background:#1a2c36;border:1px solid #30464f;border-radius:12px;padding:12px 10px;
+}
+.po-watchflow-rank{font-size:20px;font-weight:780;color:#6fa999;letter-spacing:-1px}
+.po-watchflow-card-body{min-width:0}
+.po-watchflow-card-body strong{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:13px;color:#f0f9f7}
+.po-watchflow-card-body small{display:block;color:#a3bac0;font-size:11px;margin-top:3px}
+.po-watchflow-card-body p{font-size:10px;line-height:1.4;color:#7bd5bd;margin:5px 0 0}
+.po-watchflow-play,.po-watchflow-empty button{
+ background:#7cdfc4;border:0;border-radius:9px;color:#103228;font-size:12px;
+ font-weight:750;min-height:35px;padding:7px 12px;cursor:pointer;
+}
+.po-watchflow-empty{background:#1a2b35;border:1px solid #354d54;border-radius:12px;padding:20px;text-align:center}
+.po-watchflow-empty strong{display:block;font-size:14px;color:#ecf7f4}
+.po-watchflow-empty p{color:#a6bec1;line-height:1.6;font-size:12px}
+.po-watchflow-note{font-size:10px;line-height:1.55;color:#92a9b0;margin:13px 0 0}
+@media(max-width:1320px){
+ html[data-positron="true"].po-horizon #positronBar #poWatchFlowToggle{min-width:35px!important}
+ html[data-positron="true"].po-horizon #poWatchFlowToggle .po-watchflow-word{display:none}
+ html[data-positron="true"].po-horizon #page-tv .tv-layout{grid-template-columns:minmax(215px,244px) minmax(0,1fr)!important}
+}
+@media(max-width:1000px){
+ html[data-positron="true"].po-horizon #page-tv .tv-layout{
+  display:flex!important;flex-direction:column!important;gap:13px!important;align-items:stretch!important;
+ }
+ html[data-positron="true"].po-horizon #page-tv .watch-panel{order:0!important;width:100%!important}
+ html[data-positron="true"].po-horizon #page-tv .channel-panel{order:1!important;width:100%!important;max-height:390px!important}
+ html[data-positron="true"].po-horizon #page-tv #channelList{max-height:195px!important}
+ html[data-positron="true"].po-horizon #page-tv .channel-panel-show-toggle{order:2!important}
+}
+@media(max-width:760px){
+ html[data-positron="true"].po-horizon #appSidebar.sidebar{
+  width:56px!important;min-width:56px!important;max-width:56px!important;flex:0 0 56px!important;
+  padding-inline:3px!important;
+ }
+ html[data-positron="true"].po-horizon #appSidebar .nav{width:43px!important;max-width:43px!important}
+ html[data-positron="true"].po-horizon #appSidebar #poRailExpand{top:14px!important}
+ html[data-positron="true"].po-horizon .main .content{padding:11px!important}
+ html[data-positron="true"].po-horizon #page-tv .player-control-card .control-layout-top{
+  grid-template-columns:minmax(0,1fr) auto!important;row-gap:4px!important;
+ }
+ html[data-positron="true"].po-horizon #page-tv .player-control-card .playing-info{
+  grid-column:1!important;grid-row:1!important;
+ }
+ html[data-positron="true"].po-horizon #page-tv .player-control-card .controls.transport-controls{
+  grid-column:2!important;grid-row:1!important;
+ }
+ html[data-positron="true"].po-horizon #page-tv .player-control-card .volume-controls{grid-column:1!important;grid-row:2!important}
+ html[data-positron="true"].po-horizon #page-tv .player-control-card .output-controls{grid-column:2!important;grid-row:2!important}
+ .po-watchflow-panel{top:54px;right:8px;width:calc(100vw - 16px);padding:13px;max-height:80vh}
+}
+@media(prefers-reduced-motion:reduce){
+ html[data-positron="true"].po-horizon *:not(video),.po-watchflow-panel *{transition:none!important;animation:none!important}
+}
+
+/* Keep inherited Sources card/heading surfaces equal for all themes. */
+html[data-positron="true"].po-horizon #page-sources .source-hub-heading{
+ background:#111d26!important;border-color:#293c45!important;color:#dce9ec!important;
+}

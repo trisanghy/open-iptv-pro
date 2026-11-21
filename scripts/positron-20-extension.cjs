@@ -50,6 +50,12 @@ async function runTwenty(page){
     epgEmptySummary:document.getElementById('epgSummary')?.textContent?.trim()||'',
     epgGuideEmptyText:document.querySelector('#epgGuide>.empty-list')?.textContent?.trim()||'',
     epgReloadAvailability:(()=>{const n=document.getElementById('epgRefreshBtn');return {disabled:!!n?.disabled,marked:n?.getAttribute('data-positron-epg-no-channels')||'',describedBy:n?.getAttribute('aria-describedby')||''};})(),
+    horizon:(()=>{
+      const root=document.documentElement,toggle=document.getElementById('poWatchFlowToggle');
+      return {loaded:root.classList.contains('po-horizon'),
+       watchFlowReady:root.dataset.poWatchFlow==='ready',
+       toggle:!!toggle,expanded:toggle?.getAttribute('aria-expanded')||''};
+    })(),
     v2Media:(()=>{
      const btn=document.getElementById('playBtn');
      const bar=document.querySelector('#page-tv .player-control-card .control-layout-top');
@@ -225,7 +231,15 @@ async function runTwenty(page){
    assert.equal(metrics.transportVectors,true,'non-vector transport icons: '+name);
    assert.ok(metrics.v2Media?.loaded,'P5.1.54 media redesign module failed to initialize: '+name);
    assert.equal(metrics.v3Workspace?.loaded,true,'P5.1.55 workspace did not initialize: '+name);
-   assert.ok(metrics.v3Workspace?.railWidth<=90,'compact rail still steals player width: '+name);
+   // The P4 audit may leave the rail intentionally expanded; test either
+   // actual user state rather than incorrectly demanding compact at all times.
+   assert.ok(metrics.v3Workspace?.railExpanded==='true'
+     ? metrics.v3Workspace.railWidth>=180&&metrics.v3Workspace.railWidth<=222
+     : metrics.v3Workspace?.railWidth<=90,
+     'rail width mismatches actual expanded/compact state: '+name);
+   assert.equal(metrics.horizon?.loaded,true,'Horizon layer missing: '+name);
+   assert.equal(metrics.horizon?.watchFlowReady,true,'WatchFlow did not initialize: '+name);
+   assert.equal(metrics.horizon?.toggle,true,'WatchFlow toolbar action absent: '+name);
    assert.ok(metrics.v3Workspace?.advancedInToolbar,'More tools disclosure was not moved inside media controls: '+name);
    assert.ok(metrics.v3Workspace?.filtersInSearch,'secondary filter still takes a full extra row: '+name);
    assert.ok(metrics.v3Workspace?.mainNavLabels,'accessible labels missing from compact navigation: '+name);
@@ -235,6 +249,23 @@ async function runTwenty(page){
    assert.ok(metrics.v2Media?.width<=48&&metrics.v2Media.height>=40,'new Play button is not compact: '+name+' '+JSON.stringify(metrics.v2Media));
    assert.ok(metrics.v2Media?.vectorOutputs&&metrics.v2Media.navIcon,'new SVG system not installed: '+name);
    assert.equal(metrics.v2Media?.topOverflow,false,'toolbar extends beyond viewport: '+name);
+   if(width===1360){
+    const watchFlow=await page.evaluate(()=>{
+     const button=document.getElementById('poWatchFlowToggle');
+     const panel=document.getElementById('poWatchFlowPanel');
+     button.click();
+     const opened=!panel.hidden&&button.getAttribute('aria-expanded')==='true';
+     const groupCount=panel.querySelectorAll('[data-po-mode]').length;
+     const reasons=panel.textContent.includes('bằng chứng hoạt động');
+     document.getElementById('poWatchFlowClose').click();
+     return {opened,groupCount,reasons,closed:panel.hidden&&button.getAttribute('aria-expanded')==='false'};
+    });
+    assert.equal(watchFlow.opened,true,'WatchFlow cannot open: '+name);
+    assert.equal(watchFlow.closed,true,'WatchFlow cannot close: '+name);
+    assert.equal(watchFlow.groupCount,6,'WatchFlow topics missing: '+name);
+    assert.equal(watchFlow.reasons,true,'WatchFlow evidence explanation is missing: '+name);
+   }
+
 
    for(const [key,label] of [['cast','Cast / AirPlay'],['pip','PiP']]){
     const i=metrics.outputIcons?.[key];

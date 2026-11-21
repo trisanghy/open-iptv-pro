@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.139",
-  "description": "Positron P5.1.55: TV-first workspace and compact reversible navigation",
+  "version": "4.23.140",
+  "description": "Positron P5.1.56: Horizon redesign with local WatchFlow viewing recommendations",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

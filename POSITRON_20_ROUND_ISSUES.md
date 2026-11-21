@@ -128,3 +128,6 @@ P5.1.46 CI attempt 44866650681: 604 pass / 2 failed / 5 skipped; failures were s
 | File (9) round | Next version | Real screenshot | Defect | Repair | Verification status |
 |---|---|---|---|---|---|
 | 06/20 (pending) | P5.1.49 / v4.23.133 | P5.1.48 EPG 1360px + 720px | Reload EPG appears actionable with 0 IPTV channels and only yields a warning | Guard no-channel reload button; auto-reenable on channel arrival; leave EPG sources accessible | Pending CI + images + release |
+
+
+| HORIZON redesign | P5.1.56 / v4.23.140 | Actual P5.1.55 TV 1360px screenshot and capture failure in run 44872760322 | Entire information hierarchy and visual token system fragmented across layered CSS, video competes with navigation and tools, no guided viewing; persisted expanded rail incorrectly rejected by QA | New last Horizon CSS, 6-mode local WatchFlow choosing real enabled channels with evidence, category and novelty; Node regression and real Electron screenshots, release pending verification |
