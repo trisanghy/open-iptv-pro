@@ -117,10 +117,18 @@ async function main(){
  await sectionShot('22-sources-merge','#sourceMergePanel');
  await sectionShot('23-sources-repair','#sourceRepairSection');
  const sourceModal=await click('#sourcesUrlBtn');
- if(sourceModal==='clicked'&&await page.evaluate(()=>!document.getElementById('modal')?.classList.contains('hidden'))){
+ const consentVisible=await page.evaluate(()=>!!document.querySelector('dialog.iptv-legal-consent[open]'));
+ if(sourceModal==='clicked'&&consentVisible){
+  await sectionShot('24-sources-legal-usage-confirmation','dialog.iptv-legal-consent');
+  // Inspect the rights notice without checking the legal attestation.
+  // The gallery must cancel; never silently accept rights or import a source.
+  await click('dialog.iptv-legal-consent .iptv-legal-actions button:first-child');
+  const stillOpen=await page.evaluate(()=>!!document.querySelector('dialog.iptv-legal-consent[open]'));
+  if(stillOpen)throw Error('Legal consent remained open after pressing Hủy');
+ }else if(sourceModal==='clicked'&&await page.evaluate(()=>!document.getElementById('modal')?.classList.contains('hidden'))){
   await sectionShot('24-sources-add-url-modal','#modal');
   await click('#modalCancel');
- }
+ }else issues.push({type:'unavailable-feature',name:'sourcesUrlLegalNotice'});
  await nav('health');
  await sectionShot('25-health-failover','#page-health');
  await nav('doctor');
