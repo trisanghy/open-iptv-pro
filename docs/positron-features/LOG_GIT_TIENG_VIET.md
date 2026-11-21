@@ -2,14 +2,23 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
-## P5.1.141 — tìm chương trình đang chiếu theo tên XMLTV
+## P5.1.142 — hiện chương trình tiếp theo theo lịch XMLTV
 
-**Ứng dụng:** 4.23.225 · **Trạng thái:** Chưa có bản phát hành
+**Ứng dụng:** 4.23.226 · **Trạng thái:** Chưa có bản phát hành
+
+Feature priority: NEW — Hiển thị tên và giờ bắt đầu chương trình sắp phát bên dưới chương trình hiện tại trên thẻ kênh, chỉ khi người dùng bật bộ lọc EPG và chỉ từ lịch XMLTV có thật đã nhập; không tự mở nguồn ngoài, tự phát video hay đặt nhắc lịch. User action: Mở TV → Chọn kênh → Bộ lọc → bật “Có chương trình đang chiếu (EPG)”; thẻ kênh sẽ hiện “Theo EPG: ...” và “Tiếp theo HH:MM: ...” khi lịch XMLTV có chương trình kế tiếp.
+
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/b1a8f8b62b61e4409646eb66d5ccfa012d6262af)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+
+## P5.1.141 — Tìm theo tên chương trình đang chiếu
+
+**Ứng dụng:** 4.23.225 · **Trạng thái:** Đã phát hành
 
 Feature priority: NEW — Cho phép tìm kênh bằng **tên chương trình đang chiếu** từ XMLTV hiện có ngay trong giao diện TV, không cần mở trang Lịch phát sóng; tìm tiếng Việt không dấu và nhiều từ linh hoạt. Chỉ bật tính năng khi người dùng chủ động lọc EPG. User action: Mở Chọn kênh → Bộ lọc → Có chương trình đang chiếu (EPG), nhập tên chương trình như “tin yeu thich” để tìm kênh đang có chương trình đó theo XMLTV; nhấn vào thẻ mới phát.
 
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/72ffb9de23bee959f09757621907ead0f348ec85)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/361a2830232bc83a820cb5375c0be6cc9de8e704)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.225-p5.1.141)
 
 ## P5.1.140 — Lọc kênh đang có chương trình từ XMLTV
 
