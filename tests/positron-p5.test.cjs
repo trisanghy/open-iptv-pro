@@ -37,7 +37,7 @@ test('P5 assets are loaded after P4 without replacing it',()=>{
 test('P5 release is immutable and versioned separately from P4.1',()=>{
  const pkg=JSON.parse(read('package.json'));
  const flow=read('.github/workflows/positron-lab.yml');
- assert.equal(pkg.version,'4.23.167');
+ assert.equal(pkg.version,'4.23.168');
  const label=pkg.description.match(/Positron\s+(P\d+\.\d+\.\d+)/)?.[1];
  assert.ok(label,'product P-label must accompany SemVer');
  assert.ok(flow.includes('TAG=positron/v'+pkg.version+'-'+label.toLowerCase()),'release tag and app version must match');
@@ -709,4 +709,14 @@ test('P5.1.83 compact 450px player keeps fit, backup link and favorite on a nati
  assert.ok(qa.includes('chooserQa.playerRow.aligned,true'));
  assert.ok(qa.includes('chooserQa.playerRow.noOverflow,true'));
  assert.ok(qa.includes('chooserQa.playerRow.height<=145'));
+});
+
+test('P5.1.84 real empty TV sidebar offers native source import action',()=>{
+ const js=read('renderer/positron-horizon-v4.js'),css=read('renderer/positron-horizon-v4.css'),qa=read('scripts/positron-20-extension.cjs');
+ assert.ok(js.includes("window.IPTVState.getChannels().length>0"));
+ assert.ok(js.includes("nativeChannelList.querySelector('.empty-list')"));
+ assert.ok(js.includes("action.id='poEmptySourceAction'"));
+ assert.ok(js.includes("window.IPTVState?.setPage?.('sources')"));
+ assert.ok(css.includes('#channelList #poEmptySourceAction'));
+ assert.ok(qa.includes("importedFromSidebar,'page-sources'"));
 });

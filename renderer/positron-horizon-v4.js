@@ -170,6 +170,28 @@
   new MutationObserver(syncDoctorAvailability).observe(doctorCount,{childList:true,subtree:true,characterData:true});
   syncDoctorAvailability();
  }
+ // P5.1.84: real P5.1.83 empty TV sidebar had only a passive instruction.
+ // Preserve native playlist renderer and expose direct source management only
+ // while its authoritative channel array is genuinely empty.
+ const nativeChannelList=byId('channelList');
+ if(nativeChannelList&&window.IPTVState?.getChannels){
+  const syncEmptySidebarSource=()=>{
+   if(window.IPTVState.getChannels().length>0)return;
+   const empty=nativeChannelList.querySelector('.empty-list');
+   if(!empty||empty.querySelector('#poEmptySourceAction'))return;
+   empty.classList.add('po-empty-channel-onboarding');
+   empty.replaceChildren();
+   const heading=d.createElement('strong');heading.textContent='Chưa có nguồn IPTV';
+   const hint=d.createElement('p');hint.textContent='Thêm danh sách M3U hoặc URL để bắt đầu xem.';
+   const action=d.createElement('button');action.type='button';action.id='poEmptySourceAction';
+   action.textContent='Thêm nguồn IPTV';
+   action.setAttribute('aria-label','Mở trang Nguồn để thêm danh sách IPTV');
+   action.addEventListener('click',()=>window.IPTVState?.setPage?.('sources'));
+   empty.append(heading,hint,action);
+  };
+  new MutationObserver(syncEmptySidebarSource).observe(nativeChannelList,{childList:true});
+  syncEmptySidebarSource();
+ }
  root.dataset.poWatchFlow='ready';
  window.PositronWatchFlow=Object.freeze({open:openPanel,close,refresh:draw});
 })();

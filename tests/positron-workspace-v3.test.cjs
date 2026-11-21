@@ -8,7 +8,7 @@ test('P5.1.55 workspace loads after all previous style and behavior layers',()=>
  const html=read('renderer/index.html');
  assert.ok(html.indexOf('positron-workspace-v3.css')>html.indexOf('positron-media-v2.css'));
  assert.ok(html.indexOf('positron-workspace-v3.js')>html.indexOf('positron-media-v2.js'));
- assert.equal(JSON.parse(read('package.json')).version,'4.23.167');
+ assert.equal(JSON.parse(read('package.json')).version,'4.23.168');
 });
 test('navigation rail is reversible without deleting native navigation routes',()=>{
  const js=read('renderer/positron-workspace-v3.js');

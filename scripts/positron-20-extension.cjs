@@ -143,6 +143,7 @@ async function runTwenty(page){
      favoriteGuidance:(()=>document.querySelector('#favoriteList .empty-list')?.firstChild?.textContent?.trim()||'')(),
      favoriteEmptyLayout:(()=>{const e=document.querySelector('#favoriteList>.empty-list'),b=document.getElementById('positronFavoritesSources');const r=e?.getBoundingClientRect(),a=b?.getBoundingClientRect();return{top:Math.round(r?.top||0),height:Math.round(r?.height||0),buttonBottom:Math.round(a?.bottom||0),viewportHeight:innerHeight};})(),
      sourceCount:document.getElementById('sourceCount')?.textContent?.trim()||'0',
+     sidebarImport:(()=>{const b=document.getElementById('poEmptySourceAction');return b?{visible:!!b.getClientRects().length,content:b.textContent.trim(),aria:b.getAttribute('aria-label')}:null;})(),
      footerStatus:(()=>{
       const n=document.getElementById('footerText'),footer=n?.closest('.footer');if(!n||!footer)return null;
       const s=getComputedStyle(n),bg=getComputedStyle(footer).backgroundColor;
@@ -251,6 +252,17 @@ async function runTwenty(page){
    assert.equal(navQa.parentOverflow,false,'Source toolbar creates whole-window overflow: '+name);
   }
   assert.ok(metrics.controls>=8,'native player controls missing');
+  if(target==='tv'&&metrics.sourceCount==='0'){
+   assert.equal(metrics.sidebarImport?.visible,true,'Empty TV sidebar still lacks source onboarding action: '+name);
+   assert.equal(metrics.sidebarImport?.content,'Thêm nguồn IPTV','Native sidebar source action unclear: '+name);
+   const importedFromSidebar=await page.evaluate(()=>{
+    document.getElementById('poEmptySourceAction').click();
+    const dest=document.querySelector('.page.active-page')?.id;
+    window.IPTVState.setPage('tv');
+    return dest;
+   });
+   assert.equal(importedFromSidebar,'page-sources','Sidebar CTA must open native Sources: '+name);
+  }
   if(target==='tv'){
    assert.ok(metrics.player?.width>180&&metrics.player.height>100,'video collapsed: '+name);
    assert.equal(metrics.transportVectors,true,'non-vector transport icons: '+name);
