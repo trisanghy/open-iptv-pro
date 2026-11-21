@@ -128,6 +128,19 @@
  if(tvPage)new MutationObserver(()=>{
   if(open&&!tvPage.classList.contains('active-page'))close();
  }).observe(tvPage,{attributes:true,attributeFilter:['class']});
+ // Source management contains five in-page actions: expose the selected section
+ // for pointer, keyboard and screen-reader users without altering native jumps.
+ const sourceJumps=[...d.querySelectorAll('#page-sources .sources-hub-nav [data-source-jump]')];
+ const markSourceJump=destination=>{
+  sourceJumps.forEach(jump=>{
+   const active=jump.dataset.sourceJump===destination;
+   jump.classList.toggle('po-source-jump-active',active);
+   if(active)jump.setAttribute('aria-current','location');
+   else jump.removeAttribute('aria-current');
+  });
+ };
+ sourceJumps.forEach(jump=>jump.addEventListener('click',()=>markSourceJump(jump.dataset.sourceJump)));
+ if(sourceJumps.length)markSourceJump(sourceJumps[0].dataset.sourceJump);
  root.dataset.poWatchFlow='ready';
  window.PositronWatchFlow=Object.freeze({open:openPanel,close,refresh:draw});
 })();

@@ -491,3 +491,10 @@ P5.1.46 same-version CI repair: run 44866650681 failed 2/611 because historical 
 - Cause: legacy `.sources-hub-nav{flex-wrap:wrap}` with button 16px horizontal padding forces an orphan fifth tab at 720px.
 - Fix: in Horizon Sources at <=900px, use compact 10px button padding, nowrap flex, accessible horizontal overflow scroll on narrower viewports. Preserve native data-source-jump and input behaviors.
 - Regression: native Electron 720px Sources assert five buttons, same y for first/last, nowrap, overflow-x auto and no whole-document scroll spill. Node guard and visual before/after. Build+release pending.
+
+
+## P5.1.70 / v4.23.154 — Sources tool navigation lacks active section feedback
+- Input: real P5.1.69 720px Sources screenshot from run 44898216081 (read after single-row fix): five equal dark tabs offer no clue which in-page tool section is selected.
+- Root cause: original data-source-jump native buttons scroll but do not indicate selection with ARIA/current styling. This makes section navigation hard to orient when the sources view contains long tools.
+- Fix: existing buttons now expose exactly one `aria-current=location` and high-contrast teal selection; clicking each native button updates visual and screen-reader feedback without replacing source jump listeners or mutating IPTV data.
+- Regression: real Electron 720px Sources verifies exactly one active destination `smartDiscoverySection` by default and its computed border color, preserving previous no-wrap/overflow checks. Node regression guards event and ARIA wiring, pending screenshots/build.

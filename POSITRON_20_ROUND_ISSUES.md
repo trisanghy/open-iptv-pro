@@ -180,3 +180,5 @@ Action: Horizon-only scrollbar variable override (#40736c thumb, #101a23 track),
 | 06/20 | P5.1.68 / v4.23.152 | Real P5.1.67 TV 600px `positron-p5-07-real.png`, Actions 44897365785 | Double grid and ellipsis in compact sidebar More; original text glyph + CSS ::before/::first-letter overlap | Native four-square SVG, hide duplicate pseudo/text in compact, expand label only on rail open; real 600px SVG/geometry/no-overflow checks |
 
 | 07/20 | P5.1.69 / v4.23.153 | P5.1.68 real Sources 720px screenshot `positron-p5-15-real.png` | Fifth tool `Kiểm tra & sửa` wraps as lonely second row, wasting space | Responsive one-row keyboard-scrollable source nav, keep all five original jump handlers, Electron DOM first/last tab y equality and screenshot |
+
+| 08/20 | P5.1.70 / v4.23.154 | P5.1.69 real Sources 720px screenshot after layout repair | Five equally styled source tool buttons have no visible currently selected destination or aria-current | Preserve native click, add one high-contrast active tab and aria-current=location; Electron 720px computed style and selection-count assertions |

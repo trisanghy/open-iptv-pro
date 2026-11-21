@@ -37,7 +37,7 @@ test('P5 assets are loaded after P4 without replacing it',()=>{
 test('P5 release is immutable and versioned separately from P4.1',()=>{
  const pkg=JSON.parse(read('package.json'));
  const flow=read('.github/workflows/positron-lab.yml');
- assert.equal(pkg.version,'4.23.153');
+ assert.equal(pkg.version,'4.23.154');
  const label=pkg.description.match(/Positron\s+(P\d+\.\d+\.\d+)/)?.[1];
  assert.ok(label,'product P-label must accompany SemVer');
  assert.ok(flow.includes('TAG=positron/v'+pkg.version+'-'+label.toLowerCase()),'release tag and app version must match');
@@ -611,4 +611,13 @@ test('P5.1.69 native 720px Source tools stay in a single scrollable row',()=>{
  assert.ok(css.includes('flex-wrap:nowrap!important;overflow-x:auto!important'));
  assert.ok(audit.includes('navQa.verticalGap<=1'));
  assert.ok(audit.includes("navQa.scroll,'auto'"));
+});
+
+test('P5.1.70 Sources navigation reports the selected section to screen readers',()=>{
+ const js=read('renderer/positron-horizon-v4.js'),css=read('renderer/positron-horizon-v4.css'),qa=read('scripts/positron-20-extension.cjs');
+ assert.ok(js.includes("jump.setAttribute('aria-current','location')"));
+ assert.ok(js.includes('sourceJumps.forEach(jump=>jump.addEventListener'));
+ assert.ok(css.includes('button.po-source-jump-active'));
+ assert.ok(qa.includes('navQa.selectedCount,1'));
+ assert.ok(qa.includes('navQa.selectedAccent'));
 });

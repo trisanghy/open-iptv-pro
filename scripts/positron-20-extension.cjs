@@ -233,11 +233,16 @@ async function runTwenty(page){
     const buttons=[...nav.querySelectorAll('button')];
     const style=getComputedStyle(nav);
     const first=buttons[0].getBoundingClientRect(),last=buttons.at(-1).getBoundingClientRect();
-    return {count:buttons.length,wrap:style.flexWrap,scroll:style.overflowX,
+    const selected=buttons.filter(x=>x.getAttribute('aria-current')==='location');
+    return {count:buttons.length,selectedCount:selected.length,selectedTarget:selected[0]?.dataset.sourceJump,
+     selectedAccent:selected[0]?getComputedStyle(selected[0]).borderBottomColor:'',wrap:style.flexWrap,scroll:style.overflowX,
      firstTop:first.top,lastTop:last.top,verticalGap:Math.abs(last.top-first.top),
      parentOverflow:document.documentElement.scrollWidth>innerWidth+6};
    });
    assert.equal(navQa.count,5,'Source jump actions missing from compact toolbar: '+name);
+   assert.equal(navQa.selectedCount,1,'Source toolbar must identify one selected jump: '+name);
+   assert.equal(navQa.selectedTarget,'smartDiscoverySection','Source toolbar initially highlights wrong section: '+name);
+   assert.equal(navQa.selectedAccent,'rgb(90, 203, 178)','Selected Source tab has no visible accent: '+name);
    assert.equal(navQa.wrap,'nowrap','Source jump actions wrap into an orphan row: '+name);
    assert.ok(navQa.verticalGap<=1,'Fifth source tool button appears alone below row: '+name);
    assert.equal(navQa.scroll,'auto','Source jump controls cannot scroll when narrow: '+name);

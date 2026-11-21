@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.153",
-  "description": "Positron P5.1.69: Single-row responsive source management toolbar",
+  "version": "4.23.154",
+  "description": "Positron P5.1.70: Accessible active source navigation selection",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",
