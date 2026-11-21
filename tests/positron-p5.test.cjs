@@ -52,3 +52,5 @@ test('P5.1.4 compact header shows accessible short page title',()=>{const js=rea
 test('P5.1.5 compact page title covers 720px source layout',()=>{const css=read('renderer/positron-twenty.css');assert.ok(css.includes('@media(max-width:760px){html[data-positron="true"] #positronBar .p-heading'));});
 
 test('P5.1.6 Smart Discovery inherits theme card surface instead of black',()=>{const css=read('renderer/positron-twenty.css');assert.match(css,/\.p20-07 #page-sources \.source-hub-section\{\s*background:var\(--po-card\)!important/);});
+
+test('P5.1.6 Smart Discovery heading and its parent must share theme card surface',()=>{const css=read('renderer/positron-twenty.css');assert.ok(css.includes('#page-sources .source-hub-heading{background:var(--po-card)!important'));});

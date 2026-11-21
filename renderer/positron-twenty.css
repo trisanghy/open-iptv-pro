@@ -90,3 +90,6 @@ html[data-positron="true"] #page-tv #fullscreenBtn svg{display:block;width:19px;
 /* P5.1.5: Source page title screenshot at 720px had the same visible ellipsis; reuse compact titles through sidebar-rail breakpoint 760px. */
 
 /* P5.1.6: Sources screenshot 720px showed a near-black rectangular Discovery section (9,15,30) against dark navy navigation (20,33,56). Use the established theme card surface, not background black. */
+
+/* P5.1.6 screenshot follow-up: P4 .source-hub-heading retained --po-bg and was still a black band even after its parent was repaired. */
+html[data-positron="true"].p20-07 #page-sources .source-hub-heading{background:var(--po-card)!important;color:var(--po-ink)!important;border-color:var(--po-line)!important}

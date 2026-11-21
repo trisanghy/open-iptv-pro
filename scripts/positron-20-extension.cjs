@@ -46,7 +46,7 @@ async function runTwenty(page){
    return {page:document.querySelector('.page.active-page')?.id,
     viewport:innerWidth,overflow:document.documentElement.scrollWidth>innerWidth+6,
     player:get('#playerBox'),sidebar:get('#appSidebar'),
-    sources:get('#page-sources .sources-hub-nav'),sourceSection:get('#smartDiscoverySection'),epg:get('#page-epg .epg-filter'),
+    sources:get('#page-sources .sources-hub-nav'),sourceSection:get('#smartDiscoverySection'),sourceHeading:get('#page-sources .source-hub-heading'),epg:get('#page-epg .epg-filter'),
     controls:document.querySelectorAll('#page-tv button').length,
     transportVectors:['prevBtn','stopBtn','nextBtn','fsPrev','fsNext','fullscreenBtn'].every(id=>!!document.getElementById(id)?.querySelector('svg')),
     brandIcon:get('#appSidebar .brand-icon'),
@@ -78,6 +78,7 @@ async function runTwenty(page){
   if(target==='sources'){
    assert.ok(metrics.sourceSection,'Smart Discovery section missing');
    assert.equal(metrics.sourceSection.background,metrics.sources?.background,'Smart Discovery dark band must match source navigation theme');
+   assert.equal(metrics.sourceHeading?.background,metrics.sources?.background,'Smart Discovery heading must not be black');
    const channels=(metrics.sourceSection.background.match(/[0-9]+/g)||[]).map(Number).slice(0,3);
    assert.ok(channels.length===3&&channels.reduce((a,b)=>a+b,0)/3<110,
     'P5.1 regression: light Smart Discovery background '+metrics.sourceSection.background);
