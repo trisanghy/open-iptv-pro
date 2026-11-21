@@ -257,6 +257,8 @@ async function runTwenty(page){
      const panel=document.getElementById('poWatchFlowPanel');
      button.click();
      const opened=!panel.hidden&&button.getAttribute('aria-expanded')==='true';
+     const focusEntered=panel.contains(document.activeElement);
+     const firstUsefulFocus=document.activeElement===panel.querySelector('.po-watchflow-empty button');
      const groupCount=panel.querySelectorAll('[data-po-mode]').length;
      const reasons=panel.textContent.includes('bằng chứng hoạt động');
      const titleColor=getComputedStyle(panel.querySelector('h2')).color;
@@ -268,7 +270,8 @@ async function runTwenty(page){
      const emptyPlaylist=panel.dataset.emptyPlaylist==='true';
      const modesHidden=getComputedStyle(panel.querySelector('.po-watchflow-modes')).display==='none';
      document.getElementById('poWatchFlowClose').click();
-     return {opened,groupCount,reasons,titleColor,emptyPlaylist,modesHidden,overlapWithImport,overlapWithTitle,panelWidth:panelRect.width,closed:panel.hidden&&button.getAttribute('aria-expanded')==='false'};
+     const focusReturned=document.activeElement===button;
+     return {opened,groupCount,reasons,titleColor,emptyPlaylist,modesHidden,overlapWithImport,overlapWithTitle,focusEntered,firstUsefulFocus,focusReturned,panelWidth:panelRect.width,closed:panel.hidden&&button.getAttribute('aria-expanded')==='false'};
     });
     assert.equal(watchFlow.opened,true,'WatchFlow cannot open: '+name);
     assert.equal(watchFlow.closed,true,'WatchFlow cannot close: '+name);
@@ -278,6 +281,9 @@ async function runTwenty(page){
     assert.equal(watchFlow.modesHidden,true,'Empty WatchFlow wastes space on inactive genres: '+name);
     assert.equal(watchFlow.overlapWithImport,false,'WatchFlow obscures native Add URL: '+name);
     assert.equal(watchFlow.overlapWithTitle,false,'WatchFlow hides the native empty-player title: '+name);
+    assert.equal(watchFlow.focusEntered,true,'WatchFlow dialog did not receive keyboard focus: '+name);
+    assert.equal(watchFlow.firstUsefulFocus,true,'Empty WatchFlow did not focus source action: '+name);
+    assert.equal(watchFlow.focusReturned,true,'Closing WatchFlow did not restore toolbar focus: '+name);
     assert.ok(watchFlow.panelWidth<=320,'Empty WatchFlow too wide at 1360px: '+name);
     const titleRgb=(watchFlow.titleColor.match(/\d+/g)||[]).slice(0,3).map(Number);
     assert.ok(titleRgb.length===3&&titleRgb.every(x=>x>200),

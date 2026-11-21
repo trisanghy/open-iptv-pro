@@ -459,3 +459,9 @@ P5.1.46 same-version CI repair: run 44866650681 failed 2/611 because historical 
 - Root cause: the no-source panel redundantly repeats intro help above its empty-state card, extending from y72 to roughly y370 over the heading. The empty card already contains the source-access explanation and call to action.
 - Fix: hide only the redundant WatchFlow intro paragraph when there are zero native channels; do not change populated recommendations, button listeners or playlist data.
 - Regression: three real Electron 1360px themes calculate two-dimensional overlay intersection against both the native `#emptyPlayer h2` and Add URL. Reopen after screenshots and confirm build/release before counting the round.
+
+
+## P5.1.65 / v4.23.149 — Restore keyboard navigation inside WatchFlow
+- Input: Actual P5.1.64 Electron 1360px open WatchFlow screenshot and source-level interaction review: the floating dialog's `openPanel()` leaves active keyboard focus on the topbar trigger because the dialog is appended at end of `<body>`; Tab cannot immediately reach its useful actions.
+- Fix: Focus the native Add IPTV source action in the empty-playlist state, or the selected genre button when channels exist. Restore focus to the WatchFlow topbar trigger when closing from within dialog. Add visible focus ring. Preserve Escape to close and underlying playlist behavior.
+- Verification gate: new native Electron three-theme DOM focus in/out tests, Node regression and screenshot comparisons, no invented streams or autoplay; build/release only after screenshots have been opened.

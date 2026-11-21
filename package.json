@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.148",
-  "description": "Positron P5.1.64: No-source WatchFlow leaves the player title visible",
+  "version": "4.23.149",
+  "description": "Positron P5.1.65: WatchFlow keyboard focus and visible focus ring",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

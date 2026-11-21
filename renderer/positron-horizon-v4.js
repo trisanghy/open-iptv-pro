@@ -86,10 +86,18 @@
   }
  };
  const close=()=>{
+  const focusWasInside=panel.contains(d.activeElement);
   open=false;panel.hidden=true;toggle.setAttribute('aria-expanded','false');
+  if(focusWasInside)toggle.focus();
  };
  const openPanel=()=>{
   open=true;panel.hidden=false;toggle.setAttribute('aria-expanded','true');draw();
+  // Dialog is appended after the main app: focus its first useful action
+  // instead of leaving keyboard users on the topbar trigger.
+  const focusTarget=panel.dataset.emptyPlaylist==='true'
+   ?panel.querySelector('.po-watchflow-empty button')
+   :panel.querySelector('[data-po-mode][aria-pressed="true"]');
+  (focusTarget||byId('poWatchFlowClose')).focus();
  };
  toggle.addEventListener('click',()=>open?close():openPanel());
  byId('poWatchFlowClose').addEventListener('click',()=>{close();toggle.focus();});

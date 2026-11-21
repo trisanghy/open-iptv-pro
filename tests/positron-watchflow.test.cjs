@@ -56,7 +56,7 @@ test('Horizon system loads last, preserves native player, covers every page',()=
  for(const part of ['#appSidebar','#page-tv .tv-layout','#page-tv #playerBox','#channelList','.page:not(#page-tv)','#page-sources','#emptyPlayer'])
   assert.ok(css.includes(part),part+' not covered by Horizon design');
  assert.ok(!/html\[data-positron.*#video\s*\{[^}]*object-fit:/s.test(css),'video fit must remain user-configurable');
- assert.equal(JSON.parse(read('package.json')).version,'4.23.148');
+ assert.equal(JSON.parse(read('package.json')).version,'4.23.149');
 });
 
 test('Horizon defeats the legacy p50 sidebar width and retains an expandable rail',()=>{
@@ -135,4 +135,14 @@ test('P5.1.64 empty WatchFlow must not cover the native player heading',()=>{
  assert.ok(css.includes('.po-watchflow-panel[data-empty-playlist="true"] .po-watchflow-head p{display:none!important}'));
  assert.ok(audit.includes('watchFlow.overlapWithTitle,false'));
  assert.ok(audit.includes("querySelector('#emptyPlayer h2')"));
+});
+
+test('P5.1.65 WatchFlow restores keyboard focus and announces the source action',()=>{
+ const ui=read('renderer/positron-horizon-v4.js'),css=read('renderer/positron-horizon-v4.css'),audit=read('scripts/positron-20-extension.cjs');
+ assert.ok(ui.includes('panel.querySelector(\'.po-watchflow-empty button\')'));
+ assert.ok(ui.includes('if(focusWasInside)toggle.focus()'));
+ assert.ok(css.includes('.po-watchflow-panel button:focus-visible'));
+ assert.ok(audit.includes('watchFlow.focusEntered,true'));
+ assert.ok(audit.includes('watchFlow.firstUsefulFocus,true'));
+ assert.ok(audit.includes('watchFlow.focusReturned,true'));
 });

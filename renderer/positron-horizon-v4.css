@@ -523,3 +523,6 @@ html[data-positron="true"].po-v3.po-horizon #page-tv .unified-ai-row .unified-ai
 /* P5.1.64: The redundant introductory description left the no-source
    WatchFlow dialog on top of the native video empty-state heading. */
 .po-watchflow-panel[data-empty-playlist="true"] .po-watchflow-head p{display:none!important}
+
+/* P5.1.65: ensure dialog controls have an unmistakable focus ring. */
+.po-watchflow-panel button:focus-visible{outline:2px solid #91e8d6!important;outline-offset:3px!important}
