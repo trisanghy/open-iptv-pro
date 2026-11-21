@@ -1,4 +1,4 @@
-name: Audit Rust Lab Light theme (renderer browser preview)
+name: Audit Rust Lab Light Dark AMOLED interface
 on:
   push:
     branches: [experiment/rust-tauri-v2]
@@ -7,8 +7,11 @@ on:
       - renderer/rust-light-consistency-v23-8-92.css
       - renderer/rust-light-feature-polish-v23-8-97.css
       - renderer/rust-dark-browser-accent-v23-8-97.css
+      - renderer/rust-dark-amoled-coherence-v23-8-98.css
       - tests/rust-light-visual-audit.cjs
       - tests/rust-feature-gallery-v23-8-97.cjs
+      - tests/rust-dark-amoled-visual-audit-v23-8-98.cjs
+      - tests/rust-dark-amoled-coherence-v23-8-98.test.cjs
       - tests/rust-light-consistency-v23-8-92.test.cjs
       - tests/rust-light-feature-polish-v23-8-97.test.cjs
   workflow_dispatch:
@@ -41,7 +44,7 @@ jobs:
           NODE_PATH: ${{ runner.temp }}/iptv-playwright/node_modules
         run: |
           set -Eeuo pipefail
-          node --test tests/rust-light-consistency-v23-8-92.test.cjs tests/rust-light-feature-polish-v23-8-97.test.cjs
+          node --test tests/rust-light-consistency-v23-8-92.test.cjs tests/rust-light-feature-polish-v23-8-97.test.cjs tests/rust-dark-amoled-coherence-v23-8-98.test.cjs
           CHROME="$(command -v google-chrome)" node tests/rust-light-visual-audit.cjs
       - name: Capture all Rust Lab feature pages and expanded panels
         shell: bash
@@ -50,13 +53,21 @@ jobs:
         run: |
           set -Eeuo pipefail
           CHROME="$(command -v google-chrome)" node tests/rust-feature-gallery-v23-8-97.cjs
+      - name: Audit Dark and AMOLED every page and expanded tool
+        shell: bash
+        env:
+          NODE_PATH: ${{ runner.temp }}/iptv-playwright/node_modules
+        run: |
+          set -Eeuo pipefail
+          CHROME="$(command -v google-chrome)" node tests/rust-dark-amoled-visual-audit-v23-8-98.cjs
       - name: Upload screenshot and per-page colors (browser renderer, not native)
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: rust-lab-full-feature-visual-gallery
+          name: rust-lab-light-dark-amoled-visual-gallery
           path: |
             rust-light-audit/
             rust-feature-gallery/
+            rust-night-audit/
           if-no-files-found: warn
           retention-days: 10
