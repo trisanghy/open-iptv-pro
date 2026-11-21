@@ -37,7 +37,7 @@ test('P5 assets are loaded after P4 without replacing it',()=>{
 test('P5 release is immutable and versioned separately from P4.1',()=>{
  const pkg=JSON.parse(read('package.json'));
  const flow=read('.github/workflows/positron-lab.yml');
- assert.equal(pkg.version,'4.23.212');
+ assert.equal(pkg.version,'4.23.213');
  const label=pkg.description.match(/Positron\s+(P\d+\.\d+\.\d+)/)?.[1];
  assert.ok(label,'product P-label must accompany SemVer');
  assert.ok(flow.includes('TAG=positron/v'+pkg.version+'-'+label.toLowerCase()),'release tag and app version must match');
@@ -1062,4 +1062,18 @@ test('P5.1.128 immutable Release notes remain below GitHub 125k maximum',()=>{
  assert.ok(!workflow.includes('--notes-file POSITRON_P5_CHANGELOG.md'),'full growing changelog may exceed GitHub body size');
  assert.ok(workflow.includes('Full change history is included as POSITRON_P5_CHANGELOG.md in the Source ZIP asset'));
  assert.ok(workflow.includes('--prerelease --latest=false'));
+});
+
+test('P5.1.129 compact sticky reset masks trailing category glyph only when scrolled',()=>{
+ const src=read('renderer/web-channel-chooser-v42371.js');
+ const css=read('renderer/positron-horizon-v4.css');
+ const qa=read('scripts/positron-20-extension.cjs');
+ assert.ok(src.includes("groups.addEventListener('scroll',syncPinnedResetMask,{passive:true})"));
+ assert.ok(src.includes("groups.classList.toggle('po-groups-scrolled',groups.scrollLeft>4)"));
+ assert.ok(css.includes('P5.1.129: genuine P5.1.128 Electron 450px screenshot'));
+ assert.ok(css.includes('.po-groups-scrolled>.web-chooser-chip:first-child::after'));
+ assert.ok(css.includes('right:-18px!important'));
+ assert.ok(qa.includes("resetClearsMask:rail.scrollLeft<=1"));
+ assert.ok(qa.includes("masksGhostTap:hit===all||all.contains(hit)"));
+ assert.ok(qa.includes('positron-p51129-right-mask-450-real.png'));
 });

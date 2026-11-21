@@ -20,3 +20,9 @@ Baseline P5.1.105: `937db5120885efefe32c62fe3a9476601e76955c`. Only the `Positro
 
 ## Future rounds
 Evaluate defects revealed by real screenshot of previous build before making changes; prioritize video controls, keyboard accessibility, channel library, Watch Later, Cast/PiP, EPG/Sources, and small-screen layout. Remaining 18 are NOT yet completed.
+
+## New upload — 22/11/2026
+- Verified P5.1.128 HEAD 7003357116d97ec3d98c76af54071fd4e81b717d, Actions #44948172418 success.
+- Opened genuine Electron baseline `p5-20-rounds/positron-p51128-dropdown-chip-450-real.png`.
+- Defect: clipped neighbour-group letter visible to RIGHT of sticky "Tất cả" after selecting "Tin tức" on 450px.
+- Proposed P5.1.129: conditional right-hand mask and real screenshot regression; count only after verified release and manual after-image review.

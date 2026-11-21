@@ -41,6 +41,10 @@
  const $=id=>document.getElementById(id);
  const grid=$('webChooserGrid'),groups=$('webChooserGroups'),search=$('webChooserSearch'),group=$('webChooserGroup'),sort=$('webChooserSort'),status=$('webChooserStatus');
  const prev=$('webChooserPrev'),next=$('webChooserNext'),pageLabel=$('webChooserPage'),favGrid=$('webChooserFavorites'),recentGrid=$('webChooserRecent');
+ // P5.1.129: actual P5.1.128 Electron screenshot shows a clipped category
+ // letter to the RIGHT of the pinned All reset. Track native scroll state.
+ const syncPinnedResetMask=()=>groups.classList.toggle('po-groups-scrolled',groups.scrollLeft>4);
+ groups.addEventListener('scroll',syncPinnedResetMask,{passive:true});
  // P5.1.111 same-round screenshot QA: one-row chips alone did not raise the
  // first channel card above the fold. Preserve native group/sort controls in
  // an accessible disclosure on 450px; keep them expanded on desktop.
@@ -184,6 +188,7 @@
    groups.append(btn);
   }
   groups.scrollLeft=previousChipsScroll;
+  syncPinnedResetMask();
  }
  function renderSide(target,list,label){target.replaceChildren();if(!list.length){empty(target,'Chưa có kênh '+label);return;}list.slice(0,6).forEach(c=>target.append(channelCard(c,true)));}
  function render(){
@@ -255,6 +260,7 @@
   const active=groups.querySelector('button.web-chooser-chip.active');
   if(!group.value)groups.scrollLeft=0;
   else active?.scrollIntoView({block:'nearest',inline:'nearest'});
+  requestAnimationFrame(syncPinnedResetMask);
  });sort.addEventListener('change',()=>{page=0;render();});
  prev.addEventListener('click',()=>{page=Math.max(0,page-1);render();});
  next.addEventListener('click',()=>{page++;render();});

@@ -1109,3 +1109,13 @@ html[data-positron="true"].po-horizon #toastArea.toast-area .toast .po-toast-dis
   pointer-events:auto!important;
  }
 }
+
+/* P5.1.129: genuine P5.1.128 Electron 450px screenshot shows a clipped
+   category letter to the RIGHT of sticky All; mask only when scrolled. */
+@media(max-width:600px){
+ html[data-positron="true"].po-horizon #page-tv #webChooserGroups.web-chooser-chips.po-groups-scrolled>.web-chooser-chip:first-child::after{
+  content:""!important;position:absolute!important;right:-18px!important;
+  top:-6px!important;bottom:-6px!important;width:18px!important;
+  background:#0a1b29!important;pointer-events:auto!important;
+ }
+}

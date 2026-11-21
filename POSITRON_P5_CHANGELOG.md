@@ -1,3 +1,11 @@
+## P5.1.129 — Repair clipped group-chip text in compact Electron / v4.23.213
+
+- Baseline: opened genuine P5.1.128 450px Electron screenshot `positron-p51128-dropdown-chip-450-real.png` from Actions #44948172418, revealing a stray clipped letter RIGHT of sticky "Tất cả" after selecting "Tin tức".
+- Root cause: P5.1.126 masks the left side only. Horizontal scroll after P5.1.128 dropdown selection leaves a small category fragment visible at the right.
+- Fix: native scroll synchronization toggles `po-groups-scrolled`; scoped right-side `::after` mask applies only while scrolled. No changes to playlist, playback, favorites, stored data or group semantics.
+- Regression: Node syntax/asset assertions and true Electron 450px screenshot QA of computed mask, hit-testing, active filter, reset and no-autoplay. After: `positron-p51129-right-mask-450-real.png`.
+- CANDIDATE pending Actions verification, opened after-image review and immutable Release installers.
+
 ## P5.1.107 — Replace font-dependent compact channel chooser icons with SVG / Electron v4.23.191
 
 - Actual P5.1.106 native Electron TV screenshots at 450px/540px: channel chooser tabs and grid/list toggles still use platform text-glyph symbols (▣, ☆, ◷, ▦, ☷) rather than a coherent icon set. Some appear like isolated small squares.

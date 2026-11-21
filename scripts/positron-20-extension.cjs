@@ -2393,9 +2393,43 @@ async function runTwenty(page){
  for(const [key,value] of Object.entries(dropdownChipQA))
   assert.equal(value,true,'P5.1.128 native dropdown-chip '+key+': '+JSON.stringify(dropdownChipQA));
 
+ // P5.1.129: real Electron 450px after-image + DOM hit-test.
+ await page.evaluate(()=>{document.getElementById('webChooserAdvanced').open=true;document.getElementById('webChooserGroups').scrollLeft=0;});
+ await page.locator('#webChooserGroup').selectOption('Tin tức');
+ await page.evaluate(()=>{document.getElementById('webChooserAdvanced').open=false;});
+ await page.waitForTimeout(90);
+ const pinnedRightMaskQA=await page.evaluate(()=>{
+  const rail=document.getElementById('webChooserGroups');
+  const all=rail.querySelector('button[data-po-quick-group="all"]');
+  const b=all.getBoundingClientRect(),r=rail.getBoundingClientRect();
+  const mask=getComputedStyle(all,'::after');
+  const hit=document.elementFromPoint(Math.min(b.right+9,r.right-5),b.top+b.height/2);
+  return {scrolled:rail.scrollLeft>40,
+   maskEnabled:rail.classList.contains('po-groups-scrolled'),
+   maskWidth:parseFloat(mask.width)>=17,
+   maskOpaque:mask.backgroundColor==='rgb(10, 27, 41)',
+   masksGhostTap:hit===all||all.contains(hit),
+   activeGroupStillVisible:!!rail.querySelector('button[data-po-quick-group="Tin tức"].active'),
+   filteredCorrectly:document.getElementById('webChooserGroup').value==='Tin tức',
+   noOverflow:document.documentElement.scrollWidth<=innerWidth+1,
+   noAutoplay:window.IPTVState.getCurrent()===null};
+ });
+ await page.screenshot({path:path.join(out,'positron-p51129-right-mask-450-real.png'),animations:'disabled'});
+ await page.evaluate(()=>{document.getElementById('webChooserAdvanced').open=true;});
+ await page.locator('#webChooserGroup').selectOption('');
+ await page.waitForTimeout(70);
+ Object.assign(pinnedRightMaskQA,await page.evaluate(()=>{
+  const rail=document.getElementById('webChooserGroups');
+  const all=rail.querySelector('button[data-po-quick-group="all"]');
+  return {resetClearsMask:rail.scrollLeft<=1&&!rail.classList.contains('po-groups-scrolled'),
+   resetRevealsNextChip:getComputedStyle(all,'::after').content==='none'};
+ }));
+ for(const [key,value] of Object.entries(pinnedRightMaskQA))
+  assert.equal(value,true,'P5.1.129 real Electron right-chip mask '+key+': '+JSON.stringify(pinnedRightMaskQA));
+
  await page.setViewportSize({width:1360,height:820});
   const report={type:'Positron P5 twenty distinct desktop screenshot cases',realElectron:true,syntheticChannels:false,
-  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA,chooserQa,toastLayoutQA,nativeToastQA,compactIdleQA,channelChipRailQA,advancedFilterQA,readableCardsQA,keyboardTabQA,favoriteEmptyQA,duplicateEmptyQA,categoryFilterQA,categoryFixtureQA,compactSingleQA,directFavoriteQA,favoriteCountQA,compactToastStackQA,toastDismissQA,toastFocusReturnQA,toastDockQA,wheelQA,pinnedAllQA,pinnedMaskQA,categoryKeyQA,dropdownChipQA};
+  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA,chooserQa,toastLayoutQA,nativeToastQA,compactIdleQA,channelChipRailQA,advancedFilterQA,readableCardsQA,keyboardTabQA,favoriteEmptyQA,duplicateEmptyQA,categoryFilterQA,categoryFixtureQA,compactSingleQA,directFavoriteQA,favoriteCountQA,compactToastStackQA,toastDismissQA,toastFocusReturnQA,toastDockQA,wheelQA,pinnedAllQA,pinnedMaskQA,categoryKeyQA,dropdownChipQA,pinnedRightMaskQA};
  fs.writeFileSync(path.resolve('positron-evidence','audit-p5-20-rounds.json'),JSON.stringify(report,null,2));
  return report;
 }
