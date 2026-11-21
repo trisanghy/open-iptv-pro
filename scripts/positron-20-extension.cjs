@@ -1040,6 +1040,37 @@ async function runTwenty(page){
  for(const key of ['hiddenWhenIdle','visibleWithSelection','hiddenAfterRestore','noPlaying','preserved'])
   assert.equal(videoLabAvailabilityQa[key],true,'Video Lab availability regression: '+key);
  await page.screenshot({path:path.join(out,'positron-p5190-player-ready-video-lab-hidden-552-metadata-real.png'),animations:'disabled'});
+
+// P5.1.91: inspect the computed Web SVG mask on the real Electron native
+// Play button. Switch glyph text without clicking or ever starting video.
+ const webPlayIconQa=await page.evaluate(async()=>{
+  const button=document.getElementById('playBtn'),video=document.getElementById('video');
+  const original=button.textContent;
+  const preview=()=>{const css=getComputedStyle(button,'::before');return {
+    mask:css.webkitMaskImage||css.maskImage,
+    clip:css.clipPath,
+    width:Math.round(parseFloat(css.width)),
+    playing:button.dataset.poPlaying};};
+  const before=preview();
+  button.textContent='Ⅱ';
+  await new Promise(resolve=>requestAnimationFrame(resolve));
+  const during=preview();
+  button.textContent=original;
+  await new Promise(resolve=>requestAnimationFrame(resolve));
+  const after=preview();
+  return {webMask:before.mask.includes('data:image/svg+xml'),
+    playAndPauseDistinct:before.mask!==during.mask,
+    pauseState:during.playing==='true',
+    restoredPlay:after.playing==='false'&&after.mask===before.mask,
+    noClip:before.clip==='none'&&during.clip==='none',
+    vectorSize:before.width===22&&during.width===22,
+    notPlaying:window.IPTVState.getCurrent()===null&&video.paused,
+    noNativeHandlersRemoved:!!button};
+ });
+ for(const key of ['webMask','playAndPauseDistinct','pauseState','restoredPlay','noClip','vectorSize','notPlaying','noNativeHandlersRemoved'])
+  assert.equal(webPlayIconQa[key],true,'P5.1.91 native Play SVG mask regression: '+key);
+ await page.screenshot({path:path.join(out,'positron-p5191-web-play-svg-552-metadata-real.png'),animations:'disabled'});
+
  // P5.1.76: the no-source Doctor simplification must disappear when native
  // metadata-only channels are imported, without touching any live URL.
  await page.evaluate(()=>window.IPTVState.setPage('doctor'));

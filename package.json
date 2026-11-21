@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.174",
-  "description": "Positron P5.1.90: hide experimental video controls until a native channel is selected",
+  "version": "4.23.175",
+  "description": "Positron P5.1.91: native Play/Pause icons match verified Web SVG paths",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

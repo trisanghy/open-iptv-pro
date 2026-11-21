@@ -1,3 +1,10 @@
+## P5.1.91 — Match native Play/Pause glyphs to Web original SVG / v4.23.175
+
+- Input: actual P5.1.90 Electron screenshot `positron-p5190-player-ready-video-lab-hidden-552-metadata-real.png`. The legacy Electron Play triangle was made with CSS `clip-path:polygon(...)` and pause using `linear-gradient`, unlike the modern verified SVG icon set from `web/online/web-player-icons.css`.
+- Read the **Web branch only** and bring its exact SVG data URI masks for Play and Pause into the Positron-specific media CSS. Restore 22×22 consistent stroke geometry. Preserve the existing original Play button, click handlers, MutationObserver deriving state from native app glyph, disabled style, current theme colors, player and media IPC; no other branch changed.
+- Native Electron CDP QA temporarily updates only decorative Play text (without clicks, playback or network requests), asserts CSS SVG mask, 22px sizing, proper switch to Pause and restoration, then captures `positron-p5191-web-play-svg-552-metadata-real.png`.
+- Node regression asserts masks, Web-origin geometry and native handler wiring. Do not claim feature tested until QA screenshot is opened and CI passes.
+
 ## P5.1.90 — Hide experimental Video Lab when nothing is selected / v4.23.174
 
 - Input: actual P5.1.89 Electron 1360×820 screenshot `positron-p5189-player-ready-subtitle-552-metadata-real.png` shows an active-looking `Video Lab · Beta` control while the player has no selected channel. Source `renderer/video-enhancement-electron-v42375.js` confirms its AI enhancement pipeline is not connected; original button opens a UI-only experimental panel and saves settings but does not enable live AI upscaling.
