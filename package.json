@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.188",
-  "description": "Positron P5.1.104: show unavailable saved Watch Later bookmarks without deleting them",
+  "version": "4.23.189",
+  "description": "Positron P5.1.105: explicit two-step management of unavailable Watch Later bookmarks",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

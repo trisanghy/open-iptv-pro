@@ -184,3 +184,11 @@ html[data-positron="true"].po-horizon body #poWatchFlowPanel.po-watchflow-panel 
 
 /* P5.1.104: subtle local-only notice for saved channels absent from current sources. */
 #poWatchFlowPanel #poWatchLaterUnavailable.po-watchlater-unavailable{display:block;color:#b6c8ce;background:#1b2d36;border-left:2px solid #587a80;padding:8px 10px;margin:10px 0 6px;line-height:1.5;font-size:11px;border-radius:3px}
+
+/* P5.1.105: optional local saved-channel recovery, no destructive defaults. */
+#poWatchFlowPanel #poWatchLaterDormantManager.po-watchlater-manager{margin:8px 0 10px;border:1px solid #405b62;border-radius:8px;color:#bbd1d6;background:#142630;padding:8px 10px;font-size:11px}
+#poWatchFlowPanel #poWatchLaterDormantManager summary{cursor:pointer;user-select:none;font-weight:650;line-height:1.6}
+#poWatchFlowPanel .po-watchlater-dormant-row{display:flex;flex-wrap:wrap;align-items:center;gap:8px;justify-content:space-between;padding:8px 0;border-top:1px solid #38505c}
+#poWatchFlowPanel .po-watchlater-dormant-row span{flex:1;min-width:0;overflow-wrap:anywhere}
+#poWatchFlowPanel .po-watchlater-dormant-row button{min-width:94px;min-height:32px;border:1px solid #63817f;border-radius:7px;background:#24413f;color:#d8e9e3;cursor:pointer;font-size:11px}
+#poWatchFlowPanel .po-watchlater-dormant-row button[data-confirm="yes"]{border-color:#ccad8f;background:#543c34;color:#ffe4cc}

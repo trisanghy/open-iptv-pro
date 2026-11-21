@@ -720,3 +720,9 @@ P5.1.81 follow-up: real Electron capture found nav overflow; replace flexible no
 - Add `unavailable(rows,channels)` to count fingerprints with no currently playable matching native channel, source-scoped and without checking stream URLs externally. UI shows a quiet privacy-preserving note while keeping all bookmarks in localStorage for source recovery. No auto-delete, autoplay or network fetch.
 - Add Node regression for dead, missing, wrong-source and blank-URL channels, and native Electron QA under a 552-channel metadata-only dataset. Capture `positron-p51104-watchlater-unavailable-552-real.png`, audit note geometry, unchanged bookmarks and idle player.
 - Pending: verify screenshot by opening real PNG and CI release Windows Setup/Portable + Mac DMG before counting.
+
+## P5.1.105 — Explicit two-step cleanup of unavailable bookmarks (new batch 04/20)
+- Opened P5.1.104 actual Electron screenshot `positron-p51104-watchlater-unavailable-552-real.png`: status notice tells users a source is unavailable but gives no way to free dormant saved slots while retaining healthy bookmarks.
+- Add opt-in details manager. Display only sanitized normalized bookmark keys, never source URL, token or full M3U. On first click change the action to `Xác nhận bỏ` without any data write; on second confirm revalidate that the selected fingerprint is still unavailable before removing only that bookmark from localStorage. Never auto-remove when source is offline.
+- Node regression ensures source restored between clicks cannot be mistakenly deleted; native Electron QA checks first-click no deletion, second click exactly one deletion, original available card survives and no stream plays. Screenshot `positron-p51105-dormant-manage-before-real.png` and `-after-real.png`.
+- No claim completed until screenshots reviewed and prerelease asset checks pass.

@@ -1480,6 +1480,45 @@ async function runTwenty(page){
   assert.equal(unavailableSavedQA[key],true,'P5.1.104 dormant saved-channel native QA failed: '+key);
  await page.screenshot({path:path.join(out,'positron-p51104-watchlater-unavailable-552-real.png'),animations:'disabled'});
 
+// P5.1.105: user opens dormant manager and explicitly confirms removal.
+// The first click must never delete; the second click removes only the
+// unresolved fingerprint, leaving the accessible channel untouched.
+ const dormantManageBefore=await page.evaluate(()=>{
+  const core=window.PositronWatchLaterCore;
+  const details=document.getElementById('poWatchLaterDormantManager');
+  const summary=details?.querySelector('summary');
+  if(!summary)return {ready:false};
+  summary.click();
+  const remove=details.querySelector('.po-watchlater-dormant-row button');
+  const before=localStorage.getItem(core.STORAGE_KEY);
+  remove?.scrollIntoView({block:'nearest'});
+  remove?.click();
+  const r=remove?.getBoundingClientRect(),p=document.getElementById('poWatchFlowPanel').getBoundingClientRect();
+  return {ready:details.open&&!!remove,confirmation:remove?.textContent==='Xác nhận bỏ',
+   storageUnchanged:localStorage.getItem(core.STORAGE_KEY)===before,
+   stillTwo:core.compact(JSON.parse(before||'[]')).length===2,
+   buttonReachable:!!r&&r.width>=80&&r.height>=30&&r.bottom<=p.bottom+2,
+   noAutoplay:window.IPTVState.getCurrent()===null};
+ });
+ for(const key of ['ready','confirmation','storageUnchanged','stillTwo','buttonReachable','noAutoplay'])
+  assert.equal(dormantManageBefore[key],true,'P5.1.105 dormant manager first-confirm native QA failed: '+key);
+ await page.screenshot({path:path.join(out,'positron-p51105-dormant-manage-before-real.png'),animations:'disabled'});
+ const dormantManageAfter=await page.evaluate(()=>{
+  const core=window.PositronWatchLaterCore;
+  const btn=document.querySelector('#poWatchLaterDormantManager .po-watchlater-dormant-row button');
+  btn?.click();
+  const store=localStorage.getItem(core.STORAGE_KEY),rows=core.compact(JSON.parse(store||'[]'));
+  const cards=document.querySelectorAll('#poFlowPlusResults .po-flowplus-card');
+  return {oneSavedRemains:rows.length===1&&cards.length===1,
+   noStaleNote:!document.getElementById('poWatchLaterUnavailable'),
+   remainingIsValid:core.unavailable(rows,window.IPTVState.getChannels())===0,
+   playerIdle:window.IPTVState.getCurrent()===null};
+ });
+ for(const key of ['oneSavedRemains','noStaleNote','remainingIsValid','playerIdle'])
+  assert.equal(dormantManageAfter[key],true,'P5.1.105 confirmed removal native QA failed: '+key);
+ await page.screenshot({path:path.join(out,'positron-p51105-dormant-manage-after-real.png'),animations:'disabled'});
+
+
 
 
 

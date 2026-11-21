@@ -211,6 +211,32 @@
     const notice=label(missing+' kênh Xem sau chưa khả dụng từ nguồn hiện tại. Đánh dấu vẫn được giữ trên thiết bị, không tự xóa.','po-watchlater-unavailable');
     notice.id='poWatchLaterUnavailable';notice.setAttribute('role','status');
     content.append(notice);
+    // P5.1.105: explicit, two-step local cleanup for dormant bookmarks.
+    // A temporary source outage must never trigger automatic deletion.
+    const manager=d.createElement('details');manager.id='poWatchLaterDormantManager';manager.className='po-watchlater-manager';
+    const summary=d.createElement('summary');summary.textContent='Quản lý '+missing+' dấu kênh chưa khả dụng';
+    manager.append(summary);
+    for(const entry of watchLater?.unavailableEntries?.(saved,collection)||[]){
+     const row=d.createElement('div');row.className='po-watchlater-dormant-row';
+     const name=d.createElement('span');
+     name.textContent='Đã lưu: '+entry.key.replace(/^(?:name|id):/,'');
+     const remove=d.createElement('button');remove.type='button';remove.textContent='Bỏ đánh dấu';
+     remove.setAttribute('aria-label','Bỏ đánh dấu kênh chưa khả dụng '+name.textContent);
+     remove.addEventListener('click',()=>{
+      if(remove.dataset.confirm!=='yes'){
+       remove.dataset.confirm='yes';remove.textContent='Xác nhận bỏ';
+       remove.setAttribute('aria-label','Xác nhận bỏ dấu kênh chưa khả dụng');
+       return;
+      }
+      const change=watchLater.removeUnavailable(saved,channels(),entry);
+      if(!change.ok){render();return;}
+      try{window.localStorage.setItem(watchLater.STORAGE_KEY,JSON.stringify(change.rows));}
+      catch{state()?.toast?.('Không thể thay đổi dấu kênh trên thiết bị.','error');return;}
+      saved=change.rows;render();
+     });
+     row.append(name,remove);manager.append(row);
+    }
+    content.append(manager);
    }
    heading('Tiếp tục xem','Chỉ các kênh từng lên hình thật trên thiết bị này.');
    const played=core.continueWatching(collection,recent(),5);

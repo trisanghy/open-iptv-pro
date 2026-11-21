@@ -189,3 +189,33 @@ test('P5.1.104 native unavailable bookmark notice retains local data and no auto
  assert.ok(qa.includes('positron-p51104-watchlater-unavailable-552-real.png'));
  assert.ok(flow.includes('positron-p51104-watchlater-unavailable-552-real.png'));
 });
+
+test('P5.1.105 manual stale-bookmark removal preserves active bookmarks and checks current availability',()=>{
+ const available=C('main','a','VTV1'),missing=C('removed','b','Offline Archive');
+ let rows=later.toggle([],available).rows;rows=later.toggle(rows,missing).rows;
+ assert.equal(later.unavailableEntries(rows,[available]).length,1);
+ const dormant=later.unavailableEntries(rows,[available])[0];
+ assert.equal(dormant.key,'name:offline archive');
+ const snapshot=JSON.stringify(rows);
+ const reject=later.removeUnavailable(rows,[available,missing],dormant);
+ assert.equal(reject.ok,false,'restored sources cannot be removed via stale flow');
+ assert.equal(JSON.stringify(reject.rows),snapshot);
+ const cleared=later.removeUnavailable(rows,[available],dormant);
+ assert.equal(cleared.ok,true);
+ assert.equal(cleared.rows.length,1);
+ assert.equal(later.has(cleared.rows,available),true);
+ assert.equal(later.has(cleared.rows,missing),false);
+ assert.equal(JSON.stringify(rows),snapshot,'original state stays immutable');
+ assert.equal(later.removeUnavailable(rows,[available],{source:'00000000',key:'name:fake'}).ok,false);
+});
+test('P5.1.105 native two-step stale management has before/after screenshots',()=>{
+ const ui=fs.readFileSync('renderer/positron-watchflow-next.js','utf8');
+ const qa=fs.readFileSync('scripts/positron-20-extension.cjs','utf8');
+ const flow=fs.readFileSync('.github/workflows/positron-lab.yml','utf8');
+ assert.ok(ui.includes("manager.id='poWatchLaterDormantManager'"));
+ assert.ok(ui.includes("remove.dataset.confirm!=='yes'"));
+ assert.ok(ui.includes('watchLater.removeUnavailable(saved,channels(),entry)'));
+ assert.ok(qa.includes('positron-p51105-dormant-manage-before-real.png'));
+ assert.ok(qa.includes('positron-p51105-dormant-manage-after-real.png'));
+ assert.ok(flow.includes('positron-p51105-dormant-manage-after-real.png'));
+});
