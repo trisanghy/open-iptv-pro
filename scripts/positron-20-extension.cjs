@@ -2304,9 +2304,29 @@ async function runTwenty(page){
  for(const [key,value] of Object.entries(pinnedAllQA))
   assert.equal(value,true,'P5.1.125 native pinned-All chip '+key+': '+JSON.stringify(pinnedAllQA));
 
+ 
+ // P5.1.126: Verify visual/hit-testing mask on genuine Electron 450px,
+ // not a webpage mockup. The old source still owns group filter buttons.
+ await page.evaluate(()=>{const rail=document.getElementById('webChooserGroups');rail.scrollLeft=rail.scrollWidth;});
+ const pinnedMaskQA=await page.evaluate(()=>{
+  const rail=document.getElementById('webChooserGroups');
+  const all=rail.querySelector('button[data-po-quick-group="all"]');
+  const mask=getComputedStyle(all,'::before');
+  const rect=all.getBoundingClientRect(),lane=rail.getBoundingClientRect();
+  const hit=document.elementFromPoint(rect.left-10,rect.top+rect.height/2);
+  return {allVisible:rect.left>=lane.left-2,
+   maskWidth:parseFloat(mask.width)>=20,
+   maskOpaque:mask.backgroundColor==='rgb(10, 27, 41)',
+   maskCapturesTap:hit===all||all.contains(hit),
+   noOverflow:document.documentElement.scrollWidth<=innerWidth+1};
+ });
+ await page.screenshot({path:path.join(out,'positron-p51126-pinned-all-masked-450-real.png'),animations:'disabled'});
+ for(const [key,value] of Object.entries(pinnedMaskQA))
+  assert.equal(value,true,'P5.1.126 Electron pinned mask '+key+': '+JSON.stringify(pinnedMaskQA));
+
  await page.setViewportSize({width:1360,height:820});
   const report={type:'Positron P5 twenty distinct desktop screenshot cases',realElectron:true,syntheticChannels:false,
-  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA,chooserQa,toastLayoutQA,nativeToastQA,compactIdleQA,channelChipRailQA,advancedFilterQA,readableCardsQA,keyboardTabQA,favoriteEmptyQA,duplicateEmptyQA,categoryFilterQA,categoryFixtureQA,compactSingleQA,directFavoriteQA,favoriteCountQA,compactToastStackQA,toastDismissQA,toastFocusReturnQA,toastDockQA,wheelQA,pinnedAllQA};
+  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA,chooserQa,toastLayoutQA,nativeToastQA,compactIdleQA,channelChipRailQA,advancedFilterQA,readableCardsQA,keyboardTabQA,favoriteEmptyQA,duplicateEmptyQA,categoryFilterQA,categoryFixtureQA,compactSingleQA,directFavoriteQA,favoriteCountQA,compactToastStackQA,toastDismissQA,toastFocusReturnQA,toastDockQA,wheelQA,pinnedAllQA,pinnedMaskQA};
  fs.writeFileSync(path.resolve('positron-evidence','audit-p5-20-rounds.json'),JSON.stringify(report,null,2));
  return report;
 }

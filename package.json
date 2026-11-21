@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.209",
-  "description": "Positron P5.1.125: persistent All Channels reset on compact category rail",
+  "version": "4.23.210",
+  "description": "Positron P5.1.126: prevent clipped channel-group labels behind pinned All reset",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

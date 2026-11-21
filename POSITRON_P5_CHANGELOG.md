@@ -879,3 +879,9 @@ P5.1.81 follow-up: real Electron capture found nav overflow; replace flexible no
 - Fix: make only the first native chip position:sticky at the left edge <=600px, preserving the full group catalog, native wheel/touch/keyboard, focus restoration and playlist/player behavior. It remains a normal button, no duplicate UI.
 - New regression: Node test and actual Electron 450px screenshot `positron-p51125-pinned-all-450-real.png` plus geometry, hit-target, actual filter switch/reset, focus, overflow checks.
 - Status: candidate pending 6/6 CI, manual after-image review, and immutable Release binaries verification.
+
+## P5.1.126 / Electron v4.23.210 — Hide clipped category labels behind pinned All reset
+- Input: direct visual review of P5.1.125 actual Electron 450x820 screenshot `positron-p51125-pinned-all-450-real.png`. The native sticky All chip works and 9/9 QA passes, but fragments of underlying horizontally scrolled chip text remain visible in the narrow margin at its left.
+- Root cause: sticky chip overlays only its own border box, while the 10px scroll-lane padding shows clipped neighboring labels.
+- Fix: add a scoped 22px dark mask using the original first chip's own ::before and let it capture pointer events, preventing invisible category selection in the masked region. Do not remove native group controls or modify playlists/playback.
+- Regression: Node source test; real Electron computed pseudo style, masked hit-test, no-overflow, new screenshot `positron-p51126-pinned-all-masked-450-real.png`. Pending full CI and immutable Release.

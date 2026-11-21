@@ -37,7 +37,7 @@ test('P5 assets are loaded after P4 without replacing it',()=>{
 test('P5 release is immutable and versioned separately from P4.1',()=>{
  const pkg=JSON.parse(read('package.json'));
  const flow=read('.github/workflows/positron-lab.yml');
- assert.equal(pkg.version,'4.23.209');
+ assert.equal(pkg.version,'4.23.210');
  const label=pkg.description.match(/Positron\s+(P\d+\.\d+\.\d+)/)?.[1];
  assert.ok(label,'product P-label must accompany SemVer');
  assert.ok(flow.includes('TAG=positron/v'+pkg.version+'-'+label.toLowerCase()),'release tag and app version must match');
@@ -1018,4 +1018,15 @@ test('P5.1.125 compact All channels reset stays usable when category chips scrol
  for(const token of ['pinnedVisible:left.left>=rect.left-2',
   'allResetClearsGroup:','positron-p51125-pinned-all-450-real.png'])
   assert.ok(qa.includes(token),'missing native pinned-All verification '+token);
+});
+
+test('P5.1.126 pinned All reset blocks clipped underlying chip text and clicks',()=>{
+ const css=read('renderer/positron-horizon-v4.css'),qa=read('scripts/positron-20-extension.cjs');
+ assert.ok(css.includes('P5.1.126: The real P5.1.125 450px Electron image'));
+ assert.ok(css.includes('#webChooserGroups.web-chooser-chips>.web-chooser-chip:first-child::before'));
+ assert.ok(css.includes('left:-22px!important;top:-6px!important;bottom:-6px!important'));
+ assert.ok(css.includes('width:22px!important;background:#0a1b29!important'));
+ assert.ok(css.includes('pointer-events:auto!important'));
+ for(const token of ['maskOpaque:mask.backgroundColor===','maskCapturesTap:hit===all||all.contains(hit)','positron-p51126-pinned-all-masked-450-real.png'])
+  assert.ok(qa.includes(token),'missing native Electron mask regression '+token);
 });

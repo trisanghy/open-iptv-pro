@@ -177,3 +177,9 @@ Not yet started. Choose each new repair from the preceding real screenshot, with
 - Fix: preserve the existing first native All chip and make it sticky only on compact windows, no second duplicate button; native filtering/playback unchanged.
 - Evidence: new Node regression and Electron geometry/hit-target/filter-reset checks, actual new image `positron-p51125-pinned-all-450-real.png`, distinct version+commit and release only if verified.
 - Status: candidate, NOT a completed repair round until CI/after-image/Release pass.
+
+## New file-triggered batch round 03/20 — P5.1.126 / v4.23.210 — CANDIDATE
+- Input: opened real P5.1.125 screenshot `positron-p51125-pinned-all-450-real.png` (native filter reset + focus checks all passed); visible clipped letters behind sticky All badge.
+- Root: category rail has 10px left padding and overlay only spans the sticky button's own rectangle, so scrolled-away text peeks around it.
+- Fix: original All chip gains an opaque interactive ::before overhang, scoped to compact window only, preserving filtering/wheel/keyboard and storage.
+- Native evidence: `positron-p51126-pinned-all-masked-450-real.png`, computed pseudo sizing and click-hit target, unique P5.1.126 version/CI/release if verified; do not count until full checks complete.
