@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.222",
-  "description": "Positron P5.1.138: chuyển trang kênh bằng PageDown PageUp",
+  "version": "4.23.223",
+  "description": "Positron P5.1.139: ưu tiên kênh yêu thích khi sắp xếp",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

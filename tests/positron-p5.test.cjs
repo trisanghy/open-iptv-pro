@@ -37,7 +37,7 @@ test('P5 assets are loaded after P4 without replacing it',()=>{
 test('P5 release is immutable and versioned separately from P4.1',()=>{
  const pkg=JSON.parse(read('package.json'));
  const flow=read('.github/workflows/positron-lab.yml');
- assert.equal(pkg.version,'4.23.222');
+ assert.equal(pkg.version,'4.23.223');
  const label=pkg.description.match(/Positron\s+(P\d+\.\d+\.\d+)/)?.[1];
  assert.ok(label,'product P-label must accompany SemVer');
  assert.ok(flow.includes('TAG=positron/v'+pkg.version+'-'+label.toLowerCase()),'release tag and app version must match');
@@ -1225,4 +1225,19 @@ test('P5.1.138 hồi quy: render mới không làm mất focus của thẻ kênh
  assert.ok(js.includes('restored?.focus({preventScroll:true})'));
  assert.ok(qa.includes("document.getElementById('webChooserStatus')?.textContent==='552 kênh'"));
  assert.ok(qa.includes("assert.equal(nativeFocusReady,true"));
+});
+
+test('P5.1.139 tùy chọn yêu thích lên đầu chỉ sắp xếp hiển thị',()=>{
+ const js=read('renderer/web-channel-chooser-v42371.js');
+ const qa=read('scripts/positron-20-extension.cjs');
+ for(const token of ["favoriteFirstOption.value='fav-first'",
+  "favoriteFirstOption.textContent='Yêu thích lên đầu'",
+  "favoriteFirst=sort.value==='fav-first'",
+  "favorites.has(saved,a)","favorites.has(saved,b)",
+  "result=[...result].sort"])assert.ok(js.includes(token),token);
+ for(const token of ["await page.selectOption('#webChooserSort','fav-first')",
+  'channelsNotAltered:','favoritesBeforeOtherChannels:','noAutoplay:',
+  'positron-p51139-favorites-first-before-450-real.png',
+  'positron-p51139-favorites-first-after-450-real.png'])
+  assert.ok(qa.includes(token),'Thiếu Electron QA: '+token);
 });

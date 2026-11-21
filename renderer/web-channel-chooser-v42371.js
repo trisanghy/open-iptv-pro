@@ -41,6 +41,12 @@
  const $=id=>document.getElementById(id);
  const grid=$('webChooserGrid'),groups=$('webChooserGroups'),search=$('webChooserSearch'),group=$('webChooserGroup'),sort=$('webChooserSort'),status=$('webChooserStatus');
  const prev=$('webChooserPrev'),next=$('webChooserNext'),pageLabel=$('webChooserPage'),favGrid=$('webChooserFavorites'),recentGrid=$('webChooserRecent');
+ // P5.1.139: optional Favorite-first ordering of local native channels.
+ // This only changes display order, never playlist data or saved keys.
+ const favoriteFirstOption=document.createElement('option');
+ favoriteFirstOption.value='fav-first';
+ favoriteFirstOption.textContent='Yêu thích lên đầu';
+ sort.append(favoriteFirstOption);
  // P5.1.129: actual P5.1.128 Electron screenshot shows a clipped category
  // letter to the RIGHT of the pinned All reset. Track native scroll state.
  const syncPinnedResetMask=()=>groups.classList.toggle('po-groups-scrolled',groups.scrollLeft>4);
@@ -85,7 +91,18 @@
    return terms.every(term=>searchable.includes(term));
   });
   if(g)result=result.filter(c=>normalize(c.group||'').includes(normalize(g))||normalize(c.name).startsWith(normalize(g)));
-  if(tab!=='recent'){const dir=sort.value==='desc'?-1:1;result=[...result].sort((a,b)=>dir*String(a.name||'').localeCompare(String(b.name||''),'vi',{numeric:true,sensitivity:'base'}));}
+  if(tab!=='recent'){
+   const dir=sort.value==='desc'?-1:1;
+   const favoriteFirst=sort.value==='fav-first';
+   const saved=favoriteFirst?store():null;
+   result=[...result].sort((a,b)=>{
+    if(favoriteFirst){
+     const aFavorite=favorites.has(saved,a),bFavorite=favorites.has(saved,b);
+     if(aFavorite!==bFavorite)return aFavorite?-1:1;
+    }
+    return dir*String(a.name||'').localeCompare(String(b.name||''),'vi',{numeric:true,sensitivity:'base'});
+   });
+  }
   return result;
  }
  function channelCard(ch,compact=false){

@@ -1,3 +1,12 @@
+## P5.1.139 — Ưu tiên kênh yêu thích lên đầu / Electron v4.23.223
+
+- Feature priority: NEW — Thêm tùy chọn sắp xếp “Yêu thích lên đầu” trong danh sách kênh, đưa kênh đã đánh dấu sao lên trước nhưng giữ các kênh khác theo thứ tự tên; chỉ thay đổi cách hiển thị, không sửa playlist hay dữ liệu nguồn.
+- User action: Mở Chọn kênh, mở Bộ lọc rồi chọn Sắp xếp → Yêu thích lên đầu; có thể trở lại Tên A → Z/Z → A ngay lập tức.
+- Electron screenshot: positron-p51139-favorites-first-after-450-real.png
+- Ảnh đầu vào: positron-p51138-page-navigation-after-450-real.png trong giao diện Electron 450px có danh sách nhiều trang nhưng chưa có tùy chọn đưa kênh yêu thích lên đầu.
+- Kiểm thử: Node regression và Electron thật tại 450px; bật dấu sao cho kênh QA, chọn sắp xếp, kiểm tra mọi thẻ yêu thích ở đầu, dữ liệu nguồn bất biến, không autoplay, không tràn ngang, có ảnh trước/sau.
+- Trạng thái: CANDIDATE — chỉ ghi vòng 04/20 hoàn tất khi CI, ảnh Electron và Release Windows/Mac thực sự đạt.
+
 ## P5.1.138 — Chuyển trang kênh bằng PageDown/PageUp / Electron v4.23.222
 
 - Feature priority: NEW — Duyệt xuyên qua các trang kênh dài chỉ bằng hai phím PageDown/PageUp, giữ tiêu điểm vào thẻ ở trang mới và không tự phát; hữu ích khi danh sách có hàng trăm kênh.
