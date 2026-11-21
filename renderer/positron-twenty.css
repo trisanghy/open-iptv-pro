@@ -241,3 +241,9 @@ html[data-positron="true"] #page-epg #dvrPanel .dvr-heading h2 svg .record-dot{f
 
 /* P5.1.25: make DVR no-channel disabled selection legible without altering native data. */
 html[data-positron="true"] #page-epg #dvrChannel:disabled{opacity:1!important;color:var(--po-ink,#d8e2f2)!important;cursor:not-allowed}
+
+/* P5.1.26: real Doctor zero-channel state keeps prior exports available but
+   distinguishes unavailable analysis actions from the actionable Sources CTA. */
+html[data-positron="true"] #page-doctor button[data-positron-no-channels="true"]{
+ opacity:.55!important;filter:saturate(.55);cursor:not-allowed!important;
+}

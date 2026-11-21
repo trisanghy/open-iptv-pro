@@ -234,6 +234,35 @@
   new MutationObserver(syncDvrChannel).observe(dvrChannel,{childList:true});
  }
 
+
+ // P5.1.26 / round 01: the real Doctor screenshot shows active analysis
+ // buttons next to zero channel metrics, despite the existing source CTA.
+ // Disable no-input operations only; never remove listeners or prior reports.
+ const doctorAvailabilityCount=byId('navCount');
+ if(doctorPage&&doctorAvailabilityCount){
+  const analysisButtons=['doctorRun','doctor3Refresh','doctor3Verify'];
+  const syncDoctorAvailability=()=>{
+   const count=Number((doctorAvailabilityCount.textContent||'0').replace(/[^0-9]/g,''))||0;
+   for(const id of analysisButtons){
+    const button=byId(id);if(!button)continue;
+    if(count===0){
+     if(!button.hasAttribute('data-positron-no-channels')){
+      if(button.disabled)continue; // preserve independently disabled native states
+      button.setAttribute('data-positron-no-channels','true');
+     }
+     button.disabled=true;
+     button.setAttribute('aria-describedby','positronDoctorEmptyHint');
+    }else if(button.getAttribute('data-positron-no-channels')==='true'){
+     button.disabled=false;
+     button.removeAttribute('data-positron-no-channels');
+     button.removeAttribute('aria-describedby');
+    }
+   }
+  };
+  new MutationObserver(syncDoctorAvailability).observe(doctorAvailabilityCount,{childList:true,subtree:true,characterData:true});
+  syncDoctorAvailability();
+ }
+
  window.OpenIPTVPositronTwenty=Object.freeze({
   setStage,getStage:()=>stage,getFeedback:()=>previous
  });

@@ -54,6 +54,7 @@ async function runTwenty(page){
     badge:(()=>{const n=document.querySelector('#appSidebar .brand small');if(!n)return null;const b=n.getBoundingClientRect();return {visible:b.width>0&&b.height>0,clipped:n.scrollWidth>n.clientWidth+1,right:b.right,top:b.top,bottom:b.bottom};})(),
     toggle:(()=>{const n=document.querySelector('#appSidebar .sidebar-edge-toggle');if(!n)return null;const b=n.getBoundingClientRect();return {left:b.left,top:b.top,bottom:b.bottom};})(),
     doctorSourceAction:get('#positronDoctorSources'),
+     doctorAnalysis:(()=>{const ids=['doctorRun','doctor3Refresh','doctor3Verify'];return ids.map(id=>{const b=document.getElementById(id);return {id,exists:!!b,disabled:!!b?.disabled,tag:b?.getAttribute('data-positron-no-channels')||'',describedBy:b?.getAttribute('aria-describedby')||''};});})(),
      doctorEmptyVisible:(()=>{const n=document.getElementById('positronDoctorEmptyHint');return !!n&&!n.hidden;})(),
      navCount:document.getElementById('navCount')?.textContent?.trim()||'0',
      sidebarStatus:(()=>{const n=document.getElementById('miniStatus');if(!n)return null;const s=getComputedStyle(n),r=n.getBoundingClientRect();return{visible:r.width>0&&r.height>0,whiteSpace:s.whiteSpace,scrollHeight:n.scrollHeight,clientHeight:n.clientHeight,title:n.title,text:n.textContent||''};})(),
@@ -203,6 +204,27 @@ async function runTwenty(page){
   if(target==='doctor'&&Number(metrics.navCount)===0){
     assert.equal(metrics.doctorEmptyVisible,true,'Doctor with no channels requires source onboarding: '+name);
     assert.equal(metrics.doctorSourceAction?.visible,true,'Doctor source CTA hidden: '+name);
+    assert.equal(metrics.doctorAnalysis?.length,3,'Doctor must report three analysis controls: '+name);
+    for(const action of metrics.doctorAnalysis){
+      assert.equal(action.exists,true,'Doctor analysis button missing: '+action.id);
+      assert.equal(action.disabled,true,'No-channel Doctor action remains clickable: '+action.id);
+      assert.equal(action.tag,'true','Doctor disabled state must be tracked: '+action.id);
+      assert.equal(action.describedBy,'positronDoctorEmptyHint','Doctor action must explain why disabled: '+action.id);
+    }
+    const restored=await page.evaluate(async()=>{
+      const count=document.getElementById('navCount'),previous=count.textContent;
+      const ids=['doctorRun','doctor3Refresh','doctor3Verify'];
+      count.textContent='1';await new Promise(resolve=>setTimeout(resolve,0));
+      const enabled=ids.every(id=>{
+       const b=document.getElementById(id);
+       return !b.disabled&&!b.hasAttribute('data-positron-no-channels');
+      });
+      count.textContent=previous;await new Promise(resolve=>setTimeout(resolve,0));
+      return {enabled,disabledAgain:ids.every(id=>document.getElementById(id).disabled)};
+    });
+    assert.equal(restored.enabled,true,'Doctor must re-enable when channels arrive: '+name);
+    assert.equal(restored.disabledAgain,true,'Doctor must restore empty-state guard: '+name);
+
     const destination=await page.evaluate(()=>{
       document.getElementById('positronDoctorSources').click();
       const reached=document.querySelector('.page.active-page')?.id;

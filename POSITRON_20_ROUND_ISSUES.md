@@ -53,3 +53,8 @@ Round 03 P5.1.23 real screenshot review: Sources 720px empty guidance measured 4
 
 | 05/20 | P5.1.25 / 4.23.109 | P5.1.24 real EPG 720px | DVR channel select blank and interactive with no playlist, no guidance | Auto disable with placeholder, re-enable on real option updates; Electron DOM lifecycle test; CI pending |
 Round 04 verified in actual Electron: DVR heading is monochrome SVG 20px with aria-hidden true at EPG 720/1360, CI 6/6 succeeded and release https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.108-p5.1.24
+
+## Batch opened by self-running file (7) · from P5.1.25
+| Round | Next version | Real previous-screen input | Problem / repair | Evidence |
+| --- | --- | --- | --- | --- |
+| 01/20 | P5.1.26 / v4.23.110 | P5.1.24 Electron Doctor 1360px (same Doctor code/state at P5.1.25), artifact 14688244941 | Zero metrics but three analysis actions active; non-destructive disable/reenable on navCount | New Node tests and Electron lifecycle screenshot audit; pending CI and after-image review |
