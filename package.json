@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.198",
-  "description": "Positron P5.1.114: actionable Favorites and Recent empty states",
+  "version": "4.23.199",
+  "description": "Positron P5.1.115: remove duplicate empty sidebar panels on compact tabs",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

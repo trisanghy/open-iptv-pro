@@ -83,3 +83,11 @@ Not yet started. Choose each new repair from the preceding real screenshot, with
 - Fix: contextual empty states, action back to all channels, hide unneeded pager and maintain screen-reader keyboard focus; no playlist edits or autoplay.
 - Before: positron-p51113-keyboard-favorites-tab-450-real.png. After candidate: positron-p51114-favorite-empty-action-450-real.png.
 - Status: count after successful real Electron screenshot QA and release. Preserve prior version as immutable.
+
+
+## Separate file-triggered batch round 03/20 — P5.1.115 / v4.23.199 — CANDIDATE
+- Input: manually opened actual P5.1.114 Electron 450px screenshot, redundant empty Favorites description in right side stack below contextual main empty state.
+- Root in renderer/web-channel-chooser-v42371.js: renderSide() always appends empty mini list on active same tab even with zero items.
+- Fix: hide only duplicate empty mini sidebar for compact <=650px view while active in Favorites/Recent; always retain on All and when nonempty.
+- Before: positron-p51114-favorite-empty-action-450-real.png. Candidate after: positron-p51115-no-duplicate-favorite-450-real.png; direct image review mandatory.
+- Status: CANDIDATE, cannot count unless real Electron QA and release success.

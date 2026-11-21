@@ -37,7 +37,7 @@ test('P5 assets are loaded after P4 without replacing it',()=>{
 test('P5 release is immutable and versioned separately from P4.1',()=>{
  const pkg=JSON.parse(read('package.json'));
  const flow=read('.github/workflows/positron-lab.yml');
- assert.equal(pkg.version,'4.23.198');
+ assert.equal(pkg.version,'4.23.199');
  const label=pkg.description.match(/Positron\s+(P\d+\.\d+\.\d+)/)?.[1];
  assert.ok(label,'product P-label must accompany SemVer');
  assert.ok(flow.includes('TAG=positron/v'+pkg.version+'-'+label.toLowerCase()),'release tag and app version must match');
@@ -871,4 +871,17 @@ test('P5.1.114 Favorites and Recent zero-state explains empty lists with a nativ
  assert.ok(css.includes('.po-chooser-empty-action:focus-visible'));
  assert.ok(audit.includes("positron-p51114-favorite-empty-action-450-real.png"));
  assert.ok(audit.includes('emptyPagerHidden:pager?.hidden===true'));
+});
+
+
+test('P5.1.115 compact empty Favorites/Recent mini panels are hidden only when redundant',()=>{
+ const js=read('renderer/web-channel-chooser-v42371.js');
+ const css=read('renderer/positron-horizon-v4.css');
+ const audit=read('scripts/positron-20-extension.cjs');
+ assert.ok(js.includes("tab==='fav'&&!favoriteItems.length"));
+ assert.ok(js.includes("tab==='recent'&&!recentItems.length"));
+ assert.ok(css.includes('@media(max-width:650px)'));
+ assert.ok(css.includes('.web-chooser-side section[data-po-duplicate-empty="true"]'));
+ assert.ok(audit.includes('const duplicateEmptyQA={...duplicateFavoriteQA,favoriteRestored,recentHidden,recentRestored'));
+ assert.ok(audit.includes('positron-p51115-no-duplicate-favorite-450-real.png'));
 });

@@ -939,3 +939,13 @@ html[data-positron="true"].po-horizon #page-tv #webChooserGrid .po-chooser-empty
 html[data-positron="true"].po-horizon #page-tv #webChooserGrid .po-chooser-empty-action:focus-visible{
  outline:2px solid var(--po-accent)!important;outline-offset:2px!important;
 }
+
+
+/* P5.1.115: avoid showing the same empty Favorites/Recent hint twice
+   in stacked narrow layouts. Native mini lists remain accessible in other
+   tabs, desktop windows, and whenever they contain actual channels. */
+@media(max-width:650px){
+ html[data-positron="true"].po-horizon #page-tv .web-chooser-side section[data-po-duplicate-empty="true"]{
+  display:none!important;
+ }
+}

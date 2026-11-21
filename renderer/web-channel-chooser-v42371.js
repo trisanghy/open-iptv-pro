@@ -128,7 +128,15 @@
   pageLabel.textContent=(page+1)+' / '+pages;prev.disabled=page<=0;next.disabled=page>=pages-1;
   pageLabel.closest('.web-chooser-pager').hidden=pages<=1;
   status.textContent=data.length+' kênh';
-  renderSide(favGrid,favoritesList(),'yêu thích');renderSide(recentGrid,recentList(),'xem gần đây');
+  const favoriteItems=favoritesList(),recentItems=recentList();
+  renderSide(favGrid,favoriteItems,'yêu thích');renderSide(recentGrid,recentItems,'xem gần đây');
+  // P5.1.115: real 450px screenshot of P5.1.114 shows the empty Favorites
+  // instruction twice: once in the active chooser grid, again in the mini
+  // sidebar directly below. Hide only the redundant mini widget on compact
+  // screens. Preserve it on All, other tabs, desktop and whenever populated.
+  const favoriteMini=favGrid.closest('section'),recentMini=recentGrid.closest('section');
+  if(favoriteMini)favoriteMini.dataset.poDuplicateEmpty=String(tab==='fav'&&!favoriteItems.length);
+  if(recentMini)recentMini.dataset.poDuplicateEmpty=String(tab==='recent'&&!recentItems.length);
   root.querySelectorAll('[data-chooser-tab]').forEach(b=>{const active=b.dataset.chooserTab===tab;b.classList.toggle('active',active);b.setAttribute('aria-selected',String(active));b.tabIndex=active?0:-1;});
   root.querySelectorAll('[data-chooser-layout]').forEach(b=>b.classList.toggle('active',b.dataset.chooserLayout===layout));
  }

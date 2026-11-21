@@ -794,3 +794,10 @@ P5.1.81 follow-up: real Electron capture found nav overflow; replace flexible no
 - Root: chooser renderer reused generic no-results branch for genuinely empty Favorites/Recent lists and always rendered a pager for zero matches.
 - Fix: context-specific empty messages for Favorites and Recent, native "Xem tất cả kênh" action that clears local search/group filters and restores All tab focus without autoplay; hide pager on one-page or empty results; preserve playlist and favorites data.
 - Regression: Node source tests + real Electron CDP 450px empty UI, button focus/click, channel restoration, no playback/overflow, screenshot positron-p51114-favorite-empty-action-450-real.png. Candidate until CI, opened screenshot, release assets verified.
+
+
+## P5.1.115 / v4.23.199 — Suppress duplicate compact empty mini panels (file-triggered batch round 03/20)
+- Baseline: genuine manually viewed P5.1.114 450px Electron screenshot positron-p51114-favorite-empty-action-450-real.png: active Favorites tab correctly explains empty state, but a second lower empty Favorites mini panel repeats the same instruction.
+- Root: chooser always renders sidebar Favorites and Recent mini panels regardless of active tab and their empty data.
+- Fix: mark only duplicate empty mini section on its own active tab and hide it only <=650px via scoped CSS. Keep mini section on All, other tabs, desktop, and when actually populated. No stored data, filtering or playback changed.
+- Regression: Node asserts + real Electron CDP view of Favorites/Recent/All with one section hidden and restored, no autoplay or overflow, screenshot positron-p51115-no-duplicate-favorite-450-real.png. Candidate until CI + manual screenshot review + release.

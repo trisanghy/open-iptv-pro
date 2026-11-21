@@ -1887,10 +1887,54 @@ async function runTwenty(page){
  for(const [key,value] of Object.entries(favoriteEmptyQA))
   assert.equal(value,true,'P5.1.114 actionable Favorites empty state '+key+': '+JSON.stringify(favoriteEmptyQA));
 
+ // P5.1.115: P114 screenshot showed duplicate empty Favorites side pane.
+ // Verify compact-only suppression of the duplicate, restore on All, then
+ // ensure the Recent empty pane is also nonduplicative and accessible.
+ await page.focus('#webChannelChooser [data-chooser-tab="all"]');
+ await page.keyboard.press('ArrowRight');
+ const duplicateFavoriteQA=await page.evaluate(()=>{
+  const side=document.querySelector('#webChannelChooser .web-chooser-side');
+  const fav=side.querySelector('section[aria-label="Kênh yêu thích"]');
+  const recent=side.querySelector('section[aria-label="Kênh vừa xem"]');
+  const active=side.closest('#webChannelChooser').querySelector('[data-chooser-tab="fav"]');
+  return {favoriteSelected:active.getAttribute('aria-selected')==='true',
+   duplicateMarked:fav.dataset.poDuplicateEmpty==='true',
+   duplicateHidden:getComputedStyle(fav).display==='none',
+   recentStillAvailable:getComputedStyle(recent).display!=='none',
+   emptyMessageInMain:!!document.querySelector('#webChooserGrid .web-chooser-empty'),
+   noOverflow:document.documentElement.scrollWidth<=innerWidth+1};
+ });
+ await page.screenshot({path:path.join(out,'positron-p51115-no-duplicate-favorite-450-real.png'),animations:'disabled'});
+ await page.click('#webChooserGrid .po-chooser-empty-action');
+ const favoriteRestored=await page.evaluate(()=>{
+  const fav=document.querySelector('.web-chooser-side section[aria-label="Kênh yêu thích"]');
+  return fav.dataset.poDuplicateEmpty==='false'&&getComputedStyle(fav).display!=='none';
+ });
+ await page.focus('#webChannelChooser [data-chooser-tab="all"]');
+ await page.keyboard.press('End');
+ const recentHidden=await page.evaluate(()=>{
+  const fav=document.querySelector('.web-chooser-side section[aria-label="Kênh yêu thích"]');
+  const recent=document.querySelector('.web-chooser-side section[aria-label="Kênh vừa xem"]');
+  const active=document.querySelector('#webChannelChooser [data-chooser-tab="recent"]');
+  return active.getAttribute('aria-selected')==='true'&&
+   recent.dataset.poDuplicateEmpty==='true'&&getComputedStyle(recent).display==='none'&&
+   getComputedStyle(fav).display!=='none';
+ });
+ await page.click('#webChooserGrid .po-chooser-empty-action');
+ const recentRestored=await page.evaluate(()=>{
+  const recent=document.querySelector('.web-chooser-side section[aria-label="Kênh vừa xem"]');
+  return recent.dataset.poDuplicateEmpty==='false'&&getComputedStyle(recent).display!=='none';
+ });
+ const duplicateEmptyQA={...duplicateFavoriteQA,favoriteRestored,recentHidden,recentRestored,
+  noAutoplay:await page.evaluate(()=>window.IPTVState.getCurrent()===null)};
+ for(const [key,value] of Object.entries(duplicateEmptyQA))
+  assert.equal(value,true,'P5.1.115 hide duplicate compact empty widget '+key+': '+JSON.stringify(duplicateEmptyQA));
+
+
 
  await page.setViewportSize({width:1360,height:820});
   const report={type:'Positron P5 twenty distinct desktop screenshot cases',realElectron:true,syntheticChannels:false,
-  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA,chooserQa,toastLayoutQA,nativeToastQA,compactIdleQA,channelChipRailQA,advancedFilterQA,readableCardsQA,keyboardTabQA,favoriteEmptyQA};
+  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA,chooserQa,toastLayoutQA,nativeToastQA,compactIdleQA,channelChipRailQA,advancedFilterQA,readableCardsQA,keyboardTabQA,favoriteEmptyQA,duplicateEmptyQA};
  fs.writeFileSync(path.resolve('positron-evidence','audit-p5-20-rounds.json'),JSON.stringify(report,null,2));
  return report;
 }
