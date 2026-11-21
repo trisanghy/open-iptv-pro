@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.131",
-  "description": "Positron P5.1.47: correct misleading DVR idle status with no channels",
+  "version": "4.23.132",
+  "description": "Positron P5.1.48: distinguish missing playlists from unmatched EPG data",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

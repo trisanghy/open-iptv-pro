@@ -37,12 +37,12 @@ test('P5 assets are loaded after P4 without replacing it',()=>{
 test('P5 release is immutable and versioned separately from P4.1',()=>{
  const pkg=JSON.parse(read('package.json'));
  const flow=read('.github/workflows/positron-lab.yml');
- assert.equal(pkg.version,'4.23.131');
+ assert.equal(pkg.version,'4.23.132');
  const label=pkg.description.match(/Positron\s+(P\d+\.\d+\.\d+)/)?.[1];
  assert.ok(label,'product P-label must accompany SemVer');
  assert.ok(flow.includes('TAG=positron/v'+pkg.version+'-'+label.toLowerCase()),'release tag and app version must match');
  assert.ok(read('scripts/positron-50-audit.cjs').includes('runTwenty(page)'));
- assert.ok(flow.includes('Positron-P5147-20-Real-Screenshots.zip'));
+ assert.ok(flow.includes('Positron-P5148-20-Real-Screenshots.zip'));
 });
 
 test('P5.1.1 sidebar badge matches shipped release instead of stale P4',()=>{const js=read('renderer/positron.js');const pkg=JSON.parse(read('package.json'));
@@ -512,4 +512,15 @@ test('P5.1.47 DVR idle readiness must disappear without hiding real errors or jo
  assert.ok(audit.includes('metrics.dvrNativeStatus?.visible'));
  assert.ok(audit.includes('state.readyVisibleWithChannel'));
  assert.ok(audit.includes('state.nativeReadyHiddenAgain'));
+});
+
+
+test('P5.1.48 EPG guide treats missing M3U differently from unmatched XMLTV identifiers',()=>{
+ const f=read('renderer/features.js'),i18n=read('renderer/i18n.js'),audit=read('scripts/positron-20-extension.cjs');
+ assert.ok(f.includes('empty.textContent=channels.length?'));
+ assert.ok(f.includes('Chưa có kênh. Thêm nguồn M3U trong Quản lý nguồn để xem lịch phát sóng.'));
+ assert.ok(f.includes('Không tìm thấy lịch khớp với kênh trong playlist.'));
+ assert.ok(i18n.includes('positronEpgNoPlaylistLocales'));
+ assert.ok(audit.includes('metrics.epgGuideEmptyText'));
+ assert.ok(audit.includes("metrics.sourceCount==='0'"));
 });

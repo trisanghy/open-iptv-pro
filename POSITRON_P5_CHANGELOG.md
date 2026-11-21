@@ -326,3 +326,10 @@ P5.1.46 same-version CI repair: run 44866650681 failed 2/611 because historical 
 - Repair strictly Positron-local: while no schedulable channel and native text equals its known idle-ready message (including offline locale translation), hide only that specific status. Keep native message in DOM and show it again if a channel arrives. Never suppress actual DVR errors, ongoing recording statuses, saved schedules, or folder controls.
 - Add Node and real Electron 720px/1360px screenshot checks, including synthetic selectable channel/rollback to verify restoration and no phantom readiness.
 - Continue SemVer/P-label increment and immutable release tag validation.
+
+## File (9), round 05/20 — P5.1.48 / v4.23.132
+- Input: visually opened P5.1.47 actual Electron EPG 1360px screenshot. It shows zero channels yet guide footer blames unmatched XMLTV/tvg-id in an existing playlist, which cannot be accurate when there is no playlist.
+- Root cause: renderer/features.js renderEPG() uses the same empty-guide text regardless of channels.length.
+- Repair: branch on actual channel count. When there are zero channels, instruct to add an M3U playlist through Quản lý nguồn. When channels exist but EPG has no matches, preserve the original matching/tvg-id guidance.
+- Build the empty node using textContent rather than innerHTML; add all 16 non-Vietnamese offline translations and Electron screenshot assertion for 720px and 1360px guide.
+- Preserve EPG data/offset/cache, source import, existing programmes and favorites. Await individual CI/release proof.

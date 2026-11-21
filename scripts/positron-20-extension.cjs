@@ -48,6 +48,7 @@ async function runTwenty(page){
     player:get('#playerBox'),sidebar:get('#appSidebar'),
     sources:get('#page-sources .sources-hub-nav'),sourceSection:get('#smartDiscoverySection'),sourceHeading:get('#page-sources .source-hub-heading'),epg:get('#page-epg .epg-filter'),
     epgEmptySummary:document.getElementById('epgSummary')?.textContent?.trim()||'',
+    epgGuideEmptyText:document.querySelector('#epgGuide>.empty-list')?.textContent?.trim()||'',
     epgSourceAction:get('#epgSettingsBtn'),
     dvrFormVisible:get('#dvrForm')?.visible||false,
     dvrEmptyAction:get('#positronDvrNoChannels'),
@@ -355,6 +356,7 @@ async function runTwenty(page){
    if(target==='epg'){
     assert.equal(metrics.epgEmptySummary,"Chưa tải EPG. Nhấn “Nguồn EPG” phía trên để chọn hoặc cập nhật nguồn.",'EPG empty instruction must point to actual top Nguồn EPG button: '+name);
     assert.ok(metrics.epgSourceAction?.visible,'EPG settings shortcut must be visible: '+name);
+    if(metrics.sourceCount==='0')assert.equal(metrics.epgGuideEmptyText,'Chưa có kênh. Thêm nguồn M3U trong Quản lý nguồn để xem lịch phát sóng.','EPG guide falsely blames XMLTV mapping when no playlist exists: '+name);
     if(metrics.sourceCount==='0'){
      assert.equal(metrics.dvrFormVisible,false,'Empty DVR scheduling form still dominates EPG: '+name);
      assert.ok(metrics.dvrEmptyAction?.visible,'Compact DVR empty action missing: '+name);

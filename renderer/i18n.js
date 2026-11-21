@@ -100,6 +100,13 @@
     const dict=dictionaries[code]||(dictionaries[code]={});
     dict[positronEpgEmptyHint]=value;
   }
+  // P5.1.48: distinguish a missing M3U playlist from unmatched XMLTV IDs in all 17 UI locales.
+  const positronEpgNoPlaylist="Chưa có kênh. Thêm nguồn M3U trong Quản lý nguồn để xem lịch phát sóng.";
+  const positronEpgNoPlaylistLocales={"en":"No channels yet. Add an M3U playlist in Manage Sources to view the TV guide.","es":"Aún no hay canales. Añade una lista M3U en Administrar fuentes para ver la guía de TV.","pt-BR":"Ainda não há canais. Adicione uma lista M3U em Gerenciar fontes para ver a programação.","zh-CN":"暂无频道。请在“管理来源”中添加 M3U 播放列表以查看节目指南。","th":"ยังไม่มีช่อง เพิ่มรายการ M3U ในจัดการแหล่งที่มาเพื่อดูผังรายการ","lo":"ຍັງບໍ່ມີຊ່ອງ. ເພີ່ມລາຍການ M3U ໃນຈັດການແຫຼ່ງເພື່ອເບິ່ງຕາຕະລາງລາຍການ.","km":"មិនទាន់មានប៉ុស្តិ៍ទេ។ បន្ថែមបញ្ជី M3U ក្នុងការគ្រប់គ្រងប្រភព ដើម្បីមើលកម្មវិធីទូរទស្សន៍។","fr":"Aucune chaîne pour le moment. Ajoutez une liste M3U dans Gérer les sources pour voir le guide TV.","de":"Noch keine Sender. Füge unter Quellen verwalten eine M3U-Playlist hinzu, um den EPG zu sehen.","it":"Nessun canale presente. Aggiungi una playlist M3U in Gestisci sorgenti per vedere la guida TV.","ja":"チャンネルがありません。「ソース管理」で M3U プレイリストを追加すると番組表を表示できます。","ko":"아직 채널이 없습니다. 소스 관리에서 M3U 재생목록을 추가하면 방송 편성표를 볼 수 있습니다.","ru":"Каналов пока нет. Добавьте плейлист M3U в разделе «Управление источниками», чтобы увидеть телепрограмму.","id":"Belum ada saluran. Tambahkan daftar M3U di Kelola sumber untuk melihat panduan TV.","hi":"अभी कोई चैनल नहीं है। टीवी गाइड देखने के लिए स्रोत प्रबंधन में M3U प्लेलिस्ट जोड़ें।","ar":"لا توجد قنوات بعد. أضف قائمة M3U من إدارة المصادر لعرض دليل البرامج."};
+  for(const [language,value] of Object.entries(positronEpgNoPlaylistLocales)){
+   const dictionary=dictionaries[language]||(dictionaries[language]={});
+   dictionary[positronEpgNoPlaylist]=value;
+  }
   const key='open-iptv-pro-language';
   let locale='vi';
   try{const stored=localStorage.getItem(key);if(stored && Object.hasOwn(locales,stored))locale=stored;}catch{}

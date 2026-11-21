@@ -120,3 +120,7 @@ P5.1.46 CI attempt 44866650681: 604 pass / 2 failed / 5 skipped; failures were s
 | File (9) round | Version | Screenshot input | Observed bug | Source repair | Required evidence |
 |---|---|---|---|---|---|
 | 04/20 (pending) | P5.1.47 / v4.23.131 | P5.1.46 real Electron EPG 720px + 1360px | DVR says Ready to Schedule with no channels | Hide only idle-ready copy, restore when channels return; never hide error/active recording statuses | Node test, screenshot, live DOM transitions, build and correct Release |
+
+| File (9) round | Version | Screenshot input | Actual root-cause issue | Fix | Required verification |
+|---|---|---|---|---|---|
+| 05/20 (pending) | P5.1.48 / v4.23.132 | P5.1.47 EPG 1360px guide footer | Zero-channel case wrongly asks users to repair M3U tvg-id and XMLTV mappings | Detect missing channel list and show correct import hint, preserving true mapping-error text | Node i18n/renderer test, real after PNG + release |
