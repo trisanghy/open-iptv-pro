@@ -1,0 +1,63 @@
+'use strict';
+const { test } = require('node:test');
+const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const path = require('node:path');
+const ROOT = path.resolve(__dirname, '..');
+const read = (file) => fs.readFileSync(path.join(ROOT, file), 'utf8');
+
+test('Positron HEAD preserves immutable feature-first rule and branch isolation', () => {
+  const policy = read('POSITRON_FEATURE_RULES.md');
+  assert.match(policy, /^# Positron — Quy tắc ưu tiên chức năng mới/m);
+  assert.match(policy, /Ưu tiên số 1: thêm nhiều tính năng mới thiết thực/);
+  assert.match(policy, /Không dùng nhiều vòng liên tiếp chỉ để tinh chỉnh/);
+  assert.match(policy, /tuyệt đối không sửa main/);
+  assert.match(policy, /Không đổi nhánh nguồn Pages và không ghi đè website Web/);
+  assert.match(policy, /P5\.1\.134/);
+  assert.match(policy, /Feature priority: NEW/);
+  assert.match(policy, /Feature priority: BLOCKER_FIX/);
+});
+
+test('every following Positron application version must justify feature-first decision', () => {
+  const pkg = JSON.parse(read('package.json'));
+  const match = /\bPositron\s+P5\.1\.(\d+)/.exec(String(pkg.description || ''));
+  assert.ok(match, 'package.json must retain its Positron P5.1.N label');
+  const number = Number(match[1]);
+  const sections = read('POSITRON_P5_CHANGELOG.md').split(/\n(?=## P5\.1\.\d+)/);
+  const heading = '## P5.1.' + number;
+  const current = sections.find(s => s.startsWith(heading + ' '));
+  assert.ok(current, 'current Positron version needs own changelog section ' + heading);
+  // Baseline P5.1.133 predates adoption; future releases may not bypass this gate.
+  if (number < 134) return;
+  const declared = /^- Feature priority: (NEW|BLOCKER_FIX) — (.+)$/m.exec(current);
+  assert.ok(declared, heading + ' must declare NEW or justified BLOCKER_FIX');
+  assert.ok(declared[2].trim().length >= 35, 'priority needs a real impact explanation');
+  const screenshot = /^- Electron screenshot: (.+)$/m.exec(current);
+  assert.ok(screenshot && screenshot[1].includes('p51' + number) && /\.png\b/i.test(screenshot[1]),
+    'declare genuine native Electron screenshot filename for same version');
+  if (declared[1] === 'NEW') {
+    const action = /^- User action: (.+)$/m.exec(current);
+    assert.ok(action && action[1].trim().length >= 24,
+      'a new feature must describe how the viewer activates and uses it');
+  } else {
+    assert.match(declared[2], /phát|âm thanh|video|dữ liệu|bảo mật|privacy|security|CI|build|crash|mất dữ liệu|playback/i,
+      'fix exception must be about an actual release or user-data blocker');
+  }
+});
+
+test('GitHub version gallery has one expandable row and authentic screenshots', () => {
+  const workflow = read('.github/workflows/positron-feature-pages.yml');
+  const generator = read('scripts/build-positron-feature-site.py');
+  const page = read('docs/positron-features/index.html');
+  assert.match(workflow, /branches: \[Positron\]/);
+  assert.match(workflow, /node --test tests\/positron-feature-priority\.test\.cjs/);
+  assert.match(workflow, /docs\/positron-features\/FEATURES\.md/);
+  assert.match(workflow, /if: vars\.POSITRON_PAGES_ENABLED == 'true'/);
+  assert.match(generator, /def write_github_index\(rows\)/);
+  assert.match(generator, /def attach_real_images\(rows\)/);
+  assert.match(generator, /data\.startswith\(b"\\x89PNG/);
+  assert.match(page, /details\.entry/);
+  assert.match(page, /r\.image/);
+  assert.ok(fs.existsSync(path.join(ROOT, 'docs/positron-features/FEATURES.md')),
+    'GitHub-native expandable timeline must remain checked into Positron');
+});

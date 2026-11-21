@@ -24,6 +24,8 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - name: Enforce immutable feature-first rule for Positron HEAD
+        run: node --test tests/positron-feature-priority.test.cjs
       - name: Generate release timeline and real Electron screenshots
         env:
           GITHUB_TOKEN: ${{ github.token }}

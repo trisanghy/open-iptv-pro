@@ -18,3 +18,22 @@ Auto generator: scripts/build-positron-feature-site.py.
 Workflow: .github/workflows/positron-feature-pages.yml.
 
 **Quan trọng:** GitHub Pages hiện đang chỉ cho phép nhánh web/online triển khai. **Không đổi nhánh nguồn Pages và không ghi đè website Web.** Mỗi commit Positron sẽ tự xuất bản trang Markdown có thể mở trực tiếp trong GitHub, cùng ảnh PNG thật trích từ Release. Bản HTML được tạo và giữ dưới dạng GitHub Actions artifact. Chỉ bật Pages riêng nếu chủ sở hữu tạo được môi trường/site độc lập, không ảnh hưởng web/online.
+
+## Cổng kiểm thử bắt buộc cho mọi phiên bản tiếp theo
+
+Từ **P5.1.134**, mỗi phiên bản ứng dụng mới PHẢI khai báo quyết định ưu tiên ngay trong mục `## P5.1.x` tương ứng của `POSITRON_P5_CHANGELOG.md`. CI chặn phiên bản thiếu khai báo; không được tăng số bản để né quy tắc.
+
+**Mặc định: tính năng mới.** Dùng đầy đủ ba trường:
+
+- `Feature priority: NEW — <mô tả tính năng người xem thực sự sử dụng được>`
+- `User action: <cách người dùng mở và sử dụng tính năng mới>`
+- `Electron screenshot: <tên ảnh QA thật có chứa số phiên bản>`
+
+**Ngoại lệ duy nhất:** lỗi thật nghiêm trọng ảnh hưởng phát hình/âm thanh, quyền riêng tư, dữ liệu, bảo mật, hoặc CI/build đang chặn phát hành. Khi đó khai báo:
+
+- `Feature priority: BLOCKER_FIX — <lỗi, tác động và lý do phải sửa trước tính năng mới>`
+- `Electron screenshot: <tên ảnh QA thật có chứa số phiên bản>`
+
+Các dòng trên phải bắt đầu bằng `- ` trong changelog. Không coi đổi màu/viền/icon/spacing, đổi version, thêm test rỗng hay thay mockup là tính năng mới. Việc CI thông qua chỉ xác nhận đủ bằng chứng bắt buộc; vẫn phải kiểm tra tính năng thật bằng Electron và build Windows x64.
+
+**Bộ gác quy tắc:** `tests/positron-feature-priority.test.cjs`. Workflow công bố nhật ký chạy bộ gác trước khi tạo website; các workflow phát hành dùng `npm test` để chạy lại tự động.
