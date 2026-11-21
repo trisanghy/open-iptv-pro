@@ -1,3 +1,11 @@
+## P5.1.80 — WatchFlow Plus / v4.23.164
+
+- **Smart Zap**: một nút chuyển sang kênh khác theo tình trạng nguồn, bỏ kênh đã chết, tránh kênh đang phát và kênh vừa chuyển; chỉ phát sau thao tác người dùng.
+- **Tiếp tục xem**: đọc lịch sử phát đã xác minh khung hình, sử dụng native Recent Channels, không ghi nhận việc phát không thành công.
+- **Cùng gu**: đề xuất kênh cùng nhóm hay cùng thể loại với kênh hiện tại hoặc đã xem, không yêu cầu API/EPG bên ngoài.
+- **Mix 5 hôm nay**: gợi ý năm kênh thuộc nhiều thể loại/nhóm, danh sách theo ngày; không tự chạy bất kỳ kênh nào.
+- **QA**: Node regression tests, ảnh screenshot UI thật với 552 kênh giả lập metadata-only; không truy cập các luồng từ bộ QA.
+
 # Positron P5 · 20 scoped upgrades (v4.23.84)
 
 This release preserves all P4.1 source data/feature logic. It adds **20 independent CSS/UX upgrade gates** in `renderer/positron-twenty.css`, a small accessibility companion, and **20 new actual Electron screenshot scenarios** (not AI-generated screenshots). Legacy P4 50-round audit remains in place. The screenshot checks are not a claim of 20 independent AI self-repair cycles.

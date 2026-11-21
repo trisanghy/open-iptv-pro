@@ -1,0 +1,46 @@
+/* WatchFlow Plus — compact, coherent in the existing Horizon panel. */
+#poWatchFlowPanel .po-flowplus-nav[hidden],
+#poWatchFlowPanel .po-flowplus-hidden,
+#poWatchFlowPanel #poFlowPlusResults[hidden],
+#poWatchFlowPanel .po-flowplus-privacy[hidden]{display:none!important}
+#poWatchFlowPanel .po-flowplus-nav{
+ display:flex;gap:5px;align-items:center;flex-wrap:wrap;padding:0 0 12px;margin:0 0 12px;
+ border-bottom:1px solid rgba(153,220,207,.12)
+}
+#poWatchFlowPanel .po-flowplus-nav button{
+ display:inline-flex;align-items:center;gap:5px;min-height:35px;padding:7px 9px;
+ color:#b7cdd0;background:#1c303a;border:1px solid #36505b;border-radius:10px;
+ font-size:11px;font-weight:680;cursor:pointer;line-height:1.2
+}
+#poWatchFlowPanel .po-flowplus-nav button svg{width:16px;height:16px;flex-shrink:0}
+#poWatchFlowPanel .po-flowplus-nav button:hover{background:#2c4650;color:#effaf7}
+#poWatchFlowPanel .po-flowplus-nav button[aria-pressed="true"]{
+ border-color:#72d3b9;background:#21473f;color:#a8f0dd
+}
+#poWatchFlowPanel .po-flowplus-nav #poFlowPluszap{
+ margin-left:auto;border-color:#547d6b;color:#c8f6e6;background:#244338
+}
+#poWatchFlowPanel .po-flowplus-results{min-height:84px;display:grid;gap:10px}
+#poWatchFlowPanel .po-flowplus-head strong{color:#effbf7;font-size:14px}
+#poWatchFlowPanel .po-flowplus-head p{margin:4px 0 0;color:#a3bfc4;font-size:11px;line-height:1.5}
+#poWatchFlowPanel .po-flowplus-cards{display:grid;gap:7px}
+#poWatchFlowPanel .po-flowplus-card{
+ display:grid;grid-template-columns:minmax(0,1fr) auto;gap:9px;align-items:center;
+ border:1px solid #304852;background:#1b2e38;border-radius:11px;padding:10px 11px
+}
+#poWatchFlowPanel .po-flowplus-card-info{min-width:0}
+#poWatchFlowPanel .po-flowplus-card-info strong{display:block;color:#eef9f6;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#poWatchFlowPanel .po-flowplus-card-info small{display:block;margin-top:4px;font-size:10px;color:#a1b9bf;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#poWatchFlowPanel .po-flowplus-card button{
+ min-height:34px;min-width:52px;border:1px solid #78d6ba;border-radius:9px;
+ color:#173b35;background:#96e2c7;font-weight:750;font-size:11px;cursor:pointer
+}
+#poWatchFlowPanel .po-flowplus-empty{background:#1c3039;padding:15px;border:1px solid #36505b;border-radius:10px;color:#b4c8cd;font-size:12px;line-height:1.55}
+#poWatchFlowPanel .po-flowplus-reason,
+#poWatchFlowPanel .po-flowplus-privacy{display:block;color:#869fa7;font-size:10px;line-height:1.5;margin:4px 0 0}
+#poWatchFlowPanel button:focus-visible{outline:2px solid #91e8d6!important;outline-offset:2px}
+#poWatchFlowPanel[data-empty-playlist="true"] .po-flowplus-nav{display:none!important}
+@media(max-width:560px){
+ #poWatchFlowPanel .po-flowplus-nav button{font-size:10px;padding:7px}
+ #poWatchFlowPanel .po-flowplus-nav #poFlowPluszap{margin-left:0}
+}

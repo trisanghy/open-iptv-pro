@@ -1033,8 +1033,27 @@ async function runTwenty(page){
  const watchFlowBytes=await page.screenshot({path:path.join(out,'positron-watchflow-552-metadata-qa-real.png'),animations:'disabled'});
  assert.ok(watchFlowBytes.length>10000,'WatchFlow populated real Electron screenshot invalid');
  await page.evaluate(()=>document.getElementById('poWatchFlowClose').click());
- const report={type:'Positron P5 twenty distinct desktop screenshot cases',realElectron:true,syntheticChannels:false,
-  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,metadataQa,watchFlowQa};
+ // WatchFlow Plus Electron QA: use only synthetic metadata; do NOT click Play/Smart Zap.
+ const plusQA=await page.evaluate(()=>{
+  window.PositronWatchFlow.open();
+  document.getElementById('poFlowPlusmix').click();
+  const panel=document.getElementById('poWatchFlowPanel');
+  return {
+   mixCards:panel.querySelectorAll('#poFlowPlusResults .po-flowplus-card').length,
+   mixSelected:panel.querySelector('#poFlowPlusmix[aria-pressed="true"]')!==null,
+   resumeButton:!!document.getElementById('poFlowPluscontinue'),
+   similarButton:!!document.getElementById('poFlowPlussimilar'),
+   zapButton:!!document.getElementById('poFlowPluszap'),
+   notPlaying:window.IPTVState.getCurrent()===null
+  };
+ });
+ assert.equal(plusQA.mixCards,5,'WatchFlow Plus must display five real-native metadata QA channels');
+ for(const key of ['mixSelected','resumeButton','similarButton','zapButton','notPlaying'])
+  assert.equal(plusQA[key],true,'WatchFlow Plus QA failed: '+key);
+ await page.screenshot({path:path.join(out,'positron-watchflow-plus-mix-552-metadata-qa-real.png'),animations:'disabled'});
+ await page.evaluate(()=>window.PositronWatchFlow.close());
+  const report={type:'Positron P5 twenty distinct desktop screenshot cases',realElectron:true,syntheticChannels:false,
+  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA};
  fs.writeFileSync(path.resolve('positron-evidence','audit-p5-20-rounds.json'),JSON.stringify(report,null,2));
  return report;
 }

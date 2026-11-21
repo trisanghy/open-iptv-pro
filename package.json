@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.163",
-  "description": "Positron P5.1.79: accessible media tools sliders icon with reliable disclosure",
+  "version": "4.23.164",
+  "description": "Positron P5.1.80: WatchFlow Plus — Smart Zap, Continue, Similar, Daily Mix",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

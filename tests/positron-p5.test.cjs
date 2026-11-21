@@ -37,7 +37,7 @@ test('P5 assets are loaded after P4 without replacing it',()=>{
 test('P5 release is immutable and versioned separately from P4.1',()=>{
  const pkg=JSON.parse(read('package.json'));
  const flow=read('.github/workflows/positron-lab.yml');
- assert.equal(pkg.version,'4.23.163');
+ assert.equal(pkg.version,'4.23.164');
  const label=pkg.description.match(/Positron\s+(P\d+\.\d+\.\d+)/)?.[1];
  assert.ok(label,'product P-label must accompany SemVer');
  assert.ok(flow.includes('TAG=positron/v'+pkg.version+'-'+label.toLowerCase()),'release tag and app version must match');
@@ -684,7 +684,7 @@ test('P5.1.78 Doctor onboarding hides only empty zero-statistics and restores na
  for(const statement of ['emptyDoctor.metricsHidden,true','populatedDoctor.metricsVisible,true'])assert.ok(qa.includes(statement));
 });
 
-test('P5.1.79 real media more-tools action uses SVG sliders, not unlabeled dots',()=>{
+test('P5.1.80 real media more-tools action uses SVG sliders, not unlabeled dots',()=>{
  const js=read('renderer/positron-fifty.js'),css=read('renderer/positron-horizon-v4.css'),audit=read('scripts/positron-20-extension.cjs');
  assert.ok(js.includes("stroke.setAttribute('d','M4 7h4m4 0h8M4 17h10m4 0h2')"));
  assert.ok(js.includes("tools.append(icon)"));

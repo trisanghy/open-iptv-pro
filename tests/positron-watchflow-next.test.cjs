@@ -1,0 +1,52 @@
+'use strict';
+const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs');
+const base=require('../renderer/positron-watchflow-core.js');
+globalThis.PositronWatchFlowCore=base;
+const p=require('../renderer/positron-watchflow-next-core.js');
+const C=(id,name,group,status='uncertain',at='')=>({id,name,group,url:'https://example.invalid/'+id+'.m3u8',status,lastPlaybackAt:at});
+const channels=[
+ C('n','VTV1 Tin Tuc','Tin tức','alive','2026-11-20T00:00:00Z'),
+ C('n2','VTV2 Tin Tuc','Tin tức','dead'),
+ C('s','Sports Arena','Thể thao','alive'),
+ C('m','MTV Music','Âm nhạc'),
+ C('f','HBO Movie','Phim'),
+ C('k','Disney Kids','Thiếu nhi'),
+ C('u','Something','Other'),
+ C('u2','Another','Other')
+];
+test('continue watching honors verified native recents, existing channels and their order',()=>{
+ const originals=JSON.stringify(channels);
+ assert.deepEqual(p.continueWatching(channels,[channels[4],channels[0],channels[1],{id:'missing'},channels[4]]).map(c=>c.id),['f','n']);
+ assert.equal(JSON.stringify(channels),originals);
+});
+test('similar recommends same group or genre, never dead or current',()=>{
+ const picks=p.similar(channels,channels[0],{limit:5});
+ assert.ok(!picks.some(c=>c.id==='n'||c.id==='n2'));
+ assert.equal(p.similar(channels,null).length,0);
+});
+test('daily mix is deterministic per day, diverse and excludes dead streams',()=>{
+ const a=p.dailyMix(channels,{limit:5,date:'2026-11-21'}),b=p.dailyMix(channels,{limit:5,date:'2026-11-21'});
+ assert.deepEqual(a.map(c=>c.id),b.map(c=>c.id));
+ assert.equal(new Set(a.map(c=>c.id)).size,5);
+ assert.ok(!a.some(c=>c.status==='dead'));
+ assert.ok(new Set(a.map(c=>base.category(c))).size>=4);
+});
+test('Smart Zap does not repeat current or seen except when exhausted',()=>{
+ const result=p.smartZap(channels,{currentId:'n',seen:['m','f','s','k','u']});
+ assert.ok(result);
+ assert.notEqual(result.id,'n');
+ assert.ok(result.status!=='dead');
+ const only=p.smartZap([channels[0]],{currentId:'n'});
+ assert.equal(only,null);
+});
+test('WatchFlow Plus UI only plays after an explicit click and uses native channel IDs',()=>{
+ const script=fs.readFileSync('renderer/positron-watchflow-next.js','utf8');
+ const html=fs.readFileSync('renderer/index.html','utf8');
+ assert.ok(script.includes("buttons.zap.addEventListener('click'"));
+ assert.ok(script.includes("app.playChannel(String(ch.id))"));
+ assert.ok(script.includes('recentApi.visible(source,channels(),key)'));
+ assert.ok(!/fetch\s*\(|XMLHttpRequest|importSource\s*\(/.test(script));
+ assert.ok(html.includes('positron-watchflow-next-core.js'));
+ assert.ok(html.includes('positron-watchflow-next.js'));
+ assert.ok(html.includes('positron-watchflow-next.css'));
+});
