@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.201",
-  "description": "Positron P5.1.117: readable full-width single-result channel card on compact view",
+  "version": "4.23.202",
+  "description": "Positron P5.1.118: native direct channel favorites without starting playback",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

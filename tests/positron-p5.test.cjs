@@ -37,7 +37,7 @@ test('P5 assets are loaded after P4 without replacing it',()=>{
 test('P5 release is immutable and versioned separately from P4.1',()=>{
  const pkg=JSON.parse(read('package.json'));
  const flow=read('.github/workflows/positron-lab.yml');
- assert.equal(pkg.version,'4.23.201');
+ assert.equal(pkg.version,'4.23.202');
  const label=pkg.description.match(/Positron\s+(P\d+\.\d+\.\d+)/)?.[1];
  assert.ok(label,'product P-label must accompany SemVer');
  assert.ok(flow.includes('TAG=positron/v'+pkg.version+'-'+label.toLowerCase()),'release tag and app version must match');
@@ -905,9 +905,26 @@ test('P5.1.117 450px single filtered channel fills row in a readable horizontal 
  const css=read('renderer/positron-horizon-v4.css');
  const qa=read('scripts/positron-20-extension.cjs');
  assert.ok(css.includes('P5.1.117: actual P5.1.116 Electron 450px VTV-filter screenshot'));
- assert.ok(css.includes('button.web-chooser-card:only-child'));
+ assert.ok(css.includes('>.web-chooser-card-wrap:only-child>button.web-chooser-card'));
  assert.ok(css.includes('grid-column:1/-1!important;min-height:84px!important'));
  assert.ok(css.includes('flex-direction:row!important;justify-content:flex-start!important'));
  assert.ok(qa.includes('const compactSingleQA={...singleResultQA,multipleCardsUnchanged}'));
  assert.ok(qa.includes('positron-p51117-single-result-wide-card-450-real.png'));
+});
+
+
+test('P5.1.118 main grid separates native play and favorite buttons with persistent save/rollback',()=>{
+ const js=read('renderer/web-channel-chooser-v42371.js');
+ const css=read('renderer/positron-horizon-v4.css');
+ const qa=read('scripts/positron-20-extension.cjs');
+ assert.ok(js.includes("if(compact)return card"));
+ assert.ok(js.includes("frame.append(card)"));
+ assert.ok(js.includes("frame.append(star)"));
+ assert.ok(js.includes("favorites.toggle(s,ch)"));
+ assert.ok(js.includes("if(!state.save?.())"));
+ assert.ok(js.includes("s.favorites=oldUrls"));
+ assert.ok(css.includes('#webChooserGrid .web-chooser-card-wrap'));
+ assert.ok(css.includes('.web-chooser-favorite[aria-pressed="true"]'));
+ assert.ok(qa.includes("positron-p51118-direct-favorite-channel-450-real.png"));
+ assert.ok(qa.includes("persistedInStorage:Array.isArray(persisted.favoriteKeys)"));
 });

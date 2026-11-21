@@ -77,7 +77,42 @@
   card.append(face,name);
   if(active){const flag=document.createElement('span');flag.className='web-chooser-playing';flag.textContent='▶';card.append(flag);}
   card.addEventListener('click',()=>{void state.playChannel(ch.id);render();});
-  return card;
+  // P5.1.118: P5.1.117 screenshot has a full-width channel tile, but users
+  // cannot bookmark from that tile without first playing the channel.
+  // Keep the original native play button untouched; place a separate
+  // keyboard-operable favorite button beside it, never nested inside it.
+  if(compact)return card;
+  const frame=document.createElement('div');frame.className='web-chooser-card-wrap';
+  frame.append(card);
+  const star=document.createElement('button');star.type='button';
+  star.className='web-chooser-favorite';star.dataset.channelId=String(ch.id);
+  const isFavorite=favorites.has(store(),ch);
+  star.textContent=isFavorite?'★':'☆';star.setAttribute('aria-pressed',String(isFavorite));
+  star.setAttribute('aria-label',(isFavorite?'Bỏ khỏi yêu thích: ':'Thêm vào yêu thích: ')+(ch.name||'Kênh'));
+  star.title=isFavorite?'Bỏ yêu thích':'Thêm yêu thích';
+  star.addEventListener('click',()=>{
+   const s=store(),oldKeys=Array.isArray(s.favoriteKeys)?[...s.favoriteKeys]:null;
+   const oldUrls=Array.isArray(s.favorites)?[...s.favorites]:[];
+   const added=favorites.toggle(s,ch);
+   if(!state.save?.()){
+    if(oldKeys)s.favoriteKeys=oldKeys;else delete s.favoriteKeys;
+    s.favorites=oldUrls;state.render?.();
+    state.toast?.('Không lưu được kênh yêu thích. Hãy kiểm tra bộ nhớ ứng dụng.','error');
+    return;
+   }
+   state.render?.();
+   render();
+   // Native render() and Favorites change events can both redraw the tile;
+   // focus after their scheduled refresh so keyboard users remain oriented.
+   requestAnimationFrame(()=>{
+    const replacement=[...grid.querySelectorAll('.web-chooser-favorite')]
+     .find(b=>b.dataset.channelId===String(ch.id));
+    (replacement||root.querySelector('[data-chooser-tab="fav"]'))?.focus({preventScroll:true});
+   });
+   state.toast?.((added?'Đã thêm yêu thích: ':'Đã bỏ yêu thích: ')+(ch.name||'Kênh'));
+  });
+  frame.append(star);
+  return frame;
  }
  function empty(target,message){const p=document.createElement('p');p.className='web-chooser-empty';p.textContent=message;target.append(p);}
  function renderGroups(){

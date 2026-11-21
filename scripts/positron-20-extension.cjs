@@ -2018,13 +2018,63 @@ async function runTwenty(page){
  for(const [key,value] of Object.entries(compactSingleQA))
   assert.equal(value,true,'P5.1.117 single native channel result layout '+key+': '+JSON.stringify(compactSingleQA));
 
+ // P5.1.118: native Favorite action directly on a channel tile must not
+ // start playback. Verify persisted stable key, ARIA state, keyboard focus,
+ // native Favorites page synchronization, and reversible unstar.
+ await page.click('#webChooserGroups button[data-po-quick-group="VTV"]');
+ const bookmarkBefore=await page.evaluate(()=>{
+  const play=document.querySelector('#webChooserGrid button.web-chooser-card');
+  const wrapper=play?.closest('.web-chooser-card-wrap');
+  const star=wrapper?.querySelector('button.web-chooser-favorite');
+  return {separateNativeButtons:play?.tagName==='BUTTON'&&star?.tagName==='BUTTON'&&
+    !play.contains(star),notSaved:star?.getAttribute('aria-pressed')==='false',
+    noPlayback:window.IPTVState.getCurrent()===null};
+ });
+ await page.click('#webChooserGrid button.web-chooser-favorite');
+ await page.waitForFunction(()=>document.querySelector('#webChooserGrid button.web-chooser-favorite')?.getAttribute('aria-pressed')==='true',{timeout:4000});
+ const bookmarkedQA=await page.evaluate(()=>{
+  const store=window.IPTVState.getStore();
+  const ch=window.IPTVState.getChannels().find(c=>c.name==='VTV QA 1');
+  const button=document.querySelector('#webChooserGrid button.web-chooser-favorite');
+  const persisted=JSON.parse(localStorage.getItem('open-iptv-pro-4')||'{}');
+  const key=window.OpenIPTVFavorites.key(ch);
+  return {stableFavorite:window.OpenIPTVFavorites.has(store,ch)&&store.favoriteKeys.includes(key),
+   persistedInStorage:Array.isArray(persisted.favoriteKeys)&&persisted.favoriteKeys.includes(key),
+   starPressed:button?.getAttribute('aria-pressed')==='true'&&button.textContent==='★',
+   keyboardFocus:document.activeElement===button,
+   noAutoplay:window.IPTVState.getCurrent()===null};
+ });
+ await page.screenshot({path:path.join(out,'positron-p51118-direct-favorite-channel-450-real.png'),animations:'disabled'});
+ await page.click('#webChannelChooser [data-chooser-tab="fav"]');
+ const favoriteTabQA=await page.evaluate(()=>document.querySelectorAll('#webChooserGrid button.web-chooser-card').length===1&&
+  document.querySelector('#webChooserGrid button.web-chooser-favorite')?.getAttribute('aria-pressed')==='true');
+ await page.click('#webChooserGrid button.web-chooser-favorite');
+ await page.waitForFunction(()=>!!document.querySelector('#webChooserGrid .po-chooser-empty-action'),{timeout:4000});
+ const unstarQA=await page.evaluate(()=>{
+  const store=window.IPTVState.getStore();
+  const ch=window.IPTVState.getChannels().find(c=>c.name==='VTV QA 1');
+  const persisted=JSON.parse(localStorage.getItem('open-iptv-pro-4')||'{}');
+  const key=window.OpenIPTVFavorites.key(ch);
+  return {removed:!window.OpenIPTVFavorites.has(store,ch),
+   removedFromStorage:!(persisted.favoriteKeys||[]).includes(key),
+   emptyFavoritesRestored:!!document.querySelector('#webChooserGrid .po-chooser-empty-action'),
+   noAutoplay:window.IPTVState.getCurrent()===null};
+ });
+ await page.click('#webChooserGrid .po-chooser-empty-action');
+ const resetQA=await page.evaluate(()=>document.querySelector('#webChooserGroups button.active')?.dataset.poQuickGroup==='all'&&
+  document.querySelectorAll('#webChooserGrid button.web-chooser-card').length===18);
+ const directFavoriteQA={...bookmarkBefore,...bookmarkedQA,favoriteTabQA,...unstarQA,resetQA};
+ for(const [key,value] of Object.entries(directFavoriteQA))
+  assert.equal(value,true,'P5.1.118 native direct Favorite control '+key+': '+JSON.stringify(directFavoriteQA));
+
+
 
 
 
 
  await page.setViewportSize({width:1360,height:820});
   const report={type:'Positron P5 twenty distinct desktop screenshot cases',realElectron:true,syntheticChannels:false,
-  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA,chooserQa,toastLayoutQA,nativeToastQA,compactIdleQA,channelChipRailQA,advancedFilterQA,readableCardsQA,keyboardTabQA,favoriteEmptyQA,duplicateEmptyQA,categoryFilterQA,categoryFixtureQA,compactSingleQA};
+  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA,chooserQa,toastLayoutQA,nativeToastQA,compactIdleQA,channelChipRailQA,advancedFilterQA,readableCardsQA,keyboardTabQA,favoriteEmptyQA,duplicateEmptyQA,categoryFilterQA,categoryFixtureQA,compactSingleQA,directFavoriteQA};
  fs.writeFileSync(path.resolve('positron-evidence','audit-p5-20-rounds.json'),JSON.stringify(report,null,2));
  return report;
 }

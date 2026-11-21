@@ -112,3 +112,14 @@ Not yet started. Choose each new repair from the preceding real screenshot, with
 ### Verified previous round P5.1.116
 - P5.1.116 / v4.23.200 final HEAD `68bf5505bc72a73853284574dc3106bfad7e9973`; immutable release `positron/v4.23.200-p5.1.116` and GitHub Actions `44934384750` with 6/6 jobs success.
 - Node 716 tests: 711 passed, 5 skipped, zero failed. True Electron 450px screenshot `positron-p51116-real-category-filter-450-real.png` manually opened; 10/10 category checks passed with no playback and no horizontal overflow. Windows Setup/Portable x64 and Mac Intel/ARM64 release assets API-verified.
+
+
+## Separate file-triggered batch round 06/20 — P5.1.118 / v4.23.202 — CANDIDATE
+- Input: manually opened genuine P5.1.117 450px Electron screenshot: readable single VTV tile contains only click-to-play and no direct Favorite control; P114 Favorites empty state guides user to press star, but card has no star.
+- Root: renderer/web-channel-chooser-v42371.js channelCard creates just one Play button; Favorites toggle only attached to active player in renderer/app.js.
+- Fix: native sibling star button and semantic pressed state directly on main card with favorites-core toggle, store.save/rollback, app.render/notifications, no stream playback; retain mini-card native play, P117 full-width and multi-column layouts.
+- Before: positron-p51117-single-result-wide-card-450-real.png; candidate after: positron-p51118-direct-favorite-channel-450-real.png.
+- Status: CANDIDATE; validate Node+Electron+opened PNG+release before counting as 06/20.
+
+### Round 05 verified
+- P5.1.117 HEAD `15a29463a11da0679caa367515362c74bfec8029`, immutable tag `positron/v4.23.201-p5.1.117`, CI `44934939463` success 6/6. Node 717: 712 pass, 5 skipped, zero fail. Actual Electron image opened, 9/9 new layout assertions true; four binary assets verified.

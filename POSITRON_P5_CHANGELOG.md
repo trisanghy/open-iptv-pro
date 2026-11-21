@@ -820,3 +820,13 @@ P5.1.81 follow-up: real Electron capture found nav overflow; replace flexible no
 ### Verified previous round P5.1.116
 - P5.1.116 / v4.23.200 final HEAD `68bf5505bc72a73853284574dc3106bfad7e9973`; immutable release `positron/v4.23.200-p5.1.116` and GitHub Actions `44934384750` with 6/6 jobs success.
 - Node 716 tests: 711 passed, 5 skipped, zero failed. True Electron 450px screenshot `positron-p51116-real-category-filter-450-real.png` manually opened; 10/10 category checks passed with no playback and no horizontal overflow. Windows Setup/Portable x64 and Mac Intel/ARM64 release assets API-verified.
+
+
+## P5.1.118 / v4.23.202 — Direct channel bookmark without playback (file-triggered round 06/20)
+- Baseline: opened genuine P5.1.117 Electron 450px screenshot positron-p51117-single-result-wide-card-450-real.png: VTV QA card can play but has no favorite action, while Favorite empty state tells user to press a star. Users must play first to access player-only star.
+- Fix: each main grid tile keeps original native Play button and gains a separate accessible native Favorite button as a sibling, not nested inside Play. Uses existing OpenIPTVFavorites.toggle/getStore/save/render, stable favorite keys, persistence and in-memory rollback if save fails; native Favorites tab reactivity preserved. Compact side mini cards remain native Play buttons.
+- Affected CSS: add wrapper as grid cell, keep P117 one-result full-width behavior, subtle native star with aria-pressed and focus; multi-channel grid, video playback and stored sources unchanged.
+- Regression: Node plus real Electron CDP 450px QA bookmark VTV without playback, verify store/localStorage stable key, keyboard focus, Favorite tab entry, undo and persist removal, return All. Screenshot positron-p51118-direct-favorite-channel-450-real.png. Candidate until test/visual/release.
+
+### Verified previous round P5.1.117
+- Final HEAD `15a29463a11da0679caa367515362c74bfec8029`, tag `positron/v4.23.201-p5.1.117`, Actions `44934939463` success 6/6. Node 717: 712 pass, 5 skipped. Real Electron screenshot `positron-p51117-single-result-wide-card-450-real.png` opened; 9/9 P117 checks pass, all four installer assets verified.

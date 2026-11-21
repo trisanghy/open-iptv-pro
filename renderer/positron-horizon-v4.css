@@ -956,16 +956,47 @@ html[data-positron="true"].po-horizon #page-tv #webChooserGrid .po-chooser-empty
    page has exactly one channel, use the full available row with clear
    side-by-side logo/name; do not change multi-result grid or list mode. */
 @media(max-width:500px) and (max-height:900px){
- html[data-positron="true"].po-horizon #page-tv #webChooserGrid.web-chooser-grid:not(.list)>button.web-chooser-card:only-child{
+ html[data-positron="true"].po-horizon #page-tv #webChooserGrid.web-chooser-grid:not(.list)>.web-chooser-card-wrap:only-child>button.web-chooser-card{
   grid-column:1/-1!important;min-height:84px!important;
   flex-direction:row!important;justify-content:flex-start!important;
   text-align:left!important;gap:12px!important;padding:10px 14px!important;
  }
- html[data-positron="true"].po-horizon #page-tv #webChooserGrid.web-chooser-grid:not(.list)>button.web-chooser-card:only-child .web-chooser-art{
+ html[data-positron="true"].po-horizon #page-tv #webChooserGrid.web-chooser-grid:not(.list)>.web-chooser-card-wrap:only-child>button.web-chooser-card .web-chooser-art{
   flex:0 0 62px!important;width:62px!important;height:46px!important;
  }
- html[data-positron="true"].po-horizon #page-tv #webChooserGrid.web-chooser-grid:not(.list)>button.web-chooser-card:only-child .web-chooser-name{
+ html[data-positron="true"].po-horizon #page-tv #webChooserGrid.web-chooser-grid:not(.list)>.web-chooser-card-wrap:only-child>button.web-chooser-card .web-chooser-name{
   min-height:0!important;text-align:left!important;line-height:1.4!important;
   white-space:normal!important;-webkit-line-clamp:2!important;
+ }
+}
+
+
+/* P5.1.118: separate native favorite control for each main library tile.
+   Using sibling buttons prevents nested interactive elements and preserves
+   native play click plus existing localStorage save/rollback semantics. */
+html[data-positron="true"].po-horizon #page-tv #webChooserGrid .web-chooser-card-wrap{
+ position:relative!important;min-width:0!important;width:100%!important;
+}
+html[data-positron="true"].po-horizon #page-tv #webChooserGrid .web-chooser-card-wrap>button.web-chooser-card{
+ width:100%!important;height:100%!important;min-width:0!important;
+ padding-right:46px!important;
+}
+html[data-positron="true"].po-horizon #page-tv #webChooserGrid .web-chooser-favorite{
+ position:absolute!important;right:8px!important;bottom:8px!important;z-index:2!important;
+ width:34px!important;height:34px!important;border-radius:9px!important;
+ border:1px solid var(--po-line,#30495a)!important;
+ background:var(--po-raised,#203244)!important;color:var(--po-ink,#f3f7ff)!important;
+ display:flex!important;align-items:center!important;justify-content:center!important;
+ font-size:20px!important;line-height:1!important;cursor:pointer!important;
+}
+html[data-positron="true"].po-horizon #page-tv #webChooserGrid .web-chooser-favorite[aria-pressed="true"]{
+ color:var(--po-accent,#5ee4b3)!important;border-color:var(--po-accent,#5ee4b3)!important;
+}
+html[data-positron="true"].po-horizon #page-tv #webChooserGrid .web-chooser-favorite:focus-visible{
+ outline:2px solid var(--po-accent,#5ee4b3)!important;outline-offset:2px!important;
+}
+@media(max-width:500px) and (max-height:900px){
+ html[data-positron="true"].po-horizon #page-tv #webChooserGrid.web-chooser-grid:not(.list)>.web-chooser-card-wrap:only-child{
+  grid-column:1/-1!important;
  }
 }
