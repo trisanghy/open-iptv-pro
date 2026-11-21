@@ -37,13 +37,13 @@ test('P5 assets are loaded after P4 without replacing it',()=>{
 test('P5 release is immutable and versioned separately from P4.1',()=>{
  const pkg=JSON.parse(read('package.json'));
  const flow=read('.github/workflows/positron-lab.yml');
- assert.equal(pkg.version,'4.23.121');
- assert.ok(flow.includes('positron/v4.23.121-p5.1.37'));
+ assert.equal(pkg.version,'4.23.122');
+ assert.ok(flow.includes('positron/v4.23.122-p5.1.38'));
  assert.ok(read('scripts/positron-50-audit.cjs').includes('runTwenty(page)'));
- assert.ok(flow.includes('Positron-P5137-20-Real-Screenshots.zip'));
+ assert.ok(flow.includes('Positron-P5138-20-Real-Screenshots.zip'));
 });
 
-test('P5.1.1 sidebar badge matches shipped release instead of stale P4',()=>{const js=read('renderer/positron.js');assert.ok(js.includes("descriptor.textContent='P5.1.37'"));assert.ok(!js.includes('OPEN IPTV PRO · P4 · 50 VÒNG'));});
+test('P5.1.1 sidebar badge matches shipped release instead of stale P4',()=>{const js=read('renderer/positron.js');assert.ok(js.includes("descriptor.textContent='P5.1.38'"));assert.ok(!js.includes('OPEN IPTV PRO · P4 · 50 VÒNG'));});
 
 test('P5.1.3 fullscreen icon uses SVG not a tiny platform glyph',()=>{const js=read('renderer/positron-twenty.js');const css=read('renderer/positron-twenty.css');assert.ok(js.includes("['fullscreenBtn','M8 3H3v5"));assert.ok(css.includes('#page-tv #fullscreenBtn svg'));});
 
@@ -383,4 +383,14 @@ test('P5.1.37 empty-TV Play is disabled, restores when channels appear',()=>{
  assert.ok(css.includes('opacity:.50!important'));
  assert.ok(audit.includes('metrics.playAvailability?.disabled,true'));
  assert.ok(audit.includes('playLifecycle.reenabled,true'));
+});
+
+
+test('P5.1.38 guards empty TV Prev/Stop/Next and re-enables navigation dynamically',()=>{
+ const js=read('renderer/positron-twenty.js'),css=read('renderer/positron-twenty.css'),audit=read('scripts/positron-20-extension.cjs');
+ assert.ok(js.includes("const transportActions=['prevBtn','stopBtn','nextBtn']"));
+ assert.ok(js.includes('new MutationObserver(syncTransportAvailability)'));
+ assert.ok(css.includes('#page-tv .player-control-card .controls.transport-controls :is(#prevBtn,#stopBtn,#nextBtn)[data-positron-inactive="true"]'));
+ assert.ok(audit.includes('metrics.transportAvailability?.every'));
+ assert.ok(audit.includes('transportLifecycle.navigationEnabled,true'));
 });

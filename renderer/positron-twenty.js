@@ -309,6 +309,37 @@
   if(playing)new MutationObserver(syncPlayAvailability).observe(playing,{childList:true,subtree:true,characterData:true});
   syncPlayAvailability();
  }
+ // P5.1.38: P5.1.37 real Electron TV 450px empty-state screenshot
+ // shows Prev, Stop, Next available even with zero channels. Stop is only
+ // meaningful while a current channel exists, while navigation is available
+ // as soon as a playlist supplies channels. Preserve original event nodes.
+ const transportActions=['prevBtn','stopBtn','nextBtn'];
+ const transportCount=byId('navCount');
+ if(transportCount){
+  const syncTransportAvailability=()=>{
+   const count=Number((transportCount.textContent||'0').replace(/[^0-9]/g,''))||0;
+   const hasCurrent=!!window.IPTVState?.getCurrent?.();
+   for(const id of transportActions){
+    const button=byId(id);if(!button)continue;
+    const unavailable=id==='stopBtn'?!hasCurrent:count===0;
+    if(unavailable){
+     if(!button.hasAttribute('data-positron-inactive')){
+      if(button.disabled)continue;
+      button.setAttribute('data-positron-inactive','true');
+     }
+     button.disabled=true;
+     button.setAttribute('aria-describedby','playingSubtitle');
+    }else if(button.getAttribute('data-positron-inactive')==='true'){
+     button.disabled=false;button.removeAttribute('data-positron-inactive');
+     button.removeAttribute('aria-describedby');
+    }
+   }
+  };
+  new MutationObserver(syncTransportAvailability).observe(transportCount,{childList:true,subtree:true,characterData:true});
+  const currentTitle=byId('playingTitle');
+  if(currentTitle)new MutationObserver(syncTransportAvailability).observe(currentTitle,{childList:true,subtree:true,characterData:true});
+  syncTransportAvailability();
+ }
  const currentFavorite=byId('favCurrentBtn'),currentLabel=byId('playingTitle');
  if(currentFavorite&&currentLabel){
   const syncFavoriteAvailability=()=>{

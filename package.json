@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.121",
-  "description": "Positron P5.1.37: disable TV Play only when no channels exist",
+  "version": "4.23.122",
+  "description": "Positron P5.1.38: synchronize idle transport controls to channel availability",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

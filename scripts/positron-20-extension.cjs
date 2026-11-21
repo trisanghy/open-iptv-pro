@@ -111,6 +111,7 @@ async function runTwenty(page){
        text:n.selectedOptions?.[0]?.textContent?.trim()||'',label:n.getAttribute('aria-label')||''};
      })(),
 
+     transportAvailability:(()=>{return ['prevBtn','stopBtn','nextBtn'].map(id=>{const b=document.getElementById(id);if(!b)return null;const st=getComputedStyle(b);return {id,disabled:b.disabled,guard:b.getAttribute('data-positron-inactive')||'',opacity:Number(st.opacity),cursor:st.cursor};});})(),
      playAvailability:(()=>{const el=document.getElementById('playBtn');if(!el)return null;const st=getComputedStyle(el);return {disabled:el.disabled,guard:el.getAttribute('data-positron-no-channels')||'',opacity:st.opacity,cursor:st.cursor,description:el.getAttribute('aria-describedby')||''};})(),
      epgGuidance:(()=>{const node=document.getElementById('epgSearchResults');if(!node)return null;const st=getComputedStyle(node);const rgb=(st.color.match(/\d+/g)||[]).map(Number).slice(0,3);return {text:node.textContent?.trim()||'',color:st.color,luma:rgb.length===3?Math.round(rgb[0]*.2126+rgb[1]*.7152+rgb[2]*.0722):0,fontSize:st.fontSize,opacity:st.opacity};})(),
      dvrSchedule:(()=>{const b=document.getElementById('dvrAdd');if(!b)return null;const style=getComputedStyle(b);return {disabled:b.disabled,guard:b.getAttribute('data-positron-no-channels')||'',description:b.getAttribute('aria-describedby')||'',background:style.backgroundColor,filter:style.filter,opacity:style.opacity,cursor:style.cursor,vector:!!b.querySelector('svg.positron-dvr-record-icon'),ariaHidden:b.querySelector('svg')?.getAttribute('aria-hidden')||'',label:b.textContent?.trim()||''};})(),
@@ -417,6 +418,20 @@ async function runTwenty(page){
    });
    assert.equal(playLifecycle.reenabled,true,'Play must reactivate when a source supplies channels: '+name);
    assert.equal(playLifecycle.disabledAgain,true,'Play should guard empty sources again: '+name);
+   assert.equal(metrics.transportAvailability?.every(x=>x?.disabled&&x.guard==='true'&&x.opacity<=.5),true,'TV navigation/Stop actions still active with zero channels: '+name);
+   const transportLifecycle=await page.evaluate(async()=>{
+    const counter=document.getElementById('navCount'),old=counter.textContent;
+    counter.textContent='1';await new Promise(resolve=>setTimeout(resolve,0));
+    const prev=document.getElementById('prevBtn'),next=document.getElementById('nextBtn'),stop=document.getElementById('stopBtn');
+    const navigationEnabled=!prev.disabled&&!next.disabled;
+    const stopRemainsInactive=stop.disabled;
+    counter.textContent=old;await new Promise(resolve=>setTimeout(resolve,0));
+    return {navigationEnabled,stopRemainsInactive,restored:['prevBtn','nextBtn','stopBtn'].every(id=>document.getElementById(id).disabled)};
+   });
+   assert.equal(transportLifecycle.navigationEnabled,true,'channel navigation not restored: '+name);
+   assert.equal(transportLifecycle.stopRemainsInactive,true,'Stop should require current channel: '+name);
+   assert.equal(transportLifecycle.restored,true,'empty transport guards not restored: '+name);
+
   }
 
   // P5.1.19: exercise both real keyboard handlers in the Electron renderer.

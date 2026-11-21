@@ -349,3 +349,12 @@ html[data-positron="true"] #page-tv .player-control-card .controls.transport-con
  border-color:var(--po-line)!important;color:var(--po-muted)!important;
  box-shadow:none!important;cursor:not-allowed!important;
 }
+
+/* P5.1.38: real TV empty-state transport actions have no channel to
+   navigate/stop. Override the native two-ID transport CSS with explicit
+   Positron guard styles; live actions keep native color and handlers. */
+html[data-positron="true"] #page-tv .player-control-card .controls.transport-controls :is(#prevBtn,#stopBtn,#nextBtn)[data-positron-inactive="true"]{
+ opacity:.38!important;color:var(--po-muted)!important;
+ filter:grayscale(1)!important;cursor:not-allowed!important;
+ background:transparent!important;box-shadow:none!important;
+}
