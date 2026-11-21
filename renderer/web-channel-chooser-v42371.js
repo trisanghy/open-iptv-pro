@@ -68,9 +68,13 @@
   group.replaceChildren(new Option('Tất cả nhóm',''));
   for(const name of groupNames)group.append(new Option(name,name));
   group.value=groupNames.includes(existing)?existing:'';
+  // Re-rendering a horizontal mobile filter rail must not jump it back to
+  // the first category after a user selects a chip near its far edge.
+  const previousChipsScroll=groups.scrollLeft;
   groups.replaceChildren();
   for(const [value,label] of filterGroups){if(value!=='all'&&!available.size)continue;const btn=document.createElement('button');btn.type='button';btn.textContent=label;btn.className='web-chooser-chip'+(group.value===value||value==='all'&&!group.value?' active':'');
    btn.addEventListener('click',()=>{group.value=value==='all'?'':groupNames.find(name=>normalize(name).includes(normalize(value)))||'';page=0;render();});groups.append(btn);}
+  groups.scrollLeft=previousChipsScroll;
  }
  function renderSide(target,list,label){target.replaceChildren();if(!list.length){empty(target,'Chưa có kênh '+label);return;}list.slice(0,6).forEach(c=>target.append(channelCard(c,true)));}
  function render(){

@@ -844,3 +844,19 @@ html[data-positron="true"].po-horizon #page-tv .web-chooser-layout button svg{
   margin-top:8px!important;
  }
 }
+
+
+/* P5.1.111: 450px real P5.1.110 screenshot shows three stacked category
+   rows above the search box. Keep ALL native categories in one scrollable,
+   keyboard-accessible lane; no filtering logic or channel data is removed. */
+@media(max-width:600px){
+ html[data-positron="true"].po-horizon #page-tv #webChooserGroups.web-chooser-chips{
+  display:flex!important;flex-wrap:nowrap!important;gap:6px!important;
+  overflow-x:auto!important;overflow-y:hidden!important;
+  max-width:100%!important;overscroll-behavior-x:contain;
+  padding:8px 10px 6px!important;scrollbar-width:thin;
+ }
+ html[data-positron="true"].po-horizon #page-tv #webChooserGroups .web-chooser-chip{
+  flex:0 0 auto!important;white-space:nowrap!important;
+ }
+}

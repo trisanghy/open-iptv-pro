@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.194",
-  "description": "Positron P5.1.110: compact unplayed player on narrow windows while keeping native 16:9 video",
+  "version": "4.23.195",
+  "description": "Positron P5.1.111: single-row scrollable mobile category rail and persistent chip scroll",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

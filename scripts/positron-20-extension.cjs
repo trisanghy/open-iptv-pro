@@ -1752,9 +1752,37 @@ async function runTwenty(page){
  for(const key of ['compact','contentFits','videoUnmodified','restored','channelFilterReachable','noHorizontalOverflow'])
   assert.equal(compactIdleQA[key],true,'P5.1.110 compact native idle-player regression '+key+': '+JSON.stringify(compactIdleQA));
  await page.screenshot({path:path.join(out,'positron-p51110-compact-idle-player-450-real.png'),animations:'disabled'});
+ // P5.1.111: the actual P5.1.110 450px screenshot had 3 stacked
+ // category rows. Verify all native chips fit one accessible horizontal lane
+ // and the native rerender keeps scroll position after selecting a last chip.
+ const channelChipRailQA=await page.evaluate(()=>{
+  const lane=document.getElementById('webChooserGroups');
+  const tabs=[...lane.querySelectorAll('button.web-chooser-chip')];
+  const first=tabs[0]?.getBoundingClientRect();
+  const oneRow=tabs.length>=9&&tabs.every(b=>Math.abs(b.getBoundingClientRect().top-first.top)<=2);
+  const horizontallyScrollable=lane.scrollWidth>lane.clientWidth+25&&getComputedStyle(lane).overflowX==='auto';
+  lane.scrollLeft=lane.scrollWidth;
+  const before=lane.scrollLeft;
+  tabs[tabs.length-1].click();
+  const after=lane.scrollLeft;
+  const retainsScroll=before>50&&after>=before-3;
+  lane.scrollLeft=0;
+  lane.querySelector('button').click(); // restore native all-channels filter
+  const search=document.getElementById('webChooserSearch').getBoundingClientRect();
+  const grid=document.getElementById('webChooserGrid').getBoundingClientRect();
+  return {oneRow,horizontallyScrollable,retainsScroll,
+   nativeCategories:tabs.length>=9,
+   searchAboveFold:search.bottom<innerHeight-25,
+   channelGridEarlier:grid.top<innerHeight-45,
+   noOverflow:document.documentElement.scrollWidth<=innerWidth+1,
+   noAutoplay:window.IPTVState.getCurrent()===null};
+ });
+ for(const key of ['oneRow','horizontallyScrollable','retainsScroll','nativeCategories','searchAboveFold','channelGridEarlier','noOverflow','noAutoplay'])
+  assert.equal(channelChipRailQA[key],true,'P5.1.111 chip rail '+key+': '+JSON.stringify(channelChipRailQA));
+ await page.screenshot({path:path.join(out,'positron-p51111-single-row-chips-450-real.png'),animations:'disabled'});
  await page.setViewportSize({width:1360,height:820});
   const report={type:'Positron P5 twenty distinct desktop screenshot cases',realElectron:true,syntheticChannels:false,
-  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA,chooserQa,toastLayoutQA,nativeToastQA,compactIdleQA};
+  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA,chooserQa,toastLayoutQA,nativeToastQA,compactIdleQA,channelChipRailQA};
  fs.writeFileSync(path.resolve('positron-evidence','audit-p5-20-rounds.json'),JSON.stringify(report,null,2));
  return report;
 }

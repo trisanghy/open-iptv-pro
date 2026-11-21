@@ -765,3 +765,11 @@ P5.1.81 follow-up: real Electron capture found nav overflow; replace flexible no
 - Fix: when viewport <=600x900 only, compact idle onboarding canvas to 164px, remove decorative empty TV icon on narrow view, tighten text/CTA spacing. Native playback retains original 16:9 stage immediately as soon as the empty illustration hides, and remains untouched at fullscreen or larger screens. No playlist or stream changes.
 - Regression: Node guard + real Electron 450px frame height, CTA bounds, channel heading access, aspect after temporarily hiding empty state and restoration; actual image `positron-p51110-compact-idle-player-450-real.png` must be opened and reviewed.
 - Status: candidate; full CI, image review and immutable release pending verification.
+
+
+## P5.1.111 / v4.23.195 — Real one-row channel groups and sticky horizontal position (new batch round 04/20)
+- Input: manually inspected P5.1.110 genuine Electron 450x820 screenshot `positron-p51110-compact-idle-player-450-real.png`: 11 popular group buttons spill across three rows above search, making the first channel tiles hard to reach above the fold.
+- Root: the native `.web-chooser-chips` flex container wraps under 600px, and `renderGroups()` replaces all buttons (resetting scrollLeft) after every selection.
+- Fix: Positron <=600px horizontal overflow strip with native buttons all present + focus accessible; `renderGroups()` saves/restores scrollLeft to prevent jumping to the start after selecting a chip near the right side. Group filtering and playlist never altered.
+- QA: Node regression and real Electron 450px single row, scrollable, rightmost selection position retained, search and channel grid higher in viewport, no horizontal document overflow/autoplay. Screenshot `positron-p51111-single-row-chips-450-real.png` must be opened before counting completion.
+- Status: candidate until CI/installer assets and screenshot reviewed.

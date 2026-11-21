@@ -37,7 +37,7 @@ test('P5 assets are loaded after P4 without replacing it',()=>{
 test('P5 release is immutable and versioned separately from P4.1',()=>{
  const pkg=JSON.parse(read('package.json'));
  const flow=read('.github/workflows/positron-lab.yml');
- assert.equal(pkg.version,'4.23.194');
+ assert.equal(pkg.version,'4.23.195');
  const label=pkg.description.match(/Positron\s+(P\d+\.\d+\.\d+)/)?.[1];
  assert.ok(label,'product P-label must accompany SemVer');
  assert.ok(flow.includes('TAG=positron/v'+pkg.version+'-'+label.toLowerCase()),'release tag and app version must match');
@@ -802,4 +802,19 @@ test('P5.1.110 compact unplayed mobile player preserves the 28px SVG, CTA and na
  for(const check of ['videoUnmodified:Math.abs(live.width/live.height-16/9)<.08',
   'contentFits:title.top>=before.top-1','positron-p51110-compact-idle-player-450-real.png'])
   assert.ok(audit.includes(check),'native Electron idle-player audit missing '+check);
+});
+
+
+test('P5.1.111 category chips stay on a single keyboard-accessible horizontal line and retain native scroll',()=>{
+ const css=read('renderer/positron-horizon-v4.css');
+ const chooser=read('renderer/web-channel-chooser-v42371.js');
+ const audit=read('scripts/positron-20-extension.cjs');
+ assert.ok(css.includes('#webChooserGroups.web-chooser-chips'));
+ assert.ok(css.includes('overflow-x:auto!important;overflow-y:hidden!important'));
+ assert.ok(css.includes('flex:0 0 auto!important;white-space:nowrap!important'));
+ assert.ok(chooser.includes('const previousChipsScroll=groups.scrollLeft;'));
+ assert.ok(chooser.includes('groups.scrollLeft=previousChipsScroll;'));
+ for(const check of ['retainsScroll=before>50&&after>=before-3',
+  'oneRow=tabs.length>=9','positron-p51111-single-row-chips-450-real.png'])
+  assert.ok(audit.includes(check),'missing native chip-rail regression '+check);
 });

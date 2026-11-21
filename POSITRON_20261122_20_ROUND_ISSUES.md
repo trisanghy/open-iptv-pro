@@ -45,3 +45,11 @@ Not yet started. Choose each new repair from the preceding real screenshot, with
 ### Same-round CI repair — P5.1.110 (not a new cycle)
 - Run `44929563935`: 708 Node tests passed/5 skipped, but native capture failed at the existing P5 450px vector-size test (expected visible SVG width 28px, received 0), caused by initially hiding the decorative icon. No test assertion deleted or relaxed.
 - Correction restores visible native 28px SVG in a 44x34px compact container, sets idle stage to 174px to fit title + button, and adds a dedicated Node source regression which was missing from first candidate commit. Repeat CI and real screenshot review; P5.1.110 remains unfinished until immutable release succeeds.
+
+### Completed round 03 evidence
+- Positron P5.1.110 / v4.23.194 final commit `75d4acb5bf940eb46ecb868476aca6bda33e99f4`, tag `positron/v4.23.194-p5.1.110`, Actions `44929904122` six green jobs, real after-image opened: idle 174px, live 362x204px (16:9), CTA and original 28px vector intact. Node 709 total/704 pass/5 skipped/0 fail; four Windows/Mac installer assets API-verified.
+
+## New round 04/20 — P5.1.111 / v4.23.195 — CANDIDATE
+- Baseline screenshot: actual P5.1.110 native Electron `positron-p51110-compact-idle-player-450-real.png` at 450x820: three rows of category chips push search/channel rows below fold.
+- Cause: flex-wrap chips and native renderGroups replaces buttons without saving scrollLeft.
+- Planned+implemented candidate: native full set of 11 categories in a single horizontal scroll row and preserve scroll offset across group selection, with no deletion of channels/favorites/TV playback. Test by native 450px screenshot `positron-p51111-single-row-chips-450-real.png`, Node source guard, CI/full release before marking round done.
