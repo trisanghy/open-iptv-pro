@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.162",
-  "description": "Positron P5.1.78: focused Doctor onboarding instead of six meaningless zero tiles",
+  "version": "4.23.163",
+  "description": "Positron P5.1.79: accessible media tools sliders icon with reliable disclosure",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

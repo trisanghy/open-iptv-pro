@@ -127,7 +127,9 @@ async function runTwenty(page){
      toolsToggle:(()=>{
        const n=document.getElementById('positronToolsToggle');
        return n?{text:n.textContent?.trim()||'',title:n.title,
-        expanded:n.getAttribute('aria-expanded'),visible:!!n.getClientRects().length}:null;
+        expanded:n.getAttribute('aria-expanded'),visible:!!n.getClientRects().length,
+        vector:!!n.querySelector('svg path')&&n.querySelectorAll('svg circle').length===2,
+        pseudo:getComputedStyle(n,'::after').content}:null;
      })(),
      shortcutHint:(()=>{
       const b=document.getElementById('positronOpen'),k=b?.querySelector('kbd');
@@ -531,14 +533,18 @@ async function runTwenty(page){
     }
 
     assert.equal(metrics.toolsToggle?.visible,true,'TV tools disclosure hidden at 450px');
+    assert.equal(metrics.toolsToggle?.vector,true,'Tools disclosure still uses dots instead of sliders vector');
+    assert.ok(metrics.toolsToggle?.pseudo==='none'||metrics.toolsToggle?.pseudo==='normal','Legacy ellipsis still appears over native SVG');
     assert.ok(metrics.toolsToggle.title.includes('Tua lại'),'TV tools tooltip still says Timeshift');
     if(metrics.toolsToggle.expanded==='false')assert.ok(metrics.toolsToggle.text.includes('Tua lại'),'collapsed disclosure uses nonlocalized Timeshift');
     const disclosure=await page.evaluate(()=>{
       const b=document.getElementById('positronToolsToggle'),initial=b.getAttribute('aria-expanded');
       b.click();const changed=b.getAttribute('aria-expanded')!==initial;
-      b.click();return {changed,restored:b.getAttribute('aria-expanded')===initial};
+      const vectorAfterToggle=!!b.querySelector('svg path')&&b.querySelectorAll('svg circle').length===2;
+      b.click();return {changed,vectorAfterToggle,restored:b.getAttribute('aria-expanded')===initial};
     });
     assert.equal(disclosure.changed,true,'tools toggle no longer opens');
+    assert.equal(disclosure.vectorAfterToggle,true,'sliders icon disappears after toggling more tools');
     assert.equal(disclosure.restored,true,'tools toggle failed to restore original state');
 
     const focusState=await page.evaluate(()=>{

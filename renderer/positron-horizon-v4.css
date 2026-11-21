@@ -688,3 +688,16 @@ html[data-positron="true"].po-horizon #page-doctor #positronDoctorSources{flex-s
  html[data-positron="true"].po-horizon #page-doctor .po-doctor-start-copy strong{font-size:20px}
  html[data-positron="true"].po-horizon #page-doctor #positronDoctorSources{width:100%!important}
 }
+
+/* P5.1.79 — The real TV screenshot's three floating dots did not explain
+   where Timeshift and recording controls live. Use a consistent SVG sliders
+   disclosure, preserving the original click state and text for accessibility. */
+html[data-positron="true"].po-v3.po-horizon #page-tv .player-control-card .output-controls #positronToolsToggle::after{content:none!important}
+html[data-positron="true"].po-v3.po-horizon #page-tv .player-control-card .output-controls #positronToolsToggle svg{
+ display:block!important;width:20px!important;height:20px!important;stroke:currentColor!important;
+ stroke-width:1.9!important;stroke-linecap:round!important;stroke-linejoin:round!important;
+ fill:none!important;flex:0 0 20px!important;pointer-events:none!important;
+}
+html[data-positron="true"].po-v3.po-horizon #page-tv .player-control-card .output-controls #positronToolsToggle[aria-expanded="true"]{
+ background:#254c46!important;color:#9bf5d8!important;
+}

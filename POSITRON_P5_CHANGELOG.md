@@ -541,3 +541,8 @@ P5.1.46 same-version CI repair: run 44866650681 failed 2/611 because historical 
 - P5.1.77 actual no-source Electron Doctor screenshot still had six zero-value metrics taking an entire horizontal row, despite advanced diagnostic panels being correctly hidden.
 - While native channel count is zero, hide only `.doctor-metrics` and render a purposeful, labeled introduction with direct access to native source manager; keep both original Doctor V2/V3 sections, all report DOM, and preferences untouched. Restore the complete metric dashboard automatically when actual native channels are added.
 - Add Node regression and Electron screenshot assertions for zero-source metrics being hidden and restored after 552 metadata-only channels. No real playback claimed. CI/build/release pending.
+
+## P5.1.79 — Understandable player tools disclosure (new batch 03/20)
+- P5.1.78 real Electron TV shows a trailing `•••` icon that does not communicate the Timeshift/recording/tool collection and looks out-of-place against the other monochrome player icons.
+- Render a monochrome sliders SVG as part of the existing native toggle in `positron-fifty.js`, overriding only the legacy pseudo-element dots; retain the actual button, its localized text, click handler, aria-expanded, tooltip and saved open/closed state.
+- Extend real Electron CDP checks for vector presence, pseudo removal and icon survival across open/close transitions. Add Node regression. CI/release pending.

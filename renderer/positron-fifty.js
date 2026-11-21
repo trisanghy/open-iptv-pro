@@ -83,6 +83,19 @@
     root.classList.toggle('p50-tools-closed',!toolsOpen);
     tools.setAttribute('aria-expanded',String(toolsOpen));
     tools.textContent=toolsOpen?'▴ Ẩn công cụ phát':'▾ Tua lại · Ghi hình · Công cụ';
+    // P5.1.79: a clearly recognizable sliders icon replaces the unreadable
+    // three-dot affordance, while the same button and handlers remain native.
+    const icon=d.createElementNS('http://www.w3.org/2000/svg','svg');
+    icon.setAttribute('viewBox','0 0 24 24');icon.setAttribute('aria-hidden','true');
+    icon.setAttribute('focusable','false');
+    const stroke=d.createElementNS('http://www.w3.org/2000/svg','path');
+    stroke.setAttribute('d','M4 7h4m4 0h8M4 17h10m4 0h2');icon.append(stroke);
+    for(const [cx,cy] of [[10,7],[16,17]]){
+      const knob=d.createElementNS('http://www.w3.org/2000/svg','circle');
+      knob.setAttribute('cx',String(cx));knob.setAttribute('cy',String(cy));
+      knob.setAttribute('r','2');icon.append(knob);
+    }
+    tools.append(icon);
   };
   tools.addEventListener('click',()=>{toolsOpen=!toolsOpen;syncTools();});
   syncTools();
