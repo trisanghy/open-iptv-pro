@@ -6,6 +6,12 @@
 (()=>{
  const area=document.getElementById('toastArea');
  if(!area)return;
+ // P5.1.122: Keep the last native focus target outside notifications.
+ let returnFocus=null;
+ document.addEventListener('focusin',event=>{
+  const target=event.target;
+  if(target instanceof HTMLElement&&!area.contains(target))returnFocus=target;
+ },true);
  function enhance(node){
   if(!(node instanceof Element)||!node.classList.contains('toast'))return;
   if(node.querySelector('.po-toast-dismiss'))return;
@@ -16,7 +22,10 @@
   button.title='Đóng thông báo';
   button.addEventListener('click',event=>{
    event.preventDefault();event.stopPropagation();
+   const restore=document.activeElement===button?returnFocus:null;
    node.remove();
+   if(restore?.isConnected&&typeof restore.focus==='function'&&!restore.disabled)
+    restore.focus({preventScroll:true});
   });
   node.append(button);
   node.dataset.poDismissReady='true';

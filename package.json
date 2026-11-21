@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.205",
-  "description": "Positron P5.1.121: dismissible toast action with keyboard and touch",
+  "version": "4.23.206",
+  "description": "Positron P5.1.122: restore keyboard focus after toast dismissal",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

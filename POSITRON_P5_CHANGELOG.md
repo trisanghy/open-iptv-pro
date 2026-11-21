@@ -852,3 +852,10 @@ P5.1.81 follow-up: real Electron capture found nav overflow; replace flexible no
 - Isolated Positron DOM observer adds keyboard/touch accessible native close button to each notification; original toast data, severity, auto expiration and app playback remain unchanged.
 - Scoped contrast and 32px pointer target; real Electron screenshot `positron-p51121-toast-dismiss-visible-450-real.png` and QA must test mouse click and keyboard Enter, proper accessible label and no overflow.
 - Candidate until full CI 6/6, actual image opening and immutable binary release verification.
+
+
+## P5.1.122 / v4.23.206 — Preserve keyboard focus after dismissing toast (new batch 01/20)
+- Baseline: P5.1.121 actual Electron 450px image `positron-p51121-toast-dismiss-visible-450-real.png`, directly inspected.
+- Root: deleting a focused toast close button returns keyboard focus to the page body, not the user's previous control.
+- Fix: track last genuinely focused control outside #toastArea and restore if still connected and enabled. Preserve native toast timers, severity, M3U, favorites and playback.
+- Actual Electron QA: focus #webChooserSearch, append isolated warning toast, press Enter to dismiss, assert return focus/no overflow; after-image `positron-p51122-toast-focus-return-450-real.png`. Node syntax guard. Candidate until CI and image/release verification.

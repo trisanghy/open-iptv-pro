@@ -970,3 +970,14 @@ test('P5.1.121 native toast observer adds a real accessible close action',()=>{
  assert.ok(qa.includes('positron-p51121-toast-dismiss-visible-450-real.png'));
  assert.ok(qa.includes('clickedDismissed,keyboardDismissed'));
 });
+
+
+test('P5.1.122 native toast restores keyboard focus after dismissal',()=>{
+ const src=read('renderer/positron-toast-dismiss.js'),qa=read('scripts/positron-20-extension.cjs');
+ assert.doesNotThrow(()=>new vm.Script(src));
+ assert.ok(src.includes("document.addEventListener('focusin'"));
+ assert.ok(src.includes('!area.contains(target)'));
+ assert.ok(src.includes("restore.focus({preventScroll:true})"));
+ assert.ok(qa.includes("focusRestored:document.activeElement?.id==='webChooserSearch'"));
+ assert.ok(qa.includes('positron-p51122-toast-focus-return-450-real.png'));
+});

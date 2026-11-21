@@ -2191,9 +2191,29 @@ async function runTwenty(page){
  for(const [key,value] of Object.entries(toastDismissQA))
   assert.equal(value,true,'P5.1.121 accessible native notification dismissal '+key+': '+JSON.stringify(toastDismissQA));
 
+ // P5.1.122 native Electron: closing a focused toast must return focus.
+ await page.locator('#webChooserSearch').focus();
+ await page.evaluate(()=>{
+  const n=document.createElement('div');n.className='toast warn';
+  n.textContent='QA: Trở về ô tìm kiếm';n.dataset.poRound122='focus';
+  document.getElementById('toastArea').append(n);
+ });
+ await page.waitForFunction(()=>!!document.querySelector('#toastArea [data-po-round122="focus"] .po-toast-dismiss'),{timeout:4000});
+ await page.locator('#toastArea [data-po-round122="focus"] .po-toast-dismiss').focus();
+ await page.keyboard.press('Enter');
+ const toastFocusReturnQA=await page.evaluate(()=>({
+  toastGone:!document.querySelector('#toastArea [data-po-round122="focus"]'),
+  focusRestored:document.activeElement?.id==='webChooserSearch',
+  inputStillEnabled:!document.getElementById('webChooserSearch')?.disabled,
+  noOverflow:document.documentElement.scrollWidth<=innerWidth+1
+ }));
+ await page.screenshot({path:path.join(out,'positron-p51122-toast-focus-return-450-real.png'),animations:'disabled'});
+ for(const [key,value] of Object.entries(toastFocusReturnQA))
+  assert.equal(value,true,'P5.1.122 native focus return '+key+': '+JSON.stringify(toastFocusReturnQA));
+
  await page.setViewportSize({width:1360,height:820});
   const report={type:'Positron P5 twenty distinct desktop screenshot cases',realElectron:true,syntheticChannels:false,
-  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA,chooserQa,toastLayoutQA,nativeToastQA,compactIdleQA,channelChipRailQA,advancedFilterQA,readableCardsQA,keyboardTabQA,favoriteEmptyQA,duplicateEmptyQA,categoryFilterQA,categoryFixtureQA,compactSingleQA,directFavoriteQA,favoriteCountQA,compactToastStackQA,toastDismissQA};
+  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA,chooserQa,toastLayoutQA,nativeToastQA,compactIdleQA,channelChipRailQA,advancedFilterQA,readableCardsQA,keyboardTabQA,favoriteEmptyQA,duplicateEmptyQA,categoryFilterQA,categoryFixtureQA,compactSingleQA,directFavoriteQA,favoriteCountQA,compactToastStackQA,toastDismissQA,toastFocusReturnQA};
  fs.writeFileSync(path.resolve('positron-evidence','audit-p5-20-rounds.json'),JSON.stringify(report,null,2));
  return report;
 }

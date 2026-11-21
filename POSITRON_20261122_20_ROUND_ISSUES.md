@@ -149,3 +149,11 @@ Not yet started. Choose each new repair from the preceding real screenshot, with
 - Fix: separate Positron-only observer appends accessible 32px close buttons, focusable for keyboard users. Desktop and mobile both supported; warnings/errors retain their severity.
 - Native 450px image and QA: `positron-p51121-toast-dismiss-visible-450-real.png`, button click and Enter dismiss, hit-target, focus/ARIA, no overflow. Node guard.
 - Before: P5.1.120 Electron PNG; after pending real screenshot. Not countable without CI, image review, release assets.
+
+
+## New file-triggered batch round 01/20 — P5.1.122 / v4.23.206 — CANDIDATE
+- Real before: P5.1.121 Electron `positron-p51121-toast-dismiss-visible-450-real.png`, manually opened.
+- Defect: focused toast close action removes itself and leaves keyboard focus stranded.
+- Fix: Positron-specific last non-toast focus restoration, no changes to playlist, player, native toast expiry.
+- After candidate: Electron 450px `positron-p51122-toast-focus-return-450-real.png`, CI must assert focusRestored, noOverflow.
+- Do not count completed until image opened, tests and immutable release assets verified.
