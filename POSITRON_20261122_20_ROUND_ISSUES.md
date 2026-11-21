@@ -75,3 +75,11 @@ Not yet started. Choose each new repair from the preceding real screenshot, with
 - Before: P5.1.112 real screenshot above. After: pending native Electron screenshot positron-p51113-keyboard-favorites-tab-450-real.png and manual review.
 - Pre-baseline correction: workflow-only commit 50a2f2e24710e1727b7fe6a31273cc2808bc30d0 corrected P5.1.112 photo filename typo; not a separate version/round.
 - Status: P5.1.113 CANDIDATE, count only once real CI, screenshot review and release succeed. Earlier rounds from prior batches are not counted.
+
+
+## Separate file-triggered batch round 02/20 — P5.1.114 / v4.23.198 — CANDIDATE
+- Input: actual P5.1.113 Electron 450px screenshot manually opened; Favorites selected, 552 channels present, generic incorrect no-results text and useless 1/1 pager.
+- Root in renderer/web-channel-chooser-v42371.js: no results do not differentiate no favorites/no recent from search mismatch; unconditional pager.
+- Fix: contextual empty states, action back to all channels, hide unneeded pager and maintain screen-reader keyboard focus; no playlist edits or autoplay.
+- Before: positron-p51113-keyboard-favorites-tab-450-real.png. After candidate: positron-p51114-favorite-empty-action-450-real.png.
+- Status: count after successful real Electron screenshot QA and release. Preserve prior version as immutable.

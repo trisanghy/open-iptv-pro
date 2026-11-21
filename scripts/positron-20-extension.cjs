@@ -1853,9 +1853,44 @@ async function runTwenty(page){
  for(const [key,value] of Object.entries(keyboardTabQA))
   assert.equal(value,true,'P5.1.113 native chooser keyboard tab '+key+': '+JSON.stringify(keyboardTabQA));
 
+ // P5.1.114: screenshot of P5.1.113 Favorites tab showed 552 imported
+ // channels with wrong generic no-results text and unusable 1 / 1 pager.
+ // Verify useful zero-state and a return action that does not autoplay.
+ await page.focus('#webChannelChooser [data-chooser-tab="all"]');
+ await page.keyboard.press('ArrowRight');
+ const emptyFavoriteQA=await page.evaluate(()=>{
+  const root=document.getElementById('webChannelChooser');
+  const grid=document.getElementById('webChooserGrid');
+  const message=grid.querySelector('.web-chooser-empty')?.textContent||'';
+  const action=grid.querySelector('button.po-chooser-empty-action');
+  const pager=root.querySelector('.web-chooser-pager');
+  return {channelsLoaded:window.IPTVState.getChannels().length>=500,
+   favoriteTabSelected:root.querySelector('[data-chooser-tab="fav"]')?.getAttribute('aria-selected')==='true',
+   descriptiveMessage:message.includes('Chưa có kênh yêu thích')&&message.includes('sao'),
+   returnButton:!!action&&action.textContent.includes('Xem tất cả kênh')&&action.getBoundingClientRect().height>=32,
+   emptyPagerHidden:pager?.hidden===true&&getComputedStyle(pager).display==='none',
+   noAutoplay:window.IPTVState.getCurrent()===null,
+   noOverflow:document.documentElement.scrollWidth<=innerWidth+1};
+ });
+ await page.screenshot({path:path.join(out,'positron-p51114-favorite-empty-action-450-real.png'),animations:'disabled'});
+ await page.click('#webChooserGrid .po-chooser-empty-action');
+ const returnedAll=await page.evaluate(()=>{
+  const all=document.querySelector('[data-chooser-tab="all"]');
+  const cards=document.querySelectorAll('#webChooserGrid button.web-chooser-card');
+  const pager=document.querySelector('#webChannelChooser .web-chooser-pager');
+  return all.getAttribute('aria-selected')==='true'&&document.activeElement===all&&
+   cards.length>=6&&pager.hidden===false&&
+   document.getElementById('webChooserSearch').value===''&&
+   window.IPTVState.getCurrent()===null;
+ });
+ const favoriteEmptyQA={...emptyFavoriteQA,returnedAll};
+ for(const [key,value] of Object.entries(favoriteEmptyQA))
+  assert.equal(value,true,'P5.1.114 actionable Favorites empty state '+key+': '+JSON.stringify(favoriteEmptyQA));
+
+
  await page.setViewportSize({width:1360,height:820});
   const report={type:'Positron P5 twenty distinct desktop screenshot cases',realElectron:true,syntheticChannels:false,
-  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA,chooserQa,toastLayoutQA,nativeToastQA,compactIdleQA,channelChipRailQA,advancedFilterQA,readableCardsQA,keyboardTabQA};
+  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA,chooserQa,toastLayoutQA,nativeToastQA,compactIdleQA,channelChipRailQA,advancedFilterQA,readableCardsQA,keyboardTabQA,favoriteEmptyQA};
  fs.writeFileSync(path.resolve('positron-evidence','audit-p5-20-rounds.json'),JSON.stringify(report,null,2));
  return report;
 }

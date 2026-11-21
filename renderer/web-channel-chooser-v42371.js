@@ -101,9 +101,32 @@
   const data=candidates(),pages=Math.max(1,Math.ceil(data.length/18));page=Math.min(page,pages-1);
   grid.classList.toggle('list',layout==='list');grid.replaceChildren();
   if(!all.length)empty(grid,'Chưa có nguồn kênh. Hãy nhập playlist M3U để bắt đầu.');
-  else if(!data.length)empty(grid,'Không tìm thấy kênh phù hợp.');
+  else if(!data.length){
+   // P5.1.114: real P5.1.113 Electron screenshot showed an empty Favorites tab
+   // with 552 imported channels but an incorrect generic "not found" message.
+   // Explain true first-use states; retain filters/data and offer a reversible
+   // one-click path back to browsing without starting playback.
+   let message='Không tìm thấy kênh phù hợp với bộ lọc hiện tại.';
+   if(tab==='fav')message=favoritesList().length
+    ?'Không có kênh yêu thích phù hợp với bộ lọc.'
+    :'Chưa có kênh yêu thích. Nhấn biểu tượng sao ở một kênh để lưu vào đây.';
+   if(tab==='recent')message=recentList().length
+    ?'Không có kênh xem gần đây phù hợp với bộ lọc.'
+    :'Chưa xem kênh nào gần đây. Chọn một kênh và bắt đầu phát để hiển thị ở đây.';
+   empty(grid,message);
+   if(tab==='fav'||tab==='recent'){
+    const back=document.createElement('button');back.type='button';
+    back.className='po-chooser-empty-action';back.textContent='Xem tất cả kênh';
+    back.addEventListener('click',()=>{
+     tab='all';page=0;search.value='';group.value='';
+     render();chooserTabs.find(b=>b.dataset.chooserTab==='all')?.focus();
+    });
+    grid.append(back);
+   }
+  }
   else data.slice(page*18,page*18+18).forEach(c=>grid.append(channelCard(c)));
   pageLabel.textContent=(page+1)+' / '+pages;prev.disabled=page<=0;next.disabled=page>=pages-1;
+  pageLabel.closest('.web-chooser-pager').hidden=pages<=1;
   status.textContent=data.length+' kênh';
   renderSide(favGrid,favoritesList(),'yêu thích');renderSide(recentGrid,recentList(),'xem gần đây');
   root.querySelectorAll('[data-chooser-tab]').forEach(b=>{const active=b.dataset.chooserTab===tab;b.classList.toggle('active',active);b.setAttribute('aria-selected',String(active));b.tabIndex=active?0:-1;});

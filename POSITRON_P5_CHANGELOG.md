@@ -787,3 +787,10 @@ P5.1.81 follow-up: real Electron capture found nav overflow; replace flexible no
 - Baseline: manually opened real P5.1.112 Electron 450px screenshot containing three native chooser tabs. Static inspection found role=tablist but no ArrowLeft/ArrowRight/Home/End handler or roving tabindex.
 - Fix: preserve original native click-to-select, add directional/Home/End keyboard focus, selected tab only in Tab sequence, aria-controls; Favorites/Recent/channel playback and stored data unchanged.
 - Regression: Node assertions + real Electron CDP key presses, focus/selected states, wraparound, no autoplay/overflow, actual screenshot positron-p51113-keyboard-favorites-tab-450-real.png. CANDIDATE until CI, manual review, installer assets verified.
+
+
+## P5.1.114 / v4.23.198 — Actionable Favorites/Recent empty states (file-triggered batch round 02/20)
+- Input: manually opened real P5.1.113 Electron screenshot positron-p51113-keyboard-favorites-tab-450-real.png. After keyboard selection of Favorites, 552 channels were loaded but UI incorrectly said generic "Không tìm thấy kênh phù hợp" and showed disabled page 1 / 1.
+- Root: chooser renderer reused generic no-results branch for genuinely empty Favorites/Recent lists and always rendered a pager for zero matches.
+- Fix: context-specific empty messages for Favorites and Recent, native "Xem tất cả kênh" action that clears local search/group filters and restores All tab focus without autoplay; hide pager on one-page or empty results; preserve playlist and favorites data.
+- Regression: Node source tests + real Electron CDP 450px empty UI, button focus/click, channel restoration, no playback/overflow, screenshot positron-p51114-favorite-empty-action-450-real.png. Candidate until CI, opened screenshot, release assets verified.

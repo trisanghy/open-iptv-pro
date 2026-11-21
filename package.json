@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.197",
-  "description": "Positron P5.1.113: accessible keyboard tabs for native channel chooser",
+  "version": "4.23.198",
+  "description": "Positron P5.1.114: actionable Favorites and Recent empty states",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

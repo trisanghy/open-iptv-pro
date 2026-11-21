@@ -37,7 +37,7 @@ test('P5 assets are loaded after P4 without replacing it',()=>{
 test('P5 release is immutable and versioned separately from P4.1',()=>{
  const pkg=JSON.parse(read('package.json'));
  const flow=read('.github/workflows/positron-lab.yml');
- assert.equal(pkg.version,'4.23.197');
+ assert.equal(pkg.version,'4.23.198');
  const label=pkg.description.match(/Positron\s+(P\d+\.\d+\.\d+)/)?.[1];
  assert.ok(label,'product P-label must accompany SemVer');
  assert.ok(flow.includes('TAG=positron/v'+pkg.version+'-'+label.toLowerCase()),'release tag and app version must match');
@@ -856,4 +856,19 @@ test('P5.1.113 channel chooser tabs support ArrowLeft/Right/Home/End with one ta
  assert.ok(js.includes("target.click();target.focus()"));
  assert.ok(audit.includes("const keyboardTabQA={arrowRight,end,home,wrap"));
  assert.ok(audit.includes("positron-p51113-keyboard-favorites-tab-450-real.png"));
+});
+
+
+test('P5.1.114 Favorites and Recent zero-state explains empty lists with a native return action',()=>{
+ const js=read('renderer/web-channel-chooser-v42371.js');
+ const css=read('renderer/positron-horizon-v4.css');
+ const audit=read('scripts/positron-20-extension.cjs');
+ assert.ok(js.includes("Chưa có kênh yêu thích. Nhấn biểu tượng sao"));
+ assert.ok(js.includes("Chưa xem kênh nào gần đây."));
+ assert.ok(js.includes("back.textContent='Xem tất cả kênh'"));
+ assert.ok(js.includes("pageLabel.closest('.web-chooser-pager').hidden=pages<=1"));
+ assert.ok(css.includes('.web-chooser-pager[hidden]{display:none!important}'));
+ assert.ok(css.includes('.po-chooser-empty-action:focus-visible'));
+ assert.ok(audit.includes("positron-p51114-favorite-empty-action-450-real.png"));
+ assert.ok(audit.includes('emptyPagerHidden:pager?.hidden===true'));
 });
