@@ -3,6 +3,17 @@
 > **HEAD BẤT BIẾN — MỖI LẦN GỬI FILE = 20 VÒNG TÍNH NĂNG MỚI (KHÔNG PHẢI 20 LỖI CSS).** Đọc [POSITRON_HEAD_20_VONG_TINH_NANG_MOI.md](POSITRON_HEAD_20_VONG_TINH_NANG_MOI.md) trước mọi thao tác: **20 phiên bản độc lập, mỗi phiên bản tính năng mới, một cặp ảnh Electron thật đã mở xem, test/commit/CI/release và báo cáo; không dừng sau 1 vòng; không đếm 70 ảnh QA là 20 vòng**. Nếu giới hạn thực tế, lưu checkpoint và nêu đúng tiến độ, không giả chạy nền.
 
 
+## Quy tắc ảnh 16:9 desktop bất biến — áp dụng từ 22/11/2026
+
+**Ảnh chính cho báo cáo, nhật ký tính năng và Release của Positron bắt buộc ưu tiên chụp từ Electron thật ở 1920 × 1080 (16:9).** Quy tắc này được duy trì cho các phiên bản tiếp theo, kể cả khi chuyển cuộc trò chuyện hoặc bàn giao file.
+
+- Mỗi phiên bản mới phải lưu tối thiểu một ảnh PNG desktop toàn màn hình 1920 × 1080. Khi tính năng có trạng thái trước/sau, chụp cả hai ở cùng 1920 × 1080, có thao tác thực tế và xem lại bằng mắt.
+- Các ảnh 450px/600px/720px vẫn bắt buộc khi kiểm tra responsive nhưng là bằng chứng bổ sung; không lấy ảnh màn hình hẹp làm ảnh đại diện nếu có ảnh desktop đúng phiên bản.
+- Ảnh phải là dữ liệu pixel chụp trực tiếp từ Electron qua CDP/Playwright hoặc máy thật, không vẽ giả, không AI, không upscale, không cắt/căn lại để giả tỷ lệ; kiểm tra đúng kích thước PNG và lưu SHA-256.
+- CI sử dụng màn hình ảo tối thiểu 1920 × 1080, lưu ảnh desktop cùng gói ảnh của mỗi phiên bản. Nếu ảnh chưa được xác minh, ghi CHƯA XÁC MINH, không lấy ảnh phiên bản khác.
+- Không đưa playlist hay dữ liệu riêng vào ảnh; nếu dùng dữ liệu QA cục bộ thì ghi rõ đó là dữ liệu kiểm thử. Không tính việc chỉnh quy tắc/chụp ảnh là một vòng thêm tính năng mới.
+- Chỉ áp dụng trên nhánh `Positron`; không sửa main, Web, Electron ổn định, Rust hoặc Mobile. Chỉ đổi quy tắc này khi người dùng yêu cầu trực tiếp.
+
 **Ưu tiên số 1: thêm nhiều tính năng mới thiết thực cho người xem.** Không dùng nhiều vòng liên tiếp chỉ để tinh chỉnh màu, viền, khoảng cách hoặc đổi nhãn phiên bản. Chỉ ưu tiên sửa lỗi khi đó là lỗi phát hình/âm thanh, mất dữ liệu, bảo mật, CI không đạt, hoặc khiến tính năng mới không dùng được.
 
 Mỗi vòng:

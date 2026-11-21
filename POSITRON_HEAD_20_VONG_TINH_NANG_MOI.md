@@ -2,6 +2,17 @@
 
 > **MỖI LẦN NGƯỜI DÙNG GỬI FILE KHỞI CHẠY = YÊU CẦU HOÀN THÀNH ĐỦ 20 VÒNG TÍNH NĂNG MỚI LIÊN TIẾP, MỖI VÒNG MỘT BẢN VÁ VÀ ẢNH ELECTRON THẬT.** Không hỏi lại quyền đã cấp. Quy định này được ưu tiên trước hồ sơ lịch sử và những hướng dẫn chỉ thiên về sửa lỗi hoặc chụp ảnh kiểm thử.
 
+## Quy tắc ảnh 16:9 desktop bất biến — áp dụng từ 22/11/2026
+
+**Ảnh chính cho báo cáo, nhật ký tính năng và Release của Positron bắt buộc ưu tiên chụp từ Electron thật ở 1920 × 1080 (16:9).** Quy tắc này được duy trì cho các phiên bản tiếp theo, kể cả khi chuyển cuộc trò chuyện hoặc bàn giao file.
+
+- Mỗi phiên bản mới phải lưu tối thiểu một ảnh PNG desktop toàn màn hình 1920 × 1080. Khi tính năng có trạng thái trước/sau, chụp cả hai ở cùng 1920 × 1080, có thao tác thực tế và xem lại bằng mắt.
+- Các ảnh 450px/600px/720px vẫn bắt buộc khi kiểm tra responsive nhưng là bằng chứng bổ sung; không lấy ảnh màn hình hẹp làm ảnh đại diện nếu có ảnh desktop đúng phiên bản.
+- Ảnh phải là dữ liệu pixel chụp trực tiếp từ Electron qua CDP/Playwright hoặc máy thật, không vẽ giả, không AI, không upscale, không cắt/căn lại để giả tỷ lệ; kiểm tra đúng kích thước PNG và lưu SHA-256.
+- CI sử dụng màn hình ảo tối thiểu 1920 × 1080, lưu ảnh desktop cùng gói ảnh của mỗi phiên bản. Nếu ảnh chưa được xác minh, ghi CHƯA XÁC MINH, không lấy ảnh phiên bản khác.
+- Không đưa playlist hay dữ liệu riêng vào ảnh; nếu dùng dữ liệu QA cục bộ thì ghi rõ đó là dữ liệu kiểm thử. Không tính việc chỉnh quy tắc/chụp ảnh là một vòng thêm tính năng mới.
+- Chỉ áp dụng trên nhánh `Positron`; không sửa main, Web, Electron ổn định, Rust hoặc Mobile. Chỉ đổi quy tắc này khi người dùng yêu cầu trực tiếp.
+
 ## Quy tắc cứng mỗi lần chạy
 
 1. **Bắt đầu từ HEAD mới nhất** của repo `trisanghy/open-iptv-pro`, duy nhất nhánh `Positron`; xác minh `package.json`, phiên bản, Actions, release, ảnh Electron và các chức năng có thật. Không quay về nhãn phiên bản trong hồ sơ bàn giao.
