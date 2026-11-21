@@ -185,3 +185,44 @@ html[data-theme="light"] #page-tv .channel-panel .folder-actions button:hover{
  background:var(--rust-light-selected)!important;
  color:var(--rust-light-text)!important;
 }
+
+/* Rust Lab Light visual review pass 3:
+   legacy DVR and warning text still used pastel colors intended for dark themes.
+   Align these with the existing Light semantic text colors without hiding errors,
+   mutating user data or changing video/subtitle overlays. */
+html[data-theme="light"] :is(.dvr-error,.dvr-job-error,.dvr-running-warning){
+ color:#a12f44!important;
+}
+html[data-theme="light"] :is(.dvr-status,.dvr-job-meta,.dvr-heading p,.dvr-quick-hint){
+ color:var(--rust-light-muted)!important;
+}
+html[data-theme="light"] .dvr-quick-status.error,
+html[data-theme="light"] .dvr-status.error{
+ color:#a12f44!important;
+}
+html[data-theme="light"] :is(.dvr-recording .dvr-pill,.dvr-quick-status.recording){
+ color:#86501e!important;
+}
+html[data-theme="light"] :is(.dvr-completed .dvr-pill,.dvr-quick-status.scheduled){
+ color:#12664d!important;
+}
+/* Foreground contrast for dynamic status and source instructions. */
+html[data-theme="light"] :is(.source-hub-heading p,.source-check-note,.collector-log,.smart-controls small){
+ color:var(--rust-light-muted)!important;
+}
+html[data-theme="light"] :is(.source-hub-section .hint,.epg-source-card .hint,.source-hub-section .source-meta){
+ color:#435a70!important;
+}
+html[data-theme="light"] #page-tv :is(.channel-drag-hint,.rust-browser-empty){
+ color:#425a70!important;
+}
+html[data-theme="light"] .sidebar :is(.nav,.nav-label,.aside-caption){
+ color:var(--rust-light-muted)!important;
+}
+html[data-theme="light"] .sidebar .nav.active :is(.nav-label,.nav-label+small){
+ color:var(--rust-light-text)!important;
+}
+html[data-theme="light"] :is(button,input,select,textarea):focus-visible{
+ outline:2px solid var(--accent)!important;
+ outline-offset:2px!important;
+}
