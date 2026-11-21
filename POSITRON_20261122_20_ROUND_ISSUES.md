@@ -157,3 +157,10 @@ Not yet started. Choose each new repair from the preceding real screenshot, with
 - Fix: Positron-specific last non-toast focus restoration, no changes to playlist, player, native toast expiry.
 - After candidate: Electron 450px `positron-p51122-toast-focus-return-450-real.png`, CI must assert focusRestored, noOverflow.
 - Do not count completed until image opened, tests and immutable release assets verified.
+
+
+## New file-triggered batch round 02/20 — P5.1.123 / v4.23.207 — CANDIDATE
+- Input: real after screenshot P5.1.122 `positron-p51122-toast-focus-return-450-real.png` manually opened; success toast still covers channel tiles near bottom.
+- Fix: scope successes on compact windows to a 36px footer dock, keep close focus and untouched original warning/error styles.
+- Regressions: actual Electron 450px footer geometry/overflow/visible warning, photo `positron-p51123-success-toast-footer-450-real.png` and Node source test. No alterations to M3U, favorites, media streams or persistence.
+- Accept only after CI, after-image opened, and immutable release installers verified.

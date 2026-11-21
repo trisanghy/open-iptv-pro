@@ -2211,9 +2211,43 @@ async function runTwenty(page){
  for(const [key,value] of Object.entries(toastFocusReturnQA))
   assert.equal(value,true,'P5.1.122 native focus return '+key+': '+JSON.stringify(toastFocusReturnQA));
 
+
+ // P5.1.123: Routine success notices should dock into footer, not overlap
+ // native channel tiles; warnings must retain their higher, readable stack.
+ await page.evaluate(()=>{
+  const n=document.createElement('div');n.className='toast';
+  n.textContent='QA: Đã lưu kênh yêu thích';n.dataset.poRound123='success';
+  document.getElementById('toastArea').append(n);
+ });
+ await page.waitForFunction(()=>!!document.querySelector('#toastArea [data-po-round123="success"] .po-toast-dismiss'),{timeout:4000});
+ const successDockQA=await page.evaluate(()=>{
+  const n=document.querySelector('#toastArea [data-po-round123="success"]');
+  const t=n.getBoundingClientRect(),f=document.querySelector('.footer').getBoundingClientRect();
+  const tray=document.getElementById('toastArea');
+  return {footerPresent:f.height>=32,withinFooter:t.top>=f.top-3&&t.bottom<=f.bottom+2,
+   shortAndReadable:t.height>=32&&t.height<=38,nativeDismiss:!!n.querySelector('button.po-toast-dismiss'),
+   trayAtBottom:parseFloat(getComputedStyle(tray).bottom)<=4,
+   noPageOverflow:document.documentElement.scrollWidth<=innerWidth+1};
+ });
+ await page.screenshot({path:path.join(out,'positron-p51123-success-toast-footer-450-real.png'),animations:'disabled'});
+ const warningDockQA=await page.evaluate(()=>{
+  const tray=document.getElementById('toastArea');
+  const n=document.createElement('div');n.className='toast warn';n.textContent='QA: Cảnh báo nguồn không hợp lệ';
+  n.dataset.poRound123='warning';tray.append(n);
+  const warn=n.getBoundingClientRect();
+  const result={warnPreserved:getComputedStyle(n).display!=='none'&&warn.height>=30,
+   warningNotFooterDock:parseFloat(getComputedStyle(tray).bottom)>=40,
+   noPageOverflow:document.documentElement.scrollWidth<=innerWidth+1};
+  [n,tray.querySelector('[data-po-round123="success"]')].forEach(x=>x?.remove());
+  return result;
+ });
+ const toastDockQA={...successDockQA,...warningDockQA};
+ for(const [key,value] of Object.entries(toastDockQA))
+  assert.equal(value,true,'P5.1.123 non-blocking success toast '+key+': '+JSON.stringify(toastDockQA));
+
  await page.setViewportSize({width:1360,height:820});
   const report={type:'Positron P5 twenty distinct desktop screenshot cases',realElectron:true,syntheticChannels:false,
-  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA,chooserQa,toastLayoutQA,nativeToastQA,compactIdleQA,channelChipRailQA,advancedFilterQA,readableCardsQA,keyboardTabQA,favoriteEmptyQA,duplicateEmptyQA,categoryFilterQA,categoryFixtureQA,compactSingleQA,directFavoriteQA,favoriteCountQA,compactToastStackQA,toastDismissQA,toastFocusReturnQA};
+  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA,chooserQa,toastLayoutQA,nativeToastQA,compactIdleQA,channelChipRailQA,advancedFilterQA,readableCardsQA,keyboardTabQA,favoriteEmptyQA,duplicateEmptyQA,categoryFilterQA,categoryFixtureQA,compactSingleQA,directFavoriteQA,favoriteCountQA,compactToastStackQA,toastDismissQA,toastFocusReturnQA,toastDockQA};
  fs.writeFileSync(path.resolve('positron-evidence','audit-p5-20-rounds.json'),JSON.stringify(report,null,2));
  return report;
 }

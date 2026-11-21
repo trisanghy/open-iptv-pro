@@ -1052,3 +1052,21 @@ html[data-positron="true"].po-horizon #toastArea.toast-area .toast .po-toast-dis
 html[data-positron="true"].po-horizon #toastArea.toast-area .toast .po-toast-dismiss:focus-visible{
  outline:2px solid #edfff8!important;outline-offset:1px!important;
 }
+
+
+/* P5.1.123: The verified P5.1.122 450px Electron image shows even one
+   successful toast obscuring the lower channel cards. For compact windows,
+   dock only routine confirmations in the existing footer-status strip.
+   Warning/error toasts retain their original raised position and full text. */
+@media(max-width:600px){
+ html[data-positron="true"].po-horizon #toastArea.toast-area:not(:has(.toast.warn,.toast.err)){
+  bottom:2px!important;
+ }
+ html[data-positron="true"].po-horizon #toastArea.toast-area:not(:has(.toast.warn,.toast.err))
+ .toast:not(.warn):not(.err){
+  box-sizing:border-box!important;height:36px!important;min-height:36px!important;max-height:36px!important;
+  margin-top:0!important;padding:2px 40px 2px 11px!important;
+  overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important;
+  line-height:30px!important;
+ }
+}

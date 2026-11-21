@@ -37,7 +37,7 @@ test('P5 assets are loaded after P4 without replacing it',()=>{
 test('P5 release is immutable and versioned separately from P4.1',()=>{
  const pkg=JSON.parse(read('package.json'));
  const flow=read('.github/workflows/positron-lab.yml');
- assert.equal(pkg.version,'4.23.206');
+ assert.equal(pkg.version,'4.23.207');
  const label=pkg.description.match(/Positron\s+(P\d+\.\d+\.\d+)/)?.[1];
  assert.ok(label,'product P-label must accompany SemVer');
  assert.ok(flow.includes('TAG=positron/v'+pkg.version+'-'+label.toLowerCase()),'release tag and app version must match');
@@ -980,4 +980,16 @@ test('P5.1.122 native toast restores keyboard focus after dismissal',()=>{
  assert.ok(src.includes("restore.focus({preventScroll:true})"));
  assert.ok(qa.includes("focusRestored:document.activeElement?.id==='webChooserSearch'"));
  assert.ok(qa.includes('positron-p51122-toast-focus-return-450-real.png'));
+});
+
+
+test('P5.1.123 routine success dock avoids channel cards without hiding warnings',()=>{
+ const css=read('renderer/positron-horizon-v4.css');
+ const qa=read('scripts/positron-20-extension.cjs');
+ assert.ok(css.includes('P5.1.123: The verified P5.1.122 450px Electron image'));
+ assert.ok(css.includes('#toastArea.toast-area:not(:has(.toast.warn,.toast.err))'));
+ assert.ok(css.includes('bottom:2px!important'));
+ assert.ok(qa.includes('positron-p51123-success-toast-footer-450-real.png'));
+ assert.ok(qa.includes('withinFooter:t.top>=f.top-3&&t.bottom<=f.bottom+2'));
+ assert.ok(qa.includes('warningNotFooterDock'));
 });

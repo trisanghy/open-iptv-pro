@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.206",
-  "description": "Positron P5.1.122: restore keyboard focus after toast dismissal",
+  "version": "4.23.207",
+  "description": "Positron P5.1.123: compact notifications dock without blocking channels",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

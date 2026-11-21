@@ -859,3 +859,10 @@ P5.1.81 follow-up: real Electron capture found nav overflow; replace flexible no
 - Root: deleting a focused toast close button returns keyboard focus to the page body, not the user's previous control.
 - Fix: track last genuinely focused control outside #toastArea and restore if still connected and enabled. Preserve native toast timers, severity, M3U, favorites and playback.
 - Actual Electron QA: focus #webChooserSearch, append isolated warning toast, press Enter to dismiss, assert return focus/no overflow; after-image `positron-p51122-toast-focus-return-450-real.png`. Node syntax guard. Candidate until CI and image/release verification.
+
+
+## P5.1.123 / v4.23.207 — Dock routine success notifications to footer (new batch 02/20)
+- Input: genuine P5.1.122 Electron 450x820 after-image `positron-p51122-toast-focus-return-450-real.png`, manually opened: native confirmation banner still covers lower channel cards.
+- Root: narrow-view native #toastArea bottom:45px fixed overlay overlaps channels, even with P120 single-toast and P121 manual close.
+- Fix: at <=600px, success-only notifications dock into 36px existing footer strip at bottom:2px. Long success text ellipsizes, X remains 32x32. Any warnings or errors restore original elevated position/height and severity. Core native toast timers, state, channel data and playback untouched.
+- Electron QA: real 450px footer and toast DOM bounding boxes, warning persistence, no overflow, photo `positron-p51123-success-toast-footer-450-real.png`. Candidate until all six CI jobs, direct visual review and installer Release verified.
