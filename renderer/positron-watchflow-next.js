@@ -54,7 +54,7 @@
  const scrollCue=d.createElement('div');scrollCue.id='poFlowPlusScrollHint';
  scrollCue.textContent='↓ Cuộn xuống để xem thêm kênh';
  scrollCue.hidden=true;scrollCue.setAttribute('aria-hidden','true');
- let view='discover',lastMix=[],zapSeen=[];
+ let view='discover',lastMix=[],zapSeen=[],watchLaterShown=8;
  const syncScrollCue=()=>{
   const last=content.querySelector('.po-flowplus-card:last-child');
   const modalRect=panel.getBoundingClientRect();
@@ -140,10 +140,29 @@
   clear();
   const current=state()?.getCurrent?.();
   if(view==='continue'){
-   const waiting=watchLater?.visible(saved,collection,8)||[];
-   if(waiting.length){
-    heading('Để xem sau · '+waiting.length+' kênh','Các kênh bạn chủ động lưu trên thiết bị này.');
+   // P5.1.97: local storage holds 80 bookmarks; the old 8-only UI hid the rest.
+   const waitingAll=watchLater?.visible(saved,collection,watchLater.LIMIT)||[];
+   const waiting=waitingAll.slice(0,watchLaterShown);
+   if(waitingAll.length){
+    heading('Để xem sau · '+waitingAll.length+' kênh','Các kênh bạn chủ động lưu trên thiết bị này.');
     cards(waiting,'Chọn Xem khi muốn phát, hoặc Bỏ lưu để xóa đánh dấu.');
+    if(waitingAll.length>waiting.length){
+     const remaining=waitingAll.length-waiting.length;
+     const more=d.createElement('button');
+     more.id='poWatchLaterMore';more.type='button';more.className='po-flowplus-more';
+     more.textContent='Xem thêm '+Math.min(8,remaining)+' kênh · còn '+remaining;
+     more.setAttribute('aria-label','Hiển thị thêm kênh đã lưu để xem sau, còn '+remaining+' kênh');
+     more.addEventListener('click',()=>{
+      const previousScroll=panel.scrollTop;
+      watchLaterShown=Math.min(watchLater.LIMIT,watchLaterShown+8);
+      render();
+      panel.scrollTop=previousScroll;
+      const next=byId('poWatchLaterMore');
+      const lastSave=[...content.querySelectorAll('.po-flowplus-save')].at(-1);
+      (next||lastSave||buttons.continue).focus();
+     });
+     content.append(more);
+    }
    }
    heading('Tiếp tục xem','Chỉ các kênh từng lên hình thật trên thiết bị này.');
    const played=core.continueWatching(collection,recent(),5);

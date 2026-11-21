@@ -57,3 +57,19 @@ test('Watch Later Electron QA covers unobstructed Xem AND Luu controls',()=>{
  assert.ok(qa.includes('playActions.length===5&&saveActions.length===5&&actions.every(a=>!overlaps(a))'));
  assert.ok(qa.includes('positron-p5195-watchflow-inline-scroll-cue-552-real.png'));
 });
+
+// P5.1.97: prevent silently hiding saved entries beyond position 8.
+test('Watch Later exposes bookmark 9-80 via accessible batches',()=>{
+ const ui=fs.readFileSync('renderer/positron-watchflow-next.js','utf8');
+ const qa=fs.readFileSync('scripts/positron-20-extension.cjs','utf8');
+ const css=fs.readFileSync('renderer/positron-watchflow-next.css','utf8');
+ const channels=Array.from({length:12},(_,i)=>C('main-source','channel'+i,'QA Channel '+String(i).padStart(3,'0')));
+ let rows=[];for(const ch of channels)rows=later.toggle(rows,ch).rows;
+ assert.equal(later.visible(rows,channels,later.LIMIT).length,12);
+ assert.ok(ui.includes('watchLater?.visible(saved,collection,watchLater.LIMIT)'));
+ assert.ok(ui.includes('watchLaterShown=Math.min(watchLater.LIMIT,watchLaterShown+8)'));
+ assert.ok(ui.includes("more.id='poWatchLaterMore'"));
+ assert.ok(css.includes('#poWatchLaterMore.po-flowplus-more'));
+ assert.ok(qa.includes('positron-p5197-watch-later-many-552-real.png'));
+ assert.ok(qa.includes('manySavedQA[key],true'));
+});

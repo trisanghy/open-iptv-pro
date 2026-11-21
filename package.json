@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.180",
-  "description": "Positron P5.1.96: local-only Watch Later channel bookmarks in WatchFlow",
+  "version": "4.23.181",
+  "description": "Positron P5.1.97: accessible pagination for all Watch Later bookmarks",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

@@ -1,3 +1,11 @@
+## P5.1.97 — Watch Later pagination: all saved channels reachable / Electron v4.23.181
+
+- Fixed a confirmed accessibility and functionality gap: Watch Later retained up to 80 bookmarks but Continue displayed only the first eight, making entries 9–80 unreachable.
+- Continue now shows the count of available saved channels, initially renders eight, and offers an accessible "Xem thêm" control in groups of eight. Native playback remains explicit and does not start on saving or expanding.
+- The private local bookmark store is unchanged, with no added URLs, credentials, or playlists.
+- Added Node regression and real Electron CDP QA with 12 synthetic metadata-only bookmarked channels, expanding 8 to 12, testing their actions and no automatic playback; `positron-p5197-watch-later-many-552-real.png` is the visual evidence.
+- Prior P5.1.96 and its release remain immutable. CI result and assets require independent verification.
+
 ## P5.1.96 — WatchFlow Xem sau: private local channel bookmarks / Electron v4.23.180
 
 - Feature motivation: real open-source IPTV ecosystem increasingly has favorites, history and quick-return interfaces; the existing native history intentionally records only decoded playback, so a separate deliberate 'Xem sau' saves a choice even when the user has not played it. Related research: `POSITRON_FEATURE_RESEARCH_NEXT20_20261121.md`.

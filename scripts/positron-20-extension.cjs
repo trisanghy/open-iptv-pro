@@ -1276,6 +1276,57 @@ async function runTwenty(page){
  });
  assert.equal(watchLaterCleanup,true,'Watch Later QA must clean up synthetic bookmark');
 
+ // P5.1.97: prove channels 9-12 are not permanently hidden behind an 8-item cap.
+ const manySavedQA=await page.evaluate(()=>{
+  const core=window.PositronWatchLaterCore,panel=document.getElementById('poWatchFlowPanel');
+  const original=localStorage.getItem(core.STORAGE_KEY);
+  const channels=window.IPTVState.getChannels().filter(c=>core.identity(c)&&c.status!=='dead'&&c.url);
+  let rows=[];
+  for(const ch of channels){
+   const updated=core.toggle(rows,ch);
+   if(updated.ok&&updated.rows.length>rows.length)rows=updated.rows;
+   if(rows.length===12)break;
+  }
+  if(rows.length!==12)return {seeded:false};
+  localStorage.setItem(core.STORAGE_KEY,JSON.stringify(rows));
+  window.dispatchEvent(new StorageEvent('storage',{key:core.STORAGE_KEY,newValue:JSON.stringify(rows)}));
+  document.getElementById('poFlowPluscontinue').click();
+  const firstCount=panel.querySelectorAll('#poFlowPlusResults .po-flowplus-card').length;
+  const firstMore=panel.querySelector('#poWatchLaterMore');
+  const initialLabel=panel.querySelector('#poFlowPlusResults .po-flowplus-head strong')?.textContent||'';
+  firstMore?.click();
+  const afterCount=panel.querySelectorAll('#poFlowPlusResults .po-flowplus-card').length;
+  const last=panel.querySelectorAll('#poFlowPlusResults .po-flowplus-card')[11];
+  const visibleLast=!!last?.querySelector('.po-flowplus-save[aria-pressed="true"]');
+  const removedMore=!panel.querySelector('#poWatchLaterMore');
+  const result={seeded:true,firstEight:firstCount===8,hasMore:!!firstMore,
+   countTwelve:initialLabel.includes('12 kênh'),expanded:afterCount===12,
+   lastReachable:visibleLast,noMore:removedMore,noAutoPlay:window.IPTVState.getCurrent()===null};
+  if(original===null)localStorage.removeItem(core.STORAGE_KEY);
+  else localStorage.setItem(core.STORAGE_KEY,original);
+  window.dispatchEvent(new StorageEvent('storage',{key:core.STORAGE_KEY,newValue:original}));
+  panel.querySelector('#poFlowPlusmix')?.click();
+  return result;
+ });
+ for(const key of ['seeded','firstEight','hasMore','countTwelve','expanded','lastReachable','noMore','noAutoPlay'])
+  assert.equal(manySavedQA[key],true,'Watch Later 12-bookmark Electron QA failed: '+key);
+ await page.evaluate(()=>{
+  const core=window.PositronWatchLaterCore,channels=window.IPTVState.getChannels();
+  let rows=[];for(const ch of channels.slice(0,12))rows=core.toggle(rows,ch).rows;
+  localStorage.setItem(core.STORAGE_KEY,JSON.stringify(rows));
+  window.dispatchEvent(new StorageEvent('storage',{key:core.STORAGE_KEY,newValue:JSON.stringify(rows)}));
+  document.getElementById('poFlowPluscontinue').click();
+  document.getElementById('poWatchLaterMore')?.click();
+  const panel=document.getElementById('poWatchFlowPanel');panel.scrollTop=panel.scrollHeight;
+ });
+ await page.screenshot({path:path.join(out,'positron-p5197-watch-later-many-552-real.png'),animations:'disabled'});
+ await page.evaluate(()=>{
+  const core=window.PositronWatchLaterCore;localStorage.setItem(core.STORAGE_KEY,'[]');
+  window.dispatchEvent(new StorageEvent('storage',{key:core.STORAGE_KEY,newValue:'[]'}));
+  document.getElementById('poFlowPlusmix').click();
+ });
+
+
  // P5.1.85: exercise the real Electron Similar panel with a temporary
  // native metadata-only current channel; no stream is opened or stored.
  const similarQA=await page.evaluate(()=>{
