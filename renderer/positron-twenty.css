@@ -62,7 +62,7 @@
 /* P5.1 visual repair: screenshot rounds 14 and 15 exposed light-theme white bands
    inherited by Smart Discovery from .source-hub-section. */
 html[data-positron="true"].p20-07 #page-sources .source-hub-section{
- background:var(--po-bg)!important;color:var(--po-ink)!important;border-color:var(--po-line)!important;
+ background:var(--po-card)!important;color:var(--po-ink)!important;border-color:var(--po-line)!important;
 }
 
 /* P5.1 real 450px screenshot review: do not stack the brand icon under
@@ -88,3 +88,5 @@ html[data-positron="true"] #page-tv #fullscreenBtn svg{display:block;width:19px;
 @media(max-width:760px){html[data-positron="true"] #positronBar .p-heading strong[data-short-title]{max-width:none!important;width:max-content!important;min-width:max-content!important;flex-shrink:0!important}html[data-positron="true"] #positronBar .p-heading{min-width:max-content!important}}
 
 /* P5.1.5: Source page title screenshot at 720px had the same visible ellipsis; reuse compact titles through sidebar-rail breakpoint 760px. */
+
+/* P5.1.6: Sources screenshot 720px showed a near-black rectangular Discovery section (9,15,30) against dark navy navigation (20,33,56). Use the established theme card surface, not background black. */

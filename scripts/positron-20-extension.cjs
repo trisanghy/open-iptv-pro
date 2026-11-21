@@ -77,6 +77,7 @@ async function runTwenty(page){
   if(target==='sources'&&metrics.sources)assert.notEqual(metrics.sources.background,'rgb(255, 255, 255)','white source panel');
   if(target==='sources'){
    assert.ok(metrics.sourceSection,'Smart Discovery section missing');
+   assert.equal(metrics.sourceSection.background,metrics.sources?.background,'Smart Discovery dark band must match source navigation theme');
    const channels=(metrics.sourceSection.background.match(/[0-9]+/g)||[]).map(Number).slice(0,3);
    assert.ok(channels.length===3&&channels.reduce((a,b)=>a+b,0)/3<110,
     'P5.1 regression: light Smart Discovery background '+metrics.sourceSection.background);
