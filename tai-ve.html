@@ -39,6 +39,11 @@ h2{font-size:24px;letter-spacing:-.025em;margin:43px 0 17px}
 .mac-copy-row code{flex:1 1 270px;min-width:0;margin:0;user-select:all;line-height:1.6}
 .mac-copy-button{flex:0 0 auto;padding:12px 14px;border-radius:9px;background:#4e64b4;border:1px solid #b7cafa;color:#fff;font-weight:700;cursor:pointer}
 .mac-copy-button:focus-visible,.mac-copy-button:hover{background:#647acb}
+.mac-open-button{background:transparent;border-color:#99a9eb;color:#eff4ff}
+.mac-terminal-open-guide{margin:10px 0 14px;padding:12px 14px;border:1px solid #526891;border-radius:10px;background:#111a2c;color:#dbe4f5;font-size:13px;line-height:1.7}
+.mac-terminal-open-guide[hidden]{display:none}
+.mac-terminal-open-guide kbd{display:inline-block;padding:1px 5px;border:1px solid #617293;border-radius:4px;color:#fff;background:#101a2d}
+
 .mac-install-note .mac-warning{color:#ffdfc0}
 table{border-collapse:collapse;width:100%;background:#151e31;border:1px solid #374660;border-radius:15px;overflow:hidden}
 th,td{text-align:left;border-bottom:1px solid #313d55;padding:13px;vertical-align:top;font-size:14px}
@@ -73,7 +78,8 @@ footer{border-top:1px solid #34415a;padding:25px 0 40px;color:#9faec6;font-size:
 <li>Nếu đã xác minh tệp an toàn nhưng vẫn bị chặn chỉ do quarantine, mở <b>Terminal</b> bằng <b>⌘ + Space</b>, nhấn <b>Sao chép lệnh</b> bên dưới, dán bằng <b>⌘ + V</b>, nhấn <b>Enter</b> và mở lại ứng dụng.</li>
 </ol>
 <p><strong>Lệnh Terminal xử lý quarantine cho riêng Open IPTV Pro:</strong></p>
-<div class="mac-copy-row"><code id="mac-install-command">xattr -dr com.apple.quarantine "/Applications/Open IPTV Pro.app"</code><button type="button" data-mac-copy-command class="mac-copy-button">📋 Sao chép lệnh Terminal</button></div>
+<div class="mac-copy-row"><code id="mac-install-command">xattr -dr com.apple.quarantine "/Applications/Open IPTV Pro.app"</code><button type="button" data-mac-copy-command class="mac-copy-button">📋 Sao chép lệnh Terminal</button><button type="button" data-mac-open-help class="mac-copy-button mac-open-button" aria-expanded="false" aria-controls="mac-terminal-open-guide">⌘ Mở Terminal (hướng dẫn)</button></div>
+<div class="mac-terminal-open-guide" id="mac-terminal-open-guide" hidden role="status"><strong>Để mở Terminal:</strong> Trên Mac, nhấn <kbd>⌘ + Space</kbd>, gõ <strong>Terminal</strong>, nhấn <kbd>Enter</kbd>. Dán lệnh đã sao chép bằng <kbd>⌘ + V</kbd>. Trình duyệt không thể mở Terminal trực tiếp. <a href="https://support.apple.com/guide/terminal/open-or-quit-terminal-apd5265185d-f365-44cb-8b09-71a064a42125/mac" target="_blank" rel="noopener noreferrer">Hướng dẫn chính thức của Apple</a>.</div>
 <p class="mac-warning">Không chạy lệnh nếu DMG thực sự bị hỏng, sai checksum, chữ ký không hợp lệ hoặc macOS cảnh báo mã độc. Hãy tải lại từ GitHub chính thức hoặc báo lỗi. Không vô hiệu hóa Gatekeeper toàn máy.</p>
 </section><p class="note">Release Stable 4.23.76 đã được build trên GitHub Actions từ main, vượt qua kiểm thử tự động, có đủ bộ cài Windows/Mac và SHA256. Phiên bản cũ được giữ nguyên.</p></article>
 <article class="card"><span class="tag">Rust Lab · Beta</span><h3>Rust Lab / Tauri</h3><div class="ver">23.8.98 · Windows &amp; macOS</div><p>Theme Dark/AMOLED, bộ biểu tượng player SVG, phụ đề/dịch/TTS thử nghiệm, bù chuyển động có giới hạn và công cụ video. Phát lại/PiP/AI cần kiểm thử trên máy thật; chưa có AI upscale 4K hoạt động thực.</p><div class="links">
@@ -111,7 +117,10 @@ async function copyCommand(){
 if(navigator.clipboard?.writeText && window.isSecureContext){await navigator.clipboard.writeText(command);return;}
 const input=document.createElement('textarea');input.value=command;input.setAttribute('readonly','');input.style.cssText='position:fixed;left:-9999px;top:0';document.body.append(input);input.select();const ok=document.execCommand('copy');input.remove();if(!ok)throw Error('Clipboard unavailable');
 }
-document.addEventListener('click',async event=>{const b=event.target.closest('button[data-mac-copy-command]');if(!b)return;try{await copyCommand();b.textContent='✓ Đã sao chép';}catch{b.textContent='Không thể tự sao chép — hãy chọn lệnh để sao chép';}});
+document.addEventListener('click',async event=>{
+const opener=event.target.closest('button[data-mac-open-help]');
+if(opener){const guide=document.getElementById('mac-terminal-open-guide');if(guide){guide.hidden=!guide.hidden;opener.setAttribute('aria-expanded',String(!guide.hidden));}return;}
+const b=event.target.closest('button[data-mac-copy-command]');if(!b)return;try{await copyCommand();b.textContent='✓ Đã sao chép';}catch{b.textContent='Không thể tự sao chép — hãy chọn lệnh để sao chép';}});
 })();
 </script>
 </body></html>
