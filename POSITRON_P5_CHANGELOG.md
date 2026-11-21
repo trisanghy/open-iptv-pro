@@ -471,3 +471,9 @@ P5.1.46 same-version CI repair: run 44866650681 failed 2/611 because historical 
 - Input: actual P5.1.65 Electron 1360px WatchFlow screenshot, downloaded from run 44896707674 and visually reviewed. The upper-right close button uses a generic × glyph in a 30×30 px target, unlike new native monochrome line icons.
 - Fix: replace glyph with 20px currentColor inline SVG in same original button; raise close target to 42×42px without changing native close, Escape or focus behavior, keep source playlists untouched.
 - Proof gate: real Electron screenshot and DOM check actual target >=40px + SVG across 3 themes, plus Node test, Windows+Mac CI, explicit separate release validation.
+
+
+## P5.1.67 / v4.23.151 — WatchFlow persists over other pages on keyboard navigation
+- Input: native Electron P5.1.66 screenshots showed overlay anchored to the global topbar. Source inspection confirmed dismissal only on document pointerdown and Escape; keyboard-triggered navigation does not emit pointerdown, so popup can remain over Sources/Settings.
+- Fix: observe only real TV page active class. If user navigates away, close WatchFlow without mutating current playlist, selected channel or any source. Preserve existing pointer/Escape pathways.
+- Regression: native Electron in three themes opens WatchFlow, invokes real IPTVState.setPage('sources'), checks hidden/aria-expanded, restores TV page and verifies active; Node guards source wiring. Build/screenshots/immutable release separately required.

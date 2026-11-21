@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.150",
-  "description": "Positron P5.1.66: WatchFlow vector close icon and accessible hit target",
+  "version": "4.23.151",
+  "description": "Positron P5.1.67: WatchFlow closes after keyboard page navigation",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

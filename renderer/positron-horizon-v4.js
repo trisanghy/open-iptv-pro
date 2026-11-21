@@ -123,6 +123,11 @@
  });
  const count=byId('navCount');
  if(count)new MutationObserver(()=>{if(open)draw();}).observe(count,{childList:true,characterData:true,subtree:true});
+ // Keyboard navigation has no document pointerdown: dismiss the popup if TV is left.
+ const tvPage=byId('page-tv');
+ if(tvPage)new MutationObserver(()=>{
+  if(open&&!tvPage.classList.contains('active-page'))close();
+ }).observe(tvPage,{attributes:true,attributeFilter:['class']});
  root.dataset.poWatchFlow='ready';
  window.PositronWatchFlow=Object.freeze({open:openPanel,close,refresh:draw});
 })();

@@ -290,6 +290,19 @@ async function runTwenty(page){
     assert.equal(watchFlow.closeVector,true,'WatchFlow close control does not use vector artwork: '+name);
     assert.ok(watchFlow.closeTapSize>=40,'WatchFlow close control is too small: '+name);
     assert.ok(watchFlow.panelWidth<=320,'Empty WatchFlow too wide at 1360px: '+name);
+    const watchFlowNav=await page.evaluate(async()=>{
+     const trigger=document.getElementById('poWatchFlowToggle'),panel=document.getElementById('poWatchFlowPanel');
+     trigger.click();
+     const opened=!panel.hidden;
+     window.IPTVState.setPage('sources');
+     await new Promise(resolve=>setTimeout(resolve,0));
+     const dismissed=panel.hidden&&trigger.getAttribute('aria-expanded')==='false';
+     window.IPTVState.setPage('tv');
+     return {opened,dismissed,restored:document.getElementById('page-tv').classList.contains('active-page')};
+    });
+    assert.equal(watchFlowNav.opened,true,'Cannot reproduce WatchFlow keyboard navigation scenario: '+name);
+    assert.equal(watchFlowNav.dismissed,true,'WatchFlow remains over Sources after keyboard navigation: '+name);
+    assert.equal(watchFlowNav.restored,true,'WatchFlow QA failed to restore TV page: '+name);
     const titleRgb=(watchFlow.titleColor.match(/\d+/g)||[]).slice(0,3).map(Number);
     assert.ok(titleRgb.length===3&&titleRgb.every(x=>x>200),
       'WatchFlow title has unreadable dark contrast: '+name+' '+watchFlow.titleColor);

@@ -174,3 +174,5 @@ Action: Horizon-only scrollbar variable override (#40736c thumb, #101a23 track),
 | 03/20 | P5.1.65 / v4.23.149 | P5.1.64 real Electron `positron-watchflow-1360-night-real.png`, source-interaction review | No focus transfer into appended floating panel means keyboard users remain on toolbar trigger and cannot reach useful source action promptly | Focus first useful action at open, restore trigger on close, visible focus ring; native Electron actual focus assertions and screenshots, release pending |
 
 | 04/20 | P5.1.66 / v4.23.150 | Actual P5.1.65 real WatchFlow dialog 1360px, run 44896707674 | Dialog's platform font × icon uses 30px hit target, cramped and inconsistent with vector toolbar | SVG artwork and 42px native close button, real 3-theme Electron click-target geometry and Node regression; release pending |
+
+| 05/20 | P5.1.67 / v4.23.151 | Real P5.1.66 WatchFlow 1360px overlay and verified JS handlers | Popup dismissal is pointer-only; keyboard navigation across routes leaves popup over destination | Observe native TV active state to close on route change; real Electron 3-theme setPage('sources') -> dialog hidden and return TV; release pending |
