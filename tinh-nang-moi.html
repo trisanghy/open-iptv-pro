@@ -88,7 +88,7 @@ document.querySelectorAll('[data-filter]').forEach(btn=>btn.addEventListener('cl
 more.addEventListener('click',()=>{limit+=20;render();});
 async function verifyTop(v){
  if(!v||v.status==='release'||!/^P5\.1\.\d+$/.test(v.version)||!/^4\.\d+\.\d+$/.test(v.appVersion||''))return;
- const tag='positron/v'+v.appVersion+'-p'+v.version.toLowerCase();
+ const tag='positron/v'+v.appVersion+'-'+v.version.toLowerCase();
  try{const res=await fetch('https://api.github.com/repos/trisanghy/open-iptv-pro/releases/tags/'+tag,{cache:'no-store'});
  if(!res.ok)return;const d=await res.json();if(d.tag_name!==tag||d.draft||!Array.isArray(d.assets)||!d.assets.some(x=>/Setup-[\d.]+-x64\.exe$/i.test(x.name||'')))return;
  v._verified=true;v.tag=tag;v.assets=d.assets.map(x=>({name:x.name,url:x.browser_download_url}));render();}catch{}
