@@ -651,6 +651,28 @@ async function runTwenty(page){
     assert.equal(metrics.smartStatusLabel?.flexShrink,'0','status label still shrinks in responsive flex: '+name);
    }
 
+   // P5.1.72: screenshots exposed a confusing interleaving of inputs/actions.
+   // Compare actual DOM geometry, not just the CSS declaration.
+   if(target==='sources'){
+    const layout=await page.evaluate(()=>{
+     const form=document.querySelector('#smartDiscoverySection .smart-discovery-filters');
+     const fields=[...form.querySelectorAll(':scope > label')].filter(el=>getComputedStyle(el).display!=='none');
+     const b=el=>el.getBoundingClientRect();
+     const find=document.getElementById('smartFind'),verify=document.getElementById('smartVerify'),cancel=document.getElementById('smartCancel');
+     return {display:getComputedStyle(form).display,fieldCount:fields.length,
+      fieldsAboveActions:b(find).top>=Math.max(...fields.map(el=>b(el).bottom))-2,
+      siblingActions:Math.abs(b(verify).top-b(cancel).top)<3,
+      noHorizontalOverflow:form.scrollWidth<=form.clientWidth+2,
+      tabOrder:fields.at(-1)?.compareDocumentPosition(find)&Node.DOCUMENT_POSITION_FOLLOWING?true:false};
+    });
+    assert.equal(layout.display,'grid','Discovery must use ordered grid at '+width+'px');
+    assert.equal(layout.fieldCount,4,'Discovery filters lost native controls');
+    assert.equal(layout.fieldsAboveActions,true,'Search button still interleaves native filters: '+name);
+    assert.equal(layout.siblingActions,true,'Scan and Cancel must share one visual row: '+name);
+    assert.equal(layout.noHorizontalOverflow,true,'Discovery form overflows: '+name);
+    assert.equal(layout.tabOrder,true,'Discovery keyboard order differs from visual sequence: '+name);
+   }
+
    if(target==='sources'&&width>=900&&Number(metrics.sourceCount)===0){
     assert.ok(metrics.sourceEmpty?.height<=57,'desktop no-source card remains oversized: '+name);
     assert.ok(metrics.sourceEmpty?.paddingTop<=14&&metrics.sourceEmpty?.paddingBottom<=14,'desktop empty state padding too large: '+name);

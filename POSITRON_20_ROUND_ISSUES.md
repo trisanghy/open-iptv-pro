@@ -187,3 +187,5 @@ Action: Horizon-only scrollbar variable override (#40736c thumb, #101a23 track),
 | Round | Target | Real previous screenshot | Cause / change | Evidence |
 | --- | --- | --- | --- | --- |
 | 01/20 | P5.1.71 / v4.23.155 | P5.1.70 real Electron `positron-p5-14-real.png` Sources 1360 and `positron-p5-15-real.png` Sources 720 | WatchFlow action stays visible on non-TV pages, cluttering Sources and allowing unrelated overlay; only show/open from TV; move focus to visible toolbar on navigation | New Node regression + real Electron page-switch assertions; screenshot/CI/release require verification. |
+
+| 02/20 | P5.1.72 / v4.23.156 | P5.1.71 real Electron `positron-p5-15-real.png` Sources 720 and `positron-p5-14-real.png` Sources 1360 | Discovery form interleaves Find between Country and Limit; disabled Verify/Cancel float on uneven rows. Move Find after four native filter inputs in DOM, CSS responsive 4/2/1-column grid and two-stage actions | New geometry/DOM keyboard tab-order checks, Node regression, post-change CI and screenshot review pending. |

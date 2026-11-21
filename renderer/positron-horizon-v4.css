@@ -577,3 +577,31 @@ html[data-positron="true"].po-horizon #page-sources .sources-hub-nav button.po-s
 
 /* P5.1.71: contextual WatchFlow, visible only while TV is active. */
 html[data-positron="true"].po-horizon #positronBar #poWatchFlowToggle[hidden]{display:none!important}
+
+/* P5.1.72 — Discovery: inputs above actions. Source DOM follows visual/tab order. */
+html[data-positron="true"].po-horizon #smartDiscoverySection .smart-controls.smart-discovery-filters{
+ display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;
+ align-items:end!important;gap:12px!important;
+}
+html[data-positron="true"].po-horizon #smartDiscoverySection .smart-discovery-filters>label{
+ min-width:0!important;max-width:none!important;width:100%!important;flex:none!important;
+}
+html[data-positron="true"].po-horizon #smartDiscoverySection .smart-discovery-filters select{
+ width:100%!important;min-width:0!important;max-width:100%!important;
+}
+html[data-positron="true"].po-horizon #smartDiscoverySection .smart-discovery-filters>button{
+ width:100%!important;min-width:0!important;max-width:100%!important;
+ min-height:42px!important;
+}
+html[data-positron="true"].po-horizon #smartDiscoverySection #smartFind{grid-column:span 2}
+@media(max-width:1100px){
+ html[data-positron="true"].po-horizon #smartDiscoverySection .smart-controls.smart-discovery-filters{
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+ }
+}
+@media(max-width:540px){
+ html[data-positron="true"].po-horizon #smartDiscoverySection .smart-controls.smart-discovery-filters{
+  grid-template-columns:minmax(0,1fr)!important;
+ }
+ html[data-positron="true"].po-horizon #smartDiscoverySection #smartFind{grid-column:auto}
+}

@@ -503,3 +503,8 @@ P5.1.46 same-version CI repair: run 44866650681 failed 2/611 because historical 
 - Actual P5.1.70 Sources screenshots at 1360 and 720px show TV-specific WatchFlow in source management.
 - Opening is now guarded to TV; changing tabs hides the button and dialog, keeps focus accessible, and restores WatchFlow on return. Native channel rank, play events, playlists, preferences and rights consent are untouched.
 - New regression + real Electron UI assertions. CI/screenshot/release pending verification.
+
+## P5.1.72 — Smart Discovery with ordered, usable filters (new 20-round batch 02)
+- P5.1.71 real Electron Sources screenshots show the primary Discover button between Country and Scan scope, and Cancel separated onto a new row at 1360px.
+- Reorder actual native DOM fields so keyboard tab order matches display; use Horizon-only responsive 4-column desktop, 2-column tablet and 1-column narrow Discovery layout. Keep catalog, country, unlimited scope, concurrency, Verify and Cancel IDs/events intact.
+- Node regression plus actual Electron geometry assertions validate four fields above Find, paired Verify/Cancel and no horizontal overflow. CI and after-images pending.
