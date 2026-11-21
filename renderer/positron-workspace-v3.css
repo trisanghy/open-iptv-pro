@@ -1,0 +1,343 @@
+/* Positron P5.1.55 — TV-first workspace.
+   High-specificity layer after Positron P4/P5. No #video or caption styling. */
+html[data-positron="true"].po-v3{
+ --po-v3-bg:#0b1118;--po-v3-surface:#121b25;--po-v3-raised:#17232f;
+ --po-v3-muted:#96aabc;--po-v3-edge:#273746;--po-v3-text:#e6eef6;
+ --po-v3-focus:#82baff;--po-v3-button:#233449;--po-v3-active:#263b52;
+ --po-accent:#a9c7e9;--po-on:#101a27;--po-glow:transparent;
+}
+html[data-positron="true"].po-v3 body,
+html[data-positron="true"].po-v3 .app-shell{background:var(--po-v3-bg)!important;color:var(--po-v3-text)!important}
+html[data-positron="true"].po-v3 #appSidebar.sidebar{
+ width:76px!important;min-width:76px!important;max-width:76px!important;
+ background:#101821!important;padding:13px 7px 10px!important;
+ border-right:1px solid #283746!important;overflow-y:auto!important;overflow-x:hidden!important;
+}
+html[data-positron="true"].po-v3 #appSidebar .brand{
+ padding:0!important;margin:2px 0 56px!important;justify-content:center!important;
+ gap:0!important;min-width:0!important;height:39px!important;
+}
+html[data-positron="true"].po-v3 #appSidebar .brand-icon{
+ width:35px!important;height:35px!important;min-width:35px!important;
+ margin:0!important;border-radius:10px!important;
+}
+html[data-positron="true"].po-v3 #appSidebar .brand>div:last-child{
+ display:none!important;
+}
+html[data-positron="true"].po-v3 #sidebarToggleBtn{display:none!important}
+html[data-positron="true"].po-v3 #appSidebar #poRailExpand{
+ position:absolute!important;top:63px!important;left:calc(50% - 17px)!important;
+ display:grid!important;place-items:center!important;
+ width:34px!important;height:32px!important;min-width:34px!important;
+ border-radius:9px!important;border:1px solid #304355!important;
+ background:#1b2937!important;color:#bfd2e5!important;
+ font-size:18px!important;padding:0!important;cursor:pointer!important;
+}
+html[data-positron="true"].po-v3 #appSidebar :is(.aside-caption,.sidebar-bottom){display:none!important}
+html[data-positron="true"].po-v3 #appSidebar .nav,
+html[data-positron="true"].po-v3 #appSidebar #positronMorePages{
+ display:flex!important;align-items:center!important;justify-content:center!important;
+ width:52px!important;max-width:52px!important;height:47px!important;min-height:47px!important;
+ font-size:0!important;margin:4px auto!important;padding:0!important;
+ color:#a4b6c8!important;border:1px solid transparent!important;
+ border-radius:12px!important;box-shadow:none!important;background:transparent!important;
+ position:relative!important;
+}
+html[data-positron="true"].po-v3 #appSidebar .nav:hover,
+html[data-positron="true"].po-v3 #appSidebar #positronMorePages:hover{
+ background:#1c2e41!important;border-color:#39516b!important;color:#f2f7ff!important;
+}
+html[data-positron="true"].po-v3 #appSidebar .nav.active{
+ background:#2b4058!important;border:1px solid #466789!important;
+ color:#c0d9f6!important;box-shadow:none!important;
+}
+html[data-positron="true"].po-v3 #appSidebar .nav > span{
+ display:grid!important;place-items:center!important;flex:0 0 25px!important;
+ width:25px!important;height:25px!important;margin:0!important;padding:0!important;
+ color:inherit!important;font-size:0!important;border:0!important;
+ background:none!important;box-shadow:none!important;
+}
+html[data-positron="true"].po-v3 #appSidebar .nav > span svg{
+ display:block!important;stroke:currentColor!important;width:21px!important;height:21px!important;
+}
+html[data-positron="true"].po-v3 #appSidebar .nav > small{display:none!important}
+html[data-positron="true"].po-v3 #appSidebar #positronMorePages{
+ border-style:solid!important;font-size:0!important;
+}
+html[data-positron="true"].po-v3 #appSidebar #positronMorePages::after{
+ content:"•••";font-size:20px!important;line-height:1!important;letter-spacing:2px!important;
+}
+html[data-positron="true"].po-v3[data-po-rail-expanded="true"] #appSidebar.sidebar{
+ width:210px!important;min-width:210px!important;max-width:210px!important;padding-inline:10px!important;
+}
+html[data-positron="true"].po-v3[data-po-rail-expanded="true"] #appSidebar .brand{
+ justify-content:flex-start!important;padding-left:6px!important;margin-bottom:56px!important;
+}
+html[data-positron="true"].po-v3[data-po-rail-expanded="true"] #appSidebar .brand>div:last-child{
+ display:block!important;margin-left:9px!important;
+}
+html[data-positron="true"].po-v3[data-po-rail-expanded="true"] #appSidebar .brand b{
+ font-size:16px!important;letter-spacing:-.5px!important;
+}
+html[data-positron="true"].po-v3[data-po-rail-expanded="true"] #appSidebar #poRailExpand{
+ left:auto!important;right:11px!important;top:64px!important;
+}
+html[data-positron="true"].po-v3[data-po-rail-expanded="true"] #appSidebar .nav{
+ width:100%!important;max-width:none!important;min-height:43px!important;height:43px!important;
+ justify-content:flex-start!important;padding:0 10px!important;font-size:12px!important;
+ gap:9px!important;margin:2px 0!important;
+}
+html[data-positron="true"].po-v3[data-po-rail-expanded="true"] #appSidebar #positronMorePages{
+ width:100%!important;max-width:none!important;height:40px!important;
+ justify-content:flex-start!important;padding:0 10px!important;font-size:11px!important;
+}
+html[data-positron="true"].po-v3[data-po-rail-expanded="true"] #appSidebar #positronMorePages::after{display:none!important}
+html[data-positron="true"].po-v3[data-po-rail-expanded="true"] #appSidebar .nav > small{
+ display:inline!important;font-size:10px!important;margin-left:auto!important;
+}
+html[data-positron="true"].po-v3 #positronBar{
+ height:51px!important;min-height:51px!important;padding:7px 16px!important;
+ background:#111b26!important;border-bottom:1px solid #263748!important;
+}
+html[data-positron="true"].po-v3 #positronBar .p-title .p-heading strong{
+ font-size:13px!important;color:#bfcddd!important;font-weight:620!important;
+}
+html[data-positron="true"].po-v3 #positronBar .p-live{
+ background:transparent!important;border:0!important;padding:5px 7px!important;
+ color:#e4eef8!important;max-width:380px!important;font-size:12px!important;
+}
+html[data-positron="true"].po-v3 #positronBar .p-live::before{background:#6fd0a6!important;box-shadow:none!important}
+html[data-positron="true"].po-v3 #positronBar .p-actions{gap:6px!important}
+html[data-positron="true"].po-v3 #positronBar button{
+ min-height:33px!important;padding:5px 10px!important;border-radius:8px!important;
+ background:#1a2837!important;border:1px solid #2c4358!important;
+ color:#d2e2f1!important;box-shadow:none!important;
+}
+html[data-positron="true"].po-v3 #positronBar #positronOpen{min-width:160px!important}
+html[data-positron="true"].po-v3 .main .content{
+ padding:10px 13px 16px!important;background:var(--po-v3-bg)!important;
+}
+html[data-positron="true"].po-v3 #page-tv .tv-layout{
+ grid-template-columns:minmax(220px,256px) minmax(0,1fr)!important;
+ gap:12px!important;align-items:start!important;
+}
+html[data-positron="true"].po-v3 #page-tv .channel-panel{
+ border:1px solid #293a49!important;border-radius:12px!important;
+ background:#141e29!important;box-shadow:none!important;min-width:0!important;
+}
+html[data-positron="true"].po-v3 #page-tv .channel-panel .panel-header{
+ padding:12px!important;background:#141e29!important;
+ border-bottom:1px solid #283746!important;
+}
+html[data-positron="true"].po-v3 #page-tv .channel-panel .panel-header h2{
+ font-size:13px!important;color:#e7eff7!important;letter-spacing:-.1px!important;
+}
+html[data-positron="true"].po-v3 #page-tv .channel-panel .filter-box{
+ display:flex!important;align-items:center!important;gap:6px!important;
+ margin:10px 9px 8px!important;min-height:37px!important;padding-right:4px!important;
+ border:1px solid #334a5e!important;background:#1c2a38!important;border-radius:9px!important;
+}
+html[data-positron="true"].po-v3 #page-tv .channel-panel .filter-box input{
+ min-width:0!important;flex:1 1 auto!important;color:#e7f0f9!important;
+}
+html[data-positron="true"].po-v3 #page-tv #positronFiltersToggle{
+ display:grid!important;place-items:center!important;flex:0 0 29px!important;
+ width:29px!important;max-width:29px!important;height:29px!important;min-height:29px!important;
+ font-size:0!important;padding:0!important;margin:0!important;
+ background:#233448!important;color:#bfd1e4!important;border:0!important;border-radius:7px!important;
+}
+html[data-positron="true"].po-v3 #page-tv #positronFiltersToggle::after{
+ content:"≡";font-size:18px!important;line-height:1!important;
+}
+html[data-positron="true"].po-v3 #page-tv #channelList{padding:0 6px 8px!important}
+html[data-positron="true"].po-v3 #page-tv #channelList .channel-item{
+ min-height:58px!important;margin:1px 0!important;padding:7px!important;
+ background:transparent!important;border:1px solid transparent!important;
+ box-shadow:none!important;border-radius:9px!important;
+}
+html[data-positron="true"].po-v3 #page-tv #channelList .channel-item.current{
+ background:#273d51!important;border:1px solid #4a6984!important;box-shadow:none!important;
+}
+html[data-positron="true"].po-v3 #page-tv #channelList .channel-item .chan-logo{
+ flex:0 0 37px!important;width:37px!important;height:37px!important;
+ border-radius:8px!important;
+}
+html[data-positron="true"].po-v3 #page-tv #channelList .channel-text b{
+ font-size:12px!important;line-height:1.4!important;
+}
+html[data-positron="true"].po-v3 #page-tv #channelList .channel-text small{
+ font-size:10px!important;color:#92a7bb!important;
+}
+html[data-positron="true"].po-v3 #page-tv .watch-panel{gap:8px!important}
+html[data-positron="true"].po-v3 #page-tv #playerBox{
+ background:#03070d!important;border:1px solid #263847!important;
+ border-radius:12px!important;box-shadow:none!important;
+}
+html[data-positron="true"].po-v3 #page-tv .player-control-card{
+ border:1px solid #263847!important;background:#131e29!important;
+ border-radius:11px!important;box-shadow:none!important;
+}
+html[data-positron="true"].po-v3 #page-tv .player-control-card .control-layout-top{
+ display:grid!important;grid-template-columns:minmax(98px,1fr) auto minmax(88px,.58fr) auto!important;
+ min-height:57px!important;padding:4px 9px!important;gap:4px!important;
+ align-items:center!important;background:#131e29!important;
+ border-bottom:1px solid #283746!important;
+}
+html[data-positron="true"].po-v3 #page-tv .player-control-card .control-layout-top .playing-info{
+ grid-row:1!important;grid-column:1!important;padding:0 8px!important;
+ margin:0!important;min-width:0!important;gap:0!important;border:0!important;
+}
+html[data-positron="true"].po-v3 #page-tv .player-control-card .playing-info .small-lcd{
+ display:none!important;
+}
+html[data-positron="true"].po-v3 #page-tv .player-control-card .playing-channel-text b{
+ font-size:13px!important;color:#edf5fd!important;
+}
+html[data-positron="true"].po-v3 #page-tv .player-control-card .playing-channel-text small{
+ color:#8fa7ba!important;font-size:10px!important;
+}
+html[data-positron="true"].po-v3 #page-tv .player-control-card .controls.transport-controls{
+ grid-row:1!important;grid-column:2!important;gap:1px!important;
+ border:0!important;margin:0!important;padding:0 4px!important;min-width:0!important;
+ min-height:48px!important;align-items:center!important;justify-content:center!important;
+}
+html[data-positron="true"].po-v3 #page-tv .player-control-card .controls.transport-controls :is(#prevBtn,#stopBtn,#nextBtn){
+ flex:0 0 35px!important;min-width:35px!important;max-width:35px!important;
+ width:35px!important;height:38px!important;min-height:38px!important;
+ background:transparent!important;border:0!important;border-radius:8px!important;
+ color:#b3c5d5!important;box-shadow:none!important;
+}
+html[data-positron="true"].po-v3 #page-tv .player-control-card .controls.transport-controls #playBtn{
+ flex:0 0 43px!important;min-width:43px!important;max-width:43px!important;
+ width:43px!important;height:43px!important;min-height:43px!important;max-height:43px!important;
+ border:0!important;border-radius:10px!important;
+ color:#132134!important;background:#bbd7fa!important;
+ box-shadow:none!important;font-size:0!important;
+}
+html[data-positron="true"].po-v3 #page-tv .player-control-card .controls.transport-controls #playBtn:disabled{
+ background:#334455!important;color:#8ca0b3!important;opacity:.52!important;box-shadow:none!important;
+}
+html[data-positron="true"].po-v3 #page-tv .player-control-card .volume-controls{
+ grid-column:3!important;grid-row:1!important;padding:0 8px!important;
+ border:0!important;min-width:88px!important;gap:6px!important;
+}
+html[data-positron="true"].po-v3 #page-tv .player-control-card #volume{
+ min-width:48px!important;max-width:125px!important;accent-color:#a8c8eb!important;
+}
+html[data-positron="true"].po-v3 #page-tv .player-control-card .output-controls{
+ grid-column:4!important;grid-row:1!important;gap:3px!important;
+ flex-wrap:nowrap!important;padding:0 2px!important;min-width:0!important;
+}
+html[data-positron="true"].po-v3 #page-tv .player-control-card .output-controls :is(#castBtn,#pipBtn,#fullscreenBtn,#positronToolsToggle){
+ display:inline-flex!important;align-items:center!important;justify-content:center!important;
+ flex:0 0 35px!important;min-width:35px!important;max-width:35px!important;
+ width:35px!important;height:36px!important;min-height:36px!important;
+ padding:0!important;margin:0!important;
+ color:#b4c8da!important;border:0!important;background:transparent!important;
+ border-radius:8px!important;box-shadow:none!important;font-size:0!important;
+}
+html[data-positron="true"].po-v3 #page-tv .player-control-card .output-controls .po-media-caption{
+ display:none!important;
+}
+html[data-positron="true"].po-v3 #page-tv .player-control-card .output-controls #positronToolsToggle::after{
+ content:"•••";font-size:17px!important;letter-spacing:2px!important;line-height:1!important;
+}
+html[data-positron="true"].po-v3 #page-tv .player-control-card .control-layout-bottom{
+ min-height:50px!important;padding:6px 10px!important;gap:8px!important;
+ border:0!important;background:#172330!important;
+ grid-template-columns:minmax(0,1fr) minmax(105px,.5fr) minmax(135px,.75fr) 35px!important;
+}
+html[data-positron="true"].po-v3 #page-tv .player-control-card .control-layout-bottom :is(.epg-current-card,.manual-link-picker){
+ background:transparent!important;box-shadow:none!important;border:0!important;
+}
+html[data-positron="true"].po-v3 #page-tv .player-control-card .control-layout-bottom :is(#videoFit,#manualStreamSelect){
+ min-height:33px!important;color:#dce9f7!important;border-radius:8px!important;
+ background:#1e2e3d!important;border:1px solid #344859!important;
+}
+html[data-positron="true"].po-v3 #page-tv .player-control-card .output-controls button:hover:not(:disabled){
+ background:#263a4e!important;color:#f0f7ff!important;
+}
+html[data-positron="true"].po-v3 #page-tv :is(.player-control-card,.channel-panel,.advanced-timebar,.compact-tools) button:focus-visible{
+ outline:2px solid #82baff!important;outline-offset:2px!important;
+}
+html[data-positron="true"].po-v3 #page-tv :is(.advanced-timebar,.compact-tools){
+ background:#141f2b!important;border:1px solid #2b4052!important;border-radius:10px!important;
+ box-shadow:none!important;
+}
+html[data-positron="true"].po-v3 .footer{
+ min-height:27px!important;background:#101923!important;border-top:1px solid #253545!important;
+}
+/* P4 forcibly sets p50-29 Play to a circle; keep the new square selector stronger. */
+html[data-positron="true"].po-v3.p50-29 #page-tv .player-control-card .controls.transport-controls #playBtn{
+ flex:0 0 43px!important;width:43px!important;min-width:43px!important;max-width:43px!important;
+ height:43px!important;min-height:43px!important;max-height:43px!important;
+ border-radius:10px!important;box-shadow:none!important;border:0!important;
+ background:#bbd7fa!important;color:#132134!important;
+}
+html[data-positron="true"].po-v3.p50-29 #page-tv .player-control-card .controls.transport-controls #playBtn:disabled{
+ background:#334455!important;color:#8ca0b3!important;opacity:.52!important;
+}
+html[data-positron="true"].po-v3.p50-30 #page-tv .player-control-card .controls.transport-controls :is(#prevBtn,#stopBtn,#nextBtn){
+ flex:0 0 35px!important;width:35px!important;min-width:35px!important;
+ height:38px!important;min-height:38px!important;
+ background:transparent!important;border:0!important;
+}
+html[data-positron="true"].po-v3.p50-32 #page-tv .player-control-card .output-controls :is(#castBtn,#pipBtn,#fullscreenBtn,#positronToolsToggle){
+ flex:0 0 35px!important;min-width:35px!important;max-width:35px!important;
+ width:35px!important;height:36px!important;min-height:36px!important;
+ padding:0!important;border:0!important;background:transparent!important;
+}
+html[data-positron="true"].po-v3.p50-36 #page-tv #positronToolsToggle{
+ display:inline-flex!important;justify-content:center!important;
+ width:35px!important;min-width:35px!important;max-width:35px!important;
+ min-height:36px!important;max-height:36px!important;padding:0!important;
+ border:0!important;background:transparent!important;font-size:0!important;
+ border-radius:8px!important;
+}
+@container (max-width:700px){
+ html[data-positron="true"].po-v3 #page-tv .player-control-card .control-layout-top{
+  grid-template-columns:minmax(0,1fr) max-content!important;
+  row-gap:3px!important;padding:5px 8px!important;
+ }
+ html[data-positron="true"].po-v3 #page-tv .player-control-card .control-layout-top .playing-info{
+  grid-column:1!important;grid-row:1!important;
+ }
+ html[data-positron="true"].po-v3 #page-tv .player-control-card .controls.transport-controls{
+  grid-column:2!important;grid-row:1!important;
+ }
+ html[data-positron="true"].po-v3 #page-tv .player-control-card .volume-controls{
+  grid-column:1!important;grid-row:2!important;
+ }
+ html[data-positron="true"].po-v3 #page-tv .player-control-card .output-controls{
+  grid-column:2!important;grid-row:2!important;
+ }
+ html[data-positron="true"].po-v3 #page-tv .player-control-card .control-layout-bottom{
+  grid-template-columns:minmax(0,1fr) minmax(115px,.65fr)!important;
+ }
+}
+@media(max-width:930px){
+ html[data-positron="true"].po-v3 #page-tv .tv-layout{
+  grid-template-columns:minmax(205px,230px) minmax(0,1fr)!important;
+ }
+ html[data-positron="true"].po-v3 #positronBar #positronOpen{min-width:0!important}
+ html[data-positron="true"].po-v3 #positronBar .p-command-label{display:none!important}
+}
+@media(max-width:760px){
+ html[data-positron="true"].po-v3 #appSidebar.sidebar{
+  width:65px!important;min-width:65px!important;max-width:65px!important;
+ }
+ html[data-positron="true"].po-v3 #appSidebar .brand-icon{display:none!important}
+ html[data-positron="true"].po-v3 #appSidebar #poRailExpand{top:13px!important}
+ html[data-positron="true"].po-v3 #page-tv .tv-layout{grid-template-columns:minmax(0,1fr)!important}
+ html[data-positron="true"].po-v3 #page-tv .channel-panel{max-height:320px!important}
+ html[data-positron="true"].po-v3 #positronBar .p-live{display:none!important}
+}
+
+/* Advanced navigation must continue to obey the original disclosure state. */
+html[data-positron="true"].po-v3.p50-advanced-closed #appSidebar :is(
+ .nav[data-page="multiview"],.nav[data-page="shots"],.nav[data-page="folders"],
+ .nav[data-page="health"],.nav[data-page="doctor"],.nav[data-page="profiles"],#exportNav
+){display:none!important;}
+html[data-positron="true"].po-v3 #appSidebar #positronMorePages[aria-expanded="true"]{
+ background:#253b52!important;color:#d9e9ff!important;
+}

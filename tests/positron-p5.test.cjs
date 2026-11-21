@@ -37,12 +37,12 @@ test('P5 assets are loaded after P4 without replacing it',()=>{
 test('P5 release is immutable and versioned separately from P4.1',()=>{
  const pkg=JSON.parse(read('package.json'));
  const flow=read('.github/workflows/positron-lab.yml');
- assert.equal(pkg.version,'4.23.138');
+ assert.equal(pkg.version,'4.23.139');
  const label=pkg.description.match(/Positron\s+(P\d+\.\d+\.\d+)/)?.[1];
  assert.ok(label,'product P-label must accompany SemVer');
  assert.ok(flow.includes('TAG=positron/v'+pkg.version+'-'+label.toLowerCase()),'release tag and app version must match');
  assert.ok(read('scripts/positron-50-audit.cjs').includes('runTwenty(page)'));
- assert.ok(flow.includes('Positron-P5154-20-Real-Screenshots.zip'));
+ assert.ok(flow.includes('Positron-P5155-20-Real-Screenshots.zip'));
 });
 
 test('P5.1.1 sidebar badge matches shipped release instead of stale P4',()=>{const js=read('renderer/positron.js');const pkg=JSON.parse(read('package.json'));
@@ -526,7 +526,7 @@ test('P5.1.48 EPG guide treats missing M3U differently from unmatched XMLTV iden
 });
 
 
-test('P5.1.54 no-channel EPG reload is disabled and restores safely with a playlist',()=>{
+test('P5.1.55 no-channel EPG reload is disabled and restores safely with a playlist',()=>{
  const js=read('renderer/positron-twenty.js'),css=read('renderer/positron-twenty.css'),audit=read('scripts/positron-20-extension.cjs');
  assert.ok(js.includes("epgReload.setAttribute('data-positron-epg-no-channels','true')"));
  assert.ok(js.includes("new MutationObserver(syncReloadAvailability).observe(epgChannelCount"));
@@ -538,7 +538,7 @@ test('P5.1.54 no-channel EPG reload is disabled and restores safely with a playl
  assert.ok(audit.includes('reload.restored'));
 });
 
-test('P5.1.54 empty-guide advanced tools are reversible and preserve native controls',()=>{
+test('P5.1.55 empty-guide advanced tools are reversible and preserve native controls',()=>{
  const js=read('renderer/positron-twenty.js'),css=read('renderer/positron-twenty.css'),audit=read('scripts/positron-20-extension.cjs');
  assert.ok(js.includes("epgPage.toggleAttribute('data-positron-no-epg-programmes',!hasProgrammes)"));
  assert.ok(js.includes('new MutationObserver(syncEpgToolVisibility).observe(epgSummary'));
@@ -550,7 +550,7 @@ test('P5.1.54 empty-guide advanced tools are reversible and preserve native cont
  for(const id of ['epgSearch','epgGlobalSearch','epgSearchGo','epgManualMap','epgOffset','epgSettingsBtn'])assert.ok(html.includes('id="'+id+'"'),'native EPG control must be retained: '+id);
 });
 
-test('P5.1.54 hides duplicate empty EPG search guidance and refreshes when guide appears',()=>{
+test('P5.1.55 hides duplicate empty EPG search guidance and refreshes when guide appears',()=>{
  const js=read('renderer/positron-twenty.js'),css=read('renderer/positron-twenty.css'),audit=read('scripts/positron-20-extension.cjs');
  assert.ok(css.includes('#page-epg[data-positron-no-epg-programmes] #epgSearchResults'));
  assert.ok(js.includes("if(hasProgrammes&&wasCollapsed&&epgPage.classList.contains('active-page'))"));

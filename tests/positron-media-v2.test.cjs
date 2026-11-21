@@ -5,11 +5,11 @@ const fs=require('node:fs');
 const path=require('node:path');
 const read=p=>fs.readFileSync(path.join(__dirname,'..',p),'utf8');
 
-test('P5.1.54 media redesign is loaded after original Positron layers',()=>{
+test('P5.1.55 media redesign is loaded after original Positron layers',()=>{
  const html=read('renderer/index.html');
  assert.ok(html.indexOf('positron-media-v2.css')>html.indexOf('positron-twenty.css'));
  assert.ok(html.indexOf('positron-media-v2.js')>html.indexOf('positron-twenty.js'));
- assert.equal(JSON.parse(read('package.json')).version,'4.23.138');
+ assert.equal(JSON.parse(read('package.json')).version,'4.23.139');
 });
 test('Playback retains native media handlers; new vectors replace presentation only',()=>{
  const js=read('renderer/positron-media-v2.js');

@@ -80,6 +80,24 @@ async function runTwenty(page){
     dvrFolder:get('#dvrPanel .dvr-folder'),
     dvrNativeStatus:get('#dvrStatus'),
     dvrNativeText:document.getElementById('dvrStatus')?.textContent?.trim()||'',
+    v3Workspace:(()=>{
+     const root=document.documentElement,rail=document.getElementById('appSidebar');
+     const advanced=document.getElementById('positronToolsToggle');
+     const filters=document.getElementById('positronFiltersToggle');
+     const railButton=document.getElementById('poRailExpand');
+     const play=document.getElementById('playBtn'),style=play&&getComputedStyle(play);
+     return {loaded:root.dataset.poWorkspaceV3==='true',
+      railWidth:Math.round(rail?.getBoundingClientRect().width||0),
+      railExpanded:root.dataset.poRailExpanded||'',
+      railToggle:!!railButton&&railButton.getAttribute('aria-expanded')==='false',
+      advancedInToolbar:advanced?.parentElement?.classList.contains('output-controls')||false,
+      filtersInSearch:filters?.parentElement?.classList.contains('filter-box')||false,
+      playRadius:style?.borderTopLeftRadius||'',
+      mainNavLabels:[...document.querySelectorAll('#appSidebar .nav[data-page]')].every(n=>!!n.getAttribute('aria-label')),
+      sourceAction:!!document.querySelector('#appSidebar .nav[data-page="sources"]'),
+      moreAction:!!document.getElementById('positronMorePages')
+     };
+    })(),
     controls:document.querySelectorAll('#page-tv button').length,
     transportVectors:['prevBtn','stopBtn','nextBtn','fsPrev','fsNext','fullscreenBtn'].every(id=>!!document.getElementById(id)?.querySelector('svg')),
     brandIcon:get('#appSidebar .brand-icon'),
@@ -206,6 +224,14 @@ async function runTwenty(page){
    assert.ok(metrics.player?.width>180&&metrics.player.height>100,'video collapsed: '+name);
    assert.equal(metrics.transportVectors,true,'non-vector transport icons: '+name);
    assert.ok(metrics.v2Media?.loaded,'P5.1.54 media redesign module failed to initialize: '+name);
+   assert.equal(metrics.v3Workspace?.loaded,true,'P5.1.55 workspace did not initialize: '+name);
+   assert.ok(metrics.v3Workspace?.railWidth<=90,'compact rail still steals player width: '+name);
+   assert.ok(metrics.v3Workspace?.advancedInToolbar,'More tools disclosure was not moved inside media controls: '+name);
+   assert.ok(metrics.v3Workspace?.filtersInSearch,'secondary filter still takes a full extra row: '+name);
+   assert.ok(metrics.v3Workspace?.mainNavLabels,'accessible labels missing from compact navigation: '+name);
+   assert.ok(metrics.v3Workspace?.sourceAction&&metrics.v3Workspace.moreAction,'source or advanced navigation became inaccessible: '+name);
+   assert.equal(metrics.v3Workspace?.playRadius,'10px','Play button became a circle again: '+name);
+
    assert.ok(metrics.v2Media?.width<=48&&metrics.v2Media.height>=40,'new Play button is not compact: '+name+' '+JSON.stringify(metrics.v2Media));
    assert.ok(metrics.v2Media?.vectorOutputs&&metrics.v2Media.navIcon,'new SVG system not installed: '+name);
    assert.equal(metrics.v2Media?.topOverflow,false,'toolbar extends beyond viewport: '+name);
@@ -588,6 +614,21 @@ async function runTwenty(page){
   // P5.1.19: exercise both real keyboard handlers in the Electron renderer.
   // '/' must focus the visible channel finder; Ctrl+K remains global.
   if(target==='tv'&&round===1){
+   const rail=await page.evaluate(async()=>{
+    const button=document.getElementById('poRailExpand'),sidebar=document.getElementById('appSidebar');
+    const before=sidebar.getBoundingClientRect().width;
+    button.click();await new Promise(resolve=>setTimeout(resolve,0));
+    const expanded=sidebar.getBoundingClientRect().width;
+    const aria=button.getAttribute('aria-expanded');
+    button.click();await new Promise(resolve=>setTimeout(resolve,0));
+    const restored=sidebar.getBoundingClientRect().width;
+    return {before,expanded,aria,restored};
+   });
+   assert.ok(rail.expanded>=205&&rail.expanded>rail.before+90,'rail cannot expand to show full feature labels');
+   assert.equal(rail.aria,'true','expanded rail lacks accessible state');
+   assert.ok(Math.abs(rail.restored-rail.before)<=2,'rail cannot collapse back without layout loss');
+  }
+  if(target==='tv'&&round===1){
    const keys=await page.evaluate(()=>{
     const finder=document.getElementById('searchBox');
     finder?.blur();
@@ -618,8 +659,37 @@ async function runTwenty(page){
   prev={round,overflow:metrics.overflow,sha256};
   process.stdout.write('P5 upgrade check '+round+'/20 REAL Electron screenshot PASS: '+name+'\n');
  }
+ // Separate, explicit metadata-only QA (NOT a real streaming test). We use
+ // 552 synthetic channels so the user playlist never enters source control or
+ // CI logs and live streams are never requested.
+ await page.setViewportSize({width:1360,height:820});
+ const metadataQa=await page.evaluate(()=>{
+  const lines=['#EXTM3U'];
+  for(let i=1;i<=552;i++){
+   const name=i%55===0?'Very long channel title '+i+' · regional extended edition':'QA Channel '+String(i).padStart(3,'0');
+   const group=i<=15?'01 • Main channels':i<=120?'02 • Regional channels':'03 • Other channels';
+   lines.push('#EXTINF:-1 tvg-id="qa'+i+'" group-title="'+group+'",'+name);
+   lines.push('https://example.invalid/positron-visual-only-'+i+'.m3u8');
+  }
+  window.IPTVState.importSource('LOCAL QA VISUAL ONLY','local:qa',lines.join('\n'),'file');
+  window.IPTVState.setPage('tv');
+  const list=document.getElementById('channelList'),panel=document.querySelector('#page-tv .channel-panel');
+  return {channelCount:window.IPTVState.getChannels().length,
+   sourceCount:window.IPTVState.getStore().sources.length,
+   groupHeaders:list.querySelectorAll('.folder-header,.group-header,.channel-folder-header').length,
+   panelWidth:Math.round(panel.getBoundingClientRect().width),
+   noPlaying:window.IPTVState.getCurrent()===null};
+ });
+ assert.equal(metadataQa.channelCount,552,'visual-only M3U test did not import 552 channels');
+ assert.equal(metadataQa.noPlaying,true,'visual metadata QA must never start a stream');
+ assert.ok(metadataQa.panelWidth>=200,'populated channel panel clipped');
+ const metaFilename='positron-p5-visual-only-552-channels.png';
+ const metaBytes=await page.screenshot({path:path.join(out,metaFilename),animations:'disabled'});
+ assert.ok(metaBytes.length>10000,'visual-only playlist screenshot too small');
+ metadataQa.filename=metaFilename;
+ metadataQa.sha256=crypto.createHash('sha256').update(metaBytes).digest('hex');
  const report={type:'Positron P5 twenty distinct desktop screenshot cases',realElectron:true,syntheticChannels:false,
-  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results};
+  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,metadataQa};
  fs.writeFileSync(path.resolve('positron-evidence','audit-p5-20-rounds.json'),JSON.stringify(report,null,2));
  return report;
 }
