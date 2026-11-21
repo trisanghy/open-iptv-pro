@@ -37,7 +37,7 @@ test('P5 assets are loaded after P4 without replacing it',()=>{
 test('P5 release is immutable and versioned separately from P4.1',()=>{
  const pkg=JSON.parse(read('package.json'));
  const flow=read('.github/workflows/positron-lab.yml');
- assert.equal(pkg.version,'4.23.215');
+ assert.equal(pkg.version,'4.23.216');
  const label=pkg.description.match(/Positron\s+(P\d+\.\d+\.\d+)/)?.[1];
  assert.ok(label,'product P-label must accompany SemVer');
  assert.ok(flow.includes('TAG=positron/v'+pkg.version+'-'+label.toLowerCase()),'release tag and app version must match');
@@ -1101,4 +1101,20 @@ test('P5.1.131 Vietnamese ASCII search matches native group containing đ withou
   'positron-p51131-ascii-d-search-450-real.png',
   "await page.waitForFunction(()=>document.querySelectorAll('#webChooserGrid button.web-chooser-card').length===18"])
   assert.ok(qa.includes(token),'missing native Vietnamese search proof: '+token);
+});
+
+test('P5.1.132 actionable empty channel search restores all and input focus without autoplay',()=>{
+ const chooser=read('renderer/web-channel-chooser-v42371.js');
+ const qa=read('scripts/positron-20-extension.cjs');
+ assert.ok(chooser.includes("if(tab==='all'&&(search.value.trim()||group.value))"));
+ assert.ok(chooser.includes("clear.id='poChooserClearFilters'"));
+ assert.ok(chooser.includes("search.value='';group.value='';page=0;render();"));
+ assert.ok(chooser.includes('search.focus({preventScroll:true})'));
+ for(const t of ["await page.fill('#webChooserSearch','zz-no-channel')",
+  "await page.click('#poChooserClearFilters')",
+  'focusReturned:document.activeElement===document.getElementById',
+  'noAutoplayAfterReset:window.IPTVState.getCurrent()===null',
+  'positron-p51132-empty-search-clear-before-450-real.png',
+  'positron-p51132-empty-search-clear-after-450-real.png'])
+  assert.ok(qa.includes(t),'missing no-result recovery Electron proof '+t);
 });

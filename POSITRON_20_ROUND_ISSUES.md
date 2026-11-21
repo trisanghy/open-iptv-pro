@@ -35,3 +35,7 @@ Evaluate defects revealed by real screenshot of previous build before making cha
 - Genuine Electron `positron-p51130-border-mask-450-real.png`: previous curled-border defect no longer visible; native channel search clearly accessible.
 - Source-grounded functional defect: normalize(NFD)+combining mark removal does not map Vietnamese đ/Đ to ASCII d.
 - P5.1.131 v4.23.215: map đ→d in native chooser, real QA fixture `TH địa phương` queried as `dia phuong`, screenshot/keyboard/focus, clear restored; no playback.
+
+## Planned round 04 — input genuine P5.1.131
+- Real Electron screenshot of `dia phuong` shows channel search prominently; source reveals no actionable empty-state recovery for All-tab user typos.
+- P5.1.132 v4.23.216: add reversible clear-filters button only for meaningful no-results search/group, never import/delete source or autoplay. Verify native before+after screenshots.

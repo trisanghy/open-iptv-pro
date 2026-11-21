@@ -1,3 +1,11 @@
+## P5.1.132 — Recover from empty channel search without reimporting / Electron v4.23.216
+
+- Input: genuine P5.1.131 real 450px Electron screenshot `positron-p51131-ascii-d-search-450-real.png` exposes the prominent channel search. Source review reveals All-tab no-results state has only generic text; unlike Favorites and Recent, it has no actionable path to clear filters.
+- Fix: when there are imported channels but no search results on All and search/group filters are active, add one native "Xóa bộ lọc và xem tất cả kênh" button. On click clear query and group, render all 18 page-1 cards and restore search focus. Existing CSS reused.
+- QA: real Electron 450px no-match query `zz-no-channel`, screenshot before and after clicking native reset, verify empty message, reachable button, focus, restored cards, group cleared, no autoplay/overflow.
+- Screenshots: `positron-p51132-empty-search-clear-before-450-real.png`, `positron-p51132-empty-search-clear-after-450-real.png`.
+- CANDIDATE until native QA+installers verified; do not count release without assets.
+
 ## P5.1.131 — Search 'đ' using ASCII 'd' in channel library / Electron v4.23.215
 
 - Baseline: genuine P5.1.130 450px Electron screenshot `positron-p51130-border-mask-450-real.png` shows native channel search. Source inspection reveals NFD strips accents but does not decompose Vietnamese đ/Đ, so typing `dia phuong` cannot match "TH địa phương".

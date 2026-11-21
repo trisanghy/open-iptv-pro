@@ -2491,9 +2491,40 @@ async function runTwenty(page){
  for(const [key,value] of Object.entries(asciiDSearchQA))
   assert.equal(value,true,'P5.1.131 Vietnamese ASCII search '+key+': '+JSON.stringify(asciiDSearchQA));
 
+ // P5.1.132: the P5.1.131 genuine 450px Electron screenshot shows a
+ // native channel search but no way back from a no-results typo except the
+ // browser's tiny X. Verify one-click recovery in the All tab.
+ await page.evaluate(()=>document.querySelector('#webChannelChooser [data-chooser-tab="all"]').click());
+ await page.fill('#webChooserSearch','zz-no-channel');
+ await page.waitForFunction(()=>!!document.getElementById('poChooserClearFilters'));
+ const emptySearchActionQA=await page.evaluate(()=>{
+  const grid=document.getElementById('webChooserGrid');
+  const button=document.getElementById('poChooserClearFilters');
+  const bounds=button?.getBoundingClientRect();
+  return {zeroResults:grid.querySelectorAll('button.web-chooser-card').length===0,
+   meaningfulMessage:!!grid.querySelector('.web-chooser-empty')?.textContent.includes('Không tìm thấy kênh'),
+   nativeClearButton:!!button&&button.tagName==='BUTTON'&&button.textContent.includes('Xóa bộ lọc'),
+   visuallyReachable:!!bounds&&bounds.height>=30&&getComputedStyle(button).display!=='none',
+   noAutoplay:window.IPTVState.getCurrent()===null,
+   noOverflow:document.documentElement.scrollWidth<=innerWidth+1};
+ });
+ await page.screenshot({path:path.join(out,'positron-p51132-empty-search-clear-before-450-real.png'),animations:'disabled'});
+ await page.click('#poChooserClearFilters');
+ await page.waitForFunction(()=>document.querySelectorAll('#webChooserGrid button.web-chooser-card').length===18);
+ Object.assign(emptySearchActionQA,await page.evaluate(()=>({
+  queryCleared:document.getElementById('webChooserSearch').value==='',
+  groupCleared:document.getElementById('webChooserGroup').value==='',
+  focusReturned:document.activeElement===document.getElementById('webChooserSearch'),
+  cardsRestored:document.querySelectorAll('#webChooserGrid button.web-chooser-card').length===18,
+  noAutoplayAfterReset:window.IPTVState.getCurrent()===null
+ })));
+ await page.screenshot({path:path.join(out,'positron-p51132-empty-search-clear-after-450-real.png'),animations:'disabled'});
+ for(const [key,value] of Object.entries(emptySearchActionQA))
+  assert.equal(value,true,'P5.1.132 native empty-search recovery '+key+': '+JSON.stringify(emptySearchActionQA));
+
  await page.setViewportSize({width:1360,height:820});
   const report={type:'Positron P5 twenty distinct desktop screenshot cases',realElectron:true,syntheticChannels:false,
-  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA,chooserQa,toastLayoutQA,nativeToastQA,compactIdleQA,channelChipRailQA,advancedFilterQA,readableCardsQA,keyboardTabQA,favoriteEmptyQA,duplicateEmptyQA,categoryFilterQA,categoryFixtureQA,compactSingleQA,directFavoriteQA,favoriteCountQA,compactToastStackQA,toastDismissQA,toastFocusReturnQA,toastDockQA,wheelQA,pinnedAllQA,pinnedMaskQA,categoryKeyQA,dropdownChipQA,pinnedRightMaskQA,pinnedBorderMaskQA,asciiDSearchQA};
+  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA,chooserQa,toastLayoutQA,nativeToastQA,compactIdleQA,channelChipRailQA,advancedFilterQA,readableCardsQA,keyboardTabQA,favoriteEmptyQA,duplicateEmptyQA,categoryFilterQA,categoryFixtureQA,compactSingleQA,directFavoriteQA,favoriteCountQA,compactToastStackQA,toastDismissQA,toastFocusReturnQA,toastDockQA,wheelQA,pinnedAllQA,pinnedMaskQA,categoryKeyQA,dropdownChipQA,pinnedRightMaskQA,pinnedBorderMaskQA,asciiDSearchQA,emptySearchActionQA};
  fs.writeFileSync(path.resolve('positron-evidence','audit-p5-20-rounds.json'),JSON.stringify(report,null,2));
  return report;
 }

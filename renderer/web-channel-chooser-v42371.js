@@ -212,6 +212,20 @@
     ?'Không có kênh xem gần đây phù hợp với bộ lọc.'
     :'Chưa xem kênh nào gần đây. Chọn một kênh và bắt đầu phát để hiển thị ở đây.';
    empty(grid,message);
+   // P5.1.132: P5.1.131 real compact Electron screenshot shows the channel
+   // search clearly, but a typo/no-match on the All tab previously stranded
+   // the user on a generic empty card with no direct reset action.
+   // Use the existing native empty-state button style; never mutate source data.
+   if(tab==='all'&&(search.value.trim()||group.value)){
+    const clear=document.createElement('button');clear.type='button';
+    clear.id='poChooserClearFilters';clear.className='po-chooser-empty-action';
+    clear.textContent='Xóa bộ lọc và xem tất cả kênh';
+    clear.addEventListener('click',()=>{
+     search.value='';group.value='';page=0;render();
+     search.focus({preventScroll:true});
+    });
+    grid.append(clear);
+   }
    if(tab==='fav'||tab==='recent'){
     const back=document.createElement('button');back.type='button';
     back.className='po-chooser-empty-action';back.textContent='Xem tất cả kênh';

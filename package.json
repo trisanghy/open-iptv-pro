@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.215",
-  "description": "Positron P5.1.131: Vietnamese ASCII search matches the letter đ in channel groups",
+  "version": "4.23.216",
+  "description": "Positron P5.1.132: recover directly from empty channel search with one clear-filters action",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",
