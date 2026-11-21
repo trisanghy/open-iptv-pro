@@ -458,3 +458,13 @@ html[data-positron="true"] #page-epg #dvrPanel #positronDvrNoChannels[hidden]{di
 html[data-positron="true"] #page-epg #dvrPanel.p46-no-channels.p47-hide-idle-status #dvrStatus{
  display:none!important;
 }
+
+/* P5.1.49 — EPG Reload has no action without M3U channels; render this
+   no-channel disabled state neutrally without affecting real fetch loading. */
+html[data-positron="true"] #page-epg #epgRefreshBtn:disabled[data-positron-epg-no-channels="true"]{
+ background:var(--po-card,#25354a)!important;
+ color:var(--po-muted,#9fb0c5)!important;
+ border:1px solid var(--po-line,#40536e)!important;
+ box-shadow:none!important;opacity:1!important;
+ cursor:not-allowed!important;
+}

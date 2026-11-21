@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.132",
-  "description": "Positron P5.1.48: distinguish missing playlists from unmatched EPG data",
+  "version": "4.23.133",
+  "description": "Positron P5.1.49: prevent misleading EPG reload when no channels exist",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

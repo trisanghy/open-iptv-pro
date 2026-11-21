@@ -463,6 +463,36 @@
   syncCompactDvr();
  }
 
+ // P5.1.49: real P5.1.48 EPG empty screenshot still presents Reload EPG
+ // as available with zero channels. Do not allow a no-op warning click;
+ // reenable only the state disabled by this guard once channels exist.
+ const epgReload=byId('epgRefreshBtn'),epgChannelCount=byId('navCount');
+ if(epgReload&&epgChannelCount){
+  const syncReloadAvailability=()=>{
+   const count=Number((epgChannelCount.textContent||'0').replace(/[^0-9]/g,''))||0;
+   if(count===0){
+    if(!epgReload.disabled){
+     epgReload.setAttribute('data-positron-epg-no-channels','true');
+     epgReload.disabled=true;
+     if(!epgReload.hasAttribute('aria-describedby')){
+      epgReload.setAttribute('aria-describedby','epgGuide');
+      epgReload.setAttribute('data-positron-epg-described','true');
+     }
+    }
+   }else if(epgReload.getAttribute('data-positron-epg-no-channels')==='true'){
+    epgReload.removeAttribute('data-positron-epg-no-channels');
+    if(epgReload.getAttribute('data-positron-epg-described')==='true'){
+     epgReload.removeAttribute('aria-describedby');
+     epgReload.removeAttribute('data-positron-epg-described');
+    }
+    if(!byId('epgLoadBtn')?.disabled)epgReload.disabled=false;
+   }
+  };
+  new MutationObserver(syncReloadAvailability).observe(epgChannelCount,{childList:true,subtree:true,characterData:true});
+  new MutationObserver(syncReloadAvailability).observe(epgReload,{attributes:true,attributeFilter:['disabled']});
+  syncReloadAvailability();
+ }
+
  window.OpenIPTVPositronTwenty=Object.freeze({
   setStage,getStage:()=>stage,getFeedback:()=>previous
  });

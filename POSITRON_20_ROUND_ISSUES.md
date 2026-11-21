@@ -124,3 +124,7 @@ P5.1.46 CI attempt 44866650681: 604 pass / 2 failed / 5 skipped; failures were s
 | File (9) round | Version | Screenshot input | Actual root-cause issue | Fix | Required verification |
 |---|---|---|---|---|---|
 | 05/20 (pending) | P5.1.48 / v4.23.132 | P5.1.47 EPG 1360px guide footer | Zero-channel case wrongly asks users to repair M3U tvg-id and XMLTV mappings | Detect missing channel list and show correct import hint, preserving true mapping-error text | Node i18n/renderer test, real after PNG + release |
+
+| File (9) round | Next version | Real screenshot | Defect | Repair | Verification status |
+|---|---|---|---|---|---|
+| 06/20 (pending) | P5.1.49 / v4.23.133 | P5.1.48 EPG 1360px + 720px | Reload EPG appears actionable with 0 IPTV channels and only yields a warning | Guard no-channel reload button; auto-reenable on channel arrival; leave EPG sources accessible | Pending CI + images + release |

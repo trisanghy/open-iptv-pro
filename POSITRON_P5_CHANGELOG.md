@@ -333,3 +333,10 @@ P5.1.46 same-version CI repair: run 44866650681 failed 2/611 because historical 
 - Repair: branch on actual channel count. When there are zero channels, instruct to add an M3U playlist through Quản lý nguồn. When channels exist but EPG has no matches, preserve the original matching/tvg-id guidance.
 - Build the empty node using textContent rather than innerHTML; add all 16 non-Vietnamese offline translations and Electron screenshot assertion for 720px and 1360px guide.
 - Preserve EPG data/offset/cache, source import, existing programmes and favorites. Await individual CI/release proof.
+
+## File (9) round 06/20 — P5.1.49 / v4.23.133
+- Real screenshot P5.1.48 EPG 1360px/720px shows 0 channels but ↻ Tải lại EPG is highlighted and clickable; native refreshEPG() only warns instead of loading because no M3U playlist.
+- Root cause: no-channel UI state omitted from reload button guard; native EPG data and service are not modified.
+- Positron only: disable the reload CTA while zero channels, mark precisely when Positron owns this disabled state, style muted, restore only own state once navCount changes. Do not override native in-flight load (`epgLoadBtn.disabled`).
+- Add real Electron snapshot assertion at 1360px/720px and synthetic nav-count 0→1→0 transition proving reversible control. Keep the Nguồn EPG button enabled and playlist/cached guide/EPG data intact.
+- Check separate CI/test/screenshots/build and immutable tag before certification.

@@ -49,6 +49,7 @@ async function runTwenty(page){
     sources:get('#page-sources .sources-hub-nav'),sourceSection:get('#smartDiscoverySection'),sourceHeading:get('#page-sources .source-hub-heading'),epg:get('#page-epg .epg-filter'),
     epgEmptySummary:document.getElementById('epgSummary')?.textContent?.trim()||'',
     epgGuideEmptyText:document.querySelector('#epgGuide>.empty-list')?.textContent?.trim()||'',
+    epgReloadAvailability:(()=>{const n=document.getElementById('epgRefreshBtn');return {disabled:!!n?.disabled,marked:n?.getAttribute('data-positron-epg-no-channels')||'',describedBy:n?.getAttribute('aria-describedby')||''};})(),
     epgSourceAction:get('#epgSettingsBtn'),
     dvrFormVisible:get('#dvrForm')?.visible||false,
     dvrEmptyAction:get('#positronDvrNoChannels'),
@@ -327,6 +328,18 @@ async function runTwenty(page){
     assert.equal(focusState.svg,true,'focus icon removed after toggles: '+name);
    }
    if(target==='epg'&&width===720&&metrics.sourceCount==='0'){
+    const reload=await page.evaluate(async()=>{
+     const count=document.getElementById('navCount'),button=document.getElementById('epgRefreshBtn');
+     const original=count.textContent;
+     count.textContent='1';await new Promise(resolve=>setTimeout(resolve,0));
+     const released=!button.disabled&&button.getAttribute('data-positron-epg-no-channels')===null;
+     count.textContent=original;await new Promise(resolve=>setTimeout(resolve,0));
+     return {released,restored:button.disabled&&button.getAttribute('data-positron-epg-no-channels')==='true'};
+    });
+    assert.equal(reload.released,true,'EPG Reload did not reenable on playlist arrival');
+    assert.equal(reload.restored,true,'EPG Reload did not guard again after playlist removal');
+   }
+   if(target==='epg'&&width===720&&metrics.sourceCount==='0'){
     const state=await page.evaluate(async()=>{
      const select=document.getElementById('dvrChannel');
      const option=document.createElement('option');option.value='positron-qa-only';option.textContent='Kênh kiểm thử';
@@ -357,6 +370,10 @@ async function runTwenty(page){
     assert.equal(metrics.epgEmptySummary,"Chưa tải EPG. Nhấn “Nguồn EPG” phía trên để chọn hoặc cập nhật nguồn.",'EPG empty instruction must point to actual top Nguồn EPG button: '+name);
     assert.ok(metrics.epgSourceAction?.visible,'EPG settings shortcut must be visible: '+name);
     if(metrics.sourceCount==='0')assert.equal(metrics.epgGuideEmptyText,'Chưa có kênh. Thêm nguồn M3U trong Quản lý nguồn để xem lịch phát sóng.','EPG guide falsely blames XMLTV mapping when no playlist exists: '+name);
+    if(metrics.sourceCount==='0'){
+     assert.equal(metrics.epgReloadAvailability?.disabled,true,'Reload EPG must not be actionable with no channels: '+name);
+     assert.equal(metrics.epgReloadAvailability?.marked,'true','Empty-channel EPG Reload guard missing: '+name);
+    }
     if(metrics.sourceCount==='0'){
      assert.equal(metrics.dvrFormVisible,false,'Empty DVR scheduling form still dominates EPG: '+name);
      assert.ok(metrics.dvrEmptyAction?.visible,'Compact DVR empty action missing: '+name);
