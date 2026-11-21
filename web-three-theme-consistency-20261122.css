@@ -1,0 +1,242 @@
+/* Web Desktop + Web Mobile: three-theme coherence, 2026-11-22.
+ * Scope to the Web UI only. No data/playlist/stream/consent changes.
+ * Keep actual video, full-screen transport overlays and art thumbnails dark.
+ * Respect user's selected accent. Custom design presets on Dark stay intact. */
+html[data-theme="light"]{
+ --web-coherent-card:var(--ui-card,var(--surface,#fff));
+ --web-coherent-control:var(--ui-control,var(--surface2,#f2f6fd));
+ --web-coherent-border:var(--ui-stroke,var(--edge,#dbe4ee));
+ --web-coherent-ink:var(--text,#1b2d40);
+ --web-coherent-muted:var(--muted,#526a82);
+ --web-coherent-selected:color-mix(in srgb,var(--accent) 13%,var(--web-coherent-card));
+ color-scheme:light;
+}
+html[data-theme="dark"]:is([data-ui-style="current"],:not([data-ui-style])){
+ --web-coherent-card:var(--ui-card,var(--surface,#101923));
+ --web-coherent-control:var(--ui-control,var(--surface2,#152230));
+ --web-coherent-border:var(--ui-stroke,var(--edge,#314355));
+ --web-coherent-ink:var(--text,#eaf2f7);
+ --web-coherent-muted:var(--muted,#a4b4c4);
+ --web-coherent-selected:color-mix(in srgb,var(--accent) 19%,var(--web-coherent-card));
+ color-scheme:dark;
+}
+html[data-theme="amoled"]{
+ --web-coherent-card:#080808;
+ --web-coherent-control:#151515;
+ --web-coherent-border:#303036;
+ --web-coherent-ink:#f4f4f5;
+ --web-coherent-muted:#b0b0b9;
+ --web-coherent-selected:color-mix(in srgb,var(--accent) 19%,#080808);
+ --ui-card:#080808;--ui-control:#151515;--ui-stroke:#303036;
+ --ui-navigation:#000000;
+ color-scheme:dark;
+}
+html[data-theme="amoled"] :is(body,.app-shell,.main,.content,.sidebar,.topbar,.footer){
+ background:#000!important;background-image:none!important;color:var(--web-coherent-ink)!important;
+}
+html[data-theme="amoled"] :is(.sidebar,.topbar,.footer){border-color:var(--web-coherent-border)!important;box-shadow:none!important}
+/* Legacy Web sections and external feature modules: semantic surfaces.
+   Light uses existing tested palette; Dark uses its native navy.
+   AMOLED removes all navy cast in secondary panels. */
+html[data-theme="amoled"] :is(
+ .channel-panel,.player-control-card,.quick-btn,.task-box,.source-card,
+ .shot-card,.fav-card,.profile-card,.settings-card,.settings-accordion-heading,
+ .settings-accordion-content,.folder-card,.folder-manager,.multi-tile,
+ .doctor-v2-panel,.doctor-v3-panel,.doctor-metrics article,.doctor-issues,
+ .health-table,.health-overview,.epg-summary,.epg-row,.epg-source-card,
+ .epg-program,.epg-result,.epg-search-results,.epg-tools-fold,.epg-day-channel,
+ .dvr-panel,.dvr-job,.dvr-quick-form,.collector-progress,.collector-metrics span,
+ .smart-panel,.smart-results,.smart-row,.smart-metrics span,.source-hub,
+ .source-hub-section,.source-merge-panel,.source-merge-summary,
+ .source-duplicate-row,.source-repair-log-card,.source-repair-statistics,
+ .source-repair-progress,.source-repair-help,.task-dock,.task-panel,
+ .task-dock-body,.task-live-results,.advanced-timebar,.compact-tools,
+ .epg-current-card,.modal-box,.cloud-sync-conflict,#cloudSyncCard
+){
+ background:var(--web-coherent-card)!important;background-image:none!important;
+ color:var(--web-coherent-ink)!important;border-color:var(--web-coherent-border)!important;
+}
+html[data-theme="amoled"] :is(
+ .sources-hub-nav,.source-hub-heading,.epg-row header,.epg-day-channel>.epg-channel-heading,
+ .epg-tools-summary,.health-table th,.multi-head,.multi-bottom,
+ .task-dock-head,.collector-metrics span,.settings-accordion-heading,.folder-header
+){
+ background:var(--web-coherent-control)!important;background-image:none!important;
+ color:var(--web-coherent-ink)!important;border-color:var(--web-coherent-border)!important;
+}
+html:is([data-theme="dark"]:is([data-ui-style="current"],:not([data-ui-style])),[data-theme="amoled"]) :is(
+ .epg-summary,.epg-program small,.epg-program time,.epg-channel-copy small,
+ .dvr-panel small,.dvr-quick-hint,.dvr-job-meta,.source-hub-heading p,
+ .source-repair-help p,.source-repair-log-card small,.collector-progress p,
+ .smart-panel small,.smart-controls small,.settings-card p,.settings-card small,
+ .health-overview small,.doctor-v3-panel small,.task-dock-summary,
+ .source-url,.source-meta,.empty-list,.hint,.channel-text small
+){color:var(--web-coherent-muted)!important}
+html:is([data-theme="dark"]:is([data-ui-style="current"],:not([data-ui-style])),[data-theme="amoled"]) :is(
+ .epg-program b,.epg-channel-copy strong,.epg-channel-heading,.health-table td,
+ .source-hub-heading h2,.source-repair-card-title,.smart-panel strong,
+ .settings-card h2,.settings-accordion-heading,.doctor-metrics strong
+){color:var(--web-coherent-ink)!important}
+html:is([data-theme="dark"]:is([data-ui-style="current"],:not([data-ui-style])),[data-theme="amoled"]) :is(
+ .dvr-panel input,.dvr-panel select,.epg-tools-fold input,.epg-advanced input,
+ .epg-advanced select,.smart-controls input,.smart-controls select,
+ .source-hub input,.source-hub select,.source-repair-log-card input,
+ .doctor-v3-panel input,.doctor-v3-panel select,.health-overview input,
+ .health-overview select,.settings-accordion-content input,
+ .settings-accordion-content select,#cloudSyncCard input,#cloudSyncCard select,
+ #cloudOtpCode
+){
+ background:var(--web-coherent-control)!important;
+ color:var(--web-coherent-ink)!important;
+ border-color:var(--web-coherent-border)!important;
+ color-scheme:dark;caret-color:var(--web-coherent-ink);
+}
+html:is([data-theme="dark"]:is([data-ui-style="current"],:not([data-ui-style])),[data-theme="amoled"]) :is(
+ .source-repair-log-card button,.smart-row button:not(.btn-primary),
+ .source-hub button:not(.btn-primary),.doctor-v3-panel button:not(.btn-primary),
+ .folder-actions button,.folder-card-actions button,.source-actions button,
+ .sources-hub-nav button,.multi-bottom button
+){
+ background:var(--web-coherent-control)!important;
+ color:var(--web-coherent-ink)!important;
+ border-color:var(--web-coherent-border)!important;
+}
+/* TV channel chooser: same cards and selected accent in all themes,
+   without overriding the intentional layout or channel logo. */
+html[data-theme="amoled"] #page-tv :is(.web-hub-main,.web-hub-side-card,.web-hub-tile){
+ background:var(--web-coherent-card)!important;background-image:none!important;
+ color:var(--web-coherent-ink)!important;border-color:var(--web-coherent-border)!important;
+}
+html[data-theme="amoled"] #page-tv :is(
+ .web-hub-chip,.web-hub-view,.web-hub-arrow,
+ .web-hub-controls input,.web-hub-controls select
+){
+ background:var(--web-coherent-control)!important;
+ color:var(--web-coherent-ink)!important;border-color:var(--web-coherent-border)!important;
+}
+html:is([data-theme="light"],[data-theme="dark"],[data-theme="amoled"]) #page-tv :is(
+ .web-hub-chip.active,.web-hub-view.active,.web-hub-tile.current
+){
+ background:var(--web-coherent-selected)!important;
+ color:var(--web-coherent-ink)!important;
+ border-color:color-mix(in srgb,var(--accent) 55%,var(--web-coherent-border))!important;
+}
+html:is([data-theme="light"],[data-theme="dark"],[data-theme="amoled"]) #page-tv .web-hub-tab.active{
+ color:var(--accent)!important;border-bottom-color:var(--accent)!important;
+}
+html:is([data-theme="light"],[data-theme="dark"],[data-theme="amoled"]) #page-tv .web-hub-view-all{
+ color:var(--accent)!important;
+}
+html:is([data-theme="dark"]:is([data-ui-style="current"],:not([data-ui-style])),[data-theme="amoled"]) #page-tv .channel-panel :is(
+ .filter-tab.active,.channel-item.current
+){
+ background:var(--web-coherent-selected)!important;
+ border-color:color-mix(in srgb,var(--accent) 45%,var(--web-coherent-border))!important;
+ color:var(--web-coherent-ink)!important;
+}
+html[data-theme="amoled"] #page-tv :is(
+ .channel-panel,.channel-list,.filter-box,.folder-header,.folder-actions
+){
+ background:var(--web-coherent-card)!important;background-image:none!important;
+ border-color:var(--web-coherent-border)!important;
+}
+html[data-theme="amoled"] #page-tv :is(.filter-box input,.channel-panel .folder-actions button){
+ color:var(--web-coherent-ink)!important;
+}
+/* Mobile bottom navigation has much stronger legacy CSS selectors. */
+html[data-iptv-device="mobile"][data-theme="light"] body #appShell>#appSidebar{
+ background:var(--web-coherent-card)!important;border-color:var(--web-coherent-border)!important;
+ color:var(--web-coherent-ink)!important;
+}
+html[data-iptv-device="mobile"][data-theme="dark"][data-ui-style="current"] body #appShell>#appSidebar{
+ background:var(--web-coherent-card)!important;
+ border-color:var(--web-coherent-border)!important;
+}
+html[data-iptv-device="mobile"][data-theme="amoled"] body #appShell>#appSidebar{
+ background:#000!important;background-image:none!important;
+ border-color:var(--web-coherent-border)!important;box-shadow:none!important;
+ color:var(--web-coherent-ink)!important;
+}
+html[data-iptv-device="mobile"]:is([data-theme="light"],[data-theme="dark"],[data-theme="amoled"])
+ body #appShell>#appSidebar .nav.active{
+ background:var(--web-coherent-selected)!important;
+ border-color:color-mix(in srgb,var(--accent) 48%,var(--web-coherent-border))!important;
+}
+html[data-iptv-device="mobile"]:is([data-theme="light"],[data-theme="dark"],[data-theme="amoled"])
+ body #appShell>#appSidebar .nav.active :is(.macos-nav-symbol,.mobile-tab-caption,.macos-nav-symbol svg){
+ color:var(--accent)!important;stroke:currentColor!important;
+}
+html[data-iptv-device="mobile"]:is([data-theme="light"],[data-theme="dark"],[data-theme="amoled"])
+ body #appShell>#appSidebar .nav:not(.active) .mobile-tab-caption{
+ color:var(--web-coherent-muted)!important;
+}
+/* Mobile "Thêm" is hard-coded to a dark frosted glass skin in every mode.
+   Rebind only its colors; preserve sheet size, blur, touch targets and icons. */
+html[data-iptv-device="mobile"][data-theme="light"] .mobile-more-panel{
+ background:rgba(255,255,255,.96)!important;
+ color:var(--web-coherent-ink)!important;
+ border-color:var(--web-coherent-border)!important;
+ box-shadow:0 22px 56px #253b522e!important;
+ color-scheme:light;
+}
+html[data-iptv-device="mobile"][data-theme="light"] .mobile-more-backdrop{
+ background:rgba(20,34,55,.35)!important;
+}
+html[data-iptv-device="mobile"][data-theme="dark"] .mobile-more-panel{
+ background:color-mix(in srgb,var(--web-coherent-card) 94%,transparent)!important;
+ color:var(--web-coherent-ink)!important;border-color:var(--web-coherent-border)!important;
+ color-scheme:dark;
+}
+html[data-iptv-device="mobile"][data-theme="amoled"] .mobile-more-panel{
+ background:#080808!important;color:var(--web-coherent-ink)!important;
+ border-color:var(--web-coherent-border)!important;box-shadow:0 22px 52px #000b!important;
+ color-scheme:dark;
+}
+html[data-iptv-device="mobile"][data-theme="amoled"] .mobile-more-backdrop{
+ background:rgba(0,0,0,.86)!important;
+}
+html[data-iptv-device="mobile"]:is([data-theme="light"],[data-theme="dark"],[data-theme="amoled"])
+ :is(.mobile-more-action,.mobile-more-close){
+ background:var(--web-coherent-control)!important;
+ color:var(--web-coherent-ink)!important;
+ border-color:var(--web-coherent-border)!important;
+}
+html[data-iptv-device="mobile"]:is([data-theme="light"],[data-theme="dark"],[data-theme="amoled"])
+ .mobile-more-action:active{
+ background:var(--web-coherent-selected)!important;
+}
+html[data-iptv-device="mobile"][data-theme="light"] .mobile-more-action>.mobile-more-icon{
+ color:var(--accent)!important;
+}
+html[data-iptv-device="mobile"][data-theme="amoled"] .mobile-more-action>.mobile-more-icon{
+ color:var(--accent)!important;
+}
+/* Volume popup, mobile secondary controls and inline task cards.
+   Fullscreen/mini theater intentionally stays dark on all three themes. */
+html[data-iptv-device="mobile"][data-theme="amoled"] body #page-tv :is(
+ .player-control-card,.advanced-timebar,.compact-tools,#webMobileVolumePanel,
+ .web-mobile-volume-panel,.web-volume-popover
+){
+ background:var(--web-coherent-card)!important;background-image:none!important;
+ color:var(--web-coherent-ink)!important;border-color:var(--web-coherent-border)!important;
+}
+html[data-iptv-device="mobile"][data-theme="dark"][data-ui-style="current"] body #page-tv :is(
+ #webMobileVolumePanel,.web-volume-popover,.web-mobile-volume-panel
+){
+ background:var(--web-coherent-control)!important;
+ color:var(--web-coherent-ink)!important;border-color:var(--web-coherent-border)!important;
+}
+html[data-iptv-device="mobile"][data-theme="amoled"] body #page-tv
+ #webMobileVolumePanel::before{background:var(--web-coherent-card)!important;border-color:var(--web-coherent-border)!important}
+html[data-iptv-device="mobile"][data-theme="amoled"] body #page-tv .player-control-card
+ .control-layout-top>.output-controls :is(#webVolumeMute,#castBtn,#pipBtn,#fullscreenBtn){
+ background:var(--web-coherent-control)!important;
+ color:var(--web-coherent-ink)!important;
+ border-color:var(--web-coherent-border)!important;
+}
+/* Do not recolor video or fullscreen controls; accessibility and layout. */
+html[data-theme="amoled"] #page-tv .player-box{background:#000!important}
+html:is([data-theme="light"],[data-theme="dark"],[data-theme="amoled"])
+ :is(button,input,select,textarea):focus-visible{
+ outline:2px solid var(--accent)!important;outline-offset:2px!important;
+}
