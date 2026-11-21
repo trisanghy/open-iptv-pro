@@ -23,6 +23,15 @@ function idColor(color){
  const scale=color.startsWith('color(')?255:1;
  return nums.slice(1,4).map(v=>Number(v)*scale);
 }
+
+function contrastRatio(a,b){
+ const L=rgb=>{
+  const components=rgb.map(v=>{const c=v/255;return c<=.04045?c/12.92:((c+.055)/1.055)**2.4});
+  return .2126*components[0]+.7152*components[1]+.0722*components[2];
+ };
+ const l1=L(a),l2=L(b);return (Math.max(l1,l2)+.05)/(Math.min(l1,l2)+.05);
+}
+
 (async()=>{
  const executablePath=process.env.CHROME||'/usr/bin/google-chrome';
  const browser=await chromium.launch({executablePath,headless:true,args:['--no-sandbox','--disable-gpu']});
@@ -71,6 +80,29 @@ function idColor(color){
     if(rgb&&Math.max(...rgb)<175)throw Error(mode+' dark surface: '+JSON.stringify({id,item}));
    }
    await page.waitForTimeout(140);
+   if(id==='tv' && !mobile){
+    const colors=await page.evaluate(()=>{
+     const el=document.querySelector('#page-tv .channel-panel .filter-tab.active');
+     if(!el)return null;
+     const st=getComputedStyle(el);
+     return {label:el.textContent.trim(),color:st.color,bg:st.backgroundColor};
+    });
+    if(!colors)throw Error('Selected channel filter missing from TV page');
+    const fg=idColor(colors.color),bg=idColor(colors.bg);
+    if(!fg||!bg||contrastRatio(fg,bg)<4.5)throw Error('Light channel filter contrast below WCAG AA: '+JSON.stringify({colors,ratio:fg&&bg?contrastRatio(fg,bg):null}));
+    report.push({mode,lightContrast:colors,ratio:contrastRatio(fg,bg)});
+   }
+   if(id==='sources' && mobile){
+    const layout=await page.evaluate(()=>{
+     const heading=document.querySelector('#page-sources>.section-heading>div:first-child');
+     const actions=document.querySelector('#page-sources>.section-heading>.heading-actions');
+     const h1=document.querySelector('#page-sources>.section-heading h1');
+     const y=element=>{const r=element?.getBoundingClientRect();return r?{top:r.top,bottom:r.bottom,width:r.width,height:r.height}:null};
+     return {heading:y(heading),actions:y(actions),title:y(h1)};
+    });
+    if(!layout.heading||!layout.actions||layout.actions.top<layout.heading.bottom-1)throw Error('Mobile Sources heading overlaps upload buttons: '+JSON.stringify(layout));
+    report.push({mode,sourcesLayout:layout});
+   }
    await page.screenshot({path:path.join(dir,mode+'-'+id+'.png'),fullPage:false});
    report.push({mode,...output});
   }
