@@ -1,3 +1,12 @@
+## P5.1.142 — Xem lịch chương trình tiếp theo ngay trên thẻ kênh / Electron v4.23.226
+
+- Feature priority: NEW — Hiển thị tên và giờ bắt đầu chương trình sắp phát bên dưới chương trình hiện tại trên thẻ kênh, chỉ khi người dùng bật bộ lọc EPG và chỉ từ lịch XMLTV có thật đã nhập; không tự mở nguồn ngoài, tự phát video hay đặt nhắc lịch.
+- User action: Mở TV → Chọn kênh → Bộ lọc → bật “Có chương trình đang chiếu (EPG)”; thẻ kênh sẽ hiện “Theo EPG: ...” và “Tiếp theo HH:MM: ...” khi lịch XMLTV có chương trình kế tiếp.
+- Electron screenshot: positron-p51142-next-programme-after-450-real.png
+- Ảnh đầu vào: positron-p51141-programme-title-search-after-450-real.png, ảnh Electron thực 450px đã mở kiểm tra: thẻ chỉ hiển thị tên chương trình đang chiếu, không có lịch tiếp theo; ảnh chụp còn có toast QA cũ ở chân màn hình, cần tiếp tục tối ưu bằng cách tách dữ liệu thử nghiệm.
+- Kiểm thử: Node regression và QA Electron 450px với một kênh metadata cục bộ, guide có 2 chương trình tiếp nối; xác minh nhãn hiện tại, giờ bắt đầu/tên kế tiếp, ẩn khi tắt EPG, không đổi dữ liệu playlist, không tự phát và không tràn ngang.
+- Trạng thái: CANDIDATE — chưa tính một vòng hoàn tất trước khi kiểm tra toàn bộ Actions, mở ảnh thật và xác minh bộ cài Windows/Mac.
+
 ## P5.1.141 — Tìm theo tên chương trình đang chiếu / Electron v4.23.225
 
 - Feature priority: NEW — Cho phép tìm kênh bằng **tên chương trình đang chiếu** từ XMLTV hiện có ngay trong giao diện TV, không cần mở trang Lịch phát sóng; tìm tiếng Việt không dấu và nhiều từ linh hoạt. Chỉ bật tính năng khi người dùng chủ động lọc EPG.

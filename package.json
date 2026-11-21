@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.225",
-  "description": "Positron P5.1.141: tìm chương trình đang chiếu theo tên XMLTV",
+  "version": "4.23.226",
+  "description": "Positron P5.1.142: hiện chương trình tiếp theo theo lịch XMLTV",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

@@ -153,6 +153,17 @@
     now.title='Chương trình theo lịch XMLTV đã nhập: '+item.title;
     card.append(now);
    }
+   // P5.1.142: Optional next showtime, strictly from saved XMLTV.
+   // Never predict, fetch, stream or create a reminder automatically.
+   const upcoming=window.PositronOnAirCore?.upcoming(guide,ch,Date.now(),window.IPTVGuide);
+   if(upcoming){
+    const next=document.createElement('small');
+    next.className='web-chooser-next-programme';
+    const time=new Date(upcoming.start).toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit'});
+    next.textContent='Tiếp theo '+time+': '+upcoming.title;
+    next.title='Chương trình tiếp theo theo lịch XMLTV đã nhập: '+upcoming.title;
+    card.append(next);
+   }
   }
   if(active){const flag=document.createElement('span');flag.className='web-chooser-playing';flag.textContent='▶';card.append(flag);}
   card.addEventListener('click',()=>{void state.playChannel(ch.id);render();});

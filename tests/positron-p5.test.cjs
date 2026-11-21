@@ -37,7 +37,7 @@ test('P5 assets are loaded after P4 without replacing it',()=>{
 test('P5 release is immutable and versioned separately from P4.1',()=>{
  const pkg=JSON.parse(read('package.json'));
  const flow=read('.github/workflows/positron-lab.yml');
- assert.equal(pkg.version,'4.23.225');
+ assert.equal(pkg.version,'4.23.226');
  const label=pkg.description.match(/Positron\s+(P\d+\.\d+\.\d+)/)?.[1];
  assert.ok(label,'product P-label must accompany SemVer');
  assert.ok(flow.includes('TAG=positron/v'+pkg.version+'-'+label.toLowerCase()),'release tag and app version must match');
@@ -1283,4 +1283,18 @@ test('P5.1.141 tìm chương trình XMLTV đang chiếu bằng tên có dấu ho
   'positron-p51141-programme-title-search-before-450-real.png',
   'positron-p51141-programme-title-search-after-450-real.png'])
   assert.ok(qa.includes(token),'Thiếu Electron QA '+token);
+});
+
+test('P5.1.142 chương trình tiếp theo và giờ hiển thị theo XMLTV cục bộ',()=>{
+ const ui=read('renderer/web-channel-chooser-v42371.js');
+ const css=read('renderer/web-channel-chooser-v42371.css');
+ const qa=read('scripts/positron-20-extension.cjs');
+ for(const token of ["window.PositronOnAirCore?.upcoming(guide,ch,Date.now(),window.IPTVGuide)",
+  "next.className='web-chooser-next-programme'",
+  "toLocaleTimeString('vi-VN'", "next.textContent='Tiếp theo '+time+': '+upcoming.title"])
+  assert.ok(ui.includes(token),'Thiếu thao tác chương trình tiếp theo: '+token);
+ assert.ok(css.includes('.web-chooser-next-programme'));
+ for(const token of ['upcomingFromRealLocalXMLTV:','upcomingShowsLocalClock:','noNextProgrammeWithoutOptIn:','noAutoplay:',
+  'positron-p51142-next-programme-before-450-real.png','positron-p51142-next-programme-after-450-real.png'])
+  assert.ok(qa.includes(token),'Thiếu bằng chứng Electron: '+token);
 });

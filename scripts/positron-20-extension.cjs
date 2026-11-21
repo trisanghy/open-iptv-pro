@@ -2955,9 +2955,71 @@ async function runTwenty(page){
  });
  await page.fill('#webChooserSearch','');
 
+ // P5.1.142: show next XMLTV schedule on the same native TV channel
+ // tile after explicit EPG opt-in. No source fetch or automatic playback.
+ await page.click('[data-chooser-layout="grid"]');
+ await page.fill('#webChooserSearch','QA Channel 001');
+ await page.waitForFunction(()=>document.querySelectorAll('#webChooserGrid button.web-chooser-card').length===1
+  &&document.querySelector('#webChooserGrid .web-chooser-name')?.textContent==='QA Channel 001',{timeout:5000});
+ const upcomingFixture=await page.evaluate(()=>{
+  const ch=window.IPTVState.getChannels().find(c=>c.name==='QA Channel 001');
+  if(!ch)throw Error('P5.1.142 missing actual imported local QA channel');
+  window.__positron142OriginalGuide=window.IPTVExtras.getGuide;
+  const id='qa-positron-142',now=Date.now();
+  window.IPTVExtras.getGuide=()=>({
+   names:{[window.IPTVGuide.tidy(ch.name)]:id},
+   aliasesById:{[id]:[ch.name]},offsetMinutes:0,
+   programmes:[
+    {id,start:now-60000,end:now+15*60000,title:'Đang phát QA'},
+    {id,start:now+15*60000,end:now+65*60000,title:'Phim QA sắp chiếu'}
+   ]});
+  return {count:window.IPTVState.getStore().channels.length};
+ });
+ await page.evaluate(()=>document.querySelector('#webChooserGrid button.web-chooser-card').scrollIntoView({block:'center'}));
+ await page.screenshot({path:path.join(out,'positron-p51142-next-programme-before-450-real.png'),animations:'disabled'});
+ await page.evaluate(()=>{
+  const toggle=document.getElementById('webChooserOnAirOnly');
+  toggle.checked=true;toggle.dispatchEvent(new Event('change',{bubbles:true}));
+ });
+ await page.waitForFunction(()=>{
+  const card=document.querySelector('#webChooserGrid button.web-chooser-card');
+  return document.querySelectorAll('#webChooserGrid button.web-chooser-card').length===1
+   &&card?.querySelector('.web-chooser-next-programme')?.textContent.includes('Phim QA sắp chiếu')
+   &&card?.querySelector('.web-chooser-onair-programme')?.textContent==='Theo EPG: Đang phát QA';
+ },{timeout:5000});
+ await page.evaluate(()=>document.querySelector('.web-chooser-next-programme')?.scrollIntoView({block:'center'}));
+ const upcomingProgrammeQA=await page.evaluate(original=>{
+  const card=document.querySelector('#webChooserGrid button.web-chooser-card'),
+   upcoming=card?.querySelector('.web-chooser-next-programme'),
+   now=card?.querySelector('.web-chooser-onair-programme');
+  return {
+   userEnabledEPG:document.getElementById('webChooserOnAirOnly').checked,
+   showsActualCurrentProgramme:now?.textContent==='Theo EPG: Đang phát QA',
+   upcomingFromRealLocalXMLTV:upcoming?.textContent.endsWith(': Phim QA sắp chiếu')===true,
+   upcomingShowsLocalClock:/^Tiếp theo \d{1,2}:\d{2}: /.test(upcoming?.textContent||''),
+   sourceRecordsUnchanged:window.IPTVState.getStore().channels.length===original.count,
+   onlyMatchingChannel:document.querySelectorAll('#webChooserGrid button.web-chooser-card').length===1,
+   noAutoplay:window.IPTVState.getCurrent()===null,
+   noHorizontalOverflow:document.documentElement.scrollWidth<=innerWidth+1
+  };
+ },upcomingFixture);
+ await page.screenshot({path:path.join(out,'positron-p51142-next-programme-after-450-real.png'),animations:'disabled'});
+ await page.evaluate(()=>{
+  const toggle=document.getElementById('webChooserOnAirOnly');
+  toggle.checked=false;toggle.dispatchEvent(new Event('change',{bubbles:true}));
+ });
+ Object.assign(upcomingProgrammeQA,await page.evaluate(()=>({
+  noNextProgrammeWithoutOptIn:document.querySelectorAll('#webChooserGrid .web-chooser-next-programme').length===0,
+  noPlaybackAfterDisabling:window.IPTVState.getCurrent()===null
+ })));
+ await page.evaluate(()=>{window.IPTVExtras.getGuide=window.__positron142OriginalGuide;});
+ await page.fill('#webChooserSearch','');
+ for(const [key,value] of Object.entries(upcomingProgrammeQA))
+  assert.equal(value,true,'P5.1.142 native XMLTV next programme '+key+': '+JSON.stringify(upcomingProgrammeQA));
+
  await page.setViewportSize({width:1360,height:820});
   const report={type:'Positron P5 twenty distinct desktop screenshot cases',realElectron:true,syntheticChannels:false,
-  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA,chooserQa,toastLayoutQA,nativeToastQA,compactIdleQA,channelChipRailQA,advancedFilterQA,readableCardsQA,keyboardTabQA,favoriteEmptyQA,duplicateEmptyQA,categoryFilterQA,categoryFixtureQA,compactSingleQA,directFavoriteQA,favoriteCountQA,compactToastStackQA,toastDismissQA,toastFocusReturnQA,toastDockQA,wheelQA,pinnedAllQA,pinnedMaskQA,categoryKeyQA,dropdownChipQA,pinnedRightMaskQA,pinnedBorderMaskQA,asciiDSearchQA,emptySearchActionQA,readableCardTitleQA,favoriteSvgQA,keyboardFavoriteQA,multiTermSearchQA,keyboardSearchQA,arrowNavigationQA,pageNavigationQA,favoriteSortQA,onAirFilterQA,programmeSearchQA};
+  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA,chooserQa,toastLayoutQA,nativeToastQA,compactIdleQA,channelChipRailQA,advancedFilterQA,readableCardsQA,keyboardTabQA,favoriteEmptyQA,duplicateEmptyQA,categoryFilterQA,categoryFixtureQA,compactSingleQA,directFavoriteQA,favoriteCountQA,compactToastStackQA,toastDismissQA,toastFocusReturnQA,toastDockQA,wheelQA,pinnedAllQA,pinnedMaskQA,categoryKeyQA,dropdownChipQA,pinnedRightMaskQA,pinnedBorderMaskQA,asciiDSearchQA,emptySearchActionQA,readableCardTitleQA,favoriteSvgQA,keyboardFavoriteQA,multiTermSearchQA,keyboardSearchQA,arrowNavigationQA,pageNavigationQA,favoriteSortQA,onAirFilterQA,programmeSearchQA,upcomingProgrammeQA};
  fs.writeFileSync(path.resolve('positron-evidence','audit-p5-20-rounds.json'),JSON.stringify(report,null,2));
  return report;
 }
