@@ -1177,6 +1177,23 @@ async function runTwenty(page){
  for(const key of ['fiveCards','selected','noAutoPlay','pureLocalDate'])
   assert.equal(mixLocalCalendarQa[key],true,'Local Mix calendar UI regression: '+key);
  await page.screenshot({path:path.join(out,'positron-p5192-local-calendar-mix-552-real.png'),animations:'disabled'});
+ // P5.1.93: balance real 552-channel metadata suggestions among equal-evidence groups.
+ const balancedMixQA=await page.evaluate(()=>{
+  const cards=[...document.querySelectorAll('#poFlowPlusResults .po-flowplus-card')];
+  const counts={};for(const card of cards){
+   const group=(card.querySelector('small')?.textContent||'').split(' · ')[0];
+   counts[group]=(counts[group]||0)+1;
+  }
+  return {total:cards.length,groups:Object.keys(counts).length,
+   max:Math.max(...Object.values(counts)),min:Math.min(...Object.values(counts)),
+   noAutoPlay:window.IPTVState.getCurrent()===null};
+ });
+ assert.equal(balancedMixQA.total,5);
+ assert.equal(balancedMixQA.groups,3);
+ assert.equal(balancedMixQA.max,2,'Daily Mix has too many cards from one equal-evidence group');
+ assert.equal(balancedMixQA.min,1);
+ assert.equal(balancedMixQA.noAutoPlay,true);
+ await page.screenshot({path:path.join(out,'positron-p5193-group-balanced-mix-552-real.png'),animations:'disabled'});
  // P5.1.85: exercise the real Electron Similar panel with a temporary
  // native metadata-only current channel; no stream is opened or stored.
  const similarQA=await page.evaluate(()=>{

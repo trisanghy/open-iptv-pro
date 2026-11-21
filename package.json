@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.176",
-  "description": "Positron P5.1.92: WatchFlow Mix and Smart Zap update on device local calendar day",
+  "version": "4.23.177",
+  "description": "Positron P5.1.93: WatchFlow Daily Mix balances equal-evidence source groups",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

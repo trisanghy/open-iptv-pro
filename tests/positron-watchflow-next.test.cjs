@@ -108,3 +108,20 @@ test('P5.1.92 Mix uses device calendar day, not UTC (UTC+7 midnight boundary)',(
  assert.ok(qa.includes('mixLocalCalendarQa[key],true'));
  assert.ok(qa.includes('positron-p5192-local-calendar-mix-552-real.png'));
 });
+
+// P5.1.93: real Electron metadata QA revealed a 3:1:1 source-group skew.
+test('daily Mix balances equal-evidence groups, rotates locally and preserves proven playback',()=>{
+ const many=['Main','Regional','Other'].flatMap(group=>Array.from({length:14},(_,i)=>C(group+'-'+i,'QA '+group+' '+i,group)));
+ const mixes=['2026-11-21','2026-11-22','2026-11-23','2026-11-24'].map(date=>p.dailyMix(many,{limit:5,date}));
+ for(const mix of mixes){
+  assert.equal(mix.length,5);
+  const counts=new Map();for(const c of mix)counts.set(c.group,(counts.get(c.group)||0)+1);
+  assert.deepEqual([...counts.values()].sort((a,b)=>a-b),[1,2,2]);
+  assert.equal(new Set(mix.map(c=>c.id)).size,5);
+ }
+ assert.ok(new Set(mixes.map(a=>a.map(c=>c.id).join(','))).size>1);
+ const proven=many.map((c,i)=>i===0?{...c,status:'alive'}:c);
+ assert.ok(p.dailyMix(proven,{limit:5,date:'2026-11-21'}).some(c=>c.id===proven[0].id));
+ const qa=fs.readFileSync('scripts/positron-20-extension.cjs','utf8');
+ assert.ok(qa.includes('positron-p5193-group-balanced-mix-552-real.png'));
+});

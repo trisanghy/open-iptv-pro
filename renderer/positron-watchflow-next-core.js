@@ -69,10 +69,22 @@
       entries.push(ch);used.add(String(ch.id));usedGroups.add(group);
       if(entries.length>=limit)return entries;
     }
-    for(const ch of byEvidence(pool)){
-      if(used.has(String(ch.id)))continue;
-      entries.push(ch);used.add(String(ch.id));
-      if(entries.length>=limit)break;
+    // Balance later picks across source groups only when evidence scores tie.
+    // Alphabetical fallback previously chose 3/5 from one group while other
+    // equally evidenced groups were still available.
+    const groupKey=ch=>normalize(ch.group||ch.groupTitle)||'__ungrouped__';
+    const counts=new Map();
+    for(const ch of entries){const g=groupKey(ch);counts.set(g,(counts.get(g)||0)+1);}
+    const remaining=byEvidence(pool).filter(ch=>!used.has(String(ch.id)));
+    while(entries.length<limit&&remaining.length){
+      const best=score(remaining[0]);
+      const ties=remaining.filter(ch=>score(ch)===best);
+      ties.sort((a,b)=>(counts.get(groupKey(a))||0)-(counts.get(groupKey(b))||0)
+        ||hash(date+'|'+String(a.id))-hash(date+'|'+String(b.id)));
+      const pick=ties[0],key=groupKey(pick);
+      entries.push(pick);used.add(String(pick.id));
+      counts.set(key,(counts.get(key)||0)+1);
+      remaining.splice(remaining.findIndex(ch=>String(ch.id)===String(pick.id)),1);
     }
     return entries;
   }

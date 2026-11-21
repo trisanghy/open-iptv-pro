@@ -1,3 +1,10 @@
+## P5.1.93 — Balance daily Mix source groups with equal playback evidence / v4.23.177
+
+- Baseline: opened genuine Electron P5.1.92 `positron-p5192-local-calendar-mix-552-real.png` from run `44910897473`, screenshot artifact `14709677582`. The five Mix suggestions had Main=3, Regional=1, Other=1, even though all QA streams were equally unverified; current Mix promised variety.
+- Root cause: the final alphabetical `dailyMix` filler did not account for groups already selected. Keep source status/playback evidence as the first ranking criterion, and balance source-group counts only among channels with the same evidence score. A local-day hash supplies stable but rotating ties.
+- New regression tests: 3 groups × 14 channels, 5 picks with [1,2,2] group counts on four dates, no duplicates, different dates rotate, and an actually proven stream remains included. Native Electron 552-channel QA measures rendered card group counts, no autoplay and generates `positron-p5193-group-balanced-mix-552-real.png`.
+- This version is a candidate until test, native screenshot opening, CI and immutable installer assets are verified. No playlist/history modifications and no network or streaming during QA.
+
 ## P5.1.92 — Correct daily Mix and Smart Zap calendar day / v4.23.176
 
 - Input: opened *real Electron* P5.1.91 `positron-watchflow-plus-mix-552-metadata-qa-real.png`: user-facing heading promises `Mix 5 kênh hôm nay`. The existing implementation used `new Date().toISOString().slice(0,10)` in both WatchFlow UI and underlying smart suggestion engine, incorrectly rotating daily recommendations at **07:00 local time in Vietnam (UTC+7)** instead of local midnight.
