@@ -149,7 +149,17 @@ async function main(){
   ['36-settings-performance','#fullFeatureTools'],['37-settings-epg','#epgSettingsCard'],
   ['38-settings-pip','#pipAutoSettings'],['39-settings-ai-hardware','#rustAIHardwareSettings'],
   ['40-settings-updates','.update-settings']]){
-  await sectionShot(id,selector);
+  // Settings sections are native <details> accordions; scrollIntoView alone
+  // photographs only collapsed headings. Open each section as a real user would.
+  const available=await page.evaluate(selector=>{
+   const node=document.querySelector(selector);
+   if(!node)return false;
+   if(node.matches('details.settings-accordion'))node.open=true;
+   return true;
+  },selector);
+  await page.waitForTimeout(120);
+  if(available)await sectionShot(id,selector);
+  else issues.push({type:'missing-settings-accordion',name:id,selector});
  }
  await page.evaluate(()=>{document.documentElement.dataset.theme='dark';});
  await nav('tv');await shot('41-dark-tv-controls','.player-control-card');
