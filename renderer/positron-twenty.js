@@ -263,6 +263,29 @@
  }
 
 
+
+ // P5.1.33: real P5.1.32 TV 450px screenshot shows an actionable
+ // favorite star beside 'Chưa chọn kênh'. Use the native selection API,
+ // not an empty-state string, to protect existing playlist semantics.
+ const currentFavorite=byId('favCurrentBtn'),currentLabel=byId('playingTitle');
+ if(currentFavorite&&currentLabel){
+  const syncFavoriteAvailability=()=>{
+   const hasCurrent=!!window.IPTVState?.getCurrent?.();
+   if(!hasCurrent){
+    if(!currentFavorite.disabled)currentFavorite.setAttribute('data-positron-no-current','true');
+    currentFavorite.disabled=true;
+    currentFavorite.setAttribute('aria-describedby','playingTitle');
+   }else if(currentFavorite.getAttribute('data-positron-no-current')==='true'){
+    currentFavorite.disabled=false;
+    currentFavorite.removeAttribute('data-positron-no-current');
+    currentFavorite.removeAttribute('aria-describedby');
+   }
+  };
+  new MutationObserver(syncFavoriteAvailability).observe(currentLabel,{childList:true,subtree:true,characterData:true});
+  new MutationObserver(syncFavoriteAvailability).observe(currentFavorite,{attributes:true,attributeFilter:['aria-pressed']});
+  syncFavoriteAvailability();
+ }
+
  // P5.1.26–27: the real Doctor screenshots show active analysis
  // buttons next to zero channel metrics, despite the existing source CTA.
  // Disable no-input operations only; never remove listeners or prior reports.

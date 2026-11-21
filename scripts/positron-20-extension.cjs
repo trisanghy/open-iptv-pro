@@ -59,6 +59,12 @@ async function runTwenty(page){
      navCount:document.getElementById('navCount')?.textContent?.trim()||'0',
      sidebarStatus:(()=>{const n=document.getElementById('miniStatus');if(!n)return null;const s=getComputedStyle(n),r=n.getBoundingClientRect();return{visible:r.width>0&&r.height>0,whiteSpace:s.whiteSpace,scrollHeight:n.scrollHeight,clientHeight:n.clientHeight,title:n.title,text:n.textContent||''};})(),
 
+
+     currentFavorite:(()=>{
+       const b=document.getElementById('favCurrentBtn');
+       return b?{disabled:b.disabled,guard:b.getAttribute('data-positron-no-current')||'',
+         description:b.getAttribute('aria-describedby')||'',pressed:b.getAttribute('aria-pressed')||''}:null;
+     })(),
      toolsToggle:(()=>{
        const n=document.getElementById('positronToolsToggle');
        return n?{text:n.textContent?.trim()||'',title:n.title,
@@ -271,6 +277,13 @@ async function runTwenty(page){
     assert.equal(searchOpens,true,'new icon must keep native command palette event');
    }
    if(target==='tv'&&width===450){
+    if(Number(metrics.sourceCount)===0){
+      assert.equal(metrics.currentFavorite?.disabled,true,'no-channel star still clickable: '+name);
+      assert.equal(metrics.currentFavorite?.guard,'true','favorite guard missing: '+name);
+      assert.equal(metrics.currentFavorite?.description,'playingTitle','favorite needs accessible no-channel context: '+name);
+      assert.equal(metrics.currentFavorite?.pressed,'false','favorite star incorrectly pressed without channel: '+name);
+    }
+
     assert.equal(metrics.toolsToggle?.visible,true,'TV tools disclosure hidden at 450px');
     assert.ok(metrics.toolsToggle.title.includes('Tua lại'),'TV tools tooltip still says Timeshift');
     if(metrics.toolsToggle.expanded==='false')assert.ok(metrics.toolsToggle.text.includes('Tua lại'),'collapsed disclosure uses nonlocalized Timeshift');

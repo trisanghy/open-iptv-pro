@@ -70,3 +70,5 @@ Round 04 verified in actual Electron: DVR heading is monochrome SVG 20px with ar
 | 06/20 | P5.1.31 / v4.23.115 | P5.1.30 real Electron TV 450px, artifact 14690060103 | Compact tools disclosure says English Timeshift while settings use Tua lại | Change hardcoded label+tooltip; test native toggle and screenshot 450px |
 
 | 07/20 | P5.1.32 / v4.23.116 | P5.1.31 real TV 450px, artifact 14690160671 | Compact Studio button still relies on OS-specific '◈' pseudo-element | Replace with half-circle theme SVG, keep click/menu and verify real viewport, ARIA |
+
+| 08/20 | P5.1.33 / v4.23.117 | P5.1.32 TV 450px screenshot, artifact 14689029565 | Favorite star appears enabled without selected channel | Guard via native IPTVState.getCurrent, reenable on selection changes; Electron 450 QA |

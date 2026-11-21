@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.116",
-  "description": "Positron P5.1.32: replace mobile theme glyph with accessible SVG",
+  "version": "4.23.117",
+  "description": "Positron P5.1.33: guard favorite star until a current channel is selected",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

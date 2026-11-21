@@ -292,3 +292,8 @@ html[data-positron="true"] #positronBar .p-actions #positronStudioBtn svg .theme
  }
  html[data-positron="true"] #positronBar .p-actions #positronStudioBtn>span{display:none!important}
 }
+
+/* P5.1.33: no favorite without a selected native channel. */
+html[data-positron="true"] #page-tv #favCurrentBtn[data-positron-no-current="true"]{
+ opacity:.48!important;cursor:not-allowed!important;
+}
