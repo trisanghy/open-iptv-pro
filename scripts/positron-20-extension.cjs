@@ -2123,8 +2123,8 @@ async function runTwenty(page){
   const tray=document.getElementById('toastArea');
   for(const [i,msg] of ['QA: Đã thêm nguồn','QA: Đã thêm yêu thích','QA: Đã bỏ yêu thích'].entries()){
    const n=document.createElement('div');n.className='toast';
-   n.textContent=msg;n.dataset.poRound120='true';
-   if(i===2)n.dataset.poRound120Last='true';
+   n.textContent=msg;n.setAttribute('data-po-round-120','true');
+   if(i===2)n.setAttribute('data-po-round-120-last','true');
    tray.append(n);
   }
   const successes=[...tray.querySelectorAll('.toast:not(.err):not(.warn)')];
@@ -2140,7 +2140,7 @@ async function runTwenty(page){
  const warningStackQA=await page.evaluate(()=>{
   const tray=document.getElementById('toastArea');
   const warning=document.createElement('div');warning.className='toast warn';
-  warning.dataset.poRound120='true';warning.textContent='QA: Cảnh báo quan trọng';
+  warning.setAttribute('data-po-round-120','true');warning.textContent='QA: Cảnh báo quan trọng';
   tray.append(warning);
   const visibleSuccess=[...tray.querySelectorAll('.toast:not(.err):not(.warn)')].filter(n=>getComputedStyle(n).display!=='none');
   const warningVisible=getComputedStyle(warning).display!=='none'&&warning.getBoundingClientRect().height>=20;
