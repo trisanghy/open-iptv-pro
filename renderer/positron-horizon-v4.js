@@ -148,6 +148,17 @@
  };
  sourceJumps.forEach(jump=>jump.addEventListener('click',()=>markSourceJump(jump.dataset.sourceJump)));
  if(sourceJumps.length)markSourceJump(sourceJumps[0].dataset.sourceJump);
+ // P5.1.73: keep the full native recording path available to hover and
+ // assistive technologies even when a long device path is visually ellipsized.
+ const recordingDirectory=byId('dvrDirectory');
+ if(recordingDirectory){
+  const syncDirectoryTitle=()=>{
+   const full=recordingDirectory.textContent.trim();
+   if(recordingDirectory.title!==full)recordingDirectory.title=full;
+  };
+  new MutationObserver(syncDirectoryTitle).observe(recordingDirectory,{childList:true,characterData:true,subtree:true});
+  syncDirectoryTitle();
+ }
  root.dataset.poWatchFlow='ready';
  window.PositronWatchFlow=Object.freeze({open:openPanel,close,refresh:draw});
 })();

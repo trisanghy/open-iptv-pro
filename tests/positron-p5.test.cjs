@@ -37,7 +37,7 @@ test('P5 assets are loaded after P4 without replacing it',()=>{
 test('P5 release is immutable and versioned separately from P4.1',()=>{
  const pkg=JSON.parse(read('package.json'));
  const flow=read('.github/workflows/positron-lab.yml');
- assert.equal(pkg.version,'4.23.156');
+ assert.equal(pkg.version,'4.23.157');
  const label=pkg.description.match(/Positron\s+(P\d+\.\d+\.\d+)/)?.[1];
  assert.ok(label,'product P-label must accompany SemVer');
  assert.ok(flow.includes('TAG=positron/v'+pkg.version+'-'+label.toLowerCase()),'release tag and app version must match');
@@ -622,7 +622,7 @@ test('P5.1.70 Sources navigation reports the selected section to screen readers'
  assert.ok(qa.includes('navQa.selectedAccent'));
 });
 
-test('P5.1.72 Discovery shows 4 native filters before the 3 actions and matches keyboard order',()=>{
+test('P5.1.73 Discovery shows 4 native filters before the 3 actions and matches keyboard order',()=>{
  const html=read('renderer/index.html'),css=read('renderer/positron-horizon-v4.css'),audit=read('scripts/positron-20-extension.cjs');
  const positions=['smartCatalog','smartCountry','smartLimit','smartWorkers','smartFind','smartVerify','smartCancel'].map(id=>html.indexOf('id="'+id+'"'));
  assert.ok(positions.every(x=>x>=0));
@@ -631,4 +631,15 @@ test('P5.1.72 Discovery shows 4 native filters before the 3 actions and matches 
  assert.ok(css.includes('@media(max-width:1100px)'));
  assert.ok(css.includes('@media(max-width:540px)'));
  for(const check of ['fieldsAboveActions,true','siblingActions,true','noHorizontalOverflow,true','tabOrder,true'])assert.ok(audit.includes(check));
+});
+
+test('P5.1.73 EPG recording path is accessible, truncated visually and preserves native actions',()=>{
+ const html=read('renderer/index.html'),css=read('renderer/positron-horizon-v4.css'),ui=read('renderer/positron-horizon-v4.js'),audit=read('scripts/positron-20-extension.cjs');
+ assert.ok(html.includes('id="poDvrDirectoryLabel"'));
+ assert.ok(html.includes('id="dvrDirectory" aria-labelledby="poDvrDirectoryLabel"'));
+ assert.ok(html.includes('id="dvrChooseDir"'));
+ assert.ok(css.includes('text-overflow:ellipsis!important'));
+ assert.ok(css.includes('.po-dvr-directory strong'));
+ assert.ok(ui.includes('new MutationObserver(syncDirectoryTitle)'));
+ for(const k of ['folderQa.titled,true','folderQa.clipped,true','folderQa.buttonVisible,true','folderQa.rowAligned,true'])assert.ok(audit.includes(k));
 });

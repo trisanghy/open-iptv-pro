@@ -605,3 +605,27 @@ html[data-positron="true"].po-horizon #smartDiscoverySection #smartFind{grid-col
  }
  html[data-positron="true"].po-horizon #smartDiscoverySection #smartFind{grid-column:auto}
 }
+
+/* P5.1.73 — EPG: readable recording location without a wrapping OS path. */
+html[data-positron="true"].po-horizon #page-epg .dvr-folder{
+ display:grid!important;grid-template-columns:minmax(0,1fr) auto!important;
+ align-items:center!important;gap:14px!important;
+}
+html[data-positron="true"].po-horizon #page-epg .po-dvr-directory{
+ min-width:0!important;display:flex!important;flex-direction:column!important;gap:4px!important;
+}
+html[data-positron="true"].po-horizon #page-epg .po-dvr-directory strong{
+ color:#b6ced5!important;font-size:11px!important;font-weight:700!important;
+}
+html[data-positron="true"].po-horizon #page-epg #dvrDirectory{
+ display:block!important;min-width:0!important;max-width:100%!important;
+ overflow:hidden!important;white-space:nowrap!important;text-overflow:ellipsis!important;
+ overflow-wrap:normal!important;font-size:12px!important;
+}
+html[data-positron="true"].po-horizon #page-epg #dvrChooseDir{
+ max-width:100%!important;flex-shrink:0!important;justify-self:end!important;
+}
+@media(max-width:540px){
+ html[data-positron="true"].po-horizon #page-epg .dvr-folder{grid-template-columns:minmax(0,1fr)!important;gap:10px!important}
+ html[data-positron="true"].po-horizon #page-epg #dvrChooseDir{justify-self:start!important}
+}

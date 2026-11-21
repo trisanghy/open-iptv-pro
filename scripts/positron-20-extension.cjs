@@ -756,6 +756,34 @@ async function runTwenty(page){
     assert.equal(metrics.dvrHeading.aria,'true','decorative DVR SVG must be hidden from screen readers');
     assert.ok(metrics.dvrHeading.label.includes('Hẹn giờ ghi hình chương trình'),'DVR heading text lost');
    }
+   // P5.1.73: very long device recording directories must remain accessible.
+   if(target==='epg'&&width===720){
+    const folderQa=await page.evaluate(async()=>{
+     const directory=document.getElementById('dvrDirectory'),button=document.getElementById('dvrChooseDir');
+     const folder=directory.closest('.dvr-folder'),original=directory.textContent;
+     const long='/Users/Example Account With A Very Very Long Name/Library/Application Support/Open IPTV Pro Positron/very/deep/nested/directory/recordings/final';
+     directory.textContent=long;
+     await new Promise(resolve=>setTimeout(resolve,0));
+     const pathRect=directory.getBoundingClientRect(),buttonRect=button.getBoundingClientRect(),folderRect=folder.getBoundingClientRect();
+     const computed=getComputedStyle(directory);
+     const test={label:document.getElementById('poDvrDirectoryLabel')?.textContent?.trim(),
+      titled:directory.title===long,ellipsis:computed.textOverflow==='ellipsis',
+      clipped:directory.scrollWidth>directory.clientWidth,
+      buttonVisible:buttonRect.width>=90&&buttonRect.right<=folderRect.right+2,
+      rowAligned:Math.abs((pathRect.top+pathRect.height/2)-(buttonRect.top+buttonRect.height/2))<=45,
+      noOverflow:document.documentElement.scrollWidth<=innerWidth+6};
+     directory.textContent=original;await new Promise(resolve=>setTimeout(resolve,0));
+     return test;
+    });
+    assert.equal(folderQa.label,'Nơi lưu video','recordings path is missing a human-friendly label');
+    assert.equal(folderQa.titled,true,'recording path tooltip lost full path');
+    assert.equal(folderQa.ellipsis,true,'long filesystem path is not visually truncated');
+    assert.equal(folderQa.clipped,true,'long path must be constrained to available width');
+    assert.equal(folderQa.buttonVisible,true,'change directory button clipped outside EPG panel');
+    assert.equal(folderQa.rowAligned,true,'change directory and path become disconnected');
+    assert.equal(folderQa.noOverflow,true,'long directory creates horizontal page scroll');
+   }
+
    if(target==='epg'&&metrics.epg)assert.notEqual(metrics.epg.background,'rgb(255, 255, 255)','white EPG search');
   if(target==='tv')assert.equal(metrics.searchShortcut,'/');
   if(target==='tv'&&width===450&&Number(metrics.navCount)===0){

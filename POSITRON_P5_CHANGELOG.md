@@ -508,3 +508,9 @@ P5.1.46 same-version CI repair: run 44866650681 failed 2/611 because historical 
 - P5.1.71 real Electron Sources screenshots show the primary Discover button between Country and Scan scope, and Cancel separated onto a new row at 1360px.
 - Reorder actual native DOM fields so keyboard tab order matches display; use Horizon-only responsive 4-column desktop, 2-column tablet and 1-column narrow Discovery layout. Keep catalog, country, unlimited scope, concurrency, Verify and Cancel IDs/events intact.
 - Node regression plus actual Electron geometry assertions validate four fields above Find, paired Verify/Cancel and no horizontal overflow. CI and after-images pending.
+
+## P5.1.73 — labeled and safe DVR recording path (new batch 03/20)
+- P5.1.72 real Electron EPG 720 screenshot revealed an unlabeled absolute path beside the folder control. It will wrap badly for long localized user profiles.
+- Added a labeled path field while retaining native `#dvrDirectory` and `#dvrChooseDir`, responsive grid and complete hover tooltip mirrored from the actual native path via MutationObserver. No filesystem calls or data mutations.
+- Added real Electron QA simulating a very long directory and checking path clipping, full title, visible button, row placement and horizontal overflow, plus Node guard.
+- Build and screenshot reviews to be verified from P5.1.73 Actions before marking round complete.
