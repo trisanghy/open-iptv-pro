@@ -37,7 +37,7 @@ test('P5 assets are loaded after P4 without replacing it',()=>{
 test('P5 release is immutable and versioned separately from P4.1',()=>{
  const pkg=JSON.parse(read('package.json'));
  const flow=read('.github/workflows/positron-lab.yml');
- assert.equal(pkg.version,'4.23.133');
+ assert.equal(pkg.version,'4.23.134');
  const label=pkg.description.match(/Positron\s+(P\d+\.\d+\.\d+)/)?.[1];
  assert.ok(label,'product P-label must accompany SemVer');
  assert.ok(flow.includes('TAG=positron/v'+pkg.version+'-'+label.toLowerCase()),'release tag and app version must match');
@@ -526,7 +526,7 @@ test('P5.1.48 EPG guide treats missing M3U differently from unmatched XMLTV iden
 });
 
 
-test('P5.1.49 no-channel EPG reload is disabled and restores safely with a playlist',()=>{
+test('P5.1.50 no-channel EPG reload is disabled and restores safely with a playlist',()=>{
  const js=read('renderer/positron-twenty.js'),css=read('renderer/positron-twenty.css'),audit=read('scripts/positron-20-extension.cjs');
  assert.ok(js.includes("epgReload.setAttribute('data-positron-epg-no-channels','true')"));
  assert.ok(js.includes("new MutationObserver(syncReloadAvailability).observe(epgChannelCount"));

@@ -37,7 +37,7 @@
  }
  function createElement(tag,className,content){const e=document.createElement(tag);if(className)e.className=className;if(content!==undefined)e.textContent=String(content);return e;}
  function listJobs(list){const box=$('dvrJobs');box.replaceChildren();
-  const sorted=[...(list?.jobs||[])].sort((a,b)=>{const pa=['recording','finalizing'].includes(a.status)?0:a.status==='scheduled'?1:2;const pb=['recording','finalizing'].includes(b.status)?0:b.status==='scheduled'?1:2;return pa-pb||(pa===2?b.startAt-a.startAt:a.startAt-b.startAt);});if(!sorted.length){box.append(createElement('p','hint','Chưa có lịch ghi hình. Chọn chương trình EPG hoặc thêm lịch thủ công.'));return;}
+  const sorted=[...(list?.jobs||[])].sort((a,b)=>{const pa=['recording','finalizing'].includes(a.status)?0:a.status==='scheduled'?1:2;const pb=['recording','finalizing'].includes(b.status)?0:b.status==='scheduled'?1:2;return pa-pb||(pa===2?b.startAt-a.startAt:a.startAt-b.startAt);});if(!sorted.length){const hasRecordableChannel=ctx.getChannels().some(c=>c?.id&&c?.url&&/^https?:\/\//i.test(c.url));const hint=hasRecordableChannel?'Chưa có lịch ghi hình. Chọn chương trình EPG hoặc thêm lịch thủ công.':'Chưa có lịch ghi hình. Hãy nhập nguồn IPTV có kênh trước khi đặt lịch.';box.append(createElement('p','hint',hint));return;}
   for(const j of sorted.slice(0,100)){
    const card=createElement('article','dvr-job dvr-'+j.status);
    const head=createElement('div','dvr-job-heading');
