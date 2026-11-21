@@ -107,6 +107,7 @@
   const option=document.createElement('option');option.value=String(minutes);
   option.textContent=minutes+' phút';reminderLead.append(option);
  }
+ reminderLead.value='10'; // Unconfigured installs keep original 10-minute behavior.
  try{const saved=Number(localStorage.getItem('open-iptv-positron-reminder-lead-v1'));
   if([5,10,15,30].includes(saved))reminderLead.value=String(saved);
  }catch{}

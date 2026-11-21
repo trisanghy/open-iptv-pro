@@ -1390,7 +1390,7 @@ test('P5.1.147 chuông nhắc XMLTV trong bộ chọn kênh sử dụng dịch v
  const qa=read('scripts/positron-20-extension.cjs');
  assert.ok(js.includes("reminder.className='web-chooser-remind'"));
  assert.ok(js.includes("const remind=window.IPTVProAdvanced?.remind"));
- assert.ok(js.includes("remind({id:next.id,title:next.title,start:next.start},ch)"));
+ assert.ok(js.includes("remind({id:next.id,title:next.title,start:next.start},ch,Number(reminderLead.value))"));
  assert.ok(css.includes('.web-chooser-card-wrap>.web-chooser-remind'));
  for(const token of ['addedOnce:','correctChannel:','noDuplicateReminder:','noAutoplay:',
   'positron-p51147-epg-reminder-before-450-real.png',
@@ -1425,6 +1425,7 @@ test('P5.1.149 reminders can use 5, 10, 15 or 30 minutes, old records default to
   'ch,Number(reminderLead.value)','open-iptv-positron-reminder-lead-v1'])
   assert.ok(ui.includes(token),'chooser missing '+token);
  assert.ok(css.includes('.web-chooser-reminder-lead[hidden]'));
+ assert.ok(ui.includes("reminderLead.value='10'"),'unconfigured reminder defaults to 10 minutes');
  for(const token of ['selectedThirtySaved:','playlistUnchanged:','noAutoplay:','noOverflow:',
   'positron-p51149-reminder-lead-before-450-real.png','positron-p51149-reminder-lead-after-450-real.png'])
   assert.ok(qa.includes(token),'native QA missing '+token);

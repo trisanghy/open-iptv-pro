@@ -19,7 +19,8 @@ test('chooser uses enabled channels, existing favorites/recent keys, and real pl
  const js=read('renderer/web-channel-chooser-v42371.js');
  assert.doesNotThrow(()=>new Function(js));
  for(const token of ['state.getChannels','favorites.visible','recent.visible','favorites.key','state.playChannel(ch.id)','data-chooser-tab','data-chooser-see'])assert.ok(js.includes(token),token);
- assert.ok(!js.includes('localStorage.setItem('),'chooser must not overwrite playlist or favorites');
+ const writes=[...js.matchAll(/localStorage\.setItem\(([^,]+),/g)].map(x=>x[1]);
+ assert.deepEqual(writes,["'open-iptv-positron-reminder-lead-v1'"],'only the reminder preference may persist; never overwrite playlist or favorites');
 });
 test('channel chooser styles are restricted to TV page and responsive',()=>{
  const css=read('renderer/web-channel-chooser-v42371.css');
