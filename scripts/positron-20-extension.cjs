@@ -3000,7 +3000,11 @@ async function runTwenty(page){
    sourceRecordsUnchanged:window.IPTVState.getStore().channels.length===original.count,
    onlyMatchingChannel:document.querySelectorAll('#webChooserGrid button.web-chooser-card').length===1,
    noAutoplay:window.IPTVState.getCurrent()===null,
-   noHorizontalOverflow:document.documentElement.scrollWidth<=innerWidth+1
+   noHorizontalOverflow:document.documentElement.scrollWidth<=innerWidth+1,
+   epgTitlesLegible:card?.querySelector('.web-chooser-name')?.getBoundingClientRect().width>=140
+    &&now?.getBoundingClientRect().width>=140&&upcoming?.getBoundingClientRect().width>=140,
+   epgRowsStacked:upcoming?.getBoundingClientRect().top>=now?.getBoundingClientRect().bottom-2
+    &&now?.getBoundingClientRect().top>=card?.querySelector('.web-chooser-name')?.getBoundingClientRect().bottom-2
   };
  },upcomingFixture);
  await page.screenshot({path:path.join(out,'positron-p51142-next-programme-after-450-real.png'),animations:'disabled'});
@@ -3058,7 +3062,10 @@ async function runTwenty(page){
    noInventedCurrentTitle:card?.querySelector('.web-chooser-onair-programme')===null,
    sourceRecordsUnchanged:window.IPTVState.getStore().channels.length===original.channels,
    noAutoplay:window.IPTVState.getCurrent()===null,
-   noHorizontalOverflow:document.documentElement.scrollWidth<=innerWidth+1
+   noHorizontalOverflow:document.documentElement.scrollWidth<=innerWidth+1,
+   futureTitleLegible:future?.getBoundingClientRect().width>=140
+    &&card?.querySelector('.web-chooser-name')?.getBoundingClientRect().width>=140,
+   futureRowBelowName:future?.getBoundingClientRect().top>=card?.querySelector('.web-chooser-name')?.getBoundingClientRect().bottom-2
   };
  },soonFixture);
  await page.evaluate(()=>document.querySelector('.web-chooser-next-programme')?.scrollIntoView({block:'center'}));

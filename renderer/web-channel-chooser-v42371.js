@@ -156,6 +156,7 @@
  }
  function channelCard(ch,compact=false){
   const card=document.createElement('button');card.type='button';card.className='web-chooser-card'+(compact?' compact':'');
+  if(!compact&&(onAirOnly.checked||soonOnly.checked))card.classList.add('po-epg-card');
   card.dataset.channelId=ch.id;card.title='Xem '+(ch.name||'Kênh');
   const active=state.getCurrent?.()?.id===ch.id;card.classList.toggle('active',active);
   const face=document.createElement('span');face.className='web-chooser-art';

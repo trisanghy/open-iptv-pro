@@ -1159,3 +1159,35 @@ html[data-positron="true"].po-horizon #page-tv #webChooserGrid .web-chooser-favo
 html[data-positron="true"].po-horizon #page-tv #webChooserGrid .web-chooser-favorite[aria-pressed="true"] svg path{
  fill:currentColor!important;
 }
+
+
+/* P5.1.143: prevent narrow Electron cards truncating XMLTV current/next labels. */
+@media(max-width:650px){
+ html[data-positron="true"].po-horizon #page-tv #webChooserGrid.web-chooser-grid:not(.list):has(.po-epg-card){grid-template-columns:minmax(0,1fr)!important}
+ html[data-positron="true"].po-horizon #page-tv #webChooserGrid .web-chooser-card-wrap>button.web-chooser-card.po-epg-card,
+ html[data-positron="true"].po-horizon #page-tv #webChooserGrid.web-chooser-grid:not(.list)>.web-chooser-card-wrap:only-child>button.web-chooser-card.po-epg-card{
+  display:grid!important;grid-template-columns:58px minmax(0,1fr)!important;
+  grid-template-rows:auto auto auto!important;justify-content:stretch!important;
+  min-height:134px!important;height:auto!important;align-content:center!important;
+  text-align:left!important;column-gap:12px!important;row-gap:4px!important;
+  padding:12px 46px 12px 12px!important
+ }
+ html[data-positron="true"].po-horizon #page-tv #webChooserGrid .web-chooser-card-wrap>button.web-chooser-card.po-epg-card .web-chooser-art{
+  grid-column:1!important;grid-row:1/span 3!important;width:58px!important;height:48px!important;
+  align-self:center!important;min-width:0!important
+ }
+ html[data-positron="true"].po-horizon #page-tv #webChooserGrid .web-chooser-card-wrap>button.web-chooser-card.po-epg-card .web-chooser-name{
+  grid-column:2!important;grid-row:1!important;text-align:left!important;min-width:0!important;
+  white-space:normal!important;overflow:visible!important;text-overflow:clip!important;
+  font-size:12px!important;line-height:1.35!important;-webkit-line-clamp:unset!important
+ }
+ html[data-positron="true"].po-horizon #page-tv #webChooserGrid .web-chooser-card-wrap>button.web-chooser-card.po-epg-card .web-chooser-onair-programme,
+ html[data-positron="true"].po-horizon #page-tv #webChooserGrid .web-chooser-card-wrap>button.web-chooser-card.po-epg-card .web-chooser-next-programme{
+  grid-column:2!important;min-width:0!important;max-width:100%!important;
+  display:block!important;text-align:left!important;white-space:normal!important;
+  overflow:visible!important;-webkit-line-clamp:unset!important;font-size:11px!important;
+  line-height:1.35!important;word-break:normal!important;overflow-wrap:anywhere!important
+ }
+ html[data-positron="true"].po-horizon #page-tv #webChooserGrid .web-chooser-card-wrap>button.web-chooser-card.po-epg-card .web-chooser-onair-programme{grid-row:2!important}
+ html[data-positron="true"].po-horizon #page-tv #webChooserGrid .web-chooser-card-wrap>button.web-chooser-card.po-epg-card .web-chooser-next-programme{grid-row:3!important}
+}

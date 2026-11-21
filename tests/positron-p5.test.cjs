@@ -1317,3 +1317,13 @@ test('P5.1.143 lọc XMLTV sắp chiếu trong giờ tới, tìm không dấu, k
  'positron-p51143-soon-filter-after-450-real.png'])
  assert.ok(qa.includes(token),'Thiếu Electron QA '+token);
 });
+
+test('P5.1.143 kiểm tra nhãn EPG không bị bó cột tại Electron 450px',()=>{
+ const js=read('renderer/web-channel-chooser-v42371.js');
+ const css=read('renderer/positron-horizon-v4.css');
+ const qa=read('scripts/positron-20-extension.cjs');
+ assert.ok(js.includes("card.classList.add('po-epg-card')"));
+ assert.ok(css.includes('grid-template-columns:58px minmax(0,1fr)!important'));
+ for(const token of ['epgTitlesLegible:','epgRowsStacked:','futureTitleLegible:','futureRowBelowName:'])
+  assert.ok(qa.includes(token),'Thiếu kiểm chứng rõ chữ: '+token);
+});
