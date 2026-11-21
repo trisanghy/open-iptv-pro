@@ -24,3 +24,12 @@ test('Rust retains original dark video and native themes',()=>{
  assert.ok(css.includes('html[data-theme="light"] #page-tv :is(.player-box,.player-box video'));
  assert.ok(!css.includes('background:#000!important'));
 });
+test('screenshot review: active channel filter and navigation use legible Light colors',()=>{
+ const css=read('renderer/rust-light-consistency-v23-8-92.css');
+ assert.match(css,/\.channel-panel \.filter-tab\.active/);
+ assert.match(css,/\.filter-tab\.active\s*\{[^}]*background:color-mix\([^}]*#ffffff\)!important/);
+ assert.match(css,/\.sidebar \.nav\.active span/);
+ assert.match(css,/\.timeshift-actions>b/);
+ assert.match(css,/\.rust-browser-empty/);
+ assert.match(css,/\.dvr-quick-status\.error/);
+});

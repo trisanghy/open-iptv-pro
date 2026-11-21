@@ -146,3 +146,26 @@ html[data-theme="light"] :is(.btn-primary,.control-main):not(:disabled){
 html[data-theme="light"] #page-tv :is(.player-box,.player-box video,.multi-tile video){
  background-color:#07111d;
 }
+
+/* Review of real Chromium screenshots (22 Nov 2026): legacy generic
+   .filter-tab.active uses !important dark-mix backgrounds even in Light.
+   Selected left navigation text and timeshift/error labels were too pale. */
+html[data-theme="light"] #page-tv .channel-panel .filter-tab.active{
+ background:color-mix(in srgb,var(--accent) 12%,#ffffff)!important;
+ color:var(--text)!important;
+ border-color:color-mix(in srgb,var(--accent) 35%,var(--edge))!important;
+}
+html[data-theme="light"] .sidebar .nav.active span{
+ color:var(--text)!important;
+}
+html[data-theme="light"] #page-tv .timeshift-actions>b{
+ color:color-mix(in srgb,var(--accent) 35%,#203449)!important;
+}
+html[data-theme="light"] #page-tv .rust-browser-empty{
+ color:#4c6074!important;
+}
+html[data-theme="light"] :is(.dvr-quick-status.error,.dvr-status.error){
+ color:#a83a4a!important;
+}
+html[data-theme="light"] .dvr-quick-status.recording{color:#86501e!important}
+html[data-theme="light"] .dvr-quick-status.scheduled{color:#12664d!important}
