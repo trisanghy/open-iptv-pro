@@ -37,7 +37,7 @@ test('P5 assets are loaded after P4 without replacing it',()=>{
 test('P5 release is immutable and versioned separately from P4.1',()=>{
  const pkg=JSON.parse(read('package.json'));
  const flow=read('.github/workflows/positron-lab.yml');
- assert.equal(pkg.version,'4.23.159');
+ assert.equal(pkg.version,'4.23.160');
  const label=pkg.description.match(/Positron\s+(P\d+\.\d+\.\d+)/)?.[1];
  assert.ok(label,'product P-label must accompany SemVer');
  assert.ok(flow.includes('TAG=positron/v'+pkg.version+'-'+label.toLowerCase()),'release tag and app version must match');
@@ -654,4 +654,13 @@ test('P5.1.75 compact empty TV frees controls but loaded native video retains 16
 
  assert.ok(css.includes('height:clamp(280px,calc(100dvh - 420px),430px)!important'));
  for(const t of ['emptyStage.compactHasRoom,true','emptyStage.nativeControlsReachable,true','emptyStage.preservesVideoRatio,true','emptyStage.restored,true'])assert.ok(audit.includes(t));
+});
+
+test('P5.1.76 Doctor hides empty analysis but restores full tools after native channels import',()=>{
+ const css=read('renderer/positron-horizon-v4.css'),js=read('renderer/positron-horizon-v4.js'),qa=read('scripts/positron-20-extension.cjs');
+ assert.ok(css.includes('#page-doctor[data-po-empty-doctor="true"]'));
+ assert.ok(css.includes(':is(#doctorV3Panel,#doctorV2Panel)'));
+ assert.ok(js.includes('const syncDoctorAvailability=()=>'));
+ assert.ok(js.includes('window.IPTVState.getChannels().length===0'));
+ for(const x of ['emptyDoctor.v3Hidden,true','emptyDoctor.v2Hidden,true','populatedDoctor.v3Visible,true','populatedDoctor.v2Visible,true'])assert.ok(qa.includes(x));
 });

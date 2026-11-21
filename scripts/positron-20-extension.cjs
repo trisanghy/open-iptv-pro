@@ -721,6 +721,19 @@ async function runTwenty(page){
     assert.equal(destination,'page-sources','Favorites action must open Sources: '+name);
    }
    if(target==='doctor'&&metrics.sourceCount==='0'){
+    const emptyDoctor=await page.evaluate(()=>{
+     const section=document.getElementById('page-doctor');
+     return {empty:section.dataset.poEmptyDoctor==='true',
+      v3Hidden:getComputedStyle(document.getElementById('doctorV3Panel')).display==='none',
+      v2Hidden:getComputedStyle(document.getElementById('doctorV2Panel')).display==='none',
+      sourceAction:!!document.querySelector('#doctorReport button, #doctorReport a')};
+    });
+    assert.equal(emptyDoctor.empty,true,'Doctor did not detect empty native playlist');
+    assert.equal(emptyDoctor.v3Hidden,true,'Zero-channel Doctor still opens complex unused analytics');
+    assert.equal(emptyDoctor.v2Hidden,true,'Zero-channel Doctor still exposes advanced visual diagnostics');
+    assert.equal(emptyDoctor.sourceAction,true,'Doctor must retain native source onboarding action');
+   }
+   if(target==='doctor'&&metrics.sourceCount==='0'){
     assert.equal(metrics.doctorButtons?.length,4,'expected four native Doctor analysis buttons: '+name);
     assert.equal(metrics.doctorButtons?.every(action=>action?.disabled&&action.guard==='true'&&action.filter.includes('grayscale(1)')&&action.luma<140),true,'disabled Doctor action still bright or active: '+name+' '+JSON.stringify(metrics.doctorButtons));
    }
@@ -945,6 +958,22 @@ async function runTwenty(page){
  });
  assert.equal(metadataQa.channelCount,552,'visual-only M3U test did not import 552 channels');
  assert.equal(metadataQa.noPlaying,true,'visual metadata QA must never start a stream');
+ // P5.1.76: the no-source Doctor simplification must disappear when native
+ // metadata-only channels are imported, without touching any live URL.
+ await page.evaluate(()=>window.IPTVState.setPage('doctor'));
+ await page.waitForTimeout(0);
+ const populatedDoctor=await page.evaluate(()=>({
+  empty:document.getElementById('page-doctor').dataset.poEmptyDoctor,
+  v3Visible:getComputedStyle(document.getElementById('doctorV3Panel')).display!=='none',
+  v2Visible:getComputedStyle(document.getElementById('doctorV2Panel')).display!=='none',
+  channels:window.IPTVState.getChannels().length
+ }));
+ assert.equal(populatedDoctor.empty,'false','Doctor failed to restore after importing channels');
+ assert.equal(populatedDoctor.v3Visible,true,'Doctor analysis missing after source import');
+ assert.equal(populatedDoctor.v2Visible,true,'Doctor advanced diagnostics missing after source import');
+ assert.equal(populatedDoctor.channels,552,'Doctor restoration used nonnative playlist');
+ await page.screenshot({path:path.join(out,'positron-p5-doctor-552-metadata-real.png'),animations:'disabled'});
+ await page.evaluate(()=>window.IPTVState.setPage('tv'));
  assert.ok(metadataQa.panelWidth>=200,'populated channel panel clipped');
  assert.equal(metadataQa.groupHeaderStyle?.background,'rgb(23, 48, 56)','populated channel folder must be dark and match Horizon rather than lavender legacy style');
  assert.equal(metadataQa.groupHeaderStyle?.color,'rgb(142, 233, 211)','folder text must match Horizon teal and remain readable');

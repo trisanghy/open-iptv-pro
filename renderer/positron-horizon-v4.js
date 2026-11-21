@@ -159,6 +159,17 @@
   new MutationObserver(syncDirectoryTitle).observe(recordingDirectory,{childList:true,characterData:true,subtree:true});
   syncDirectoryTitle();
  }
+ // P5.1.76: no playlist means the Doctor analysis dashboards have no
+ // meaningful inputs. Hide them until native channels exist, preserving DOM,
+ // saved reports and full functionality after import.
+ const doctorPage=byId('page-doctor'),doctorCount=byId('navCount');
+ if(doctorPage&&doctorCount&&window.IPTVState?.getChannels){
+  const syncDoctorAvailability=()=>{
+   doctorPage.dataset.poEmptyDoctor=String(window.IPTVState.getChannels().length===0);
+  };
+  new MutationObserver(syncDoctorAvailability).observe(doctorCount,{childList:true,subtree:true,characterData:true});
+  syncDoctorAvailability();
+ }
  root.dataset.poWatchFlow='ready';
  window.PositronWatchFlow=Object.freeze({open:openPanel,close,refresh:draw});
 })();

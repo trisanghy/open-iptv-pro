@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.159",
-  "description": "Positron P5.1.75: Honest Video Lab beta controls and no false AI upscale promise",
+  "version": "4.23.160",
+  "description": "Positron P5.1.76: Doctor onboarding hides empty analytics and restores with channels",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

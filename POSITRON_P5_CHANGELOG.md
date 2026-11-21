@@ -526,3 +526,8 @@ P5.1.46 same-version CI repair: run 44866650681 failed 2/611 because historical 
 - Renamed to ‘Video Lab · Beta’, added honest warning tooltip, renamed fake Apply to capability status, and de-emphasized beta visual chrome. Preserved experimental benchmark, settings, data and real playback.
 - Added Node mock-browser regression and actual Electron interactions for open/close, beta label, backend warning and non-fake action.
 - Screenshot/CI/build/release pending verification.
+
+## P5.1.76 — Smart Doctor zero-source onboarding (new batch 06/20)
+- Real P5.1.75 Electron Doctor with 0 playlist channels shows a large noninteractive V3 diagnostics page after the native message to add sources.
+- Keep the native import action, safety report and six counters but collapse unused V3/V2 analytics until native channels exist. Observe channel count and automatically restore all original controls on import, without modifying user preferences/history.
+- Node regression plus real Electron zero-source and 552 metadata-only source tests confirm both phases; screenshot capture and CI release require verification.

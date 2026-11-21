@@ -660,3 +660,9 @@ html[data-positron="true"].po-v3.po-horizon #page-tv #videoEnhanceToggle{
 html[data-positron="true"].po-v3.po-horizon #page-tv #videoEnhanceToggle:hover{
  color:#e2f3f0!important;background:#2a404a!important;
 }
+
+/* P5.1.76: keep empty Doctor focused on the native source-import action.
+ * Diagnostics remain in the DOM and reappear on the first native channel. */
+html[data-positron="true"].po-horizon #page-doctor[data-po-empty-doctor="true"] :is(#doctorV3Panel,#doctorV2Panel){
+ display:none!important;
+}
