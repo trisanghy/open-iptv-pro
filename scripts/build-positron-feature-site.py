@@ -197,6 +197,78 @@ def attach_real_images(rows):
         print("WARNING: Could not retrieve authentic screenshot ZIP:", err, file=sys.stderr)
 
 
+
+def write_github_index(rows):
+    """Render a GitHub-native expandable timeline when Pages is owned by web/online.
+
+    Store only public QA images from the release-backed ZIP; never use mock images.
+    """
+    import html
+    docs = ROOT / "docs" / "positron-features"
+    docs.mkdir(parents=True, exist_ok=True)
+    images = docs / "screenshots"
+    images.mkdir(parents=True, exist_ok=True)
+    for file in (OUT / "screenshots").glob("*.png"):
+        shutil.copyfile(file, images / file.name)
+    shutil.copyfile(OUT / "catalog.json", docs / "catalog.json")
+    lines = [
+        "# Positron — Nhật ký tính năng theo phiên bản",
+        "",
+        "**Ưu tiên: tính năng mới hữu ích, không chỉ sửa giao diện.**",
+        "",
+        "Trang này được tạo tự động từ GitHub Releases và ảnh kiểm thử Electron thật. "
+        "Bấm vào từng phiên bản để đọc mô tả, mở ảnh và tải EXE.",
+        "",
+        "[Xem mã nguồn website](index.html) · "
+        "[Các bản phát hành](https://github.com/trisanghy/open-iptv-pro/releases) · "
+        "[Quy tắc ưu tiên tính năng](../../POSITRON_FEATURE_RULES.md)",
+        "",
+    ]
+    for row in rows:
+        title = html.escape(str(row["title"]).replace("\n", " "), quote=False)
+        version = html.escape(row["version"])
+        status = "ĐANG PHÁT TRIỂN" if row["status"] == "candidate" else "ĐÃ PHÁT HÀNH"
+        kind = "TÍNH NĂNG" if row["kind"] == "feature" else "CẢI TIẾN / SỬA LỖI"
+        lines.extend([
+            "<details>",
+            "<summary><strong>" + version + "</strong> · " + title +
+            " · " + status + " · " + kind + "</summary>",
+            "",
+            "**Ứng dụng:** " + row["appVersion"] + " · **Trạng thái:** " + status,
+            "",
+            str(row.get("description") or "Chưa có mô tả chi tiết.")[:850],
+            "",
+        ])
+        if row.get("image"):
+            file = Path(row["image"]).name
+            lines.extend(["![Ảnh chụp Electron thật " + version + "](./screenshots/" + file + ")", ""])
+        else:
+            lines.extend(["*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*", ""])
+        links = []
+        if row.get("url"):
+            links.append("[Release / thông tin](" + row["url"] + ")")
+        if re.fullmatch(r"[0-9a-fA-F]{40}", str(row.get("commit") or "")):
+            links.append("[Commit](https://github.com/trisanghy/open-iptv-pro/commit/" +
+                         row["commit"] + ")")
+        for asset in row.get("assets", []):
+            if "Setup" in asset["name"] and asset["name"].endswith("-x64.exe"):
+                links.append("[Tải Windows Setup x64](" + asset["url"] + ")")
+                break
+        for asset in row.get("assets", []):
+            if asset["name"].endswith("20-Real-Screenshots.zip"):
+                links.append("[Tải gói ảnh QA](" + asset["url"] + ")")
+                break
+        lines.extend([" · ".join(links), "", "</details>", ""])
+    lines.extend([
+        "---", "",
+        "Ảnh chỉ xuất hiện nếu có PNG thực từ GitHub Release. "
+        "Mỗi lần nhánh Positron được cập nhật, GitHub Actions tạo lại "
+        "trang Markdown và đồng bộ ảnh mà không force-push hay sửa nhánh web/online.",
+        "",
+    ])
+    (docs / "FEATURES.md").write_text("\n".join(lines), encoding="utf-8")
+    print("Wrote GitHub-native timeline with", len(rows), "expandable version rows")
+
 def main():
     OUT.mkdir(parents=True, exist_ok=True)
     shutil.copyfile(ROOT / "docs" / "positron-features" / "index.html", OUT / "index.html")
@@ -209,6 +281,7 @@ def main():
         "repository": "trisanghy/open-iptv-pro", "branch": "Positron",
         "versions": rows
     }, indent=2, ensure_ascii=False), encoding="utf-8")
+    write_github_index(rows)
     (ROOT / "site" / "index.html").write_text(
         '<!doctype html><html lang="vi"><meta charset="utf-8">'
         '<meta http-equiv="refresh" content="0;url=./positron-features/">'

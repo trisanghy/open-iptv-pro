@@ -1,4 +1,4 @@
-name: Positron · Feature history website (GitHub Pages)
+name: Positron · Feature history (GitHub + optional Pages)
 on:
   push:
     branches: [Positron]
@@ -12,17 +12,19 @@ jobs:
   build-site:
     if: github.repository == 'trisanghy/open-iptv-pro'
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Checkout Positron only
         uses: actions/checkout@v4
         with:
           ref: Positron
-          persist-credentials: false
+          persist-credentials: true
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Generate version rows and extract released Electron screenshots
+      - name: Generate release timeline and real Electron screenshots
         env:
           GITHUB_TOKEN: ${{ github.token }}
         run: |
@@ -30,17 +32,46 @@ jobs:
           python scripts/build-positron-feature-site.py
           test -s site/positron-features/index.html
           test -s site/positron-features/catalog.json
+          test -s docs/positron-features/FEATURES.md
           python -c "import json; d=json.load(open('site/positron-features/catalog.json')); assert d['versions']; print('Rows:',len(d['versions']),'Photos:',sum(bool(x['image']) for x in d['versions']))"
-      - name: Preserve published website preview regardless of Pages settings
+      - name: Save downloadable interactive HTML website
         uses: actions/upload-artifact@v4
         with:
           name: positron-feature-website
           path: site
           if-no-files-found: error
           retention-days: 30
+      - name: Publish native GitHub feature timeline on Positron
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add docs/positron-features/FEATURES.md docs/positron-features/catalog.json docs/positron-features/screenshots
+          if git diff --cached --quiet; then
+            echo 'No new release rows or screenshot changes to publish.'
+            exit 0
+          fi
+          git commit -m 'docs(positron): refresh public version gallery with release-backed screenshots [skip ci]'
+          for attempt in 1 2 3; do
+            git fetch origin Positron
+            if ! git rebase origin/Positron; then
+              git rebase --abort || true
+              echo 'Branch changed with a conflict; leaving remote untouched.'
+              exit 1
+            fi
+            if git push origin HEAD:Positron; then
+              echo 'Feature timeline updated without force push.'
+              exit 0
+            fi
+            sleep 3
+          done
+          echo 'Non-fast-forward race after retries; no forced update.'
+          exit 1
 
-  deploy:
+  deploy-pages:
     needs: build-site
+    if: vars.POSITRON_PAGES_ENABLED == 'true'
     runs-on: ubuntu-latest
     permissions:
       contents: read

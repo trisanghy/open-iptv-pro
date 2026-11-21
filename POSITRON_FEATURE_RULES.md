@@ -11,11 +11,10 @@ Mỗi vòng:
 6. **Bắt buộc công bố mỗi phiên bản thành một dòng trên website nhật ký Positron**. Bấm vào dòng sẽ hiện mô tả tính năng mới, ảnh chụp thật (nếu đã tồn tại), commit, CI và link tải phát hành. Không lấy ảnh phiên bản khác, không dựng ảnh như ảnh QA.
 7. Nếu yêu cầu "liên tục", sử dụng GitHub workflow để cập nhật trang sau các commit; không tự nhận có tác vụ nền khi không có workflow hoặc tự động hóa thật.
 
-Website source: docs/positron-features/index.html.
+**Trang dùng ngay trên GitHub:** docs/positron-features/FEATURES.md — các dòng mở rộng kèm ảnh kiểm thử Electron thật.
+
+Website HTML source: docs/positron-features/index.html.
 Auto generator: scripts/build-positron-feature-site.py.
 Workflow: .github/workflows/positron-feature-pages.yml.
 
-Công khai sau khi GitHub Pages đã được đặt nguồn **GitHub Actions** trong Settings > Pages. Trang sẽ có URL chuẩn:
-https://trisanghy.github.io/open-iptv-pro/positron-features/
-
-Không coi đường dẫn trên là đang hoạt động cho đến khi workflow Pages deploy thành công và trang thực tế truy cập được.
+**Quan trọng:** GitHub Pages hiện đang chỉ cho phép nhánh web/online triển khai. **Không đổi nhánh nguồn Pages và không ghi đè website Web.** Mỗi commit Positron sẽ tự xuất bản trang Markdown có thể mở trực tiếp trong GitHub, cùng ảnh PNG thật trích từ Release. Bản HTML được tạo và giữ dưới dạng GitHub Actions artifact. Chỉ bật Pages riêng nếu chủ sở hữu tạo được môi trường/site độc lập, không ảnh hưởng web/online.
