@@ -37,7 +37,7 @@ test('P5 assets are loaded after P4 without replacing it',()=>{
 test('P5 release is immutable and versioned separately from P4.1',()=>{
  const pkg=JSON.parse(read('package.json'));
  const flow=read('.github/workflows/positron-lab.yml');
- assert.equal(pkg.version,'4.23.228');
+ assert.equal(pkg.version,'4.23.229');
  const label=pkg.description.match(/Positron\s+(P\d+\.\d+\.\d+)/)?.[1];
  assert.ok(label,'product P-label must accompany SemVer');
  assert.ok(flow.includes('TAG=positron/v'+pkg.version+'-'+label.toLowerCase()),'release tag and app version must match');
@@ -1108,7 +1108,7 @@ test('P5.1.132 actionable empty channel search restores all and input focus with
  const qa=read('scripts/positron-20-extension.cjs');
  assert.ok(chooser.includes("if(tab==='all'&&(search.value.trim()||group.value||onAirOnly.checked||soonOnly.checked))"));
  assert.ok(chooser.includes("clear.id='poChooserClearFilters'"));
- assert.ok(chooser.includes("search.value='';group.value='';onAirOnly.checked=false;soonOnly.checked=false;page=0;render();"));
+ assert.ok(chooser.includes("search.value='';group.value='';onAirOnly.checked=false;soonOnly.checked=false;soonWindow.value='60';soonCaption.textContent='Sắp chiếu trong 60 phút (EPG)';soonWindowLabel.hidden=true;page=0;render();"));
  assert.ok(chooser.includes('search.focus({preventScroll:true})'));
  for(const t of ["await page.fill('#webChooserSearch','zz-no-channel')",
   "await page.click('#poChooserClearFilters')",
@@ -1248,7 +1248,7 @@ test('P5.1.140 lọc theo chương trình hiện tại chỉ từ EPG/XMLTV đã
  const qa=read('scripts/positron-20-extension.cjs');
  for(const token of ["onAirOnly.id='webChooserOnAirOnly'",
   "onAirOnly.addEventListener('change'","epg?.lookup(guide,c,clock,window.IPTVGuide)",
-  "card.append(now)","onAirOnly.checked=false;soonOnly.checked=false;page=0;render();"])
+  "card.append(now)","onAirOnly.checked=false;soonOnly.checked=false;soonWindow.value='60';soonCaption.textContent='Sắp chiếu trong 60 phút (EPG)';soonWindowLabel.hidden=true;page=0;render();"])
   assert.ok(js.includes(token),'Thiếu hành vi EPG: '+token);
  assert.ok(css.includes('#page-tv #webChooserOnAirOnly'));
  assert.ok(css.includes('.web-chooser-onair-programme'));
@@ -1302,7 +1302,7 @@ test('P5.1.142 chương trình tiếp theo và giờ hiển thị theo XMLTV c�
 test('P5.1.143 lọc XMLTV sắp chiếu trong giờ tới, tìm không dấu, không autoplay',()=>{
  const js=read('renderer/web-channel-chooser-v42371.js'),css=read('renderer/web-channel-chooser-v42371.css');
  const qa=read('scripts/positron-20-extension.cjs');
- for(const token of ["soonOnly.id='webChooserSoonOnly'","next.start-clock<=60*60000",
+ for(const token of ["soonOnly.id='webChooserSoonOnly'","next.start-clock<=Number(soonWindow.value)*60000",
  "soonOnly.addEventListener('change'","if(soonOnly.checked)onAirOnly.checked=false",
  "if(onAirOnly.checked)soonOnly.checked=false","result=result.filter(c=>Boolean(startingSoon(guide,c,clock)))",
  "const soonProgramme=soonOnly.checked","soonOnly.checked=false;page=0;render();",
@@ -1344,4 +1344,22 @@ test('P5.1.144 sắp xếp EPG sắp phát sớm nhất và không ẩn kênh ch
  'alphabeticalUndoRestored:','noAutoplay:',
  'positron-p51144-earliest-epg-before-450-real.png','positron-p51144-earliest-epg-after-450-real.png'])
   assert.ok(qa.includes(token),'Thiếu QA Electron P144 '+token);
+});
+
+test('P5.1.145 chọn mốc chương trình sắp chiếu 15, 30 và 60 phút',()=>{
+ const ui=read('renderer/web-channel-chooser-v42371.js'),css=read('renderer/web-channel-chooser-v42371.css');
+ const qa=read('scripts/positron-20-extension.cjs');
+ for(const token of ["soonWindow.id='webChooserSoonWindow'",
+ "for(const minutes of [15,30,60])",
+ "next.start-clock<=Number(soonWindow.value)*60000",
+ "soonWindow.addEventListener('change'",
+ "soonCaption.textContent='Sắp chiếu trong '+soonWindow.value+' phút (EPG)'",
+ "soonWindowLabel.hidden=!soonOnly.checked"])
+  assert.ok(ui.includes(token),'Thiếu chức năng chọn thời gian '+token);
+ assert.ok(css.includes('.web-chooser-soon-window[hidden]'));
+ for(const token of ['fifteenMinuteWindowEmpty:','thirtyMinuteMatchesOnlyOne:',
+ 'sixtyMinuteRestoresBoth:','durationHiddenWhenOff:','actionableRecovery:',
+ 'localPlaylistUnchanged:','noAutoplay:','noHorizontalOverflow:',
+ 'positron-p51145-time-window-before-450-real.png','positron-p51145-time-window-after-450-real.png'])
+  assert.ok(qa.includes(token),'Thiếu kiểm thử Electron '+token);
 });

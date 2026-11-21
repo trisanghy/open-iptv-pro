@@ -1,3 +1,11 @@
+## P5.1.145 — Tùy chỉnh mốc lọc EPG sắp chiếu 15, 30, 60 phút / Electron v4.23.229
+
+- Feature priority: NEW — Cho phép chọn khoảng thời gian 15, 30 hoặc 60 phút khi lọc chương trình sắp chiếu. Danh sách thay đổi tức thì theo giờ phát thật từ XMLTV đã nhập, không tự tải thêm lịch hay tác động playlist.
+- User action: Mở TV → Chọn kênh → Bộ lọc → bật “Sắp chiếu” → chọn “Khoảng thời gian” 15, 30 hoặc 60 phút. Hệ thống cập nhật bộ lọc ngay, người dùng tắt chế độ để trở về danh sách đầy đủ.
+- Electron screenshot: positron-p51145-time-window-after-450-real.png
+- Ảnh trước: positron-p51145-time-window-before-450-real.png. Bộ lọc 15 phút đưa về thông báo trống có cách xóa, 30 phút chỉ giữ kênh sắp bắt đầu sau 20 phút, 60 phút hiện thêm kênh sau 50 phút.
+- Kiểm thử: Node và Electron 450px thử đủ ba mốc, giấu ô khoảng thời gian khi tắt bộ lọc, vẫn giữ dữ liệu nguồn, không autoplay/không tràn ngang. CANDIDATE cho tới khi CI và EXE được xác minh.
+
 ## P5.1.144 — Sắp xếp chương trình EPG sắp phát sớm nhất / Electron v4.23.228
 
 - Feature priority: NEW — Thêm tùy chọn sắp xếp kênh theo thời điểm bắt đầu chương trình tiếp theo từ lịch XMLTV thực tế đã nhập; kênh chưa có EPG vẫn giữ lại cuối danh sách và không mất nguồn.

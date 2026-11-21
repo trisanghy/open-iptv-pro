@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.228",
-  "description": "Positron P5.1.144: sắp xếp chương trình EPG bắt đầu sớm nhất theo XMLTV",
+  "version": "4.23.229",
+  "description": "Positron P5.1.145: chọn khoảng thời gian tìm chương trình EPG 15 30 60 phút",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

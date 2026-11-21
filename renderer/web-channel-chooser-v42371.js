@@ -79,9 +79,24 @@
  soonOnly.type='checkbox';soonOnly.id='webChooserSoonOnly';
  soonOnly.setAttribute('aria-label','Chỉ chương trình sắp chiếu trong 60 phút theo lịch EPG đã nhập');
  const soonLabel=document.createElement('label');soonLabel.className='web-chooser-soon-filter';
- soonLabel.append(soonOnly,document.createTextNode('Sắp chiếu trong 60 phút (EPG)'));
+ const soonCaption=document.createTextNode('Sắp chiếu trong 60 phút (EPG)');
+ soonLabel.append(soonOnly,soonCaption);
  soonLabel.title='Chỉ XMLTV đã lưu; không tự phát hoặc tạo nhắc lịch';
  chooserAdvanced.append(soonLabel);
+ // P5.1.145: switch the actual future XMLTV window without network requests.
+ const soonWindowLabel=document.createElement('label');
+ soonWindowLabel.className='web-chooser-soon-window';soonWindowLabel.hidden=true;
+ const soonWindowText=document.createElement('span');soonWindowText.textContent='Khoảng thời gian';
+ const soonWindow=document.createElement('select');
+ soonWindow.id='webChooserSoonWindow';soonWindow.setAttribute('aria-label','Khoảng thời gian sắp chiếu');
+ for(const minutes of [15,30,60]){
+  const option=document.createElement('option');
+  option.value=String(minutes);option.textContent=minutes+' phút';
+  if(minutes===60)option.selected=true;
+  soonWindow.append(option);
+ }
+ soonWindowLabel.append(soonWindowText,soonWindow);
+ chooserAdvanced.append(soonWindowLabel);
  [...filterControls.querySelectorAll('label')].forEach(label=>chooserAdvanced.append(label));
  filterControls.append(chooserAdvanced);
  const compactFilterMedia=window.matchMedia('(max-width:600px)');
@@ -102,7 +117,7 @@
  const filterGroups=[['all','Tất cả'],['VTV','VTV'],['VTC','VTC'],['HTV','HTV'],['K+','K+'],['TH','TH địa phương'],['Quốc tế','Quốc tế'],['Phim','Phim'],['Thiếu nhi','Thiếu nhi'],['Thể thao','Thể thao'],['Tin tức','Tin tức']];
  const startingSoon=(guide,ch,clock)=>{
   const next=window.PositronOnAirCore?.upcoming(guide,ch,clock,window.IPTVGuide);
-  return next&&next.start>clock&&next.start-clock<=60*60000?next:null;
+  return next&&next.start>clock&&next.start-clock<=Number(soonWindow.value)*60000?next:null;
  };
  function favoritesList(){return favorites.visible(store());}
  function recentList(){return recent.visible(store(),channels(),favorites.key);}
@@ -373,7 +388,7 @@
     clear.id='poChooserClearFilters';clear.className='po-chooser-empty-action';
     clear.textContent='Xóa bộ lọc và xem tất cả kênh';
     clear.addEventListener('click',()=>{
-     search.value='';group.value='';onAirOnly.checked=false;soonOnly.checked=false;page=0;render();
+     search.value='';group.value='';onAirOnly.checked=false;soonOnly.checked=false;soonWindow.value='60';soonCaption.textContent='Sắp chiếu trong 60 phút (EPG)';soonWindowLabel.hidden=true;page=0;render();
      search.focus({preventScroll:true});
     });
     grid.append(clear);
@@ -497,11 +512,17 @@
  };
  onAirOnly.addEventListener('change',()=>{
   if(onAirOnly.checked)soonOnly.checked=false;
+  soonWindowLabel.hidden=!soonOnly.checked;
   syncEpgSearch();page=0;render();
  });
  soonOnly.addEventListener('change',()=>{
   if(soonOnly.checked)onAirOnly.checked=false;
+  soonWindowLabel.hidden=!soonOnly.checked;
   syncEpgSearch();page=0;render();
+ });
+ soonWindow.addEventListener('change',()=>{
+  soonCaption.textContent='Sắp chiếu trong '+soonWindow.value+' phút (EPG)';
+  page=0;render();
  });
  // P5.1.128: when the user selects a group from the native advanced dropdown,
  // reveal its matching quick chip instead of leaving the active state offscreen.

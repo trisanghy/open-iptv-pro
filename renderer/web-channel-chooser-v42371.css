@@ -52,3 +52,8 @@
 /* P5.1.143: near-future local EPG opt-in. */
 #page-tv #webChooserSoonOnly{flex:0 0 16px!important;width:16px;height:16px;min-height:0;padding:0;accent-color:#3ce888}
 #page-tv label.web-chooser-soon-filter{display:flex;align-items:center;gap:8px;min-width:0;line-height:1.4;cursor:pointer}
+
+/* P5.1.145: explicit, accessible duration selector for imminent programmes. */
+#page-tv label.web-chooser-soon-window{display:flex;align-items:center;justify-content:space-between;gap:12px;min-width:0;line-height:1.4;max-width:100%}
+#page-tv .web-chooser-soon-window[hidden]{display:none!important}
+#page-tv #webChooserSoonWindow{min-height:32px;border-radius:8px;min-width:84px;font-size:12px}

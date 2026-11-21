@@ -3150,9 +3150,76 @@ async function runTwenty(page){
  for(const [key,value] of Object.entries(earliestEpgSortQA))
   assert.equal(value,true,'P5.1.144 actual next-programme sorting '+key+': '+JSON.stringify(earliestEpgSortQA));
 
+
+ // P5.1.145: viewer adjusts upcoming window to 15, 30 or 60 minutes.
+ // All programmes are synthetic XMLTV metadata attached to imported QA channels.
+ await page.click('[data-chooser-layout="grid"]');
+ await page.fill('#webChooserSearch','QA Channel');
+ await page.waitForFunction(()=>document.querySelectorAll('#webChooserGrid button.web-chooser-card').length===18,{timeout:5000});
+ const windowFixture=await page.evaluate(()=>{
+  const all=window.IPTVState.getChannels(),ch1=all.find(c=>c.name==='QA Channel 001'),
+   ch2=all.find(c=>c.name==='QA Channel 002');
+  if(!ch1||!ch2)throw Error('P5.1.145 missing actual QA channels');
+  window.__positron145OriginalGuide=window.IPTVExtras.getGuide;
+  const now=Date.now(),a='qa145-a',b='qa145-b';
+  window.IPTVExtras.getGuide=()=>({names:{[window.IPTVGuide.tidy(ch1.name)]:a,[window.IPTVGuide.tidy(ch2.name)]:b},
+   aliasesById:{[a]:[ch1.name],[b]:[ch2.name]},offsetMinutes:0,
+   programmes:[
+    {id:a,start:now+20*60000,end:now+47*60000,title:'Chương trình hai mươi phút'},
+    {id:b,start:now+50*60000,end:now+82*60000,title:'Chương trình năm mươi phút'}
+   ]});
+  const t=document.getElementById('webChooserSoonOnly');
+  t.checked=true;t.dispatchEvent(new Event('change',{bubbles:true}));
+  document.getElementById('webChooserAdvanced').open=true;
+  return {sourceCount:window.IPTVState.getStore().channels.length};
+ });
+ await page.waitForFunction(()=>document.querySelectorAll('#webChooserGrid button.web-chooser-card').length===2,{timeout:5000});
+ await page.screenshot({path:path.join(out,'positron-p51145-time-window-before-450-real.png'),animations:'disabled'});
+ await page.selectOption('#webChooserSoonWindow','15');
+ await page.waitForFunction(()=>document.querySelectorAll('#webChooserGrid button.web-chooser-card').length===0,{timeout:5000});
+ const noEarly=await page.evaluate(()=>({
+  fifteenMinuteWindowEmpty:document.getElementById('webChooserSoonWindow').value==='15'
+   &&document.querySelectorAll('#webChooserGrid button.web-chooser-card').length===0,
+  actionableRecovery:!!document.getElementById('poChooserClearFilters'),
+  captionMatches15:document.querySelector('label.web-chooser-soon-filter')?.textContent.includes('15 phút')
+ }));
+ await page.selectOption('#webChooserSoonWindow','30');
+ await page.waitForFunction(()=>document.querySelectorAll('#webChooserGrid button.web-chooser-card').length===1
+  &&document.querySelector('#webChooserGrid .web-chooser-name')?.textContent==='QA Channel 001',{timeout:5000});
+ const thirty=await page.evaluate(()=>({
+  thirtyMinuteMatchesOnlyOne:document.querySelectorAll('#webChooserGrid button.web-chooser-card').length===1,
+  expectedName:document.querySelector('#webChooserGrid .web-chooser-name')?.textContent==='QA Channel 001',
+  nextProgrammeFromXmltv:document.querySelector('#webChooserGrid .web-chooser-next-programme')?.textContent.includes('hai mươi phút')===true,
+  selectorVisible:getComputedStyle(document.querySelector('.web-chooser-soon-window')).display!=='none',
+  captionMatches30:document.querySelector('label.web-chooser-soon-filter')?.textContent.includes('30 phút')
+ }));
+ await page.evaluate(()=>document.querySelector('#webChooserGrid .web-chooser-next-programme')?.scrollIntoView({block:'center'}));
+ await page.screenshot({path:path.join(out,'positron-p51145-time-window-after-450-real.png'),animations:'disabled'});
+ await page.selectOption('#webChooserSoonWindow','60');
+ await page.waitForFunction(()=>document.querySelectorAll('#webChooserGrid button.web-chooser-card').length===2,{timeout:5000});
+ const timeWindowQA={...noEarly,...thirty,...await page.evaluate(original=>({
+  sixtyMinuteRestoresBoth:document.querySelectorAll('#webChooserGrid button.web-chooser-card').length===2
+   &&document.getElementById('webChooserSoonWindow').value==='60',
+  localPlaylistUnchanged:window.IPTVState.getStore().channels.length===original.sourceCount,
+  noAutoplay:window.IPTVState.getCurrent()===null,
+  noHorizontalOverflow:document.documentElement.scrollWidth<=innerWidth+1
+ }),windowFixture)};
+ await page.evaluate(()=>{
+  window.IPTVExtras.getGuide=window.__positron145OriginalGuide;
+  const t=document.getElementById('webChooserSoonOnly');
+  t.checked=false;t.dispatchEvent(new Event('change',{bubbles:true}));
+ });
+ Object.assign(timeWindowQA,await page.evaluate(()=>({
+  durationHiddenWhenOff:document.querySelector('.web-chooser-soon-window').hidden,
+  noPlaybackAfterTurnOff:window.IPTVState.getCurrent()===null
+ })));
+ await page.fill('#webChooserSearch','');
+ for(const [key,value] of Object.entries(timeWindowQA))
+  assert.equal(value,true,'P5.1.145 upcoming XMLTV duration '+key+': '+JSON.stringify(timeWindowQA));
+
  await page.setViewportSize({width:1360,height:820});
   const report={type:'Positron P5 twenty distinct desktop screenshot cases',realElectron:true,syntheticChannels:false,
-  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA,chooserQa,toastLayoutQA,nativeToastQA,compactIdleQA,channelChipRailQA,advancedFilterQA,readableCardsQA,keyboardTabQA,favoriteEmptyQA,duplicateEmptyQA,categoryFilterQA,categoryFixtureQA,compactSingleQA,directFavoriteQA,favoriteCountQA,compactToastStackQA,toastDismissQA,toastFocusReturnQA,toastDockQA,wheelQA,pinnedAllQA,pinnedMaskQA,categoryKeyQA,dropdownChipQA,pinnedRightMaskQA,pinnedBorderMaskQA,asciiDSearchQA,emptySearchActionQA,readableCardTitleQA,favoriteSvgQA,keyboardFavoriteQA,multiTermSearchQA,keyboardSearchQA,arrowNavigationQA,pageNavigationQA,favoriteSortQA,onAirFilterQA,programmeSearchQA,upcomingProgrammeQA,soonProgrammeQA,earliestEpgSortQA};
+  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA,chooserQa,toastLayoutQA,nativeToastQA,compactIdleQA,channelChipRailQA,advancedFilterQA,readableCardsQA,keyboardTabQA,favoriteEmptyQA,duplicateEmptyQA,categoryFilterQA,categoryFixtureQA,compactSingleQA,directFavoriteQA,favoriteCountQA,compactToastStackQA,toastDismissQA,toastFocusReturnQA,toastDockQA,wheelQA,pinnedAllQA,pinnedMaskQA,categoryKeyQA,dropdownChipQA,pinnedRightMaskQA,pinnedBorderMaskQA,asciiDSearchQA,emptySearchActionQA,readableCardTitleQA,favoriteSvgQA,keyboardFavoriteQA,multiTermSearchQA,keyboardSearchQA,arrowNavigationQA,pageNavigationQA,favoriteSortQA,onAirFilterQA,programmeSearchQA,upcomingProgrammeQA,soonProgrammeQA,earliestEpgSortQA,timeWindowQA};
  fs.writeFileSync(path.resolve('positron-evidence','audit-p5-20-rounds.json'),JSON.stringify(report,null,2));
  return report;
 }
