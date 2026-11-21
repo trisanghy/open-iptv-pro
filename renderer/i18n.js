@@ -85,6 +85,14 @@
     const dict=dictionaries[code]||(dictionaries[code]={});
     collectorUiKeys.forEach((source,index)=>{if(!dict[source])dict[source]=values[index];});
   }
+  // Positron P5.1.43: translate preselected Smart Discovery guidance in all 17 offline locales.
+  // UI text only: do not translate channels, playlists, metadata or user-supplied strings.
+  const positronSmartDefault="Đã chọn bộ sưu tập mặc định. Nhấn Khám phá nguồn để tải kênh.";
+  const positronSmartDefaultTranslations={"en":"A collection is already selected. Select Discover Sources to load channels.","es":"Ya hay una colección seleccionada. Pulsa Descubrir fuentes para cargar los canales.","pt-BR":"Uma coleção já está selecionada. Clique em Descobrir fontes para carregar os canais.","zh-CN":"已选择默认集合。点击“发现来源”加载频道。","th":"เลือกชุดรายการเริ่มต้นแล้ว กดค้นหาแหล่งที่มาเพื่อโหลดช่อง","lo":"ເລືອກຊຸດລາຍການເລີ່ມຕົ້ນແລ້ວ. ກົດຄົ້ນຫາແຫຼ່ງຂໍ້ມູນເພື່ອໂຫຼດຊ່ອງ.","km":"បានជ្រើសរើសបណ្ដុំលំនាំដើមរួចហើយ។ ចុច ស្វែងរកប្រភព ដើម្បីផ្ទុកប៉ុស្តិ៍។","fr":"Une collection est déjà sélectionnée. Cliquez sur Découvrir les sources pour charger les chaînes.","de":"Eine Sammlung ist bereits ausgewählt. Klicke auf Quellen entdecken, um Sender zu laden.","it":"Una raccolta è già selezionata. Premi Scopri sorgenti per caricare i canali.","ja":"既定のコレクションが選択されています。「ソースを探索」を押してチャンネルを読み込んでください。","ko":"기본 모음이 이미 선택되었습니다. 소스 검색을 눌러 채널을 불러오세요.","ru":"Коллекция уже выбрана. Нажмите «Поиск источников», чтобы загрузить каналы.","id":"Koleksi bawaan sudah dipilih. Tekan Temukan sumber untuk memuat saluran.","hi":"डिफ़ॉल्ट संग्रह पहले से चुना है। चैनल लोड करने के लिए स्रोत खोजें दबाएँ।","ar":"تم تحديد المجموعة الافتراضية بالفعل. اضغط «اكتشاف المصادر» لتحميل القنوات."};
+  for(const [code,value] of Object.entries(positronSmartDefaultTranslations)){
+    const dict=dictionaries[code]||(dictionaries[code]={});
+    dict[positronSmartDefault]=value;
+  }
   const key='open-iptv-pro-language';
   let locale='vi';
   try{const stored=localStorage.getItem(key);if(stored && Object.hasOwn(locales,stored))locale=stored;}catch{}

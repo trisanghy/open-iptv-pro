@@ -296,3 +296,5 @@ P5.1.37 same-round screenshot feedback: Electron capture failed TV 450px at comp
 - Baseline verified: P5.1.43 HEAD ef5eae4e54bf; actual screenshot P5.1.41 Sources at 720px showed the source catalog already set to iptv-org/country/VN, but the initial status still said to select a catalog first; P5.1.43 only adjusted Doctor, so this Sources issue persisted.
 - Correct only Smart Discovery initial source guidance in Positron renderer; leave default catalog, network fetch, consent, playlists, streaming and existing event handlers untouched.
 - Add Node assertion and real Electron Sources screenshot audit of select value and status. Screenshot review, CI and Release assets must be checked before marking the new round complete.
+
+P5.1.43 same-round regression repair: first CI run 44864848127 failed 2/606 Node tests (native i18n audit) because the edited default Source instruction had no translations. Added full offline translations for 16 non-Vietnamese locales in `renderer/i18n.js`, kept original dictionaries/streams untouched, added localization coverage test. Retest CI and actual Electron screenshot before certification.\n

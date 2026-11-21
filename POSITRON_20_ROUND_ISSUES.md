@@ -101,3 +101,5 @@ P5.1.37 capture run 44863007302: **FAILED at real TV 450px** after all 50 P4 cas
 | Round | Next version | Real screenshot input / observed issue | Changed behavior | Validation |
 | --- | --- | --- | --- | --- |
 | 01/20 | P5.1.43 / v4.23.127 | P5.1.41 Sources 720px (preserved in P5.1.43): iptv-org/country/VN preselected yet initial status says select collection | Honest first-use instruction with native selections intact | Node + real Electron audit to run; GitHub release 403 unresolved |
+
+P5.1.43 same-round CI follow-up: Actions run 44864848127 failed native-language audit 2/606. Corrected all 16 translations in renderer/i18n.js and added regression. Round remains UNCERTIFIED until new test+capture+image review succeed; Release 403 is an independent blocking issue.\n

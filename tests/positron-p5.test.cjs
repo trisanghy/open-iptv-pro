@@ -441,3 +441,11 @@ test('P5.1.43 Smart Discovery default catalog guidance is accurate',()=>{
  assert.ok(!html.includes("Chọn bộ sưu tập rồi bấm Khám phá."));
  assert.ok(audit.includes('metrics.smartInitial?.catalog'));
 });
+
+
+test('P5.1.43 Smart Discovery corrected default guidance is localized in 17 languages',()=>{
+ const i18n=read('renderer/i18n.js');
+ assert.ok(i18n.includes('positronSmartDefaultTranslations'));
+ assert.ok(i18n.includes('dict[positronSmartDefault]=value'));
+ for(const code of ['en','es','pt-BR','zh-CN','th','lo','km','fr','de','it','ja','ko','ru','id','hi','ar'])assert.ok(i18n.includes(JSON.stringify(code)),code+' locale missing');
+});
