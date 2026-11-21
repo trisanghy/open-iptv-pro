@@ -1,3 +1,12 @@
+## P5.1.138 — Chuyển trang kênh bằng PageDown/PageUp / Electron v4.23.222
+
+- Feature priority: NEW — Duyệt xuyên qua các trang kênh dài chỉ bằng hai phím PageDown/PageUp, giữ tiêu điểm vào thẻ ở trang mới và không tự phát; hữu ích khi danh sách có hàng trăm kênh.
+- User action: Mở Chọn kênh, dùng Enter chọn thẻ rồi nhấn PageDown để sang trang kế tiếp và chọn kênh đầu; PageUp trở về trang trước và chọn thẻ cuối, nhấn Enter trên thẻ mới phát.
+- Electron screenshot: positron-p51138-page-navigation-after-450-real.png
+- Ảnh đầu vào: P5.1.137 với positron-p51137-arrow-navigation-after-450-real.png đã mở xem; phím mũi tên hoạt động nhưng chưa có chuyển trang bằng bàn phím.
+- Kiểm thử: Node regression, QA Electron 450px với danh sách nhiều hơn 18 kênh; PageDown/Up đi đúng 2 trang, giữ truy vấn, focus, không autoplay, không tràn và có aria-keyshortcuts.
+- Trạng thái: CANDIDATE, chưa tính hoàn thành khi chưa xác minh ảnh và Release.
+
 ## P5.1.137 — Duyệt thẻ kênh bằng phím mũi tên / Electron v4.23.221
 
 - Feature priority: NEW — Điều hướng các kênh ngay trong Chọn kênh bằng bốn phím mũi tên và Home/End, bám đúng vị trí thẻ ở cả dạng lưới và danh sách; không cần Tab qua từng nút yêu thích và không tự phát video.

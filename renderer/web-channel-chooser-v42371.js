@@ -345,6 +345,26 @@
   target.focus({preventScroll:true});
   target.scrollIntoView({block:'nearest',inline:'nearest'});
  });
+ // P5.1.138: PageDown/PageUp navigate entire filtered channel library.
+ // Unlike Arrow navigation, this moves to an adjacent page (18 entries)
+ // while retaining the native search/group/layout and without autoplay.
+ grid.addEventListener('keydown',event=>{
+  if(!['PageDown','PageUp'].includes(event.key)||
+   !event.target?.matches?.('button.web-chooser-card')||event.repeat||
+   event.ctrlKey||event.metaKey||event.altKey||event.shiftKey)return;
+  const direction=event.key==='PageDown'?1:-1;
+  const pages=Math.max(1,Math.ceil(candidates().length/18));
+  const destination=page+direction;
+  if(destination<0||destination>=pages)return;
+  event.preventDefault();event.stopPropagation();
+  page=destination;render();
+  const cards=[...grid.querySelectorAll('button.web-chooser-card')];
+  const target=direction>0?cards[0]:cards[cards.length-1];
+  target?.focus({preventScroll:true});
+  target?.scrollIntoView({block:'nearest',inline:'nearest'});
+ });
+ grid.setAttribute('aria-keyshortcuts','PageDown PageUp');
+ grid.title='PageDown: trang tiếp; PageUp: trang trước, không tự phát kênh';
  search.title='Nhập tên kênh rồi nhấn Enter để chọn kết quả đầu tiên';
  search.addEventListener('input',()=>{page=0;schedule();});
  // P5.1.128: when the user selects a group from the native advanced dropdown,

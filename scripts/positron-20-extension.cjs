@@ -2743,9 +2743,45 @@ async function runTwenty(page){
  await page.click('[data-chooser-layout="grid"]');
  await page.fill('#webChooserSearch','');
 
+ // P5.1.138: PageDown/PageUp keep keyboard focus on actual native tiles
+ // across the 18-card page boundary, with source and playback unchanged.
+ await page.click('[data-chooser-layout="grid"]');
+ await page.fill('#webChooserSearch','QA Channel');
+ await page.waitForFunction(()=>document.querySelectorAll('#webChooserGrid button.web-chooser-card').length===18,{timeout:4000});
+ await page.evaluate(()=>document.querySelector('#webChooserGrid button.web-chooser-card').focus({preventScroll:true}));
+ await page.screenshot({path:path.join(out,'positron-p51138-page-navigation-before-450-real.png'),animations:'disabled'});
+ await page.keyboard.press('PageDown');
+ await page.waitForFunction(()=>document.getElementById('webChooserPage').textContent.startsWith('2 /'),{timeout:4000});
+ const pageNavigationQA=await page.evaluate(()=>{
+  const cards=[...document.querySelectorAll('#webChooserGrid button.web-chooser-card')];
+  return {
+   nextPageSelected:document.getElementById('webChooserPage').textContent.startsWith('2 /'),
+   firstCardFocused:document.activeElement===cards[0],
+   nextPageStartsAtNineteen:cards[0]?.querySelector('.web-chooser-name')?.textContent==='QA Channel 019',
+   queryPreserved:document.getElementById('webChooserSearch').value==='QA Channel',
+   noAutoplay:window.IPTVState.getCurrent()===null,
+   noHorizontalOverflow:document.documentElement.scrollWidth<=innerWidth+1,
+   accessibleKeyHints:document.getElementById('webChooserGrid').getAttribute('aria-keyshortcuts')==='PageDown PageUp'
+  };
+ });
+ await page.screenshot({path:path.join(out,'positron-p51138-page-navigation-after-450-real.png'),animations:'disabled'});
+ await page.keyboard.press('PageUp');
+ Object.assign(pageNavigationQA,await page.evaluate(()=>{
+  const cards=[...document.querySelectorAll('#webChooserGrid button.web-chooser-card')];
+  return {
+   previousPageRestored:document.getElementById('webChooserPage').textContent.startsWith('1 /'),
+   previousPageLastFocused:document.activeElement===cards[cards.length-1],
+   finalItemIsEighteen:cards[cards.length-1]?.querySelector('.web-chooser-name')?.textContent==='QA Channel 018',
+   returnStillNoAutoplay:window.IPTVState.getCurrent()===null
+  };
+ }));
+ for(const [key,value] of Object.entries(pageNavigationQA))
+  assert.equal(value,true,'P5.1.138 real Electron PageUp/Down '+key+': '+JSON.stringify(pageNavigationQA));
+ await page.fill('#webChooserSearch','');
+
  await page.setViewportSize({width:1360,height:820});
   const report={type:'Positron P5 twenty distinct desktop screenshot cases',realElectron:true,syntheticChannels:false,
-  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA,chooserQa,toastLayoutQA,nativeToastQA,compactIdleQA,channelChipRailQA,advancedFilterQA,readableCardsQA,keyboardTabQA,favoriteEmptyQA,duplicateEmptyQA,categoryFilterQA,categoryFixtureQA,compactSingleQA,directFavoriteQA,favoriteCountQA,compactToastStackQA,toastDismissQA,toastFocusReturnQA,toastDockQA,wheelQA,pinnedAllQA,pinnedMaskQA,categoryKeyQA,dropdownChipQA,pinnedRightMaskQA,pinnedBorderMaskQA,asciiDSearchQA,emptySearchActionQA,readableCardTitleQA,favoriteSvgQA,keyboardFavoriteQA,multiTermSearchQA,keyboardSearchQA,arrowNavigationQA};
+  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA,chooserQa,toastLayoutQA,nativeToastQA,compactIdleQA,channelChipRailQA,advancedFilterQA,readableCardsQA,keyboardTabQA,favoriteEmptyQA,duplicateEmptyQA,categoryFilterQA,categoryFixtureQA,compactSingleQA,directFavoriteQA,favoriteCountQA,compactToastStackQA,toastDismissQA,toastFocusReturnQA,toastDockQA,wheelQA,pinnedAllQA,pinnedMaskQA,categoryKeyQA,dropdownChipQA,pinnedRightMaskQA,pinnedBorderMaskQA,asciiDSearchQA,emptySearchActionQA,readableCardTitleQA,favoriteSvgQA,keyboardFavoriteQA,multiTermSearchQA,keyboardSearchQA,arrowNavigationQA,pageNavigationQA};
  fs.writeFileSync(path.resolve('positron-evidence','audit-p5-20-rounds.json'),JSON.stringify(report,null,2));
  return report;
 }
