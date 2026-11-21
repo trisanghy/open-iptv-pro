@@ -235,12 +235,12 @@
  }
 
 
- // P5.1.26 / round 01: the real Doctor screenshot shows active analysis
+ // P5.1.26–27: the real Doctor screenshots show active analysis
  // buttons next to zero channel metrics, despite the existing source CTA.
  // Disable no-input operations only; never remove listeners or prior reports.
  const doctorAvailabilityCount=byId('navCount');
  if(doctorPage&&doctorAvailabilityCount){
-  const analysisButtons=['doctorRun','doctor3Refresh','doctor3Verify'];
+  const analysisButtons=['doctorRun','doctorDeepCheck','doctor3Refresh','doctor3Verify'];
   const syncDoctorAvailability=()=>{
    const count=Number((doctorAvailabilityCount.textContent||'0').replace(/[^0-9]/g,''))||0;
    for(const id of analysisButtons){

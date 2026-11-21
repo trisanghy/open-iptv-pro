@@ -37,10 +37,10 @@ test('P5 assets are loaded after P4 without replacing it',()=>{
 test('P5 release is immutable and versioned separately from P4.1',()=>{
  const pkg=JSON.parse(read('package.json'));
  const flow=read('.github/workflows/positron-lab.yml');
- assert.equal(pkg.version,'4.23.110');
- assert.ok(flow.includes('positron/v4.23.110-p5.1.26'));
+ assert.equal(pkg.version,'4.23.111');
+ assert.ok(flow.includes('positron/v4.23.111-p5.1.26'));
  assert.ok(read('scripts/positron-50-audit.cjs').includes('runTwenty(page)'));
- assert.ok(flow.includes('Positron-P5126-20-Real-Screenshots.zip'));
+ assert.ok(flow.includes('Positron-P5127-20-Real-Screenshots.zip'));
 });
 
 test('P5.1.1 sidebar badge matches shipped release instead of stale P4',()=>{const js=read('renderer/positron.js');assert.ok(js.includes("descriptor.textContent='P5.1.26'"));assert.ok(!js.includes('OPEN IPTV PRO · P4 · 50 VÒNG'));});
@@ -260,11 +260,20 @@ test('P5.1.26 Doctor skips no-channel analysis and re-enables on source updates'
  const js=read('renderer/positron-twenty.js');
  const css=read('renderer/positron-twenty.css');
  const audit=read('scripts/positron-20-extension.cjs');
- assert.ok(js.includes("const analysisButtons=['doctorRun','doctor3Refresh','doctor3Verify']"));
+ assert.ok(js.includes("const analysisButtons=['doctorRun','doctorDeepCheck','doctor3Refresh','doctor3Verify']"));
  assert.ok(js.includes("new MutationObserver(syncDoctorAvailability)"));
  assert.ok(js.includes("button.setAttribute('aria-describedby','positronDoctorEmptyHint')"));
  assert.ok(js.includes("button.removeAttribute('data-positron-no-channels')"));
  assert.ok(css.includes('#page-doctor button[data-positron-no-channels="true"]'));
  assert.ok(audit.includes("assert.equal(restored.enabled,true"));
  assert.ok(audit.includes("assert.equal(restored.disabledAgain,true"));
+});
+
+
+test('P5.1.27 deep-link check joins dynamic Doctor no-channel protection',()=>{
+ const js=read('renderer/positron-twenty.js');
+ const audit=read('scripts/positron-20-extension.cjs');
+ assert.ok(js.includes("const analysisButtons=['doctorRun','doctorDeepCheck','doctor3Refresh','doctor3Verify']"));
+ assert.ok(audit.includes("['doctorRun','doctorDeepCheck','doctor3Refresh','doctor3Verify']"));
+ assert.ok(audit.includes('metrics.doctorAnalysis?.length,4'));
 });

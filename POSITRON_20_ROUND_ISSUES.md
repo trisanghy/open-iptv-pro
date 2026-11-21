@@ -58,3 +58,5 @@ Round 04 verified in actual Electron: DVR heading is monochrome SVG 20px with ar
 | Round | Next version | Real previous-screen input | Problem / repair | Evidence |
 | --- | --- | --- | --- | --- |
 | 01/20 | P5.1.26 / v4.23.110 | P5.1.24 Electron Doctor 1360px (same Doctor code/state at P5.1.25), artifact 14688244941 | Zero metrics but three analysis actions active; non-destructive disable/reenable on navCount | New Node tests and Electron lifecycle screenshot audit; pending CI and after-image review |
+
+| 02/20 | P5.1.27 / v4.23.111 | P5.1.26 real Electron Doctor 1360px, artifact 14688743177 | 'Kiểm tra link sâu' still enabled with zero channels, omitted from first guard | Extend guard to fourth native action; test disabled, accessibly described, and re-enabled on channel change |

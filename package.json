@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.110",
-  "description": "Positron P5.1.26: prevent empty Doctor diagnostic actions while retaining source navigation",
+  "version": "4.23.111",
+  "description": "Positron P5.1.27: disable unused deep-link Doctor action when no channels exist",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",
