@@ -42,7 +42,7 @@ test('P5 release is immutable and versioned separately from P4.1',()=>{
  assert.ok(label,'product P-label must accompany SemVer');
  assert.ok(flow.includes('TAG=positron/v'+pkg.version+'-'+label.toLowerCase()),'release tag and app version must match');
  assert.ok(read('scripts/positron-50-audit.cjs').includes('runTwenty(page)'));
- assert.ok(flow.includes('Positron-P5157-20-Real-Screenshots.zip'));
+ assert.ok(flow.includes('Positron-P'+label.replaceAll('.','')+'-20-Real-Screenshots.zip'),'screenshot artifact must match current P-label');
 });
 
 test('P5.1.1 sidebar badge matches shipped release instead of stale P4',()=>{const js=read('renderer/positron.js');const pkg=JSON.parse(read('package.json'));
