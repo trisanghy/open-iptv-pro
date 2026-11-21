@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.141",
-  "description": "Positron P5.1.57: Horizon polished and WatchFlow with populated 552-channel Electron QA",
+  "version": "4.23.142",
+  "description": "Positron P5.1.58: Horizon compact title repair from native Favorites QA",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

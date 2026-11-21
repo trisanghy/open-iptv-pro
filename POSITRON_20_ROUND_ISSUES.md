@@ -133,3 +133,9 @@ P5.1.46 CI attempt 44866650681: 604 pass / 2 failed / 5 skipped; failures were s
 | HORIZON redesign | P5.1.56 / v4.23.140 | Actual P5.1.55 TV 1360px screenshot and capture failure in run 44872760322 | Entire information hierarchy and visual token system fragmented across layered CSS, video competes with navigation and tools, no guided viewing; persisted expanded rail incorrectly rejected by QA | New last Horizon CSS, 6-mode local WatchFlow choosing real enabled channels with evidence, category and novelty; Node regression and real Electron screenshots, release pending verification |
 
 | Horizon quality pass | P5.1.57 / v4.23.141 | P5.1.56 actual WatchFlow Electron 1360 screenshot, and existing 552 metadata-only QA | Title low-contrast; zero-channel UI tested but native populated flow not yet verified by Electron | Fix title CSS cascade, real native 552 channels WatchFlow open/cards/novelty/no playback screenshot QA, full new immutable release |
+
+
+## User-file (10) fresh repair batch · baseline P5.1.57 / Electron 4.23.141
+- Verified baseline HEAD `3a8bd1b6c80b5bb6165db1990915f61c47074f6f`, CI six jobs passed at `44874945170`, release `positron/v4.23.141-p5.1.57`.
+- Screenshot genuinely opened: `Positron-P5157-20-Real-Screenshots.zip/p5-20-rounds/positron-p5-20-real.png`, Favorites viewport 600px. Defect: duplicate headline "Kênh yêu thíchYêu thích".
+- Candidate batch round 01: P5.1.58 / 4.23.142, Horizon-only responsive CSS override and Electron computed style regression. **NOT CERTIFIED until new screenshot is opened and reviewed, test green and release verified.** Do not count old P5 rounds as new rounds.

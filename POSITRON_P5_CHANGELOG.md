@@ -408,3 +408,11 @@ P5.1.46 same-version CI repair: run 44866650681 failed 2/611 because historical 
 - Actual Electron WatchFlow 1360 screenshot review discovered dark/low-contrast heading on the panel from legacy Studio theme cascade. The final Horizon layer now uses high-specificity accessible pale title, and the Electron audit asserts computed RGB > 200.
 - WatchFlow integration QA now opens the actual Electron panel after importing the existing 552 strictly metadata-only synthetic QA channels into native IPTVState: confirms 552 eligible channels, 3 native action cards, three *different* suggestions after 'Gợi ý khác', captures a populated WatchFlow PNG, and asserts no channel was played or URL accessed.
 - No changes to M3U ownership, streaming, Favorites, EPG, encrypted sources, Supabase, platform integrations or media pipeline. Reverify Node, 70 real Electron screenshot cases, Windows/macOS builds, and immutable new tag before certifying.
+
+
+## P5.1.58 / v4.23.142 — Compact Favorites title duplication from real Electron screenshot
+- Previous release: P5.1.57 / v4.23.141 HEAD 3a8bd1b6c80b5bb6165db1990915f61c47074f6f, successful CI 44874945170.
+- Opened actual Electron screenshot at 600px: `p5-20-rounds/positron-p5-20-real.png`. Top header displayed "Kênh yêu thíchYêu thích" simultaneously.
+- Root cause: Horizon later style `#positronBar .p-heading strong{font-size:13px!important}` overrides compact P5 `font-size:0` while short `::after` text remains visible.
+- Fix: scoped Horizon-only responsive strong/::after rules; keep full accessible native text and render one short visual label. Add native Electron computed font-size/pseudo assertions and Node regression.
+- Verification gate: native CI capture and post-change PNG review, full Node tests, Windows/macOS artifacts, immutable release check. No playback/source code changed.

@@ -107,7 +107,7 @@ async function runTwenty(page){
     controls:document.querySelectorAll('#page-tv button').length,
     transportVectors:['prevBtn','stopBtn','nextBtn','fsPrev','fsNext','fullscreenBtn'].every(id=>!!document.getElementById(id)?.querySelector('svg')),
     brandIcon:get('#appSidebar .brand-icon'),
-    heading:(()=>{const n=document.querySelector('#positronBar .p-heading strong');if(!n)return null;const b=n.getBoundingClientRect();return {shortTitle:n.dataset.shortTitle||'',clipped:n.scrollWidth>n.clientWidth+1,width:Math.round(b.width)};})(),
+    heading:(()=>{const n=document.querySelector('#positronBar .p-heading strong');if(!n)return null;const b=n.getBoundingClientRect();return {shortTitle:n.dataset.shortTitle||'',nativeText:n.textContent||'',fontSize:getComputedStyle(n).fontSize,pseudoContent:getComputedStyle(n,'::after').content,clipped:n.scrollWidth>n.clientWidth+1,width:Math.round(b.width)};})(),
     badge:(()=>{const n=document.querySelector('#appSidebar .brand small');if(!n)return null;const b=n.getBoundingClientRect();return {visible:b.width>0&&b.height>0,clipped:n.scrollWidth>n.clientWidth+1,right:b.right,top:b.top,bottom:b.bottom};})(),
     toggle:(()=>{const n=document.querySelector('#appSidebar .sidebar-edge-toggle');if(!n)return null;const b=n.getBoundingClientRect();return {left:b.left,top:b.top,bottom:b.bottom};})(),
     doctorSourceAction:get('#positronDoctorSources'),
@@ -571,7 +571,11 @@ async function runTwenty(page){
   }
   if(target==='fav'){
     if(width===600){
-     assert.ok(metrics.favoriteEmptyLayout?.top>=300,'compact Favorites card too high: '+name+' '+metrics.favoriteEmptyLayout?.top);
+     assert.equal(metrics.heading?.shortTitle,'Yêu thích','real compact Favorites title should be short');
+      assert.equal(metrics.heading?.fontSize,'0px','Horizon duplicates header title on 600px viewport');
+      assert.ok((metrics.heading?.pseudoContent||'').includes(metrics.heading.shortTitle),'short heading not rendered');
+      assert.equal(metrics.heading?.nativeText,'Kênh yêu thích','accessible full text must remain');
+      assert.ok(metrics.favoriteEmptyLayout?.top>=300,'compact Favorites card too high: '+name+' '+metrics.favoriteEmptyLayout?.top);
      assert.ok(metrics.favoriteEmptyLayout?.buttonBottom<=metrics.favoriteEmptyLayout?.viewportHeight-40,'Favorites source action clipped by bottom bar: '+name);
     }
 

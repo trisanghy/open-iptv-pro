@@ -447,3 +447,19 @@ html[data-positron="true"].po-v3.po-horizon body #poWatchFlowPanel .po-watchflow
  color:#effbf7!important;opacity:1!important;text-shadow:none!important;
  font-size:22px!important;letter-spacing:-.7px!important;font-weight:770!important;
 }
+
+/* P5.1.58 · Real Favorites 600px: fix duplicate full+short title.
+   Horizon broad font-size overrode the P5 compact rule. Preserve full
+   accessible DOM text and display only ::after short title at <=760px. */
+@media(max-width:760px){
+ html[data-positron="true"].po-v3.po-horizon #positronBar .p-heading strong[data-short-title]{
+  font-size:0!important;line-height:0!important;letter-spacing:0!important;
+  width:max-content!important;max-width:max-content!important;min-width:0!important;
+  white-space:nowrap!important;overflow:visible!important;text-overflow:clip!important;
+ }
+ html[data-positron="true"].po-v3.po-horizon #positronBar .p-heading strong[data-short-title]::after{
+  content:attr(data-short-title)!important;display:inline-block!important;
+  font-size:13px!important;line-height:1.2!important;font-weight:680!important;
+  letter-spacing:-.12px!important;white-space:nowrap!important;
+ }
+}

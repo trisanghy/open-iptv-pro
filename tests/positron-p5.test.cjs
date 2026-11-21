@@ -559,3 +559,12 @@ test('P5.1.55 hides duplicate empty EPG search guidance and refreshes when guide
  assert.ok(audit.includes('epgSearchUpdatedAfterGuide'));
  assert.ok(read('renderer/advanced.js').includes('function renderEpgSearch()'));
 });
+
+test('P5.1.58 Horizon eliminates duplicate Favorites title while keeping accessible DOM text',()=>{
+ const css=read('renderer/positron-horizon-v4.css'),audit=read('scripts/positron-20-extension.cjs');
+ assert.ok(css.includes('.po-v3.po-horizon #positronBar .p-heading strong[data-short-title]'));
+ assert.ok(css.includes('font-size:0!important;line-height:0!important'));
+ assert.ok(css.includes('content:attr(data-short-title)!important'));
+ assert.ok(audit.includes("metrics.heading?.fontSize,'0px'"));
+ assert.ok(audit.includes("metrics.heading?.nativeText,'Kênh yêu thích'"));
+});
