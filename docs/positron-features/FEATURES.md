@@ -15,7 +15,7 @@ P5.1.132 genuine Electron screenshot `positron-p51132-empty-search-clear-after-4
 
 *Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
 
-[Release / thông tin](https://github.com/trisanghy/open-iptv-pro/tree/Positron) · [Commit](https://github.com/trisanghy/open-iptv-pro/commit/f83532e25748d481dfdf37a43799944b77d4a93b)
+[Release / thông tin](https://github.com/trisanghy/open-iptv-pro/tree/Positron) · [Commit](https://github.com/trisanghy/open-iptv-pro/commit/d83cd7cdceba1629bdfc2f847d1e549434b81455)
 
 </details>
 
