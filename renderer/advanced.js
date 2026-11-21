@@ -163,7 +163,7 @@
  function onStop(){bufferRequest++;buffering=false;bufferStarting=false;bufferId='';activeChannelId='';autoAttemptedId='';autoSuppressedId='';$('#bufferToggle').textContent='Bật bộ đệm';$('#bufferToggle').disabled=false;window.streamleaf?.stopTimeshift?.().catch(()=>{});}
  // ====== EPG search, reminders, catch-up and mapping ======
  const epg=()=>window.IPTVExtras?.getGuide?.()||{names:{},programmes:[]};
- function renderEpgSearch(){const root=$('#epgSearchResults'),q=$('#epgGlobalSearch').value.trim();root.replaceChildren();if(!q){root.textContent='Nhập tên chương trình để tìm trên lịch đã tải';return;}
+ function renderEpgSearch(){const root=$('#epgSearchResults'),q=$('#epgGlobalSearch').value.trim();root.replaceChildren();if(!Array.isArray(epg().programmes)||!epg().programmes.length){root.textContent='Chưa có dữ liệu EPG. Chọn Nguồn EPG và tải lịch trước khi tìm chương trình.';return;}if(!q){root.textContent='Nhập tên chương trình để tìm trên lịch đã tải';return;}
   const timeOffset=Number(window.IPTVExtras?.getOffset?.()||0)*60000;const matches=lib.epgSearch(epg(),q).map(p=>({...p,start:p.start+timeOffset,end:p.end+timeOffset}));if(!matches.length){root.textContent='Chưa tìm thấy chương trình trong dữ liệu EPG đã tải';return;}
   const ids=new Map();for(const c of channels()){const entries=window.IPTVGuide.find(epg(),c);if(entries.length)ids.set(entries[0].id,c);}
   const table=document.createElement('div');table.className='epg-results-list';for(const p of matches.slice(0,80)){

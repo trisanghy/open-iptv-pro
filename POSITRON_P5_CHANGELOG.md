@@ -334,14 +334,19 @@ P5.1.46 same-version CI repair: run 44866650681 failed 2/611 because historical 
 - Build the empty node using textContent rather than innerHTML; add all 16 non-Vietnamese offline translations and Electron screenshot assertion for 720px and 1360px guide.
 - Preserve EPG data/offset/cache, source import, existing programmes and favorites. Await individual CI/release proof.
 
-## File (9) round 06/20 — P5.1.50 / v4.23.134
+## File (9) round 06/20 — P5.1.51 / v4.23.135
 - Real screenshot P5.1.48 EPG 1360px/720px shows 0 channels but ↻ Tải lại EPG is highlighted and clickable; native refreshEPG() only warns instead of loading because no M3U playlist.
 - Root cause: no-channel UI state omitted from reload button guard; native EPG data and service are not modified.
 - Positron only: disable the reload CTA while zero channels, mark precisely when Positron owns this disabled state, style muted, restore only own state once navCount changes. Do not override native in-flight load (`epgLoadBtn.disabled`).
 - Add real Electron snapshot assertion at 1360px/720px and synthetic nav-count 0→1→0 transition proving reversible control. Keep the Nguồn EPG button enabled and playlist/cached guide/EPG data intact.
 - Check separate CI/test/screenshots/build and immutable tag before certification.
 
-## P5.1.50 — Screenshot-reviewed DVR empty-state repair
+## P5.1.51 — Screenshot-reviewed DVR empty-state repair
 - Inspected actual P5.1.49 Electron EPG screenshot at 720px (`positron-p5-17-real.png`): empty DVR history offered manual scheduling while no IPTV channels exist.
 - `renderer/dvr-ui.js` now provides source-import guidance when there are no recordable HTTP(S) channels, while preserving EPG/manual-schedule instructions when channels are available. Existing jobs and DVR APIs unchanged.
 - Added Node source regression test and version-synchronized Windows scripts. Require fresh Electron screenshot and full CI/build before certification.
+
+## P5.1.51 — Real EPG screenshot review: no-data search guidance
+- P5.1.50 inherits the verified real Electron P5.1.49 EPG 720px screenshot showing no EPG guide alongside an active programme-search control.
+- When the user searches without any EPG programmes, `renderer/advanced.js` now explains that guide data must be loaded through Nguồn EPG instead of presenting the misleading no-match result. Normal EPG searching and reminders are untouched once programmes exist.
+- Add regression tests; require GitHub CI, real Electron screenshots, Windows and Mac builds and immutable release verification before marking complete.
