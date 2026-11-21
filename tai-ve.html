@@ -31,6 +31,15 @@ h2{font-size:24px;letter-spacing:-.025em;margin:43px 0 17px}
 .mac-install-note strong{color:#f7f6ff;font-size:14px}.mac-install-note p{margin:9px 0!important;font-size:13px;line-height:1.65}
 .mac-install-note code{display:block;background:#0b1425;border:1px solid #3d4f6d;border-radius:8px;padding:11px;margin:10px 0;overflow-wrap:anywhere;white-space:normal;color:#f4f2ff}
 .mac-install-note a{color:#c3d8ff}
+.mac-install-note h4{margin:0 0 12px;font-size:17px;line-height:1.5}
+.mac-install-note ol{margin:0 0 10px;padding-left:21px}
+.mac-install-note li{margin:9px 0;line-height:1.65}
+.mac-install-note p{line-height:1.6}
+.mac-copy-row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:12px 0}
+.mac-copy-row code{flex:1 1 270px;min-width:0;margin:0;user-select:all;line-height:1.6}
+.mac-copy-button{flex:0 0 auto;padding:12px 14px;border-radius:9px;background:#4e64b4;border:1px solid #b7cafa;color:#fff;font-weight:700;cursor:pointer}
+.mac-copy-button:focus-visible,.mac-copy-button:hover{background:#647acb}
+.mac-install-note .mac-warning{color:#ffdfc0}
 table{border-collapse:collapse;width:100%;background:#151e31;border:1px solid #374660;border-radius:15px;overflow:hidden}
 th,td{text-align:left;border-bottom:1px solid #313d55;padding:13px;vertical-align:top;font-size:14px}
 th{background:#20314c;color:#eaf1ff}tbody tr:last-child td{border-bottom:0}
@@ -54,11 +63,19 @@ footer{border-top:1px solid #34415a;padding:25px 0 40px;color:#9faec6;font-size:
 <a href="https://github.com/trisanghy/open-iptv-pro/releases/download/v4.23.76/Open-IPTV-Pro-4.23.76-mac-x64.dmg">Mac Intel · Stable</a>
 <a href="https://github.com/trisanghy/open-iptv-pro/releases/tag/v4.23.71">Stable 4.23.71 (bản cũ)</a>
 <a href="https://github.com/trisanghy/open-iptv-pro/releases/tag/v4.23.76">Source + SHA256 · Stable</a>
-</div><div class="mac-install-note" id="mac-dmg-help"><strong>🍎 Mac báo lỗi “is damaged and can’t be opened” sau khi tải DMG?</strong>
-<p>Chỉ tải từ <a href="https://github.com/trisanghy/open-iptv-pro/releases" target="_blank" rel="noopener noreferrer">GitHub Releases</a>, kiểm tra SHA-256, kéo <b>Open IPTV Pro.app</b> vào <b>Applications</b>. Trước tiên thử <b>System Settings → Privacy &amp; Security → Open Anyway</b> nếu xuất hiện.</p>
-<p>Nếu đã xác minh file an toàn, đúng checksum nhưng chỉ bị chặn do quarantine, mở Terminal và chạy lệnh dành riêng cho ứng dụng:</p>
-<code>xattr -dr com.apple.quarantine "/Applications/Open IPTV Pro.app"</code>
-<p>Không chạy nếu DMG thực sự hỏng, chữ ký sai hoặc macOS cảnh báo mã độc. Khi đó hãy xóa file, tải lại và báo lỗi. Không tắt Gatekeeper toàn máy.</p></div><p class="note">Release Stable 4.23.76 đã được build trên GitHub Actions từ main, vượt qua kiểm thử tự động, có đủ bộ cài Windows/Mac và SHA256. Phiên bản cũ được giữ nguyên.</p></article>
+</div><section class="mac-install-note" id="mac-dmg-help" aria-labelledby="mac-install-title">
+<h4 id="mac-install-title">🍎 Hướng dẫn cài trên macOS và xử lý lỗi DMG “is damaged”</h4>
+<ol>
+<li>Tải <b>Mac Apple Silicon (ARM64)</b> cho M1/M2/M3/M4... hoặc <b>Mac Intel (x64)</b> theo CPU.</li>
+<li>Kiểm tra nguồn <a href="https://github.com/trisanghy/open-iptv-pro/releases" target="_blank" rel="noopener noreferrer">GitHub Releases</a> và so sánh <b>SHA-256</b> với checksum của bản phát hành.</li>
+<li>Nhấp đúp <code>.dmg</code>, kéo <b>Open IPTV Pro.app</b> vào <b>Applications</b>; mở ứng dụng trong Applications.</li>
+<li>Nếu bị chặn, mở <b>System Settings → Privacy &amp; Security → Open Anyway</b> (nếu tùy chọn xuất hiện).</li>
+<li>Nếu đã xác minh tệp an toàn nhưng vẫn bị chặn chỉ do quarantine, mở <b>Terminal</b> bằng <b>⌘ + Space</b>, nhấn <b>Sao chép lệnh</b> bên dưới, dán bằng <b>⌘ + V</b>, nhấn <b>Enter</b> và mở lại ứng dụng.</li>
+</ol>
+<p><strong>Lệnh Terminal xử lý quarantine cho riêng Open IPTV Pro:</strong></p>
+<div class="mac-copy-row"><code id="mac-install-command">xattr -dr com.apple.quarantine "/Applications/Open IPTV Pro.app"</code><button type="button" data-mac-copy-command class="mac-copy-button">📋 Sao chép lệnh Terminal</button></div>
+<p class="mac-warning">Không chạy lệnh nếu DMG thực sự bị hỏng, sai checksum, chữ ký không hợp lệ hoặc macOS cảnh báo mã độc. Hãy tải lại từ GitHub chính thức hoặc báo lỗi. Không vô hiệu hóa Gatekeeper toàn máy.</p>
+</section><p class="note">Release Stable 4.23.76 đã được build trên GitHub Actions từ main, vượt qua kiểm thử tự động, có đủ bộ cài Windows/Mac và SHA256. Phiên bản cũ được giữ nguyên.</p></article>
 <article class="card"><span class="tag">Rust Lab · Beta</span><h3>Rust Lab / Tauri</h3><div class="ver">23.8.98 · Windows &amp; macOS</div><p>Theme Dark/AMOLED, bộ biểu tượng player SVG, phụ đề/dịch/TTS thử nghiệm, bù chuyển động có giới hạn và công cụ video. Phát lại/PiP/AI cần kiểm thử trên máy thật; chưa có AI upscale 4K hoạt động thực.</p><div class="links">
 <a href="https://github.com/trisanghy/open-iptv-pro/releases/download/rust-lab/v23.8.98/OpenIPTVPro-RustLab-v23.8.98-Windows-Setup-x64.exe">Windows Setup x64</a>
 <a href="https://github.com/trisanghy/open-iptv-pro/releases/download/rust-lab/v23.8.98/OpenIPTVPro-RustLab-v23.8.98-Windows-Portable-x64.zip">Windows Portable ZIP</a>
@@ -88,4 +105,13 @@ footer{border-top:1px solid #34415a;padding:25px 0 40px;color:#9faec6;font-size:
 <p class="note">Bộ cài desktop chưa ký/notarize có thể hiển thị cảnh báo bảo mật. Với Mac, sau khi xác minh tải từ GitHub và SHA256, mở Cài đặt hệ thống → Quyền riêng tư & Bảo mật → Vẫn mở nếu macOS cho phép; không tắt toàn bộ Gatekeeper. Với iOS, IPA chưa ký cần Apple Developer/provisioning hợp lệ. Dữ liệu playlist, kênh yêu thích và cấu hình nên được sao lưu trước khi đổi phiên bản. Chỉ nhập file M3U/URL mà bạn có quyền sử dụng; Open IPTV Pro không cung cấp kênh truyền hình hay giấy phép nội dung.</p>
 </main>
 <footer><div class="wrap">Open IPTV Pro · <a href="https://github.com/trisanghy/open-iptv-pro/releases">Lưu trữ tất cả phiên bản</a> · <a href="./">Quay lại trình phát Web</a></div></footer>
+<script id="openiptv-mac-copy-handler">
+(()=>{const command='xattr -dr com.apple.quarantine "/Applications/Open IPTV Pro.app"';
+async function copyCommand(){
+if(navigator.clipboard?.writeText && window.isSecureContext){await navigator.clipboard.writeText(command);return;}
+const input=document.createElement('textarea');input.value=command;input.setAttribute('readonly','');input.style.cssText='position:fixed;left:-9999px;top:0';document.body.append(input);input.select();const ok=document.execCommand('copy');input.remove();if(!ok)throw Error('Clipboard unavailable');
+}
+document.addEventListener('click',async event=>{const b=event.target.closest('button[data-mac-copy-command]');if(!b)return;try{await copyCommand();b.textContent='✓ Đã sao chép';}catch{b.textContent='Không thể tự sao chép — hãy chọn lệnh để sao chép';}});
+})();
+</script>
 </body></html>
