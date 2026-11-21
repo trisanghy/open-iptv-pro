@@ -170,3 +170,10 @@ Not yet started. Choose each new repair from the preceding real screenshot, with
 - Issue: horizontal category-chip scrollbar dominates 450px layout and desktop mouse wheel cannot reach hidden categories.
 - Fix: guarded wheel-to-horizontal only when scrollable, boundary escape, muted track; preserve every group and stream behavior.
 - Candidate QA: Node regression and native Electron `positron-p51124-chip-wheel-450-real.png`; count only after 6 jobs + opened after-image + Release/EXE verification.
+
+## New file-triggered batch round 02/20 — P5.1.125 / v4.23.209 — CANDIDATE
+- Input: P5.1.124 final HEAD `808e2f8ef5260b4bd9b41dc2747ce3113256181d`, successful immutable release `positron/v4.23.208-p5.1.124`, 719 passed/5 skipped/0 failed, 6/6 CI jobs. Genuine 450px after-image opened.
+- New screenshot-derived defect: native desktop wheel scrolls to later group chips as intended, but the All/reset button scrolls off the left edge.
+- Fix: preserve the existing first native All chip and make it sticky only on compact windows, no second duplicate button; native filtering/playback unchanged.
+- Evidence: new Node regression and Electron geometry/hit-target/filter-reset checks, actual new image `positron-p51125-pinned-all-450-real.png`, distinct version+commit and release only if verified.
+- Status: candidate, NOT a completed repair round until CI/after-image/Release pass.

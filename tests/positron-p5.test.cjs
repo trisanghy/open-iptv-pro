@@ -37,7 +37,7 @@ test('P5 assets are loaded after P4 without replacing it',()=>{
 test('P5 release is immutable and versioned separately from P4.1',()=>{
  const pkg=JSON.parse(read('package.json'));
  const flow=read('.github/workflows/positron-lab.yml');
- assert.equal(pkg.version,'4.23.208');
+ assert.equal(pkg.version,'4.23.209');
  const label=pkg.description.match(/Positron\s+(P\d+\.\d+\.\d+)/)?.[1];
  assert.ok(label,'product P-label must accompany SemVer');
  assert.ok(flow.includes('TAG=positron/v'+pkg.version+'-'+label.toLowerCase()),'release tag and app version must match');
@@ -1007,4 +1007,15 @@ test('P5.1.124 compact category wheel navigation releases native page scroll at 
  for(const token of ['mouseWheelMoved:after.x-before.x>25',
   'boundaryReleasesPage:boundaryAllowed','positron-p51124-chip-wheel-450-real.png'])
   assert.ok(qa.includes(token),'missing native Electron QA '+token);
+});
+
+test('P5.1.125 compact All channels reset stays usable when category chips scroll',()=>{
+ const css=read('renderer/positron-horizon-v4.css');
+ const qa=read('scripts/positron-20-extension.cjs');
+ assert.ok(css.includes('P5.1.125: verified P5.1.124 actual 450px Electron after-image'));
+ assert.ok(css.includes('#webChooserGroups.web-chooser-chips>.web-chooser-chip:first-child'));
+ assert.ok(css.includes('position:sticky!important;left:8px!important;z-index:3!important'));
+ for(const token of ['pinnedVisible:left.left>=rect.left-2',
+  'allResetClearsGroup:','positron-p51125-pinned-all-450-real.png'])
+  assert.ok(qa.includes(token),'missing native pinned-All verification '+token);
 });

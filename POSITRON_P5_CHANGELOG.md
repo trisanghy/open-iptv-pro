@@ -872,3 +872,10 @@ P5.1.81 follow-up: real Electron capture found nav overflow; replace flexible no
 - Root: native horizontal chip rail not navigable using standard vertical mouse wheel, later categories offscreen; bright scroll track visually dominates compact layout.
 - Fix: wheel-to-horizontal navigation while rail can move, release native page scroll at edges, toned scroll indicator. Preserve touch, keyboard, group filters, favorite data, playlist and media transport.
 - Verification: new Node regression, actual Electron 450px wheel/color/edge/overflow checks and screenshot `positron-p51124-chip-wheel-450-real.png`. Candidate pending CI, direct after-image and immutable binary release.
+
+## P5.1.125 / Electron v4.23.209 — Always-available All Channels reset on narrow screens
+- Input: genuine manually reviewed P5.1.124 Electron 450x820 after-image `positron-p51124-chip-wheel-450-real.png`: group chip rail scrolled right after a real mouse-wheel event, causing the first `Tất cả` reset chip to disappear.
+- Root: horizontal native scroll container moves the reset chip together with category choices.
+- Fix: make only the first native chip position:sticky at the left edge <=600px, preserving the full group catalog, native wheel/touch/keyboard, focus restoration and playlist/player behavior. It remains a normal button, no duplicate UI.
+- New regression: Node test and actual Electron 450px screenshot `positron-p51125-pinned-all-450-real.png` plus geometry, hit-target, actual filter switch/reset, focus, overflow checks.
+- Status: candidate pending 6/6 CI, manual after-image review, and immutable Release binaries verification.

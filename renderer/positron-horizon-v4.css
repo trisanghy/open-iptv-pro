@@ -1084,3 +1084,12 @@ html[data-positron="true"].po-horizon #toastArea.toast-area .toast .po-toast-dis
   background:rgba(106,150,147,.45)!important;border-radius:6px!important;
  }
 }
+
+/* P5.1.125: verified P5.1.124 actual 450px Electron after-image shows
+   "Tất cả" disappears when group chips scroll. Pin its native reset button. */
+@media(max-width:600px){
+ html[data-positron="true"].po-horizon #page-tv #webChooserGroups.web-chooser-chips>.web-chooser-chip:first-child{
+  position:sticky!important;left:8px!important;z-index:3!important;
+  box-shadow:6px 0 12px rgba(6,17,25,.45)!important;
+ }
+}

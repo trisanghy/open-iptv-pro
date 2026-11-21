@@ -2277,9 +2277,36 @@ async function runTwenty(page){
  for(const [key,value] of Object.entries(wheelQA))
   assert.equal(value,true,'P5.1.124 real Electron chip wheel '+key+': '+JSON.stringify(wheelQA));
 
+ 
+ // P5.1.125: True 450px Electron. Scroll category rail fully right but
+ // keep native "Tất cả" reset button available and clickable without
+ // adding an overlay, changing playlist data, or starting a stream.
+ await page.evaluate(()=>{const rail=document.getElementById('webChooserGroups');rail.scrollLeft=rail.scrollWidth;});
+ const pinnedAllQA=await page.evaluate(()=>{
+  const rail=document.getElementById('webChooserGroups');
+  const all=rail.querySelector('button[data-po-quick-group="all"]');
+  const left=all.getBoundingClientRect(),rect=rail.getBoundingClientRect();
+  const point=document.elementFromPoint(left.left+left.width/2,left.top+left.height/2);
+  return {overflowing:rail.scrollWidth>rail.clientWidth+40,
+   pinnedVisible:left.left>=rect.left-2&&left.right<=rect.left+120,
+   stickyStyle:getComputedStyle(all).position==='sticky',
+   pinnedClickable:point===all||all.contains(point),
+   preservesGroups:rail.querySelectorAll('button[data-po-quick-group]').length>=5,
+   noOverflow:document.documentElement.scrollWidth<=innerWidth+1};
+ });
+ await page.screenshot({path:path.join(out,'positron-p51125-pinned-all-450-real.png'),animations:'disabled'});
+ await page.locator('#webChooserGroups button[data-po-quick-group]:last-child').click();
+ const filterApplied=await page.evaluate(()=>!!document.getElementById('webChooserGroup').value);
+ await page.locator('#webChooserGroups button[data-po-quick-group="all"]').click();
+ Object.assign(pinnedAllQA,{filterApplied,
+  allResetClearsGroup:await page.evaluate(()=>document.getElementById('webChooserGroup').value===''),
+  allResetFocused:await page.evaluate(()=>document.activeElement?.dataset?.poQuickGroup==='all')});
+ for(const [key,value] of Object.entries(pinnedAllQA))
+  assert.equal(value,true,'P5.1.125 native pinned-All chip '+key+': '+JSON.stringify(pinnedAllQA));
+
  await page.setViewportSize({width:1360,height:820});
   const report={type:'Positron P5 twenty distinct desktop screenshot cases',realElectron:true,syntheticChannels:false,
-  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA,chooserQa,toastLayoutQA,nativeToastQA,compactIdleQA,channelChipRailQA,advancedFilterQA,readableCardsQA,keyboardTabQA,favoriteEmptyQA,duplicateEmptyQA,categoryFilterQA,categoryFixtureQA,compactSingleQA,directFavoriteQA,favoriteCountQA,compactToastStackQA,toastDismissQA,toastFocusReturnQA,toastDockQA,wheelQA};
+  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA,chooserQa,toastLayoutQA,nativeToastQA,compactIdleQA,channelChipRailQA,advancedFilterQA,readableCardsQA,keyboardTabQA,favoriteEmptyQA,duplicateEmptyQA,categoryFilterQA,categoryFixtureQA,compactSingleQA,directFavoriteQA,favoriteCountQA,compactToastStackQA,toastDismissQA,toastFocusReturnQA,toastDockQA,wheelQA,pinnedAllQA};
  fs.writeFileSync(path.resolve('positron-evidence','audit-p5-20-rounds.json'),JSON.stringify(report,null,2));
  return report;
 }
