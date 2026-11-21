@@ -77,3 +77,24 @@ test('HEAD bất biến yêu cầu đủ 20 tính năng mới, 20 phiên bản v
  assert.match(policy,/HEAD BẤT BIẾN/);
  assert.match(policy,/POSITRON_HEAD_20_VONG_TINH_NANG_MOI\.md/);
 });
+
+test('Hai PNG Electron thật riêng cho phiên bản mới phải được khai báo và CI kiểm tra',()=>{
+ const pkg=JSON.parse(read('package.json'));
+ const m=/Positron\\s+P5\\.1\\.(\\d+)/.exec(pkg.description||'');
+ assert.ok(m,'cần nhãn sản phẩm để đối chiếu bằng chứng');
+ const n=Number(m[1]);
+ if(n<136)return; // Nhãn lịch sử trước áp dụng cổng này.
+ const prefix='positron-p51'+n;
+ const qa=read('scripts/positron-20-extension.cjs');
+ const workflow=read('.github/workflows/positron-lab.yml');
+ const filePattern=new RegExp('(' +prefix+'[^\\\\\\'"\\n]*?-(?:before|after)-[^\\\\\\'"\\n]*?\\\\.png)','g');
+ const names=[...qa.matchAll(filePattern)].map(m=>m[1]);
+ const before=names.filter(x=>x.includes('-before-'));
+ const after=names.filter(x=>x.includes('-after-'));
+ assert.ok(before.length>=1,'phiên bản '+n+' thiếu ảnh Electron TRƯỚC trong QA');
+ assert.ok(after.length>=1,'phiên bản '+n+' thiếu ảnh Electron SAU trong QA');
+ assert.ok(after.some(x=>workflow.includes(x)),'workflow không xác minh sự tồn tại PNG SAU');
+ assert.ok(before.some(x=>workflow.includes(x)),'workflow không xác minh sự tồn tại PNG TRƯỚC');
+ assert.ok(qa.includes('await page.screenshot({path:path.join(out,'),
+  'Ảnh mới phải do Playwright/Electron thực ghi, không phải mockup');
+});
