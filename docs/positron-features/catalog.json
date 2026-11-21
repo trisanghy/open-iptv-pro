@@ -1,22 +1,98 @@
 {
-  "generatedAt": "2026-11-21T22:14:24.942734+00:00",
+  "generatedAt": "2026-11-21T22:17:44.251243+00:00",
   "repository": "trisanghy/open-iptv-pro",
   "branch": "Positron",
   "versions": [
     {
-      "number": 137,
-      "version": "P5.1.137",
-      "appVersion": "4.23.221",
-      "title": "duyệt thẻ kênh bằng phím mũi tên",
-      "description": "Feature priority: NEW — Điều hướng các kênh ngay trong Chọn kênh bằng bốn phím mũi tên và Home/End, bám đúng vị trí thẻ ở cả dạng lưới và danh sách; không cần Tab qua từng nút yêu thích và không tự phát video. User action: Mở Chọn kênh, nhập “QA Channel” rồi Enter để chọn thẻ đầu tiên; dùng ← → ↑ ↓ để di chuyển theo vị trí kênh, Home về đầu và End tới cuối; chỉ Enter trên thẻ mới phát.",
+      "number": 138,
+      "version": "P5.1.138",
+      "appVersion": "4.23.222",
+      "title": "chuyển trang kênh bằng PageDown PageUp",
+      "description": "Feature priority: NEW — Duyệt xuyên qua các trang kênh dài chỉ bằng hai phím PageDown/PageUp, giữ tiêu điểm vào thẻ ở trang mới và không tự phát; hữu ích khi danh sách có hàng trăm kênh. User action: Mở Chọn kênh, dùng Enter chọn thẻ rồi nhấn PageDown để sang trang kế tiếp và chọn kênh đầu; PageUp trở về trang trước và chọn thẻ cuối, nhấn Enter trên thẻ mới phát.",
       "kind": "fix",
       "status": "candidate",
       "published": "",
       "tag": "",
-      "commit": "6d8b23968e30a4264feca3cd58b44ace6d1720ee",
+      "commit": "71e224539f908ec1ceb40e6f8bb4c02aa9478dd0",
       "url": "https://github.com/trisanghy/open-iptv-pro/tree/Positron",
       "assets": [],
       "image": null
+    },
+    {
+      "number": 137,
+      "version": "P5.1.137",
+      "appVersion": "4.23.221",
+      "title": "Duyệt thẻ kênh bằng phím mũi tên",
+      "description": "Feature priority: NEW — Điều hướng các kênh ngay trong Chọn kênh bằng bốn phím mũi tên và Home/End, bám đúng vị trí thẻ ở cả dạng lưới và danh sách; không cần Tab qua từng nút yêu thích và không tự phát video. User action: Mở Chọn kênh, nhập “QA Channel” rồi Enter để chọn thẻ đầu tiên; dùng ← → ↑ ↓ để di chuyển theo vị trí kênh, Home về đầu và End tới cuối; chỉ Enter trên thẻ mới phát.",
+      "kind": "fix",
+      "status": "release",
+      "published": "2026-11-21T22:16:17Z",
+      "tag": "positron/v4.23.221-p5.1.137",
+      "commit": "6d8b23968e30a4264feca3cd58b44ace6d1720ee",
+      "url": "https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.221-p5.1.137",
+      "assets": [
+        {
+          "name": "audit-p4-50-rounds.json",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.221-p5.1.137/audit-p4-50-rounds.json"
+        },
+        {
+          "name": "audit-p5-20-rounds.json",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.221-p5.1.137/audit-p5-20-rounds.json"
+        },
+        {
+          "name": "Open-IPTV-Pro-4.23.221-mac-arm64.dmg",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.221-p5.1.137/Open-IPTV-Pro-4.23.221-mac-arm64.dmg"
+        },
+        {
+          "name": "Open-IPTV-Pro-4.23.221-mac-x64.dmg",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.221-p5.1.137/Open-IPTV-Pro-4.23.221-mac-x64.dmg"
+        },
+        {
+          "name": "Open-IPTV-Pro-4.23.221-x64.exe",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.221-p5.1.137/Open-IPTV-Pro-4.23.221-x64.exe"
+        },
+        {
+          "name": "Open-IPTV-Pro-Setup-4.23.221-x64.exe",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.221-p5.1.137/Open-IPTV-Pro-Setup-4.23.221-x64.exe"
+        },
+        {
+          "name": "OpenIPTVPro-Positron-P51137-Source.zip",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.221-p5.1.137/OpenIPTVPro-Positron-P51137-Source.zip"
+        },
+        {
+          "name": "positron-p4-final-main-real.png",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.221-p5.1.137/positron-p4-final-main-real.png"
+        },
+        {
+          "name": "positron-p4-round-10-real.png",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.221-p5.1.137/positron-p4-round-10-real.png"
+        },
+        {
+          "name": "positron-p4-round-20-real.png",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.221-p5.1.137/positron-p4-round-20-real.png"
+        },
+        {
+          "name": "positron-p4-round-30-real.png",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.221-p5.1.137/positron-p4-round-30-real.png"
+        },
+        {
+          "name": "positron-p4-round-40-real.png",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.221-p5.1.137/positron-p4-round-40-real.png"
+        },
+        {
+          "name": "Positron-P51137-20-Real-Screenshots.zip",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.221-p5.1.137/Positron-P51137-20-Real-Screenshots.zip"
+        },
+        {
+          "name": "Positron-P51137-50-Real-Screenshots.zip",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.221-p5.1.137/Positron-P51137-50-Real-Screenshots.zip"
+        },
+        {
+          "name": "SHA256SUMS.txt",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.221-p5.1.137/SHA256SUMS.txt"
+        }
+      ],
+      "image": "screenshots/positron-p51137-arrow-navigation-after-450-real.png"
     },
     {
       "number": 136,
