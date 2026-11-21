@@ -490,3 +490,24 @@ html[data-positron="true"].po-v3.po-horizon #page-tv .channel-panel .folder-head
 html[data-positron="true"].po-v3.po-horizon #page-tv .channel-panel .folder-header :is(.folder-arrow,.folder-size){
  color:#bbd5d2!important;
 }
+
+/* P5.1.62: real Electron TV 600px retained legacy lavender CC / AI toolbar.
+   Legacy unified-ai-inline-v1.css uses #bd83ec, #322044, #c587f2
+   with !important; Horizon override is scoped and keeps native listeners. */
+html[data-positron="true"].po-v3.po-horizon{
+ --accent:#67d4c0!important;
+ --ui-primary:#67d4c0!important;
+ --primary:#67d4c0!important;
+ --blue:#67d4c0!important;
+ --ui-on-primary:#072820!important;
+}
+html[data-positron="true"].po-v3.po-horizon #page-tv .unified-ai-row .unified-ai-toggle{
+ background:#19352f!important;border:1px solid #3c7e70!important;
+ color:#e0fff4!important;box-shadow:none!important;border-radius:10px!important;
+}
+html[data-positron="true"].po-v3.po-horizon #page-tv .unified-ai-row .unified-ai-toggle:hover{
+ background:#22453e!important;border-color:#69c5ad!important;
+}
+html[data-positron="true"].po-v3.po-horizon #page-tv .unified-ai-row .unified-ai-mark{
+ background:#70d8bf!important;color:#083126!important;
+}

@@ -156,3 +156,9 @@ Action: Horizon-only scrollbar variable override (#40736c thumb, #101a23 track),
 - Actual previous P5.1.60 552-channel Electron QA screenshot opened: the "01 Main channels" group header is pale lavender with purple text in a dark teal palette.
 - Cause: legacy .folder-header active/light preset selector leaked into Horizon; fix with scoped higher specificity on .channel-panel folder headers; preserve folder interactions and source data.
 - QA: capture metadata header computed background and text colors, assert dark teal RGB in Electron, Node regression. Pending after screenshot review and immutable CI/release.
+
+
+### User-file (10) batch round 05 candidate P5.1.62 / v4.23.146
+- Actual previous native P5.1.61 TV600 screenshot opened: CC "Phụ đề · Dịch · Giọng nói" button lavender with bright purple badge while Horizon uses teal.
+- Cause: unified-ai-inline-v1.css legacy !important colors and global palette vars.
+- P5.1.62: Horizon-specific CSS overrides, native Electron computed-style tests on TV 600 and 1360; preserve actual CC/Translate/TTS handlers/data. Pending after-screen manually reviewed, build/release verified. Do not count until complete.

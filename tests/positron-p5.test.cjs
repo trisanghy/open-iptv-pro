@@ -37,7 +37,7 @@ test('P5 assets are loaded after P4 without replacing it',()=>{
 test('P5 release is immutable and versioned separately from P4.1',()=>{
  const pkg=JSON.parse(read('package.json'));
  const flow=read('.github/workflows/positron-lab.yml');
- assert.equal(pkg.version,'4.23.145');
+ assert.equal(pkg.version,'4.23.146');
  const label=pkg.description.match(/Positron\s+(P\d+\.\d+\.\d+)/)?.[1];
  assert.ok(label,'product P-label must accompany SemVer');
  assert.ok(flow.includes('TAG=positron/v'+pkg.version+'-'+label.toLowerCase()),'release tag and app version must match');
@@ -593,4 +593,14 @@ test('P5.1.61 real populated folder headers cannot inherit white/purple legacy p
  assert.ok(css.includes('background:#173038!important;color:#8ee9d3!important'));
  assert.ok(audit.includes("metadataQa.groupHeaderStyle?.background,'rgb(23, 48, 56)'"));
  assert.ok(audit.includes("metadataQa.groupHeaderStyle?.color,'rgb(142, 233, 211)'"));
+});
+
+test('P5.1.62 actual Electron narrow and desktop CC toolbar uses Horizon palette not legacy lavender',()=>{
+ const css=read('renderer/positron-horizon-v4.css'),audit=read('scripts/positron-20-extension.cjs');
+ assert.ok(css.includes('.po-v3.po-horizon #page-tv .unified-ai-row .unified-ai-toggle'));
+ assert.ok(css.includes('background:#19352f!important;border:1px solid #3c7e70!important'));
+ assert.ok(css.includes('background:#70d8bf!important;color:#083126!important'));
+ assert.ok(css.includes('--ui-primary:#67d4c0!important'));
+ assert.ok(audit.includes("metrics.unifiedAiColors?.background,'rgb(25, 53, 47)'"));
+ assert.ok(audit.includes("metrics.unifiedAiColors?.markBackground,'rgb(112, 216, 191)'"));
 });

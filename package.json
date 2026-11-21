@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.145",
-  "description": "Positron P5.1.61: Horizon populated channel group surface repair from real Electron QA",
+  "version": "4.23.146",
+  "description": "Positron P5.1.62: Horizon AI/CC accent unification from real TV screenshot",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

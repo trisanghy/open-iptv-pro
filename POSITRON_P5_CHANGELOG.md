@@ -438,3 +438,10 @@ P5.1.46 same-version CI repair: run 44866650681 failed 2/611 because historical 
 - Root cause: legacy theme and UI-preset CSS styles for .folder-header are applied after native metadata imports and are not overridden by the Horizon layer.
 - Fix: scope the populated folder header background/foreground (and arrow/count) to Horizon dark teal; preserve folder click/drag events and source data. Test computed dark RGB background and teal ink in native Electron after importing 552 metadata-only QA channels.
 - Before/after real PNG manual review, Node, multi-platform build and immutable release required to certify.
+
+
+## P5.1.62 / v4.23.146 — Legacy AI/CC toolbar purple color persists inside Horizon
+- Input: P5.1.61 native Electron TV 600px PNG p5-20-rounds/positron-p5-07-real.png, personally opened. Visually purple "CC Phụ đề · Dịch · Giọng nói" chip amongst teal Horizon controls.
+- Root cause: legacy renderer/unified-ai-inline-v1.css declares #bd83ec border, #322044 background, #c587f2 CC badge !important. Positron previous palettes also leave global --ui-primary / --accent inconsistent.
+- Repair: only Horizon skin explicitly defines coherent root accent variables and scoped AI toggle/button/mark/hover colors, retaining existing native control listeners, keyboard interaction, playlist, caption, translate and TTS behavior.
+- Proof gate: full Node unit, screenshot Electron TV 600/1360 computed palette/assertions, manually opened AFTER PNG; six-job Mac/Win immutable release.

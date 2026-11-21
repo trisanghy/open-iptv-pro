@@ -108,7 +108,8 @@ async function runTwenty(page){
     transportVectors:['prevBtn','stopBtn','nextBtn','fsPrev','fsNext','fullscreenBtn'].every(id=>!!document.getElementById(id)?.querySelector('svg')),
     brandIcon:get('#appSidebar .brand-icon'),
     horizonScrollbar:(()=>{const n=document.querySelector('.main');if(!n)return null;const s=getComputedStyle(n);return {color:s.scrollbarColor,thumb:getComputedStyle(document.documentElement).getPropertyValue('--iptv-scroll-thumb').trim(),track:getComputedStyle(document.documentElement).getPropertyValue('--iptv-scroll-track').trim()};})(),
-    heading:(()=>{const n=document.querySelector('#positronBar .p-heading strong');if(!n)return null;const b=n.getBoundingClientRect();return {shortTitle:n.dataset.shortTitle||'',nativeText:n.textContent||'',fontSize:getComputedStyle(n).fontSize,pseudoContent:getComputedStyle(n,'::after').content,clipped:n.scrollWidth>n.clientWidth+1,width:Math.round(b.width)};})(),
+    unifiedAiColors:(()=>{const n=document.querySelector('#page-tv .unified-ai-row .unified-ai-toggle'),mark=n?.querySelector('.unified-ai-mark');if(!n)return null;const s=getComputedStyle(n),root=getComputedStyle(document.documentElement);return {background:s.backgroundColor,border:s.borderTopColor,ink:s.color,markBackground:mark?getComputedStyle(mark).backgroundColor:'',accent:root.getPropertyValue('--accent').trim(),uiPrimary:root.getPropertyValue('--ui-primary').trim(),expanded:n.getAttribute('aria-expanded')||''};})(),
+     heading:(()=>{const n=document.querySelector('#positronBar .p-heading strong');if(!n)return null;const b=n.getBoundingClientRect();return {shortTitle:n.dataset.shortTitle||'',nativeText:n.textContent||'',fontSize:getComputedStyle(n).fontSize,pseudoContent:getComputedStyle(n,'::after').content,clipped:n.scrollWidth>n.clientWidth+1,width:Math.round(b.width)};})(),
     badge:(()=>{const n=document.querySelector('#appSidebar .brand small');if(!n)return null;const b=n.getBoundingClientRect();return {visible:b.width>0&&b.height>0,clipped:n.scrollWidth>n.clientWidth+1,right:b.right,top:b.top,bottom:b.bottom};})(),
     toggle:(()=>{const n=document.querySelector('#appSidebar .sidebar-edge-toggle');if(!n)return null;const b=n.getBoundingClientRect();return {left:b.left,top:b.top,bottom:b.bottom};})(),
     doctorSourceAction:get('#positronDoctorSources'),
@@ -407,6 +408,10 @@ async function runTwenty(page){
       assert.equal(metrics.horizonScrollbar?.thumb,'#40736c','Horizon must not inherit purple scrollbar at '+width+'px');
       assert.equal(metrics.horizonScrollbar?.track,'#101a23','Horizon scrollbar track should match dark panel');
       assert.ok((metrics.horizonScrollbar?.color||'').includes('64, 115, 108'),'Electron scrollbar thumb must be muted teal');
+       assert.equal(metrics.unifiedAiColors?.background,'rgb(25, 53, 47)','Horizon CC toolbar must not retain legacy purple fill');
+       assert.equal(metrics.unifiedAiColors?.border,'rgb(60, 126, 112)','Horizon CC toolbar should have muted teal edge');
+       assert.equal(metrics.unifiedAiColors?.markBackground,'rgb(112, 216, 191)','Horizon CC mark should not inherit bright purple');
+       assert.equal(metrics.unifiedAiColors?.accent,'#67d4c0','Horizon legacy accent variable mismatch');
      }
     if(target==='tv'&&width===450){
     const state=await page.evaluate(async()=>{
@@ -424,6 +429,10 @@ async function runTwenty(page){
       assert.equal(metrics.horizonScrollbar?.thumb,'#40736c','Horizon must not inherit purple scrollbar at '+width+'px');
       assert.equal(metrics.horizonScrollbar?.track,'#101a23','Horizon scrollbar track should match dark panel');
       assert.ok((metrics.horizonScrollbar?.color||'').includes('64, 115, 108'),'Electron scrollbar thumb must be muted teal');
+       assert.equal(metrics.unifiedAiColors?.background,'rgb(25, 53, 47)','Horizon CC toolbar must not retain legacy purple fill');
+       assert.equal(metrics.unifiedAiColors?.border,'rgb(60, 126, 112)','Horizon CC toolbar should have muted teal edge');
+       assert.equal(metrics.unifiedAiColors?.markBackground,'rgb(112, 216, 191)','Horizon CC mark should not inherit bright purple');
+       assert.equal(metrics.unifiedAiColors?.accent,'#67d4c0','Horizon legacy accent variable mismatch');
      }
     if(target==='tv'&&width===450){
     if(Number(metrics.sourceCount)===0){
