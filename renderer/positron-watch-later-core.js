@@ -56,7 +56,15 @@
   }
   return out;
  }
- const api=Object.freeze({STORAGE_KEY,LIMIT,identity,compact,has,toggle,visible});
+ // P5.1.101: resolve bookmarks locally before searching; never search stream URLs.
+ function search(rows,channels,query,limit=LIMIT){
+  const needle=norm(query);
+  const matches=visible(rows,channels,LIMIT).filter(ch=>
+   !needle||norm(ch.name).includes(needle)||norm(ch.group).includes(needle));
+  const take=Math.min(LIMIT,Math.max(1,Math.trunc(limit)||LIMIT));
+  return matches.slice(0,take);
+ }
+ const api=Object.freeze({STORAGE_KEY,LIMIT,identity,compact,has,toggle,visible,search});
  if(typeof module==='object'&&module.exports)module.exports=api;
  if(root)root.PositronWatchLaterCore=api;
 })(typeof globalThis!=='undefined'?globalThis:null);

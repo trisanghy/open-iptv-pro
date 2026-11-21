@@ -1,3 +1,11 @@
+## P5.1.101 — Search within all privately saved Watch Later channels / Electron v4.23.185
+
+- Evidence from actual P5.1.100 Electron screenshot and source: saved Watch Later entries are accessible in batches but up to 80 entries require many manual scroll/reveal actions to find a particular channel.
+- Provide a persistent accessible search field on the Continue screen. Filter locally resolved saved channel titles or group names, with Vietnamese accent-insensitive matching, and show result counts. No URL search, network requests, data upload, playlist changes or automatic playback. The local-only bookmark schema remains unchanged.
+- Keep the search input separate from re-rendered cards to preserve keyboard focus as results change. Retain the existing eight-at-a-time paging for the unfiltered list.
+- Pure Node regression test covers matching title/group, diacritics, never searching stream URLs or unsaved channels. Real Electron CDP QA searches the twelfth item in a synthetic local 12-channel bookmark list, checks no autoplay / no storage changes, and takes screenshot `positron-p51101-watch-later-search-552-real.png`.
+- Candidate until all tests, screenshot review and immutable release assets have actually been verified.
+
 ## P5.1.100 — WatchFlow header and mode tabs remain visible in long saved lists / Electron v4.23.184
 
 - Real P5.1.98 Electron screenshots of 12 saved bookmarks demonstrate that the close icon and mode tabs disappear after scrolling to the end, even with accessible bookmark pagination.

@@ -84,3 +84,27 @@ test('P5.1.100 WatchFlow keeps close and mode navigation visible after saved-lis
  assert.ok(qa.includes('stickyWatchLaterClose,true'));
  assert.ok(qa.includes('positron-p51100-watch-later-sticky-552-real.png'));
 });
+
+test('P5.1.101 search resolves only saved channels by accent-free title and group',()=>{
+ const channels=[
+  {...C('qa','a','Truyền hình Đà Nẵng HD'),group:'Tin tức'},
+  {...C('qa','b','VTV2'),group:'Khoa học'},
+  {...C('qa','c','Không lưu'),group:'Giải trí'}
+ ];
+ let rows=[];for(const ch of channels.slice(0,2))rows=later.toggle(rows,ch).rows;
+ assert.equal(later.search(rows,channels,'da nang').length,1);
+ assert.equal(later.search(rows,channels,'da nang')[0].id,'a');
+ assert.equal(later.search(rows,channels,'khoa hoc')[0].id,'b');
+ assert.equal(later.search(rows,channels,'khong luu').length,0);
+ assert.equal(later.search(rows,channels,'example.invalid').length,0);
+ assert.equal(later.search(rows,channels,'').length,2);
+});
+test('P5.1.101 local saved search is accessible and covered by native Electron QA',()=>{
+ const ui=fs.readFileSync('renderer/positron-watchflow-next.js','utf8');
+ const css=fs.readFileSync('renderer/positron-watchflow-next.css','utf8');
+ const qa=fs.readFileSync('scripts/positron-20-extension.cjs','utf8');
+ assert.ok(ui.includes("savedInput.id='poWatchLaterSearch'"));
+ assert.ok(ui.includes('watchLater?.search(saved,collection,savedQuery,watchLater.LIMIT)'));
+ assert.ok(css.includes('#poWatchFlowPanel #poWatchLaterSearch'));
+ assert.ok(qa.includes('positron-p51101-watch-later-search-552-real.png'));
+});

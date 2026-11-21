@@ -166,3 +166,18 @@ html[data-positron="true"].po-horizon body #poWatchFlowPanel.po-watchflow-panel 
  margin:0 -18px 12px!important;padding:7px 18px 9px!important;
  background:#132730!important;border-bottom:1px solid rgba(142,200,189,.19)!important;
 }
+
+/* P5.1.101: searchable local Watch Later entries, no network or playlist writes. */
+#poWatchFlowPanel #poWatchLaterSearchRow[hidden]{display:none!important}
+#poWatchFlowPanel .po-watchlater-search{
+ margin:0 0 12px;display:flex;align-items:center;gap:8px;min-height:39px;
+}
+#poWatchFlowPanel #poWatchLaterSearch{
+ display:block;width:100%;min-width:0;min-height:39px;
+ border:1px solid #54737b;border-radius:10px;background:#192f37;
+ color:#effdf8;padding:9px 12px;font:inherit;font-size:12px;
+}
+#poWatchFlowPanel #poWatchLaterSearch::placeholder{color:#a3b9c2}
+#poWatchFlowPanel #poWatchLaterSearch:focus-visible{
+ outline:2px solid #91e8d6;outline-offset:1px;border-color:#91e8d6
+}

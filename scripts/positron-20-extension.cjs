@@ -1355,6 +1355,36 @@ async function runTwenty(page){
  });
  assert.equal(stickyWatchLaterClose,true,'Watch Later close/reopen must work after deep scroll');
 
+ // P5.1.101: find the twelfth local bookmark without scrolling 80 entries.
+ // Uses only native synthetic metadata; this cannot start video or fetch a URL.
+ const savedSearchQA=await page.evaluate(()=>{
+  const core=window.PositronWatchLaterCore,all=window.IPTVState.getChannels();
+  const saved=core.visible(JSON.parse(localStorage.getItem(core.STORAGE_KEY)||'[]'),all,core.LIMIT);
+  const input=document.getElementById('poWatchLaterSearch');
+  const panel=document.getElementById('poWatchFlowPanel');
+  if(saved.length!==12||!input)return {ready:false};
+  const beforeStorage=localStorage.getItem(core.STORAGE_KEY);
+  const target=saved[11];
+  input.focus();input.value=target.name;
+  input.dispatchEvent(new Event('input',{bubbles:true}));
+  const cards=[...panel.querySelectorAll('#poFlowPlusResults .po-flowplus-card')];
+  const result={ready:true,visible:getComputedStyle(input).display!=='none'&&input.getBoundingClientRect().height>=35,
+   titleMatched:cards.length===1&&cards[0]?.querySelector('.po-flowplus-card-info strong')?.textContent===target.name,
+   countMatched:panel.querySelector('.po-flowplus-head strong')?.textContent.includes('1 kết quả'),
+   focusHeld:document.activeElement===input,
+   storeUnchanged:localStorage.getItem(core.STORAGE_KEY)===beforeStorage,
+   noAutoplay:window.IPTVState.getCurrent()===null};
+  return result;
+ });
+ for(const key of ['ready','visible','titleMatched','countMatched','focusHeld','storeUnchanged','noAutoplay'])
+  assert.equal(savedSearchQA[key],true,'Watch Later local search native Electron QA failed: '+key);
+ await page.screenshot({path:path.join(out,'positron-p51101-watch-later-search-552-real.png'),animations:'disabled'});
+ await page.evaluate(()=>{
+  const input=document.getElementById('poWatchLaterSearch');
+  input.value='';input.dispatchEvent(new Event('input',{bubbles:true}));
+ });
+
+
  await page.evaluate(()=>{
   const core=window.PositronWatchLaterCore;localStorage.setItem(core.STORAGE_KEY,'[]');
   window.dispatchEvent(new StorageEvent('storage',{key:core.STORAGE_KEY,newValue:'[]'}));

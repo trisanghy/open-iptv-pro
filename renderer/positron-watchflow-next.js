@@ -49,12 +49,24 @@
  const status=d.createElement('small');status.className='po-flowplus-privacy';
  status.textContent='Chỉ dùng dữ liệu kênh trên thiết bị · Không tự phát · Không tìm nguồn bên ngoài';
  content.after(status);status.hidden=true;
+ // P5.1.101: persistent local search field, independent of the rendered card list.
+ const savedSearch=d.createElement('div');
+ savedSearch.id='poWatchLaterSearchRow';savedSearch.className='po-watchlater-search';savedSearch.hidden=true;
+ const savedInput=d.createElement('input');
+ savedInput.id='poWatchLaterSearch';savedInput.type='search';savedInput.autocomplete='off';
+ savedInput.placeholder='Tìm kênh đã lưu...';
+ savedInput.setAttribute('aria-label','Tìm theo tên hoặc nhóm trong các kênh Xem sau');
+ savedSearch.append(savedInput);content.before(savedSearch);
  // P5.1.94: a bounded desktop panel hides later Mix recommendations.
  // Offer a non-interactive scroll cue while the last card is below view.
  const scrollCue=d.createElement('div');scrollCue.id='poFlowPlusScrollHint';
  scrollCue.textContent='↓ Cuộn xuống để xem thêm kênh';
  scrollCue.hidden=true;scrollCue.setAttribute('aria-hidden','true');
- let view='discover',lastMix=[],zapSeen=[],watchLaterShown=8;
+ let view='discover',lastMix=[],zapSeen=[],watchLaterShown=8,savedQuery='';
+ savedInput.addEventListener('input',()=>{
+  savedQuery=savedInput.value;
+  if(view==='continue'){render();panel.scrollTop=0;}
+ });
  const syncScrollCue=()=>{
   const last=content.querySelector('.po-flowplus-card:last-child');
   const modalRect=panel.getBoundingClientRect();
@@ -163,11 +175,15 @@
   if(view==='continue'){
    // P5.1.97: local storage holds 80 bookmarks; the old 8-only UI hid the rest.
    const waitingAll=watchLater?.visible(saved,collection,watchLater.LIMIT)||[];
-   const waiting=waitingAll.slice(0,watchLaterShown);
+   const filtering=!!savedQuery.trim();
+   const found=filtering?(watchLater?.search(saved,collection,savedQuery,watchLater.LIMIT)||[]):waitingAll;
+   const waiting=filtering?found:found.slice(0,watchLaterShown);
    if(waitingAll.length){
-    heading('Để xem sau · '+waitingAll.length+' kênh','Các kênh bạn chủ động lưu trên thiết bị này.');
-    cards(waiting,'Chọn Xem khi muốn phát, hoặc Bỏ lưu để xóa đánh dấu.');
-    if(waitingAll.length>waiting.length){
+    heading('Để xem sau · '+waitingAll.length+' kênh'+(filtering?' · '+found.length+' kết quả':''),
+     'Chỉ tìm trong các kênh bạn đã lưu trên thiết bị.');
+    if(!found.length)empty('Không tìm thấy kênh đã lưu phù hợp. Hãy thử tên hoặc nhóm khác.');
+    else cards(waiting,'Chọn Xem khi muốn phát, hoặc Bỏ lưu để xóa đánh dấu.');
+    if(!filtering&&waitingAll.length>waiting.length){
      const remaining=waitingAll.length-waiting.length;
      const more=d.createElement('button');
      more.id='poWatchLaterMore';more.type='button';more.className='po-flowplus-more';
@@ -208,6 +224,8 @@
   for(const [key,b] of Object.entries(buttons))b.setAttribute('aria-pressed',String(key===next));
   for(const el of standard)el.classList.toggle('po-flowplus-hidden',next!=='discover');
   content.hidden=next==='discover';status.hidden=next==='discover';
+  savedSearch.hidden=next!=='continue';
+  if(next!=='continue'){savedQuery='';savedInput.value='';}
   if(next!=='discover')render();
   else scrollCue.hidden=true;
  };
