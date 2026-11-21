@@ -72,6 +72,40 @@ def sections():
     return out
 
 
+def changelog_titles():
+    """Prefer the actual source changelog over a possibly stale Release title."""
+    source = (ROOT / "POSITRON_P5_CHANGELOG.md").read_text(encoding="utf-8")
+    found = {}
+    for m in re.finditer(r"(?m)^## P5\.1\.(\d+)([^\n]*)$", source):
+        n = int(m.group(1))
+        raw = m.group(2).strip()
+        ver = re.search(r"\bv(4\.23\.\d+)", raw, re.I)
+        name = re.sub(r"^\s*[—–:\-]\s*", "", raw)
+        name = re.sub(r"\s*/\s*(?:Electron\s*)?v4\.23\.\d+.*$", "", name, flags=re.I)
+        name = name.strip(" —–-:/")
+        item = {"title": name[:160], "appVersion": ver.group(1) if ver else ""}
+        if n not in found or (not found[n]["appVersion"] and item["appVersion"]):
+            found[n] = item
+    return found
+
+
+def include_source_versions(rows, descriptions, titles):
+    """Show real numbered source versions without inventing a successful Release."""
+    seen = {r["number"] for r in rows}
+    for n, meta in titles.items():
+        if n in seen:
+            continue
+        title = meta["title"] or "Thay đổi được ghi nhận trong mã nguồn"
+        rows.append({"number": n, "version": "P5.1." + str(n),
+                     "appVersion": meta["appVersion"] or "Chưa xác minh",
+                     "title": title, "description": descriptions.get(n) or title,
+                     "kind": feature_type(n, title, descriptions.get(n, "")),
+                     "status": "candidate", "published": "", "tag": "", "commit": "",
+                     "url": "https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md",
+                     "assets": [], "image": None})
+    return rows
+
+
 def summary_name(release):
     value = str(release.get("name") or "").strip()
     value = re.sub(r"^Open IPTV Pro\s+Positron\s*", "", value, flags=re.I)
@@ -89,7 +123,7 @@ def feature_type(n: int, title: str, detail: str):
     return "fix"
 
 
-def records(releases, descriptions):
+def records(releases, descriptions, titles):
     out = []
     for item in releases:
         matched = TAG.match(str(item.get("tag_name") or ""))
@@ -99,7 +133,7 @@ def records(releases, descriptions):
         n = int(n)
         assets = [{"name": a.get("name", ""), "url": a.get("browser_download_url", "")}
                   for a in item.get("assets", []) if a.get("name") and a.get("browser_download_url")]
-        title = summary_name(item)
+        title = titles.get(n, {}).get('title') or summary_name(item)
         description = descriptions.get(n) or str(item.get("body") or "").replace("\r", "").strip()[:600]
         out.append({"number": n, "version": "P5.1." + str(n),
                     "appVersion": version, "title": title, "description": description,
@@ -227,7 +261,7 @@ def write_github_index(rows):
     for row in rows:
         title = html.escape(str(row["title"]).replace("\n", " "), quote=False)
         version = html.escape(row["version"])
-        status = "ĐANG PHÁT TRIỂN" if row["status"] == "candidate" else "ĐÃ PHÁT HÀNH"
+        status = "CHƯA CÓ RELEASE" if row["status"] == "candidate" else "ĐÃ PHÁT HÀNH"
         kind = "TÍNH NĂNG" if row["kind"] == "feature" else "CẢI TIẾN / SỬA LỖI"
         lines.extend([
             "<details>",
@@ -273,7 +307,9 @@ def main():
     OUT.mkdir(parents=True, exist_ok=True)
     shutil.copyfile(ROOT / "docs" / "positron-features" / "index.html", OUT / "index.html")
     descriptions = sections()
-    rows = add_candidate(records(fetch_releases(), descriptions), descriptions)
+    titles = changelog_titles()
+    rows = add_candidate(records(fetch_releases(), descriptions, titles), descriptions)
+    rows = include_source_versions(rows, descriptions, titles)
     attach_real_images(rows)
     rows.sort(key=lambda row: row["number"], reverse=True)
     (OUT / "catalog.json").write_text(json.dumps({
