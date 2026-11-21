@@ -199,6 +199,7 @@
   if(ch.logo){const img=document.createElement('img');img.src=ch.logo;img.alt='';img.loading='lazy';img.referrerPolicy='no-referrer';img.addEventListener('error',()=>{img.remove();face.textContent='TV';},{once:true});face.append(img);}else face.textContent='TV';
   const name=document.createElement('span');name.className='web-chooser-name';name.textContent=ch.name||'Không tên';
   card.append(face,name);
+  let nextReminderProgramme=null;
   if(!compact&&(onAirOnly.checked||soonOnly.checked||sort.value==='upcoming-first')){
    let guide=null;
    try{guide=window.IPTVExtras?.getGuide?.()||null;}catch{}
@@ -225,6 +226,7 @@
    const upcoming=soonOnly.checked?startingSoon(guide,ch,Date.now())
     :window.PositronOnAirCore?.upcoming(guide,ch,Date.now(),window.IPTVGuide);
    if(upcoming){
+    nextReminderProgramme=upcoming;
     const next=document.createElement('small');
     next.className='web-chooser-next-programme';
     const time=new Date(upcoming.start).toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit'});
@@ -296,6 +298,27 @@
    state.toast?.((added?'Đã thêm yêu thích: ':'Đã bỏ yêu thích: ')+(ch.name||'Kênh'));
   });
   frame.append(star);
+  // P5.1.147: explicit one-click XMLTV reminder on an existing channel tile.
+  // This is a separate native button, never a nested channel Play action.
+  if(nextReminderProgramme?.id && nextReminderProgramme.start>Date.now()){
+   const reminder=document.createElement('button');reminder.type='button';
+   reminder.className='web-chooser-remind';reminder.dataset.channelId=String(ch.id);
+   reminder.setAttribute('aria-label','Nhắc trước 10 phút: '+nextReminderProgramme.title);
+   reminder.title='Nhắc trước 10 phút cho '+nextReminderProgramme.title;
+   reminder.innerHTML='<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 21h4"/></svg>';
+   reminder.addEventListener('click',()=>{
+    if(!state.getChannels?.().some(c=>String(c.id)===String(ch.id)))return;
+    let guide=null;
+    try{guide=window.IPTVExtras?.getGuide?.()||null;}catch{}
+    const next=soonOnly.checked?startingSoon(guide,ch,Date.now())
+     :window.PositronOnAirCore?.upcoming(guide,ch,Date.now(),window.IPTVGuide);
+    if(!next?.id||!(next.start>Date.now()))return state.toast?.('Lịch EPG đã thay đổi, hãy cập nhật và thử lại.','warn');
+    const remind=window.IPTVProAdvanced?.remind;
+    if(typeof remind!=='function')return state.toast?.('Không thể mở chức năng nhắc lịch.','warn');
+    remind({id:next.id,title:next.title,start:next.start},ch);
+   });
+   frame.append(reminder);
+  }
   return frame;
  }
  function empty(target,message){const p=document.createElement('p');p.className='web-chooser-empty';p.textContent=message;target.append(p);}

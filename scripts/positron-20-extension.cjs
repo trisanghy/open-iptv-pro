@@ -3283,9 +3283,72 @@ async function runTwenty(page){
  for(const [key,value] of Object.entries(scheduleProgressQA))
   assert.equal(value,true,'P5.1.146 XMLTV schedule progress '+key+': '+JSON.stringify(scheduleProgressQA));
 
+
+ // P5.1.147: explicit future XMLTV reminder on a native channel tile.
+ await page.click('[data-chooser-layout="grid"]');
+ await page.selectOption('#webChooserSort','asc');
+ await page.fill('#webChooserSearch','QA Channel 001');
+ await page.waitForFunction(()=>document.querySelector('#webChooserGrid .web-chooser-name')?.textContent==='QA Channel 001'
+  &&document.querySelectorAll('#webChooserGrid button.web-chooser-card').length===1,{timeout:5000});
+ const reminderFixture=await page.evaluate(()=>{
+  const ch=window.IPTVState.getChannels().find(c=>c.name==='QA Channel 001');
+  if(!ch)throw Error('P5.1.147 missing native imported QA Channel 001');
+  window.__positron147Guide=window.IPTVExtras.getGuide;
+  const now=Date.now(),id='qa147-reminder';
+  const guide={names:{[window.IPTVGuide.tidy(ch.name)]:id},
+   aliasesById:{[id]:[ch.name]},offsetMinutes:0,
+   programmes:[{id,start:now+35*60000,end:now+65*60000,title:'Phim nhắc lịch QA'}]};
+  window.IPTVExtras.getGuide=()=>guide;
+  window.__positron147PreviousAdvanced=localStorage.getItem('open-iptv-pro-advanced-v1');
+  const original=JSON.parse(window.__positron147PreviousAdvanced||'{}');
+  document.getElementById('webChooserAdvanced').open=true;
+  const toggle=document.getElementById('webChooserSoonOnly');
+  toggle.checked=true;toggle.dispatchEvent(new Event('change',{bubbles:true}));
+  return {sourceCount:window.IPTVState.getStore().channels.length,
+   reminderCount:Array.isArray(original.reminders)?original.reminders.length:0};
+ });
+ await page.waitForFunction(()=>document.querySelector('#webChooserGrid .web-chooser-remind')?.getAttribute('aria-label')?.includes('Phim nhắc lịch QA'),{timeout:5000});
+ await page.screenshot({path:path.join(out,'positron-p51147-epg-reminder-before-450-real.png'),animations:'disabled'});
+ await page.click('#webChooserGrid .web-chooser-remind');
+ await page.waitForFunction(()=>{
+  const rows=JSON.parse(localStorage.getItem('open-iptv-pro-advanced-v1')||'{}').reminders||[];
+  return rows.some(r=>r.id.startsWith('qa147-reminder|')&&r.title==='Phim nhắc lịch QA');
+ },{timeout:5000});
+ const nativeReminderQA=await page.evaluate(original=>{
+  const reminders=JSON.parse(localStorage.getItem('open-iptv-pro-advanced-v1')||'{}').reminders||[];
+  const native=reminders.filter(r=>r.id.startsWith('qa147-reminder|'));
+  return {
+   addedOnce:reminders.length===original.reminderCount+1&&native.length===1,
+   correctTitle:native[0]?.title==='Phim nhắc lịch QA',
+   correctChannel:native[0]?.channel==='QA Channel 001',
+   correctFutureStart:native[0]?.start>Date.now(),
+   buttonIndependent:document.querySelector('#webChooserGrid .web-chooser-remind')?.parentElement?.classList.contains('web-chooser-card-wrap')===true,
+   noAutoplay:window.IPTVState.getCurrent()===null,
+   sourcesUnchanged:window.IPTVState.getStore().channels.length===original.sourceCount,
+   noHorizontalOverflow:document.documentElement.scrollWidth<=innerWidth+1
+  };
+ },reminderFixture);
+ await page.screenshot({path:path.join(out,'positron-p51147-epg-reminder-after-450-real.png'),animations:'disabled'});
+ await page.click('#webChooserGrid .web-chooser-remind');
+ Object.assign(nativeReminderQA,await page.evaluate(original=>({
+  noDuplicateReminder:(JSON.parse(localStorage.getItem('open-iptv-pro-advanced-v1')||'{}').reminders||[]).length===original.reminderCount+1,
+  duplicateNeverPlays:window.IPTVState.getCurrent()===null
+ }),reminderFixture));
+ await page.evaluate(()=>{
+  window.IPTVExtras.getGuide=window.__positron147Guide;
+  const toggle=document.getElementById('webChooserSoonOnly');
+  toggle.checked=false;toggle.dispatchEvent(new Event('change',{bubbles:true}));
+  const previous=window.__positron147PreviousAdvanced;
+  if(previous===null)localStorage.removeItem('open-iptv-pro-advanced-v1');
+  else localStorage.setItem('open-iptv-pro-advanced-v1',previous);
+ });
+ await page.fill('#webChooserSearch','');
+ for(const [key,value] of Object.entries(nativeReminderQA))
+  assert.equal(value,true,'P5.1.147 native XMLTV reminder '+key+': '+JSON.stringify(nativeReminderQA));
+
  await page.setViewportSize({width:1360,height:820});
   const report={type:'Positron P5 twenty distinct desktop screenshot cases',realElectron:true,syntheticChannels:false,
-  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA,chooserQa,toastLayoutQA,nativeToastQA,compactIdleQA,channelChipRailQA,advancedFilterQA,readableCardsQA,keyboardTabQA,favoriteEmptyQA,duplicateEmptyQA,categoryFilterQA,categoryFixtureQA,compactSingleQA,directFavoriteQA,favoriteCountQA,compactToastStackQA,toastDismissQA,toastFocusReturnQA,toastDockQA,wheelQA,pinnedAllQA,pinnedMaskQA,categoryKeyQA,dropdownChipQA,pinnedRightMaskQA,pinnedBorderMaskQA,asciiDSearchQA,emptySearchActionQA,readableCardTitleQA,favoriteSvgQA,keyboardFavoriteQA,multiTermSearchQA,keyboardSearchQA,arrowNavigationQA,pageNavigationQA,favoriteSortQA,onAirFilterQA,programmeSearchQA,upcomingProgrammeQA,soonProgrammeQA,earliestEpgSortQA,timeWindowQA,scheduleProgressQA};
+  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA,chooserQa,toastLayoutQA,nativeToastQA,compactIdleQA,channelChipRailQA,advancedFilterQA,readableCardsQA,keyboardTabQA,favoriteEmptyQA,duplicateEmptyQA,categoryFilterQA,categoryFixtureQA,compactSingleQA,directFavoriteQA,favoriteCountQA,compactToastStackQA,toastDismissQA,toastFocusReturnQA,toastDockQA,wheelQA,pinnedAllQA,pinnedMaskQA,categoryKeyQA,dropdownChipQA,pinnedRightMaskQA,pinnedBorderMaskQA,asciiDSearchQA,emptySearchActionQA,readableCardTitleQA,favoriteSvgQA,keyboardFavoriteQA,multiTermSearchQA,keyboardSearchQA,arrowNavigationQA,pageNavigationQA,favoriteSortQA,onAirFilterQA,programmeSearchQA,upcomingProgrammeQA,soonProgrammeQA,earliestEpgSortQA,timeWindowQA,scheduleProgressQA,nativeReminderQA};
  fs.writeFileSync(path.resolve('positron-evidence','audit-p5-20-rounds.json'),JSON.stringify(report,null,2));
  return report;
 }

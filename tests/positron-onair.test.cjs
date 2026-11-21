@@ -65,3 +65,10 @@ test('P5.1.146 tiến độ lịch phát XMLTV và dữ liệu giờ phát khôn
  assert.equal(core.scheduleProgress({start:NaN,end:now+1},now),null);
  assert.equal(core.scheduleProgress({start:now,end:now},now),null);
 });
+
+test('P5.1.147 upcoming XMLTV includes programme id required by reminder',()=>{
+ const next=core.upcoming({programmes:[{id:'qa147-reminder',title:'Phim QA',start:now+1000,end:now+5000}]},
+ channel,now,{current:(guide)=>({next:guide.programmes[0]})});
+ assert.equal(next?.id,'qa147-reminder');
+ assert.equal(next?.title,'Phim QA');
+});

@@ -18,7 +18,7 @@
    if(!next||!Number.isFinite(next.start)||!Number.isFinite(next.end)||next.start<=clock||next.end<=next.start
     ||next.start-clock>12*60*60*1000)return null;
    const title=typeof next.title==='string'?next.title.trim().replace(/\s+/g,' ').slice(0,140):'';
-   return title?{title,start:next.start}:null;
+   return title?{id:String(next.id||''),title,start:next.start}:null;
   }catch{return null;}
  }
  // P5.1.146: progress of scheduled XMLTV programme, never a streaming metric.

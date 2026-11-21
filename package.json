@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.230",
-  "description": "Positron P5.1.146: tiến độ và số phút còn lại của chương trình EPG",
+  "version": "4.23.231",
+  "description": "Positron P5.1.147: đặt nhắc trước 10 phút cho chương trình EPG sắp chiếu",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

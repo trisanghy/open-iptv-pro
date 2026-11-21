@@ -37,7 +37,7 @@ test('P5 assets are loaded after P4 without replacing it',()=>{
 test('P5 release is immutable and versioned separately from P4.1',()=>{
  const pkg=JSON.parse(read('package.json'));
  const flow=read('.github/workflows/positron-lab.yml');
- assert.equal(pkg.version,'4.23.230');
+ assert.equal(pkg.version,'4.23.231');
  const label=pkg.description.match(/Positron\s+(P\d+\.\d+\.\d+)/)?.[1];
  assert.ok(label,'product P-label must accompany SemVer');
  assert.ok(flow.includes('TAG=positron/v'+pkg.version+'-'+label.toLowerCase()),'release tag and app version must match');
@@ -1379,8 +1379,21 @@ test('P5.1.146 tiến độ chương trình hiện tại từ EPG cục bộ, kh
   "remaining.textContent='Theo lịch EPG: '+timeline.percent+'% · còn '+timeline.remainingMinutes+' phút'"])
    assert.ok(ui.includes(token),'Thiếu nhãn tiến độ: '+token);
  assert.ok(css.includes('.web-chooser-epg-progress'));
- for(const token of ['const scheduleProgressQA=','percentApproximatelyHalf:','showsRemainingMinutes:',
+ for(const token of ['scheduleProgressQA:','percentApproximatelyHalf:','showsRemainingMinutes:',
   'progressAfterProgramme:','noProgressWithoutOptIn:','noAutoplay:',
   'positron-p51146-epg-progress-before-450-real.png','positron-p51146-epg-progress-after-450-real.png'])
    assert.ok(qa.includes(token),'Thiếu ảnh kiểm thử Electron: '+token);
+});
+
+test('P5.1.147 chuông nhắc XMLTV trong bộ chọn kênh sử dụng dịch vụ nhắc lịch có thật',()=>{
+ const js=read('renderer/web-channel-chooser-v42371.js'),css=read('renderer/positron-horizon-v4.css');
+ const qa=read('scripts/positron-20-extension.cjs');
+ assert.ok(js.includes("reminder.className='web-chooser-remind'"));
+ assert.ok(js.includes("const remind=window.IPTVProAdvanced?.remind"));
+ assert.ok(js.includes("remind({id:next.id,title:next.title,start:next.start},ch)"));
+ assert.ok(css.includes('.web-chooser-card-wrap>.web-chooser-remind'));
+ for(const token of ['addedOnce:','correctChannel:','noDuplicateReminder:','noAutoplay:',
+  'positron-p51147-epg-reminder-before-450-real.png',
+  'positron-p51147-epg-reminder-after-450-real.png'])
+  assert.ok(qa.includes(token),'Thiếu Electron QA '+token);
 });

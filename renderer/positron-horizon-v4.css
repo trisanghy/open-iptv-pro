@@ -1203,3 +1203,7 @@ html[data-positron="true"].po-horizon #page-tv #webChooserGrid .web-chooser-favo
  }
  html[data-positron="true"].po-horizon #page-tv #webChooserGrid .web-chooser-card-wrap>button.web-chooser-card.po-epg-card:has(.web-chooser-epg-progress) .web-chooser-next-programme{grid-row:5!important}
 }
+
+/* P5.1.147: independent EPG reminder action, never nested in the play tile. */
+html[data-positron="true"].po-horizon #page-tv #webChooserGrid .web-chooser-card-wrap>.web-chooser-remind{position:absolute!important;right:8px!important;top:8px!important;z-index:3!important;width:34px!important;height:34px!important;border-radius:9px!important;border:1px solid var(--po-line,#30495a)!important;background:var(--po-raised,#203244)!important;color:var(--po-accent,#5ee4b3)!important;display:flex!important;align-items:center!important;justify-content:center!important;cursor:pointer!important}
+html[data-positron="true"].po-horizon #page-tv #webChooserGrid .web-chooser-remind:focus-visible{outline:2px solid var(--po-accent,#5ee4b3)!important;outline-offset:2px!important}

@@ -1,3 +1,13 @@
+## P5.1.147 — Nhắc trước 10 phút ngay trên kênh có chương trình sắp chiếu / Electron v4.23.231
+
+- Feature priority: NEW — Thêm nút chuông độc lập trên thẻ kênh có lịch XMLTV sắp chiếu, cho phép đặt nhắc trước 10 phút bằng hệ thống nhắc lịch thật đã có; không cần mở trang EPG và tuyệt đối không tự phát video.
+- User action: Trong Chọn kênh bật “Sắp chiếu” hoặc “Đang chiếu (EPG)”, tìm kênh có chương trình tiếp theo, nhấn nút chuông ở góc phải trên để lưu nhắc. Nhấn lần nữa nhận thông báo đã có nhắc, không tạo lịch trùng.
+- Electron screenshot: positron-p51147-epg-reminder-after-450-real.png
+- Ảnh trước: positron-p51147-epg-reminder-before-450-real.png.
+- Bằng chứng nguyên nhân: P5.1.146 có lịch và thanh tiến độ EPG nhưng người xem phải chuyển sang trang EPG để đặt lịch. Bản này kết nối thẻ kênh với hàm nhắc của mô-đun nâng cao, truyền chính xác EPG ID/time và giữ nguyên tương tác nút Xem và Yêu thích.
+- Kiểm thử: Node hồi quy và Electron thực 450px; thêm nhắc chương trình XMLTV +35 phút, xác minh localStorage lưu ID và tên kênh, không tạo bản sao khi bấm lại, giữ nguyên playlist, không tự phát, ảnh trước/sau và không tràn ngang.
+- Trạng thái: CANDIDATE — chưa tính vòng hoàn tất khi CI, ảnh thực và EXE/DMG chưa được xác minh.
+
 ## P5.1.146 — Thanh tiến độ và phút còn lại theo lịch XMLTV / Electron v4.23.230
 
 - Feature priority: NEW — Xem tiến độ ước tính của chương trình **theo lịch EPG**, gồm thanh phần trăm và số phút còn lại. Không mô tả là tiến độ phát video thực tế.
