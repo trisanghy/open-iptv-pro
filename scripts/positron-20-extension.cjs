@@ -111,6 +111,7 @@ async function runTwenty(page){
        text:n.selectedOptions?.[0]?.textContent?.trim()||'',label:n.getAttribute('aria-label')||''};
      })(),
 
+     epgGuidance:(()=>{const node=document.getElementById('epgSearchResults');if(!node)return null;const st=getComputedStyle(node);const rgb=(st.color.match(/\d+/g)||[]).map(Number).slice(0,3);return {text:node.textContent?.trim()||'',color:st.color,luma:rgb.length===3?Math.round(rgb[0]*.2126+rgb[1]*.7152+rgb[2]*.0722):0,fontSize:st.fontSize,opacity:st.opacity};})(),
      dvrSchedule:(()=>{const b=document.getElementById('dvrAdd');if(!b)return null;const style=getComputedStyle(b);return {disabled:b.disabled,guard:b.getAttribute('data-positron-no-channels')||'',description:b.getAttribute('aria-describedby')||'',background:style.backgroundColor,filter:style.filter,opacity:style.opacity,cursor:style.cursor,vector:!!b.querySelector('svg.positron-dvr-record-icon'),ariaHidden:b.querySelector('svg')?.getAttribute('aria-hidden')||'',label:b.textContent?.trim()||''};})(),
      dvrHeading:(()=>{
       const h=document.querySelector('#dvrPanel .dvr-heading h2');if(!h)return null;
@@ -372,6 +373,9 @@ async function runTwenty(page){
     assert.equal(destination,'page-sources','Favorites action must open Sources: '+name);
    }
    if(target==='epg'){
+    assert.ok(metrics.epgGuidance?.luma>=140,'EPG search guidance color too dim: '+name+' '+metrics.epgGuidance?.color);
+    assert.equal(metrics.epgGuidance?.fontSize,'13px','EPG search guidance too small: '+name);
+    assert.equal(metrics.epgGuidance?.opacity,'1','EPG guidance unexpectedly faded: '+name);
     if(metrics.sourceCount==='0'){
      assert.equal(metrics.dvrSchedule?.disabled,true,'no-channel DVR submit still clickable: '+name);
      assert.equal(metrics.dvrSchedule?.guard,'true','DVR submit missing guard: '+name);

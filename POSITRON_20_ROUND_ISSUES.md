@@ -79,3 +79,5 @@ Round 04 verified in actual Electron: DVR heading is monochrome SVG 20px with ar
 | 01/20 | P5.1.34 / 4.23.118 | P5.1.32 real Electron Aurora EPG 1360px (`positron-p5-16-real.png`, artifact 14689029565); P5.1.33 only changed TV favorite control | No-channel `Đặt lịch ghi` disabled but vivid teal/looks enabled | Scope neutral disabled CSS; retain native logic; Node test and actual Electron computed color/opacity/cursor screenshot audit; pending CI/after-image review |
 
 | 02/20 | P5.1.35 / 4.23.119 | P5.1.34 real Electron EPG Aurora 1360px `positron-p5-16-real.png`, artifact 14690910182 | Disabled DVR button is now neutral, but its leading record glyph still depends on OS emoji/font | Preserve native submit event; inject accessible currentColor SVG and assert real EPG 720/1360 screenshot + live DOM; CI/release pending |
+
+| 03/20 | P5.1.36 / 4.23.120 | P5.1.35 Electron EPG 1360 and 720px screenshot, artifact 14690880372 | `Nhập tên chương trình...` guidance dim almost invisible on dark surface; legacy result text style | Scoped current theme ink for #epgSearchResults; real screenshot DOM computed color/luma/font tests and Node regression, awaiting CI/release |

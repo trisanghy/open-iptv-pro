@@ -321,3 +321,14 @@ html[data-positron="true"] #page-epg #dvrAdd svg.positron-dvr-record-icon{
  fill:none;stroke:currentColor;stroke-width:1.8;pointer-events:none;
 }
 html[data-positron="true"] #page-epg #dvrAdd svg .record-dot{fill:currentColor;stroke:none}
+
+/* P5.1.36 — real P5.1.35 Electron EPG screenshots at 720/1360px
+   show initial program-search guidance nearly invisible on the dark page.
+   Legacy theme CSS can give this dynamic result area a dim foreground.
+   Scope readable ink to the result container, preserving native EPG data. */
+html[data-positron="true"] #page-epg #epgSearchResults{
+ color:var(--po-ink)!important;
+ font-size:13px!important;
+ opacity:1!important;
+ line-height:1.5!important;
+}

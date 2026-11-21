@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.119",
-  "description": "Positron P5.1.35: render EPG DVR record icon as native-compatible vector",
+  "version": "4.23.120",
+  "description": "Positron P5.1.36: restore legible EPG search help contrast",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",
