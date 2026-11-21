@@ -28,14 +28,18 @@
     const group=normalize(current.group||current.groupTitle||'');
     const kind=category(current);
     const pool=safe(channels).filter(c=>String(c.id)!==String(current.id));
-    return byEvidence(pool.filter(c=>{
+    // Evidence first, then exact source group when evidence is tied.
+    // A second general sort used to erase the group preference.
+    return pool.filter(c=>{
       const sameGroup=!!group&&normalize(c.group||c.groupTitle||'')===group;
       return sameGroup||(kind!=='other'&&category(c)===kind);
     }).sort((a,b)=>{
-      const sameA=group&&normalize(a.group||a.groupTitle||'')===group;
-      const sameB=group&&normalize(b.group||b.groupTitle||'')===group;
-      return Number(sameB)-Number(sameA);
-    })).slice(0,Math.max(1,Math.min(8,limit)));
+      const health=score(b)-score(a);
+      if(health)return health;
+      const sameA=!!group&&normalize(a.group||a.groupTitle||'')===group;
+      const sameB=!!group&&normalize(b.group||b.groupTitle||'')===group;
+      return Number(sameB)-Number(sameA)||String(a.name).localeCompare(String(b.name),'vi');
+    }).slice(0,Math.max(1,Math.min(8,limit)));
   }
   function dailyMix(channels,{limit=5,date=new Date().toISOString().slice(0,10),seen=[]}={}){
     const excluded=new Set((Array.isArray(seen)?seen:[]).map(String));

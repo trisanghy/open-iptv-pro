@@ -1069,6 +1069,25 @@ async function runTwenty(page){
  for(const key of ['mixSelected','resumeButton','similarButton','zapButton','notPlaying','navOneRow','navNoOverflow','ariaFull','navButtonVisible'])
   assert.equal(plusQA[key],true,'WatchFlow Plus QA failed: '+key+' overflowPx='+plusQA.navOverflowPx);
  await page.screenshot({path:path.join(out,'positron-watchflow-plus-mix-552-metadata-qa-real.png'),animations:'disabled'});
+ // P5.1.85: exercise the real Electron Similar panel with a temporary
+ // native metadata-only current channel; no stream is opened or stored.
+ const similarQA=await page.evaluate(()=>{
+  const native=window.IPTVState,basis=native.getChannels().find(c=>c.group)||native.getChannels()[0];
+  if(!basis)return {selected:false,count:0,notPlaying:false};
+  try{
+   window.IPTVState=Object.freeze({...native,getCurrent:()=>basis});
+   document.getElementById('poFlowPlussimilar').click();
+   const panel=document.getElementById('poWatchFlowPanel');
+   return {selected:!!panel.querySelector('#poFlowPlussimilar[aria-pressed="true"]'),
+    count:panel.querySelectorAll('#poFlowPlusResults .po-flowplus-card').length,
+    notPlaying:native.getCurrent()===null};
+  }finally{window.IPTVState=native;}
+ });
+ assert.equal(similarQA.selected,true,'Similar mode must react to selection');
+ assert.equal(similarQA.count,5,'Similar mode must show five native metadata matches');
+ assert.equal(similarQA.notPlaying,true,'Similar QA cannot trigger playback');
+ await page.screenshot({path:path.join(out,'positron-watchflow-plus-similar-552-metadata-qa-real.png'),animations:'disabled'});
+ await page.evaluate(()=>document.getElementById('poFlowPlusmix').click());
  await page.setViewportSize({width:450,height:820});
  const narrowFlow=await page.evaluate(()=>{const nav=document.querySelector('#poWatchFlowPanel .po-flowplus-nav');return {scrollable:nav.scrollWidth<=nav.clientWidth+1||getComputedStyle(nav).overflowX==='auto',oneRow:[...nav.querySelectorAll('button')].every(b=>Math.abs(b.getBoundingClientRect().top-nav.querySelector('button').getBoundingClientRect().top)<=1)};});
  assert.equal(narrowFlow.scrollable,true,'WatchFlow modes are inaccessible at mobile 450px');

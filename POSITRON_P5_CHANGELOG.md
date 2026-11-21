@@ -1,3 +1,10 @@
+## P5.1.85 — WatchFlow Plus Similar ranking / v4.23.169
+
+- Inspected the actual P5.1.84 Electron WatchFlow screenshots. The Similar code first sorted by exact source group but then resorted all matches by playback score and alphabetical name, erasing group ordering for equally proven streams.
+- Fixed evidence-first ordering with same-group as the next tie-breaker. Proven streams retain priority over unverified streams. Input playlists and watch history remain untouched.
+- Added unit regression for same-group order and non-mutation, plus metadata-only Electron Similar screenshot assertion/capture. Never starts IPTV playback.
+- This is one new patch cycle, not an assertion of 20 completed rounds; inspect CI and image before marking it complete.
+
 ## P5.1.80 — WatchFlow Plus / v4.23.164
 
 - **Smart Zap**: một nút chuyển sang kênh khác theo tình trạng nguồn, bỏ kênh đã chết, tránh kênh đang phát và kênh vừa chuyển; chỉ phát sau thao tác người dùng.

@@ -64,3 +64,11 @@ test('P5.1.81 WatchFlow Plus presents all modes in one row with full accessible 
 });
 
 test('P5.1.81 review repair uses five proportional tracks without hiding native actions',()=>{const css=fs.readFileSync('renderer/positron-watchflow-next.css','utf8'),qa=fs.readFileSync('scripts/positron-20-extension.cjs','utf8');assert.ok(css.includes('grid-template-columns:repeat(5,minmax(0,1fr))'));assert.ok(qa.includes('plusQA.navOverflowPx'));assert.ok(qa.includes('navButtonVisible'));});
+
+test('P5.1.85 Similar recommends equal-evidence same-group channels before alphabetically earlier outside-group channels',()=>{
+ const basis=C('base','VTV1 News','Tin tức','alive');
+ const input=[basis,C('a','A Other News','Tin nhanh','uncertain'),C('z','Z Same News','Tin tức','uncertain'),C('b','B Other News','Tin nhanh','alive')];
+ const snapshot=JSON.stringify(input);
+ assert.deepEqual(p.similar(input,basis,{limit:5}).map(c=>c.id),['b','z','a']);
+ assert.equal(JSON.stringify(input),snapshot,'Similarity sorting must never mutate playlist data');
+});

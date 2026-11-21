@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.168",
-  "description": "Positron P5.1.84: actionable native IPTV sources shortcut in empty channel sidebar",
+  "version": "4.23.169",
+  "description": "Positron P5.1.85: preserve same-group suggestions when playback evidence ties",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",
