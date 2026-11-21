@@ -44,7 +44,7 @@ jobs:
         run: |
           set -Eeuo pipefail
           for p in src/update-manager.cjs src/update-version-catalog.cjs src/main.cjs src/preload.cjs renderer/features.js renderer/i18n.js renderer/i18n-full-locale-pack.js renderer/i18n-dynamic-locales.js renderer/i18n-multilingual-packs.js renderer/i18n-english-coverage.js; do node --check "$p"; done
-          test "$(node -p "require('./package.json').version")" = '4.23.75'
+          node -e "const fs=require('fs'),v=require('./package.json').version,h=fs.readFileSync('renderer/index.html','utf8'); if(!h.includes('<title>Open IPTV Pro '+v+'</title>'))process.exit(1);"
           bash -n build-mac-electron.sh
           bash -n build-mac-electron-public.sh
       - name: Version picker and toolbar tests
