@@ -126,6 +126,14 @@
   if(label)label.textContent='Tìm kênh / trang';
   searchButton.setAttribute('aria-label','Tìm kiếm kênh, trang và công cụ');
  }
+ // P5.1.13 round 06: keep full native FFmpeg readiness/status accessible.
+ // The original sidebar text updates during runtime; never cache or replace it.
+ const statusLabel=byId('miniStatus');
+ if(statusLabel){
+  const syncStatusTitle=()=>{const value=statusLabel.textContent||'';if(statusLabel.title!==value)statusLabel.title=value;};
+  new MutationObserver(syncStatusTitle).observe(statusLabel,{childList:true,subtree:true,characterData:true});
+  syncStatusTitle();
+ }
  window.OpenIPTVPositronTwenty=Object.freeze({
   setStage,getStage:()=>stage,getFeedback:()=>previous
  });

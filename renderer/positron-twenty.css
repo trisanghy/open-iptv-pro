@@ -139,3 +139,17 @@ html[data-positron="true"] #positronBar #positronOpen>span:first-child svg{
  display:block;width:18px;height:18px;fill:none;stroke:currentColor;
  stroke-width:2;stroke-linecap:round;stroke-linejoin:round;pointer-events:none;
 }
+
+/* P5.1.13 / round 06: the real 1360px Settings image cuts important
+   native FFmpeg readiness details after "FFmpeg tích hợp: đ...". Give the
+   status its second line and preserve original dynamic state. */
+@media(min-width:901px){
+ html[data-positron="true"].p50-08 #appSidebar .sidebar-bottom{
+  min-height:54px!important;align-items:center!important;
+ }
+ html[data-positron="true"].p50-08 #appSidebar .sidebar-bottom #miniStatus{
+  white-space:normal!important;text-overflow:clip!important;
+  overflow:visible!important;overflow-wrap:anywhere!important;
+  max-height:none!important;line-height:1.25!important;
+ }
+}

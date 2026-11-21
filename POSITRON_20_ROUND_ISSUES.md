@@ -18,3 +18,5 @@ First P5.1.8 test run https://github.com/trisanghy/open-iptv-pro/actions/runs/44
 | 04/20 | P5.1.11 / 4.23.95 | P5.1.10 `positron-p5-09-real.png` TV at 450px | Next EPG title is visibly cut with `...`, from inherited nowrap/ellipsis | Mobile text wraps; computed-style + geometry checks in real Electron, screenshot review | CI/release pending |
 
 | 05/20 | P5.1.12 / 4.23.96 | P5.1.11 real `positron-p5-18-real.png` Settings 1360px + TV 450px | Search command label ellipsized and icon glyph unclear | Concise label, real SVG, full ARIA and click regression in Electron | CI/after-image review pending |
+
+| 06/20 | P5.1.13 / 4.23.97 | P5.1.12 `positron-p5-18-real.png` Settings 1360px | Sidebar status clips the FFmpeg readiness message after `đ...` | Scoped multiline status + tooltip; real screenshot and DOM height test | Screenshot/CI/release pending |

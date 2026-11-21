@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.96",
-  "description": "Positron P5.1.12: readable search icon and compact label",
+  "version": "4.23.97",
+  "description": "Positron P5.1.13: full readable native FFmpeg sidebar status",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",
