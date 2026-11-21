@@ -2694,9 +2694,58 @@ async function runTwenty(page){
   assert.equal(value,true,'P5.1.136 Electron keyboard '+key+': '+JSON.stringify(keyboardSearchQA));
  await page.fill('#webChooserSearch','');
 
+
+ // P5.1.137: only focus moves between native channel cards. Test grid and list.
+ await page.fill('#webChooserSearch','QA Channel');
+ await page.waitForFunction(()=>document.querySelectorAll('#webChooserGrid button.web-chooser-card').length===18,{timeout:4000});
+ await page.evaluate(()=>document.querySelector('#webChooserGrid button.web-chooser-card').focus({preventScroll:true}));
+ await page.screenshot({path:path.join(out,'positron-p51137-arrow-navigation-before-450-real.png'),animations:'disabled'});
+ await page.keyboard.press('ArrowRight');
+ const arrowNavigationQA=await page.evaluate(()=>{
+  const cards=[...document.querySelectorAll('#webChooserGrid button.web-chooser-card')];
+  return {
+   gridRightSelectsSecond:document.activeElement===cards[1],
+   firstName:cards[0]?.querySelector('.web-chooser-name')?.textContent==='QA Channel 001',
+   secondName:cards[1]?.querySelector('.web-chooser-name')?.textContent==='QA Channel 002',
+   noAutoplay:window.IPTVState.getCurrent()===null,
+   noHorizontalOverflow:document.documentElement.scrollWidth<=innerWidth+1
+  };
+ });
+ await page.screenshot({path:path.join(out,'positron-p51137-arrow-navigation-after-450-real.png'),animations:'disabled'});
+ await page.keyboard.press('ArrowDown');
+ Object.assign(arrowNavigationQA,await page.evaluate(()=>({
+  downKeepsColumn:document.activeElement===[...document.querySelectorAll('#webChooserGrid button.web-chooser-card')][3]
+ })));
+ await page.keyboard.press('ArrowLeft');
+ Object.assign(arrowNavigationQA,await page.evaluate(()=>({
+  leftChangesColumn:document.activeElement===[...document.querySelectorAll('#webChooserGrid button.web-chooser-card')][2]
+ })));
+ await page.keyboard.press('Home');
+ Object.assign(arrowNavigationQA,await page.evaluate(()=>({
+  homeSelectsFirst:document.activeElement===document.querySelector('#webChooserGrid button.web-chooser-card')
+ })));
+ await page.keyboard.press('End');
+ Object.assign(arrowNavigationQA,await page.evaluate(()=>{
+  const cards=[...document.querySelectorAll('#webChooserGrid button.web-chooser-card')];
+  return {endSelectsLast:document.activeElement===cards[cards.length-1],
+   stillNoPlayback:window.IPTVState.getCurrent()===null};
+ }));
+ await page.click('[data-chooser-layout="list"]');
+ await page.evaluate(()=>document.querySelector('#webChooserGrid button.web-chooser-card').focus({preventScroll:true}));
+ await page.keyboard.press('ArrowDown');
+ Object.assign(arrowNavigationQA,await page.evaluate(()=>{
+  const cards=[...document.querySelectorAll('#webChooserGrid button.web-chooser-card')];
+  return {listDownSelectsNext:document.activeElement===cards[1],
+   listRemainsAccessible:cards.every(c=>c.tagName==='BUTTON')};
+ }));
+ for(const [key,value] of Object.entries(arrowNavigationQA))
+  assert.equal(value,true,'P5.1.137 Electron tile arrow navigation '+key+': '+JSON.stringify(arrowNavigationQA));
+ await page.click('[data-chooser-layout="grid"]');
+ await page.fill('#webChooserSearch','');
+
  await page.setViewportSize({width:1360,height:820});
   const report={type:'Positron P5 twenty distinct desktop screenshot cases',realElectron:true,syntheticChannels:false,
-  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA,chooserQa,toastLayoutQA,nativeToastQA,compactIdleQA,channelChipRailQA,advancedFilterQA,readableCardsQA,keyboardTabQA,favoriteEmptyQA,duplicateEmptyQA,categoryFilterQA,categoryFixtureQA,compactSingleQA,directFavoriteQA,favoriteCountQA,compactToastStackQA,toastDismissQA,toastFocusReturnQA,toastDockQA,wheelQA,pinnedAllQA,pinnedMaskQA,categoryKeyQA,dropdownChipQA,pinnedRightMaskQA,pinnedBorderMaskQA,asciiDSearchQA,emptySearchActionQA,readableCardTitleQA,favoriteSvgQA,keyboardFavoriteQA,multiTermSearchQA,keyboardSearchQA};
+  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA,chooserQa,toastLayoutQA,nativeToastQA,compactIdleQA,channelChipRailQA,advancedFilterQA,readableCardsQA,keyboardTabQA,favoriteEmptyQA,duplicateEmptyQA,categoryFilterQA,categoryFixtureQA,compactSingleQA,directFavoriteQA,favoriteCountQA,compactToastStackQA,toastDismissQA,toastFocusReturnQA,toastDockQA,wheelQA,pinnedAllQA,pinnedMaskQA,categoryKeyQA,dropdownChipQA,pinnedRightMaskQA,pinnedBorderMaskQA,asciiDSearchQA,emptySearchActionQA,readableCardTitleQA,favoriteSvgQA,keyboardFavoriteQA,multiTermSearchQA,keyboardSearchQA,arrowNavigationQA};
  fs.writeFileSync(path.resolve('positron-evidence','audit-p5-20-rounds.json'),JSON.stringify(report,null,2));
  return report;
 }

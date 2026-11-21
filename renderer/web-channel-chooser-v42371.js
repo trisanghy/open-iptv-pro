@@ -312,6 +312,39 @@
   first.focus({preventScroll:true});
   first.scrollIntoView({block:'nearest',inline:'nearest'});
  });
+
+ // P5.1.137: Navigate actual native tiles using Arrow keys, Home and End.
+ // Respect the current grid/list geometry; never trigger click or playback.
+ grid.addEventListener('keydown',event=>{
+  if(!['ArrowLeft','ArrowRight','ArrowUp','ArrowDown','Home','End'].includes(event.key)||
+   !event.target?.matches?.('button.web-chooser-card')||event.altKey||event.ctrlKey||event.metaKey||event.shiftKey)return;
+  const cards=[...grid.querySelectorAll('button.web-chooser-card')];
+  const index=cards.indexOf(event.target);
+  if(index<0)return;
+  let target=null;
+  if(event.key==='Home')target=cards[0];
+  else if(event.key==='End')target=cards[cards.length-1];
+  else {
+   const current=cards[index].getBoundingClientRect();
+   const cx=(current.left+current.right)/2,cy=(current.top+current.bottom)/2;
+   let best=Infinity;
+   for(const candidate of cards){
+    if(candidate===event.target)continue;
+    const rect=candidate.getBoundingClientRect();
+    const dx=(rect.left+rect.right)/2-cx,dy=(rect.top+rect.bottom)/2-cy;
+    const sameRow=Math.abs(dy)<=Math.max(current.height,rect.height)*0.6;
+    const horizontal=event.key==='ArrowLeft'||event.key==='ArrowRight';
+    if(horizontal&&(!sameRow||(event.key==='ArrowLeft'?dx>=-2:dx<=2)))continue;
+    if(!horizontal&&(event.key==='ArrowUp'?dy>=-2:dy<=2))continue;
+    const score=horizontal?Math.abs(dx)+Math.abs(dy)*4:Math.abs(dy)*100+Math.abs(dx);
+    if(score<best){best=score;target=candidate;}
+   }
+  }
+  if(!target)return;
+  event.preventDefault();
+  target.focus({preventScroll:true});
+  target.scrollIntoView({block:'nearest',inline:'nearest'});
+ });
  search.title='Nhập tên kênh rồi nhấn Enter để chọn kết quả đầu tiên';
  search.addEventListener('input',()=>{page=0;schedule();});
  // P5.1.128: when the user selects a group from the native advanced dropdown,

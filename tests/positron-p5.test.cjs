@@ -37,7 +37,7 @@ test('P5 assets are loaded after P4 without replacing it',()=>{
 test('P5 release is immutable and versioned separately from P4.1',()=>{
  const pkg=JSON.parse(read('package.json'));
  const flow=read('.github/workflows/positron-lab.yml');
- assert.equal(pkg.version,'4.23.220');
+ assert.equal(pkg.version,'4.23.221');
  const label=pkg.description.match(/Positron\s+(P\d+\.\d+\.\d+)/)?.[1];
  assert.ok(label,'product P-label must accompany SemVer');
  assert.ok(flow.includes('TAG=positron/v'+pkg.version+'-'+label.toLowerCase()),'release tag and app version must match');
@@ -1202,4 +1202,12 @@ test('P5.1.136 Enter khi tìm chỉ chọn kênh bằng focus, không phát ngay
  const js=read('renderer/web-channel-chooser-v42371.js'),qa=read('scripts/positron-20-extension.cjs');
  for(const token of ["search.addEventListener('keydown',event=>","event.key!=='Enter'||event.isComposing","grid.querySelector('button.web-chooser-card')","first.focus({preventScroll:true})"])assert.ok(js.includes(token),token);
  for(const token of ["await page.keyboard.press('Enter')","focusMovedToMatch:","correctChannel:","queryPreserved:","noMatchKeepsSearchFocus:","noAutoplay:","positron-p51136-search-enter-before-450-real.png","positron-p51136-search-enter-after-450-real.png"])assert.ok(qa.includes(token),token);
+});
+
+test('P5.1.137 điều hướng thẻ kênh bằng mũi tên trong lưới/danh sách, không tự phát',()=>{
+ const js=read('renderer/web-channel-chooser-v42371.js'),qa=read('scripts/positron-20-extension.cjs');
+ for(const token of ["grid.addEventListener('keydown',event=>","ArrowLeft","ArrowRight","ArrowUp","ArrowDown","Home","End","target.focus({preventScroll:true})","target.scrollIntoView({block:'nearest',inline:'nearest'})"])
+  assert.ok(js.includes(token),'Thiếu xử lý bàn phím: '+token);
+ for(const token of ["gridRightSelectsSecond:","downKeepsColumn:","leftChangesColumn:","homeSelectsFirst:","endSelectsLast:","listDownSelectsNext:","noAutoplay:","positron-p51137-arrow-navigation-before-450-real.png","positron-p51137-arrow-navigation-after-450-real.png"])
+  assert.ok(qa.includes(token),'Thiếu QA Electron: '+token);
 });

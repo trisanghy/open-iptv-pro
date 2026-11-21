@@ -1,3 +1,12 @@
+## P5.1.137 — Duyệt thẻ kênh bằng phím mũi tên / Electron v4.23.221
+
+- Feature priority: NEW — Điều hướng các kênh ngay trong Chọn kênh bằng bốn phím mũi tên và Home/End, bám đúng vị trí thẻ ở cả dạng lưới và danh sách; không cần Tab qua từng nút yêu thích và không tự phát video.
+- User action: Mở Chọn kênh, nhập “QA Channel” rồi Enter để chọn thẻ đầu tiên; dùng ← → ↑ ↓ để di chuyển theo vị trí kênh, Home về đầu và End tới cuối; chỉ Enter trên thẻ mới phát.
+- Electron screenshot: positron-p51137-arrow-navigation-after-450-real.png
+- Ảnh đầu vào: positron-p51136-search-enter-after-450-real.png Electron thật 450px đã mở soát; kết quả đầu tiên có viền focus nhưng thiếu điều hướng liên tục giữa các thẻ.
+- Kiểm thử: Node và QA Electron thật 450px; danh sách 18 thẻ, ArrowRight chọn kênh 002, ArrowDown giữ cột, ArrowLeft, Home/End; chế độ danh sách dùng ArrowDown; giữ nguyên playlist, không autoplay và không tràn ngang.
+- Trạng thái: CANDIDATE — chỉ đánh dấu vòng 02/20 khi CI, ảnh trước/sau và Release EXE/DMG đạt.
+
 ## P5.1.136 — Enter chọn kết quả tìm kênh / Electron v4.23.220
 
 - Feature priority: NEW — Chuyển tiêu điểm bàn phím tới thẻ kênh phù hợp đầu tiên sau khi tìm kiếm, tránh phải dùng chuột và không tự phát hoặc thay đổi dữ liệu người dùng.
