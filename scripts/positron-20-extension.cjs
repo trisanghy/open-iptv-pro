@@ -62,6 +62,18 @@ async function runTwenty(page){
      favoriteAction:get('#positronFavoritesSources'),
      favoriteGuidance:(()=>document.querySelector('#favoriteList .empty-list')?.firstChild?.textContent?.trim()||'')(),
      sourceCount:document.getElementById('sourceCount')?.textContent?.trim()||'0',
+     footerStatus:(()=>{
+      const n=document.getElementById('footerText'),footer=n?.closest('.footer');if(!n||!footer)return null;
+      const s=getComputedStyle(n),bg=getComputedStyle(footer).backgroundColor;
+      const luminance=c=>{const channels=(c.match(/\\d+(?:\\.\\d+)?/g)||[]).slice(0,3).map(Number);
+       if(channels.length!==3)return null;
+       const v=channels.map(x=>{x/=255;return x<=.04045?x/12.92:((x+.055)/1.055)**2.4;});
+       return .2126*v[0]+.7152*v[1]+.0722*v[2];};
+      const a=luminance(s.color),b=luminance(bg);
+      return {whiteSpace:s.whiteSpace,color:s.color,background:bg,contrast:(a===null||b===null)?0:(Math.max(a,b)+.05)/(Math.min(a,b)+.05),
+       clientWidth:n.clientWidth,scrollWidth:n.scrollWidth,clientHeight:n.clientHeight,scrollHeight:n.scrollHeight,
+       taskVisible:!footer.querySelector('#taskDock')?.classList.contains('hidden')};
+     })(),
      outputIcons:(()=>{
       const inspect=id=>{const b=document.getElementById(id),s=b?.querySelector('svg');return {svg:!!s,width:Math.round(s?.getBoundingClientRect().width||0),label:b?.querySelector('span')?.textContent?.trim()||'',aria:b?.getAttribute('aria-label')||''};};
       return {cast:inspect('castBtn'),pip:inspect('pipBtn')};
@@ -100,6 +112,15 @@ async function runTwenty(page){
      assert.equal(metrics.epgNext.textOverflow,'clip','mobile EPG text still showing ellipsis: '+name);
      assert.ok(metrics.epgNext.scrollWidth<=metrics.epgNext.clientWidth+2,'mobile EPG text still clipped: '+name);
     }
+  }
+  if(width<=600){
+   assert.ok(metrics.footerStatus,'native footer status missing: '+name);
+   assert.equal(metrics.footerStatus.whiteSpace,'normal','footer status still forced to ellipsis: '+name);
+   assert.ok(metrics.footerStatus.contrast>=4.5,'footer status does not meet 4.5:1 contrast: '+name);
+   if(!metrics.footerStatus.taskVisible){
+    assert.ok(metrics.footerStatus.scrollWidth<=metrics.footerStatus.clientWidth+2,'footer status still clipped horizontally: '+name);
+    assert.ok(metrics.footerStatus.scrollHeight<=metrics.footerStatus.clientHeight+2,'footer status still clipped vertically: '+name);
+   }
   }
   if(width<=600){
     assert.ok(metrics.themeButton,'theme control missing: '+name);
