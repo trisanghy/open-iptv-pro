@@ -1,3 +1,10 @@
+## P5.1.94 — Expose hidden WatchFlow Mix suggestions when desktop panel scrolls / v4.23.178
+
+- Input: manually opened genuine P5.1.93 Electron screenshot `positron-p5193-group-balanced-mix-552-real.png` at 1360×820. The 390px bounded dialog displays just 2–3 of the five Mix results and its small native scrollbar does not clearly signal that the remaining channels can be reached. The 450px screenshot shows all five cards without this problem.
+- Root cause: the fixed-height desktop popup protects native playback controls but has no scroll-affordance state tied to card visibility.
+- Fix: preserve the current 390px max-height and native playback, source files, and user preferences; add a passive on-panel visual cue `↓ Cuộn xuống để xem thêm kênh` only when the final recommendation card is actually outside the panel bounds. Recompute on scroll, resize, mode switch and reopen; hide when the last card becomes visible or panel closes, prevent pointer interception.
+- Regression: Node assertions for cue presence, geometry, aria and pointer-safe style; real Electron QA at 1360×820 checks cue visible, hides after scrolling to end, no autoplay and dialog clears player controls; screenshot `positron-p5194-watchflow-scroll-cue-552-real.png` for direct inspection. Not counted complete until after-image/release verified.
+
 ## P5.1.93 — Balance daily Mix source groups with equal playback evidence / v4.23.177
 
 - Baseline: opened genuine Electron P5.1.92 `positron-p5192-local-calendar-mix-552-real.png` from run `44910897473`, screenshot artifact `14709677582`. The five Mix suggestions had Main=3, Regional=1, Other=1, even though all QA streams were equally unverified; current Mix promised variety.

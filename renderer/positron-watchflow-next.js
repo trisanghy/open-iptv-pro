@@ -46,7 +46,21 @@
  const status=d.createElement('small');status.className='po-flowplus-privacy';
  status.textContent='Chỉ dùng dữ liệu kênh trên thiết bị · Không tự phát · Không tìm nguồn bên ngoài';
  content.after(status);status.hidden=true;
+ // P5.1.94: a bounded desktop panel hides later Mix recommendations.
+ // Offer a non-interactive scroll cue while the last card is below view.
+ const scrollCue=d.createElement('div');scrollCue.id='poFlowPlusScrollHint';
+ scrollCue.textContent='↓ Cuộn xuống để xem thêm kênh';
+ scrollCue.hidden=true;scrollCue.setAttribute('aria-hidden','true');panel.append(scrollCue);
  let view='discover',lastMix=[],zapSeen=[];
+ const syncScrollCue=()=>{
+  const last=content.querySelector('.po-flowplus-card:last-child');
+  const modalRect=panel.getBoundingClientRect();
+  scrollCue.hidden=!(view!=='discover'&&!panel.hidden&&last&&
+   last.getBoundingClientRect().bottom>modalRect.bottom-18);
+ };
+ const scheduleScrollCue=()=>window.requestAnimationFrame(syncScrollCue);
+ panel.addEventListener('scroll',syncScrollCue,{passive:true});
+ window.addEventListener('resize',scheduleScrollCue);
  const channels=()=>state()?.getChannels?.()||[];
  const recent=()=>{
   const source=state()?.getStore?.();
@@ -109,6 +123,7 @@
    lastMix=core.dailyMix(collection,{limit:5,date:core.localDay()});
    cards(lastMix,'Danh sách gợi ý không tự chuyển kênh. Bạn chọn kênh muốn phát.');
   }
+  scheduleScrollCue();
  };
  const select=next=>{
   view=next;
@@ -116,6 +131,7 @@
   for(const el of standard)el.classList.toggle('po-flowplus-hidden',next!=='discover');
   content.hidden=next==='discover';status.hidden=next==='discover';
   if(next!=='discover')render();
+  else scrollCue.hidden=true;
  };
  for(const key of ['discover','continue','similar','mix'])buttons[key].addEventListener('click',()=>select(key));
  buttons.zap.addEventListener('click',()=>{
@@ -134,7 +150,7 @@
  };
  const count=byId('navCount');
  if(count)new MutationObserver(sync).observe(count,{childList:true,characterData:true,subtree:true});
- new MutationObserver(()=>{if(!panel.hidden)sync();}).observe(panel,{attributes:true,attributeFilter:['hidden']});
+ new MutationObserver(()=>{if(!panel.hidden)sync();else scrollCue.hidden=true;}).observe(panel,{attributes:true,attributeFilter:['hidden']});
  sync();
  window.PositronWatchFlowPlus=Object.freeze({select,refresh:sync});
 })();

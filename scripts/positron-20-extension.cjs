@@ -1194,6 +1194,27 @@ async function runTwenty(page){
  assert.equal(balancedMixQA.min,1);
  assert.equal(balancedMixQA.noAutoPlay,true);
  await page.screenshot({path:path.join(out,'positron-p5193-group-balanced-mix-552-real.png'),animations:'disabled'});
+ // P5.1.94: the desktop 390px dialog hides last Mix cards. The passive
+ // cue is visible while hidden cards remain and disappears after scrolling.
+ const scrollCueQA=await page.evaluate(async()=>{
+  const panel=document.getElementById('poWatchFlowPanel');
+  const cue=document.getElementById('poFlowPlusScrollHint');
+  const settle=()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
+  await settle();
+  const desktopVisible=!!cue&&!cue.hidden&&cue.getBoundingClientRect().height>0;
+  const toolbar=document.querySelector('#page-tv .player-control-card')?.getBoundingClientRect();
+  const controlsClear=!!toolbar&&panel.getBoundingClientRect().bottom<=toolbar.top-12;
+  panel.scrollTop=panel.scrollHeight;
+  await settle();
+  const bottomHidden=!!cue&&cue.hidden;
+  panel.scrollTop=0;
+  await settle();
+  return {desktopVisible,bottomHidden,controlsClear,
+   noAutoplay:window.IPTVState.getCurrent()===null};
+ });
+ for(const key of ['desktopVisible','bottomHidden','noAutoplay','controlsClear'])
+  assert.equal(scrollCueQA[key],true,'WatchFlow scroll visibility regression: '+key);
+ await page.screenshot({path:path.join(out,'positron-p5194-watchflow-scroll-cue-552-real.png'),animations:'disabled'});
  // P5.1.85: exercise the real Electron Similar panel with a temporary
  // native metadata-only current channel; no stream is opened or stored.
  const similarQA=await page.evaluate(()=>{

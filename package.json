@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.177",
-  "description": "Positron P5.1.93: WatchFlow Daily Mix balances equal-evidence source groups",
+  "version": "4.23.178",
+  "description": "Positron P5.1.94: WatchFlow shows scroll cue for hidden suggestions",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

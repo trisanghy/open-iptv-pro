@@ -125,3 +125,20 @@ test('daily Mix balances equal-evidence groups, rotates locally and preserves pr
  const qa=fs.readFileSync('scripts/positron-20-extension.cjs','utf8');
  assert.ok(qa.includes('positron-p5193-group-balanced-mix-552-real.png'));
 });
+
+// P5.1.94: desktop screenshot hides part of the five cards.
+test('WatchFlow desktop scroll cue follows actual hidden card geometry',()=>{
+ const js=fs.readFileSync('renderer/positron-watchflow-next.js','utf8');
+ const css=fs.readFileSync('renderer/positron-watchflow-next.css','utf8');
+ const qa=fs.readFileSync('scripts/positron-20-extension.cjs','utf8');
+ assert.ok(js.includes('poFlowPlusScrollHint'));
+ assert.ok(js.includes("content.querySelector('.po-flowplus-card:last-child')"));
+ assert.ok(js.includes('last.getBoundingClientRect().bottom>modalRect.bottom-18'));
+ assert.ok(js.includes("panel.addEventListener('scroll',syncScrollCue"));
+ assert.ok(js.includes('else scrollCue.hidden=true'));
+ assert.ok(css.includes('pointer-events:none')&&css.includes('#poFlowPlusScrollHint[hidden]'));
+ for(const key of ["'desktopVisible'","'bottomHidden'","'noAutoplay'","'controlsClear'"])
+  assert.ok(qa.includes(key),'missing Electron proof '+key);
+ assert.ok(qa.includes("assert.equal(scrollCueQA[key],true"));
+ assert.ok(qa.includes('positron-p5194-watchflow-scroll-cue-552-real.png'));
+});
