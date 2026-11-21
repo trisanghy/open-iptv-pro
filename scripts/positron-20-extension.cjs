@@ -47,6 +47,8 @@ async function runTwenty(page){
     viewport:innerWidth,overflow:document.documentElement.scrollWidth>innerWidth+6,
     player:get('#playerBox'),sidebar:get('#appSidebar'),
     sources:get('#page-sources .sources-hub-nav'),sourceSection:get('#smartDiscoverySection'),sourceHeading:get('#page-sources .source-hub-heading'),epg:get('#page-epg .epg-filter'),
+    epgEmptySummary:document.getElementById('epgSummary')?.textContent?.trim()||'',
+    epgSourceAction:get('#epgSettingsBtn'),
     controls:document.querySelectorAll('#page-tv button').length,
     transportVectors:['prevBtn','stopBtn','nextBtn','fsPrev','fsNext','fullscreenBtn'].every(id=>!!document.getElementById(id)?.querySelector('svg')),
     brandIcon:get('#appSidebar .brand-icon'),
@@ -336,6 +338,10 @@ async function runTwenty(page){
     assert.equal(state.enabledSubmit,true,'DVR submit must re-enable when channel appears');
     assert.equal(state.disabledSubmit,true,'DVR submit must disable again when channels are removed');
     assert.equal(state.placeholder,'Chưa có kênh để ghi hình','DVR placeholder failed to recover');
+   }
+   if(target==='epg'){
+    assert.equal(metrics.epgEmptySummary,"Chưa tải EPG. Nhấn “Nguồn EPG” phía trên để chọn hoặc cập nhật nguồn.",'EPG empty instruction must point to actual top Nguồn EPG button: '+name);
+    assert.ok(metrics.epgSourceAction?.visible,'EPG settings shortcut must be visible: '+name);
    }
    if(target==='sources'&&metrics.sources)assert.notEqual(metrics.sources.background,'rgb(255, 255, 255)','white source panel');
    if(target==='sources'){

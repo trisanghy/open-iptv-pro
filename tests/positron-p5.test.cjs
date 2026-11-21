@@ -37,13 +37,13 @@ test('P5 assets are loaded after P4 without replacing it',()=>{
 test('P5 release is immutable and versioned separately from P4.1',()=>{
  const pkg=JSON.parse(read('package.json'));
  const flow=read('.github/workflows/positron-lab.yml');
- assert.equal(pkg.version,'4.23.128');
- assert.ok(flow.includes('positron/v4.23.128-p5.1.44'));
+ assert.equal(pkg.version,'4.23.129');
+ assert.ok(flow.includes('positron/v4.23.129-p5.1.44'));
  assert.ok(read('scripts/positron-50-audit.cjs').includes('runTwenty(page)'));
- assert.ok(flow.includes('Positron-P5144-20-Real-Screenshots.zip'));
+ assert.ok(flow.includes('Positron-P5145-20-Real-Screenshots.zip'));
 });
 
-test('P5.1.1 sidebar badge matches shipped release instead of stale P4',()=>{const js=read('renderer/positron.js');assert.ok(js.includes("descriptor.textContent='P5.1.44'"));assert.ok(!js.includes('OPEN IPTV PRO · P4 · 50 VÒNG'));});
+test('P5.1.1 sidebar badge matches shipped release instead of stale P4',()=>{const js=read('renderer/positron.js');assert.ok(js.includes("descriptor.textContent='P5.1.45'"));assert.ok(!js.includes('OPEN IPTV PRO · P4 · 50 VÒNG'));});
 
 test('P5.1.3 fullscreen icon uses SVG not a tiny platform glyph',()=>{const js=read('renderer/positron-twenty.js');const css=read('renderer/positron-twenty.css');assert.ok(js.includes("['fullscreenBtn','M8 3H3v5"));assert.ok(css.includes('#page-tv #fullscreenBtn svg'));});
 
@@ -451,11 +451,25 @@ test('P5.1.43 Smart Discovery corrected default guidance is localized in 17 lang
 });
 
 
-test('P5.1.44 Favorites empty state is centered and action remains accessible at 600px',()=>{
+test('P5.1.45 Favorites empty state is centered and action remains accessible at 600px',()=>{
  const css=read('renderer/positron-twenty.css'),audit=read('scripts/positron-20-extension.cjs');
  assert.ok(css.includes('#page-fav #favoriteList:has(>.empty-list)'));
  assert.ok(css.includes('justify-content:center!important'));
  assert.ok(audit.includes('favoriteEmptyLayout:(()=>'));
  assert.ok(audit.includes('metrics.favoriteEmptyLayout?.top>=300'));
  assert.ok(audit.includes('metrics.favoriteEmptyLayout?.buttonBottom'));
+});
+
+
+test('P5.1.45 EPG empty instruction references the existing EPG Sources action and all native locales',()=>{
+ const features=read('renderer/features.js');
+ const i18n=read('renderer/i18n.js');
+ const audit=read('scripts/positron-20-extension.cjs');
+ const settings=read('renderer/settings-ui.js');
+ assert.ok(features.includes("Chưa tải EPG. Nhấn “Nguồn EPG” phía trên để chọn hoặc cập nhật nguồn."));
+ assert.ok(!features.includes('Chưa tải EPG. Vào Cài đặt và bấm'));
+ assert.ok(settings.includes("openSection('epgSettingsCard')"));
+ assert.ok(i18n.includes('positronEpgEmptyTranslations'));
+ assert.ok(audit.includes('metrics.epgEmptySummary'));
+ assert.ok(audit.includes('metrics.epgSourceAction?.visible'));
 });

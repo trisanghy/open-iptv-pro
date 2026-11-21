@@ -93,6 +93,13 @@
     const dict=dictionaries[code]||(dictionaries[code]={});
     dict[positronSmartDefault]=value;
   }
+  // Positron P5.1.45 EPG empty-state CTA: offline localized to all 17 native locales.
+  const positronEpgEmptyHint="Chưa tải EPG. Nhấn “Nguồn EPG” phía trên để chọn hoặc cập nhật nguồn.";
+  const positronEpgEmptyTranslations={"en":"No EPG loaded. Select EPG Sources above to choose or update a source.","es":"No se ha cargado la EPG. Pulsa Fuentes EPG arriba para elegir o actualizar una fuente.","pt-BR":"Nenhum EPG carregado. Clique em Fontes EPG acima para escolher ou atualizar uma fonte.","zh-CN":"尚未加载 EPG。点击上方“EPG 来源”选择或更新来源。","th":"ยังไม่ได้โหลด EPG กดแหล่งข้อมูล EPG ด้านบนเพื่อเลือกหรืออัปเดตแหล่งข้อมูล","lo":"ຍັງບໍ່ໄດ້ໂຫຼດ EPG. ກົດແຫຼ່ງ EPG ດ້ານເທິງເພື່ອເລືອກ ຫຼື ອັບເດດແຫຼ່ງ.","km":"មិនទាន់បានផ្ទុក EPG ទេ។ ចុច ប្រភព EPG ខាងលើ ដើម្បីជ្រើស ឬធ្វើបច្ចុប្បន្នភាពប្រភព។","fr":"Aucun EPG chargé. Cliquez sur Sources EPG ci-dessus pour choisir ou mettre à jour une source.","de":"Noch kein EPG geladen. Wähle oben EPG-Quellen, um eine Quelle auszuwählen oder zu aktualisieren.","it":"Nessun EPG caricato. Premi Fonti EPG in alto per scegliere o aggiornare una fonte.","ja":"EPG が読み込まれていません。上の「EPG ソース」からソースを選択または更新してください。","ko":"EPG가 아직 로드되지 않았습니다. 위의 EPG 소스를 눌러 소스를 선택하거나 갱신하세요.","ru":"EPG не загружен. Нажмите «Источники EPG» выше, чтобы выбрать или обновить источник.","id":"EPG belum dimuat. Pilih Sumber EPG di atas untuk memilih atau memperbarui sumber.","hi":"EPG अभी लोड नहीं हुआ है। स्रोत चुनने या अपडेट करने के लिए ऊपर EPG स्रोत दबाएँ।","ar":"لم يتم تحميل دليل EPG. اضغط «مصادر EPG» أعلاه لاختيار مصدر أو تحديثه."};
+  for(const [code,value] of Object.entries(positronEpgEmptyTranslations)){
+    const dict=dictionaries[code]||(dictionaries[code]={});
+    dict[positronEpgEmptyHint]=value;
+  }
   const key='open-iptv-pro-language';
   let locale='vi';
   try{const stored=localStorage.getItem(key);if(stored && Object.hasOwn(locales,stored))locale=stored;}catch{}

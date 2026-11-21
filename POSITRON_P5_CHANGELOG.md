@@ -303,3 +303,10 @@ P5.1.43 same-round regression repair: first CI run 44864848127 failed 2/606 Node
 - Center the existing empty Favorites CTA within compact viewport via scoped CSS without touching channel data, source button listeners or nonempty/desktop lists; geometry audit checks top>=300 and button above status footer.
 - Correct P5.1.43 workflow tag mismatch: new version's tag is `positron/v4.23.128-p5.1.44`, matching displayed version, instead of carrying prior p5.1.42 suffix. Retain historical tags/commits.
 - Real Electron screenshot and full Node CI pending, do not mark complete before opening image and verification.
+
+## File (9), screenshot-driven round 02/20 — P5.1.45 / v4.23.129
+- Input: actual P5.1.44 Electron screenshot positron-p5-17-real.png (720px). EPG missing-data text asks users to open Settings and find 'Cập nhật EPG ngay', while visible action is 'Nguồn EPG'.
+- Root cause: renderer/features.js EPG empty fallback text did not match existing epgSettingsBtn, which opens the EPG settings section.
+- Fix only default missing-data prose and translate all 17 native locales. Do not change EPG fetch, XMLTV, reminders, recordings or playlist data.
+- Add Node regression and Electron audit checks at EPG 1360px and 720px, synchronize build version and stale CI artifact naming.
+- Await CI, actual after screenshot, build and release verification; release token HTTP 403 remains a blocker.

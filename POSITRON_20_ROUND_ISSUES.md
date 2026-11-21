@@ -104,3 +104,7 @@ P5.1.37 capture run 44863007302: **FAILED at real TV 450px** after all 50 P4 cas
 
 P5.1.43 same-round CI follow-up: Actions run 44864848127 failed native-language audit 2/606. Corrected all 16 translations in renderer/i18n.js and added regression. Round remains UNCERTIFIED until new test+capture+image review succeed; Release 403 is an independent blocking issue.\n
 | 10/20 (file 8) | P5.1.44 / 4.23.128 | Actual P5.1.43 Electron Favorites 600px `positron-p5-20-real.png` artifact 14691567509 | Empty guidance/CTA at y230–320 with >450px unused below | Center only Favorites empty state on narrow windows, preserve original CTA/list; audit on screenshot position and footer clipping. Also rectify release tag P5.1.43 workflow inconsistency in new version. Await CI/capture/release. |
+
+| File (9) round | Version | Real screenshot input | Problem | Fix | Validation |
+|---|---|---|---|---|---|
+| 02/20 (pending) | P5.1.45 / v4.23.129 | P5.1.44 EPG 720px, positron-p5-17-real.png | Empty EPG status points to Settings update instead of the visible Nguồn EPG button | Align fallback text, all 17 offline locales, snapshot assertion | Pending CI and after PNG; release 403 blocked |

@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.128",
-  "description": "Positron P5.1.44: center empty Favorites content in compact windows",
+  "version": "4.23.129",
+  "description": "Positron P5.1.45: point missing-EPG instructions to the actual Sources button",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",
