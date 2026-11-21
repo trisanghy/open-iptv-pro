@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.175",
-  "description": "Positron P5.1.91: native Play/Pause icons match verified Web SVG paths",
+  "version": "4.23.176",
+  "description": "Positron P5.1.92: WatchFlow Mix and Smart Zap update on device local calendar day",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

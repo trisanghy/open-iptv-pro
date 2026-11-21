@@ -91,3 +91,20 @@ test('P5.1.87 WatchFlow mode labels are never cut off at desktop 1360px while sc
  assert.ok(qa.includes('plusQA.navNoTruncatedLabels,true'));
  assert.ok(qa.includes('label.scrollWidth<=label.clientWidth+1'));
 });
+
+test('P5.1.92 Mix uses device calendar day, not UTC (UTC+7 midnight boundary)',()=>{
+ const cp=require('node:child_process');
+ const script="const core=require('./renderer/positron-watchflow-next-core.js');process.stdout.write(core.localDay(new Date('2026-11-20T18:30:00Z')))";
+ const bangkok=cp.execFileSync(process.execPath,['-e',script],{cwd:process.cwd(),env:{...process.env,TZ:'Asia/Bangkok'},encoding:'utf8'});
+ const utc=cp.execFileSync(process.execPath,['-e',script],{cwd:process.cwd(),env:{...process.env,TZ:'UTC'},encoding:'utf8'});
+ assert.equal(bangkok,'2026-11-21','1:30 AM in Thailand must be the next calendar day');
+ assert.equal(utc,'2026-11-20','same instant remains previous day in UTC');
+ const ui=fs.readFileSync('renderer/positron-watchflow-next.js','utf8');
+ const core=fs.readFileSync('renderer/positron-watchflow-next-core.js','utf8');
+ const qa=fs.readFileSync('scripts/positron-20-extension.cjs','utf8');
+ assert.ok(ui.includes('date:core.localDay()'),'Mix must request local day from engine');
+ assert.ok(core.includes('date=localDay()')&&core.includes('date:localDay()'));
+ assert.ok(!core.includes('toISOString().slice(0,10)'),'Core must not derive daily Mix from UTC midnight');
+ assert.ok(qa.includes('mixLocalCalendarQa[key],true'));
+ assert.ok(qa.includes('positron-p5192-local-calendar-mix-552-real.png'));
+});

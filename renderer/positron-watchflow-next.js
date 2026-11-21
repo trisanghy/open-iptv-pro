@@ -106,7 +106,7 @@
    else cards(core.similar(collection,basis,{limit:5}),'Ưu tiên nguồn từng phát được. Không suy đoán nội dung EPG.');
   }else if(view==='mix'){
    heading('Mix 5 kênh hôm nay','Một danh sách khám phá đa dạng từ các nhóm nguồn bạn đã nhập.');
-   lastMix=core.dailyMix(collection,{limit:5,date:new Date().toISOString().slice(0,10)});
+   lastMix=core.dailyMix(collection,{limit:5,date:core.localDay()});
    cards(lastMix,'Danh sách gợi ý không tự chuyển kênh. Bạn chọn kênh muốn phát.');
   }
  };

@@ -41,7 +41,13 @@
       return Number(sameB)-Number(sameA)||String(a.name).localeCompare(String(b.name),'vi');
     }).slice(0,Math.max(1,Math.min(8,limit)));
   }
-  function dailyMix(channels,{limit=5,date=new Date().toISOString().slice(0,10),seen=[]}={}){
+  // Calendar day belongs to the device, not UTC: in Vietnam UTC midnight
+  // is 07:00 and incorrectly delayed today's new Mix until the morning.
+  function localDay(date=new Date()){
+    const pad=n=>String(n).padStart(2,'0');
+    return date.getFullYear()+'-'+pad(date.getMonth()+1)+'-'+pad(date.getDate());
+  }
+  function dailyMix(channels,{limit=5,date=localDay(),seen=[]}={}){
     const excluded=new Set((Array.isArray(seen)?seen:[]).map(String));
     let pool=safe(channels).filter(c=>!excluded.has(String(c.id)));
     if(!pool.length)pool=safe(channels);
@@ -80,7 +86,7 @@
     if(focused.length)candidates=focused;
     // Health is more important than novelty; never skip a proven channel just
     // to suggest one already classified dead.
-    return dailyMix(candidates,{limit:1,date:new Date().toISOString().slice(0,10)})[0]||null;
+    return dailyMix(candidates,{limit:1,date:localDay()})[0]||null;
   }
-  return Object.freeze({continueWatching,similar,dailyMix,smartZap,playable});
+  return Object.freeze({continueWatching,similar,dailyMix,smartZap,playable,localDay});
 });

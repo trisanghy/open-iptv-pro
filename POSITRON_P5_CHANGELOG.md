@@ -1,3 +1,10 @@
+## P5.1.92 — Correct daily Mix and Smart Zap calendar day / v4.23.176
+
+- Input: opened *real Electron* P5.1.91 `positron-watchflow-plus-mix-552-metadata-qa-real.png`: user-facing heading promises `Mix 5 kênh hôm nay`. The existing implementation used `new Date().toISOString().slice(0,10)` in both WatchFlow UI and underlying smart suggestion engine, incorrectly rotating daily recommendations at **07:00 local time in Vietnam (UTC+7)** instead of local midnight.
+- Added pure `localDay(date)` helper using the device Date local year/month/day. The Mix UI and engine defaults now use the local day consistently, including Smart Zap. Explicit date arguments remain supported, and recommendation health/dedup/privacy continue unchanged.
+- New Node regression launches child processes in `TZ=Asia/Bangkok` and `TZ=UTC` for the **same instant** 2026-11-20T18:30:00Z and confirms Nov21 in Bangkok but Nov20 UTC. Real Electron QA asserts five Mix recommendations remain clickable, mode selected, never autoplay, and local date key; captures `positron-p5192-local-calendar-mix-552-real.png`.
+- No network, automatic playlist import, recording/stream access, or personal time-zone data storage.
+
 ## P5.1.91 — Match native Play/Pause glyphs to Web original SVG / v4.23.175
 
 - Input: actual P5.1.90 Electron screenshot `positron-p5190-player-ready-video-lab-hidden-552-metadata-real.png`. The legacy Electron Play triangle was made with CSS `clip-path:polygon(...)` and pause using `linear-gradient`, unlike the modern verified SVG icon set from `web/online/web-player-icons.css`.

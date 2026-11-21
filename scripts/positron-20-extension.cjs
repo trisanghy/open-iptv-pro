@@ -1158,6 +1158,25 @@ async function runTwenty(page){
  assert.equal(plusQA.navNoTruncatedLabels,true,'WatchFlow visible mode text is clipped');
  assert.equal(plusQA.ariaFull,true,'WatchFlow requires full accessible labels');
  await page.screenshot({path:path.join(out,'positron-watchflow-plus-mix-552-metadata-qa-real.png'),animations:'disabled'});
+
+// P5.1.92: real Electron WatchFlow Mix must follow the device's calendar
+// day. No playlist change or network stream starts during this check.
+ const mixLocalCalendarQa=await page.evaluate(()=>{
+  const core=window.PositronWatchFlowPlusCore;
+  const date=new Date(2026,10,21,0,15,0);
+  const selected=document.querySelector('#poFlowPlusmix[aria-pressed="true"]');
+  return {localDate:core.localDay(date),
+    fiveCards:document.querySelectorAll('#poFlowPlusResults .po-flowplus-card').length===5,
+    selected:!!selected,
+    noAutoPlay:window.IPTVState.getCurrent()===null,
+    pureLocalDate:core.localDay(date)===[
+      date.getFullYear(),String(date.getMonth()+1).padStart(2,'0'),
+      String(date.getDate()).padStart(2,'0')].join('-')};
+ });
+ assert.equal(mixLocalCalendarQa.localDate,'2026-11-21');
+ for(const key of ['fiveCards','selected','noAutoPlay','pureLocalDate'])
+  assert.equal(mixLocalCalendarQa[key],true,'Local Mix calendar UI regression: '+key);
+ await page.screenshot({path:path.join(out,'positron-p5192-local-calendar-mix-552-real.png'),animations:'disabled'});
  // P5.1.85: exercise the real Electron Similar panel with a temporary
  // native metadata-only current channel; no stream is opened or stored.
  const similarQA=await page.evaluate(()=>{
