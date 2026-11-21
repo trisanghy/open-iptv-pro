@@ -107,6 +107,25 @@
   syncFavoriteSourceAction();
  }
 
+ // P5.1.12 / round 05: real 1360px Settings screenshot shows the old
+ // search label cut off ("Tìm kênh, trang, công cu..."), with a tiny font glyph
+ // instead of a recognizable search icon. Preserve button event and shortcut.
+ const searchButton=byId('positronOpen');
+ if(searchButton){
+  const glyph=searchButton.querySelector('span:first-child');
+  if(glyph&&!glyph.querySelector('svg')){
+   const svg=d.createElementNS(ns,'svg');
+   svg.setAttribute('viewBox','0 0 24 24');
+   svg.setAttribute('aria-hidden','true');svg.setAttribute('focusable','false');
+   const circle=d.createElementNS(ns,'circle');
+   circle.setAttribute('cx','10.5');circle.setAttribute('cy','10.5');circle.setAttribute('r','6.5');
+   const handle=d.createElementNS(ns,'path');handle.setAttribute('d','M16 16l5 5');
+   svg.append(circle,handle);glyph.replaceChildren(svg);
+  }
+  const label=searchButton.querySelector('.p-command-label');
+  if(label)label.textContent='Tìm kênh / trang';
+  searchButton.setAttribute('aria-label','Tìm kiếm kênh, trang và công cụ');
+ }
  window.OpenIPTVPositronTwenty=Object.freeze({
   setStage,getStage:()=>stage,getFeedback:()=>previous
  });

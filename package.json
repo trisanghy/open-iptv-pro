@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.95",
-  "description": "Positron P5.1.11: mobile EPG next-program title readability",
+  "version": "4.23.96",
+  "description": "Positron P5.1.12: readable search icon and compact label",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

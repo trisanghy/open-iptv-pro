@@ -133,3 +133,9 @@ html[data-positron="true"] #page-fav #positronFavoritesSources{
   overflow-wrap:anywhere!important;line-height:1.4!important;max-width:100%!important;
  }
 }
+
+/* P5.1.12 / round 05: crisp scaled search glyph in the existing native button. */
+html[data-positron="true"] #positronBar #positronOpen>span:first-child svg{
+ display:block;width:18px;height:18px;fill:none;stroke:currentColor;
+ stroke-width:2;stroke-linecap:round;stroke-linejoin:round;pointer-events:none;
+}

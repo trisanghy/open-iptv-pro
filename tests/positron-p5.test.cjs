@@ -37,13 +37,13 @@ test('P5 assets are loaded after P4 without replacing it',()=>{
 test('P5 release is immutable and versioned separately from P4.1',()=>{
  const pkg=JSON.parse(read('package.json'));
  const flow=read('.github/workflows/positron-lab.yml');
- assert.equal(pkg.version,'4.23.95');
- assert.ok(flow.includes('positron/v4.23.95-p5.1.11'));
+ assert.equal(pkg.version,'4.23.96');
+ assert.ok(flow.includes('positron/v4.23.96-p5.1.12'));
  assert.ok(read('scripts/positron-50-audit.cjs').includes('runTwenty(page)'));
- assert.ok(flow.includes('Positron-P5111-20-Real-Screenshots.zip'));
+ assert.ok(flow.includes('Positron-P5112-20-Real-Screenshots.zip'));
 });
 
-test('P5.1.1 sidebar badge matches shipped release instead of stale P4',()=>{const js=read('renderer/positron.js');assert.ok(js.includes("descriptor.textContent='P5.1.11'"));assert.ok(!js.includes('OPEN IPTV PRO · P4 · 50 VÒNG'));});
+test('P5.1.1 sidebar badge matches shipped release instead of stale P4',()=>{const js=read('renderer/positron.js');assert.ok(js.includes("descriptor.textContent='P5.1.12'"));assert.ok(!js.includes('OPEN IPTV PRO · P4 · 50 VÒNG'));});
 
 test('P5.1.3 fullscreen icon uses SVG not a tiny platform glyph',()=>{const js=read('renderer/positron-twenty.js');const css=read('renderer/positron-twenty.css');assert.ok(js.includes("['fullscreenBtn','M8 3H3v5"));assert.ok(css.includes('#page-tv #fullscreenBtn svg'));});
 
@@ -98,4 +98,17 @@ test('P5.1.11 small TV keeps next EPG programme title readable without ellipsis'
  assert.ok(css.includes('white-space:normal!important;text-overflow:clip!important'));
  assert.ok(audit.includes("metrics.epgNext.whiteSpace,'normal'"));
  assert.ok(audit.includes("metrics.epgNext.scrollWidth<=metrics.epgNext.clientWidth+2"));
+});
+
+test('P5.1.12 search toolbar uses legible SVG and concise visual label',()=>{
+ const js=read('renderer/positron-twenty.js');
+ const css=read('renderer/positron-twenty.css');
+ const audit=read('scripts/positron-20-extension.cjs');
+ assert.ok(js.includes("const searchButton=byId('positronOpen')"));
+ assert.ok(js.includes("label.textContent='Tìm kênh / trang'"));
+ assert.ok(js.includes("searchButton.setAttribute('aria-label','Tìm kiếm kênh, trang và công cụ')"));
+ assert.ok(js.includes("circle.setAttribute('cx','10.5')"));
+ assert.ok(css.includes('#positronOpen>span:first-child svg'));
+ assert.ok(audit.includes('metrics.searchButton.labelClipped,false'));
+ assert.ok(audit.includes("searchOpens,true"));
 });

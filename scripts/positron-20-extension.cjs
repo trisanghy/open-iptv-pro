@@ -53,7 +53,8 @@ async function runTwenty(page){
     heading:(()=>{const n=document.querySelector('#positronBar .p-heading strong');if(!n)return null;const b=n.getBoundingClientRect();return {shortTitle:n.dataset.shortTitle||'',clipped:n.scrollWidth>n.clientWidth+1,width:Math.round(b.width)};})(),
     badge:(()=>{const n=document.querySelector('#appSidebar .brand small');if(!n)return null;const b=n.getBoundingClientRect();return {visible:b.width>0&&b.height>0,clipped:n.scrollWidth>n.clientWidth+1,right:b.right,top:b.top,bottom:b.bottom};})(),
     toggle:(()=>{const n=document.querySelector('#appSidebar .sidebar-edge-toggle');if(!n)return null;const b=n.getBoundingClientRect();return {left:b.left,top:b.top,bottom:b.bottom};})(),
-    epgNext:(()=>{const n=document.getElementById('epgNextName');if(!n)return null;const s=getComputedStyle(n);return {whiteSpace:s.whiteSpace,textOverflow:s.textOverflow,scrollWidth:n.scrollWidth,clientWidth:n.clientWidth,height:Math.round(n.getBoundingClientRect().height)};})(),
+    searchButton:(()=>{const n=document.getElementById('positronOpen'),label=n?.querySelector('.p-command-label');if(!n)return null;return{svg:!!n.querySelector('svg'),label:label?.textContent||'',labelClipped:!!(label&&label.getClientRects().length&&label.scrollWidth>label.clientWidth+1),aria:n.getAttribute('aria-label')};})(),
+     epgNext:(()=>{const n=document.getElementById('epgNextName');if(!n)return null;const s=getComputedStyle(n);return {whiteSpace:s.whiteSpace,textOverflow:s.textOverflow,scrollWidth:n.scrollWidth,clientWidth:n.clientWidth,height:Math.round(n.getBoundingClientRect().height)};})(),
      favoriteAction:get('#positronFavoritesSources'),
      favoriteGuidance:(()=>document.querySelector('#favoriteList .empty-list')?.firstChild?.textContent?.trim()||'')(),
      sourceCount:document.getElementById('sourceCount')?.textContent?.trim()||'0',
@@ -83,6 +84,10 @@ async function runTwenty(page){
     assert.equal(metrics.themeButton.pseudoContent,'"◈"','single theme icon missing: '+name);
     assert.ok(metrics.themeButton.ariaLabel&&metrics.themeButton.title,'icon requires accessible label and tooltip: '+name);
    }
+   assert.equal(metrics.searchButton?.svg,true,'search toolbar icon must be SVG: '+name);
+   assert.equal(metrics.searchButton?.label,'Tìm kênh / trang','compact search label missing: '+name);
+   assert.ok(metrics.searchButton?.aria,'search button must keep full accessible name: '+name);
+   if(width>=1000)assert.equal(metrics.searchButton.labelClipped,false,'desktop search label clipped: '+name);
    if(width<=720&&(target==='tv'||target==='sources')){
    assert.equal(metrics.heading?.shortTitle,target==='sources'?'Nguồn':'TV','missing compact page title: '+name);
    assert.equal(metrics.heading?.clipped,false,'page header text clipped: '+name);
@@ -92,7 +97,16 @@ async function runTwenty(page){
    if(metrics.toggle&&metrics.badge.bottom>metrics.toggle.top&&metrics.badge.top<metrics.toggle.bottom)
     assert.ok(metrics.badge.right<=metrics.toggle.left-2,'release badge covered by menu: '+name);
   }
-  if(target==='sources'&&metrics.sources)assert.notEqual(metrics.sources.background,'rgb(255, 255, 255)','white source panel');
+  if(target==='settings'&&width>=900){
+    const searchOpens=await page.evaluate(()=>{
+      document.getElementById('positronOpen').click();
+      const open=document.getElementById('positronPalette')?.hidden===false;
+      window.OpenIPTVPositron?.close?.();
+      return open;
+    });
+    assert.equal(searchOpens,true,'new icon must keep native command palette event');
+   }
+   if(target==='sources'&&metrics.sources)assert.notEqual(metrics.sources.background,'rgb(255, 255, 255)','white source panel');
   if(target==='sources'){
    assert.ok(metrics.sourceSection,'Smart Discovery section missing');
    assert.equal(metrics.sourceSection.background,metrics.sources?.background,'Smart Discovery dark band must match source navigation theme');
