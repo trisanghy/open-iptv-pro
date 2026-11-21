@@ -39,3 +39,13 @@ test('P4 safeguards dark theme transport and visual feedback',()=>{
  assert.match(js,/p50-empty/);
  assert.match(js,/localStorage/);
 });
+
+test('P5.1.68 compact 600px advanced-pages rail uses exactly one real SVG icon',()=>{
+ const js=read('renderer/positron-fifty.js'),css=read('renderer/positron-horizon-v4.css'),audit=read('scripts/positron-20-extension.cjs');
+ assert.ok(js.includes("glyph.setAttribute('class','po-more-vector')"));
+ assert.ok(js.includes('more.replaceChildren(glyph,caption)'));
+ assert.ok(css.includes('#positronMorePages::before{content:none!important'));
+ assert.ok(css.includes('.po-more-label{display:none!important}'));
+ assert.ok(audit.includes('moreIcon.rects,4'));
+ assert.ok(audit.includes('moreIcon.overflow,false'));
+});

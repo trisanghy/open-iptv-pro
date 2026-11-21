@@ -477,3 +477,10 @@ P5.1.46 same-version CI repair: run 44866650681 failed 2/611 because historical 
 - Input: native Electron P5.1.66 screenshots showed overlay anchored to the global topbar. Source inspection confirmed dismissal only on document pointerdown and Escape; keyboard-triggered navigation does not emit pointerdown, so popup can remain over Sources/Settings.
 - Fix: observe only real TV page active class. If user navigates away, close WatchFlow without mutating current playlist, selected channel or any source. Preserve existing pointer/Escape pathways.
 - Regression: native Electron in three themes opens WatchFlow, invokes real IPTVState.setPage('sources'), checks hidden/aria-expanded, restores TV page and verifies active; Node guards source wiring. Build/screenshots/immutable release separately required.
+
+
+## P5.1.68 / v4.23.152 — Compact advanced-menu button renders overlapping icons
+- Input: personally opened P5.1.67 actual Electron 600px TV screenshot `positron-p5-07-real.png`, run 44897365785. Sidebar control around y245 shows extra teal grid protruding left of a three-dot glyph inside a big selected pill.
+- Root cause: `renderer/positron-fifty.js` writes a legacy text icon via `syncMore()` while P4 compact styles add a `::before` glyph and `::first-letter` override. Competing pseudo/text icons overlap and overflow the intended 49px rail width.
+- Fix: create exactly one four-tile inline SVG in the existing native disclosure button, preserve JS event, aria-expanded, local storage and label in expanded rail; suppress legacy pseudo glyphs under scoped Horizon CSS.
+- Regression: actual Electron 600px TV screenshot audit checks one SVG with 4 tiles, pseudo content none, no text spill/overflow, visible icon ~20px; Node test guards replacement DOM and styles. Build+Release pending.

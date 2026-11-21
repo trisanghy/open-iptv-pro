@@ -176,3 +176,5 @@ Action: Horizon-only scrollbar variable override (#40736c thumb, #101a23 track),
 | 04/20 | P5.1.66 / v4.23.150 | Actual P5.1.65 real WatchFlow dialog 1360px, run 44896707674 | Dialog's platform font × icon uses 30px hit target, cramped and inconsistent with vector toolbar | SVG artwork and 42px native close button, real 3-theme Electron click-target geometry and Node regression; release pending |
 
 | 05/20 | P5.1.67 / v4.23.151 | Real P5.1.66 WatchFlow 1360px overlay and verified JS handlers | Popup dismissal is pointer-only; keyboard navigation across routes leaves popup over destination | Observe native TV active state to close on route change; real Electron 3-theme setPage('sources') -> dialog hidden and return TV; release pending |
+
+| 06/20 | P5.1.68 / v4.23.152 | Real P5.1.67 TV 600px `positron-p5-07-real.png`, Actions 44897365785 | Double grid and ellipsis in compact sidebar More; original text glyph + CSS ::before/::first-letter overlap | Native four-square SVG, hide duplicate pseudo/text in compact, expand label only on rail open; real 600px SVG/geometry/no-overflow checks |

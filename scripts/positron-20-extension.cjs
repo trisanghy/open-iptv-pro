@@ -251,6 +251,25 @@ async function runTwenty(page){
    assert.ok(metrics.v2Media?.width<=48&&metrics.v2Media.height>=40,'new Play button is not compact: '+name+' '+JSON.stringify(metrics.v2Media));
    assert.ok(metrics.v2Media?.vectorOutputs&&metrics.v2Media.navIcon,'new SVG system not installed: '+name);
    assert.equal(metrics.v2Media?.topOverflow,false,'toolbar extends beyond viewport: '+name);
+   if(width===600){
+    const moreIcon=await page.evaluate(()=>{
+     const button=document.getElementById('positronMorePages');
+     const shape=button.querySelector('svg.po-more-vector');
+     const label=button.querySelector('.po-more-label');
+     const pseudo=getComputedStyle(button,'::before').content;
+     const box=button.getBoundingClientRect();
+     return {shape:!!shape,rects:shape?.querySelectorAll('rect').length||0,
+      labelHidden:getComputedStyle(label).display==='none',pseudo,
+      boxWidth:box.width,iconWidth:shape?.getBoundingClientRect().width||0,
+      overflow:button.scrollWidth>button.clientWidth+1};
+    });
+    assert.equal(moreIcon.shape,true,'Advanced-pages rail still uses a platform glyph: '+name);
+    assert.equal(moreIcon.rects,4,'Advanced-pages rail SVG missing grid geometry: '+name);
+    assert.equal(moreIcon.labelHidden,true,'Compact rail label bleeds into icon: '+name);
+    assert.ok(['none','normal'].includes(moreIcon.pseudo),'Duplicate pseudo-grid still visible: '+name+' '+moreIcon.pseudo);
+    assert.ok(moreIcon.iconWidth>=18&&moreIcon.iconWidth<=24,'Compact rail SVG size wrong: '+name);
+    assert.equal(moreIcon.overflow,false,'Advanced-pages icon rail overflows: '+name);
+   }
    if(width===1360){
     const watchFlow=await page.evaluate(()=>{
      const button=document.getElementById('poWatchFlowToggle');

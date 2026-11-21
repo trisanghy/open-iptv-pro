@@ -26,7 +26,20 @@
   const syncMore=()=>{
     root.classList.toggle('p50-advanced-closed',!expanded);
     more.setAttribute('aria-expanded',String(expanded));
-    more.textContent=expanded?'▴ Thu gọn công cụ':'▾ Công cụ khác';
+    // Replace the competing legacy text glyph and CSS pseudo-icon with one vector.
+    const glyph=d.createElementNS('http://www.w3.org/2000/svg','svg');
+    glyph.setAttribute('class','po-more-vector');
+    glyph.setAttribute('viewBox','0 0 24 24');
+    glyph.setAttribute('aria-hidden','true');
+    for(const [x,y] of [[3,3],[13,3],[3,13],[13,13]]){
+     const rect=d.createElementNS('http://www.w3.org/2000/svg','rect');
+     rect.setAttribute('x',String(x));rect.setAttribute('y',String(y));
+     rect.setAttribute('width','8');rect.setAttribute('height','8');rect.setAttribute('rx','1.5');
+     glyph.append(rect);
+    }
+    const caption=d.createElement('span');caption.className='po-more-label';
+    caption.textContent=expanded?'Thu gọn công cụ':'Công cụ khác';
+    more.replaceChildren(glyph,caption);
   };
   const showMore=(value,persist=true)=>{
     expanded=!!value;

@@ -529,3 +529,20 @@ html[data-positron="true"].po-v3.po-horizon #page-tv .unified-ai-row .unified-ai
 
 /* P5.1.66: explicit vector close icon with sufficiently large keyboard/touch target. */
 .po-watchflow-head #poWatchFlowClose svg{width:20px;height:20px;pointer-events:none;stroke:currentColor;fill:none}
+
+/* P5.1.68 · 600px real screenshot: legacy ::first-letter and ::before grid
+   overlap the old leading glyph in the advanced-pages disclosure. */
+html[data-positron="true"].po-horizon #appSidebar #positronMorePages::before{content:none!important;display:none!important}
+html[data-positron="true"].po-horizon #appSidebar #positronMorePages::first-letter{font-size:inherit!important}
+html[data-positron="true"].po-horizon #appSidebar #positronMorePages .po-more-vector{
+ width:20px!important;height:20px!important;flex:0 0 20px!important;
+ fill:none!important;stroke:currentColor!important;stroke-width:1.8!important;pointer-events:none!important;
+}
+html[data-positron="true"].po-horizon #appSidebar #positronMorePages .po-more-label{display:none!important}
+html[data-positron="true"].po-horizon[data-po-rail-expanded="true"] #appSidebar #positronMorePages{
+ width:100%!important;max-width:none!important;justify-content:flex-start!important;
+ gap:10px!important;padding:0 12px!important;
+}
+html[data-positron="true"].po-horizon[data-po-rail-expanded="true"] #appSidebar #positronMorePages .po-more-label{
+ display:inline!important;font-size:12px!important;white-space:nowrap!important;
+}
