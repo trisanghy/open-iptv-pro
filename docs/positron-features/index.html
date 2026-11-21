@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="dark">
+<title>Positron · Nhật ký tính năng</title>
+<meta name="description" content="Nhật ký tính năng Open IPTV Pro Positron theo phiên bản, ảnh kiểm thử Electron thật và liên kết bản phát hành.">
+<style>
+:root{font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;color:#e9f1f3;background:#0c141c}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(ellipse at 90% -10%,#173e45 0,transparent 42%),#0c141c}
+a{color:#a0ebdb;text-decoration:none}a:hover{text-decoration:underline}
+main{max-width:1100px;margin:auto;padding:28px clamp(16px,5vw,56px) 80px}
+header{display:flex;gap:14px;align-items:center;flex-wrap:wrap;padding:12px 0 25px}
+.logo{display:grid;place-items:center;width:43px;height:43px;border:1px solid #4e897d;border-radius:14px;color:#b8ffea;background:#133934;font-size:24px}
+.brand{font-size:15px;font-weight:800;letter-spacing:.08em}.subbrand{font-size:12px;color:#8faab0;margin-top:4px}
+h1{font-size:clamp(32px,5.5vw,58px);letter-spacing:-.052em;line-height:1.05;max-width:760px;margin:34px 0 16px}
+.lead{max-width:760px;color:#a6bdc4;line-height:1.65;font-size:15px;margin:0 0 26px}
+.hero-actions{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:32px}
+.action{border:1px solid #35636a;padding:11px 16px;border-radius:11px;color:#e0f8f2;background:#15333d;font-weight:650}
+.action.secondary{background:transparent;color:#aac1c6}
+.statistics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:18px 0 24px}
+.stat{background:#111f29;border:1px solid #253a46;border-radius:14px;padding:14px 16px}
+.stat b{font-size:24px;display:block;font-variant-numeric:tabular-nums}
+.stat span{font-size:11px;color:#93aeb7}
+.toolbar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:32px 0 15px}
+.toolbar input,.toolbar select{background:#12232e;color:#edf4f4;border:1px solid #314b57;border-radius:10px;min-height:43px;padding:10px 13px;font:inherit}
+.toolbar input{min-width:220px;flex:1}.toolbar select{min-width:152px}
+.toolbar label{color:#b8ced0;font-size:12px}
+h2{font-size:20px;letter-spacing:-.02em;margin:0}
+.small{font-size:12px;color:#9bb3ba;line-height:1.6}
+#entries{display:grid;gap:8px}
+details.entry{background:#12212b;border:1px solid #304650;border-radius:14px;overflow:hidden}
+details.entry[open]{border-color:#568d82;background:#142832}
+summary{list-style:none;cursor:pointer;display:grid;grid-template-columns:100px minmax(0,1fr) auto 22px;align-items:center;gap:15px;padding:16px 18px}
+summary::-webkit-details-marker{display:none}
+summary:focus-visible{outline:2px solid #9cf4de;outline-offset:-3px}
+.version{color:#b0fff0;font-weight:850;font-size:14px;white-space:nowrap}
+.feature-name{font-weight:650;color:#f0f7f7;font-size:14px;line-height:1.5}
+.tag{display:inline-flex;align-items:center;justify-content:center;padding:5px 8px;border-radius:7px;white-space:nowrap;font-size:10px;font-weight:760;background:#203a42;color:#abcfcb}
+.tag.new{background:#1b4a3e;color:#c0ffdf}.tag.candidate{background:#473b24;color:#ffdf9c}
+.chevron{font-size:22px;color:#9bb9be;transition:transform .15s}details[open] .chevron{transform:rotate(90deg)}
+.entry-body{border-top:1px solid #304650;padding:17px 19px 20px}
+.entry-body p{line-height:1.65;color:#bbd0d4;font-size:13px;margin:0 0 16px;white-space:pre-wrap;overflow-wrap:anywhere}
+.meta{display:flex;gap:10px;flex-wrap:wrap;color:#8daab2;font-size:11px;margin-bottom:14px}
+.preview{background:#0d1920;border:1px solid #30414a;border-radius:12px;padding:12px;max-width:740px}
+.preview img{display:block;max-width:100%;max-height:640px;width:auto;height:auto;margin:auto;border-radius:8px}
+.preview .missing{padding:30px 15px;text-align:center;color:#8ba6ad;font-size:13px}
+.preview figcaption{font-size:11px;color:#8ea8ad;margin-top:10px;overflow-wrap:anywhere}
+.links{display:flex;gap:12px;flex-wrap:wrap;margin-top:14px;font-size:12px}
+.info{padding:16px;border:1px solid #2a4550;border-radius:12px;background:#132630;color:#aac3c8;line-height:1.6;margin:22px 0;font-size:12px}
+#loading{color:#8cb0ae;padding:20px 0}
+footer{color:#79949c;font-size:12px;border-top:1px solid #203743;padding-top:24px;margin-top:35px;line-height:1.7}
+@media(max-width:640px){summary{grid-template-columns:85px minmax(0,1fr) 19px;gap:9px;padding:14px 12px}summary .tag{grid-column:2;justify-self:start}summary .chevron{grid-column:3;grid-row:1 / span 2}.statistics{gap:6px}.stat{padding:12px 10px}.stat b{font-size:19px}.entry-body{padding:14px}h1{margin-top:18px}}
+</style>
+</head>
+<body>
+<main>
+<header><div class="logo" aria-hidden="true">✦</div><div><div class="brand">OPEN IPTV PRO / POSITRON</div><div class="subbrand">Feature Lab · Công khai tiến độ theo phiên bản</div></div></header>
+<h1>Mỗi phiên bản.<br> Một cải tiến có thể kiểm chứng.</h1>
+<p class="lead">Nhật ký tính năng Positron. Mỗi phiên bản là một dòng: nhấn để xem thay đổi, ảnh chụp Electron thật (nếu đã có), commit và liên kết bản phát hành. Ưu tiên tính năng mới hữu ích; không tính việc đổi số phiên bản là một tính năng.</p>
+<div class="hero-actions"><a class="action" href="https://github.com/trisanghy/open-iptv-pro/tree/Positron">Xem nhánh Positron</a><a class="action secondary" href="https://github.com/trisanghy/open-iptv-pro/releases">Các bản tải xuống</a><a class="action secondary" href="https://github.com/trisanghy/open-iptv-pro/actions">GitHub Actions</a></div>
+<div class="statistics"><div class="stat"><b id="total">—</b><span>Phiên bản trong nhật ký</span></div><div class="stat"><b id="featureCount">—</b><span>Tính năng/cải tiến hữu ích</span></div><div class="stat"><b id="photoCount">—</b><span>Phiên bản có ảnh thật</span></div></div>
+<div class="toolbar"><h2>Nhật ký phiên bản</h2><input id="search" type="search" autocomplete="off" placeholder="Tìm tính năng, phiên bản..." aria-label="Tìm phiên bản"><label for="filter">Hiển thị</label><select id="filter"><option value="all">Tất cả</option><option value="feature">Ưu tiên tính năng mới</option><option value="release">Đã phát hành</option><option value="candidate">Đang phát triển</option></select></div>
+<p id="loading" aria-live="polite">Đang đọc nhật ký từ GitHub…</p>
+<section id="entries" aria-label="Danh sách phiên bản"></section>
+<div class="info">Ảnh chỉ được gắn với phiên bản khi tìm thấy tệp ảnh thực trong gói kiểm thử của GitHub Release. Nếu thiếu ảnh, trang sẽ nói rõ, không thay bằng hình dựng. Bản phát hành (prerelease) không mặc nhiên đồng nghĩa đã thử trên máy người dùng. Danh mục tự tải dữ liệu release mới từ GitHub khi mở trang; ảnh được cập nhật qua workflow xuất bản.</div>
+<footer>Dữ liệu: GitHub Releases, nhánh Positron và ảnh Electron từ artifact/release của dự án. Trang hiển thị công khai, không cần đăng nhập. Không thu thập lịch sử xem IPTV.</footer>
+</main>
+<script>
+(function(){
+'use strict';
+const owner='trisanghy',repo='open-iptv-pro';
+const $=id=>document.getElementById(id);
+const state={rows:[],text:'',filter:'all'};
+const normal=s=>String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/gi,'d').toLowerCase();
+const safeUrl=url=>{try{const u=new URL(url,location.href);return u.protocol==='https:'||u.origin===location.origin?u.href:'#';}catch{return '#';}};
+const link=(href,label)=>{const a=document.createElement('a');a.href=safeUrl(href);a.textContent=label;a.target='_blank';a.rel='noopener noreferrer';return a;};
+const el=(tag,cls,text)=>{const n=document.createElement(tag);if(cls)n.className=cls;if(text!==undefined)n.textContent=text;return n;};
+function toRow(release){
+ const match=/^positron\/v([\d.]+)-p5\.1\.(\d+)$/.exec(release.tag_name||'');
+ if(!match)return null;
+ const n=Number(match[2]);
+ const raw=(release.name||'').replace(/^Open IPTV Pro Positron\s*/i,'').replace(/^P5\.1\.\d+\s*[—–:-]?\s*/i,'').trim();
+ return {number:n,version:'P5.1.'+n,appVersion:match[1],title:raw||'Cập nhật Positron',
+  description:(release.body||'').split('\n').filter(s=>s.trim()&&!s.trim().startsWith('#')).slice(0,2).join(' ').slice(0,500),
+  status:'release',tag:release.tag_name,commit:release.target_commitish||'',published:release.published_at||'',
+  url:release.html_url,assets:(release.assets||[]).map(a=>({name:a.name,url:a.browser_download_url})),image:null,
+  kind:/^(add|new|introduce|smart|local|live|watch|show|keyboard|sync)/i.test(raw)?'feature':'fix'};
+}
+function render(){
+ const rows=state.rows.filter(r=>{
+  if(state.filter==='feature'&&r.kind!=='feature')return false;
+  if(state.filter==='release'&&r.status!=='release')return false;
+  if(state.filter==='candidate'&&r.status!=='candidate')return false;
+  return normal([r.version,r.appVersion,r.title,r.description].join(' ')).includes(normal(state.text));
+ });
+ $('total').textContent=state.rows.length;
+ $('featureCount').textContent=state.rows.filter(r=>r.kind==='feature').length;
+ $('photoCount').textContent=state.rows.filter(r=>r.image).length;
+ $('entries').replaceChildren();
+ for(const r of rows){
+  const d=el('details','entry'),head=el('summary'),version=el('span','version',r.version),
+   title=el('span','feature-name',r.title),tag=el('span','tag '+(r.status==='candidate'?'candidate':r.kind==='feature'?'new':''),
+   r.status==='candidate'?'Đang phát triển':r.kind==='feature'?'TÍNH NĂNG':'CẬP NHẬT'),arrow=el('span','chevron','›');
+  head.append(version,title,tag,arrow);d.append(head);
+  const body=el('div','entry-body'),meta=el('div','meta');
+  meta.append(el('span','', 'Ứng dụng '+r.appVersion),el('span','',r.published?'Phát hành '+new Date(r.published).toLocaleDateString('vi-VN'):'Chưa có Release'));
+  body.append(meta,el('p','',r.description||'Xem commit hoặc ghi chú Release để biết nội dung thay đổi.'));
+  const figure=el('figure','preview');figure.style.margin='0';
+  if(r.image){
+   const img=el('img');img.src='./'+r.image;img.alt='Ảnh chụp Electron thật — '+r.version;img.loading='lazy';
+   img.onerror=()=>{img.replaceWith(el('div','missing','Không tải được tệp ảnh, hãy xem gói kiểm thử tại Release.'));};
+   figure.append(img,el('figcaption','',r.image.split('/').pop()));
+  }else figure.append(el('div','missing','Phiên bản này chưa có ảnh riêng được xác minh trong thư viện ảnh công khai.'));
+  body.append(figure);
+  const links=el('div','links');
+  if(r.url)links.append(link(r.url,'Xem Release'));
+  if(r.commit&&/^[0-9a-f]{40}$/i.test(r.commit))links.append(link('https://github.com/'+owner+'/'+repo+'/commit/'+r.commit,'Xem commit'));
+  const bin=(r.assets||[]).find(a=>/Setup.*x64\.exe$/.test(a.name));
+  if(bin)links.append(link(bin.url,'Tải EXE x64'));
+  const images=(r.assets||[]).find(a=>/20-Real-Screenshots\.zip$/.test(a.name));
+  if(images)links.append(link(images.url,'Toàn bộ ảnh kiểm thử'));
+  if(r.status==='candidate')links.append(link('https://github.com/'+owner+'/'+repo+'/actions','Theo dõi CI'));
+  body.append(links);d.append(body);$('entries').append(d);
+ }
+ $('loading').textContent=rows.length?'Nhấn vào một phiên bản để xem thông tin và ảnh kiểm thử.':'Chưa có phiên bản phù hợp với bộ lọc.';
+}
+function merge(incoming){
+ const old=new Map(state.rows.map(r=>[r.version,r]));
+ for(const r of incoming){
+  const prev=old.get(r.version);
+  if(prev&&prev.image)r.image=prev.image;
+  if(prev&&prev.description&&(!r.description||r.description.length<20))r.description=prev.description;
+  if(prev&&prev.kind==='feature')r.kind='feature';
+  old.set(r.version,r);
+ }
+ state.rows=[...old.values()].sort((a,b)=>b.number-a.number);render();
+}
+$('search').addEventListener('input',e=>{state.text=e.target.value;render();});
+$('filter').addEventListener('change',e=>{state.filter=e.target.value;render();});
+fetch('./catalog.json',{cache:'no-cache'}).then(r=>{if(!r.ok)throw Error(r.status);return r.json();})
+ .then(data=>{state.rows=Array.isArray(data.versions)?data.versions:[];render();})
+ .catch(()=>{$('loading').textContent='Không tải được dữ liệu đóng gói; đang truy vấn GitHub.';});
+fetch('https://api.github.com/repos/'+owner+'/'+repo+'/releases?per_page=100',{headers:{'Accept':'application/vnd.github+json'}})
+ .then(r=>{if(!r.ok)throw Error(r.status);return r.json();})
+ .then(list=>merge(list.map(toRow).filter(Boolean)))
+ .catch(()=>{if(!state.rows.length)$('loading').textContent='Chưa thể truy vấn GitHub. Thử tải lại trang.';});
+})();
+</script>
+</body>
+</html>

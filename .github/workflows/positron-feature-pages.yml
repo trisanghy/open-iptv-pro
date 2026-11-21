@@ -1,0 +1,47 @@
+name: Positron · Feature history website (GitHub Pages)
+on:
+  push:
+    branches: [Positron]
+  workflow_dispatch:
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: positron-feature-pages
+  cancel-in-progress: true
+jobs:
+  publish:
+    if: github.repository == 'trisanghy/open-iptv-pro'
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Checkout Positron only
+        uses: actions/checkout@v4
+        with:
+          ref: Positron
+          persist-credentials: false
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Create timeline and extract authentic released Electron screenshots
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          python -m py_compile scripts/build-positron-feature-site.py
+          python scripts/build-positron-feature-site.py
+          test -s site/positron-features/index.html
+          test -s site/positron-features/catalog.json
+          python -c "import json; d=json.load(open('site/positron-features/catalog.json')); assert d['versions']; assert all(x['version'].startswith('P5.1.') for x in d['versions'])"
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+      - name: Upload website
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
