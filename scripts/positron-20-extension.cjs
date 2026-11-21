@@ -1347,10 +1347,11 @@ async function runTwenty(page){
   return {oneRealMetadataRow:programmes.length===1,
    correctTitle:programmes[0]?.textContent==='Đang chiếu: Bản tin EPG đã xác minh trong QA',
    fiveCards:root.querySelectorAll('.po-flowplus-card').length===5,
+   scrollAtTop:document.getElementById('poWatchFlowPanel').scrollTop===0,
    noAutoPlay:window.IPTVState.getCurrent()===null,
    safeText:!root.querySelector('.po-flowplus-onair script')};
  });
- for(const key of ['oneRealMetadataRow','correctTitle','fiveCards','noAutoPlay','safeText'])
+ for(const key of ['oneRealMetadataRow','correctTitle','fiveCards','scrollAtTop','noAutoPlay','safeText'])
   assert.equal(liveEPGQA[key],true,'On-air XMLTV WatchFlow QA: '+key);
  await page.screenshot({path:path.join(out,'positron-p5198-live-epg-watchflow-552-real.png'),animations:'disabled'});
  await page.evaluate(()=>{

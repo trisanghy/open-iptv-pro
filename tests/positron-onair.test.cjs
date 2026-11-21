@@ -32,4 +32,7 @@ test('WatchFlow on-air uses existing XMLTV API and metadata-only Electron eviden
  assert.ok(ui.includes('window.PositronOnAirCore?.lookup(liveGuide,ch,liveClock,window.IPTVGuide)'));
  assert.ok(ui.includes("programme.textContent='Đang chiếu: '+onAir.title"));
  assert.ok(qa.includes('positron-p5198-live-epg-watchflow-552-real.png'));
+ assert.ok(qa.includes('scrollAtTop:document.getElementById'));
+ assert.ok(ui.includes('panel.scrollTop=0'));
+
 });

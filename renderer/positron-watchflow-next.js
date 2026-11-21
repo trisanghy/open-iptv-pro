@@ -192,6 +192,8 @@
   scheduleScrollCue();
  };
  const select=next=>{
+  // Switching mode should never inherit a scrolled-to-bottom Watch Later view.
+  panel.scrollTop=0;
   view=next;
   for(const [key,b] of Object.entries(buttons))b.setAttribute('aria-pressed',String(key===next));
   for(const el of standard)el.classList.toggle('po-flowplus-hidden',next!=='discover');
