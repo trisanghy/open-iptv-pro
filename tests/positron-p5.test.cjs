@@ -37,7 +37,7 @@ test('P5 assets are loaded after P4 without replacing it',()=>{
 test('P5 release is immutable and versioned separately from P4.1',()=>{
  const pkg=JSON.parse(read('package.json'));
  const flow=read('.github/workflows/positron-lab.yml');
- assert.equal(pkg.version,'4.23.160');
+ assert.equal(pkg.version,'4.23.161');
  const label=pkg.description.match(/Positron\s+(P\d+\.\d+\.\d+)/)?.[1];
  assert.ok(label,'product P-label must accompany SemVer');
  assert.ok(flow.includes('TAG=positron/v'+pkg.version+'-'+label.toLowerCase()),'release tag and app version must match');
@@ -663,4 +663,14 @@ test('P5.1.76 Doctor hides empty analysis but restores full tools after native c
  assert.ok(js.includes('const syncDoctorAvailability=()=>'));
  assert.ok(js.includes('window.IPTVState.getChannels().length===0'));
  for(const x of ['emptyDoctor.v3Hidden,true','emptyDoctor.v2Hidden,true','populatedDoctor.v3Visible,true','populatedDoctor.v2Visible,true'])assert.ok(qa.includes(x));
+});
+
+test('P5.1.77 Doctor screenshot QA locates real native onboarding button and verifies navigation',()=>{
+ const qa=read('scripts/positron-20-extension.cjs');
+ const ui=read('renderer/positron-twenty.js');
+ assert.ok(ui.includes("action.id='positronDoctorSources'"));
+ assert.ok(ui.includes("window.IPTVState?.setPage?.('sources')"));
+ assert.ok(qa.includes("document.getElementById('positronDoctorSources')"));
+ assert.ok(qa.includes("doctorNavigation,'page-sources'"));
+ assert.ok(!qa.includes("document.querySelector('#doctorReport button, #doctorReport a')"));
 });

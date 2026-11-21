@@ -726,12 +726,21 @@ async function runTwenty(page){
      return {empty:section.dataset.poEmptyDoctor==='true',
       v3Hidden:getComputedStyle(document.getElementById('doctorV3Panel')).display==='none',
       v2Hidden:getComputedStyle(document.getElementById('doctorV2Panel')).display==='none',
-      sourceAction:!!document.querySelector('#doctorReport button, #doctorReport a')};
+      sourceAction:(()=>{const action=document.getElementById('positronDoctorSources');return !!action&&!action.hidden&&!action.closest('[hidden]')&&getComputedStyle(action).display!=='none'&&action.getBoundingClientRect().width>=40;})(),
+      sourceActionNative:document.getElementById('positronDoctorSources')?.textContent.trim()==='Quản lý nguồn IPTV'};
     });
     assert.equal(emptyDoctor.empty,true,'Doctor did not detect empty native playlist');
     assert.equal(emptyDoctor.v3Hidden,true,'Zero-channel Doctor still opens complex unused analytics');
     assert.equal(emptyDoctor.v2Hidden,true,'Zero-channel Doctor still exposes advanced visual diagnostics');
-    assert.equal(emptyDoctor.sourceAction,true,'Doctor must retain native source onboarding action');
+    assert.equal(emptyDoctor.sourceAction,true,'Doctor must retain visible native source onboarding action');
+    assert.equal(emptyDoctor.sourceActionNative,true,'Doctor import action must keep native label');
+    const doctorNavigation=await page.evaluate(()=>{
+      document.getElementById('positronDoctorSources').click();
+      const active=document.querySelector('.page.active-page')?.id;
+      window.IPTVState.setPage('doctor');
+      return active;
+    });
+    assert.equal(doctorNavigation,'page-sources','Doctor import action must navigate to native Sources');
    }
    if(target==='doctor'&&metrics.sourceCount==='0'){
     assert.equal(metrics.doctorButtons?.length,4,'expected four native Doctor analysis buttons: '+name);

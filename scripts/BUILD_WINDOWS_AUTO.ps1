@@ -1,9 +1,9 @@
-# Open IPTV Pro v4.23.160 Full Desktop - Windows build (Setup + Portable).
+# Open IPTV Pro v4.23.161 Full Desktop - Windows build (Setup + Portable).
 # This script always builds from its own project root, never from the caller's folder.
 # Windows symlink permissions are checked before downloading any dependencies.
 # No signing, release publishing, or system-wide installs are performed.
 $ErrorActionPreference = 'Stop'
-$expectedVersion = '4.23.160'
+$expectedVersion = '4.23.161'
 $root = [System.IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
 $projectFile = Join-Path $root 'package.json'
 $logDir = Join-Path $root 'build-logs'
