@@ -3,6 +3,9 @@
 **Dùng trực tiếp:** https://trisanghy.github.io/open-iptv-pro/  
 **Hướng dẫn trên website:** https://trisanghy.github.io/open-iptv-pro/huong-dan.html  
 **Desktop mới nhất:** https://github.com/trisanghy/open-iptv-pro/releases/latest
+**Tải ứng dụng theo nền tảng:** https://trisanghy.github.io/open-iptv-pro/tai-ve.html
+
+**Hướng dẫn lỗi DMG trên macOS:** Nếu ứng dụng báo `is damaged and can't be opened`, chỉ tiếp tục sau khi xác thực DMG và SHA-256 từ GitHub Release chính thức. Kéo `Open IPTV Pro.app` vào Applications, thử **System Settings → Privacy & Security → Open Anyway**. Nếu xác minh an toàn nhưng ứng dụng chỉ bị chặn bởi quarantine, có thể mở Terminal chạy `xattr -dr com.apple.quarantine "/Applications/Open IPTV Pro.app"`. Không dùng cách này cho DMG lỗi thật, sai checksum hoặc bị phát hiện mã độc. Xem [hướng dẫn hiển thị ngay cạnh nút tải Mac](https://trisanghy.github.io/open-iptv-pro/tai-ve.html#mac-dmg-help).
 
 Bản Web là ứng dụng trình duyệt tĩnh trên nhánh **web/online**, khác bản desktop Electron mã nguồn chính tại `main`.
 
