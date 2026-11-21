@@ -14,3 +14,5 @@ First P5.1.8 test run https://github.com/trisanghy/open-iptv-pro/actions/runs/44
 | 02/20 | P5.1.9 / v4.23.93 | P5.1.8 `positron-p5-20-real.png` Favorites 600px | Empty state offers no actionable route to manage or activate a source | Add keyboard-focusable native button, test actual Electron click destination | CI and after-image review pending |
 
 | 03/20 | P5.1.10 / 4.23.94 | P5.1.9 `positron-p5-20-real.png` Favorites at 600px | Generic empty-state copy tells first-time users to "re-add" an old source when source count is zero | Source-aware text node with MutationObserver; screenshot text validation and regression test | CI/after-image review pending |
+
+| 04/20 | P5.1.11 / 4.23.95 | P5.1.10 `positron-p5-09-real.png` TV at 450px | Next EPG title is visibly cut with `...`, from inherited nowrap/ellipsis | Mobile text wraps; computed-style + geometry checks in real Electron, screenshot review | CI/release pending |
