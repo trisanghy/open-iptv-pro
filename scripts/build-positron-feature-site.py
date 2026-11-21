@@ -232,11 +232,13 @@ def attach_real_images(rows):
                 if not found or not name.lower().endswith(".png"):
                     continue
                 n = int(found.group(1))
-                if entry.file_size <= 1000 or entry.file_size > 7_000_000:
+                if entry.file_size <= 1000 or entry.file_size > 12_000_000:
                     continue
                 # For each version, choose the screenshot with the clearest
                 # feature-specific marker when multiple QA images are present.
-                priority = (2 if "after" in name.lower() else 0) + (
+                priority = (50 if "desktop-1920x1080" in name.lower() else 0) + (
+                    20 if "after" in name.lower() else 0) + (
+                    5 if "trang-chu" in name.lower() else 0) + (
                     1 if "real" in name.lower() else 0)
                 current = matches.get(n)
                 if current is None or priority > current[0]:

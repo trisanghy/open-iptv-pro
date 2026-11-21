@@ -1429,3 +1429,21 @@ test('P5.1.149 reminders can use 5, 10, 15 or 30 minutes, old records default to
   'positron-p51149-reminder-lead-before-450-real.png','positron-p51149-reminder-lead-after-450-real.png'])
   assert.ok(qa.includes(token),'native QA missing '+token);
 });
+
+
+test('Positron bắt buộc ảnh chính Electron 1920x1080 16:9 và giữ ảnh responsive riêng',()=>{
+ const rules=read('POSITRON_FEATURE_RULES.md');
+ const head=read('POSITRON_HEAD_20_VONG_TINH_NANG_MOI.md');
+ const capture=read('scripts/positron-20-extension.cjs');
+ const workflow=read('.github/workflows/positron-lab.yml');
+ const site=read('scripts/build-positron-feature-site.py');
+ assert.ok(rules.includes('1920 × 1080 (16:9)'),'Thiếu quy tắc ảnh lớn trong HEAD');
+ assert.ok(head.includes('Quy tắc ảnh 16:9 desktop bất biến'));
+ assert.ok(capture.includes('await page.setViewportSize({width:1920,height:1080})'));
+ assert.ok(capture.includes('bytes.readUInt32BE(16),1920'));
+ assert.ok(capture.includes('bytes.readUInt32BE(20),1080'));
+ assert.ok(capture.includes('desktop16x9Screenshots.push('));
+ assert.ok(workflow.includes('Xvfb :99 -screen 0 1920x1080x24'));
+ assert.ok(workflow.includes('positron-desktop-1920x1080-16x9-main-real.png'));
+ assert.ok(site.includes('50 if "desktop-1920x1080" in name.lower()'));
+});

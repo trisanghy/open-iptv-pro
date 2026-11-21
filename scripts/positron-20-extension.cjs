@@ -3468,9 +3468,33 @@ async function runTwenty(page){
  for(const [key,value] of Object.entries(reminderLeadQA))
   assert.equal(value,true,'P149 reminder after '+key+': '+JSON.stringify(reminderLeadQA));
 
+
+ // BẤT BIẾN 22/11/2026: ảnh GIỚI THIỆU desktop Electron thật 1920x1080 16:9.
+ // Ảnh hẹp được giữ để phát hiện lỗi responsive, không dùng làm ảnh đại diện.
+ const desktopEdition=/P5[.]1[.]([0-9]+)/.exec(require('../package.json').description||'');
+ assert.ok(desktopEdition,'Thiếu nhãn P5.1.x để lưu ảnh desktop theo đúng phiên bản');
+ const desktopPrefix='positron-p51'+desktopEdition[1];
+ const desktop16x9Screenshots=[];
+ await page.setViewportSize({width:1920,height:1080});
+ for(const [target,slug] of [['tv','trang-chu'],['sources','nguon'],['epg','lich-phat-song'],['fav','yeu-thich']]){
+  await page.evaluate(next=>window.IPTVState.setPage(next),target);
+  await page.waitForTimeout(100);
+  const viewport=await page.evaluate(()=>({width:innerWidth,height:innerHeight}));
+  assert.deepEqual(viewport,{width:1920,height:1080},'Ảnh desktop phải chụp từ viewport 16:9 thật');
+  const filename=desktopPrefix+'-desktop-1920x1080-'+slug+'-real.png';
+  const bytes=await page.screenshot({path:path.join(out,filename),fullPage:false,animations:'disabled'});
+  assert.ok(bytes.length>10000,'Ảnh Electron desktop trống '+filename);
+  assert.equal(bytes.readUInt32BE(16),1920,'PNG desktop sai chiều rộng '+filename);
+  assert.equal(bytes.readUInt32BE(20),1080,'PNG desktop sai chiều cao '+filename);
+  desktop16x9Screenshots.push({page:target,filename,width:1920,height:1080,
+   sha256:crypto.createHash('sha256').update(bytes).digest('hex'),
+   source:'Electron thật (CDP)',data:'Dữ liệu cục bộ kiểm thử giao diện; không phải xác minh luồng phát thực tế'});
+ }
+ await page.evaluate(()=>window.IPTVState.setPage('tv'));
+
  await page.setViewportSize({width:1360,height:820});
   const report={type:'Positron P5 twenty distinct desktop screenshot cases',realElectron:true,syntheticChannels:false,
-  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA,chooserQa,toastLayoutQA,nativeToastQA,compactIdleQA,channelChipRailQA,advancedFilterQA,readableCardsQA,keyboardTabQA,favoriteEmptyQA,duplicateEmptyQA,categoryFilterQA,categoryFixtureQA,compactSingleQA,directFavoriteQA,favoriteCountQA,compactToastStackQA,toastDismissQA,toastFocusReturnQA,toastDockQA,wheelQA,pinnedAllQA,pinnedMaskQA,categoryKeyQA,dropdownChipQA,pinnedRightMaskQA,pinnedBorderMaskQA,asciiDSearchQA,emptySearchActionQA,readableCardTitleQA,favoriteSvgQA,keyboardFavoriteQA,multiTermSearchQA,keyboardSearchQA,arrowNavigationQA,pageNavigationQA,favoriteSortQA,onAirFilterQA,programmeSearchQA,upcomingProgrammeQA,soonProgrammeQA,earliestEpgSortQA,timeWindowQA,scheduleProgressQA:scheduleProgressQA,nativeReminderQA,cancelReminderQA,reminderLeadQA};
+  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,desktop16x9Screenshots,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA,chooserQa,toastLayoutQA,nativeToastQA,compactIdleQA,channelChipRailQA,advancedFilterQA,readableCardsQA,keyboardTabQA,favoriteEmptyQA,duplicateEmptyQA,categoryFilterQA,categoryFixtureQA,compactSingleQA,directFavoriteQA,favoriteCountQA,compactToastStackQA,toastDismissQA,toastFocusReturnQA,toastDockQA,wheelQA,pinnedAllQA,pinnedMaskQA,categoryKeyQA,dropdownChipQA,pinnedRightMaskQA,pinnedBorderMaskQA,asciiDSearchQA,emptySearchActionQA,readableCardTitleQA,favoriteSvgQA,keyboardFavoriteQA,multiTermSearchQA,keyboardSearchQA,arrowNavigationQA,pageNavigationQA,favoriteSortQA,onAirFilterQA,programmeSearchQA,upcomingProgrammeQA,soonProgrammeQA,earliestEpgSortQA,timeWindowQA,scheduleProgressQA:scheduleProgressQA,nativeReminderQA,cancelReminderQA,reminderLeadQA};
  fs.writeFileSync(path.resolve('positron-evidence','audit-p5-20-rounds.json'),JSON.stringify(report,null,2));
  return report;
 }
