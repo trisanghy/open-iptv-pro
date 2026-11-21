@@ -693,3 +693,10 @@ test('P5.1.80 real media more-tools action uses SVG sliders, not unlabeled dots'
  assert.ok(css.includes('#positronToolsToggle svg{'));
  for(const target of ['metrics.toolsToggle?.vector,true','disclosure.vectorAfterToggle,true'])assert.ok(audit.includes(target));
 });
+
+test('P5.1.82 450px channel chooser keeps three filters on one native row',()=>{
+ const css=read('renderer/positron-horizon-v4.css'),qa=read('scripts/positron-20-extension.cjs');
+ assert.ok(css.includes('.web-chooser-tabs{\n  display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important'));
+ assert.ok(css.includes('.web-chooser-heading{\n  display:grid!important;grid-template-columns:minmax(0,1fr) auto!important'));
+ for(const label of ['const chooserQa=await page.evaluate','chooserQa[key]','positron-p5-chooser-450-metadata-qa-real.png'])assert.ok(qa.includes(label));
+});

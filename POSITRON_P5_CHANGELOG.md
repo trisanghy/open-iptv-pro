@@ -561,3 +561,8 @@ P5.1.46 same-version CI repair: run 44866650681 failed 2/611 because historical 
 - Add CDP actual layout assertions and a 450px Electron screenshot, plus Node regression; version tag/CI prerelease remain subject to Actions verification.
 
 P5.1.81 follow-up: real Electron capture found nav overflow; replace flexible nowrap with five measured grid tracks, shorter text plus full aria, and richer screenshot/overflow assertions. Preserve the same version while retrying.
+
+## P5.1.82 — Single-row mobile channel chooser (new batch round 05/20)
+- The freshly reviewed P5.1.81 real 450px Electron screenshot revealed that the native `webChannelChooser` beneath the overlay wraps its three filter tabs into two rows, pushing the Recent tab down and wasting scarce height.
+- Under 600px, retain all three native tabs and both layout toggles in a 3-column CSS grid + compact two-button view control, with readable focus states and theme-aware selected color. Do not remove controls or alter filtering behavior.
+- Add actual 450px TV screenshot and CDP geometry regression on tab count, one-row alignment, no horizontal overflow and both view controls; CI/build/release pending.

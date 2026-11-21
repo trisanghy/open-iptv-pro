@@ -701,3 +701,33 @@ html[data-positron="true"].po-v3.po-horizon #page-tv .player-control-card .outpu
 html[data-positron="true"].po-v3.po-horizon #page-tv .player-control-card .output-controls #positronToolsToggle[aria-expanded="true"]{
  background:#254c46!important;color:#9bf5d8!important;
 }
+
+/* P5.1.82 — Real 450px P5.1.81 screenshot: web chooser tabs break into
+   two rows, with "Xem gần đây" detached from the other filters.
+   Keep tabs and view toggles in a single compact but fully operable row. */
+@media(max-width:600px){
+ html[data-positron="true"].po-horizon #page-tv .web-chooser-heading{
+  display:grid!important;grid-template-columns:minmax(0,1fr) auto!important;
+  gap:6px!important;align-items:center!important;flex-wrap:nowrap!important;
+  padding:10px 8px!important;
+ }
+ html[data-positron="true"].po-horizon #page-tv .web-chooser-tabs{
+  display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  gap:2px!important;min-width:0!important;flex-wrap:nowrap!important;
+ }
+ html[data-positron="true"].po-horizon #page-tv .web-chooser-tabs button{
+  min-width:0!important;max-width:100%!important;white-space:nowrap!important;
+  overflow:hidden!important;text-overflow:ellipsis!important;
+  font-size:10.5px!important;letter-spacing:-.15px!important;
+  padding:10px 2px!important;min-height:37px!important;
+ }
+ html[data-positron="true"].po-horizon #page-tv .web-chooser-layout{
+  display:flex!important;gap:2px!important;flex-wrap:nowrap!important;min-width:0!important;
+ }
+ html[data-positron="true"].po-horizon #page-tv .web-chooser-layout button{
+  padding:7px 5px!important;min-width:27px!important;min-height:34px!important;
+ }
+ html[data-positron="true"].po-horizon #page-tv .web-chooser-tabs button.active{
+  color:#91efd6!important;box-shadow:inset 0 -2px #64d7b7!important;
+ }
+}

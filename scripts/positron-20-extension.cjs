@@ -1064,8 +1064,24 @@ async function runTwenty(page){
  await page.screenshot({path:path.join(out,'positron-watchflow-plus-mix-450-metadata-qa-real.png'),animations:'disabled'});
  await page.setViewportSize({width:1360,height:820});
  await page.evaluate(()=>window.PositronWatchFlow.close());
+ // P5.1.82: image-based regression on native channel chooser at 450px.
+ await page.setViewportSize({width:450,height:820});
+ const chooserQa=await page.evaluate(()=>{
+  const root=document.getElementById('webChannelChooser');
+  const tabs=[...root.querySelectorAll('.web-chooser-tabs [data-chooser-tab]')];
+  const base=tabs[0]?.getBoundingClientRect();
+  const modeBtns=[...root.querySelectorAll('.web-chooser-layout button')];
+  return {tabCount:tabs.length,oneRow:tabs.every(b=>Math.abs(b.getBoundingClientRect().top-base.top)<=1),
+   visible:tabs.every(b=>b.getBoundingClientRect().width>=49),
+   noOverflow:root.querySelector('.web-chooser-heading').scrollWidth<=root.querySelector('.web-chooser-heading').clientWidth+1,
+   viewSwitches:modeBtns.length===2&&modeBtns.every(b=>b.getBoundingClientRect().width>=25)};
+ });
+ await page.screenshot({path:path.join(out,'positron-p5-chooser-450-metadata-qa-real.png'),animations:'disabled'});
+ for(const key of ['oneRow','visible','noOverflow','viewSwitches'])assert.equal(chooserQa[key],true,'450px native channel chooser is broken: '+key+' '+JSON.stringify(chooserQa));
+ assert.equal(chooserQa.tabCount,3,'Native TV channel filters vanished');
+ await page.setViewportSize({width:1360,height:820});
   const report={type:'Positron P5 twenty distinct desktop screenshot cases',realElectron:true,syntheticChannels:false,
-  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA};
+  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA,chooserQa};
  fs.writeFileSync(path.resolve('positron-evidence','audit-p5-20-rounds.json'),JSON.stringify(report,null,2));
  return report;
 }

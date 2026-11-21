@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.165",
-  "description": "Positron P5.1.81: compact accessible WatchFlow mode toolbar",
+  "version": "4.23.166",
+  "description": "Positron P5.1.82: no-wrap native channel chooser at compact 450px",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",
