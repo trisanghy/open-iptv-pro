@@ -192,3 +192,12 @@ html[data-positron="true"].po-horizon body #poWatchFlowPanel.po-watchflow-panel 
 #poWatchFlowPanel .po-watchlater-dormant-row span{flex:1;min-width:0;overflow-wrap:anywhere}
 #poWatchFlowPanel .po-watchlater-dormant-row button{min-width:94px;min-height:32px;border:1px solid #63817f;border-radius:7px;background:#24413f;color:#d8e9e3;cursor:pointer;font-size:11px}
 #poWatchFlowPanel .po-watchlater-dormant-row button[data-confirm="yes"]{border-color:#ccad8f;background:#543c34;color:#ffe4cc}
+/* P5.1.106: align the sticky empty-source WatchFlow header inset with
+   its actual 15px compact-dialog padding; previous -18px margins created
+   a real horizontal scrollbar on 1360px Electron screenshots. */
+@media(min-width:1280px){
+ html[data-positron="true"].po-horizon body #poWatchFlowPanel.po-watchflow-panel[data-empty-playlist="true"] .po-watchflow-head{
+  margin:-15px -15px 0!important;
+  padding:10px 15px 9px!important;
+ }
+}

@@ -328,10 +328,12 @@ async function runTwenty(page){
      const overlapWithImport=!!importRect&&panelRect.left<importRect.right&&panelRect.right>importRect.left&&panelRect.top<importRect.bottom&&panelRect.bottom>importRect.top;
      const overlapWithTitle=!!titleRect&&panelRect.left<titleRect.right&&panelRect.right>titleRect.left&&panelRect.top<titleRect.bottom&&panelRect.bottom>titleRect.top;
      const emptyPlaylist=panel.dataset.emptyPlaylist==='true';
+     const noHorizontalScroll=panel.scrollWidth<=panel.clientWidth+1;
+     const horizontalOverflowPx=panel.scrollWidth-panel.clientWidth;
      const modesHidden=getComputedStyle(panel.querySelector('.po-watchflow-modes')).display==='none';
      document.getElementById('poWatchFlowClose').click();
      const focusReturned=document.activeElement===button;
-     return {opened,groupCount,reasons,titleColor,emptyPlaylist,modesHidden,overlapWithImport,overlapWithTitle,focusEntered,firstUsefulFocus,focusReturned,titleOffset,closeTapSize,closeVector,panelWidth:panelRect.width,closed:panel.hidden&&button.getAttribute('aria-expanded')==='false'};
+     return {opened,groupCount,reasons,titleColor,emptyPlaylist,modesHidden,overlapWithImport,overlapWithTitle,focusEntered,firstUsefulFocus,focusReturned,titleOffset,closeTapSize,closeVector,panelWidth:panelRect.width,noHorizontalScroll,horizontalOverflowPx,closed:panel.hidden&&button.getAttribute('aria-expanded')==='false'};
     });
     assert.equal(watchFlow.opened,true,'WatchFlow cannot open: '+name);
     assert.equal(watchFlow.closed,true,'WatchFlow cannot close: '+name);
@@ -348,6 +350,12 @@ async function runTwenty(page){
     assert.equal(watchFlow.closeVector,true,'WatchFlow close control does not use vector artwork: '+name);
     assert.ok(watchFlow.closeTapSize>=40,'WatchFlow close control is too small: '+name);
     assert.ok(watchFlow.panelWidth<=320,'Empty WatchFlow too wide at 1360px: '+name);
+    assert.equal(watchFlow.noHorizontalScroll,true,'Empty WatchFlow has horizontal overflow: '+name+' '+JSON.stringify(watchFlow));
+    if(theme==='night'){
+     await page.evaluate(()=>document.getElementById('poWatchFlowToggle').click());
+     await page.screenshot({path:path.join(out,'positron-p51106-empty-watchflow-no-horizontal-scroll-real.png'),animations:'disabled'});
+     await page.evaluate(()=>document.getElementById('poWatchFlowClose').click());
+    }
     const watchFlowNav=await page.evaluate(async()=>{
      const trigger=document.getElementById('poWatchFlowToggle'),panel=document.getElementById('poWatchFlowPanel');
      trigger.click();

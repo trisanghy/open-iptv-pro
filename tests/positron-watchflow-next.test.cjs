@@ -154,3 +154,13 @@ test('WatchFlow scroll cue lives inside its heading, not over actionable cards',
  assert.ok(qa.includes('fixedCueQA.cueClearOfActions,true'));
  assert.ok(qa.includes('positron-p5195-watchflow-inline-scroll-cue-552-real.png'));
 });
+test('P5.1.106 compact empty WatchFlow does not horizontally scroll',()=>{
+ const css=fs.readFileSync('renderer/positron-watchflow-next.css','utf8');
+ const qa=fs.readFileSync('scripts/positron-20-extension.cjs','utf8');
+ assert.ok(css.includes('[data-empty-playlist="true"] .po-watchflow-head'));
+ assert.ok(css.includes('margin:-15px -15px 0!important'));
+ assert.ok(css.includes('padding:10px 15px 9px!important'));
+ assert.ok(qa.includes('panel.scrollWidth<=panel.clientWidth+1'));
+ assert.ok(qa.includes('watchFlow.noHorizontalScroll,true'));
+ assert.ok(qa.includes('positron-p51106-empty-watchflow-no-horizontal-scroll-real.png'));
+});

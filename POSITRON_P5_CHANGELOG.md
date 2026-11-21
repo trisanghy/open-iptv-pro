@@ -1,3 +1,11 @@
+## P5.1.106 — Empty WatchFlow without a horizontal scrollbar / Electron v4.23.190
+
+- Real screenshot P5.1.105 `positron-watchflow-1360-night-real.png` reveals a horizontal scrollbar in compact no-source WatchFlow.
+- Root cause: P5.1.100 sticky header has -18px horizontal margins, but compact empty playlist uses 15px padding.
+- Scoped fix matches the 15px padding, preserving playback, saved bookmarks, other modal modes and user data.
+- Strict CDP/Electron proof: `panel.scrollWidth <= panel.clientWidth+1`; screenshot `positron-p51106-empty-watchflow-no-horizontal-scroll-real.png`.
+- Do not count complete before CI and screenshot visual inspection.
+
 ## P5.1.101 — Search within all privately saved Watch Later channels / Electron v4.23.185
 
 - Evidence from actual P5.1.100 Electron screenshot and source: saved Watch Later entries are accessible in batches but up to 80 entries require many manual scroll/reveal actions to find a particular channel.
