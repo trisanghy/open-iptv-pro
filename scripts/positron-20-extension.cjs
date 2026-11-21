@@ -2461,6 +2461,9 @@ async function runTwenty(page){
  // Use existing local-only category fixture; no URL playback or new import.
  await page.evaluate(()=>{document.getElementById('webChooserAdvanced').open=true;document.querySelector('[data-chooser-tab="all"]').click();});
  await page.locator('#webChooserGroup').selectOption('');
+ // Keep the compact advanced controls closed in the real screenshot;
+ // opening them was only necessary to set up the native select.
+ await page.evaluate(()=>{document.getElementById('webChooserAdvanced').open=false;});
  await page.fill('#webChooserSearch','dia phuong');
  await page.waitForTimeout(100);
  const asciiDSearchQA=await page.evaluate(()=>{
@@ -2477,6 +2480,9 @@ async function runTwenty(page){
  });
  await page.screenshot({path:path.join(out,'positron-p51131-ascii-d-search-450-real.png'),animations:'disabled'});
  await page.fill('#webChooserSearch','');
+ // Native input changes schedule render() in requestAnimationFrame, so the
+ // reset assertion must wait for the actual 18 restored native cards.
+ await page.waitForFunction(()=>document.querySelectorAll('#webChooserGrid button.web-chooser-card').length===18,{timeout:4000});
  Object.assign(asciiDSearchQA,await page.evaluate(()=>({
   resetShowsChannels:document.querySelectorAll('#webChooserGrid button.web-chooser-card').length===18,
   queryCleared:document.getElementById('webChooserSearch').value==='',

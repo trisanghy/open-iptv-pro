@@ -1098,6 +1098,7 @@ test('P5.1.131 Vietnamese ASCII search matches native group containing đ withou
   "matchesVietnameseD:names.length===1&&names[0]==='TH QA 1'",
   "exactGroupOriginal:window.IPTVState.getChannels().some",
   "noAutoPlayAfterReset:window.IPTVState.getCurrent()===null",
-  'positron-p51131-ascii-d-search-450-real.png'])
+  'positron-p51131-ascii-d-search-450-real.png',
+  "await page.waitForFunction(()=>document.querySelectorAll('#webChooserGrid button.web-chooser-card').length===18"])
   assert.ok(qa.includes(token),'missing native Vietnamese search proof: '+token);
 });
