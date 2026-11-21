@@ -37,7 +37,7 @@ test('P5 assets are loaded after P4 without replacing it',()=>{
 test('P5 release is immutable and versioned separately from P4.1',()=>{
  const pkg=JSON.parse(read('package.json'));
  const flow=read('.github/workflows/positron-lab.yml');
- assert.equal(pkg.version,'4.23.214');
+ assert.equal(pkg.version,'4.23.215');
  const label=pkg.description.match(/Positron\s+(P\d+\.\d+\.\d+)/)?.[1];
  assert.ok(label,'product P-label must accompany SemVer');
  assert.ok(flow.includes('TAG=positron/v'+pkg.version+'-'+label.toLowerCase()),'release tag and app version must match');
@@ -1087,4 +1087,17 @@ test('P5.1.130 real screenshot revealed clipped curved category border; scoped m
  assert.ok(qa.includes('nextChipUnmasked:!!child&&!!n'));
  assert.ok(qa.includes('nextChipClickable:atNext===child||child?.contains(atNext)'));
  assert.ok(qa.includes('positron-p51130-border-mask-450-real.png'));
+});
+
+test('P5.1.131 Vietnamese ASCII search matches native group containing đ without changing playback',()=>{
+ const src=read('renderer/web-channel-chooser-v42371.js');
+ const qa=read('scripts/positron-20-extension.cjs');
+ assert.ok(src.includes('P5.1.131: Unicode NFD does NOT decompose Vietnamese'));
+ assert.ok(src.includes(".toLocaleLowerCase().replace(/đ/g,'d')"));
+ for(const token of ["await page.fill('#webChooserSearch','dia phuong')",
+  "matchesVietnameseD:names.length===1&&names[0]==='TH QA 1'",
+  "exactGroupOriginal:window.IPTVState.getChannels().some",
+  "noAutoPlayAfterReset:window.IPTVState.getCurrent()===null",
+  'positron-p51131-ascii-d-search-450-real.png'])
+  assert.ok(qa.includes(token),'missing native Vietnamese search proof: '+token);
 });

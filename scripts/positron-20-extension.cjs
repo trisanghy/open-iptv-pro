@@ -2456,9 +2456,38 @@ async function runTwenty(page){
  for(const [key,value] of Object.entries(pinnedBorderMaskQA))
   assert.equal(value,true,'P5.1.130 real Electron curved-border mask '+key+': '+JSON.stringify(pinnedBorderMaskQA));
 
+ // P5.1.131: Search is visible in the P5.1.130 real screenshot. Verify
+ // the Vietnamese native-group 'đ' / ASCII 'd' mismatch on genuine Electron.
+ // Use existing local-only category fixture; no URL playback or new import.
+ await page.evaluate(()=>{document.getElementById('webChooserAdvanced').open=true;document.querySelector('[data-chooser-tab="all"]').click();});
+ await page.locator('#webChooserGroup').selectOption('');
+ await page.fill('#webChooserSearch','dia phuong');
+ await page.waitForTimeout(100);
+ const asciiDSearchQA=await page.evaluate(()=>{
+  const search=document.getElementById('webChooserSearch');
+  const cards=[...document.querySelectorAll('#webChooserGrid button.web-chooser-card')];
+  const names=cards.map(b=>b.querySelector('.web-chooser-name')?.textContent||'');
+  return {queryAsciiD:search.value==='dia phuong',
+   focused:document.activeElement===search,
+   matchesVietnameseD:names.length===1&&names[0]==='TH QA 1',
+   exactGroupOriginal:window.IPTVState.getChannels().some(c=>c.name==='TH QA 1'&&c.group==='TH địa phương'),
+   liveCount:document.getElementById('webChooserStatus').textContent.trim()==='1 kênh',
+   noAutoplay:window.IPTVState.getCurrent()===null,
+   noOverflow:document.documentElement.scrollWidth<=innerWidth+1};
+ });
+ await page.screenshot({path:path.join(out,'positron-p51131-ascii-d-search-450-real.png'),animations:'disabled'});
+ await page.fill('#webChooserSearch','');
+ Object.assign(asciiDSearchQA,await page.evaluate(()=>({
+  resetShowsChannels:document.querySelectorAll('#webChooserGrid button.web-chooser-card').length===18,
+  queryCleared:document.getElementById('webChooserSearch').value==='',
+  noAutoPlayAfterReset:window.IPTVState.getCurrent()===null
+ })));
+ for(const [key,value] of Object.entries(asciiDSearchQA))
+  assert.equal(value,true,'P5.1.131 Vietnamese ASCII search '+key+': '+JSON.stringify(asciiDSearchQA));
+
  await page.setViewportSize({width:1360,height:820});
   const report={type:'Positron P5 twenty distinct desktop screenshot cases',realElectron:true,syntheticChannels:false,
-  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA,chooserQa,toastLayoutQA,nativeToastQA,compactIdleQA,channelChipRailQA,advancedFilterQA,readableCardsQA,keyboardTabQA,favoriteEmptyQA,duplicateEmptyQA,categoryFilterQA,categoryFixtureQA,compactSingleQA,directFavoriteQA,favoriteCountQA,compactToastStackQA,toastDismissQA,toastFocusReturnQA,toastDockQA,wheelQA,pinnedAllQA,pinnedMaskQA,categoryKeyQA,dropdownChipQA,pinnedRightMaskQA,pinnedBorderMaskQA};
+  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA,chooserQa,toastLayoutQA,nativeToastQA,compactIdleQA,channelChipRailQA,advancedFilterQA,readableCardsQA,keyboardTabQA,favoriteEmptyQA,duplicateEmptyQA,categoryFilterQA,categoryFixtureQA,compactSingleQA,directFavoriteQA,favoriteCountQA,compactToastStackQA,toastDismissQA,toastFocusReturnQA,toastDockQA,wheelQA,pinnedAllQA,pinnedMaskQA,categoryKeyQA,dropdownChipQA,pinnedRightMaskQA,pinnedBorderMaskQA,asciiDSearchQA};
  fs.writeFileSync(path.resolve('positron-evidence','audit-p5-20-rounds.json'),JSON.stringify(report,null,2));
  return report;
 }

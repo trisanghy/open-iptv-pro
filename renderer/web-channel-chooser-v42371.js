@@ -67,7 +67,10 @@
  let tab='all',page=0,layout='grid',queued=false;
  const store=()=>state.getStore?.()||{};
  const channels=()=>state.getChannels?.()||[];
- const normalize=v=>String(v||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLocaleLowerCase();
+ // P5.1.131: Unicode NFD does NOT decompose Vietnamese đ/Đ. Without the
+ // explicit mapping, ASCII "dia phuong" cannot find "TH địa phương".
+ // Apply it consistently to both query and channel/group metadata.
+ const normalize=v=>String(v||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLocaleLowerCase().replace(/đ/g,'d');
  const filterGroups=[['all','Tất cả'],['VTV','VTV'],['VTC','VTC'],['HTV','HTV'],['K+','K+'],['TH','TH địa phương'],['Quốc tế','Quốc tế'],['Phim','Phim'],['Thiếu nhi','Thiếu nhi'],['Thể thao','Thể thao'],['Tin tức','Tin tức']];
  function favoritesList(){return favorites.visible(store());}
  function recentList(){return recent.visible(store(),channels(),favorites.key);}

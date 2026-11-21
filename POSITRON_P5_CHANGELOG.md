@@ -1,3 +1,11 @@
+## P5.1.131 — Search 'đ' using ASCII 'd' in channel library / Electron v4.23.215
+
+- Baseline: genuine P5.1.130 450px Electron screenshot `positron-p51130-border-mask-450-real.png` shows native channel search. Source inspection reveals NFD strips accents but does not decompose Vietnamese đ/Đ, so typing `dia phuong` cannot match "TH địa phương".
+- Fix: append `replace(/đ/g,'d')` after lower-casing in the native chooser search normalizer; applies equally to typed text, channel names and group names. Original metadata is unchanged.
+- Actual Electron regression: with nine locally imported QA category records, search `dia phuong` must return precisely "TH QA 1" (original group "TH địa phương"), live 1-channel status and focus; clearing restores 18 cards. No IPTV playback, favorites or playlist changes.
+- Screenshot: `positron-p51131-ascii-d-search-450-real.png`; Node regression checks the normalization and authentic Electron scenario.
+- CANDIDATE until QA screenshot manual review and immutable Release builds verified.
+
 ## P5.1.130 — Cover clipped category-chip outline alongside sticky reset / Electron v4.23.214
 
 - Input: actual P5.1.129 450px Electron screenshot `positron-p51129-right-mask-450-real.png` opened and enlarged. The ghost letter is gone but a detached curved chip border remains visible immediately RIGHT of the pinned "Tất cả" chip.
