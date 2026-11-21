@@ -708,3 +708,9 @@ P5.1.81 follow-up: real Electron capture found nav overflow; replace flexible no
 - Keep personal bookmarks local; search accent-insensitively across multiple title/group terms, in any order. Do not strip HD, FHD or 4K query tokens as bookmark fingerprints do; punctuation-only input must not accidentally reveal all saved channels.
 - Add Node regression for cross-field queries, non-saved exclusions and URL privacy. Add actual Electron screenshot and DOM checks for `main 001`, preserved focus, no auto playback, unchanged local bookmark data.
 - Do not count the round complete until the updated CI screenshot is opened and inspected, tests pass, and an immutable P5.1.102 release is verified.
+
+## P5.1.103 — Stop silent Watch Later bookmark eviction at 80 (new batch 02/20)
+- Followed the P5.1.102 real `positron-p51102-watch-later-multiterm-552-real.png` screenshot and its saved-list status back into `toggle()`: with 80 saved channels, the 81st was inserted at the front and `compact()` discarded the oldest without warning.
+- Preserve all prior bookmarks: refuse a new save at capacity with `{ok:false,reason:'full'}`; existing saved channels may still be removed, and a new channel may be saved after freeing a slot.
+- Present a clear local toast and capacity hint, without changing playlist, playback, URLs, or account data.
+- Add Node regression for 80-to-81 attempt and removal/retry. Extend native Electron QA with real before/after shots of the 80-bookmark state, checking the 81st 'Lưu' button cannot mutate storage or auto-start video. Release only after screenshot review and all six CI jobs.

@@ -35,6 +35,8 @@
   const before=compact(rows),id=identity(channel);
   if(!id)return {ok:false,saved:false,rows:before};
   const exists=before.some(e=>e.source===id.source&&e.key===id.key);
+  // P5.1.103: never silently evict a saved bookmark at capacity.
+  if(!exists&&before.length>=LIMIT)return {ok:false,saved:false,rows:before,reason:'full'};
   const updated=before.filter(e=>!(e.source===id.source&&e.key===id.key));
   if(!exists)updated.unshift({...id,savedAt:Number.isFinite(Date.parse(at))?new Date(at).toISOString():''});
   return {ok:true,saved:!exists,rows:compact(updated)};

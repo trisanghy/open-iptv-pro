@@ -95,7 +95,10 @@
  const toggleSaved=channel=>{
   if(!watchLater)return null;
   const change=watchLater.toggle(saved,channel);
-  if(!change.ok)return null;
+  if(!change.ok){
+   if(change.reason==='full')state()?.toast?.('Xem sau đã lưu đủ '+watchLater.LIMIT+' kênh. Bỏ lưu một kênh trước khi thêm mới.','error');
+   return null;
+  }
   try{window.localStorage.setItem(watchLater.STORAGE_KEY,JSON.stringify(change.rows));}
   catch{state()?.toast?.('Không thể lưu trên thiết bị. Kiểm tra quyền lưu dữ liệu.','error');return null;}
   saved=change.rows;
@@ -180,7 +183,7 @@
    const waiting=filtering?found:found.slice(0,watchLaterShown);
    if(waitingAll.length){
     heading('Để xem sau · '+waitingAll.length+' kênh'+(filtering?' · '+found.length+' kết quả':''),
-     'Chỉ tìm trong các kênh bạn đã lưu trên thiết bị.');
+     saved.length>=watchLater.LIMIT?'Đã đạt giới hạn 80 kênh. Bỏ lưu một kênh trước khi thêm.':'Chỉ tìm trong các kênh bạn đã lưu trên thiết bị.');
     if(!found.length)empty('Không tìm thấy kênh đã lưu phù hợp. Hãy thử tên hoặc nhóm khác.');
     else cards(waiting,'Chọn Xem khi muốn phát, hoặc Bỏ lưu để xóa đánh dấu.');
     if(!filtering&&waitingAll.length>waiting.length){

@@ -1404,6 +1404,49 @@ async function runTwenty(page){
   const input=document.getElementById('poWatchLaterSearch');
   input.value='';input.dispatchEvent(new Event('input',{bubbles:true}));
  });
+ // P5.1.103: verify 80 private bookmarks cannot be silently displaced by #81.
+ // Start with the actual native Mix panel and a real unbookmarked recommendation.
+ const bookmarkCapBefore=await page.evaluate(()=>{
+  const core=window.PositronWatchLaterCore,chs=window.IPTVState.getChannels();
+  document.getElementById('poFlowPlusmix').click();
+  const first=document.querySelector('#poFlowPlusResults .po-flowplus-card');
+  const name=first?.querySelector('.po-flowplus-card-info strong')?.textContent;
+  const target=chs.find(ch=>ch.name===name);
+  if(!target||chs.length<81)return {ready:false};
+  let rows=[];
+  for(const ch of chs.filter(ch=>ch.id!==target.id).slice(0,80)){
+   const change=core.toggle(rows,ch);
+   if(!change.ok)return {ready:false,reason:change.reason};
+   rows=change.rows;
+  }
+  localStorage.setItem(core.STORAGE_KEY,JSON.stringify(rows));
+  window.dispatchEvent(new StorageEvent('storage',{key:core.STORAGE_KEY,newValue:JSON.stringify(rows)}));
+  const card=[...document.querySelectorAll('#poFlowPlusResults .po-flowplus-card')]
+   .find(el=>el.querySelector('.po-flowplus-card-info strong')?.textContent===name);
+  const save=card?.querySelector('.po-flowplus-save');
+  return {ready:rows.length===80&&!!save,unbookmarked:save?.getAttribute('aria-pressed')==='false',
+   targetName:name,storage:localStorage.getItem(core.STORAGE_KEY),
+   idlePlayer:window.IPTVState.getCurrent()===null};
+ });
+ assert.equal(bookmarkCapBefore.ready,true,'80-channel native cap fixture not ready');
+ assert.equal(bookmarkCapBefore.unbookmarked,true,'81st target must not already be bookmarked');
+ await page.screenshot({path:path.join(out,'positron-p51103-watchlater-cap-before-real.png'),animations:'disabled'});
+ const bookmarkCapAfter=await page.evaluate(targetName=>{
+  const core=window.PositronWatchLaterCore;
+  const before=localStorage.getItem(core.STORAGE_KEY);
+  const card=[...document.querySelectorAll('#poFlowPlusResults .po-flowplus-card')]
+   .find(el=>el.querySelector('.po-flowplus-card-info strong')?.textContent===targetName);
+  const save=card?.querySelector('.po-flowplus-save');
+  save?.click();
+  const after=localStorage.getItem(core.STORAGE_KEY);
+  return {still80:core.compact(JSON.parse(after||'[]')).length===80,
+   storageUnchanged:after===before,notMarked:save?.getAttribute('aria-pressed')==='false',
+   playerIdle:window.IPTVState.getCurrent()===null};
+ },bookmarkCapBefore.targetName);
+ for(const key of ['still80','storageUnchanged','notMarked','playerIdle'])
+  assert.equal(bookmarkCapAfter[key],true,'P5.1.103 local bookmark capacity protection failed: '+key);
+ await page.screenshot({path:path.join(out,'positron-p51103-watchlater-cap-after-real.png'),animations:'disabled'});
+
 
 
  await page.evaluate(()=>{

@@ -133,3 +133,34 @@ test('P5.1.102 native Electron captures a multi-word search with unchanged local
  assert.ok(qa.includes("input.value='main 001'"));
  assert.ok(flow.includes('positron-p51102-watch-later-multiterm-552-real.png'));
 });
+
+test('P5.1.103 refuses bookmark 81 instead of silently evicting bookmark 1',()=>{
+ const channels=Array.from({length:81},(_,i)=>C('local-qa','id-'+i,'QA Channel '+String(i+1).padStart(3,'0')));
+ let rows=[];
+ for(const channel of channels.slice(0,80)){
+  const result=later.toggle(rows,channel);
+  assert.equal(result.ok,true);
+  rows=result.rows;
+ }
+ const snapshot=JSON.stringify(rows),blocked=later.toggle(rows,channels[80]);
+ assert.equal(rows.length,80);
+ assert.equal(blocked.ok,false);assert.equal(blocked.reason,'full');assert.equal(blocked.saved,false);
+ assert.equal(JSON.stringify(blocked.rows),snapshot,'original 80 bookmarks must not change');
+ assert.equal(later.has(blocked.rows,channels[0]),true,'oldest bookmark must not be evicted');
+ assert.equal(later.has(blocked.rows,channels[80]),false);
+ const removed=later.toggle(rows,channels[0]);
+ assert.equal(removed.ok,true);assert.equal(removed.saved,false);
+ const added=later.toggle(removed.rows,channels[80]);
+ assert.equal(added.ok,true);assert.equal(added.saved,true);assert.equal(added.rows.length,80);
+ assert.equal(later.has(added.rows,channels[80]),true);
+});
+test('P5.1.103 warns about a full local list and verifies native non-destructive capture',()=>{
+ const ui=fs.readFileSync('renderer/positron-watchflow-next.js','utf8');
+ const qa=fs.readFileSync('scripts/positron-20-extension.cjs','utf8');
+ const flow=fs.readFileSync('.github/workflows/positron-lab.yml','utf8');
+ assert.ok(ui.includes("if(change.reason==='full')state()?.toast?."),'full limit should be visible to users');
+ assert.ok(ui.includes('Đã đạt giới hạn 80 kênh'));
+ assert.ok(qa.includes('positron-p51103-watchlater-cap-before-real.png'));
+ assert.ok(qa.includes('positron-p51103-watchlater-cap-after-real.png'));
+ assert.ok(flow.includes('positron-p51103-watchlater-cap-after-real.png'));
+});
