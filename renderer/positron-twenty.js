@@ -216,6 +216,24 @@
   };
   ensureDvrVector();new MutationObserver(ensureDvrVector).observe(dvrTitle,{childList:true,subtree:true,characterData:true});
  }
+ // P5.1.25: the actual P5.1.24 EPG 720px screenshot shows a blank
+ // enabled DVR channel select even though no playlists/channels exist.
+ // Preserve native DVR scheduling, but clearly expose no-channel state.
+ const dvrChannel=byId('dvrChannel');
+ if(dvrChannel){
+  const syncDvrChannel=()=>{
+   const hasChannels=Array.from(dvrChannel.options).some(o=>o.value!=='');
+   if(!hasChannels&&dvrChannel.options.length===0){
+    const option=d.createElement('option');option.value='';option.textContent='Chưa có kênh để ghi hình';
+    dvrChannel.append(option);
+   }
+   dvrChannel.disabled=!hasChannels;
+   dvrChannel.setAttribute('aria-label',hasChannels?'Chọn kênh để ghi hình':'Chưa có kênh để hẹn giờ ghi hình');
+  };
+  syncDvrChannel();
+  new MutationObserver(syncDvrChannel).observe(dvrChannel,{childList:true});
+ }
+
  window.OpenIPTVPositronTwenty=Object.freeze({
   setStage,getStage:()=>stage,getFeedback:()=>previous
  });

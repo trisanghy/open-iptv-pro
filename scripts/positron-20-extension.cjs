@@ -92,6 +92,12 @@ async function runTwenty(page){
        path:svg?.querySelector('path')?.getAttribute('d')||''};
      })(),
 
+     dvrChannel:(()=>{
+      const n=document.getElementById('dvrChannel');if(!n)return null;
+      return {disabled:n.disabled,count:n.options.length,
+       text:n.selectedOptions?.[0]?.textContent?.trim()||'',label:n.getAttribute('aria-label')||''};
+     })(),
+
      dvrHeading:(()=>{
       const h=document.querySelector('#dvrPanel .dvr-heading h2');if(!h)return null;
       const svg=h.querySelector('svg');return {svg:!!svg,
@@ -229,6 +235,21 @@ async function runTwenty(page){
     assert.equal(focusState.restored,true,'native focus mode did not restore layout: '+name);
     assert.equal(focusState.svg,true,'focus icon removed after toggles: '+name);
    }
+   if(target==='epg'&&width===720&&metrics.sourceCount==='0'){
+    const state=await page.evaluate(async()=>{
+     const select=document.getElementById('dvrChannel');
+     const option=document.createElement('option');option.value='positron-qa-only';option.textContent='Kênh kiểm thử';
+     select.replaceChildren(option);
+     await new Promise(resolve=>setTimeout(resolve,0));
+     const enabled=!select.disabled&&select.value==='positron-qa-only';
+     select.replaceChildren();
+     await new Promise(resolve=>setTimeout(resolve,0));
+     return {enabled,disabled:select.disabled,placeholder:select.selectedOptions?.[0]?.textContent?.trim()||''};
+    });
+    assert.equal(state.enabled,true,'DVR select failed to re-enable when a channel option appears');
+    assert.equal(state.disabled,true,'DVR select failed to disable again after options removed');
+    assert.equal(state.placeholder,'Chưa có kênh để ghi hình','DVR placeholder failed to recover');
+   }
    if(target==='sources'&&metrics.sources)assert.notEqual(metrics.sources.background,'rgb(255, 255, 255)','white source panel');
   if(target==='sources'&&width<=720){
    assert.ok(metrics.sourceEmpty?.text.startsWith('Chưa có nguồn.'),'no-source guidance unexpectedly changed');
@@ -260,6 +281,12 @@ async function runTwenty(page){
     assert.equal(destination,'page-sources','Favorites action must open Sources: '+name);
    }
    if(target==='epg'){
+    if(metrics.sourceCount==='0'){
+     assert.equal(metrics.dvrChannel?.disabled,true,'DVR selector must be disabled with no channels: '+name);
+     assert.equal(metrics.dvrChannel?.count,1,'empty DVR option missing: '+name);
+     assert.equal(metrics.dvrChannel?.text,'Chưa có kênh để ghi hình','DVR placeholder lost: '+name);
+     assert.ok(metrics.dvrChannel.label.includes('Chưa có kênh'),'DVR accessible label missing');
+    }
     assert.equal(metrics.dvrHeading?.svg,true,'DVR heading still uses platform emoji: '+name);
     assert.ok(metrics.dvrHeading.width>=18,'DVR recording icon too small: '+name);
     assert.equal(metrics.dvrHeading.aria,'true','decorative DVR SVG must be hidden from screen readers');

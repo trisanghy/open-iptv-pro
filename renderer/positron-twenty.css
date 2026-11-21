@@ -238,3 +238,6 @@ html[data-positron="true"] #positronBar #positronFocus svg{display:block;width:1
 /* P5.1.24: native DVR heading uses a monochrome, theme-aware recording vector. */
 html[data-positron="true"] #page-epg #dvrPanel .dvr-heading h2 svg{display:inline-block;vertical-align:-3px;width:20px;height:20px;margin-right:6px;fill:none;stroke:currentColor;stroke-width:1.8;pointer-events:none}
 html[data-positron="true"] #page-epg #dvrPanel .dvr-heading h2 svg .record-dot{fill:currentColor;stroke:none}
+
+/* P5.1.25: make DVR no-channel disabled selection legible without altering native data. */
+html[data-positron="true"] #page-epg #dvrChannel:disabled{opacity:1!important;color:var(--po-ink,#d8e2f2)!important;cursor:not-allowed}
