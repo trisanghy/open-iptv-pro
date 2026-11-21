@@ -81,3 +81,5 @@ Round 04 verified in actual Electron: DVR heading is monochrome SVG 20px with ar
 | 02/20 | P5.1.35 / 4.23.119 | P5.1.34 real Electron EPG Aurora 1360px `positron-p5-16-real.png`, artifact 14690910182 | Disabled DVR button is now neutral, but its leading record glyph still depends on OS emoji/font | Preserve native submit event; inject accessible currentColor SVG and assert real EPG 720/1360 screenshot + live DOM; CI/release pending |
 
 | 03/20 | P5.1.36 / 4.23.120 | P5.1.35 Electron EPG 1360 and 720px screenshot, artifact 14690880372 | `Nhập tên chương trình...` guidance dim almost invisible on dark surface; legacy result text style | Scoped current theme ink for #epgSearchResults; real screenshot DOM computed color/luma/font tests and Node regression, awaiting CI/release |
+
+| 04/20 | P5.1.37 / 4.23.121 | P5.1.36 actual Electron TV at 450px, `positron-p5-09-real.png` from artifact 14690358283 | Zero channels but native Play still vivid and clickable, leads only to no-playlist warning | Apply non-destructive empty guard to original Play button, re-enable via navCount observer; Electron click/state + computed disabled style tests, pending CI/release |

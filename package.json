@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.120",
-  "description": "Positron P5.1.36: restore legible EPG search help contrast",
+  "version": "4.23.121",
+  "description": "Positron P5.1.37: disable TV Play only when no channels exist",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

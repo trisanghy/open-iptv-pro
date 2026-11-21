@@ -111,6 +111,7 @@ async function runTwenty(page){
        text:n.selectedOptions?.[0]?.textContent?.trim()||'',label:n.getAttribute('aria-label')||''};
      })(),
 
+     playAvailability:(()=>{const el=document.getElementById('playBtn');if(!el)return null;const st=getComputedStyle(el);return {disabled:el.disabled,guard:el.getAttribute('data-positron-no-channels')||'',opacity:st.opacity,cursor:st.cursor,description:el.getAttribute('aria-describedby')||''};})(),
      epgGuidance:(()=>{const node=document.getElementById('epgSearchResults');if(!node)return null;const st=getComputedStyle(node);const rgb=(st.color.match(/\d+/g)||[]).map(Number).slice(0,3);return {text:node.textContent?.trim()||'',color:st.color,luma:rgb.length===3?Math.round(rgb[0]*.2126+rgb[1]*.7152+rgb[2]*.0722):0,fontSize:st.fontSize,opacity:st.opacity};})(),
      dvrSchedule:(()=>{const b=document.getElementById('dvrAdd');if(!b)return null;const style=getComputedStyle(b);return {disabled:b.disabled,guard:b.getAttribute('data-positron-no-channels')||'',description:b.getAttribute('aria-describedby')||'',background:style.backgroundColor,filter:style.filter,opacity:style.opacity,cursor:style.cursor,vector:!!b.querySelector('svg.positron-dvr-record-icon'),ariaHidden:b.querySelector('svg')?.getAttribute('aria-hidden')||'',label:b.textContent?.trim()||''};})(),
      dvrHeading:(()=>{
@@ -402,6 +403,22 @@ async function runTwenty(page){
    }
    if(target==='epg'&&metrics.epg)assert.notEqual(metrics.epg.background,'rgb(255, 255, 255)','white EPG search');
   if(target==='tv')assert.equal(metrics.searchShortcut,'/');
+  if(target==='tv'&&width===450&&Number(metrics.navCount)===0){
+   assert.equal(metrics.playAvailability?.disabled,true,'Play must be disabled when no channels exist: '+name);
+   assert.equal(metrics.playAvailability?.guard,'true','empty Play guard missing: '+name);
+   assert.ok(Number(metrics.playAvailability?.opacity)<=.6,'empty Play still looks active: '+name);
+   assert.equal(metrics.playAvailability?.cursor,'not-allowed','empty Play pointer not disabled: '+name);
+   const playLifecycle=await page.evaluate(async()=>{
+    const count=document.getElementById('navCount'),play=document.getElementById('playBtn');
+    const before=count.textContent;count.textContent='1';await new Promise(resolve=>setTimeout(resolve,0));
+    const reenabled=!play.disabled&&!play.hasAttribute('data-positron-no-channels');
+    count.textContent=before;await new Promise(resolve=>setTimeout(resolve,0));
+    return {reenabled,disabledAgain:play.disabled};
+   });
+   assert.equal(playLifecycle.reenabled,true,'Play must reactivate when a source supplies channels: '+name);
+   assert.equal(playLifecycle.disabledAgain,true,'Play should guard empty sources again: '+name);
+  }
+
   // P5.1.19: exercise both real keyboard handlers in the Electron renderer.
   // '/' must focus the visible channel finder; Ctrl+K remains global.
   if(target==='tv'&&round===1){

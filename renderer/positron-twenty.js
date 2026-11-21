@@ -282,6 +282,33 @@
  // P5.1.33: real P5.1.32 TV 450px screenshot shows an actionable
  // favorite star beside 'Chưa chọn kênh'. Use the native selection API,
  // not an empty-state string, to protect existing playlist semantics.
+ // P5.1.37: actual P5.1.36 Electron TV 450px screenshot shows an active
+ // purple Play button next to a 0-channel empty state. Native Play only
+ // displays a no-playlist warning in this case. Preserve it for future
+ // playlist updates and never interfere with a selected playing channel.
+ const mainPlay=byId('playBtn'),channelCount=byId('navCount');
+ if(mainPlay&&channelCount){
+  const syncPlayAvailability=()=>{
+   const count=Number((channelCount.textContent||'0').replace(/[^0-9]/g,''))||0;
+   const canPlay=count>0||!!window.IPTVState?.getCurrent?.();
+   if(!canPlay){
+    if(!mainPlay.hasAttribute('data-positron-no-channels')){
+     if(mainPlay.disabled)return; // another native guard takes precedence
+     mainPlay.setAttribute('data-positron-no-channels','true');
+    }
+    mainPlay.disabled=true;
+    mainPlay.setAttribute('aria-describedby','playingSubtitle');
+   }else if(mainPlay.getAttribute('data-positron-no-channels')==='true'){
+    mainPlay.disabled=false;
+    mainPlay.removeAttribute('data-positron-no-channels');
+    mainPlay.removeAttribute('aria-describedby');
+   }
+  };
+  new MutationObserver(syncPlayAvailability).observe(channelCount,{childList:true,subtree:true,characterData:true});
+  const playing=byId('playingTitle');
+  if(playing)new MutationObserver(syncPlayAvailability).observe(playing,{childList:true,subtree:true,characterData:true});
+  syncPlayAvailability();
+ }
  const currentFavorite=byId('favCurrentBtn'),currentLabel=byId('playingTitle');
  if(currentFavorite&&currentLabel){
   const syncFavoriteAvailability=()=>{

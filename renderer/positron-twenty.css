@@ -332,3 +332,10 @@ html[data-positron="true"] #page-epg #epgSearchResults{
  opacity:1!important;
  line-height:1.5!important;
 }
+
+/* P5.1.37: no channels, no playable TV. Visually distinguish disabled
+   main Play while keeping its original native event handler untouched. */
+html[data-positron="true"] #page-tv #playBtn[data-positron-no-channels="true"]{
+ opacity:.5!important;filter:saturate(.2)!important;cursor:not-allowed!important;
+ box-shadow:none!important;
+}
