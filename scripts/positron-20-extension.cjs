@@ -260,7 +260,8 @@ async function runTwenty(page){
      const box=button.getBoundingClientRect();
      return {shape:!!shape,rects:shape?.querySelectorAll('rect').length||0,
       labelHidden:getComputedStyle(label).display==='none',pseudo,
-      boxWidth:box.width,iconWidth:shape?.getBoundingClientRect().width||0,
+      boxWidth:box.width,clientWidth:button.clientWidth,scrollWidth:button.scrollWidth,
+      iconWidth:shape?.getBoundingClientRect().width||0,
       overflow:button.scrollWidth>button.clientWidth+1};
     });
     assert.equal(moreIcon.shape,true,'Advanced-pages rail still uses a platform glyph: '+name);
@@ -268,7 +269,7 @@ async function runTwenty(page){
     assert.equal(moreIcon.labelHidden,true,'Compact rail label bleeds into icon: '+name);
     assert.ok(['none','normal'].includes(moreIcon.pseudo),'Duplicate pseudo-grid still visible: '+name+' '+moreIcon.pseudo);
     assert.ok(moreIcon.iconWidth>=18&&moreIcon.iconWidth<=24,'Compact rail SVG size wrong: '+name);
-    assert.equal(moreIcon.overflow,false,'Advanced-pages icon rail overflows: '+name);
+    assert.equal(moreIcon.overflow,false,'Advanced-pages icon rail overflows: '+name+' '+JSON.stringify(moreIcon));
    }
    if(width===1360){
     const watchFlow=await page.evaluate(()=>{

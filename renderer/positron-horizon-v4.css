@@ -546,3 +546,12 @@ html[data-positron="true"].po-horizon[data-po-rail-expanded="true"] #appSidebar 
 html[data-positron="true"].po-horizon[data-po-rail-expanded="true"] #appSidebar #positronMorePages .po-more-label{
  display:inline!important;font-size:12px!important;white-space:nowrap!important;
 }
+
+/* P5.1.68 CI regression refinement: compact More stays strictly in its 49px slot. */
+html[data-positron="true"].po-horizon:not([data-po-rail-expanded="true"]) #appSidebar #positronMorePages{
+ box-sizing:border-box!important;padding:0!important;overflow:hidden!important;
+ white-space:nowrap!important;display:flex!important;align-items:center!important;
+ justify-content:center!important;gap:0!important;
+}
+html[data-positron="true"].po-horizon #appSidebar #positronMorePages::after{content:none!important;display:none!important}
+html[data-positron="true"].po-horizon[data-po-rail-expanded="true"] #appSidebar #positronMorePages{overflow:visible!important}
