@@ -38,12 +38,16 @@ test('P5 release is immutable and versioned separately from P4.1',()=>{
  const pkg=JSON.parse(read('package.json'));
  const flow=read('.github/workflows/positron-lab.yml');
  assert.equal(pkg.version,'4.23.130');
- assert.ok(flow.includes('positron/v4.23.130-p5.1.44'));
+ const label=pkg.description.match(/Positron\s+(P\d+\.\d+\.\d+)/)?.[1];
+ assert.ok(label,'product P-label must accompany SemVer');
+ assert.ok(flow.includes('TAG=positron/v'+pkg.version+'-'+label.toLowerCase()),'release tag and app version must match');
  assert.ok(read('scripts/positron-50-audit.cjs').includes('runTwenty(page)'));
  assert.ok(flow.includes('Positron-P5146-20-Real-Screenshots.zip'));
 });
 
-test('P5.1.1 sidebar badge matches shipped release instead of stale P4',()=>{const js=read('renderer/positron.js');assert.ok(js.includes("descriptor.textContent='P5.1.45'"));assert.ok(!js.includes('OPEN IPTV PRO · P4 · 50 VÒNG'));});
+test('P5.1.1 sidebar badge matches shipped release instead of stale P4',()=>{const js=read('renderer/positron.js');const pkg=JSON.parse(read('package.json'));
+ const label=pkg.description.match(/Positron\s+(P\d+\.\d+\.\d+)/)?.[1];
+ assert.ok(label&&js.includes("descriptor.textContent='"+label+"'"));assert.ok(!js.includes('OPEN IPTV PRO · P4 · 50 VÒNG'));});
 
 test('P5.1.3 fullscreen icon uses SVG not a tiny platform glyph',()=>{const js=read('renderer/positron-twenty.js');const css=read('renderer/positron-twenty.css');assert.ok(js.includes("['fullscreenBtn','M8 3H3v5"));assert.ok(css.includes('#page-tv #fullscreenBtn svg'));});
 

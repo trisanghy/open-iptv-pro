@@ -114,3 +114,5 @@ P5.1.43 same-round CI follow-up: Actions run 44864848127 failed native-language 
 | 03/20 (pending) | P5.1.46 / v4.23.130 | P5.1.45 EPG 720px / 1360px, positron-p5-17-real.png / positron-p5-16-real.png | Disabled recording scheduler form occupies guide space when no sources | Conditional collapse and restore on channel option, keep folder/history; Source shortcut | Pending 17-locale Node regression, real screenshots, CI build/release |
 
 Release integrity note: v4.23.129 was released under mismatched tag positron/v4.23.129-p5.1.44 (GitHub Actions run 44866076196). Never relabel or overwrite that immutable tag; P5.1.46 explicitly validates its own tag against SemVer and P-label.
+
+P5.1.46 CI attempt 44866650681: 604 pass / 2 failed / 5 skipped; failures were stale hardcoded historical test expected tag/badge. Fixed test to derive P-label from package manifest (same version, new SHA), pending re-run.

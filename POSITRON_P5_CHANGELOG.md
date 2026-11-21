@@ -317,3 +317,5 @@ P5.1.43 same-round regression repair: first CI run 44864848127 failed 2/606 Node
 - Add Node regression and actual Electron screenshot audits of both sizes, plus live DOM simulation of channel arrival/removal proving reversibility.
 - Release consistency correction: P5.1.45 / v4.23.129 CI succeeded but produced a GitHub Release with INCONSISTENT tag positron/v4.23.129-p5.1.44. Preserve that immutable tag; P5.1.46 workflow explicitly uses positron/v4.23.130-p5.1.46, with test verifying package.json SemVer + P-label. Do not claim P5.1.45 was correctly tagged.
 - Test, capture, Windows and macOS builds, Release asset verification remain prerequisites for certification.
+
+P5.1.46 same-version CI repair: run 44866650681 failed 2/611 because historical Positron test assertions still expected P5.1.44 release tag and P5.1.45 badge while actual manifest, workflow and badge correctly specify P5.1.46. Correct these assertions to dynamically derive the P-label from package.json description; never suppress mismatch. New test/capture/build/release required.
