@@ -949,3 +949,23 @@ html[data-positron="true"].po-horizon #page-tv #webChooserGrid .po-chooser-empty
   display:none!important;
  }
 }
+
+
+/* P5.1.117: actual P5.1.116 Electron 450px VTV-filter screenshot shows
+   one 165px card and a blank second grid column. When a native filtered
+   page has exactly one channel, use the full available row with clear
+   side-by-side logo/name; do not change multi-result grid or list mode. */
+@media(max-width:500px) and (max-height:900px){
+ html[data-positron="true"].po-horizon #page-tv #webChooserGrid.web-chooser-grid:not(.list)>button.web-chooser-card:only-child{
+  grid-column:1/-1!important;min-height:84px!important;
+  flex-direction:row!important;justify-content:flex-start!important;
+  text-align:left!important;gap:12px!important;padding:10px 14px!important;
+ }
+ html[data-positron="true"].po-horizon #page-tv #webChooserGrid.web-chooser-grid:not(.list)>button.web-chooser-card:only-child .web-chooser-art{
+  flex:0 0 62px!important;width:62px!important;height:46px!important;
+ }
+ html[data-positron="true"].po-horizon #page-tv #webChooserGrid.web-chooser-grid:not(.list)>button.web-chooser-card:only-child .web-chooser-name{
+  min-height:0!important;text-align:left!important;line-height:1.4!important;
+  white-space:normal!important;-webkit-line-clamp:2!important;
+ }
+}

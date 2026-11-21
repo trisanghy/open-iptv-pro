@@ -99,3 +99,16 @@ Not yet started. Choose each new repair from the preceding real screenshot, with
 - Fix: show only imported groups, no phantom K+, preserve quick-chip focus and aria pressed, TH specific matching. Metadata-only QA category fixture preserves older horizontal scrollbar tests without licensed streams.
 - Before P115: positron-p51115-no-duplicate-favorite-450-real.png. Candidate after P116: positron-p51116-real-category-filter-450-real.png.
 - Status: CANDIDATE pending tests/image/release, prior releases unchanged.
+
+
+## Separate file-triggered batch round 05/20 — P5.1.117 / v4.23.201 — CANDIDATE
+- Input: directly opened P5.1.116 screenshot at 450px, a single filtered VTV channel occupies a short, narrow card in the left half of a two-column library.
+- Root in renderer/positron-horizon-v4.css: responsive 2-column grid does not adapt for one result/page.
+- Fix: :only-child channel fills full row and aligns logo/title horizontally at <=500px; preserves many-result grid, list mode and play button.
+- Before: positron-p51116-real-category-filter-450-real.png; candidate after: positron-p51117-single-result-wide-card-450-real.png.
+- Status: CANDIDATE until independently checked screenshot/CI/release.
+
+
+### Verified previous round P5.1.116
+- P5.1.116 / v4.23.200 final HEAD `68bf5505bc72a73853284574dc3106bfad7e9973`; immutable release `positron/v4.23.200-p5.1.116` and GitHub Actions `44934384750` with 6/6 jobs success.
+- Node 716 tests: 711 passed, 5 skipped, zero failed. True Electron 450px screenshot `positron-p51116-real-category-filter-450-real.png` manually opened; 10/10 category checks passed with no playback and no horizontal overflow. Windows Setup/Portable x64 and Mac Intel/ARM64 release assets API-verified.

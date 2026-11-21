@@ -1985,12 +1985,46 @@ async function runTwenty(page){
  for(const [key,value] of Object.entries(categoryFilterQA))
   assert.equal(value,true,'P5.1.116 real-category quick filter '+key+': '+JSON.stringify(categoryFilterQA));
 
+ // P5.1.117: real P5.1.116 screenshot shows one VTV tile using only the
+ // first of two narrow columns. Expand one-result grid to a comfortable
+ // horizontal button, preserving 2 columns for a populated grid.
+ await page.click('#webChooserGroups button[data-po-quick-group="VTV"]');
+ const singleResultQA=await page.evaluate(()=>{
+  const grid=document.getElementById('webChooserGrid');
+  const card=grid.querySelector('button.web-chooser-card');
+  const rect=card?.getBoundingClientRect();
+  const art=card?.querySelector('.web-chooser-art')?.getBoundingClientRect();
+  const name=card?.querySelector('.web-chooser-name')?.getBoundingClientRect();
+  const style=card?getComputedStyle(card):null;
+  const nameStyle=card?getComputedStyle(card.querySelector('.web-chooser-name')):null;
+  return {onlyOne:grid.querySelectorAll('button.web-chooser-card').length===1,
+   fullWidth:rect?.width>=300&&Math.abs(rect.width-(grid.clientWidth-20))<=10,
+   horizontal:style?.flexDirection==='row'&&art?.right<name?.left,
+   compactHeight:rect?.height>=75&&rect.height<=112,
+   leftAligned:nameStyle?.textAlign==='left',
+   keepsFocus:document.activeElement?.dataset.poQuickGroup==='VTV',
+   noOverflow:document.documentElement.scrollWidth<=innerWidth+1,
+   noAutoplay:window.IPTVState.getCurrent()===null};
+ });
+ await page.screenshot({path:path.join(out,'positron-p51117-single-result-wide-card-450-real.png'),animations:'disabled'});
+ await page.click('#webChooserGroups button[data-po-quick-group="all"]');
+ const multipleCardsUnchanged=await page.evaluate(()=>{
+  const cards=[...document.querySelectorAll('#webChooserGrid button.web-chooser-card')];
+  const a=cards.slice(0,3).map(c=>c.getBoundingClientRect());
+  return cards.length===18&&a.length===3&&Math.abs(a[0].top-a[1].top)<=2&&
+   a[2].top>=a[0].bottom+4&&a[0].width>=140&&a[0].width<190;
+ });
+ const compactSingleQA={...singleResultQA,multipleCardsUnchanged};
+ for(const [key,value] of Object.entries(compactSingleQA))
+  assert.equal(value,true,'P5.1.117 single native channel result layout '+key+': '+JSON.stringify(compactSingleQA));
+
+
 
 
 
  await page.setViewportSize({width:1360,height:820});
   const report={type:'Positron P5 twenty distinct desktop screenshot cases',realElectron:true,syntheticChannels:false,
-  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA,chooserQa,toastLayoutQA,nativeToastQA,compactIdleQA,channelChipRailQA,advancedFilterQA,readableCardsQA,keyboardTabQA,favoriteEmptyQA,duplicateEmptyQA,categoryFilterQA,categoryFixtureQA};
+  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA,chooserQa,toastLayoutQA,nativeToastQA,compactIdleQA,channelChipRailQA,advancedFilterQA,readableCardsQA,keyboardTabQA,favoriteEmptyQA,duplicateEmptyQA,categoryFilterQA,categoryFixtureQA,compactSingleQA};
  fs.writeFileSync(path.resolve('positron-evidence','audit-p5-20-rounds.json'),JSON.stringify(report,null,2));
  return report;
 }

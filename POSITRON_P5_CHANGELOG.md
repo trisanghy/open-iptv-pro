@@ -808,3 +808,15 @@ P5.1.81 follow-up: real Electron capture found nav overflow; replace flexible no
 - Root: renderGroups() used only available.size, did not check each group's presence; fallback to group.value='' for absent label; clicked chip lost focus on replacement.
 - Fix: quick chips only for actually imported group names (TH matches a separate token rather than the beginning of Thể thao). Selected chip state now uses aria-pressed; native keyboard focus restored after filtering; no changes to stream playback or saved playlists.
 - Regression: preserve previous P111 accessible horizontal-rail checks by adding nine metadata-only QA channels in genuine groups (non-playing), omit K+ to assert absent chip, test VTV filters to exactly one channel, returns to All 561 records, focus restored, no autoplay/overflow; real screenshot positron-p51116-real-category-filter-450-real.png. Candidate until CI + screenshot inspection + installer verified.
+
+
+## P5.1.117 / v4.23.201 — Full-width readable single filtered channel tile (file-triggered round 05/20)
+- Baseline: genuine P5.1.116 Electron screenshot at 450px positron-p51116-real-category-filter-450-real.png, VTV filter works but its single result occupies only the first of two columns, leaving a conspicuous empty half.
+- Cause: two-column responsive grid applies even when only one button is visible on the page.
+- Fix: compact-only :only-child channel button spans all grid columns and uses a horizontal logo-title arrangement with original click-to-play, keyboard and list mode preserved; multi-result grid remains two columns.
+- Regression: real Electron 450px check single result >=300px width, horizontal, readable, focus preserved, no autoplay/overflow, and after clearing filter first two buttons remain side by side; screenshot positron-p51117-single-result-wide-card-450-real.png. Candidate until CI/manual image review/release.
+
+
+### Verified previous round P5.1.116
+- P5.1.116 / v4.23.200 final HEAD `68bf5505bc72a73853284574dc3106bfad7e9973`; immutable release `positron/v4.23.200-p5.1.116` and GitHub Actions `44934384750` with 6/6 jobs success.
+- Node 716 tests: 711 passed, 5 skipped, zero failed. True Electron 450px screenshot `positron-p51116-real-category-filter-450-real.png` manually opened; 10/10 category checks passed with no playback and no horizontal overflow. Windows Setup/Portable x64 and Mac Intel/ARM64 release assets API-verified.

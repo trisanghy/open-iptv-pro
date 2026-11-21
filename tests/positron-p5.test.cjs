@@ -37,7 +37,7 @@ test('P5 assets are loaded after P4 without replacing it',()=>{
 test('P5 release is immutable and versioned separately from P4.1',()=>{
  const pkg=JSON.parse(read('package.json'));
  const flow=read('.github/workflows/positron-lab.yml');
- assert.equal(pkg.version,'4.23.200');
+ assert.equal(pkg.version,'4.23.201');
  const label=pkg.description.match(/Positron\s+(P\d+\.\d+\.\d+)/)?.[1];
  assert.ok(label,'product P-label must accompany SemVer');
  assert.ok(flow.includes('TAG=positron/v'+pkg.version+'-'+label.toLowerCase()),'release tag and app version must match');
@@ -898,4 +898,16 @@ test('P5.1.116 category chips only include actual imported group labels and keep
  assert.ok(qa.includes("const kPlusAbsent=!labels.includes('K+')"));
  assert.ok(qa.includes("names.length===1&&names[0].includes('VTV QA')"));
  assert.ok(qa.includes("positron-p51116-real-category-filter-450-real.png"));
+});
+
+
+test('P5.1.117 450px single filtered channel fills row in a readable horizontal tile',()=>{
+ const css=read('renderer/positron-horizon-v4.css');
+ const qa=read('scripts/positron-20-extension.cjs');
+ assert.ok(css.includes('P5.1.117: actual P5.1.116 Electron 450px VTV-filter screenshot'));
+ assert.ok(css.includes('button.web-chooser-card:only-child'));
+ assert.ok(css.includes('grid-column:1/-1!important;min-height:84px!important'));
+ assert.ok(css.includes('flex-direction:row!important;justify-content:flex-start!important'));
+ assert.ok(qa.includes('const compactSingleQA={...singleResultQA,multipleCardsUnchanged}'));
+ assert.ok(qa.includes('positron-p51117-single-result-wide-card-450-real.png'));
 });
