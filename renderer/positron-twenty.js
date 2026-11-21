@@ -444,12 +444,22 @@
   sourceButton.addEventListener('click',()=>window.IPTVState?.setPage?.('sources'));
   prompt.append(message,sourceButton);
   compactDvrForm.insertAdjacentElement('beforebegin',prompt);
+  // P5.1.47: the actual P5.1.46 screenshots still said 'ready to schedule'
+  // while there are zero channels. Only conceal that exact idle copy: native
+  // errors, live recording, history and other status changes remain visible.
+  const dvrNativeStatus=byId('dvrStatus');
+  const idleReadyCopy="Sẵn sàng đặt lịch ghi. Ứng dụng cần đang mở đúng giờ; chỉ hỗ trợ luồng bạn có quyền ghi.";
   const syncCompactDvr=()=>{
    const available=Array.from(compactDvrSelect.options).some(o=>o.value!=='');
    compactDvrPanel.classList.toggle('p46-no-channels',!available);
    prompt.hidden=available;
+   const nativeText=dvrNativeStatus?.textContent?.trim()||'';
+   const translated=window.OpenIPTVI18n?.t?.(idleReadyCopy)||idleReadyCopy;
+   const isIdle=(nativeText===idleReadyCopy||nativeText===translated)&&!dvrNativeStatus?.classList.contains('dvr-error');
+   compactDvrPanel.classList.toggle('p47-hide-idle-status',!available&&isIdle);
   };
   new MutationObserver(syncCompactDvr).observe(compactDvrSelect,{childList:true});
+  if(dvrNativeStatus)new MutationObserver(syncCompactDvr).observe(dvrNativeStatus,{childList:true,subtree:true,characterData:true});
   syncCompactDvr();
  }
 

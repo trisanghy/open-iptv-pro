@@ -451,3 +451,10 @@ html[data-positron="true"] #page-epg #dvrPanel #positronDvrNoChannels:not([hidde
  border-radius:12px;
 }
 html[data-positron="true"] #page-epg #dvrPanel #positronDvrNoChannels[hidden]{display:none!important;}
+
+/* P5.1.47: when no channels exist, the native idle "ready to schedule"
+   conflicts with the disabled DVR controls. Hide only that verified idle
+   message; other DVR statuses and errors remain visible and unchanged. */
+html[data-positron="true"] #page-epg #dvrPanel.p46-no-channels.p47-hide-idle-status #dvrStatus{
+ display:none!important;
+}

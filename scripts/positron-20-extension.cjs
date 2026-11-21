@@ -52,6 +52,8 @@ async function runTwenty(page){
     dvrFormVisible:get('#dvrForm')?.visible||false,
     dvrEmptyAction:get('#positronDvrNoChannels'),
     dvrFolder:get('#dvrPanel .dvr-folder'),
+    dvrNativeStatus:get('#dvrStatus'),
+    dvrNativeText:document.getElementById('dvrStatus')?.textContent?.trim()||'',
     controls:document.querySelectorAll('#page-tv button').length,
     transportVectors:['prevBtn','stopBtn','nextBtn','fsPrev','fsNext','fullscreenBtn'].every(id=>!!document.getElementById(id)?.querySelector('svg')),
     brandIcon:get('#appSidebar .brand-icon'),
@@ -330,13 +332,15 @@ async function runTwenty(page){
      select.replaceChildren(option);
      await new Promise(resolve=>setTimeout(resolve,0));
      const enabled=!select.disabled&&select.value==='positron-qa-only';
+     const readyVisibleWithChannel=getComputedStyle(document.getElementById('dvrStatus')).display!=='none';
      const add=document.getElementById('dvrAdd');
      const enabledSubmit=!add.disabled&&!add.hasAttribute('data-positron-no-channels');
      const visibleWithChannels=getComputedStyle(document.getElementById('dvrForm')).display!=='none';
      select.replaceChildren();
      await new Promise(resolve=>setTimeout(resolve,0));
      const hiddenWithoutChannels=getComputedStyle(document.getElementById('dvrForm')).display==='none';
-     return {enabled,enabledSubmit,disabled:select.disabled,disabledSubmit:add.disabled,placeholder:select.selectedOptions?.[0]?.textContent?.trim()||'',visibleWithChannels,hiddenWithoutChannels};
+     const nativeReadyHiddenAgain=getComputedStyle(document.getElementById('dvrStatus')).display==='none';
+     return {enabled,enabledSubmit,disabled:select.disabled,disabledSubmit:add.disabled,placeholder:select.selectedOptions?.[0]?.textContent?.trim()||'',visibleWithChannels,hiddenWithoutChannels,readyVisibleWithChannel,nativeReadyHiddenAgain};
     });
     assert.equal(state.enabled,true,'DVR select failed to re-enable when a channel option appears');
     assert.equal(state.disabled,true,'DVR select failed to disable again after options removed');
@@ -345,6 +349,8 @@ async function runTwenty(page){
     assert.equal(state.placeholder,'Chưa có kênh để ghi hình','DVR placeholder failed to recover');
     assert.equal(state.visibleWithChannels,true,'DVR form did not reappear when channels were added');
     assert.equal(state.hiddenWithoutChannels,true,'DVR form did not collapse again after channels removed');
+    assert.equal(state.readyVisibleWithChannel,true,'Native DVR status did not return after channel restoration');
+    assert.equal(state.nativeReadyHiddenAgain,true,'Misleading native idle-ready status returned after channel removal');
    }
    if(target==='epg'){
     assert.equal(metrics.epgEmptySummary,"Chưa tải EPG. Nhấn “Nguồn EPG” phía trên để chọn hoặc cập nhật nguồn.",'EPG empty instruction must point to actual top Nguồn EPG button: '+name);
@@ -353,6 +359,7 @@ async function runTwenty(page){
      assert.equal(metrics.dvrFormVisible,false,'Empty DVR scheduling form still dominates EPG: '+name);
      assert.ok(metrics.dvrEmptyAction?.visible,'Compact DVR empty action missing: '+name);
      assert.ok(metrics.dvrFolder?.visible,'DVR folder controls lost when no channels: '+name);
+     if(metrics.dvrNativeText.startsWith('Sẵn sàng đặt lịch ghi'))assert.equal(metrics.dvrNativeStatus?.visible,false,'DVR falsely says ready despite no schedulable channel: '+name);
     }
    }
    if(target==='sources'&&metrics.sources)assert.notEqual(metrics.sources.background,'rgb(255, 255, 255)','white source panel');

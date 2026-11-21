@@ -319,3 +319,10 @@ P5.1.43 same-round regression repair: first CI run 44864848127 failed 2/606 Node
 - Test, capture, Windows and macOS builds, Release asset verification remain prerequisites for certification.
 
 P5.1.46 same-version CI repair: run 44866650681 failed 2/611 because historical Positron test assertions still expected P5.1.44 release tag and P5.1.45 badge while actual manifest, workflow and badge correctly specify P5.1.46. Correct these assertions to dynamically derive the P-label from package.json description; never suppress mismatch. New test/capture/build/release required.
+
+## File (9) round 04/20 — P5.1.47 / 4.23.131
+- Observed in actual P5.1.46 Electron 720px/1360px EPG screenshots: no channels, DVR schedule form correctly hidden, but native status still displays "Sẵn sàng đặt lịch ghi..." despite scheduling impossible.
+- Cause: renderer/dvr-ui.js originally sets an unconditional idle-ready status on first load; Positron P5.1.46 suppressed the form only.
+- Repair strictly Positron-local: while no schedulable channel and native text equals its known idle-ready message (including offline locale translation), hide only that specific status. Keep native message in DOM and show it again if a channel arrives. Never suppress actual DVR errors, ongoing recording statuses, saved schedules, or folder controls.
+- Add Node and real Electron 720px/1360px screenshot checks, including synthetic selectable channel/rollback to verify restoration and no phantom readiness.
+- Continue SemVer/P-label increment and immutable release tag validation.

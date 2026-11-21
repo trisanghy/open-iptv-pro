@@ -37,12 +37,12 @@ test('P5 assets are loaded after P4 without replacing it',()=>{
 test('P5 release is immutable and versioned separately from P4.1',()=>{
  const pkg=JSON.parse(read('package.json'));
  const flow=read('.github/workflows/positron-lab.yml');
- assert.equal(pkg.version,'4.23.130');
+ assert.equal(pkg.version,'4.23.131');
  const label=pkg.description.match(/Positron\s+(P\d+\.\d+\.\d+)/)?.[1];
  assert.ok(label,'product P-label must accompany SemVer');
  assert.ok(flow.includes('TAG=positron/v'+pkg.version+'-'+label.toLowerCase()),'release tag and app version must match');
  assert.ok(read('scripts/positron-50-audit.cjs').includes('runTwenty(page)'));
- assert.ok(flow.includes('Positron-P5146-20-Real-Screenshots.zip'));
+ assert.ok(flow.includes('Positron-P5147-20-Real-Screenshots.zip'));
 });
 
 test('P5.1.1 sidebar badge matches shipped release instead of stale P4',()=>{const js=read('renderer/positron.js');const pkg=JSON.parse(read('package.json'));
@@ -499,4 +499,17 @@ test('P5.1.46 release tag must match SemVer AND P-label, never carry the previou
  const tag='TAG=positron/v'+pkg.version+'-p'+label.slice(1);
  assert.ok(workflow.includes(tag),'release tag mismatch: expected '+tag);
  assert.ok(!workflow.includes('TAG=positron/v'+pkg.version+'-p5.1.44'),'stale P-label in new release tag');
+});
+
+
+test('P5.1.47 DVR idle readiness must disappear without hiding real errors or jobs',()=>{
+ const js=read('renderer/positron-twenty.js'),css=read('renderer/positron-twenty.css'),audit=read('scripts/positron-20-extension.cjs');
+ assert.ok(js.includes('p47-hide-idle-status'));
+ assert.ok(js.includes('isIdle=(nativeText===idleReadyCopy||nativeText===translated)'));
+ assert.ok(js.includes("!dvrNativeStatus?.classList.contains('dvr-error')"));
+ assert.ok(js.includes('new MutationObserver(syncCompactDvr).observe(dvrNativeStatus'));
+ assert.ok(css.includes('#dvrPanel.p46-no-channels.p47-hide-idle-status #dvrStatus'));
+ assert.ok(audit.includes('metrics.dvrNativeStatus?.visible'));
+ assert.ok(audit.includes('state.readyVisibleWithChannel'));
+ assert.ok(audit.includes('state.nativeReadyHiddenAgain'));
 });

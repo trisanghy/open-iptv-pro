@@ -116,3 +116,7 @@ P5.1.43 same-round CI follow-up: Actions run 44864848127 failed native-language 
 Release integrity note: v4.23.129 was released under mismatched tag positron/v4.23.129-p5.1.44 (GitHub Actions run 44866076196). Never relabel or overwrite that immutable tag; P5.1.46 explicitly validates its own tag against SemVer and P-label.
 
 P5.1.46 CI attempt 44866650681: 604 pass / 2 failed / 5 skipped; failures were stale hardcoded historical test expected tag/badge. Fixed test to derive P-label from package manifest (same version, new SHA), pending re-run.
+
+| File (9) round | Version | Screenshot input | Observed bug | Source repair | Required evidence |
+|---|---|---|---|---|---|
+| 04/20 (pending) | P5.1.47 / v4.23.131 | P5.1.46 real Electron EPG 720px + 1360px | DVR says Ready to Schedule with no channels | Hide only idle-ready copy, restore when channels return; never hide error/active recording statuses | Node test, screenshot, live DOM transitions, build and correct Release |
