@@ -1,4 +1,4 @@
-name: Screenshot Electron sidebar and light chooser regression
+name: Audit Electron Light theme across main pages
 on:
   push:
     branches: [build-sources/electron-desktop]
@@ -64,6 +64,42 @@ jobs:
               if(!rgb||[1,2,3].some(i=>Number(rgb[i])<205))throw Error('Chooser is not light: '+JSON.stringify(inspection));
               await page.screenshot({path:'screenshots/electron-light-chooser-real.png',timeout:15000});
               console.log('LAYOUT VERIFIED',inspection);
+              // Screenshot the actual Electron renderer on every major Light page.
+              // Audits sample real computed colors; no artificial content is injected.
+              const sections=[
+                ['tv','01-tv-light',['#page-tv .web-chooser-main','#page-tv .unified-ai-toggle','#page-tv .video-enhance-toggle']],
+                ['epg','02-epg-light',['#page-epg .dvr-panel','#page-epg .epg-summary']],
+                ['sources','03-sources-light',['#page-sources .source-hub']],
+                ['doctor','04-doctor-light',['#page-doctor .doctor-v3-panel']],
+                ['health','05-health-light',['#page-health .settings-card']],
+                ['settings','06-settings-light',['#page-settings .settings-card']],
+                ['fav','07-favorites-light',['#page-fav']]
+              ];
+              const checks=[];
+              for(const [id,name,selectors] of sections){
+                await page.evaluate(id=>document.querySelector('.nav[data-page="'+id+'"]')?.click(),id);
+                await page.waitForTimeout(300);
+                const row=await page.evaluate(({id,selectors})=>{
+                  const active=document.querySelector('.page.active-page')?.id;
+                  const samples=selectors.map(selector=>{
+                    const el=document.querySelector(selector);
+                    if(!el)return {selector,missing:true};
+                    const s=getComputedStyle(el);
+                    return {selector,bg:s.backgroundColor,ink:s.color,visible:!!el.getClientRects().length};
+                  });
+                  return {id,active,samples};
+                },{id,selectors});
+                if(row.active!=='page-'+id)throw Error('Wrong Light page: '+JSON.stringify(row));
+                for(const sample of row.samples){
+                  if(sample.missing||!sample.visible)continue;
+                  const rgb=(sample.bg.match(/rgba?\\((\\d+),\\s*(\\d+),\\s*(\\d+)/)||[]).slice(1).map(Number);
+                  if(rgb.length!==3||rgb.some(x=>x<185))throw Error('Dark card still in Light mode: '+JSON.stringify(row));
+                }
+                checks.push(row);
+                await page.screenshot({path:'screenshots/'+name+'.png',timeout:15000});
+              }
+              fs.writeFileSync('screenshots/light-palette-audit.json',JSON.stringify(checks,null,2));
+              console.log('LIGHT PALETTE AUDIT VERIFIED',checks.length,'pages');
             } finally {await electron.close();}
           })().catch(e=>{console.error(e);process.exitCode=1;});
           NODE
@@ -71,6 +107,6 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: electron-light-sidebar-verified-screenshots
+          name: electron-light-theme-consistency-screenshots
           path: screenshots/
           retention-days: 7
