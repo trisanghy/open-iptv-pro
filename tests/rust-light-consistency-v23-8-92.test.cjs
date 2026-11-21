@@ -40,3 +40,17 @@ test('visual review: empty channel/EPG text and folder action buttons use readab
  assert.match(css,/\.channel-panel \.folder-actions button\s*\{/);
  assert.match(css,/\.folder-actions button:hover\s*\{/);
 });
+
+
+test('Rust Light keeps warning, success and helper text readable without affecting Dark',()=>{
+ const css=read('renderer/rust-light-consistency-v23-8-92.css');
+ for(const selector of ['.dvr-error','.dvr-job-error','.dvr-running-warning',
+  '.dvr-status','.dvr-job-meta','.dvr-quick-hint','.source-check-note',
+  '.channel-drag-hint','.sidebar .nav.active','.rust-browser-empty']){
+  assert.ok(css.includes(selector),'Missing Light contrast fix: '+selector);
+ }
+ assert.match(css,/\.dvr-error[^}]*color:#a12f44!important/);
+ assert.match(css,/\.dvr-completed \.dvr-pill/);
+ assert.match(css,/\.sidebar \.nav\.active :is\(\.nav-label/);
+ assert.doesNotMatch(css,/html\[data-theme="(dark|amoled)"\]/);
+});
