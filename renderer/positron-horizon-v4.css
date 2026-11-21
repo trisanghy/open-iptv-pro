@@ -1000,3 +1000,22 @@ html[data-positron="true"].po-horizon #page-tv #webChooserGrid .web-chooser-favo
   grid-column:1/-1!important;
  }
 }
+
+
+/* P5.1.119: small live Favorite count over the star, not an extra text
+   column that would truncate the three 450px native chooser tabs. */
+html[data-positron="true"].po-horizon #page-tv .web-chooser-tabs button[data-chooser-tab="fav"]{
+ position:relative!important;overflow:visible!important;
+}
+html[data-positron="true"].po-horizon #page-tv .web-chooser-tabs button[data-chooser-tab="fav"] .po-favorite-count{
+ position:absolute!important;left:11px!important;top:-5px!important;
+ min-width:16px!important;height:16px!important;padding:0 3px!important;
+ border-radius:999px!important;border:1px solid var(--po-raised,#162c3f)!important;
+ display:inline-flex!important;align-items:center!important;justify-content:center!important;
+ color:#091b21!important;background:var(--po-accent,#5de5b4)!important;
+ font-size:10px!important;font-weight:800!important;line-height:1!important;
+ pointer-events:none!important;
+}
+html[data-positron="true"].po-horizon #page-tv .web-chooser-tabs button[data-chooser-tab="fav"] .po-favorite-count[hidden]{
+ display:none!important;
+}

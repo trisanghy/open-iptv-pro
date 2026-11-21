@@ -2067,6 +2067,39 @@ async function runTwenty(page){
  for(const [key,value] of Object.entries(directFavoriteQA))
   assert.equal(value,true,'P5.1.118 native direct Favorite control '+key+': '+JSON.stringify(directFavoriteQA));
 
+ // P5.1.119: visible, accessible Favorite count must update on the actual
+ // chooser tab when a star is clicked, without forcing video playback.
+ await page.click('#webChooserGroups button[data-po-quick-group="VTV"]');
+ await page.click('#webChooserGrid button.web-chooser-favorite');
+ await page.waitForFunction(()=>document.querySelector('#webChannelChooser .po-favorite-count')?.textContent==='1',{timeout:4000});
+ const badgeOnQA=await page.evaluate(()=>{
+  const b=document.querySelector('#webChannelChooser .po-favorite-count');
+  const tab=document.querySelector('#webChannelChooser [data-chooser-tab="fav"]');
+  const r=b.getBoundingClientRect(),t=tab.getBoundingClientRect();
+  return {countOne:b.textContent==='1'&&!b.hidden,
+   visuallyVisible:getComputedStyle(b).display!=='none'&&r.width>=14&&r.height>=14,
+   containedByTab:r.left>=t.left-2&&r.right<=t.right+2,
+   accessibleCount:tab.getAttribute('aria-label')==='Yêu thích, 1 kênh',
+   stillAllSelected:document.querySelector('[data-chooser-tab="all"]').getAttribute('aria-selected')==='true',
+   noPlayback:window.IPTVState.getCurrent()===null,
+   noOverflow:document.documentElement.scrollWidth<=innerWidth+1};
+ });
+ await page.screenshot({path:path.join(out,'positron-p51119-favorite-count-badge-450-real.png'),animations:'disabled'});
+ await page.click('#webChooserGrid button.web-chooser-favorite');
+ await page.waitForFunction(()=>document.querySelector('#webChannelChooser .po-favorite-count')?.hidden===true,{timeout:4000});
+ const badgeOffQA=await page.evaluate(()=>{
+  const b=document.querySelector('#webChannelChooser .po-favorite-count');
+  const tab=document.querySelector('#webChannelChooser [data-chooser-tab="fav"]');
+  return {hiddenZero:b.hidden&&getComputedStyle(b).display==='none',
+   accessibleZero:tab.getAttribute('aria-label')==='Yêu thích, 0 kênh',
+   noPlayback:window.IPTVState.getCurrent()===null};
+ });
+ await page.click('#webChooserGroups button[data-po-quick-group="all"]');
+ const favoriteCountQA={...badgeOnQA,...badgeOffQA};
+ for(const [key,value] of Object.entries(favoriteCountQA))
+  assert.equal(value,true,'P5.1.119 Favorites count badge '+key+': '+JSON.stringify(favoriteCountQA));
+
+
 
 
 
@@ -2074,7 +2107,7 @@ async function runTwenty(page){
 
  await page.setViewportSize({width:1360,height:820});
   const report={type:'Positron P5 twenty distinct desktop screenshot cases',realElectron:true,syntheticChannels:false,
-  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA,chooserQa,toastLayoutQA,nativeToastQA,compactIdleQA,channelChipRailQA,advancedFilterQA,readableCardsQA,keyboardTabQA,favoriteEmptyQA,duplicateEmptyQA,categoryFilterQA,categoryFixtureQA,compactSingleQA,directFavoriteQA};
+  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA,chooserQa,toastLayoutQA,nativeToastQA,compactIdleQA,channelChipRailQA,advancedFilterQA,readableCardsQA,keyboardTabQA,favoriteEmptyQA,duplicateEmptyQA,categoryFilterQA,categoryFixtureQA,compactSingleQA,directFavoriteQA,favoriteCountQA};
  fs.writeFileSync(path.resolve('positron-evidence','audit-p5-20-rounds.json'),JSON.stringify(report,null,2));
  return report;
 }

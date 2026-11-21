@@ -37,7 +37,7 @@ test('P5 assets are loaded after P4 without replacing it',()=>{
 test('P5 release is immutable and versioned separately from P4.1',()=>{
  const pkg=JSON.parse(read('package.json'));
  const flow=read('.github/workflows/positron-lab.yml');
- assert.equal(pkg.version,'4.23.202');
+ assert.equal(pkg.version,'4.23.203');
  const label=pkg.description.match(/Positron\s+(P\d+\.\d+\.\d+)/)?.[1];
  assert.ok(label,'product P-label must accompany SemVer');
  assert.ok(flow.includes('TAG=positron/v'+pkg.version+'-'+label.toLowerCase()),'release tag and app version must match');
@@ -927,4 +927,18 @@ test('P5.1.118 main grid separates native play and favorite buttons with persist
  assert.ok(css.includes('.web-chooser-favorite[aria-pressed="true"]'));
  assert.ok(qa.includes("positron-p51118-direct-favorite-channel-450-real.png"));
  assert.ok(qa.includes("persistedInStorage:Array.isArray(persisted.favoriteKeys)"));
+});
+
+
+test('P5.1.119 favorite count badge updates through native Favorites visibility after icon initialization',()=>{
+ const js=read('renderer/web-channel-chooser-v42371.js');
+ const css=read('renderer/positron-horizon-v4.css');
+ const qa=read('scripts/positron-20-extension.cjs');
+ assert.ok(js.indexOf("const favCountBadge=document.createElement('span')")>js.indexOf('for(const [selector,label,paths] of chooserIconSpecs)'));
+ assert.ok(js.includes("favCountBadge.textContent=String(favCount)"));
+ assert.ok(js.includes("favCountBadge.hidden=favCount===0"));
+ assert.ok(js.includes("favTabButton?.setAttribute('aria-label','Yêu thích, '+favCount+' kênh')"));
+ assert.ok(css.includes('.po-favorite-count[hidden]'));
+ assert.ok(qa.includes("positron-p51119-favorite-count-badge-450-real.png"));
+ assert.ok(qa.includes("const favoriteCountQA={...badgeOnQA,...badgeOffQA}"));
 });

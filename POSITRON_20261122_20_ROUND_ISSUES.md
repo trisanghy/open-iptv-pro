@@ -123,3 +123,14 @@ Not yet started. Choose each new repair from the preceding real screenshot, with
 
 ### Round 05 verified
 - P5.1.117 HEAD `15a29463a11da0679caa367515362c74bfec8029`, immutable tag `positron/v4.23.201-p5.1.117`, CI `44934939463` success 6/6. Node 717: 712 pass, 5 skipped, zero fail. Actual Electron image opened, 9/9 new layout assertions true; four binary assets verified.
+
+
+## Separate file-triggered batch round 07/20 — P5.1.119 / v4.23.203 — CANDIDATE
+- Input: genuine P5.1.118 Electron 450px screenshot manually opened; a starred VTV QA tile and toasts are shown, but the Favorites tab does not indicate saved count.
+- Root: renderer/web-channel-chooser-v42371.js replaces tab icon children once at startup and never renders a Favorites count in native tab state.
+- Fix: badge added after vector-icon pass, updated via favoritesList() each render, aria-label count and hidden at zero; scoped CSS pill overlay avoids narrowing mobile tabs.
+- Before: positron-p51118-direct-favorite-channel-450-real.png; candidate after: positron-p51119-favorite-count-badge-450-real.png.
+- Status: CANDIDATE, not countable without CI + real image inspection + binary release.
+
+### Round 06 verified
+- P5.1.118 HEAD `9751d3c02c2a293c63301f066b16b079a2d884ff`, release `positron/v4.23.202-p5.1.118`, Actions `44935525440` 6/6 success. Node 718 tests 713 pass/5 skipped/0 fail; real Electron screenshot opened and 13/13 new assertions pass. Windows Setup/Portable & macOS Intel/ARM assets present.

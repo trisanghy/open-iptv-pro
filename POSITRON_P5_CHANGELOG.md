@@ -830,3 +830,12 @@ P5.1.81 follow-up: real Electron capture found nav overflow; replace flexible no
 
 ### Verified previous round P5.1.117
 - Final HEAD `15a29463a11da0679caa367515362c74bfec8029`, tag `positron/v4.23.201-p5.1.117`, Actions `44934939463` success 6/6. Node 717: 712 pass, 5 skipped. Real Electron screenshot `positron-p51117-single-result-wide-card-450-real.png` opened; 9/9 P117 checks pass, all four installer assets verified.
+
+
+## P5.1.119 / v4.23.203 — Live Favorites count badge on chooser tab (file-triggered round 07/20)
+- Baseline: manually opened actual P5.1.118 450px Electron screenshot positron-p51118-direct-favorite-channel-450-real.png. Channel tile shows a saved star but Favorites tab shows no count; only transient toasts confirm progress.
+- Fix: add badge AFTER legacy SVG tab-icon replacement, update its count on every native chooser render from favorites.visible(store), hide at zero, use aria-label "Yêu thích, N kênh", overlay small pill near icon without taking width away from 450px tab row; no playlist data mutation.
+- Regression: real Electron 450px favoriting metadata-only VTV, visible 1 badge and accessible count, no overflow/autoplay; unstar must hide badge and speak count 0, screenshot positron-p51119-favorite-count-badge-450-real.png. Candidate until CI, opened screenshot, release verified.
+
+### Verified previous round P5.1.118
+- Final HEAD `9751d3c02c2a293c63301f066b16b079a2d884ff`, immutable tag `positron/v4.23.202-p5.1.118`, GitHub Actions `44935525440` 6/6 success. Node 718: 713 passed, 5 skipped, no failure. Real screenshot opened, 13/13 direct Favorite assertions true including stored key, remove/reverse, focus and no playback; 4 binary release assets verified.

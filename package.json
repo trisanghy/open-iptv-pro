@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.202",
-  "description": "Positron P5.1.118: native direct channel favorites without starting playback",
+  "version": "4.23.203",
+  "description": "Positron P5.1.119: live accessible favorite-count badge on chooser tab",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

@@ -30,6 +30,14 @@
   b.prepend(svg);
  }
 
+ // P5.1.119: P5.1.118 screenshot shows a starred channel but no count on
+ // the Favorites chooser tab. Create the badge AFTER the SVG icon pass,
+ // which replaces tab children during initialization; expose the same count
+ // through a full accessible label without shifting cramped mobile tabs.
+ const favTabButton=root.querySelector('[data-chooser-tab="fav"]');
+ const favCountBadge=document.createElement('span');
+ favCountBadge.className='po-favorite-count';favCountBadge.setAttribute('aria-hidden','true');
+ favCountBadge.hidden=true;favTabButton?.append(favCountBadge);
  const $=id=>document.getElementById(id);
  const grid=$('webChooserGrid'),groups=$('webChooserGroups'),search=$('webChooserSearch'),group=$('webChooserGroup'),sort=$('webChooserSort'),status=$('webChooserStatus');
  const prev=$('webChooserPrev'),next=$('webChooserNext'),pageLabel=$('webChooserPage'),favGrid=$('webChooserFavorites'),recentGrid=$('webChooserRecent');
@@ -187,6 +195,10 @@
   pageLabel.closest('.web-chooser-pager').hidden=pages<=1;
   status.textContent=data.length+' kênh';
   const favoriteItems=favoritesList(),recentItems=recentList();
+  const favCount=favoriteItems.length;
+  favCountBadge.textContent=String(favCount);
+  favCountBadge.hidden=favCount===0;
+  favTabButton?.setAttribute('aria-label','Yêu thích, '+favCount+' kênh');
   renderSide(favGrid,favoriteItems,'yêu thích');renderSide(recentGrid,recentItems,'xem gần đây');
   // P5.1.115: real 450px screenshot of P5.1.114 shows the empty Favorites
   // instruction twice: once in the active chooser grid, again in the mini
