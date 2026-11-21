@@ -37,7 +37,7 @@ test('P5 assets are loaded after P4 without replacing it',()=>{
 test('P5 release is immutable and versioned separately from P4.1',()=>{
  const pkg=JSON.parse(read('package.json'));
  const flow=read('.github/workflows/positron-lab.yml');
- assert.equal(pkg.version,'4.23.166');
+ assert.equal(pkg.version,'4.23.167');
  const label=pkg.description.match(/Positron\s+(P\d+\.\d+\.\d+)/)?.[1];
  assert.ok(label,'product P-label must accompany SemVer');
  assert.ok(flow.includes('TAG=positron/v'+pkg.version+'-'+label.toLowerCase()),'release tag and app version must match');
@@ -699,4 +699,14 @@ test('P5.1.82 450px channel chooser keeps three filters on one native row',()=>{
  assert.ok(css.includes('.web-chooser-tabs{\n  display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important'));
  assert.ok(css.includes('.web-chooser-heading{\n  display:grid!important;grid-template-columns:minmax(0,1fr) auto!important'));
  for(const label of ['const chooserQa=await page.evaluate','chooserQa[key]','positron-p5-chooser-450-metadata-qa-real.png'])assert.ok(qa.includes(label));
+});
+
+test('P5.1.83 compact 450px player keeps fit, backup link and favorite on a native shared row',()=>{
+ const css=read('renderer/positron-horizon-v4.css'),qa=read('scripts/positron-20-extension.cjs');
+ assert.ok(css.includes('grid-template-columns:minmax(0,1fr) minmax(0,1fr) 33px!important'));
+ assert.ok(css.includes('.control-layout-bottom .manual-link-picker{'));
+ assert.ok(css.includes('.control-layout-bottom .view-mode{'));
+ assert.ok(qa.includes('chooserQa.playerRow.aligned,true'));
+ assert.ok(qa.includes('chooserQa.playerRow.noOverflow,true'));
+ assert.ok(qa.includes('chooserQa.playerRow.height<=145'));
 });

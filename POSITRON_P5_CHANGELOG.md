@@ -566,3 +566,8 @@ P5.1.81 follow-up: real Electron capture found nav overflow; replace flexible no
 - The freshly reviewed P5.1.81 real 450px Electron screenshot revealed that the native `webChannelChooser` beneath the overlay wraps its three filter tabs into two rows, pushing the Recent tab down and wasting scarce height.
 - Under 600px, retain all three native tabs and both layout toggles in a 3-column CSS grid + compact two-button view control, with readable focus states and theme-aware selected color. Do not remove controls or alter filtering behavior.
 - Add actual 450px TV screenshot and CDP geometry regression on tab count, one-row alignment, no horizontal overflow and both view controls; CI/build/release pending.
+
+## P5.1.83 — Compact player secondary controls under 600px (batch round 06/20)
+- P5.1.82 actual 450px TV screenshot had a tiny 200px video and 160px secondary control panel, with two select dropdowns needlessly stacked despite room for them side by side.
+- Grid layout now keeps EPG on its own row, fit + manual backup URL + favorite in a common row. All native controls remain addressable, no state or playlist changes.
+- CDP validates same row, usable widths, no overflow and reduced height at actual 450px Electron. Screenshot in `positron-p5-chooser-450-metadata-qa-real.png`; full CI/release pending.

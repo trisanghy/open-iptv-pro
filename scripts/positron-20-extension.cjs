@@ -1074,11 +1074,23 @@ async function runTwenty(page){
   return {tabCount:tabs.length,oneRow:tabs.every(b=>Math.abs(b.getBoundingClientRect().top-base.top)<=1),
    visible:tabs.every(b=>b.getBoundingClientRect().width>=49),
    noOverflow:root.querySelector('.web-chooser-heading').scrollWidth<=root.querySelector('.web-chooser-heading').clientWidth+1,
-   viewSwitches:modeBtns.length===2&&modeBtns.every(b=>b.getBoundingClientRect().width>=25)};
+   viewSwitches:modeBtns.length===2&&modeBtns.every(b=>b.getBoundingClientRect().width>=25),
+   playerRow:(()=>{const bottom=document.querySelector('#page-tv .player-control-card .control-layout-bottom');
+    const fit=document.querySelector('#page-tv .control-layout-bottom .view-mode')?.getBoundingClientRect();
+    const link=document.querySelector('#page-tv .control-layout-bottom .manual-link-picker')?.getBoundingClientRect();
+    const fav=document.querySelector('#page-tv .control-layout-bottom #favCurrentBtn')?.getBoundingClientRect();
+    const rect=bottom.getBoundingClientRect();
+    return {aligned:Math.abs(fit.top-link.top)<=2&&Math.abs(fav.top-link.top)<=6,
+      fitWidth:fit.width,linkWidth:link.width,starWidth:fav.width,height:rect.height,
+      noOverflow:bottom.scrollWidth<=bottom.clientWidth+1};})()};
  });
  await page.screenshot({path:path.join(out,'positron-p5-chooser-450-metadata-qa-real.png'),animations:'disabled'});
  for(const key of ['oneRow','visible','noOverflow','viewSwitches'])assert.equal(chooserQa[key],true,'450px native channel chooser is broken: '+key+' '+JSON.stringify(chooserQa));
  assert.equal(chooserQa.tabCount,3,'Native TV channel filters vanished');
+ assert.equal(chooserQa.playerRow.aligned,true,'Mobile fit and backup selectors are split over wasteful rows');
+ assert.equal(chooserQa.playerRow.noOverflow,true,'Compact player controls overflow horizontally');
+ assert.ok(chooserQa.playerRow.fitWidth>=80&&chooserQa.playerRow.linkWidth>=80,'Mobile controls no longer usable');
+ assert.ok(chooserQa.playerRow.height<=145,'450px player controls remain taller than necessary: '+JSON.stringify(chooserQa.playerRow));
  await page.setViewportSize({width:1360,height:820});
   const report={type:'Positron P5 twenty distinct desktop screenshot cases',realElectron:true,syntheticChannels:false,
   screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA,chooserQa};
