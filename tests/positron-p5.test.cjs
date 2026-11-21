@@ -1305,7 +1305,7 @@ test('P5.1.143 lọc XMLTV sắp chiếu trong giờ tới, tìm không dấu, k
  for(const token of ["soonOnly.id='webChooserSoonOnly'","next.start-clock<=Number(soonWindow.value)*60000",
  "soonOnly.addEventListener('change'","if(soonOnly.checked)onAirOnly.checked=false",
  "if(onAirOnly.checked)soonOnly.checked=false","result=result.filter(c=>Boolean(startingSoon(guide,c,clock)))",
- "const soonProgramme=soonOnly.checked","soonOnly.checked=false;page=0;render();",
+ "const soonProgramme=soonOnly.checked","soonOnly.checked=false;soonWindow.value='60';soonCaption.textContent='Sắp chiếu trong 60 phút (EPG)';soonWindowLabel.hidden=true;page=0;render();",
  "next.textContent=(soonOnly.checked?'Sắp chiếu '"])
  assert.ok(js.includes(token),'Thiếu logic XMLTV: '+token);
  assert.ok(css.includes('#page-tv #webChooserSoonOnly'));
