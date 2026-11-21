@@ -37,7 +37,7 @@ test('P5 assets are loaded after P4 without replacing it',()=>{
 test('P5 release is immutable and versioned separately from P4.1',()=>{
  const pkg=JSON.parse(read('package.json'));
  const flow=read('.github/workflows/positron-lab.yml');
- assert.equal(pkg.version,'4.23.233');
+ assert.equal(pkg.version,'4.23.234');
  const label=pkg.description.match(/Positron\s+(P\d+\.\d+\.\d+)/)?.[1];
  assert.ok(label,'product P-label must accompany SemVer');
  assert.ok(flow.includes('TAG=positron/v'+pkg.version+'-'+label.toLowerCase()),'release tag and app version must match');
@@ -1447,4 +1447,22 @@ test('Positron bắt buộc ảnh chính Electron 1920x1080 16:9 và giữ ảnh
  assert.ok(workflow.includes('Xvfb :99 -screen 0 1920x1080x24'));
  assert.ok(workflow.includes('positron-desktop-1920x1080-16x9-main-real.png'));
  assert.ok(site.includes('50 if "desktop-1920x1080" in name.lower()'));
+});
+
+test('P5.1.150 groups recent native success toasts and exposes a reversible view',()=>{
+ const js=read('renderer/positron-toast-dismiss.js'),css=read('renderer/positron-horizon-v4.css');
+ const qa=read('scripts/positron-20-extension.cjs');
+ assert.doesNotThrow(()=>new vm.Script(js));
+ for(const token of ["showMore.className='po-toast-history-toggle'",
+  'area.classList.toggle(\'po-toast-history-open\',expanded)',
+  'showMore.addEventListener(\'click\'', "showMore.hidden=count===0",
+  "node.classList.contains('err')","node.classList.contains('warn')"])
+  assert.ok(js.includes(token),'notification centre missing '+token);
+ assert.ok(css.includes('.po-toast-history-open'));
+ assert.ok(css.includes('>.po-toast-history-toggle[hidden]'));
+ for(const token of ['const toastHistoryQA=','onlyLatestSuccessVisible:',
+  'warningsRemainVisible:','expandShowsAllSuccesses:','collapseRestoresOne:',
+  'positron-p51150-toast-centre-collapsed-1920x1080-real.png',
+  'positron-p51150-toast-centre-expanded-1920x1080-real.png'])
+  assert.ok(qa.includes(token),'native Electron QA missing '+token);
 });

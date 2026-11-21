@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.233",
-  "description": "Positron P5.1.149: chọn nhắc lịch EPG trước 5 đến 30 phút",
+  "version": "4.23.234",
+  "description": "Positron P5.1.150: trung tâm thông báo thành công có thể thu gọn",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

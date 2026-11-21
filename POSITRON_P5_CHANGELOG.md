@@ -1,3 +1,12 @@
+## P5.1.150 — Trung tâm thông báo gọn, xem lại thông báo khi cần / Electron v4.23.234
+
+- Feature priority: NEW — Thêm nút "Xem thêm N thông báo" cho các xác nhận thành công còn hiệu lực, mặc định thu gọn chỉ hiện thông báo mới nhất. Bấm để mở lại rồi bấm thu gọn. Cảnh báo và lỗi không bị ẩn, người dùng vẫn có thể đóng từng thông báo, và bộ hẹn tự tắt 5,5 giây không thay đổi. Không ghi thông báo lên đĩa và không sửa playlist/player.
+- Baseline screenshot đã MỞ trực tiếp: `positron-p51149-desktop-1920x1080-trang-chu-real.png` từ CI P5.1.149. Bảy banner xanh chắn khu vực Yêu thích/Xem gần đây trên desktop 1920×1080.
+- User action: Khi thao tác nhiều, chỉ một thông báo thành công mới nhất và một nút Xem thêm xuất hiện; bấm Xem thêm để đọc lại những thông báo vẫn còn trên màn hình, bấm Thu gọn để giải phóng không gian.
+- Electron after: `positron-p51150-toast-centre-collapsed-1920x1080-real.png`; expanded: `positron-p51150-toast-centre-expanded-1920x1080-real.png`.
+- QA: tạo 7 sự kiện thông báo thành công thật trong ứng dụng và một cảnh báo; xác minh 1/7 thành công hiển thị khi thu gọn, 7/7 khi mở, cảnh báo vẫn hiển thị, không tràn ngang, không phát kênh, không sửa playlist; Node + native Electron + kiểm tra ảnh.
+- Trạng thái: CANDIDATE cho tới khi CI, ảnh sau đã mở và installer Release bất biến xác minh.
+
 ## P5.1.149 — Chọn nhắc EPG trước 5/10/15/30 phút / Electron v4.23.233
 
 - Feature priority: NEW — Chọn thông báo XMLTV trước 5, 10, 15 hoặc 30 phút; mỗi lịch giữ thời điểm riêng. Lịch cũ không có leadMinutes vẫn mặc định 10 phút; không đụng nguồn và không autoplay.

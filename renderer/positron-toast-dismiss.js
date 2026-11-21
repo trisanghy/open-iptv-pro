@@ -30,9 +30,36 @@
   node.append(button);
   node.dataset.poDismissReady='true';
  }
+ // P5.1.150: A native, temporary notification centre. Only the most recent
+ // successful notice stays on screen by default. The viewer may expand all
+ // still-live successes, then collapse them; warnings/errors remain visible.
+ // No history is stored, and the original 5.5s timer remains authoritative.
+ const showMore=document.createElement('button');
+ showMore.type='button';showMore.className='po-toast-history-toggle';
+ showMore.hidden=true;showMore.setAttribute('aria-expanded','false');
+ showMore.setAttribute('aria-label','Xem các thông báo thành công gần đây');
+ let expanded=false;
+ const successes=()=>[...area.children].filter(node=>node.classList?.contains('toast')
+  &&!node.classList.contains('err')&&!node.classList.contains('warn'));
+ const syncHistory=()=>{
+  const count=Math.max(0,successes().length-1);
+  if(count===0)expanded=false;
+  const restore=count===0&&document.activeElement===showMore?returnFocus:null;
+  showMore.hidden=count===0;
+  showMore.setAttribute('aria-expanded',String(expanded));
+  showMore.textContent=expanded?'Thu gọn thông báo':'Xem thêm '+count+' thông báo';
+  area.classList.toggle('po-toast-history-open',expanded);
+  if(restore?.isConnected&&!restore.disabled)restore.focus({preventScroll:true});
+ };
+ showMore.addEventListener('click',()=>{
+  expanded=!expanded;syncHistory();
+ });
+ area.prepend(showMore);
  [...area.children].forEach(enhance);
  new MutationObserver(records=>{
   for(const record of records)
    for(const node of record.addedNodes)enhance(node);
+  syncHistory();
  }).observe(area,{childList:true});
+ syncHistory();
 })();

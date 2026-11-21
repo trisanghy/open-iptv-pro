@@ -9,7 +9,7 @@ test('P5.1.55 media redesign is loaded after original Positron layers',()=>{
  const html=read('renderer/index.html');
  assert.ok(html.indexOf('positron-media-v2.css')>html.indexOf('positron-twenty.css'));
  assert.ok(html.indexOf('positron-media-v2.js')>html.indexOf('positron-twenty.js'));
- assert.equal(JSON.parse(read('package.json')).version,'4.23.233');
+ assert.equal(JSON.parse(read('package.json')).version,'4.23.234');
 });
 test('Playback retains native media handlers; new vectors replace presentation only',()=>{
  const js=read('renderer/positron-media-v2.js');
