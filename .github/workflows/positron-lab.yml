@@ -20,6 +20,7 @@ on:
       - 'renderer/positron-horizon-v4.*'
       - 'renderer/index.html'
       - 'renderer/web-channel-chooser-v42371.js'
+      - 'renderer/web-channel-chooser-v42371.css'
       - 'package.json'
       - 'BUILD_WINDOWS.bat'
       - 'scripts/BUILD_WINDOWS_AUTO.ps1'
