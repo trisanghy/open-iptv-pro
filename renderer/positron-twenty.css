@@ -366,3 +366,15 @@ html[data-positron="true"] #page-tv .player-control-card .output-controls :is(#c
  filter:grayscale(1)!important;cursor:not-allowed!important;
  border-color:var(--po-line)!important;box-shadow:none!important;
 }
+
+/* P5.1.40: empty player artwork is a non-actionable television, not a
+   fake Play CTA. Retain the actual M3U/File import buttons below it. */
+html[data-positron="true"] #page-tv #emptyPlayer .empty-icon{
+ color:var(--po-muted)!important;
+ cursor:default!important;
+}
+html[data-positron="true"] #page-tv #emptyPlayer .empty-icon svg.positron-empty-tv{
+ display:block!important;width:28px!important;height:28px!important;
+ fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;
+ pointer-events:none!important;
+}

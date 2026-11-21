@@ -60,6 +60,21 @@
  const ns='http://www.w3.org/2000/svg';
  // P5.1.32: actual P5.1.31 TV 450px screenshot uses platform font '◈'.
  // Preserve the original Studio button and all native click/keyboard handlers.
+ // P5.1.40: in the actual P5.1.39 no-playlist Electron TV screenshot,
+ // the large decorative purple Play triangle looks tappable while native
+ // Play is correctly disabled. Replace only static empty-state artwork.
+ const emptyPicture=byId('emptyPlayer')?.querySelector('.empty-icon');
+ if(emptyPicture&&!emptyPicture.querySelector('svg')){
+  const svg=d.createElementNS(ns,'svg');
+  svg.setAttribute('viewBox','0 0 24 24');
+  svg.setAttribute('class','positron-empty-tv');
+  svg.setAttribute('aria-hidden','true');svg.setAttribute('focusable','false');
+  const body=d.createElementNS(ns,'rect');body.setAttribute('x','3');body.setAttribute('y','4');body.setAttribute('width','18');body.setAttribute('height','14');body.setAttribute('rx','2');
+  const stem=d.createElementNS(ns,'path');stem.setAttribute('d','M12 18v3m-4 0h8');
+  svg.append(body,stem);
+  emptyPicture.replaceChildren(svg);
+  emptyPicture.setAttribute('aria-hidden','true');
+ }
  const themeControl=byId('positronStudioBtn');
  if(themeControl&&!themeControl.querySelector('svg')){
   const vector=d.createElementNS(ns,'svg');vector.setAttribute('viewBox','0 0 24 24');

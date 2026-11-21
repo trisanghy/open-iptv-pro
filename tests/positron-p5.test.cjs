@@ -37,13 +37,13 @@ test('P5 assets are loaded after P4 without replacing it',()=>{
 test('P5 release is immutable and versioned separately from P4.1',()=>{
  const pkg=JSON.parse(read('package.json'));
  const flow=read('.github/workflows/positron-lab.yml');
- assert.equal(pkg.version,'4.23.123');
- assert.ok(flow.includes('positron/v4.23.123-p5.1.39'));
+ assert.equal(pkg.version,'4.23.124');
+ assert.ok(flow.includes('positron/v4.23.124-p5.1.40'));
  assert.ok(read('scripts/positron-50-audit.cjs').includes('runTwenty(page)'));
- assert.ok(flow.includes('Positron-P5139-20-Real-Screenshots.zip'));
+ assert.ok(flow.includes('Positron-P5140-20-Real-Screenshots.zip'));
 });
 
-test('P5.1.1 sidebar badge matches shipped release instead of stale P4',()=>{const js=read('renderer/positron.js');assert.ok(js.includes("descriptor.textContent='P5.1.39'"));assert.ok(!js.includes('OPEN IPTV PRO · P4 · 50 VÒNG'));});
+test('P5.1.1 sidebar badge matches shipped release instead of stale P4',()=>{const js=read('renderer/positron.js');assert.ok(js.includes("descriptor.textContent='P5.1.40'"));assert.ok(!js.includes('OPEN IPTV PRO · P4 · 50 VÒNG'));});
 
 test('P5.1.3 fullscreen icon uses SVG not a tiny platform glyph',()=>{const js=read('renderer/positron-twenty.js');const css=read('renderer/positron-twenty.css');assert.ok(js.includes("['fullscreenBtn','M8 3H3v5"));assert.ok(css.includes('#page-tv #fullscreenBtn svg'));});
 
@@ -403,4 +403,14 @@ test('P5.1.39 idle Cast and PiP preserve original buttons and re-enable on chann
  assert.ok(js.includes("b.removeAttribute('data-positron-no-current')"));
  assert.ok(css.includes('#page-tv .player-control-card .output-controls :is(#castBtn,#pipBtn)[data-positron-no-current="true"]'));
  assert.ok(audit.includes('metrics.outputAvailability?.every'));
+});
+
+
+test('P5.1.40 empty-player hero icon is accessible passive TV artwork',()=>{
+ const js=read('renderer/positron-twenty.js'),css=read('renderer/positron-twenty.css'),audit=read('scripts/positron-20-extension.cjs');
+ assert.ok(js.includes("const emptyPicture=byId('emptyPlayer')?.querySelector('.empty-icon')"));
+ assert.ok(js.includes("svg.setAttribute('class','positron-empty-tv')"));
+ assert.ok(js.includes('emptyPicture.replaceChildren(svg)'));
+ assert.ok(css.includes('#emptyPlayer .empty-icon svg.positron-empty-tv'));
+ assert.ok(audit.includes('metrics.emptyArtwork?.svg,true'));
 });
