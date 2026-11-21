@@ -2,14 +2,23 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
-## P5.1.147 — đặt nhắc trước 10 phút cho chương trình EPG sắp chiếu
+## P5.1.148 — hủy nhắc lịch EPG bằng nút chuông
 
-**Ứng dụng:** 4.23.231 · **Trạng thái:** Chưa có bản phát hành
+**Ứng dụng:** 4.23.232 · **Trạng thái:** Chưa có bản phát hành
+
+Feature priority: NEW — Nút chuông nhắc lịch ngay trên thẻ kênh nay thể hiện rõ đã lưu/chưa lưu, và cho phép bấm lần nữa để hủy đúng một chương trình đã nhắc; sử dụng lịch XMLTV đã nhập và dịch vụ nhắc nội bộ hiện có, không tự phát và không tác động lịch khác. User action: Mở Chọn kênh và bật bộ lọc EPG, tìm chương trình sắp chiếu rồi nhấn chuông để lưu; chuông đổi màu và trạng thái đã nhắc. Nhấn lại chuông để hủy, không phải tìm vào màn EPG và không cần tải nguồn ngoài.
+
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/681f1406615d9f0b6f4c7a6fc5c15a159ed62ac2)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+
+## P5.1.147 — Nhắc trước 10 phút ngay trên kênh có chương trình sắp chiếu
+
+**Ứng dụng:** 4.23.231 · **Trạng thái:** Đã phát hành
 
 Feature priority: NEW — Thêm nút chuông độc lập trên thẻ kênh có lịch XMLTV sắp chiếu, cho phép đặt nhắc trước 10 phút bằng hệ thống nhắc lịch thật đã có; không cần mở trang EPG và tuyệt đối không tự phát video. User action: Trong Chọn kênh bật “Sắp chiếu” hoặc “Đang chiếu (EPG)”, tìm kênh có chương trình tiếp theo, nhấn nút chuông ở góc phải trên để lưu nhắc. Nhấn lần nữa nhận thông báo đã có nhắc, không tạo lịch trùng.
 
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/c4e84e9e87c537de2197b097b284ff91e83818a6)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/274567ce608e2d8e8f8a96681cdb5edb654f0de0)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.231-p5.1.147)
 
 ## P5.1.146 — Thanh tiến độ và phút còn lại theo lịch XMLTV
 

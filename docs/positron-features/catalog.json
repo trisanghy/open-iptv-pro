@@ -1,22 +1,98 @@
 {
-  "generatedAt": "2026-11-21T23:03:16.209804+00:00",
+  "generatedAt": "2026-11-21T23:07:52.920036+00:00",
   "repository": "trisanghy/open-iptv-pro",
   "branch": "Positron",
   "versions": [
     {
-      "number": 147,
-      "version": "P5.1.147",
-      "appVersion": "4.23.231",
-      "title": "đặt nhắc trước 10 phút cho chương trình EPG sắp chiếu",
-      "description": "Feature priority: NEW — Thêm nút chuông độc lập trên thẻ kênh có lịch XMLTV sắp chiếu, cho phép đặt nhắc trước 10 phút bằng hệ thống nhắc lịch thật đã có; không cần mở trang EPG và tuyệt đối không tự phát video. User action: Trong Chọn kênh bật “Sắp chiếu” hoặc “Đang chiếu (EPG)”, tìm kênh có chương trình tiếp theo, nhấn nút chuông ở góc phải trên để lưu nhắc. Nhấn lần nữa nhận thông báo đã có nhắc, không tạo lịch trùng.",
+      "number": 148,
+      "version": "P5.1.148",
+      "appVersion": "4.23.232",
+      "title": "hủy nhắc lịch EPG bằng nút chuông",
+      "description": "Feature priority: NEW — Nút chuông nhắc lịch ngay trên thẻ kênh nay thể hiện rõ đã lưu/chưa lưu, và cho phép bấm lần nữa để hủy đúng một chương trình đã nhắc; sử dụng lịch XMLTV đã nhập và dịch vụ nhắc nội bộ hiện có, không tự phát và không tác động lịch khác. User action: Mở Chọn kênh và bật bộ lọc EPG, tìm chương trình sắp chiếu rồi nhấn chuông để lưu; chuông đổi màu và trạng thái đã nhắc. Nhấn lại chuông để hủy, không phải tìm vào màn EPG và không cần tải nguồn ngoài.",
       "kind": "fix",
       "status": "candidate",
       "published": "",
       "tag": "",
-      "commit": "c4e84e9e87c537de2197b097b284ff91e83818a6",
+      "commit": "681f1406615d9f0b6f4c7a6fc5c15a159ed62ac2",
       "url": "https://github.com/trisanghy/open-iptv-pro/tree/Positron",
       "assets": [],
       "image": null
+    },
+    {
+      "number": 147,
+      "version": "P5.1.147",
+      "appVersion": "4.23.231",
+      "title": "Nhắc trước 10 phút ngay trên kênh có chương trình sắp chiếu",
+      "description": "Feature priority: NEW — Thêm nút chuông độc lập trên thẻ kênh có lịch XMLTV sắp chiếu, cho phép đặt nhắc trước 10 phút bằng hệ thống nhắc lịch thật đã có; không cần mở trang EPG và tuyệt đối không tự phát video. User action: Trong Chọn kênh bật “Sắp chiếu” hoặc “Đang chiếu (EPG)”, tìm kênh có chương trình tiếp theo, nhấn nút chuông ở góc phải trên để lưu nhắc. Nhấn lần nữa nhận thông báo đã có nhắc, không tạo lịch trùng.",
+      "kind": "fix",
+      "status": "release",
+      "published": "2026-11-21T23:07:02Z",
+      "tag": "positron/v4.23.231-p5.1.147",
+      "commit": "274567ce608e2d8e8f8a96681cdb5edb654f0de0",
+      "url": "https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.231-p5.1.147",
+      "assets": [
+        {
+          "name": "audit-p4-50-rounds.json",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.231-p5.1.147/audit-p4-50-rounds.json"
+        },
+        {
+          "name": "audit-p5-20-rounds.json",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.231-p5.1.147/audit-p5-20-rounds.json"
+        },
+        {
+          "name": "Open-IPTV-Pro-4.23.231-mac-arm64.dmg",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.231-p5.1.147/Open-IPTV-Pro-4.23.231-mac-arm64.dmg"
+        },
+        {
+          "name": "Open-IPTV-Pro-4.23.231-mac-x64.dmg",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.231-p5.1.147/Open-IPTV-Pro-4.23.231-mac-x64.dmg"
+        },
+        {
+          "name": "Open-IPTV-Pro-4.23.231-x64.exe",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.231-p5.1.147/Open-IPTV-Pro-4.23.231-x64.exe"
+        },
+        {
+          "name": "Open-IPTV-Pro-Setup-4.23.231-x64.exe",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.231-p5.1.147/Open-IPTV-Pro-Setup-4.23.231-x64.exe"
+        },
+        {
+          "name": "OpenIPTVPro-Positron-P51147-Source.zip",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.231-p5.1.147/OpenIPTVPro-Positron-P51147-Source.zip"
+        },
+        {
+          "name": "positron-p4-final-main-real.png",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.231-p5.1.147/positron-p4-final-main-real.png"
+        },
+        {
+          "name": "positron-p4-round-10-real.png",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.231-p5.1.147/positron-p4-round-10-real.png"
+        },
+        {
+          "name": "positron-p4-round-20-real.png",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.231-p5.1.147/positron-p4-round-20-real.png"
+        },
+        {
+          "name": "positron-p4-round-30-real.png",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.231-p5.1.147/positron-p4-round-30-real.png"
+        },
+        {
+          "name": "positron-p4-round-40-real.png",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.231-p5.1.147/positron-p4-round-40-real.png"
+        },
+        {
+          "name": "Positron-P51147-20-Real-Screenshots.zip",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.231-p5.1.147/Positron-P51147-20-Real-Screenshots.zip"
+        },
+        {
+          "name": "Positron-P51147-50-Real-Screenshots.zip",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.231-p5.1.147/Positron-P51147-50-Real-Screenshots.zip"
+        },
+        {
+          "name": "SHA256SUMS.txt",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.231-p5.1.147/SHA256SUMS.txt"
+        }
+      ],
+      "image": "screenshots/positron-p51147-epg-reminder-after-450-real.png"
     },
     {
       "number": 146,
@@ -31,7 +107,7 @@
       "commit": "",
       "url": "https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md",
       "assets": [],
-      "image": null
+      "image": "screenshots/positron-p51146-epg-progress-after-450-real.png"
     },
     {
       "number": 145,
@@ -46,7 +122,7 @@
       "commit": "",
       "url": "https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md",
       "assets": [],
-      "image": null
+      "image": "screenshots/positron-p51145-time-window-after-450-real.png"
     },
     {
       "number": 144,
@@ -61,7 +137,7 @@
       "commit": "",
       "url": "https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md",
       "assets": [],
-      "image": null
+      "image": "screenshots/positron-p51144-earliest-epg-after-450-real.png"
     },
     {
       "number": 143,
@@ -76,7 +152,7 @@
       "commit": "",
       "url": "https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md",
       "assets": [],
-      "image": null
+      "image": "screenshots/positron-p51143-soon-filter-after-450-real.png"
     },
     {
       "number": 142,
@@ -91,7 +167,7 @@
       "commit": "",
       "url": "https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md",
       "assets": [],
-      "image": null
+      "image": "screenshots/positron-p51142-next-programme-after-450-real.png"
     },
     {
       "number": 141,
