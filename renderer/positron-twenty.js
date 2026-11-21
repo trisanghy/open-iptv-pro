@@ -493,6 +493,21 @@
   syncReloadAvailability();
  }
 
+ // P5.1.52: On the verified P5.1.51 EPG 720px screenshot the advanced
+ // programme search, mapping and offset tools occupy space before any guide
+ // exists. Keep their original nodes, handlers and user-entered values,
+ // and reveal them as soon as the native EPG summary refreshes with data.
+ const epgPage=byId('page-epg'),epgSummary=byId('epgSummary');
+ if(epgPage&&epgSummary){
+  const syncEpgToolVisibility=()=>{
+   const guide=window.IPTVExtras?.getGuide?.();
+   const hasProgrammes=Array.isArray(guide?.programmes)&&guide.programmes.length>0;
+   epgPage.toggleAttribute('data-positron-no-epg-programmes',!hasProgrammes);
+  };
+  new MutationObserver(syncEpgToolVisibility).observe(epgSummary,{childList:true,subtree:true,characterData:true});
+  syncEpgToolVisibility();
+ }
+
  window.OpenIPTVPositronTwenty=Object.freeze({
   setStage,getStage:()=>stage,getFeedback:()=>previous
  });

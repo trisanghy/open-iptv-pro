@@ -51,6 +51,18 @@ async function runTwenty(page){
     epgGuideEmptyText:document.querySelector('#epgGuide>.empty-list')?.textContent?.trim()||'',
     epgReloadAvailability:(()=>{const n=document.getElementById('epgRefreshBtn');return {disabled:!!n?.disabled,marked:n?.getAttribute('data-positron-epg-no-channels')||'',describedBy:n?.getAttribute('aria-describedby')||''};})(),
     epgSourceAction:get('#epgSettingsBtn'),
+    epgToolVisibility:(()=>{
+     const page=document.getElementById('page-epg');
+     const guide=window.IPTVExtras?.getGuide?.();
+     const getVisible=id=>{const el=document.querySelector(id);if(!el)return false;const box=el.getBoundingClientRect();return box.width>0&&box.height>0&&getComputedStyle(el).display!=='none';};
+     return {programmeCount:Array.isArray(guide?.programmes)?guide.programmes.length:0,
+      collapsed:page?.hasAttribute('data-positron-no-epg-programmes')||false,
+      filterVisible:getVisible('#page-epg .epg-filter'),
+      advancedVisible:getVisible('#page-epg .epg-advanced'),
+      searchPreserved:!!document.getElementById('epgGlobalSearch'),
+      mappingPreserved:!!document.getElementById('epgManualMap'),
+      offsetPreserved:!!document.getElementById('epgOffset')};
+    })(),
     dvrFormVisible:get('#dvrForm')?.visible||false,
     dvrEmptyAction:get('#positronDvrNoChannels'),
     dvrFolder:get('#dvrPanel .dvr-folder'),
@@ -369,6 +381,37 @@ async function runTwenty(page){
    if(target==='epg'){
     assert.equal(metrics.epgEmptySummary,"Chưa tải EPG. Nhấn “Nguồn EPG” phía trên để chọn hoặc cập nhật nguồn.",'EPG empty instruction must point to actual top Nguồn EPG button: '+name);
     assert.ok(metrics.epgSourceAction?.visible,'EPG settings shortcut must be visible: '+name);
+    if(metrics.epgToolVisibility?.programmeCount===0){
+     assert.equal(metrics.epgToolVisibility.collapsed,true,'Unusable advanced EPG controls must collapse without guide: '+name);
+     assert.equal(metrics.epgToolVisibility.filterVisible,false,'Empty EPG channel filter still wasting space: '+name);
+     assert.equal(metrics.epgToolVisibility.advancedVisible,false,'Unusable EPG search, mapping and offset are still visible: '+name);
+     assert.ok(metrics.epgToolVisibility.searchPreserved&&metrics.epgToolVisibility.mappingPreserved&&metrics.epgToolVisibility.offsetPreserved,
+      'Advanced controls were removed instead of reversibly hidden: '+name);
+     const transitions=await page.evaluate(async()=>{
+      const state=window.IPTVExtras?.getGuide?.();
+      const summary=document.getElementById('epgSummary');
+      const section=document.getElementById('page-epg');
+      const advanced=document.querySelector('#page-epg .epg-advanced');
+      const filter=document.querySelector('#page-epg .epg-filter');
+      if(!state||!Array.isArray(state.programmes)||!summary||!advanced||!filter)return null;
+      const oldMarkup=summary.innerHTML;
+      const program={id:'positron-qa-only',title:'Visual UI regression (temporary)',start:Date.now(),end:Date.now()+60000};
+      state.programmes.push(program);
+      summary.textContent+=' ';
+      await new Promise(resolve=>setTimeout(resolve,0));
+      const epgToolsReopened=!section.hasAttribute('data-positron-no-epg-programmes')
+        &&getComputedStyle(advanced).display!=='none'&&getComputedStyle(filter).display!=='none';
+      state.programmes.pop();
+      summary.innerHTML=oldMarkup;
+      await new Promise(resolve=>setTimeout(resolve,0));
+      const epgToolsCollapsedAgain=section.hasAttribute('data-positron-no-epg-programmes')
+        &&getComputedStyle(advanced).display==='none'&&getComputedStyle(filter).display==='none';
+      return {epgToolsReopened,epgToolsCollapsedAgain,programmeCount:state.programmes.length};
+     });
+     assert.ok(transitions?.epgToolsReopened,'EPG controls did not reopen when a guide programme appeared: '+name);
+     assert.ok(transitions?.epgToolsCollapsedAgain,'EPG controls did not collapse again after guide removed: '+name);
+     assert.equal(transitions?.programmeCount,0,'QA-only guide entry was not removed');
+    }
     if(metrics.sourceCount==='0')assert.equal(metrics.epgGuideEmptyText,'Chưa có kênh. Thêm nguồn M3U trong Quản lý nguồn để xem lịch phát sóng.','EPG guide falsely blames XMLTV mapping when no playlist exists: '+name);
     if(metrics.sourceCount==='0'){
      assert.equal(metrics.epgReloadAvailability?.disabled,true,'Reload EPG must not be actionable with no channels: '+name);

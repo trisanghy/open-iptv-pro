@@ -468,3 +468,10 @@ html[data-positron="true"] #page-epg #epgRefreshBtn:disabled[data-positron-epg-n
  box-shadow:none!important;opacity:1!important;
  cursor:not-allowed!important;
 }
+
+/* P5.1.52: only the no-guide empty state hides unusable EPG filters and
+   advanced programme/mapping tools. Original controls are retained and
+   automatically shown again when guide data is available. */
+html[data-positron="true"] #page-epg[data-positron-no-epg-programmes] :is(.epg-filter,.epg-advanced){
+ display:none!important;
+}

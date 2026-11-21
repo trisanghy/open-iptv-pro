@@ -350,3 +350,11 @@ P5.1.46 same-version CI repair: run 44866650681 failed 2/611 because historical 
 - P5.1.50 inherits the verified real Electron P5.1.49 EPG 720px screenshot showing no EPG guide alongside an active programme-search control.
 - When the user searches without any EPG programmes, `renderer/advanced.js` now explains that guide data must be loaded through Nguồn EPG instead of presenting the misleading no-match result. Normal EPG searching and reminders are untouched once programmes exist.
 - Add regression tests; require GitHub CI, real Electron screenshots, Windows and Mac builds and immutable release verification before marking complete.
+
+## Positron P5.1.52 (Electron 4.23.136) — remove nonfunctional EPG clutter in empty state
+- Reference: P5.1.51 actual Electron screenshot `positron-p5-17-real.png` (EPG 720px) and `positron-p5-16-real.png` (EPG 1360px), verified from workflow 44869443462.
+- Root cause: programme-search, manual XMLTV mapping and offset controls were rendered unconditionally even when there were zero loaded EPG programmes. This used screen space but those operations could not produce useful results.
+- New Positron-only UI state hides the EPG channel filter and advanced search/mapping/offset row **only** when the current guide contains no programmes. Original DOM, handlers and saved values are unchanged, and a native EPG summary mutation automatically restores controls when XMLTV programmes appear.
+- The visible Nguồn EPG button, empty-guide explanation, cached guide, DVR and all playback settings remain intact. No features or user data are deleted.
+- Regression: assert real Electron empty state at 1360px and 720px; emulate a temporary in-memory guide entry to verify controls reappear and disappear again; assert all native controls still exist. No synthetic screenshot is accepted as a real streaming test.
+- Requires new GitHub Actions test, screenshots, both Windows x64 EXE installers and macOS builds before release is verified.
