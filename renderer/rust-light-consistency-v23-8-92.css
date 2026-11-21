@@ -169,3 +169,19 @@ html[data-theme="light"] :is(.dvr-quick-status.error,.dvr-status.error){
 }
 html[data-theme="light"] .dvr-quick-status.recording{color:#86501e!important}
 html[data-theme="light"] .dvr-quick-status.scheduled{color:#12664d!important}
+
+/* Visual review pass 2: dynamically rendered empty-list messages in the
+   TV channel list and EPG, plus folder buttons, inherited low-contrast
+   light-lavender or blue-gray values from the original dark stylesheet. */
+html[data-theme="light"] .empty-list{
+ color:#425a70!important;
+}
+html[data-theme="light"] #page-tv .channel-panel .folder-actions button{
+ color:var(--rust-light-text)!important;
+ background:var(--rust-light-control)!important;
+ border-color:var(--rust-light-border)!important;
+}
+html[data-theme="light"] #page-tv .channel-panel .folder-actions button:hover{
+ background:var(--rust-light-selected)!important;
+ color:var(--rust-light-text)!important;
+}

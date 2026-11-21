@@ -33,3 +33,10 @@ test('screenshot review: active channel filter and navigation use legible Light 
  assert.match(css,/\.rust-browser-empty/);
  assert.match(css,/\.dvr-quick-status\.error/);
 });
+
+test('visual review: empty channel/EPG text and folder action buttons use readable Light colors',()=>{
+ const css=read('renderer/rust-light-consistency-v23-8-92.css');
+ assert.match(css,/html\[data-theme="light"\] \.empty-list\s*\{/);
+ assert.match(css,/\.channel-panel \.folder-actions button\s*\{/);
+ assert.match(css,/\.folder-actions button:hover\s*\{/);
+});
