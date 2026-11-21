@@ -22,7 +22,7 @@ jobs:
           set -Eeuo pipefail
           test "$(node -p 'require("./package.json").version')" = 4.23.76
           npm install --no-audit --no-fund
-          node --test tests/player-web-svg-v42377.test.cjs
+          node --test tests/player-web-svg-v42377.test.cjs tests/selected-chip-cast-pip-v42376-svg4.test.cjs
           npm test
   build:
     needs: tests
