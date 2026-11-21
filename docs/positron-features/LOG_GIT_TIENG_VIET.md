@@ -2,14 +2,23 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
+## P5.1.135 — tìm kênh nhiều từ không cần đúng thứ tự
+
+**Ứng dụng:** 4.23.219 · **Trạng thái:** Chưa có bản phát hành
+
+Feature priority: NEW — Tìm được kênh bằng nhiều từ khóa trong tên và nhóm dù đảo thứ tự, có khoảng trắng lặp hoặc gõ tiếng Việt không dấu; không truy cập URL, không tự phát video và không đổi dữ liệu. User action: Mở Chọn kênh, gõ "001 Channel QA" hoặc "qa 001" vào Tìm kiếm; kết quả "QA Channel 001" xuất hiện mà không cần gõ chính xác thứ tự.
+
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/71114f4211c833e3da6dd0faa5e60045ca3d9a09)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+
 ## P5.1.134 — Nhấn F để thêm/bỏ Yêu thích và dùng biểu tượng sao SVG
 
-**Ứng dụng:** 4.23.218 · **Trạng thái:** Chưa có bản phát hành
+**Ứng dụng:** 4.23.218 · **Trạng thái:** Đã phát hành
 
 Khi chọn một thẻ kênh, nhấn phím F để thêm kênh vào Yêu thích; nhấn lần nữa để bỏ lưu mà không phát video. Nút sao sử dụng SVG 20 px đồng nhất thay ký tự phụ thuộc phông chữ, giữ nguyên dữ liệu đã lưu, thao tác chuột và bàn phím.
 
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/649c19f3a41cd73bf870ba4fcdbd6b288d70da87)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/d973e0886eae15c9fed6f8bee1886639bbfaa46e)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.218-p5.1.134)
 
 ## P5.1.133 — Tên kênh dễ đọc hơn, nút Yêu thích tách riêng
 
