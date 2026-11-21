@@ -195,6 +195,29 @@ async function runTwenty(page){
    }
    if(target==='epg'&&metrics.epg)assert.notEqual(metrics.epg.background,'rgb(255, 255, 255)','white EPG search');
   if(target==='tv')assert.equal(metrics.searchShortcut,'/');
+  // P5.1.19: exercise both real keyboard handlers in the Electron renderer.
+  // '/' must focus the visible channel finder; Ctrl+K remains global.
+  if(target==='tv'&&round===1){
+   const keys=await page.evaluate(()=>{
+    const finder=document.getElementById('searchBox');
+    finder?.blur();
+    document.dispatchEvent(new KeyboardEvent('keydown',{key:'/',bubbles:true}));
+    const slashFocused=document.activeElement===finder;
+    const slashDidNotOpenPalette=document.getElementById('positronPalette')?.hidden===true;
+    document.dispatchEvent(new KeyboardEvent('keydown',{key:'k',ctrlKey:true,bubbles:true}));
+    const ctrlOpenedPalette=document.getElementById('positronPalette')?.hidden===false;
+    document.dispatchEvent(new KeyboardEvent('keydown',{key:'Escape',bubbles:true}));
+    const escapeClosedPalette=document.getElementById('positronPalette')?.hidden===true;
+    return {slashFocused,slashDidNotOpenPalette,ctrlOpenedPalette,escapeClosedPalette};
+   });
+   assert.equal(keys.slashFocused,true,'/ failed to focus visible TV channel finder');
+   assert.equal(keys.slashDidNotOpenPalette,true,'/ incorrectly opened global palette over channel search');
+   assert.equal(keys.ctrlOpenedPalette,true,'Ctrl+K must still open command palette');
+   assert.equal(keys.escapeClosedPalette,true,'Escape must close command palette');
+   await page.screenshot({path:path.join(out,'positron-p5-19-slash-search-real.png'),animations:'disabled'});
+   await page.evaluate(()=>document.activeElement?.blur?.());
+  }
+
   // Preserve an explicit metric for overflow; fail rather than concealing a layout regression.
   assert.equal(metrics.overflow,false,'horizontal overflow in '+name);
   const filename='positron-p5-'+String(round).padStart(2,'0')+'-real.png';

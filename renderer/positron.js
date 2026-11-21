@@ -11,7 +11,7 @@
   const brand=doc.querySelector('#appSidebar .brand b');
   const descriptor=doc.querySelector('#appSidebar .brand small');
   if(brand) brand.textContent='Positron';
-  if(descriptor) descriptor.textContent='P5.1.18';
+  if(descriptor) descriptor.textContent='P5.1.19';
   const navItems=[
     ['tv','▣','Xem truyền hình','Phát kênh và điều khiển video'],
     ['fav','★','Kênh yêu thích','Danh sách đã đánh dấu sao'],
@@ -113,6 +113,12 @@
     if(event.key==='Escape'&&!overlay.hidden){event.preventDefault();close();return;}
     if(overlay.hidden){
       if(event.key==='/'&&!event.altKey&&!event.metaKey&&!event.ctrlKey&&!inputTarget(event.target)){
+        // The channel-search shortcut on TV belongs to the later
+        // PositronTwenty listener. The command palette must not steal '/'.
+        // When channel search is hidden (e.g. compact TV), use palette.
+        const finder=$('searchBox');
+        const rect=finder?.getBoundingClientRect();
+        if(doc.querySelector('#page-tv.active-page')&&rect?.width>0&&rect?.height>0)return;
         event.preventDefault();open();
       }
       return;
