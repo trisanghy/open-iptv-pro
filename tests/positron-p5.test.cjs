@@ -37,13 +37,13 @@ test('P5 assets are loaded after P4 without replacing it',()=>{
 test('P5 release is immutable and versioned separately from P4.1',()=>{
  const pkg=JSON.parse(read('package.json'));
  const flow=read('.github/workflows/positron-lab.yml');
- assert.equal(pkg.version,'4.23.104');
- assert.ok(flow.includes('positron/v4.23.104-p5.1.20'));
+ assert.equal(pkg.version,'4.23.105');
+ assert.ok(flow.includes('positron/v4.23.105-p5.1.21'));
  assert.ok(read('scripts/positron-50-audit.cjs').includes('runTwenty(page)'));
- assert.ok(flow.includes('Positron-P5120-20-Real-Screenshots.zip'));
+ assert.ok(flow.includes('Positron-P5121-20-Real-Screenshots.zip'));
 });
 
-test('P5.1.1 sidebar badge matches shipped release instead of stale P4',()=>{const js=read('renderer/positron.js');assert.ok(js.includes("descriptor.textContent='P5.1.20'"));assert.ok(!js.includes('OPEN IPTV PRO · P4 · 50 VÒNG'));});
+test('P5.1.1 sidebar badge matches shipped release instead of stale P4',()=>{const js=read('renderer/positron.js');assert.ok(js.includes("descriptor.textContent='P5.1.21'"));assert.ok(!js.includes('OPEN IPTV PRO · P4 · 50 VÒNG'));});
 
 test('P5.1.3 fullscreen icon uses SVG not a tiny platform glyph',()=>{const js=read('renderer/positron-twenty.js');const css=read('renderer/positron-twenty.css');assert.ok(js.includes("['fullscreenBtn','M8 3H3v5"));assert.ok(css.includes('#page-tv #fullscreenBtn svg'));});
 
@@ -184,11 +184,25 @@ test('P5.1.19 slash focuses visible TV search and preserves Ctrl+K command palet
  assert.ok(audit.includes('positron-p5-19-slash-search-real.png'));
 });
 
-test('P5.1.20 command palette hint uses Ctrl on Windows/Linux and Command on Mac',()=>{
+test('P5.1.21 command palette hint uses Ctrl on Windows/Linux and Command on Mac',()=>{
  const js=read('renderer/positron.js'),audit=read('scripts/positron-20-extension.cjs');
  assert.ok(js.includes('navigator.userAgentData?.platform||navigator.platform'));
  assert.ok(js.includes("shortcutBadge.textContent=isMac?'⌘ K':'Ctrl K'"));
  assert.ok(js.includes("shortcutButton.title=isMac?'Tìm nhanh (⌘+K)':'Tìm nhanh (Ctrl+K)'"));
  assert.ok(audit.includes('metrics.shortcutHint?.text,metrics.shortcutHint?.expected'));
  assert.ok(audit.includes('global search ARIA shortcuts lost'));
+});
+
+test('P5.1.21 native fallback link select has sufficient visible width at 450px',()=>{
+ const css=read('renderer/positron-twenty.css');
+ const audit=read('scripts/positron-20-extension.cjs');
+ const html=read('renderer/index.html');
+ assert.ok(css.includes('P5.1.21 / independent screenshot-repair'));
+ assert.ok(css.includes('#page-tv .player-control-card .control-layout-bottom .manual-link-picker'));
+ assert.ok(css.includes('grid-column:1/-1!important;grid-row:3!important'));
+ assert.ok(css.includes('#manualStreamSelect'));
+ assert.ok(audit.includes('metrics.manualLink.controlWidth>=metrics.manualLink.selectedTextWidth+34'));
+ assert.ok(audit.includes('metrics.manualLink.right<=width-6'));
+ assert.ok(html.includes('id="manualStreamSelect"'));
+ assert.ok(html.includes('id="favCurrentBtn"'));
 });

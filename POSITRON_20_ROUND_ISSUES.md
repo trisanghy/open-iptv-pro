@@ -33,3 +33,10 @@ First P5.1.8 test run https://github.com/trisanghy/open-iptv-pro/actions/runs/44
 | 04/20 | P5.1.18 / 4.23.102 | Real P5.1.17 Favorites 600px status text almost invisible and ellipsized | Fix footer low-contrast foreground and narrow hidden-dock grid, allow status wrapping | Real Electron 4.5:1 contrast + overflow tests; CI pending |
 | 05/20 | P5.1.19 / 4.23.103 | P5.1.18 desktop TV screenshot shows channel search but keyboard handler steals `/` to global palette | Route `/` to visible TV channel search, preserve Ctrl/⌘+K palette | Actual Electron keydown test and focus screenshot; CI pending |
 | 06/20 | P5.1.20 / 4.23.104 | P5.1.19 Linux Electron TV 1360px screenshot displays Mac-only `⌘ K` shortcut hint | OS-aware shortcut text and tooltip, keep actual Ctrl/Meta+K events | Electron screenshot computed platform + ARIA checks; CI pending |
+
+## Independent new 20-round batch from P5.1.20
+| Round | Version | Prior actual screenshot | Cause / change | Status |
+|---|---|---|---|---|
+| 01/20 | P5.1.21 / 4.23.105 | P5.1.20 Electron positron-p5-09-real.png TV 450px | Selected native stream link is clipped by three-control narrow row; make stream select full width below Fit / Favorites | Code and Node/real Electron assertions prepared, screenshot after / CI / release not yet verified |
+
+Do not credit the round until the new Electron PNG has been opened and inspected and CI/release outcome reported. GitHub workflow release currently blocked by HTTP 403.

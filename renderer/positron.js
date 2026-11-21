@@ -11,7 +11,7 @@
   const brand=doc.querySelector('#appSidebar .brand b');
   const descriptor=doc.querySelector('#appSidebar .brand small');
   if(brand) brand.textContent='Positron';
-  if(descriptor) descriptor.textContent='P5.1.20';
+  if(descriptor) descriptor.textContent='P5.1.21';
   const navItems=[
     ['tv','▣','Xem truyền hình','Phát kênh và điều khiển video'],
     ['fav','★','Kênh yêu thích','Danh sách đã đánh dấu sao'],
@@ -31,7 +31,7 @@
   bar.setAttribute('aria-label','Thanh công cụ Positron');
   bar.innerHTML='<div class="p-title"><span class="p-orb" aria-hidden="true"></span><div class="p-heading"><strong>Trung tâm phát sóng</strong><small>POSITRON WORKSPACE / ELECTRON LAB</small></div></div><div class="p-actions"><span class="p-live" id="positronLiveLabel" aria-live="polite">Chưa chọn kênh</span><button type="button" id="positronOpen" title="Tìm kênh hoặc chuyển trang (Ctrl/⌘+K)" aria-keyshortcuts="Control+K Meta+K"><span>⌕</span><span class="p-command-label">Tìm kênh, trang, công cụ…</span><kbd>⌘ K</kbd></button><button type="button" id="positronFocus" aria-pressed="false" title="Ẩn/hiện danh sách và sidebar">◫ Tập trung</button><button type="button" id="positronAdd" title="Thêm playlist URL">＋ Nguồn</button></div>';
   main.insertBefore(bar,main.querySelector('.content'));
-  // P5.1.20: real Electron/Linux screenshot shows a Mac-only command glyph.
+  // P5.1.21: real Electron/Linux screenshot shows a Mac-only command glyph.
   // This label describes the existing native Ctrl/Meta+K shortcut; never
   // change the actual key handler or the accessibility shortcut attribute.
   const shortcutButton=bar.querySelector('#positronOpen');

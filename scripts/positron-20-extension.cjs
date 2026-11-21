@@ -85,6 +85,15 @@ async function runTwenty(page){
       return {cast:inspect('castBtn'),pip:inspect('pipBtn')};
      })(),
      volumeIcon:(()=>{const n=document.querySelector('#page-tv label.volume-icon'),v=n?.querySelector('svg');if(!n)return null;return {svg:!!v,for:n.getAttribute('for'),width:Math.round(v?.getBoundingClientRect().width||0),height:Math.round(v?.getBoundingClientRect().height||0)};})(),
+     manualLink:(()=>{
+      const n=document.getElementById('manualStreamSelect');if(!n)return null;
+      const ctx=document.createElement('canvas').getContext('2d');ctx.font=getComputedStyle(n).font;
+      const label=n.selectedOptions?.[0]?.textContent?.trim()||'';
+      const rect=n.getBoundingClientRect();
+      return {label,selectedTextWidth:Math.ceil(ctx.measureText(label).width),
+       controlWidth:n.clientWidth,right:rect.right,visible:rect.width>0&&rect.height>0};
+     })(),
+
      smartLimit:(()=>{const n=document.getElementById('smartLimit');if(!n)return null;
        const label=n.selectedOptions?.[0]?.textContent?.trim()||'';
        const c=document.createElement('canvas').getContext('2d');
@@ -113,6 +122,9 @@ async function runTwenty(page){
    assert.ok(metrics.volumeIcon.width>=16&&metrics.volumeIcon.height>=16,'volume vector too small: '+name);
    if(width<=800&&round>=6)assert.equal(metrics.brandIcon?.visible,false,'brand icon overlaps sidebar toggle: '+name);
     if(width<=540){
+     assert.ok(metrics.manualLink?.visible,'native stream link picker missing: '+name);
+     assert.ok(metrics.manualLink.controlWidth>=metrics.manualLink.selectedTextWidth+34,'stream link selected label clipped: '+name);
+     assert.ok(metrics.manualLink.right<=width-6,'stream link picker exceeds viewport: '+name);
      assert.ok(metrics.epgNext,'EPG next-program name missing: '+name);
      assert.equal(metrics.epgNext.whiteSpace,'normal','mobile EPG text still forced to a single line: '+name);
      assert.equal(metrics.epgNext.textOverflow,'clip','mobile EPG text still showing ellipsis: '+name);

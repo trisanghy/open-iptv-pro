@@ -202,3 +202,18 @@ html[data-positron="true"] .footer #footerText{
   grid-template-columns:minmax(0,1fr)!important;
  }
 }
+
+/* P5.1.21 / independent screenshot-repair round 01: actual P5.1.20
+   Electron 450px TV screenshot cuts the link selector to "Chưa c...".
+   Put the native fallback-link selector on its own row without replacing the button nodes. */
+@media(max-width:540px){
+ html[data-positron="true"] #page-tv .player-control-card .control-layout-bottom{
+  display:grid!important;grid-template-columns:minmax(0,1fr) auto!important;
+  gap:8px!important;align-items:center!important;
+ }
+ html[data-positron="true"] #page-tv .player-control-card .control-layout-bottom #epgCurrent{grid-column:1/-1!important;min-width:0!important}
+ html[data-positron="true"] #page-tv .player-control-card .control-layout-bottom .view-mode{grid-column:1!important;grid-row:2!important;min-width:0!important;width:100%!important;max-width:100%!important}
+ html[data-positron="true"] #page-tv .player-control-card .control-layout-bottom #favCurrentBtn{grid-column:2!important;grid-row:2!important;justify-self:end!important}
+ html[data-positron="true"] #page-tv .player-control-card .control-layout-bottom .manual-link-picker{grid-column:1/-1!important;grid-row:3!important;min-width:0!important;width:100%!important;max-width:100%!important}
+ html[data-positron="true"] #page-tv .player-control-card .control-layout-bottom #manualStreamSelect{display:block!important;min-width:0!important;width:100%!important;max-width:100%!important}
+}

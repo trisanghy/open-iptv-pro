@@ -162,3 +162,10 @@ This release preserves all P4.1 source data/feature logic. It adds **20 independ
 - Fix: set only the displayed shortcut hint and tooltip from the renderer platform. Keep the actual key handler, command palette, controls and `aria-keyshortcuts=Control+K Meta+K` unchanged. Mac gets `⌘ K`; Windows/Linux get `Ctrl K`.
 - New regression: Node source check and actual Electron screenshots/DOM assertions for platform-appropriate label and full ARIA shortcuts on all P5 cases. No external data touched.
 - Completion pending real after-screenshot review, CI and installer checks.
+
+## P5.1.21 / v4.23.105 — independent screenshot repair round 01/20
+- Input: actual P5.1.20 Electron TV screenshot positron-p5-09-real.png at 450px. The selected native fallback stream link is visibly truncated to Chua c....
+- Root cause: the video-fit selector, fallback-link selector and Favorite button share a constrained narrow row.
+- Fix: make the native stream select full width in its own row at <=540px; preserve original events, stream values, Favorites and persisted data.
+- Tests: Node source regression, actual Electron option-text width and viewport-boundary checks. Post-patch screenshot/CI/release must be verified before completion.
+- External release blocker: P5.1.18 and P5.1.19 Actions release jobs failed HTTP 403 Resource not accessible by integration despite successful tests, screenshots and installers.
