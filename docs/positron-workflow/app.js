@@ -93,7 +93,7 @@ function table(kind){
   var descr=E("td");descr.append(E("strong","truncate",r.title),E("small","truncate",r.defect?"Lỗi: "+r.defect:""),E("small","truncate",r.cause?"Nguyên nhân: "+r.cause:""),E("small","truncate",r.fix?"Sửa: "+r.fix:""));tr.append(descr);
   tr.append(E("td","nowrap",r.priority));var st=E("td");st.append(pill(r.status));tr.append(st);
   var proof=E("td","nowrap",evidenceCount(r)+"/5 liên kết");proof.append(E("small","",complete(r)?"Đủ cổng":"Thiếu bằng chứng"));tr.append(proof);
-  var action=E("td"),btn=E("button","link-button",r.readOnly?"Tạo hồ sơ →":"Sửa / mở lại →");btn.addEventListener("click",function(){openEditor(r)});action.append(btn);tr.append(action);body.append(tr);
+  var action=E("td"),btn=E("button","link-button",r.readOnly?"Tạo hồ sơ →":"Sửa / mở lại →");btn.addEventListener("click",function(){editExisting(r)});action.append(btn);tr.append(action);body.append(tr);
  });
  if(!rows.length){var tr=E("tr"),td=E("td","empty","Không tìm thấy mục phù hợp. Không suy đoán tiến độ từ dữ liệu trống.");td.colSpan=8;tr.append(td);body.append(tr)}
  $(kind+"Count").textContent="Hiển thị "+rows.length+" mục · "+(kind==="round"?"Nhật ký gốc chỉ đọc":"Lỗi nhập / quản lý thủ công");
@@ -204,6 +204,7 @@ async function pull(){
 }
 async function push(){
  app.token=$("token").value.trim();if(!app.token){notify("Bạn chưa nhập token.",true);return}
+ if(!app.remoteSha){notify("Trước khi ghi, hãy Đọc bản ghi GitHub để lấy SHA và giải quyết trùng dữ liệu. Có thể Xuất JSON trước rồi nhập lại sau.",true);return}
  if(!confirm("Tạo commit mới chỉ thay data.json trên Positron? Không ghi đè nếu SHA tệp đã thay đổi."))return;
  try{
   var original=await request("/contents/"+dataPath+"?ref="+branch);
