@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="vi"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="dark">
+<title>Positron Control · Quản lý workflow nâng cấp</title><meta name="description" content="Quản lý riêng Positron: phiên bản, vòng nâng cấp, lỗi, kiểm thử, ảnh thực tế, artefact và lịch sử có bằng chứng.">
+<link rel="stylesheet" href="./style.css"></head><body>
+<div class="shell"><aside class="sidebar">
+<div class="brand"><span class="logo">✦</span><div><b>POSITRON</b><small>WORKFLOW CONTROL</small></div></div>
+<p class="nav-caption">TRUNG TÂM QUẢN LÝ</p>
+<nav aria-label="Điều hướng">
+<button class="nav active" data-view="overview">◫ <span>Tổng quan</span></button>
+<button class="nav" data-view="rounds">▤ <span>Vòng nâng cấp</span></button>
+<button class="nav" data-view="issues">◇ <span>Sổ lỗi / việc cần làm</span></button>
+<button class="nav" data-view="compare">⇄ <span>So sánh phiên bản</span></button>
+<button class="nav" data-view="artifacts">▣ <span>Ảnh & artefact</span></button>
+<button class="nav" data-view="history">◷ <span>Lịch sử thay đổi</span></button>
+</nav><div class="side-bottom"><span class="tag orange">CHỈ NHÁNH POSITRON</span><p>Không trộn dữ liệu Electron Stable, Rust/Tauri, Web hoặc Mobile.</p><a href="https://github.com/trisanghy/open-iptv-pro/tree/Positron" target="_blank" rel="noopener noreferrer">Mở mã nguồn Positron ↗</a></div>
+</aside>
+<main>
+<header class="topbar"><div><div class="eyebrow">OPEN IPTV PRO / POSITRON LAB</div><small id="lastSync">Chưa đối chiếu HEAD GitHub</small></div><div class="tools">
+<button class="button" id="refresh">↻ Làm mới GitHub</button><button class="button" id="import">Nhập JSON</button><button class="button" id="export">Xuất JSON</button><button class="button" id="remote">Đồng bộ lên GitHub</button><button class="button primary" id="new">+ Tạo mục</button>
+</div></header>
+<section id="overview" class="view active">
+<div class="hero"><div><div class="eyebrow">TRUNG TÂM ĐIỀU HÀNH</div><h1>Tiếp tục từ phiên bản mới nhất.<br>Chỉ xác nhận khi có bằng chứng.</h1><p>Kiểm soát nghiên cứu, sửa lỗi, tính năng mới, UI, ảnh Electron thật, build và QA của mỗi vòng. Mọi nhãn hoàn thành đều đi qua cổng xác minh.</p></div><div class="version-card"><small>Phiên bản HEAD / nhật ký</small><strong id="currentVersion">Chưa xác minh</strong><span id="currentApp">Chưa đọc phiên bản ứng dụng</span></div></div>
+<div class="stats"><div class="stat"><small>Phiên bản đã ghi trong GitHub</small><b id="statVersions">—</b></div><div class="stat"><small>Mục theo dõi được nhập</small><b id="statRecords">0</b></div><div class="stat"><small>Đã hoàn thành đủ bằng chứng</small><b id="statDone">0</b></div><div class="stat"><small>Đang chờ / chưa xác minh</small><b id="statPending">0</b></div></div>
+<div class="two-col"><article class="panel"><div class="panel-title"><h2>Tiếp nối an toàn</h2><span class="tag orange" id="headChip">HEAD CHƯA KIỂM TRA</span></div><p class="muted">Đọc trực tiếp nhánh Positron; không đánh đồng phiên bản mã nguồn với phát hành hoàn tất.</p><div class="progress"><i></i><i></i><i></i><i></i></div><div id="continuation" class="stack"></div><p class="notice-box">Cổng hoàn tất yêu cầu: đúng commit + tag Positron, ảnh thật đã soát, báo cáo, test, log CI thành công và artefact đã được đối chiếu. Thiếu một mục sẽ giữ trạng thái “chưa xác minh”.</p></article>
+<article class="panel"><div class="panel-title"><h2>Việc cần làm tiếp theo</h2><button class="button small" data-view="issues">Xem sổ lỗi →</button></div><div class="stack" id="nextWork"></div></article></div>
+</section>
+<section id="rounds" class="view"><div class="section-title"><div><h2>Theo dõi từng vòng & phiên bản</h2><p class="muted">Nhật ký gốc GitHub chỉ đọc; có thể bổ sung hồ sơ xác minh cho từng phiên bản.</p></div><button class="button primary" data-add="vòng">+ Ghi nhận vòng</button></div><div id="roundFilters" class="filters"></div><div class="tablebox"><table><thead><tr><th>Vòng / phiên bản</th><th>Nhánh / SHA / tag</th><th>Nền tảng</th><th>Lỗi · nguyên nhân · cách sửa</th><th>Ưu tiên</th><th>Trạng thái</th><th>Bằng chứng</th><th></th></tr></thead><tbody id="roundTable"></tbody></table></div><p class="muted" id="roundCount"></p></section>
+<section id="issues" class="view"><div class="section-title"><div><h2>Sổ lỗi còn tồn đọng</h2><p class="muted">Mở lại lỗi chưa được xác nhận; mọi trạng thái và thay đổi đều có lịch sử.</p></div><button class="button primary" data-add="lỗi">+ Ghi nhận lỗi</button></div><div id="issueFilters" class="filters"></div><div class="tablebox"><table><thead><tr><th>Vòng / phiên bản</th><th>Nhánh / SHA / tag</th><th>Nền tảng</th><th>Lỗi · nguyên nhân · cách sửa</th><th>Ưu tiên</th><th>Trạng thái</th><th>Bằng chứng</th><th></th></tr></thead><tbody id="issueTable"></tbody></table></div><p class="muted" id="issueCount"></p></section>
+<section id="compare" class="view"><div class="section-title"><div><h2>So sánh giữa hai phiên bản</h2><p class="muted">Dựa trên thông tin có thật trong nhật ký và hồ sơ; chỗ chưa biết được ghi rõ.</p></div></div><div class="panel"><div class="compare-controls"><label>Phiên bản A<select id="compareA"></select></label><label>Phiên bản B<select id="compareB"></select></label></div><div id="comparison" class="two-col"></div></div></section>
+<section id="artifacts" class="view"><div class="section-title"><div><h2>Ảnh chụp · Build · Artefact</h2><p class="muted">Dẫn tới GitHub Release, ảnh theo phiên bản và liên kết bằng chứng người quản lý thêm vào. Có tệp không đồng nghĩa đã đạt QA.</p></div><a class="button" href="https://github.com/trisanghy/open-iptv-pro/actions/workflows/positron-lab.yml" target="_blank" rel="noopener noreferrer">GitHub Actions ↗</a></div><div class="panel"><div class="filters"><input id="assetSearch" placeholder="Lọc tên, phiên bản, artefact..."><select id="assetType"><option value="">Mọi loại</option><option value="image">Ảnh chụp</option><option value="exe">Windows EXE</option><option value="dmg">macOS DMG</option><option value="qa">Test / log</option><option value="other">Khác</option></select></div><div class="stack" id="assets"></div></div></section>
+<section id="history" class="view"><div class="section-title"><h2>Lịch sử thao tác và chỉnh sửa</h2></div><div class="panel" id="historyList"></div></section>
+<footer>Quy tắc: chỉ ghi lên <b>Positron</b>, không tự thay tag hoặc phát hành. Dữ liệu mặc định lưu trong trình duyệt; có thể nhập/xuất JSON và chủ động lưu tệp dữ liệu lên GitHub. Không lưu token. <a href="https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_HEAD_20_VONG_TINH_NANG_MOI.md" target="_blank" rel="noopener noreferrer">Quy trình 20 vòng ↗</a> · <a href="https://github.com/trisanghy/open-iptv-pro/blob/Positron/docs/positron-features/FEATURES.md" target="_blank" rel="noopener noreferrer">Nhật ký phiên bản ↗</a></footer>
+</main></div>
+<input type="file" id="fileInput" hidden accept=".json,application/json"><div id="toast" role="status" aria-live="polite"></div>
+<dialog id="editDialog"><div class="dialog-head"><h2 id="editTitle">Tạo bản ghi</h2><button type="button" class="button small" data-close="editDialog">✕</button></div>
+<form id="form" class="dialog-body"><input type="hidden" name="id"><div class="formgrid">
+<label>Loại mục<select name="type"><option value="vòng">Vòng nâng cấp</option><option value="lỗi">Lỗi / việc cần làm</option></select></label>
+<label>Vòng (ví dụ 03/20)<input name="round" placeholder="03/20"></label>
+<label>Phiên bản Positron<input name="version" required placeholder="P5.1.149" pattern="P5\.1\.[0-9]+"></label>
+<label>Phiên bản ứng dụng<input name="appVersion" placeholder="4.23.233"></label>
+<label>Nhánh (cố định)<input name="branch" value="Positron" readonly></label>
+<label>Nền tảng<select name="platform"><option>Electron UI</option><option>Windows x64</option><option>macOS ARM64</option><option>macOS x64</option><option>Đa nền tảng</option><option>CI / GitHub</option></select></label>
+<label>Commit SHA<input name="commit" placeholder="SHA đầy đủ, 40 ký tự"></label>
+<label>Tag Positron<input name="tag" placeholder="positron/v..."></label>
+<label>Ưu tiên<select name="priority"><option>P1 · Khẩn cấp</option><option>P2 · Cao</option><option selected>P3 · Trung bình</option><option>P4 · Thấp</option></select></label>
+<label>Trạng thái<select name="status"><option>chưa làm</option><option>đang làm</option><option>đã kiểm thử</option><option>đã hoàn thành</option><option selected>chưa xác minh</option></select></label>
+<label class="full">Tên tính năng / công việc<input name="title" required placeholder="Tên và hành động thực tế"></label>
+<label class="full">Mô tả lỗi / hiện tượng<textarea name="defect"></textarea></label>
+<label class="full">Nguyên nhân đã xác định<textarea name="cause"></textarea></label>
+<label class="full">Cách sửa / cải tiến chức năng<textarea name="fix"></textarea></label>
+<div class="full evidence-title">BẰNG CHỨNG ĐỐI CHIẾU</div>
+<label>Ảnh Electron thật (URL)<input name="screenshot" type="url" placeholder="https://...png"></label>
+<label>Báo cáo thay đổi / QA (URL)<input name="report" type="url" placeholder="https://..."></label>
+<label>Kết quả kiểm thử (URL)<input name="tests" type="url" placeholder="https://..."></label>
+<label>Log build / GitHub Actions (URL)<input name="buildLog" type="url" placeholder="https://..."></label>
+<label class="full">Artefact thực tế được kiểm tra (URL)<input name="artifact" type="url" placeholder="https://...exe / .dmg / .zip"></label>
+<div class="full checks"><label><input type="checkbox" name="screenshotChecked"> Đã mở và kiểm tra ảnh thật đúng phiên bản</label><label><input type="checkbox" name="reportChecked"> Đã đọc báo cáo</label><label><input type="checkbox" name="testsPassed"> Kiểm thử đạt</label><label><input type="checkbox" name="ciPassed"> CI / build đạt</label><label><input type="checkbox" name="artifactChecked"> Đã xác minh tệp artefact</label></div>
+<label class="full">Ghi chú và bước tiếp theo<textarea name="notes"></textarea></label>
+</div><p class="notice-box">Nếu chọn “đã hoàn thành” nhưng thiếu bằng chứng, Site tự chuyển về “chưa xác minh”. Các dấu kiểm do người dùng xác nhận, không thay thế kết quả xác minh thực tế.</p><div class="dialog-actions"><div><button type="button" id="reopen" class="button">Mở lại / chưa xác minh</button><button type="button" id="delete" class="button danger">Xóa</button></div><div><button type="button" class="button" data-close="editDialog">Hủy</button><button type="submit" class="button primary">Lưu mục</button></div></div></form></dialog>
+<dialog id="syncDialog"><div class="dialog-head"><h2>Lưu dữ liệu trên GitHub</h2><button type="button" class="button small" data-close="syncDialog">✕</button></div><div class="dialog-body"><p class="notice-box">Chỉ nhập token trên bản Site bạn tin cậy và tự kiểm soát, không nhập vào website HTML preview bên thứ ba. Fine-grained PAT chỉ cần quyền <b>Contents: Read and write</b> trong đúng repository. Token chỉ giữ trong RAM phiên này.</p><label>GitHub token phiên làm việc<input type="password" id="token" autocomplete="off" placeholder="github_pat_..."></label><p class="muted">Chỉ thay <code>docs/positron-workflow/data.json</code> trên nhánh Positron. Lưu bằng SHA tệp để chống ghi đè thay đổi đồng thời.</p><div class="dialog-actions"><button id="pullData" class="button">Đọc bản ghi GitHub</button><button id="pushData" class="button primary">Commit dữ liệu Positron</button></div></div></dialog>
+<script src="./app.js" defer></script></body></html>
