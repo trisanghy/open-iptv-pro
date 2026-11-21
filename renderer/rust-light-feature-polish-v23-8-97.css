@@ -1,0 +1,80 @@
+/* Rust Lab v23.8.97: screenshot-driven Light UI correction.
+ * The GPU capability panel and its modal were using dark-only literals, causing
+ * an isolated navy tile inside the white AI video settings. Retain every native
+ * action, selected accent, Dark/AMOLED and actual video background unchanged. */
+html[data-theme="light"] #page-tv #videoGpuManager{
+  background:var(--rust-light-control,var(--surface2))!important;
+  border:1px solid var(--rust-light-border,var(--edge))!important;
+  color:var(--rust-light-text,var(--text))!important;
+  box-shadow:none!important;
+}
+html[data-theme="light"] #page-tv #videoGpuManager :is(
+  strong,#veh-gpu-state,.veh-gpu-storage-row,#veh-gpu-storage summary
+){
+  color:var(--rust-light-text,var(--text))!important;
+}
+html[data-theme="light"] #page-tv #videoGpuManager .veh-gpu-note{
+  color:var(--rust-light-muted,var(--muted))!important;
+}
+html[data-theme="light"] #page-tv #videoGpuManager #veh-gpu-storage{
+  border-color:var(--rust-light-border,var(--edge))!important;
+}
+html[data-theme="light"] #page-tv #videoGpuManager :is(
+  .veh-gpu-actions button,.veh-gpu-storage-row button,#veh-gpu-refresh
+){
+  background:var(--rust-light-card,var(--surface))!important;
+  color:var(--rust-light-text,var(--text))!important;
+  border:1px solid var(--rust-light-border,var(--edge))!important;
+  box-shadow:none!important;
+}
+html[data-theme="light"] #page-tv #videoGpuManager :is(
+  .veh-gpu-actions button,.veh-gpu-storage-row button,#veh-gpu-refresh
+):hover:not(:disabled){
+  background:var(--rust-light-selected)!important;
+  border-color:color-mix(in srgb,var(--accent) 40%,var(--rust-light-border))!important;
+}
+html[data-theme="light"] .veh-gpu-modal{
+  background:var(--rust-light-card,var(--surface))!important;
+  border-color:var(--rust-light-border,var(--edge))!important;
+  color:var(--rust-light-text,var(--text))!important;
+  box-shadow:0 24px 60px rgba(24,42,69,.22)!important;
+  color-scheme:light;
+}
+html[data-theme="light"] .veh-gpu-modal :is(
+  h3,#veh-gpu-result
+){color:var(--rust-light-text,var(--text))!important}
+html[data-theme="light"] .veh-gpu-modal .veh-gpu-note{
+  color:var(--rust-light-muted,var(--muted))!important;
+}
+html[data-theme="light"] .veh-gpu-modal .veh-gpu-actions button{
+  background:var(--rust-light-control,var(--surface2))!important;
+  color:var(--rust-light-text,var(--text))!important;
+  border:1px solid var(--rust-light-border,var(--edge))!important;
+}
+/* Original AI caption/translate/TTS selects used inconsistent native grey
+ * controls, while their containing panel was already Light white. */
+html[data-theme="light"] #page-tv .unified-ai-content :is(
+  .caption-third-controls select,.rust-ai-field select,.rust-cc-panel select
+){
+  background:var(--rust-light-card,var(--surface))!important;
+  color:var(--rust-light-text,var(--text))!important;
+  border:1px solid var(--rust-light-border,var(--edge))!important;
+  border-radius:8px!important;
+  color-scheme:light;
+}
+html[data-theme="light"] #page-tv .unified-ai-content :is(
+  .caption-ai-main label,.caption-tts-main label,.caption-ai-main small,.caption-tts-main small
+){
+  color:var(--rust-light-text,var(--text))!important;
+}
+html[data-theme="light"] #page-tv .unified-ai-content input[type="checkbox"]{
+  accent-color:var(--accent)!important;
+}
+/* Real screenshot review also found a light purple theme icon/labels in
+ * secondary tool rows: keep it as the selected accent only; make all
+ * instructional text readable at normal desktop font sizes. */
+html[data-theme="light"] #page-tv :is(
+  .compact-tools-heading small,.channel-drag-hint,.rust-browser-card-group
+){
+  color:var(--rust-light-muted,var(--muted))!important;
+}
