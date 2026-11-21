@@ -1,4 +1,4 @@
-name: Capture actual Electron UI and sidebar AI regression
+name: Capture Electron Web SVG player icons and actual UI
 on:
   push:
     branches:
@@ -52,6 +52,19 @@ jobs:
            }
            if(!page)throw Error('Electron renderer not found: '+context.pages().map(p=>p.url()).join(','));
            await page.waitForSelector('#playerBox',{timeout:20000});
+           const svgChecks=await page.evaluate(()=>{
+             const ids=['prevBtn','playBtn','stopBtn','nextBtn','castBtn','pipBtn','fullscreenBtn','openGuideBtn','favCurrentBtn'];
+             return ids.map(id=>{
+               const el=document.getElementById(id);
+               const style=el?getComputedStyle(el,'::before'):null;
+               return {id,icon:style?.maskImage||style?.webkitMaskImage||'',width:style?.width||''};
+             });
+           });
+           fs.writeFileSync('screenshots/web-svg-inspection.json',JSON.stringify(svgChecks,null,2));
+           if(svgChecks.some(x=>!x.icon.includes('data:image/svg+xml')))
+             throw Error('Missing Web SVG masks: '+JSON.stringify(svgChecks));
+           await page.screenshot({path:'screenshots/electron-player-svg-main-real.png',fullPage:false});
+
            await page.waitForTimeout(800);
            await page.screenshot({path:'screenshots/electron-main-window-real.png',fullPage:false});
            const main=await page.evaluate(()=>({title:document.title,fullscreen:!!document.fullscreenElement,activePage:document.querySelector('.page.active-page')?.id||null,channelChooser:!!document.getElementById('webChannelChooser'),quickTools:!!document.getElementById('quickTools'),windowWidth:innerWidth,windowHeight:innerHeight}));
@@ -159,6 +172,6 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: actual-electron-all-pages-screenshots
+          name: actual-electron-web-svg-player-screenshots
           path: screenshots/
           retention-days: 7
