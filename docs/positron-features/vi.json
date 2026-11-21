@@ -431,8 +431,8 @@
       "description": "Ở cửa sổ 450 px, tên kênh dài bị cắt cạnh nút hình sao. Bản này dành hàng riêng cho nút Yêu thích, cho phép tên kênh xuống hai dòng mà vẫn giữ nguyên thao tác phát và dữ liệu đã lưu."
     },
     "134": {
-      "title": "Biểu tượng sao Yêu thích SVG đồng nhất và dễ sử dụng",
-      "description": "Thay ký tự sao ★/☆ phụ thuộc phông chữ bằng biểu tượng SVG 20 px thống nhất trên nút Yêu thích của thư viện kênh. Giữ thao tác chuột, bàn phím, trạng thái đã lưu và không tự phát video."
+      "title": "Nhấn F để thêm/bỏ Yêu thích và dùng biểu tượng sao SVG",
+      "description": "Khi chọn một thẻ kênh, nhấn phím F để thêm kênh vào Yêu thích; nhấn lần nữa để bỏ lưu mà không phát video. Nút sao sử dụng SVG 20 px đồng nhất thay ký tự phụ thuộc phông chữ, giữ nguyên dữ liệu đã lưu, thao tác chuột và bàn phím."
     }
   }
 }
