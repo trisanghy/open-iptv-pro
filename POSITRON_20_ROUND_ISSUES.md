@@ -66,3 +66,5 @@ Round 04 verified in actual Electron: DVR heading is monochrome SVG 20px with ar
 | 04/20 | P5.1.29 / v4.23.113 | P5.1.28 Sources 1360px screenshot, artifact 14689292042 | 'Trạng thái' filter label wraps on desktop because flex shrink competes with search width | No-wrap/auto flex basis scoped to status filter; test real text range lineRects=1 at Sources views |
 
 | 05/20 | P5.1.30 / v4.23.114 | P5.1.29 EPG 1360px real screenshot, artifact 14689795888 | DVR selector disabled at 0 channels while submit still bright/clickable; P5.1.25 disabled only selector | Disable button in same observer; reenable when channel option added; regression Electron 720/1360 |
+
+| 06/20 | P5.1.31 / v4.23.115 | P5.1.30 real Electron TV 450px, artifact 14690060103 | Compact tools disclosure says English Timeshift while settings use Tua lại | Change hardcoded label+tooltip; test native toggle and screenshot 450px |

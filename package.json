@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.114",
-  "description": "Positron P5.1.30: disable DVR scheduling without channels and restore dynamically",
+  "version": "4.23.115",
+  "description": "Positron P5.1.31: localize TV tools disclosure to Tua lại",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

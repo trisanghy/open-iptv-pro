@@ -58,6 +58,12 @@ async function runTwenty(page){
      doctorEmptyVisible:(()=>{const n=document.getElementById('positronDoctorEmptyHint');return !!n&&!n.hidden;})(),
      navCount:document.getElementById('navCount')?.textContent?.trim()||'0',
      sidebarStatus:(()=>{const n=document.getElementById('miniStatus');if(!n)return null;const s=getComputedStyle(n),r=n.getBoundingClientRect();return{visible:r.width>0&&r.height>0,whiteSpace:s.whiteSpace,scrollHeight:n.scrollHeight,clientHeight:n.clientHeight,title:n.title,text:n.textContent||''};})(),
+
+     toolsToggle:(()=>{
+       const n=document.getElementById('positronToolsToggle');
+       return n?{text:n.textContent?.trim()||'',title:n.title,
+        expanded:n.getAttribute('aria-expanded'),visible:!!n.getClientRects().length}:null;
+     })(),
      shortcutHint:(()=>{
       const b=document.getElementById('positronOpen'),k=b?.querySelector('kbd');
       const platform=String(navigator.userAgentData?.platform||navigator.platform||'');
@@ -254,6 +260,17 @@ async function runTwenty(page){
     assert.equal(searchOpens,true,'new icon must keep native command palette event');
    }
    if(target==='tv'&&width===450){
+    assert.equal(metrics.toolsToggle?.visible,true,'TV tools disclosure hidden at 450px');
+    assert.ok(metrics.toolsToggle.title.includes('Tua lại'),'TV tools tooltip still says Timeshift');
+    if(metrics.toolsToggle.expanded==='false')assert.ok(metrics.toolsToggle.text.includes('Tua lại'),'collapsed disclosure uses nonlocalized Timeshift');
+    const disclosure=await page.evaluate(()=>{
+      const b=document.getElementById('positronToolsToggle'),initial=b.getAttribute('aria-expanded');
+      b.click();const changed=b.getAttribute('aria-expanded')!==initial;
+      b.click();return {changed,restored:b.getAttribute('aria-expanded')===initial};
+    });
+    assert.equal(disclosure.changed,true,'tools toggle no longer opens');
+    assert.equal(disclosure.restored,true,'tools toggle failed to restore original state');
+
     const focusState=await page.evaluate(()=>{
      const b=document.getElementById('positronFocus');
      const initial=b.querySelector('svg path')?.getAttribute('d');

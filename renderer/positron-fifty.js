@@ -62,14 +62,14 @@
   const watch=q('#page-tv .watch-panel');
   const tools=d.createElement('button');
   tools.type='button';tools.id='positronToolsToggle';tools.className='p50-tools-toggle';
-  tools.title='Hiện hoặc ẩn Timeshift, hẹn giờ ghi và các công cụ nhanh';
+  tools.title='Hiện hoặc ẩn Tua lại, hẹn giờ ghi và các công cụ nhanh';
   tools.setAttribute('aria-expanded','false');
   const timeshift=q('#page-tv .advanced-timebar');
   timeshift?.before(tools);
   const syncTools=()=>{
     root.classList.toggle('p50-tools-closed',!toolsOpen);
     tools.setAttribute('aria-expanded',String(toolsOpen));
-    tools.textContent=toolsOpen?'▴ Ẩn công cụ phát':'▾ Timeshift · Ghi hình · Công cụ';
+    tools.textContent=toolsOpen?'▴ Ẩn công cụ phát':'▾ Tua lại · Ghi hình · Công cụ';
   };
   tools.addEventListener('click',()=>{toolsOpen=!toolsOpen;syncTools();});
   syncTools();
