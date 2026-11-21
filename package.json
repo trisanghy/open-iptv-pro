@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.143",
-  "description": "Positron P5.1.59: Horizon scrollbar accent harmonization from real TV QA",
+  "version": "4.23.144",
+  "description": "Positron P5.1.60: WatchFlow group-balanced local channel suggestions from real Electron QA",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

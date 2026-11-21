@@ -56,7 +56,7 @@ test('Horizon system loads last, preserves native player, covers every page',()=
  for(const part of ['#appSidebar','#page-tv .tv-layout','#page-tv #playerBox','#channelList','.page:not(#page-tv)','#page-sources','#emptyPlayer'])
   assert.ok(css.includes(part),part+' not covered by Horizon design');
  assert.ok(!/html\[data-positron.*#video\s*\{[^}]*object-fit:/s.test(css),'video fit must remain user-configurable');
- assert.equal(JSON.parse(read('package.json')).version,'4.23.143');
+ assert.equal(JSON.parse(read('package.json')).version,'4.23.144');
 });
 
 test('Horizon defeats the legacy p50 sidebar width and retains an expandable rail',()=>{
@@ -94,4 +94,28 @@ test('real Electron WatchFlow audit exercises populated 552 channel suggestions 
  assert.ok(audit.includes('watchFlowQa.fresh,true'));
  assert.ok(audit.includes('watchFlowQa.nonePlaying,true'));
  assert.ok(audit.includes('positron-watchflow-552-metadata-qa-real.png'));
+});
+
+test('P5.1.60 recommendations diversify equivalent-evidence groups instead of three adjacent channels',()=>{
+ const groups=[
+  {id:'a1',name:'QA Channel 001',group:'01 Main',url:'https://test.invalid/1',status:'uncertain'},
+  {id:'a2',name:'QA Channel 002',group:'01 Main',url:'https://test.invalid/2',status:'uncertain'},
+  {id:'b1',name:'QA Channel 016',group:'02 Regional',url:'https://test.invalid/16',status:'uncertain'},
+  {id:'c1',name:'QA Channel 121',group:'03 Other',url:'https://test.invalid/121',status:'uncertain'}
+ ];
+ const before=JSON.stringify(groups),suggested=core.rank(groups,{now,limit:3});
+ assert.deepEqual(suggested.items.map(c=>c.id),['a1','b1','c1']);
+ assert.equal(new Set(suggested.items.map(c=>c.group)).size,3);
+ assert.equal(JSON.stringify(groups),before,'suggestions must not reorder source playlist');
+ const more=core.rank(groups,{now,limit:3,seen:['a1','b1','c1']});
+ assert.ok(more.items.some(c=>c.id==='a2'),'refresh must expose unseen channels');
+});
+test('P5.1.60 group variety cannot demote verified live streams beneath unverified streams',()=>{
+ const input=[
+  {id:'alive1',name:'AAA live',group:'One',url:'https://test.invalid/a',status:'alive'},
+  {id:'alive2',name:'BBB live',group:'One',url:'https://test.invalid/b',status:'alive'},
+  {id:'unchecked',name:'CCC unknown',group:'Two',url:'https://test.invalid/c',status:'uncertain'}
+ ];
+ const res=core.rank(input,{now,limit:2});
+ assert.deepEqual(res.items.map(x=>x.id),['alive1','alive2']);
 });

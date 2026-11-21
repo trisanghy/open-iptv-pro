@@ -144,3 +144,9 @@ P5.1.46 CI attempt 44866650681: 604 pass / 2 failed / 5 skipped; failures were s
 ### New file (10), batch round 02 candidate P5.1.59 / v4.23.143
 Input: Actual P5.1.58 TV 600px and 1360px Electron PNGs and WatchFlow 552 metadata QA. Visible purple root scroll thumb clashes with Horizon turquoise icons and player. Legacy UI scroll thumb variables from ui-polish are not theme-correct under Horizon.
 Action: Horizon-only scrollbar variable override (#40736c thumb, #101a23 track), native Electron geometry/computed scrollbar assertion. Pending after PNG review, Node, Mac/Windows builds and immutable release. Do not count until certified.
+
+
+### User-file (10), batch round 03 candidate P5.1.60 / v4.23.144
+- Input opened: Actual P5.1.59 WatchFlow metadata-only 552-channel screenshot, showing QA Channel 004/005/006 all from group "01 Main channels".
+- Fix: core ranking gains source-group diversity among channels with comparable playback evidence while preserving alive status priority and avoiding state mutation; Node tests and Electron 552-channel screenshot regression check 3 distinct native groups before/after "Gợi ý khác".
+- Pending: Node green, Electron real PNG reviewed, 6-job build and immutable release; do not count if incomplete.

@@ -423,3 +423,11 @@ P5.1.46 same-version CI repair: run 44866650681 failed 2/611 because historical 
 - Root cause: ui-polish global scroll style derives thumb from legacy --ui-primary, while Horizon only set --po-accent.
 - Scope correction: set --iptv-scroll-thumb / --iptv-scroll-track only under .po-v3.po-horizon. Preserve scrollbar functionality, user playlists and other themes, add real Electron computed-style tests at 600px and 1360px, leave stream playback unchanged.
 - Gate: full Node test, actual Electron before/after PNG review, Mac/Windows CI and unique release tag. No claim until checks pass.
+
+
+## P5.1.60 / v4.23.144 — WatchFlow diversified recommendations by native playlist group
+- Genuine prior P5.1.59 WatchFlow QA screenshot with 552 metadata-only channels displays three adjacent QA Channel 004/005/006 recommendations all within "01 Main channels" although there are three source groups.
+- Root cause: deterministic score/name sort returned the first 3 without source-group diversity.
+- Change: retain score-based evidence priority; for same/nearly equal score (within 18 points), pick one per distinct native group before filling remaining slots. Refresh still excludes already-seen items, never changes native data, never requests or plays streams.
+- Regression: two Node tests ensure 3 distinct groups, preservation of proven live preference, immutability; Electron metadata QA asserts first three and refreshed three cover 3 native groups; re-open real PNG to confirm.
+- CI/release: pending validation. No claim of testing actual IPTV playback; local metadata only.

@@ -44,7 +44,24 @@
    return {id:String(ch.id),name:String(ch.name),group:String(ch.group||ch.groupTitle||''),category:category(ch),status:ch.status||'unchecked',score,reason:reasons.join(' · ')};
   }).sort((a,b)=>b.score-a.score||a.name.localeCompare(b.name,'vi'));
   const n=Math.min(6,Math.max(1,Math.trunc(Number(limit)||3)));
-  return {items:result.slice(0,n),available:eligible.length,unseen:unseen.length,mode,exhausted:eligible.length>0&&unseen.length===0};
+  // P5.1.60: if equally evidenced channels fill one source group, rotate
+  // across distinct groups before filling the remaining slots. Never demote
+  // an alive/recently proven channel below an unverified one just for variety.
+  const diversified=[],usedGroups=new Set(),selectedIds=new Set();
+  const highest=result[0]?.score??0;
+  for(const item of result){
+   if(item.score<highest-18)break;
+   const key=normalize(item.group)||'__ungrouped__';
+   if(usedGroups.has(key))continue;
+   usedGroups.add(key);selectedIds.add(item.id);diversified.push(item);
+   if(diversified.length>=n)break;
+  }
+  for(const item of result){
+   if(diversified.length>=n)break;
+   if(selectedIds.has(item.id))continue;
+   selectedIds.add(item.id);diversified.push(item);
+  }
+  return {items:diversified,available:eligible.length,unseen:unseen.length,mode,exhausted:eligible.length>0&&unseen.length===0};
  }
  return Object.freeze({rank,normalize,category});
 });

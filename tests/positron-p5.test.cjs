@@ -37,7 +37,7 @@ test('P5 assets are loaded after P4 without replacing it',()=>{
 test('P5 release is immutable and versioned separately from P4.1',()=>{
  const pkg=JSON.parse(read('package.json'));
  const flow=read('.github/workflows/positron-lab.yml');
- assert.equal(pkg.version,'4.23.143');
+ assert.equal(pkg.version,'4.23.144');
  const label=pkg.description.match(/Positron\s+(P\d+\.\d+\.\d+)/)?.[1];
  assert.ok(label,'product P-label must accompany SemVer');
  assert.ok(flow.includes('TAG=positron/v'+pkg.version+'-'+label.toLowerCase()),'release tag and app version must match');
@@ -576,4 +576,13 @@ test('P5.1.59 Horizon scrollbars use muted teal instead of legacy purple',()=>{
  assert.ok(css.includes('po-v3.po-horizon ::-webkit-scrollbar-thumb:hover'));
  assert.ok(audit.includes("metrics.horizonScrollbar?.thumb,'#40736c'"));
  assert.ok(audit.includes("includes('64, 115, 108')"));
+});
+
+test('P5.1.60 real Electron WatchFlow QA checks diversity of both initial and refreshed cards',()=>{
+ const audit=read('scripts/positron-20-extension.cjs');
+ const core=read('renderer/positron-watchflow-core.js');
+ assert.ok(audit.includes('watchFlowQa.firstGroupCount,3'));
+ assert.ok(audit.includes('watchFlowQa.secondGroupCount,3'));
+ assert.ok(core.includes("normalize(item.group)||'__ungrouped__'"));
+ assert.ok(core.includes('highest-18'),'diversification must protect score evidence priority');
 });
