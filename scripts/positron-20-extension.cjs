@@ -48,7 +48,7 @@ async function runTwenty(page){
     player:get('#playerBox'),sidebar:get('#appSidebar'),
     sources:get('#page-sources .sources-hub-nav'),sourceSection:get('#smartDiscoverySection'),epg:get('#page-epg .epg-filter'),
     controls:document.querySelectorAll('#page-tv button').length,
-    transportVectors:['prevBtn','stopBtn','nextBtn','fsPrev','fsNext'].every(id=>!!document.getElementById(id)?.querySelector('svg')),
+    transportVectors:['prevBtn','stopBtn','nextBtn','fsPrev','fsNext','fullscreenBtn'].every(id=>!!document.getElementById(id)?.querySelector('svg')),
     brandIcon:get('#appSidebar .brand-icon'),
     badge:(()=>{const n=document.querySelector('#appSidebar .brand small');if(!n)return null;const b=n.getBoundingClientRect();return {visible:b.width>0&&b.height>0,clipped:n.scrollWidth>n.clientWidth+1,right:b.right,top:b.top,bottom:b.bottom};})(),
     toggle:(()=>{const n=document.querySelector('#appSidebar .sidebar-edge-toggle');if(!n)return null;const b=n.getBoundingClientRect();return {left:b.left,top:b.top,bottom:b.bottom};})(),

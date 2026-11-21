@@ -76,3 +76,6 @@ html[data-positron="true"] #fullscreenUX button svg{
  display:block;width:19px;height:19px;flex:0 0 19px;stroke:currentColor;stroke-width:1.9;
  stroke-linecap:round;stroke-linejoin:round;fill:none;pointer-events:none;
 }
+
+/* P5.1.3: real 450px screenshot revealed an illegible legacy fullscreen glyph. */
+html[data-positron="true"] #page-tv #fullscreenBtn svg{display:block;width:19px;height:19px;stroke:currentColor;stroke-width:2;stroke-linejoin:round;stroke-linecap:round;fill:none;pointer-events:none}

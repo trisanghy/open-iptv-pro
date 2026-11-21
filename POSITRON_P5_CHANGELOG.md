@@ -45,3 +45,8 @@ This release preserves all P4.1 source data/feature logic. It adds **20 independ
 ## P5.1.2 — v4.23.86
 - P5.1.1 screenshot `positron-p5-18-real.png` Settings revealed the replacement P5.1.1 badge partly hidden under the hamburger button. Fix with a compact release badge `P5.1.2`.
 - Extend real Electron screenshot audit with badge clipping and menu intersection checks on desktop widths; preserve all IPTV state and playback.
+
+## P5.1.3 — v4.23.87
+- From real P5.1.2 Electron TV screenshot at 450px: the fullscreen control appeared as a tiny unclear glyph beside Cast/PiP.
+- Replace its content with a clear stroke SVG while retaining the original button node and playback/fullscreen event handlers.
+- Add real-Electron audit assertion that fullscreen button carries its SVG, and a source regression test. Maintain independent version/build/release tag and unchanged user data.

@@ -63,7 +63,8 @@
   ['stopBtn','M6 6h12v12H6z','Dừng phát'],
   ['nextBtn','M18 5v14 M4 5l11 7-11 7V5z','Kênh sau'],
   ['fsPrev','M6 5v14 M20 5 9 12l11 7V5z','Kênh trước'],
-  ['fsNext','M18 5v14 M4 5l11 7-11 7V5z','Kênh sau']
+  ['fsNext','M18 5v14 M4 5l11 7-11 7V5z','Kênh sau'],
+  ['fullscreenBtn','M8 3H3v5 M16 3h5v5 M8 21H3v-5 M16 21h5v-5','Bật toàn màn hình']
  ];
  for(const [name,shape,label] of iconDefinitions){
   const button=byId(name);if(!button)continue;
