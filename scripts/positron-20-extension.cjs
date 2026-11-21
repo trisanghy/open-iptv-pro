@@ -62,6 +62,10 @@ async function runTwenty(page){
      favoriteAction:get('#positronFavoritesSources'),
      favoriteGuidance:(()=>document.querySelector('#favoriteList .empty-list')?.firstChild?.textContent?.trim()||'')(),
      sourceCount:document.getElementById('sourceCount')?.textContent?.trim()||'0',
+     outputIcons:(()=>{
+      const inspect=id=>{const b=document.getElementById(id),s=b?.querySelector('svg');return {svg:!!s,width:Math.round(s?.getBoundingClientRect().width||0),label:b?.querySelector('span')?.textContent?.trim()||'',aria:b?.getAttribute('aria-label')||''};};
+      return {cast:inspect('castBtn'),pip:inspect('pipBtn')};
+     })(),
      volumeIcon:(()=>{const n=document.querySelector('#page-tv label.volume-icon'),v=n?.querySelector('svg');if(!n)return null;return {svg:!!v,for:n.getAttribute('for'),width:Math.round(v?.getBoundingClientRect().width||0),height:Math.round(v?.getBoundingClientRect().height||0)};})(),
      smartLimit:(()=>{const n=document.getElementById('smartLimit');if(!n)return null;
        const label=n.selectedOptions?.[0]?.textContent?.trim()||'';
@@ -79,6 +83,13 @@ async function runTwenty(page){
   if(target==='tv'){
    assert.ok(metrics.player?.width>180&&metrics.player.height>100,'video collapsed: '+name);
    assert.equal(metrics.transportVectors,true,'non-vector transport icons: '+name);
+   for(const [key,label] of [['cast','Cast / AirPlay'],['pip','PiP']]){
+    const i=metrics.outputIcons?.[key];
+    assert.equal(i?.svg,true,'native '+key+' output icon still uses a glyph: '+name);
+    assert.ok(i.width>=14,'native '+key+' SVG too small: '+name);
+    assert.equal(i.label,label,'native '+key+' label missing: '+name);
+    assert.ok(i.aria,'native '+key+' accessible name missing: '+name);
+   }
    assert.equal(metrics.volumeIcon?.svg,true,'volume still uses platform glyph: '+name);
    assert.equal(metrics.volumeIcon?.for,'volume','native volume label association lost: '+name);
    assert.ok(metrics.volumeIcon.width>=16&&metrics.volumeIcon.height>=16,'volume vector too small: '+name);

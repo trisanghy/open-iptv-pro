@@ -172,3 +172,15 @@ html[data-positron="true"] #page-tv .volume-controls label.volume-icon svg{
  display:block;width:20px;height:20px;fill:none;stroke:currentColor;
  stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;pointer-events:none;
 }
+
+/* P5.1.17: replace tiny OS glyphs in native Cast / PiP buttons with
+   consistent line icons while preserving button semantics and hit areas. */
+html[data-positron="true"] #page-tv .output-controls :is(#castBtn,#pipBtn){
+ display:inline-flex!important;align-items:center!important;justify-content:center!important;
+ gap:4px!important;white-space:nowrap!important;
+}
+html[data-positron="true"] #page-tv .output-controls :is(#castBtn,#pipBtn) svg{
+ display:block;width:15px;height:15px;flex:0 0 15px;fill:none;
+ stroke:currentColor;stroke-width:1.8;stroke-linejoin:round;
+ stroke-linecap:round;pointer-events:none;
+}

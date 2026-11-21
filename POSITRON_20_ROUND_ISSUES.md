@@ -29,3 +29,4 @@ First P5.1.8 test run https://github.com/trisanghy/open-iptv-pro/actions/runs/44
 
 | 07/20 | P5.1.15 / 4.23.99 | Latest P5.1.14 `positron-p5-19-real.png` Doctor 1360px | Six zero metrics are dead end for users without playlists | Conditional Doctor hint, direct source button, real Electron click test | CI/release pending; external P5.1.14 preserved |
 | 02/20 | P5.1.16 / 4.23.100 | P5.1.15 TV 450px screenshot retains OS glyph `◖))` | Replace label content with vector SVG; preserve input linkage | New screenshot/DOM assertion, Node test, CI pending |
+| 03/20 | P5.1.17 / 4.23.101 | P5.1.16 real TV 450px screenshot: Cast/AirPlay and PiP use tiny square glyphs | Replace icon glyphs with inline SVG inside existing buttons, retain events and labels | Node + real Electron screenshot icon/label/ARIA assertions, CI pending |

@@ -176,6 +176,30 @@
   }
   volumeLabel.replaceChildren(svg);
  }
+ // P5.1.17: Actual P5.1.16 Electron TV 450px screenshot revealed
+ // Cast and PiP buttons still have tiny platform-dependent box glyphs.
+ // Keep original button nodes, native click handlers and accessible labels.
+ const outputIcons=[
+  {id:'castBtn',caption:'Cast / AirPlay',paths:['M5 7V5h15v14h-4','M4 12a7 7 0 0 1 7 7','M4 16a3 3 0 0 1 3 3']},
+  {id:'pipBtn',caption:'PiP',rects:[[3,4,18,16,2],[11,11,7,6,1]]}
+ ];
+ for(const spec of outputIcons){
+  const button=byId(spec.id);if(!button||button.querySelector('svg'))continue;
+  const svg=d.createElementNS(ns,'svg');
+  svg.setAttribute('viewBox','0 0 24 24');
+  svg.setAttribute('aria-hidden','true');
+  svg.setAttribute('focusable','false');
+  for(const pathText of spec.paths||[]){
+   const path=d.createElementNS(ns,'path');path.setAttribute('d',pathText);svg.append(path);
+  }
+  for(const [x,y,width,height,rx] of spec.rects||[]){
+   const rect=d.createElementNS(ns,'rect');
+   for(const [key,value] of Object.entries({x,y,width,height,rx}))rect.setAttribute(key,String(value));
+   svg.append(rect);
+  }
+  const label=d.createElement('span');label.textContent=spec.caption;
+  button.replaceChildren(svg,label);
+ }
  window.OpenIPTVPositronTwenty=Object.freeze({
   setStage,getStage:()=>stage,getFeedback:()=>previous
  });
