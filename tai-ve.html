@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Tải Open IPTV Pro — Electron, Rust Lab, Web, Mobile và so sánh tính năng</title>
+<meta name="description" content="Tải bản Electron cho Windows và macOS, Rust Lab, Mobile Android/iOS; so sánh tính năng thực tế và giới hạn.">
+<link rel="canonical" href="https://trisanghy.github.io/open-iptv-pro/tai-ve.html">
+<link rel="icon" href="assets/icon.png">
+<style>
+:root{color-scheme:dark;font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;background:#0b1020;color:#f4f6fb}
+*{box-sizing:border-box}body{margin:0;line-height:1.55}a{color:#adcbff}a:focus-visible{outline:2px solid #a9c8ff;outline-offset:4px}
+.wrap{width:min(1100px,calc(100% - 36px));margin:auto}
+header{border-bottom:1px solid #2b3550;background:#0e1629;position:sticky;top:0;z-index:2}
+.head{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:15px 0}
+.brand{display:flex;align-items:center;gap:12px;font-weight:800;text-decoration:none;color:#fff}.brand img{width:38px;height:38px;border-radius:10px}
+nav{display:flex;flex-wrap:wrap;gap:16px;font-size:14px}nav a{text-decoration:none;color:#d6e2f6}
+main{padding:52px 0 65px}.eyebrow{font-size:12px;font-weight:800;letter-spacing:.13em;color:#93bdfd;text-transform:uppercase}
+h1{font-size:clamp(30px,5vw,51px);letter-spacing:-.05em;line-height:1.12;margin:11px 0 18px}
+.lead{max-width:760px;color:#b9c6dc;font-size:17px}.date{color:#9eafc7;font-size:13px}
+h2{font-size:24px;letter-spacing:-.025em;margin:43px 0 17px}
+.editions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;margin-top:30px}
+.card{border:1px solid #34415a;background:#151e31;border-radius:18px;padding:23px;min-width:0}
+.card h3{font-size:22px;margin:5px 0 7px}.card p{color:#c0cde1;margin:12px 0}
+.tag{font-size:12px;color:#dce6f9;background:#293751;border-radius:99px;padding:4px 10px;display:inline-block;font-weight:750}
+.ver{color:#92b9f4;font-size:13px;font-weight:700}
+.links{display:flex;gap:9px;flex-wrap:wrap;margin-top:17px}
+.links a{display:inline-flex;align-items:center;padding:9px 12px;border-radius:10px;border:1px solid #51648a;color:#e6efff;text-decoration:none;font-size:13px;font-weight:730;background:#253555}
+.links a:hover{background:#31486f}
+.card small,.note{color:#acbad0}.note{font-size:13px}
+table{border-collapse:collapse;width:100%;background:#151e31;border:1px solid #374660;border-radius:15px;overflow:hidden}
+th,td{text-align:left;border-bottom:1px solid #313d55;padding:13px;vertical-align:top;font-size:14px}
+th{background:#20314c;color:#eaf1ff}tbody tr:last-child td{border-bottom:0}
+.scroller{overflow-x:auto;border-radius:15px}table{min-width:720px}
+footer{border-top:1px solid #34415a;padding:25px 0 40px;color:#9faec6;font-size:13px}
+@media(max-width:720px){.editions{grid-template-columns:1fr}main{padding-top:32px}.head{align-items:flex-start;flex-direction:column}h2{margin-top:30px}.card{padding:20px}}
+</style>
+</head>
+<body>
+<header><div class="wrap head"><a class="brand" href="./"><img src="assets/icon.png" alt="">Open IPTV Pro</a><nav><a href="./">Mở Web Online</a><a href="huong-dan.html">Hướng dẫn</a><a href="https://github.com/trisanghy/open-iptv-pro">Mã nguồn GitHub</a></nav></div></header>
+<main class="wrap">
+<div class="eyebrow">Phát hành · 4 nền tảng</div>
+<h1>Chọn đúng phiên bản.<br>Tải đúng thiết bị.</h1>
+<p class="lead">Electron dành cho máy tính, Rust Lab thử nghiệm trên Tauri, Web chạy trực tiếp trong trình duyệt và Mobile dành cho Android/iOS. Mỗi dòng phát hành độc lập với file cài và giới hạn tính năng riêng.</p>
+<p class="date">Cập nhật ngày 22/11/2026 · Chỉ liên kết tới file có thật trên GitHub Releases. Trạng thái Stable không được suy ra chỉ từ việc build thành công.</p>
+<section class="editions" aria-label="Các bản phát hành">
+<article class="card"><span class="tag">Desktop · Stable hiện hành 4.23.71 / 4.23.76 Beta</span><h3>Electron — Windows &amp; Mac</h3><div class="ver">4.23.76 · bản nguồn mới nhất</div><p>Giao diện Light đồng nhất, biểu tượng phát SVG, tối ưu điều khiển, phép đo hiệu năng mã hóa GPU và quản lý dung lượng cache do app tạo. Chưa có AI upscale video thực.</p><div class="links">
+<a href="https://github.com/trisanghy/open-iptv-pro/releases/download/electron-v4.23.76/Open-IPTV-Pro-Setup-4.23.76-x64.exe">Windows Setup x64 · Beta</a>
+<a href="https://github.com/trisanghy/open-iptv-pro/releases/download/electron-v4.23.76/Open-IPTV-Pro-4.23.76-x64.exe">Windows Portable · Beta</a>
+<a href="https://github.com/trisanghy/open-iptv-pro/releases/download/electron-v4.23.76/Open-IPTV-Pro-4.23.76-mac-arm64.dmg">Mac Apple Silicon · Beta</a>
+<a href="https://github.com/trisanghy/open-iptv-pro/releases/download/electron-v4.23.76/Open-IPTV-Pro-4.23.76-mac-x64.dmg">Mac Intel · Beta</a>
+<a href="https://github.com/trisanghy/open-iptv-pro/releases/tag/v4.23.71">Stable 4.23.71</a>
+<a href="https://github.com/trisanghy/open-iptv-pro/releases/tag/electron-v4.23.76">Source + SHA256</a>
+</div><p class="note">Bản Stable 4.23.76 được phát hành riêng từ main sau khi kiểm thử CI và xác minh đủ file, không ghi đè bản cũ.</p></article>
+<article class="card"><span class="tag">Rust Lab · Beta</span><h3>Rust Lab / Tauri</h3><div class="ver">23.8.98 · Windows &amp; macOS</div><p>Theme Dark/AMOLED, bộ biểu tượng player SVG, phụ đề/dịch/TTS thử nghiệm, bù chuyển động có giới hạn và công cụ video. Phát lại/PiP/AI cần kiểm thử trên máy thật; chưa có AI upscale 4K hoạt động thực.</p><div class="links">
+<a href="https://github.com/trisanghy/open-iptv-pro/releases/download/rust-lab/v23.8.98/OpenIPTVPro-RustLab-v23.8.98-Windows-Setup-x64.exe">Windows Setup x64</a>
+<a href="https://github.com/trisanghy/open-iptv-pro/releases/download/rust-lab/v23.8.98/OpenIPTVPro-RustLab-v23.8.98-Windows-Portable-x64.zip">Windows Portable ZIP</a>
+<a href="https://github.com/trisanghy/open-iptv-pro/releases/download/rust-lab/v23.8.98/OpenIPTVPro-RustLab-v23.8.98-mac-universal.dmg">macOS Universal DMG</a>
+<a href="https://github.com/trisanghy/open-iptv-pro/releases/tag/rust-lab/v23.8.98">Source + SHA256</a>
+</div></article>
+<article class="card"><span class="tag">Trình duyệt · Không cần cài</span><h3>Web Online</h3><div class="ver">Mã mới nhất · web/online</div><p>Phát HLS/DASH khi trình duyệt hỗ trợ; quản lý nguồn, EPG, Yêu thích, tìm kiếm, PiP trong giới hạn thiết bị, giao diện Sáng/Tối/AMOLED trên desktop và mobile. Web không cung cấp file EXE/APK.</p><div class="links"><a href="./">Mở Web Online</a><a href="huong-dan.html">Hướng dẫn sử dụng</a><a href="https://github.com/trisanghy/open-iptv-pro/tree/web/online">Mã nguồn Web</a></div><p class="note">Có thể thêm trang vào Màn hình chính trên iPhone. Đây là lối tắt Web, không phải ứng dụng IPA ký sẵn.</p></article>
+<article class="card"><span class="tag">Mobile · Beta</span><h3>Android &amp; iOS / Capacitor</h3><div class="ver">4.23.17-mobile.35</div><p>Điều khiển cảm ứng, EPG, yêu thích và đăng nhập đồng bộ Supabase. APK là bản debug để kiểm thử; IPA chưa ký, chưa thể cài trực tiếp trên iPhone nếu thiếu chứng chỉ/provisioning.</p><div class="links">
+<a href="https://github.com/trisanghy/open-iptv-pro/releases/download/mobile/v4.23.17.35/OpenIPTVPro-Mobile-4.23.17-mobile.35-debug.apk">Android APK</a>
+<a href="https://github.com/trisanghy/open-iptv-pro/releases/download/mobile/v4.23.17.35/OpenIPTVPro-Mobile-4.23.17-mobile.35-unsigned.ipa">iOS IPA unsigned</a>
+<a href="https://github.com/trisanghy/open-iptv-pro/releases/tag/mobile/v4.23.17.35">Source + ảnh kiểm thử</a>
+</div></article>
+</section>
+<h2>So sánh nhanh tính năng</h2>
+<div class="scroller"><table>
+<thead><tr><th>Tính năng</th><th>Electron</th><th>Rust Lab</th><th>Web</th><th>Mobile</th></tr></thead>
+<tbody>
+<tr><td>Nhập M3U hợp pháp, quản lý kênh, Yêu thích</td><td>Có</td><td>Có · Beta</td><td>Có</td><td>Có · Beta</td></tr>
+<tr><td>EPG / chương trình đang phát</td><td>Có</td><td>Có · Beta</td><td>Có</td><td>Có · Beta</td></tr>
+<tr><td>PiP / fullscreen / phát nền</td><td>Tùy OS</td><td>Cần xác minh</td><td>Tùy trình duyệt</td><td>Tùy OS, Beta</td></tr>
+<tr><td>Sáng, Tối, AMOLED</td><td>Có, Light cập nhật</td><td>Dark/AMOLED đồng bộ</td><td>Kiểm thử 6 giao diện</td><td>Giao diện cảm ứng</td></tr>
+<tr><td>Phụ đề, dịch, giọng TTS ngoại tuyến</td><td>Có, tùy mô hình</td><td>Thử nghiệm</td><td>Không tương đương desktop</td><td>Không tương đương desktop</td></tr>
+<tr><td>GPU benchmark / AI upscale 4K thực</td><td>Benchmark / chưa upscale</td><td>Công cụ video / chưa upscale</td><td>Không</td><td>Không</td></tr>
+<tr><td>Đồng bộ tài khoản</td><td>Có, tùy OTP</td><td>Có, tùy OTP</td><td>Có, tùy OTP</td><td>Có, tùy OTP</td></tr>
+</tbody></table></div>
+<h2>Trước khi cài hoặc nhập playlist</h2>
+<p class="note">Bộ cài desktop chưa ký có thể hiển thị cảnh báo của hệ điều hành. Với iOS, IPA chưa ký cần Apple Developer/provisioning hợp lệ. Dữ liệu playlist, kênh yêu thích và cấu hình nên được sao lưu trước khi đổi phiên bản. Chỉ nhập file M3U/URL mà bạn có quyền sử dụng; Open IPTV Pro không cung cấp kênh truyền hình hay giấy phép nội dung.</p>
+</main>
+<footer><div class="wrap">Open IPTV Pro · <a href="https://github.com/trisanghy/open-iptv-pro/releases">Lưu trữ tất cả phiên bản</a> · <a href="./">Quay lại trình phát Web</a></div></footer>
+</body></html>

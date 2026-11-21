@@ -4,9 +4,11 @@
  const api=factory(root);
  if(typeof module==='object'&&module.exports)module.exports=api;
 })(function(root){
- const RELEASES='https://github.com/trisanghy/open-iptv-pro/releases/latest';
- const API='https://api.github.com/repos/trisanghy/open-iptv-pro/releases/latest';
- const MOBILE_API='https://api.github.com/repos/trisanghy/open-iptv-pro/releases?per_page=60';
+ const RELEASES='https://github.com/trisanghy/open-iptv-pro/releases/tag/v4.23.71';
+ const API='https://api.github.com/repos/trisanghy/open-iptv-pro/releases/tags/v4.23.71';
+ const ELECTRON_PREVIEW_API='https://api.github.com/repos/trisanghy/open-iptv-pro/releases/tags/electron-v4.23.76';
+ const RUST_API='https://api.github.com/repos/trisanghy/open-iptv-pro/releases/tags/rust-lab/v23.8.98';
+ const MOBILE_API='https://api.github.com/repos/trisanghy/open-iptv-pro/releases/tags/mobile/v4.23.17.35';
  const MOBILE_RELEASES='https://github.com/trisanghy/open-iptv-pro/releases?q=mobile';
  const INTRO_KEY='openiptv-software-download-intro-seen-v1';
  const formats=[
@@ -21,7 +23,7 @@
  function safeAssetUrl(url){
   try{const u=new URL(String(url||''));
    return u.origin==='https://github.com'&&!u.username&&!u.password&&!u.search&&!u.hash&&
-    /^\/trisanghy\/open-iptv-pro\/releases\/download\/(?:v[0-9][^/]*|mobile\/v[0-9][^/]*|rust-lab\/v[0-9][^/]*)\/[^/]+$/i.test(u.pathname);
+    /^\/trisanghy\/open-iptv-pro\/releases\/download\/(?:v[0-9][^/]*|electron-v[0-9][^/]*|mobile\/v[0-9][^/]*|rust-lab\/v[0-9][^/]*)\/[^/]+$/i.test(u.pathname);
   }catch{return false;}
  }
  function resolveRelease(r){
@@ -39,8 +41,8 @@ const mobileFormats=[
   {id:'ios',label:'iOS · IPA',desc:'IPA unsigned · cần ký để cài đặt',glyph:'▢',re:/^OpenIPTVPro-Mobile-[\w.-]+-unsigned\.ipa$/i}
  ];
  function resolveMobileRelease(releases){
-  if(!Array.isArray(releases))return null;
-  const ordered=releases.filter(r=>r&&!r.draft&&/^mobile\/v[0-9]/i.test(String(r.tag_name||'')))
+  const sources=Array.isArray(releases)?releases:[releases];
+  const ordered=sources.filter(r=>r&&!r.draft&&/^mobile\/v[0-9]/i.test(String(r.tag_name||'')))
    .sort((a,b)=>Date.parse(b.published_at||b.created_at||0)-Date.parse(a.published_at||a.created_at||0));
   for(const release of ordered){
    const items=mobileFormats.flatMap(f=>{
@@ -99,7 +101,8 @@ const mobileFormats=[
     <p id="desktopDownloadStatus" class="desktop-download-status" role="status" aria-live="polite">Đang kiểm tra phiên bản…</p>
     <div id="desktopDownloadOptions" class="desktop-download-options"></div>
     <div class="desktop-download-actions">
-     <a class="desktop-download-releases" href="${RELEASES}" target="_blank" rel="noopener noreferrer">Desktop mới nhất</a>
+     <a class="desktop-download-releases" href="${RELEASES}" target="_blank" rel="noopener noreferrer">Electron Stable</a>
+     <a class="desktop-download-releases" href="tai-ve.html" target="_blank" rel="noopener noreferrer">So sánh 4 nền tảng &amp; tải file</a>
      <a class="desktop-download-releases" href="${MOBILE_RELEASES}" target="_blank" rel="noopener noreferrer">Các bản Mobile</a>
      <button type="button" class="desktop-download-dismiss" data-desktop-close>Đóng</button>
     </div>
@@ -112,18 +115,19 @@ const mobileFormats=[
   const iosShortcut=overlay.querySelector('#iosShortcutInstall');
   if(iosShortcut&&/iPhone|iPad|iPod/i.test(String(root.navigator?.userAgent||'')))iosShortcut.open=true;
   let loaded=false,loading=null,previous=null;
-  function render(desktop,mobile){
+  function render(desktop,mobile,rust,preview){
    list.replaceChildren();
-   const all=[...(desktop?.items||[]),...(mobile?.items||[])];
+   const all=[...(desktop?.items||[]),...(mobile?.items||[]),...(rust?.items||[]),...(preview?.items||[])];
    if(!all.length){
     status.textContent='Chưa truy xuất được bộ cài; hãy dùng liên kết GitHub bên dưới để tải trực tiếp.';
     return;
    }
    status.textContent='Các bản phát hành GitHub · '+all.length+' lựa chọn';
    const groups=[
-    {title:'Android & iOS · '+(mobile?.version||'mới nhất'),items:mobile?.items||[]},
-    {title:'Desktop Stable · '+(desktop?.version||'mới nhất'),items:(desktop?.items||[]).filter(x=>!x.id.startsWith('rust-'))},
-    {title:'Desktop Rust Lab · '+(desktop?.version||'mới nhất'),items:(desktop?.items||[]).filter(x=>x.id.startsWith('rust-'))}
+    {title:'Android & iOS · '+(mobile?.version||'mới nhất')+' · Beta',items:mobile?.items||[]},
+    {title:'Electron Stable · '+(desktop?.version||'mới nhất'),items:(desktop?.items||[]).filter(x=>!x.id.startsWith('rust-'))},
+    {title:'Electron mới · '+(preview?.version||'4.23.76')+' · Beta, chờ chứng nhận Stable',items:preview?.version===desktop?.version?[]:(preview?.items||[]).filter(x=>!x.id.startsWith('rust-'))},
+    {title:'Rust Lab · '+(rust?.version||'23.8.98')+' · Beta',items:(rust?.items||[]).filter(x=>x.id.startsWith('rust-'))}
    ];
    if(!/iPhone|iPad|iPod|Android/i.test(String(root.navigator?.userAgent||'')))groups.push(groups.shift());
    for(const group of groups){
@@ -157,10 +161,12 @@ const mobileFormats=[
    status.textContent='Đang kiểm tra bản Desktop và Mobile mới nhất trên GitHub…';
    loading=(async()=>{
     try{
-     const [a,b]=await Promise.allSettled([readRelease(API),readRelease(MOBILE_API)]);
+     const [a,b,c,d]=await Promise.allSettled([readRelease(API),readRelease(MOBILE_API),readRelease(RUST_API),readRelease(ELECTRON_PREVIEW_API)]);
      const desktop=a.status==='fulfilled'?resolveRelease(a.value):null;
      const mobile=b.status==='fulfilled'?resolveMobileRelease(b.value):null;
-     render(desktop,mobile);
+     const rust=c.status==='fulfilled'?resolveRelease(c.value):null;
+     const preview=d.status==='fulfilled'?resolveRelease(d.value):null;
+     render(desktop,mobile,rust,preview);
      loaded=!!(desktop?.items.length&&mobile?.items.length);
      if(!loaded)console.warn('Some Github release catalogs are unavailable',a.status,b.status);
     }finally{loading=null;}
