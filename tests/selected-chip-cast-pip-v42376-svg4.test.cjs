@@ -19,3 +19,14 @@ test('Cast / PiP are one SVG only, without cloning or replacing click target',()
  assert.ok(!js.includes('replaceWith('));
  assert.doesNotThrow(()=>new Function(js));
 });
+
+test('Light theme chooser inherits the app surface and restores sidebar once',()=>{
+ const css=read('renderer/web-channel-chooser-v42371.css');
+ const features=read('renderer/features.js');
+ assert.match(css,/background:var\(--ui-card,var\(--surface\)\)/);
+ assert.match(css,/color:var\(--text\)/);
+ assert.doesNotMatch(css,/background:linear-gradient\(160deg,#0b1b2b,#07131e\)/);
+ assert.match(features,/sidebarChooserLayoutRepairV1!==true/);
+ assert.match(features,/config\.sidebarVisible=true/);
+ assert.match(features,/config\.channelPanelVisible=true/);
+});
