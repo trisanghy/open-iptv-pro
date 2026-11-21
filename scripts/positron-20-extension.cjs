@@ -1059,6 +1059,7 @@ async function runTwenty(page){
    notPlaying:window.IPTVState.getCurrent()===null,
    navOneRow:(()=>{const a=[...panel.querySelectorAll('.po-flowplus-nav button')];return a.length===5&&a.every(b=>Math.abs(b.getBoundingClientRect().top-a[0].getBoundingClientRect().top)<=1);})(),
    navNoOverflow:(()=>{const a=panel.querySelector('.po-flowplus-nav');return a.scrollWidth<=a.clientWidth+1;})(),
+   navNoTruncatedLabels:[...panel.querySelectorAll('.po-flowplus-nav button span')].every(label=>label.scrollWidth<=label.clientWidth+1),
    ariaFull:[...panel.querySelectorAll('.po-flowplus-nav button')].every(b=>b.getAttribute('aria-label')?.length>=5),
    navButtonVisible:[...panel.querySelectorAll('.po-flowplus-nav button')].every(b=>b.getBoundingClientRect().width>=48),
    navOverflowPx:(()=>{const n=panel.querySelector('.po-flowplus-nav');return n.scrollWidth-n.clientWidth;})()
@@ -1066,7 +1067,7 @@ async function runTwenty(page){
  });
  assert.equal(plusQA.mixCards,5,'WatchFlow Plus must display five real-native metadata QA channels');
  await page.screenshot({path:path.join(out,'positron-watchflow-plus-mix-552-metadata-before-assert-real.png'),animations:'disabled'});
- for(const key of ['mixSelected','resumeButton','similarButton','zapButton','notPlaying','navOneRow','navNoOverflow','ariaFull','navButtonVisible'])
+ for(const key of ['mixSelected','resumeButton','similarButton','zapButton','notPlaying','navOneRow','navNoOverflow','navNoTruncatedLabels','ariaFull','navButtonVisible'])
   assert.equal(plusQA[key],true,'WatchFlow Plus QA failed: '+key+' overflowPx='+plusQA.navOverflowPx);
  await page.screenshot({path:path.join(out,'positron-watchflow-plus-mix-552-metadata-qa-real.png'),animations:'disabled'});
  // P5.1.85: exercise the real Electron Similar panel with a temporary

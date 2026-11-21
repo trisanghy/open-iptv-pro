@@ -1,3 +1,10 @@
+## P5.1.87 — WatchFlow tabs stay readable / v4.23.171
+
+- Input: manually opened real Electron P5.1.86 screenshot `positron-watchflow-plus-similar-552-metadata-qa-real.png` at 1360×820. The navigation tab formerly labeled “Xem tiếp” rendered as visibly truncated “Xem ti…”.
+- Replace the short visible label with “Tiếp”; the accessible `aria-label` and `title` remain the complete “Tiếp tục xem”. No watch-history, stream, channel, or EPG behavior changes.
+- Add regression assertions and **real Electron DOM geometry checks** for five mode-label widths (span.scrollWidth <= span.clientWidth) in the same populated WatchFlow screenshot, retaining existing nav overflow and button-width validations.
+- Only count the round after Node tests, real Electron screenshot/manual review, all platform builds, and immutable release verification succeed.
+
 ## P5.1.86 — Prevent WatchFlow dialog from covering native player / v4.23.170
 
 - Visual input is the actual Electron 1360×820 screenshot from P5.1.85 at `p5-20-rounds/positron-watchflow-plus-similar-552-metadata-qa-real.png`; popup (top ~72, bottom ~680) covered the entire right part of native player controls (top ~487).

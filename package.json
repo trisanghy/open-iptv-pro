@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.170",
-  "description": "Positron P5.1.86: WatchFlow Similar recommendations no longer cover native playback controls",
+  "version": "4.23.171",
+  "description": "Positron P5.1.87: WatchFlow full accessible mode labels without desktop clipping",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

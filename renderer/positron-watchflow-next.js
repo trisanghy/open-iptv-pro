@@ -19,7 +19,7 @@
  toolbar.className='po-flowplus-nav';toolbar.setAttribute('aria-label','Khám phá WatchFlow');
  const choices=[
   ['discover','Gợi ý','compass'],
-  ['continue','Xem tiếp','history'],
+  ['continue','Tiếp','history'],
   ['similar','Cùng gu','layers'],
   ['mix','Mix','shuffle'],
   ['zap','Zap','zap']

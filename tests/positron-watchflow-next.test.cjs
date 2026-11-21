@@ -55,7 +55,7 @@ test('P5.1.81 WatchFlow Plus presents all modes in one row with full accessible 
  const js=fs.readFileSync('renderer/positron-watchflow-next.js','utf8');
  const css=fs.readFileSync('renderer/positron-watchflow-next.css','utf8');
  const qa=fs.readFileSync('scripts/positron-20-extension.cjs','utf8');
- assert.ok(js.includes("['continue','Xem tiếp','history']"));
+ assert.ok(js.includes("['continue','Tiếp','history']"));
  assert.ok(js.includes("b.setAttribute('aria-label',fullLabels[key])"));
  assert.ok(css.includes('.po-flowplus-nav{flex-wrap:nowrap!important'));
  assert.ok(css.includes('.po-flowplus-nav{overflow-x:auto!important'));
@@ -80,4 +80,14 @@ test('P5.1.86 real Electron WatchFlow Similar dialog does not obscure player con
  assert.ok(css.includes('box-sizing:border-box!important'));
  for(const key of ['similarQA.modalNotOverPlayer,true','similarQA.recommendationsScrollable,true','similarQA.recommendationActions,5'])assert.ok(qa.includes(key),key);
  assert.ok(qa.includes('positron-watchflow-plus-similar-552-metadata-qa-real.png'));
+});
+
+test('P5.1.87 WatchFlow mode labels are never cut off at desktop 1360px while screen-reader names remain full',()=>{
+ const js=fs.readFileSync('renderer/positron-watchflow-next.js','utf8');
+ const qa=fs.readFileSync('scripts/positron-20-extension.cjs','utf8');
+ assert.ok(js.includes("['continue','Tiếp','history']"));
+ assert.ok(js.includes("continue:'Tiếp tục xem'"));
+ assert.ok(js.includes("b.setAttribute('aria-label',fullLabels[key])"));
+ assert.ok(qa.includes('plusQA.navNoTruncatedLabels,true'));
+ assert.ok(qa.includes('label.scrollWidth<=label.clientWidth+1'));
 });
