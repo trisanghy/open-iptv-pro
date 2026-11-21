@@ -6,6 +6,7 @@
  if(!video)return;
  const get=id=>document.getElementById(id);
  const buttons=['playBtn','fsPlay'].map(get).filter(Boolean);
+ for(const id of ['castBtn','pipBtn']){const button=get(id);if(button&&button.firstChild?.nodeType===3)button.firstChild.nodeValue=button.firstChild.nodeValue.replace(/^▣\\s*/,'');}
  const direct=(id,label)=>{const b=get(id);if(b&&!b.getAttribute('aria-label'))b.setAttribute('aria-label',b.title||label);};
  for(const [id,label] of [['prevBtn','Kênh trước'],['playBtn','Phát'],['stopBtn','Dừng'],['nextBtn','Kênh sau'],['fsPrev','Kênh trước'],['fsPlay','Phát'],['fsNext','Kênh sau'],['fsExit','Thoát toàn màn hình'],['fullscreenBtn','Toàn màn hình'],['openGuideBtn','Lịch phát sóng'],['favCurrentBtn','Yêu thích']])direct(id,label);
  // The legacy play handlers still replace button.textContent with ▶ or Ⅱ;
