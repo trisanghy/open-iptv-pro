@@ -37,13 +37,13 @@ test('P5 assets are loaded after P4 without replacing it',()=>{
 test('P5 release is immutable and versioned separately from P4.1',()=>{
  const pkg=JSON.parse(read('package.json'));
  const flow=read('.github/workflows/positron-lab.yml');
- assert.equal(pkg.version,'4.23.106');
- assert.ok(flow.includes('positron/v4.23.106-p5.1.22'));
+ assert.equal(pkg.version,'4.23.107');
+ assert.ok(flow.includes('positron/v4.23.107-p5.1.23'));
  assert.ok(read('scripts/positron-50-audit.cjs').includes('runTwenty(page)'));
- assert.ok(flow.includes('Positron-P5122-20-Real-Screenshots.zip'));
+ assert.ok(flow.includes('Positron-P5123-20-Real-Screenshots.zip'));
 });
 
-test('P5.1.1 sidebar badge matches shipped release instead of stale P4',()=>{const js=read('renderer/positron.js');assert.ok(js.includes("descriptor.textContent='P5.1.22'"));assert.ok(!js.includes('OPEN IPTV PRO · P4 · 50 VÒNG'));});
+test('P5.1.1 sidebar badge matches shipped release instead of stale P4',()=>{const js=read('renderer/positron.js');assert.ok(js.includes("descriptor.textContent='P5.1.23'"));assert.ok(!js.includes('OPEN IPTV PRO · P4 · 50 VÒNG'));});
 
 test('P5.1.3 fullscreen icon uses SVG not a tiny platform glyph',()=>{const js=read('renderer/positron-twenty.js');const css=read('renderer/positron-twenty.css');assert.ok(js.includes("['fullscreenBtn','M8 3H3v5"));assert.ok(css.includes('#page-tv #fullscreenBtn svg'));});
 
@@ -219,4 +219,14 @@ test('P5.1.22 focus mode renders stateful SVG while preserving native toggling',
  assert.ok(audit.includes('assert.equal(focusState.active,true'));
  assert.ok(audit.includes('assert.equal(focusState.different,true'));
  assert.ok(audit.includes('assert.equal(focusState.restored,true'));
+});
+
+test('P5.1.23 Sources empty state is compact only without playlists',()=>{
+ const css=read('renderer/positron-twenty.css');
+ const audit=read('scripts/positron-20-extension.cjs');
+ assert.ok(css.includes('P5.1.23: Sources 720px real Electron screenshot'));
+ assert.ok(css.includes('#sourcesList:has(>.empty-list)>.empty-list'));
+ assert.ok(css.includes('#sourcesList:has(>.empty-list)+#smartDiscoverySection'));
+ assert.ok(audit.includes('metrics.sourceEmpty.height<=65'));
+ assert.ok(audit.includes('metrics.sourceEmpty.gap<=30'));
 });

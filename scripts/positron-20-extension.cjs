@@ -92,6 +92,15 @@ async function runTwenty(page){
        path:svg?.querySelector('path')?.getAttribute('d')||''};
      })(),
 
+     sourceEmpty:(()=>{
+      const n=document.querySelector('#sourcesList>.empty-list');if(!n)return null;
+      const s=getComputedStyle(n),b=n.getBoundingClientRect();
+      const discovery=document.getElementById('smartDiscoverySection')?.getBoundingClientRect();
+      return {text:n.textContent?.trim()||'',height:Math.round(b.height),
+       paddingTop:parseFloat(s.paddingTop),paddingBottom:parseFloat(s.paddingBottom),
+       gap:discovery?Math.round(discovery.top-b.bottom):null};
+     })(),
+
      manualLink:(()=>{
       const n=document.getElementById('manualStreamSelect');if(!n)return null;
       const ctx=document.createElement('canvas').getContext('2d');ctx.font=getComputedStyle(n).font;
@@ -215,6 +224,10 @@ async function runTwenty(page){
    }
    if(target==='sources'&&metrics.sources)assert.notEqual(metrics.sources.background,'rgb(255, 255, 255)','white source panel');
   if(target==='sources'&&width<=720){
+   assert.ok(metrics.sourceEmpty?.text.startsWith('Chưa có nguồn.'),'no-source guidance unexpectedly changed');
+   assert.ok(metrics.sourceEmpty.height<=65,'empty sources block still wastes vertical space: '+name);
+   assert.ok(metrics.sourceEmpty.paddingTop<=14&&metrics.sourceEmpty.paddingBottom<=14,'empty source padding remained oversized: '+name);
+   assert.ok(metrics.sourceEmpty.gap<=30,'Discovery is still pushed far below empty source message: '+name);
    assert.equal(metrics.smartLimit?.value,'all','scan all behavior changed: '+name);
    assert.equal(metrics.smartLimit?.label,'Tất cả kênh','compact scope label missing: '+name);
    assert.ok(metrics.smartLimit.textWidth+32<=metrics.smartLimit.controlWidth,'scan scope option is clipped: '+name);

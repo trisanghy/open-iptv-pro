@@ -44,3 +44,6 @@ Do not credit the round until the new Electron PNG has been opened and inspected
 | 02/20 | P5.1.22 / 4.23.106 | P5.1.21 actual Electron TV 450px screenshot | Static square pseudo-element obscures focus mode state; replace with stateful SVG while retaining native click/ARIA | Code + Node + Electron state assertions staged; after-image/release pending |
 
 Round 01 P5.1.21 verified: Node, Electron capture, mac x64/arm64, Windows x64 and GitHub Release 6/6 success; https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.105-p5.1.21
+
+| 03/20 | P5.1.23 / 4.23.107 | P5.1.22 Sources 720px screenshot | 30px each-side empty-state padding plus 24px source section margin produce excessive empty gap; scope compact spacing to no-playlist state | Source-only responsive CSS plus Electron geometry assertions; CI/release pending |
+Round 02 P5.1.22 verified: 6/6 Actions success and immutable Release https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.106-p5.1.22
