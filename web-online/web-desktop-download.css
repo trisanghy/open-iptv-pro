@@ -93,3 +93,8 @@ html[data-iptv-device="mobile"] .desktop-download-overlay{padding-bottom:max(12p
 .desktop-download-mac-command code{flex:1 1 230px;min-width:0;padding:12px;border:1px solid var(--edge,#35485c);border-radius:9px;background:var(--surface,#101c29);color:var(--text,#eef4fb);font-size:12px;line-height:1.6;overflow-wrap:anywhere;user-select:all}
 .desktop-download-mac-command button{flex:0 0 auto;border:1px solid var(--accent,#bd89f5);border-radius:9px;background:var(--surface2,#172737);color:var(--text,#eef4fb);font-size:13px;font-weight:750;padding:12px;cursor:pointer}
 .desktop-download-mac-command button:hover,.desktop-download-mac-command button:focus-visible{background:color-mix(in srgb,var(--accent,#bd89f5) 18%,var(--surface,#101c29))}
+
+.desktop-download-mac-open-guide{margin:10px 0;padding:12px;border:1px solid var(--edge,#35485c);border-radius:10px;background:var(--surface,#101c29);color:var(--text,#eef4fb);font-size:12px;line-height:1.7}
+.desktop-download-mac-open-guide[hidden]{display:none}
+.desktop-download-mac-open-guide kbd{display:inline-block;background:var(--surface2,#172737);border:1px solid var(--edge,#35485c);border-radius:4px;padding:0 5px}
+.desktop-download-mac-open-guide a{color:var(--accent,#bd89f5)}
