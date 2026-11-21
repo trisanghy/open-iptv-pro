@@ -7,6 +7,8 @@ on:
       - 'src/**'
       - 'renderer/**'
       - 'tests/**'
+      - 'BUILD_WINDOWS.bat'
+      - 'RELEASE_NOTES_ELECTRON_V4_23_72.md'
       - 'scripts/BUILD_WINDOWS_AUTO.ps1'
       - '.github/workflows/publish-electron-v42372.yml'
       - '.github/workflows/publish-main-electron-v42376.yml'
