@@ -224,3 +224,19 @@ html[data-theme="light"] .dvr-quick-status.recording{color:#86501e!important}
   white-space:nowrap!important;
  }
 }
+
+/* Second screenshot pass: "Thư mục / Mở hết / Gập hết" actions and the
+   dynamically injected .empty-list messages (TV/EPG/sources) inherited
+   legacy dark-mode colors, resulting in pale text on white backgrounds. */
+html[data-theme="light"] .empty-list{
+ color:#425a70!important;
+}
+html[data-theme="light"] #page-tv .channel-panel .folder-actions button{
+ color:var(--text)!important;
+ background:var(--web-light-control)!important;
+ border-color:var(--web-light-border)!important;
+}
+html[data-theme="light"] #page-tv .channel-panel .folder-actions button:hover{
+ background:var(--web-light-selected)!important;
+ color:var(--text)!important;
+}
