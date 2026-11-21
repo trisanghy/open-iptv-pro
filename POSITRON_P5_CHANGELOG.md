@@ -846,3 +846,9 @@ P5.1.81 follow-up: real Electron capture found nav overflow; replace flexible no
 - Fix: compact Positron-only CSS shows latest success while retaining warning/error notices, expiry timers and desktop behavior.
 - Real Electron 450px regression with three benign fixture notices, warning visibility, sidebar clearance and no overflow; after screenshot `positron-p51120-compact-toast-stack-450-real.png`.
 - Candidate until CI, direct image review, immutable release and installers are verified.
+
+## P5.1.121 / v4.23.205 — Dismiss individual toast without waiting (new file-triggered round 02/20)
+- Baseline actual P5.1.120 450px Electron after-image directly inspected: latest single success toast still covers a channel tile until its 5.5s expiry; no close button.
+- Isolated Positron DOM observer adds keyboard/touch accessible native close button to each notification; original toast data, severity, auto expiration and app playback remain unchanged.
+- Scoped contrast and 32px pointer target; real Electron screenshot `positron-p51121-toast-dismiss-visible-450-real.png` and QA must test mouse click and keyboard Enter, proper accessible label and no overflow.
+- Candidate until full CI 6/6, actual image opening and immutable binary release verification.

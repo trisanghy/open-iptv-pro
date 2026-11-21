@@ -142,3 +142,10 @@ Not yet started. Choose each new repair from the preceding real screenshot, with
 - Before: `positron-p51119-favorite-count-badge-450-real.png`; after candidate `positron-p51120-compact-toast-stack-450-real.png`.
 - Acceptance: Node tests, actual Electron screenshot geometry, manual opening, independent version/commit and six CI jobs, verified release binaries.
 - Not counted until all evidence is verified.
+
+## File-triggered new batch 02/20 — P5.1.121 / v4.23.205 — CANDIDATE
+- Input: directly opened actual P5.1.120 `positron-p51120-compact-toast-stack-450-real.png`, with latest single success notification still obscuring a card without manual dismissal.
+- Root: native toast function removes notices only after 5.5 seconds, no close control. Do not alter native persistence or timers.
+- Fix: separate Positron-only observer appends accessible 32px close buttons, focusable for keyboard users. Desktop and mobile both supported; warnings/errors retain their severity.
+- Native 450px image and QA: `positron-p51121-toast-dismiss-visible-450-real.png`, button click and Enter dismiss, hit-target, focus/ARIA, no overflow. Node guard.
+- Before: P5.1.120 Electron PNG; after pending real screenshot. Not countable without CI, image review, release assets.

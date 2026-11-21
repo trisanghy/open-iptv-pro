@@ -37,7 +37,7 @@ test('P5 assets are loaded after P4 without replacing it',()=>{
 test('P5 release is immutable and versioned separately from P4.1',()=>{
  const pkg=JSON.parse(read('package.json'));
  const flow=read('.github/workflows/positron-lab.yml');
- assert.equal(pkg.version,'4.23.204');
+ assert.equal(pkg.version,'4.23.205');
  const label=pkg.description.match(/Positron\s+(P\d+\.\d+\.\d+)/)?.[1];
  assert.ok(label,'product P-label must accompany SemVer');
  assert.ok(flow.includes('TAG=positron/v'+pkg.version+'-'+label.toLowerCase()),'release tag and app version must match');
@@ -952,4 +952,21 @@ test('P5.1.120 compact success toast remains visible without hiding warnings',()
  assert.ok(audit.includes('positron-p51120-compact-toast-stack-450-real.png'));
  assert.ok(audit.includes('onlyNewestVisible:shown.length===1'));
  assert.ok(audit.includes('warningVisible,successStillVisible'));
+});
+
+test('P5.1.121 native toast observer adds a real accessible close action',()=>{
+ const script=read('renderer/positron-toast-dismiss.js');
+ const css=read('renderer/positron-horizon-v4.css');
+ const html=read('renderer/index.html');
+ const qa=read('scripts/positron-20-extension.cjs');
+ assert.doesNotThrow(()=>new vm.Script(script));
+ assert.ok(html.includes('src="positron-toast-dismiss.js"'));
+ assert.ok(script.includes('new MutationObserver('));
+ assert.ok(script.includes("button.setAttribute('aria-label','Đóng thông báo / Dismiss notification')"));
+ assert.ok(script.includes("button.addEventListener('click'"));
+ assert.ok(script.includes('node.remove()'));
+ assert.ok(css.includes('#toastArea.toast-area .toast .po-toast-dismiss'));
+ assert.ok(css.includes('pointer-events:auto!important'));
+ assert.ok(qa.includes('positron-p51121-toast-dismiss-visible-450-real.png'));
+ assert.ok(qa.includes('clickedDismissed,keyboardDismissed'));
 });

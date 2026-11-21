@@ -2151,9 +2151,49 @@ async function runTwenty(page){
  for(const [key,value] of Object.entries(compactToastStackQA))
   assert.equal(value,true,'P5.1.120 mobile success toast stack '+key+': '+JSON.stringify(compactToastStackQA));
 
+
+ // P5.1.121: prior after-image showed the single remaining success toast
+ // covering the bottom channel tile. Real Electron QA requires a usable
+ // native dismiss action, including keyboard Enter and warning retention.
+ await page.evaluate(()=>{
+  const tray=document.getElementById('toastArea');
+  const n=document.createElement('div');n.className='toast';
+  n.textContent='QA: Thông báo có thể đóng';n.setAttribute('data-po-round-121','one');
+  tray.append(n);
+ });
+ await page.waitForFunction(()=>!!document.querySelector('#toastArea [data-po-round-121="one"] .po-toast-dismiss'),{timeout:4000});
+ const dismissReadyQA=await page.evaluate(()=>{
+  const n=document.querySelector('#toastArea [data-po-round-121="one"]');
+  const b=n.querySelector('button.po-toast-dismiss');
+  const tr=n.getBoundingClientRect(),br=b.getBoundingClientRect();
+  return {nativeButton:b.tagName==='BUTTON'&&b.type==='button',
+   accessibleLabel:b.getAttribute('aria-label').includes('Đóng thông báo'),
+   hitTarget:br.width>=30&&br.height>=30,
+   insideToast:br.left>=tr.left&&br.right<=tr.right+1,
+   clickable:getComputedStyle(b).pointerEvents==='auto',
+   toastStillVisible:getComputedStyle(n).display!=='none',
+   noOverflow:document.documentElement.scrollWidth<=innerWidth+1};
+ });
+ await page.screenshot({path:path.join(out,'positron-p51121-toast-dismiss-visible-450-real.png'),animations:'disabled'});
+ await page.click('#toastArea [data-po-round-121="one"] .po-toast-dismiss');
+ const clickedDismissed=await page.evaluate(()=>!document.querySelector('#toastArea [data-po-round-121="one"]'));
+ await page.evaluate(()=>{
+  const tray=document.getElementById('toastArea');
+  const n=document.createElement('div');n.className='toast warn';
+  n.textContent='QA: Cảnh báo vẫn giữ được';n.setAttribute('data-po-round-121','keyboard');
+  tray.append(n);
+ });
+ await page.waitForFunction(()=>!!document.querySelector('#toastArea [data-po-round-121="keyboard"] .po-toast-dismiss'),{timeout:4000});
+ await page.locator('#toastArea [data-po-round-121="keyboard"] .po-toast-dismiss').focus();
+ await page.keyboard.press('Enter');
+ const keyboardDismissed=await page.evaluate(()=>!document.querySelector('#toastArea [data-po-round-121="keyboard"]'));
+ const toastDismissQA={...dismissReadyQA,clickedDismissed,keyboardDismissed};
+ for(const [key,value] of Object.entries(toastDismissQA))
+  assert.equal(value,true,'P5.1.121 accessible native notification dismissal '+key+': '+JSON.stringify(toastDismissQA));
+
  await page.setViewportSize({width:1360,height:820});
   const report={type:'Positron P5 twenty distinct desktop screenshot cases',realElectron:true,syntheticChannels:false,
-  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA,chooserQa,toastLayoutQA,nativeToastQA,compactIdleQA,channelChipRailQA,advancedFilterQA,readableCardsQA,keyboardTabQA,favoriteEmptyQA,duplicateEmptyQA,categoryFilterQA,categoryFixtureQA,compactSingleQA,directFavoriteQA,favoriteCountQA,compactToastStackQA};
+  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA,chooserQa,toastLayoutQA,nativeToastQA,compactIdleQA,channelChipRailQA,advancedFilterQA,readableCardsQA,keyboardTabQA,favoriteEmptyQA,duplicateEmptyQA,categoryFilterQA,categoryFixtureQA,compactSingleQA,directFavoriteQA,favoriteCountQA,compactToastStackQA,toastDismissQA};
  fs.writeFileSync(path.resolve('positron-evidence','audit-p5-20-rounds.json'),JSON.stringify(report,null,2));
  return report;
 }

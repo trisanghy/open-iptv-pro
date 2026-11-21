@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.204",
-  "description": "Positron P5.1.120: compact mobile toast stack retains warnings",
+  "version": "4.23.205",
+  "description": "Positron P5.1.121: dismissible toast action with keyboard and touch",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",
