@@ -1,0 +1,178 @@
+/* Light theme coherence v4.23.78.
+   One shared light palette across legacy sections and newer feature modules.
+   Scope strictly to data-theme=light; fullscreen media/video stay dark.
+   Never replace the user's selected accent or saved appearance settings. */
+html[data-theme="light"][data-ui-style="current"]{
+  --ui-card:var(--surface);
+  --ui-control:var(--surface2);
+  --ui-stroke:var(--edge);
+  --ui-navigation:#ffffff;
+  --ui-selection:color-mix(in srgb,var(--accent) 13%,#fff);
+  --ui-primary:var(--accent);
+  --ui-on-primary:#20152e;
+  --ui-shadow:0 3px 12px #263b5410;
+  color-scheme:light;
+}
+/* Shared surfaces: older screens still use navy literals even in Light. */
+html[data-theme="light"] :is(
+ .dvr-panel,.dvr-job,.dvr-quick-form,.epg-summary,.epg-row,.epg-result,
+ .epg-search-results,.epg-source-card,.epg-advanced,.epg-source-row,
+ .health-table,.health-overview,.doctor-metrics article,.doctor-v2-panel,
+ .doctor-v3-panel,.doctor-issues,.collector-progress,.collector-metrics span,
+ .source-merge-summary,.source-duplicate-row,.source-hub,.source-hub-section,
+ .settings-card,.settings-accordion-content,.settings-accordion-heading,
+ .source-card,.task-dock,.task-dock-body,.task-panel,.task-live-results,
+ .advanced-timebar,.folder-card,.folder-manager,.modal-box,
+ .web-chooser-main,.web-chooser-side section
+){
+  background:var(--ui-card,var(--surface))!important;
+  color:var(--text)!important;
+  border-color:var(--ui-stroke,var(--edge))!important;
+}
+html[data-theme="light"] :is(
+ .dvr-panel .dvr-heading,.dvr-panel .dvr-folder,.dvr-panel .dvr-job,
+ .epg-program,.epg-program header,.health-table th,.health-table td,
+ .doctor-metrics article,.source-duplicate-row,.task-dock-head,
+ .settings-accordion-heading,.collector-metrics span,.source-hub-heading
+){border-color:var(--ui-stroke,var(--edge))!important}
+html[data-theme="light"] :is(
+ .epg-summary,.task-dock-head,.source-duplicate-row,.collector-metrics span,
+ .settings-accordion-heading,.health-table th,.sources-hub-nav,
+ .multi-head,.multi-bottom,.dvr-folder,.doctor-v3-panel .smart-controls
+){
+  background:var(--ui-control,var(--surface2))!important;
+  color:var(--text)!important;
+}
+html[data-theme="light"] :is(
+ .dvr-panel h2,.dvr-panel h3,.dvr-panel label,.dvr-panel strong,
+ .dvr-folder,.epg-summary,.epg-row header,.epg-program b,.epg-program time,
+ .collector-progress strong,.doctor-metrics strong,.source-hub-heading h2,
+ .health-table th,.health-table td,.settings-accordion-heading
+){color:var(--text)!important}
+html[data-theme="light"] :is(
+ .dvr-panel p,.dvr-panel small,.dvr-panel .hint,.dvr-quick-hint,
+ .dvr-panel .dvr-quick-status,.epg-source-card p,.epg-program small,
+ .epg-summary small,.doctor-v3-panel small,.health-overview small,
+ .collector-progress p,.source-duplicate-row small,.task-dock-summary
+){color:var(--muted)!important}
+/* Fix dark inputs and native controls inside DVR, EPG and utilities. */
+html[data-theme="light"] :is(
+ .dvr-panel input,.dvr-panel select,.dvr-panel textarea,
+ .epg-advanced input,.epg-advanced select,.epg-search-results input,
+ .source-hub input,.source-hub select,.collector-progress input,
+ .health-overview select,.health-overview input,
+ .doctor-v3-panel input,.doctor-v3-panel select,.doctor-v2-panel select,
+ .settings-accordion-content input,.settings-accordion-content select,
+ .web-channel-chooser input,.web-channel-chooser select
+){
+  background:var(--surface)!important;
+  color:var(--text)!important;
+  border-color:var(--ui-stroke,var(--edge))!important;
+  color-scheme:light;
+}
+html[data-theme="light"] :is(
+ .dvr-panel .btn-subtle,.dvr-panel button:not(.btn-primary),
+ .epg-advanced button,.source-hub button:not(.btn-primary),
+ .doctor-v2-panel button:not(.btn-primary),.doctor-v3-panel button:not(.btn-primary),
+ .folder-actions button,.folder-card-actions button,
+ .multi-head select,.multi-bottom button,.source-actions button,
+ .settings-accordion-heading button
+){
+  background:var(--ui-control,var(--surface2))!important;
+  color:var(--text)!important;
+  border-color:var(--ui-stroke,var(--edge))!important;
+}
+/* Preserve obvious selection / primary call-to-action colors. */
+html[data-theme="light"] :is(.btn-primary,.control-main):not(:disabled){
+  background:var(--ui-primary,var(--accent))!important;
+  border-color:var(--ui-primary,var(--accent))!important;
+  color:var(--ui-on-primary,#211a35)!important;
+}
+html[data-theme="light"] #page-tv :is(.filter-tab.active,.channel-item.current){
+  background:var(--ui-selection,color-mix(in srgb,var(--accent) 13%,#fff))!important;
+  border-color:color-mix(in srgb,var(--accent) 40%,var(--edge))!important;
+  color:var(--text)!important;
+}
+html[data-theme="light"] #page-tv :is(.folder-actions button,.folder-header,.filter-tab){
+  background:var(--ui-control,var(--surface2))!important;
+  color:var(--text)!important;
+  border-color:var(--edge)!important;
+}
+/* New AI module: remove dark purple pills/cards from a white control strip. */
+html[data-theme="light"] #page-tv .unified-ai-row :is(.unified-ai-toggle,.video-enhance-toggle){
+  background:color-mix(in srgb,var(--accent) 12%,var(--surface))!important;
+  color:var(--text)!important;
+  border:1px solid color-mix(in srgb,var(--accent) 38%,var(--edge))!important;
+  box-shadow:none!important;
+}
+html[data-theme="light"] #page-tv .unified-ai-row :is(.unified-ai-toggle,.video-enhance-toggle):hover{
+  background:color-mix(in srgb,var(--accent) 20%,var(--surface))!important;
+}
+html[data-theme="light"] #page-tv .unified-ai-row .unified-ai-mark{
+  background:color-mix(in srgb,var(--accent) 22%,var(--surface))!important;
+  color:var(--text)!important;
+}
+html[data-theme="light"] #page-tv .unified-ai-row :is(
+ .veh-card,.veh-bench,.veh-ai-probe,#veh-status
+){
+  background:var(--ui-control,var(--surface2))!important;
+  color:var(--text)!important;
+  border-color:var(--ui-stroke,var(--edge))!important;
+}
+html[data-theme="light"] #page-tv .unified-ai-row :is(
+ .veh-card label,.veh-card span,.veh-card small,.veh-limit,.veh-safe,
+ #veh-ai-hw-status,.veh-nav button,.veh-bench strong,#veh-status
+){color:var(--text)!important}
+html[data-theme="light"] #page-tv .unified-ai-row :is(.veh-card select,.veh-bench button,#veh-ai-probe){
+  background:var(--surface)!important;
+  color:var(--text)!important;
+  border-color:var(--edge)!important;
+}
+html[data-theme="light"] #page-tv .unified-ai-row .veh-nav{
+  border-color:var(--edge)!important;
+}
+html[data-theme="light"] #page-tv .unified-ai-row .veh-nav button:first-child{
+  background:var(--ui-selection,color-mix(in srgb,var(--accent) 13%,white))!important;
+  color:var(--text)!important;
+}
+/* Sub-controls underneath the player inherit light surfaces, not dark overlays. */
+html[data-theme="light"] #page-tv .player-control-card :is(
+ .caption-third-row,.caption-third-controls,.caption-ai-main,.caption-tts-main,
+ .playback-extra,.playback-extra-inner,.unified-ai-content
+){
+  color:var(--text)!important;
+  border-color:var(--edge)!important;
+}
+html[data-theme="light"] #page-tv .player-control-card :is(
+ .caption-third-controls select,.caption-third-controls button,
+ .playback-extra summary
+){
+  background:var(--ui-control,var(--surface2))!important;
+  color:var(--text)!important;
+  border-color:var(--edge)!important;
+}
+html[data-theme="light"] #page-tv .player-control-card :is(
+ #liveCaptionStatus,#liveTtsStatus,.caption-tts-footer
+){color:var(--muted)!important}
+html[data-theme="light"] #page-tv :is(.epg-current-card,.advanced-timebar,.compact-tools,.quick-btn){
+  background:var(--ui-card,var(--surface))!important;
+  border-color:var(--edge)!important;
+  color:var(--text)!important;
+}
+html[data-theme="light"] #page-tv .web-channel-chooser :is(
+ .web-chooser-main,.web-chooser-side section
+){background:var(--ui-card,var(--surface))!important;color:var(--text)!important;border-color:var(--edge)!important}
+html[data-theme="light"] #page-tv .web-channel-chooser :is(
+ .web-chooser-chip,.web-chooser-card,.web-chooser-filters input,.web-chooser-filters select
+){background:var(--ui-control,var(--surface2))!important;color:var(--text)!important;border-color:var(--edge)!important}
+html[data-theme="light"] #page-tv .web-channel-chooser :is(.web-chooser-chip.active,.web-chooser-card.active){
+  background:var(--ui-selection,color-mix(in srgb,var(--accent) 13%,white))!important;
+  border-color:color-mix(in srgb,var(--accent) 43%,var(--edge))!important;
+}
+html[data-theme="light"] #page-tv .web-channel-chooser :is(.web-chooser-tabs button.active,.web-chooser-see){
+  color:var(--text)!important;
+}
+/* Preserve black surfaces behind video frames and fullscreen controls by design. */
+html[data-theme="light"] #page-tv :is(.player-box,.player-box video,.multi-tile video){
+  background-color:#07111f;
+}
