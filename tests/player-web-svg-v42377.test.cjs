@@ -21,10 +21,15 @@ test('Legacy emoji are hidden and real video state updates play/pause vectors',(
  assert.match(js,/dataset\.iptvPlaying=String\(playing\)/);
  assert.match(js,/!video\.paused&&!video\.ended/);
  assert.match(js,/attributeFilter:\['aria-pressed'\]/);
- assert.match(js,/replace\(\/\^▣/);
+ assert.match(js,/iconOnlyMediaButton\(get\('castBtn'\)/);
 });
-test('Cast and PiP keep their text captions, all handlers untouched',()=>{
- assert.match(css,/#page-tv :is\(#castBtn,#pipBtn\)\{font-size:12px!important/);
+test('Cast and PiP show exactly one SVG, keeping native handlers and accessibility',()=>{
+ assert.match(css,/\.web-svg-icon-only::before\{/);
+ assert.match(js,/button\.replaceChildren\(\)/);
+ assert.match(js,/button\.setAttribute\('aria-label',label\)/);
+ assert.match(js,/iconOnlyMediaButton\(get\('pipBtn'\)/);
+ assert.match(read('renderer/app.js'),/bind\(\['castBtn'\]/);
+ assert.match(read('renderer/cast-ui.js'),/OpenIPTVCastUI=Object\.freeze/);
  assert.ok(!js.includes('cloneNode('));
  assert.ok(!js.includes('replaceWith('));
 });
