@@ -502,7 +502,13 @@
   const syncEpgToolVisibility=()=>{
    const guide=window.IPTVExtras?.getGuide?.();
    const hasProgrammes=Array.isArray(guide?.programmes)&&guide.programmes.length>0;
+   const wasCollapsed=epgPage.hasAttribute('data-positron-no-epg-programmes');
    epgPage.toggleAttribute('data-positron-no-epg-programmes',!hasProgrammes);
+   // A guide can finish loading while this page stays open. Refresh the
+   // original advanced-search result so it no longer says "no EPG data".
+   if(hasProgrammes&&wasCollapsed&&epgPage.classList.contains('active-page')){
+    window.IPTVProAdvanced?.onPage?.('epg');
+   }
   };
   new MutationObserver(syncEpgToolVisibility).observe(epgSummary,{childList:true,subtree:true,characterData:true});
   syncEpgToolVisibility();

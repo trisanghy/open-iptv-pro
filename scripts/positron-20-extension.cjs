@@ -61,7 +61,8 @@ async function runTwenty(page){
       advancedVisible:getVisible('#page-epg .epg-advanced'),
       searchPreserved:!!document.getElementById('epgGlobalSearch'),
       mappingPreserved:!!document.getElementById('epgManualMap'),
-      offsetPreserved:!!document.getElementById('epgOffset')};
+      offsetPreserved:!!document.getElementById('epgOffset'),
+      searchResultsVisible:getVisible('#epgSearchResults')};
     })(),
     dvrFormVisible:get('#dvrForm')?.visible||false,
     dvrEmptyAction:get('#positronDvrNoChannels'),
@@ -385,6 +386,7 @@ async function runTwenty(page){
      assert.equal(metrics.epgToolVisibility.collapsed,true,'Unusable advanced EPG controls must collapse without guide: '+name);
      assert.equal(metrics.epgToolVisibility.filterVisible,false,'Empty EPG channel filter still wasting space: '+name);
      assert.equal(metrics.epgToolVisibility.advancedVisible,false,'Unusable EPG search, mapping and offset are still visible: '+name);
+     assert.equal(metrics.epgToolVisibility.searchResultsVisible,false,'No-guide advanced search duplicates the native empty-state guidance: '+name);
      assert.ok(metrics.epgToolVisibility.searchPreserved&&metrics.epgToolVisibility.mappingPreserved&&metrics.epgToolVisibility.offsetPreserved,
       'Advanced controls were removed instead of reversibly hidden: '+name);
      const transitions=await page.evaluate(async()=>{
@@ -401,14 +403,18 @@ async function runTwenty(page){
       await new Promise(resolve=>setTimeout(resolve,0));
       const epgToolsReopened=!section.hasAttribute('data-positron-no-epg-programmes')
         &&getComputedStyle(advanced).display!=='none'&&getComputedStyle(filter).display!=='none';
+      const results=document.getElementById('epgSearchResults');
+      const epgSearchUpdatedAfterGuide=!!results&&!results.textContent.includes('Chưa có dữ liệu EPG.')
+       &&getComputedStyle(results).display!=='none';
       state.programmes.pop();
       summary.innerHTML=oldMarkup;
       await new Promise(resolve=>setTimeout(resolve,0));
       const epgToolsCollapsedAgain=section.hasAttribute('data-positron-no-epg-programmes')
         &&getComputedStyle(advanced).display==='none'&&getComputedStyle(filter).display==='none';
-      return {epgToolsReopened,epgToolsCollapsedAgain,programmeCount:state.programmes.length};
+      return {epgToolsReopened,epgToolsCollapsedAgain,epgSearchUpdatedAfterGuide,programmeCount:state.programmes.length};
      });
      assert.ok(transitions?.epgToolsReopened,'EPG controls did not reopen when a guide programme appeared: '+name);
+     assert.ok(transitions?.epgSearchUpdatedAfterGuide,'EPG search still displays old no-data message after guide becomes available: '+name);
      assert.ok(transitions?.epgToolsCollapsedAgain,'EPG controls did not collapse again after guide removed: '+name);
      assert.equal(transitions?.programmeCount,0,'QA-only guide entry was not removed');
     }

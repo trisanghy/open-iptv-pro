@@ -358,3 +358,11 @@ P5.1.46 same-version CI repair: run 44866650681 failed 2/611 because historical 
 - The visible Nguồn EPG button, empty-guide explanation, cached guide, DVR and all playback settings remain intact. No features or user data are deleted.
 - Regression: assert real Electron empty state at 1360px and 720px; emulate a temporary in-memory guide entry to verify controls reappear and disappear again; assert all native controls still exist. No synthetic screenshot is accepted as a real streaming test.
 - Requires new GitHub Actions test, screenshots, both Windows x64 EXE installers and macOS builds before release is verified.
+
+## Positron P5.1.53 (Electron 4.23.137) — remove duplicate empty EPG search copy; refresh live guide search
+- Input: actual P5.1.52 Electron 720px EPG screenshot `positron-p5-17-real.png` from workflow 44870313583, visually opened and compared with P5.1.51.
+- Found: after the P5.1.52 no-guide filters are hidden, `#epgSearchResults` still repeats an almost identical no-guide message already supplied by the native `#epgSummary`.
+- Also found potential runtime stale text: after an asynchronous EPG load, previously rendered search results could keep the no-data message even though programme controls are restored.
+- Repair: Positron-only empty-state CSS hides just redundant search status while guide is empty; original native EPG summary and Nguồn EPG remain visible. When programme data first becomes available on the active EPG page, reuse existing `IPTVProAdvanced.onPage('epg')` to refresh search-result text; user inputs, saved mappings and guide are preserved.
+- Tests: real Electron audit at EPG 1360px/720px checks suppression plus reversible show/hide and verifies search text updates when temporary in-memory QA programme appears. Screenshot audit is not proof of live TV playback.
+- Release condition: full tests + actual before/after Electron screenshots + Windows/macOS packaging + non-overwriting tag P5.1.53.

@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.136",
-  "description": "Positron P5.1.52: hide empty-guide EPG controls until programme data loads",
+  "version": "4.23.137",
+  "description": "Positron P5.1.53: simplify empty EPG and refresh search after guide loads",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

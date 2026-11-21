@@ -475,3 +475,10 @@ html[data-positron="true"] #page-epg #epgRefreshBtn:disabled[data-positron-epg-n
 html[data-positron="true"] #page-epg[data-positron-no-epg-programmes] :is(.epg-filter,.epg-advanced){
  display:none!important;
 }
+
+/* P5.1.53: while advanced EPG search is unavailable, suppress the extra
+   stale no-guide search-status row. The native EPG summary and source action
+   remain visible; native search results return immediately with guide data. */
+html[data-positron="true"] #page-epg[data-positron-no-epg-programmes] #epgSearchResults{
+ display:none!important;
+}
