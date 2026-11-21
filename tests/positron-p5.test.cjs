@@ -1191,3 +1191,9 @@ test('P5.1.135 tìm kênh nhiều từ không đúng thứ tự vẫn thuần lo
   'positron-p51135-reordered-search-450-real.png'])
   assert.ok(qa.includes(proof),'Thiếu kiểm thử Electron: '+proof);
 });
+
+test('P5.1.135 tiêu đề Electron và sidebar đồng bộ phiên bản ứng dụng',()=>{
+ const html=read('renderer/index.html'),pkg=JSON.parse(read('package.json'));
+ assert.ok(html.includes('<title>Open IPTV Pro '+pkg.version+'</title>'),'tiêu đề cửa sổ phải khớp package');
+ assert.ok(html.includes('<span class="version">'+pkg.version+'</span>'),'sidebar không được hiển thị phiên bản cũ');
+});
