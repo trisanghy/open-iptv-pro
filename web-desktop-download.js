@@ -100,6 +100,14 @@ const mobileFormats=[
     </details>
     <p id="desktopDownloadStatus" class="desktop-download-status" role="status" aria-live="polite">Đang kiểm tra phiên bản…</p>
     <div id="desktopDownloadOptions" class="desktop-download-options"></div>
+    <details class="desktop-download-ios-shortcut" id="macosDownloadHelp">
+      <summary class="desktop-download-shortcut-summary"><span class="desktop-download-shortcut-copy"><strong>Mac báo “is damaged and can’t be opened”?</strong><small>Hướng dẫn khi macOS chặn ứng dụng</small></span><span class="desktop-download-shortcut-chevron" aria-hidden="true">⌄</span></summary>
+      <div class="desktop-download-shortcut-steps">
+       <p>Chỉ tải file từ GitHub Releases chính thức, đối chiếu SHA-256 và kéo <strong>Open IPTV Pro.app</strong> vào Applications. Thử <strong>System Settings → Privacy &amp; Security → Open Anyway</strong> nếu có.</p>
+       <p>Chỉ khi đã xác minh file an toàn nhưng bị chặn do quarantine, mở Terminal chạy: <code style="overflow-wrap:anywhere">xattr -dr com.apple.quarantine "/Applications/Open IPTV Pro.app"</code></p>
+       <p class="desktop-download-shortcut-note">Nếu DMG hỏng, checksum không khớp hoặc macOS báo mã độc, dừng cài và tải lại. Không tắt Gatekeeper toàn máy.</p>
+      </div>
+     </details>
     <div class="desktop-download-actions">
      <a class="desktop-download-releases" href="${RELEASES}" target="_blank" rel="noopener noreferrer">Electron Stable</a>
      <a class="desktop-download-releases" href="tai-ve.html" target="_blank" rel="noopener noreferrer">So sánh 4 nền tảng &amp; tải file</a>
