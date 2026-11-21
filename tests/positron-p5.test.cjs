@@ -1168,3 +1168,12 @@ test('P5.1.134 NEW keyboard F on focused channel card toggles persistent Favorit
   'positron-p51134-favorite-hotkey-f-450-real.png'])
   assert.ok(qa.includes(t),'missing real Electron keyboard Favorite proof: '+t);
 });
+
+test('P5.1.134 legacy direct Favorite regression checks native SVG fill instead of Unicode',()=>{
+ const qa=read('scripts/positron-20-extension.cjs');
+ assert.ok(qa.includes('starPressed:button?.getAttribute'), 'retain the pressed state assertion');
+ assert.ok(qa.includes("getComputedStyle(button.querySelector('svg path')).fill!=='none'"), 'verify SVG selected fill');
+ assert.ok(qa.includes('persistedInStorage:'), 'retain persistent Favorite assertion');
+ assert.ok(qa.includes('keyboardFocus:'), 'retain keyboard focus assertion');
+ assert.ok(!qa.includes("button.textContent==='★'"), 'reject stale font glyph assertion');
+});

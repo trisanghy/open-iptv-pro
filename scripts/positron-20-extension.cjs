@@ -2050,7 +2050,9 @@ async function runTwenty(page){
   const key=window.OpenIPTVFavorites.key(ch);
   return {stableFavorite:window.OpenIPTVFavorites.has(store,ch)&&store.favoriteKeys.includes(key),
    persistedInStorage:Array.isArray(persisted.favoriteKeys)&&persisted.favoriteKeys.includes(key),
-   starPressed:button?.getAttribute('aria-pressed')==='true'&&button.textContent==='★',
+   starPressed:button?.getAttribute('aria-pressed')==='true'&&
+    !!button.querySelector('svg[aria-hidden="true"] path')&&
+    getComputedStyle(button.querySelector('svg path')).fill!=='none',
    keyboardFocus:document.activeElement===button,
    noAutoplay:window.IPTVState.getCurrent()===null};
  });
