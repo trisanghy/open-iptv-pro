@@ -6,6 +6,7 @@ on:
       - .github/workflows/audit-rust-light-ui.yml
       - renderer/rust-light-consistency-v23-8-92.css
       - tests/rust-light-visual-audit.cjs
+      - tests/rust-feature-gallery-v23-8-97.cjs
       - tests/rust-light-consistency-v23-8-92.test.cjs
   workflow_dispatch:
 permissions:
@@ -39,11 +40,20 @@ jobs:
           set -Eeuo pipefail
           node --test tests/rust-light-consistency-v23-8-92.test.cjs
           CHROME="$(command -v google-chrome)" node tests/rust-light-visual-audit.cjs
+      - name: Capture all Rust Lab feature pages and expanded panels
+        shell: bash
+        env:
+          NODE_PATH: ${{ runner.temp }}/iptv-playwright/node_modules
+        run: |
+          set -Eeuo pipefail
+          CHROME="$(command -v google-chrome)" node tests/rust-feature-gallery-v23-8-97.cjs
       - name: Upload screenshot and per-page colors (browser renderer, not native)
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: rust-light-renderer-browser-screenshots
-          path: rust-light-audit/
+          name: rust-lab-full-feature-visual-gallery
+          path: |
+            rust-light-audit/
+            rust-feature-gallery/
           if-no-files-found: warn
           retention-days: 10
