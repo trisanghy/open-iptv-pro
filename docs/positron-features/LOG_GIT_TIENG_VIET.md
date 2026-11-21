@@ -2,14 +2,23 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
-## P5.1.135 — tìm kênh nhiều từ không cần đúng thứ tự
+## P5.1.136 — nhấn Enter để chọn kênh sau khi tìm kiếm
 
-**Ứng dụng:** 4.23.219 · **Trạng thái:** Chưa có bản phát hành
+**Ứng dụng:** 4.23.220 · **Trạng thái:** Chưa có bản phát hành
+
+Feature priority: NEW — Chuyển tiêu điểm bàn phím tới thẻ kênh phù hợp đầu tiên sau khi tìm kiếm, tránh phải dùng chuột và không tự phát hoặc thay đổi dữ liệu người dùng. User action: Mở Chọn kênh ở TV, nhập tên kênh vào Tìm kiếm rồi nhấn Enter để chọn thẻ đầu tiên; nhấn Enter thêm lần nữa trên thẻ mới phát kênh nếu muốn.
+
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/4bccbe89e2643f333ebf46442d2727c253aa891f)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+
+## P5.1.135 — Tìm kênh nhiều từ không đúng thứ tự
+
+**Ứng dụng:** 4.23.219 · **Trạng thái:** Đã phát hành
 
 Feature priority: NEW — Tìm được kênh bằng nhiều từ khóa trong tên và nhóm dù đảo thứ tự, có khoảng trắng lặp hoặc gõ tiếng Việt không dấu; không truy cập URL, không tự phát video và không đổi dữ liệu. User action: Mở Chọn kênh, gõ "001 Channel QA" hoặc "qa 001" vào Tìm kiếm; kết quả "QA Channel 001" xuất hiện mà không cần gõ chính xác thứ tự.
 
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/71114f4211c833e3da6dd0faa5e60045ca3d9a09)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/f257bf79031549cc75d4eb5f3beb463786930daf)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.219-p5.1.135)
 
 ## P5.1.134 — Nhấn F để thêm/bỏ Yêu thích và dùng biểu tượng sao SVG
 
