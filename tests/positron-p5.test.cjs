@@ -37,7 +37,7 @@ test('P5 assets are loaded after P4 without replacing it',()=>{
 test('P5 release is immutable and versioned separately from P4.1',()=>{
  const pkg=JSON.parse(read('package.json'));
  const flow=read('.github/workflows/positron-lab.yml');
- assert.equal(pkg.version,'4.23.227');
+ assert.equal(pkg.version,'4.23.228');
  const label=pkg.description.match(/Positron\s+(P\d+\.\d+\.\d+)/)?.[1];
  assert.ok(label,'product P-label must accompany SemVer');
  assert.ok(flow.includes('TAG=positron/v'+pkg.version+'-'+label.toLowerCase()),'release tag and app version must match');
@@ -1291,7 +1291,7 @@ test('P5.1.142 chương trình tiếp theo và giờ hiển thị theo XMLTV c�
  const qa=read('scripts/positron-20-extension.cjs');
  for(const token of ["window.PositronOnAirCore?.upcoming(guide,ch,Date.now(),window.IPTVGuide)",
   "next.className='web-chooser-next-programme'",
-  "toLocaleTimeString('vi-VN'", "next.textContent=(soonOnly.checked?'Sắp chiếu ':'Tiếp theo ')+time+': '+upcoming.title"])
+  "toLocaleTimeString('vi-VN'", "next.textContent=(soonOnly.checked?'Sắp chiếu ':sort.value==='upcoming-first'?'Sắp tới ':'Tiếp theo ')+time+': '+upcoming.title"])
   assert.ok(ui.includes(token),'Thiếu thao tác chương trình tiếp theo: '+token);
  assert.ok(css.includes('.web-chooser-next-programme'));
  for(const token of ['upcomingFromRealLocalXMLTV:','upcomingShowsLocalClock:','noNextProgrammeWithoutOptIn:','noAutoplay:',
@@ -1326,4 +1326,22 @@ test('P5.1.143 kiểm tra nhãn EPG không bị bó cột tại Electron 450px',
  assert.ok(css.includes('grid-template-columns:58px minmax(0,1fr)!important'));
  for(const token of ['epgTitlesLegible:','epgRowsStacked:','futureTitleLegible:','futureRowBelowName:'])
   assert.ok(qa.includes(token),'Thiếu kiểm chứng rõ chữ: '+token);
+});
+
+test('P5.1.144 sắp xếp EPG sắp phát sớm nhất và không ẩn kênh chưa có lịch',()=>{
+ const js=read('renderer/web-channel-chooser-v42371.js');
+ const qa=read('scripts/positron-20-extension.cjs');
+ for(const token of ["earliestOption.value='upcoming-first'",
+ "earliestOption.textContent='Chương trình sắp phát sớm nhất (EPG)'",
+ "const earliestFirst=sort.value==='upcoming-first'",
+ "window.PositronOnAirCore?.upcoming(sortGuide,c,sortClock,window.IPTVGuide)",
+ "nextStartCache.set(key,Number.isFinite(upcoming?.start)?upcoming.start:Infinity)",
+ "if(first!==second)return first<second?-1:1",
+ "sort.value==='upcoming-first'?'Sắp tới '"])
+  assert.ok(js.includes(token),'Thiếu sắp xếp EPG sớm nhất '+token);
+ for(const token of ['selectedRealEpgSort:','upcomingSoonestFirst:','unknownEpgNotLost:',
+ 'earlyTitleFromXMLTV:','laterTitleFromXMLTV:','sourceRecordsUnchanged:',
+ 'alphabeticalUndoRestored:','noAutoplay:',
+ 'positron-p51144-earliest-epg-before-450-real.png','positron-p51144-earliest-epg-after-450-real.png'])
+  assert.ok(qa.includes(token),'Thiếu QA Electron P144 '+token);
 });

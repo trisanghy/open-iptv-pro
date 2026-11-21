@@ -47,6 +47,11 @@
  favoriteFirstOption.value='fav-first';
  favoriteFirstOption.textContent='Yêu thích lên đầu';
  sort.append(favoriteFirstOption);
+ // P5.1.144: discover programmes by actual next XMLTV start time.
+ const earliestOption=document.createElement('option');
+ earliestOption.value='upcoming-first';
+ earliestOption.textContent='Chương trình sắp phát sớm nhất (EPG)';
+ sort.append(earliestOption);
  // P5.1.129: actual P5.1.128 Electron screenshot shows a clipped category
  // letter to the RIGHT of the pinned All reset. Track native scroll state.
  const syncPinnedResetMask=()=>groups.classList.toggle('po-groups-scrolled',groups.scrollLeft>4);
@@ -138,8 +143,24 @@
   if(tab!=='recent'){
    const dir=sort.value==='desc'?-1:1;
    const favoriteFirst=sort.value==='fav-first';
+   const earliestFirst=sort.value==='upcoming-first';
    const saved=favoriteFirst?store():null;
+   let sortGuide=null;
+   if(earliestFirst){try{sortGuide=window.IPTVExtras?.getGuide?.()||null;}catch{}}
+   const sortClock=Date.now(),nextStartCache=new Map();
+   const nextStart=c=>{
+    const key=String(c.id);
+    if(!nextStartCache.has(key)){
+     const upcoming=window.PositronOnAirCore?.upcoming(sortGuide,c,sortClock,window.IPTVGuide);
+     nextStartCache.set(key,Number.isFinite(upcoming?.start)?upcoming.start:Infinity);
+    }
+    return nextStartCache.get(key);
+   };
    result=[...result].sort((a,b)=>{
+    if(earliestFirst){
+     const first=nextStart(a),second=nextStart(b);
+     if(first!==second)return first<second?-1:1;
+    }
     if(favoriteFirst){
      const aFavorite=favorites.has(saved,a),bFavorite=favorites.has(saved,b);
      if(aFavorite!==bFavorite)return aFavorite?-1:1;
@@ -156,14 +177,14 @@
  }
  function channelCard(ch,compact=false){
   const card=document.createElement('button');card.type='button';card.className='web-chooser-card'+(compact?' compact':'');
-  if(!compact&&(onAirOnly.checked||soonOnly.checked))card.classList.add('po-epg-card');
+  if(!compact&&(onAirOnly.checked||soonOnly.checked||sort.value==='upcoming-first'))card.classList.add('po-epg-card');
   card.dataset.channelId=ch.id;card.title='Xem '+(ch.name||'Kênh');
   const active=state.getCurrent?.()?.id===ch.id;card.classList.toggle('active',active);
   const face=document.createElement('span');face.className='web-chooser-art';
   if(ch.logo){const img=document.createElement('img');img.src=ch.logo;img.alt='';img.loading='lazy';img.referrerPolicy='no-referrer';img.addEventListener('error',()=>{img.remove();face.textContent='TV';},{once:true});face.append(img);}else face.textContent='TV';
   const name=document.createElement('span');name.className='web-chooser-name';name.textContent=ch.name||'Không tên';
   card.append(face,name);
-  if(!compact&&(onAirOnly.checked||soonOnly.checked)){
+  if(!compact&&(onAirOnly.checked||soonOnly.checked||sort.value==='upcoming-first')){
    let guide=null;
    try{guide=window.IPTVExtras?.getGuide?.()||null;}catch{}
    const item=window.PositronOnAirCore?.lookup(guide,ch,Date.now(),window.IPTVGuide);
@@ -181,7 +202,7 @@
     const next=document.createElement('small');
     next.className='web-chooser-next-programme';
     const time=new Date(upcoming.start).toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit'});
-    next.textContent=(soonOnly.checked?'Sắp chiếu ':'Tiếp theo ')+time+': '+upcoming.title;
+    next.textContent=(soonOnly.checked?'Sắp chiếu ':sort.value==='upcoming-first'?'Sắp tới ':'Tiếp theo ')+time+': '+upcoming.title;
     next.title='Chương trình tiếp theo theo lịch XMLTV đã nhập: '+upcoming.title;
     card.append(next);
    }

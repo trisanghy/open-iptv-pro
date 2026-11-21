@@ -3088,9 +3088,71 @@ async function runTwenty(page){
  for(const [key,value] of Object.entries(soonProgrammeQA))
   assert.equal(value,true,'P5.1.143 local upcoming XMLTV filter '+key+': '+JSON.stringify(soonProgrammeQA));
 
+
+ // P5.1.144: sort actual upcoming XMLTV programmes by the nearest start,
+ // leaving channels without an EPG schedule visible after scheduled ones.
+ await page.click('[data-chooser-layout="grid"]');
+ await page.fill('#webChooserSearch','QA Channel');
+ await page.waitForFunction(()=>document.querySelector('#webChooserGrid .web-chooser-name')?.textContent==='QA Channel 001'
+  &&document.querySelectorAll('#webChooserGrid button.web-chooser-card').length===18,{timeout:5000});
+ const earliestFixture=await page.evaluate(()=>{
+  const all=window.IPTVState.getChannels();
+  const ch1=all.find(c=>c.name==='QA Channel 001');
+  const ch2=all.find(c=>c.name==='QA Channel 002');
+  const ch3=all.find(c=>c.name==='QA Channel 003');
+  if(!ch1||!ch2||!ch3)throw Error('P5.1.144 missing imported channels');
+  const a='qa144-a',b='qa144-b',clock=Date.now();
+  window.__positron144Guide=window.IPTVExtras.getGuide;
+  window.IPTVExtras.getGuide=()=>({
+   names:{[window.IPTVGuide.tidy(ch1.name)]:a,[window.IPTVGuide.tidy(ch2.name)]:b},
+   aliasesById:{[a]:[ch1.name],[b]:[ch2.name]},offsetMinutes:0,
+   programmes:[
+    {id:a,start:clock+44*60000,end:clock+72*60000,title:'Bản tin bắt đầu muộn'},
+    {id:b,start:clock+8*60000,end:clock+38*60000,title:'Chương trình sớm nhất'}
+   ]});
+  document.getElementById('webChooserAdvanced').open=true;
+  return {sources:window.IPTVState.getStore().channels.length};
+ });
+ await page.screenshot({path:path.join(out,'positron-p51144-earliest-epg-before-450-real.png'),animations:'disabled'});
+ await page.selectOption('#webChooserSort','upcoming-first');
+ await page.waitForFunction(()=>{
+  const names=[...document.querySelectorAll('#webChooserGrid button.web-chooser-card .web-chooser-name')]
+   .slice(0,3).map(e=>e.textContent);
+  return names[0]==='QA Channel 002'&&names[1]==='QA Channel 001';
+ },{timeout:5000});
+ const earliestEpgSortQA=await page.evaluate(original=>{
+  const cards=[...document.querySelectorAll('#webChooserGrid button.web-chooser-card')];
+  const names=cards.map(c=>c.querySelector('.web-chooser-name')?.textContent);
+  const epg=cards.slice(0,2).map(c=>c.querySelector('.web-chooser-next-programme')?.textContent||'');
+  return {
+   selectedRealEpgSort:document.getElementById('webChooserSort').value==='upcoming-first',
+   upcomingSoonestFirst:names[0]==='QA Channel 002'&&names[1]==='QA Channel 001',
+   unknownEpgNotLost:cards.length===18&&names.includes('QA Channel 003'),
+   earlyTitleFromXMLTV:epg[0].includes('Chương trình sớm nhất'),
+   laterTitleFromXMLTV:epg[1].includes('Bản tin bắt đầu muộn'),
+   localTimesVisible:epg.every(t=>/^Sắp tới \d{1,2}:\d{2}: /.test(t)),
+   sourceRecordsUnchanged:window.IPTVState.getStore().channels.length===original.sources,
+   noAutoplay:window.IPTVState.getCurrent()===null,
+   noHorizontalOverflow:document.documentElement.scrollWidth<=innerWidth+1
+  };
+ },earliestFixture);
+ await page.evaluate(()=>document.querySelector('#webChooserGrid button.web-chooser-card .web-chooser-next-programme')?.scrollIntoView({block:'center'}));
+ await page.screenshot({path:path.join(out,'positron-p51144-earliest-epg-after-450-real.png'),animations:'disabled'});
+ await page.selectOption('#webChooserSort','asc');
+ await page.evaluate(()=>{window.IPTVExtras.getGuide=window.__positron144Guide;});
+ await page.waitForFunction(()=>document.querySelector('#webChooserGrid .web-chooser-name')?.textContent==='QA Channel 001',{timeout:5000});
+ Object.assign(earliestEpgSortQA,await page.evaluate(()=>({
+  alphabeticalUndoRestored:document.getElementById('webChooserSort').value==='asc'
+   &&document.querySelector('#webChooserGrid .web-chooser-name')?.textContent==='QA Channel 001',
+  noAutoPlayAfterUndo:window.IPTVState.getCurrent()===null
+ })));
+ await page.fill('#webChooserSearch','');
+ for(const [key,value] of Object.entries(earliestEpgSortQA))
+  assert.equal(value,true,'P5.1.144 actual next-programme sorting '+key+': '+JSON.stringify(earliestEpgSortQA));
+
  await page.setViewportSize({width:1360,height:820});
   const report={type:'Positron P5 twenty distinct desktop screenshot cases',realElectron:true,syntheticChannels:false,
-  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA,chooserQa,toastLayoutQA,nativeToastQA,compactIdleQA,channelChipRailQA,advancedFilterQA,readableCardsQA,keyboardTabQA,favoriteEmptyQA,duplicateEmptyQA,categoryFilterQA,categoryFixtureQA,compactSingleQA,directFavoriteQA,favoriteCountQA,compactToastStackQA,toastDismissQA,toastFocusReturnQA,toastDockQA,wheelQA,pinnedAllQA,pinnedMaskQA,categoryKeyQA,dropdownChipQA,pinnedRightMaskQA,pinnedBorderMaskQA,asciiDSearchQA,emptySearchActionQA,readableCardTitleQA,favoriteSvgQA,keyboardFavoriteQA,multiTermSearchQA,keyboardSearchQA,arrowNavigationQA,pageNavigationQA,favoriteSortQA,onAirFilterQA,programmeSearchQA,upcomingProgrammeQA,soonProgrammeQA};
+  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA,chooserQa,toastLayoutQA,nativeToastQA,compactIdleQA,channelChipRailQA,advancedFilterQA,readableCardsQA,keyboardTabQA,favoriteEmptyQA,duplicateEmptyQA,categoryFilterQA,categoryFixtureQA,compactSingleQA,directFavoriteQA,favoriteCountQA,compactToastStackQA,toastDismissQA,toastFocusReturnQA,toastDockQA,wheelQA,pinnedAllQA,pinnedMaskQA,categoryKeyQA,dropdownChipQA,pinnedRightMaskQA,pinnedBorderMaskQA,asciiDSearchQA,emptySearchActionQA,readableCardTitleQA,favoriteSvgQA,keyboardFavoriteQA,multiTermSearchQA,keyboardSearchQA,arrowNavigationQA,pageNavigationQA,favoriteSortQA,onAirFilterQA,programmeSearchQA,upcomingProgrammeQA,soonProgrammeQA,earliestEpgSortQA};
  fs.writeFileSync(path.resolve('positron-evidence','audit-p5-20-rounds.json'),JSON.stringify(report,null,2));
  return report;
 }

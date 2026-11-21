@@ -1,3 +1,12 @@
+## P5.1.144 — Sắp xếp chương trình EPG sắp phát sớm nhất / Electron v4.23.228
+
+- Feature priority: NEW — Thêm tùy chọn sắp xếp kênh theo thời điểm bắt đầu chương trình tiếp theo từ lịch XMLTV thực tế đã nhập; kênh chưa có EPG vẫn giữ lại cuối danh sách và không mất nguồn.
+- User action: Mở TV → Chọn kênh → Bộ lọc → Sắp xếp → “Chương trình sắp phát sớm nhất (EPG)”; các kênh có chương trình gần tới đứng đầu, trên thẻ hiện giờ và tên chương trình. Chọn “Tên A → Z” để trở về như cũ.
+- Electron screenshot: positron-p51144-earliest-epg-after-450-real.png
+- Ảnh trước: positron-p51144-earliest-epg-before-450-real.png. Bộ lọc EPG là tùy chọn, không tự tìm mạng, thay playlist, phát kênh hoặc tạo nhắc lịch.
+- Kiểm thử: Node và Electron thực 450px với hai kênh có lịch bắt đầu sau 8 và 44 phút; kênh bắt đầu sớm đứng trước, kênh không có EPG vẫn nằm trong danh sách, phục hồi sắp xếp được, không autoplay hoặc tràn ngang.
+- Trạng thái: CANDIDATE — chỉ xác nhận sau khi GitHub Actions kiểm thử/chụp ảnh/build thành công, kiểm tra nguồn ảnh và EXE.
+
 ## P5.1.143 — Lọc chương trình sắp chiếu trong 60 phút / Electron v4.23.227
 
 - Feature priority: NEW — Lọc kênh có chương trình sẽ bắt đầu trong 60 phút tới từ EPG/XMLTV đã nhập, kể cả kênh chưa có chương trình đang phát. Hiện giờ phát và tên, tìm tên không dấu. Tách biệt và loại trừ bộ lọc “Đang chiếu”.
