@@ -259,3 +259,13 @@ html[data-positron="true"] #page-doctor button[data-positron-no-channels="true"]
   margin-top:12px!important;
  }
 }
+
+/* P5.1.29: real P5.1.28 Sources 1360px screenshot showed 'Trạng thái'
+   wrapping into two lines beside #smartStatusFilter. Keep filter labels
+   intact by preventing flex shrink and allow search input to resize first. */
+html[data-positron="true"] #page-sources .smart-result-filters>label{
+ flex:0 0 auto!important;min-width:max-content!important;white-space:nowrap!important;
+}
+html[data-positron="true"] #page-sources .smart-result-filters>input{
+ flex:1 1 260px!important;min-width:min(260px,100%)!important;
+}

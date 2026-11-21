@@ -62,3 +62,5 @@ Round 04 verified in actual Electron: DVR heading is monochrome SVG 20px with ar
 | 02/20 | P5.1.27 / v4.23.111 | P5.1.26 real Electron Doctor 1360px, artifact 14688743177 | 'Kiểm tra link sâu' still enabled with zero channels, omitted from first guard | Extend guard to fourth native action; test disabled, accessibly described, and re-enabled on channel change |
 
 | 03/20 | P5.1.28 / v4.23.112 | P5.1.27 Sources 1360px PNG, artifact 14689552049 | Empty no-playlist region is 83px high with 30px padding and 24px Discovery gap; desktop omitted from P5.1.23 compact CSS | Desktop-only :has(>.empty-list) rule; Node + real Electron geometry assertions; CI/release pending |
+
+| 04/20 | P5.1.29 / v4.23.113 | P5.1.28 Sources 1360px screenshot, artifact 14689292042 | 'Trạng thái' filter label wraps on desktop because flex shrink competes with search width | No-wrap/auto flex basis scoped to status filter; test real text range lineRects=1 at Sources views |

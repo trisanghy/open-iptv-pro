@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.112",
-  "description": "Positron P5.1.28: compact no-source desktop gap before Smart Discovery",
+  "version": "4.23.113",
+  "description": "Positron P5.1.29: prevent Smart Discovery status filter label wrapping on desktop",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

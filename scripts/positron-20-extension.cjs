@@ -106,6 +106,16 @@ async function runTwenty(page){
        aria:svg?.getAttribute('aria-hidden')||''};
      })(),
 
+
+     smartStatusLabel:(()=>{
+      const n=document.getElementById('smartStatusFilter')?.closest('label');if(!n)return null;
+      const labelText=[...n.childNodes].find(x=>x.nodeType===3&&x.textContent.trim());
+      if(!labelText)return null;
+      const range=document.createRange();range.selectNodeContents(labelText);
+      return {text:labelText.textContent.trim(),lineRects:range.getClientRects().length,
+       whiteSpace:getComputedStyle(n).whiteSpace,flexShrink:getComputedStyle(n).flexShrink,
+       labelWidth:Math.round(n.getBoundingClientRect().width)};
+     })(),
      sourceEmpty:(()=>{
       const n=document.querySelector('#sourcesList>.empty-list');if(!n)return null;
       const s=getComputedStyle(n),b=n.getBoundingClientRect();
@@ -273,6 +283,13 @@ async function runTwenty(page){
     assert.equal(state.placeholder,'Chưa có kênh để ghi hình','DVR placeholder failed to recover');
    }
    if(target==='sources'&&metrics.sources)assert.notEqual(metrics.sources.background,'rgb(255, 255, 255)','white source panel');
+   if(target==='sources'){
+    assert.equal(metrics.smartStatusLabel?.text,'Trạng thái','Smart Discovery status label disappeared: '+name);
+    assert.equal(metrics.smartStatusLabel?.lineRects,1,'Smart Discovery status label wrapped: '+name);
+    assert.equal(metrics.smartStatusLabel?.whiteSpace,'nowrap','status label missing no-wrap layout: '+name);
+    assert.equal(metrics.smartStatusLabel?.flexShrink,'0','status label still shrinks in responsive flex: '+name);
+   }
+
    if(target==='sources'&&width>=900&&Number(metrics.sourceCount)===0){
     assert.ok(metrics.sourceEmpty?.height<=57,'desktop no-source card remains oversized: '+name);
     assert.ok(metrics.sourceEmpty?.paddingTop<=14&&metrics.sourceEmpty?.paddingBottom<=14,'desktop empty state padding too large: '+name);
