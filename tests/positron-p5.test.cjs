@@ -37,7 +37,7 @@ test('P5 assets are loaded after P4 without replacing it',()=>{
 test('P5 release is immutable and versioned separately from P4.1',()=>{
  const pkg=JSON.parse(read('package.json'));
  const flow=read('.github/workflows/positron-lab.yml');
- assert.equal(pkg.version,'4.23.142');
+ assert.equal(pkg.version,'4.23.143');
  const label=pkg.description.match(/Positron\s+(P\d+\.\d+\.\d+)/)?.[1];
  assert.ok(label,'product P-label must accompany SemVer');
  assert.ok(flow.includes('TAG=positron/v'+pkg.version+'-'+label.toLowerCase()),'release tag and app version must match');
@@ -567,4 +567,13 @@ test('P5.1.58 Horizon eliminates duplicate Favorites title while keeping accessi
  assert.ok(css.includes('content:attr(data-short-title)!important'));
  assert.ok(audit.includes("metrics.heading?.fontSize,'0px'"));
  assert.ok(audit.includes("metrics.heading?.nativeText,'Kênh yêu thích'"));
+});
+
+test('P5.1.59 Horizon scrollbars use muted teal instead of legacy purple',()=>{
+ const css=read('renderer/positron-horizon-v4.css'),audit=read('scripts/positron-20-extension.cjs');
+ assert.ok(css.includes('--iptv-scroll-thumb:#40736c'));
+ assert.ok(css.includes('--iptv-scroll-track:#101a23'));
+ assert.ok(css.includes('po-v3.po-horizon ::-webkit-scrollbar-thumb:hover'));
+ assert.ok(audit.includes("metrics.horizonScrollbar?.thumb,'#40736c'"));
+ assert.ok(audit.includes("includes('64, 115, 108')"));
 });

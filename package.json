@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.142",
-  "description": "Positron P5.1.58: Horizon compact title repair from native Favorites QA",
+  "version": "4.23.143",
+  "description": "Positron P5.1.59: Horizon scrollbar accent harmonization from real TV QA",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

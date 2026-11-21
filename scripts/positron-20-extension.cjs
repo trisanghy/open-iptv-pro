@@ -107,6 +107,7 @@ async function runTwenty(page){
     controls:document.querySelectorAll('#page-tv button').length,
     transportVectors:['prevBtn','stopBtn','nextBtn','fsPrev','fsNext','fullscreenBtn'].every(id=>!!document.getElementById(id)?.querySelector('svg')),
     brandIcon:get('#appSidebar .brand-icon'),
+    horizonScrollbar:(()=>{const n=document.querySelector('.main');if(!n)return null;const s=getComputedStyle(n);return {color:s.scrollbarColor,thumb:getComputedStyle(document.documentElement).getPropertyValue('--iptv-scroll-thumb').trim(),track:getComputedStyle(document.documentElement).getPropertyValue('--iptv-scroll-track').trim()};})(),
     heading:(()=>{const n=document.querySelector('#positronBar .p-heading strong');if(!n)return null;const b=n.getBoundingClientRect();return {shortTitle:n.dataset.shortTitle||'',nativeText:n.textContent||'',fontSize:getComputedStyle(n).fontSize,pseudoContent:getComputedStyle(n,'::after').content,clipped:n.scrollWidth>n.clientWidth+1,width:Math.round(b.width)};})(),
     badge:(()=>{const n=document.querySelector('#appSidebar .brand small');if(!n)return null;const b=n.getBoundingClientRect();return {visible:b.width>0&&b.height>0,clipped:n.scrollWidth>n.clientWidth+1,right:b.right,top:b.top,bottom:b.bottom};})(),
     toggle:(()=>{const n=document.querySelector('#appSidebar .sidebar-edge-toggle');if(!n)return null;const b=n.getBoundingClientRect();return {left:b.left,top:b.top,bottom:b.bottom};})(),
@@ -402,7 +403,12 @@ async function runTwenty(page){
     });
     assert.equal(searchOpens,true,'new icon must keep native command palette event');
    }
-   if(target==='tv'&&width===450){
+   if(target==='tv'&&(width===600||width===1360)){
+      assert.equal(metrics.horizonScrollbar?.thumb,'#40736c','Horizon must not inherit purple scrollbar at '+width+'px');
+      assert.equal(metrics.horizonScrollbar?.track,'#101a23','Horizon scrollbar track should match dark panel');
+      assert.ok((metrics.horizonScrollbar?.color||'').includes('64, 115, 108'),'Electron scrollbar thumb must be muted teal');
+     }
+    if(target==='tv'&&width===450){
     const state=await page.evaluate(async()=>{
      const btn=document.getElementById('playBtn'),previous=btn.textContent;
      btn.textContent='Ⅱ';await new Promise(resolve=>setTimeout(resolve,0));
@@ -414,7 +420,12 @@ async function runTwenty(page){
     });
     assert.ok(state.pause&&state.play,'native Play/Pause state must drive new compact media button');
    }
-   if(target==='tv'&&width===450){
+   if(target==='tv'&&(width===600||width===1360)){
+      assert.equal(metrics.horizonScrollbar?.thumb,'#40736c','Horizon must not inherit purple scrollbar at '+width+'px');
+      assert.equal(metrics.horizonScrollbar?.track,'#101a23','Horizon scrollbar track should match dark panel');
+      assert.ok((metrics.horizonScrollbar?.color||'').includes('64, 115, 108'),'Electron scrollbar thumb must be muted teal');
+     }
+    if(target==='tv'&&width===450){
     if(Number(metrics.sourceCount)===0){
       assert.equal(metrics.currentFavorite?.disabled,true,'no-channel star still clickable: '+name);
       assert.equal(metrics.currentFavorite?.guard,'true','favorite guard missing: '+name);

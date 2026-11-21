@@ -139,3 +139,8 @@ P5.1.46 CI attempt 44866650681: 604 pass / 2 failed / 5 skipped; failures were s
 - Verified baseline HEAD `3a8bd1b6c80b5bb6165db1990915f61c47074f6f`, CI six jobs passed at `44874945170`, release `positron/v4.23.141-p5.1.57`.
 - Screenshot genuinely opened: `Positron-P5157-20-Real-Screenshots.zip/p5-20-rounds/positron-p5-20-real.png`, Favorites viewport 600px. Defect: duplicate headline "Kênh yêu thíchYêu thích".
 - Candidate batch round 01: P5.1.58 / 4.23.142, Horizon-only responsive CSS override and Electron computed style regression. **NOT CERTIFIED until new screenshot is opened and reviewed, test green and release verified.** Do not count old P5 rounds as new rounds.
+
+
+### New file (10), batch round 02 candidate P5.1.59 / v4.23.143
+Input: Actual P5.1.58 TV 600px and 1360px Electron PNGs and WatchFlow 552 metadata QA. Visible purple root scroll thumb clashes with Horizon turquoise icons and player. Legacy UI scroll thumb variables from ui-polish are not theme-correct under Horizon.
+Action: Horizon-only scrollbar variable override (#40736c thumb, #101a23 track), native Electron geometry/computed scrollbar assertion. Pending after PNG review, Node, Mac/Windows builds and immutable release. Do not count until certified.

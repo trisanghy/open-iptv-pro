@@ -463,3 +463,15 @@ html[data-positron="true"].po-v3.po-horizon body #poWatchFlowPanel .po-watchflow
   letter-spacing:-.12px!important;white-space:nowrap!important;
  }
 }
+
+/* P5.1.59: real P5.1.58 Electron TV 600/1360 screenshots show a bright
+   purple native scroll thumb, inconsistent with the Horizon muted-teal
+   interface. Legacy ui-polish uses --iptv-scroll-thumb from ui-primary.
+   Scope this to Horizon, not unrelated themes. */
+html[data-positron="true"].po-v3.po-horizon{
+ --iptv-scroll-thumb:#40736c;
+ --iptv-scroll-track:#101a23;
+}
+html[data-positron="true"].po-v3.po-horizon ::-webkit-scrollbar-thumb:hover{
+ background:#67d4c0;
+}
