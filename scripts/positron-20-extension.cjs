@@ -2357,9 +2357,45 @@ async function runTwenty(page){
  for(const [key,value] of Object.entries(categoryKeyQA))
   assert.equal(value,true,'P5.1.127 keyboard group chips '+key+': '+JSON.stringify(categoryKeyQA));
 
+ 
+ // P5.1.128: Real Electron advanced native dropdown selection must reveal the
+ // selected quick chip, not leave its active state offscreen after keyboard
+ // navigation. No source/channel state is changed except UI group filtering.
+ await page.evaluate(()=>{
+  document.getElementById('webChooserAdvanced').open=true;
+  document.getElementById('webChooserGroups').scrollLeft=0;
+ });
+ await page.locator('#webChooserGroup').selectOption('Tin tức');
+ await page.evaluate(()=>{document.getElementById('webChooserAdvanced').open=false;});
+ const dropdownChipQA=await page.evaluate(()=>{
+  const select=document.getElementById('webChooserGroup');
+  const rail=document.getElementById('webChooserGroups');
+  const chip=rail.querySelector('button[data-po-quick-group="Tin tức"]');
+  const chipRect=chip?.getBoundingClientRect(),laneRect=rail.getBoundingClientRect();
+  return {exactSelectedGroup:select.value==='Tin tức',
+   activeChip:!!chip&&chip.classList.contains('active'),
+   activeVisible:chipRect.right<=laneRect.right+1&&chipRect.left>=laneRect.left-1,
+   railScrolled:rail.scrollLeft>40,
+   noOverflow:document.documentElement.scrollWidth<=innerWidth+1,
+   noAutoplay:window.IPTVState.getCurrent()===null};
+ });
+ await page.screenshot({path:path.join(out,'positron-p51128-dropdown-chip-450-real.png'),animations:'disabled'});
+ await page.evaluate(()=>{document.getElementById('webChooserAdvanced').open=true;});
+ await page.locator('#webChooserGroup').selectOption('');
+ await page.evaluate(()=>{document.getElementById('webChooserAdvanced').open=false;});
+ const dropdownResetQA=await page.evaluate(()=>{
+  const rail=document.getElementById('webChooserGroups');
+  const all=rail.querySelector('button[data-po-quick-group="all"]');
+  return {resetScroll:rail.scrollLeft<=1,
+   resetAllSelected:all.classList.contains('active')&&document.getElementById('webChooserGroup').value===''};
+ });
+ Object.assign(dropdownChipQA,dropdownResetQA);
+ for(const [key,value] of Object.entries(dropdownChipQA))
+  assert.equal(value,true,'P5.1.128 native dropdown-chip '+key+': '+JSON.stringify(dropdownChipQA));
+
  await page.setViewportSize({width:1360,height:820});
   const report={type:'Positron P5 twenty distinct desktop screenshot cases',realElectron:true,syntheticChannels:false,
-  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA,chooserQa,toastLayoutQA,nativeToastQA,compactIdleQA,channelChipRailQA,advancedFilterQA,readableCardsQA,keyboardTabQA,favoriteEmptyQA,duplicateEmptyQA,categoryFilterQA,categoryFixtureQA,compactSingleQA,directFavoriteQA,favoriteCountQA,compactToastStackQA,toastDismissQA,toastFocusReturnQA,toastDockQA,wheelQA,pinnedAllQA,pinnedMaskQA,categoryKeyQA};
+  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA,chooserQa,toastLayoutQA,nativeToastQA,compactIdleQA,channelChipRailQA,advancedFilterQA,readableCardsQA,keyboardTabQA,favoriteEmptyQA,duplicateEmptyQA,categoryFilterQA,categoryFixtureQA,compactSingleQA,directFavoriteQA,favoriteCountQA,compactToastStackQA,toastDismissQA,toastFocusReturnQA,toastDockQA,wheelQA,pinnedAllQA,pinnedMaskQA,categoryKeyQA,dropdownChipQA};
  fs.writeFileSync(path.resolve('positron-evidence','audit-p5-20-rounds.json'),JSON.stringify(report,null,2));
  return report;
 }

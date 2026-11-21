@@ -8,7 +8,7 @@ const read=file=>fs.readFileSync(path.join(__dirname,'..',file),'utf8');
 
 test('Positron has a separate prerelease application identity',()=>{
   const p=JSON.parse(read('package.json'));
-  assert.equal(p.version,'4.23.211');
+  assert.equal(p.version,'4.23.212');
   assert.equal(p.build.appId,'org.openiptvpro.positron');
   assert.equal(p.build.productName,'Open IPTV Pro Positron');
   assert.equal(p.build.publish[0].channel,'positron');

@@ -37,7 +37,7 @@ test('P5 assets are loaded after P4 without replacing it',()=>{
 test('P5 release is immutable and versioned separately from P4.1',()=>{
  const pkg=JSON.parse(read('package.json'));
  const flow=read('.github/workflows/positron-lab.yml');
- assert.equal(pkg.version,'4.23.211');
+ assert.equal(pkg.version,'4.23.212');
  const label=pkg.description.match(/Positron\s+(P\d+\.\d+\.\d+)/)?.[1];
  assert.ok(label,'product P-label must accompany SemVer');
  assert.ok(flow.includes('TAG=positron/v'+pkg.version+'-'+label.toLowerCase()),'release tag and app version must match');
@@ -1042,4 +1042,17 @@ test('P5.1.127 category keys navigate hidden chips without selecting until Enter
   'homeFocus:first===document.activeElement','const enterApplied=await page.evaluate(',
   "enterReset:group.value===''",'positron-p51127-category-keys-450-real.png'])
   assert.ok(qa.includes(token),'missing genuine Electron category-key regression '+token);
+});
+
+test('P5.1.128 advanced group dropdown reveals corresponding active quick chip',()=>{
+ const src=read('renderer/web-channel-chooser-v42371.js');
+ const qa=read('scripts/positron-20-extension.cjs');
+ assert.ok(src.includes('P5.1.128: when the user selects a group from the native advanced dropdown'));
+ assert.ok(src.includes("const active=groups.querySelector('button.web-chooser-chip.active')"));
+ assert.ok(src.includes("if(!group.value)groups.scrollLeft=0"));
+ assert.ok(src.includes("else active?.scrollIntoView({block:'nearest',inline:'nearest'})"));
+ for(const token of ["exactSelectedGroup:select.value==='Tin tức'",
+  "activeVisible:chipRect.right<=laneRect.right+1", "resetScroll:rail.scrollLeft<=1",
+  "positron-p51128-dropdown-chip-450-real.png"])
+  assert.ok(qa.includes(token),'missing genuine Electron dropdown-chip QA '+token);
 });

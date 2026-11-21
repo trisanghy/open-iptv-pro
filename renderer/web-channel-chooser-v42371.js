@@ -247,7 +247,15 @@
  });
  root.querySelectorAll('[data-chooser-layout]').forEach(b=>b.addEventListener('click',()=>{layout=b.dataset.chooserLayout;render();}));
  search.addEventListener('input',()=>{page=0;schedule();});
- group.addEventListener('change',()=>{page=0;render();});sort.addEventListener('change',()=>{page=0;render();});
+ // P5.1.128: when the user selects a group from the native advanced dropdown,
+ // reveal its matching quick chip instead of leaving the active state offscreen.
+ // Native chip clicks keep their existing restored horizontal position.
+ group.addEventListener('change',()=>{
+  page=0;render();
+  const active=groups.querySelector('button.web-chooser-chip.active');
+  if(!group.value)groups.scrollLeft=0;
+  else active?.scrollIntoView({block:'nearest',inline:'nearest'});
+ });sort.addEventListener('change',()=>{page=0;render();});
  prev.addEventListener('click',()=>{page=Math.max(0,page-1);render();});
  next.addEventListener('click',()=>{page++;render();});
  root.querySelectorAll('[data-chooser-see]').forEach(b=>b.addEventListener('click',()=>{tab=b.dataset.chooserSee;page=0;render();root.scrollIntoView({behavior:'smooth',block:'nearest'});}));

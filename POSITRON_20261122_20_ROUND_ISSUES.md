@@ -188,3 +188,9 @@ Not yet started. Choose each new repair from the preceding real screenshot, with
 - Baseline P5.1.126 `positron-p51126-pinned-all-masked-450-real.png` directly inspected: opaque mask fixed left-clipped text. Long group row still hard to navigate with keyboard/remote: no ArrowLeft/Right/Home/End.
 - Fix native group-row keydown only, focus navigation without applying selection, scroll focused group into view; Enter/Space retains original explicit selection.
 - Regression: Electron 450px focus/selection behavior + image `positron-p51127-category-keys-450-real.png`, Node source test; count only after six CI jobs, actual opened screenshot and verified tag/installers.
+
+## New file-triggered batch round 05/20 — P5.1.128 / 4.23.212 — CANDIDATE
+- Input: P5.1.127 genuine 450px Electron screenshot `positron-p51127-category-keys-450-real.png` directly opened: long row of group chips correctly responds to keyboard, but active group from advanced dropdown may remain offscreen.
+- Root: dropdown change rerenders without aligning rail to selected active quick chip; horizontal position is restored unconditionally.
+- Fix: scoped change handler finds matching active chip, scrolls it into sight; All reset returns rail to start; quick-chip click behavior unchanged.
+- Evidence: native Electron dropdown select/reset, no autoplay, screenshot `positron-p51128-dropdown-chip-450-real.png` and regression test. Count only after full CI/actual image review and immutable release.

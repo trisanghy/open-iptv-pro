@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.211",
-  "description": "Positron P5.1.127: arrow-key navigation for compact channel group chips",
+  "version": "4.23.212",
+  "description": "Positron P5.1.128: keep compact category rail in sync with advanced group dropdown",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",
