@@ -401,3 +401,10 @@ P5.1.46 same-version CI repair: run 44866650681 failed 2/611 because historical 
 - CI attempt #44874090231 reached the redesigned TV 1360 screenshot and the interactive WatchFlow capture. It detected a second inherited P50 style conflict at 1250px: search label max-width:110px clipped visible text.
 - The 1360px screenshot also showed overflowing native sidebar labels after the width issue was fixed. Horizon now explicitly hides only rail text in compact mode (keeping SVG and full tooltip/ARIA) and restores it in expanded mode. At 1000–1280px the command button allows its actual text width, avoiding ellipsis. These are substantive visual regressions found in actual Electron captures, not simulated placeholders.
 - Retest same immutable P5.1.56 target until UI audit and CI succeed; no misleading release claim.
+
+
+## P5.1.57 / v4.23.141 · Horizon visual QA and WatchFlow native integration
+- Baseline: P5.1.56 v4.23.140, git SHA 38a28739b8e003f59cb3b863bc8df4a0ddb10e2b, all six GitHub Actions jobs successful and actual Setup/Portable Windows x64 and Mac DMGs published. Do not change or overwrite that immutable release.
+- Actual Electron WatchFlow 1360 screenshot review discovered dark/low-contrast heading on the panel from legacy Studio theme cascade. The final Horizon layer now uses high-specificity accessible pale title, and the Electron audit asserts computed RGB > 200.
+- WatchFlow integration QA now opens the actual Electron panel after importing the existing 552 strictly metadata-only synthetic QA channels into native IPTVState: confirms 552 eligible channels, 3 native action cards, three *different* suggestions after 'Gợi ý khác', captures a populated WatchFlow PNG, and asserts no channel was played or URL accessed.
+- No changes to M3U ownership, streaming, Favorites, EPG, encrypted sources, Supabase, platform integrations or media pipeline. Reverify Node, 70 real Electron screenshot cases, Windows/macOS builds, and immutable new tag before certifying.

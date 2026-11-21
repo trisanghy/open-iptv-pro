@@ -131,3 +131,5 @@ P5.1.46 CI attempt 44866650681: 604 pass / 2 failed / 5 skipped; failures were s
 
 
 | HORIZON redesign | P5.1.56 / v4.23.140 | Actual P5.1.55 TV 1360px screenshot and capture failure in run 44872760322 | Entire information hierarchy and visual token system fragmented across layered CSS, video competes with navigation and tools, no guided viewing; persisted expanded rail incorrectly rejected by QA | New last Horizon CSS, 6-mode local WatchFlow choosing real enabled channels with evidence, category and novelty; Node regression and real Electron screenshots, release pending verification |
+
+| Horizon quality pass | P5.1.57 / v4.23.141 | P5.1.56 actual WatchFlow Electron 1360 screenshot, and existing 552 metadata-only QA | Title low-contrast; zero-channel UI tested but native populated flow not yet verified by Electron | Fix title CSS cascade, real native 552 channels WatchFlow open/cards/novelty/no playback screenshot QA, full new immutable release |

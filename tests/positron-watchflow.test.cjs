@@ -56,7 +56,7 @@ test('Horizon system loads last, preserves native player, covers every page',()=
  for(const part of ['#appSidebar','#page-tv .tv-layout','#page-tv #playerBox','#channelList','.page:not(#page-tv)','#page-sources','#emptyPlayer'])
   assert.ok(css.includes(part),part+' not covered by Horizon design');
  assert.ok(!/html\[data-positron.*#video\s*\{[^}]*object-fit:/s.test(css),'video fit must remain user-configurable');
- assert.equal(JSON.parse(read('package.json')).version,'4.23.140');
+ assert.equal(JSON.parse(read('package.json')).version,'4.23.141');
 });
 
 test('Horizon defeats the legacy p50 sidebar width and retains an expandable rail',()=>{
@@ -78,4 +78,20 @@ test('Horizon does not show overflowing rail text or clipped search at 1250px',(
  assert.ok(css.includes('po-horizon.p50-04[data-po-rail-expanded="true"]'));
  assert.ok(css.includes('p50-46 #positronBar #positronOpen .p-command-label'));
  assert.ok(css.includes('max-width:none!important;white-space:nowrap!important;overflow:visible!important'));
+});
+
+test('WatchFlow heading remains legible on every legacy Studio theme',()=>{
+ const css=read('renderer/positron-horizon-v4.css');
+ const audit=read('scripts/positron-20-extension.cjs');
+ assert.ok(css.includes('body #poWatchFlowPanel .po-watchflow-head h2'));
+ assert.ok(css.includes('color:#effbf7!important;opacity:1!important'));
+ assert.ok(audit.includes('WatchFlow title has unreadable dark contrast'));
+});
+
+test('real Electron WatchFlow audit exercises populated 552 channel suggestions without playback',()=>{
+ const audit=read('scripts/positron-20-extension.cjs');
+ assert.ok(audit.includes('watchFlowQa.playable,3'));
+ assert.ok(audit.includes('watchFlowQa.fresh,true'));
+ assert.ok(audit.includes('watchFlowQa.nonePlaying,true'));
+ assert.ok(audit.includes('positron-watchflow-552-metadata-qa-real.png'));
 });

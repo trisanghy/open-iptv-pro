@@ -257,13 +257,17 @@ async function runTwenty(page){
      const opened=!panel.hidden&&button.getAttribute('aria-expanded')==='true';
      const groupCount=panel.querySelectorAll('[data-po-mode]').length;
      const reasons=panel.textContent.includes('bằng chứng hoạt động');
+     const titleColor=getComputedStyle(panel.querySelector('h2')).color;
      document.getElementById('poWatchFlowClose').click();
-     return {opened,groupCount,reasons,closed:panel.hidden&&button.getAttribute('aria-expanded')==='false'};
+     return {opened,groupCount,reasons,titleColor,closed:panel.hidden&&button.getAttribute('aria-expanded')==='false'};
     });
     assert.equal(watchFlow.opened,true,'WatchFlow cannot open: '+name);
     assert.equal(watchFlow.closed,true,'WatchFlow cannot close: '+name);
     assert.equal(watchFlow.groupCount,6,'WatchFlow topics missing: '+name);
     assert.equal(watchFlow.reasons,true,'WatchFlow evidence explanation is missing: '+name);
+    const titleRgb=(watchFlow.titleColor.match(/\d+/g)||[]).slice(0,3).map(Number);
+    assert.ok(titleRgb.length===3&&titleRgb.every(x=>x>200),
+      'WatchFlow title has unreadable dark contrast: '+name+' '+watchFlow.titleColor);
     const railCycle=await page.evaluate(async()=>{
       const root=document.documentElement,button=document.getElementById('poRailExpand');
       const rail=document.getElementById('appSidebar');
@@ -737,8 +741,32 @@ async function runTwenty(page){
  assert.ok(metaBytes.length>10000,'visual-only playlist screenshot too small');
  metadataQa.filename=metaFilename;
  metadataQa.sha256=crypto.createHash('sha256').update(metaBytes).digest('hex');
+ // P5.1.57: visual and behavioral proof with 552 strictly metadata-only
+ // local QA channels; no URL is ever requested or played.
+ const watchFlowQa=await page.evaluate(()=>{
+  const trigger=document.getElementById('poWatchFlowToggle');
+  const panel=document.getElementById('poWatchFlowPanel');
+  trigger.click();
+  const first=[...panel.querySelectorAll('.po-watchflow-card')].map(el=>el.querySelector('.po-watchflow-card-body strong')?.textContent||'');
+  const playable=panel.querySelectorAll('.po-watchflow-play').length;
+  const text=document.getElementById('poWatchFlowCount').textContent;
+  const next=document.getElementById('poWatchFlowNext');
+  next.click();
+  const second=[...panel.querySelectorAll('.po-watchflow-card')].map(el=>el.querySelector('.po-watchflow-card-body strong')?.textContent||'');
+  const fresh=second.some(x=>!first.includes(x));
+  const nonePlaying=window.IPTVState.getCurrent()===null;
+  return {open:!panel.hidden,first,second,playable,text,fresh,nonePlaying};
+ });
+ assert.equal(watchFlowQa.open,true,'WatchFlow panel failed to open with real native source data');
+ assert.equal(watchFlowQa.playable,3,'WatchFlow did not expose 3 native channel actions');
+ assert.ok(watchFlowQa.text.includes('552'),'WatchFlow does not see the imported native playlist');
+ assert.equal(watchFlowQa.fresh,true,'WatchFlow repeated the same suggestions despite available unseen channels');
+ assert.equal(watchFlowQa.nonePlaying,true,'Metadata-only QA accidentally started IPTV playback');
+ const watchFlowBytes=await page.screenshot({path:path.join(out,'positron-watchflow-552-metadata-qa-real.png'),animations:'disabled'});
+ assert.ok(watchFlowBytes.length>10000,'WatchFlow populated real Electron screenshot invalid');
+ await page.evaluate(()=>document.getElementById('poWatchFlowClose').click());
  const report={type:'Positron P5 twenty distinct desktop screenshot cases',realElectron:true,syntheticChannels:false,
-  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,metadataQa};
+  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,metadataQa,watchFlowQa};
  fs.writeFileSync(path.resolve('positron-evidence','audit-p5-20-rounds.json'),JSON.stringify(report,null,2));
  return report;
 }
