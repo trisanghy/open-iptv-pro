@@ -67,3 +67,20 @@
 /* Desktop Cast/PiP keep their text labels, but only Web SVG is rendered as icon. */
 #page-tv :is(#castBtn,#pipBtn){font-size:12px!important;line-height:1.2!important}
 #page-tv :is(#castBtn,#pipBtn)::before{font-size:0!important}
+
+/* Cast/PiP are single-icon actions. Legacy labels and decorative badges are
+   removed by player-web-svg-v42377.js while listeners remain on same button. */
+#page-tv .player-control-card .output-controls :is(#castBtn,#pipBtn),
+#page-tv :is(#castBtn,#pipBtn).web-svg-icon-only{
+  display:inline-flex!important;align-items:center!important;justify-content:center!important;
+  gap:0!important;padding:0!important;width:42px!important;min-width:42px!important;
+  max-width:42px!important;height:40px!important;min-height:40px!important;
+  overflow:hidden!important;line-height:0!important;font-size:0!important;
+  color:var(--text,#e9f3f6)!important;
+}
+#page-tv :is(#castBtn,#pipBtn).web-svg-icon-only>*{display:none!important}
+#page-tv :is(#castBtn,#pipBtn).web-svg-icon-only::before{
+  display:block!important;flex:0 0 23px!important;width:23px!important;height:23px!important;
+  margin:0!important;line-height:0!important;
+}
+#page-tv :is(#castBtn,#pipBtn).web-svg-icon-only:hover{background:rgba(69,148,118,.17)!important;border-color:#4c907b!important}
