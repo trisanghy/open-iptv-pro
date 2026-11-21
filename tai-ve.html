@@ -43,14 +43,14 @@ footer{border-top:1px solid #34415a;padding:25px 0 40px;color:#9faec6;font-size:
 <p class="lead">Electron dành cho máy tính, Rust Lab thử nghiệm trên Tauri, Web chạy trực tiếp trong trình duyệt và Mobile dành cho Android/iOS. Mỗi dòng phát hành độc lập với file cài và giới hạn tính năng riêng.</p>
 <p class="date">Cập nhật ngày 22/11/2026 · Chỉ liên kết tới file có thật trên GitHub Releases. Trạng thái Stable không được suy ra chỉ từ việc build thành công.</p>
 <section class="editions" aria-label="Các bản phát hành">
-<article class="card"><span class="tag">Desktop · Stable hiện hành 4.23.71 / 4.23.76 Beta</span><h3>Electron — Windows &amp; Mac</h3><div class="ver">4.23.76 · bản nguồn mới nhất</div><p>Giao diện Light đồng nhất, biểu tượng phát SVG, tối ưu điều khiển, phép đo hiệu năng mã hóa GPU và quản lý dung lượng cache do app tạo. Chưa có AI upscale video thực.</p><div class="links">
-<a href="https://github.com/trisanghy/open-iptv-pro/releases/download/electron-v4.23.76/Open-IPTV-Pro-Setup-4.23.76-x64.exe">Windows Setup x64 · Beta</a>
-<a href="https://github.com/trisanghy/open-iptv-pro/releases/download/electron-v4.23.76/Open-IPTV-Pro-4.23.76-x64.exe">Windows Portable · Beta</a>
-<a href="https://github.com/trisanghy/open-iptv-pro/releases/download/electron-v4.23.76/Open-IPTV-Pro-4.23.76-mac-arm64.dmg">Mac Apple Silicon · Beta</a>
-<a href="https://github.com/trisanghy/open-iptv-pro/releases/download/electron-v4.23.76/Open-IPTV-Pro-4.23.76-mac-x64.dmg">Mac Intel · Beta</a>
-<a href="https://github.com/trisanghy/open-iptv-pro/releases/tag/v4.23.71">Stable 4.23.71</a>
-<a href="https://github.com/trisanghy/open-iptv-pro/releases/tag/electron-v4.23.76">Source + SHA256</a>
-</div><p class="note">Bản Stable 4.23.76 được phát hành riêng từ main sau khi kiểm thử CI và xác minh đủ file, không ghi đè bản cũ.</p></article>
+<article class="card"><span class="tag">Desktop · Stable 4.23.76</span><h3>Electron — Windows &amp; Mac</h3><div class="ver">4.23.76 · Stable từ nhánh main</div><p>Giao diện Light đồng nhất, biểu tượng phát SVG, tối ưu điều khiển, phép đo hiệu năng mã hóa GPU và quản lý dung lượng cache do app tạo. Chưa có AI upscale video thực.</p><div class="links">
+<a href="https://github.com/trisanghy/open-iptv-pro/releases/download/v4.23.76/Open-IPTV-Pro-Setup-4.23.76-x64.exe">Windows Setup x64 · Stable</a>
+<a href="https://github.com/trisanghy/open-iptv-pro/releases/download/v4.23.76/Open-IPTV-Pro-4.23.76-x64.exe">Windows Portable · Stable</a>
+<a href="https://github.com/trisanghy/open-iptv-pro/releases/download/v4.23.76/Open-IPTV-Pro-4.23.76-mac-arm64.dmg">Mac Apple Silicon · Stable</a>
+<a href="https://github.com/trisanghy/open-iptv-pro/releases/download/v4.23.76/Open-IPTV-Pro-4.23.76-mac-x64.dmg">Mac Intel · Stable</a>
+<a href="https://github.com/trisanghy/open-iptv-pro/releases/tag/v4.23.71">Stable 4.23.71 (bản cũ)</a>
+<a href="https://github.com/trisanghy/open-iptv-pro/releases/tag/v4.23.76">Source + SHA256 · Stable</a>
+</div><p class="note">Release Stable 4.23.76 đã được build trên GitHub Actions từ main, vượt qua kiểm thử tự động, có đủ bộ cài Windows/Mac và SHA256. Phiên bản cũ được giữ nguyên.</p></article>
 <article class="card"><span class="tag">Rust Lab · Beta</span><h3>Rust Lab / Tauri</h3><div class="ver">23.8.98 · Windows &amp; macOS</div><p>Theme Dark/AMOLED, bộ biểu tượng player SVG, phụ đề/dịch/TTS thử nghiệm, bù chuyển động có giới hạn và công cụ video. Phát lại/PiP/AI cần kiểm thử trên máy thật; chưa có AI upscale 4K hoạt động thực.</p><div class="links">
 <a href="https://github.com/trisanghy/open-iptv-pro/releases/download/rust-lab/v23.8.98/OpenIPTVPro-RustLab-v23.8.98-Windows-Setup-x64.exe">Windows Setup x64</a>
 <a href="https://github.com/trisanghy/open-iptv-pro/releases/download/rust-lab/v23.8.98/OpenIPTVPro-RustLab-v23.8.98-Windows-Portable-x64.zip">Windows Portable ZIP</a>
@@ -77,7 +77,7 @@ footer{border-top:1px solid #34415a;padding:25px 0 40px;color:#9faec6;font-size:
 <tr><td>Đồng bộ tài khoản</td><td>Có, tùy OTP</td><td>Có, tùy OTP</td><td>Có, tùy OTP</td><td>Có, tùy OTP</td></tr>
 </tbody></table></div>
 <h2>Trước khi cài hoặc nhập playlist</h2>
-<p class="note">Bộ cài desktop chưa ký có thể hiển thị cảnh báo của hệ điều hành. Với iOS, IPA chưa ký cần Apple Developer/provisioning hợp lệ. Dữ liệu playlist, kênh yêu thích và cấu hình nên được sao lưu trước khi đổi phiên bản. Chỉ nhập file M3U/URL mà bạn có quyền sử dụng; Open IPTV Pro không cung cấp kênh truyền hình hay giấy phép nội dung.</p>
+<p class="note">Bộ cài desktop chưa ký/notarize có thể hiển thị cảnh báo bảo mật. Với Mac, sau khi xác minh tải từ GitHub và SHA256, mở Cài đặt hệ thống → Quyền riêng tư & Bảo mật → Vẫn mở nếu macOS cho phép; không tắt toàn bộ Gatekeeper. Với iOS, IPA chưa ký cần Apple Developer/provisioning hợp lệ. Dữ liệu playlist, kênh yêu thích và cấu hình nên được sao lưu trước khi đổi phiên bản. Chỉ nhập file M3U/URL mà bạn có quyền sử dụng; Open IPTV Pro không cung cấp kênh truyền hình hay giấy phép nội dung.</p>
 </main>
 <footer><div class="wrap">Open IPTV Pro · <a href="https://github.com/trisanghy/open-iptv-pro/releases">Lưu trữ tất cả phiên bản</a> · <a href="./">Quay lại trình phát Web</a></div></footer>
 </body></html>
