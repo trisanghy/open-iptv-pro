@@ -161,6 +161,21 @@
   if(count)new MutationObserver(updateHint).observe(count,{childList:true,subtree:true,characterData:true});
   updateHint();
  }
+ // P5.1.16: P5.1.15 actual Electron 450px TV screenshot still
+ // shows OS-dependent '◖))' speaker text unlike vector transport icons.
+ // Keep the native label and the original range input event handlers.
+ const volumeLabel=d.querySelector('#page-tv label.volume-icon[for="volume"]');
+ if(volumeLabel&&!volumeLabel.querySelector('svg')){
+  const svg=d.createElementNS(ns,'svg');
+  svg.setAttribute('viewBox','0 0 24 24');
+  svg.setAttribute('aria-hidden','true');
+  svg.setAttribute('focusable','false');
+  for(const shape of ['M11 5 6 9H3v6h3l5 4z','M15 9a4 4 0 0 1 0 6','M18 6a8 8 0 0 1 0 12']){
+   const path=d.createElementNS(ns,'path');
+   path.setAttribute('d',shape);svg.append(path);
+  }
+  volumeLabel.replaceChildren(svg);
+ }
  window.OpenIPTVPositronTwenty=Object.freeze({
   setStage,getStage:()=>stage,getFeedback:()=>previous
  });

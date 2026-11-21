@@ -165,3 +165,10 @@ html[data-positron="true"] #page-doctor #positronDoctorEmptyHint{
 }
 html[data-positron="true"] #page-doctor #positronDoctorEmptyHint[hidden]{display:none!important}
 html[data-positron="true"] #page-doctor #positronDoctorSources{min-height:37px!important;white-space:normal!important}
+
+/* P5.1.16: actual Electron 450px TV shows OS-native unicode volume icon.
+   Use the same monochrome outline semantics as other transport SVGs. */
+html[data-positron="true"] #page-tv .volume-controls label.volume-icon svg{
+ display:block;width:20px;height:20px;fill:none;stroke:currentColor;
+ stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;pointer-events:none;
+}

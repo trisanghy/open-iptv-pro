@@ -37,13 +37,13 @@ test('P5 assets are loaded after P4 without replacing it',()=>{
 test('P5 release is immutable and versioned separately from P4.1',()=>{
  const pkg=JSON.parse(read('package.json'));
  const flow=read('.github/workflows/positron-lab.yml');
- assert.equal(pkg.version,'4.23.99');
- assert.ok(flow.includes('positron/v4.23.99-p5.1.15'));
+ assert.equal(pkg.version,'4.23.100');
+ assert.ok(flow.includes('positron/v4.23.100-p5.1.16'));
  assert.ok(read('scripts/positron-50-audit.cjs').includes('runTwenty(page)'));
- assert.ok(flow.includes('Positron-P5115-20-Real-Screenshots.zip'));
+ assert.ok(flow.includes('Positron-P5116-20-Real-Screenshots.zip'));
 });
 
-test('P5.1.1 sidebar badge matches shipped release instead of stale P4',()=>{const js=read('renderer/positron.js');assert.ok(js.includes("descriptor.textContent='P5.1.15'"));assert.ok(!js.includes('OPEN IPTV PRO · P4 · 50 VÒNG'));});
+test('P5.1.1 sidebar badge matches shipped release instead of stale P4',()=>{const js=read('renderer/positron.js');assert.ok(js.includes("descriptor.textContent='P5.1.16'"));assert.ok(!js.includes('OPEN IPTV PRO · P4 · 50 VÒNG'));});
 
 test('P5.1.3 fullscreen icon uses SVG not a tiny platform glyph',()=>{const js=read('renderer/positron-twenty.js');const css=read('renderer/positron-twenty.css');assert.ok(js.includes("['fullscreenBtn','M8 3H3v5"));assert.ok(css.includes('#page-tv #fullscreenBtn svg'));});
 
@@ -143,4 +143,13 @@ test('P5.1.15 Doctor zero-channel state provides real source navigation',()=>{
  assert.ok(js.includes("new MutationObserver(updateHint)"));
  assert.ok(css.includes('#positronDoctorEmptyHint[hidden]{display:none!important}'));
  assert.ok(audit.includes("destination,'page-sources'"));
+});
+
+test('P5.1.16 native volume label uses a vector speaker while retaining for=volume',()=>{
+ const js=read('renderer/positron-twenty.js'),css=read('renderer/positron-twenty.css'),audit=read('scripts/positron-20-extension.cjs');
+ assert.ok(js.includes("label.volume-icon[for=\"volume\"]"));
+ assert.ok(js.includes('volumeLabel.replaceChildren(svg)'));
+ assert.ok(css.includes('#page-tv .volume-controls label.volume-icon svg'));
+ assert.ok(audit.includes('metrics.volumeIcon?.svg,true'));
+ assert.ok(audit.includes("metrics.volumeIcon?.for,'volume'"));
 });

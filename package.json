@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.99",
-  "description": "Positron P5.1.15: actionable Doctor zero-channel recovery",
+  "version": "4.23.100",
+  "description": "Positron P5.1.16: consistent volume speaker SVG",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

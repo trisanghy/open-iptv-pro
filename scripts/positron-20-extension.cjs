@@ -62,6 +62,7 @@ async function runTwenty(page){
      favoriteAction:get('#positronFavoritesSources'),
      favoriteGuidance:(()=>document.querySelector('#favoriteList .empty-list')?.firstChild?.textContent?.trim()||'')(),
      sourceCount:document.getElementById('sourceCount')?.textContent?.trim()||'0',
+     volumeIcon:(()=>{const n=document.querySelector('#page-tv label.volume-icon'),v=n?.querySelector('svg');if(!n)return null;return {svg:!!v,for:n.getAttribute('for'),width:Math.round(v?.getBoundingClientRect().width||0),height:Math.round(v?.getBoundingClientRect().height||0)};})(),
      smartLimit:(()=>{const n=document.getElementById('smartLimit');if(!n)return null;
        const label=n.selectedOptions?.[0]?.textContent?.trim()||'';
        const c=document.createElement('canvas').getContext('2d');
@@ -78,6 +79,9 @@ async function runTwenty(page){
   if(target==='tv'){
    assert.ok(metrics.player?.width>180&&metrics.player.height>100,'video collapsed: '+name);
    assert.equal(metrics.transportVectors,true,'non-vector transport icons: '+name);
+   assert.equal(metrics.volumeIcon?.svg,true,'volume still uses platform glyph: '+name);
+   assert.equal(metrics.volumeIcon?.for,'volume','native volume label association lost: '+name);
+   assert.ok(metrics.volumeIcon.width>=16&&metrics.volumeIcon.height>=16,'volume vector too small: '+name);
    if(width<=800&&round>=6)assert.equal(metrics.brandIcon?.visible,false,'brand icon overlaps sidebar toggle: '+name);
     if(width<=540){
      assert.ok(metrics.epgNext,'EPG next-program name missing: '+name);
