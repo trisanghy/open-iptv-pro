@@ -2828,7 +2828,7 @@ async function runTwenty(page){
    readableVietnameseLabel:[...document.getElementById('webChooserSort').options].some(o=>o.value==='fav-first'&&o.textContent==='Yêu thích lên đầu'),
    markedCardAppearsFirst:flags[0]===true,
    favoritesBeforeOtherChannels:firstUnmarked===-1||flags.slice(firstUnmarked).every(x=>!x),
-   channelsNotAltered:current.length===originalCount&&current.join('|')===original.channels,
+   channelsNotAltered:current.length===originalCount&&current.slice().sort().join('|')===original.channels.split('|').sort().join('|'),
    eighteenResults:wrappers.length===18,
    noAutoplay:window.IPTVState.getCurrent()===null,
    noHorizontalOverflow:document.documentElement.scrollWidth<=innerWidth+1

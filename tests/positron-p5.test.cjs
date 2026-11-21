@@ -1259,3 +1259,10 @@ test('P5.1.140 lọc theo chương trình hiện tại chỉ từ EPG/XMLTV đã
   'positron-p51140-epg-current-filter-after-450-real.png'])
   assert.ok(qa.includes(token),'Thiếu QA Electron: '+token);
 });
+
+test('P5.1.140 kiểm thử P5.1.139 so danh sách nguồn theo tập ID, không theo thứ tự giao diện',()=>{
+ const qa=read('scripts/positron-20-extension.cjs');
+ assert.ok(qa.includes("current.slice().sort().join('|')===original.channels.split('|').sort().join('|')"));
+ assert.ok(qa.includes('current.length===originalCount'));
+ assert.ok(qa.includes('noAutoplay:window.IPTVState.getCurrent()===null'));
+});
