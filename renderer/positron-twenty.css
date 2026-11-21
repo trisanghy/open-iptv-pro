@@ -274,3 +274,21 @@ html[data-positron="true"] #page-sources .smart-result-filters>input{
 html[data-positron="true"] #page-epg #dvrAdd[data-positron-no-channels="true"]{
  opacity:.55!important;cursor:not-allowed!important;
 }
+
+/* P5.1.32: consistent theme SVG replaces font-dependent mobile diamond. */
+html[data-positron="true"] #positronBar .p-actions #positronStudioBtn{
+ display:inline-flex!important;align-items:center!important;justify-content:center!important;gap:6px!important;
+}
+html[data-positron="true"] #positronBar .p-actions #positronStudioBtn svg.positron-theme-vector{
+ display:block!important;width:18px!important;height:18px!important;flex:0 0 18px!important;
+ fill:none;stroke:currentColor;stroke-width:1.8;pointer-events:none;
+}
+html[data-positron="true"] #positronBar .p-actions #positronStudioBtn svg .theme-half{
+ fill:currentColor;fill-opacity:.3;stroke:none;
+}
+@media(max-width:600px){
+ html[data-positron="true"].p50-49 #positronBar .p-actions #positronStudioBtn::before{
+  content:none!important;display:none!important;
+ }
+ html[data-positron="true"] #positronBar .p-actions #positronStudioBtn>span{display:none!important}
+}

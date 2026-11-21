@@ -68,3 +68,5 @@ Round 04 verified in actual Electron: DVR heading is monochrome SVG 20px with ar
 | 05/20 | P5.1.30 / v4.23.114 | P5.1.29 EPG 1360px real screenshot, artifact 14689795888 | DVR selector disabled at 0 channels while submit still bright/clickable; P5.1.25 disabled only selector | Disable button in same observer; reenable when channel option added; regression Electron 720/1360 |
 
 | 06/20 | P5.1.31 / v4.23.115 | P5.1.30 real Electron TV 450px, artifact 14690060103 | Compact tools disclosure says English Timeshift while settings use Tua lại | Change hardcoded label+tooltip; test native toggle and screenshot 450px |
+
+| 07/20 | P5.1.32 / v4.23.116 | P5.1.31 real TV 450px, artifact 14690160671 | Compact Studio button still relies on OS-specific '◈' pseudo-element | Replace with half-circle theme SVG, keep click/menu and verify real viewport, ARIA |

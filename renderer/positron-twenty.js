@@ -58,6 +58,20 @@
  // P5.1 screenshot review: neutral monochrome SVGs replace platform-colored
  // transport emoji without replacing button nodes, playback listeners or state.
  const ns='http://www.w3.org/2000/svg';
+ // P5.1.32: actual P5.1.31 TV 450px screenshot uses platform font '◈'.
+ // Preserve the original Studio button and all native click/keyboard handlers.
+ const themeControl=byId('positronStudioBtn');
+ if(themeControl&&!themeControl.querySelector('svg')){
+  const vector=d.createElementNS(ns,'svg');vector.setAttribute('viewBox','0 0 24 24');
+  vector.setAttribute('aria-hidden','true');vector.setAttribute('focusable','false');
+  vector.setAttribute('class','positron-theme-vector');
+  const outer=d.createElementNS(ns,'circle');outer.setAttribute('cx','12');outer.setAttribute('cy','12');outer.setAttribute('r','9');
+  const half=d.createElementNS(ns,'path');half.setAttribute('d','M12 3a9 9 0 0 1 0 18Z');half.setAttribute('class','theme-half');
+  vector.append(outer,half);
+  const word=d.createElement('span');word.textContent='Chủ đề';
+  themeControl.replaceChildren(vector,word);
+ }
+
  const iconDefinitions=[
   ['prevBtn','M6 5v14 M20 5 9 12l11 7V5z','Kênh trước'],
   ['stopBtn','M6 6h12v12H6z','Dừng phát'],

@@ -146,7 +146,7 @@ async function runTwenty(page){
        const c=document.createElement('canvas').getContext('2d');
        c.font=getComputedStyle(n).font;
        return {value:n.value,label,textWidth:Math.ceil(c.measureText(label).width),controlWidth:n.clientWidth};})(),
-     themeButton:(()=>{const n=document.getElementById('positronStudioBtn');if(!n)return null;const b=n.getBoundingClientRect(),s=getComputedStyle(n),p=getComputedStyle(n,'::before');return{width:Math.round(b.width),fontSize:s.fontSize,pseudoContent:p.content,ariaLabel:n.getAttribute('aria-label'),title:n.title};})(),
+     themeButton:(()=>{const n=document.getElementById('positronStudioBtn');if(!n)return null;const b=n.getBoundingClientRect(),s=getComputedStyle(n),p=getComputedStyle(n,'::before');return{width:Math.round(b.width),fontSize:s.fontSize,pseudoContent:p.content,svg:!!n.querySelector('svg.positron-theme-vector'),svgWidth:Math.round(n.querySelector('svg')?.getBoundingClientRect().width||0),ariaLabel:n.getAttribute('aria-label'),title:n.title};})(),
      searchShortcut:document.getElementById('searchBox')?.getAttribute('aria-keyshortcuts'),
     stage:document.documentElement.dataset.p20Stage};
   });
@@ -194,8 +194,19 @@ async function runTwenty(page){
     assert.ok(metrics.themeButton,'theme control missing: '+name);
     assert.equal(metrics.themeButton.fontSize,'0px','theme label visible in compact toolbar: '+name);
     assert.ok(metrics.themeButton.width<=46,'theme button exceeds compact width: '+name);
-    assert.equal(metrics.themeButton.pseudoContent,'"◈"','single theme icon missing: '+name);
+
+    assert.equal(metrics.themeButton.svg,true,'compact theme control still uses platform glyph: '+name);
+    assert.ok(metrics.themeButton.svgWidth>=16,'compact theme vector too small: '+name);
+    assert.equal(metrics.themeButton.pseudoContent,'none','duplicate compact glyph pseudo-element remains: '+name);
     assert.ok(metrics.themeButton.ariaLabel&&metrics.themeButton.title,'icon requires accessible label and tooltip: '+name);
+    const themeLifecycle=await page.evaluate(()=>{
+      const b=document.getElementById('positronStudioBtn'),menu=document.getElementById('positronStudioMenu');
+      const before=b.getAttribute('aria-expanded');b.click();
+      const opened=menu.hidden===false&&b.getAttribute('aria-expanded')==='true';
+      b.click();return{opened,restored:menu.hidden===true&&b.getAttribute('aria-expanded')===before};
+    });
+    assert.equal(themeLifecycle.opened,true,'theme vector destroyed original click handler: '+name);
+    assert.equal(themeLifecycle.restored,true,'theme selector did not close: '+name);
    }
    if(width>=901&&metrics.sidebarStatus?.visible){
     assert.equal(metrics.sidebarStatus.whiteSpace,'normal','side FFmpeg status still forcibly ellipsized: '+name);
