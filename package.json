@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.179",
-  "description": "Positron P5.1.95: WatchFlow inline scroll cue never covers channel actions",
+  "version": "4.23.180",
+  "description": "Positron P5.1.96: local-only Watch Later channel bookmarks in WatchFlow",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

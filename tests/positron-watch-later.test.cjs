@@ -1,0 +1,53 @@
+'use strict';
+const {test}=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs');
+const fav=require('../renderer/favorites-core.js');
+globalThis.OpenIPTVFavorites=fav;
+const later=require('../renderer/positron-watch-later-core.js');
+const C=(sourceId,id,name,url='https://example.invalid/live.m3u8',status='alive')=>({sourceId,id,name,url,status});
+test('Watch Later stores only scoped fingerprints, normalized channel names and timestamps',()=>{
+ const channel=C('private-source','a','VTV1 HD','https://user:secret@example.invalid/live.m3u8?token=PRIVATE');
+ const x=later.toggle([],channel,'2026-11-21T13:00:00Z');
+ assert.equal(x.ok,true);assert.equal(x.saved,true);assert.equal(later.has(x.rows,channel),true);
+ const json=JSON.stringify(x.rows);
+ assert.ok(!json.includes('private-source')&&!json.includes('https:')&&!json.includes('PRIVATE')&&!json.includes('secret'));
+ assert.deepEqual(Object.keys(x.rows[0]).sort(),['key','savedAt','source']);
+ assert.equal(later.visible(x.rows,[channel]).length,1);
+});
+test('Watch Later survives URL/id refresh but never leaks to another source with same name',()=>{
+ const a=C('private-source','old','VTV1 HD');
+ const b=C('private-source','new','VTV1 FHD','https://example.invalid/refreshed');
+ const wrong=C('other-source','x','VTV1','https://example.invalid/other');
+ const rows=later.toggle([],a).rows;
+ assert.deepEqual(later.visible(rows,[b,wrong]).map(x=>x.id),['new']);
+ assert.equal(later.has(rows,wrong),false);
+ assert.equal(later.visible(rows,[wrong]).length,0);
+ assert.equal(later.visible(rows,[{...b,status:'dead'}]).length,0);
+ const removed=later.toggle(rows,b);
+ assert.equal(removed.saved,false);assert.equal(removed.rows.length,0);
+ assert.equal(later.has(rows,a),true,'prior immutable state must not be mutated');
+});
+test('Watch Later malformed entries and URL-based identities fail closed, with bounded storage',()=>{
+ const urlOnly=C('src','id','a','https://very.private.invalid/stream?token=yes');
+ assert.equal(later.identity(urlOnly),null,'one-letter channel name must not persist a URL fallback');
+ const item=later.toggle([],{...urlOnly,name:'Television'});
+ assert.equal(item.ok,true);
+ const untrusted=[...item.rows,{source:'https://evil.invalid',key:'url:secret'},{source:'11111111',key:'url:supersecret'},{source:'12345678',key:'<script>alert(1)</script>'}];
+ assert.deepEqual(later.compact(untrusted),item.rows);
+ const many=Array.from({length:100},(_,i)=>C('source',String(i),'Channel '+String(i)));
+ let rows=[];for(const ch of many)rows=later.toggle(rows,ch).rows;
+ assert.equal(rows.length,later.LIMIT);
+ assert.equal(later.visible(rows,many,100).length,later.LIMIT);
+});
+test('Watch Later uses native channel actions without networking or automatic playback',()=>{
+ const ui=fs.readFileSync('renderer/positron-watchflow-next.js','utf8');
+ const html=fs.readFileSync('renderer/index.html','utf8');
+ const qa=fs.readFileSync('scripts/positron-20-extension.cjs','utf8');
+ assert.ok(html.indexOf('positron-watch-later-core.js')<html.indexOf('positron-watchflow-next.js'));
+ assert.ok(ui.includes('watchLater.toggle(saved,channel)'));
+ assert.ok(ui.includes('window.localStorage.setItem(watchLater.STORAGE_KEY'));
+ assert.ok(ui.includes("if(view==='continue')render();"));
+ assert.ok(ui.includes("heading('Để xem sau · '+waiting.length"));
+ assert.ok(ui.includes("save.setAttribute('aria-pressed',String(isSaved))"));
+ assert.ok(!/fetch\s*\(|XMLHttpRequest|importSource\s*\(/.test(ui));
+ assert.ok(qa.includes('positron-p5196-watch-later-552-real.png'));
+});

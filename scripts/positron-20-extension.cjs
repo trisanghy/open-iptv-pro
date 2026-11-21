@@ -1235,6 +1235,45 @@ async function runTwenty(page){
  assert.equal(fixedCueQA.cueClearOfActions,true,'Cue visually occludes a clickable Xem button');
  assert.equal(fixedCueQA.noAutoplay,true);
  await page.screenshot({path:path.join(out,'positron-p5195-watchflow-inline-scroll-cue-552-real.png'),animations:'disabled'});
+ // P5.1.96: actual Electron Watch Later, using 552 in-memory synthetic
+ // metadata-only channels. Never contacts streams or auto-starts playback.
+ const watchLaterQA=await page.evaluate(()=>{
+  const panel=document.getElementById('poWatchFlowPanel');
+  const core=window.PositronWatchLaterCore;
+  const first=panel.querySelector('#poFlowPlusResults .po-flowplus-card');
+  const save=first?.querySelector('.po-flowplus-save');
+  if(!core||!save)return {ready:false};
+  const name=first.querySelector('.po-flowplus-card-info strong')?.textContent||'';
+  const before=window.IPTVState.getCurrent();
+  const preStore=window.localStorage.getItem(core.STORAGE_KEY);
+  save.click();
+  const persisted=JSON.parse(window.localStorage.getItem(core.STORAGE_KEY)||'[]');
+  const localOnly=persisted.length===1&&Object.keys(persisted[0]).sort().join(',')==='key,savedAt,source'&&
+   !JSON.stringify(persisted).includes('https:')&&!JSON.stringify(persisted).includes('example.invalid');
+  const pressed=save.getAttribute('aria-pressed')==='true';
+  panel.querySelector('#poFlowPluscontinue').click();
+  const savedCard=panel.querySelector('#poFlowPlusResults .po-flowplus-card');
+  const displayed=panel.querySelector('#poFlowPlusResults .po-flowplus-head strong')?.textContent.includes('Để xem sau')&&
+   savedCard?.querySelector('.po-flowplus-card-info strong')?.textContent===name;
+  const buttonAvailable=!!savedCard?.querySelector('.po-flowplus-save[aria-pressed="true"]');
+  return {ready:true,localOnly,pressed,displayed,buttonAvailable,
+   noAutoPlay:before===null&&window.IPTVState.getCurrent()===null,
+   hadNoPreviousItem:!preStore||JSON.parse(preStore).length===0};
+ });
+ for(const key of ['ready','localOnly','pressed','displayed','buttonAvailable','noAutoPlay','hadNoPreviousItem'])
+  assert.equal(watchLaterQA[key],true,'Watch Later native Electron QA failed: '+key);
+ await page.screenshot({path:path.join(out,'positron-p5196-watch-later-552-real.png'),animations:'disabled'});
+ const watchLaterCleanup=await page.evaluate(()=>{
+  const panel=document.getElementById('poWatchFlowPanel');
+  const saved=panel.querySelector('#poFlowPlusResults .po-flowplus-save[aria-pressed="true"]');
+  if(!saved)return false;
+  saved.click();
+  const store=JSON.parse(localStorage.getItem(window.PositronWatchLaterCore.STORAGE_KEY)||'[]');
+  panel.querySelector('#poFlowPlusmix').click();
+  return store.length===0&&window.IPTVState.getCurrent()===null;
+ });
+ assert.equal(watchLaterCleanup,true,'Watch Later QA must clean up synthetic bookmark');
+
  // P5.1.85: exercise the real Electron Similar panel with a temporary
  // native metadata-only current channel; no stream is opened or stored.
  const similarQA=await page.evaluate(()=>{
@@ -1253,7 +1292,7 @@ async function runTwenty(page){
       return !!toolbar&&dialog.bottom<=toolbar.top-12;
     })(),
     recommendationsScrollable:panel.scrollHeight>panel.clientHeight+10&&getComputedStyle(panel).overflowY==='auto',
-    recommendationActions:panel.querySelectorAll('#poFlowPlusResults .po-flowplus-card button').length};
+    recommendationActions:panel.querySelectorAll('#poFlowPlusResults .po-flowplus-card button[aria-label^="Xem kênh "]').length};
   }finally{window.IPTVState=native;}
  });
  assert.equal(similarQA.selected,true,'Similar mode must react to selection');

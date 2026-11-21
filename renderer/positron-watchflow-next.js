@@ -6,6 +6,9 @@
 (()=>{
  const d=document,byId=id=>d.getElementById(id);
  const core=window.PositronWatchFlowPlusCore;
+ const watchLater=window.PositronWatchLaterCore;
+ const loadSaved=()=>{try{return watchLater?.compact(JSON.parse(window.localStorage.getItem(watchLater.STORAGE_KEY)||'[]'))||[];}catch{return [];}};
+ let saved=loadSaved();
  const panel=byId('poWatchFlowPanel');
  const state=()=>window.IPTVState;
  if(!core||!panel||!window.PositronWatchFlow||!state()?.getChannels)return;
@@ -77,6 +80,16 @@
   head.append(h,label(sub),scrollCue);content.append(head);
  };
  const empty=txt=>{const node=d.createElement('div');node.className='po-flowplus-empty';node.textContent=txt;content.append(node);};
+ const toggleSaved=channel=>{
+  if(!watchLater)return null;
+  const change=watchLater.toggle(saved,channel);
+  if(!change.ok)return null;
+  try{window.localStorage.setItem(watchLater.STORAGE_KEY,JSON.stringify(change.rows));}
+  catch{state()?.toast?.('Không thể lưu trên thiết bị. Kiểm tra quyền lưu dữ liệu.','error');return null;}
+  saved=change.rows;
+  return change.saved;
+ };
+
  const play=ch=>{
   if(!ch||!channels().some(c=>String(c.id)===String(ch.id)))return render();
   window.PositronWatchFlow.close();
@@ -96,7 +109,25 @@
    body.append(name,info);
    const action=d.createElement('button');action.type='button';action.textContent='Xem';
    action.setAttribute('aria-label','Xem kênh '+ch.name);action.addEventListener('click',()=>play(ch));
-   card.append(body,action);list.append(card);
+   const buttons=d.createElement('div');buttons.className='po-flowplus-actions';
+   if(watchLater?.identity(ch)){
+    const save=d.createElement('button');save.type='button';save.className='po-flowplus-save';
+    const drawSave=()=>{
+     const isSaved=watchLater.has(saved,ch);
+     save.textContent=isSaved?'Bỏ lưu':'Lưu';
+     save.setAttribute('aria-label',(isSaved?'Bỏ lưu kênh ':'Lưu kênh để xem sau ')+ch.name);
+     save.setAttribute('aria-pressed',String(isSaved));
+     save.title=isSaved?'Bỏ khỏi Xem sau':'Lưu để xem sau trên thiết bị này';
+    };
+    drawSave();
+    save.addEventListener('click',()=>{
+     if(toggleSaved(ch)===null)return;
+     drawSave();
+     if(view==='continue')render();
+    });
+    buttons.append(save);
+   }
+   buttons.append(action);card.append(body,buttons);list.append(card);
   }
   content.append(list);
   if(reason)content.append(label(reason,'po-flowplus-reason'));
@@ -109,6 +140,11 @@
   clear();
   const current=state()?.getCurrent?.();
   if(view==='continue'){
+   const waiting=watchLater?.visible(saved,collection,8)||[];
+   if(waiting.length){
+    heading('Để xem sau · '+waiting.length+' kênh','Các kênh bạn chủ động lưu trên thiết bị này.');
+    cards(waiting,'Chọn Xem khi muốn phát, hoặc Bỏ lưu để xóa đánh dấu.');
+   }
    heading('Tiếp tục xem','Chỉ các kênh từng lên hình thật trên thiết bị này.');
    const played=core.continueWatching(collection,recent(),5);
    if(!played.length)empty('Chưa có lịch sử phát thành công. Hãy xem một kênh, danh sách này sẽ xuất hiện sau khi có hình.');
@@ -151,6 +187,9 @@
  const count=byId('navCount');
  if(count)new MutationObserver(sync).observe(count,{childList:true,characterData:true,subtree:true});
  new MutationObserver(()=>{if(!panel.hidden)sync();else scrollCue.hidden=true;}).observe(panel,{attributes:true,attributeFilter:['hidden']});
+ window.addEventListener('storage',event=>{
+  if(event.key===watchLater?.STORAGE_KEY){saved=loadSaved();if(!panel.hidden&&view!=='discover')render();}
+ });
  sync();
  window.PositronWatchFlowPlus=Object.freeze({select,refresh:sync});
 })();
