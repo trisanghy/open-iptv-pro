@@ -1,0 +1,16 @@
+/* GPU video toolkit: compact, inline; modal appears only after user-triggered benchmark. */
+#page-tv #videoGpuManager{display:flex;flex-direction:column;gap:9px;border:1px solid #305266;background:#102735;border-radius:12px;padding:12px;max-width:100%;min-width:0;color:#e7f1f9}
+#page-tv #videoGpuManager strong{font-size:13px}
+#page-tv .veh-gpu-actions{display:flex;gap:8px;flex-wrap:wrap}
+#page-tv .veh-gpu-actions button,#page-tv .veh-gpu-storage-row button,#page-tv #veh-gpu-refresh{padding:8px 12px;border:1px solid #8176ba;border-radius:8px;color:#fff;background:#362f52;cursor:pointer;font-size:12px}
+#page-tv .veh-gpu-actions button:disabled{opacity:.55;cursor:wait}
+#page-tv .veh-gpu-note{font-size:12px;line-height:1.5;color:#aabfd2;margin:0}
+#page-tv #veh-gpu-state{font-size:12px;margin:0;overflow-wrap:anywhere}
+#page-tv #veh-gpu-storage{border-top:1px solid #355267;padding-top:8px;font-size:12px}
+#page-tv #veh-gpu-storage summary{cursor:pointer;font-weight:650}
+#page-tv .veh-gpu-storage-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:6px 0}
+.veh-gpu-modal{width:min(470px,calc(100% - 32px));border:1px solid #6e67a7;border-radius:14px;padding:22px;background:#122737;color:#fff;box-shadow:0 24px 65px #0009}
+.veh-gpu-modal::backdrop{background:#050d14aa}
+.veh-gpu-modal h3{margin:0 0 12px;font-size:18px}
+.veh-gpu-modal #veh-gpu-result{white-space:pre-line;line-height:1.7;font-size:14px}
+.veh-gpu-modal .veh-gpu-actions{margin-top:15px}

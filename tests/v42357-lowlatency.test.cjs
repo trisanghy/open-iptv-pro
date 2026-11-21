@@ -22,7 +22,7 @@ test('v4.23.60: continuous FFmpeg captures every audio chunk without reopening t
  try{
   capture.start();
   assert.equal(launches,1);
-  assert.equal(ffmpegArgs[ffmpegArgs.indexOf('-segment_time')+1],'8');
+  assert.equal(ffmpegArgs[ffmpegArgs.indexOf('-segment_time')+1],'10');
   assert.ok(ffmpegArgs.includes('-segment_list'));
   assert.ok(!ffmpegArgs.includes('-t'),'FFmpeg must NEVER pause after recording eight seconds');
   for(let i=0;i<3;i++){
@@ -30,7 +30,7 @@ test('v4.23.60: continuous FFmpeg captures every audio chunk without reopening t
    fs.writeFileSync(path.join(dir,'seg_'+id+'.wav'),Buffer.alloc(26000));
   }
   fs.writeFileSync(path.join(dir,'segments.csv'),
-   ['seg_000000.wav,0,8','seg_000001.wav,8,16','seg_000002.wav,16,24'].join('\n')+'\n');
+   ['seg_000000.wav,0,10','seg_000001.wav,10,20','seg_000002.wav,20,30'].join('\n')+'\n');
   const captured=[];
   for(let i=0;i<3;i++){const segment=await capture.next();captured.push(segment.index);}
   assert.deepEqual(captured,[0,1,2],'every recorded segment is processed in capture order');
@@ -102,7 +102,7 @@ test('v4.23.60: stop can cancel both active FFmpeg and Whisper jobs; source rema
  assert.match(c,/s\.children\?\.delete\(child\)/);
  assert.match(c,/for\(const proc of c\.children\|\|\[\]\)/);
  const pkg=JSON.parse(read('package.json'));
- assert.equal(pkg.version,'4.23.71');
+ assert.match(pkg.version,/^4\.23\.\d+$/);
  assert.deepEqual(pkg.build.mac.target,['dmg']);
  assert.equal(pkg.build.dmg.writeUpdateInfo,false);
 });

@@ -1,0 +1,112 @@
+name: Publish Electron v4.23.76 Stable from main (immutable)
+on:
+  push:
+    branches: ['main']
+    paths:
+      - 'package.json'
+      - 'src/**'
+      - 'renderer/**'
+      - 'tests/**'
+      - '.github/workflows/publish-main-electron-v42376.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: electron-main-v42376-stable
+  cancel-in-progress: false
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify main source and Electron regression suite
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          test "${{ github.ref_name }}" = main
+          npm install --no-audit --no-fund
+          test "$(node -p 'require("./package.json").version')" = 4.23.76
+          npm test
+  build:
+    needs: test
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - {os: windows-latest, platform: win, arch: x64, label: windows-x64}
+          - {os: macos-15, platform: mac, arch: arm64, label: mac-arm64}
+          - {os: macos-15-intel, platform: mac, arch: x64, label: mac-intel}
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 75
+    env:
+      CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm install --no-audit --no-fund
+      - name: Build genuine Mac/Windows installers
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          npx electron-builder --${{ matrix.platform }} --${{ matrix.arch }} --publish never
+          if [[ '${{ matrix.platform }}' == mac ]]; then
+            test -s "dist/Open-IPTV-Pro-4.23.76-mac-${{ matrix.arch }}.dmg"
+          else
+            test -s dist/Open-IPTV-Pro-Setup-4.23.76-x64.exe
+            test -s dist/Open-IPTV-Pro-4.23.76-x64.exe
+          fi
+      - uses: actions/upload-artifact@v4
+        with:
+          name: stable-v42376-${{ matrix.label }}
+          if-no-files-found: error
+          path: |
+            dist/*.exe
+            dist/*.dmg
+  release:
+    needs: [test, build]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: stable-v42376-*
+          merge-multiple: true
+          path: release-stage
+      - name: Verify asset set, freeze source and checksums
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          git archive --format=zip --output=release-stage/OpenIPTVPro_Source_v4.23.76.zip HEAD
+          for name in Open-IPTV-Pro-4.23.76-mac-arm64.dmg Open-IPTV-Pro-4.23.76-mac-x64.dmg Open-IPTV-Pro-Setup-4.23.76-x64.exe Open-IPTV-Pro-4.23.76-x64.exe OpenIPTVPro_Source_v4.23.76.zip; do
+            test -s "release-stage/$name"
+          done
+          (cd release-stage && sha256sum *.dmg *.exe *.zip > SHA256SUMS.txt)
+      - name: Publish new immutable Stable tag (no overwrite)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          TAG=v4.23.76
+          if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "::error::Immutable Stable release already exists; do not overwrite."
+            exit 1
+          fi
+          if gh api "repos/$GITHUB_REPOSITORY/git/ref/tags/$TAG" >/dev/null 2>&1; then
+            echo "::error::Tag already exists; do not overwrite."
+            exit 1
+          fi
+          gh release create "$TAG" release-stage/* --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" --title "Open IPTV Pro Electron v4.23.76 Stable · Windows/macOS" --notes "Stable được build từ main $GITHUB_SHA. Windows x64 Setup/Portable, macOS Apple Silicon/Intel, source ZIP và SHA256SUMS. Nâng cấp các biểu tượng player, giao diện Light, GPU encoder benchmark và lưu trữ video. AI upscale chưa có pipeline inference thực; kiểm tra quyền dùng nguồn M3U trước khi nhập." --latest
+          for name in Open-IPTV-Pro-4.23.76-mac-arm64.dmg Open-IPTV-Pro-4.23.76-mac-x64.dmg Open-IPTV-Pro-Setup-4.23.76-x64.exe Open-IPTV-Pro-4.23.76-x64.exe OpenIPTVPro_Source_v4.23.76.zip SHA256SUMS.txt; do
+            gh release view "$TAG" --repo "$GITHUB_REPOSITORY" --json assets --jq '.assets[].name' | grep -Fxq "$name"
+          done
+          echo "Verified immutable Stable release: $TAG"

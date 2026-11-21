@@ -30,6 +30,7 @@ const {createLiveCaptionService}=require('./live-caption-service.cjs');
 const {createHyMTService}=require('./hymt-service.cjs');
 const {translateWithInstalledFallback}=require('./ai-translation-fallback.cjs');
 const {createLocalModelStorage}=require('./local-ai-storage.cjs');
+const {createVideoGPUService}=require('./video-gpu-service.cjs');
 let localHyMT=null,localAIStorage=null;
 const {createLocalSpeechService}=require('./local-tts-service.cjs');
 const {createAutoModelInstaller}=require('./local-ai-autoinstall.cjs');
@@ -170,6 +171,13 @@ async function makeSnapshot(url,label){
 }
 function setupIPC(){
   let lastFallbackNotice=0;
+  // Video GPU tools use the FFmpeg binary already bundled in full releases.
+  // Missing/unsupported drivers and AI models are never installed silently.
+  const gpuService=createVideoGPUService({dataDir:app.getPath('userData'),getFFmpeg:ffmpegPath});
+  ipcMain.handle('video:gpuPrepare',()=>gpuService.prepare());
+  ipcMain.handle('video:gpuBenchmark',()=>gpuService.benchmark());
+  ipcMain.handle('video:gpuStorage',()=>gpuService.storage());
+  ipcMain.handle('video:gpuDelete',(_event,id)=>gpuService.remove(id));
   liveCaptionService=createLiveCaptionService({
    dataDir:app.getPath('userData'),getFFmpeg:ffmpegPath,
    notify:data=>{if(webWindow&&!webWindow.isDestroyed())webWindow.webContents.send('caption:event',data);},

@@ -93,8 +93,8 @@ test('v4.23.67: actual Electron UI waits for natural ended, TTS never restores t
  assert.match(ui,/speechQueue\.enqueue\(payload\)/);
  assert.match(ui,/speechQueue\.setEnabled\(enabled\)/);
  assert.match(ui,/if\(!e\.translated\)return/);
- assert.match(ui,/maxPendingAgeMs:5000/);
- assert.match(ui,/maxSynthAgeMs:7000/);
+ assert.match(ui,/maxPendingAgeMs:14000/);
+ assert.match(ui,/maxSynthAgeMs:12000/);
  assert.match(ui,/applyDuck\(\)/);
  assert.match(ui,/applySpeechRate\(audio\)/);
  assert.doesNotMatch(ui,/resetPlayback\(false\)/);
@@ -105,6 +105,20 @@ test('v4.23.67: actual Electron UI waits for natural ended, TTS never restores t
   html.indexOf('src="local-tts-v42344.js"'));
  assert.match(read('renderer/video-only-translated-caption-v42358.css'),/#liveCaptionOutput/);
  const pkg=JSON.parse(read('package.json'));
- assert.equal(pkg.version,'4.23.71');
+ assert.match(pkg.version,/^4\.23\.\d+$/);
  assert.deepEqual(pkg.build.mac.target,['dmg']);
+});
+
+test('v4.23.73: a newer subtitle cannot terminate a long sentence between synthesized WAV chunks',()=>{
+ const ui=read('renderer/local-tts-v42344.js');
+ assert.match(ui,/if\(i<chunks\.length\)\{/);
+ assert.match(ui,/if\(i===chunks\.length\)break;/);
+ assert.doesNotMatch(ui,/if\(i===chunks\.length\|\|speechQueue\.status\(\)\.pending\)break;/);
+ assert.doesNotMatch(ui,/if\(i<chunks\.length&&!speechQueue\.status\(\)\.pending\)/);
+ // A true Stop/Pause still cancels the active WAV immediately.
+ assert.match(ui,/cancelAudio:\(\)=>\{/);
+ assert.match(ui,/resetPlayback\(\);speechQueue\.setPaused\(true\)/);
+ // Realtime queue: only latest untranslated pending line survives; no replay backlog.
+ const q=read('renderer/tts-utterance-queue-v42359.js');
+ assert.match(q,/pending=\{payload,createdAt:now\(\),serial:\+\+serial\}/);
 });

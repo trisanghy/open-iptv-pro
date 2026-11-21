@@ -208,7 +208,7 @@
   if(!ev)return;
   if(ev.type==='setup-progress'){message(ev.message||'Đang cài Whisper…');return;}
   if(ev.id!==activeId||!activeId)return;
-  // A running FFmpeg/Whisper worker can finish an old 8s window after Pause.
+  // A running FFmpeg/Whisper worker can finish an old 10s window after Pause.
   // Never resurrect captions while the actual video element isn't playing.
   if(!mediaActive()){clearOutput();return;}
   if(ev.type==='segment'){

@@ -73,7 +73,7 @@ function createLiveCaptionService({dataDir,getFFmpeg,notify,spawnProc=spawn,plat
     const wav=path.join(tmp,'audio.wav');
     try{
      notify({type:'status',id:s.id,message:s.translate?'Đang nhận diện và dịch tiếng Anh…':'Đang nhận diện tiếng nói…'});
-     await exec(ff,['-hide_banner','-nostdin','-loglevel','error','-y','-rw_timeout','8000000','-user_agent','Mozilla/5.0','-i',s.url,'-map','0:a:0','-vn','-sn','-dn','-ac','1','-ar','16000','-c:a','pcm_s16le','-t','8',wav],s,30000);
+     await exec(ff,['-hide_banner','-nostdin','-loglevel','error','-y','-rw_timeout','8000000','-user_agent','Mozilla/5.0','-i',s.url,'-map','0:a:0','-vn','-sn','-dn','-ac','1','-ar','16000','-c:a','pcm_s16le','-t','10',wav],s,30000);
      if(current!==s)break;
      if((await fs.promises.stat(wav)).size<25000)throw Error('Nguồn chưa có âm thanh');
      // Transcribe in original detected language, never force English.
@@ -141,11 +141,11 @@ function createLiveCaptionService({dataDir,getFFmpeg,notify,spawnProc=spawn,plat
   const removeFile=async file=>{try{await fs.promises.unlink(file);}catch{}};
   try{
    capture=createContinuousCapture({
-    ffmpeg:ff,url:s.url,dir:temp,spawnProc,chunkSeconds:8
+    ffmpeg:ff,url:s.url,dir:temp,spawnProc,chunkSeconds:10
    });
    s.capture=capture;
    capture.start();
-   notify({type:'status',id:s.id,message:'Thu âm liên tục · nhận diện mỗi khoảng 8 giây'});
+   notify({type:'status',id:s.id,message:'Thu âm liên tục · nhận diện mỗi khoảng 10 giây'});
    while(current===s){
     let item;
     try{item=await capture.next();}

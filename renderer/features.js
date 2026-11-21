@@ -63,6 +63,14 @@
  if(!['sidebar','compact'].includes(config.uiNavLayout))config.uiNavLayout='sidebar';
  if(typeof config.sidebarVisible!=='boolean')config.sidebarVisible=true;
  if(typeof config.channelPanelVisible!=='boolean')config.channelPanelVisible=true;
+ // One-time recovery from the 4.23.76 SVG/chooser layout regression.
+ // Restore navigation + channel drawer once; subsequent user toggles persist.
+ if(config.sidebarChooserLayoutRepairV1!==true){
+  config.sidebarVisible=true;
+  config.channelPanelVisible=true;
+  config.sidebarChooserLayoutRepairV1=true;
+ }
+
  if(typeof config.repo!=='string')config.repo='';
  if(!config.manualMappings||typeof config.manualMappings!=='object')config.manualMappings={};
  if(!Number.isFinite(Number(config.offsetMinutes)))config.offsetMinutes=0;
