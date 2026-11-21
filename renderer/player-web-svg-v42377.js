@@ -16,8 +16,13 @@
  }
  function stripPrefix(button){
   if(!button)return;
-  for(const node of Array.from(button.childNodes)){
-   if(node.nodeType===3&&node.nodeValue)node.nodeValue=node.nodeValue.replace(/^\\s*[▣◖►▶Ⅱ⏯⏸⛶]+\\s*/u,'');
+  // Cast UI inserts a nested .cast-label / .pip-label after first paint.
+  // Strip decorative glyphs in any text node while keeping readable captions.
+  const walk=document.createTreeWalker(button,NodeFilter.SHOW_TEXT);
+  let node;
+  while((node=walk.nextNode())){
+   const cleaned=String(node.nodeValue||'').replace(/^\\s*[▣◖▶►⏯⏸⛶]+\\s*/u,'');
+   if(cleaned!==node.nodeValue)node.nodeValue=cleaned;
   }
  }
  // Legacy app.js and player-ux.js update textContent on every state change:
@@ -34,7 +39,7 @@
   if(!button)continue;
   stripPrefix(button);
   if(typeof MutationObserver==='function')
-   new MutationObserver(()=>stripPrefix(button)).observe(button,{childList:true,characterData:true});
+   new MutationObserver(()=>stripPrefix(button)).observe(button,{childList:true,characterData:true,subtree:true});
  }
  const iconVolume=get('fsWebVolume')?.parentElement?.querySelector('.fs-web-volume-icon');
  if(iconVolume)iconVolume.textContent='';
