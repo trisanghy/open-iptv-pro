@@ -2,14 +2,22 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
-## P5.1.140 — lọc kênh theo chương trình hiện tại từ EPG
+## P5.1.141 — tìm chương trình đang chiếu theo tên XMLTV
+
+**Ứng dụng:** 4.23.225 · **Trạng thái:** Chưa có bản phát hành
+
+Feature priority: NEW — Cho phép tìm kênh bằng **tên chương trình đang chiếu** từ XMLTV hiện có ngay trong giao diện TV, không cần mở trang Lịch phát sóng; tìm tiếng Việt không dấu và nhiều từ linh hoạt. Chỉ bật tính năng khi người dùng chủ động lọc EPG. User action: Mở Chọn kênh → Bộ lọc → Có chương trình đang chiếu (EPG), nhập tên chương trình như “tin yeu thich” để tìm kênh đang có chương trình đó theo XMLTV; nhấn vào thẻ mới phát.
+
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/72ffb9de23bee959f09757621907ead0f348ec85)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+
+## P5.1.140 — Lọc kênh đang có chương trình từ XMLTV
 
 **Ứng dụng:** 4.23.224 · **Trạng thái:** Chưa có bản phát hành
 
 Feature priority: NEW — Thêm bộ lọc chỉ hiển thị các kênh có chương trình hiện tại trong lịch EPG/XMLTV đã nhập, kèm tên chương trình ngay trên thẻ; không dự đoán lịch phát và không kiểm tra hoặc tự mở luồng mạng. User action: Mở Chọn kênh → Bộ lọc → bật “Có chương trình đang chiếu (EPG)”; chọn kênh có tên chương trình theo lịch, hoặc tắt bộ lọc để xem toàn bộ.
 
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/a5f02b18df93a6faacad8dc17dd560a4b5a0b67d)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
 
 ## P5.1.139 — Ưu tiên kênh yêu thích lên đầu
 
