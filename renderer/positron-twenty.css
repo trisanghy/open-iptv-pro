@@ -435,3 +435,19 @@ html[data-positron="true"] #page-doctor :is(#doctorRun,#doctorDeepCheck,#doctor3
   padding:16px 12px!important;
  }
 }
+
+/* P5.1.46 — actual EPG 720/1360 screenshots: unavailable DVR scheduling form
+   occupied the guide's main viewport without a channel; preserve its DOM,
+   folder controls and saved jobs while showing a direct Sources action. */
+html[data-positron="true"] #page-epg #dvrPanel.p46-no-channels #dvrForm,
+html[data-positron="true"] #page-epg #dvrPanel.p46-no-channels > p.hint{
+ display:none!important;
+}
+html[data-positron="true"] #page-epg #dvrPanel #positronDvrNoChannels:not([hidden]){
+ display:flex!important;align-items:center;justify-content:space-between;
+ gap:12px;flex-wrap:wrap;margin-top:12px;margin-bottom:10px;
+ padding:12px 14px;background:var(--po-card,#25354a);
+ color:var(--po-muted,#b5c6db);border:1px solid var(--po-line,#40526a);
+ border-radius:12px;
+}
+html[data-positron="true"] #page-epg #dvrPanel #positronDvrNoChannels[hidden]{display:none!important;}

@@ -108,3 +108,9 @@ P5.1.43 same-round CI follow-up: Actions run 44864848127 failed native-language 
 | File (9) round | Version | Real screenshot input | Problem | Fix | Validation |
 |---|---|---|---|---|---|
 | 02/20 (pending) | P5.1.45 / v4.23.129 | P5.1.44 EPG 720px, positron-p5-17-real.png | Empty EPG status points to Settings update instead of the visible Nguồn EPG button | Align fallback text, all 17 offline locales, snapshot assertion | Pending CI and after PNG; release 403 blocked |
+
+| File (9) round | Version | Real screenshot input | Problem | Fix | Evidence status |
+|---|---|---|---|---|---|
+| 03/20 (pending) | P5.1.46 / v4.23.130 | P5.1.45 EPG 720px / 1360px, positron-p5-17-real.png / positron-p5-16-real.png | Disabled recording scheduler form occupies guide space when no sources | Conditional collapse and restore on channel option, keep folder/history; Source shortcut | Pending 17-locale Node regression, real screenshots, CI build/release |
+
+Release integrity note: v4.23.129 was released under mismatched tag positron/v4.23.129-p5.1.44 (GitHub Actions run 44866076196). Never relabel or overwrite that immutable tag; P5.1.46 explicitly validates its own tag against SemVer and P-label.

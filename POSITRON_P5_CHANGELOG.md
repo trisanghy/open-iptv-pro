@@ -310,3 +310,10 @@ P5.1.43 same-round regression repair: first CI run 44864848127 failed 2/606 Node
 - Fix only default missing-data prose and translate all 17 native locales. Do not change EPG fetch, XMLTV, reminders, recordings or playlist data.
 - Add Node regression and Electron audit checks at EPG 1360px and 720px, synchronize build version and stale CI artifact naming.
 - Await CI, actual after screenshot, build and release verification; release token HTTP 403 remains a blocker.
+
+## File (9) screenshot-driven repair round 03/20 — Positron P5.1.46 / v4.23.130
+- Evidence: opened P5.1.45 genuine Electron EPG screenshots at 720px / 1360px. Unavailable DVR recording form, date fields, and disabled Add Schedule consume substantial viewport space when there are zero channels.
+- Preserve native form and saved schedules. Only hide unusable form/help for zero source channels; retain recording directory, history, actions. Display existing localized no-channel status and Quản lý nguồn IPTV shortcut, automatically restore form if a channel becomes selectable.
+- Add Node regression and actual Electron screenshot audits of both sizes, plus live DOM simulation of channel arrival/removal proving reversibility.
+- Release consistency correction: P5.1.45 / v4.23.129 CI succeeded but produced a GitHub Release with INCONSISTENT tag positron/v4.23.129-p5.1.44. Preserve that immutable tag; P5.1.46 workflow explicitly uses positron/v4.23.130-p5.1.46, with test verifying package.json SemVer + P-label. Do not claim P5.1.45 was correctly tagged.
+- Test, capture, Windows and macOS builds, Release asset verification remain prerequisites for certification.

@@ -430,6 +430,29 @@
   syncDoctorAvailability();
  }
 
+ // P5.1.46 — the verified EPG 720px and 1360px Electron screenshots show
+ // an unusable DVR schedule form dominating the page when no source channels exist.
+ // Collapse only the unavailable form/help; keep folder controls, existing jobs,
+ // native handlers and all field values intact for when channels arrive.
+ const compactDvrPanel=byId('dvrPanel'),compactDvrForm=byId('dvrForm'),compactDvrSelect=byId('dvrChannel');
+ if(compactDvrPanel&&compactDvrForm&&compactDvrSelect&&!byId('positronDvrNoChannels')){
+  const prompt=d.createElement('div');
+  prompt.id='positronDvrNoChannels';prompt.className='p46-dvr-empty';prompt.setAttribute('role','status');
+  const message=d.createElement('span');message.textContent='Chưa có kênh';
+  const sourceButton=d.createElement('button');sourceButton.type='button';sourceButton.className='btn btn-subtle';
+  sourceButton.id='positronDvrGoSources';sourceButton.textContent='Quản lý nguồn IPTV';
+  sourceButton.addEventListener('click',()=>window.IPTVState?.setPage?.('sources'));
+  prompt.append(message,sourceButton);
+  compactDvrForm.insertAdjacentElement('beforebegin',prompt);
+  const syncCompactDvr=()=>{
+   const available=Array.from(compactDvrSelect.options).some(o=>o.value!=='');
+   compactDvrPanel.classList.toggle('p46-no-channels',!available);
+   prompt.hidden=available;
+  };
+  new MutationObserver(syncCompactDvr).observe(compactDvrSelect,{childList:true});
+  syncCompactDvr();
+ }
+
  window.OpenIPTVPositronTwenty=Object.freeze({
   setStage,getStage:()=>stage,getFeedback:()=>previous
  });

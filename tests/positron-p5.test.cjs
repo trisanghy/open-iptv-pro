@@ -37,10 +37,10 @@ test('P5 assets are loaded after P4 without replacing it',()=>{
 test('P5 release is immutable and versioned separately from P4.1',()=>{
  const pkg=JSON.parse(read('package.json'));
  const flow=read('.github/workflows/positron-lab.yml');
- assert.equal(pkg.version,'4.23.129');
- assert.ok(flow.includes('positron/v4.23.129-p5.1.44'));
+ assert.equal(pkg.version,'4.23.130');
+ assert.ok(flow.includes('positron/v4.23.130-p5.1.44'));
  assert.ok(read('scripts/positron-50-audit.cjs').includes('runTwenty(page)'));
- assert.ok(flow.includes('Positron-P5145-20-Real-Screenshots.zip'));
+ assert.ok(flow.includes('Positron-P5146-20-Real-Screenshots.zip'));
 });
 
 test('P5.1.1 sidebar badge matches shipped release instead of stale P4',()=>{const js=read('renderer/positron.js');assert.ok(js.includes("descriptor.textContent='P5.1.45'"));assert.ok(!js.includes('OPEN IPTV PRO · P4 · 50 VÒNG'));});
@@ -472,4 +472,27 @@ test('P5.1.45 EPG empty instruction references the existing EPG Sources action a
  assert.ok(i18n.includes('positronEpgEmptyTranslations'));
  assert.ok(audit.includes('metrics.epgEmptySummary'));
  assert.ok(audit.includes('metrics.epgSourceAction?.visible'));
+});
+
+
+test('P5.1.46 unavailable DVR scheduler collapses without removing native recording form',()=>{
+ const js=read('renderer/positron-twenty.js'),css=read('renderer/positron-twenty.css'),audit=read('scripts/positron-20-extension.cjs');
+ assert.ok(js.includes('p46-no-channels'));
+ assert.ok(js.includes('compactDvrForm.insertAdjacentElement'));
+ assert.ok(js.includes("window.IPTVState?.setPage?.('sources')"));
+ assert.ok(js.includes('MutationObserver(syncCompactDvr)'));
+ assert.ok(css.includes('#dvrPanel.p46-no-channels #dvrForm'));
+ assert.ok(css.includes('#positronDvrNoChannels:not([hidden])'));
+ assert.ok(audit.includes('metrics.dvrFormVisible'));
+ assert.ok(audit.includes('state.visibleWithChannels'));
+ assert.ok(audit.includes('state.hiddenWithoutChannels'));
+});
+
+test('P5.1.46 release tag must match SemVer AND P-label, never carry the previous P-label',()=>{
+ const pkg=JSON.parse(read('package.json')),workflow=read('.github/workflows/positron-lab.yml');
+ const label=pkg.description.match(/Positron\s+(P\d+\.\d+\.\d+)/)?.[1];
+ assert.ok(label,'package description needs an explicit P-label');
+ const tag='TAG=positron/v'+pkg.version+'-p'+label.slice(1);
+ assert.ok(workflow.includes(tag),'release tag mismatch: expected '+tag);
+ assert.ok(!workflow.includes('TAG=positron/v'+pkg.version+'-p5.1.44'),'stale P-label in new release tag');
 });

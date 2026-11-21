@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.129",
-  "description": "Positron P5.1.45: point missing-EPG instructions to the actual Sources button",
+  "version": "4.23.130",
+  "description": "Positron P5.1.46: compact DVR controls safely when no channels are available",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",
