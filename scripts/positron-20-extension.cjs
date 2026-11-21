@@ -1223,11 +1223,13 @@ async function runTwenty(page){
   const cue=document.getElementById('poFlowPlusScrollHint');
   const head=panel.querySelector('#poFlowPlusResults .po-flowplus-head');
   const r=cue.getBoundingClientRect();
-  const actions=[...panel.querySelectorAll('#poFlowPlusResults .po-flowplus-card button')];
+  const playActions=[...panel.querySelectorAll('#poFlowPlusResults .po-flowplus-card button[aria-label^="Xem kênh "]')];
+  const saveActions=[...panel.querySelectorAll('#poFlowPlusResults .po-flowplus-card .po-flowplus-save')];
+  const actions=[...playActions,...saveActions];
   const overlaps=a=>{const b=a.getBoundingClientRect();
    return r.left<b.right&&r.right>b.left&&r.top<b.bottom&&r.bottom>b.top;};
   return {cueInsideHeading:head.contains(cue),visible:!cue.hidden,
-   cueClearOfActions:actions.length===5&&actions.every(a=>!overlaps(a)),
+   cueClearOfActions:playActions.length===5&&saveActions.length===5&&actions.every(a=>!overlaps(a)),
    noAutoplay:window.IPTVState.getCurrent()===null};
  });
  assert.equal(fixedCueQA.visible,true,'All five cards still require scrolling at 1360px');

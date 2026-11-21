@@ -51,3 +51,9 @@ test('Watch Later uses native channel actions without networking or automatic pl
  assert.ok(!/fetch\s*\(|XMLHttpRequest|importSource\s*\(/.test(ui));
  assert.ok(qa.includes('positron-p5196-watch-later-552-real.png'));
 });
+
+test('Watch Later Electron QA covers unobstructed Xem AND Luu controls',()=>{
+ const qa=fs.readFileSync('scripts/positron-20-extension.cjs','utf8');
+ assert.ok(qa.includes('playActions.length===5&&saveActions.length===5&&actions.every(a=>!overlaps(a))'));
+ assert.ok(qa.includes('positron-p5195-watchflow-inline-scroll-cue-552-real.png'));
+});
