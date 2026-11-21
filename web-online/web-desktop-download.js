@@ -6,6 +6,7 @@
 })(function(root){
  const RELEASES='https://github.com/trisanghy/open-iptv-pro/releases/tag/v4.23.71';
  const API='https://api.github.com/repos/trisanghy/open-iptv-pro/releases/tags/v4.23.71';
+ const NEW_STABLE_API='https://api.github.com/repos/trisanghy/open-iptv-pro/releases/tags/v4.23.76';
  const ELECTRON_PREVIEW_API='https://api.github.com/repos/trisanghy/open-iptv-pro/releases/tags/electron-v4.23.76';
  const RUST_API='https://api.github.com/repos/trisanghy/open-iptv-pro/releases/tags/rust-lab/v23.8.98';
  const MOBILE_API='https://api.github.com/repos/trisanghy/open-iptv-pro/releases/tags/mobile/v4.23.17.35';
@@ -109,7 +110,7 @@ const mobileFormats=[
       </div>
      </details>
     <div class="desktop-download-actions">
-     <a class="desktop-download-releases" href="${RELEASES}" target="_blank" rel="noopener noreferrer">Electron Stable</a>
+     <a class="desktop-download-releases" data-desktop-stable-release href="${RELEASES}" target="_blank" rel="noopener noreferrer">Electron Stable</a>
      <a class="desktop-download-releases" href="tai-ve.html" target="_blank" rel="noopener noreferrer">So sánh 4 nền tảng &amp; tải file</a>
      <a class="desktop-download-releases" href="${MOBILE_RELEASES}" target="_blank" rel="noopener noreferrer">Các bản Mobile</a>
      <button type="button" class="desktop-download-dismiss" data-desktop-close>Đóng</button>
@@ -134,7 +135,7 @@ const mobileFormats=[
    const groups=[
     {title:'Android & iOS · '+(mobile?.version||'mới nhất')+' · Beta',items:mobile?.items||[]},
     {title:'Electron Stable · '+(desktop?.version||'mới nhất'),items:(desktop?.items||[]).filter(x=>!x.id.startsWith('rust-'))},
-    {title:'Electron mới · '+(preview?.version||'4.23.76')+' · Beta, chờ chứng nhận Stable',items:preview?.version===desktop?.version?[]:(preview?.items||[]).filter(x=>!x.id.startsWith('rust-'))},
+    {title:'Electron mới · '+(preview?.version||'4.23.76')+' · Beta, chờ chứng nhận Stable',items:preview?.version.replace(/^electron-/,'')===desktop?.version?[]:(preview?.items||[]).filter(x=>!x.id.startsWith('rust-'))},
     {title:'Rust Lab · '+(rust?.version||'23.8.98')+' · Beta',items:(rust?.items||[]).filter(x=>x.id.startsWith('rust-'))}
    ];
    if(!/iPhone|iPad|iPod|Android/i.test(String(root.navigator?.userAgent||'')))groups.push(groups.shift());
@@ -158,6 +159,10 @@ const mobileFormats=[
     list.append(section);
    }
    for(const badge of doc.querySelectorAll('[data-desktop-download-version]'))badge.textContent=desktop?.version||'';
+   const stableLink=overlay.querySelector('[data-desktop-stable-release]');
+   if(stableLink&&/^v[0-9.]+$/.test(desktop?.version||'')){
+    stableLink.href='https://github.com/trisanghy/open-iptv-pro/releases/tag/'+desktop.version;
+   }
   }
   async function readRelease(url){
    const response=await root.fetch(url,{headers:{Accept:'application/vnd.github+json'},cache:'no-store'});
@@ -169,7 +174,13 @@ const mobileFormats=[
    status.textContent='Đang kiểm tra bản Desktop và Mobile mới nhất trên GitHub…';
    loading=(async()=>{
     try{
-     const [a,b,c,d]=await Promise.allSettled([readRelease(API),readRelease(MOBILE_API),readRelease(RUST_API),readRelease(ELECTRON_PREVIEW_API)]);
+     const stableRelease=readRelease(NEW_STABLE_API).then(r=>{
+      const parsed=resolveRelease(r);
+      if(r.prerelease||r.draft||!parsed||parsed.items.filter(x=>!x.id.startsWith('rust-')).length!==4||
+        !r.assets.some(x=>x.name==='SHA256SUMS.txt'))throw Error('Stable 4.23.76 chưa được xác minh đủ file');
+      return r;
+     }).catch(()=>readRelease(API));
+     const [a,b,c,d]=await Promise.allSettled([stableRelease,readRelease(MOBILE_API),readRelease(RUST_API),readRelease(ELECTRON_PREVIEW_API)]);
      const desktop=a.status==='fulfilled'?resolveRelease(a.value):null;
      const mobile=b.status==='fulfilled'?resolveMobileRelease(b.value):null;
      const rust=c.status==='fulfilled'?resolveRelease(c.value):null;
