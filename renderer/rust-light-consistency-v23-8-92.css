@@ -1,0 +1,148 @@
+/* Rust Lab: Light appearance coherence for all native renderer features.
+   This stylesheet is deliberately loaded last. No JavaScript, playlist,
+   persistence, dark mode, AMOLED, or fullscreen media behavior is modified. */
+html[data-theme="light"] {
+ --rust-light-card:var(--ui-card,var(--surface,#fff));
+ --rust-light-control:var(--ui-control,var(--surface2,#f3f7fd));
+ --rust-light-border:var(--ui-stroke,var(--edge,#dae4ee));
+ --rust-light-text:var(--text,#203449);
+ --rust-light-muted:var(--muted,#587087);
+ --rust-light-selected:var(--ui-selection,color-mix(in srgb,var(--accent,#7b4cdd) 12%,var(--rust-light-card)));
+ color-scheme:light;
+}
+html[data-theme="light"] :is(
+ .dvr-panel,.dvr-job,.dvr-quick-form,.epg-summary,.epg-row,.epg-source-card,
+ .epg-result,.health-table,.health-overview,.doctor-v2-panel,.doctor-v3-panel,
+ .doctor-metrics article,.doctor-issues,.smart-panel,.smart-row,.smart-results,
+ .collector-progress,.source-merge-summary,.source-duplicate-row,.source-hub,
+ .source-hub-section,.task-dock,.task-panel,.task-live-results,
+ .settings-card,.settings-accordion-content,.settings-accordion-heading,
+ .advanced-timebar,.folder-card,.folder-manager,.modal-box
+) {
+ background:var(--rust-light-card)!important;
+ color:var(--rust-light-text)!important;
+ border-color:var(--rust-light-border)!important;
+}
+html[data-theme="light"] :is(
+ .epg-program,.epg-tools-fold,.epg-summary,.health-table th,
+ .sources-hub-nav,.task-dock-head,.multi-head,.multi-bottom,
+ .smart-metrics span,.collector-metrics span,.source-duplicate-row,
+ .folder-header,.settings-accordion-heading
+) {
+ background:var(--rust-light-control)!important;
+ color:var(--rust-light-text)!important;
+ border-color:var(--rust-light-border)!important;
+}
+html[data-theme="light"] :is(
+ .epg-program b,.epg-program time,.epg-row header,.epg-summary,
+ .doctor-metrics article,.health-table td,.health-table th,
+ .smart-panel strong,.smart-row b,.smart-controls label,
+ .settings-accordion-heading,.source-hub-heading h2
+){color:var(--rust-light-text)!important}
+html[data-theme="light"] :is(
+ .epg-summary small,.source-hub-heading p,.doctor-v3-panel small,
+ .smart-panel small,.smart-controls small,.collector-progress p,
+ .health-overview small,.dvr-panel small,.dvr-panel .hint
+){color:var(--rust-light-muted)!important}
+html[data-theme="light"] :is(
+ .dvr-panel input,.dvr-panel select,.dvr-panel textarea,
+ .epg-advanced input,.epg-advanced select,.smart-controls select,
+ .source-hub input,.source-hub select,.doctor-v3-panel input,
+ .doctor-v3-panel select,.health-overview input,.health-overview select,
+ .settings-accordion-content input,.settings-accordion-content select
+){
+ background:var(--rust-light-card)!important;color:var(--rust-light-text)!important;
+ border-color:var(--rust-light-border)!important;color-scheme:light;
+}
+/* Rust-specific full channel browser: cards, filters, favorites and recent. */
+html[data-theme="light"] #page-tv :is(
+ .rust-browser-main,.rust-browser-side-card
+){
+ background:var(--rust-light-card)!important;color:var(--rust-light-text)!important;
+ border-color:var(--rust-light-border)!important;box-shadow:0 4px 18px #243a5015!important;
+}
+html[data-theme="light"] #page-tv :is(
+ .rust-browser-card,.rust-browser-chip,.rust-browser-view button,
+ .rust-browser-pager button,.rust-browser-logo-holder,.rust-browser-logo
+){
+ background:var(--rust-light-control)!important;color:var(--rust-light-text)!important;
+ border-color:var(--rust-light-border)!important;
+}
+html[data-theme="light"] #page-tv :is(
+ .rust-browser-tab,.rust-browser-name,.rust-browser-side-head strong
+){color:var(--rust-light-text)!important}
+html[data-theme="light"] #page-tv :is(.rust-browser-card-group,.rust-browser-side-head button){
+ color:var(--rust-light-muted)!important;
+}
+html[data-theme="light"] #page-tv .rust-browser-filters :is(input,select){
+ background:var(--rust-light-card)!important;color:var(--rust-light-text)!important;
+ border-color:var(--rust-light-border)!important;color-scheme:light;
+}
+html[data-theme="light"] #page-tv :is(
+ .rust-browser-card.selected,.rust-browser-chip.active,
+ .rust-browser-view button.active,.rust-browser-tab.active
+){
+ background:var(--rust-light-selected)!important;
+ color:var(--rust-light-text)!important;
+ border-color:color-mix(in srgb,var(--accent) 40%,var(--rust-light-border))!important;
+}
+html[data-theme="light"] #page-tv .rust-browser-card:hover{
+ background:var(--rust-light-selected)!important;color:var(--rust-light-text)!important;
+}
+/* Recognition/translation/TTS and model management: replace navy literals. */
+html[data-theme="light"] #page-tv :is(
+ .unified-ai-toggle,.video-enhance-toggle,#rustSubtitleOptionsButton,
+ .rust-ai-action,.rust-ai-actions button
+){
+ background:var(--rust-light-selected)!important;color:var(--rust-light-text)!important;
+ border:1px solid color-mix(in srgb,var(--accent) 33%,var(--rust-light-border))!important;
+}
+html[data-theme="light"] #page-tv :is(.unified-ai-mark,.rust-ai-index){
+ background:var(--rust-light-selected)!important;color:var(--rust-light-text)!important;
+}
+html[data-theme="light"] #page-tv :is(
+ .rust-ai-card,.rust-ai-storage-item,.rust-ai-privacy,
+ .rust-ai-status,.rust-ai-heading,.rust-cc-panel,
+ .veh-card,.veh-bench,.veh-ai-probe,#veh-status
+){
+ background:var(--rust-light-control)!important;color:var(--rust-light-text)!important;
+ border-color:var(--rust-light-border)!important;
+}
+html[data-theme="light"] #page-tv :is(
+ .rust-ai-heading h3,.rust-ai-heading p,.rust-ai-card-heading h4,
+ .rust-ai-storage-item strong,.rust-ai-storage-item small,
+ .rust-ai-muted,.rust-ai-field label,.rust-ai-storage-total,
+ .rust-ai-storage-details summary,.rust-ai-status,.rust-ai-privacy,
+ .rust-cc-panel header,.rust-cc-panel small,
+ .veh-card label,.veh-card span,.veh-card small,.veh-limit,
+ .veh-safe,#veh-ai-hw-status,#veh-status,.veh-nav button
+){color:var(--rust-light-text)!important}
+html[data-theme="light"] #page-tv :is(
+ .rust-ai-field select,.rust-ai-card select,.rust-cc-panel select,
+ .veh-card select,.veh-bench button,#veh-ai-probe
+){
+ background:var(--rust-light-card)!important;color:var(--rust-light-text)!important;
+ border-color:var(--rust-light-border)!important;color-scheme:light;
+}
+html[data-theme="light"] #page-tv .veh-nav{
+ border-color:var(--rust-light-border)!important;
+}
+html[data-theme="light"] #page-tv :is(.veh-nav button:first-child,.rust-ai-card button:focus-visible){
+ background:var(--rust-light-selected)!important;
+}
+html[data-theme="light"] #page-tv .unified-ai-row .unified-ai-content{
+ color:var(--rust-light-text)!important;border-color:var(--rust-light-border)!important;
+}
+/* Native popup captions should use light UI, but the video subtitle overlay
+   and fullscreen player are intentionally excluded. */
+html[data-theme="light"] #page-tv .rust-cc-panel :is(button:not(.rust-cc-swatch),select){
+ color:var(--rust-light-text)!important;border-color:var(--rust-light-border)!important;
+}
+html[data-theme="light"] :is(.btn-primary,.control-main):not(:disabled){
+ background:var(--ui-primary,var(--accent))!important;
+ border-color:var(--ui-primary,var(--accent))!important;
+ color:var(--ui-on-primary,#19112b)!important;
+}
+html[data-theme="light"] #page-tv :is(.player-box,.player-box video,.multi-tile video){
+ background-color:#07111d;
+}
