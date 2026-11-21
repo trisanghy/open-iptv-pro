@@ -54,6 +54,8 @@ async function runTwenty(page){
     badge:(()=>{const n=document.querySelector('#appSidebar .brand small');if(!n)return null;const b=n.getBoundingClientRect();return {visible:b.width>0&&b.height>0,clipped:n.scrollWidth>n.clientWidth+1,right:b.right,top:b.top,bottom:b.bottom};})(),
     toggle:(()=>{const n=document.querySelector('#appSidebar .sidebar-edge-toggle');if(!n)return null;const b=n.getBoundingClientRect();return {left:b.left,top:b.top,bottom:b.bottom};})(),
     favoriteAction:get('#positronFavoritesSources'),
+     favoriteGuidance:(()=>document.querySelector('#favoriteList .empty-list')?.firstChild?.textContent?.trim()||'')(),
+     sourceCount:document.getElementById('sourceCount')?.textContent?.trim()||'0',
      themeButton:(()=>{const n=document.getElementById('positronStudioBtn');if(!n)return null;const b=n.getBoundingClientRect(),s=getComputedStyle(n),p=getComputedStyle(n,'::before');return{width:Math.round(b.width),fontSize:s.fontSize,pseudoContent:p.content,ariaLabel:n.getAttribute('aria-label'),title:n.title};})(),
      searchShortcut:document.getElementById('searchBox')?.getAttribute('aria-keyshortcuts'),
     stage:document.documentElement.dataset.p20Stage};
@@ -94,6 +96,8 @@ async function runTwenty(page){
   }
   if(target==='fav'){
     assert.equal(metrics.favoriteAction?.visible,true,'Favorites empty state requires source action: '+name);
+    if(Number(metrics.sourceCount)===0)assert.ok(metrics.favoriteGuidance.startsWith('Chưa có nguồn IPTV.'),'zero-source message misleading: '+name);
+    else assert.ok(metrics.favoriteGuidance.startsWith('Chưa có kênh yêu thích'),'nonempty source guidance misleading: '+name);
     const destination=await page.evaluate(()=>{
       document.getElementById('positronFavoritesSources').click();
       const page=document.querySelector('.page.active-page')?.id;

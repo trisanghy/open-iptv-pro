@@ -84,3 +84,9 @@ This release preserves all P4.1 source data/feature logic. It adds **20 independ
 - Fix: additive `Quản lý nguồn IPTV` button inside the native empty state; uses the existing `IPTVState.setPage('sources')` without changing favorites storage, source data or playback.
 - Regression: Node source assertions and a real Electron screenshot test that the action is visible and navigates to Sources; return to Favorites for screenshot.
 - CI/release/manual after-image review must be separately confirmed.
+
+## Screenshot-feedback series · Round 03/20 · P5.1.10 / 4.23.94
+- Input: actual P5.1.9 600px Favorites screenshot after round 02 (successful Actions 44851699538): the previous generic empty-state copy says "when adding a source again" despite exactly zero sources; a new user gets misleading advice.
+- Fix: text-only, non-destructive guidance based on live `#sourceCount` (0 vs active sources). Observe source changes, retain native Favorites list and the functional Sources CTA from P5.1.9.
+- Regression: Node source test plus real Electron screenshot computed-text validation in Favorites, with the 70-scenario capture suite and full macOS/Windows CI.
+- Pending after screenshot manual inspection, green jobs, and independent release confirmation.

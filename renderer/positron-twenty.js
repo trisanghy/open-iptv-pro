@@ -84,7 +84,15 @@
  if(favoriteList){
   const syncFavoriteSourceAction=()=>{
    const empty=favoriteList.querySelector('.empty-list');
-   if(!empty||empty.querySelector('#positronFavoritesSources'))return;
+   if(!empty)return;
+   // Write only the native message text node; never replace the Favorites list or its button.
+   const num=Number((byId('sourceCount')?.textContent||'0').replace(/[^0-9]/g,''))||0;
+   const guidance=num===0
+    ?'Chưa có nguồn IPTV. Hãy mở Quản lý nguồn IPTV để thêm playlist M3U hoặc URL, sau đó đánh dấu sao những kênh muốn lưu.'
+    :'Chưa có kênh yêu thích trong các nguồn đang bật. Đánh dấu sao để lưu kênh hoặc kiểm tra những nguồn đã tắt trong Quản lý nguồn IPTV.';
+   const copy=empty.firstChild;
+   if(copy?.nodeType===3&&copy.textContent!==guidance)copy.textContent=guidance;
+   if(empty.querySelector('#positronFavoritesSources'))return;
    const button=d.createElement('button');
    button.id='positronFavoritesSources';button.type='button';
    button.className='btn btn-primary po-fav-action';
@@ -94,6 +102,8 @@
    empty.append(button);
   };
   new MutationObserver(syncFavoriteSourceAction).observe(favoriteList,{childList:true,subtree:true});
+  const countNode=byId('sourceCount');
+  if(countNode)new MutationObserver(syncFavoriteSourceAction).observe(countNode,{childList:true,subtree:true,characterData:true});
   syncFavoriteSourceAction();
  }
 

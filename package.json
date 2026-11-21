@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.93",
-  "description": "Positron P5.1.9: navigation from Favorites empty state",
+  "version": "4.23.94",
+  "description": "Positron P5.1.10: contextual Favorites empty-state guidance",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",
