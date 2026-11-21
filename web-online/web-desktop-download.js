@@ -110,7 +110,8 @@ const mobileFormats=[
         <li>Nếu macOS chặn, thử <strong>System Settings → Privacy &amp; Security → Open Anyway</strong> khi có tùy chọn.</li>
         <li>Nếu chỉ bị quarantine dù đã xác minh bản tải an toàn, mở <strong>Terminal</strong> bằng <strong>⌘ + Space</strong>, sao chép/dán lệnh dưới đây bằng <strong>⌘ + V</strong>, nhấn <strong>Enter</strong> và mở lại app.</li>
        </ol>
-       <div class="desktop-download-mac-command"><code id="desktopMacCommand">xattr -dr com.apple.quarantine "/Applications/Open IPTV Pro.app"</code><button type="button" data-mac-copy-command>📋 Sao chép lệnh Terminal</button></div>
+       <div class="desktop-download-mac-command"><code id="desktopMacCommand">xattr -dr com.apple.quarantine "/Applications/Open IPTV Pro.app"</code><button type="button" data-mac-copy-command>📋 Sao chép lệnh Terminal</button><button type="button" data-mac-open-help aria-expanded="false" aria-controls="desktopMacOpenGuide">⌘ Mở Terminal (hướng dẫn)</button></div>
+       <p id="desktopMacOpenGuide" class="desktop-download-mac-open-guide" hidden><strong>Cách mở Terminal trên Mac:</strong> Nhấn <kbd>⌘ + Space</kbd>, gõ <strong>Terminal</strong>, nhấn <kbd>Enter</kbd>. Dán lệnh bằng <kbd>⌘ + V</kbd>. Website không thể mở Terminal trực tiếp. <a href="https://support.apple.com/guide/terminal/open-or-quit-terminal-apd5265185d-f365-44cb-8b09-71a064a42125/mac" target="_blank" rel="noopener noreferrer">Apple hướng dẫn</a>.</p>
        <p class="desktop-download-shortcut-note">Chỉ dùng khi tin tưởng file và SHA-256 khớp. Nếu DMG thực sự hỏng, chữ ký sai hoặc macOS báo mã độc, không vượt cảnh báo. Không tắt Gatekeeper toàn máy.</p>
       </div>
      </details>
@@ -219,6 +220,12 @@ const mobileFormats=[
   introClose?.addEventListener('click',()=>{if(intro)intro.hidden=true;try{root.localStorage?.setItem(INTRO_KEY,'seen');}catch{}});
   for(const trigger of triggers)trigger.addEventListener('click',open);
   overlay.addEventListener('click',async event=>{
+   const opener=event.target.closest('button[data-mac-open-help]');
+   if(opener){
+    const guide=overlay.querySelector('#desktopMacOpenGuide');
+    if(guide){guide.hidden=!guide.hidden;opener.setAttribute('aria-expanded',String(!guide.hidden));}
+    return;
+   }
    const button=event.target.closest('button[data-mac-copy-command]');
    if(button){
     const command='xattr -dr com.apple.quarantine "/Applications/Open IPTV Pro.app"';
