@@ -1,0 +1,45 @@
+name: Audit Rust Lab Light theme (renderer browser preview)
+on:
+  push:
+    branches: [experiment/rust-tauri-v2]
+    paths: [.github/workflows/audit-rust-light-ui.yml]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  renderer-light:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Prepare Rust renderer resources and Chromium runner
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          npm ci --no-audit --no-fund
+          npm run prepare:renderer
+          mkdir -p "$RUNNER_TEMP/iptv-playwright"
+          npm install --prefix "$RUNNER_TEMP/iptv-playwright" --no-save --no-audit --no-fund playwright-core
+          command -v google-chrome
+          node scripts/devserver.cjs > "$RUNNER_TEMP/iptv-rust-renderer-server.log" 2>&1 &
+          sleep 2
+          curl -fsS http://127.0.0.1:1420/ -o /dev/null
+      - name: Test and photograph real Rust renderer Light pages
+        shell: bash
+        env:
+          NODE_PATH: ${{ runner.temp }}/iptv-playwright/node_modules
+        run: |
+          set -Eeuo pipefail
+          node --test tests/rust-light-consistency-v23-8-92.test.cjs
+          CHROME="$(command -v google-chrome)" node tests/rust-light-visual-audit.cjs
+      - name: Upload screenshot and per-page colors (browser renderer, not native)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: rust-light-renderer-browser-screenshots
+          path: rust-light-audit/
+          if-no-files-found: warn
+          retention-days: 10
