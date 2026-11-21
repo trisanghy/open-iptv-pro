@@ -247,3 +247,15 @@ html[data-positron="true"] #page-epg #dvrChannel:disabled{opacity:1!important;co
 html[data-positron="true"] #page-doctor button[data-positron-no-channels="true"]{
  opacity:.55!important;filter:saturate(.55);cursor:not-allowed!important;
 }
+
+/* P5.1.28: P5.1.27 real Sources 1360px screenshot retains 83px
+   empty source block. Extend compact no-playlist treatment to desktop,
+   without affecting populated source lists or Smart Discovery itself. */
+@media(min-width:801px){
+ html[data-positron="true"] #page-sources #sourcesList:has(>.empty-list)>.empty-list{
+  padding:12px 18px!important;line-height:1.45!important;min-height:0!important;
+ }
+ html[data-positron="true"] #page-sources #sourcesList:has(>.empty-list)+#smartDiscoverySection{
+  margin-top:12px!important;
+ }
+}

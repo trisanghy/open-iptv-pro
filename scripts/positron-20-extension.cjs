@@ -273,6 +273,12 @@ async function runTwenty(page){
     assert.equal(state.placeholder,'Chưa có kênh để ghi hình','DVR placeholder failed to recover');
    }
    if(target==='sources'&&metrics.sources)assert.notEqual(metrics.sources.background,'rgb(255, 255, 255)','white source panel');
+   if(target==='sources'&&width>=900&&Number(metrics.sourceCount)===0){
+    assert.ok(metrics.sourceEmpty?.height<=57,'desktop no-source card remains oversized: '+name);
+    assert.ok(metrics.sourceEmpty?.paddingTop<=14&&metrics.sourceEmpty?.paddingBottom<=14,'desktop empty state padding too large: '+name);
+    assert.ok(metrics.sourceEmpty?.gap<=20,'desktop Smart Discovery remains too far below guidance: '+name);
+   }
+
   if(target==='sources'&&width<=720){
    assert.ok(metrics.sourceEmpty?.text.startsWith('Chưa có nguồn.'),'no-source guidance unexpectedly changed');
    assert.ok(metrics.sourceEmpty.height<=65,'empty sources block still wastes vertical space: '+name);

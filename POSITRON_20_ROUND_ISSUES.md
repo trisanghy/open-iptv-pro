@@ -60,3 +60,5 @@ Round 04 verified in actual Electron: DVR heading is monochrome SVG 20px with ar
 | 01/20 | P5.1.26 / v4.23.110 | P5.1.24 Electron Doctor 1360px (same Doctor code/state at P5.1.25), artifact 14688244941 | Zero metrics but three analysis actions active; non-destructive disable/reenable on navCount | New Node tests and Electron lifecycle screenshot audit; pending CI and after-image review |
 
 | 02/20 | P5.1.27 / v4.23.111 | P5.1.26 real Electron Doctor 1360px, artifact 14688743177 | 'Kiểm tra link sâu' still enabled with zero channels, omitted from first guard | Extend guard to fourth native action; test disabled, accessibly described, and re-enabled on channel change |
+
+| 03/20 | P5.1.28 / v4.23.112 | P5.1.27 Sources 1360px PNG, artifact 14689552049 | Empty no-playlist region is 83px high with 30px padding and 24px Discovery gap; desktop omitted from P5.1.23 compact CSS | Desktop-only :has(>.empty-list) rule; Node + real Electron geometry assertions; CI/release pending |
