@@ -2522,9 +2522,42 @@ async function runTwenty(page){
  for(const [key,value] of Object.entries(emptySearchActionQA))
   assert.equal(value,true,'P5.1.132 native empty-search recovery '+key+': '+JSON.stringify(emptySearchActionQA));
 
+ // P5.1.133: the last genuine P5.1.132 450px screenshot shows the
+ // second row's long QA Channel names cut off next to the separate star.
+ // Test a multi-result library card (not the single-result wide-card path).
+ await page.evaluate(()=>{
+  const cards=[...document.querySelectorAll('#webChooserGrid button.web-chooser-card')];
+  const c=cards.find(n=>n.querySelector('.web-chooser-name')?.textContent.startsWith('QA Channel '));
+  c?.scrollIntoView({block:'center',inline:'nearest'});
+ });
+ await page.waitForTimeout(90);
+ const readableCardTitleQA=await page.evaluate(()=>{
+  const grid=document.getElementById('webChooserGrid');
+  const button=[...grid.querySelectorAll('button.web-chooser-card')]
+   .find(n=>n.querySelector('.web-chooser-name')?.textContent.startsWith('QA Channel '));
+  const frame=button?.closest('.web-chooser-card-wrap');
+  const title=button?.querySelector('.web-chooser-name');
+  const star=frame?.querySelector('.web-chooser-favorite');
+  const t=title?.getBoundingClientRect(),s=star?.getBoundingClientRect();
+  const style=title&&getComputedStyle(title);
+  return {usesNativeGrid:!!grid&&!grid.classList.contains('list'),
+   loadedManyCards:grid.querySelectorAll('button.web-chooser-card').length===18,
+   realLongTitle:title?.textContent.length>=14,
+   wrapsTwoLines:style?.whiteSpace==='normal'&&style?.webkitLineClamp==='2',
+   readableWithoutClipping:!!title&&title.scrollHeight<=title.clientHeight+2,
+   separateStarHitArea:!!s&&s.width>=33&&s.height>=33&&star.tagName==='BUTTON',
+   noStarOverlap:!!t&&!!s&&t.bottom<=s.top-3,
+   videoCardStillNative:button?.tagName==='BUTTON',
+   noAutoplay:window.IPTVState.getCurrent()===null,
+   noOverflow:document.documentElement.scrollWidth<=innerWidth+1};
+ });
+ await page.screenshot({path:path.join(out,'positron-p51133-compact-card-title-star-450-real.png'),animations:'disabled'});
+ for(const [key,value] of Object.entries(readableCardTitleQA))
+  assert.equal(value,true,'P5.1.133 genuine compact card title/star '+key+': '+JSON.stringify(readableCardTitleQA));
+
  await page.setViewportSize({width:1360,height:820});
   const report={type:'Positron P5 twenty distinct desktop screenshot cases',realElectron:true,syntheticChannels:false,
-  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA,chooserQa,toastLayoutQA,nativeToastQA,compactIdleQA,channelChipRailQA,advancedFilterQA,readableCardsQA,keyboardTabQA,favoriteEmptyQA,duplicateEmptyQA,categoryFilterQA,categoryFixtureQA,compactSingleQA,directFavoriteQA,favoriteCountQA,compactToastStackQA,toastDismissQA,toastFocusReturnQA,toastDockQA,wheelQA,pinnedAllQA,pinnedMaskQA,categoryKeyQA,dropdownChipQA,pinnedRightMaskQA,pinnedBorderMaskQA,asciiDSearchQA,emptySearchActionQA};
+  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA,chooserQa,toastLayoutQA,nativeToastQA,compactIdleQA,channelChipRailQA,advancedFilterQA,readableCardsQA,keyboardTabQA,favoriteEmptyQA,duplicateEmptyQA,categoryFilterQA,categoryFixtureQA,compactSingleQA,directFavoriteQA,favoriteCountQA,compactToastStackQA,toastDismissQA,toastFocusReturnQA,toastDockQA,wheelQA,pinnedAllQA,pinnedMaskQA,categoryKeyQA,dropdownChipQA,pinnedRightMaskQA,pinnedBorderMaskQA,asciiDSearchQA,emptySearchActionQA,readableCardTitleQA};
  fs.writeFileSync(path.resolve('positron-evidence','audit-p5-20-rounds.json'),JSON.stringify(report,null,2));
  return report;
 }

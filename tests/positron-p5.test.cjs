@@ -37,7 +37,7 @@ test('P5 assets are loaded after P4 without replacing it',()=>{
 test('P5 release is immutable and versioned separately from P4.1',()=>{
  const pkg=JSON.parse(read('package.json'));
  const flow=read('.github/workflows/positron-lab.yml');
- assert.equal(pkg.version,'4.23.216');
+ assert.equal(pkg.version,'4.23.217');
  const label=pkg.description.match(/Positron\s+(P\d+\.\d+\.\d+)/)?.[1];
  assert.ok(label,'product P-label must accompany SemVer');
  assert.ok(flow.includes('TAG=positron/v'+pkg.version+'-'+label.toLowerCase()),'release tag and app version must match');
@@ -1117,4 +1117,16 @@ test('P5.1.132 actionable empty channel search restores all and input focus with
   'positron-p51132-empty-search-clear-before-450-real.png',
   'positron-p51132-empty-search-clear-after-450-real.png'])
   assert.ok(qa.includes(t),'missing no-result recovery Electron proof '+t);
+});
+
+test('P5.1.133 compact multi-result channel titles wrap above native separate favorite control',()=>{
+ const css=read('renderer/positron-horizon-v4.css'),qa=read('scripts/positron-20-extension.cjs');
+ assert.ok(css.includes('P5.1.133: review of P5.1.132 genuine 450px Electron'));
+ assert.ok(css.includes('min-height:142px!important;padding:10px 9px 49px!important'));
+ assert.ok(css.includes('-webkit-line-clamp:2!important'));
+ assert.ok(css.includes('right:calc(50% - 17px)!important'));
+ for(const t of ['readableWithoutClipping:','noStarOverlap:',
+  'separateStarHitArea:',"realLongTitle:title?.textContent.length>=14",
+  'positron-p51133-compact-card-title-star-450-real.png'])
+  assert.ok(qa.includes(t),'missing real compact card proof '+t);
 });

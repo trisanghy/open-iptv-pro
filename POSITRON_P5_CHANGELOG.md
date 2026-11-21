@@ -1,3 +1,11 @@
+## P5.1.133 — Keep compact channel titles readable above Favorite stars / Electron v4.23.217
+
+- P5.1.132 genuine Electron screenshot `positron-p51132-empty-search-clear-after-450-real.png` shows two-column 450px grid cards whose long "QA Channel 00…" labels are truncated beside the separate bottom Favorite star.
+- Root cause: native chooser white-space:nowrap plus P5.1.118 star overlay and 46px right padding leave too little label width.
+- Fix only in multi-result compact native GRID (not list, not wide single-result): reserve a dedicated 34px bottom action row; allow name to wrap to two lines; center the original 34px independent Favorite control below the title. Preserve native play action, keyboard and stored Favorite keys.
+- True Electron QA: 450px long QA Channel card title rendered without clipping/overlap, favorite button separate and reachable, 18 native cards, no overflow and no autoplay. After PNG `positron-p51133-compact-card-title-star-450-real.png`.
+- CANDIDATE until CI and visual review, installer/build verification.
+
 ## P5.1.132 — Recover from empty channel search without reimporting / Electron v4.23.216
 
 - Input: genuine P5.1.131 real 450px Electron screenshot `positron-p51131-ascii-d-search-450-real.png` exposes the prominent channel search. Source review reveals All-tab no-results state has only generic text; unlike Favorites and Recent, it has no actionable path to clear filters.

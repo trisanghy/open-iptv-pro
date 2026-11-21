@@ -1129,3 +1129,23 @@ html[data-positron="true"].po-horizon #toastArea.toast-area .toast .po-toast-dis
   right:-30px!important;width:30px!important;
  }
 }
+
+/* P5.1.133: review of P5.1.132 genuine 450px Electron screenshot shows
+   long 2-column channel names truncated at the 34px Favorite star level.
+   Reserve a true separate lower action row; show up to two readable title
+   lines, with original native video-button and independent Favorite button. */
+@media(max-width:500px){
+ html[data-positron="true"].po-horizon #page-tv #webChooserGrid.web-chooser-grid:not(.list)>.web-chooser-card-wrap:not(:only-child)>button.web-chooser-card{
+  min-height:142px!important;padding:10px 9px 49px!important;
+  justify-content:flex-start!important;gap:7px!important;
+ }
+ html[data-positron="true"].po-horizon #page-tv #webChooserGrid.web-chooser-grid:not(.list)>.web-chooser-card-wrap:not(:only-child)>button.web-chooser-card .web-chooser-name{
+  max-width:100%!important;white-space:normal!important;
+  display:-webkit-box!important;-webkit-box-orient:vertical!important;
+  -webkit-line-clamp:2!important;line-height:1.35!important;
+  overflow-wrap:anywhere!important;overflow:hidden!important;
+ }
+ html[data-positron="true"].po-horizon #page-tv #webChooserGrid.web-chooser-grid:not(.list)>.web-chooser-card-wrap:not(:only-child)>.web-chooser-favorite{
+  bottom:7px!important;right:calc(50% - 17px)!important;
+ }
+}

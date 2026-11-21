@@ -39,3 +39,7 @@ Evaluate defects revealed by real screenshot of previous build before making cha
 ## Planned round 04 — input genuine P5.1.131
 - Real Electron screenshot of `dia phuong` shows channel search prominently; source reveals no actionable empty-state recovery for All-tab user typos.
 - P5.1.132 v4.23.216: add reversible clear-filters button only for meaningful no-results search/group, never import/delete source or autoplay. Verify native before+after screenshots.
+
+## Planned round 05 — P5.1.132 after-image
+- Direct visual review of true `positron-p51132-empty-search-clear-after-450-real.png`: at 450px with 18 cards, labels like "QA Channel 00…" are truncated and collide vertically with their separate Favorite star button.
+- P5.1.133 v4.23.217: only multi-card compact Grid: reserve star row and allow 2-line text; genuine Electron screenshot/hit geometry regression; no data changes.
