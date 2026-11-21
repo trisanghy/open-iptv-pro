@@ -1002,7 +1002,8 @@ async function runTwenty(page){
    ready:empty.dataset.poHasChannels,firstAction:!!first&&!first.hidden,
    fileHidden:file.hidden,urlHidden:url.hidden,
    nativeImportsKept:!!file&&!!url,
-   noPlaying:window.IPTVState.getCurrent()===null};
+   noPlaying:window.IPTVState.getCurrent()===null,
+   subtitle:document.getElementById('playingSubtitle')?.textContent.trim()};
  });
  assert.equal(populatedPlayerQa.title,'Chọn kênh để xem','Player still asks to import after 552 channels exist');
  assert.ok(populatedPlayerQa.countText.includes('552'),'Player cannot explain imported channel count');
@@ -1010,7 +1011,9 @@ async function runTwenty(page){
   assert.equal(populatedPlayerQa[key],true,'Populated-player onboarding failed: '+key);
  assert.equal(populatedPlayerQa.ready,'true');
  assert.equal(populatedPlayerQa.noPlaying,true,'Native source onboarding must never autoplay during metadata QA');
+ assert.equal(populatedPlayerQa.subtitle,'Chọn kênh để bắt đầu','Native player subtitle still incorrectly asks to import a source');
  await page.screenshot({path:path.join(out,'positron-p5188-player-ready-552-metadata-real.png'),animations:'disabled'});
+ await page.screenshot({path:path.join(out,'positron-p5189-player-ready-subtitle-552-metadata-real.png'),animations:'disabled'});
  // P5.1.76: the no-source Doctor simplification must disappear when native
  // metadata-only channels are imported, without touching any live URL.
  await page.evaluate(()=>window.IPTVState.setPage('doctor'));

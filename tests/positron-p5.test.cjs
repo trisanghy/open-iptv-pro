@@ -37,7 +37,7 @@ test('P5 assets are loaded after P4 without replacing it',()=>{
 test('P5 release is immutable and versioned separately from P4.1',()=>{
  const pkg=JSON.parse(read('package.json'));
  const flow=read('.github/workflows/positron-lab.yml');
- assert.equal(pkg.version,'4.23.172');
+ assert.equal(pkg.version,'4.23.173');
  const label=pkg.description.match(/Positron\s+(P\d+\.\d+\.\d+)/)?.[1];
  assert.ok(label,'product P-label must accompany SemVer');
  assert.ok(flow.includes('TAG=positron/v'+pkg.version+'-'+label.toLowerCase()),'release tag and app version must match');
@@ -733,4 +733,14 @@ test('P5.1.88 populated native player replaces redundant import prompts with exp
  assert.ok(qa.includes("populatedPlayerQa.title,'Chọn kênh để xem'"));
  assert.ok(qa.includes("populatedPlayerQa.noPlaying"));
  assert.ok(qa.includes('positron-p5188-player-ready-552-metadata-real.png'));
+});
+
+test('P5.1.89 native player status is synchronized without clobbering stop or playback messages',()=>{
+ const ui=read('renderer/positron-horizon-v4.js'),qa=read('scripts/positron-20-extension.cjs');
+ assert.ok(ui.includes("const playerSubtitle=byId('playingSubtitle')"));
+ assert.ok(ui.includes("if(playerSubtitle&&!window.IPTVState.getCurrent()?.id)"));
+ assert.ok(ui.includes("text==='Nhập danh sách để bắt đầu'||text==='Chọn kênh để bắt đầu'"));
+ assert.ok(ui.includes("playerSubtitle.textContent=hasChannels?'Chọn kênh để bắt đầu':'Nhập danh sách để bắt đầu'"));
+ assert.ok(qa.includes("populatedPlayerQa.subtitle,'Chọn kênh để bắt đầu'"));
+ assert.ok(qa.includes('positron-p5189-player-ready-subtitle-552-metadata-real.png'));
 });

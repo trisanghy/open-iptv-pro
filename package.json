@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.172",
-  "description": "Positron P5.1.88: useful start-channel action when an IPTV playlist is already available",
+  "version": "4.23.173",
+  "description": "Positron P5.1.89: native player status reflects already imported channels",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

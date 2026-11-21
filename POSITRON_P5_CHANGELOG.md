@@ -1,3 +1,10 @@
+## P5.1.89 — Native player status reflects available channels / v4.23.173
+
+- Input: actual P5.1.88 Electron 1360×820 screenshot `positron-p5188-player-ready-552-metadata-real.png` shows 552 imported native channels and a useful explicit start action, yet the status under the video still says `Nhập danh sách để bắt đầu` (import a playlist to begin).
+- Synchronize only the native *default* `#playingSubtitle` hint with native enabled-channel count. Change the default to `Chọn kênh để bắt đầu` when channels are present, restore the original import hint when none are. Never overwrite status labels after a user stops video or when a channel is already selected or playing.
+- Add Node assertion and real Electron metadata screenshot `positron-p5189-player-ready-subtitle-552-metadata-real.png`, including a CDP check that UI state and caption agree and playback remains stopped.
+- No playlist changes, imports, autoplay, caption, DVR or stream requests.
+
 ## P5.1.88 — Real playlist-aware TV onboarding / v4.23.172
 
 - Input: opened actual P5.1.87 Electron 1360×820 screenshot `positron-p5-visual-only-552-channels.png`. Although 552 native channels were already in the sidebar, the video's empty state still misleadingly asked the user to import a playlist, and offered only `Mở file M3U` and `Thêm URL`.

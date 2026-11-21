@@ -202,6 +202,7 @@
   const buttons=nativeEmptyPlayer.querySelector('.empty-actions');
   const fileAction=byId('emptyFileBtn'),urlAction=byId('emptyUrlBtn');
   if(heading&&hint&&buttons&&fileAction&&urlAction){
+   const playerSubtitle=byId('playingSubtitle');
    const originalHeading=heading.textContent,originalHint=hint.textContent;
    const start=d.createElement('button');start.type='button';
    start.id='poFirstChannelAction';start.className='btn btn-primary';
@@ -225,6 +226,14 @@
      'Đã có '+channels.length+' kênh, nhưng chưa tìm thấy link có thể thử phát. Hãy kiểm tra nguồn.'):originalHint;
     fileAction.hidden=hasChannels&&!!first;urlAction.hidden=hasChannels&&!!first;
     start.hidden=!first;
+    // P5.1.89: the native player subtitle should not say "import a
+    // playlist" after enabled channels are present; preserve stop/playback
+    // captions, which are owned by the native player state machine.
+    if(playerSubtitle&&!window.IPTVState.getCurrent()?.id){
+     const text=playerSubtitle.textContent.trim();
+     if(text==='Nhập danh sách để bắt đầu'||text==='Chọn kênh để bắt đầu')
+      playerSubtitle.textContent=hasChannels?'Chọn kênh để bắt đầu':'Nhập danh sách để bắt đầu';
+    }
    };
    new MutationObserver(syncPlayerIntro).observe(nativeChannelMeta,{childList:true,characterData:true,subtree:true});
    syncPlayerIntro();
