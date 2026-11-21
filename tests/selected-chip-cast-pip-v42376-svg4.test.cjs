@@ -1,10 +1,10 @@
 'use strict';
 const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');
 const root=path.resolve(__dirname,'..'),read=p=>fs.readFileSync(path.join(root,p),'utf8');
-test('Tất cả selected chip uses dark teal rather than bright playback green',()=>{
+test('Tất cả selected chip follows the active theme rather than bright playback green',()=>{
  const css=read('renderer/web-channel-chooser-v42371.css');
- assert.match(css,/\.web-chooser-chip\.active\{background:#183a33/);
- assert.match(css,/background:#193c35!important/);
+ assert.match(css,/\.web-chooser-chip\.active\{background:color-mix\(in srgb,var\(--accent\) 12%,var\(--surface\)\)/);
+ assert.match(css,/background:color-mix\(in srgb,var\(--accent\) 12%,var\(--surface\)\)!important/);
  assert.doesNotMatch(css,/\.web-chooser-chip\.active\{background:#32db76/);
 });
 test('Cast / PiP are one SVG only, without cloning or replacing click target',()=>{
