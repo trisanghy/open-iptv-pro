@@ -1692,9 +1692,37 @@ async function runTwenty(page){
   assert.equal(toastLayoutQA[key],true,'P5.1.108 narrow native toast regression '+key+': '+JSON.stringify(toastLayoutQA));
  await page.screenshot({path:path.join(out,'positron-p51108-toast-clear-of-sidebar-450-real.png'),animations:'disabled'});
  await page.evaluate(()=>document.getElementById('poPositronToastLayoutQA')?.remove());
+ // P5.1.109: the reviewed P5.1.108 real screenshot shows duplicated
+ // quota banners. Verify the REAL native IPTVState.toast twice at 450px.
+ await page.evaluate(()=>{
+  const tray=document.getElementById('toastArea');
+  tray.replaceChildren(); // isolate the screenshot from previous QA fixtures
+  window.IPTVState.toast('Xem sau đã lưu đủ 80 kênh. Bỏ lưu một kênh trước khi thêm mới.','error');
+  window.IPTVState.toast('Xem sau đã lưu đủ 80 kênh. Bỏ lưu một kênh trước khi thêm mới.','error');
+ });
+ const nativeToastQA=await page.evaluate(()=>{
+  const tray=document.getElementById('toastArea');
+  const toasts=[...tray.querySelectorAll('.toast')];
+  const r=toasts[0]?.getBoundingClientRect();
+  return {singleActive:toasts.length===1,readable:toasts[0]?.textContent.includes('80 kênh')===true,
+   nativeError:toasts[0]?.classList.contains('err')===true,
+   clearOfSidebar:!!r&&r.left>=document.getElementById('appSidebar').getBoundingClientRect().right+8,
+   withinViewport:!!r&&r.right<=innerWidth-8,
+   noOverflow:document.documentElement.scrollWidth<=innerWidth+1};
+ });
+ for(const key of ['singleActive','readable','nativeError','clearOfSidebar','withinViewport','noOverflow'])
+  assert.equal(nativeToastQA[key],true,'P5.1.109 native toast check '+key+': '+JSON.stringify(nativeToastQA));
+ await page.screenshot({path:path.join(out,'positron-p51109-native-toast-dedupe-450-real.png'),animations:'disabled'});
+ const toastSeverityQA=await page.evaluate(()=>{
+  window.IPTVState.toast('Xem sau đã lưu đủ 80 kênh. Bỏ lưu một kênh trước khi thêm mới.','warn');
+  const rows=[...document.querySelectorAll('#toastArea .toast')];
+  const result={distinctSeverity:rows.length===2&&rows.some(n=>n.classList.contains('warn'))};
+  document.getElementById('toastArea').replaceChildren();return result;
+ });
+ assert.equal(toastSeverityQA.distinctSeverity,true,'P5.1.109 must preserve distinct warning severity');
  await page.setViewportSize({width:1360,height:820});
   const report={type:'Positron P5 twenty distinct desktop screenshot cases',realElectron:true,syntheticChannels:false,
-  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA,chooserQa,toastLayoutQA};
+  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA,chooserQa,toastLayoutQA,nativeToastQA};
  fs.writeFileSync(path.resolve('positron-evidence','audit-p5-20-rounds.json'),JSON.stringify(report,null,2));
  return report;
 }

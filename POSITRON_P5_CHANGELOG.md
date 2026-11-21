@@ -749,3 +749,11 @@ P5.1.81 follow-up: real Electron capture found nav overflow; replace flexible no
 - Cause: the shared native `.toast-area` uses right:24px/max-width:380px with no left constraint for the compact sidebar.
 - Fix: Positron-only <=600px notification lane left:66px/right:12px; text wraps safely and the visual toast does not intercept taps. Native toast content, timers, IPTV data and playback remain untouched.
 - Regression: Node source assertion and real Electron 450px measured sidebar clearance, viewport bounds, overflow and message height. Capture `positron-p51108-toast-clear-of-sidebar-450-real.png`. CI/release/screenshot review must be checked before marking this round complete.
+
+
+## P5.1.109 / v4.23.193 — Avoid repeated identical native toast notifications (new batch round 02/20)
+- Input: P5.1.108 real 450px Electron `positron-p51108-toast-clear-of-sidebar-450-real.png`, directly inspected: two identical quota banners cover the lower channel list during QA. The second banner was introduced by an audit fixture, but the underlying native toast function was independently confirmed to append every identical notification without deduplication.
+- Root: native `renderer/app.js` `toast()` creates a new DOM node on every call, with no active-notification key. Repeated user clicks can stack the same error.
+- Fix: coalesce only the same text + severity while the previous toast is still mounted. Different messages or severity remain visible; timeout still removes existing toast after 5.5 seconds. Existing IPTV data, local playlist, player, source and accessibility live region are unchanged.
+- Regression: Node executes extracted native toast function with a DOM stub to verify same/different messages, severity and expiry, plus native Electron 450px invokes IPTVState.toast twice and captures `positron-p51109-native-toast-dedupe-450-real.png` after asserting exactly one message.
+- Status: candidate until GitHub Actions, native screenshot review, immutable release and installers are verified.

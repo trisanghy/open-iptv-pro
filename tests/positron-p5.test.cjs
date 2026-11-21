@@ -37,7 +37,7 @@ test('P5 assets are loaded after P4 without replacing it',()=>{
 test('P5 release is immutable and versioned separately from P4.1',()=>{
  const pkg=JSON.parse(read('package.json'));
  const flow=read('.github/workflows/positron-lab.yml');
- assert.equal(pkg.version,'4.23.192');
+ assert.equal(pkg.version,'4.23.193');
  const label=pkg.description.match(/Positron\s+(P\d+\.\d+\.\d+)/)?.[1];
  assert.ok(label,'product P-label must accompany SemVer');
  assert.ok(flow.includes('TAG=positron/v'+pkg.version+'-'+label.toLowerCase()),'release tag and app version must match');
@@ -768,4 +768,24 @@ test('P5.1.108 mobile error toast stays outside 54px rail and inside viewport',(
  assert.ok(audit.includes('t.right<=innerWidth-8'));
  assert.ok(audit.includes('positron-p51108-toast-clear-of-sidebar-450-real.png'));
  assert.ok(audit.includes('toastLayoutQA'));
+});
+
+
+test('P5.1.109 native toast deduplicates active identical messages but preserves severity and expiry',()=>{
+ const src=read('renderer/app.js');
+ const begin=src.indexOf(" function toast(message,type='ok'){");
+ const end=src.indexOf('\n function setPage(',begin);
+ assert.ok(begin>0&&end>begin,'native toast must remain available');
+ const area={children:[],append(n){this.children.push(n);}};
+ const callbacks=[];
+ const document={createElement:()=>({dataset:{},className:'',textContent:'',remove(){const i=area.children.indexOf(this);if(i>=0)area.children.splice(i,1);}})};
+ const factory=require('node:vm').runInNewContext('(function(document,$,setTimeout){'+src.slice(begin,end)+';return toast;})');
+ const toast=factory(document,()=>area,fn=>callbacks.push(fn));
+ toast('Xem sau đã lưu đủ','error');toast('Xem sau đã lưu đủ','error');
+ assert.equal(area.children.length,1,'same active error must only appear once');
+ toast('Xem sau đã lưu đủ','warn');toast('Kênh khác','error');
+ assert.equal(area.children.length,3,'other type or message must remain visible');
+ assert.equal(callbacks.length,3,'duplicate must not schedule an extra removal');
+ callbacks[0]();assert.equal(area.children.length,2,'oldest notification expires');
+ toast('Xem sau đã lưu đủ','error');assert.equal(area.children.length,3,'message can reappear after expiry');
 });

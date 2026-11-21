@@ -63,7 +63,21 @@
   }
  }
  function textStatus(t){$('#footerText').textContent=t;$('#miniStatus').textContent=t;}
- function toast(message,type='ok'){const node=document.createElement('div');node.className='toast'+(type==='error'?' err':type==='warn'?' warn':'');node.textContent=message;$('#toastArea').append(node);setTimeout(()=>node.remove(),5500);}
+ function toast(message,type='ok'){
+  const area=$('#toastArea');
+  const content=String(message??'');
+  const kind=type==='error'?'err':type==='warn'?'warn':'ok';
+  // A repeated action must not stack identical live notifications across the
+  // video controls. Distinct messages and warning levels remain independent.
+  if([...area.children].some(n=>n.dataset?.poToastKind===kind&&n.dataset?.poToastMessage===content))return;
+  const node=document.createElement('div');
+  node.className='toast'+(kind==='ok'?'':' '+kind);
+  node.textContent=content;
+  node.dataset.poToastKind=kind;
+  node.dataset.poToastMessage=content;
+  area.append(node);
+  setTimeout(()=>node.remove(),5500);
+ }
  function setPage(p){if(p==='collector'||p==='discovery')p='sources';if(window.IPTVProAdvanced?.canEnterPage?.(p)===false){toast('Trang này bị khóa trong hồ sơ trẻ em','warn');return;}const last=page;if(last!==p||p==='tv')window.OpenIPTVAutoPiP?.onPageChange(p,last);page=p;if(last!==p){const scrolling=$('.content');if(scrolling)scrolling.scrollTop=0;}$$('.nav[data-page]').forEach(x=>x.classList.toggle('active',x.dataset.page===p));$$('.page').forEach(x=>x.classList.remove('active-page'));$('#page-'+p)?.classList.add('active-page');$('#pageTitle').textContent=({tv:'Xem truyền hình',fav:'Kênh yêu thích',shots:'Ảnh chụp kênh',sources:'Quản lý nguồn',discovery:'Smart Discovery',doctor:'Smart IPTV Doctor 3.0',health:'Sức khỏe kênh',folders:'Thư mục kênh',epg:'Lịch phát sóng EPG',settings:'Cài đặt'})[p]||'Open IPTV Pro';render();window.IPTVExtras?.onPage?.(p);window.IPTVProAdvanced?.onPage?.(p,last);window.IPTVDVR?.onPage?.(p);window.IPTVCollectorUI?.refresh?.();}
  function closeModal(){$('#modal').classList.add('hidden');modalHandler=null;}
  function openModal(title,html,onSubmit,confirmText='Xác nhận'){$('#modalTitle').textContent=title;$('#modalBody').innerHTML=html;$('#modalConfirm').textContent=confirmText;modalHandler=onSubmit;$('#modal').classList.remove('hidden');setTimeout(()=>$('#modalBody input:not([type=radio])')?.focus(),40);}
