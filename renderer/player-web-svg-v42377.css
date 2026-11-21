@@ -63,3 +63,7 @@
 #page-tv .fs-web-extras #fsWebFav,#page-tv .fs-web-extras #fsWebPiP{font-size:0!important}
 #page-tv :is(#prevBtn,#playBtn,#stopBtn,#nextBtn,#castBtn,#pipBtn,#fullscreenBtn,#fsPrev,#fsPlay,#fsNext,#fsExit,#openGuideBtn,#favCurrentBtn,#fsWebFav,#fsWebPiP,#fsWebEPG,#fsWebAspect,#fsWebLinks):focus-visible{outline:2px solid var(--accent,#41d994)!important;outline-offset:3px!important}
 @media(max-width:870px){#page-tv .fs-web-actions :is(#fsWebEPG,#fsWebAspect,#fsWebLinks)::before{width:19px!important;height:19px!important}}
+
+/* Desktop Cast/PiP keep their text labels, but only Web SVG is rendered as icon. */
+#page-tv :is(#castBtn,#pipBtn){font-size:12px!important;line-height:1.2!important}
+#page-tv :is(#castBtn,#pipBtn)::before{font-size:0!important}
