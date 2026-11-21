@@ -15,7 +15,7 @@ Thay ký tự sao ★/☆ phụ thuộc phông chữ bằng biểu tượng SVG 
 
 *Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
 
-[Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/tree/Positron) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/a8c971b57f09cf7c19d391673ee0f843652ccadc)
+[Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/tree/Positron) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/649c19f3a41cd73bf870ba4fcdbd6b288d70da87)
 
 </details>
 
