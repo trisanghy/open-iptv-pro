@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Tính năng mới Open IPTV Pro — WatchFlow, EPG, Positron, bản phát hành & ảnh</title>
+<meta name="description" content="Theo dõi chức năng Open IPTV Pro mới: WatchFlow, Xem sau, lọc và tìm EPG, nhắc chương trình. Nhật ký Positron cập nhật theo từng phiên bản, ảnh kiểm thử và liên kết GitHub Release.">
+<link rel="canonical" href="https://trisanghy.github.io/open-iptv-pro/tinh-nang-moi.html"><link rel="icon" href="assets/icon.png">
+<style>
+:root{color-scheme:dark;font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;background:#0b1220;color:#f2f8ff}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;line-height:1.55;background:radial-gradient(ellipse 65% 340px at 55% 0,#204456 0,transparent 85%),#0b1220}
+a{color:#a8d9ff;text-underline-offset:3px}a:focus-visible,button:focus-visible,summary:focus-visible{outline:3px solid #9de5cf;outline-offset:3px}
+.wrap{width:min(1100px,calc(100% - 34px));margin:auto}header{border-bottom:1px solid #30455d;background:#101c2edb;position:sticky;top:0;z-index:5;backdrop-filter:blur(14px)}
+header .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 0}.brand{display:flex;align-items:center;gap:11px;color:#fff;text-decoration:none;font-weight:800}.brand img{width:36px;height:36px;border-radius:9px}nav{display:flex;gap:13px;flex-wrap:wrap;font-size:13px}nav a{text-decoration:none}
+.hero{padding:66px 0 20px}.eyebrow{color:#92e2c8;text-transform:uppercase;letter-spacing:.13em;font-weight:850;font-size:12px}
+h1{font-size:clamp(33px,5vw,56px);letter-spacing:-.04em;line-height:1.1;margin:16px 0}h1 span{color:#a5eada}h2{font-size:clamp(23px,3vw,29px);margin:0 0 9px;letter-spacing:-.025em}.lead{font-size:16px;max-width:840px;color:#bcd0e6}.note{border-left:3px solid #87d5b9;background:#173347aa;padding:14px 18px;border-radius:0 9px 9px 0;margin:22px 0;font-size:14px}
+.actions,.links{display:flex;gap:9px;flex-wrap:wrap}.btn,.links a{display:inline-flex;padding:9px 13px;background:#243a57;border:1px solid #52718c;border-radius:9px;color:#f2f8ff;text-decoration:none;font-size:13px;font-weight:750}.btn.primary{background:#b6e8d9;color:#173132;border-color:#b6e8d9}
+section{margin-top:40px}.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px;margin-top:18px}
+.card{border:1px solid #334b66;background:#14233a;border-radius:16px;padding:20px}.card h3{font-size:18px;margin:8px 0}.card p{font-size:14px;color:#c7d8e8;margin:0}.flag{display:inline-block;font-size:11px;color:#cbf2db;background:#205044;border-radius:18px;padding:4px 10px;font-weight:750}.flag.beta{background:#504425;color:#ffebb9}
+.muted{color:#afc0d4}.small{font-size:13px}.filters{display:flex;gap:8px;flex-wrap:wrap;margin:20px 0}
+.filters button,#more{cursor:pointer;border:1px solid #4f6b88;border-radius:9px;padding:10px 13px;color:#e9f5ff;background:#273c55;font-weight:700}
+.filters button[aria-pressed="true"]{color:#12322e;background:#b6e8d9}
+#feed{display:grid;gap:10px}.version{border:1px solid #39516c;background:#14243a;border-radius:12px;overflow:hidden}
+.version summary{cursor:pointer;display:flex;align-items:center;gap:10px;padding:14px 17px;list-style:none;flex-wrap:wrap}.version summary::-webkit-details-marker{display:none}.version summary:after{content:"＋";margin-left:auto;color:#9cdccf}.version[open] summary:after{content:"−"}
+.vnum{color:#9ce8d8;font-weight:850}.vtitle{font-weight:700;flex:1 1 260px}.vbadge{font-size:11px;border-radius:8px;border:1px solid #60758c;padding:4px 8px;color:#c9d8eb}.vbadge.ready{color:#b4efce;border-color:#397f63}
+.info{padding:18px;border-top:1px solid #334c66}.info p{margin:0 0 14px;color:#d1e0ee;white-space:pre-line}
+.info img{display:block;max-width:100%;max-height:370px;object-fit:contain;border:1px solid #3b5269;border-radius:9px;margin-bottom:14px}.info .links a{font-size:12px}
+#status{background:#12263a;color:#cfe0f3;padding:11px 15px;border:1px dashed #52718b;border-radius:9px;font-size:13px;margin:14px 0}
+#more{display:none;margin-top:18px}footer{margin-top:60px;border-top:1px solid #324961;padding:28px 0;color:#9fb5cf;font-size:13px}
+@media(max-width:780px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.hero{padding-top:38px}}
+@media(max-width:550px){.grid{grid-template-columns:1fr}header .wrap{align-items:flex-start;flex-direction:column}.version summary{padding:13px}.vtitle{flex-basis:100%}}
+</style></head><body>
+<header><div class="wrap"><a href="project-home.html" class="brand"><img src="assets/icon.png" alt="">Open IPTV Pro</a><nav><a href="project-home.html">Trang chủ</a><a href="./">Mở Web</a><a href="tai-ve.html">Tải & so sánh</a><a href="https://github.com/trisanghy/open-iptv-pro">GitHub</a></nav></div></header>
+<main class="wrap">
+<div class="hero"><div class="eyebrow">Cập nhật sản phẩm · 22/11/2026</div><h1>Tính năng mới.<br><span>Trải nghiệm xem thông minh hơn.</span></h1>
+<p class="lead">WatchFlow, Xem sau, khám phá chương trình theo XMLTV, nhắc lịch, phím tắt và nhiều công cụ cho người xem. Nhật ký từng phiên bản được lấy trực tiếp từ nhánh Positron của GitHub mỗi khi bạn mở trang.</p>
+<div class="note"><strong>Quan trọng:</strong> Electron <strong>4.23.76 Stable</strong> là bản chính trên <code>main</code>. <strong>Positron</strong> là nhánh Electron Beta nghiên cứu riêng, không tự động có trong Stable. Rust Lab 23.8.98 và Mobile .35 cũng là các Beta riêng. Tình trạng có file phát hành không đồng nghĩa mọi tính năng đã được kiểm thử thực tế trên tất cả thiết bị.</div>
+<div class="actions"><a href="#nhat-ky" class="btn primary">Các phiên bản mới nhất</a><a href="tai-ve.html" class="btn">So sánh và tải ứng dụng</a><a href="https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.232-p5.1.148" class="btn">Positron P5.1.148 Beta</a></div></div>
+<section><div class="eyebrow">Đối chiếu mã nguồn và Release</div><h2>Chức năng mới theo từng dòng sản phẩm</h2>
+<div class="grid">
+<article class="card"><span class="flag beta">Positron Beta</span><h3>WatchFlow khám phá kênh</h3><p>Gợi ý kênh tương tự và hiển thị chương trình đang/sắp phát từ lịch EPG đã nhập, khi có dữ liệu.</p></article>
+<article class="card"><span class="flag beta">Positron Beta</span><h3>Xem sau (Watch Later)</h3><p>Lưu kênh trên thiết bị, tìm dấu trang, báo nguồn không còn hoạt động và dọn mục với xác nhận.</p></article>
+<article class="card"><span class="flag beta">Positron Beta</span><h3>Tìm và lọc EPG nâng cao</h3><p>Tìm theo chương trình, lọc chương trình sắp chiếu 15/30/60 phút, xếp theo giờ bắt đầu và ước tính %/phút còn lại từ XMLTV.</p></article>
+<article class="card"><span class="flag beta">Positron Beta</span><h3>Đặt hoặc hủy nhắc lịch</h3><p>Nút chuông ngay trên thẻ kênh, nhắc trước chương trình 10 phút. Không tự phát video hay tải nguồn ngoài.</p></article>
+<article class="card"><span class="flag beta">Positron Beta</span><h3>Phím tắt, tìm kiếm, Yêu thích</h3><p>Tìm tiếng Việt không dấu, nhiều từ không theo thứ tự; mũi tên/Home/End/Enter, đánh dấu sao trực tiếp và đếm Yêu thích.</p></article>
+<article class="card"><span class="flag">Electron Stable</span><h3>Player SVG, GPU, Light</h3><p>Desktop 4.23.76 đồng nhất icon, giao diện Light, benchmark GPU encoder, quản lý cache và các công cụ kênh/EPG.</p></article>
+<article class="card"><span class="flag beta">Rust Lab Beta</span><h3>Dark và AMOLED</h3><p>Tauri 23.8.98 chỉnh giao diện kênh, EPG, DVR, GPU và các bảng phụ đề/dịch/TTS thử nghiệm.</p></article>
+<article class="card"><span class="flag">Web Online</span><h3>M3U, EPG, dự phòng</h3><p>Trình duyệt desktop/mobile, quản lý nguồn, ghép kênh, link dự phòng, yêu thích và đồng bộ khi dịch vụ sẵn sàng.</p></article>
+<article class="card"><span class="flag beta">Mobile .35 Beta</span><h3>Điều khiển cảm ứng & tài khoản</h3><p>Capacitor cho Android/iOS, giao diện đăng nhập OTP và dữ liệu playlist theo tài khoản; IPA chưa ký.</p></article>
+</div></section>
+<section id="nhat-ky"><div class="eyebrow">Tự cập nhật từ GitHub Positron</div><h2>Nhật ký theo từng phiên bản · Ảnh thật · Link tải</h2>
+<p class="muted">Bấm vào một hàng để mở tính năng mới, ảnh kiểm thử được lưu trong repo, commit và bộ cài đúng phiên bản. Trạng thái trong nhật ký có thể trễ ít phút so với GitHub Releases; bản mới nhất được kiểm tra bổ sung.</p>
+<div class="filters" role="group" aria-label="Lọc phiên bản">
+<button type="button" data-filter="all" aria-pressed="true">Tất cả</button><button type="button" data-filter="release" aria-pressed="false">Đã phát hành</button><button type="button" data-filter="candidate" aria-pressed="false">Đang kiểm thử</button><button type="button" data-filter="feature" aria-pressed="false">Có chức năng mới</button>
+</div><div id="status" role="status">Đang đọc danh mục phiên bản từ GitHub…</div><div id="feed"></div><button type="button" id="more">Xem thêm 20 phiên bản</button>
+<p class="small muted"><a href="https://github.com/trisanghy/open-iptv-pro/blob/Positron/docs/positron-features/FEATURES.md">Đọc nhật ký gốc</a> · <a href="https://github.com/trisanghy/open-iptv-pro/tree/Positron/docs/positron-features/screenshots">Thư viện ảnh</a> · <a href="https://github.com/trisanghy/open-iptv-pro/releases?q=positron">Tất cả Positron Beta</a></p>
+</section></main>
+<footer><div class="wrap">Open IPTV Pro không cung cấp nguồn truyền hình; chỉ sử dụng playlist và EPG mà bạn có quyền truy cập. AI upscale 4K chưa có pipeline thực đã xác minh.</div></footer>
+<script>
+(function(){
+'use strict';
+const base='https://github.com/trisanghy/open-iptv-pro/',raw='https://raw.githubusercontent.com/trisanghy/open-iptv-pro/Positron/docs/positron-features/';
+const feed=document.getElementById('feed'),status=document.getElementById('status'),more=document.getElementById('more');
+let entries=[],filter='all',limit=20;
+function safe(url){
+ try{const u=new URL(url);return u.protocol==='https:'&&!u.username&&!u.password&&((u.hostname==='github.com'&&u.pathname.startsWith('/trisanghy/open-iptv-pro/'))||(u.hostname==='raw.githubusercontent.com'&&u.pathname.startsWith('/trisanghy/open-iptv-pro/Positron/')));}catch{return false;}
+}
+function link(name,url){if(!safe(url))return null;const a=document.createElement('a');a.href=url;a.target='_blank';a.rel='noopener noreferrer';a.textContent=name;return a;}
+function released(v){return v._verified||v.status==='release'||v.version==='P5.1.148';}
+function item(v){
+ const details=document.createElement('details');details.className='version';
+ const summary=document.createElement('summary'),num=document.createElement('span'),title=document.createElement('span'),badge=document.createElement('span');
+ num.className='vnum';num.textContent=v.version;title.className='vtitle';title.textContent=String(v.title||'Cập nhật');badge.className='vbadge'+(released(v)?' ready':'');badge.textContent=released(v)?'Beta đã phát hành':'Đang kiểm thử';summary.append(num,title,badge);details.append(summary);
+ const info=document.createElement('div');info.className='info';const p=document.createElement('p');p.textContent='Electron '+String(v.appVersion||'')+' · '+String(v.description||'');info.append(p);
+ if(typeof v.image==='string'&&/^screenshots\/[a-z0-9._-]+\.png$/i.test(v.image)){
+ const img=document.createElement('img');img.src=raw+v.image;img.loading='lazy';img.alt='Ảnh kiểm thử Electron phiên bản '+v.version+' — '+String(v.title||'').slice(0,100);img.onerror=()=>img.remove();info.append(img);
+ }else{const note=document.createElement('p');note.className='small';note.textContent='Chưa khai báo ảnh riêng đã xác minh.';info.append(note);}
+ const links=document.createElement('div');links.className='links';
+ const tag=v.tag||(v.version==='P5.1.148'?'positron/v4.23.232-p5.1.148':'');
+ const release=released(v)&&tag?link('Release và tất cả file tải',base+'releases/tag/'+tag):link('Xem nhánh nghiên cứu',base+'tree/Positron');if(release)links.append(release);
+ if(/^[0-9a-f]{40}$/.test(v.commit||'')){let x=link('Xem commit',base+'commit/'+v.commit);if(x)links.append(x);}
+ const assets=Array.isArray(v.assets)?v.assets:[];
+ const setup=assets.find(x=>x&&/Setup-[\d.]+-x64\.exe$/i.test(x.name||'')&&safe(x.url));
+ if(setup){let x=link('Windows Setup EXE',setup.url);if(x)links.append(x);}
+ else if(v.version==='P5.1.148'){let x=link('Windows Setup 4.23.232',base+'releases/download/positron/v4.23.232-p5.1.148/Open-IPTV-Pro-Setup-4.23.232-x64.exe');if(x)links.append(x);}
+ info.append(links);details.append(info);return details;
+}
+function filtered(){return entries.filter(v=>filter==='all'||(filter==='release'&&released(v))||(filter==='candidate'&&!released(v))||(filter==='feature'&&(v.kind==='feature'||/Feature priority: NEW/i.test(v.description||''))));}
+function render(){const list=filtered();feed.replaceChildren(...list.slice(0,limit).map(item));more.style.display=list.length>limit?'inline-flex':'none';more.textContent='Xem thêm 20 phiên bản ('+Math.max(0,list.length-limit)+' mục)';status.textContent='Hiển thị '+Math.min(list.length,limit)+' / '+list.length+' phiên bản Positron. Các tính năng này không mặc định có trong Electron Stable 4.23.76.';}
+document.querySelectorAll('[data-filter]').forEach(btn=>btn.addEventListener('click',()=>{filter=btn.dataset.filter;limit=20;document.querySelectorAll('[data-filter]').forEach(b=>b.setAttribute('aria-pressed',String(b===btn)));render();}));
+more.addEventListener('click',()=>{limit+=20;render();});
+async function verifyTop(v){
+ if(!v||v.status==='release'||!/^P5\.1\.\d+$/.test(v.version)||!/^4\.\d+\.\d+$/.test(v.appVersion||''))return;
+ const tag='positron/v'+v.appVersion+'-p'+v.version.toLowerCase();
+ try{const res=await fetch('https://api.github.com/repos/trisanghy/open-iptv-pro/releases/tags/'+tag,{cache:'no-store'});
+ if(!res.ok)return;const d=await res.json();if(d.tag_name!==tag||d.draft||!Array.isArray(d.assets)||!d.assets.some(x=>/Setup-[\d.]+-x64\.exe$/i.test(x.name||'')))return;
+ v._verified=true;v.tag=tag;v.assets=d.assets.map(x=>({name:x.name,url:x.browser_download_url}));render();}catch{}
+}
+(async()=>{
+ try{const res=await fetch(raw+'catalog.json',{cache:'no-store'});if(!res.ok)throw Error('Không đọc được GitHub');
+ const d=await res.json();entries=(Array.isArray(d.versions)?d.versions:[]).filter(v=>/^P5\.1\.\d+$/.test(String(v.version||''))).sort((a,b)=>Number(b.number||0)-Number(a.number||0));
+ if(!entries.length)throw Error('Không có phiên bản');
+ render();verifyTop(entries[0]);
+ }catch{status.textContent='Không truy cập được danh mục GitHub. Có thể mở nhật ký gốc qua đường dẫn bên dưới.';const p=document.createElement('p');p.textContent='Positron P5.1.148 — Nhắc và hủy nhắc lịch EPG từ thẻ kênh. Bản Beta 4.23.232 có EXE, DMG và gói QA trên GitHub.';const a=link('Mở Positron P5.1.148 Beta',base+'releases/tag/positron/v4.23.232-p5.1.148');feed.replaceChildren(p);if(a)feed.append(a);}
+})();
+})();
+</script></body></html>
