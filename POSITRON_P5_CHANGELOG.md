@@ -5,6 +5,7 @@
 - Electron screenshot: positron-p51140-epg-current-filter-after-450-real.png
 - Ảnh đầu vào: positron-p51139-favorites-first-after-450-real.png của phiên bản trước; giữ nguyên các tùy chọn sắp xếp và thao tác kênh.
 - Kiểm thử: Node regression, ảnh Electron 450px trước/sau; chèn tạm metadata XMLTV đúng khoảng thời gian cho một kênh QA, chỉ đúng kênh đó còn hiển thị và có tên chương trình; không sửa playlist, không phát, không tràn ngang, khôi phục guide gốc sau kiểm tra.
+- Sửa CI trong cùng phiên bản: bài test phục hồi tìm kiếm P5.1.132 còn đóng đinh biểu thức cũ; cập nhật kiểm chứng bao gồm bộ lọc EPG mới và việc tắt bộ lọc khi xóa điều kiện tìm kiếm. Không loại bỏ bất kỳ assertion hành vi nào.
 - Trạng thái: CANDIDATE — cần xác minh CI/ảnh chụp Electron thực và Release Windows/Mac, không tính hoàn tất trước đó.
 
 ## P5.1.139 — Ưu tiên kênh yêu thích lên đầu / Electron v4.23.223

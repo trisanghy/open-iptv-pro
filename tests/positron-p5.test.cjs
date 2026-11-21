@@ -1106,9 +1106,9 @@ test('P5.1.131 Vietnamese ASCII search matches native group containing đ withou
 test('P5.1.132 actionable empty channel search restores all and input focus without autoplay',()=>{
  const chooser=read('renderer/web-channel-chooser-v42371.js');
  const qa=read('scripts/positron-20-extension.cjs');
- assert.ok(chooser.includes("if(tab==='all'&&(search.value.trim()||group.value))"));
+ assert.ok(chooser.includes("if(tab==='all'&&(search.value.trim()||group.value||onAirOnly.checked))"));
  assert.ok(chooser.includes("clear.id='poChooserClearFilters'"));
- assert.ok(chooser.includes("search.value='';group.value='';page=0;render();"));
+ assert.ok(chooser.includes("search.value='';group.value='';onAirOnly.checked=false;page=0;render();"));
  assert.ok(chooser.includes('search.focus({preventScroll:true})'));
  for(const t of ["await page.fill('#webChooserSearch','zz-no-channel')",
   "await page.click('#poChooserClearFilters')",
