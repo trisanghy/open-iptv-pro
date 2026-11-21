@@ -60,7 +60,7 @@ jobs:
               });
               fs.writeFileSync('screenshots/layout-inspection.json',JSON.stringify(inspection,null,2));
               if(inspection.sidebarWidth<145||inspection.sidebarDisplay==='none'||inspection.sidebarLeft<0)throw Error('Sidebar remains hidden: '+JSON.stringify(inspection));
-              const rgb=inspection.chooserBackground.match(/rgba?\\((\\d+),\\s*(\\d+),\\s*(\\d+)/);
+              const rgb=inspection.chooserBackground.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
               if(!rgb||[1,2,3].some(i=>Number(rgb[i])<205))throw Error('Chooser is not light: '+JSON.stringify(inspection));
               await page.screenshot({path:'screenshots/electron-light-chooser-real.png',timeout:15000});
               console.log('LAYOUT VERIFIED',inspection);
