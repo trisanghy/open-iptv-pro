@@ -46,7 +46,7 @@ test('Watch Later uses native channel actions without networking or automatic pl
  assert.ok(ui.includes('watchLater.toggle(saved,channel)'));
  assert.ok(ui.includes('window.localStorage.setItem(watchLater.STORAGE_KEY'));
  assert.ok(ui.includes("if(view==='continue')render();"));
- assert.ok(ui.includes("heading('Để xem sau · '+waiting.length"));
+ assert.ok(ui.includes("heading('Để xem sau · '+waitingAll.length"));
  assert.ok(ui.includes("save.setAttribute('aria-pressed',String(isSaved))"));
  assert.ok(!/fetch\s*\(|XMLHttpRequest|importSource\s*\(/.test(ui));
  assert.ok(qa.includes('positron-p5196-watch-later-552-real.png'));
