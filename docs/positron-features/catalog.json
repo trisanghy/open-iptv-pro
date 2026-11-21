@@ -1,8 +1,23 @@
 {
-  "generatedAt": "2026-11-21T23:42:47.792840+00:00",
+  "generatedAt": "2026-11-21T23:47:48.718609+00:00",
   "repository": "trisanghy/open-iptv-pro",
   "branch": "Positron",
   "versions": [
+    {
+      "number": 149,
+      "version": "P5.1.149",
+      "appVersion": "4.23.233",
+      "title": "chọn nhắc lịch EPG trước 5 đến 30 phút",
+      "description": "Feature priority: NEW — Chọn thông báo XMLTV trước 5, 10, 15 hoặc 30 phút; mỗi lịch giữ thời điểm riêng. Lịch cũ không có leadMinutes vẫn mặc định 10 phút; không đụng nguồn và không autoplay. User action: Trong Chọn kênh, bật lọc Sắp chiếu hoặc Đang chiếu (EPG), mở Bộ lọc, chọn Nhắc trước 5/10/15/30 phút rồi bấm chuông trên thẻ kênh. Bấm lại để hủy như P5.1.148.",
+      "kind": "fix",
+      "status": "candidate",
+      "published": "",
+      "tag": "",
+      "commit": "e6f69bc4a16f2bdf64764170af50d0613c3b84b1",
+      "url": "https://github.com/trisanghy/open-iptv-pro/tree/Positron",
+      "assets": [],
+      "image": null
+    },
     {
       "number": 148,
       "version": "P5.1.148",

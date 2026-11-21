@@ -2,6 +2,15 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
+## P5.1.149 — chọn nhắc lịch EPG trước 5 đến 30 phút
+
+**Ứng dụng:** 4.23.233 · **Trạng thái:** Chưa có bản phát hành
+
+Feature priority: NEW — Chọn thông báo XMLTV trước 5, 10, 15 hoặc 30 phút; mỗi lịch giữ thời điểm riêng. Lịch cũ không có leadMinutes vẫn mặc định 10 phút; không đụng nguồn và không autoplay. User action: Trong Chọn kênh, bật lọc Sắp chiếu hoặc Đang chiếu (EPG), mở Bộ lọc, chọn Nhắc trước 5/10/15/30 phút rồi bấm chuông trên thẻ kênh. Bấm lại để hủy như P5.1.148.
+
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/e6f69bc4a16f2bdf64764170af50d0613c3b84b1)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+
 ## P5.1.148 — Hủy hoặc bật lại lịch nhắc EPG ngay bằng chuông
 
 **Ứng dụng:** 4.23.232 · **Trạng thái:** Đã phát hành
