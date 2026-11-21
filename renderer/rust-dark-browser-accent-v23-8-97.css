@@ -1,5 +1,5 @@
 /* Rust Lab v23.8.97 — Dark/AMOLED channel-picker accent coherence.
- * Screenshots found green state colors (#35e780, #06b861) even though
+ * Screenshots found hardcoded neon-green selection colors even though
  * selected application accent was violet. Preserve user theme/palette and
  * all card data; change presentation only. */
 html:is([data-theme="dark"],[data-theme="amoled"]) #page-tv :is(
