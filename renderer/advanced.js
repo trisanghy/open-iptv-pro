@@ -176,6 +176,17 @@
    row.append(btn);if(c)decorateRow(c,row);table.append(row);
   }root.append(table);
  }
+ // P5.1.148: locally reversible reminders; never remove any other schedule.
+ const reminderKey=p=>p?.id&&Number.isFinite(p?.start)?String(p.id)+'|'+String(p.start):'';
+ const hasReminder=p=>Boolean(reminderKey(p)&&state.reminders.some(r=>r.id===reminderKey(p)&&r.done!==true));
+ function cancelReminder(p){
+  const key=reminderKey(p);
+  if(!key)return false;
+  const at=state.reminders.findIndex(r=>r.id===key&&r.done!==true);
+  if(at<0)return false;
+  const [entry]=state.reminders.splice(at,1);save();
+  ctx.toast('Đã hủy nhắc lịch: '+(entry.title||'Chương trình'));return true;
+ }
  function remind(p,c){if(state.reminders.some(x=>x.id===`${p.id}|${p.start}`))return ctx.toast('Đã có nhắc lịch này');state.reminders.push({id:`${p.id}|${p.start}`,title:p.title,channel:c?.name||p.id,start:p.start,done:false});save();ctx.toast('Đã lưu lịch nhắc: '+p.title);if('Notification' in window&&Notification.permission==='default')Notification.requestPermission().catch(()=>{});}
  async function playCatchup(c,p){const url=lib.catchup(c,p);if(!url)return ctx.toast('Nguồn không có mẫu catchup-source hợp lệ','warn');ctx.setPage('tv');ctx.playChannel(c.id,url,{mode:'catchup'});}
  async function checkReminders(){const now=Date.now();let edited=false;for(const r of state.reminders){if(r.done)continue;if(r.start-10*60000<=now&&r.start>=now-60000){r.done=true;edited=true;try{if(window.streamleaf?.notifyReminder)await window.streamleaf.notifyReminder('Open IPTV Pro · Sắp chiếu',r.channel+' · '+r.title);else if('Notification' in window&&Notification.permission==='granted')new Notification('Open IPTV Pro · Sắp chiếu',{body:r.channel+' · '+r.title});else ctx.toast('Sắp chiếu: '+r.channel+' · '+r.title,'warn');}catch{ctx.toast('Sắp chiếu: '+r.title,'warn');}}if(r.start<now-86400000){r.done=true;edited=true;}}if(edited)save();}
@@ -230,7 +241,7 @@
  function onPage(p,last){hidePreview();if(last==='multiview'&&p!=='multiview'){stopMulti();ctx.player.muted=previousMainMuted;}if(p==='multiview'){previousMainMuted=ctx.player.muted;ctx.player.muted=true;renderMulti();}if(p==='health')renderHealth();if(p==='doctor')doctor();if(p==='profiles')renderProfiles();if(p==='epg')renderEpgSearch();applyProfileUI();}
  $('#epgSearchResults').textContent='Nhập tên chương trình để tìm và đặt nhắc lịch.';
  $('#bufferPreset').value=state.optimizer;
- window.IPTVProAdvanced={decorateRow,closePreview:hidePreview,allowChannel,onCheck,onPlaying,onLoadStart,onQuality,onStreamError,onChannel,onStop,onPage,onFavoritesChanged,hlsOptions,getReplayMinutes:replayMinutes,recordHealth:record,doctor,playCatchup,remind,setAlternates:(id,urls)=>{state.alternates[id]=[...new Set(urls)].slice(0,15);save();ctx.refreshManualLinks?.();},canEdit:()=>!profile().child,canEnterPage:p=>!profile().child||!['sources','discovery','folders','settings','health','doctor'].includes(p)};
+ window.IPTVProAdvanced={decorateRow,closePreview:hidePreview,allowChannel,onCheck,onPlaying,onLoadStart,onQuality,onStreamError,onChannel,onStop,onPage,onFavoritesChanged,hlsOptions,getReplayMinutes:replayMinutes,recordHealth:record,doctor,playCatchup,remind,hasReminder,cancelReminder,setAlternates:(id,urls)=>{state.alternates[id]=[...new Set(urls)].slice(0,15);save();ctx.refreshManualLinks?.();},canEdit:()=>!profile().child,canEnterPage:p=>!profile().child||!['sources','discovery','folders','settings','health','doctor'].includes(p)};
  onFavoritesChanged();
  applyProfileUI();
  setInterval(checkReminders,30000);checkReminders();

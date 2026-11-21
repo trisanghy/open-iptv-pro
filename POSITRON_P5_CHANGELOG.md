@@ -1,3 +1,13 @@
+## P5.1.148 — Hủy hoặc bật lại lịch nhắc EPG ngay bằng chuông / Electron v4.23.232
+
+- Feature priority: NEW — Nút chuông nhắc lịch ngay trên thẻ kênh nay thể hiện rõ đã lưu/chưa lưu, và cho phép bấm lần nữa để hủy đúng một chương trình đã nhắc; sử dụng lịch XMLTV đã nhập và dịch vụ nhắc nội bộ hiện có, không tự phát và không tác động lịch khác.
+- User action: Mở Chọn kênh và bật bộ lọc EPG, tìm chương trình sắp chiếu rồi nhấn chuông để lưu; chuông đổi màu và trạng thái đã nhắc. Nhấn lại chuông để hủy, không phải tìm vào màn EPG và không cần tải nguồn ngoài.
+- Electron screenshot: positron-p51148-cancel-reminder-after-450-real.png
+- Ảnh trước: positron-p51148-cancel-reminder-before-450-real.png. Ảnh sau khi hủy: positron-p51148-cancel-reminder-canceled-450-real.png.
+- Bằng chứng từ ảnh P5.1.147: nút chuông sau khi thêm lịch vẫn giữ hình thức giống chưa lưu; người xem khó biết đã nhắc hay chưa, và chưa có thao tác hủy trực tiếp. P5.1.148 sửa trạng thái lưu có thể kiểm chứng và bổ sung thao tác hủy có kiểm soát.
+- Kiểm thử: Node hồi quy và Electron thật 450px; lưu nhắc cho chương trình tương lai, xác minh aria-pressed, localStorage, hủy chính xác ID nhắc, không xóa lịch khác, playlist bất biến, không tự phát, ảnh trước/sau và không tràn ngang.
+- Trạng thái: CANDIDATE — chỉ tính vòng hoàn tất sau khi CI, ảnh Electron, bộ cài Windows/Mac và phát hành được xác minh.
+
 ## P5.1.147 — Nhắc trước 10 phút ngay trên kênh có chương trình sắp chiếu / Electron v4.23.231
 
 - Feature priority: NEW — Thêm nút chuông độc lập trên thẻ kênh có lịch XMLTV sắp chiếu, cho phép đặt nhắc trước 10 phút bằng hệ thống nhắc lịch thật đã có; không cần mở trang EPG và tuyệt đối không tự phát video.

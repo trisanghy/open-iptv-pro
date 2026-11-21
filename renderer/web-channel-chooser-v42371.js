@@ -303,8 +303,12 @@
   if(nextReminderProgramme?.id && nextReminderProgramme.start>Date.now()){
    const reminder=document.createElement('button');reminder.type='button';
    reminder.className='web-chooser-remind';reminder.dataset.channelId=String(ch.id);
-   reminder.setAttribute('aria-label','Nhắc trước 10 phút: '+nextReminderProgramme.title);
-   reminder.title='Nhắc trước 10 phút cho '+nextReminderProgramme.title;
+   // Reflect the saved reminder immediately and on subsequent chooser renders.
+   const initial={id:nextReminderProgramme.id,start:nextReminderProgramme.start};
+   const reminderActive=window.IPTVProAdvanced?.hasReminder?.(initial)===true;
+   reminder.setAttribute('aria-pressed',String(reminderActive));
+   reminder.setAttribute('aria-label',(reminderActive?'Hủy nhắc lịch: ':'Nhắc trước 10 phút: ')+nextReminderProgramme.title);
+   reminder.title=(reminderActive?'Hủy nhắc lịch: ':'Nhắc trước 10 phút cho ')+nextReminderProgramme.title;
    reminder.innerHTML='<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 21h4"/></svg>';
    reminder.addEventListener('click',()=>{
     if(!state.getChannels?.().some(c=>String(c.id)===String(ch.id)))return;
@@ -314,8 +318,17 @@
      :window.PositronOnAirCore?.upcoming(guide,ch,Date.now(),window.IPTVGuide);
     if(!next?.id||!(next.start>Date.now()))return state.toast?.('Lịch EPG đã thay đổi, hãy cập nhật và thử lại.','warn');
     const remind=window.IPTVProAdvanced?.remind;
-    if(typeof remind!=='function')return state.toast?.('Không thể mở chức năng nhắc lịch.','warn');
-    remind({id:next.id,title:next.title,start:next.start},ch);
+    const hasReminder=window.IPTVProAdvanced?.hasReminder;
+    const cancelReminder=window.IPTVProAdvanced?.cancelReminder;
+    if(typeof remind!=='function'||typeof hasReminder!=='function'||typeof cancelReminder!=='function')
+     return state.toast?.('Không thể mở chức năng nhắc lịch.','warn');
+    const item={id:next.id,title:next.title,start:next.start};
+    if(hasReminder(item))cancelReminder(item);
+    else remind({id:next.id,title:next.title,start:next.start},ch);
+    const saved=hasReminder(item);
+    reminder.setAttribute('aria-pressed',String(saved));
+    reminder.setAttribute('aria-label',(saved?'Hủy nhắc lịch: ':'Nhắc trước 10 phút: ')+next.title);
+    reminder.title=(saved?'Hủy nhắc lịch: ':'Nhắc trước 10 phút cho ')+next.title;
    });
    frame.append(reminder);
   }

@@ -37,7 +37,7 @@ test('P5 assets are loaded after P4 without replacing it',()=>{
 test('P5 release is immutable and versioned separately from P4.1',()=>{
  const pkg=JSON.parse(read('package.json'));
  const flow=read('.github/workflows/positron-lab.yml');
- assert.equal(pkg.version,'4.23.231');
+ assert.equal(pkg.version,'4.23.232');
  const label=pkg.description.match(/Positron\s+(P\d+\.\d+\.\d+)/)?.[1];
  assert.ok(label,'product P-label must accompany SemVer');
  assert.ok(flow.includes('TAG=positron/v'+pkg.version+'-'+label.toLowerCase()),'release tag and app version must match');
@@ -1396,4 +1396,21 @@ test('P5.1.147 chuông nhắc XMLTV trong bộ chọn kênh sử dụng dịch v
   'positron-p51147-epg-reminder-before-450-real.png',
   'positron-p51147-epg-reminder-after-450-real.png'])
   assert.ok(qa.includes(token),'Thiếu Electron QA '+token);
+});
+
+test('P5.1.148 hủy nhắc lịch EPG độc lập, biểu tượng phản ánh trạng thái lưu',()=>{
+ const adv=read('renderer/advanced.js'),ui=read('renderer/web-channel-chooser-v42371.js');
+ const css=read('renderer/positron-horizon-v4.css'),qa=read('scripts/positron-20-extension.cjs');
+ for(const token of ['const hasReminder=p=>','function cancelReminder(p)',"state.reminders.splice(at,1);save()",
+  'doctor,playCatchup,remind,hasReminder,cancelReminder'])
+  assert.ok(adv.includes(token),'Thiếu tính năng hủy nhắc '+token);
+ for(const token of ["reminder.setAttribute('aria-pressed',String(reminderActive))",
+  "if(hasReminder(item))cancelReminder(item)","reminder.setAttribute('aria-pressed',String(saved))"])
+  assert.ok(ui.includes(token),'Thiếu trạng thái nút '+token);
+ assert.ok(css.includes('.web-chooser-remind[aria-pressed="true"]'));
+ for(const token of ['localSavedOnce:','canceledOnlyMatchingReminder:','cancelIndicatorReset:',
+  'noPlaybackAfterCancel:','positron-p51148-cancel-reminder-before-450-real.png',
+  'positron-p51148-cancel-reminder-after-450-real.png',
+  'positron-p51148-cancel-reminder-canceled-450-real.png'])
+  assert.ok(qa.includes(token),'Thiếu kiểm thử Electron '+token);
 });

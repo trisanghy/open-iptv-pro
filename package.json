@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.231",
-  "description": "Positron P5.1.147: đặt nhắc trước 10 phút cho chương trình EPG sắp chiếu",
+  "version": "4.23.232",
+  "description": "Positron P5.1.148: hủy nhắc lịch EPG bằng nút chuông",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",
