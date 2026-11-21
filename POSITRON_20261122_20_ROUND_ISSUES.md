@@ -12,3 +12,7 @@ Baseline: verified Positron P5.1.107 / v4.23.191 / HEAD `ac4670a51959aef9a9e6917
 
 ## Rounds 02–20
 Not started. Select the next defect only after viewing the current round's after-image and QA output, commit independently and do not count old screenshots as new work.
+
+### CI regression checkpoint (same round 01)
+- Run `44928014375`: 693 pass, 9 fail, 5 skipped. All nine failures were stale hardcoded version references in UI labels, tests, and Windows scripts following the version bump; capture/build skipped.
+- Second corrective commit updates UI/version labels and Windows expected version without weakening any assertions. Await full CI and real after-image review before counting round 01.
