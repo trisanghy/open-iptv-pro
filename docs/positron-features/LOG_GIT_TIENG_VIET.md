@@ -2,14 +2,22 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
-## P5.1.144 — sắp xếp chương trình EPG bắt đầu sớm nhất theo XMLTV
+## P5.1.145 — chọn khoảng thời gian tìm chương trình EPG 15 30 60 phút
+
+**Ứng dụng:** 4.23.229 · **Trạng thái:** Chưa có bản phát hành
+
+Feature priority: NEW — Cho phép chọn khoảng thời gian 15, 30 hoặc 60 phút khi lọc chương trình sắp chiếu. Danh sách thay đổi tức thì theo giờ phát thật từ XMLTV đã nhập, không tự tải thêm lịch hay tác động playlist. User action: Mở TV → Chọn kênh → Bộ lọc → bật “Sắp chiếu” → chọn “Khoảng thời gian” 15, 30 hoặc 60 phút. Hệ thống cập nhật bộ lọc ngay, người dùng tắt chế độ để trở về danh sách đầy đủ.
+
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/cdd97383b1d7a543516eb800c59715758c58ab01)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+
+## P5.1.144 — Sắp xếp chương trình EPG sắp phát sớm nhất
 
 **Ứng dụng:** 4.23.228 · **Trạng thái:** Chưa có bản phát hành
 
 Feature priority: NEW — Thêm tùy chọn sắp xếp kênh theo thời điểm bắt đầu chương trình tiếp theo từ lịch XMLTV thực tế đã nhập; kênh chưa có EPG vẫn giữ lại cuối danh sách và không mất nguồn. User action: Mở TV → Chọn kênh → Bộ lọc → Sắp xếp → “Chương trình sắp phát sớm nhất (EPG)”; các kênh có chương trình gần tới đứng đầu, trên thẻ hiện giờ và tên chương trình. Chọn “Tên A → Z” để trở về như cũ.
 
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/3b5f9bac04dfae36c40bfa096fb7fae0f6eafbdd)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
 
 ## P5.1.143 — Lọc chương trình sắp chiếu trong 60 phút
 
