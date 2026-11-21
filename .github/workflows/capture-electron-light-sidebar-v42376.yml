@@ -1,0 +1,76 @@
+name: Screenshot Electron sidebar and light chooser regression
+on:
+  push:
+    branches: [build-sources/electron-desktop]
+    paths: ['.github/workflows/capture-electron-light-sidebar-v42376.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  screenshot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - name: Install Electron, X11 and Playwright
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq xvfb libgtk-3-0 libnss3 libasound2t64 libgbm1 libxss1 libatk-bridge2.0-0 libdrm2
+          npm install --no-audit --no-fund
+          npm install --no-save --no-audit --no-fund playwright-core
+      - name: Run actual app, verify layout and capture both screenshots
+        shell: bash
+        timeout-minutes: 4
+        run: |
+          set -Eeuo pipefail
+          mkdir -p screenshots
+          cat > /tmp/electron-layout-capture.cjs <<'NODE'
+          const { _electron } = require(process.cwd()+'/node_modules/playwright-core');
+          const fs=require('node:fs');
+          (async()=>{
+            const electron=await _electron.launch({
+              executablePath: require('node:path').resolve('node_modules/.bin/electron'),
+              args:['.','--no-sandbox','--disable-gpu','--window-size=1500,900'],
+              timeout:90000
+            });
+            try{
+              const page=await electron.firstWindow({timeout:45000});
+              await page.waitForSelector('#webChannelChooser .web-chooser-main',{timeout:20000});
+              await page.evaluate(()=>{
+                document.documentElement.dataset.theme='light';
+                document.documentElement.dataset.uiStyle='current';
+                document.documentElement.dataset.sidebarVisible='true';
+                document.documentElement.dataset.channelPanelVisible='true';
+              });
+              await page.waitForTimeout(900);
+              await page.screenshot({path:'screenshots/electron-light-main-real.png',timeout:15000});
+              await page.evaluate(()=>document.getElementById('webChannelChooser').scrollIntoView({block:'center'}));
+              await page.waitForTimeout(500);
+              const inspection=await page.evaluate(()=>{
+                const sidebar=document.getElementById('appSidebar');
+                const chooser=document.querySelector('#webChannelChooser .web-chooser-main');
+                const sidePanel=document.querySelector('#webChannelChooser .web-chooser-side section');
+                const rect=sidebar.getBoundingClientRect();
+                const bg=getComputedStyle(chooser).backgroundColor;
+                return {theme:document.documentElement.dataset.theme,sidebarWidth:rect.width,sidebarLeft:rect.left,sidebarDisplay:getComputedStyle(sidebar).display,chooserBackground:bg,sideBackground:getComputedStyle(sidePanel).backgroundColor,sidebarVisible:document.documentElement.dataset.sidebarVisible,channelPanelVisible:document.documentElement.dataset.channelPanelVisible};
+              });
+              fs.writeFileSync('screenshots/layout-inspection.json',JSON.stringify(inspection,null,2));
+              if(inspection.sidebarWidth<145||inspection.sidebarDisplay==='none'||inspection.sidebarLeft<0)throw Error('Sidebar remains hidden: '+JSON.stringify(inspection));
+              const rgb=inspection.chooserBackground.match(/rgba?\\((\\d+),\\s*(\\d+),\\s*(\\d+)/);
+              if(!rgb||[1,2,3].some(i=>Number(rgb[i])<205))throw Error('Chooser is not light: '+JSON.stringify(inspection));
+              await page.screenshot({path:'screenshots/electron-light-chooser-real.png',timeout:15000});
+              console.log('LAYOUT VERIFIED',inspection);
+            } finally {await electron.close();}
+          })().catch(e=>{console.error(e);process.exitCode=1;});
+          NODE
+          xvfb-run -a -s "-screen 0 1600x900x24" node /tmp/electron-layout-capture.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: electron-light-sidebar-verified-screenshots
+          path: screenshots/
+          retention-days: 7
