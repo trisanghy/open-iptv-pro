@@ -24,6 +24,31 @@ API = "https://api.github.com/repos/trisanghy/open-iptv-pro"
 TAG = re.compile(r"^positron/v(\d+\.\d+\.\d+)-p5\.1\.(\d+)$")
 FEATURE_NUMBERS = {60, 61, 79, 92, 93, 96, 98, 99, 101, 102, 105, 113, 118, 119, 121, 127, 132}
 IMAGE_RE = re.compile(r"(?:^|[-_])p51(\d{1,3})(?=[-_])", re.I)
+VI_SOURCE = ROOT / "docs" / "positron-features" / "vi.json"
+
+
+def viet_hoa_rows(rows):
+    """Dùng tiêu đề và mô tả tiếng Việt đã được đối chiếu với nhật ký nguồn.
+
+    Không sửa SHA, đường tải, tên ảnh, trạng thái phát hành hay lịch sử Git.
+    Phiên bản mới chưa có bản dịch sẽ không hiển thị nguyên văn tiếng Anh.
+    """
+    data = json.loads(VI_SOURCE.read_text(encoding="utf-8"))
+    versions = data["versions"]
+    for row in rows:
+        translation = versions.get(str(row["number"]))
+        if translation:
+            row["title"] = translation["title"]
+            row["description"] = translation["description"]
+        else:
+            # Với phiên bản mới, ưu tiên chính changelog tiếng Việt.
+            # Không đẩy Release tiếng Anh trực tiếp ra trang công khai.
+            if not re.search(r"[À-ỹđĐ]", row.get("title", "")):
+                row["title"] = "Cập nhật Positron " + row["version"]
+            if not re.search(r"[À-ỹđĐ]", row.get("description", "")):
+                row["description"] = ("Ghi chú tiếng Việt của phiên bản đang được xác minh. "
+                                      "Có thể mở liên kết mã nguồn hoặc bản phát hành để đối chiếu.")
+    return rows
 
 
 def get_json(url: str):
@@ -183,9 +208,9 @@ def attach_real_images(rows):
             bundle = archive
             break
     if not bundle:
-        print("INFO: No real Electron screenshots archive in the last 8 releases")
+        print("THÔNG TIN: Chưa có gói ảnh Electron thật trong 8 bản phát hành gần nhất")
         return
-    print("Reading real Electron screenshots:", bundle["name"])
+    print("Đang đọc ảnh chụp Electron thật:", bundle["name"])
     try:
         req = urllib.request.Request(bundle["url"], headers={"User-Agent": "Positron-Feature-Catalog/1.0"})
         with urllib.request.urlopen(req, timeout=120) as response:
@@ -225,10 +250,10 @@ def attach_real_images(rows):
                 (folder / name).write_bytes(data)
                 row["image"] = "screenshots/" + name
                 count += 1
-            print("Published", count, "release-backed individual screenshots")
+            print("Đã đưa vào thư viện", count, "ảnh Electron đúng phiên bản")
     except (urllib.error.URLError, ValueError, zipfile.BadZipFile, TimeoutError, OSError) as err:
         # Never fabricate or reuse another version's image on failure.
-        print("WARNING: Could not retrieve authentic screenshot ZIP:", err, file=sys.stderr)
+        print("CẢNH BÁO: Không tải được gói ảnh Electron thật:", err, file=sys.stderr)
 
 
 
@@ -253,15 +278,16 @@ def write_github_index(rows):
         "Trang này được tạo tự động từ GitHub Releases và ảnh kiểm thử Electron thật. "
         "Bấm vào từng phiên bản để đọc mô tả, mở ảnh và tải EXE.",
         "",
-        "[Xem mã nguồn website](index.html) · "
+        "[Xem giao diện trang web](index.html) · "
         "[Các bản phát hành](https://github.com/trisanghy/open-iptv-pro/releases) · "
+        "[Nhật ký Git tiếng Việt](LOG_GIT_TIENG_VIET.md) · "
         "[Quy tắc ưu tiên tính năng](../../POSITRON_FEATURE_RULES.md)",
         "",
     ]
     for row in rows:
         title = html.escape(str(row["title"]).replace("\n", " "), quote=False)
         version = html.escape(row["version"])
-        status = "CHƯA CÓ RELEASE" if row["status"] == "candidate" else "ĐÃ PHÁT HÀNH"
+        status = "CHƯA CÓ BẢN PHÁT HÀNH" if row["status"] == "candidate" else "ĐÃ PHÁT HÀNH"
         kind = "TÍNH NĂNG" if row["kind"] == "feature" else "CẢI TIẾN / SỬA LỖI"
         lines.extend([
             "<details>",
@@ -280,9 +306,9 @@ def write_github_index(rows):
             lines.extend(["*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*", ""])
         links = []
         if row.get("url"):
-            links.append("[Release / thông tin](" + row["url"] + ")")
+            links.append("[Bản phát hành / thông tin](" + row["url"] + ")")
         if re.fullmatch(r"[0-9a-fA-F]{40}", str(row.get("commit") or "")):
-            links.append("[Commit](https://github.com/trisanghy/open-iptv-pro/commit/" +
+            links.append("[Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/" +
                          row["commit"] + ")")
         for asset in row.get("assets", []):
             if "Setup" in asset["name"] and asset["name"].endswith("-x64.exe"):
@@ -301,7 +327,32 @@ def write_github_index(rows):
         "",
     ])
     (docs / "FEATURES.md").write_text("\n".join(lines), encoding="utf-8")
-    print("Wrote GitHub-native timeline with", len(rows), "expandable version rows")
+    print("Đã tạo nhật ký GitHub tiếng Việt với", len(rows), "phiên bản có thể mở rộng")
+    # Lịch sử Git bất biến: đây là nhật ký diễn giải tiếng Việt, không viết
+    # lại commit cũ hoặc dùng force-push.
+    git_log = [
+        "# Nhật ký thay đổi Git — Positron (tiếng Việt)", "",
+        "Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. "
+        "SHA và liên kết commit nguyên gốc được giữ để đối chiếu.", "",
+    ]
+    for row in rows:
+        git_log.append("## " + row["version"] + " — " + row["title"])
+        git_log.append("")
+        git_log.append("**Ứng dụng:** " + row["appVersion"] + " · **Trạng thái:** " +
+                       ("Đã phát hành" if row["status"] == "release"
+                        else "Chưa có bản phát hành"))
+        git_log.append("")
+        git_log.append(row["description"])
+        git_log.append("")
+        if re.fullmatch(r"[0-9a-fA-F]{40}", str(row.get("commit") or "")):
+            git_log.append("[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/" +
+                           row["commit"] + ")")
+        if row.get("url"):
+            git_log.append("[Bản phát hành hoặc mã nguồn](" + row["url"] + ")")
+        git_log.append("")
+    (docs / "LOG_GIT_TIENG_VIET.md").write_text(
+        "\n".join(git_log) + "\n", encoding="utf-8")
+    print("Đã tạo nhật ký thay đổi Git bằng tiếng Việt")
 
 def main():
     OUT.mkdir(parents=True, exist_ok=True)
@@ -310,6 +361,7 @@ def main():
     titles = changelog_titles()
     rows = add_candidate(records(fetch_releases(), descriptions, titles), descriptions)
     rows = include_source_versions(rows, descriptions, titles)
+    viet_hoa_rows(rows)
     attach_real_images(rows)
     rows.sort(key=lambda row: row["number"], reverse=True)
     (OUT / "catalog.json").write_text(json.dumps({
@@ -321,10 +373,10 @@ def main():
     (ROOT / "site" / "index.html").write_text(
         '<!doctype html><html lang="vi"><meta charset="utf-8">'
         '<meta http-equiv="refresh" content="0;url=./positron-features/">'
-        '<title>Positron Feature Lab</title>'
+        '<title>Nhật ký tính năng Positron</title>'
         '<a href="./positron-features/">Xem nhật ký Positron</a></html>\n',
         encoding="utf-8")
-    print("Built", len(rows), "version rows under site/positron-features/")
+    print("Đã tạo", len(rows), "dòng phiên bản tại site/positron-features/")
 
 
 if __name__ == "__main__":

@@ -37,3 +37,13 @@ Từ **P5.1.134**, mỗi phiên bản ứng dụng mới PHẢI khai báo quyế
 Các dòng trên phải bắt đầu bằng `- ` trong changelog. Không coi đổi màu/viền/icon/spacing, đổi version, thêm test rỗng hay thay mockup là tính năng mới. Việc CI thông qua chỉ xác nhận đủ bằng chứng bắt buộc; vẫn phải kiểm tra tính năng thật bằng Electron và build Windows x64.
 
 **Bộ gác quy tắc:** `tests/positron-feature-priority.test.cjs`. Workflow công bố nhật ký chạy bộ gác trước khi tạo website; các workflow phát hành dùng `npm test` để chạy lại tự động.
+
+## Quy tắc ngôn ngữ — chỉ hiển thị tiếng Việt
+
+Từ đây, **mọi nội dung dành cho người dùng trong nhánh Positron phải viết bằng tiếng Việt**: tiêu đề tính năng, chú thích, mô tả từng phiên bản, nhật ký thay đổi, nội dung website, nhãn trạng thái, hướng dẫn, ghi chú phát hành mới và thông điệp commit mới. Tên thư viện, mã lệnh, đường dẫn, thuật ngữ kỹ thuật, SHA, tên file, tên sản phẩm và mã phiên bản giữ nguyên khi cần để kiểm chứng.
+
+- Website lấy bản dịch từ `docs/positron-features/vi.json`; dữ liệu các phiên bản mới phải được viết bằng tiếng Việt trực tiếp trong changelog. Không cho GitHub Release API ghi đè mô tả đã Việt hóa bằng nội dung tiếng Anh.
+- Trang GitHub `docs/positron-features/FEATURES.md` và `LOG_GIT_TIENG_VIET.md` phải tự sinh từ dữ liệu phiên bản có kiểm chứng, ảnh thật của đúng phiên bản; không được bịa ảnh hoặc kết quả CI.
+- **Không viết lại các commit lịch sử** (không force-push, không sửa tag, không thay đổi SHA). Thay vào đó có nhật ký giải thích bằng tiếng Việt kèm liên kết đến commit gốc. Các commit mới từ người và GitHub Actions phải dùng thông điệp tiếng Việt.
+- Tên khóa bắt buộc cho máy như `Feature priority: NEW`, `User action:`, `Electron screenshot:`, `BLOCKER_FIX` giữ nguyên để kiểm thử tương thích, nhưng nội dung mô tả sau dấu phân cách phải viết bằng tiếng Việt.
+- Nếu bản phát hành mới chưa có bản dịch được xác minh, trang ghi rõ đang chờ mô tả tiếng Việt, **không hiển thị nguyên văn tiếng Anh**.

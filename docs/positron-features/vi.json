@@ -1,0 +1,438 @@
+{
+  "language": "vi",
+  "note": "Bản dịch hiển thị cho nhật ký Positron. Không thay đổi commit hay dữ liệu kiểm thử gốc.",
+  "versions": {
+    "1": {
+      "title": "Hiển thị đúng phiên bản Positron P5.1.1",
+      "description": "Thay nhãn phiên bản cũ còn sót ở thanh bên bằng nhãn Positron phù hợp."
+    },
+    "2": {
+      "title": "Đặt lại vị trí huy hiệu phiên bản",
+      "description": "Sửa huy hiệu phiên bản bị che một phần bởi nút menu trên màn hình hẹp."
+    },
+    "3": {
+      "title": "Nút Toàn màn hình rõ hơn",
+      "description": "Thay biểu tượng toàn màn hình khó nhận biết bằng hình vector dễ hiểu."
+    },
+    "4": {
+      "title": "Sửa tiêu đề trang đang mở trên màn hình hẹp",
+      "description": "Cải thiện cách căn và hiển thị tiêu đề trang khi thanh điều hướng thu nhỏ."
+    },
+    "5": {
+      "title": "Sửa tiêu đề trang Nguồn ở độ rộng 720 px",
+      "description": "Điều chỉnh tiêu đề Nguồn để không bị cắt bằng dấu ba chấm quá sớm."
+    },
+    "6": {
+      "title": "Đồng bộ nền tối của Smart Discovery",
+      "description": "Sửa dải nền tối không phù hợp tại khu vực Khám phá nguồn."
+    },
+    "7": {
+      "title": "Sửa nền tối còn sót trong Khám phá nguồn",
+      "description": "Theo ảnh Electron, vùng nền Khám phá nguồn đã cải thiện nhưng còn dải tối ở phần tiêu đề; tiếp tục sửa lớp giao diện này."
+    },
+    "8": {
+      "title": "Sửa nút đổi chủ đề trên màn hình hẹp",
+      "description": "Tăng độ rõ của nút chuyển chủ đề và tránh chèn lên nội dung."
+    },
+    "9": {
+      "title": "Điều hướng từ trạng thái Yêu thích trống",
+      "description": "Thêm đường quay về xem kênh khi danh sách Yêu thích chưa có mục nào."
+    },
+    "10": {
+      "title": "Hướng dẫn thao tác Yêu thích theo ngữ cảnh",
+      "description": "Hiển thị lời hướng dẫn phù hợp khi chưa có hoặc đang xem danh sách Yêu thích."
+    },
+    "11": {
+      "title": "Tên chương trình EPG xuống dòng trên di động",
+      "description": "Cho phép tiêu đề chương trình dài hiển thị đủ dòng khi xem lịch trên màn hình nhỏ."
+    },
+    "12": {
+      "title": "Gợi ý phím tắt tìm kiếm dễ đọc hơn",
+      "description": "Chỉnh cách trình bày gợi ý phím tắt trong ô tìm kiếm."
+    },
+    "16": {
+      "title": "Biểu tượng âm lượng dạng vector",
+      "description": "Sử dụng biểu tượng âm lượng có nét đồng nhất, không phụ thuộc phông chữ."
+    },
+    "20": {
+      "title": "Phím tắt tìm kiếm phù hợp hệ điều hành",
+      "description": "Hiển thị gợi ý phím tắt tìm kiếm theo hệ điều hành đang sử dụng."
+    },
+    "21": {
+      "title": "Sửa bố cục lựa chọn luồng phát trên cửa sổ nhỏ",
+      "description": "Đưa bộ chọn đường phát thành một hàng đủ rộng trong cửa sổ rất hẹp."
+    },
+    "22": {
+      "title": "Nút điều khiển hình ảnh SVG rõ ràng hơn",
+      "description": "Thay ký tự biểu tượng bằng SVG đơn sắc, giữ trạng thái bật/tắt và tên điều khiển."
+    },
+    "23": {
+      "title": "Thu gọn hướng dẫn Nguồn ở cửa sổ hẹp",
+      "description": "Giảm khoảng đệm của hướng dẫn nhập nguồn và khám phá nguồn khi chưa có danh sách."
+    },
+    "24": {
+      "title": "Biểu tượng ghi hình DVR rõ hơn",
+      "description": "Thay biểu tượng ghi hình bằng SVG đồng nhất mà không ảnh hưởng lịch hẹn và dữ liệu."
+    },
+    "25": {
+      "title": "Sửa nút xóa kênh khi chưa có kênh nào",
+      "description": "Đặt điều khiển ở trạng thái vô hiệu hóa rõ ràng khi chưa có kênh; tự kích hoạt lại khi có dữ liệu."
+    },
+    "26": {
+      "title": "Vô hiệu hóa kiểm tra Chẩn đoán khi chưa có kênh",
+      "description": "Không cho chạy thao tác phân tích chưa có dữ liệu trên trang Chẩn đoán, tránh báo cáo sai."
+    },
+    "28": {
+      "title": "Sửa khoảng cách trang Nguồn khi chưa có dữ liệu",
+      "description": "Giảm các vùng trống dư trong trang quản lý nguồn trên máy tính."
+    },
+    "31": {
+      "title": "Việt hóa tên công cụ Tua lại",
+      "description": "Thay tên nút mở công cụ tua lại bằng lời tiếng Việt dễ hiểu."
+    },
+    "32": {
+      "title": "Thay biểu tượng chủ đề nhỏ bằng SVG một màu",
+      "description": "Dùng biểu tượng chủ đề dạng SVG thay cho ký tự hệ thống khó nhìn ở màn hình hẹp."
+    },
+    "44": {
+      "title": "Hướng dẫn thiết lập nguồn dữ liệu EPG",
+      "description": "Bổ sung hướng dẫn đưa nguồn lịch phát sóng vào ứng dụng."
+    },
+    "46": {
+      "title": "Thu gọn lịch DVR không khả dụng và sửa nhãn bản phát hành",
+      "description": "Cải thiện bố cục lịch ghi hình khi chưa có dữ liệu, đồng thời đồng bộ nhãn phiên bản."
+    },
+    "51": {
+      "title": "Sửa màn hình DVR trống theo ảnh kiểm thử",
+      "description": "Điều chỉnh trang ghi hình khi chưa có kênh, tránh hiển thị lịch hẹn không thể sử dụng."
+    },
+    "52": {
+      "title": "Ẩn công cụ EPG chưa dùng được khi lịch chưa tải",
+      "description": "Không cho thao tác các công cụ lịch chương trình khi chưa có dữ liệu hướng dẫn truyền hình hợp lệ."
+    },
+    "53": {
+      "title": "Bỏ phần lịch EPG trống bị lặp và làm mới tìm kiếm",
+      "description": "Giảm nội dung EPG trùng khi chưa có dữ liệu và cải thiện cách trình bày ô tìm lịch."
+    },
+    "54": {
+      "title": "Tinh chỉnh điều khiển phát và không gian TV",
+      "description": "Điều chỉnh bộ công cụ phát video và bố cục trang TV, giữ các nguồn kênh và chức năng vốn có."
+    },
+    "56": {
+      "title": "Thiết kế lại Horizon và gợi ý WatchFlow cục bộ",
+      "description": "Bổ sung lớp bố cục Horizon và các gợi ý WatchFlow dựa trên dữ liệu có sẵn cục bộ, kèm ảnh kiểm thử Electron."
+    },
+    "57": {
+      "title": "Hoàn thiện Horizon và WatchFlow có dữ liệu thử nghiệm",
+      "description": "Kiểm tra WatchFlow với dữ liệu kênh giả lập và sửa tiêu đề thiếu tương phản trên nền tối."
+    },
+    "58": {
+      "title": "Sửa tiêu đề bị chật trên giao diện Horizon hẹp",
+      "description": "Sửa cách hiển thị tiêu đề ở cửa sổ khoảng 600 px theo ảnh Electron thực tế để không bị cắt, chồng chữ."
+    },
+    "59": {
+      "title": "Đồng bộ màu thanh cuộn của Horizon",
+      "description": "Chỉnh màu thanh cuộn theo giao diện Horizon mà không thay đổi hành vi cuộn hoặc các chủ đề khác."
+    },
+    "60": {
+      "title": "Gợi ý WatchFlow cân bằng theo nhóm kênh",
+      "description": "Phân bổ gợi ý WatchFlow từ các nhóm nguồn khác nhau thay vì chọn liên tiếp quá nhiều kênh trong một nhóm."
+    },
+    "61": {
+      "title": "Tăng độ tương phản thư mục có dữ liệu trong Horizon",
+      "description": "Chỉnh nền, chữ và mũi tên của thư mục có kênh để dễ đọc trên giao diện tối, không ảnh hưởng kéo thả."
+    },
+    "62": {
+      "title": "Đồng bộ màu thanh phụ đề CC trong giao diện Horizon",
+      "description": "Chỉnh màu các điều khiển phụ đề và AI theo bảng màu Horizon; không thay đổi hành vi công cụ."
+    },
+    "63": {
+      "title": "Hướng dẫn nhập nguồn rõ ràng trong WatchFlow trống",
+      "description": "Khi chưa có nguồn kênh, hiện cách thêm IPTV thay vì các bộ lọc thể loại không thể dùng."
+    },
+    "64": {
+      "title": "Ẩn đoạn giới thiệu WatchFlow thừa khi chưa có kênh",
+      "description": "Bỏ đoạn hướng dẫn lặp ở trạng thái trống, vẫn giữ nguyên bố cục và các gợi ý khi có kênh."
+    },
+    "65": {
+      "title": "Khôi phục tiêu điểm sau khi đóng WatchFlow",
+      "description": "Sau khi đóng WatchFlow, đưa tiêu điểm về nút phù hợp ở trang TV để người dùng tiếp tục thao tác bằng bàn phím."
+    },
+    "66": {
+      "title": "Nút đóng WatchFlow rõ và dễ bấm hơn",
+      "description": "Thay ký tự biểu tượng bằng SVG 20 px và mở rộng vùng chạm của nút đóng, giữ hỗ trợ phím Escape."
+    },
+    "67": {
+      "title": "Tự đóng WatchFlow khi rời trang TV",
+      "description": "Theo dõi trang TV đang được mở và đóng bảng WatchFlow khi người dùng chuyển trang, không làm thay đổi dữ liệu hoặc kênh đang phát."
+    },
+    "68": {
+      "title": "Thay biểu tượng menu bằng SVG bốn ô",
+      "description": "Đưa biểu tượng SVG bốn ô vào nút mở menu sẵn có, giữ nguyên nhãn, trạng thái mở và thao tác."
+    },
+    "69": {
+      "title": "Sửa hàng điều hướng nguồn bị tách lẻ",
+      "description": "Điều chỉnh bố cục điều hướng quản lý nguồn ở cửa sổ khoảng 720 px để không còn một nút bị rớt xuống hàng riêng."
+    },
+    "70": {
+      "title": "Đánh dấu rõ mục đang chọn trong quản lý nguồn",
+      "description": "Tăng tương phản mục điều hướng đang chọn và gắn nhãn vị trí hiện tại cho công cụ hỗ trợ truy cập."
+    },
+    "71": {
+      "title": "Chỉ mở WatchFlow đúng ngữ cảnh màn hình TV",
+      "description": "Ẩn thao tác WatchFlow khi đang quản lý nguồn và đóng bảng khi chuyển khỏi trang TV, giữ nguyên kênh và nguồn."
+    },
+    "72": {
+      "title": "Sắp xếp bộ lọc Smart Discovery dễ dùng hơn",
+      "description": "Đưa các điều khiển khám phá nguồn về thứ tự thao tác tự nhiên, tránh các nút và lựa chọn nằm rời rạc."
+    },
+    "73": {
+      "title": "Đường dẫn lưu bản ghi DVR rõ ràng và an toàn",
+      "description": "Cải thiện nhãn và cách trình bày đường dẫn lưu bản ghi, tránh chuỗi đường dẫn dài làm vỡ bố cục."
+    },
+    "74": {
+      "title": "Tận dụng chiều cao màn hình máy tính hợp lý",
+      "description": "Thu gọn vùng phát trống trên cửa sổ máy tính thấp để các điều khiển hữu ích không bị đẩy xuống dưới."
+    },
+    "75": {
+      "title": "Thông báo rõ giới hạn Video Lab thử nghiệm",
+      "description": "Nêu rõ chức năng nâng cao hình ảnh bằng AI hiện chưa có hệ thống xử lý video trực tiếp đã xác minh, tránh gây hiểu nhầm."
+    },
+    "76": {
+      "title": "Chẩn đoán thông minh cho trạng thái chưa có nguồn",
+      "description": "Tập trung trang Chẩn đoán vào thao tác thêm nguồn trước khi hiển thị các bảng kiểm tra nâng cao chưa sử dụng được."
+    },
+    "77": {
+      "title": "Kiểm tra lại nút nhập nguồn trong Chẩn đoán",
+      "description": "Bổ sung kiểm thử ảnh để xác minh nút nhập nguồn thật của trang Chẩn đoán khi chưa có kênh."
+    },
+    "78": {
+      "title": "Màn hình chẩn đoán khi chưa có nguồn gọn hơn",
+      "description": "Ẩn các chỉ số bằng không chưa hữu ích ở trạng thái chưa nhập nguồn, tập trung vào hướng dẫn bắt đầu."
+    },
+    "79": {
+      "title": "Tên công cụ trình phát rõ nghĩa hơn",
+      "description": "Thay nút dấu ba chấm khó hiểu bằng nhãn mở công cụ rõ hơn, giúp tìm Tua lại và ghi hình."
+    },
+    "80": {
+      "title": "WatchFlow Plus: nhiều cách khám phá kênh",
+      "description": "Thử nghiệm các chế độ gợi ý và chuyển kênh nhanh, gồm Smart Zap và Mix, dựa trên thông tin nguồn và hành vi xem cục bộ; chỉ phát khi người dùng thao tác."
+    },
+    "81": {
+      "title": "Thanh công cụ WatchFlow Plus nằm trên một hàng",
+      "description": "Sắp xếp các chế độ WatchFlow Plus thành một hàng dễ sử dụng, tránh chiếm vùng hiển thị của video và danh sách."
+    },
+    "82": {
+      "title": "Bộ chọn kênh một hàng trên màn hình nhỏ",
+      "description": "Các tab lọc của thư viện kênh được bố trí lại trên một hàng khi cửa sổ hẹp, hạn chế xuống dòng không cần thiết."
+    },
+    "83": {
+      "title": "Điều khiển phụ của trình phát gọn hơn trên 600 px",
+      "description": "Sắp xếp lại các lựa chọn phụ của trình phát trên cửa sổ hẹp để tránh chiếm quá nhiều chiều cao."
+    },
+    "84": {
+      "title": "Thêm thao tác hữu ích khi danh sách kênh trống",
+      "description": "Hiển thị hướng dẫn và thao tác nhập nguồn ngay ở thanh danh sách kênh khi chưa có kênh để xem."
+    },
+    "85": {
+      "title": "Xếp hạng kênh tương tự tốt hơn trong WatchFlow",
+      "description": "Điều chỉnh thứ tự gợi ý Tương tự để ưu tiên nhóm kênh phù hợp trước khi xét điểm chất lượng phát."
+    },
+    "86": {
+      "title": "Hộp WatchFlow không che trình phát",
+      "description": "Giới hạn bố cục hộp gợi ý WatchFlow để không đè lên vùng video và các điều khiển quan trọng."
+    },
+    "87": {
+      "title": "Tab Tiếp tục xem gọn và dễ đọc",
+      "description": "Rút gọn nhãn hiển thị thành “Tiếp” khi cần, trong khi nhãn đầy đủ “Tiếp tục xem” vẫn được giữ cho hỗ trợ truy cập."
+    },
+    "88": {
+      "title": "Hướng dẫn bắt đầu xem dựa trên playlist thực",
+      "description": "Khi đã có danh sách kênh, hiển thị lời mời chọn kênh và số kênh thực tế. Khi chưa có nguồn, giữ hướng dẫn nhập danh sách."
+    },
+    "89": {
+      "title": "Trạng thái trình phát phản ánh số kênh có sẵn",
+      "description": "Thay lời hướng dẫn mặc định dựa trên việc danh sách có kênh khả dụng hay không, giúp người dùng biết bước tiếp theo."
+    },
+    "90": {
+      "title": "Ẩn thử nghiệm Video Lab khi chưa chọn kênh",
+      "description": "Không hiện công cụ Video Lab khi người dùng chưa chọn kênh, tránh nút dẫn vào tính năng chưa có nội dung. Cài đặt không bị xóa."
+    },
+    "91": {
+      "title": "Đồng bộ biểu tượng Phát/Tạm dừng theo bản Web",
+      "description": "Sử dụng hình SVG Phát và Tạm dừng tương ứng với bộ biểu tượng trên nhánh Web, giữ kích thước và đường nét đồng nhất."
+    },
+    "92": {
+      "title": "Tính đúng ngày địa phương cho Mix và Smart Zap",
+      "description": "Dùng ngày theo múi giờ của thiết bị khi tạo gợi ý Mix hằng ngày và chuyển kênh thông minh, tránh lệch ngày."
+    },
+    "93": {
+      "title": "Phân bổ gợi ý Mix cân bằng giữa các nhóm nguồn",
+      "description": "Điều chỉnh cách chọn gợi ý Mix theo ngày để không tập trung quá nhiều kênh trong một nhóm, đồng thời vẫn dựa trên dữ liệu phát thực tế."
+    },
+    "94": {
+      "title": "Báo hiệu còn gợi ý WatchFlow phía dưới",
+      "description": "Thêm dấu hiệu trực quan khi danh sách gợi ý WatchFlow còn nội dung bên dưới, giúp người dùng biết có thể cuộn xem thêm."
+    },
+    "95": {
+      "title": "Sửa dấu hiệu cuộn WatchFlow bị che",
+      "description": "Điều chỉnh vị trí chỉ báo cuộn dựa trên ảnh kiểm thử thực, tránh lớp chỉ dẫn nằm đè lên nội dung thẻ."
+    },
+    "96": {
+      "title": "Lưu kênh Xem sau riêng tư trên thiết bị",
+      "description": "Bổ sung danh sách Xem sau cục bộ để người dùng lưu kênh muốn quay lại. Không tải dữ liệu lên máy chủ và không tự phát."
+    },
+    "97": {
+      "title": "Xem được mọi kênh đã lưu trong Xem sau",
+      "description": "Bổ sung cách duyệt các dấu trang vượt quá tám kênh đầu tiên, giúp truy cập đủ danh sách đã lưu."
+    },
+    "98": {
+      "title": "Hiển thị tên chương trình đang phát trong WatchFlow",
+      "description": "Kết hợp dữ liệu lịch XMLTV đã nhập để thẻ gợi ý WatchFlow hiện chương trình đang phát, thay vì chỉ tên kênh."
+    },
+    "99": {
+      "title": "Xem chương trình sắp phát từ lịch XMLTV",
+      "description": "Bên cạnh chương trình đang phát, WatchFlow hiển thị chương trình tiếp theo và giờ bắt đầu khi có dữ liệu XMLTV hợp lệ. Không tự suy đoán tên chương trình."
+    },
+    "100": {
+      "title": "Giữ thanh tiêu đề WatchFlow khi cuộn danh sách dài",
+      "description": "Cố định tiêu đề và các tab WatchFlow khi cuộn sâu trong danh sách Xem sau, giúp nút đóng và điều hướng luôn dễ tìm."
+    },
+    "101": {
+      "title": "Tìm kiếm trong toàn bộ danh sách Xem sau",
+      "description": "Thêm ô tìm kiếm cục bộ cho tối đa 80 kênh đã lưu Xem sau, hỗ trợ không dấu, không gửi dữ liệu lên mạng và không tự phát video."
+    },
+    "102": {
+      "title": "Tìm Xem sau theo nhiều từ, nhóm và chất lượng",
+      "description": "Cải thiện tìm kiếm dấu trang đã lưu bằng nhiều từ khóa và thông tin nhóm/chất lượng, thay vì chỉ khớp chuỗi liền nhau."
+    },
+    "103": {
+      "title": "Không tự loại dấu trang Xem sau khi đủ 80 mục",
+      "description": "Khi đạt giới hạn 80 kênh lưu Xem sau, ngăn việc âm thầm loại kênh cũ. Người dùng được thông báo để tự quyết định."
+    },
+    "104": {
+      "title": "Thông báo nguồn Xem sau không còn hoạt động",
+      "description": "Phát hiện dấu trang đã lưu nhưng nguồn không còn sẵn có; thông báo rõ tình trạng mà không tự xóa dữ liệu đã lưu."
+    },
+    "105": {
+      "title": "Dọn dấu trang mất nguồn bằng hai bước xác nhận",
+      "description": "Bổ sung thao tác xử lý dấu trang Xem sau không còn nguồn hợp lệ, có bước xác nhận rõ ràng để tránh xóa nhầm."
+    },
+    "106": {
+      "title": "Bỏ thanh cuộn ngang thừa trong WatchFlow trống",
+      "description": "Sửa khoảng cách ở hộp WatchFlow khi chưa có nguồn để không xuất hiện thanh cuộn ngang không cần thiết."
+    },
+    "107": {
+      "title": "Thay biểu tượng chữ bằng SVG thống nhất",
+      "description": "Các nút tab thư viện kênh và chế độ xem dùng biểu tượng SVG thay cho ký tự phụ thuộc phông chữ. Thao tác và nhãn hỗ trợ truy cập được giữ nguyên."
+    },
+    "108": {
+      "title": "Thông báo không đè lên thanh biểu tượng",
+      "description": "Giới hạn vị trí thông báo trong cửa sổ hẹp để không che thanh điều hướng có biểu tượng bên trái."
+    },
+    "109": {
+      "title": "Không lặp thông báo đang hiển thị",
+      "description": "Nếu một thông báo cùng nội dung và mức độ vẫn đang mở, không tạo bản trùng. Thông báo khác hoặc mức cảnh báo khác vẫn xuất hiện."
+    },
+    "110": {
+      "title": "Thu gọn màn hình phát khi chưa chọn kênh",
+      "description": "Ở cửa sổ hẹp và chưa phát gì, thu gọn vùng giới thiệu để đưa phần tìm kênh lên cao hơn. Khung video thực vẫn giữ tỷ lệ."
+    },
+    "111": {
+      "title": "Bộ lọc nhóm kênh gọn trong một hàng cuộn",
+      "description": "Hiển thị nhóm trong một hàng cuộn ngang thay vì xuống nhiều dòng. Giữ vị trí thanh cuộn sau khi chọn nhóm."
+    },
+    "112": {
+      "title": "Thẻ kênh hai cột dễ đọc hơn trên màn hình hẹp",
+      "description": "Thay lưới thẻ quá nhỏ bằng hai cột và cho phép tên kênh hiển thị nhiều dòng, tránh cắt mất tên."
+    },
+    "113": {
+      "title": "Điều hướng các tab thư viện kênh bằng bàn phím",
+      "description": "Hỗ trợ phím mũi tên, Home và End để chuyển tab; giữ trạng thái được chọn, tiêu điểm và các thao tác chuột vốn có."
+    },
+    "114": {
+      "title": "Hướng dẫn rõ ràng khi Yêu thích hoặc Gần đây trống",
+      "description": "Phân biệt chưa có Yêu thích, chưa có lịch sử và lọc không ra kết quả. Thêm nút “Xem tất cả kênh” để quay lại thư viện."
+    },
+    "115": {
+      "title": "Bỏ hướng dẫn trùng ở Yêu thích và Gần đây",
+      "description": "Trên màn hình hẹp, ẩn bảng phụ rỗng bị lặp với thông báo chính của tab đang mở. Các bảng hữu ích khác vẫn được giữ lại."
+    },
+    "116": {
+      "title": "Chỉ hiển thị nhóm kênh thật trong danh sách",
+      "description": "Thanh lọc nhanh lấy nhóm có trong nguồn M3U đã nhập, không hiện nhóm rỗng. Trạng thái nút được chọn và khả năng dùng bàn phím được cải thiện."
+    },
+    "117": {
+      "title": "Một kênh lọc được hiển thị rộng và dễ đọc",
+      "description": "Khi chỉ còn một kênh trong kết quả lọc trên màn hình hẹp, thẻ kênh tự chiếm toàn bộ hàng thay vì bó hẹp trong nửa cột."
+    },
+    "118": {
+      "title": "Đánh dấu Yêu thích ngay trên thẻ kênh",
+      "description": "Thêm nút hình sao riêng trên từng thẻ kênh. Người dùng có thể lưu hoặc bỏ Yêu thích mà không cần phát kênh trước."
+    },
+    "119": {
+      "title": "Hiển thị số kênh Yêu thích trực tiếp trên tab",
+      "description": "Thêm huy hiệu đếm số kênh đã lưu ở tab Yêu thích. Số được cập nhật khi thêm/bỏ sao và ẩn khi bằng không; có nhãn hỗ trợ truy cập."
+    },
+    "120": {
+      "title": "Rút gọn các thông báo thành công trên màn hình hẹp",
+      "description": "Chỉ hiện thông báo thành công mới nhất ở cửa sổ hẹp để không che danh sách kênh; cảnh báo, lỗi và bộ hẹn giờ vẫn hoạt động."
+    },
+    "121": {
+      "title": "Thêm nút đóng thông báo bằng chuột hoặc bàn phím",
+      "description": "Bổ sung nút đóng có thể dùng bằng cảm ứng và bàn phím cho thông báo trong Positron. Không thay đổi nội dung và thời gian tự tắt của thông báo."
+    },
+    "122": {
+      "title": "Đóng thông báo và khôi phục vị trí bàn phím",
+      "description": "Khi đóng thông báo, tiêu điểm quay lại điều khiển trước đó thay vì bị mất. Giữ nguyên thời gian tự tắt, mức cảnh báo và các chức năng khác."
+    },
+    "123": {
+      "title": "Thông báo trên màn hình nhỏ không che nội dung",
+      "description": "Đưa thông báo thành công vào dải gọn phía dưới và giữ nút đóng. Các thông báo cảnh báo/lỗi vẫn được ưu tiên hiển thị."
+    },
+    "124": {
+      "title": "Cuộn nhóm kênh ngang bằng bánh xe chuột",
+      "description": "Dùng bánh xe chuột để di chuyển thanh nhóm kênh theo chiều ngang khi còn nội dung cần cuộn. Khi tới mép, trả thao tác cuộn về trang như bình thường."
+    },
+    "125": {
+      "title": "Ghim nút “Tất cả” khi cuộn nhóm kênh",
+      "description": "Giữ nút đặt lại “Tất cả” ở mép trái của thanh nhóm kênh trên cửa sổ hẹp. Các nhóm còn lại vẫn hỗ trợ cuộn, cảm ứng và bàn phím."
+    },
+    "126": {
+      "title": "Che tên nhóm kênh bị khuất sau nút “Tất cả”",
+      "description": "Thêm vùng che phía dưới nút “Tất cả” được ghim khi thanh nhóm cuộn ngang, tránh hiển thị chữ chồng và tránh chọn nhầm nhóm bị che."
+    },
+    "127": {
+      "title": "Dùng phím mũi tên để duyệt nhóm kênh",
+      "description": "Cho phép chuyển tiêu điểm giữa các nhóm bằng phím mũi tên, Home và End trên màn hình hẹp. Chỉ thay đổi bộ lọc khi người dùng chọn nhóm."
+    },
+    "128": {
+      "title": "Tự đưa nhóm đang chọn vào vùng nhìn thấy",
+      "description": "Khi đổi nhóm bằng bộ lọc nâng cao, thanh nhóm kênh tự cuộn để hiện nút nhóm đang được chọn. Chọn “Tất cả” sẽ đưa thanh về đầu."
+    },
+    "129": {
+      "title": "Sửa chữ nhóm kênh bị lộ cạnh nút “Tất cả”",
+      "description": "Theo ảnh Electron 450 px, một phần chữ của nhóm bị cuộn lọt ra cạnh nút “Tất cả”. Đồng bộ trạng thái cuộn và chỉ che phần chữ thừa khi thực sự cuộn ngang."
+    },
+    "130": {
+      "title": "Ẩn phần viền thừa ở nút lọc nhóm kênh",
+      "description": "Mở rộng vùng che có điều kiện cho thanh nhóm kênh cuộn ngang, xử lý nét viền còn lộ cạnh “Tất cả”. Các nút nhóm bên cạnh vẫn bấm được và không ảnh hưởng phát kênh."
+    },
+    "131": {
+      "title": "Tìm kênh tiếng Việt không dấu, kể cả chữ đ",
+      "description": "Bổ sung quy đổi chữ “đ” thành “d” khi tìm kiếm. Ví dụ, gõ “dia phuong” có thể tìm nhóm “TH địa phương”. Tên và nhóm kênh gốc không bị thay đổi."
+    },
+    "132": {
+      "title": "Xóa nhanh bộ lọc khi tìm không thấy kênh",
+      "description": "Khi tìm kiếm hoặc chọn nhóm mà không có kết quả, xuất hiện nút “Xóa bộ lọc và xem tất cả kênh”. Nhấn nút sẽ xóa truy vấn, khôi phục danh sách và đưa con trỏ về ô tìm kiếm; không tự phát kênh."
+    },
+    "133": {
+      "title": "Tên kênh dễ đọc hơn, nút Yêu thích tách riêng",
+      "description": "Ở cửa sổ 450 px, tên kênh dài bị cắt cạnh nút hình sao. Bản này dành hàng riêng cho nút Yêu thích, cho phép tên kênh xuống hai dòng mà vẫn giữ nguyên thao tác phát và dữ liệu đã lưu."
+    },
+    "134": {
+      "title": "Biểu tượng sao Yêu thích SVG đồng nhất và dễ sử dụng",
+      "description": "Thay ký tự sao ★/☆ phụ thuộc phông chữ bằng biểu tượng SVG 20 px thống nhất trên nút Yêu thích của thư viện kênh. Giữ thao tác chuột, bàn phím, trạng thái đã lưu và không tự phát video."
+    }
+  }
+}

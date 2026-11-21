@@ -1,14 +1,15 @@
-# Positron Feature Lab — nhật ký các chức năng theo phiên bản
+# Positron — Nhật ký tính năng và thay đổi Git bằng tiếng Việt
 
-Trang giới thiệu mỗi bản P5.1.x bằng một dòng có thể mở rộng. Khi mở dòng sẽ thấy mô tả, ảnh chụp ứng dụng Electron thực (nếu có), commit, release và liên kết Windows EXE.
+Toàn bộ tiêu đề và mô tả phiên bản trên trang Positron được hiển thị bằng tiếng Việt. Mỗi phiên bản là một dòng mở rộng để xem nội dung đã thay đổi, ảnh chụp Electron thật, trạng thái kiểm thử, commit gốc và tệp cài đặt (nếu có).
 
-- **Trang mở ngay trên GitHub:** [FEATURES.md](FEATURES.md) — danh sách mỗi phiên bản một dòng, bấm để mở ảnh và mô tả.
-- **HTML có thể tải:** GitHub Actions artifact positron-feature-website.
-- **GitHub Pages:** hiện chỉ cho phép triển khai từ nhánh web/online; không thay đổi cấu hình vì sẽ ảnh hưởng site Web.
-- **Trang nguồn:** [index.html](index.html)
-- **Tự động hóa:** [positron-feature-pages.yml](../../.github/workflows/positron-feature-pages.yml), mỗi commit Positron sẽ tự tạo và commit FEATURES.md + catalog.json + PNG từ GitHub Release lên chính nhánh Positron bằng push fast-forward, không force push. GitHub Pages deploy tắt theo mặc định để bảo vệ web/online.
-- **Tạo dữ liệu:** [build-positron-feature-site.py](../../scripts/build-positron-feature-site.py), lấy GitHub Releases thật và ảnh PNG trong gói 20-Real-Screenshots.zip của release gần nhất. Chỉ gắn ảnh cùng đúng số phiên bản, không gán sai phiên bản, không giả ảnh.
-- **Live release listing:** mỗi lần mở trang, trình duyệt truy vấn GitHub public Releases API để hiển thị release mới. Nếu API chạm giới hạn, trang vẫn có bản dữ liệu catalog.json được đóng gói ở lần chạy workflow gần nhất.
-- **CANDIDATE:** phiên bản có trong mã nguồn nhưng chưa có Release được trình bày khác với bản đã phát hành.
+- **[Mở nhật ký phiên bản trên GitHub](FEATURES.md)** — danh sách tự cập nhật, bấm từng dòng để xem chi tiết.
+- **[Mở nhật ký thay đổi Git bằng tiếng Việt](LOG_GIT_TIENG_VIET.md)** — diễn giải phiên bản và liên kết commit gốc, không thay đổi SHA hay lịch sử.
+- **[Xem giao diện trang HTML](index.html)** — trang có lọc/tìm kiếm; bản đóng gói HTML tải ở GitHub Actions.
+- **[Bản dịch chính xác theo phiên bản](vi.json)** — dữ liệu Việt hóa có thể bổ sung, đối chiếu với changelog và Release gốc.
+- **[Quy tắc bắt buộc](../../POSITRON_FEATURE_RULES.md)** — ưu tiên tính năng mới; các mô tả, ghi chú và commit mới viết bằng tiếng Việt.
 
-**Đường dẫn sử dụng ngay:** https://github.com/trisanghy/open-iptv-pro/blob/Positron/docs/positron-features/FEATURES.md . Đây là trang Markdown do GitHub hiển thị, không cần đổi Pages source. Chỉ bật POSITRON_PAGES_ENABLED=true khi có Pages độc lập được phép deploy Positron. Không tuyên bố GitHub Pages đã trực tuyến trước khi deploy thành công. Việc tạo trang này không sửa mã trình phát IPTV, playlist, tag phát hành hoặc nhánh khác.
+Mã nguồn trình tạo: `scripts/build-positron-feature-site.py`. Quy trình cập nhật: `.github/workflows/positron-feature-pages.yml`. Workflow tải GitHub Releases thật, ghép ảnh PNG từ gói kiểm thử Electron đúng phiên bản và cập nhật bảng GitHub mà không force-push. Nếu chưa có ảnh riêng hoặc chưa xuất bản Release, trang phải ghi rõ trạng thái.
+
+**Giới hạn GitHub Pages:** môi trường hiện chỉ cho phép triển khai từ nhánh `web/online`. Không thay đổi trang Web đó. Bản nhật ký GitHub trên nhánh `Positron` hoạt động độc lập; Pages chỉ được bật khi có môi trường riêng được chủ sở hữu cho phép.
+
+**Lưu ý về lịch sử:** GitHub không cho đổi ngôn ngữ các thông điệp commit cũ mà vẫn giữ nguyên SHA. Vì vậy trang Việt hóa diễn giải commit, giữ liên kết và bằng chứng gốc; các thông điệp commit mới từ workflow dùng tiếng Việt.

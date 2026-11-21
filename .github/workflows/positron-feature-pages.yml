@@ -1,4 +1,4 @@
-name: Positron · Feature history (GitHub + optional Pages)
+name: Positron · Nhật ký tính năng tiếng Việt (GitHub và Pages tùy chọn)
 on:
   push:
     branches: [Positron]
@@ -15,60 +15,62 @@ jobs:
     permissions:
       contents: write
     steps:
-      - name: Checkout Positron only
+      - name: Chỉ lấy mã nguồn nhánh Positron
         uses: actions/checkout@v4
         with:
           ref: Positron
           persist-credentials: true
-      - name: Set up Python
+      - name: Thiết lập môi trường Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Enforce immutable feature-first rule for Positron HEAD
+      - name: Kiểm tra quy tắc bắt buộc ưu tiên tính năng mới
         run: node --test tests/positron-feature-priority.test.cjs
-      - name: Generate release timeline and real Electron screenshots
+      - name: Tạo nhật ký tiếng Việt và ảnh chụp Electron thật
         env:
           GITHUB_TOKEN: ${{ github.token }}
         run: |
+          node --test tests/positron-site-language.test.cjs
           python -m py_compile scripts/build-positron-feature-site.py
           python scripts/build-positron-feature-site.py
           test -s site/positron-features/index.html
           test -s site/positron-features/catalog.json
           test -s docs/positron-features/FEATURES.md
-          python -c "import json; d=json.load(open('site/positron-features/catalog.json')); assert d['versions']; print('Rows:',len(d['versions']),'Photos:',sum(bool(x['image']) for x in d['versions']))"
-      - name: Save downloadable interactive HTML website
+          test -s docs/positron-features/LOG_GIT_TIENG_VIET.md
+          python -c "import json; d=json.load(open('site/positron-features/catalog.json')); assert d['versions']; assert all(x['title'] and x['description'] for x in d['versions']); print('Phiên bản:',len(d['versions']),'Ảnh thật:',sum(bool(x['image']) for x in d['versions']))"
+      - name: Đóng gói trang HTML tiếng Việt để tải xuống
         uses: actions/upload-artifact@v4
         with:
           name: positron-feature-website
           path: site
           if-no-files-found: error
           retention-days: 30
-      - name: Publish native GitHub feature timeline on Positron
+      - name: Công bố nhật ký phiên bản tiếng Việt trên GitHub
         shell: bash
         run: |
           set -Eeuo pipefail
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add docs/positron-features/FEATURES.md docs/positron-features/catalog.json docs/positron-features/screenshots
+          git add docs/positron-features/FEATURES.md docs/positron-features/LOG_GIT_TIENG_VIET.md docs/positron-features/catalog.json docs/positron-features/screenshots
           if git diff --cached --quiet; then
-            echo 'No new release rows or screenshot changes to publish.'
+            echo 'Không có bản dịch, phiên bản hoặc ảnh mới cần công bố.'
             exit 0
           fi
-          git commit -m 'docs(positron): refresh public version gallery with release-backed screenshots [skip ci]'
+          git commit -m 'Tài liệu Positron: cập nhật nhật ký phiên bản và ảnh kiểm thử tiếng Việt [skip ci]'
           for attempt in 1 2 3; do
             git fetch origin Positron
             if ! git rebase origin/Positron; then
               git rebase --abort || true
-              echo 'Branch changed with a conflict; leaving remote untouched.'
+              echo 'Nhánh đã thay đổi và có xung đột; giữ nguyên mã nguồn trên GitHub.'
               exit 1
             fi
             if git push origin HEAD:Positron; then
-              echo 'Feature timeline updated without force push.'
+              echo 'Đã cập nhật nhật ký phiên bản tiếng Việt mà không ghi đè lịch sử Git.'
               exit 0
             fi
             sleep 3
           done
-          echo 'Non-fast-forward race after retries; no forced update.'
+          echo 'Nhánh thay đổi trong lúc đăng tải; không ép ghi đè lịch sử Git.'
           exit 1
 
   deploy-pages:
@@ -83,17 +85,17 @@ jobs:
       name: positron-feature-pages
       url: ${{ steps.publish.outputs.page_url }}
     steps:
-      - name: Download verified generated site
+      - name: Tải bản website đã được tạo và kiểm tra
         uses: actions/download-artifact@v4
         with:
           name: positron-feature-website
           path: site
-      - name: Configure GitHub Pages
+      - name: Cấu hình GitHub Pages
         uses: actions/configure-pages@v5
-      - name: Upload GitHub Pages bundle
+      - name: Đưa gói website lên GitHub Pages
         uses: actions/upload-pages-artifact@v3
         with:
           path: site
-      - name: Deploy to GitHub Pages
+      - name: Công bố website bằng GitHub Pages
         id: publish
         uses: actions/deploy-pages@v4
