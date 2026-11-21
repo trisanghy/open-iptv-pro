@@ -195,7 +195,7 @@ test('P5.1.105 manual stale-bookmark removal preserves active bookmarks and chec
  let rows=later.toggle([],available).rows;rows=later.toggle(rows,missing).rows;
  assert.equal(later.unavailableEntries(rows,[available]).length,1);
  const dormant=later.unavailableEntries(rows,[available])[0];
- assert.equal(dormant.key,'name:offline archive');
+ assert.equal(dormant.key,later.identity(missing).key,'dormant bookmark must preserve the native opaque identity');
  const snapshot=JSON.stringify(rows);
  const reject=later.removeUnavailable(rows,[available,missing],dormant);
  assert.equal(reject.ok,false,'restored sources cannot be removed via stale flow');
