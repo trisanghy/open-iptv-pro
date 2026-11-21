@@ -227,6 +227,11 @@
  }
  function renderSide(target,list,label){target.replaceChildren();if(!list.length){empty(target,'Chưa có kênh '+label);return;}list.slice(0,6).forEach(c=>target.append(channelCard(c,true)));}
  function render(){
+  // P5.1.138: scheduled refresh retains focus of an existing native tile;
+  // otherwise Arrow keys fall through to global player shortcuts.
+  const focusedCardId=grid.contains(document.activeElement)&&
+   document.activeElement?.matches?.('button.web-chooser-card')
+   ?String(document.activeElement.dataset.channelId):null;
   const all=channels();renderGroups();
   const data=candidates(),pages=Math.max(1,Math.ceil(data.length/18));page=Math.min(page,pages-1);
   grid.classList.toggle('list',layout==='list');grid.replaceChildren();
@@ -269,6 +274,11 @@
    }
   }
   else data.slice(page*18,page*18+18).forEach(c=>grid.append(channelCard(c)));
+  if(focusedCardId!==null){
+   const restored=[...grid.querySelectorAll('button.web-chooser-card')]
+    .find(button=>String(button.dataset.channelId)===focusedCardId);
+   restored?.focus({preventScroll:true});
+  }
   pageLabel.textContent=(page+1)+' / '+pages;prev.disabled=page<=0;next.disabled=page>=pages-1;
   pageLabel.closest('.web-chooser-pager').hidden=pages<=1;
   status.textContent=data.length+' kênh';

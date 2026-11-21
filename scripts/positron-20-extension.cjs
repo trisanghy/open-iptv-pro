@@ -2697,8 +2697,15 @@ async function runTwenty(page){
 
  // P5.1.137: only focus moves between native channel cards. Test grid and list.
  await page.fill('#webChooserSearch','QA Channel');
- await page.waitForFunction(()=>document.querySelectorAll('#webChooserGrid button.web-chooser-card').length===18,{timeout:4000});
+ await page.waitForFunction(()=>document.getElementById('webChooserStatus')?.textContent==='552 kênh'
+  &&document.querySelectorAll('#webChooserGrid button.web-chooser-card').length===18,{timeout:4000});
  await page.evaluate(()=>document.querySelector('#webChooserGrid button.web-chooser-card').focus({preventScroll:true}));
+ // Wait for pending scheduled render; then verify native tile still owns focus.
+ await page.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));
+ const nativeFocusReady=await page.evaluate(()=>
+  document.activeElement?.matches?.('#webChooserGrid button.web-chooser-card')===true
+  &&document.activeElement?.querySelector('.web-chooser-name')?.textContent==='QA Channel 001');
+ assert.equal(nativeFocusReady,true,'P5.1.138 focus must survive queued render');
  await page.screenshot({path:path.join(out,'positron-p51137-arrow-navigation-before-450-real.png'),animations:'disabled'});
  await page.keyboard.press('ArrowRight');
  const arrowNavigationQA=await page.evaluate(()=>{
@@ -2747,7 +2754,8 @@ async function runTwenty(page){
  // across the 18-card page boundary, with source and playback unchanged.
  await page.click('[data-chooser-layout="grid"]');
  await page.fill('#webChooserSearch','QA Channel');
- await page.waitForFunction(()=>document.querySelectorAll('#webChooserGrid button.web-chooser-card').length===18,{timeout:4000});
+ await page.waitForFunction(()=>document.getElementById('webChooserStatus')?.textContent==='552 kênh'
+  &&document.querySelectorAll('#webChooserGrid button.web-chooser-card').length===18,{timeout:4000});
  await page.evaluate(()=>document.querySelector('#webChooserGrid button.web-chooser-card').focus({preventScroll:true}));
  await page.screenshot({path:path.join(out,'positron-p51138-page-navigation-before-450-real.png'),animations:'disabled'});
  await page.keyboard.press('PageDown');

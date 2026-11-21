@@ -5,6 +5,7 @@
 - Electron screenshot: positron-p51138-page-navigation-after-450-real.png
 - Ảnh đầu vào: P5.1.137 với positron-p51137-arrow-navigation-after-450-real.png đã mở xem; phím mũi tên hoạt động nhưng chưa có chuyển trang bằng bàn phím.
 - Kiểm thử: Node regression, QA Electron 450px với danh sách nhiều hơn 18 kênh; PageDown/Up đi đúng 2 trang, giữ truy vấn, focus, không autoplay, không tràn và có aria-keyshortcuts.
+- Sửa lỗi CI trong cùng phiên bản: quá trình refresh danh sách có thể làm mất focus của thẻ (P5.1.137 QA bị fail và phím mũi tên có thể kích hoạt shortcut toàn ứng dụng); lưu channelId đang focus và trả về thẻ khi render. QA chờ đúng số kết quả tìm kiếm 552 rồi mới thao tác.
 - Trạng thái: CANDIDATE, chưa tính hoàn thành khi chưa xác minh ảnh và Release.
 
 ## P5.1.137 — Duyệt thẻ kênh bằng phím mũi tên / Electron v4.23.221

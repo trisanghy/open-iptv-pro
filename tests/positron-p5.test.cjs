@@ -1218,3 +1218,11 @@ test('P5.1.138 PageDown/PageUp chuyển trang kênh mà không tự phát',()=>{
  for(const token of ["['PageDown','PageUp']","const destination=page+direction;","page=destination;render();","grid.setAttribute('aria-keyshortcuts','PageDown PageUp')"])assert.ok(ui.includes(token),token);
  for(const token of ["await page.keyboard.press('PageDown')","await page.keyboard.press('PageUp')","nextPageStartsAtNineteen:","previousPageLastFocused:","returnStillNoAutoplay:","positron-p51138-page-navigation-before-450-real.png","positron-p51138-page-navigation-after-450-real.png"])assert.ok(qa.includes(token),token);
 });
+
+test('P5.1.138 hồi quy: render mới không làm mất focus của thẻ kênh',()=>{
+ const js=read('renderer/web-channel-chooser-v42371.js'),qa=read('scripts/positron-20-extension.cjs');
+ assert.ok(js.includes('const focusedCardId=grid.contains(document.activeElement)'));
+ assert.ok(js.includes('restored?.focus({preventScroll:true})'));
+ assert.ok(qa.includes("document.getElementById('webChooserStatus')?.textContent==='552 kênh'"));
+ assert.ok(qa.includes("assert.equal(nativeFocusReady,true"));
+});
