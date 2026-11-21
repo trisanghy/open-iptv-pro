@@ -92,7 +92,9 @@ jobs:
                 if(row.active!=='page-'+id)throw Error('Wrong Light page: '+JSON.stringify(row));
                 for(const sample of row.samples){
                   if(sample.missing||!sample.visible)continue;
-                  const rgb=sample.bg.replace('rgba(','').replace('rgb(','').split(',').slice(0,3).map(v=>Number.parseInt(v,10));
+                  const rgb=sample.bg.startsWith('color(srgb ')
+                    ? sample.bg.slice(11).split(')')[0].trim().split(' ').slice(0,3).map(v=>Math.round(Number(v)*255))
+                    : sample.bg.replace('rgba(','').replace('rgb(','').split(',').slice(0,3).map(v=>Number.parseInt(v,10));
                   if(rgb.length!==3||rgb.some(x=>x<185))throw Error('Dark card still in Light mode: '+JSON.stringify(row));
                 }
                 checks.push(row);
