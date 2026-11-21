@@ -1,0 +1,48 @@
+name: Attach verified light sidebar screenshots to Electron SVG5
+on:
+  push:
+    branches: [build-sources/electron-desktop]
+    paths: ['.github/workflows/attach-electron-light-sidebar-v42376.yml']
+  workflow_dispatch:
+permissions:
+  actions: read
+  contents: write
+jobs:
+  attach:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Download verified real Electron screenshots
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -Eeuo pipefail
+          gh run download 44917480134 --repo "$GITHUB_REPOSITORY" --name electron-light-sidebar-verified-screenshots --dir screenshots
+          test -s screenshots/electron-light-main-real.png
+          test -s screenshots/electron-light-chooser-real.png
+          test -s screenshots/layout-inspection.json
+          grep -q '"sidebarVisible": "true"' screenshots/layout-inspection.json
+          grep -q '"theme": "light"' screenshots/layout-inspection.json
+          cp screenshots/electron-light-main-real.png screenshots/Electron-SVG5-Restored-Sidebar.png
+          cp screenshots/electron-light-chooser-real.png screenshots/Electron-SVG5-Light-Channel-Chooser.png
+      - name: Attach screenshots to immutable patch release
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -Eeuo pipefail
+          TAG=electron-v4.23.76-svg.5
+          for n in $(seq 1 70); do
+            if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then break; fi
+            sleep 10
+          done
+          gh release view "$TAG" --repo "$GITHUB_REPOSITORY"
+          for name in Electron-SVG5-Restored-Sidebar.png Electron-SVG5-Light-Channel-Chooser.png; do
+            if ! gh release view "$TAG" --repo "$GITHUB_REPOSITORY" --json assets --jq '.assets[].name' | grep -Fxq "$name"; then
+              gh release upload "$TAG" "screenshots/$name" --repo "$GITHUB_REPOSITORY"
+            fi
+          done
+          for name in Electron-SVG5-Restored-Sidebar.png Electron-SVG5-Light-Channel-Chooser.png; do
+            gh release view "$TAG" --repo "$GITHUB_REPOSITORY" --json assets --jq '.assets[].name' | grep -Fxq "$name"
+          done
