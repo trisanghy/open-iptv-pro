@@ -1,5 +1,8 @@
 # Positron — Quy tắc ưu tiên chức năng mới
 
+> **HEAD BẤT BIẾN — MỖI LẦN GỬI FILE = 20 VÒNG TÍNH NĂNG MỚI (KHÔNG PHẢI 20 LỖI CSS).** Đọc [POSITRON_HEAD_20_VONG_TINH_NANG_MOI.md](POSITRON_HEAD_20_VONG_TINH_NANG_MOI.md) trước mọi thao tác: **20 phiên bản độc lập, mỗi phiên bản tính năng mới, một cặp ảnh Electron thật đã mở xem, test/commit/CI/release và báo cáo; không dừng sau 1 vòng; không đếm 70 ảnh QA là 20 vòng**. Nếu giới hạn thực tế, lưu checkpoint và nêu đúng tiến độ, không giả chạy nền.
+
+
 **Ưu tiên số 1: thêm nhiều tính năng mới thiết thực cho người xem.** Không dùng nhiều vòng liên tiếp chỉ để tinh chỉnh màu, viền, khoảng cách hoặc đổi nhãn phiên bản. Chỉ ưu tiên sửa lỗi khi đó là lỗi phát hình/âm thanh, mất dữ liệu, bảo mật, CI không đạt, hoặc khiến tính năng mới không dùng được.
 
 Mỗi vòng:

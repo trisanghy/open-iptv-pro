@@ -61,3 +61,19 @@ test('GitHub version gallery has one expandable row and authentic screenshots', 
   assert.ok(fs.existsSync(path.join(ROOT, 'docs/positron-features/FEATURES.md')),
     'GitHub-native expandable timeline must remain checked into Positron');
 });
+
+test('HEAD bất biến yêu cầu đủ 20 tính năng mới, 20 phiên bản và ảnh Electron thật từng vòng',()=>{
+ const head=read('POSITRON_HEAD_20_VONG_TINH_NANG_MOI.md');
+ const policy=read('POSITRON_FEATURE_RULES.md');
+ assert.match(head,/MỖI LẦN NGƯỜI DÙNG GỬI FILE KHỞI CHẠY/);
+ assert.match(head,/20 VÒNG \/ 20 TÍNH NĂNG MỚI \/ 20 PHIÊN BẢN/);
+ assert.match(head,/round-NN-before-real\.png/);
+ assert.match(head,/round-NN-after-real\.png/);
+ assert.match(head,/mở và xem ảnh sau bằng mắt/);
+ assert.match(head,/Không nhầm 70 screenshot checks với 20 vòng tính năng/);
+ assert.match(head,/CANDIDATE/);
+ assert.match(head,/không dừng sau vòng đầu/i);
+ assert.match(head,/expected_sha/);
+ assert.match(policy,/HEAD BẤT BIẾN/);
+ assert.match(policy,/POSITRON_HEAD_20_VONG_TINH_NANG_MOI\.md/);
+});
