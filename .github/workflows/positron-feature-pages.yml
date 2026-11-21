@@ -9,6 +9,19 @@ concurrency:
 permissions:
   contents: read
 jobs:
+  # Giữ nguyên cổng kiểm tra nghiêm ngặt: phiên bản không đạt vẫn báo lỗi.
+  # Nhật ký lịch sử cần được cập nhật kể cả khi phiên bản mới đang sửa lỗi.
+  kiem-tra-uu-tien:
+    if: github.repository == 'trisanghy/open-iptv-pro'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Lấy mã nguồn Positron để kiểm tra phiên bản
+        uses: actions/checkout@v4
+        with:
+          ref: Positron
+      - name: Bắt buộc ưu tiên tính năng mới ở phiên bản tiếp theo
+        run: node --test tests/positron-feature-priority.test.cjs
+
   build-site:
     if: github.repository == 'trisanghy/open-iptv-pro'
     runs-on: ubuntu-latest
@@ -24,8 +37,6 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Kiểm tra quy tắc bắt buộc ưu tiên tính năng mới
-        run: node --test tests/positron-feature-priority.test.cjs
       - name: Tạo nhật ký tiếng Việt và ảnh chụp Electron thật
         env:
           GITHUB_TOKEN: ${{ github.token }}
