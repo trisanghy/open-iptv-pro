@@ -7,11 +7,11 @@ Trang này được tạo tự động từ GitHub Releases và ảnh kiểm th�
 [Xem giao diện trang web](index.html) · [Các bản phát hành](https://github.com/trisanghy/open-iptv-pro/releases) · [Nhật ký Git tiếng Việt](LOG_GIT_TIENG_VIET.md) · [Quy tắc ưu tiên tính năng](../../POSITRON_FEATURE_RULES.md)
 
 <details>
-<summary><strong>P5.1.134</strong> · Biểu tượng sao Yêu thích SVG đồng nhất và dễ sử dụng · CHƯA CÓ BẢN PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.134</strong> · Nhấn F để thêm/bỏ Yêu thích và dùng biểu tượng sao SVG · CHƯA CÓ BẢN PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
 
 **Ứng dụng:** 4.23.218 · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
 
-Thay ký tự sao ★/☆ phụ thuộc phông chữ bằng biểu tượng SVG 20 px thống nhất trên nút Yêu thích của thư viện kênh. Giữ thao tác chuột, bàn phím, trạng thái đã lưu và không tự phát video.
+Khi chọn một thẻ kênh, nhấn phím F để thêm kênh vào Yêu thích; nhấn lần nữa để bỏ lưu mà không phát video. Nút sao sử dụng SVG 20 px đồng nhất thay ký tự phụ thuộc phông chữ, giữ nguyên dữ liệu đã lưu, thao tác chuột và bàn phím.
 
 *Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
 
