@@ -108,3 +108,28 @@ test('P5.1.101 local saved search is accessible and covered by native Electron Q
  assert.ok(css.includes('#poWatchFlowPanel #poWatchLaterSearch'));
  assert.ok(qa.includes('positron-p51101-watch-later-search-552-real.png'));
 });
+
+test('P5.1.102 multi-term Watch Later searches saved title and group without dropping HD/4K',()=>{
+ const channels=[
+  {...C('private-qa','a','Truyền hình Đà Nẵng HD','https://secret.invalid/stream?token=abc'),group:'Tin tức'},
+  {...C('private-qa','b','VTV2 4K'),group:'Khoa học'},
+  {...C('private-qa','c','Chưa lưu'),group:'Tin tức'}
+ ];
+ let saved=[];
+ for(const ch of channels.slice(0,2))saved=later.toggle(saved,ch).rows;
+ assert.deepEqual(later.search(saved,channels,'nang tin').map(c=>c.id),['a']);
+ assert.deepEqual(later.search(saved,channels,'hoc vtv2').map(c=>c.id),['b']);
+ assert.deepEqual(later.search(saved,channels,'hD').map(c=>c.id),['a']);
+ assert.deepEqual(later.search(saved,channels,'4k').map(c=>c.id),['b']);
+ assert.equal(later.search(saved,channels,'@!?').length,0,'punctuation cannot match all saved entries');
+ assert.equal(later.search(saved,channels,'secret.invalid').length,0,'never search the stream URL');
+ assert.equal(later.search(saved,channels,'chua luu').length,0,'unsaved channels must stay hidden');
+ assert.equal(later.search(saved,channels,' ').length,2);
+});
+test('P5.1.102 native Electron captures a multi-word search with unchanged local bookmarks',()=>{
+ const qa=fs.readFileSync('scripts/positron-20-extension.cjs','utf8');
+ const flow=fs.readFileSync('.github/workflows/positron-lab.yml','utf8');
+ assert.ok(qa.includes('positron-p51102-watch-later-multiterm-552-real.png'));
+ assert.ok(qa.includes("input.value='main 001'"));
+ assert.ok(flow.includes('positron-p51102-watch-later-multiterm-552-real.png'));
+});

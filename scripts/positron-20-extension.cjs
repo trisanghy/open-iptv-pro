@@ -1379,6 +1379,27 @@ async function runTwenty(page){
  for(const key of ['ready','visible','titleMatched','countMatched','focusHeld','storeUnchanged','noAutoplay'])
   assert.equal(savedSearchQA[key],true,'Watch Later local search native Electron QA failed: '+key);
  await page.screenshot({path:path.join(out,'positron-p51101-watch-later-search-552-real.png'),animations:'disabled'});
+ // P5.1.102: real browser search must combine words from separate metadata fields.
+ // This finds QA Channel 001 in the native "Main channels" group without URL access.
+ const multiTermQA=await page.evaluate(()=>{
+  const input=document.getElementById('poWatchLaterSearch');
+  const panel=document.getElementById('poWatchFlowPanel');
+  const core=window.PositronWatchLaterCore;
+  const before=localStorage.getItem(core.STORAGE_KEY);
+  input.focus();input.value='main 001';input.dispatchEvent(new Event('input',{bubbles:true}));
+  const cards=[...panel.querySelectorAll('#poFlowPlusResults .po-flowplus-card')];
+  const matched=cards.map(c=>c.querySelector('.po-flowplus-card-info strong')?.textContent||'');
+  return {
+   inputActive:document.activeElement===input,
+   oneSavedMatch:cards.length===1&&matched[0]==='QA Channel 001',
+   countCorrect:panel.querySelector('.po-flowplus-head strong')?.textContent.includes('1 kết quả'),
+   unchangedStorage:localStorage.getItem(core.STORAGE_KEY)===before,
+   idlePlayer:window.IPTVState.getCurrent()===null
+  };
+ });
+ for(const key of ['inputActive','oneSavedMatch','countCorrect','unchangedStorage','idlePlayer'])
+  assert.equal(multiTermQA[key],true,'P5.1.102 native multi-term search failed: '+key);
+ await page.screenshot({path:path.join(out,'positron-p51102-watch-later-multiterm-552-real.png'),animations:'disabled'});
  await page.evaluate(()=>{
   const input=document.getElementById('poWatchLaterSearch');
   input.value='';input.dispatchEvent(new Event('input',{bubbles:true}));

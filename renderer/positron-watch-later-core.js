@@ -56,11 +56,21 @@
   }
   return out;
  }
- // P5.1.101: resolve bookmarks locally before searching; never search stream URLs.
+ // P5.1.102: multi-term local search across saved channel names and groups.
+ // Resolution tokens (HD, 4K) remain searchable, unlike bookmark identity.
+ // Never inspect stream URLs, credentials, guide links or hidden channels.
+ function searchText(value){return String(value??'').normalize('NFD')
+  .replace(/[\u0300-\u036f]/g,'').replace(/đ/gi,'d').toLowerCase()
+  .replace(/[^a-z0-9]+/g,' ').trim();}
  function search(rows,channels,query,limit=LIMIT){
-  const needle=norm(query);
-  const matches=visible(rows,channels,LIMIT).filter(ch=>
-   !needle||norm(ch.name).includes(needle)||norm(ch.group).includes(needle));
+  const raw=String(query??'').trim();
+  const terms=raw?searchText(raw).split(/\s+/).filter(Boolean):[];
+  const matches=visible(rows,channels,LIMIT).filter(ch=>{
+   if(!raw)return true;
+   if(!terms.length)return false;
+   const searchable=searchText(String(ch.name||'')+' '+String(ch.group||''));
+   return terms.every(term=>searchable.includes(term));
+  });
   const take=Math.min(LIMIT,Math.max(1,Math.trunc(limit)||LIMIT));
   return matches.slice(0,take);
  }

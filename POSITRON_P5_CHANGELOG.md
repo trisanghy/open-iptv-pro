@@ -702,3 +702,9 @@ P5.1.81 follow-up: real Electron capture found nav overflow; replace flexible no
 - Actual P5.1.83 TV Electron screenshot shows the channel sidebar occupying substantial space with passive no-channel text and no direct action, in contrast to the functional main player CTA.
 - When native IPTVState.getChannels() has zero channels, replace only the native no-channel description with a compact title, explanation and real source-management CTA. The existing channel list and all metadata/favorites are untouched. MutationObserver tracks native list re-renders; after importing a playlist, the native list appears normally.
 - Add regression and Electron CDP click-to-Sources + restore; screenshots and CI/installer remain pending.
+
+## P5.1.102 — Watch Later multi-word, group and quality-aware search (new 20-round batch 01/20)
+- Opened real P5.1.101 screenshot `positron-p51101-watch-later-search-552-real.png`: searching only a contiguous substring cannot find saved `QA Channel 001` with cross-field `main 001`, although native group metadata is present.
+- Keep personal bookmarks local; search accent-insensitively across multiple title/group terms, in any order. Do not strip HD, FHD or 4K query tokens as bookmark fingerprints do; punctuation-only input must not accidentally reveal all saved channels.
+- Add Node regression for cross-field queries, non-saved exclusions and URL privacy. Add actual Electron screenshot and DOM checks for `main 001`, preserved focus, no auto playback, unchanged local bookmark data.
+- Do not count the round complete until the updated CI screenshot is opened and inspected, tests pass, and an immutable P5.1.102 release is verified.

@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.185",
-  "description": "Positron P5.1.101: private local search across all saved Watch Later channels",
+  "version": "4.23.186",
+  "description": "Positron P5.1.102: precise multi-term local search in saved Watch Later channels",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",
