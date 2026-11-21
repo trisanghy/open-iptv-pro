@@ -217,3 +217,9 @@ html[data-positron="true"] .footer #footerText{
  html[data-positron="true"] #page-tv .player-control-card .control-layout-bottom .manual-link-picker{grid-column:1/-1!important;grid-row:3!important;min-width:0!important;width:100%!important;max-width:100%!important}
  html[data-positron="true"] #page-tv .player-control-card .control-layout-bottom #manualStreamSelect{display:block!important;min-width:0!important;width:100%!important;max-width:100%!important}
 }
+
+/* P5.1.22: screenshot-driven focus icon fix; no platform-dependent square glyph. */
+html[data-positron="true"] #positronBar #positronFocus{display:inline-flex!important;align-items:center!important;gap:6px!important}
+html[data-positron="true"] #positronBar #positronFocus::before{content:none!important;display:none!important}
+html[data-positron="true"] #positronBar #positronFocus svg{display:block;width:18px;height:18px;flex:0 0 18px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linejoin:round;stroke-linecap:round;pointer-events:none}
+@media(max-width:600px){html[data-positron="true"] #positronBar #positronFocus>span{font-size:0!important}}

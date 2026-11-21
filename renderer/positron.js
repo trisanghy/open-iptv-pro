@@ -11,7 +11,7 @@
   const brand=doc.querySelector('#appSidebar .brand b');
   const descriptor=doc.querySelector('#appSidebar .brand small');
   if(brand) brand.textContent='Positron';
-  if(descriptor) descriptor.textContent='P5.1.21';
+  if(descriptor) descriptor.textContent='P5.1.22';
   const navItems=[
     ['tv','▣','Xem truyền hình','Phát kênh và điều khiển video'],
     ['fav','★','Kênh yêu thích','Danh sách đã đánh dấu sao'],
@@ -148,6 +148,20 @@
   $('positronOpen').addEventListener('click',open);
   $('positronClose').addEventListener('click',close);
   $('positronAdd').addEventListener('click',()=>{$('urlBtn')?.click();});
+  // P5.1.22: replace ambiguous platform glyph with stateful SVG in the original focus button.
+  function renderFocusVisual(active){
+    const button=$('positronFocus');if(!button)return;
+    const ns='http://www.w3.org/2000/svg';
+    const svg=doc.createElementNS(ns,'svg');svg.setAttribute('viewBox','0 0 24 24');svg.setAttribute('aria-hidden','true');
+    const path=doc.createElementNS(ns,'path');
+    path.setAttribute('d',active?'M8 3H3v5 M16 3h5v5 M8 21H3v-5 M16 21h5v-5':'M4 4h16v16H4z M9 4v16');
+    svg.append(path);
+    const label=doc.createElement('span');label.textContent=active?'Khôi phục':'Tập trung';
+    button.replaceChildren(svg,label);
+    button.setAttribute('aria-label',active?'Khôi phục bố cục bình thường':'Bật chế độ tập trung');
+    button.title=active?'Khôi phục sidebar và danh sách':'Ẩn/hiện danh sách và sidebar';
+  }
+  renderFocusVisual(false);
   function setFocus(shouldFocus){
     const sidebarVisible=root.dataset.sidebarVisible!=='false';
     const channelsVisible=root.dataset.channelPanelVisible!=='false';
@@ -168,7 +182,7 @@
     }
     root.dataset.positronFocus=shouldFocus?'true':'false';
     $('positronFocus').setAttribute('aria-pressed',String(shouldFocus));
-    $('positronFocus').textContent=shouldFocus?'◧ Khôi phục':'◫ Tập trung';
+    renderFocusVisual(shouldFocus);
   }
   $('positronFocus').addEventListener('click',()=>setFocus(!focusBefore));
   function syncStatus(){

@@ -37,13 +37,13 @@ test('P5 assets are loaded after P4 without replacing it',()=>{
 test('P5 release is immutable and versioned separately from P4.1',()=>{
  const pkg=JSON.parse(read('package.json'));
  const flow=read('.github/workflows/positron-lab.yml');
- assert.equal(pkg.version,'4.23.105');
- assert.ok(flow.includes('positron/v4.23.105-p5.1.21'));
+ assert.equal(pkg.version,'4.23.106');
+ assert.ok(flow.includes('positron/v4.23.106-p5.1.22'));
  assert.ok(read('scripts/positron-50-audit.cjs').includes('runTwenty(page)'));
- assert.ok(flow.includes('Positron-P5121-20-Real-Screenshots.zip'));
+ assert.ok(flow.includes('Positron-P5122-20-Real-Screenshots.zip'));
 });
 
-test('P5.1.1 sidebar badge matches shipped release instead of stale P4',()=>{const js=read('renderer/positron.js');assert.ok(js.includes("descriptor.textContent='P5.1.21'"));assert.ok(!js.includes('OPEN IPTV PRO · P4 · 50 VÒNG'));});
+test('P5.1.1 sidebar badge matches shipped release instead of stale P4',()=>{const js=read('renderer/positron.js');assert.ok(js.includes("descriptor.textContent='P5.1.22'"));assert.ok(!js.includes('OPEN IPTV PRO · P4 · 50 VÒNG'));});
 
 test('P5.1.3 fullscreen icon uses SVG not a tiny platform glyph',()=>{const js=read('renderer/positron-twenty.js');const css=read('renderer/positron-twenty.css');assert.ok(js.includes("['fullscreenBtn','M8 3H3v5"));assert.ok(css.includes('#page-tv #fullscreenBtn svg'));});
 
@@ -205,4 +205,18 @@ test('P5.1.21 native fallback link select has sufficient visible width at 450px'
  assert.ok(audit.includes('metrics.manualLink.right<=width-6'));
  assert.ok(html.includes('id="manualStreamSelect"'));
  assert.ok(html.includes('id="favCurrentBtn"'));
+});
+
+test('P5.1.22 focus mode renders stateful SVG while preserving native toggling',()=>{
+ const js=read('renderer/positron.js');
+ const css=read('renderer/positron-twenty.css');
+ const audit=read('scripts/positron-20-extension.cjs');
+ assert.ok(js.includes('function renderFocusVisual(active)'));
+ assert.ok(js.includes('button.replaceChildren(svg,label)'));
+ assert.ok(js.includes('renderFocusVisual(shouldFocus)'));
+ assert.ok(css.includes('#positronBar #positronFocus svg'));
+ assert.ok(css.includes('#positronBar #positronFocus::before{content:none!important'));
+ assert.ok(audit.includes('assert.equal(focusState.active,true'));
+ assert.ok(audit.includes('assert.equal(focusState.different,true'));
+ assert.ok(audit.includes('assert.equal(focusState.restored,true'));
 });

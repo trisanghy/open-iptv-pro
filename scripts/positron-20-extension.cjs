@@ -85,6 +85,13 @@ async function runTwenty(page){
       return {cast:inspect('castBtn'),pip:inspect('pipBtn')};
      })(),
      volumeIcon:(()=>{const n=document.querySelector('#page-tv label.volume-icon'),v=n?.querySelector('svg');if(!n)return null;return {svg:!!v,for:n.getAttribute('for'),width:Math.round(v?.getBoundingClientRect().width||0),height:Math.round(v?.getBoundingClientRect().height||0)};})(),
+     focusIcon:(()=>{
+      const n=document.getElementById('positronFocus'),svg=n?.querySelector('svg');
+      return {svg:!!svg,width:Math.round(svg?.getBoundingClientRect().width||0),
+       label:n?.getAttribute('aria-label')||'',pressed:n?.getAttribute('aria-pressed')||'',
+       path:svg?.querySelector('path')?.getAttribute('d')||''};
+     })(),
+
      manualLink:(()=>{
       const n=document.getElementById('manualStreamSelect');if(!n)return null;
       const ctx=document.createElement('canvas').getContext('2d');ctx.font=getComputedStyle(n).font;
@@ -141,6 +148,9 @@ async function runTwenty(page){
    }
   }
   if(width<=600){
+    assert.equal(metrics.focusIcon?.svg,true,'focus control missing vector icon: '+name);
+    assert.ok(metrics.focusIcon.width>=16,'focus vector too small: '+name);
+    assert.ok(metrics.focusIcon.label.length>=10,'focus control missing descriptive ARIA: '+name);
     assert.ok(metrics.themeButton,'theme control missing: '+name);
     assert.equal(metrics.themeButton.fontSize,'0px','theme label visible in compact toolbar: '+name);
     assert.ok(metrics.themeButton.width<=46,'theme button exceeds compact width: '+name);
@@ -187,6 +197,21 @@ async function runTwenty(page){
       return open;
     });
     assert.equal(searchOpens,true,'new icon must keep native command palette event');
+   }
+   if(target==='tv'&&width===450){
+    const focusState=await page.evaluate(()=>{
+     const b=document.getElementById('positronFocus');
+     const initial=b.querySelector('svg path')?.getAttribute('d');
+     b.click();
+     const active=b.getAttribute('aria-pressed')==='true';
+     const different=b.querySelector('svg path')?.getAttribute('d')!==initial;
+     b.click();
+     return {active,different,restored:b.getAttribute('aria-pressed')==='false',svg:!!b.querySelector('svg')};
+    });
+    assert.equal(focusState.active,true,'native focus button click failed: '+name);
+    assert.equal(focusState.different,true,'vector icon did not reflect focus state: '+name);
+    assert.equal(focusState.restored,true,'native focus mode did not restore layout: '+name);
+    assert.equal(focusState.svg,true,'focus icon removed after toggles: '+name);
    }
    if(target==='sources'&&metrics.sources)assert.notEqual(metrics.sources.background,'rgb(255, 255, 255)','white source panel');
   if(target==='sources'&&width<=720){

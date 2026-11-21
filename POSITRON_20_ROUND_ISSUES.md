@@ -40,3 +40,7 @@ First P5.1.8 test run https://github.com/trisanghy/open-iptv-pro/actions/runs/44
 | 01/20 | P5.1.21 / 4.23.105 | P5.1.20 Electron positron-p5-09-real.png TV 450px | Selected native stream link is clipped by three-control narrow row; make stream select full width below Fit / Favorites | Code and Node/real Electron assertions prepared, screenshot after / CI / release not yet verified |
 
 Do not credit the round until the new Electron PNG has been opened and inspected and CI/release outcome reported. GitHub workflow release currently blocked by HTTP 403.
+
+| 02/20 | P5.1.22 / 4.23.106 | P5.1.21 actual Electron TV 450px screenshot | Static square pseudo-element obscures focus mode state; replace with stateful SVG while retaining native click/ARIA | Code + Node + Electron state assertions staged; after-image/release pending |
+
+Round 01 P5.1.21 verified: Node, Electron capture, mac x64/arm64, Windows x64 and GitHub Release 6/6 success; https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.105-p5.1.21
