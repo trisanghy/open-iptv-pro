@@ -3017,9 +3017,73 @@ async function runTwenty(page){
  for(const [key,value] of Object.entries(upcomingProgrammeQA))
   assert.equal(value,true,'P5.1.142 native XMLTV next programme '+key+': '+JSON.stringify(upcomingProgrammeQA));
 
+
+ // P5.1.143: future XMLTV-only filter must work with no current programme.
+ await page.click('[data-chooser-layout="grid"]');
+ await page.fill('#webChooserSearch','QA Channel');
+ await page.waitForFunction(()=>document.querySelectorAll('#webChooserGrid button.web-chooser-card').length===18,{timeout:5000});
+ const soonFixture=await page.evaluate(()=>{
+  const all=window.IPTVState.getChannels(),early=all.find(c=>c.name==='QA Channel 001'),
+   late=all.find(c=>c.name==='QA Channel 002');
+  if(!early||!late)throw Error('P5.1.143 missing imported QA channels');
+  const now=Date.now(),a='qa143-a',b='qa143-b';
+  window.__positron143OriginalGuide=window.IPTVExtras.getGuide;
+  window.IPTVExtras.getGuide=()=>({
+   names:{[window.IPTVGuide.tidy(early.name)]:a,[window.IPTVGuide.tidy(late.name)]:b},
+   aliasesById:{[a]:[early.name],[b]:[late.name]},offsetMinutes:0,
+   programmes:[
+    {id:a,start:now+20*60000,end:now+50*60000,title:'Phim sắp chiếu đặc biệt QA'},
+    {id:b,start:now+90*60000,end:now+130*60000,title:'Chương trình quá xa QA'}
+   ]});
+  document.getElementById('webChooserAdvanced').open=true;
+  return {channels:window.IPTVState.getStore().channels.length};
+ });
+ await page.screenshot({path:path.join(out,'positron-p51143-soon-filter-before-450-real.png'),animations:'disabled'});
+ await page.click('#webChooserSoonOnly');
+ await page.waitForFunction(()=>document.querySelectorAll('#webChooserGrid button.web-chooser-card').length===1
+  &&document.querySelector('#webChooserGrid .web-chooser-name')?.textContent==='QA Channel 001',{timeout:5000});
+ await page.fill('#webChooserSearch','phim sap chieu');
+ await page.waitForFunction(()=>document.querySelectorAll('#webChooserGrid button.web-chooser-card').length===1,{timeout:5000});
+ const soonProgrammeQA=await page.evaluate(original=>{
+  const card=document.querySelector('#webChooserGrid button.web-chooser-card');
+  const future=card?.querySelector('.web-chooser-next-programme');
+  return {
+   optInActive:document.getElementById('webChooserSoonOnly').checked,
+   mutuallyExclusive:!document.getElementById('webChooserOnAirOnly').checked,
+   futureOnlyChannel:card?.querySelector('.web-chooser-name')?.textContent==='QA Channel 001'
+    &&document.querySelectorAll('#webChooserGrid button.web-chooser-card').length===1,
+   nextHourTitle:future?.textContent.includes('Phim sắp chiếu đặc biệt QA')===true,
+   localStartTime:/^Sắp chiếu \d{1,2}:\d{2}: /.test(future?.textContent||''),
+   findsUnaccentedFutureTitle:document.getElementById('webChooserSearch').value==='phim sap chieu',
+   noInventedCurrentTitle:card?.querySelector('.web-chooser-onair-programme')===null,
+   sourceRecordsUnchanged:window.IPTVState.getStore().channels.length===original.channels,
+   noAutoplay:window.IPTVState.getCurrent()===null,
+   noHorizontalOverflow:document.documentElement.scrollWidth<=innerWidth+1
+  };
+ },soonFixture);
+ await page.evaluate(()=>document.querySelector('.web-chooser-next-programme')?.scrollIntoView({block:'center'}));
+ await page.screenshot({path:path.join(out,'positron-p51143-soon-filter-after-450-real.png'),animations:'disabled'});
+ await page.evaluate(()=>{
+  document.getElementById('webChooserOnAirOnly').checked=true;
+  document.getElementById('webChooserOnAirOnly').dispatchEvent(new Event('change',{bubbles:true}));
+ });
+ Object.assign(soonProgrammeQA,await page.evaluate(()=>({
+  onAirDisablesSoon:document.getElementById('webChooserOnAirOnly').checked
+   &&!document.getElementById('webChooserSoonOnly').checked,
+  noPlaybackAfterToggle:window.IPTVState.getCurrent()===null
+ })));
+ await page.evaluate(()=>{
+  window.IPTVExtras.getGuide=window.__positron143OriginalGuide;
+  document.getElementById('webChooserOnAirOnly').checked=false;
+  document.getElementById('webChooserOnAirOnly').dispatchEvent(new Event('change',{bubbles:true}));
+ });
+ await page.fill('#webChooserSearch','');
+ for(const [key,value] of Object.entries(soonProgrammeQA))
+  assert.equal(value,true,'P5.1.143 local upcoming XMLTV filter '+key+': '+JSON.stringify(soonProgrammeQA));
+
  await page.setViewportSize({width:1360,height:820});
   const report={type:'Positron P5 twenty distinct desktop screenshot cases',realElectron:true,syntheticChannels:false,
-  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA,chooserQa,toastLayoutQA,nativeToastQA,compactIdleQA,channelChipRailQA,advancedFilterQA,readableCardsQA,keyboardTabQA,favoriteEmptyQA,duplicateEmptyQA,categoryFilterQA,categoryFixtureQA,compactSingleQA,directFavoriteQA,favoriteCountQA,compactToastStackQA,toastDismissQA,toastFocusReturnQA,toastDockQA,wheelQA,pinnedAllQA,pinnedMaskQA,categoryKeyQA,dropdownChipQA,pinnedRightMaskQA,pinnedBorderMaskQA,asciiDSearchQA,emptySearchActionQA,readableCardTitleQA,favoriteSvgQA,keyboardFavoriteQA,multiTermSearchQA,keyboardSearchQA,arrowNavigationQA,pageNavigationQA,favoriteSortQA,onAirFilterQA,programmeSearchQA,upcomingProgrammeQA};
+  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA,chooserQa,toastLayoutQA,nativeToastQA,compactIdleQA,channelChipRailQA,advancedFilterQA,readableCardsQA,keyboardTabQA,favoriteEmptyQA,duplicateEmptyQA,categoryFilterQA,categoryFixtureQA,compactSingleQA,directFavoriteQA,favoriteCountQA,compactToastStackQA,toastDismissQA,toastFocusReturnQA,toastDockQA,wheelQA,pinnedAllQA,pinnedMaskQA,categoryKeyQA,dropdownChipQA,pinnedRightMaskQA,pinnedBorderMaskQA,asciiDSearchQA,emptySearchActionQA,readableCardTitleQA,favoriteSvgQA,keyboardFavoriteQA,multiTermSearchQA,keyboardSearchQA,arrowNavigationQA,pageNavigationQA,favoriteSortQA,onAirFilterQA,programmeSearchQA,upcomingProgrammeQA,soonProgrammeQA};
  fs.writeFileSync(path.resolve('positron-evidence','audit-p5-20-rounds.json'),JSON.stringify(report,null,2));
  return report;
 }

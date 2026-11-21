@@ -1,3 +1,11 @@
+## P5.1.143 — Lọc chương trình sắp chiếu trong 60 phút / Electron v4.23.227
+
+- Feature priority: NEW — Lọc kênh có chương trình sẽ bắt đầu trong 60 phút tới từ EPG/XMLTV đã nhập, kể cả kênh chưa có chương trình đang phát. Hiện giờ phát và tên, tìm tên không dấu. Tách biệt và loại trừ bộ lọc “Đang chiếu”.
+- Thao tác: TV → Chọn kênh → Bộ lọc → “Sắp chiếu trong 60 phút (EPG)”; tìm “phim sap chieu”. Không tự mở nguồn phát, đặt lịch nhắc, tải XMLTV mới hay thay đổi playlist.
+- Kiểm thử: Node regression, Electron thật 450px; fixture XMLTV có một chương trình sau 20 phút và một chương trình sau 90 phút; chỉ kênh đúng hạn hiện, tên tìm được, tắt lẫn nhau, kiểm tra không autoplay, không sửa nguồn và không tràn ngang.
+- Ảnh Electron: positron-p51143-soon-filter-before-450-real.png, positron-p51143-soon-filter-after-450-real.png.
+- Trạng thái: CANDIDATE — chỉ xác nhận khi GitHub Actions và Release thực tế thành công.
+
 ## P5.1.142 — Xem lịch chương trình tiếp theo ngay trên thẻ kênh / Electron v4.23.226
 
 - Feature priority: NEW — Hiển thị tên và giờ bắt đầu chương trình sắp phát bên dưới chương trình hiện tại trên thẻ kênh, chỉ khi người dùng bật bộ lọc EPG và chỉ từ lịch XMLTV có thật đã nhập; không tự mở nguồn ngoài, tự phát video hay đặt nhắc lịch.

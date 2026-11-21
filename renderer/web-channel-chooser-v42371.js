@@ -69,6 +69,14 @@
  onAirLabel.append(onAirOnly,document.createTextNode('Có chương trình đang chiếu (EPG)'));
  onAirLabel.title='Chỉ dùng XMLTV đã lưu; không xác nhận trạng thái phát trực tuyến';
  chooserAdvanced.append(onAirLabel);
+ // P5.1.143: discover locally scheduled starts within the next hour.
+ const soonOnly=document.createElement('input');
+ soonOnly.type='checkbox';soonOnly.id='webChooserSoonOnly';
+ soonOnly.setAttribute('aria-label','Chỉ chương trình sắp chiếu trong 60 phút theo lịch EPG đã nhập');
+ const soonLabel=document.createElement('label');soonLabel.className='web-chooser-soon-filter';
+ soonLabel.append(soonOnly,document.createTextNode('Sắp chiếu trong 60 phút (EPG)'));
+ soonLabel.title='Chỉ XMLTV đã lưu; không tự phát hoặc tạo nhắc lịch';
+ chooserAdvanced.append(soonLabel);
  [...filterControls.querySelectorAll('label')].forEach(label=>chooserAdvanced.append(label));
  filterControls.append(chooserAdvanced);
  const compactFilterMedia=window.matchMedia('(max-width:600px)');
@@ -87,6 +95,10 @@
  // Apply it consistently to both query and channel/group metadata.
  const normalize=v=>String(v||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLocaleLowerCase().replace(/đ/g,'d');
  const filterGroups=[['all','Tất cả'],['VTV','VTV'],['VTC','VTC'],['HTV','HTV'],['K+','K+'],['TH','TH địa phương'],['Quốc tế','Quốc tế'],['Phim','Phim'],['Thiếu nhi','Thiếu nhi'],['Thể thao','Thể thao'],['Tin tức','Tin tức']];
+ const startingSoon=(guide,ch,clock)=>{
+  const next=window.PositronOnAirCore?.upcoming(guide,ch,clock,window.IPTVGuide);
+  return next&&next.start>clock&&next.start-clock<=60*60000?next:null;
+ };
  function favoritesList(){return favorites.visible(store());}
  function recentList(){return recent.visible(store(),channels(),favorites.key);}
  function candidates(){
@@ -98,14 +110,15 @@
   // P5.1.141: opt-in programme-title search, only from genuine local XMLTV.
   // Keep normal search name/group only when the EPG switch is off.
   let guideForSearch=null;
-  if(onAirOnly.checked && terms.length){
+  if((onAirOnly.checked||soonOnly.checked) && terms.length){
    try{guideForSearch=window.IPTVExtras?.getGuide?.()||null;}catch{}
   }
   const searchClock=Date.now();
   if(terms.length)result=result.filter(c=>{
    const currentProgramme=onAirOnly.checked
     ?(window.PositronOnAirCore?.lookup(guideForSearch,c,searchClock,window.IPTVGuide)?.title||''):'';
-   const searchable=normalize(c.name+' '+(c.group||''))+' '+normalize(currentProgramme);
+   const soonProgramme=soonOnly.checked?(startingSoon(guideForSearch,c,searchClock)?.title||''):'';
+   const searchable=normalize(c.name+' '+(c.group||''))+' '+normalize(currentProgramme)+' '+normalize(soonProgramme);
    return terms.every(term=>searchable.includes(term));
   });
   if(g)result=result.filter(c=>normalize(c.group||'').includes(normalize(g))||normalize(c.name).startsWith(normalize(g)));
@@ -115,6 +128,12 @@
    try{guide=window.IPTVExtras?.getGuide?.()||null;}catch{}
    const clock=Date.now(),epg=window.PositronOnAirCore;
    result=result.filter(c=>Boolean(epg?.lookup(guide,c,clock,window.IPTVGuide)));
+  }
+  if(soonOnly.checked){
+   let guide=null;
+   try{guide=window.IPTVExtras?.getGuide?.()||null;}catch{}
+   const clock=Date.now();
+   result=result.filter(c=>Boolean(startingSoon(guide,c,clock)));
   }
   if(tab!=='recent'){
    const dir=sort.value==='desc'?-1:1;
@@ -143,11 +162,11 @@
   if(ch.logo){const img=document.createElement('img');img.src=ch.logo;img.alt='';img.loading='lazy';img.referrerPolicy='no-referrer';img.addEventListener('error',()=>{img.remove();face.textContent='TV';},{once:true});face.append(img);}else face.textContent='TV';
   const name=document.createElement('span');name.className='web-chooser-name';name.textContent=ch.name||'Không tên';
   card.append(face,name);
-  if(!compact&&onAirOnly.checked){
+  if(!compact&&(onAirOnly.checked||soonOnly.checked)){
    let guide=null;
    try{guide=window.IPTVExtras?.getGuide?.()||null;}catch{}
    const item=window.PositronOnAirCore?.lookup(guide,ch,Date.now(),window.IPTVGuide);
-   if(item){
+   if(item&&onAirOnly.checked){
     const now=dummyNowLabel();
     now.textContent='Theo EPG: '+item.title;
     now.title='Chương trình theo lịch XMLTV đã nhập: '+item.title;
@@ -155,12 +174,13 @@
    }
    // P5.1.142: Optional next showtime, strictly from saved XMLTV.
    // Never predict, fetch, stream or create a reminder automatically.
-   const upcoming=window.PositronOnAirCore?.upcoming(guide,ch,Date.now(),window.IPTVGuide);
+   const upcoming=soonOnly.checked?startingSoon(guide,ch,Date.now())
+    :window.PositronOnAirCore?.upcoming(guide,ch,Date.now(),window.IPTVGuide);
    if(upcoming){
     const next=document.createElement('small');
     next.className='web-chooser-next-programme';
     const time=new Date(upcoming.start).toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit'});
-    next.textContent='Tiếp theo '+time+': '+upcoming.title;
+    next.textContent=(soonOnly.checked?'Sắp chiếu ':'Tiếp theo ')+time+': '+upcoming.title;
     next.title='Chương trình tiếp theo theo lịch XMLTV đã nhập: '+upcoming.title;
     card.append(next);
    }
@@ -310,9 +330,11 @@
    // with 552 imported channels but an incorrect generic "not found" message.
    // Explain true first-use states; retain filters/data and offer a reversible
    // one-click path back to browsing without starting playback.
-   let message=onAirOnly.checked
-    ?'Không có chương trình đang chiếu trong EPG đã nhập. Hãy tắt bộ lọc hoặc cập nhật lịch phát.'
-    :'Không tìm thấy kênh phù hợp với bộ lọc hiện tại.';
+   let message=soonOnly.checked
+    ?'Không có chương trình bắt đầu trong 60 phút tới theo lịch EPG đã nhập.'
+    :onAirOnly.checked
+     ?'Không có chương trình đang chiếu trong EPG đã nhập. Hãy tắt bộ lọc hoặc cập nhật lịch phát.'
+     :'Không tìm thấy kênh phù hợp với bộ lọc hiện tại.';
    if(tab==='fav')message=favoritesList().length
     ?'Không có kênh yêu thích phù hợp với bộ lọc.'
     :'Chưa có kênh yêu thích. Nhấn biểu tượng sao ở một kênh để lưu vào đây.';
@@ -324,12 +346,12 @@
    // search clearly, but a typo/no-match on the All tab previously stranded
    // the user on a generic empty card with no direct reset action.
    // Use the existing native empty-state button style; never mutate source data.
-   if(tab==='all'&&(search.value.trim()||group.value||onAirOnly.checked)){
+   if(tab==='all'&&(search.value.trim()||group.value||onAirOnly.checked||soonOnly.checked)){
     const clear=document.createElement('button');clear.type='button';
     clear.id='poChooserClearFilters';clear.className='po-chooser-empty-action';
     clear.textContent='Xóa bộ lọc và xem tất cả kênh';
     clear.addEventListener('click',()=>{
-     search.value='';group.value='';onAirOnly.checked=false;page=0;render();
+     search.value='';group.value='';onAirOnly.checked=false;soonOnly.checked=false;page=0;render();
      search.focus({preventScroll:true});
     });
     grid.append(clear);
@@ -448,9 +470,16 @@
  grid.title='PageDown: trang tiếp; PageUp: trang trước, không tự phát kênh';
  search.title='Nhập tên kênh rồi nhấn Enter để chọn kết quả đầu tiên';
  search.addEventListener('input',()=>{page=0;schedule();});
+ const syncEpgSearch=()=>{
+  search.placeholder=onAirOnly.checked?'Tìm kênh hoặc chương trình EPG…':soonOnly.checked?'Tìm chương trình sắp chiếu…':'Tìm kiếm kênh...';
+ };
  onAirOnly.addEventListener('change',()=>{
-  search.placeholder=onAirOnly.checked?'Tìm kênh hoặc chương trình EPG…':'Tìm kiếm kênh...';
-  page=0;render();
+  if(onAirOnly.checked)soonOnly.checked=false;
+  syncEpgSearch();page=0;render();
+ });
+ soonOnly.addEventListener('change',()=>{
+  if(soonOnly.checked)onAirOnly.checked=false;
+  syncEpgSearch();page=0;render();
  });
  // P5.1.128: when the user selects a group from the native advanced dropdown,
  // reveal its matching quick chip instead of leaving the active state offscreen.

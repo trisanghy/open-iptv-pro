@@ -48,3 +48,7 @@
 /* P5.1.142: upcoming XMLTV schedule is visible only after the EPG opt-in. */
 #page-tv .web-chooser-next-programme{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;max-width:100%;font-size:10px;line-height:1.3;color:#76e6c0;text-align:center;word-break:break-word}
 #page-tv .web-chooser-grid.list .web-chooser-next-programme{text-align:left;flex:1;min-width:0}
+
+/* P5.1.143: near-future local EPG opt-in. */
+#page-tv #webChooserSoonOnly{flex:0 0 16px!important;width:16px;height:16px;min-height:0;padding:0;accent-color:#3ce888}
+#page-tv label.web-chooser-soon-filter{display:flex;align-items:center;gap:8px;min-width:0;line-height:1.4;cursor:pointer}
