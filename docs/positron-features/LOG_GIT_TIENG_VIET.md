@@ -2,14 +2,22 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
-## P5.1.138 — chuyển trang kênh bằng PageDown PageUp
+## P5.1.139 — ưu tiên kênh yêu thích khi sắp xếp
+
+**Ứng dụng:** 4.23.223 · **Trạng thái:** Chưa có bản phát hành
+
+Feature priority: NEW — Thêm tùy chọn sắp xếp “Yêu thích lên đầu” trong danh sách kênh, đưa kênh đã đánh dấu sao lên trước nhưng giữ các kênh khác theo thứ tự tên; chỉ thay đổi cách hiển thị, không sửa playlist hay dữ liệu nguồn. User action: Mở Chọn kênh, mở Bộ lọc rồi chọn Sắp xếp → Yêu thích lên đầu; có thể trở lại Tên A → Z/Z → A ngay lập tức.
+
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/36dc27488fcc0894ef7f2384d98f0b2e40202ef9)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+
+## P5.1.138 — Chuyển trang kênh bằng PageDown/PageUp
 
 **Ứng dụng:** 4.23.222 · **Trạng thái:** Chưa có bản phát hành
 
 Feature priority: NEW — Duyệt xuyên qua các trang kênh dài chỉ bằng hai phím PageDown/PageUp, giữ tiêu điểm vào thẻ ở trang mới và không tự phát; hữu ích khi danh sách có hàng trăm kênh. User action: Mở Chọn kênh, dùng Enter chọn thẻ rồi nhấn PageDown để sang trang kế tiếp và chọn kênh đầu; PageUp trở về trang trước và chọn thẻ cuối, nhấn Enter trên thẻ mới phát.
 
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/71e224539f908ec1ceb40e6f8bb4c02aa9478dd0)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
 
 ## P5.1.137 — Duyệt thẻ kênh bằng phím mũi tên
 
