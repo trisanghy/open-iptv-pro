@@ -2,14 +2,14 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
-## P5.1.148 — hủy nhắc lịch EPG bằng nút chuông
+## P5.1.148 — Hủy hoặc bật lại lịch nhắc EPG ngay bằng chuông
 
-**Ứng dụng:** 4.23.232 · **Trạng thái:** Chưa có bản phát hành
+**Ứng dụng:** 4.23.232 · **Trạng thái:** Đã phát hành
 
 Feature priority: NEW — Nút chuông nhắc lịch ngay trên thẻ kênh nay thể hiện rõ đã lưu/chưa lưu, và cho phép bấm lần nữa để hủy đúng một chương trình đã nhắc; sử dụng lịch XMLTV đã nhập và dịch vụ nhắc nội bộ hiện có, không tự phát và không tác động lịch khác. User action: Mở Chọn kênh và bật bộ lọc EPG, tìm chương trình sắp chiếu rồi nhấn chuông để lưu; chuông đổi màu và trạng thái đã nhắc. Nhấn lại chuông để hủy, không phải tìm vào màn EPG và không cần tải nguồn ngoài.
 
 [Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/681f1406615d9f0b6f4c7a6fc5c15a159ed62ac2)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.232-p5.1.148)
 
 ## P5.1.147 — Nhắc trước 10 phút ngay trên kênh có chương trình sắp chiếu
 

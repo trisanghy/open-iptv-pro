@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-21T23:07:52.920036+00:00",
+  "generatedAt": "2026-11-21T23:37:23.334868+00:00",
   "repository": "trisanghy/open-iptv-pro",
   "branch": "Positron",
   "versions": [
@@ -7,16 +7,77 @@
       "number": 148,
       "version": "P5.1.148",
       "appVersion": "4.23.232",
-      "title": "hủy nhắc lịch EPG bằng nút chuông",
+      "title": "Hủy hoặc bật lại lịch nhắc EPG ngay bằng chuông",
       "description": "Feature priority: NEW — Nút chuông nhắc lịch ngay trên thẻ kênh nay thể hiện rõ đã lưu/chưa lưu, và cho phép bấm lần nữa để hủy đúng một chương trình đã nhắc; sử dụng lịch XMLTV đã nhập và dịch vụ nhắc nội bộ hiện có, không tự phát và không tác động lịch khác. User action: Mở Chọn kênh và bật bộ lọc EPG, tìm chương trình sắp chiếu rồi nhấn chuông để lưu; chuông đổi màu và trạng thái đã nhắc. Nhấn lại chuông để hủy, không phải tìm vào màn EPG và không cần tải nguồn ngoài.",
       "kind": "fix",
-      "status": "candidate",
-      "published": "",
-      "tag": "",
+      "status": "release",
+      "published": "2026-11-21T23:12:19Z",
+      "tag": "positron/v4.23.232-p5.1.148",
       "commit": "681f1406615d9f0b6f4c7a6fc5c15a159ed62ac2",
-      "url": "https://github.com/trisanghy/open-iptv-pro/tree/Positron",
-      "assets": [],
-      "image": null
+      "url": "https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.232-p5.1.148",
+      "assets": [
+        {
+          "name": "audit-p4-50-rounds.json",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.232-p5.1.148/audit-p4-50-rounds.json"
+        },
+        {
+          "name": "audit-p5-20-rounds.json",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.232-p5.1.148/audit-p5-20-rounds.json"
+        },
+        {
+          "name": "Open-IPTV-Pro-4.23.232-mac-arm64.dmg",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.232-p5.1.148/Open-IPTV-Pro-4.23.232-mac-arm64.dmg"
+        },
+        {
+          "name": "Open-IPTV-Pro-4.23.232-mac-x64.dmg",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.232-p5.1.148/Open-IPTV-Pro-4.23.232-mac-x64.dmg"
+        },
+        {
+          "name": "Open-IPTV-Pro-4.23.232-x64.exe",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.232-p5.1.148/Open-IPTV-Pro-4.23.232-x64.exe"
+        },
+        {
+          "name": "Open-IPTV-Pro-Setup-4.23.232-x64.exe",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.232-p5.1.148/Open-IPTV-Pro-Setup-4.23.232-x64.exe"
+        },
+        {
+          "name": "OpenIPTVPro-Positron-P51148-Source.zip",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.232-p5.1.148/OpenIPTVPro-Positron-P51148-Source.zip"
+        },
+        {
+          "name": "positron-p4-final-main-real.png",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.232-p5.1.148/positron-p4-final-main-real.png"
+        },
+        {
+          "name": "positron-p4-round-10-real.png",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.232-p5.1.148/positron-p4-round-10-real.png"
+        },
+        {
+          "name": "positron-p4-round-20-real.png",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.232-p5.1.148/positron-p4-round-20-real.png"
+        },
+        {
+          "name": "positron-p4-round-30-real.png",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.232-p5.1.148/positron-p4-round-30-real.png"
+        },
+        {
+          "name": "positron-p4-round-40-real.png",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.232-p5.1.148/positron-p4-round-40-real.png"
+        },
+        {
+          "name": "Positron-P51148-20-Real-Screenshots.zip",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.232-p5.1.148/Positron-P51148-20-Real-Screenshots.zip"
+        },
+        {
+          "name": "Positron-P51148-50-Real-Screenshots.zip",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.232-p5.1.148/Positron-P51148-50-Real-Screenshots.zip"
+        },
+        {
+          "name": "SHA256SUMS.txt",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.232-p5.1.148/SHA256SUMS.txt"
+        }
+      ],
+      "image": "screenshots/positron-p51148-cancel-reminder-after-450-real.png"
     },
     {
       "number": 147,
