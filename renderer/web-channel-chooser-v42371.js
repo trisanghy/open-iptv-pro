@@ -208,6 +208,17 @@
     now.textContent='Theo EPG: '+item.title;
     now.title='Chương trình theo lịch XMLTV đã nhập: '+item.title;
     card.append(now);
+    // P5.1.146: EPG schedule position; not the playback seek position.
+    const timeline=window.PositronOnAirCore?.scheduleProgress(item,Date.now());
+    if(timeline){
+     const track=document.createElement('span');track.className='web-chooser-epg-progress';
+     track.setAttribute('aria-hidden','true');
+     const fill=document.createElement('span');fill.className='web-chooser-epg-progress-fill';
+     fill.style.width=timeline.percent+'%';track.append(fill);
+     const remaining=document.createElement('small');remaining.className='web-chooser-epg-remaining';
+     remaining.textContent='Theo lịch EPG: '+timeline.percent+'% · còn '+timeline.remainingMinutes+' phút';
+     card.append(track,remaining);
+    }
    }
    // P5.1.142: Optional next showtime, strictly from saved XMLTV.
    // Never predict, fetch, stream or create a reminder automatically.

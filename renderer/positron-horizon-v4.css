@@ -1191,3 +1191,15 @@ html[data-positron="true"].po-horizon #page-tv #webChooserGrid .web-chooser-favo
  html[data-positron="true"].po-horizon #page-tv #webChooserGrid .web-chooser-card-wrap>button.web-chooser-card.po-epg-card .web-chooser-onair-programme{grid-row:2!important}
  html[data-positron="true"].po-horizon #page-tv #webChooserGrid .web-chooser-card-wrap>button.web-chooser-card.po-epg-card .web-chooser-next-programme{grid-row:3!important}
 }
+
+/* P5.1.146: dedicated progress/remaining rows keep current and next EPG
+   labels legible at 450px. The Favorite control stays a separate button. */
+@media(max-width:650px){
+ html[data-positron="true"].po-horizon #page-tv #webChooserGrid .web-chooser-card-wrap>button.web-chooser-card.po-epg-card .web-chooser-epg-progress{
+  grid-column:2!important;grid-row:3!important;width:100%!important;min-width:0!important;align-self:center!important
+ }
+ html[data-positron="true"].po-horizon #page-tv #webChooserGrid .web-chooser-card-wrap>button.web-chooser-card.po-epg-card .web-chooser-epg-remaining{
+  grid-column:2!important;grid-row:4!important;text-align:left!important;max-width:100%!important
+ }
+ html[data-positron="true"].po-horizon #page-tv #webChooserGrid .web-chooser-card-wrap>button.web-chooser-card.po-epg-card:has(.web-chooser-epg-progress) .web-chooser-next-programme{grid-row:5!important}
+}

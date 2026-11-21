@@ -8,7 +8,7 @@
    const item=api.current(guide,channel,clock)?.now;
    if(!item||!Number.isFinite(item.start)||!Number.isFinite(item.end)||item.start>clock||item.end<=clock)return null;
    const title=typeof item.title==='string'?item.title.trim().replace(/\s+/g,' ').slice(0,140):'';
-   return title?{title,end:item.end}:null;
+   return title?{title,start:item.start,end:item.end}:null;
   }catch{return null;}
  }
  function upcoming(guide,channel,clock=Date.now(),api=root?.IPTVGuide){
@@ -21,7 +21,15 @@
    return title?{title,start:next.start}:null;
   }catch{return null;}
  }
- const api=Object.freeze({lookup,upcoming});
+ // P5.1.146: progress of scheduled XMLTV programme, never a streaming metric.
+ function scheduleProgress(item,clock=Date.now()){
+  if(!item||!Number.isFinite(item.start)||!Number.isFinite(item.end)||!Number.isFinite(clock))return null;
+  if(item.start>clock||item.end<=clock||item.end<=item.start)return null;
+  const percent=Math.max(0,Math.min(99,Math.floor(100*(clock-item.start)/(item.end-item.start))));
+  const remainingMinutes=Math.max(1,Math.ceil((item.end-clock)/60000));
+  return {percent,remainingMinutes};
+ }
+ const api=Object.freeze({lookup,upcoming,scheduleProgress});
  if(typeof module==='object'&&module.exports)module.exports=api;
  if(root)root.PositronOnAirCore=api;
 })(typeof globalThis!=='undefined'?globalThis:null);

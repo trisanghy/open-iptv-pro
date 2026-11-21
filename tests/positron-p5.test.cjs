@@ -37,7 +37,7 @@ test('P5 assets are loaded after P4 without replacing it',()=>{
 test('P5 release is immutable and versioned separately from P4.1',()=>{
  const pkg=JSON.parse(read('package.json'));
  const flow=read('.github/workflows/positron-lab.yml');
- assert.equal(pkg.version,'4.23.229');
+ assert.equal(pkg.version,'4.23.230');
  const label=pkg.description.match(/Positron\s+(P\d+\.\d+\.\d+)/)?.[1];
  assert.ok(label,'product P-label must accompany SemVer');
  assert.ok(flow.includes('TAG=positron/v'+pkg.version+'-'+label.toLowerCase()),'release tag and app version must match');
@@ -1362,4 +1362,25 @@ test('P5.1.145 chọn mốc chương trình sắp chiếu 15, 30 và 60 phút',(
  'localPlaylistUnchanged:','noAutoplay:','noHorizontalOverflow:',
  'positron-p51145-time-window-before-450-real.png','positron-p51145-time-window-after-450-real.png'])
   assert.ok(qa.includes(token),'Thiếu kiểm thử Electron '+token);
+});
+
+test('P5.1.146 tiến độ chương trình hiện tại từ EPG cục bộ, không phát stream',()=>{
+ const core=read('renderer/positron-onair-core.js');
+ const ui=read('renderer/web-channel-chooser-v42371.js');
+ const css=read('renderer/web-channel-chooser-v42371.css');
+ const qa=read('scripts/positron-20-extension.cjs');
+ for(const token of ["function scheduleProgress(item,clock=Date.now())",
+  "Math.floor(100*(clock-item.start)/(item.end-item.start))", "start:item.start",
+  "Object.freeze({lookup,upcoming,scheduleProgress})"])
+   assert.ok(core.includes(token),'Thiếu tính phần trăm lịch XMLTV: '+token);
+ for(const token of ["window.PositronOnAirCore?.scheduleProgress(item,Date.now())",
+  "track.className='web-chooser-epg-progress'",
+  "fill.style.width=timeline.percent+'%'",
+  "remaining.textContent='Theo lịch EPG: '+timeline.percent+'% · còn '+timeline.remainingMinutes+' phút'"])
+   assert.ok(ui.includes(token),'Thiếu nhãn tiến độ: '+token);
+ assert.ok(css.includes('.web-chooser-epg-progress'));
+ for(const token of ['scheduleProgressQA:','percentApproximatelyHalf:','showsRemainingMinutes:',
+  'progressAfterProgramme:','noProgressWithoutOptIn:','noAutoplay:',
+  'positron-p51146-epg-progress-before-450-real.png','positron-p51146-epg-progress-after-450-real.png'])
+   assert.ok(qa.includes(token),'Thiếu ảnh kiểm thử Electron: '+token);
 });

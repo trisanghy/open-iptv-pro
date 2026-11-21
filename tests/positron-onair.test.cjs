@@ -54,3 +54,14 @@ test('Next XMLTV display uses native local clock and never fetches media',()=>{
  assert.ok(ui.includes("upcoming.textContent='Tiếp theo '+at+': '+nextEPG.title"));
  assert.ok(qa.includes('positron-p5199-next-epg-watchflow-552-real.png'));
 });
+
+test('P5.1.146 tiến độ lịch phát XMLTV và dữ liệu giờ phát không hợp lệ',()=>{
+ assert.equal(match(guide,channel)?.start,now-60000);
+ const period={start:now-15*60000,end:now+15*60000};
+ assert.deepEqual(core.scheduleProgress(period,now),{percent:50,remainingMinutes:15});
+ assert.deepEqual(core.scheduleProgress(period,now+14*60000),{percent:96,remainingMinutes:1});
+ assert.equal(core.scheduleProgress(period,now-16*60000),null);
+ assert.equal(core.scheduleProgress(period,now+15*60000),null);
+ assert.equal(core.scheduleProgress({start:NaN,end:now+1},now),null);
+ assert.equal(core.scheduleProgress({start:now,end:now},now),null);
+});
