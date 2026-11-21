@@ -1039,7 +1039,7 @@ test('P5.1.127 category keys navigate hidden chips without selecting until Enter
  assert.ok(src.includes("target.focus({preventScroll:true})"));
  assert.ok(src.includes("target.scrollIntoView({block:'nearest',inline:'nearest'})"));
  for(const token of ['endFocus:last===document.activeElement','selectionUnchanged:!group.value',
-  'homeFocus:first===document.activeElement','enterApplied:!!group.value',
+  'homeFocus:first===document.activeElement','const enterApplied=await page.evaluate(',
   "enterReset:group.value===''",'positron-p51127-category-keys-450-real.png'])
   assert.ok(qa.includes(token),'missing genuine Electron category-key regression '+token);
 });
