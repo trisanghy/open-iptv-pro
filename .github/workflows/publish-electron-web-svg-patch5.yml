@@ -1,0 +1,105 @@
+name: Publish Electron Web SVG Player Patch 5 (Windows Portable x64 and Mac)
+on:
+  push:
+    branches: [build-sources/electron-desktop]
+    paths: ['.github/workflows/publish-electron-web-svg-patch5.yml']
+  workflow_dispatch:
+concurrency:
+  group: electron-web-svg-patch5-public
+  cancel-in-progress: false
+permissions:
+  contents: read
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - name: Test Electron Web SVG controls and full regression
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          test "$(node -p 'require("./package.json").version')" = 4.23.76
+          npm install --no-audit --no-fund
+          node --test tests/player-web-svg-v42377.test.cjs
+          npm test
+  build:
+    needs: tests
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - {os: windows-latest, platform: win, arch: x64, label: windows-x64}
+          - {os: macos-15, platform: mac, arch: arm64, label: mac-arm64}
+          - {os: macos-15-intel, platform: mac, arch: x64, label: mac-x64}
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 75
+    env:
+      CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - name: Install native dependencies
+        run: npm install --no-audit --no-fund
+      - name: Package actual installers
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          npx electron-builder --${{ matrix.platform }} --${{ matrix.arch }} --publish never
+          if [[ "${{ matrix.platform }}" == win ]]; then
+            test -s dist/Open-IPTV-Pro-4.23.76-x64.exe
+            test -s dist/Open-IPTV-Pro-Setup-4.23.76-x64.exe
+          else
+            test -s "dist/Open-IPTV-Pro-4.23.76-mac-${{ matrix.arch }}.dmg"
+          fi
+      - uses: actions/upload-artifact@v4
+        with:
+          name: web-svg-electron-${{ matrix.label }}
+          path: |
+            dist/*.dmg
+            dist/*.exe
+          if-no-files-found: error
+  release:
+    needs: [tests,build]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: web-svg-electron-*
+          path: release-stage
+          merge-multiple: true
+      - name: Create source archive and verify binaries
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          git archive --format=zip --output=release-stage/OpenIPTVPro_Source_v4.23.76-svg.5.zip HEAD
+          for name in Open-IPTV-Pro-4.23.76-x64.exe Open-IPTV-Pro-Setup-4.23.76-x64.exe Open-IPTV-Pro-4.23.76-mac-arm64.dmg Open-IPTV-Pro-4.23.76-mac-x64.dmg OpenIPTVPro_Source_v4.23.76-svg.5.zip; do test -s "release-stage/$name"; done
+          (cd release-stage && sha256sum *.exe *.dmg *.zip > SHA256SUMS.txt)
+      - name: Publish immutable SVG patch without changing earlier releases
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -Eeuo pipefail
+          TAG=electron-v4.23.76-svg.5
+          if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            existing="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/tags/$TAG" --jq '.object.sha')"
+            test "$existing" = "$GITHUB_SHA" || { echo "::error::Do not overwrite immutable tag"; exit 1; }
+          else
+            gh release create "$TAG" release-stage/* \
+              --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" --prerelease --latest=false \
+              --title 'Electron 4.23.76 SVG Player Patch 5 — Windows Portable x64' \
+              --notes 'Electron-only patch: the corrected Web SVG media icons (no duplicate Unicode glyphs) for Play, Pause, Stop, channel navigation, Cast, PiP, fullscreen, EPG and Favorite. Main, Web and Rust Lab are unchanged. Previous releases are preserved. Portable x64 is the EXE without Setup in its name.'
+          fi
+          gh release view "$TAG" --repo "$GITHUB_REPOSITORY" --json assets --jq '.assets[].name' > names.txt
+          grep -Fxq Open-IPTV-Pro-4.23.76-x64.exe names.txt
+          grep -Fxq Open-IPTV-Pro-Setup-4.23.76-x64.exe names.txt
+          grep -Fxq Open-IPTV-Pro-4.23.76-mac-arm64.dmg names.txt
+          grep -Fxq Open-IPTV-Pro-4.23.76-mac-x64.dmg names.txt
+          grep -Fxq OpenIPTVPro_Source_v4.23.76-svg.5.zip names.txt
+          grep -Fxq SHA256SUMS.txt names.txt
