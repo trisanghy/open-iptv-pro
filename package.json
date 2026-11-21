@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.97",
-  "description": "Positron P5.1.13: full readable native FFmpeg sidebar status",
+  "version": "4.23.98",
+  "description": "Positron P5.1.14: readable unlimited Discovery scope in compact Sources",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

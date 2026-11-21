@@ -134,6 +134,16 @@
   new MutationObserver(syncStatusTitle).observe(statusLabel,{childList:true,subtree:true,characterData:true});
   syncStatusTitle();
  }
+ // P5.1.14: the real P5.1.13 Sources screenshot at 720px showed
+ // the unlimited native scan option clipped. Keep value='all' unchanged.
+ const smartLimit=byId('smartLimit');
+ if(smartLimit){
+  const unlimited=smartLimit.querySelector('option[value="all"]');
+  if(unlimited){
+   unlimited.textContent='Tất cả kênh';
+   unlimited.title='Kiểm tra tất cả (không giới hạn)';
+  }
+ }
  window.OpenIPTVPositronTwenty=Object.freeze({
   setStage,getStage:()=>stage,getFeedback:()=>previous
  });

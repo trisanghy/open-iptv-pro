@@ -59,6 +59,11 @@ async function runTwenty(page){
      favoriteAction:get('#positronFavoritesSources'),
      favoriteGuidance:(()=>document.querySelector('#favoriteList .empty-list')?.firstChild?.textContent?.trim()||'')(),
      sourceCount:document.getElementById('sourceCount')?.textContent?.trim()||'0',
+     smartLimit:(()=>{const n=document.getElementById('smartLimit');if(!n)return null;
+       const label=n.selectedOptions?.[0]?.textContent?.trim()||'';
+       const c=document.createElement('canvas').getContext('2d');
+       c.font=getComputedStyle(n).font;
+       return {value:n.value,label,textWidth:Math.ceil(c.measureText(label).width),controlWidth:n.clientWidth};})(),
      themeButton:(()=>{const n=document.getElementById('positronStudioBtn');if(!n)return null;const b=n.getBoundingClientRect(),s=getComputedStyle(n),p=getComputedStyle(n,'::before');return{width:Math.round(b.width),fontSize:s.fontSize,pseudoContent:p.content,ariaLabel:n.getAttribute('aria-label'),title:n.title};})(),
      searchShortcut:document.getElementById('searchBox')?.getAttribute('aria-keyshortcuts'),
     stage:document.documentElement.dataset.p20Stage};
@@ -113,6 +118,11 @@ async function runTwenty(page){
     assert.equal(searchOpens,true,'new icon must keep native command palette event');
    }
    if(target==='sources'&&metrics.sources)assert.notEqual(metrics.sources.background,'rgb(255, 255, 255)','white source panel');
+  if(target==='sources'&&width<=720){
+   assert.equal(metrics.smartLimit?.value,'all','scan all behavior changed: '+name);
+   assert.equal(metrics.smartLimit?.label,'Tất cả kênh','compact scope label missing: '+name);
+   assert.ok(metrics.smartLimit.textWidth+32<=metrics.smartLimit.controlWidth,'scan scope option is clipped: '+name);
+  }
   if(target==='sources'){
    assert.ok(metrics.sourceSection,'Smart Discovery section missing');
    assert.equal(metrics.sourceSection.background,metrics.sources?.background,'Smart Discovery dark band must match source navigation theme');

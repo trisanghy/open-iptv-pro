@@ -20,3 +20,9 @@ First P5.1.8 test run https://github.com/trisanghy/open-iptv-pro/actions/runs/44
 | 05/20 | P5.1.12 / 4.23.96 | P5.1.11 real `positron-p5-18-real.png` Settings 1360px + TV 450px | Search command label ellipsized and icon glyph unclear | Concise label, real SVG, full ARIA and click regression in Electron | CI/after-image review pending |
 
 | 06/20 | P5.1.13 / 4.23.97 | P5.1.12 `positron-p5-18-real.png` Settings 1360px | Sidebar status clips the FFmpeg readiness message after `đ...` | Scoped multiline status + tooltip; real screenshot and DOM height test | Screenshot/CI/release pending |
+
+## NEW 20-round user-file batch · starts from P5.1.13
+
+| Batch round | Version | Real prior screenshot issue | Root cause / code action | Validation |
+|---|---|---|---|---|
+| 01/20 | P5.1.14 / 4.23.98 | Sources 720px `positron-p5-15-real.png`, P5.1.13, unlimited scope name clipped | Native option text too long; short selected label preserving `value=all` | New real Electron metrics and screenshot, Node test, CI/release pending |
