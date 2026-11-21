@@ -1,4 +1,24 @@
-# Open IPTV Pro — Desktop v4.23.39
+# Open IPTV Pro — Web, Desktop và Mobile
+
+## Tính năng mới được cập nhật — 22/11/2026
+
+Bảng giới thiệu cũ chỉ nói về Desktop v4.23.39. Đây là tình trạng hiện hành đã đối chiếu với các **GitHub Releases**, không nhầm tính năng của nhánh nghiên cứu với bản Stable:
+
+| Dòng ứng dụng | Phát hành | Chức năng mới |
+|---|---|---|
+| Electron Stable | [4.23.76](https://github.com/trisanghy/open-iptv-pro/releases/tag/v4.23.76) | Giao diện Light đồng bộ, player SVG, benchmark GPU encoder, cache và công cụ nguồn/EPG trên desktop |
+| **Positron Beta** | [P5.1.148 / Electron 4.23.232](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.232-p5.1.148) | WatchFlow khám phá kênh, Xem sau, EPG theo tên chương trình, lọc sắp chiếu 15/30/60 phút, xem tiến độ dựa lịch XMLTV, đặt/hủy nhắc lịch, tìm tiếng Việt không dấu, phím tắt và Yêu thích nhanh |
+| Rust Lab Beta | [23.8.98](https://github.com/trisanghy/open-iptv-pro/releases/tag/rust-lab/v23.8.98) | Đồng bộ Dark/AMOLED, EPG, DVR, GPU và các công cụ phụ đề/dịch/TTS thử nghiệm |
+| Mobile Beta | [4.23.17-mobile.35](https://github.com/trisanghy/open-iptv-pro/releases/tag/mobile/v4.23.17.35) | Android/iOS Capacitor, điều khiển cảm ứng, OTP đăng nhập, dữ liệu tài khoản tách biệt |
+| Web Online | [Trình phát trên trình duyệt](https://trisanghy.github.io/open-iptv-pro/) | Quản lý M3U, EPG, gộp nguồn, link dự phòng, yêu thích, giao diện cho desktop/mobile |
+
+**[Trang tính năng mới tự cập nhật](https://trisanghy.github.io/open-iptv-pro/tinh-nang-moi.html)** — danh sách Positron theo phiên bản, ảnh chụp từ repository, commit và file tải đúng release. [Trang so sánh và tải về](https://trisanghy.github.io/open-iptv-pro/tai-ve.html) · [README chính](https://github.com/trisanghy/open-iptv-pro/blob/main/README.md).
+
+> Positron là nhánh Electron nghiên cứu, không phải tên khác của Electron Stable 4.23.76. AI nâng cao video/4K chưa có pipeline thực được xác minh; các chức năng phát, PiP và AI phụ thuộc OS, codec, quyền nguồn và thiết bị.
+
+---
+
+## Tài liệu lưu trữ: Desktop v4.23.39
 
 **Một trải nghiệm IPTV hiện đại, linh hoạt và nhiều công cụ cho Windows & macOS.**  
 **A versatile, modern IPTV desktop experience — powered by Electron / Chromium.**
