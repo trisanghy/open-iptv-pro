@@ -72,3 +72,8 @@ Round 04 verified in actual Electron: DVR heading is monochrome SVG 20px with ar
 | 07/20 | P5.1.32 / v4.23.116 | P5.1.31 real TV 450px, artifact 14690160671 | Compact Studio button still relies on OS-specific '◈' pseudo-element | Replace with half-circle theme SVG, keep click/menu and verify real viewport, ARIA |
 
 | 08/20 | P5.1.33 / v4.23.117 | P5.1.32 TV 450px screenshot, artifact 14689029565 | Favorite star appears enabled without selected channel | Guard via native IPTVState.getCurrent, reenable on selection changes; Electron 450 QA |
+
+## New file (8) batch · resumes after P5.1.33
+| Batch round | Version | Actual screenshot input | Observed issue | Scope and validation |
+| --- | --- | --- | --- | --- |
+| 01/20 | P5.1.34 / 4.23.118 | P5.1.32 real Electron Aurora EPG 1360px (`positron-p5-16-real.png`, artifact 14689029565); P5.1.33 only changed TV favorite control | No-channel `Đặt lịch ghi` disabled but vivid teal/looks enabled | Scope neutral disabled CSS; retain native logic; Node test and actual Electron computed color/opacity/cursor screenshot audit; pending CI/after-image review |

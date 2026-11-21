@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.117",
-  "description": "Positron P5.1.33: guard favorite star until a current channel is selected",
+  "version": "4.23.118",
+  "description": "Positron P5.1.34: clarify disabled DVR scheduling in EPG",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

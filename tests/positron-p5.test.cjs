@@ -37,13 +37,13 @@ test('P5 assets are loaded after P4 without replacing it',()=>{
 test('P5 release is immutable and versioned separately from P4.1',()=>{
  const pkg=JSON.parse(read('package.json'));
  const flow=read('.github/workflows/positron-lab.yml');
- assert.equal(pkg.version,'4.23.117');
- assert.ok(flow.includes('positron/v4.23.117-p5.1.33'));
+ assert.equal(pkg.version,'4.23.118');
+ assert.ok(flow.includes('positron/v4.23.118-p5.1.34'));
  assert.ok(read('scripts/positron-50-audit.cjs').includes('runTwenty(page)'));
- assert.ok(flow.includes('Positron-P5133-20-Real-Screenshots.zip'));
+ assert.ok(flow.includes('Positron-P5134-20-Real-Screenshots.zip'));
 });
 
-test('P5.1.1 sidebar badge matches shipped release instead of stale P4',()=>{const js=read('renderer/positron.js');assert.ok(js.includes("descriptor.textContent='P5.1.33'"));assert.ok(!js.includes('OPEN IPTV PRO · P4 · 50 VÒNG'));});
+test('P5.1.1 sidebar badge matches shipped release instead of stale P4',()=>{const js=read('renderer/positron.js');assert.ok(js.includes("descriptor.textContent='P5.1.34'"));assert.ok(!js.includes('OPEN IPTV PRO · P4 · 50 VÒNG'));});
 
 test('P5.1.3 fullscreen icon uses SVG not a tiny platform glyph',()=>{const js=read('renderer/positron-twenty.js');const css=read('renderer/positron-twenty.css');assert.ok(js.includes("['fullscreenBtn','M8 3H3v5"));assert.ok(css.includes('#page-tv #fullscreenBtn svg'));});
 
@@ -343,4 +343,12 @@ test('P5.1.33 current favorite follows native selected-channel availability',()=
  assert.ok(js.includes("currentFavorite.removeAttribute('data-positron-no-current')"));
  assert.ok(css.includes('#favCurrentBtn[data-positron-no-current="true"]'));
  assert.ok(audit.includes('metrics.currentFavorite?.disabled,true'));
+});
+
+test('P5.1.34 disabled DVR schedule uses a neutral non-clickable visual',()=>{
+ const css=read('renderer/positron-twenty.css'),audit=read('scripts/positron-20-extension.cjs');
+ assert.ok(css.includes('#page-epg #dvrAdd:disabled[data-positron-no-channels="true"]'));
+ assert.ok(css.includes('filter:grayscale(1)!important'));
+ assert.ok(audit.includes('dvrSchedule?.filter.includes'));
+ assert.ok(audit.includes('dvrSchedule?.opacity'));
 });
