@@ -16,6 +16,8 @@ on:
       - 'renderer/positron-horizon-v4.*'
       - 'renderer/index.html'
       - 'package.json'
+      - 'BUILD_WINDOWS.bat'
+      - 'scripts/BUILD_WINDOWS_AUTO.ps1'
       - 'scripts/positron-capture.cjs'
       - 'tests/positron.test.cjs'
       - 'tests/positron-studio.test.cjs'
