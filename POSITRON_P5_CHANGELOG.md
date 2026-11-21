@@ -532,7 +532,12 @@ P5.1.46 same-version CI repair: run 44866650681 failed 2/611 because historical 
 - Keep the native import action, safety report and six counters but collapse unused V3/V2 analytics until native channels exist. Observe channel count and automatically restore all original controls on import, without modifying user preferences/history.
 - Node regression plus real Electron zero-source and 552 metadata-only source tests confirm both phases; screenshot capture and CI release require verification.
 
-## P5.1.77 — Doctor source CTA screenshot smoke regression (new batch 07/20)
+## P5.1.77 — Doctor source CTA screenshot smoke regression (new batch 01/20)
 - P5.1.76 capture failed: screenshot shows the native `#positronDoctorSources` source-import action, but added QA mistakenly looked for an element inside `#doctorReport`.
 - Check the actual native action's visibility and text, simulate its click and assert successful navigation to the native Sources page, then restore Doctor. Preserve empty V2/V3 hiding and full restoration when channels exist.
 - Add regression for the correct selector; new CI screenshot/build/release remain unverified until Actions completes.
+
+## P5.1.78 — Focused empty Doctor onboarding (new batch 02/20)
+- P5.1.77 actual no-source Electron Doctor screenshot still had six zero-value metrics taking an entire horizontal row, despite advanced diagnostic panels being correctly hidden.
+- While native channel count is zero, hide only `.doctor-metrics` and render a purposeful, labeled introduction with direct access to native source manager; keep both original Doctor V2/V3 sections, all report DOM, and preferences untouched. Restore the complete metric dashboard automatically when actual native channels are added.
+- Add Node regression and Electron screenshot assertions for zero-source metrics being hidden and restored after 552 metadata-only channels. No real playback claimed. CI/build/release pending.

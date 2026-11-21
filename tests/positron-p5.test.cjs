@@ -37,7 +37,7 @@ test('P5 assets are loaded after P4 without replacing it',()=>{
 test('P5 release is immutable and versioned separately from P4.1',()=>{
  const pkg=JSON.parse(read('package.json'));
  const flow=read('.github/workflows/positron-lab.yml');
- assert.equal(pkg.version,'4.23.161');
+ assert.equal(pkg.version,'4.23.162');
  const label=pkg.description.match(/Positron\s+(P\d+\.\d+\.\d+)/)?.[1];
  assert.ok(label,'product P-label must accompany SemVer');
  assert.ok(flow.includes('TAG=positron/v'+pkg.version+'-'+label.toLowerCase()),'release tag and app version must match');
@@ -673,4 +673,13 @@ test('P5.1.77 Doctor screenshot QA locates real native onboarding button and ver
  assert.ok(qa.includes("document.getElementById('positronDoctorSources')"));
  assert.ok(qa.includes("doctorNavigation,'page-sources'"));
  assert.ok(!qa.includes("document.querySelector('#doctorReport button, #doctorReport a')"));
+});
+
+test('P5.1.78 Doctor onboarding hides only empty zero-statistics and restores native diagnostics',()=>{
+ const css=read('renderer/positron-horizon-v4.css'),ui=read('renderer/positron-twenty.js'),qa=read('scripts/positron-20-extension.cjs');
+ assert.ok(css.includes('#page-doctor[data-po-empty-doctor="true"] #doctorReport .doctor-metrics'));
+ assert.ok(css.includes('.po-doctor-start-copy strong'));
+ assert.ok(ui.includes("heading.textContent='Bắt đầu chẩn đoán với nguồn của bạn'"));
+ assert.ok(ui.includes("action.id='positronDoctorSources'"));
+ for(const statement of ['emptyDoctor.metricsHidden,true','populatedDoctor.metricsVisible,true'])assert.ok(qa.includes(statement));
 });

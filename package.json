@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.161",
-  "description": "Positron P5.1.77: Doctor real-source onboarding navigation QA repair",
+  "version": "4.23.162",
+  "description": "Positron P5.1.78: focused Doctor onboarding instead of six meaningless zero tiles",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

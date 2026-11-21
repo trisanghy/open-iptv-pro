@@ -178,7 +178,11 @@
  const doctorPage=byId('page-doctor');
  if(doctorPage&&!byId('positronDoctorEmptyHint')){
   const hint=d.createElement('div');hint.id='positronDoctorEmptyHint';
-  const copy=d.createElement('span');copy.textContent='Chưa có kênh để chẩn đoán. Thêm hoặc bật nguồn IPTV trước khi chạy Doctor 3.0.';
+  const copy=d.createElement('div');copy.className='po-doctor-start-copy';
+  const kicker=d.createElement('span');kicker.className='po-doctor-start-label';kicker.textContent='CHƯA CÓ DANH SÁCH KÊNH';
+  const heading=d.createElement('strong');heading.textContent='Bắt đầu chẩn đoán với nguồn của bạn';
+  const explanation=d.createElement('p');explanation.textContent='Thêm playlist M3U hoặc URL hợp lệ. Doctor sẽ giúp kiểm tra kênh trùng, ghép EPG và link dự phòng khi có dữ liệu.';
+  copy.append(kicker,heading,explanation);
   const action=d.createElement('button');action.type='button';action.id='positronDoctorSources';
   action.className='btn btn-primary';action.textContent='Quản lý nguồn IPTV';
   action.title='Mở trang quản lý nguồn IPTV';

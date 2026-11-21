@@ -727,13 +727,17 @@ async function runTwenty(page){
       v3Hidden:getComputedStyle(document.getElementById('doctorV3Panel')).display==='none',
       v2Hidden:getComputedStyle(document.getElementById('doctorV2Panel')).display==='none',
       sourceAction:(()=>{const action=document.getElementById('positronDoctorSources');return !!action&&!action.hidden&&!action.closest('[hidden]')&&getComputedStyle(action).display!=='none'&&action.getBoundingClientRect().width>=40;})(),
-      sourceActionNative:document.getElementById('positronDoctorSources')?.textContent.trim()==='Quản lý nguồn IPTV'};
+      sourceActionNative:document.getElementById('positronDoctorSources')?.textContent.trim()==='Quản lý nguồn IPTV',
+      metricsHidden:(()=>{const m=document.querySelector('#doctorReport .doctor-metrics');return !!m&&getComputedStyle(m).display==='none';})(),
+      startHeading:document.querySelector('#positronDoctorEmptyHint .po-doctor-start-copy strong')?.textContent.trim()};
     });
     assert.equal(emptyDoctor.empty,true,'Doctor did not detect empty native playlist');
     assert.equal(emptyDoctor.v3Hidden,true,'Zero-channel Doctor still opens complex unused analytics');
     assert.equal(emptyDoctor.v2Hidden,true,'Zero-channel Doctor still exposes advanced visual diagnostics');
     assert.equal(emptyDoctor.sourceAction,true,'Doctor must retain visible native source onboarding action');
     assert.equal(emptyDoctor.sourceActionNative,true,'Doctor import action must keep native label');
+    assert.equal(emptyDoctor.metricsHidden,true,'Empty Doctor still shows six meaningless zeros');
+    assert.equal(emptyDoctor.startHeading,'Bắt đầu chẩn đoán với nguồn của bạn','Doctor onboarding heading lost');
     const doctorNavigation=await page.evaluate(()=>{
       document.getElementById('positronDoctorSources').click();
       const active=document.querySelector('.page.active-page')?.id;
@@ -975,12 +979,14 @@ async function runTwenty(page){
   empty:document.getElementById('page-doctor').dataset.poEmptyDoctor,
   v3Visible:getComputedStyle(document.getElementById('doctorV3Panel')).display!=='none',
   v2Visible:getComputedStyle(document.getElementById('doctorV2Panel')).display!=='none',
-  channels:window.IPTVState.getChannels().length
+  channels:window.IPTVState.getChannels().length,
+  metricsVisible:getComputedStyle(document.querySelector('#doctorReport .doctor-metrics')).display!=='none'
  }));
  assert.equal(populatedDoctor.empty,'false','Doctor failed to restore after importing channels');
  assert.equal(populatedDoctor.v3Visible,true,'Doctor analysis missing after source import');
  assert.equal(populatedDoctor.v2Visible,true,'Doctor advanced diagnostics missing after source import');
  assert.equal(populatedDoctor.channels,552,'Doctor restoration used nonnative playlist');
+ assert.equal(populatedDoctor.metricsVisible,true,'Doctor statistics did not return after native import');
  await page.screenshot({path:path.join(out,'positron-p5-doctor-552-metadata-real.png'),animations:'disabled'});
  await page.evaluate(()=>window.IPTVState.setPage('tv'));
  assert.ok(metadataQa.panelWidth>=200,'populated channel panel clipped');
