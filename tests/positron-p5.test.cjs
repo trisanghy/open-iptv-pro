@@ -37,13 +37,13 @@ test('P5 assets are loaded after P4 without replacing it',()=>{
 test('P5 release is immutable and versioned separately from P4.1',()=>{
  const pkg=JSON.parse(read('package.json'));
  const flow=read('.github/workflows/positron-lab.yml');
- assert.equal(pkg.version,'4.23.113');
- assert.ok(flow.includes('positron/v4.23.113-p5.1.29'));
+ assert.equal(pkg.version,'4.23.114');
+ assert.ok(flow.includes('positron/v4.23.114-p5.1.30'));
  assert.ok(read('scripts/positron-50-audit.cjs').includes('runTwenty(page)'));
- assert.ok(flow.includes('Positron-P5129-20-Real-Screenshots.zip'));
+ assert.ok(flow.includes('Positron-P5130-20-Real-Screenshots.zip'));
 });
 
-test('P5.1.1 sidebar badge matches shipped release instead of stale P4',()=>{const js=read('renderer/positron.js');assert.ok(js.includes("descriptor.textContent='P5.1.29'"));assert.ok(!js.includes('OPEN IPTV PRO · P4 · 50 VÒNG'));});
+test('P5.1.1 sidebar badge matches shipped release instead of stale P4',()=>{const js=read('renderer/positron.js');assert.ok(js.includes("descriptor.textContent='P5.1.30'"));assert.ok(!js.includes('OPEN IPTV PRO · P4 · 50 VÒNG'));});
 
 test('P5.1.3 fullscreen icon uses SVG not a tiny platform glyph',()=>{const js=read('renderer/positron-twenty.js');const css=read('renderer/positron-twenty.css');assert.ok(js.includes("['fullscreenBtn','M8 3H3v5"));assert.ok(css.includes('#page-tv #fullscreenBtn svg'));});
 
@@ -298,4 +298,16 @@ test('P5.1.29 real Sources status filter keeps a one-line label across viewports
  assert.ok(css.includes('flex:0 0 auto!important'));
  assert.ok(audit.includes('metrics.smartStatusLabel?.lineRects,1'));
  assert.ok(audit.includes("metrics.smartStatusLabel?.whiteSpace,'nowrap'"));
+});
+
+
+test('P5.1.30 DVR scheduling button follows actual channel availability',()=>{
+ const js=read('renderer/positron-twenty.js'),css=read('renderer/positron-twenty.css'),audit=read('scripts/positron-20-extension.cjs');
+ assert.ok(js.includes("const schedule=byId('dvrAdd')"));
+ assert.ok(js.includes("schedule.setAttribute('aria-describedby','dvrChannel')"));
+ assert.ok(js.includes("schedule.removeAttribute('data-positron-no-channels')"));
+ assert.ok(css.includes('#page-epg #dvrAdd[data-positron-no-channels="true"]'));
+ assert.ok(audit.includes('state.enabledSubmit,true'));
+ assert.ok(audit.includes('state.disabledSubmit,true'));
+ assert.ok(audit.includes('metrics.dvrSchedule?.disabled,true'));
 });

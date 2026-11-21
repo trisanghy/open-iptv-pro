@@ -269,3 +269,8 @@ html[data-positron="true"] #page-sources .smart-result-filters>label{
 html[data-positron="true"] #page-sources .smart-result-filters>input{
  flex:1 1 260px!important;min-width:min(260px,100%)!important;
 }
+
+/* P5.1.30: no channel, no DVR schedule; keep native submit & state. */
+html[data-positron="true"] #page-epg #dvrAdd[data-positron-no-channels="true"]{
+ opacity:.55!important;cursor:not-allowed!important;
+}

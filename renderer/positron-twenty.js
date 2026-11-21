@@ -229,6 +229,20 @@
    }
    dvrChannel.disabled=!hasChannels;
    dvrChannel.setAttribute('aria-label',hasChannels?'Chọn kênh để ghi hình':'Chưa có kênh để hẹn giờ ghi hình');
+   // P5.1.30: EPG real screenshot shows enabled submit without any channel.
+   const schedule=byId('dvrAdd');
+   if(schedule){
+    if(!hasChannels){
+     if(!schedule.disabled)schedule.setAttribute('data-positron-no-channels','true');
+     schedule.disabled=true;
+     schedule.setAttribute('aria-describedby','dvrChannel');
+    }else if(schedule.getAttribute('data-positron-no-channels')==='true'){
+     schedule.disabled=false;
+     schedule.removeAttribute('data-positron-no-channels');
+     schedule.removeAttribute('aria-describedby');
+    }
+   }
+
   };
   syncDvrChannel();
   new MutationObserver(syncDvrChannel).observe(dvrChannel,{childList:true});

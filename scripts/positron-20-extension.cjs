@@ -99,6 +99,7 @@ async function runTwenty(page){
        text:n.selectedOptions?.[0]?.textContent?.trim()||'',label:n.getAttribute('aria-label')||''};
      })(),
 
+     dvrSchedule:(()=>{const b=document.getElementById('dvrAdd');return b?{disabled:b.disabled,guard:b.getAttribute('data-positron-no-channels')||'',description:b.getAttribute('aria-describedby')||''}:null;})(),
      dvrHeading:(()=>{
       const h=document.querySelector('#dvrPanel .dvr-heading h2');if(!h)return null;
       const svg=h.querySelector('svg');return {svg:!!svg,
@@ -274,12 +275,16 @@ async function runTwenty(page){
      select.replaceChildren(option);
      await new Promise(resolve=>setTimeout(resolve,0));
      const enabled=!select.disabled&&select.value==='positron-qa-only';
+     const add=document.getElementById('dvrAdd');
+     const enabledSubmit=!add.disabled&&!add.hasAttribute('data-positron-no-channels');
      select.replaceChildren();
      await new Promise(resolve=>setTimeout(resolve,0));
-     return {enabled,disabled:select.disabled,placeholder:select.selectedOptions?.[0]?.textContent?.trim()||''};
+     return {enabled,enabledSubmit,disabled:select.disabled,disabledSubmit:add.disabled,placeholder:select.selectedOptions?.[0]?.textContent?.trim()||''};
     });
     assert.equal(state.enabled,true,'DVR select failed to re-enable when a channel option appears');
     assert.equal(state.disabled,true,'DVR select failed to disable again after options removed');
+    assert.equal(state.enabledSubmit,true,'DVR submit must re-enable when channel appears');
+    assert.equal(state.disabledSubmit,true,'DVR submit must disable again when channels are removed');
     assert.equal(state.placeholder,'Chưa có kênh để ghi hình','DVR placeholder failed to recover');
    }
    if(target==='sources'&&metrics.sources)assert.notEqual(metrics.sources.background,'rgb(255, 255, 255)','white source panel');
@@ -327,6 +332,9 @@ async function runTwenty(page){
    }
    if(target==='epg'){
     if(metrics.sourceCount==='0'){
+     assert.equal(metrics.dvrSchedule?.disabled,true,'no-channel DVR submit still clickable: '+name);
+     assert.equal(metrics.dvrSchedule?.guard,'true','DVR submit missing guard: '+name);
+     assert.equal(metrics.dvrSchedule?.description,'dvrChannel','DVR submit must reference disabled channel selector');
      assert.equal(metrics.dvrChannel?.disabled,true,'DVR selector must be disabled with no channels: '+name);
      assert.equal(metrics.dvrChannel?.count,1,'empty DVR option missing: '+name);
      assert.equal(metrics.dvrChannel?.text,'Chưa có kênh để ghi hình','DVR placeholder lost: '+name);

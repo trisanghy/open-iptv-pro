@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.113",
-  "description": "Positron P5.1.29: prevent Smart Discovery status filter label wrapping on desktop",
+  "version": "4.23.114",
+  "description": "Positron P5.1.30: disable DVR scheduling without channels and restore dynamically",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

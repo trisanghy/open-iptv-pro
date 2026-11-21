@@ -217,3 +217,9 @@ This release preserves all P4.1 source data/feature logic. It adds **20 independ
 - Root cause: base .smart-result-filters flex container allows label to shrink despite available room; search input claims flexible width.
 - Fix: P5-only, no-storage-change no-wrap and non-shrinking status filter label with search input flexible width; preserve select and search listeners and full keyboard navigation.
 - Regression: Node source assertion and real Electron screenshot audit count text line rects, white-space and flexShrink across Sources views, plus UI overflow checks. Completion requires full CI, visual after-image and release evidence.
+
+## Screenshot-driven batch · Round 05/20 · P5.1.30 / v4.23.114
+- Input: actual P5.1.29 Electron EPG 1360px image from capture artifact 14689795888, opened; DVR channel select is disabled showing 'Chưa có kênh để ghi hình' but the green 'Đặt lịch ghi' submit remains visibly clickable.
+- Root cause: P5.1.25 guarded `#dvrChannel` only, not the native `#dvrAdd` form submit.
+- Repair: reuse same channel observer to disable the native DVR submission when no channel options exist, link its ARIA description to the channel selector, restore exactly when channels return, preserve all scheduled jobs, title/date fields, callbacks, recordings and data.
+- Regression: real Electron EPG 1360/720 screenshots, DOM assertions and lifecycle simulation (empty → populated → empty) for both selector and submit; Node source assertions. Version and release require full CI and manual screenshot review.
