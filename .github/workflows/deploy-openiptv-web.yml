@@ -156,6 +156,7 @@ jobs:
           node --test web-online/tests/web-recent-channels.test.cjs
           node --check _site/web-tv-channel-hub.js
           node --test web-online/tests/web-tv-channel-hub.test.cjs
+          node --test web-online/tests/web-light-consistency-20261122.test.cjs
           CHANNEL_HUB_CHROME="$(command -v google-chrome)" node --test web-online/tests/web-tv-channel-hub-expand-browser.test.cjs
           cmp _site/web-tv-channel-hub.js web-online/web-tv-channel-hub.js
           cmp _site/web-tv-channel-hub.css web-online/web-tv-channel-hub.css
