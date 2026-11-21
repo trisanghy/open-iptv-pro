@@ -68,3 +68,7 @@ This release preserves all P4.1 source data/feature logic. It adds **20 independ
 - Round pending fresh screenshot validation, source tests, builds and immutable release.
 
 - P5.1.6 in-round screenshot follow-up: parent section matched color, but `renderer/positron-fifty.css` forced `.source-hub-heading` back to `--po-bg`. Overridden with same card color and added real computed-style screenshot assertion for child.
+
+## P5.1.7 · v4.23.91 – P5.1.6 incomplete screenshot-repair follow-up
+- P5.1.6 real Electron screenshot proved that the Discovery parent background was fixed but `.source-hub-heading` remained a black band due to a separate P4 override. This version carries the verified child override and explicit screenshot regression for both child and parent.
+- Version bumped to avoid overwriting an immutable P5.1.6 tag if its earlier concurrent workflow publishes; neither the old release nor its history are changed. Count as continuation of NEW round 03, not a new independent bugfix cycle.
