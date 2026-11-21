@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.191",
-  "description": "Positron P5.1.107: consistent native SVG icons for channel chooser",
+  "version": "4.23.192",
+  "description": "Positron P5.1.108: compact error toast stays clear of sidebar on narrow windows",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

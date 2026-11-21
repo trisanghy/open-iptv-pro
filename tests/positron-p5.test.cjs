@@ -756,3 +756,16 @@ test('P5.1.90 Video Lab is contextual without removing controls or experimental 
  assert.ok(qa.includes('visibleWithSelection'));
  assert.ok(qa.includes('positron-p5190-player-ready-video-lab-hidden-552-metadata-real.png'));
 });
+
+
+test('P5.1.108 mobile error toast stays outside 54px rail and inside viewport',()=>{
+ const css=read('renderer/positron-horizon-v4.css');
+ const audit=read('scripts/positron-20-extension.cjs');
+ assert.ok(css.includes('html[data-positron="true"].po-horizon #toastArea.toast-area'));
+ assert.ok(css.includes('left:66px!important;right:12px!important'));
+ assert.ok(css.includes('pointer-events:none!important'));
+ assert.ok(audit.includes('t.left>=sidebar.right+8'));
+ assert.ok(audit.includes('t.right<=innerWidth-8'));
+ assert.ok(audit.includes('positron-p51108-toast-clear-of-sidebar-450-real.png'));
+ assert.ok(audit.includes('toastLayoutQA'));
+});

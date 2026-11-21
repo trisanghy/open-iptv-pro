@@ -1666,9 +1666,35 @@ async function runTwenty(page){
  for(const key of ['fiveIcons','allVisible','correctLabels','namedLayouts','oneLine','noOverflow'])
   assert.equal(vectorChooserQA[key],true,'P5.1.107 SVG chooser QA '+key+': '+JSON.stringify(vectorChooserQA));
  await page.screenshot({path:path.join(out,'positron-p51107-chooser-native-svg-450-real.png'),animations:'disabled'});
+ // P5.1.108: regression for the P5.1.107 real 450px quota-toast image.
+ // Exercise the actual native #toastArea style inside Electron without touching
+ // playback, URLs, local playlists, saved channels or remote services.
+ await page.evaluate(()=>{
+  const tray=document.getElementById('toastArea');
+  const toast=document.createElement('div');
+  toast.className='toast err';toast.id='poPositronToastLayoutQA';
+  toast.textContent='Xem sau đã lưu đủ 80 kênh. Bỏ lưu một kênh trước khi thêm mới.';
+  tray.append(toast);
+ });
+ const toastLayoutQA=await page.evaluate(()=>{
+  const sidebar=document.getElementById('appSidebar').getBoundingClientRect();
+  const toast=document.getElementById('poPositronToastLayoutQA');
+  const t=toast.getBoundingClientRect();
+  const css=getComputedStyle(document.getElementById('toastArea'));
+  return {sidebarRight:sidebar.right,toastLeft:t.left,toastRight:t.right,
+   width:innerWidth,laneClear:t.left>=sidebar.right+8,
+   rightSafe:t.right<=innerWidth-8,
+   noHorizontalOverflow:document.documentElement.scrollWidth<=innerWidth+1,
+   passthrough:css.pointerEvents==='none',
+   readable:t.height>=42&&t.height<=110};
+ });
+ for(const key of ['laneClear','rightSafe','noHorizontalOverflow','passthrough','readable'])
+  assert.equal(toastLayoutQA[key],true,'P5.1.108 narrow native toast regression '+key+': '+JSON.stringify(toastLayoutQA));
+ await page.screenshot({path:path.join(out,'positron-p51108-toast-clear-of-sidebar-450-real.png'),animations:'disabled'});
+ await page.evaluate(()=>document.getElementById('poPositronToastLayoutQA')?.remove());
  await page.setViewportSize({width:1360,height:820});
   const report={type:'Positron P5 twenty distinct desktop screenshot cases',realElectron:true,syntheticChannels:false,
-  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA,chooserQa};
+  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA,chooserQa,toastLayoutQA};
  fs.writeFileSync(path.resolve('positron-evidence','audit-p5-20-rounds.json'),JSON.stringify(report,null,2));
  return report;
 }

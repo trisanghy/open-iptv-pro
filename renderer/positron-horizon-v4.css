@@ -798,3 +798,20 @@ html[data-positron="true"].po-horizon #page-tv .web-chooser-layout button{
 html[data-positron="true"].po-horizon #page-tv .web-chooser-layout button svg{
  width:16px!important;height:16px!important;flex:0 0 16px!important;pointer-events:none!important;
 }
+
+
+/* P5.1.108: The real 450px Electron screenshot showed the native Watch Later
+   quota toast crossing the 54px icon rail. Scope fixed notifications to the
+   usable content area, retaining native messages, timing and ARIA behavior. */
+@media(max-width:600px){
+ html[data-positron="true"].po-horizon #toastArea.toast-area{
+  left:66px!important;right:12px!important;width:auto!important;
+  max-width:none!important;bottom:45px!important;
+  pointer-events:none!important;
+ }
+ html[data-positron="true"].po-horizon #toastArea.toast-area .toast{
+  max-width:100%!important;box-sizing:border-box!important;
+  overflow-wrap:anywhere!important;white-space:normal!important;
+  padding:10px 12px!important;margin-top:6px!important;
+ }
+}

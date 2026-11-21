@@ -742,3 +742,10 @@ P5.1.81 follow-up: real Electron capture found nav overflow; replace flexible no
 - Add opt-in details manager. Display only sanitized normalized bookmark keys, never source URL, token or full M3U. On first click change the action to `Xác nhận bỏ` without any data write; on second confirm revalidate that the selected fingerprint is still unavailable before removing only that bookmark from localStorage. Never auto-remove when source is offline.
 - Node regression ensures source restored between clicks cannot be mistakenly deleted; native Electron QA checks first-click no deletion, second click exactly one deletion, original available card survives and no stream plays. Screenshot `positron-p51105-dormant-manage-before-real.png` and `-after-real.png`.
 - No claim completed until screenshots reviewed and prerelease asset checks pass.
+
+
+## P5.1.108 / v4.23.192 — Native quota notification clears compact sidebar (new batch 01/20)
+- Input: directly opened real P5.1.107 450px Electron screenshot `positron-p51107-chooser-native-svg-450-real.png`: Watch Later quota toast begins near x46 and crosses the 54px icon rail.
+- Cause: the shared native `.toast-area` uses right:24px/max-width:380px with no left constraint for the compact sidebar.
+- Fix: Positron-only <=600px notification lane left:66px/right:12px; text wraps safely and the visual toast does not intercept taps. Native toast content, timers, IPTV data and playback remain untouched.
+- Regression: Node source assertion and real Electron 450px measured sidebar clearance, viewport bounds, overflow and message height. Capture `positron-p51108-toast-clear-of-sidebar-450-real.png`. CI/release/screenshot review must be checked before marking this round complete.
