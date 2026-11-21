@@ -2,14 +2,22 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
-## P5.1.139 — ưu tiên kênh yêu thích khi sắp xếp
+## P5.1.140 — lọc kênh theo chương trình hiện tại từ EPG
+
+**Ứng dụng:** 4.23.224 · **Trạng thái:** Chưa có bản phát hành
+
+Feature priority: NEW — Thêm bộ lọc chỉ hiển thị các kênh có chương trình hiện tại trong lịch EPG/XMLTV đã nhập, kèm tên chương trình ngay trên thẻ; không dự đoán lịch phát và không kiểm tra hoặc tự mở luồng mạng. User action: Mở Chọn kênh → Bộ lọc → bật “Có chương trình đang chiếu (EPG)”; chọn kênh có tên chương trình theo lịch, hoặc tắt bộ lọc để xem toàn bộ.
+
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/a5f02b18df93a6faacad8dc17dd560a4b5a0b67d)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+
+## P5.1.139 — Ưu tiên kênh yêu thích lên đầu
 
 **Ứng dụng:** 4.23.223 · **Trạng thái:** Chưa có bản phát hành
 
 Feature priority: NEW — Thêm tùy chọn sắp xếp “Yêu thích lên đầu” trong danh sách kênh, đưa kênh đã đánh dấu sao lên trước nhưng giữ các kênh khác theo thứ tự tên; chỉ thay đổi cách hiển thị, không sửa playlist hay dữ liệu nguồn. User action: Mở Chọn kênh, mở Bộ lọc rồi chọn Sắp xếp → Yêu thích lên đầu; có thể trở lại Tên A → Z/Z → A ngay lập tức.
 
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/36dc27488fcc0894ef7f2384d98f0b2e40202ef9)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
 
 ## P5.1.138 — Chuyển trang kênh bằng PageDown/PageUp
 
