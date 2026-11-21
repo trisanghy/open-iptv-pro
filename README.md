@@ -186,6 +186,16 @@ Các ảnh dưới đây đi kèm **bộ APK Android được build trên GitHub
 3. Nếu macOS thông báo chưa xác minh nhà phát triển hoặc file chưa ký số, hãy đối chiếu nguồn GitHub và SHA-256 trước. Chỉ khi tin tưởng nguồn tải, sử dụng **System Settings → Privacy & Security → Open Anyway** nếu macOS cung cấp tùy chọn.
 4. Thêm playlist M3U hợp pháp của bạn và thiết lập EPG, Yêu thích, giao diện nếu cần.
 
+**Khắc phục lỗi macOS “Open IPTV Pro is damaged and can't be opened”:** Chỉ thực hiện nếu đã tải DMG từ [GitHub Releases chính thức](https://github.com/trisanghy/open-iptv-pro/releases), đối chiếu SHA-256 với tệp checksum của bản phát hành và đã kéo `Open IPTV Pro.app` vào **Applications**. Trước tiên thử **System Settings → Privacy & Security → Open Anyway** nếu macOS cung cấp tùy chọn.
+
+Nếu đã xác minh tệp nguyên vẹn, tin tưởng nguồn tải nhưng ứng dụng vẫn bị chặn do quarantine, mở **Terminal** và chạy đúng lệnh sau (chỉ áp dụng cho Open IPTV Pro):
+
+```bash
+xattr -dr com.apple.quarantine "/Applications/Open IPTV Pro.app"
+```
+
+Nếu DMG không mở được, checksum không khớp, chữ ký sai hoặc macOS cảnh báo phát hiện phần mềm độc hại, **không vượt cảnh báo**; hãy xóa file, tải lại từ nguồn chính thức và báo lỗi. Lệnh trên không sửa DMG hỏng thực sự.
+
 **Không khuyến nghị tắt Gatekeeper cho toàn bộ hệ thống.**
 
 ### Cài trên Windows
