@@ -236,7 +236,7 @@ async function runTwenty(page){
    assert.ok(metrics.v3Workspace?.railExpanded==='true'
      ? metrics.v3Workspace.railWidth>=180&&metrics.v3Workspace.railWidth<=222
      : metrics.v3Workspace?.railWidth<=90,
-     'rail width mismatches actual expanded/compact state: '+name);
+     'rail width mismatches actual expanded/compact state: '+name+' '+JSON.stringify(metrics.v3Workspace));
    assert.equal(metrics.horizon?.loaded,true,'Horizon layer missing: '+name);
    assert.equal(metrics.horizon?.watchFlowReady,true,'WatchFlow did not initialize: '+name);
    assert.equal(metrics.horizon?.toggle,true,'WatchFlow toolbar action absent: '+name);
@@ -264,6 +264,24 @@ async function runTwenty(page){
     assert.equal(watchFlow.closed,true,'WatchFlow cannot close: '+name);
     assert.equal(watchFlow.groupCount,6,'WatchFlow topics missing: '+name);
     assert.equal(watchFlow.reasons,true,'WatchFlow evidence explanation is missing: '+name);
+    const railCycle=await page.evaluate(async()=>{
+      const root=document.documentElement,button=document.getElementById('poRailExpand');
+      const rail=document.getElementById('appSidebar');
+      const beforeWidth=Math.round(rail.getBoundingClientRect().width);
+      const beforeState=root.dataset.poRailExpanded;
+      button.click();await new Promise(resolve=>requestAnimationFrame(resolve));
+      const afterWidth=Math.round(rail.getBoundingClientRect().width);
+      const changed=root.dataset.poRailExpanded!==beforeState&&Math.abs(afterWidth-beforeWidth)>=100;
+      button.click();await new Promise(resolve=>requestAnimationFrame(resolve));
+      const restored=Math.round(rail.getBoundingClientRect().width)===beforeWidth
+        &&root.dataset.poRailExpanded===beforeState;
+      return {changed,restored,beforeWidth,afterWidth,beforeState};
+    });
+    assert.equal(railCycle.changed,true,'rail button must change real width: '+name+' '+JSON.stringify(railCycle));
+    assert.equal(railCycle.restored,true,'rail button must restore original state: '+name+' '+JSON.stringify(railCycle));
+    await page.evaluate(()=>document.getElementById('poWatchFlowToggle').click());
+    await page.screenshot({path:path.join(out,'positron-watchflow-'+width+'-'+theme+'-real.png')});
+    await page.evaluate(()=>document.getElementById('poWatchFlowClose').click());
    }
 
 

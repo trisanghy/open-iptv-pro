@@ -385,3 +385,29 @@ html[data-positron="true"].po-horizon :is(button,.btn):disabled{cursor:not-allow
 html[data-positron="true"].po-horizon #page-sources .source-hub-heading{
  background:#111d26!important;border-color:#293c45!important;color:#dce9ec!important;
 }
+
+/* P5.1.56 capture repair: P4 has a higher-specificity p50-01 206px sidebar
+   rule. Make Horizon's compact rail win whenever it is not explicitly expanded.
+   Respect the native completely-hidden state and preserve reversible expansion. */
+html[data-positron="true"].po-v3.po-horizon.p50-01:not([data-sidebar-visible="false"]):not([data-po-rail-expanded="true"]) #appShell > #appSidebar.sidebar{
+ width:68px!important;min-width:68px!important;max-width:68px!important;flex:0 0 68px!important;
+}
+html[data-positron="true"].po-v3.po-horizon.p50-01:not([data-sidebar-visible="false"])[data-po-rail-expanded="true"] #appShell > #appSidebar.sidebar{
+ width:206px!important;min-width:206px!important;max-width:206px!important;flex:0 0 206px!important;
+}
+html[data-positron="true"].po-v3.po-horizon #appShell #appSidebar #sidebarToggleBtn{
+ display:none!important;visibility:hidden!important;
+}
+/* The onboarding illustration should be the actual stage, not a nested
+   420px inset box inside another black rectangle. */
+html[data-positron="true"].po-v3.po-horizon #page-tv #playerBox #emptyPlayer:not(.hidden){
+ position:absolute!important;inset:0!important;transform:none!important;
+ width:100%!important;max-width:none!important;height:100%!important;max-height:none!important;
+ border:0!important;border-radius:16px!important;
+ background:radial-gradient(ellipse at 50% 30%,#17392f 0%,#09201e 36%,#030a0e 83%)!important;
+}
+@media(max-width:760px){
+ html[data-positron="true"].po-v3.po-horizon.p50-48:not([data-sidebar-visible="false"]):not([data-po-rail-expanded="true"]) #appShell > #appSidebar.sidebar{
+  width:56px!important;min-width:56px!important;max-width:56px!important;flex:0 0 56px!important;
+ }
+}

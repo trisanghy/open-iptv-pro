@@ -58,3 +58,15 @@ test('Horizon system loads last, preserves native player, covers every page',()=
  assert.ok(!/html\[data-positron.*#video\s*\{[^}]*object-fit:/s.test(css),'video fit must remain user-configurable');
  assert.equal(JSON.parse(read('package.json')).version,'4.23.140');
 });
+
+test('Horizon defeats the legacy p50 sidebar width and retains an expandable rail',()=>{
+ const css=read('renderer/positron-horizon-v4.css');
+ const audit=read('scripts/positron-20-extension.cjs');
+ assert.ok(css.includes('po-horizon.p50-01:not([data-sidebar-visible="false"]):not([data-po-rail-expanded="true"])'));
+ assert.ok(css.includes('width:68px!important;min-width:68px!important;max-width:68px!important;flex:0 0 68px!important'));
+ assert.ok(css.includes('[data-po-rail-expanded="true"] #appShell > #appSidebar.sidebar'));
+ assert.ok(css.includes('#appShell #appSidebar #sidebarToggleBtn'));
+ assert.ok(audit.includes('railCycle.changed,true'));
+ assert.ok(audit.includes('railCycle.restored,true'));
+ assert.ok(audit.includes('positron-watchflow-'));
+});
