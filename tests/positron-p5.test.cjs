@@ -170,5 +170,6 @@ test('P5.1.18 footer status wraps and meets 4.5:1 contrast on compact view',()=>
  assert.ok(css.includes('white-space:normal!important'));
  assert.ok(css.includes('#footerText'));
  assert.ok(audit.includes('metrics.footerStatus.contrast>=4.5'));
+ assert.ok(audit.includes(String.raw`c.match(/\d+(?:\.\d+)?/g)`),'contrast RGB parser must recognize numeric channels');
  assert.ok(audit.includes('metrics.footerStatus.scrollWidth<=metrics.footerStatus.clientWidth+2'));
 });

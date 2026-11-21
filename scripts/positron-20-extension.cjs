@@ -65,7 +65,7 @@ async function runTwenty(page){
      footerStatus:(()=>{
       const n=document.getElementById('footerText'),footer=n?.closest('.footer');if(!n||!footer)return null;
       const s=getComputedStyle(n),bg=getComputedStyle(footer).backgroundColor;
-      const luminance=c=>{const channels=(c.match(/\\d+(?:\\.\\d+)?/g)||[]).slice(0,3).map(Number);
+      const luminance=c=>{const channels=(c.match(/\d+(?:\.\d+)?/g)||[]).slice(0,3).map(Number);
        if(channels.length!==3)return null;
        const v=channels.map(x=>{x/=255;return x<=.04045?x/12.92:((x+.055)/1.055)**2.4;});
        return .2126*v[0]+.7152*v[1]+.0722*v[2];};
