@@ -262,11 +262,13 @@ async function runTwenty(page){
      const titleColor=getComputedStyle(panel.querySelector('h2')).color;
      const panelRect=panel.getBoundingClientRect();
      const importRect=document.getElementById('emptyUrlBtn')?.getBoundingClientRect();
+     const titleRect=document.querySelector('#emptyPlayer h2')?.getBoundingClientRect();
      const overlapWithImport=!!importRect&&panelRect.left<importRect.right&&panelRect.right>importRect.left&&panelRect.top<importRect.bottom&&panelRect.bottom>importRect.top;
+     const overlapWithTitle=!!titleRect&&panelRect.left<titleRect.right&&panelRect.right>titleRect.left&&panelRect.top<titleRect.bottom&&panelRect.bottom>titleRect.top;
      const emptyPlaylist=panel.dataset.emptyPlaylist==='true';
      const modesHidden=getComputedStyle(panel.querySelector('.po-watchflow-modes')).display==='none';
      document.getElementById('poWatchFlowClose').click();
-     return {opened,groupCount,reasons,titleColor,emptyPlaylist,modesHidden,overlapWithImport,panelWidth:panelRect.width,closed:panel.hidden&&button.getAttribute('aria-expanded')==='false'};
+     return {opened,groupCount,reasons,titleColor,emptyPlaylist,modesHidden,overlapWithImport,overlapWithTitle,panelWidth:panelRect.width,closed:panel.hidden&&button.getAttribute('aria-expanded')==='false'};
     });
     assert.equal(watchFlow.opened,true,'WatchFlow cannot open: '+name);
     assert.equal(watchFlow.closed,true,'WatchFlow cannot close: '+name);
@@ -275,6 +277,7 @@ async function runTwenty(page){
     assert.equal(watchFlow.emptyPlaylist,true,'No-playlist WatchFlow did not identify empty source: '+name);
     assert.equal(watchFlow.modesHidden,true,'Empty WatchFlow wastes space on inactive genres: '+name);
     assert.equal(watchFlow.overlapWithImport,false,'WatchFlow obscures native Add URL: '+name);
+    assert.equal(watchFlow.overlapWithTitle,false,'WatchFlow hides the native empty-player title: '+name);
     assert.ok(watchFlow.panelWidth<=320,'Empty WatchFlow too wide at 1360px: '+name);
     const titleRgb=(watchFlow.titleColor.match(/\d+/g)||[]).slice(0,3).map(Number);
     assert.ok(titleRgb.length===3&&titleRgb.every(x=>x>200),

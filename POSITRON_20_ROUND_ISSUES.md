@@ -168,3 +168,5 @@ Action: Horizon-only scrollbar variable override (#40736c thumb, #101a23 track),
 | Batch round | Candidate | Genuine previous screenshot | Visible defect | Fix / acceptance |
 | --- | --- | --- | --- | --- |
 | 01/20 | P5.1.63 / v4.23.147 | `p5-20-rounds/positron-watchflow-1360-night-real.png` from run 44894869647 | No-source WatchFlow 440px dialog overlays the native Add URL CTA | Compact empty source panel 310px, hidden unusable mode filters, 3-theme non-overlap DOM geometry + actual Electron screenshot after; unverified until QA/release |
+
+| 02/20 | P5.1.64 / v4.23.148 | P5.1.63 actual `positron-watchflow-1360-night-real.png` from run 44896009698 | Source-free popup no longer covers URL CTA but still overlays the native empty-player heading | Hide duplicate empty-mode intro paragraph, assert no collision with #emptyPlayer h2 and Add URL across three real themes; awaiting after image and release |

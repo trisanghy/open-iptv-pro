@@ -519,3 +519,7 @@ html[data-positron="true"].po-v3.po-horizon #page-tv .unified-ai-row .unified-ai
 @media(min-width:1280px){
  .po-watchflow-panel[data-empty-playlist="true"]{width:310px!important;max-width:calc(100vw - 32px)!important;right:24px!important;padding:15px!important;max-height:calc(100vh - 100px)!important}
 }
+
+/* P5.1.64: The redundant introductory description left the no-source
+   WatchFlow dialog on top of the native video empty-state heading. */
+.po-watchflow-panel[data-empty-playlist="true"] .po-watchflow-head p{display:none!important}

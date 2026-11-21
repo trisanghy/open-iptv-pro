@@ -452,3 +452,10 @@ P5.1.46 same-version CI repair: run 44866650681 failed 2/611 because historical 
 - Cause: WatchFlow's popup never differentiated zero native channels from available recommendations, showing six unusable genre filters and a wide overlay.
 - Code: mark empty playlist at render, narrow the popup to 310px above 1280px, hide unused category filters and keep the native sources entry in its empty state. Populated channel recommendations and playback code remain unchanged.
 - Evidence gate: Node regression, three-theme 1360px real Electron geometry assertions for non-overlap with #emptyUrlBtn, new after PNG screenshot review, multi-platform CI release verification. Do not certify before those checks.
+
+
+## P5.1.64 / v4.23.148 — Empty WatchFlow overlaps primary player heading
+- Input: P5.1.63 real Electron screenshots `positron-watchflow-1360-night-real.png` and Aurora counterpart from Actions run 44896009698, personally reviewed. The smaller panel stopped obscuring the M3U and URL buttons but still covered the far-right portion of the native "Sẵn sàng xem truyền hình" heading.
+- Root cause: the no-source panel redundantly repeats intro help above its empty-state card, extending from y72 to roughly y370 over the heading. The empty card already contains the source-access explanation and call to action.
+- Fix: hide only the redundant WatchFlow intro paragraph when there are zero native channels; do not change populated recommendations, button listeners or playlist data.
+- Regression: three real Electron 1360px themes calculate two-dimensional overlay intersection against both the native `#emptyPlayer h2` and Add URL. Reopen after screenshots and confirm build/release before counting the round.
