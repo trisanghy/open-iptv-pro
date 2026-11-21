@@ -2,7 +2,7 @@
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
   "version": "4.23.190",
-  "description": "Positron P5.1.105: explicit two-step management of unavailable Watch Later bookmarks",
+  "description": "Positron P5.1.106: remove empty WatchFlow horizontal overflow",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",
