@@ -1657,13 +1657,23 @@ async function runTwenty(page){
   return {
    fiveIcons:controls.length===5&&controls.every(b=>!!b.querySelector('svg[aria-hidden="true"]')),
    allVisible:controls.every(b=>{const icon=b.querySelector('svg');const r=icon?.getBoundingClientRect();return r&&r.width>=11&&r.height>=11;}),
-   correctLabels:tabs.map(b=>b.textContent.trim()).join('|')==='Chọn kênh|Yêu thích|Xem gần đây',
+   // Read the tab's own text nodes. A live Favorites count is a separate,
+   // aria-hidden badge and must not silently change the stable tab label.
+   correctLabels:tabs.map(b=>[...b.childNodes].filter(n=>n.nodeType===Node.TEXT_NODE).map(n=>n.textContent).join('').trim()).join('|')==='Chọn kênh|Yêu thích|Xem gần đây',
+   favoriteCountAccessible:(()=>{
+    const fav=tabs.find(b=>b.dataset.chooserTab==='fav');
+    const badge=fav?.querySelector('.po-favorite-count');
+    const count=Number(badge?.textContent);
+    return !!badge&&badge.getAttribute('aria-hidden')==='true'&&
+     Number.isInteger(count)&&count>=0&&badge.hidden===(count===0)&&
+     fav.getAttribute('aria-label')==='Yêu thích, '+count+' kênh';
+   })(),
    namedLayouts:layouts.map(b=>b.getAttribute('aria-label')).join('|')==='Dạng lưới|Dạng danh sách',
    oneLine:tabs.every(b=>Math.abs(b.getBoundingClientRect().top-tabs[0].getBoundingClientRect().top)<=1),
    noOverflow:heading.scrollWidth<=heading.clientWidth+1
   };
  });
- for(const key of ['fiveIcons','allVisible','correctLabels','namedLayouts','oneLine','noOverflow'])
+ for(const key of ['fiveIcons','allVisible','correctLabels','favoriteCountAccessible','namedLayouts','oneLine','noOverflow'])
   assert.equal(vectorChooserQA[key],true,'P5.1.107 SVG chooser QA '+key+': '+JSON.stringify(vectorChooserQA));
  await page.screenshot({path:path.join(out,'positron-p51107-chooser-native-svg-450-real.png'),animations:'disabled'});
  // P5.1.108: regression for the P5.1.107 real 450px quota-toast image.
