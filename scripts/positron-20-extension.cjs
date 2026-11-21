@@ -2592,9 +2592,55 @@ async function runTwenty(page){
  for(const [key,value] of Object.entries(favoriteSvgQA))
   assert.equal(value,true,'P5.1.134 genuine SVG Favorite '+key+': '+JSON.stringify(favoriteSvgQA));
 
+ // P5.1.134 NEW: press F on a focused native channel tile to toggle
+ // Favorite without playing the channel or losing keyboard focus. No
+ // modified M3U/stream URL and focus remains on the same channel card.
+ await page.locator('#webChooserGrid button.web-chooser-card').first().focus();
+ const hotkeyChannel=await page.locator('#webChooserGrid button.web-chooser-card').first().getAttribute('data-channel-id');
+ await page.keyboard.press('f');
+ await page.waitForFunction(id=>{
+  const star=[...document.querySelectorAll('#webChooserGrid .web-chooser-favorite')]
+   .find(b=>b.dataset.channelId===id);
+  return star?.getAttribute('aria-pressed')==='true';
+ },hotkeyChannel);
+ await page.waitForFunction(id=>{
+  const active=document.activeElement;
+  return active?.classList.contains('web-chooser-card')&&active.dataset.channelId===id;
+ },hotkeyChannel);
+ const keyboardFavoriteQA=await page.evaluate(id=>{
+  const card=[...document.querySelectorAll('#webChooserGrid button.web-chooser-card')]
+   .find(b=>b.dataset.channelId===id);
+  const star=[...document.querySelectorAll('#webChooserGrid .web-chooser-favorite')]
+   .find(b=>b.dataset.channelId===id);
+  return {favoriteWithoutPlaying:window.IPTVState.getCurrent()===null,
+   savedFavorite:star?.getAttribute('aria-pressed')==='true',
+   vectorFilled:getComputedStyle(star?.querySelector('svg path')).fill!=='none',
+   keyboardFocusPreserved:document.activeElement===card,
+   readableCardRemains:!!card?.querySelector('.web-chooser-name')?.textContent,
+   noOverflow:document.documentElement.scrollWidth<=innerWidth+1};
+ },hotkeyChannel);
+ await page.screenshot({path:path.join(out,'positron-p51134-favorite-hotkey-f-450-real.png'),animations:'disabled'});
+ await page.keyboard.press('f');
+ await page.waitForFunction(id=>{
+  const star=[...document.querySelectorAll('#webChooserGrid .web-chooser-favorite')]
+   .find(b=>b.dataset.channelId===id);
+  return star?.getAttribute('aria-pressed')==='false';
+ },hotkeyChannel);
+ Object.assign(keyboardFavoriteQA,await page.evaluate(id=>{
+  const card=[...document.querySelectorAll('#webChooserGrid button.web-chooser-card')]
+   .find(b=>b.dataset.channelId===id);
+  const star=[...document.querySelectorAll('#webChooserGrid .web-chooser-favorite')]
+   .find(b=>b.dataset.channelId===id);
+  return {undoWithoutPlayback:window.IPTVState.getCurrent()===null,
+   restoredOriginalFavorite:star?.getAttribute('aria-pressed')==='false',
+   nativeFocusStillOnCard:document.activeElement===card};
+ },hotkeyChannel));
+ for(const [key,value] of Object.entries(keyboardFavoriteQA))
+  assert.equal(value,true,'P5.1.134 real Electron press F Favorite '+key+': '+JSON.stringify(keyboardFavoriteQA));
+
  await page.setViewportSize({width:1360,height:820});
   const report={type:'Positron P5 twenty distinct desktop screenshot cases',realElectron:true,syntheticChannels:false,
-  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA,chooserQa,toastLayoutQA,nativeToastQA,compactIdleQA,channelChipRailQA,advancedFilterQA,readableCardsQA,keyboardTabQA,favoriteEmptyQA,duplicateEmptyQA,categoryFilterQA,categoryFixtureQA,compactSingleQA,directFavoriteQA,favoriteCountQA,compactToastStackQA,toastDismissQA,toastFocusReturnQA,toastDockQA,wheelQA,pinnedAllQA,pinnedMaskQA,categoryKeyQA,dropdownChipQA,pinnedRightMaskQA,pinnedBorderMaskQA,asciiDSearchQA,emptySearchActionQA,readableCardTitleQA,favoriteSvgQA};
+  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA,chooserQa,toastLayoutQA,nativeToastQA,compactIdleQA,channelChipRailQA,advancedFilterQA,readableCardsQA,keyboardTabQA,favoriteEmptyQA,duplicateEmptyQA,categoryFilterQA,categoryFixtureQA,compactSingleQA,directFavoriteQA,favoriteCountQA,compactToastStackQA,toastDismissQA,toastFocusReturnQA,toastDockQA,wheelQA,pinnedAllQA,pinnedMaskQA,categoryKeyQA,dropdownChipQA,pinnedRightMaskQA,pinnedBorderMaskQA,asciiDSearchQA,emptySearchActionQA,readableCardTitleQA,favoriteSvgQA,keyboardFavoriteQA};
  fs.writeFileSync(path.resolve('positron-evidence','audit-p5-20-rounds.json'),JSON.stringify(report,null,2));
  return report;
 }

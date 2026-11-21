@@ -1,5 +1,10 @@
 ## P5.1.134 — Unified native SVG Favorite stars / Electron v4.23.218
 
+- Feature priority: NEW — Add direct F keyboard toggle to each focused channel card, saving or removing an existing native Favorite without starting playback, with focus restored for repeated use.
+- User action: Focus any channel tile using Tab or a mouse click, then press F to mark it as Favorite; press F again on the same tile to undo without playing the stream.
+- Electron screenshot: positron-p51134-favorite-hotkey-f-450-real.png
+
+
 - Input: visually opened genuine P5.1.133 450px Electron PNG `positron-p51133-compact-card-title-star-450-real.png`. Card titles are now readable but Favorite controls still use uneven, very small OS-dependent Unicode ★/☆ glyphs, conflicting with native monochrome controls.
 - Repair: native 20px SVG star geometry inside existing separate Favorite buttons; keep real button/keyboard/focus/aria-label/aria-pressed behavior and persistence. Selected star uses currentColor fill; unselected remains hollow. No stream, M3U, EPG, favorites data model or autoplay changes.
 - Regression: Node asserts SVG setup and scoped CSS; real 450px Electron before/after images compare unpressed/pressed state, keyboard-independent mouse toggle, aria accessibility, native geometry and safe undo.

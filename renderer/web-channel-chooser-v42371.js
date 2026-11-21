@@ -118,7 +118,18 @@
   star.setAttribute('aria-pressed',String(isFavorite));
   star.setAttribute('aria-label',(isFavorite?'Bỏ khỏi yêu thích: ':'Thêm vào yêu thích: ')+(ch.name||'Kênh'));
   star.title=isFavorite?'Bỏ yêu thích':'Thêm yêu thích';
+  // P5.1.134 genuinely new shortcut: when the channel card itself has focus,
+  // pressing F saves/removes a Favorite WITHOUT starting video. Event is
+  // scoped to this card, so typing in search and application shortcuts stay
+  // unchanged. Replaced cards recover focus after the native save/redraw.
+  let fromFavoriteShortcut=false;
+  card.addEventListener('keydown',event=>{
+   if(!/^[fF]$/.test(event.key)||event.ctrlKey||event.metaKey||event.altKey||event.repeat)return;
+   event.preventDefault();event.stopPropagation();
+   fromFavoriteShortcut=true;star.click();
+  });
   star.addEventListener('click',()=>{
+   const restoreCardFocus=fromFavoriteShortcut;fromFavoriteShortcut=false;
    const s=store(),oldKeys=Array.isArray(s.favoriteKeys)?[...s.favoriteKeys]:null;
    const oldUrls=Array.isArray(s.favorites)?[...s.favorites]:[];
    const added=favorites.toggle(s,ch);
@@ -135,7 +146,9 @@
    requestAnimationFrame(()=>{
     const replacement=[...grid.querySelectorAll('.web-chooser-favorite')]
      .find(b=>b.dataset.channelId===String(ch.id));
-    (replacement||root.querySelector('[data-chooser-tab="fav"]'))?.focus({preventScroll:true});
+    const replacementCard=restoreCardFocus
+     ?[...grid.querySelectorAll('button.web-chooser-card')].find(b=>b.dataset.channelId===String(ch.id)):null;
+    (replacementCard||replacement||root.querySelector('[data-chooser-tab="fav"]'))?.focus({preventScroll:true});
    });
    state.toast?.((added?'Đã thêm yêu thích: ':'Đã bỏ yêu thích: ')+(ch.name||'Kênh'));
   });

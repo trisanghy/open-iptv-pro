@@ -1154,3 +1154,17 @@ test('P5.1.134 native vector Favorite stars retain aria and real CSS pressed sta
    'positron-p51134-favorite-native-svg-after-450-real.png'])
   assert.ok(qa.includes(t));
 });
+
+test('P5.1.134 NEW keyboard F on focused channel card toggles persistent Favorite without video',()=>{
+ const js=read('renderer/web-channel-chooser-v42371.js');
+ const qa=read('scripts/positron-20-extension.cjs');
+ assert.ok(js.includes("card.addEventListener('keydown',event=>"));
+ assert.ok(js.includes("if(!/^[fF]$/.test(event.key)"));
+ assert.ok(js.includes('fromFavoriteShortcut=true;star.click();'));
+ assert.ok(js.includes('const replacementCard=restoreCardFocus'));
+ for(const t of ['P5.1.134 NEW: press F on a focused native channel tile',
+  "await page.keyboard.press('f')",
+  'favoriteWithoutPlaying:', 'keyboardFocusPreserved:', 'restoredOriginalFavorite:',
+  'positron-p51134-favorite-hotkey-f-450-real.png'])
+  assert.ok(qa.includes(t),'missing real Electron keyboard Favorite proof: '+t);
+});
