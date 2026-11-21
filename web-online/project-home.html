@@ -107,6 +107,16 @@ th{background:#252940;color:#e9e9ff}td{color:#aebed2}tr:last-child td{border-bot
 .macos-install-help p{margin:12px 0 0;font-size:13px;line-height:1.75}
 .macos-install-help a{color:#cbb9ff}
 .macos-install-help pre{overflow-x:auto;white-space:pre-wrap;overflow-wrap:anywhere;margin:12px 0;padding:13px;border:1px solid rgba(180,180,230,.18);border-radius:9px;background:#101729;color:#f0eaff}
+.macos-install-help{display:block;margin:20px 0 0;padding:20px;border:1px solid rgba(167,139,250,.35);border-radius:16px;background:rgba(108,99,225,.10)}
+.macos-install-help h3{margin:0 0 14px;color:#ece6ff;font-size:19px;line-height:1.45}
+.macos-install-help ol{margin:0 0 14px;padding-left:23px;color:#d0dbed}
+.macos-install-help li{margin:8px 0;font-size:14px;line-height:1.65}
+.macos-install-help code{color:#fff}
+.mac-copy-wrap{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin:10px 0 14px}
+.mac-copy-wrap code{display:block;flex:1 1 320px;min-width:0;background:#0e1627;border:1px solid rgba(194,199,246,.25);border-radius:10px;padding:14px;overflow-wrap:anywhere;user-select:all;line-height:1.6}
+.mac-copy-button{flex:0 0 auto;border:1px solid #bca8ff;background:#6554c0;border-radius:10px;color:white;cursor:pointer;padding:13px 16px;font-size:14px;font-weight:750}
+.mac-copy-button:hover,.mac-copy-button:focus-visible{background:#7e6bd2}
+.macos-install-help .mac-copy-safety{font-size:13px;line-height:1.6;color:#cbd5e7}
 .faq{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}
 .faq details{background:var(--surface);border:1px solid var(--border);padding:18px;border-radius:14px}
 .faq summary{font-size:14px;font-weight:700;cursor:pointer}
@@ -296,11 +306,19 @@ img.image-error{display:none!important}img.image-error+.image-fallback{display:f
 <article class="platform"><strong>macOS Apple Silicon</strong><small>Mac dùng chip Apple M1, M2, M3, M4 hoặc dòng Apple Silicon tương thích.</small><span class="version" data-release-version>Bản phát hành mới nhất</span><a class="btn" id="download-arm" href="https://github.com/trisanghy/open-iptv-pro/releases/latest">Tải Mac Apple</a></article>
 <article class="platform"><strong>macOS Intel</strong><small>Mac dùng bộ xử lý Intel; tải file .dmg phiên bản x64.</small><span class="version" data-release-version>Bản phát hành mới nhất</span><a class="btn" id="download-mac-x64" href="https://github.com/trisanghy/open-iptv-pro/releases/latest">Tải Mac Intel</a></article>
 </div>
-<details class="macos-install-help" id="macos-install-help" open><summary>HƯỚNG DẪN MAC: Sửa lỗi “is damaged and can’t be opened” sau khi tải DMG</summary>
-<p>Trước hết, chỉ tải DMG từ <a href="https://github.com/trisanghy/open-iptv-pro/releases" target="_blank" rel="noopener noreferrer">GitHub Releases chính thức</a>, kiểm tra SHA-256 theo bản phát hành và kéo <strong>Open IPTV Pro.app</strong> vào thư mục <strong>Applications</strong>. Nếu macOS có tùy chọn, mở <strong>System Settings → Privacy &amp; Security → Open Anyway</strong>.</p>
-<p>Chỉ khi đã xác minh file không bị thay đổi và tin tưởng ứng dụng nhưng macOS vẫn chặn do quarantine, mở Terminal rồi chạy lệnh dành riêng cho ứng dụng:</p>
-<pre><code>xattr -dr com.apple.quarantine "/Applications/Open IPTV Pro.app"</code></pre>
-<p>Nếu DMG không mở được, SHA-256 không khớp, chữ ký bị lỗi hoặc macOS báo phần mềm độc hại, hãy dừng cài, tải lại và báo lỗi. Không tắt Gatekeeper cho toàn bộ máy.</p></details>
+<section class="macos-install-help" id="macos-install-help" aria-labelledby="macos-install-title">
+<h3 id="macos-install-title">🍎 Cài Open IPTV Pro trên Mac · Hướng dẫn sửa lỗi “is damaged and can’t be opened”</h3>
+<ol>
+<li><strong>Tải DMG đúng dòng máy:</strong> Mac M1/M2/M3/M4... chọn <strong>Apple Silicon (ARM64)</strong>, Mac Intel chọn <strong>Intel (x64)</strong> ở phía trên.</li>
+<li><strong>Kiểm tra tệp:</strong> chỉ dùng <a href="https://github.com/trisanghy/open-iptv-pro/releases" target="_blank" rel="noopener noreferrer">GitHub Releases chính thức</a>; đối chiếu SHA-256 với mã được công bố trong bản phát hành.</li>
+<li><strong>Cài đặt:</strong> nhấp đúp file <code>.dmg</code> đã tải → kéo <strong>Open IPTV Pro.app</strong> vào <strong>Applications (Ứng dụng)</strong> → mở ứng dụng từ thư mục Applications.</li>
+<li><strong>Nếu macOS chặn:</strong> vào <strong>System Settings → Privacy &amp; Security → Open Anyway</strong> nếu có tùy chọn.</li>
+<li><strong>Nếu vẫn hiện “is damaged”</strong> nhưng bạn đã xác minh file an toàn và lỗi chỉ do quarantine: mở <strong>Terminal</strong> bằng <strong>⌘ + Space</strong> → nhập <strong>Terminal</strong> → dán lệnh dưới đây (<strong>⌘ + V</strong>) → nhấn <strong>Enter</strong> → mở lại ứng dụng.</li>
+</ol>
+<p><strong>Lệnh Terminal dành riêng cho Open IPTV Pro:</strong></p>
+<div class="mac-copy-wrap"><code id="mac-install-command">xattr -dr com.apple.quarantine "/Applications/Open IPTV Pro.app"</code><button type="button" class="mac-copy-button" data-mac-copy-command aria-label="Sao chép lệnh Terminal xử lý lỗi Mac">📋 Sao chép lệnh Terminal</button></div>
+<p class="mac-copy-safety">Nếu DMG không mở được, SHA-256 không khớp, chữ ký sai hoặc macOS cảnh báo mã độc, <strong>không chạy lệnh này</strong>; hãy tải lại/báo lỗi. Không tắt Gatekeeper cho toàn bộ máy.</p>
+</section>
 <div class="links"><a href="https://github.com/trisanghy/open-iptv-pro/releases/latest">Tất cả bộ cài và ghi chú phát hành</a><a href="https://github.com/trisanghy/open-iptv-pro/releases">Lịch sử phiên bản</a><a href="https://github.com/trisanghy/open-iptv-pro/releases/latest">Windows Portable và Rust Lab</a></div>
 <p class="note">iOS/Android hiện dùng Web trực tiếp từ link dự án; không quảng cáo file IPA/APK nếu chưa có bản phát hành được xác nhận. Bản Rust Lab là một nhánh sản phẩm riêng với phạm vi tính năng khác Electron.</p></section>
 
@@ -541,6 +559,21 @@ for(const event of ['scroll','resize','hashchange','pageshow']){
 document.addEventListener('touchmove',()=>stopAnimation(true),{passive:true});
 window.addEventListener('wheel',()=>stopAnimation(true),{passive:true});
 scheduleActive();
+})();
+</script>
+<script id="openiptv-mac-copy-handler">
+(()=>{const command='xattr -dr com.apple.quarantine "/Applications/Open IPTV Pro.app"';
+ async function copyCommand(){
+  if(navigator.clipboard?.writeText && window.isSecureContext){await navigator.clipboard.writeText(command);return;}
+  const input=document.createElement('textarea');input.value=command;input.setAttribute('readonly','');
+  input.style.cssText='position:fixed;left:-9999px;top:0';document.body.append(input);input.select();
+  const ok=document.execCommand('copy');input.remove();if(!ok)throw Error('Clipboard unavailable');
+ }
+ document.addEventListener('click',async e=>{
+  const button=e.target.closest('button[data-mac-copy-command]');if(!button)return;
+  try{await copyCommand();button.textContent='✓ Đã sao chép';}
+  catch{button.textContent='Không thể tự sao chép — hãy chọn và sao chép lệnh';}
+ });
 })();
 </script>
 </body></html>
