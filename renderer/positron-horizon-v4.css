@@ -782,3 +782,6 @@ html[data-positron="true"].po-horizon #page-tv #channelList #poEmptySourceAction
    showing two redundant reimport buttons; preserve both in the original DOM. */
 html[data-positron="true"].po-horizon #page-tv #emptyPlayer .empty-actions :is(#poFirstChannelAction,#emptyFileBtn,#emptyUrlBtn)[hidden]{display:none!important}
 html[data-positron="true"].po-horizon #page-tv #emptyPlayer #poFirstChannelAction:not([hidden]){min-width:170px!important;min-height:42px!important}
+/* P5.1.90: hide UI-only Video Lab until a native channel is selected.
+   The original control and persisted options are preserved. */
+html[data-positron="true"].po-horizon #page-tv #videoEnhanceToggle[hidden]{display:none!important}

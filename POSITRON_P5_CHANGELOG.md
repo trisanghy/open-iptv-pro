@@ -1,3 +1,10 @@
+## P5.1.90 — Hide experimental Video Lab when nothing is selected / v4.23.174
+
+- Input: actual P5.1.89 Electron 1360×820 screenshot `positron-p5189-player-ready-subtitle-552-metadata-real.png` shows an active-looking `Video Lab · Beta` control while the player has no selected channel. Source `renderer/video-enhancement-electron-v42375.js` confirms its AI enhancement pipeline is not connected; original button opens a UI-only experimental panel and saves settings but does not enable live AI upscaling.
+- Remove that dead-end from the **unselected** player UI only. Keep button and settings in DOM, restore it when native selected channel exists, and collapse its panel when selection ends. Monitor native title and component initialization rather than mutating playlists or media pipeline.
+- Node tests and real Electron metadata-only QA assert the button is hidden and not taking space with no current channel; with a temporarily stubbed channel selection it becomes visible, and after restoring native state it hides again, all without starting video. Screenshot `positron-p5190-player-ready-video-lab-hidden-552-metadata-real.png`.
+- No model installation, upscaling, autoplay, user preferences deletion, or changes to other branches.
+
 ## P5.1.89 — Native player status reflects available channels / v4.23.173
 
 - Input: actual P5.1.88 Electron 1360×820 screenshot `positron-p5188-player-ready-552-metadata-real.png` shows 552 imported native channels and a useful explicit start action, yet the status under the video still says `Nhập danh sách để bắt đầu` (import a playlist to begin).

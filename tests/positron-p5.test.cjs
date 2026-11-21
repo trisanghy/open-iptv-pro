@@ -37,7 +37,7 @@ test('P5 assets are loaded after P4 without replacing it',()=>{
 test('P5 release is immutable and versioned separately from P4.1',()=>{
  const pkg=JSON.parse(read('package.json'));
  const flow=read('.github/workflows/positron-lab.yml');
- assert.equal(pkg.version,'4.23.173');
+ assert.equal(pkg.version,'4.23.174');
  const label=pkg.description.match(/Positron\s+(P\d+\.\d+\.\d+)/)?.[1];
  assert.ok(label,'product P-label must accompany SemVer');
  assert.ok(flow.includes('TAG=positron/v'+pkg.version+'-'+label.toLowerCase()),'release tag and app version must match');
@@ -743,4 +743,16 @@ test('P5.1.89 native player status is synchronized without clobbering stop or pl
  assert.ok(ui.includes("playerSubtitle.textContent=hasChannels?'Chọn kênh để bắt đầu':'Nhập danh sách để bắt đầu'"));
  assert.ok(qa.includes("populatedPlayerQa.subtitle,'Chọn kênh để bắt đầu'"));
  assert.ok(qa.includes('positron-p5189-player-ready-subtitle-552-metadata-real.png'));
+});
+
+test('P5.1.90 Video Lab is contextual without removing controls or experimental settings',()=>{
+ const ui=read('renderer/positron-horizon-v4.js'),css=read('renderer/positron-horizon-v4.css'),qa=read('scripts/positron-20-extension.cjs');
+ assert.ok(ui.includes('const syncVideoLabAvailability=()=>'));
+ assert.ok(ui.includes('trigger.hidden=!hasSelection'));
+ assert.ok(ui.includes("const panel=byId('videoEnhancePanel');if(panel)panel.hidden=true"));
+ assert.ok(ui.includes('new MutationObserver(syncVideoLabAvailability).observe(selectedTitle'));
+ assert.ok(css.includes('#page-tv #videoEnhanceToggle[hidden]{display:none!important}'));
+ assert.ok(qa.includes("videoLabAvailabilityQa[key],true"));
+ assert.ok(qa.includes('visibleWithSelection'));
+ assert.ok(qa.includes('positron-p5190-player-ready-video-lab-hidden-552-metadata-real.png'));
 });

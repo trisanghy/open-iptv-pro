@@ -239,6 +239,26 @@
    syncPlayerIntro();
   }
  }
+
+ // P5.1.90: Video Lab is an experimental UI without verified AI backend.
+ // Do not show a dead-end control when no native channel is selected.
+ const captionRow=byId('captionThirdRow'),selectedTitle=byId('playingTitle');
+ if(captionRow&&selectedTitle){
+  const syncVideoLabAvailability=()=>{
+   const trigger=byId('videoEnhanceToggle');if(!trigger)return;
+   const hasSelection=!!window.IPTVState?.getCurrent?.()?.id;
+   trigger.hidden=!hasSelection;
+   if(!hasSelection){
+    const panel=byId('videoEnhancePanel');if(panel)panel.hidden=true;
+    trigger.setAttribute('aria-expanded','false');
+   }
+  };
+  new MutationObserver(syncVideoLabAvailability).observe(captionRow,{childList:true});
+  new MutationObserver(syncVideoLabAvailability).observe(selectedTitle,{childList:true,subtree:true,characterData:true});
+  d.addEventListener('openiptv:renderer-ready',syncVideoLabAvailability);
+  d.addEventListener('openiptv:unified-ai-ready',syncVideoLabAvailability);
+  syncVideoLabAvailability();
+ }
  root.dataset.poWatchFlow='ready';
  window.PositronWatchFlow=Object.freeze({open:openPanel,close,refresh:draw});
 })();

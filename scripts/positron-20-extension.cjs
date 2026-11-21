@@ -1014,6 +1014,32 @@ async function runTwenty(page){
  assert.equal(populatedPlayerQa.subtitle,'Chọn kênh để bắt đầu','Native player subtitle still incorrectly asks to import a source');
  await page.screenshot({path:path.join(out,'positron-p5188-player-ready-552-metadata-real.png'),animations:'disabled'});
  await page.screenshot({path:path.join(out,'positron-p5189-player-ready-subtitle-552-metadata-real.png'),animations:'disabled'});
+
+// P5.1.90: simulate selection via temporary native facade; never play a
+// stream. Confirm experimental Video Lab returns only with a selected channel.
+ const videoLabAvailabilityQa=await page.evaluate(async()=>{
+  const native=window.IPTVState,button=document.getElementById('videoEnhanceToggle');
+  const title=document.getElementById('playingTitle'),originalTitle=title.textContent;
+  const first=native.getChannels()[0];
+  const hiddenWhenIdle=button.hidden&&getComputedStyle(button).display==='none';
+  let visibleWithSelection=false;
+  try{
+   window.IPTVState=Object.freeze({...native,getCurrent:()=>first});
+   title.textContent=first.name;
+   await new Promise(resolve=>requestAnimationFrame(resolve));
+   visibleWithSelection=!button.hidden&&getComputedStyle(button).display!=='none';
+  }finally{
+   window.IPTVState=native;
+   title.textContent=originalTitle;
+   await new Promise(resolve=>requestAnimationFrame(resolve));
+  }
+  return {hiddenWhenIdle,visibleWithSelection,hiddenAfterRestore:button.hidden,
+   noPlaying:native.getCurrent()===null,
+   preserved:!!document.getElementById('videoEnhancePanel')};
+ });
+ for(const key of ['hiddenWhenIdle','visibleWithSelection','hiddenAfterRestore','noPlaying','preserved'])
+  assert.equal(videoLabAvailabilityQa[key],true,'Video Lab availability regression: '+key);
+ await page.screenshot({path:path.join(out,'positron-p5190-player-ready-video-lab-hidden-552-metadata-real.png'),animations:'disabled'});
  // P5.1.76: the no-source Doctor simplification must disappear when native
  // metadata-only channels are imported, without touching any live URL.
  await page.evaluate(()=>window.IPTVState.setPage('doctor'));
