@@ -137,7 +137,7 @@ jobs:
           test -s positron-evidence/p5-20-rounds/positron-p51103-watchlater-cap-before-real.png
           test -s positron-evidence/p5-20-rounds/positron-p51103-watchlater-cap-after-real.png
           test -s positron-evidence/p5-20-rounds/positron-p51104-watchlater-unavailable-552-real.png
-          test -s positron-evidence/p5-20-rounds/positron-p51106-dormant-manage-before-real.png
+          test -s positron-evidence/p5-20-rounds/positron-p51105-dormant-manage-before-real.png
           test -s positron-evidence/p5-20-rounds/positron-p51105-dormant-manage-after-real.png
           test -s positron-evidence/p5-20-rounds/positron-p51106-empty-watchflow-no-horizontal-scroll-real.png
           node -e "let a=require('./positron-evidence/audit-p4-50-rounds.json');if(a.newP4Rounds!==50||a.screenshotCount!==50||a.rounds.length!==50)process.exit(1);let p=require('./positron-evidence/audit-p5-20-rounds.json');if(p.screenshotCount!==20||p.upgradeChecks!==20||p.rounds.length!==20)process.exit(1)"

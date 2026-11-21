@@ -164,3 +164,9 @@ test('P5.1.106 compact empty WatchFlow does not horizontally scroll',()=>{
  assert.ok(qa.includes('watchFlow.noHorizontalScroll,true'));
  assert.ok(qa.includes('positron-p51106-empty-watchflow-no-horizontal-scroll-real.png'));
 });
+test('P5.1.106 release checks preserve original P5.1.105 evidence filenames',()=>{
+ const wf=fs.readFileSync('.github/workflows/positron-lab.yml','utf8');
+ for(const image of ['positron-p51105-dormant-manage-before-real.png','positron-p51105-dormant-manage-after-real.png','positron-p51106-empty-watchflow-no-horizontal-scroll-real.png'])
+  assert.ok(wf.includes('test -s positron-evidence/p5-20-rounds/'+image),'missing proof '+image);
+ assert.ok(!wf.includes('positron-p51106-dormant-manage-before-real.png'));
+});
