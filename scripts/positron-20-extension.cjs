@@ -309,13 +309,15 @@ async function runTwenty(page){
      const panelRect=panel.getBoundingClientRect();
      const importRect=document.getElementById('emptyUrlBtn')?.getBoundingClientRect();
      const titleRect=document.querySelector('#emptyPlayer h2')?.getBoundingClientRect();
+     const stageRect=document.getElementById('playerBox').getBoundingClientRect();
+     const titleOffset=titleRect?(titleRect.left+titleRect.width/2)-(stageRect.left+stageRect.width/2):0;
      const overlapWithImport=!!importRect&&panelRect.left<importRect.right&&panelRect.right>importRect.left&&panelRect.top<importRect.bottom&&panelRect.bottom>importRect.top;
      const overlapWithTitle=!!titleRect&&panelRect.left<titleRect.right&&panelRect.right>titleRect.left&&panelRect.top<titleRect.bottom&&panelRect.bottom>titleRect.top;
      const emptyPlaylist=panel.dataset.emptyPlaylist==='true';
      const modesHidden=getComputedStyle(panel.querySelector('.po-watchflow-modes')).display==='none';
      document.getElementById('poWatchFlowClose').click();
      const focusReturned=document.activeElement===button;
-     return {opened,groupCount,reasons,titleColor,emptyPlaylist,modesHidden,overlapWithImport,overlapWithTitle,focusEntered,firstUsefulFocus,focusReturned,closeTapSize,closeVector,panelWidth:panelRect.width,closed:panel.hidden&&button.getAttribute('aria-expanded')==='false'};
+     return {opened,groupCount,reasons,titleColor,emptyPlaylist,modesHidden,overlapWithImport,overlapWithTitle,focusEntered,firstUsefulFocus,focusReturned,titleOffset,closeTapSize,closeVector,panelWidth:panelRect.width,closed:panel.hidden&&button.getAttribute('aria-expanded')==='false'};
     });
     assert.equal(watchFlow.opened,true,'WatchFlow cannot open: '+name);
     assert.equal(watchFlow.closed,true,'WatchFlow cannot close: '+name);
@@ -325,6 +327,7 @@ async function runTwenty(page){
     assert.equal(watchFlow.modesHidden,true,'Empty WatchFlow wastes space on inactive genres: '+name);
     assert.equal(watchFlow.overlapWithImport,false,'WatchFlow obscures native Add URL: '+name);
     assert.equal(watchFlow.overlapWithTitle,false,'WatchFlow hides the native empty-player title: '+name);
+    assert.ok(watchFlow.titleOffset<=-90,'Open WatchFlow does not reserve space beside compact empty stage: '+name+' '+watchFlow.titleOffset);
     assert.equal(watchFlow.focusEntered,true,'WatchFlow dialog did not receive keyboard focus: '+name);
     assert.equal(watchFlow.firstUsefulFocus,true,'Empty WatchFlow did not focus source action: '+name);
     assert.equal(watchFlow.focusReturned,true,'Closing WatchFlow did not restore toolbar focus: '+name);

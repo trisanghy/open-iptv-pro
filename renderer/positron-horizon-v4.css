@@ -641,3 +641,12 @@ html[data-positron="true"].po-horizon #page-epg #dvrChooseDir{
   min-height:280px!important;
  }
 }
+
+/* P5.1.74 screenshot correction: the smaller empty canvas brought the
+   centered title behind the WatchFlow overlay. Reserve its right column
+   only while the popup is open, without changing video or popup position. */
+@media(min-width:900px) and (max-height:900px){
+ html[data-positron="true"].po-v3.po-horizon body:has(#poWatchFlowPanel:not([hidden])) #page-tv #emptyPlayer:not(.hidden){
+  padding-right:min(38vw,360px)!important;
+ }
+}

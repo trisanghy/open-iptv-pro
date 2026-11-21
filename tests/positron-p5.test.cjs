@@ -649,6 +649,9 @@ test('P5.1.74 compact empty TV frees controls but loaded native video retains 16
  assert.ok(css.includes('#playerBox:has(#emptyPlayer:not(.hidden))'));
  assert.ok(css.includes('aspect-ratio:auto!important'));
  assert.ok(css.includes('not(:has(:fullscreen))'));
+ assert.ok(css.includes('body:has(#poWatchFlowPanel:not([hidden]))'));
+ assert.ok(audit.includes('watchFlow.titleOffset<=-90'));
+
  assert.ok(css.includes('height:clamp(280px,calc(100dvh - 420px),430px)!important'));
  for(const t of ['emptyStage.compactHasRoom,true','emptyStage.nativeControlsReachable,true','emptyStage.preservesVideoRatio,true','emptyStage.restored,true'])assert.ok(audit.includes(t));
 });
