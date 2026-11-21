@@ -50,6 +50,8 @@ async function runTwenty(page){
     controls:document.querySelectorAll('#page-tv button').length,
     transportVectors:['prevBtn','stopBtn','nextBtn','fsPrev','fsNext'].every(id=>!!document.getElementById(id)?.querySelector('svg')),
     brandIcon:get('#appSidebar .brand-icon'),
+    badge:(()=>{const n=document.querySelector('#appSidebar .brand small');if(!n)return null;const b=n.getBoundingClientRect();return {visible:b.width>0&&b.height>0,clipped:n.scrollWidth>n.clientWidth+1,right:b.right,top:b.top,bottom:b.bottom};})(),
+    toggle:(()=>{const n=document.querySelector('#appSidebar .sidebar-edge-toggle');if(!n)return null;const b=n.getBoundingClientRect();return {left:b.left,top:b.top,bottom:b.bottom};})(),
     searchShortcut:document.getElementById('searchBox')?.getAttribute('aria-keyshortcuts'),
     stage:document.documentElement.dataset.p20Stage};
   });
@@ -61,6 +63,11 @@ async function runTwenty(page){
    assert.ok(metrics.player?.width>180&&metrics.player.height>100,'video collapsed: '+name);
    assert.equal(metrics.transportVectors,true,'non-vector transport icons: '+name);
    if(width<=800&&round>=6)assert.equal(metrics.brandIcon?.visible,false,'brand icon overlaps sidebar toggle: '+name);
+  }
+  if(width>=900&&metrics.badge?.visible){
+   assert.equal(metrics.badge.clipped,false,'release badge clipped: '+name);
+   if(metrics.toggle&&metrics.badge.bottom>metrics.toggle.top&&metrics.badge.top<metrics.toggle.bottom)
+    assert.ok(metrics.badge.right<=metrics.toggle.left-2,'release badge covered by menu: '+name);
   }
   if(target==='sources'&&metrics.sources)assert.notEqual(metrics.sources.background,'rgb(255, 255, 255)','white source panel');
   if(target==='sources'){
