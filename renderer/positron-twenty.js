@@ -77,6 +77,26 @@
   button.setAttribute('aria-label',label);button.title=label;
  }
 
+ 
+ // P5.1.9 round 02: Empty Favorites had no path to manage sources in
+ // the actual P5.1.8 600px Electron screenshot. Preserve original list.
+ const favoriteList=byId('favoriteList');
+ if(favoriteList){
+  const syncFavoriteSourceAction=()=>{
+   const empty=favoriteList.querySelector('.empty-list');
+   if(!empty||empty.querySelector('#positronFavoritesSources'))return;
+   const button=d.createElement('button');
+   button.id='positronFavoritesSources';button.type='button';
+   button.className='btn btn-primary po-fav-action';
+   button.textContent='Quản lý nguồn IPTV';
+   button.title='Mở trang quản lý và thêm nguồn IPTV';
+   button.addEventListener('click',()=>window.IPTVState?.setPage?.('sources'));
+   empty.append(button);
+  };
+  new MutationObserver(syncFavoriteSourceAction).observe(favoriteList,{childList:true,subtree:true});
+  syncFavoriteSourceAction();
+ }
+
  window.OpenIPTVPositronTwenty=Object.freeze({
   setStage,getStage:()=>stage,getFeedback:()=>previous
  });

@@ -53,7 +53,8 @@ async function runTwenty(page){
     heading:(()=>{const n=document.querySelector('#positronBar .p-heading strong');if(!n)return null;const b=n.getBoundingClientRect();return {shortTitle:n.dataset.shortTitle||'',clipped:n.scrollWidth>n.clientWidth+1,width:Math.round(b.width)};})(),
     badge:(()=>{const n=document.querySelector('#appSidebar .brand small');if(!n)return null;const b=n.getBoundingClientRect();return {visible:b.width>0&&b.height>0,clipped:n.scrollWidth>n.clientWidth+1,right:b.right,top:b.top,bottom:b.bottom};})(),
     toggle:(()=>{const n=document.querySelector('#appSidebar .sidebar-edge-toggle');if(!n)return null;const b=n.getBoundingClientRect();return {left:b.left,top:b.top,bottom:b.bottom};})(),
-    themeButton:(()=>{const n=document.getElementById('positronStudioBtn');if(!n)return null;const b=n.getBoundingClientRect(),s=getComputedStyle(n),p=getComputedStyle(n,'::before');return{width:Math.round(b.width),fontSize:s.fontSize,pseudoContent:p.content,ariaLabel:n.getAttribute('aria-label'),title:n.title};})(),
+    favoriteAction:get('#positronFavoritesSources'),
+     themeButton:(()=>{const n=document.getElementById('positronStudioBtn');if(!n)return null;const b=n.getBoundingClientRect(),s=getComputedStyle(n),p=getComputedStyle(n,'::before');return{width:Math.round(b.width),fontSize:s.fontSize,pseudoContent:p.content,ariaLabel:n.getAttribute('aria-label'),title:n.title};})(),
      searchShortcut:document.getElementById('searchBox')?.getAttribute('aria-keyshortcuts'),
     stage:document.documentElement.dataset.p20Stage};
   });
@@ -91,7 +92,17 @@ async function runTwenty(page){
    assert.ok(channels.length===3&&channels.reduce((a,b)=>a+b,0)/3<110,
     'P5.1 regression: light Smart Discovery background '+metrics.sourceSection.background);
   }
-  if(target==='epg'&&metrics.epg)assert.notEqual(metrics.epg.background,'rgb(255, 255, 255)','white EPG search');
+  if(target==='fav'){
+    assert.equal(metrics.favoriteAction?.visible,true,'Favorites empty state requires source action: '+name);
+    const destination=await page.evaluate(()=>{
+      document.getElementById('positronFavoritesSources').click();
+      const page=document.querySelector('.page.active-page')?.id;
+      window.IPTVState.setPage('fav');
+      return page;
+    });
+    assert.equal(destination,'page-sources','Favorites action must open Sources: '+name);
+   }
+   if(target==='epg'&&metrics.epg)assert.notEqual(metrics.epg.background,'rgb(255, 255, 255)','white EPG search');
   if(target==='tv')assert.equal(metrics.searchShortcut,'/');
   // Preserve an explicit metric for overflow; fail rather than concealing a layout regression.
   assert.equal(metrics.overflow,false,'horizontal overflow in '+name);

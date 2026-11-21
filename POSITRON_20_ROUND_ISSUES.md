@@ -10,3 +10,5 @@ Round is not certified until new screenshot has been opened and reviewed, tests 
 
 ### Round 01 verification follow-up
 First P5.1.8 test run https://github.com/trisanghy/open-iptv-pro/actions/runs/44850968811 failed four **version synchronization regressions**: `tests/positron.test.cjs` expected 4.23.91, the visible `renderer/index.html` badge was stale, and `BUILD_WINDOWS.bat` plus `scripts/BUILD_WINDOWS_AUTO.ps1` still identified 4.23.91. Fixed all sources to actual 4.23.92 without relaxing test assertions. Must retest full CI and screenshot before marking the same round complete.
+
+| 02/20 | P5.1.9 / v4.23.93 | P5.1.8 `positron-p5-20-real.png` Favorites 600px | Empty state offers no actionable route to manage or activate a source | Add keyboard-focusable native button, test actual Electron click destination | CI and after-image review pending |

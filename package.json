@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.92",
-  "description": "Positron P5.1.8: correct compact theme control CSS",
+  "version": "4.23.93",
+  "description": "Positron P5.1.9: navigation from Favorites empty state",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",
