@@ -1752,6 +1752,29 @@ async function runTwenty(page){
  for(const key of ['compact','contentFits','videoUnmodified','restored','channelFilterReachable','noHorizontalOverflow'])
   assert.equal(compactIdleQA[key],true,'P5.1.110 compact native idle-player regression '+key+': '+JSON.stringify(compactIdleQA));
  await page.screenshot({path:path.join(out,'positron-p51110-compact-idle-player-450-real.png'),animations:'disabled'});
+
+ // P5.1.116: the category rail tests must use ACTUAL corresponding groups.
+ // Earlier 552 metadata QA channels all had generic group titles and the old
+ // chooser displayed non-functional VTV/VTC/K+ chips. Import nine local-only
+ // category metadata records (no playback); leave K+ absent as negative test.
+ const categoryFixtureQA=await page.evaluate(()=>{
+  const cats=[
+   ['VTV','VTV QA 1'],['VTC','VTC QA 1'],['HTV','HTV QA 1'],
+   ['TH địa phương','TH QA 1'],['Quốc tế','Quốc tế QA 1'],
+   ['Phim','Phim QA 1'],['Thiếu nhi','Thiếu nhi QA 1'],
+   ['Thể thao','Thể thao QA 1'],['Tin tức','Tin tức QA 1']];
+  const lines=['#EXTM3U'];
+  cats.forEach(([group,name],i)=>{
+   lines.push('#EXTINF:-1 tvg-id="qa-category-'+i+'" group-title="'+group+'",'+name);
+   lines.push('https://example.invalid/positron-category-visual-only-'+i+'.m3u8');
+  });
+  window.IPTVState.importSource('LOCAL QA CATEGORY META ONLY','local:qa-category',lines.join('\n'),'file');
+  return {channelCount:window.IPTVState.getChannels().length,added:cats.length};
+ });
+ assert.equal(categoryFixtureQA.added,9);
+ assert.equal(categoryFixtureQA.channelCount,561);
+ await page.waitForFunction(()=>document.querySelectorAll('#webChooserGroups .web-chooser-chip').length>=10,{timeout:6000});
+
  // P5.1.111: the actual P5.1.110 450px screenshot had 3 stacked
  // category rows. Verify all native chips fit one accessible horizontal lane
  // and the native rerender keeps scroll position after selecting a last chip.
@@ -1930,11 +1953,44 @@ async function runTwenty(page){
  for(const [key,value] of Object.entries(duplicateEmptyQA))
   assert.equal(value,true,'P5.1.115 hide duplicate compact empty widget '+key+': '+JSON.stringify(duplicateEmptyQA));
 
+ // P5.1.116: quick groups must reflect actual imported group names, and
+ // selecting one must filter rather than silently resetting to All.
+ const categoryChipQA=await page.evaluate(()=>{
+  const lane=document.getElementById('webChooserGroups');
+  const buttons=[...lane.querySelectorAll('button.web-chooser-chip')];
+  const labels=buttons.map(b=>b.textContent.trim());
+  const kPlusAbsent=!labels.includes('K+');
+  const allExpected=labels.length===10&&labels.includes('VTV')&&labels.includes('TH địa phương');
+  const vtv=buttons.find(b=>b.dataset.poQuickGroup==='VTV');
+  vtv?.click();
+  const selected=[...lane.querySelectorAll('button')].find(b=>b.dataset.poQuickGroup==='VTV');
+  const names=[...document.querySelectorAll('#webChooserGrid button.web-chooser-card .web-chooser-name')].map(x=>x.textContent);
+  return {allExpected,kPlusAbsent,vtvSelected:!!selected&&selected.classList.contains('active')&&
+   selected.getAttribute('aria-pressed')==='true',
+   focusRestored:document.activeElement===selected,
+   realFiltering:document.getElementById('webChooserGroup').value==='VTV'&&names.length===1&&names[0].includes('VTV QA'),
+   noAutoplay:window.IPTVState.getCurrent()===null,
+   noOverflow:document.documentElement.scrollWidth<=innerWidth+1};
+ });
+ await page.screenshot({path:path.join(out,'positron-p51116-real-category-filter-450-real.png'),animations:'disabled'});
+ const categoryResetQA=await page.evaluate(()=>{
+  const all=[...document.querySelectorAll('#webChooserGroups button')].find(b=>b.dataset.poQuickGroup==='all');
+  all.click();
+  return {allSelected:all!==null&&document.querySelector('#webChooserGroups button.active')?.dataset.poQuickGroup==='all',
+   allCount:document.getElementById('webChooserStatus').textContent.trim()==='561 kênh',
+   cardsRestored:document.querySelectorAll('#webChooserGrid button.web-chooser-card').length===18,
+   noAutoplay:window.IPTVState.getCurrent()===null};
+ });
+ const categoryFilterQA={...categoryChipQA,...categoryResetQA};
+ for(const [key,value] of Object.entries(categoryFilterQA))
+  assert.equal(value,true,'P5.1.116 real-category quick filter '+key+': '+JSON.stringify(categoryFilterQA));
+
+
 
 
  await page.setViewportSize({width:1360,height:820});
   const report={type:'Positron P5 twenty distinct desktop screenshot cases',realElectron:true,syntheticChannels:false,
-  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA,chooserQa,toastLayoutQA,nativeToastQA,compactIdleQA,channelChipRailQA,advancedFilterQA,readableCardsQA,keyboardTabQA,favoriteEmptyQA,duplicateEmptyQA};
+  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA,chooserQa,toastLayoutQA,nativeToastQA,compactIdleQA,channelChipRailQA,advancedFilterQA,readableCardsQA,keyboardTabQA,favoriteEmptyQA,duplicateEmptyQA,categoryFilterQA,categoryFixtureQA};
  fs.writeFileSync(path.resolve('positron-evidence','audit-p5-20-rounds.json'),JSON.stringify(report,null,2));
  return report;
 }

@@ -801,3 +801,10 @@ P5.1.81 follow-up: real Electron capture found nav overflow; replace flexible no
 - Root: chooser always renders sidebar Favorites and Recent mini panels regardless of active tab and their empty data.
 - Fix: mark only duplicate empty mini section on its own active tab and hide it only <=650px via scoped CSS. Keep mini section on All, other tabs, desktop, and when actually populated. No stored data, filtering or playback changed.
 - Regression: Node asserts + real Electron CDP view of Favorites/Recent/All with one section hidden and restored, no autoplay or overflow, screenshot positron-p51115-no-duplicate-favorite-450-real.png. Candidate until CI + manual screenshot review + release.
+
+
+## P5.1.116 / v4.23.200 — Real category quick filters, no phantom group chips (file-triggered round 04/20)
+- Baseline: manually opened genuine P5.1.115 450px Electron screenshot positron-p51115-no-duplicate-favorite-450-real.png shows VTV/VTC/HTV/K+ category chips despite 552 synthetic QA channels belonging only to generic groups; source inspection confirms all chips were shown whenever any channels existed. Clicking a nonexistent group's chip silently reset group=All.
+- Root: renderGroups() used only available.size, did not check each group's presence; fallback to group.value='' for absent label; clicked chip lost focus on replacement.
+- Fix: quick chips only for actually imported group names (TH matches a separate token rather than the beginning of Thể thao). Selected chip state now uses aria-pressed; native keyboard focus restored after filtering; no changes to stream playback or saved playlists.
+- Regression: preserve previous P111 accessible horizontal-rail checks by adding nine metadata-only QA channels in genuine groups (non-playing), omit K+ to assert absent chip, test VTV filters to exactly one channel, returns to All 561 records, focus restored, no autoplay/overflow; real screenshot positron-p51116-real-category-filter-450-real.png. Candidate until CI + screenshot inspection + installer verified.

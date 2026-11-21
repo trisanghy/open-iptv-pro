@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.199",
-  "description": "Positron P5.1.115: remove duplicate empty sidebar panels on compact tabs",
+  "version": "4.23.200",
+  "description": "Positron P5.1.116: only actionable category chips with preserved keyboard focus",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

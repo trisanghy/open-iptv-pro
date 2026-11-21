@@ -91,3 +91,11 @@ Not yet started. Choose each new repair from the preceding real screenshot, with
 - Fix: hide only duplicate empty mini sidebar for compact <=650px view while active in Favorites/Recent; always retain on All and when nonempty.
 - Before: positron-p51114-favorite-empty-action-450-real.png. Candidate after: positron-p51115-no-duplicate-favorite-450-real.png; direct image review mandatory.
 - Status: CANDIDATE, cannot count unless real Electron QA and release success.
+
+
+## Separate file-triggered batch round 04/20 — P5.1.116 / v4.23.200 — CANDIDATE
+- Input: manually opened real P5.1.115 screenshot 450px with category chips VTV/VTC/HTV/K+ despite no matching category in original 552 QA channel group titles.
+- Root: renderer/web-channel-chooser-v42371.js renderGroups() displays every preset whenever any channels exist, clicking missing one resets to All; click rerenders and loses keyboard focus.
+- Fix: show only imported groups, no phantom K+, preserve quick-chip focus and aria pressed, TH specific matching. Metadata-only QA category fixture preserves older horizontal scrollbar tests without licensed streams.
+- Before P115: positron-p51115-no-duplicate-favorite-450-real.png. Candidate after P116: positron-p51116-real-category-filter-450-real.png.
+- Status: CANDIDATE pending tests/image/release, prior releases unchanged.

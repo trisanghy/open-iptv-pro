@@ -37,7 +37,7 @@ test('P5 assets are loaded after P4 without replacing it',()=>{
 test('P5 release is immutable and versioned separately from P4.1',()=>{
  const pkg=JSON.parse(read('package.json'));
  const flow=read('.github/workflows/positron-lab.yml');
- assert.equal(pkg.version,'4.23.199');
+ assert.equal(pkg.version,'4.23.200');
  const label=pkg.description.match(/Positron\s+(P\d+\.\d+\.\d+)/)?.[1];
  assert.ok(label,'product P-label must accompany SemVer');
  assert.ok(flow.includes('TAG=positron/v'+pkg.version+'-'+label.toLowerCase()),'release tag and app version must match');
@@ -884,4 +884,18 @@ test('P5.1.115 compact empty Favorites/Recent mini panels are hidden only when r
  assert.ok(css.includes('.web-chooser-side section[data-po-duplicate-empty="true"]'));
  assert.ok(audit.includes('const duplicateEmptyQA={...duplicateFavoriteQA,favoriteRestored,recentHidden,recentRestored'));
  assert.ok(audit.includes('positron-p51115-no-duplicate-favorite-450-real.png'));
+});
+
+
+test('P5.1.116 category chips only include actual imported group labels and keep keyboard focus',()=>{
+ const js=read('renderer/web-channel-chooser-v42371.js');
+ const qa=read('scripts/positron-20-extension.cjs');
+ assert.ok(js.includes("const groupForChip=value=>groupNames.find(name=>"));
+ assert.ok(js.includes("if(value!=='all'&&!match)continue"));
+ assert.ok(js.includes("btn.setAttribute('aria-pressed',String(active))"));
+ assert.ok(js.includes("x.dataset.poQuickGroup===value)?.focus({preventScroll:true})"));
+ assert.ok(qa.includes("LOCAL QA CATEGORY META ONLY"));
+ assert.ok(qa.includes("const kPlusAbsent=!labels.includes('K+')"));
+ assert.ok(qa.includes("names.length===1&&names[0].includes('VTV QA')"));
+ assert.ok(qa.includes("positron-p51116-real-category-filter-450-real.png"));
 });

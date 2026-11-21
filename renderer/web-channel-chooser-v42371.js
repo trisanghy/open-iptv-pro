@@ -81,18 +81,41 @@
  }
  function empty(target,message){const p=document.createElement('p');p.className='web-chooser-empty';p.textContent=message;target.append(p);}
  function renderGroups(){
-  const available=new Set(channels().map(c=>normalize(c.group+' '+c.name)));
   const existing=group.value;
   const groupNames=[...new Set(channels().map(c=>String(c.group||'Khác').trim()).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'vi'));
   group.replaceChildren(new Option('Tất cả nhóm',''));
   for(const name of groupNames)group.append(new Option(name,name));
   group.value=groupNames.includes(existing)?existing:'';
-  // Re-rendering a horizontal mobile filter rail must not jump it back to
-  // the first category after a user selects a chip near its far edge.
+  // P5.1.116: P5.1.115 Electron screenshot showed VTV/VTC/K+ quick chips
+  // with only QA Channel metadata in unrelated groups. The old code exposed
+  // every preset whenever any channel existed, and selecting an absent group
+  // silently reset to All. Show only actual imported groups and preserve
+  // keyboard focus when replacing the filtered chips.
+  const groupForChip=value=>groupNames.find(name=>{
+   const n=normalize(name),needle=normalize(value);
+   // "TH" means the separate TH/local group, NOT every "The thao" group.
+   return value==='TH'?/(^|[^a-z0-9])th([^a-z0-9]|$)/.test(n):n.includes(needle);
+  })||'';
   const previousChipsScroll=groups.scrollLeft;
   groups.replaceChildren();
-  for(const [value,label] of filterGroups){if(value!=='all'&&!available.size)continue;const btn=document.createElement('button');btn.type='button';btn.textContent=label;btn.className='web-chooser-chip'+(group.value===value||value==='all'&&!group.value?' active':'');
-   btn.addEventListener('click',()=>{group.value=value==='all'?'':groupNames.find(name=>normalize(name).includes(normalize(value)))||'';page=0;render();});groups.append(btn);}
+  for(const [value,label] of filterGroups){
+   const match=value==='all'?'':groupForChip(value);
+   if(value!=='all'&&!match)continue;
+   const btn=document.createElement('button');btn.type='button';
+   btn.dataset.poQuickGroup=value;btn.textContent=label;
+   const active=value==='all'?!group.value:group.value===match;
+   btn.className='web-chooser-chip'+(active?' active':'');
+   btn.setAttribute('aria-pressed',String(active));
+   btn.addEventListener('click',()=>{
+    group.value=value==='all'?'':match;
+    page=0;render();
+    // Browser focus would otherwise land on BODY when renderGroups removes
+    // the clicked chip; restore focus to the replacement native button.
+    [...groups.querySelectorAll('button[data-po-quick-group]')]
+     .find(x=>x.dataset.poQuickGroup===value)?.focus({preventScroll:true});
+   });
+   groups.append(btn);
+  }
   groups.scrollLeft=previousChipsScroll;
  }
  function renderSide(target,list,label){target.replaceChildren();if(!list.length){empty(target,'Chưa có kênh '+label);return;}list.slice(0,6).forEach(c=>target.append(channelCard(c,true)));}
