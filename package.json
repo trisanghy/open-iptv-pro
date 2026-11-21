@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.126",
-  "description": "Positron P5.1.42: visually distinguish disabled Smart Doctor analysis",
+  "version": "4.23.127",
+  "description": "Positron P5.1.43: align Smart Discovery initial guidance with selected catalog",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

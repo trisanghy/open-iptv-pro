@@ -94,4 +94,10 @@ P5.1.37 capture run 44863007302: **FAILED at real TV 450px** after all 50 P4 cas
 
 | 08/20 | P5.1.41 / 4.23.125 | P5.1.40 real Settings Electron 1360px `positron-p5-18-real.png` artifact 14691385846 | Logged-out account card dominates 300+px screen height, pushing settings accordions out of view | Scope only desktop logged-out account card, compress spacing not field/button targets; real panel height and 44px target checks pending CI/release |
 
-| 09/20 | P5.1.42 / 4.23.126 | P5.1.41 actual Electron Doctor 1360px `positron-p5-19-real.png`, capture artifact 14691221839 | `Chẩn đoán ngay` / `Phân tích` remain bright beige in no-source state though disabled; native btn-primary fill overrides intended state | Scope four guarded Doctor operations to neutral disabled skin; actual Electron DOM color/luma and Node regression pending CI/release |
+| 09/20 | P5.1.43 / 4.23.127 | P5.1.41 actual Electron Doctor 1360px `positron-p5-19-real.png`, capture artifact 14691221839 | `Chẩn đoán ngay` / `Phân tích` remain bright beige in no-source state though disabled; native btn-primary fill overrides intended state | Scope four guarded Doctor operations to neutral disabled skin; actual Electron DOM color/luma and Node regression pending CI/release |
+
+
+## File (9) new repair batch from P5.1.43
+| Round | Next version | Real screenshot input / observed issue | Changed behavior | Validation |
+| --- | --- | --- | --- | --- |
+| 01/20 | P5.1.43 / v4.23.127 | P5.1.41 Sources 720px (preserved in P5.1.43): iptv-org/country/VN preselected yet initial status says select collection | Honest first-use instruction with native selections intact | Node + real Electron audit to run; GitHub release 403 unresolved |
