@@ -115,3 +115,13 @@ test('Electron AI panel is UI-only until a verified runtime exists',()=>{
  assert.match(source,/không đổi luồng video/);
  assert.match(source,/Chưa có backend benchmark/);
 });
+
+test('P5.1.75 Video Lab makes unavailable AI backend explicit instead of promising applied upscaling',()=>{
+ const {doc,elements}=fakeBrowser();doc.dispatchEvent({type:'openiptv:renderer-ready'});
+ const trigger=elements.get('videoEnhanceToggle'),panel=elements.get('videoEnhancePanel');
+ assert.match(trigger.textContent,/Video Lab .* Beta/);
+ assert.match(trigger.title,/chưa có backend tăng chất lượng/);
+ assert.match(panel.html,/id="veh-apply">Xem khả năng áp dụng/);
+ assert.doesNotMatch(trigger.textContent,/Nâng cao video bằng AI/);
+ trigger.click();assert.equal(panel.hidden,false);trigger.click();assert.equal(panel.hidden,true);
+});

@@ -650,3 +650,13 @@ html[data-positron="true"].po-horizon #page-epg #dvrChooseDir{
   padding-right:min(38vw,360px)!important;
  }
 }
+
+/* P5.1.75: transparent experimental-video affordance.
+ * Active backend is not connected: never style Video Lab as a live enhancement. */
+html[data-positron="true"].po-v3.po-horizon #page-tv #videoEnhanceToggle{
+ background:#213039!important;color:#afc2c8!important;
+ border:1px solid #344b55!important;box-shadow:none!important;
+}
+html[data-positron="true"].po-v3.po-horizon #page-tv #videoEnhanceToggle:hover{
+ color:#e2f3f0!important;background:#2a404a!important;
+}

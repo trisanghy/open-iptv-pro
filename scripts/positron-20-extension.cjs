@@ -852,6 +852,27 @@ async function runTwenty(page){
    assert.equal(emptyStage.restored,true,'empty stage did not restore after test');
   }
 
+  // P5.1.75: only expose a genuine Video Lab beta, not an active AI upscale claim.
+  if(target==='tv'&&(width===1360||width===720)){
+   const videoLab=await page.evaluate(()=>{
+    const trigger=document.getElementById('videoEnhanceToggle'),panel=document.getElementById('videoEnhancePanel');
+    const apply=document.getElementById('veh-apply');
+    const before=panel.hidden;
+    trigger.click();
+    const opened=!panel.hidden&&trigger.getAttribute('aria-expanded')==='true';
+    trigger.click();
+    const closed=panel.hidden&&trigger.getAttribute('aria-expanded')==='false';
+    return {label:trigger.textContent.trim(),title:trigger.title,apply:apply?.textContent.trim(),
+     before,opened,closed};
+   });
+   assert.equal(videoLab.before,true,'Video Lab must not auto-open');
+   assert.ok(videoLab.label.includes('Video Lab')&&videoLab.label.includes('Beta'),'AI button still misleadingly promises working upscale');
+   assert.ok(videoLab.title.includes('chưa có backend'),'Video Lab lacks an honest capability explanation');
+   assert.equal(videoLab.apply,'Xem khả năng áp dụng','no backend should offer a fake Apply button');
+   assert.equal(videoLab.opened,true,'Video Lab settings became inaccessible');
+   assert.equal(videoLab.closed,true,'Video Lab cannot close');
+  }
+
   // P5.1.19: exercise both real keyboard handlers in the Electron renderer.
   // '/' must focus the visible channel finder; Ctrl+K remains global.
   if(target==='tv'&&round===1){

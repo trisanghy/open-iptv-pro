@@ -520,3 +520,9 @@ P5.1.46 same-version CI repair: run 44866650681 failed 2/611 because historical 
 - On desktop viewports shorter than 900px, only the no-video stage is shortened to provide access to controls. It retains a fluid floor of 280px and bypasses fullscreen. When the player starts video, the original native 16:9 frame remains unchanged.
 - Node and real-Electron regression intentionally toggle the empty illustration to verify the live aspect ratio is preserved and the original empty state is restored before screenshots.
 - Actual CI and screenshot comparison to be verified before release credit.
+
+## P5.1.75 — truthful Video Lab beta (new batch 05/20)
+- P5.1.74 real TV screenshot shows a prominent ‘Nâng cao video bằng AI’ control even though Electron implementation explicitly lacks any live upscale backend; its Apply button does not affect streams.
+- Renamed to ‘Video Lab · Beta’, added honest warning tooltip, renamed fake Apply to capability status, and de-emphasized beta visual chrome. Preserved experimental benchmark, settings, data and real playback.
+- Added Node mock-browser regression and actual Electron interactions for open/close, beta label, backend warning and non-fake action.
+- Screenshot/CI/build/release pending verification.

@@ -9,7 +9,7 @@
   const row=doc.getElementById('captionThirdRow'),caption=doc.getElementById('unifiedAiToggle');
   if(!row||!caption||doc.getElementById('videoEnhanceToggle'))return;
   const trigger=doc.createElement('button');trigger.type='button';trigger.id='videoEnhanceToggle';trigger.className='video-enhance-toggle';
-  trigger.textContent='✧ Nâng cao video bằng AI ⌄';trigger.setAttribute('aria-controls','videoEnhancePanel');trigger.setAttribute('aria-expanded','false');
+  trigger.textContent='✧ Video Lab · Beta ⌄';trigger.title='Công cụ thử nghiệm: Electron chưa có backend tăng chất lượng video thực; không làm thay đổi luồng.';trigger.setAttribute('aria-controls','videoEnhancePanel');trigger.setAttribute('aria-expanded','false');
   caption.insertAdjacentElement('afterend',trigger);
   const panel=doc.createElement('section');panel.id='videoEnhancePanel';panel.className='video-enhance-panel';panel.hidden=true;
   panel.innerHTML=[
@@ -24,7 +24,7 @@
    '<select id="veh-resolution"><option value="1080">1080p (FHD)</option><option value="1440">2K (1440p)</option><option value="2160">4K (2160p)</option></select></div></div>',
    '<div class="veh-ai-probe"><strong>Khả năng AI trên thiết bị</strong><span id="veh-ai-hw-status" role="status">Chưa kiểm tra phần cứng</span><button type="button" id="veh-ai-probe">Kiểm tra hỗ trợ AI</button></div>',
    '<div class="veh-bench" id="veh-bench"><strong>Benchmark & Tự chọn cấu hình</strong><button type="button" id="veh-run">▶ Chạy Benchmark</button>',
-   '<button type="button" id="veh-auto">✧ Tự chọn cấu hình</button><button type="button" id="veh-apply">Áp dụng cho kênh này</button></div>',
+   '<button type="button" id="veh-auto">✧ Tự chọn cấu hình</button><button type="button" id="veh-apply">Xem khả năng áp dụng</button></div>',
    '<label class="veh-safe" id="veh-safe"><input type="checkbox" id="veh-downshift"> Tự giảm chất lượng khi quá tải</label>',
    '<p class="veh-limit">Electron chưa nối bộ xử lý video; mức FPS/độ phân giải chỉ lưu tuỳ chọn, chưa áp dụng. AI cần mô hình chuyên dụng.</p><p id="veh-status" role="status" aria-live="polite">Chưa hỗ trợ xử lý AI trong Electron · Video gốc được giữ nguyên</p></div>'
   ].join('');

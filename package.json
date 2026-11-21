@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.158",
-  "description": "Positron P5.1.74: Compact idle TV screen with untouched live video aspect ratio",
+  "version": "4.23.159",
+  "description": "Positron P5.1.75: Honest Video Lab beta controls and no false AI upscale promise",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",
