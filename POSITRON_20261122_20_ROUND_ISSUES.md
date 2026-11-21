@@ -164,3 +164,9 @@ Not yet started. Choose each new repair from the preceding real screenshot, with
 - Fix: scope successes on compact windows to a 36px footer dock, keep close focus and untouched original warning/error styles.
 - Regressions: actual Electron 450px footer geometry/overflow/visible warning, photo `positron-p51123-success-toast-footer-450-real.png` and Node source test. No alterations to M3U, favorites, media streams or persistence.
 - Accept only after CI, after-image opened, and immutable release installers verified.
+
+## Uploaded-file batch 22 Nov 2026 — round 01/20 P5.1.124 / 4.23.208 — CANDIDATE
+- Baseline P5.1.123 HEAD 38011da89d7b384431bbf3babb9da4f581674340. Real 450px Electron image `positron-p51123-success-toast-footer-450-real.png` directly opened.
+- Issue: horizontal category-chip scrollbar dominates 450px layout and desktop mouse wheel cannot reach hidden categories.
+- Fix: guarded wheel-to-horizontal only when scrollable, boundary escape, muted track; preserve every group and stream behavior.
+- Candidate QA: Node regression and native Electron `positron-p51124-chip-wheel-450-real.png`; count only after 6 jobs + opened after-image + Release/EXE verification.

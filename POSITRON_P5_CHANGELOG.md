@@ -866,3 +866,9 @@ P5.1.81 follow-up: real Electron capture found nav overflow; replace flexible no
 - Root: narrow-view native #toastArea bottom:45px fixed overlay overlaps channels, even with P120 single-toast and P121 manual close.
 - Fix: at <=600px, success-only notifications dock into 36px existing footer strip at bottom:2px. Long success text ellipsizes, X remains 32x32. Any warnings or errors restore original elevated position/height and severity. Core native toast timers, state, channel data and playback untouched.
 - Electron QA: real 450px footer and toast DOM bounding boxes, warning persistence, no overflow, photo `positron-p51123-success-toast-footer-450-real.png`. Candidate until all six CI jobs, direct visual review and installer Release verified.
+
+## P5.1.124 / Electron v4.23.208 — Mouse-wheel access to compact channel groups
+- Baseline: actual P5.1.123 450px Electron screenshot `positron-p51123-success-toast-footer-450-real.png` downloaded and manually opened.
+- Root: native horizontal chip rail not navigable using standard vertical mouse wheel, later categories offscreen; bright scroll track visually dominates compact layout.
+- Fix: wheel-to-horizontal navigation while rail can move, release native page scroll at edges, toned scroll indicator. Preserve touch, keyboard, group filters, favorite data, playlist and media transport.
+- Verification: new Node regression, actual Electron 450px wheel/color/edge/overflow checks and screenshot `positron-p51124-chip-wheel-450-real.png`. Candidate pending CI, direct after-image and immutable binary release.

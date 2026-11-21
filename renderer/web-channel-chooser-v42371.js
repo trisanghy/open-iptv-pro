@@ -123,6 +123,17 @@
   return frame;
  }
  function empty(target,message){const p=document.createElement('p');p.className='web-chooser-empty';p.textContent=message;target.append(p);}
+ // P5.1.124: Native desktop wheel navigation with boundary escape.
+ groups.addEventListener('wheel',event=>{
+  if(event.ctrlKey||event.metaKey||event.shiftKey||Math.abs(event.deltaY)<=Math.abs(event.deltaX))return;
+  if(groups.scrollWidth<=groups.clientWidth+1)return;
+  const factor=event.deltaMode===1?16:event.deltaMode===2?groups.clientWidth:1;
+  const max=groups.scrollWidth-groups.clientWidth;
+  const next=Math.max(0,Math.min(max,groups.scrollLeft+event.deltaY*factor));
+  if(Math.abs(next-groups.scrollLeft)<.5)return;
+  groups.scrollLeft=next;
+  event.preventDefault();
+ },{passive:false});
  function renderGroups(){
   const existing=group.value;
   const groupNames=[...new Set(channels().map(c=>String(c.group||'Khác').trim()).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'vi'));

@@ -1070,3 +1070,17 @@ html[data-positron="true"].po-horizon #toastArea.toast-area .toast .po-toast-dis
   line-height:30px!important;
  }
 }
+
+/* P5.1.124: Genuine P5.1.123 Electron 450px screenshot shows a visually
+   oversized bright category scrollbar. Keep a muted scroll affordance. */
+@media(max-width:600px){
+ html[data-positron="true"].po-horizon #page-tv #webChooserGroups.web-chooser-chips{
+  scrollbar-color:rgba(106,150,147,.45) transparent!important;
+ }
+ html[data-positron="true"].po-horizon #page-tv #webChooserGroups.web-chooser-chips::-webkit-scrollbar{
+  height:4px!important;
+ }
+ html[data-positron="true"].po-horizon #page-tv #webChooserGroups.web-chooser-chips::-webkit-scrollbar-thumb{
+  background:rgba(106,150,147,.45)!important;border-radius:6px!important;
+ }
+}

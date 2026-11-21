@@ -2245,9 +2245,41 @@ async function runTwenty(page){
  for(const [key,value] of Object.entries(toastDockQA))
   assert.equal(value,true,'P5.1.123 non-blocking success toast '+key+': '+JSON.stringify(toastDockQA));
 
+ 
+ // P5.1.124: Real Electron wheel, scrollbar and natural edge behavior.
+ await page.evaluate(()=>{document.getElementById('webChooserGroups').scrollLeft=0;});
+ const before=await page.evaluate(()=>({
+  x:document.getElementById('webChooserGroups').scrollLeft,
+  y:document.scrollingElement?.scrollTop||0
+ }));
+ await page.locator('#webChooserGroups').hover();
+ await page.mouse.wheel(0,240);
+ await page.waitForTimeout(130);
+ const after=await page.evaluate(()=>{
+  const rail=document.getElementById('webChooserGroups');
+  return {x:rail.scrollLeft,y:document.scrollingElement?.scrollTop||0,
+   max:rail.scrollWidth-rail.clientWidth,color:getComputedStyle(rail).scrollbarColor,
+   focusableChips:[...rail.querySelectorAll('button')].filter(b=>!b.disabled).length,
+   noOverflow:document.documentElement.scrollWidth<=innerWidth+1};
+ });
+ const wheelQA={overflowing:after.max>40,mouseWheelMoved:after.x-before.x>25,
+  pageStayedPut:Math.abs(after.y-before.y)<=1,
+  mutedScrollbar:after.color.includes('106, 150, 147'),
+  nativeChipsStillAccessible:after.focusableChips>=4,noOverflow:after.noOverflow};
+ await page.screenshot({path:path.join(out,'positron-p51124-chip-wheel-450-real.png'),animations:'disabled'});
+ const boundaryAllowed=await page.evaluate(()=>{
+  const rail=document.getElementById('webChooserGroups');
+  rail.scrollLeft=rail.scrollWidth;
+  const wheel=new WheelEvent('wheel',{deltaY:240,bubbles:true,cancelable:true});
+  return rail.dispatchEvent(wheel)&&!wheel.defaultPrevented;
+ });
+ Object.assign(wheelQA,{boundaryReleasesPage:boundaryAllowed});
+ for(const [key,value] of Object.entries(wheelQA))
+  assert.equal(value,true,'P5.1.124 real Electron chip wheel '+key+': '+JSON.stringify(wheelQA));
+
  await page.setViewportSize({width:1360,height:820});
   const report={type:'Positron P5 twenty distinct desktop screenshot cases',realElectron:true,syntheticChannels:false,
-  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA,chooserQa,toastLayoutQA,nativeToastQA,compactIdleQA,channelChipRailQA,advancedFilterQA,readableCardsQA,keyboardTabQA,favoriteEmptyQA,duplicateEmptyQA,categoryFilterQA,categoryFixtureQA,compactSingleQA,directFavoriteQA,favoriteCountQA,compactToastStackQA,toastDismissQA,toastFocusReturnQA,toastDockQA};
+  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA,chooserQa,toastLayoutQA,nativeToastQA,compactIdleQA,channelChipRailQA,advancedFilterQA,readableCardsQA,keyboardTabQA,favoriteEmptyQA,duplicateEmptyQA,categoryFilterQA,categoryFixtureQA,compactSingleQA,directFavoriteQA,favoriteCountQA,compactToastStackQA,toastDismissQA,toastFocusReturnQA,toastDockQA,wheelQA};
  fs.writeFileSync(path.resolve('positron-evidence','audit-p5-20-rounds.json'),JSON.stringify(report,null,2));
  return report;
 }

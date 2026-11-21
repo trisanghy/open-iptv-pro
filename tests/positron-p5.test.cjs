@@ -37,7 +37,7 @@ test('P5 assets are loaded after P4 without replacing it',()=>{
 test('P5 release is immutable and versioned separately from P4.1',()=>{
  const pkg=JSON.parse(read('package.json'));
  const flow=read('.github/workflows/positron-lab.yml');
- assert.equal(pkg.version,'4.23.207');
+ assert.equal(pkg.version,'4.23.208');
  const label=pkg.description.match(/Positron\s+(P\d+\.\d+\.\d+)/)?.[1];
  assert.ok(label,'product P-label must accompany SemVer');
  assert.ok(flow.includes('TAG=positron/v'+pkg.version+'-'+label.toLowerCase()),'release tag and app version must match');
@@ -992,4 +992,19 @@ test('P5.1.123 routine success dock avoids channel cards without hiding warnings
  assert.ok(qa.includes('positron-p51123-success-toast-footer-450-real.png'));
  assert.ok(qa.includes('withinFooter:t.top>=f.top-3&&t.bottom<=f.bottom+2'));
  assert.ok(qa.includes('warningNotFooterDock'));
+});
+
+test('P5.1.124 compact category wheel navigation releases native page scroll at boundaries',()=>{
+ const chooser=read('renderer/web-channel-chooser-v42371.js');
+ const css=read('renderer/positron-horizon-v4.css');
+ const qa=read('scripts/positron-20-extension.cjs');
+ for(const code of ["groups.addEventListener('wheel',event=>",
+  "event.deltaMode===1?16:event.deltaMode===2?groups.clientWidth:1",
+  "if(Math.abs(next-groups.scrollLeft)<.5)return;","event.preventDefault();","{passive:false}"])
+  assert.ok(chooser.includes(code),'missing wheel guard '+code);
+ assert.ok(css.includes('P5.1.124: Genuine P5.1.123 Electron 450px screenshot'));
+ assert.ok(css.includes('scrollbar-color:rgba(106,150,147,.45) transparent!important'));
+ for(const token of ['mouseWheelMoved:after.x-before.x>25',
+  'boundaryReleasesPage:boundaryAllowed','positron-p51124-chip-wheel-450-real.png'])
+  assert.ok(qa.includes(token),'missing native Electron QA '+token);
 });
