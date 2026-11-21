@@ -1215,6 +1215,26 @@ async function runTwenty(page){
  for(const key of ['desktopVisible','bottomHidden','noAutoplay','controlsClear'])
   assert.equal(scrollCueQA[key],true,'WatchFlow scroll visibility regression: '+key);
  await page.screenshot({path:path.join(out,'positron-p5194-watchflow-scroll-cue-552-real.png'),animations:'disabled'});
+ // P5.1.95: the P5.1.94 screenshot revealed that absolute scroll cue
+ // covered the third recommendation's Xem button; inline cue must not.
+ const fixedCueQA=await page.evaluate(async()=>{
+  await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
+  const panel=document.getElementById('poWatchFlowPanel');
+  const cue=document.getElementById('poFlowPlusScrollHint');
+  const head=panel.querySelector('#poFlowPlusResults .po-flowplus-head');
+  const r=cue.getBoundingClientRect();
+  const actions=[...panel.querySelectorAll('#poFlowPlusResults .po-flowplus-card button')];
+  const overlaps=a=>{const b=a.getBoundingClientRect();
+   return r.left<b.right&&r.right>b.left&&r.top<b.bottom&&r.bottom>b.top;};
+  return {cueInsideHeading:head.contains(cue),visible:!cue.hidden,
+   cueClearOfActions:actions.length===5&&actions.every(a=>!overlaps(a)),
+   noAutoplay:window.IPTVState.getCurrent()===null};
+ });
+ assert.equal(fixedCueQA.visible,true,'All five cards still require scrolling at 1360px');
+ assert.equal(fixedCueQA.cueInsideHeading,true,'Cue must be inline, not over the player');
+ assert.equal(fixedCueQA.cueClearOfActions,true,'Cue visually occludes a clickable Xem button');
+ assert.equal(fixedCueQA.noAutoplay,true);
+ await page.screenshot({path:path.join(out,'positron-p5195-watchflow-inline-scroll-cue-552-real.png'),animations:'disabled'});
  // P5.1.85: exercise the real Electron Similar panel with a temporary
  // native metadata-only current channel; no stream is opened or stored.
  const similarQA=await page.evaluate(()=>{

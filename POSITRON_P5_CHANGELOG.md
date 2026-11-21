@@ -1,3 +1,11 @@
+## P5.1.95 — Correct visible overlay of WatchFlow scroll cue / v4.23.179
+
+- Direct manual review of the REAL P5.1.94 Electron screenshot `positron-p5194-watchflow-scroll-cue-552-real.png` revealed an important new defect: the indicator `↓ Cuộn xuống để xem thêm kênh` sat over the third Mix card's `Xem` button. Pointer-events:none made the button technically clickable, but visual occlusion is unacceptable. P5.1.94 was therefore not counted as a fully reviewed round.
+- Cause: indicator was an absolute-positioned child at the bottom of a 390px, scroll-clipped dialog.
+- Fix: mount scroll indicator inside the actual dynamic Mix heading and use relative inline layout, not absolute overlap; keep the existing geometry-based visibility, hide at bottom/close/when not needed and preserve native player transport and no-autoplay.
+- New Node regression verifies inline DOM hierarchy and no overlay style. Real Electron 1360×820 QA asserts all five buttons exist and indicator rectangle has zero overlap with every card button, remains visible when needed and no IPTV stream starts. New authentic screenshot: `positron-p5195-watchflow-inline-scroll-cue-552-real.png`.
+- Distinct P5.1.95 SemVer/tag preserves immutable P5.1.94 records while delivering screenshot-grounded correction. This correction belongs to the same uploaded batch round 02; count only after after-image manually opened, tests and release assets verified.
+
 ## P5.1.94 — Expose hidden WatchFlow Mix suggestions when desktop panel scrolls / v4.23.178
 
 - Input: manually opened genuine P5.1.93 Electron screenshot `positron-p5193-group-balanced-mix-552-real.png` at 1360×820. The 390px bounded dialog displays just 2–3 of the five Mix results and its small native scrollbar does not clearly signal that the remaining channels can be reached. The 450px screenshot shows all five cards without this problem.

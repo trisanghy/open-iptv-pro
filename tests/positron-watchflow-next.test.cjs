@@ -142,3 +142,15 @@ test('WatchFlow desktop scroll cue follows actual hidden card geometry',()=>{
  assert.ok(qa.includes("assert.equal(scrollCueQA[key],true"));
  assert.ok(qa.includes('positron-p5194-watchflow-scroll-cue-552-real.png'));
 });
+
+// P5.1.95: screenshot-review correction keeps the cue OUTSIDE card buttons.
+test('WatchFlow scroll cue lives inside its heading, not over actionable cards',()=>{
+ const js=fs.readFileSync('renderer/positron-watchflow-next.js','utf8');
+ const css=fs.readFileSync('renderer/positron-watchflow-next.css','utf8');
+ const qa=fs.readFileSync('scripts/positron-20-extension.cjs','utf8');
+ assert.ok(js.includes('head.append(h,label(sub),scrollCue);content.append(head)'));
+ assert.ok(!js.includes('panel.append(scrollCue)'),'absolute panel overlay could cover an Xem button');
+ assert.ok(css.includes('position:relative;right:auto;bottom:auto'));
+ assert.ok(qa.includes('fixedCueQA.cueClearOfActions,true'));
+ assert.ok(qa.includes('positron-p5195-watchflow-inline-scroll-cue-552-real.png'));
+});

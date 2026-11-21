@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.178",
-  "description": "Positron P5.1.94: WatchFlow shows scroll cue for hidden suggestions",
+  "version": "4.23.179",
+  "description": "Positron P5.1.95: WatchFlow inline scroll cue never covers channel actions",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

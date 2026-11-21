@@ -50,7 +50,7 @@
  // Offer a non-interactive scroll cue while the last card is below view.
  const scrollCue=d.createElement('div');scrollCue.id='poFlowPlusScrollHint';
  scrollCue.textContent='↓ Cuộn xuống để xem thêm kênh';
- scrollCue.hidden=true;scrollCue.setAttribute('aria-hidden','true');panel.append(scrollCue);
+ scrollCue.hidden=true;scrollCue.setAttribute('aria-hidden','true');
  let view='discover',lastMix=[],zapSeen=[];
  const syncScrollCue=()=>{
   const last=content.querySelector('.po-flowplus-card:last-child');
@@ -74,7 +74,7 @@
  const heading=(txt,sub)=>{
   const head=d.createElement('div');head.className='po-flowplus-head';
   const h=d.createElement('strong');h.textContent=txt;
-  head.append(h,label(sub));content.append(head);
+  head.append(h,label(sub),scrollCue);content.append(head);
  };
  const empty=txt=>{const node=d.createElement('div');node.className='po-flowplus-empty';node.textContent=txt;content.append(node);};
  const play=ch=>{
