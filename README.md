@@ -6,18 +6,23 @@
 
 > README tiếng Việt là tài liệu kỹ thuật đầy đủ. Các bản dịch quốc tế là hướng dẫn tóm lược có liên kết đến mã nguồn, bộ cài, ảnh giao diện và thông báo bản quyền chính thức.
 
-## Bản tải theo nền tảng — cập nhật 22/11/2026
+## Tải Open IPTV Pro — Stable và bản thử nghiệm (22/11/2026)
 
-> Mỗi nhánh có phiên bản và bộ cài độc lập. Không dùng danh mục GitHub `/releases/latest` chung để chọn trình cài Desktop vì Release Rust Lab tự động có thể thay thế kết quả đó.
+**Electron 4.23.76 Stable** được build từ `main`: [GitHub Release v4.23.76](https://github.com/trisanghy/open-iptv-pro/releases/tag/v4.23.76). Workflow đã vượt qua bộ test Node và build thành công Windows x64, Mac Apple Silicon, Mac Intel. Kiểm tra thực tế trên từng thiết bị/nguồn IPTV vẫn cần thực hiện riêng.
 
-| Hệ | Phiên bản nguồn / bản phát hành | Trạng thái và tệp |
+| Nền tảng | Phiên bản và trạng thái | Tải về / sử dụng |
 |---|---|---|
-| **Electron · Windows/macOS** | **4.23.76** từ `build-sources/electron-desktop` | [Bộ cài Beta có thật: Windows Setup/Portable, Mac ARM/Intel, source, SHA256](https://github.com/trisanghy/open-iptv-pro/releases/tag/electron-v4.23.76). Stable trước đó: [v4.23.71](https://github.com/trisanghy/open-iptv-pro/releases/tag/v4.23.71). Đang kiểm thử và build lại bản 4.23.76 từ `main` để phát hành Stable bất biến. |
-| **Rust Lab/Tauri · Windows/macOS** | **v23.8.98** | [Windows Setup/Portable, macOS Universal DMG, source và SHA256](https://github.com/trisanghy/open-iptv-pro/releases/tag/rust-lab/v23.8.98) · **Beta**; chưa được chứng nhận trên thiết bị thực hoặc các pipeline AI |
-| **Mobile Capacitor · Android/iOS** | **4.23.17-mobile.35** | [Android APK debug, iOS IPA unsigned, ảnh và source](https://github.com/trisanghy/open-iptv-pro/releases/tag/mobile/v4.23.17.35) · **Beta**; IPA cần ký trước khi cài lên iPhone |
-| **Web Online · mọi thiết bị** | `web/online` mới nhất (CI Pages thành công 22/11) | [Mở Web Online](https://trisanghy.github.io/open-iptv-pro/) · [So sánh và tải đúng nền tảng](https://trisanghy.github.io/open-iptv-pro/tai-ve.html) |
+| **Electron Desktop — Windows x64** | **v4.23.76 Stable** | [Windows Setup EXE](https://github.com/trisanghy/open-iptv-pro/releases/download/v4.23.76/Open-IPTV-Pro-Setup-4.23.76-x64.exe) · [Windows Portable EXE](https://github.com/trisanghy/open-iptv-pro/releases/download/v4.23.76/Open-IPTV-Pro-4.23.76-x64.exe) |
+| **Electron Desktop — macOS** | **v4.23.76 Stable** | [DMG Apple Silicon](https://github.com/trisanghy/open-iptv-pro/releases/download/v4.23.76/Open-IPTV-Pro-4.23.76-mac-arm64.dmg) · [DMG Intel](https://github.com/trisanghy/open-iptv-pro/releases/download/v4.23.76/Open-IPTV-Pro-4.23.76-mac-x64.dmg) |
+| **Rust Lab/Tauri — Windows/macOS** | **v23.8.98 Beta** | [Windows Setup/Portable, Universal DMG, Source, SHA256](https://github.com/trisanghy/open-iptv-pro/releases/tag/rust-lab/v23.8.98); chưa chứng nhận phát/AI trên thiết bị thực |
+| **Mobile Capacitor — Android/iOS** | **v4.23.17-mobile.35 Beta** | [APK debug, IPA unsigned, source, ảnh và checksum](https://github.com/trisanghy/open-iptv-pro/releases/tag/mobile/v4.23.17.35); IPA cần ký hợp lệ trước khi cài trên iPhone |
+| **Web Online — Desktop/mobile browser** | **Mã mới nhất từ `web/online`** | [Mở trình phát Web](https://trisanghy.github.io/open-iptv-pro/) · [Bảng so sánh + file tải từng nền tảng](https://trisanghy.github.io/open-iptv-pro/tai-ve.html) |
 
-Các bộ cài trên đã được kiểm tra theo danh sách asset GitHub; kết quả CI/build không thay thế kiểm thử phát IPTV/AI trên máy thật. **Không gọi Rust Lab hoặc Mobile là Stable chỉ vì GitHub Release không đặt cờ prerelease đúng cách.** Xem [so sánh chi tiết và giới hạn](docs/PHAT_HANH_DA_NEN_TANG_2026_11_22.md).
+[**Bộ source Electron Stable 4.23.76 và SHA256SUMS**](https://github.com/trisanghy/open-iptv-pro/releases/tag/v4.23.76) · [**So sánh chi tiết, tính năng mới và giới hạn**](docs/PHAT_HANH_DA_NEN_TANG_2026_11_22.md) · [**Stable cũ 4.23.71**](https://github.com/trisanghy/open-iptv-pro/releases/tag/v4.23.71).
+
+**Tính năng mới Electron 4.23.76:** bộ biểu tượng player SVG đồng nhất, tinh chỉnh giao diện Light, trình đo GPU encoder VideoToolbox/NVENC/AMF/QSV khi phần cứng và FFmpeg hỗ trợ, quản lý cache riêng của app. **Chưa có AI super-resolution/upscale 4K hoạt động thực.** Rust Lab 23.8.98 cải tiến Dark/AMOLED, thống nhất icon Web và giữ phụ đề/dịch/TTS thử nghiệm; Mobile .35 cải thiện đăng nhập/đồng bộ và điều khiển cảm ứng; Web hỗ trợ nhiều chủ đề trên desktop/mobile.
+
+**Lưu ý cài macOS:** bản DMG chưa ký/notarize có thể bị Gatekeeper cảnh báo. Đảm bảo tải từ release chính thức, xác thực SHA-256, rồi vào **Cài đặt hệ thống → Quyền riêng tư & Bảo mật → Vẫn mở** nếu hệ điều hành cho phép. Việc xóa quarantine hoặc tắt toàn bộ Gatekeeper không được khuyến nghị. Người dùng cần có quyền xem hợp pháp đối với mọi file/URL M3U nhập vào phần mềm.
 
 ### Đồng bộ nhiều nền tảng
 
@@ -25,9 +30,9 @@ Web, Electron, Rust Lab/Tauri và Mobile dùng chung dự án Supabase `zjbsvqry
 
 
 
-**Trình phát IPTV đa nền tảng · Electron v4.23.71 Stable / v4.23.72 Beta · Rust Lab v23.8.74 Beta · Mobile Capacitor v4.23.17-mobile.35 Beta · Web Online**
+**Trình phát IPTV đa nền tảng · Electron v4.23.76 Stable / v4.23.72 Beta · Rust Lab v23.8.74 Beta · Mobile Capacitor v4.23.17-mobile.35 Beta · Web Online**
 
-[**Electron Stable mới nhất**](https://github.com/trisanghy/open-iptv-pro/releases/tag/v4.23.71) · [**Electron Beta có giao diện mới**](https://github.com/trisanghy/open-iptv-pro/releases/tag/electron-v4.23.72) · [**Rust Lab Beta có giao diện mới**](https://github.com/trisanghy/open-iptv-pro/releases/tag/rust-lab/v23.8.74) · [**Android/iOS Mobile Beta có giao diện mới**](https://github.com/trisanghy/open-iptv-pro/releases/tag/mobile/v4.23.17.35) · [**Mở Web Online**](https://trisanghy.github.io/open-iptv-pro/) · [**Xem mã nguồn**](https://github.com/trisanghy/open-iptv-pro) · [**Nhật ký thay đổi**](CHANGELOG.md)
+[**Electron Stable mới nhất**](https://github.com/trisanghy/open-iptv-pro/releases/tag/v4.23.76) · [**Electron Beta có giao diện mới**](https://github.com/trisanghy/open-iptv-pro/releases/tag/electron-v4.23.72) · [**Rust Lab Beta có giao diện mới**](https://github.com/trisanghy/open-iptv-pro/releases/tag/rust-lab/v23.8.74) · [**Android/iOS Mobile Beta có giao diện mới**](https://github.com/trisanghy/open-iptv-pro/releases/tag/mobile/v4.23.17.35) · [**Mở Web Online**](https://trisanghy.github.io/open-iptv-pro/) · [**Xem mã nguồn**](https://github.com/trisanghy/open-iptv-pro) · [**Nhật ký thay đổi**](CHANGELOG.md)
 
 Open IPTV Pro là ứng dụng mã nguồn mở được phát triển như **một dự án cá nhân**, giúp người dùng phát và tự tổ chức các nguồn IPTV/M3U mà **chính họ cung cấp** trên macOS, Windows, Android, iOS hoặc trình duyệt (tùy phiên bản). Trọng tâm là xem kênh nhanh, quản lý danh sách hiệu quả, ưu tiên Yêu thích, sử dụng thuận tiện trên cửa sổ nhỏ hoặc màn hình lớn, và có thêm công cụ EPG, ghi hình, kiểm tra luồng cùng AI phụ đề ngoại tuyến.
 
@@ -43,15 +48,15 @@ Open IPTV Pro là ứng dụng mã nguồn mở được phát triển như **m�
 
 Trong **Xem truyền hình → Danh sách kênh**, bộ lọc **◷ Vừa xem** nằm cạnh **★ Yêu thích**. Kênh gần đây xuất hiện trước, không tạo mục trùng, nhấn vào kênh để phát lại và vẫn đánh dấu sao bình thường. Danh sách tự ẩn những kênh đã xóa hoặc thuộc nguồn đang tắt. Electron và Rust ghi nhận kênh sau khi phát thành công; Web ghi nhận kênh khi được mở. Lịch sử được lưu trong dữ liệu ứng dụng, khôi phục khi mở lại. Số mục tối đa do mỗi phiên bản quản lý riêng.
 
-**Lưu ý về phát hành:** Các build Beta mới (Electron v4.23.71, Rust Lab v23.8.69, Mobile .34) có tệp tải thật trên GitHub Releases. Tính năng liên quan đăng nhập/chuyển dữ liệu đa thiết bị vẫn cần kiểm thử trên thiết bị thật trước khi triển khai rộng.
+**Lưu ý về phát hành:** Các build Beta mới (Electron v4.23.76, Rust Lab v23.8.98, Mobile .34) có tệp tải thật trên GitHub Releases. Tính năng liên quan đăng nhập/chuyển dữ liệu đa thiết bị vẫn cần kiểm thử trên thiết bị thật trước khi triển khai rộng.
 
 ## 1. Các phiên bản
 
 > **Đọc trên điện thoại:** mỗi phiên bản có mục riêng thay vì bảng bốn cột gây xuống dòng và khó đọc trên GitHub Mobile.
 
-### Electron Desktop — v4.23.71 Stable (Beta và Stable lịch sử vẫn lưu lại)
+### Electron Desktop — v4.23.76 Stable (Beta và Stable lịch sử vẫn lưu lại)
 
-**macOS (Apple Silicon / Intel) và Windows x64.** Bản sử dụng hằng ngày, với công cụ native và tính năng desktop nâng cao. [Tải Electron v4.23.71 Stable](https://github.com/trisanghy/open-iptv-pro/releases/tag/v4.23.71), [Beta v4.23.71](https://github.com/trisanghy/open-iptv-pro/releases/tag/electron-v4.23.72) hoặc [Stable v4.23.70 lịch sử](https://github.com/trisanghy/open-iptv-pro/releases/tag/v4.23.70).
+**macOS (Apple Silicon / Intel) và Windows x64.** Bản sử dụng hằng ngày, với công cụ native và tính năng desktop nâng cao. [Tải Electron v4.23.76 Stable](https://github.com/trisanghy/open-iptv-pro/releases/tag/v4.23.76), [Beta v4.23.71](https://github.com/trisanghy/open-iptv-pro/releases/tag/electron-v4.23.72) hoặc [Stable v4.23.70 lịch sử](https://github.com/trisanghy/open-iptv-pro/releases/tag/v4.23.70).
 
 ### Rust Lab — v23.8.75 Beta độc lập
 
