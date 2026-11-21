@@ -44,3 +44,15 @@
  #poWatchFlowPanel .po-flowplus-nav button{font-size:10px;padding:7px}
  #poWatchFlowPanel .po-flowplus-nav #poFlowPluszap{margin-left:0}
 }
+
+/* P5.1.81: screenshot P5.1.80 had a two-row toolbar over the TV player.
+   Keep all five WatchFlow modes together and preserve full accessible names. */
+#poWatchFlowPanel .po-flowplus-nav{flex-wrap:nowrap!important;gap:5px!important;min-width:0!important}
+#poWatchFlowPanel .po-flowplus-nav button{
+ flex:0 0 auto!important;white-space:nowrap!important;padding:7px 7px!important;
+}
+#poWatchFlowPanel .po-flowplus-nav button svg{width:14px!important;height:14px!important}
+@media(max-width:560px){
+ #poWatchFlowPanel .po-flowplus-nav{overflow-x:auto!important;scrollbar-width:thin!important;scrollbar-color:#44655e transparent!important}
+ #poWatchFlowPanel .po-flowplus-nav button{padding:7px 6px!important}
+}

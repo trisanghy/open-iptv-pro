@@ -50,3 +50,15 @@ test('WatchFlow Plus UI only plays after an explicit click and uses native chann
  assert.ok(html.includes('positron-watchflow-next.js'));
  assert.ok(html.includes('positron-watchflow-next.css'));
 });
+
+test('P5.1.81 WatchFlow Plus presents all modes in one row with full accessible names',()=>{
+ const js=fs.readFileSync('renderer/positron-watchflow-next.js','utf8');
+ const css=fs.readFileSync('renderer/positron-watchflow-next.css','utf8');
+ const qa=fs.readFileSync('scripts/positron-20-extension.cjs','utf8');
+ assert.ok(js.includes("['continue','Gần đây','history']"));
+ assert.ok(js.includes("b.setAttribute('aria-label',fullLabels[key])"));
+ assert.ok(css.includes('.po-flowplus-nav{flex-wrap:nowrap!important'));
+ assert.ok(css.includes('.po-flowplus-nav{overflow-x:auto!important'));
+ for(const key of ['plusQA.navOneRow,true','plusQA.navNoOverflow,true','plusQA.ariaFull,true'])assert.ok(qa.includes(key)||qa.includes("'navOneRow','navNoOverflow','ariaFull'"));
+ assert.ok(qa.includes('positron-watchflow-plus-mix-450-metadata-qa-real.png'));
+});

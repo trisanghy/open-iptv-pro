@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.164",
-  "description": "Positron P5.1.80: WatchFlow Plus — Smart Zap, Continue, Similar, Daily Mix",
+  "version": "4.23.165",
+  "description": "Positron P5.1.81: compact accessible WatchFlow mode toolbar",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

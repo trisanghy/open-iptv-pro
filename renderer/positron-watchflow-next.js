@@ -18,11 +18,11 @@
  const toolbar=d.createElement('nav');
  toolbar.className='po-flowplus-nav';toolbar.setAttribute('aria-label','Khám phá WatchFlow');
  const choices=[
-  ['discover','Khám phá','compass'],
-  ['continue','Tiếp tục xem','history'],
+  ['discover','Gợi ý','compass'],
+  ['continue','Gần đây','history'],
   ['similar','Cùng gu','layers'],
   ['mix','Mix hôm nay','shuffle'],
-  ['zap','Smart Zap','zap']
+  ['zap','Zap','zap']
  ];
  const paths={
   compass:'<circle cx="12" cy="12" r="9"/><path d="m15 9-2 4-4 2 2-4 4-2Z"/>',
@@ -36,7 +36,9 @@
   const b=d.createElement('button');b.type='button';b.id='poFlowPlus'+key;
   b.dataset.flowplusMode=key;b.setAttribute('aria-pressed',String(key==='discover'));
   b.innerHTML='<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+paths[icon]+'</svg><span>'+label+'</span>';
-  b.title=label;buttons[key]=b;toolbar.append(b);
+  const fullLabels={discover:'Khám phá kênh',continue:'Tiếp tục xem',similar:'Kênh cùng gu',mix:'Mix hôm nay',zap:'Smart Zap'};
+  b.title=fullLabels[key];b.setAttribute('aria-label',fullLabels[key]);
+  buttons[key]=b;toolbar.append(b);
  }
  modes.before(toolbar);
  const content=d.createElement('section');content.id='poFlowPlusResults';content.className='po-flowplus-results';

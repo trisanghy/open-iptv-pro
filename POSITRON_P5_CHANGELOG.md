@@ -554,3 +554,8 @@ P5.1.46 same-version CI repair: run 44866650681 failed 2/611 because historical 
 - P5.1.78 real Electron TV shows a trailing `•••` icon that does not communicate the Timeshift/recording/tool collection and looks out-of-place against the other monochrome player icons.
 - Render a monochrome sliders SVG as part of the existing native toggle in `positron-fifty.js`, overriding only the legacy pseudo-element dots; retain the actual button, its localized text, click handler, aria-expanded, tooltip and saved open/closed state.
 - Extend real Electron CDP checks for vector presence, pseudo removal and icon survival across open/close transitions. Add Node regression. CI/release pending.
+
+## P5.1.81 — Single-row WatchFlow Plus toolbar (this batch round 04/20)
+- Actual P5.1.80 Electron mix screenshot showed the new five modes wrapped awkwardly into two rows, covering player content and reducing the visible card list.
+- Shorten only the visual button captions and preserve complete localized names via aria-label/title. Force one logical row at desktop and allow horizontal scrolling for very narrow screens; maintain all five mode buttons, Smart Zap manual-only playback and keyboard controls.
+- Add CDP actual layout assertions and a 450px Electron screenshot, plus Node regression; version tag/CI prerelease remain subject to Actions verification.

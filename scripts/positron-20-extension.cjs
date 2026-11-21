@@ -1044,13 +1044,22 @@ async function runTwenty(page){
    resumeButton:!!document.getElementById('poFlowPluscontinue'),
    similarButton:!!document.getElementById('poFlowPlussimilar'),
    zapButton:!!document.getElementById('poFlowPluszap'),
-   notPlaying:window.IPTVState.getCurrent()===null
+   notPlaying:window.IPTVState.getCurrent()===null,
+   navOneRow:(()=>{const a=[...panel.querySelectorAll('.po-flowplus-nav button')];return a.length===5&&a.every(b=>Math.abs(b.getBoundingClientRect().top-a[0].getBoundingClientRect().top)<=1);})(),
+   navNoOverflow:(()=>{const a=panel.querySelector('.po-flowplus-nav');return a.scrollWidth<=a.clientWidth+1;})(),
+   ariaFull:[...panel.querySelectorAll('.po-flowplus-nav button')].every(b=>b.getAttribute('aria-label')?.length>=5)
   };
  });
  assert.equal(plusQA.mixCards,5,'WatchFlow Plus must display five real-native metadata QA channels');
- for(const key of ['mixSelected','resumeButton','similarButton','zapButton','notPlaying'])
+ for(const key of ['mixSelected','resumeButton','similarButton','zapButton','notPlaying','navOneRow','navNoOverflow','ariaFull'])
   assert.equal(plusQA[key],true,'WatchFlow Plus QA failed: '+key);
  await page.screenshot({path:path.join(out,'positron-watchflow-plus-mix-552-metadata-qa-real.png'),animations:'disabled'});
+ await page.setViewportSize({width:450,height:820});
+ const narrowFlow=await page.evaluate(()=>{const nav=document.querySelector('#poWatchFlowPanel .po-flowplus-nav');return {scrollable:nav.scrollWidth<=nav.clientWidth+1||getComputedStyle(nav).overflowX==='auto',oneRow:[...nav.querySelectorAll('button')].every(b=>Math.abs(b.getBoundingClientRect().top-nav.querySelector('button').getBoundingClientRect().top)<=1)};});
+ assert.equal(narrowFlow.scrollable,true,'WatchFlow modes are inaccessible at mobile 450px');
+ assert.equal(narrowFlow.oneRow,true,'WatchFlow modes wrap despite compact responsive labels');
+ await page.screenshot({path:path.join(out,'positron-watchflow-plus-mix-450-metadata-qa-real.png'),animations:'disabled'});
+ await page.setViewportSize({width:1360,height:820});
  await page.evaluate(()=>window.PositronWatchFlow.close());
   const report={type:'Positron P5 twenty distinct desktop screenshot cases',realElectron:true,syntheticChannels:false,
   screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA};
