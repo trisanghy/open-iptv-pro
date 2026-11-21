@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.125",
-  "description": "Positron P5.1.41: compact logged-out account settings without shrinking inputs",
+  "version": "4.23.126",
+  "description": "Positron P5.1.42: visually distinguish disabled Smart Doctor analysis",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

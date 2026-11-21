@@ -284,3 +284,9 @@ P5.1.37 same-round screenshot feedback: Electron capture failed TV 450px at comp
 - Input: opened actual P5.1.40 Electron Settings 1360px screenshot from artifact 14691385846; logged-out Supabase account panel is >300px tall before any PiP/Theme/Backup setting accordions.
 - Repair: Positron-only desktop CSS compresses logged-out card padding, header, status, help link and footer spacing; preserves OTP/email input and submit button native min-height 44px, no auth logic or data changes. Logged-in/mobile unaffected by `:has(#portableCloudEmailForm:not([hidden]))` and `@media(min-width:900px)`.
 - Regression: real Electron Settings screenshot checks card height 200–290px, input/button >=42px, status visible; Node CSS source test. Must inspect after image and verify CI/release before counting.
+
+## File (8) batch · Round 09/20 · P5.1.42 / v4.23.126
+- Input: opened P5.1.41 actual Electron Doctor at 1360px, artifact 14691221839. Zero-channel guard correctly disables analyses, but primary buttons `Chẩn đoán ngay` and `Phân tích` still show light beige, unlike disabled secondary actions.
+- Cause: legacy primary button palette has greater visual emphasis, not overridden by empty-source guard.
+- Repair: state-specific Positron Doctor CSS enforces neutral background/text, grayscale and disabled pointer only for four buttons with `:disabled[data-positron-no-channels=true]`. Native analysis, source data, report/export untouched.
+- Regression: Node source test; real Electron screenshot check each Doctor button is disabled, guarded and neutral with background luma <140. Await direct screenshot review/CI/release before certifying.
