@@ -63,6 +63,10 @@ jobs:
            fs.writeFileSync('screenshots/web-svg-inspection.json',JSON.stringify(svgChecks,null,2));
            if(svgChecks.some(x=>!x.icon.includes('data:image/svg+xml')))
              throw Error('Missing Web SVG masks: '+JSON.stringify(svgChecks));
+           await page.waitForTimeout(250);
+           const duplicates=await page.evaluate(()=>['prevBtn','playBtn','stopBtn','nextBtn','fullscreenBtn','fsPrev','fsPlay','fsNext','fsExit','openGuideBtn','favCurrentBtn'].filter(id=>(document.getElementById(id)?.textContent||'').trim().length>0));
+           fs.writeFileSync('screenshots/icon-duplicate-inspection.json',JSON.stringify(duplicates));
+           if(duplicates.length)throw Error('Legacy glyph visible next to SVG: '+duplicates.join(', '));
            await page.screenshot({path:'screenshots/electron-player-svg-main-real.png',fullPage:false});
 
            await page.waitForTimeout(800);
