@@ -70,3 +70,12 @@ test('Horizon defeats the legacy p50 sidebar width and retains an expandable rai
  assert.ok(audit.includes('railCycle.restored,true'));
  assert.ok(audit.includes('positron-watchflow-'));
 });
+
+test('Horizon does not show overflowing rail text or clipped search at 1250px',()=>{
+ const css=read('renderer/positron-horizon-v4.css');
+ assert.ok(css.includes('po-horizon.p50-04:not([data-po-rail-expanded="true"])'));
+ assert.ok(css.includes('font-size:0!important;line-height:0!important'));
+ assert.ok(css.includes('po-horizon.p50-04[data-po-rail-expanded="true"]'));
+ assert.ok(css.includes('p50-46 #positronBar #positronOpen .p-command-label'));
+ assert.ok(css.includes('max-width:none!important;white-space:nowrap!important;overflow:visible!important'));
+});

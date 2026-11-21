@@ -396,3 +396,8 @@ P5.1.46 same-version CI repair: run 44866650681 failed 2/611 because historical 
 - First Horizon Node tests passed, but Electron capture run #44873746200 failed: P4's `.p50-01 #appShell > #appSidebar` specificity still forced 206px even while the new Horizon compact rail state was selected.
 - Root-cause fix adds a more specific compact 68px / explicit expanded 206px layout rule; native hidden-sidebar preference remains respected, removes the duplicate legacy burger and gives empty-player onboarding the actual full stage instead of a nested inset rectangle.
 - Electron audit now **clicks** expand/compact twice and checks measured widths plus restoration, and captures an additional real WatchFlow panel screenshot. No version bump: same P5.1.56 round; build release remains pending fresh CI confirmation.
+
+### P5.1.56 screenshot follow-up #2
+- CI attempt #44874090231 reached the redesigned TV 1360 screenshot and the interactive WatchFlow capture. It detected a second inherited P50 style conflict at 1250px: search label max-width:110px clipped visible text.
+- The 1360px screenshot also showed overflowing native sidebar labels after the width issue was fixed. Horizon now explicitly hides only rail text in compact mode (keeping SVG and full tooltip/ARIA) and restores it in expanded mode. At 1000–1280px the command button allows its actual text width, avoiding ellipsis. These are substantive visual regressions found in actual Electron captures, not simulated placeholders.
+- Retest same immutable P5.1.56 target until UI audit and CI succeed; no misleading release claim.

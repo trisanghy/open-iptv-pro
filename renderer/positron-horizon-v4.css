@@ -411,3 +411,32 @@ html[data-positron="true"].po-v3.po-horizon #page-tv #playerBox #emptyPlayer:not
   width:56px!important;min-width:56px!important;max-width:56px!important;flex:0 0 56px!important;
  }
 }
+
+/* P5.1.56 screenshot QA #2: collapsing the rail exposed P50's more-specific
+   11px text-size on native nav buttons. Hide LABEL GLYPHS visually only while
+   compact; preserve SVG, original button DOM, aria-label and expanded labels. */
+html[data-positron="true"].po-v3.po-horizon.p50-04:not([data-po-rail-expanded="true"]) #appShell > #appSidebar button.nav{
+ font-size:0!important;line-height:0!important;letter-spacing:0!important;
+ width:49px!important;max-width:49px!important;padding:0!important;
+ display:flex!important;align-items:center!important;justify-content:center!important;
+ white-space:nowrap!important;overflow:hidden!important;
+}
+html[data-positron="true"].po-v3.po-horizon.p50-04[data-po-rail-expanded="true"] #appShell > #appSidebar button.nav{
+ font-size:12px!important;line-height:1.2!important;white-space:nowrap!important;
+}
+html[data-positron="true"].po-v3.po-horizon #appSidebar button.nav > span svg{
+ display:block!important;width:21px!important;height:21px!important;flex-shrink:0!important;
+}
+@media(min-width:1000px) and (max-width:1280px){
+ html[data-positron="true"].po-v3.po-horizon.p50-46 #positronBar #positronOpen{
+  min-width:184px!important;max-width:232px!important;width:auto!important;flex:0 0 auto!important;
+ }
+ html[data-positron="true"].po-v3.po-horizon.p50-46 #positronBar #positronOpen .p-command-label{
+  max-width:none!important;white-space:nowrap!important;overflow:visible!important;text-overflow:clip!important;
+ }
+}
+@media(max-width:760px){
+ html[data-positron="true"].po-v3.po-horizon.p50-48:not([data-po-rail-expanded="true"]) #appShell > #appSidebar button.nav{
+  width:43px!important;max-width:43px!important;
+ }
+}
