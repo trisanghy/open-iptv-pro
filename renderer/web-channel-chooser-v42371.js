@@ -76,8 +76,14 @@
  function recentList(){return recent.visible(store(),channels(),favorites.key);}
  function candidates(){
   let result=tab==='fav'?favoritesList():tab==='recent'?recentList():channels();
-  const q=normalize(search.value.trim()),g=group.value;
-  if(q)result=result.filter(c=>normalize(c.name+' '+(c.group||'')).includes(q));
+  // P5.1.135: viewer-entered terms may appear in any order in a channel's
+  // local name or group (e.g. "001 Channel QA" finds "QA Channel 001").
+  // Never search private stream URLs, and never load any external source.
+  const terms=normalize(search.value.trim()).split(/\s+/).filter(Boolean),g=group.value;
+  if(terms.length)result=result.filter(c=>{
+   const searchable=normalize(c.name+' '+(c.group||''));
+   return terms.every(term=>searchable.includes(term));
+  });
   if(g)result=result.filter(c=>normalize(c.group||'').includes(normalize(g))||normalize(c.name).startsWith(normalize(g)));
   if(tab!=='recent'){const dir=sort.value==='desc'?-1:1;result=[...result].sort((a,b)=>dir*String(a.name||'').localeCompare(String(b.name||''),'vi',{numeric:true,sensitivity:'base'}));}
   return result;

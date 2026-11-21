@@ -2640,9 +2640,35 @@ async function runTwenty(page){
  for(const [key,value] of Object.entries(keyboardFavoriteQA))
   assert.equal(value,true,'P5.1.134 real Electron press F Favorite '+key+': '+JSON.stringify(keyboardFavoriteQA));
 
+
+ // P5.1.135: user searches by reordered local title/group keywords.
+ // Before-image shows the unfiltered native channel list; after shows one result.
+ await page.screenshot({path:path.join(out,'positron-p51135-reordered-search-before-450-real.png'),animations:'disabled'});
+ await page.fill('#webChooserSearch','001 Channel QA');
+ await page.waitForFunction(()=>document.querySelectorAll('#webChooserGrid button.web-chooser-card').length===1
+  &&document.querySelector('#webChooserGrid .web-chooser-name')?.textContent==='QA Channel 001',{timeout:4000});
+ const multiTermSearchQA=await page.evaluate(()=>{
+  const titles=[...document.querySelectorAll('#webChooserGrid .web-chooser-name')].map(n=>n.textContent);
+  return {reorderedKeywordsFindChannel:titles.length===1&&titles[0]==='QA Channel 001',
+   actualSearchText:document.getElementById('webChooserSearch').value==='001 Channel QA',
+   noAutoplay:window.IPTVState.getCurrent()===null,
+   noHorizontalOverflow:document.documentElement.scrollWidth<=innerWidth+1};
+ });
+ await page.screenshot({path:path.join(out,'positron-p51135-reordered-search-450-real.png'),animations:'disabled'});
+ await page.fill('#webChooserSearch','qa   001');
+ await page.waitForFunction(()=>document.querySelectorAll('#webChooserGrid button.web-chooser-card').length===1
+  &&document.querySelector('#webChooserGrid .web-chooser-name')?.textContent==='QA Channel 001',{timeout:4000});
+ Object.assign(multiTermSearchQA,await page.evaluate(()=>({
+  repeatedSpacesAccepted:document.querySelectorAll('#webChooserGrid button.web-chooser-card').length===1,
+  noPlaybackAfterAlternateQuery:window.IPTVState.getCurrent()===null
+ })));
+ for(const [key,value] of Object.entries(multiTermSearchQA))
+  assert.equal(value,true,'P5.1.135 native reordered local search '+key+': '+JSON.stringify(multiTermSearchQA));
+ await page.fill('#webChooserSearch','');
+
  await page.setViewportSize({width:1360,height:820});
   const report={type:'Positron P5 twenty distinct desktop screenshot cases',realElectron:true,syntheticChannels:false,
-  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA,chooserQa,toastLayoutQA,nativeToastQA,compactIdleQA,channelChipRailQA,advancedFilterQA,readableCardsQA,keyboardTabQA,favoriteEmptyQA,duplicateEmptyQA,categoryFilterQA,categoryFixtureQA,compactSingleQA,directFavoriteQA,favoriteCountQA,compactToastStackQA,toastDismissQA,toastFocusReturnQA,toastDockQA,wheelQA,pinnedAllQA,pinnedMaskQA,categoryKeyQA,dropdownChipQA,pinnedRightMaskQA,pinnedBorderMaskQA,asciiDSearchQA,emptySearchActionQA,readableCardTitleQA,favoriteSvgQA,keyboardFavoriteQA};
+  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA,chooserQa,toastLayoutQA,nativeToastQA,compactIdleQA,channelChipRailQA,advancedFilterQA,readableCardsQA,keyboardTabQA,favoriteEmptyQA,duplicateEmptyQA,categoryFilterQA,categoryFixtureQA,compactSingleQA,directFavoriteQA,favoriteCountQA,compactToastStackQA,toastDismissQA,toastFocusReturnQA,toastDockQA,wheelQA,pinnedAllQA,pinnedMaskQA,categoryKeyQA,dropdownChipQA,pinnedRightMaskQA,pinnedBorderMaskQA,asciiDSearchQA,emptySearchActionQA,readableCardTitleQA,favoriteSvgQA,keyboardFavoriteQA,multiTermSearchQA};
  fs.writeFileSync(path.resolve('positron-evidence','audit-p5-20-rounds.json'),JSON.stringify(report,null,2));
  return report;
 }

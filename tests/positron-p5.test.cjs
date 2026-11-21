@@ -37,7 +37,7 @@ test('P5 assets are loaded after P4 without replacing it',()=>{
 test('P5 release is immutable and versioned separately from P4.1',()=>{
  const pkg=JSON.parse(read('package.json'));
  const flow=read('.github/workflows/positron-lab.yml');
- assert.equal(pkg.version,'4.23.218');
+ assert.equal(pkg.version,'4.23.219');
  const label=pkg.description.match(/Positron\s+(P\d+\.\d+\.\d+)/)?.[1];
  assert.ok(label,'product P-label must accompany SemVer');
  assert.ok(flow.includes('TAG=positron/v'+pkg.version+'-'+label.toLowerCase()),'release tag and app version must match');
@@ -1176,4 +1176,18 @@ test('P5.1.134 legacy direct Favorite regression checks native SVG fill instead 
  assert.ok(qa.includes('persistedInStorage:'), 'retain persistent Favorite assertion');
  assert.ok(qa.includes('keyboardFocus:'), 'retain keyboard focus assertion');
  assert.ok(!qa.includes("button.textContent==='★'"), 'reject stale font glyph assertion');
+});
+
+test('P5.1.135 tìm kênh nhiều từ không đúng thứ tự vẫn thuần local',()=>{
+ const js=read('renderer/web-channel-chooser-v42371.js');
+ const qa=read('scripts/positron-20-extension.cjs');
+ assert.ok(js.includes("normalize(search.value.trim()).split(/\\s+/).filter(Boolean)"));
+ assert.ok(js.includes('terms.every(term=>searchable.includes(term))'));
+ assert.ok(js.includes("normalize(c.name+' '+(c.group||''))"));
+ assert.ok(!js.includes("normalize(c.name+' '+(c.group||'')).includes(q)"));
+ for(const proof of ["await page.fill('#webChooserSearch','001 Channel QA')",
+  'reorderedKeywordsFindChannel:', 'repeatedSpacesAccepted:', 'noAutoplay:',
+  'positron-p51135-reordered-search-before-450-real.png',
+  'positron-p51135-reordered-search-450-real.png'])
+  assert.ok(qa.includes(proof),'Thiếu kiểm thử Electron: '+proof);
 });

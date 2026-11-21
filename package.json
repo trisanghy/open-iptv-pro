@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.218",
-  "description": "Positron P5.1.134: consistent accessible SVG favorite stars in native channel library",
+  "version": "4.23.219",
+  "description": "Positron P5.1.135: tìm kênh nhiều từ không cần đúng thứ tự",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

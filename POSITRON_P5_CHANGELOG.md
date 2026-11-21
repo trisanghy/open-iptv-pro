@@ -1,3 +1,13 @@
+## P5.1.135 — Tìm kênh nhiều từ không đúng thứ tự / Electron v4.23.219
+
+- Feature priority: NEW — Tìm được kênh bằng nhiều từ khóa trong tên và nhóm dù đảo thứ tự, có khoảng trắng lặp hoặc gõ tiếng Việt không dấu; không truy cập URL, không tự phát video và không đổi dữ liệu.
+- User action: Mở Chọn kênh, gõ "001 Channel QA" hoặc "qa 001" vào Tìm kiếm; kết quả "QA Channel 001" xuất hiện mà không cần gõ chính xác thứ tự.
+- Electron screenshot: positron-p51135-reordered-search-450-real.png
+
+- Ảnh đầu vào: P5.1.134 giao diện chọn kênh 450px, đã mở xem trực tiếp.
+- Kiểm thử: Node regression và Electron thực với truy vấn đảo từ, khoảng trắng, kết quả chính xác, không tự phát và không tràn ngang.
+- Trạng thái: CANDIDATE — chưa tính vòng hoàn tất trước khi kiểm tra CI, ảnh Electron và bộ cài.
+
 ## P5.1.134 — Unified native SVG Favorite stars / Electron v4.23.218
 
 - Feature priority: NEW — Add direct F keyboard toggle to each focused channel card, saving or removing an existing native Favorite without starting playback, with focus restored for repeated use.
