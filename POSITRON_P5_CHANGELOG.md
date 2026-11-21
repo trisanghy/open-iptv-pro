@@ -1,3 +1,12 @@
+## P5.1.140 — Lọc kênh đang có chương trình từ XMLTV / Electron v4.23.224
+
+- Feature priority: NEW — Thêm bộ lọc chỉ hiển thị các kênh có chương trình hiện tại trong lịch EPG/XMLTV đã nhập, kèm tên chương trình ngay trên thẻ; không dự đoán lịch phát và không kiểm tra hoặc tự mở luồng mạng.
+- User action: Mở Chọn kênh → Bộ lọc → bật “Có chương trình đang chiếu (EPG)”; chọn kênh có tên chương trình theo lịch, hoặc tắt bộ lọc để xem toàn bộ.
+- Electron screenshot: positron-p51140-epg-current-filter-after-450-real.png
+- Ảnh đầu vào: positron-p51139-favorites-first-after-450-real.png của phiên bản trước; giữ nguyên các tùy chọn sắp xếp và thao tác kênh.
+- Kiểm thử: Node regression, ảnh Electron 450px trước/sau; chèn tạm metadata XMLTV đúng khoảng thời gian cho một kênh QA, chỉ đúng kênh đó còn hiển thị và có tên chương trình; không sửa playlist, không phát, không tràn ngang, khôi phục guide gốc sau kiểm tra.
+- Trạng thái: CANDIDATE — cần xác minh CI/ảnh chụp Electron thực và Release Windows/Mac, không tính hoàn tất trước đó.
+
 ## P5.1.139 — Ưu tiên kênh yêu thích lên đầu / Electron v4.23.223
 
 - Feature priority: NEW — Thêm tùy chọn sắp xếp “Yêu thích lên đầu” trong danh sách kênh, đưa kênh đã đánh dấu sao lên trước nhưng giữ các kênh khác theo thứ tự tên; chỉ thay đổi cách hiển thị, không sửa playlist hay dữ liệu nguồn.

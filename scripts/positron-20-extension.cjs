@@ -2847,9 +2847,54 @@ async function runTwenty(page){
  }
  await page.fill('#webChooserSearch','');
 
+ // P5.1.140: show only real currently scheduled XMLTV programmes.
+ // Inject one local metadata-only guide, never an IPTV URL or a network fetch.
+ await page.click('[data-chooser-layout="grid"]');
+ await page.fill('#webChooserSearch','QA Channel');
+ await page.waitForFunction(()=>document.querySelector('#webChooserGrid .web-chooser-name')?.textContent==='QA Channel 001'
+  &&document.querySelectorAll('#webChooserGrid button.web-chooser-card').length===18,{timeout:5000});
+ const onAirFixture=await page.evaluate(()=>{
+  const ch=window.IPTVState.getChannels().find(c=>c.name==='QA Channel 001');
+  if(!ch)throw Error('P5.1.140 missing QA Channel 001');
+  const id='qa-positron-140',now=Date.now();
+  window.__positron140OriginalGuide=window.IPTVExtras.getGuide;
+  const guide={names:{[window.IPTVGuide.tidy(ch.name)]:id},
+   aliasesById:{[id]:[ch.name]},
+   programmes:[{id,start:now-60000,end:now+1800000,title:'Chương trình QA hiện tại'}],
+   offsetMinutes:0};
+  window.IPTVExtras.getGuide=()=>guide;
+  document.getElementById('webChooserAdvanced').open=true;
+  return {sourceCount:window.IPTVState.getChannels().length};
+ });
+ await page.screenshot({path:path.join(out,'positron-p51140-epg-current-filter-before-450-real.png'),animations:'disabled'});
+ await page.click('#webChooserOnAirOnly');
+ await page.waitForFunction(()=>document.querySelectorAll('#webChooserGrid button.web-chooser-card').length===1
+  &&document.querySelector('#webChooserGrid .web-chooser-name')?.textContent==='QA Channel 001',{timeout:5000});
+ const onAirFilterQA=await page.evaluate(original=>{
+  const card=document.querySelector('#webChooserGrid button.web-chooser-card');
+  return {
+   optedIn:document.getElementById('webChooserOnAirOnly').checked===true,
+   onlyRealCurrentProgramme:document.querySelectorAll('#webChooserGrid button.web-chooser-card').length===1,
+   selectedExpectedChannel:card?.querySelector('.web-chooser-name')?.textContent==='QA Channel 001',
+   programmeLabel:card?.querySelector('.web-chooser-onair-programme')?.textContent==='Theo EPG: Chương trình QA hiện tại',
+   sourcesUnchanged:window.IPTVState.getChannels().length===original.sourceCount,
+   noAutoplay:window.IPTVState.getCurrent()===null,
+   noHorizontalOverflow:document.documentElement.scrollWidth<=innerWidth+1
+  };
+ },onAirFixture);
+ await page.screenshot({path:path.join(out,'positron-p51140-epg-current-filter-after-450-real.png'),animations:'disabled'});
+ for(const [key,value] of Object.entries(onAirFilterQA))
+  assert.equal(value,true,'P5.1.140 Electron XMLTV-only filter '+key+': '+JSON.stringify(onAirFilterQA));
+ await page.evaluate(()=>{
+  window.IPTVExtras.getGuide=window.__positron140OriginalGuide;
+  document.getElementById('webChooserOnAirOnly').checked=false;
+  document.getElementById('webChooserOnAirOnly').dispatchEvent(new Event('change',{bubbles:true}));
+ });
+ await page.fill('#webChooserSearch','');
+
  await page.setViewportSize({width:1360,height:820});
   const report={type:'Positron P5 twenty distinct desktop screenshot cases',realElectron:true,syntheticChannels:false,
-  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA,chooserQa,toastLayoutQA,nativeToastQA,compactIdleQA,channelChipRailQA,advancedFilterQA,readableCardsQA,keyboardTabQA,favoriteEmptyQA,duplicateEmptyQA,categoryFilterQA,categoryFixtureQA,compactSingleQA,directFavoriteQA,favoriteCountQA,compactToastStackQA,toastDismissQA,toastFocusReturnQA,toastDockQA,wheelQA,pinnedAllQA,pinnedMaskQA,categoryKeyQA,dropdownChipQA,pinnedRightMaskQA,pinnedBorderMaskQA,asciiDSearchQA,emptySearchActionQA,readableCardTitleQA,favoriteSvgQA,keyboardFavoriteQA,multiTermSearchQA,keyboardSearchQA,arrowNavigationQA,pageNavigationQA,favoriteSortQA};
+  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA,chooserQa,toastLayoutQA,nativeToastQA,compactIdleQA,channelChipRailQA,advancedFilterQA,readableCardsQA,keyboardTabQA,favoriteEmptyQA,duplicateEmptyQA,categoryFilterQA,categoryFixtureQA,compactSingleQA,directFavoriteQA,favoriteCountQA,compactToastStackQA,toastDismissQA,toastFocusReturnQA,toastDockQA,wheelQA,pinnedAllQA,pinnedMaskQA,categoryKeyQA,dropdownChipQA,pinnedRightMaskQA,pinnedBorderMaskQA,asciiDSearchQA,emptySearchActionQA,readableCardTitleQA,favoriteSvgQA,keyboardFavoriteQA,multiTermSearchQA,keyboardSearchQA,arrowNavigationQA,pageNavigationQA,favoriteSortQA,onAirFilterQA};
  fs.writeFileSync(path.resolve('positron-evidence','audit-p5-20-rounds.json'),JSON.stringify(report,null,2));
  return report;
 }

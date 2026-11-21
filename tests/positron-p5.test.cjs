@@ -37,7 +37,7 @@ test('P5 assets are loaded after P4 without replacing it',()=>{
 test('P5 release is immutable and versioned separately from P4.1',()=>{
  const pkg=JSON.parse(read('package.json'));
  const flow=read('.github/workflows/positron-lab.yml');
- assert.equal(pkg.version,'4.23.223');
+ assert.equal(pkg.version,'4.23.224');
  const label=pkg.description.match(/Positron\s+(P\d+\.\d+\.\d+)/)?.[1];
  assert.ok(label,'product P-label must accompany SemVer');
  assert.ok(flow.includes('TAG=positron/v'+pkg.version+'-'+label.toLowerCase()),'release tag and app version must match');
@@ -1240,4 +1240,22 @@ test('P5.1.139 tùy chọn yêu thích lên đầu chỉ sắp xếp hiển th�
   'positron-p51139-favorites-first-before-450-real.png',
   'positron-p51139-favorites-first-after-450-real.png'])
   assert.ok(qa.includes(token),'Thiếu Electron QA: '+token);
+});
+
+test('P5.1.140 lọc theo chương trình hiện tại chỉ từ EPG/XMLTV đã nhập',()=>{
+ const js=read('renderer/web-channel-chooser-v42371.js');
+ const css=read('renderer/web-channel-chooser-v42371.css');
+ const qa=read('scripts/positron-20-extension.cjs');
+ for(const token of ["onAirOnly.id='webChooserOnAirOnly'",
+  "onAirOnly.addEventListener('change'","epg?.lookup(guide,c,clock,window.IPTVGuide)",
+  "card.append(now)","onAirOnly.checked=false;page=0;render();"])
+  assert.ok(js.includes(token),'Thiếu hành vi EPG: '+token);
+ assert.ok(css.includes('#page-tv #webChooserOnAirOnly'));
+ assert.ok(css.includes('.web-chooser-onair-programme'));
+ assert.ok(!/fetch\s*\(|XMLHttpRequest/.test(js),'Không tự tải lịch EPG hoặc stream');
+ for(const token of ["await page.click('#webChooserOnAirOnly')",
+  'onlyRealCurrentProgramme:','programmeLabel:','sourcesUnchanged:','noAutoplay:',
+  'positron-p51140-epg-current-filter-before-450-real.png',
+  'positron-p51140-epg-current-filter-after-450-real.png'])
+  assert.ok(qa.includes(token),'Thiếu QA Electron: '+token);
 });

@@ -38,3 +38,9 @@
 #page-tv .web-channel-chooser button:focus-visible,#page-tv .web-channel-chooser input:focus-visible,#page-tv .web-channel-chooser select:focus-visible{outline:2px solid #44ec91;outline-offset:2px}
 @media(max-width:1050px){#page-tv .web-channel-chooser{grid-template-columns:1fr}#page-tv .web-chooser-side{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:650px){#page-tv .web-chooser-side{grid-template-columns:1fr}#page-tv .web-chooser-heading{padding:10px}#page-tv .web-chooser-filters{padding:10px}#page-tv .web-chooser-grid{grid-template-columns:repeat(auto-fill,minmax(80px,1fr))}}
+
+/* P5.1.140: native, opt-in XMLTV filter and on-air title in chooser only. */
+#page-tv #webChooserOnAirOnly{flex:0 0 16px!important;width:16px;height:16px;min-height:0;padding:0;accent-color:#3ce888}
+#page-tv label.web-chooser-onair-filter{display:flex;align-items:center;gap:8px;min-width:0;line-height:1.4;cursor:pointer}
+#page-tv .web-chooser-onair-programme{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;max-width:100%;font-size:10px;line-height:1.25;font-weight:400;opacity:.85;text-align:center;word-break:break-word}
+#page-tv .web-chooser-grid.list .web-chooser-onair-programme{text-align:left;flex:1;min-width:0}

@@ -60,6 +60,15 @@
  const chooserAdvancedSummary=document.createElement('summary');
  chooserAdvancedSummary.textContent='Bộ lọc';chooserAdvancedSummary.title='Nhóm và sắp xếp kênh';
  chooserAdvanced.append(chooserAdvancedSummary);
+ // P5.1.140: opt-in XMLTV-only filter; no network or stream probe.
+ const onAirOnly=document.createElement('input');
+ onAirOnly.type='checkbox';onAirOnly.id='webChooserOnAirOnly';
+ onAirOnly.setAttribute('aria-label','Chỉ kênh có chương trình đang chiếu theo lịch EPG đã nhập');
+ const onAirLabel=document.createElement('label');
+ onAirLabel.className='web-chooser-onair-filter';
+ onAirLabel.append(onAirOnly,document.createTextNode('Có chương trình đang chiếu (EPG)'));
+ onAirLabel.title='Chỉ dùng XMLTV đã lưu; không xác nhận trạng thái phát trực tuyến';
+ chooserAdvanced.append(onAirLabel);
  [...filterControls.querySelectorAll('label')].forEach(label=>chooserAdvanced.append(label));
  filterControls.append(chooserAdvanced);
  const compactFilterMedia=window.matchMedia('(max-width:600px)');
@@ -91,6 +100,13 @@
    return terms.every(term=>searchable.includes(term));
   });
   if(g)result=result.filter(c=>normalize(c.group||'').includes(normalize(g))||normalize(c.name).startsWith(normalize(g)));
+  if(onAirOnly.checked){
+   // Lookup accepts only current programme windows from the existing XMLTV.
+   let guide=null;
+   try{guide=window.IPTVExtras?.getGuide?.()||null;}catch{}
+   const clock=Date.now(),epg=window.PositronOnAirCore;
+   result=result.filter(c=>Boolean(epg?.lookup(guide,c,clock,window.IPTVGuide)));
+  }
   if(tab!=='recent'){
    const dir=sort.value==='desc'?-1:1;
    const favoriteFirst=sort.value==='fav-first';
@@ -105,6 +121,11 @@
   }
   return result;
  }
+ function dummyNowLabel(){
+  const tag=document.createElement('small');
+  tag.className='web-chooser-onair-programme';
+  return tag;
+ }
  function channelCard(ch,compact=false){
   const card=document.createElement('button');card.type='button';card.className='web-chooser-card'+(compact?' compact':'');
   card.dataset.channelId=ch.id;card.title='Xem '+(ch.name||'Kênh');
@@ -113,6 +134,17 @@
   if(ch.logo){const img=document.createElement('img');img.src=ch.logo;img.alt='';img.loading='lazy';img.referrerPolicy='no-referrer';img.addEventListener('error',()=>{img.remove();face.textContent='TV';},{once:true});face.append(img);}else face.textContent='TV';
   const name=document.createElement('span');name.className='web-chooser-name';name.textContent=ch.name||'Không tên';
   card.append(face,name);
+  if(!compact&&onAirOnly.checked){
+   let guide=null;
+   try{guide=window.IPTVExtras?.getGuide?.()||null;}catch{}
+   const item=window.PositronOnAirCore?.lookup(guide,ch,Date.now(),window.IPTVGuide);
+   if(item){
+    const now=dummyNowLabel();
+    now.textContent='Theo EPG: '+item.title;
+    now.title='Chương trình theo lịch XMLTV đã nhập: '+item.title;
+    card.append(now);
+   }
+  }
   if(active){const flag=document.createElement('span');flag.className='web-chooser-playing';flag.textContent='▶';card.append(flag);}
   card.addEventListener('click',()=>{void state.playChannel(ch.id);render();});
   // P5.1.118: P5.1.117 screenshot has a full-width channel tile, but users
@@ -258,7 +290,9 @@
    // with 552 imported channels but an incorrect generic "not found" message.
    // Explain true first-use states; retain filters/data and offer a reversible
    // one-click path back to browsing without starting playback.
-   let message='Không tìm thấy kênh phù hợp với bộ lọc hiện tại.';
+   let message=onAirOnly.checked
+    ?'Không có chương trình đang chiếu trong EPG đã nhập. Hãy tắt bộ lọc hoặc cập nhật lịch phát.'
+    :'Không tìm thấy kênh phù hợp với bộ lọc hiện tại.';
    if(tab==='fav')message=favoritesList().length
     ?'Không có kênh yêu thích phù hợp với bộ lọc.'
     :'Chưa có kênh yêu thích. Nhấn biểu tượng sao ở một kênh để lưu vào đây.';
@@ -270,12 +304,12 @@
    // search clearly, but a typo/no-match on the All tab previously stranded
    // the user on a generic empty card with no direct reset action.
    // Use the existing native empty-state button style; never mutate source data.
-   if(tab==='all'&&(search.value.trim()||group.value)){
+   if(tab==='all'&&(search.value.trim()||group.value||onAirOnly.checked)){
     const clear=document.createElement('button');clear.type='button';
     clear.id='poChooserClearFilters';clear.className='po-chooser-empty-action';
     clear.textContent='Xóa bộ lọc và xem tất cả kênh';
     clear.addEventListener('click',()=>{
-     search.value='';group.value='';page=0;render();
+     search.value='';group.value='';onAirOnly.checked=false;page=0;render();
      search.focus({preventScroll:true});
     });
     grid.append(clear);
@@ -394,6 +428,7 @@
  grid.title='PageDown: trang tiếp; PageUp: trang trước, không tự phát kênh';
  search.title='Nhập tên kênh rồi nhấn Enter để chọn kết quả đầu tiên';
  search.addEventListener('input',()=>{page=0;schedule();});
+ onAirOnly.addEventListener('change',()=>{page=0;render();});
  // P5.1.128: when the user selects a group from the native advanced dropdown,
  // reveal its matching quick chip instead of leaving the active state offscreen.
  // Native chip clicks keep their existing restored horizontal position.
