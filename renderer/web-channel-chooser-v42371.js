@@ -95,8 +95,17 @@
   // local name or group (e.g. "001 Channel QA" finds "QA Channel 001").
   // Never search private stream URLs, and never load any external source.
   const terms=normalize(search.value.trim()).split(/\s+/).filter(Boolean),g=group.value;
+  // P5.1.141: opt-in programme-title search, only from genuine local XMLTV.
+  // Keep normal search name/group only when the EPG switch is off.
+  let guideForSearch=null;
+  if(onAirOnly.checked && terms.length){
+   try{guideForSearch=window.IPTVExtras?.getGuide?.()||null;}catch{}
+  }
+  const searchClock=Date.now();
   if(terms.length)result=result.filter(c=>{
-   const searchable=normalize(c.name+' '+(c.group||''));
+   const currentProgramme=onAirOnly.checked
+    ?(window.PositronOnAirCore?.lookup(guideForSearch,c,searchClock,window.IPTVGuide)?.title||''):'';
+   const searchable=normalize(c.name+' '+(c.group||''))+' '+normalize(currentProgramme);
    return terms.every(term=>searchable.includes(term));
   });
   if(g)result=result.filter(c=>normalize(c.group||'').includes(normalize(g))||normalize(c.name).startsWith(normalize(g)));
@@ -428,7 +437,10 @@
  grid.title='PageDown: trang tiếp; PageUp: trang trước, không tự phát kênh';
  search.title='Nhập tên kênh rồi nhấn Enter để chọn kết quả đầu tiên';
  search.addEventListener('input',()=>{page=0;schedule();});
- onAirOnly.addEventListener('change',()=>{page=0;render();});
+ onAirOnly.addEventListener('change',()=>{
+  search.placeholder=onAirOnly.checked?'Tìm kênh hoặc chương trình EPG…':'Tìm kiếm kênh...';
+  page=0;render();
+ });
  // P5.1.128: when the user selects a group from the native advanced dropdown,
  // reveal its matching quick chip instead of leaving the active state offscreen.
  // Native chip clicks keep their existing restored horizontal position.

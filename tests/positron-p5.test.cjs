@@ -37,7 +37,7 @@ test('P5 assets are loaded after P4 without replacing it',()=>{
 test('P5 release is immutable and versioned separately from P4.1',()=>{
  const pkg=JSON.parse(read('package.json'));
  const flow=read('.github/workflows/positron-lab.yml');
- assert.equal(pkg.version,'4.23.224');
+ assert.equal(pkg.version,'4.23.225');
  const label=pkg.description.match(/Positron\s+(P\d+\.\d+\.\d+)/)?.[1];
  assert.ok(label,'product P-label must accompany SemVer');
  assert.ok(flow.includes('TAG=positron/v'+pkg.version+'-'+label.toLowerCase()),'release tag and app version must match');
@@ -1265,4 +1265,19 @@ test('P5.1.140 kiểm thử P5.1.139 so danh sách nguồn theo tập ID, không
  assert.ok(qa.includes("current.slice().sort().join('|')===original.channels.split('|').sort().join('|')"));
  assert.ok(qa.includes('current.length===originalCount'));
  assert.ok(qa.includes('noAutoplay:window.IPTVState.getCurrent()===null'));
+});
+
+test('P5.1.141 tìm chương trình XMLTV đang chiếu bằng tên có dấu hoặc không dấu',()=>{
+ const js=read('renderer/web-channel-chooser-v42371.js'),qa=read('scripts/positron-20-extension.cjs');
+ for(const token of ["guideForSearch=window.IPTVExtras?.getGuide?.()",
+  "window.PositronOnAirCore?.lookup(guideForSearch,c,searchClock,window.IPTVGuide)?.title",
+  "normalize(c.name+' '+(c.group||''))+' '+normalize(currentProgramme)",
+  "onAirOnly.checked?'Tìm kênh hoặc chương trình EPG…'"])
+  assert.ok(js.includes(token),'Thiếu tìm chương trình theo XMLTV '+token);
+ for(const token of ["await page.fill('#webChooserSearch','tin yeu thich')",
+  'matchesProgrammeWithoutChannelKeywords:','programmeTitleIsFromXMLTV:',
+  'sourceCountStable:','noAutoplay:',
+  'positron-p51141-programme-title-search-before-450-real.png',
+  'positron-p51141-programme-title-search-after-450-real.png'])
+  assert.ok(qa.includes(token),'Thiếu Electron QA '+token);
 });

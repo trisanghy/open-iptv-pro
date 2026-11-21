@@ -2892,9 +2892,58 @@ async function runTwenty(page){
  });
  await page.fill('#webChooserSearch','');
 
+ // P5.1.141: programme-title discovery on the native TV chooser.
+ // Search phrase appears only in current XMLTV title, NOT in channel name.
+ await page.click('[data-chooser-layout="grid"]');
+ await page.fill('#webChooserSearch','QA Channel');
+ await page.waitForFunction(()=>document.querySelector('#webChooserGrid .web-chooser-name')?.textContent==='QA Channel 001'
+  &&document.querySelectorAll('#webChooserGrid button.web-chooser-card').length===18,{timeout:5000});
+ const epgSearchFixture=await page.evaluate(()=>{
+  const channel=window.IPTVState.getChannels().find(c=>c.name==='QA Channel 001');
+  if(!channel)throw Error('P5.1.141 missing QA channel');
+  const id='qa-positron-141',now=Date.now();
+  window.__positron141OriginalGuide=window.IPTVExtras.getGuide;
+  const guide={names:{[window.IPTVGuide.tidy(channel.name)]:id},
+   aliasesById:{[id]:[channel.name]},
+   programmes:[{id,start:now-60000,end:now+1800000,title:'Bản tin yêu thích QA'}],
+   offsetMinutes:0};
+  window.IPTVExtras.getGuide=()=>guide;
+  const toggle=document.getElementById('webChooserOnAirOnly');
+  toggle.checked=true;toggle.dispatchEvent(new Event('change',{bubbles:true}));
+  document.getElementById('webChooserAdvanced').open=true;
+  return {sources:window.IPTVState.getChannels().length};
+ });
+ await page.waitForFunction(()=>document.querySelectorAll('#webChooserGrid button.web-chooser-card').length===1,{timeout:5000});
+ await page.screenshot({path:path.join(out,'positron-p51141-programme-title-search-before-450-real.png'),animations:'disabled'});
+ await page.fill('#webChooserSearch','tin yeu thich');
+ await page.waitForFunction(()=>document.querySelectorAll('#webChooserGrid button.web-chooser-card').length===1
+  &&document.querySelector('#webChooserGrid .web-chooser-name')?.textContent==='QA Channel 001',{timeout:5000});
+ const programmeSearchQA=await page.evaluate(original=>{
+  const card=document.querySelector('#webChooserGrid button.web-chooser-card');
+  return {
+   matchesProgrammeWithoutChannelKeywords:card?.querySelector('.web-chooser-name')?.textContent==='QA Channel 001',
+   programmeTitleIsFromXMLTV:card?.querySelector('.web-chooser-onair-programme')?.textContent==='Theo EPG: Bản tin yêu thích QA',
+   asciiVietnamesePhrase:document.getElementById('webChooserSearch').value==='tin yeu thich',
+   epgOnlyIsOptIn:document.getElementById('webChooserOnAirOnly').checked===true,
+   helpfulSearchPlaceholder:document.getElementById('webChooserSearch').placeholder.includes('chương trình EPG'),
+   sourceCountStable:window.IPTVState.getChannels().length===original.sources,
+   noAutoplay:window.IPTVState.getCurrent()===null,
+   noHorizontalOverflow:document.documentElement.scrollWidth<=innerWidth+1
+  };
+ },epgSearchFixture);
+ await page.screenshot({path:path.join(out,'positron-p51141-programme-title-search-after-450-real.png'),animations:'disabled'});
+ for(const [key,value] of Object.entries(programmeSearchQA))
+  assert.equal(value,true,'P5.1.141 real Electron programme-title search '+key+': '+JSON.stringify(programmeSearchQA));
+ await page.evaluate(()=>{
+  window.IPTVExtras.getGuide=window.__positron141OriginalGuide;
+  const toggle=document.getElementById('webChooserOnAirOnly');
+  toggle.checked=false;toggle.dispatchEvent(new Event('change',{bubbles:true}));
+ });
+ await page.fill('#webChooserSearch','');
+
  await page.setViewportSize({width:1360,height:820});
   const report={type:'Positron P5 twenty distinct desktop screenshot cases',realElectron:true,syntheticChannels:false,
-  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA,chooserQa,toastLayoutQA,nativeToastQA,compactIdleQA,channelChipRailQA,advancedFilterQA,readableCardsQA,keyboardTabQA,favoriteEmptyQA,duplicateEmptyQA,categoryFilterQA,categoryFixtureQA,compactSingleQA,directFavoriteQA,favoriteCountQA,compactToastStackQA,toastDismissQA,toastFocusReturnQA,toastDockQA,wheelQA,pinnedAllQA,pinnedMaskQA,categoryKeyQA,dropdownChipQA,pinnedRightMaskQA,pinnedBorderMaskQA,asciiDSearchQA,emptySearchActionQA,readableCardTitleQA,favoriteSvgQA,keyboardFavoriteQA,multiTermSearchQA,keyboardSearchQA,arrowNavigationQA,pageNavigationQA,favoriteSortQA,onAirFilterQA};
+  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA,chooserQa,toastLayoutQA,nativeToastQA,compactIdleQA,channelChipRailQA,advancedFilterQA,readableCardsQA,keyboardTabQA,favoriteEmptyQA,duplicateEmptyQA,categoryFilterQA,categoryFixtureQA,compactSingleQA,directFavoriteQA,favoriteCountQA,compactToastStackQA,toastDismissQA,toastFocusReturnQA,toastDockQA,wheelQA,pinnedAllQA,pinnedMaskQA,categoryKeyQA,dropdownChipQA,pinnedRightMaskQA,pinnedBorderMaskQA,asciiDSearchQA,emptySearchActionQA,readableCardTitleQA,favoriteSvgQA,keyboardFavoriteQA,multiTermSearchQA,keyboardSearchQA,arrowNavigationQA,pageNavigationQA,favoriteSortQA,onAirFilterQA,programmeSearchQA};
  fs.writeFileSync(path.resolve('positron-evidence','audit-p5-20-rounds.json'),JSON.stringify(report,null,2));
  return report;
 }

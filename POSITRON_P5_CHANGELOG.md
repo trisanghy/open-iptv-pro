@@ -1,3 +1,12 @@
+## P5.1.141 — Tìm theo tên chương trình đang chiếu / Electron v4.23.225
+
+- Feature priority: NEW — Cho phép tìm kênh bằng **tên chương trình đang chiếu** từ XMLTV hiện có ngay trong giao diện TV, không cần mở trang Lịch phát sóng; tìm tiếng Việt không dấu và nhiều từ linh hoạt. Chỉ bật tính năng khi người dùng chủ động lọc EPG.
+- User action: Mở Chọn kênh → Bộ lọc → Có chương trình đang chiếu (EPG), nhập tên chương trình như “tin yeu thich” để tìm kênh đang có chương trình đó theo XMLTV; nhấn vào thẻ mới phát.
+- Electron screenshot: positron-p51141-programme-title-search-after-450-real.png
+- Ảnh đầu vào: positron-p51140-epg-current-filter-after-450-real.png của vòng trước; mở rộng tính năng lọc EPG thành tìm tên chương trình có ích.
+- Kiểm thử: Node regression, Electron 450px với XMLTV metadata chỉ tồn tại cục bộ; tên chương trình “Bản tin yêu thích QA” tìm được qua truy vấn không dấu “tin yeu thich” dù từ khóa không có trong tên kênh; không tự phát, dữ liệu nguồn bất biến và không tràn ngang.
+- Trạng thái: CANDIDATE — xác minh CI, screenshot và Release thực tế trước khi đếm vòng 06/20.
+
 ## P5.1.140 — Lọc kênh đang có chương trình từ XMLTV / Electron v4.23.224
 
 - Feature priority: NEW — Thêm bộ lọc chỉ hiển thị các kênh có chương trình hiện tại trong lịch EPG/XMLTV đã nhập, kèm tên chương trình ngay trên thẻ; không dự đoán lịch phát và không kiểm tra hoặc tự mở luồng mạng.
