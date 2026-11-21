@@ -38,7 +38,9 @@ test('P5 release is immutable and versioned separately from P4.1',()=>{
  const pkg=JSON.parse(read('package.json'));
  const flow=read('.github/workflows/positron-lab.yml');
  assert.equal(pkg.version,'4.23.84');
- assert.ok(flow.includes('positron/v4.23.84-p5.1'));
+ assert.ok(flow.includes('positron/v4.23.85-p5.1.1'));
  assert.ok(read('scripts/positron-50-audit.cjs').includes('runTwenty(page)'));
- assert.ok(flow.includes('Positron-P51-20-Real-Screenshots.zip'));
+ assert.ok(flow.includes('Positron-P511-20-Real-Screenshots.zip'));
 });
+
+test('P5.1.1 sidebar badge matches shipped release instead of stale P4',()=>{const js=read('renderer/positron.js');assert.ok(js.includes("descriptor.textContent='OPEN IPTV PRO · P5.1.1'"));assert.ok(!js.includes('OPEN IPTV PRO · P4 · 50 VÒNG'));});
