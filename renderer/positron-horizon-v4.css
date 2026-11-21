@@ -815,3 +815,30 @@ html[data-positron="true"].po-horizon #page-tv .web-chooser-layout button svg{
   padding:10px 12px!important;margin-top:6px!important;
  }
 }
+
+
+/* P5.1.110: Real P5.1.109 450px Electron screenshot shows a 203px
+   unplayed onboarding canvas above lengthy native controls, keeping the
+   channel library below the fold. Shorten only the idle illustration for
+   compact laptop-height windows; native video always keeps 16:9 geometry. */
+@media(max-width:600px) and (max-height:900px){
+ html[data-positron="true"].po-v3.po-horizon:not(:has(:fullscreen)) #page-tv #playerBox:has(#emptyPlayer:not(.hidden)){
+  aspect-ratio:auto!important;height:164px!important;
+  min-height:164px!important;max-height:164px!important;
+ }
+ html[data-positron="true"].po-v3.po-horizon #page-tv #playerBox #emptyPlayer:not(.hidden){
+  padding:10px 12px!important;
+ }
+ html[data-positron="true"].po-v3.po-horizon #page-tv #playerBox #emptyPlayer:not(.hidden) .empty-icon{
+  display:none!important;
+ }
+ html[data-positron="true"].po-v3.po-horizon #page-tv #playerBox #emptyPlayer:not(.hidden) h2{
+  font-size:16px!important;line-height:1.25!important;margin:0 0 3px!important;
+ }
+ html[data-positron="true"].po-v3.po-horizon #page-tv #playerBox #emptyPlayer:not(.hidden) p{
+  font-size:11.5px!important;line-height:1.35!important;margin:0!important;
+ }
+ html[data-positron="true"].po-v3.po-horizon #page-tv #playerBox #emptyPlayer:not(.hidden) .empty-actions{
+  margin-top:8px!important;
+ }
+}

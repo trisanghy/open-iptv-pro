@@ -1720,9 +1720,41 @@ async function runTwenty(page){
   document.getElementById('toastArea').replaceChildren();return result;
  });
  assert.equal(toastSeverityQA.distinctSeverity,true,'P5.1.109 must preserve distinct warning severity');
+ // P5.1.110: A 450px native screenshot of P5.1.109 puts the channel
+ // library below the fold while no video is playing. Compact only the
+ // onboarding illustration and verify native live video aspect remains 16:9.
+ const compactIdleQA=await page.evaluate(async()=>{
+  const stage=document.getElementById('playerBox');
+  const empty=document.getElementById('emptyPlayer');
+  const title=empty.querySelector('h2').getBoundingClientRect();
+  const info=empty.querySelector('p').getBoundingClientRect();
+  const action=(document.getElementById('poFirstChannelAction')&&!document.getElementById('poFirstChannelAction').hidden)
+   ?document.getElementById('poFirstChannelAction'):document.getElementById('emptyFileBtn');
+  const cta=action.getBoundingClientRect();
+  const before=stage.getBoundingClientRect();
+  const heading=document.querySelector('#webChannelChooser .web-chooser-heading')?.getBoundingClientRect();
+  empty.classList.add('hidden');
+  await new Promise(resolve=>requestAnimationFrame(resolve));
+  const live=stage.getBoundingClientRect();
+  empty.classList.remove('hidden');
+  await new Promise(resolve=>requestAnimationFrame(resolve));
+  const restored=stage.getBoundingClientRect();
+  return {
+   playerHeight:Math.round(before.height),liveWidth:Math.round(live.width),liveHeight:Math.round(live.height),
+   compact:before.height>=145&&before.height<=175,
+   contentFits:title.top>=before.top-1&&info.bottom<cta.top&&cta.bottom<=before.bottom+1&&cta.height>=34,
+   videoUnmodified:Math.abs(live.width/live.height-16/9)<.08,
+   restored:Math.abs(restored.height-before.height)<2,
+   channelFilterReachable:!!heading&&heading.top<innerHeight-120,
+   noHorizontalOverflow:document.documentElement.scrollWidth<=innerWidth+1
+  };
+ });
+ for(const key of ['compact','contentFits','videoUnmodified','restored','channelFilterReachable','noHorizontalOverflow'])
+  assert.equal(compactIdleQA[key],true,'P5.1.110 compact native idle-player regression '+key+': '+JSON.stringify(compactIdleQA));
+ await page.screenshot({path:path.join(out,'positron-p51110-compact-idle-player-450-real.png'),animations:'disabled'});
  await page.setViewportSize({width:1360,height:820});
   const report={type:'Positron P5 twenty distinct desktop screenshot cases',realElectron:true,syntheticChannels:false,
-  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA,chooserQa,toastLayoutQA,nativeToastQA};
+  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA,chooserQa,toastLayoutQA,nativeToastQA,compactIdleQA};
  fs.writeFileSync(path.resolve('positron-evidence','audit-p5-20-rounds.json'),JSON.stringify(report,null,2));
  return report;
 }

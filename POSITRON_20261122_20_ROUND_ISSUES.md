@@ -31,3 +31,13 @@ Not started. Select the next defect only after viewing the current round's after
 
 ## New rounds 03–20
 Not yet started. Choose each new repair from the preceding real screenshot, with its own tests, version, evidence and immutable release.
+
+## New round 03/20 — P5.1.110 / v4.23.194 — CANDIDATE
+- Input: actual manually inspected P5.1.109 450px Electron screenshot `positron-p51109-native-toast-dedupe-450-real.png` (552 synthetic channel metadata, no stream playback); oversized idle video stage pushes channel list down.
+- Root: 16:9 video layout still applied when only onboarding illustration is present; desktop-only compact rule does not apply at 450px.
+- Fix: narrow <600x900 unplayed stage 164px and scaled onboarding text/CTA; live stage remains original ratio, data untouched.
+- Regression Node and native Electron QA + screenshot `positron-p51110-compact-idle-player-450-real.png` with visual review. NOT complete until CI/release verified.
+
+### Completed round 02 evidence
+- P5.1.109 commit `1b2c5d4d55f3d60a9ff64f45529aa181d3a9454e`; immutable tag `positron/v4.23.193-p5.1.109`.
+- CI Actions `44928941637` succeeded 6/6 jobs; 708 tests (703 pass, 5 skipped, 0 failed). Screenshot manually opened, one error toast displayed. Windows EXE and macOS DMG assets independently verified.

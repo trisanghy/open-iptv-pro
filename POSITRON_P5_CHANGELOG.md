@@ -757,3 +757,11 @@ P5.1.81 follow-up: real Electron capture found nav overflow; replace flexible no
 - Fix: coalesce only the same text + severity while the previous toast is still mounted. Different messages or severity remain visible; timeout still removes existing toast after 5.5 seconds. Existing IPTV data, local playlist, player, source and accessibility live region are unchanged.
 - Regression: Node executes extracted native toast function with a DOM stub to verify same/different messages, severity and expiry, plus native Electron 450px invokes IPTVState.toast twice and captures `positron-p51109-native-toast-dedupe-450-real.png` after asserting exactly one message.
 - Status: candidate until GitHub Actions, native screenshot review, immutable release and installers are verified.
+
+
+## P5.1.110 / v4.23.194 — Unplayed 450px player no longer hides the channel library (new batch round 03/20)
+- Input: directly viewed native Electron P5.1.109 screenshot `positron-p51109-native-toast-dedupe-450-real.png`: 552 synthetic metadata-only channels exist, but the empty player consumes a full 203px, pushing their chooser almost below the 820px viewport.
+- Root: the 16:9 ratio is applied to the video stage even in idle mode, when no picture must be preserved. P5.1.74 compacted desktop idle stage only above 900px viewport width.
+- Fix: when viewport <=600x900 only, compact idle onboarding canvas to 164px, remove decorative empty TV icon on narrow view, tighten text/CTA spacing. Native playback retains original 16:9 stage immediately as soon as the empty illustration hides, and remains untouched at fullscreen or larger screens. No playlist or stream changes.
+- Regression: Node guard + real Electron 450px frame height, CTA bounds, channel heading access, aspect after temporarily hiding empty state and restoration; actual image `positron-p51110-compact-idle-player-450-real.png` must be opened and reviewed.
+- Status: candidate; full CI, image review and immutable release pending verification.
