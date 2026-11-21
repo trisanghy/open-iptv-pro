@@ -2697,7 +2697,7 @@ async function runTwenty(page){
 
  // P5.1.137: only focus moves between native channel cards. Test grid and list.
  await page.fill('#webChooserSearch','QA Channel');
- await page.waitForFunction(()=>document.getElementById('webChooserStatus')?.textContent==='552 kênh'
+ await page.waitForFunction(()=>document.querySelector('#webChooserGrid .web-chooser-name')?.textContent==='QA Channel 001'
   &&document.querySelectorAll('#webChooserGrid button.web-chooser-card').length===18,{timeout:4000});
  await page.evaluate(()=>document.querySelector('#webChooserGrid button.web-chooser-card').focus({preventScroll:true}));
  // Wait for pending scheduled render; then verify native tile still owns focus.
@@ -2754,7 +2754,7 @@ async function runTwenty(page){
  // across the 18-card page boundary, with source and playback unchanged.
  await page.click('[data-chooser-layout="grid"]');
  await page.fill('#webChooserSearch','QA Channel');
- await page.waitForFunction(()=>document.getElementById('webChooserStatus')?.textContent==='552 kênh'
+ await page.waitForFunction(()=>document.querySelector('#webChooserGrid .web-chooser-name')?.textContent==='QA Channel 001'
   &&document.querySelectorAll('#webChooserGrid button.web-chooser-card').length===18,{timeout:4000});
  await page.evaluate(()=>document.querySelector('#webChooserGrid button.web-chooser-card').focus({preventScroll:true}));
  await page.screenshot({path:path.join(out,'positron-p51138-page-navigation-before-450-real.png'),animations:'disabled'});
@@ -2791,7 +2791,7 @@ async function runTwenty(page){
  // list, with actual native Favorite controls and reversible local metadata.
  await page.click('[data-chooser-layout="grid"]');
  await page.fill('#webChooserSearch','QA Channel');
- await page.waitForFunction(()=>document.getElementById('webChooserStatus')?.textContent==='552 kênh'
+ await page.waitForFunction(()=>document.querySelector('#webChooserGrid .web-chooser-name')?.textContent==='QA Channel 001'
   &&document.querySelectorAll('#webChooserGrid button.web-chooser-card').length===18,{timeout:5000});
  const favoriteSortBefore=await page.evaluate(()=>{
   const names=window.IPTVState.getChannels().map(ch=>String(ch.id));

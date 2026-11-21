@@ -1223,7 +1223,7 @@ test('P5.1.138 hồi quy: render mới không làm mất focus của thẻ kênh
  const js=read('renderer/web-channel-chooser-v42371.js'),qa=read('scripts/positron-20-extension.cjs');
  assert.ok(js.includes('const focusedCardId=grid.contains(document.activeElement)'));
  assert.ok(js.includes('restored?.focus({preventScroll:true})'));
- assert.ok(qa.includes("document.getElementById('webChooserStatus')?.textContent==='552 kênh'"));
+ assert.ok(qa.includes("document.querySelector('#webChooserGrid .web-chooser-name')?.textContent==='QA Channel 001'"));
  assert.ok(qa.includes("assert.equal(nativeFocusReady,true"));
 });
 

@@ -5,6 +5,7 @@
 - Electron screenshot: positron-p51139-favorites-first-after-450-real.png
 - Ảnh đầu vào: positron-p51138-page-navigation-after-450-real.png trong giao diện Electron 450px có danh sách nhiều trang nhưng chưa có tùy chọn đưa kênh yêu thích lên đầu.
 - Kiểm thử: Node regression và Electron thật tại 450px; bật dấu sao cho kênh QA, chọn sắp xếp, kiểm tra mọi thẻ yêu thích ở đầu, dữ liệu nguồn bất biến, không autoplay, không tràn ngang, có ảnh trước/sau.
+- Sửa CI cùng phiên bản: chờ đúng kênh đầu tiên QA Channel 001 và 18 thẻ thực thay vì so cứng tổng 552; bộ dữ liệu QA đã bổ sung các nhóm mới. Không làm lỏng kiểm chứng focus, điều hướng hoặc không tự phát.
 - Trạng thái: CANDIDATE — chỉ ghi vòng 04/20 hoàn tất khi CI, ảnh Electron và Release Windows/Mac thực sự đạt.
 
 ## P5.1.138 — Chuyển trang kênh bằng PageDown/PageUp / Electron v4.23.222
