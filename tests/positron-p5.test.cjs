@@ -1130,3 +1130,11 @@ test('P5.1.133 compact multi-result channel titles wrap above native separate fa
   'positron-p51133-compact-card-title-star-450-real.png'])
   assert.ok(qa.includes(t),'missing real compact card proof '+t);
 });
+
+test('P5.1.133 CI assertions use actual previous and current screenshot names',()=>{
+ const wf=read('.github/workflows/positron-lab.yml');
+ assert.ok(wf.includes('positron-p51132-empty-search-clear-before-450-real.png'));
+ assert.ok(wf.includes('positron-p51132-empty-search-clear-after-450-real.png'));
+ assert.ok(wf.includes('positron-p51133-compact-card-title-star-450-real.png'));
+ assert.ok(!wf.includes('positron-p51133-empty-search-clear-before-450-real.png'));
+});

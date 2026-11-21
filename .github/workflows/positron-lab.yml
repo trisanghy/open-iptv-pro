@@ -167,7 +167,6 @@ jobs:
           test -s positron-evidence/p5-20-rounds/positron-p51129-right-mask-450-real.png
           test -s positron-evidence/p5-20-rounds/positron-p51130-border-mask-450-real.png
           test -s positron-evidence/p5-20-rounds/positron-p51131-ascii-d-search-450-real.png
-          test -s positron-evidence/p5-20-rounds/positron-p51133-empty-search-clear-before-450-real.png
           test -s positron-evidence/p5-20-rounds/positron-p51132-empty-search-clear-before-450-real.png
           test -s positron-evidence/p5-20-rounds/positron-p51132-empty-search-clear-after-450-real.png
           test -s positron-evidence/p5-20-rounds/positron-p51133-compact-card-title-star-450-real.png
@@ -278,7 +277,7 @@ jobs:
           else
             if gh release create "$TAG" release-stage/*.dmg release-stage/*.exe release-stage/*.png release-stage/audit-p4-50-rounds.json release-stage/audit-p5-20-rounds.json release-stage/*.zip release-stage/SHA256SUMS.txt \
               --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" \
-              --title 'Open IPTV Pro Positron P5.1.133 — Mask ghost category text beside sticky All' \
+              --title 'Open IPTV Pro Positron P5.1.133 — Readable compact channel names and separate favorites' \
               --notes "Positron $TAG at $GITHUB_SHA. Full change history is included as POSITRON_P5_CHANGELOG.md in the Source ZIP asset. Native Electron screenshots, reports and installer checksums are attached." --prerelease --latest=false 2>/tmp/positron-release-error; then
               echo 'GitHub Release successfully created.'
             elif grep -Eq '(HTTP 403|Resource not accessible by integration)' /tmp/positron-release-error; then
