@@ -44,6 +44,12 @@ jobs:
           node --test tests/positron-site-language.test.cjs
           python -m py_compile scripts/build-positron-feature-site.py
           python scripts/build-positron-feature-site.py
+          node --check docs/positron-workflow/app.js
+          node --test tests/positron-workflow-site.test.cjs
+          mkdir -p site/positron-workflow
+          cp docs/positron-workflow/index.html docs/positron-workflow/style.css docs/positron-workflow/app.js docs/positron-workflow/data.json site/positron-workflow/
+          test -s site/positron-workflow/index.html
+          test -s site/positron-workflow/app.js
           test -s site/positron-features/index.html
           test -s site/positron-features/catalog.json
           test -s docs/positron-features/FEATURES.md
