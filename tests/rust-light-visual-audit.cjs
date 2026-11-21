@@ -16,6 +16,15 @@ const components=color=>{
  const m=String(color).match(/(?:rgba?\(\s*|color\(srgb\s+)([\d.]+)[\s,]+([\d.]+)[\s,]+([\d.]+)/);
  return m?m.slice(1,4).map(n=>Number(n)*(color.startsWith('color(')?255:1)):null;
 };
+
+function contrastRatio(a,b){
+ const brightness=rgb=>{
+  const v=rgb.map(x=>{const c=x/255;return c<=.04045?c/12.92:((c+.055)/1.055)**2.4;});
+  return .2126*v[0]+.7152*v[1]+.0722*v[2];
+ };
+ const A=brightness(a),B=brightness(b);return (Math.max(A,B)+.05)/(Math.min(A,B)+.05);
+}
+
 (async()=>{
  const browser=await chromium.launch({headless:true,executablePath:process.env.CHROME||'/usr/bin/google-chrome',args:['--no-sandbox','--disable-gpu']});
  const context=await browser.newContext({viewport:{width:1500,height:940}});
@@ -54,6 +63,18 @@ const components=color=>{
    if(rgb&&Math.max(...rgb)<175)throw Error('Rust Light contains dark surface: '+JSON.stringify({id,sample}));
   }
   report.push(row);
+  if(id==='tv'){
+   const selected=await page.evaluate(()=>{
+    const el=document.querySelector('#page-tv .channel-panel .filter-tab.active');
+    if(!el)return null;
+    const s=getComputedStyle(el);
+    return {label:el.textContent.trim(),color:s.color,bg:s.backgroundColor};
+   });
+   if(!selected)throw Error('Rust Light channel active filter missing');
+   const fg=components(selected.color),bg=components(selected.bg);
+   if(!fg||!bg||contrastRatio(fg,bg)<4.5)throw Error('Rust Light selected channel filter has insufficient contrast: '+JSON.stringify({selected,ratio:fg&&bg?contrastRatio(fg,bg):null}));
+   report.push({contrastReview:selected,ratio:contrastRatio(fg,bg)});
+  }
   await page.waitForTimeout(180);
   await page.screenshot({path:path.join(dest,'rust-light-'+id+'.png'),fullPage:false});
  }

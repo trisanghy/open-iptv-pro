@@ -2,7 +2,11 @@ name: Audit Rust Lab Light theme (renderer browser preview)
 on:
   push:
     branches: [experiment/rust-tauri-v2]
-    paths: [.github/workflows/audit-rust-light-ui.yml]
+    paths:
+      - .github/workflows/audit-rust-light-ui.yml
+      - renderer/rust-light-consistency-v23-8-92.css
+      - tests/rust-light-visual-audit.cjs
+      - tests/rust-light-consistency-v23-8-92.test.cjs
   workflow_dispatch:
 permissions:
   contents: read
