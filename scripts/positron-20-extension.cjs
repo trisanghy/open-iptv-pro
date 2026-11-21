@@ -1320,6 +1320,41 @@ async function runTwenty(page){
   const panel=document.getElementById('poWatchFlowPanel');panel.scrollTop=panel.scrollHeight;
  });
  await page.screenshot({path:path.join(out,'positron-p5197-watch-later-many-552-real.png'),animations:'disabled'});
+
+ // P5.1.100: deep scroll 12 saved channels and prove close and mode
+ // navigation are actually visible and hit-testable in real Electron.
+ const stickyWatchLaterQA=await page.evaluate(()=>{
+  const panel=document.getElementById('poWatchFlowPanel');
+  const header=panel.querySelector('.po-watchflow-head');
+  const close=document.getElementById('poWatchFlowClose');
+  const nav=panel.querySelector('.po-flowplus-nav');
+  panel.scrollTop=panel.scrollHeight;
+  const pr=panel.getBoundingClientRect(),hr=header.getBoundingClientRect();
+  const cr=close.getBoundingClientRect(),nr=nav.getBoundingClientRect();
+  const target=document.elementFromPoint(cr.left+cr.width/2,cr.top+cr.height/2);
+  const player=document.querySelector('#page-tv .player-control-card')?.getBoundingClientRect();
+  return {scrollable:panel.scrollHeight>panel.clientHeight+10,
+   twelveCards:panel.querySelectorAll('#poFlowPlusResults .po-flowplus-card').length===12,
+   pinnedHeader:getComputedStyle(header).position==='sticky'&&hr.top>=pr.top-2&&hr.top<pr.top+6,
+   pinnedNav:getComputedStyle(nav).position==='sticky'&&nr.top>=pr.top+35&&nr.top<pr.top+95,
+   closeVisible:cr.width>30&&cr.top>=pr.top-1&&cr.bottom<=pr.bottom,
+   closeHit:close===target||close.contains(target),
+   navVisible:nr.bottom<=pr.bottom-10,
+   playerClear:!!player&&pr.bottom<=player.top-12,
+   noAutoPlay:window.IPTVState.getCurrent()===null};
+ });
+ for(const key of ['scrollable','twelveCards','pinnedHeader','pinnedNav','closeVisible','closeHit','navVisible','playerClear','noAutoPlay'])
+  assert.equal(stickyWatchLaterQA[key],true,'Watch Later sticky header Electron QA failed: '+key);
+ await page.screenshot({path:path.join(out,'positron-p51100-watch-later-sticky-552-real.png'),animations:'disabled'});
+ const stickyWatchLaterClose=await page.evaluate(()=>{
+  const panel=document.getElementById('poWatchFlowPanel'),close=document.getElementById('poWatchFlowClose');
+  close.click();
+  const hidden=panel.hidden;
+  window.PositronWatchFlow.open(); // restore the prior QA view for subsequent EPG scenarios
+  return hidden&&!panel.hidden;
+ });
+ assert.equal(stickyWatchLaterClose,true,'Watch Later close/reopen must work after deep scroll');
+
  await page.evaluate(()=>{
   const core=window.PositronWatchLaterCore;localStorage.setItem(core.STORAGE_KEY,'[]');
   window.dispatchEvent(new StorageEvent('storage',{key:core.STORAGE_KEY,newValue:'[]'}));

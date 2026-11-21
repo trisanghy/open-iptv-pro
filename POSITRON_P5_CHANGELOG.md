@@ -1,3 +1,10 @@
+## P5.1.100 — WatchFlow header and mode tabs remain visible in long saved lists / Electron v4.23.184
+
+- Real P5.1.98 Electron screenshots of 12 saved bookmarks demonstrate that the close icon and mode tabs disappear after scrolling to the end, even with accessible bookmark pagination.
+- Keep header and mode selector sticky in the existing WatchFlow dialog, using compact typography and dark background while preserving the native TV transport, EPG, and local-only saved state.
+- Test with 12 synthetic metadata-only saved channels on actual Electron CDP. Assert scrollability, header/nav position, hit-testable close icon, non-obstruction of native player, no autoplay, and close/reopen. Capture `positron-p51100-watch-later-sticky-552-real.png`.
+- Node regression guards CSS and real Electron QA setup. This is a new source revision, not a relabel of 70 historic screenshot scenarios. Release verification is independent and may be blocked by GitHub token HTTP 403.
+
 ## P5.1.99 — Upcoming programme in WatchFlow directly from XMLTV / Electron v4.23.183
 
 - Feature: extend actual Now cards with the first Next XMLTV programme and its local start time. Reuse `IPTVGuide.current()` and existing channel/manual mappings, EPG offset and user's device time zone. Never infer a programme title from a channel or network search.

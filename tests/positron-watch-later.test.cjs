@@ -73,3 +73,14 @@ test('Watch Later exposes bookmark 9-80 via accessible batches',()=>{
  assert.ok(qa.includes('positron-p5197-watch-later-many-552-real.png'));
  assert.ok(qa.includes('manySavedQA[key],true'));
 });
+
+test('P5.1.100 WatchFlow keeps close and mode navigation visible after saved-list scrolling',()=>{
+ const css=fs.readFileSync('renderer/positron-watchflow-next.css','utf8');
+ const qa=fs.readFileSync('scripts/positron-20-extension.cjs','utf8');
+ assert.ok(css.includes('#poWatchFlowPanel.po-watchflow-panel .po-watchflow-head'));
+ assert.ok(css.includes('#poWatchFlowPanel.po-watchflow-panel .po-flowplus-nav'));
+ assert.ok(css.includes('position:sticky!important'));
+ assert.ok(qa.includes('stickyWatchLaterQA[key],true'));
+ assert.ok(qa.includes('stickyWatchLaterClose,true'));
+ assert.ok(qa.includes('positron-p51100-watch-later-sticky-552-real.png'));
+});

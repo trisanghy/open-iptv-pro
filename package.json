@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.183",
-  "description": "Positron P5.1.99: Next programme from genuine XMLTV in WatchFlow",
+  "version": "4.23.184",
+  "description": "Positron P5.1.100: sticky WatchFlow close and mode tabs for long saved lists",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",
