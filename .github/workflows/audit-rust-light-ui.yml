@@ -5,9 +5,11 @@ on:
     paths:
       - .github/workflows/audit-rust-light-ui.yml
       - renderer/rust-light-consistency-v23-8-92.css
+      - renderer/rust-light-feature-polish-v23-8-97.css
       - tests/rust-light-visual-audit.cjs
       - tests/rust-feature-gallery-v23-8-97.cjs
       - tests/rust-light-consistency-v23-8-92.test.cjs
+      - tests/rust-light-feature-polish-v23-8-97.test.cjs
   workflow_dispatch:
 permissions:
   contents: read
@@ -38,7 +40,7 @@ jobs:
           NODE_PATH: ${{ runner.temp }}/iptv-playwright/node_modules
         run: |
           set -Eeuo pipefail
-          node --test tests/rust-light-consistency-v23-8-92.test.cjs
+          node --test tests/rust-light-consistency-v23-8-92.test.cjs tests/rust-light-feature-polish-v23-8-97.test.cjs
           CHROME="$(command -v google-chrome)" node tests/rust-light-visual-audit.cjs
       - name: Capture all Rust Lab feature pages and expanded panels
         shell: bash
