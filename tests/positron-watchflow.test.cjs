@@ -56,7 +56,7 @@ test('Horizon system loads last, preserves native player, covers every page',()=
  for(const part of ['#appSidebar','#page-tv .tv-layout','#page-tv #playerBox','#channelList','.page:not(#page-tv)','#page-sources','#emptyPlayer'])
   assert.ok(css.includes(part),part+' not covered by Horizon design');
  assert.ok(!/html\[data-positron.*#video\s*\{[^}]*object-fit:/s.test(css),'video fit must remain user-configurable');
- assert.equal(JSON.parse(read('package.json')).version,'4.23.149');
+ assert.equal(JSON.parse(read('package.json')).version,'4.23.150');
 });
 
 test('Horizon defeats the legacy p50 sidebar width and retains an expandable rail',()=>{
@@ -145,4 +145,13 @@ test('P5.1.65 WatchFlow restores keyboard focus and announces the source action'
  assert.ok(audit.includes('watchFlow.focusEntered,true'));
  assert.ok(audit.includes('watchFlow.firstUsefulFocus,true'));
  assert.ok(audit.includes('watchFlow.focusReturned,true'));
+});
+
+test('P5.1.66 WatchFlow close action is a 42px SVG target, not a platform glyph',()=>{
+ const ui=read('renderer/positron-horizon-v4.js'),css=read('renderer/positron-horizon-v4.css'),audit=read('scripts/positron-20-extension.cjs');
+ assert.ok(ui.includes('id="poWatchFlowClose"'));
+ assert.ok(ui.includes('M18 6 6 18M6 6l12 12'));
+ assert.ok(css.includes('width:42px;height:42px;flex:0 0 42px'));
+ assert.ok(audit.includes('watchFlow.closeTapSize>=40'));
+ assert.ok(audit.includes('watchFlow.closeVector,true'));
 });

@@ -262,6 +262,9 @@ async function runTwenty(page){
      const groupCount=panel.querySelectorAll('[data-po-mode]').length;
      const reasons=panel.textContent.includes('bằng chứng hoạt động');
      const titleColor=getComputedStyle(panel.querySelector('h2')).color;
+     const closeRect=document.getElementById('poWatchFlowClose').getBoundingClientRect();
+     const closeTapSize=Math.min(closeRect.width,closeRect.height);
+     const closeVector=!!panel.querySelector('#poWatchFlowClose svg path');
      const panelRect=panel.getBoundingClientRect();
      const importRect=document.getElementById('emptyUrlBtn')?.getBoundingClientRect();
      const titleRect=document.querySelector('#emptyPlayer h2')?.getBoundingClientRect();
@@ -271,7 +274,7 @@ async function runTwenty(page){
      const modesHidden=getComputedStyle(panel.querySelector('.po-watchflow-modes')).display==='none';
      document.getElementById('poWatchFlowClose').click();
      const focusReturned=document.activeElement===button;
-     return {opened,groupCount,reasons,titleColor,emptyPlaylist,modesHidden,overlapWithImport,overlapWithTitle,focusEntered,firstUsefulFocus,focusReturned,panelWidth:panelRect.width,closed:panel.hidden&&button.getAttribute('aria-expanded')==='false'};
+     return {opened,groupCount,reasons,titleColor,emptyPlaylist,modesHidden,overlapWithImport,overlapWithTitle,focusEntered,firstUsefulFocus,focusReturned,closeTapSize,closeVector,panelWidth:panelRect.width,closed:panel.hidden&&button.getAttribute('aria-expanded')==='false'};
     });
     assert.equal(watchFlow.opened,true,'WatchFlow cannot open: '+name);
     assert.equal(watchFlow.closed,true,'WatchFlow cannot close: '+name);
@@ -284,6 +287,8 @@ async function runTwenty(page){
     assert.equal(watchFlow.focusEntered,true,'WatchFlow dialog did not receive keyboard focus: '+name);
     assert.equal(watchFlow.firstUsefulFocus,true,'Empty WatchFlow did not focus source action: '+name);
     assert.equal(watchFlow.focusReturned,true,'Closing WatchFlow did not restore toolbar focus: '+name);
+    assert.equal(watchFlow.closeVector,true,'WatchFlow close control does not use vector artwork: '+name);
+    assert.ok(watchFlow.closeTapSize>=40,'WatchFlow close control is too small: '+name);
     assert.ok(watchFlow.panelWidth<=320,'Empty WatchFlow too wide at 1360px: '+name);
     const titleRgb=(watchFlow.titleColor.match(/\d+/g)||[]).slice(0,3).map(Number);
     assert.ok(titleRgb.length===3&&titleRgb.every(x=>x>200),

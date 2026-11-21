@@ -308,7 +308,7 @@ html[data-positron="true"].po-horizon :is(button,.btn):disabled{cursor:not-allow
 .po-watchflow-head p{font-size:12px;color:#a6c0c5;line-height:1.55;margin:0 0 14px;max-width:355px}
 .po-watchflow-head #poWatchFlowClose{
  background:transparent;color:#bdcfd1;border:1px solid #405a61;border-radius:9px;
- width:30px;height:30px;flex:0 0 30px;font-size:22px;cursor:pointer;
+ width:42px;height:42px;flex:0 0 42px;display:grid;place-items:center;font-size:0;cursor:pointer;
 }
 .po-watchflow-modes{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 15px}
 .po-watchflow-modes button{
@@ -526,3 +526,6 @@ html[data-positron="true"].po-v3.po-horizon #page-tv .unified-ai-row .unified-ai
 
 /* P5.1.65: ensure dialog controls have an unmistakable focus ring. */
 .po-watchflow-panel button:focus-visible{outline:2px solid #91e8d6!important;outline-offset:3px!important}
+
+/* P5.1.66: explicit vector close icon with sufficiently large keyboard/touch target. */
+.po-watchflow-head #poWatchFlowClose svg{width:20px;height:20px;pointer-events:none;stroke:currentColor;fill:none}

@@ -23,7 +23,7 @@
  panel.setAttribute('role','dialog');panel.setAttribute('aria-modal','false');
  panel.setAttribute('aria-labelledby','poWatchFlowTitle');
  panel.innerHTML=`
- <header class="po-watchflow-head"><div><span class="po-watchflow-kicker">KHÁM PHÁ KÊNH CỦA BẠN</span><h2 id="poWatchFlowTitle">Xem gì bây giờ?</h2><p>Chọn theo chủ đề, ưu tiên kênh có bằng chứng hoạt động. Không cần tải dữ liệu bên ngoài.</p></div><button type="button" id="poWatchFlowClose" aria-label="Đóng gợi ý kênh" title="Đóng">×</button></header>
+ <header class="po-watchflow-head"><div><span class="po-watchflow-kicker">KHÁM PHÁ KÊNH CỦA BẠN</span><h2 id="poWatchFlowTitle">Xem gì bây giờ?</h2><p>Chọn theo chủ đề, ưu tiên kênh có bằng chứng hoạt động. Không cần tải dữ liệu bên ngoài.</p></div><button type="button" id="poWatchFlowClose" aria-label="Đóng gợi ý kênh" title="Đóng"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button></header>
  <div class="po-watchflow-modes" role="group" aria-label="Chủ đề gợi ý">
  <button type="button" data-po-mode="all" aria-pressed="true">Dành cho bạn</button>
  <button type="button" data-po-mode="news" aria-pressed="false">Tin tức</button>

@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.149",
-  "description": "Positron P5.1.65: WatchFlow keyboard focus and visible focus ring",
+  "version": "4.23.150",
+  "description": "Positron P5.1.66: WatchFlow vector close icon and accessible hit target",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",
