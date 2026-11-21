@@ -6,6 +6,30 @@
 
 > README tiếng Việt là tài liệu kỹ thuật đầy đủ. Các bản dịch quốc tế là hướng dẫn tóm lược có liên kết đến mã nguồn, bộ cài, ảnh giao diện và thông báo bản quyền chính thức.
 
+## Tính năng mới nổi bật — cập nhật 22/11/2026
+
+> **Lưu ý phân biệt phiên bản:** Electron **4.23.76 Stable** là bản phát hành chính trên `main`. **Positron P5.1.148 (Electron 4.23.232 Beta)** là nhánh thử nghiệm riêng, **không có sẵn toàn bộ tính năng Positron trong bản Stable**. Rust Lab, Mobile và Web cũng có vòng phát hành độc lập.
+
+| Nhóm chức năng | Mô tả thực tế | Có ở đâu |
+|---|---|---|
+| **WatchFlow** | Khám phá các kênh liên quan, bố cục gợi ý, kênh đang/sắp có chương trình dựa trên EPG đã nhập | **Positron Beta** |
+| **Xem sau / Watch Later** | Lưu kênh trên thiết bị, tìm kiếm trong dấu trang, báo nguồn không còn hoạt động, dọn mục có xác nhận | **Positron Beta** |
+| **Khám phá EPG thông minh** | Tìm theo tên chương trình đang chiếu, hiển thị chương trình tiếp theo, lọc sắp chiếu 15/30/60 phút, sắp lịch bắt đầu sớm nhất | **Positron Beta** |
+| **Tiến độ theo XMLTV** | Thanh tiến độ ước tính và số phút còn lại theo giờ bắt đầu/kết thúc từ lịch, **không phải tiến độ stream thực** | **Positron Beta** |
+| **Nhắc lịch chương trình** | Đặt nhắc trước chương trình 10 phút, hủy nhắc ngay trên thẻ kênh bằng nút chuông, không tự phát video | **Positron Beta** |
+| **Tìm kiếm và điều khiển mới** | Tìm tiếng Việt không dấu và từ khóa đảo thứ tự; phím mũi tên, Home/End, PageUp/Down, Enter để điều hướng thẻ kênh | **Positron Beta** |
+| **Yêu thích nhanh** | Đánh dấu sao ngay trên thẻ kênh, đếm số kênh yêu thích; dùng phím F trong màn chọn kênh | **Positron Beta** |
+| **Điều khiển và hình ảnh Desktop** | Icon player SVG, giao diện Light đồng nhất, kiểm tra GPU encoder, quản lý cache cục bộ | **Electron 4.23.76 Stable** |
+| **Công cụ media/TTS thử nghiệm** | Giao diện Dark/AMOLED đồng bộ cho EPG, DVR, GPU, phụ đề, dịch và TTS | **Rust Lab 23.8.98 Beta** |
+| **Mobile & cloud** | Giao diện cảm ứng, đăng nhập/OTP, tách dữ liệu theo tài khoản, quản lý playlist và yêu thích | **Mobile .35 Beta** |
+| **Web Online** | M3U/EPG, gộp nguồn, link dự phòng, tìm kênh, yêu thích, giao diện desktop/mobile và tài khoản khi cấu hình | **Web trên trình duyệt** |
+
+**Nhật ký tính năng Positron:** [P5.1.148 / 4.23.232 Beta — đã có EXE, DMG, source, QA và checksum](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.232-p5.1.148) · [Nhật ký từng phiên bản, ảnh chụp và kết quả kiểm thử](https://github.com/trisanghy/open-iptv-pro/blob/Positron/docs/positron-features/FEATURES.md) · [Trang chức năng mới trên Web](https://trisanghy.github.io/open-iptv-pro/tinh-nang-moi.html) · [So sánh và tải 4 nền tảng](https://trisanghy.github.io/open-iptv-pro/tai-ve.html).
+
+**Giới hạn:** AI upscale 4K/interpolation chưa có pipeline thực đã được xác minh; kết quả benchmark không thay thế kiểm thử phát hình, âm thanh, codec, PiP và AI trên thiết bị thực. Chỉ nhập playlist và lịch có quyền sử dụng. Danh mục Positron thay đổi theo từng commit, trạng thái của mỗi bản cần đối chiếu Release/CI thay vì suy đoán từ mã nguồn.
+
+---
+
 ## Tải Open IPTV Pro — Stable và bản thử nghiệm (22/11/2026)
 
 **Electron 4.23.76 Stable** được build từ `main`: [GitHub Release v4.23.76](https://github.com/trisanghy/open-iptv-pro/releases/tag/v4.23.76). Workflow đã vượt qua bộ test Node và build thành công Windows x64, Mac Apple Silicon, Mac Intel. Kiểm tra thực tế trên từng thiết bị/nguồn IPTV vẫn cần thực hiện riêng.
