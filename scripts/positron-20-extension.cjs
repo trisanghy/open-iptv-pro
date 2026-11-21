@@ -1327,6 +1327,38 @@ async function runTwenty(page){
  });
 
 
+ // P5.1.98: real Electron UI, synthetic local XMLTV only. Present the
+ // actual guide title in WatchFlow without stream requests or EPG downloads.
+ await page.evaluate(()=>{
+  const channels=window.IPTVState.getChannels();
+  const first=window.PositronWatchFlowPlusCore.dailyMix(channels,{date:window.PositronWatchFlowPlusCore.localDay(),limit:5})[0];
+  if(!first)throw Error('No QA recommendation to match EPG');
+  const timestamp=Date.now(),epgId='positron-qa-epg';
+  const guide={names:{[window.IPTVGuide.tidy(first.name)]:epgId},aliasesById:{[epgId]:[first.name]},
+   programmes:[{id:epgId,start:timestamp-60000,end:timestamp+1800000,title:'Bản tin EPG đã xác minh trong QA'}],
+   manualMappings:{},offsetMinutes:0};
+  window.__positronQaOriginalGetGuide=window.IPTVExtras.getGuide;
+  window.IPTVExtras.getGuide=()=>guide;
+  window.PositronWatchFlowPlus.select('mix');
+ });
+ const liveEPGQA=await page.evaluate(()=>{
+  const root=document.getElementById('poFlowPlusResults');
+  const programmes=[...root.querySelectorAll('.po-flowplus-onair')];
+  return {oneRealMetadataRow:programmes.length===1,
+   correctTitle:programmes[0]?.textContent==='Đang chiếu: Bản tin EPG đã xác minh trong QA',
+   fiveCards:root.querySelectorAll('.po-flowplus-card').length===5,
+   noAutoPlay:window.IPTVState.getCurrent()===null,
+   safeText:!root.querySelector('.po-flowplus-onair script')};
+ });
+ for(const key of ['oneRealMetadataRow','correctTitle','fiveCards','noAutoPlay','safeText'])
+  assert.equal(liveEPGQA[key],true,'On-air XMLTV WatchFlow QA: '+key);
+ await page.screenshot({path:path.join(out,'positron-p5198-live-epg-watchflow-552-real.png'),animations:'disabled'});
+ await page.evaluate(()=>{
+  window.IPTVExtras.getGuide=window.__positronQaOriginalGetGuide;
+  delete window.__positronQaOriginalGetGuide;
+  window.PositronWatchFlowPlus.select('mix');
+ });
+ 
  // P5.1.85: exercise the real Electron Similar panel with a temporary
  // native metadata-only current channel; no stream is opened or stored.
  const similarQA=await page.evaluate(()=>{

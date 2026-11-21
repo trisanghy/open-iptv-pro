@@ -1,3 +1,11 @@
+## P5.1.98 — On-air XMLTV programme titles in WatchFlow recommendations / Electron v4.23.182
+
+- Research basis: the imported XMLTV guide already backs native EPG search and reminders, but WatchFlow cards show only channel names and source health. IPTVnator's channel list offers Now/Next EPG inline; copy no external assets/code.
+- Enhancement: add only the **currently airing** actual XMLTV programme title under relevant WatchFlow card names, using the existing guide from `IPTVExtras.getGuide()`, `IPTVGuide.current()`, manual channel mapping and saved EPG offset. One line of readable text with full title in a tooltip. No programme title is shown without matching, currently active guide data; no guessed programme info.
+- Security/privacy: no external URL/EPG fetch, automatic discovery, AI guessing, playlist mutation, history logging or autoplay. Labels use `textContent` instead of HTML. Works with local-only data and still works when EPG is not installed.
+- Tests: new pure metadata adapter `renderer/positron-onair-core.js`; Node tests for start/end boundary, timezone-adjusted offset, no guide and malformed metadata; real Electron 552-channel synthetic metadata QA temporarily injects exactly one XMLTV programme title and checks one card shows it without autoplay, then restores original guide. New screenshot `positron-p5198-live-epg-watchflow-552-real.png`.
+- A future phase may offer programme explanations, filter by current programmes, and guide-based recommendation ordering after independent consent and quality tests. Current release implements only verified Now UI, not semantic AI.
+
 ## P5.1.97 — Watch Later pagination: all saved channels reachable / Electron v4.23.181
 
 - Fixed a confirmed accessibility and functionality gap: Watch Later retained up to 80 bookmarks but Continue displayed only the first eight, making entries 9–80 unreachable.

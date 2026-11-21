@@ -19,7 +19,7 @@ Các nguồn trên là định hướng so sánh, **không** chứng minh ứng 
 | Vòng mục tiêu | Tính năng cần nghiên cứu/triển khai | Bài kiểm thử chấp nhận tối thiểu | Trạng thái |
 |---|---|---|---|
 | 01 | **Xem sau**: đánh dấu kênh từ WatchFlow; mục Tiếp hiển thị danh sách đã lưu; không lưu URL/mật khẩu | Thêm/xóa trên Electron, mở lại, lưu local, không phát tự động, nguồn khác không trộn | Đang triển khai P5.1.96 |
-| 02 | **Đang phát gì?**: tìm chương trình đang chiếu từ EPG thật của danh sách đã nhập | Không EPG thì chỉ báo chưa có, không đoán; chính xác giờ địa phương | Nghiên cứu |
+| 02 | **Đang phát gì?**: hiển thị chương trình từ XMLTV thật ngay trên thẻ WatchFlow, không đoán EPG | Đúng cửa sổ giờ và offset; không EPG không bịa, không tự phát | P5.1.98 đang triển khai |
 | 03 | **Nhắc chương trình**: đặt/hủy nhắc từ EPG thực, thông báo khi app chạy | Hủy, trùng lịch, thay múi giờ, quyền notification | Nghiên cứu |
 | 04 | **Tìm chương trình đa kênh**: tên/tập/thể loại EPG, dấu tiếng Việt | Kiểm chứng kết quả có nguồn+start/end, không bịa tên | Nghiên cứu |
 | 05 | **Lịch phát cá nhân hôm nay**: danh sách chương trình quan tâm, chỉ với guide | Local-first, không tự đặt lịch ghi hình, không giả dữ liệu | Nghiên cứu |

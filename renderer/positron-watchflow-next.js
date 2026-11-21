@@ -98,6 +98,10 @@
  };
  const cards=(items,reason)=>{
   if(!items.length)return empty('Chưa có kênh phù hợp từ nguồn đã nhập.');
+  // Use the original XMLTV guide only, with its native mapping/time offset.
+  // No guide means no fabricated programme title or network discovery.
+  const liveGuide=(()=>{try{return window.IPTVExtras?.getGuide?.()||null;}catch{return null;}})();
+  const liveClock=Date.now();
   const list=d.createElement('div');list.className='po-flowplus-cards';
   for(const ch of items){
    const card=d.createElement('article');card.className='po-flowplus-card';
@@ -107,6 +111,13 @@
    const group=ch.group||ch.groupTitle||'Không phân nhóm';
    info.textContent=group+' · '+(ch.status==='alive'?'Đã có bằng chứng phát':'Chưa xác minh');
    body.append(name,info);
+   const onAir=window.PositronOnAirCore?.lookup(liveGuide,ch,liveClock,window.IPTVGuide);
+   if(onAir){
+    const programme=d.createElement('small');programme.className='po-flowplus-onair';
+    programme.textContent='Đang chiếu: '+onAir.title;
+    programme.title='Đang chiếu theo lịch XMLTV: '+onAir.title;
+    body.append(programme);
+   }
    const action=d.createElement('button');action.type='button';action.textContent='Xem';
    action.setAttribute('aria-label','Xem kênh '+ch.name);action.addEventListener('click',()=>play(ch));
    const buttons=d.createElement('div');buttons.className='po-flowplus-actions';

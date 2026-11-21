@@ -133,3 +133,9 @@
 }
 #poWatchFlowPanel #poWatchLaterMore.po-flowplus-more:hover{background:#285d51}
 #poWatchFlowPanel #poWatchLaterMore.po-flowplus-more:focus-visible{outline:2px solid #91e8d6;outline-offset:2px}
+
+/* P5.1.98: reliable XMLTV Now metadata in WatchFlow; never crowd actions. */
+#poWatchFlowPanel .po-flowplus-card-info .po-flowplus-onair{
+ display:block;margin-top:5px;color:#8fe3cb;font-size:10.5px;line-height:1.35;
+ overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%;
+}

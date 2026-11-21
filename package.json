@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.181",
-  "description": "Positron P5.1.97: accessible pagination for all Watch Later bookmarks",
+  "version": "4.23.182",
+  "description": "Positron P5.1.98: show verified Now programmes on WatchFlow cards",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",
