@@ -35,9 +35,13 @@ Not yet started. Choose each new repair from the preceding real screenshot, with
 ## New round 03/20 — P5.1.110 / v4.23.194 — CANDIDATE
 - Input: actual manually inspected P5.1.109 450px Electron screenshot `positron-p51109-native-toast-dedupe-450-real.png` (552 synthetic channel metadata, no stream playback); oversized idle video stage pushes channel list down.
 - Root: 16:9 video layout still applied when only onboarding illustration is present; desktop-only compact rule does not apply at 450px.
-- Fix: narrow <600x900 unplayed stage 164px and scaled onboarding text/CTA; live stage remains original ratio, data untouched.
+- Fix: narrow <600x900 unplayed stage 174px and scaled onboarding text/CTA; live stage remains original ratio, data untouched.
 - Regression Node and native Electron QA + screenshot `positron-p51110-compact-idle-player-450-real.png` with visual review. NOT complete until CI/release verified.
 
 ### Completed round 02 evidence
 - P5.1.109 commit `1b2c5d4d55f3d60a9ff64f45529aa181d3a9454e`; immutable tag `positron/v4.23.193-p5.1.109`.
 - CI Actions `44928941637` succeeded 6/6 jobs; 708 tests (703 pass, 5 skipped, 0 failed). Screenshot manually opened, one error toast displayed. Windows EXE and macOS DMG assets independently verified.
+
+### Same-round CI repair — P5.1.110 (not a new cycle)
+- Run `44929563935`: 708 Node tests passed/5 skipped, but native capture failed at the existing P5 450px vector-size test (expected visible SVG width 28px, received 0), caused by initially hiding the decorative icon. No test assertion deleted or relaxed.
+- Correction restores visible native 28px SVG in a 44x34px compact container, sets idle stage to 174px to fit title + button, and adds a dedicated Node source regression which was missing from first candidate commit. Repeat CI and real screenshot review; P5.1.110 remains unfinished until immutable release succeeds.

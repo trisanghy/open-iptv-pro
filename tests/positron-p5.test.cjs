@@ -789,3 +789,17 @@ test('P5.1.109 native toast deduplicates active identical messages but preserves
  callbacks[0]();assert.equal(area.children.length,2,'oldest notification expires');
  toast('Xem sau đã lưu đủ','error');assert.equal(area.children.length,3,'message can reappear after expiry');
 });
+
+
+test('P5.1.110 compact unplayed mobile player preserves the 28px SVG, CTA and native live aspect',()=>{
+ const css=read('renderer/positron-horizon-v4.css');
+ const audit=read('scripts/positron-20-extension.cjs');
+ assert.ok(css.includes('P5.1.110: Real P5.1.109 450px Electron screenshot'));
+ assert.ok(css.includes('#playerBox:has(#emptyPlayer:not(.hidden))'));
+ assert.ok(css.includes('height:174px!important'));
+ assert.ok(css.includes('not(:has(:fullscreen))'));
+ assert.ok(css.includes('display:flex!important;align-items:center!important;justify-content:center!important'));
+ for(const check of ['videoUnmodified:Math.abs(live.width/live.height-16/9)<.08',
+  'contentFits:title.top>=before.top-1','positron-p51110-compact-idle-player-450-real.png'])
+  assert.ok(audit.includes(check),'native Electron idle-player audit missing '+check);
+});
