@@ -78,3 +78,17 @@
  #poWatchFlowPanel .po-flowplus-nav{overflow:hidden!important}
  #poWatchFlowPanel .po-flowplus-nav button{padding:7px 2px!important}
 }
+
+/* P5.1.86: actual 1360x820 Electron Similar screenshot showed the modal
+   obscuring native transport, captions and video-fit controls. Keep the
+   controls accessible; the five recommendation cards remain scrollable. */
+@media(min-width:900px) and (max-height:900px){
+ html[data-positron="true"].po-horizon body #poWatchFlowPanel.po-watchflow-panel:not([data-empty-playlist="true"]){
+  box-sizing:border-box!important;
+  max-height:min(390px,calc(100dvh - 420px))!important;
+  overflow-y:auto!important;
+  overscroll-behavior:contain!important;
+  scrollbar-width:thin!important;
+  scrollbar-color:#648e82 #142a32!important;
+ }
+}

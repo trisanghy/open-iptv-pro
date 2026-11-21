@@ -1,3 +1,10 @@
+## P5.1.86 — Prevent WatchFlow dialog from covering native player / v4.23.170
+
+- Visual input is the actual Electron 1360×820 screenshot from P5.1.85 at `p5-20-rounds/positron-watchflow-plus-similar-552-metadata-qa-real.png`; popup (top ~72, bottom ~680) covered the entire right part of native player controls (top ~487).
+- Fix desktop-short viewport WatchFlow popup to a 390px *border-box* maximum with an internal scroll bar. Keep five clickable native metadata suggestions and keyboard-accessible controls; don't alter native playback, playlists, history, or recommendations.
+- New real Electron CDP assertion requires 12px clearance above native player controls, internal vertical scrolling, and all five recommendation buttons; captures the same Similar state for before/after comparison. No streaming or automatic playback is performed.
+- P5.1.86 round will only count complete after CI build/release and manual inspection of new screenshot.
+
 ## P5.1.85 — WatchFlow Plus Similar ranking / v4.23.169
 
 - Inspected the actual P5.1.84 Electron WatchFlow screenshots. The Similar code first sorted by exact source group but then resorted all matches by playback score and alphabetical name, erasing group ordering for equally proven streams.

@@ -72,3 +72,12 @@ test('P5.1.85 Similar recommends equal-evidence same-group channels before alpha
  assert.deepEqual(p.similar(input,basis,{limit:5}).map(c=>c.id),['b','z','a']);
  assert.equal(JSON.stringify(input),snapshot,'Similarity sorting must never mutate playlist data');
 });
+
+test('P5.1.86 real Electron WatchFlow Similar dialog does not obscure player controls',()=>{
+ const css=fs.readFileSync('renderer/positron-watchflow-next.css','utf8');
+ const qa=fs.readFileSync('scripts/positron-20-extension.cjs','utf8');
+ assert.ok(css.includes('max-height:min(390px,calc(100dvh - 420px))!important'));
+ assert.ok(css.includes('box-sizing:border-box!important'));
+ for(const key of ['similarQA.modalNotOverPlayer,true','similarQA.recommendationsScrollable,true','similarQA.recommendationActions,5'])assert.ok(qa.includes(key),key);
+ assert.ok(qa.includes('positron-watchflow-plus-similar-552-metadata-qa-real.png'));
+});

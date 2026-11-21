@@ -1080,12 +1080,22 @@ async function runTwenty(page){
    const panel=document.getElementById('poWatchFlowPanel');
    return {selected:!!panel.querySelector('#poFlowPlussimilar[aria-pressed="true"]'),
     count:panel.querySelectorAll('#poFlowPlusResults .po-flowplus-card').length,
-    notPlaying:native.getCurrent()===null};
+    notPlaying:native.getCurrent()===null,
+    modalNotOverPlayer:(()=>{
+      const dialog=panel.getBoundingClientRect();
+      const toolbar=document.querySelector('#page-tv .player-control-card')?.getBoundingClientRect();
+      return !!toolbar&&dialog.bottom<=toolbar.top-12;
+    })(),
+    recommendationsScrollable:panel.scrollHeight>panel.clientHeight+10&&getComputedStyle(panel).overflowY==='auto',
+    recommendationActions:panel.querySelectorAll('#poFlowPlusResults .po-flowplus-card button').length};
   }finally{window.IPTVState=native;}
  });
  assert.equal(similarQA.selected,true,'Similar mode must react to selection');
  assert.equal(similarQA.count,5,'Similar mode must show five native metadata matches');
  assert.equal(similarQA.notPlaying,true,'Similar QA cannot trigger playback');
+ assert.equal(similarQA.modalNotOverPlayer,true,'WatchFlow Similar dialog obscures native player controls at 1360x820');
+ assert.equal(similarQA.recommendationsScrollable,true,'WatchFlow recommendations must remain scrollable when resized to avoid player');
+ assert.equal(similarQA.recommendationActions,5,'Scrollable WatchFlow must retain all five clickable recommendations');
  await page.screenshot({path:path.join(out,'positron-watchflow-plus-similar-552-metadata-qa-real.png'),animations:'disabled'});
  await page.evaluate(()=>document.getElementById('poFlowPlusmix').click());
  await page.setViewportSize({width:450,height:820});
