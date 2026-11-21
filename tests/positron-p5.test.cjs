@@ -37,7 +37,7 @@ test('P5 assets are loaded after P4 without replacing it',()=>{
 test('P5 release is immutable and versioned separately from P4.1',()=>{
  const pkg=JSON.parse(read('package.json'));
  const flow=read('.github/workflows/positron-lab.yml');
- assert.equal(pkg.version,'4.23.144');
+ assert.equal(pkg.version,'4.23.145');
  const label=pkg.description.match(/Positron\s+(P\d+\.\d+\.\d+)/)?.[1];
  assert.ok(label,'product P-label must accompany SemVer');
  assert.ok(flow.includes('TAG=positron/v'+pkg.version+'-'+label.toLowerCase()),'release tag and app version must match');
@@ -585,4 +585,12 @@ test('P5.1.60 real Electron WatchFlow QA checks diversity of both initial and re
  assert.ok(audit.includes('watchFlowQa.secondGroupCount,3'));
  assert.ok(core.includes("normalize(item.group)||'__ungrouped__'"));
  assert.ok(core.includes('highest-18'),'diversification must protect score evidence priority');
+});
+
+test('P5.1.61 real populated folder headers cannot inherit white/purple legacy palettes',()=>{
+ const css=read('renderer/positron-horizon-v4.css'),audit=read('scripts/positron-20-extension.cjs');
+ assert.ok(css.includes('.channel-panel :is(.folder-header,.folder-header.active)'));
+ assert.ok(css.includes('background:#173038!important;color:#8ee9d3!important'));
+ assert.ok(audit.includes("metadataQa.groupHeaderStyle?.background,'rgb(23, 48, 56)'"));
+ assert.ok(audit.includes("metadataQa.groupHeaderStyle?.color,'rgb(142, 233, 211)'"));
 });

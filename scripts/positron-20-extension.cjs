@@ -742,7 +742,8 @@ async function runTwenty(page){
   window.IPTVState.importSource('LOCAL QA VISUAL ONLY','local:qa',lines.join('\n'),'file');
   window.IPTVState.setPage('tv');
   const list=document.getElementById('channelList'),panel=document.querySelector('#page-tv .channel-panel');
-  return {channelCount:window.IPTVState.getChannels().length,
+  const groupHeader=list.querySelector('.folder-header'),groupStyle=groupHeader?getComputedStyle(groupHeader):null;
+  return {groupHeaderStyle:groupStyle?{background:groupStyle.backgroundColor,color:groupStyle.color,theme:document.documentElement.dataset.theme||'',uiPreset:document.documentElement.dataset.uiStyle||''}:null,channelCount:window.IPTVState.getChannels().length,
    sourceCount:window.IPTVState.getStore().sources.length,
    groupHeaders:list.querySelectorAll('.folder-header,.group-header,.channel-folder-header').length,
    panelWidth:Math.round(panel.getBoundingClientRect().width),
@@ -751,6 +752,8 @@ async function runTwenty(page){
  assert.equal(metadataQa.channelCount,552,'visual-only M3U test did not import 552 channels');
  assert.equal(metadataQa.noPlaying,true,'visual metadata QA must never start a stream');
  assert.ok(metadataQa.panelWidth>=200,'populated channel panel clipped');
+ assert.equal(metadataQa.groupHeaderStyle?.background,'rgb(23, 48, 56)','populated channel folder must be dark and match Horizon rather than lavender legacy style');
+ assert.equal(metadataQa.groupHeaderStyle?.color,'rgb(142, 233, 211)','folder text must match Horizon teal and remain readable');
  const metaFilename='positron-p5-visual-only-552-channels.png';
  const metaBytes=await page.screenshot({path:path.join(out,metaFilename),animations:'disabled'});
  assert.ok(metaBytes.length>10000,'visual-only playlist screenshot too small');

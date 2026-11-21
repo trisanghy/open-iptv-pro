@@ -431,3 +431,10 @@ P5.1.46 same-version CI repair: run 44866650681 failed 2/611 because historical 
 - Change: retain score-based evidence priority; for same/nearly equal score (within 18 points), pick one per distinct native group before filling remaining slots. Refresh still excludes already-seen items, never changes native data, never requests or plays streams.
 - Regression: two Node tests ensure 3 distinct groups, preservation of proven live preference, immutability; Electron metadata QA asserts first three and refreshed three cover 3 native groups; re-open real PNG to confirm.
 - CI/release: pending validation. No claim of testing actual IPTV playback; local metadata only.
+
+
+## P5.1.61 / v4.23.145 — Channel group header dark contrast from native 552-channel screenshot
+- Input: P5.1.60 actual Electron 552-channel WatchFlow QA PNG shows bright lavender/white folder header "01 Main channels" with purple text in an otherwise dark/turquoise Horizon UI.
+- Root cause: legacy theme and UI-preset CSS styles for .folder-header are applied after native metadata imports and are not overridden by the Horizon layer.
+- Fix: scope the populated folder header background/foreground (and arrow/count) to Horizon dark teal; preserve folder click/drag events and source data. Test computed dark RGB background and teal ink in native Electron after importing 552 metadata-only QA channels.
+- Before/after real PNG manual review, Node, multi-platform build and immutable release required to certify.

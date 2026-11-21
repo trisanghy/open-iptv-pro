@@ -475,3 +475,18 @@ html[data-positron="true"].po-v3.po-horizon{
 html[data-positron="true"].po-v3.po-horizon ::-webkit-scrollbar-thumb:hover{
  background:#67d4c0;
 }
+
+/* P5.1.61 · Real 552-channel Electron QA showed a white/lavender folder
+   heading with purple text inside the otherwise dark Horizon channel list.
+   Legacy UI preset and light-theme folder selectors leaked through. Keep
+   collapse/expand and drag/drop behavior, only correct the visual surface. */
+html[data-positron="true"].po-v3.po-horizon #page-tv .channel-panel :is(.folder-header,.folder-header.active){
+ background:#173038!important;color:#8ee9d3!important;
+ border-bottom:1px solid #2d4a4d!important;box-shadow:none!important;
+}
+html[data-positron="true"].po-v3.po-horizon #page-tv .channel-panel .folder-header:hover{
+ background:#21443e!important;color:#d5fff2!important;
+}
+html[data-positron="true"].po-v3.po-horizon #page-tv .channel-panel .folder-header :is(.folder-arrow,.folder-size){
+ color:#bbd5d2!important;
+}

@@ -150,3 +150,9 @@ Action: Horizon-only scrollbar variable override (#40736c thumb, #101a23 track),
 - Input opened: Actual P5.1.59 WatchFlow metadata-only 552-channel screenshot, showing QA Channel 004/005/006 all from group "01 Main channels".
 - Fix: core ranking gains source-group diversity among channels with comparable playback evidence while preserving alive status priority and avoiding state mutation; Node tests and Electron 552-channel screenshot regression check 3 distinct native groups before/after "Gợi ý khác".
 - Pending: Node green, Electron real PNG reviewed, 6-job build and immutable release; do not count if incomplete.
+
+
+### User-file (10), batch round 04 candidate P5.1.61 / v4.23.145
+- Actual previous P5.1.60 552-channel Electron QA screenshot opened: the "01 Main channels" group header is pale lavender with purple text in a dark teal palette.
+- Cause: legacy .folder-header active/light preset selector leaked into Horizon; fix with scoped higher specificity on .channel-panel folder headers; preserve folder interactions and source data.
+- QA: capture metadata header computed background and text colors, assert dark teal RGB in Electron, Node regression. Pending after screenshot review and immutable CI/release.
