@@ -194,3 +194,7 @@ Not yet started. Choose each new repair from the preceding real screenshot, with
 - Root: dropdown change rerenders without aligning rail to selected active quick chip; horizontal position is restored unconditionally.
 - Fix: scoped change handler finds matching active chip, scrolls it into sight; All reset returns rail to start; quick-chip click behavior unchanged.
 - Evidence: native Electron dropdown select/reset, no autoplay, screenshot `positron-p51128-dropdown-chip-450-real.png` and regression test. Count only after full CI/actual image review and immutable release.
+
+### P5.1.128 release correction
+- CI 44947642498: Node, Electron capture, Win/mac builds success; Release failed HTTP 422 because full changelog exceeded 125,000-character Release body limit.
+- Correct workflow to publish concise release notes, preserve full history in Source ZIP, add regression; rerun same 4.23.212 / P5.1.128, no tag reused.

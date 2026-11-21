@@ -272,7 +272,7 @@ jobs:
             if gh release create "$TAG" release-stage/*.dmg release-stage/*.exe release-stage/*.png release-stage/audit-p4-50-rounds.json release-stage/audit-p5-20-rounds.json release-stage/*.zip release-stage/SHA256SUMS.txt \
               --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" \
               --title 'Open IPTV Pro Positron P5.1.128 — Reveal active quick-group after advanced filter change' \
-              --notes-file POSITRON_P5_CHANGELOG.md --prerelease --latest=false 2>/tmp/positron-release-error; then
+              --notes "Positron $TAG at $GITHUB_SHA. Full change history is included as POSITRON_P5_CHANGELOG.md in the Source ZIP asset. Native Electron screenshots, reports and installer checksums are attached." --prerelease --latest=false 2>/tmp/positron-release-error; then
               echo 'GitHub Release successfully created.'
             elif grep -Eq '(HTTP 403|Resource not accessible by integration)' /tmp/positron-release-error; then
               echo '::warning::GitHub token cannot publish Release (HTTP 403). Installers and QA evidence remain available in the Actions fallback artifact. Repository Actions token permissions require owner review.'

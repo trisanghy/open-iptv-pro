@@ -1056,3 +1056,10 @@ test('P5.1.128 advanced group dropdown reveals corresponding active quick chip',
   "positron-p51128-dropdown-chip-450-real.png"])
   assert.ok(qa.includes(token),'missing genuine Electron dropdown-chip QA '+token);
 });
+
+test('P5.1.128 immutable Release notes remain below GitHub 125k maximum',()=>{
+ const workflow=read('.github/workflows/positron-lab.yml');
+ assert.ok(!workflow.includes('--notes-file POSITRON_P5_CHANGELOG.md'),'full growing changelog may exceed GitHub body size');
+ assert.ok(workflow.includes('Full change history is included as POSITRON_P5_CHANGELOG.md in the Source ZIP asset'));
+ assert.ok(workflow.includes('--prerelease --latest=false'));
+});

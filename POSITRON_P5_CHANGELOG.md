@@ -897,3 +897,8 @@ P5.1.81 follow-up: real Electron capture found nav overflow; replace flexible no
 - Root: native group 'change' handler calls render() only; renderGroups restores the previous scroll position regardless of a selection made from the advanced dropdown. Native quick-chip clicks already preserve their own position and must continue to work.
 - Fix: on explicit dropdown group change, scroll only the currently active matching quick chip into view; resetting to All restores the rail start. Preserve original chip click focus restoration, no group/playlist write or automatic playback.
 - Regression: Node source test, real Electron selects 'Tin tức' in native dropdown from leftmost rail, validates active/visible chip and zero overflow, then resets via dropdown and checks rail starts at zero. Photo `positron-p51128-dropdown-chip-450-real.png`. Candidate pending CI/after-image inspection/immutable installer release.
+
+### P5.1.128 CI release correction (same version, new commit)
+- Release job reached a real GitHub HTTP 422: `body is too long (maximum is 125000 characters)`. The complete historical changelog outgrew GitHub's Release body limit.
+- Keep the historical `POSITRON_P5_CHANGELOG.md` intact in the bundled source, publish short notes with a pointer to the full file, and add a Node regression assertion against using full changelog as release notes.
+- No UI code, filter semantics, 450px Electron screenshot requirements, tags or previous versions were altered. Round 05 remains candidate until a fresh full CI run and immutable Release pass.
