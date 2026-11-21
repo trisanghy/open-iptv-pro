@@ -2,7 +2,12 @@ name: Audit Web Light theme (real desktop and mobile Chromium)
 on:
   push:
     branches: [web/online]
-    paths: [.github/workflows/audit-web-light-ui.yml]
+    paths:
+      - .github/workflows/audit-web-light-ui.yml
+      - web-light-consistency-20261122.css
+      - index.html
+      - web-online/tests/web-light-visual-audit.cjs
+      - web-online/tests/web-light-consistency-20261122.test.cjs
   workflow_dispatch:
 permissions:
   contents: read
