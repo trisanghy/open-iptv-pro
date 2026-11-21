@@ -1,12 +1,15 @@
-name: Audit Web Light theme (real desktop and mobile Chromium)
+name: Audit Web Light Dark AMOLED desktop mobile
 on:
   push:
     branches: [web/online]
     paths:
       - .github/workflows/audit-web-light-ui.yml
       - web-light-consistency-20261122.css
+      - web-three-theme-consistency-20261122.css
       - index.html
       - web-online/tests/web-light-visual-audit.cjs
+      - web-online/tests/web-three-theme-visual-audit.cjs
+      - web-online/tests/web-three-theme-consistency-20261122.test.cjs
       - web-online/tests/web-light-consistency-20261122.test.cjs
   workflow_dispatch:
 permissions:
@@ -30,19 +33,22 @@ jobs:
           python3 -m http.server 8765 --bind 127.0.0.1 > "$RUNNER_TEMP/iptv-web-server.log" 2>&1 &
           sleep 2
           curl -fsS http://127.0.0.1:8765/index.html -o /dev/null
-      - name: Test and photograph all Web Light desktop and mobile pages
+      - name: Test all three themes and photograph desktop/mobile pages
         shell: bash
         env:
           NODE_PATH: ${{ runner.temp }}/iptv-playwright/node_modules
         run: |
           set -Eeuo pipefail
-          node --test web-online/tests/web-light-consistency-20261122.test.cjs
+          node --test web-online/tests/web-light-consistency-20261122.test.cjs web-online/tests/web-three-theme-consistency-20261122.test.cjs
           CHROME="$(command -v google-chrome)" node web-online/tests/web-light-visual-audit.cjs
+          CHROME="$(command -v google-chrome)" node web-online/tests/web-three-theme-visual-audit.cjs
       - name: Upload screenshots and measured surface colors
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: web-light-desktop-mobile-real-screenshots
-          path: light-audit-web/
+          name: web-desktop-mobile-light-dark-amoled-screenshots
+          path: |
+            light-audit-web/
+            web-three-theme-audit/
           if-no-files-found: warn
           retention-days: 10
