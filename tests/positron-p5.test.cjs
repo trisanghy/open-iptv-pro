@@ -379,6 +379,8 @@ test('P5.1.37 empty-TV Play is disabled, restores when channels appear',()=>{
  assert.ok(js.includes('new MutationObserver(syncPlayAvailability)'));
  assert.ok(js.includes("mainPlay.removeAttribute('data-positron-no-channels')"));
  assert.ok(css.includes('#page-tv #playBtn[data-positron-no-channels="true"]'));
+ assert.ok(css.includes('#page-tv .player-control-card .controls.transport-controls #playBtn[data-positron-no-channels="true"]'));
+ assert.ok(css.includes('opacity:.50!important'));
  assert.ok(audit.includes('metrics.playAvailability?.disabled,true'));
  assert.ok(audit.includes('playLifecycle.reenabled,true'));
 });

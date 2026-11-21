@@ -339,3 +339,13 @@ html[data-positron="true"] #page-tv #playBtn[data-positron-no-channels="true"]{
  opacity:.5!important;filter:saturate(.2)!important;cursor:not-allowed!important;
  box-shadow:none!important;
 }
+
+/* P5.1.37 in-round screenshot QA: the older Electron toolbar has a
+   two-ID + three-class selector that forces `opacity:1!important` on Play.
+   Match that native chain plus this state attribute, scoped to Positron. */
+html[data-positron="true"] #page-tv .player-control-card .controls.transport-controls #playBtn[data-positron-no-channels="true"]{
+ opacity:.50!important;filter:saturate(.18)!important;
+ background:var(--po-card)!important;
+ border-color:var(--po-line)!important;color:var(--po-muted)!important;
+ box-shadow:none!important;cursor:not-allowed!important;
+}
