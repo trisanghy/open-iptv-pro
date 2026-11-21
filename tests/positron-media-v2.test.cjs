@@ -31,3 +31,10 @@ test('Media controls are compact, keyboard accessible and free from oversized ro
  assert.ok(css.includes('#channelList .channel-item.current'));
  assert.ok(css.includes('@container (max-width:890px)'));
 });
+
+test('legacy P4 selector cannot reintroduce round oversized Play',()=>{
+ const css=read('renderer/positron-media-v2.css');
+ assert.ok(css.includes('html[data-positron="true"].p50-29 #page-tv .player-control-card .controls.transport-controls #playBtn'));
+ assert.ok(css.includes('max-width:44px!important'));
+ assert.ok(css.includes('max-height:44px!important'));
+});

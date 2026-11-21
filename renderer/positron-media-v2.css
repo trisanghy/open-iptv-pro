@@ -297,3 +297,32 @@ html[data-positron="true"] #page-tv .player-control-card .output-controls .po-me
   display:none!important;
  }
 }
+
+/* Real Electron screenshot fix: historical p50-29/30/32 has higher specificity. */
+html[data-positron="true"].p50-29 #page-tv .player-control-card .controls.transport-controls #playBtn{
+ width:44px!important;min-width:44px!important;max-width:44px!important;
+ height:44px!important;min-height:44px!important;max-height:44px!important;
+ flex:0 0 44px!important;border-radius:11px!important;
+ border:1px solid #c4dcff!important;box-shadow:none!important;
+ background:var(--po-v2-accent)!important;color:var(--po-v2-on)!important;
+ font-size:0!important;
+}
+html[data-positron="true"].p50-29 #page-tv .player-control-card .controls.transport-controls #playBtn:disabled{
+ background:#354657!important;border-color:#415365!important;
+ color:#8598aa!important;opacity:.5!important;filter:grayscale(1)!important;
+}
+html[data-positron="true"].p50-30 #page-tv .player-control-card .controls.transport-controls :is(#prevBtn,#stopBtn,#nextBtn){
+ width:37px!important;height:40px!important;min-width:37px!important;
+ min-height:40px!important;flex:0 0 37px!important;
+ background:transparent!important;border:0!important;
+ border-radius:9px!important;box-shadow:none!important;
+}
+html[data-positron="true"].p50-32 #page-tv .player-control-card .output-controls :is(#castBtn,#pipBtn,#fullscreenBtn){
+ min-height:38px!important;height:38px!important;border-radius:9px!important;
+ background:transparent!important;border:1px solid transparent!important;
+ box-shadow:none!important;color:#bdcede!important;font-size:11px!important;
+}
+html[data-positron="true"].p50-27 #page-tv .player-control-card{
+ background:var(--po-v2-panel)!important;border:1px solid var(--po-v2-line)!important;
+ border-radius:11px!important;box-shadow:none!important;
+}
