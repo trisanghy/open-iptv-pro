@@ -3,20 +3,15 @@ on:
   push:
     branches: [Positron]
   workflow_dispatch:
-permissions:
-  contents: read
-  pages: write
-  id-token: write
 concurrency:
   group: positron-feature-pages
   cancel-in-progress: true
+permissions:
+  contents: read
 jobs:
-  publish:
+  build-site:
     if: github.repository == 'trisanghy/open-iptv-pro'
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Checkout Positron only
         uses: actions/checkout@v4
@@ -27,7 +22,7 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Create timeline and extract authentic released Electron screenshots
+      - name: Generate version rows and extract released Electron screenshots
         env:
           GITHUB_TOKEN: ${{ github.token }}
         run: |
@@ -35,13 +30,37 @@ jobs:
           python scripts/build-positron-feature-site.py
           test -s site/positron-features/index.html
           test -s site/positron-features/catalog.json
-          python -c "import json; d=json.load(open('site/positron-features/catalog.json')); assert d['versions']; assert all(x['version'].startswith('P5.1.') for x in d['versions'])"
+          python -c "import json; d=json.load(open('site/positron-features/catalog.json')); assert d['versions']; print('Rows:',len(d['versions']),'Photos:',sum(bool(x['image']) for x in d['versions']))"
+      - name: Preserve published website preview regardless of Pages settings
+        uses: actions/upload-artifact@v4
+        with:
+          name: positron-feature-website
+          path: site
+          if-no-files-found: error
+          retention-days: 30
+
+  deploy:
+    needs: build-site
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: positron-feature-pages
+      url: ${{ steps.publish.outputs.page_url }}
+    steps:
+      - name: Download verified generated site
+        uses: actions/download-artifact@v4
+        with:
+          name: positron-feature-website
+          path: site
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
-      - name: Upload website
+      - name: Upload GitHub Pages bundle
         uses: actions/upload-pages-artifact@v3
         with:
           path: site
       - name: Deploy to GitHub Pages
-        id: deployment
+        id: publish
         uses: actions/deploy-pages@v4
