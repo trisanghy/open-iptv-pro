@@ -3530,6 +3530,7 @@ async function runTwenty(page){
    expandedButtonState:area.querySelector('.po-toast-history-toggle')?.getAttribute('aria-expanded')==='true'
   };
  }));
+ await page.screenshot({path:path.join(out,'positron-p51150-toast-centre-before-1920x1080-real.png'),animations:'disabled'});
  await page.screenshot({path:path.join(out,'positron-p51150-toast-centre-expanded-1920x1080-real.png'),animations:'disabled'});
  await page.click('#toastArea .po-toast-history-toggle');
  Object.assign(toastHistoryQA,await page.evaluate(()=>{
@@ -3540,6 +3541,7 @@ async function runTwenty(page){
    noAutoplay:window.IPTVState.getCurrent()===null
   };
  }));
+ await page.screenshot({path:path.join(out,'positron-p51150-toast-centre-after-1920x1080-real.png'),animations:'disabled'});
  await page.evaluate(()=>{
   for(const node of [...document.querySelectorAll('#toastArea>.toast')])
    if(node.dataset.poToastMessage?.includes('QA '))node.remove();
