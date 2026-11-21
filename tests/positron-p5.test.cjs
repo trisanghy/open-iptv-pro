@@ -37,7 +37,7 @@ test('P5 assets are loaded after P4 without replacing it',()=>{
 test('P5 release is immutable and versioned separately from P4.1',()=>{
  const pkg=JSON.parse(read('package.json'));
  const flow=read('.github/workflows/positron-lab.yml');
- assert.equal(pkg.version,'4.23.152');
+ assert.equal(pkg.version,'4.23.153');
  const label=pkg.description.match(/Positron\s+(P\d+\.\d+\.\d+)/)?.[1];
  assert.ok(label,'product P-label must accompany SemVer');
  assert.ok(flow.includes('TAG=positron/v'+pkg.version+'-'+label.toLowerCase()),'release tag and app version must match');
@@ -603,4 +603,12 @@ test('P5.1.62 actual Electron narrow and desktop CC toolbar uses Horizon palette
  assert.ok(css.includes('--ui-primary:#67d4c0!important'));
  assert.ok(audit.includes("metrics.unifiedAiColors?.background,'rgb(25, 53, 47)'"));
  assert.ok(audit.includes("metrics.unifiedAiColors?.markBackground,'rgb(112, 216, 191)'"));
+});
+
+test('P5.1.69 native 720px Source tools stay in a single scrollable row',()=>{
+ const css=read('renderer/positron-horizon-v4.css'),audit=read('scripts/positron-20-extension.cjs');
+ assert.ok(css.includes('#page-sources .sources-hub-nav{'));
+ assert.ok(css.includes('flex-wrap:nowrap!important;overflow-x:auto!important'));
+ assert.ok(audit.includes('navQa.verticalGap<=1'));
+ assert.ok(audit.includes("navQa.scroll,'auto'"));
 });

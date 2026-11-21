@@ -555,3 +555,16 @@ html[data-positron="true"].po-horizon:not([data-po-rail-expanded="true"]) #appSi
 }
 html[data-positron="true"].po-horizon #appSidebar #positronMorePages::after{content:none!important;display:none!important}
 html[data-positron="true"].po-horizon[data-po-rail-expanded="true"] #appSidebar #positronMorePages{overflow:visible!important}
+
+/* P5.1.69: 720px native Sources screenshot exposes an isolated fifth tool tab.
+   Keep all five tools on one accessible horizontal row; scroll when narrower. */
+@media(max-width:900px){
+ html[data-positron="true"].po-horizon #page-sources .sources-hub-nav{
+  display:flex!important;flex-wrap:nowrap!important;overflow-x:auto!important;
+  overflow-y:hidden!important;gap:6px!important;overscroll-behavior-x:contain;
+  scrollbar-width:thin;scrollbar-color:#35515d #111d26;
+ }
+ html[data-positron="true"].po-horizon #page-sources .sources-hub-nav button{
+  flex:0 0 auto!important;white-space:nowrap!important;padding:8px 10px!important;
+ }
+}

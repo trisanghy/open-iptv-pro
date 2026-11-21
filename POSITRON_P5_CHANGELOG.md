@@ -484,3 +484,10 @@ P5.1.46 same-version CI repair: run 44866650681 failed 2/611 because historical 
 - Root cause: `renderer/positron-fifty.js` writes a legacy text icon via `syncMore()` while P4 compact styles add a `::before` glyph and `::first-letter` override. Competing pseudo/text icons overlap and overflow the intended 49px rail width.
 - Fix: create exactly one four-tile inline SVG in the existing native disclosure button, preserve JS event, aria-expanded, local storage and label in expanded rail; suppress legacy pseudo glyphs under scoped Horizon CSS.
 - Regression: actual Electron 600px TV screenshot audit checks one SVG with 4 tiles, pseudo content none, no text spill/overflow, visible icon ~20px; Node test guards replacement DOM and styles. Build+Release pending.
+
+
+## P5.1.69 / v4.23.153 — Fifth Sources jump tool wraps on its own row
+- Input: P5.1.68 real Electron 720px Sources screenshot from CI run 44897915228, personally inspected. Source navigation displays Smart Discovery, Nguồn hiện có, Thu thập and Gộp kênh on the first row, with Kiểm tra & sửa stranded on a second row, wasting vertical space.
+- Cause: legacy `.sources-hub-nav{flex-wrap:wrap}` with button 16px horizontal padding forces an orphan fifth tab at 720px.
+- Fix: in Horizon Sources at <=900px, use compact 10px button padding, nowrap flex, accessible horizontal overflow scroll on narrower viewports. Preserve native data-source-jump and input behaviors.
+- Regression: native Electron 720px Sources assert five buttons, same y for first/last, nowrap, overflow-x auto and no whole-document scroll spill. Node guard and visual before/after. Build+release pending.

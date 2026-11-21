@@ -227,6 +227,22 @@ async function runTwenty(page){
   assert.equal(metrics.page,'page-'+target);
   assert.equal(metrics.stage,String(round));
   assert.ok(metrics.sidebar&&metrics.sidebar.width<=285,'sidebar overflow: '+name);
+  if(target==='sources'&&width===720){
+   const navQa=await page.evaluate(()=>{
+    const nav=document.querySelector('#page-sources .sources-hub-nav');
+    const buttons=[...nav.querySelectorAll('button')];
+    const style=getComputedStyle(nav);
+    const first=buttons[0].getBoundingClientRect(),last=buttons.at(-1).getBoundingClientRect();
+    return {count:buttons.length,wrap:style.flexWrap,scroll:style.overflowX,
+     firstTop:first.top,lastTop:last.top,verticalGap:Math.abs(last.top-first.top),
+     parentOverflow:document.documentElement.scrollWidth>innerWidth+6};
+   });
+   assert.equal(navQa.count,5,'Source jump actions missing from compact toolbar: '+name);
+   assert.equal(navQa.wrap,'nowrap','Source jump actions wrap into an orphan row: '+name);
+   assert.ok(navQa.verticalGap<=1,'Fifth source tool button appears alone below row: '+name);
+   assert.equal(navQa.scroll,'auto','Source jump controls cannot scroll when narrow: '+name);
+   assert.equal(navQa.parentOverflow,false,'Source toolbar creates whole-window overflow: '+name);
+  }
   assert.ok(metrics.controls>=8,'native player controls missing');
   if(target==='tv'){
    assert.ok(metrics.player?.width>180&&metrics.player.height>100,'video collapsed: '+name);
