@@ -173,26 +173,51 @@ jobs:
               test -s "release-stage/$name" || { echo "::error::Missing $name"; exit 1; }
           done
           (cd release-stage && sha256sum *.dmg *.exe *.png *.json *.zip > SHA256SUMS.txt)
-      - name: Publish immutable Positron prerelease without affecting stable
+      - name: Publish immutable Positron prerelease or document permission blocker
         shell: bash
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -Eeuo pipefail
           TAG=positron/v4.23.133-p5.1.49
+          echo 'GitHub Release publication has not been verified.' > release-stage/PUBLISH_STATUS.txt
           if gh api "repos/$GITHUB_REPOSITORY/git/ref/tags/$TAG" --jq '.object.sha' >/tmp/tag-sha 2>/dev/null; then
-            test "$(cat /tmp/tag-sha)" = "$GITHUB_SHA" || { echo "::error::Positron tag exists at a different SHA"; exit 1; }
-            echo 'Immutable Positron tag already exists at the correct commit.'
+            test "$(cat /tmp/tag-sha)" = "$GITHUB_SHA" || { echo '::error::Immutable tag points to a different commit'; exit 1; }
             gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null
           else
-            gh release create "$TAG" release-stage/*.dmg release-stage/*.exe release-stage/*.png release-stage/audit-p4-50-rounds.json release-stage/audit-p5-20-rounds.json release-stage/*.zip release-stage/SHA256SUMS.txt \
+            if gh release create "$TAG" release-stage/*.dmg release-stage/*.exe release-stage/*.png release-stage/audit-p4-50-rounds.json release-stage/audit-p5-20-rounds.json release-stage/*.zip release-stage/SHA256SUMS.txt \
               --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" \
               --title 'Open IPTV Pro Positron P5.1.49 — Guard empty playlist EPG reload' \
-              --notes-file POSITRON_P5_CHANGELOG.md --prerelease --latest=false
+              --notes-file POSITRON_P5_CHANGELOG.md --prerelease --latest=false 2>/tmp/positron-release-error; then
+              echo 'GitHub Release successfully created.'
+            elif grep -Eq '(HTTP 403|Resource not accessible by integration)' /tmp/positron-release-error; then
+              echo '::warning::GitHub token cannot publish Release (HTTP 403). Installers and QA evidence remain available in the Actions fallback artifact. Repository Actions token permissions require owner review.'
+              echo 'RELEASE_BLOCKED_403: Not published; download verified builds from Actions artifact positron-p5149-release-fallback. Check repository workflow token permission.' > release-stage/PUBLISH_STATUS.txt
+              exit 0
+            else
+              cat /tmp/positron-release-error >&2
+              exit 1
+            fi
           fi
           gh release view "$TAG" --repo "$GITHUB_REPOSITORY" --json assets --jq '.assets[].name' >/tmp/positron-assets
           grep -Fxq 'positron-p4-final-main-real.png' /tmp/positron-assets
           grep -Fxq 'Positron-P5149-20-Real-Screenshots.zip' /tmp/positron-assets
           grep -Fxq 'Open-IPTV-Pro-4.23.133-mac-arm64.dmg' /tmp/positron-assets
           grep -Fxq 'Open-IPTV-Pro-Setup-4.23.133-x64.exe' /tmp/positron-assets
+          echo "PUBLISHED_AND_VERIFIED: $TAG at $GITHUB_SHA" > release-stage/PUBLISH_STATUS.txt
           echo "Verified experimental release $TAG from $GITHUB_SHA"
+      - name: Preserve installers and release evidence as Actions artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: positron-p5149-release-fallback
+          path: |
+            release-stage/*.exe
+            release-stage/*.dmg
+            release-stage/*.zip
+            release-stage/*.png
+            release-stage/*.json
+            release-stage/SHA256SUMS.txt
+            release-stage/PUBLISH_STATUS.txt
+          retention-days: 30
+          if-no-files-found: error
