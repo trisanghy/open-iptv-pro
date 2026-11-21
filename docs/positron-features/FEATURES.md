@@ -7,20 +7,20 @@ Trang này được tạo tự động từ GitHub Releases và ảnh kiểm th�
 [Xem mã nguồn website](index.html) · [Các bản phát hành](https://github.com/trisanghy/open-iptv-pro/releases) · [Quy tắc ưu tiên tính năng](../../POSITRON_FEATURE_RULES.md)
 
 <details>
-<summary><strong>P5.1.133</strong> · readable compact channel names above separate favorite controls · ĐANG PHÁT TRIỂN · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.133</strong> · readable compact channel names above separate favorite controls · CHƯA CÓ RELEASE · CẢI TIẾN / SỬA LỖI</summary>
 
-**Ứng dụng:** 4.23.217 · **Trạng thái:** ĐANG PHÁT TRIỂN
+**Ứng dụng:** 4.23.217 · **Trạng thái:** CHƯA CÓ RELEASE
 
 P5.1.132 genuine Electron screenshot `positron-p51132-empty-search-clear-after-450-real.png` shows two-column 450px grid cards whose long "QA Channel 00…" labels are truncated beside the separate bottom Favorite star. Fix only in multi-result compact native GRID (not list, not wide single-result): reserve a dedicated 34px bottom action row; allow name to wrap to two lines; center the original 34px independent Favorite control below the title. Preserve native play action, keyboard and stored Favorite keys.
 
 *Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
 
-[Release / thông tin](https://github.com/trisanghy/open-iptv-pro/tree/Positron) · [Commit](https://github.com/trisanghy/open-iptv-pro/commit/ae597a3d5399410dd97e6077f8b5f6f1764a0d7a)
+[Release / thông tin](https://github.com/trisanghy/open-iptv-pro/tree/Positron) · [Commit](https://github.com/trisanghy/open-iptv-pro/commit/00a9461896ea55031748fd28f9b0e8270958d863)
 
 </details>
 
 <details>
-<summary><strong>P5.1.132</strong> · Mask ghost category text beside sticky All · ĐÃ PHÁT HÀNH · TÍNH NĂNG</summary>
+<summary><strong>P5.1.132</strong> · Recover from empty channel search without reimporting · ĐÃ PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.216 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
@@ -33,7 +33,33 @@ Fix: when there are imported channels but no search results on All and search/gr
 </details>
 
 <details>
-<summary><strong>P5.1.129</strong> · Mask ghost category text beside sticky All · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.131</strong> · Search 'đ' using ASCII 'd' in channel library · CHƯA CÓ RELEASE · CẢI TIẾN / SỬA LỖI</summary>
+
+**Ứng dụng:** 4.23.215 · **Trạng thái:** CHƯA CÓ RELEASE
+
+Fix: append `replace(/đ/g,'d')` after lower-casing in the native chooser search normalizer; applies equally to typed text, channel names and group names. Original metadata is unchanged. Actual Electron regression: with nine locally imported QA category records, search `dia phuong` must return precisely "TH QA 1" (original group "TH địa phương"), live 1-channel status and focus; clearing restores 18 cards. No IPTV playback, favorites or playlist changes.
+
+![Ảnh chụp Electron thật P5.1.131](./screenshots/positron-p51131-ascii-d-search-450-real.png)
+
+[Release / thông tin](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
+
+</details>
+
+<details>
+<summary><strong>P5.1.130</strong> · Cover clipped category-chip outline alongside sticky reset · CHƯA CÓ RELEASE · CẢI TIẾN / SỬA LỖI</summary>
+
+**Ứng dụng:** 4.23.214 · **Trạng thái:** CHƯA CÓ RELEASE
+
+Fix: adjust conditional right mask to 30px; leave mask completely off at scrollLeft=0. Native group chips, selection, playlist, keyboard, play controls and local state unchanged.
+
+![Ảnh chụp Electron thật P5.1.130](./screenshots/positron-p51130-border-mask-450-real.png)
+
+[Release / thông tin](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
+
+</details>
+
+<details>
+<summary><strong>P5.1.129</strong> · Repair clipped group-chip text in compact Electron · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
 
 **Ứng dụng:** 4.23.213 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
@@ -319,7 +345,7 @@ Cause: the shared native `.toast-area` uses right:24px/max-width:380px with no l
 </details>
 
 <details>
-<summary><strong>P5.1.107</strong> · Replace font-dependent chooser icons with native SVG · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.107</strong> · Replace font-dependent compact channel chooser icons with SVG · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
 
 **Ứng dụng:** 4.23.191 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
@@ -332,7 +358,7 @@ Actual P5.1.106 native Electron TV screenshots at 450px/540px: channel chooser t
 </details>
 
 <details>
-<summary><strong>P5.1.106</strong> · Remove horizontal overflow in empty WatchFlow · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.106</strong> · Empty WatchFlow without a horizontal scrollbar · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
 
 **Ứng dụng:** 4.23.190 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
@@ -345,7 +371,7 @@ Real screenshot P5.1.105 `positron-watchflow-1360-night-real.png` reveals a hori
 </details>
 
 <details>
-<summary><strong>P5.1.105</strong> · Explicitly manage dormant bookmarks with two-step removal · ĐÃ PHÁT HÀNH · TÍNH NĂNG</summary>
+<summary><strong>P5.1.105</strong> · Explicit two-step cleanup of unavailable bookmarks (new batch 04/20) · ĐÃ PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.189 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
@@ -358,7 +384,7 @@ Opened P5.1.104 actual Electron screenshot `positron-p51104-watchlater-unavailab
 </details>
 
 <details>
-<summary><strong>P5.1.104</strong> · Keep unavailable saved channels visible without deleting data · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.104</strong> · Inform about dormant Watch Later bookmarks without deleting them (new batch 03/20) · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
 
 **Ứng dụng:** 4.23.188 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
@@ -371,7 +397,7 @@ Reviewed actual P5.1.103 Electron screenshot `positron-p51103-watchlater-cap-aft
 </details>
 
 <details>
-<summary><strong>P5.1.103</strong> · Safe Watch Later 80-channel capacity without silent eviction · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.103</strong> · Stop silent Watch Later bookmark eviction at 80 (new batch 02/20) · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
 
 **Ứng dụng:** 4.23.187 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
@@ -384,7 +410,7 @@ Followed the P5.1.102 real `positron-p51102-watch-later-multiterm-552-real.png` 
 </details>
 
 <details>
-<summary><strong>P5.1.102</strong> · Local search for saved Watch Later channels · ĐÃ PHÁT HÀNH · TÍNH NĂNG</summary>
+<summary><strong>P5.1.102</strong> · Watch Later multi-word, group and quality-aware search (new 20-round batch 01/20) · ĐÃ PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.186 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
@@ -397,7 +423,7 @@ Opened real P5.1.101 screenshot `positron-p51101-watch-later-search-552-real.png
 </details>
 
 <details>
-<summary><strong>P5.1.101</strong> · Local search for saved Watch Later channels · ĐÃ PHÁT HÀNH · TÍNH NĂNG</summary>
+<summary><strong>P5.1.101</strong> · Search within all privately saved Watch Later channels · ĐÃ PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.185 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
@@ -410,7 +436,7 @@ Evidence from actual P5.1.100 Electron screenshot and source: saved Watch Later 
 </details>
 
 <details>
-<summary><strong>P5.1.100</strong> · WatchFlow sticky close button and mode navigation · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.100</strong> · WatchFlow header and mode tabs remain visible in long saved lists · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
 
 **Ứng dụng:** 4.23.184 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
@@ -423,7 +449,20 @@ Real P5.1.98 Electron screenshots of 12 saved bookmarks demonstrate that the clo
 </details>
 
 <details>
-<summary><strong>P5.1.98</strong> · Watch Later: all saved channels reachable in batches · ĐÃ PHÁT HÀNH · TÍNH NĂNG</summary>
+<summary><strong>P5.1.99</strong> · Upcoming programme in WatchFlow directly from XMLTV · CHƯA CÓ RELEASE · TÍNH NĂNG</summary>
+
+**Ứng dụng:** 4.23.183 · **Trạng thái:** CHƯA CÓ RELEASE
+
+Feature: extend actual Now cards with the first Next XMLTV programme and its local start time. Reuse `IPTVGuide.current()` and existing channel/manual mappings, EPG offset and user's device time zone. Never infer a programme title from a channel or network search. Show Next only if its schedule starts after the present instant, has valid end time, an actual title and starts within 12 hours. Avoid misleading 'up next tomorrow' from incomplete guides. Do not load extra sources, auto-play a channel or alter native playlists.
+
+![Ảnh chụp Electron thật P5.1.99](./screenshots/positron-p5199-next-epg-watchflow-552-real.png)
+
+[Release / thông tin](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
+
+</details>
+
+<details>
+<summary><strong>P5.1.98</strong> · On-air XMLTV programme titles in WatchFlow recommendations · ĐÃ PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.182 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
@@ -436,7 +475,20 @@ Research basis: the imported XMLTV guide already backs native EPG search and rem
 </details>
 
 <details>
-<summary><strong>P5.1.96</strong> · WatchFlow Plus Smart Zap, Continue, Similar and Daily Mix · ĐÃ PHÁT HÀNH · TÍNH NĂNG</summary>
+<summary><strong>P5.1.97</strong> · Watch Later pagination: all saved channels reachable · CHƯA CÓ RELEASE · CẢI TIẾN / SỬA LỖI</summary>
+
+**Ứng dụng:** 4.23.181 · **Trạng thái:** CHƯA CÓ RELEASE
+
+Fixed a confirmed accessibility and functionality gap: Watch Later retained up to 80 bookmarks but Continue displayed only the first eight, making entries 9–80 unreachable. Continue now shows the count of available saved channels, initially renders eight, and offers an accessible "Xem thêm" control in groups of eight. Native playback remains explicit and does not start on saving or expanding.
+
+![Ảnh chụp Electron thật P5.1.97](./screenshots/positron-p5197-watch-later-many-552-real.png)
+
+[Release / thông tin](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
+
+</details>
+
+<details>
+<summary><strong>P5.1.96</strong> · WatchFlow Xem sau: private local channel bookmarks · ĐÃ PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.180 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
@@ -449,7 +501,7 @@ Feature motivation: real open-source IPTV ecosystem increasingly has favorites, 
 </details>
 
 <details>
-<summary><strong>P5.1.95</strong> · WatchFlow Plus Smart Zap, Continue, Similar and Daily Mix · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.95</strong> · Correct visible overlay of WatchFlow scroll cue · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
 
 **Ứng dụng:** 4.23.179 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
@@ -462,7 +514,7 @@ Direct manual review of the REAL P5.1.94 Electron screenshot `positron-p5194-wat
 </details>
 
 <details>
-<summary><strong>P5.1.94</strong> · WatchFlow Plus Smart Zap, Continue, Similar and Daily Mix · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.94</strong> · Expose hidden WatchFlow Mix suggestions when desktop panel scrolls · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
 
 **Ứng dụng:** 4.23.178 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
@@ -475,7 +527,7 @@ Fix: preserve the current 390px max-height and native playback, source files, an
 </details>
 
 <details>
-<summary><strong>P5.1.93</strong> · WatchFlow Plus Smart Zap, Continue, Similar and Daily Mix · ĐÃ PHÁT HÀNH · TÍNH NĂNG</summary>
+<summary><strong>P5.1.93</strong> · Balance daily Mix source groups with equal playback evidence · ĐÃ PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.177 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
@@ -488,7 +540,7 @@ New regression tests: 3 groups × 14 channels, 5 picks with [1,2,2] group counts
 </details>
 
 <details>
-<summary><strong>P5.1.92</strong> · WatchFlow Plus Smart Zap, Continue, Similar and Daily Mix · ĐÃ PHÁT HÀNH · TÍNH NĂNG</summary>
+<summary><strong>P5.1.92</strong> · Correct daily Mix and Smart Zap calendar day · ĐÃ PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.176 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
@@ -501,7 +553,20 @@ Added pure `localDay(date)` helper using the device Date local year/month/day. T
 </details>
 
 <details>
-<summary><strong>P5.1.90</strong> · WatchFlow Plus Smart Zap, Continue, Similar and Daily Mix · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.91</strong> · Match native Play/Pause glyphs to Web original SVG · CHƯA CÓ RELEASE · CẢI TIẾN / SỬA LỖI</summary>
+
+**Ứng dụng:** 4.23.175 · **Trạng thái:** CHƯA CÓ RELEASE
+
+Read the **Web branch only** and bring its exact SVG data URI masks for Play and Pause into the Positron-specific media CSS. Restore 22×22 consistent stroke geometry. Preserve the existing original Play button, click handlers, MutationObserver deriving state from native app glyph, disabled style, current theme colors, player and media IPC; no other branch changed. Native Electron CDP QA temporarily updates only decorative Play text (without clicks, playback or network requests), asserts CSS SVG mask, 22px sizing, proper switch to Pause and restoration, then captures `positron-p5191-web-play-svg-552-metadata-real.png`.
+
+![Ảnh chụp Electron thật P5.1.91](./screenshots/positron-p5191-web-play-svg-552-metadata-real.png)
+
+[Release / thông tin](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
+
+</details>
+
+<details>
+<summary><strong>P5.1.90</strong> · Hide experimental Video Lab when nothing is selected · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
 
 **Ứng dụng:** 4.23.174 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
@@ -514,7 +579,7 @@ Remove that dead-end from the **unselected** player UI only. Keep button and set
 </details>
 
 <details>
-<summary><strong>P5.1.89</strong> · WatchFlow Plus Smart Zap, Continue, Similar and Daily Mix · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.89</strong> · Native player status reflects available channels · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
 
 **Ứng dụng:** 4.23.173 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
@@ -527,7 +592,7 @@ Synchronize only the native *default* `#playingSubtitle` hint with native enable
 </details>
 
 <details>
-<summary><strong>P5.1.88</strong> · WatchFlow Plus Smart Zap, Continue, Similar and Daily Mix · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.88</strong> · Real playlist-aware TV onboarding · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
 
 **Ứng dụng:** 4.23.172 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
@@ -540,7 +605,7 @@ Keep the native no-playlist onboarding intact. When enabled native channels are 
 </details>
 
 <details>
-<summary><strong>P5.1.87</strong> · WatchFlow Plus Smart Zap, Continue, Similar and Daily Mix · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.87</strong> · WatchFlow tabs stay readable · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
 
 **Ứng dụng:** 4.23.171 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
@@ -553,7 +618,7 @@ Replace the short visible label with “Tiếp”; the accessible `aria-label` a
 </details>
 
 <details>
-<summary><strong>P5.1.86</strong> · WatchFlow Plus Smart Zap, Continue, Similar and Daily Mix · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.86</strong> · Prevent WatchFlow dialog from covering native player · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
 
 **Ứng dụng:** 4.23.170 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
@@ -566,7 +631,7 @@ Visual input is the actual Electron 1360×820 screenshot from P5.1.85 at `p5-20-
 </details>
 
 <details>
-<summary><strong>P5.1.85</strong> · WatchFlow Plus Smart Zap, Continue, Similar and Daily Mix · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.85</strong> · WatchFlow Plus Similar ranking · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
 
 **Ứng dụng:** 4.23.169 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
@@ -579,7 +644,7 @@ Inspected the actual P5.1.84 Electron WatchFlow screenshots. The Similar code fi
 </details>
 
 <details>
-<summary><strong>P5.1.84</strong> · WatchFlow Plus Smart Zap, Continue, Similar and Daily Mix · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.84</strong> · Actionable empty channel sidebar (new batch round 07/20) · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
 
 **Ứng dụng:** 4.23.168 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
@@ -592,7 +657,20 @@ Actual P5.1.83 TV Electron screenshot shows the channel sidebar occupying substa
 </details>
 
 <details>
-<summary><strong>P5.1.82</strong> · WatchFlow Plus Smart Zap, Continue, Similar and Daily Mix · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.83</strong> · Compact player secondary controls under 600px (batch round 06/20) · CHƯA CÓ RELEASE · CẢI TIẾN / SỬA LỖI</summary>
+
+**Ứng dụng:** Chưa xác minh · **Trạng thái:** CHƯA CÓ RELEASE
+
+P5.1.82 actual 450px TV screenshot had a tiny 200px video and 160px secondary control panel, with two select dropdowns needlessly stacked despite room for them side by side. Grid layout now keeps EPG on its own row, fit + manual backup URL + favorite in a common row. All native controls remain addressable, no state or playlist changes.
+
+*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+
+[Release / thông tin](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
+
+</details>
+
+<details>
+<summary><strong>P5.1.82</strong> · Single-row mobile channel chooser (new batch round 05/20) · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
 
 **Ứng dụng:** 4.23.166 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
@@ -605,7 +683,7 @@ The freshly reviewed P5.1.81 real 450px Electron screenshot revealed that the na
 </details>
 
 <details>
-<summary><strong>P5.1.81</strong> · WatchFlow Plus Smart Zap, Continue, Similar and Daily Mix · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.81</strong> · Single-row WatchFlow Plus toolbar (this batch round 04/20) · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
 
 **Ứng dụng:** 4.23.165 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
@@ -618,7 +696,33 @@ Actual P5.1.80 Electron mix screenshot showed the new five modes wrapped awkward
 </details>
 
 <details>
-<summary><strong>P5.1.78</strong> · Source selected-section state and accessible current location · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.80</strong> · WatchFlow Plus · CHƯA CÓ RELEASE · CẢI TIẾN / SỬA LỖI</summary>
+
+**Ứng dụng:** 4.23.164 · **Trạng thái:** CHƯA CÓ RELEASE
+
+**Smart Zap**: một nút chuyển sang kênh khác theo tình trạng nguồn, bỏ kênh đã chết, tránh kênh đang phát và kênh vừa chuyển; chỉ phát sau thao tác người dùng. **Tiếp tục xem**: đọc lịch sử phát đã xác minh khung hình, sử dụng native Recent Channels, không ghi nhận việc phát không thành công.
+
+*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+
+[Release / thông tin](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
+
+</details>
+
+<details>
+<summary><strong>P5.1.79</strong> · Understandable player tools disclosure (new batch 03/20) · CHƯA CÓ RELEASE · TÍNH NĂNG</summary>
+
+**Ứng dụng:** Chưa xác minh · **Trạng thái:** CHƯA CÓ RELEASE
+
+P5.1.78 real Electron TV shows a trailing `•••` icon that does not communicate the Timeshift/recording/tool collection and looks out-of-place against the other monochrome player icons. Render a monochrome sliders SVG as part of the existing native toggle in `positron-fifty.js`, overriding only the legacy pseudo-element dots; retain the actual button, its localized text, click handler, aria-expanded, tooltip and saved open/closed state.
+
+*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+
+[Release / thông tin](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
+
+</details>
+
+<details>
+<summary><strong>P5.1.78</strong> · Focused empty Doctor onboarding (new batch 02/20) · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
 
 **Ứng dụng:** 4.23.162 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
@@ -631,7 +735,7 @@ P5.1.77 actual no-source Electron Doctor screenshot still had six zero-value met
 </details>
 
 <details>
-<summary><strong>P5.1.77</strong> · Source selected-section state and accessible current location · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.77</strong> · Doctor source CTA screenshot smoke regression (new batch 01/20) · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
 
 **Ứng dụng:** 4.23.161 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
@@ -644,7 +748,20 @@ P5.1.76 capture failed: screenshot shows the native `#positronDoctorSources` sou
 </details>
 
 <details>
-<summary><strong>P5.1.75</strong> · Source selected-section state and accessible current location · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.76</strong> · Smart Doctor zero-source onboarding (new batch 06/20) · CHƯA CÓ RELEASE · CẢI TIẾN / SỬA LỖI</summary>
+
+**Ứng dụng:** Chưa xác minh · **Trạng thái:** CHƯA CÓ RELEASE
+
+Real P5.1.75 Electron Doctor with 0 playlist channels shows a large noninteractive V3 diagnostics page after the native message to add sources. Keep the native import action, safety report and six counters but collapse unused V3/V2 analytics until native channels exist. Observe channel count and automatically restore all original controls on import, without modifying user preferences/history.
+
+*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+
+[Release / thông tin](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
+
+</details>
+
+<details>
+<summary><strong>P5.1.75</strong> · truthful Video Lab beta (new batch 05/20) · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
 
 **Ứng dụng:** 4.23.159 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
@@ -657,7 +774,7 @@ P5.1.74 real TV screenshot shows a prominent ‘Nâng cao video bằng AI’ con
 </details>
 
 <details>
-<summary><strong>P5.1.74</strong> · Source selected-section state and accessible current location · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.74</strong> · no-source TV workspace uses laptop height intelligently (new batch 04/20) · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
 
 **Ứng dụng:** 4.23.158 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
@@ -670,7 +787,7 @@ P5.1.73 actual Electron TV at 1360x820 displayed a 538px empty video stage, push
 </details>
 
 <details>
-<summary><strong>P5.1.73</strong> · Source selected-section state and accessible current location · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.73</strong> · labeled and safe DVR recording path (new batch 03/20) · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
 
 **Ứng dụng:** 4.23.157 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
@@ -683,7 +800,7 @@ P5.1.72 real Electron EPG 720 screenshot revealed an unlabeled absolute path bes
 </details>
 
 <details>
-<summary><strong>P5.1.72</strong> · Source selected-section state and accessible current location · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.72</strong> · Smart Discovery with ordered, usable filters (new 20-round batch 02) · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
 
 **Ứng dụng:** 4.23.156 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
@@ -696,7 +813,7 @@ P5.1.71 real Electron Sources screenshots show the primary Discover button betwe
 </details>
 
 <details>
-<summary><strong>P5.1.71</strong> · Source selected-section state and accessible current location · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.71</strong> · WatchFlow contextual to TV (new 20-round batch 01) · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
 
 **Ứng dụng:** 4.23.155 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
@@ -731,6 +848,71 @@ Cause: legacy `.sources-hub-nav{flex-wrap:wrap}` with button 16px horizontal pad
 *Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
 
 [Release / thông tin](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.153-p5.1.69) · [Commit](https://github.com/trisanghy/open-iptv-pro/commit/fa6cc662b8d3e6d9b7a2092684d630089e9ba929) · [Tải Windows Setup x64](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.153-p5.1.69/Open-IPTV-Pro-Setup-4.23.153-x64.exe) · [Tải gói ảnh QA](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.153-p5.1.69/Positron-P5169-20-Real-Screenshots.zip)
+
+</details>
+
+<details>
+<summary><strong>P5.1.68</strong> · Thay đổi được ghi nhận trong mã nguồn · CHƯA CÓ RELEASE · CẢI TIẾN / SỬA LỖI</summary>
+
+**Ứng dụng:** 4.23.152 · **Trạng thái:** CHƯA CÓ RELEASE
+
+Fix: create exactly one four-tile inline SVG in the existing native disclosure button, preserve JS event, aria-expanded, local storage and label in expanded rail; suppress legacy pseudo glyphs under scoped Horizon CSS.
+
+*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+
+[Release / thông tin](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
+
+</details>
+
+<details>
+<summary><strong>P5.1.67</strong> · Thay đổi được ghi nhận trong mã nguồn · CHƯA CÓ RELEASE · CẢI TIẾN / SỬA LỖI</summary>
+
+**Ứng dụng:** 4.23.151 · **Trạng thái:** CHƯA CÓ RELEASE
+
+Fix: observe only real TV page active class. If user navigates away, close WatchFlow without mutating current playlist, selected channel or any source. Preserve existing pointer/Escape pathways.
+
+*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+
+[Release / thông tin](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
+
+</details>
+
+<details>
+<summary><strong>P5.1.66</strong> · Thay đổi được ghi nhận trong mã nguồn · CHƯA CÓ RELEASE · CẢI TIẾN / SỬA LỖI</summary>
+
+**Ứng dụng:** 4.23.150 · **Trạng thái:** CHƯA CÓ RELEASE
+
+Fix: replace glyph with 20px currentColor inline SVG in same original button; raise close target to 42×42px without changing native close, Escape or focus behavior, keep source playlists untouched. Proof gate: real Electron screenshot and DOM check actual target >=40px + SVG across 3 themes, plus Node test, Windows+Mac CI, explicit separate release validation.
+
+*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+
+[Release / thông tin](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
+
+</details>
+
+<details>
+<summary><strong>P5.1.65</strong> · Thay đổi được ghi nhận trong mã nguồn · CHƯA CÓ RELEASE · CẢI TIẾN / SỬA LỖI</summary>
+
+**Ứng dụng:** 4.23.149 · **Trạng thái:** CHƯA CÓ RELEASE
+
+Fix: Focus the native Add IPTV source action in the empty-playlist state, or the selected genre button when channels exist. Restore focus to the WatchFlow topbar trigger when closing from within dialog. Add visible focus ring. Preserve Escape to close and underlying playlist behavior. Verification gate: new native Electron three-theme DOM focus in/out tests, Node regression and screenshot comparisons, no invented streams or autoplay; build/release only after screenshots have been opened.
+
+*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+
+[Release / thông tin](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
+
+</details>
+
+<details>
+<summary><strong>P5.1.64</strong> · Thay đổi được ghi nhận trong mã nguồn · CHƯA CÓ RELEASE · CẢI TIẾN / SỬA LỖI</summary>
+
+**Ứng dụng:** 4.23.148 · **Trạng thái:** CHƯA CÓ RELEASE
+
+Fix: hide only the redundant WatchFlow intro paragraph when there are zero native channels; do not change populated recommendations, button listeners or playlist data.
+
+*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+
+[Release / thông tin](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
 
 </details>
 
@@ -902,7 +1084,7 @@ This release preserves all P4.1 source data/feature logic. It adds **20 independ
 </details>
 
 <details>
-<summary><strong>P5.1.51</strong> · Clear empty EPG search instructions · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.51</strong> · Screenshot-reviewed DVR empty-state repair · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
 
 **Ứng dụng:** 4.23.135 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
@@ -1041,7 +1223,20 @@ This release preserves all P4.1 source data/feature logic. It adds **20 independ
 </details>
 
 <details>
-<summary><strong>P5.1.24</strong> · Correct OS search shortcut hint · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.25</strong> · v4.23.109 (independent screenshot repair round 05/20) · CHƯA CÓ RELEASE · CẢI TIẾN / SỬA LỖI</summary>
+
+**Ứng dụng:** 4.23.109 · **Trạng thái:** CHƯA CÓ RELEASE
+
+Fix in Positron UI layer: add a disabled clear no-channel placeholder, preserve native channel selection/listeners and re-enable automatically whenever real options appear; do not alter DVR storage or scheduling. Visual defect: while six channel metrics show zero, Doctor exposes live 'Chẩn đoán ngay', 'Phân tích' and 'Kiểm tra theo phạm vi' actions next to an existing source-management message.
+
+*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+
+[Release / thông tin](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
+
+</details>
+
+<details>
+<summary><strong>P5.1.24</strong> · v4.23.108 (independent screenshot repair round 04/20) · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
 
 **Ứng dụng:** 4.23.108 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
@@ -1054,7 +1249,20 @@ Fix: use scoped inline recording SVG preserving heading text and dynamic localiz
 </details>
 
 <details>
-<summary><strong>P5.1.22</strong> · Correct OS search shortcut hint · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.23</strong> · v4.23.107 (independent screenshot repair round 03/20) · CHƯA CÓ RELEASE · CẢI TIẾN / SỬA LỖI</summary>
+
+**Ứng dụng:** 4.23.107 · **Trạng thái:** CHƯA CÓ RELEASE
+
+Fix: on <=800px only when #sourcesList contains the empty-list, reduce the guidance padding to 12px and the subsequent Discovery margin to 12px. Existing source card layouts and IPTV data untouched.
+
+*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+
+[Release / thông tin](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
+
+</details>
+
+<details>
+<summary><strong>P5.1.22</strong> · v4.23.106 (independent screenshot repair round 02/20) · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
 
 **Ứng dụng:** 4.23.106 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
@@ -1227,7 +1435,7 @@ This release preserves all P4.1 source data/feature logic. It adds **20 independ
 </details>
 
 <details>
-<summary><strong>P5.1.7</strong> · P5.1 — Smart Discovery heading dark-band final repair · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.7</strong> · · v4.23.91 – P5.1.6 incomplete screenshot-repair follow-up · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
 
 **Ứng dụng:** 4.23.91 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
@@ -1303,7 +1511,7 @@ This release preserves all P4.1 source data/feature logic. It adds **20 independ
 </details>
 
 <details>
-<summary><strong>P5.1.3</strong> · P5.1 — Vector fullscreen control repair · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.3</strong> · v4.23.87 · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
 
 **Ứng dụng:** 4.23.87 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
@@ -1316,7 +1524,7 @@ From real P5.1.2 Electron TV screenshot at 450px: the fullscreen control appeare
 </details>
 
 <details>
-<summary><strong>P5.1.2</strong> · P5.1 — Compact sidebar badge and screenshot clipping regression · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.2</strong> · v4.23.86 · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
 
 **Ứng dụng:** 4.23.86 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
@@ -1325,6 +1533,19 @@ P5.1.1 screenshot `positron-p5-18-real.png` Settings revealed the replacement P5
 *Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
 
 [Release / thông tin](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.86-p5.1.2) · [Commit](https://github.com/trisanghy/open-iptv-pro/commit/cf04f42baf8d58b86db63897ad3d7ae986f0a663) · [Tải Windows Setup x64](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.86-p5.1.2/Open-IPTV-Pro-Setup-4.23.86-x64.exe) · [Tải gói ảnh QA](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.86-p5.1.2/Positron-P512-20-Real-Screenshots.zip)
+
+</details>
+
+<details>
+<summary><strong>P5.1.1</strong> · v4.23.85 · CHƯA CÓ RELEASE · CẢI TIẾN / SỬA LỖI</summary>
+
+**Ứng dụng:** 4.23.85 · **Trạng thái:** CHƯA CÓ RELEASE
+
+Correct the stale `P4 · 50 VÒNG` sidebar badge visible in the real P5.1 Electron Settings screenshot. Keep the current product label aligned with `P5.1.1`. Bump package and document title; update the immutable CI release tag and Windows/macOS installer checks for v4.23.85. The baseline P5.1 screenshot evidence remains historical and does not count as a newly captured repair round.
+
+*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+
+[Release / thông tin](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
 
 </details>
 
