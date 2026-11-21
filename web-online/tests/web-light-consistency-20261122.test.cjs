@@ -4,7 +4,7 @@ const root=path.resolve(__dirname,'..','..');
 const read=p=>fs.readFileSync(path.join(root,p),'utf8');
 test('Web Light patch is loaded last by the actual published index',()=>{
  const html=read('index.html'),css=read('web-light-consistency-20261122.css');
- assert.match(html,/web-light-consistency-20261122\.css\?v=light-contrast-20261122b/);
+ assert.match(html,/web-light-consistency-20261122\.css\?v=light-contrast-20261122c/);
  assert.ok(html.indexOf('web-light-consistency-20261122.css')>html.indexOf('web-source-repair-layout.css'));
  assert.match(css,/html\[data-theme="light"\]/);
  assert.doesNotMatch(css,/data-theme="dark"|data-theme="amoled"|localStorage/);
@@ -38,4 +38,10 @@ test('photo review: narrow mobile Sources heading stacks above upload actions',(
  assert.match(css,/@media\(max-width:600px\)/);
  assert.match(css,/#page-sources>\.section-heading>\.heading-actions/);
  assert.match(css,/grid-template-columns:repeat\(2,minmax\(0,1fr\)\)!important/);
+});
+
+test('screenshot pass two: Light empty notices and folder buttons use readable colors',()=>{
+ const css=read('web-light-consistency-20261122.css');
+ assert.match(css,/html\[data-theme="light"\] \.empty-list\s*\{/);
+ assert.match(css,/#page-tv \.channel-panel \.folder-actions button\s*\{/);
 });
