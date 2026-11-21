@@ -1,0 +1,70 @@
+name: Quick capture released Electron SVG toolbar
+on:
+  push:
+    branches: [build-sources/electron-desktop]
+    paths: ['.github/workflows/capture-electron-web-svg-quick.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  screenshot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - name: Install runner GUI dependencies
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq xvfb libgtk-3-0 libnss3 libasound2t64 libgbm1 libxss1 libatk-bridge2.0-0 libdrm2
+          npm install --no-audit --no-fund
+          npm install --no-save --no-audit --no-fund playwright-core
+      - name: Capture native Electron player at 1360x850
+        shell: bash
+        timeout-minutes: 3
+        run: |
+          set -Eeuo pipefail
+          mkdir -p screenshots
+          Xvfb :99 -screen 0 1600x900x24 >screenshots/xvfb.log 2>&1 &
+          export DISPLAY=:99
+          timeout 130s ./node_modules/.bin/electron . --no-sandbox --disable-gpu --remote-debugging-port=9222 >screenshots/electron.log 2>&1 &
+          node - <<'NODE'
+          const fs=require('node:fs');
+          const {chromium}=require('playwright-core');
+          (async()=>{
+            let browser;
+            for(let i=0;i<30;i++){
+              try{browser=await chromium.connectOverCDP('http://127.0.0.1:9222',{timeout:1000});break}
+              catch{await new Promise(r=>setTimeout(r,1000))}
+            }
+            if(!browser)throw Error('Electron CDP unavailable');
+            const ctx=browser.contexts()[0];
+            let page;
+            for(let i=0;i<20;i++){page=ctx.pages().find(p=>p.url().includes('index.html'));if(page)break;await new Promise(r=>setTimeout(r,1000))}
+            if(!page)throw Error('Electron application main window unavailable');
+            await page.waitForSelector('#playBtn',{timeout:15000});
+            await page.screenshot({path:'screenshots/actual-electron-svg-main.png',timeout:10000});
+            const inspection=await page.evaluate(()=>{
+              const ids=['prevBtn','playBtn','stopBtn','nextBtn','castBtn','pipBtn','fullscreenBtn'];
+              return ids.map(id=>{const x=document.getElementById(id);return {id,text:x?.textContent||'',svgMask:getComputedStyle(x,'::before').maskImage}});
+            });
+            fs.writeFileSync('screenshots/icons-inspection.json',JSON.stringify(inspection,null,2));
+            if(inspection.some(x=>!x.svgMask.includes('data:image/svg+xml')))throw Error('Missing SVG artwork');
+            if(inspection.some(x=>['prevBtn','playBtn','stopBtn','nextBtn','fullscreenBtn'].includes(x.id)&&x.text.trim()))throw Error('Duplicate Unicode glyphs');
+            if(inspection.some(x=>['castBtn','pipBtn'].includes(x.id)&&/▣/.test(x.text)))throw Error('Nested Cast PiP Unicode glyphs');
+            await page.evaluate(()=>document.getElementById('playerBox').requestFullscreen());
+            await page.waitForTimeout(600);
+            await page.screenshot({path:'screenshots/actual-electron-svg-fullscreen.png',timeout:10000});
+            if(await page.evaluate(()=>document.fullscreenElement?.id)!=='playerBox')throw Error('Fullscreen failed');
+            await browser.close();
+          })().catch(e=>{console.error(e);process.exitCode=1;});
+          NODE
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: verified-electron-web-svg-quick-screenshots
+          path: screenshots/
+          retention-days: 7
