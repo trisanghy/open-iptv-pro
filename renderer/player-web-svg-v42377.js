@@ -14,39 +14,25 @@
    if(node.nodeType===3&&node.nodeValue)node.nodeValue='';
   }
  }
- function stripPrefix(button){
+ // Cast/PiP have ONE Web SVG via ::before. Remove stale glyphs and
+ // textual icon badges, without replacing buttons or their click handlers.
+ function iconOnlyMediaButton(button,label){
   if(!button)return;
-  // Cast UI inserts a nested .cast-label / .pip-label after first paint.
-  // Strip decorative glyphs in any text node while keeping readable captions.
-  const walk=document.createTreeWalker(button,NodeFilter.SHOW_TEXT);
-  let node;
-  while((node=walk.nextNode())){
-   const cleaned=String(node.nodeValue||'').replace(/^\\s*[▣◖▶►⏯⏸⛶]+\\s*/u,'');
-   if(cleaned!==node.nodeValue)node.nodeValue=cleaned;
-  }
- }
- // Legacy app.js and player-ux.js update textContent on every state change:
- // remove glyph text AND observe updates so one SVG is painted, never both.
- for(const id of iconOnly){
-  const button=get(id);
-  if(!button)continue;
-  eraseOldGlyph(button);
+  button.setAttribute('aria-label',label);
+  button.setAttribute('title',label);
+  button.classList.add('web-svg-icon-only');
+  const clean=()=>{if(button.childNodes.length)button.replaceChildren();};
+  clean();
   if(typeof MutationObserver==='function')
-   new MutationObserver(()=>eraseOldGlyph(button)).observe(button,{childList:true,characterData:true});
+   new MutationObserver(clean).observe(button,{childList:true,characterData:true,subtree:true});
  }
- for(const id of ['castBtn','pipBtn']){
-  const button=get(id);
-  if(!button)continue;
-  stripPrefix(button);
-  if(typeof MutationObserver==='function')
-   new MutationObserver(()=>stripPrefix(button)).observe(button,{childList:true,characterData:true,subtree:true});
- }
+ iconOnlyMediaButton(get('castBtn'),'Cast / AirPlay lên TV');
+ iconOnlyMediaButton(get('pipBtn'),'Picture-in-Picture');
  const iconVolume=get('fsWebVolume')?.parentElement?.querySelector('.fs-web-volume-icon');
  if(iconVolume)iconVolume.textContent='';
  const regularVolume=document.querySelector('#page-tv .volume-icon');
  if(regularVolume)regularVolume.textContent='';
 
- for(const id of ['castBtn','pipBtn']){const button=get(id);if(button&&button.firstChild?.nodeType===3)button.firstChild.nodeValue=button.firstChild.nodeValue.replace(/^▣\\s*/,'');}
  const direct=(id,label)=>{const b=get(id);if(b&&!b.getAttribute('aria-label'))b.setAttribute('aria-label',b.title||label);};
  for(const [id,label] of [['prevBtn','Kênh trước'],['playBtn','Phát'],['stopBtn','Dừng'],['nextBtn','Kênh sau'],['fsPrev','Kênh trước'],['fsPlay','Phát'],['fsNext','Kênh sau'],['fsExit','Thoát toàn màn hình'],['fullscreenBtn','Toàn màn hình'],['openGuideBtn','Lịch phát sóng'],['favCurrentBtn','Yêu thích']])direct(id,label);
  // The legacy play handlers still replace button.textContent with ▶ or Ⅱ;
