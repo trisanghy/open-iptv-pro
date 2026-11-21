@@ -200,6 +200,22 @@
   const label=d.createElement('span');label.textContent=spec.caption;
   button.replaceChildren(svg,label);
  }
+ // P5.1.24: real Electron 720px EPG image revealed an OS-colored recording emoji.
+ // Keep the original localized label and DVR handlers; only replace the decorative glyph.
+ const dvrTitle=d.querySelector('#dvrPanel .dvr-heading h2');
+ if(dvrTitle){
+  const ensureDvrVector=()=>{
+   if(dvrTitle.querySelector('svg'))return;
+   const caption=(dvrTitle.textContent||'').replace(/^[\s⏺🔴🟠•]+/u,'').trim();
+   const icon=d.createElementNS(ns,'svg');icon.setAttribute('viewBox','0 0 24 24');
+   icon.setAttribute('aria-hidden','true');icon.setAttribute('focusable','false');
+   const outer=d.createElementNS(ns,'circle');outer.setAttribute('cx','12');outer.setAttribute('cy','12');outer.setAttribute('r','9');
+   const core=d.createElementNS(ns,'circle');core.setAttribute('cx','12');core.setAttribute('cy','12');core.setAttribute('r','3.5');core.setAttribute('class','record-dot');
+   icon.append(outer,core);const label=d.createElement('span');label.textContent=caption;
+   dvrTitle.replaceChildren(icon,label);
+  };
+  ensureDvrVector();new MutationObserver(ensureDvrVector).observe(dvrTitle,{childList:true,subtree:true,characterData:true});
+ }
  window.OpenIPTVPositronTwenty=Object.freeze({
   setStage,getStage:()=>stage,getFeedback:()=>previous
  });

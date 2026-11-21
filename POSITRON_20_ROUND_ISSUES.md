@@ -47,3 +47,6 @@ Round 01 P5.1.21 verified: Node, Electron capture, mac x64/arm64, Windows x64 an
 
 | 03/20 | P5.1.23 / 4.23.107 | P5.1.22 Sources 720px screenshot | 30px each-side empty-state padding plus 24px source section margin produce excessive empty gap; scope compact spacing to no-playlist state | Source-only responsive CSS plus Electron geometry assertions; CI/release pending |
 Round 02 P5.1.22 verified: 6/6 Actions success and immutable Release https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.106-p5.1.22
+
+| 04/20 | P5.1.24 / 4.23.108 | P5.1.23 actual Electron EPG 720px | Orange OS DVR emoji inconsistent with Positron monochrome icons; replace decorative heading glyph with state-preserving SVG | Node + real Electron EPG assertions, after-image/CI/release pending |
+Round 03 P5.1.23 real screenshot review: Sources 720px empty guidance measured 43px high and 12px gap to Smart Discovery, no-source-only CSS. Build/release outcome tracked in Actions run 44858148055.

@@ -92,6 +92,13 @@ async function runTwenty(page){
        path:svg?.querySelector('path')?.getAttribute('d')||''};
      })(),
 
+     dvrHeading:(()=>{
+      const h=document.querySelector('#dvrPanel .dvr-heading h2');if(!h)return null;
+      const svg=h.querySelector('svg');return {svg:!!svg,
+       label:h.textContent?.trim()||'',width:Math.round(svg?.getBoundingClientRect().width||0),
+       aria:svg?.getAttribute('aria-hidden')||''};
+     })(),
+
      sourceEmpty:(()=>{
       const n=document.querySelector('#sourcesList>.empty-list');if(!n)return null;
       const s=getComputedStyle(n),b=n.getBoundingClientRect();
@@ -251,6 +258,12 @@ async function runTwenty(page){
       return page;
     });
     assert.equal(destination,'page-sources','Favorites action must open Sources: '+name);
+   }
+   if(target==='epg'){
+    assert.equal(metrics.dvrHeading?.svg,true,'DVR heading still uses platform emoji: '+name);
+    assert.ok(metrics.dvrHeading.width>=18,'DVR recording icon too small: '+name);
+    assert.equal(metrics.dvrHeading.aria,'true','decorative DVR SVG must be hidden from screen readers');
+    assert.ok(metrics.dvrHeading.label.includes('Hẹn giờ ghi hình chương trình'),'DVR heading text lost');
    }
    if(target==='epg'&&metrics.epg)assert.notEqual(metrics.epg.background,'rgb(255, 255, 255)','white EPG search');
   if(target==='tv')assert.equal(metrics.searchShortcut,'/');

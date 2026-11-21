@@ -234,3 +234,7 @@ html[data-positron="true"] #positronBar #positronFocus svg{display:block;width:1
   margin-top:12px!important;
  }
 }
+
+/* P5.1.24: native DVR heading uses a monochrome, theme-aware recording vector. */
+html[data-positron="true"] #page-epg #dvrPanel .dvr-heading h2 svg{display:inline-block;vertical-align:-3px;width:20px;height:20px;margin-right:6px;fill:none;stroke:currentColor;stroke-width:1.8;pointer-events:none}
+html[data-positron="true"] #page-epg #dvrPanel .dvr-heading h2 svg .record-dot{fill:currentColor;stroke:none}
