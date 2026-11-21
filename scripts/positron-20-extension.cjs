@@ -775,7 +775,7 @@ async function runTwenty(page){
      directory.textContent=original;await new Promise(resolve=>setTimeout(resolve,0));
      return test;
     });
-    assert.equal(folderQa.label,'Nơi lưu video','recordings path is missing a human-friendly label');
+    assert.equal(folderQa.label,'Thư mục ghi hình','recordings path is missing a human-friendly label');
     assert.equal(folderQa.titled,true,'recording path tooltip lost full path');
     assert.equal(folderQa.ellipsis,true,'long filesystem path is not visually truncated');
     assert.equal(folderQa.clipped,true,'long path must be constrained to available width');
