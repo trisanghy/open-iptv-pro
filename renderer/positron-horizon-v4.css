@@ -629,3 +629,15 @@ html[data-positron="true"].po-horizon #page-epg #dvrChooseDir{
  html[data-positron="true"].po-horizon #page-epg .dvr-folder{grid-template-columns:minmax(0,1fr)!important;gap:10px!important}
  html[data-positron="true"].po-horizon #page-epg #dvrChooseDir{justify-self:start!important}
 }
+
+/* P5.1.74: a giant empty 16:9 canvas hides the actual controls on laptops.
+ * Compress ONLY the unplayed empty state and ONLY on short desktop windows.
+ * As soon as the empty state hides, native 16:9 playback is unchanged.
+ * Native full screen bypasses this rule. */
+@media(min-width:900px) and (max-height:900px){
+ html[data-positron="true"].po-v3.po-horizon:not(:has(:fullscreen)) #page-tv #playerBox:has(#emptyPlayer:not(.hidden)){
+  aspect-ratio:auto!important;
+  height:clamp(280px,calc(100dvh - 420px),430px)!important;
+  min-height:280px!important;
+ }
+}

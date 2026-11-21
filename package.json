@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.157",
-  "description": "Positron P5.1.73: Accessible recording directory with responsive EPG layout",
+  "version": "4.23.158",
+  "description": "Positron P5.1.74: Compact idle TV screen with untouched live video aspect ratio",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

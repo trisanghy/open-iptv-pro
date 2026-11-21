@@ -514,3 +514,9 @@ P5.1.46 same-version CI repair: run 44866650681 failed 2/611 because historical 
 - Added a labeled path field while retaining native `#dvrDirectory` and `#dvrChooseDir`, responsive grid and complete hover tooltip mirrored from the actual native path via MutationObserver. No filesystem calls or data mutations.
 - Added real Electron QA simulating a very long directory and checking path clipping, full title, visible button, row placement and horizontal overflow, plus Node guard.
 - Build and screenshot reviews to be verified from P5.1.73 Actions before marking round complete.
+
+## P5.1.74 — no-source TV workspace uses laptop height intelligently (new batch 04/20)
+- P5.1.73 actual Electron TV at 1360x820 displayed a 538px empty video stage, pushing useful controls below the fold.
+- On desktop viewports shorter than 900px, only the no-video stage is shortened to provide access to controls. It retains a fluid floor of 280px and bypasses fullscreen. When the player starts video, the original native 16:9 frame remains unchanged.
+- Node and real-Electron regression intentionally toggle the empty illustration to verify the live aspect ratio is preserved and the original empty state is restored before screenshots.
+- Actual CI and screenshot comparison to be verified before release credit.

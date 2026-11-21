@@ -823,6 +823,32 @@ async function runTwenty(page){
 
   }
 
+  // P5.1.74: prioritize usable controls over an oversized empty video area.
+  // Turn the empty state off only for a measurement and restore it before capture.
+  if(target==='tv'&&width===1360&&Number(metrics.navCount)===0){
+   const emptyStage=await page.evaluate(async()=>{
+    const stage=document.getElementById('playerBox'),empty=document.getElementById('emptyPlayer');
+    const initial=stage.getBoundingClientRect();
+    const compact=initial.height;
+    const controls=document.querySelector('#page-tv .player-control-card').getBoundingClientRect();
+    empty.classList.add('hidden');
+    await new Promise(resolve=>requestAnimationFrame(resolve));
+    const liveStage=stage.getBoundingClientRect();
+    empty.classList.remove('hidden');
+    await new Promise(resolve=>requestAnimationFrame(resolve));
+    const restored=stage.getBoundingClientRect().height;
+    return {compact,viewport:innerHeight,firstControlTop:controls.top,
+     restored:Math.abs(restored-compact)<=2,
+     preservesVideoRatio:Math.abs(liveStage.height-liveStage.width*9/16)<=3,
+     compactHasRoom:compact>=280&&compact<=430,
+     nativeControlsReachable:controls.top<innerHeight-200};
+   });
+   assert.equal(emptyStage.compactHasRoom,true,'oversized no-source video stage still hides quick player controls');
+   assert.equal(emptyStage.nativeControlsReachable,true,'empty TV pushes player toolbar below the first screen');
+   assert.equal(emptyStage.preservesVideoRatio,true,'loaded video must retain its native 16:9 stage');
+   assert.equal(emptyStage.restored,true,'empty stage did not restore after test');
+  }
+
   // P5.1.19: exercise both real keyboard handlers in the Electron renderer.
   // '/' must focus the visible channel finder; Ctrl+K remains global.
   if(target==='tv'&&round===1){

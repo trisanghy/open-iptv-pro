@@ -37,7 +37,7 @@ test('P5 assets are loaded after P4 without replacing it',()=>{
 test('P5 release is immutable and versioned separately from P4.1',()=>{
  const pkg=JSON.parse(read('package.json'));
  const flow=read('.github/workflows/positron-lab.yml');
- assert.equal(pkg.version,'4.23.157');
+ assert.equal(pkg.version,'4.23.158');
  const label=pkg.description.match(/Positron\s+(P\d+\.\d+\.\d+)/)?.[1];
  assert.ok(label,'product P-label must accompany SemVer');
  assert.ok(flow.includes('TAG=positron/v'+pkg.version+'-'+label.toLowerCase()),'release tag and app version must match');
@@ -642,4 +642,13 @@ test('P5.1.73 EPG recording path is accessible, truncated visually and preserves
  assert.ok(css.includes('.po-dvr-directory strong'));
  assert.ok(ui.includes('new MutationObserver(syncDirectoryTitle)'));
  for(const k of ['folderQa.titled,true','folderQa.clipped,true','folderQa.buttonVisible,true','folderQa.rowAligned,true'])assert.ok(audit.includes(k));
+});
+
+test('P5.1.74 compact empty TV frees controls but loaded native video retains 16:9',()=>{
+ const css=read('renderer/positron-horizon-v4.css'),audit=read('scripts/positron-20-extension.cjs');
+ assert.ok(css.includes('#playerBox:has(#emptyPlayer:not(.hidden))'));
+ assert.ok(css.includes('aspect-ratio:auto!important'));
+ assert.ok(css.includes('not(:has(:fullscreen))'));
+ assert.ok(css.includes('height:clamp(280px,calc(100dvh - 420px),430px)!important'));
+ for(const t of ['emptyStage.compactHasRoom,true','emptyStage.nativeControlsReachable,true','emptyStage.preservesVideoRatio,true','emptyStage.restored,true'])assert.ok(audit.includes(t));
 });
