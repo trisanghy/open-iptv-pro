@@ -1069,6 +1069,12 @@ async function runTwenty(page){
  await page.screenshot({path:path.join(out,'positron-watchflow-plus-mix-552-metadata-before-assert-real.png'),animations:'disabled'});
  for(const key of ['mixSelected','resumeButton','similarButton','zapButton','notPlaying','navOneRow','navNoOverflow','navNoTruncatedLabels','ariaFull','navButtonVisible'])
   assert.equal(plusQA[key],true,'WatchFlow Plus QA failed: '+key+' overflowPx='+plusQA.navOverflowPx);
+ // Explicit assertions keep legacy regression guards discoverable while
+ // ensuring each new accessibility requirement is actually evaluated.
+ assert.equal(plusQA.navOneRow,true,'WatchFlow nav must remain in one row');
+ assert.equal(plusQA.navNoOverflow,true,'WatchFlow navigation container overflows');
+ assert.equal(plusQA.navNoTruncatedLabels,true,'WatchFlow visible mode text is clipped');
+ assert.equal(plusQA.ariaFull,true,'WatchFlow requires full accessible labels');
  await page.screenshot({path:path.join(out,'positron-watchflow-plus-mix-552-metadata-qa-real.png'),animations:'disabled'});
  // P5.1.85: exercise the real Electron Similar panel with a temporary
  // native metadata-only current channel; no stream is opened or stored.
