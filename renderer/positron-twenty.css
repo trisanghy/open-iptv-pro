@@ -378,3 +378,30 @@ html[data-positron="true"] #page-tv #emptyPlayer .empty-icon svg.positron-empty-
  fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;
  pointer-events:none!important;
 }
+
+/* P5.1.41 — real P5.1.40 Settings 1360px: logged-out cloud card is
+   300+px tall and pushes four settings groups below the fold. Compact only
+   this desktop Electron state; preserve 44px minimum email/OTP controls. */
+@media(min-width:900px){
+ html[data-positron="true"] #page-settings #openiptvPortableCloud:has(#portableCloudEmailForm:not([hidden])){
+  padding:14px 18px!important;margin:6px 0 12px!important;
+ }
+ html[data-positron="true"] #page-settings #openiptvPortableCloud:has(#portableCloudEmailForm:not([hidden])) .oc-head{
+  margin-bottom:8px!important;
+ }
+ html[data-positron="true"] #page-settings #openiptvPortableCloud:has(#portableCloudEmailForm:not([hidden])) .oc-symbol{
+  width:38px!important;height:38px!important;flex-basis:38px!important;
+ }
+ html[data-positron="true"] #page-settings #openiptvPortableCloud:has(#portableCloudEmailForm:not([hidden])) .oc-status{
+  padding:8px 10px!important;margin-bottom:9px!important;
+ }
+ html[data-positron="true"] #page-settings #openiptvPortableCloud:has(#portableCloudEmailForm:not([hidden])) .oc-form{
+  margin-top:8px!important;gap:6px!important;
+ }
+ html[data-positron="true"] #page-settings #openiptvPortableCloud:has(#portableCloudEmailForm:not([hidden])) .oc-link{
+  min-height:30px!important;padding:4px 0!important;
+ }
+ html[data-positron="true"] #page-settings #openiptvPortableCloud:has(#portableCloudEmailForm:not([hidden])) .oc-footnote{
+  margin-top:9px!important;padding-top:9px!important;
+ }
+}
