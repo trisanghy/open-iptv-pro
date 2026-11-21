@@ -8,7 +8,7 @@ Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA 
 
 Thay ký tự sao ★/☆ phụ thuộc phông chữ bằng biểu tượng SVG 20 px thống nhất trên nút Yêu thích của thư viện kênh. Giữ thao tác chuột, bàn phím, trạng thái đã lưu và không tự phát video.
 
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/67111e5369977c7a0ee5013d4d5956d5137dde0b)
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/a8c971b57f09cf7c19d391673ee0f843652ccadc)
 [Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
 
 ## P5.1.133 — Tên kênh dễ đọc hơn, nút Yêu thích tách riêng
