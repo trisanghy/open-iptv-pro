@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.182",
-  "description": "Positron P5.1.98: show verified Now programmes on WatchFlow cards",
+  "version": "4.23.183",
+  "description": "Positron P5.1.99: Next programme from genuine XMLTV in WatchFlow",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

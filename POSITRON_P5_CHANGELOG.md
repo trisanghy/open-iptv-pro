@@ -1,3 +1,11 @@
+## P5.1.99 — Upcoming programme in WatchFlow directly from XMLTV / Electron v4.23.183
+
+- Feature: extend actual Now cards with the first Next XMLTV programme and its local start time. Reuse `IPTVGuide.current()` and existing channel/manual mappings, EPG offset and user's device time zone. Never infer a programme title from a channel or network search.
+- Show Next only if its schedule starts after the present instant, has valid end time, an actual title and starts within 12 hours. Avoid misleading 'up next tomorrow' from incomplete guides. Do not load extra sources, auto-play a channel or alter native playlists.
+- UI stays inside existing WatchFlow cards, beneath true Now (if any), truncates long metadata but exposes full title in tooltip. Native Lưu / Xem controls preserved.
+- Tests: pure unit cases for active future, finished, missing/stale, invalid metadata; Electron 552-channel metadata-only scenario temporarily provides synthetic current+next XMLTV on one actual QA channel, verifies exactly one Next row, no auto-play and captures `positron-p5199-next-epg-watchflow-552-real.png`.
+- Inherits the P5.1.98 follow-up correction resetting WatchFlow scroll on mode change, preventing lower cards obscuring title/navigation. Complete only after reading real screenshot and CI installers/release.
+
 ## P5.1.98 — On-air XMLTV programme titles in WatchFlow recommendations / Electron v4.23.182
 
 - Research basis: the imported XMLTV guide already backs native EPG search and reminders, but WatchFlow cards show only channel names and source health. IPTVnator's channel list offers Now/Next EPG inline; copy no external assets/code.

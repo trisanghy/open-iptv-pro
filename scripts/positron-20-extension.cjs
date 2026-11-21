@@ -1335,7 +1335,10 @@ async function runTwenty(page){
   if(!first)throw Error('No QA recommendation to match EPG');
   const timestamp=Date.now(),epgId='positron-qa-epg';
   const guide={names:{[window.IPTVGuide.tidy(first.name)]:epgId},aliasesById:{[epgId]:[first.name]},
-   programmes:[{id:epgId,start:timestamp-60000,end:timestamp+1800000,title:'Bản tin EPG đã xác minh trong QA'}],
+   programmes:[
+    {id:epgId,start:timestamp-60000,end:timestamp+1800000,title:'Bản tin EPG đã xác minh trong QA'},
+    {id:epgId,start:timestamp+1800000,end:timestamp+3600000,title:'Phim tiếp theo từ XMLTV QA'}
+   ],
    manualMappings:{},offsetMinutes:0};
   window.__positronQaOriginalGetGuide=window.IPTVExtras.getGuide;
   window.IPTVExtras.getGuide=()=>guide;
@@ -1354,6 +1357,17 @@ async function runTwenty(page){
  for(const key of ['oneRealMetadataRow','correctTitle','fiveCards','scrollAtTop','noAutoPlay','safeText'])
   assert.equal(liveEPGQA[key],true,'On-air XMLTV WatchFlow QA: '+key);
  await page.screenshot({path:path.join(out,'positron-p5198-live-epg-watchflow-552-real.png'),animations:'disabled'});
+ const nextEPGQA=await page.evaluate(()=>{
+  const root=document.getElementById('poFlowPlusResults');
+  const next=[...root.querySelectorAll('.po-flowplus-next-epg')];
+  const sample=next[0]?.textContent||'';
+  return {singleVerifiedNext:next.length===1,
+   correctTitle:sample.includes('Phim tiếp theo từ XMLTV QA')&&sample.startsWith('Tiếp theo '),
+   noAutoPlay:window.IPTVState.getCurrent()===null};
+ });
+ for(const key of ['singleVerifiedNext','correctTitle','noAutoPlay'])
+  assert.equal(nextEPGQA[key],true,'XMLTV Next QA: '+key);
+ await page.screenshot({path:path.join(out,'positron-p5199-next-epg-watchflow-552-real.png'),animations:'disabled'});
  await page.evaluate(()=>{
   window.IPTVExtras.getGuide=window.__positronQaOriginalGetGuide;
   delete window.__positronQaOriginalGetGuide;

@@ -139,3 +139,9 @@
  display:block;margin-top:5px;color:#8fe3cb;font-size:10.5px;line-height:1.35;
  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%;
 }
+
+/* P5.1.99: next genuine XMLTV schedule at the point of channel choice. */
+#poWatchFlowPanel .po-flowplus-card-info .po-flowplus-next-epg{
+ display:block;margin-top:3px;color:#b8cfd0;font-size:10px;line-height:1.35;
+ overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%;
+}

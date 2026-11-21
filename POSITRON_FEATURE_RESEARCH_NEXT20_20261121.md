@@ -20,7 +20,7 @@ Các nguồn trên là định hướng so sánh, **không** chứng minh ứng 
 |---|---|---|---|
 | 01 | **Xem sau**: đánh dấu kênh từ WatchFlow; mục Tiếp hiển thị danh sách đã lưu; không lưu URL/mật khẩu | Thêm/xóa trên Electron, mở lại, lưu local, không phát tự động, nguồn khác không trộn | Đang triển khai P5.1.96 |
 | 02 | **Đang phát gì?**: hiển thị chương trình từ XMLTV thật ngay trên thẻ WatchFlow, không đoán EPG | Đúng cửa sổ giờ và offset; không EPG không bịa, không tự phát | P5.1.98 đang triển khai |
-| 03 | **Nhắc chương trình**: đặt/hủy nhắc từ EPG thực, thông báo khi app chạy | Hủy, trùng lịch, thay múi giờ, quyền notification | Nghiên cứu |
+| 03 | **Nhắc chương trình**: mở rộng nhắc lịch đã có, xử lý đổi EPG và hủy | Hủy, trùng lịch, thay múi giờ, quyền notification | Nghiên cứu nâng cấp |
 | 04 | **Tìm chương trình đa kênh**: tên/tập/thể loại EPG, dấu tiếng Việt | Kiểm chứng kết quả có nguồn+start/end, không bịa tên | Nghiên cứu |
 | 05 | **Lịch phát cá nhân hôm nay**: danh sách chương trình quan tâm, chỉ với guide | Local-first, không tự đặt lịch ghi hình, không giả dữ liệu | Nghiên cứu |
 | 06 | **Smart Zap 2.0**: giải thích vì sao kênh được đề xuất, đổi kênh chủ động | Không lặp ngay, loại nguồn dead, tôn trọng seen | Nghiên cứu |

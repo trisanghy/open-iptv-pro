@@ -36,3 +36,21 @@ test('WatchFlow on-air uses existing XMLTV API and metadata-only Electron eviden
  assert.ok(ui.includes('panel.scrollTop=0'));
 
 });
+
+test('Next programme is XMLTV-only, future, bounded and respects absence',()=>{
+ const base={...guide,programmes:[...guide.programmes,{id:'vtv1',start:now+60_000,end:now+3600_000,title:'Phim tối nay'}]};
+ const api={current:(g,c,at)=>({next:g.programmes.find(p=>p.start>at)})};
+ assert.equal(core.upcoming(base,channel,now,api)?.title,'Phim tối nay');
+ assert.equal(core.upcoming({...base,programmes:[]},channel,now,api),null);
+ assert.equal(core.upcoming(base,channel,now+60_000,api),null);
+ assert.equal(core.upcoming(base,channel,now-13*3600_000,api),null);
+ assert.equal(core.upcoming(base,channel,now,{current:()=>({next:{start:now+1000,end:now+2000,title:''}})}),null);
+});
+test('Next XMLTV display uses native local clock and never fetches media',()=>{
+ const ui=fs.readFileSync('renderer/positron-watchflow-next.js','utf8');
+ const qa=fs.readFileSync('scripts/positron-20-extension.cjs','utf8');
+ assert.ok(ui.includes('window.PositronOnAirCore?.upcoming(liveGuide,ch,liveClock,window.IPTVGuide)'));
+ assert.ok(ui.includes("toLocaleTimeString('vi-VN'"));
+ assert.ok(ui.includes("upcoming.textContent='Tiếp theo '+at+': '+nextEPG.title"));
+ assert.ok(qa.includes('positron-p5199-next-epg-watchflow-552-real.png'));
+});

@@ -118,6 +118,16 @@
     programme.title='Đang chiếu theo lịch XMLTV: '+onAir.title;
     body.append(programme);
    }
+   // A real scheduled next programme is useful at decision time, but must
+   // remain absent when guide data is stale, missing or beyond 12 hours.
+   const nextEPG=window.PositronOnAirCore?.upcoming(liveGuide,ch,liveClock,window.IPTVGuide);
+   if(nextEPG){
+    const upcoming=d.createElement('small');upcoming.className='po-flowplus-next-epg';
+    const at=new Date(nextEPG.start).toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit'});
+    upcoming.textContent='Tiếp theo '+at+': '+nextEPG.title;
+    upcoming.title='Tiếp theo theo lịch XMLTV: '+nextEPG.title;
+    body.append(upcoming);
+   }
    const action=d.createElement('button');action.type='button';action.textContent='Xem';
    action.setAttribute('aria-label','Xem kênh '+ch.name);action.addEventListener('click',()=>play(ch));
    const buttons=d.createElement('div');buttons.className='po-flowplus-actions';
