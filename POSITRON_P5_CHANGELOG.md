@@ -5,6 +5,7 @@
 - Electron screenshot: positron-p51141-programme-title-search-after-450-real.png
 - Ảnh đầu vào: positron-p51140-epg-current-filter-after-450-real.png của vòng trước; mở rộng tính năng lọc EPG thành tìm tên chương trình có ích.
 - Kiểm thử: Node regression, Electron 450px với XMLTV metadata chỉ tồn tại cục bộ; tên chương trình “Bản tin yêu thích QA” tìm được qua truy vấn không dấu “tin yeu thich” dù từ khóa không có trong tên kênh; không tự phát, dữ liệu nguồn bất biến và không tràn ngang.
+- Sửa QA tiếp nối: ID kênh thực có thể chứa dấu `|`, nên so sánh ID qua chuỗi nối/split không bảo toàn danh tính. Giữ nguyên mảng ID gốc và so sánh hai mảng đã sort bằng JSON, không giảm điều kiện dữ liệu bất biến.
 - Trạng thái: CANDIDATE — xác minh CI, screenshot và Release thực tế trước khi đếm vòng 06/20.
 
 ## P5.1.140 — Lọc kênh đang có chương trình từ XMLTV / Electron v4.23.224
