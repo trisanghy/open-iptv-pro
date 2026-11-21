@@ -340,6 +340,34 @@
   if(currentTitle)new MutationObserver(syncTransportAvailability).observe(currentTitle,{childList:true,subtree:true,characterData:true});
   syncTransportAvailability();
  }
+ // P5.1.39: actual P5.1.38 Electron TV 450px screenshot shows Cast/PiP
+ // still active when there is no selected channel. Cast's native handler
+ // only emits a warning without a channel; PiP needs video. Preserve native
+ // handlers and any platform feature-support disabled flags.
+ const idleOutputActions=['castBtn','pipBtn'];
+ const outputTitle=byId('playingTitle');
+ if(outputTitle){
+  const syncOutputAvailability=()=>{
+   const hasCurrent=!!window.IPTVState?.getCurrent?.();
+   for(const id of idleOutputActions){
+    const b=byId(id);if(!b)continue;
+    if(!hasCurrent){
+     if(!b.hasAttribute('data-positron-no-current')){
+      if(b.disabled)continue;
+      b.setAttribute('data-positron-no-current','true');
+     }
+     b.disabled=true;b.setAttribute('aria-describedby','playingTitle');
+    }else if(b.getAttribute('data-positron-no-current')==='true'){
+     b.disabled=false;
+     b.removeAttribute('data-positron-no-current');
+     b.removeAttribute('aria-describedby');
+    }
+   }
+  };
+  new MutationObserver(syncOutputAvailability).observe(outputTitle,{childList:true,subtree:true,characterData:true});
+  window.addEventListener('openiptv:media-info',syncOutputAvailability);
+  syncOutputAvailability();
+ }
  const currentFavorite=byId('favCurrentBtn'),currentLabel=byId('playingTitle');
  if(currentFavorite&&currentLabel){
   const syncFavoriteAvailability=()=>{

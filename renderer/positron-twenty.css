@@ -358,3 +358,11 @@ html[data-positron="true"] #page-tv .player-control-card .controls.transport-con
  filter:grayscale(1)!important;cursor:not-allowed!important;
  background:transparent!important;box-shadow:none!important;
 }
+
+/* P5.1.39: Cast/PiP require a selected channel. Native output toolbar
+   forces enabled opacity, so use a scoped stronger selector for idle state. */
+html[data-positron="true"] #page-tv .player-control-card .output-controls :is(#castBtn,#pipBtn)[data-positron-no-current="true"]{
+ opacity:.38!important;color:var(--po-muted)!important;
+ filter:grayscale(1)!important;cursor:not-allowed!important;
+ border-color:var(--po-line)!important;box-shadow:none!important;
+}

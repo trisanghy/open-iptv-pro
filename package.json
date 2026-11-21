@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.122",
-  "description": "Positron P5.1.38: synchronize idle transport controls to channel availability",
+  "version": "4.23.123",
+  "description": "Positron P5.1.39: guard Cast and PiP when no channel is selected",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",
