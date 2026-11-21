@@ -53,7 +53,8 @@ async function runTwenty(page){
     heading:(()=>{const n=document.querySelector('#positronBar .p-heading strong');if(!n)return null;const b=n.getBoundingClientRect();return {shortTitle:n.dataset.shortTitle||'',clipped:n.scrollWidth>n.clientWidth+1,width:Math.round(b.width)};})(),
     badge:(()=>{const n=document.querySelector('#appSidebar .brand small');if(!n)return null;const b=n.getBoundingClientRect();return {visible:b.width>0&&b.height>0,clipped:n.scrollWidth>n.clientWidth+1,right:b.right,top:b.top,bottom:b.bottom};})(),
     toggle:(()=>{const n=document.querySelector('#appSidebar .sidebar-edge-toggle');if(!n)return null;const b=n.getBoundingClientRect();return {left:b.left,top:b.top,bottom:b.bottom};})(),
-    searchShortcut:document.getElementById('searchBox')?.getAttribute('aria-keyshortcuts'),
+    themeButton:(()=>{const n=document.getElementById('positronStudioBtn');if(!n)return null;const b=n.getBoundingClientRect(),s=getComputedStyle(n),p=getComputedStyle(n,'::before');return{width:Math.round(b.width),fontSize:s.fontSize,pseudoContent:p.content,ariaLabel:n.getAttribute('aria-label'),title:n.title};})(),
+     searchShortcut:document.getElementById('searchBox')?.getAttribute('aria-keyshortcuts'),
     stage:document.documentElement.dataset.p20Stage};
   });
   assert.equal(metrics.page,'page-'+target);
@@ -65,7 +66,14 @@ async function runTwenty(page){
    assert.equal(metrics.transportVectors,true,'non-vector transport icons: '+name);
    if(width<=800&&round>=6)assert.equal(metrics.brandIcon?.visible,false,'brand icon overlaps sidebar toggle: '+name);
   }
-  if(width<=720&&(target==='tv'||target==='sources')){
+  if(width<=600){
+    assert.ok(metrics.themeButton,'theme control missing: '+name);
+    assert.equal(metrics.themeButton.fontSize,'0px','theme label visible in compact toolbar: '+name);
+    assert.ok(metrics.themeButton.width<=46,'theme button exceeds compact width: '+name);
+    assert.equal(metrics.themeButton.pseudoContent,'"◈"','single theme icon missing: '+name);
+    assert.ok(metrics.themeButton.ariaLabel&&metrics.themeButton.title,'icon requires accessible label and tooltip: '+name);
+   }
+   if(width<=720&&(target==='tv'||target==='sources')){
    assert.equal(metrics.heading?.shortTitle,target==='sources'?'Nguồn':'TV','missing compact page title: '+name);
    assert.equal(metrics.heading?.clipped,false,'page header text clipped: '+name);
   }

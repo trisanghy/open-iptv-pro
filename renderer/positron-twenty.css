@@ -93,3 +93,16 @@ html[data-positron="true"] #page-tv #fullscreenBtn svg{display:block;width:19px;
 
 /* P5.1.6 screenshot follow-up: P4 .source-hub-heading retained --po-bg and was still a black band even after its parent was repaired. */
 html[data-positron="true"].p20-07 #page-sources .source-hub-heading{background:var(--po-card)!important;color:var(--po-ink)!important;border-color:var(--po-line)!important}
+
+/* P5.1.8, new round 01: The real Electron 600px Favorites screenshot shows
+   the full theme label and two diamond glyphs. P4's icon-only font-size
+   loses to #positronBar .p-actions button. Preserve native event/ARIA. */
+@media(max-width:600px){
+ html[data-positron="true"].p50-49 #positronBar .p-actions #positronStudioBtn{
+  font-size:0!important;width:36px!important;min-width:36px!important;max-width:36px!important;
+  padding:0!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;
+ }
+ html[data-positron="true"].p50-49 #positronBar .p-actions #positronStudioBtn::before{
+  content:"◈";font-size:17px!important;line-height:1!important;
+ }
+}
