@@ -184,3 +184,43 @@ html[data-theme="light"] :is(.btn-primary,.control-main):not(:disabled){
 html[data-theme="light"] #page-tv :is(.player-box,.player-box video,.multi-tile video){
  background-color:#07111c;
 }
+
+/* Screenshot review 2026-11-22: the shared dark-theme !important rule for
+   .filter-tab.active still won in Light mode; active tab had a navy background
+   with low-contrast purple/green lettering (desktop-TV screenshots). */
+html[data-theme="light"] #page-tv .channel-panel .filter-tab.active{
+ background:color-mix(in srgb,var(--accent) 12%,#ffffff)!important;
+ color:var(--text)!important;
+ border-color:color-mix(in srgb,var(--accent) 35%,var(--edge))!important;
+}
+html[data-theme="light"] .sidebar .nav.active span{
+ color:var(--text)!important;
+}
+html[data-theme="light"] :is(
+ .dvr-quick-status.error,.dvr-status.error
+){color:#a83a4a!important}
+html[data-theme="light"] .dvr-quick-status.scheduled{color:#12664d!important}
+html[data-theme="light"] .dvr-quick-status.recording{color:#86501e!important}
+/* The Sources title collapsed to three narrow lines beside two action buttons
+   on the 390px mobile capture. Stack heading, then put both actions in one row. */
+@media(max-width:600px){
+ html[data-theme="light"][data-iptv-device="mobile"] #page-sources>.section-heading{
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr)!important;
+  align-items:start!important;
+  gap:10px!important;
+ }
+ html[data-theme="light"][data-iptv-device="mobile"] #page-sources>.section-heading>div:first-child{
+  width:100%!important;min-width:0!important;
+ }
+ html[data-theme="light"][data-iptv-device="mobile"] #page-sources>.section-heading>.heading-actions{
+  display:grid!important;
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  gap:8px!important;width:100%!important;min-width:0!important;
+  justify-content:stretch!important;
+ }
+ html[data-theme="light"][data-iptv-device="mobile"] #page-sources>.section-heading>.heading-actions .btn{
+  width:100%!important;min-width:0!important;
+  white-space:nowrap!important;
+ }
+}
