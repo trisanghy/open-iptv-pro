@@ -37,7 +37,7 @@ test('P5 assets are loaded after P4 without replacing it',()=>{
 test('P5 release is immutable and versioned separately from P4.1',()=>{
  const pkg=JSON.parse(read('package.json'));
  const flow=read('.github/workflows/positron-lab.yml');
- assert.equal(pkg.version,'4.23.84');
+ assert.equal(pkg.version,'4.23.85');
  assert.ok(flow.includes('positron/v4.23.85-p5.1.1'));
  assert.ok(read('scripts/positron-50-audit.cjs').includes('runTwenty(page)'));
  assert.ok(flow.includes('Positron-P511-20-Real-Screenshots.zip'));
