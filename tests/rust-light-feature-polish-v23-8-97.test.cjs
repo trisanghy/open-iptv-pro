@@ -27,3 +27,16 @@ test('gallery photographs legal notice and cancels rather than claiming usage ri
  assert.match(js,/13-tv-video-enhancement-open/);
  assert.match(js,/44-amoled-settings/);
 });
+
+
+test('Dark and AMOLED channel browser uses saved accent, never a fixed green selection',()=>{
+ const css=read('renderer/rust-dark-browser-accent-v23-8-97.css');
+ const html=read('renderer/index.html');
+ assert.ok(html.indexOf('rust-dark-browser-accent-v23-8-97.css')>html.indexOf('rust-light-feature-polish-v23-8-97.css'));
+ assert.match(css,/data-theme="dark"/);
+ assert.match(css,/data-theme="amoled"/);
+ assert.match(css,/rust-browser-chip\.active/);
+ assert.match(css,/rust-browser-tab\.active/);
+ assert.match(css,/var\(--accent\)/);
+ assert.doesNotMatch(css,/#35e780|#06b861|#2de17a|localStorage/);
+});
