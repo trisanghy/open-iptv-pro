@@ -164,3 +164,28 @@ test('P5.1.103 warns about a full local list and verifies native non-destructive
  assert.ok(qa.includes('positron-p51103-watchlater-cap-after-real.png'));
  assert.ok(flow.includes('positron-p51103-watchlater-cap-after-real.png'));
 });
+
+test('P5.1.104 unavailable bookmark count is source-isolated and non-destructive',()=>{
+ const okay=C('src-A','a','VTV1 HD'),broken=C('src-A','b','VTV2','https://invalid.example/stream','dead');
+ const missing=C('unmounted-source','c','Unloaded Sports');
+ const noUrl=C('src-A','d','VTV3','');
+ let rows=[];
+ for(const ch of [okay,broken,missing,noUrl])rows=later.toggle(rows,ch).rows;
+ const frozen=JSON.stringify(rows);
+ assert.equal(later.unavailable(rows,[okay,broken,noUrl]),3);
+ assert.equal(later.visible(rows,[okay,broken,noUrl],later.LIMIT).length,1);
+ assert.equal(later.unavailable(rows,[okay,{...broken,status:'alive'},noUrl]),2);
+ assert.equal(later.unavailable(rows,[okay,{...broken,status:'alive'},{...noUrl,url:'https://valid.invalid/test'},missing]),0);
+ assert.equal(JSON.stringify(rows),frozen,'checking availability must never mutate bookmarks');
+ assert.equal(frozen.includes('invalid.example'),false,'never store source URL');
+ assert.equal(later.unavailable(rows,[{...okay,sourceId:'wrong-source'}]),4,'same channel name from another source cannot masquerade as available');
+});
+test('P5.1.104 native unavailable bookmark notice retains local data and no autoplay',()=>{
+ const ui=fs.readFileSync('renderer/positron-watchflow-next.js','utf8');
+ const qa=fs.readFileSync('scripts/positron-20-extension.cjs','utf8');
+ const flow=fs.readFileSync('.github/workflows/positron-lab.yml','utf8');
+ assert.ok(ui.includes('notice.id=\'poWatchLaterUnavailable\''));
+ assert.ok(ui.includes('watchLater?.unavailable?.(saved,collection)'));
+ assert.ok(qa.includes('positron-p51104-watchlater-unavailable-552-real.png'));
+ assert.ok(flow.includes('positron-p51104-watchlater-unavailable-552-real.png'));
+});

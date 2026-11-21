@@ -181,3 +181,6 @@ html[data-positron="true"].po-horizon body #poWatchFlowPanel.po-watchflow-panel 
 #poWatchFlowPanel #poWatchLaterSearch:focus-visible{
  outline:2px solid #91e8d6;outline-offset:1px;border-color:#91e8d6
 }
+
+/* P5.1.104: subtle local-only notice for saved channels absent from current sources. */
+#poWatchFlowPanel #poWatchLaterUnavailable.po-watchlater-unavailable{display:block;color:#b6c8ce;background:#1b2d36;border-left:2px solid #587a80;padding:8px 10px;margin:10px 0 6px;line-height:1.5;font-size:11px;border-radius:3px}

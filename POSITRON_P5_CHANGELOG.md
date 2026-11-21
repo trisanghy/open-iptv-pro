@@ -714,3 +714,9 @@ P5.1.81 follow-up: real Electron capture found nav overflow; replace flexible no
 - Preserve all prior bookmarks: refuse a new save at capacity with `{ok:false,reason:'full'}`; existing saved channels may still be removed, and a new channel may be saved after freeing a slot.
 - Present a clear local toast and capacity hint, without changing playlist, playback, URLs, or account data.
 - Add Node regression for 80-to-81 attempt and removal/retry. Extend native Electron QA with real before/after shots of the 80-bookmark state, checking the 81st 'Lưu' button cannot mutate storage or auto-start video. Release only after screenshot review and all six CI jobs.
+
+## P5.1.104 — Inform about dormant Watch Later bookmarks without deleting them (new batch 03/20)
+- Reviewed actual P5.1.103 Electron screenshot `positron-p51103-watchlater-cap-after-real.png`, inspected the strict 80-entry limit and found stored bookmarks for dead/removed channels are silently hidden by `visible()`; users may think saved data vanished.
+- Add `unavailable(rows,channels)` to count fingerprints with no currently playable matching native channel, source-scoped and without checking stream URLs externally. UI shows a quiet privacy-preserving note while keeping all bookmarks in localStorage for source recovery. No auto-delete, autoplay or network fetch.
+- Add Node regression for dead, missing, wrong-source and blank-URL channels, and native Electron QA under a 552-channel metadata-only dataset. Capture `positron-p51104-watchlater-unavailable-552-real.png`, audit note geometry, unchanged bookmarks and idle player.
+- Pending: verify screenshot by opening real PNG and CI release Windows Setup/Portable + Mac DMG before counting.

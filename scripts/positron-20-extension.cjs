@@ -1447,6 +1447,40 @@ async function runTwenty(page){
   assert.equal(bookmarkCapAfter[key],true,'P5.1.103 local bookmark capacity protection failed: '+key);
  await page.screenshot({path:path.join(out,'positron-p51103-watchlater-cap-after-real.png'),animations:'disabled'});
 
+// P5.1.104: retain bookmarks while their source is temporarily unmounted.
+// This uses one native metadata-only channel and one synthetic fingerprint,
+// never a real M3U URL, credentials or background playback.
+ const unavailableSavedQA=await page.evaluate(()=>{
+  const core=window.PositronWatchLaterCore,chs=window.IPTVState.getChannels();
+  const available=chs.find(ch=>core.identity(ch)&&ch.status!=='dead'&&ch.id&&ch.url);
+  if(!available)return {ready:false};
+  const old=core.toggle([],available);
+  const dormant={...available,id:'unloaded-local-qa',sourceId:'unmounted-temporary-qa-source',name:'Offline QA bookmark'};
+  const result=core.toggle(old.rows,dormant);
+  const rows=result.rows,stored=JSON.stringify(rows);
+  localStorage.setItem(core.STORAGE_KEY,stored);
+  window.dispatchEvent(new StorageEvent('storage',{key:core.STORAGE_KEY,newValue:stored}));
+  document.getElementById('poFlowPluscontinue').click();
+  const notice=document.getElementById('poWatchLaterUnavailable');
+  const cards=[...document.querySelectorAll('#poFlowPlusResults .po-flowplus-card')];
+  const name=cards[0]?.querySelector('.po-flowplus-card-info strong')?.textContent;
+  const rect=notice?.getBoundingClientRect();
+  return {
+   ready:old.ok&&result.ok&&rows.length===2,
+   oneUnavailable:core.unavailable(rows,chs)===1,
+   visibleNotice:!!rect&&rect.width>100&&rect.height>15&&getComputedStyle(notice).display!=='none',
+   accurateMessage:notice?.textContent.includes('1 kênh Xem sau chưa khả dụng')&&notice?.textContent.includes('không tự xóa'),
+   oneAvailableCard:cards.length===1&&name===available.name,
+   sourcePrivacy:!notice?.textContent.includes(dormant.sourceId)&&!notice?.textContent.includes(dormant.name),
+   storageUnchanged:localStorage.getItem(core.STORAGE_KEY)===stored,
+   playerIdle:window.IPTVState.getCurrent()===null
+  };
+ });
+ for(const key of ['ready','oneUnavailable','visibleNotice','accurateMessage','oneAvailableCard','sourcePrivacy','storageUnchanged','playerIdle'])
+  assert.equal(unavailableSavedQA[key],true,'P5.1.104 dormant saved-channel native QA failed: '+key);
+ await page.screenshot({path:path.join(out,'positron-p51104-watchlater-unavailable-552-real.png'),animations:'disabled'});
+
+
 
 
  await page.evaluate(()=>{

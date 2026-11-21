@@ -204,6 +204,14 @@
      content.append(more);
     }
    }
+   // P5.1.104: do not let stored bookmarks disappear without explanation.
+   // Offline, removed or source-scoped items are retained locally for recovery.
+   const missing=watchLater?.unavailable?.(saved,collection)||0;
+   if(missing){
+    const notice=label(missing+' kênh Xem sau chưa khả dụng từ nguồn hiện tại. Đánh dấu vẫn được giữ trên thiết bị, không tự xóa.','po-watchlater-unavailable');
+    notice.id='poWatchLaterUnavailable';notice.setAttribute('role','status');
+    content.append(notice);
+   }
    heading('Tiếp tục xem','Chỉ các kênh từng lên hình thật trên thiết bị này.');
    const played=core.continueWatching(collection,recent(),5);
    if(!played.length)empty('Chưa có lịch sử phát thành công. Hãy xem một kênh, danh sách này sẽ xuất hiện sau khi có hình.');

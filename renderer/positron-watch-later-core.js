@@ -58,6 +58,17 @@
   }
   return out;
  }
+ // P5.1.104: identify bookmarks whose channels are not currently playable.
+ // Never delete them or disclose credentials: sources can be temporarily offline.
+ function unavailable(rows,channels){
+  const available=new Set();
+  for(const channel of Array.isArray(channels)?channels:[]){
+   const id=identity(channel);
+   if(!id||channel.status==='dead'||!channel.id||typeof channel.url!=='string'||!channel.url.trim())continue;
+   available.add(id.source+'|'+id.key);
+  }
+  return compact(rows).filter(entry=>!available.has(entry.source+'|'+entry.key)).length;
+ }
  // P5.1.102: multi-term local search across saved channel names and groups.
  // Resolution tokens (HD, 4K) remain searchable, unlike bookmark identity.
  // Never inspect stream URLs, credentials, guide links or hidden channels.
@@ -76,7 +87,7 @@
   const take=Math.min(LIMIT,Math.max(1,Math.trunc(limit)||LIMIT));
   return matches.slice(0,take);
  }
- const api=Object.freeze({STORAGE_KEY,LIMIT,identity,compact,has,toggle,visible,search});
+ const api=Object.freeze({STORAGE_KEY,LIMIT,identity,compact,has,toggle,visible,search,unavailable});
  if(typeof module==='object'&&module.exports)module.exports=api;
  if(root)root.PositronWatchLaterCore=api;
 })(typeof globalThis!=='undefined'?globalThis:null);
