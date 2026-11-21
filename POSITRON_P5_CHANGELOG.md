@@ -1,3 +1,11 @@
+## P5.1.88 — Real playlist-aware TV onboarding / v4.23.172
+
+- Input: opened actual P5.1.87 Electron 1360×820 screenshot `positron-p5-visual-only-552-channels.png`. Although 552 native channels were already in the sidebar, the video's empty state still misleadingly asked the user to import a playlist, and offered only `Mở file M3U` and `Thêm URL`.
+- Keep the native no-playlist onboarding intact. When enabled native channels are available, show `Chọn kênh để xem` and accurate channel count, preserve the file/URL buttons in DOM but hide them, and offer `Xem kênh đầu tiên` which invokes the existing `IPTVState.playChannel(first.id)` **only after a real user click**. The first eligible enabled source is used; dead and missing-link channels are not selected. No autoplay, playlist mutation or network lookup.
+- Observe native `channelMeta` for source import/removal updates; restore original import actions when there are zero enabled channels. Preserve the existing player, playback and source data.
+- New Node regression and actual Electron screenshot `positron-p5188-player-ready-552-metadata-real.png` inspect the imported 552-channel state and assert original import controls remain in DOM, new action visible, text accurate, and playback never starts during QA.
+- Counts as complete only after UI screenshot opened and full CI/release success.
+
 ## P5.1.87 — WatchFlow tabs stay readable / v4.23.171
 
 - Input: manually opened real Electron P5.1.86 screenshot `positron-watchflow-plus-similar-552-metadata-qa-real.png` at 1360×820. The navigation tab formerly labeled “Xem tiếp” rendered as visibly truncated “Xem ti…”.

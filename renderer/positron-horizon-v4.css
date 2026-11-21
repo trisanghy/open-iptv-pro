@@ -778,3 +778,7 @@ html[data-positron="true"].po-horizon #page-tv #channelList #poEmptySourceAction
 }
 html[data-positron="true"].po-horizon #page-tv #channelList #poEmptySourceAction:hover{background:#2e5e54!important;border-color:#72ceb8!important}
 html[data-positron="true"].po-horizon #page-tv #channelList #poEmptySourceAction:focus-visible{outline:2px solid #b5ffe2!important;outline-offset:2px!important}
+/* P5.1.88: playlist already imported — expose a true start action instead of
+   showing two redundant reimport buttons; preserve both in the original DOM. */
+html[data-positron="true"].po-horizon #page-tv #emptyPlayer .empty-actions :is(#poFirstChannelAction,#emptyFileBtn,#emptyUrlBtn)[hidden]{display:none!important}
+html[data-positron="true"].po-horizon #page-tv #emptyPlayer #poFirstChannelAction:not([hidden]){min-width:170px!important;min-height:42px!important}

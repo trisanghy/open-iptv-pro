@@ -989,6 +989,27 @@ async function runTwenty(page){
  });
  assert.equal(metadataQa.channelCount,552,'visual-only M3U test did not import 552 channels');
  assert.equal(metadataQa.noPlaying,true,'visual metadata QA must never start a stream');
+ // P5.1.88: real native metadata-only playlist must transform player onboarding
+ // without triggering video playback or removing original import controls.
+ await page.waitForTimeout(0);
+ const populatedPlayerQa=await page.evaluate(()=>{
+  const empty=document.getElementById('emptyPlayer');
+  const first=document.getElementById('poFirstChannelAction');
+  const file=document.getElementById('emptyFileBtn');
+  const url=document.getElementById('emptyUrlBtn');
+  return {title:empty.querySelector('h2')?.textContent,
+   countText:empty.querySelector('p')?.textContent||'',
+   ready:empty.dataset.poHasChannels,firstAction:!!first&&!first.hidden,
+   fileHidden:file.hidden,urlHidden:url.hidden,
+   nativeImportsKept:!!file&&!!url,
+   noPlaying:window.IPTVState.getCurrent()===null};
+ });
+ assert.equal(populatedPlayerQa.title,'Chọn kênh để xem','Player still asks to import after 552 channels exist');
+ assert.ok(populatedPlayerQa.countText.includes('552'),'Player cannot explain imported channel count');
+ for(const key of ['firstAction','fileHidden','urlHidden','nativeImportsKept','noPlaying'])
+  assert.equal(populatedPlayerQa[key],true,'Populated-player onboarding failed: '+key);
+ assert.equal(populatedPlayerQa.ready,'true');
+ await page.screenshot({path:path.join(out,'positron-p5188-player-ready-552-metadata-real.png'),animations:'disabled'});
  // P5.1.76: the no-source Doctor simplification must disappear when native
  // metadata-only channels are imported, without touching any live URL.
  await page.evaluate(()=>window.IPTVState.setPage('doctor'));

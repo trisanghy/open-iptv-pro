@@ -192,6 +192,44 @@
   new MutationObserver(syncEmptySidebarSource).observe(nativeChannelList,{childList:true});
   syncEmptySidebarSource();
  }
+
+ // P5.1.88: when native sources already provide usable channels, the TV
+ // empty player must not keep asking to reimport a playlist. No autoplay.
+ const nativeEmptyPlayer=byId('emptyPlayer'),nativeChannelMeta=byId('channelMeta');
+ if(nativeEmptyPlayer&&nativeChannelMeta&&window.IPTVState?.getChannels){
+  const heading=nativeEmptyPlayer.querySelector('h2');
+  const hint=nativeEmptyPlayer.querySelector('p');
+  const buttons=nativeEmptyPlayer.querySelector('.empty-actions');
+  const fileAction=byId('emptyFileBtn'),urlAction=byId('emptyUrlBtn');
+  if(heading&&hint&&buttons&&fileAction&&urlAction){
+   const originalHeading=heading.textContent,originalHint=hint.textContent;
+   const start=d.createElement('button');start.type='button';
+   start.id='poFirstChannelAction';start.className='btn btn-primary';
+   start.textContent='Xem kênh đầu tiên';
+   start.setAttribute('aria-label','Phát kênh đầu tiên trong danh sách nguồn hiện có');
+   start.hidden=true;
+   start.addEventListener('click',()=>{
+    const first=window.IPTVState?.getChannels?.().find(c=>c?.id&&c?.url&&c.status!=='dead');
+    if(!first)return;
+    Promise.resolve(window.IPTVState.playChannel(first.id)).catch(e=>window.IPTVState?.toast?.(e.message||String(e),'error'));
+   });
+   buttons.prepend(start);
+   const syncPlayerIntro=()=>{
+    const channels=window.IPTVState.getChannels();
+    const hasChannels=channels.length>0;
+    const first=channels.find(c=>c?.id&&c?.url&&c.status!=='dead');
+    nativeEmptyPlayer.dataset.poHasChannels=String(hasChannels);
+    heading.textContent=hasChannels?'Chọn kênh để xem':originalHeading;
+    hint.textContent=hasChannels?(first?
+     'Đã có '+channels.length+' kênh. Chọn trong danh sách bên trái hoặc bắt đầu với kênh đầu tiên.':
+     'Đã có '+channels.length+' kênh, nhưng chưa tìm thấy link có thể thử phát. Hãy kiểm tra nguồn.'):originalHint;
+    fileAction.hidden=hasChannels;urlAction.hidden=hasChannels;
+    start.hidden=!first;
+   };
+   new MutationObserver(syncPlayerIntro).observe(nativeChannelMeta,{childList:true,characterData:true,subtree:true});
+   syncPlayerIntro();
+  }
+ }
  root.dataset.poWatchFlow='ready';
  window.PositronWatchFlow=Object.freeze({open:openPanel,close,refresh:draw});
 })();

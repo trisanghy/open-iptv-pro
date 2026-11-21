@@ -37,7 +37,7 @@ test('P5 assets are loaded after P4 without replacing it',()=>{
 test('P5 release is immutable and versioned separately from P4.1',()=>{
  const pkg=JSON.parse(read('package.json'));
  const flow=read('.github/workflows/positron-lab.yml');
- assert.equal(pkg.version,'4.23.171');
+ assert.equal(pkg.version,'4.23.172');
  const label=pkg.description.match(/Positron\s+(P\d+\.\d+\.\d+)/)?.[1];
  assert.ok(label,'product P-label must accompany SemVer');
  assert.ok(flow.includes('TAG=positron/v'+pkg.version+'-'+label.toLowerCase()),'release tag and app version must match');
@@ -719,4 +719,18 @@ test('P5.1.84 real empty TV sidebar offers native source import action',()=>{
  assert.ok(js.includes("window.IPTVState?.setPage?.('sources')"));
  assert.ok(css.includes('#channelList #poEmptySourceAction'));
  assert.ok(qa.includes("importedFromSidebar,'page-sources'"));
+});
+
+test('P5.1.88 populated native player replaces redundant import prompts with explicit start action',()=>{
+ const ui=read('renderer/positron-horizon-v4.js'),css=read('renderer/positron-horizon-v4.css'),qa=read('scripts/positron-20-extension.cjs');
+ assert.ok(ui.includes("start.id='poFirstChannelAction'"));
+ assert.ok(ui.includes("start.addEventListener('click'"));
+ assert.ok(ui.includes('window.IPTVState.playChannel(first.id)'));
+ assert.ok(ui.includes('new MutationObserver(syncPlayerIntro)'));
+ assert.ok(ui.includes("heading.textContent=hasChannels?'Chọn kênh để xem'"));
+ assert.ok(ui.includes('fileAction.hidden=hasChannels;urlAction.hidden=hasChannels'));
+ assert.ok(css.includes('#poFirstChannelAction,#emptyFileBtn,#emptyUrlBtn'));
+ assert.ok(qa.includes("populatedPlayerQa.title,'Chọn kênh để xem'"));
+ assert.ok(qa.includes("populatedPlayerQa.noPlaying"));
+ assert.ok(qa.includes('positron-p5188-player-ready-552-metadata-real.png'));
 });
