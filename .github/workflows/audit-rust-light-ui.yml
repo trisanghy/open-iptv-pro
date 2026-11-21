@@ -6,6 +6,7 @@ on:
       - .github/workflows/audit-rust-light-ui.yml
       - renderer/rust-light-consistency-v23-8-92.css
       - renderer/rust-light-feature-polish-v23-8-97.css
+      - renderer/rust-dark-browser-accent-v23-8-97.css
       - tests/rust-light-visual-audit.cjs
       - tests/rust-feature-gallery-v23-8-97.cjs
       - tests/rust-light-consistency-v23-8-92.test.cjs
