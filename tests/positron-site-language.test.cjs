@@ -41,6 +41,8 @@ test('bộ tạo nhật ký Việt hóa trước khi xuất bản, giữ nguyên
  assert.ok(code.includes('VI_SOURCE = ROOT / "docs" / "positron-features" / "vi.json"'));
  assert.ok(code.includes('def write_github_index(rows):'));
  assert.ok(code.includes('LOG_GIT_TIENG_VIET.md'));
+ assert.ok(code.includes('commits?sha=Positron&path=package.json&per_page=1'),
+   'không được gán commit của bot nhật ký cho phiên bản ứng dụng');
  assert.ok(code.includes('Không đẩy Release tiếng Anh trực tiếp'));
  assert.ok(code.includes('commit gốc')||code.includes('commit nguyên gốc'));
 });

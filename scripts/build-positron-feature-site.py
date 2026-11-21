@@ -181,9 +181,16 @@ def add_candidate(rows, descriptions):
     n = int(matched.group(1))
     if any(row["number"] == n for row in rows):
         return rows
-    sha = os.environ.get("GITHUB_SHA", "").strip()
-    if not re.fullmatch(r"[0-9a-fA-F]{40}", sha):
-        sha = ""
+    # Commit đang hiển thị phải là commit sửa phiên bản ứng dụng.
+    # Không gắn nhầm commit của bot cập nhật website vào tính năng mới.
+    sha = ""
+    try:
+        changes = get_json(API + "/commits?sha=Positron&path=package.json&per_page=1")
+        candidate_sha = changes[0]["sha"] if changes else ""
+        if re.fullmatch(r"[0-9a-fA-F]{40}", candidate_sha):
+            sha = candidate_sha
+    except (urllib.error.URLError, KeyError, IndexError, TypeError, ValueError):
+        print("THÔNG TIN: Chưa xác minh được commit của phiên bản ứng dụng.")
     label = re.sub(r"^Positron P5\.1\.\d+\s*:?\s*", "", str(pkg.get("description") or ""))
     rows.append({"number": n, "version": "P5.1." + str(n),
                  "appVersion": str(pkg.get("version") or ""), "title": label or "Đang kiểm thử",
