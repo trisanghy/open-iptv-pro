@@ -1,3 +1,11 @@
+## P5.1.134 — Unified native SVG Favorite stars / Electron v4.23.218
+
+- Input: visually opened genuine P5.1.133 450px Electron PNG `positron-p51133-compact-card-title-star-450-real.png`. Card titles are now readable but Favorite controls still use uneven, very small OS-dependent Unicode ★/☆ glyphs, conflicting with native monochrome controls.
+- Repair: native 20px SVG star geometry inside existing separate Favorite buttons; keep real button/keyboard/focus/aria-label/aria-pressed behavior and persistence. Selected star uses currentColor fill; unselected remains hollow. No stream, M3U, EPG, favorites data model or autoplay changes.
+- Regression: Node asserts SVG setup and scoped CSS; real 450px Electron before/after images compare unpressed/pressed state, keyboard-independent mouse toggle, aria accessibility, native geometry and safe undo.
+- Evidence: `positron-p51134-favorite-native-svg-before-450-real.png`, `positron-p51134-favorite-native-svg-after-450-real.png`.
+- CANDIDATE pending CI full suite, actual PNG review, installer verification.
+
 ## P5.1.133 — Keep compact channel titles readable above Favorite stars / Electron v4.23.217
 
 - P5.1.132 genuine Electron screenshot `positron-p51132-empty-search-clear-after-450-real.png` shows two-column 450px grid cards whose long "QA Channel 00…" labels are truncated beside the separate bottom Favorite star.

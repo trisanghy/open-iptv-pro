@@ -2555,9 +2555,46 @@ async function runTwenty(page){
  for(const [key,value] of Object.entries(readableCardTitleQA))
   assert.equal(value,true,'P5.1.133 genuine compact card title/star '+key+': '+JSON.stringify(readableCardTitleQA));
 
+ // P5.1.134: real P5.1.133 450px screenshot shows an uneven font glyph
+ // in each Favorite button; verify actual native SVG and persisted toggling.
+ const svgStarBefore=await page.evaluate(()=>{
+  const b=document.querySelector('#webChooserGrid .web-chooser-favorite');
+  const svg=b?.querySelector('svg'),path=svg?.querySelector('path');
+  const r=b?.getBoundingClientRect();
+  return {hasNativeSvg:svg?.namespaceURI==='http://www.w3.org/2000/svg',
+   safeHiddenIcon:svg?.getAttribute('aria-hidden')==='true',
+   fixedGeometry:svg?.getAttribute('viewBox')==='0 0 24 24'&&r.width>=33&&r.height>=33,
+   hollowWhenUnselected:b?.getAttribute('aria-pressed')==='false'&&getComputedStyle(path).fill==='none',
+   separateFromPlay:!!b?.closest('.web-chooser-card-wrap')?.querySelector('button.web-chooser-card'),
+   noAutoplay:window.IPTVState.getCurrent()===null};
+ });
+ await page.screenshot({path:path.join(out,'positron-p51134-favorite-native-svg-before-450-real.png'),animations:'disabled'});
+ await page.click('#webChooserGrid .web-chooser-favorite');
+ await page.waitForFunction(()=>document.querySelector('#webChooserGrid .web-chooser-favorite')?.getAttribute('aria-pressed')==='true');
+ const svgStarAfter=await page.evaluate(()=>{
+  const b=document.querySelector('#webChooserGrid .web-chooser-favorite');
+  const path=b?.querySelector('svg path');
+  return {pressed:b?.getAttribute('aria-pressed')==='true',
+   filledWhenSelected:!!path&&getComputedStyle(path).fill!=='none',
+   accessibleToggle:b?.getAttribute('aria-label')?.startsWith('Bỏ khỏi yêu thích:'),
+   noAutoplay:window.IPTVState.getCurrent()===null};
+ });
+ await page.screenshot({path:path.join(out,'positron-p51134-favorite-native-svg-after-450-real.png'),animations:'disabled'});
+ await page.click('#webChooserGrid .web-chooser-favorite');
+ await page.waitForFunction(()=>document.querySelector('#webChooserGrid .web-chooser-favorite')?.getAttribute('aria-pressed')==='false');
+ Object.assign(svgStarAfter,await page.evaluate(()=>{
+  const b=document.querySelector('#webChooserGrid .web-chooser-favorite');
+  return {restoredUnselected:b?.getAttribute('aria-pressed')==='false',
+   restoredHollow:getComputedStyle(b.querySelector('svg path')).fill==='none',
+   noOverflow:document.documentElement.scrollWidth<=innerWidth+1};
+ }));
+ const favoriteSvgQA={...svgStarBefore,...svgStarAfter};
+ for(const [key,value] of Object.entries(favoriteSvgQA))
+  assert.equal(value,true,'P5.1.134 genuine SVG Favorite '+key+': '+JSON.stringify(favoriteSvgQA));
+
  await page.setViewportSize({width:1360,height:820});
   const report={type:'Positron P5 twenty distinct desktop screenshot cases',realElectron:true,syntheticChannels:false,
-  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA,chooserQa,toastLayoutQA,nativeToastQA,compactIdleQA,channelChipRailQA,advancedFilterQA,readableCardsQA,keyboardTabQA,favoriteEmptyQA,duplicateEmptyQA,categoryFilterQA,categoryFixtureQA,compactSingleQA,directFavoriteQA,favoriteCountQA,compactToastStackQA,toastDismissQA,toastFocusReturnQA,toastDockQA,wheelQA,pinnedAllQA,pinnedMaskQA,categoryKeyQA,dropdownChipQA,pinnedRightMaskQA,pinnedBorderMaskQA,asciiDSearchQA,emptySearchActionQA,readableCardTitleQA};
+  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA,chooserQa,toastLayoutQA,nativeToastQA,compactIdleQA,channelChipRailQA,advancedFilterQA,readableCardsQA,keyboardTabQA,favoriteEmptyQA,duplicateEmptyQA,categoryFilterQA,categoryFixtureQA,compactSingleQA,directFavoriteQA,favoriteCountQA,compactToastStackQA,toastDismissQA,toastFocusReturnQA,toastDockQA,wheelQA,pinnedAllQA,pinnedMaskQA,categoryKeyQA,dropdownChipQA,pinnedRightMaskQA,pinnedBorderMaskQA,asciiDSearchQA,emptySearchActionQA,readableCardTitleQA,favoriteSvgQA};
  fs.writeFileSync(path.resolve('positron-evidence','audit-p5-20-rounds.json'),JSON.stringify(report,null,2));
  return report;
 }

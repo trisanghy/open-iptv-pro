@@ -102,7 +102,20 @@
   const star=document.createElement('button');star.type='button';
   star.className='web-chooser-favorite';star.dataset.channelId=String(ch.id);
   const isFavorite=favorites.has(store(),ch);
-  star.textContent=isFavorite?'★':'☆';star.setAttribute('aria-pressed',String(isFavorite));
+  // P5.1.134: genuine P5.1.133 Electron 450px screenshot showed tiny
+  // font-dependent outlined stars. Use an invariant stroke-based native SVG
+  // while retaining the original separate, accessible Favorite button.
+  const svgNS='http://www.w3.org/2000/svg';
+  const starSvg=document.createElementNS(svgNS,'svg');
+  starSvg.setAttribute('viewBox','0 0 24 24');
+  starSvg.setAttribute('width','20');starSvg.setAttribute('height','20');
+  starSvg.setAttribute('fill','none');starSvg.setAttribute('stroke','currentColor');
+  starSvg.setAttribute('stroke-width','1.8');starSvg.setAttribute('stroke-linejoin','round');
+  starSvg.setAttribute('aria-hidden','true');starSvg.setAttribute('focusable','false');
+  const starPath=document.createElementNS(svgNS,'path');
+  starPath.setAttribute('d','M12 2.6 14.88 8.43 21.32 9.37 16.66 13.9 17.76 20.3 12 17.28 6.24 20.3 7.34 13.9 2.68 9.37 9.12 8.43Z');
+  starSvg.append(starPath);star.replaceChildren(starSvg);
+  star.setAttribute('aria-pressed',String(isFavorite));
   star.setAttribute('aria-label',(isFavorite?'Bỏ khỏi yêu thích: ':'Thêm vào yêu thích: ')+(ch.name||'Kênh'));
   star.title=isFavorite?'Bỏ yêu thích':'Thêm yêu thích';
   star.addEventListener('click',()=>{

@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.217",
-  "description": "Positron P5.1.133: readable compact channel names above separate favorite controls",
+  "version": "4.23.218",
+  "description": "Positron P5.1.134: consistent accessible SVG favorite stars in native channel library",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

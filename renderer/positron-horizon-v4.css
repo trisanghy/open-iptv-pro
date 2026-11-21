@@ -1149,3 +1149,13 @@ html[data-positron="true"].po-horizon #toastArea.toast-area .toast .po-toast-dis
   bottom:7px!important;right:calc(50% - 17px)!important;
  }
 }
+
+/* P5.1.134: native vector Favorite icon replaces OS-dependent glyph while
+   preserving original hit area and visible pressed state at every scale. */
+html[data-positron="true"].po-horizon #page-tv #webChooserGrid .web-chooser-favorite svg{
+ display:block!important;width:20px!important;height:20px!important;
+ fill:none!important;stroke:currentColor!important;
+}
+html[data-positron="true"].po-horizon #page-tv #webChooserGrid .web-chooser-favorite[aria-pressed="true"] svg path{
+ fill:currentColor!important;
+}

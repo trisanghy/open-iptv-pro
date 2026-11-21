@@ -37,7 +37,7 @@ test('P5 assets are loaded after P4 without replacing it',()=>{
 test('P5 release is immutable and versioned separately from P4.1',()=>{
  const pkg=JSON.parse(read('package.json'));
  const flow=read('.github/workflows/positron-lab.yml');
- assert.equal(pkg.version,'4.23.217');
+ assert.equal(pkg.version,'4.23.218');
  const label=pkg.description.match(/Positron\s+(P\d+\.\d+\.\d+)/)?.[1];
  assert.ok(label,'product P-label must accompany SemVer');
  assert.ok(flow.includes('TAG=positron/v'+pkg.version+'-'+label.toLowerCase()),'release tag and app version must match');
@@ -1137,4 +1137,20 @@ test('P5.1.133 CI assertions use actual previous and current screenshot names',(
  assert.ok(wf.includes('positron-p51132-empty-search-clear-after-450-real.png'));
  assert.ok(wf.includes('positron-p51133-compact-card-title-star-450-real.png'));
  assert.ok(!wf.includes('positron-p51133-empty-search-clear-before-450-real.png'));
+});
+
+test('P5.1.134 native vector Favorite stars retain aria and real CSS pressed state',()=>{
+ const js=read('renderer/web-channel-chooser-v42371.js');
+ const css=read('renderer/positron-horizon-v4.css');
+ const qa=read('scripts/positron-20-extension.cjs');
+ for(const t of ["document.createElementNS(svgNS,'svg')",
+  "starSvg.setAttribute('aria-hidden','true')",
+  "star.replaceChildren(starSvg)","star.setAttribute('aria-pressed',String(isFavorite))"])
+  assert.ok(js.includes(t));
+ assert.ok(css.includes('P5.1.134: native vector Favorite'));
+ assert.ok(css.includes('.web-chooser-favorite[aria-pressed="true"] svg path'));
+ for(const t of ['hollowWhenUnselected:', 'filledWhenSelected:', 'restoredHollow:',
+   'positron-p51134-favorite-native-svg-before-450-real.png',
+   'positron-p51134-favorite-native-svg-after-450-real.png'])
+  assert.ok(qa.includes(t));
 });

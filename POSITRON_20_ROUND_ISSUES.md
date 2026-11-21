@@ -43,3 +43,7 @@ Evaluate defects revealed by real screenshot of previous build before making cha
 ## Planned round 05 — P5.1.132 after-image
 - Direct visual review of true `positron-p51132-empty-search-clear-after-450-real.png`: at 450px with 18 cards, labels like "QA Channel 00…" are truncated and collide vertically with their separate Favorite star button.
 - P5.1.133 v4.23.217: only multi-card compact Grid: reserve star row and allow 2-line text; genuine Electron screenshot/hit geometry regression; no data changes.
+
+## Round 06 input — Positron P5.1.133 actual after image
+- Opened P5.1.133 real `positron-p51133-compact-card-title-star-450-real.png`: title clipping fixed, but Unicode star glyph is tiny/visually inconsistent. P5.1.134 changes only presentation to consistent SVG while preserving the favorite toggle's native semantic and storage.
+- Required Electron 450px before+after screenshots and aria-pressed / fill / undo QA, real release or fallback assets.
