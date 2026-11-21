@@ -71,6 +71,8 @@ footer{color:#79949c;font-size:12px;border-top:1px solid #203743;padding-top:24p
 (function(){
 'use strict';
 const owner='trisanghy',repo='open-iptv-pro';
+// Tải dữ liệu và ảnh trực tiếp từ nhánh Positron, kể cả khi trang được mở qua HTML preview.
+const publicAssets='https://raw.githubusercontent.com/'+owner+'/'+repo+'/Positron/docs/positron-features/';
 const $=id=>document.getElementById(id);
 const state={rows:[],text:'',filter:'all'};
 const normal=s=>String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/gi,'d').toLowerCase();
@@ -109,8 +111,11 @@ function render(){
   body.append(meta,el('p','',r.description||'Xem mã thay đổi hoặc ghi chú phát hành để biết nội dung cập nhật.'));
   const figure=el('figure','preview');figure.style.margin='0';
   if(r.image){
-   const img=el('img');img.src='./'+r.image;img.alt='Ảnh chụp Electron thật — '+r.version;img.loading='lazy';
-   img.onerror=()=>{img.replaceWith(el('div','missing','Không tải được ảnh, vui lòng xem gói kiểm thử trong bản phát hành.'));};
+   const img=el('img');const validImage=/^screenshots\/[a-z0-9_.-]+\.png$/i.test(r.image);
+   img.alt='Ảnh chụp Electron thật — '+r.version;img.loading='lazy';
+   img.src=validImage?publicAssets+r.image:'./'+r.image;
+   img.onerror=()=>{if(validImage&&!img.dataset.localFallback){img.dataset.localFallback='1';img.src='./'+r.image;return;}
+    img.replaceWith(el('div','missing','Không tải được ảnh, vui lòng xem gói kiểm thử trong bản phát hành.'));};
    figure.append(img,el('figcaption','',r.image.split('/').pop()));
   }else figure.append(el('div','missing','Phiên bản này chưa có ảnh riêng được xác minh trong thư viện ảnh công khai.'));
   body.append(figure);
@@ -142,9 +147,20 @@ function merge(incoming){
 }
 $('search').addEventListener('input',e=>{state.text=e.target.value;render();});
 $('filter').addEventListener('change',e=>{state.filter=e.target.value;render();});
-fetch('./catalog.json',{cache:'no-cache'}).then(r=>{if(!r.ok)throw Error(r.status);return r.json();})
- .then(data=>{state.rows=Array.isArray(data.versions)?data.versions:[];render();})
- .catch(()=>{$('loading').textContent='Không tải được dữ liệu đóng gói; đang truy vấn GitHub.';});
+// Bản xem trước tĩnh vẫn hoạt động khi GitHub Pages đang dành cho web/online.
+async function loadCatalog(){
+ for(const address of [publicAssets+'catalog.json','./catalog.json']){
+  try{
+   const response=await fetch(address,{cache:'no-cache'});
+   if(!response.ok)throw Error(String(response.status));
+   const data=await response.json();
+   if(Array.isArray(data.versions)&&data.versions.length)return data;
+  }catch(_error){/* Chuyển sang nguồn dữ liệu công khai còn lại. */}
+ }
+ throw Error('catalog-unavailable');
+}
+loadCatalog().then(data=>{state.rows=data.versions;render();})
+ .catch(()=>{$('loading').textContent='Không tải được danh mục; đang truy vấn GitHub Releases.';});
 fetch('https://api.github.com/repos/'+owner+'/'+repo+'/releases?per_page=100',{headers:{'Accept':'application/vnd.github+json'}})
  .then(r=>{if(!r.ok)throw Error(r.status);return r.json();})
  .then(list=>merge(list.map(toRow).filter(Boolean)))

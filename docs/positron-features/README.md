@@ -4,7 +4,8 @@ Toàn bộ tiêu đề và mô tả phiên bản trên trang Positron được h
 
 - **[Mở nhật ký phiên bản trên GitHub](FEATURES.md)** — danh sách tự cập nhật, bấm từng dòng để xem chi tiết.
 - **[Mở nhật ký thay đổi Git bằng tiếng Việt](LOG_GIT_TIENG_VIET.md)** — diễn giải phiên bản và liên kết commit gốc, không thay đổi SHA hay lịch sử.
-- **[Xem giao diện trang HTML](index.html)** — trang có lọc/tìm kiếm; bản đóng gói HTML tải ở GitHub Actions.
+- **[Mở WEBSITE changelog tương tác](https://raw.githack.com/trisanghy/open-iptv-pro/Positron/docs/positron-features/index.html)** — xem từng phiên bản, lọc/tìm kiếm, mở ảnh Electron thật, tải EXE. Đây là bản xem trước HTML công khai qua GitHack, không thay đổi GitHub Pages đang phục vụ `web/online`. Nếu trang trung gian hiện thông báo an toàn, cần xác nhận để tiếp tục.
+- **[Mở mã HTML trong repository](index.html)** — nguồn trang và bản đóng gói từ GitHub Actions; [bản GitHub tương tác](FEATURES.md) hoạt động ngay cả khi dịch vụ xem trước không truy cập được.
 - **[Bản dịch chính xác theo phiên bản](vi.json)** — dữ liệu Việt hóa có thể bổ sung, đối chiếu với changelog và Release gốc.
 - **[Quy tắc bắt buộc](../../POSITRON_FEATURE_RULES.md)** — ưu tiên tính năng mới; các mô tả, ghi chú và commit mới viết bằng tiếng Việt.
 

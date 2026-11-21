@@ -59,3 +59,18 @@ test('workflow kiểm tra tiếng Việt, tự tạo nhật ký và không ghi �
  assert.ok(rules.includes('mọi nội dung dành cho người dùng trong nhánh Positron phải viết bằng tiếng Việt'));
  assert.ok(rules.includes('Không viết lại các commit lịch sử'));
 });
+
+test('website có đường dẫn công khai độc lập với Pages của web/online',()=>{
+ const html=read('docs/positron-features/index.html');
+ const readme=read('docs/positron-features/README.md');
+ const builder=read('scripts/build-positron-feature-site.py');
+ const url='https://raw.githack.com/trisanghy/open-iptv-pro/Positron/docs/positron-features/index.html';
+ assert.ok(readme.includes(url),'thiếu link truy cập HTML tương tác');
+ assert.ok(builder.includes(url),'workflow phải giữ link sau khi tạo lại Markdown');
+ assert.ok(html.includes("const publicAssets='https://raw.githubusercontent.com/'"));
+ assert.ok(html.includes("publicAssets+'catalog.json'"));
+ assert.ok(html.includes("img.src=validImage?publicAssets+r.image"));
+ assert.ok(html.includes("if(validImage&&!img.dataset.localFallback)"));
+ assert.ok(html.includes('for(const address of [publicAssets+\'catalog.json\',\'./catalog.json\'])'));
+ assert.ok(!html.includes('localStorage'),'website nhật ký không cần truy cập dữ liệu xem IPTV');
+});

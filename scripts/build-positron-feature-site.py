@@ -285,7 +285,8 @@ def write_github_index(rows):
         "Trang này được tạo tự động từ GitHub Releases và ảnh kiểm thử Electron thật. "
         "Bấm vào từng phiên bản để đọc mô tả, mở ảnh và tải EXE.",
         "",
-        "[Xem giao diện trang web](index.html) · "
+        "[Mở WEBSITE changelog tương tác](https://raw.githack.com/trisanghy/open-iptv-pro/Positron/docs/positron-features/index.html) · "
+        "[Giao diện HTML trong repository](index.html) · "
         "[Các bản phát hành](https://github.com/trisanghy/open-iptv-pro/releases) · "
         "[Nhật ký Git tiếng Việt](LOG_GIT_TIENG_VIET.md) · "
         "[Quy tắc ưu tiên tính năng](../../POSITRON_FEATURE_RULES.md)",
