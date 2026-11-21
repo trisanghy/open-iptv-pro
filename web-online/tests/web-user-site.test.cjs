@@ -33,3 +33,26 @@ test('Root homepage has comprehensive landing sections and valid SEO',()=>{
  assert.ok(read('web-online/user-site/robots.txt').includes('Sitemap: https://trisanghy.github.io/sitemap.xml'));
  assert.ok(read('web-online/user-site/sitemap.xml').includes('<loc>https://trisanghy.github.io/</loc>'));
 });
+
+test('macOS DMG help includes visible step-by-step installation and one-click Terminal copy on both websites',()=>{
+ const home=read('web-online/project-home.html');
+ const downloads=read('tai-ve.html');
+ const command='xattr -dr com.apple.quarantine "/Applications/Open IPTV Pro.app"';
+ assert.match(home,/<section class="macos-install-help" id="macos-install-help"/);
+ assert.ok(home.includes('data-mac-copy-command'));
+ assert.ok(home.includes('openiptv-mac-copy-handler'));
+ assert.ok(home.indexOf('id="macos-install-help"')>home.indexOf('id="download-arm"'));
+ assert.ok(home.includes(command));
+ assert.ok(!home.includes('<details class="macos-install-help"'),'Install steps should be visible without expanding a section');
+ assert.match(downloads,/<section class="mac-install-note" id="mac-dmg-help"/);
+ assert.ok(downloads.includes('data-mac-copy-command'));
+ assert.ok(downloads.includes('openiptv-mac-copy-handler'));
+ assert.ok(downloads.includes('⌘ + V'));
+ assert.ok(downloads.includes(command));
+ const web=read('web-desktop-download.js');
+ assert.match(web,/id="macosDownloadHelp" open/);
+ assert.match(web,/data-mac-copy-command/);
+ assert.ok(web.includes(command));
+ assert.equal(web,read('web-online/web-desktop-download.js'));
+ assert.equal(read('web-desktop-download.css'),read('web-online/web-desktop-download.css'));
+});
