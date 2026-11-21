@@ -1309,7 +1309,7 @@ test('P5.1.143 lọc XMLTV sắp chiếu trong giờ tới, tìm không dấu, k
  "next.textContent=(soonOnly.checked?'Sắp chiếu '"])
  assert.ok(js.includes(token),'Thiếu logic XMLTV: '+token);
  assert.ok(css.includes('#page-tv #webChooserSoonOnly'));
- assert.ok(!/fetch\\s*\\(|XMLHttpRequest/.test(js),'Không tự tải chương trình trên mạng');
+ assert.ok(!/fetch\s*\(|XMLHttpRequest/.test(js),'Không tự tải chương trình trên mạng');
  for(const token of ['optInActive:','mutuallyExclusive:','futureOnlyChannel:',
  'findsUnaccentedFutureTitle:','noInventedCurrentTitle:','sourceRecordsUnchanged:',
  'noAutoplay:','noHorizontalOverflow:','onAirDisablesSoon:',
