@@ -54,6 +54,11 @@ test("Có bộ lọc, so sánh, lưu cục bộ, nhập xuất và mở lại",(
   assert.ok(source.includes(name),name);
  }
 });
+test("Nút quản lý dòng mở đúng trình chỉnh sửa và ghi GitHub cần SHA đã đọc",()=>{
+ assert.ok(source.includes('function(){editExisting(r)}'));
+ assert.ok(!source.includes('openEditor(r)'));
+ assert.ok(source.includes('if(!app.remoteSha)'));
+});
 test("Token không được ghi vào bản dữ liệu xuất",()=>{
  const start=source.indexOf("function snapshot()");
  const end=source.indexOf("function saveLocal()");
