@@ -77,7 +77,7 @@ jobs:
       - name: Install actual Electron and screenshot tooling
         run: |
           sudo apt-get update -qq
-          sudo apt-get install -y -qq xvfb libgtk-3-0 libnss3 libasound2t64 libgbm1 libxss1 libatk-bridge2.0 libdrm2
+          sudo apt-get install -y -qq xvfb x11-utils libgtk-3-0 libnss3 libasound2t64 libgbm1 libxss1 libatk-bridge2.0 libdrm2
           npm install --no-audit --no-fund
           npm install --no-save --no-audit --no-fund playwright-core
       - name: Execute 50 P4 real Electron screenshot review rounds
@@ -86,7 +86,26 @@ jobs:
           set -Eeuo pipefail
           mkdir -p positron-evidence
           Xvfb :99 -screen 0 1600x900x24 > positron-evidence/xvfb.log 2>&1 &
+          XVFB_PID=$!
           export DISPLAY=:99
+          # Xvfb startup is asynchronous. Launching Electron before X11 is
+          # ready causes "Missing X server or $DISPLAY" and no CDP port.
+          # Check real X11 readiness, not merely socket existence.
+          X11_READY=false
+          for attempt in $(seq 1 60); do
+            if xdpyinfo -display "$DISPLAY" >/dev/null 2>&1; then X11_READY=true; break; fi
+            if ! kill -0 "$XVFB_PID" 2>/dev/null; then
+              cat positron-evidence/xvfb.log
+              echo "::error::Xvfb exited before display became ready"
+              exit 1
+            fi
+            sleep 0.5
+          done
+          if [[ "$X11_READY" != true ]]; then
+            cat positron-evidence/xvfb.log
+            echo "::error::X11 display $DISPLAY never became ready"
+            exit 1
+          fi
           export ELECTRON_DISABLE_SECURITY_WARNINGS=true
           ./node_modules/.bin/electron . --no-sandbox --disable-gpu --remote-debugging-port=9222 > positron-evidence/electron.log 2>&1 &
           echo $! > positron-evidence/electron.pid
