@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.196",
-  "description": "Positron P5.1.112: readable two-column compact channel grid with two-line titles",
+  "version": "4.23.197",
+  "description": "Positron P5.1.113: accessible keyboard tabs for native channel chooser",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

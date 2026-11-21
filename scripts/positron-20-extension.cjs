@@ -1821,9 +1821,41 @@ async function runTwenty(page){
   assert.equal(readableCardsQA[key],true,'P5.1.112 450px channel-card regression '+key+': '+JSON.stringify(readableCardsQA));
  await page.evaluate(()=>document.getElementById('webChooserGrid').scrollIntoView({block:'center',behavior:'instant'}));
  await page.screenshot({path:path.join(out,'positron-p51112-readable-channel-cards-450-real.png'),animations:'disabled'});
+
+ // P5.1.113: the real P112 450px view has a 3-button tablist.
+ // Verify Arrow/Home/End focus, selection and no playback.
+ await page.evaluate(()=>document.querySelector('#webChannelChooser .web-chooser-tabs')
+  .scrollIntoView({block:'center',behavior:'instant'}));
+ await page.focus('#webChannelChooser [data-chooser-tab="all"]');
+ await page.keyboard.press('ArrowRight');
+ const arrowRight=await page.evaluate(()=>{
+  const fav=document.querySelector('#webChannelChooser [data-chooser-tab="fav"]');
+  const tabs=[...document.querySelectorAll('#webChannelChooser [role="tab"]')];
+  return document.activeElement===fav&&fav.getAttribute('aria-selected')==='true'&&
+    tabs.filter(x=>x.tabIndex===0).length===1&&
+    tabs.every(x=>x.getAttribute('aria-controls')==='webChooserGrid');
+ });
+ await page.screenshot({path:path.join(out,'positron-p51113-keyboard-favorites-tab-450-real.png'),animations:'disabled'});
+ await page.keyboard.press('End');
+ const end=await page.evaluate(()=>document.activeElement?.dataset.chooserTab==='recent'&&
+  document.activeElement.getAttribute('aria-selected')==='true');
+ await page.keyboard.press('Home');
+ const home=await page.evaluate(()=>document.activeElement?.dataset.chooserTab==='all'&&
+  document.activeElement.getAttribute('aria-selected')==='true');
+ await page.keyboard.press('ArrowLeft');
+ const wrap=await page.evaluate(()=>document.activeElement?.dataset.chooserTab==='recent'&&
+  document.activeElement.getAttribute('aria-selected')==='true');
+ await page.keyboard.press('Home');
+ const keyboardTabQA={arrowRight,end,home,wrap,
+  reset:await page.evaluate(()=>document.activeElement?.dataset.chooserTab==='all'),
+  noAutoplay:await page.evaluate(()=>window.IPTVState.getCurrent()===null),
+  noOverflow:await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)};
+ for(const [key,value] of Object.entries(keyboardTabQA))
+  assert.equal(value,true,'P5.1.113 native chooser keyboard tab '+key+': '+JSON.stringify(keyboardTabQA));
+
  await page.setViewportSize({width:1360,height:820});
   const report={type:'Positron P5 twenty distinct desktop screenshot cases',realElectron:true,syntheticChannels:false,
-  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA,chooserQa,toastLayoutQA,nativeToastQA,compactIdleQA,channelChipRailQA,advancedFilterQA,readableCardsQA};
+  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA,chooserQa,toastLayoutQA,nativeToastQA,compactIdleQA,channelChipRailQA,advancedFilterQA,readableCardsQA,keyboardTabQA};
  fs.writeFileSync(path.resolve('positron-evidence','audit-p5-20-rounds.json'),JSON.stringify(report,null,2));
  return report;
 }

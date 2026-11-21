@@ -37,7 +37,7 @@ test('P5 assets are loaded after P4 without replacing it',()=>{
 test('P5 release is immutable and versioned separately from P4.1',()=>{
  const pkg=JSON.parse(read('package.json'));
  const flow=read('.github/workflows/positron-lab.yml');
- assert.equal(pkg.version,'4.23.196');
+ assert.equal(pkg.version,'4.23.197');
  const label=pkg.description.match(/Positron\s+(P\d+\.\d+\.\d+)/)?.[1];
  assert.ok(label,'product P-label must accompany SemVer');
  assert.ok(flow.includes('TAG=positron/v'+pkg.version+'-'+label.toLowerCase()),'release tag and app version must match');
@@ -844,4 +844,16 @@ test('P5.1.112 narrow native channel grid uses two readable columns without modi
  assert.ok(audit.includes('readableWidths:r.length>=2&&r[0].width>=145'));
  assert.ok(audit.includes('twoAcross:r.length===3'));
  assert.ok(audit.includes('positron-p51112-readable-channel-cards-450-real.png'));
+});
+
+
+test('P5.1.113 channel chooser tabs support ArrowLeft/Right/Home/End with one tab stop',()=>{
+ const js=read('renderer/web-channel-chooser-v42371.js');
+ const audit=read('scripts/positron-20-extension.cjs');
+ assert.ok(js.includes("chooserTabs.forEach(b=>b.setAttribute('aria-controls','webChooserGrid'))"));
+ assert.ok(js.includes("b.tabIndex=active?0:-1"));
+ assert.ok(js.includes("['ArrowLeft','ArrowRight','Home','End']"));
+ assert.ok(js.includes("target.click();target.focus()"));
+ assert.ok(audit.includes("const keyboardTabQA={arrowRight,end,home,wrap"));
+ assert.ok(audit.includes("positron-p51113-keyboard-favorites-tab-450-real.png"));
 });

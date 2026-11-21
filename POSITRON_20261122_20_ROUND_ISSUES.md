@@ -66,3 +66,12 @@ Not yet started. Choose each new repair from the preceding real screenshot, with
 - Baseline: genuine manually opened P5.1.111 450px screenshot: channel cards are three very narrow tiles, with title truncation.
 - Cause: original 80px grid min size + one-line ellipsis under 650px.
 - Fix candidate: two readable columns, two-line names at <=500px width, only grid display; preserves list mode and playback. Require real Electron screenshot review and own immutable release/CI before counting round.
+
+
+## Separate file-triggered new 20-round batch, round 01/20 — P5.1.113 / v4.23.197 — CANDIDATE
+- Baseline: directly opened real P5.1.112 Electron 450px screenshot positron-p51111-compact-filters-450-real.png; three tabs visible.
+- Root: role=tablist uses mouse click only, lacks standard keyboard arrows/Home/End and roving tabindex.
+- Fix: keyboard navigation and accessible focus/selected state, original data and stream behavior untouched.
+- Before: P5.1.112 real screenshot above. After: pending native Electron screenshot positron-p51113-keyboard-favorites-tab-450-real.png and manual review.
+- Pre-baseline correction: workflow-only commit 50a2f2e24710e1727b7fe6a31273cc2808bc30d0 corrected P5.1.112 photo filename typo; not a separate version/round.
+- Status: P5.1.113 CANDIDATE, count only once real CI, screenshot review and release succeed. Earlier rounds from prior batches are not counted.

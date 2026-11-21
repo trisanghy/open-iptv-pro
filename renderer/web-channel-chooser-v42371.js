@@ -49,6 +49,9 @@
  if(compactFilterMedia.addEventListener)compactFilterMedia.addEventListener('change',syncAdvancedDisclosure);
  else compactFilterMedia.addListener(syncAdvancedDisclosure);
  syncAdvancedDisclosure();
+ // P5.1.113: standard native chooser tablist keyboard support.
+ const chooserTabs=[...root.querySelectorAll('[data-chooser-tab][role="tab"]')];
+ chooserTabs.forEach(b=>b.setAttribute('aria-controls','webChooserGrid'));
  let tab='all',page=0,layout='grid',queued=false;
  const store=()=>state.getStore?.()||{};
  const channels=()=>state.getChannels?.()||[];
@@ -103,11 +106,20 @@
   pageLabel.textContent=(page+1)+' / '+pages;prev.disabled=page<=0;next.disabled=page>=pages-1;
   status.textContent=data.length+' kênh';
   renderSide(favGrid,favoritesList(),'yêu thích');renderSide(recentGrid,recentList(),'xem gần đây');
-  root.querySelectorAll('[data-chooser-tab]').forEach(b=>{const active=b.dataset.chooserTab===tab;b.classList.toggle('active',active);b.setAttribute('aria-selected',String(active));});
+  root.querySelectorAll('[data-chooser-tab]').forEach(b=>{const active=b.dataset.chooserTab===tab;b.classList.toggle('active',active);b.setAttribute('aria-selected',String(active));b.tabIndex=active?0:-1;});
   root.querySelectorAll('[data-chooser-layout]').forEach(b=>b.classList.toggle('active',b.dataset.chooserLayout===layout));
  }
  function schedule(){if(queued)return;queued=true;requestAnimationFrame(()=>{queued=false;render();});}
- root.querySelectorAll('[data-chooser-tab]').forEach(b=>b.addEventListener('click',()=>{tab=b.dataset.chooserTab;page=0;render();}));
+ chooserTabs.forEach(b=>b.addEventListener('click',()=>{tab=b.dataset.chooserTab;page=0;render();}));
+ root.querySelector('.web-chooser-tabs')?.addEventListener('keydown',event=>{
+  const index=chooserTabs.indexOf(document.activeElement);
+  if(index<0||!['ArrowLeft','ArrowRight','Home','End'].includes(event.key))return;
+  event.preventDefault();
+  const nextIndex=event.key==='Home'?0:event.key==='End'?chooserTabs.length-1:
+   (index+(event.key==='ArrowRight'?1:-1)+chooserTabs.length)%chooserTabs.length;
+  const target=chooserTabs[nextIndex];
+  target.click();target.focus();
+ });
  root.querySelectorAll('[data-chooser-layout]').forEach(b=>b.addEventListener('click',()=>{layout=b.dataset.chooserLayout;render();}));
  search.addEventListener('input',()=>{page=0;schedule();});
  group.addEventListener('change',()=>{page=0;render();});sort.addEventListener('change',()=>{page=0;render();});

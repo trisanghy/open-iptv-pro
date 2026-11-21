@@ -781,3 +781,9 @@ P5.1.81 follow-up: real Electron capture found nav overflow; replace flexible no
 - Fix: narrow <=500x900 unplayed/regular grid (not list mode) uses 2 equal columns with min 145px card width and two-line names; original native channel button, click, logo, pagination, stream logic and responsive desktop layout stay untouched.
 - Tests: Node source/assertion + actual Electron 450px measured two-column placement, label wrap, keyboard buttons, no document overflow, no autoplay and real screenshot `positron-p51112-readable-channel-cards-450-real.png` to open/review.
 - Release status: candidate until verified full CI, screenshot review and immutable installers.
+
+
+## P5.1.113 / v4.23.197 — Keyboard-accessible native channel chooser (new batch round 01/20)
+- Baseline: manually opened real P5.1.112 Electron 450px screenshot containing three native chooser tabs. Static inspection found role=tablist but no ArrowLeft/ArrowRight/Home/End handler or roving tabindex.
+- Fix: preserve original native click-to-select, add directional/Home/End keyboard focus, selected tab only in Tab sequence, aria-controls; Favorites/Recent/channel playback and stored data unchanged.
+- Regression: Node assertions + real Electron CDP key presses, focus/selected states, wraparound, no autoplay/overflow, actual screenshot positron-p51113-keyboard-favorites-tab-450-real.png. CANDIDATE until CI, manual review, installer assets verified.
