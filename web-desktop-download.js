@@ -101,12 +101,17 @@ const mobileFormats=[
     </details>
     <p id="desktopDownloadStatus" class="desktop-download-status" role="status" aria-live="polite">Đang kiểm tra phiên bản…</p>
     <div id="desktopDownloadOptions" class="desktop-download-options"></div>
-    <details class="desktop-download-ios-shortcut" id="macosDownloadHelp">
-      <summary class="desktop-download-shortcut-summary"><span class="desktop-download-shortcut-copy"><strong>Mac báo “is damaged and can’t be opened”?</strong><small>Hướng dẫn khi macOS chặn ứng dụng</small></span><span class="desktop-download-shortcut-chevron" aria-hidden="true">⌄</span></summary>
+    <details class="desktop-download-ios-shortcut" id="macosDownloadHelp" open>
+      <summary class="desktop-download-shortcut-summary"><span class="desktop-download-shortcut-copy"><strong>🍎 Hướng dẫn cài Mac &amp; xử lý lỗi “is damaged”</strong><small>Có lệnh Terminal và nút sao chép ngay bên dưới</small></span><span class="desktop-download-shortcut-chevron" aria-hidden="true">⌄</span></summary>
       <div class="desktop-download-shortcut-steps">
-       <p>Chỉ tải file từ GitHub Releases chính thức, đối chiếu SHA-256 và kéo <strong>Open IPTV Pro.app</strong> vào Applications. Thử <strong>System Settings → Privacy &amp; Security → Open Anyway</strong> nếu có.</p>
-       <p>Chỉ khi đã xác minh file an toàn nhưng bị chặn do quarantine, mở Terminal chạy: <code style="overflow-wrap:anywhere">xattr -dr com.apple.quarantine "/Applications/Open IPTV Pro.app"</code></p>
-       <p class="desktop-download-shortcut-note">Nếu DMG hỏng, checksum không khớp hoặc macOS báo mã độc, dừng cài và tải lại. Không tắt Gatekeeper toàn máy.</p>
+       <ol>
+        <li>Tải đúng DMG <strong>Mac Apple Silicon (ARM64)</strong> hoặc <strong>Mac Intel (x64)</strong> từ GitHub Releases và kiểm tra SHA-256.</li>
+        <li>Mở DMG, kéo <strong>Open IPTV Pro.app</strong> vào <strong>Applications</strong>, rồi mở từ Applications.</li>
+        <li>Nếu macOS chặn, thử <strong>System Settings → Privacy &amp; Security → Open Anyway</strong> khi có tùy chọn.</li>
+        <li>Nếu chỉ bị quarantine dù đã xác minh bản tải an toàn, mở <strong>Terminal</strong> bằng <strong>⌘ + Space</strong>, sao chép/dán lệnh dưới đây bằng <strong>⌘ + V</strong>, nhấn <strong>Enter</strong> và mở lại app.</li>
+       </ol>
+       <div class="desktop-download-mac-command"><code id="desktopMacCommand">xattr -dr com.apple.quarantine "/Applications/Open IPTV Pro.app"</code><button type="button" data-mac-copy-command>📋 Sao chép lệnh Terminal</button></div>
+       <p class="desktop-download-shortcut-note">Chỉ dùng khi tin tưởng file và SHA-256 khớp. Nếu DMG thực sự hỏng, chữ ký sai hoặc macOS báo mã độc, không vượt cảnh báo. Không tắt Gatekeeper toàn máy.</p>
       </div>
      </details>
     <div class="desktop-download-actions">
@@ -213,7 +218,21 @@ const mobileFormats=[
   if(intro&&doc.documentElement?.getAttribute('data-iptv-device')==='mobile'&&firstVisit(root.localStorage))intro.hidden=false;
   introClose?.addEventListener('click',()=>{if(intro)intro.hidden=true;try{root.localStorage?.setItem(INTRO_KEY,'seen');}catch{}});
   for(const trigger of triggers)trigger.addEventListener('click',open);
-  overlay.addEventListener('click',event=>{
+  overlay.addEventListener('click',async event=>{
+   const button=event.target.closest('button[data-mac-copy-command]');
+   if(button){
+    const command='xattr -dr com.apple.quarantine "/Applications/Open IPTV Pro.app"';
+    try{
+     if(root.navigator?.clipboard?.writeText&&root.isSecureContext)await root.navigator.clipboard.writeText(command);
+     else{
+      const input=doc.createElement('textarea');input.value=command;input.setAttribute('readonly','');
+      input.style.cssText='position:fixed;left:-9999px;top:0';doc.body.append(input);input.select();
+      const ok=doc.execCommand('copy');input.remove();if(!ok)throw Error('Clipboard unavailable');
+     }
+     button.textContent='✓ Đã sao chép';
+    }catch{button.textContent='Hãy chọn và sao chép lệnh ở bên trái';}
+    return;
+   }
    if(event.target===overlay||event.target.closest('[data-desktop-close]'))close();
   });
   overlay.addEventListener('keydown',event=>{
