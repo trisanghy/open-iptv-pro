@@ -258,16 +258,16 @@ jobs:
         run: |
           set -Eeuo pipefail
           mkdir -p release-stage
-          git archive --format=zip --output=release-stage/OpenIPTVPro-Positron-P51142-Source.zip HEAD
-          zip -q -r release-stage/Positron-P51142-50-Real-Screenshots.zip release-stage/p4-50-rounds
-          zip -q -r release-stage/Positron-P51142-20-Real-Screenshots.zip release-stage/p5-20-rounds
+          git archive --format=zip --output=release-stage/OpenIPTVPro-Positron-P51143-Source.zip HEAD
+          zip -q -r release-stage/Positron-P51143-50-Real-Screenshots.zip release-stage/p4-50-rounds
+          zip -q -r release-stage/Positron-P51143-20-Real-Screenshots.zip release-stage/p5-20-rounds
           cp release-stage/p4-50-rounds/positron-p4-50-real.png release-stage/positron-p4-final-main-real.png
           cp release-stage/p4-50-rounds/positron-p4-10-real.png release-stage/positron-p4-round-10-real.png
           cp release-stage/p4-50-rounds/positron-p4-20-real.png release-stage/positron-p4-round-20-real.png
           cp release-stage/p4-50-rounds/positron-p4-30-real.png release-stage/positron-p4-round-30-real.png
           cp release-stage/p4-50-rounds/positron-p4-40-real.png release-stage/positron-p4-round-40-real.png
           for name in \
-            Positron-P51142-20-Real-Screenshots.zip \
+            Positron-P51143-20-Real-Screenshots.zip \
             audit-p5-20-rounds.json \
             Open-IPTV-Pro-4.23.227-mac-arm64.dmg \
             Open-IPTV-Pro-4.23.227-mac-x64.dmg \
@@ -280,8 +280,8 @@ jobs:
             positron-p4-round-20-real.png \
             positron-p4-round-30-real.png \
             positron-p4-round-40-real.png \
-            Positron-P51142-50-Real-Screenshots.zip \
-            OpenIPTVPro-Positron-P51142-Source.zip; do
+            Positron-P51143-50-Real-Screenshots.zip \
+            OpenIPTVPro-Positron-P51143-Source.zip; do
               test -s "release-stage/$name" || { echo "::error::Missing $name"; exit 1; }
           done
           (cd release-stage && sha256sum *.dmg *.exe *.png *.json *.zip > SHA256SUMS.txt)
@@ -313,7 +313,7 @@ jobs:
           fi
           gh release view "$TAG" --repo "$GITHUB_REPOSITORY" --json assets --jq '.assets[].name' >/tmp/positron-assets
           grep -Fxq 'positron-p4-final-main-real.png' /tmp/positron-assets
-          grep -Fxq 'Positron-P51142-20-Real-Screenshots.zip' /tmp/positron-assets
+          grep -Fxq 'Positron-P51143-20-Real-Screenshots.zip' /tmp/positron-assets
           grep -Fxq 'Open-IPTV-Pro-4.23.227-mac-arm64.dmg' /tmp/positron-assets
           grep -Fxq 'Open-IPTV-Pro-Setup-4.23.227-x64.exe' /tmp/positron-assets
           echo "PUBLISHED_AND_VERIFIED: $TAG at $GITHUB_SHA" > release-stage/PUBLISH_STATUS.txt
