@@ -1,0 +1,299 @@
+/* Positron P5.1.54 • Playback workspace v2.
+   Scoped visual redesign only. Does not alter stream/video/fullscreen logic. */
+html[data-positron="true"]{
+ --po-v2-bg:#0e141d;--po-v2-panel:#17212d;--po-v2-panel2:#1b2836;
+ --po-v2-line:#2b3a49;--po-v2-ink:#e9f0f7;--po-v2-muted:#97abbf;
+ --po-v2-accent:#aacdff;--po-v2-on:#11243a;
+}
+html[data-positron="true"] body,
+html[data-positron="true"] .app-shell{
+ background:var(--po-v2-bg)!important;color:var(--po-v2-ink)!important;
+}
+html[data-positron="true"] #appSidebar.sidebar{
+ background:#121b26!important;border-right:1px solid #253240!important;
+ width:188px!important;min-width:188px!important;padding:16px 9px 12px!important;
+ position:relative!important;
+}
+html[data-positron="true"] #appSidebar .brand{
+ gap:8px!important;padding:2px 6px 18px!important;margin-right:30px!important;
+}
+html[data-positron="true"] #appSidebar .brand-icon{
+ width:31px!important;height:31px!important;min-width:31px!important;
+ border:0!important;border-radius:9px!important;box-shadow:none!important;
+ background:transparent!important;
+}
+html[data-positron="true"] #appSidebar .brand b{
+ font-size:17px!important;letter-spacing:-.65px!important;font-weight:750!important;
+ white-space:nowrap!important;
+}
+html[data-positron="true"] #appSidebar .brand small{
+ font-size:10px!important;letter-spacing:.25px!important;color:var(--po-v2-muted)!important;
+}
+html[data-positron="true"][data-sidebar-visible="true"] #sidebarToggleBtn{
+ top:17px!important;right:9px!important;left:auto!important;
+ width:31px!important;height:31px!important;border-radius:9px!important;
+ background:#233140!important;border:1px solid #344557!important;
+ box-shadow:none!important;
+}
+html[data-positron="true"] #appSidebar .nav{
+ min-height:39px!important;height:39px!important;margin:2px 0!important;
+ border:1px solid transparent!important;border-radius:9px!important;
+ background:transparent!important;font-size:12px!important;color:#adbbcc!important;
+ font-weight:550!important;padding:0 9px!important;box-shadow:none!important;
+}
+html[data-positron="true"] #appSidebar .nav.active{
+ background:#243649!important;border:1px solid #37526b!important;
+ box-shadow:none!important;color:#f5f9ff!important;
+}
+html[data-positron="true"] #appSidebar .nav:hover{
+ background:#243240!important;color:#f5f9ff!important;
+}
+html[data-positron="true"] #appSidebar .aside-caption{
+ font-size:9px!important;letter-spacing:1px!important;color:#7d90a6!important;padding:0 8px!important;
+}
+html[data-positron="true"] #appSidebar .sidebar-bottom{
+ background:#1a2633!important;border:1px solid #2d4052!important;box-shadow:none!important;
+ border-radius:10px!important;
+}
+html[data-positron="true"] #positronBar{
+ height:53px!important;min-height:53px!important;padding:7px 16px!important;
+ background:#17222e!important;border-bottom:1px solid #2b3b4c!important;
+ box-shadow:none!important;gap:12px!important;
+}
+html[data-positron="true"] #positronBar .p-title{gap:0!important}
+html[data-positron="true"] #positronBar .p-orb{display:none!important}
+html[data-positron="true"] #positronBar .p-heading strong{font-size:13px!important;font-weight:690!important}
+html[data-positron="true"] #positronBar .p-heading small{display:none!important}
+html[data-positron="true"] #positronBar .p-live{
+ border-color:#385264!important;color:#b9d0e2!important;background:#1b2b38!important;
+ box-shadow:none!important;
+}
+html[data-positron="true"] #positronBar button{
+ background:#202f3d!important;color:#d6e4f2!important;border-color:#34475a!important;
+ border-radius:9px!important;font-weight:600!important;min-height:34px!important;
+ box-shadow:none!important;
+}
+html[data-positron="true"] #positronBar #positronOpen{
+ min-width:155px!important;background:#1c2936!important;
+}
+html[data-positron="true"] .main .content{
+ padding:10px 12px 14px!important;
+ background:var(--po-v2-bg)!important;
+}
+html[data-positron="true"] #page-tv .tv-layout{
+ grid-template-columns:minmax(212px,244px) minmax(0,1fr)!important;
+ gap:10px!important;align-items:start!important;
+}
+html[data-positron="true"] #page-tv .channel-panel{
+ background:var(--po-v2-panel)!important;border:1px solid var(--po-v2-line)!important;
+ border-radius:11px!important;box-shadow:none!important;overflow:hidden!important;
+}
+html[data-positron="true"] #page-tv .panel-header{
+ background:var(--po-v2-panel)!important;border-color:var(--po-v2-line)!important;
+ min-height:53px!important;padding:9px 10px!important;
+}
+html[data-positron="true"] #page-tv .panel-header h2{font-size:13px!important}
+html[data-positron="true"] #page-tv .panel-header p{font-size:10px!important;color:var(--po-v2-muted)!important}
+html[data-positron="true"] #page-tv .channel-panel .filter-box{
+ margin:9px 9px 5px!important;min-height:37px!important;
+ background:#202d3b!important;border:1px solid #34475a!important;border-radius:8px!important;
+}
+html[data-positron="true"] #page-tv .channel-panel .filter-box input{
+ font-size:12px!important;color:var(--po-v2-ink)!important;
+}
+html[data-positron="true"] #page-tv #channelList{padding:4px 7px 7px!important}
+html[data-positron="true"] #page-tv #channelList .channel-item{
+ min-height:59px!important;border-radius:9px!important;padding:6px 7px!important;
+ border:1px solid transparent!important;background:transparent!important;
+ box-shadow:none!important;margin:2px 0!important;gap:7px!important;
+}
+html[data-positron="true"] #page-tv #channelList .channel-item:hover{
+ background:#223242!important;border-color:#34485b!important;
+}
+html[data-positron="true"] #page-tv #channelList .channel-item.current{
+ background:#2b3d51!important;border:1px solid #4c6d88!important;
+ box-shadow:none!important;
+}
+html[data-positron="true"] #page-tv #channelList .channel-item .chan-logo{
+ width:36px!important;height:36px!important;min-width:36px!important;
+ border-radius:8px!important;background:#243546!important;
+}
+html[data-positron="true"] #page-tv #channelList .channel-item .channel-text b{
+ color:#e2edf8!important;font-size:12px!important;font-weight:660!important;
+}
+html[data-positron="true"] #page-tv #channelList .channel-item .channel-text small{
+ color:#9cadbf!important;font-size:10px!important;line-height:1.5!important;
+}
+html[data-positron="true"] #page-tv #channelList .channel-star{
+ color:#98abc0!important;font-size:16px!important;background:transparent!important;
+}
+html[data-positron="true"] #page-tv #channelList .channel-star.marked{color:#f0c77a!important}
+html[data-positron="true"] #page-tv .watch-panel{gap:8px!important}
+html[data-positron="true"] #page-tv #playerBox{
+ background:#05080e!important;border:1px solid #2a3948!important;
+ border-radius:11px!important;box-shadow:none!important;overflow:hidden!important;
+}
+html[data-positron="true"] #page-tv .player-control-card{
+ background:var(--po-v2-panel)!important;border:1px solid var(--po-v2-line)!important;
+ border-radius:11px!important;box-shadow:none!important;overflow:hidden!important;
+}
+html[data-positron="true"] #page-tv .player-control-card .control-layout-top{
+ grid-template-columns:minmax(138px,1.05fr) minmax(164px,.94fr) minmax(102px,.52fr) max-content!important;
+ gap:0!important;min-height:61px!important;padding:4px 8px!important;
+ background:var(--po-v2-panel)!important;border-bottom:1px solid var(--po-v2-line)!important;
+}
+html[data-positron="true"] #page-tv .player-control-card .control-layout-top .playing-info{
+ grid-column:1!important;grid-row:1!important;gap:9px!important;
+ padding:3px 9px!important;margin:0!important;border:0!important;
+}
+html[data-positron="true"] #page-tv .control-layout-top .small-lcd{
+ width:35px!important;height:35px!important;min-width:35px!important;flex:0 0 35px!important;
+ border-radius:9px!important;background:#203c37!important;color:#b0e3d5!important;
+}
+html[data-positron="true"] #page-tv .playing-channel-text b{font-size:13px!important;font-weight:700!important}
+html[data-positron="true"] #page-tv .playing-channel-text small{font-size:10px!important;color:#9dafc1!important}
+html[data-positron="true"] #page-tv .player-control-card .controls.transport-controls{
+ grid-column:2!important;grid-row:1!important;gap:2px!important;
+ min-height:52px!important;padding:0 5px!important;margin:0!important;
+ display:flex!important;align-items:center!important;justify-content:center!important;
+ border-right:1px solid var(--po-v2-line)!important;
+}
+html[data-positron="true"] #page-tv .player-control-card .controls.transport-controls :is(#prevBtn,#stopBtn,#nextBtn){
+ flex:0 0 37px!important;min-width:37px!important;min-height:40px!important;
+ width:37px!important;height:40px!important;border:0!important;border-radius:9px!important;
+ background:transparent!important;color:#c2d0df!important;box-shadow:none!important;
+}
+html[data-positron="true"] #page-tv .player-control-card .controls.transport-controls #playBtn{
+ flex:0 0 44px!important;min-width:44px!important;min-height:44px!important;
+ width:44px!important;height:44px!important;border-radius:11px!important;
+ background:var(--po-v2-accent)!important;color:var(--po-v2-on)!important;
+ border:1px solid #c4dcff!important;box-shadow:none!important;
+ font-size:0!important;display:inline-flex!important;align-items:center!important;
+ justify-content:center!important;position:relative!important;
+}
+html[data-positron="true"] #page-tv .player-control-card .controls.transport-controls #playBtn::before{
+ content:"";display:block;width:17px;height:19px;flex:0 0 auto;
+ background:currentColor;
+ clip-path:polygon(12% 0,93% 50%,12% 100%);
+}
+html[data-positron="true"] #page-tv .player-control-card .controls.transport-controls #playBtn[data-po-playing="true"]::before{
+ width:17px;height:19px;clip-path:none;
+ background:linear-gradient(90deg,currentColor 0 37%,transparent 37% 63%,currentColor 63% 100%);
+}
+html[data-positron="true"] #page-tv .player-control-card .controls.transport-controls #playBtn:disabled{
+ background:#354657!important;color:#8598aa!important;border-color:#415365!important;
+ box-shadow:none!important;opacity:.55!important;
+}
+html[data-positron="true"] #page-tv .player-control-card .controls.transport-controls button:hover:not(:disabled){
+ background:#2a3b4b!important;color:#f3f7ff!important;filter:none!important;
+}
+html[data-positron="true"] #page-tv .player-control-card .controls.transport-controls #playBtn:hover:not(:disabled){
+ background:#c4daff!important;color:#10263d!important;
+}
+html[data-positron="true"] #page-tv .player-control-card :is(.transport-controls,.output-controls) svg{
+ width:19px!important;height:19px!important;stroke:currentColor!important;
+ stroke-width:1.85!important;fill:none!important;stroke-linecap:round!important;
+ stroke-linejoin:round!important;pointer-events:none!important;
+}
+html[data-positron="true"] #page-tv .player-control-card .volume-controls{
+ grid-column:3!important;grid-row:1!important;gap:7px!important;padding:2px 10px!important;
+ min-width:90px!important;border:0!important;border-right:1px solid var(--po-v2-line)!important;
+ display:flex!important;align-items:center!important;justify-content:center!important;
+}
+html[data-positron="true"] #page-tv .player-control-card .volume-icon svg{
+ width:18px!important;height:18px!important;stroke:currentColor!important;stroke-width:1.8!important;
+}
+html[data-positron="true"] #page-tv .player-control-card .volume-controls #volume{
+ width:100%!important;min-width:50px!important;max-width:148px!important;
+ accent-color:#aaccff!important;cursor:pointer!important;
+}
+html[data-positron="true"] #page-tv .player-control-card .output-controls{
+ grid-column:4!important;grid-row:1!important;gap:4px!important;
+ padding:3px 7px!important;min-width:0!important;display:flex!important;
+ flex-wrap:nowrap!important;justify-content:flex-end!important;align-items:center!important;
+}
+html[data-positron="true"] #page-tv .player-control-card .output-controls :is(#castBtn,#pipBtn,#fullscreenBtn){
+ height:38px!important;min-height:38px!important;min-width:38px!important;
+ padding:0 9px!important;gap:6px!important;border:1px solid transparent!important;
+ border-radius:9px!important;background:transparent!important;color:#bdcede!important;
+ box-shadow:none!important;font-size:11px!important;font-weight:560!important;
+}
+html[data-positron="true"] #page-tv .player-control-card .output-controls :is(#castBtn,#pipBtn,#fullscreenBtn):hover:not(:disabled){
+ background:#293b4e!important;border-color:#3b526a!important;color:white!important;
+}
+html[data-positron="true"] #page-tv .player-control-card .control-layout-bottom{
+ padding:6px 11px!important;min-height:51px!important;gap:9px!important;
+ grid-template-columns:minmax(0,1.8fr) minmax(120px,.67fr) minmax(145px,.91fr) 42px!important;
+ background:#1b2835!important;
+}
+html[data-positron="true"] #page-tv .player-control-card :is(.epg-current-card,.manual-link-picker){
+ background:transparent!important;border:0!important;box-shadow:none!important;
+}
+html[data-positron="true"] #page-tv .player-control-card :is(#manualStreamSelect,#videoFit){
+ background:#223343!important;border:1px solid #384d61!important;
+ border-radius:8px!important;color:#e4ecf6!important;font-size:11px!important;
+}
+html[data-positron="true"] #page-tv .player-control-card #favCurrentBtn{
+ width:38px!important;height:38px!important;min-height:38px!important;
+ background:transparent!important;border:1px solid transparent!important;
+ box-shadow:none!important;border-radius:9px!important;
+}
+html[data-positron="true"] #page-tv .advanced-timebar,
+html[data-positron="true"] #page-tv .compact-tools{
+ background:#182430!important;border:1px solid #2b3a49!important;
+ box-shadow:none!important;border-radius:10px!important;
+}
+html[data-positron="true"] #page-tv :is(.advanced-timebar,.compact-tools) button{
+ box-shadow:none!important;border-radius:8px!important;
+}
+html[data-positron="true"] #page-tv .quick-tools-heading{color:#b6c8d9!important;font-size:12px!important}
+html[data-positron="true"] #page-tv :is(.channel-panel,.player-control-card,.advanced-timebar,.compact-tools) button:focus-visible{
+ outline:2px solid #aaccff!important;outline-offset:2px!important;
+}
+@container (max-width:890px){
+ html[data-positron="true"] #page-tv .player-control-card .control-layout-top{
+  grid-template-columns:minmax(0,1fr) max-content!important;row-gap:4px!important;padding:6px 8px!important;
+ }
+ html[data-positron="true"] #page-tv .player-control-card .control-layout-top .playing-info{grid-column:1!important;grid-row:1!important}
+ html[data-positron="true"] #page-tv .player-control-card .controls.transport-controls{
+  grid-column:2!important;grid-row:1!important;border:0!important;
+ }
+ html[data-positron="true"] #page-tv .player-control-card .volume-controls{
+  grid-column:1!important;grid-row:2!important;border:0!important;justify-content:flex-start!important;
+ }
+ html[data-positron="true"] #page-tv .player-control-card .output-controls{grid-column:2!important;grid-row:2!important}
+ html[data-positron="true"] #page-tv .player-control-card .output-controls .po-media-caption{display:none!important}
+ html[data-positron="true"] #page-tv .player-control-card .control-layout-bottom{
+  grid-template-columns:minmax(0,1fr) minmax(110px,.55fr)!important;row-gap:5px!important;
+ }
+}
+@media(max-width:900px){
+ html[data-positron="true"] #appSidebar.sidebar{width:160px!important;min-width:160px!important}
+ html[data-positron="true"] #page-tv .tv-layout{grid-template-columns:minmax(180px,218px) minmax(0,1fr)!important}
+ html[data-positron="true"] #positronBar #positronOpen{min-width:0!important}
+ html[data-positron="true"] #positronBar #positronOpen .p-command-label{display:none!important}
+}
+@media(max-width:720px){
+ html[data-positron="true"] #page-tv .tv-layout{grid-template-columns:minmax(0,1fr)!important}
+ html[data-positron="true"] #page-tv .channel-panel{max-height:300px!important}
+ html[data-positron="true"] #positronBar{padding-inline:10px!important}
+}
+@media(prefers-reduced-motion:reduce){
+ html[data-positron="true"] #page-tv .player-control-card *{transition:none!important}
+}
+
+/* Unified outline icons for the main navigation. */
+html[data-positron="true"] #appSidebar .nav > span svg.po-media-svg{
+ width:18px!important;height:18px!important;
+ stroke:currentColor!important;stroke-width:1.75!important;
+ fill:none!important;stroke-linecap:round!important;stroke-linejoin:round!important;
+}
+html[data-positron="true"] #appSidebar .nav.active > span{color:#bcd9ff!important}
+html[data-positron="true"] #page-tv .player-control-card .output-controls .po-media-caption{
+ display:inline-block;font-size:11px!important;letter-spacing:0!important;white-space:nowrap!important;
+}
+@container (max-width:890px){
+ html[data-positron="true"] #page-tv .player-control-card .output-controls .po-media-caption{
+  display:none!important;
+ }
+}

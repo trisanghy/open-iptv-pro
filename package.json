@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.137",
-  "description": "Positron P5.1.53: simplify empty EPG and refresh search after guide loads",
+  "version": "4.23.138",
+  "description": "Positron P5.1.54: modern flat media controls and calmer TV layout",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

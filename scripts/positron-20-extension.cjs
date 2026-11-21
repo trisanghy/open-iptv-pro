@@ -50,6 +50,17 @@ async function runTwenty(page){
     epgEmptySummary:document.getElementById('epgSummary')?.textContent?.trim()||'',
     epgGuideEmptyText:document.querySelector('#epgGuide>.empty-list')?.textContent?.trim()||'',
     epgReloadAvailability:(()=>{const n=document.getElementById('epgRefreshBtn');return {disabled:!!n?.disabled,marked:n?.getAttribute('data-positron-epg-no-channels')||'',describedBy:n?.getAttribute('aria-describedby')||''};})(),
+    v2Media:(()=>{
+     const btn=document.getElementById('playBtn');
+     const bar=document.querySelector('#page-tv .player-control-card .control-layout-top');
+     if(!btn||!bar)return null;
+     const rect=btn.getBoundingClientRect(),style=getComputedStyle(btn),top=bar.getBoundingClientRect();
+     return {loaded:document.documentElement.dataset.poMediaV2==='true',
+      width:Math.round(rect.width),height:Math.round(rect.height),
+      radius:style.borderTopLeftRadius,topOverflow:top.right>innerWidth+8,
+      vectorOutputs:['castBtn','pipBtn','fullscreenBtn'].every(id=>!!document.querySelector('#'+id+' svg.po-media-svg')),
+      navIcon:!!document.querySelector('#appSidebar .nav[data-page="tv"] svg.po-media-svg')};
+    })(),
     epgSourceAction:get('#epgSettingsBtn'),
     epgToolVisibility:(()=>{
      const page=document.getElementById('page-epg');
@@ -194,6 +205,11 @@ async function runTwenty(page){
   if(target==='tv'){
    assert.ok(metrics.player?.width>180&&metrics.player.height>100,'video collapsed: '+name);
    assert.equal(metrics.transportVectors,true,'non-vector transport icons: '+name);
+   assert.ok(metrics.v2Media?.loaded,'P5.1.54 media redesign module failed to initialize: '+name);
+   assert.ok(metrics.v2Media?.width<=48&&metrics.v2Media.height>=40,'new Play button is not compact: '+name+' '+JSON.stringify(metrics.v2Media));
+   assert.ok(metrics.v2Media?.vectorOutputs&&metrics.v2Media.navIcon,'new SVG system not installed: '+name);
+   assert.equal(metrics.v2Media?.topOverflow,false,'toolbar extends beyond viewport: '+name);
+
    for(const [key,label] of [['cast','Cast / AirPlay'],['pip','PiP']]){
     const i=metrics.outputIcons?.[key];
     assert.equal(i?.svg,true,'native '+key+' output icon still uses a glyph: '+name);
@@ -306,6 +322,18 @@ async function runTwenty(page){
       return open;
     });
     assert.equal(searchOpens,true,'new icon must keep native command palette event');
+   }
+   if(target==='tv'&&width===450){
+    const state=await page.evaluate(async()=>{
+     const btn=document.getElementById('playBtn'),previous=btn.textContent;
+     btn.textContent='Ⅱ';await new Promise(resolve=>setTimeout(resolve,0));
+     const pause=btn.dataset.poPlaying==='true'&&btn.getAttribute('aria-label')==='Tạm dừng phát';
+     btn.textContent='▶';await new Promise(resolve=>setTimeout(resolve,0));
+     const play=btn.dataset.poPlaying==='false'&&btn.getAttribute('aria-label')==='Phát kênh';
+     btn.textContent=previous;await new Promise(resolve=>setTimeout(resolve,0));
+     return {pause,play};
+    });
+    assert.ok(state.pause&&state.play,'native Play/Pause state must drive new compact media button');
    }
    if(target==='tv'&&width===450){
     if(Number(metrics.sourceCount)===0){
