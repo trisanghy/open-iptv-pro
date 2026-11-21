@@ -94,7 +94,7 @@ P5.1.37 capture run 44863007302: **FAILED at real TV 450px** after all 50 P4 cas
 
 | 08/20 | P5.1.41 / 4.23.125 | P5.1.40 real Settings Electron 1360px `positron-p5-18-real.png` artifact 14691385846 | Logged-out account card dominates 300+px screen height, pushing settings accordions out of view | Scope only desktop logged-out account card, compress spacing not field/button targets; real panel height and 44px target checks pending CI/release |
 
-| 09/20 | P5.1.43 / 4.23.127 | P5.1.41 actual Electron Doctor 1360px `positron-p5-19-real.png`, capture artifact 14691221839 | `Chẩn đoán ngay` / `Phân tích` remain bright beige in no-source state though disabled; native btn-primary fill overrides intended state | Scope four guarded Doctor operations to neutral disabled skin; actual Electron DOM color/luma and Node regression pending CI/release |
+| 09/20 | P5.1.42 / 4.23.126 | P5.1.41 actual Electron Doctor 1360px `positron-p5-19-real.png`, capture artifact 14691221839 | `Chẩn đoán ngay` / `Phân tích` remain bright beige in no-source state though disabled; native btn-primary fill overrides intended state | Scope four guarded Doctor operations to neutral disabled skin; actual Electron DOM color/luma and Node regression pending CI/release |
 
 
 ## File (9) new repair batch from P5.1.43
@@ -103,3 +103,4 @@ P5.1.37 capture run 44863007302: **FAILED at real TV 450px** after all 50 P4 cas
 | 01/20 | P5.1.43 / v4.23.127 | P5.1.41 Sources 720px (preserved in P5.1.43): iptv-org/country/VN preselected yet initial status says select collection | Honest first-use instruction with native selections intact | Node + real Electron audit to run; GitHub release 403 unresolved |
 
 P5.1.43 same-round CI follow-up: Actions run 44864848127 failed native-language audit 2/606. Corrected all 16 translations in renderer/i18n.js and added regression. Round remains UNCERTIFIED until new test+capture+image review succeed; Release 403 is an independent blocking issue.\n
+| 10/20 (file 8) | P5.1.44 / 4.23.128 | Actual P5.1.43 Electron Favorites 600px `positron-p5-20-real.png` artifact 14691567509 | Empty guidance/CTA at y230–320 with >450px unused below | Center only Favorites empty state on narrow windows, preserve original CTA/list; audit on screenshot position and footer clipping. Also rectify release tag P5.1.43 workflow inconsistency in new version. Await CI/capture/release. |

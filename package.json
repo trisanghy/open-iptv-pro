@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.127",
-  "description": "Positron P5.1.43: align Smart Discovery initial guidance with selected catalog",
+  "version": "4.23.128",
+  "description": "Positron P5.1.44: center empty Favorites content in compact windows",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

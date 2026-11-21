@@ -298,3 +298,8 @@ P5.1.37 same-round screenshot feedback: Electron capture failed TV 450px at comp
 - Add Node assertion and real Electron Sources screenshot audit of select value and status. Screenshot review, CI and Release assets must be checked before marking the new round complete.
 
 P5.1.43 same-round regression repair: first CI run 44864848127 failed 2/606 Node tests (native i18n audit) because the edited default Source instruction had no translations. Added full offline translations for 16 non-Vietnamese locales in `renderer/i18n.js`, kept original dictionaries/streams untouched, added localization coverage test. Retest CI and actual Electron screenshot before certification.\n
+## File (8) batch · Round 10/20 · P5.1.44 / v4.23.128
+- Read actual P5.1.43 Electron Favorites 600x820 screenshot (artifact 14691567509): no-source instructions/CTA stranded near y230–320, large unused empty region below.
+- Center the existing empty Favorites CTA within compact viewport via scoped CSS without touching channel data, source button listeners or nonempty/desktop lists; geometry audit checks top>=300 and button above status footer.
+- Correct P5.1.43 workflow tag mismatch: new version's tag is `positron/v4.23.128-p5.1.44`, matching displayed version, instead of carrying prior p5.1.42 suffix. Retain historical tags/commits.
+- Real Electron screenshot and full Node CI pending, do not mark complete before opening image and verification.

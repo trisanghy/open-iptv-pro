@@ -419,3 +419,19 @@ html[data-positron="true"] #page-doctor :is(#doctorRun,#doctorDeepCheck,#doctor3
  box-shadow:none!important;
  cursor:not-allowed!important;
 }
+
+/* P5.1.44 · actual P5.1.43 Electron Favorites 600x820 screenshot shows
+   empty guidance/action at y230–320 with >450px unused below. Center only
+   the empty list at compact widths, preserving native action/real favorites. */
+@media(max-width:760px){
+ html[data-positron="true"] #page-fav #favoriteList:has(>.empty-list){
+  display:flex!important;align-items:center!important;
+  justify-content:center!important;
+  min-height:min(520px,calc(100dvh - 220px))!important;
+  width:100%!important;
+ }
+ html[data-positron="true"] #page-fav #favoriteList>.empty-list{
+  margin:0 auto!important;max-width:500px!important;
+  padding:16px 12px!important;
+ }
+}

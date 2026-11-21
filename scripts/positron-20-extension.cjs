@@ -80,6 +80,7 @@ async function runTwenty(page){
      epgNext:(()=>{const n=document.getElementById('epgNextName');if(!n)return null;const s=getComputedStyle(n);return {whiteSpace:s.whiteSpace,textOverflow:s.textOverflow,scrollWidth:n.scrollWidth,clientWidth:n.clientWidth,height:Math.round(n.getBoundingClientRect().height)};})(),
      favoriteAction:get('#positronFavoritesSources'),
      favoriteGuidance:(()=>document.querySelector('#favoriteList .empty-list')?.firstChild?.textContent?.trim()||'')(),
+     favoriteEmptyLayout:(()=>{const e=document.querySelector('#favoriteList>.empty-list'),b=document.getElementById('positronFavoritesSources');const r=e?.getBoundingClientRect(),a=b?.getBoundingClientRect();return{top:Math.round(r?.top||0),height:Math.round(r?.height||0),buttonBottom:Math.round(a?.bottom||0),viewportHeight:innerHeight};})(),
      sourceCount:document.getElementById('sourceCount')?.textContent?.trim()||'0',
      footerStatus:(()=>{
       const n=document.getElementById('footerText'),footer=n?.closest('.footer');if(!n||!footer)return null;
@@ -369,6 +370,11 @@ async function runTwenty(page){
     'P5.1 regression: light Smart Discovery background '+metrics.sourceSection.background);
   }
   if(target==='fav'){
+    if(width===600){
+     assert.ok(metrics.favoriteEmptyLayout?.top>=300,'compact Favorites card too high: '+name+' '+metrics.favoriteEmptyLayout?.top);
+     assert.ok(metrics.favoriteEmptyLayout?.buttonBottom<=metrics.favoriteEmptyLayout?.viewportHeight-40,'Favorites source action clipped by bottom bar: '+name);
+    }
+
     assert.equal(metrics.favoriteAction?.visible,true,'Favorites empty state requires source action: '+name);
     if(Number(metrics.sourceCount)===0)assert.ok(metrics.favoriteGuidance.startsWith('Chưa có nguồn IPTV.'),'zero-source message misleading: '+name);
     else assert.ok(metrics.favoriteGuidance.startsWith('Chưa có kênh yêu thích'),'nonempty source guidance misleading: '+name);
