@@ -7,6 +7,8 @@ on:
       - 'src/**'
       - 'renderer/**'
       - 'tests/**'
+      - 'scripts/BUILD_WINDOWS_AUTO.ps1'
+      - '.github/workflows/publish-electron-v42372.yml'
       - '.github/workflows/publish-main-electron-v42376.yml'
   workflow_dispatch:
 permissions:
