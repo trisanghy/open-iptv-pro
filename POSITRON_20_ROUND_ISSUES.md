@@ -162,3 +162,9 @@ Action: Horizon-only scrollbar variable override (#40736c thumb, #101a23 track),
 - Actual previous native P5.1.61 TV600 screenshot opened: CC "Phụ đề · Dịch · Giọng nói" button lavender with bright purple badge while Horizon uses teal.
 - Cause: unified-ai-inline-v1.css legacy !important colors and global palette vars.
 - P5.1.62: Horizon-specific CSS overrides, native Electron computed-style tests on TV 600 and 1360; preserve actual CC/Translate/TTS handlers/data. Pending after-screen manually reviewed, build/release verified. Do not count until complete.
+
+
+## New self-running user-file batch — 21 Nov 2026, baseline P5.1.62
+| Batch round | Candidate | Genuine previous screenshot | Visible defect | Fix / acceptance |
+| --- | --- | --- | --- | --- |
+| 01/20 | P5.1.63 / v4.23.147 | `p5-20-rounds/positron-watchflow-1360-night-real.png` from run 44894869647 | No-source WatchFlow 440px dialog overlays the native Add URL CTA | Compact empty source panel 310px, hidden unusable mode filters, 3-theme non-overlap DOM geometry + actual Electron screenshot after; unverified until QA/release |

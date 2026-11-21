@@ -511,3 +511,11 @@ html[data-positron="true"].po-v3.po-horizon #page-tv .unified-ai-row .unified-ai
 html[data-positron="true"].po-v3.po-horizon #page-tv .unified-ai-row .unified-ai-mark{
  background:#70d8bf!important;color:#083126!important;
 }
+
+/* P5.1.63: native Electron 1360px showed empty WatchFlow covering Add URL. */
+.po-watchflow-panel[data-empty-playlist="true"] :is(.po-watchflow-modes,.po-watchflow-subhead,.po-watchflow-note){display:none!important}
+.po-watchflow-panel[data-empty-playlist="true"] .po-watchflow-empty{padding:14px 12px}
+.po-watchflow-panel[data-empty-playlist="true"] .po-watchflow-head p{margin-bottom:10px}
+@media(min-width:1280px){
+ .po-watchflow-panel[data-empty-playlist="true"]{width:310px!important;max-width:calc(100vw - 32px)!important;right:24px!important;padding:15px!important;max-height:calc(100vh - 100px)!important}
+}

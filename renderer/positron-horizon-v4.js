@@ -54,6 +54,8 @@
  const draw=()=>{
   const target=byId('poWatchFlowResults');if(!target)return;
   const channels=window.IPTVState?.getChannels?.()||[];
+  // Empty-source suggestions must leave the native playlist-import actions visible.
+  panel.dataset.emptyPlaylist=String(channels.length===0);
   const ranking=core.rank(channels,{mode,seen,limit:3});
   target.replaceChildren();
   last=ranking.items;

@@ -56,7 +56,7 @@ test('Horizon system loads last, preserves native player, covers every page',()=
  for(const part of ['#appSidebar','#page-tv .tv-layout','#page-tv #playerBox','#channelList','.page:not(#page-tv)','#page-sources','#emptyPlayer'])
   assert.ok(css.includes(part),part+' not covered by Horizon design');
  assert.ok(!/html\[data-positron.*#video\s*\{[^}]*object-fit:/s.test(css),'video fit must remain user-configurable');
- assert.equal(JSON.parse(read('package.json')).version,'4.23.146');
+ assert.equal(JSON.parse(read('package.json')).version,'4.23.147');
 });
 
 test('Horizon defeats the legacy p50 sidebar width and retains an expandable rail',()=>{
@@ -118,4 +118,13 @@ test('P5.1.60 group variety cannot demote verified live streams beneath unverifi
  ];
  const res=core.rank(input,{now,limit:2});
  assert.deepEqual(res.items.map(x=>x.id),['alive1','alive2']);
+});
+
+test('P5.1.63 native Electron empty WatchFlow cannot obscure playlist import',()=>{
+ const ui=read('renderer/positron-horizon-v4.js'),css=read('renderer/positron-horizon-v4.css'),audit=read('scripts/positron-20-extension.cjs');
+ assert.ok(ui.includes('panel.dataset.emptyPlaylist=String(channels.length===0)'));
+ assert.ok(css.includes('.po-watchflow-panel[data-empty-playlist="true"]'));
+ assert.ok(audit.includes('watchFlow.overlapWithImport,false'));
+ assert.ok(audit.includes('watchFlow.modesHidden,true'));
+ assert.ok(audit.includes('watchFlow.panelWidth<=320'));
 });

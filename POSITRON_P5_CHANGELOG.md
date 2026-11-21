@@ -445,3 +445,10 @@ P5.1.46 same-version CI repair: run 44866650681 failed 2/611 because historical 
 - Root cause: legacy renderer/unified-ai-inline-v1.css declares #bd83ec border, #322044 background, #c587f2 CC badge !important. Positron previous palettes also leave global --ui-primary / --accent inconsistent.
 - Repair: only Horizon skin explicitly defines coherent root accent variables and scoped AI toggle/button/mark/hover colors, retaining existing native control listeners, keyboard interaction, playlist, caption, translate and TTS behavior.
 - Proof gate: full Node unit, screenshot Electron TV 600/1360 computed palette/assertions, manually opened AFTER PNG; six-job Mac/Win immutable release.
+
+
+## P5.1.63 / v4.23.147 — Empty WatchFlow must not hide playlist import
+- Input: P5.1.62 real Electron 1360px `positron-watchflow-1360-night-real.png`, run 44894869647, personally reviewed; the 440px fixed panel intersects the main player URL-import action.
+- Cause: WatchFlow's popup never differentiated zero native channels from available recommendations, showing six unusable genre filters and a wide overlay.
+- Code: mark empty playlist at render, narrow the popup to 310px above 1280px, hide unused category filters and keep the native sources entry in its empty state. Populated channel recommendations and playback code remain unchanged.
+- Evidence gate: Node regression, three-theme 1360px real Electron geometry assertions for non-overlap with #emptyUrlBtn, new after PNG screenshot review, multi-platform CI release verification. Do not certify before those checks.

@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.146",
-  "description": "Positron P5.1.62: Horizon AI/CC accent unification from real TV screenshot",
+  "version": "4.23.147",
+  "description": "Positron P5.1.63: Compact no-source WatchFlow preserves native playlist import",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",
