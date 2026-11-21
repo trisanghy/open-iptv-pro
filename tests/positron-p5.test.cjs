@@ -1379,7 +1379,7 @@ test('P5.1.146 tiến độ chương trình hiện tại từ EPG cục bộ, kh
   "remaining.textContent='Theo lịch EPG: '+timeline.percent+'% · còn '+timeline.remainingMinutes+' phút'"])
    assert.ok(ui.includes(token),'Thiếu nhãn tiến độ: '+token);
  assert.ok(css.includes('.web-chooser-epg-progress'));
- for(const token of ['scheduleProgressQA:','percentApproximatelyHalf:','showsRemainingMinutes:',
+ for(const token of ['const scheduleProgressQA=','percentApproximatelyHalf:','showsRemainingMinutes:',
   'progressAfterProgramme:','noProgressWithoutOptIn:','noAutoplay:',
   'positron-p51146-epg-progress-before-450-real.png','positron-p51146-epg-progress-after-450-real.png'])
    assert.ok(qa.includes(token),'Thiếu ảnh kiểm thử Electron: '+token);

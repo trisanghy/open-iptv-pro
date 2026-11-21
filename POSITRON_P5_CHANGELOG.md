@@ -3,6 +3,7 @@
 - Feature priority: NEW — Xem tiến độ ước tính của chương trình **theo lịch EPG**, gồm thanh phần trăm và số phút còn lại. Không mô tả là tiến độ phát video thực tế.
 - User action: TV → Chọn kênh → Bộ lọc → “Có chương trình đang chiếu (EPG)”, xem “Theo lịch EPG: 50% · còn 15 phút” trên thẻ kênh. Không có dữ liệu EPG hợp lệ hoặc tắt bộ lọc thì ẩn tiến độ.
 - Không tự phát kênh, không truy cập link streaming, không tải lịch ngoài hay ghi dữ liệu playlist. Dùng chính thời điểm bắt đầu và kết thúc XMLTV.
+- Electron screenshot: positron-p51146-epg-progress-after-450-real.png
 - Kịch bản Electron 450px: `positron-p51146-epg-progress-before-450-real.png`, `positron-p51146-epg-progress-after-450-real.png` với chương trình 30 phút giữa thời lượng và chương trình kế tiếp.
 - Node regression: thời điểm đầu, giữa, cuối, thiếu thời gian; Electron: hiện %/phút còn lại, giao diện xếp hàng không chồng nhau, tắt EPG thì ẩn tiến độ, dữ liệu nguồn không đổi, không tự phát, không tràn ngang.
 - Trạng thái: CANDIDATE cho đến khi workflow và ảnh Electron thực tế/EXE được xác minh.
