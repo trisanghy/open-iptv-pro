@@ -37,13 +37,13 @@ test('P5 assets are loaded after P4 without replacing it',()=>{
 test('P5 release is immutable and versioned separately from P4.1',()=>{
  const pkg=JSON.parse(read('package.json'));
  const flow=read('.github/workflows/positron-lab.yml');
- assert.equal(pkg.version,'4.23.98');
- assert.ok(flow.includes('positron/v4.23.98-p5.1.14'));
+ assert.equal(pkg.version,'4.23.99');
+ assert.ok(flow.includes('positron/v4.23.99-p5.1.15'));
  assert.ok(read('scripts/positron-50-audit.cjs').includes('runTwenty(page)'));
- assert.ok(flow.includes('Positron-P5114-20-Real-Screenshots.zip'));
+ assert.ok(flow.includes('Positron-P5115-20-Real-Screenshots.zip'));
 });
 
-test('P5.1.1 sidebar badge matches shipped release instead of stale P4',()=>{const js=read('renderer/positron.js');assert.ok(js.includes("descriptor.textContent='P5.1.14'"));assert.ok(!js.includes('OPEN IPTV PRO · P4 · 50 VÒNG'));});
+test('P5.1.1 sidebar badge matches shipped release instead of stale P4',()=>{const js=read('renderer/positron.js');assert.ok(js.includes("descriptor.textContent='P5.1.15'"));assert.ok(!js.includes('OPEN IPTV PRO · P4 · 50 VÒNG'));});
 
 test('P5.1.3 fullscreen icon uses SVG not a tiny platform glyph',()=>{const js=read('renderer/positron-twenty.js');const css=read('renderer/positron-twenty.css');assert.ok(js.includes("['fullscreenBtn','M8 3H3v5"));assert.ok(css.includes('#page-tv #fullscreenBtn svg'));});
 
@@ -131,4 +131,16 @@ test('P5.1.14 Smart Discovery small-window option is readable and remains unlimi
  assert.ok(js.includes("unlimited.title='Kiểm tra tất cả (không giới hạn)'"));
  assert.ok(audit.includes("metrics.smartLimit?.value,'all'"));
  assert.ok(audit.includes("metrics.smartLimit.textWidth+32<=metrics.smartLimit.controlWidth"));
+});
+
+test('P5.1.15 Doctor zero-channel state provides real source navigation',()=>{
+ const js=read('renderer/positron-twenty.js');
+ const css=read('renderer/positron-twenty.css');
+ const audit=read('scripts/positron-20-extension.cjs');
+ assert.ok(js.includes("const doctorPage=byId('page-doctor')"));
+ assert.ok(js.includes("const count=byId('navCount')"));
+ assert.ok(js.includes("action.addEventListener('click',()=>window.IPTVState?.setPage?.('sources'))"));
+ assert.ok(js.includes("new MutationObserver(updateHint)"));
+ assert.ok(css.includes('#positronDoctorEmptyHint[hidden]{display:none!important}'));
+ assert.ok(audit.includes("destination,'page-sources'"));
 });

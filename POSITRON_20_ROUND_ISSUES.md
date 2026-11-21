@@ -26,3 +26,5 @@ First P5.1.8 test run https://github.com/trisanghy/open-iptv-pro/actions/runs/44
 | Batch round | Version | Real prior screenshot issue | Root cause / code action | Validation |
 |---|---|---|---|---|
 | 01/20 | P5.1.14 / 4.23.98 | Sources 720px `positron-p5-15-real.png`, P5.1.13, unlimited scope name clipped | Native option text too long; short selected label preserving `value=all` | New real Electron metrics and screenshot, Node test, CI/release pending |
+
+| 07/20 | P5.1.15 / 4.23.99 | Latest P5.1.14 `positron-p5-19-real.png` Doctor 1360px | Six zero metrics are dead end for users without playlists | Conditional Doctor hint, direct source button, real Electron click test | CI/release pending; external P5.1.14 preserved |

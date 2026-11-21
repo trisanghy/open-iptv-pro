@@ -153,3 +153,15 @@ html[data-positron="true"] #positronBar #positronOpen>span:first-child svg{
   max-height:none!important;line-height:1.25!important;
  }
 }
+
+/* P5.1.15 / new round 07: actionable Doctor empty state, hidden when
+   the user's source data provides channels; preserves original Doctor UI. */
+html[data-positron="true"] #page-doctor #positronDoctorEmptyHint{
+ display:flex!important;align-items:center!important;justify-content:space-between!important;
+ gap:12px!important;flex-wrap:wrap!important;padding:13px 16px!important;
+ margin:0 0 16px!important;border-radius:11px!important;
+ background:var(--po-card)!important;border:1px solid var(--po-line)!important;
+ color:var(--po-ink)!important;font-size:13px!important;line-height:1.45!important;
+}
+html[data-positron="true"] #page-doctor #positronDoctorEmptyHint[hidden]{display:none!important}
+html[data-positron="true"] #page-doctor #positronDoctorSources{min-height:37px!important;white-space:normal!important}

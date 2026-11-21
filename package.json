@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.98",
-  "description": "Positron P5.1.14: readable unlimited Discovery scope in compact Sources",
+  "version": "4.23.99",
+  "description": "Positron P5.1.15: actionable Doctor zero-channel recovery",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

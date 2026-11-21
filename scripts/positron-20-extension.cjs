@@ -53,7 +53,10 @@ async function runTwenty(page){
     heading:(()=>{const n=document.querySelector('#positronBar .p-heading strong');if(!n)return null;const b=n.getBoundingClientRect();return {shortTitle:n.dataset.shortTitle||'',clipped:n.scrollWidth>n.clientWidth+1,width:Math.round(b.width)};})(),
     badge:(()=>{const n=document.querySelector('#appSidebar .brand small');if(!n)return null;const b=n.getBoundingClientRect();return {visible:b.width>0&&b.height>0,clipped:n.scrollWidth>n.clientWidth+1,right:b.right,top:b.top,bottom:b.bottom};})(),
     toggle:(()=>{const n=document.querySelector('#appSidebar .sidebar-edge-toggle');if(!n)return null;const b=n.getBoundingClientRect();return {left:b.left,top:b.top,bottom:b.bottom};})(),
-    sidebarStatus:(()=>{const n=document.getElementById('miniStatus');if(!n)return null;const s=getComputedStyle(n),r=n.getBoundingClientRect();return{visible:r.width>0&&r.height>0,whiteSpace:s.whiteSpace,scrollHeight:n.scrollHeight,clientHeight:n.clientHeight,title:n.title,text:n.textContent||''};})(),
+    doctorSourceAction:get('#positronDoctorSources'),
+     doctorEmptyVisible:(()=>{const n=document.getElementById('positronDoctorEmptyHint');return !!n&&!n.hidden;})(),
+     navCount:document.getElementById('navCount')?.textContent?.trim()||'0',
+     sidebarStatus:(()=>{const n=document.getElementById('miniStatus');if(!n)return null;const s=getComputedStyle(n),r=n.getBoundingClientRect();return{visible:r.width>0&&r.height>0,whiteSpace:s.whiteSpace,scrollHeight:n.scrollHeight,clientHeight:n.clientHeight,title:n.title,text:n.textContent||''};})(),
      searchButton:(()=>{const n=document.getElementById('positronOpen'),label=n?.querySelector('.p-command-label');if(!n)return null;return{svg:!!n.querySelector('svg'),label:label?.textContent||'',labelClipped:!!(label&&label.getClientRects().length&&label.scrollWidth>label.clientWidth+1),aria:n.getAttribute('aria-label')};})(),
      epgNext:(()=>{const n=document.getElementById('epgNextName');if(!n)return null;const s=getComputedStyle(n);return {whiteSpace:s.whiteSpace,textOverflow:s.textOverflow,scrollWidth:n.scrollWidth,clientWidth:n.clientWidth,height:Math.round(n.getBoundingClientRect().height)};})(),
      favoriteAction:get('#positronFavoritesSources'),
@@ -108,7 +111,18 @@ async function runTwenty(page){
    if(metrics.toggle&&metrics.badge.bottom>metrics.toggle.top&&metrics.badge.top<metrics.toggle.bottom)
     assert.ok(metrics.badge.right<=metrics.toggle.left-2,'release badge covered by menu: '+name);
   }
-  if(target==='settings'&&width>=900){
+  if(target==='doctor'&&Number(metrics.navCount)===0){
+    assert.equal(metrics.doctorEmptyVisible,true,'Doctor with no channels requires source onboarding: '+name);
+    assert.equal(metrics.doctorSourceAction?.visible,true,'Doctor source CTA hidden: '+name);
+    const destination=await page.evaluate(()=>{
+      document.getElementById('positronDoctorSources').click();
+      const reached=document.querySelector('.page.active-page')?.id;
+      window.IPTVState.setPage('doctor');
+      return reached;
+    });
+    assert.equal(destination,'page-sources','Doctor source action must open Sources: '+name);
+   }
+   if(target==='settings'&&width>=900){
     const searchOpens=await page.evaluate(()=>{
       document.getElementById('positronOpen').click();
       const open=document.getElementById('positronPalette')?.hidden===false;

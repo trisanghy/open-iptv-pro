@@ -144,6 +144,23 @@
    unlimited.title='Kiểm tra tất cả (không giới hạn)';
   }
  }
+ // P5.1.15 / new round 07: live Electron Doctor shows six zero metrics
+ // with no route to import sources. Add a non-destructive recovery action.
+ const doctorPage=byId('page-doctor');
+ if(doctorPage&&!byId('positronDoctorEmptyHint')){
+  const hint=d.createElement('div');hint.id='positronDoctorEmptyHint';
+  const copy=d.createElement('span');copy.textContent='Chưa có kênh để chẩn đoán. Thêm hoặc bật nguồn IPTV trước khi chạy Doctor 3.0.';
+  const action=d.createElement('button');action.type='button';action.id='positronDoctorSources';
+  action.className='btn btn-primary';action.textContent='Quản lý nguồn IPTV';
+  action.title='Mở trang quản lý nguồn IPTV';
+  action.addEventListener('click',()=>window.IPTVState?.setPage?.('sources'));
+  hint.append(copy,action);
+  doctorPage.querySelector('.section-heading')?.insertAdjacentElement('afterend',hint);
+  const count=byId('navCount');
+  const updateHint=()=>{hint.hidden=(Number((count?.textContent||'0').replace(/[^0-9]/g,''))||0)>0;};
+  if(count)new MutationObserver(updateHint).observe(count,{childList:true,subtree:true,characterData:true});
+  updateHint();
+ }
  window.OpenIPTVPositronTwenty=Object.freeze({
   setStage,getStage:()=>stage,getFeedback:()=>previous
  });
