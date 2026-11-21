@@ -1,0 +1,47 @@
+name: Capture Electron Cast PiP and muted filter after SVG4
+on:
+  push:
+    branches: [build-sources/electron-desktop]
+    paths: ['.github/workflows/capture-electron-svg4.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  screenshot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - name: Install Electron and X11 UI testing
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq xvfb imagemagick xdotool libgtk-3-0 libnss3 libasound2t64 libgbm1 libxss1 libatk-bridge2.0-0 libdrm2
+          npm install --no-audit --no-fund
+      - name: Capture real player and selected filter
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          mkdir -p screenshots
+          Xvfb :99 -screen 0 1600x900x24 >screenshots/xvfb.log 2>&1 &
+          export DISPLAY=:99
+          sleep 2
+          timeout 75s ./node_modules/.bin/electron . --no-sandbox --disable-gpu > screenshots/electron.log 2>&1 &
+          sleep 12
+          import -display :99 -window root screenshots/electron-svg4-main.png
+          xdotool mousemove 1120 680
+          xdotool click --repeat 7 --delay 70 5
+          sleep 2
+          import -display :99 -window root screenshots/electron-svg4-channel-filter.png
+          test -s screenshots/electron-svg4-main.png
+          test -s screenshots/electron-svg4-channel-filter.png
+          identify screenshots/*.png > screenshots/images.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: electron-svg4-real-screenshots
+          path: screenshots/
+          retention-days: 7
