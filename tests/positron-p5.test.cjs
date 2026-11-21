@@ -818,3 +818,17 @@ test('P5.1.111 category chips stay on a single keyboard-accessible horizontal li
   'oneRow=tabs.length>=9','positron-p51111-single-row-chips-450-real.png'])
   assert.ok(audit.includes(check),'missing native chip-rail regression '+check);
 });
+
+
+test('P5.1.111 narrow chooser advanced disclosure preserves source group and sort selects',()=>{
+ const src=read('renderer/web-channel-chooser-v42371.js');
+ const css=read('renderer/positron-horizon-v4.css');
+ const qa=read('scripts/positron-20-extension.cjs');
+ assert.ok(src.includes("chooserAdvanced.id='webChooserAdvanced'"));
+ assert.ok(src.includes("chooserAdvanced.append(chooserAdvancedSummary)"));
+ assert.ok(src.includes("[...filterControls.querySelectorAll('label')].forEach(label=>chooserAdvanced.append(label))"));
+ assert.ok(src.includes("compactFilterMedia.addEventListener('change',syncAdvancedDisclosure)"));
+ assert.ok(css.includes('.web-chooser-filters:has(#webChooserAdvanced[open])'));
+ assert.ok(qa.includes("nativeControlsPreserved:group.closest('details')===details"));
+ assert.ok(qa.includes('positron-p51111-compact-filters-450-real.png'));
+});

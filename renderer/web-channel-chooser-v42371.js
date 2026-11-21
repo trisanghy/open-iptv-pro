@@ -33,6 +33,22 @@
  const $=id=>document.getElementById(id);
  const grid=$('webChooserGrid'),groups=$('webChooserGroups'),search=$('webChooserSearch'),group=$('webChooserGroup'),sort=$('webChooserSort'),status=$('webChooserStatus');
  const prev=$('webChooserPrev'),next=$('webChooserNext'),pageLabel=$('webChooserPage'),favGrid=$('webChooserFavorites'),recentGrid=$('webChooserRecent');
+ // P5.1.111 same-round screenshot QA: one-row chips alone did not raise the
+ // first channel card above the fold. Preserve native group/sort controls in
+ // an accessible disclosure on 450px; keep them expanded on desktop.
+ const filterControls=root.querySelector('.web-chooser-filters');
+ const chooserAdvanced=document.createElement('details');
+ chooserAdvanced.id='webChooserAdvanced';chooserAdvanced.className='web-chooser-advanced';
+ const chooserAdvancedSummary=document.createElement('summary');
+ chooserAdvancedSummary.textContent='Bộ lọc';chooserAdvancedSummary.title='Nhóm và sắp xếp kênh';
+ chooserAdvanced.append(chooserAdvancedSummary);
+ [...filterControls.querySelectorAll('label')].forEach(label=>chooserAdvanced.append(label));
+ filterControls.append(chooserAdvanced);
+ const compactFilterMedia=window.matchMedia('(max-width:600px)');
+ const syncAdvancedDisclosure=()=>{chooserAdvanced.open=!compactFilterMedia.matches;};
+ if(compactFilterMedia.addEventListener)compactFilterMedia.addEventListener('change',syncAdvancedDisclosure);
+ else compactFilterMedia.addListener(syncAdvancedDisclosure);
+ syncAdvancedDisclosure();
  let tab='all',page=0,layout='grid',queued=false;
  const store=()=>state.getStore?.()||{};
  const channels=()=>state.getChannels?.()||[];

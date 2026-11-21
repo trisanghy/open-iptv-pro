@@ -1780,9 +1780,30 @@ async function runTwenty(page){
  for(const key of ['oneRow','horizontallyScrollable','retainsScroll','nativeCategories','searchAboveFold','channelGridEarlier','noOverflow','noAutoplay'])
   assert.equal(channelChipRailQA[key],true,'P5.1.111 chip rail '+key+': '+JSON.stringify(channelChipRailQA));
  await page.screenshot({path:path.join(out,'positron-p51111-single-row-chips-450-real.png'),animations:'disabled'});
+ // P5.1.111 corrective evidence: opening 'Bộ lọc' MUST retain native
+ // group/sort selects. Collapsed, the first grid must be closer to viewport.
+ const advancedFilterQA=await page.evaluate(()=>{
+  const details=document.getElementById('webChooserAdvanced');
+  const summary=details?.querySelector('summary');
+  const group=document.getElementById('webChooserGroup');
+  const sort=document.getElementById('webChooserSort');
+  const closed=!!details&&!details.open&&summary.getBoundingClientRect().height>=30;
+  summary.click();
+  const expands=details.open&&group.getBoundingClientRect().height>25&&sort.getBoundingClientRect().height>25;
+  summary.click();
+  const collapses=!details.open;
+  const search=document.getElementById('webChooserSearch').getBoundingClientRect();
+  const grid=document.getElementById('webChooserGrid').getBoundingClientRect();
+  return {closed,expands,collapses,nativeControlsPreserved:group.closest('details')===details&&sort.closest('details')===details,
+   searchVisible:search.bottom<innerHeight-25,gridEarlier:grid.top<innerHeight-45,
+   documentNoOverflow:document.documentElement.scrollWidth<=innerWidth+1};
+ });
+ for(const key of ['closed','expands','collapses','nativeControlsPreserved','searchVisible','gridEarlier','documentNoOverflow'])
+  assert.equal(advancedFilterQA[key],true,'P5.1.111 native advanced filtering '+key+': '+JSON.stringify(advancedFilterQA));
+ await page.screenshot({path:path.join(out,'positron-p51111-compact-filters-450-real.png'),animations:'disabled'});
  await page.setViewportSize({width:1360,height:820});
   const report={type:'Positron P5 twenty distinct desktop screenshot cases',realElectron:true,syntheticChannels:false,
-  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA,chooserQa,toastLayoutQA,nativeToastQA,compactIdleQA,channelChipRailQA};
+  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA,chooserQa,toastLayoutQA,nativeToastQA,compactIdleQA,channelChipRailQA,advancedFilterQA};
  fs.writeFileSync(path.resolve('positron-evidence','audit-p5-20-rounds.json'),JSON.stringify(report,null,2));
  return report;
 }

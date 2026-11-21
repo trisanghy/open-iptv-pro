@@ -860,3 +860,41 @@ html[data-positron="true"].po-horizon #page-tv .web-chooser-layout button svg{
   flex:0 0 auto!important;white-space:nowrap!important;
  }
 }
+
+
+/* P5.1.111 same-round correction from failing native screenshot geometry:
+   a single group-chip rail is not enough if the additional group/sort selects
+   still add rows below search. Both remain available through native <details>
+   on narrow viewports, while desktop preserves the standard full controls. */
+@media(min-width:601px){
+ html[data-positron="true"].po-horizon #page-tv #webChooserAdvanced[open]{display:contents!important}
+ html[data-positron="true"].po-horizon #page-tv #webChooserAdvanced>summary{display:none!important}
+}
+@media(max-width:600px){
+ html[data-positron="true"].po-horizon #page-tv .web-chooser-filters{
+  display:flex!important;flex-wrap:nowrap!important;gap:6px!important;
+  padding:7px 10px!important;align-items:center!important;
+ }
+ html[data-positron="true"].po-horizon #page-tv #webChooserSearch{
+  flex:1 1 0!important;width:0!important;min-width:0!important;
+ }
+ html[data-positron="true"].po-horizon #page-tv #webChooserAdvanced{
+  flex:0 0 auto!important;max-width:110px!important;
+ }
+ html[data-positron="true"].po-horizon #page-tv #webChooserAdvanced>summary{
+  cursor:pointer!important;white-space:nowrap!important;font-size:11px!important;
+  line-height:20px!important;padding:7px 10px!important;
+  color:#d2e7e5!important;background:#1b313d!important;
+  border:1px solid #31535d!important;border-radius:9px!important;
+ }
+ html[data-positron="true"].po-horizon #page-tv .web-chooser-filters:has(#webChooserAdvanced[open]){
+  flex-wrap:wrap!important;
+ }
+ html[data-positron="true"].po-horizon #page-tv #webChooserAdvanced[open]{
+  flex:1 1 100%!important;max-width:100%!important;
+ }
+ html[data-positron="true"].po-horizon #page-tv #webChooserAdvanced[open]>label{
+  display:flex!important;justify-content:space-between!important;gap:8px!important;
+  margin-top:7px!important;
+ }
+}

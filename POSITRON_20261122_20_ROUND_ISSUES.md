@@ -53,3 +53,7 @@ Not yet started. Choose each new repair from the preceding real screenshot, with
 - Baseline screenshot: actual P5.1.110 native Electron `positron-p51110-compact-idle-player-450-real.png` at 450x820: three rows of category chips push search/channel rows below fold.
 - Cause: flex-wrap chips and native renderGroups replaces buttons without saving scrollLeft.
 - Planned+implemented candidate: native full set of 11 categories in a single horizontal scroll row and preserve scroll offset across group selection, with no deletion of channels/favorites/TV playback. Test by native 450px screenshot `positron-p51111-single-row-chips-450-real.png`, Node source guard, CI/full release before marking round done.
+
+### Same-round correction for P5.1.111 (do not count as another cycle)
+- Run `44930713949`: Node passed and 50 P4 + 20 P5 Electron scenarios passed, but new 450px QA failed `channelGridEarlier`. Single-row chip lane and horizontal position preservation all passed. The native Group/Sort selects were still adding vertical rows under search.
+- Correction: keep Group and Sort select elements and behavior intact inside native keyboard-accessible details disclosure, default collapsed <=600px but expanded on larger windows; mobile search and 'Bộ lọc' share one row. Adds real Electron open/collapse checks and additional screenshot `positron-p51111-compact-filters-450-real.png`. No test removed. Repeat CI/review before releasing P5.1.111.
