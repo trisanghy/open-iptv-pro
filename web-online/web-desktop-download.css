@@ -87,3 +87,9 @@ html[data-iptv-device="mobile"] .desktop-download-overlay{padding-bottom:max(12p
 .desktop-download-shortcut-note{font-size:11px;line-height:1.5;color:var(--muted,#b1c0ce);margin:8px 0 0}
 .desktop-download-share-symbol{display:inline-block;vertical-align:-3px;color:var(--accent,#c49afb)}
 @media(max-width:560px){.desktop-download-ios-shortcut{margin-bottom:12px}.desktop-download-shortcut-summary{padding:10px}.desktop-download-shortcut-steps{padding:4px 12px 12px}}
+
+/* Always-visible verified macOS install guidance and one-click Terminal copy. */
+.desktop-download-mac-command{display:flex;flex-wrap:wrap;align-items:center;gap:9px;margin:10px 0}
+.desktop-download-mac-command code{flex:1 1 230px;min-width:0;padding:12px;border:1px solid var(--edge,#35485c);border-radius:9px;background:var(--surface,#101c29);color:var(--text,#eef4fb);font-size:12px;line-height:1.6;overflow-wrap:anywhere;user-select:all}
+.desktop-download-mac-command button{flex:0 0 auto;border:1px solid var(--accent,#bd89f5);border-radius:9px;background:var(--surface2,#172737);color:var(--text,#eef4fb);font-size:13px;font-weight:750;padding:12px;cursor:pointer}
+.desktop-download-mac-command button:hover,.desktop-download-mac-command button:focus-visible{background:color-mix(in srgb,var(--accent,#bd89f5) 18%,var(--surface,#101c29))}
