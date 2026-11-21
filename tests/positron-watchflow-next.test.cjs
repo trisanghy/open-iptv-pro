@@ -170,3 +170,17 @@ test('P5.1.106 release checks preserve original P5.1.105 evidence filenames',()=
   assert.ok(wf.includes('test -s positron-evidence/p5-20-rounds/'+image),'missing proof '+image);
  assert.ok(!wf.includes('positron-p51106-dormant-manage-before-real.png'));
 });
+test('P5.1.107 chooser icons are real inline vectors with accessible control labels',()=>{
+ const ui=fs.readFileSync('renderer/web-channel-chooser-v42371.js','utf8');
+ const css=fs.readFileSync('renderer/positron-horizon-v4.css','utf8');
+ const qa=fs.readFileSync('scripts/positron-20-extension.cjs','utf8');
+ assert.ok(ui.includes('chooserIconSpecs'));
+ assert.ok(ui.includes("document.createElementNS('http://www.w3.org/2000/svg','svg')"));
+ assert.ok(ui.includes("svg.setAttribute('aria-hidden','true')"));
+ assert.ok(ui.includes("b.setAttribute('aria-label',label)"));
+ for(const t of ['Chọn kênh','Yêu thích','Xem gần đây','Dạng lưới','Dạng danh sách'])assert.ok(ui.includes(t));
+ assert.ok(css.includes('.web-chooser-tabs button svg'));
+ assert.ok(css.includes('.web-chooser-layout button svg'));
+ for(const t of ['vectorChooserQA.fiveIcons','vectorChooserQA.allVisible','vectorChooserQA.noOverflow'])assert.ok(qa.includes(t)||qa.includes("'fiveIcons','allVisible'"));
+ assert.ok(qa.includes('positron-p51107-chooser-native-svg-450-real.png'));
+});

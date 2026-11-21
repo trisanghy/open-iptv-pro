@@ -785,3 +785,16 @@ html[data-positron="true"].po-horizon #page-tv #emptyPlayer #poFirstChannelActio
 /* P5.1.90: hide UI-only Video Lab until a native channel is selected.
    The original control and persisted options are preserved. */
 html[data-positron="true"].po-horizon #page-tv #videoEnhanceToggle[hidden]{display:none!important}
+/* P5.1.107: consistently readable native SVG controls at narrow 450-540px. */
+html[data-positron="true"].po-horizon #page-tv .web-chooser-tabs button{
+ display:inline-flex!important;align-items:center!important;gap:4px!important;
+}
+html[data-positron="true"].po-horizon #page-tv .web-chooser-tabs button svg{
+ width:12px!important;height:12px!important;flex:0 0 12px!important;pointer-events:none!important;
+}
+html[data-positron="true"].po-horizon #page-tv .web-chooser-layout button{
+ display:inline-flex!important;align-items:center!important;justify-content:center!important;
+}
+html[data-positron="true"].po-horizon #page-tv .web-chooser-layout button svg{
+ width:16px!important;height:16px!important;flex:0 0 16px!important;pointer-events:none!important;
+}

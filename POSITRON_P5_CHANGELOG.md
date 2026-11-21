@@ -1,3 +1,11 @@
+## P5.1.107 — Replace font-dependent compact channel chooser icons with SVG / Electron v4.23.191
+
+- Actual P5.1.106 native Electron TV screenshots at 450px/540px: channel chooser tabs and grid/list toggles still use platform text-glyph symbols (▣, ☆, ◷, ▦, ☷) rather than a coherent icon set. Some appear like isolated small squares.
+- Root cause: old renderer/web-channel-chooser-v42371.js hardcodes text glyphs into the chooser's button HTML.
+- Fix inside Positron branch only: render five deterministic SVG icons, preserve all existing click listeners, role/tab selection, channel playlist data, and no-autoplay semantics. Give grid/list toggles explicit accessible names.
+- Regression: real Electron 450px QA validates exactly 5 icons, icon visibility, full readable tab labels, grid/list accessibility and zero header overflow, and captures `positron-p51107-chooser-native-svg-450-real.png`.
+- Candidate until CI, actual image review, and immutable release asset verification.
+
 ## P5.1.106 — Empty WatchFlow without a horizontal scrollbar / Electron v4.23.190
 
 - Real screenshot P5.1.105 `positron-watchflow-1360-night-real.png` reveals a horizontal scrollbar in compact no-source WatchFlow.

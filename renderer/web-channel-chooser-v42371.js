@@ -6,6 +6,30 @@
  const root=document.getElementById('webChannelChooser');
  if(!state||!favorites||!recent||!root)return;
  root.innerHTML="\n       <div class=\"web-chooser-main\">\n        <div class=\"web-chooser-heading\">\n         <div class=\"web-chooser-tabs\" role=\"tablist\" aria-label=\"Bộ lọc kênh\">\n          <button type=\"button\" class=\"active\" data-chooser-tab=\"all\" role=\"tab\" aria-selected=\"true\">▣ Chọn kênh</button>\n          <button type=\"button\" data-chooser-tab=\"fav\" role=\"tab\" aria-selected=\"false\">☆ Yêu thích</button>\n          <button type=\"button\" data-chooser-tab=\"recent\" role=\"tab\" aria-selected=\"false\">◷ Xem gần đây</button>\n         </div>\n         <div class=\"web-chooser-layout\" role=\"group\" aria-label=\"Chế độ hiển thị\">\n          <button type=\"button\" data-chooser-layout=\"grid\" class=\"active\" title=\"Dạng lưới\">▦</button>\n          <button type=\"button\" data-chooser-layout=\"list\" title=\"Dạng danh sách\">☷</button>\n         </div>\n        </div>\n        <div class=\"web-chooser-chips\" id=\"webChooserGroups\" aria-label=\"Nhóm kênh phổ biến\"></div>\n        <div class=\"web-chooser-filters\">\n         <input id=\"webChooserSearch\" type=\"search\" placeholder=\"Tìm kiếm kênh...\" aria-label=\"Tìm kênh\"/>\n         <label>Nhóm <select id=\"webChooserGroup\" aria-label=\"Lọc theo nhóm\"><option value=\"\">Tất cả nhóm</option></select></label>\n         <label>Sắp xếp <select id=\"webChooserSort\" aria-label=\"Sắp xếp kênh\"><option value=\"asc\">Tên A → Z</option><option value=\"desc\">Tên Z → A</option></select></label>\n        </div>\n        <div id=\"webChooserStatus\" class=\"screen-reader-only\" role=\"status\" aria-live=\"polite\"></div>\n        <div id=\"webChooserGrid\" class=\"web-chooser-grid\" aria-label=\"Kênh có thể chọn\"></div>\n        <div class=\"web-chooser-pager\"><button id=\"webChooserPrev\" type=\"button\" aria-label=\"Trang trước\">‹</button><span id=\"webChooserPage\">1 / 1</span><button id=\"webChooserNext\" type=\"button\" aria-label=\"Trang tiếp\">›</button></div>\n       </div>\n       <div class=\"web-chooser-side\">\n        <section aria-label=\"Kênh yêu thích\"><header><strong>★ Yêu thích</strong><button type=\"button\" class=\"web-chooser-see\" data-chooser-see=\"fav\">Xem tất cả ›</button></header><div class=\"web-chooser-mini\" id=\"webChooserFavorites\"></div></section>\n        <section aria-label=\"Kênh vừa xem\"><header><strong>◷ Xem gần đây</strong><button type=\"button\" class=\"web-chooser-see\" data-chooser-see=\"recent\">Xem tất cả ›</button></header><div class=\"web-chooser-mini\" id=\"webChooserRecent\"></div></section>\n       </div>\n";
+
+ // P5.1.107: system text glyphs in this old channel chooser rendered as tiny
+ // tofu/squares in actual 450px and 540px Electron screenshots. Use local,
+ // deterministic inline SVG icons; do not touch channel filtering/playback.
+ const chooserIconSpecs=[
+  ['[data-chooser-tab="all"]','Chọn kênh','<rect x="3" y="3" width="8" height="8" rx="1.5"/><rect x="13" y="3" width="8" height="8" rx="1.5"/><rect x="3" y="13" width="8" height="8" rx="1.5"/><rect x="13" y="13" width="8" height="8" rx="1.5"/>'],
+  ['[data-chooser-tab="fav"]','Yêu thích','<path d="m12 3 2.8 5.8 6.4.9-4.6 4.5 1.1 6.3-5.7-3-5.7 3 1.1-6.3-4.6-4.5 6.4-.9Z"/>'],
+  ['[data-chooser-tab="recent"]','Xem gần đây','<circle cx="12" cy="12" r="9"/><path d="M12 7v5l4 2"/>'],
+  ['[data-chooser-layout="grid"]','Dạng lưới','<rect x="3" y="3" width="8" height="8" rx="1"/><rect x="13" y="3" width="8" height="8" rx="1"/><rect x="3" y="13" width="8" height="8" rx="1"/><rect x="13" y="13" width="8" height="8" rx="1"/>'],
+  ['[data-chooser-layout="list"]','Dạng danh sách','<path d="M9 6h12M9 12h12M9 18h12"/><path d="M3 6h2M3 12h2M3 18h2"/>']
+ ];
+ for(const [selector,label,paths] of chooserIconSpecs){
+  const b=root.querySelector(selector);if(!b)continue;
+  const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
+  svg.setAttribute('viewBox','0 0 24 24');svg.setAttribute('fill','none');
+  svg.setAttribute('stroke','currentColor');svg.setAttribute('stroke-width','1.8');
+  svg.setAttribute('stroke-linecap','round');svg.setAttribute('stroke-linejoin','round');
+  svg.setAttribute('aria-hidden','true');svg.setAttribute('focusable','false');
+  svg.innerHTML=paths; // static trusted vector geometry only, never playlist content
+  b.textContent=selector.includes('data-chooser-tab')?label:'';
+  if(!selector.includes('data-chooser-tab'))b.setAttribute('aria-label',label);
+  b.prepend(svg);
+ }
+
  const $=id=>document.getElementById(id);
  const grid=$('webChooserGrid'),groups=$('webChooserGroups'),search=$('webChooserSearch'),group=$('webChooserGroup'),sort=$('webChooserSort'),status=$('webChooserStatus');
  const prev=$('webChooserPrev'),next=$('webChooserNext'),pageLabel=$('webChooserPage'),favGrid=$('webChooserFavorites'),recentGrid=$('webChooserRecent');

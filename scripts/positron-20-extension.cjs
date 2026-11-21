@@ -1647,6 +1647,25 @@ async function runTwenty(page){
  assert.equal(chooserQa.playerRow.noOverflow,true,'Compact player controls overflow horizontally');
  assert.ok(chooserQa.playerRow.fitWidth>=80&&chooserQa.playerRow.linkWidth>=80,'Mobile controls no longer usable');
  assert.ok(chooserQa.playerRow.height<=145,'450px player controls remain taller than necessary: '+JSON.stringify(chooserQa.playerRow));
+ // P5.1.107: assert native vector chooser buttons instead of platform font glyphs.
+ const vectorChooserQA=await page.evaluate(()=>{
+  const root=document.getElementById('webChannelChooser');
+  const tabs=[...root.querySelectorAll('[data-chooser-tab]')];
+  const layouts=[...root.querySelectorAll('[data-chooser-layout]')];
+  const controls=[...tabs,...layouts];
+  const heading=root.querySelector('.web-chooser-heading');
+  return {
+   fiveIcons:controls.length===5&&controls.every(b=>!!b.querySelector('svg[aria-hidden="true"]')),
+   allVisible:controls.every(b=>{const icon=b.querySelector('svg');const r=icon?.getBoundingClientRect();return r&&r.width>=11&&r.height>=11;}),
+   correctLabels:tabs.map(b=>b.textContent.trim()).join('|')==='Chọn kênh|Yêu thích|Xem gần đây',
+   namedLayouts:layouts.map(b=>b.getAttribute('aria-label')).join('|')==='Dạng lưới|Dạng danh sách',
+   oneLine:tabs.every(b=>Math.abs(b.getBoundingClientRect().top-tabs[0].getBoundingClientRect().top)<=1),
+   noOverflow:heading.scrollWidth<=heading.clientWidth+1
+  };
+ });
+ for(const key of ['fiveIcons','allVisible','correctLabels','namedLayouts','oneLine','noOverflow'])
+  assert.equal(vectorChooserQA[key],true,'P5.1.107 SVG chooser QA '+key+': '+JSON.stringify(vectorChooserQA));
+ await page.screenshot({path:path.join(out,'positron-p51107-chooser-native-svg-450-real.png'),animations:'disabled'});
  await page.setViewportSize({width:1360,height:820});
   const report={type:'Positron P5 twenty distinct desktop screenshot cases',realElectron:true,syntheticChannels:false,
   screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA,chooserQa};

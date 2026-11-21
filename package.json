@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.190",
-  "description": "Positron P5.1.106: remove empty WatchFlow horizontal overflow",
+  "version": "4.23.191",
+  "description": "Positron P5.1.107: consistent native SVG icons for channel chooser",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",
