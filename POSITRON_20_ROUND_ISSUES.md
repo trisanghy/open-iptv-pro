@@ -182,3 +182,8 @@ Action: Horizon-only scrollbar variable override (#40736c thumb, #101a23 track),
 | 07/20 | P5.1.69 / v4.23.153 | P5.1.68 real Sources 720px screenshot `positron-p5-15-real.png` | Fifth tool `Kiểm tra & sửa` wraps as lonely second row, wasting space | Responsive one-row keyboard-scrollable source nav, keep all five original jump handlers, Electron DOM first/last tab y equality and screenshot |
 
 | 08/20 | P5.1.70 / v4.23.154 | P5.1.69 real Sources 720px screenshot after layout repair | Five equally styled source tool buttons have no visible currently selected destination or aria-current | Preserve native click, add one high-contrast active tab and aria-current=location; Electron 720px computed style and selection-count assertions |
+
+## New 20-round batch from P5.1.70 (2026-11-21)
+| Round | Target | Real previous screenshot | Cause / change | Evidence |
+| --- | --- | --- | --- | --- |
+| 01/20 | P5.1.71 / v4.23.155 | P5.1.70 real Electron `positron-p5-14-real.png` Sources 1360 and `positron-p5-15-real.png` Sources 720 | WatchFlow action stays visible on non-TV pages, cluttering Sources and allowing unrelated overlay; only show/open from TV; move focus to visible toolbar on navigation | New Node regression + real Electron page-switch assertions; screenshot/CI/release require verification. |

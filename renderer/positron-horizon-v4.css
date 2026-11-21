@@ -574,3 +574,6 @@ html[data-positron="true"].po-horizon #page-sources .sources-hub-nav button.po-s
  color:#defef3!important;background:#193d35!important;border-color:#5acbb2!important;
  box-shadow:inset 0 -2px 0 #6fd9ba!important;
 }
+
+/* P5.1.71: contextual WatchFlow, visible only while TV is active. */
+html[data-positron="true"].po-horizon #positronBar #poWatchFlowToggle[hidden]{display:none!important}

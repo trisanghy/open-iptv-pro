@@ -56,7 +56,7 @@ test('Horizon system loads last, preserves native player, covers every page',()=
  for(const part of ['#appSidebar','#page-tv .tv-layout','#page-tv #playerBox','#channelList','.page:not(#page-tv)','#page-sources','#emptyPlayer'])
   assert.ok(css.includes(part),part+' not covered by Horizon design');
  assert.ok(!/html\[data-positron.*#video\s*\{[^}]*object-fit:/s.test(css),'video fit must remain user-configurable');
- assert.equal(JSON.parse(read('package.json')).version,'4.23.154');
+ assert.equal(JSON.parse(read('package.json')).version,'4.23.155');
 });
 
 test('Horizon defeats the legacy p50 sidebar width and retains an expandable rail',()=>{
@@ -163,4 +163,15 @@ test('P5.1.67 WatchFlow dismisses after native keyboard page navigation',()=>{
  assert.ok(audit.includes("window.IPTVState.setPage('sources')"));
  assert.ok(audit.includes('watchFlowNav.dismissed,true'));
  assert.ok(audit.includes('watchFlowNav.restored,true'));
+});
+
+test('P5.1.71 WatchFlow is scoped to TV and keyboard focus remains visible',()=>{
+ const ui=read('renderer/positron-horizon-v4.js'),css=read('renderer/positron-horizon-v4.css'),audit=read('scripts/positron-20-extension.cjs');
+ assert.ok(ui.includes('const syncTVAvailability=()=>'));
+ assert.ok(ui.includes('toggle.hidden=!onTV'));
+ assert.ok(ui.includes('if(!onTV&&open)close()'));
+ assert.ok(ui.includes("if(!byId('page-tv').classList.contains('active-page'))return"));
+ assert.ok(ui.includes("byId('positronOpen')"));
+ assert.ok(css.includes('#poWatchFlowToggle[hidden]{display:none!important}'));
+ for(const k of ['hiddenOnSources','refusesOffTV','visibleOnTV'])assert.ok(audit.includes('watchFlowNav.'+k+',true'));
 });

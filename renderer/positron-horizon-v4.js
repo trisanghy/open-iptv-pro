@@ -91,6 +91,7 @@
   if(focusWasInside)toggle.focus();
  };
  const openPanel=()=>{
+  if(!byId('page-tv').classList.contains('active-page'))return;
   open=true;panel.hidden=false;toggle.setAttribute('aria-expanded','true');draw();
   // Dialog is appended after the main app: focus its first useful action
   // instead of leaving keyboard users on the topbar trigger.
@@ -123,11 +124,17 @@
  });
  const count=byId('navCount');
  if(count)new MutationObserver(()=>{if(open)draw();}).observe(count,{childList:true,characterData:true,subtree:true});
- // Keyboard navigation has no document pointerdown: dismiss the popup if TV is left.
+ // P5.1.71: TV-only WatchFlow; restore keyboard focus to a visible action.
  const tvPage=byId('page-tv');
- if(tvPage)new MutationObserver(()=>{
-  if(open&&!tvPage.classList.contains('active-page'))close();
- }).observe(tvPage,{attributes:true,attributeFilter:['class']});
+ const syncTVAvailability=()=>{
+  const onTV=tvPage.classList.contains('active-page');
+  if(!onTV&&open)close();
+  toggle.hidden=!onTV;
+  if(!onTV&&d.activeElement===toggle)
+   (byId('positronOpen')||d.querySelector('#positronBar .p-actions button:not([hidden])'))?.focus();
+ };
+ new MutationObserver(syncTVAvailability).observe(tvPage,{attributes:true,attributeFilter:['class']});
+ syncTVAvailability();
  // Source management contains five in-page actions: expose the selected section
  // for pointer, keyboard and screen-reader users without altering native jumps.
  const sourceJumps=[...d.querySelectorAll('#page-sources .sources-hub-nav [data-source-jump]')];

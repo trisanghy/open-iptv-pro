@@ -498,3 +498,8 @@ P5.1.46 same-version CI repair: run 44866650681 failed 2/611 because historical 
 - Root cause: original data-source-jump native buttons scroll but do not indicate selection with ARIA/current styling. This makes section navigation hard to orient when the sources view contains long tools.
 - Fix: existing buttons now expose exactly one `aria-current=location` and high-contrast teal selection; clicking each native button updates visual and screen-reader feedback without replacing source jump listeners or mutating IPTV data.
 - Regression: real Electron 720px Sources verifies exactly one active destination `smartDiscoverySection` by default and its computed border color, preserving previous no-wrap/overflow checks. Node regression guards event and ARIA wiring, pending screenshots/build.
+
+## P5.1.71 — WatchFlow contextual to TV (new 20-round batch 01)
+- Actual P5.1.70 Sources screenshots at 1360 and 720px show TV-specific WatchFlow in source management.
+- Opening is now guarded to TV; changing tabs hides the button and dialog, keeps focus accessible, and restores WatchFlow on return. Native channel rank, play events, playlists, preferences and rights consent are untouched.
+- New regression + real Electron UI assertions. CI/screenshot/release pending verification.

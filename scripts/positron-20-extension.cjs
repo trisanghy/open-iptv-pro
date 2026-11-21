@@ -338,11 +338,19 @@ async function runTwenty(page){
      window.IPTVState.setPage('sources');
      await new Promise(resolve=>setTimeout(resolve,0));
      const dismissed=panel.hidden&&trigger.getAttribute('aria-expanded')==='false';
+     const hiddenOnSources=trigger.hidden&&getComputedStyle(trigger).display==='none';
+     window.PositronWatchFlow.open();
+     const refusesOffTV=panel.hidden;
      window.IPTVState.setPage('tv');
-     return {opened,dismissed,restored:document.getElementById('page-tv').classList.contains('active-page')};
+     await new Promise(resolve=>setTimeout(resolve,0));
+     const visibleOnTV=!trigger.hidden&&getComputedStyle(trigger).display!=='none';
+     return {opened,dismissed,hiddenOnSources,refusesOffTV,visibleOnTV,restored:document.getElementById('page-tv').classList.contains('active-page')};
     });
     assert.equal(watchFlowNav.opened,true,'Cannot reproduce WatchFlow keyboard navigation scenario: '+name);
     assert.equal(watchFlowNav.dismissed,true,'WatchFlow remains over Sources after keyboard navigation: '+name);
+    assert.equal(watchFlowNav.hiddenOnSources,true,'WatchFlow trigger visible on Sources: '+name);
+    assert.equal(watchFlowNav.refusesOffTV,true,'WatchFlow opens from a non-TV page: '+name);
+    assert.equal(watchFlowNav.visibleOnTV,true,'WatchFlow trigger not restored on TV: '+name);
     assert.equal(watchFlowNav.restored,true,'WatchFlow QA failed to restore TV page: '+name);
     const titleRgb=(watchFlow.titleColor.match(/\d+/g)||[]).slice(0,3).map(Number);
     assert.ok(titleRgb.length===3&&titleRgb.every(x=>x>200),
