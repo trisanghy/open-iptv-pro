@@ -1,0 +1,186 @@
+/* Web Online Light appearance visual consistency: desktop + mobile.
+   Affects only data-theme=light, respects chosen accent and source/user data.
+   Keep video, fullscreen player overlays and demo illustrations dark by design. */
+html[data-theme="light"]{
+ --web-light-card:var(--ui-card,var(--surface,#fff));
+ --web-light-control:var(--ui-control,var(--surface2,#f3f7fd));
+ --web-light-border:var(--ui-stroke,var(--edge,#dae4ee));
+ --web-light-text:var(--text,#203449);
+ --web-light-muted:var(--muted,#5a7085);
+ --web-light-selected:var(--ui-selection,color-mix(in srgb,var(--accent,#7956d8) 12%,var(--web-light-card)));
+ color-scheme:light;
+}
+/* Existing dark literals in channel management, EPG, source health, Doctor,
+   Smart Discovery, playlist repair, DVR and settings. */
+html[data-theme="light"] :is(
+ .dvr-panel,.dvr-job,.dvr-quick-form,.epg-summary,.epg-row,.epg-result,
+ .epg-search-results,.epg-source-card,.epg-tools-fold,.health-table,
+ .health-overview,.doctor-metrics article,.doctor-v2-panel,.doctor-v3-panel,
+ .doctor-issues,.smart-panel,.smart-results,.smart-row,.smart-metrics span,
+ .collector-progress,.collector-metrics span,.source-merge-summary,
+ .source-duplicate-row,.source-hub,.source-hub-section,
+ .source-repair-log-card,.source-repair-statistics,.source-repair-help,
+ .source-repair-progress,.sources-hub-nav,.task-dock,.task-panel,
+ .task-live-results,.task-dock-body,.settings-card,.settings-accordion-content,
+ .settings-accordion-heading,.advanced-timebar,.folder-card,.folder-manager,
+ .modal-box,.cloud-sync-conflict,#cloudSyncCard,#cloudSyncCard #cloudStatus
+){
+ background:var(--web-light-card)!important;
+ color:var(--web-light-text)!important;
+ border-color:var(--web-light-border)!important;
+}
+html[data-theme="light"] :is(
+ .epg-summary,.epg-program,.epg-tools-summary,.epg-tools-fold,
+ .epg-day-channel,.health-table th,.doctor-v3-panel .smart-controls,
+ .smart-metrics span,.collector-metrics span,.source-duplicate-row,
+ .sources-hub-nav,.source-repair-log-card,.task-dock-head,
+ .multi-head,.multi-bottom,.folder-header,.settings-accordion-heading
+){
+ background:var(--web-light-control)!important;
+ color:var(--web-light-text)!important;
+ border-color:var(--web-light-border)!important;
+}
+html[data-theme="light"] :is(
+ .epg-summary,.epg-program b,.epg-program time,.epg-day-channel b,
+ .epg-channel-heading,.epg-channel-copy strong,.health-table td,
+ .health-table th,.smart-row b,.smart-panel strong,.smart-controls label,
+ .collector-progress strong,.source-hub-heading h2,.source-repair-card-title,
+ .cloud-auth-guide,.settings-accordion-heading
+){color:var(--web-light-text)!important}
+html[data-theme="light"] :is(
+ .epg-program small,.epg-channel-copy small,.source-hub-heading p,
+ .smart-panel small,.smart-controls small,.source-repair-help p,
+ .source-repair-log-card small,.collector-progress p,
+ .health-overview small,.dvr-panel small,#cloudSyncCard .hint
+){color:var(--web-light-muted)!important}
+html[data-theme="light"] :is(
+ .dvr-panel input,.dvr-panel select,.dvr-panel textarea,
+ .epg-advanced input,.epg-advanced select,.epg-tools-fold input,
+ .smart-controls input,.smart-controls select,.source-hub input,
+ .source-hub select,.source-repair-log-card input,
+ .doctor-v3-panel input,.doctor-v3-panel select,
+ .health-overview input,.health-overview select,
+ .settings-accordion-content input,.settings-accordion-content select,
+ #cloudSyncCard input,#cloudSyncCard select,#cloudOtpCode
+){
+ background:var(--web-light-card)!important;
+ color:var(--web-light-text)!important;
+ border-color:var(--web-light-border)!important;
+ color-scheme:light;
+}
+html[data-theme="light"] :is(
+ .smart-row button:not(.btn-primary),.source-repair-log-card button,
+ .source-hub button:not(.btn-primary),.doctor-v3-panel button:not(.btn-primary),
+ .folder-actions button,.folder-card-actions button,.multi-bottom button,
+ .source-actions button,.epg-tools-summary
+){
+ background:var(--web-light-control)!important;
+ color:var(--web-light-text)!important;
+ border-color:var(--web-light-border)!important;
+}
+/* Web TV Channel Hub: real playlist cards, filters, recent and favorites. */
+html[data-theme="light"] #page-tv :is(
+ .web-hub-main,.web-hub-side-card
+){
+ background:var(--web-light-card)!important;color:var(--web-light-text)!important;
+ border-color:var(--web-light-border)!important;
+}
+html[data-theme="light"] #page-tv :is(
+ .web-hub-chip,.web-hub-view,.web-hub-tile,.web-hub-arrow,
+ .web-hub-controls input,.web-hub-controls select
+){
+ background:var(--web-light-control)!important;
+ color:var(--web-light-text)!important;
+ border-color:var(--web-light-border)!important;
+}
+html[data-theme="light"] #page-tv :is(
+ .web-hub-chip.active,.web-hub-view.active,.web-hub-tile.current,
+ .web-hub-tab.active
+){
+ background:var(--web-light-selected)!important;
+ color:var(--web-light-text)!important;
+ border-color:color-mix(in srgb,var(--accent) 38%,var(--web-light-border))!important;
+}
+html[data-theme="light"] #page-tv :is(
+ .web-hub-tab,.web-hub-name,.web-hub-side-card strong
+){color:var(--web-light-text)!important}
+html[data-theme="light"] #page-tv .web-hub-tile:hover{
+ background:var(--web-light-selected)!important;
+}
+/* Web source repair and collector results: visible panels and counters. */
+html[data-theme="light"] #sourceRepairSection :is(
+ .source-repair-log-card,.source-repair-statistics,.collector-metrics span,
+ .source-repair-progress,.collector-progress
+){
+ background:var(--web-light-control)!important;
+ color:var(--web-light-text)!important;
+ border-color:var(--web-light-border)!important;
+}
+html[data-theme="light"] #smartDiscoverySection :is(
+ .smart-panel,.smart-row,.smart-results,.smart-metrics span
+){
+ background:var(--web-light-card)!important;
+ color:var(--web-light-text)!important;
+ border-color:var(--web-light-border)!important;
+}
+/* Supabase email OTP and sync status must inherit Light without using the
+   dark inline fallback. Keep error state outlines/colors meaningful. */
+html[data-theme="light"] #cloudSyncCard :is(
+ #cloudLinkForm,#cloudOtpForm,#cloudStatus,.cloud-email-form,
+ .cloud-sync-actions,.cloud-email-input-line
+){
+ color:var(--web-light-text)!important;
+ border-color:var(--web-light-border)!important;
+}
+html[data-theme="light"] #cloudSyncCard :is(input,textarea,select){
+ background:var(--web-light-card)!important;color:var(--web-light-text)!important;
+ border-color:var(--web-light-border)!important;
+ caret-color:var(--web-light-text)!important;
+}
+html[data-theme="light"] #cloudSyncCard #cloudStatus[data-state="error"]{
+ background:color-mix(in srgb,#d43546 9%,var(--web-light-card))!important;
+ border-color:#bd6570!important;
+}
+/* Mobile tabs, player actions, volume popover and More menu stay in one
+   Light palette. Preserve all mobile layouts and minimum touch sizes. */
+html[data-theme="light"][data-iptv-device="mobile"] body #appShell>#appSidebar{
+ background:var(--web-light-card)!important;
+ border-color:var(--web-light-border)!important;
+ color:var(--web-light-text)!important;
+ box-shadow:0 -6px 24px #253b521c!important;
+}
+html[data-theme="light"][data-iptv-device="mobile"] body #appShell>#appSidebar .nav{
+ color:var(--web-light-text)!important;
+}
+html[data-theme="light"][data-iptv-device="mobile"] body #appShell>#appSidebar .nav.active{
+ background:var(--web-light-selected)!important;
+ border-color:color-mix(in srgb,var(--accent) 38%,var(--web-light-border))!important;
+}
+html[data-theme="light"][data-iptv-device="mobile"] body #page-tv .player-control-card
+ .control-layout-top>.output-controls :is(#webVolumeMute,#castBtn,#pipBtn,#fullscreenBtn){
+ background:var(--web-light-control)!important;
+ color:var(--web-light-text)!important;
+ border-color:var(--web-light-border)!important;
+}
+html[data-theme="light"][data-iptv-device="mobile"] body #page-tv :is(
+ #webMobileVolumePanel,.web-volume-popover,.web-mobile-volume-panel
+){
+ background:var(--web-light-control)!important;
+ color:var(--web-light-text)!important;
+ border-color:var(--web-light-border)!important;
+}
+html[data-theme="light"][data-iptv-device="mobile"] body #page-tv
+ #webMobileVolumePanel::before{
+ background:var(--web-light-control)!important;
+ border-color:var(--web-light-border)!important;
+}
+html[data-theme="light"] :is(.btn-primary,.control-main):not(:disabled){
+ background:var(--ui-primary,var(--accent))!important;
+ color:var(--ui-on-primary,#17142a)!important;
+ border-color:var(--ui-primary,var(--accent))!important;
+}
+/* Video, picture-in-picture and fullscreen companion panels retain intentional
+   dark control overlays; do NOT blanket-override them. */
+html[data-theme="light"] #page-tv :is(.player-box,.player-box video,.multi-tile video){
+ background-color:#07111c;
+}
