@@ -195,7 +195,7 @@
   try{await root.navigator.clipboard.writeText(input.value);setStatus('Đã sao chép URL nguồn.');}
   catch{input.focus?.();input.select?.();setStatus('Đã chọn URL; hãy sao chép thủ công.');}
  }
- function stopOnLocalStop(){if(!active)return;void stop();}
+ function stopOnLocalStop(){if(!active)return;void transportRemote('stop');} // Stop receiver media, retain the connected Cast session.
  function onChannelChanged(next,selectedUrl){
   if(!next)return;
   const wasDifferent=next.id!==channel?.id||(selectedUrl||next.url||'')!==source;
@@ -245,7 +245,17 @@
    return true;
   }catch(error){setStatus('Không điều khiển được TV qua Google Cast: '+String(error?.message||error),true);return false;}
  }
+ async function setReceiverVolume(level,muted){
+  const session=currentSession();
+  if(!session)return false;
+  try{
+   const amount=Math.max(0,Math.min(1,Number(level)||0));
+   if(typeof session.setVolume==='function')await Promise.resolve(session.setVolume(amount));
+   if(typeof session.setMute==='function')await Promise.resolve(session.setMute(!!muted));
+   return true;
+  }catch(error){setStatus('Không chỉnh được âm lượng Cast: '+String(error?.message||error),true);return false;}
+ }
  initAirplayWatcher();
  const getState=()=>({initialized,connected:!!currentSession(),name:currentSession()?getName(currentSession()):'',active,remotePaused});
- root.OpenIPTVWebCast=Object.freeze({open,scan,play,stop,stopOnLocalStop,onChannelChanged,airplayPicker,validSource,mediaType,getState,getAirplayState,transportRemote});
+ root.OpenIPTVWebCast=Object.freeze({open,scan,play,stop,stopOnLocalStop,onChannelChanged,airplayPicker,validSource,mediaType,getState,getAirplayState,transportRemote,setReceiverVolume});
 })(typeof window==='undefined'?null:window);
