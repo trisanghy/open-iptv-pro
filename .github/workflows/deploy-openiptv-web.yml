@@ -180,9 +180,17 @@ jobs:
           grep -Fq 'id="castBtn"' _site/index.html
           node --check _site/cast-ui.js
           node --check _site/web-cast-sender.js
+          node --check _site/web-tv-pair.js
+          node --check _site/web-cast-v2.js
+          node --check _site/web-tv-receiver.js
+          test -s _site/tv.html && test -s _site/web-cast-v2.css
           node --test web-online/tests/web-airplay.test.cjs
           node --test web-online/tests/web-cast-sender.test.cjs
-          grep -Fq 'web-cast-sender.js?v=web-cast-sdk-20261122b' _site/index.html
+          node --test web-online/tests/web-cast-v2.test.cjs
+          grep -Fq 'web-cast-sender.js?v=cast-v2-20261122a' _site/index.html
+          grep -Fq 'web-cast-v2.css?v=cast-v2-20261122a' _site/index.html
+          grep -Fq 'web-tv-pair.js?v=cast-v2-20261122a' _site/index.html
+          grep -Fq 'wss:' _site/index.html
           grep -Fq 'x-webkit-airplay="allow"' _site/index.html
           grep -Fq 'web-player-icons.css?v=single-icon-first-paint-20261119a' _site/index.html
           grep -Fq 'web-player-icons.js?v=audio-state-sync-20261119a' _site/index.html
