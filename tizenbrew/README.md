@@ -1,4 +1,4 @@
-# Open IPTV Pro TV · TizenBrew v0.1.9 (thử nghiệm)
+# Open IPTV Pro TV · TizenBrew v0.1.10 (thử nghiệm)
 
 ## Cập nhật không cần USB
 
@@ -110,3 +110,13 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -Command "$f=Join-Path $env:TE
 - QR mới mở `https://trisanghy.github.io/open-iptv-pro/tizen/phone.html?v=019`. Tệp này được đồng bộ riêng trong nhánh `web/online` mà không sửa trình phát web chính.
 - Link `https://d.org.vn/listiptv` chưa thể xác minh trực tiếp từ môi trường kiểm thử. TV dùng trình duyệt không thể tự vượt CORS nếu máy chủ không cho phép; hãy mở link trên điện thoại và dùng file hoặc sao chép nội dung M3U để chuyển qua QR.
 - Kiểm thử logic đã bổ sung trong `tizenbrew/tests/source-dialog.test.cjs`; còn cần xác nhận chạy thực tế trên TV Samsung.
+
+## v0.1.10 — Đọc URL rút gọn như bản Web, không cần gửi tệp thủ công
+
+- Đối chiếu trực tiếp `web/online:app.js` hàm `readSourceURL()`: bản Web đã có bảng ánh xạ **chính xác** các link rút gọn công khai sang playlist HTTPS hỗ trợ trình duyệt.
+- TizenBrew giờ thử URL gốc `https://d.org.vn/listiptv` trước. Khi CORS, timeout, lỗi HTTP hoặc nội dung không phải M3U, TV tự thử `https://raw.githubusercontent.com/vuminhthanh12/vuminhthanh12/main/vmttv` theo đúng đường dự phòng của Web.
+- Tương tự với `https://nts12.s.gy/iptv`: `https://gist.githubusercontent.com/trisanghy/e63b2927598a4b932b3708ddd3183aaa/raw/iptv.m3u`.
+- URL nhập bắt đầu bằng `http://` của **đúng hai liên kết trên** sẽ thử thẳng đích HTTPS, tránh lỗi nội dung hỗn hợp. Các nguồn URL riêng khác không bị thay đổi hoặc chuyển tới dịch vụ khác.
+- Vẫn **lưu nguyên URL nguồn gốc** trong danh sách để quản lý sau; chỉ thay URL khi tải nội dung M3U. Chế độ gửi tệp và dán M3U qua QR v0.1.9 vẫn giữ nguyên.
+- Đã kiểm tra truy cập đích HTTPS bằng nguồn công khai: nội dung bắt đầu bằng `#EXTM3U`. Kiểm thử mô phỏng tải lỗi CORS → dự phòng và không làm thay đổi URL riêng; **chưa xác minh thực tế trên TV Samsung**. Cấu hình giải mã/phát các kênh còn phụ thuộc TV, CORS và codec.
+- Kiểm thử hồi quy: `node --test tizenbrew/tests/source-dialog.test.cjs`. Không sửa nhánh `main`, `web/online`, Electron, Rust hoặc Mobile trong vòng này.
