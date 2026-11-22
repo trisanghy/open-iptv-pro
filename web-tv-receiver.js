@@ -5,6 +5,67 @@
 (function(root){
  const d=root.document,$=id=>d.getElementById(id);
  let receiver=null,hls=null,dash=null,busy=false,accepted=false,playingName='',playingId='',suppressPause=true,fullscreenAttempted=false;
+
+ // Keep only the 50 most recently played channels on this TV/browser.
+ // Sources remain local to the TV; pairing and Supabase are not used for storage.
+ const HISTORY_KEY='openiptv-tv-history-v1',HISTORY_LIMIT=50;
+ let playingUrl='',watchHistory=[];
+ const safeHistoryUrl=value=>root.OpenIPTVTVPair?.validateUrl?.(value)||'';
+ function normalizeHistory(row){
+  if(!row||typeof row!=='object')return null;
+  const url=safeHistoryUrl(row.url);
+  if(!url)return null;
+  return {url,name:String(row.name||'Kênh không tên').slice(0,100),
+   mediaId:String(row.mediaId||'').slice(0,320),
+   watchedAt:Number.isFinite(row.watchedAt)&&row.watchedAt>0?row.watchedAt:Date.now()};
+ }
+ const sameChannel=(a,b)=>a.url===b.url||!!(a.mediaId&&b.mediaId&&a.mediaId===b.mediaId);
+ function readHistory(){
+  try{
+   const rows=JSON.parse(root.localStorage.getItem(HISTORY_KEY)||'[]');
+   if(!Array.isArray(rows))return [];
+   const unique=[];
+   for(const row of rows.slice(0,250)){
+    const entry=normalizeHistory(row);
+    if(entry&&!unique.some(item=>sameChannel(item,entry)))unique.push(entry);
+    if(unique.length===HISTORY_LIMIT)break;
+   }
+   return unique;
+  }catch{return [];}
+ }
+ function historyTime(timestamp){
+  try{return new Intl.DateTimeFormat('vi-VN',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}).format(new Date(timestamp));}
+  catch{return 'Đã xem';}
+ }
+ function renderHistory(){
+  const grid=$('tvHistoryGrid');
+  if(!grid)return;
+  const fragment=d.createDocumentFragment();
+  watchHistory.forEach(entry=>{
+   const card=d.createElement('button');card.type='button';card.className='tv-history-card';
+   card.title='Phát '+entry.name;card.setAttribute('aria-label','Phát kênh '+entry.name);
+   if(playingUrl&&entry.url===playingUrl)card.dataset.current='true';
+   const icon=d.createElement('span');icon.className='tv-history-icon';icon.textContent='▶';icon.setAttribute('aria-hidden','true');
+   const detail=d.createElement('span');detail.className='tv-history-details';
+   const name=d.createElement('span');name.className='tv-history-name';name.textContent=entry.name;
+   const meta=d.createElement('span');meta.className='tv-history-meta';
+   meta.textContent=playingUrl&&entry.url===playingUrl?'Đang phát':'Xem '+historyTime(entry.watchedAt);
+   detail.append(name,meta);card.append(icon,detail);
+   card.addEventListener('click',()=>{show('tvPlayer');void loadVideo(entry.url,entry.name,entry.mediaId);});
+   fragment.append(card);
+  });
+  grid.replaceChildren(fragment);
+  $('tvHistoryCount').textContent=watchHistory.length+'/'+HISTORY_LIMIT;
+  $('tvHistoryEmpty').hidden=watchHistory.length>0;
+  $('tvClearHistory').hidden=watchHistory.length===0;
+ }
+ function rememberChannel(url,name,mediaId){
+  const entry=normalizeHistory({url,name,mediaId,watchedAt:Date.now()});
+  if(!entry)return;
+  watchHistory=[entry,...watchHistory.filter(item=>!sameChannel(entry,item))].slice(0,HISTORY_LIMIT);
+  try{root.localStorage.setItem(HISTORY_KEY,JSON.stringify(watchHistory));}catch{}
+  renderHistory();
+ }
  const cinemaButton=$('tvExitFullscreen');
  const video=$('tvVideo');
  const status=text=>{$('tvStatus').textContent=String(text||'');};
@@ -35,7 +96,8 @@
   }catch{} // TV browsers often require a remote-control gesture; CSS cinema remains usable.
  }
  function cleanupPlayer(){
-  suppressPause=true;
+  suppressPause=true;playingUrl='';
+  renderHistory();
   leaveCinema();
   try{video.pause();}catch{}
   try{hls?.destroy();}catch{}hls=null;
@@ -48,7 +110,10 @@
   playingId=String(mediaId||'').slice(0,320);
   fullscreenAttempted=false;playingName=String(name||'Open IPTV Pro');
   $('tvPlayingTitle').textContent=name||'Open IPTV Pro';
-  const u=new URL(url);
+  const safeUrl=safeHistoryUrl(url);
+  if(!safeUrl){status('Đường dẫn kênh không hợp lệ.');return;}
+  playingUrl=safeUrl;
+  const u=new URL(safeUrl);
   if(u.protocol==='http:'&&root.location.protocol==='https:'){
    status('Nguồn đang dùng HTTP. Trình duyệt TV có thể chặn nội dung không an toàn; hãy dùng HTTPS hoặc ứng dụng Electron.');
     void receiver?.reportPlayback('error',playingName,playingId).catch(()=>{});
@@ -88,11 +153,12 @@
   }
  }
  video.addEventListener('playing',()=>{
-  if(!accepted)return;
+  if(!playingUrl)return;
   suppressPause=false;
   enterCinema();
   status('Đang phát '+playingName+' trên TV.');
-  void receiver?.reportPlayback('playing',playingName,playingId).catch(()=>{});
+  rememberChannel(playingUrl,playingName,playingId);
+  if(accepted)void receiver?.reportPlayback('playing',playingName,playingId).catch(()=>{});
  });
  video.addEventListener('error',()=>{
   if(!video.error)return;
@@ -141,6 +207,14 @@
    status('Không thể tạo mã ghép đôi: '+String(error.message||error)+'. Hãy kiểm tra Internet rồi thử lại.');
   }finally{busy=false;$('tvNewPin').disabled=false;}
  }
+ watchHistory=readHistory();
+ renderHistory();
+ $('tvClearHistory').addEventListener('click',()=>{
+  watchHistory=[];
+  try{root.localStorage.removeItem(HISTORY_KEY);}catch{}
+  renderHistory();
+  status('Đã xóa lịch sử xem trên TV này.');
+ });
  $('tvNewPin').addEventListener('click',()=>void boot());
  $('tvAllow').addEventListener('click',async()=>{
   $('tvAllow').disabled=true;
