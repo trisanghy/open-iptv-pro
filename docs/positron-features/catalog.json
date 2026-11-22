@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-22T17:52:35.336246+00:00",
+  "generatedAt": "2026-11-22T17:54:06.682758+00:00",
   "repository": "trisanghy/open-iptv-pro",
   "branch": "Positron",
   "versions": [
@@ -8,7 +8,7 @@
       "version": "P5.1.238",
       "appVersion": "4.23.323",
       "title": "Giữ phím tắt khỏi cướp focus khi đang nhập liệu",
-      "description": "Feature priority: FIX — Ở P5.1.237, phím Alt+J/Alt+G trong ô tìm kênh vẫn mở bảng nhảy và lấy mất focus. Bỏ qua phím tắt khi đang nhập `input`, `textarea`, `select`, `contenteditable`, `role=textbox`; tôn trọng IME và sự kiện đã xử lý. Giữ nguyên thao tác Alt+J/Alt+G khi focus ngoài các ô nhập; không tự phát kênh, không thay đổi nguồn M3U, lịch sử hay danh sách Yêu thích.",
+      "description": "Feature priority: NEW — Tăng khả năng điều hướng bằng bàn phím có nhận biết ngữ cảnh: Alt+J/Alt+G chỉ bật bảng nhảy khi ngoài vùng soạn thảo, trong ô tìm kiếm hoặc biểu mẫu người dùng tiếp tục nhập không mất focus, bảo toàn dữ liệu và thao tác video hiện tại. Giải quyết việc phím tắt toàn cục can thiệp vào chỉnh sửa nội dung. Giữ nguyên thao tác Alt+J/Alt+G khi focus ngoài các ô nhập; không tự phát kênh, không thay đổi nguồn M3U, lịch sử hay danh sách Yêu thích.",
       "kind": "fix",
       "status": "candidate",
       "published": "",
