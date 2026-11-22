@@ -1811,7 +1811,7 @@ test('P5.1.176 gợi ý thêm kênh khi Favorites đã có ít nhất một th�
  assert.ok(js.includes("more.hidden=!populated"),'Ẩn khi danh sách trống');
  assert.ok(js.includes("channels.filter(ch=>ch&&ch.id&&!fav.has(store,ch))"), 'Chỉ gợi ý kênh chưa đánh dấu sao');
  assert.ok(js.includes('Array.from({length:Math.min(morePageSize,filtered.length)}'), 'Giới hạn theo số kênh người xem chọn');
- assert.ok(js.includes("let moreCursor=0,moreQuery='',morePageSize=6;"), 'Mặc định sáu kênh được giữ để tương thích P176');
+ assert.ok(js.includes("let moreCursor=0,moreQuery='',morePageSize=6,moreGroup='';"), 'Mặc định sáu kênh được giữ để tương thích P176');
  assert.ok(js.includes("fav.toggle(current,active);state.save();state.render();state.setPage('fav')"));
  assert.ok(js.includes("new MutationObserver(syncFavoriteMore).observe(favoriteList"));
  assert.ok(css.includes('#positronFavoriteMore[hidden]{display:none!important}'));
@@ -1915,7 +1915,7 @@ test('P5.1.182 sorts Favorites A-Z/Z-A without changing source records',()=>{
 test('P5.1.183 expands Favorites suggestions to 6 12 or 24 without changing the source',()=>{
  const js=read('renderer/positron-twenty.js'),css=read('renderer/positron-twenty.css');
  const qa=read('scripts/positron-20-extension.cjs');
- assert.ok(js.includes("let moreCursor=0,moreQuery='',morePageSize=6;"));
+ assert.ok(js.includes("let moreCursor=0,moreQuery='',morePageSize=6,moreGroup='';"));
  assert.ok(js.includes("pageSize.id='positronFavoritePageSize'"));
  assert.ok(js.includes('for(const amount of [6,12,24])'));
  assert.ok(js.includes('morePageSize=Number(pageSize.value)||6'));
