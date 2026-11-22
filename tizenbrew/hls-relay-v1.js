@@ -21,6 +21,8 @@ var PORT=17865;
 var MAX_SESSIONS=32,MAX_RESOURCES=3500,MAX_PLAYLIST=2*1024*1024;
 var MAX_SEGMENT=48*1024*1024,EXPIRE_MS=20*60*1000;
 var ALLOWED_ORIGINS={'http://127.0.0.1:8081':true,'http://localhost:8081':true};
+var CAST_ORIGIN='https://trisanghy.github.io';
+var CAST_REFERER='https://trisanghy.github.io/open-iptv-pro/tv.html';
 var sessions={};
 function own(o,k){return Object.prototype.hasOwnProperty.call(o,k);}
 function safeIp(ip){
@@ -94,13 +96,14 @@ function rewritePlaylist(raw,base,session){
   return addResource(session,resolved)||line;
  }).join('\n');
 }
-function respondUpstream(source,req,res,session,depth){
+function respondUpstream(source,req,res,session,depth,castContext){
  var parsed=inspectRemote(source);
  if(!parsed){json(res,400,{error:'Nguồn không hợp lệ hoặc không được phép.'});return;}
  if(depth>4){json(res,502,{error:'Quá nhiều chuyển hướng nguồn.'});return;}
  dns.lookup(parsed.hostname,function(err,address){
   if(err||!safeIp(String(address||''))){json(res,502,{error:'Không thể xác minh địa chỉ máy chủ phát.'});return;}
-  var headers={'Host':parsed.host,'Accept':'*/*','User-Agent':session.userAgent||'OpenIPTVPro-TV/0.1.32'};
+  var headers={'Host':parsed.host,'Accept':'*/*','User-Agent':session.userAgent||'OpenIPTVPro-TV/0.1.34'};
+  if(castContext){headers.Origin=CAST_ORIGIN;headers.Referer=CAST_REFERER;}
   if(req.headers.range)headers.Range=String(req.headers.range).slice(0,120);
   var options={
    hostname:address,port:parsed.port||(parsed.protocol==='https:'?443:80),
@@ -111,10 +114,16 @@ function respondUpstream(source,req,res,session,depth){
    if(remote.statusCode>=300&&remote.statusCode<400&&remote.headers.location){
     remote.resume();
     var target=Url.resolve(source,remote.headers.location);
-    respondUpstream(target,req,res,session,depth+1);return;
+    respondUpstream(target,req,res,session,depth+1,castContext);return;
    }
    if(remote.statusCode<200||remote.statusCode>=300){
     remote.resume();
+    // The paired Cast receiver runs at our HTTPS site origin. Some IPTV
+    // hosts allow that page context but reject TizenBrew's localhost WebView.
+    // Retry one 403 once with the same fixed Origin/Referer as tv.html.
+    if(remote.statusCode===403&&!castContext){
+     respondUpstream(source,req,res,session,depth,true);return;
+    }
     json(res,remote.statusCode>=400&&remote.statusCode<600?remote.statusCode:502,
      {error:'Máy chủ nguồn trả HTTP '+remote.statusCode});return;
    }

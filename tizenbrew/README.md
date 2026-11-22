@@ -1,4 +1,10 @@
-# Open IPTV Pro TV · TizenBrew v0.1.32 (OTA)
+# Open IPTV Pro TV · TizenBrew v0.1.34 (OTA)
+
+## v0.1.34 — Thử lại HTTP 403 theo ngữ cảnh Cast HTTPS
+
+- Khi relay nội bộ nhận HTTP 403, thử lại đúng một lần với `Origin` và `Referer` cố định của `tv.html` trên HTTPS — cùng ngữ cảnh trang TV Cast đã phát được. Giữ nguyên User-Agent TV đã chuyển tiếp và không thay URL/token của kênh.
+- Không lặp vô hạn: nếu máy chủ vẫn từ chối sau lần thử có ngữ cảnh Cast, ứng dụng giữ nguyên thông báo lỗi 403 để không báo phát thành công giả.
+- Chỉ sửa `tizenbrew`; bộ phát Cast/Web không thay đổi. Xác minh qua CI và WGT giả lập; chưa có xác nhận phát VTV trên TV thật.
 
 ## v0.1.32 — Phát HLS ngay trong TizenBrew, không chuyển sang Cast
 
