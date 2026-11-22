@@ -30,6 +30,7 @@
   $('cxPin').addEventListener('input',e=>{
    const p=e.target.value.replace(/\D/g,'').slice(0,6);
    e.target.value=p.length>3?p.slice(0,3)+' '+p.slice(3):p;renderPair();
+   if(p.length===6&&!pairPending&&!pair?.connected)void connect(); // TV opens automatically after the sixth digit.
   });
   $('cxPin').addEventListener('keydown',e=>{if(e.key==='Enter')void connect();});
   $('cxConnect').addEventListener('click',()=>void connect());
