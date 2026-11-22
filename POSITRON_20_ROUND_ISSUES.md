@@ -1,3 +1,8 @@
+# Vòng ứng viên P5.1.224 — Phản hồi nhập XMLTV ngay trong EPG (CANDIDATE)
+- Input: MỞ ảnh Electron P5.1.223 đã nhóm Chọn nguồn và Nhập file từ máy. Khi nhập từ EPG rồi hủy/lỗi, trạng thái vẫn nằm trong Cài đặt đang ẩn.
+- Tính năng: gương phản hồi aria-live ngay dưới các nút; giữ nguyên thông báo gốc ở Cài đặt và mọi nhánh confirm/success/cancel/failure.
+- Bằng chứng bắt buộc: Electron ảnh trước/sau của status mô phỏng, test aria-live và 450px, Node/CI, phát hành bất biến. Không gọi mô phỏng là thao tác file picker thật.
+
 # Vòng ứng viên P5.1.223 — Nhập EPG tại trang Lịch (CANDIDATE)
 - Input: MỞ ảnh sau P5.1.222 1920×1080; CTA Chọn nguồn EPG đang sát cuối câu, và người có file XMLTV phải điều hướng qua Cài đặt để nhập.
 - Tính năng mới: nhóm hành động ở dưới mô tả, thêm Nhập file EPG từ máy gọi lại bộ nhập và confirm gốc.

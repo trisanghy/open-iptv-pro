@@ -1,5 +1,14 @@
 # Positron P5 Changelog
 
+## P5.1.224 — Trạng thái nhập XMLTV hiển thị ngay trong EPG / 4.23.309
+- Feature priority: NEW — Sau khi người dùng nhập hoặc hủy file XMLTV ngay từ trang Lịch phát sóng, phản hồi không còn bị giấu trong mục Cài đặt, tránh nhầm rằng ứng dụng treo hoặc mất dữ liệu EPG.
+- Electron screenshot: positron-p51224-epg-feedback-after-1920x1080-real.png
+- User action: Trên trang EPG chưa có dữ liệu, chọn Nhập file EPG từ máy, chọn hoặc hủy file. Ngay dưới nhóm nút sẽ xuất hiện trạng thái có thể đọc bằng trình đọc màn hình; nội dung trạng thái bên Cài đặt vẫn được giữ giống hệt.
+- QA Electron screenshot: before/after 1920×1080 với dữ liệu tình huống hủy được mô phỏng qua hàm phản hồi cùng code path, kiểm tra aria-live, chuỗi status song song, giữ nguyên playlist và responsive 450px.
+- Không đổi logic đọc file, xác nhận xóa dữ liệu, tính năng DVR, M3U hay playback.
+- CANDIDATE đến khi Node/ảnh/CI 6 job/tag release được xác minh.
+
+
 ## P5.1.223 — Nhập XMLTV trực tiếp từ trạng thái EPG rỗng / Electron 4.23.308
 - Feature priority: NEW — Người xem có file XMLTV hợp pháp trong máy có thể nhập trực tiếp từ trang Lịch phát sóng mà không phải đi vòng qua trang Cài đặt; dùng nguyên luồng kiểm tra, xác nhận và lưu của chức năng nhập hiện có.
 - Electron screenshot: positron-p51223-epg-import-after-1920x1080-real.png

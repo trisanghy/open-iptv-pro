@@ -1210,3 +1210,11 @@ html[data-positron="true"] #page-epg #poEpgImportFileAction:focus-visible{
   flex-direction:column;align-items:stretch;width:100%;
  }
 }
+
+/* P5.1.224: local XMLTV result stays visible on the EPG page even on cancel. */
+html[data-positron="true"] #page-epg .po-epg-import-feedback{
+ display:block;max-width:680px;margin:10px auto 0;
+ color:var(--po-muted,#adc0ce);font-size:12px;line-height:1.5;
+ text-align:center;white-space:normal;overflow-wrap:anywhere;
+}
+html[data-positron="true"] #page-epg .po-epg-import-feedback:empty{display:none}

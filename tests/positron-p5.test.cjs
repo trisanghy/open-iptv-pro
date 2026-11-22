@@ -2624,3 +2624,23 @@ test('P5.1.223 adds guarded local XMLTV import directly to EPG empty state',()=>
  assert.ok(wf.includes('test -s positron-evidence/p5-20-rounds/positron-p51223-epg-import-after-1920x1080-real.png'));
  assert.ok(wf.includes(currentReleaseTag()));
 });
+
+test('P5.1.224 mirrors local XMLTV import feedback to active EPG with aria-live status',()=>{
+ const js=read('renderer/features.js'),css=read('renderer/positron-twenty.css');
+ const qa=read('scripts/positron-20-extension.cjs'),wf=read('.github/workflows/positron-lab.yml');
+ for(const x of ["status.id='poEpgImportFileStatus'","status.setAttribute('role','status')",
+  "status.setAttribute('aria-live','polite')","function setEPGImportFeedback(message)",
+  "showImportFeedback:setEPGImportFeedback"])
+  assert.ok(js.includes(x),'P224 inline status '+x);
+ for(const x of ['Đang chọn và kiểm tra file XMLTV','Đã hủy chọn file; dữ liệu EPG hiện tại được giữ nguyên.',
+  'Đã hủy nhập; giữ nguyên EPG hiện tại.','Nhập EPG thất bại:'])
+  assert.ok(js.includes('setEPGImportFeedback('),'P224 native status must use shared path: '+x);
+ assert.ok(css.includes('#page-epg .po-epg-import-feedback:empty'));
+ for(const x of ['epgImportFeedbackBaseline224','epgImportFeedbackQA224','epgFeedbackCompact224',
+  'mirroredToSettings','playlistUnchanged','noOverflow',
+  'positron-p51224-epg-feedback-before-1920x1080-real.png',
+  'positron-p51224-epg-feedback-after-1920x1080-real.png'])
+  assert.ok(qa.includes(x),'P224 native screenshot '+x);
+ assert.ok(wf.includes('test -s positron-evidence/p5-20-rounds/positron-p51224-epg-feedback-after-1920x1080-real.png'));
+ assert.ok(wf.includes(currentReleaseTag()));
+});

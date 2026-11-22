@@ -315,6 +315,9 @@
     fileAction.addEventListener('click',()=>$('#epgImportFileBtn')?.click());
     const actions=document.createElement('div');actions.className='po-epg-setup-actions';
     actions.append(setup,fileAction);empty.append(actions);
+    const status=document.createElement('p');status.id='poEpgImportFileStatus';
+    status.className='po-epg-import-feedback';status.setAttribute('role','status');
+    status.setAttribute('aria-live','polite');empty.append(status);
    }else{
     empty.textContent=channels.length?'Không tìm thấy lịch khớp với kênh trong playlist. Thử nguồn EPG khác hoặc thêm tvg-id vào M3U.':"Chưa có kênh. Thêm nguồn M3U trong Quản lý nguồn để xem lịch phát sóng.";
    }
@@ -344,23 +347,30 @@
    renderNow();renderGuidePages();ctx.renderList();
   }finally{loading=false;$('#epgLoadBtn').disabled=false;$('#epgLoadBtn').textContent='↻ Tải EPG từ URL ngay';$('#epgRefreshBtn').disabled=false;ctx.textStatus('Đã hoàn tất kiểm tra EPG');}
  }
+ // P224: mirror every local XMLTV import result to the active EPG page.
+ // The original Settings status stays intact and retains the same text.
+ function setEPGImportFeedback(message){
+  $('#epgImportStatus').textContent=message;
+  const inline=$('#poEpgImportFileStatus');
+  if(inline)inline.textContent=message;
+ }
  async function importLocalEPG(){
   if(loading){ctx.toast('Đang tải EPG, hãy thử lại sau','warn');return;}
   if(!window.streamleaf?.importEPGFile){ctx.toast('Nhập file XMLTV cần chạy trong ứng dụng desktop','warn');return;}
   if(!ctx.getChannels().length){ctx.toast('Hãy nhập danh sách kênh M3U trước khi nhập EPG','warn');return;}
-  loading=true;$('#epgImportFileBtn').disabled=true;$('#epgImportStatus').textContent='Đang chọn và kiểm tra file XMLTV…';
+  loading=true;$('#epgImportFileBtn').disabled=true;setEPGImportFeedback('Đang chọn và kiểm tra file XMLTV…');
   try{
    const result=await window.streamleaf.importEPGFile();
-   if(!result){$('#epgImportStatus').textContent='Đã hủy chọn file; dữ liệu EPG hiện tại được giữ nguyên.';return;}
+   if(!result){setEPGImportFeedback('Đã hủy chọn file; dữ liệu EPG hiện tại được giữ nguyên.');return;}
    const parsed=guideLib.parse(result.xml,ctx.getChannels());
    if(!parsed.programmes?.length)throw Error('Không có chương trình hợp lệ trong khoảng 7 ngày trước/sau thời điểm hiện tại.');
    const msg=`Nhập ${parsed.programmes.length} chương trình từ file "${result.name}"?\nDữ liệu EPG hiện tại sẽ được thay thế. Danh sách kênh và lịch ghi hình đã đặt không thay đổi.`;
-   if(!window.confirm(msg)){$('#epgImportStatus').textContent='Đã hủy nhập; giữ nguyên EPG hiện tại.';return;}
+   if(!window.confirm(msg)){setEPGImportFeedback('Đã hủy nhập; giữ nguyên EPG hiện tại.');return;}
    guide={names:parsed.names,aliasesById:parsed.aliasesById,programmes:parsed.programmes,manualMappings:config.manualMappings,offsetMinutes:config.offsetMinutes};
    updatedAt=new Date().toISOString();const saved=await cacheGuide();renderGuidePages();ctx.renderList();
-   $('#epgImportStatus').textContent=saved?`Đã nhập ${guide.programmes.length} chương trình từ ${result.name}.`:`Đã mở ${guide.programmes.length} chương trình từ ${result.name}, nhưng bộ nhớ đầy: dữ liệu chỉ giữ trong phiên hiện tại.`;
+   setEPGImportFeedback(saved?`Đã nhập ${guide.programmes.length} chương trình từ ${result.name}.`:`Đã mở ${guide.programmes.length} chương trình từ ${result.name}, nhưng bộ nhớ đầy: dữ liệu chỉ giữ trong phiên hiện tại.`);
    ctx.toast(saved?'Nhập file EPG thành công':'Đã nhập EPG nhưng chưa lưu bền vững vì bộ nhớ đầy',saved?'ok':'warn');
-  }catch(e){$('#epgImportStatus').textContent='Nhập EPG thất bại: '+String(e?.message||e).slice(0,170);ctx.toast('Không thể nhập EPG: '+String(e?.message||e),'warn');}
+  }catch(e){setEPGImportFeedback('Nhập EPG thất bại: '+String(e?.message||e).slice(0,170));ctx.toast('Không thể nhập EPG: '+String(e?.message||e),'warn');}
   finally{loading=false;$('#epgImportFileBtn').disabled=false;}
  }
  function renderGuidePages(){renderNow();renderEPG();$('#epgUpdatedLabel').textContent=updatedAt?'Cập nhật lần cuối: '+new Date(updatedAt).toLocaleString('vi-VN'):'Chưa tải EPG';}
@@ -578,6 +588,6 @@
   void refreshEPG({startup:true}).catch(e=>{ctx.toast('Tự tải EPG gặp lỗi: '+String(e?.message||e),'warn');});
  },2200);}
  window.setInterval(()=>{if($('#page-tv')?.classList.contains('active-page'))renderNow();},60_000);
- window.IPTVExtras={render:renderNow,onChannel:renderNow,onPage:p=>{if(p==='settings')renderSources();if(p==='epg')renderGuidePages();},decorateRow,getGuide:()=>guide,setMapping:(id,epgId)=>{if(epgId)config.manualMappings[id]=epgId;else delete config.manualMappings[id];guide.manualMappings=config.manualMappings;saveConfig();void cacheGuide();renderGuidePages();ctx.renderList();},setOffset:minutes=>{config.offsetMinutes=Math.max(-720,Math.min(720,Number(minutes)||0));guide.offsetMinutes=config.offsetMinutes;saveConfig();void cacheGuide();renderGuidePages();ctx.renderList();},getOffset:()=>config.offsetMinutes};
+ window.IPTVExtras={render:renderNow,onChannel:renderNow,showImportFeedback:setEPGImportFeedback,onPage:p=>{if(p==='settings')renderSources();if(p==='epg')renderGuidePages();},decorateRow,getGuide:()=>guide,setMapping:(id,epgId)=>{if(epgId)config.manualMappings[id]=epgId;else delete config.manualMappings[id];guide.manualMappings=config.manualMappings;saveConfig();void cacheGuide();renderGuidePages();ctx.renderList();},setOffset:minutes=>{config.offsetMinutes=Math.max(-720,Math.min(720,Number(minutes)||0));guide.offsetMinutes=config.offsetMinutes;saveConfig();void cacheGuide();renderGuidePages();ctx.renderList();},getOffset:()=>config.offsetMinutes};
  window.setInterval(()=>{renderNow();if(document.querySelector('#page-epg').classList.contains('active-page'))renderEPG();},60000);
 })();
