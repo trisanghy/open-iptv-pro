@@ -1,5 +1,13 @@
 # Positron P5 Changelog
 
+## P5.1.264 — Đặt lại bộ lọc chi tiết nguồn / Electron 4.23.349
+- Feature priority: NEW — Một nút “Đặt lại” khôi phục đồng thời tìm kiếm, bộ lọc Bật/Tắt và thứ tự nguồn ban đầu. Nút chỉ khả dụng khi điều kiện tìm/lọc/sắp xếp đang khác mặc định; không sửa nguồn, playlist, Favorites hay video phát.
+- Electron screenshot: positron-p51264-source-reset-after-1920x1080-real.png
+- User action: Nguồn IPTV → Chi tiết nguồn → tìm CATEGORY, chọn Đang bật và Ít kênh trước → nhấn Đặt lại để xem lại 2/2 nguồn; focus trở về ô tìm kiếm.
+- Electron QA: chụp trước/sau 1920×1080 cùng ảnh 720px; so dữ liệu nguồn/kênh bất biến, không autoplay, không tràn ngang.
+- Trạng thái CANDIDATE: cần xác minh Actions 6/6, mở xem ảnh Electron và release bất biến.
+
+
 ## P5.1.263 — Điều hướng danh sách nguồn bằng phím mũi tên / Electron 4.23.348
 - Feature priority: NEW — Duyệt các hàng trong Chi tiết nguồn bằng mũi tên Lên/Xuống, tự chuyển focus rõ ràng và quay vòng khi tới đầu/cuối; chặn phím khỏi shortcut TV bên ngoài, không thay đổi playlist hoặc phát kênh.
 - Electron screenshot: positron-p51263-source-keyboard-after-1920x1080-real.png

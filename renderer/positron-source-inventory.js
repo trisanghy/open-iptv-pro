@@ -55,7 +55,12 @@
  resultCount.id='poSourceInventoryResultCount';
  resultCount.setAttribute('role','status');
  resultCount.setAttribute('aria-live','polite');
- statusRow.append(statusSelect,sortSelect,resultCount);
+ const reset=d.createElement('button');
+ reset.id='poSourceInventoryReset';reset.type='button';
+ reset.className='po-source-inventory-reset';reset.textContent='Đặt lại';
+ reset.setAttribute('aria-label','Đặt lại tìm kiếm, lọc và sắp xếp nguồn');
+ reset.disabled=true;
+ statusRow.append(statusSelect,sortSelect,reset,resultCount);
  heading.append(statusRow);
  const foldSourceName=value=>String(value??'').trim().normalize('NFD')
   .replace(/[\u0300-\u036f]/g,'').replace(/đ/gi,'d').toLocaleLowerCase('vi');
@@ -65,6 +70,7 @@
  details.setAttribute('aria-label','Danh sách nguồn và số kênh');
  details.hidden=true;
  heading.append(details);
+ const updateReset=()=>{reset.disabled=!(search.value.trim()||statusSelect.value!=='all'||sortSelect.value!=='original');};
  const renderDetails=()=>{
   const store=state.getStore(),sources=Array.isArray(store?.sources)?store.sources:[],
         channels=Array.isArray(store?.channels)?store.channels:[];
@@ -86,6 +92,7 @@
    filtered.sort((a,b)=>String(a.name||'').localeCompare(String(b.name||''),'vi',{numeric:true,sensitivity:'base'}));
   }
   resultCount.textContent=filtered.length+'/'+sources.length+' nguồn phù hợp';
+  updateReset();
   details.replaceChildren();
   for(const source of filtered.slice(0,30)){
    const li=d.createElement('li');
@@ -165,7 +172,7 @@
   details.hidden=!expanded;
   search.hidden=!expanded;
   statusRow.hidden=!expanded;
-  if(!expanded){search.value='';statusSelect.value='all';sortSelect.value='original';}
+  if(!expanded){search.value='';statusSelect.value='all';sortSelect.value='original';updateReset();}
   toggle.setAttribute('aria-expanded',String(expanded));
   toggle.textContent=expanded?'Ẩn chi tiết':'Chi tiết nguồn';
   if(expanded)renderDetails();
@@ -190,6 +197,12 @@
   next.dataset.poInventoryActive='true';
   next.focus({preventScroll:true});
   next.scrollIntoView({block:'nearest',behavior:'auto'});
+ });
+ // P264: read-only reset of search, status and sort.
+ reset.addEventListener('click',()=>{
+  if(details.hidden)return;
+  search.value='';statusSelect.value='all';sortSelect.value='original';
+  renderDetails();search.focus({preventScroll:true});
  });
  search.addEventListener('input',()=>{if(!details.hidden)renderDetails();});
  statusSelect.addEventListener('change',()=>{if(!details.hidden)renderDetails();});

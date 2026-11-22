@@ -111,3 +111,12 @@ html[data-positron="true"] #page-sources #poSourceInventoryDetails li[data-po-in
 html[data-positron="true"] #page-sources #poSourceInventoryDetails li:focus-visible{
  outline:2px solid #9beedb;outline-offset:2px;
 }
+
+/* P264: reset all source inventory filters. */
+html[data-positron="true"] #page-sources #poSourceInventoryReset{
+ box-sizing:border-box;min-height:32px;padding:5px 10px;border-radius:8px;
+ background:#193e44;border:1px solid #418782;color:#baf8e8;
+ font:650 12px/1.25 system-ui,sans-serif;cursor:pointer;
+}
+html[data-positron="true"] #page-sources #poSourceInventoryReset:disabled{opacity:.48;cursor:default}
+html[data-positron="true"] #page-sources #poSourceInventoryReset:focus-visible{outline:2px solid #baf8e8;outline-offset:2px}

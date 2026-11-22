@@ -150,7 +150,7 @@ test('P5.1.263 allows safe Up/Down roving focus through filtered source rows',()
   assert.ok(code.includes(token),'P263 keyboard source inventory '+token);
  assert.ok(css.includes('li[data-po-inventory-active="true"]'));
  assert.ok(!code.includes('playChannel(')&&!code.includes('save(')&&!code.includes('localStorage.setItem('));
- assert.equal(JSON.parse(read('package.json')).version,'4.23.348');
+ assert.equal(JSON.parse(read('package.json')).version,'4.23.349');
 });
 test('P5.1.263 Electron screenshots verify keyboard focus order and zero playback mutation',()=>{
  const qa=read('scripts/positron-20-extension.cjs'),wf=read('.github/workflows/positron-lab.yml');
@@ -160,4 +160,23 @@ test('P5.1.263 Electron screenshots verify keyboard focus order and zero playbac
  for(const key of ['sourceKeyboardQA263','focusedSecondRow:','activeMarker:','tabStopOnSecond:',
   'noAutoplay:','sourcesUnchanged:','playlistUnchanged:','noOverflow:'])
   assert.ok(qa.includes(key),'P263 source keyboard QA missing '+key);
+});
+
+test('P5.1.264 resets source inventory search, state filter and sorting together',()=>{
+ const js=read('renderer/positron-source-inventory.js'),css=read('renderer/positron-source-inventory.css');
+ for(const t of ["reset.id='poSourceInventoryReset';","reset.textContent='Đặt lại';",
+  'reset.disabled=true;', "reset.addEventListener('click'","search.value='';statusSelect.value='all';sortSelect.value='original';",
+  'renderDetails();','search.focus({preventScroll:true});','updateReset();'])
+  assert.ok(js.includes(t),'P264 reset implementation '+t);
+ assert.ok(css.includes('#poSourceInventoryReset:disabled'));
+ assert.ok(!js.includes('playChannel(')&&!js.includes('save(')&&!js.includes('localStorage.setItem('));
+ assert.equal(JSON.parse(read('package.json')).version,'4.23.349');
+});
+test('P5.1.264 real Electron QA covers reset before/after and 720px layout',()=>{
+ const qa=read('scripts/positron-20-extension.cjs'),wf=read('.github/workflows/positron-lab.yml');
+ for(const n of ['positron-p51264-source-reset-before-1920x1080-real.png','positron-p51264-source-reset-after-1920x1080-real.png','positron-p51264-source-reset-720-real.png'])
+  assert.ok(qa.includes(n)&&wf.includes(n),'Missing P264 screenshot '+n);
+ for(const t of ['sourceResetQA264','narrowResetQA264','filtersRestored:','sourceNamesRestored:','resetDisabled:',
+  'noAutoplay:','sourcesUnchanged:','playlistUnchanged:','noOverflow:'])
+  assert.ok(qa.includes(t),'Missing P264 QA '+t);
 });
