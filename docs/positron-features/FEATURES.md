@@ -11,7 +11,7 @@ Trang này được tạo tự động từ GitHub Releases và ảnh kiểm th�
 
 **Ứng dụng:** 4.23.284 · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
 
-Sửa lỗi nhìn thấy trên ảnh thật P5.1.198: tên tự tạo giữ ngày cũ sau khi bấm Ngày mai cùng giờ. Tên do Positron tạo trong phiên và chưa được chỉnh tay sẽ đổi theo giờ/kênh; tên thủ công và tên đã lưu giữ nguyên.
+Feature priority: NEW — Tên được ứng dụng tạo từ kênh và giờ nay tự cập nhật khi người xem đổi thời gian ghi hoặc kênh, tránh tạo lịch với tên sai ngày nhưng vẫn bảo vệ nhãn nhập tay. User action: Mở Lịch phát sóng, tạo tên từ kênh và giờ, sau đó chọn Ngày mai cùng giờ hoặc sửa giờ bắt đầu để thấy tên tự cập nhật.
 
 *Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
 

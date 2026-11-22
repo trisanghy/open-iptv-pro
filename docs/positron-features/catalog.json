@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-22T10:01:06.346516+00:00",
+  "generatedAt": "2026-11-22T10:03:02.246889+00:00",
   "repository": "trisanghy/open-iptv-pro",
   "branch": "Positron",
   "versions": [
@@ -8,7 +8,7 @@
       "version": "P5.1.199",
       "appVersion": "4.23.284",
       "title": "tên bản ghi tự tạo đồng bộ khi đổi giờ",
-      "description": "Sửa lỗi nhìn thấy trên ảnh thật P5.1.198: tên tự tạo giữ ngày cũ sau khi bấm Ngày mai cùng giờ. Tên do Positron tạo trong phiên và chưa được chỉnh tay sẽ đổi theo giờ/kênh; tên thủ công và tên đã lưu giữ nguyên.",
+      "description": "Feature priority: NEW — Tên được ứng dụng tạo từ kênh và giờ nay tự cập nhật khi người xem đổi thời gian ghi hoặc kênh, tránh tạo lịch với tên sai ngày nhưng vẫn bảo vệ nhãn nhập tay. User action: Mở Lịch phát sóng, tạo tên từ kênh và giờ, sau đó chọn Ngày mai cùng giờ hoặc sửa giờ bắt đầu để thấy tên tự cập nhật.",
       "kind": "fix",
       "status": "candidate",
       "published": "",
