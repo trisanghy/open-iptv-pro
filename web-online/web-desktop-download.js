@@ -99,6 +99,22 @@ const mobileFormats=[
       <p class="desktop-download-shortcut-note">Đây là ứng dụng Web/lối tắt trên Màn hình chính, <strong>không phải file IPA</strong>. Không cần ký ứng dụng, chứng chỉ hay Apple Developer.</p>
      </div>
     </details>
+    <details class="desktop-download-ios-shortcut" id="androidWebApkInstall">
+     <summary class="desktop-download-shortcut-summary">
+      <span class="desktop-download-shortcut-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="2" width="12" height="20" rx="3"/><path d="M9 7h6M9 11h6M10 18h4"/></svg></span>
+      <span class="desktop-download-shortcut-copy"><strong>Cài app cho Android (không cần tải APK)</strong><small>Chrome · Cài ứng dụng Web lên Màn hình chính · Tự nhận cập nhật Web</small></span>
+      <span class="desktop-download-shortcut-chevron" aria-hidden="true">⌄</span>
+     </summary>
+     <div class="desktop-download-shortcut-steps">
+      <button type="button" data-android-install-now class="desktop-download-install-now">Cài đặt ngay</button><p id="androidInstallFeedback" class="desktop-download-shortcut-note" role="status" aria-live="polite"></p>
+      <ol>
+       <li>Mở <a href="https://trisanghy.github.io/open-iptv-pro/" class="desktop-download-web-link">Open IPTV Pro Web</a> bằng <strong>Google Chrome</strong> trên Android.</li>
+       <li>Nhấn menu <strong>⋮</strong> của Chrome, chọn <strong>Cài đặt ứng dụng</strong> (Install app) hoặc <strong>Thêm vào Màn hình chính</strong> nếu trình duyệt hiển thị tùy chọn đó.</li>
+       <li>Xác nhận <strong>Cài đặt</strong> hoặc <strong>Thêm</strong>, sau đó mở Open IPTV Pro từ màn hình chính.</li>
+      </ol>
+      <p class="desktop-download-shortcut-note">Đây là <strong>PWA/WebAPK do Chrome cài</strong>, không phải APK Android native trong mục Beta bên dưới. Phiên bản 1 trong thông tin ứng dụng là phiên bản gói WebAPK, không phải số phiên bản Open IPTV Pro. Các cập nhật Web được tải khi ứng dụng kết nối mạng; khả năng chạy nền/PiP phụ thuộc Chrome và Android.</p>
+     </div>
+    </details>
     <p id="desktopDownloadStatus" class="desktop-download-status" role="status" aria-live="polite">Đang kiểm tra phiên bản…</p>
     <div id="desktopDownloadOptions" class="desktop-download-options"></div>
     <details class="desktop-download-ios-shortcut" id="macosDownloadHelp" open>
@@ -129,6 +145,38 @@ const mobileFormats=[
   const cross=overlay.querySelector('.desktop-download-close');
   const iosShortcut=overlay.querySelector('#iosShortcutInstall');
   if(iosShortcut&&/iPhone|iPad|iPod/i.test(String(root.navigator?.userAgent||'')))iosShortcut.open=true;
+  let androidInstallPrompt=null;
+  const androidInstallButton=overlay.querySelector('[data-android-install-now]');
+  const androidFeedback=overlay.querySelector('#androidInstallFeedback');
+  const androidInstalled=()=>root.matchMedia?.('(display-mode: standalone)')?.matches||root.navigator?.standalone===true;
+  function updateAndroidInstall(){
+   if(!androidInstallButton)return;
+   if(androidInstalled()){androidInstallButton.textContent='Đã mở dưới dạng ứng dụng';androidInstallButton.disabled=true;}
+   else{androidInstallButton.textContent='Cài đặt ngay';androidInstallButton.disabled=false;}
+  }
+  root.addEventListener?.('beforeinstallprompt',event=>{
+   event.preventDefault();androidInstallPrompt=event;updateAndroidInstall();
+  });
+  root.addEventListener?.('appinstalled',()=>{
+   androidInstallPrompt=null;updateAndroidInstall();
+   if(androidFeedback)androidFeedback.textContent='Đã cài ứng dụng. Mở Open IPTV Pro từ Màn hình chính.';
+  });
+  androidInstallButton?.addEventListener('click',async()=>{
+   if(androidInstalled()){updateAndroidInstall();return;}
+   if(!androidInstallPrompt){
+    androidFeedback.textContent='Chrome chưa cung cấp hộp thoại cài đặt tự động. Hãy mở trang bằng Chrome, chọn menu ⋮ → Cài đặt ứng dụng hoặc Thêm vào Màn hình chính. Nếu đã cài, hãy mở ứng dụng từ Màn hình chính.';
+    return;
+   }
+   const prompt=androidInstallPrompt;androidInstallPrompt=null;
+   try{
+    await prompt.prompt();
+    const choice=await prompt.userChoice;
+    androidFeedback.textContent=choice?.outcome==='accepted'?'Đã chấp nhận cài đặt. Hãy chờ Chrome hoàn tất.':'Chưa cài đặt. Bạn có thể dùng menu ⋮ của Chrome để cài thủ công.';
+   }catch{
+    androidFeedback.textContent='Không thể mở hộp thoại tự động. Hãy dùng menu ⋮ của Chrome → Cài đặt ứng dụng.';
+   }
+  });
+  updateAndroidInstall();
   let loaded=false,loading=null,previous=null;
   function render(desktop,mobile,rust,preview){
    list.replaceChildren();
