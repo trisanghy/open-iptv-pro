@@ -188,8 +188,8 @@ test('TV manager hello confirms online and returns a live snapshot',async()=>{
 });
 
 test('QR manager uses the official GitHub Pages URL rather than RawGitHack',()=>{
- const expected='https://trisanghy.github.io/open-iptv-pro/tizen/phone.html?v=020';
- assert.match(tv,/var SOURCE_PAGE='https:\/\/trisanghy[.]github[.]io\/open-iptv-pro\/tizen\/phone[.]html[?]v=020';/);
+ const expected='https://trisanghy.github.io/open-iptv-pro/tizen/phone.html?v=021';
+ assert.match(tv,/var SOURCE_PAGE='https:\/\/trisanghy[.]github[.]io\/open-iptv-pro\/tizen\/phone[.]html[?]v=021';/);
  assert.ok(tv.includes("var qrLink=SOURCE_PAGE+'#code='+token"),'QR must preserve ephemeral pairing token');
  assert.ok(tv.includes(expected));
  assert.doesNotMatch(tv,/raw[.]githack[.]com/);
