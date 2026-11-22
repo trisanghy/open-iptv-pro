@@ -240,3 +240,35 @@ html[data-iptv-device="mobile"] body #page-tv #castBtn[data-cast-connection]:not
 #iptvCastPanel #cxAirBadge[data-ok="true"]{
  border-color:var(--cx-accent);color:var(--cx-good);background:var(--cx-soft);
 }
+
+
+/* TV-only watch history: remote-friendly rectangular cards, up to 50 channels. */
+.iptv-tv-body .tv-history{border-top:1px solid var(--tv-edge);margin-top:24px;padding-top:23px;text-align:left}
+.iptv-tv-body .tv-history-head{display:flex;align-items:start;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+.iptv-tv-body .tv-history-head h2{font-size:clamp(19px,2.3vw,24px);margin:0;font-weight:800;letter-spacing:-.02em}
+.iptv-tv-body .tv-history-head p{font-size:12px;margin:6px 0 0}
+.iptv-tv-body .tv-history-tools{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.iptv-tv-body #tvHistoryCount{font-size:13px;font-weight:800;color:var(--tv-muted);white-space:nowrap}
+.iptv-tv-body #tvClearHistory{padding:9px 12px;font-size:12px}
+.iptv-tv-body .tv-history-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:11px}
+.iptv-tv-body .tv-history-card{display:flex;align-items:center;gap:10px;min-width:0;width:100%;min-height:89px;padding:12px;
+ border:1px solid var(--tv-edge);border-radius:13px;text-align:left;background:var(--tv-card);color:inherit;
+ transition:background .15s,border-color .15s,transform .15s}
+.iptv-tv-body .tv-history-card:hover{border-color:#29d776;background:color-mix(in srgb,#29d776 8%,var(--tv-card));transform:translateY(-1px)}
+.iptv-tv-body .tv-history-card:focus-visible{outline:3px solid #29d776;outline-offset:3px}
+.iptv-tv-body .tv-history-card[data-current="true"]{border-color:#29d776;background:color-mix(in srgb,#29d776 12%,var(--tv-card))}
+.iptv-tv-body .tv-history-icon{flex:0 0 42px;width:42px;height:42px;border-radius:10px;display:grid;place-items:center;
+ background:color-mix(in srgb,#29d776 18%,var(--tv-card));color:#29d776;font-size:18px}
+.iptv-tv-body .tv-history-details{display:grid;gap:5px;min-width:0;flex:1}
+.iptv-tv-body .tv-history-name{font-size:13px;font-weight:800;line-height:1.35;overflow-wrap:anywhere;
+ display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.iptv-tv-body .tv-history-meta{font-size:11px;line-height:1.3;color:var(--tv-muted)}
+.iptv-tv-body .tv-history-empty{border:1px dashed var(--tv-edge);padding:17px;text-align:center;border-radius:12px;margin:0}
+.iptv-tv-body.tv-cinema #tvHistory{display:none!important}
+@media(max-width:850px){.iptv-tv-body .tv-history-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:600px){.iptv-tv-body .tv-history-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+ .iptv-tv-body .tv-history-card{min-height:84px;padding:9px;gap:8px}
+ .iptv-tv-body .tv-history-icon{width:34px;height:38px;flex-basis:34px}
+ .iptv-tv-body .tv-history-name{font-size:12px}}
+@media(max-width:350px){.iptv-tv-body .tv-history-grid{grid-template-columns:minmax(0,1fr)}}
+@media(prefers-reduced-motion:reduce){.iptv-tv-body .tv-history-card{transition:none}}
