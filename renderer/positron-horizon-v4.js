@@ -401,7 +401,44 @@
       Promise.resolve(window.IPTVState.playChannel(channel.id))
        .catch(e=>window.IPTVState?.toast?.(e.message||String(e),'error'));
      });
-     historyList.append(option);
+     // P217: favorite a discovered channel directly without starting playback.
+     // Keep the play and favorite buttons siblings; never nest interactive buttons.
+     const row=d.createElement('div');row.className='po-random-history-row';
+     row.append(option);
+     const fav=window.OpenIPTVFavorites,store=window.IPTVState?.getStore?.();
+     if(fav&&store){
+      const favorite=d.createElement('button');favorite.type='button';
+      favorite.className='po-random-history-favorite';favorite.dataset.channelId=channel.id;
+      const isFavorite=fav.has(store,channel);
+      favorite.textContent=isFavorite?'★':'☆';
+      favorite.setAttribute('aria-pressed',String(isFavorite));
+      favorite.setAttribute('aria-label',(isFavorite?'Bỏ khỏi Yêu thích: ':'Thêm vào Yêu thích: ')+(channel.name||'Kênh'));
+      favorite.title=isFavorite?'Bỏ yêu thích':'Thêm yêu thích';
+      favorite.addEventListener('click',event=>{
+       event.stopPropagation();
+       const state=window.IPTVState,core=window.OpenIPTVFavorites;
+       const active=state?.getChannels?.().find(c=>c?.id===channel.id&&c?.url&&c.status!=='dead');
+       const current=state?.getStore?.();
+       if(!core||!active||!current)return;
+       const oldKeys=Array.isArray(current.favoriteKeys)?[...current.favoriteKeys]:null;
+       const oldUrls=Array.isArray(current.favorites)?[...current.favorites]:[];
+       const added=core.toggle(current,active);
+       if(!state.save?.()){
+        if(oldKeys)current.favoriteKeys=oldKeys;else delete current.favoriteKeys;
+        current.favorites=oldUrls;
+        state.render?.();
+        state.toast?.('Không lưu được kênh yêu thích. Hãy kiểm tra bộ nhớ ứng dụng.','error');
+        return;
+       }
+       state.render?.();renderHistory();
+       const updated=Array.from(historyList.querySelectorAll('.po-random-history-favorite'))
+        .find(b=>b.dataset.channelId===String(channel.id));
+       updated?.focus({preventScroll:true});
+       state.toast?.((added?'Đã thêm yêu thích: ':'Đã bỏ yêu thích: ')+(channel.name||'Kênh'));
+      });
+      row.append(favorite);
+     }
+     historyList.append(row);
     }
     if(!filtered.length){
      const empty=d.createElement('p');empty.textContent=recent.length?'Không tìm thấy kênh phù hợp.':'Chưa có kênh hợp lệ trong lịch sử.';

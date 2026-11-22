@@ -1116,3 +1116,21 @@ html[data-positron="true"] #poRandomHistorySearch::placeholder{
 html[data-positron="true"] #poRandomHistoryList>p{
  margin:4px 0;color:var(--po-muted,#a4c4cf);font-size:12px;
 }
+
+/* P217: separate, keyboard-accessible Favorite action for each random-history row. */
+html[data-positron="true"] #poRandomHistoryList .po-random-history-row{
+ display:grid;grid-template-columns:minmax(0,1fr) 36px;gap:6px;align-items:stretch;min-width:0;
+}
+html[data-positron="true"] #poRandomHistoryList .po-random-history-row .po-random-history-item{min-width:0;width:100%}
+html[data-positron="true"] #poRandomHistoryPanel .po-random-history-favorite{
+ width:36px;min-height:36px;padding:0;display:grid;place-items:center;
+ border:1px solid var(--po-border,#325160);border-radius:8px;
+ background:var(--po-input,#17303c);color:var(--po-muted,#a4c4cf);
+ font-size:22px;line-height:1;cursor:pointer;
+}
+html[data-positron="true"] #poRandomHistoryPanel .po-random-history-favorite[aria-pressed="true"]{
+ color:#ffd76d;border-color:#7f683b;
+}
+html[data-positron="true"] #poRandomHistoryPanel .po-random-history-favorite:hover{
+ border-color:var(--po-accent,#79dfc6);
+}

@@ -6267,7 +6267,7 @@ async function runTwenty(page){
   try{random.click();random.click();}finally{window.IPTVState=native;}
   history.click();window.__p213HistoryFirst=plays[0];
   return {distinct:plays.length===2&&plays[0]!==plays[1],
-   opensWithTwoItems:!panel.hidden&&list.querySelectorAll('button').length===2,
+   opensWithTwoItems:!panel.hidden&&list.querySelectorAll('.po-random-history-item').length===2,
    buttonVisible:!history.hidden&&getComputedStyle(history).display!=='none',
    expanded:history.getAttribute('aria-expanded')==='true',
    countStable:random.dataset.poDiscoverCount==='2',
@@ -6284,7 +6284,7 @@ async function runTwenty(page){
    panel=d.getElementById('poRandomHistoryPanel'),list=d.getElementById('poRandomHistoryList'),
    random=d.getElementById('poNextRandomChannel'),ids=native.getChannels().map(c=>c.id).join('|');
   const selected=window.__p213HistoryFirst;
-  const option=Array.from(list.querySelectorAll('button')).find(b=>b.dataset.channelId===String(selected));
+  const option=Array.from(list.querySelectorAll('.po-random-history-item')).find(b=>b.dataset.channelId===String(selected));
   const plays=[];window.IPTVState={...native,playChannel:id=>{plays.push(id);return Promise.resolve();}};
   try{option?.click();}finally{window.IPTVState=native;}
   const closedOnPick=panel.hidden;
@@ -6523,8 +6523,81 @@ async function runTwenty(page){
  await page.keyboard.press('Escape');
  await page.setViewportSize({width:1360,height:820});
 
+
+ // P217: save/remove favorites directly in the random-history menu without playback.
+ await page.setViewportSize({width:1920,height:1080});
+ const favoriteStart217=await page.evaluate(()=>{
+  const native=window.IPTVState,core=window.OpenIPTVFavorites;
+  const button=document.getElementById('poRandomHistory');
+  button.click();
+  const star=document.querySelector('#poRandomHistoryList .po-random-history-favorite');
+  const ch=native.getChannels().find(c=>c.id===star?.dataset.channelId);
+  const store=native.getStore();
+  window.__p217Native=native;window.__p217Plays=[];
+  window.__p217OldKeys=Array.isArray(store.favoriteKeys)?[...store.favoriteKeys]:null;
+  window.__p217OldUrls=Array.isArray(store.favorites)?[...store.favorites]:[];
+  window.IPTVState={...native,playChannel:id=>{window.__p217Plays.push(id);return Promise.resolve();}};
+  window.__p217ChannelId=ch?.id;
+  window.__p217WasFavorite=ch?core.has(store,ch):null;
+  window.__p217SourceIds=native.getChannels().map(c=>c.id).join('|');
+  window.__p217PreviousState=window.__p217WasFavorite;
+  return {starExists:!!star,channelExists:!!ch,coreExists:!!core,
+   oldPressed:star?.getAttribute('aria-pressed'),
+   oldHas:ch?core.has(store,ch):null,sourceIds:native.getChannels().map(c=>c.id).join('|')};
+ });
+ for(const k of ['starExists','channelExists','coreExists'])
+  assert.equal(favoriteStart217[k],true,'P217 native favorite initial '+k);
+ assert.equal(favoriteStart217.oldPressed,String(favoriteStart217.oldHas),'P217 initial favorite accurate');
+ const before217=await page.screenshot({path:path.join(out,'positron-p51217-history-favorite-before-1920x1080-real.png'),animations:'disabled'});
+ assert.deepEqual([before217.readUInt32BE(16),before217.readUInt32BE(20)],[1920,1080]);
+ await page.evaluate(()=>document.querySelector('#poRandomHistoryList .po-random-history-favorite').click());
+ const favoriteQA217=await page.evaluate(()=>{
+  const native=window.__p217Native,core=window.OpenIPTVFavorites,store=native.getStore();
+  const channel=native.getChannels().find(c=>c.id===window.__p217ChannelId);
+  const star=[...document.querySelectorAll('#poRandomHistoryList .po-random-history-favorite')]
+   .find(b=>b.dataset.channelId===String(window.__p217ChannelId));
+  return {
+   persistedToggle:core.has(store,channel)===!window.__p217WasFavorite,
+   uiMatchesStore:star?.getAttribute('aria-pressed')===String(core.has(store,channel)),
+   starStateChanged:star?.getAttribute('aria-pressed')!==String(window.__p217PreviousState),
+   menuOpen:!document.getElementById('poRandomHistoryPanel').hidden,
+   focusOnStar:document.activeElement===star,
+   noAutoplay:window.__p217Plays.length===0,
+   channelsIntact:native.getChannels().map(c=>c.id).join('|')===window.__p217SourceIds
+  };
+ });
+
+ for(const [k,v] of Object.entries(favoriteQA217))
+  assert.equal(v,true,'P217 Favorite '+k+': '+JSON.stringify(favoriteQA217));
+ const after217=await page.screenshot({path:path.join(out,'positron-p51217-history-favorite-after-1920x1080-real.png'),animations:'disabled'});
+ assert.deepEqual([after217.readUInt32BE(16),after217.readUInt32BE(20)],[1920,1080]);
+ assert.equal(before217.equals(after217),false,'P217 star toggle visible in native screenshot');
+ await page.evaluate(()=>{
+  const native=window.__p217Native,store=native.getStore();
+  if(window.__p217OldKeys)store.favoriteKeys=[...window.__p217OldKeys];
+  else delete store.favoriteKeys;
+  store.favorites=[...window.__p217OldUrls];
+  window.IPTVState=native;
+  native.save?.();native.render?.();
+  delete window.__p217Native;delete window.__p217OldKeys;delete window.__p217OldUrls;
+  delete window.__p217Plays;delete window.__p217ChannelId;delete window.__p217WasFavorite;
+  delete window.__p217PreviousState;delete window.__p217SourceIds;
+  document.querySelector('#poRandomHistoryPanel .po-random-history-head button').click();
+ });
+ await page.setViewportSize({width:450,height:820});
+ await page.evaluate(()=>document.getElementById('poRandomHistory').click());
+ const compact217=await page.evaluate(()=>({
+  starVisible:!!document.querySelector('#poRandomHistoryList .po-random-history-favorite'),
+  starAccessible:!!document.querySelector('#poRandomHistoryList .po-random-history-favorite[aria-pressed]'),
+  noOverflow:document.documentElement.scrollWidth<=innerWidth+1
+ }));
+ for(const [k,v] of Object.entries(compact217))
+  assert.equal(v,true,'P217 compact Favorite '+k+': '+JSON.stringify(compact217));
+ await page.keyboard.press('Escape');
+ await page.setViewportSize({width:1360,height:820});
+
  const report={type:'Positron P5 twenty distinct desktop screenshot cases',realElectron:true,syntheticChannels:false,
-  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,desktop16x9Screenshots,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA,chooserQa,toastLayoutQA,nativeToastQA,compactIdleQA,channelChipRailQA,advancedFilterQA,readableCardsQA,keyboardTabQA,favoriteEmptyQA,duplicateEmptyQA,categoryFilterQA,categoryFixtureQA,compactSingleQA,directFavoriteQA,favoriteCountQA,compactToastStackQA,toastDismissQA,toastFocusReturnQA,toastDockQA,wheelQA,pinnedAllQA,pinnedMaskQA,categoryKeyQA,dropdownChipQA,pinnedRightMaskQA,pinnedBorderMaskQA,asciiDSearchQA,emptySearchActionQA,readableCardTitleQA,favoriteSvgQA,keyboardFavoriteQA,multiTermSearchQA,keyboardSearchQA,arrowNavigationQA,pageNavigationQA,favoriteSortQA,onAirFilterQA,programmeSearchQA,upcomingProgrammeQA,soonProgrammeQA,earliestEpgSortQA,timeWindowQA,scheduleProgressQA:scheduleProgressQA,nativeReminderQA,cancelReminderQA,reminderLeadQA,toastHistoryQA,notificationArchiveQA,alertFilterQA,noticeSearchQA,quietModeQA,dismissToastQA,libraryPulseQA,groupDistributionQA,logoMissingQA,missingSearchQA,missingGroupQA,missingSortQA,missingJumpQA,missingCsvQA,duplicateQA,duplicateSearchQA,duplicateCsvQA,duplicateScopeQA,missingSizeQA,missingPagerQA,missingEpgFilterQA,missingResetQA,missingRangeQA,missingLocateQA,libraryReturnQA,favoriteActionQA,quickFavoriteQA,favoriteMoreQA,favoriteSearchQA,favoriteRotateQA,favoriteSuggestSearchQA,favoriteBulkQA,favoriteLayoutQA,favoriteNameSortQA,searchAfterSortQA,restoredSortQA,favoriteSuggestion12QA,batchFavorite12QA,restoreSixQA,favoriteRegionalQA,favoriteGroupSearchQA,resetGroupQA,favoriteQuickGroupQA,favoriteQuickResetQA,favoritePageLastQA,favoritePageNavigationQA,favoriteJumpSevenQA,favoriteJumpClampQA,favoriteWideQA,favoriteSuggestionSortQA,tvReselectTopQA,dvrDurationPresetQA,dvrDurationLiveQA,dvrPresetSelectionQA,dvrQuickStartQA,dvrSuggestedTitleQA,dvrReviewQA,dvrCopyQA,dvrTomorrowQA,dvrTitleSyncQA,dvrReplaceConfirmQA,dvrUndoQA,dvrExtendQA,tvToastSafeQA,otherPage203,randomDiscoveryQA,randomFollowupQA,compact205,randomCycleQA,compact206,randomResetQA,compact207,focusReturnQA,compact208,discoveryProgressQA,compact209,sourceChangeQA,compact210,randomBackQA,randomBackActionQA,compact211,forwardHistoryQA,forwardActionQA,compact212,historyOpenQA,historyPickQA,compact213,historyKeyboardQA,compact214,historySearchQA,searchEnterQA,missing215,compact215,first216,typed216,down216,up216,close216,compact216};
+  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,desktop16x9Screenshots,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA,chooserQa,toastLayoutQA,nativeToastQA,compactIdleQA,channelChipRailQA,advancedFilterQA,readableCardsQA,keyboardTabQA,favoriteEmptyQA,duplicateEmptyQA,categoryFilterQA,categoryFixtureQA,compactSingleQA,directFavoriteQA,favoriteCountQA,compactToastStackQA,toastDismissQA,toastFocusReturnQA,toastDockQA,wheelQA,pinnedAllQA,pinnedMaskQA,categoryKeyQA,dropdownChipQA,pinnedRightMaskQA,pinnedBorderMaskQA,asciiDSearchQA,emptySearchActionQA,readableCardTitleQA,favoriteSvgQA,keyboardFavoriteQA,multiTermSearchQA,keyboardSearchQA,arrowNavigationQA,pageNavigationQA,favoriteSortQA,onAirFilterQA,programmeSearchQA,upcomingProgrammeQA,soonProgrammeQA,earliestEpgSortQA,timeWindowQA,scheduleProgressQA:scheduleProgressQA,nativeReminderQA,cancelReminderQA,reminderLeadQA,toastHistoryQA,notificationArchiveQA,alertFilterQA,noticeSearchQA,quietModeQA,dismissToastQA,libraryPulseQA,groupDistributionQA,logoMissingQA,missingSearchQA,missingGroupQA,missingSortQA,missingJumpQA,missingCsvQA,duplicateQA,duplicateSearchQA,duplicateCsvQA,duplicateScopeQA,missingSizeQA,missingPagerQA,missingEpgFilterQA,missingResetQA,missingRangeQA,missingLocateQA,libraryReturnQA,favoriteActionQA,quickFavoriteQA,favoriteMoreQA,favoriteSearchQA,favoriteRotateQA,favoriteSuggestSearchQA,favoriteBulkQA,favoriteLayoutQA,favoriteNameSortQA,searchAfterSortQA,restoredSortQA,favoriteSuggestion12QA,batchFavorite12QA,restoreSixQA,favoriteRegionalQA,favoriteGroupSearchQA,resetGroupQA,favoriteQuickGroupQA,favoriteQuickResetQA,favoritePageLastQA,favoritePageNavigationQA,favoriteJumpSevenQA,favoriteJumpClampQA,favoriteWideQA,favoriteSuggestionSortQA,tvReselectTopQA,dvrDurationPresetQA,dvrDurationLiveQA,dvrPresetSelectionQA,dvrQuickStartQA,dvrSuggestedTitleQA,dvrReviewQA,dvrCopyQA,dvrTomorrowQA,dvrTitleSyncQA,dvrReplaceConfirmQA,dvrUndoQA,dvrExtendQA,tvToastSafeQA,otherPage203,randomDiscoveryQA,randomFollowupQA,compact205,randomCycleQA,compact206,randomResetQA,compact207,focusReturnQA,compact208,discoveryProgressQA,compact209,sourceChangeQA,compact210,randomBackQA,randomBackActionQA,compact211,forwardHistoryQA,forwardActionQA,compact212,historyOpenQA,historyPickQA,compact213,historyKeyboardQA,compact214,historySearchQA,searchEnterQA,missing215,compact215,first216,typed216,down216,up216,close216,compact216,favoriteStart217,favoriteQA217,compact217};
  fs.writeFileSync(path.resolve('positron-evidence','audit-p5-20-rounds.json'),JSON.stringify(report,null,2));
  return report;
 }

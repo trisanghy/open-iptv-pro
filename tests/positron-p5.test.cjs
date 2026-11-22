@@ -2317,7 +2317,7 @@ test('P5.1.207 accessible reset clears only random session history',()=>{
   'positron-p51207-random-reset-after-1920x1080-real.png'])
   assert.ok(qa.includes(t),'Missing genuine reset QA '+t);
  const pkg=JSON.parse(read('package.json'));
- assert.ok(flow.includes('TAG=positron/v'+pkg.version+'-p5.1.216'));
+ assert.ok(flow.includes('TAG=positron/v'+pkg.version+'-p5.1.217'));
 });
 
 
@@ -2487,4 +2487,25 @@ test('P5.1.216 opens discovery history with focused search and bidirectional arr
   'before216.equals(after216),false'])
   assert.ok(qa.includes(token),'Missing P216 Electron screenshot QA: '+token);
  assert.ok(flow.includes('test -s positron-evidence/p5-20-rounds/positron-p51216-search-focus-after-1920x1080-real.png'));
+});
+
+
+test('P5.1.217 adds an independent, persistent Favorite button to each discovered channel',()=>{
+ const js=read('renderer/positron-horizon-v4.js'),css=read('renderer/positron-twenty.css');
+ const qa=read('scripts/positron-20-extension.cjs'),flow=read('.github/workflows/positron-lab.yml');
+ for(const token of ["favorite.className='po-random-history-favorite'",
+  "const isFavorite=fav.has(store,channel)","const added=core.toggle(current,active)",
+  "if(!state.save?.())","state.render?.();renderHistory()",
+  "favorite.setAttribute('aria-pressed',String(isFavorite))",
+  "event.stopPropagation()","row.append(option)","row.append(favorite)"])
+  assert.ok(js.includes(token),'Missing real favorite action: '+token);
+ for(const token of ['.po-random-history-row','.po-random-history-favorite[aria-pressed="true"]'])
+  assert.ok(css.includes(token),'Missing favorite row layout '+token);
+ for(const token of ['favoriteStart217','favoriteQA217','compact217',
+  'persistedToggle','uiMatchesStore','noAutoplay','channelsIntact',
+  'positron-p51217-history-favorite-before-1920x1080-real.png',
+  'positron-p51217-history-favorite-after-1920x1080-real.png',
+  'before217.equals(after217),false'])
+  assert.ok(qa.includes(token),'Missing true Electron favorite QA: '+token);
+ assert.ok(flow.includes('test -s positron-evidence/p5-20-rounds/positron-p51217-history-favorite-after-1920x1080-real.png'));
 });
