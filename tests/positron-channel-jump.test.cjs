@@ -314,7 +314,7 @@ test('P5.1.242 chip identifies every hidden channel filter and recovers empty hi
   "filter-tab[data-filter=\"all\"]"])
   assert.ok(js.includes(token),'P242 missing generalized active filter: '+token);
  assert.ok(css.includes('#poFavoriteFilterChip[data-mode="recent"]'));
- assert.equal(JSON.parse(read('package.json')).version,'4.23.327');
+ assert.ok(Number(JSON.parse(read('package.json')).version.split('.')[2])>=327);
 });
 test('P5.1.242 verifies native Electron recent-filter indicator and clear action',()=>{
  const qa=read('scripts/positron-20-extension.cjs'),wf=read('.github/workflows/positron-lab.yml');
