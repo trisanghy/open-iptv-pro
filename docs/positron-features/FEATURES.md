@@ -7,15 +7,28 @@ Trang này được tạo tự động từ GitHub Releases và ảnh kiểm th�
 [Mở WEBSITE changelog tương tác](https://raw.githack.com/trisanghy/open-iptv-pro/Positron/docs/positron-features/index.html) · [Giao diện HTML trong repository](index.html) · [Các bản phát hành](https://github.com/trisanghy/open-iptv-pro/releases) · [Nhật ký Git tiếng Việt](LOG_GIT_TIENG_VIET.md) · [Quy tắc ưu tiên tính năng](../../POSITRON_FEATURE_RULES.md)
 
 <details>
-<summary><strong>P5.1.259</strong> · Lọc nhanh nguồn bật và tắt · CHƯA CÓ BẢN PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.260</strong> · Sắp xếp nguồn theo số kênh hoặc tên · CHƯA CÓ BẢN PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
 
-**Ứng dụng:** 4.23.344 · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
+**Ứng dụng:** 4.23.345 · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
+
+Feature priority: NEW — Cho phép xem nguồn nhiều kênh nhất hoặc ít kênh nhất ở đầu bảng chi tiết, hoặc sắp xếp tên A–Z; chỉ thay đổi thứ tự hiển thị bảng phụ, hoàn toàn giữ nguyên dữ liệu M3U và thứ tự nguồn gốc. Electron screenshot: positron-p51260-source-sort-after-1920x1080-real.png
+
+*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+
+[Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/tree/Positron) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/3871eaee48b913bded533e8c21cf928567a99a55)
+
+</details>
+
+<details>
+<summary><strong>P5.1.259</strong> · Lọc nhanh nguồn bật/tắt trong chi tiết IPTV / Electron 4.23.344 · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+
+**Ứng dụng:** 4.23.344 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
 Feature priority: NEW — Có bộ chọn trạng thái Tất cả / Đang bật / Đang tắt ngay trong chi tiết nguồn. Thao tác lọc phối hợp với tìm kiếm theo tên, công khai số nguồn phù hợp và không đổi dữ liệu playlist, Favorites hoặc kênh phát. Electron screenshot: positron-p51259-source-status-after-1920x1080-real.png
 
 *Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
 
-[Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/tree/Positron) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/5934d661794fec842c601d6a7ce4266f9700e396)
+[Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.344-p5.1.259) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/fe4dd6a7eab43d3520a113317ddc3f655e46b4f8) · [Tải Windows Setup x64](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.344-p5.1.259/Open-IPTV-Pro-Setup-4.23.344-x64.exe) · [Tải gói ảnh QA](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.344-p5.1.259/Positron-P51259-20-Real-Screenshots.zip)
 
 </details>
 
