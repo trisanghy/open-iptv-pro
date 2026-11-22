@@ -167,3 +167,37 @@ test('P268 AI panel hiển thị độc quyền và cảnh báo cần opt-in ri�
  assert.ok(qa.includes('getBoundingClientRect().top'));
  assert.ok(qa.includes('aiCardsActuallyHidden'));
 });
+
+test('P269 AI tối ưu lịch 24 giờ loại trùng giờ, xếp theo trọng số đã học',()=>{
+ const t=now,channels=[sport,news],guide={programmes:[{id:'fixture'}]};
+ const finder={find:(_g,ch)=>ch.id==='sport'?[
+  {title:'Trực tiếp bóng đá A',start:t+3600000,end:t+7200000},
+  {title:'Trực tiếp bóng đá B',start:t+7200000,end:t+10800000}
+ ]:[
+  {title:'Bản tin thời sự dài',start:t+5400000,end:t+9000000}
+ ]};
+ let m=C.emptyModel();
+ for(let i=0;i<20;i++)m=C.learn(m,C.features(sport,{key:'sport',source:'epg'},new Date(t+3600000)),1);
+ for(let i=0;i<20;i++)m=C.learn(m,C.features(news,{key:'news',source:'epg'},new Date(t+5400000)),0);
+ const before=JSON.stringify(channels);
+ const plan=C.planForYou(channels,guide,finder,m,{}, {clock:t,limit:3,hours:24});
+ assert.deepEqual(plan.map(x=>x.programme.title),['Trực tiếp bóng đá A','Trực tiếp bóng đá B']);
+ assert.ok(plan.every((x,i)=>i===0||plan[i-1].programme.end<=x.programme.start));
+ assert.ok(plan.every(x=>x.probability>=0&&x.probability<=1));
+ assert.equal(JSON.stringify(channels),before);
+});
+test('P269 lịch không bịa XMLTV, lọc tương lai và khống chế số chương trình',()=>{
+ assert.deepEqual(C.planForYou([sport],null,null,C.emptyModel(),{}, {clock:now}),[]);
+ const resolver={find:()=>[
+  {title:'Từ hôm qua',start:now-300000,end:now-1000},
+  {title:'Ngoài 24h',start:now+26*3600000,end:now+27*3600000},
+  {title:'Bản tin',start:now+3600000,end:now+7200000}
+ ]};
+ const plan=C.planForYou([sport],epg,resolver,C.emptyModel(),{}, {clock:now});
+ assert.equal(plan.length,1);
+ assert.equal(plan[0].programme.title,'Bản tin');
+ const src=fs.readFileSync('renderer/positron-intelligence.js','utf8');
+ assert.ok(src.includes("planMode.addEventListener('click'"));
+ assert.ok(src.includes('core.planForYou(collection,guide(),win.IPTVGuide,model,profile'));
+ assert.ok(src.includes('programmeTopic||metadata(channel)'));
+});

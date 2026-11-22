@@ -134,7 +134,7 @@
  function upcomingForYou(channels,guide,api,model,webMap={}, {limit=8,clock=Date.now(),hours=8}={}){
   if(!guide||typeof api?.find!=='function'||!Number.isFinite(clock))return [];
   const m=sanitizedModel(model),seen=new Set(),rows=[];
-  const horizon=clock+Math.max(1,Math.min(12,Number(hours)||8))*3600000;
+  const horizon=clock+Math.max(1,Math.min(24,Number(hours)||8))*3600000;
   for(const ch of (Array.isArray(channels)?channels:[]).slice(0,900)){
    if(!ch?.id||!ch.name||!ch.url||ch.status==='dead')continue;
    let programmes=[];
@@ -172,9 +172,56 @@
   }
   rows.sort((a,b)=>b.score-a.score||a.programme.start-b.programme.start
    ||String(a.channel.name).localeCompare(String(b.channel.name),'vi'));
-  return rows.slice(0,Math.max(1,Math.min(20,Math.trunc(limit)||8)));
+  return rows.slice(0,Math.max(1,Math.min(2000,Math.trunc(limit)||8)));
  }
 
+
+
+ // P5.1.269: local 24h watch schedule. XMLTV candidates are scored by the
+ // existing learned logistic model; weighted interval scheduling chooses a
+ // conflict-free set. No guide means no invented broadcasts or playback.
+ function planForYou(channels,guide,api,model,webMap={}, {clock=Date.now(),hours=24,limit=8}={}){
+  if(!Number.isFinite(clock)||!guide||typeof api?.find!=='function')return [];
+  const span=Math.max(1,Math.min(24,Number(hours)||24));
+  const horizon=clock+span*3600000;
+  const candidates=upcomingForYou(channels,guide,api,model,webMap,
+   {clock,hours:span,limit:2000});
+  const buckets=new Map();
+  for(const item of candidates){
+   const p=item.programme;
+   if(!Number.isFinite(p.start)||!Number.isFinite(p.end)||
+    p.start<=clock||p.end>horizon||p.end<=p.start)continue;
+   const bucket=Math.floor((p.start-clock)/3600000);
+   const rows=buckets.get(bucket)||[];
+   if(rows.length<12){rows.push(item);buckets.set(bucket,rows);}
+  }
+  const items=[...buckets.values()].flat()
+   .sort((a,b)=>a.programme.end-b.programme.end||a.programme.start-b.programme.start);
+  const n=items.length,wanted=Math.max(1,Math.min(8,Math.trunc(limit)||8));
+  if(!n)return [];
+  const ends=items.map(item=>item.programme.end);
+  const prev=items.map((item,i)=>{
+   let left=0,right=i;
+   while(left<right){const mid=(left+right)>>>1;
+    if(ends[mid]<=item.programme.start)left=mid+1;else right=mid;}
+   return left; // number of programmes compatible before this one
+  });
+  const dp=Array.from({length:n+1},()=>new Float64Array(wanted+1));
+  const chosen=Array.from({length:n+1},()=>new Uint8Array(wanted+1));
+  for(let i=1;i<=n;i++)for(let k=1;k<=wanted;k++){
+   const row=items[i-1],duration=Math.max(1,(row.programme.end-row.programme.start)/60000);
+   const reward=Math.max(0.01,row.score)*(0.65+0.35*Math.min(90,duration)/90);
+   const take=dp[prev[i-1]][k-1]+reward,skip=dp[i-1][k];
+   if(take>skip+1e-9){dp[i][k]=take;chosen[i][k]=1;}
+   else dp[i][k]=skip;
+  }
+  const selected=[];
+  for(let i=n,k=wanted;i>0&&k>0;){
+   if(chosen[i][k]){selected.push(items[i-1]);i=prev[i-1];k--;}
+   else i--;
+  }
+  return selected.reverse();
+ }
 
  // P5.1.268: local, model-scored on-air-soon alerts. Never infer schedules
  // without an imported XMLTV guide; do not create OS/network notifications.
@@ -216,5 +263,5 @@
   return best;
  }
  return Object.freeze({KINDS,normalize,subject,metadataTopic,topicFor,features,emptyModel,
-  sanitizedModel,predict,learn,recommend,upcomingForYou,startingForYou,cleanQuery,readWikiSearch});
+  sanitizedModel,predict,learn,recommend,upcomingForYou,planForYou,startingForYou,cleanQuery,readWikiSearch});
 });

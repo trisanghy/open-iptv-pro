@@ -1,5 +1,14 @@
 # Positron P5 Changelog
 
+## P5.1.269 — AI lập lịch xem 24 giờ tránh trùng giờ / Electron 4.23.354
+- Feature priority: NEW — WatchFlow Intelligence có chế độ **Lịch AI 24h** tối ưu lịch xem không trùng giờ. Thuật toán weighted interval scheduling chọn tối đa 8 chương trình từ XMLTV thật theo trọng số logistic học từ sở thích; chương trình chồng thời gian cạnh tranh cùng một vị trí, không bịa lịch khi thiếu EPG.
+- Feature class: AI
+- Evidence: Node tests kiểm thử 3 chương trình xung đột (2 chương trình thể thao liên tiếp và 1 thời sự chồng giờ), 20 phản hồi thể thao tích cực / 20 phản hồi thời sự tiêu cực; thuật toán phải chọn hai chương trình thể thao không trùng. Electron CDP phải chụp hai ảnh 1920x1080 trong app thật khi đổi từ Lịch EPG hợp gu sang Lịch AI 24h; assert không phát kênh, không đổi playlist, có mode button tương tác và viewport không tràn.
+- User action: TV → WatchFlow → ✦ AI hợp gu → Lịch AI 24h. Xem các chương trình được đề xuất theo giờ và kênh, nhấn ▶ Xem kênh khi muốn phát; phản hồi Hợp gu/Không hợp sẽ huấn luyện mô hình theo chính chủ đề và thời điểm của chương trình đã chọn.
+- Privacy: Chỉ dữ liệu XMLTV đã nạp và trọng số học cục bộ theo opt-in, không gửi hành vi/M3U/stream URL ra Internet; không phát tự động, không tạo lịch giả khi không có guide. Chế độ lịch xem không thêm nhắc hay sửa playlist.
+- Electron screenshot: positron-p51269-ai-plan-before-1920x1080-real.png / positron-p51269-ai-plan-after-1920x1080-real.png, từ Electron thật và cần mở soát bằng mắt.
+- Trạng thái: CANDIDATE tới khi unit/UI, ảnh thật 1920x1080, Windows EXE, Mac DMG, Actions và Release xác minh thành công.
+
 ## P5.1.268 — AI nhắc chương trình hợp gu đúng lúc / Electron 4.23.353
 - Feature priority: NEW — Bổ sung công cụ **Nhắc trong ứng dụng** cho WatchFlow Intelligence. Khi người xem chủ động bật học và bật nhắc, ứng dụng định kỳ kiểm tra XMLTV đã tải, lấy chương trình gần giờ chiếu và dùng **mô hình logistic đã học từ hành vi/đánh giá** để thông báo chương trình có xác suất hợp gu đạt ngưỡng. Chỉ hiển thị lời nhắc cục bộ, không tự phát kênh, không gửi hành vi lên mạng, không mở thông báo OS khi chưa xin quyền.
 - Feature class: AI

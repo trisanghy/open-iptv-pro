@@ -1,7 +1,7 @@
 #poWatchFlowPanel #poIntelligenceResults[hidden]{display:none!important}
 /* P267: six full nav labels must fit; 440px had clipped 'Cùng gu'. */
 html[data-positron="true"].po-horizon body #poWatchFlowPanel.po-watchflow-panel:not([data-empty-playlist="true"]){width:min(528px,calc(100vw - 32px))!important}
-#poWatchFlowPanel .po-ai-modes{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+#poWatchFlowPanel .po-ai-modes{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
 #poWatchFlowPanel .po-ai-modes button{min-height:38px;border:1px solid #476d6a;background:#1a353b;color:#ccece5;border-radius:9px;font-weight:700;cursor:pointer;font-size:12px}
 #poWatchFlowPanel .po-ai-modes button[aria-pressed="true"]{border-color:#8de2c5;background:#28594d;color:#f3fff9}
 #poWatchFlowPanel .po-ai-programme{font-size:12px;line-height:1.45;color:#9fead9;font-weight:700;border-left:3px solid #5ac5a7;padding-left:8px;margin:2px 0 3px;overflow-wrap:anywhere}
