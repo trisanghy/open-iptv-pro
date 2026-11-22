@@ -184,7 +184,7 @@ test('remote channel handoff tears down local HLS/DASH before awaiting channel s
   clearTimeout(id){seen.push('timer-'+id);},
   window:{OpenIPTVWebCastV2:{syncRemoteControls(){seen.push('sync');},onLocalStop(){throw Error('must never stop TV');}}},
  };
- vm.runInNewContext(release+';releaseLocalForRemote();',mock);
+ vm.runInNewContext(release+'\nreleaseLocalForRemote();',mock);
  assert.deepEqual(seen.slice(0,3),['timer-1','timer-2','timer-3']);
  assert.ok(seen.indexOf('hls-destroy')<seen.indexOf('pause'),'HLS decoder is torn down before video pause');
  assert.ok(seen.includes('dash-reset'));
