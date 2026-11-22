@@ -403,7 +403,7 @@ jobs:
           if-no-files-found: warn
 
   build:
-    needs: [test]
+    needs: [test, capture]
     strategy:
       fail-fast: false
       matrix:

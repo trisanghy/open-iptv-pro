@@ -6105,7 +6105,7 @@ async function runTwenty(page){
  // the real playlist and playback are never edited or started.
  await page.setViewportSize({width:1920,height:1080});
  await page.evaluate(()=>window.IPTVState.setPage('tv'));
- const before210=await page.screenshot({path:path.join(out,'positron-p51210-source-sync-before-1920x1080-real.png'),animations:'disabled'});
+ const before210=await page.screenshot({path:path.join(out,'positron-p51210-source-sync-before-1920x1080-real.png'),animations:'disabled',timeout:60000});
  assert.deepEqual([before210.readUInt32BE(16),before210.readUInt32BE(20)],[1920,1080]);
  const sourceChangeQA=await page.evaluate(async()=>{
   const d=document,btn=d.getElementById('poNextRandomChannel'),
