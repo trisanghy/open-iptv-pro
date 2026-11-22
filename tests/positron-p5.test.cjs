@@ -2274,7 +2274,7 @@ test('P5.1.205 has actual Electron screenshot proof of persistent random switch'
   'positron-p51205-tv-switch-after-1920x1080-real.png'])
   assert.ok(qa.includes(token),'Missing actual P205 Electron QA '+token);
  const pkg=JSON.parse(read('package.json'));
- const label=pkg.description.split(' ')[1];
+ const label=pkg.description.split(' ')[1].replace(/:$/,'');
  assert.ok(flow.includes('TAG=positron/v'+pkg.version+'-'+label.toLowerCase()));
 });
 
