@@ -1,4 +1,16 @@
-# Open IPTV Pro TV · TizenBrew v0.1.29 (OTA)
+# Open IPTV Pro TV · TizenBrew v0.1.30 (OTA)
+
+## v0.1.30 — Sửa nút Cast sai trang và bỏ đường thử nghiệm gây manifestLoadError
+
+- **Chứng cứ từ TV:** người dùng xác nhận `tv.html` mở qua Samsung Browser và được điều khiển từ Web/Mobile thì phát VTV7 tốt. Trang `tizen/hosted-player.html` do bản 0.1.28–0.1.29 bổ sung vẫn báo `manifestLoadError`. Hai trang không tương đương: Cast thật nhận URL qua phiên ghép đôi, còn hosted-player lấy lại URL TizenBrew đã chọn.
+- **Đổi nút dự phòng:** bấm **Mở Cast chuẩn trên Samsung Internet (mã 6 số)** sẽ mở đúng `https://trisanghy.github.io/open-iptv-pro/tv.html` — trang Cast đã xác nhận hoạt động. Mở ứng dụng Web/Mobile Open IPTV Pro, chọn Cast và nhập mã 6 số trên TV để phát từ URL đang hoạt động của bản Web. Nút **không tự phát kênh được chọn** và không giả vờ rằng mở trang thử nghiệm sẽ sửa HTTP 403.
+- **Không chuyển tiếp URL nhạy cảm:** đường mở trình duyệt chỉ chứa địa chỉ `tv.html`, không kèm URL M3U8/token trong query, fragment hay lịch sử. Nếu trình duyệt mở thành công, dừng bộ phát TizenBrew cũ để tránh chồng âm/luồng.
+- **Tắt tự động thử iframe hosted-player:** nhánh fallback không mở iframe HTTPS thử nghiệm sau lỗi nữa. Nếu kênh có URL dự phòng do người dùng nhập, vẫn thử lần lượt rồi mới báo lỗi; không chạy hai nguồn cùng lúc.
+- **Chẩn đoán nguồn:** khi lỗi, màn hình hiển thị tên miền nguồn đang được thử và thứ tự `Nguồn 1/N`; không hiển thị đường dẫn, token hoặc thông số URL. Giúp đối chiếu đúng hostname giữa TizenBrew và bản Web Cast.
+- **Cần xác minh riêng:** chỉ khi cùng một URL, token và điều kiện truy cập mà `tv.html` phát được trong khi TizenBrew thất bại, mới kết luận khác biệt về môi trường WebView/CORS; hiện chưa có đủ URL để xác định máy chủ 403 do nguyên nhân nào.
+- **Bảo toàn OTA:** `package.json` vẫn dùng `appPath=tizenbrew/bootstrap.html`. Không xóa nguồn, lịch sử, yêu thích, thứ tự hay bảng chọn kênh.
+- **Kiểm thử:** `tizenbrew/tests/browser-native-fallback.test.cjs` kiểm tra mở đúng Cast receiver, không rò URL/token và chỉ dừng engine sau khi Samsung Internet mở thành công. `tizenbrew/tests/hosted-samsung-cast.test.cjs` xác minh không tự chuyển sang iframe lỗi.
+- **Giới hạn:** chưa xác minh trên TV người dùng; nút Cast chuẩn cần ghép mã 6 số bằng điện thoại hoặc Web và chọn kênh lại.
 
 ## v0.1.29 — Sửa mở kênh bằng Samsung Internet thành bộ phát Cast thực
 
