@@ -3,6 +3,19 @@
 > **HEAD BẤT BIẾN — MỖI LẦN GỬI FILE = 20 VÒNG TÍNH NĂNG MỚI (KHÔNG PHẢI 20 LỖI CSS).** Đọc [POSITRON_HEAD_20_VONG_TINH_NANG_MOI.md](POSITRON_HEAD_20_VONG_TINH_NANG_MOI.md) trước mọi thao tác: **20 phiên bản độc lập, mỗi phiên bản tính năng mới, một cặp ảnh Electron thật đã mở xem, test/commit/CI/release và báo cáo; không dừng sau 1 vòng; không đếm 70 ảnh QA là 20 vòng**. Nếu giới hạn thực tế, lưu checkpoint và nêu đúng tiến độ, không giả chạy nền.
 
 
+
+## HEAD BẤT BIẾN — TỪ P5.1.266: CHỈ PHÁT HÀNH TÍNH NĂNG AI HOẶC ĐỘT PHÁ THỰC CHẤT
+
+**Chỉ được tính một phiên bản NEW nếu thêm khả năng người xem chưa từng có, thuộc ít nhất một nhóm: AI học từ tương tác có mô hình và đánh giá được; phân loại/nội suy chủ đề từ EPG có dữ liệu thật; khám phá kiến thức kênh có nguồn, kiểm soát quyền mạng; hoặc nâng cấp hệ thống phát/khám phá khác biệt rõ ràng, kiểm chứng bằng tác vụ đầu-cuối.** Không dùng việc đổi màu, sắp xếp, phím tắt, biểu tượng, nhãn, nút dẫn trang, số phiên bản, báo cáo kiểm thử hoặc tinh chỉnh nhỏ làm phiên bản NEW độc lập.
+
+- Ưu tiên lộ trình: **WatchFlow Intelligence** phân loại chương trình theo EPG, tra cứu chủ đề kênh trên internet có sự đồng ý rõ ràng, đề xuất dựa trên **mô hình học máy sở thích/thời lượng xem/giờ xem/khám phá**, có giải thích và điều khiển xóa dữ liệu.
+- Mỗi bản mới từ **P5.1.266** phải có `Feature class: AI` hoặc `Feature class: BREAKTHROUGH` trong mục changelog mới nhất, kèm `Evidence: ...` mô tả phép đo hoặc kiểm thử chức năng thực (không chỉ ảnh giao diện). CI phải kiểm tra các trường này. Khi là sửa lỗi chặn tính năng, khai báo `BLOCKER_FIX`, chỉ trong các ngoại lệ bảo mật, phát video/âm thanh, mất dữ liệu hoặc CI/build chặn phát hành.
+- AI phải gọi đúng tên kỹ thuật: luật từ khóa là **phân loại theo luật**, không gọi là ML; chỉ gọi **học máy** khi có trọng số thực sự cập nhật theo quan sát và đo được thay đổi thứ hạng trên tập kiểm thử. Không nhận là mô hình ngôn ngữ hay AI tạo sinh nếu không có nền tảng xử lý tương ứng.
+- Khai thác EPG chỉ khi chương trình XMLTV đã tồn tại, ánh xạ đúng `tvg-id` và thời gian. Không bịa thông tin lên sóng khi thiếu guide. Tra cứu web chỉ gửi tên kênh sau thao tác đồng ý; **không gửi stream URL, M3U, lịch sử, hồ sơ hoặc hành vi xem**.
+- Dữ liệu sở thích học cục bộ theo nguyên tắc quyền riêng tư: chọn bật, tắt, xóa được; chỉ ghi nhận phiên xem có bằng chứng hình/tiếng thật; không tự phát kênh, tự thêm nguồn, hoặc thay playlist.
+- **Tiêu chí phát hành:** thao tác chạy được trên app Electron, test logic với EPG giả lập + phản hồi hành vi, test quyền riêng tư, screenshot 1920×1080 trước/sau **thật**, Actions/build và Release qua kiểm chứng. Thiếu bằng chứng = **CANDIDATE**, không báo hoàn tất.
+- Không rewrite HEAD cũ, không force-push, không sửa các nhánh khác. Quy tắc áp dụng cho các commit kế tiếp trên nhánh `Positron` và chỉ có thể thay đổi bằng yêu cầu trực tiếp của chủ repo.
+
 ## Quy tắc ảnh 16:9 desktop bất biến — áp dụng từ 22/11/2026
 
 **Ảnh chính cho báo cáo, nhật ký tính năng và Release của Positron bắt buộc ưu tiên chụp từ Electron thật ở 1920 × 1080 (16:9).** Quy tắc này được duy trì cho các phiên bản tiếp theo, kể cả khi chuyển cuộc trò chuyện hoặc bàn giao file.

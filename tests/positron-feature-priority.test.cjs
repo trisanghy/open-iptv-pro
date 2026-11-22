@@ -100,3 +100,25 @@ test('Hai PNG Electron thật riêng cho phiên bản mới phải được khai
  assert.ok(qa.includes('await page.screenshot({path:path.join(out,'),
   'Ảnh mới phải ghi bởi Playwright/Electron thực, không phải mockup');
 });
+
+
+test('HEAD từ P5.1.266 yêu cầu AI hoặc BREAKTHROUGH có bằng chứng và quyền riêng tư',()=>{
+ const rules=read('POSITRON_FEATURE_RULES.md');
+ const guide=read('POSITRON_HEAD_20_VONG_TINH_NANG_MOI.md');
+ assert.match(rules,/HEAD BẤT BIẾN — TỪ P5\.1\.266/);
+ assert.match(rules,/Feature class: AI/);
+ assert.match(rules,/Feature class: BREAKTHROUGH/);
+ assert.match(rules,/Evidence:/);
+ assert.match(rules,/không gửi stream URL, M3U, lịch sử/);
+ assert.match(guide,/BẤT BIẾN CỦA HEAD MỚI TỪ P5\.1\.266/);
+ const pkg=JSON.parse(read('package.json'));
+ const match=/Positron P5\.1\.(\d+)/.exec(pkg.description||'');
+ if(!match||Number(match[1])<266)return;
+ const source=read('POSITRON_P5_CHANGELOG.md');
+ const section=source.split(/(?=^## P5\.1\.\d+)/m).find(s=>s.startsWith('## P5.1.'+match[1]+' '));
+ assert.ok(section,'cần mục changelog đúng phiên bản');
+ if(/^- Feature priority: BLOCKER_FIX/m.test(section))return;
+ assert.match(section,/^- Feature class: (AI|BREAKTHROUGH)$/m);
+ const evidence=/^- Evidence: (.+)$/m.exec(section);
+ assert.ok(evidence && evidence[1].trim().length>=55,'cần bằng chứng hành vi và đo lường, không chỉ thay UI');
+});
