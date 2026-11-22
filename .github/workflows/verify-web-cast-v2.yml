@@ -21,6 +21,9 @@ on:
       - 'web-tv-receiver.js'
       - 'tv.html'
       - 'web-online/tests/web-cast-v2*.cjs'
+      - 'web-online/tests/web-cast-sender.test.cjs'
+      - 'app.js'
+      - 'cast-ui.js'
       - 'web-online/tests/web-cast-icons.test.cjs'
       - '.github/workflows/verify-web-cast-v2.yml'
   workflow_dispatch:
