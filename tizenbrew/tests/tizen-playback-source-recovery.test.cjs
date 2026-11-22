@@ -32,17 +32,20 @@ function setup(){
  }
  return {api,context,state,els,callbacks,calls,advance,cls};
 }
-test('same-name user-imported channels become bounded distinct fallback streams',()=>{
- const s=setup(),c={id:'channel1',name:'VTV1',url:'https://example.org/one.mp4'};
+test('Same-name channels in independent M3U sources never replace the selected URL',()=>{
+ const s=setup(),c={id:'channel1',name:'VTV7',url:'https://cdn1.example.org/one.m3u8?token=selected'};
  s.state.sources=[
-  {channels:[{name:'VTV1',url:'https://example.org/one.mp4'},
-             {name:' VTV1 ',url:'https://example.org/two.mp4'},
-             {name:'VTV1',url:'https://example.org/two.mp4'}]},
-  {channels:[{name:'VTV1',url:'https://example.org/three.mp4'},
-             {name:'VTV3',url:'https://example.org/other.mp4'}]}
+  {channels:[c,{id:'different',name:'VTV7',url:'https://cdn2.example.org/two.m3u8?token=other'}]},
+  {channels:[{id:'third',name:'VTV7',url:'https://cdn3.example.org/three.m3u8'}]}
  ];
- assert.deepEqual(Array.from(s.api.playbackCandidates(c)),
-  ['https://example.org/one.mp4','https://example.org/two.mp4','https://example.org/three.mp4']);
+ assert.deepEqual(Array.from(s.api.playbackCandidates(c)),[c.url]);
+ s.api.play(c);s.api.finishPlaybackError(s.api.current().playbackSerial,'manifestLoadError HTTP 403');
+ s.advance(2400);
+ assert.equal(s.api.current().playbackStreamIndex,0);
+ assert.equal(s.els.video.src,c.url,'Do not silently use any other provider');
+ assert.equal(s.state.sources[0].channels[1].url,'https://cdn2.example.org/two.m3u8?token=other');
+ assert.match(s.els.playerStatus.textContent,/cdn1.example.org/);
+ assert.doesNotMatch(s.els.playerStatus.textContent,/token=selected|token=other/);
 });
 test('late successful playback cancels error grace period and prevents unintended source change',()=>{
  const s=setup(),ch={id:'c1',name:'VTV1',url:'https://example.org/one.mp4'};
@@ -58,8 +61,8 @@ test('late successful playback cancels error grace period and prevents unintende
  assert.equal(s.els.playerStatus.hidden,true);
  assert.ok(s.cls.has('is-playing'));
 });
-test('after stable failure it tries another imported stream without changing favorites or history',()=>{
- const s=setup(),ch={id:'c1',name:'VTV1',url:'https://example.org/one.mp4'};
+test('Explicit backup URL belonging to the selected channel is used only after stable failure',()=>{
+ const s=setup(),ch={id:'c1',name:'VTV1',url:'https://example.org/one.mp4',backupUrls:['https://example.org/two.mp4']};
  s.state.sources=[{channels:[{name:'VTV1',url:'https://example.org/one.mp4'},{name:'VTV1',url:'https://example.org/two.mp4'}]}];
  s.api.play(ch);
  s.api.finishPlaybackError(s.api.current().playbackSerial,'first route failed');
@@ -90,11 +93,26 @@ test('HLS errors show safe HTTP and network diagnoses without exposing playlist 
  assert.match(report2,/CORS/);
  assert.match(report3,/HTTP 404/);
 });
-test('maximum five candidate URLs; channel name mismatch never causes cross-channel fallback',()=>{
+test('Only explicit backup URLs are considered; maximum five with dedup and validation',()=>{
  const s=setup(),channels=[];
  for(let i=0;i<12;i++)channels.push({name:'VTV1',url:'https://a.test/'+i+'.m3u8'});
  channels.push({name:'VTV2',url:'https://a.test/notvtv1.m3u8'});
  s.state.sources=[{channels}];
- assert.equal(s.api.playbackCandidates({name:'VTV1',url:channels[0].url}).length,5);
- assert.ok(!Array.from(s.api.playbackCandidates({name:'VTV1',url:channels[0].url})).includes(channels[12].url));
+ const selected={name:'VTV1',url:channels[0].url,backupUrls:[
+  'https://a.test/1.m3u8','https://a.test/1.m3u8',
+  'javascript:alert(1)','http://a.test/2.m3u8',
+  'https://a.test/3.m3u8','https://a.test/4.m3u8','https://a.test/5.m3u8'
+ ]};
+ const urls=Array.from(s.api.playbackCandidates(selected));
+ assert.deepEqual(urls,[
+  selected.url,'https://a.test/1.m3u8','http://a.test/2.m3u8',
+  'https://a.test/3.m3u8','https://a.test/4.m3u8'
+ ]);
+ assert.ok(!urls.includes(channels[12].url));
+});
+test('Playback diagnostics display only source hostname, never M3U8 path or tokens',()=>{
+ const s=setup(),ch={id:'vtv7',name:'VTV7',url:'https://origin.example.org/live/private.m3u8?token=secret'};
+ s.api.play(ch);
+ assert.match(s.els.playbackDiag.textContent,/Nguồn 1\/1.*origin.example.org/);
+ assert.doesNotMatch(s.els.playbackDiag.textContent,/secret|private|token=/);
 });
