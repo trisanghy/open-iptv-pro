@@ -63,3 +63,11 @@ test('P5.1.158 missingLogos phân trang và không truy cập URL nguồn',()=>{
  assert.equal(JSON.stringify(channels),snapshot);
  assert.equal(core.missingLogos(null).total,0);
 });
+
+test('P5.1.158 Escape luôn khôi phục focus về nút Thư viện kể cả sau điều hướng trang',()=>{
+ const fs=require('node:fs'),path=require('node:path');
+ const source=fs.readFileSync(path.join(__dirname,'../renderer/positron-library-pulse.js'),'utf8');
+ assert.match(source,/const hide=\(restoreFocus=false\)/);
+ assert.match(source,/const restore=restoreFocus\|\|panel\.contains\(d\.activeElement\)/);
+ assert.match(source,/event\.key==='Escape'\)\{event\.preventDefault\(\);hide\(true\);/);
+});

@@ -131,7 +131,7 @@
   missingNext.disabled=(missingIndex+1)*10>=missingTotal;
  };
  let opened=false;
- const hide=()=>{if(!opened)return;const restore=panel.contains(d.activeElement);
+ const hide=(restoreFocus=false)=>{if(!opened)return;const restore=restoreFocus||panel.contains(d.activeElement);
   opened=false;panel.hidden=true;toggle.setAttribute('aria-expanded','false');
   if(restore)toggle.focus({preventScroll:true});};
  toggle.addEventListener('click',()=>{
@@ -164,7 +164,7 @@
  });
  close.addEventListener('click',hide);
  refresh.addEventListener('click',()=>{render();refresh.focus({preventScroll:true});});
- d.addEventListener('keydown',event=>{if(opened&&event.key==='Escape'){event.preventDefault();hide();}});
+ d.addEventListener('keydown',event=>{if(opened&&event.key==='Escape'){event.preventDefault();hide(true);}});
  d.addEventListener('pointerdown',event=>{
   if(opened&&!panel.contains(event.target)&&!toggle.contains(event.target))hide();
  });
