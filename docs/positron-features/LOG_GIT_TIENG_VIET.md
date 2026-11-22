@@ -2,14 +2,23 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
-## P5.1.186 — phân trang gợi ý có Trước/Tiếp và trang cuối chính xác
+## P5.1.187 — đi thẳng tới trang gợi ý, giữ phân trang ổn định
 
-**Ứng dụng:** 4.23.271 · **Trạng thái:** Chưa có bản phát hành
+**Ứng dụng:** 4.23.272 · **Trạng thái:** Chưa có bản phát hành
+
+Feature priority: NEW — Ảnh P5.1.186 hiển thị Trang 9/9 và Trước/Tiếp, nhưng chưa thể tới trang số bất kỳ khi nguồn có hàng chục hoặc hàng trăm trang. Thêm ô số “Đến trang” với giới hạn 1..tổng trang, nhập và nhấn Enter hoặc đổi giá trị để nhảy trực tiếp; tự kẹp số quá nhỏ/lớn, đồng bộ chỉ số và số kênh, giữ nguyên tìm kiếm/nhóm/pageSize và dữ liệu nguồn.
+
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/93abc920f4197ca4e3724b8ce83411f23ddcaa7f)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+
+## P5.1.186 — Phân trang gợi ý Trước / Tiếp / Trang x/y / Electron 4.23.271
+
+**Ứng dụng:** 4.23.271 · **Trạng thái:** Đã phát hành
 
 Feature priority: NEW — Ảnh P5.1.185 có hàng trăm kênh gợi ý nhưng chỉ có Gợi ý khác, không biết đang ở trang nào, không quay lại trang trước và vòng lặp cũ có thể lặp kênh ở trang cuối. Thêm nút Trước, chỉ số Trang x/y (aria-live), giữ nút Gợi ý khác để tiến tiếp; phân trang theo các lát cắt không trùng kênh. Trang cuối đúng số còn lại, nút Lưu cả N phản ánh số hiện tại, chức năng cũ vẫn giữ và không tự phát video.
 
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/2d789e5e0728a99dc9043a8c46166d716b96292e)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/3d990557bb77972a22f4e0d77ff55b7436da7bcb)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.271-p5.1.186)
 
 ## P5.1.185 — Nhóm gợi ý truy cập nhanh có số kênh / Electron 4.23.270
 
