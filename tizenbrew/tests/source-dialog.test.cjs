@@ -188,8 +188,8 @@ test('TV manager hello confirms online and returns a live snapshot',async()=>{
 });
 
 test('QR manager uses the official GitHub Pages URL rather than RawGitHack',()=>{
- const expected='https://trisanghy.github.io/open-iptv-pro/tizen/phone.html?v=021';
- assert.match(tv,/var SOURCE_PAGE='https:\/\/trisanghy[.]github[.]io\/open-iptv-pro\/tizen\/phone[.]html[?]v=021';/);
+ const expected='https://trisanghy.github.io/open-iptv-pro/tizen/phone.html?v=023';
+ assert.match(tv,/var SOURCE_PAGE='https:\/\/trisanghy[.]github[.]io\/open-iptv-pro\/tizen\/phone[.]html[?]v=023';/);
  assert.ok(tv.includes("var qrLink=SOURCE_PAGE+'#code='+token"),'QR must preserve ephemeral pairing token');
  assert.ok(tv.includes(expected));
  assert.doesNotMatch(tv,/raw[.]githack[.]com/);
@@ -230,7 +230,7 @@ test('TV and QR page normalize missing and mistyped HTTP(S) URLs identically',()
 
 
 test('QR phone M3U transfer is chunked, hash-checked and saves only on TV confirmation',()=>{
- const begin=tv.indexOf('function playlistStart(req){');
+ const begin=tv.indexOf('function sourceDisplayName(value){');
  const end=tv.indexOf('async function onManagerRequest(',begin);
  const phoneBegin=phone.indexOf('function playlistHash(s){');
  const phoneEnd=phone.indexOf("byId('openSource').onclick",phoneBegin);
