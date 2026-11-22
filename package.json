@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.320",
-  "description": "Positron P5.1.235: lịch sử nhóm bỏ điểm quay lại trùng nhóm hiện tại",
+  "version": "4.23.321",
+  "description": "Positron P5.1.236: thêm nút Nhóm sau để tiến theo lịch sử duyệt nhóm",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

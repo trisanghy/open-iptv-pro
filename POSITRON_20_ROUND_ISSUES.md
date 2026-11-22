@@ -36,3 +36,9 @@ Ngày 22/11/2026. Chỉ nhánh Positron. Không đếm 70 ảnh QA là 20 vòng 
 - Nguyên nhân: lịch sử nhóm được push mà không deduplicate, khiến các nhóm trùng vẫn nằm trong stack và dẫn tới self-back.
 - Khắc phục stack nhóm theo phiên, tự ẩn nút khi không còn đích hợp lệ, bổ sung Node regressions và hai PNG Electron 1920×1080.
 - Chưa tính vòng đạt trước khi xác minh Node tests, QA Electron, mở và soát ảnh mới, build/Release.
+
+## Đợt mới sau P5.1.233 — Vòng 03 / P5.1.236 (CANDIDATE)
+- Từ ảnh Electron P5.1.235 sau Back: nút trước biến mất chính xác nhưng không có thao tác Tiến tới nhóm vừa rời, buộc dùng Alt+G chọn lại.
+- Thêm lịch sử đi tới (Forward) tối đa 10 nhóm trong RAM, đi tiếp sau Back, xoá Forward khi nhảy nhóm mới; giữ playback, playlist, Favorites, EPG, dữ liệu.
+- QA mới chụp Electron thật trước/sau 1920×1080 và kiểm tra trạng thái nút, focus, không autoplay/overflow.
+- Chưa tính vòng đạt cho tới khi test và release hoàn tất.

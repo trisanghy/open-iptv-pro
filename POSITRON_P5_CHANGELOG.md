@@ -1,5 +1,16 @@
 # Positron P5 Changelog
 
+## P5.1.236 — Nhóm sau: quay lại nhóm vừa rời sau thao tác Back / Electron 4.23.321
+- Feature priority: NEW — Thêm nút “↷ Nhóm sau” chỉ xuất hiện sau khi người xem quay về nhóm trước, hỗ trợ tiến lại nhóm đã duyệt mà không phải tìm kiếm hay ghi nhớ thư mục vừa xem; việc chọn nhóm mới chủ động sẽ xóa hướng tiến không còn hợp lệ.
+- Electron screenshot: positron-p51236-group-forward-after-1920x1080-real.png
+- User action: Trên trang TV mở Alt+G để chuyển từ nhóm 01 sang nhóm 03, nhấn “↶ Nhóm trước” để về 01 rồi nhấn “↷ Nhóm sau” để trở lại 03, tất cả thao tác chỉ chuyển focus chứ không tự phát kênh.
+- Ảnh P5.1.235 đã soát: sau khi Back về 01, nút Back đúng là tự ẩn nhưng người xem chưa có đường tiến trở lại nhóm 03 đã rời.
+- Cơ chế: forward stack tối đa 10 nhóm trong RAM, mỗi lần quay lại lưu đích tiến; khi đi tới nhóm khác bằng menu trực tiếp sẽ xóa redo; render nút phù hợp bằng hidden + aria label, không sửa dữ liệu IPTV.
+- QA: Node regression và hai ảnh Electron thật 1920×1080, xác nhận focus 001→121, nút Back/Forward chuyển trạng thái, không autoplay, không tràn.
+- Trạng thái: CANDIDATE cho tới khi test/ảnh/build/Release được xác minh.
+
+
+
 ## P5.1.235 — Quay về nhóm trước mà không lặp lại nhóm hiện tại / Electron 4.23.320
 - Feature priority: NEW — Lịch sử điều hướng nhóm theo phiên chỉ giữ một vị trí cho mỗi nhóm và tự loại đích quay lại trùng nhóm đang xem, giúp nút “Nhóm trước” không quay vòng vô ích hoặc hiển thị nhầm sau khi trở về.
 - Electron screenshot: positron-p51235-history-dedupe-after-1920x1080-real.png

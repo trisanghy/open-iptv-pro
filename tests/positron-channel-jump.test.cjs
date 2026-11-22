@@ -154,7 +154,7 @@ test('P5.1.235 group Back history never retains duplicate or self-reference',()=
   'groupHistory.push(lastFocusedGroup);'
  ])assert.ok(source.includes(token),'Missing self-history guard: '+token);
  assert.ok(!source.includes('playChannel('),'History must not autoplay');
- assert.equal(JSON.parse(read('package.json')).version,'4.23.320');
+ assert.ok(Number(JSON.parse(read('package.json')).version.split('.')[2])>=320);
 });
 test('P5.1.235 real Electron checks Back button and no duplicate focused folder',()=>{
  const qa=read('scripts/positron-20-extension.cjs');
@@ -167,4 +167,32 @@ test('P5.1.235 real Electron checks Back button and no duplicate focused folder'
  }
  for(const token of ['noSelfReference:', 'returnedToPreviousGroup:', 'noAutoplay:', 'noHorizontalOverflow:', 'historyButtonHidden:'])
   assert.ok(qa.includes(token),'Missing P235 QA assertion: '+token);
+});
+
+
+test('P5.1.236 enables redo of previously visited group after pressing Back',()=>{
+ const code=read('renderer/positron-channel-jump.js'),styles=read('renderer/positron-channel-jump.css');
+ for(const token of [
+  'const forwardGroups=[];',
+  'forwardButton.addEventListener(\'click\'',
+  'forwardGroups.push(from);',
+  'forwardGroups.length=0;',
+  'forwardButton.hidden=!forwardGroups.length;',
+  'backButton.hidden=!groupHistory.length;',
+  'returningToHistory=true;'
+ ])assert.ok(code.includes(token),'Missing P236 forward group action '+token);
+ assert.ok(styles.includes('#poChannelGroupForward[hidden]'),'Native hidden state must not be overridden by styling');
+ assert.ok(!code.includes('playChannel('),'Back/forward cannot autoplay');
+ assert.equal(JSON.parse(read('package.json')).version,'4.23.321');
+});
+test('P5.1.236 validates real Electron group forward before/after and no autoplay',()=>{
+ const qa=read('scripts/positron-20-extension.cjs'),flow=read('.github/workflows/positron-lab.yml');
+ for(const file of ['positron-p51236-group-forward-before-1920x1080-real.png',
+  'positron-p51236-group-forward-after-1920x1080-real.png']){
+  assert.ok(qa.includes(file),file);
+  assert.ok(flow.includes(file),'Missing P236 workflow image '+file);
+ }
+ for(const token of ['forwardAvailable:', 'returnedToRecentGroup:', 'noAutoplay:',
+    'noHorizontalOverflow:', 'forwardConsumed:'])
+  assert.ok(qa.includes(token),token);
 });

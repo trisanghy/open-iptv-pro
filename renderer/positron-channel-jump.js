@@ -71,6 +71,7 @@
  // P233: reversible, in-session folder navigation history. This is independent
  // of viewing/playback history and never writes a user's saved IPTV settings.
  const groupHistory=[];
+ const forwardGroups=[]; // P236: in-session redo navigation, no persistence or playback
  let lastFocusedGroup='';
  let returningToHistory=false;
  const focusList=d.getElementById('channelList');
@@ -83,18 +84,23 @@
  });
  const backRow=d.createElement('div');
  backRow.id='poChannelGroupHistoryRow';
- backRow.innerHTML='<button id="poChannelGroupBack" type="button" aria-label="Quay về nhóm kênh trước">↶ Nhóm trước</button><output id="poChannelGroupBackHint" aria-live="polite"></output>';
+ backRow.innerHTML='<button id="poChannelGroupBack" type="button" aria-label="Quay về nhóm kênh trước">↶ Nhóm trước</button><button id="poChannelGroupForward" type="button" aria-label="Tiến tới nhóm kênh vừa rời" hidden>↷ Nhóm sau</button><output id="poChannelGroupBackHint" aria-live="polite"></output>';
  status.before(backRow);
  const backButton=backRow.querySelector('#poChannelGroupBack');
+ const forwardButton=backRow.querySelector('#poChannelGroupForward');
  const backHint=backRow.querySelector('#poChannelGroupBackHint');
  function updateBackRow(){
   // P235: never offer the current folder as its own Back destination.
   while(groupHistory.length&&groupHistory[groupHistory.length-1]===lastFocusedGroup)groupHistory.pop();
+  while(forwardGroups.length&&forwardGroups[forwardGroups.length-1]===lastFocusedGroup)forwardGroups.pop();
   backRow.dataset.historyDepth=String(groupHistory.length);
-  backRow.hidden=!groupHistory.length;
-  backHint.textContent=groupHistory.length?groupHistory[groupHistory.length-1]:'';
+  backRow.hidden=!groupHistory.length&&!forwardGroups.length;
+  backButton.hidden=!groupHistory.length;
+  forwardButton.hidden=!forwardGroups.length;
+  backHint.textContent=groupHistory.length?groupHistory[groupHistory.length-1]:(forwardGroups.length?'Có thể tới nhóm sau':'');
  }
  backButton.addEventListener('click',()=>{
+  const from=lastFocusedGroup;
   let previous='';
   while(groupHistory.length){
    const candidate=groupHistory.pop();
@@ -104,9 +110,39 @@
    }
   }
   if(!previous){updateBackRow();return;}
+  if(from&&from!==previous){
+   const old=forwardGroups.indexOf(from);
+   if(old!==-1)forwardGroups.splice(old,1);
+   forwardGroups.push(from);
+   if(forwardGroups.length>10)forwardGroups.shift();
+  }
   groupSearch.value='';
   filterGroups();
   groupSelect.value=previous;
+  returningToHistory=true;
+  try{jumpGroup();}finally{returningToHistory=false;}
+  updateBackRow();
+ });
+ forwardButton.addEventListener('click',()=>{
+  let next='';
+  while(forwardGroups.length){
+   const candidate=forwardGroups.pop();
+   if(candidate===lastFocusedGroup)continue;
+   if(visibleHeaders().some(header=>header.dataset.group===candidate)){
+    next=candidate;break;
+   }
+  }
+  if(!next){updateBackRow();return;}
+  const from=lastFocusedGroup;
+  if(from&&from!==next){
+   const existing=groupHistory.indexOf(from);
+   if(existing!==-1)groupHistory.splice(existing,1);
+   groupHistory.push(from);
+   if(groupHistory.length>10)groupHistory.shift();
+  }
+  groupSearch.value='';
+  filterGroups();
+  groupSelect.value=next;
   returningToHistory=true;
   try{jumpGroup();}finally{returningToHistory=false;}
   updateBackRow();
@@ -131,6 +167,7 @@
   const box=list.getBoundingClientRect(),rect=target.getBoundingClientRect();
   list.scrollTop+=rect.top-box.top-(list.clientHeight-rect.height)/2;
   if(!returningToHistory&&lastFocusedGroup&&lastFocusedGroup!==group){
+   forwardGroups.length=0; // new path invalidates redo, Back/Forward remain distinct
    const existing=groupHistory.indexOf(lastFocusedGroup);
    if(existing!==-1)groupHistory.splice(existing,1); // one entry per group in session
    groupHistory.push(lastFocusedGroup);
