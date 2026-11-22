@@ -18,7 +18,7 @@ function setup(hasAvplay){
   pause(){calls.htmlPause++;this.paused=true;},
   removeAttribute(k){if(k==='src')this.src='';},load(){},
  };
- const objects={player,playerStatus:status,video,avplayObject:{hidden:true},playingName:{textContent:''},exitModuleBtn:{title:''}};
+ const objects={player,playerStatus:status,playbackDiag:{hidden:true,textContent:''},video,avplayObject:{hidden:true},playingName:{textContent:''},exitModuleBtn:{title:''}};
  let avState='NONE';
  const av={
   open(url){calls.avOpen.push(url);avState='IDLE';},
@@ -41,7 +41,7 @@ function setup(hasAvplay){
   setTimeout:(fn,ms)=>{const timer={fn,ms,cancelled:false};calls.timers.push(timer);return timer;},
   clearTimeout:timer=>{if(timer)timer.cancelled=true;}
  };
- const api=vm.runInNewContext(source+'\n({play,closePlayer,togglePlayback,nativeAvplay,engine:()=>playbackEngine,serial:()=>playbackSerial});',env);
+ const api=vm.runInNewContext(source+'\n({play,closePlayer,togglePlayback,nativeAvplay,handleHtml5Error,engine:()=>playbackEngine,serial:()=>playbackSerial,mode:()=>html5Mode,evidence:()=>playbackEvidence.slice()});',env);
  return {api,env,calls,av,player,status,video,objects,state,channel:(id,url)=>({id,name:id,url})};
 }
 test('Samsung Tizen loads WebAPI script and AVPlay object on TV',()=>{
@@ -131,4 +131,50 @@ test('HLS.js fallback is used when AVPlay is missing and native browser cannot p
  assert.equal(hlsLoaded,c.url);
  assert.equal(attachCalls,1);
  assert.equal(s.calls.htmlPlay,1);
+});
+
+
+test('A channel URL with no .m3u8 suffix retries HLS.js after unsupported HTML5 source',async()=>{
+ const s=setup(false),c=s.channel('VTV Prime','https://example.com/live?id=iptv');
+ let loaded='',attached=0;
+ class HlsMock{
+  constructor(){this.events={};}
+  static isSupported(){return true;}
+  on(event,fn){this.events[event]=fn;}
+  attachMedia(){attached++;}
+  loadSource(u){loaded=u;this.events.ready();}
+  destroy(){}
+ }
+ HlsMock.Events={MANIFEST_PARSED:'ready',ERROR:'error'};
+ s.env.window.Hls=HlsMock;
+ s.api.play(c);
+ assert.equal(s.calls.htmlPlay,1,'Direct HTML5 attempted for extensionless stream');
+ s.api.handleHtml5Error(s.api.serial(),'No supported source');
+ await Promise.resolve();await Promise.resolve();await Promise.resolve();
+ assert.equal(loaded,c.url,'Same URL reused for HLS.js, not modified');
+ assert.equal(attached,1);
+ assert.equal(s.calls.htmlPlay,2,'HLS.js playback retried');
+ assert.equal(s.api.mode(),'hlsjs');
+});
+test('When AVPlay and MediaSource are unavailable the TV explains the limitation',async()=>{
+ const s=setup(false),c=s.channel('VTV1','https://example.com/list.m3u8');
+ class HlsMock{static isSupported(){return false;}}
+ s.env.window.Hls=HlsMock;
+ s.api.play(c);
+ await Promise.resolve();await Promise.resolve();
+ assert.match(s.status.textContent,/AVPlay không khả dụng/);
+ assert.match(s.objects.playbackDiag.textContent,/HLS.js không hỗ trợ MediaSource/);
+ assert.equal(s.objects.playbackDiag.hidden,false);
+});
+test('A native HTML5 failure retries HLS.js at most once',async()=>{
+ const s=setup(false),c=s.channel('VTV Prime','https://example.com/live/channel?id=123');
+ class HlsMock{static isSupported(){return false;}}
+ s.env.window.Hls=HlsMock;
+ s.api.play(c);
+ s.api.handleHtml5Error(s.api.serial(),'no sources');
+ await Promise.resolve();await Promise.resolve();
+ assert.equal(s.api.mode(),'hlsjs');
+ const evidence=s.api.evidence().slice();
+ s.api.handleHtml5Error(s.api.serial(),'no sources again');
+ assert.equal(s.api.evidence().join('|'),evidence.join('|'),'HLS failure is not retried infinitely');
 });
