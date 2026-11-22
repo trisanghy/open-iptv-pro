@@ -34,7 +34,8 @@ jobs:
           set -euo pipefail
           base="https://cdn.jsdelivr.net/gh/${REPOSITORY}@${COMMIT}"
           curl -fLsS --retry 3 --retry-delay 2 --max-time 30 "${base}/package.json" -o cdn-package.json
-          jq -e '.version=="0.1.22" and .appPath=="tizenbrew/bootstrap.html"' cdn-package.json
+          expected="$(jq -r '.version' package.json)"
+          jq -e --arg v "$expected" '.version==$v and .appPath=="tizenbrew/bootstrap.html"' cdn-package.json
           curl -fLsS --retry 3 --retry-delay 2 --max-time 30 "${base}/tizenbrew/bootstrap.html" -o cdn-bootstrap.html
           grep -F 'api.github.com/repos/' cdn-bootstrap.html
           grep -F "tizenbrew/index.html" cdn-bootstrap.html
