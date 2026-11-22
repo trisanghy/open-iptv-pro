@@ -448,7 +448,7 @@ test('P5.1.249 Electron screenshots exercise Escape recovery and unchanged toolb
    'positron-p51249-escape-focus-after-1920x1080-real.png'])
    assert.ok(qa.includes(f)&&wf.includes(f),'P249 evidence '+f);
  for(const token of ['escapeStartQA249','escapeRestoreQA249',
-   "page.keyboard.press('Escape')",'restoredRow412:','toggleAfterNonRowEscape:',
+   "page.keyboard.press('Escape')",'restoredRow412:','const toggleAfterNonRowEscape=',
    'noAutoplay:'])
    assert.ok(qa.includes(token),'P249 Electron recovery QA '+token);
 });

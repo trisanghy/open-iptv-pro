@@ -1993,7 +1993,7 @@ P5.1.81 follow-up: real Electron capture found nav overflow; replace flexible no
 
 
 ## P5.1.249 / Electron 4.23.334 — Escape hủy rồi trở về hàng kênh đang chọn (CANDIDATE)
-- Feature priority: NEW/FIX — Khi mở bảng nhảy số từ một hàng kênh đang focus, phím Escape hủy và trả tiêu điểm về đúng hàng đó, để tiếp tục duyệt bằng lên/xuống. Trước đây Escape chỉ trả focus về nút mở bảng, gây đứt dòng điều hướng.
+- Feature priority: NEW — Khi mở bảng nhảy số từ một hàng kênh đang focus, phím Escape hủy và trả tiêu điểm về đúng hàng đó, để tiếp tục duyệt bằng lên/xuống. Trước đây Escape chỉ trả focus về nút mở bảng, gây đứt dòng điều hướng.
 - User action: Chọn QA Channel 412, Alt+Shift+J, Escape: bảng đóng và kênh 412 sáng trở lại; nếu mở từ thanh công cụ thì Escape tiếp tục focus nút như cũ.
 - Electron screenshot: positron-p51249-escape-focus-after-1920x1080-real.png
 - Đầu vào ảnh thật P5.1.248: bảng nhập 412 chiếm focus và hàng kênh 412 mất focus; cần khôi phục đúng nguồn khi hủy.
