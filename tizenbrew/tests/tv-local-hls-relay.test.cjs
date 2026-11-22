@@ -21,8 +21,8 @@ function request(method,path,body,opts={}){
 }
 test('serviceFile is registered on TizenBrew app manifest; OTA bootstrap untouched',()=>{
  assert.equal(manifest.packageType,'app');
- assert.equal(manifest.version,'0.1.39');
- assert.equal(manifest.tizenbrewEdition,'0.1.39');
+ assert.equal(manifest.version,'0.1.40');
+ assert.equal(manifest.tizenbrewEdition,'0.1.40');
  assert.equal(manifest.appPath,'tizenbrew/bootstrap.html');
  assert.equal(manifest.serviceFile,'tizenbrew/hls-relay-v1.js');
 });
@@ -69,7 +69,7 @@ test('TV localhost service CORS preflight works without actual X-Open-IPTV-Relay
   const health=await request('GET','/health');
   assert.equal(health.status,200);
   assert.equal(JSON.parse(health.body).ok,true);
-  assert.equal(JSON.parse(health.body).version,'0.1.39');
+  assert.equal(JSON.parse(health.body).version,'0.1.40');
   const denied=await request('GET','/health',null,{origin:'https://untrusted.example'});
   assert.equal(denied.status,403);
   assert.equal(denied.headers['access-control-allow-origin'],undefined);
