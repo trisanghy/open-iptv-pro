@@ -77,7 +77,9 @@ test('live MutationObserver catches subsequent app.textContent replacements',()=
 
 test('Cast icon is centered on iPhone without old caption',()=>{
  assert.match(css,/output-controls #castBtn\{[\s\S]*?justify-content:center!important/);
- assert.match(css,/output-controls #castBtn::before\{[\s\S]*?transform:translate\(-50%,-50%\)!important/);
+ assert.doesNotMatch(css,/#castBtn::before/);
+ assert.match(fs.readFileSync(path.join(root,'web-cast-v2.css'),'utf8'),/#castBtn > svg\.oip-cast-svg/);
+ assert.match(fs.readFileSync(path.join(root,'index.html'),'utf8'),/id="castBtn"[^>]*>[\s\S]*?<svg[^>]*data-iptv-svg-icon="cast"/);
  assert.match(css,/output-controls #castBtn>\.cast-label\{display:none!important/);
 });
 
