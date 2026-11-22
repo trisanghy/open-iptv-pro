@@ -79,5 +79,46 @@
  panel.addEventListener('keydown',event=>{
   if(event.key==='Escape'){event.preventDefault();setOpen(false);}
  });
+
+ // P5.1.228 — Keyboard-only traversal of existing channel rows.
+ // Focus never starts playback: Enter/Space remain native playback actions.
+ const channelList=d.getElementById('channelList');
+ if(channelList){
+  channelList.setAttribute('aria-label','Danh sách kênh, dùng các phím mũi tên, Home, End, Page Up hoặc Page Down để chuyển vị trí');
+  channelList.addEventListener('keydown',event=>{
+   const keys=['ArrowUp','ArrowDown','Home','End','PageUp','PageDown'];
+   if(!keys.includes(event.key))return;
+   const current=event.target;
+   if(!(current instanceof HTMLElement)||!current.matches('.channel-item'))return;
+   const rows=[...channelList.querySelectorAll('.channel-item')];
+   const index=rows.indexOf(current);
+   if(index<0)return;
+   event.preventDefault();
+   event.stopPropagation();
+   const pageSize=Math.max(1,Math.floor(channelList.clientHeight/Math.max(35,current.getBoundingClientRect().height)));
+   const targetIndex=event.key==='Home'?0:event.key==='End'?rows.length-1:
+    event.key==='ArrowDown'?Math.min(rows.length-1,index+1):
+    event.key==='ArrowUp'?Math.max(0,index-1):
+    event.key==='PageDown'?Math.min(rows.length-1,index+pageSize):
+    Math.max(0,index-pageSize);
+   const next=rows[targetIndex];
+   const listRect=channelList.getBoundingClientRect();
+   const nextRect=next.getBoundingClientRect();
+   if(nextRect.top<listRect.top)channelList.scrollTop+=nextRect.top-listRect.top;
+   else if(nextRect.bottom>listRect.bottom)channelList.scrollTop+=nextRect.bottom-listRect.bottom;
+   next.focus({preventScroll:true});
+   const name=next.querySelector('.channel-text b')?.textContent||'';
+   status.textContent='Đang chọn '+(targetIndex+1)+'/'+rows.length+': '+name+'. Nhấn Enter để phát.';
+  });
+ }
+ d.addEventListener('keydown',event=>{
+  if(event.altKey&&!event.ctrlKey&&!event.metaKey&&event.key.toLowerCase()==='j'&&
+   d.getElementById('page-tv')?.classList.contains('active-page')){
+   event.preventDefault();
+   setOpen(true);
+  }
+ });
+ toggle.setAttribute('aria-keyshortcuts','Alt+J');
+ toggle.title='Nhảy tới kênh theo số (Alt+J)';
  window.OpenIPTVPositronChannelJump=Object.freeze({open:()=>setOpen(true)});
 })();

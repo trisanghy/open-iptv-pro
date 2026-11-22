@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.312",
-  "description": "Positron P5.1.227: nhảy kênh không cuộn cả giao diện TV",
+  "version": "4.23.313",
+  "description": "Positron P5.1.228: phím điều hướng kênh không tự phát video",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

@@ -59,3 +59,16 @@ html[data-positron="true"].po-v3 #page-tv .channel-panel .panel-header h2{
 html[data-positron="true"].po-v3 #page-tv .channel-panel .panel-header .panel-header-actions{
  gap:4px!important;flex-shrink:0!important;
 }
+
+
+/* P5.1.228 — unmistakable keyboard focus, including programmatic channel jump.
+   Existing favorite stars/move actions, click playback and video remain intact. */
+html[data-positron="true"] #page-tv #channelList .channel-item:focus{
+ outline:2px solid #83e3d3!important;
+ outline-offset:-3px!important;
+ background:#21444b!important;
+ box-shadow:inset 4px 0 0 #9bf4d8!important;
+}
+html[data-positron="true"] #page-tv #channelList .channel-item:focus .channel-text b{
+ color:#f4fffc!important;
+}

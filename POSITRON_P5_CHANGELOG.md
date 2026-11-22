@@ -1,5 +1,14 @@
 # Positron P5 Changelog
 
+## P5.1.228 — Duyệt kênh bằng bàn phím, không cần chuột / Electron 4.23.313
+- Feature priority: NEW — Người dùng có hàng trăm kênh có thể di chuyển focus bằng mũi tên lên xuống, Home, End, PageUp và PageDown mà không phải nhấn phát từng kênh; thêm viền focus rõ ràng và Alt+J mở ô nhảy tới số kênh, giữ nguyên video đang xem.
+- Electron screenshot: positron-p51228-keyboard-channels-after-1920x1080-real.png
+- User action: Chọn một kênh trong danh sách bằng Tab hoặc ô Nhảy theo số, dùng ↑/↓/PageUp/PageDown/Home/End để duyệt. Chỉ Enter mới phát; Alt+J mở ô nhập số kênh.
+- QA Electron: ảnh before/after 1920×1080 từ Electron thật, focus kênh 400 → ArrowDown → PageDown, đo viền focus và vùng cuộn, End/Home, Alt+J, không làm cuộn trang TV hoặc tự phát kênh.
+- Không thay đổi danh sách nguồn, Favorites, playback, DVR, Cast hoặc stream.
+- CANDIDATE đến khi test Node, ảnh thực đã MỞ soát và release được xác minh.
+
+
 ## P5.1.227 — Nhảy kênh không cuộn cả trang video, tiêu đề gọn / Electron 4.23.312
 - Feature priority: BLOCKER_FIX — Ảnh Electron P5.1.226 cho thấy nhảy tới kênh 250 kéo cả trang video lên, che khuất đầu sidebar và mép trên khung phát, trong khi ba nút tiêu đề khiến chữ xuống hai dòng; sửa đúng vùng cuộn để điều khiển TV vẫn luôn nhìn thấy.
 - Electron screenshot: positron-p51227-jump-scroll-after-1920x1080-real.png
