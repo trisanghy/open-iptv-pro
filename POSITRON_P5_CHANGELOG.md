@@ -1,5 +1,14 @@
 # Positron P5 Changelog
 
+## P5.1.225 — Giữ điều khiển phát video trong cửa sổ desktop / Electron 4.23.310
+- Feature priority: BLOCKER_FIX — Các nút điều khiển phát video, âm lượng và chọn kênh bị đẩy xuống dưới vùng nhìn khi desktop rộng mà cửa sổ thấp, nên cần giới hạn riêng chiều cao stage để tránh cắt thao tác quan trọng mà không thay đổi dữ liệu người xem.
+- Electron screenshot: positron-p51225-tv-controls-after-1920x1080-real.png
+- User action: Mở TV trên desktop 1920×1080; hàng điều khiển Play và các thao tác bổ sung vẫn nằm trên thanh trạng thái thay vì phải cuộn.
+- QA Electron: hai PNG before/after từ cùng ứng dụng thật, đo vị trí bottom của player và control card, kiểm tra không tràn ngang và giữ video trong tỷ lệ khung; riêng fullscreen giữ nguyên.
+- Không sửa nguồn M3U, logic playback, Cast, DVR hay dữ liệu Favorites.
+- CANDIDATE cho đến khi Node, Electron screenshot sau đã MỞ, 6 jobs và release được xác minh.
+
+
 ## P5.1.224 — Trạng thái nhập XMLTV hiển thị ngay trong EPG / 4.23.309
 - Feature priority: NEW — Sau khi người dùng nhập hoặc hủy file XMLTV ngay từ trang Lịch phát sóng, phản hồi không còn bị giấu trong mục Cài đặt, tránh nhầm rằng ứng dụng treo hoặc mất dữ liệu EPG.
 - Electron screenshot: positron-p51224-epg-feedback-after-1920x1080-real.png
