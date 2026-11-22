@@ -1309,6 +1309,8 @@
   });
   let pendingChannelSearch=0;$('#searchBox').addEventListener('input',()=>{if(pendingChannelSearch)cancelAnimationFrame(pendingChannelSearch);pendingChannelSearch=requestAnimationFrame(()=>{pendingChannelSearch=0;renderList();});});$('#volume').addEventListener('input',e=>{player.volume=e.target.value/100;store.volume=player.volume;save();});
   player.volume=store.volume??.8;$('#volume').value=Math.round(player.volume*100);
+  // Keep TV pairing volume synchronized even when adjusting the existing Web slider.
+  player.addEventListener('volumechange',()=>{if(!native)window.OpenIPTVWebCastV2?.onLocalVolumeChanged?.(player.volume,player.muted);});
   const fit=['contain','cover','fill','none'].includes(store.videoFit)?store.videoFit:'contain';$('#videoFit').value=fit;player.className='fit-'+fit;$('#videoFit').addEventListener('change',e=>{store.videoFit=e.target.value;player.className='fit-'+store.videoFit;save();});
   player.addEventListener('playing',()=>{if(window.OpenIPTVBackgroundAudio?.active){player.pause();return;}clearTimeout(failoverTimer);clearTimeout(stallTimer);clearTimeout(startupNoteTimer);markPlaybackVerified();window.IPTVProAdvanced?.onPlaying?.(current,playCandidates[playCandidateIndex]);$('#streamInfo').textContent='● Đang phát';$('#playBtn').textContent='Ⅱ';textStatus('Đang xem: '+(current?.name||''));});
   player.addEventListener('timeupdate',markPlaybackVerified);
