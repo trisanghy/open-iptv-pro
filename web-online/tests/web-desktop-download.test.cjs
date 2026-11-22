@@ -83,7 +83,7 @@ test('More menu always retains software downloads even after intro is dismissed'
  assert.ok(builder.includes('sidebar_button='));
  assert.ok(builder.includes('desktop_button='));
  assert.ok(builder.includes('mobile_button='));
- assert.ok(builder.includes('web-desktop-download.js?v=apple-more-20261120a'));
+ assert.ok(builder.includes('web-desktop-download.js?v=android-pwa-prompt-20261122b'));
  assert.match(fs.readFileSync(path.join(root,'web-online/web-desktop-download.js'),'utf8'),/data-mobile-more-click="softwareDownloadNav"/);
  assert.match(fs.readFileSync(path.join(root,'web-online/web-desktop-download.css'),'utf8'),/desktop-download-intro/);
 });
