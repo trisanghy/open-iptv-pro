@@ -146,3 +146,24 @@ test('P5.1.162 đến trang N giới hạn đúng, bỏ qua số không hợp l�
  assert.equal(core.missingLogos(original,{offset:(core.missingPage('2',2)-1),limit:1}).rows[0].name,'QA 2');
  assert.equal(JSON.stringify(original),snapshot);
 });
+
+test('P5.1.163 CSV chỉ metadata, đủ trên 50 dòng, chống công thức Excel',()=>{
+ const items=Array.from({length:62},(_,i)=>({name:'Kênh '+String(i+1).padStart(3,'0'),
+  group:i%2?'Tin tức':'Thể thao',url:'https://private-stream.invalid/'+i}));
+ items.push({name:'=HYPERLINK("https://bad.invalid")',group:'  +cmd',url:'https://private/secret'});
+ items.push({name:'Dấu, "kép"',group:'Tin tức'});
+ items.push({name:'Có logo',group:'Tin tức',logo:'https://logo/a.png'});
+ const original=JSON.stringify(items),csv=core.missingLogoCsv(items);
+ assert.ok(csv.startsWith('\ufeff"Tên kênh","Nhóm"\r\n'));
+ assert.equal(csv.trim().split('\r\n').length,65);
+ assert.ok(csv.includes('"'+"'" + '=HYPERLINK(""https://bad.invalid"")"'));
+ assert.ok(csv.includes('"'+"'" + '+cmd"'));
+ assert.ok(csv.includes('"Dấu, ""kép"""'));
+ assert.ok(!csv.includes('private-stream.invalid')&&!csv.includes('https://private/secret'));
+ assert.ok(!csv.includes('Có logo'));
+ const filtered=core.missingLogoCsv(items,{query:'kenh',group:'Tin tức',sort:'name-desc'});
+ assert.equal(filtered.trim().split('\r\n').length,32);
+ assert.ok(filtered.indexOf('"Kênh 062"')<filtered.indexOf('"Kênh 002"'));
+ assert.equal(JSON.stringify(items),original);
+ assert.equal(core.missingLogoCsv([]),'\ufeff"Tên kênh","Nhóm"\r\n');
+});

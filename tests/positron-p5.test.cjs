@@ -1613,7 +1613,7 @@ test('P5.1.160.1 phát hành bản vá ảnh desktop đúng phiên bản bất b
  const qa=read('scripts/positron-20-extension.cjs');
  const css=read('renderer/positron-library-pulse.css');
  const workflow=read('.github/workflows/positron-lab.yml');
- assert.equal(pkg.version,'4.23.247');
+ assert.equal(pkg.version,'4.23.248');
  assert.match(read('POSITRON_P5_CHANGELOG.md'),/## P5\.1\.160\.1/);
  assert.match(css,/\.po-pulse-header::before\{content:/);
  assert.match(qa,/mask1601/);
@@ -1630,7 +1630,7 @@ test('P5.1.161 sắp xếp A-Z/Z-A có ảnh thật và không gọi stream',()=
  const css=read('renderer/positron-library-pulse.css');
  const qa=read('scripts/positron-20-extension.cjs');
  const workflow=read('.github/workflows/positron-lab.yml');
- assert.equal(pkg.version,'4.23.247');
+ assert.equal(pkg.version,'4.23.248');
  assert.match(read('POSITRON_P5_CHANGELOG.md'),/## P5\.1\.161/);
  assert.doesNotThrow(()=>new vm.Script(core));
  assert.doesNotThrow(()=>new vm.Script(ui));
@@ -1651,8 +1651,8 @@ test('P5.1.162 đến trang N có ảnh Electron và kiểm tra giới hạn s�
  const css=read('renderer/positron-library-pulse.css');
  const qa=read('scripts/positron-20-extension.cjs');
  const workflow=read('.github/workflows/positron-lab.yml');
- assert.equal(pkg.version,'4.23.247');
- assert.match(pkg.description,/Positron P5\.1\.162:/);
+ assert.equal(pkg.version,'4.23.248');
+ assert.match(read('POSITRON_P5_CHANGELOG.md'),/## P5\.1\.162/);
  assert.doesNotThrow(()=>new vm.Script(core));
  assert.doesNotThrow(()=>new vm.Script(ui));
  assert.match(core,/function missingPage\(/);
@@ -1660,8 +1660,27 @@ test('P5.1.162 đến trang N có ảnh Electron và kiểm tra giới hạn s�
  assert.match(ui,/missingJump\.addEventListener\('keydown'/);
  assert.match(css,/#poLibraryMissingJump:focus-visible/);
  assert.match(qa,/missingJumpQA/);
- assert.match(workflow,/TAG=positron\/v4\.23\.247-p5\.1\.162/);
+ assert.match(read('POSITRON_P5_CHANGELOG.md'),/Electron 4\.23\.247/);
  for(const name of ['positron-p51162-jump-page-before-1920x1080-real.png','positron-p51162-jump-page-after-1920x1080-real.png'])
   assert.ok(qa.includes(name)&&workflow.includes(name),'P162 thiếu ảnh '+name);
+ assert.ok(!ui.includes('fetch(')&&!ui.includes('playChannel('));
+});
+
+test('P5.1.163 Xuất CSV có nút và ảnh Electron 16:9, không quét stream',()=>{
+ const pkg=JSON.parse(read('package.json')),ui=read('renderer/positron-library-pulse.js');
+ const core=read('renderer/positron-library-pulse-core.js');
+ const css=read('renderer/positron-library-pulse.css');
+ const qa=read('scripts/positron-20-extension.cjs');
+ const flow=read('.github/workflows/positron-lab.yml');
+ assert.equal(pkg.version,'4.23.248');
+ assert.match(pkg.description,/Positron P5\.1\.163:/);
+ assert.match(core,/missingLogoCsv/);
+ assert.match(ui,/missingExport\.addEventListener\('click'/);
+ assert.match(ui,/URL\.createObjectURL\(blob\)/);
+ assert.match(css,/#poLibraryMissingExport:disabled/);
+ assert.match(qa,/missingCsvQA/);
+ assert.match(flow,/TAG=positron\/v4\.23\.248-p5\.1\.163/);
+ for(const n of ['positron-p51163-csv-before-1920x1080-real.png','positron-p51163-csv-after-1920x1080-real.png'])
+  assert.ok(qa.includes(n)&&flow.includes(n),n);
  assert.ok(!ui.includes('fetch(')&&!ui.includes('playChannel('));
 });

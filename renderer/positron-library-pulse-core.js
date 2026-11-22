@@ -55,7 +55,7 @@
   if(!Number.isSafeInteger(number))return fallback;
   return Math.max(1,Math.min(total,number));
  }
- function missingLogos(input,{offset=0,limit=10,query='',group='',sort='playlist'}={}){
+ function selectMissingLogoChannels(input,{query='',group='',sort='playlist'}={}){
   const terms=fold(query).split(/\s+/).filter(Boolean);
   const rows=(Array.isArray(input)?input:[]).filter(c=>c&&typeof c==='object'&&
    clean(c.name)&&!clean(c.logo)&&
@@ -67,6 +67,10 @@
    rows.sort((a,b)=>direction*clean(a.name).localeCompare(clean(b.name),'vi',
     {numeric:true,sensitivity:'base'}));
   }
+  return rows;
+ }
+ function missingLogos(input,{offset=0,limit=10,query='',group='',sort='playlist'}={}){
+  const rows=selectMissingLogoChannels(input,{query,group,sort});
   const start=Number.isFinite(offset)?Math.max(0,Math.floor(offset)):0;
   const count=Number.isFinite(limit)?Math.min(50,Math.max(1,Math.floor(limit))):10;
   return {total:rows.length,offset:start,limit:count,
@@ -74,5 +78,18 @@
     name:clean(c.name),group:clean(c.group||c.groupTitle)||'Chưa phân nhóm'
    }))};
  }
- return Object.freeze({summarize,pageGroups,missingLogos,missingLogoGroups,missingPage});
+ // P5.1.163: metadata CSV toàn bộ kết quả lọc, không giới hạn 50 dòng/trang.
+ // Escape công thức và chỉ xuất hai trường: tên và nhóm; tuyệt đối không URL.
+ const csvCell=value=>{
+  const raw=clean(value).replace(/[\u0000-\u001f\u007f]/g,' ');
+  const safe=/^[\s\ufeff]*[=+\-@]/u.test(raw)?"'"+raw:raw;
+  return '"'+safe.replace(/"/g,'""')+'"';
+ };
+ function missingLogoCsv(input,{query='',group='',sort='playlist'}={}){
+  const rows=selectMissingLogoChannels(input,{query,group,sort});
+  const lines=rows.map(c=>csvCell(c.name)+','+
+   csvCell(clean(c.group||c.groupTitle)||'Chưa phân nhóm'));
+  return '\ufeff"Tên kênh","Nhóm"\r\n'+lines.join('\r\n')+(lines.length?'\r\n':'');
+ }
+ return Object.freeze({summarize,pageGroups,missingLogos,missingLogoGroups,missingPage,missingLogoCsv});
 });

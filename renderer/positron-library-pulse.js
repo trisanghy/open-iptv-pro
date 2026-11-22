@@ -1,5 +1,5 @@
 'use strict';
-// Positron P5.1.162 — Bảng phân tích metadata thư viện, không thử stream.
+// Positron P5.1.163 — Bảng phân tích metadata thư viện, không thử stream.
 (()=>{
  const d=document,root=d.documentElement,bar=d.getElementById('positronBar');
  const core=window.PositronLibraryPulseCore,state=window.IPTVState;
@@ -63,6 +63,14 @@
   const option=d.createElement('option');option.value=value;option.textContent=label;
   missingSort.append(option);
  }
+ // P5.1.163: xuất CSV chỉ chứa tên/nhóm theo bộ lọc hiện hành.
+ const exportBar=d.createElement('div');exportBar.className='po-pulse-export-bar';
+ const missingExport=d.createElement('button');missingExport.type='button';
+ missingExport.id='poLibraryMissingExport';missingExport.textContent='Xuất CSV';
+ missingExport.setAttribute('aria-label','Xuất CSV tên và nhóm kênh thiếu logo đã lọc');
+ const exportStatus=d.createElement('span');exportStatus.id='poLibraryMissingExportStatus';
+ exportStatus.setAttribute('role','status');exportStatus.setAttribute('aria-live','polite');
+ exportBar.append(missingExport,exportStatus);
  const missingRows=d.createElement('ol');missingRows.id='poLibraryMissingRows';
  const missingNav=d.createElement('div');missingNav.className='po-pulse-missing-nav';missingNav.id='poLibraryMissingNav';
  const missingPrev=d.createElement('button');missingPrev.type='button';missingPrev.id='poLibraryMissingPrev';
@@ -76,7 +84,7 @@
  const missingGo=d.createElement('button');missingGo.type='button';missingGo.id='poLibraryMissingGo';
  missingGo.textContent='Đến';
  missingNav.append(missingPrev,missingPageLabel,missingJump,missingGo,missingNext);
- missingBody.append(missingSearch,missingGroup,missingSort,missingRows,missingNav);missingPane.append(missingToggle,missingBody);
+ missingBody.append(missingSearch,missingGroup,missingSort,exportBar,missingRows,missingNav);missingPane.append(missingToggle,missingBody);
  const footer=d.createElement('footer');footer.className='po-pulse-footer';
  const stamp=d.createElement('span');stamp.id='poLibraryPulseStamp';
  const refresh=d.createElement('button');refresh.type='button';refresh.id='poLibraryPulseRefresh';
@@ -141,6 +149,9 @@
  const renderMissing=()=>{
   const report=core.missingLogos(state.getChannels(),{offset:missingIndex*10,limit:10,query:missingSearch.value,group:missingGroup.value,sort:missingSort.value});
   missingTotal=report.total;missingRows.replaceChildren();
+  missingExport.disabled=missingTotal===0;
+  missingExport.textContent='Xuất CSV · '+missingTotal+' kênh';
+  exportStatus.textContent='';
   missingToggle.textContent='Kênh thiếu logo: '+missingTotal;
   for(const item of report.rows){
    const li=d.createElement('li');li.className='po-pulse-missing-row';
@@ -186,6 +197,20 @@
  missingSearch.addEventListener('input',()=>{missingIndex=0;renderMissing();});
  missingGroup.addEventListener('change',()=>{missingIndex=0;renderMissing();});
  missingSort.addEventListener('change',()=>{missingIndex=0;renderMissing();});
+ missingExport.addEventListener('click',()=>{
+  const options={query:missingSearch.value,group:missingGroup.value,sort:missingSort.value};
+  const count=core.missingLogos(state.getChannels(),options).total;
+  if(!count)return;
+  const csv=core.missingLogoCsv(state.getChannels(),options);
+  const blob=new Blob([csv],{type:'text/csv;charset=utf-8'});
+  const url=URL.createObjectURL(blob);
+  const link=d.createElement('a');link.href=url;
+  link.download='positron-kenh-thieu-logo-'+new Date().toISOString().slice(0,10)+'.csv';
+  d.body.append(link);link.click();link.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
+  exportStatus.textContent='Đã xuất '+count+' kênh · Chỉ tên và nhóm';
+  missingExport.focus({preventScroll:true});
+ });
  const goMissingPage=()=>{
   const max=Math.max(1,Math.ceil(missingTotal/10));
   missingIndex=core.missingPage(missingJump.value,max,missingIndex+1)-1;

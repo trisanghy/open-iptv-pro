@@ -73,3 +73,9 @@ html[data-positron="true"] .po-pulse-missing-nav{flex-wrap:wrap;justify-content:
 html[data-positron="true"] #poLibraryMissingNav #poLibraryMissingJump{box-sizing:border-box;width:55px;min-height:32px;border:1px solid var(--po-border,#42606b);border-radius:8px;background:var(--po-card,#162934);color:var(--po-text,#eaf7f7);text-align:center;font:inherit;font-size:12px}
 html[data-positron="true"] #poLibraryMissingNav #poLibraryMissingJump:focus-visible{outline:2px solid var(--po-accent,#66d4c2);outline-offset:2px}
 html[data-positron="true"] #poLibraryMissingNav #poLibraryMissingPage{margin-right:auto}
+
+/* P5.1.163: xuất CSV metadata cục bộ, chỉ sau click của người dùng. */
+html[data-positron="true"] .po-pulse-export-bar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:7px;min-width:0}
+html[data-positron="true"] #poLibraryMissingExport{border-color:var(--po-accent,#6ed9c4);font-weight:700}
+html[data-positron="true"] #poLibraryMissingExport:disabled{opacity:.45;cursor:not-allowed}
+html[data-positron="true"] #poLibraryMissingExportStatus{font-size:11px;color:var(--po-muted,#a4b9c0);overflow-wrap:anywhere}

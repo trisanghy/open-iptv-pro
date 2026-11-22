@@ -1,3 +1,11 @@
+## P5.1.163 — Xuất CSV kênh thiếu logo an toàn / Electron 4.23.248
+- NEW FEATURE: Thư viện → Kênh thiếu logo → lọc/tìm/sắp xếp → **Xuất CSV** tất cả kênh khớp, không chỉ 10 hàng hiện tại.
+- CSV UTF-8 BOM tương thích Excel, chỉ Tên kênh/Nhóm; không chứa URL stream, M3U, EPG, tài khoản hay thông tin nguồn. Không gọi mạng hoặc phát video.
+- Chống CSV formula injection, dấu nháy và xuống dòng; thứ tự playlist gốc không đổi.
+- Node regression: >50 hàng, lọc, sắp xếp, thoát công thức. Electron UI 1920×1080 before/after, kiểm tra tạo Blob; không giả nhận đã thử Save As của hệ điều hành.
+- Ảnh trước: positron-p51163-csv-before-1920x1080-real.png; sau: positron-p51163-csv-after-1920x1080-real.png.
+- Trạng thái CANDIDATE cho đến khi CI, ảnh sau đã xem và bản cài đặt Release xác minh.
+
 ## P5.1.162 — Chuyển nhanh tới trang bất kỳ trong thư viện / Electron 4.23.247
 - Feature priority: NEW — Nhập trực tiếp trang muốn xem ở bảng kênh thiếu logo thay vì bấm nút Tiếp liên tục khi thư viện có hàng chục trang; tự giới hạn trong khoảng trang hợp lệ, tránh mất vị trí.
 - User action: Mở Thư viện → Kênh thiếu logo → chọn nhóm hoặc tìm kiếm → nhập số trang trong ô cạnh nút Trước/Tiếp rồi nhấn Enter hoặc nút Đến để chuyển ngay.
