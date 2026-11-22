@@ -146,7 +146,7 @@ test('remote sync routes selected channels and controls to the TV and reflects r
  const app=load('app.js'),castUI=load('cast-ui.js');
  assert.match(app,/OpenIPTVCastUI\?\.onChannelChanged\?\.\(found,playCandidates\[0\]\)/);
  assert.match(castUI,/OpenIPTVWebCast\?\.onChannelChanged\?\.\(ch,url\)/);
- assert.match(app,/OpenIPTVWebCastV2\?\.toggleRemotePlayback\(\)/);
+ assert.match(app,/OpenIPTVWebCastV2\.toggleRemotePlayback\(\)/);
  assert.match(app,/OpenIPTVWebCastV2\?\.onLocalStop\?\.\(\)/);
  assert.match(app,/OpenIPTVWebCastV2\?\.onLocalVolumeChanged\?\.\(player.volume,player.muted\)/);
  assert.match(ui,/function sendRemotePlay\(/);
