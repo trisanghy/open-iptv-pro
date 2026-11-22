@@ -42,5 +42,5 @@ test('Inactive mobile tabs share blue icons and the active tab keeps accent colo
 test('Production HTML requests versioned CSS to avoid stale mobile icons',()=>{
  const html=read('index.html');
  assert.match(html,/web-player-icons\.css\?v=single-icon-first-paint-20261119a/);
- assert.match(html,/web-mobile-controls-polish\.css\?v=quick-icons-unified-20261119b/);
+ assert.match(html,/web-mobile-controls-polish\.css\?v=cast-pseudo-icon-fix-20261122g/);
 });
