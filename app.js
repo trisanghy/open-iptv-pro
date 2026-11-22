@@ -675,6 +675,24 @@
   picker.value=urls.includes(actual)?actual:ch.url;
   picker.title='Chọn link phát thủ công · '+urls.length+' link cho '+ch.name;
  }
+ // Remote TV/Cast owns playback: release the local decoder BEFORE any
+ // awaited parental checks or channel metadata work. Do not call stopPlayer():
+ // that sends a STOP command to the TV and would break channel navigation.
+ function releaseLocalForRemote(){
+  playGeneration++;playAttemptSerial++;
+  clearTimeout(failoverTimer);clearTimeout(stallTimer);clearTimeout(startupNoteTimer);
+  failoverTimer=0;stallTimer=0;startupNoteTimer=null;
+  if(hls){try{hls.destroy();}catch{}hls=null;}
+  if(dash){try{dash.reset();}catch{}dash=null;}
+  try{player.pause();player.removeAttribute('src');player.load();}catch{}
+  window.OpenIPTVWebCastV2?.syncRemoteControls?.();
+ }
+ // Connecting a TV while the browser is already playing must stop the
+ // existing local stream immediately, not 1–2 seconds after TV's first frame.
+ document.addEventListener('openiptv:remote-player-attached',()=>{
+  if(!native&&window.OpenIPTVWebCastV2?.shouldUseRemotePlayer?.())
+   releaseLocalForRemote();
+ });
  function stopPlayer(){const oldFallback=ffmpegFallbackId;ffmpegFallbackId='';if(oldFallback)window.streamleaf?.stopPlaybackFallback?.(oldFallback).catch(()=>{});window.OpenIPTVCastUI?.stopOnLocalStop?.();if(!native)void window.OpenIPTVWebCastV2?.onLocalStop?.();playGeneration++;playAttemptSerial++;clearTimeout(failoverTimer);clearTimeout(stallTimer);clearTimeout(startupNoteTimer);attemptedTransports.clear();nativeHlsTried.clear();window.IPTVProAdvanced?.onStop?.();if(hls){hls.destroy();hls=null;}if(dash){try{dash.reset();}catch{}dash=null;}player.pause();player.removeAttribute('src');player.load();current=null;mediaInfo={hls:false,mode:'unknown',seekable:false};document.dispatchEvent(new CustomEvent('openiptv:media-info',{detail:mediaInfo}));$('#playingTitle').textContent='Chưa chọn kênh';$('#playingSubtitle').textContent='Chọn kênh để phát';$('#playBtn').textContent='▶';$('#emptyPlayer').classList.remove('hidden');$('#playingIcon').textContent='TV';updatePlayerFavorite();updateManualLinkPicker();renderList();window.IPTVExtras?.onChannel?.(null);}
  async function loadHlsLib(){if(window.Hls)return window.Hls;if(native)throw Error('Ứng dụng chưa đóng gói hls.js. Hãy chạy npm install rồi đóng gói lại.');return new Promise((resolve,reject)=>{const script=document.createElement('script');script.src='https://cdn.jsdelivr.net/npm/hls.js@1.6.15/dist/hls.min.js';script.onload=()=>window.Hls?resolve(window.Hls):reject(Error('Thiếu thư viện hls.js'));script.onerror=()=>reject(Error('Không tải được hls.js từ CDN để phát HLS trên trình duyệt này'));document.head.append(script);});}
  function isInternalMediaUrl(raw){return /^https?:\/\/127\.0\.0\.1:\d+\/(?:stream|buffer|snapshot|playback-fallback)\b/i.test(String(raw||''));}
@@ -940,6 +958,11 @@
  }
  async function playChannel(chId,override=null,opts={}){
   const found=enabledChannels().find(c=>c.id===chId);if(!found){toast('Kênh không tồn tại hoặc nguồn đang tắt','warn');return;}
+  // Capture remote ownership at selection time and stop local media synchronously.
+  // Previously the old HLS/DASH engine kept rendering while allowChannel()
+  // and subsequent channel setup ran, creating 1–2 seconds of local playback.
+  const remoteAtSelection=!native&&!!window.OpenIPTVWebCastV2?.shouldUseRemotePlayer?.();
+  if(remoteAtSelection)releaseLocalForRemote();
   if(window.IPTVProAdvanced?.allowChannel && !(await window.IPTVProAdvanced.allowChannel(found)))return;
   if(!opts.buffer)window.streamleaf?.stopTimeshift?.().catch(()=>{});
   const audioOnly=!!(opts.audioOnly||window.OpenIPTVBackgroundAudio?.active);
@@ -970,8 +993,7 @@
   // A paired TV/active Cast is the playback owner. Do not start a competing
   // local decoder while asynchronous TV commands are in flight.
   if(!native&&window.OpenIPTVWebCastV2?.shouldUseRemotePlayer?.()){
-   try{player.pause();player.removeAttribute('src');player.load();}catch{}
-   window.OpenIPTVWebCastV2?.syncRemoteControls?.();
+   if(!remoteAtSelection)releaseLocalForRemote(); // TV connected mid-selection.
    $('#streamInfo').textContent='● Đang điều khiển TV · '+found.name;
    textStatus('Đang chuyển '+found.name+' trên TV…');
    return;
@@ -1321,7 +1343,7 @@
   // Keep TV pairing volume synchronized even when adjusting the existing Web slider.
   player.addEventListener('volumechange',()=>{if(!native)window.OpenIPTVWebCastV2?.onLocalVolumeChanged?.(player.volume,player.muted);});
   const fit=['contain','cover','fill','none'].includes(store.videoFit)?store.videoFit:'contain';$('#videoFit').value=fit;player.className='fit-'+fit;$('#videoFit').addEventListener('change',e=>{store.videoFit=e.target.value;player.className='fit-'+store.videoFit;save();});
-  player.addEventListener('playing',()=>{if(window.OpenIPTVBackgroundAudio?.active){player.pause();return;}clearTimeout(failoverTimer);clearTimeout(stallTimer);clearTimeout(startupNoteTimer);markPlaybackVerified();window.IPTVProAdvanced?.onPlaying?.(current,playCandidates[playCandidateIndex]);$('#streamInfo').textContent='● Đang phát';$('#playBtn').textContent='Ⅱ';textStatus('Đang xem: '+(current?.name||''));});
+  player.addEventListener('playing',()=>{if((!native&&window.OpenIPTVWebCastV2?.shouldUseRemotePlayer?.())||window.OpenIPTVBackgroundAudio?.active){player.pause();if(!native&&window.OpenIPTVWebCastV2?.shouldUseRemotePlayer?.())releaseLocalForRemote();return;}clearTimeout(failoverTimer);clearTimeout(stallTimer);clearTimeout(startupNoteTimer);markPlaybackVerified();window.IPTVProAdvanced?.onPlaying?.(current,playCandidates[playCandidateIndex]);$('#streamInfo').textContent='● Đang phát';$('#playBtn').textContent='Ⅱ';textStatus('Đang xem: '+(current?.name||''));});
   player.addEventListener('timeupdate',markPlaybackVerified);
   player.addEventListener('loadeddata',()=>{clearTimeout(startupNoteTimer);
    if(current&&!firstFrameReported&&channelRequestedAt){
