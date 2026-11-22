@@ -7,7 +7,7 @@ const chrome=process.env.CAST_V2_CHROME||'';
 const output=path.join(root,'cast-v2-artifacts');
 const testSource=path.join(root,'web-cast-v2.js');
 const testCss=path.join(root,'web-cast-v2.css');
-function documentFixture(theme){
+function documentFixture(theme,device){
  const probe=[
   '(function(){',
   'const overlay=document.getElementById("iptvCastOverlay");',
@@ -25,7 +25,7 @@ function documentFixture(theme){
   '})();'
  ].join('');
  return [
-  '<!doctype html><html lang="vi" data-theme="'+theme+'" data-iptv-device="mobile"><head>',
+  '<!doctype html><html lang="vi" data-theme="'+theme+'" data-iptv-device="'+device+'"><head>',
   '<meta name="viewport" content="width=device-width,initial-scale=1">',
   '<link rel="stylesheet" href="web-player-icons.css">',
   '<link rel="stylesheet" href="web-mobile-controls-polish.css">',
@@ -44,7 +44,7 @@ for(const theme of ['light','dark','amoled']){
    fs.mkdirSync(output,{recursive:true});
    const fixture=path.join(root,'cast-v2-check-'+theme+'-'+device+'.html');
    const shot=path.join(output,'cast-v2-'+theme+'-'+device+'.png');
-   fs.writeFileSync(fixture,documentFixture(theme),'utf8');
+   fs.writeFileSync(fixture,documentFixture(theme,device),'utf8');
    try{
     const common=['--headless','--no-sandbox','--disable-gpu','--allow-file-access-from-files',
      '--hide-scrollbars','--window-size='+width+','+height,'file://'+fixture];
