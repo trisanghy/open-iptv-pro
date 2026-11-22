@@ -20,7 +20,7 @@ test('Intelligence native inventory is reused, and new model installs need an ex
  assert.match(ui,/installButton\.addEventListener\('click',async/);
  assert.match(ui,/native\.aiInstallModel\(key\)/);
  assert.match(ui,/selectionKey='watchflow:intelligence-model-v1'/);
- assert.match(ui,/Không tải/);
+ assert.match(ui,/không tải/);
  assert.match(css,/wf-model-picker\[hidden\]/);
 });
 test('Existing release workflows are strictly prerelease',()=>{

@@ -1,3 +1,7 @@
+## Rust Lab v23.8.110 — Cập nhật kiểm thử hồi quy cho kiến trúc AI đã chốt (PRERELEASE)
+
+Test cũ không còn ép Bayes chạy dưới Smart hoặc mô tả sai về mô hình Intelligence. Giữ Standard = Naive Bayes, Smart = fastText đã huấn luyện 18 MB (chưa có trọng số), Intelligence = dùng chung mô hình đang cài hoặc tải mới. Các tính năng phát và AI khác không thay đổi.
+
 ## Rust Lab v23.8.109 — Tách đúng 3 tầng WatchFlow AI (PRE-RELEASE)
 
 Standard dùng Naive Bayes tích hợp, đọc EPG hiện có. Smart là mô hình fastText huấn luyện trước với mục tiêu ≈18 MB nhưng chưa có file trọng số được xác minh; hiển thị rõ chưa kích hoạt, không gọi bộ Bayes là fastText. Intelligence có bộ chọn mô hình cục bộ từ Rust Lab: tự tìm mô hình MLX đã tải, không tải trùng; chỉ cài mới khi người dùng bấm Tải. Giao diện phân biệt giữa mô hình có sẵn và backend LLM WatchFlow chưa được nối. Test hồi quy + giữ prerelease, không đụng main/Latest.
