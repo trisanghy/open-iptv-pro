@@ -7,6 +7,7 @@ function extract(from,to){
  assert.ok(a>=0&&b>a,'Missing '+from);
  return html.slice(a,b);
 }
+const focusCode=extract("var focusStorageKey=","function select(c){");
 const pickerCode=extract("var pickerGroup='Tất cả',pickerIndex=0,pickerChannels=[];","function closePlayer(){");
 function harness(){
  const channels=Array.from({length:45},(_,i)=>({
@@ -30,9 +31,10 @@ function harness(){
  };
  const ctx={
    items:channels,playing,byId:id=>els[id],elem:el,
+   localStorage:{getItem(){return null;},setItem(){}},
    select:ch=>selected.push(ch.id),play:ch=>played.push(ch.id)
  };
- const picker=vm.runInNewContext(pickerCode+'\n({openChannelPicker,closeChannelPicker,pickerMove,confirmPickerChannel,pickerSetGroup,pickerGroupsAll,renderChannelPicker,current:()=>({pickerGroup,pickerIndex,pickerChannels})});',ctx);
+ const picker=vm.runInNewContext(focusCode+pickerCode+'\n({openChannelPicker,closeChannelPicker,pickerMove,confirmPickerChannel,pickerSetGroup,pickerGroupsAll,renderChannelPicker,current:()=>({pickerGroup,pickerIndex,pickerChannels,lastPickerPosition})});',ctx);
  return {picker,els,channels,played,selected,ctx,focused};
 }
 test('Full-screen player opens a real picker with the playing channel highlighted without switching',()=>{
@@ -122,4 +124,18 @@ test('HTML picker is inside the player and announces remote navigation',()=>{
  assert.match(markup,/id="pickerList"/);
  assert.match(markup,/Back Đóng danh sách/);
  assert.match(html,/↑ ↓ ← → Mở danh sách kênh/);
+});
+
+
+test('Closing and reopening channel picker remembers the last highlighted channel',()=>{
+ const s=harness();s.picker.openChannelPicker();
+ s.picker.pickerMove('ArrowDown');
+ assert.equal(s.picker.current().lastPickerPosition.id,'c12');
+ s.picker.closeChannelPicker();
+ s.picker.openChannelPicker();
+ assert.equal(s.picker.current().pickerChannels[s.picker.current().pickerIndex].id,'c12');
+ s.picker.pickerMove('ArrowRight');
+ assert.equal(s.picker.current().lastPickerPosition.group,'Tin tức');
+ s.picker.closeChannelPicker();s.picker.openChannelPicker();
+ assert.equal(s.picker.current().pickerGroup,'Tin tức');
 });
