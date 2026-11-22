@@ -1,4 +1,5 @@
 name: Rust Lab Windows EXE (branch build)
+# A main-TV screenshot workflow refresh also requests the matching Windows x64 branch build.
 on:
   push:
     branches:

@@ -60,6 +60,23 @@ jobs:
         run: |
           set -Eeuo pipefail
           CHROME="$(command -v google-chrome)" node tests/rust-dark-amoled-visual-audit-v23-8-98.cjs
+      - name: Export fresh main-screen TV screenshots from this exact HEAD
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          mkdir -p rust-main-ui-capture
+          test -s rust-feature-gallery/01-page-tv.png
+          test -s rust-feature-gallery/41-dark-tv-controls.png
+          cp rust-feature-gallery/01-page-tv.png rust-main-ui-capture/rust-lab-main-tv-light.png
+          cp rust-feature-gallery/41-dark-tv-controls.png rust-main-ui-capture/rust-lab-main-tv-dark.png
+      - name: Upload fresh main-screen previews (renderer, not native)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: rust-lab-main-tv-current-head
+          path: rust-main-ui-capture/*.png
+          if-no-files-found: warn
+          retention-days: 14
       - name: Upload screenshot and per-page colors (browser renderer, not native)
         if: always()
         uses: actions/upload-artifact@v4
