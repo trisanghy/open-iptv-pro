@@ -131,7 +131,7 @@ label{display:block;color:#ecf6ff;font-weight:650;margin:12px 0 6px}
 <section id="addPanel" class="panel" hidden>
 <h1>Thêm nguồn IPTV</h1><p>Gửi URL hoặc chuyển tệp M3U qua QR khi TV không đọc được nguồn.</p>
 <form id="sourceForm">
-<label for="name">Tên nguồn</label><input id="name" type="text" maxlength="80" placeholder="Ví dụ: Danh sách của tôi" required autocomplete="off">
+<label for="name">Tên nguồn (không bắt buộc)</label><input id="name" type="text" maxlength="80" placeholder="Để trống để TV tự đặt tên" autocomplete="off">
 <label for="address">Đường dẫn URL M3U / M3U8</label><input id="address" type="text" maxlength="4096" placeholder="https://example.com/channels.m3u" required inputmode="url" autocapitalize="off" autocomplete="off" spellcheck="false">
 <label class="checkline"><input id="rights" type="checkbox" required> Tôi có quyền sử dụng danh sách và nội dung này.</label>
 <button id="send" class="primary full" type="submit" disabled>Gửi nguồn sang TV</button>
@@ -572,7 +572,7 @@ byId('filterChannels').oninput=function(){var next=this.value.trim().slice(0,90)
 byId('sourceForm').onsubmit=async function(event){
  event.preventDefault();
  var name=byId('name').value.trim().slice(0,80),address=validUrl(byId('address').value);
- if(!name||!address||!byId('rights').checked){feedback(!address?'URL không hợp lệ. Nhập tên miền hoặc URL HTTP(S), ví dụ d.org.vn/listiptv.':'Nhập tên nguồn và xác nhận quyền sử dụng.',true);return;}
+ if(!address||!byId('rights').checked){feedback(!address?'URL không hợp lệ. Nhập tên miền hoặc URL HTTP(S), ví dụ d.org.vn/listiptv.':'Cần xác nhận quyền sử dụng danh sách.',true);return;}
  byId('address').value=address;
  try{
   var response=await command('add-source',{name:name,address:address,rights:true,sourceId:''},'Đang gửi nguồn. Chờ TV xác nhận đã nhận yêu cầu…');
