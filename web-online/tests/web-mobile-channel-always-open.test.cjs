@@ -4,6 +4,7 @@ const root=path.resolve(__dirname,'../..');
 const features=fs.readFileSync(path.join(root,'features.js'),'utf8');
 const css=fs.readFileSync(path.join(root,'web-mobile-player.css'),'utf8');
 const html=fs.readFileSync(path.join(root,'index.html'),'utf8');
+const touchCss=fs.readFileSync(path.join(root,'web-mobile-touch-sort.css'),'utf8');
 function runPanel({mobile,preference}){
  const start=features.indexOf(' function isMobileChannelPanel(){');
  const end=features.indexOf(' function updateAppearance(persist=true){',start);
@@ -59,4 +60,10 @@ test('mobile preference changes and viewport lifecycle are synchronized without 
  assert.match(html,/features\.js\?v=web-perf-20261120a/);
  assert.match(html,/web-mobile-player\.css\?v=apple-more-20261120a/);
  assert.match(fs.readFileSync(path.join(root,'web-online/prepare-web.py'),'utf8'),/Cannot protect mobile channel list visibility after WebView build/);
+});
+
+test('mobile panel header swipes scroll the channel list from one native touch surface',()=>{
+ assert.match(touchCss,/\.channel-panel\{\s*overflow-x:hidden!important;overflow-y:auto!important/);
+ assert.match(touchCss,/\.channel-panel > #channelList\{\s*flex:0 0 auto!important;height:auto!important;min-height:0!important;\s*max-height:none!important;overflow:visible!important/);
+ assert.match(touchCss,/#channelList \.folder-header\{\s*position:relative!important;top:auto!important/);
 });
