@@ -420,7 +420,7 @@ function renderChannels(){
 async function command(action,details,notice){
  busy=true;updateControls();feedback(notice||'Đang gửi thay đổi đến TV…');
  try{
-  var payload=Object.assign({sourceId:currentSource,offset:offset,query:query,filter:managerMode,group:activeGroup},details||{});
+  var payload=Object.assign({sourceId:currentSource,offset:offset,query:query,filter:managerMode,group:activeGroup,viewGroup:activeGroup},details||{});
   var response=await request(action,payload,action==='add-source'?55000:30000);
   if(response.state)applySnapshot(response.state);
   feedback(response.message||'✓ TV đã xác nhận lưu thay đổi thành công.');
