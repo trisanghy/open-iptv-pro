@@ -131,3 +131,54 @@ html[data-theme="amoled"] #iptvCastPanel{background-image:none!important}
 /* Keep the TV URL and remote controls inside narrow mobile viewports. */
 #iptvCastPanel .cx-link{overflow-wrap:anywhere;word-break:break-word;max-width:100%;min-width:0}
 #iptvCastPanel .cx-card,#iptvCastPanel .cx-remote{overflow-wrap:anywhere}
+
+
+/* Cast SVG single-source guard v3 — eliminate the conflicting pseudo icons
+   from web-player-icons.css / tablet layouts / mobile controls. */
+html body #page-tv #castBtn::before,
+html[data-iptv-device="mobile"] body #page-tv .player-control-card .control-layout-top .output-controls #castBtn::before,
+html[data-iptv-device="mobile"] body #page-tv .player-control-card .control-layout-top>.output-controls:is(.output-controls) #castBtn::before {
+  content:none!important;display:none!important;visibility:hidden!important;
+  -webkit-mask-image:none!important;mask-image:none!important;
+  width:0!important;height:0!important;position:static!important;
+}
+html body #page-tv #castBtn{
+  display:inline-flex!important;align-items:center!important;justify-content:center!important;
+  gap:7px!important;line-height:1!important;white-space:nowrap!important;
+}
+html body #page-tv #castBtn > svg.oip-cast-svg {
+  box-sizing:border-box!important;display:block!important;position:static!important;
+  flex:0 0 22px!important;width:22px!important;height:22px!important;
+  padding:0!important;margin:0!important;max-width:none!important;max-height:none!important;
+  transform:none!important;top:auto!important;left:auto!important;
+  background:none!important;border:0!important;box-shadow:none!important;
+  -webkit-mask:none!important;mask:none!important;
+  color:currentColor!important;opacity:1!important;overflow:visible!important;
+}
+html[data-iptv-device="mobile"] body #page-tv .player-control-card .control-layout-top .output-controls #castBtn {
+  gap:0!important;font-size:0!important;padding:0!important;
+}
+html[data-iptv-device="mobile"] body #page-tv .player-control-card .control-layout-top .output-controls #castBtn > svg.oip-cast-svg {
+  width:24px!important;height:24px!important;flex-basis:24px!important;
+}
+/* All modal glyphs are now identical SVG shapes from web-cast-icons.js.
+   Stroke/fill belongs to the icon; tint belongs to the three-theme palette. */
+#iptvCastPanel svg.oip-cast-svg,
+.iptv-tv-body svg.oip-cast-svg {
+  display:inline-block;flex:0 0 auto;width:20px;height:20px;
+  min-width:0;max-width:none;max-height:none;
+  vertical-align:middle;fill:currentColor;stroke:currentColor;
+  color:inherit;overflow:visible;pointer-events:none;
+}
+#iptvCastPanel .cx-icon > svg.oip-cast-svg {width:29px;height:29px;color:var(--cx-accent)}
+#iptvCastPanel .cx-tab > svg.oip-cast-svg {width:20px;height:20px}
+#iptvCastPanel .cx-featureicon > svg.oip-cast-svg {width:27px;height:27px;color:var(--cx-accent)}
+#iptvCastPanel .cx-button > svg.oip-cast-svg {width:18px;height:18px}
+#iptvCastPanel .cx-close > svg.oip-cast-svg {width:23px;height:23px;color:var(--cx-dim)}
+#iptvCastPanel .cx-tvlogo {display:flex;align-items:center;justify-content:center;gap:7px}
+#iptvCastPanel .cx-tvlogo > svg.oip-cast-svg {width:17px;height:17px}
+#iptvCastPanel .cx-link {font-variant-ligatures:none;overflow-wrap:anywhere}
+#iptvCastPanel .cx-tab,#iptvCastPanel .cx-button {display:inline-flex;align-items:center;justify-content:center;gap:9px}
+.iptv-tv-body .tv-pill{display:inline-flex;align-items:center;gap:8px}
+.iptv-tv-body .tv-pill > svg.oip-cast-svg{width:18px;height:18px}
+.iptv-tv-body button:has(>svg.oip-cast-svg){display:inline-flex;align-items:center;justify-content:center;gap:8px}
