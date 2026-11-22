@@ -2,7 +2,7 @@
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
   "version": "4.23.257",
-  "description": "Positron P5.1.171: hiển thị phạm vi kênh đang xem theo phân trang",
+  "description": "Positron P5.1.172: tìm kênh thiếu logo trực tiếp trong danh sách TV",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",
