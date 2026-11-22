@@ -1934,7 +1934,8 @@ test('P5.1.184 filters Favorites suggestions by actual source groups with accent
  const qa=read('scripts/positron-20-extension.cjs');
  assert.ok(js.includes("let moreCursor=0,moreQuery='',morePageSize=6,moreGroup='';"));
  assert.ok(js.includes("groupSelect.id='positronFavoriteMoreGroup'"));
- assert.ok(js.includes("available.map(ch=>String(ch.group||'Không phân nhóm'))"));
+ assert.ok(js.includes("const group=String(channel.group||'Không phân nhóm')"));
+ assert.ok(js.includes('groupCounts.set(group,(groupCounts.get(group)||0)+1)'), 'Every available source channel contributes to group counts');
  assert.ok(js.includes("(!moreGroup||String(ch.group||'Không phân nhóm')===moreGroup)"));
  assert.ok(js.includes('moreGroup=groupSelect.value;moreCursor=0;syncFavoriteMore()'));
  assert.ok(js.includes('words.every(word=>foldMore((ch.name||\'\')+\' \'+(ch.group||\'\')).includes(word))'));
