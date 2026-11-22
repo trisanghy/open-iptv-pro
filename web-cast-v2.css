@@ -273,11 +273,13 @@ html[data-iptv-device="mobile"] body #page-tv #castBtn[data-cast-connection]:not
 @media(max-width:350px){.iptv-tv-body .tv-history-grid{grid-template-columns:minmax(0,1fr)}}
 @media(prefers-reduced-motion:reduce){.iptv-tv-body .tv-history-card{transition:none}}
 
-/* Pairing PIN compacts with page scroll, remaining readable at TV remote distance. */
+/* Moderate fallback for older Samsung TV browsers and cached receiver JavaScript. */
 .iptv-tv-body #tvPairPin{
  white-space:nowrap;line-height:1.15;overflow-wrap:normal;
- /* font size and vertical margins are updated on scroll to reclaim real layout space */
- will-change:font-size,margin;
+ font-size:clamp(40px,5.7vw,72px);margin:25px 0;
+ transition:font-size .14s ease-out,margin .14s ease-out;
 }
 .iptv-tv-body #tvClearHistory:disabled{opacity:.55;cursor:default}
 .iptv-tv-body #tvClearHistory:not(:disabled):focus-visible{outline:3px solid #29d776;outline-offset:3px}
+
+@media(prefers-reduced-motion:reduce){.iptv-tv-body #tvPairPin{transition:none}}
