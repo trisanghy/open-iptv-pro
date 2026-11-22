@@ -126,3 +126,9 @@ html[data-positron="true"] #poLibraryMissingEpg:focus-visible{outline:2px solid 
 html[data-positron="true"] #poLibraryMissingReset{min-height:34px;flex:0 0 auto;border-color:var(--po-border,#36515c);font-weight:650}
 html[data-positron="true"] #poLibraryMissingReset[hidden]{display:none!important}
 html[data-positron="true"] #poLibraryMissingReset:focus-visible{outline:2px solid var(--po-accent,#66d4c2);outline-offset:2px}
+/* P5.1.171: phạm vi mới nằm dưới các nút, không chèn thanh phân trang. */
+html[data-positron="true"] #poLibraryMissingRange{
+ display:block;min-height:16px;margin:-3px 0 0;
+ color:var(--po-muted,#a4b9c0);font-size:11px;line-height:1.45;
+ font-variant-numeric:tabular-nums;overflow-wrap:anywhere;
+}

@@ -80,6 +80,16 @@
     name:clean(c.name),group:clean(c.group||c.groupTitle)||'Chưa phân nhóm'
    }))};
  }
+ // P5.1.171: Phạm vi metadata, không truy cập stream.
+ function missingVisibleRange(total,offset=0,limit=10){
+  const count=Number.isFinite(Number(total))?Math.max(0,Math.floor(Number(total))):0;
+  if(!count)return 'Không có kênh phù hợp';
+  const skip=Number.isFinite(Number(offset))?Math.max(0,Math.floor(Number(offset))):0;
+  const size=Number.isFinite(Number(limit))?Math.max(1,Math.floor(Number(limit))):10;
+  const first=Math.min(count,skip+1);
+  const last=Math.min(count,first+size-1);
+  return 'Đang xem '+first+'–'+last+' / '+count+' kênh';
+ }
  // P5.1.163: metadata CSV toàn bộ kết quả lọc, không giới hạn 50 dòng/trang.
  // Escape công thức và chỉ xuất hai trường: tên và nhóm; tuyệt đối không URL.
  const csvCell=value=>{
@@ -135,5 +145,5 @@
   return '\ufeff"Tên kênh","Số kênh","Số nhóm","Số nguồn","Nhóm"\r\n'+
    lines.join('\r\n')+(lines.length?'\r\n':'');
  }
- return Object.freeze({summarize,pageGroups,missingLogos,missingLogoGroups,missingPage,missingLogoCsv,duplicateNames,duplicateNamesCsv});
+ return Object.freeze({summarize,pageGroups,missingLogos,missingLogoGroups,missingPage,missingVisibleRange,missingLogoCsv,duplicateNames,duplicateNamesCsv});
 });

@@ -314,3 +314,24 @@ test('P5.1.170 nút Xóa bộ lọc khôi phục đủ 5 điều kiện mà khô
  assert.ok(css.includes('#poLibraryMissingReset[hidden]{display:none!important}'));
  assert.ok(!ui.includes('importSource(')&&!ui.includes('playChannel(')&&!ui.includes('deleteChannel('));
 });
+
+test('P5.1.171 nhãn phạm vi kênh không sửa danh sách nguồn',()=>{
+ const f=core.missingVisibleRange;
+ assert.equal(f(561,0,10),'Đang xem 1–10 / 561 kênh');
+ assert.equal(f(561,10,10),'Đang xem 11–20 / 561 kênh');
+ assert.equal(f(561,550,25),'Đang xem 551–561 / 561 kênh');
+ assert.equal(f(8,0,25),'Đang xem 1–8 / 8 kênh');
+ assert.equal(f(0,0,10),'Không có kênh phù hợp');
+ assert.equal(f(-1,-2,10),'Không có kênh phù hợp');
+ assert.equal(f(1,999,25),'Đang xem 1–1 / 1 kênh');
+ const channels=[{name:'QA A',group:'Tin',url:'https://secret.test/1'},{name:'QA B',group:'Tin',url:'https://secret.test/2'}];
+ const before=JSON.stringify(channels),report=core.missingLogos(channels,{limit:1,offset:1});
+ assert.equal(f(report.total,report.offset,report.limit),'Đang xem 2–2 / 2 kênh');
+ assert.equal(JSON.stringify(channels),before);
+ const js=fs.readFileSync(path.join(__dirname,'../renderer/positron-library-pulse.js'),'utf8');
+ const css=fs.readFileSync(path.join(__dirname,'../renderer/positron-library-pulse.css'),'utf8');
+ assert.ok(js.includes('poLibraryMissingRange')&&js.includes("setAttribute('aria-live','polite')"));
+ assert.ok(js.includes('core.missingVisibleRange(missingTotal,missingIndex*size,size)'));
+ assert.ok(css.includes('#poLibraryMissingRange{'));
+ assert.ok(!js.includes('deleteChannel(')&&!js.includes('importSource('));
+});

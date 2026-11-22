@@ -93,6 +93,9 @@
  const missingPrev=d.createElement('button');missingPrev.type='button';missingPrev.id='poLibraryMissingPrev';
  missingPrev.textContent='Trước';
  const missingPageLabel=d.createElement('span');missingPageLabel.id='poLibraryMissingPage';
+ const missingRange=d.createElement('div');missingRange.id='poLibraryMissingRange';
+ missingRange.className='po-pulse-missing-range';missingRange.setAttribute('role','status');
+ missingRange.setAttribute('aria-live','polite');
  const missingNext=d.createElement('button');missingNext.type='button';missingNext.id='poLibraryMissingNext';
  missingNext.textContent='Tiếp';
  const missingJump=d.createElement('input');missingJump.type='number';missingJump.min='1';
@@ -101,7 +104,7 @@
  const missingGo=d.createElement('button');missingGo.type='button';missingGo.id='poLibraryMissingGo';
  missingGo.textContent='Đến';
  missingNav.append(missingPrev,missingPageLabel,missingJump,missingGo,missingNext);
- missingBody.append(missingSearch,missingGroup,missingEpg,missingSort,missingSize,exportBar,missingNav,missingRows);missingPane.append(missingToggle,missingBody);
+ missingBody.append(missingSearch,missingGroup,missingEpg,missingSort,missingSize,exportBar,missingNav,missingRange,missingRows);missingPane.append(missingToggle,missingBody);
  // P5.1.164: tên trùng ở nhiều kênh/nguồn, chỉ xem metadata, không tự xóa.
  const duplicatePane=d.createElement('section');duplicatePane.id='poLibraryDuplicates';
  duplicatePane.className='po-pulse-duplicates';
@@ -227,6 +230,7 @@
   }
   const pages=Math.max(1,Math.ceil(missingTotal/size));
   missingPageLabel.textContent='Trang '+(missingIndex+1)+' / '+pages;
+  missingRange.textContent=core.missingVisibleRange(missingTotal,missingIndex*size,size);
   missingJump.max=String(pages);
   missingJump.value=String(missingIndex+1);
   missingPrev.disabled=missingIndex===0;
