@@ -170,6 +170,40 @@ test('remote sync routes selected channels and controls to the TV and reflects r
  assert.match(receiver,/case 'volume'/);
  assert.match(receiver,/command\.volume/);
 });
+test('remote channel handoff tears down local HLS/DASH before awaiting channel selection and never stops TV session',()=>{
+ const app=load('app.js');
+ const releaseStart=app.indexOf(' function releaseLocalForRemote(){');
+ const releaseEnd=app.indexOf('\n document.addEventListener(\'openiptv:remote-player-attached\'',releaseStart);
+ assert.ok(releaseStart>0&&releaseEnd>releaseStart,'local release helper exists');
+ const release=app.slice(releaseStart,releaseEnd);
+ const seen=[];
+ const mock={
+  playGeneration:11,playAttemptSerial:4,failoverTimer:1,stallTimer:2,startupNoteTimer:3,
+  hls:{destroy(){seen.push('hls-destroy');}},dash:{reset(){seen.push('dash-reset');}},
+  player:{pause(){seen.push('pause');},removeAttribute(name){seen.push('remove-'+name);},load(){seen.push('load');}},
+  clearTimeout(id){seen.push('timer-'+id);},
+  window:{OpenIPTVWebCastV2:{syncRemoteControls(){seen.push('sync');},onLocalStop(){throw Error('must never stop TV');}}},
+ };
+ vm.runInNewContext(release+';releaseLocalForRemote();',mock);
+ assert.deepEqual(seen.slice(0,3),['timer-1','timer-2','timer-3']);
+ assert.ok(seen.indexOf('hls-destroy')<seen.indexOf('pause'),'HLS decoder is torn down before video pause');
+ assert.ok(seen.includes('dash-reset'));
+ assert.ok(seen.includes('remove-src'));
+ assert.ok(seen.includes('load'));
+ assert.equal(mock.playGeneration,12);
+ assert.equal(mock.playAttemptSerial,5);
+ const playStart=app.indexOf(' async function playChannel(chId,override=null,opts={}){');
+ const gate=app.indexOf('await window.IPTVProAdvanced.allowChannel(found)',playStart);
+ const handoff=app.indexOf('if(remoteAtSelection)releaseLocalForRemote();',playStart);
+ const localTry=app.indexOf('try{await tryPlayback(playCandidates[0]',playStart);
+ assert.ok(handoff>playStart&&handoff<gate,'local decoder must stop before async permission gate');
+ assert.ok(gate<localTry,'local playback can begin only after remote ownership check');
+ assert.match(app,/requestSerial!==channelSelectionSerial/);
+ assert.match(app,/openiptv:remote-player-attached/);
+ assert.match(app,/releaseLocalForRemote\(\); \/\/ Prevent a late HLS retry/);
+ assert.match(ui,/new root\.CustomEvent\('openiptv:remote-player-attached'/);
+ assert.match(sender,/new root\.CustomEvent\('openiptv:remote-player-attached'/);
+});
 test('invalid media schemes and local addresses are rejected before transmission',()=>{
  assert.match(core,/AES-GCM/);
  assert.match(core,/ECDH/);
