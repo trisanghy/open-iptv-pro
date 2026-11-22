@@ -2254,3 +2254,14 @@ test('P5.1.204 random channel discovery requires a click and filters unusable st
   'positron-p51204-tv-random-after-1920x1080-real.png'])
   assert.ok(qa.includes(token),'Missing real Electron random discovery QA '+token);
 });
+
+test('P5.1.205 native transport allows explicit random channel follow-up',()=>{
+ const js=read('renderer/positron-horizon-v4.js'),css=read('renderer/positron-twenty.css');
+ for(const t of ["nextRandom.id='poNextRandomChannel'","nextRandom.addEventListener('click',switchRandomChannel)",
+  "byId('nextBtn')?.parentElement?.append(nextRandom)","nextRandom.hidden=channels.filter",
+  "const other=candidates.filter(c=>c.id!==currentId)","random.addEventListener('click',switchRandomChannel)"])
+  assert.ok(js.includes(t),'Missing P205 random follow-up: '+t);
+ for(const t of ['#poNextRandomChannel[hidden]{display:none!important}',
+  '#poNextRandomChannel:focus-visible','#poNextRandomChannel .po-random-label'])
+  assert.ok(css.includes(t),'Missing P205 native layout: '+t);
+});

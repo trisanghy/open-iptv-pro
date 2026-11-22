@@ -984,3 +984,17 @@ html[data-positron="true"] #poRandomChannelAction:focus-visible{
  html[data-positron="true"] #emptyPlayer .empty-actions{flex-wrap:wrap;justify-content:center}
  html[data-positron="true"] #poRandomChannelAction{width:100%}
 }
+
+/* P205: user-triggered random channel on native transport. */
+html[data-positron="true"] #poNextRandomChannel{
+ display:inline-flex!important;align-items:center;justify-content:center;gap:5px;
+ min-height:36px;min-width:36px;padding:5px 8px;border:1px solid var(--po-border,#325160);
+ border-radius:9px;background:var(--po-input,#17303c);color:var(--po-text,#e6f4f4);
+ font-size:11px;font-weight:600;cursor:pointer;
+}
+html[data-positron="true"] #poNextRandomChannel[hidden]{display:none!important}
+html[data-positron="true"] #poNextRandomChannel:focus-visible{
+ outline:2px solid var(--po-accent,#79dfc6);outline-offset:2px;
+}
+html[data-positron="true"] #poNextRandomChannel svg{display:block;flex-shrink:0}
+@media(max-width:1000px){html[data-positron="true"] #poNextRandomChannel .po-random-label{display:none}}

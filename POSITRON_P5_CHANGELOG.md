@@ -1603,3 +1603,8 @@ P5.1.81 follow-up: real Electron capture found nav overflow; replace flexible no
 - Electron screenshot: positron-p51204-tv-random-after-1920x1080-real.png
 - Ảnh Electron P5.1.203 thực cho thấy màn hình TV chỉ có Xem kênh đầu tiên, chưa có cách khám phá bất kỳ kênh nào. Nút mới chỉ có hiệu lực khi có kênh dùng được, thử nghiệm bằng stub chọn kênh an toàn trong Electron (không khẳng định luồng IPTV đã chạy).
 - Regression bảo toàn thứ tự playlist, kênh, EPG, DVR, không tự phát video, có focus keyboard và giao diện mobile hẹp.
+
+## P5.1.205 / Electron 4.23.290 — Đổi kênh ngẫu nhiên ngay khi xem (CANDIDATE)
+- Đã trực tiếp mở screenshot P5.1.204 thực 1920×1080 từ CI run 45016102045, thấy nút Khám phá ngẫu nhiên chỉ nằm trong empty player.
+- Bổ sung nút xúc xắc sau Kênh sau trên native transport, chỉ hiển thị khi có từ 2 kênh hợp lệ và chỉ phát kênh khác sau nhấn chuột. Không tự phát, không ghi dữ liệu playlist.
+- Regression Node kiểm tra điều khiển, CSS/keyboard và tái sử dụng thuật toán chọn kênh bỏ qua kênh hiện tại. Cần CI thật, ảnh trước/sau và soát PNG để xác nhận release, chưa kiểm thử playback thực.

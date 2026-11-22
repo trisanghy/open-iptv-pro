@@ -222,7 +222,7 @@
    random.textContent='Khám phá kênh ngẫu nhiên';
    random.setAttribute('aria-label','Chọn và phát một kênh ngẫu nhiên có thể xem');
    random.hidden=true;
-   random.addEventListener('click',()=>{
+   const switchRandomChannel=()=>{
     const candidates=window.IPTVState?.getChannels?.().filter(c=>c?.id&&c?.url&&c.status!=='dead')||[];
     if(!candidates.length)return;
     const currentId=window.IPTVState?.getCurrent?.()?.id;
@@ -232,8 +232,18 @@
     if(!selected)return;
     Promise.resolve(window.IPTVState.playChannel(selected.id))
      .catch(e=>window.IPTVState?.toast?.(e.message||String(e),'error'));
-   });
+   };
+   random.addEventListener('click',switchRandomChannel);
    buttons.prepend(start,random);
+   // P205: offer the same explicit discovery action while watching.
+   const nextRandom=d.createElement('button');nextRandom.type='button';
+   nextRandom.id='poNextRandomChannel';nextRandom.className='control-sm po-switch-random';
+   nextRandom.title='Đổi sang kênh ngẫu nhiên khác';
+   nextRandom.setAttribute('aria-label','Đổi sang kênh ngẫu nhiên khác');
+   nextRandom.innerHTML='<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="3"/><circle cx="8.5" cy="8.5" r="1" fill="currentColor"/><circle cx="12" cy="12" r="1" fill="currentColor"/><circle cx="15.5" cy="15.5" r="1" fill="currentColor"/></svg><span class="po-random-label">Bất kỳ</span>';
+   nextRandom.hidden=true;
+   nextRandom.addEventListener('click',switchRandomChannel);
+   byId('nextBtn')?.parentElement?.append(nextRandom);
    const syncPlayerIntro=()=>{
     const channels=window.IPTVState.getChannels();
     const hasChannels=channels.length>0;
@@ -246,6 +256,7 @@
     fileAction.hidden=hasChannels&&!!first;urlAction.hidden=hasChannels&&!!first;
     start.hidden=!first;
     random.hidden=!first;
+    nextRandom.hidden=channels.filter(c=>c?.id&&c?.url&&c.status!=='dead').length<2;
     // P5.1.89: the native player subtitle should not say "import a
     // playlist" after enabled channels are present; preserve stop/playback
     // captions, which are owned by the native player state machine.
