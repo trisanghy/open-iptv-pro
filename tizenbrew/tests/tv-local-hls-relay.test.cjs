@@ -75,7 +75,7 @@ test('TV localhost service CORS preflight works without actual X-Open-IPTV-Relay
   const noHeader=await request('GET','/health',null,{custom:false});
   assert.equal(noHeader.status,403);
   const mediaWithoutHeader=await request('GET','/r/'+ 'a'.repeat(40) +'/0',null,{custom:false});
-  assert.equal(mediaWithoutHeader.status,404, 'media requests must reach session lookup without custom headers');
+  assert.equal(mediaWithoutHeader.status,403, 'unknown media sessions must remain forbidden');
   const invalid=await request('POST','/session',{url:'http://127.0.0.1:80/admin'});
   assert.equal(invalid.status,400);
   const secret='https://cdn.example.org/vtv2/live.m3u8?token=TOP_SECRET';
