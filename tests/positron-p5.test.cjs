@@ -1841,7 +1841,7 @@ test('P5.1.178 đổi nhóm kênh gợi ý không tự phát hoặc sửa nguồ
  const qa=read('scripts/positron-20-extension.cjs');
  assert.ok(js.includes('let moreCursor=0'));
  assert.ok(js.includes('moreCursor=(moreCursor+morePageSize)%filtered.length'), 'Chuyển đúng số kênh viewer đã chọn');
- assert.ok(js.includes('let moreCursor=0,moreQuery=\'\',morePageSize=6;'),'Vẫn bắt đầu với 6 như bản P178');
+ assert.ok(js.includes("let moreCursor=0,moreQuery='',morePageSize=6,moreGroup='';"),'Vẫn bắt đầu với 6 như bản P178');
  assert.ok(js.includes("next.setAttribute('aria-label','Xem '+Math.min(morePageSize,filtered.length)"),'ARIA phản ánh số kênh thực');
  assert.ok(js.includes('moreCursor=filtered.length?moreCursor%filtered.length:0'), 'Giữ con trỏ hợp lệ kể cả khi không tìm thấy kênh');
  assert.ok(js.includes('next.hidden=filtered.length<=morePageSize'), 'Ẩn chuyển nhóm khi mọi kết quả đã hiển thị');
