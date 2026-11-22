@@ -1,0 +1,41 @@
+name: TizenBrew OTA bootstrap and pinned CDN smoke
+
+on:
+  push:
+    branches: [tizenbrew]
+    paths:
+      - package.json
+      - tizenbrew/bootstrap.html
+      - tizenbrew/index.html
+      - tizenbrew/tests/ota-bootstrap.test.cjs
+      - .github/workflows/tizenbrew-ota-smoke.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Verify OTA fallback and latest GitHub commit logic
+        run: node --test tizenbrew/tests/ota-bootstrap.test.cjs tizenbrew/tests/module-metadata.test.cjs
+      - name: Check immutable exact-commit installation path on jsDelivr
+        env:
+          REPOSITORY: ${{ github.repository }}
+          COMMIT: ${{ github.sha }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          base="https://cdn.jsdelivr.net/gh/${REPOSITORY}@${COMMIT}"
+          curl -fLsS --retry 3 --retry-delay 2 --max-time 30 "${base}/package.json" -o cdn-package.json
+          jq -e '.version=="0.1.22" and .appPath=="tizenbrew/bootstrap.html"' cdn-package.json
+          curl -fLsS --retry 3 --retry-delay 2 --max-time 30 "${base}/tizenbrew/bootstrap.html" -o cdn-bootstrap.html
+          grep -F 'api.github.com/repos/' cdn-bootstrap.html
+          grep -F "tizenbrew/index.html" cdn-bootstrap.html
+          echo "Exact commit module package + bootstrap are accessible on jsDelivr: ${COMMIT}"
