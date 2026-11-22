@@ -4267,13 +4267,15 @@ async function runTwenty(page){
    URL.revokeObjectURL=()=>{};
    HTMLAnchorElement.prototype.click=function(){filename=this.download;};
    btn.click();
-   const csv=await blob?.text();
+   // Blob.text() bỏ BOM khi giải mã. Kiểm đúng 3 byte EF BB BF trên file thật.
+   const bytes=blob?new Uint8Array(await blob.arrayBuffer()):null;
+   const csv=bytes?new TextDecoder('utf-8').decode(bytes):null;
    const p=document.getElementById('poLibraryPulsePanel').getBoundingClientRect(),r=btn.getBoundingClientRect();
    return {buttonVisible:r.width>80&&r.top>=p.top&&r.bottom<=p.bottom,
     buttonLabel:btn.textContent.includes(String(expected.expected)),
     status:document.getElementById('poLibraryMissingExportStatus').textContent.includes('Đã xuất '+expected.expected),
     filename:filename.startsWith('positron-kenh-thieu-logo-')&&filename.endsWith('.csv'),
-    csvBOM:csv?.startsWith('\ufeff"Tên kênh","Nhóm"\r\n')===true,
+    csvBOM:bytes?.[0]===0xEF&&bytes?.[1]===0xBB&&bytes?.[2]===0xBF&&csv?.startsWith('"Tên kênh","Nhóm"\\r\\n')===true,
     csvComplete:csv?.trim().split('\r\n').length===expected.expected+1,
     noStreamUrl:!csv?.includes('://'),
     noMutation:window.IPTVState.getChannels().length===expected.total,
