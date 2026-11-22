@@ -159,8 +159,7 @@ test('AirPlay connected status is based on Safari native wireless playback, not 
 test('Stop button stops Google Cast media but preserves session for the next channel',async()=>{
  const h=harness();
  await h.api.play();
- h.api.stopOnLocalStop();
- for(let i=0;i<12&&!h.remoteCommands.length;i++)await new Promise(r=>setTimeout(r,1));
+ await h.api.stopOnLocalStop();
  assert.deepEqual(h.remoteCommands,['stop']);
  assert.equal(h.ends(),0);
  assert.equal(h.api.getState().connected,true);
