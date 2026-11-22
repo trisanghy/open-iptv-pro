@@ -1048,17 +1048,18 @@ function requestLocalHlsSession(channel,attempt){
   headers:{'Content-Type':'application/json','X-Open-IPTV-Relay':'1'},
   body:JSON.stringify({url:channel.url})
  }).then(function(response){
-  if(!response.ok)throw Error('Dịch vụ HLS TV trả HTTP '+response.status);
+  if(!response.ok){var issue=Error('Dịch vụ HLS TV trả HTTP '+response.status);issue.permanent=response.status>=400&&response.status<500;throw issue;}
   return response.json();
  }).catch(function(error){
-  if(attempt>=7)throw error;
+  if(error&&error.permanent||attempt>=7)throw error;
   return new Promise(function(resolve){setTimeout(resolve,650);})
    .then(function(){return requestLocalHlsSession(channel,attempt+1);});
  });
 }
 function startRelayHlsPlayback(channel,token){
  if(hlsRelayAttempted||!playbackActive(token)||playbackEngine!=='html5')return false;
- if(!hlsAddress(channel&&channel.url))return false;
+ // HLS endpoints can be extensionless (e.g. /live?token=...), so this
+ // fallback is gated by an actual HLS.js manifest error, not URL suffix.
  hlsRelayAttempted=true;
  html5Mode='hls-relay';
  if(hlsInstance){try{hlsInstance.destroy();}catch(e){}hlsInstance=null;}
