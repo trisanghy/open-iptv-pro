@@ -243,8 +243,23 @@
  }
  toggle.addEventListener('click',()=>setOpen(panel.hidden));
  go.addEventListener('click',jump);
+ // P246: Ctrl+Enter goes to the requested channel and closes the jump tool,
+ // restoring focus to the real channel row; normal Enter stays unchanged.
+ number.title='Enter: đến kênh; Ctrl+Enter: đến kênh rồi thu gọn bảng';
+ number.setAttribute('aria-keyshortcuts','Enter Control+Enter Meta+Enter');
  number.addEventListener('keydown',event=>{
-  if(event.key==='Enter'){event.preventDefault();jump();}
+  if(event.key!=='Enter')return;
+  event.preventDefault();
+  const quickClose=event.ctrlKey||event.metaKey;
+  if(quickClose)event.stopPropagation();
+  jump();
+  if(quickClose){
+   const row=d.activeElement;
+   if(row?.matches?.('.channel-item')&&row.isConnected){
+    setOpen(false);
+    row.focus({preventScroll:true});
+   }
+  }
  });
  panel.addEventListener('keydown',event=>{
   if(event.key==='Escape'){event.preventDefault();setOpen(false);}

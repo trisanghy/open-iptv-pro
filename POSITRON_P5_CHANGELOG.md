@@ -1963,3 +1963,12 @@ P5.1.81 follow-up: real Electron capture found nav overflow; replace flexible no
 - Đầu vào từ ảnh Electron thật P5.1.244 đã mở: người dùng focus QA Channel 412 thuộc nhóm 03 nhưng hộp nhóm vẫn ghi 01.
 - QA: ảnh Electron 1920×1080 trước/sau, group 01→03, focus kênh 412, không tự phát, nguồn và Favorites không đổi.
 - Chỉ coi HOÀN THÀNH khi CI, soát ảnh và release đủ bằng chứng.
+
+
+## P5.1.246 / Electron 4.23.331 — Ctrl+Enter nhảy kênh rồi thu gọn bảng (CANDIDATE)
+- Feature priority: NEW — Khi nhập số kênh, Ctrl+Enter (Mac có thể Command+Enter) nhảy đến hàng kênh rồi tự thu gọn công cụ, trả lại không gian danh sách và giữ tiêu điểm đúng hàng; Enter thông thường vẫn để mở bảng cho tác vụ tiếp.
+- User action: Tại Xem truyền hình, chọn hàng kênh, gõ 412 rồi Ctrl+Enter để tới QA Channel 412 mà không tự phát, đồng thời bảng nhập số thu gọn.
+- Electron screenshot: positron-p51246-quick-close-after-1920x1080-real.png
+- Bằng chứng đầu vào: đã trực tiếp xem ảnh SAU P5.1.245, bảng nhảy cao chiếm diện tích danh sách sau khi thao tác hoàn tất.
+- QA: kiểm tra Ctrl+Enter và điều khiển truy cập; focus, visibility, playlist, Favorites và playback không đổi; 1920×1080 before/after.
+- Cần CI, ảnh thật mở soát và release hoàn chỉnh để tính vòng hoàn tất.
