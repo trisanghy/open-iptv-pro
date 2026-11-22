@@ -2,14 +2,23 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
-## P5.1.216 — tìm kiếm kênh trong lịch sử khám phá ngẫu nhiên
+## P5.1.217 — đánh dấu Yêu thích ngay trong lịch sử khám phá
 
-**Ứng dụng:** 4.23.301 · **Trạng thái:** Chưa có bản phát hành
+**Ứng dụng:** 4.23.302 · **Trạng thái:** Chưa có bản phát hành
+
+Feature priority: NEW — Ảnh Electron P5.1.216 cho thấy menu khám phá cho phép chọn phát lại và tìm kiếm nhưng thiếu thao tác lưu ngay kênh vừa thấy vào Yêu thích; thêm nút sao độc lập trong mỗi dòng. Electron screenshot: positron-p51217-history-favorite-after-1920x1080-real.png
+
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/050d158fdb9a1c313db74fe333211d339040f7fd)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+
+## P5.1.216 — Gõ tìm ngay khi mở lịch sử khám phá / Electron 4.23.301
+
+**Ứng dụng:** 4.23.301 · **Trạng thái:** Đã phát hành
 
 Feature priority: NEW — Mở menu với tiêu điểm ở ô tìm, gõ ngay và di chuyển hai hướng giữa kết quả bằng bàn phím; không tự phát kênh. Electron screenshot: positron-p51216-search-focus-after-1920x1080-real.png
 
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/33f4cec7eda78980e001dd7b45c121727bc989c5)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/18a791e1373a02601e398940f73075574d6b0b87)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.301-p5.1.216)
 
 ## P5.1.215 — Tìm kiếm nhanh trong lịch sử khám phá kênh / Electron 4.23.300
 
