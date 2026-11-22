@@ -1,7 +1,5 @@
 /* Approved Web pairing cockpit: only the real encrypted TV session is controlled. */
-#iptvCastPanel .cx-pair-hero{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:20px}
-#iptvCastPanel .cx-web-short{display:inline-flex;align-items:center;justify-content:center;gap:12px;margin-inline:auto;min-height:54px;padding:10px 28px;border:1px solid #30e87c;border-radius:100px;background:linear-gradient(125deg,#0c3027,#10402c);box-shadow:0 0 15px #30e87c4c;color:#c2ffde!important;font-size:clamp(19px,2.6vw,28px);font-weight:840;text-decoration:none}
-#iptvCastPanel .cx-web-short svg{width:25px;height:25px}
+#iptvCastPanel .cx-pair-hero{display:flex;justify-content:flex-end;align-items:center;gap:12px;margin-bottom:14px}
 #iptvCastPanel .cx-disconnect{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;border:1px solid var(--cx-edge);border-radius:11px;background:var(--cx-pane2);padding:10px 15px;font-size:13px;font-weight:750}
 #iptvCastPanel .cx-disconnect:hover{border-color:#d7767e;color:#ffc5c7}
 #iptvCastPanel .cx-disconnect[hidden]{display:none!important}
@@ -21,7 +19,9 @@
 #iptvCastPanel #cxPanePair[data-paired="true"] .cx-tvdesc{display:none}
 #iptvCastPanel #cxPanePair[data-paired="true"] .cx-tvcode{font-size:clamp(28px,5vw,56px);line-height:1.12;letter-spacing:.075em;margin:0}
 #iptvCastPanel #cxPanePair[data-paired="true"] .cx-tvstatus{font-size:clamp(12px,1.5vw,15px);margin:0;padding:7px 16px;border-color:#2cba70;color:#c7ffdd;background:#124d3799}
-#iptvCastPanel .cx-tv-controls{width:100%;max-width:940px;margin:0 auto;display:grid;align-items:center;grid-template-columns:45px 60px 45px 45px 1px 40px minmax(70px,1fr);gap:clamp(6px,1.6vw,20px);min-height:80px;padding:8px clamp(12px,2.7vw,26px);border:1px solid #5a8094;border-radius:100px;color:#f3fbff;background:linear-gradient(130deg,#122b3dcf,#112334e0)}
+#iptvCastPanel .cx-tv-controls{width:100%;max-width:940px;margin:0 auto;display:grid;align-items:center;grid-template-columns:repeat(4,minmax(0,1fr)) 1px 42px minmax(70px,30%);gap:clamp(8px,1.3vw,16px);min-height:80px;padding:8px clamp(12px,2.7vw,26px);border:1px solid #5a8094;border-radius:100px;color:#f3fbff;background:linear-gradient(130deg,#122b3dcf,#112334e0)}
+#iptvCastPanel .cx-tv-controls>.cx-tv-key{justify-self:center}
+#iptvCastPanel #cxTvVolume{justify-self:stretch}
 #iptvCastPanel .cx-tv-controls[hidden]{display:none!important}
 #iptvCastPanel .cx-tv-key{width:44px;height:44px;border:0;border-radius:50%;padding:0;background:none;color:inherit;display:grid;place-items:center}
 #iptvCastPanel .cx-tv-key svg{width:27px;height:27px}
@@ -38,11 +38,10 @@
 #iptvCastPanel #cxPanePair[data-paired="true"] .cx-tvstand{height:9px;width:30%}
 @media(max-width:760px){
  #iptvCastPanel .cx-pair-hero{justify-content:center}
- #iptvCastPanel .cx-web-short{min-height:46px;padding:8px 18px;font-size:19px;margin-inline:0}
  #iptvCastPanel #cxPanePair[data-paired="true"] .cx-tv{min-height:310px;aspect-ratio:auto;padding:10px;border-width:7px;border-radius:15px}
  #iptvCastPanel #cxPanePair[data-paired="true"] .cx-tvcontent{gap:9px}
  #iptvCastPanel #cxPanePair[data-paired="true"] .cx-tvcode{font-size:clamp(25px,6vw,39px)}
- #iptvCastPanel .cx-tv-controls{min-height:63px;gap:6px;grid-template-columns:30px 45px 30px 30px 1px 30px minmax(40px,1fr);padding:6px 10px}
+ #iptvCastPanel .cx-tv-controls{min-height:63px;gap:5px;grid-template-columns:repeat(4,minmax(0,1fr)) 1px 28px minmax(44px,29%);padding:6px 10px}
  #iptvCastPanel .cx-tv-key{width:30px;height:36px}
  #iptvCastPanel .cx-tv-key svg{width:21px;height:21px}
  #iptvCastPanel .cx-tv-toggle{width:45px;height:45px}
@@ -52,7 +51,7 @@
  #iptvCastPanel #cxTvVolume::-moz-range-thumb{width:18px;height:18px}
 }
 @media(max-width:420px){
- #iptvCastPanel .cx-tv-controls{grid-template-columns:26px 43px 26px 26px 1px 26px minmax(35px,1fr);gap:4px;padding:6px}
+ #iptvCastPanel .cx-tv-controls{grid-template-columns:repeat(4,minmax(0,1fr)) 1px 26px minmax(40px,29%);gap:4px;padding:6px}
  #iptvCastPanel .cx-tv-key{width:26px}
  #iptvCastPanel .cx-tv-toggle{width:43px;height:43px}
 }

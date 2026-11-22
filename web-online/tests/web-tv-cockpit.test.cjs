@@ -8,6 +8,12 @@ test('approved paired-screen controls and link are present and old step 3 is rem
  for(const id of ['cxWebShort','cxTvVerified','cxTvControls','cxTvPrev','cxTvToggle','cxTvStop','cxTvNext','cxTvMute','cxTvVolume','cxTvFeedback'])
   assert.ok(ui.includes(id),id);
  assert.match(ui,/https:\/\/is\.gd\/openiptv/);
+ assert.match(ui,/webCaption\.textContent='Web · Link rút gọn'/);
+ assert.match(ui,/overlay\.querySelector\('\.cx-link-stack'\)\?\.prepend\(webRow\)/);
+ assert.match(ui,/webCopy\.id='cxCopyWebShort'/);
+ assert.match(ui,/clipboard\.writeText\('https:\/\/is\.gd\/openiptv'\)/);
+ assert.match(ui,/hero\.append\(disconnectBtn\)/);
+ assert.doesNotMatch(ui,/hero\.append\(webLink,disconnectBtn\)/);
  assert.match(ui,/set\('cxTvCode','ĐÃ KẾT NỐI'\)/);
  assert.match(ui,/set\('cxTvChip','● Phiên được mã hóa'\)/);
  assert.doesNotMatch(ui,/Chọn “Cho phép” trên màn hình TV/);
@@ -24,7 +30,10 @@ test('TV playback and channel controls reuse actual app transport and state',()=
 test('pairing expands TV screen without a second visible controller, responsive CSS is loaded',()=>{
  assert.match(css,/#cxPanePair\[data-paired="true"\] \.cx-grid/);
  assert.match(css,/\.cx-tv-controls\[hidden\]/);
+ assert.match(css,/grid-template-columns:repeat\(4,minmax\(0,1fr\)\) 1px 42px minmax\(70px,30%\)/);
+ assert.match(css,/grid-template-columns:repeat\(4,minmax\(0,1fr\)\) 1px 28px minmax\(44px,29%\)/);
+ assert.match(css,/\.cx-tv-controls>\.cx-tv-key\{justify-self:center\}/);
  assert.match(css,/@media\(max-width:420px\)/);
- assert.match(index,/web-tv-cockpit\.css\?v=20261122a/);
- assert.match(index,/web-cast-v2\.js\?v=tv-cockpit-20261122a/);
+ assert.match(index,/web-tv-cockpit\.css\?v=20261122b/);
+ assert.match(index,/web-cast-v2\.js\?v=tv-cockpit-20261122b/);
 });

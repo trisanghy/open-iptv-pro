@@ -55,13 +55,23 @@
   const hero=d.createElement('div');
   hero.className='cx-pair-hero';
   const webLink=d.createElement('a');
-  webLink.id='cxWebShort';webLink.className='cx-web-short';
+  webLink.id='cxWebShort';webLink.className='cx-link';
   webLink.href='https://is.gd/openiptv';webLink.target='_blank';
-  webLink.rel='noopener noreferrer';webLink.textContent='is.gd/openiptv';
+  webLink.rel='noopener noreferrer';webLink.textContent='https://is.gd/openiptv';
+  // The Open IPTV Pro short URL belongs in the link list, not above the TV.
+  // Keep the TV short URL and its original fallback unchanged.
+  const webRow=d.createElement('div');webRow.className='cx-link-row';
+  const webCaption=d.createElement('span');webCaption.className='cx-link-type';
+  webCaption.textContent='Web · Link rút gọn';
+  const webCopy=d.createElement('button');webCopy.id='cxCopyWebShort';
+  webCopy.className='cx-button cx-button-secondary';webCopy.type='button';
+  webCopy.textContent='Sao chép';
+  webRow.append(webCaption,webLink,webCopy);
+  overlay.querySelector('.cx-link-stack')?.prepend(webRow);
   const disconnectBtn=$('cxDisconnect');
   disconnectBtn.hidden=true;disconnectBtn.className='cx-disconnect';
   disconnectBtn.setAttribute('aria-label','Ngắt kết nối TV');
-  hero.append(webLink,disconnectBtn);
+  hero.append(disconnectBtn);
   pairPane.insertBefore(hero,pairPane.querySelector('.cx-sectionhead'));
   overlay.querySelector('.cx-tvbadge')?.remove();
   overlay.querySelector('.cx-tvcard > .cx-p')?.remove();
@@ -88,6 +98,7 @@
   if(airBadge)airBadge.id='cxAirBadge';
   root.OpenIPTVCastIcons?.decorateModal?.(overlay);
   webLink.prepend(root.OpenIPTVCastIcons.svg('link'));
+  root.OpenIPTVCastIcons?.replace?.(webCopy,'copy','Sao chép');
   root.OpenIPTVCastIcons?.replace?.(disconnectBtn,'close','Ngắt kết nối');
   for(const [id,kind] of [['cxTvPrev','prev'],['cxTvToggle','play'],['cxTvStop','stop'],['cxTvNext','next'],['cxTvMute','volume']])
    setTvIcon($(id),kind);
@@ -111,6 +122,11 @@
   $('cxCopyTv').addEventListener('click',async()=>{
    try{await root.navigator.clipboard.writeText(tvUrl());notice('cxPairNotice','Đã sao chép liên kết mở trên TV.','ok');}
    catch{notice('cxPairNotice','Không sao chép được; hãy sao chép địa chỉ TV thủ công.','error');}
+  });
+  $('cxCopyWebShort').addEventListener('click',async()=>{
+   try{await root.navigator.clipboard.writeText('https://is.gd/openiptv');
+    notice('cxPairNotice','Đã sao chép link rút gọn mở Open IPTV Pro Web.','ok');}
+   catch{notice('cxPairNotice','Không sao chép được; hãy chọn đường dẫn Web và sao chép thủ công.','error');}
   });
   $('cxRemotePlay').addEventListener('click',()=>void remote('play'));
   $('cxRemotePause').addEventListener('click',()=>void remote('pause'));
