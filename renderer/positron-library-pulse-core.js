@@ -28,5 +28,10 @@
    withLogoMeta:logoMeta,withEpgId:epgId,knownAlive:alive,knownDead:dead,
    groupBreakdown:sort(groups),sourceBreakdown:sort(sources)};
  }
- return Object.freeze({summarize});
+ function pageGroups(groups,limit=5){
+  const values=Array.isArray(groups)?groups:[];
+  const size=Number.isFinite(limit)?Math.max(0,Math.floor(limit)):5;
+  return {rows:values.slice(0,size),remaining:Math.max(0,values.length-size)};
+ }
+ return Object.freeze({summarize,pageGroups});
 });

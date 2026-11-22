@@ -22,3 +22,16 @@ html[data-positron="true"] .po-pulse-footer span{font-size:11px;color:var(--po-m
 html[data-positron="true"] .po-pulse-panel button:focus-visible,html[data-positron="true"] .po-pulse-toggle:focus-visible{outline:2px solid var(--po-accent,#66d4c2);outline-offset:2px}
 @media(max-width:1250px){html[data-positron="true"] .po-pulse-toggle-label{display:none}html[data-positron="true"] .po-pulse-toggle{min-width:35px;padding:0 8px}}
 @media(max-width:600px){html[data-positron="true"] .po-pulse-panel{top:52px;right:8px;max-height:65vh}}
+
+/* P5.1.157: biểu đồ phân bố nhóm, có thể mở thêm theo lô 5. */
+html[data-positron="true"] .po-pulse-groups{display:flex;flex-direction:column;gap:8px;min-width:0}
+html[data-positron="true"] .po-pulse-groups h3{margin:0;color:inherit;font-size:13px;font-weight:700}
+html[data-positron="true"] .po-pulse-group-rows{display:flex;flex-direction:column;gap:8px;min-width:0}
+html[data-positron="true"] .po-pulse-group{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:5px 8px;min-width:0}
+html[data-positron="true"] .po-pulse-group-name{font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+html[data-positron="true"] .po-pulse-group strong{font-size:12px;font-variant-numeric:tabular-nums}
+html[data-positron="true"] .po-pulse-group-track{grid-column:1/-1;height:5px;border-radius:10px;overflow:hidden;background:#ffffff14}
+html[data-positron="true"] .po-pulse-group-track>span{display:block;height:100%;border-radius:10px;background:var(--po-accent,#74daca)}
+html[data-positron="true"] .po-pulse-group-empty{margin:4px 0;font-size:12px;color:var(--po-muted,#adbec5)}
+html[data-positron="true"] #poLibraryPulseMoreGroups{align-self:flex-start}
+html[data-positron="true"] #poLibraryPulseMoreGroups[hidden]{display:none!important}

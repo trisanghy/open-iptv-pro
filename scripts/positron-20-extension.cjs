@@ -3872,9 +3872,52 @@ async function runTwenty(page){
  for(const [name,value] of Object.entries(libraryPulseQA))
   assert.equal(value,true,'P156 library pulse '+name+': '+JSON.stringify(libraryPulseQA));
 
+
+ // P5.1.157: kênh theo nhóm trên Electron thật, cùng metadata như phiên bản trước.
+ const input157=await page.evaluate(()=>{
+  const state=window.IPTVState,core=window.PositronLibraryPulseCore;
+  return {summary:core.summarize(state.getChannels()),
+   channels:state.getChannels().length,idle:state.getCurrent()===null};
+ });
+ await page.screenshot({path:path.join(out,'positron-p51157-groups-before-1920x1080-real.png'),animations:'disabled'});
+ await page.click('#poLibraryPulseToggle');
+ const initial157=await page.evaluate(expected=>{
+  const rows=[...document.querySelectorAll('#poLibraryPulseGroups .po-pulse-group')];
+  const top=expected.summary.groupBreakdown;
+  return {
+   heading:document.getElementById('poLibraryPulseGroupsTitle')?.textContent==='Phân bố kênh theo nhóm',
+   topFive:rows.length===Math.min(5,top.length),
+   sorted:rows.every((row,i)=>row.querySelector('.po-pulse-group-name')?.textContent===top[i].name&&
+    Number(row.querySelector('strong')?.textContent)===top[i].count),
+   expandable:document.getElementById('poLibraryPulseMoreGroups')?.hidden===(top.length<=5),
+   noOverflow:document.documentElement.scrollWidth<=innerWidth+1
+  };
+ },input157);
+ if(input157.summary.groupBreakdown.length>5)await page.click('#poLibraryPulseMoreGroups');
+ const expanded157=await page.evaluate(expected=>{
+  const top=expected.summary.groupBreakdown,rows=[...document.querySelectorAll('#poLibraryPulseGroups .po-pulse-group')];
+  return {
+   secondPage:rows.length===Math.min(top.length,10),
+   expanded:document.getElementById('poLibraryPulseMoreGroups')?.getAttribute('aria-expanded')===(top.length>5?'true':'false'),
+   match:rows.every((row,i)=>row.querySelector('.po-pulse-group-name')?.textContent===top[i].name),
+   notAutoplay:!expected.idle||window.IPTVState.getCurrent()===null,
+   channelsSafe:window.IPTVState.getChannels().length===expected.channels,
+   noOverflow:document.documentElement.scrollWidth<=innerWidth+1
+  };
+ },input157);
+ await page.screenshot({path:path.join(out,'positron-p51157-groups-after-1920x1080-real.png'),animations:'disabled'});
+ await page.keyboard.press('Escape');
+ const closed157=await page.evaluate(()=>({
+  panelHidden:document.getElementById('poLibraryPulsePanel')?.hidden===true,
+  focusRestored:document.activeElement?.id==='poLibraryPulseToggle'
+ }));
+ const groupDistributionQA={...initial157,...expanded157,...closed157};
+ for(const [key,value] of Object.entries(groupDistributionQA))
+  assert.equal(value,true,'P157 group distribution '+key+': '+JSON.stringify(groupDistributionQA));
+
  await page.setViewportSize({width:1360,height:820});
   const report={type:'Positron P5 twenty distinct desktop screenshot cases',realElectron:true,syntheticChannels:false,
-  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,desktop16x9Screenshots,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA,chooserQa,toastLayoutQA,nativeToastQA,compactIdleQA,channelChipRailQA,advancedFilterQA,readableCardsQA,keyboardTabQA,favoriteEmptyQA,duplicateEmptyQA,categoryFilterQA,categoryFixtureQA,compactSingleQA,directFavoriteQA,favoriteCountQA,compactToastStackQA,toastDismissQA,toastFocusReturnQA,toastDockQA,wheelQA,pinnedAllQA,pinnedMaskQA,categoryKeyQA,dropdownChipQA,pinnedRightMaskQA,pinnedBorderMaskQA,asciiDSearchQA,emptySearchActionQA,readableCardTitleQA,favoriteSvgQA,keyboardFavoriteQA,multiTermSearchQA,keyboardSearchQA,arrowNavigationQA,pageNavigationQA,favoriteSortQA,onAirFilterQA,programmeSearchQA,upcomingProgrammeQA,soonProgrammeQA,earliestEpgSortQA,timeWindowQA,scheduleProgressQA:scheduleProgressQA,nativeReminderQA,cancelReminderQA,reminderLeadQA,toastHistoryQA,notificationArchiveQA,alertFilterQA,noticeSearchQA,quietModeQA,dismissToastQA,libraryPulseQA};
+  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,desktop16x9Screenshots,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA,chooserQa,toastLayoutQA,nativeToastQA,compactIdleQA,channelChipRailQA,advancedFilterQA,readableCardsQA,keyboardTabQA,favoriteEmptyQA,duplicateEmptyQA,categoryFilterQA,categoryFixtureQA,compactSingleQA,directFavoriteQA,favoriteCountQA,compactToastStackQA,toastDismissQA,toastFocusReturnQA,toastDockQA,wheelQA,pinnedAllQA,pinnedMaskQA,categoryKeyQA,dropdownChipQA,pinnedRightMaskQA,pinnedBorderMaskQA,asciiDSearchQA,emptySearchActionQA,readableCardTitleQA,favoriteSvgQA,keyboardFavoriteQA,multiTermSearchQA,keyboardSearchQA,arrowNavigationQA,pageNavigationQA,favoriteSortQA,onAirFilterQA,programmeSearchQA,upcomingProgrammeQA,soonProgrammeQA,earliestEpgSortQA,timeWindowQA,scheduleProgressQA:scheduleProgressQA,nativeReminderQA,cancelReminderQA,reminderLeadQA,toastHistoryQA,notificationArchiveQA,alertFilterQA,noticeSearchQA,quietModeQA,dismissToastQA,libraryPulseQA,groupDistributionQA};
  fs.writeFileSync(path.resolve('positron-evidence','audit-p5-20-rounds.json'),JSON.stringify(report,null,2));
  return report;
 }

@@ -30,11 +30,21 @@
  hint.textContent='Tổng hợp metadata từ những kênh đã có · Không quét nguồn, không tự phát';
  const cards=d.createElement('div');cards.id='poLibraryPulseCards';cards.className='po-pulse-cards';
  const ratios=d.createElement('div');ratios.id='poLibraryPulseRatios';ratios.className='po-pulse-ratios';
+ // P5.1.157: phân bố theo nhóm, mở dần không truy cập playlist ngoài metadata.
+ const groupPane=d.createElement('section');groupPane.id='poLibraryPulseGroups';
+ groupPane.className='po-pulse-groups';groupPane.setAttribute('aria-labelledby','poLibraryPulseGroupsTitle');
+ const groupHeading=d.createElement('h3');groupHeading.id='poLibraryPulseGroupsTitle';
+ groupHeading.textContent='Phân bố kênh theo nhóm';
+ const groupRows=d.createElement('div');groupRows.className='po-pulse-group-rows';
+ const moreGroups=d.createElement('button');moreGroups.type='button';moreGroups.id='poLibraryPulseMoreGroups';
+ moreGroups.setAttribute('aria-controls','poLibraryPulseGroups');
+ moreGroups.setAttribute('aria-expanded','false');
+ groupPane.append(groupHeading,groupRows,moreGroups);
  const footer=d.createElement('footer');footer.className='po-pulse-footer';
  const stamp=d.createElement('span');stamp.id='poLibraryPulseStamp';
  const refresh=d.createElement('button');refresh.type='button';refresh.id='poLibraryPulseRefresh';
  refresh.textContent='Cập nhật';footer.append(stamp,refresh);
- panel.append(header,hint,cards,ratios,footer);d.body.append(panel);
+ panel.append(header,hint,cards,ratios,groupPane,footer);d.body.append(panel);
  const addCard=(label,value)=>{
   const item=d.createElement('div');item.className='po-pulse-card';
   const number=d.createElement('strong');number.textContent=String(value);
@@ -48,6 +58,28 @@
   const fill=d.createElement('span');fill.style.width=total?Math.round(100*value/total)+'%':'0%';
   bar.append(fill);row.append(caption,data,bar);ratios.append(row);
  };
+ let groupSummary=[],groupTotal=0,visibleGroupCount=5;
+ const renderGroupRows=()=>{
+  groupRows.replaceChildren();
+  const page=core.pageGroups(groupSummary,visibleGroupCount);
+  if(!groupSummary.length){
+   const empty=d.createElement('p');empty.className='po-pulse-group-empty';
+   empty.textContent='Chưa có nhóm kênh để phân tích';groupRows.append(empty);
+  }
+  for(const group of page.rows){
+   const row=d.createElement('div');row.className='po-pulse-group';
+   const name=d.createElement('span');name.className='po-pulse-group-name';name.textContent=group.name;
+   name.title=group.name;
+   const count=d.createElement('strong');count.textContent=String(group.count);
+   const track=d.createElement('div');track.className='po-pulse-group-track';
+   const fill=d.createElement('span');fill.style.width=groupTotal?
+    Math.min(100,Math.round(100*group.count/groupTotal))+'%':'0%';
+   track.append(fill);row.append(name,count,track);groupRows.append(row);
+  }
+  moreGroups.hidden=groupSummary.length<=5;
+  moreGroups.textContent=page.remaining?'Xem thêm '+Math.min(5,page.remaining)+' nhóm':'Thu gọn danh sách';
+  moreGroups.setAttribute('aria-expanded',String(visibleGroupCount>5));
+ };
  const render=()=>{
   const result=core.summarize(state.getChannels());
   cards.replaceChildren();ratios.replaceChildren();
@@ -55,6 +87,7 @@
   addCard('Nhóm',result.groups);addCard('Đã ghi nhận phát được',result.knownAlive);
   addRatio('Có URL logo trong metadata',result.withLogoMeta,result.total);
   addRatio('Có mã nhận diện EPG',result.withEpgId,result.total);
+  groupSummary=result.groupBreakdown;groupTotal=result.total;renderGroupRows();
   stamp.textContent='Cập nhật lúc '+new Date().toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit'});
  };
  let opened=false;
@@ -69,6 +102,11 @@
   }
   render();opened=true;panel.hidden=false;toggle.setAttribute('aria-expanded','true');
   close.focus({preventScroll:true});
+ });
+ moreGroups.addEventListener('click',()=>{
+  if(visibleGroupCount>=groupSummary.length&&visibleGroupCount>5)visibleGroupCount=5;
+  else visibleGroupCount+=5;
+  renderGroupRows();moreGroups.focus({preventScroll:true});
  });
  close.addEventListener('click',hide);
  refresh.addEventListener('click',()=>{render();refresh.focus({preventScroll:true});});

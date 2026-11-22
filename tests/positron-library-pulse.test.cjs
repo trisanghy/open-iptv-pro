@@ -25,3 +25,22 @@ test('Library Pulse nhận dữ liệu trống an toàn và không đoán trạn
  assert.equal(r.total,0);assert.equal(r.sources,0);
  assert.equal(r.withEpgId,0);assert.equal(r.knownAlive,0);
 });
+
+test('Library Pulse phân trang nhóm theo lô 5, không thay đổi dữ liệu gốc',()=>{
+ const groups=Array.from({length:13},(_,i)=>({name:'Nhóm '+i,count:13-i}));
+ const before=JSON.stringify(groups);
+ assert.deepEqual(core.pageGroups(groups,5).rows,groups.slice(0,5));
+ assert.equal(core.pageGroups(groups,5).remaining,8);
+ assert.equal(core.pageGroups(groups,10).remaining,3);
+ assert.equal(core.pageGroups(groups,15).remaining,0);
+ assert.equal(core.pageGroups(groups,-3).rows.length,0);
+ assert.deepEqual(core.pageGroups(null),{rows:[],remaining:0});
+ assert.equal(JSON.stringify(groups),before);
+});
+test('P157 mở thêm nhóm và dùng textContent an toàn',()=>{
+ const fs=require('node:fs'),path=require('node:path');
+ const source=fs.readFileSync(path.join(__dirname,'../renderer/positron-library-pulse.js'),'utf8');
+ assert.match(source,/name\.textContent=group\.name/);
+ assert.match(source,/moreGroups\.addEventListener\('click'/);
+ assert.match(source,/visibleGroupCount\+=5/);
+});

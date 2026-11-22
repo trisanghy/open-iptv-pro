@@ -1,3 +1,11 @@
+## P5.1.157 — Phân bố kênh theo nhóm / Electron v4.23.241
+- Feature priority: NEW — Thêm danh sách nhóm kênh với số lượng và thanh tỷ lệ ngay trong Bản đồ thư viện; có thể mở thêm từng 5 nhóm mà không cần tải nguồn mới hoặc thử phát.
+- User action: Bấm Thư viện, xem Phân bố kênh theo nhóm; nhấn Xem thêm 5 nhóm để đọc tiếp, chọn Thu gọn danh sách khi đã xem hết.
+- Electron screenshot: positron-p51157-groups-after-1920x1080-real.png
+- Before: positron-p51157-groups-before-1920x1080-real.png; After: positron-p51157-groups-after-1920x1080-real.png.
+- Quyền riêng tư: dữ liệu cục bộ, tên nhóm qua textContent, không tải mạng, không thay đổi playlist, Favorites hoặc phát video.
+- Trạng thái: CANDIDATE cho tới khi CI, ảnh Electron thật mở soát, release và bộ cài xác minh.
+
 ## P5.1.156 — Bản đồ thư viện kênh ngoại tuyến / Electron v4.23.240
 - Feature priority: NEW — Thêm bảng Library Pulse riêng trong thanh trên: đếm số kênh, số nguồn, số nhóm, trạng thái khả dụng đã được lưu, URL logo và mã EPG của dữ liệu hiện có.
 - User action: Chọn Thư viện, xem các thẻ thống kê và thanh mức độ hoàn thiện metadata; nhấn Cập nhật để đọc lại dữ liệu hiện hành hoặc Escape để đóng.
