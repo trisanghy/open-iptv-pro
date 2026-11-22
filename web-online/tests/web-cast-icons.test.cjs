@@ -93,7 +93,7 @@ test('Cast dialog icons, caption and TV link use only a single shared SVG librar
 });
 test('all themes load new SVG and disable old pseudo-element masks everywhere',()=>{
  assert.match(page,/web-cast-icons\.js\?v=dual-links-20261122a/);
- assert.match(page,/web-cast-v2\.css\?v=tv-auto-fullscreen-20261122a/);
+ assert.match(page,/web-cast-v2\.css\?v=tv-remote-sync-20261122a/);
  assert.match(tv,/web-cast-icons\.js\?v=dual-links-20261122a/);
  const svgIndex=page.indexOf('web-cast-icons.js?v=');
  assert.ok(svgIndex>0&&svgIndex<page.indexOf('web-cast-v2.js?v='));
