@@ -76,3 +76,9 @@ Evaluate defects revealed by real screenshot of previous build before making cha
 - Input ảnh Electron thật P5.1.176 `positron-p51176-more-favorites-after-1920x1080-real.png`: sáu gợi ý cố định trong hàng trăm kênh.
 - Thêm điều hướng Gợi ý khác duyệt các kênh chưa đánh dấu sao, không autoplay, không lưu Favorites nếu người dùng chưa bấm ☆.
 - Chỉ tính vòng khi Node pass, Electron screenshot trước/sau được mở kiểm tra trực tiếp, CI build + Release Windows/Mac xác minh thành công.
+
+
+## P5.1.179 (CANDIDATE) — tìm trong nhiều kênh gợi ý
+- Đọc ảnh Electron thật P5.1.178: sáu gợi ý đổi 003–008 sang 009–014, nhưng hơn 500 kênh khác không tìm nhanh được.
+- Thêm ô Tìm kênh để thêm, tìm theo tên/nhóm không dấu, chỉ xem metadata trong danh sách đang bật và chưa sao.
+- Phải kiểm chứng Node, 9 QA trong Electron, chụp/mở PNG 1920×1080 before/after, Windows/macOS Release hoặc fallback 403. Không đánh dấu hoàn thành khi còn thiếu.

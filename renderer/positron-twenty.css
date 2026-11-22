@@ -622,3 +622,23 @@ html[data-positron="true"] #page-fav .po-fav-more-next:hover{border-color:var(--
 html[data-positron="true"] #page-fav .po-fav-more-next:focus-visible{
  outline:2px solid var(--po-accent,#60d7c2);outline-offset:2px;
 }
+
+/* P5.1.179: tìm từ mọi kênh chưa sao, hỗ trợ tiếng Việt không dấu. */
+html[data-positron="true"] #page-fav .po-fav-more-search-row{
+ display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:7px 0 12px;
+}
+html[data-positron="true"] #page-fav .po-fav-more-search-row label{
+ flex:0 0 auto;color:var(--po-text,#eaf7f7);font-size:12px;font-weight:650;
+}
+html[data-positron="true"] #page-fav #positronFavoriteMoreSearch{
+ flex:1 1 200px;min-width:0;min-height:36px;max-width:500px;
+ border:1px solid var(--po-border,#324f59);border-radius:8px;
+ background:var(--po-input,#152933);color:var(--po-text,#eaf7f7);
+ padding:7px 11px;font-size:12px;
+}
+html[data-positron="true"] #page-fav #positronFavoriteMoreSearch:focus-visible{
+ outline:2px solid var(--po-accent,#60d7c2);outline-offset:2px;
+}
+html[data-positron="true"] #page-fav .po-fav-more-empty{
+ grid-column:1/-1;margin:0;padding:7px 0;
+}

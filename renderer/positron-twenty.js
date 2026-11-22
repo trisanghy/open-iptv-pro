@@ -184,7 +184,9 @@
   const more=d.createElement('section');more.id='positronFavoriteMore';
   more.className='po-fav-more';more.hidden=true;
   favoriteList.after(more);
-  let moreCursor=0;
+  let moreCursor=0,moreQuery='';
+  const foldMore=value=>String(value||'').normalize('NFD')
+   .replace(/[\u0300-\u036f]/g,'').replace(/đ/gi,'d').toLowerCase().trim();
   const syncFavoriteMore=()=>{
    const populated=Boolean(favoriteList.querySelector('.fav-card'));
    more.hidden=!populated;
@@ -194,25 +196,46 @@
    const available=store&&fav?channels.filter(ch=>ch&&ch.id&&!fav.has(store,ch)):[];
    more.replaceChildren();
    if(!available.length){more.hidden=true;return;}
-   // P5.1.178: duyệt toàn bộ danh sách, không chỉ sáu gợi ý đầu.
-   moreCursor%=available.length;
-   const picks=Array.from({length:Math.min(6,available.length)},
-    (_,index)=>available[(moreCursor+index)%available.length]);
+   // P5.1.179: tìm kiếm cả kênh chưa đánh sao, kết hợp chuyển nhóm.
+   const words=foldMore(moreQuery).split(/\s+/).filter(Boolean);
+   const filtered=words.length?available.filter(ch=>
+    words.every(word=>foldMore((ch.name||'')+' '+(ch.group||'')).includes(word))):available;
+   moreCursor=filtered.length?moreCursor%filtered.length:0;
+   const picks=Array.from({length:Math.min(6,filtered.length)},
+    (_,index)=>filtered[(moreCursor+index)%filtered.length]);
    const toolbar=d.createElement('div');toolbar.className='po-fav-more-top';
    const heading=d.createElement('h3');heading.textContent='Gợi ý thêm vào Yêu thích';
    const next=d.createElement('button');next.type='button';next.className='po-fav-more-next';
    next.textContent='Gợi ý khác ↻';
    next.setAttribute('aria-label','Xem sáu kênh chưa yêu thích tiếp theo');
-   next.hidden=available.length<=6;
+   next.hidden=filtered.length<=6;
    next.addEventListener('click',()=>{
-    moreCursor=(moreCursor+6)%available.length;
+    moreCursor=(moreCursor+6)%filtered.length;
     syncFavoriteMore();
     more.querySelector('.po-fav-more-next')?.focus();
    });
    toolbar.append(heading,next);
+   const searchRow=d.createElement('div');searchRow.className='po-fav-more-search-row';
+   const searchLabel=d.createElement('label');searchLabel.htmlFor='positronFavoriteMoreSearch';
+   searchLabel.textContent='Tìm kênh để thêm';
+   const moreInput=d.createElement('input');moreInput.id='positronFavoriteMoreSearch';
+   moreInput.type='search';moreInput.placeholder='Tên kênh hoặc nhóm, có thể không dấu…';
+   moreInput.setAttribute('autocomplete','off');moreInput.value=moreQuery;
+   moreInput.addEventListener('input',()=>{
+    const caret=moreInput.selectionStart??moreInput.value.length;
+    moreQuery=moreInput.value;moreCursor=0;syncFavoriteMore();
+    const focus=d.getElementById('positronFavoriteMoreSearch');
+    if(focus){focus.focus();focus.setSelectionRange(caret,caret);}
+   });
+   searchRow.append(searchLabel,moreInput);
    const hint=d.createElement('p');
-   hint.textContent='Bấm ☆ để lưu hoặc Gợi ý khác để khám phá '+available.length+' kênh chưa yêu thích. Không tự phát video.';
+   hint.textContent='Tìm thấy '+filtered.length+' / '+available.length+' kênh chưa yêu thích. Bấm ☆ để lưu, không tự phát video.';
    const grid=d.createElement('div');grid.className='po-fav-more-grid';
+   if(!filtered.length){
+    const noMatch=d.createElement('p');noMatch.className='po-fav-more-empty';
+    noMatch.textContent='Không có kênh chưa yêu thích phù hợp. Hãy thử từ khóa khác.';
+    grid.append(noMatch);
+   }
    for(const candidate of picks){
     const chip=d.createElement('button');chip.type='button';
     chip.className='po-fav-more-chip';chip.textContent='☆ '+String(candidate.name||'Kênh');
@@ -224,7 +247,7 @@
     });
     grid.append(chip);
    }
-   more.append(toolbar,hint,grid);
+   more.append(toolbar,searchRow,hint,grid);
   };
   new MutationObserver(syncFavoriteMore).observe(favoriteList,{childList:true,subtree:true});
   syncFavoriteMore();

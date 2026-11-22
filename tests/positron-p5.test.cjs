@@ -1848,3 +1848,19 @@ test('P5.1.178 đổi nhóm kênh gợi ý không tự phát hoặc sửa nguồ
  assert.ok(css.includes('#page-fav .po-fav-more-next:focus-visible'));
  assert.ok(qa.includes('favoriteRotateQA'));
 });
+
+test('P5.1.179 tìm trong các kênh chưa đánh sao không làm mất nguồn',()=>{
+ const js=read('renderer/positron-twenty.js');
+ const css=read('renderer/positron-twenty.css');
+ const qa=read('scripts/positron-20-extension.cjs');
+ assert.ok(js.includes("moreInput.id='positronFavoriteMoreSearch'"));
+ assert.ok(js.includes("moreInput.addEventListener('input'"));
+ assert.ok(js.includes("words.every(word=>foldMore((ch.name||'')+' '+(ch.group||'')).includes(word))"));
+ assert.ok(js.includes("replace(/[\\u0300-\\u036f]/g,'').replace(/đ/gi,'d')"));
+ assert.ok(js.includes("focus.setSelectionRange(caret,caret)"));
+ assert.ok(js.includes('moreCursor=filtered.length?moreCursor%filtered.length:0'));
+ assert.ok(js.includes('Array.from({length:Math.min(6,filtered.length)}'));
+ assert.ok(js.includes("noMatch.textContent='Không có kênh chưa yêu thích phù hợp. Hãy thử từ khóa khác.'"));
+ assert.ok(css.includes('#page-fav #positronFavoriteMoreSearch:focus-visible'));
+ assert.ok(qa.includes('favoriteSuggestSearchQA'));
+});

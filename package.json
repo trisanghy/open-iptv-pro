@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.263",
-  "description": "Positron P5.1.178: duyệt các nhóm kênh gợi ý Yêu thích",
+  "version": "4.23.264",
+  "description": "Positron P5.1.179: tìm kênh chưa yêu thích theo tên hoặc nhóm",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",
