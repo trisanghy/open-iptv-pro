@@ -1,0 +1,66 @@
+name: Package Samsung TV native AVPlay source (unsigned)
+
+on:
+  push:
+    branches: [tizenbrew]
+    paths:
+      - tizen-native/**
+      - tizenbrew/index.html
+      - tizenbrew/phone.html
+      - supabase-sdk.js
+      - hls.min.js
+      - assets/icon.png
+      - package.json
+      - .github/workflows/package-tizen-native-avplay.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: native-tv-source-build
+  cancel-in-progress: true
+
+jobs:
+  build-source:
+    name: Build and validate unsigned Samsung Tizen WGT
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build unsigned TV web application archive
+        run: python3 tizen-native/build.py
+      - name: Verify archive, AVPlay assets and version
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          from xml.etree import ElementTree as ET
+          import json
+          path=Path('dist-tizen-native/Open-IPTV-Pro-TV-Native-UNSIGNED.wgt')
+          version=json.loads(Path('package.json').read_text())['version']
+          assert path.is_file() and path.stat().st_size>500_000
+          with ZipFile(path) as z:
+              assert z.testzip() is None
+              names=set(z.namelist())
+              assert {'config.xml','index.html','phone.html','hls.min.js','supabase-sdk.js','icon.png'}.issubset(names)
+              xml=ET.fromstring(z.read('config.xml'))
+              assert xml.attrib['version']==version
+              html=z.read('index.html').decode()
+              assert 'webapis.avplay' in html
+              assert 'hls.min.js' in html
+              assert '$WEBAPIS/webapis/webapis.js' in html
+              assert 'sourceQR' in html
+          print('Unsigned Samsung TV WGT source archive passed static validation:',version)
+          PY
+      - name: Upload unsigned WGT for local Samsung signing
+        uses: actions/upload-artifact@v4
+        with:
+          name: Open-IPTV-Pro-TV-Native-UNSIGNED
+          path: |
+            dist-tizen-native/Open-IPTV-Pro-TV-Native-UNSIGNED.wgt
+            tizen-native/README.md
+          if-no-files-found: error
+          retention-days: 30
