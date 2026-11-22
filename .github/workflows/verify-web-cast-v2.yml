@@ -8,6 +8,11 @@ on:
       - 'web-cast-sender.js'
       - 'web-cast-v2.js'
       - 'web-cast-icons.js'
+      - 'web-player-icons.css'
+      - 'web-mobile-controls-polish.css'
+      - 'web-mobile-tablet-controls.css'
+      - 'web-online/tests/web-player-icons*.cjs'
+      - 'web-online/tests/web-mobile-controls-polish.test.cjs'
       - 'web-cast-v2.css'
       - 'web-tv-pair.js'
       - 'web-tv-receiver.js'
@@ -45,6 +50,8 @@ jobs:
         run: |
           node --test web-online/tests/web-cast-v2.test.cjs
           node --test web-online/tests/web-cast-icons.test.cjs
+          node --test web-online/tests/web-player-icons.test.cjs
+          node --test web-online/tests/web-mobile-controls-polish.test.cjs
           node --test web-online/tests/web-cast-sender.test.cjs
           node --test web-online/tests/web-airplay.test.cjs
       - name: Capture desktop 16:9 and mobile screenshots in all three themes
