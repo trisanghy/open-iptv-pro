@@ -51,6 +51,7 @@
   const u=new URL(url);
   if(u.protocol==='http:'&&root.location.protocol==='https:'){
    status('Nguồn đang dùng HTTP. Trình duyệt TV có thể chặn nội dung không an toàn; hãy dùng HTTPS hoặc ứng dụng Electron.');
+    void receiver?.reportPlayback('error',playingName,playingId).catch(()=>{});
    return;
   }
   const isHls=/\.m3u8?(?:[?#]|$)/i.test(url);
@@ -62,7 +63,10 @@
    hls.attachMedia(video);
    hls.on(root.Hls.Events.MEDIA_ATTACHED,()=>hls.loadSource(url));
    hls.on(root.Hls.Events.ERROR,(_event,data)=>{
-    if(data.fatal)status('Không phát được HLS trên TV: '+String(data.details||data.type||'lỗi nguồn'));
+    if(data.fatal){
+      status('Không phát được HLS trên TV: '+String(data.details||data.type||'lỗi nguồn'));
+      void receiver?.reportPlayback('error',playingName,playingId).catch(()=>{});
+     }
    });
   }else if(isDash&&root.dashjs?.MediaPlayer){
    dash=root.dashjs.MediaPlayer().create();
@@ -74,7 +78,13 @@
    await video.play();
    status('Đang phát '+(name||'kênh')+' trên TV.');
   }catch(error){
-   status('Đã nhận kênh '+(name||'')+'. Nhấn nút ▶ Phát trên TV bằng điều khiển TV nếu tự phát bị chặn.');
+   if(error?.name==='NotAllowedError'){
+     status('TV đã chặn tự phát. Nhấn ▶ Phát trực tiếp trên TV bằng điều khiển TV.');
+     void receiver?.reportPlayback('paused',playingName,playingId).catch(()=>{});
+    }else{
+     status('TV chưa phát được '+(name||'kênh')+': '+String(error?.message||error));
+     void receiver?.reportPlayback('error',playingName,playingId).catch(()=>{});
+    }
   }
  }
  video.addEventListener('playing',()=>{
@@ -94,7 +104,10 @@
   switch(command.action){
    case 'play':show('tvPlayer');void loadVideo(command.url,command.name,command.mediaId);break;
    case 'pause':suppressPause=false;video.pause();status('Đã tạm dừng phát theo lệnh từ máy tính.');break;
-   case 'resume':void video.play().catch(()=>status('TV cần nhấn Phát để tiếp tục.'));break;
+   case 'resume':void video.play().catch(error=>{
+     status('TV chưa tiếp tục phát: '+String(error?.message||error)+'. Thử nhấn Phát trên TV.');
+     void receiver?.reportPlayback(error?.name==='NotAllowedError'?'paused':'error',playingName,playingId).catch(()=>{});
+    });break;
    case 'stop':cleanupPlayer();status('Đã dừng kênh. Chọn kênh mới trên máy tính.');void receiver?.reportPlayback('stopped',playingName,playingId).catch(()=>{});break;
    case 'volume':
     if(command.volume!==null)try{video.volume=command.volume;}catch{}
@@ -153,6 +166,7 @@
  });
  $('tvLocalPause').addEventListener('click',()=>video.pause());
  video.addEventListener('pause',()=>{if(accepted&&!video.ended&&!suppressPause)void receiver?.reportPlayback('paused',playingName,playingId).catch(()=>{});});
+ video.addEventListener('ended',()=>{if(accepted)void receiver?.reportPlayback('stopped',playingName,playingId).catch(()=>{});});
  root.addEventListener('pagehide',()=>{void receiver?.close();cleanupPlayer();});
  void boot();
 })(window);
