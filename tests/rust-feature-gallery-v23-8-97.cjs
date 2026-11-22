@@ -118,6 +118,25 @@ async function main(){
   if(clicked!=='clicked'||selected!=='true')throw Error('WatchFlow tab failed: '+tab);
   await sectionShot(name,'#watchflowDemo');
  }
+ // Capture Smart (lightweight) and Intelligence (heavy) modes across every
+ // WatchFlow tab. The preview explicitly discloses these aren't live models.
+ for(const [mode,number] of [['smart',53],['intelligence',57]]){
+  const chosen=await click('#watchflowDemo [data-wf-mode="'+mode+'"]');
+  const aria=await page.evaluate(m=>document.querySelector('#watchflowDemo [data-wf-mode="'+m+'"]')?.getAttribute('aria-checked'),mode);
+  if(chosen!=='clicked'||aria!=='true')throw Error('WatchFlow mode not selected: '+mode);
+  const tabs=[
+   ['overview','overview'],
+   ['classify','epg-classification'],
+   ['suggest','recommendations'],
+   ['search','internet-search']
+  ];
+  for(const [index,[tab,part]] of tabs.entries()){
+   const clicked=await click('#watchflowDemo [data-wf-tab="'+tab+'"]');
+   const selected=await page.evaluate(t=>document.querySelector('#watchflowDemo [data-wf-tab="'+t+'"]')?.getAttribute('aria-selected'),tab);
+   if(clicked!=='clicked'||selected!=='true')throw Error('WatchFlow mode tab failed: '+mode+'/'+tab);
+   await sectionShot(String(number+index)+'-tv-watchflow-'+mode+'-'+part,'#watchflowDemo');
+  }
+ }
  await click('#wfClose');
  if(!await page.evaluate(()=>document.getElementById('watchflowDemo')?.hidden===true))
   throw Error('WatchFlow panel did not close');

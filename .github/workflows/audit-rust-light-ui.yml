@@ -58,7 +58,9 @@ jobs:
         run: |
           set -Eeuo pipefail
           mkdir -p rust-watchflow-capture
-          for filename in 49-tv-watchflow-overview 50-tv-watchflow-classify 51-tv-watchflow-recommend 52-tv-watchflow-internet-search; do
+          for filename in 49-tv-watchflow-overview 50-tv-watchflow-classify 51-tv-watchflow-recommend 52-tv-watchflow-internet-search \
+            53-tv-watchflow-smart-overview 54-tv-watchflow-smart-epg-classification 55-tv-watchflow-smart-recommendations 56-tv-watchflow-smart-internet-search \
+            57-tv-watchflow-intelligence-overview 58-tv-watchflow-intelligence-epg-classification 59-tv-watchflow-intelligence-recommendations 60-tv-watchflow-intelligence-internet-search; do
             test -s "rust-feature-gallery/${filename}.png"
             cp "rust-feature-gallery/${filename}.png" rust-watchflow-capture/
           done
@@ -66,7 +68,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: rustlab-watchflow-real-renderer-v23-8-103
+          name: rustlab-watchflow-real-renderer-v23-8-104
           path: rust-watchflow-capture/*.png
           if-no-files-found: error
           retention-days: 14

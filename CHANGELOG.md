@@ -1,3 +1,7 @@
+# Rust Lab v23.8.104 — WatchFlow Smart và Intelligence screenshots
+
+Chụp thêm 8 ảnh giao diện thực tế trong Chromium: bốn tab ở chế độ Smart (AI nhẹ) và bốn tab ở chế độ Intelligence (AI nâng cao). Xác minh cả mode selector và các tab chuyển được. Chưa chạy mô hình học máy thực tế. Xem [release notes](RELEASE_NOTES_RUST_LAB_V23_8_104.md).
+
 # Rust Lab v23.8.103 — WatchFlow AI chụp giao diện thật
 
 Bổ sung kiểm thử click nút WatchFlow và chụp từng tab từ Chromium renderer (không phải native Tauri). Chưa thay đổi tính năng AI/phát video. Xem [release notes](RELEASE_NOTES_RUST_LAB_V23_8_103.md).
