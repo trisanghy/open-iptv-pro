@@ -520,7 +520,7 @@ if html.count('web-ios-pip-compat.js?v=')!=1 or html.count('web-ios-pip-compat.c
 # Keep player subtitles and fullscreen EPG across Safari cached PWA versions.
 for old,new in (
     ('features.js?v=epg-atomic-gzip-20261120a','features.js?v=web-perf-20261120a'),
-    ('web-only.css?v=no-timeshift-20261119a','web-only.css?v=epg-player-details-20261120a'),
+    ('web-only.css?v=no-timeshift-20261119a','web-only.css?v=cast-visible-20261122a'),
     ('web-fullscreen-controls.js?v=fullscreen-tools-20261119b','web-fullscreen-controls.js?v=epg-player-details-20261120a'),
     ('web-fullscreen-controls.css?v=fullscreen-tools-20261119b','web-fullscreen-controls.css?v=epg-player-details-20261120a'),
 ):
