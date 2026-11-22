@@ -11,7 +11,7 @@ Trang này được tạo tự động từ GitHub Releases và ảnh kiểm th�
 
 **Ứng dụng:** 4.23.319 · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
 
-Từ mã P233: bộ lọc tên nhóm loại dấu rồi thay chữ đ trước khi chuyển chữ hoa thành thường; do đó tên ĐÀI TRUYỀN HÌNH không khớp khi gõ dai truyen hinh. Bản sửa đặt chuyển thường trước khi thay đ→d; ảnh hưởng duy nhất bộ lọc nhóm cục bộ. Không sửa nguồn IPTV, playlist, Favorites, playback hoặc EPG.
+Feature priority: NEW — Hỗ trợ tìm tên thư mục tiếng Việt có chữ Đ viết hoa bằng từ khóa không dấu ngay trong bộ chọn nhóm, giúp người xem truy cập đúng dữ liệu danh sách kênh mà không cần đổi tên thư mục hoặc mở video. Electron screenshot: positron-p51234-vietnamese-group-after-1920x1080-real.png
 
 *Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
 

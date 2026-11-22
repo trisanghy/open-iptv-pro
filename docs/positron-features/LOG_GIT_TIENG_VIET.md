@@ -6,7 +6,7 @@ Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA 
 
 **Ứng dụng:** 4.23.319 · **Trạng thái:** Chưa có bản phát hành
 
-Từ mã P233: bộ lọc tên nhóm loại dấu rồi thay chữ đ trước khi chuyển chữ hoa thành thường; do đó tên ĐÀI TRUYỀN HÌNH không khớp khi gõ dai truyen hinh. Bản sửa đặt chuyển thường trước khi thay đ→d; ảnh hưởng duy nhất bộ lọc nhóm cục bộ. Không sửa nguồn IPTV, playlist, Favorites, playback hoặc EPG.
+Feature priority: NEW — Hỗ trợ tìm tên thư mục tiếng Việt có chữ Đ viết hoa bằng từ khóa không dấu ngay trong bộ chọn nhóm, giúp người xem truy cập đúng dữ liệu danh sách kênh mà không cần đổi tên thư mục hoặc mở video. Electron screenshot: positron-p51234-vietnamese-group-after-1920x1080-real.png
 
 [Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/44805db1954307444caddba65579ccf48902bdb6)
 [Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)

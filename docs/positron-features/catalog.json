@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-22T17:06:52.117625+00:00",
+  "generatedAt": "2026-11-22T17:08:51.734210+00:00",
   "repository": "trisanghy/open-iptv-pro",
   "branch": "Positron",
   "versions": [
@@ -8,7 +8,7 @@
       "version": "P5.1.234",
       "appVersion": "4.23.319",
       "title": "sửa tìm tên nhóm có Đ viết hoa",
-      "description": "Từ mã P233: bộ lọc tên nhóm loại dấu rồi thay chữ đ trước khi chuyển chữ hoa thành thường; do đó tên ĐÀI TRUYỀN HÌNH không khớp khi gõ dai truyen hinh. Bản sửa đặt chuyển thường trước khi thay đ→d; ảnh hưởng duy nhất bộ lọc nhóm cục bộ. Không sửa nguồn IPTV, playlist, Favorites, playback hoặc EPG.",
+      "description": "Feature priority: NEW — Hỗ trợ tìm tên thư mục tiếng Việt có chữ Đ viết hoa bằng từ khóa không dấu ngay trong bộ chọn nhóm, giúp người xem truy cập đúng dữ liệu danh sách kênh mà không cần đổi tên thư mục hoặc mở video. Electron screenshot: positron-p51234-vietnamese-group-after-1920x1080-real.png",
       "kind": "fix",
       "status": "candidate",
       "published": "",
