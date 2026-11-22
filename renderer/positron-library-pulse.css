@@ -150,3 +150,14 @@ html[data-positron="true"] .po-pulse-missing-locate:hover{border-color:var(--po-
 html[data-positron="true"] .po-pulse-missing-locate:focus-visible{
  outline:2px solid var(--po-accent,#6ed9c4);outline-offset:2px;
 }
+/* P5.1.173: nút quay lại kiểm kê xuất hiện sau thao tác định vị, không lấn player. */
+html[data-positron="true"] #poLibraryReturnToMissing{
+ display:block;width:100%;margin:3px 0 5px;padding:6px 9px;text-align:left;
+ border:1px solid var(--po-border,#375462);border-radius:8px;
+ background:var(--po-card,#162934);color:var(--po-text,#eaf7f7);
+ font-size:11px;font-weight:650;cursor:pointer;
+}
+html[data-positron="true"] #poLibraryReturnToMissing[hidden]{display:none!important}
+html[data-positron="true"] #poLibraryReturnToMissing:focus-visible{
+ outline:2px solid var(--po-accent,#6ed9c4);outline-offset:2px;
+}

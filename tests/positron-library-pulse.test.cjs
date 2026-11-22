@@ -349,3 +349,17 @@ test('P5.1.172 Tìm kênh thiếu logo trong TV an toàn, không tự mở playb
  assert.ok(css.includes('.po-pulse-missing-locate:focus-visible'),'Nút có focus rõ');
  assert.ok(!js.includes('state.playChannel(')&&!js.includes('deleteChannel('));
 });
+
+test('P5.1.173 quay lại đúng trang kiểm kê, không làm thay đổi danh sách',()=>{
+ const js=fs.readFileSync(path.join(__dirname,'../renderer/positron-library-pulse.js'),'utf8');
+ const css=fs.readFileSync(path.join(__dirname,'../renderer/positron-library-pulse.css'),'utf8');
+ assert.ok(js.includes("returnChip.id='poLibraryReturnToMissing'"));
+ assert.ok(js.includes("returnChip.dataset.page=String(missingIndex)"));
+ assert.ok(js.includes('returnChip.hidden=false'));
+ assert.ok(js.includes('if(!opened)toggle.click()'));
+ assert.ok(js.includes('Math.min(targetPage,Math.max(0,Math.ceil(missingTotal/missingPageSize())-1))'));
+ assert.ok(js.includes("missingNav.scrollIntoView({block:'center',behavior:'instant'})"));
+ assert.ok(js.includes('missingJump.focus({preventScroll:true})'));
+ assert.ok(css.includes('#poLibraryReturnToMissing[hidden]{display:none!important}'));
+ assert.ok(!js.includes('state.playChannel(')&&!js.includes('state.save()'));
+});

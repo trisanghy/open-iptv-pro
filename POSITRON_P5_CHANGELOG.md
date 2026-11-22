@@ -1,3 +1,12 @@
+## P5.1.173 — Quay lại đúng vị trí kiểm kê sau khi tìm kênh / Electron 4.23.258
+- Feature priority: NEW — Ảnh Electron P5.1.172 cho thấy bấm Tìm sẽ đưa đúng một kênh lên TV nhưng người dùng phải tìm lại vị trí kiểm kê; bổ sung nút ↩ Kiểm kê · trang N xuất hiện cạnh ô tìm TV chỉ sau thao tác định vị, quay về đúng trang kênh thiếu logo đang xử lý mà không mất bộ lọc.
+- User action: Từ Thư viện → Kênh thiếu logo → sang trang 2 → bấm Tìm một kênh → chọn ↩ Kiểm kê · trang 2 ngay dưới ô tìm để quay lại đúng trang thứ hai và tiếp tục rà soát.
+- Electron screenshot: positron-p51173-return-inspection-after-1920x1080-real.png
+- Baseline thực đã mở: `positron-p51172-locate-channel-after-1920x1080-real.png` của P5.1.172, danh sách TV đã lọc chỉ 1 kênh; nút quay lại chưa có.
+- Chỉ thêm trạng thái phiên giao diện, không đọc/ghi URL stream, không đổi Favorites, M3U, EPG hay playback; nút ẩn khi không sử dụng.
+- Chứng cứ cần: unit kiểm tra phiên trang/hidden/focus, Electron 1920×1080 ảnh before/after, 10 kiểm tra đóng/mở, số trang/range, no-autoplay, no-mutation.
+- Trạng thái: CANDIDATE, phải có Node + ảnh Electron đã nhìn + Release asset thật trước khi tính vòng.
+
 ## P5.1.172 — Tìm đúng kênh thiếu logo trong danh sách TV / Electron 4.23.257
 - Feature priority: NEW — Ảnh Electron thật P5.1.171 cho thấy trang kiểm kê hiển thị kênh 11–20 trong khi danh sách TV bên trái còn kênh 1–10, thiếu cầu nối tìm đúng kênh để người dùng sửa hoặc xem thông tin. Thêm nút Tìm cho mỗi hàng, đặt ô tìm trong TV theo đúng tên kênh và mở bộ lọc Tất cả.
 - User action: Mở Thư viện → Kênh thiếu logo → chuyển tới trang cần kiểm tra → bấm Tìm cạnh kênh muốn định vị; panel đóng, tab TV hiện danh sách đã lọc theo tên, chỉ phát khi người dùng chủ động bấm kênh.

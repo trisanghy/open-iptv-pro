@@ -18,6 +18,13 @@
  svg.append(p);
  const word=d.createElement('span');word.textContent='Thư viện';word.className='po-pulse-toggle-label';
  toggle.append(svg,word);actions.prepend(toggle);
+ // P5.1.173: trở lại đúng trang kiểm kê sau thao tác định vị kênh từ Thư viện.
+ const returnChip=d.createElement('button');returnChip.type='button';
+ returnChip.id='poLibraryReturnToMissing';returnChip.className='po-pulse-return-to-missing';
+ returnChip.textContent='↩ Quay lại kiểm kê';returnChip.hidden=true;
+ returnChip.setAttribute('aria-label','Quay lại trang kiểm kê kênh thiếu logo');
+ const searchArea=d.querySelector('#page-tv .filter-box');
+ if(searchArea)searchArea.after(returnChip);
  const panel=d.createElement('section');panel.id='poLibraryPulsePanel';panel.className='po-pulse-panel';
  panel.hidden=true;panel.setAttribute('role','dialog');panel.setAttribute('aria-modal','false');
  panel.setAttribute('aria-labelledby','poLibraryPulseTitle');
@@ -233,6 +240,9 @@
     state.setPage('tv');
     if(!all.classList.contains('active'))all.click();
     search.value=item.name;search.dispatchEvent(new Event('input',{bubbles:true}));
+    returnChip.dataset.page=String(missingIndex);
+    returnChip.textContent='↩ Kiểm kê · trang '+(missingIndex+1);
+    returnChip.hidden=false;
     hide();search.focus({preventScroll:true});
    });
    li.append(name,group,locate);missingRows.append(li);
@@ -293,6 +303,16 @@
   }
   render();opened=true;panel.hidden=false;panel.scrollTop=0;toggle.setAttribute('aria-expanded','true');
   close.focus({preventScroll:true});
+ });
+ returnChip.addEventListener('click',()=>{
+  const targetPage=Math.max(0,Number(returnChip.dataset.page)||0);
+  if(!opened)toggle.click();
+  missingIndex=Math.min(targetPage,Math.max(0,Math.ceil(missingTotal/missingPageSize())-1));
+  renderMissing();
+  if(missingToggle.getAttribute('aria-expanded')!=='true')missingToggle.click();
+  missingNav.scrollIntoView({block:'center',behavior:'instant'});
+  returnChip.hidden=true;
+  missingJump.focus({preventScroll:true});
  });
  moreGroups.addEventListener('click',()=>{
   if(visibleGroupCount>=groupSummary.length&&visibleGroupCount>5)visibleGroupCount=5;
