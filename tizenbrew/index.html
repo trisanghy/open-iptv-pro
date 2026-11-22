@@ -48,22 +48,21 @@ button,input,textarea{font:inherit;color:inherit}button{cursor:pointer;border:2p
 .dialog .rights-toggle[aria-checked=true] .rights-box::before{content:"✓";font-weight:800}
 .dialog .rights-toggle:focus,.dialog .rights-toggle:focus-visible{outline:4px solid var(--focus);outline-offset:3px;box-shadow:0 0 0 7px #168df833}
 
-/* One compact exit action, always at the bottom; no duplicate exits in the header/sidebar/player. */
-.tv-shortcuts{position:fixed;z-index:8;right:18px;bottom:13px;display:flex;align-items:center;gap:9px}
-.tv-shortcuts button{font-size:15px;line-height:1.25;padding:9px 13px;min-height:39px;border:1px solid #61738d;background:rgba(21,36,57,.94);color:#fff;border-radius:9px;white-space:nowrap}
-.tv-shortcuts .exit-small{background:rgba(126,31,48,.91);border-color:#b9586c}
-.tv-shortcuts button:focus-visible{background:#0879db;outline:3px solid #86d8ff;outline-offset:2px}
-.footer{padding-right:275px;gap:10px;justify-content:space-evenly}
-.playerfoot{padding:17px 275px 17px 24px;text-align:left;font-size:16px;pointer-events:none;transition:opacity .25s}
+/* Shortcuts belong only to the home sidebar, never to the video player. */
+.nav .sidebar-shortcuts{margin-top:auto;display:flex;gap:9px;align-items:center;flex-wrap:wrap;padding:0 5px}
+.nav .sidebar-shortcuts button{flex:1 1 auto;width:auto;min-height:40px;padding:9px 11px;text-align:center;font-size:15px;line-height:1.3;border:1px solid #61738d;background:var(--item);color:var(--fg);border-radius:9px;white-space:nowrap}
+.nav .sidebar-shortcuts .exit-small{background:#782238;color:#fff;border-color:#ad5468}
+.nav .sidebar-shortcuts button:focus-visible{background:var(--blue);color:#fff;outline:3px solid var(--focus);outline-offset:2px}
+.playerfoot{pointer-events:none;transition:opacity .25s}
 .playerhead{pointer-events:none;transition:opacity .25s}
 #player.is-playing .playerfoot,#player.is-playing .playerhead{opacity:0}
 .playerstatus[hidden]{display:none!important}
 #video:focus-visible{outline:none}
-@media(max-width:1100px){.tv-shortcuts button{font-size:13px;padding:8px 10px}.footer{padding-right:245px}.playerfoot{padding-right:245px;font-size:14px}}
+@media(max-width:1100px){.nav .sidebar-shortcuts{gap:6px;padding:0 2px}.nav .sidebar-shortcuts button{font-size:13px;padding:8px 9px}}
 </style></head><body data-theme="dark">
 <div id="app">
-<header class="top"><div class="brand"><div class="brandicon">▶</div><div><strong>Open IPTV Pro <small>TV</small></strong><p>Samsung Tizen Edition · TizenBrew v0.1.13</p></div></div><div class="toolbar"><span class="clock" id="clock">--:--</span><button id="searchBtn">⌕ Tìm</button><button id="addBtn">＋ Nguồn</button><button id="themeBtn">◐ Giao diện</button></div></header>
-<div class="main"><nav class="nav"><button class="active" data-nav="all">▣　Trực tiếp</button><button data-nav="favorites">♡　Yêu thích</button><button data-nav="recent">◷　Đã xem</button><button data-nav="sources">☷　Nguồn M3U</button><button data-nav="help">⚙　Hướng dẫn</button><p class="tip">Dùng ↑ ↓ ← → và OK để điều khiển bằng remote TV.</p></nav>
+<header class="top"><div class="brand"><div class="brandicon">▶</div><div><strong>Open IPTV Pro <small>TV</small></strong><p>Samsung Tizen Edition · TizenBrew v0.1.14</p></div></div><div class="toolbar"><span class="clock" id="clock">--:--</span><button id="searchBtn">⌕ Tìm</button><button id="addBtn">＋ Nguồn</button><button id="themeBtn">◐ Giao diện</button></div></header>
+<div class="main"><nav class="nav"><button class="active" data-nav="all">▣　Trực tiếp</button><button data-nav="favorites">♡　Yêu thích</button><button data-nav="recent">◷　Đã xem</button><button data-nav="sources">☷　Nguồn M3U</button><button data-nav="help">⚙　Hướng dẫn</button><div id="sidebarShortcuts" class="sidebar-shortcuts"><button type="button" id="tizenTubeBtn" title="Chuyển sang TizenTube đã cài trong TizenBrew">▶ TizenTube</button><button type="button" id="exitModuleBtn" class="exit-small" title="Thoát về TizenBrew">✕ Thoát</button></div><p class="tip">Dùng ↑ ↓ ← → và OK để điều khiển bằng remote TV.</p></nav>
 <section class="listpane"><div class="heading"><div><div class="eyebrow">DANH SÁCH KÊNH</div><h1 id="heading">Trực tiếp</h1></div><span id="count">0 kênh</span></div><div class="groups" id="groups"></div><div class="channels" id="channels"></div><div class="empty" id="empty" hidden><h2>Chưa có kênh IPTV</h2><p>Thêm nguồn bằng URL trên remote hoặc quét QR để nhập bằng điện thoại.</p><button id="emptyAdd" class="primary">＋ Thêm nguồn IPTV</button><button id="sampleBtn">▶ Luồng kiểm thử</button></div><button id="more" hidden>Xem thêm kênh ↓</button></section>
 <aside class="details"><div class="preview"><span class="live">● TRỰC TIẾP</span><b id="previewText">TV</b><span class="watermark">OPEN IPTV PRO</span></div><div class="eyebrow">KÊNH ĐANG CHỌN</div><h2 id="channelTitle">Open IPTV Pro TV</h2><p id="channelGroup">Chọn kênh để xem</p><div class="info"><div class="eyebrow">THÔNG TIN</div><p id="channelInfo">Hỗ trợ nhập M3U, nhóm kênh, yêu thích và remote Samsung.</p></div><div class="actions"><button class="primary" id="watchBtn">▶ Xem</button><button id="favBtn">♡ Yêu thích</button></div></aside></div>
 <footer class="footer"><span><b>↑ ↓ ← →</b> Di chuyển</span><span><b>OK</b> Chọn</span><span><b>↶</b> Trở lại / Thoát</span><span><b>CH ±</b> Chuyển kênh</span></footer></div>
@@ -81,7 +80,6 @@ button,input,textarea{font:inherit;color:inherit}button{cursor:pointer;border:2p
 <button type="button" id="refreshSourceQR">↻ Tạo mã QR mới</button></section></div></div>
 <div id="searchDialog" hidden><label for="searchInput">Tìm kênh</label><input id="searchInput" placeholder="Nhập tên kênh..."><div class="buttons"><button id="cancelSearch">Hủy</button><button id="applySearch" class="primary">Tìm</button></div></div></div></div>
 <div id="player" hidden><video id="video" tabindex="0" playsinline preload="none"></video><div class="playerhead"><strong id="playingName">Open IPTV Pro TV</strong></div><div class="playerstatus" id="playerStatus" role="status">Đang tải luồng…</div><div class="playerfoot">CH ± Chuyển kênh　·　OK Phát/Tạm dừng　·　Back Danh sách</div></div>
-<div id="tvShortcuts" class="tv-shortcuts"><button type="button" id="tizenTubeBtn" title="Chuyển sang TizenTube đã cài trong TizenBrew">▶ TizenTube</button><button type="button" id="exitModuleBtn" class="exit-small" title="Trở lại danh sách hoặc thoát về TizenBrew">✕ Thoát</button></div>
 <div id="toast" hidden></div>
 <!-- QRCode.js © davidshimjs, MIT license. Embedded to work on older Tizen browsers. -->
 <script>
@@ -580,7 +578,7 @@ return {ok:true,count:list.length,usedFallback:webAliasUsed};}
 catch(e){var error=sourceError(e,address);notify('Không tải được URL. Quét QR trên điện thoại để gửi tệp hoặc dán M3U.');if(fromPhone)sourceStatus('✕ TV không tải được URL. Trên điện thoại hãy chọn tệp hoặc dán M3U qua QR.');return {ok:false,error:error};}
 finally{byId('saveSource').disabled=false;byId('saveSource').textContent='Lưu và tải';}}
 function setPlayerStatus(message){var status=byId('playerStatus');status.textContent=message||'';status.hidden=!message;}
-function updateBottomActions(){byId('exitModuleBtn').title=byId('player').hidden?'Thoát về TizenBrew':'Trở lại danh sách kênh';}
+function updateBottomActions(){byId('exitModuleBtn').title='Thoát về TizenBrew';}
 function play(c){if(!c)return;playing=c;state.recent=[c.id].concat(state.recent.filter(function(id){return id!==c.id;})).slice(0,60);save();byId('player').hidden=false;byId('player').classList.remove('is-playing');updateBottomActions();byId('playingName').textContent=c.name;
 var video=byId('video');try{video.pause();video.removeAttribute('src');video.load();video.src=c.url;setPlayerStatus('Đang mở '+c.name+'...');video.play().then(function(){if(playing&&playing.id===c.id&&!video.paused)setPlayerStatus('');}).catch(function(){if(playing&&playing.id===c.id&&video.paused)setPlayerStatus('Không tự phát được. Nhấn OK thử lại; codec hoặc CORS có thể không được hỗ trợ.');});}catch(e){setPlayerStatus(String(e.message||e));}}
 function closePlayer(){var v=byId('video');try{v.pause();v.removeAttribute('src');v.load();}catch(e){}byId('player').hidden=true;byId('player').classList.remove('is-playing');setPlayerStatus('');playing=null;draw();updateBottomActions();}
@@ -694,13 +692,9 @@ if(k.indexOf('Arrow')===0){e.preventDefault();e.stopPropagation();move(k);}retur
 if(!byId('player').hidden){
  if(c===427||k==='ChannelUp'){e.preventDefault();changeChannel(1);return;}
  if(c===428||k==='ChannelDown'){e.preventDefault();changeChannel(-1);return;}
- if(k==='ArrowDown'){e.preventDefault();byId('exitModuleBtn').focus();return;}
- if(k==='ArrowUp'){e.preventDefault();byId('video').focus();return;}
- if(k==='ArrowLeft'||k==='ArrowRight'){e.preventDefault();(document.activeElement===byId('exitModuleBtn')?byId('tizenTubeBtn'):byId('exitModuleBtn')).focus();return;}
+ if(k.indexOf('Arrow')===0){e.preventDefault();return;}
  if(k==='Enter'||c===415||c===10252){
-  e.preventDefault();var active=document.activeElement;
-  if(active===byId('exitModuleBtn')||active===byId('tizenTubeBtn')){active.click();return;}
-  var v=byId('video');if(v.paused)v.play().catch(function(){if(v.paused)notify('Luồng không hỗ trợ phát trên TV.');});else v.pause();return;
+  e.preventDefault();var v=byId('video');if(v.paused)v.play().catch(function(){if(v.paused)notify('Luồng không hỗ trợ phát trên TV.');});else v.pause();return;
  }return;
 }
 if(k.indexOf('Arrow')===0){e.preventDefault();move(k);}}
@@ -712,7 +706,7 @@ byId('rights').onclick=toggleRights;
 byId('toSourceUrl').onclick=function(){byId('sourceUrl').focus();};
 byId('refreshSourceQR').onclick=function(){void openPair();};
 byId('applySearch').onclick=function(){search=byId('searchInput').value.trim().toLowerCase();showLimit=160;closeDialog();draw();};
-byId('exitModuleBtn').onclick=function(){if(!byId('player').hidden)closePlayer();else exitModule();};
+byId('exitModuleBtn').onclick=exitModule;
 byId('tizenTubeBtn').onclick=openTizenTube;
 byId('themeBtn').onclick=function(){var themes=['dark','light','amoled'],previous=state.theme;state.theme=themes[(themes.indexOf(state.theme)+1)%3];if(!save()){state.theme=previous;document.body.dataset.theme=previous;return;}document.body.dataset.theme=state.theme;notify('Giao diện: '+state.theme);};
 byId('watchBtn').onclick=function(){play(selected);};byId('favBtn').onclick=function(){if(!selected)return;var id=selected.id,old=state.favorites[id];if(old)delete state.favorites[id];else state.favorites[id]=true;if(!save()){if(old===undefined)delete state.favorites[id];else state.favorites[id]=old;}draw();};

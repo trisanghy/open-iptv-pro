@@ -1,4 +1,11 @@
-# Open IPTV Pro TV · TizenBrew v0.1.13 (thử nghiệm)
+# Open IPTV Pro TV · TizenBrew v0.1.14 (thử nghiệm)
+
+## v0.1.14 — Đặt nút TizenTube và Thoát tại menu chính
+
+- Chuyển **▶ TizenTube** và **✕ Thoát** vào phần trống **cuối menu bên trái** (dưới Hướng dẫn, phía trên chú thích remote). Hai nút nhỏ gọn, điều khiển được bằng remote ngay từ màn hình danh sách kênh.
+- **Không đặt nút nào đè lên video**. Khi trình phát toàn màn hình mở, menu bên trái cùng hai nút được che bởi trình phát; dùng **Back** để trở về danh sách kênh, **OK** phát/tạm dừng và **CH±** chuyển kênh. Phím mũi tên khi xem không thể vô tình focus các nút nằm sau video.
+- **Thoát** từ màn hình chính quay về TizenBrew; **TizenTube** chỉ mở module đã cài qua dịch vụ TizenBrew. Giữ sửa lỗi xóa cảnh báo autoplay khi video phát từ v0.1.13.
+- Kiểm thử vị trí nút trong DOM, cú pháp và hành vi remote tại `tizenbrew/tests/tizentube-player-controls.test.cjs`.
 
 ## v0.1.12 — Quản lý kênh theo Web Mobile trên trang QR
 

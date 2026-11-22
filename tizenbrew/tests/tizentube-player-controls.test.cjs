@@ -8,7 +8,34 @@ test('Only one small exit remains; a separate TizenTube button is provided',()=>
  assert.equal((html.match(/id="tizenTubeBtn"/g)||[]).length,1);
  assert.doesNotMatch(html,/id="navExitBtn"|id="exitPlayer"/);
  assert.match(html,/class="exit-small"/);
- assert.match(html,/byId\('exitModuleBtn'\)\.onclick=function\(\)\{if\(!byId\('player'\)\.hidden\)closePlayer\(\);else exitModule\(\);\}/);
+ assert.match(html,/byId\('exitModuleBtn'\)\.onclick=exitModule/);
+ const nav=html.slice(html.indexOf('<nav class="nav">'),html.indexOf('</nav>')+6);
+ const player=html.slice(html.indexOf('<div id="player"'),html.indexOf('<div id="toast"'));
+ assert.ok(nav.includes('id="sidebarShortcuts"'),'Both shortcuts should be inside the left sidebar');
+ assert.ok(nav.indexOf('data-nav="help"')<nav.indexOf('id="sidebarShortcuts"'),'Below Hướng dẫn');
+ assert.ok(nav.indexOf('id="sidebarShortcuts"')<nav.indexOf('class="tip"'),'Above remote guidance');
+ assert.match(nav,/id="tizenTubeBtn"/);
+ assert.match(nav,/id="exitModuleBtn"/);
+ assert.doesNotMatch(player,/id="exitModuleBtn"|id="tizenTubeBtn"|sidebarShortcuts/);
+ assert.doesNotMatch(html,/\.tv-shortcuts\{|position:fixed;z-index:8;right:18px/);
+});
+test('Full-screen player cannot navigate to hidden sidebar buttons with remote',()=>{
+ const from=html.indexOf('function keyHandler(e){');
+ const to=html.indexOf("\ndocument.querySelectorAll('[data-nav]')",from);
+ assert.ok(from>0&&to>from);
+ let focused=0,clicked=0,played=0,paused=0,prevented=0;
+ const video={paused:true,play(){played++;return Promise.resolve()},pause(){paused++}};
+ const exit={focus(){focused++},click(){clicked++}},tube={focus(){focused++},click(){clicked++}};
+ const byId=id=>({player:{hidden:false},modal:{hidden:true},video,exitModuleBtn:exit,tizenTubeBtn:tube})[id];
+ const fn=vm.runInNewContext(html.slice(from,to)+'\nkeyHandler;',{
+  byId,isRemoteBack:()=>false,handleBack(){},document:{activeElement:exit},notify(){},
+  changeChannel(){},move(){focused++}
+ });
+ for(const key of ['ArrowUp','ArrowDown','ArrowLeft','ArrowRight'])fn({key,keyCode:0,preventDefault(){prevented++}});
+ assert.equal(focused,0,'no hidden sidebar button may be focused from the player');
+ fn({key:'Enter',keyCode:13,preventDefault(){prevented++}});
+ assert.equal(played,1,'OK should control video');
+ assert.equal(clicked,0,'OK on player must not activate old sidebar focus');
 });
 test('Changing to TizenTube asks installed TizenBrew module list first',async()=>{
  const code=block('function openTizenTube(){','function handleBack(e){');
