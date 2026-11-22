@@ -2,13 +2,14 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
-## P5.1.250 — Electron 4.23.335 — Ẩn chỉ báo vị trí đã cũ (CANDIDATE)
+## P5.1.250 — Ẩn chỉ báo focus đã cũ
 
-**Ứng dụng:** Chưa xác minh · **Trạng thái:** Chưa có bản phát hành
+**Ứng dụng:** 4.23.335 · **Trạng thái:** Chưa có bản phát hành
 
 Dựa trên ảnh Electron thật P5.1.249: chỉ báo `Kênh 412/561` nằm dưới bộ đếm. Kiểm tra mã phát hiện chỉ có `focusin` cập nhật nên nhãn vẫn hiển thị khi đã rời danh sách. Sửa: `focusout` xóa vị trí focus cũ khi chuyển sang thanh công cụ; tạm giữ vị trí gốc khi hộp nhảy số mở và khôi phục khi Escape. Không đọc/sửa dữ liệu luồng M3U hay Favorites.
 
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/41bb78b88c6994c8f68b9ae0316446574f1991ac)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
 
 ## P5.1.249 — Electron 4.23.334 — Escape hủy rồi trở về hàng kênh đang chọn (CANDIDATE)
 
