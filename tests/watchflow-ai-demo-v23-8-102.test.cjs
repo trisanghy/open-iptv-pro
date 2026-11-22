@@ -22,6 +22,6 @@ test('History-based order is non-mutating',()=>{
 });
 test('No stealth discovery or stream import in preview',()=>{
  assert.match(source,/MINH HỌA/);
- assert.match(source,/giao diện thử nghiệm/);
+ assert.match(source,/chưa kích hoạt mô hình Smart/);
  assert.doesNotMatch(source,/\bfetch\s*\(|smartLoad\s*\(|parseM3U\s*\(/);
 });

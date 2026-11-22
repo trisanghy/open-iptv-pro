@@ -9,7 +9,7 @@ test('Standard under 20MB and Smart under 200MB do not claim missing weights',()
 });
 test('advanced model uses already installed Qwen3 or Hy-MT2, or offers new download through existing model manager',()=>{
  assert.match(source,/Dùng chung Qwen3\/Hy-MT2 đã tải hoặc tải thêm/);
- assert.match(source,/chưa nối suy luận LLM|Chưa nối suy luận LLM/);
+ assert.match(source,/Qwen3 đã có đường suy luận native/);
 });
 test('prior prerelease rules remain enforced',()=>{
  const policy=fs.readFileSync('PRE_RELEASE_POLICY_RUST_LAB.md','utf8');

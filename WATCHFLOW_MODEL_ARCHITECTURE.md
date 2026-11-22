@@ -21,3 +21,6 @@ The original v4.23.82 UI concept shows:
 - Smart (<200 MB): user's choice from TinyBERT 4L INT8, MobileBERT INT8, multilingual E5 Small INT8, multilingual MiniLM INT8, PhoBERT Base INT8, with descriptions and size estimates. Selection persists locally, but no unverified model is presented as active. Existing Standard Bayes and existing behavioral ranking continue to handle real data.
 - Strict activation requirement: full packaged weights plus tokenizer strictly below 200 MiB; verified integrity, license and functional inference runtime. PhoBERT Base unquantized does not qualify.
 - Intelligence: existing Qwen3 MLX native integration remains unchanged.
+
+### v23.8.113 regression correction
+- UI tests now assert the actual Smart-catalog fallback and installed Qwen3 native route, rather than stale v23.8.108 preview text. The pre-release version is incremented; no immutable tag is rewritten.
