@@ -2,14 +2,23 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
-## P5.1.270 — AI khám phá kênh bằng contextual bandit
+## P5.1.271 — AI tự học phân loại kênh từ nhãn
 
-**Ứng dụng:** 4.23.355 · **Trạng thái:** Chưa có bản phát hành
+**Ứng dụng:** 4.23.356 · **Trạng thái:** Chưa có bản phát hành
+
+Feature priority: NEW — Bổ sung **Dạy AI phân loại** trên từng kênh khi có quyền học, sử dụng mô hình Multinomial Naive Bayes huấn luyện online từ các nhãn chủ đề do người dùng tự xác nhận. Sau khi có ít nhất hai nhóm đủ ví dụ, AI có thể gợi ý chủ đề cho kênh tương tự chưa khớp quy tắc tên hoặc EPG; kết quả phải vượt ngưỡng tin cậy, và EPG thực luôn được ưu tiên. Feature class: AI
+
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/4de866a505f8ca58ee5d09119fe944ff31b78f09)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+
+## P5.1.270 — AI khám phá theo contextual bandit / Electron 4.23.355
+
+**Ứng dụng:** 4.23.355 · **Trạng thái:** Đã phát hành
 
 Feature priority: NEW — Chế độ **Khám phá AI** tính điểm UCB cho chủ đề ít được đánh giá kết hợp xác suất logistic đã học thực tế, chọn ra danh sách đa dạng, tránh lặp quá nhiều kênh cùng chủ đề và giảm dần mức khám phá khi chủ đề được phản hồi. Feature class: AI
 
 [Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/aabfd6c885a45920eb78e3df5d453d1addceadc4)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.355-p5.1.270)
 
 ## P5.1.269 — AI lập lịch xem 24 giờ tránh trùng giờ / Electron 4.23.354
 
@@ -1872,21 +1881,19 @@ Phân bổ gợi ý WatchFlow từ các nhóm nguồn khác nhau thay vì chọn
 
 ## P5.1.59 — Đồng bộ màu thanh cuộn của Horizon
 
-**Ứng dụng:** 4.23.143 · **Trạng thái:** Đã phát hành
+**Ứng dụng:** 4.23.143 · **Trạng thái:** Chưa có bản phát hành
 
 Chỉnh màu thanh cuộn theo giao diện Horizon mà không thay đổi hành vi cuộn hoặc các chủ đề khác.
 
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/6e7778ba991cc427de34804278316673c0f97e35)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.143-p5.1.59)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
 
 ## P5.1.58 — Sửa tiêu đề bị chật trên giao diện Horizon hẹp
 
-**Ứng dụng:** 4.23.142 · **Trạng thái:** Đã phát hành
+**Ứng dụng:** 4.23.142 · **Trạng thái:** Chưa có bản phát hành
 
 Sửa cách hiển thị tiêu đề ở cửa sổ khoảng 600 px theo ảnh Electron thực tế để không bị cắt, chồng chữ.
 
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/493595f8d143229f5399893218b0f19272647af2)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.142-p5.1.58)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
 
 ## P5.1.57 — Hoàn thiện Horizon và WatchFlow có dữ liệu thử nghiệm
 
