@@ -1,4 +1,4 @@
-name: Positron P5.1.237 · 70 real Electron screenshot checks · Mac and Windows prerelease
+name: Positron P5.1.238 · 70 real Electron screenshot checks · Mac and Windows prerelease
 on:
   push:
     branches: [Positron]
@@ -154,6 +154,8 @@ jobs:
           test -s positron-evidence/p5-20-rounds/positron-p51236-group-forward-after-1920x1080-real.png
           test -s positron-evidence/p5-20-rounds/positron-p51237-keyboard-history-before-1920x1080-real.png
           test -s positron-evidence/p5-20-rounds/positron-p51237-keyboard-history-after-1920x1080-real.png
+          test -s positron-evidence/p5-20-rounds/positron-p51238-shortcut-guard-before-1920x1080-real.png
+          test -s positron-evidence/p5-20-rounds/positron-p51238-shortcut-guard-after-1920x1080-real.png
           test -s positron-evidence/p5-20-rounds/positron-p51229-keyboard-favorite-before-1920x1080-real.png
           test -s positron-evidence/p5-20-rounds/positron-p51229-keyboard-favorite-after-1920x1080-real.png
           test -s positron-evidence/p4-50-rounds/positron-p4-01-real.png
@@ -434,13 +436,13 @@ jobs:
         shell: bash
         run: |
           set -Eeuo pipefail
-          test "$(node -p 'require("./package.json").version')" = "4.23.322"
+          test "$(node -p 'require("./package.json").version')" = "4.23.323"
           npx electron-builder --${{ matrix.platform }} --${{ matrix.arch }} --publish never
           if [[ "${{ matrix.platform }}" == mac ]]; then
-            test -s "dist/Open-IPTV-Pro-4.23.322-mac-${{ matrix.arch }}.dmg"
+            test -s "dist/Open-IPTV-Pro-4.23.323-mac-${{ matrix.arch }}.dmg"
           else
-            test -s "dist/Open-IPTV-Pro-4.23.322-x64.exe"
-            test -s "dist/Open-IPTV-Pro-Setup-4.23.322-x64.exe"
+            test -s "dist/Open-IPTV-Pro-4.23.323-x64.exe"
+            test -s "dist/Open-IPTV-Pro-Setup-4.23.323-x64.exe"
           fi
       - uses: actions/upload-artifact@v4
         with:
@@ -467,9 +469,9 @@ jobs:
         run: |
           set -Eeuo pipefail
           mkdir -p release-stage
-          git archive --format=zip --output=release-stage/OpenIPTVPro-Positron-P51237-Source.zip HEAD
-          zip -q -r release-stage/Positron-P51237-50-Real-Screenshots.zip release-stage/p4-50-rounds
-          zip -q -r release-stage/Positron-P51237-20-Real-Screenshots.zip release-stage/p5-20-rounds
+          git archive --format=zip --output=release-stage/OpenIPTVPro-Positron-P51238-Source.zip HEAD
+          zip -q -r release-stage/Positron-P51238-50-Real-Screenshots.zip release-stage/p4-50-rounds
+          zip -q -r release-stage/Positron-P51238-20-Real-Screenshots.zip release-stage/p5-20-rounds
           node -e 'const fs=require("fs"),p=require("path"),r=require("./release-stage/audit-p5-20-rounds.json");const x=r.desktop16x9Screenshots?.find(s=>s.page==="tv");if(!x)throw Error("Thiếu ảnh 16:9 chính");fs.copyFileSync(p.join("release-stage/p5-20-rounds",x.filename),"release-stage/positron-desktop-1920x1080-16x9-main-real.png")'
           cp release-stage/p4-50-rounds/positron-p4-50-real.png release-stage/positron-p4-final-main-real.png
           cp release-stage/p4-50-rounds/positron-p4-10-real.png release-stage/positron-p4-round-10-real.png
@@ -477,12 +479,12 @@ jobs:
           cp release-stage/p4-50-rounds/positron-p4-30-real.png release-stage/positron-p4-round-30-real.png
           cp release-stage/p4-50-rounds/positron-p4-40-real.png release-stage/positron-p4-round-40-real.png
           for name in \
-            Positron-P51237-20-Real-Screenshots.zip \
+            Positron-P51238-20-Real-Screenshots.zip \
             audit-p5-20-rounds.json \
-            Open-IPTV-Pro-4.23.322-mac-arm64.dmg \
-            Open-IPTV-Pro-4.23.322-mac-x64.dmg \
-            Open-IPTV-Pro-Setup-4.23.322-x64.exe \
-            Open-IPTV-Pro-4.23.322-x64.exe \
+            Open-IPTV-Pro-4.23.323-mac-arm64.dmg \
+            Open-IPTV-Pro-4.23.323-mac-x64.dmg \
+            Open-IPTV-Pro-Setup-4.23.323-x64.exe \
+            Open-IPTV-Pro-4.23.323-x64.exe \
             positron-p4-final-main-real.png \
             positron-desktop-1920x1080-16x9-main-real.png \
             audit-p4-50-rounds.json \
@@ -491,8 +493,8 @@ jobs:
             positron-p4-round-20-real.png \
             positron-p4-round-30-real.png \
             positron-p4-round-40-real.png \
-            Positron-P51237-50-Real-Screenshots.zip \
-            OpenIPTVPro-Positron-P51237-Source.zip; do
+            Positron-P51238-50-Real-Screenshots.zip \
+            OpenIPTVPro-Positron-P51238-Source.zip; do
               test -s "release-stage/$name" || { echo "::error::Missing $name"; exit 1; }
           done
           (cd release-stage && sha256sum *.dmg *.exe *.png *.json *.zip > SHA256SUMS.txt)
@@ -502,7 +504,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -Eeuo pipefail
-          TAG=positron/v4.23.322-p5.1.237
+          TAG=positron/v4.23.323-p5.1.237
           echo 'GitHub Release publication has not been verified.' > release-stage/PUBLISH_STATUS.txt
           if gh api "repos/$GITHUB_REPOSITORY/git/ref/tags/$TAG" --jq '.object.sha' >/tmp/tag-sha 2>/dev/null; then
             test "$(cat /tmp/tag-sha)" = "$GITHUB_SHA" || { echo '::error::Immutable tag points to a different commit'; exit 1; }
@@ -510,7 +512,7 @@ jobs:
           else
             if gh release create "$TAG" release-stage/*.dmg release-stage/*.exe release-stage/*.png release-stage/audit-p4-50-rounds.json release-stage/audit-p5-20-rounds.json release-stage/*.zip release-stage/SHA256SUMS.txt \
               --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" \
-              --title 'Open IPTV Pro Positron P5.1.237 — Phím Alt và mũi tên chuyển nhóm theo lịch sử' \
+              --title 'Open IPTV Pro Positron P5.1.238 — Giữ focus khi nhập liệu với Alt+J và Alt+G' \
               --notes "Positron $TAG at $GITHUB_SHA. Full change history is included as POSITRON_P5_CHANGELOG.md in the Source ZIP asset. Native Electron screenshots, reports and installer checksums are attached." --prerelease --latest=false 2>/tmp/positron-release-error; then
               echo 'GitHub Release successfully created.'
             elif grep -Eq '(HTTP 403|Resource not accessible by integration)' /tmp/positron-release-error; then
@@ -526,9 +528,9 @@ jobs:
           gh release view "$TAG" --repo "$GITHUB_REPOSITORY" --json assets --jq '.assets[].name' >/tmp/positron-assets
           grep -Fxq 'positron-desktop-1920x1080-16x9-main-real.png' /tmp/positron-assets
           grep -Fxq 'positron-p4-final-main-real.png' /tmp/positron-assets
-          grep -Fxq 'Positron-P51237-20-Real-Screenshots.zip' /tmp/positron-assets
-          grep -Fxq 'Open-IPTV-Pro-4.23.322-mac-arm64.dmg' /tmp/positron-assets
-          grep -Fxq 'Open-IPTV-Pro-Setup-4.23.322-x64.exe' /tmp/positron-assets
+          grep -Fxq 'Positron-P51238-20-Real-Screenshots.zip' /tmp/positron-assets
+          grep -Fxq 'Open-IPTV-Pro-4.23.323-mac-arm64.dmg' /tmp/positron-assets
+          grep -Fxq 'Open-IPTV-Pro-Setup-4.23.323-x64.exe' /tmp/positron-assets
           echo "PUBLISHED_AND_VERIFIED: $TAG at $GITHUB_SHA" > release-stage/PUBLISH_STATUS.txt
           echo "Verified experimental release $TAG from $GITHUB_SHA"
       - name: Preserve installers and release evidence as Actions artifact

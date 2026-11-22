@@ -1,5 +1,11 @@
 # Positron P5 Changelog
 
+## P5.1.238 — Không cướp focus khi đang nhập với Alt+J/Alt+G / Electron 4.23.323
+- Feature priority: FIX — Ở P5.1.237, phím Alt+J/Alt+G trong ô tìm kênh vẫn mở bảng nhảy và lấy mất focus. Bỏ qua phím tắt khi đang nhập `input`, `textarea`, `select`, `contenteditable`, `role=textbox`; tôn trọng IME và sự kiện đã xử lý.
+- Giữ nguyên thao tác Alt+J/Alt+G khi focus ngoài các ô nhập; không tự phát kênh, không thay đổi nguồn M3U, lịch sử hay danh sách Yêu thích.
+- Electron QA: `positron-p51238-shortcut-guard-before-1920x1080-real.png`, `positron-p51238-shortcut-guard-after-1920x1080-real.png`; chỉ coi đạt khi workflow thành công và ảnh sau đã được xem trực tiếp.
+
+
 ## P5.1.237 — Alt+←/Alt+→ điều hướng lịch sử nhóm / Electron 4.23.322
 - Feature priority: NEW — Điều hướng lịch sử nhóm trực tiếp từ hàng kênh bằng tổ hợp Alt+Mũi tên trái/phải, giúp người dùng điều khiển bằng bàn phím mà không phải di chuyển focus lên nút Nhóm trước/Nhóm sau; phím vẫn giữ chức năng soạn thảo khi đang ở ô nhập.
 - Electron screenshot: positron-p51237-keyboard-history-after-1920x1080-real.png

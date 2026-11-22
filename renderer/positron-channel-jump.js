@@ -326,6 +326,10 @@
  }
  d.addEventListener('keydown',event=>{
   if(historyShortcut(event))return;
+  // P238: global group/jump shortcuts must not hijack text editing.
+  // History shortcuts above already guard inputs; keep the same protection
+  // for Alt+G and Alt+J, including native selects and contenteditable fields.
+  if(event.defaultPrevented||event.isComposing||event.target?.closest?.('input,textarea,select,[contenteditable]:not([contenteditable="false"]),[role="textbox"]'))return;
   if(event.altKey&&!event.ctrlKey&&!event.metaKey&&!event.shiftKey&&event.key.toLowerCase()==='g'&&
    d.getElementById('page-tv')?.classList.contains('active-page')){
    event.preventDefault();

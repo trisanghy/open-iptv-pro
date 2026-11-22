@@ -210,7 +210,7 @@ test('P5.1.237 Alt+ArrowLeft/Right keyboard history never starts playback',()=>{
   "event.preventDefault();",
   "control.click();"
  ])assert.ok(code.includes(token),'P237 keyboard shortcut implementation missing '+token);
- assert.equal(JSON.parse(read('package.json')).version,'4.23.322');
+ assert.ok(Number(JSON.parse(read('package.json')).version.split('.')[2])>=322);
 });
 test('P5.1.237 tests real Electron keyboard group navigation screenshots',()=>{
  const qa=read('scripts/positron-20-extension.cjs'),flow=read('.github/workflows/positron-lab.yml');
@@ -226,4 +226,26 @@ test('P5.1.237 installer builds may parallelize capture only after tests pass',(
  const w=read('.github/workflows/positron-lab.yml');
  assert.match(w,/\n  build:\n    needs: \[test\]/);
  assert.match(w,/\n  release:\n    needs: \[test, capture, build\]/);
+});
+
+
+test('P5.1.238 keeps Alt+J / Alt+G inside editable controls without opening channel jump',()=>{
+ const code=read('renderer/positron-channel-jump.js');
+ const check=code.slice(code.indexOf(" d.addEventListener('keydown',event=>{"));
+ assert.ok(check.includes("event.defaultPrevented||event.isComposing"),'respect handled keys and IME');
+ assert.ok(check.includes("[contenteditable]:not([contenteditable="),'editable regions protected');
+ assert.ok(check.includes("[role=\"textbox\"]"),'custom text editor protected');
+ assert.ok(check.includes("event.target?.closest?.('input,textarea,select"),'native input and select protected');
+ assert.ok(!code.includes('playChannel('),'keyboard navigation must never start playback');
+ assert.equal(JSON.parse(read('package.json')).version,'4.23.323');
+});
+test('P5.1.238 captures real Electron blocked and allowed Alt+J screenshots',()=>{
+ const qa=read('scripts/positron-20-extension.cjs');
+ const workflow=read('.github/workflows/positron-lab.yml');
+ for(const f of ['positron-p51238-shortcut-guard-before-1920x1080-real.png','positron-p51238-shortcut-guard-after-1920x1080-real.png']){
+  assert.ok(qa.includes(f),'missing QA capture '+f);
+  assert.ok(workflow.includes(f),'missing workflow screenshot check '+f);
+ }
+ for(const token of ["page.keyboard.press('Alt+j')","page.keyboard.press('Alt+g')",'inputRetainsFocus:','panelStayedClosed:','jumpOpenedOutsideInput:','noAutoplay:'])
+  assert.ok(qa.includes(token),'missing P238 QA assertion '+token);
 });
