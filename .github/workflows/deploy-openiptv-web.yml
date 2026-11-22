@@ -53,6 +53,13 @@ jobs:
             cp -p tizen/phone.html _site/tizen/phone.html
             grep -Fq 'manager-request' _site/tizen/phone.html
           fi
+          # A standalone, no-pairing HTTPS playback origin for TizenBrew's Cast fallback.
+          # The same-origin HLS/DASH libraries are already deployed beside tv.html.
+          if [ -s tizen/hosted-player.html ]; then
+            mkdir -p _site/tizen
+            cp -p tizen/hosted-player.html _site/tizen/hosted-player.html
+            grep -Fq 'openiptv-tizen-hosted' _site/tizen/hosted-player.html
+          fi
           for dir in assets locales epg; do
             test -d "$dir"
             cp -R "$dir" "_site/$dir"
