@@ -101,7 +101,8 @@ test('P267 UI có chế độ lịch sắp chiếu, không tự tải EPG hay t�
 test('HEAD: chỉ AI hoặc đột phá có bằng chứng được tăng bản tính năng',()=>{
  const h=fs.readFileSync('POSITRON_HEAD_20_VONG_TINH_NANG_MOI.md','utf8');
  const c=fs.readFileSync('POSITRON_P5_CHANGELOG.md','utf8').split(/^## /m)[1];
- assert.match(h,/CHỈ PHÁT HÀNH TÍNH NĂNG AI HOẶC ĐỘT PHÁ/);
+ assert.match(h,/Mỗi phiên bản NEW phải là AI thực/);
+ assert.match(h,/Feature class: AI\|BREAKTHROUGH/);
  assert.match(c,/Feature class: (?:AI|BREAKTHROUGH)/);
  assert.match(c,/Evidence:/);
 });
