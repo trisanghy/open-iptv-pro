@@ -19,13 +19,11 @@ var net=require('net');
 var crypto=require('crypto');
 var Url=require('url');
 
-var PORT=17867;
-var SERVICE_VERSION='0.1.39';
+var PORT=17868;
+var SERVICE_VERSION='0.1.41';
 var MAX_SESSIONS=32,MAX_RESOURCES=3500,MAX_PLAYLIST=2*1024*1024;
 var MAX_SEGMENT=48*1024*1024,EXPIRE_MS=20*60*1000;
 var ALLOWED_ORIGINS={'http://127.0.0.1:8081':true,'http://localhost:8081':true};
-var CAST_ORIGIN='https://trisanghy.github.io';
-var CAST_REFERER='https://trisanghy.github.io/open-iptv-pro/tv.html';
 var sessions={};
 function own(o,k){return Object.prototype.hasOwnProperty.call(o,k);}
 function safeIp(ip){
@@ -54,11 +52,10 @@ function inspectRemote(value){
  if(!(port>=1&&port<=65535))return null;
  return parsed;
 }
-function recordDiagnostic(session,parsed,remote,castContext){
+function recordDiagnostic(session,parsed,remote){
  var rows=session.requestDiagnostics||(session.requestDiagnostics=[]);
  rows.push({host:String(parsed.hostname||'').slice(0,180),status:Number(remote.statusCode||0),
-  context:castContext?'cast-page':'tizenbrew',userAgent:String(session.userAgent||'').slice(0,300),
-  origin:castContext?CAST_ORIGIN:'',referer:castContext?CAST_REFERER:'',
+  context:'tizenbrew',userAgent:String(session.userAgent||'').slice(0,300),origin:'',referer:'',
   contentType:String(remote.headers['content-type']||'').slice(0,120),
   server:String(remote.headers.server||'').slice(0,120)});
  while(rows.length>8)rows.shift();
@@ -108,14 +105,13 @@ function rewritePlaylist(raw,base,session){
   return addResource(session,resolved)||line;
  }).join('\n');
 }
-function respondUpstream(source,req,res,session,depth,castContext){
+function respondUpstream(source,req,res,session,depth){
  var parsed=inspectRemote(source);
  if(!parsed){json(res,400,{error:'Nguồn không hợp lệ hoặc không được phép.'});return;}
  if(depth>4){json(res,502,{error:'Quá nhiều chuyển hướng nguồn.'});return;}
  dns.lookup(parsed.hostname,function(err,address){
   if(err||!safeIp(String(address||''))){json(res,502,{error:'Không thể xác minh địa chỉ máy chủ phát.'});return;}
-  var headers={'Host':parsed.host,'Accept':'*/*','User-Agent':session.userAgent||'OpenIPTVPro-TV/0.1.36'};
-  if(castContext){headers.Origin=CAST_ORIGIN;headers.Referer=CAST_REFERER;}
+  var headers={'Host':parsed.host,'Accept':'*/*','User-Agent':session.userAgent||'OpenIPTVPro-TV/0.1.41'};
   if(req.headers.range)headers.Range=String(req.headers.range).slice(0,120);
   var options={
    hostname:address,port:parsed.port||(parsed.protocol==='https:'?443:80),
@@ -126,17 +122,11 @@ function respondUpstream(source,req,res,session,depth,castContext){
    if(remote.statusCode>=300&&remote.statusCode<400&&remote.headers.location){
     remote.resume();
     var target=Url.resolve(source,remote.headers.location);
-    respondUpstream(target,req,res,session,depth+1,castContext);return;
+    respondUpstream(target,req,res,session,depth+1);return;
    }
    if(remote.statusCode<200||remote.statusCode>=300){
-    recordDiagnostic(session,parsed,remote,castContext);
+    recordDiagnostic(session,parsed,remote);
     remote.resume();
-    // The paired Cast receiver runs at our HTTPS site origin. Some IPTV
-    // hosts allow that page context but reject TizenBrew's localhost WebView.
-    // Retry one 403 once with the same fixed Origin/Referer as tv.html.
-    if(remote.statusCode===403&&!castContext){
-     respondUpstream(source,req,res,session,depth,true);return;
-    }
     json(res,remote.statusCode>=400&&remote.statusCode<600?remote.statusCode:502,
      {error:'Máy chủ nguồn trả HTTP '+remote.statusCode});return;
    }
