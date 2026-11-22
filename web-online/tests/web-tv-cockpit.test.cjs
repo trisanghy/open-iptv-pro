@@ -12,7 +12,13 @@ test('approved paired-screen controls and link are present and old step 3 is rem
  assert.match(ui,/overlay\.querySelector\('\.cx-link-stack'\)\?\.prepend\(webRow\)/);
  assert.match(ui,/webCopy\.id='cxCopyWebShort'/);
  assert.match(ui,/clipboard\.writeText\('https:\/\/is\.gd\/openiptv'\)/);
- assert.match(ui,/hero\.append\(disconnectBtn\)/);
+ assert.match(ui,/overlay\\.querySelector\\('\\.cx-tv'\\)\\.append\\(disconnectBtn\\)/);
+ assert.doesNotMatch(ui,/hero\\.append\\(disconnectBtn\\)/);
+ assert.match(ui,/const pairedView=mode==='pair'&&!!pair\\?\\.connected/);
+ assert.match(ui,/pairedView\\?'\\.cx-pair-hero':'\\.cx-head'/);
+ assert.match(ui,/\\$\\('cxClose'\\)\\.addEventListener\\('click',close\\)/);
+ assert.match(ui,/function close\\(\\)\\{if\\(overlay\\)overlay\\.hidden=true;\\}/);
+ assert.match(ui,/\\$\\('cxDisconnect'\\)\\.addEventListener\\('click',\\(\\)=>void disconnect\\(\\)\\)/);
  assert.doesNotMatch(ui,/hero\.append\(webLink,disconnectBtn\)/);
  assert.match(ui,/set\('cxTvCode','ĐÃ KẾT NỐI'\)/);
  assert.match(ui,/set\('cxTvChip','● Phiên được mã hóa'\)/);
@@ -34,6 +40,9 @@ test('pairing expands TV screen without a second visible controller, responsive 
  assert.match(css,/grid-template-columns:repeat\(4,minmax\(0,1fr\)\) 1px 28px minmax\(44px,29%\)/);
  assert.match(css,/\.cx-tv-controls>\.cx-tv-key\{justify-self:center\}/);
  assert.match(css,/@media\(max-width:420px\)/);
- assert.match(index,/web-tv-cockpit\.css\?v=20261122b/);
- assert.match(index,/web-cast-v2\.js\?v=tv-cockpit-20261122b/);
+ assert.match(css,/#iptvCastPanel \\.cx-tv>\\.cx-disconnect\\{/);
+ assert.match(css,/position:absolute;top:/);
+ assert.match(css,/#iptvCastPanel \\.cx-pair-hero \\.cx-close\\{/);
+ assert.match(index,/web-tv-cockpit\\.css\\?v=cast-close-and-disconnect-20261122c/);
+ assert.match(index,/web-cast-v2\.js\?v=cast-close-and-disconnect-20261122c/);
 });
