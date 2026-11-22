@@ -90,9 +90,12 @@
    groupSelect.value=lastFocusedGroup;
  };
  const focusList=d.getElementById('channelList');
+ // P251: session-only bookmark of the most recently keyboard-focused channel.
+ let lastVisitedRow=null;
  focusList?.addEventListener('focusin',event=>{
   const row=event.target.closest?.('.channel-item');
   if(!row)return;
+  lastVisitedRow=row;
   let header=row.previousElementSibling;
   while(header&&!header.matches('.folder-header'))header=header.previousElementSibling;
   lastFocusedGroup=header?.dataset.group||'';
@@ -472,6 +475,24 @@
   // History shortcuts above already guard inputs; keep the same protection
   // for Alt+G and Alt+J, including native selects and contenteditable fields.
   if(event.defaultPrevented||event.isComposing||event.target?.closest?.('input,textarea,select,[contenteditable]:not([contenteditable="false"]),[role="textbox"]'))return;
+  // P251: Alt+Shift+L resumes keyboard browsing at the last focused row,
+  // even after visiting toolbar controls. Does not change playback or data.
+  if(event.altKey&&event.shiftKey&&!event.ctrlKey&&!event.metaKey&&
+     event.key.toLowerCase()==='l'&&panel.hidden&&
+     d.getElementById('page-tv')?.classList.contains('active-page')){
+   const row=lastVisitedRow;
+   if(!row?.isConnected||!row.matches('.channel-item')||!row.getClientRects().length)return;
+   const list=focusList;
+   if(!list)return;
+   event.preventDefault();event.stopPropagation();
+   const box=list.getBoundingClientRect(),rect=row.getBoundingClientRect();
+   if(rect.top<box.top)list.scrollTop+=rect.top-box.top;
+   else if(rect.bottom>box.bottom)list.scrollTop+=rect.bottom-box.bottom;
+   row.focus({preventScroll:true});
+   const index=[...list.querySelectorAll('.channel-item')].indexOf(row)+1;
+   status.textContent='Đã quay lại kênh '+index+'. Nhấn Enter để phát.';
+   return;
+  }
   // P243: when recent history is empty there are no channel rows to focus.
   // Shift+R on its visible status chip must still restore the full list.
   if(event.shiftKey&&!event.altKey&&!event.ctrlKey&&!event.metaKey&&
@@ -508,6 +529,6 @@
  groupSelect.setAttribute('aria-keyshortcuts','Alt+G');
  groupSelect.title='Chọn nhóm kênh nhanh (Alt+G)';
  toggle.setAttribute('aria-keyshortcuts','Alt+J Alt+Shift+J');
- toggle.title='Alt+J: nhập số kênh; Alt+Shift+J: điền số hàng kênh đang chọn';
+ toggle.title='Alt+J: nhập số kênh; Alt+Shift+J: điền số hàng kênh đang chọn; Alt+Shift+L: trở lại kênh vừa duyệt';
  window.OpenIPTVPositronChannelJump=Object.freeze({open:()=>setOpen(true)});
 })();

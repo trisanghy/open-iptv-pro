@@ -56,3 +56,12 @@ Chỉ đánh dấu hoàn tất khi sửa nguồn, node test pass, Electron scree
 - Đã mở ảnh Electron 1920×1080 P249 trang TV, Nguồn, Escape trước/sau; vị trí `Kênh 412/561` xuất hiện đúng khi focus vào hàng 412.
 - Lỗi mã: `#poFocusedPosition` chỉ cập nhật khi `focusin`, không xóa khi focus rời danh sách, nên có thể tiếp tục báo vị trí không còn được chọn.
 - P250: thêm `focusout` dọn trạng thái khi panel đóng, giữ origin lúc nhảy số; CI Electron sẽ kiểm tra và ghi ảnh riêng.
+
+## Đợt 23/11/2026 — Vòng 01/20 P5.1.250 HOÀN TẤT
+- Fix `focusout` xóa nhãn vị trí cũ khi rời danh sách; giữ origin khi Escape. Chạy Electron thật và đã MỞ hai ảnh `positron-p51250-focus-badge-before-1920x1080-real.png` / `positron-p51250-focus-badge-after-1920x1080-real.png`.
+- CI `45061351371`: Node 928 tests, 923 pass/0 fail/5 skipped, 6/6 jobs success. Release `positron/v4.23.335-p5.1.250` xác nhận đầy đủ EXE/DMG/QA zip.
+- Commit nguồn `54560357cd2be7458266a36e510b3ddc721a37dc`; fix version `41bb78b88c6994c8f68b9ae0316446574f1991ac`; hoàn chỉnh QA/changelog `b02d3ff4947e473d233f3d97b40ade1c0ff8a14b`.
+- QA P250 `positionClearedQA250`: badgeHidden/cleared/toggleFocused/noAutoplay/favoritesUnchanged/playlistUnchanged/noOverflow true; `positionReturnQA250` focus về hàng 412 true.
+## Đợt 23/11/2026 — Vòng 02/20 P5.1.251 CANDIDATE
+- Ảnh P250 SAU cho thấy đã mất viền focus ở hàng 412 khi đi sang toolbar. Mục tiêu: Alt+Shift+L trở lại hàng duyệt gần nhất, không phát video, không mutate playlist.
+- Đầu vào P251: P250 release thành công; mở PNG gốc trước khi sửa; tạo QA before/after riêng, commit SemVer 4.23.336 và chỉ hoàn thành sau CI + mở ảnh thật + release mới.

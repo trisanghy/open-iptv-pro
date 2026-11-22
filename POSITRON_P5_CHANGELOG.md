@@ -2000,7 +2000,7 @@ P5.1.81 follow-up: real Electron capture found nav overflow; replace flexible no
 - QA: ảnh Electron trước/sau 1920x1080, restore focus hàng 412, no autoplay/favorites mutation, legacy toggle Escape; regression Node.
 - Chỉ hoàn tất sau CI, mở ảnh và release bất biến thành công.
 
-## P5.1.250 / Electron 4.23.335 — Ẩn chỉ báo vị trí đã cũ (CANDIDATE)
+## P5.1.250 / Electron 4.23.335 — Ẩn chỉ báo vị trí đã cũ (HOÀN TẤT)
 - Feature priority: NEW — Thêm tương tác mới tự ẩn chỉ báo vị trí đang chọn khi người dùng đưa tiêu điểm ra khỏi danh sách kênh, không hiển thị sai trạng thái và không tác động việc phát video hay dữ liệu playlist.
 - Electron screenshot: positron-p51250-focus-badge-after-1920x1080-real.png
 - User action: Focus một hàng kênh để xem vị trí, chuyển Tab sang thanh công cụ để ẩn nhãn; khi mở bộ nhảy kênh Alt+Shift+J rồi Escape, vị trí được giữ và khôi phục.
@@ -2008,3 +2008,10 @@ P5.1.81 follow-up: real Electron capture found nav overflow; replace flexible no
 - Sửa: `focusout` xóa vị trí focus cũ khi chuyển sang thanh công cụ; tạm giữ vị trí gốc khi hộp nhảy số mở và khôi phục khi Escape. Không đọc/sửa dữ liệu luồng M3U hay Favorites.
 - QA: `positron-p51250-focus-badge-before-1920x1080-real.png` và `positron-p51250-focus-badge-after-1920x1080-real.png`, kiểm tra giữ focus, không tự phát và dữ liệu bất biến.
 - Chỉ hoàn thành khi CI, ảnh sau đã MỞ và release mới được kiểm chứng.
+
+## P5.1.251 / Electron 4.23.336 — Alt+Shift+L quay lại hàng kênh vừa duyệt (CANDIDATE)
+- Feature priority: NEW — Thêm phím tắt Alt+Shift+L trở lại đúng hàng kênh từng được focus trước khi chuyển sang thanh công cụ; tận dụng ghi nhớ vị trí trong phiên làm việc, không ghi dữ liệu hay tự phát video.
+- Electron screenshot: positron-p51251-return-to-row-after-1920x1080-real.png
+- User action: Khi đang duyệt kênh bất kỳ, chuyển sang thanh công cụ rồi nhấn Alt+Shift+L để quay lại ngay hàng kênh cũ, có viền focus và vị trí chính xác.
+- Đầu vào: ảnh P5.1.250 SAU đã trực tiếp mở xem; nhãn vị trí 412/561 đã được ẩn đúng khi focus ra toolbar nhưng không có thao tác quay lại nhanh bằng bàn phím.
+- Kiểm thử: before/after Electron thật 1920×1080, giữ dữ liệu Favorites/Playlist và không làm video tự phát. Chờ CI và release trước khi tính vòng hoàn tất.
