@@ -58,7 +58,8 @@ test('video opts into WebKit AirPlay and retains remote playback',()=>{
 });
 
 test('Web edition keeps the original Cast button visible beside PiP',()=>{
- assert.match(html, /id="castBtn"[^>]*aria-label="Cast \/ AirPlay"/);
+ assert.match(html, /id="castBtn"[^>]*aria-label="Cast \/ AirPlay lên TV"/);
+ assert.match(html, /id="castBtn"[^>]*>[\s\S]*?<svg[^>]*data-iptv-svg-icon="cast"/);
  assert.doesNotMatch(webCss, /#castBtn\b[^{}]*\{\s*display\s*:\s*none/i);
 });
 test('desktop browser invokes a supported native remote playback picker',()=>{
