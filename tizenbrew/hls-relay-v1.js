@@ -19,8 +19,11 @@ var net=require('net');
 var crypto=require('crypto');
 var Url=require('url');
 
-var PORT=17868;
-var SERVICE_VERSION='0.1.41';
+var PORT=17869;
+var SERVICE_VERSION='0.1.42';
+// Some IPTV origins reject Samsung/Tizen (403) but serve the same URL to a
+// desktop browser. Retry once as Chrome and retain the winning UA per session.
+var CHROME_USER_AGENT='Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36';
 var MAX_SESSIONS=32,MAX_RESOURCES=3500,MAX_PLAYLIST=2*1024*1024;
 var MAX_SEGMENT=48*1024*1024,EXPIRE_MS=20*60*1000;
 var ALLOWED_ORIGINS={'http://127.0.0.1:8081':true,'http://localhost:8081':true};
@@ -105,13 +108,13 @@ function rewritePlaylist(raw,base,session){
   return addResource(session,resolved)||line;
  }).join('\n');
 }
-function respondUpstream(source,req,res,session,depth){
+function respondUpstream(source,req,res,session,depth,chromeRetried){
  var parsed=inspectRemote(source);
  if(!parsed){json(res,400,{error:'Nguồn không hợp lệ hoặc không được phép.'});return;}
  if(depth>4){json(res,502,{error:'Quá nhiều chuyển hướng nguồn.'});return;}
  dns.lookup(parsed.hostname,function(err,address){
   if(err||!safeIp(String(address||''))){json(res,502,{error:'Không thể xác minh địa chỉ máy chủ phát.'});return;}
-  var headers={'Host':parsed.host,'Accept':'*/*','User-Agent':session.userAgent||'OpenIPTVPro-TV/0.1.41'};
+  var headers={'Host':parsed.host,'Accept':'*/*','User-Agent':session.userAgent||CHROME_USER_AGENT};
   if(req.headers.range)headers.Range=String(req.headers.range).slice(0,120);
   var options={
    hostname:address,port:parsed.port||(parsed.protocol==='https:'?443:80),
@@ -122,9 +125,15 @@ function respondUpstream(source,req,res,session,depth){
    if(remote.statusCode>=300&&remote.statusCode<400&&remote.headers.location){
     remote.resume();
     var target=Url.resolve(source,remote.headers.location);
-    respondUpstream(target,req,res,session,depth+1);return;
+    respondUpstream(target,req,res,session,depth+1,chromeRetried);return;
    }
    if(remote.statusCode<200||remote.statusCode>=300){
+    if(remote.statusCode===403&&!chromeRetried&&session.userAgent!==CHROME_USER_AGENT){
+     recordDiagnostic(session,parsed,remote);
+     remote.resume();
+     session.userAgent=CHROME_USER_AGENT;
+     respondUpstream(source,req,res,session,depth,true);return;
+    }
     recordDiagnostic(session,parsed,remote);
     remote.resume();
     json(res,remote.statusCode>=400&&remote.statusCode<600?remote.statusCode:502,
@@ -232,7 +241,7 @@ function handler(req,res){
    if(!inspectRemote(data.url)){json(res,400,{error:'Địa chỉ nguồn không hợp lệ.'});return;}
    prune();
    var agent=String(data.browserUserAgent||'').slice(0,300).replace(/[\r\n\u0000-\u001f\u007f]/g,'');
-   var session={id:crypto.randomBytes(20).toString('hex'),resources:[String(data.url)],last:Date.now(),userAgent:agent};
+   var session={id:crypto.randomBytes(20).toString('hex'),resources:[String(data.url)],last:Date.now(),userAgent:agent||'Mozilla/5.0 (SMART-TV; Linux; Tizen 6.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 TV Safari/537.36'};
    sessions[session.id]=session;
    json(res,201,{url:'http://127.0.0.1:'+PORT+'/r/'+session.id+'/0'});
   });

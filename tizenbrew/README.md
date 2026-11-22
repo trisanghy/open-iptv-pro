@@ -1,4 +1,11 @@
-# Open IPTV Pro TV · TizenBrew v0.1.41 (OTA)
+# Open IPTV Pro TV · TizenBrew v0.1.42 (OTA)
+
+## v0.1.42 — Thử lại bằng Chrome khi nguồn trả HTTP 403
+
+- Khi Samsung/Tizen User-Agent nhận HTTP 403 từ máy chủ kênh, relay trên TV tự thử lại URL một lần với Chrome User-Agent. Nếu thành công, cùng User-Agent Chrome được giữ cho manifest và segment của phiên xem đó.
+- Thử trực tiếp URL VTV2 trong M3U đính kèm: Tizen UA nhận HTTP 403; Chrome 131 nhận HTTP 200 và manifest `#EXTM3U`. Relay không thêm Origin/Referer giả.
+- Relay chuyển sang cổng loopback `17869` để tránh tiến trình phiên bản cũ còn chiếm cổng trước; bản mới hiển thị `0.1.42` trong chẩn đoán.
+- Kiểm thử tự động mô phỏng đúng tình huống Tizen 403 → Chrome 200, sau đó phát segment bằng Chrome. Chưa thể xác nhận phát trên TV Samsung thật từ môi trường này.
 
 ## v0.1.41 — Chuyển kênh trực tiếp bằng ↑/↓ trong toàn màn hình
 
@@ -25,7 +32,7 @@
 
 - **Đúng mục tiêu:** khi chọn VTV1/VTV2/VTV7 ngay trong Open IPTV Pro trên TizenBrew, ứng dụng phát qua bộ phát hiện tại; nếu HLS.js không tải được manifest do CORS, tự kích hoạt **bộ chuyển tiếp HLS chạy trên chính Samsung TV**. Video tiếp tục hiển thị trong trình phát, remote OK/Back/↑↓←→ không thay đổi. Không tự mở `tv.html` hoặc đòi mã ghép đôi.
 - **Dịch vụ TizenBrew:** khai báo `serviceFile: tizenbrew/hls-relay-v1.js` trong `package.json`. Mã dịch vụ được nạp qua cơ chế TizenBrew `StartService` (WebSocket event type 6) ngay khi module khởi động, không cần người dùng tự cài Node, mở laptop, hoặc sử dụng proxy bên ngoài. Cơ chế gọi khởi động có điều tiết; client thử kết nối lại dịch vụ tối đa 7 lần nếu tiến trình chưa sẵn sàng.
-- **Phạm vi bảo mật:** dịch vụ chỉ lắng nghe `127.0.0.1:17868`, chỉ chấp nhận Origin TizenBrew localhost và header riêng, từ chối địa chỉ IP mạng nội bộ/loopback từ playlist, chỉ kết nối HTTP(S). URL và token gốc không ghi vào log, không gửi tới máy chủ proxy bên thứ ba. Playlist HLS được viết lại sang ID tài nguyên ngẫu nhiên trên TV; hỗ trợ manifest nhiều mức chất lượng, audio URI, AES key, init segment và HTTP Range. Giới hạn phiên, số tài nguyên và kích thước để giảm rủi ro.
+- **Phạm vi bảo mật:** ở phiên bản 0.1.32, dịch vụ chỉ lắng nghe `127.0.0.1:17868`, chỉ chấp nhận Origin TizenBrew localhost và header riêng, từ chối địa chỉ IP mạng nội bộ/loopback từ playlist, chỉ kết nối HTTP(S). URL và token gốc không ghi vào log, không gửi tới máy chủ proxy bên thứ ba. Playlist HLS được viết lại sang ID tài nguyên ngẫu nhiên trên TV; hỗ trợ manifest nhiều mức chất lượng, audio URI, AES key, init segment và HTTP Range. Giới hạn phiên, số tài nguyên và kích thước để giảm rủi ro.
 - **Khả năng khắc phục:** giải quyết một lớp lỗi **CORS của WebView** khi TV vẫn có mạng và nguồn HLS hợp lệ. **Không thể** khắc phục HTTP 403 do máy chủ từ chối cả yêu cầu từ dịch vụ TV, codec phần cứng không hỗ trợ, DRM hoặc AVPlay bị giới hạn. Khi đó lỗi sẽ hiển thị trên TV; không được coi là đã phát thành công.
 - **Kênh & dữ liệu:** giữ chính xác URL đã chọn (bản v0.1.31), không gom URL của kênh trùng tên; giữ QR, thứ tự kênh, lịch sử và mục yêu thích. Đường OTA vẫn `tizenbrew/bootstrap.html`. **Không chỉnh sửa `web/online` hoặc trình phát Cast**.
 - **Kiểm thử:** `tizenbrew/tests/tv-local-hls-relay.test.cjs` kiểm tra CORS preflight, bắt buộc header và nguồn TV, playlist rewriting, không rò URL/token, chặn loopback/private IP. `tizenbrew/tests/tizen-in-app-relay-playback.test.cjs` kiểm tra HLS.js tự thử relay, chọn kênh khác hủy callback cũ và không tự dùng Cast. `tizenbrew/tests/last-channel-startup.test.cjs` kiểm tra dịch vụ khởi động trước khi mở kênh gần nhất.

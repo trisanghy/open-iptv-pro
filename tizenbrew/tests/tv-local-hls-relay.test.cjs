@@ -23,8 +23,8 @@ function request(method,path,body,opts={}){
 }
 test('serviceFile is registered on TizenBrew app manifest; OTA bootstrap untouched',()=>{
  assert.equal(manifest.packageType,'app');
- assert.equal(manifest.version,'0.1.41');
- assert.equal(manifest.tizenbrewEdition,'0.1.41');
+ assert.equal(manifest.version,'0.1.42');
+ assert.equal(manifest.tizenbrewEdition,'0.1.42');
  assert.equal(manifest.appPath,'tizenbrew/bootstrap.html');
  assert.equal(manifest.serviceFile,'tizenbrew/hls-relay-v1.js');
 });
@@ -57,7 +57,7 @@ test('HLS playlist rewrite keeps variant, key and init-segment resources on TV-l
  assert.equal(session.resources[2],'https://cdn.example.org/live/init.mp4');
  assert.equal(session.resources[3],'https://cdn.example.org/live/segment0001.ts?quality=hd');
  assert.equal(session.resources[4],'https://second.example.org/hi/stream.m3u8');
- for(let i=0;i<5;i++)assert.ok(out.includes('http://127.0.0.1:17868/r/'+session.id+'/'+i));
+ for(let i=0;i<5;i++)assert.ok(out.includes('http://127.0.0.1:17869/r/'+session.id+'/'+i));
  assert.doesNotMatch(out,/second\.example\.org|token=123/);
 });
 test('TV localhost service CORS preflight works without actual X-Open-IPTV-Relay header',async()=>{
@@ -71,7 +71,7 @@ test('TV localhost service CORS preflight works without actual X-Open-IPTV-Relay
   const health=await request('GET','/health');
   assert.equal(health.status,200);
   assert.equal(JSON.parse(health.body).ok,true);
-  assert.equal(JSON.parse(health.body).version,'0.1.41');
+  assert.equal(JSON.parse(health.body).version,'0.1.42');
   const denied=await request('GET','/health',null,{origin:'https://untrusted.example'});
   assert.equal(denied.status,403);
   assert.equal(denied.headers['access-control-allow-origin'],undefined);
@@ -85,7 +85,7 @@ test('TV localhost service CORS preflight works without actual X-Open-IPTV-Relay
   const result=await request('POST','/session',{url:secret,browserUserAgent:'TestTV/1.0'});
   assert.equal(result.status,201);
   const data=JSON.parse(result.body);
-  assert.match(data.url,/^http:\/\/127\.0\.0\.1:17868\/r\/[a-f0-9]{40}\/0$/);
+  assert.match(data.url,/^http:\/\/127\.0\.0\.1:17869\/r\/[a-f0-9]{40}\/0$/);
   assert.doesNotMatch(result.body,/TOP_SECRET|cdn\.example\.org/);
   const sessionId=data.url.match(/\/r\/([a-f0-9]{40})\/0$/)[1];
   const diagnostics=await request('GET','/diag/'+sessionId);
@@ -118,7 +118,7 @@ test('HLS relay streams playlist and segment with TV UA and no spoofed Cast head
   };
   return req;
  };
- const server=relay.startServer(17868);
+ const server=relay.startServer(17869);
  await new Promise((resolve,reject)=>{
   if(server.listening)resolve();else{server.once('listening',resolve);server.once('error',reject);}
  });
@@ -126,14 +126,14 @@ test('HLS relay streams playlist and segment with TV UA and no spoofed Cast head
   const appOrigin='http://127.0.0.1:8081',ua='Tizen40-UA';
   const session=await request('POST','/session',{
    url:'https://cdn.example.org/live.m3u8?token=TOP_SECRET',browserUserAgent:ua
-  },{port:17868});
+  },{port:17869});
   assert.equal(session.status,201);
   const sessionUrl=JSON.parse(session.body).url;
-  const mediaRequest={port:17868,origin:'',custom:false};
+  const mediaRequest={port:17869,origin:'',custom:false};
   const playlist=await request('GET',new URL(sessionUrl).pathname,null,mediaRequest);
   assert.equal(playlist.status,200);
   assert.match(playlist.body,/#EXTM3U/);
-  const segmentUrl=playlist.body.split('\n').find(line=>line.indexOf('http://127.0.0.1:17868/r/')===0);
+  const segmentUrl=playlist.body.split('\n').find(line=>line.indexOf('http://127.0.0.1:17869/r/')===0);
   assert.ok(segmentUrl,'playlist should rewrite the segment to the local relay');
   const segment=await request('GET',new URL(segmentUrl).pathname,null,mediaRequest);
   assert.equal(segment.status,200);
@@ -145,10 +145,10 @@ test('HLS relay streams playlist and segment with TV UA and no spoofed Cast head
    assert.equal(call.headers.Referer,undefined);
   }
   const id=sessionUrl.match(/\/r\/([a-f0-9]{40})\//)[1];
-  const diag=await request('GET','/diag/'+id,null,{port:17868});
+  const diag=await request('GET','/diag/'+id,null,{port:17869});
   assert.equal(diag.status,200);
   const report=JSON.parse(diag.body);
-  assert.equal(report.relayVersion,'0.1.41');
+  assert.equal(report.relayVersion,'0.1.42');
   assert.equal(report.mediaRequest.origin,'(no Origin)');
   assert.equal(report.mediaRequest.appHeader,false);
   assert.doesNotMatch(playlist.body,/TOP_SECRET|token=hidden/);
@@ -157,11 +157,56 @@ test('HLS relay streams playlist and segment with TV UA and no spoofed Cast head
   dns.lookup=oldLookup;https.request=oldRequest;
  }
 });
+test('HLS relay retries a 403 once with Chrome UA and keeps it for HLS segments',async()=>{
+ const oldLookup=dns.lookup,oldRequest=https.request,calls=[];
+ dns.lookup=function(host,opts,cb){if(typeof opts==='function')cb=opts;process.nextTick(()=>cb(null,'93.184.216.34',4));};
+ https.request=function(options,callback){
+  calls.push(options);
+  const req=new EventEmitter();req.setTimeout=function(){};req.abort=function(){};
+  req.end=function(){
+   const response=new Readable({read(){}});
+   const blocked=options.headers['User-Agent']==='Samsung-Tizen-UA'&&calls.length===1;
+   response.statusCode=blocked?403:200;
+   response.headers={'content-type':/segment\.ts/.test(options.path)?'video/mp2t':'application/vnd.apple.mpegurl'};
+   process.nextTick(function(){
+    callback(response);
+    response.push(Buffer.from(blocked?'denied':/segment\.ts/.test(options.path)?'CHROME-SEGMENT':'#EXTM3U\n#EXTINF:5,Test\nhttps://cdn.example.org/segment.ts\n'));
+    response.push(null);
+   });
+  };
+  return req;
+ };
+ const server=relay.startServer(17869);
+ await new Promise((resolve,reject)=>{if(server.listening)resolve();else{server.once('listening',resolve);server.once('error',reject);}});
+ try{
+  const session=await request('POST','/session',{url:'https://cdn.example.org/live.m3u8',browserUserAgent:'Samsung-Tizen-UA'},{port:17869});
+  assert.equal(session.status,201);
+  const sessionUrl=JSON.parse(session.body).url,media={port:17869,origin:'',custom:false};
+  const playlist=await request('GET',new URL(sessionUrl).pathname,null,media);
+  assert.equal(playlist.status,200);
+  const segmentUrl=playlist.body.split('\n').find(line=>line.indexOf('http://127.0.0.1:17869/r/')===0);
+  assert.ok(segmentUrl);
+  const segment=await request('GET',new URL(segmentUrl).pathname,null,media);
+  assert.equal(segment.status,200);
+  assert.equal(segment.body,'CHROME-SEGMENT');
+  assert.equal(calls.length,3,'Tizen 403, Chrome manifest retry, then Chrome segment');
+  assert.equal(calls[0].headers['User-Agent'],'Samsung-Tizen-UA');
+  assert.ok(calls.slice(1).every(call=>/Chrome\/131\.0\.0\.0/.test(call.headers['User-Agent'])));
+  assert.ok(calls.every(call=>call.headers.Origin===undefined&&call.headers.Referer===undefined));
+  const id=sessionUrl.match(/\/r\/([a-f0-9]{40})\//)[1];
+  const diag=await request('GET','/diag/'+id,null,{port:17869});
+  assert.equal(diag.status,200);
+  const report=JSON.parse(diag.body);
+  assert.match(report.browserUserAgent,/Chrome\/131\.0\.0\.0/);
+  assert.equal(report.requests[0].status,403,'diagnostics retain the blocked Tizen request');
+  assert.equal(report.requests[0].userAgent,'Samsung-Tizen-UA');
+ }finally{await new Promise(resolve=>server.close(resolve));dns.lookup=oldLookup;https.request=oldRequest;}
+});
 test('TizenBrew video player tries local relay only on HLS failure and never navigates to Cast',()=>{
  assert.match(ui,/function startRelayHlsPlayback\(channel,token\)/);
  assert.match(ui,/function loadRelayDiagnostics\(token\)/);
  assert.match(ui,/TizenBrew User-Agent/);
- assert.match(ui,/hlsRelayServer='http:\/\/127\.0\.0\.1:17868'/);
+ assert.match(ui,/hlsRelayServer='http:\/\/127\.0\.0\.1:17869'/);
  assert.match(ui,/if\(\/manifestLoadError\|manifestLoadTimeout\|levelLoadError\|levelLoadTimeout\/i\.test/);
  assert.match(ui,/method:'POST',mode:'cors',cache:'no-store'/);
  assert.match(ui,/xhrSetup:function\(xhr\)/);

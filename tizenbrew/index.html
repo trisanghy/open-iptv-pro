@@ -91,7 +91,7 @@ button,input,textarea{font:inherit;color:inherit}button{cursor:pointer;border:2p
 <script type="text/javascript" src="$WEBAPIS/webapis/webapis.js"></script>
 </head><body data-theme="dark">
 <div id="app">
-<header class="top"><div class="brand"><div class="brandicon">▶</div><div><strong>Open IPTV Pro <small>TV</small></strong><p>Samsung Tizen Edition · TizenBrew v0.1.41</p></div></div><div class="toolbar"><span class="clock" id="clock">--:--</span><button id="searchBtn">⌕ Tìm</button><button id="addBtn">＋ Nguồn</button><button id="themeBtn">◐ Giao diện</button></div></header>
+<header class="top"><div class="brand"><div class="brandicon">▶</div><div><strong>Open IPTV Pro <small>TV</small></strong><p>Samsung Tizen Edition · TizenBrew v0.1.42</p></div></div><div class="toolbar"><span class="clock" id="clock">--:--</span><button id="searchBtn">⌕ Tìm</button><button id="addBtn">＋ Nguồn</button><button id="themeBtn">◐ Giao diện</button></div></header>
 <div class="main"><nav class="nav"><button class="active" data-nav="all">▣　Trực tiếp</button><button data-nav="favorites">♡　Yêu thích</button><button data-nav="recent">◷　Đã xem</button><button data-nav="sources">☷　Nguồn M3U</button><button data-nav="help">⚙　Hướng dẫn</button><div id="sidebarShortcuts" class="sidebar-shortcuts"><button type="button" id="tizenTubeBtn" title="Chuyển sang TizenTube đã cài trong TizenBrew">▶ TizenTube</button><button type="button" id="exitModuleBtn" class="exit-small" title="Thoát về TizenBrew">✕ Thoát</button></div><p class="tip">Dùng ↑ ↓ ← → và OK để điều khiển bằng remote TV.</p></nav>
 <section class="listpane"><div class="heading"><div><div class="eyebrow">DANH SÁCH KÊNH</div><h1 id="heading">Trực tiếp</h1></div><span id="count">0 kênh</span></div><div class="groups" id="groups"></div><div class="channels" id="channels"></div><div class="empty" id="empty" hidden><h2>Chưa có kênh IPTV</h2><p>Thêm nguồn bằng URL trên remote hoặc quét QR để nhập bằng điện thoại.</p><button id="emptyAdd" class="primary">＋ Thêm nguồn IPTV</button><button id="sampleBtn">▶ Luồng kiểm thử</button></div><button id="more" hidden>Xem thêm kênh ↓</button></section>
 <aside class="details"><div class="preview"><span class="live">● TRỰC TIẾP</span><b id="previewText">TV</b><span class="watermark">OPEN IPTV PRO</span></div><div class="eyebrow">KÊNH ĐANG CHỌN</div><h2 id="channelTitle">Open IPTV Pro TV</h2><p id="channelGroup">Chọn kênh để xem</p><div class="info"><div class="eyebrow">THÔNG TIN</div><p id="channelInfo">Hỗ trợ nhập M3U, nhóm kênh, yêu thích và remote Samsung.</p></div><div class="actions"><button class="primary" id="watchBtn">▶ Xem</button><button id="favBtn">♡ Yêu thích</button></div></aside></div>
@@ -724,7 +724,7 @@ function updateBottomActions(){byId('exitModuleBtn').title='Thoát về TizenBre
 var playbackSerial=0,playbackEngine='',avplayInstance=null,hlsInstance=null,playbackTimer=0,hlsLibraryPromise=null;
 var html5Mode='',hlsAttempted=false,playbackEvidence=[],playbackFailed=false;
 var playbackConfirmed=false,playbackGraceTimer=0,playbackStreamUrls=[],playbackStreamIndex=0,playbackStream=null,nativeReplayUsed=false;
-var hlsRelayAttempted=false,hlsRelayUrl='',hlsRelayServer='http://127.0.0.1:17868';
+var hlsRelayAttempted=false,hlsRelayUrl='',hlsRelayServer='http://127.0.0.1:17869';
 var hostedCastAttempted=false,hostedCastSession='',hostedCastToken=0,hostedCastSent=false,hostedCastPlaying=false;
 var hostedCastOrigin='https://trisanghy.github.io';
 var hostedCastPage=hostedCastOrigin+'/open-iptv-pro/tizen/hosted-player.html?v=20261122c';
@@ -1032,7 +1032,7 @@ function ensureTizenHlsRelayService(){
     ws.send(JSON.stringify({
      type:6,
      payload:{
-      fullName:'gh/trisanghy/open-iptv-pro@3a60dc73ec165c96ec8d89ec436c2a90c621a9f7',
+      fullName:'gh/trisanghy/open-iptv-pro@3a60dc73ec165c96ec8d89ec436c2a90c621a9f76',
       serviceFile:'tizenbrew/hls-relay-v1.js'
      }
     }));
@@ -1060,7 +1060,7 @@ function diagText(value,max){
  return String(value||'').replace(/[\r\n\u0000-\u001f]/g,' ').slice(0,max||180);
 }
 function loadRelayDiagnostics(token){
- var match=/^http:\/\/127\.0\.0\.1:17868\/r\/([0-9a-f]{40})\/\d+$/.exec(String(hlsRelayUrl||''));
+ var match=/^http:\/\/127\.0\.0\.1:17869\/r\/([0-9a-f]{40})\/\d+$/.exec(String(hlsRelayUrl||''));
  if(!match)return;
  fetch(hlsRelayServer+'/diag/'+match[1],{method:'GET',mode:'cors',cache:'no-store',headers:{'X-Open-IPTV-Relay':'1'}})
   .then(function(response){if(!response.ok)throw Error('HTTP '+response.status);return response.json();})
@@ -1112,7 +1112,7 @@ function startRelayHlsPlayback(channel,token){
   if(completed)return;completed=true;clearTimeout(limit);
   if(!playbackActive(token)||playbackEngine!=='html5'||html5Mode!=='hls-relay')return;
   var local=String(result&&result.url||'');
-  if(!/^http:\/\/127\.0\.0\.1:17868\/r\/[0-9a-f]{40}\/0$/.test(local))throw Error('Dịch vụ HLS trả đường dẫn không hợp lệ');
+  if(!/^http:\/\/127\.0\.0\.1:17869\/r\/[0-9a-f]{40}\/0$/.test(local))throw Error('Dịch vụ HLS trả đường dẫn không hợp lệ');
   hlsRelayUrl=local;
   return loadHlsLibrary().then(function(Hls){
    if(!playbackActive(token)||playbackEngine!=='html5'||html5Mode!=='hls-relay')return;
