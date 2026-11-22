@@ -183,6 +183,10 @@ jobs:
           node --check _site/web-tv-pair.js
           node --check _site/web-cast-v2.js
           node --check _site/web-cast-icons.js
+          node --check _site/web-access-links.js
+          test -s _site/web-access-links.css
+          grep -Fq 'https://is.gd/openiptv' _site/index.html
+          grep -Fq 'https://trisanghy.github.io/open-iptv-pro/' _site/index.html
           test -s _site/web-cast-icons.js
           grep -Fq 'web-cast-icons.js?v=dual-links-20261122a' _site/index.html
           grep -Fq 'web-cast-icons.js?v=dual-links-20261122a' _site/tv.html
@@ -192,6 +196,7 @@ jobs:
           node --test web-online/tests/web-cast-sender.test.cjs
           node --test web-online/tests/web-cast-v2.test.cjs
           node --test web-online/tests/web-cast-icons.test.cjs
+          node --test web-online/tests/web-access-links.test.cjs
           grep -Fq 'web-cast-sender.js?v=cast-v2-20261122a' _site/index.html
           grep -Fq 'web-cast-v2.css?v=dual-links-20261122a' _site/index.html
           grep -Fq 'web-tv-pair.js?v=cast-v2-20261122a' _site/index.html
