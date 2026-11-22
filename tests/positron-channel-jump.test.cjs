@@ -9,12 +9,12 @@ test('P5.1.226 ships visible accessible numeric channel jump without playback',(
  assert.ok(html.includes('positron-channel-jump.css'));
  assert.ok(html.includes('positron-channel-jump.js'));
  for(const fragment of ["toggle.id='poChannelJumpToggle'","panel.id='poChannelJumpPanel'","state.getChannels()",
-  "all.click()","expandFolderBtn","scrollIntoView({block:'center'","target.focus({preventScroll:true})",
+  "all.click()","expandFolderBtn","list.scrollTop+=","target.focus({preventScroll:true})",
   "event.key==='Enter'","event.key==='Escape'"])
   assert.ok(js.includes(fragment),'Missing native channel jump: '+fragment);
  assert.ok(!js.includes('playChannel('),'Jump must never call playback');
  assert.ok(!js.includes('store.channels=')&&!js.includes('save()'),'Jump cannot reorder playlist');
- assert.equal(JSON.parse(read('package.json')).version,'4.23.311');
+ assert.ok(Number(JSON.parse(read('package.json')).version.split('.')[2])>=311,'P226 numeric jump must remain covered');
 });
 test('P5.1.226 real Electron image and list focus are checked in CI',()=>{
  const qa=read('scripts/positron-20-extension.cjs'),flow=read('.github/workflows/positron-lab.yml');

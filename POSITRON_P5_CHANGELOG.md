@@ -1,5 +1,14 @@
 # Positron P5 Changelog
 
+## P5.1.227 — Nhảy kênh không cuộn cả trang video, tiêu đề gọn / Electron 4.23.312
+- Feature priority: BLOCKER_FIX — Ảnh Electron P5.1.226 cho thấy nhảy tới kênh 250 kéo cả trang video lên, che khuất đầu sidebar và mép trên khung phát, trong khi ba nút tiêu đề khiến chữ xuống hai dòng; sửa đúng vùng cuộn để điều khiển TV vẫn luôn nhìn thấy.
+- Electron screenshot: positron-p51227-jump-scroll-after-1920x1080-real.png
+- User action: Nhập số 400 rồi chọn Đi. Chỉ danh sách kênh được cuộn tới đúng hàng; thanh tiêu đề và khung phát không dịch chuyển, không có stream nào tự phát.
+- QA Electron: dùng ảnh P226 bị lỗi làm đầu vào; ảnh before/after thật P227, kiểm tra vùng cuộn ngoài không đổi, header hiển thị một dòng, player còn trong vùng nhìn, hàng 400 được focus.
+- Giữ nguồn M3U, Favorites, DVR, phụ đề và Cast.
+- CANDIDATE tới khi Node, ảnh thật đã MỞ, CI và Release đạt.
+
+
 ## P5.1.226 — Nhảy nhanh tới kênh theo số, không tự phát / Electron 4.23.311
 - Feature priority: NEW — Khi playlist có hàng trăm kênh, người dùng có thể nhập số thứ tự để định vị kênh trong danh sách mà không phải cuộn qua hàng trăm mục hoặc làm gián đoạn video đang phát.
 - Electron screenshot: positron-p51226-channel-jump-after-1920x1080-real.png

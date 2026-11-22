@@ -46,3 +46,16 @@ html[data-positron="true"] #page-tv #poChannelJumpToggle:focus-visible{
 @media(max-width:450px){
  html[data-positron="true"] #page-tv #poChannelJumpPanel{grid-template-columns:minmax(0,1fr) 64px 40px!important;gap:5px!important;padding:7px!important}
 }
+
+
+/* P5.1.227 visual review: 3 sidebar actions must not wrap the heading. */
+html[data-positron="true"].po-v3 #page-tv .channel-panel .panel-header > div:first-child{
+ min-width:0!important;flex:1 1 auto!important;
+}
+html[data-positron="true"].po-v3 #page-tv .channel-panel .panel-header h2{
+ font-size:12px!important;line-height:1.32!important;white-space:nowrap!important;
+ overflow:hidden!important;text-overflow:ellipsis!important;letter-spacing:-.1px!important;
+}
+html[data-positron="true"].po-v3 #page-tv .channel-panel .panel-header .panel-header-actions{
+ gap:4px!important;flex-shrink:0!important;
+}

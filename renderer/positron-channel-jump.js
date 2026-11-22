@@ -63,7 +63,10 @@
    status.textContent='Không tìm thấy kênh số '+index+' trong danh sách.';
    return;
   }
-  target.scrollIntoView({block:'center',inline:'nearest',behavior:'instant'});
+  // P227: scroll only #channelList, not the entire TV page.
+  const listRect=list.getBoundingClientRect();
+  const targetRect=target.getBoundingClientRect();
+  list.scrollTop+=targetRect.top-listRect.top-(list.clientHeight-targetRect.height)/2;
   target.focus({preventScroll:true});
   const title=target.querySelector('.channel-text b')?.textContent||'';
   status.textContent='Đã tới kênh '+index+'/'+channels.length+': '+title+'. Chưa phát kênh.';
