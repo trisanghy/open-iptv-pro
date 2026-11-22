@@ -45,7 +45,7 @@ function harness({relayAvailable=true}={}){
    return Promise.resolve({ok:true,json:()=>Promise.resolve({url:local})});
   }
  };
- const api=vm.runInNewContext(code+'\n({play,playbackReady,current:()=>({playbackEngine,html5Mode,playing,playbackConfirmed,hlsRelayAttempted,hlsRelayUrl,playbackSerial})});',env);
+ const api=vm.runInNewContext(code+'\n({play,playbackReady,handleHtml5Error,current:()=>({playbackEngine,html5Mode,playing,playbackConfirmed,hlsRelayAttempted,hlsRelayUrl,playbackSerial})});',env);
  return {api,instances,requests,elements,notes,video,env,timers,calls,state};
 }
 async function flush(){await new Promise(resolve=>setImmediate(resolve));}
@@ -100,4 +100,18 @@ test('When local relay service is absent, app reports failure and does not open 
  grace.fn();
  assert.match(s.elements.playerStatus.textContent,/Không phát được kênh/);
  assert.equal(s.elements.player.hidden,false);
+});
+
+test('An extensionless HLS endpoint retries TV-local relay after HTML5 and direct HLS fail',async()=>{
+ const s=harness(),url='https://cdn.example.org/live/channel?id=vtv7';
+ s.api.play({id:'vtv7',name:'VTV7',url});await flush();
+ assert.equal(s.api.current().html5Mode,'native');
+ s.api.handleHtml5Error(s.api.current().playbackSerial,'HTML5 unsupported');
+ await flush();
+ assert.equal(s.api.current().html5Mode,'hlsjs');
+ const hls=s.instances.at(-1);assert.equal(hls.url,url);
+ hls.fail('manifestLoadError');await flush();
+ assert.equal(s.api.current().html5Mode,'hls-relay');
+ assert.equal(s.instances.at(-1).url,local);
+ assert.equal(s.elements.browserFallback.hidden,true);
 });
