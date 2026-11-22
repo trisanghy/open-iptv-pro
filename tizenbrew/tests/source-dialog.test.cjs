@@ -340,7 +340,7 @@ test('Web Mobile channel management controls exist on the QR phone page',()=>{
   assert.ok(phone.includes('function '+fn+'('),'missing '+fn);
  assert.match(phone,/},500\)/,'touch long press activates in 0.5 seconds');
  assert.match(phone,/passive:false/,'active touch drag can prevent scrolling');
- assert.match(phone,/command\('relocate-channel'/);
+ assert.match(phone,/action='relocate-channel'/,'drag/drop dispatches the relocate-channel action');
  assert.match(phone,/command\('play-channel'|action==='play-channel'/);
 });
 test('TV manager supports folder filtering, favorite/recent, batch actions and TV playback',()=>{
