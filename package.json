@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.350",
-  "description": "Positron P5.1.265: Enter/Space đi tới thẻ nguồn IPTV đang chọn",
+  "version": "4.23.351",
+  "description": "Positron P5.1.266: WatchFlow Intelligence học máy sở thích, phân loại EPG và tra cứu Wikipedia",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

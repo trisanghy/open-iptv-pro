@@ -1,0 +1,25 @@
+#poWatchFlowPanel #poIntelligenceResults[hidden]{display:none!important}
+#poWatchFlowPanel .po-ai-tab{color:#baf7df;font-weight:750;white-space:nowrap}
+#poWatchFlowPanel .po-ai-tab[aria-pressed="true"]{background:#204e44;color:#effff8}
+#poWatchFlowPanel .po-ai-panel{display:grid;gap:12px;padding:8px 1px 18px;min-width:0}
+#poWatchFlowPanel .po-ai-heading h3{font-size:19px;margin:4px 0 6px;color:#e6fff4}
+#poWatchFlowPanel .po-ai-heading p,#poWatchFlowPanel .po-ai-privacy{font-size:12px;line-height:1.6;color:#b7cbd0;margin:0}
+#poWatchFlowPanel .po-ai-controls{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;padding:12px;background:#112b32;border:1px solid #3b555c;border-radius:11px}
+#poWatchFlowPanel .po-ai-check{display:flex;gap:9px;align-items:center;font-size:13px;cursor:pointer}
+#poWatchFlowPanel .po-ai-check input{accent-color:#57d9a3;width:17px;height:17px}
+#poWatchFlowPanel .po-ai-controls button{padding:8px 10px;background:transparent;color:#c8dde1;border:1px solid #507078;border-radius:8px}
+#poWatchFlowPanel .po-ai-summary{font-size:12px;color:#a8e3d7;margin:1px 0 2px}
+#poWatchFlowPanel .po-ai-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(265px,1fr));gap:10px}
+#poWatchFlowPanel .po-ai-card{display:flex;flex-direction:column;gap:7px;background:#132932;border:1px solid #38525d;border-radius:13px;padding:12px;min-width:0}
+#poWatchFlowPanel .po-ai-card-header{display:grid;gap:5px}
+#poWatchFlowPanel .po-ai-card-header strong{font-size:14px;overflow-wrap:anywhere;color:#f4faf9}
+#poWatchFlowPanel .po-ai-card-header small{font-size:12px;color:#a8e2bd}
+#poWatchFlowPanel .po-ai-epg{font-size:12px;font-weight:650;color:#dceaff;margin:0}
+#poWatchFlowPanel .po-ai-why{font-size:11px;color:#a6bac5;line-height:1.45;margin:0}
+#poWatchFlowPanel .po-ai-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:auto;padding-top:5px}
+#poWatchFlowPanel .po-ai-actions button{font-size:11px;padding:7px 9px;min-height:34px;background:#21444c;color:#e8f9f5;border-radius:8px;border:1px solid #47737d}
+#poWatchFlowPanel .po-ai-actions button:first-child{background:#287260}
+#poWatchFlowPanel .po-ai-actions button:disabled{opacity:.4;cursor:not-allowed}
+#poWatchFlowPanel .po-ai-link{font-size:11px;color:#91e6ca;text-decoration:underline}
+#poWatchFlowPanel .po-ai-empty{font-size:12px;color:#a5bac3}
+@media(max-width:800px){#poWatchFlowPanel .po-ai-cards{grid-template-columns:1fr}#poWatchFlowPanel .po-ai-actions button{flex:1}}

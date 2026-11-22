@@ -1,5 +1,14 @@
 # Positron P5 Changelog
 
+## P5.1.266 — WatchFlow Intelligence: học máy sở thích, phân loại EPG và tìm chủ đề trên Wikipedia / Electron 4.23.351
+- Feature priority: NEW — WatchFlow Intelligence với thuật toán học máy hồi quy logistic cập nhật trọng số dựa trên thời lượng xem ≥35 giây có hình hoặc đánh giá Hợp gu/Không hợp; phân loại theo chương trình XMLTV đang/sắp chiếu; tra cứu Wikipedia theo tên kênh và chỉ khi bấm nút, không gửi playlist, URL hoặc lịch sử xem lên mạng.
+- Feature class: AI
+- Evidence: Bộ kiểm thử EPG gán tin tức/thể thao bằng XMLTV thật với thời gian phát, loại chương trình lỗi/quá hạn, 10 phản hồi tích cực thể thao và 6 phản hồi tiêu cực tin tức phải làm thay đổi trọng số thực và thứ hạng; kiểm thử Wikipedia chỉ gắn bài khớp tên, không tự gửi dữ liệu; Electron QA kiểm tra mở bảng AI, giữ playlist và không tự phát. QA ảnh 1920×1080 cần xác minh tại Actions.
+- User action: TV → WatchFlow → ✦ AI hợp gu; bật cho phép học trên thiết bị, xem kênh có hình ít nhất 35 giây hoặc bấm Hợp gu/Không hợp; dùng Tra cứu web riêng từng kênh khi cần biết chủ đề; bấm Xóa dữ liệu học để xóa trọng số.
+- Electron screenshot: positron-p51266-intelligence-after-1920x1080-real.png
+- Electron before/after: positron-p51266-intelligence-before-1920x1080-real.png / positron-p51266-intelligence-after-1920x1080-real.png. Ảnh chỉ có giá trị khi do Electron CI tạo thật và lưu đúng phiên bản.
+- Trạng thái CANDIDATE cho tới khi Node tests, Electron screenshot, build Windows x64, bản phát hành bất biến được kiểm chứng. Wikipedia cần có mạng và có thể không có bài trùng khớp.
+
 ## P5.1.265 — Đi tới nguồn bằng Enter/Space / Electron 4.23.350
 - Feature priority: NEW — Người dùng bàn phím có thể focus một hàng trong Chi tiết nguồn rồi bấm Enter hoặc Space để mở thẻ nguồn tương ứng; giữ nguyên điều khiển nút Đi tới và không can thiệp vào phát kênh.
 - Electron screenshot: positron-p51265-source-enter-after-1920x1080-real.png
