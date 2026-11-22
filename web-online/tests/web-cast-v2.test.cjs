@@ -14,7 +14,7 @@ test('approved Cast modal matches demo, has 3 actual modes and all theme variant
  assert.match(css,/@media\(max-width:760px\)/);
  assert.match(html,/web-cast-v2\.css\?v=tv-local-handoff-20261122d/);
  assert.match(html,/web-tv-pair\.js\?v=tv-local-handoff-20261122d/);
- assert.match(html,/web-cast-v2\.js\?v=tv-cockpit-20261122a/);
+ assert.match(html,/web-cast-v2\.js\?v=tv-cockpit-20261122b/);
  assert.match(sender,/OpenIPTVWebCastV2\.open/);
 });
 test('all Cast UI icons come from one real SVG source, not overlapping pseudo glyphs',()=>{
