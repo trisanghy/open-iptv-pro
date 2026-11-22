@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.238",
-  "description": "Positron P5.1.154: chế độ không làm phiền xác nhận nổi",
+  "version": "4.23.239",
+  "description": "Positron P5.1.155: dọn banner nổi không mất nhật ký",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

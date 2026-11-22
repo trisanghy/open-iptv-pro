@@ -3782,9 +3782,50 @@ async function runTwenty(page){
  for(const [key,value] of Object.entries(quietModeQA))
   assert.equal(value,true,'P154 quiet mode '+key+': '+JSON.stringify(quietModeQA));
 
+
+ // P5.1.155: người dùng dọn banner nổi, các thông báo vẫn còn trong nhật ký.
+ const input155=await page.evaluate(()=>{
+  const state=window.IPTVState;
+  const channels=state.getChannels().length;
+  const idle=state.getCurrent()===null;
+  state.toast('QA P155: Đã lưu hồ sơ');
+  state.toast('QA P155: Cảnh báo nguồn phụ','warn');
+  state.toast('QA P155: Cập nhật danh sách thành công');
+  return {channels,idle};
+ });
+ await page.waitForTimeout(140);
+ await page.click('#poArchiveToggle');
+ const before155=await page.evaluate(()=>{
+  const items=[...document.querySelectorAll('#poArchiveEntries .po-archive-item')];
+  return {
+   dismissButton:!!document.getElementById('poArchiveDismissVisible'),
+   activeOverlays:[...document.querySelectorAll('#toastArea>.toast')].some(n=>(n.textContent||'').includes('QA P155:')),
+   hasThreeInHistory:items.filter(n=>n.textContent.includes('QA P155:')).length===3
+  };
+ });
+ await page.screenshot({path:path.join(out,'positron-p51155-dismiss-toasts-before-1920x1080-real.png'),animations:'disabled'});
+ await page.click('#poArchiveDismissVisible');
+ const after155=await page.evaluate(expected=>{
+  const items=[...document.querySelectorAll('#poArchiveEntries .po-archive-item')];
+  return {
+   noFloatingToasts:document.querySelectorAll('#toastArea>.toast').length===0,
+   allHistoryRetained:items.filter(n=>n.textContent.includes('QA P155:')).length===3,
+   badgeStillThree:Number(document.querySelector('#poArchiveToggle .po-archive-count')?.textContent)===3,
+   focusedButton:document.activeElement?.id==='poArchiveDismissVisible',
+   channelsSafe:window.IPTVState.getChannels().length===expected.channels,
+   noAutoplay:!expected.idle||window.IPTVState.getCurrent()===null,
+   noOverflow:document.documentElement.scrollWidth<=innerWidth+1
+  };
+ },input155);
+ await page.screenshot({path:path.join(out,'positron-p51155-dismiss-toasts-after-1920x1080-real.png'),animations:'disabled'});
+ await page.click('#poArchiveClear');await page.click('#poArchiveClose');
+ const dismissToastQA={...before155,...after155};
+ for(const [key,value] of Object.entries(dismissToastQA))
+  assert.equal(value,true,'P155 dismiss '+key+': '+JSON.stringify(dismissToastQA));
+
  await page.setViewportSize({width:1360,height:820});
   const report={type:'Positron P5 twenty distinct desktop screenshot cases',realElectron:true,syntheticChannels:false,
-  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,desktop16x9Screenshots,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA,chooserQa,toastLayoutQA,nativeToastQA,compactIdleQA,channelChipRailQA,advancedFilterQA,readableCardsQA,keyboardTabQA,favoriteEmptyQA,duplicateEmptyQA,categoryFilterQA,categoryFixtureQA,compactSingleQA,directFavoriteQA,favoriteCountQA,compactToastStackQA,toastDismissQA,toastFocusReturnQA,toastDockQA,wheelQA,pinnedAllQA,pinnedMaskQA,categoryKeyQA,dropdownChipQA,pinnedRightMaskQA,pinnedBorderMaskQA,asciiDSearchQA,emptySearchActionQA,readableCardTitleQA,favoriteSvgQA,keyboardFavoriteQA,multiTermSearchQA,keyboardSearchQA,arrowNavigationQA,pageNavigationQA,favoriteSortQA,onAirFilterQA,programmeSearchQA,upcomingProgrammeQA,soonProgrammeQA,earliestEpgSortQA,timeWindowQA,scheduleProgressQA:scheduleProgressQA,nativeReminderQA,cancelReminderQA,reminderLeadQA,toastHistoryQA,notificationArchiveQA,alertFilterQA,noticeSearchQA,quietModeQA};
+  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,desktop16x9Screenshots,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA,chooserQa,toastLayoutQA,nativeToastQA,compactIdleQA,channelChipRailQA,advancedFilterQA,readableCardsQA,keyboardTabQA,favoriteEmptyQA,duplicateEmptyQA,categoryFilterQA,categoryFixtureQA,compactSingleQA,directFavoriteQA,favoriteCountQA,compactToastStackQA,toastDismissQA,toastFocusReturnQA,toastDockQA,wheelQA,pinnedAllQA,pinnedMaskQA,categoryKeyQA,dropdownChipQA,pinnedRightMaskQA,pinnedBorderMaskQA,asciiDSearchQA,emptySearchActionQA,readableCardTitleQA,favoriteSvgQA,keyboardFavoriteQA,multiTermSearchQA,keyboardSearchQA,arrowNavigationQA,pageNavigationQA,favoriteSortQA,onAirFilterQA,programmeSearchQA,upcomingProgrammeQA,soonProgrammeQA,earliestEpgSortQA,timeWindowQA,scheduleProgressQA:scheduleProgressQA,nativeReminderQA,cancelReminderQA,reminderLeadQA,toastHistoryQA,notificationArchiveQA,alertFilterQA,noticeSearchQA,quietModeQA,dismissToastQA};
  fs.writeFileSync(path.resolve('positron-evidence','audit-p5-20-rounds.json'),JSON.stringify(report,null,2));
  return report;
 }

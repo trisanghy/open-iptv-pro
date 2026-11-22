@@ -522,3 +522,7 @@ html[data-positron="true"] .po-archive-quiet{display:block;width:100%;text-align
 html[data-positron="true"] .po-archive-quiet[aria-pressed="true"]{background:#235446;border-color:#6dd4bc;color:#e5fff5}
 html[data-positron="true"] .po-archive-quiet:focus-visible{outline:2px solid var(--po-accent,#6fddce);outline-offset:2px}
 html[data-positron="true"].po-toast-quiet #toastArea>.toast:not(.warn):not(.err){display:none!important}
+
+/* P5.1.155: hành động dọn banner thủ công, giữ nhật ký thông báo. */
+html[data-positron="true"] .po-archive-actions button.po-archive-dismiss{border-color:var(--po-accent,#66c1ab);color:var(--po-text,#eaf7f6)}
+html[data-positron="true"] .po-archive-actions button.po-archive-dismiss:hover{background:#235446}

@@ -1,3 +1,12 @@
+## P5.1.155 — Dọn banner nổi, giữ nhật ký / Electron v4.23.239
+- Feature priority: NEW — Thêm thao tác Dọn banner để người dùng đóng nhanh toàn bộ banner đang che trình phát, không phải chạm từng toast và không làm mất dòng nhật ký đã ghi.
+- User action: Mở Thông báo và bấm Dọn banner; các banner thành công/cảnh báo/lỗi đang nổi biến mất theo thao tác chủ động, nhưng nội dung và số mục trong Nhật ký giữ nguyên.
+- Electron screenshot: positron-p51155-dismiss-toasts-after-1920x1080-real.png
+- Before: positron-p51155-dismiss-toasts-before-1920x1080-real.png; After: positron-p51155-dismiss-toasts-after-1920x1080-real.png.
+- Bảo vệ: không phát kênh, không sửa M3U, Favorites hoặc cấu hình, và không can thiệp thông báo mới sau thao tác.
+- CI: chuyển nhóm concurrency sang SHA từng commit để không chặn các bản nâng cấp khác; Release bị HTTP 403 sẽ được báo lỗi rõ và lưu EXE/DMG vào artifact fallback, không nhận là đã phát hành.
+- Trạng thái ban đầu: CANDIDATE cho tới khi QA ảnh Electron, CI và Release được xác minh.
+
 ## P5.1.154 — Chế độ Không làm phiền khi xem TV / Electron v4.23.238
 - Feature priority: NEW — Bổ sung công tắc Ẩn xác nhận nổi để giảm banner che nội dung video, nhưng vẫn ghi toàn bộ sự kiện vào nhật ký phiên và luôn giữ banner cảnh báo/lỗi quan trọng.
 - User action: Mở Thông báo, bấm Ẩn xác nhận nổi: Bật; các thông báo thành công mới không che màn hình nhưng vẫn xem được trong Nhật ký. Bấm lại để tắt chế độ.

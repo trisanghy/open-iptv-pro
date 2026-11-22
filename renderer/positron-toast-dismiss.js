@@ -115,8 +115,12 @@
   quiet.setAttribute('aria-pressed','false');quiet.textContent='Ẩn xác nhận nổi: Tắt';
   const actions=document.createElement('div');actions.className='po-archive-actions';
   const clear=document.createElement('button');clear.type='button';clear.id='poArchiveClear';clear.textContent='Xóa lịch sử';
+  const dismissVisible=document.createElement('button');dismissVisible.type='button';
+  dismissVisible.id='poArchiveDismissVisible';dismissVisible.className='po-archive-dismiss';
+  dismissVisible.textContent='Dọn banner';
+  dismissVisible.setAttribute('aria-label','Đóng banner nổi nhưng giữ toàn bộ nhật ký');
   const close=document.createElement('button');close.type='button';close.id='poArchiveClose';close.textContent='Đóng';
-  actions.append(clear,close);panel.append(title,hint,quiet,filters,searchRow,entries,actions);document.body.append(panel);
+  actions.append(clear,dismissVisible,close);panel.append(title,hint,quiet,filters,searchRow,entries,actions);document.body.append(panel);
   let history=[],isOpen=false,filterMode='all';const seen=new WeakSet();
   const normalizeArchiveText=value=>String(value||'').toLocaleLowerCase('vi-VN')
    .replace(/đ/g,'d').normalize('NFD').replace(/[\u0300-\u036f]/g,'');
@@ -173,6 +177,12 @@
    quiet.setAttribute('aria-pressed',String(enabled));
    quiet.textContent='Ẩn xác nhận nổi: '+(enabled?'Bật':'Tắt');
    document.documentElement.classList.toggle('po-toast-quiet',enabled);
+  });
+  // P5.1.155: dọn banner bị chồng trên player theo ý người dùng, không xóa lịch sử.
+  dismissVisible.addEventListener('click',()=>{
+   for(const node of [...area.children])
+    if(node.classList.contains('toast'))node.remove();
+   dismissVisible.focus({preventScroll:true});
   });
   close.addEventListener('click',dismiss);
   clear.addEventListener('click',()=>{history=[];render();clear.focus({preventScroll:true});});

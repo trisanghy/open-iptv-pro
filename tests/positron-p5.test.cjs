@@ -37,7 +37,7 @@ test('P5 assets are loaded after P4 without replacing it',()=>{
 test('P5 release is immutable and versioned separately from P4.1',()=>{
  const pkg=JSON.parse(read('package.json'));
  const flow=read('.github/workflows/positron-lab.yml');
- assert.equal(pkg.version,'4.23.238');
+ assert.equal(pkg.version,'4.23.239');
  const label=pkg.description.match(/Positron\s+(P\d+\.\d+\.\d+)/)?.[1];
  assert.ok(label,'product P-label must accompany SemVer');
  assert.ok(flow.includes('TAG=positron/v'+pkg.version+'-'+label.toLowerCase()),'release tag and app version must match');
@@ -1521,4 +1521,18 @@ test('P5.1.154 có chế độ không làm phiền nhưng vẫn lưu cảnh báo
   'chỉ được ẩn banner thành công, không ẩn cảnh báo/lỗi');
  for(const n of ['positron-p51154-quiet-mode-before-1920x1080-real.png','positron-p51154-quiet-mode-after-1920x1080-real.png'])
   assert.ok(qa.includes(n),'thiếu ảnh Electron thật '+n);
+});
+
+test('P5.1.155 dọn banner đang nổi nhưng giữ nguyên nhật ký và tránh ghi đè',()=>{
+ const js=read('renderer/positron-toast-dismiss.js');
+ const css=read('renderer/positron-twenty.css');
+ const qa=read('scripts/positron-20-extension.cjs');
+ assert.doesNotThrow(()=>new vm.Script(js));
+ assert.ok(js.includes('poArchiveDismissVisible'));
+ assert.ok(js.includes("if(node.classList.contains('toast'))node.remove()"));
+ assert.ok(js.includes('history.unshift'),'dọn banner không được xóa dữ liệu nhật ký');
+ assert.ok(css.includes('.po-archive-actions button.po-archive-dismiss'));
+ assert.ok(!js.includes('IPTVState.playChannel'),'thao tác dọn banner không được phát kênh');
+ for(const n of ['positron-p51155-dismiss-toasts-before-1920x1080-real.png','positron-p51155-dismiss-toasts-after-1920x1080-real.png'])
+  assert.ok(qa.includes(n),'thiếu ảnh QA '+n);
 });
