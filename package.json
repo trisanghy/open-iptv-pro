@@ -1,7 +1,7 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro",
-  "version": "0.1.35",
+  "version": "0.1.36",
   "description": "Open IPTV Pro TV cho Samsung: phát kênh M3U/HLS trong TizenBrew, hỗ trợ dịch vụ HLS nội bộ, quản lý kênh bằng QR và OTA.",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
@@ -128,6 +128,6 @@
     "ColorF0Red",
     "ColorF1Green"
   ],
-  "tizenbrewEdition": "0.1.35",
+  "tizenbrewEdition": "0.1.36",
   "serviceFile": "tizenbrew/hls-relay-v1.js"
 }
