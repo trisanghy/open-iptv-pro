@@ -9,10 +9,10 @@ TizenBrew tải `package.json` và các file module từ `https://cdn.jsdelivr.n
 Mở **TizenBrew > Module Manager > Add GitHub Module**, nhập nguyên văn:
 
 ```text
-gh/trisanghy/open-iptv-pro@77e9b0bebbbad18914334b02ff3042e5883db939
+trisanghy/open-iptv-pro@77e9b0bebbbad18914334b02ff3042e5883db939
 ```
 
-Đây là **commit chính xác đã được GitHub Actions xác minh CDN tải được cả `package.json` v0.1.22 và `tizenbrew/bootstrap.html`**, xem workflow `tizenbrew-ota-smoke.yml`. Không thay thành `@tizenbrew` vì URL cũ đang bị CDN hạn chế purge. Có thể xóa thẻ Open IPTV Pro cũ khỏi danh sách TizenBrew nếu muốn tránh trùng; không chọn xóa dữ liệu TizenBrew.
+Mục **Add GitHub Module** tự thêm tiền tố `gh/`, vì vậy **không nhập thêm `gh/`**. Đây là **commit chính xác đã được GitHub Actions xác minh CDN tải được cả `package.json` v0.1.22 và `tizenbrew/bootstrap.html`**, xem workflow `tizenbrew-ota-smoke.yml`. Không thay thành `@tizenbrew` vì URL cũ đang bị CDN hạn chế purge. Có thể xóa thẻ Open IPTV Pro cũ khỏi danh sách TizenBrew nếu muốn tránh trùng; không chọn xóa dữ liệu TizenBrew.
 
 ### Cơ chế OTA không phụ thuộc cache URL nhánh
 - `package.json` đặt `appPath: tizenbrew/bootstrap.html`.
