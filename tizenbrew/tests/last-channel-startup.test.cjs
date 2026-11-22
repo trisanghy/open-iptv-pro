@@ -35,7 +35,7 @@ test('start-up calls resume after drawing, and last watch history is persisted',
  assert.match(html,/dataset\.theme=state\.theme;draw\(\);setTimeout\(function\(\)\{if\(resumeLastChannel\(\)\)/);
  assert.match(html,/state\.recent=\[c\.id\]\.concat\(state\.recent\.filter/);
  assert.match(html,/\.slice\(0,60\);save\(\)/);
- assert.match(html,/id="exitPlayer"/);
+ assert.match(html,/id="exitModuleBtn"/);
 });
 test('inline application scripts remain valid JavaScript',()=>{
  for(const match of html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/g)){

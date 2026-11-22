@@ -17,5 +17,5 @@ test('Back on home navigates directly to TizenBrew launcher',()=>assert.deepEqua
 test('Back in modal only closes modal',()=>{let h=run({modal:true});assert.equal(h.modal,1);assert.equal(h.replace.length,0)});
 test('Back in player only closes player',()=>{let h=run({player:true});assert.equal(h.player,1);assert.equal(h.replace.length,0)});
 test('Fallback exits native app',()=>assert.equal(run({fail:true}).exit,1));
-test('Both large sidebar and top buttons are present',()=>{assert.match(html,/id="navExitBtn"/);assert.match(html,/id="exitModuleBtn"/);assert.match(html,/navExitBtn'\)\.onclick=exitModule/);});
+test('Single compact bottom exit replaces former duplicate exits',()=>{assert.equal((html.match(/id="exitModuleBtn"/g)||[]).length,1);assert.doesNotMatch(html,/id="navExitBtn"/);assert.doesNotMatch(html,/id="exitPlayer"/);assert.match(html,/id="tizenTubeBtn"/);});
 test('App scripts parse',()=>{let chunks=[...html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/g)];assert.ok(chunks.length);for(const m of chunks)assert.doesNotThrow(()=>new Function(m[1]));});

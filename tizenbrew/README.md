@@ -1,4 +1,4 @@
-# Open IPTV Pro TV · TizenBrew v0.1.12 (thử nghiệm)
+# Open IPTV Pro TV · TizenBrew v0.1.13 (thử nghiệm)
 
 ## v0.1.12 — Quản lý kênh theo Web Mobile trên trang QR
 
@@ -15,6 +15,14 @@
 1. Mở ứng dụng **TizenBrew** (không phải TizenBrew Installer).
 2. Vào **Module Manager → Add GitHub Module**, nhập `trisanghy/open-iptv-pro@tizenbrew`.
 3. Mở/cập nhật module **Open IPTV Pro TV**. Nếu thấy giao diện cũ, tải lại module hoặc xóa cache.
+
+## v0.1.13 — Nút thoát gọn, chuyển TizenTube, xóa thông báo che video
+
+- Gỡ nút thoát lớn trên header, menu bên trái và đầu trình phát. Chỉ còn **1 nút ✕ Thoát nhỏ ở góc dưới**: đang xem thì về danh sách, ở danh sách thì về TizenBrew. Back từ remote tiếp tục làm tương tự.
+- Thêm nút **▶ TizenTube** ở cạnh nút thoát. Nút dùng WebSocket nội bộ `ws://127.0.0.1:8081` của TizenBrew để đọc module đã cài, yêu cầu `LaunchModule` cho module TizenTube đã tìm thấy, sau đó chuyển sang `appPath` TizenBrew cung cấp. Không tự cài và không chuyển sang trang YouTube thường nếu module chưa có.
+- Trong trình phát, điều hướng **↓** để chọn nút Thoát, **←/→** để chuyển giữa Thoát và TizenTube, **↑** về video. Nhấn **OK** trên video để phát/tạm dừng, trên nút sẽ thực hiện đúng thao tác đã chọn.
+- Sửa cảnh báo autoplay lưu lại trên hình: `playing` và `timeupdate` xóa cảnh báo cũ ngay khi phát thực tế, kể cả khi người dùng nhấn OK thử lại. Phụ đề trạng thái và hướng dẫn bên dưới ẩn khi video đang phát; khi chờ hoặc tạm dừng sẽ hiện hướng dẫn.
+- Đã có kiểm thử mô phỏng; cần kiểm tra thực tế trên Samsung Tizen vì TizenBrew và codec khác nhau theo TV.
 
 ## v0.1.12 — Tự mở kênh xem gần nhất khi khởi động
 
