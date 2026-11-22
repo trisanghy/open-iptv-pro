@@ -74,9 +74,10 @@ function bus(){
   },
   async removeChannel(ch){ch.joined=false;return 'ok';}
  };
+ client.__channels=channels;
  return {client,messages};
 }
-test('actual TV pairing requires TV approval, encrypts stream URL, supports remote commands',async()=>{
+test('TV uses one-time PIN for automatic encrypted pairing and reports actual playback',async()=>{
  const {client,messages}=bus();
  const browser={document:{},crypto:webcrypto,
   supabase:{createClient:()=>client},
@@ -86,22 +87,21 @@ test('actual TV pairing requires TV approval, encrypts stream URL, supports remo
  vm.runInNewContext(core,{window:browser,URL,TextEncoder,TextDecoder,Uint8Array,DataView,Promise,console,setTimeout,clearTimeout,btoa,atob});
  const api=browser.OpenIPTVTVPair;
  assert.ok(api);
- const pending=[],commands=[],state={connected:false};
+ const pending=[],commands=[],playback=[],state={connected:false};
  const host=api.createReceiver({
+  autoApprove:true,
   onStatus:()=>{},onRequest:req=>{if(req)pending.push(req);},onConnected:()=>{state.connected=true;},
   onCommand:cmd=>commands.push(cmd)
  });
  await host.start();
  assert.match(host.code,/^\d{6}$/);
- const mobile=api.createController({onStatus:()=>{},onConnected:()=>{state.controller=true;}});
+ const mobile=api.createController({onStatus:()=>{},onConnected:()=>{state.controller=true;},onPlayback:msg=>playback.push(msg)});
  await mobile.connect(host.code);
- for(let i=0;i<20&&!pending.length;i++)await new Promise(r=>setTimeout(r,1));
- assert.equal(pending.length,1,'TV must receive an approval request');
- assert.equal(state.controller,undefined,'a user must accept on the TV first');
- await host.approve();
+ // Supplying a valid six-digit PIN must complete pairing without any TV click.
  for(let i=0;i<100&&!mobile.connected;i++)await new Promise(r=>setTimeout(r,4));
  assert.equal(mobile.connected,true);
  assert.equal(state.connected,true);
+ assert.equal(pending.length,0,'Auto-pairing must not display an approval prompt');
  await mobile.command('play',{url:'https://media.example/live.m3u8?token=temporary',name:'VTV2'});
  for(let i=0;i<50&&!commands.length;i++)await new Promise(r=>setTimeout(r,3));
  assert.equal(commands[0].action,'play');
@@ -109,12 +109,33 @@ test('actual TV pairing requires TV approval, encrypts stream URL, supports remo
  assert.equal(commands[0].url,'https://media.example/live.m3u8?token=temporary');
  assert.equal(messages.some(msg=>JSON.stringify(msg).includes('media.example')),false,'URL never appears in public broadcast');
  assert.equal(messages.some(msg=>msg.event==='sealed'&&typeof msg.payload.ciphertext==='string'),true);
+ await host.reportPlayback('playing','VTV2');
+ for(let i=0;i<100&&!playback.length;i++)await new Promise(r=>setTimeout(r,2));
+ assert.equal(playback[0].state,'playing');
+ assert.equal(playback[0].name,'VTV2');
+ assert.equal(await host.reportPlayback('unknown'),false);
+ // A consumed PIN stops listening on the public pairing room.
+ assert.equal(client.__channels?.filter(x=>x.topic.endsWith('pin-'+host.code)&&x.joined).length||0,0);
  await mobile.command('pause');
  await mobile.command('resume');
  await mobile.command('stop');
  for(let i=0;i<30&&commands.length<4;i++)await new Promise(r=>setTimeout(r,3));
  assert.deepEqual(commands.map(x=>x.action),['play','pause','resume','stop']);
  await mobile.disconnect(false);await host.close();
+});
+test('TV receiver requests fullscreen on playback and provides viewport fallback and TV remote exit',()=>{
+ assert.match(receiver,/autoApprove:true/);
+ assert.match(receiver,/addEventListener\('playing'/);
+ assert.match(receiver,/reportPlayback\('playing'/);
+ assert.match(receiver,/requestFullscreen\(/);
+ assert.match(receiver,/webkitEnterFullscreen\(/);
+ assert.match(receiver,/classList\.add\('tv-cinema'\)/);
+ assert.match(receiver,/keyCode===10009/);
+ assert.match(tv,/id="tvExitFullscreen"/);
+ assert.match(css,/\.iptv-tv-body\.tv-cinema #tvVideo/);
+ assert.match(css,/width:100vw!important;height:100dvh!important/);
+ assert.match(ui,/onPlayback:info/);
+ assert.match(ui,/if\(localVideo&&!localVideo\.paused\)localVideo\.pause\(\)/);
 });
 test('invalid media schemes and local addresses are rejected before transmission',()=>{
  assert.match(core,/AES-GCM/);
