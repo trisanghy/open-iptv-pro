@@ -7,15 +7,28 @@ Trang này được tạo tự động từ GitHub Releases và ảnh kiểm th�
 [Mở WEBSITE changelog tương tác](https://raw.githack.com/trisanghy/open-iptv-pro/Positron/docs/positron-features/index.html) · [Giao diện HTML trong repository](index.html) · [Các bản phát hành](https://github.com/trisanghy/open-iptv-pro/releases) · [Nhật ký Git tiếng Việt](LOG_GIT_TIENG_VIET.md) · [Quy tắc ưu tiên tính năng](../../POSITRON_FEATURE_RULES.md)
 
 <details>
-<summary><strong>P5.1.248</strong> · Alt+Shift+J điền sẵn số kênh · CHƯA CÓ BẢN PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.249</strong> · Escape trả tiêu điểm về kênh trước đó · CHƯA CÓ BẢN PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
 
-**Ứng dụng:** 4.23.333 · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
+**Ứng dụng:** 4.23.334 · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
+
+Feature priority: NEW/FIX — Khi mở bảng nhảy số từ một hàng kênh đang focus, phím Escape hủy và trả tiêu điểm về đúng hàng đó, để tiếp tục duyệt bằng lên/xuống. Trước đây Escape chỉ trả focus về nút mở bảng, gây đứt dòng điều hướng. User action: Chọn QA Channel 412, Alt+Shift+J, Escape: bảng đóng và kênh 412 sáng trở lại; nếu mở từ thanh công cụ thì Escape tiếp tục focus nút như cũ.
+
+*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+
+[Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/tree/Positron) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/f892cc51f322bd35dc2a5a7b1c6bd62ec2ed71ae)
+
+</details>
+
+<details>
+<summary><strong>P5.1.248</strong> · Electron 4.23.333 — Alt+Shift+J điền sẵn số kênh đang focus (CANDIDATE) · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+
+**Ứng dụng:** 4.23.333 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
 Feature priority: NEW — Trên danh sách kênh đang focus, Alt+Shift+J mở bảng nhảy và tự điền số hàng đang chọn để sửa sang một kênh lân cận; Alt+J vẫn mở ô trống như trước. User action: Sau khi chọn vị trí kênh 412/561, nhấn Alt+Shift+J để ô số đã có 412; sửa thành 413 rồi Enter nếu muốn, không tự phát.
 
 *Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
 
-[Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/tree/Positron) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/42d3264949a995d7a5bdae3d06a69e7c5e4849d3)
+[Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.333-p5.1.248) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/42d3264949a995d7a5bdae3d06a69e7c5e4849d3) · [Tải Windows Setup x64](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.333-p5.1.248/Open-IPTV-Pro-Setup-4.23.333-x64.exe) · [Tải gói ảnh QA](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.333-p5.1.248/Positron-P51248-20-Real-Screenshots.zip)
 
 </details>
 

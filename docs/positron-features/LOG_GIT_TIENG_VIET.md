@@ -2,14 +2,23 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
-## P5.1.248 — Alt+Shift+J điền sẵn số kênh
+## P5.1.249 — Escape trả tiêu điểm về kênh trước đó
 
-**Ứng dụng:** 4.23.333 · **Trạng thái:** Chưa có bản phát hành
+**Ứng dụng:** 4.23.334 · **Trạng thái:** Chưa có bản phát hành
+
+Feature priority: NEW/FIX — Khi mở bảng nhảy số từ một hàng kênh đang focus, phím Escape hủy và trả tiêu điểm về đúng hàng đó, để tiếp tục duyệt bằng lên/xuống. Trước đây Escape chỉ trả focus về nút mở bảng, gây đứt dòng điều hướng. User action: Chọn QA Channel 412, Alt+Shift+J, Escape: bảng đóng và kênh 412 sáng trở lại; nếu mở từ thanh công cụ thì Escape tiếp tục focus nút như cũ.
+
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/f892cc51f322bd35dc2a5a7b1c6bd62ec2ed71ae)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+
+## P5.1.248 — Electron 4.23.333 — Alt+Shift+J điền sẵn số kênh đang focus (CANDIDATE)
+
+**Ứng dụng:** 4.23.333 · **Trạng thái:** Đã phát hành
 
 Feature priority: NEW — Trên danh sách kênh đang focus, Alt+Shift+J mở bảng nhảy và tự điền số hàng đang chọn để sửa sang một kênh lân cận; Alt+J vẫn mở ô trống như trước. User action: Sau khi chọn vị trí kênh 412/561, nhấn Alt+Shift+J để ô số đã có 412; sửa thành 413 rồi Enter nếu muốn, không tự phát.
 
 [Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/42d3264949a995d7a5bdae3d06a69e7c5e4849d3)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.333-p5.1.248)
 
 ## P5.1.247 — Electron 4.23.332 — Hiện vị trí kênh đang chọn (CANDIDATE)
 
