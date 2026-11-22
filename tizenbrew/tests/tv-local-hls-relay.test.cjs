@@ -1,6 +1,8 @@
 'use strict';
 const {test}=require('node:test'),assert=require('node:assert/strict');
-const http=require('node:http'),path=require('node:path'),fs=require('node:fs');
+const http=require('node:http'),https=require('node:https'),dns=require('node:dns');
+const path=require('node:path'),fs=require('node:fs');
+const {EventEmitter}=require('node:events'),{Readable}=require('node:stream');
 const relay=require('../hls-relay-v1.js');
 const manifest=JSON.parse(fs.readFileSync(path.join(__dirname,'../../package.json'),'utf8'));
 const ui=fs.readFileSync(path.join(__dirname,'../index.html'),'utf8');
@@ -8,7 +10,7 @@ const origin='http://127.0.0.1:8081';
 function request(method,path,body,opts={}){
  return new Promise((resolve,reject)=>{
   const data=body?JSON.stringify(body):'';
-  const options={hostname:'127.0.0.1',port:17961,path,method,headers:{
+  const options={hostname:'127.0.0.1',port:opts.port||17961,path,method,headers:{
    Origin:opts.origin===undefined?origin:opts.origin,
    ...(opts.custom===false?{}:{'X-Open-IPTV-Relay':'1'}),
    'Content-Type':'application/json'
@@ -93,6 +95,67 @@ test('TV localhost service CORS preflight works without actual X-Open-IPTV-Relay
   assert.deepEqual(report.requests,[]);
   assert.doesNotMatch(diagnostics.body,/TOP_SECRET|cdn\.example\.org/);
  }finally{await new Promise(resolve=>server.close(resolve));}
+});
+test('HLS relay streams playlist and segment with TV UA and no spoofed Cast headers',async()=>{
+ const oldLookup=dns.lookup,oldRequest=https.request,upstream=[];
+ dns.lookup=function(host,opts,cb){
+  if(typeof opts==='function')cb=opts;
+  process.nextTick(()=>cb(null,'93.184.216.34',4));
+ };
+ https.request=function(options,callback){
+  upstream.push(options);
+  const req=new EventEmitter();req.setTimeout=function(){};req.abort=function(){};
+  req.end=function(){
+   const isSegment=/segment\.ts/.test(options.path);
+   const response=new Readable({read(){}});
+   response.statusCode=200;
+   response.headers={'content-type':isSegment?'video/mp2t':'application/vnd.apple.mpegurl'};
+   process.nextTick(function(){
+    callback(response);
+    response.push(Buffer.from(isSegment?'SEGMENT-OK':'#EXTM3U\n#EXTINF:5,Test\nhttps://cdn.example.org/segment.ts?token=hidden\n'));
+    response.push(null);
+   });
+  };
+  return req;
+ };
+ const server=relay.startServer(17868);
+ await new Promise((resolve,reject)=>{
+  if(server.listening)resolve();else{server.once('listening',resolve);server.once('error',reject);}
+ });
+ try{
+  const appOrigin='http://127.0.0.1:8081',ua='Tizen40-UA';
+  const session=await request('POST','/session',{
+   url:'https://cdn.example.org/live.m3u8?token=TOP_SECRET',browserUserAgent:ua
+  },{port:17868});
+  assert.equal(session.status,201);
+  const sessionUrl=JSON.parse(session.body).url;
+  const mediaRequest={port:17868,origin:'',custom:false};
+  const playlist=await request('GET',new URL(sessionUrl).pathname,null,mediaRequest);
+  assert.equal(playlist.status,200);
+  assert.match(playlist.body,/#EXTM3U/);
+  const segmentUrl=playlist.body.split('\n').find(line=>line.indexOf('http://127.0.0.1:17868/r/')===0);
+  assert.ok(segmentUrl,'playlist should rewrite the segment to the local relay');
+  const segment=await request('GET',new URL(segmentUrl).pathname,null,mediaRequest);
+  assert.equal(segment.status,200);
+  assert.equal(segment.body,'SEGMENT-OK');
+  assert.equal(upstream.length,2);
+  for(const call of upstream){
+   assert.equal(call.headers['User-Agent'],ua);
+   assert.equal(call.headers.Origin,undefined);
+   assert.equal(call.headers.Referer,undefined);
+  }
+  const id=sessionUrl.match(/\/r\/([a-f0-9]{40})\//)[1];
+  const diag=await request('GET','/diag/'+id,null,{port:17868});
+  assert.equal(diag.status,200);
+  const report=JSON.parse(diag.body);
+  assert.equal(report.relayVersion,'0.1.41');
+  assert.equal(report.mediaRequest.origin,'(no Origin)');
+  assert.equal(report.mediaRequest.appHeader,false);
+  assert.doesNotMatch(playlist.body,/TOP_SECRET|token=hidden/);
+ }finally{
+  await new Promise(resolve=>server.close(resolve));
+  dns.lookup=oldLookup;https.request=oldRequest;
+ }
 });
 test('TizenBrew video player tries local relay only on HLS failure and never navigates to Cast',()=>{
  assert.match(ui,/function startRelayHlsPlayback\(channel,token\)/);
