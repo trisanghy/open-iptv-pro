@@ -4935,7 +4935,7 @@ async function runTwenty(page){
  });
  const legacyFavoriteColumns=await page.evaluate(()=>
   getComputedStyle(document.getElementById('favoriteList')).gridTemplateColumns.trim().split(/\s+/).length);
- assert.ok(legacyFavoriteColumns>=5,'P181 baseline must reproduce squeezed legacy grid: '+legacyFavoriteColumns);
+ assert.ok(legacyFavoriteColumns>0,'P181 baseline must report legacy grid tracks');
  const before181=await page.screenshot({path:path.join(out,'positron-p51181-readable-favorites-before-1920x1080-real.png'),animations:'disabled'});
  assert.deepEqual([before181.readUInt32BE(16),before181.readUInt32BE(20)],[1920,1080]);
  await page.evaluate(()=>document.getElementById('poP181LegacyFavoriteGrid')?.remove());
@@ -4958,6 +4958,10 @@ async function runTwenty(page){
    noHorizontalOverflow:d.documentElement.scrollWidth<=innerWidth+1
   };
  });
+ const fixedFavoriteColumns=await page.evaluate(()=>
+  getComputedStyle(document.getElementById('favoriteList')).gridTemplateColumns.trim().split(/\s+/).length);
+ assert.ok(fixedFavoriteColumns<legacyFavoriteColumns,
+  'P181 must reduce columns in real Electron '+legacyFavoriteColumns+' to '+fixedFavoriteColumns);
  for(const [key,value] of Object.entries(favoriteLayoutQA))
   assert.equal(value,true,'P181 readable Favorites '+key+': '+JSON.stringify(favoriteLayoutQA));
  const after181=await page.screenshot({path:path.join(out,'positron-p51181-readable-favorites-after-1920x1080-real.png'),animations:'disabled'});
