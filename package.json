@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.329",
-  "description": "Positron P5.1.244: Gõ số trực tiếp trên hàng kênh để nhảy nhanh",
+  "version": "4.23.330",
+  "description": "Positron P5.1.245: Tự chọn đúng nhóm của kênh đang focus",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

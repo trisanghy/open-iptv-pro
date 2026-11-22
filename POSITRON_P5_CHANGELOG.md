@@ -1954,3 +1954,12 @@ P5.1.81 follow-up: real Electron capture found nav overflow; replace flexible no
 - User action: Focus một hàng kênh trong Xem truyền hình; gõ 412 rồi Enter để chuyển tiêu điểm tới kênh 412, Escape để hủy.
 - Electron screenshot: positron-p51244-direct-number-after-1920x1080-real.png
 - QA: Ảnh Electron thật 1920×1080 trước/sau; kiểm tra focus, playlist, Favorites, và không tự phát. Chưa hoàn tất nếu thiếu CI/ảnh soát/release.
+
+
+## P5.1.245 / Electron 4.23.330 — Đồng bộ nhóm với kênh đang chọn (CANDIDATE)
+- Feature priority: NEW — Hộp chọn nhóm trong trình nhảy kênh tự chỉ đúng nhóm của hàng kênh được focus sau thao tác bằng bàn phím, thay vì duy trì lựa chọn cũ.
+- User action: Tại Xem truyền hình, focus một hàng kênh và gõ 412 Enter; ô Đến nhóm hiển thị 03 · Other channels đúng với QA Channel 412.
+- Electron screenshot: positron-p51245-focus-group-after-1920x1080-real.png
+- Đầu vào từ ảnh Electron thật P5.1.244 đã mở: người dùng focus QA Channel 412 thuộc nhóm 03 nhưng hộp nhóm vẫn ghi 01.
+- QA: ảnh Electron 1920×1080 trước/sau, group 01→03, focus kênh 412, không tự phát, nguồn và Favorites không đổi.
+- Chỉ coi HOÀN THÀNH khi CI, soát ảnh và release đủ bằng chứng.

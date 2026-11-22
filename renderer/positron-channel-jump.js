@@ -74,6 +74,11 @@
  const forwardGroups=[]; // P236: in-session redo navigation, no persistence or playback
  let lastFocusedGroup='';
  let returningToHistory=false;
+ // P245: follow the focused row's group in the native picker without media changes.
+ const syncFocusedGroupToPicker=()=>{
+  if(lastFocusedGroup&&[...groupSelect.options].some(option=>option.value===lastFocusedGroup))
+   groupSelect.value=lastFocusedGroup;
+ };
  const focusList=d.getElementById('channelList');
  focusList?.addEventListener('focusin',event=>{
   const row=event.target.closest?.('.channel-item');
@@ -81,6 +86,7 @@
   let header=row.previousElementSibling;
   while(header&&!header.matches('.folder-header'))header=header.previousElementSibling;
   lastFocusedGroup=header?.dataset.group||'';
+  syncFocusedGroupToPicker();
  });
  const backRow=d.createElement('div');
  backRow.id='poChannelGroupHistoryRow';
@@ -194,6 +200,7 @@
   if(open){
    const count=state.getChannels().length;
    refreshGroups();
+   syncFocusedGroupToPicker();
    number.max=String(count);
    number.value='';
    status.textContent=count?'Có '+count+' kênh. Nhập số thứ tự để cuộn tới.':'Chưa có kênh để nhảy tới.';
