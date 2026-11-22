@@ -62,18 +62,18 @@ button,input,textarea{font:inherit;color:inherit}button{cursor:pointer;border:2p
 @media(max-width:1100px){.nav .sidebar-shortcuts{gap:6px;padding:0 2px}.nav .sidebar-shortcuts button{font-size:13px;padding:8px 9px}}
 </style></head><body data-theme="dark">
 <div id="app">
-<header class="top"><div class="brand"><div class="brandicon">▶</div><div><strong>Open IPTV Pro <small>TV</small></strong><p>Samsung Tizen Edition · TizenBrew v0.1.17</p></div></div><div class="toolbar"><span class="clock" id="clock">--:--</span><button id="searchBtn">⌕ Tìm</button><button id="addBtn">＋ Nguồn</button><button id="themeBtn">◐ Giao diện</button></div></header>
+<header class="top"><div class="brand"><div class="brandicon">▶</div><div><strong>Open IPTV Pro <small>TV</small></strong><p>Samsung Tizen Edition · TizenBrew v0.1.18</p></div></div><div class="toolbar"><span class="clock" id="clock">--:--</span><button id="searchBtn">⌕ Tìm</button><button id="addBtn">＋ Nguồn</button><button id="themeBtn">◐ Giao diện</button></div></header>
 <div class="main"><nav class="nav"><button class="active" data-nav="all">▣　Trực tiếp</button><button data-nav="favorites">♡　Yêu thích</button><button data-nav="recent">◷　Đã xem</button><button data-nav="sources">☷　Nguồn M3U</button><button data-nav="help">⚙　Hướng dẫn</button><div id="sidebarShortcuts" class="sidebar-shortcuts"><button type="button" id="tizenTubeBtn" title="Chuyển sang TizenTube đã cài trong TizenBrew">▶ TizenTube</button><button type="button" id="exitModuleBtn" class="exit-small" title="Thoát về TizenBrew">✕ Thoát</button></div><p class="tip">Dùng ↑ ↓ ← → và OK để điều khiển bằng remote TV.</p></nav>
 <section class="listpane"><div class="heading"><div><div class="eyebrow">DANH SÁCH KÊNH</div><h1 id="heading">Trực tiếp</h1></div><span id="count">0 kênh</span></div><div class="groups" id="groups"></div><div class="channels" id="channels"></div><div class="empty" id="empty" hidden><h2>Chưa có kênh IPTV</h2><p>Thêm nguồn bằng URL trên remote hoặc quét QR để nhập bằng điện thoại.</p><button id="emptyAdd" class="primary">＋ Thêm nguồn IPTV</button><button id="sampleBtn">▶ Luồng kiểm thử</button></div><button id="more" hidden>Xem thêm kênh ↓</button></section>
 <aside class="details"><div class="preview"><span class="live">● TRỰC TIẾP</span><b id="previewText">TV</b><span class="watermark">OPEN IPTV PRO</span></div><div class="eyebrow">KÊNH ĐANG CHỌN</div><h2 id="channelTitle">Open IPTV Pro TV</h2><p id="channelGroup">Chọn kênh để xem</p><div class="info"><div class="eyebrow">THÔNG TIN</div><p id="channelInfo">Hỗ trợ nhập M3U, nhóm kênh, yêu thích và remote Samsung.</p></div><div class="actions"><button class="primary" id="watchBtn">▶ Xem</button><button id="favBtn">♡ Yêu thích</button></div></aside></div>
 <footer class="footer"><span><b>↑ ↓ ← →</b> Di chuyển</span><span><b>OK</b> Chọn</span><span><b>↶</b> Trở lại / Thoát</span><span><b>CH ±</b> Chuyển kênh</span></footer></div>
 <div class="overlay" id="modal" hidden><div class="dialog" role="dialog" aria-modal="true"><h2 id="dialogTitle">Thêm nguồn IPTV</h2><div id="sourceDialog">
 <div class="source-grid"><section class="source-manual">
-<label for="sourceName">Tên nguồn</label><input id="sourceName" placeholder="Danh sách của tôi" maxlength="80" autocomplete="off">
+<label for="sourceName">Tên nguồn (không bắt buộc)</label><input id="sourceName" placeholder="Để trống để tự đặt tên" maxlength="80" autocomplete="off">
 <button type="button" id="toSourceUrl">↓ Chuyển xuống nhập đường dẫn</button>
 <label for="sourceUrl">URL M3U / M3U8</label><input id="sourceUrl" type="url" placeholder="https://example.com/channels.m3u" autocomplete="off">
 <button type="button" class="rights-toggle" id="rights" role="checkbox" aria-checked="false" aria-label="Tôi có quyền sử dụng danh sách và nội dung này"><span class="rights-box" aria-hidden="true"></span><span>Tôi có quyền sử dụng danh sách và nội dung này</span></button>
-<p class="hint">Remote: ↓ hoặc OK để chuyển từ tên tới URL. Nếu tải nguồn lỗi, trên điện thoại quét QR, chọn tệp M3U hoặc dán nội dung M3U.</p>
+<p class="hint">Chỉ cần nhập URL, tên nguồn có thể để trống. Nhấn ↑ để đặt tên nếu muốn. Nếu TV không tải được, quét QR và gửi tệp hoặc dán M3U bằng điện thoại.</p>
 <div class="buttons"><button id="cancelSource">Hủy</button><button id="saveSource" class="primary">Lưu và tải</button></div></section>
 <section class="source-pair"><h3>📱 Quản lý IPTV bằng điện thoại</h3><p>Quét QR để thêm nguồn, xem và chỉnh sửa danh sách kênh trên TV. Giữ màn hình này mở khi quản lý.</p>
 <div id="sourceQR" aria-label="Mã QR nhập nguồn IPTV"></div>
@@ -352,12 +352,12 @@ async function pairSend(channel,event,payload){
 }
 
 /* Bounded, ordered and acknowledged playlist upload for the active QR session. */
+function sourceDisplayName(value){return String(value==null?'':value).trim().slice(0,80)||('Nguồn IPTV '+(state.sources.length+1));}
 function playlistStart(req){
  if(req.rights!==true)throw Error('Cần xác nhận quyền sử dụng danh sách.');
  if(state.sources.length>=15)throw Error('Đã đạt tối đa 15 nguồn.');
  if(!/^[a-f0-9]{32}$/i.test(String(req.transferId||'')))throw Error('Mã gửi tệp không hợp lệ.');
- var name=String(req.name||'').trim().slice(0,80),parts=Number(req.parts),total=Number(req.total),address=String(req.address||'').trim();
- if(!name)throw Error('Tên nguồn không được trống.');
+ var name=sourceDisplayName(req.name),parts=Number(req.parts),total=Number(req.total),address=String(req.address||'').trim();
  if(!Number.isInteger(parts)||parts<1||parts>300||!Number.isInteger(total)||total<1||total>3000000)throw Error('M3U vượt 3 MB hoặc số phần không hợp lệ.');
  if(address&&(!url(address)||address.length>4096))throw Error('Địa chỉ gốc không hợp lệ.');
  if(playlistTransfer&&playlistTransfer.id!==req.transferId)playlistTransfer=null; // Permit retry after a failed or abandoned transfer.
@@ -553,14 +553,14 @@ function openDialog(kind){byId('modal').hidden=false;byId('sourceDialog').hidden
 byId('modal').firstElementChild.classList.toggle('source-mode',kind!=='search');
 byId('dialogTitle').textContent=kind==='search'?'Tìm kiếm kênh':'Thêm nguồn IPTV';
 if(kind==='source'){setRightsChecked(false);void openPair();}else stopPair();
-setTimeout(function(){byId(kind==='search'?'searchInput':'sourceName').focus();},40);}
+setTimeout(function(){byId(kind==='search'?'searchInput':'sourceUrl').focus();},40);}
 function setRightsChecked(on){byId('rights').setAttribute('aria-checked',on?'true':'false');}
 function toggleRights(){setRightsChecked(byId('rights').getAttribute('aria-checked')!=='true');}
 function closeDialog(){stopPair();byId('modal').hidden=true;byId('addBtn').focus();}
 async function addSource(data,fromPhone){
 var rights=fromPhone?data&&data.rights:byId('rights').getAttribute('aria-checked')==='true';
 if(rights!==true){notify('Cần xác nhận quyền sử dụng danh sách.');return {ok:false,error:'Cần xác nhận quyền sử dụng.'};}
-var name=String((fromPhone?data.name:byId('sourceName').value)||'Nguồn của tôi').trim().slice(0,80)||'Nguồn của tôi';
+var name=sourceDisplayName(fromPhone?data.name:byId('sourceName').value);
 var originalAddress=fromPhone?data.address:byId('sourceUrl').value;
 var address=url(originalAddress);
 if(!address){notify('URL M3U không hợp lệ.');return {ok:false,error:'URL không hợp lệ. Nhập tên miền hoặc địa chỉ HTTP(S), ví dụ example.com/list.m3u'};}
