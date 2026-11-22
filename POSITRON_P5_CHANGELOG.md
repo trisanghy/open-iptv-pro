@@ -1557,6 +1557,9 @@ P5.1.81 follow-up: real Electron capture found nav overflow; replace flexible no
 
 
 ## P5.1.199 / 4.23.284 — Đồng bộ tên ghi hình tạo tự động (CANDIDATE)
+- Feature priority: NEW — Tên được ứng dụng tạo từ kênh và giờ nay tự cập nhật khi người xem đổi thời gian ghi hoặc kênh, tránh tạo lịch với tên sai ngày nhưng vẫn bảo vệ nhãn nhập tay.
+- User action: Mở Lịch phát sóng, tạo tên từ kênh và giờ, sau đó chọn Ngày mai cùng giờ hoặc sửa giờ bắt đầu để thấy tên tự cập nhật.
+- Electron screenshot: positron-p51199-dvr-title-sync-after-1920x1080-real.png
 - Sửa lỗi nhìn thấy trên ảnh thật P5.1.198: tên tự tạo giữ ngày cũ sau khi bấm Ngày mai cùng giờ.
 - Tên do Positron tạo trong phiên và chưa được chỉnh tay sẽ đổi theo giờ/kênh; tên thủ công và tên đã lưu giữ nguyên.
 - Regression Node và Electron 1920×1080 before/after, kiểm chứng CI và release bất biến.
