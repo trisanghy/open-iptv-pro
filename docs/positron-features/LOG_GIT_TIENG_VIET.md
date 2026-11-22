@@ -2,14 +2,22 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
-## P5.1.171 — hiển thị phạm vi kênh đang xem theo phân trang
+## P5.1.172 — Tìm đúng kênh thiếu logo trong danh sách TV / Electron 4.23.257
 
-**Ứng dụng:** 4.23.256 · **Trạng thái:** Chưa có bản phát hành
+**Ứng dụng:** Chưa xác minh · **Trạng thái:** Chưa có bản phát hành
+
+Feature priority: NEW — Ảnh Electron thật P5.1.171 cho thấy trang kiểm kê hiển thị kênh 11–20 trong khi danh sách TV bên trái còn kênh 1–10, thiếu cầu nối tìm đúng kênh để người dùng sửa hoặc xem thông tin. Thêm nút Tìm cho mỗi hàng, đặt ô tìm trong TV theo đúng tên kênh và mở bộ lọc Tất cả. User action: Mở Thư viện → Kênh thiếu logo → chuyển tới trang cần kiểm tra → bấm Tìm cạnh kênh muốn định vị; panel đóng, tab TV hiện danh sách đã lọc theo tên, chỉ phát khi người dùng chủ động bấm kênh.
+
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
+
+## P5.1.171 — Phạm vi kênh thực đang xem / Electron 4.23.256
+
+**Ứng dụng:** 4.23.256 · **Trạng thái:** Đã phát hành
 
 Electron screenshot: positron-p51171-visible-range-after-1920x1080-real.png User action: Mở Thư viện → Kênh thiếu logo → chuyển trang hoặc đổi số kênh/trang; quan sát dòng Đang xem X–Y / tổng kênh ngay dưới thanh phân trang.
 
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/a0db0fb088aeeb95ea0fa18571da30bb6d501a97)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/d41dac20e845cdbef5bea8d34cb4737be5887903)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.256-p5.1.171)
 
 ## P5.1.170 — Xóa nhanh toàn bộ bộ lọc Thư viện / Electron 4.23.255
 
