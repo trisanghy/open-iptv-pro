@@ -718,8 +718,9 @@
     field.dispatchEvent(new Event('change',{bubbles:true}));
    }
   });
-  row.append(tomorrow);
-  start.parentElement.append(row);
+  tomorrow.className='po-dvr-tomorrow';
+  // Keep the original quick-start group exactly three buttons for existing UX.
+  start.parentElement.append(row,tomorrow);
  };
  attachDvrQuickStart('dvrStart','dvrEnd','poDvrQuickStartPresets');
  attachDvrQuickStart('dvrQuickStart','dvrQuickEnd','poDvrQuickStartQuickPresets');

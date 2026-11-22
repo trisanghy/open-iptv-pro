@@ -908,9 +908,17 @@ html[data-positron="true"] #poDvrReviewCopy:focus-visible{outline:2px solid var(
 
 
 /* P198: tomorrow preset is an ordinary accessible quick start control. */
-html[data-positron="true"] .po-dvr-quick-start button[data-start-tomorrow="true"]{
+html[data-positron="true"] button.po-dvr-tomorrow[data-start-tomorrow="true"]{
  border-color:var(--po-accent,#79dfc6);color:var(--po-accent,#79dfc6);
 }
-html[data-positron="true"] .po-dvr-quick-start button[data-start-tomorrow="true"]:focus-visible{
+html[data-positron="true"] button.po-dvr-tomorrow[data-start-tomorrow="true"]:focus-visible{
  outline:2px solid var(--po-accent,#79dfc6);outline-offset:2px;
+}
+
+html[data-positron="true"] button.po-dvr-tomorrow{
+ display:inline-flex;align-items:center;justify-content:center;
+ min-height:29px;margin:6px 0 0;padding:5px 9px;
+ border:1px solid var(--po-border,#325160);border-radius:7px;
+ background:var(--po-input,#17303c);color:var(--po-accent,#79dfc6);
+ font:inherit;font-size:11px;cursor:pointer;
 }

@@ -2145,9 +2145,10 @@ test('P5.1.198 tomorrow DVR preset preserves clock and duration across native fo
  for(const t of ['poDvrTomorrowStart','poDvrTomorrowQuickStart',
   "tomorrow.dataset.startTomorrow='true'","next.setDate(next.getDate()+1)",
   'next.setHours(previousStart.getHours(),previousStart.getMinutes(),0,0)',
-  'minutes>0&&minutes<=480?minutes:60','row.append(tomorrow)'])
+  'minutes>0&&minutes<=480?minutes:60','start.parentElement.append(row,tomorrow)'])
   assert.ok(js.includes(t),'Missing P198 tomorrow feature: '+t);
- assert.ok(css.includes('[data-start-tomorrow="true"]'));
+ assert.ok(css.includes('button.po-dvr-tomorrow[data-start-tomorrow="true"]'));
+ assert.ok(js.includes("tomorrow.className='po-dvr-tomorrow'"));
  for(const t of ['dvrTomorrowQA','positron-p51198-dvr-tomorrow-before-1920x1080-real.png',
   'positron-p51198-dvr-tomorrow-after-1920x1080-real.png'])
   assert.ok(qa.includes(t),'Missing P198 Electron QA: '+t);
