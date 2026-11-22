@@ -26,6 +26,8 @@
  const number=panel.querySelector('#poChannelJumpNumber');
  const go=panel.querySelector('#poChannelJumpGo');
  const status=panel.querySelector('#poChannelJumpStatus');
+ // P249: preserve the originating focused channel on Escape cancellation.
+ let jumpOriginRow=null;
  // P5.1.231: direct group picker uses native rendered folder headers.
  // All option labels use textContent; stream URLs never enter this control.
  const groupRow=d.createElement('div');
@@ -207,6 +209,10 @@
   if(event.key==='Enter'){event.preventDefault();jumpGroup();}
  });
  function setOpen(open){
+  if(open){
+   const candidate=d.activeElement;
+   jumpOriginRow=candidate?.matches?.('.channel-item')?candidate:null;
+  }
   panel.hidden=!open;
   toggle.setAttribute('aria-expanded',String(open));
   if(open){
@@ -274,7 +280,16 @@
   }
  });
  panel.addEventListener('keydown',event=>{
-  if(event.key==='Escape'){event.preventDefault();setOpen(false);}
+  if(event.key==='Escape'){
+   event.preventDefault();
+   // P249: cancellation returns to the row that opened the jump, not the
+   // toolbar toggle; if no row originated it, preserve normal toggle focus.
+   const origin=jumpOriginRow;
+   setOpen(false);
+   jumpOriginRow=null;
+   if(origin?.isConnected&&origin.matches('.channel-item')&&origin.getClientRects().length)
+    origin.focus({preventScroll:true});
+  }
  });
 
  // P237: keyboard Back/Forward shortcuts work from a focused channel row

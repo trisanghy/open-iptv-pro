@@ -333,7 +333,7 @@ test('P5.1.243 Shift+R toggles recent filter from rows and empty recent chip',()
   "chip.hidden=false;chip.focus({preventScroll:true});"])
   assert.ok(js.includes(token),'P243 recent shortcut missing '+token);
  assert.ok(!js.includes('playChannel('));
- assert.equal(JSON.parse(read('package.json')).version,'4.23.333');
+ assert.equal(JSON.parse(read('package.json')).version,'4.23.334');
 });
 test('P5.1.243 requires real Electron Shift+R screenshots and round-trip state',()=>{
  const qa=read('scripts/positron-20-extension.cjs'),wf=read('.github/workflows/positron-lab.yml');
@@ -349,7 +349,7 @@ test('P5.1.244 direct digits open channel jump and preserve player',()=>{
  const js=read('renderer/positron-channel-jump.js');
  for(const t of ['// P244: direct numeric jump','/^[0-9]$/.test(event.key)',"event.target.matches('.channel-item')",'number.value=event.key'])
   assert.ok(js.includes(t),'P244: '+t);
- assert.equal(JSON.parse(read('package.json')).version,'4.23.333');
+ assert.equal(JSON.parse(read('package.json')).version,'4.23.334');
 });
 test('P5.1.244 real Electron numeric scenario is required',()=>{
  const qa=read('scripts/positron-20-extension.cjs'),wf=read('.github/workflows/positron-lab.yml');
@@ -364,7 +364,7 @@ test('P5.1.245 focuses the correct group in the native picker, not a stale folde
  for(const t of ['// P245: follow the focused row', 'const syncFocusedGroupToPicker=', 'groupSelect.value=lastFocusedGroup;', 'syncFocusedGroupToPicker();'])
   assert.ok(js.includes(t),'P245 code absent '+t);
  assert.ok(!js.includes('playChannel('));
- assert.equal(JSON.parse(read('package.json')).version,'4.23.333');
+ assert.equal(JSON.parse(read('package.json')).version,'4.23.334');
 });
 test('P5.1.245 requires real Electron screenshots and group focus regression',()=>{
  const qa=read('scripts/positron-20-extension.cjs'),wf=read('.github/workflows/positron-lab.yml');
@@ -380,7 +380,7 @@ test('P5.1.246 Ctrl+Enter jumps and closes tool but keeps keyboard focus',()=>{
   "if(quickClose){","setOpen(false);","row.focus({preventScroll:true});",
   "number.setAttribute('aria-keyshortcuts','Enter Control+Enter Meta+Enter')"])
   assert.ok(js.includes(token),'P246 quick-close shortcut missing '+token);
- assert.equal(JSON.parse(read('package.json')).version,'4.23.333');
+ assert.equal(JSON.parse(read('package.json')).version,'4.23.334');
 });
 test('P5.1.246 requires real Electron Ctrl+Enter before/after and preserves playback',()=>{
  const qa=read('scripts/positron-20-extension.cjs'),wf=read('.github/workflows/positron-lab.yml');
@@ -400,7 +400,7 @@ test('P5.1.247 focused channel index is read-only and visible under total count'
   assert.ok(js.includes(t),'P247 focused index code missing '+t);
  for(const t of ['#poFocusedPosition','font-variant-numeric:tabular-nums',
    '#poFocusedPosition[hidden]'])assert.ok(css.includes(t),'P247 style '+t);
- assert.equal(JSON.parse(read('package.json')).version,'4.23.333');
+ assert.equal(JSON.parse(read('package.json')).version,'4.23.334');
 });
 test('P5.1.247 real Electron screenshot proves selected index, focus, and data-safe action',()=>{
  const qa=read('scripts/positron-20-extension.cjs'),wf=read('.github/workflows/positron-lab.yml');
@@ -419,7 +419,7 @@ test('P5.1.248 Alt+Shift+J pre-fills focused row index, plain Alt+J remains blan
   "number.value=String(selectedIndex);",
   "toggle.setAttribute('aria-keyshortcuts','Alt+J Alt+Shift+J')"])
   assert.ok(js.includes(token),'P248 prefill shortcut missing '+token);
- assert.equal(JSON.parse(read('package.json')).version,'4.23.333');
+ assert.equal(JSON.parse(read('package.json')).version,'4.23.334');
 });
 test('P5.1.248 Electron screenshot asserts editable prefill and no playback',()=>{
  const qa=read('scripts/positron-20-extension.cjs'),wf=read('.github/workflows/positron-lab.yml');
@@ -430,4 +430,25 @@ test('P5.1.248 Electron screenshot asserts editable prefill and no playback',()=
   "page.keyboard.press('Alt+Shift+J')",'prefilled412:',
   'noAutoplay:','regularEmpty:'])
   assert.ok(qa.includes(t),'P248 Electron QA '+t);
+});
+
+test('P5.1.249 Escape from jump restores focused origin row instead of toggle',()=>{
+ const js=read('renderer/positron-channel-jump.js');
+ for(const token of ['// P249: preserve the originating focused channel',
+  'jumpOriginRow=candidate?.matches?',
+  'const origin=jumpOriginRow;',
+  "if(origin?.isConnected&&origin.matches('.channel-item')&&origin.getClientRects().length)",
+  'origin.focus({preventScroll:true});'])
+  assert.ok(js.includes(token),'P249 Escape focus recovery missing '+token);
+ assert.equal(JSON.parse(read('package.json')).version,'4.23.334');
+});
+test('P5.1.249 Electron screenshots exercise Escape recovery and unchanged toolbar behavior',()=>{
+ const qa=read('scripts/positron-20-extension.cjs'),wf=read('.github/workflows/positron-lab.yml');
+ for(const f of ['positron-p51249-escape-focus-before-1920x1080-real.png',
+   'positron-p51249-escape-focus-after-1920x1080-real.png'])
+   assert.ok(qa.includes(f)&&wf.includes(f),'P249 evidence '+f);
+ for(const token of ['escapeStartQA249','escapeRestoreQA249',
+   "page.keyboard.press('Escape')",'restoredRow412:','toggleAfterNonRowEscape:',
+   'noAutoplay:'])
+   assert.ok(qa.includes(token),'P249 Electron recovery QA '+token);
 });
