@@ -47,7 +47,7 @@ test('P5.1.258 search source names across all sources without modifying playlist
  assert.ok(css.includes('#poSourceInventorySearch[hidden]'));
  assert.ok(css.includes('max-height:245px'));
  assert.ok(!js.includes('save(')&&!js.includes('playChannel('));
- assert.equal(JSON.parse(read('package.json')).version,'4.23.343');
+ assert.ok(Number(JSON.parse(read('package.json')).version.split('.')[2])>=343);
 });
 test('P5.1.258 validates real filtered Electron source screenshots and readonly state',()=>{
  const qa=read('scripts/positron-20-extension.cjs'),wf=read('.github/workflows/positron-lab.yml');
@@ -55,4 +55,24 @@ test('P5.1.258 validates real filtered Electron source screenshots and readonly 
   assert.ok(qa.includes(f)&&wf.includes(f),'Missing P258 real screenshot '+f);
  for(const key of ['sourceSearchQA258','filteredToOne:','queryMatches:','noAutoplay:','sourcesUnchanged:','playlistUnchanged:','noOverflow:'])
   assert.ok(qa.includes(key),'P258 QA missing '+key);
+});
+
+test('P5.1.259 offers native enabled/disabled source filtering and result totals',()=>{
+ const js=read('renderer/positron-source-inventory.js'),css=read('renderer/positron-source-inventory.css');
+ for(const s of ["statusRow.id='poSourceInventoryFilterRow';","statusSelect.id='poSourceInventoryStatus';",
+  "resultCount.id='poSourceInventoryResultCount';","['enabled','Đang bật']","['disabled','Đang tắt']",
+  "statusSelect.addEventListener('change'","resultCount.textContent=filtered.length",
+  "statusRow.hidden=!expanded;","statusSelect.value='all'"])
+  assert.ok(js.includes(s),'P259 state filter missing '+s);
+ assert.ok(css.includes('#poSourceInventoryFilterRow[hidden]'));
+ assert.ok(css.includes('#poSourceInventoryStatus:focus-visible'));
+ assert.ok(!js.includes('playChannel(')&&!js.includes('save('));
+ assert.equal(JSON.parse(read('package.json')).version,'4.23.344');
+});
+test('P5.1.259 requires source status filter Electron before/after and 720px evidence',()=>{
+ const qa=read('scripts/positron-20-extension.cjs'),wf=read('.github/workflows/positron-lab.yml');
+ for(const f of ['positron-p51259-source-status-before-1920x1080-real.png','positron-p51259-source-status-after-1920x1080-real.png','positron-p51259-source-status-720-real.png'])
+  assert.ok(qa.includes(f)&&wf.includes(f),f);
+ for(const key of ['sourceStatusQA259','correctRows:','totalMatches:','noAutoplay:','sourcesUnchanged:','playlistUnchanged:','noOverflow:'])
+  assert.ok(qa.includes(key),'P259 QA missing '+key);
 });

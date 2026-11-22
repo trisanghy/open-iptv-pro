@@ -31,6 +31,24 @@
  search.setAttribute('autocomplete','off');
  search.hidden=true;
  heading.append(search);
+ // P259: quickly isolate disabled playlists and announce filtered result totals.
+ const statusRow=d.createElement('div');
+ statusRow.id='poSourceInventoryFilterRow';
+ statusRow.className='po-source-inventory-filter-row';
+ statusRow.hidden=true;
+ const statusSelect=d.createElement('select');
+ statusSelect.id='poSourceInventoryStatus';
+ statusSelect.setAttribute('aria-label','Lọc nguồn theo trạng thái');
+ for(const [value,label] of [['all','Tất cả nguồn'],['enabled','Đang bật'],['disabled','Đang tắt']]){
+  const option=d.createElement('option');
+  option.value=value;option.textContent=label;statusSelect.append(option);
+ }
+ const resultCount=d.createElement('output');
+ resultCount.id='poSourceInventoryResultCount';
+ resultCount.setAttribute('role','status');
+ resultCount.setAttribute('aria-live','polite');
+ statusRow.append(statusSelect,resultCount);
+ heading.append(statusRow);
  const foldSourceName=value=>String(value??'').trim().normalize('NFD')
   .replace(/[\u0300-\u036f]/g,'').replace(/đ/gi,'d').toLocaleLowerCase('vi');
  const details=d.createElement('ul');
@@ -49,7 +67,10 @@
    countBySource.set(key,1+(countBySource.get(key)||0));
   }
   const needle=foldSourceName(search.value);
-  const filtered=sources.filter(source=>source&&foldSourceName(source.name||'Nguồn chưa đặt tên').includes(needle));
+  const filter=statusSelect.value;
+  const filtered=sources.filter(source=>source&&foldSourceName(source.name||'Nguồn chưa đặt tên').includes(needle)&&
+   (filter==='all'||(source.enabled!==false)===(filter==='enabled')));
+  resultCount.textContent=filtered.length+'/'+sources.length+' nguồn phù hợp';
   details.replaceChildren();
   for(const source of filtered.slice(0,30)){
    const li=d.createElement('li');
@@ -79,12 +100,14 @@
   const expanded=details.hidden;
   details.hidden=!expanded;
   search.hidden=!expanded;
-  if(!expanded)search.value='';
+  statusRow.hidden=!expanded;
+  if(!expanded){search.value='';statusSelect.value='all';}
   toggle.setAttribute('aria-expanded',String(expanded));
   toggle.textContent=expanded?'Ẩn chi tiết':'Chi tiết nguồn';
   if(expanded)renderDetails();
  });
  search.addEventListener('input',()=>{if(!details.hidden)renderDetails();});
+ statusSelect.addEventListener('change',()=>{if(!details.hidden)renderDetails();});
  const refresh=()=>{
   const store=state.getStore();
   const sources=Array.isArray(store?.sources)?store.sources:[];

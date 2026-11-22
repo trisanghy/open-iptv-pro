@@ -1,118 +1,20 @@
-# POSITRON 20 ROUND ISSUES — Đợt từ P5.1.237
+# POSITRON 20 ROUND ISSUES — đợt tiếp tục từ P5.1.257
 
-- HEAD gốc kiểm tra ngày 2026-11-23: `92086f1c4ba0124230a8388e76b53bf7dc0b58ef`.
-- P5.1.237 / 4.23.322: release, test và 6/6 jobs xanh; screenshot Electron 1920x1080 được tải từ artifact `14765506102` và trực tiếp mở xem.
-- Ưu tiên 1: Phím tắt Alt+J/Alt+G cướp focus trong input của trang TV; xác minh nguyên nhân trong `renderer/positron-channel-jump.js`; sửa trong P5.1.238, test bàn phím và ảnh QA trước/sau.
-- Ưu tiên 2: kiểm tra khả năng đọc/chọn nhóm khi panel chỉ rộng ~230px, không được suy đoán nguyên nhân trước khi QA.
-- Ưu tiên 3: rà soát vị trí toast nổi trên player từ ảnh baseline; phân biệt thông báo QA với lỗi thật trước khi sửa.
+## Baseline đã xác minh
+- HEAD lúc mở đợt: `a58aa136f91ab36bc14e748743b8fd11e0f275ba`, phiên bản `P5.1.257 / 4.23.342`.
+- Ảnh Electron thực P5.1.257 đã mở: source-details before/after 1920x1080, source-details 720px.
+- Phát hiện: danh sách chi tiết chỉ hiển thị 30 nguồn, thiếu tìm kiếm xuyên toàn bộ danh sách.
 
-## Cách tính vòng
+## Vòng 01 — P5.1.258 / 4.23.343 — ĐÃ XÁC MINH
+- Tìm nguồn theo tên không phân biệt dấu/chữ hoa, duyệt trên tất cả sources; không sửa M3U.
+- Ảnh Electron đã tải và mở: `positron-p51258-source-search-before-1920x1080-real.png`, `positron-p51258-source-search-after-1920x1080-real.png`, `positron-p51258-source-search-720-real.png`.
+- QA: 942 tests, 937 pass, 5 skipped, 0 fail; 6/6 CI jobs success. Release `positron/v4.23.343-p5.1.258`.
+- Đánh giá ảnh: tìm cAtEgOrY còn đúng 1 nguồn; không tràn ngang desktop/720px. Phát hiện nhu cầu lọc trạng thái Bật/Tắt riêng biệt.
 
-Chỉ đánh dấu hoàn tất khi sửa nguồn, node test pass, Electron screenshot mới đã trực tiếp mở để xem, HEAD/CI/release kiểm chứng; không đếm mỗi ảnh hay mỗi test như vòng riêng.
+## Vòng 02 — P5.1.259 / 4.23.344 — ĐANG XÁC MINH
+- Thêm lựa chọn trạng thái Bật/Tắt/All và số kết quả kết hợp tìm tên, chỉ đọc.
+- Chỉ đánh dấu ĐẠT khi CI, ảnh thật trước/sau và release mới được xác minh.
 
-## Vòng 01 — P5.1.238 / 4.23.323 [HOÀN TẤT]
-- Commit nguồn `6e2ce559ca45e8a4887a1f9913e2840a676fe573`; fix CI `636b484fe5fdec59aad8377e4b37532c688c6c08`.
-- CI `45051988709`: 904 Node tests, 899 pass, 5 skipped; 6/6 jobs thành công; release `positron/v4.23.323-p5.1.238`.
-- Mở ảnh Electron P238 trước/sau 1920x1080 trực tiếp, `shortcutGuardQA238` và `shortcutAfterQA238` đều true.
-- Đầu vào vòng 02: ảnh sau khi bật bảng nhảy làm danh sách kênh bị đẩy xuống; cần cách đóng bảng nhanh khi đang focus hàng kênh.
-
-## Vòng 02 — P5.1.239 [CANDIDATE]
-- Escape đóng bảng nhảy khi đang focus hàng kênh, khôi phục focus và không tự phát; thêm screenshot regression trước/sau.
-
-## Vòng 02 — P5.1.239 / 4.23.324 [HOÀN TẤT]
-- CI `45052833628` 6/6 thành công; release `positron/v4.23.324-p5.1.239`.
-- Electron: mở ảnh P239 before/after thật, Escape đóng bảng, focus vẫn ở QA Channel 001, không playback, không tràn và 561 kênh được giữ.
-- Đầu vào vòng 03: focus đang ở hàng kênh yêu thích; trong nguồn, Shift+F hiện bị xử lý như F thường nên có nguy cơ đổi dấu sao khi người dùng muốn lọc.
-
-## Vòng 03 — P5.1.240 [CANDIDATE]
-- Shift+F đổi bộ lọc all/fav bằng control native, F thường vẫn đánh dấu sao; QA xác thực dữ liệu Favorites không đổi, screenshot mới trước/sau và 6/6 CI.
-
-## Vòng 03 — P5.1.240 / 4.23.325 [HOÀN TẤT]
-- CI `45053439491`: 908 tests / 903 pass / 5 skipped; 6/6 job thành công, release `positron/v4.23.325-p5.1.240`.
-- Mở ảnh Electron before/after thật, 561 kênh xuống 20 kênh yêu thích; xác nhận dữ liệu Favorites vẫn bất biến và đảo về Tất cả được.
-- Đầu vào vòng 04: ảnh SAU chỉ hiển thị 20/561 chứ không nói đã bật bộ lọc Yêu thích; có nguy cơ người dùng nghĩ danh sách bị mất kênh.
-
-## Vòng 04 — P5.1.241 [CANDIDATE]
-- Thêm chip nhắc lọc Yêu thích trong panel kênh và nút Xem tất cả, không mutate playlist; kiểm thử Electron screenshot trước/sau và QA kích thước.
-
-## Vòng 04 — P5.1.241 / 4.23.326 [HOÀN TẤT]
-- CI `45054237610`: 910 tests / 905 pass / 5 skipped; 6/6 jobs success; release `positron/v4.23.326-p5.1.241`.
-- Mở ảnh Electron P241 trước/sau thật; chip hiển thị Yêu thích · 20 và Xem tất cả dưới ô tìm, không tràn cột; click khôi phục 561 kênh, Favorites không thay đổi.
-- Đầu vào vòng 05: chip mới chỉ hỗ trợ Yêu thích; khi tab khác như Vừa xem được bật, vẫn có thể thấy danh sách rỗng mà không hiểu vì sao.
-
-## Vòng 05 — P5.1.242 [CANDIDATE]
-- Tổng quát chip mọi native filter, hiển thị tên, số lượng, hành động xóa; kiểm thử khi chọn Vừa xem, kể cả empty state.
-
-## Vòng 05 — P5.1.242 / 4.23.327 [HOÀN TẤT]
-- CI `45054829307`: 912 tests, 907 pass / 5 skipped; 6/6 jobs success, release `positron/v4.23.327-p5.1.242`.
-- Mở ảnh thật: Vừa xem · 0 hiện chip màu xanh tại sidebar, người dùng biết lý do không thấy kênh; click Xem tất cả khôi phục 561.
-- Đầu vào vòng 06: lịch sử vừa xem rỗng không có hàng kênh để sử dụng bàn phím quay về.
-
-## Vòng 06 — P5.1.243 [CANDIDATE]
-- Shift+R từ hàng kênh mở nhanh Vừa xem, từ chip khi empty quay All, không playback và không mutate Favorites.
-
-## Đợt mới 23/11/2026 — P5.1.250 (CANDIDATE)
-- Baseline P5.1.249 / Electron 4.23.334, HEAD `13d4fdd25bd74e587c11be5f285d8012c21f4279`, CI `45059996731` hoàn tất thành công.
-- Đã mở ảnh Electron 1920×1080 P249 trang TV, Nguồn, Escape trước/sau; vị trí `Kênh 412/561` xuất hiện đúng khi focus vào hàng 412.
-- Lỗi mã: `#poFocusedPosition` chỉ cập nhật khi `focusin`, không xóa khi focus rời danh sách, nên có thể tiếp tục báo vị trí không còn được chọn.
-- P250: thêm `focusout` dọn trạng thái khi panel đóng, giữ origin lúc nhảy số; CI Electron sẽ kiểm tra và ghi ảnh riêng.
-
-## Đợt 23/11/2026 — Vòng 01/20 P5.1.250 HOÀN TẤT
-- Fix `focusout` xóa nhãn vị trí cũ khi rời danh sách; giữ origin khi Escape. Chạy Electron thật và đã MỞ hai ảnh `positron-p51250-focus-badge-before-1920x1080-real.png` / `positron-p51250-focus-badge-after-1920x1080-real.png`.
-- CI `45061351371`: Node 928 tests, 923 pass/0 fail/5 skipped, 6/6 jobs success. Release `positron/v4.23.335-p5.1.250` xác nhận đầy đủ EXE/DMG/QA zip.
-- Commit nguồn `54560357cd2be7458266a36e510b3ddc721a37dc`; fix version `41bb78b88c6994c8f68b9ae0316446574f1991ac`; hoàn chỉnh QA/changelog `b02d3ff4947e473d233f3d97b40ade1c0ff8a14b`.
-- QA P250 `positionClearedQA250`: badgeHidden/cleared/toggleFocused/noAutoplay/favoritesUnchanged/playlistUnchanged/noOverflow true; `positionReturnQA250` focus về hàng 412 true.
-## Đợt 23/11/2026 — Vòng 02/20 P5.1.251 CANDIDATE
-- Ảnh P250 SAU cho thấy đã mất viền focus ở hàng 412 khi đi sang toolbar. Mục tiêu: Alt+Shift+L trở lại hàng duyệt gần nhất, không phát video, không mutate playlist.
-- Đầu vào P251: P250 release thành công; mở PNG gốc trước khi sửa; tạo QA before/after riêng, commit SemVer 4.23.336 và chỉ hoàn thành sau CI + mở ảnh thật + release mới.
-
-## Đợt 23/11/2026 — Vòng 02/20 P5.1.251 HOÀN TẤT
-- Ảnh đầu vào P250 đã mở: sau khi focus sang toolbar, hàng 412 không còn highlight. Thêm Alt+Shift+L quay lại hàng kênh focus gần nhất, bảo toàn playlist và playback.
-- Electron before/after P251 đã trực tiếp MỞ và đối chiếu; `rowReturnQA251` mọi phép thử true (row 412, badge, playlist, favorites, no autoplay, no overflow).
-- Commit `8d91b18927192866b127c61eb2912983eddbf02d`; CI `45062166884` 6/6 thành công, Node 930 tests / 925 pass, 5 skipped, 0 fail. Release `positron/v4.23.336-p5.1.251` xác nhận EXE/DMG/ZIP QA.
-## Đợt 23/11/2026 — Vòng 03/20 P5.1.252 CANDIDATE
-- Từ ảnh P251 SAU và mã: bookmark chỉ lưu tham chiếu DOM; nếu đổi bộ lọc Yêu thích rồi quay lại, hàng DOM cũ có thể bị huỷ nên Alt+Shift+L không còn tác dụng.
-- Mục tiêu: lưu ID kênh, khôi phục view Tất cả khi cần rồi focus row tương ứng, không phát và không thay đổi dữ liệu. QA phải xác minh màn hình trước/sau 1920×1080 và CI.
-
-## Đợt 23/11/2026 — Vòng 03/20 P5.1.252 HOÀN TẤT
-- Ảnh P251 là input; ổn định ID hàng kênh khi lọc Yêu thích/All. Đã MỞ ảnh P252 trước (20/561 Favorites) và sau (561/561, row 412 focus).
-- CI `45062930623`: 6/6 success; Node 932 tests, 927 passed, 0 failed, 5 skipped. Release `positron/v4.23.337-p5.1.252` xác nhận EXE x64, Mac DMG, ZIP QA. Commit `b2c93b5403781274aefe2555a71ec72b2844ada1`.
-- `filteredReturnQA252` tất cả true: all filter restored, rowId, position, no autoplay, favorites/playlist unchanged, no overflow.
-## Đợt 23/11/2026 — Vòng 04/20 P5.1.253 CANDIDATE
-- Ảnh P252 SAU: hàng 412 hiện tại sát mép dưới danh sách cuộn. Mục tiêu mới: Alt+Shift+L căn giữa row, cho thấy thêm các kênh kề cạnh; đo vị trí bằng DOM, chụp before/after Electron thật.
-
-## Đợt mới sau P5.1.253 — Vòng 01/20 P5.1.254 (CANDIDATE)
-- Baseline: dec211947de45fe42f264672ed15f76676f27f2f / Electron 4.23.338, run CI P253 45063655451 thành công 6/6. Đã mở ảnh TV/Nguồn/EPG và ảnh row 412 trước/sau của bản P253.
-- Lỗi: shortcut Alt+Shift+L bị giới hạn ở page-tv.active-page và không thể quay lại hàng kênh sau khi sang Nguồn/EPG/Cài đặt.
-- Thay đổi: phím quay lại TV khi có bookmark; không can thiệp các ô nhập, không autoplay và không sửa dữ liệu.
-- Chờ xác minh: Node test, 2 ảnh Electron 1920x1080 thật, QA focus kênh 412, release và bộ cài.
-
-## Đợt mới tiếp theo — Vòng 01/20 P5.1.254 [HOÀN TẤT]
-- Node 935 tests: 930 pass, 5 skipped, 0 fail. CI 45065493786: 6/6 jobs success (test, capture, Windows x64, Mac ARM64, Mac Intel, release).
-- Hai PNG Electron thật 1920x1080 đã tải và trực tiếp mở đối chiếu (Sources trước / TV sau); audit crossPageStartQA254/crossPageQA254 đều true, trở về hàng QA Channel 412 và căn giữa, không tự phát, không sửa Favorites/playlist, không tràn ngang.
-- Release bất biến `positron/v4.23.339-p5.1.254`, xác minh Setup/Portable EXE, DMG 2 kiến trúc, QA images, SHA256SUMS.
-- Commit code `411de0d7a45ba37690c4648f6ebe6a9824ed2b13`; commit sửa quy chuẩn changelog `9f4a2d1cd69ade9b4b94099b1894a6d9ee768377`.
-- Phát hiện từ ảnh trước: trang Sources không có nút quay lại kênh bằng chuột; chỉ có phím tắt khó khám phá. Ưu tiên vòng 02 mở nút riêng trong header Sources.
-
-## Đợt mới tiếp theo — Vòng 02/20 P5.1.255 [CANDIDATE]
-- Từ screenshot P254, thêm nút Sources “↩ Kênh 412”, disabled khi chưa có bookmark; click trả về hàng kênh và giữ mọi dữ liệu; tái dùng logic Alt+Shift+L; bố cục ưu tiên không tràn viewport.
-- QA bắt buộc: Node tests, ảnh Electron Sources trước / TV sau 1920x1080, click, tập trung hàng 412, căn giữa, không playback, không mutate danh sách và release mới.
-
-## Đợt tiếp theo — Vòng 02/20 P5.1.255 [HOÀN TẤT]
-- Node 936 tests: 931 pass/0 fail/5 skipped; CI 45066510928 6/6 jobs success; release `positron/v4.23.340-p5.1.255` có EXE/DMG/QA ZIP và SHA256SUMS.
-- Đã trực tiếp mở ảnh Electron P255 Sources trước (nút ↩ Kênh 412 nằm cùng File M3U/URL) và TV sau (focus QA Channel 412, căn giữa), không tràn. QA returnButtonStartQA255/returnButtonQA255 đều true, nguồn/playlist/Favorites và player bất biến.
-- Commit tính năng `f647528038b6ef32350d427d1569e7b63af3dee8`, commit giữ test P254 sau tái sử dụng hàm `0cabb37d421f6ba0ed6bf152323bb9d91d72110b`.
-- Đầu vào vòng 03: ảnh Sources cho thấy tổng 561 kênh/2 nguồn chỉ trong thanh trạng thái cuối màn hình. Bổ sung chip thống kê nguồn bật/ngắt và kênh ngay tiêu đề.
-
-## Đợt tiếp theo — Vòng 03/20 P5.1.256 [CANDIDATE]
-- Chỉ đọc store hiện có và cập nhật thông tin số nguồn đang bật/tất cả nguồn, tổng kênh trong trang Nguồn. Đồng bộ theo thay đổi footer native, không sửa danh sách hoặc phát.
-- QA phải có ảnh Electron thật trước/sau 1920x1080 và 720px, assert nội dung khớp state, không tràn, test/regression và release bất biến.
-
-## Đợt tiếp theo — Vòng 03/20 P5.1.256 [HOÀN TẤT]
-- Node 938 tests: 933 pass, 5 skipped, 0 fail; CI 45067258979 đạt 6/6 jobs success, release `positron/v4.23.341-p5.1.256` đầy đủ EXE Windows (Setup+Portable), DMG (arm64+x64), screenshots, SHA256SUMS.
-- Đã mở 3 PNG Electron thật: Sources trước/sau 1920x1080 và Sources 720px. Chip “2/2 nguồn bật · 561 kênh” hiển thị rõ; không tràn, QA sourceInventoryQA256 và sourceInventoryNarrowQA256 đều true; nguồn/playlist/Favorites/trạng thái player bất biến.
-- Commit `abaf2d182b3381713d88853ecd388cb0bd5dd835`. Đầu vào vòng 04: từ chip chỉ biết tổng số, chưa xem nhanh tên nguồn và số kênh từng nguồn; thiết kế mở rộng chi tiết read-only.
-
-## Đợt tiếp theo — Vòng 04/20 P5.1.257 [CANDIDATE]
-- Nút mở rộng cạnh chip, xem từng nguồn: tên, số kênh, bật/tắt; thu gọn một chạm. Giới hạn 30 dòng, không mutate user data.
-- Bắt buộc Node tests, ảnh Electron before/after 1920x1080 và 720px, so sánh count/status với store và phát hành riêng P5.1.257 mới coi hoàn thành.
+## Các vòng kế
+- Bám theo PNG và nhật ký của vòng gần nhất, không tự ghi 20/20 khi chưa có bằng chứng.
+- Không sửa nhánh khác, không force push hay ghi đè tag.

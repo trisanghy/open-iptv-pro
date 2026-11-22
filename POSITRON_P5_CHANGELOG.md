@@ -1,5 +1,11 @@
 # Positron P5 Changelog
 
+## P5.1.259 — Lọc nhanh nguồn bật/tắt trong chi tiết IPTV / Electron 4.23.344
+- Feature priority: NEW — Có bộ chọn trạng thái Tất cả / Đang bật / Đang tắt ngay trong chi tiết nguồn. Thao tác lọc phối hợp với tìm kiếm theo tên, công khai số nguồn phù hợp và không đổi dữ liệu playlist, Favorites hoặc kênh phát.
+- Electron screenshot: positron-p51259-source-status-after-1920x1080-real.png
+- User action: Mở Nguồn IPTV → Chi tiết nguồn, chọn Đang tắt để kiểm tra nguồn tắt mà không cần cuộn danh sách playlist dài; chuyển Đang bật hoặc Tất cả để xem các nguồn tương ứng.
+- Electron QA: `positron-p51259-source-status-before-1920x1080-real.png` / `positron-p51259-source-status-after-1920x1080-real.png` / `positron-p51259-source-status-720-real.png`; so khớp metadata, 720px, không autoplay và không thay đổi nguồn, chỉ hoàn thành khi nhìn ảnh thực và CI/release đạt.
+
 ## P5.1.258 — Tìm kiếm trong danh sách chi tiết nguồn IPTV / Electron 4.23.343
 - Feature priority: NEW — Bổ sung ô tìm nguồn ngay sau khi mở “Chi tiết nguồn”, tìm không phân biệt hoa/thường và dấu tiếng Việt trên **toàn bộ danh sách nguồn**, không chỉ 30 dòng đầu. Danh sách chi tiết có cuộn riêng và thông báo khi không có kết quả.
 - Không gọi playback, không ghi dữ liệu nguồn/M3U, giữ số kênh/trạng thái từng nguồn và có thể thu gọn như trước.
