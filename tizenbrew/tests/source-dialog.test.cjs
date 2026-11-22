@@ -17,7 +17,7 @@ test('Tizen and mobile JavaScript scripts parse',()=>{
 });
 test('Only name, URL and consent are required on Tizen',()=>{
  assert.doesNotMatch(tv,/id="sourceText"/);
- assert.doesNotMatch(tv,/dán nội dung M3U/);
+ // The TV may mention phone paste in help text; only the TV paste control must be absent.
  for(const id of ['sourceName','sourceUrl','rights','sourceQR','sourceQRStatus','refreshSourceQR','toSourceUrl'])
   assert.match(tv,new RegExp('id="'+id+'"'));
  assert.match(tv,/new QRCode\(/);
