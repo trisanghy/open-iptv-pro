@@ -76,3 +76,17 @@ html[data-iptv-device="mobile"] body #page-tv .channel-panel .filter-tabs,
 html[data-iptv-device="mobile"] body #page-tv .channel-panel .filter-tabs .filter-tab{
  touch-action:pan-x pan-y!important;
 }
+
+/* Header is stationary relative to the channel rows, but vertical gestures
+   over it must chain to the outer PAGE scrollport (not the channel panel).
+   overflow:clip does not create a hidden scrolling container. */
+html[data-iptv-device="mobile"] body #page-tv .channel-panel{
+ overflow:clip!important;overflow-x:clip!important;overflow-y:clip!important;
+ overscroll-behavior-y:auto!important;
+}
+html[data-iptv-device="mobile"] body #page-tv .channel-panel :is(
+ .panel-header,.filter-box,.folder-actions,.channel-selection-bar,.channel-drag-hint
+){overflow-y:clip!important;overscroll-behavior-y:auto!important}
+html[data-iptv-device="mobile"] body #page-tv .channel-panel .filter-tabs{
+ overscroll-behavior-y:auto!important;
+}
