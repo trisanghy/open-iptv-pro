@@ -773,8 +773,10 @@
    clearReplace();
   });
   for(const field of [selector,start]){
-   field.addEventListener('input',()=>{clearReplace();syncGenerated();});
-   field.addEventListener('change',()=>{clearReplace();syncGenerated();});
+   field.addEventListener('input',syncGenerated);
+   field.addEventListener('change',syncGenerated);
+   field.addEventListener('input',clearReplace);
+   field.addEventListener('change',clearReplace);
   }
   button.addEventListener('keydown',event=>{
    if(event.key==='Escape'&&replacePending){
