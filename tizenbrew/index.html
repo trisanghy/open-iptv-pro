@@ -218,7 +218,7 @@ function playlistStart(req){
  if(!name)throw Error('Tên nguồn không được trống.');
  if(!Number.isInteger(parts)||parts<1||parts>300||!Number.isInteger(total)||total<1||total>3000000)throw Error('M3U vượt 3 MB hoặc số phần không hợp lệ.');
  if(address&&(!url(address)||address.length>4096))throw Error('Địa chỉ gốc không hợp lệ.');
- if(playlistTransfer&&playlistTransfer.id!==req.transferId)throw Error('TV đang nhận tệp khác.');
+ if(playlistTransfer&&playlistTransfer.id!==req.transferId)playlistTransfer=null; // Permit retry after a failed or abandoned transfer.
  if(playlistTransfer)return;
  playlistTransfer={id:req.transferId,name:name,address:address?url(address):'',parts:parts,total:total,checksum:String(req.checksum||''),chunks:[],length:0,next:0};
  sourceStatus('Đang chờ tệp M3U: 0/'+parts+' phần.');
