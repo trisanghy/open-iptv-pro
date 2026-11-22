@@ -3503,8 +3503,25 @@ async function runTwenty(page){
   window.IPTVState.toast('Cảnh báo QA: kiểm tra nguồn','warn');
   return {channels:window.IPTVState.getChannels().length};
  });
- await page.waitForFunction(()=>document.querySelector('#toastArea .po-toast-history-toggle')
-  ?.textContent.includes('Xem thêm 6 thông báo'),{timeout:5000});
+ await page.waitForTimeout(150);
+ const toastProbe=await page.evaluate(()=>{
+  const area=document.getElementById('toastArea');
+  const success=[...area.querySelectorAll(':scope>.toast:not(.warn):not(.err)')];
+  const warning=[...area.querySelectorAll(':scope>.toast.warn,:scope>.toast.err')];
+  const toggle=area.querySelector('.po-toast-history-toggle');
+  return {
+   successCount:success.length,warningCount:warning.length,
+   successLabels:success.map(n=>n.dataset.poToastMessage),
+   toggleExists:!!toggle,toggleText:toggle?.textContent,
+   toggleHidden:toggle?.hidden,open:area.classList.contains('po-toast-history-open'),
+   directChildren:area.children.length,htmlClass:document.documentElement.className
+  };
+ });
+ console.log('P5.1.150 live toast diagnostic:',JSON.stringify(toastProbe));
+ await page.screenshot({path:path.join(out,'positron-p51150-toast-centre-diagnostic-1920x1080-real.png'),animations:'disabled'});
+ assert.equal(toastProbe.successCount,7,'P150 native 7 distinct success toasts: '+JSON.stringify(toastProbe));
+ assert.equal(toastProbe.toggleExists,true,'P150 companion must mount: '+JSON.stringify(toastProbe));
+ assert.equal(toastProbe.toggleText,'Xem thêm 6 thông báo','P150 history control count: '+JSON.stringify(toastProbe));
  const toastHistoryQA=await page.evaluate(expected=>{
   const area=document.getElementById('toastArea');
   const ok=[...area.querySelectorAll(':scope>.toast:not(.warn):not(.err)')];
