@@ -86,7 +86,7 @@ button,input,textarea{font:inherit;color:inherit}button{cursor:pointer;border:2p
 <script type="text/javascript" src="$WEBAPIS/webapis/webapis.js"></script>
 </head><body data-theme="dark">
 <div id="app">
-<header class="top"><div class="brand"><div class="brandicon">▶</div><div><strong>Open IPTV Pro <small>TV</small></strong><p>Samsung Tizen Edition · TizenBrew v0.1.25</p></div></div><div class="toolbar"><span class="clock" id="clock">--:--</span><button id="searchBtn">⌕ Tìm</button><button id="addBtn">＋ Nguồn</button><button id="themeBtn">◐ Giao diện</button></div></header>
+<header class="top"><div class="brand"><div class="brandicon">▶</div><div><strong>Open IPTV Pro <small>TV</small></strong><p>Samsung Tizen Edition · TizenBrew v0.1.26</p></div></div><div class="toolbar"><span class="clock" id="clock">--:--</span><button id="searchBtn">⌕ Tìm</button><button id="addBtn">＋ Nguồn</button><button id="themeBtn">◐ Giao diện</button></div></header>
 <div class="main"><nav class="nav"><button class="active" data-nav="all">▣　Trực tiếp</button><button data-nav="favorites">♡　Yêu thích</button><button data-nav="recent">◷　Đã xem</button><button data-nav="sources">☷　Nguồn M3U</button><button data-nav="help">⚙　Hướng dẫn</button><div id="sidebarShortcuts" class="sidebar-shortcuts"><button type="button" id="tizenTubeBtn" title="Chuyển sang TizenTube đã cài trong TizenBrew">▶ TizenTube</button><button type="button" id="exitModuleBtn" class="exit-small" title="Thoát về TizenBrew">✕ Thoát</button></div><p class="tip">Dùng ↑ ↓ ← → và OK để điều khiển bằng remote TV.</p></nav>
 <section class="listpane"><div class="heading"><div><div class="eyebrow">DANH SÁCH KÊNH</div><h1 id="heading">Trực tiếp</h1></div><span id="count">0 kênh</span></div><div class="groups" id="groups"></div><div class="channels" id="channels"></div><div class="empty" id="empty" hidden><h2>Chưa có kênh IPTV</h2><p>Thêm nguồn bằng URL trên remote hoặc quét QR để nhập bằng điện thoại.</p><button id="emptyAdd" class="primary">＋ Thêm nguồn IPTV</button><button id="sampleBtn">▶ Luồng kiểm thử</button></div><button id="more" hidden>Xem thêm kênh ↓</button></section>
 <aside class="details"><div class="preview"><span class="live">● TRỰC TIẾP</span><b id="previewText">TV</b><span class="watermark">OPEN IPTV PRO</span></div><div class="eyebrow">KÊNH ĐANG CHỌN</div><h2 id="channelTitle">Open IPTV Pro TV</h2><p id="channelGroup">Chọn kênh để xem</p><div class="info"><div class="eyebrow">THÔNG TIN</div><p id="channelInfo">Hỗ trợ nhập M3U, nhóm kênh, yêu thích và remote Samsung.</p></div><div class="actions"><button class="primary" id="watchBtn">▶ Xem</button><button id="favBtn">♡ Yêu thích</button></div></aside></div>
@@ -162,6 +162,19 @@ function managerGroups(source){
  order=preferred.concat(order.filter(function(g){return preferred.indexOf(g)<0;}));
  return order.map(function(g){return {name:g,count:counts[g]||0};});
 }
+function orderedManagerEntries(source){
+ // Keep physical indexes for QR mutations while honoring the saved folder order.
+ var entries=(source&&source.channels||[]).map(function(channel,index){return {channel:channel,index:index};});
+ var groups=managerGroups(source).map(function(group){return group.name;});
+ var position={};groups.forEach(function(name,i){position[name]=i;});
+ entries.sort(function(a,b){
+  var ga=String(a.channel.group||'Khác'),gb=String(b.channel.group||'Khác');
+  var ia=Object.prototype.hasOwnProperty.call(position,ga)?position[ga]:groups.length;
+  var ib=Object.prototype.hasOwnProperty.call(position,gb)?position[gb]:groups.length;
+  return ia-ib||a.index-b.index;
+ });
+ return entries;
+}
 function managerSnapshot(opts){
  opts=opts||{};managerIds();
  var sources=state.sources.map(function(source){
@@ -172,7 +185,8 @@ function managerSnapshot(opts){
  var group=String(opts.group||'').slice(0,80),recent=state.recent||[];
  if(['all','fav','recent','visible','hidden'].indexOf(mode)<0)mode='all';
  var matches=[],offset=Math.max(0,Math.min(10000,Number(opts.offset)||0)),pageSize=30;
- if(src)(src.channels||[]).forEach(function(c,i){
+ if(src)orderedManagerEntries(src).forEach(function(entry){
+  var c=entry.channel,i=entry.index;
   if(group&&String(c.group||'Khác')!==group)return;
   if(mode==='fav'&&!state.favorites[c.id]||mode==='recent'&&recent.indexOf(c.id)<0||
      mode==='hidden'&&!c.hidden||mode==='visible'&&c.hidden)return;
@@ -191,9 +205,9 @@ function managerSnapshot(opts){
 function managerMutation(change){
  var before=JSON.stringify(state);try{
   var result=change();if(!save())throw Error('TV không đủ bộ nhớ lưu thay đổi.');
-  managerRevision++;selected=null;draw();return {ok:true,value:result};
+  managerRevision++;draw();return {ok:true,value:result};
  }catch(e){try{state=JSON.parse(before);}catch(ignored){}
-  selected=null;draw();return {ok:false,error:String(e.message||e).slice(0,250)};}
+  draw();return {ok:false,error:String(e.message||e).slice(0,250)};}
 }
 function findManagerSource(id){
  var s=state.sources.find(function(x){return x.id===id;});
@@ -567,21 +581,71 @@ for(var i=0;i<arr.length&&out.length<5000;i++){var s=arr[i].trim();if(/^#EXTINF:
 else if(s&&s[0]!=='#'){var u=url(s);if(u){var name=(meta&&meta.name||title||'IPTV').trim();out.push({id:hash(u+name),name:name.slice(0,140),group:meta?meta.group:'Khác',logo:meta?meta.logo:'',url:u});}meta=null;}}
 return out;}
 function elem(tag,cls,text){var x=document.createElement(tag);if(cls)x.className=cls;if(text!==undefined)x.textContent=text;return x;}
-function all(){var seen={},out=[];state.sources.forEach(function(s){(s.channels||[]).forEach(function(c){if(c.id&&!c.hidden&&!seen[c.id]){seen[c.id]=true;out.push(c);}});});return out;}
+function all(){var seen={},out=[];state.sources.forEach(function(source){orderedManagerEntries(source).forEach(function(entry){var c=entry.channel;if(c.id&&!c.hidden&&!seen[c.id]){seen[c.id]=true;out.push(c);}});});return out;}
+var focusStorageKey='open-iptv-tizen-focus-v1';
+var pickerFocusStorageKey='open-iptv-tizen-picker-v1';
+var lastHomeFocus='nav:all',lastPickerPosition={group:'Tất cả',id:''};
+try{
+ var rememberedFocus=localStorage.getItem(focusStorageKey);
+ if(rememberedFocus&&rememberedFocus.length<180)lastHomeFocus=rememberedFocus;
+ var rememberedPicker=JSON.parse(localStorage.getItem(pickerFocusStorageKey)||'{}');
+ if(rememberedPicker&&typeof rememberedPicker.group==='string'&&typeof rememberedPicker.id==='string')
+  lastPickerPosition={group:rememberedPicker.group.slice(0,80),id:rememberedPicker.id.slice(0,140)};
+}catch(e){}
+function focusIdentity(node){
+ if(!node)return '';
+ var data=node.dataset||{};
+ if(data.channelId)return 'channel:'+data.channelId;
+ if(data.groupName)return 'group:'+data.groupName;
+ if(data.nav)return 'nav:'+data.nav;
+ if(node.id)return 'id:'+node.id;
+ return '';
+}
+function rememberHomeFocus(node){
+ if(!byId('modal').hidden||!byId('player').hidden)return;
+ var key=focusIdentity(node);
+ if(!key||key===lastHomeFocus)return;
+ lastHomeFocus=key;
+ try{localStorage.setItem(focusStorageKey,key);}catch(e){}
+}
+function restoreHomeFocus(){
+ if(!byId('modal').hidden||!byId('player').hidden)return false;
+ var nodes=Array.prototype.slice.call(document.querySelectorAll('[data-nav],#groups button,#channels button,button[id]'));
+ function usable(node){return node&&!node.disabled&&(!node.getClientRects||node.getClientRects().length>0);}
+ var target=nodes.find(function(node){return usable(node)&&focusIdentity(node)===lastHomeFocus;});
+ if(!target&&selected)target=nodes.find(function(node){return usable(node)&&focusIdentity(node)==='channel:'+selected.id;});
+ if(!target)target=nodes.find(function(node){return usable(node)&&focusIdentity(node)==='nav:'+section;});
+ if(!target)target=nodes.find(function(node){return usable(node)&&focusIdentity(node)==='nav:all';});
+ if(!target)return false;
+ if(document.activeElement!==target){
+  try{target.focus({preventScroll:true});}catch(e){target.focus();}
+ }
+ try{target.scrollIntoView({block:'nearest',inline:'nearest'});}catch(e){}
+ return true;
+}
+function rememberPickerPosition(){
+ var channel=pickerChannels[pickerIndex];
+ if(!channel)return;
+ lastPickerPosition={group:pickerGroup,id:channel.id};
+ try{localStorage.setItem(pickerFocusStorageKey,JSON.stringify(lastPickerPosition));}catch(e){}
+}
 function select(c){selected=c;byId('channelTitle').textContent=c?c.name:'Open IPTV Pro TV';byId('channelGroup').textContent=c?c.group:'Chọn một kênh để xem';byId('channelInfo').textContent=c?'Nguồn: '+c.url.slice(0,130):'Thêm danh sách M3U từ mục Nguồn.';byId('previewText').textContent=c?c.name.slice(0,4).toUpperCase():'TV';byId('watchBtn').disabled=!c;byId('favBtn').disabled=!c;byId('favBtn').textContent=c&&state.favorites[c.id]?'♥ Đã thích':'♡ Yêu thích';}
-function draw(){items=all();if(selected)selected=items.filter(function(c){return c.id===selected.id;})[0]||null;
+function draw(){
+ rememberHomeFocus(document.activeElement);
+ items=all();if(selected)selected=items.filter(function(c){return c.id===selected.id;})[0]||null;
 var list=items.filter(function(c){return section==='favorites'?!!state.favorites[c.id]:section==='recent'?state.recent.indexOf(c.id)>=0:true;});
 if(section==='recent')list.sort(function(a,b){return state.recent.indexOf(a.id)-state.recent.indexOf(b.id);});
 var gs=['Tất cả'];list.forEach(function(c){if(gs.indexOf(c.group)<0)gs.push(c.group);});if(gs.indexOf(group)<0)group='Tất cả';
-byId('groups').replaceChildren();gs.slice(0,80).forEach(function(g){var b=elem('button',g===group?'active':'',g);b.onclick=function(){group=g;showLimit=160;draw();};byId('groups').appendChild(b);});
+byId('groups').replaceChildren();gs.slice(0,80).forEach(function(g){var b=elem('button',g===group?'active':'',g);b.dataset.groupName=g;b.onclick=function(){group=g;lastHomeFocus='group:'+g;try{localStorage.setItem(focusStorageKey,lastHomeFocus);}catch(e){}showLimit=160;draw();};byId('groups').appendChild(b);});
 list=list.filter(function(c){return (group==='Tất cả'||c.group===group)&&(!search||(c.name+' '+c.group).toLowerCase().indexOf(search)>=0);});
 byId('count').textContent=list.length+' kênh';byId('heading').textContent=section==='favorites'?'Yêu thích':section==='recent'?'Đã xem':'Trực tiếp';
-var holder=byId('channels');holder.replaceChildren();list.slice(0,showLimit).forEach(function(c,i){var b=elem('button','channel'+(selected&&selected.id===c.id?' selected':''));b.appendChild(elem('span','num',String(i+1).padStart(3,'0')));
+var holder=byId('channels');holder.replaceChildren();list.slice(0,showLimit).forEach(function(c,i){var b=elem('button','channel'+(selected&&selected.id===c.id?' selected':''));b.dataset.channelId=c.id;b.appendChild(elem('span','num',String(i+1).padStart(3,'0')));
 if(c.logo){var image=elem('img','logo');image.src=c.logo;image.alt='';image.onerror=function(){image.replaceWith(elem('span','placeholder','TV'));};b.appendChild(image);}else b.appendChild(elem('span','placeholder','TV'));
 var meta=elem('span','chtext');meta.appendChild(elem('strong','',c.name));meta.appendChild(elem('small','',c.group));b.appendChild(meta);if(state.favorites[c.id])b.appendChild(elem('span','heart','♥'));b.onfocus=function(){select(c);};b.onclick=function(){select(c);play(c);};holder.appendChild(b);});
 byId('more').hidden=list.length<=showLimit;byId('empty').hidden=list.length>0;
 if(!selected&&list.length)select(list[0]);else select(selected);
-document.querySelectorAll('[data-nav]').forEach(function(b){b.classList.toggle('active',b.dataset.nav===section);});}
+document.querySelectorAll('[data-nav]').forEach(function(b){b.classList.toggle('active',b.dataset.nav===section);});
+ restoreHomeFocus();}
 function openDialog(kind){byId('modal').hidden=false;byId('sourceDialog').hidden=kind==='search';byId('searchDialog').hidden=kind!=='search';
 byId('modal').firstElementChild.classList.toggle('source-mode',kind!=='search');
 byId('dialogTitle').textContent=kind==='search'?'Tìm kiếm kênh':'Thêm nguồn IPTV';
@@ -589,7 +653,7 @@ if(kind==='source'){setRightsChecked(false);void openPair();}else stopPair();
 setTimeout(function(){byId(kind==='search'?'searchInput':'toSourceUrl').focus();},40);}
 function setRightsChecked(on){byId('rights').setAttribute('aria-checked',on?'true':'false');}
 function toggleRights(){setRightsChecked(byId('rights').getAttribute('aria-checked')!=='true');}
-function closeDialog(){stopPair();byId('modal').hidden=true;byId('addBtn').focus();}
+function closeDialog(){stopPair();byId('modal').hidden=true;if(!restoreHomeFocus())byId('addBtn').focus();}
 async function addSource(data,fromPhone){
 var rights=fromPhone?data&&data.rights:byId('rights').getAttribute('aria-checked')==='true';
 if(rights!==true){notify('Cần xác nhận quyền sử dụng danh sách.');return {ok:false,error:'Cần xác nhận quyền sử dụng.'};}
@@ -948,10 +1012,10 @@ function pickerGroupsAll(){
  items.forEach(function(ch){var name=String(ch.group||'Khác');if(out.indexOf(name)<0)out.push(name);});
  return out;
 }
-function pickerSetGroup(name){
+function pickerSetGroup(name,preferredId){
  pickerGroup=name||'Tất cả';
  pickerChannels=items.filter(function(ch){return pickerGroup==='Tất cả'||String(ch.group||'Khác')===pickerGroup;});
- var currentlyPlaying=playing&&playing.id||'';
+ var currentlyPlaying=preferredId||(playing&&playing.id)||'';
  var idx=pickerChannels.findIndex(function(ch){return ch.id===currentlyPlaying;});
  pickerIndex=idx>=0?idx:0;
  renderChannelPicker();
@@ -995,7 +1059,8 @@ function renderChannelPicker(){
 function openChannelPicker(){
  if(byId('player').hidden||!items.length)return false;
  byId('channelPicker').hidden=false;
- pickerSetGroup('Tất cả');
+ var desiredGroup=pickerGroupsAll().indexOf(lastPickerPosition.group)>=0?lastPickerPosition.group:'Tất cả';
+ pickerSetGroup(desiredGroup,lastPickerPosition.id);
  byId('channelPicker').focus();
  return true;
 }
@@ -1009,15 +1074,16 @@ function pickerMove(key){
  if(key==='ArrowLeft'||key==='ArrowRight'){
   var groups=pickerGroupsAll(),index=groups.indexOf(pickerGroup);
   pickerSetGroup(groups[(index+(key==='ArrowRight'?1:-1)+groups.length)%groups.length]);
+  rememberPickerPosition();
  }else if(pickerChannels.length&&(key==='ArrowUp'||key==='ArrowDown')){
   pickerIndex=(pickerIndex+(key==='ArrowDown'?1:-1)+pickerChannels.length)%pickerChannels.length;
-  renderChannelPicker();
+  rememberPickerPosition();renderChannelPicker();
  }
 }
 function confirmPickerChannel(){
  if(byId('channelPicker').hidden)return false;
  var channel=pickerChannels[pickerIndex];
- closeChannelPicker();
+ rememberPickerPosition();closeChannelPicker();
  if(channel){select(channel);play(channel);}
  byId('player').focus();
  return !!channel;
@@ -1223,7 +1289,8 @@ window.addEventListener('keyup',function(e){
 },true);
 document.addEventListener('tizenhwkey',function(e){if(String(e.keyName||'').toLowerCase()==='back')handleBack(e);},true);
 window.addEventListener('tizenhwkey',function(e){if(String(e.keyName||'').toLowerCase()==='back')handleBack(e);},true);
-document.body.dataset.theme=state.theme;draw();updateBottomActions();refreshTizenBrewModules();setTimeout(function(){if(resumeLastChannel())byId('player').focus();else document.querySelector('[data-nav=all]').focus();},50);
+document.addEventListener('focusin',function(event){rememberHomeFocus(event.target);},true);
+document.body.dataset.theme=state.theme;draw();updateBottomActions();refreshTizenBrewModules();setTimeout(function(){if(resumeLastChannel())byId('player').focus();else restoreHomeFocus();},50);
 function clock(){var d=new Date();byId('clock').textContent=String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');}clock();setInterval(clock,30000);
 })();
 </script></body></html>
