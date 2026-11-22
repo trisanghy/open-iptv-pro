@@ -1,4 +1,11 @@
-# Open IPTV Pro TV · TizenBrew v0.1.16 (thử nghiệm)
+# Open IPTV Pro TV · TizenBrew v0.1.17 (thử nghiệm)
+
+## v0.1.17 — Sửa phiên bản và mô tả thẻ ứng dụng TizenBrew
+
+- Tách phiên bản module TizenBrew khỏi bản Desktop: metadata `package.json` khai báo **0.1.17** đồng bộ với `tizenbrewEdition` và dòng phiên bản trên giao diện TV.
+- Đổi mô tả module thành tiếng Việt, ngắn gọn, đúng các chức năng Samsung TV; bỏ đoạn giới thiệu Desktop dài gây **tràn khỏi thẻ ứng dụng** trên TizenBrew.
+- TizenBrew lấy tên, phiên bản và mô tả hiển thị trực tiếp từ metadata của module; không thể điều chỉnh CSS của màn hình TizenBrew thông qua module Open IPTV Pro.
+- Nếu TV vẫn hiện **4.23.39**, hãy thoát TizenBrew, mở lại và để module cập nhật; nếu chưa đổi, làm mới/cài lại module từ `trisanghy/open-iptv-pro@tizenbrew`. Đừng cài từ `main`, `web/online` hoặc một release/tag cũ. Việc cài lại module có thể ảnh hưởng dữ liệu lưu trên TV, nên xuất sao lưu trước nếu có.
 
 ## v0.1.16 — Hai nút tách thành hai hàng trong ô trống sidebar
 
