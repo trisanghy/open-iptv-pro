@@ -4,7 +4,7 @@
  if(!root?.document)return;
  const d=root.document,$=id=>d.getElementById(id);
  let overlay=null,mode='pair',channel=null,source='',pair=null,pairPending=false;
- let remoteState='stopped',lastSentKey='',playSerial=0,commandQueue=Promise.resolve();
+ let remoteState='stopped',lastSentKey='',lastMediaId='',playSerial=0,commandQueue=Promise.resolve();
  const clean=s=>String(s||'').replace(/\s+/g,' ').trim();
  const tvUrl=()=> 'https://is.gd/IPTVTV';
  const tvOriginalUrl=()=> 'https://trisanghy.github.io/open-iptv-pro/tv.html';
@@ -125,13 +125,14 @@
     onStatus:msg=>notice('cxPairNotice',msg),
     onConnected:()=>{pairPending=false;$('cxConnect').disabled=false;remoteState='stopped';renderPair();notice('cxPairNotice','Đã kết nối TV. Đang đồng bộ kênh được chọn…','ok');if(validSource())void sendRemotePlay(true);},
     onPlayback:info=>{
-     if(info.mediaId&&info.mediaId!==lastSentKey)return; // Ignore stale acknowledgements after changing channel.
+     if(info.mediaId&&info.mediaId!==lastMediaId)return; // Ignore stale acknowledgements after changing channel.
      if(info.state==='playing'){
       remoteState='playing';
       const localVideo=$('video');
       try{if(localVideo&&!localVideo.paused)localVideo.pause();}catch{}
       notice('cxPairNotice','TV đang phát '+(info.name||'kênh')+'. Web đã tạm dừng video.','ok');
      }else if(info.state==='paused')remoteState='paused';
+     else if(info.state==='stopped')remoteState='stopped';
      else if(info.state==='error'){
       remoteState='error';notice('cxPairNotice','TV không phát được luồng. Bạn có thể tiếp tục xem trên Web.','error');
      }
@@ -163,7 +164,8 @@
   remoteState='loading';updateRemoteTransport();
   return enqueueCommand(async()=>{
    if(serial!==playSerial||!controller.connected||pair!==controller)return false;
-   await controller.command('play',{url,name:channel?.name||'Open IPTV Pro',mediaId:key});
+   lastMediaId=String(serial);
+   await controller.command('play',{url,name:channel?.name||'Open IPTV Pro',mediaId:lastMediaId});
    lastSentKey=key;
    notice('cxPairNotice','Đã chuyển '+(channel?.name||'kênh')+' lên TV. Đang chờ TV xác nhận phát.','ok');
    return true;
@@ -178,7 +180,7 @@
    }else{
     await enqueueCommand(()=>pair.command(action));
     remoteState=action==='pause'?'paused':action==='resume'?'playing':'stopped';
-    if(action==='stop'){lastSentKey='';playSerial++;}
+    if(action==='stop'){lastSentKey='';lastMediaId='';playSerial++;}
     updateRemoteTransport();
    }
    notice('cxPairNotice',action==='play'?'Đã gửi lệnh phát '+(channel?.name||'kênh')+' lên TV.':action==='pause'?'Đã tạm dừng trên TV.':action==='resume'?'Đã tiếp tục phát trên TV.':'Đã dừng phát trên TV.','ok');
@@ -186,7 +188,7 @@
  }
  async function disconnect(){
   if(pair)await pair.disconnect();
-  pair=null;remoteState='stopped';lastSentKey='';playSerial++;$('cxPin').value='';renderPair();
+  pair=null;remoteState='stopped';lastSentKey='';lastMediaId='';playSerial++;$('cxPin').value='';renderPair();
   notice('cxPairNotice','Đã ngắt kết nối. TV cần ghép đôi lại trước khi nhận lệnh.','');
  }
  function syncCast(){
@@ -222,7 +224,7 @@
  }
  function onLocalStop(){
   if(!pair?.connected)return Promise.resolve(false);
-  playSerial++;lastSentKey='';remoteState='stopped';updateRemoteTransport();
+  playSerial++;lastSentKey='';lastMediaId='';remoteState='stopped';updateRemoteTransport();
   return enqueueCommand(()=>pair.connected?pair.command('stop'):false).catch(()=>false);
  }
  async function toggleRemotePlayback(){
