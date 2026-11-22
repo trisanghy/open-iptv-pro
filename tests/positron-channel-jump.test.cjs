@@ -535,7 +535,7 @@ test('P5.1.253 requires Electron screenshots and measured center offset before/a
 
 test('P5.1.254 cross-page shortcut uses native TV navigation without autoplay',()=>{
  const js=read('renderer/positron-channel-jump.js'),qa=read('scripts/positron-20-extension.cjs'),wf=read('.github/workflows/positron-lab.yml');
- for(const t of ['// P254: cross-page return','const returnFromAnotherPage=',"if(returnFromAnotherPage)state.setPage('tv');","if(!tvPage?.classList.contains('active-page'))return;","'Đã về trang TV. '"])
+ for(const t of ['// P254: cross-page return','const returnFromAnotherPage=',"if(returnFromAnotherPage)state.setPage('tv');","if(!tvPage?.classList.contains('active-page'))return false;","'Đã về trang TV. '"])
   assert.ok(js.includes(t),'P254 behavior missing '+t);
  assert.ok(js.includes("event.target?.closest?.('input,textarea,select,"));
  assert.ok(!js.includes('playChannel('));
