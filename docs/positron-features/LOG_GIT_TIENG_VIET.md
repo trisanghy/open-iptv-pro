@@ -2,14 +2,22 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
-## P5.1.233 — quay về nhóm kênh trước bằng lịch sử focus trong phiên
+## P5.1.234 — sửa tìm tên nhóm có Đ viết hoa
 
-**Ứng dụng:** 4.23.318 · **Trạng thái:** Chưa có bản phát hành
+**Ứng dụng:** 4.23.319 · **Trạng thái:** Chưa có bản phát hành
+
+Từ mã P233: bộ lọc tên nhóm loại dấu rồi thay chữ đ trước khi chuyển chữ hoa thành thường; do đó tên ĐÀI TRUYỀN HÌNH không khớp khi gõ dai truyen hinh. Bản sửa đặt chuyển thường trước khi thay đ→d; ảnh hưởng duy nhất bộ lọc nhóm cục bộ. Không sửa nguồn IPTV, playlist, Favorites, playback hoặc EPG.
+
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/44805db1954307444caddba65579ccf48902bdb6)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+
+## P5.1.233 — Quay về nhóm vừa rời / Electron 4.23.318
+
+**Ứng dụng:** Chưa xác minh · **Trạng thái:** Chưa có bản phát hành
 
 Feature priority: NEW — Người dùng nhảy từ nhóm 01 sang một nhóm bất kỳ có thể quay lại nhóm cũ trong một lần nhấn, kể cả khi hai nhóm cách xa nhau; lịch sử focus nhóm trong phiên hoàn toàn tách biệt lịch sử phát video và không ghi đè dữ liệu playlist. Electron screenshot: positron-p51233-group-history-after-1920x1080-real.png
 
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/865adfd8055fc752ea3a79dcedc1a8d9b8b44793)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
 
 ## P5.1.232 — Tìm nhanh nhóm kênh theo tên / Electron 4.23.317
 
