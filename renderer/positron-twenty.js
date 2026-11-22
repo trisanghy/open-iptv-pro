@@ -214,7 +214,23 @@
     syncFavoriteMore();
     more.querySelector('.po-fav-more-next')?.focus();
    });
-   toolbar.append(heading,next);
+   // P5.1.180: chỉ khi người dùng bấm mới lưu hàng loạt các kênh được gợi ý.
+   const bulk=d.createElement('button');bulk.type='button';bulk.className='po-fav-more-bulk';
+   bulk.textContent='Lưu cả '+picks.length+' kênh';
+   bulk.setAttribute('aria-label','Thêm tất cả '+picks.length+' kênh gợi ý hiện tại vào Yêu thích');
+   bulk.hidden=picks.length<2;
+   bulk.addEventListener('click',()=>{
+    const current=state.getStore(),enabled=state.getChannels();
+    let added=0;
+    for(const candidate of picks){
+     const active=enabled.find(ch=>String(ch.id)===String(candidate.id));
+     if(!active||fav.has(current,active))continue;
+     fav.toggle(current,active);added++;
+    }
+    if(!added)return;
+    state.save();state.render();state.setPage('fav');
+   });
+   toolbar.append(heading,next,bulk);
    const searchRow=d.createElement('div');searchRow.className='po-fav-more-search-row';
    const searchLabel=d.createElement('label');searchLabel.htmlFor='positronFavoriteMoreSearch';
    searchLabel.textContent='Tìm kênh để thêm';

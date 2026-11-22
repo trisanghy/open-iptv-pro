@@ -1864,3 +1864,19 @@ test('P5.1.179 tìm trong các kênh chưa đánh sao không làm mất nguồn'
  assert.ok(css.includes('#page-fav #positronFavoriteMoreSearch:focus-visible'));
  assert.ok(qa.includes('favoriteSuggestSearchQA'));
 });
+
+test('P5.1.180 chỉ lưu các kênh đang gợi ý sau khi người dùng chủ động bấm',()=>{
+ const js=read('renderer/positron-twenty.js');
+ const css=read('renderer/positron-twenty.css');
+ const qa=read('scripts/positron-20-extension.cjs');
+ assert.ok(js.includes("bulk.className='po-fav-more-bulk'"));
+ assert.ok(js.includes("bulk.addEventListener('click'"));
+ assert.ok(js.includes("bulk.hidden=picks.length<2"));
+ assert.ok(js.includes('for(const candidate of picks)'));
+ assert.ok(js.includes("if(!active||fav.has(current,active))continue;"));
+ assert.ok(js.includes('fav.toggle(current,active);added++'));
+ assert.ok(js.includes("if(!added)return;"));
+ assert.ok(js.includes("state.save();state.render();state.setPage('fav')"));
+ assert.ok(css.includes('#page-fav .po-fav-more-bulk:focus-visible'));
+ assert.ok(qa.includes('favoriteBulkQA'));
+});

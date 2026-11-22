@@ -1,3 +1,12 @@
+## P5.1.180 — Lưu nhiều kênh gợi ý vào Yêu thích bằng một nhấn / Electron 4.23.265
+- Feature priority: NEW — Ảnh Electron thật P5.1.179 cho thấy tìm ra kênh gợi ý dễ hơn nhưng người xem vẫn phải nhấn ☆ nhiều lần để lưu một nhóm sáu kênh. Thêm thao tác Lưu cả N kênh chỉ lưu danh sách gợi ý hiện tại khi có nhấn chủ động, không sửa playlist hoặc tự phát.
+- User action: Mở Yêu thích có ít nhất một kênh → xem nhóm gợi ý hoặc lọc theo tên/nhóm → bấm Lưu cả N kênh để đánh dấu yêu thích toàn bộ danh sách N kênh đang hiển thị.
+- Electron screenshot: positron-p51180-bulk-favorites-after-1920x1080-real.png
+- Baseline P5.1.179 thật đã xem: `positron-p51179-search-suggestions-after-1920x1080-real.png`, tìm được một kênh QA 050 nhưng thao tác thêm vẫn là từng nút.
+- Không hiện nút lưu nhiều nếu ít hơn hai kênh; chỉ xử lý metadata của những kênh đã có; kiểm tra lại trạng thái favorites trước khi toggle để tránh đảo sai, chỉ save/render một lượt, không gọi player.
+- Regression: Node test và chín điều kiện QA Electron 1920×1080 trước/sau, bao gồm lưu đủ sáu, đếm 8 Favorites, giữ playlist, không autoplay, không tràn ngang.
+- Trạng thái: CANDIDATE; chỉ hoàn thành sau khi Node/Electron screenshot mở bằng mắt và Windows/macOS release xác minh.
+
 ## P5.1.179 — Tìm trực tiếp trong 559 kênh gợi ý / Electron 4.23.264
 - Feature priority: NEW — Ảnh Electron thật P5.1.178 cho thấy Gợi ý khác đã duyệt sáu kênh mỗi lần nhưng không có cách tìm tên hoặc nhóm khi 559 kênh chưa sao. Bổ sung bộ tìm riêng ngay trong khu vực gợi ý, hỗ trợ tiếng Việt không dấu, không ảnh hưởng bộ lọc của Favorites đã lưu.
 - User action: Mở Yêu thích có ít nhất một kênh → gõ tên hoặc nhóm trong ô Tìm kênh để thêm → chọn ☆ để lưu hoặc xóa từ khóa để xem các nhóm kênh tiếp.

@@ -642,3 +642,15 @@ html[data-positron="true"] #page-fav #positronFavoriteMoreSearch:focus-visible{
 html[data-positron="true"] #page-fav .po-fav-more-empty{
  grid-column:1/-1;margin:0;padding:7px 0;
 }
+
+/* P5.1.180: lưu hàng loạt chỉ khi người dùng chủ động xác nhận bằng nút. */
+html[data-positron="true"] #page-fav .po-fav-more-bulk{
+ min-height:34px;padding:6px 11px;border:1px solid var(--po-accent,#60d7c2);
+ border-radius:8px;background:var(--po-selected,#173931);color:var(--po-text,#eaf7f7);
+ font-size:12px;font-weight:700;cursor:pointer;
+}
+html[data-positron="true"] #page-fav .po-fav-more-bulk[hidden]{display:none!important}
+html[data-positron="true"] #page-fav .po-fav-more-bulk:hover{filter:brightness(1.1)}
+html[data-positron="true"] #page-fav .po-fav-more-bulk:focus-visible{
+ outline:2px solid var(--po-accent,#60d7c2);outline-offset:2px;
+}

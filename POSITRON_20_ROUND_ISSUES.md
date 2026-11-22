@@ -82,3 +82,9 @@ Evaluate defects revealed by real screenshot of previous build before making cha
 - Đọc ảnh Electron thật P5.1.178: sáu gợi ý đổi 003–008 sang 009–014, nhưng hơn 500 kênh khác không tìm nhanh được.
 - Thêm ô Tìm kênh để thêm, tìm theo tên/nhóm không dấu, chỉ xem metadata trong danh sách đang bật và chưa sao.
 - Phải kiểm chứng Node, 9 QA trong Electron, chụp/mở PNG 1920×1080 before/after, Windows/macOS Release hoặc fallback 403. Không đánh dấu hoàn thành khi còn thiếu.
+
+
+## P5.1.180 (CANDIDATE) — thao tác lưu nhiều kênh
+- Ảnh thật P5.1.179 đã mở: bộ tìm đề xuất có kết quả rõ, nhưng mỗi kênh phải tự đánh dấu sao. Khi sáu gợi ý cần lưu cần sáu thao tác.
+- Thêm nút Lưu cả N kênh chủ động, kiểm tra lại favorites hiện tại và save/render một lần. Không xóa nguồn, không autoplay.
+- Bằng chứng bắt buộc: 9 QA trên Electron thật, Node xanh, hai ảnh trước/sau trực tiếp soát, release EXE/DMG có tài sản được xác minh.
