@@ -9,7 +9,7 @@ const code=fs.readFileSync(path.join(root,'web-cast-sender.js'),'utf8');
 const html=fs.readFileSync(path.join(root,'index.html'),'utf8');
 const castUi=fs.readFileSync(path.join(root,'cast-ui.js'),'utf8');
 
-function harness({sender=true,source='https://example.com/live.m3u8'}={}){
+function harness({sender=true,source='https://example.com/live.m3u8',userAgent='Mozilla/5.0 (Macintosh; Intel Mac OS X) Chrome/130'}={}){
  const elements={},listeners={},scripts=[];
  const ids=['video','castModal','castTitle','castChannel','castGoogleHint','castScan','castPlay','castDevices','castStatus','castAirplay',
   'airplaySection','airplayScan','airplayDeviceList','airplayMobileHelp','castLanHint','castLink','castCopy','castUrl','castStop'];
@@ -34,8 +34,11 @@ function harness({sender=true,source='https://example.com/live.m3u8'}={}){
   head:{appendChild:script=>scripts.push(script)}
  };
  let session=null,requested=0,loads=[],ends=0,options=null,castListener;
+ const remoteCommands=[];
+ const remoteMedia={pause:(_req,resolve)=>{remoteCommands.push('pause');resolve();},play:(_req,resolve)=>{remoteCommands.push('resume');resolve();},stop:(_req,resolve)=>{remoteCommands.push('stop');resolve();}};
  const castSession={
   getCastDevice:()=>({friendlyName:'TV phòng khách'}),
+  getMediaSession:()=>remoteMedia,
   loadMedia:req=>{loads.push(req);return Promise.resolve();}
  };
  const ctx={
@@ -46,7 +49,7 @@ function harness({sender=true,source='https://example.com/live.m3u8'}={}){
   addEventListener:(name,listener)=>castListener=listener
  };
  const win={document:doc,location:{href:'https://trisanghy.github.io/open-iptv-pro/'},
-  navigator:{userAgent:'Mozilla/5.0 (Macintosh; Intel Mac OS X) Chrome/130',maxTouchPoints:0,
+  navigator:{userAgent,maxTouchPoints:0,
    clipboard:{writeText:async()=>{}}},
   streamleaf:null
  };
@@ -63,7 +66,7 @@ function harness({sender=true,source='https://example.com/live.m3u8'}={}){
  const api=win.OpenIPTVWebCast;
  if(!api)throw Error('Adapter not initialized');
  api.open({id:'vtv2',name:'VTV2',group:'VTV'},source);
- return {api,win,ctx,elements,listeners,scripts,requested:()=>requested,loads,ends:()=>ends,options:()=>options,fireSession:()=>castListener?.()};
+ return {api,win,ctx,elements,listeners,scripts,remoteCommands,requested:()=>requested,loads,ends:()=>ends,options:()=>options,fireSession:()=>castListener?.()};
 }
 
 test('browser requests official sender SDK from Google and the CSP permits it',()=>{
@@ -122,6 +125,36 @@ test('local-only URL is not accepted for Google Cast',()=>{
  assert.equal(h.api.validSource('blob:https://example.com/live'),'');
  assert.equal(h.elements.castLink.disabled,true);
  assert.equal(h.api.mediaType('https://example.com/film.mp4'),'video/mp4');
+});
+test('switching selected channels reuses the same Google Cast session without disconnecting',async()=>{
+ const h=harness();
+ await h.api.play();
+ assert.equal(h.loads.length,1);
+ h.api.onChannelChanged({id:'vtv3',name:'VTV3',url:'https://example.com/vtv3.m3u8'},'https://example.com/vtv3.m3u8');
+ for(let i=0;i<20&&h.loads.length<2;i++)await new Promise(r=>setTimeout(r,1));
+ assert.equal(h.loads.length,2);
+ assert.equal(h.loads[1].media.contentId,'https://example.com/vtv3.m3u8');
+ assert.equal(h.loads[1].media.metadata.title,'VTV3');
+ assert.equal(h.ends(),0);
+ assert.equal(h.api.getState().connected,true);
+});
+test('Google Cast pause and resume commands control the receiver media session',async()=>{
+ const h=harness();
+ await h.api.play();
+ assert.equal(await h.api.transportRemote('pause'),true);
+ assert.equal(h.api.getState().remotePaused,true);
+ assert.equal(await h.api.transportRemote('resume'),true);
+ assert.equal(h.api.getState().remotePaused,false);
+ assert.deepEqual(h.remoteCommands,['pause','resume']);
+});
+test('AirPlay connected status is based on Safari native wireless playback, not a clicked picker',()=>{
+ const h=harness({userAgent:'Mozilla/5.0 (Macintosh; Intel Mac OS X) AppleWebKit/605.1.15 Version/17.0 Safari/605.1.15'});
+ assert.equal(h.api.getAirplayState().connected,false);
+ h.elements.video.webkitCurrentPlaybackTargetIsWireless=true;
+ assert.equal(h.api.getAirplayState().connected,true);
+ const chrome=harness();
+ chrome.elements.video.webkitCurrentPlaybackTargetIsWireless=true;
+ assert.equal(chrome.api.getAirplayState().connected,false);
 });
 test('user stop and changed channel end active receiver playback, not just local video',async()=>{
  const h=harness();
