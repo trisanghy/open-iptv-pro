@@ -2,14 +2,22 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
-## P5.1.153 — tìm kiếm nhanh nhật ký thông báo
+## P5.1.154 — chế độ không làm phiền xác nhận nổi
+
+**Ứng dụng:** 4.23.238 · **Trạng thái:** Chưa có bản phát hành
+
+Feature priority: NEW — Bổ sung công tắc Ẩn xác nhận nổi để giảm banner che nội dung video, nhưng vẫn ghi toàn bộ sự kiện vào nhật ký phiên và luôn giữ banner cảnh báo/lỗi quan trọng. User action: Mở Thông báo, bấm Ẩn xác nhận nổi: Bật; các thông báo thành công mới không che màn hình nhưng vẫn xem được trong Nhật ký. Bấm lại để tắt chế độ.
+
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/fad7c1af0b146ee85083a833d7a747a0859d42a0)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+
+## P5.1.153 — Tìm trong nhật ký thông báo bằng từ khóa không dấu
 
 **Ứng dụng:** 4.23.237 · **Trạng thái:** Chưa có bản phát hành
 
 Feature priority: NEW — Cho phép tìm kiếm nội dung thông báo ngay trong nhật ký 30 mục theo từ khóa tiếng Việt có hoặc không có dấu, kết hợp bộ lọc loại thông báo mà không xóa dữ liệu. User action: Mở Thông báo, nhập từ khóa trong ô Tìm trong thông báo; có thể gõ ket noi để tìm kết nối, hoặc nhấn Xóa tìm kiếm để khôi phục danh sách.
 
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/6af7f8fb5b7ca2d5d2251f368407fde298503d9d)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
 
 ## P5.1.152 — Lọc nhật ký theo loại thông báo
 
