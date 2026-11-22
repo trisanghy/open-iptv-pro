@@ -1,21 +1,101 @@
 {
-  "generatedAt": "2026-11-22T21:45:06.138648+00:00",
+  "generatedAt": "2026-11-22T21:51:39.100714+00:00",
   "repository": "trisanghy/open-iptv-pro",
   "branch": "Positron",
   "versions": [
     {
-      "number": 263,
-      "version": "P5.1.263",
-      "appVersion": "4.23.348",
-      "title": "Điều hướng nguồn bằng phím mũi tên",
-      "description": "Feature priority: NEW — Duyệt các hàng trong Chi tiết nguồn bằng mũi tên Lên/Xuống, tự chuyển focus rõ ràng và quay vòng khi tới đầu/cuối; chặn phím khỏi shortcut TV bên ngoài, không thay đổi playlist hoặc phát kênh. Electron screenshot: positron-p51263-source-keyboard-after-1920x1080-real.png",
+      "number": 264,
+      "version": "P5.1.264",
+      "appVersion": "4.23.349",
+      "title": "Đặt lại tìm kiếm, lọc và sắp xếp chi tiết nguồn",
+      "description": "Feature priority: NEW — Một nút “Đặt lại” khôi phục đồng thời tìm kiếm, bộ lọc Bật/Tắt và thứ tự nguồn ban đầu. Nút chỉ khả dụng khi điều kiện tìm/lọc/sắp xếp đang khác mặc định; không sửa nguồn, playlist, Favorites hay video phát. Electron screenshot: positron-p51264-source-reset-after-1920x1080-real.png",
       "kind": "fix",
       "status": "candidate",
       "published": "",
       "tag": "",
-      "commit": "c15272d98831bef2c7610c3de6dd8e273eb99a1f",
+      "commit": "26c53fbab00a71c76c429f8e8b6048ec41eefd0f",
       "url": "https://github.com/trisanghy/open-iptv-pro/tree/Positron",
       "assets": [],
+      "image": null
+    },
+    {
+      "number": 263,
+      "version": "P5.1.263",
+      "appVersion": "4.23.348",
+      "title": "Điều hướng danh sách nguồn bằng phím mũi tên / Electron 4.23.348",
+      "description": "Feature priority: NEW — Duyệt các hàng trong Chi tiết nguồn bằng mũi tên Lên/Xuống, tự chuyển focus rõ ràng và quay vòng khi tới đầu/cuối; chặn phím khỏi shortcut TV bên ngoài, không thay đổi playlist hoặc phát kênh. Electron screenshot: positron-p51263-source-keyboard-after-1920x1080-real.png",
+      "kind": "fix",
+      "status": "release",
+      "published": "2026-11-22T21:49:35Z",
+      "tag": "positron/v4.23.348-p5.1.263",
+      "commit": "c15272d98831bef2c7610c3de6dd8e273eb99a1f",
+      "url": "https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.348-p5.1.263",
+      "assets": [
+        {
+          "name": "audit-p4-50-rounds.json",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.348-p5.1.263/audit-p4-50-rounds.json"
+        },
+        {
+          "name": "audit-p5-20-rounds.json",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.348-p5.1.263/audit-p5-20-rounds.json"
+        },
+        {
+          "name": "Open-IPTV-Pro-4.23.348-mac-arm64.dmg",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.348-p5.1.263/Open-IPTV-Pro-4.23.348-mac-arm64.dmg"
+        },
+        {
+          "name": "Open-IPTV-Pro-4.23.348-mac-x64.dmg",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.348-p5.1.263/Open-IPTV-Pro-4.23.348-mac-x64.dmg"
+        },
+        {
+          "name": "Open-IPTV-Pro-4.23.348-x64.exe",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.348-p5.1.263/Open-IPTV-Pro-4.23.348-x64.exe"
+        },
+        {
+          "name": "Open-IPTV-Pro-Setup-4.23.348-x64.exe",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.348-p5.1.263/Open-IPTV-Pro-Setup-4.23.348-x64.exe"
+        },
+        {
+          "name": "OpenIPTVPro-Positron-P51263-Source.zip",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.348-p5.1.263/OpenIPTVPro-Positron-P51263-Source.zip"
+        },
+        {
+          "name": "positron-desktop-1920x1080-16x9-main-real.png",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.348-p5.1.263/positron-desktop-1920x1080-16x9-main-real.png"
+        },
+        {
+          "name": "positron-p4-final-main-real.png",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.348-p5.1.263/positron-p4-final-main-real.png"
+        },
+        {
+          "name": "positron-p4-round-10-real.png",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.348-p5.1.263/positron-p4-round-10-real.png"
+        },
+        {
+          "name": "positron-p4-round-20-real.png",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.348-p5.1.263/positron-p4-round-20-real.png"
+        },
+        {
+          "name": "positron-p4-round-30-real.png",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.348-p5.1.263/positron-p4-round-30-real.png"
+        },
+        {
+          "name": "positron-p4-round-40-real.png",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.348-p5.1.263/positron-p4-round-40-real.png"
+        },
+        {
+          "name": "Positron-P51263-20-Real-Screenshots.zip",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.348-p5.1.263/Positron-P51263-20-Real-Screenshots.zip"
+        },
+        {
+          "name": "Positron-P51263-50-Real-Screenshots.zip",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.348-p5.1.263/Positron-P51263-50-Real-Screenshots.zip"
+        },
+        {
+          "name": "SHA256SUMS.txt",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.348-p5.1.263/SHA256SUMS.txt"
+        }
+      ],
       "image": null
     },
     {

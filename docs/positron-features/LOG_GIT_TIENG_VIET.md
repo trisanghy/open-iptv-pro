@@ -2,14 +2,23 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
-## P5.1.263 — Điều hướng nguồn bằng phím mũi tên
+## P5.1.264 — Đặt lại tìm kiếm, lọc và sắp xếp chi tiết nguồn
 
-**Ứng dụng:** 4.23.348 · **Trạng thái:** Chưa có bản phát hành
+**Ứng dụng:** 4.23.349 · **Trạng thái:** Chưa có bản phát hành
+
+Feature priority: NEW — Một nút “Đặt lại” khôi phục đồng thời tìm kiếm, bộ lọc Bật/Tắt và thứ tự nguồn ban đầu. Nút chỉ khả dụng khi điều kiện tìm/lọc/sắp xếp đang khác mặc định; không sửa nguồn, playlist, Favorites hay video phát. Electron screenshot: positron-p51264-source-reset-after-1920x1080-real.png
+
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/26c53fbab00a71c76c429f8e8b6048ec41eefd0f)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+
+## P5.1.263 — Điều hướng danh sách nguồn bằng phím mũi tên / Electron 4.23.348
+
+**Ứng dụng:** 4.23.348 · **Trạng thái:** Đã phát hành
 
 Feature priority: NEW — Duyệt các hàng trong Chi tiết nguồn bằng mũi tên Lên/Xuống, tự chuyển focus rõ ràng và quay vòng khi tới đầu/cuối; chặn phím khỏi shortcut TV bên ngoài, không thay đổi playlist hoặc phát kênh. Electron screenshot: positron-p51263-source-keyboard-after-1920x1080-real.png
 
 [Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/c15272d98831bef2c7610c3de6dd8e273eb99a1f)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.348-p5.1.263)
 
 ## P5.1.262 — Trở lại chi tiết nguồn đã chọn / Electron 4.23.347
 
