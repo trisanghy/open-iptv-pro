@@ -4531,7 +4531,7 @@ async function runTwenty(page){
  const missingEpgFilterQA=await page.evaluate(totalBefore=>{
   const d=document,c=window.PositronLibraryPulseCore,st=window.IPTVState;
   const select=d.getElementById('poLibraryMissingEpg'),panel=d.getElementById('poLibraryPulsePanel');
-  const options={epg:'with-epg'},expected=c.missingLogos(st.getChannels(),options);
+  const options={epg:'with-epg',limit:Number(d.getElementById('poLibraryMissingSize').value)||10},expected=c.missingLogos(st.getChannels(),options);
   const rows=[...d.querySelectorAll('#poLibraryMissingRows .po-pulse-missing-row strong')].map(el=>el.textContent);
   const csv=c.missingLogoCsv(st.getChannels(),options),rect=select.getBoundingClientRect(),pr=panel.getBoundingClientRect();
   const pager=d.getElementById('poLibraryMissingNav').getBoundingClientRect();
