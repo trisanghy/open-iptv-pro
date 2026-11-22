@@ -174,6 +174,7 @@
    request.autoplay=true;
    await session.loadMedia(request);
    active=true;remotePaused=false;
+   root.document?.dispatchEvent?.(new root.CustomEvent('openiptv:remote-player-attached',{detail:{method:'cast'}}));
    setStatus('Đã gửi '+(channel?.name||'kênh')+' lên '+getName(session)+'. Nếu TV không phát, nguồn có thể bị giới hạn quyền truy cập hoặc codec.');
    video()?.pause?.();
   }catch(error){setStatus('Không phát được trên TV: '+String(error?.message||error),true);}
