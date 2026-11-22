@@ -227,3 +227,29 @@ test('P270 chế độ AI bandit phụ thuộc consent và có nút xóa bộ đ
   "core.exploreWithBandit(collection,guide(),win.IPTVGuide,model,profile,bandit",
   "bandit=core.observeBandit(bandit,topic.key)","model=core.emptyModel();bandit={}"])assert.ok(s.includes(x),x);
 });
+
+test('P271 Multinomial NB từ nhãn người dùng phân loại kênh cùng mẫu chưa rõ EPG',()=>{
+ let m=C.emptyCategoryModel();
+ m=C.teachCategory(m,{name:'Atlas Academy Alpha'},'education');
+ m=C.teachCategory(m,{name:'Atlas Academy Omega'},'education');
+ m=C.teachCategory(m,{name:'Business Daily Report'},'news');
+ assert.equal(m.examples,3);
+ const guessed=C.predictCategory(m,{name:'Atlas Academy Beta'});
+ assert.ok(guessed,'must classify similar unseen title');
+ assert.equal(guessed.key,'education');assert.equal(guessed.source,'ml');
+ assert.ok(guessed.confidence>=.72);
+ assert.equal(C.topicFor({name:'Atlas Academy Beta'},null,null,now,guessed).source,'ml');
+ assert.ok(!JSON.stringify(m).includes('http'));
+});
+test('P271 từ chối nhãn không hợp lệ, không phỏng đoán khi thiếu dữ liệu, xóa sạch',()=>{
+ const empty=C.emptyCategoryModel();
+ assert.equal(C.predictCategory(empty,{name:'Atlas Academy'}),null);
+ assert.equal(C.teachCategory(empty,{name:'No'},'invalid').examples,0);
+ const model=C.teachCategory(empty,{name:'Atlas Academy Alpha'},'education');
+ assert.equal(C.predictCategory(model,{name:'Atlas Academy Omega'}),null);
+ assert.equal(C.emptyCategoryModel().examples,0);
+ const s=fs.readFileSync('renderer/positron-intelligence.js','utf8');
+ for(const key of ["poAITeach-","core.teachCategory(categoryModel,ch,select.value)",
+  "core.predictCategory(categoryModel,channel)","categoryModel=core.emptyCategoryModel()"])
+  assert.ok(s.includes(key),key);
+});

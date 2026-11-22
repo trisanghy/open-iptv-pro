@@ -50,3 +50,8 @@ html[data-positron="true"].po-horizon body #poWatchFlowPanel.po-watchflow-panel:
 #poWatchFlowPanel .po-ai-alerts:has(input:disabled){opacity:.7;cursor:not-allowed}
 
 #poWatchFlowPanel .po-ai-modes button:disabled{opacity:.48;cursor:not-allowed}
+
+#poWatchFlowPanel .po-ai-teacher{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;
+ background:#112b32;border:1px solid #31535c;padding:9px 10px;border-radius:8px;color:#b8e5db;font-size:12px}
+#poWatchFlowPanel .po-ai-teacher select{min-width:138px;min-height:32px;max-width:100%;
+ color:#edfff9;background:#183e42;border:1px solid #6aa798;border-radius:7px;padding:4px 7px}

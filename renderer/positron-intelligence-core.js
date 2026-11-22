@@ -63,7 +63,7 @@
     source:'epg',epgMatched,count,nowTitle,nextTitle,topics:ordered.slice(0,3).map(([key,value])=>({key,value}))};
   }
   const online=web&&typeof web==='object'&&web.key&&KINDS[web.key]&&web.confidence>=0.7?web:null;
-  const fallback=online?{key:online.key,source:'web',confidence:Math.min(0.85,online.confidence)}:base;
+  const fallback=online?{key:online.key,source:online.source==='ml'?'ml':'web',confidence:Math.min(0.95,online.confidence)}:base;
   return {...fallback,label:KINDS[fallback.key],epgMatched,count,nowTitle,nextTitle,topics:[]};
  }
  function features(channel,topic,date=new Date()){
@@ -177,6 +177,63 @@
 
 
 
+
+
+ // P5.1.271: user-supervised local Multinomial Naive Bayes classifier.
+ // Learns category-level token frequencies, not URLs or full channel names.
+ function categoryTokens(channel){
+  const terms=normalize([channel?.name,channel?.group,channel?.groupTitle].filter(Boolean).join(' '));
+  const ignored=new Set(['tv','hd','sd','kenh','channel','channels','main','online','iptv','stream','full','qa']);
+  return [...new Set(terms.split(' ').filter(t=>t.length>=3&&t.length<=22&&!ignored.has(t)))].slice(0,20);
+ }
+ function emptyCategoryModel(){return {version:1,examples:0,docs:Object.create(null),tokens:Object.create(null)};}
+ function sanitizedCategoryModel(raw){
+  const out=emptyCategoryModel();if(!raw||typeof raw!=='object'||Array.isArray(raw))return out;
+  for(const key of Object.keys(KINDS)){
+   if(key==='other')continue;
+   const docs=Number(raw.docs?.[key]);
+   if(!Number.isFinite(docs)||docs<=0)continue;
+   out.docs[key]=Math.min(1000,Math.trunc(docs));
+   const bag=Object.create(null);
+   for(const [token,amount] of Object.entries(raw.tokens?.[key]||{}).slice(0,150)){
+    if(!/^[a-z0-9]{3,22}$/.test(token))continue;
+    const n=Number(amount);if(Number.isFinite(n)&&n>0)bag[token]=Math.min(1000,Math.trunc(n));
+   }
+   out.tokens[key]=bag;
+  }
+  out.examples=Object.values(out.docs).reduce((a,b)=>a+b,0);
+  return out;
+ }
+ function teachCategory(raw,channel,key){
+  const model=sanitizedCategoryModel(raw);
+  if(!KINDS[key]||key==='other'||model.examples>=1500)return model;
+  const tokens=categoryTokens(channel);if(!tokens.length)return model;
+  model.docs[key]=Math.min(1000,(model.docs[key]||0)+1);
+  model.tokens[key]||=Object.create(null);
+  for(const token of tokens)if(Object.keys(model.tokens[key]).length<150||token in model.tokens[key])
+   model.tokens[key][token]=Math.min(1000,(model.tokens[key][token]||0)+1);
+  model.examples=Object.values(model.docs).reduce((a,b)=>a+b,0);
+  return model;
+ }
+ function predictCategory(raw,channel,{threshold=0.72}={}){
+  const model=sanitizedCategoryModel(raw),tokens=categoryTokens(channel);
+  const kinds=Object.keys(model.docs).filter(k=>model.docs[k]>0);
+  if(model.examples<2||kinds.length<2||!tokens.length)return null;
+  const vocabulary=new Set();
+  for(const key of kinds)for(const token of Object.keys(model.tokens[key]||{}))vocabulary.add(token);
+  const size=Math.max(1,vocabulary.size),scores=[];
+  for(const key of kinds){
+   const bag=model.tokens[key]||{},total=Object.values(bag).reduce((a,b)=>a+b,0);
+   let log=Math.log((model.docs[key]+1)/(model.examples+kinds.length));
+   for(const token of tokens)log+=Math.log(((bag[token]||0)+1)/(total+size));
+   scores.push({key,log});
+  }
+  scores.sort((a,b)=>b.log-a.log);const max=scores[0].log;
+  const denom=scores.reduce((n,row)=>n+Math.exp(row.log-max),0);
+  const confidence=1/denom;
+  const min=Math.max(0.55,Math.min(0.95,Number(threshold)||0.72));
+  return confidence>=min?{key:scores[0].key,confidence,source:'ml'}:null;
+ }
 
  // P5.1.270: consent-based contextual bandit. Genre-level UCB bonuses shrink
  // as the user explicitly rates/watches a category; no channel history stored.
@@ -309,5 +366,5 @@
   return best;
  }
  return Object.freeze({KINDS,normalize,subject,metadataTopic,topicFor,features,emptyModel,
-  sanitizedModel,predict,learn,recommend,sanitizedBandit,observeBandit,banditBonus,exploreWithBandit,upcomingForYou,planForYou,startingForYou,cleanQuery,readWikiSearch});
+  sanitizedModel,predict,learn,recommend,emptyCategoryModel,sanitizedCategoryModel,teachCategory,predictCategory,sanitizedBandit,observeBandit,banditBonus,exploreWithBandit,upcomingForYou,planForYou,startingForYou,cleanQuery,readWikiSearch});
 });

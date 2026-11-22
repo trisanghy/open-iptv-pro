@@ -1,5 +1,14 @@
 # Positron P5 Changelog
 
+## P5.1.271 — AI tự học phân loại chủ đề / Electron 4.23.356
+- Feature priority: NEW — Bổ sung **Dạy AI phân loại** trên từng kênh khi có quyền học, sử dụng mô hình Multinomial Naive Bayes huấn luyện online từ các nhãn chủ đề do người dùng tự xác nhận. Sau khi có ít nhất hai nhóm đủ ví dụ, AI có thể gợi ý chủ đề cho kênh tương tự chưa khớp quy tắc tên hoặc EPG; kết quả phải vượt ngưỡng tin cậy, và EPG thực luôn được ưu tiên.
+- Feature class: AI
+- Evidence: Train hai ví dụ giáo dục “Atlas Academy” và một ví dụ thời sự, dự đoán chính xác một kênh “Atlas Academy” khác chưa gán nhãn; kiểm tra xác suất, không bịa khi ít dữ liệu; Electron thực 1920×1080 hiển thị select thể loại, người dùng chọn và bộ đếm nhãn tăng mà không autoplay hay đổi nguồn.
+- User action: TV → WatchFlow → ✦ AI hợp gu → bật học sở thích → chọn thể loại ở “Dạy AI phân loại” trên kênh. Mô hình tại máy cập nhật tần suất token và có thể nhận diện tên/nhóm kênh tương tự. Bấm “Xóa dữ liệu học” để xóa cả mô hình học nhãn.
+- Privacy: Chỉ lưu bảng đếm từ khóa và nhóm chủ đề trên máy, không tải tên, URL hoặc lịch sử kênh lên máy chủ, không ghi riêng tên đầy đủ và không suy đoán EPG khi không có. Wikipedia vẫn chỉ gọi khi người dùng tự nhấn.
+- Electron screenshot: positron-p51271-ai-teach-before-1920x1080-real.png / positron-p51271-ai-teach-after-1920x1080-real.png; mở ảnh thật trước khi xác nhận.
+- Trạng thái: CANDIDATE tới khi test, ảnh thực và toàn bộ CI/release thành công.
+
 ## P5.1.270 — AI khám phá theo contextual bandit / Electron 4.23.355
 - Feature priority: NEW — Chế độ **Khám phá AI** tính điểm UCB cho chủ đề ít được đánh giá kết hợp xác suất logistic đã học thực tế, chọn ra danh sách đa dạng, tránh lặp quá nhiều kênh cùng chủ đề và giảm dần mức khám phá khi chủ đề được phản hồi.
 - Feature class: AI

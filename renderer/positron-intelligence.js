@@ -11,7 +11,7 @@
  const guide=()=>{try{return win.IPTVExtras?.getGuide?.()||null;}catch{return null;}};
  const load=(key)=>{try{return JSON.parse(win.localStorage.getItem(key)||'null');}catch{return null;}};
  let record=load(KEY);
- let enabled=record?.enabled===true,model=core.sanitizedModel(record?.model),bandit=core.sanitizedBandit(record?.bandit),active=null,aiOpen=false;
+ let enabled=record?.enabled===true,model=core.sanitizedModel(record?.model),bandit=core.sanitizedBandit(record?.bandit),categoryModel=core.sanitizedCategoryModel(record?.categoryModel),active=null,aiOpen=false;
  let alertEnabled=enabled&&record?.alertEnabled===true;const notified=new Set();
  let web=load(WEB_KEY);if(!web||typeof web!=='object'||Array.isArray(web))web={};
  const webValid=()=>{
@@ -22,7 +22,7 @@
   }
   return live;
  };
- const save=()=>{try{win.localStorage.setItem(KEY,JSON.stringify({enabled,alertEnabled,model,bandit}));return true;}catch{return false;}};
+ const save=()=>{try{win.localStorage.setItem(KEY,JSON.stringify({enabled,alertEnabled,model,bandit,categoryModel}));return true;}catch{return false;}};
  const saveWeb=()=>{try{
   const entries=Object.entries(web).sort((a,b)=>(b[1]?.at||0)-(a[1]?.at||0)).slice(0,60);
   web=Object.fromEntries(entries);win.localStorage.setItem(WEB_KEY,JSON.stringify(web));return true;
@@ -99,7 +99,23 @@
  }
  tab.addEventListener('click',()=>{if(aiOpen){toolbar.querySelector('[data-flowplus-mode="discover"]')?.click();return;}showAI();});
  toolbar.addEventListener('click',event=>{if(event.target.closest('[data-flowplus-mode]'))hideAI();},true);
- const metadata=(channel)=>core.topicFor(channel,guide(),win.IPTVGuide,Date.now(),webValid()[String(channel.name)]);
+ const learnedSource=(channel,cache=null)=>{
+  const sources=cache||webValid(),wiki=sources[String(channel.name)];
+  if(wiki)return wiki;
+  if(!enabled)return null;
+  return core.predictCategory(categoryModel,channel);
+ };
+ const metadata=(channel)=>core.topicFor(channel,guide(),win.IPTVGuide,Date.now(),learnedSource(channel));
+ const profileFor=(collection)=>{
+  const result=webValid();
+  if(enabled)for(const channel of collection){
+   const name=String(channel.name);
+   if(result[name])continue;
+   const predicted=core.predictCategory(categoryModel,channel);
+   if(predicted)result[name]=predicted;
+  }
+  return result;
+ };
  function feedback(channel,label,programmeTopic=null,programmeStart=0){
   if(!enabled){state()?.toast?.('Bật học sở thích trước khi đánh giá kênh','info');return;}
   const topic=programmeTopic||metadata(channel);
@@ -111,13 +127,13 @@
  }
  function render(){
   if(!aiOpen)return;
-  const collection=channels();const profile=webValid();
+  const collection=channels();const profile=profileFor(collection);
   channelsMode.setAttribute('aria-pressed',String(!upcomingOpen));
   upcomingMode.setAttribute('aria-pressed',String(upcomingOpen));
   planMode.setAttribute('aria-pressed',String(planOpen));
   exploreMode.setAttribute('aria-pressed',String(exploreOpen));exploreMode.disabled=!enabled;
   summary.textContent=(enabled?'● Đang học':'○ Chưa bật học')+(alertEnabled?' · Nhắc lịch AI bật':'')+' · '+model.observations+
-   ' phản hồi hợp lệ · '+collection.length+' kênh khả dụng · Web chỉ tra khi nhấn nút';
+   ' phản hồi · '+categoryModel.examples+' nhãn AI · '+collection.length+' kênh · Web chỉ tra khi nhấn';
   list.replaceChildren();
   if(!collection.length){
    const empty=d.createElement('p');empty.className='po-ai-empty';
@@ -145,7 +161,7 @@
    const header=d.createElement('div');header.className='po-ai-card-header';
    const chName=d.createElement('strong');chName.textContent=(index+1)+'. '+ch.name;
    const metric=d.createElement('small');
-   metric.textContent=topic.label+' · '+(topic.source==='epg'?'EPG':topic.source==='web'?'Wikipedia':
+   metric.textContent=topic.label+' · '+(topic.source==='epg'?'EPG':topic.source==='web'?'Wikipedia':topic.source==='ml'?'AI học nhãn':
     topic.key==='other'?'Chưa rõ chủ đề':'Tên/nhóm')+(model.observations>=2?' · '+Math.round(item.probability*100)+'% hợp gu':'');
    header.append(chName,metric);card.append(header);
    if((upcomingOpen||planOpen)&&item.programme){
@@ -200,7 +216,27 @@
     }catch(e){state()?.toast?.('Không tra cứu được Wikipedia: '+String(e.message||e).slice(0,90),'warn');}
     finally{lookup.disabled=false;lookup.textContent='Tra cứu web';if(aiOpen)render();}
    });
-   actions.append(play,like,dislike,lookup);card.append(actions);list.append(card);
+   actions.append(play,like,dislike,lookup);card.append(actions);
+   if(enabled&&topic.source!=='epg'){
+    const teach=d.createElement('label');teach.className='po-ai-teacher';
+    const title=d.createElement('span');title.textContent='Dạy AI phân loại:';
+    const select=d.createElement('select');select.id='poAITeach-'+index;
+    select.setAttribute('aria-label','Dạy AI thể loại cho '+ch.name);
+    const empty=d.createElement('option');empty.value='';empty.textContent='Chọn thể loại';select.append(empty);
+    for(const [key,label] of Object.entries(core.KINDS)){
+     if(key==='other')continue;
+     const option=d.createElement('option');option.value=key;option.textContent=label;select.append(option);
+    }
+    select.addEventListener('change',()=>{
+     if(!enabled||!select.value)return;
+     categoryModel=core.teachCategory(categoryModel,ch,select.value);
+     if(!save())state()?.toast?.('Không lưu được nhãn học AI','warn');
+     else state()?.toast?.('AI đã học thể loại từ nhãn xác nhận','info');
+     render();
+    });
+    teach.append(title,select);card.append(teach);
+   }
+   list.append(card);
   }
  }
  check.addEventListener('change',()=>{
@@ -217,7 +253,7 @@
  });
  clear.addEventListener('click',()=>{
   if(!win.confirm('Xóa toàn bộ trọng số học sở thích trên thiết bị này?'))return;
-  model=core.emptyModel();bandit={};active=null;alertEnabled=false;alertCheck.checked=false;
+  model=core.emptyModel();bandit={};categoryModel=core.emptyCategoryModel();active=null;alertEnabled=false;alertCheck.checked=false;
   notified.clear();save();render();
   state()?.toast?.('Đã xóa mô hình sở thích cục bộ','info');
  });
@@ -274,7 +310,8 @@
   recommend:()=>core.recommend(channels(),guide(),win.IPTVGuide,model,webValid()),
   upcoming:()=>core.upcomingForYou(channels(),guide(),win.IPTVGuide,model,webValid()),
   plan:()=>core.planForYou(channels(),guide(),win.IPTVGuide,model,webValid()),
-  explore:()=>enabled?core.exploreWithBandit(channels(),guide(),win.IPTVGuide,model,webValid(),bandit):[],
+  explore:()=>enabled?core.exploreWithBandit(channels(),guide(),win.IPTVGuide,model,profileFor(channels()),bandit):[],
+  categoryProfile:()=>({enabled,examples:categoryModel.examples}),
   alerts:()=>({enabled:alertEnabled,candidates:alertEnabled?core.startingForYou(channels(),guide(),win.IPTVGuide,model,webValid()):[]}),
   getTopic:metadata});
 })();
