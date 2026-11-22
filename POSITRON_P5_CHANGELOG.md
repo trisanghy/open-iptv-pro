@@ -1,5 +1,10 @@
 # Positron P5 Changelog
 
+## P5.1.254 — Alt+Shift+L quay lại kênh từ trang khác / Electron 4.23.339
+- Từ Nguồn IPTV, Lịch EPG và Cài đặt, Alt+Shift+L trở về TV, khôi phục focus ở kênh cuối cùng đã duyệt và căn giữa danh sách, không tự phát. Chỉ kích hoạt nếu đã có kênh được nhớ; không chiếm phím khi đang nhập liệu. Playlist, Favorites, nguồn và trạng thái phát không thay đổi.
+- Electron QA: `positron-p51254-cross-page-before-1920x1080-real.png` và `positron-p51254-cross-page-after-1920x1080-real.png`; phải xem ảnh thật, đo focus/kích thước và xác minh CI trước khi đánh dấu hoàn thành.
+
+
 ## P5.1.243 — Shift+R mở/thoát Vừa xem mà không cần chuột / Electron 4.23.328
 - Feature priority: NEW — Thêm phím Shift+R ngay tại hàng kênh để mở lọc Vừa xem. Ảnh P5.1.242 cho thấy khi lịch sử rỗng không còn hàng nào để focus, do đó Shift+R trên chip Vừa xem cũng quay lại Tất cả và trả focus về kênh đầu tiên. Cho phép thao tác hai chiều bằng bàn phím, không tự phát, không sửa Favorites hay nguồn.
 - Electron screenshot: positron-p51243-keyboard-recent-after-1920x1080-real.png

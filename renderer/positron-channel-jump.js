@@ -481,10 +481,14 @@
   // P251: Alt+Shift+L resumes keyboard browsing at the last focused row,
   // even after visiting toolbar controls. Does not change playback or data.
   if(event.altKey&&event.shiftKey&&!event.ctrlKey&&!event.metaKey&&
-     event.key.toLowerCase()==='l'&&panel.hidden&&
-     d.getElementById('page-tv')?.classList.contains('active-page')){
+     event.key.toLowerCase()==='l'&&panel.hidden){
    const list=focusList;
-   if(!list)return;
+   if(!list||(!lastVisitedChannelId&&!lastVisitedRow))return;
+   // P254: cross-page return to last focused channel with no autoplay.
+   const tvPage=d.getElementById('page-tv');
+   const returnFromAnotherPage=!tvPage?.classList.contains('active-page');
+   if(returnFromAnotherPage)state.setPage('tv');
+   if(!tvPage?.classList.contains('active-page'))return;
    // P252: if favorite/recent filters rebuilt the list, restore the
    // previous channel by its stable ID, expanding only the view filter.
    const available=row=>row?.isConnected&&row.matches('.channel-item')&&row.getClientRects().length;
@@ -507,7 +511,7 @@
    list.scrollTop+=rect.top-box.top-(list.clientHeight-rect.height)/2;
    row.focus({preventScroll:true});
    const index=[...list.querySelectorAll('.channel-item')].indexOf(row)+1;
-   status.textContent=(restoredAll?'Đã xem tất cả để quay lại. ':'')+'Đã quay lại kênh '+index+'. Nhấn Enter để phát.';
+   status.textContent=(returnFromAnotherPage?'Đã về trang TV. ':'')+(restoredAll?'Đã xem tất cả để quay lại. ':'')+'Đã quay lại kênh '+index+'. Nhấn Enter để phát.';
    return;
   }
   // P243: when recent history is empty there are no channel rows to focus.

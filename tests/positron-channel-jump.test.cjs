@@ -333,7 +333,7 @@ test('P5.1.243 Shift+R toggles recent filter from rows and empty recent chip',()
   "chip.hidden=false;chip.focus({preventScroll:true});"])
   assert.ok(js.includes(token),'P243 recent shortcut missing '+token);
  assert.ok(!js.includes('playChannel('));
- assert.equal(JSON.parse(read('package.json')).version,'4.23.338');
+ assert.equal(JSON.parse(read('package.json')).version,'4.23.339');
 });
 test('P5.1.243 requires real Electron Shift+R screenshots and round-trip state',()=>{
  const qa=read('scripts/positron-20-extension.cjs'),wf=read('.github/workflows/positron-lab.yml');
@@ -349,7 +349,7 @@ test('P5.1.244 direct digits open channel jump and preserve player',()=>{
  const js=read('renderer/positron-channel-jump.js');
  for(const t of ['// P244: direct numeric jump','/^[0-9]$/.test(event.key)',"event.target.matches('.channel-item')",'number.value=event.key'])
   assert.ok(js.includes(t),'P244: '+t);
- assert.equal(JSON.parse(read('package.json')).version,'4.23.338');
+ assert.equal(JSON.parse(read('package.json')).version,'4.23.339');
 });
 test('P5.1.244 real Electron numeric scenario is required',()=>{
  const qa=read('scripts/positron-20-extension.cjs'),wf=read('.github/workflows/positron-lab.yml');
@@ -364,7 +364,7 @@ test('P5.1.245 focuses the correct group in the native picker, not a stale folde
  for(const t of ['// P245: follow the focused row', 'const syncFocusedGroupToPicker=', 'groupSelect.value=lastFocusedGroup;', 'syncFocusedGroupToPicker();'])
   assert.ok(js.includes(t),'P245 code absent '+t);
  assert.ok(!js.includes('playChannel('));
- assert.equal(JSON.parse(read('package.json')).version,'4.23.338');
+ assert.equal(JSON.parse(read('package.json')).version,'4.23.339');
 });
 test('P5.1.245 requires real Electron screenshots and group focus regression',()=>{
  const qa=read('scripts/positron-20-extension.cjs'),wf=read('.github/workflows/positron-lab.yml');
@@ -380,7 +380,7 @@ test('P5.1.246 Ctrl+Enter jumps and closes tool but keeps keyboard focus',()=>{
   "if(quickClose){","setOpen(false);","row.focus({preventScroll:true});",
   "number.setAttribute('aria-keyshortcuts','Enter Control+Enter Meta+Enter')"])
   assert.ok(js.includes(token),'P246 quick-close shortcut missing '+token);
- assert.equal(JSON.parse(read('package.json')).version,'4.23.338');
+ assert.equal(JSON.parse(read('package.json')).version,'4.23.339');
 });
 test('P5.1.246 requires real Electron Ctrl+Enter before/after and preserves playback',()=>{
  const qa=read('scripts/positron-20-extension.cjs'),wf=read('.github/workflows/positron-lab.yml');
@@ -400,7 +400,7 @@ test('P5.1.247 focused channel index is read-only and visible under total count'
   assert.ok(js.includes(t),'P247 focused index code missing '+t);
  for(const t of ['#poFocusedPosition','font-variant-numeric:tabular-nums',
    '#poFocusedPosition[hidden]'])assert.ok(css.includes(t),'P247 style '+t);
- assert.equal(JSON.parse(read('package.json')).version,'4.23.338');
+ assert.equal(JSON.parse(read('package.json')).version,'4.23.339');
 });
 test('P5.1.247 real Electron screenshot proves selected index, focus, and data-safe action',()=>{
  const qa=read('scripts/positron-20-extension.cjs'),wf=read('.github/workflows/positron-lab.yml');
@@ -419,7 +419,7 @@ test('P5.1.248 Alt+Shift+J pre-fills focused row index, plain Alt+J remains blan
   "number.value=String(selectedIndex);",
   "toggle.setAttribute('aria-keyshortcuts','Alt+J Alt+Shift+J')"])
   assert.ok(js.includes(token),'P248 prefill shortcut missing '+token);
- assert.equal(JSON.parse(read('package.json')).version,'4.23.338');
+ assert.equal(JSON.parse(read('package.json')).version,'4.23.339');
 });
 test('P5.1.248 Electron screenshot asserts editable prefill and no playback',()=>{
  const qa=read('scripts/positron-20-extension.cjs'),wf=read('.github/workflows/positron-lab.yml');
@@ -440,7 +440,7 @@ test('P5.1.249 Escape from jump restores focused origin row instead of toggle',(
   "if(origin?.isConnected&&origin.matches('.channel-item')&&origin.getClientRects().length)",
   'origin.focus({preventScroll:true});'])
   assert.ok(js.includes(token),'P249 Escape focus recovery missing '+token);
- assert.equal(JSON.parse(read('package.json')).version,'4.23.338');
+ assert.equal(JSON.parse(read('package.json')).version,'4.23.339');
 });
 test('P5.1.249 Electron screenshots exercise Escape recovery and unchanged toolbar behavior',()=>{
  const qa=read('scripts/positron-20-extension.cjs'),wf=read('.github/workflows/positron-lab.yml');
@@ -460,7 +460,7 @@ test('P5.1.250 hides stale focused-index badge when leaving channels, not during
   "focusedPosition.textContent='';","focusedPosition.hidden=true;"])
   assert.ok(js.includes(token),'P250 badge cleanup absent: '+token);
  assert.ok(!js.includes('playChannel('),'Badge must not start playback');
- assert.equal(JSON.parse(read('package.json')).version,'4.23.338');
+ assert.equal(JSON.parse(read('package.json')).version,'4.23.339');
 });
 test('P5.1.250 requires real-Electron before/after and focus restoration QA',()=>{
  const qa=read('scripts/positron-20-extension.cjs'),wf=read('.github/workflows/positron-lab.yml');
@@ -480,7 +480,7 @@ test('P5.1.251 remembers last focused channel row and restores it with Alt+Shift
   "Alt+Shift+L: trở lại kênh vừa duyệt"])
   assert.ok(source.includes(token),'P251 row resume missing '+token);
  assert.ok(!source.includes('playChannel('),'Resume focus cannot autoplay');
- assert.equal(JSON.parse(read('package.json')).version,'4.23.338');
+ assert.equal(JSON.parse(read('package.json')).version,'4.23.339');
 });
 test('P5.1.251 requires actual Electron screenshots with shortcut and no mutation',()=>{
  const qa=read('scripts/positron-20-extension.cjs'),wf=read('.github/workflows/positron-lab.yml');
@@ -501,7 +501,7 @@ test('P5.1.252 uses stable channel ID to restore from favorite-filter rerenders'
   "restoredAll?'Đã xem tất cả để quay lại. '"])
   assert.ok(js.includes(token),'P252 filtered resume missing '+token);
  assert.ok(!js.includes('playChannel('),'Filtered resume cannot start video');
- assert.equal(JSON.parse(read('package.json')).version,'4.23.338');
+ assert.equal(JSON.parse(read('package.json')).version,'4.23.339');
 });
 test('P5.1.252 requires real Electron filtered-before and restored-after screenshots',()=>{
  const qa=read('scripts/positron-20-extension.cjs'),wf=read('.github/workflows/positron-lab.yml');
@@ -520,7 +520,7 @@ test('P5.1.253 centers bookmarked row after Alt+Shift+L without scrolling outer 
  assert.ok(js.includes('list.scrollTop+=rect.top-box.top-(list.clientHeight-rect.height)/2;'));
  assert.ok(!js.includes('else if(rect.bottom>box.bottom)list.scrollTop+=rect.bottom-box.bottom;'));
  assert.ok(!js.includes('window.scrollTo('),'Must keep main page stationary');
- assert.equal(JSON.parse(read('package.json')).version,'4.23.338');
+ assert.equal(JSON.parse(read('package.json')).version,'4.23.339');
 });
 test('P5.1.253 requires Electron screenshots and measured center offset before/after',()=>{
  const qa=read('scripts/positron-20-extension.cjs'),wf=read('.github/workflows/positron-lab.yml');
@@ -531,4 +531,17 @@ test('P5.1.253 requires Electron screenshots and measured center offset before/a
   'bottomEdgeBaseline:','restoredRow412:','centered:','improved:',
   'noAutoplay:','favoritesUnchanged:','playlistUnchanged:'])
   assert.ok(qa.includes(name),'P253 native geometry regression missing '+name);
+});
+
+test('P5.1.254 cross-page shortcut uses native TV navigation without autoplay',()=>{
+ const js=read('renderer/positron-channel-jump.js'),qa=read('scripts/positron-20-extension.cjs'),wf=read('.github/workflows/positron-lab.yml');
+ for(const t of ['// P254: cross-page return','const returnFromAnotherPage=',"if(returnFromAnotherPage)state.setPage('tv');","if(!tvPage?.classList.contains('active-page'))return;","'Đã về trang TV. '"])
+  assert.ok(js.includes(t),'P254 behavior missing '+t);
+ assert.ok(js.includes("event.target?.closest?.('input,textarea,select,"));
+ assert.ok(!js.includes('playChannel('));
+ for(const n of ['positron-p51254-cross-page-before-1920x1080-real.png','positron-p51254-cross-page-after-1920x1080-real.png'])
+  assert.ok(qa.includes(n)&&wf.includes(n),'P254 Electron screenshot missing '+n);
+ for(const t of ['crossPageStartQA254','crossPageQA254',"window.IPTVState.setPage('sources')","page.keyboard.press('Alt+Shift+L')",'tvRestored:','row412Focused:','centered:','noAutoplay:','favoritesUnchanged:','playlistUnchanged:','noOverflow:'])
+  assert.ok(qa.includes(t),'P254 CI check missing '+t);
+ assert.equal(JSON.parse(read('package.json')).version,'4.23.339');
 });

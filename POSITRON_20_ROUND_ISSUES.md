@@ -80,3 +80,9 @@ Chỉ đánh dấu hoàn tất khi sửa nguồn, node test pass, Electron scree
 - `filteredReturnQA252` tất cả true: all filter restored, rowId, position, no autoplay, favorites/playlist unchanged, no overflow.
 ## Đợt 23/11/2026 — Vòng 04/20 P5.1.253 CANDIDATE
 - Ảnh P252 SAU: hàng 412 hiện tại sát mép dưới danh sách cuộn. Mục tiêu mới: Alt+Shift+L căn giữa row, cho thấy thêm các kênh kề cạnh; đo vị trí bằng DOM, chụp before/after Electron thật.
+
+## Đợt mới sau P5.1.253 — Vòng 01/20 P5.1.254 (CANDIDATE)
+- Baseline: dec211947de45fe42f264672ed15f76676f27f2f / Electron 4.23.338, run CI P253 45063655451 thành công 6/6. Đã mở ảnh TV/Nguồn/EPG và ảnh row 412 trước/sau của bản P253.
+- Lỗi: shortcut Alt+Shift+L bị giới hạn ở page-tv.active-page và không thể quay lại hàng kênh sau khi sang Nguồn/EPG/Cài đặt.
+- Thay đổi: phím quay lại TV khi có bookmark; không can thiệp các ô nhập, không autoplay và không sửa dữ liệu.
+- Chờ xác minh: Node test, 2 ảnh Electron 1920x1080 thật, QA focus kênh 412, release và bộ cài.
