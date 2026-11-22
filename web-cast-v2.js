@@ -99,7 +99,16 @@
    if(pair)await pair.disconnect(false);
    pair=root.OpenIPTVTVPair.createController({
     onStatus:msg=>notice('cxPairNotice',msg),
-    onConnected:()=>{pairPending=false;$('cxConnect').disabled=false;renderPair();notice('cxPairNotice','Đã ghép đôi TV. Chọn kênh và nhấn Phát lên TV.','ok');},
+    onConnected:()=>{pairPending=false;$('cxConnect').disabled=false;renderPair();notice('cxPairNotice','TV đã tự ghép đôi bằng mã 6 số. Chọn kênh rồi nhấn Phát lên TV.','ok');},
+    onPlayback:info=>{
+     if(info.state==='playing'){
+      const localVideo=$('video');
+      try{if(localVideo&&!localVideo.paused)localVideo.pause();}catch{}
+      notice('cxPairNotice','TV đang phát '+(info.name||'kênh')+'. Đã tạm dừng video trên Web.','ok');
+     }else if(info.state==='error'){
+      notice('cxPairNotice','TV báo lỗi phát nguồn. Video trên Web vẫn được giữ nguyên.','error');
+     }
+    },
     onDisconnected:()=>{pairPending=false;$('cxConnect').disabled=false;renderPair();}
    });
    await pair.connect(code);
