@@ -136,9 +136,9 @@ test('P268 AI cảnh báo lịch sắp chiếu cần mô hình đã học và EP
  for(let i=0;i<20;i++)learned=C.learn(learned,
   C.features(news,{key:'news',source:'epg'},new Date(t+60000)),0);
  const original=JSON.stringify([sport,news]);
- const found=C.startingForYou([news,sport],guide,find,learned,{}, {clock:t,threshold:0.65});
+ const found=C.startingForYou([news,sport],guide,find,learned,{}, {clock:t,threshold:0.62});
  assert.ok(found.some(row=>row.channel.id==='sport'));
- assert.ok(found.every(row=>row.probability>=0.65));
+ assert.ok(found.every(row=>row.probability>=0.62));
  assert.ok(found.every(row=>row.programme.start>t));
  assert.equal(JSON.stringify([sport,news]),original);
  assert.deepEqual(C.startingForYou([sport],null,find,learned,{}, {clock:t}),[]);

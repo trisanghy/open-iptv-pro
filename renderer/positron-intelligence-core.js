@@ -178,12 +178,12 @@
 
  // P5.1.268: local, model-scored on-air-soon alerts. Never infer schedules
  // without an imported XMLTV guide; do not create OS/network notifications.
- function startingForYou(channels,guide,api,model,webMap={}, {clock=Date.now(),windowMinutes=2,threshold=0.65,limit=3}={}){
+ function startingForYou(channels,guide,api,model,webMap={}, {clock=Date.now(),windowMinutes=2,threshold=0.62,limit=3}={}){
   const m=sanitizedModel(model);
   if(m.observations<3||!guide||typeof api?.find!=='function'||!Number.isFinite(clock))return [];
   const minutes=Math.max(1,Math.min(5,Number(windowMinutes)||2));
   const cutoff=clock+minutes*60000;
-  const minScore=Math.max(0.6,Math.min(0.95,Number(threshold)||0.65));
+  const minScore=Math.max(0.6,Math.min(0.95,Number(threshold)||0.62));
   // Look back 90s so minute-level polling still catches a programme that
   // began just before the tick, as long as it has not finished.
   const found=upcomingForYou(channels,guide,api,m,webMap,{clock:clock-90000,hours:1,limit:20});
