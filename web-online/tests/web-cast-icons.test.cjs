@@ -72,7 +72,7 @@ test('Cast dialog icons, caption and TV link use only a single shared SVG librar
  const selectors=[
  '.cx-icon','#cxTabPair','#cxTabCast','#cxTabAir',
  '#cxPaneCast .cx-featureicon','#cxPaneAir .cx-featureicon',
- '#cxCopyTv','#cxConnect','#cxRemotePlay','#cxRemotePause',
+ '#cxCopyTv','#cxCopyTvOriginal','#cxConnect','#cxRemotePlay','#cxRemotePause',
  '#cxRemoteResume','#cxRemoteStop','#cxCastScan','#cxCastPlay',
  '#cxCastStop','#cxAirOpen','#cxClose','.cx-tvlogo'
  ];
