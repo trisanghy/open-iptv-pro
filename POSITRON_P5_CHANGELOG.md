@@ -1999,3 +1999,9 @@ P5.1.81 follow-up: real Electron capture found nav overflow; replace flexible no
 - Đầu vào ảnh thật P5.1.248: bảng nhập 412 chiếm focus và hàng kênh 412 mất focus; cần khôi phục đúng nguồn khi hủy.
 - QA: ảnh Electron trước/sau 1920x1080, restore focus hàng 412, no autoplay/favorites mutation, legacy toggle Escape; regression Node.
 - Chỉ hoàn tất sau CI, mở ảnh và release bất biến thành công.
+
+## P5.1.250 / Electron 4.23.335 — Ẩn chỉ báo vị trí đã cũ (CANDIDATE)
+- Dựa trên ảnh Electron thật P5.1.249: chỉ báo `Kênh 412/561` nằm dưới bộ đếm. Kiểm tra mã phát hiện chỉ có `focusin` cập nhật nên nhãn vẫn hiển thị khi đã rời danh sách.
+- Sửa: `focusout` xóa vị trí focus cũ khi chuyển sang thanh công cụ; tạm giữ vị trí gốc khi hộp nhảy số mở và khôi phục khi Escape. Không đọc/sửa dữ liệu luồng M3U hay Favorites.
+- QA: `positron-p51250-focus-badge-before-1920x1080-real.png` và `positron-p51250-focus-badge-after-1920x1080-real.png`, kiểm tra giữ focus, không tự phát và dữ liệu bất biến.
+- Chỉ hoàn thành khi CI, ảnh sau đã MỞ và release mới được kiểm chứng.

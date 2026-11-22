@@ -102,6 +102,14 @@
   focusedPosition.textContent=index>0?'Kênh '+index+'/'+visibleRows.length:'';
   focusedPosition.hidden=index<1;
  });
+ // P250: hide the keyboard-focus position when focus leaves channel rows.
+ // Retain the origin label while numeric-jump is open for Escape recovery.
+ focusList?.addEventListener('focusout',event=>{
+  if(!panel.hidden)return;
+  if(event.relatedTarget instanceof Element&&focusList.contains(event.relatedTarget))return;
+  focusedPosition.textContent='';
+  focusedPosition.hidden=true;
+ });
  const backRow=d.createElement('div');
  backRow.id='poChannelGroupHistoryRow';
  backRow.innerHTML='<button id="poChannelGroupBack" type="button" aria-label="Quay về nhóm kênh trước">↶ Nhóm trước</button><button id="poChannelGroupForward" type="button" aria-label="Tiến tới nhóm kênh vừa rời" hidden>↷ Nhóm sau</button><output id="poChannelGroupBackHint" aria-live="polite"></output>';

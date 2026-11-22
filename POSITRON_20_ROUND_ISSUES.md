@@ -50,3 +50,9 @@ Chỉ đánh dấu hoàn tất khi sửa nguồn, node test pass, Electron scree
 
 ## Vòng 06 — P5.1.243 [CANDIDATE]
 - Shift+R từ hàng kênh mở nhanh Vừa xem, từ chip khi empty quay All, không playback và không mutate Favorites.
+
+## Đợt mới 23/11/2026 — P5.1.250 (CANDIDATE)
+- Baseline P5.1.249 / Electron 4.23.334, HEAD `13d4fdd25bd74e587c11be5f285d8012c21f4279`, CI `45059996731` hoàn tất thành công.
+- Đã mở ảnh Electron 1920×1080 P249 trang TV, Nguồn, Escape trước/sau; vị trí `Kênh 412/561` xuất hiện đúng khi focus vào hàng 412.
+- Lỗi mã: `#poFocusedPosition` chỉ cập nhật khi `focusin`, không xóa khi focus rời danh sách, nên có thể tiếp tục báo vị trí không còn được chọn.
+- P250: thêm `focusout` dọn trạng thái khi panel đóng, giữ origin lúc nhảy số; CI Electron sẽ kiểm tra và ghi ảnh riêng.
