@@ -35,11 +35,22 @@
  }
  const fold=v=>clean(v).normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/gi,'d').toLocaleLowerCase('vi');
  // P5.1.158: liệt kê kênh thiếu logo bằng metadata đã có, không tải ảnh/mạng.
- function missingLogos(input,{offset=0,limit=10,query=''}={}){
+ function missingLogoGroups(input){
+  const groups=new Map();
+  for(const c of Array.isArray(input)?input:[]){
+   if(!c||typeof c!=='object'||!clean(c.name)||clean(c.logo))continue;
+   const group=clean(c.group||c.groupTitle)||'Chưa phân nhóm';
+   groups.set(group,(groups.get(group)||0)+1);
+  }
+  return [...groups].map(([name,count])=>({name,count}))
+   .sort((a,b)=>b.count-a.count||a.name.localeCompare(b.name,'vi'));
+ }
+ function missingLogos(input,{offset=0,limit=10,query='',group=''}={}){
   const terms=fold(query).split(/\s+/).filter(Boolean);
   const rows=(Array.isArray(input)?input:[]).filter(c=>c&&typeof c==='object'&&
-   clean(c.name)&&!clean(c.logo)&&terms.every(term=>
-    fold(clean(c.name)+' '+clean(c.group||c.groupTitle)).includes(term)));
+   clean(c.name)&&!clean(c.logo)&&
+   (!clean(group)||(clean(c.group||c.groupTitle)||'Chưa phân nhóm')===clean(group))&&
+   terms.every(term=>fold(clean(c.name)+' '+clean(c.group||c.groupTitle)).includes(term)));
   const start=Number.isFinite(offset)?Math.max(0,Math.floor(offset)):0;
   const count=Number.isFinite(limit)?Math.min(50,Math.max(1,Math.floor(limit))):10;
   return {total:rows.length,offset:start,limit:count,
@@ -47,5 +58,5 @@
     name:clean(c.name),group:clean(c.group||c.groupTitle)||'Chưa phân nhóm'
    }))};
  }
- return Object.freeze({summarize,pageGroups,missingLogos});
+ return Object.freeze({summarize,pageGroups,missingLogos,missingLogoGroups});
 });

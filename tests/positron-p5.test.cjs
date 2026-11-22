@@ -37,7 +37,7 @@ test('P5 assets are loaded after P4 without replacing it',()=>{
 test('P5 release is immutable and versioned separately from P4.1',()=>{
  const pkg=JSON.parse(read('package.json'));
  const flow=read('.github/workflows/positron-lab.yml');
- assert.equal(pkg.version,'4.23.243');
+ assert.equal(pkg.version,'4.23.244');
  const label=pkg.description.match(/Positron\s+(P\d+\.\d+\.\d+)/)?.[1];
  assert.ok(label,'product P-label must accompany SemVer');
  assert.ok(flow.includes('TAG=positron/v'+pkg.version+'-'+label.toLowerCase()),'release tag and app version must match');
@@ -1589,5 +1589,21 @@ test('P5.1.159 tìm kênh thiếu logo có ô tìm và ảnh trước/sau Electr
  assert.match(css,/#poLibraryMissingSearch:focus-visible/);
  for(const name of ['positron-p51159-search-missing-before-1920x1080-real.png','positron-p51159-search-missing-after-1920x1080-real.png'])
   assert.ok(qa.includes(name),'thiếu ảnh thật '+name);
+ assert.ok(!ui.includes('fetch(')&&!ui.includes('playChannel('));
+});
+
+test('P5.1.160 chọn nhóm kênh thiếu logo riêng với theme và ảnh Electron 16:9',()=>{
+ const core=read('renderer/positron-library-pulse-core.js');
+ const ui=read('renderer/positron-library-pulse.js');
+ const css=read('renderer/positron-library-pulse.css');
+ const qa=read('scripts/positron-20-extension.cjs');
+ assert.doesNotThrow(()=>new vm.Script(core));
+ assert.doesNotThrow(()=>new vm.Script(ui));
+ for(const marker of ['missingLogoGroups','poLibraryMissingGroup','missingGroup.addEventListener'])
+  assert.ok((core+ui).includes(marker),'thiếu '+marker);
+ assert.match(css,/#poLibraryMissingGroup:focus-visible/);
+ assert.match(css,/\.po-pulse-header\{position:sticky/);
+ for(const name of ['positron-p51160-group-filter-before-1920x1080-real.png','positron-p51160-group-filter-after-1920x1080-real.png'])
+  assert.ok(qa.includes(name),'thiếu ảnh '+name);
  assert.ok(!ui.includes('fetch(')&&!ui.includes('playChannel('));
 });

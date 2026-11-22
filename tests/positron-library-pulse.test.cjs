@@ -89,3 +89,25 @@ test('P5.1.159 tìm kiếm không dấu theo tên/nhóm, không lộ URL stream'
  assert.ok(!JSON.stringify(a).includes('https://secret'));
  assert.equal(JSON.stringify(list),original);
 });
+
+test('P5.1.160 chọn nhóm thiếu logo chính xác, kết hợp tìm kiếm không dấu, không đổi playlist',()=>{
+ const list=[
+  {name:'Đài Một',group:'Tin tức',logo:'',url:'https://private/a'},
+  {name:'Đài Hai',group:'Tin tức',logo:'',url:'https://private/b'},
+  {name:'Thể thao 1',group:'Thể thao',logo:'',url:'https://private/c'},
+  {name:'Tin tức 3',group:'Tin tức',logo:'https://img/logo.png'},
+  {name:'Chưa nhóm',logo:''},
+  {name:'Không tính',group:'Tin tức',logo:'https://img/a.png'}
+ ];
+ const snapshot=JSON.stringify(list);
+ const groups=core.missingLogoGroups(list);
+ assert.deepEqual(groups.map(x=>[x.name,x.count]),[['Tin tức',2],['Chưa phân nhóm',1],['Thể thao',1]]);
+ assert.equal(core.missingLogos(list,{group:'Tin tức'}).total,2);
+ assert.deepEqual(core.missingLogos(list,{group:'Tin tức',query:'dai hai'}).rows.map(x=>x.name),['Đài Hai']);
+ assert.equal(core.missingLogos(list,{group:'Thể thao',query:'dai'}).total,0);
+ assert.equal(core.missingLogos(list,{group:'Chưa phân nhóm'}).rows[0].name,'Chưa nhóm');
+ assert.equal(core.missingLogos(list,{group:'Tin'}).total,0);
+ assert.equal(core.missingLogoGroups(null).length,0);
+ assert.ok(!JSON.stringify(core.missingLogoGroups(list)).includes('private'));
+ assert.equal(JSON.stringify(list),snapshot);
+});

@@ -1,3 +1,12 @@
+## P5.1.160 — Lọc kênh thiếu logo theo nhóm / Electron 4.23.244
+- Feature priority: NEW — Thêm lựa chọn nhóm riêng trong danh sách kênh thiếu logo, hiển thị số kênh từng nhóm và kết hợp tìm theo tên không dấu, giảm thao tác với thư viện hàng trăm kênh.
+- User action: Mở Thư viện → Kênh thiếu logo → chọn nhóm trong ô “Tất cả nhóm thiếu logo”; có thể nhập tiếp tên kênh để tìm trong riêng nhóm đã chọn.
+- Electron screenshot: positron-p51160-group-filter-after-1920x1080-real.png
+- Before: positron-p51160-group-filter-before-1920x1080-real.png; After: positron-p51160-group-filter-after-1920x1080-real.png, ảnh Electron thật 16:9 phải được mở soát trước khi công nhận.
+- Sửa UX phát hiện từ ảnh P159: header bảng Thư viện giữ hiển thị khi cuộn, mở bảng về đầu trang.
+- Chỉ đọc metadata tên, nhóm và trạng thái URL logo; không động tới URL stream, playlist, EPG, playback hoặc dữ liệu người dùng.
+- Status: CANDIDATE — chờ Node tests, Electron screenshot review và xác minh Release hoặc build artifact.
+
 ## P5.1.159 — Tìm kiếm kênh thiếu logo / Electron 4.23.243
 - Feature priority: NEW — Thêm tìm kiếm kênh chưa có logo theo tên hoặc nhóm, hỗ trợ tiếng Việt không dấu để người dùng không phải duyệt từng trang trong playlist lớn.
 - User action: Mở Thư viện → Kênh thiếu logo → nhập tên hoặc nhóm; danh sách cập nhật ngay và xoá tìm kiếm để xem lại tất cả.

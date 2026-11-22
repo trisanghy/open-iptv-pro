@@ -55,3 +55,8 @@ html[data-positron="true"] .po-pulse-missing-empty{font-size:11px;padding:8px;co
 html[data-positron="true"] #poLibraryMissingSearch{box-sizing:border-box;width:100%;min-width:0;min-height:36px;border:1px solid var(--po-border,#42606b);border-radius:9px;padding:8px 11px;background:var(--po-card,#162934);color:var(--po-text,#eaf7f7);font:inherit;font-size:12px}
 html[data-positron="true"] #poLibraryMissingSearch::placeholder{color:var(--po-muted,#a4b9c0)}
 html[data-positron="true"] #poLibraryMissingSearch:focus-visible{outline:2px solid var(--po-accent,#66d4c2);outline-offset:2px}
+
+/* P5.1.160: chọn nhóm chỉ trong những kênh thiếu logo, giữ header khi cuộn. */
+html[data-positron="true"] .po-pulse-header{position:sticky;top:0;z-index:2;background:var(--po-card,#162934);padding:8px 0;border-bottom:1px solid var(--po-border,#36515c)}
+html[data-positron="true"] #poLibraryMissingGroup{box-sizing:border-box;min-width:0;width:100%;min-height:36px;border:1px solid var(--po-border,#42606b);border-radius:9px;padding:8px 10px;background:var(--po-card,#162934);color:var(--po-text,#eaf7f7);font:inherit;font-size:12px}
+html[data-positron="true"] #poLibraryMissingGroup:focus-visible{outline:2px solid var(--po-accent,#66d4c2);outline-offset:2px}

@@ -1,5 +1,5 @@
 'use strict';
-// Positron P5.1.159 — Bảng phân tích metadata thư viện, không thử stream.
+// Positron P5.1.160 — Bảng phân tích metadata thư viện, không thử stream.
 (()=>{
  const d=document,root=d.documentElement,bar=d.getElementById('positronBar');
  const core=window.PositronLibraryPulseCore,state=window.IPTVState;
@@ -54,6 +54,9 @@
  missingSearch.id='poLibraryMissingSearch';missingSearch.placeholder='Tìm kênh hoặc nhóm (không dấu)…';
  missingSearch.setAttribute('aria-label','Tìm kênh thiếu logo theo tên hoặc nhóm');
  missingSearch.setAttribute('autocomplete','off');
+ const missingGroup=d.createElement('select');
+ missingGroup.id='poLibraryMissingGroup';
+ missingGroup.setAttribute('aria-label','Lọc kênh thiếu logo theo nhóm');
  const missingRows=d.createElement('ol');missingRows.id='poLibraryMissingRows';
  const missingNav=d.createElement('div');missingNav.className='po-pulse-missing-nav';
  const missingPrev=d.createElement('button');missingPrev.type='button';missingPrev.id='poLibraryMissingPrev';
@@ -62,7 +65,7 @@
  const missingNext=d.createElement('button');missingNext.type='button';missingNext.id='poLibraryMissingNext';
  missingNext.textContent='Tiếp';
  missingNav.append(missingPrev,missingPageLabel,missingNext);
- missingBody.append(missingSearch,missingRows,missingNav);missingPane.append(missingToggle,missingBody);
+ missingBody.append(missingSearch,missingGroup,missingRows,missingNav);missingPane.append(missingToggle,missingBody);
  const footer=d.createElement('footer');footer.className='po-pulse-footer';
  const stamp=d.createElement('span');stamp.id='poLibraryPulseStamp';
  const refresh=d.createElement('button');refresh.type='button';refresh.id='poLibraryPulseRefresh';
@@ -111,12 +114,21 @@
   addRatio('Có URL logo trong metadata',result.withLogoMeta,result.total);
   addRatio('Có mã nhận diện EPG',result.withEpgId,result.total);
   groupSummary=result.groupBreakdown;groupTotal=result.total;renderGroupRows();
+  const selectedGroup=missingGroup.value;
+  missingGroup.replaceChildren();
+  const optionAll=d.createElement('option');optionAll.value='';optionAll.textContent='Tất cả nhóm thiếu logo';
+  missingGroup.append(optionAll);
+  for(const group of core.missingLogoGroups(state.getChannels())){
+   const option=d.createElement('option');option.value=group.name;
+   option.textContent=group.name+' · '+group.count+' kênh';missingGroup.append(option);
+  }
+  missingGroup.value=[...missingGroup.options].some(o=>o.value===selectedGroup)?selectedGroup:'';
   missingIndex=0;renderMissing();
   stamp.textContent='Cập nhật lúc '+new Date().toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit'});
  };
  let missingIndex=0,missingTotal=0;
  const renderMissing=()=>{
-  const report=core.missingLogos(state.getChannels(),{offset:missingIndex*10,limit:10,query:missingSearch.value});
+  const report=core.missingLogos(state.getChannels(),{offset:missingIndex*10,limit:10,query:missingSearch.value,group:missingGroup.value});
   missingTotal=report.total;missingRows.replaceChildren();
   missingToggle.textContent='Kênh thiếu logo: '+missingTotal;
   for(const item of report.rows){
@@ -127,7 +139,7 @@
   }
   if(!report.rows.length){
    const empty=d.createElement('li');empty.className='po-pulse-missing-empty';
-   empty.textContent=missingSearch.value.trim()?'Không tìm thấy kênh phù hợp.':'Không có kênh thiếu URL logo.';missingRows.append(empty);
+   empty.textContent=(missingSearch.value.trim()||missingGroup.value)?'Không tìm thấy kênh phù hợp.':'Không có kênh thiếu URL logo.';missingRows.append(empty);
   }
   const pages=Math.max(1,Math.ceil(missingTotal/10));
   missingPageLabel.textContent='Trang '+(missingIndex+1)+' / '+pages;
@@ -144,7 +156,7 @@
    const other=d.getElementById(id);
    if(other?.getAttribute('aria-expanded')==='true')other.click();
   }
-  render();opened=true;panel.hidden=false;toggle.setAttribute('aria-expanded','true');
+  render();opened=true;panel.hidden=false;panel.scrollTop=0;toggle.setAttribute('aria-expanded','true');
   close.focus({preventScroll:true});
  });
  moreGroups.addEventListener('click',()=>{
@@ -159,6 +171,7 @@
   if(expanded)missingPane.scrollIntoView({block:'nearest',behavior:'instant'});
  });
  missingSearch.addEventListener('input',()=>{missingIndex=0;renderMissing();});
+ missingGroup.addEventListener('change',()=>{missingIndex=0;renderMissing();});
  missingPrev.addEventListener('click',()=>{
   if(missingIndex>0)missingIndex--;
   renderMissing();missingPrev.focus({preventScroll:true});
