@@ -44,7 +44,7 @@ function start(mode){
 }
 test('Module card points to the OTA bootstrap rather than stale inline TV HTML',()=>{
  assert.equal(pkg.appPath,'tizenbrew/bootstrap.html');
- assert.equal(pkg.version,'0.1.22');
+ assert.equal(pkg.version,'0.1.23');
  assert.equal(pkg.tizenbrewEdition,'0.1.22');
  assert.match(bootstrap,/api\.github\.com\/repos/);
  assert.match(bootstrap,/tizenbrew\/index\.html/);
