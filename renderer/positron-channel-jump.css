@@ -80,3 +80,34 @@ html[data-positron="true"] #page-tv #channelList .channel-item:focus .channel-st
  color:#ffdb82!important;
  filter:drop-shadow(0 0 3px rgba(255,201,87,.55))!important;
 }
+
+/* P5.1.231 — accessible direct folder picker inside the existing jump panel.
+   Nested grid prevents the selected group label from causing horizontal overflow. */
+html[data-positron="true"] #page-tv #poChannelGroupRow{
+ grid-column:1/-1!important;display:grid!important;
+ grid-template-columns:48px minmax(0,1fr) 70px!important;
+ align-items:center!important;gap:6px!important;min-width:0!important;
+}
+html[data-positron="true"] #page-tv #poChannelGroupRow label{
+ font-size:10.5px!important;min-width:0!important;white-space:nowrap!important;
+}
+html[data-positron="true"] #page-tv #poChannelGroupSelect{
+ display:block!important;min-width:0!important;width:100%!important;box-sizing:border-box!important;
+ min-height:34px!important;max-width:100%!important;padding:4px!important;
+ border:1px solid #426375!important;border-radius:7px!important;
+ background:#0d1c28!important;color:#f0ffff!important;font-size:11px!important;
+}
+html[data-positron="true"] #page-tv #poChannelGroupGo{
+ min-width:0!important;min-height:34px!important;padding:4px!important;
+ border:1px solid #5cbaaa!important;border-radius:7px!important;
+ background:#267a6e!important;color:#fff!important;font-size:10px!important;font-weight:750!important;
+ cursor:pointer!important;
+}
+html[data-positron="true"] #page-tv #poChannelGroupRow :is(button,select):focus-visible{
+ outline:2px solid #8ae2d7!important;outline-offset:2px!important;
+}
+@media(max-width:450px){
+ html[data-positron="true"] #page-tv #poChannelGroupRow{
+  grid-template-columns:44px minmax(0,1fr) 62px!important;gap:4px!important;
+ }
+}

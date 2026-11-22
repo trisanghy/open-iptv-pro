@@ -34,7 +34,7 @@ test('P5.1.230 keyboard group hopping does not play or reorder channels',()=>{
   "event.key==='ArrowRight'?1:-1","groupMove?'Đã chuyển nhóm. '"])
   assert.ok(js.includes(token),'Missing P230 behavior: '+token);
  assert.ok(!js.includes('playChannel('),'No autoplay allowed');
- assert.equal(JSON.parse(read('package.json')).version,'4.23.315');
+ assert.ok(Number(JSON.parse(read('package.json')).version.split('.')[2])>=315,'P230 group traversal must survive subsequent versions');
 });
 test('P5.1.230 checks left/right transitions in real 16:9 Electron screenshots',()=>{
  const qa=read('scripts/positron-20-extension.cjs');
@@ -47,4 +47,29 @@ test('P5.1.230 checks left/right transitions in real 16:9 Electron screenshots',
  for(const token of ["page.keyboard.press('ArrowRight')","page.keyboard.press('ArrowLeft')",
   'nextGroupFocused:','firstGroupFocused:','noAutoplay:','noHorizontalOverflow:'])
   assert.ok(qa.includes(token));
+});
+
+test('P5.1.231 opens native folder picker with Alt+G and does not play a stream',()=>{
+ const ui=read('renderer/positron-channel-jump.js');
+ for(const key of ["groupRow.id='poChannelGroupRow'","const visibleHeaders=",
+  "const groupSelect=","function refreshGroups(){","function jumpGroup(){",
+  "groupGo.addEventListener('click',jumpGroup)","header.click();",
+  "target.focus({preventScroll:true})","event.key.toLowerCase()==='g'",
+  "groupSelect.setAttribute('aria-keyshortcuts','Alt+G')"])
+  assert.ok(ui.includes(key),'Missing direct folder picker behavior: '+key);
+ assert.ok(!ui.includes('playChannel('));
+ assert.equal(JSON.parse(read('package.json')).version,'4.23.316');
+});
+test('P5.1.231 requires real Electron group picker screenshots and focus/scroll QA',()=>{
+ const qa=read('scripts/positron-20-extension.cjs');
+ const flow=read('.github/workflows/positron-lab.yml');
+ for(const name of ['positron-p51231-group-picker-before-1920x1080-real.png',
+  'positron-p51231-group-picker-after-1920x1080-real.png']){
+  assert.ok(qa.includes(name),'Missing screenshot QA '+name);
+  assert.ok(flow.includes(name),'Missing workflow verification '+name);
+ }
+ for(const key of ["page.keyboard.press('Alt+g')",
+  "page.locator('#poChannelGroupSelect').selectOption({index:2})",
+  'selectedGroupFocused:','noAutoplay:','noHorizontalOverflow:'])
+  assert.ok(qa.includes(key),'Missing P231 Electron QA '+key);
 });

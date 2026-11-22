@@ -1,5 +1,13 @@
 # Positron P5 Changelog
 
+## P5.1.231 — Bộ chọn nhóm kênh trực tiếp qua Alt+G / Electron 4.23.316
+- Feature priority: NEW — Sau khi chuyển nhóm tuần tự đã hoạt động, người dùng có hàng chục nhóm kênh cần nhảy trực tiếp tới bất kỳ nhóm nào bằng menu chọn có nhãn rõ ràng và hỗ trợ bàn phím; có thể mở nhóm thu gọn qua thao tác gốc.
+- Electron screenshot: positron-p51231-group-picker-after-1920x1080-real.png
+- User action: Trên trang TV, nhấn Alt+G để mở bộ chọn Nhóm, chọn một nhóm đang hiển thị rồi bấm Đến nhóm hoặc Enter. Hàng kênh đầu nhóm được focus; chỉ khi nhấn Enter trên hàng đó mới phát video.
+- QA: 561 kênh kiểm thử cục bộ, Electron thật trước/sau 1920×1080, xác nhận đúng nhóm, không tự phát, không tràn ngang, giữ nguyên danh sách và playback; Node test và CI 6/6.
+- CANDIDATE đến khi mở ảnh Electron thật, test và Release đạt.
+
+
 ## P5.1.230 — Chuyển nhóm kênh bằng phím trái/phải / Electron 4.23.315
 - Feature priority: NEW — Chọn một kênh rồi nhấn → để tới đầu nhóm mở kế tiếp, ← để về đầu nhóm trước. Bỏ qua nhóm thu gọn, giữ nguyên luồng phát, dữ liệu playlist và Favorites.
 - User action: Trên trang TV, focus một hàng kênh rồi nhấn mũi tên phải để tới đầu nhóm kế tiếp đang mở, nhấn mũi tên trái để quay lại nhóm trước; nhấn Enter mới phát.

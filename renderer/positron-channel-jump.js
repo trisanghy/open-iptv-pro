@@ -26,11 +26,58 @@
  const number=panel.querySelector('#poChannelJumpNumber');
  const go=panel.querySelector('#poChannelJumpGo');
  const status=panel.querySelector('#poChannelJumpStatus');
+ // P5.1.231: direct group picker uses native rendered folder headers.
+ // All option labels use textContent; stream URLs never enter this control.
+ const groupRow=d.createElement('div');
+ groupRow.id='poChannelGroupRow';
+ groupRow.innerHTML='<label for="poChannelGroupSelect">Đến nhóm</label><select id="poChannelGroupSelect" aria-label="Chọn nhóm kênh đang hiển thị"></select><button type="button" id="poChannelGroupGo">Đến nhóm</button>';
+ status.before(groupRow);
+ const groupSelect=groupRow.querySelector('#poChannelGroupSelect');
+ const groupGo=groupRow.querySelector('#poChannelGroupGo');
+ const visibleHeaders=()=>[...d.querySelectorAll('#channelList .folder-header[data-group]')];
+ function refreshGroups(){
+  const groups=visibleHeaders();
+  groupSelect.replaceChildren();
+  groups.forEach(header=>{
+   const option=d.createElement('option');
+   option.value=header.dataset.group;
+   option.textContent=header.querySelector('span:nth-child(3)')?.textContent||header.dataset.group;
+   groupSelect.append(option);
+  });
+  groupGo.disabled=!groups.length;
+  return groups.length;
+ }
+ function jumpGroup(){
+  const group=groupSelect.value;
+  const header=visibleHeaders().find(node=>node.dataset.group===group);
+  if(!header){status.textContent='Không tìm thấy nhóm đang chọn.';return;}
+  const count=Number(header.querySelector('.folder-size')?.textContent)||0;
+  if(!count){status.textContent='Nhóm này chưa có kênh.';return;}
+  let target=header.nextElementSibling;
+  if(!target?.matches('.channel-item')){
+   header.click(); // native collapsed-group toggle preserves its normal persistence.
+   const fresh=visibleHeaders().find(node=>node.dataset.group===group);
+   target=fresh?.nextElementSibling;
+  }
+  if(!target?.matches('.channel-item')){
+   status.textContent='Không mở được danh sách kênh của nhóm.';return;
+  }
+  const list=d.getElementById('channelList');
+  const box=list.getBoundingClientRect(),rect=target.getBoundingClientRect();
+  list.scrollTop+=rect.top-box.top-(list.clientHeight-rect.height)/2;
+  target.focus({preventScroll:true});
+  status.textContent='Đã tới nhóm '+group+': '+count+' kênh. Nhấn Enter để phát kênh được chọn.';
+ }
+ groupGo.addEventListener('click',jumpGroup);
+ groupSelect.addEventListener('keydown',event=>{
+  if(event.key==='Enter'){event.preventDefault();jumpGroup();}
+ });
  function setOpen(open){
   panel.hidden=!open;
   toggle.setAttribute('aria-expanded',String(open));
   if(open){
    const count=state.getChannels().length;
+   refreshGroups();
    number.max=String(count);
    number.value='';
    status.textContent=count?'Có '+count+' kênh. Nhập số thứ tự để cuộn tới.':'Chưa có kênh để nhảy tới.';
@@ -145,12 +192,22 @@
   });
  }
  d.addEventListener('keydown',event=>{
+  if(event.altKey&&!event.ctrlKey&&!event.metaKey&&!event.shiftKey&&event.key.toLowerCase()==='g'&&
+   d.getElementById('page-tv')?.classList.contains('active-page')){
+   event.preventDefault();
+   setOpen(true);
+   refreshGroups();
+   groupSelect.focus();
+   return;
+  }
   if(event.altKey&&!event.ctrlKey&&!event.metaKey&&event.key.toLowerCase()==='j'&&
    d.getElementById('page-tv')?.classList.contains('active-page')){
    event.preventDefault();
    setOpen(true);
   }
  });
+ groupSelect.setAttribute('aria-keyshortcuts','Alt+G');
+ groupSelect.title='Chọn nhóm kênh nhanh (Alt+G)';
  toggle.setAttribute('aria-keyshortcuts','Alt+J');
  toggle.title='Nhảy tới kênh theo số (Alt+J)';
  window.OpenIPTVPositronChannelJump=Object.freeze({open:()=>setOpen(true)});

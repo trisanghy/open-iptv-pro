@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.315",
-  "description": "Positron P5.1.230: chuyển nhanh giữa nhóm kênh bằng phím trái/phải",
+  "version": "4.23.316",
+  "description": "Positron P5.1.231: chọn trực tiếp nhóm kênh bằng Alt+G không tự phát",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",
