@@ -1,3 +1,11 @@
+## P5.1.153 — Tìm trong nhật ký thông báo bằng từ khóa không dấu / Electron v4.23.237
+- Feature priority: NEW — Cho phép tìm kiếm nội dung thông báo ngay trong nhật ký 30 mục theo từ khóa tiếng Việt có hoặc không có dấu, kết hợp bộ lọc loại thông báo mà không xóa dữ liệu.
+- User action: Mở Thông báo, nhập từ khóa trong ô Tìm trong thông báo; có thể gõ ket noi để tìm kết nối, hoặc nhấn Xóa tìm kiếm để khôi phục danh sách.
+- Electron screenshot: positron-p51153-notice-search-after-1920x1080-real.png
+- Before: positron-p51153-notice-search-before-1920x1080-real.png; After: positron-p51153-notice-search-after-1920x1080-real.png. Ảnh chỉ được xác minh sau khi mở Electron thật.
+- Riêng tư: tìm cục bộ trong RAM, không gọi mạng, không tự phát hay thay đổi M3U; tự xóa lịch sử khi đóng ứng dụng.
+- Trạng thái ban đầu: CANDIDATE tới khi QA ảnh Electron, CI và Release xác minh.
+
 ## P5.1.152 — Lọc nhật ký theo loại thông báo / Electron v4.23.236
 - Feature priority: NEW — Cho phép tìm nhanh cảnh báo, lỗi và xác nhận thành công trong nhật ký tối đa 30 mục bằng bộ lọc không phá hủy, phù hợp khi phải kiểm tra nhiều thông báo.
 - User action: Mở Thông báo ở thanh trên, bấm Cảnh báo / Lỗi / Hoàn thành để chỉ xem loại tương ứng; chọn Tất cả để khôi phục toàn bộ danh sách.

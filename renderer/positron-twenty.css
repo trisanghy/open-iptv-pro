@@ -509,3 +509,10 @@ html[data-positron="true"] .po-archive-filters{display:flex;gap:5px;flex-wrap:wr
 html[data-positron="true"] .po-archive-filters button{font:inherit;font-size:11px;min-height:29px;padding:5px 8px;border-radius:8px;cursor:pointer;border:1px solid var(--po-border,#42606b);color:var(--po-text,#eaf7f6);background:transparent}
 html[data-positron="true"] .po-archive-filters button[aria-pressed="true"]{background:#356b61;border-color:#6dd4bc;color:white}
 html[data-positron="true"] .po-archive-filters button:focus-visible{outline:2px solid var(--po-accent,#6fddce);outline-offset:2px}
+
+/* P5.1.153: tìm kiếm nhật ký, có nút xóa từ khóa. */
+html[data-positron="true"] .po-archive-search{display:flex;gap:6px;align-items:center;margin:0 0 9px}
+html[data-positron="true"] .po-archive-search input{flex:1;min-width:0;min-height:34px;padding:6px 10px;border:1px solid var(--po-border,#42606b);border-radius:8px;background:var(--po-card,#172934);color:var(--po-text,#eaf7f6);font:inherit;font-size:12px}
+html[data-positron="true"] .po-archive-search button{border:1px solid var(--po-border,#42606b);border-radius:8px;padding:6px 9px;background:transparent;color:inherit;font:inherit;font-size:11px;cursor:pointer}
+html[data-positron="true"] .po-archive-search button[hidden]{display:none!important}
+html[data-positron="true"] .po-archive-search input:focus-visible,html[data-positron="true"] .po-archive-search button:focus-visible{outline:2px solid var(--po-accent,#6fddce);outline-offset:1px}

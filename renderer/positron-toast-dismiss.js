@@ -100,20 +100,33 @@
    button.setAttribute('aria-pressed',String(id==='all'));
    filters.append(button);filterButtons.push(button);
   }
+  // P5.1.153: tìm từ khóa không dấu ngay trong dữ liệu của phiên.
+  const searchRow=document.createElement('div');searchRow.className='po-archive-search';
+  const searchInput=document.createElement('input');searchInput.type='search';searchInput.id='poArchiveSearch';
+  searchInput.setAttribute('aria-label','Tìm kiếm thông báo');searchInput.placeholder='Tìm trong thông báo…';
+  searchInput.autocomplete='off';
+  const searchClear=document.createElement('button');searchClear.type='button';
+  searchClear.id='poArchiveSearchClear';searchClear.textContent='Xóa tìm kiếm';searchClear.hidden=true;
+  searchRow.append(searchInput,searchClear);
   const entries=document.createElement('ol');entries.id='poArchiveEntries';
   const actions=document.createElement('div');actions.className='po-archive-actions';
   const clear=document.createElement('button');clear.type='button';clear.id='poArchiveClear';clear.textContent='Xóa lịch sử';
   const close=document.createElement('button');close.type='button';close.id='poArchiveClose';close.textContent='Đóng';
-  actions.append(clear,close);panel.append(title,hint,filters,entries,actions);document.body.append(panel);
+  actions.append(clear,close);panel.append(title,hint,filters,searchRow,entries,actions);document.body.append(panel);
   let history=[],isOpen=false,filterMode='all';const seen=new WeakSet();
+  const normalizeArchiveText=value=>String(value||'').toLocaleLowerCase('vi-VN')
+   .replace(/đ/g,'d').normalize('NFD').replace(/[\u0300-\u036f]/g,'');
   const render=()=>{
    count.textContent=String(history.length);count.hidden=history.length===0;
    trigger.setAttribute('aria-label','Nhật ký thông báo, '+history.length+' mục');
    entries.replaceChildren();
-   const visible=history.filter(item=>filterMode==='all'||item.severity===filterMode);
+   const queryTerms=normalizeArchiveText(searchInput.value.trim()).split(/\s+/).filter(Boolean);
+   searchClear.hidden=queryTerms.length===0;
+   const visible=history.filter(item=>(filterMode==='all'||item.severity===filterMode)
+    &&queryTerms.every(term=>normalizeArchiveText(item.text).includes(term)));
    if(!visible.length){
     const empty=document.createElement('li');empty.className='po-archive-empty';
-    empty.textContent=history.length?'Không có thông báo thuộc nhóm này.':'Chưa có thông báo trong phiên này.';entries.append(empty);
+    empty.textContent=history.length?'Không tìm thấy thông báo phù hợp.':'Chưa có thông báo trong phiên này.';entries.append(empty);
    }
    for(const item of visible){
     const li=document.createElement('li');li.className='po-archive-item po-archive-'+item.severity;
@@ -149,6 +162,8 @@
    filterButtons.forEach(item=>item.setAttribute('aria-pressed',String(item===button)));
    render();
   }));
+  searchInput.addEventListener('input',render);
+  searchClear.addEventListener('click',()=>{searchInput.value='';render();searchInput.focus({preventScroll:true});});
   close.addEventListener('click',dismiss);
   clear.addEventListener('click',()=>{history=[];render();clear.focus({preventScroll:true});});
   document.addEventListener('keydown',event=>{

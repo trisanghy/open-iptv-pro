@@ -37,7 +37,7 @@ test('P5 assets are loaded after P4 without replacing it',()=>{
 test('P5 release is immutable and versioned separately from P4.1',()=>{
  const pkg=JSON.parse(read('package.json'));
  const flow=read('.github/workflows/positron-lab.yml');
- assert.equal(pkg.version,'4.23.236');
+ assert.equal(pkg.version,'4.23.237');
  const label=pkg.description.match(/Positron\s+(P\d+\.\d+\.\d+)/)?.[1];
  assert.ok(label,'product P-label must accompany SemVer');
  assert.ok(flow.includes('TAG=positron/v'+pkg.version+'-'+label.toLowerCase()),'release tag and app version must match');
@@ -1496,4 +1496,16 @@ test('P5.1.152 lọc thông báo theo mức độ không xóa lịch sử và c�
  assert.ok(css.includes('.po-archive-filters button[aria-pressed="true"]'));
  for(const n of ['positron-p51152-alert-filter-before-1920x1080-real.png','positron-p51152-alert-filter-after-1920x1080-real.png'])
   assert.ok(qa.includes(n),'thiếu ảnh QA '+n);
+});
+
+test('P5.1.153 tìm kiếm thông báo tiếng Việt không dấu cùng bộ lọc loại',()=>{
+ const js=read('renderer/positron-toast-dismiss.js');
+ const css=read('renderer/positron-twenty.css');
+ const qa=read('scripts/positron-20-extension.cjs');
+ assert.doesNotThrow(()=>new vm.Script(js));
+ for(const t of ['poArchiveSearch','poArchiveSearchClear',"normalize('NFD')","replace(/đ/g,'d')",'queryTerms.every','searchInput.addEventListener','searchClear.addEventListener'])
+  assert.ok(js.includes(t),'thiếu tìm kiếm: '+t);
+ assert.ok(css.includes('.po-archive-search input'));
+ for(const n of ['positron-p51153-notice-search-before-1920x1080-real.png','positron-p51153-notice-search-after-1920x1080-real.png'])
+  assert.ok(qa.includes(n),'thiếu ảnh Electron '+n);
 });

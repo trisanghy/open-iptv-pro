@@ -3675,9 +3675,61 @@ async function runTwenty(page){
  for(const [key,value] of Object.entries(alertFilterQA))
   assert.equal(value,true,'P152 filter '+key+': '+JSON.stringify(alertFilterQA));
 
+
+ // P5.1.153: tìm kiếm tiếng Việt không dấu bằng thao tác bàn phím thật.
+ const input153=await page.evaluate(()=>{
+  const state=window.IPTVState;
+  const channels=state.getChannels().length;
+  const idle=state.getCurrent()===null;
+  state.toast('QA P153: Đã kết nối nguồn thành công');
+  state.toast('QA P153: Dữ liệu cần kiểm tra','warn');
+  state.toast('QA P153: Cập nhật đã lưu');
+  return {channels,idle};
+ });
+ await page.waitForTimeout(125);
+ await page.click('#poArchiveToggle');
+ const all153=await page.evaluate(()=>{
+  const items=[...document.querySelectorAll('#poArchiveEntries .po-archive-item')];
+  return {threeEntries:items.filter(x=>x.textContent.includes('QA P153:')).length===3,
+   inputAccessible:document.getElementById('poArchiveSearch')?.getAttribute('aria-label')==='Tìm kiếm thông báo',
+   searchStartsEmpty:document.getElementById('poArchiveSearch')?.value===''
+  };
+ });
+ await page.screenshot({path:path.join(out,'positron-p51153-notice-search-before-1920x1080-real.png'),animations:'disabled'});
+ await page.fill('#poArchiveSearch','ket noi');
+ const filtered153=await page.evaluate(expected=>{
+  const nodes=[...document.querySelectorAll('#poArchiveEntries .po-archive-item')];
+  return {
+   noAccentSearch:nodes.length===1&&nodes[0].textContent.includes('Đã kết nối nguồn'),
+   clearButtonVisible:document.getElementById('poArchiveSearchClear')?.hidden===false,
+   totalThree:Number(document.querySelector('#poArchiveToggle .po-archive-count')?.textContent)===3,
+   noOverflow:document.documentElement.scrollWidth<=innerWidth+1,
+   channelsIntact:window.IPTVState.getChannels().length===expected.channels,
+   noAutoplay:!expected.idle||window.IPTVState.getCurrent()===null
+  };
+ },input153);
+ await page.screenshot({path:path.join(out,'positron-p51153-notice-search-after-1920x1080-real.png'),animations:'disabled'});
+ await page.fill('#poArchiveSearch','khong-co-thong-bao');
+ const zero153=await page.evaluate(()=>({
+  emptyHint:document.querySelector('#poArchiveEntries .po-archive-empty')?.textContent.includes('Không tìm thấy'),
+  stillThree:Number(document.querySelector('#poArchiveToggle .po-archive-count')?.textContent)===3
+ }));
+ await page.click('#poArchiveSearchClear');
+ const reset153=await page.evaluate(()=>({
+  queryEmpty:document.getElementById('poArchiveSearch')?.value==='',
+  clearedAll:document.querySelectorAll('#poArchiveEntries .po-archive-item').length===3,
+  focusBack:document.activeElement?.id==='poArchiveSearch'
+ }));
+ await page.click('#poArchiveClear');await page.click('#poArchiveClose');
+ await page.evaluate(()=>{for(const node of [...document.querySelectorAll('#toastArea>.toast')])
+  if((node.textContent||'').includes('QA P153:'))node.remove();});
+ const noticeSearchQA={...all153,...filtered153,...zero153,...reset153};
+ for(const [key,value] of Object.entries(noticeSearchQA))
+  assert.equal(value,true,'P153 search '+key+': '+JSON.stringify(noticeSearchQA));
+
  await page.setViewportSize({width:1360,height:820});
   const report={type:'Positron P5 twenty distinct desktop screenshot cases',realElectron:true,syntheticChannels:false,
-  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,desktop16x9Screenshots,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA,chooserQa,toastLayoutQA,nativeToastQA,compactIdleQA,channelChipRailQA,advancedFilterQA,readableCardsQA,keyboardTabQA,favoriteEmptyQA,duplicateEmptyQA,categoryFilterQA,categoryFixtureQA,compactSingleQA,directFavoriteQA,favoriteCountQA,compactToastStackQA,toastDismissQA,toastFocusReturnQA,toastDockQA,wheelQA,pinnedAllQA,pinnedMaskQA,categoryKeyQA,dropdownChipQA,pinnedRightMaskQA,pinnedBorderMaskQA,asciiDSearchQA,emptySearchActionQA,readableCardTitleQA,favoriteSvgQA,keyboardFavoriteQA,multiTermSearchQA,keyboardSearchQA,arrowNavigationQA,pageNavigationQA,favoriteSortQA,onAirFilterQA,programmeSearchQA,upcomingProgrammeQA,soonProgrammeQA,earliestEpgSortQA,timeWindowQA,scheduleProgressQA:scheduleProgressQA,nativeReminderQA,cancelReminderQA,reminderLeadQA,toastHistoryQA,notificationArchiveQA,alertFilterQA};
+  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,desktop16x9Screenshots,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA,chooserQa,toastLayoutQA,nativeToastQA,compactIdleQA,channelChipRailQA,advancedFilterQA,readableCardsQA,keyboardTabQA,favoriteEmptyQA,duplicateEmptyQA,categoryFilterQA,categoryFixtureQA,compactSingleQA,directFavoriteQA,favoriteCountQA,compactToastStackQA,toastDismissQA,toastFocusReturnQA,toastDockQA,wheelQA,pinnedAllQA,pinnedMaskQA,categoryKeyQA,dropdownChipQA,pinnedRightMaskQA,pinnedBorderMaskQA,asciiDSearchQA,emptySearchActionQA,readableCardTitleQA,favoriteSvgQA,keyboardFavoriteQA,multiTermSearchQA,keyboardSearchQA,arrowNavigationQA,pageNavigationQA,favoriteSortQA,onAirFilterQA,programmeSearchQA,upcomingProgrammeQA,soonProgrammeQA,earliestEpgSortQA,timeWindowQA,scheduleProgressQA:scheduleProgressQA,nativeReminderQA,cancelReminderQA,reminderLeadQA,toastHistoryQA,notificationArchiveQA,alertFilterQA,noticeSearchQA};
  fs.writeFileSync(path.resolve('positron-evidence','audit-p5-20-rounds.json'),JSON.stringify(report,null,2));
  return report;
 }
