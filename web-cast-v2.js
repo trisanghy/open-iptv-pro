@@ -182,7 +182,7 @@
    if(!pair?.connected)throw Error('Chưa kết nối TV.');
    if(action==='play'){
     if(!validSource())throw Error('Nguồn phải là URL HTTP/HTTPS mà TV truy cập được. Blob/localhost không hỗ trợ.');
-    await sendRemotePlay(true);
+    if(!(await sendRemotePlay(true)))return;
    }else{
     await enqueueCommand(()=>pair.command(action));
     remoteState=action==='pause'?'paused':action==='resume'?'playing':'stopped';
@@ -249,6 +249,8 @@
   return false;
  }
  function isRemoteActive(){const cast=castState();return !!pair?.connected||!!cast.connected;}
+ function shouldUseRemotePlayer(){return isRemoteActive();}
+ function syncRemoteControls(){if(pair?.connected){updateRemoteTransport();return;}renderConnectionStatus();}
  function onLocalVolumeChanged(volume,muted){
   const level=Math.max(0,Math.min(1,Number(volume)||0));
   if(pair?.connected){void enqueueCommand(()=>pair?.connected?pair.command('volume',{volume:level,muted:!!muted}):false).catch(()=>{});return;}
@@ -257,5 +259,5 @@
  function syncAirplayState(){renderConnectionStatus();}
  function getStatus(){const cast=castState(),air=root.OpenIPTVWebCast?.getAirplayState?.()||{};return {pair:!!pair?.connected,cast:!!cast.connected,airplay:!!air.connected,remoteState};}
  function setCastFeedback(message,error=false){if(overlay)notice('cxCastNotice',message,error?'error':'');}
- root.OpenIPTVWebCastV2=Object.freeze({open,close,onChannelChanged,syncCast,syncAirplayState,setCastFeedback,onLocalStop,toggleRemotePlayback,isRemoteActive,onLocalVolumeChanged,getStatus});
+ root.OpenIPTVWebCastV2=Object.freeze({open,close,onChannelChanged,syncCast,syncAirplayState,setCastFeedback,onLocalStop,toggleRemotePlayback,isRemoteActive,onLocalVolumeChanged,getStatus,shouldUseRemotePlayer,syncRemoteControls});
 })(typeof window==='undefined'?null:window);
