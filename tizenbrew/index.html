@@ -1015,6 +1015,47 @@ function retryNativeHls(channel,token){
  * CORS without forwarding private M3U8 URLs to any external relay.
  * Activated only after direct HLS.js fails to fetch its manifest.
  */
+var hlsRelayServiceLastLaunch=0;
+function ensureTizenHlsRelayService(){
+ // TizenBrew's websocket supports StartService (event 6). Starting our own
+ // explicitly named module service avoids waiting for stale CDN metadata to
+ // be refreshed after the app HTML OTA has already advanced.
+ if(Date.now()-hlsRelayServiceLastLaunch<12000)return;
+ hlsRelayServiceLastLaunch=Date.now();
+ var socket=null;
+ try{
+  socket=new WebSocket('ws://127.0.0.1:8081');
+  var ws=socket;
+  var timeout=setTimeout(function(){try{ws.close();}catch(e){}},2600);
+  ws.onopen=function(){
+   try{
+    ws.send(JSON.stringify({
+     type:6,
+     payload:{
+      fullName:'gh/trisanghy/open-iptv-pro@tizenbrew',
+      serviceFile:'tizenbrew/hls-relay-v1.js'
+     }
+    }));
+   }catch(e){}
+   setTimeout(function(){clearTimeout(timeout);try{ws.close();}catch(e){}},1300);
+  };
+  ws.onerror=function(){clearTimeout(timeout);};
+ }catch(e){}
+}
+function requestLocalHlsSession(channel,attempt){
+ return fetch(hlsRelayServer+'/session',{
+  method:'POST',mode:'cors',cache:'no-store',
+  headers:{'Content-Type':'application/json','X-Open-IPTV-Relay':'1'},
+  body:JSON.stringify({url:channel.url})
+ }).then(function(response){
+  if(!response.ok)throw Error('Dịch vụ HLS TV trả HTTP '+response.status);
+  return response.json();
+ }).catch(function(error){
+  if(attempt>=7)throw error;
+  return new Promise(function(resolve){setTimeout(resolve,650);})
+   .then(function(){return requestLocalHlsSession(channel,attempt+1);});
+ });
+}
 function startRelayHlsPlayback(channel,token){
  if(hlsRelayAttempted||!playbackActive(token)||playbackEngine!=='html5')return false;
  if(!hlsAddress(channel&&channel.url))return false;
@@ -1026,6 +1067,7 @@ function startRelayHlsPlayback(channel,token){
  clearPlaybackTimer();
  setPlayerStatus('Đang thử bộ phát HLS ngay trong TizenBrew bằng dịch vụ TV nội bộ…');
  logPlayback('Đang kết nối bộ chuyển tiếp HLS trên TV (127.0.0.1)');
+ ensureTizenHlsRelayService();
  var completed=false,limit=0;
  limit=setTimeout(function(){
   if(completed)return;completed=true;
@@ -1034,14 +1076,7 @@ function startRelayHlsPlayback(channel,token){
    finishPlaybackError(token,'Bộ phát HLS nội bộ chưa khởi động. Đóng và mở lại TizenBrew một lần.');
   }
  },15000);
- fetch(hlsRelayServer+'/session',{
-  method:'POST',mode:'cors',cache:'no-store',
-  headers:{'Content-Type':'application/json','X-Open-IPTV-Relay':'1'},
-  body:JSON.stringify({url:channel.url})
- }).then(function(response){
-  if(!response.ok)throw Error('Dịch vụ HLS trên TV trả '+response.status);
-  return response.json();
- }).then(function(result){
+ requestLocalHlsSession(channel,0).then(function(result){
   if(completed)return;completed=true;clearTimeout(limit);
   if(!playbackActive(token)||playbackEngine!=='html5'||html5Mode!=='hls-relay')return;
   var local=String(result&&result.url||'');
@@ -1529,7 +1564,7 @@ window.addEventListener('keyup',function(e){
 document.addEventListener('tizenhwkey',function(e){if(String(e.keyName||'').toLowerCase()==='back')handleBack(e);},true);
 window.addEventListener('tizenhwkey',function(e){if(String(e.keyName||'').toLowerCase()==='back')handleBack(e);},true);
 document.addEventListener('focusin',function(event){rememberHomeFocus(event.target);},true);
-document.body.dataset.theme=state.theme;draw();updateBottomActions();refreshTizenBrewModules();setTimeout(function(){if(resumeLastChannel())byId('player').focus();else restoreHomeFocus();},50);
+document.body.dataset.theme=state.theme;draw();updateBottomActions();refreshTizenBrewModules();ensureTizenHlsRelayService();setTimeout(function(){if(resumeLastChannel())byId('player').focus();else restoreHomeFocus();},50);
 function clock(){var d=new Date();byId('clock').textContent=String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');}clock();setInterval(clock,30000);
 })();
 </script></body></html>
