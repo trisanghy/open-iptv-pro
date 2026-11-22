@@ -1887,7 +1887,8 @@ test('P5.1.181 giữ card Favorites đọc được khi có 8 kênh',()=>{
  assert.ok(css.includes('#page-fav #favoriteList.favorite-grid'));
  assert.ok(css.includes('repeat(auto-fit,minmax(min(100%,390px),1fr))!important'));
  assert.ok(css.includes('#page-fav #favoriteList .fav-card h3'));
- assert.ok(css.includes('grid-template-columns:minmax(0,1fr)!important'));
+ assert.ok(css.includes('grid-template-columns:minmax(0,1fr)!important'))
+ assert.ok(css.includes('favorite-grid:not(:has(>.empty-list))'), 'Empty Favorites retains compact centering');;
  assert.ok(qa.includes('favoriteLayoutQA'));
  assert.ok(qa.includes('titleNotTruncated'));
 });

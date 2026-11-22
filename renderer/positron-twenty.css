@@ -657,7 +657,7 @@ html[data-positron="true"] #page-fav .po-fav-more-bulk:focus-visible{
 
 /* P5.1.181: ảnh P180 với 8 Favorites phơi bày 6 cột hẹp từ --ui-grid-min.
    Giới hạn riêng trang Yêu thích để giữ đủ chỗ cho tên, logo và nút xem/sao. */
-html[data-positron="true"] #page-fav #favoriteList.favorite-grid{
+html[data-positron="true"] #page-fav #favoriteList.favorite-grid:not(:has(>.empty-list)){
  display:grid!important;
  grid-template-columns:repeat(auto-fit,minmax(min(100%,390px),1fr))!important;
  gap:14px!important;align-content:start!important;
@@ -672,7 +672,7 @@ html[data-positron="true"] #page-fav #favoriteList .fav-card h3{
  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
 }
 @media(max-width:760px){
- html[data-positron="true"] #page-fav #favoriteList.favorite-grid{
+ html[data-positron="true"] #page-fav #favoriteList.favorite-grid:not(:has(>.empty-list)){
   grid-template-columns:minmax(0,1fr)!important;
  }
 }
