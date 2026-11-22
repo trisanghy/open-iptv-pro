@@ -59,10 +59,15 @@ button,input,textarea{font:inherit;color:inherit}button{cursor:pointer;border:2p
 #player.is-playing .playerfoot,#player.is-playing .playerhead{opacity:0}
 .playerstatus[hidden]{display:none!important}
 #video:focus-visible{outline:none}
+#avplayObject{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+#player .playerhead,#player .playerstatus,#player .playerfoot{z-index:2}
+#player:focus-visible{outline:none}
 @media(max-width:1100px){.nav .sidebar-shortcuts{gap:6px;padding:0 2px}.nav .sidebar-shortcuts button{font-size:13px;padding:8px 9px}}
-</style></head><body data-theme="dark">
+</style>
+<script type="text/javascript" src="$WEBAPIS/webapis/webapis.js"></script>
+</head><body data-theme="dark">
 <div id="app">
-<header class="top"><div class="brand"><div class="brandicon">▶</div><div><strong>Open IPTV Pro <small>TV</small></strong><p>Samsung Tizen Edition · TizenBrew v0.1.20</p></div></div><div class="toolbar"><span class="clock" id="clock">--:--</span><button id="searchBtn">⌕ Tìm</button><button id="addBtn">＋ Nguồn</button><button id="themeBtn">◐ Giao diện</button></div></header>
+<header class="top"><div class="brand"><div class="brandicon">▶</div><div><strong>Open IPTV Pro <small>TV</small></strong><p>Samsung Tizen Edition · TizenBrew v0.1.21</p></div></div><div class="toolbar"><span class="clock" id="clock">--:--</span><button id="searchBtn">⌕ Tìm</button><button id="addBtn">＋ Nguồn</button><button id="themeBtn">◐ Giao diện</button></div></header>
 <div class="main"><nav class="nav"><button class="active" data-nav="all">▣　Trực tiếp</button><button data-nav="favorites">♡　Yêu thích</button><button data-nav="recent">◷　Đã xem</button><button data-nav="sources">☷　Nguồn M3U</button><button data-nav="help">⚙　Hướng dẫn</button><div id="sidebarShortcuts" class="sidebar-shortcuts"><button type="button" id="tizenTubeBtn" title="Chuyển sang TizenTube đã cài trong TizenBrew">▶ TizenTube</button><button type="button" id="exitModuleBtn" class="exit-small" title="Thoát về TizenBrew">✕ Thoát</button></div><p class="tip">Dùng ↑ ↓ ← → và OK để điều khiển bằng remote TV.</p></nav>
 <section class="listpane"><div class="heading"><div><div class="eyebrow">DANH SÁCH KÊNH</div><h1 id="heading">Trực tiếp</h1></div><span id="count">0 kênh</span></div><div class="groups" id="groups"></div><div class="channels" id="channels"></div><div class="empty" id="empty" hidden><h2>Chưa có kênh IPTV</h2><p>Thêm nguồn bằng URL trên remote hoặc quét QR để nhập bằng điện thoại.</p><button id="emptyAdd" class="primary">＋ Thêm nguồn IPTV</button><button id="sampleBtn">▶ Luồng kiểm thử</button></div><button id="more" hidden>Xem thêm kênh ↓</button></section>
 <aside class="details"><div class="preview"><span class="live">● TRỰC TIẾP</span><b id="previewText">TV</b><span class="watermark">OPEN IPTV PRO</span></div><div class="eyebrow">KÊNH ĐANG CHỌN</div><h2 id="channelTitle">Open IPTV Pro TV</h2><p id="channelGroup">Chọn kênh để xem</p><div class="info"><div class="eyebrow">THÔNG TIN</div><p id="channelInfo">Hỗ trợ nhập M3U, nhóm kênh, yêu thích và remote Samsung.</p></div><div class="actions"><button class="primary" id="watchBtn">▶ Xem</button><button id="favBtn">♡ Yêu thích</button></div></aside></div>
@@ -80,7 +85,7 @@ button,input,textarea{font:inherit;color:inherit}button{cursor:pointer;border:2p
 <p id="sourceQRStatus" role="status">Đang tạo mã QR…</p><p id="sourcePhoneLink"></p>
 <button type="button" id="refreshSourceQR">↻ Tạo mã QR mới</button></section></div></div>
 <div id="searchDialog" hidden><label for="searchInput">Tìm kênh</label><input id="searchInput" placeholder="Nhập tên kênh..."><div class="buttons"><button id="cancelSearch">Hủy</button><button id="applySearch" class="primary">Tìm</button></div></div></div></div>
-<div id="player" hidden><video id="video" tabindex="0" playsinline preload="none"></video><div class="playerhead"><strong id="playingName">Open IPTV Pro TV</strong></div><div class="playerstatus" id="playerStatus" role="status">Đang tải luồng…</div><div class="playerfoot">CH ± Chuyển kênh　·　OK Phát/Tạm dừng　·　Back Danh sách</div></div>
+<div id="player" hidden tabindex="-1"><video id="video" tabindex="0" playsinline preload="none"></video><object id="avplayObject" type="application/avplayer" hidden></object><div class="playerhead"><strong id="playingName">Open IPTV Pro TV</strong></div><div class="playerstatus" id="playerStatus" role="status">Đang tải luồng…</div><div class="playerfoot">CH ± Chuyển kênh　·　OK Phát/Tạm dừng　·　Back Danh sách</div></div>
 <div id="toast" hidden></div>
 <!-- QRCode.js © davidshimjs, MIT license. Embedded to work on older Tizen browsers. -->
 <script>
@@ -580,9 +585,179 @@ catch(e){var error=sourceError(e,address);notify('Không tải được URL. Qu�
 finally{byId('saveSource').disabled=false;byId('saveSource').textContent='Lưu và tải';}}
 function setPlayerStatus(message){var status=byId('playerStatus');status.textContent=message||'';status.hidden=!message;}
 function updateBottomActions(){byId('exitModuleBtn').title='Thoát về TizenBrew';}
-function play(c){if(!c)return;playing=c;state.recent=[c.id].concat(state.recent.filter(function(id){return id!==c.id;})).slice(0,60);save();byId('player').hidden=false;byId('player').classList.remove('is-playing');updateBottomActions();byId('playingName').textContent=c.name;
-var video=byId('video');try{video.pause();video.removeAttribute('src');video.load();video.src=c.url;setPlayerStatus('Đang mở '+c.name+'...');video.play().then(function(){if(playing&&playing.id===c.id&&!video.paused)setPlayerStatus('');}).catch(function(){if(playing&&playing.id===c.id&&video.paused)setPlayerStatus('Không tự phát được. Nhấn OK thử lại; codec hoặc CORS có thể không được hỗ trợ.');});}catch(e){setPlayerStatus(String(e.message||e));}}
-function closePlayer(){var v=byId('video');try{v.pause();v.removeAttribute('src');v.load();}catch(e){}byId('player').hidden=true;byId('player').classList.remove('is-playing');setPlayerStatus('');playing=null;draw();updateBottomActions();}
+
+/* Samsung playback engines: AVPlay is preferred for IPTV. HTML5 and HLS.js
+ * are fallbacks, not the only engine. Never send playlist URLs to a proxy. */
+var playbackSerial=0,playbackEngine='',avplayInstance=null,hlsInstance=null,playbackTimer=0,hlsLibraryPromise=null;
+function nativeAvplay(){
+ try{
+  return typeof webapis!=='undefined'&&webapis.avplay&&typeof webapis.avplay.open==='function'?
+   webapis.avplay:null;
+ }catch(e){return null;}
+}
+function hlsAddress(address){return /\.m3u8?(?:[?#]|$)/i.test(String(address||''));}
+function playbackActive(token){return token===playbackSerial&&!byId('player').hidden;}
+function clearPlaybackTimer(){if(playbackTimer)clearTimeout(playbackTimer);playbackTimer=0;}
+function stopPlaybackEngine(){
+ clearPlaybackTimer();
+ var engine=playbackEngine;playbackEngine='';
+ if(hlsInstance){try{hlsInstance.destroy();}catch(e){}hlsInstance=null;}
+ if(avplayInstance){
+  var av=avplayInstance;avplayInstance=null;
+  try{var st=av.getState&&av.getState();if(st&&st!=='NONE'&&st!=='IDLE')av.stop();}catch(e){}
+  try{av.close();}catch(e){}
+ }
+ var video=byId('video');
+ try{video.pause();video.removeAttribute('src');video.load();}catch(e){}
+ video.hidden=false;byId('avplayObject').hidden=true;
+}
+function playbackReady(token){
+ if(!playbackActive(token))return;
+ clearPlaybackTimer();
+ byId('player').classList.add('is-playing');setPlayerStatus('');
+}
+function playbackFailure(token,message){
+ if(!playbackActive(token))return;
+ clearPlaybackTimer();
+ byId('player').classList.remove('is-playing');
+ setPlayerStatus('Không phát được kênh. '+String(message||'Nguồn hoặc codec không hỗ trợ.').slice(0,170));
+}
+function fallbackFromAvplay(channel,token,message){
+ if(!playbackActive(token)||playbackEngine!=='avplay')return;
+ stopPlaybackEngine();
+ if(!playbackActive(token))return;
+ setPlayerStatus('AVPlay không mở được ('+String(message||'lỗi luồng').slice(0,85)+'). Đang thử bộ phát dự phòng…');
+ startHtml5Playback(channel,token);
+}
+function nativeHtml5Play(video,token){
+ if(!playbackActive(token)||playbackEngine!=='html5')return;
+ try{
+  var result=video.play();
+  if(result&&typeof result.catch==='function')result.catch(function(err){
+   if(!playbackActive(token)||playbackEngine!=='html5')return;
+   var name=String(err&&err.name||'');
+   if(name==='NotAllowedError')setPlayerStatus('Nhấn OK để bắt đầu phát kênh.');
+   else playbackFailure(token,'HTML5: '+String(err&&err.message||name||'không hỗ trợ').slice(0,100));
+  });
+ }catch(err){playbackFailure(token,'HTML5: '+String(err&&err.message||err));}
+}
+function loadHlsLibrary(){
+ if(window.Hls)return Promise.resolve(window.Hls);
+ if(hlsLibraryPromise)return hlsLibraryPromise;
+ hlsLibraryPromise=new Promise(function(resolve,reject){
+  var urls=[
+   'https://trisanghy.github.io/open-iptv-pro/hls.min.js',
+   'https://cdn.jsdelivr.net/npm/hls.js@1.6.15/dist/hls.min.js'
+  ];
+  function next(){
+   if(window.Hls){resolve(window.Hls);return;}
+   if(!urls.length){reject(Error('Không tải được HLS.js'));return;}
+   var script=document.createElement('script'),finished=false;
+   var timeout=setTimeout(function(){done(false);},7000);
+   function done(ok){
+    if(finished)return;finished=true;clearTimeout(timeout);
+    if(ok&&window.Hls)resolve(window.Hls);
+    else {if(script.parentNode)script.parentNode.removeChild(script);next();}
+   }
+   script.src=urls.shift();script.async=true;
+   script.onload=function(){done(true);};script.onerror=function(){done(false);};
+   document.head.appendChild(script);
+  }
+  next();
+ }).catch(function(e){hlsLibraryPromise=null;throw e;});
+ return hlsLibraryPromise;
+}
+function startHtml5Playback(channel,token){
+ if(!playbackActive(token))return;
+ playbackEngine='html5';
+ var video=byId('video');video.hidden=false;byId('avplayObject').hidden=true;
+ setPlayerStatus('Đang thử HTML5'+(hlsAddress(channel.url)?'/HLS.js':'')+'…');
+ playbackTimer=setTimeout(function(){
+  if(playbackActive(token)&&playbackEngine==='html5'&&video.paused)
+   playbackFailure(token,'HTML5 quá thời gian chờ. Kiểm tra luồng, codec hoặc HTTPS.');
+ },22000);
+ var nativeHls=false;
+ try{nativeHls=!!video.canPlayType&&!!video.canPlayType('application/vnd.apple.mpegurl');}catch(e){}
+ if(hlsAddress(channel.url)&&!nativeHls){
+  loadHlsLibrary().then(function(Hls){
+   if(!playbackActive(token)||playbackEngine!=='html5')return;
+   var supported=false;try{supported=!!Hls&&Hls.isSupported();}catch(e){}
+   if(!supported){video.src=channel.url;nativeHtml5Play(video,token);return;}
+   try{
+    hlsInstance=new Hls({enableWorker:false,lowLatencyMode:false});
+    hlsInstance.on(Hls.Events.MANIFEST_PARSED,function(){nativeHtml5Play(video,token);});
+    hlsInstance.on(Hls.Events.ERROR,function(event,data){
+     if(!playbackActive(token)||playbackEngine!=='html5'||!data||!data.fatal)return;
+     playbackFailure(token,'HLS.js '+String(data.details||data.type||'lỗi luồng'));
+    });
+    hlsInstance.attachMedia(video);
+    hlsInstance.loadSource(channel.url);
+   }catch(e){if(hlsInstance){try{hlsInstance.destroy();}catch(x){}hlsInstance=null;}video.src=channel.url;nativeHtml5Play(video,token);}
+  }).catch(function(){
+   if(!playbackActive(token)||playbackEngine!=='html5')return;
+   video.src=channel.url;nativeHtml5Play(video,token);
+  });
+ }else{video.src=channel.url;nativeHtml5Play(video,token);}
+}
+function startAvplay(channel,token){
+ var api=nativeAvplay();
+ if(!api)return false;
+ playbackEngine='avplay';avplayInstance=api;
+ byId('video').hidden=true;byId('avplayObject').hidden=false;
+ setPlayerStatus('Đang kết nối bằng Samsung AVPlay…');
+ try{
+  api.open(channel.url);
+  api.setDisplayRect(0,0,1920,1080);
+  try{api.setDisplayMethod('PLAYER_DISPLAY_MODE_LETTER_BOX');}catch(e){}
+  api.setListener({
+   onbufferingstart:function(){if(playbackActive(token)&&playbackEngine==='avplay')setPlayerStatus('AVPlay đang đệm luồng…');},
+   onbufferingcomplete:function(){if(playbackActive(token)&&playbackEngine==='avplay')playbackReady(token);},
+   oncurrentplaytime:function(){if(playbackActive(token)&&playbackEngine==='avplay')playbackReady(token);},
+   onerror:function(reason){fallbackFromAvplay(channel,token,'Lỗi '+reason);},
+   onstreamcompleted:function(){if(playbackActive(token))setPlayerStatus('Luồng đã kết thúc. Nhấn OK để thử lại.');}
+  });
+  playbackTimer=setTimeout(function(){fallbackFromAvplay(channel,token,'quá thời gian chờ');},18000);
+  api.prepareAsync(function(){
+   if(!playbackActive(token)||playbackEngine!=='avplay')return;
+   try{api.play();playbackReady(token);}catch(e){fallbackFromAvplay(channel,token,e&&e.message||e);}
+  },function(err){fallbackFromAvplay(channel,token,err&&err.message||err);});
+  return true;
+ }catch(err){
+  stopPlaybackEngine();
+  return false;
+ }
+}
+function play(c){
+ if(!c)return;
+ playbackSerial++;var token=playbackSerial;stopPlaybackEngine();playing=c;
+ state.recent=[c.id].concat(state.recent.filter(function(id){return id!==c.id;})).slice(0,60);save();
+ byId('player').hidden=false;byId('player').classList.remove('is-playing');
+ updateBottomActions();byId('playingName').textContent=c.name;
+ setPlayerStatus('Đang mở '+c.name+'…');
+ if(!startAvplay(c,token))startHtml5Playback(c,token);
+}
+function togglePlayback(){
+ if(!playing)return;
+ if(playbackEngine==='avplay'&&avplayInstance){
+  try{
+   var stateNow=avplayInstance.getState&&avplayInstance.getState();
+   if(stateNow==='PLAYING'){avplayInstance.pause();byId('player').classList.remove('is-playing');}
+   else if(stateNow==='PAUSED'||stateNow==='READY'){avplayInstance.play();playbackReady(playbackSerial);}
+   else {play(playing);}
+  }catch(e){fallbackFromAvplay(playing,playbackSerial,e&&e.message||e);}
+  return;
+ }
+ if(playbackEngine==='html5'){
+  var video=byId('video');if(video.paused)nativeHtml5Play(video,playbackSerial);else video.pause();
+  return;
+ }
+ play(playing);
+}
+function closePlayer(){
+ playbackSerial++;stopPlaybackEngine();byId('player').hidden=true;
+ byId('player').classList.remove('is-playing');setPlayerStatus('');
+ playing=null;draw();updateBottomActions();
+}
 function resumeLastChannel(){
  // Watch history is already persisted in localStorage by play(). Only restore a channel still visible in the current M3U lists.
  var id=state.recent&&state.recent[0];
@@ -720,7 +895,7 @@ if(!byId('player').hidden){
  if(c===428||k==='ChannelDown'){e.preventDefault();changeChannel(-1);return;}
  if(k.indexOf('Arrow')===0){e.preventDefault();return;}
  if(k==='Enter'||c===415||c===10252){
-  e.preventDefault();var v=byId('video');if(v.paused)v.play().catch(function(){if(v.paused)notify('Luồng không hỗ trợ phát trên TV.');});else v.pause();return;
+  e.preventDefault();togglePlayback();return;
  }return;
 }
 if(k.indexOf('Arrow')===0){e.preventDefault();move(k);}}
@@ -737,11 +912,11 @@ byId('tizenTubeBtn').onclick=openTizenTube;
 byId('themeBtn').onclick=function(){var themes=['dark','light','amoled'],previous=state.theme;state.theme=themes[(themes.indexOf(state.theme)+1)%3];if(!save()){state.theme=previous;document.body.dataset.theme=previous;return;}document.body.dataset.theme=state.theme;notify('Giao diện: '+state.theme);};
 byId('watchBtn').onclick=function(){play(selected);};byId('favBtn').onclick=function(){if(!selected)return;var id=selected.id,old=state.favorites[id];if(old)delete state.favorites[id];else state.favorites[id]=true;if(!save()){if(old===undefined)delete state.favorites[id];else state.favorites[id]=old;}draw();};
 byId('more').onclick=function(){showLimit+=160;draw();};byId('sampleBtn').onclick=function(){if(!state.sources.some(function(s){return s.name==='Thử nghiệm';})){state.sources.push({name:'Thử nghiệm',channels:parse('#EXTM3U\n#EXTINF:-1,Mux Test HLS\nhttps://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8','Thử nghiệm')});if(!save()){state.sources.pop();draw();return;}}draw();notify('Đã thêm luồng thử nghiệm HLS.');};
-byId('video').onplaying=function(){byId('player').classList.add('is-playing');setPlayerStatus('');};
-byId('video').ontimeupdate=function(){if(!this.paused&&this.readyState>=2){byId('player').classList.add('is-playing');setPlayerStatus('');}};
-byId('video').onpause=function(){byId('player').classList.remove('is-playing');};
-byId('video').onwaiting=function(){byId('player').classList.remove('is-playing');};
-byId('video').onerror=function(){if(this.paused||this.readyState<2)setPlayerStatus('TV không phát được luồng (định dạng, codec, CORS hoặc HTTPS).');};
+byId('video').onplaying=function(){if(playbackEngine==='html5')playbackReady(playbackSerial);};
+byId('video').ontimeupdate=function(){if(playbackEngine==='html5'&&!this.paused&&this.readyState>=2)playbackReady(playbackSerial);};
+byId('video').onpause=function(){if(playbackEngine==='html5')byId('player').classList.remove('is-playing');};
+byId('video').onwaiting=function(){if(playbackEngine==='html5')byId('player').classList.remove('is-playing');};
+byId('video').onerror=function(){if(playbackEngine==='html5'&&(this.paused||this.readyState<2))playbackFailure(playbackSerial,'HTML5 không giải mã được nguồn (codec, HTTPS hoặc CORS).');};
 var backDownHandled=false,backDownReset=0;
 window.addEventListener('keydown',function(e){
  if(isRemoteBack(e)){
@@ -762,7 +937,7 @@ window.addEventListener('keyup',function(e){
 },true);
 document.addEventListener('tizenhwkey',function(e){if(String(e.keyName||'').toLowerCase()==='back')handleBack(e);},true);
 window.addEventListener('tizenhwkey',function(e){if(String(e.keyName||'').toLowerCase()==='back')handleBack(e);},true);
-document.body.dataset.theme=state.theme;draw();updateBottomActions();refreshTizenBrewModules();setTimeout(function(){if(resumeLastChannel())byId('video').focus();else document.querySelector('[data-nav=all]').focus();},50);
+document.body.dataset.theme=state.theme;draw();updateBottomActions();refreshTizenBrewModules();setTimeout(function(){if(resumeLastChannel())byId('player').focus();else document.querySelector('[data-nav=all]').focus();},50);
 function clock(){var d=new Date();byId('clock').textContent=String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');}clock();setInterval(clock,30000);
 })();
 </script></body></html>
