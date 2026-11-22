@@ -2,14 +2,23 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
-## P5.1.243 — Shift+R mở Vừa xem và quay về tất cả bằng bàn phím
+## P5.1.244 — Gõ số trực tiếp trên hàng kênh để nhảy nhanh
 
-**Ứng dụng:** 4.23.328 · **Trạng thái:** Chưa có bản phát hành
+**Ứng dụng:** 4.23.329 · **Trạng thái:** Chưa có bản phát hành
+
+Feature priority: NEW — Gõ chữ số 0–9 khi focus hàng kênh để mở hộp nhảy số, nhập tiếp và nhấn Enter để đi tới kênh; không tự phát hoặc đổi nguồn. User action: Focus một hàng kênh trong Xem truyền hình; gõ 412 rồi Enter để chuyển tiêu điểm tới kênh 412, Escape để hủy.
+
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/b1d614ea6af394e5a88924c72d1cb968a6ccecc4)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+
+## P5.1.243 — Shift+R mở/thoát Vừa xem mà không cần chuột / Electron 4.23.328
+
+**Ứng dụng:** 4.23.328 · **Trạng thái:** Đã phát hành
 
 Feature priority: NEW — Thêm phím Shift+R ngay tại hàng kênh để mở lọc Vừa xem. Ảnh P5.1.242 cho thấy khi lịch sử rỗng không còn hàng nào để focus, do đó Shift+R trên chip Vừa xem cũng quay lại Tất cả và trả focus về kênh đầu tiên. Cho phép thao tác hai chiều bằng bàn phím, không tự phát, không sửa Favorites hay nguồn. Electron screenshot: positron-p51243-keyboard-recent-after-1920x1080-real.png
 
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/e37e695ef965ec6b55a9fe26dfc54ac1a0d08032)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/7edfcd38a3c6fab821f5f8097d8a6b1c012b83e5)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.328-p5.1.243)
 
 ## P5.1.242 — Chip báo mọi bộ lọc kênh ẩn / Electron 4.23.327
 
