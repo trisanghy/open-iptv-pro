@@ -7,15 +7,28 @@ Trang này được tạo tự động từ GitHub Releases và ảnh kiểm th�
 [Mở WEBSITE changelog tương tác](https://raw.githack.com/trisanghy/open-iptv-pro/Positron/docs/positron-features/index.html) · [Giao diện HTML trong repository](index.html) · [Các bản phát hành](https://github.com/trisanghy/open-iptv-pro/releases) · [Nhật ký Git tiếng Việt](LOG_GIT_TIENG_VIET.md) · [Quy tắc ưu tiên tính năng](../../POSITRON_FEATURE_RULES.md)
 
 <details>
-<summary><strong>P5.1.257</strong> · Chi tiết nguồn và số kênh · CHƯA CÓ BẢN PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.258</strong> · Tìm kiếm chi tiết nguồn theo tên · CHƯA CÓ BẢN PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
 
-**Ứng dụng:** 4.23.342 · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
+**Ứng dụng:** 4.23.343 · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
+
+Feature priority: NEW — Bổ sung ô tìm nguồn ngay sau khi mở “Chi tiết nguồn”, tìm không phân biệt hoa/thường và dấu tiếng Việt trên **toàn bộ danh sách nguồn**, không chỉ 30 dòng đầu. Danh sách chi tiết có cuộn riêng và thông báo khi không có kết quả. Không gọi playback, không ghi dữ liệu nguồn/M3U, giữ số kênh/trạng thái từng nguồn và có thể thu gọn như trước.
+
+*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+
+[Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/tree/Positron) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/1c8c2a44f32ffb9a78c9d4786c57dc4af825cde9)
+
+</details>
+
+<details>
+<summary><strong>P5.1.257</strong> · Mở chi tiết nguồn và số kênh từ thẻ thống kê / Electron 4.23.342 · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+
+**Ứng dụng:** 4.23.342 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
 Feature priority: NEW — Thêm nút Chi tiết nguồn ngay cạnh thống kê thư viện. Khi bấm, ứng dụng liệt kê tên từng nguồn, số kênh thuộc nguồn và trạng thái Bật/Tắt, có thể đóng lại; bản lớn giới hạn hiển thị 30 nguồn để tránh làm nặng giao diện. Tất cả chỉ đọc, không thay đổi playlist. Electron screenshot: positron-p51257-source-details-after-1920x1080-real.png
 
 *Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
 
-[Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/tree/Positron) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/b7aa11106930fec36fe1e0ca4a544bf09c9f5156)
+[Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.342-p5.1.257) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/b7aa11106930fec36fe1e0ca4a544bf09c9f5156) · [Tải Windows Setup x64](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.342-p5.1.257/Open-IPTV-Pro-Setup-4.23.342-x64.exe) · [Tải gói ảnh QA](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.342-p5.1.257/Positron-P51257-20-Real-Screenshots.zip)
 
 </details>
 
