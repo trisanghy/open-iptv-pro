@@ -564,10 +564,10 @@ byId('sendText').onclick=async function(){
   byId('playlistText').value='';
  }catch(e){feedback('Lỗi gửi nội dung M3U: '+String(e.message||e),true);}
 };
-byId('tabManage').onclick=function(){showTab('manage');if(online&&!snapshot)void getSnapshot('',0,'');};
+byId('tabManage').onclick=function(){collapsedFolders={};showTab('manage');renderChannels();if(online&&!snapshot)void getSnapshot('',0,'');};
 byId('tabAdd').onclick=function(){showTab('add');};
 byId('refresh').onclick=function(){void getSnapshot(currentSource,offset,query);};
-byId('sourceSelect').onchange=function(){query='';activeGroup='';managerMode='all';selectedItems={};selectionMode=false;byId('filterChannels').value='';void getSnapshot(this.value,0,'');};
+byId('sourceSelect').onchange=function(){query='';activeGroup='';managerMode='all';collapsedFolders={};selectedItems={};selectionMode=false;byId('filterChannels').value='';void getSnapshot(this.value,0,'');};
 byId('filterChannels').oninput=function(){var next=this.value.trim().slice(0,90);clearTimeout(filterTimer);filterTimer=setTimeout(function(){void getSnapshot(currentSource,0,next);},350);};
 byId('sourceForm').onsubmit=async function(event){
  event.preventDefault();
