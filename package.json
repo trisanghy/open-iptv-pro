@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.241",
-  "description": "Positron P5.1.157: phân bố nhóm thư viện kênh",
+  "version": "4.23.242",
+  "description": "Positron P5.1.158: khám phá kênh thiếu logo",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

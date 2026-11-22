@@ -1,5 +1,5 @@
 'use strict';
-// Positron P5.1.156 — Bảng phân tích metadata thư viện, không thử stream.
+// Positron P5.1.158 — Bảng phân tích metadata thư viện, không thử stream.
 (()=>{
  const d=document,root=d.documentElement,bar=d.getElementById('positronBar');
  const core=window.PositronLibraryPulseCore,state=window.IPTVState;
@@ -40,11 +40,30 @@
  moreGroups.setAttribute('aria-controls','poLibraryPulseGroups');
  moreGroups.setAttribute('aria-expanded','false');
  groupPane.append(groupHeading,groupRows,moreGroups);
+ // P5.1.158: duyệt các kênh thiếu URL logo mà không làm thay đổi nguồn.
+ const missingPane=d.createElement('section');missingPane.id='poLibraryMissingLogos';
+ missingPane.className='po-pulse-missing';
+ const missingToggle=d.createElement('button');missingToggle.type='button';
+ missingToggle.id='poLibraryMissingToggle';
+ missingToggle.setAttribute('aria-controls','poLibraryMissingBody');
+ missingToggle.setAttribute('aria-expanded','false');
+ missingToggle.textContent='Kênh thiếu logo';
+ const missingBody=d.createElement('div');missingBody.id='poLibraryMissingBody';
+ missingBody.hidden=true;missingBody.className='po-pulse-missing-body';
+ const missingRows=d.createElement('ol');missingRows.id='poLibraryMissingRows';
+ const missingNav=d.createElement('div');missingNav.className='po-pulse-missing-nav';
+ const missingPrev=d.createElement('button');missingPrev.type='button';missingPrev.id='poLibraryMissingPrev';
+ missingPrev.textContent='Trước';
+ const missingPageLabel=d.createElement('span');missingPageLabel.id='poLibraryMissingPage';
+ const missingNext=d.createElement('button');missingNext.type='button';missingNext.id='poLibraryMissingNext';
+ missingNext.textContent='Tiếp';
+ missingNav.append(missingPrev,missingPageLabel,missingNext);
+ missingBody.append(missingRows,missingNav);missingPane.append(missingToggle,missingBody);
  const footer=d.createElement('footer');footer.className='po-pulse-footer';
  const stamp=d.createElement('span');stamp.id='poLibraryPulseStamp';
  const refresh=d.createElement('button');refresh.type='button';refresh.id='poLibraryPulseRefresh';
  refresh.textContent='Cập nhật';footer.append(stamp,refresh);
- panel.append(header,hint,cards,ratios,groupPane,footer);d.body.append(panel);
+ panel.append(header,hint,cards,ratios,groupPane,missingPane,footer);d.body.append(panel);
  const addCard=(label,value)=>{
   const item=d.createElement('div');item.className='po-pulse-card';
   const number=d.createElement('strong');number.textContent=String(value);
@@ -88,7 +107,28 @@
   addRatio('Có URL logo trong metadata',result.withLogoMeta,result.total);
   addRatio('Có mã nhận diện EPG',result.withEpgId,result.total);
   groupSummary=result.groupBreakdown;groupTotal=result.total;renderGroupRows();
+  missingIndex=0;renderMissing();
   stamp.textContent='Cập nhật lúc '+new Date().toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit'});
+ };
+ let missingIndex=0,missingTotal=0;
+ const renderMissing=()=>{
+  const report=core.missingLogos(state.getChannels(),{offset:missingIndex*10,limit:10});
+  missingTotal=report.total;missingRows.replaceChildren();
+  missingToggle.textContent='Kênh thiếu logo: '+missingTotal;
+  for(const item of report.rows){
+   const li=d.createElement('li');li.className='po-pulse-missing-row';
+   const name=d.createElement('strong');name.textContent=item.name;
+   const group=d.createElement('small');group.textContent=item.group;
+   li.append(name,group);missingRows.append(li);
+  }
+  if(!report.rows.length){
+   const empty=d.createElement('li');empty.className='po-pulse-missing-empty';
+   empty.textContent='Không có kênh thiếu URL logo.';missingRows.append(empty);
+  }
+  const pages=Math.max(1,Math.ceil(missingTotal/10));
+  missingPageLabel.textContent='Trang '+(missingIndex+1)+' / '+pages;
+  missingPrev.disabled=missingIndex===0;
+  missingNext.disabled=(missingIndex+1)*10>=missingTotal;
  };
  let opened=false;
  const hide=()=>{if(!opened)return;const restore=panel.contains(d.activeElement);
@@ -107,6 +147,20 @@
   if(visibleGroupCount>=groupSummary.length&&visibleGroupCount>5)visibleGroupCount=5;
   else visibleGroupCount+=5;
   renderGroupRows();moreGroups.focus({preventScroll:true});
+ });
+ missingToggle.addEventListener('click',()=>{
+  const expanded=missingToggle.getAttribute('aria-expanded')!=='true';
+  missingBody.hidden=!expanded;
+  missingToggle.setAttribute('aria-expanded',String(expanded));
+  if(expanded)missingPane.scrollIntoView({block:'nearest',behavior:'instant'});
+ });
+ missingPrev.addEventListener('click',()=>{
+  if(missingIndex>0)missingIndex--;
+  renderMissing();missingPrev.focus({preventScroll:true});
+ });
+ missingNext.addEventListener('click',()=>{
+  if((missingIndex+1)*10<missingTotal)missingIndex++;
+  renderMissing();missingNext.focus({preventScroll:true});
  });
  close.addEventListener('click',hide);
  refresh.addEventListener('click',()=>{render();refresh.focus({preventScroll:true});});

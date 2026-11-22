@@ -37,7 +37,7 @@ test('P5 assets are loaded after P4 without replacing it',()=>{
 test('P5 release is immutable and versioned separately from P4.1',()=>{
  const pkg=JSON.parse(read('package.json'));
  const flow=read('.github/workflows/positron-lab.yml');
- assert.equal(pkg.version,'4.23.241');
+ assert.equal(pkg.version,'4.23.242');
  const label=pkg.description.match(/Positron\s+(P\d+\.\d+\.\d+)/)?.[1];
  assert.ok(label,'product P-label must accompany SemVer');
  assert.ok(flow.includes('TAG=positron/v'+pkg.version+'-'+label.toLowerCase()),'release tag and app version must match');
@@ -1555,4 +1555,19 @@ test('P5.1.156 Bản đồ thư viện chỉ đọc metadata và dùng Electron 
  assert.ok(css.includes('.po-pulse-panel[hidden]'));
  for(const n of ['positron-p51156-library-pulse-before-1920x1080-real.png','positron-p51156-library-pulse-after-1920x1080-real.png'])
   assert.ok(qa.includes(n),'thiếu ảnh Electron thật '+n);
+});
+
+test('P5.1.158 xem kênh thiếu logo bằng phân trang từ metadata cục bộ',()=>{
+ const core=read('renderer/positron-library-pulse-core.js');
+ const ui=read('renderer/positron-library-pulse.js');
+ const css=read('renderer/positron-library-pulse.css');
+ const qa=read('scripts/positron-20-extension.cjs');
+ assert.doesNotThrow(()=>new vm.Script(core));
+ assert.doesNotThrow(()=>new vm.Script(ui));
+ for(const label of ['missingLogos','poLibraryMissingToggle','poLibraryMissingRows','poLibraryMissingPrev','poLibraryMissingNext'])
+  assert.ok((core+ui).includes(label),'thiếu chức năng '+label);
+ assert.ok(css.includes('.po-pulse-missing-body[hidden]'));
+ for(const picture of ['positron-p51158-missing-logos-before-1920x1080-real.png','positron-p51158-missing-logos-after-1920x1080-real.png'])
+  assert.ok(qa.includes(picture),'thiếu ảnh Electron '+picture);
+ assert.ok(!ui.includes('fetch('),'không được quét mạng');
 });

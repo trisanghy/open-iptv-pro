@@ -44,3 +44,22 @@ test('P157 mở thêm nhóm và dùng textContent an toàn',()=>{
  assert.match(source,/moreGroups\.addEventListener\('click'/);
  assert.match(source,/visibleGroupCount\+=5/);
 });
+
+test('P5.1.158 missingLogos phân trang và không truy cập URL nguồn',()=>{
+ const channels=[
+  {id:'1',name:'VTV1',group:'Tin tức',logo:'',url:'http://s1/secret'},
+  {id:'2',name:'VTV2',groupTitle:'Khoa học',url:'http://s2/secret'},
+  {id:'3',name:'VTV3',logo:'https://cdn/img.png'},
+  {id:'4',name:'VTV4',logo:'   ',group:'Tin tức'},
+  {id:'5',name:'VTV5',logo:'https://cdn/abc.png'}
+ ];
+ const snapshot=JSON.stringify(channels);
+ const p1=core.missingLogos(channels,{offset:0,limit:2});
+ const p2=core.missingLogos(channels,{offset:2,limit:2});
+ assert.equal(p1.total,3);assert.deepEqual(p1.rows.map(x=>x.name),['VTV1','VTV2']);
+ assert.deepEqual(p2.rows.map(x=>x.name),['VTV4']);
+ assert.equal(p1.rows[0].group,'Tin tức');
+ assert.ok(!JSON.stringify(p1).includes('secret'));
+ assert.equal(JSON.stringify(channels),snapshot);
+ assert.equal(core.missingLogos(null).total,0);
+});

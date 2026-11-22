@@ -35,3 +35,18 @@ html[data-positron="true"] .po-pulse-group-track>span{display:block;height:100%;
 html[data-positron="true"] .po-pulse-group-empty{margin:4px 0;font-size:12px;color:var(--po-muted,#adbec5)}
 html[data-positron="true"] #poLibraryPulseMoreGroups{align-self:flex-start}
 html[data-positron="true"] #poLibraryPulseMoreGroups[hidden]{display:none!important}
+
+/* P5.1.158: duyệt metadata kênh thiếu logo, có phân trang và trạng thái trống. */
+html[data-positron="true"] .po-pulse-missing{display:flex;flex-direction:column;gap:7px}
+html[data-positron="true"] .po-pulse-missing>button{font-weight:650!important;border-color:var(--po-accent,#6ed9c4)!important;text-align:left;width:100%}
+html[data-positron="true"] .po-pulse-missing>button[aria-expanded="true"]{background:#1e5b4d!important}
+html[data-positron="true"] .po-pulse-missing-body[hidden]{display:none!important}
+html[data-positron="true"] .po-pulse-missing-body{display:flex;flex-direction:column;gap:8px;min-width:0}
+html[data-positron="true"] #poLibraryMissingRows{list-style:none;display:flex;flex-direction:column;gap:5px;max-height:250px;overflow-y:auto;overscroll-behavior:contain;margin:0;padding:0 4px}
+html[data-positron="true"] .po-pulse-missing-row{display:flex;flex-direction:column;gap:2px;background:#ffffff09;border:1px solid #ffffff0d;border-radius:8px;padding:7px 9px}
+html[data-positron="true"] .po-pulse-missing-row strong{font-size:11px;overflow-wrap:anywhere;color:var(--po-text,#eaf7f6)}
+html[data-positron="true"] .po-pulse-missing-row small{font-size:10px;color:var(--po-muted,#a4b9c0)}
+html[data-positron="true"] .po-pulse-missing-nav{display:flex;justify-content:space-between;align-items:center;gap:8px}
+html[data-positron="true"] .po-pulse-missing-nav span{font-size:11px;font-variant-numeric:tabular-nums}
+html[data-positron="true"] .po-pulse-missing-nav button:disabled{opacity:.4;cursor:default}
+html[data-positron="true"] .po-pulse-missing-empty{font-size:11px;padding:8px;color:var(--po-muted,#a4b9c0)}
