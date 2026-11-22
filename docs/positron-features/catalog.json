@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-22T09:12:11.229698+00:00",
+  "generatedAt": "2026-11-22T09:13:51.786836+00:00",
   "repository": "trisanghy/open-iptv-pro",
   "branch": "Positron",
   "versions": [
@@ -8,8 +8,8 @@
       "version": "P5.1.196",
       "appVersion": "4.23.281",
       "title": "xem trước lịch ghi trước khi xác nhận",
-      "description": "Ưu tiên thêm tính năng mới: ảnh Electron thật P5.1.195 cho thấy kênh, tên và giờ ghi đã nhập nhưng không có phần tổng hợp để kiểm lại trước khi xác nhận. Thêm **Xem trước lịch ghi** dưới biểu mẫu EPG, hiện kênh/tên/giờ/thời lượng địa phương; tự cập nhật theo thay đổi trong biểu mẫu, báo thiếu dữ liệu hoặc thời lượng sai/vượt 8 giờ.",
-      "kind": "feature",
+      "description": "Feature priority: NEW — Ảnh Electron thật P5.1.195 cho thấy người dùng điền kênh, tên và hai mốc thời gian nhưng thiếu bước xem lại toàn bộ lịch. Thêm phần xem trước luôn cập nhật, cho phép phát hiện thời lượng sai trước khi người dùng chủ động xác nhận. Electron screenshot: positron-p51196-dvr-preview-after-1920x1080-real.png",
+      "kind": "fix",
       "status": "candidate",
       "published": "",
       "tag": "",

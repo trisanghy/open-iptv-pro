@@ -6,7 +6,7 @@ Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA 
 
 **Ứng dụng:** 4.23.281 · **Trạng thái:** Chưa có bản phát hành
 
-Ưu tiên thêm tính năng mới: ảnh Electron thật P5.1.195 cho thấy kênh, tên và giờ ghi đã nhập nhưng không có phần tổng hợp để kiểm lại trước khi xác nhận. Thêm **Xem trước lịch ghi** dưới biểu mẫu EPG, hiện kênh/tên/giờ/thời lượng địa phương; tự cập nhật theo thay đổi trong biểu mẫu, báo thiếu dữ liệu hoặc thời lượng sai/vượt 8 giờ.
+Feature priority: NEW — Ảnh Electron thật P5.1.195 cho thấy người dùng điền kênh, tên và hai mốc thời gian nhưng thiếu bước xem lại toàn bộ lịch. Thêm phần xem trước luôn cập nhật, cho phép phát hiện thời lượng sai trước khi người dùng chủ động xác nhận. Electron screenshot: positron-p51196-dvr-preview-after-1920x1080-real.png
 
 [Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/dc3fb9c240562335154411a5c7e3b00d08e9dcc5)
 [Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
