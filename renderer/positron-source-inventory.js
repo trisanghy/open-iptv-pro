@@ -114,6 +114,34 @@
     target.tabIndex=-1;
     target.focus({preventScroll:true});
     target.scrollIntoView({block:'center',behavior:'auto'});
+    // P262: add one temporary way back to the originating inventory row.
+    for(const stale of d.querySelectorAll('#sourcesList .po-source-inventory-back'))stale.remove();
+    for(const row of details.querySelectorAll('li[data-po-inventory-return]'))row.removeAttribute('data-po-inventory-return');
+    const back=d.createElement('button');
+    back.type='button';
+    back.className='po-source-inventory-back';
+    back.textContent='↖ Chi tiết';
+    back.setAttribute('aria-label','Trở lại chi tiết nguồn '+String(source.name||'chưa đặt tên'));
+    back.addEventListener('click',()=>{
+     if(details.hidden)toggle.click();
+     let row=[...details.querySelectorAll('li[data-source-id]')]
+      .find(item=>item.dataset.sourceId===String(source.id));
+     if(!row){
+      search.value='';statusSelect.value='all';sortSelect.value='original';renderDetails();
+      row=[...details.querySelectorAll('li[data-source-id]')]
+       .find(item=>item.dataset.sourceId===String(source.id));
+     }
+     if(row){
+      row.tabIndex=-1;
+      row.dataset.poInventoryReturn='true';
+      row.focus({preventScroll:true});
+      row.scrollIntoView({block:'center',behavior:'auto'});
+     }
+     target.removeAttribute('data-po-inventory-target');
+     back.remove();
+    });
+    const actions=target.querySelector('.source-actions');
+    (actions||target).append(back);
    });
    li.append(name,status,jump);
    details.append(li);

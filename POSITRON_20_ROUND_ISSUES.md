@@ -23,10 +23,16 @@
 - Release: `positron/v4.23.345-p5.1.260`; commit `6a34a041ba7f688e0f584dd90ec646f679b2124f`.
 - Phát hiện từ ảnh: có thể thấy danh sách đã sắp xếp nhưng chưa điều hướng từ hàng trong bảng tới thẻ nguồn gốc.
 
-## Vòng 04 — P5.1.261 / 4.23.346 — ĐANG XÁC MINH
-- Thêm nút Đi tới, tìm native source card theo ID và focus/scroll/highlight đúng thẻ nguồn, không thay đổi thứ tự hay playback.
-- Screenshot cần trực tiếp mở: `positron-p51261-source-jump-before-1920x1080-real.png`, `positron-p51261-source-jump-after-1920x1080-real.png`, `positron-p51261-source-jump-720-real.png`.
-- Chỉ ghi đạt khi test/CI, ảnh thật và release đã xác minh.
+## Vòng 04 — P5.1.261 / 4.23.346 — ĐÃ XÁC MINH
+- Nhấn Đi tới ở hàng chi tiết để cuộn/focus/highlight native source card tương ứng.
+- QA: 948 tests, 943 pass, 5 skipped, 0 fail; 6/6 jobs success. 3 PNG thật trước/sau 1920x1080 và 720px đã tải/mở; viền xanh xuất hiện đúng thẻ thứ hai (nguồn 9 kênh).
+- Release: `positron/v4.23.346-p5.1.261`; SHA `22be696da3edf895822560bdea9b6993f70ffccd`.
+- Phát hiện từ ảnh 720px: sau khi trang cuộn xuống thẻ nguồn, bảng Chi tiết nguồn không còn nằm hoàn toàn trong vùng nhìn thấy.
+
+## Vòng 05 — P5.1.262 / 4.23.347 — ĐANG XÁC MINH
+- Thêm nút Trở lại chi tiết ngay tại thẻ được tô viền, focus/highlight đúng hàng vừa xuất phát, xóa nút tạm sau khi quay lại.
+- PNG thật yêu cầu: `positron-p51262-source-return-before-1920x1080-real.png`, `positron-p51262-source-return-after-1920x1080-real.png`, `positron-p51262-source-return-720-real.png`.
+- Chỉ tính hoàn thành khi đầy đủ code/test/ảnh xem trực tiếp/CI/release bất biến.
 
 ## Các vòng kế
 - Bám theo PNG và nhật ký của vòng gần nhất, không tự ghi 20/20 khi chưa có bằng chứng.

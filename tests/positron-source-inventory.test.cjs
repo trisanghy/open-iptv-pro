@@ -107,7 +107,7 @@ test('P5.1.261 source detail rows jump to matching native source card safely',()
   assert.ok(js.includes(token),'P261 direct source navigation '+token);
  assert.ok(css.includes('.source-card[data-po-inventory-target="true"]'));
  assert.ok(!js.includes('playChannel(')&&!js.includes('save(')&&!js.includes('localStorage.setItem('));
- assert.equal(JSON.parse(read('package.json')).version,'4.23.346');
+ assert.ok(Number(JSON.parse(read('package.json')).version.split('.')[2])>=346);
 });
 test('P5.1.261 Electron screenshots verify native card focus, scroll and unchanged playlist',()=>{
  const qa=read('scripts/positron-20-extension.cjs'),wf=read('.github/workflows/positron-lab.yml');
@@ -117,4 +117,25 @@ test('P5.1.261 Electron screenshots verify native card focus, scroll and unchang
  for(const key of ['sourceJumpQA261','focusedCard:','highlightedCard:',
   'sourceIdCorrect:','noAutoplay:','sourcesUnchanged:','playlistUnchanged:','noOverflow:'])
   assert.ok(qa.includes(key),'P261 native card QA '+key);
+});
+
+test('P5.1.262 return navigation restores focus on the exact source inventory row',()=>{
+ const code=read('renderer/positron-source-inventory.js'),css=read('renderer/positron-source-inventory.css');
+ for(const k of ["back.className='po-source-inventory-back';","back.textContent='↖ Chi tiết';",
+  "back.addEventListener('click'","if(details.hidden)toggle.click();",
+  "row.dataset.poInventoryReturn='true';","row.focus({preventScroll:true});",
+  "target.removeAttribute('data-po-inventory-target');","back.remove();"])
+  assert.ok(code.includes(k),'Missing P262 source return '+k);
+ assert.ok(css.includes('li[data-po-inventory-return="true"]'));
+ assert.ok(!code.includes('playChannel(')&&!code.includes('save(')&&!code.includes('localStorage.setItem('));
+ assert.equal(JSON.parse(read('package.json')).version,'4.23.347');
+});
+test('P5.1.262 real Electron screenshots prove reverse navigation and playlist invariance',()=>{
+ const qa=read('scripts/positron-20-extension.cjs'),wf=read('.github/workflows/positron-lab.yml');
+ for(const name of ['positron-p51262-source-return-before-1920x1080-real.png',
+  'positron-p51262-source-return-after-1920x1080-real.png','positron-p51262-source-return-720-real.png'])
+  assert.ok(qa.includes(name)&&wf.includes(name),name);
+ for(const k of ['sourceReturnQA262','focusedRow:','highlightedRow:','backRemoved:',
+  'noAutoplay:','sourcesUnchanged:','playlistUnchanged:','noOverflow:'])
+  assert.ok(qa.includes(k),'P262 return QA missing '+k);
 });
