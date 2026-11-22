@@ -177,6 +177,7 @@ jobs:
           node --test web-online/tests/web-quick-tools-icons.test.cjs
           if grep -Fq 'id="quickShotCurrent"' _site/index.html; then echo 'Redundant Quick Tools screenshot action remains'; exit 1; fi
           grep -Fq 'web-mobile-controls-polish.css?v=quick-icons-unified-20261119b' _site/index.html
+          grep -Fq 'id="castBtn"' _site/index.html
           node --check _site/cast-ui.js
           node --test web-online/tests/web-airplay.test.cjs
           grep -Fq 'x-webkit-airplay="allow"' _site/index.html
@@ -199,10 +200,10 @@ jobs:
           grep -Fq 'Thêm vào Màn hình chính' _site/web-desktop-download.js
           grep -Fq 'id="softwareDownloadNav"' _site/index.html
           grep -Fq 'id="softwareDownloadIntroClose"' _site/index.html
-          grep -Fq 'web-desktop-download.css?v=ios-shortcut-20261119a' _site/index.html
+          grep -Fq 'web-desktop-download.css?v=android-cta-theme-20261122c' _site/index.html
           grep -Fq 'id="desktopDownloadBtn"' _site/index.html
           grep -Fq 'id="desktopDownloadMobileBtn"' _site/index.html
-          grep -Fq 'web-desktop-download.js?v=apple-more-20261120a' _site/index.html
+          grep -Fq 'web-desktop-download.js?v=android-pwa-prompt-20261122b' _site/index.html
           node --check _site/web-mobile-player.js
           node --test web-online/tests/web-mobile-player.test.cjs
           node --test web-online/tests/web-apple-more-menu.test.cjs
@@ -210,8 +211,8 @@ jobs:
           node --check _site/web-mobile-touch-sort.js
           node --test web-online/tests/web-mobile-touch-sort.test.cjs
           TOUCH_SORT_CHROME="$(command -v google-chrome)" node --test web-online/tests/web-mobile-touch-sort-browser.test.cjs
-          grep -Fq 'web-mobile-touch-sort.css?v=page-swipe-fixed-header-20261122c' _site/index.html
-          grep -Fq 'web-mobile-touch-sort.js?v=mobile-touch-sort-20261122a' _site/index.html
+          grep -Fq 'web-mobile-touch-sort.css?v=header-page-scroll-20261122d' _site/index.html
+          grep -Fq 'web-mobile-touch-sort.js?v=header-swipe-page-20261122e' _site/index.html
           node --check _site/advanced.js
           node --check _site/app.js
           grep -Fq 'features.js?v=web-perf-20261120a' _site/index.html
