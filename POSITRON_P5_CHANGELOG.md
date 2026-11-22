@@ -1,5 +1,12 @@
 # Positron P5 Changelog
 
+## P5.1.257 — Mở chi tiết nguồn và số kênh từ thẻ thống kê / Electron 4.23.342
+- Feature priority: NEW — Thêm nút Chi tiết nguồn ngay cạnh thống kê thư viện. Khi bấm, ứng dụng liệt kê tên từng nguồn, số kênh thuộc nguồn và trạng thái Bật/Tắt, có thể đóng lại; bản lớn giới hạn hiển thị 30 nguồn để tránh làm nặng giao diện. Tất cả chỉ đọc, không thay đổi playlist.
+- Electron screenshot: positron-p51257-source-details-after-1920x1080-real.png
+- User action: Vào Nguồn IPTV, bấm “Chi tiết nguồn” cạnh chip số liệu để xem nguồn nào có bao nhiêu kênh và nguồn nào đang tắt; bấm “Ẩn chi tiết” để thu gọn.
+- Electron QA: `positron-p51257-source-details-before-1920x1080-real.png` / `positron-p51257-source-details-after-1920x1080-real.png` và `positron-p51257-source-details-720-real.png`, so sánh tên/trạng thái/số kênh với store, không sửa nguồn, không autoplay, không tràn ngang, test/CI phải đạt mới công bố.
+
+
 ## P5.1.256 — Thống kê nguồn đang bật và tổng kênh ngay trong tiêu đề Nguồn IPTV / Electron 4.23.341
 - Feature priority: NEW — Hiển thị thẻ số liệu `2/2 nguồn bật · 561 kênh` theo thư viện thực, tự cập nhật khi số lượng nguồn/kênh trong footer chính thay đổi. Giúp nhận ra nguồn đang tắt ngay trên màn quản lý thay vì phải tìm nút trạng thái; chỉ đọc dữ liệu, không phát kênh hay lưu nguồn.
 - Electron screenshot: positron-p51256-inventory-after-1920x1080-real.png

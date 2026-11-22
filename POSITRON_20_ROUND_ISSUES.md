@@ -107,3 +107,12 @@ Chỉ đánh dấu hoàn tất khi sửa nguồn, node test pass, Electron scree
 ## Đợt tiếp theo — Vòng 03/20 P5.1.256 [CANDIDATE]
 - Chỉ đọc store hiện có và cập nhật thông tin số nguồn đang bật/tất cả nguồn, tổng kênh trong trang Nguồn. Đồng bộ theo thay đổi footer native, không sửa danh sách hoặc phát.
 - QA phải có ảnh Electron thật trước/sau 1920x1080 và 720px, assert nội dung khớp state, không tràn, test/regression và release bất biến.
+
+## Đợt tiếp theo — Vòng 03/20 P5.1.256 [HOÀN TẤT]
+- Node 938 tests: 933 pass, 5 skipped, 0 fail; CI 45067258979 đạt 6/6 jobs success, release `positron/v4.23.341-p5.1.256` đầy đủ EXE Windows (Setup+Portable), DMG (arm64+x64), screenshots, SHA256SUMS.
+- Đã mở 3 PNG Electron thật: Sources trước/sau 1920x1080 và Sources 720px. Chip “2/2 nguồn bật · 561 kênh” hiển thị rõ; không tràn, QA sourceInventoryQA256 và sourceInventoryNarrowQA256 đều true; nguồn/playlist/Favorites/trạng thái player bất biến.
+- Commit `abaf2d182b3381713d88853ecd388cb0bd5dd835`. Đầu vào vòng 04: từ chip chỉ biết tổng số, chưa xem nhanh tên nguồn và số kênh từng nguồn; thiết kế mở rộng chi tiết read-only.
+
+## Đợt tiếp theo — Vòng 04/20 P5.1.257 [CANDIDATE]
+- Nút mở rộng cạnh chip, xem từng nguồn: tên, số kênh, bật/tắt; thu gọn một chạm. Giới hạn 30 dòng, không mutate user data.
+- Bắt buộc Node tests, ảnh Electron before/after 1920x1080 và 720px, so sánh count/status với store và phát hành riêng P5.1.257 mới coi hoàn thành.
