@@ -5,7 +5,7 @@ const html=fs.readFileSync(path.join(__dirname,'../index.html'),'utf8');
 const a=html.indexOf('function setPlayerStatus(message){'),b=html.indexOf('function resumeLastChannel(){',a);
 assert.ok(a>=0&&b>a);
 const code=html.slice(a,b);
-const local='http://127.0.0.1:17865/r/'+'a'.repeat(40)+'/0';
+const local='http://127.0.0.1:17866/r/'+'a'.repeat(40)+'/0';
 function harness({relayAvailable=true}={}){
  const requests=[],instances=[],events=[],notes=[],timers=[],calls={play:0};
  const status={hidden:true,textContent:''},diag={hidden:true,textContent:''};
@@ -63,7 +63,7 @@ test('Click channel tries native HLS first, then HLS.js and TV-local relay on fa
  assert.equal(s.requests.length,0);
  s.instances[0].fail('manifestLoadError',0);await flush();
  assert.equal(s.requests.length,1);
- assert.equal(s.requests[0].address,'http://127.0.0.1:17865/session');
+ assert.equal(s.requests[0].address,'http://127.0.0.1:17866/session');
  assert.equal(JSON.parse(s.requests[0].options.body).url,selected.url);
  assert.equal(s.api.current().html5Mode,'hls-relay');
  assert.equal(s.instances.length,2);
