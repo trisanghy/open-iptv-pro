@@ -1570,4 +1570,8 @@ test('P5.1.158 xem kênh thiếu logo bằng phân trang từ metadata cục b�
  for(const picture of ['positron-p51158-missing-logos-before-1920x1080-real.png','positron-p51158-missing-logos-after-1920x1080-real.png'])
   assert.ok(qa.includes(picture),'thiếu ảnh Electron '+picture);
  assert.ok(!ui.includes('fetch('),'không được quét mạng');
+ const changelog=read('POSITRON_P5_CHANGELOG.md');
+ const p158=changelog.split('## P5.1.158')[1]?.split('## P5.1.157')[0]||'';
+ assert.ok(p158.includes('- Electron screenshot: positron-p51158-missing-logos-after-1920x1080-real.png'));
 });
+
