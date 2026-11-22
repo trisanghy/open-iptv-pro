@@ -6,7 +6,9 @@
  * This is NOT an Internet proxy. Listen only on 127.0.0.1, reject internal
  * upstream hosts, require TizenBrew's origin + custom request header,
  * rewrite live playlists/keys/segments to random, local resource IDs and
- * never log the user's original IPTV URL or credentials.
+ * never log the user's original IPTV URL or credentials. The media GET route
+ * accepts the allowlisted TizenBrew origin without a custom header because
+ * Samsung WebKit's HLS loader may omit headers on playlist/segment requests.
  *
  * Compatible with the legacy Node.js runtime used by older TizenBrew TVs.
  */
@@ -199,10 +201,13 @@ function handler(req,res){
  // A CORS preflight carries Access-Control-Request-Headers, not the actual
  // X-Open-IPTV-Relay header. It must be handled before checking that header.
  if(req.method==='OPTIONS'){res.writeHead(204);res.end();return;}
- if(req.headers['x-open-iptv-relay']!=='1'){
+ var path=Url.parse(req.url).pathname;
+ // Samsung WebKit/HLS.js may omit custom headers on media GETs. Keep those
+ // requests scoped to the allowlisted app origin and unguessable session ID.
+ var isMediaRequest=req.method==='GET'&&/^\\/r\\/[0-9a-f]{40}\\/\\d+$/.test(path);
+ if(!isMediaRequest&&req.headers['x-open-iptv-relay']!=='1'){
   json(res,403,{error:'Yêu cầu thiếu mã ứng dụng.'});return;
  }
- var path=Url.parse(req.url).pathname;
  if(req.method==='GET'&&path==='/health'){json(res,200,{ok:true,transport:'local-hls',version:'1'});return;}
  if(req.method==='POST'&&path==='/session'){
   var length=0,parts=[];
