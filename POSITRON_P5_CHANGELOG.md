@@ -1,5 +1,15 @@
 # Positron P5 Changelog
 
+## P5.1.211 — Trở lại kênh ngẫu nhiên đã khám phá / Electron 4.23.296
+- Feature priority: NEW — Sau ảnh Electron P5.1.210, thanh Bất kỳ đã có số lượt và nút làm mới nhưng chưa có thao tác quay lại khi vừa khám phá một kênh ngẫu nhiên thú vị rồi chuyển tiếp. Thêm nút quay lại theo lịch sử phiên khám phá để tiết kiệm thao tác tìm kênh và giữ ngữ cảnh.
+- Electron screenshot: positron-p51211-random-back-after-1920x1080-real.png
+- User action: Bấm Bất kỳ để khám phá hai kênh hoặc nhiều hơn. Nút ↶ sẽ hiện bên cạnh Bất kỳ; nhấn để mở lại kênh khám phá trước, có thể lùi nhiều bước. Làm mới lượt khám phá thì lịch sử tạm được xóa.
+- Tính năng: lưu tối đa 50 ID kênh trong bộ nhớ phiên, không dùng mạng hoặc nguồn khác; bỏ ID khi danh sách nguồn thay đổi. Nút quay lại ẩn khi không còn ít nhất hai kênh trong lịch sử. Giữ điều khiển bàn phím focus khi nút tự ẩn. Không sửa Favorites/playlist hay tăng bộ đếm khi quay lại.
+- Before: `positron-p51211-random-back-before-1920x1080-real.png`; after: `positron-p51211-random-back-after-1920x1080-real.png`.
+- QA: Electron thật 1920×1080 chọn hai kênh khác nhau qua click, ảnh xuất hiện nút back, nhấn quay lại ID đầu tiên bằng bàn phím, kiểm bộ đếm không thay đổi, playlist bất biến, 450px không tràn ngang.
+- Status: CANDIDATE chờ test/ảnh và Release xác minh.
+
+
 ## P5.1.210 — Tự cập nhật bộ đếm khám phá khi đổi nguồn / Electron 4.23.295
 - Feature priority: NEW — Từ ảnh P5.1.209 và mã xử lý danh sách nguồn, bộ đếm Bất kỳ có thể tiếp tục ghi nhận các kênh đã xóa hoặc thay nguồn, dẫn tới tiến độ sai cho tới lúc người dùng tự bấm chuyển kênh tiếp. Bổ sung đồng bộ thông minh khi danh sách kênh được cập nhật, tránh khiến tiến độ kênh không còn tồn tại gây nhầm lẫn.
 - Electron screenshot: positron-p51210-source-sync-after-1920x1080-real.png

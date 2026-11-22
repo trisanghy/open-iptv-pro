@@ -2317,7 +2317,7 @@ test('P5.1.207 accessible reset clears only random session history',()=>{
   'positron-p51207-random-reset-after-1920x1080-real.png'])
   assert.ok(qa.includes(t),'Missing genuine reset QA '+t);
  const pkg=JSON.parse(read('package.json'));
- assert.ok(flow.includes('TAG=positron/v'+pkg.version+'-p5.1.210'));
+ assert.ok(flow.includes('TAG=positron/v'+pkg.version+'-p5.1.211'));
 });
 
 
@@ -2374,4 +2374,26 @@ test('P5.1.210 automatically prunes random exploration when channels are removed
   'before210.equals(after210),false'])
   assert.ok(qa.includes(token),'Missing Electron native source-change QA: '+token);
  assert.ok(flow.includes('test -s positron-evidence/p5-20-rounds/positron-p51210-source-sync-after-1920x1080-real.png'));
+});
+
+
+test('P5.1.211 adds an accessible previous-random-channel control',()=>{
+ const js=read('renderer/positron-horizon-v4.js'),css=read('renderer/positron-twenty.css');
+ const qa=read('scripts/positron-20-extension.cjs'),flow=read('.github/workflows/positron-lab.yml');
+ for(const token of ['const randomTrail=[]','randomTrail.push(selected.id)',
+  'if(randomTrail.length>50)randomTrail.shift()','backRandom.id=\'poRandomBack\'',
+  'backRandom.addEventListener(\'click\'','randomTrail.pop()',
+  'if(restoreKeyboardFocus&&!nextRandom.hidden)nextRandom.focus()',
+  'randomTrail.length=0'])
+  assert.ok(js.includes(token),'Missing native random back: '+token);
+ for(const token of ['#poRandomBack[hidden]{display:none!important}',
+  '#poRandomBack:focus-visible'])assert.ok(css.includes(token));
+ for(const token of ['randomBackQA','randomBackActionQA','distinctChoices',
+  'backShownAfterTwo','replayedFirst','keyboardFocusRestored',
+  'noPlaylistMutation','compact211',
+  'positron-p51211-random-back-before-1920x1080-real.png',
+  'positron-p51211-random-back-after-1920x1080-real.png',
+  'before211.equals(after211),false'])
+  assert.ok(qa.includes(token),'Missing native Electron random back evidence: '+token);
+ assert.ok(flow.includes('test -s positron-evidence/p5-20-rounds/positron-p51211-random-back-after-1920x1080-real.png'));
 });

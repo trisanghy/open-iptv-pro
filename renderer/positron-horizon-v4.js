@@ -224,6 +224,8 @@
    random.hidden=true;
    // P206: session-only pool prevents random repeats until choices run out.
    const randomSeenIds=new Set();
+   // P211: session-only trail for returning to a previously discovered channel.
+   const randomTrail=[];
    const switchRandomChannel=()=>{
     const candidates=window.IPTVState?.getChannels?.().filter(c=>c?.id&&c?.url&&c.status!=='dead')||[];
     if(!candidates.length)return;
@@ -239,6 +241,8 @@
     const selected=available[Math.floor(Math.random()*available.length)];
     if(!selected)return;
     randomSeenIds.add(selected.id);
+    if(randomTrail[randomTrail.length-1]!==selected.id)randomTrail.push(selected.id);
+    if(randomTrail.length>50)randomTrail.shift();
     resetRandom.hidden=false;
     const badge=nextRandom.querySelector('.po-random-count');
     if(badge){badge.hidden=false;badge.textContent=String(randomSeenIds.size);}
@@ -265,6 +269,7 @@
     const eligible=window.IPTVState?.getChannels?.().filter(c=>c?.id&&c?.url&&c.status!=='dead')||[];
     const activeIds=new Set(eligible.map(c=>c.id));
     for(const id of randomSeenIds)if(!activeIds.has(id))randomSeenIds.delete(id);
+    for(let i=randomTrail.length-1;i>=0;i--)if(!activeIds.has(randomTrail[i]))randomTrail.splice(i,1);
     const total=eligible.length,count=randomSeenIds.size;
     const badge=nextRandom.querySelector('.po-random-count');
     if(badge){badge.hidden=count===0;badge.textContent=count?String(count):'';}
@@ -275,9 +280,29 @@
     nextRandom.setAttribute('aria-label',count?'Đã khám phá '+count+' trong '+total+' kênh; nhấn để xem kênh khác':'Đổi sang kênh ngẫu nhiên khác');
     const reset=byId('poRandomCycleReset');
     if(reset)reset.hidden=nextRandom.hidden||count===0;
+    const back=byId('poRandomBack');
+    if(back)back.hidden=nextRandom.hidden||randomTrail.length<2;
    };
    nextRandom.addEventListener('click',switchRandomChannel);
    byId('nextBtn')?.parentElement?.append(nextRandom);
+   // P211: jump back in the random trail; no new visit or playlist mutation.
+   const backRandom=d.createElement('button');backRandom.type='button';
+   backRandom.id='poRandomBack';backRandom.className='control-sm po-random-back';
+   backRandom.textContent='↶';backRandom.title='Trở lại kênh khám phá trước';
+   backRandom.setAttribute('aria-label','Trở lại kênh ngẫu nhiên đã khám phá trước');
+   backRandom.hidden=true;
+   backRandom.addEventListener('click',()=>{
+    if(randomTrail.length<2)return;
+    const restoreKeyboardFocus=d.activeElement===backRandom;
+    randomTrail.pop();
+    const previousId=randomTrail[randomTrail.length-1];
+    syncRandomProgress();
+    if(restoreKeyboardFocus&&!nextRandom.hidden)nextRandom.focus();
+    if(!window.IPTVState?.getChannels?.().some(c=>c?.id===previousId&&c?.url&&c.status!=='dead'))return;
+    Promise.resolve(window.IPTVState.playChannel(previousId))
+     .catch(e=>window.IPTVState?.toast?.(e.message||String(e),'error'));
+   });
+   byId('nextBtn')?.parentElement?.append(backRandom);
    // P207: explicit accessible reset for the session-only discovery cycle.
    const resetRandom=d.createElement('button');resetRandom.type='button';
    resetRandom.id='poRandomCycleReset';resetRandom.className='control-sm po-random-reset';
@@ -288,6 +313,7 @@
     // Keep keyboard/remote focus on an actionable control after hiding reset.
     const restoreKeyboardFocus=d.activeElement===resetRandom;
     randomSeenIds.clear();
+    randomTrail.length=0;
     const badge=nextRandom.querySelector('.po-random-count');
     if(badge){badge.hidden=true;badge.textContent='';}
     nextRandom.dataset.poDiscoverCount='0';
