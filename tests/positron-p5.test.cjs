@@ -1723,3 +1723,22 @@ test('P5.1.165 xuất CSV bảo mật, có QA Electron riêng và workflow đún
  assert.ok(flow.includes('TAG=positron/v'+pkg.version+'-'+label.toLowerCase()));
  assert.ok(!ui.includes('fetch(')&&!ui.includes('playChannel('));
 });
+
+test('P5.1.166 phân loại tên trùng theo nguồn và xóa từ khóa, kiểm thử Electron thật',()=>{
+ const pkg=JSON.parse(read('package.json'));
+ const core=read('renderer/positron-library-pulse-core.js'),ui=read('renderer/positron-library-pulse.js');
+ const css=read('renderer/positron-library-pulse.css'),qa=read('scripts/positron-20-extension.cjs');
+ const workflow=read('.github/workflows/positron-lab.yml');
+ assert.equal(pkg.version,'4.23.251');
+ assert.match(pkg.description,/Positron P5\.1\.166:/);
+ for(const token of ["scope==='cross-source'","scope==='single-source'","scope==='unknown-source'"])assert.ok(core.includes(token),token);
+ assert.match(ui,/poLibraryDuplicateScope/);
+ assert.match(ui,/duplicateScope\.addEventListener\('change'/);
+ assert.match(ui,/duplicateClear\.addEventListener\('click'/);
+ assert.match(css,/#poLibraryDuplicateScope:focus-visible/);
+ assert.match(qa,/duplicateScopeQA/);
+ assert.match(workflow,/TAG=positron\/v4\.23\.251-p5\.1\.166/);
+ for(const name of ['positron-p51166-duplicate-scope-before-1920x1080-real.png','positron-p51166-duplicate-scope-after-1920x1080-real.png'])
+  assert.ok(qa.includes(name)&&workflow.includes(name),'P166 thiếu ảnh '+name);
+ assert.ok(!ui.includes('fetch(')&&!ui.includes('playChannel('));
+});

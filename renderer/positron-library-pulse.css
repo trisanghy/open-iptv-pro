@@ -102,3 +102,10 @@ html[data-positron="true"] .po-pulse-duplicate-empty{font-size:11px;color:var(--
 html[data-positron="true"] .po-pulse-duplicates #poLibraryDuplicateExport{min-height:34px;white-space:normal}
 html[data-positron="true"] .po-pulse-duplicates #poLibraryDuplicateExport:disabled{opacity:.45;cursor:not-allowed}
 html[data-positron="true"] #poLibraryDuplicateExportStatus{font-size:11px;color:var(--po-muted,#a4b9c0);overflow-wrap:anywhere}
+
+/* P5.1.166: Bộ lọc nguồn và xóa từ khóa hiện hành không gây tràn. */
+html[data-positron="true"] .po-pulse-duplicate-tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap;min-width:0}
+html[data-positron="true"] #poLibraryDuplicateScope{flex:1 1 170px;max-width:100%;min-height:36px;min-width:0;box-sizing:border-box;border:1px solid var(--po-border,#42606b);border-radius:9px;padding:6px 8px;background:var(--po-card,#162934);color:var(--po-text,#eaf7f7);font:inherit;font-size:12px}
+html[data-positron="true"] #poLibraryDuplicateClear{min-height:36px;flex:0 0 auto}
+html[data-positron="true"] #poLibraryDuplicateClear[hidden]{display:none!important}
+html[data-positron="true"] #poLibraryDuplicateScope:focus-visible,html[data-positron="true"] #poLibraryDuplicateClear:focus-visible{outline:2px solid var(--po-accent,#66d4c2);outline-offset:2px}

@@ -4378,8 +4378,63 @@ async function runTwenty(page){
  await page.keyboard.press('Escape');
  await page.setViewportSize({width:1360,height:820});
 
+  
+ // P5.1.166: Ảnh thật lấy P165 query còn sót làm input, thử Xóa lọc và phân loại nguồn.
+ await page.setViewportSize({width:1920,height:1080});
+ await page.evaluate(()=>window.IPTVState.setPage('tv'));
+ await page.click('#poLibraryPulseToggle');
+ if(await page.getAttribute('#poLibraryDuplicateToggle','aria-expanded')!=='true')
+  await page.click('#poLibraryDuplicateToggle');
+ await page.fill('#poLibraryDuplicateSearch','unlikely-qa-no-channel-duplicate-name');
+ await page.evaluate(()=>document.getElementById('poLibraryDuplicateClear').scrollIntoView({block:'center',behavior:'instant'}));
+ const before166=await page.screenshot({path:path.join(out,'positron-p51166-duplicate-scope-before-1920x1080-real.png'),animations:'disabled'});
+ assert.deepEqual([before166.readUInt32BE(16),before166.readUInt32BE(20)],[1920,1080]);
+ const before166QA=await page.evaluate(()=>{
+  const clear=document.getElementById('poLibraryDuplicateClear'),input=document.getElementById('poLibraryDuplicateSearch');
+  return {clearVisible:!clear.hidden&&clear.getBoundingClientRect().width>35,
+   queryPresent:input.value==='unlikely-qa-no-channel-duplicate-name'};
+ });
+ assert.equal(before166QA.clearVisible&&before166QA.queryPresent,true,'P166 before: stale query must be visible');
+ await page.click('#poLibraryDuplicateClear');
+ await page.selectOption('#poLibraryDuplicateScope','cross-source');
+ await page.evaluate(()=>document.getElementById('poLibraryDuplicateScope').scrollIntoView({block:'center',behavior:'instant'}));
+ const duplicateScopeQA=await page.evaluate(()=>{
+  const d=document,c=window.PositronLibraryPulseCore,st=window.IPTVState;
+  const actual=c.duplicateNames(st.getChannels(),{scope:'cross-source'});
+  const rows=[...d.querySelectorAll('#poLibraryDuplicateRows .po-pulse-duplicate-row strong')];
+  const scope=d.getElementById('poLibraryDuplicateScope'),clear=d.getElementById('poLibraryDuplicateClear');
+  const input=d.getElementById('poLibraryDuplicateSearch');
+  const fixture=[
+   {name:'Thời Sự',sourceId:'a',url:'https://private.invalid/one'},
+   {name:'THỜI SỰ',sourceId:'b',url:'https://private.invalid/two'},
+   {name:'Phim',sourceId:'a'},{name:'PHIM',sourceId:'a'},
+   {name:'Khác'},{name:'KHÁC'}];
+  const cross=c.duplicateNames(fixture,{scope:'cross-source'});
+  const single=c.duplicateNames(fixture,{scope:'single-source'});
+  const unknown=c.duplicateNames(fixture,{scope:'unknown-source'});
+  const csv=c.duplicateNamesCsv(fixture,{scope:'cross-source'});
+  const scopeRect=scope.getBoundingClientRect(),panel=d.getElementById('poLibraryPulsePanel').getBoundingClientRect();
+  return {cleared:input.value===''&&clear.hidden,
+   scopeSelected:scope.value==='cross-source',
+   scopeVisible:scopeRect.width>=150&&scopeRect.top>=panel.top&&scopeRect.bottom<=panel.bottom,
+   filteredCount:actual.total===rows.length,
+   filteredNames:rows.every((n,i)=>n.textContent===actual.rows[i]?.name),
+   categories:cross.total===1&&single.total===1&&unknown.total===1,
+   csvMatches:csv.includes('Thời Sự')&&!csv.includes('Phim')&&!csv.includes('Khác'),
+   noLeakedUrl:!csv.includes('://')&&!csv.includes('private.invalid'),
+   noOverflow:d.documentElement.scrollWidth<=innerWidth+1,
+   noAutoplay:st.getCurrent()===null};
+ });
+ const after166=await page.screenshot({path:path.join(out,'positron-p51166-duplicate-scope-after-1920x1080-real.png'),animations:'disabled'});
+ assert.deepEqual([after166.readUInt32BE(16),after166.readUInt32BE(20)],[1920,1080]);
+ for(const [key,value] of Object.entries(duplicateScopeQA))
+  assert.equal(value,true,'P166 duplicate scope QA '+key+': '+JSON.stringify(duplicateScopeQA));
+ await page.keyboard.press('Escape');
+ await page.setViewportSize({width:1360,height:820});
+
+
   const report={type:'Positron P5 twenty distinct desktop screenshot cases',realElectron:true,syntheticChannels:false,
-  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,desktop16x9Screenshots,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA,chooserQa,toastLayoutQA,nativeToastQA,compactIdleQA,channelChipRailQA,advancedFilterQA,readableCardsQA,keyboardTabQA,favoriteEmptyQA,duplicateEmptyQA,categoryFilterQA,categoryFixtureQA,compactSingleQA,directFavoriteQA,favoriteCountQA,compactToastStackQA,toastDismissQA,toastFocusReturnQA,toastDockQA,wheelQA,pinnedAllQA,pinnedMaskQA,categoryKeyQA,dropdownChipQA,pinnedRightMaskQA,pinnedBorderMaskQA,asciiDSearchQA,emptySearchActionQA,readableCardTitleQA,favoriteSvgQA,keyboardFavoriteQA,multiTermSearchQA,keyboardSearchQA,arrowNavigationQA,pageNavigationQA,favoriteSortQA,onAirFilterQA,programmeSearchQA,upcomingProgrammeQA,soonProgrammeQA,earliestEpgSortQA,timeWindowQA,scheduleProgressQA:scheduleProgressQA,nativeReminderQA,cancelReminderQA,reminderLeadQA,toastHistoryQA,notificationArchiveQA,alertFilterQA,noticeSearchQA,quietModeQA,dismissToastQA,libraryPulseQA,groupDistributionQA,logoMissingQA,missingSearchQA,missingGroupQA,missingSortQA,missingJumpQA,missingCsvQA,duplicateQA,duplicateSearchQA,duplicateCsvQA};
+  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,desktop16x9Screenshots,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA,chooserQa,toastLayoutQA,nativeToastQA,compactIdleQA,channelChipRailQA,advancedFilterQA,readableCardsQA,keyboardTabQA,favoriteEmptyQA,duplicateEmptyQA,categoryFilterQA,categoryFixtureQA,compactSingleQA,directFavoriteQA,favoriteCountQA,compactToastStackQA,toastDismissQA,toastFocusReturnQA,toastDockQA,wheelQA,pinnedAllQA,pinnedMaskQA,categoryKeyQA,dropdownChipQA,pinnedRightMaskQA,pinnedBorderMaskQA,asciiDSearchQA,emptySearchActionQA,readableCardTitleQA,favoriteSvgQA,keyboardFavoriteQA,multiTermSearchQA,keyboardSearchQA,arrowNavigationQA,pageNavigationQA,favoriteSortQA,onAirFilterQA,programmeSearchQA,upcomingProgrammeQA,soonProgrammeQA,earliestEpgSortQA,timeWindowQA,scheduleProgressQA:scheduleProgressQA,nativeReminderQA,cancelReminderQA,reminderLeadQA,toastHistoryQA,notificationArchiveQA,alertFilterQA,noticeSearchQA,quietModeQA,dismissToastQA,libraryPulseQA,groupDistributionQA,logoMissingQA,missingSearchQA,missingGroupQA,missingSortQA,missingJumpQA,missingCsvQA,duplicateQA,duplicateSearchQA,duplicateCsvQA,duplicateScopeQA};
  fs.writeFileSync(path.resolve('positron-evidence','audit-p5-20-rounds.json'),JSON.stringify(report,null,2));
  return report;
 }

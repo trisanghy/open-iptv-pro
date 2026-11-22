@@ -1,5 +1,5 @@
 'use strict';
-// Positron P5.1.165 — Bảng phân tích metadata thư viện, không thử stream.
+// Positron P5.1.166 — Bảng phân tích metadata thư viện, không thử stream.
 (()=>{
  const d=document,root=d.documentElement,bar=d.getElementById('positronBar');
  const core=window.PositronLibraryPulseCore,state=window.IPTVState;
@@ -98,6 +98,17 @@
  duplicateSearch.id='poLibraryDuplicateSearch';duplicateSearch.placeholder='Tìm tên trùng hoặc nhóm…';
  duplicateSearch.setAttribute('aria-label','Tìm tên kênh trùng trong thư viện');
  duplicateSearch.setAttribute('autocomplete','off');
+ const duplicateTools=d.createElement('div');duplicateTools.className='po-pulse-duplicate-tools';
+ const duplicateScope=d.createElement('select');duplicateScope.id='poLibraryDuplicateScope';
+ duplicateScope.setAttribute('aria-label','Lọc tên kênh trùng theo số nguồn');
+ for(const [value,label] of [['','Tất cả tên trùng'],['cross-source','Trùng giữa nhiều nguồn'],
+  ['single-source','Trùng trong một nguồn'],['unknown-source','Chưa rõ nguồn']]){
+  const option=d.createElement('option');option.value=value;option.textContent=label;duplicateScope.append(option);
+ }
+ const duplicateClear=d.createElement('button');duplicateClear.type='button';
+ duplicateClear.id='poLibraryDuplicateClear';duplicateClear.textContent='Xóa lọc';
+ duplicateClear.setAttribute('aria-label','Xóa từ khóa tìm kiếm tên kênh trùng');
+ duplicateTools.append(duplicateScope,duplicateClear);
  const duplicateSummary=d.createElement('p');duplicateSummary.id='poLibraryDuplicateSummary';
  duplicateSummary.className='po-pulse-duplicate-summary';
  const duplicateExportBar=d.createElement('div');duplicateExportBar.className='po-pulse-export-bar';
@@ -114,7 +125,7 @@
  const duplicateNext=d.createElement('button');duplicateNext.type='button';
  duplicateNext.id='poLibraryDuplicateNext';duplicateNext.textContent='Tiếp';
  duplicateNav.append(duplicatePrev,duplicatePage,duplicateNext);
- duplicateBody.append(duplicateSearch,duplicateSummary,duplicateExportBar,duplicateRows,duplicateNav);
+ duplicateBody.append(duplicateSearch,duplicateTools,duplicateSummary,duplicateExportBar,duplicateRows,duplicateNav);
  duplicatePane.append(duplicateToggle,duplicateBody);
  const footer=d.createElement('footer');footer.className='po-pulse-footer';
  const stamp=d.createElement('span');stamp.id='poLibraryPulseStamp';
@@ -205,8 +216,9 @@
  let duplicateIndex=0,duplicateTotal=0;
  const renderDuplicates=()=>{
   const report=core.duplicateNames(state.getChannels(),{
-   query:duplicateSearch.value,offset:duplicateIndex*8,limit:8});
+   query:duplicateSearch.value,scope:duplicateScope.value,offset:duplicateIndex*8,limit:8});
   duplicateTotal=report.total;
+  duplicateClear.hidden=!duplicateSearch.value.trim();
   duplicateExport.disabled=duplicateTotal===0;
   duplicateExport.textContent='Xuất CSV · '+duplicateTotal+' tên trùng';
   duplicateExportStatus.textContent='';
@@ -263,8 +275,12 @@
   if(expanded)duplicatePane.scrollIntoView({block:'nearest',behavior:'instant'});
  });
  duplicateSearch.addEventListener('input',()=>{duplicateIndex=0;renderDuplicates();});
+ duplicateScope.addEventListener('change',()=>{duplicateIndex=0;renderDuplicates();});
+ duplicateClear.addEventListener('click',()=>{
+  duplicateSearch.value='';duplicateIndex=0;renderDuplicates();duplicateSearch.focus({preventScroll:true});
+ });
  duplicateExport.addEventListener('click',()=>{
-  const options={query:duplicateSearch.value};
+  const options={query:duplicateSearch.value,scope:duplicateScope.value};
   const count=core.duplicateNames(state.getChannels(),options).total;
   if(!count)return;
   const csv=core.duplicateNamesCsv(state.getChannels(),options);

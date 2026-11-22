@@ -217,3 +217,26 @@ test('P5.1.165 Xuất CSV tên trùng trên 50 hàng và chống rò URL',()=>{
  assert.equal(core.duplicateNamesCsv([]),'\ufeff"Tên kênh","Số kênh","Số nhóm","Số nguồn","Nhóm"\r\n');
  assert.equal(JSON.stringify(list),original);
 });
+
+test('P5.1.166 lọc tên trùng nhiều nguồn, một nguồn, chưa rõ nguồn, CSV không lộ URL',()=>{
+ const input=[
+  {name:'VTV 1',group:'Tin tức',sourceId:'s1',url:'https://private.invalid/1'},
+  {name:'vtv 1',group:'Thời sự',sourceId:'s2',url:'https://private.invalid/2'},
+  {name:'Kênh Nội Bộ',group:'Phim',sourceId:'s3'},
+  {name:'kênh nội bộ',group:'Phim',sourceId:'s3'},
+  {name:'Không rõ',group:'Khác'},
+  {name:'KHÔNG RÕ',group:'Khác'},
+  {name:'Chỉ một',group:'Khác',sourceId:'s1'}];
+ const original=JSON.stringify(input),list=scope=>core.duplicateNames(input,{scope});
+ assert.equal(list('').total,3);
+ assert.deepEqual(list('cross-source').rows.map(x=>x.name),['VTV 1']);
+ assert.deepEqual(list('single-source').rows.map(x=>x.name),['Kênh Nội Bộ']);
+ assert.deepEqual(list('unknown-source').rows.map(x=>x.name),['Không rõ']);
+ assert.equal(list('not-supported').total,3);
+ assert.equal(core.duplicateNames(input,{scope:'cross-source',query:'khong ro'}).total,0);
+ const csv=core.duplicateNamesCsv(input,{scope:'cross-source'});
+ assert.equal(csv.split('\r\n').filter(Boolean).length,2);
+ assert.ok(csv.includes('VTV 1')&&!csv.includes('Kênh Nội Bộ'));
+ assert.ok(!csv.includes('private.invalid')&&!csv.includes('https://'));
+ assert.equal(JSON.stringify(input),original);
+});

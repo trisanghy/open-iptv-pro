@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.250",
-  "description": "Positron P5.1.165: xuất CSV tên kênh trùng an toàn",
+  "version": "4.23.251",
+  "description": "Positron P5.1.166: lọc tên kênh trùng theo nguồn và xóa tìm kiếm",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

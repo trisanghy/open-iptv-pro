@@ -1,3 +1,11 @@
+## P5.1.166 — Lọc tên kênh trùng theo nguồn và Xóa lọc / Electron 4.23.251
+- Feature priority: NEW — Thêm bộ lọc tên kênh trùng giữa nhiều nguồn, trong một nguồn hoặc thiếu mã nguồn, giúp rà soát metadata nhanh và tránh nhầm kênh khi trùng tên giữa nhiều playlist.
+- User action: Mở Thư viện → Tên kênh trùng → chọn chế độ lọc nguồn; khi ô tìm kiếm còn từ khóa cũ bấm Xóa lọc để hiện danh sách đầy đủ, không cần xóa từng ký tự. Xuất CSV vẫn tôn trọng bộ lọc nguồn.
+- Electron screenshot: positron-p51166-duplicate-scope-after-1920x1080-real.png
+- Ảnh thật trước/sau (1920×1080): positron-p51166-duplicate-scope-before-1920x1080-real.png / positron-p51166-duplicate-scope-after-1920x1080-real.png.
+- Core filtering hoàn toàn local/read-only; không xuất URL stream hoặc sourceId, không thay đổi M3U hoặc tự động phát; regression theo 4 chế độ nguồn.
+- Status: CANDIDATE — chưa phát hành tới khi Node, Electron screenshot review, build và Release đạt.
+
 ## P5.1.165 — Xuất CSV tên kênh trùng / Electron 4.23.250
 - Feature priority: NEW — Xuất bảng metadata có thể đối chiếu toàn bộ tên kênh trùng theo bộ lọc, giúp rà soát hàng trăm kênh mà không phải sửa playlist hoặc mở từng trang.
 - User action: Thư viện → Tên kênh trùng → tìm tên hoặc nhóm → Xuất CSV; ghi toàn bộ kết quả được lọc vào file tải về.

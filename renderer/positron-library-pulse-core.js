@@ -93,7 +93,7 @@
  }
  // P5.1.164: phát hiện trùng TÊN kênh từ metadata nội bộ; không so URL/stream.
  // Giữ dấu tiếng Việt, thống nhất NFC + khoảng trắng + chữ hoa/thường.
- function selectDuplicateNames(input,query=''){
+ function selectDuplicateNames(input,query='',scope=''){
   const names=new Map();
   for(const channel of Array.isArray(input)?input:[]){
    if(!channel||typeof channel!=='object')continue;
@@ -114,17 +114,20 @@
     groupCount:item.groups.size,sourceCount:item.sources.size,
     groups:[...item.groups].sort((a,b)=>a.localeCompare(b,'vi'))}))
    .sort((a,b)=>b.count-a.count||a.name.localeCompare(b.name,'vi',{numeric:true}));
+  if(scope==='cross-source')return entries.filter(item=>item.sourceCount>1);
+  if(scope==='single-source')return entries.filter(item=>item.sourceCount===1);
+  if(scope==='unknown-source')return entries.filter(item=>item.sourceCount===0);
   return entries;
  }
- function duplicateNames(input,{query='',offset=0,limit=8}={}){
-  const entries=selectDuplicateNames(input,query);
+ function duplicateNames(input,{query='',scope='',offset=0,limit=8}={}){
+  const entries=selectDuplicateNames(input,query,scope);
   const start=Number.isFinite(offset)?Math.max(0,Math.floor(offset)):0;
   const count=Number.isFinite(limit)?Math.min(50,Math.max(1,Math.floor(limit))):8;
   return {total:entries.length,extraChannels:entries.reduce((sum,item)=>sum+item.count-1,0),
    offset:start,limit:count,rows:entries.slice(start,start+count)};
  }
- function duplicateNamesCsv(input,{query=''}={}){
-  const rows=selectDuplicateNames(input,query);
+ function duplicateNamesCsv(input,{query='',scope=''}={}){
+  const rows=selectDuplicateNames(input,query,scope);
   const lines=rows.map(item=>[item.name,item.count,item.groupCount,item.sourceCount,
    item.groups.join(' · ')].map(csvCell).join(','));
   return '\ufeff"Tên kênh","Số kênh","Số nhóm","Số nguồn","Nhóm"\r\n'+
