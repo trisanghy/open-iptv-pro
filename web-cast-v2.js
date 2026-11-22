@@ -136,5 +136,6 @@
  }
  function close(){if(overlay)overlay.hidden=true;}
  function onChannelChanged(ch,url){if(ch){channel=ch;source=url||ch.url||source;}renderPair();}
- root.OpenIPTVWebCastV2=Object.freeze({open,close,onChannelChanged,syncCast});
+ function setCastFeedback(message,error=false){if(overlay)notice('cxCastNotice',message,error?'error':'');}
+ root.OpenIPTVWebCastV2=Object.freeze({open,close,onChannelChanged,syncCast,setCastFeedback});
 })(typeof window==='undefined'?null:window);
