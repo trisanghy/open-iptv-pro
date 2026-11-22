@@ -88,6 +88,12 @@ test('When local relay service is absent, app reports failure and does not open 
  s.api.play({id:'vtv3',name:'VTV3',url:'https://cdn.example.org/live.m3u8'});
  await flush();s.instances[0].fail('manifestLoadError',403);await flush();
  assert.equal(s.api.current().html5Mode,'hls-relay');
+ // Service startup is asynchronous; simulate the 7 bounded retries.
+ for(let i=0;i<7;i++){
+  const retry=s.timers.find(t=>t.ms===650&&!t.cancelled);
+  assert.ok(retry,'local relay retry '+(i+1));
+  retry.cancelled=true;retry.fn();await flush();
+ }
  assert.ok(s.elements.playbackDiag.textContent.includes('HLS nội bộ'));
  const grace=s.timers.find(t=>t.ms===2400&&!t.cancelled);
  assert.ok(grace,'fallback remains controlled within app');
