@@ -292,3 +292,38 @@ test('Phone URL inputs permit typo correction before browser form validation',()
  assert.doesNotMatch(phone,/id="address" type="url"/);
  assert.match(phone,/var name=byId\('name'\)\.value\.trim\(\)\.slice\(0,80\),address=validUrl\(/);
 });
+
+
+test('Tizen mirrors the Web exact shortlink aliases and never redirects arbitrary URLs',()=>{
+ const start=tv.indexOf('function webPlaylistAlias(address){');
+ const end=tv.indexOf('function sourceError(e,address){',start);
+ assert.ok(start>=0&&end>start,'Tizen needs the web/online shortlink fallback loader');
+ const {webPlaylistAlias}=vm.runInNewContext(tv.slice(start,end)+'\n({webPlaylistAlias});',{});
+ assert.equal(webPlaylistAlias('https://d.org.vn/listiptv'),'https://raw.githubusercontent.com/vuminhthanh12/vuminhthanh12/main/vmttv');
+ assert.equal(webPlaylistAlias('http://d.org.vn/listiptv'),'https://raw.githubusercontent.com/vuminhthanh12/vuminhthanh12/main/vmttv');
+ assert.equal(webPlaylistAlias('https://nts12.s.gy/iptv'),'https://gist.githubusercontent.com/trisanghy/e63b2927598a4b932b3708ddd3183aaa/raw/iptv.m3u');
+ assert.equal(webPlaylistAlias('https://example.com/private.m3u'),'','unknown sources must stay private');
+ assert.match(tv,/address:address,channels:list/,'original short URL must remain stored');
+});
+test('Tizen retries verified public HTTPS playlist on CORS but not arbitrary URL',async()=>{
+ const start=tv.indexOf('function webPlaylistAlias(address){');
+ const end=tv.indexOf('function sourceError(e,address){',start);
+ const playlist='#EXTM3U\n#EXTINF:-1,Demo\nhttps://example.com/live.m3u8\n';
+ const direct='https://raw.githubusercontent.com/vuminhthanh12/vuminhthanh12/main/vmttv';
+ const calls=[];
+ const fetch=async address=>{
+  calls.push(address);
+  if(address==='https://d.org.vn/listiptv')throw new TypeError('Failed to fetch');
+  if(address===direct||address==='https://example.com/private.m3u')return {ok:true,text:async()=>playlist};
+  throw Error('Unexpected fetch '+address);
+ };
+ const api=vm.runInNewContext(tv.slice(start,end)+'\n({fetchM3UText});',{fetch,setTimeout,clearTimeout,sourceStatus:()=>{}});
+ const result=await api.fetchM3UText('https://d.org.vn/listiptv');
+ assert.equal(result.text,playlist);
+ assert.equal(result.usedFallback,true);
+ assert.deepEqual(calls,['https://d.org.vn/listiptv',direct]);
+ calls.length=0;
+ const other=await api.fetchM3UText('https://example.com/private.m3u');
+ assert.equal(other.usedFallback,false);
+ assert.deepEqual(calls,['https://example.com/private.m3u']);
+});
