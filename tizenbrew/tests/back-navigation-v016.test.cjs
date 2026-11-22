@@ -5,7 +5,7 @@ const html=fs.readFileSync(path.resolve(__dirname,'../index.html'),'utf8');
 const js=html.slice(html.indexOf('var lastBackEventAt=0;'),html.indexOf('function keyHandler(e){'));
 function run(opts={}){
  const hits={modal:0,player:0,replace:[],back:0,exit:0};
- const elems={modal:{hidden:!opts.modal},player:{hidden:!opts.player},video:{pause(){}}};
+ const elems={modal:{hidden:!opts.modal},player:{hidden:!opts.player},channelPicker:{hidden:true},video:{pause(){}}};
  const win={history:{length:opts.fail?1:2,back(){hits.back++;}},location:{protocol:'http:',host:'localhost:8081',replace(v){hits.replace.push(v)}}};
  const tizen={application:{getCurrentApplication(){return {exit(){hits.exit++}}}}};
  const f=Function('window','tizen','byId','stopPair','closeDialog','closePlayer','document',js+'return {handleBack,exitModule,isRemoteBack};')(
