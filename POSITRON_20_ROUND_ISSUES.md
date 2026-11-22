@@ -1,3 +1,9 @@
+# Vòng ứng viên P5.1.222 — Trạng thái EPG chưa tải (CANDIDATE)
+- Baseline: MỞ ảnh Electron P5.1.221 sau sửa (1920×1080), phần tóm tắt nói Chưa tải EPG nhưng vùng kết quả lại báo Không tìm thấy lịch khớp với kênh.
+- Nguyên nhân: renderer/features.js chỉ dựa channels.length khi matched.length=0, bỏ qua updatedAt và guide.programmes.length.
+- Tính năng mới: nút Chọn nguồn EPG trong trạng thái chưa có dữ liệu, điều hướng qua hành động settings gốc, không phát sinh yêu cầu mạng hoặc mutate playlist.
+- Chứng minh bắt buộc: native Electron trước/sau, QA keyboard, 720px, test, CI, release bất biến. Chưa có ảnh thì không được tính vòng.
+
 # Vòng ứng viên P5.1.221 — Form EPG lệch nhãn (CANDIDATE)
 - Baseline: ảnh Electron P5.1.219 EPG desktop 1920×1080 đã MỞ, nhìn thấy nhãn lịch ghi xô lệch do căn đáy khi các nút giờ nhanh làm label cao thấp khác nhau.
 - Fix: CSS top-align chỉ Positron desktop, giữ 720px một cột, giữ trình đặt lịch native.

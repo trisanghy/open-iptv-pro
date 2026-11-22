@@ -297,7 +297,19 @@
   $('#epgSummary').innerHTML=updatedAt?`Dữ liệu cập nhật: <b>${esc(new Date(updatedAt).toLocaleString('vi-VN'))}</b> • ${guide.programmes.length} chương trình • ${matched.length} kênh khớp`:'Chưa tải EPG. Nhấn “Nguồn EPG” phía trên để chọn hoặc cập nhật nguồn.';
   if(!matched.length){
    const empty=document.createElement('div');empty.className='empty-list';
-   empty.textContent=channels.length?'Không tìm thấy lịch khớp với kênh trong playlist. Thử nguồn EPG khác hoặc thêm tvg-id vào M3U.':"Chưa có kênh. Thêm nguồn M3U trong Quản lý nguồn để xem lịch phát sóng.";
+   // P222: an EPG that has never loaded cannot be diagnosed as a playlist mismatch.
+   // Offer an explicit route to the existing EPG source settings, without
+   // making a network request or touching playlist/recording state.
+   if(channels.length&&!updatedAt&&!guide.programmes.length){
+    empty.textContent='Chưa có dữ liệu EPG. Chọn nguồn XMLTV hoặc nhập file EPG để xem lịch phát sóng.';
+    const setup=document.createElement('button');setup.type='button';
+    setup.id='poEpgSetupAction';setup.className='btn btn-primary po-epg-setup-action';
+    setup.textContent='Chọn nguồn EPG';
+    setup.addEventListener('click',()=>$('#epgSettingsBtn')?.click());
+    empty.append(setup);
+   }else{
+    empty.textContent=channels.length?'Không tìm thấy lịch khớp với kênh trong playlist. Thử nguồn EPG khác hoặc thêm tvg-id vào M3U.':"Chưa có kênh. Thêm nguồn M3U trong Quản lý nguồn để xem lịch phát sóng.";
+   }
    root.append(empty);return;
   }
   const frag=document.createDocumentFragment();matched.forEach(c=>{const items=guideLib.find(guide,c).filter(x=>x.end>clock-24*3600000).slice(-8);

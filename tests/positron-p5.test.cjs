@@ -2317,7 +2317,7 @@ test('P5.1.207 accessible reset clears only random session history',()=>{
   'positron-p51207-random-reset-after-1920x1080-real.png'])
   assert.ok(qa.includes(t),'Missing genuine reset QA '+t);
  const pkg=JSON.parse(read('package.json'));
- assert.ok(flow.includes('TAG=positron/v'+pkg.version+'-p5.1.221'));
+ assert.ok(flow.includes('TAG=positron/v'+pkg.version+'-p5.1.222'));
 });
 
 
@@ -2577,4 +2577,21 @@ test('P5.1.221 aligns EPG DVR labels with actual Electron screenshot regression'
   assert.ok(qa.includes(x),'P221 native screenshot QA missing '+x);
  assert.ok(flow.includes('test -s positron-evidence/p5-20-rounds/positron-p51221-dvr-form-after-1920x1080-real.png'));
  assert.ok(flow.includes('TAG=positron/v'+pkg.version+'-p5.1.221'));
+});
+
+test('P5.1.222 offers actionable source setup only for never-loaded EPG',()=>{
+ const js=read('renderer/features.js'),css=read('renderer/positron-twenty.css');
+ const qa=read('scripts/positron-20-extension.cjs'),flow=read('.github/workflows/positron-lab.yml');
+ for(const x of ["channels.length&&!updatedAt&&!guide.programmes.length",
+  "setup.id='poEpgSetupAction'","setup.addEventListener('click',()=>$('#epgSettingsBtn')?.click())",
+  'Chưa có dữ liệu EPG. Chọn nguồn XMLTV'])
+  assert.ok(js.includes(x),'P222 actionable first-load EPG missing '+x);
+ assert.ok(css.includes('#page-epg #poEpgSetupAction:focus-visible'));
+ for(const x of ['epgEmptyStart222','epgEmptyQA222','navigation222','compact222',
+  'noFalseMismatch','pageIsSettings','noPlaylistMutation',
+  'positron-p51222-epg-source-before-1920x1080-real.png',
+  'positron-p51222-epg-source-after-1920x1080-real.png'])
+  assert.ok(qa.includes(x),'P222 actual Electron regression missing '+x);
+ assert.ok(flow.includes('test -s positron-evidence/p5-20-rounds/positron-p51222-epg-source-after-1920x1080-real.png'));
+ assert.ok(flow.includes('TAG=positron/v'+JSON.parse(read('package.json')).version+'-p5.1.222'));
 });

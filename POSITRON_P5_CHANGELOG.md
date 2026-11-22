@@ -1,5 +1,14 @@
 # Positron P5 Changelog
 
+## P5.1.222 — Chọn nhanh nguồn EPG khi chưa tải dữ liệu / Electron 4.23.307
+- Feature priority: NEW — Bổ sung nút chọn nguồn XMLTV ngay trong trạng thái rỗng của lịch phát sóng, giúp người dùng nhập và kiểm tra nguồn thay vì bị báo sai là danh sách kênh không khớp khi chưa tải lịch.
+- Electron screenshot: positron-p51222-epg-source-after-1920x1080-real.png
+- User action: Mở Lịch phát sóng khi EPG chưa tải, bấm Chọn nguồn EPG để đến Cài đặt, bật nguồn XMLTV hiện có hoặc nhập URL/file rồi tải lịch. Nút không tự tải dữ liệu hoặc thay đổi playlist.
+- Kịch bản native Electron: hai ảnh trước/sau 1920×1080, soát trạng thái rỗng, Enter keyboard tới Cài đặt, viewport 720px, không tràn ngang; bài kiểm thử hồi quy tự động.
+- Không sửa lịch ghi DVR, không đụng nguồn M3U, dữ liệu yêu thích, playback hoặc các nhánh khác.
+- CANDIDATE cho tới khi test, ảnh sau mở bằng mắt, 6 CI jobs và Release bất biến thành công.
+
+
 ## P5.1.221 — Căn thẳng các nhãn EPG DVR / Electron 4.23.306
 - Feature priority: BLOCKER_FIX — Các nhãn Bắt đầu và Kết thúc lệch hàng khiến việc chọn đúng thời điểm ghi video trở nên khó kiểm tra; sửa bố cục để tránh thao tác nhầm mà không thay đổi dữ liệu lịch hoặc luồng ghi hình.
 - Electron screenshot: positron-p51221-dvr-form-after-1920x1080-real.png

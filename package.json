@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.306",
-  "description": "Positron P5.1.221: sửa lệch nhãn form hẹn giờ ghi hình EPG",
+  "version": "4.23.307",
+  "description": "Positron P5.1.222: chỉ dẫn mở nguồn khi EPG chưa tải",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",
