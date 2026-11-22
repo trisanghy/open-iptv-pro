@@ -774,3 +774,14 @@ html[data-positron="true"] #page-fav #positronFavoriteJump:focus-visible{
 }
 html[data-positron="true"] #page-fav #positronFavoriteJump[hidden],
 html[data-positron="true"] #page-fav label[for="positronFavoriteJump"][hidden]{display:none!important}
+
+/* P5.1.188: genuine P187 1920x1080 screenshot left a wide unused right column.
+   Use available desktop space without changing small-screen card sizes. */
+@media(min-width:1600px){
+ html[data-positron="true"] #page-fav #positronFavoriteMore{
+  max-width:none;width:100%;min-width:0;
+ }
+ html[data-positron="true"] #page-fav .po-fav-more-grid{
+  grid-template-columns:repeat(6,minmax(0,1fr));
+ }
+}

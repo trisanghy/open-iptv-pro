@@ -4,6 +4,21 @@
   "branch": "Positron",
   "versions": [
     {
+      "number": 188,
+      "version": "P5.1.188",
+      "appVersion": "4.23.273",
+      "title": "Gợi ý Yêu thích phủ bề ngang desktop 1920px",
+      "description": "Sửa khoảng trống lớn bên phải khối gợi ý trên ảnh Electron P5.1.187: riêng desktop từ 1600px dùng chiều rộng sẵn có và 6 cột, giữ responsive, nguồn M3U, Favorites, tìm kiếm và trình phát.",
+      "kind": "fix",
+      "status": "candidate",
+      "published": "",
+      "tag": "",
+      "commit": "",
+      "url": "https://github.com/trisanghy/open-iptv-pro/tree/Positron",
+      "assets": [],
+      "image": null
+    },
+    {
       "number": 187,
       "version": "P5.1.187",
       "appVersion": "4.23.272",

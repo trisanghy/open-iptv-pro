@@ -132,3 +132,10 @@ Evaluate defects revealed by real screenshot of previous build before making cha
 - Feature: ô nhập trang có Enter, clamp 1..tổng, giữ nguồn và phân trang.
 - QA: `favoriteJumpSevenQA`, `favoriteJumpClampQA`, ảnh P187 before/after Electron 1920×1080.
 - Chờ CI/ảnh/release.
+
+## P5.1.188 (CANDIDATE) — ảnh Electron thật P187
+- Input: `positron-p51187-favorite-direct-page-after-1920x1080-real.png` lấy từ GitHub Actions run 44998410884, đã mở xem trực tiếp.
+- Triệu chứng: khối gợi ý cố định tối đa 1180px khi desktop 1920px, trong khi các thẻ Yêu thích phía trên dùng hết bề ngang; vùng trống bên phải quá lớn.
+- Nguyên nhân gốc: CSS P183 `#positronFavoriteMore{max-width:1180px;width:min(100%,1180px)}`.
+- Sửa: chỉ desktop ≥1600px mở rộng khối gợi ý và tăng thành 6 cột, không đổi viewport nhỏ, nguồn IPTV/Favorites hoặc trình phát.
+- QA bắt buộc: `favoriteWideQA`, PNG sau `positron-p51188-favorite-wide-after-1920x1080-real.png`, Node regression; không tính hoàn thành trước khi có CI và mở soát ảnh.

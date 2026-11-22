@@ -1993,3 +1993,14 @@ test('P5.1.187 jumps to numbered suggestion pages and clamps out-of-range input'
  assert.ok(qa.includes('favoriteJumpSevenQA'));
  assert.ok(qa.includes('favoriteJumpClampQA'));
 });
+
+test('P5.1.188 favorites suggestions fill 1920px desktop but preserve narrow layout',()=>{
+ const css=read('renderer/positron-twenty.css');
+ const qa=read('scripts/positron-20-extension.cjs');
+ assert.ok(css.includes('P5.1.188: genuine P187 1920x1080'));
+ assert.ok(css.includes('@media(min-width:1600px)'));
+ assert.ok(css.includes('max-width:none;width:100%;min-width:0'));
+ assert.ok(css.includes('grid-template-columns:repeat(6,minmax(0,1fr))'));
+ assert.ok(qa.includes('favoriteWideQA'));
+ assert.ok(qa.includes('positron-p51188-favorite-wide-after-1920x1080-real.png'));
+});
