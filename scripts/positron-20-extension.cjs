@@ -4828,11 +4828,41 @@ async function runTwenty(page){
  assert.deepEqual([after177.readUInt32BE(16),after177.readUInt32BE(20)],[1920,1080]);
  await page.fill('#positronFavoriteSearch','');
  await page.evaluate(()=>delete window.__poP177Channels);
+ // P5.1.178: duyệt nhóm gợi ý kế tiếp trên Electron thật.
+ await page.setViewportSize({width:1920,height:1080});
+ await page.waitForFunction(()=>document.querySelectorAll('#positronFavoriteMore .po-fav-more-chip').length===6);
+ const before178=await page.screenshot({path:path.join(out,'positron-p51178-rotate-favorites-before-1920x1080-real.png'),animations:'disabled'});
+ assert.deepEqual([before178.readUInt32BE(16),before178.readUInt32BE(20)],[1920,1080]);
+ const first178=await page.getAttribute('#positronFavoriteMore .po-fav-more-chip:first-child','aria-label');
+ await page.evaluate(()=>{window.__poP178Channels=JSON.stringify(window.IPTVState.getChannels());});
+ await page.click('#positronFavoriteMore .po-fav-more-next');
+ const favoriteRotateQA=await page.evaluate(first=>{
+  const d=document,st=window.IPTVState,store=st.getStore();
+  const more=d.getElementById('positronFavoriteMore');
+  const next=more.querySelector('.po-fav-more-next');
+  const chips=[...more.querySelectorAll('.po-fav-more-chip')];
+  return {
+   newSuggestion:chips[0]?.getAttribute('aria-label')!==first,
+   allSix:chips.length===6,
+   actionVisible:!next.hidden,
+   focusRestored:d.activeElement===next,
+   countPreserved:d.getElementById('favCount')?.textContent==='2',
+   favoritesUnchanged:(store.favoriteKeys||[]).length===2,
+   noAutoplay:st.getCurrent()===null,
+   playlistUnchanged:JSON.stringify(st.getChannels())===window.__poP178Channels,
+   noHorizontalOverflow:d.documentElement.scrollWidth<=innerWidth+1
+  };
+ },first178);
+ for(const [key,value] of Object.entries(favoriteRotateQA))
+  assert.equal(value,true,'P178 rotate favorites '+key+': '+JSON.stringify(favoriteRotateQA));
+ const after178=await page.screenshot({path:path.join(out,'positron-p51178-rotate-favorites-after-1920x1080-real.png'),animations:'disabled'});
+ assert.deepEqual([after178.readUInt32BE(16),after178.readUInt32BE(20)],[1920,1080]);
+ await page.evaluate(()=>delete window.__poP178Channels);
  await page.setViewportSize({width:1360,height:820});
 
 
   const report={type:'Positron P5 twenty distinct desktop screenshot cases',realElectron:true,syntheticChannels:false,
-  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,desktop16x9Screenshots,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA,chooserQa,toastLayoutQA,nativeToastQA,compactIdleQA,channelChipRailQA,advancedFilterQA,readableCardsQA,keyboardTabQA,favoriteEmptyQA,duplicateEmptyQA,categoryFilterQA,categoryFixtureQA,compactSingleQA,directFavoriteQA,favoriteCountQA,compactToastStackQA,toastDismissQA,toastFocusReturnQA,toastDockQA,wheelQA,pinnedAllQA,pinnedMaskQA,categoryKeyQA,dropdownChipQA,pinnedRightMaskQA,pinnedBorderMaskQA,asciiDSearchQA,emptySearchActionQA,readableCardTitleQA,favoriteSvgQA,keyboardFavoriteQA,multiTermSearchQA,keyboardSearchQA,arrowNavigationQA,pageNavigationQA,favoriteSortQA,onAirFilterQA,programmeSearchQA,upcomingProgrammeQA,soonProgrammeQA,earliestEpgSortQA,timeWindowQA,scheduleProgressQA:scheduleProgressQA,nativeReminderQA,cancelReminderQA,reminderLeadQA,toastHistoryQA,notificationArchiveQA,alertFilterQA,noticeSearchQA,quietModeQA,dismissToastQA,libraryPulseQA,groupDistributionQA,logoMissingQA,missingSearchQA,missingGroupQA,missingSortQA,missingJumpQA,missingCsvQA,duplicateQA,duplicateSearchQA,duplicateCsvQA,duplicateScopeQA,missingSizeQA,missingPagerQA,missingEpgFilterQA,missingResetQA,missingRangeQA,missingLocateQA,libraryReturnQA,favoriteActionQA,quickFavoriteQA,favoriteMoreQA,favoriteSearchQA};
+  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,desktop16x9Screenshots,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA,chooserQa,toastLayoutQA,nativeToastQA,compactIdleQA,channelChipRailQA,advancedFilterQA,readableCardsQA,keyboardTabQA,favoriteEmptyQA,duplicateEmptyQA,categoryFilterQA,categoryFixtureQA,compactSingleQA,directFavoriteQA,favoriteCountQA,compactToastStackQA,toastDismissQA,toastFocusReturnQA,toastDockQA,wheelQA,pinnedAllQA,pinnedMaskQA,categoryKeyQA,dropdownChipQA,pinnedRightMaskQA,pinnedBorderMaskQA,asciiDSearchQA,emptySearchActionQA,readableCardTitleQA,favoriteSvgQA,keyboardFavoriteQA,multiTermSearchQA,keyboardSearchQA,arrowNavigationQA,pageNavigationQA,favoriteSortQA,onAirFilterQA,programmeSearchQA,upcomingProgrammeQA,soonProgrammeQA,earliestEpgSortQA,timeWindowQA,scheduleProgressQA:scheduleProgressQA,nativeReminderQA,cancelReminderQA,reminderLeadQA,toastHistoryQA,notificationArchiveQA,alertFilterQA,noticeSearchQA,quietModeQA,dismissToastQA,libraryPulseQA,groupDistributionQA,logoMissingQA,missingSearchQA,missingGroupQA,missingSortQA,missingJumpQA,missingCsvQA,duplicateQA,duplicateSearchQA,duplicateCsvQA,duplicateScopeQA,missingSizeQA,missingPagerQA,missingEpgFilterQA,missingResetQA,missingRangeQA,missingLocateQA,libraryReturnQA,favoriteActionQA,quickFavoriteQA,favoriteMoreQA,favoriteSearchQA,favoriteRotateQA};
  fs.writeFileSync(path.resolve('positron-evidence','audit-p5-20-rounds.json'),JSON.stringify(report,null,2));
  return report;
 }

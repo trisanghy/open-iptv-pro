@@ -1832,3 +1832,18 @@ test('P5.1.177 tìm Yêu thích theo tên/nhóm không xóa kênh và không ch�
  assert.ok(css.includes('#positronFavoriteFilter[hidden]{display:none!important}'));
  assert.ok(qa.includes('favoriteSearchQA'));
 });
+
+test('P5.1.178 đổi nhóm kênh gợi ý không tự phát hoặc sửa nguồn',()=>{
+ const js=read('renderer/positron-twenty.js');
+ const css=read('renderer/positron-twenty.css');
+ const qa=read('scripts/positron-20-extension.cjs');
+ assert.ok(js.includes('let moreCursor=0'));
+ assert.ok(js.includes('moreCursor=(moreCursor+6)%available.length'));
+ assert.ok(js.includes("next.setAttribute('aria-label','Xem sáu kênh chưa yêu thích tiếp theo')"));
+ assert.ok(js.includes('moreCursor%=available.length'));
+ assert.ok(js.includes('next.hidden=available.length<=6'));
+ assert.ok(js.includes("more.querySelector('.po-fav-more-next')?.focus()"));
+ assert.ok(!js.includes("channels.filter(ch=>ch&&ch.id&&!fav.has(store,ch)).slice(0,6)"));
+ assert.ok(css.includes('#page-fav .po-fav-more-next:focus-visible'));
+ assert.ok(qa.includes('favoriteRotateQA'));
+});

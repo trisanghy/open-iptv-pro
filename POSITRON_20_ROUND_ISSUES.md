@@ -70,3 +70,9 @@ Evaluate defects revealed by real screenshot of previous build before making cha
 - P5.1.168: https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.253-p5.1.168
 - P5.1.169: https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.254-p5.1.169
 - P5.1.170: https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.255-p5.1.170
+
+
+## Tiếp nối P5.1.177 — P5.1.178 (CANDIDATE)
+- Input ảnh Electron thật P5.1.176 `positron-p51176-more-favorites-after-1920x1080-real.png`: sáu gợi ý cố định trong hàng trăm kênh.
+- Thêm điều hướng Gợi ý khác duyệt các kênh chưa đánh dấu sao, không autoplay, không lưu Favorites nếu người dùng chưa bấm ☆.
+- Chỉ tính vòng khi Node pass, Electron screenshot trước/sau được mở kiểm tra trực tiếp, CI build + Release Windows/Mac xác minh thành công.

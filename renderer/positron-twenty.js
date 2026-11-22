@@ -184,17 +184,34 @@
   const more=d.createElement('section');more.id='positronFavoriteMore';
   more.className='po-fav-more';more.hidden=true;
   favoriteList.after(more);
+  let moreCursor=0;
   const syncFavoriteMore=()=>{
    const populated=Boolean(favoriteList.querySelector('.fav-card'));
    more.hidden=!populated;
    if(!populated)return;
    const state=window.IPTVState,fav=window.OpenIPTVFavorites;
    const store=state?.getStore?.(),channels=state?.getChannels?.()||[];
-   const picks=store&&fav?channels.filter(ch=>ch&&ch.id&&!fav.has(store,ch)).slice(0,6):[];
+   const available=store&&fav?channels.filter(ch=>ch&&ch.id&&!fav.has(store,ch)):[];
    more.replaceChildren();
-   if(!picks.length)return;
+   if(!available.length){more.hidden=true;return;}
+   // P5.1.178: duyệt toàn bộ danh sách, không chỉ sáu gợi ý đầu.
+   moreCursor%=available.length;
+   const picks=Array.from({length:Math.min(6,available.length)},
+    (_,index)=>available[(moreCursor+index)%available.length]);
+   const toolbar=d.createElement('div');toolbar.className='po-fav-more-top';
    const heading=d.createElement('h3');heading.textContent='Gợi ý thêm vào Yêu thích';
-   const hint=d.createElement('p');hint.textContent='Bấm ☆ để lưu kênh khác mà không mở video.';
+   const next=d.createElement('button');next.type='button';next.className='po-fav-more-next';
+   next.textContent='Gợi ý khác ↻';
+   next.setAttribute('aria-label','Xem sáu kênh chưa yêu thích tiếp theo');
+   next.hidden=available.length<=6;
+   next.addEventListener('click',()=>{
+    moreCursor=(moreCursor+6)%available.length;
+    syncFavoriteMore();
+    more.querySelector('.po-fav-more-next')?.focus();
+   });
+   toolbar.append(heading,next);
+   const hint=d.createElement('p');
+   hint.textContent='Bấm ☆ để lưu hoặc Gợi ý khác để khám phá '+available.length+' kênh chưa yêu thích. Không tự phát video.';
    const grid=d.createElement('div');grid.className='po-fav-more-grid';
    for(const candidate of picks){
     const chip=d.createElement('button');chip.type='button';
@@ -207,7 +224,7 @@
     });
     grid.append(chip);
    }
-   more.append(heading,hint,grid);
+   more.append(toolbar,hint,grid);
   };
   new MutationObserver(syncFavoriteMore).observe(favoriteList,{childList:true,subtree:true});
   syncFavoriteMore();

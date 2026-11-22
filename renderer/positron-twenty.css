@@ -606,3 +606,19 @@ html[data-positron="true"] #page-fav .fav-card[hidden]{display:none!important}
 html[data-positron="true"] #page-fav #positronFavoriteSearch:focus-visible{
  outline:2px solid var(--po-accent,#60d7c2);outline-offset:2px;
 }
+
+/* P5.1.178: nút duyệt sáu gợi ý chưa sao tiếp theo. */
+html[data-positron="true"] #page-fav .po-fav-more-top{
+ display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:0 0 6px;
+}
+html[data-positron="true"] #page-fav .po-fav-more-top h3{margin:0}
+html[data-positron="true"] #page-fav .po-fav-more-next{
+ min-height:34px;padding:6px 12px;border:1px solid var(--po-border,#324f59);
+ border-radius:8px;background:var(--po-input,#152933);color:var(--po-text,#eaf7f7);
+ font-size:12px;font-weight:650;cursor:pointer;
+}
+html[data-positron="true"] #page-fav .po-fav-more-next[hidden]{display:none!important}
+html[data-positron="true"] #page-fav .po-fav-more-next:hover{border-color:var(--po-accent,#60d7c2)}
+html[data-positron="true"] #page-fav .po-fav-more-next:focus-visible{
+ outline:2px solid var(--po-accent,#60d7c2);outline-offset:2px;
+}
