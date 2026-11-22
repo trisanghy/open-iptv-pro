@@ -107,7 +107,7 @@ button,input,textarea{font:inherit;color:inherit}button{cursor:pointer;border:2p
 <p id="sourceQRStatus" role="status">Đang tạo mã QR…</p><p id="sourcePhoneLink"></p>
 <button type="button" id="refreshSourceQR">↻ Tạo mã QR mới</button></section></div></div>
 <div id="searchDialog" hidden><label for="searchInput">Tìm kênh</label><input id="searchInput" placeholder="Nhập tên kênh..."><div class="buttons"><button id="cancelSearch">Hủy</button><button id="applySearch" class="primary">Tìm</button></div></div></div></div>
-<div id="player" hidden tabindex="-1"><video id="video" tabindex="0" playsinline preload="none"></video><object id="avplayObject" type="application/avplayer" hidden></object><div class="playerhead"><strong id="playingName">Open IPTV Pro TV</strong></div><div class="playerstatus" id="playerStatus" role="status">Đang tải luồng…</div><div class="playerdiag" id="playbackDiag" hidden></div><button id="browserFallback" type="button" hidden>Mở thử kênh bằng Samsung Internet</button><div class="playerfoot">↑ ↓ ← → Mở danh sách kênh　·　CH ± Chuyển nhanh　·　OK Phát/Tạm dừng　·　Back Danh sách</div>
+<div id="player" hidden tabindex="-1"><video id="video" tabindex="0" playsinline preload="none"></video><object id="avplayObject" type="application/avplayer" hidden></object><div class="playerhead"><strong id="playingName">Open IPTV Pro TV</strong></div><div class="playerstatus" id="playerStatus" role="status">Đang tải luồng…</div><div class="playerdiag" id="playbackDiag" hidden></div><button id="browserFallback" type="button" hidden>Mở thử kênh bằng Samsung Internet</button><div class="playerfoot">↑ ↓ ← → Mở danh sách kênh　·　CH ± Chuyển nhanh　·　OK Phát/Tạm dừng　·　Đỏ: Trình duyệt　·　Back Danh sách</div>
 <div id="channelPicker" hidden tabindex="-1" role="dialog" aria-label="Chọn kênh">
   <div class="picker-panel">
     <div class="picker-heading">Chọn kênh TV</div>
@@ -816,7 +816,9 @@ function stopPlaybackEngine(){
 }
 function playbackReady(token){
  if(!playbackActive(token))return;
- byId('browserFallback').hidden=true;
+ var browserButton=byId('browserFallback');
+ if(document.activeElement===browserButton&&byId('player').focus)byId('player').focus();
+ browserButton.hidden=true;
  playbackConfirmed=true;playbackFailed=false;
  clearPlaybackTimer();clearPlaybackGrace();
  byId('player').classList.add('is-playing');setPlayerStatus('');
@@ -824,7 +826,9 @@ function playbackReady(token){
 }
 function playbackFailure(token,message){
  if(!playbackActive(token))return;
- byId('browserFallback').hidden=false;
+ var browserButton=byId('browserFallback');
+ browserButton.hidden=false;
+ if(byId('channelPicker').hidden&&browserButton.focus)try{browserButton.focus({preventScroll:true});}catch(e){browserButton.focus();}
  clearPlaybackTimer();
  byId('player').classList.remove('is-playing');
  setPlayerStatus('Không phát được kênh. '+String(message||'Nguồn hoặc codec không hỗ trợ.').slice(0,230));
