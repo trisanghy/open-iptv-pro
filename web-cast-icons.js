@@ -113,5 +113,6 @@
   for(const [selector,name,label] of map)replace(doc.querySelector(selector),name,label);
  }
  watchPlayerButton();
+ if(doc.querySelector('.iptv-tv-body'))decorateTv();
  root.OpenIPTVCastIcons=Object.freeze({svg,replace,ensurePlayerButton,watchPlayerButton,decorateModal,decorateTv,names:Object.keys(ICONS)});
 })(typeof window==='undefined'?null:window);
