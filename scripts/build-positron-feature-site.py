@@ -141,8 +141,8 @@ def summary_name(release):
 def feature_type(n: int, title: str, detail: str):
     # Explicit known feature rounds come from the verified Positron changelog.
     if n in FEATURE_NUMBERS or re.search(
-        r"\b(new feature|feat\(|introduce|add new|thêm chức năng|tính năng mới)\b",
-        title + " " + detail[:200], re.I
+        r"(?:feature priority:\\s*new\\b|\\bnew feature\\b|feat\\(|introduce|add new|thêm chức năng|tính năng mới)",
+        title + " " + detail[:450], re.I
     ):
         return "feature"
     return "fix"
@@ -266,6 +266,49 @@ def attach_real_images(rows):
 
 
 
+
+def attach_checked_in_images(rows):
+    """Fallback to authentic PNGs already checked into the Positron branch.
+
+    A transient Release ZIP download failure must not blank out *all* images
+    in the public catalog. Only an exact version-number match may be used.
+    """
+    source = ROOT / "docs" / "positron-features" / "screenshots"
+    if not source.is_dir():
+        return
+    matches = {}
+    for file in source.glob("*.png"):
+        found = IMAGE_RE.search(file.name)
+        if not found or not file.is_file():
+            continue
+        size = file.stat().st_size
+        if size <= 1000 or size > 12_000_000:
+            continue
+        with file.open("rb") as handle:
+            if handle.read(8) != b"\\x89PNG\\r\\n\\x1a\\n":
+                continue
+        name = file.name.lower()
+        score = (20 if "after" in name else 0) + (5 if "real" in name else 0) + (
+            1 if "desktop-1920x1080" in name else 0)
+        number = int(found.group(1))
+        if number not in matches or score > matches[number][0]:
+            matches[number] = (score, file)
+    folder = OUT / "screenshots"
+    folder.mkdir(parents=True, exist_ok=True)
+    count = 0
+    for row in rows:
+        if row.get("image"):
+            continue  # A newer verified Release image takes precedence.
+        found = matches.get(row["number"])
+        if found is None:
+            continue
+        file = found[1]
+        shutil.copyfile(file, folder / file.name)
+        row["image"] = "screenshots/" + file.name
+        count += 1
+    print("Ảnh Electron phục hồi từ repository:", count)
+
+
 def write_github_index(rows):
     """Render a GitHub-native expandable timeline when Pages is owned by web/online.
 
@@ -373,6 +416,7 @@ def main():
     rows = include_source_versions(rows, descriptions, titles)
     viet_hoa_rows(rows)
     attach_real_images(rows)
+    attach_checked_in_images(rows)
     rows.sort(key=lambda row: row["number"], reverse=True)
     (OUT / "catalog.json").write_text(json.dumps({
         "generatedAt": datetime.now(timezone.utc).isoformat(),

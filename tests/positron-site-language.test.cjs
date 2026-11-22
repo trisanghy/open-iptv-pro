@@ -74,3 +74,16 @@ test('website có đường dẫn công khai độc lập với Pages của web/
  assert.ok(html.includes('for(const address of [publicAssets+\'catalog.json\',\'./catalog.json\'])'));
  assert.ok(!html.includes('localStorage'),'website nhật ký không cần truy cập dữ liệu xem IPTV');
 });
+
+
+test('fallback ảnh Electron thật có sẵn và gallery được hiển thị nổi bật',()=>{
+ const builder=read('scripts/build-positron-feature-site.py');
+ const html=read('docs/positron-features/index.html');
+ assert.ok(builder.includes('def attach_checked_in_images(rows):'));
+ assert.ok(builder.includes('attach_real_images(rows)\n    attach_checked_in_images(rows)'));
+ assert.ok(builder.includes('IMAGE_RE.search(file.name)'));
+ assert.ok(builder.includes('row["image"] = "screenshots/" + file.name'));
+ assert.ok(html.includes('Ảnh chụp Electron đã xác minh'));
+ assert.ok(html.includes('id="gallery"'));
+ assert.ok(html.includes('function renderGallery()'));
+});
