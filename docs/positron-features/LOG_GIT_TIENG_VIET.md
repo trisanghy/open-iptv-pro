@@ -2,14 +2,23 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
-## P5.1.258 — Tìm kiếm chi tiết nguồn theo tên
+## P5.1.259 — Lọc nhanh nguồn bật và tắt
 
-**Ứng dụng:** 4.23.343 · **Trạng thái:** Chưa có bản phát hành
+**Ứng dụng:** 4.23.344 · **Trạng thái:** Chưa có bản phát hành
+
+Feature priority: NEW — Có bộ chọn trạng thái Tất cả / Đang bật / Đang tắt ngay trong chi tiết nguồn. Thao tác lọc phối hợp với tìm kiếm theo tên, công khai số nguồn phù hợp và không đổi dữ liệu playlist, Favorites hoặc kênh phát. Electron screenshot: positron-p51259-source-status-after-1920x1080-real.png
+
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/5934d661794fec842c601d6a7ce4266f9700e396)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+
+## P5.1.258 — Tìm kiếm trong danh sách chi tiết nguồn IPTV / Electron 4.23.343
+
+**Ứng dụng:** 4.23.343 · **Trạng thái:** Đã phát hành
 
 Feature priority: NEW — Bổ sung ô tìm nguồn ngay sau khi mở “Chi tiết nguồn”, tìm không phân biệt hoa/thường và dấu tiếng Việt trên **toàn bộ danh sách nguồn**, không chỉ 30 dòng đầu. Danh sách chi tiết có cuộn riêng và thông báo khi không có kết quả. Không gọi playback, không ghi dữ liệu nguồn/M3U, giữ số kênh/trạng thái từng nguồn và có thể thu gọn như trước.
 
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/1c8c2a44f32ffb9a78c9d4786c57dc4af825cde9)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/5122c19f45ea1abdf038781176479f3a62eda649)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.343-p5.1.258)
 
 ## P5.1.257 — Mở chi tiết nguồn và số kênh từ thẻ thống kê / Electron 4.23.342
 
