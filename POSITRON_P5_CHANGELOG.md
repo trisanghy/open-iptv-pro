@@ -1,9 +1,11 @@
 ## P5.1.181 — Sửa lưới Yêu thích 6 cột hẹp/cắt tên / Electron 4.23.266
+- Feature priority: BLOCKER_FIX — Ảnh P5.1.180 xác nhận lỗi cắt tên Yêu thích khiến người xem không nhận diện chính xác kênh trước khi bấm phát video, nguy cơ chọn sai kênh; đây là lỗi cản trở sử dụng cốt lõi.
 - Visual bug confirmed from real screenshot P5.1.180: khi lưu 6 kênh một lần tổng 8 Favorites, auto-fit grid dàn thành 6 cột hẹp, tên "QA Ch..." bị ellipsis và metadata dồn 4 dòng.
 - Root cause: giao diện dùng `.favorite-grid` responsive chung với `--ui-grid-min` của chế độ hiển thị hiện tại, kích thước cột quá nhỏ cho thẻ gồm logo + hai nút + tên.
 - Fix: chỉ override `#page-fav #favoriteList.favorite-grid` trong Positron bằng min-width 390px/cột, giữ auto-fit; dưới 760px dùng một cột. Không sửa hệ thống grid Sources/EPG, không xóa/sửa Favorites hay trình phát.
 - Input screenshot true native Electron: `positron-p51180-bulk-favorites-after-1920x1080-real.png` trong Release P5.1.180.
-- New screenshot: `positron-p51181-readable-favorites-after-1920x1080-real.png` trên Electron thực.
+- Electron screenshot: positron-p51181-readable-favorites-after-1920x1080-real.png
+- Before screenshot: positron-p51181-readable-favorites-before-1920x1080-real.png (Electron chạy cùng nguồn, tạm phục hồi CSS legacy đã quan sát trong ảnh P180).
 - Regression: Node + chín kiểm tra DOM Electron, gồm 8 cards, 2–4 cột ở desktop, card >=345px, tên không tràn/cắt, favorite count, gợi ý còn nguyên, không autoplay/overflow.
 - Status: CANDIDATE đến khi ảnh và release EXE/DMG được xác minh.
 

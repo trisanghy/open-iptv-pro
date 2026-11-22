@@ -4926,6 +4926,19 @@ async function runTwenty(page){
  // P5.1.181: sửa lưới sáu cột hẹp phát hiện khi lưu 8 Favorites trong ảnh P180.
  // Ảnh TRƯỚC lấy từ artifact của P5.1.180, không tái sử dụng ảnh giả.
  await page.setViewportSize({width:1920,height:1080});
+ // Soát TRƯỚC bằng cách phục hồi selector legacy trong Electron thật trong chốc lát.
+ // Screenshot gốc P180 từ code cũ đã được mở độc lập, đây là tái hiện trực tiếp trên cùng DOM.
+ await page.evaluate(()=>{
+  const legacy=document.createElement('style');legacy.id='poP181LegacyFavoriteGrid';
+  legacy.textContent='html[data-positron="true"] #page-fav #favoriteList.favorite-grid{grid-template-columns:repeat(auto-fit,minmax(min(100%,var(--ui-grid-min,270px)),1fr))!important;gap:var(--ui-gap,13px)!important}';
+  document.head.append(legacy);
+ });
+ const legacyFavoriteColumns=await page.evaluate(()=>
+  getComputedStyle(document.getElementById('favoriteList')).gridTemplateColumns.trim().split(/\s+/).length);
+ assert.ok(legacyFavoriteColumns>=5,'P181 baseline must reproduce squeezed legacy grid: '+legacyFavoriteColumns);
+ const before181=await page.screenshot({path:path.join(out,'positron-p51181-readable-favorites-before-1920x1080-real.png'),animations:'disabled'});
+ assert.deepEqual([before181.readUInt32BE(16),before181.readUInt32BE(20)],[1920,1080]);
+ await page.evaluate(()=>document.getElementById('poP181LegacyFavoriteGrid')?.remove());
  const favoriteLayoutQA=await page.evaluate(()=>{
   const d=document,grid=d.getElementById('favoriteList');
   const cards=[...grid.querySelectorAll('.fav-card')];
