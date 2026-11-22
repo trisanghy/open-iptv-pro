@@ -266,6 +266,8 @@
    resetRandom.setAttribute('aria-label','Làm mới lượt khám phá kênh ngẫu nhiên');
    resetRandom.hidden=true;
    resetRandom.addEventListener('click',()=>{
+    // Keep keyboard/remote focus on an actionable control after hiding reset.
+    const restoreKeyboardFocus=d.activeElement===resetRandom;
     randomSeenIds.clear();
     const badge=nextRandom.querySelector('.po-random-count');
     if(badge){badge.hidden=true;badge.textContent='';}
@@ -273,6 +275,7 @@
     nextRandom.title='Đổi sang kênh ngẫu nhiên khác';
     nextRandom.setAttribute('aria-label','Đổi sang kênh ngẫu nhiên khác');
     resetRandom.hidden=true;
+    if(restoreKeyboardFocus&&!nextRandom.hidden)nextRandom.focus();
    });
    byId('nextBtn')?.parentElement?.append(resetRandom);
    const syncPlayerIntro=()=>{

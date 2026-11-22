@@ -2316,5 +2316,24 @@ test('P5.1.207 accessible reset clears only random session history',()=>{
   'positron-p51207-random-reset-before-1920x1080-real.png',
   'positron-p51207-random-reset-after-1920x1080-real.png'])
   assert.ok(qa.includes(t),'Missing genuine reset QA '+t);
- assert.ok(flow.includes('TAG=positron/v4.23.292-p5.1.207'));
+ const pkg=JSON.parse(read('package.json'));
+ assert.ok(flow.includes('TAG=positron/v'+pkg.version+'-p5.1.208'));
+});
+
+
+test('P5.1.208 restores keyboard focus after hiding random reset',()=>{
+ const js=read('renderer/positron-horizon-v4.js');
+ const qa=read('scripts/positron-20-extension.cjs');
+ const flow=read('.github/workflows/positron-lab.yml');
+ for(const token of ['restoreKeyboardFocus=d.activeElement===resetRandom',
+  'if(restoreKeyboardFocus&&!nextRandom.hidden)nextRandom.focus()'])
+  assert.ok(js.includes(token),'Missing keyboard focus fix: '+token);
+ for(const token of ['focusReturnQA','keyboardFocusRestored',
+  'currentUnchanged','playlistUnchanged','noHorizontalOverflow',
+  "await page.keyboard.press('Enter')",
+  'positron-p51208-focus-return-before-1920x1080-real.png',
+  'positron-p51208-focus-return-after-1920x1080-real.png',
+  'before208.equals(after208),false'])
+  assert.ok(qa.includes(token),'Missing real Electron proof: '+token);
+ assert.ok(flow.includes('test -s positron-evidence/p5-20-rounds/positron-p51208-focus-return-after-1920x1080-real.png'));
 });

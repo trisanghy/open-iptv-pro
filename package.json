@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.292",
-  "description": "Positron P5.1.207: làm mới vòng khám phá kênh ngẫu nhiên",
+  "version": "4.23.293",
+  "description": "Positron P5.1.208: giữ tiêu điểm bàn phím sau làm mới khám phá kênh",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",
