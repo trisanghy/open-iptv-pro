@@ -65,7 +65,6 @@
   syncHistory();
  }).observe(area,{childList:true});
  syncHistory();
-}
  // P5.1.151: Nhật ký thông báo còn xem được sau khi toast gốc tự hết hạn.
  // Chỉ lưu trong RAM (tối đa 30 mục), không ghi playlist, không gọi mạng.
  const topbar=document.querySelector('#positronBar .p-actions');
