@@ -67,34 +67,79 @@
   renderHistory();
  }
 
- // Gradually compact the 6-digit pairing code as viewers scroll down to history.
- // Change layout dimensions, not just transform(), to actually free vertical room.
- function resizePairPin(){
+ // TV browsers sometimes scroll inside an element or report swipes without window.scrollY.
+ let pinGestureScroll=0,lastTouchY=null,lastScrollOffset=0,historyNavigating=false;
+ const clampPin=(n,min,max)=>Math.max(min,Math.min(max,n));
+ function scrollOffset(event){
+  const target=event?.target;
+  return Math.max(0,Number(root.scrollY||0),Number(root.pageYOffset||0),
+   Number(d.documentElement?.scrollTop||0),Number(d.body?.scrollTop||0),Number(target?.scrollTop||0));
+ }
+ function resizePairPin(event){
   const pin=$('tvPairPin');
   if(!pin||!pin.style)return;
-  const offset=Math.max(0,Number(root.scrollY||root.pageYOffset||d.documentElement?.scrollTop||d.body?.scrollTop||0));
-  const width=Math.max(280,root.innerWidth||d.documentElement?.clientWidth||950);
-  const viewportHeight=Math.max(350,root.innerHeight||d.documentElement?.clientHeight||800);
-  const progress=Math.min(1,offset/Math.min(380,Math.max(170,viewportHeight*.45)));
-  const large=Math.max(54,Math.min(112,width*.11));
-  const compact=Math.max(28,Math.min(36,width*.037));
+  const measured=scrollOffset(event);
+  if(measured<lastScrollOffset-3){
+   pinGestureScroll=Math.min(pinGestureScroll,measured);
+   if(measured<12)historyNavigating=false;
+  }
+  lastScrollOffset=measured;
+  const width=Math.max(320,Number(root.innerWidth||d.documentElement?.clientWidth||950));
+  const height=Math.max(350,Number(root.innerHeight||d.documentElement?.clientHeight||800));
+  const distance=Math.min(260,Math.max(135,height*.31));
+  const offset=Math.max(measured,pinGestureScroll,historyNavigating?distance*.82:0);
+  const progress=clampPin(offset/distance,0,1);
+  const large=clampPin(width*.057,52,72);
+  const compact=clampPin(width*.034,32,42);
   const size=large-(large-compact)*progress;
-  const margin=30-23*progress;
+  const margin=25-19*progress;
   pin.style.fontSize=size.toFixed(1)+'px';
   pin.style.marginTop=margin.toFixed(1)+'px';
   pin.style.marginBottom=margin.toFixed(1)+'px';
-  pin.dataset.compact=progress>=.99?'true':'false';
+  pin.dataset.compact=progress>=.98?'true':'false';
  }
  let resizePairPinPending=false;
- function requestPinResize(){
+ function requestPinResize(event){
   if(resizePairPinPending)return;
   resizePairPinPending=true;
-  const update=()=>{resizePairPinPending=false;resizePairPin();};
+  const update=()=>{resizePairPinPending=false;resizePairPin(event);};
   if(typeof root.requestAnimationFrame==='function')root.requestAnimationFrame(update);
   else update();
  }
- root.addEventListener('scroll',requestPinResize,{passive:true});
+ function nudgePin(delta){
+  if(!Number.isFinite(delta)||delta===0)return;
+  pinGestureScroll=clampPin(pinGestureScroll+delta,0,400);
+  if(delta<0&&pinGestureScroll<16)historyNavigating=false;
+  requestPinResize();
+ }
+ root.addEventListener('scroll',requestPinResize,{passive:true,capture:true});
+ d.addEventListener('scroll',requestPinResize,true);
  root.addEventListener('resize',requestPinResize);
+ d.addEventListener('wheel',event=>nudgePin(Number(event.deltaY||0)),{passive:true});
+ d.addEventListener('touchstart',event=>{
+  lastTouchY=Number(event.touches?.[0]?.clientY);
+  if(!Number.isFinite(lastTouchY))lastTouchY=null;
+ },{passive:true});
+ d.addEventListener('touchmove',event=>{
+  const y=Number(event.touches?.[0]?.clientY);
+  if(Number.isFinite(y)&&lastTouchY!==null)nudgePin(lastTouchY-y);
+  if(Number.isFinite(y))lastTouchY=y;
+ },{passive:true});
+ d.addEventListener('touchend',()=>{lastTouchY=null;},{passive:true});
+ d.addEventListener('focusin',event=>{
+  if($('tvHistory')?.contains?.(event.target)){
+   historyNavigating=true;
+   pinGestureScroll=Math.max(pinGestureScroll,160);
+   requestPinResize();
+  }
+ });
+ d.addEventListener('keydown',event=>{
+  if(['ArrowDown','PageDown',' '].includes(event.key))nudgePin(event.key==='ArrowDown'?55:170);
+  else if(['ArrowUp','PageUp','Home'].includes(event.key))nudgePin(event.key==='ArrowUp'?-55:-400);
+ });
+ $('tvHistory')?.addEventListener('pointerenter',()=>{
+  historyNavigating=true;pinGestureScroll=Math.max(pinGestureScroll,150);requestPinResize();
+ },{passive:true});
  const cinemaButton=$('tvExitFullscreen');
  const video=$('tvVideo');
  const status=text=>{$('tvStatus').textContent=String(text||'');};
