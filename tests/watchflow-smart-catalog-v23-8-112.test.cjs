@@ -8,7 +8,7 @@ test('Standard includes real under-20MB Bayes; 18MB fastText is not installed',(
  assert.equal(catalog.MAX_STANDARD_MB,20);
  assert.equal(catalog.STANDARD.find(x=>x.id==='naive-bayes').active,true);
  assert.equal(catalog.STANDARD.find(x=>x.id==='fasttext-quantized').active,false);
- assert.match(ui,/Naive Bayes theo tên kênh\/EPG/);
+ assert.match(ui,/Naive Bayes nhẹ, tự phân loại toàn bộ kênh và EPG offline/);
 });
 test('Smart has five described candidates and strict under-200MiB activation policy',()=>{
  assert.equal(catalog.MAX_SMART_MB,200);

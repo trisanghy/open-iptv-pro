@@ -3,7 +3,7 @@ const test=require('node:test'),assert=require('node:assert/strict'),fs=require(
 const ui=fs.readFileSync('renderer/watchflow-ai-demo-v23-8-102.js','utf8');
 const css=fs.readFileSync('renderer/watchflow-ai-demo-v23-8-102.css','utf8');
 test('Standard routes Naive Bayes EPG analysis, independent of Smart',()=>{
- assert.match(ui,/Standard: phân loại bằng Naive Bayes/);
+ assert.match(ui,/Naive Bayes nhẹ, tự phân loại toàn bộ kênh và EPG offline/);
  assert.match(ui,/const category=c=>analysis\.has\(String\(c\.id\)\)/);
  assert.match(ui,/Dưới 20 MB · Naive Bayes đang chạy/);
 });
