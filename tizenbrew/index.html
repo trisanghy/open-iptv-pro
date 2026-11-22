@@ -96,7 +96,7 @@ try{var old=JSON.parse(localStorage.getItem(storageKey)||'{}');if(old&&typeof ol
 function save(){try{localStorage.setItem(storageKey,JSON.stringify(state));return true;}catch(e){notify('Không đủ bộ nhớ để lưu danh sách.');return false;}}
 
 var SOURCE_CONFIG={url:'https://zjbsvqryaxtafuffpifu.supabase.co',key:'sb_publishable_j_aWS273AgxBi0JYj4O-WA_bNxHFxM7'};
-var SOURCE_PAGE='https://trisanghy.github.io/open-iptv-pro/tizen/phone.html?v=021';
+var SOURCE_PAGE='https://trisanghy.github.io/open-iptv-pro/tizen/phone.html?v=022';
 var sourcePair=null,pairSeq=0,pairTimer=0,sourceSdkPromise=null;
 function sourceStatus(s){byId('sourceQRStatus').textContent=s;}
 function newToken(){if(!window.crypto||!window.crypto.getRandomValues)throw Error('TV không hỗ trợ tạo mã QR an toàn.');
