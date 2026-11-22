@@ -1,4 +1,7 @@
 ## P5.1.168 — Thanh phân trang kênh thiếu logo luôn dễ thao tác / Electron 4.23.253
+- Feature priority: BLOCKER_FIX — Thanh điều hướng phân trang dữ liệu thư viện bị che khỏi vùng nhìn khiến người dùng không mở được những trang kênh còn lại khi danh sách lớn; đưa nút lên trên vùng cuộn giúp truy cập đầy đủ.
+- Electron screenshot: positron-p51168-pager-visible-after-1920x1080-real.png
+- Ảnh TRƯỚC THAO TÁC (Electron P168): positron-p51168-pager-before-1920x1080-real.png; ảnh TRƯỚC SỬA mã là P5.1.167 đã kiểm chứng trên release cũ.
 - Ảnh INPUT thực tế P5.1.167: `positron-p51167-missing-page-size-after-1920x1080-real.png` có nhóm Trước / Trang / Đến / Tiếp chỉ lộ một phần ở mép dưới bảng Thư viện khi danh sách dài.
 - Nguyên nhân trong mã: đặt thanh phân trang sau `#poLibraryMissingRows` trong panel có max-height và scroll.
 - Sửa thực chất: chuyển điều hướng lên TRƯỚC danh sách, tách rõ bằng đường viền nhẹ; giữ scroll danh sách, tìm kiếm, lọc, sắp xếp, số hàng 10/25/50 và xuất CSV.

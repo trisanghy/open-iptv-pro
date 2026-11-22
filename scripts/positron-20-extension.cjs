@@ -4493,6 +4493,9 @@ async function runTwenty(page){
  for(const [key,value] of Object.entries(missingSizeQA))
   assert.equal(value,true,'P167 missing page size QA '+key+': '+JSON.stringify(missingSizeQA));
 
+ // P5.1.168: ảnh TRƯỚC THAO TÁC trên Electron hiện hành. Ảnh trước sửa mã là ảnh P5.1.167 trong release lịch sử.
+ const pagerBefore168=await page.screenshot({path:path.join(out,'positron-p51168-pager-before-1920x1080-real.png'),animations:'disabled'});
+ assert.deepEqual([pagerBefore168.readUInt32BE(16),pagerBefore168.readUInt32BE(20)],[1920,1080]);
  // P5.1.168: ảnh Electron thật chứng minh phân trang hiển thị trên danh sách cuộn.
  await page.evaluate(()=>document.getElementById('poLibraryMissingSize').scrollIntoView({block:'center',behavior:'instant'}));
  const missingPagerQA=await page.evaluate(()=>{
