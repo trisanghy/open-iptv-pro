@@ -1,5 +1,13 @@
 # Positron P5 Changelog
 
+## P5.1.265 — Đi tới nguồn bằng Enter/Space / Electron 4.23.350
+- Feature priority: NEW — Người dùng bàn phím có thể focus một hàng trong Chi tiết nguồn rồi bấm Enter hoặc Space để mở thẻ nguồn tương ứng; giữ nguyên điều khiển nút Đi tới và không can thiệp vào phát kênh.
+- Electron screenshot: positron-p51265-source-enter-after-1920x1080-real.png
+- User action: Nguồn IPTV → Chi tiết nguồn → dùng ↑/↓ chọn nguồn rồi Enter/Space; thẻ gốc được focus/viền xanh, có nút trở về chi tiết.
+- Electron QA: ảnh trước/sau 1920×1080 và 720px; xác minh cả hai phím, không autoplay, playlist/source bất biến, không tràn ngang.
+- Trạng thái CANDIDATE cho tới khi Actions 6/6, ảnh Electron được xem và Release bất biến.
+
+
 ## P5.1.264 — Đặt lại bộ lọc chi tiết nguồn / Electron 4.23.349
 - Feature priority: NEW — Một nút “Đặt lại” khôi phục đồng thời tìm kiếm, bộ lọc Bật/Tắt và thứ tự nguồn ban đầu. Nút chỉ khả dụng khi điều kiện tìm/lọc/sắp xếp đang khác mặc định; không sửa nguồn, playlist, Favorites hay video phát.
 - Electron screenshot: positron-p51264-source-reset-after-1920x1080-real.png

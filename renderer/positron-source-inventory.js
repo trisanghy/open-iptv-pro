@@ -97,6 +97,9 @@
   for(const source of filtered.slice(0,30)){
    const li=d.createElement('li');
    li.tabIndex=details.childElementCount===0?0:-1;
+   // P265: keyboard users can open a focused source directly.
+   li.setAttribute('aria-keyshortcuts','Enter Space');
+   li.title='Mũi tên để chọn nguồn; Enter hoặc Space để đi tới thẻ nguồn';
    li.dataset.sourceId=String(source.id);
    li.dataset.channelCount=String(countBySource.get(String(source.id))||0);
    const name=d.createElement('span');
@@ -180,7 +183,14 @@
  // P263: roving keyboard focus; arrows move between the visible sorted rows only.
  details.addEventListener('keydown',event=>{
   const row=event.target?.closest?.('li[data-source-id]');
-  if(!row||(event.key!=='ArrowDown'&&event.key!=='ArrowUp'))return;
+  if(!row)return;
+  // P265: only the focused row activates navigation, not its child buttons.
+  if(event.target===row&&(event.key==='Enter'||event.key===' ')){
+   event.preventDefault();event.stopPropagation();
+   row.querySelector('.po-source-inventory-jump')?.click();
+   return;
+  }
+  if(event.key!=='ArrowDown'&&event.key!=='ArrowUp')return;
   const rows=[...details.querySelectorAll('li[data-source-id]')];
   const index=rows.indexOf(row);
   if(index<0||!rows.length)return;

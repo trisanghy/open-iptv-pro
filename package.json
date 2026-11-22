@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.349",
-  "description": "Positron P5.1.264: Đặt lại tìm kiếm, lọc và sắp xếp chi tiết nguồn",
+  "version": "4.23.350",
+  "description": "Positron P5.1.265: Enter/Space đi tới thẻ nguồn IPTV đang chọn",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

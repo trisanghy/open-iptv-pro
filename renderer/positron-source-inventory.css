@@ -120,3 +120,8 @@ html[data-positron="true"] #page-sources #poSourceInventoryReset{
 }
 html[data-positron="true"] #page-sources #poSourceInventoryReset:disabled{opacity:.48;cursor:default}
 html[data-positron="true"] #page-sources #poSourceInventoryReset:focus-visible{outline:2px solid #baf8e8;outline-offset:2px}
+
+/* P265: accessible focus on source rows that support Enter/Space. */
+html[data-positron="true"] #page-sources #poSourceInventoryDetails li[data-source-id]:focus-visible{
+ outline:2px solid #9beedb;outline-offset:2px;cursor:pointer;
+}

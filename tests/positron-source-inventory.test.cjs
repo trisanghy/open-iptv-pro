@@ -150,7 +150,7 @@ test('P5.1.263 allows safe Up/Down roving focus through filtered source rows',()
   assert.ok(code.includes(token),'P263 keyboard source inventory '+token);
  assert.ok(css.includes('li[data-po-inventory-active="true"]'));
  assert.ok(!code.includes('playChannel(')&&!code.includes('save(')&&!code.includes('localStorage.setItem('));
- assert.equal(JSON.parse(read('package.json')).version,'4.23.349');
+ assert.equal(JSON.parse(read('package.json')).version,'4.23.350');
 });
 test('P5.1.263 Electron screenshots verify keyboard focus order and zero playback mutation',()=>{
  const qa=read('scripts/positron-20-extension.cjs'),wf=read('.github/workflows/positron-lab.yml');
@@ -170,7 +170,7 @@ test('P5.1.264 resets source inventory search, state filter and sorting together
   assert.ok(js.includes(t),'P264 reset implementation '+t);
  assert.ok(css.includes('#poSourceInventoryReset:disabled'));
  assert.ok(!js.includes('playChannel(')&&!js.includes('save(')&&!js.includes('localStorage.setItem('));
- assert.equal(JSON.parse(read('package.json')).version,'4.23.349');
+ assert.equal(JSON.parse(read('package.json')).version,'4.23.350');
 });
 test('P5.1.264 real Electron QA covers reset before/after and 720px layout',()=>{
  const qa=read('scripts/positron-20-extension.cjs'),wf=read('.github/workflows/positron-lab.yml');
@@ -179,4 +179,25 @@ test('P5.1.264 real Electron QA covers reset before/after and 720px layout',()=>
  for(const t of ['sourceResetQA264','narrowResetQA264','filtersRestored:','sourceNamesRestored:','resetDisabled:',
   'noAutoplay:','sourcesUnchanged:','playlistUnchanged:','noOverflow:'])
   assert.ok(qa.includes(t),'Missing P264 QA '+t);
+});
+
+test('P5.1.265 Enter or Space on focused inventory row opens native source card',()=>{
+ const code=read('renderer/positron-source-inventory.js'),css=read('renderer/positron-source-inventory.css');
+ for(const token of ["li.setAttribute('aria-keyshortcuts','Enter Space');",
+  "if(event.target===row&&(event.key==='Enter'||event.key===' '))",
+  "event.preventDefault();event.stopPropagation();",
+  "row.querySelector('.po-source-inventory-jump')?.click();"])
+  assert.ok(code.includes(token),'P265 source activation '+token);
+ assert.ok(css.includes('li[data-source-id]:focus-visible'));
+ assert.ok(!code.includes('playChannel(')&&!code.includes('save(')&&!code.includes('localStorage.setItem('));
+ assert.equal(JSON.parse(read('package.json')).version,'4.23.350');
+});
+test('P5.1.265 Electron before/after and narrow screenshots validate Enter/Space navigation',()=>{
+ const qa=read('scripts/positron-20-extension.cjs'),wf=read('.github/workflows/positron-lab.yml');
+ for(const filename of ['positron-p51265-source-enter-before-1920x1080-real.png',
+  'positron-p51265-source-enter-after-1920x1080-real.png','positron-p51265-source-space-720-real.png'])
+  assert.ok(qa.includes(filename)&&wf.includes(filename),'P265 screenshot missing '+filename);
+ for(const token of ['sourceEnterQA265','sourceSpaceQA265','targetFocused:','targetHighlighted:',
+  'returnedRow:','noAutoplay:','sourcesUnchanged:','playlistUnchanged:','noOverflow:'])
+  assert.ok(qa.includes(token),'P265 QA missing '+token);
 });
