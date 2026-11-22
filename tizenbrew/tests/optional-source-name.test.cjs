@@ -17,17 +17,17 @@ test('version 0.1.18 is consistent in TizenBrew metadata and TV header',()=>{
  assert.ok(tv.includes('Samsung Tizen Edition · TizenBrew v'+pkg.version));
 });
 test('TV and QR phone labels clearly say source name is optional',()=>{
- assert.match(tv,/<label for="sourceName">Tên nguồn \\(không bắt buộc\\)<\\/label>/);
- assert.match(phone,/<label for="name">Tên nguồn \\(không bắt buộc\\)<\\/label><input id="name"[^>]+>/);
+ assert.ok(tv.includes('<label for="sourceName">Tên nguồn (không bắt buộc)</label>'));
+ assert.ok(phone.includes('<label for="name">Tên nguồn (không bắt buộc)</label>'));
  const nameInput=phone.match(/<input id="name"[^>]+>/)[0];
- assert.doesNotMatch(nameInput,/\\brequired\\b/);
- assert.match(phone,/byId\\('sourceForm'\\)\\.onsubmit=async function/);
- assert.doesNotMatch(phone,/if\\(!name\\|\\|!address\\|\\|!byId\\('rights'\\)\\.checked\\)/);
+ assert.doesNotMatch(nameInput,/\brequired\b/);
+ assert.ok(phone.includes("byId('sourceForm').onsubmit=async function"));
+ assert.doesNotMatch(phone,/if\(!name\|\|!address\|\|!byId\('rights'\)\.checked\)/);
  assert.ok(tv.includes("byId(kind==='search'?'searchInput':'sourceUrl').focus()"),'TV should focus directly on URL');
 });
 test('TV generates a source name only when missing',()=>{
  const state={sources:[]};
- const display=vm.runInNewContext(sourceNameHelper+'\\nsourceDisplayName;', {state});
+ const display=vm.runInNewContext(sourceNameHelper+'\nsourceDisplayName;', {state});
  assert.equal(display(''),'Nguồn IPTV 1');
  assert.equal(display('   '),'Nguồn IPTV 1');
  assert.equal(display('Tin tức'),'Tin tức');
@@ -43,10 +43,10 @@ test('TV source import accepts empty name but still checks URL and rights',async
    sourceUrl:{value:'https://example.com/live.m3u8'},
    saveSource:{disabled:false,textContent:''}
  };
- const ctx={state,byId:id=>fields[id],url:input=>/^https?:\\/\\//.test(input)?input:'',parse:()=>[{id:'c1',name:'Kênh thử',url:'https://example.com/live.m3u8'}],newToken:()=> '1234',
+ const ctx={state,byId:id=>fields[id],url:input=>/^https?:\/\//.test(input)?input:'',parse:()=>[{id:'c1',name:'Kênh thử',url:'https://example.com/live.m3u8'}],newToken:()=> '1234',
   save:()=>true,draw:()=>{},notify:m=>notes.push(m),closeDialog:()=>{},sourceStatus:m=>notes.push(m),sourceError:e=>String(e),search:'',group:'',section:'',selected:null};
  const code=sourceNameHelper+block(tv,'async function addSource(data,fromPhone){','function setPlayerStatus(');
- const add=vm.runInNewContext(code+'\\naddSource;',ctx);
+ const add=vm.runInNewContext(code+'\naddSource;',ctx);
  const ok=await add(null,false);
  assert.equal(ok.ok,true);
  assert.equal(state.sources[0].name,'Nguồn IPTV 1');
@@ -67,7 +67,7 @@ test('phone sends URL with blank optional name',async()=>{
  const ctx={byId:id=>nodes[id],validUrl:x=>'https://'+x,command:async(action,payload)=>{sent.push({action,payload});return {count:2};},
   feedback:(...args)=>feedback.push(args),showTab:()=>{},query:'before',offset:3};
  const code=block(phone,"byId('sourceForm').onsubmit=async function(event){","byId('renameSource').onclick=");
- const fn=vm.runInNewContext(code+"\\nbyId('sourceForm').onsubmit;",ctx);
+ const fn=vm.runInNewContext(code+"\nbyId('sourceForm').onsubmit;",ctx);
  await fn({preventDefault(){}});
  assert.equal(sent.length,1);
  assert.equal(sent[0].action,'add-source');
@@ -77,6 +77,6 @@ test('phone sends URL with blank optional name',async()=>{
 });
 test('QR chunked playlist import also permits empty name',()=>{
  const code=block(tv,'function playlistStart(req){','function playlistChunk(req){');
- assert.match(code,/var name=sourceDisplayName\\(req.name\\)/);
+ assert.match(code,/var name=sourceDisplayName\(req.name\)/);
  assert.doesNotMatch(code,/Tên nguồn không được trống/);
 });
