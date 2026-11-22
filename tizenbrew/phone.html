@@ -96,7 +96,20 @@ function connection(yes,message){
  updateControls();
 }
 function tokenId(){if(!window.crypto||!window.crypto.getRandomValues)throw Error('Trình duyệt thiếu Web Crypto.');var a=new Uint8Array(16);window.crypto.getRandomValues(a);return Array.prototype.map.call(a,function(n){return ('0'+n.toString(16)).slice(-2);}).join('');}
-function validUrl(value){try{var u=new URL(String(value||'').trim());return (u.protocol==='https:'||u.protocol==='http:')&&u.href.length<=4096?u.href:'';}catch(e){return '';}}
+function validUrl(s){
+ var value=String(s==null?'':s).replace(/[\u200B-\u200D\uFEFF]/g,'').trim();
+ if(!value||value.length>4096)return '';
+ value=value.replace(/\\/g,'/');
+ var match=value.match(/^(h+t+p+s*)\s*(?::\s*\/{0,2}|\/{1,2}|\s+)(.*)$/i);
+ if(match)value=(/s$/i.test(match[1])?'https':'http')+'://'+match[2].replace(/^\/+/,'');
+ else if(/^\/\//.test(value))value='https:'+value;
+ else if(!/^[a-z][a-z0-9+.-]*:\/\//i.test(value)){
+  if(/^[a-z][a-z0-9+.-]*:/i.test(value)&&!/^[\w.-]+:\d+(?:[/?#]|$)/i.test(value))return '';
+  value='https://'+value;
+ }
+ if(/\s/.test(value))return '';
+ try{var u=new URL(value);return(u.protocol==='https:'||u.protocol==='http:')&&u.hostname?u.href:'';}catch(e){return '';}
+}
 function loadSdk(){if(window.supabase&&window.supabase.createClient)return Promise.resolve(window.supabase);
 return new Promise(function(resolve,reject){var sites=['https://trisanghy.github.io/open-iptv-pro/supabase-sdk.js','https://cdn.jsdelivr.net/gh/trisanghy/open-iptv-pro@tizenbrew/supabase-sdk.js'];
 function next(){if(!sites.length){reject(Error('Không tải được thư viện Supabase.'));return;}
@@ -228,6 +241,8 @@ async function connect(){
   pulse=setInterval(function(){if(expires()){connection(false,'Mã QR đã hết hạn sau 10 phút. Quét mã mới.');return;}void ping();},7000);
  }catch(e){feedback('Lỗi: '+String(e.message||e),true);connection(false,'Không mở được kênh kết nối TV.');}
 }
+byId('address').addEventListener('blur',function(){var checked=validUrl(this.value);if(checked)this.value=checked;});
+byId('editUrl').addEventListener('blur',function(){var checked=validUrl(this.value);if(checked)this.value=checked;});
 byId('tabManage').onclick=function(){showTab('manage');if(online&&!snapshot)void getSnapshot('',0,'');};
 byId('tabAdd').onclick=function(){showTab('add');};
 byId('refresh').onclick=function(){void getSnapshot(currentSource,offset,query);};
@@ -238,7 +253,8 @@ byId('next').onclick=function(){void getSnapshot(currentSource,offset+30,query);
 byId('sourceForm').onsubmit=async function(event){
  event.preventDefault();
  var name=byId('name').value.trim().slice(0,80),address=validUrl(byId('address').value);
- if(!name||!address||!byId('rights').checked){feedback('Nhập tên, URL hợp lệ và xác nhận quyền sử dụng.',true);return;}
+ if(!name||!address||!byId('rights').checked){feedback(!address?'URL không hợp lệ. Nhập tên miền hoặc URL HTTP(S), ví dụ d.org.vn/listiptv.':'Nhập tên nguồn và xác nhận quyền sử dụng.',true);return;}
+ byId('address').value=address;
  try{
   var response=await command('add-source',{name:name,address:address,rights:true,sourceId:''},'Đang gửi nguồn. Chờ TV xác nhận đã nhận yêu cầu…');
   byId('sourceForm').reset();query='';offset=0;
