@@ -24,3 +24,10 @@ The original v4.23.82 UI concept shows:
 
 ### v23.8.113 regression correction
 - UI tests now assert the actual Smart-catalog fallback and installed Qwen3 native route, rather than stale v23.8.108 preview text. The pre-release version is incremented; no immutable tag is rewritten.
+
+## v23.8.115 — Full automatic channel and EPG scan (Rust Lab)
+
+- On startup or playlist/EPG update, the bundled Naive Bayes classifier processes every enabled channel and every valid EPG programme associated with that channel, asynchronously in short batches. No WatchFlow panel action or manual scan is required.
+- The current results are in-memory only; scan progress reports channel count, classified count, and matched programme entries. Stale runs are cancelled when the input fingerprint changes. Playback, playlist and source URLs are never modified.
+- Optional Internet lookup is separate from the local scan, limited to sanitized public names, with its existing daily request budget. Disabling online search does not disable offline EPG analysis.
+- The Standard model works now. Smart Transformer models under 200 MB remain a documented user-selectable catalog pending verified weights and inference runtimes; do not label them active.

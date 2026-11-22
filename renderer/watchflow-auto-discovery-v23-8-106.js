@@ -71,26 +71,122 @@
   const results=collect(storage,channels,engine);onUpdate({done:true,discovered:results.length,error:state.error});
   return{requests,used:state.used,limit:DAY_LIMIT,discovered:results,error:state.error};
  }
- function start(win,engine){if(!win?.document||!engine)return false;const tag='__watchflowAutoStarted';if(win[tag])return true;win[tag]=true;
-  let busy=false,last=0;
+ // Always-on local scan is independent from optional, rate-limited Wikidata lookups.
+ async function scanLocal({channels=[],guide=null,guideLib=null,engine,clock=Date.now(),
+  yieldNow=()=>new Promise(resolve=>setTimeout(resolve,0)),onProgress=()=>{},shouldStop=()=>false,batchSize=32}={}){
+  const list=Array.isArray(channels)?channels:[],analysis=new Map();
+  const total=list.length,guideProgrammes=Array.isArray(guide?.programmes)?guide.programmes.length:0;
+  let processed=0,classified=0,epgChannels=0,epgProgrammes=0,lastYield=Date.now();
+  const state=()=>({analysis,total,processed,classified,epgChannels,epgProgrammes,guideProgrammes});
+  for(const channel of list){
+   if(shouldStop())return {...state(),cancelled:true};
+   if(channel?.id){
+    let result=null;
+    try{
+     result=typeof engine?.analyzeChannel==='function'
+      ?engine.analyzeChannel(channel,guide,guideLib,clock)
+      :engine?.analyze?.([channel],guide,guideLib,clock)?.get(String(channel.id));
+    }catch{}
+    if(result){
+     analysis.set(String(channel.id),result);
+     if(result.label&&result.label!=='Chưa phân loại')classified++;
+     if(result.epgMatched||result.epgCount>0)epgChannels++;
+     epgProgrammes+=Math.max(0,Number(result.epgCount)||0);
+    }
+   }
+   processed++;
+   if(processed%Math.max(1,batchSize)===0||Date.now()-lastYield>18){
+    onProgress(state());await yieldNow();lastYield=Date.now();
+   }
+  }
+  onProgress(state());
+  return {...state(),cancelled:false};
+ }
+ function fingerprint(channels){
+  let hash=2166136261;
+  for(const ch of channels){
+   const str=String(ch?.id||'')+'|'+String(ch?.tvgId||'')+'|'+String(ch?.name||'')+'|'+String(ch?.group||ch?.groupTitle||'');
+   for(let i=0;i<str.length;i++){hash^=str.charCodeAt(i);hash=Math.imul(hash,16777619);}
+  }
+  return channels.length+':'+(hash>>>0);
+ }
+ const statusByWindow=new WeakMap();
+ function start(win,engine){
+  if(!win?.document||!engine)return false;
+  const tag='__watchflowAutoStarted';
+  if(win[tag])return true;win[tag]=true;
+  let lastKey='',lastGuide=null,guideVersion=0,generation=0,webBusy=false,lastInternet=0;
+  const status={running:false,processed:0,total:0,classified:0,epgChannels:0,epgProgrammes:0,
+   guideProgrammes:0,updatedAt:0,error:''};
+  statusByWindow.set(win,status);
   const notify=detail=>win.document.dispatchEvent(new win.CustomEvent('openiptv:watchflow-auto-update',{detail}));
-  const run=async(force=false)=>{
-   if(busy||!enabled(win.localStorage))return;
-   if(!force&&Date.now()-last<PAUSE_MS)return;busy=true;last=Date.now();notify({running:true});
-   try{const channels=win.IPTVState?.getChannels?.()||[],guide=win.IPTVExtras?.getGuide?.();
-    // Preclassify all loaded channels now, not only when the user opens the panel.
-    const preliminary=engine.analyze(channels,guide,win.IPTVGuide);
-    backgroundAnalysis.set(win,preliminary);
-    notify({running:true,classified:preliminary.size});
-    await scan({storage:win.localStorage,channels,engine,lookup:q=>engine.searchInternet(q),onUpdate:notify});
-    backgroundAnalysis.set(win,enrich(preliminary,channels,win.localStorage,engine));
-   }catch(error){notify({error:String(error?.message||error).slice(0,140)});}
-   finally{busy=false;notify({running:false,discovered:collect(win.localStorage,win.IPTVState?.getChannels?.()||[],engine).length});}
-  };
-  win.setTimeout(()=>{void run();},1800);
-  win.setInterval(()=>{void run();},PAUSE_MS);
-  win.document.addEventListener('openiptv:watchflow-auto-rescan',()=>{last=0;void run(true);});
+  const channels=()=>win.IPTVState?.getChannels?.()||[];
+  const guide=()=>{try{return win.IPTVExtras?.getGuide?.()||null;}catch{return null;}};
+  const yieldNow=()=>new Promise(resolve=>win.setTimeout(resolve,0));
+  async function runLocal(list,epg){
+   const token=++generation;
+   Object.assign(status,{running:true,processed:0,total:list.length,classified:0,epgChannels:0,
+    epgProgrammes:0,guideProgrammes:epg?.programmes?.length||0,error:''});
+   backgroundAnalysis.set(win,new Map());notify({local:true,...status});
+   let lastNotify=0;
+   try{
+    const result=await scanLocal({channels:list,guide:epg,guideLib:win.IPTVGuide,engine,
+     shouldStop:()=>token!==generation,yieldNow,onProgress:progress=>{
+      if(token!==generation)return;
+      backgroundAnalysis.set(win,progress.analysis);
+      Object.assign(status,{processed:progress.processed,total:progress.total,
+       classified:progress.classified,epgChannels:progress.epgChannels,
+       epgProgrammes:progress.epgProgrammes,guideProgrammes:progress.guideProgrammes});
+      if(Date.now()-lastNotify>=250||progress.processed===progress.total){
+       lastNotify=Date.now();notify({local:true,...status});
+      }
+     }});
+    if(token!==generation||result.cancelled)return;
+    backgroundAnalysis.set(win,enrich(result.analysis,list,win.localStorage,engine));
+    Object.assign(status,{running:false,updatedAt:Date.now()});
+    notify({local:true,complete:true,...status});
+   }catch(error){
+    if(token!==generation)return;
+    Object.assign(status,{running:false,error:String(error?.message||error).slice(0,180)});
+    notify({local:true,complete:true,...status});
+   }
+  }
+  function inspect(){
+   const list=channels(),epg=guide();
+   if(epg!==lastGuide){lastGuide=epg;guideVersion++;}
+   const mapping=JSON.stringify(epg?.manualMappings||{});
+   const key=fingerprint(list)+'|'+guideVersion+'|'+(epg?.programmes?.length||0)
+    +'|'+(epg?.offsetMinutes||0)+'|'+mapping+'|'+Math.floor(Date.now()/(30*60000));
+   if(key===lastKey)return;
+   lastKey=key;void runLocal(list,epg);
+  }
+  async function runInternet(){
+   if(webBusy||!enabled(win.localStorage))return;
+   if(Date.now()-lastInternet<PAUSE_MS)return;
+   webBusy=true;lastInternet=Date.now();notify({internet:true,running:true});
+   try{
+    const list=channels();
+    await scan({storage:win.localStorage,channels:list,engine,lookup:q=>engine.searchInternet(q),
+     onUpdate:info=>notify({internet:true,...info})});
+    const current=backgroundAnalysis.get(win);
+    if(current?.size){
+     backgroundAnalysis.set(win,enrich(current,channels(),win.localStorage,engine));
+     notify({internet:true,complete:true});
+    }
+   }catch(error){notify({internet:true,error:String(error?.message||error).slice(0,140)});}
+   finally{webBusy=false;notify({internet:true,running:false});}
+  }
+  // Local classification starts without a panel click and reruns on every playlist/EPG change.
+  win.setTimeout(inspect,200);
+  win.setInterval(inspect,3000);
+  win.document.addEventListener('openiptv:watchflow-epg-changed',inspect);
+  win.document.addEventListener('openiptv:watchflow-auto-rescan',()=>{
+   lastKey='';inspect();lastInternet=0;void runInternet();
+  });
+  win.addEventListener?.('openiptv:channel-browser-refresh',inspect);
+  win.setTimeout(()=>{void runInternet();},1800);
+  win.setInterval(()=>{void runInternet();},PAUSE_MS);
   return true;
  }
- return Object.freeze({getBackgroundAnalysis:win=>backgroundAnalysis.get(win)||new Map(),KEY,OPT,DAY_LIMIT,publicName,isTv,read,enabled,setEnabled,collect,enrich,scan,start});
+ return Object.freeze({getBackgroundAnalysis:win=>backgroundAnalysis.get(win)||new Map(),getLocalStatus:win=>({...statusByWindow.get(win)}),KEY,OPT,DAY_LIMIT,publicName,isTv,read,enabled,setEnabled,collect,enrich,scan,scanLocal,fingerprint,start});
 });

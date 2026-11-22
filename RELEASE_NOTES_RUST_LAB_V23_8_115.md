@@ -1,0 +1,10 @@
+# Rust Lab v23.8.115 — Automatic full local WatchFlow scan (PRE-RELEASE)
+
+- **Automatic, no click:** WatchFlow classifies every enabled channel from the imported playlist and all valid matched EPG programme entries while the app is open, without opening the AI panel. Removes the former 2,500-channel and 8-programme/12-hour analysis limits.
+- **Incremental/nonblocking:** the work runs in small batches, yields back to the player, reports real channel/EPG counts and cancels outdated scans if the playlist or EPG changes.
+- **Automatic refresh:** restarts on playlist change, XMLTV download/import/cache restoration, EPG offset or mapping changes, and time-window rollover. Startup EPG autoload also watches for a playlist imported after the initial launch, when the existing EPG-autoload preference is enabled.
+- **Simplified panel:** WatchFlow opens directly to automatic recommendations; scan status and progress are visible, full channel classification can be searched and paginated, and Smart model details are collapsed by default. No manual Refresh/Scan button needed.
+- **Offline/privacy:** all-channel and EPG classification uses the bundled real lightweight Naive Bayes model locally. Internet/Wikidata lookup remains optional, rate-limited and restricted to sanitized public names. Neither media URLs nor viewing history are transmitted as part of local scanning. No playback or playlist alteration.
+- **Model honesty:** Standard (<20 MB) runs automatically; Smart (<200 MB) remains a selectable catalog, not fake active Transformer inference. Native Qwen3 inference remains separate for its supported Mac MLX backend and is not silently run on every channel.
+- **Regression coverage:** 2,701 channels × 29 EPG entries; scan yield/cancellation; missing EPG; playlist fingerprint changes; updates without UI interaction and existing AI tests.
+- **Release policy:** only experiment/rust-tauri-v2; immutable prerelease, no Stable/Latest or main changes. Windows EXE and macOS DMG require verified build artifacts.

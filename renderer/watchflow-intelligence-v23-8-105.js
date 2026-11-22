@@ -15,9 +15,40 @@
  const model=(()=>{const vocab=new Set(),classes={};for(const label of labels){let total=0;const words={};for(const word of training[label].flatMap(tokenize)){words[word]=(words[word]||0)+1;vocab.add(word);total++;}classes[label]={words,total};}return{vocab,classes};})();
  function predict(text){const words=tokenize(text).filter(x=>model.vocab.has(x));if(!words.length)return{label:'Chưa phân loại',confidence:0};const scores=labels.map(l=>words.reduce((n,w)=>n+Math.log(((model.classes[l].words[w]||0)+1)/(model.classes[l].total+model.vocab.size)),0));
   const max=Math.max(...scores),prob=scores.map(x=>Math.exp(x-max)),sum=prob.reduce((a,b)=>a+b,0),idx=scores.indexOf(max);return{label:labels[idx],confidence:Math.round(100*prob[idx]/sum)};}
- function findProgrammes(channel,guide,guideLib,clock=Date.now()){if(!guide||!guideLib?.find)return[];try{return guideLib.find(guide,channel).filter(p=>Number.isFinite(p?.start)&&Number.isFinite(p?.end)&&p.end>clock&&p.start<clock+12*3600000).slice(0,8);}catch{return[];}}
- function analyze(channels,guide,guideLib,clock=Date.now()){const map=new Map();for(const channel of channels.slice(0,2500)){if(!channel?.id)continue;const list=findProgrammes(channel,guide,guideLib,clock),now=list.find(p=>p.start<=clock&&p.end>clock)||list[0];const pred=predict((now?.title||'')+' '+String(now?.description||'').slice(0,180)),name=predict((channel.name||'')+' '+(channel.group||''));const p=pred.confidence>=30?pred:name;
-  map.set(String(channel.id),{label:p.label,confidence:p.confidence,from:p===pred?'EPG':'Tên/nhóm',programme:now?.title||'',epgCount:list.length});}return map;}
+ // Scan every valid programme for each channel, not just the first eight or next twelve hours.
+ function analyzeChannel(channel,guide,guideLib,clock=Date.now()){
+  if(!channel?.id)return null;
+  const name=predict(String(channel.name||'')+' '+String(channel.group||channel.groupTitle||''));
+  let rows=[];
+  try{if(guide&&typeof guideLib?.find==='function')rows=guideLib.find(guide,channel)||[];}catch{}
+  const votes=new Map();let epgCount=0,live=null,next=null,first=null;
+  for(const row of Array.isArray(rows)?rows:[]){
+   if(!Number.isFinite(row?.start)||!Number.isFinite(row?.end)||row.end<=row.start)continue;
+   epgCount++;
+   if(row.start<=clock&&row.end>clock)live=row;
+   else if(row.start>clock&&(!next||row.start<next.start))next=row;
+   if(!first)first=row;
+   const pred=predict(String(row.title||'')+' '+String(row.description||'').slice(0,240));
+   if(pred.label==='Chưa phân loại'||pred.confidence<30)continue;
+   const weight=row.start<=clock&&row.end>clock?4:row.start>clock?1.5:.6;
+   votes.set(pred.label,(votes.get(pred.label)||0)+weight*Math.max(.3,pred.confidence/100));
+  }
+  const ranked=[...votes].sort((a,b)=>b[1]-a[1]);
+  const winner=ranked[0],total=ranked.reduce((sum,x)=>sum+x[1],0);
+  const fromEPG=!!winner&&winner[1]>=.3&&(name.label==='Chưa phân loại'||winner[1]>=.8);
+  const chosen=fromEPG?{label:winner[0],confidence:Math.max(30,Math.round(100*winner[1]/Math.max(1,total)))}:name;
+  return {label:chosen.label,confidence:chosen.confidence,from:fromEPG?'EPG':'Tên/nhóm',
+   programme:String((live||next||first)?.title||'').slice(0,180),
+   epgCount,epgMatched:epgCount>0,topics:ranked.slice(0,4).map(([label,score])=>({label,score:Math.round(score*10)/10}))};
+ }
+ function analyze(channels,guide,guideLib,clock=Date.now()){
+  const result=new Map();
+  for(const channel of Array.isArray(channels)?channels:[]){
+   const entry=analyzeChannel(channel,guide,guideLib,clock);
+   if(entry)result.set(String(channel.id),entry);
+  }
+  return result;
+ }
  const empty=()=>({version:1,updatedAt:'',seconds:{},hours:{}});
  function read(storage){let data;try{data=JSON.parse(storage?.getItem(KEY)||'null');}catch{}if(data?.version!==1||!data.seconds||typeof data.seconds!=='object')return empty();const v=empty();
   for(const label of labels)v.seconds[label]=Math.max(0,Math.min(31536000,Number(data.seconds[label])||0));
@@ -32,5 +63,5 @@
   for(const evt of ['pause','ended','stalled','emptied'])video.addEventListener(evt,()=>{time=0;});return true;}
  async function searchInternet(raw,request=fetch){const q=String(raw||'').trim().slice(0,90);if(q.length<2)return[];const url='https://www.wikidata.org/w/api.php?action=wbsearchentities&format=json&language=vi&uselang=vi&limit=8&origin=*&search='+encodeURIComponent(q);
   const response=await request(url,{method:'GET',headers:{Accept:'application/json'},signal:AbortSignal.timeout(12000)});if(!response.ok)throw Error('Wikidata HTTP '+response.status);const json=await response.json();return(Array.isArray(json.search)?json.search:[]).filter(x=>/^Q\d+$/.test(String(x.id||''))).slice(0,8).map(x=>({name:String(x.label||'').slice(0,120),description:String(x.description||'').slice(0,200),url:'https://www.wikidata.org/wiki/'+x.id}));}
- return Object.freeze({KEY,labels,predict,analyze,read,learn,save,clear,rank,monitor,searchInternet});
+ return Object.freeze({KEY,labels,predict,analyzeChannel,analyze,read,learn,save,clear,rank,monitor,searchInternet});
 });

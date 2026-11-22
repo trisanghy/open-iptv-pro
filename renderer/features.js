@@ -4,6 +4,7 @@
  const $=s=>document.querySelector(s);
  const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
  const today=(t)=>new Date(t).toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit'});
+ const notifyWatchFlow=()=>document.dispatchEvent(new Event('openiptv:watchflow-epg-changed'));
  const defaultSources=[
   {name:'Việt Nam • VNEPG · Gzip (mặc định)',url:'https://epg.io.vn/epg.xml.gz',enabled:true},
   {name:'Việt Nam • VNEPG · XML tiêu chuẩn',url:'https://epg.io.vn/epg.xml',enabled:false},
@@ -159,7 +160,7 @@
    if(updatedAt&&Date.parse(cached.updatedAt||'')<Date.parse(updatedAt))return;
    guide={...cached.guide,manualMappings:config.manualMappings,offsetMinutes:config.offsetMinutes};
    updatedAt=cached.updatedAt||'';
-   renderGuidePages();ctx.renderList();
+   renderGuidePages();ctx.renderList();notifyWatchFlow();
   }catch{} // Private browsing may block IndexedDB; retain local fallback.
  }
  function cacheGuide(){
@@ -240,7 +241,7 @@
    if(sourcesLoaded&&combined.programmes.length){guide={names:combined.names,aliasesById:combined.aliasesById,programmes:combined.programmes,manualMappings:config.manualMappings,offsetMinutes:config.offsetMinutes};updatedAt=new Date().toISOString();await cacheGuide();ctx.toast(`Đã tải ${guide.programmes.length} lịch từ ${sourcesLoaded} nguồn`);}
    else ctx.toast('Không có chương trình khớp. Dữ liệu EPG cũ được giữ nguyên. '+errors.join(' | '),'warn');
    if(errors.length)ctx.toast('Một số nguồn EPG lỗi: '+errors.join(' | ').slice(0,350),'warn');
-   renderNow();renderGuidePages();ctx.renderList();
+   renderNow();renderGuidePages();ctx.renderList();notifyWatchFlow();
   }finally{loading=false;$('#epgLoadBtn').disabled=false;$('#epgLoadBtn').textContent='↻ Tải EPG từ URL ngay';$('#epgRefreshBtn').disabled=false;ctx.textStatus('Đã hoàn tất kiểm tra EPG');}
  }
  async function importLocalEPG(){
@@ -256,7 +257,7 @@
    const msg=`Nhập ${parsed.programmes.length} chương trình từ file "${result.name}"?\nDữ liệu EPG hiện tại sẽ được thay thế. Danh sách kênh và lịch ghi hình đã đặt không thay đổi.`;
    if(!window.confirm(msg)){$('#epgImportStatus').textContent='Đã hủy nhập; giữ nguyên EPG hiện tại.';return;}
    guide={names:parsed.names,aliasesById:parsed.aliasesById,programmes:parsed.programmes,manualMappings:config.manualMappings,offsetMinutes:config.offsetMinutes};
-   updatedAt=new Date().toISOString();const saved=await cacheGuide();renderGuidePages();ctx.renderList();
+   updatedAt=new Date().toISOString();const saved=await cacheGuide();renderGuidePages();ctx.renderList();notifyWatchFlow();
    $('#epgImportStatus').textContent=saved?`Đã nhập ${guide.programmes.length} chương trình từ ${result.name}.`:`Đã mở ${guide.programmes.length} chương trình từ ${result.name}, nhưng bộ nhớ đầy: dữ liệu chỉ giữ trong phiên hiện tại.`;
    ctx.toast(saved?'Nhập file EPG thành công':'Đã nhập EPG nhưng chưa lưu bền vững vì bộ nhớ đầy',saved?'ok':'warn');
   }catch(e){$('#epgImportStatus').textContent='Nhập EPG thất bại: '+String(e?.message||e).slice(0,170);ctx.toast('Không thể nhập EPG: '+String(e?.message||e),'warn');}
@@ -366,11 +367,23 @@
  if(config.autoCheckUpdates&&window.streamleaf?.checkUpdate)setTimeout(()=>updateCheck({silent:true}),3500);
  saveConfig();applyColor(config.accent,false,false);renderSources();renderGuidePages();void restoreGuideCache();
  // Once per launch, after playlist restoration. Avoid duplicate refresh if a manual request has already started.
- if(config.autoRefreshEPGOnStartup){window.setTimeout(()=>{
-  if(epgRequestedInSession||loading||!config.autoRefreshEPGOnStartup)return;
-  if(!ctx.getChannels().length){$('#epgAutoHint').textContent='Chưa có kênh M3U; EPG sẽ tải khi có danh sách kênh.';return;}
-  void refreshEPG({startup:true}).catch(e=>{ctx.toast('Tự tải EPG gặp lỗi: '+String(e?.message||e),'warn');});
- },2200);}
- window.IPTVExtras={render:renderNow,onChannel:renderNow,onPage:p=>{if(p==='settings')renderSources();if(p==='epg')renderGuidePages();},decorateRow,getGuide:()=>guide,setMapping:(id,epgId)=>{if(epgId)config.manualMappings[id]=epgId;else delete config.manualMappings[id];guide.manualMappings=config.manualMappings;saveConfig();void cacheGuide();renderGuidePages();ctx.renderList();},setOffset:minutes=>{config.offsetMinutes=Math.max(-720,Math.min(720,Number(minutes)||0));guide.offsetMinutes=config.offsetMinutes;saveConfig();void cacheGuide();renderGuidePages();ctx.renderList();},getOffset:()=>config.offsetMinutes};
+ if(config.autoRefreshEPGOnStartup){
+  // Earlier code tried once at 2.2s and never retried if the playlist had not loaded.
+  let attempted=false;
+  const autoLoadWhenReady=()=>{
+   if(attempted||epgRequestedInSession||loading||!config.autoRefreshEPGOnStartup)return;
+   if(!ctx.getChannels().length)return;
+   attempted=true;
+   void refreshEPG({startup:true}).catch(e=>ctx.toast('Tự tải EPG gặp lỗi: '+String(e?.message||e),'warn'));
+  };
+  window.setTimeout(autoLoadWhenReady,2200);
+  const awaitingPlaylist=window.setInterval(()=>{
+   if(attempted||epgRequestedInSession||!config.autoRefreshEPGOnStartup){
+    window.clearInterval(awaitingPlaylist);return;
+   }
+   autoLoadWhenReady();
+  },3500);
+ }
+ window.IPTVExtras={render:renderNow,onChannel:renderNow,onPage:p=>{if(p==='settings')renderSources();if(p==='epg')renderGuidePages();},decorateRow,getGuide:()=>guide,setMapping:(id,epgId)=>{if(epgId)config.manualMappings[id]=epgId;else delete config.manualMappings[id];guide.manualMappings=config.manualMappings;saveConfig();void cacheGuide();renderGuidePages();ctx.renderList();notifyWatchFlow();},setOffset:minutes=>{config.offsetMinutes=Math.max(-720,Math.min(720,Number(minutes)||0));guide.offsetMinutes=config.offsetMinutes;saveConfig();void cacheGuide();renderGuidePages();ctx.renderList();notifyWatchFlow();},getOffset:()=>config.offsetMinutes};
  window.setInterval(()=>{renderNow();if(document.querySelector('#page-epg').classList.contains('active-page'))renderEPG();},60000);
 })();
