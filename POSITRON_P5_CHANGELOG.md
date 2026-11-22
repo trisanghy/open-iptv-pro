@@ -1,5 +1,14 @@
 # Positron P5 Changelog
 
+## P5.1.215 — Tìm kiếm nhanh trong lịch sử khám phá kênh / Electron 4.23.300
+- Feature priority: NEW — Ảnh P5.1.214 xác nhận lịch sử khám phá có nút chọn bằng bàn phím nhưng chưa có ô tìm khi nhiều kênh xuất hiện. Thêm tìm nhanh theo tên hoặc nhóm, hỗ trợ bỏ dấu tiếng Việt.
+- Electron screenshot: positron-p51215-history-search-after-1920x1080-real.png
+- User action: Mở ☷ từ thanh phát, nhập tên kênh hoặc tên nhóm vào ô Tìm trong lịch sử; kết quả lọc ngay, nhấn Enter để xem kênh đầu tiên. Nhấn ↓ từ ô tìm để dùng các phím mũi tên.
+- Tính năng: tìm trong tối đa 10 kênh đang có trong lịch sử phiên; không yêu cầu mạng, không lưu truy vấn, không thay đổi playlist/Favorites, chỉ phát khi người dùng bấm Enter/click; có empty state khi không khớp và hỗ trợ viewport 450px.
+- Before: `positron-p51215-history-search-before-1920x1080-real.png`; after: `positron-p51215-history-search-after-1920x1080-real.png`.
+- QA: Electron 1920×1080 tìm và lọc một kênh, Enter để xem, giữ nguyên danh sách nguồn và bộ đếm khám phá, kiểm no-match và viewport 450px; ảnh thật trước/sau được mở soát.
+- Status: CANDIDATE cho tới khi Node/Electron screenshot/build Release đều đạt.
+
 ## P5.1.214 — Điều hướng menu lịch sử bằng bàn phím/remote / Electron 4.23.299
 - Feature priority: NEW — Ảnh P5.1.213 chứng minh menu lịch sử mở và chọn kênh bằng click nhưng thiếu di chuyển tiêu điểm có điều khiển với phím mũi tên. Thêm ↑/↓ chuyển lựa chọn và quay vòng, Home/End đến đầu/cuối; Enter thực hiện xem lại.
 - Electron screenshot: positron-p51214-history-keys-after-1920x1080-real.png

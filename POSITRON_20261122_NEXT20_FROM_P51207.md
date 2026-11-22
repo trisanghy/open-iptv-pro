@@ -41,7 +41,14 @@ Phạm vi: chỉ `Positron`. Baseline HEAD `2e0d53a478a3361731e0f191e8b06c54a943
 
 - P213 đã xác minh: Actions #45026225429 6/6 success sau sửa version sidebar (860/865 pass, 5 skipped), đã mở cặp ảnh Electron 1920×1080 P213, QA giữ playlist và Enter/ESC. Release `positron/v4.23.298-p5.1.213` có Setup/Portable EXE, DMG ARM/Intel, ảnh/sha.
 
-## Vòng 07/20 — P5.1.214 / Electron 4.23.299 — CANDIDATE
+## Vòng 07/20 — P5.1.214 / Electron 4.23.299 — ĐÃ HOÀN THÀNH
 - Từ ảnh P213: menu danh sách có focus nhưng không hỗ trợ phím mũi tên/Home/End như menu trên TV; bổ sung phím cho menu đang mở và giữ Enter là hành động phát duy nhất.
 - QA: `historyKeyboardQA` và `compact214`; screenshot `positron-p51214-history-keys-before-1920x1080-real.png` và `positron-p51214-history-keys-after-1920x1080-real.png` từ Electron thật, Node tests và 450px.
 - Chưa tính hoàn thành cho đến khi CI 6/6 thành công và mở soát PNG P214.
+
+- Đã xác minh: GitHub Actions #45027131934 6/6 success, Node 861 pass/5 skipped, thực sự mở ảnh P214 1920×1080 và thấy focus chuyển giữa kênh theo ArrowDown; QA Home/End/wrap/Enter, 450px đạt. Release `positron/v4.23.299-p5.1.214` đã có đủ EXE/DMG/source/ZIP ảnh và SHA256SUMS.
+
+## Vòng 08/20 — P5.1.215 / Electron 4.23.300 — CANDIDATE
+- Từ ảnh P214: popover lịch sử chưa có công cụ tìm khi có nhiều kênh. Thêm ô lọc theo tên/nhóm không dấu, Enter phát kênh khớp đầu tiên, ArrowDown chọn option; không thay đổi playlist hoặc số lượt khám phá.
+- QA bắt buộc: historySearchQA, searchEnterQA, missing215, compact215, screenshot Electron trước/sau 1920×1080 và Node regression.
+- Chỉ đánh dấu hoàn thành khi CI 6/6 và release bất biến thực sự có assets, ảnh đã mở xem.

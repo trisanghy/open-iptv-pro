@@ -1097,3 +1097,22 @@ html[data-positron="true"] #poRandomHistoryList .po-random-history-item:hover{bo
  html[data-positron="true"] #poRandomHistory{min-width:28px;padding:0 4px}
  html[data-positron="true"] #poRandomHistoryPanel{left:12px!important;right:12px!important;width:auto}
 }
+
+
+/* P215: dark, keyboard-accessible search in the recent random history menu. */
+html[data-positron="true"] #poRandomHistorySearch{
+ display:block;box-sizing:border-box;width:100%;min-height:36px;
+ margin:2px 0 10px;padding:8px 10px;border:1px solid var(--po-border,#325160);
+ border-radius:8px;background:var(--po-input,#17303c);color:var(--po-text,#e6f4f4);
+ font:inherit;font-size:12px;outline:none;
+}
+html[data-positron="true"] #poRandomHistorySearch:focus-visible{
+ border-color:var(--po-accent,#79dfc6);outline:2px solid var(--po-accent,#79dfc6);
+ outline-offset:1px;
+}
+html[data-positron="true"] #poRandomHistorySearch::placeholder{
+ color:var(--po-muted,#a4c4cf);opacity:1;
+}
+html[data-positron="true"] #poRandomHistoryList>p{
+ margin:4px 0;color:var(--po-muted,#a4c4cf);font-size:12px;
+}

@@ -2317,7 +2317,7 @@ test('P5.1.207 accessible reset clears only random session history',()=>{
   'positron-p51207-random-reset-after-1920x1080-real.png'])
   assert.ok(qa.includes(t),'Missing genuine reset QA '+t);
  const pkg=JSON.parse(read('package.json'));
- assert.ok(flow.includes('TAG=positron/v'+pkg.version+'-p5.1.214'));
+ assert.ok(flow.includes('TAG=positron/v'+pkg.version+'-p5.1.215'));
 });
 
 
@@ -2454,4 +2454,23 @@ test('P5.1.214 supports arrow, Home and End navigation in random-channel history
   'positron-p51214-history-keys-after-1920x1080-real.png','before214.equals(after214),false'])
   assert.ok(qa.includes(token),'Missing native keyboard QA '+token);
  assert.ok(flow.includes('test -s positron-evidence/p5-20-rounds/positron-p51214-history-keys-after-1920x1080-real.png'));
+});
+
+
+test('P5.1.215 supports no-accent search and deliberate Enter replay in random history',()=>{
+ const js=read('renderer/positron-horizon-v4.js'),css=read('renderer/positron-twenty.css');
+ const qa=read('scripts/positron-20-extension.cjs'),flow=read('.github/workflows/positron-lab.yml');
+ for(const token of ["historySearch.id='poRandomHistorySearch'","normalize('NFD')",
+  "historySearch.addEventListener('input',renderHistory)","historySearch.value=''",
+  'for(const channel of filtered)','Không tìm thấy kênh phù hợp.',
+  "historySearch.addEventListener('keydown',event=>"])
+  assert.ok(js.includes(token),'Missing history search '+token);
+ assert.ok(css.includes('#poRandomHistorySearch:focus-visible'));
+ for(const token of ['historySearchQA','searchEnterQA','compact215','missing215',
+  'filtersOne','playsOnlyOnEnter','discoveryCountUnchanged','playlistUnchanged',
+  'positron-p51215-history-search-before-1920x1080-real.png',
+  'positron-p51215-history-search-after-1920x1080-real.png',
+  'before215.equals(after215),false'])
+  assert.ok(qa.includes(token),'Missing real Electron search QA '+token);
+ assert.ok(flow.includes('test -s positron-evidence/p5-20-rounds/positron-p51215-history-search-after-1920x1080-real.png'));
 });

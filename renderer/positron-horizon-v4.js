@@ -358,7 +358,16 @@
    const historyNote=d.createElement('p');historyNote.className='po-random-history-note';
    historyNote.textContent='↑/↓ chọn kênh, Enter để xem. Chỉ lưu trong phiên này.';
    const historyList=d.createElement('div');historyList.id='poRandomHistoryList';
-   historyPanel.append(historyHead,historyNote,historyList);d.body.append(historyPanel);
+
+   // P215: find any recent discovery without changing sources or auto-playing.
+   const historySearch=d.createElement('input');historySearch.type='search';
+   historySearch.id='poRandomHistorySearch';historySearch.maxLength=100;
+   historySearch.placeholder='Tìm trong lịch sử...';
+   historySearch.setAttribute('aria-label','Tìm tên hoặc nhóm kênh đã khám phá');
+   historySearch.setAttribute('autocomplete','off');
+   const normalizeHistory=value=>String(value||'').normalize('NFD')
+    .replace(/[\u0300-\u036f]/g,'').replace(/đ/gi,'d').toLowerCase().trim();
+   historyPanel.append(historyHead,historyNote,historySearch,historyList);d.body.append(historyPanel);
    const closeHistory=(restoreFocus=false)=>{
     historyPanel.hidden=true;historyButton.setAttribute('aria-expanded','false');
     if(restoreFocus&&!historyButton.hidden)historyButton.focus();
@@ -372,8 +381,10 @@
      const id=ids[i];if(used.has(id)||!live.has(id))continue;
      used.add(id);recent.push(live.get(id));
     }
+    const query=normalizeHistory(historySearch.value);
+    const filtered=query?recent.filter(c=>normalizeHistory(c.name+' '+(c.group||'')).includes(query)):recent;
     historyList.replaceChildren();
-    for(const channel of recent){
+    for(const channel of filtered){
      const option=d.createElement('button');option.type='button';
      option.className='po-random-history-item';option.dataset.channelId=channel.id;
      option.textContent=channel.name||'Kênh chưa có tên';
@@ -392,13 +403,24 @@
      });
      historyList.append(option);
     }
-    if(!recent.length){
-     const empty=d.createElement('p');empty.textContent='Chưa có kênh hợp lệ trong lịch sử.';
+    if(!filtered.length){
+     const empty=d.createElement('p');empty.textContent=recent.length?'Không tìm thấy kênh phù hợp.':'Chưa có kênh hợp lệ trong lịch sử.';
      historyList.append(empty);
     }
    };
+   historySearch.addEventListener('input',renderHistory);
+   historySearch.addEventListener('keydown',event=>{
+    if(event.key==='ArrowDown'){
+     const first=historyList.querySelector('.po-random-history-item');
+     if(first){event.preventDefault();event.stopPropagation();first.focus();}
+    }else if(event.key==='Enter'){
+     const first=historyList.querySelector('.po-random-history-item');
+     if(first){event.preventDefault();event.stopPropagation();first.click();}
+    }
+   });
    historyButton.addEventListener('click',()=>{
     if(!historyPanel.hidden){closeHistory(true);return;}
+    historySearch.value='';
     renderHistory();
     const bounds=historyButton.getBoundingClientRect();
     historyPanel.style.left=Math.max(12,Math.min(bounds.left-125,innerWidth-372))+'px';
