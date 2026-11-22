@@ -2,14 +2,23 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
-## P5.1.251 — Phím quay lại hàng kênh vừa duyệt
+## P5.1.252 — Quay lại kênh sau khi đổi bộ lọc
 
-**Ứng dụng:** 4.23.336 · **Trạng thái:** Chưa có bản phát hành
+**Ứng dụng:** 4.23.337 · **Trạng thái:** Chưa có bản phát hành
+
+Feature priority: NEW — Khi người dùng lọc Yêu thích hoặc Vừa xem làm mất hàng kênh cũ khỏi DOM, Alt+Shift+L ghi nhớ ID kênh ổn định, tự trở về bộ lọc Tất cả nếu cần và focus đúng kênh, không sửa nội dung playlist hay tự phát video. Electron screenshot: positron-p51252-resume-filter-after-1920x1080-real.png
+
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/b2c93b5403781274aefe2555a71ec72b2844ada1)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+
+## P5.1.251 — Electron 4.23.336 — Alt+Shift+L quay lại hàng kênh vừa duyệt (HOÀN TẤT)
+
+**Ứng dụng:** 4.23.336 · **Trạng thái:** Đã phát hành
 
 Feature priority: NEW — Thêm phím tắt Alt+Shift+L trở lại đúng hàng kênh từng được focus trước khi chuyển sang thanh công cụ; tận dụng ghi nhớ vị trí trong phiên làm việc, không ghi dữ liệu hay tự phát video. Electron screenshot: positron-p51251-return-to-row-after-1920x1080-real.png
 
 [Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/8d91b18927192866b127c61eb2912983eddbf02d)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.336-p5.1.251)
 
 ## P5.1.250 — Electron 4.23.335 — Ẩn chỉ báo vị trí đã cũ (HOÀN TẤT)
 
