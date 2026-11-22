@@ -1772,7 +1772,8 @@ test('P5.1.174 Empty Favorites CTA hướng TV khi có kênh, Sources khi không
  assert.ok(js.includes("button.addEventListener('click',()=>{"));
  assert.ok(js.includes("window.IPTVState?.setPage?.('tv')"));
  assert.ok(js.includes("window.IPTVState?.setPage?.('sources')"));
- assert.ok(js.includes("byId('searchBox')?.focus({preventScroll:true})"));
+ assert.ok(js.includes("search?.focus({preventScroll:true})"),'TV search remains keyboard-focused');
+ assert.ok(js.includes("if(search?.value){search.value='';search.dispatchEvent(new Event('input',{bubbles:true}))"),'TV clears stale filter before viewer picks a favorite');
  assert.ok(js.includes("if(button.textContent!==actionText)button.textContent=actionText"));
  assert.ok(qa.includes('favoriteActionQA'));
  assert.ok(!js.includes('window.IPTVState?.importSource?.('));
