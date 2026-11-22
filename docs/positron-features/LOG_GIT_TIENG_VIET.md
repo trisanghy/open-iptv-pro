@@ -2,14 +2,23 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
-## P5.1.155 — dọn banner nổi không mất nhật ký
+## P5.1.156 — bản đồ dữ liệu thư viện kênh
 
-**Ứng dụng:** 4.23.239 · **Trạng thái:** Chưa có bản phát hành
+**Ứng dụng:** 4.23.240 · **Trạng thái:** Chưa có bản phát hành
+
+Feature priority: NEW — Thêm bảng Library Pulse riêng trong thanh trên: đếm số kênh, số nguồn, số nhóm, trạng thái khả dụng đã được lưu, URL logo và mã EPG của dữ liệu hiện có. User action: Chọn Thư viện, xem các thẻ thống kê và thanh mức độ hoàn thiện metadata; nhấn Cập nhật để đọc lại dữ liệu hiện hành hoặc Escape để đóng.
+
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/e124df2c3230584f5642674051a4a6dda87f8837)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+
+## P5.1.155 — Dọn banner nổi, giữ nhật ký
+
+**Ứng dụng:** 4.23.239 · **Trạng thái:** Đã phát hành
 
 Feature priority: NEW — Thêm thao tác Dọn banner để người dùng đóng nhanh toàn bộ banner đang che trình phát, không phải chạm từng toast và không làm mất dòng nhật ký đã ghi. User action: Mở Thông báo và bấm Dọn banner; các banner thành công/cảnh báo/lỗi đang nổi biến mất theo thao tác chủ động, nhưng nội dung và số mục trong Nhật ký giữ nguyên.
 
 [Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/98c9a6e5f9d77dc59f85a2a5515cb5e7e8a13647)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.239-p5.1.155)
 
 ## P5.1.154 — Chế độ Không làm phiền khi xem TV
 
