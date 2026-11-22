@@ -1,3 +1,7 @@
+# Rust Lab v23.8.103 — WatchFlow AI chụp giao diện thật
+
+Bổ sung kiểm thử click nút WatchFlow và chụp từng tab từ Chromium renderer (không phải native Tauri). Chưa thay đổi tính năng AI/phát video. Xem [release notes](RELEASE_NOTES_RUST_LAB_V23_8_103.md).
+
 ## Rust Lab v23.8.102 — WatchFlow AI UI demo
 
 Thêm nút AI Phân tích kênh & Đề xuất bên cạnh các công cụ phát, với bảng demo tương tác chế độ Tiêu chuẩn, Smart, Intelligence; phân loại tên/EPG hiện có, đề xuất theo lịch sử và tìm kiếm chủ đề. Smart/Intelligence chưa có mô hình thực và Internet chỉ mở kết quả tìm kiếm khi bấm nút. Xem [release notes](RELEASE_NOTES_RUST_LAB_V23_8_102.md).

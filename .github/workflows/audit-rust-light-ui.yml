@@ -53,6 +53,23 @@ jobs:
         run: |
           set -Eeuo pipefail
           CHROME="$(command -v google-chrome)" node tests/rust-feature-gallery-v23-8-97.cjs
+      - name: Stage WatchFlow interactive screenshots
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          mkdir -p rust-watchflow-capture
+          for filename in 49-tv-watchflow-overview 50-tv-watchflow-classify 51-tv-watchflow-recommend 52-tv-watchflow-internet-search; do
+            test -s "rust-feature-gallery/${filename}.png"
+            cp "rust-feature-gallery/${filename}.png" rust-watchflow-capture/
+          done
+      - name: Upload WatchFlow AI panel screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: rustlab-watchflow-real-renderer-v23-8-103
+          path: rust-watchflow-capture/*.png
+          if-no-files-found: error
+          retention-days: 14
       - name: Audit Dark and AMOLED every page and expanded tool
         shell: bash
         env:

@@ -106,6 +106,21 @@ async function main(){
   await sectionShot('16-tv-video-enhance-hardware','#veh-ai-probe');
  }else issues.push({type:'unavailable-feature',name:'video-enhancement-panel'});
  await click('#videoEnhanceToggle');
+
+ // UI regression: capture every real WatchFlow tab from the running renderer.
+ const wf=await click('#watchflowDemoToggle');
+ if(wf!=='clicked'||!await page.evaluate(()=>document.getElementById('watchflowDemo')?.hidden===false))
+  throw Error('WatchFlow toolbar button did not open the panel');
+ await sectionShot('49-tv-watchflow-overview','#watchflowDemo');
+ for(const [tab,name] of [['classify','50-tv-watchflow-classify'],['suggest','51-tv-watchflow-recommend'],['search','52-tv-watchflow-internet-search']]){
+  const clicked=await click('#watchflowDemo [data-wf-tab="'+tab+'"]');
+  const selected=await page.evaluate(t=>document.querySelector('#watchflowDemo [data-wf-tab="'+t+'"]')?.getAttribute('aria-selected'),tab);
+  if(clicked!=='clicked'||selected!=='true')throw Error('WatchFlow tab failed: '+tab);
+  await sectionShot(name,'#watchflowDemo');
+ }
+ await click('#wfClose');
+ if(!await page.evaluate(()=>document.getElementById('watchflowDemo')?.hidden===true))
+  throw Error('WatchFlow panel did not close');
  await nav('epg');
  await sectionShot('17-epg-guide','#epgGuide');
  await sectionShot('18-epg-scheduler','#dvrForm');
