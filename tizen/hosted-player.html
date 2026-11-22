@@ -4,10 +4,15 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Open IPTV Pro · Samsung Cast playback engine</title>
-<style>html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#000}video{display:block;width:100%;height:100%;object-fit:contain;background:#000}</style>
+<style>html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#000}video{display:block;width:100%;height:100%;object-fit:contain;background:#000}
+[hidden]{display:none!important}
+#browserPanel{position:absolute;top:3%;left:4%;right:4%;z-index:2;display:flex;align-items:center;justify-content:space-between;gap:22px;padding:14px 24px;border-radius:14px;background:#071a32db;color:#e6f3ff;font:20px/1.3 Arial,sans-serif}
+#browserPanel button{background:#1269b1;color:#fff;border:2px solid #6dceff;border-radius:12px;padding:12px 21px;font:inherit}
+#browserPanel button:focus{outline:4px solid #fff}</style>
 </head>
 <body>
 <video id="castVideo" playsinline x-webkit-airplay="allow" preload="none"></video>
+<div id="browserPanel" hidden role="status"><span id="browserStatus">Đang tải kênh qua bộ phát Cast Samsung…</span><button id="browserPlay" type="button">▶ Phát / Thử lại</button></div>
 <script src="../hls.min.js"></script>
 <script src="../dash.all.min.js"></script>
 <script>
@@ -17,9 +22,23 @@
 // Stream URLs arrive only through postMessage from TizenBrew's local WebView.
 // No query-string URL, storage, analytics, or server proxy.
 var video=document.getElementById('castVideo'),hls=null,dash=null,session='',parentOrigin='',lastUrl='',nativeRetried=false;
+var standalone=window===window.top;
+function directStatus(text){
+ if(!standalone)return;
+ var el=document.getElementById('browserStatus');
+ el.textContent=String(text||'').slice(0,180);
+ document.getElementById('browserPanel').hidden=false;
+}
 var isHls=function(url){return /\.m3u8?(?:[?#]|$)/i.test(url);};
 var isDash=function(url){return /\.mpd(?:[?#]|$)/i.test(url);};
 function notify(type,detail){
+ if(standalone){
+  if(type==='playing')directStatus('Đang phát qua trình phát Cast Samsung Browser.');
+  else if(type==='blocked')directStatus('TV chặn tự phát. Chọn Phát / Thử lại rồi nhấn OK.');
+  else if(type==='error')directStatus('Không phát được kênh: '+String(detail||'lỗi nguồn').slice(0,115));
+  else if(type==='buffering')directStatus('Đang tải luồng và chờ hình ảnh…');
+  return;
+ }
  if(!parentOrigin)return;
  try{parent.postMessage({app:'openiptv-tizen-hosted',type:type,session:session,detail:String(detail||'').slice(0,145)},parentOrigin);}catch(e){}
 }
@@ -64,6 +83,7 @@ function hlsPlayer(url){
 }
 function playUrl(url){
  cleanup();lastUrl=url;
+ if(standalone)directStatus('Đang tải luồng bằng bộ phát Cast Samsung Browser…');
  if(isHls(url)&&video.canPlayType('application/vnd.apple.mpegurl')){
   video.src=url;startVideo();return;
  }
@@ -96,7 +116,29 @@ window.addEventListener('message',function(event){
   cleanup();notify('stopped','');
  }
 });
-try{parent.postMessage({app:'openiptv-tizen-hosted',type:'ready'},'*');}catch(e){}
+if(standalone){
+ // Browser handoff must use a URL fragment, never a query string. Clear it
+ // before playback so channel credentials are not left in the address bar.
+ var fragment=String(location.hash||'');
+ try{history.replaceState(null,'',location.pathname+location.search);}catch(e){}
+ video.controls=true;
+ document.getElementById('browserPanel').hidden=false;
+ var directUrl='';
+ if(fragment.indexOf('#stream=')===0){
+  try{directUrl=decodeURIComponent(fragment.slice(8));}catch(e){}
+ }
+ document.getElementById('browserPlay').onclick=function(){
+  if(directUrl)playUrl(directUrl);
+  else directStatus('Không có URL kênh. Hãy quay về Open IPTV Pro để chọn kênh.');
+ };
+ if(/^https:\/\/[^\s]+$/i.test(directUrl)&&directUrl.length<=4096){
+  playUrl(directUrl);
+ }else{
+  directStatus('URL không hợp lệ hoặc không phải HTTPS. Chọn nguồn HTTPS từ ứng dụng.');
+ }
+}else{
+ try{parent.postMessage({app:'openiptv-tizen-hosted',type:'ready'},'*');}catch(e){}
+}
 })();
 </script>
 </body>
