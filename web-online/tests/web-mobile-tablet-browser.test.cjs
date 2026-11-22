@@ -8,6 +8,7 @@ const root=path.resolve(__dirname,'../..');
 const chrome=process.env.TABLET_LAYOUT_CHROME;
 const html=fs.readFileSync(path.join(root,'index.html'),'utf8');
 const links=(html.match(/<link rel="stylesheet" href="[^"]+"\/>/g)||[]).join('\n');
+const castMarkup=html.match(/<button class="control-sm" id="castBtn"[^>]*>[\s\S]*?<\/button>/)?.[0];
 function probe(){
  const el=id=>document.getElementById(id);
  const rect=id=>el(id).getBoundingClientRect();
@@ -31,8 +32,14 @@ function probe(){
    if(r.left<row.left-2||r.right>row.right+2)errors.push(id+'-outside');
    if(i>0&&r.left<=boxes[i-1].right)errors.push(id+'-overlapping');
    if(cs.display!=='flex'||cs.alignItems!=='center'||cs.justifyContent!=='center')errors.push(id+'-flex:'+cs.display+'/'+cs.alignItems+'/'+cs.justifyContent);
-   if(ps.position!=='static'||ps.transform!=='none'||Math.abs(parseFloat(ps.width)-27)>1)errors.push(id+'-icon:'+ps.position+'/'+ps.transform+'/'+ps.width);
-   if(!ps.webkitMaskImage||ps.webkitMaskImage==='none')errors.push(id+'-mask');
+   if(id==='castBtn'){
+    const svg=el(id).querySelector('svg[data-iptv-svg-icon="cast"]');
+    const sr=svg?.getBoundingClientRect();
+    if(!svg||sr.width<20||Math.abs((sr.left+sr.width/2)-(r.left+r.width/2))>3||ps.display!=='none')errors.push(id+'-svg-center');
+   }else{
+    if(ps.position!=='static'||ps.transform!=='none'||Math.abs(parseFloat(ps.width)-27)>1)errors.push(id+'-icon:'+ps.position+'/'+ps.transform+'/'+ps.width);
+    if(!ps.webkitMaskImage||ps.webkitMaskImage==='none')errors.push(id+'-mask');
+   }
   }
  }else if(!mobile&&wide){
   if(style('outputControls').display==='grid'&&Math.abs(rect('castBtn').height-58)<1)errors.push('desktop-overwritten');
@@ -52,7 +59,7 @@ function fixture(device){
  '<button class="control-sm" id="nextBtn">⏭</button></div>',
  '<div class="output-controls" id="outputControls"><div class="web-volume-control">',
  '<button id="webVolumeMute">🔊</button><input type="range" id="volume" value="80"/></div>',
- '<button class="control-sm" id="castBtn">▣</button><button class="control-sm" id="pipBtn">▣</button>',
+ castMarkup,'<button class="control-sm" id="pipBtn">▣</button>',
  '<button class="control-sm" id="fullscreenBtn">⛶</button></div></div></div></div></div></section>',
  '<script>window.addEventListener("load",(',probe.toString(),'));</script></body></html>'
  ].join('');
