@@ -1,5 +1,5 @@
 ## P5.1.163 — Xuất CSV kênh thiếu logo an toàn / Electron 4.23.248
-- NEW FEATURE: Thư viện → Kênh thiếu logo → lọc/tìm/sắp xếp → **Xuất CSV** tất cả kênh khớp, không chỉ 10 hàng hiện tại.
+- Feature priority: NEW — Thư viện → Kênh thiếu logo → lọc/tìm/sắp xếp → **Xuất CSV** tất cả kênh khớp, không chỉ 10 hàng hiện tại.
 - CSV UTF-8 BOM tương thích Excel, chỉ Tên kênh/Nhóm; không chứa URL stream, M3U, EPG, tài khoản hay thông tin nguồn. Không gọi mạng hoặc phát video.
 - Chống CSV formula injection, dấu nháy và xuống dòng; thứ tự playlist gốc không đổi.
 - Node regression: >50 hàng, lọc, sắp xếp, thoát công thức. Electron UI 1920×1080 before/after, kiểm tra tạo Blob; không giả nhận đã thử Save As của hệ điều hành.
