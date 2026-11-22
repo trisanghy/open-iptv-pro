@@ -2,14 +2,23 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
-## P5.1.211 — trở lại kênh đã khám phá ngẫu nhiên trước đó
+## P5.1.212 — tiến tới kênh vừa quay lại trong lịch sử ngẫu nhiên
 
-**Ứng dụng:** 4.23.296 · **Trạng thái:** Chưa có bản phát hành
+**Ứng dụng:** 4.23.297 · **Trạng thái:** Chưa có bản phát hành
+
+Feature priority: NEW — Ảnh P5.1.211 cho thấy nút ↶ cho phép quay về kênh khám phá trước, nhưng sau đó người xem không thể trở lại kênh vừa rời nếu không bấm Bất kỳ để lấy một kênh khác. Thêm nút tiến ↷ để điều hướng lịch sử hai chiều ngay trong thanh phát, tránh mất ngữ cảnh. Electron screenshot: positron-p51212-random-forward-after-1920x1080-real.png
+
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/fe62662b4888ce02bd1fbac7d9a57fde4c6f3715)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+
+## P5.1.211 — Trở lại kênh ngẫu nhiên đã khám phá / Electron 4.23.296
+
+**Ứng dụng:** 4.23.296 · **Trạng thái:** Đã phát hành
 
 Feature priority: NEW — Sau ảnh Electron P5.1.210, thanh Bất kỳ đã có số lượt và nút làm mới nhưng chưa có thao tác quay lại khi vừa khám phá một kênh ngẫu nhiên thú vị rồi chuyển tiếp. Thêm nút quay lại theo lịch sử phiên khám phá để tiết kiệm thao tác tìm kênh và giữ ngữ cảnh. Electron screenshot: positron-p51211-random-back-after-1920x1080-real.png
 
 [Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/7114bfbad4b3018e39d5da180b1b94d029e94a0d)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.296-p5.1.211)
 
 ## P5.1.210 — Tự cập nhật bộ đếm khám phá khi đổi nguồn / Electron 4.23.295
 
