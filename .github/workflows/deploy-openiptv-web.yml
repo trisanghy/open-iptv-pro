@@ -203,7 +203,7 @@ jobs:
           grep -Fq 'wss:' _site/index.html
           grep -Fq 'x-webkit-airplay="allow"' _site/index.html
           grep -Fq 'web-player-icons.css?v=single-icon-first-paint-20261119a' _site/index.html
-          grep -Fq 'web-player-icons.js?v=audio-state-sync-20261119a' _site/index.html
+          grep -Fq 'web-player-icons.js?v=tv-play-state-20261122a' _site/index.html
           node --check _site/theme-boot.js
           # iPhone Safari Request Desktop Website must fill the real visible
           # height even when the desktop virtual viewport is 1024px wide.
