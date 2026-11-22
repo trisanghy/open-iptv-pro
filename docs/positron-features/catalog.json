@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-22T02:53:32.206221+00:00",
+  "generatedAt": "2026-11-22T02:55:13.468073+00:00",
   "repository": "trisanghy/open-iptv-pro",
   "branch": "Positron",
   "versions": [
@@ -8,7 +8,7 @@
       "version": "P5.1.163",
       "appVersion": "4.23.248",
       "title": "xuất CSV kênh thiếu logo an toàn",
-      "description": "Feature priority: NEW — Thư viện → Kênh thiếu logo → lọc/tìm/sắp xếp → **Xuất CSV** tất cả kênh khớp, không chỉ 10 hàng hiện tại. CSV UTF-8 BOM tương thích Excel, chỉ Tên kênh/Nhóm; không chứa URL stream, M3U, EPG, tài khoản hay thông tin nguồn. Không gọi mạng hoặc phát video.",
+      "description": "Feature priority: NEW — Thư viện → Kênh thiếu logo → lọc/tìm/sắp xếp → **Xuất CSV** tất cả kênh khớp, không chỉ 10 hàng hiện tại. User action: Mở Thư viện → Kênh thiếu logo → chọn nhóm, tìm hoặc sắp xếp → bấm Xuất CSV, nhận file tên và nhóm kênh trong thư mục Tải xuống.",
       "kind": "fix",
       "status": "candidate",
       "published": "",
