@@ -11,7 +11,7 @@ test('P5.1.229 focused F key activates native favorite toggle, never playback',(
   assert.ok(js.includes(s),s);
  assert.ok(!js.includes('playChannel('));
  assert.ok(css.includes('.channel-item:focus .channel-star.marked'));
- assert.equal(JSON.parse(read('package.json')).version,'4.23.314');
+ assert.ok(Number(JSON.parse(read('package.json')).version.split('.')[2])>=314,'P229 favorite shortcut must survive later patch versions');
 });
 test('P5.1.229 real Electron screenshots verify persisted favorite and return to baseline',()=>{
  const qa=read('scripts/positron-20-extension.cjs'),wf=read('.github/workflows/positron-lab.yml');
