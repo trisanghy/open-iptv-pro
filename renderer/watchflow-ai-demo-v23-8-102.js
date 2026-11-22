@@ -5,7 +5,8 @@
  if(typeof module==='object'&&module.exports)module.exports=api;
  if(root?.document)api.initialize();
 })(typeof window==='undefined'?null:window,function(root){
- const engine=root.OpenIPTVWatchFlowEngine;
+ const engine=root?.OpenIPTVWatchFlowEngine;
+ const auto=root?.OpenIPTVWatchFlowAuto;
  const example=[{id:'ex1',name:'VTV1 HD',group:'Tin tức',demo:1},{id:'ex2',name:'K+ SPORT1',group:'Thể thao',demo:1},{id:'ex3',name:'HBO HD',group:'Phim truyện',demo:1},{id:'ex4',name:'HTV3',group:'Thiếu nhi',demo:1}];
  const rules=[
   ['Tin tức',/thời sự|tin tức|news|vtv1|thời tiết|chính trị|thoi su|tin tuc/i],
@@ -35,9 +36,9 @@
   (doc.getElementById('videoEnhanceToggle')||anchor).insertAdjacentElement('afterend',button);
   const panel=doc.createElement('section');panel.id='watchflowDemo';panel.className='watchflow-demo';panel.hidden=true;
   panel.setAttribute('aria-label','WatchFlow AI bản xem trước');
-  panel.innerHTML='<div class="wf-head"><div><small>WATCHFLOW · GIAO DIỆN DEMO</small><h2>AI Phân tích kênh & Đề xuất</h2><p>Phân loại kênh, khám phá nội dung và học sở thích xem TV.</p></div><button id="wfClose" type="button" aria-label="Đóng">×</button></div>'+
+  panel.innerHTML='<div class="wf-head"><div><small>WATCHFLOW · TỰ ĐỘNG KHÁM PHÁ (BETA)</small><h2>AI Phân tích kênh & Đề xuất</h2><p>Phân loại kênh, khám phá nội dung và học sở thích xem TV.</p></div><button id="wfClose" type="button" aria-label="Đóng">×</button></div>'+
   '<div class="wf-modes" role="radiogroup" aria-label="Chế độ AI"><button type="button" data-wf-mode="standard" role="radio"><b>◈ Tiêu chuẩn</b><small>EPG · Tên kênh · Quy tắc</small><small class="wf-size">0 MB · Không tải thêm</small></button><button type="button" data-wf-mode="smart" role="radio"><b>ϟ Thông minh</b><small>Bayes ML · Học sở thích thật</small><small class="wf-size">Dưới 1 MB · Offline</small></button><button type="button" data-wf-mode="intelligence" role="radio"><b>✧ Intelligence</b><small>EPG + Khung giờ · Xếp hạng ngữ cảnh</small><small class="wf-size">0 MB thêm · Qwen3 ~1,4 GB nếu cài*</small></button></div>'+
-  '<p id="wfModeHint" class="wf-hint"></p><nav class="wf-tabs" role="tablist" aria-label="Chức năng WatchFlow"><button type="button" data-wf-tab="overview" role="tab">Tổng quan</button><button type="button" data-wf-tab="classify" role="tab">Phân loại EPG</button><button type="button" data-wf-tab="suggest" role="tab">Đề xuất cho bạn</button><button type="button" data-wf-tab="search" role="tab">Tìm kênh Internet</button></nav>'+
+  '<p id="wfModeHint" class="wf-hint"></p><div class="wf-auto-banner"><label><input type="checkbox" id="wfAutoEnabled"/> Tự động tìm hiểu kênh và phân loại qua Internet</label><span id="wfAutoStatus" role="status">Đang chuẩn bị quét nền…</span><small>Chỉ tra tên kênh công khai và chủ đề trên Wikidata; không gửi URL phát, không tự nhập M3U. Có thể tắt bất cứ lúc nào.</small></div><nav class="wf-tabs" role="tablist" aria-label="Chức năng WatchFlow"><button type="button" data-wf-tab="overview" role="tab">Tổng quan</button><button type="button" data-wf-tab="classify" role="tab">Phân loại EPG</button><button type="button" data-wf-tab="suggest" role="tab">Đề xuất cho bạn</button><button type="button" data-wf-tab="search" role="tab">Tìm kênh Internet</button></nav>'+
   '<div id="wfContents" class="wf-contents" role="tabpanel" aria-live="polite"></div><footer class="wf-foot"><span id="wfOrigin">Không tự thu thập dữ liệu.</span><button type="button" id="wfRefresh">↻ Làm mới</button></footer>';
   row.insertAdjacentElement('afterend',panel);
   const $=id=>doc.getElementById(id);
@@ -61,13 +62,16 @@
   }
   function render(){
    const d=data(),real=d.channels.length>0,channels=(real?d.channels:example).slice(0,120);
-   const analysis=engine&&real?engine.analyze(d.channels,d.guide,root.IPTVGuide):new Map(),learning=engine?.read(root.localStorage);
+   const local=engine&&real?engine.analyze(d.channels,d.guide,root.IPTVGuide):new Map(),analysis=auto?.enrich(local,d.channels,root.localStorage,engine)||local,learning=engine?.read(root.localStorage);
    const category=c=>mode!=='standard'&&analysis.has(String(c.id))?analysis.get(String(c.id)):classify(c,d.current?.id===c.id?d.epg:'');
    const learnedOrder=real&&mode!=='standard'?engine.rank(d.channels,analysis,learning,d.recent,Date.now(),mode):null;
    for(const x of panel.querySelectorAll('[data-wf-mode]')){const active=x.dataset.wfMode===mode;x.classList.toggle('wf-active',active);x.setAttribute('aria-checked',String(active));}
    for(const x of panel.querySelectorAll('[data-wf-tab]')){const active=x.dataset.wfTab===tab;x.classList.toggle('wf-active',active);x.setAttribute('aria-selected',String(active));}
    $('wfModeHint').textContent=mode==='standard'?'Tiêu chuẩn: quy tắc EPG, không ghi sở thích.':mode==='smart'?'Smart: học máy Bayes thực tế trên thiết bị, tích lũy sở thích khi phát video.':'Intelligence: xếp hạng ngữ cảnh EPG + giờ xem; Qwen3 hiện chưa được kết nối vào WatchFlow (giao diện thử nghiệm).';
    $('wfOrigin').textContent=real?'Dữ liệu kênh từ playlist đang nhập, lịch sử trên thiết bị.':'Dữ liệu ví dụ, chưa có playlist và EPG thực tế.';
+   const autoEnabled=$('wfAutoEnabled');if(autoEnabled)autoEnabled.checked=auto?.enabled(root.localStorage)!==false;
+   const discovered=auto?.collect(root.localStorage,d.channels,engine)||[];
+   if($('wfAutoStatus'))$('wfAutoStatus').textContent=auto?.enabled(root.localStorage)===false?'Tự khám phá đang tắt':('Đã tìm thấy '+discovered.length+' mục kênh công khai · Wikidata');
    const main=$('wfContents');main.replaceChildren();main.append(el('p','wf-source',real?'Dữ liệu hiện có · '+d.channels.length+' kênh':'XEM TRƯỚC · DỮ LIỆU MINH HỌA'));
    if(tab==='overview'){
     const metrics=el('div','wf-metrics'),known=channels.filter(c=>category(c).label!=='Chưa phân loại').length;
@@ -84,7 +88,13 @@
     for(const c of ordered)rowFor(list,c,category(c),real&&tab==='suggest');main.append(list);
     if(tab==='suggest')main.append(el('p','wf-hint',!real?'Chưa có playlist: các kênh MINH HỌA.':mode==='standard'?'Ưu tiên kênh đã xem.':'Gợi ý thực từ thời lượng xem, EPG đang chiếu và khung giờ quen thuộc.'));
    }else{
-    main.append(el('h3','','Tìm kênh theo tên, chủ đề hoặc EPG'));
+    main.append(el('h3','','AI tự phát hiện kênh công khai'));
+    const catalog=el('div','wf-internet-results');
+    if(!discovered.length)catalog.append(el('p','wf-hint','Chưa có mục mới; hệ thống tự quét nền khi ứng dụng mở và có mạng.'));
+    for(const found of discovered.slice(0,12)){const item=el('div','wf-item'),detail=el('div','wf-item-main'),link=el('a','wf-external','Wikidata');
+      detail.append(el('strong','',found.name),el('small','',(found.category||'Chưa phân loại')+' · '+found.description));
+      link.href=found.url;link.target='_blank';link.rel='noopener noreferrer';item.append(detail,link);catalog.append(item);}
+    main.append(catalog,el('h3','','Tìm thêm theo từ khóa (tùy chọn)'));
     const form=el('div','wf-search'),input=el('input',''),action=el('button','','Tra cứu Wikidata');
     input.type='search';input.placeholder='Ví dụ: bóng đá, tin tức, phim...';input.setAttribute('aria-label','Tìm kênh');
     action.type='button';form.append(input,action);main.append(form);
@@ -105,13 +115,17 @@
       }catch(error){internetResults.replaceChildren(el('p','wf-hint','Lỗi tìm kiếm: '+String(error?.message||error).slice(0,140)));}
       finally{action.disabled=false;}
     });
-    update();main.append(el('p','wf-hint','Wikidata trả về thông tin kênh, không phải URL phát. Chỉ tìm khi bạn bấm nút, không tự nhập stream.'));
+    update();main.append(el('p','wf-hint','Tự khám phá không cần nhập từ khóa. Tìm thủ công chỉ để bổ sung khi cần; không tự nhập nguồn phát.'));
    }
   }
   function close(){panel.hidden=true;button.setAttribute('aria-expanded','false');}
   button.addEventListener('click',()=>{panel.hidden=!panel.hidden;button.setAttribute('aria-expanded',String(!panel.hidden));if(!panel.hidden)render();});
   $('wfClose').addEventListener('click',()=>{close();button.focus();});
-  $('wfRefresh').addEventListener('click',render);
+  $('wfRefresh').addEventListener('click',()=>{render();doc.dispatchEvent(new Event('openiptv:watchflow-auto-rescan'));});
+  $('wfAutoEnabled').checked=auto?.enabled(root.localStorage)!==false;
+  $('wfAutoEnabled').addEventListener('change',event=>{auto?.setEnabled(root.localStorage,event.target.checked);if(event.target.checked)doc.dispatchEvent(new Event('openiptv:watchflow-auto-rescan'));render();});
+  doc.addEventListener('openiptv:watchflow-auto-update',()=>{if(!panel.hidden&&tab!=='search')render();else if(!panel.hidden&&tab==='search'&&$('wfAutoStatus'))$('wfAutoStatus').textContent='Danh mục công khai đã cập nhật · chuyển tab để xem kết quả';});
+  auto?.start(root,engine);
   const reset=el('button','wf-clear','Xóa sở thích đã học');reset.type='button';
   panel.querySelector('.wf-foot')?.append(reset);
   reset.addEventListener('click',()=>{if(root.confirm?.('Xóa dữ liệu sở thích WatchFlow đã lưu trên máy?')!==true)return;engine.clear(root.localStorage);render();});

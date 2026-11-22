@@ -1,3 +1,10 @@
+## Rust Lab v23.8.106 — AI tự động tìm hiểu và phân loại kênh trên Internet (PRERELEASE)
+
+- WatchFlow chủ động quét EPG và tên kênh đang có, tra cứu công khai Wikidata khi mở ứng dụng, định kỳ trong khi chạy, và tự tìm gợi ý kênh theo chủ đề quan tâm — không cần người dùng nhập từ khóa.
+- Đọc mô tả kênh và dùng bộ phân loại cục bộ để gán chủ đề có dẫn nguồn; chỉ ghi đè nhóm không chắc chắn, ưu tiên EPG gốc.
+- Giới hạn 6 truy vấn/lượt, 24 truy vấn/ngày, cache 48h; tắt tự động bất kỳ lúc nào; không gửi URL M3U, không tự nhập luồng, không tạo kênh phát ảo.
+- Sửa lỗi Node test cũ do truy cập root null, thêm kiểm thử hồi quy. Giữ prerelease-only, không thay main/Latest.
+
 ## Rust Lab v23.8.105 — WatchFlow học máy thực + hiển thị dung lượng (PRERELEASE)
 
 Học máy Naive Bayes thực, đọc EPG đa kênh, học sở thích từ quá trình xem thật khi bật Smart/Intelligence, xếp hạng theo thời điểm và tra cứu danh mục kênh Wikidata bằng một lần nhấn. Dung lượng dưới ba nút; AI Qwen3 cỡ ~1,4 GB chỉ là tùy chọn chưa kết nối WatchFlow. Chính sách mọi bản Rust Lab/EXE phải luôn là prerelease, không thay Latest.
