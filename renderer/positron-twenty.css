@@ -1059,3 +1059,41 @@ html[data-positron="true"] #poRandomForward:focus-visible{
  outline:2px solid var(--po-accent,#79dfc6);outline-offset:2px;
 }
 @media(max-width:1000px){html[data-positron="true"] #poRandomForward{min-width:29px;padding:0 3px}}
+
+
+/* P213: quick jump to a recent random discovery, including compact viewports. */
+html[data-positron="true"] #poRandomHistory{
+ display:inline-flex!important;align-items:center;justify-content:center;
+ min-width:32px;height:36px;padding:0 7px;border:1px solid var(--po-border,#325160);
+ border-radius:9px;background:var(--po-input,#17303c);color:var(--po-text,#e6f4f4);
+ font-size:20px;line-height:1;cursor:pointer;
+}
+html[data-positron="true"] #poRandomHistory[hidden]{display:none!important}
+html[data-positron="true"] #poRandomHistory:focus-visible,
+html[data-positron="true"] #poRandomHistoryPanel button:focus-visible{
+ outline:2px solid var(--po-accent,#79dfc6);outline-offset:2px;
+}
+html[data-positron="true"] #poRandomHistoryPanel{
+ position:fixed;z-index:2000;box-sizing:border-box;width:360px;max-width:calc(100vw - 24px);
+ max-height:min(48vh,420px);overflow:auto;padding:14px;border:1px solid var(--po-border,#325160);
+ border-radius:12px;background:var(--po-panel,#10232d);color:var(--po-text,#e6f4f4);
+ box-shadow:0 16px 45px rgba(0,0,0,.42);
+}
+html[data-positron="true"] #poRandomHistoryPanel[hidden]{display:none!important}
+html[data-positron="true"] .po-random-history-head{display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:14px}
+html[data-positron="true"] .po-random-history-head button{
+ border:1px solid var(--po-border,#325160);border-radius:8px;background:transparent;
+ color:inherit;font-size:20px;cursor:pointer;min-width:32px;min-height:32px;
+}
+html[data-positron="true"] .po-random-history-note{font-size:11px;color:var(--po-muted,#a4c4cf);margin:8px 0 10px}
+html[data-positron="true"] #poRandomHistoryList{display:grid;gap:6px}
+html[data-positron="true"] #poRandomHistoryList .po-random-history-item{
+ min-height:36px;padding:8px 10px;text-align:left;border-radius:8px;
+ border:1px solid var(--po-border,#325160);background:var(--po-input,#17303c);
+ color:var(--po-text,#e6f4f4);cursor:pointer;overflow-wrap:anywhere;
+}
+html[data-positron="true"] #poRandomHistoryList .po-random-history-item:hover{border-color:var(--po-accent,#79dfc6)}
+@media(max-width:700px){
+ html[data-positron="true"] #poRandomHistory{min-width:28px;padding:0 4px}
+ html[data-positron="true"] #poRandomHistoryPanel{left:12px!important;right:12px!important;width:auto}
+}

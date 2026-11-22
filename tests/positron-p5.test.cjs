@@ -2317,7 +2317,7 @@ test('P5.1.207 accessible reset clears only random session history',()=>{
   'positron-p51207-random-reset-after-1920x1080-real.png'])
   assert.ok(qa.includes(t),'Missing genuine reset QA '+t);
  const pkg=JSON.parse(read('package.json'));
- assert.ok(flow.includes('TAG=positron/v'+pkg.version+'-p5.1.212'));
+ assert.ok(flow.includes('TAG=positron/v'+pkg.version+'-p5.1.213'));
 });
 
 
@@ -2417,4 +2417,25 @@ test('P5.1.212 adds forward navigation after revisiting an earlier random channe
   'before212.equals(after212),false'])
   assert.ok(qa.includes(token),'Missing Electron forward proof: '+token);
  assert.ok(flow.includes('test -s positron-evidence/p5-20-rounds/positron-p51212-random-forward-after-1920x1080-real.png'));
+});
+
+
+test('P5.1.213 enables one-click replay from random discovery history',()=>{
+ const js=read('renderer/positron-horizon-v4.js'),css=read('renderer/positron-twenty.css');
+ const qa=read('scripts/positron-20-extension.cjs'),flow=read('.github/workflows/positron-lab.yml');
+ for(const token of ["historyButton.id='poRandomHistory'","historyPanel.id='poRandomHistoryPanel'",
+  'randomTrail.length+randomRedoIds.length===0','historyList.replaceChildren()',
+  'ids=[...randomTrail,...randomRedoIds.slice().reverse()]',
+  'window.IPTVState.playChannel(channel.id)',
+  "historyPanel.setAttribute('role','dialog')"])
+  assert.ok(js.includes(token),'Missing session history: '+token);
+ for(const token of ['#poRandomHistoryPanel[hidden]{display:none!important}',
+  '.po-random-history-item','@media(max-width:700px)'])
+  assert.ok(css.includes(token),'Missing history CSS: '+token);
+ for(const token of ['historyOpenQA','historyPickQA','compact213','playsSelectedChannel',
+  'playlistImmutable','popoverFits','before213.equals(after213),false',
+  'positron-p51213-random-history-before-1920x1080-real.png',
+  'positron-p51213-random-history-after-1920x1080-real.png'])
+  assert.ok(qa.includes(token),'Missing Electron QA: '+token);
+ assert.ok(flow.includes('test -s positron-evidence/p5-20-rounds/positron-p51213-random-history-after-1920x1080-real.png'));
 });

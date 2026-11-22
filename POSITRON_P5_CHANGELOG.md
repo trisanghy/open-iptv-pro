@@ -1,5 +1,14 @@
 # Positron P5 Changelog
 
+## P5.1.213 — Lịch sử kênh ngẫu nhiên chọn phát lại / Electron 4.23.298
+- Feature priority: NEW — Từ ảnh P5.1.212, Back và Forward chỉ chuyển kênh từng bước. Menu mới mở trực tiếp tối đa 10 kênh vừa khám phá để chọn phát lại bằng một lần bấm.
+- Electron screenshot: positron-p51213-random-history-after-1920x1080-real.png
+- User action: Bấm Bất kỳ để khám phá kênh, nhấn ☷ trên thanh phát, chọn tên kênh để xem lại. Escape hoặc × đóng menu.
+- Tính năng: dữ liệu chỉ trong bộ nhớ phiên; lọc kênh bị gỡ khỏi nguồn, không tăng số kênh đã khám phá và không sửa playlist/Favorites. Hỗ trợ focus bàn phím và màn 450px.
+- Before: `positron-p51213-random-history-before-1920x1080-real.png`; after: `positron-p51213-random-history-after-1920x1080-real.png`.
+- QA: Electron 1920×1080 mở popup, phát lại ID kênh đã khám phá, kiểm count/playlist bất biến, Escape và 450px không tràn.
+- Status: CANDIDATE — chỉ công nhận sau khi Node, ảnh Electron, build/release đạt.
+
 ## P5.1.212 — Tiến tới trong lịch sử kênh ngẫu nhiên / Electron 4.23.297
 - Feature priority: NEW — Ảnh P5.1.211 cho thấy nút ↶ cho phép quay về kênh khám phá trước, nhưng sau đó người xem không thể trở lại kênh vừa rời nếu không bấm Bất kỳ để lấy một kênh khác. Thêm nút tiến ↷ để điều hướng lịch sử hai chiều ngay trong thanh phát, tránh mất ngữ cảnh.
 - Electron screenshot: positron-p51212-random-forward-after-1920x1080-real.png

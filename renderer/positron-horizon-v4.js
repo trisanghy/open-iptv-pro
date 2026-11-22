@@ -288,6 +288,14 @@
     if(back)back.hidden=nextRandom.hidden||randomTrail.length<2;
     const forward=byId('poRandomForward');
     if(forward)forward.hidden=nextRandom.hidden||randomRedoIds.length===0;
+    const history=byId('poRandomHistory');
+    if(history){
+     const focused=d.activeElement===history;
+     history.hidden=nextRandom.hidden||randomTrail.length+randomRedoIds.length===0;
+     if(history.hidden&&!historyPanel.hidden)closeHistory(false);
+     else if(!historyPanel.hidden)renderHistory();
+     if(focused&&history.hidden&&!nextRandom.hidden)nextRandom.focus();
+    }
    };
    nextRandom.addEventListener('click',switchRandomChannel);
    byId('nextBtn')?.parentElement?.append(nextRandom);
@@ -330,6 +338,84 @@
      .catch(e=>window.IPTVState?.toast?.(e.message||String(e),'error'));
    });
    byId('nextBtn')?.parentElement?.append(forwardRandom);
+   
+   // P213: recent random discoveries are session-only and do not change M3U.
+   const historyButton=d.createElement('button');historyButton.type='button';
+   historyButton.id='poRandomHistory';historyButton.className='control-sm';
+   historyButton.textContent='☷';historyButton.title='Kênh ngẫu nhiên vừa khám phá';
+   historyButton.setAttribute('aria-label','Mở lịch sử kênh ngẫu nhiên');
+   historyButton.setAttribute('aria-controls','poRandomHistoryPanel');
+   historyButton.setAttribute('aria-expanded','false');historyButton.hidden=true;
+   const historyPanel=d.createElement('section');historyPanel.id='poRandomHistoryPanel';
+   historyPanel.hidden=true;historyPanel.setAttribute('role','dialog');
+   historyPanel.setAttribute('aria-label','Lịch sử khám phá kênh trong phiên');
+   historyPanel.setAttribute('aria-modal','false');
+   const historyHead=d.createElement('div');historyHead.className='po-random-history-head';
+   const historyTitle=d.createElement('strong');historyTitle.textContent='Kênh vừa khám phá';
+   const historyClose=d.createElement('button');historyClose.type='button';
+   historyClose.textContent='×';historyClose.setAttribute('aria-label','Đóng lịch sử khám phá');
+   historyHead.append(historyTitle,historyClose);
+   const historyNote=d.createElement('p');historyNote.className='po-random-history-note';
+   historyNote.textContent='Chọn một kênh để xem lại. Chỉ lưu trong phiên này.';
+   const historyList=d.createElement('div');historyList.id='poRandomHistoryList';
+   historyPanel.append(historyHead,historyNote,historyList);d.body.append(historyPanel);
+   const closeHistory=(restoreFocus=false)=>{
+    historyPanel.hidden=true;historyButton.setAttribute('aria-expanded','false');
+    if(restoreFocus&&!historyButton.hidden)historyButton.focus();
+   };
+   const renderHistory=()=>{
+    const channels=window.IPTVState?.getChannels?.().filter(c=>c?.id&&c?.url&&c.status!=='dead')||[];
+    const live=new Map(channels.map(c=>[c.id,c]));
+    const ids=[...randomTrail,...randomRedoIds.slice().reverse()];
+    const used=new Set(),recent=[];
+    for(let i=ids.length-1;i>=0&&recent.length<10;i--){
+     const id=ids[i];if(used.has(id)||!live.has(id))continue;
+     used.add(id);recent.push(live.get(id));
+    }
+    historyList.replaceChildren();
+    for(const channel of recent){
+     const option=d.createElement('button');option.type='button';
+     option.className='po-random-history-item';option.dataset.channelId=channel.id;
+     option.textContent=channel.name||'Kênh chưa có tên';
+     option.title=channel.group||'Chọn để phát lại';
+     option.setAttribute('aria-label','Xem lại '+(channel.name||'kênh đã khám phá'));
+     option.addEventListener('click',()=>{
+      if(!window.IPTVState?.getChannels?.().some(c=>c?.id===channel.id&&c?.url&&c.status!=='dead')){
+       renderHistory();return;
+      }
+      if(randomTrail[randomTrail.length-1]!==channel.id)randomTrail.push(channel.id);
+      if(randomTrail.length>50)randomTrail.shift();
+      randomRedoIds.length=0;
+      syncRandomProgress();closeHistory(true);
+      Promise.resolve(window.IPTVState.playChannel(channel.id))
+       .catch(e=>window.IPTVState?.toast?.(e.message||String(e),'error'));
+     });
+     historyList.append(option);
+    }
+    if(!recent.length){
+     const empty=d.createElement('p');empty.textContent='Chưa có kênh hợp lệ trong lịch sử.';
+     historyList.append(empty);
+    }
+   };
+   historyButton.addEventListener('click',()=>{
+    if(!historyPanel.hidden){closeHistory(true);return;}
+    renderHistory();
+    const bounds=historyButton.getBoundingClientRect();
+    historyPanel.style.left=Math.max(12,Math.min(bounds.left-125,innerWidth-372))+'px';
+    historyPanel.style.bottom=Math.max(12,innerHeight-bounds.top+8)+'px';
+    historyPanel.hidden=false;historyButton.setAttribute('aria-expanded','true');
+    historyList.querySelector('button')?.focus();
+   });
+   historyClose.addEventListener('click',()=>closeHistory(true));
+   d.addEventListener('keydown',event=>{
+    if(event.key==='Escape'&&!historyPanel.hidden){event.preventDefault();closeHistory(true);}
+   });
+   d.addEventListener('pointerdown',event=>{
+    if(!historyPanel.hidden&&!historyPanel.contains(event.target)&&!historyButton.contains(event.target))
+     closeHistory(false);
+   });
+   byId('nextBtn')?.parentElement?.append(historyButton);
+
    // P207: explicit accessible reset for the session-only discovery cycle.
    const resetRandom=d.createElement('button');resetRandom.type='button';
    resetRandom.id='poRandomCycleReset';resetRandom.className='control-sm po-random-reset';

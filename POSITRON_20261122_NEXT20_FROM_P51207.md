@@ -27,7 +27,14 @@ Phạm vi: chỉ `Positron`. Baseline HEAD `2e0d53a478a3361731e0f191e8b06c54a943
 - Test và ảnh bắt buộc: `randomBackQA`, `randomBackActionQA`, Electron 1920×1080 `positron-p51211-random-back-before-1920x1080-real.png` và `positron-p51211-random-back-after-1920x1080-real.png`, 450px, Node regression. Không đếm vòng 04 trước khi chạy và xem ảnh.
 - Đã xác minh: Actions #45024273180 test/capture/Mac ARM/Mac x64/Windows x64/release success; trước/sau Electron 1920×1080 đã mở, nút ↶ xuất hiện khi có hai lượt, phép thử keyboard focus và playlist đều đạt. Release `positron/v4.23.296-p5.1.211` có đủ EXE/DMG/source/ảnh/SHA256SUMS.
 
-## Vòng 05/20 — P5.1.212 / Electron 4.23.297 — CANDIDATE
+## Vòng 05/20 — P5.1.212 / Electron 4.23.297 — ĐÃ HOÀN THÀNH
 - Đầu vào từ ảnh P211: đã quay lại kênh ngẫu nhiên trước nhưng không có thao tác tiến lại khi người xem đổi ý. Thêm nút ↷ tiến theo lịch sử phiên sau Back, dùng stack riêng; bấm khám phá mới sẽ xóa ngăn tiến, source edit lọc ID cũ, không sửa kênh gốc.
 - Test và ảnh P212: `forwardHistoryQA`, `forwardActionQA`, native Electron `positron-p51212-random-forward-before-1920x1080-real.png` và `positron-p51212-random-forward-after-1920x1080-real.png`, 450px và focus; chưa đếm hoàn tất khi CI chưa thành công hoặc chưa mở ảnh.
 - Vòng 06–20: CHƯA LÀM; mỗi vòng phải đọc ảnh và CI phiên trước, sửa thực, tăng version và chỉ công bố release khi xác minh.
+
+## Vòng 06/20 — P5.1.213 / Electron 4.23.298 — CANDIDATE
+- Đã tải và mở ảnh thật before/after P5.1.212 từ Actions #45025012943 (6/6 success); đã xác minh Release P212 đầy đủ EXE, DMG, ảnh và SHA256SUMS.
+- Phát hiện từ ảnh: điều khiển Back/Forward và Bất kỳ có sẵn nhưng người dùng chưa thể trực tiếp chọn lại kênh bất kỳ trong danh sách gần đây.
+- Tính năng: menu ☷ hiển thị tối đa 10 kênh khám phá tạm trong phiên, có phát theo ID được chọn; không đổi M3U/Favorites, có Escape/focus và viewport 450px.
+- QA bắt buộc: Node tests; historyOpenQA/historyPickQA/compact213; screenshot 1920×1080 before/after của Electron, ảnh SAU phải được mở xem.
+- Chỉ công nhận hoàn tất sau khi CI 6/6, release assets và screenshot review đạt.
