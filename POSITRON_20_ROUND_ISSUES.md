@@ -47,3 +47,26 @@ Evaluate defects revealed by real screenshot of previous build before making cha
 ## Round 06 input — Positron P5.1.133 actual after image
 - Opened P5.1.133 real `positron-p51133-compact-card-title-star-450-real.png`: title clipping fixed, but Unicode star glyph is tiny/visually inconsistent. P5.1.134 changes only presentation to consistent SVG while preserving the favorite toggle's native semantic and storage.
 - Required Electron 450px before+after screenshots and aria-pressed / fill / undo QA, real release or fallback assets.
+
+---
+
+## Đợt mới 22/11/2026 — 20 vòng từ P5.1.167 (đã chứng minh 03/20)
+**Các dòng dưới đây dùng ảnh Electron thật / CI, không gộp 70 screenshot checks thành 70 vòng sửa.**
+
+| Vòng | Phiên bản | Input và vấn đề/tính năng | Giải pháp mã nguồn | Kiểm thử và ảnh thật | Release | Trạng thái |
+|---|---|---|---|---|---|---|
+| 01 | P5.1.168 / app 4.23.253 | Ảnh P5.1.167: thanh phân trang kênh thiếu logo bị khuất cuối popup | Đưa `#poLibraryMissingNav` lên trước vùng cuộn, CSS giữ nút trong panel | Node 808 đạt, 0 lỗi, 5 skipped; 7/7 phép đo Electron; `positron-p51168-pager-visible-after-1920x1080-real.png` đã mở | `positron/v4.23.253-p5.1.168`; CI 44985148784; commit `14265297ee9e49a053ec8e0440d9dfaddde59641` | HOÀN THÀNH |
+| 02 | P5.1.169 / app 4.23.254 | Ảnh P5.1.168: thiếu cách phân loại kênh thiếu logo theo mã EPG | Bộ lọc EPG `all/missing-epg/with-epg`, kết hợp tìm/nhóm/sắp xếp/CSV, chỉ đọc dữ liệu | Node 809 đạt, 0 lỗi, 5 skipped; 13/13 Electron QA; `positron-p51169-epg-filter-after-1920x1080-real.png` đã mở | `positron/v4.23.254-p5.1.169`; CI 44986000752; commit `c4ecb019b4eb7863a919491b8865666699e25d79` | HOÀN THÀNH |
+| 03 | P5.1.170 / app 4.23.255 | Ảnh P5.1.169: đã có 5 điều kiện lọc nhưng chưa thể khôi phục bằng một thao tác | Nút `Xóa bộ lọc`, khôi phục tìm, nhóm, EPG, sort và 10 kênh/trang, trả focus | Node 810 đạt, 0 lỗi, 5 skipped; 13/13 Electron QA; `positron-p51170-clear-filters-after-1920x1080-real.png` đã mở | `positron/v4.23.255-p5.1.170`; CI 44986538072; commit `b577e4d1bfa84bab81209ca0fec6e5b1e295998c` | HOÀN THÀNH |
+
+### Các vòng 04–20: CHƯA THỰC HIỆN
+- Đầu vào vòng 04: ảnh thật P5.1.170 phần Thư viện sau khi xóa bộ lọc. Quan sát: điều hướng hiện `Trang 1 / 57` nhưng không ghi rõ đang xem 1–10 trên 561 kênh. **Đề xuất khảo sát** bổ sung nhãn phạm vi 1–10/561; đây là đề xuất tính năng, không nhận là bug tái hiện nếu chưa chứng minh.
+- Các đầu vào sau phải đến từ PNG/QA ngay vòng trước và bug/nhu cầu thực tế, không giả lập quy trình 20 vòng. Tiếp tục ở **P5.1.171**; nếu version app 4.23.256 chưa bị dùng, tăng SemVer hợp lệ theo HEAD thực tế.
+- Rủi ro cần theo dõi: panel Thư viện có thanh cuộn riêng và danh sách cuộn riêng; kiểm tra bánh xe chuột/cảm ứng ở màn hẹp; không khẳng định đã thử nếu chưa có screenshot/hành vi tái hiện.
+- Chưa thử: stream M3U có quyền sử dụng thật, xử lý GPU/audio, Cast thiết bị thật, DVR/Timeshift ngoài fixture Electron. CI UI và bộ cài thành công không xác nhận các mục này.
+- Không thay đổi `main` hay nhánh khác, không force push, không thay tag cũ. Không trùng đếm 50 P4 + 20 P5 screenshot checks với 3 vòng code mới.
+
+### Nguồn release/ảnh đã xác minh
+- P5.1.168: https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.253-p5.1.168
+- P5.1.169: https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.254-p5.1.169
+- P5.1.170: https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.255-p5.1.170
