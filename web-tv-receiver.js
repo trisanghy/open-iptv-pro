@@ -10,6 +10,7 @@
  // Sources remain local to the TV; pairing and Supabase are not used for storage.
  const HISTORY_KEY='openiptv-tv-history-v1',HISTORY_LIMIT=50;
  let playingUrl='',watchHistory=[];
+ let selectedHistoryIndex=0,historyKeyboardActive=false;
  const safeHistoryUrl=value=>root.OpenIPTVTVPair?.validateUrl?.(value)||'';
  function normalizeHistory(row){
   if(!row||typeof row!=='object')return null;
@@ -37,12 +38,34 @@
   try{return new Intl.DateTimeFormat('vi-VN',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}).format(new Date(timestamp));}
   catch{return 'Đã xem';}
  }
+ function historyCards(){return Array.from($('tvHistoryGrid')?.querySelectorAll('.tv-history-card')||[]);}
+ function historyColumns(){
+  const width=Number(root.innerWidth||d.documentElement?.clientWidth||950);
+  return width<=350?1:width<=600?2:width<=850?3:4;
+ }
+ function focusHistory(index){
+  const cards=historyCards();
+  if(!cards.length)return false;
+  selectedHistoryIndex=Math.max(0,Math.min(cards.length-1,index));
+  historyKeyboardActive=true;
+  cards.forEach((card,i)=>{card.tabIndex=i===selectedHistoryIndex?0:-1;card.dataset.keyboardSelected=i===selectedHistoryIndex?'true':'false';});
+  const selected=cards[selectedHistoryIndex];
+  selected.focus?.({preventScroll:true});
+  selected.scrollIntoView?.({block:'nearest',inline:'nearest',behavior:'auto'});
+  historyNavigating=true;pinGestureScroll=Math.max(pinGestureScroll,160);
+  requestPinResize();
+  return true;
+ }
  function renderHistory(){
   const grid=$('tvHistoryGrid');
   if(!grid)return;
+  const hadFocus=!!grid.contains?.(d.activeElement);
   const fragment=d.createDocumentFragment();
-  watchHistory.forEach(entry=>{
+  selectedHistoryIndex=Math.max(0,Math.min(watchHistory.length-1,selectedHistoryIndex));
+  watchHistory.forEach((entry,index)=>{
    const card=d.createElement('button');card.type='button';card.className='tv-history-card';
+   card.tabIndex=index===selectedHistoryIndex?0:-1;
+   card.dataset.keyboardSelected=historyKeyboardActive&&index===selectedHistoryIndex?'true':'false';
    card.title='Phát '+entry.name;card.setAttribute('aria-label','Phát kênh '+entry.name);
    if(playingUrl&&entry.url===playingUrl)card.dataset.current='true';
    const icon=d.createElement('span');icon.className='tv-history-icon';icon.textContent='▶';icon.setAttribute('aria-hidden','true');
@@ -51,10 +74,15 @@
    const meta=d.createElement('span');meta.className='tv-history-meta';
    meta.textContent=playingUrl&&entry.url===playingUrl?'Đang phát':'Xem '+historyTime(entry.watchedAt);
    detail.append(name,meta);card.append(icon,detail);
-   card.addEventListener('click',()=>{show('tvPlayer');void loadVideo(entry.url,entry.name,entry.mediaId);});
+   card.addEventListener('focus',()=>{selectedHistoryIndex=index;});
+   card.addEventListener('click',()=>{
+    selectedHistoryIndex=index;historyKeyboardActive=true;
+    show('tvPlayer');void loadVideo(entry.url,entry.name,entry.mediaId);
+   });
    fragment.append(card);
   });
   grid.replaceChildren(fragment);
+  if(hadFocus&&watchHistory.length)focusHistory(selectedHistoryIndex);
   $('tvHistoryCount').textContent=watchHistory.length+'/'+HISTORY_LIMIT;
   $('tvHistoryEmpty').hidden=watchHistory.length>0;
   $('tvClearHistory').disabled=watchHistory.length===0;
@@ -63,6 +91,7 @@
   const entry=normalizeHistory({url,name,mediaId,watchedAt:Date.now()});
   if(!entry)return;
   watchHistory=[entry,...watchHistory.filter(item=>!sameChannel(entry,item))].slice(0,HISTORY_LIMIT);
+  selectedHistoryIndex=0;
   try{root.localStorage.setItem(HISTORY_KEY,JSON.stringify(watchHistory));}catch{}
   renderHistory();
  }
@@ -134,7 +163,9 @@
   }
  });
  d.addEventListener('keydown',event=>{
-  if(['ArrowDown','PageDown',' '].includes(event.key))nudgePin(event.key==='ArrowDown'?55:170);
+  // The history navigator owns arrows and Space when a channel is focused.
+  if(d.body.classList.contains('tv-cinema')||$('tvHistoryGrid')?.contains?.(event.target))return;
+  if(['ArrowDown','PageDown'].includes(event.key))nudgePin(event.key==='ArrowDown'?55:170);
   else if(['ArrowUp','PageUp','Home'].includes(event.key))nudgePin(event.key==='ArrowUp'?-55:-400);
  });
  $('tvHistory')?.addEventListener('pointerenter',()=>{
@@ -308,9 +339,56 @@
   void video.play().catch(()=>status('Không phát được luồng trên trình duyệt TV.'));
  });
  cinemaButton?.addEventListener('click',leaveCinema);
+ // Direction keys and Enter/OK work on computers and Samsung TV remotes.
+ function navKey(event){
+  const key=String(event.key||'');
+  if(key&&key!=='Unidentified')return key;
+  const keys={37:'ArrowLeft',38:'ArrowUp',39:'ArrowRight',40:'ArrowDown',13:'Enter',
+   32:' ',27:'Escape',8:'Backspace',10009:'Back'};
+  return keys[event.keyCode]||'';
+ }
  d.addEventListener('keydown',event=>{
-  if(event.key==='Escape'||event.key==='Backspace'||event.keyCode===10009){
-   if(d.body.classList.contains('tv-cinema')){event.preventDefault();leaveCinema();}
+  const key=navKey(event),cinema=d.body.classList.contains('tv-cinema');
+  const back=key==='Escape'||key==='Backspace'||key==='Back'||event.keyCode===10009;
+  if(back&&cinema){
+   event.preventDefault?.();
+   leaveCinema();
+   // Keep playback in the embedded video and return focus to the current channel.
+   focusHistory(selectedHistoryIndex);
+   return;
+  }
+  if(cinema)return;
+  const grid=$('tvHistoryGrid'),cards=historyCards();
+  if(!cards.length)return;
+  const active=d.activeElement;
+  const withinGrid=!!grid?.contains?.(active);
+  const keyTarget=event.target;
+  if(withinGrid){
+   if(['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(key)){
+    event.preventDefault?.();
+    const index=Math.max(0,cards.indexOf(active));
+    const columns=historyColumns();
+    const delta=key==='ArrowLeft'?-1:key==='ArrowRight'?1:key==='ArrowUp'?-columns:columns;
+    focusHistory(index+delta);
+    return;
+   }
+   if(key==='Enter'||key===' '){
+    event.preventDefault?.();
+    cards[Math.max(0,cards.indexOf(active))]?.click?.();
+    return;
+   }
+   if(back){
+    event.preventDefault?.();
+    $('tvNewPin')?.focus?.();
+    return;
+   }
+  }
+  // From the pairing screen, Down starts browsing without needing a mouse.
+  if(key==='ArrowDown'&&!withinGrid&&!grid?.contains?.(keyTarget)
+     &&keyTarget?.tagName!=='INPUT'&&keyTarget?.tagName!=='TEXTAREA'
+     &&keyTarget?.tagName!=='VIDEO'){
+   event.preventDefault?.();
+   focusHistory(selectedHistoryIndex);
   }
  });
  $('tvLocalPause').addEventListener('click',()=>video.pause());
