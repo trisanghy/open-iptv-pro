@@ -1,4 +1,14 @@
-# Open IPTV Pro TV · TizenBrew v0.1.22 (OTA)
+# Open IPTV Pro TV · TizenBrew v0.1.23 (OTA)
+
+## v0.1.23 — Thử lại luồng IPTV HLS và chẩn đoán ngay trên TV
+
+- Giữ nguyên `appPath=tizenbrew/bootstrap.html` và cơ chế OTA theo commit (đã được người dùng xác nhận TV tự tải bản `0.1.22`).
+- Trước đây, các URL IPTV không chứa đuôi `.m3u8` chỉ được thử bằng HTML5; khi HTML5 báo `NotSupportedError` hoặc `MEDIA_ERR_SRC_NOT_SUPPORTED`, trình phát dừng mà không thử HLS.js.
+- Hiện tại HTML5 lỗi sẽ thử HLS.js **một lần** với URL gốc không sửa đổi, kể cả URL không có đuôi `.m3u8`. M3U8 có đuôi vẫn thử HLS.js trực tiếp nếu trình duyệt không công bố hỗ trợ HLS native.
+- Màn hình phát hiển thị các chẩn đoán không chứa URL/token nguồn: AVPlay có khả dụng hay không, native HLS, HLS.js/MediaSource và thông báo lỗi. Tránh vòng lặp thử lại và giữ nguyên danh sách kênh/QR/yêu thích.
+- Không thể ép HLS.js hoạt động khi TV không có MediaSource, hoặc khi nguồn chặn CORS. AVPlay cần quyền Samsung Product API trong gói WGT; module web chạy dưới TizenBrew có thể không sử dụng được AVPlay của hệ thống. Trong trường hợp đó cần bản WGT độc lập được ký và khai báo quyền AVPlay, không chỉ cập nhật JS.
+- Kiểm thử hồi quy cho HLS URL không có đuôi, trường hợp MediaSource không hỗ trợ, tránh lỗi lặp: `tizenbrew/tests/samsung-avplay-playback.test.cjs`.
+- Đây là bản sửa theo thông tin lỗi từ TV, chưa được xác minh phát thành công trên phần cứng Samsung thực tế.
 
 ## v0.1.22 — Khắc phục bản TV bị kẹt tại 0.1.17 dù đã xóa/cài lại
 
