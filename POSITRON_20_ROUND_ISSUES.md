@@ -30,3 +30,9 @@ Ngày 22/11/2026. Chỉ nhánh Positron. Không đếm 70 ảnh QA là 20 vòng 
 - Lỗi phát hiện: viết hoa Đ trong tên nhóm không khớp tìm kiếm không dấu; nguyên nhân là thứ tự chuẩn hóa trong renderer/positron-channel-jump.js.
 - Sửa helper normalizeGroup, thêm Node regression và Electron ảnh before/after trên dữ liệu QA. Không sửa URL nguồn hoặc logic phát.
 - Chưa tính đạt tới khi xác minh Node test, ảnh Electron thật đã mở xem, build và Release.
+
+## Đợt mới sau P5.1.233 — Vòng 02 / P5.1.235 (CANDIDATE)
+- Ảnh Electron thật P233 cho thấy từ nhóm 03 quay về nhóm 01 nhưng nút ↶ Nhóm trước vẫn hiện 01 · Main channels.
+- Nguyên nhân: lịch sử nhóm được push mà không deduplicate, khiến các nhóm trùng vẫn nằm trong stack và dẫn tới self-back.
+- Khắc phục stack nhóm theo phiên, tự ẩn nút khi không còn đích hợp lệ, bổ sung Node regressions và hai PNG Electron 1920×1080.
+- Chưa tính vòng đạt trước khi xác minh Node tests, QA Electron, mở và soát ảnh mới, build/Release.

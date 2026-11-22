@@ -1,5 +1,16 @@
 # Positron P5 Changelog
 
+## P5.1.235 — Quay về nhóm trước mà không lặp lại nhóm hiện tại / Electron 4.23.320
+- Feature priority: NEW — Lịch sử điều hướng nhóm theo phiên chỉ giữ một vị trí cho mỗi nhóm và tự loại đích quay lại trùng nhóm đang xem, giúp nút “Nhóm trước” không quay vòng vô ích hoặc hiển thị nhầm sau khi trở về.
+- Electron screenshot: positron-p51235-history-dedupe-after-1920x1080-real.png
+- User action: Trên trang TV, nhấn Alt+G để chuyển từ nhóm 01 sang nhóm 03, sau đó nhấn “↶ Nhóm trước” để về nhóm 01; nút quay lại sẽ tự ẩn nếu không còn nhóm thực sự khác để quay về.
+- Lỗi phát hiện từ hai ảnh Electron P5.1.233 trước/sau: sau khi quay về 01, nút “Nhóm trước” vẫn đưa ra chính 01 do lịch sử thêm trùng từ các lượt điều hướng trước đó.
+- Cơ chế: gỡ entry trùng trước push, bỏ self-reference khi pop và dọn phần đuôi lịch sử trùng nhóm focus; không thay stream, autoplay, playlist, EPG hoặc Favorites.
+- QA: Node regression, Electron thật 1920×1080 before/after, focus đúng QA 001, nút tự ẩn, không phát video và không tràn.
+- Trạng thái: CANDIDATE cho tới khi Node, Electron screenshot-review, build và Release được xác minh.
+
+
+
 ## P5.1.234 — Tìm đúng nhóm có Đ viết hoa bằng chữ không dấu / Electron 4.23.319
 - Feature priority: NEW — Hỗ trợ tìm tên thư mục tiếng Việt có chữ Đ viết hoa bằng từ khóa không dấu ngay trong bộ chọn nhóm, giúp người xem truy cập đúng dữ liệu danh sách kênh mà không cần đổi tên thư mục hoặc mở video.
 - Electron screenshot: positron-p51234-vietnamese-group-after-1920x1080-real.png

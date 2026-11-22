@@ -131,7 +131,7 @@ test('P5.1.234 normalizes uppercase Vietnamese Đ in real group filter helper',(
   ['ĐÀI TRUYỀN HÌNH','dai truyen hinh'],['Đại chúng','dai chung'],
   ['đài địa phương','dai dia phuong'],['  Nhóm ÁNH SÁNG  ','nhom anh sang']])
   assert.equal(normalizeGroup(label),expected,label);
- assert.equal(JSON.parse(read('package.json')).version,'4.23.319');
+ assert.ok(Number(JSON.parse(read('package.json')).version.split('.')[2])>=319);
 });
 test('P5.1.234 requires real Electron screenshots and non-playback Vietnamese folder QA',()=>{
  const qa=read('scripts/positron-20-extension.cjs'),workflow=read('.github/workflows/positron-lab.yml');
@@ -141,4 +141,30 @@ test('P5.1.234 requires real Electron screenshots and non-playback Vietnamese fo
  }
  for(const token of ['ĐÀI TRUYỀN HÌNH',"fill('dai truyen hinh')",'oneMatch:','uppercaseDMatches:','noAutoplay:','noHorizontalOverflow:'])
   assert.ok(qa.includes(token),'QA assertion absent: '+token);
+});
+
+
+test('P5.1.235 group Back history never retains duplicate or self-reference',()=>{
+ const source=read('renderer/positron-channel-jump.js');
+ for(const token of [
+  'groupHistory[groupHistory.length-1]===lastFocusedGroup',
+  'const existing=groupHistory.indexOf(lastFocusedGroup);',
+  'groupHistory.splice(existing,1)',
+  'if(candidate===lastFocusedGroup)continue;',
+  'groupHistory.push(lastFocusedGroup);'
+ ])assert.ok(source.includes(token),'Missing self-history guard: '+token);
+ assert.ok(!source.includes('playChannel('),'History must not autoplay');
+ assert.equal(JSON.parse(read('package.json')).version,'4.23.320');
+});
+test('P5.1.235 real Electron checks Back button and no duplicate focused folder',()=>{
+ const qa=read('scripts/positron-20-extension.cjs');
+ const wf=read('.github/workflows/positron-lab.yml');
+ for(const file of [
+  'positron-p51235-history-dedupe-before-1920x1080-real.png',
+  'positron-p51235-history-dedupe-after-1920x1080-real.png']){
+  assert.ok(qa.includes(file),'Missing Electron screenshot: '+file);
+  assert.ok(wf.includes(file),'Workflow must check '+file);
+ }
+ for(const token of ['noSelfReference:', 'returnedToPreviousGroup:', 'noAutoplay:', 'noHorizontalOverflow:', 'historyButtonHidden:'])
+  assert.ok(qa.includes(token),'Missing P235 QA assertion: '+token);
 });

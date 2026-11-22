@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.319",
-  "description": "Positron P5.1.234: sửa tìm tên nhóm có Đ viết hoa",
+  "version": "4.23.320",
+  "description": "Positron P5.1.235: lịch sử nhóm bỏ điểm quay lại trùng nhóm hiện tại",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

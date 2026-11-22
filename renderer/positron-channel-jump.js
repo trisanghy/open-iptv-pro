@@ -88,6 +88,8 @@
  const backButton=backRow.querySelector('#poChannelGroupBack');
  const backHint=backRow.querySelector('#poChannelGroupBackHint');
  function updateBackRow(){
+  // P235: never offer the current folder as its own Back destination.
+  while(groupHistory.length&&groupHistory[groupHistory.length-1]===lastFocusedGroup)groupHistory.pop();
   backRow.dataset.historyDepth=String(groupHistory.length);
   backRow.hidden=!groupHistory.length;
   backHint.textContent=groupHistory.length?groupHistory[groupHistory.length-1]:'';
@@ -96,6 +98,7 @@
   let previous='';
   while(groupHistory.length){
    const candidate=groupHistory.pop();
+   if(candidate===lastFocusedGroup)continue; // skip stale self-references
    if(visibleHeaders().some(header=>header.dataset.group===candidate)){
     previous=candidate;break;
    }
@@ -128,6 +131,8 @@
   const box=list.getBoundingClientRect(),rect=target.getBoundingClientRect();
   list.scrollTop+=rect.top-box.top-(list.clientHeight-rect.height)/2;
   if(!returningToHistory&&lastFocusedGroup&&lastFocusedGroup!==group){
+   const existing=groupHistory.indexOf(lastFocusedGroup);
+   if(existing!==-1)groupHistory.splice(existing,1); // one entry per group in session
    groupHistory.push(lastFocusedGroup);
    if(groupHistory.length>10)groupHistory.shift();
   }
