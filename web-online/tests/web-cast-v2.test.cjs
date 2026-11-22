@@ -9,7 +9,7 @@ const core=load('web-tv-pair.js'),sender=load('web-cast-sender.js'),html=load('i
 test('approved Cast modal matches demo, has 3 actual modes and all theme variants',()=>{
  assert.match(ui,/Ghép đôi TV/);assert.match(ui,/Google Cast/);assert.match(ui,/AirPlay/);
  assert.match(ui,/onConnected/);assert.match(ui,/pair\.command/);
- assert.match(ui,/OpenIPTVWebCast\.scan/);assert.match(ui,/OpenIPTVWebCast\?\.airplayPicker/);
+ assert.match(ui,/api\.scan\(\)/);assert.match(ui,/OpenIPTVWebCast\?\.airplayPicker/);
  for(const name of ['light','dark','amoled'])assert.ok(css.includes('html[data-theme="'+name+'"] #iptvCastOverlay'),name);
  assert.match(css,/@media\(max-width:760px\)/);
  assert.match(html,/web-cast-v2\.css\?v=cast-v2-20261122a/);
