@@ -998,3 +998,15 @@ html[data-positron="true"] #poNextRandomChannel:focus-visible{
 }
 html[data-positron="true"] #poNextRandomChannel svg{display:block;flex-shrink:0}
 @media(max-width:1000px){html[data-positron="true"] #poNextRandomChannel .po-random-label{display:none}}
+
+/* P206: counter for distinct random discoveries in this session. */
+html[data-positron="true"] #poNextRandomChannel .po-random-count{
+ display:inline-flex;align-items:center;justify-content:center;
+ min-width:19px;height:19px;padding:0 4px;border-radius:999px;
+ background:var(--po-accent,#79dfc6);color:#10272b;font-size:10px;font-weight:800;
+ font-variant-numeric:tabular-nums;
+}
+html[data-positron="true"] #poNextRandomChannel .po-random-count[hidden]{display:none!important}
+@media(max-width:1000px){
+ html[data-positron="true"] #poNextRandomChannel .po-random-count{min-width:17px;height:17px;font-size:9px}
+}

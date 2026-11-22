@@ -222,14 +222,28 @@
    random.textContent='Khám phá kênh ngẫu nhiên';
    random.setAttribute('aria-label','Chọn và phát một kênh ngẫu nhiên có thể xem');
    random.hidden=true;
+   // P206: session-only pool prevents random repeats until choices run out.
+   const randomSeenIds=new Set();
    const switchRandomChannel=()=>{
     const candidates=window.IPTVState?.getChannels?.().filter(c=>c?.id&&c?.url&&c.status!=='dead')||[];
     if(!candidates.length)return;
     const currentId=window.IPTVState?.getCurrent?.()?.id;
     const other=candidates.filter(c=>c.id!==currentId);
-    const available=other.length?other:candidates;
+    // Keep playlist unchanged; prune removed IDs from session-only memory.
+    const activeIds=new Set(candidates.map(c=>c.id));
+    for(const id of randomSeenIds)if(!activeIds.has(id))randomSeenIds.delete(id);
+    const eligible=other.length?other:candidates;
+    const unseen=eligible.filter(c=>!randomSeenIds.has(c.id));
+    if(!unseen.length)randomSeenIds.clear();
+    const available=unseen.length?unseen:eligible;
     const selected=available[Math.floor(Math.random()*available.length)];
     if(!selected)return;
+    randomSeenIds.add(selected.id);
+    const badge=nextRandom.querySelector('.po-random-count');
+    if(badge){badge.hidden=false;badge.textContent=String(randomSeenIds.size);}
+    nextRandom.dataset.poDiscoverCount=String(randomSeenIds.size);
+    nextRandom.title='Đổi sang kênh chưa khám phá · '+randomSeenIds.size+' lượt';
+    nextRandom.setAttribute('aria-label','Đổi sang kênh chưa khám phá, đã chọn '+randomSeenIds.size+' kênh');
     Promise.resolve(window.IPTVState.playChannel(selected.id))
      .catch(e=>window.IPTVState?.toast?.(e.message||String(e),'error'));
    };
@@ -240,7 +254,7 @@
    nextRandom.id='poNextRandomChannel';nextRandom.className='control-sm po-switch-random';
    nextRandom.title='Đổi sang kênh ngẫu nhiên khác';
    nextRandom.setAttribute('aria-label','Đổi sang kênh ngẫu nhiên khác');
-   nextRandom.innerHTML='<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="3"/><circle cx="8.5" cy="8.5" r="1" fill="currentColor"/><circle cx="12" cy="12" r="1" fill="currentColor"/><circle cx="15.5" cy="15.5" r="1" fill="currentColor"/></svg><span class="po-random-label">Bất kỳ</span>';
+   nextRandom.innerHTML='<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="3"/><circle cx="8.5" cy="8.5" r="1" fill="currentColor"/><circle cx="12" cy="12" r="1" fill="currentColor"/><circle cx="15.5" cy="15.5" r="1" fill="currentColor"/></svg><span class="po-random-label">Bất kỳ</span><span class="po-random-count" hidden aria-hidden="true"></span>';
    nextRandom.hidden=true;
    nextRandom.addEventListener('click',switchRandomChannel);
    byId('nextBtn')?.parentElement?.append(nextRandom);

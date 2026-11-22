@@ -1611,3 +1611,10 @@ P5.1.81 follow-up: real Electron capture found nav overflow; replace flexible no
 - Đã trực tiếp mở screenshot P5.1.204 thực 1920×1080 từ CI run 45016102045, thấy nút Khám phá ngẫu nhiên chỉ nằm trong empty player.
 - Bổ sung nút xúc xắc sau Kênh sau trên native transport, chỉ hiển thị khi có từ 2 kênh hợp lệ và chỉ phát kênh khác sau nhấn chuột. Không tự phát, không ghi dữ liệu playlist.
 - Regression Node kiểm tra điều khiển, CSS/keyboard và tái sử dụng thuật toán chọn kênh bỏ qua kênh hiện tại. Cần CI thật, ảnh trước/sau và soát PNG để xác nhận release, chưa kiểm thử playback thực.
+
+## P5.1.206 / Electron 4.23.291 — Khám phá ngẫu nhiên không lặp kênh (CANDIDATE)
+- Feature priority: NEW — Người xem dùng nút Bất kỳ nhiều lần mà tránh chọn lại các kênh đã được khám phá trong cùng chu kỳ; khi hết tập hợp hợp lệ mới mở vòng khám phá tiếp, tăng sự đa dạng.
+- User action: Trên màn hình Xem truyền hình, nhấn Bất kỳ nhiều lần; huy hiệu số đếm các kênh đã chọn trong chu kỳ hiện tại, hoạt động ngay trong trình phát.
+- Electron screenshot: positron-p51206-random-cycle-after-1920x1080-real.png
+- Đã trực tiếp mở và soi ảnh Electron thật của P5.1.205 1920×1080: nút Bất kỳ hoạt động nhưng thiếu dấu hiệu tiến độ và có thể lặp các kênh đã chọn sau vài lượt. P206 bổ sung bộ nhớ phiên không lưu cloud, tự loại ID không còn trong source, không tự mở player khi khởi động.
+- QA dự kiến: Node regression, Electron two-click stub, screenshot before/after thực 1920×1080 với pixel khác nhau, không tràn ở 450px; chưa thử stream live trên TV/GPU.

@@ -5930,8 +5930,53 @@ async function runTwenty(page){
   assert.equal(value,true,'P205 compact follow-up '+key+': '+JSON.stringify(compact205));
  await page.setViewportSize({width:1360,height:820});
 
+ 
+ // P206: native-Electron 16:9 before/after proof for the random-history counter.
+ await page.setViewportSize({width:1920,height:1080});
+ await page.evaluate(()=>window.IPTVState.setPage('tv'));
+ await page.locator('#poNextRandomChannel .po-random-count').evaluate(el=>el.style.setProperty('display','none','important'));
+ const before206=await page.screenshot({path:path.join(out,'positron-p51206-random-cycle-before-1920x1080-real.png'),animations:'disabled'});
+ assert.deepEqual([before206.readUInt32BE(16),before206.readUInt32BE(20)],[1920,1080]);
+ await page.locator('#poNextRandomChannel .po-random-count').evaluate(el=>el.style.removeProperty('display'));
+ const randomCycleQA=await page.evaluate(()=>{
+  const d=document,btn=d.getElementById('poNextRandomChannel'),badge=btn.querySelector('.po-random-count');
+  const native=window.IPTVState,channels=native.getChannels();
+  const valid=channels.filter(c=>c?.id&&c?.url&&c.status!=='dead');
+  const previousCount=Number(btn.dataset.poDiscoverCount||0);
+  let current=valid[0]?.id,selected=[];
+  const originalIds=channels.map(c=>c.id).join('|');
+  window.IPTVState={...native,getCurrent:()=>({id:current}),playChannel:id=>{
+   selected.push(id);current=id;return Promise.resolve();
+  }};
+  try{btn.focus();btn.click();btn.click();}finally{window.IPTVState=native;}
+  return {atLeastThreeChannels:valid.length>=3,
+   twoExplicitActions:selected.length===2,
+   doesNotRepeatWithinCycle:selected.length===2&&selected[0]!==selected[1],
+   avoidsCurrentAtFirstClick:selected.length===2&&selected[0]!==valid[0].id,
+   selectedChannelsExist:selected.every(id=>valid.some(c=>c.id===id)),
+   progressIncreased:Number(btn.dataset.poDiscoverCount||0)>previousCount,
+   badgeVisible:!badge.hidden&&getComputedStyle(badge).display!=='none',
+   badgeMatchesCount:Number(badge.textContent)===Number(btn.dataset.poDiscoverCount),
+   noPlaylistMutation:native.getChannels().map(c=>c.id).join('|')===originalIds,
+   noNativeAutoplay:native.getCurrent()===null,
+   noHorizontalOverflow:d.documentElement.scrollWidth<=innerWidth+1};
+ });
+ for(const [key,value] of Object.entries(randomCycleQA))
+  assert.equal(value,true,'P206 Electron random cycle '+key+': '+JSON.stringify(randomCycleQA));
+ const after206=await page.screenshot({path:path.join(out,'positron-p51206-random-cycle-after-1920x1080-real.png'),animations:'disabled'});
+ assert.deepEqual([after206.readUInt32BE(16),after206.readUInt32BE(20)],[1920,1080]);
+ assert.equal(before206.equals(after206),false,'P206 real screenshots must differ');
+ await page.setViewportSize({width:450,height:820});
+ const compact206=await page.evaluate(()=>({
+  badgeVisible:getComputedStyle(document.querySelector('#poNextRandomChannel .po-random-count')).display!=='none',
+  noHorizontalOverflow:document.documentElement.scrollWidth<=innerWidth+1
+ }));
+ for(const [key,value] of Object.entries(compact206))
+  assert.equal(value,true,'P206 compact random cycle '+key+': '+JSON.stringify(compact206));
+ await page.setViewportSize({width:1360,height:820});
+
  const report={type:'Positron P5 twenty distinct desktop screenshot cases',realElectron:true,syntheticChannels:false,
-  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,desktop16x9Screenshots,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA,chooserQa,toastLayoutQA,nativeToastQA,compactIdleQA,channelChipRailQA,advancedFilterQA,readableCardsQA,keyboardTabQA,favoriteEmptyQA,duplicateEmptyQA,categoryFilterQA,categoryFixtureQA,compactSingleQA,directFavoriteQA,favoriteCountQA,compactToastStackQA,toastDismissQA,toastFocusReturnQA,toastDockQA,wheelQA,pinnedAllQA,pinnedMaskQA,categoryKeyQA,dropdownChipQA,pinnedRightMaskQA,pinnedBorderMaskQA,asciiDSearchQA,emptySearchActionQA,readableCardTitleQA,favoriteSvgQA,keyboardFavoriteQA,multiTermSearchQA,keyboardSearchQA,arrowNavigationQA,pageNavigationQA,favoriteSortQA,onAirFilterQA,programmeSearchQA,upcomingProgrammeQA,soonProgrammeQA,earliestEpgSortQA,timeWindowQA,scheduleProgressQA:scheduleProgressQA,nativeReminderQA,cancelReminderQA,reminderLeadQA,toastHistoryQA,notificationArchiveQA,alertFilterQA,noticeSearchQA,quietModeQA,dismissToastQA,libraryPulseQA,groupDistributionQA,logoMissingQA,missingSearchQA,missingGroupQA,missingSortQA,missingJumpQA,missingCsvQA,duplicateQA,duplicateSearchQA,duplicateCsvQA,duplicateScopeQA,missingSizeQA,missingPagerQA,missingEpgFilterQA,missingResetQA,missingRangeQA,missingLocateQA,libraryReturnQA,favoriteActionQA,quickFavoriteQA,favoriteMoreQA,favoriteSearchQA,favoriteRotateQA,favoriteSuggestSearchQA,favoriteBulkQA,favoriteLayoutQA,favoriteNameSortQA,searchAfterSortQA,restoredSortQA,favoriteSuggestion12QA,batchFavorite12QA,restoreSixQA,favoriteRegionalQA,favoriteGroupSearchQA,resetGroupQA,favoriteQuickGroupQA,favoriteQuickResetQA,favoritePageLastQA,favoritePageNavigationQA,favoriteJumpSevenQA,favoriteJumpClampQA,favoriteWideQA,favoriteSuggestionSortQA,tvReselectTopQA,dvrDurationPresetQA,dvrDurationLiveQA,dvrPresetSelectionQA,dvrQuickStartQA,dvrSuggestedTitleQA,dvrReviewQA,dvrCopyQA,dvrTomorrowQA,dvrTitleSyncQA,dvrReplaceConfirmQA,dvrUndoQA,dvrExtendQA,tvToastSafeQA,otherPage203,randomDiscoveryQA,randomFollowupQA,compact205};
+  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,desktop16x9Screenshots,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA,chooserQa,toastLayoutQA,nativeToastQA,compactIdleQA,channelChipRailQA,advancedFilterQA,readableCardsQA,keyboardTabQA,favoriteEmptyQA,duplicateEmptyQA,categoryFilterQA,categoryFixtureQA,compactSingleQA,directFavoriteQA,favoriteCountQA,compactToastStackQA,toastDismissQA,toastFocusReturnQA,toastDockQA,wheelQA,pinnedAllQA,pinnedMaskQA,categoryKeyQA,dropdownChipQA,pinnedRightMaskQA,pinnedBorderMaskQA,asciiDSearchQA,emptySearchActionQA,readableCardTitleQA,favoriteSvgQA,keyboardFavoriteQA,multiTermSearchQA,keyboardSearchQA,arrowNavigationQA,pageNavigationQA,favoriteSortQA,onAirFilterQA,programmeSearchQA,upcomingProgrammeQA,soonProgrammeQA,earliestEpgSortQA,timeWindowQA,scheduleProgressQA:scheduleProgressQA,nativeReminderQA,cancelReminderQA,reminderLeadQA,toastHistoryQA,notificationArchiveQA,alertFilterQA,noticeSearchQA,quietModeQA,dismissToastQA,libraryPulseQA,groupDistributionQA,logoMissingQA,missingSearchQA,missingGroupQA,missingSortQA,missingJumpQA,missingCsvQA,duplicateQA,duplicateSearchQA,duplicateCsvQA,duplicateScopeQA,missingSizeQA,missingPagerQA,missingEpgFilterQA,missingResetQA,missingRangeQA,missingLocateQA,libraryReturnQA,favoriteActionQA,quickFavoriteQA,favoriteMoreQA,favoriteSearchQA,favoriteRotateQA,favoriteSuggestSearchQA,favoriteBulkQA,favoriteLayoutQA,favoriteNameSortQA,searchAfterSortQA,restoredSortQA,favoriteSuggestion12QA,batchFavorite12QA,restoreSixQA,favoriteRegionalQA,favoriteGroupSearchQA,resetGroupQA,favoriteQuickGroupQA,favoriteQuickResetQA,favoritePageLastQA,favoritePageNavigationQA,favoriteJumpSevenQA,favoriteJumpClampQA,favoriteWideQA,favoriteSuggestionSortQA,tvReselectTopQA,dvrDurationPresetQA,dvrDurationLiveQA,dvrPresetSelectionQA,dvrQuickStartQA,dvrSuggestedTitleQA,dvrReviewQA,dvrCopyQA,dvrTomorrowQA,dvrTitleSyncQA,dvrReplaceConfirmQA,dvrUndoQA,dvrExtendQA,tvToastSafeQA,otherPage203,randomDiscoveryQA,randomFollowupQA,compact205,randomCycleQA,compact206};
  fs.writeFileSync(path.resolve('positron-evidence','audit-p5-20-rounds.json'),JSON.stringify(report,null,2));
  return report;
 }

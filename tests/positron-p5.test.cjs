@@ -2273,11 +2273,30 @@ test('P5.1.205 has actual Electron screenshot proof of persistent random switch'
   'positron-p51205-tv-switch-before-1920x1080-real.png',
   'positron-p51205-tv-switch-after-1920x1080-real.png'])
   assert.ok(qa.includes(token),'Missing actual P205 Electron QA '+token);
- assert.ok(flow.includes('TAG=positron/v4.23.290-p5.1.205'));
+ const pkg=JSON.parse(read('package.json'));
+ const label=pkg.description.split(' ')[1];
+ assert.ok(flow.includes('TAG=positron/v'+pkg.version+'-'+label.toLowerCase()));
 });
 
 test('P5.1.205 before/after screenshots must have different real pixels',()=>{
  const qa=read('scripts/positron-20-extension.cjs');
  assert.ok(qa.includes("el.style.setProperty('display','none','important')"));
  assert.ok(qa.includes('before205.equals(after205),false'));
+});
+
+test('P5.1.206 random cycle skips previously explored channels and counts visits',()=>{
+ const js=read('renderer/positron-horizon-v4.js'),css=read('renderer/positron-twenty.css');
+ const qa=read('scripts/positron-20-extension.cjs'),flow=read('.github/workflows/positron-lab.yml');
+ for(const t of ['const randomSeenIds=new Set()','const unseen=eligible.filter',
+  'if(!unseen.length)randomSeenIds.clear()','randomSeenIds.add(selected.id)',
+  "nextRandom.dataset.poDiscoverCount=String(randomSeenIds.size)",
+  "badge.textContent=String(randomSeenIds.size)"])
+  assert.ok(js.includes(t),'Missing no-repeat mechanism '+t);
+ assert.ok(css.includes('#poNextRandomChannel .po-random-count[hidden]{display:none!important}'));
+ for(const t of ['randomCycleQA','doesNotRepeatWithinCycle','badgeMatchesCount',
+  'noPlaylistMutation','compact206','before206.equals(after206),false',
+  'positron-p51206-random-cycle-before-1920x1080-real.png',
+  'positron-p51206-random-cycle-after-1920x1080-real.png'])
+  assert.ok(qa.includes(t),'Missing actual Electron proof '+t);
+ assert.ok(flow.includes('TAG=positron/v4.23.291-p5.1.206'));
 });
