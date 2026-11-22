@@ -56,12 +56,17 @@ test('video opts into WebKit AirPlay and retains remote playback',()=>{
  assert.match(castCode,/video\.remote\?\.prompt/);
 });
 
-test('Android Chrome opens native TV chooser on Cast tap, keeping desktop dialog hidden',()=>{
+test('Android Cast tap always opens visible dialog; Chrome picker requires explicit second tap',()=>{
  const h=harness({ua:'Mozilla/5.0 (Linux; Android 16) AppleWebKit Chrome/142 Mobile',picker:false,remotePrompt:true});
  h.api.open({name:'VTV2',group:'VTV'},'https://example.com/live.m3u8');
+ assert.equal(h.remoteCalls(),0);
+ assert.equal(h.el.castModal.classList.contains('hidden'),false);
+ assert.equal(h.el.castScan.disabled,false);
+ assert.match(h.el.castStatus.textContent,/Chọn TV bằng Chrome/);
+ h.click('castScan');
  assert.equal(h.remoteCalls(),1);
- assert.equal(h.el.castModal.classList.contains('hidden'),true);
  assert.equal(h.el.video.disableRemotePlayback,false);
+ assert.equal(h.el.castModal.classList.contains('hidden'),false);
 });
 test('Android without Remote Playback API shows an accurate fallback instead of a dead scan',()=>{
  const h=harness({ua:'Mozilla/5.0 (Linux; Android 16) Chrome/142 Mobile',picker:false});
@@ -74,6 +79,7 @@ test('Android without Remote Playback API shows an accurate fallback instead of 
 test('Android remote playback unsupported stream offers retry via browser picker',async()=>{
  const h=harness({ua:'Mozilla/5.0 (Linux; Android 16) Chrome/142 Mobile',picker:false,remotePrompt:true,remoteReject:'NotSupportedError'});
  h.api.open({name:'VTV2'},'https://example.com/live.m3u8');
+ h.click('castScan');
  await new Promise(resolve=>setImmediate(resolve));
  assert.equal(h.el.castModal.classList.contains('hidden'),false);
  assert.equal(h.el.castScan.disabled,false);
@@ -81,4 +87,13 @@ test('Android remote playback unsupported stream offers retry via browser picker
  assert.match(h.el.castStatus.textContent,/luồng đang phát/);
  h.click('castScan');
  assert.equal(h.remoteCalls(),2);
+});
+test('Android cancellation reports a message instead of silently swallowing NotAllowedError',async()=>{
+ const h=harness({ua:'Mozilla/5.0 (Linux; Android 16) Chrome/142 Mobile',picker:false,remotePrompt:true,remoteReject:'NotAllowedError'});
+ h.api.open({name:'VTV2'},'https://example.com/live.m3u8');
+ h.click('castScan');
+ await new Promise(resolve=>setImmediate(resolve));
+ assert.equal(h.el.castModal.classList.contains('hidden'),false);
+ assert.match(h.el.castStatus.textContent,/hủy hoặc từ chối/);
+ assert.equal(h.el.castScan.disabled,false);
 });

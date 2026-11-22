@@ -25,8 +25,12 @@
   $('castScan').textContent=canRetry?'Chọn TV bằng Chrome':'Tìm TV';
   $('castScan').setAttribute('aria-label',canRetry?'Thử chọn TV bằng Chrome':'Tìm TV');
   const kind=String(error?.name||'');
-  if(kind==='NotSupportedError'){
-   status('Chrome có thể nhận diện TV nhưng không hỗ trợ truyền trực tiếp luồng đang phát. Hãy thử kênh khác có định dạng tương thích hoặc dùng Truyền màn hình trên Android.',true);
+  if(!error&&canRetry){
+   status('Nhấn “Chọn TV bằng Chrome” để mở danh sách TV. Nếu Chrome không hỗ trợ luồng IPTV này, hãy thử kênh khác hoặc Truyền màn hình từ Android.',false);
+  }else if(kind==='NotSupportedError'){
+   status('Chrome nhận diện được TV nhưng không hỗ trợ truyền trực tiếp luồng đang phát. Hãy thử kênh khác hoặc dùng Truyền màn hình trên Android.',true);
+  }else if(kind==='NotAllowedError'||kind==='AbortError'){
+   status('Chrome đã hủy hoặc từ chối mở bộ chọn TV. Nhấn “Chọn TV bằng Chrome” để thử lại, hoặc dùng Truyền màn hình của Android.',true);
   }else if(kind==='NotFoundError'){
    status('Chrome không tìm được thiết bị tương thích với video hiện tại. Hãy kiểm tra điện thoại và TV cùng mạng Wi-Fi, sau đó thử lại.',true);
   }else if(!canRetry){
@@ -39,13 +43,12 @@
   const video=$('video');
   if(typeof video?.remote?.prompt!=='function')return false;
   video.disableRemotePlayback=false;
+  // This function is called only from the dedicated, user-tapped Chrome button.
+  // Keep the Cast dialog visible: Chrome can leave prompt() pending without opening a picker.
+  status('Đang yêu cầu Chrome mở bộ chọn TV…');
   try{
    const pending=video.remote.prompt();
-   pending?.catch?.(error=>{
-    // User cancelled the native picker; do not replace that choice with a modal.
-    if(['NotAllowedError','AbortError'].includes(String(error?.name||'')))return;
-    showAndroidRemoteHelp(error);
-   });
+   pending?.catch?.(error=>showAndroidRemoteHelp(error));
   }catch(error){showAndroidRemoteHelp(error);}
   return true;
  }
@@ -80,9 +83,9 @@
   channel=ch;source=url||ch?.url;
   $('castChannel').textContent=(ch?.name||'')+' · '+(ch?.group||'');
   $('castUrl').value='';$('castCopy').disabled=true;
-  // Android Chrome can show its own TV list without exposing raw device IDs to the site.
+  // Always present a visible Cast action on Android. A Remote Playback prompt
+  // can be a no-op or pending forever; never hide the entire Cast UI behind it.
   if(isAndroid()&&!hasNative){
-   if(requestAndroidRemotePicker())return;
    showAndroidRemoteHelp();return;
   }
   // AirPlay device selection is owned by WebKit, not the desktop Cast backend.
