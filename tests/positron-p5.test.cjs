@@ -1810,7 +1810,8 @@ test('P5.1.176 gợi ý thêm kênh khi Favorites đã có ít nhất một th�
  assert.ok(js.includes("favoriteList.querySelector('.fav-card')"),'Chỉ hiện khi đã có favorites');
  assert.ok(js.includes("more.hidden=!populated"),'Ẩn khi danh sách trống');
  assert.ok(js.includes("channels.filter(ch=>ch&&ch.id&&!fav.has(store,ch))"), 'Chỉ gợi ý kênh chưa đánh dấu sao');
- assert.ok(js.includes('Array.from({length:Math.min(6,filtered.length)}'), 'Vẫn giới hạn tối đa sáu gợi ý mỗi lượt trong kết quả lọc');
+ assert.ok(js.includes('Array.from({length:Math.min(morePageSize,filtered.length)}'), 'Giới hạn theo số kênh người xem chọn');
+ assert.ok(js.includes("let moreCursor=0,moreQuery='',morePageSize=6;"), 'Mặc định sáu kênh được giữ để tương thích P176');
  assert.ok(js.includes("fav.toggle(current,active);state.save();state.render();state.setPage('fav')"));
  assert.ok(js.includes("new MutationObserver(syncFavoriteMore).observe(favoriteList"));
  assert.ok(css.includes('#positronFavoriteMore[hidden]{display:none!important}'));
