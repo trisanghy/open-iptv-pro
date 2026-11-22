@@ -88,6 +88,10 @@
  status.before(backRow);
  const backButton=backRow.querySelector('#poChannelGroupBack');
  const forwardButton=backRow.querySelector('#poChannelGroupForward');
+ backButton.setAttribute('aria-keyshortcuts','Alt+ArrowLeft');
+ forwardButton.setAttribute('aria-keyshortcuts','Alt+ArrowRight');
+ backButton.title='Về nhóm trước (Alt+←)';
+ forwardButton.title='Tới nhóm sau (Alt+→)';
  const backHint=backRow.querySelector('#poChannelGroupBackHint');
  function updateBackRow(){
   // P235: never offer the current folder as its own Back destination.
@@ -239,6 +243,21 @@
   if(event.key==='Escape'){event.preventDefault();setOpen(false);}
  });
 
+ // P237: keyboard Back/Forward shortcuts work from a focused channel row
+ // without starting video. Text inputs keep their native editing keys.
+ const historyShortcut=event=>{
+  if(!event.altKey||event.ctrlKey||event.metaKey||event.shiftKey||
+     (event.key!=='ArrowLeft'&&event.key!=='ArrowRight'))return false;
+  if(!d.getElementById('page-tv')?.classList.contains('active-page')||panel.hidden)return false;
+  if(event.target?.closest?.('input,textarea,select,[contenteditable="true"]'))return false;
+  const control=event.key==='ArrowLeft'?backButton:forwardButton;
+  if(control.hidden||backRow.hidden)return false;
+  event.preventDefault();
+  event.stopPropagation();
+  control.click();
+  return true;
+ };
+
  // P5.1.228 — Keyboard-only traversal of existing channel rows.
  // Focus never starts playback: Enter/Space remain native playback actions.
  const channelList=d.getElementById('channelList');
@@ -257,6 +276,8 @@
    return row;
   };
   channelList.addEventListener('keydown',event=>{
+   if(historyShortcut(event))return;
+   if(event.altKey||event.ctrlKey||event.metaKey)return;
    const keys=['ArrowUp','ArrowDown','Home','End','PageUp','PageDown','ArrowLeft','ArrowRight'];
    const favoriteKey=(event.key==='f'||event.key==='F')&&!event.ctrlKey&&!event.altKey&&!event.metaKey;
    if(!favoriteKey&&!keys.includes(event.key))return;
@@ -304,6 +325,7 @@
   });
  }
  d.addEventListener('keydown',event=>{
+  if(historyShortcut(event))return;
   if(event.altKey&&!event.ctrlKey&&!event.metaKey&&!event.shiftKey&&event.key.toLowerCase()==='g'&&
    d.getElementById('page-tv')?.classList.contains('active-page')){
    event.preventDefault();

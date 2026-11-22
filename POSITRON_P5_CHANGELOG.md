@@ -1,5 +1,17 @@
 # Positron P5 Changelog
 
+## P5.1.237 — Alt+←/Alt+→ điều hướng lịch sử nhóm / Electron 4.23.322
+- Feature priority: NEW — Điều hướng lịch sử nhóm trực tiếp từ hàng kênh bằng tổ hợp Alt+Mũi tên trái/phải, giúp người dùng điều khiển bằng bàn phím mà không phải di chuyển focus lên nút Nhóm trước/Nhóm sau; phím vẫn giữ chức năng soạn thảo khi đang ở ô nhập.
+- Electron screenshot: positron-p51237-keyboard-history-after-1920x1080-real.png
+- User action: Trên trang TV dùng Alt+G chọn nhóm 03 rồi Alt+← quay về nhóm 01, Alt+→ đi lại nhóm 03; focus vào kênh đầu nhóm và không tự phát video.
+- Ảnh P5.1.236 cho thấy nút Nhóm sau hoạt động và không chồng nút, nhưng để sử dụng người xem phải rời vị trí đang focus trong danh sách kênh để bấm lên thanh trên.
+- Cơ chế: thêm aria-keyshortcuts và handler kênh ưu tiên Alt+Arrow trước xử lý mũi tên bình thường, bỏ qua input và trang ngoài TV; giữ nguyên M3U/EPG/Favorites/playback.
+- CI: chạy build Windows/Mac song song với Electron capture sau khi Node test xanh; Release vẫn bắt buộc test + capture + build đạt, không bỏ kiểm thử.
+- QA: Node regression, Electron thật 1920×1080, đo phím Alt+ArrowLeft/Right, focus 001↔121, không autoplay hoặc tràn, ảnh before/after.
+- Trạng thái: CANDIDATE đến khi đủ test, screenshot-review, build và Release.
+
+
+
 ## P5.1.236 — Nhóm sau: quay lại nhóm vừa rời sau thao tác Back / Electron 4.23.321
 - Feature priority: NEW — Thêm nút “↷ Nhóm sau” chỉ xuất hiện sau khi người xem quay về nhóm trước, hỗ trợ tiến lại nhóm đã duyệt mà không phải tìm kiếm hay ghi nhớ thư mục vừa xem; việc chọn nhóm mới chủ động sẽ xóa hướng tiến không còn hợp lệ.
 - Electron screenshot: positron-p51236-group-forward-after-1920x1080-real.png

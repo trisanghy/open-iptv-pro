@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.321",
-  "description": "Positron P5.1.236: thêm nút Nhóm sau để tiến theo lịch sử duyệt nhóm",
+  "version": "4.23.322",
+  "description": "Positron P5.1.237: Alt+mũi tên trái/phải đi nhóm trước/sau bằng bàn phím",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

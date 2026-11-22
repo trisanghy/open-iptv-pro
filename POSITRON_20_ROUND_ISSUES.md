@@ -42,3 +42,9 @@ Ngày 22/11/2026. Chỉ nhánh Positron. Không đếm 70 ảnh QA là 20 vòng 
 - Thêm lịch sử đi tới (Forward) tối đa 10 nhóm trong RAM, đi tiếp sau Back, xoá Forward khi nhảy nhóm mới; giữ playback, playlist, Favorites, EPG, dữ liệu.
 - QA mới chụp Electron thật trước/sau 1920×1080 và kiểm tra trạng thái nút, focus, không autoplay/overflow.
 - Chưa tính vòng đạt cho tới khi test và release hoàn tất.
+
+## Đợt mới sau P5.1.233 — Vòng 04 / P5.1.237 (CANDIDATE)
+- Ảnh P5.1.236: nút Nhóm trước/sau đã dễ hiểu và hoạt động, nhưng thiếu thao tác quay lại bằng bàn phím khi hàng kênh đang focus.
+- Thêm phím tắt Alt+ArrowLeft/Alt+ArrowRight với aria-keyshortcuts; giữ nguyên ArrowLeft/Right duyệt nhóm và Enter phát.
+- Cải thiện workflow CI: build phụ thuộc Node test, có thể chạy song song Electron capture; Release vẫn phụ thuộc cả test/capture/build.
+- QA trước/sau Electron thật 1920×1080 và Node regression bắt buộc trước đánh dấu hoàn tất.

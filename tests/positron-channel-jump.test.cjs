@@ -183,7 +183,7 @@ test('P5.1.236 enables redo of previously visited group after pressing Back',()=
  ])assert.ok(code.includes(token),'Missing P236 forward group action '+token);
  assert.ok(styles.includes('#poChannelGroupForward[hidden]'),'Native hidden state must not be overridden by styling');
  assert.ok(!code.includes('playChannel('),'Back/forward cannot autoplay');
- assert.equal(JSON.parse(read('package.json')).version,'4.23.321');
+ assert.ok(Number(JSON.parse(read('package.json')).version.split('.')[2])>=321);
 });
 test('P5.1.236 validates real Electron group forward before/after and no autoplay',()=>{
  const qa=read('scripts/positron-20-extension.cjs'),flow=read('.github/workflows/positron-lab.yml');
@@ -195,4 +195,35 @@ test('P5.1.236 validates real Electron group forward before/after and no autopla
  for(const token of ['forwardAvailable:', 'returnedToRecentGroup:', 'noAutoplay:',
     'noHorizontalOverflow:', 'forwardConsumed:'])
   assert.ok(qa.includes(token),token);
+});
+
+
+test('P5.1.237 Alt+ArrowLeft/Right keyboard history never starts playback',()=>{
+ const code=read('renderer/positron-channel-jump.js');
+ for(const token of [
+  "const historyShortcut=event=>",
+  "'Alt+ArrowLeft'",
+  "'Alt+ArrowRight'",
+  "event.key==='ArrowLeft'?backButton:forwardButton",
+  "if(historyShortcut(event))return;",
+  "event.target?.closest?.('input,textarea,select,[contenteditable",
+  "event.preventDefault();",
+  "control.click();"
+ ])assert.ok(code.includes(token),'P237 keyboard shortcut implementation missing '+token);
+ assert.equal(JSON.parse(read('package.json')).version,'4.23.322');
+});
+test('P5.1.237 tests real Electron keyboard group navigation screenshots',()=>{
+ const qa=read('scripts/positron-20-extension.cjs'),flow=read('.github/workflows/positron-lab.yml');
+ for(const file of ['positron-p51237-keyboard-history-before-1920x1080-real.png',
+ 'positron-p51237-keyboard-history-after-1920x1080-real.png']){
+  assert.ok(qa.includes(file));assert.ok(flow.includes(file));
+ }
+ for(const token of ["page.keyboard.press('Alt+ArrowLeft')","page.keyboard.press('Alt+ArrowRight')",
+ 'keyboardBackWorks:', 'keyboardForwardWorks:', 'noAutoplay:','noHorizontalOverflow:'])
+  assert.ok(qa.includes(token),token);
+});
+test('P5.1.237 installer builds may parallelize capture only after tests pass',()=>{
+ const w=read('.github/workflows/positron-lab.yml');
+ assert.match(w,/\n  build:\n    needs: \[test\]/);
+ assert.match(w,/\n  release:\n    needs: \[test, capture, build\]/);
 });
