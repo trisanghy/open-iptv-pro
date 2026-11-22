@@ -629,7 +629,7 @@ function exitModule(){
 function openTizenTube(){
  // Ask TizenBrew to launch an already installed module; never navigate to plain YouTube.
  if(openTizenTube.busy)return;
- openTizenTube.busy=true;
+ openTizenTube.busy=true;openTizenTube.retries=0;
  var socket=null,done=false,target=null,waitingForScript=false,navTimer=0;
  var timeout=setTimeout(function(){finish('TizenBrew không phản hồi khi mở TizenTube.');},15000);
  function finish(message){
@@ -644,7 +644,7 @@ function openTizenTube(){
   if(!/^https?:\/\//i.test(destination)){finish('Đường dẫn module TizenTube không hợp lệ.');return;}
   try{
    byId('video').pause();stopPair();
-   finish();window.location.href=destination;
+   window.location.href=destination;finish();
   }catch(e){finish('Không chuyển được sang TizenTube: '+String(e.message||e));}
  }
  try{socket=new WebSocket('ws://127.0.0.1:8081');}
@@ -655,6 +655,7 @@ function openTizenTube(){
   var msg;try{msg=JSON.parse(ev.data);}catch(e){return;}
   if(msg.type===8){finish('TizenBrew báo lỗi: '+String(msg.payload||'Không xác định'));return;}
   if(msg.type===4){
+   if(msg.payload===null){if(!openTizenTube.retries)openTizenTube.retries=0;if(++openTizenTube.retries<=8){setTimeout(function(){if(!done&&socket.readyState===1)socket.send(JSON.stringify({type:4}));},450);return;}}
    if(!Array.isArray(msg.payload)){finish('Chưa đọc được danh sách module trong TizenBrew.');return;}
    target=msg.payload.find(function(mod){
     if(!mod)return false;

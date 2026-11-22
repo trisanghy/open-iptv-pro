@@ -32,7 +32,7 @@ test('restore does not interrupt active playback or an open QR/dialog',()=>{
  assert.equal(run({...data,modalOpen:true}).restored,false);
 });
 test('start-up calls resume after drawing, and last watch history is persisted',()=>{
- assert.match(html,/dataset\.theme=state\.theme;draw\(\);setTimeout\(function\(\)\{if\(resumeLastChannel\(\)\)/);
+ assert.match(html,/dataset\.theme=state\.theme;draw\(\);updateBottomActions\(\);setTimeout\(function\(\)\{if\(resumeLastChannel\(\)\)/);
  assert.match(html,/state\.recent=\[c\.id\]\.concat\(state\.recent\.filter/);
  assert.match(html,/\.slice\(0,60\);save\(\)/);
  assert.match(html,/id="exitModuleBtn"/);
