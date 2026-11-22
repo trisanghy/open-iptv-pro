@@ -30,7 +30,7 @@ test('only player buttons are decorated; no duplicates or handler rewrites',()=>
  for(const id of ['prevBtn','playBtn','stopBtn','nextBtn','fullscreenBtn','castBtn','pipBtn'])
   assert.equal((html.match(new RegExp('id="'+id+'"','g'))||[]).length,1,id);
  assert.ok(html.includes('web-player-icons.css?v=single-icon-first-paint-20261119a'));
- assert.ok(html.includes('web-player-icons.js?v=audio-state-sync-20261119a'));
+ assert.ok(html.includes('web-player-icons.js?v=tv-play-state-20261122a'));
  assert.match(workflow,/node --test web-online\/tests\/web-player-icons.test.cjs/);
 });
 
@@ -102,10 +102,23 @@ test('vector play/pause derives from background audio, not the intentionally pau
 });
 test('SVG state reads the foreground audio controller and provides a sync hook',()=>{
  const source=fs.readFileSync(path.join(root,'web-player-icons.js'),'utf8');
- assert.match(source,/derive\(video,root\.OpenIPTVBackgroundAudio\)/);
+ assert.ok(source.includes('derive(video,root.OpenIPTVBackgroundAudio,root.OpenIPTVWebCastV2?.getStatus?.())'));
+ assert.match(source,/openiptv:remote-playback-state/);
  assert.match(source,/root\.OpenIPTVPlayerIcons=Object\.freeze\(\{sync\}\)/);
 });
 
+test('paired TV state overrides intentionally paused browser decoder',()=>{
+ const video={paused:true,ended:false,muted:false,volume:.8};
+ const playing=icons.derive(video,null,{pair:true,remoteState:'playing'});
+ assert.equal(playing.playing,true);
+ assert.equal(playing.pending,false);
+ const paused=icons.derive({...video,paused:false},null,{pair:true,remoteState:'paused'});
+ assert.equal(paused.playing,false);
+ const pending=icons.derive(video,null,{pair:true,remoteState:'loading'});
+ assert.equal(pending.playing,false);
+ assert.equal(pending.pending,true);
+ assert.deepEqual(icons.derive(video,null,{pair:false}),{playing:false,muted:false});
+});
 test('first paint hides Unicode glyphs with higher specificity than old toolbar rules',()=>{
  const old=fs.readFileSync(path.join(root,'player-two-row-v42335.css'),'utf8');
  assert.match(old,/#page-tv \.controls\.transport-controls #playBtn \{/);

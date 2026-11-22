@@ -15,8 +15,8 @@
   // The browser video is intentionally paused when a paired TV owns playback.
   if(remote?.pair)return {playing:remote.remoteState==='playing',pending:remote.remoteState==='loading',muted};
   const state=background?.active?background.getPlaybackState?.():null;
-  if(state)return {playing:!!state.playing,muted:!!state.muted,pending:false};
-  return {playing:!!video&&!video.paused&&!video.ended,muted,pending:false};
+  if(state)return {playing:!!state.playing,muted:!!state.muted};
+  return {playing:!!video&&!video.paused&&!video.ended,muted};
  };
   // App legacy handlers still set button.textContent = '▶', 'Ⅱ', '★' etc.
  // Scrub only direct decorative text nodes (not icon labels or aria attrs).
