@@ -9081,7 +9081,14 @@ async function runTwenty(page){
 
  // P267: real Electron mode switch and XMLTV-only discovery, no live playback.
  await page.setViewportSize({width:1920,height:1080});
- await page.evaluate(()=>{window.IPTVState.setPage('tv');window.PositronWatchFlow.open();document.getElementById('poFlowPlusAI').click();});
+ await page.evaluate(()=>{
+  window.IPTVState.setPage('tv');window.PositronWatchFlow.open();
+  const ai=document.getElementById('poFlowPlusAI');
+  // P266 left AI open before hiding the parent panel. Never toggle it off
+  // accidentally when starting the P267 before/after Electron proof.
+  if(ai.getAttribute('aria-pressed')!=='true')ai.click();
+  document.getElementById('poAIChannels').click();
+ });
  const before267=await page.screenshot({path:path.join(out,'positron-p51267-ai-epg-before-1920x1080-real.png'),animations:'disabled'});
  const qa267=await page.evaluate(()=>{
   const before=window.IPTVState.getCurrent()?.id||'';

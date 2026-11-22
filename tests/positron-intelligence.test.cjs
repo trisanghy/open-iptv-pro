@@ -117,3 +117,9 @@ test('P267 lịch nhiều ngày không mất các chương trình tương lai sa
  assert.equal(rows.length,1);
  assert.equal(rows[0].programme.title,'Trực tiếp bóng đá');
 });
+
+test('P267 screenshot review reopens already active AI without toggling it off',()=>{
+ const script=fs.readFileSync('scripts/positron-20-extension.cjs','utf8');
+ assert.ok(script.includes("if(ai.getAttribute('aria-pressed')!=='true')ai.click()"));
+ assert.ok(script.includes("document.getElementById('poAIChannels').click()"));
+});
