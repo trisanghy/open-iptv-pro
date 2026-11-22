@@ -2343,7 +2343,7 @@ test('P5.1.209 displays native random exploration progress without source mutati
  const js=read('renderer/positron-horizon-v4.js'),css=read('renderer/positron-twenty.css');
  const qa=read('scripts/positron-20-extension.cjs'),flow=read('.github/workflows/positron-lab.yml');
  for(const token of ['po-random-progress','const syncRandomProgress=()=>',
-  'progress.textContent=total>1?', 'progress.hidden=total<2||randomSeenIds.size===0',
+  'progress.textContent=total>1?', 'progress.hidden=total<2||count===0',
   'syncRandomProgress();'])assert.ok(js.includes(token),'Missing discovery progress: '+token);
  for(const token of ['#poNextRandomChannel .po-random-progress',
   '.po-random-progress[hidden]{display:none!important}'])
