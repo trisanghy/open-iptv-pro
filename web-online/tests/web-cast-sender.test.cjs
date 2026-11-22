@@ -156,10 +156,13 @@ test('AirPlay connected status is based on Safari native wireless playback, not 
  chrome.elements.video.webkitCurrentPlaybackTargetIsWireless=true;
  assert.equal(chrome.api.getAirplayState().connected,false);
 });
-test('user stop and changed channel end active receiver playback, not just local video',async()=>{
+test('Stop button stops Google Cast media but preserves session for the next channel',async()=>{
  const h=harness();
  await h.api.play();
  h.api.stopOnLocalStop();
- await Promise.resolve();
- assert.equal(h.ends(),1);
+ for(let i=0;i<12&&!h.remoteCommands.length;i++)await new Promise(r=>setTimeout(r,1));
+ assert.deepEqual(h.remoteCommands,['stop']);
+ assert.equal(h.ends(),0);
+ assert.equal(h.api.getState().connected,true);
+ assert.equal(h.api.getState().active,false);
 });
