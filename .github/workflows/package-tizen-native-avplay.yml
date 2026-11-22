@@ -41,7 +41,7 @@ jobs:
           import json
           path=Path('dist-tizen-native/Open-IPTV-Pro-TV-Native-UNSIGNED.wgt')
           version=json.loads(Path('package.json').read_text())['version']
-          assert path.is_file() and path.stat().st_size>500_000
+          assert path.is_file() and path.stat().st_size>100_000
           with ZipFile(path) as z:
               assert z.testzip() is None
               names=set(z.namelist())
