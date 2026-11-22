@@ -1,4 +1,13 @@
-# Open IPTV Pro TV · TizenBrew v0.1.19 (thử nghiệm)
+# Open IPTV Pro TV · TizenBrew v0.1.20 (thử nghiệm)
+
+## v0.1.20 — Sửa Back/Thoát và làm mới thông tin phiên bản trong TizenBrew
+
+- **Thoát bằng Back hoặc nút Thoát:** Khi đang phát video, Back đóng trình phát để về danh sách; khi đang nhập nguồn, Back đóng hộp thoại; khi ở màn hình danh sách, Back hoặc nút Thoát gọi `history.back()` để trở về đúng giao diện TizenBrew đã mở module. Bỏ cách điều hướng sai qua `http://127.0.0.1:8081/tizenbrew-ui/dist/index.html` — cổng 8081 chỉ phục vụ proxy module.
+- **Chống lặp nút Back:** Tránh xử lý cùng một lần nhấn hai lần khi remote tạo cả keydown và keyup. Tiếp tục hỗ trợ sự kiện `tizenhwkey` của Samsung.
+- **Làm mới danh sách module:** Khi khởi động, Open IPTV Pro gửi yêu cầu WebSocket `GetModules` với `payload:true` tới dịch vụ nội bộ TizenBrew, để đọc lại `package.json` thay vì giữ vĩnh viễn danh sách module trong bộ nhớ. Không xóa dữ liệu người dùng.
+- **Giới hạn cần biết:** TizenBrew đọc metadata qua jsDelivr theo nhánh GitHub, nên CDN có thể giữ dữ liệu cũ tới khoảng 12 giờ. Workflow `tizenbrew-cdn-refresh.yml` đã yêu cầu purge sau khi có commit, nhưng không thể bảo đảm TV nhận mã mới nếu CDN/TizenBrew còn đang cache. Cần kiểm tra thực tế trên TV.
+- Metadata trong `package.json` và header TV cùng là **v0.1.20**. Có thêm bài kiểm thử `tizenbrew/tests/back-exit-update.test.cjs`.
+- Không chỉnh sửa các bản Electron, Rust Lab hay nhánh `main`.
 
 ## v0.1.19 — Giữ 0,5 giây để kéo thư mục/kênh; không tự bật bàn phím
 
