@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.310",
-  "description": "Positron P5.1.225: giữ điều khiển TV trong khung hình desktop thấp",
+  "version": "4.23.311",
+  "description": "Positron P5.1.226: nhảy nhanh tới kênh theo số mà không phát",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

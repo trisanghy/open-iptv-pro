@@ -1,5 +1,14 @@
 # Positron P5 Changelog
 
+## P5.1.226 — Nhảy nhanh tới kênh theo số, không tự phát / Electron 4.23.311
+- Feature priority: NEW — Khi playlist có hàng trăm kênh, người dùng có thể nhập số thứ tự để định vị kênh trong danh sách mà không phải cuộn qua hàng trăm mục hoặc làm gián đoạn video đang phát.
+- Electron screenshot: positron-p51226-channel-jump-after-1920x1080-real.png
+- User action: Mở TV, bấm biểu tượng Nhảy tới kênh theo số ở đầu danh sách, nhập số từ 1 đến số kênh đang có rồi bấm Đi hoặc Enter. Ứng dụng đặt bộ lọc về Tất cả, mở nhóm cần thiết và cuộn đến kênh, không phát; Escape đóng ô nhập.
+- QA Electron: before/after 1920×1080 trên dữ liệu kiểm thử 561 kênh, chọn vị trí 250 rồi 350 bằng Enter, kiểm tra focus, scroll thực, không bật video, không thay nguồn; Escape hoàn trả focus.
+- Không đụng dữ liệu playlist, thứ tự người dùng, quyền xem nguồn, Favorites hoặc logic phát trực tiếp.
+- CANDIDATE đến khi Node, screenshot Electron đã MỞ, 6 jobs và release được xác minh.
+
+
 ## P5.1.225 — Giữ điều khiển phát video trong cửa sổ desktop / Electron 4.23.310
 - Feature priority: BLOCKER_FIX — Các nút điều khiển phát video, âm lượng và chọn kênh bị đẩy xuống dưới vùng nhìn khi desktop rộng mà cửa sổ thấp, nên cần giới hạn riêng chiều cao stage để tránh cắt thao tác quan trọng mà không thay đổi dữ liệu người xem.
 - Electron screenshot: positron-p51225-tv-controls-after-1920x1080-real.png

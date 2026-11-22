@@ -1,0 +1,48 @@
+/* P5.1.226: compact native channel-number jump without changing playback. */
+html[data-positron="true"] #page-tv #poChannelJumpToggle{
+ display:grid!important;place-items:center!important;flex:0 0 30px!important;
+ width:30px!important;min-width:30px!important;max-width:30px!important;
+ height:32px!important;min-height:32px!important;padding:0!important;
+ border:1px solid #365061!important;border-radius:8px!important;
+ background:#1b3040!important;color:#c6e0e9!important;cursor:pointer!important;
+}
+html[data-positron="true"] #page-tv #poChannelJumpToggle[aria-expanded="true"]{
+ border-color:#83d9ca!important;color:#edfffb!important;background:#285052!important;
+}
+html[data-positron="true"] #page-tv #poChannelJumpToggle svg{
+ display:block!important;width:17px!important;height:17px!important;stroke:currentColor!important;
+}
+html[data-positron="true"] #page-tv #poChannelJumpPanel[hidden]{display:none!important}
+html[data-positron="true"] #page-tv #poChannelJumpPanel{
+ box-sizing:border-box!important;display:grid!important;grid-template-columns:minmax(0,1fr) 66px 44px!important;
+ gap:7px!important;align-items:center!important;width:100%!important;min-width:0!important;
+ padding:9px!important;background:#152530!important;border-bottom:1px solid #365162!important;
+ color:#e2f1f2!important;
+}
+html[data-positron="true"] #page-tv #poChannelJumpPanel label{
+ min-width:0!important;font-size:11px!important;line-height:1.35!important;font-weight:650!important;
+}
+html[data-positron="true"] #page-tv #poChannelJumpNumber{
+ min-width:0!important;max-width:100%!important;width:100%!important;box-sizing:border-box!important;
+ padding:6px!important;min-height:34px!important;border:1px solid #426375!important;
+ border-radius:7px!important;background:#0d1c28!important;color:#f0ffff!important;
+ font-size:12px!important;text-align:center!important;
+}
+html[data-positron="true"] #page-tv #poChannelJumpGo{
+ min-width:0!important;min-height:34px!important;padding:5px!important;
+ border:1px solid #5cbaaa!important;border-radius:7px!important;
+ background:#267a6e!important;color:#fff!important;font-size:11px!important;font-weight:750!important;
+ cursor:pointer!important;
+}
+html[data-positron="true"] #page-tv #poChannelJumpStatus{
+ grid-column:1 / -1!important;margin:0!important;min-height:15px!important;
+ color:#a9d4d1!important;font-size:10.5px!important;line-height:1.4!important;
+ overflow-wrap:anywhere!important;
+}
+html[data-positron="true"] #page-tv #poChannelJumpPanel :is(input,button):focus-visible,
+html[data-positron="true"] #page-tv #poChannelJumpToggle:focus-visible{
+ outline:2px solid #8ae2d7!important;outline-offset:2px!important;
+}
+@media(max-width:450px){
+ html[data-positron="true"] #page-tv #poChannelJumpPanel{grid-template-columns:minmax(0,1fr) 64px 40px!important;gap:5px!important;padding:7px!important}
+}
