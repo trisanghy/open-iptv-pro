@@ -1,0 +1,56 @@
+name: Verify Web Cast V2 · 3 themes · TV pairing
+on:
+  push:
+    branches:
+      - web/online
+    paths:
+      - 'index.html'
+      - 'web-cast-sender.js'
+      - 'web-cast-v2.js'
+      - 'web-cast-v2.css'
+      - 'web-tv-pair.js'
+      - 'web-tv-receiver.js'
+      - 'tv.html'
+      - 'web-online/tests/web-cast-v2*.cjs'
+      - '.github/workflows/verify-web-cast-v2.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  cast-v2:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: web/online
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Verify all Cast V2 browser scripts
+        run: |
+          node --check web-tv-pair.js
+          node --check web-tv-receiver.js
+          node --check web-cast-v2.js
+          node --check web-cast-sender.js
+          node --check cast-ui.js
+          test -s tv.html
+          test -s web-cast-v2.css
+      - name: Test real encrypted TV pairing with mocked Realtime channels
+        run: |
+          node --test web-online/tests/web-cast-v2.test.cjs
+          node --test web-online/tests/web-cast-sender.test.cjs
+          node --test web-online/tests/web-airplay.test.cjs
+      - name: Capture desktop 16:9 and mobile screenshots in all three themes
+        run: |
+          CHROME="$(command -v google-chrome || command -v chromium || true)"
+          test -n "$CHROME"
+          CAST_V2_CHROME="$CHROME" node --test web-online/tests/web-cast-v2-browser.test.cjs
+      - name: Upload screenshot evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cast-v2-light-dark-amoled-desktop-mobile
+          path: cast-v2-artifacts/*.png
+          if-no-files-found: warn
+          retention-days: 30
