@@ -1,4 +1,16 @@
-# Open IPTV Pro TV · TizenBrew v0.1.28 (OTA)
+# Open IPTV Pro TV · TizenBrew v0.1.29 (OTA)
+
+## v0.1.29 — Sửa mở kênh bằng Samsung Internet thành bộ phát Cast thực
+
+- **Chẩn đoán từ ảnh TV:** bộ điều khiển video nhỏ `00:00` xuất hiện khi Samsung Internet được mở trực tiếp bằng URL `.m3u8`; đó không phải giao diện Cast đã phát thành công trên Samsung Browser. Nút cũ dùng `ApplicationControl(view, rawStreamUrl)`, khiến trình duyệt tự cố phát tệp HLS mà không có ứng dụng Web đứng giữa.
+- **Thay đường mở:** nhấn **Phát kênh trong Samsung Internet (Cast)** sẽ mở trang HTTPS `/tizen/hosted-player.html` có cùng bộ phát HTML5/HLS.js/DASH.js với trang Cast, và nhận URL kênh đang chọn qua fragment `#stream=...`. Trang phát xóa fragment khỏi thanh địa chỉ ngay khi khởi động; không gửi URL riêng tư trong đường dẫn hay query HTTP tới GitHub Pages.
+- **Có nút Phát / Thử lại:** trang mở trong Samsung Internet hiển thị trạng thái đang tải, lỗi và nút điều khiển trên TV, thay vì màn hình video đen `00:00` không có thông tin.
+- **Không phát chồng:** chỉ khi mở Samsung Internet thành công, ngắt toàn bộ bộ phát TizenBrew cũ để tránh hai luồng/âm thanh cùng chạy; nếu mở thất bại, giữ nguyên trạng thái hiện tại. Nguồn HTTP bị chặn ở trang Cast HTTPS và có thông báo rõ ràng.
+- **URL chính/phụ:** bộ phát đã có cơ chế `playbackCandidates` thử lần lượt: URL đang chọn ở đầu, sau đó tối đa 4 URL khác từ danh sách M3U đã nhập có cùng tên kênh. Cơ chế không phát đồng thời; mỗi lần đổi nguồn gọi `stopPlaybackEngine` trước. Không sửa hay gộp URL của người dùng, nhưng nhiều kênh trùng tên có thể được xem như các nguồn dự phòng — nếu cần phân biệt, nên đặt tên kênh riêng.
+- **Chế độ Cast trong TizenBrew:** giữ iframe dự phòng, truyền tín hiệu phát/tạm dừng qua `postMessage`; trang HTTPS giờ hỗ trợ cả chế độ khởi động độc lập trên Samsung Internet. Không thay đổi trình phát Cast `tv.html` đang dùng mã ghép đôi.
+- **OTA:** giữ `package.json` với `appPath: tizenbrew/bootstrap.html`, không yêu cầu xóa cài lại.
+- **Kiểm thử:** `tizenbrew/tests/browser-native-fallback.test.cjs` kiểm tra ứng dụng mở trang Cast thay vì URL thô, chọn đúng URL đang phát, nguồn HTTP bị chặn và chỉ đóng bộ phát sau khi mở trình duyệt thành công; `web/online:tests/tizen-hosted-browser-player.test.cjs` kiểm tra khởi động qua fragment, xóa fragment, nút thử lại và iframe không nhận nhầm dữ liệu.
+- **Giới hạn:** chưa thử VTV2–VTV5 trực tiếp trên TV Samsung. Trình duyệt Samsung có thể chặn autoplay và cần nhấn nút Phát; khi TizenBrew dùng iframe vẫn có thể khác Samsung Internet độc lập.
 
 ## v0.1.28 — Bộ phát Cast HTTPS dự phòng cho Samsung TV
 
