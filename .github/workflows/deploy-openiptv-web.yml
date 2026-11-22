@@ -210,7 +210,7 @@ jobs:
           node --check _site/web-mobile-touch-sort.js
           node --test web-online/tests/web-mobile-touch-sort.test.cjs
           TOUCH_SORT_CHROME="$(command -v google-chrome)" node --test web-online/tests/web-mobile-touch-sort-browser.test.cjs
-          grep -Fq 'web-mobile-touch-sort.css?v=mobile-touch-sort-20261122a' _site/index.html
+          grep -Fq 'web-mobile-touch-sort.css?v=page-swipe-fixed-header-20261122c' _site/index.html
           grep -Fq 'web-mobile-touch-sort.js?v=mobile-touch-sort-20261122a' _site/index.html
           node --check _site/advanced.js
           node --check _site/app.js
