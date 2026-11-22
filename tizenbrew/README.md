@@ -1,4 +1,4 @@
-# Open IPTV Pro TV · TizenBrew v0.1.7 (thử nghiệm)
+# Open IPTV Pro TV · TizenBrew v0.1.8 (thử nghiệm)
 
 ## Cập nhật không cần USB
 
@@ -56,7 +56,7 @@ Không cung cấp nguồn IPTV bản quyền mặc định. Chỉ sử dụng n�
 - Tab **Thêm nguồn**: gửi tên và URL M3U, chỉ khi TV đã xác nhận kết nối. TV trả tiến độ, số kênh thực tế hoặc lỗi.
 - Các thay đổi thực hiện tại TV rồi lưu cục bộ; trang điện thoại chỉ hiển thị trạng thái đã lưu khi nhận \`manager-result\`. Khi hết 10 phút, cần QR mới.
 - **Giữ hộp thoại QR mở trên TV** trong lúc quản lý. Nếu TV không hiển thị trạng thái "TV đã trực tuyến" dưới QR, kết nối chưa hoạt động và điện thoại không thể gửi nguồn.
-- Trang quản lý dùng GitHub Pages `https://trisanghy.github.io/open-iptv-pro/tizen/phone.html`; QR thêm `?v=017#code=...` để bảo đảm mở đúng phiên bản và giữ mã ghép TV. Không dùng RawGitHack.
+- Trang quản lý dùng GitHub Pages `https://trisanghy.github.io/open-iptv-pro/tizen/phone.html`; QR thêm `?v=018#code=...` để bảo đảm mở đúng phiên bản và giữ mã ghép TV. Không dùng RawGitHack.
 
 ## Sửa Back và nút THOÁT v0.1.6
 
@@ -91,3 +91,13 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -Command "$f=Join-Path $env:TE
 - Phiên bản đã tải được cache theo SHA; cùng SHA thì không tải lại. Nhấn **Ctrl+C** trong CMD để tắt máy chủ. Không cần quyền quản trị.
 - Workflow `package-tizen-browser.yml` tự dựng WGT Preview từ mỗi thay đổi `tizenbrew/**` và phát hành tag bất biến theo SHA.
 - Đây **không phải gói WGT đã ký để cài lên TV Samsung**; không hỗ trợ một số API Tizen khi chạy trên Chrome/Edge. Trình duyệt truy cập Internet khi dùng các tính năng liên kết QR.
+
+## v0.1.8 — Nhập playlist qua QR khi nguồn URL bị lỗi CORS (22/11/2026)
+
+- Sau khi nhập URL trên điện thoại, TV vẫn tải trực tiếp trước. Nếu tải thất bại do mạng/CORS, trang điện thoại tự thử tải URL đó bằng `fetch` trên điện thoại (chỉ khi chính sách CORS cho phép) rồi chuyển nội dung M3U cho TV.
+- Nếu cả hai trình duyệt bị chặn: ở trang QR, nhấn **↗ Mở URL nguồn bằng trình duyệt**, tải/lưu tệp **.m3u** hoặc **.m3u8** về điện thoại; nhấn **Chọn tệp M3U / M3U8** → **↑ Gửi tệp M3U sang TV**. Không cần USB, không dùng proxy công khai.
+- Tệp tối đa 3 MB. Điện thoại chia dữ liệu thành các phần tối đa 12.000 ký tự, mỗi phần cần TV xác nhận; có gửi lại tối đa 3 lượt. TV kiểm tra mã truyền riêng, đúng thứ tự, tổng kích thước và checksum FNV-1a trước khi phân tích và lưu. Khi lỗi hoặc chưa gửi đủ, không lưu nguồn thành công giả.
+- QR tiếp tục có hạn 10 phút. Bản đã đồng bộ cho trang quản lý trên `web/online:tizen/phone.html`; địa chỉ QR có `?v=018` để tránh dùng phiên bản HTML cũ.
+- Trạng thái “đã lưu” nghĩa là đã lưu danh sách kênh trên TV, **không** bảo đảm mọi kênh phát được nếu codec, DRM, CORS hoặc đường dẫn media bên trong bị giới hạn.
+- Trình duyệt Tizen không thể tự vượt giới hạn CORS của máy chủ ngoài; nhập tệp là lựa chọn dự phòng có thể thực hiện mà không cần máy chủ proxy. Việc kiểm tra trên TV Samsung thật và khả năng truy cập thực tế `https://d.org.vn/listiptv` vẫn chưa được xác nhận.
+- Kiểm thử logic bổ sung: `node --test tizenbrew/tests/source-dialog.test.cjs`. Không sửa main/Electron/Rust/Mobile.
