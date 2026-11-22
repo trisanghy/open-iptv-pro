@@ -90,7 +90,7 @@
  const missingGo=d.createElement('button');missingGo.type='button';missingGo.id='poLibraryMissingGo';
  missingGo.textContent='Đến';
  missingNav.append(missingPrev,missingPageLabel,missingJump,missingGo,missingNext);
- missingBody.append(missingSearch,missingGroup,missingSort,missingSize,exportBar,missingRows,missingNav);missingPane.append(missingToggle,missingBody);
+ missingBody.append(missingSearch,missingGroup,missingSort,missingSize,exportBar,missingNav,missingRows);missingPane.append(missingToggle,missingBody);
  // P5.1.164: tên trùng ở nhiều kênh/nguồn, chỉ xem metadata, không tự xóa.
  const duplicatePane=d.createElement('section');duplicatePane.id='poLibraryDuplicates';
  duplicatePane.className='po-pulse-duplicates';

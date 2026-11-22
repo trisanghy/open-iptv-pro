@@ -1,3 +1,11 @@
+## P5.1.168 — Thanh phân trang kênh thiếu logo luôn dễ thao tác / Electron 4.23.253
+- Ảnh INPUT thực tế P5.1.167: `positron-p51167-missing-page-size-after-1920x1080-real.png` có nhóm Trước / Trang / Đến / Tiếp chỉ lộ một phần ở mép dưới bảng Thư viện khi danh sách dài.
+- Nguyên nhân trong mã: đặt thanh phân trang sau `#poLibraryMissingRows` trong panel có max-height và scroll.
+- Sửa thực chất: chuyển điều hướng lên TRƯỚC danh sách, tách rõ bằng đường viền nhẹ; giữ scroll danh sách, tìm kiếm, lọc, sắp xếp, số hàng 10/25/50 và xuất CSV.
+- Test: Node regression thứ tự phần tử; Electron CDP xác minh thanh nằm trọn trong panel và trên danh sách, nút Tiếp hit-test được, bấm Tiếp / Trước chạy đúng, 1920×1080 PNG.
+- Ảnh AFTER từ Electron cần kiểm chứng qua Actions: `positron-p51168-pager-visible-after-1920x1080-real.png`.
+- Trạng thái: CANDIDATE; không tính vòng đạt cho đến khi xem ảnh thật, test và Release/tag bất biến đều thành công.
+
 ## P5.1.167 — Thay đổi số kênh thiếu logo mỗi trang / Electron 4.23.252
 - Feature priority: NEW — Duyệt 10, 25 hoặc 50 kênh thiếu logo mỗi trang; thao tác nhanh với thư viện lớn (ảnh gốc có 432 kênh thiếu logo), không cần nhấn Tiếp hàng chục lần.
 - User action: Thư viện → Kênh thiếu logo → chọn 10 / 25 / 50 kênh/trang; bộ lọc, tìm kiếm, nhảy trang và xuất CSV vẫn bảo toàn giá trị, tự tính lại số trang, quay về trang 1 sau đổi mật độ.

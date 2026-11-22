@@ -261,3 +261,14 @@ test('P5.1.167 phân trang thiếu logo 10/25/50 giữ tên và dữ liệu gố
  assert.equal(csv.split('\r\n').filter(Boolean).length,58);
  assert.equal(JSON.stringify(input),before);
 });
+
+
+test('P5.1.168 phân trang thiếu logo hiển thị trước danh sách cuộn',()=>{
+ const js=fs.readFileSync(path.join(__dirname,'../renderer/positron-library-pulse.js'),'utf8');
+ const css=fs.readFileSync(path.join(__dirname,'../renderer/positron-library-pulse.css'),'utf8');
+ assert.ok(js.includes('exportBar,missingNav,missingRows'), 'Điều hướng phải đứng trên danh sách cuộn');
+ assert.ok(!js.includes('exportBar,missingRows,missingNav'), 'Không đưa phân trang xuống cuối danh sách');
+ assert.ok(css.includes('#poLibraryMissingNav{align-self:stretch;'), 'Thanh điều hướng đủ bề rộng');
+ assert.ok(css.includes('#poLibraryMissingRows{scrollbar-gutter:stable}'), 'Giữ scroll độc lập');
+ assert.ok(js.includes("missingNext.addEventListener('click'"), 'Giữ nguyên điều hướng');
+});

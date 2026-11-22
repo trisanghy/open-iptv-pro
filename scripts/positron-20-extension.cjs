@@ -4492,12 +4492,36 @@ async function runTwenty(page){
  assert.deepEqual([after167.readUInt32BE(16),after167.readUInt32BE(20)],[1920,1080]);
  for(const [key,value] of Object.entries(missingSizeQA))
   assert.equal(value,true,'P167 missing page size QA '+key+': '+JSON.stringify(missingSizeQA));
+
+ // P5.1.168: ảnh Electron thật chứng minh phân trang hiển thị trên danh sách cuộn.
+ await page.evaluate(()=>document.getElementById('poLibraryMissingSize').scrollIntoView({block:'center',behavior:'instant'}));
+ const missingPagerQA=await page.evaluate(()=>{
+  const d=document,p=d.getElementById('poLibraryPulsePanel'),n=d.getElementById('poLibraryMissingNav');
+  const r=d.getElementById('poLibraryMissingRows'),next=d.getElementById('poLibraryMissingNext');
+  const pr=p.getBoundingClientRect(),nr=n.getBoundingClientRect(),rr=r.getBoundingClientRect(),br=next.getBoundingClientRect();
+  const hit=d.elementFromPoint(br.left+br.width/2,br.top+br.height/2);
+  return {visible:nr.top>=pr.top+2&&nr.bottom<=pr.bottom-8,
+   aboveRows:nr.bottom<=rr.top+1,
+   nextHittable:hit===next||next.contains(hit),
+   pageOne:d.getElementById('poLibraryMissingPage').textContent.startsWith('Trang 1 /'),
+   rowsScrollable:getComputedStyle(r).overflowY==='auto',
+   noHorizontalOverflow:d.documentElement.scrollWidth<=innerWidth+1,
+   noAutoplay:window.IPTVState.getCurrent()===null};
+ });
+ for(const [key,value] of Object.entries(missingPagerQA))
+  assert.equal(value,true,'P168 visible pager '+key+': '+JSON.stringify(missingPagerQA));
+ const pagerAfter168=await page.screenshot({path:path.join(out,'positron-p51168-pager-visible-after-1920x1080-real.png'),animations:'disabled'});
+ assert.deepEqual([pagerAfter168.readUInt32BE(16),pagerAfter168.readUInt32BE(20)],[1920,1080]);
+ await page.click('#poLibraryMissingNext');
+ assert.equal(await page.textContent('#poLibraryMissingPage'),'Trang 2 / '+Math.ceil(step167.total/25));
+ await page.click('#poLibraryMissingPrev');
+ assert.equal(await page.textContent('#poLibraryMissingPage'),'Trang 1 / '+Math.ceil(step167.total/25));
  await page.keyboard.press('Escape');
  await page.setViewportSize({width:1360,height:820});
 
 
   const report={type:'Positron P5 twenty distinct desktop screenshot cases',realElectron:true,syntheticChannels:false,
-  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,desktop16x9Screenshots,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA,chooserQa,toastLayoutQA,nativeToastQA,compactIdleQA,channelChipRailQA,advancedFilterQA,readableCardsQA,keyboardTabQA,favoriteEmptyQA,duplicateEmptyQA,categoryFilterQA,categoryFixtureQA,compactSingleQA,directFavoriteQA,favoriteCountQA,compactToastStackQA,toastDismissQA,toastFocusReturnQA,toastDockQA,wheelQA,pinnedAllQA,pinnedMaskQA,categoryKeyQA,dropdownChipQA,pinnedRightMaskQA,pinnedBorderMaskQA,asciiDSearchQA,emptySearchActionQA,readableCardTitleQA,favoriteSvgQA,keyboardFavoriteQA,multiTermSearchQA,keyboardSearchQA,arrowNavigationQA,pageNavigationQA,favoriteSortQA,onAirFilterQA,programmeSearchQA,upcomingProgrammeQA,soonProgrammeQA,earliestEpgSortQA,timeWindowQA,scheduleProgressQA:scheduleProgressQA,nativeReminderQA,cancelReminderQA,reminderLeadQA,toastHistoryQA,notificationArchiveQA,alertFilterQA,noticeSearchQA,quietModeQA,dismissToastQA,libraryPulseQA,groupDistributionQA,logoMissingQA,missingSearchQA,missingGroupQA,missingSortQA,missingJumpQA,missingCsvQA,duplicateQA,duplicateSearchQA,duplicateCsvQA,duplicateScopeQA,missingSizeQA};
+  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,desktop16x9Screenshots,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA,chooserQa,toastLayoutQA,nativeToastQA,compactIdleQA,channelChipRailQA,advancedFilterQA,readableCardsQA,keyboardTabQA,favoriteEmptyQA,duplicateEmptyQA,categoryFilterQA,categoryFixtureQA,compactSingleQA,directFavoriteQA,favoriteCountQA,compactToastStackQA,toastDismissQA,toastFocusReturnQA,toastDockQA,wheelQA,pinnedAllQA,pinnedMaskQA,categoryKeyQA,dropdownChipQA,pinnedRightMaskQA,pinnedBorderMaskQA,asciiDSearchQA,emptySearchActionQA,readableCardTitleQA,favoriteSvgQA,keyboardFavoriteQA,multiTermSearchQA,keyboardSearchQA,arrowNavigationQA,pageNavigationQA,favoriteSortQA,onAirFilterQA,programmeSearchQA,upcomingProgrammeQA,soonProgrammeQA,earliestEpgSortQA,timeWindowQA,scheduleProgressQA:scheduleProgressQA,nativeReminderQA,cancelReminderQA,reminderLeadQA,toastHistoryQA,notificationArchiveQA,alertFilterQA,noticeSearchQA,quietModeQA,dismissToastQA,libraryPulseQA,groupDistributionQA,logoMissingQA,missingSearchQA,missingGroupQA,missingSortQA,missingJumpQA,missingCsvQA,duplicateQA,duplicateSearchQA,duplicateCsvQA,duplicateScopeQA,missingSizeQA,missingPagerQA};
  fs.writeFileSync(path.resolve('positron-evidence','audit-p5-20-rounds.json'),JSON.stringify(report,null,2));
  return report;
 }
