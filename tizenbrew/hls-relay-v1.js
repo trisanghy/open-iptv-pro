@@ -17,7 +17,7 @@ var net=require('net');
 var crypto=require('crypto');
 var Url=require('url');
 
-var PORT=17865;
+var PORT=17866;
 var MAX_SESSIONS=32,MAX_RESOURCES=3500,MAX_PLAYLIST=2*1024*1024;
 var MAX_SEGMENT=48*1024*1024,EXPIRE_MS=20*60*1000;
 var ALLOWED_ORIGINS={'http://127.0.0.1:8081':true,'http://localhost:8081':true};
@@ -111,7 +111,7 @@ function respondUpstream(source,req,res,session,depth,castContext){
  if(depth>4){json(res,502,{error:'Quá nhiều chuyển hướng nguồn.'});return;}
  dns.lookup(parsed.hostname,function(err,address){
   if(err||!safeIp(String(address||''))){json(res,502,{error:'Không thể xác minh địa chỉ máy chủ phát.'});return;}
-  var headers={'Host':parsed.host,'Accept':'*/*','User-Agent':session.userAgent||'OpenIPTVPro-TV/0.1.34'};
+  var headers={'Host':parsed.host,'Accept':'*/*','User-Agent':session.userAgent||'OpenIPTVPro-TV/0.1.36'};
   if(castContext){headers.Origin=CAST_ORIGIN;headers.Referer=CAST_REFERER;}
   if(req.headers.range)headers.Range=String(req.headers.range).slice(0,120);
   var options={
