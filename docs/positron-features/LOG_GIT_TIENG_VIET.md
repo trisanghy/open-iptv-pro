@@ -2,14 +2,23 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
-## P5.1.230 — chuyển nhanh giữa nhóm kênh bằng phím trái/phải
+## P5.1.231 — chọn trực tiếp nhóm kênh bằng Alt+G không tự phát
 
-**Ứng dụng:** 4.23.315 · **Trạng thái:** Chưa có bản phát hành
+**Ứng dụng:** 4.23.316 · **Trạng thái:** Chưa có bản phát hành
+
+Feature priority: NEW — Sau khi chuyển nhóm tuần tự đã hoạt động, người dùng có hàng chục nhóm kênh cần nhảy trực tiếp tới bất kỳ nhóm nào bằng menu chọn có nhãn rõ ràng và hỗ trợ bàn phím; có thể mở nhóm thu gọn qua thao tác gốc. Electron screenshot: positron-p51231-group-picker-after-1920x1080-real.png
+
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/c24456dc805be153e916fe2555483c4d13d88d85)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+
+## P5.1.230 — Chuyển nhóm kênh bằng phím trái/phải / Electron 4.23.315
+
+**Ứng dụng:** 4.23.315 · **Trạng thái:** Đã phát hành
 
 Feature priority: NEW — Chọn một kênh rồi nhấn → để tới đầu nhóm mở kế tiếp, ← để về đầu nhóm trước. Bỏ qua nhóm thu gọn, giữ nguyên luồng phát, dữ liệu playlist và Favorites. User action: Trên trang TV, focus một hàng kênh rồi nhấn mũi tên phải để tới đầu nhóm kế tiếp đang mở, nhấn mũi tên trái để quay lại nhóm trước; nhấn Enter mới phát.
 
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/2f88744de2986daca475a3668d4308f01977bd85)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/ef06c22c7cb84ec2ae62cbd8672dc0a79781cefc)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.315-p5.1.230)
 
 ## P5.1.229 — Đánh dấu yêu thích ngay bằng phím F / Electron 4.23.314
 
