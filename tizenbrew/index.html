@@ -711,7 +711,7 @@ function startAvplay(channel,token){
   try{api.setDisplayMethod('PLAYER_DISPLAY_MODE_LETTER_BOX');}catch(e){}
   api.setListener({
    onbufferingstart:function(){if(playbackActive(token)&&playbackEngine==='avplay')setPlayerStatus('AVPlay đang đệm luồng…');},
-   onbufferingcomplete:function(){if(playbackActive(token)&&playbackEngine==='avplay')playbackReady(token);},
+   onbufferingcomplete:function(){if(playbackActive(token)&&playbackEngine==='avplay')setPlayerStatus('AVPlay đã đệm, đang phát hình…');},
    oncurrentplaytime:function(){if(playbackActive(token)&&playbackEngine==='avplay')playbackReady(token);},
    onerror:function(reason){fallbackFromAvplay(channel,token,'Lỗi '+reason);},
    onstreamcompleted:function(){if(playbackActive(token))setPlayerStatus('Luồng đã kết thúc. Nhấn OK để thử lại.');}
@@ -719,7 +719,7 @@ function startAvplay(channel,token){
   playbackTimer=setTimeout(function(){fallbackFromAvplay(channel,token,'quá thời gian chờ');},18000);
   api.prepareAsync(function(){
    if(!playbackActive(token)||playbackEngine!=='avplay')return;
-   try{api.play();playbackReady(token);}catch(e){fallbackFromAvplay(channel,token,e&&e.message||e);}
+   try{api.play();setPlayerStatus('AVPlay đang khởi chạy hình ảnh…');}catch(e){fallbackFromAvplay(channel,token,e&&e.message||e);}
   },function(err){fallbackFromAvplay(channel,token,err&&err.message||err);});
   return true;
  }catch(err){
