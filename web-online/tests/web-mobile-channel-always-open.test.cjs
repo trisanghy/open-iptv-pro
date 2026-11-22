@@ -62,8 +62,9 @@ test('mobile preference changes and viewport lifecycle are synchronized without 
  assert.match(fs.readFileSync(path.join(root,'web-online/prepare-web.py'),'utf8'),/Cannot protect mobile channel list visibility after WebView build/);
 });
 
-test('mobile panel header swipes scroll the channel list from one native touch surface',()=>{
- assert.match(touchCss,/\.channel-panel\{\s*overflow-x:hidden!important;overflow-y:auto!important/);
- assert.match(touchCss,/\.channel-panel > #channelList\{\s*flex:0 0 auto!important;height:auto!important;min-height:0!important;\s*max-height:none!important;overflow:visible!important/);
- assert.match(touchCss,/#channelList \.folder-header\{\s*position:relative!important;top:auto!important/);
+test('fixed channel header passes vertical swipes to the page and filter tabs keep horizontal gestures',()=>{
+ assert.match(touchCss,/\.channel-panel :is\([\s\S]*?\.panel-header[\s\S]*?touch-action:pan-y!important/);
+ assert.match(touchCss,/\.channel-panel \.filter-tabs,[\s\S]*?\.filter-tab\{\s*touch-action:pan-x pan-y!important/);
+ assert.doesNotMatch(touchCss,/\.channel-panel\{[^}]*overflow-y:auto/);
+ assert.match(css,/#page-tv \.channel-panel > #channelList\{[\s\S]*?overflow-y:scroll!important/);
 });
