@@ -2,14 +2,23 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
-## P5.1.238 — Giữ phím tắt khỏi cướp focus khi đang nhập liệu
+## P5.1.239 — Escape đóng bảng nhảy khi duyệt kênh
 
-**Ứng dụng:** 4.23.323 · **Trạng thái:** Chưa có bản phát hành
+**Ứng dụng:** 4.23.324 · **Trạng thái:** Chưa có bản phát hành
+
+Feature priority: NEW — Bổ sung phím Escape để đóng ngay bảng nhảy kênh/nhóm khi đang focus một hàng kênh, giảm chiều cao phần biểu mẫu và trả lại không gian duyệt kênh mà không phải quay về nút đóng. Không bắt đầu playback, không đổi M3U/EPG/Favorites và không thay đổi lịch sử nhóm. Electron screenshot: positron-p51239-escape-jump-after-1920x1080-real.png
+
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/1b3dce1f1b3dc4590076193a08d599911fdf0bd2)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+
+## P5.1.238 — Không cướp focus khi đang nhập với Alt+J/Alt+G / Electron 4.23.323
+
+**Ứng dụng:** 4.23.323 · **Trạng thái:** Đã phát hành
 
 Feature priority: NEW — Tăng khả năng điều hướng bằng bàn phím có nhận biết ngữ cảnh: Alt+J/Alt+G chỉ bật bảng nhảy khi ngoài vùng soạn thảo, trong ô tìm kiếm hoặc biểu mẫu người dùng tiếp tục nhập không mất focus, bảo toàn dữ liệu và thao tác video hiện tại. Giải quyết việc phím tắt toàn cục can thiệp vào chỉnh sửa nội dung. Giữ nguyên thao tác Alt+J/Alt+G khi focus ngoài các ô nhập; không tự phát kênh, không thay đổi nguồn M3U, lịch sử hay danh sách Yêu thích.
 
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/6e2ce559ca45e8a4887a1f9913e2840a676fe573)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/636b484fe5fdec59aad8377e4b37532c688c6c08)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.323-p5.1.238)
 
 ## P5.1.237 — Alt+←/Alt+→ điều hướng lịch sử nhóm / Electron 4.23.322
 

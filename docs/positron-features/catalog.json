@@ -1,21 +1,101 @@
 {
-  "generatedAt": "2026-11-22T17:54:06.682758+00:00",
+  "generatedAt": "2026-11-22T18:02:02.995124+00:00",
   "repository": "trisanghy/open-iptv-pro",
   "branch": "Positron",
   "versions": [
     {
-      "number": 238,
-      "version": "P5.1.238",
-      "appVersion": "4.23.323",
-      "title": "Giữ phím tắt khỏi cướp focus khi đang nhập liệu",
-      "description": "Feature priority: NEW — Tăng khả năng điều hướng bằng bàn phím có nhận biết ngữ cảnh: Alt+J/Alt+G chỉ bật bảng nhảy khi ngoài vùng soạn thảo, trong ô tìm kiếm hoặc biểu mẫu người dùng tiếp tục nhập không mất focus, bảo toàn dữ liệu và thao tác video hiện tại. Giải quyết việc phím tắt toàn cục can thiệp vào chỉnh sửa nội dung. Giữ nguyên thao tác Alt+J/Alt+G khi focus ngoài các ô nhập; không tự phát kênh, không thay đổi nguồn M3U, lịch sử hay danh sách Yêu thích.",
+      "number": 239,
+      "version": "P5.1.239",
+      "appVersion": "4.23.324",
+      "title": "Escape đóng bảng nhảy khi duyệt kênh",
+      "description": "Feature priority: NEW — Bổ sung phím Escape để đóng ngay bảng nhảy kênh/nhóm khi đang focus một hàng kênh, giảm chiều cao phần biểu mẫu và trả lại không gian duyệt kênh mà không phải quay về nút đóng. Không bắt đầu playback, không đổi M3U/EPG/Favorites và không thay đổi lịch sử nhóm. Electron screenshot: positron-p51239-escape-jump-after-1920x1080-real.png",
       "kind": "fix",
       "status": "candidate",
       "published": "",
       "tag": "",
-      "commit": "6e2ce559ca45e8a4887a1f9913e2840a676fe573",
+      "commit": "1b3dce1f1b3dc4590076193a08d599911fdf0bd2",
       "url": "https://github.com/trisanghy/open-iptv-pro/tree/Positron",
       "assets": [],
+      "image": null
+    },
+    {
+      "number": 238,
+      "version": "P5.1.238",
+      "appVersion": "4.23.323",
+      "title": "Không cướp focus khi đang nhập với Alt+J/Alt+G / Electron 4.23.323",
+      "description": "Feature priority: NEW — Tăng khả năng điều hướng bằng bàn phím có nhận biết ngữ cảnh: Alt+J/Alt+G chỉ bật bảng nhảy khi ngoài vùng soạn thảo, trong ô tìm kiếm hoặc biểu mẫu người dùng tiếp tục nhập không mất focus, bảo toàn dữ liệu và thao tác video hiện tại. Giải quyết việc phím tắt toàn cục can thiệp vào chỉnh sửa nội dung. Giữ nguyên thao tác Alt+J/Alt+G khi focus ngoài các ô nhập; không tự phát kênh, không thay đổi nguồn M3U, lịch sử hay danh sách Yêu thích.",
+      "kind": "fix",
+      "status": "release",
+      "published": "2026-11-22T17:58:30Z",
+      "tag": "positron/v4.23.323-p5.1.238",
+      "commit": "636b484fe5fdec59aad8377e4b37532c688c6c08",
+      "url": "https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.323-p5.1.238",
+      "assets": [
+        {
+          "name": "audit-p4-50-rounds.json",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.323-p5.1.238/audit-p4-50-rounds.json"
+        },
+        {
+          "name": "audit-p5-20-rounds.json",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.323-p5.1.238/audit-p5-20-rounds.json"
+        },
+        {
+          "name": "Open-IPTV-Pro-4.23.323-mac-arm64.dmg",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.323-p5.1.238/Open-IPTV-Pro-4.23.323-mac-arm64.dmg"
+        },
+        {
+          "name": "Open-IPTV-Pro-4.23.323-mac-x64.dmg",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.323-p5.1.238/Open-IPTV-Pro-4.23.323-mac-x64.dmg"
+        },
+        {
+          "name": "Open-IPTV-Pro-4.23.323-x64.exe",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.323-p5.1.238/Open-IPTV-Pro-4.23.323-x64.exe"
+        },
+        {
+          "name": "Open-IPTV-Pro-Setup-4.23.323-x64.exe",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.323-p5.1.238/Open-IPTV-Pro-Setup-4.23.323-x64.exe"
+        },
+        {
+          "name": "OpenIPTVPro-Positron-P51238-Source.zip",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.323-p5.1.238/OpenIPTVPro-Positron-P51238-Source.zip"
+        },
+        {
+          "name": "positron-desktop-1920x1080-16x9-main-real.png",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.323-p5.1.238/positron-desktop-1920x1080-16x9-main-real.png"
+        },
+        {
+          "name": "positron-p4-final-main-real.png",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.323-p5.1.238/positron-p4-final-main-real.png"
+        },
+        {
+          "name": "positron-p4-round-10-real.png",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.323-p5.1.238/positron-p4-round-10-real.png"
+        },
+        {
+          "name": "positron-p4-round-20-real.png",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.323-p5.1.238/positron-p4-round-20-real.png"
+        },
+        {
+          "name": "positron-p4-round-30-real.png",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.323-p5.1.238/positron-p4-round-30-real.png"
+        },
+        {
+          "name": "positron-p4-round-40-real.png",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.323-p5.1.238/positron-p4-round-40-real.png"
+        },
+        {
+          "name": "Positron-P51238-20-Real-Screenshots.zip",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.323-p5.1.238/Positron-P51238-20-Real-Screenshots.zip"
+        },
+        {
+          "name": "Positron-P51238-50-Real-Screenshots.zip",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.323-p5.1.238/Positron-P51238-50-Real-Screenshots.zip"
+        },
+        {
+          "name": "SHA256SUMS.txt",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.323-p5.1.238/SHA256SUMS.txt"
+        }
+      ],
       "image": null
     },
     {
