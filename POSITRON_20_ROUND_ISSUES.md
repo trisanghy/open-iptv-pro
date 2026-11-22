@@ -1,5 +1,11 @@
 # Positron — New 20-round issue register
 
+## Vòng mới từ P5.1.195 — 22/11/2026
+- Baseline đã MỞ: hai PNG Electron thật P5.1.195 before/after, 1920×1080; Actions 45004688211 6/6 jobs thành công; release `positron/v4.23.280-p5.1.195`.
+- Lỗi UX từ ảnh: chưa xem lại lịch ghi kênh, tên và thời lượng trong một hàng trước khi bấm Đặt lịch.
+- P5.1.196 / 4.23.281 (CANDIDATE): live preview read-only, xử lý nhập thiếu/sai giờ, test và screenshot trước/sau; chỉ ghi hoàn thành sau CI/Release và MỞ ảnh.
+- Vòng kế phải dựa trên ảnh P196, không đếm kịch bản screenshot cũ thành vòng sửa mới.
+
 ## Vòng 03 đợt mới, 22/11/2026
 - Baseline: P5.1.194 app 4.23.279, commit ff29ada0c777398a4fc8dcba36db4cd9c99dd474, CI 45004026363 6/6 jobs success, 839 Node pass / 5 skip; đã MỞ ảnh `positron-p51194-dvr-start-after-after-1920x1080-real.png` và xác nhận tự đặt Bắt đầu sau 15 phút, giữ 2 giờ.
 - Phát hiện từ ảnh: ô “Tên chương trình” rỗng dù đã chọn QA Channel 001 và giờ bắt đầu; trường bắt buộc dễ khiến thao tác hẹn ghi thiếu bước.

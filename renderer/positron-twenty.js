@@ -741,6 +741,44 @@
  };
  attachDvrSuggestedTitle();
 
+ // P196: read-only DVR preview; never submit, play or alter existing fields.
+ const attachDvrReview=()=>{
+  const form=byId('dvrForm'),channel=byId('dvrChannel'),name=byId('dvrTitle');
+  const start=byId('dvrStart'),end=byId('dvrEnd');
+  if(!form||!channel||!name||!start||!end||byId('poDvrReview'))return;
+  const preview=d.createElement('section');preview.id='poDvrReview';
+  preview.className='po-dvr-review';preview.setAttribute('role','group');
+  preview.setAttribute('aria-label','Xem trước lịch ghi hình');
+  const heading=d.createElement('strong');heading.textContent='Xem trước lịch ghi';
+  const summary=d.createElement('p');summary.id='poDvrReviewText';
+  preview.append(heading,summary);form.after(preview);
+  const fmt=new Intl.DateTimeFormat('vi-VN',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
+  const refresh=()=>{
+   const selected=channel.selectedOptions?.[0]?.textContent?.trim()||'';
+   const title=name.value.trim(),from=start.value?new Date(start.value):new Date(NaN);
+   const to=end.value?new Date(end.value):new Date(NaN);
+   const minutes=Math.round((to.getTime()-from.getTime())/60000);
+   if(channel.disabled||!selected||!title||!start.value||!end.value){
+    preview.dataset.state='incomplete';
+    summary.textContent='Hãy chọn kênh, đặt tên và nhập đủ giờ bắt đầu/kết thúc để kiểm tra lịch trước khi lưu.';
+   }else if(!Number.isFinite(minutes)||minutes<=0||minutes>480){
+    preview.dataset.state='invalid';
+    summary.textContent='Thời gian chưa hợp lệ: kết thúc phải sau bắt đầu và thời lượng tối đa 8 giờ.';
+   }else{
+    const h=Math.floor(minutes/60),m=minutes%60;
+    const length=h?(h+' giờ'+(m?' '+m+' phút':'')):(m+' phút');
+    preview.dataset.state='ready';
+    summary.textContent=selected+' · '+title+' · '+fmt.format(from)+' → '+fmt.format(to)+' · '+length+'. Chỉ tạo lịch khi bấm Đặt lịch ghi.';
+   }
+  };
+  for(const input of [channel,name,start,end]){
+   input.addEventListener('input',refresh);input.addEventListener('change',refresh);
+  }
+  new MutationObserver(refresh).observe(channel,{childList:true,subtree:true});
+  refresh();
+ };
+ attachDvrReview();
+
  // P5.1.33: real P5.1.32 TV 450px screenshot shows an actionable
  // favorite star beside 'Chưa chọn kênh'. Use the native selection API,
  // not an empty-state string, to protect existing playlist semantics.

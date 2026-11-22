@@ -2109,3 +2109,18 @@ test('P5.1.195 suggests DVR name from selected channel and start time without ov
  assert.ok(qa.includes('positron-p51195-dvr-autoname-before-1920x1080-real.png'));
  assert.ok(qa.includes('positron-p51195-dvr-autoname-after-1920x1080-real.png'));
 });
+
+
+test('P5.1.196 DVR preview displays channel, title, time and guards',()=>{
+ const js=read('renderer/positron-twenty.js'),css=read('renderer/positron-twenty.css');
+ const qa=read('scripts/positron-20-extension.cjs');
+ for(const t of ['const attachDvrReview=()=>','form.after(preview)',
+  "preview.dataset.state='ready'","preview.dataset.state='invalid'",
+  "preview.dataset.state='incomplete'","attachDvrReview();",
+  'Chỉ tạo lịch khi bấm Đặt lịch ghi.'])
+  assert.ok(js.includes(t),'Missing preview logic: '+t);
+ assert.ok(css.includes('#poDvrReview[data-state="invalid"]'));
+ for(const t of ['dvrReviewQA','positron-p51196-dvr-preview-before-1920x1080-real.png',
+  'positron-p51196-dvr-preview-after-1920x1080-real.png'])
+  assert.ok(qa.includes(t),'Missing native Electron evidence '+t);
+});

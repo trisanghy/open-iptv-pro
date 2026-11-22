@@ -1,5 +1,13 @@
 # Positron P5 Changelog
 
+## P5.1.196 — Xem trước lịch ghi hình / Electron 4.23.281
+- Ưu tiên thêm tính năng mới: ảnh Electron thật P5.1.195 cho thấy kênh, tên và giờ ghi đã nhập nhưng không có phần tổng hợp để kiểm lại trước khi xác nhận.
+- Thêm **Xem trước lịch ghi** dưới biểu mẫu EPG, hiện kênh/tên/giờ/thời lượng địa phương; tự cập nhật theo thay đổi trong biểu mẫu, báo thiếu dữ liệu hoặc thời lượng sai/vượt 8 giờ.
+- Tính năng chỉ đọc, không thay đổi kênh/playlist/tên/thời gian, không tự phát hoặc tạo lịch. Chỉ nút **Đặt lịch ghi** gốc tạo lịch.
+- Before: `positron-p51196-dvr-preview-before-1920x1080-real.png`; after: `positron-p51196-dvr-preview-after-1920x1080-real.png`.
+- QA: 12 kiểm tra Electron thật (hiển thị, trạng thái lỗi/thiếu, khôi phục, không phát/submit, không tràn ngang) và Node regression, 1920×1080.
+- Trạng thái: CANDIDATE đến khi Actions, ảnh đã mở và Release được xác minh.
+
 ## P5.1.195 — Đặt tên bản ghi tự động theo kênh và giờ / Electron 4.23.280
 - Feature priority: NEW — Ảnh P5.1.194 Electron thật cho thấy ô Tên chương trình vẫn rỗng ngay cả khi kênh và giờ ghi đã được chọn; người dùng cần gõ lại hoặc không thể lưu vì trường bắt buộc. Thêm nút gợi ý tên chính xác theo kênh/giờ, tuyệt đối không ghi đè tên tự nhập.
 - Tính năng: nút “Tạo tên từ kênh và giờ” bên dưới Tên chương trình của mẫu EPG. Nhấn để điền tên kênh đã chọn và thời gian địa phương đã nhập (DD.MM.YYYY HH:mm), loại ký tự không an toàn; nếu người dùng đã nhập tên khác thì chỉ báo và giữ nguyên. Không đổi giờ, kênh, nguồn hay trạng thái ghi hình.
