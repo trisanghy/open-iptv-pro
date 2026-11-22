@@ -1046,7 +1046,7 @@ function requestLocalHlsSession(channel,attempt){
  return fetch(hlsRelayServer+'/session',{
   method:'POST',mode:'cors',cache:'no-store',
   headers:{'Content-Type':'application/json','X-Open-IPTV-Relay':'1'},
-  body:JSON.stringify({url:channel.url})
+  body:JSON.stringify({url:channel.url,browserUserAgent:typeof navigator!=='undefined'?String(navigator.userAgent||'').slice(0,300):''})
  }).then(function(response){
   if(!response.ok){var issue=Error('Dịch vụ HLS TV trả HTTP '+response.status);issue.permanent=response.status>=400&&response.status<500;throw issue;}
   return response.json();
