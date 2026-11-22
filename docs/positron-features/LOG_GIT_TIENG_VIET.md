@@ -2,14 +2,23 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
-## P5.1.237 — Alt+mũi tên trái/phải đi nhóm trước/sau bằng bàn phím
+## P5.1.238 — Giữ phím tắt khỏi cướp focus khi đang nhập liệu
 
-**Ứng dụng:** 4.23.322 · **Trạng thái:** Chưa có bản phát hành
+**Ứng dụng:** 4.23.323 · **Trạng thái:** Chưa có bản phát hành
+
+Feature priority: FIX — Ở P5.1.237, phím Alt+J/Alt+G trong ô tìm kênh vẫn mở bảng nhảy và lấy mất focus. Bỏ qua phím tắt khi đang nhập `input`, `textarea`, `select`, `contenteditable`, `role=textbox`; tôn trọng IME và sự kiện đã xử lý. Giữ nguyên thao tác Alt+J/Alt+G khi focus ngoài các ô nhập; không tự phát kênh, không thay đổi nguồn M3U, lịch sử hay danh sách Yêu thích.
+
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/6e2ce559ca45e8a4887a1f9913e2840a676fe573)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+
+## P5.1.237 — Alt+←/Alt+→ điều hướng lịch sử nhóm / Electron 4.23.322
+
+**Ứng dụng:** 4.23.322 · **Trạng thái:** Đã phát hành
 
 Feature priority: NEW — Điều hướng lịch sử nhóm trực tiếp từ hàng kênh bằng tổ hợp Alt+Mũi tên trái/phải, giúp người dùng điều khiển bằng bàn phím mà không phải di chuyển focus lên nút Nhóm trước/Nhóm sau; phím vẫn giữ chức năng soạn thảo khi đang ở ô nhập. Electron screenshot: positron-p51237-keyboard-history-after-1920x1080-real.png
 
 [Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/749ca18174015329d9eebff265204c5f9d8c6ec9)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.322-p5.1.237)
 
 ## P5.1.236 — Nhóm sau: quay lại nhóm vừa rời sau thao tác Back / Electron 4.23.321
 
