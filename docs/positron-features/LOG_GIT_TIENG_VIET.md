@@ -2,14 +2,23 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
-## P5.1.205 — đổi sang kênh ngẫu nhiên khác ngay trong thanh phát
+## P5.1.206 — khám phá kênh ngẫu nhiên không lặp theo lượt
 
-**Ứng dụng:** 4.23.290 · **Trạng thái:** Chưa có bản phát hành
+**Ứng dụng:** 4.23.291 · **Trạng thái:** Chưa có bản phát hành
+
+Feature priority: NEW — Người xem dùng nút Bất kỳ nhiều lần mà tránh chọn lại các kênh đã được khám phá trong cùng chu kỳ; khi hết tập hợp hợp lệ mới mở vòng khám phá tiếp, tăng sự đa dạng. User action: Trên màn hình Xem truyền hình, nhấn Bất kỳ nhiều lần; huy hiệu số đếm các kênh đã chọn trong chu kỳ hiện tại, hoạt động ngay trong trình phát.
+
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/f92e9f29548de27eb206f0d3aa18f73927c4499d)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+
+## P5.1.205 — Electron 4.23.290 — Đổi kênh ngẫu nhiên ngay khi xem (CANDIDATE)
+
+**Ứng dụng:** 4.23.290 · **Trạng thái:** Đã phát hành
 
 Feature priority: NEW — Người xem có thể khám phá kênh ngẫu nhiên khác ngay khi đang phát thay vì phải trở về màn hình chưa chọn kênh. User action: Tại Xem truyền hình, khi có từ hai kênh hợp lệ, nhấn biểu tượng xúc xắc Bất kỳ bên cạnh nút Kênh sau.
 
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/56158e3defb6a23a97927001542fe687221db451)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/0a82f74bdec68dd434affe332dd8e5bd94eb0f6a)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.290-p5.1.205)
 
 ## P5.1.204 — 4.23.289 — Khám phá kênh ngẫu nhiên từ trang TV (CANDIDATE)
 
