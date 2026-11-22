@@ -3986,7 +3986,10 @@ async function runTwenty(page){
  const beforeP159=await page.screenshot({path:path.join(out,'positron-p51159-search-missing-before-1920x1080-real.png'),animations:'disabled'});
  assert.deepEqual([beforeP159.readUInt32BE(16),beforeP159.readUInt32BE(20)],[1920,1080],'PNG TRƯỚC P159 không phải 1920x1080');
  await page.click('#poLibraryPulseToggle');
- await page.click('#poLibraryMissingToggle');
+ // P158 đã mở mục này; tránh click lần nữa gây ẩn ô tìm kiếm.
+ if(await page.getAttribute('#poLibraryMissingToggle','aria-expanded')!=='true')
+  await page.click('#poLibraryMissingToggle');
+ await page.locator('#poLibraryMissingSearch').waitFor({state:'visible'});
  const before159=await page.evaluate(()=>({
   expected:window.PositronLibraryPulseCore.missingLogos(window.IPTVState.getChannels(),{query:'QA Channel 005'}),
   total:window.IPTVState.getChannels().length,missingTotal:window.PositronLibraryPulseCore.missingLogos(window.IPTVState.getChannels()).total,idle:window.IPTVState.getCurrent()===null
