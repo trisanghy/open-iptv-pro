@@ -63,61 +63,15 @@ html[data-iptv-device="mobile"] body :is(
  transform:translateY(-50%)!important;
 }
 
-/* Let a vertical swipe start anywhere in the mobile channel panel, including
-   its title, search and filter controls. Keep one scrollport for the whole
-   panel so the header can move the channel list instead of trapping the swipe. */
-html[data-iptv-device="mobile"] body #page-tv .channel-panel{
- overflow-x:hidden!important;overflow-y:auto!important;
- -webkit-overflow-scrolling:touch!important;
- overscroll-behavior-y:contain!important;touch-action:pan-y!important;
-}
-html[data-iptv-device="mobile"] body #page-tv .channel-panel > #channelList{
- flex:0 0 auto!important;height:auto!important;min-height:0!important;
- max-height:none!important;overflow:visible!important;
- -webkit-overflow-scrolling:auto!important;overscroll-behavior-y:auto!important;
-}
-html[data-iptv-device="mobile"] body #page-tv #channelList .folder-header{
- position:relative!important;top:auto!important;z-index:auto!important;
-}
-
-/* Fix Android/iOS: header, search and folder controls must not swallow vertical
-   swipe gestures. The panel is the sole vertical scrollport; tabs remain horizontal. */
+/* Channel panel controls stay in place while a vertical swipe beginning
+   there scrolls the outer page. The channel list keeps its own scroll area;
+   the filter strip accepts horizontal and vertical gestures. */
 html[data-iptv-device="mobile"] body #page-tv .channel-panel :is(
  .panel-header,.panel-header *,.filter-box,.filter-box *,
- .folder-actions,.folder-actions *,.channel-drag-hint
+ .folder-actions,.folder-actions *, .channel-drag-hint
 ){
  touch-action:pan-y!important;
 }
-html[data-iptv-device="mobile"] body #page-tv .channel-panel .filter-tabs{
- touch-action:pan-x pan-y!important;
-}
-html[data-iptv-device="mobile"] body #page-tv .channel-panel .filter-tabs .filter-tab{
- touch-action:pan-x pan-y!important;
-}
-html[data-iptv-device="mobile"] body #page-tv .channel-panel{
- min-height:0!important;max-height:65dvh!important;
- overflow-y:auto!important;overscroll-behavior-y:contain!important;
-}
-
-/* Header gestures belong to the page, while only channel rows scroll locally.
-   Override the previous whole-panel scrollport experiment. */
-html[data-iptv-device="mobile"] body #page-tv .channel-panel{
- height:clamp(350px,50dvh,520px)!important;
- min-height:350px!important;max-height:none!important;
- overflow:hidden!important;overscroll-behavior-y:auto!important;
- touch-action:pan-y!important;
-}
-html[data-iptv-device="mobile"] body #page-tv .channel-panel > #channelList{
- display:block!important;flex:1 1 0!important;
- height:0!important;min-height:115px!important;max-height:none!important;
- overflow-x:hidden!important;overflow-y:auto!important;
- overscroll-behavior-y:contain!important;
- -webkit-overflow-scrolling:touch!important;touch-action:pan-y!important;
-}
-html[data-iptv-device="mobile"] body #page-tv .channel-panel :is(
- .panel-header,.panel-header *,.filter-box,.filter-box *,
- .folder-actions,.folder-actions *,.channel-drag-hint
-){touch-action:pan-y!important}
 html[data-iptv-device="mobile"] body #page-tv .channel-panel .filter-tabs,
 html[data-iptv-device="mobile"] body #page-tv .channel-panel .filter-tabs .filter-tab{
  touch-action:pan-x pan-y!important;
