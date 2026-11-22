@@ -2,14 +2,23 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
-## P5.1.224 — phản hồi nhập XMLTV ngay trên EPG
+## P5.1.225 — giữ điều khiển TV trong khung hình desktop thấp
 
-**Ứng dụng:** 4.23.309 · **Trạng thái:** Chưa có bản phát hành
+**Ứng dụng:** 4.23.310 · **Trạng thái:** Chưa có bản phát hành
+
+giữ điều khiển TV trong khung hình desktop thấp
+
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/0f8f4e8374c9075f1154e3359a7532a3603e58ca)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+
+## P5.1.224 — Trạng thái nhập XMLTV hiển thị ngay trong EPG / 4.23.309
+
+**Ứng dụng:** 4.23.309 · **Trạng thái:** Đã phát hành
 
 Feature priority: NEW — Sau khi người dùng nhập hoặc hủy file XMLTV ngay từ trang Lịch phát sóng, phản hồi không còn bị giấu trong mục Cài đặt, tránh nhầm rằng ứng dụng treo hoặc mất dữ liệu EPG. Electron screenshot: positron-p51224-epg-feedback-after-1920x1080-real.png
 
 [Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/be3e79f8049cae0ebd42a211c47b73577a991fce)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.309-p5.1.224)
 
 ## P5.1.223 — Nhập XMLTV trực tiếp từ trạng thái EPG rỗng / Electron 4.23.308
 
