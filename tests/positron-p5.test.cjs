@@ -2095,3 +2095,17 @@ test('P5.1.194 quick-start DVR buttons preserve legal duration and never submit 
  assert.ok(qa.includes('positron-p51194-dvr-start-after-before-1920x1080-real.png'));
  assert.ok(qa.includes('positron-p51194-dvr-start-after-after-1920x1080-real.png'));
 });
+
+test('P5.1.195 suggests DVR name from selected channel and start time without overwriting',()=>{
+ const js=read('renderer/positron-twenty.js'),css=read('renderer/positron-twenty.css');
+ const qa=read('scripts/positron-20-extension.cjs');
+ for(const token of ["const attachDvrSuggestedTitle=()=>","button.id='poDvrSuggestName'",
+  "nameInput.value.trim()","selector.selectedOptions","safeName=selected.replace",
+  "nameInput.value=generated.slice","nameInput.dispatchEvent(new Event('change',{bubbles:true}))",
+  "button.type='button'","attachDvrSuggestedTitle();"])
+  assert.ok(js.includes(token),'Missing native DVR auto-title: '+token);
+ assert.ok(css.includes('#poDvrSuggestName:focus-visible'));
+ assert.ok(qa.includes('dvrSuggestedTitleQA'));
+ assert.ok(qa.includes('positron-p51195-dvr-autoname-before-1920x1080-real.png'));
+ assert.ok(qa.includes('positron-p51195-dvr-autoname-after-1920x1080-real.png'));
+});

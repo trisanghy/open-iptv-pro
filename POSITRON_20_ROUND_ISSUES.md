@@ -1,5 +1,11 @@
 # Positron — New 20-round issue register
 
+## Vòng 03 đợt mới, 22/11/2026
+- Baseline: P5.1.194 app 4.23.279, commit ff29ada0c777398a4fc8dcba36db4cd9c99dd474, CI 45004026363 6/6 jobs success, 839 Node pass / 5 skip; đã MỞ ảnh `positron-p51194-dvr-start-after-after-1920x1080-real.png` và xác nhận tự đặt Bắt đầu sau 15 phút, giữ 2 giờ.
+- Phát hiện từ ảnh: ô “Tên chương trình” rỗng dù đã chọn QA Channel 001 và giờ bắt đầu; trường bắt buộc dễ khiến thao tác hẹn ghi thiếu bước.
+- Vòng 03 P5.1.195/4.23.280 CANDIDATE: tạo tên theo kênh và giờ bằng nút riêng; bảo toàn tên thủ công. Đòi hỏi Node, Electron before/after 1920×1080, MỞ PNG, CI và release.
+- Vòng tiếp theo: quan sát ảnh thực P195 trước khi quyết định cải tiến mới, không tính lại các vòng lịch sử.
+
 ## Đợt mới từ P5.1.193, 22/11/2026
 - P5.1.193 / Electron 4.23.278, Actions 45003368885: 6/6 jobs thành công, 838 Node pass, 5 skip; release positron/v4.23.278-p5.1.193; đã MỞ trước/sau 1920×1080, trạng thái +60/+120 đúng, không tràn ngang.
 - Vòng 02 P5.1.194 / 4.23.279 CANDIDATE: bổ sung giờ bắt đầu nhanh 5/15/30 phút từ thời điểm hiện tại; bảo toàn khoảng ghi, không tự submit. Chỉ tính hoàn thành khi mở ảnh sau, test đạt và release được xác minh.

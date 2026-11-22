@@ -702,6 +702,45 @@
  attachDvrQuickStart('dvrStart','dvrEnd','poDvrQuickStartPresets');
  attachDvrQuickStart('dvrQuickStart','dvrQuickEnd','poDvrQuickStartQuickPresets');
 
+ // P5.1.195: manual EPG DVR auto-title from the user's selected channel
+ // and explicit start time. Never overwrite an existing custom title.
+ const attachDvrSuggestedTitle=()=>{
+  const nameInput=byId('dvrTitle'),selector=byId('dvrChannel'),start=byId('dvrStart');
+  if(!nameInput||!selector||!start||byId('poDvrSuggestName'))return;
+  const button=d.createElement('button');button.id='poDvrSuggestName';button.type='button';
+  button.className='po-dvr-suggest-name';
+  button.textContent='Tạo tên từ kênh và giờ';
+  button.setAttribute('aria-label','Tự đặt tên bản ghi theo kênh và giờ bắt đầu');
+  button.addEventListener('click',()=>{
+   if(nameInput.value.trim()){
+    nameInput.focus({preventScroll:true});
+    window.IPTVState?.toast?.('Tên bản ghi đã có. Hãy xóa tên trước khi tạo tự động.','warn');
+    return;
+   }
+   const selected=selector.selectedOptions?.[0]?.textContent?.trim()||'';
+   if(selector.disabled||!selected||selected==='Chưa có kênh để ghi hình'){
+    selector.focus({preventScroll:true});
+    window.IPTVState?.toast?.('Chọn kênh trước khi tạo tên bản ghi','warn');
+    return;
+   }
+   const safeName=selected.replace(/[\\/:*?"<>|]/g,' ').replace(/\s+/g,' ').trim();
+   const local=start.value?new Date(start.value):new Date(NaN);
+   const pad=n=>String(n).padStart(2,'0');
+   const stamp=Number.isFinite(local.getTime())
+    ?pad(local.getDate())+'.'+pad(local.getMonth()+1)+'.'+local.getFullYear()
+      +' '+pad(local.getHours())+':'+pad(local.getMinutes())
+    :'';
+   const generated=[safeName,stamp].filter(Boolean).join(' - ');
+   if(!generated)return;
+   nameInput.value=generated.slice(0,Math.max(1,nameInput.maxLength||220));
+   nameInput.dispatchEvent(new Event('input',{bubbles:true}));
+   nameInput.dispatchEvent(new Event('change',{bubbles:true}));
+   nameInput.focus({preventScroll:true});
+  });
+  nameInput.parentElement.append(button);
+ };
+ attachDvrSuggestedTitle();
+
  // P5.1.33: real P5.1.32 TV 450px screenshot shows an actionable
  // favorite star beside 'Chưa chọn kênh'. Use the native selection API,
  // not an empty-state string, to protect existing playlist semantics.

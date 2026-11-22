@@ -1,5 +1,14 @@
 # Positron P5 Changelog
 
+## P5.1.195 — Đặt tên bản ghi tự động theo kênh và giờ / Electron 4.23.280
+- Feature priority: NEW — Ảnh P5.1.194 Electron thật cho thấy ô Tên chương trình vẫn rỗng ngay cả khi kênh và giờ ghi đã được chọn; người dùng cần gõ lại hoặc không thể lưu vì trường bắt buộc. Thêm nút gợi ý tên chính xác theo kênh/giờ, tuyệt đối không ghi đè tên tự nhập.
+- Tính năng: nút “Tạo tên từ kênh và giờ” bên dưới Tên chương trình của mẫu EPG. Nhấn để điền tên kênh đã chọn và thời gian địa phương đã nhập (DD.MM.YYYY HH:mm), loại ký tự không an toàn; nếu người dùng đã nhập tên khác thì chỉ báo và giữ nguyên. Không đổi giờ, kênh, nguồn hay trạng thái ghi hình.
+- Electron screenshot: positron-p51195-dvr-autoname-after-1920x1080-real.png
+- Before screenshot: positron-p51195-dvr-autoname-before-1920x1080-real.png
+- User action: Vào Lịch phát sóng > Hẹn giờ ghi hình, chọn kênh và giờ bắt đầu, để trống tên rồi bấm “Tạo tên từ kênh và giờ”; xem lại trước khi tự nhấn Đặt lịch ghi.
+- QA: kiểm Electron 1920×1080 với nguồn QA Channel 001, ngày giờ hợp lệ; tên tự sinh gồm tên kênh và thời gian, không vượt maxlength, từ chối ghi đè tên thủ công, không submit, không phát video, không tràn ngang.
+- Status: CANDIDATE đến khi Node, ảnh thật TRƯỚC/SAU đã mở, 6 job CI, Release và assets được xác minh.
+
 ## P5.1.194 — Chọn nhanh giờ bắt đầu ghi hình sau 5/15/30 phút / Electron 4.23.279
 - Feature priority: NEW — Ảnh Electron P5.1.193 thực ở 1920×1080 cho thấy lịch ghi có các nút chọn thời lượng nhưng trường Bắt đầu vẫn cần nhập ngày giờ thủ công. Bổ sung chọn giờ bắt đầu từ hiện tại để giảm thao tác hẹn ghi, không gửi lịch khi chưa xác nhận.
 - Tính năng: dưới giờ Bắt đầu có ba nút “Sau 5 phút”, “Sau 15 phút”, “Sau 30 phút” ở EPG và biểu mẫu ghi nhanh TV. Nhấn chỉ điền Bắt đầu dựa trên phút hiện tại, đồng thời dời Kết thúc để giữ thời lượng cũ nếu hợp lệ (1–480 phút), hoặc 60 phút khi thiếu/không hợp lệ. Tự cập nhật nhãn thời lượng và trạng thái preset P5.1.192/193.

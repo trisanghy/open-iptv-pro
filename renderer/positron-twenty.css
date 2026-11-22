@@ -854,3 +854,17 @@ html[data-positron="true"] .po-dvr-quick-start button:hover{border-color:var(--p
 html[data-positron="true"] .po-dvr-quick-start button:focus-visible{
  outline:2px solid var(--po-accent,#6ad9c7);outline-offset:2px;
 }
+
+/* P5.1.195: safe one-click native DVR title suggestion. */
+html[data-positron="true"] #poDvrSuggestName{
+ display:inline-flex;align-items:center;justify-content:center;
+ min-height:29px;max-width:100%;margin-top:6px;padding:5px 9px;
+ border:1px solid var(--po-border,#325160);border-radius:7px;
+ background:var(--po-input,#17303c);color:var(--po-text,#e6f4f4);
+ font:inherit;font-size:11px;line-height:1.1;cursor:pointer;
+ white-space:normal;text-align:center;
+}
+html[data-positron="true"] #poDvrSuggestName:hover{border-color:var(--po-accent,#6ad9c7)}
+html[data-positron="true"] #poDvrSuggestName:focus-visible{
+ outline:2px solid var(--po-accent,#6ad9c7);outline-offset:2px;
+}

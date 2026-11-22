@@ -4,6 +4,21 @@
   "branch": "Positron",
   "versions": [
     {
+      "number": 195,
+      "version": "P5.1.195",
+      "appVersion": "4.23.280",
+      "title": "Tạo tên bản ghi tự động từ kênh và giờ",
+      "description": "Một nút gợi ý tên bản ghi dựa trên kênh đã chọn và thời gian bắt đầu, không ghi đè tên thủ công, không tự gửi lịch.",
+      "kind": "feature",
+      "status": "candidate",
+      "published": "",
+      "tag": "",
+      "commit": "",
+      "url": "https://github.com/trisanghy/open-iptv-pro/tree/Positron",
+      "assets": [],
+      "image": null
+    },
+    {
       "number": 194,
       "version": "P5.1.194",
       "appVersion": "4.23.279",
