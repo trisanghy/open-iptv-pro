@@ -1,4 +1,13 @@
-# Open IPTV Pro TV · TizenBrew v0.1.18 (thử nghiệm)
+# Open IPTV Pro TV · TizenBrew v0.1.19 (thử nghiệm)
+
+## v0.1.19 — Giữ 0,5 giây để kéo thư mục/kênh; không tự bật bàn phím
+
+- Trang quản lý kênh **trên điện thoại qua QR**: giữ **0,5 giây ở bất kỳ đâu trong ô kênh**, kể cả hàng nút yêu thích, chuyển, mở thêm và chỉnh sửa; không còn chỉ nhận thao tác ở `.channel-head`.
+- **Thư mục**: có thể giữ từ toàn bộ phần tiêu đề hoặc phần nền trống của khối thư mục (không yêu cầu đúng một nút), kéo đến thư mục khác để đổi thứ tự. Kéo kênh vào thư mục khác hoặc lên/xuống trước/sau kênh mục tiêu.
+- Vuốt nhanh để cuộn: nếu ngón tay di chuyển quá 14 px trước khi đủ 500 ms, hủy chế độ giữ; khi đang kéo hiển thị nhãn nổi. Chặn menu giữ mặc định iOS trong thẻ kênh/thư mục.
+- **TV Samsung – Thêm nguồn:** mở hộp nhập nguồn không tự focus vào ô URL nên **không tự hiện bàn phím che mã QR**. Ban đầu focus ở nút **Chuyển xuống nhập đường dẫn**; chỉ khi người dùng nhấn OK hoặc chuyển vào ô nhập mới bật bàn phím.
+- Địa chỉ QR trỏ đến trang quản lý mới trên `web/online` với tham số `?v=023` để hạn chế dùng bản cache cũ.
+- Giữ nguyên chức năng tên nguồn M3U không bắt buộc của v0.1.18. Có kiểm thử hồi quy tương ứng tại `tizenbrew/tests/full-card-drag-focus.test.cjs`.
 
 ## v0.1.18 — Không bắt buộc nhập tên nguồn M3U
 
