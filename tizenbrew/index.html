@@ -91,7 +91,7 @@ button,input,textarea{font:inherit;color:inherit}button{cursor:pointer;border:2p
 <script type="text/javascript" src="$WEBAPIS/webapis/webapis.js"></script>
 </head><body data-theme="dark">
 <div id="app">
-<header class="top"><div class="brand"><div class="brandicon">▶</div><div><strong>Open IPTV Pro <small>TV</small></strong><p>Samsung Tizen Edition · TizenBrew v0.1.31</p></div></div><div class="toolbar"><span class="clock" id="clock">--:--</span><button id="searchBtn">⌕ Tìm</button><button id="addBtn">＋ Nguồn</button><button id="themeBtn">◐ Giao diện</button></div></header>
+<header class="top"><div class="brand"><div class="brandicon">▶</div><div><strong>Open IPTV Pro <small>TV</small></strong><p>Samsung Tizen Edition · TizenBrew v0.1.32</p></div></div><div class="toolbar"><span class="clock" id="clock">--:--</span><button id="searchBtn">⌕ Tìm</button><button id="addBtn">＋ Nguồn</button><button id="themeBtn">◐ Giao diện</button></div></header>
 <div class="main"><nav class="nav"><button class="active" data-nav="all">▣　Trực tiếp</button><button data-nav="favorites">♡　Yêu thích</button><button data-nav="recent">◷　Đã xem</button><button data-nav="sources">☷　Nguồn M3U</button><button data-nav="help">⚙　Hướng dẫn</button><div id="sidebarShortcuts" class="sidebar-shortcuts"><button type="button" id="tizenTubeBtn" title="Chuyển sang TizenTube đã cài trong TizenBrew">▶ TizenTube</button><button type="button" id="exitModuleBtn" class="exit-small" title="Thoát về TizenBrew">✕ Thoát</button></div><p class="tip">Dùng ↑ ↓ ← → và OK để điều khiển bằng remote TV.</p></nav>
 <section class="listpane"><div class="heading"><div><div class="eyebrow">DANH SÁCH KÊNH</div><h1 id="heading">Trực tiếp</h1></div><span id="count">0 kênh</span></div><div class="groups" id="groups"></div><div class="channels" id="channels"></div><div class="empty" id="empty" hidden><h2>Chưa có kênh IPTV</h2><p>Thêm nguồn bằng URL trên remote hoặc quét QR để nhập bằng điện thoại.</p><button id="emptyAdd" class="primary">＋ Thêm nguồn IPTV</button><button id="sampleBtn">▶ Luồng kiểm thử</button></div><button id="more" hidden>Xem thêm kênh ↓</button></section>
 <aside class="details"><div class="preview"><span class="live">● TRỰC TIẾP</span><b id="previewText">TV</b><span class="watermark">OPEN IPTV PRO</span></div><div class="eyebrow">KÊNH ĐANG CHỌN</div><h2 id="channelTitle">Open IPTV Pro TV</h2><p id="channelGroup">Chọn kênh để xem</p><div class="info"><div class="eyebrow">THÔNG TIN</div><p id="channelInfo">Hỗ trợ nhập M3U, nhóm kênh, yêu thích và remote Samsung.</p></div><div class="actions"><button class="primary" id="watchBtn">▶ Xem</button><button id="favBtn">♡ Yêu thích</button></div></aside></div>
@@ -724,6 +724,7 @@ function updateBottomActions(){byId('exitModuleBtn').title='Thoát về TizenBre
 var playbackSerial=0,playbackEngine='',avplayInstance=null,hlsInstance=null,playbackTimer=0,hlsLibraryPromise=null;
 var html5Mode='',hlsAttempted=false,playbackEvidence=[],playbackFailed=false;
 var playbackConfirmed=false,playbackGraceTimer=0,playbackStreamUrls=[],playbackStreamIndex=0,playbackStream=null,nativeReplayUsed=false;
+var hlsRelayAttempted=false,hlsRelayUrl='',hlsRelayServer='http://127.0.0.1:17865';
 var hostedCastAttempted=false,hostedCastSession='',hostedCastToken=0,hostedCastSent=false,hostedCastPlaying=false;
 var hostedCastOrigin='https://trisanghy.github.io';
 var hostedCastPage=hostedCastOrigin+'/open-iptv-pro/tizen/hosted-player.html?v=20261122c';
@@ -797,7 +798,7 @@ function tryNextChannelSource(token){
  var nextToken=playbackSerial,original=playing,urlValue=playbackStreamUrls[playbackStreamIndex];
  stopPlaybackEngine();
  if(!original||byId('player').hidden)return false;
- playbackFailed=false;playbackConfirmed=false;hlsAttempted=false;nativeReplayUsed=false;hostedCastAttempted=false;
+ playbackFailed=false;playbackConfirmed=false;hlsAttempted=false;nativeReplayUsed=false;hostedCastAttempted=false;hlsRelayAttempted=false;hlsRelayUrl='';
  playbackEvidence=[];
  byId('playbackDiag').hidden=true;byId('playbackDiag').textContent='';
  setPlayerStatus('Đang thử URL dự phòng được gắn với kênh '+(playbackStreamIndex+1)+' / '+playbackStreamUrls.length+'…');
@@ -935,11 +936,11 @@ function playbackFailure(token,message){
  var sourceLabel='Nguồn '+(playbackStreamIndex+1)+'/'+Math.max(1,playbackStreamUrls.length);
  browserButton.textContent='Mở Cast chuẩn trên Samsung Internet (mã 6 số)';
  browserButton.hidden=false;
- if(byId('channelPicker').hidden&&browserButton.focus)try{browserButton.focus({preventScroll:true});}catch(e){browserButton.focus();}
+ // Keep remote focus on the in-app video controls. Cast is optional, never an automatic escape.
  clearPlaybackTimer();
  byId('player').classList.remove('is-playing');
  var sourceHost=playbackSafeHost(playbackStream&&playbackStream.url||playing&&playing.url);
- setPlayerStatus('Không phát được kênh ('+sourceLabel+(sourceHost?', máy chủ '+sourceHost:'')+'). '+String(message||'Nguồn hoặc codec không hỗ trợ.').slice(0,140)+' · Có thể mở Cast chuẩn và chọn kênh từ Web/điện thoại.');
+ setPlayerStatus('Không phát được kênh ('+sourceLabel+(sourceHost?', máy chủ '+sourceHost:'')+'). '+String(message||'Nguồn hoặc codec không hỗ trợ.').slice(0,140)+' · Nhấn OK thử lại trong ứng dụng; Cast chỉ là phương án thủ công.');
  byId('playbackDiag').hidden=!playbackEvidence.length;
 }
 function fallbackFromAvplay(channel,token,message){
@@ -1008,6 +1009,82 @@ function retryNativeHls(channel,token){
   return true;
  }catch(e){finishPlaybackError(token,String(e&&e.message||e));return true;}
 }
+/*
+ * An AVPlay-less TizenBrew web module can still play HLS by fetching it
+ * through the optional TV-local TizenBrew Node service. It avoids browser
+ * CORS without forwarding private M3U8 URLs to any external relay.
+ * Activated only after direct HLS.js fails to fetch its manifest.
+ */
+function startRelayHlsPlayback(channel,token){
+ if(hlsRelayAttempted||!playbackActive(token)||playbackEngine!=='html5')return false;
+ if(!hlsAddress(channel&&channel.url))return false;
+ hlsRelayAttempted=true;
+ html5Mode='hls-relay';
+ if(hlsInstance){try{hlsInstance.destroy();}catch(e){}hlsInstance=null;}
+ var video=byId('video');
+ try{video.pause();video.removeAttribute('src');video.load();}catch(e){}
+ clearPlaybackTimer();
+ setPlayerStatus('Đang thử bộ phát HLS ngay trong TizenBrew bằng dịch vụ TV nội bộ…');
+ logPlayback('Đang kết nối bộ chuyển tiếp HLS trên TV (127.0.0.1)');
+ var completed=false,limit=0;
+ limit=setTimeout(function(){
+  if(completed)return;completed=true;
+  if(playbackActive(token)&&html5Mode==='hls-relay'){
+   logPlayback('Dịch vụ HLS TV chưa sẵn sàng');
+   finishPlaybackError(token,'Bộ phát HLS nội bộ chưa khởi động. Đóng và mở lại TizenBrew một lần.');
+  }
+ },15000);
+ fetch(hlsRelayServer+'/session',{
+  method:'POST',mode:'cors',cache:'no-store',
+  headers:{'Content-Type':'application/json','X-Open-IPTV-Relay':'1'},
+  body:JSON.stringify({url:channel.url})
+ }).then(function(response){
+  if(!response.ok)throw Error('Dịch vụ HLS trên TV trả '+response.status);
+  return response.json();
+ }).then(function(result){
+  if(completed)return;completed=true;clearTimeout(limit);
+  if(!playbackActive(token)||playbackEngine!=='html5'||html5Mode!=='hls-relay')return;
+  var local=String(result&&result.url||'');
+  if(!/^http:\/\/127\.0\.0\.1:17865\/r\/[0-9a-f]{40}\/0$/.test(local))throw Error('Dịch vụ HLS trả đường dẫn không hợp lệ');
+  hlsRelayUrl=local;
+  return loadHlsLibrary().then(function(Hls){
+   if(!playbackActive(token)||playbackEngine!=='html5'||html5Mode!=='hls-relay')return;
+   if(!Hls||!Hls.isSupported||!Hls.isSupported())throw Error('TV thiếu MediaSource cho HLS.js');
+   var engine=new Hls({
+    enableWorker:false,lowLatencyMode:false,maxBufferLength:15,
+    xhrSetup:function(xhr){
+     // A non-simple request header also prevents foreign browser pages
+     // from using the TV-local service without its CORS preflight.
+     try{xhr.setRequestHeader('X-Open-IPTV-Relay','1');}catch(e){}
+    }
+   });
+   hlsInstance=engine;
+   engine.on(Hls.Events.MANIFEST_PARSED,function(){
+    if(playbackActive(token)&&html5Mode==='hls-relay')nativeHtml5Play(video,token);
+   });
+   engine.on(Hls.Events.ERROR,function(_evt,data){
+    if(!playbackActive(token)||html5Mode!=='hls-relay'||!data||!data.fatal)return;
+    var cause=describeHlsError(data);
+    logPlayback('HLS TV nội bộ: '+cause);
+    finishPlaybackError(token,'HLS nội bộ: '+cause);
+   });
+   engine.attachMedia(video);
+   engine.loadSource(local);
+   playbackTimer=setTimeout(function(){
+    if(playbackActive(token)&&html5Mode==='hls-relay'&&!playbackConfirmed)
+     finishPlaybackError(token,'Bộ phát HLS nội bộ quá thời gian chờ.');
+   },30000);
+  });
+ }).catch(function(error){
+  if(completed&&!(hlsRelayUrl&&html5Mode==='hls-relay'))return;
+  completed=true;clearTimeout(limit);
+  if(!playbackActive(token)||html5Mode!=='hls-relay')return;
+  var reason=String(error&&error.message||error||'không khả dụng').slice(0,100);
+  logPlayback('HLS nội bộ: '+reason);
+  finishPlaybackError(token,'Bộ chuyển tiếp HLS trên TV chưa khả dụng. Thoát mở lại TizenBrew; '+reason);
+ });
+ return true;
+}
 function startHlsPlayback(channel,token,why){
  if(!playbackActive(token)||playbackEngine!=='html5'||hlsAttempted)return false;
  hlsAttempted=true;html5Mode='hlsjs';
@@ -1038,6 +1115,11 @@ function startHlsPlayback(channel,token,why){
      setPlayerStatus('Kênh đang phát; chờ dữ liệu mới từ máy chủ…');
      return;
     }
+    // A 403 can be a genuine access denial; manifestLoadError with code 0
+    // can also mean CORS. Retry exactly the selected URL on the TV's local
+    // Node service, never silently choose another same-name channel.
+    if(/manifestLoadError|manifestLoadTimeout|levelLoadError|levelLoadTimeout/i.test(String(data.details||''))&&
+       startRelayHlsPlayback(channel,token))return;
     if(/manifestLoadError|manifestLoadTimeout/i.test(String(data.details||''))&&!nativeReplayUsed){
      var supportsNative=false;
      try{supportsNative=!!videoElement.canPlayType('application/vnd.apple.mpegurl');}catch(e){}
@@ -1120,7 +1202,7 @@ function play(c){
  if(!c)return;
  byId('browserFallback').hidden=true;
  playbackSerial++;var token=playbackSerial;stopPlaybackEngine();playing=c;
- hlsAttempted=false;playbackEvidence=[];playbackFailed=false;playbackConfirmed=false;nativeReplayUsed=false;hostedCastAttempted=false;
+ hlsAttempted=false;playbackEvidence=[];playbackFailed=false;playbackConfirmed=false;nativeReplayUsed=false;hostedCastAttempted=false;hlsRelayAttempted=false;hlsRelayUrl='';
  playbackStreamUrls=playbackCandidates(c);playbackStreamIndex=0;
  byId('playbackDiag').textContent='';byId('playbackDiag').hidden=true;
  logPlayback('AVPlay: '+(nativeAvplay()?'có API':'không có API'));
