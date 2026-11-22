@@ -42,3 +42,11 @@ Chỉ đánh dấu hoàn tất khi sửa nguồn, node test pass, Electron scree
 
 ## Vòng 05 — P5.1.242 [CANDIDATE]
 - Tổng quát chip mọi native filter, hiển thị tên, số lượng, hành động xóa; kiểm thử khi chọn Vừa xem, kể cả empty state.
+
+## Vòng 05 — P5.1.242 / 4.23.327 [HOÀN TẤT]
+- CI `45054829307`: 912 tests, 907 pass / 5 skipped; 6/6 jobs success, release `positron/v4.23.327-p5.1.242`.
+- Mở ảnh thật: Vừa xem · 0 hiện chip màu xanh tại sidebar, người dùng biết lý do không thấy kênh; click Xem tất cả khôi phục 561.
+- Đầu vào vòng 06: lịch sử vừa xem rỗng không có hàng kênh để sử dụng bàn phím quay về.
+
+## Vòng 06 — P5.1.243 [CANDIDATE]
+- Shift+R từ hàng kênh mở nhanh Vừa xem, từ chip khi empty quay All, không playback và không mutate Favorites.

@@ -1,5 +1,12 @@
 # Positron P5 Changelog
 
+## P5.1.243 — Shift+R mở/thoát Vừa xem mà không cần chuột / Electron 4.23.328
+- Feature priority: NEW — Thêm phím Shift+R ngay tại hàng kênh để mở lọc Vừa xem. Ảnh P5.1.242 cho thấy khi lịch sử rỗng không còn hàng nào để focus, do đó Shift+R trên chip Vừa xem cũng quay lại Tất cả và trả focus về kênh đầu tiên. Cho phép thao tác hai chiều bằng bàn phím, không tự phát, không sửa Favorites hay nguồn.
+- Electron screenshot: positron-p51243-keyboard-recent-after-1920x1080-real.png
+- User action: Focus một hàng kênh TV và nhấn Shift+R để mở Vừa xem; khi lịch sử trống, chip Vừa xem nhận focus, nhấn Shift+R lần nữa để khôi phục danh sách.
+- Electron QA: `positron-p51243-keyboard-recent-before-1920x1080-real.png` và `positron-p51243-keyboard-recent-after-1920x1080-real.png`; kiểm tra bàn phím, focus, số kênh và Favorites bất biến.
+
+
 ## P5.1.242 — Chip báo mọi bộ lọc kênh ẩn / Electron 4.23.327
 - Feature priority: NEW — Mở rộng chip báo trạng thái P5.1.241 từ riêng Yêu thích sang mọi tab lọc native, gồm Vừa xem, Sống, Die và Chưa rõ. Khi tab bị thu gọn hoặc lọc ra 0 kênh, người dùng vẫn nhìn thấy tên bộ lọc, số kênh và hành động Xem tất cả để tránh hiểu nhầm mất playlist. Màu chip Vừa xem dịu hơn và mọi thao tác không thay đổi Favorites, playback hay nguồn.
 - Electron screenshot: positron-p51242-recent-filter-after-1920x1080-real.png

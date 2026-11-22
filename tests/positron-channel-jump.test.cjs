@@ -325,3 +325,22 @@ test('P5.1.242 verifies native Electron recent-filter indicator and clear action
   'chipFitsPanel:','favoritesUnchanged:','allTabActive:','noAutoplay:'])
   assert.ok(qa.includes(t),'P242 UI regression '+t);
 });
+
+test('P5.1.243 Shift+R toggles recent filter from rows and empty recent chip',()=>{
+ const js=read('renderer/positron-channel-jump.js');
+ for(const token of ["const quickRecent=","if(quickRecent){","chip.setAttribute('aria-keyshortcuts','Shift+R')",
+  "event.target===d.getElementById('poFavoriteFilterChip')","Nhấn Shift+R để xem tất cả",
+  "chip.hidden=false;chip.focus({preventScroll:true});"])
+  assert.ok(js.includes(token),'P243 recent shortcut missing '+token);
+ assert.ok(!js.includes('playChannel('));
+ assert.equal(JSON.parse(read('package.json')).version,'4.23.328');
+});
+test('P5.1.243 requires real Electron Shift+R screenshots and round-trip state',()=>{
+ const qa=read('scripts/positron-20-extension.cjs'),wf=read('.github/workflows/positron-lab.yml');
+ for(const f of ['positron-p51243-keyboard-recent-before-1920x1080-real.png','positron-p51243-keyboard-recent-after-1920x1080-real.png']){
+  assert.ok(qa.includes(f));assert.ok(wf.includes(f));
+ }
+ for(const t of ['keyboardRecentQA243','keyboardRecentReturnQA243','page.keyboard.press(\'Shift+R\')',
+  'recentChipFocused:','allChannelsRestored:','favoritesUnchanged:','noAutoplay:'])
+  assert.ok(qa.includes(t),'P243 QA missing '+t);
+});

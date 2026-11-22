@@ -278,6 +278,9 @@
     const mode=activeTab?.dataset.filter||'all';
     chip.dataset.mode=mode;
     chip.hidden=mode==='all';
+    // P243: make the empty recent-filter chip keyboard-reversible.
+    if(mode==='recent'){chip.setAttribute('aria-keyshortcuts','Shift+R');chip.title='Nhấn Shift+R để xem tất cả';}
+    else{chip.removeAttribute('aria-keyshortcuts');chip.removeAttribute('title');}
     if(chip.hidden)return;
     const count=Number(d.getElementById('channelMeta')?.textContent?.match(/^\s*(\d+)/)?.[1]||0);
     const title=(activeTab?.textContent||'Đang lọc').trim();
@@ -321,8 +324,9 @@
    const keys=['ArrowUp','ArrowDown','Home','End','PageUp','PageDown','ArrowLeft','ArrowRight'];
    // P240: Shift+F is a filter shortcut, not an accidental favorite toggle.
    const quickFavorites=(event.key==='f'||event.key==='F')&&event.shiftKey;
+   const quickRecent=(event.key==='r'||event.key==='R')&&event.shiftKey;
    const favoriteKey=(event.key==='f'||event.key==='F')&&!event.shiftKey&&!event.ctrlKey&&!event.altKey&&!event.metaKey;
-   if(!favoriteKey&&!quickFavorites&&!keys.includes(event.key))return;
+   if(!favoriteKey&&!quickFavorites&&!quickRecent&&!keys.includes(event.key))return;
    const current=event.target;
    if(!(current instanceof HTMLElement)||!current.matches('.channel-item'))return;
    if(quickFavorites){
@@ -335,6 +339,23 @@
     const first=channelList.querySelector('.channel-item');
     (first||d.getElementById('searchBox'))?.focus({preventScroll:true});
     status.textContent=returnToAll?'Đang xem tất cả kênh.':'Đang lọc các kênh yêu thích. Nhấn Shift+F để xem tất cả.';
+    return;
+   }
+   if(quickRecent){
+    // P243: switch to the recent filter without opening playback.
+    const recent=d.querySelector('#page-tv .filter-tab[data-filter="recent"]');
+    const all=d.querySelector('#page-tv .filter-tab[data-filter="all"]');
+    if(!recent||!all)return;
+    event.preventDefault();event.stopPropagation();
+    const returnToAll=recent.classList.contains('active');
+    (returnToAll?all:recent).click();
+    const first=channelList.querySelector('.channel-item');
+    if(first)first.focus({preventScroll:true});
+    else{
+     const chip=d.getElementById('poFavoriteFilterChip');
+     if(chip){chip.hidden=false;chip.focus({preventScroll:true});}
+    }
+    status.textContent=returnToAll?'Đang xem tất cả kênh.':'Đang lọc kênh vừa xem. Nhấn Shift+R để xem tất cả.';
     return;
    }
    if(favoriteKey){
@@ -384,6 +405,17 @@
   // History shortcuts above already guard inputs; keep the same protection
   // for Alt+G and Alt+J, including native selects and contenteditable fields.
   if(event.defaultPrevented||event.isComposing||event.target?.closest?.('input,textarea,select,[contenteditable]:not([contenteditable="false"]),[role="textbox"]'))return;
+  // P243: when recent history is empty there are no channel rows to focus.
+  // Shift+R on its visible status chip must still restore the full list.
+  if(event.shiftKey&&!event.altKey&&!event.ctrlKey&&!event.metaKey&&
+     (event.key==='R'||event.key==='r')&&
+     event.target===d.getElementById('poFavoriteFilterChip')&&
+     d.querySelector('#page-tv .filter-tab[data-filter="recent"]')?.classList.contains('active')){
+   event.preventDefault();event.stopPropagation();
+   d.querySelector('#page-tv .filter-tab[data-filter="all"]')?.click();
+   channelList?.querySelector('.channel-item')?.focus({preventScroll:true});
+   return;
+  }
   if(event.altKey&&!event.ctrlKey&&!event.metaKey&&!event.shiftKey&&event.key.toLowerCase()==='g'&&
    d.getElementById('page-tv')?.classList.contains('active-page')){
    event.preventDefault();

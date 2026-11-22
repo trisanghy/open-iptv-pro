@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.327",
-  "description": "Positron P5.1.242: Chip thông báo mọi bộ lọc kênh và xóa lọc",
+  "version": "4.23.328",
+  "description": "Positron P5.1.243: Shift+R mở Vừa xem và quay về tất cả bằng bàn phím",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",
