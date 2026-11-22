@@ -4275,7 +4275,7 @@ async function runTwenty(page){
     buttonLabel:btn.textContent.includes(String(expected.expected)),
     status:document.getElementById('poLibraryMissingExportStatus').textContent.includes('Đã xuất '+expected.expected),
     filename:filename.startsWith('positron-kenh-thieu-logo-')&&filename.endsWith('.csv'),
-    csvBOM:bytes?.[0]===0xEF&&bytes?.[1]===0xBB&&bytes?.[2]===0xBF&&csv?.startsWith('"Tên kênh","Nhóm"\\r\\n')===true,
+    csvBOM:bytes?.[0]===0xEF&&bytes?.[1]===0xBB&&bytes?.[2]===0xBF&&csv?.startsWith('"Tên kênh","Nhóm"\r\n')===true,
     csvComplete:csv?.trim().split('\r\n').length===expected.expected+1,
     noStreamUrl:!csv?.includes('://'),
     noMutation:window.IPTVState.getChannels().length===expected.total,
