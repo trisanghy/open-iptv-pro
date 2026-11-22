@@ -39,7 +39,8 @@ function safeIp(ip){
 }
 function inspectRemote(value){
  if(typeof value!=='string'||value.length>4096||/\s/.test(value))return null;
- var parsed=Url.parse(value);
+ var parsed;
+ try{parsed=Url.parse(value);}catch(e){return null;}
  if(!parsed||!/^(http|https):$/.test(parsed.protocol)||!parsed.hostname)return null;
  var host=parsed.hostname.toLowerCase();
  if(host==='localhost'||/\.localhost$|\.local$|\.internal$/.test(host))return null;
