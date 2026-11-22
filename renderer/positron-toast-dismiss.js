@@ -42,6 +42,9 @@
  const successes=()=>[...area.children].filter(node=>node.classList?.contains('toast')
   &&!node.classList.contains('err')&&!node.classList.contains('warn'));
  const syncHistory=()=>{
+  // Other legacy modules/tests may replace all children to reset messages.
+  // Reattach the control to the live native container, never to an old node.
+  if(showMore.parentElement!==area)area.prepend(showMore);
   const count=Math.max(0,successes().length-1);
   if(count===0)expanded=false;
   const restore=count===0&&document.activeElement===showMore?returnFocus:null;

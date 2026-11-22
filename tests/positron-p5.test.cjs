@@ -1459,6 +1459,10 @@ test('P5.1.150 groups recent native success toasts and exposes a reversible view
   "node.classList.contains('err')","node.classList.contains('warn')"])
   assert.ok(js.includes(token),'notification centre missing '+token);
  assert.ok(css.includes('.po-toast-history-open'));
+ assert.ok(js.includes('if(showMore.parentElement!==area)area.prepend(showMore);'),
+  'history button must recover after native toast container replaceChildren()');
+ assert.ok(qa.includes('area.replaceChildren();'),
+  'native regression must reproduce a full toast container reset');
  assert.ok(css.includes('>.po-toast-history-toggle[hidden]'));
  for(const token of ['const toastHistoryQA=','onlyLatestSuccessVisible:',
   'warningsRemainVisible:','expandShowsAllSuccesses:','collapseRestoresOne:',

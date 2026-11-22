@@ -3497,7 +3497,8 @@ async function runTwenty(page){
  // in a legal local QA fixture, then inspect collapsed/expanded states.
  const toastHistoryFixture=await page.evaluate(()=>{
   const area=document.getElementById('toastArea');
-  for(const node of [...area.querySelectorAll(':scope>.toast')])node.remove();
+  // Explicitly reproduce the older QA reset that used to detach the toggle.
+  area.replaceChildren();
   for(let index=1;index<=7;index++)
    window.IPTVState.toast('Đã hoàn tất thao tác QA '+index);
   window.IPTVState.toast('Cảnh báo QA: kiểm tra nguồn','warn');
