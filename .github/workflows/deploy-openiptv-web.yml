@@ -182,13 +182,18 @@ jobs:
           node --check _site/web-cast-sender.js
           node --check _site/web-tv-pair.js
           node --check _site/web-cast-v2.js
+          node --check _site/web-cast-icons.js
+          test -s _site/web-cast-icons.js
+          grep -Fq 'web-cast-icons.js?v=icons-v3-20261122a' _site/index.html
+          grep -Fq 'web-cast-icons.js?v=icons-v3-20261122a' _site/tv.html
           node --check _site/web-tv-receiver.js
           test -s _site/tv.html && test -s _site/web-cast-v2.css
           node --test web-online/tests/web-airplay.test.cjs
           node --test web-online/tests/web-cast-sender.test.cjs
           node --test web-online/tests/web-cast-v2.test.cjs
+          node --test web-online/tests/web-cast-icons.test.cjs
           grep -Fq 'web-cast-sender.js?v=cast-v2-20261122a' _site/index.html
-          grep -Fq 'web-cast-v2.css?v=cast-v2-20261122a' _site/index.html
+          grep -Fq 'web-cast-v2.css?v=icons-v3-20261122a' _site/index.html
           grep -Fq 'web-tv-pair.js?v=cast-v2-20261122a' _site/index.html
           grep -Fq 'wss:' _site/index.html
           grep -Fq 'x-webkit-airplay="allow"' _site/index.html
