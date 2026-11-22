@@ -7,7 +7,7 @@
  if(!root?.document || root.streamleaf?.castDiscover)return;
  const doc=root.document, $=id=>doc.getElementById(id);
  const SDK='https://www.gstatic.com/cv/js/sender/v1/cast_sender.js?loadCastFramework=1';
- let context=null, sdkFailed=false, initialized=false, source='', channel=null, active=false, busy=false;
+ let context=null, sdkFailed=false, initialized=false, source='', channel=null, active=false, busy=false, remotePaused=false;
  const el=id=>$(id);
  const video=()=>el('video');
  const validSource=value=>{
@@ -173,7 +173,7 @@
    const request=new chromeCast.media.LoadRequest(media);
    request.autoplay=true;
    await session.loadMedia(request);
-   active=true;
+   active=true;remotePaused=false;
    setStatus('Đã gửi '+(channel?.name||'kênh')+' lên '+getName(session)+'. Nếu TV không phát, nguồn có thể bị giới hạn quyền truy cập hoặc codec.');
    video()?.pause?.();
   }catch(error){setStatus('Không phát được trên TV: '+String(error?.message||error),true);}
@@ -181,7 +181,7 @@
  }
  async function stop(){
   if(!context||!currentSession())return;
-  try{await Promise.resolve(context.endCurrentSession(true));active=false;sync();setStatus('Đã dừng phiên Google Cast trên TV.');}
+  try{await Promise.resolve(context.endCurrentSession(true));active=false;remotePaused=false;sync();setStatus('Đã dừng phiên Google Cast trên TV.');}
   catch(error){setStatus('Không dừng được Cast: '+String(error?.message||error),true);}
  }
  function link(){
@@ -239,11 +239,13 @@
   try{
    await new Promise((resolve,reject)=>remote[method](request,resolve,reject));
    if(action==='stop')active=false;
+   if(action==='pause')remotePaused=true;
+   if(action==='resume')remotePaused=false;
    root.OpenIPTVWebCastV2?.syncCast?.();
    return true;
   }catch(error){setStatus('Không điều khiển được TV qua Google Cast: '+String(error?.message||error),true);return false;}
  }
  initAirplayWatcher();
- const getState=()=>({initialized,connected:!!currentSession(),name:currentSession()?getName(currentSession()):'',active});
+ const getState=()=>({initialized,connected:!!currentSession(),name:currentSession()?getName(currentSession()):'',active,remotePaused});
  root.OpenIPTVWebCast=Object.freeze({open,scan,play,stop,stopOnLocalStop,onChannelChanged,airplayPicker,validSource,mediaType,getState,getAirplayState,transportRemote});
 })(typeof window==='undefined'?null:window);
