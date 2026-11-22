@@ -1,5 +1,11 @@
 # Positron P5 Changelog
 
+## P5.1.263 — Điều hướng danh sách nguồn bằng phím mũi tên / Electron 4.23.348
+- Feature priority: NEW — Duyệt các hàng trong Chi tiết nguồn bằng mũi tên Lên/Xuống, tự chuyển focus rõ ràng và quay vòng khi tới đầu/cuối; chặn phím khỏi shortcut TV bên ngoài, không thay đổi playlist hoặc phát kênh.
+- Electron screenshot: positron-p51263-source-keyboard-after-1920x1080-real.png
+- User action: Mở Nguồn IPTV → Chi tiết nguồn, dùng Tab tới hàng nguồn đầu và bấm ↓/↑ để đổi hàng đang chọn; viền xanh cho biết focus, danh sách vẫn giữ thứ tự lọc/sắp xếp.
+- Electron QA: `positron-p51263-source-keyboard-before-1920x1080-real.png` / `positron-p51263-source-keyboard-after-1920x1080-real.png` / `positron-p51263-source-keyboard-720-real.png`; kiểm tra focus, wrap, tab stop, không autoplay, không tràn ngang và dữ liệu bất biến.
+
 ## P5.1.262 — Trở lại chi tiết nguồn đã chọn / Electron 4.23.347
 - Feature priority: NEW — Thêm nút trở lại ngay trên thẻ nguồn sau khi dùng Đi tới, cuộn lại đúng hàng chi tiết trước đó và làm nổi bật dòng nguồn; giữ ID nguồn sau khi sắp xếp, không sửa playlist hoặc phát video.
 - Electron screenshot: positron-p51262-source-return-after-1920x1080-real.png

@@ -29,10 +29,16 @@
 - Release: `positron/v4.23.346-p5.1.261`; SHA `22be696da3edf895822560bdea9b6993f70ffccd`.
 - Phát hiện từ ảnh 720px: sau khi trang cuộn xuống thẻ nguồn, bảng Chi tiết nguồn không còn nằm hoàn toàn trong vùng nhìn thấy.
 
-## Vòng 05 — P5.1.262 / 4.23.347 — ĐANG XÁC MINH
-- Thêm nút Trở lại chi tiết ngay tại thẻ được tô viền, focus/highlight đúng hàng vừa xuất phát, xóa nút tạm sau khi quay lại.
-- PNG thật yêu cầu: `positron-p51262-source-return-before-1920x1080-real.png`, `positron-p51262-source-return-after-1920x1080-real.png`, `positron-p51262-source-return-720-real.png`.
-- Chỉ tính hoàn thành khi đầy đủ code/test/ảnh xem trực tiếp/CI/release bất biến.
+## Vòng 05 — P5.1.262 / 4.23.347 — ĐÃ XÁC MINH
+- Từ thẻ được chọn, nút ↖ Chi tiết đưa focus trở lại đúng hàng nguồn và xóa highlight tạm trên thẻ gốc.
+- QA: 950 tests, 945 pass, 5 skipped, 0 fail; 6/6 CI jobs success. 3 PNG thật trước/sau/720px đã tải và xem; ở ảnh sau hàng 9 kênh được viền, card gốc hết viền.
+- Release: `positron/v4.23.347-p5.1.262`; SHA `0419e80c05a4ba0e5ef9afe35e51905a70460de6`.
+- Phát hiện sau ảnh: focus đúng hàng nhưng người dùng chưa thể duyệt hàng khác bằng ArrowUp/ArrowDown, phải Tab hoặc click.
+
+## Vòng 06 — P5.1.263 / 4.23.348 — ĐANG XÁC MINH
+- Thêm roving focus bằng ArrowUp/ArrowDown trong bảng nguồn đã lọc và sắp xếp, chặn bubble ra shortcut TV.
+- Ảnh phải mở: `positron-p51263-source-keyboard-before-1920x1080-real.png`, `positron-p51263-source-keyboard-after-1920x1080-real.png`, `positron-p51263-source-keyboard-720-real.png`.
+- Chỉ tính đủ vòng khi có test, ảnh thật, trực tiếp nhìn PNG và release.
 
 ## Các vòng kế
 - Bám theo PNG và nhật ký của vòng gần nhất, không tự ghi 20/20 khi chưa có bằng chứng.

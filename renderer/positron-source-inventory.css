@@ -105,3 +105,9 @@ html[data-positron="true"] #page-sources #sourcesList .po-source-inventory-back:
 html[data-positron="true"] #page-sources #poSourceInventoryDetails li[data-po-inventory-return="true"]{
  outline:2px solid #8be9d2;outline-offset:2px;
 }
+
+/* P263: visible roving focus for keyboard navigation across source inventory. */
+html[data-positron="true"] #page-sources #poSourceInventoryDetails li[data-po-inventory-active="true"],
+html[data-positron="true"] #page-sources #poSourceInventoryDetails li:focus-visible{
+ outline:2px solid #9beedb;outline-offset:2px;
+}

@@ -89,6 +89,7 @@
   details.replaceChildren();
   for(const source of filtered.slice(0,30)){
    const li=d.createElement('li');
+   li.tabIndex=details.childElementCount===0?0:-1;
    li.dataset.sourceId=String(source.id);
    li.dataset.channelCount=String(countBySource.get(String(source.id))||0);
    const name=d.createElement('span');
@@ -132,7 +133,8 @@
        .find(item=>item.dataset.sourceId===String(source.id));
      }
      if(row){
-      row.tabIndex=-1;
+      for(const item of details.querySelectorAll('li[data-source-id]'))item.tabIndex=-1;
+      row.tabIndex=0;
       row.dataset.poInventoryReturn='true';
       row.focus({preventScroll:true});
       row.scrollIntoView({block:'center',behavior:'auto'});
@@ -167,6 +169,27 @@
   toggle.setAttribute('aria-expanded',String(expanded));
   toggle.textContent=expanded?'Ẩn chi tiết':'Chi tiết nguồn';
   if(expanded)renderDetails();
+ });
+ // P263: roving keyboard focus; arrows move between the visible sorted rows only.
+ details.addEventListener('keydown',event=>{
+  const row=event.target?.closest?.('li[data-source-id]');
+  if(!row||(event.key!=='ArrowDown'&&event.key!=='ArrowUp'))return;
+  const rows=[...details.querySelectorAll('li[data-source-id]')];
+  const index=rows.indexOf(row);
+  if(index<0||!rows.length)return;
+  event.preventDefault();
+  event.stopPropagation();
+  const step=event.key==='ArrowDown'?1:-1;
+  const next=rows[(index+step+rows.length)%rows.length];
+  for(const item of rows){
+   item.tabIndex=-1;
+   item.removeAttribute('data-po-inventory-active');
+   item.removeAttribute('data-po-inventory-return');
+  }
+  next.tabIndex=0;
+  next.dataset.poInventoryActive='true';
+  next.focus({preventScroll:true});
+  next.scrollIntoView({block:'nearest',behavior:'auto'});
  });
  search.addEventListener('input',()=>{if(!details.hidden)renderDetails();});
  statusSelect.addEventListener('change',()=>{if(!details.hidden)renderDetails();});

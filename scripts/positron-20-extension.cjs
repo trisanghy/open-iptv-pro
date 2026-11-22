@@ -8859,6 +8859,59 @@ async function runTwenty(page){
  await page.setViewportSize({width:1360,height:820});
  await page.evaluate(()=>window.IPTVState.setPage('tv'));
 
+
+ // P263: verify roving keyboard focus between sources, not a channel-changing shortcut.
+ await page.setViewportSize({width:1920,height:1080});
+ await page.evaluate(()=>{
+  window.IPTVState.setPage('sources');
+  const toggle=document.getElementById('poSourceInventoryToggle');
+  if(toggle.getAttribute('aria-expanded')!=='true')toggle.click();
+  const search=document.getElementById('poSourceInventorySearch');
+  search.value='';search.dispatchEvent(new Event('input',{bubbles:true}));
+  const filter=document.getElementById('poSourceInventoryStatus');
+  filter.value='all';filter.dispatchEvent(new Event('change',{bubbles:true}));
+  const sort=document.getElementById('poSourceInventorySort');
+  sort.value='count-asc';sort.dispatchEvent(new Event('change',{bubbles:true}));
+  window.__p263Sources=JSON.stringify(window.IPTVState.getStore().sources);
+  window.__p263Channels=JSON.stringify(window.IPTVState.getChannels().map(c=>c.id));
+  window.__p263Current=window.IPTVState.getCurrent()?.id||null;
+ });
+ await page.locator('#poSourceInventoryDetails li[data-source-id]').first().focus();
+ const before263=await page.screenshot({path:path.join(out,'positron-p51263-source-keyboard-before-1920x1080-real.png'),animations:'disabled'});
+ await page.keyboard.press('ArrowDown');
+ const sourceKeyboardQA263=await page.evaluate(()=>{
+  const d=document,store=window.IPTVState.getStore();
+  const rows=[...d.querySelectorAll('#poSourceInventoryDetails li[data-source-id]')];
+  return {focusedSecondRow:rows.length===2&&d.activeElement===rows[1],
+   activeMarker:rows.length===2&&rows[1].dataset.poInventoryActive==='true',
+   tabStopOnSecond:rows.length===2&&rows[1].tabIndex===0&&rows[0].tabIndex===-1,
+   noAutoplay:(window.IPTVState.getCurrent()?.id||null)===window.__p263Current,
+   sourcesUnchanged:JSON.stringify(store.sources)===window.__p263Sources,
+   playlistUnchanged:JSON.stringify(window.IPTVState.getChannels().map(c=>c.id))===window.__p263Channels,
+   noOverflow:d.documentElement.scrollWidth<=innerWidth+1};
+ });
+ for(const [k,ok] of Object.entries(sourceKeyboardQA263))
+  assert.equal(ok,true,'P263 keyboard '+k+': '+JSON.stringify(sourceKeyboardQA263));
+ const after263=await page.screenshot({path:path.join(out,'positron-p51263-source-keyboard-after-1920x1080-real.png'),animations:'disabled'});
+ assert.equal(before263.equals(after263),false);
+ await page.setViewportSize({width:720,height:820});
+ await page.locator('#poSourceInventoryDetails li[data-source-id]').first().focus();
+ await page.keyboard.press('ArrowUp');
+ const narrowKeyboard263=await page.evaluate(()=>{
+  const d=document,rows=[...d.querySelectorAll('#poSourceInventoryDetails li[data-source-id]')];
+  return {wrapFocus:rows.length===2&&d.activeElement===rows[1],
+   noOverflow:d.documentElement.scrollWidth<=innerWidth+1};
+ });
+ for(const [k,ok] of Object.entries(narrowKeyboard263))
+  assert.equal(ok,true,'P263 narrow keyboard '+k+': '+JSON.stringify(narrowKeyboard263));
+ await page.screenshot({path:path.join(out,'positron-p51263-source-keyboard-720-real.png'),animations:'disabled'});
+ await page.evaluate(()=>{
+  const toggle=document.getElementById('poSourceInventoryToggle');
+  if(toggle.getAttribute('aria-expanded')==='true')toggle.click();
+ });
+ await page.setViewportSize({width:1360,height:820});
+ await page.evaluate(()=>window.IPTVState.setPage('tv'));
+
  const report={type:'Positron P5 twenty distinct desktop screenshot cases',realElectron:true,syntheticChannels:false,
   screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,desktop16x9Screenshots,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA,chooserQa,toastLayoutQA,nativeToastQA,compactIdleQA,channelChipRailQA,advancedFilterQA,readableCardsQA,keyboardTabQA,favoriteEmptyQA,duplicateEmptyQA,categoryFilterQA,categoryFixtureQA,compactSingleQA,directFavoriteQA,favoriteCountQA,compactToastStackQA,toastDismissQA,toastFocusReturnQA,toastDockQA,wheelQA,pinnedAllQA,pinnedMaskQA,categoryKeyQA,dropdownChipQA,pinnedRightMaskQA,pinnedBorderMaskQA,asciiDSearchQA,emptySearchActionQA,readableCardTitleQA,favoriteSvgQA,keyboardFavoriteQA,multiTermSearchQA,keyboardSearchQA,arrowNavigationQA,pageNavigationQA,favoriteSortQA,onAirFilterQA,programmeSearchQA,upcomingProgrammeQA,soonProgrammeQA,earliestEpgSortQA,timeWindowQA,scheduleProgressQA:scheduleProgressQA,nativeReminderQA,cancelReminderQA,reminderLeadQA,toastHistoryQA,notificationArchiveQA,alertFilterQA,noticeSearchQA,quietModeQA,dismissToastQA,libraryPulseQA,groupDistributionQA,logoMissingQA,missingSearchQA,missingGroupQA,missingSortQA,missingJumpQA,missingCsvQA,duplicateQA,duplicateSearchQA,duplicateCsvQA,duplicateScopeQA,missingSizeQA,missingPagerQA,missingEpgFilterQA,missingResetQA,missingRangeQA,missingLocateQA,libraryReturnQA,favoriteActionQA,quickFavoriteQA,favoriteMoreQA,favoriteSearchQA,favoriteRotateQA,favoriteSuggestSearchQA,favoriteBulkQA,favoriteLayoutQA,favoriteNameSortQA,searchAfterSortQA,restoredSortQA,favoriteSuggestion12QA,batchFavorite12QA,restoreSixQA,favoriteRegionalQA,favoriteGroupSearchQA,resetGroupQA,favoriteQuickGroupQA,favoriteQuickResetQA,favoritePageLastQA,favoritePageNavigationQA,favoriteJumpSevenQA,favoriteJumpClampQA,favoriteWideQA,favoriteSuggestionSortQA,tvReselectTopQA,dvrDurationPresetQA,dvrDurationLiveQA,dvrPresetSelectionQA,dvrQuickStartQA,dvrSuggestedTitleQA,dvrReviewQA,dvrCopyQA,dvrTomorrowQA,dvrTitleSyncQA,dvrReplaceConfirmQA,dvrUndoQA,dvrExtendQA,tvToastSafeQA,otherPage203,randomDiscoveryQA,randomFollowupQA,compact205,randomCycleQA,compact206,randomResetQA,compact207,focusReturnQA,compact208,discoveryProgressQA,compact209,sourceChangeQA,compact210,randomBackQA,randomBackActionQA,compact211,forwardHistoryQA,forwardActionQA,compact212,historyOpenQA,historyPickQA,compact213,historyKeyboardQA,compact214,historySearchQA,searchEnterQA,missing215,compact215,first216,typed216,down216,up216,close216,compact216,favoriteStart217,favoriteQA217,compact217,filterStart218,filterQA218,empty218,reset218,compact218,sortStart219,sortAZ219,sortZA219,sortRestore219,compact219,expandStart220,expandQA220,collapseQA220,compact220,epgStart221,oldStagger221,epgAligned221,compact221,epgEmptyStart222,epgEmptyQA222,navigation222,compact222,epgImportStart223,epgImportQA223,importForwardQA223,compact223,epgImportFeedbackBaseline224,epgImportFeedbackQA224,epgFeedbackCompact224,tvControlQA225,channelJumpQA226,enterQA226,escapeQA226,jumpScrollQA227,downQA228,keyboardChannelQA228,endQA228,homeQA228,shortcutQA228,favoriteQA229,favoriteRestoreQA229,groupQA230,groupBackQA230,groupQA231,pickerReady231,groupQA232,filterQA232,historyQA233,historyReady233,groupDiacriticQA234,historyDedupeQA235,forwardQA236,keyboardBack237,keyboardForward237,shortcutGuardQA238,shortcutAfterQA238,escapeJumpBeforeQA239,escapeJumpAfterQA239,favoriteFilterQA240,favoriteFilterRestoreQA240,favoriteChipQA241,favoriteChipClearQA241,recentFilterQA242,recentFilterClearQA242,keyboardRecentQA243,keyboardRecentReturnQA243,numericStartQA244,numericFinalQA244,beforeGroupQA245,groupSyncQA245,quickCloseStartQA246,quickCloseQA246,positionStartQA247,positionQA247,regularJumpQA248,prefillQA248,escapeStartQA249,escapeRestoreQA249,toggleAfterNonRowEscape,positionStartQA250,positionClearedQA250,positionJumpQA250,positionReturnQA250,rowReturnStartQA251,rowReturnQA251,filteredReturnStartQA252,filteredReturnQA252,centerRowStartQA253,centerRowQA253,crossPageStartQA254,crossPageQA254,returnButtonStartQA255,returnButtonQA255,sourceInventoryQA256,sourceInventoryNarrowQA256,sourceDetailsStartQA257,sourceDetailsQA257,sourceDetailsNarrowQA257};
  fs.writeFileSync(path.resolve('positron-evidence','audit-p5-20-rounds.json'),JSON.stringify(report,null,2));

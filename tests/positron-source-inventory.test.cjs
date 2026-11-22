@@ -128,7 +128,7 @@ test('P5.1.262 return navigation restores focus on the exact source inventory ro
   assert.ok(code.includes(k),'Missing P262 source return '+k);
  assert.ok(css.includes('li[data-po-inventory-return="true"]'));
  assert.ok(!code.includes('playChannel(')&&!code.includes('save(')&&!code.includes('localStorage.setItem('));
- assert.equal(JSON.parse(read('package.json')).version,'4.23.347');
+ assert.ok(Number(JSON.parse(read('package.json')).version.split('.')[2])>=347);
 });
 test('P5.1.262 real Electron screenshots prove reverse navigation and playlist invariance',()=>{
  const qa=read('scripts/positron-20-extension.cjs'),wf=read('.github/workflows/positron-lab.yml');
@@ -138,4 +138,26 @@ test('P5.1.262 real Electron screenshots prove reverse navigation and playlist i
  for(const k of ['sourceReturnQA262','focusedRow:','highlightedRow:','backRemoved:',
   'noAutoplay:','sourcesUnchanged:','playlistUnchanged:','noOverflow:'])
   assert.ok(qa.includes(k),'P262 return QA missing '+k);
+});
+
+test('P5.1.263 allows safe Up/Down roving focus through filtered source rows',()=>{
+ const code=read('renderer/positron-source-inventory.js'),css=read('renderer/positron-source-inventory.css');
+ for(const token of ["li.tabIndex=details.childElementCount===0?0:-1;",
+  "details.addEventListener('keydown'","event.key!=='ArrowDown'","event.key!=='ArrowUp'",
+  "event.preventDefault();","event.stopPropagation();","next.tabIndex=0;",
+  "next.dataset.poInventoryActive='true';","next.focus({preventScroll:true});",
+  "next.scrollIntoView({block:'nearest',behavior:'auto'});"])
+  assert.ok(code.includes(token),'P263 keyboard source inventory '+token);
+ assert.ok(css.includes('li[data-po-inventory-active="true"]'));
+ assert.ok(!code.includes('playChannel(')&&!code.includes('save(')&&!code.includes('localStorage.setItem('));
+ assert.equal(JSON.parse(read('package.json')).version,'4.23.348');
+});
+test('P5.1.263 Electron screenshots verify keyboard focus order and zero playback mutation',()=>{
+ const qa=read('scripts/positron-20-extension.cjs'),wf=read('.github/workflows/positron-lab.yml');
+ for(const name of ['positron-p51263-source-keyboard-before-1920x1080-real.png',
+  'positron-p51263-source-keyboard-after-1920x1080-real.png','positron-p51263-source-keyboard-720-real.png'])
+  assert.ok(qa.includes(name)&&wf.includes(name),name);
+ for(const key of ['sourceKeyboardQA263','focusedSecondRow:','activeMarker:','tabStopOnSecond:',
+  'noAutoplay:','sourcesUnchanged:','playlistUnchanged:','noOverflow:'])
+  assert.ok(qa.includes(key),'P263 source keyboard QA missing '+key);
 });
