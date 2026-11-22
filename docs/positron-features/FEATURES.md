@@ -11,7 +11,7 @@ Trang này được tạo tự động từ GitHub Releases và ảnh kiểm th�
 
 **Ứng dụng:** 4.23.266 · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
 
-Visual bug confirmed from real screenshot P5.1.180: khi lưu 6 kênh một lần tổng 8 Favorites, auto-fit grid dàn thành 6 cột hẹp, tên "QA Ch..." bị ellipsis và metadata dồn 4 dòng. Fix: chỉ override `#page-fav #favoriteList.favorite-grid` trong Positron bằng min-width 390px/cột, giữ auto-fit; dưới 760px dùng một cột. Không sửa hệ thống grid Sources/EPG, không xóa/sửa Favorites hay trình phát.
+Feature priority: BLOCKER_FIX — Ảnh P5.1.180 xác nhận lỗi cắt tên Yêu thích khiến người xem không nhận diện chính xác kênh trước khi bấm phát video, nguy cơ chọn sai kênh; đây là lỗi cản trở sử dụng cốt lõi. Visual bug confirmed from real screenshot P5.1.180: khi lưu 6 kênh một lần tổng 8 Favorites, auto-fit grid dàn thành 6 cột hẹp, tên "QA Ch..." bị ellipsis và metadata dồn 4 dòng.
 
 *Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
 
