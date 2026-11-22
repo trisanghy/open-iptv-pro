@@ -5793,10 +5793,67 @@ async function runTwenty(page){
   assert.equal(value,true,'P202 actual Electron DVR extend '+key+': '+JSON.stringify(dvrExtendQA));
  const after202=await page.screenshot({path:path.join(out,'positron-p51202-dvr-extend-after-1920x1080-real.png'),animations:'disabled'});
  assert.deepEqual([after202.readUInt32BE(16),after202.readUInt32BE(20)],[1920,1080]);
+
+ // P203: genuine Electron before & after. The baseline temporarily restores
+ // P202 bottom-edge CSS, then the override is removed for the new screenshot.
+ await page.setViewportSize({width:1920,height:1080});
+ await page.evaluate(()=>{
+  window.IPTVState.setPage('tv');
+  const tray=document.getElementById('toastArea');tray.replaceChildren();
+  for(const [kind,txt] of [
+    ['', 'QA P203: Đã lưu danh sách kênh'],
+    ['', 'QA P203: Đã cập nhật lịch phát'],
+    ['warn', 'QA P203: Nguồn cần được kiểm tra']
+  ]){
+   const notice=document.createElement('div');
+   notice.className='toast'+(kind?' '+kind:'');
+   notice.textContent=txt;notice.dataset.poRound203='true';tray.append(notice);
+  }
+ });
+ await page.waitForFunction(()=>!!document.querySelector('#toastArea .po-toast-history-toggle')
+  &&!!document.querySelector('#toastArea .toast.warn .po-toast-dismiss'),{timeout:5000});
+ const legacyP203=await page.addStyleTag({content:
+  'html[data-positron="true"]:has(#page-tv.active-page) #toastArea{top:auto!important;bottom:16px!important;right:16px!important}'+
+  'html[data-positron="true"]:has(#page-tv.active-page) #toastArea>.po-toast-history-toggle{display:block!important}'});
+ const before203=await page.screenshot({path:path.join(out,'positron-p51203-tv-toast-safe-before-1920x1080-real.png'),animations:'disabled'});
+ assert.deepEqual([before203.readUInt32BE(16),before203.readUInt32BE(20)],[1920,1080]);
+ await legacyP203.evaluate(node=>node.remove());
+ const tvToastSafeQA=await page.evaluate(()=>{
+  const d=document,area=d.getElementById('toastArea'),volume=d.getElementById('volume');
+  const player=d.querySelector('#page-tv .transport-controls')||volume;
+  const rect=area.getBoundingClientRect(),controls=player.getBoundingClientRect();
+  const warning=area.querySelector('.toast.warn'),history=area.querySelector('.po-toast-history-toggle');
+  const archive=d.getElementById('poArchiveToggle');
+  return {
+   tvActive:d.getElementById('page-tv')?.classList.contains('active-page')===true,
+   trayPinnedToTop:parseFloat(getComputedStyle(area).top)>=58
+    &&parseFloat(getComputedStyle(area).top)<=90,
+   noPlayerControlOverlap:rect.bottom<controls.top-8,
+   warningPreserved:!!warning&&getComputedStyle(warning).display!=='none',
+   historyFloatingHidden:!!history&&getComputedStyle(history).display==='none',
+   topbarArchiveAccessible:!!archive&&getComputedStyle(archive).display!=='none',
+   volumeControlPreserved:!!volume&&volume.isConnected,
+   noAutoplay:window.IPTVState.getCurrent()===null,
+   noHorizontalOverflow:d.documentElement.scrollWidth<=innerWidth+1
+  };
+ });
+ for(const [key,value] of Object.entries(tvToastSafeQA))
+  assert.equal(value,true,'P203 actual Electron TV toast '+key+': '+JSON.stringify(tvToastSafeQA));
+ const after203=await page.screenshot({path:path.join(out,'positron-p51203-tv-toast-safe-after-1920x1080-real.png'),animations:'disabled'});
+ assert.deepEqual([after203.readUInt32BE(16),after203.readUInt32BE(20)],[1920,1080]);
+ const otherPage203=await page.evaluate(()=>{
+  window.IPTVState.setPage('epg');
+  const area=document.getElementById('toastArea'),history=area.querySelector('.po-toast-history-toggle');
+  return {normalPageRestored:parseFloat(getComputedStyle(area).bottom)>=0,
+   controlsInOtherPages:!!history&&getComputedStyle(history).display!=='none'};
+ });
+ for(const [key,value] of Object.entries(otherPage203))
+  assert.equal(value,true,'P203 other-page toast regression '+key+': '+JSON.stringify(otherPage203));
+ await page.evaluate(()=>document.getElementById('toastArea').replaceChildren());
  await page.setViewportSize({width:1360,height:820});
 
   const report={type:'Positron P5 twenty distinct desktop screenshot cases',realElectron:true,syntheticChannels:false,
-  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,desktop16x9Screenshots,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA,chooserQa,toastLayoutQA,nativeToastQA,compactIdleQA,channelChipRailQA,advancedFilterQA,readableCardsQA,keyboardTabQA,favoriteEmptyQA,duplicateEmptyQA,categoryFilterQA,categoryFixtureQA,compactSingleQA,directFavoriteQA,favoriteCountQA,compactToastStackQA,toastDismissQA,toastFocusReturnQA,toastDockQA,wheelQA,pinnedAllQA,pinnedMaskQA,categoryKeyQA,dropdownChipQA,pinnedRightMaskQA,pinnedBorderMaskQA,asciiDSearchQA,emptySearchActionQA,readableCardTitleQA,favoriteSvgQA,keyboardFavoriteQA,multiTermSearchQA,keyboardSearchQA,arrowNavigationQA,pageNavigationQA,favoriteSortQA,onAirFilterQA,programmeSearchQA,upcomingProgrammeQA,soonProgrammeQA,earliestEpgSortQA,timeWindowQA,scheduleProgressQA:scheduleProgressQA,nativeReminderQA,cancelReminderQA,reminderLeadQA,toastHistoryQA,notificationArchiveQA,alertFilterQA,noticeSearchQA,quietModeQA,dismissToastQA,libraryPulseQA,groupDistributionQA,logoMissingQA,missingSearchQA,missingGroupQA,missingSortQA,missingJumpQA,missingCsvQA,duplicateQA,duplicateSearchQA,duplicateCsvQA,duplicateScopeQA,missingSizeQA,missingPagerQA,missingEpgFilterQA,missingResetQA,missingRangeQA,missingLocateQA,libraryReturnQA,favoriteActionQA,quickFavoriteQA,favoriteMoreQA,favoriteSearchQA,favoriteRotateQA,favoriteSuggestSearchQA,favoriteBulkQA,favoriteLayoutQA,favoriteNameSortQA,searchAfterSortQA,restoredSortQA,favoriteSuggestion12QA,batchFavorite12QA,restoreSixQA,favoriteRegionalQA,favoriteGroupSearchQA,resetGroupQA,favoriteQuickGroupQA,favoriteQuickResetQA,favoritePageLastQA,favoritePageNavigationQA,favoriteJumpSevenQA,favoriteJumpClampQA,favoriteWideQA,favoriteSuggestionSortQA,tvReselectTopQA,dvrDurationPresetQA,dvrDurationLiveQA,dvrPresetSelectionQA,dvrQuickStartQA,dvrSuggestedTitleQA,dvrReviewQA,dvrCopyQA,dvrTomorrowQA,dvrTitleSyncQA,dvrReplaceConfirmQA,dvrUndoQA,dvrExtendQA};
+  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,desktop16x9Screenshots,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA,chooserQa,toastLayoutQA,nativeToastQA,compactIdleQA,channelChipRailQA,advancedFilterQA,readableCardsQA,keyboardTabQA,favoriteEmptyQA,duplicateEmptyQA,categoryFilterQA,categoryFixtureQA,compactSingleQA,directFavoriteQA,favoriteCountQA,compactToastStackQA,toastDismissQA,toastFocusReturnQA,toastDockQA,wheelQA,pinnedAllQA,pinnedMaskQA,categoryKeyQA,dropdownChipQA,pinnedRightMaskQA,pinnedBorderMaskQA,asciiDSearchQA,emptySearchActionQA,readableCardTitleQA,favoriteSvgQA,keyboardFavoriteQA,multiTermSearchQA,keyboardSearchQA,arrowNavigationQA,pageNavigationQA,favoriteSortQA,onAirFilterQA,programmeSearchQA,upcomingProgrammeQA,soonProgrammeQA,earliestEpgSortQA,timeWindowQA,scheduleProgressQA:scheduleProgressQA,nativeReminderQA,cancelReminderQA,reminderLeadQA,toastHistoryQA,notificationArchiveQA,alertFilterQA,noticeSearchQA,quietModeQA,dismissToastQA,libraryPulseQA,groupDistributionQA,logoMissingQA,missingSearchQA,missingGroupQA,missingSortQA,missingJumpQA,missingCsvQA,duplicateQA,duplicateSearchQA,duplicateCsvQA,duplicateScopeQA,missingSizeQA,missingPagerQA,missingEpgFilterQA,missingResetQA,missingRangeQA,missingLocateQA,libraryReturnQA,favoriteActionQA,quickFavoriteQA,favoriteMoreQA,favoriteSearchQA,favoriteRotateQA,favoriteSuggestSearchQA,favoriteBulkQA,favoriteLayoutQA,favoriteNameSortQA,searchAfterSortQA,restoredSortQA,favoriteSuggestion12QA,batchFavorite12QA,restoreSixQA,favoriteRegionalQA,favoriteGroupSearchQA,resetGroupQA,favoriteQuickGroupQA,favoriteQuickResetQA,favoritePageLastQA,favoritePageNavigationQA,favoriteJumpSevenQA,favoriteJumpClampQA,favoriteWideQA,favoriteSuggestionSortQA,tvReselectTopQA,dvrDurationPresetQA,dvrDurationLiveQA,dvrPresetSelectionQA,dvrQuickStartQA,dvrSuggestedTitleQA,dvrReviewQA,dvrCopyQA,dvrTomorrowQA,dvrTitleSyncQA,dvrReplaceConfirmQA,dvrUndoQA,dvrExtendQA,tvToastSafeQA,otherPage203};
  fs.writeFileSync(path.resolve('positron-evidence','audit-p5-20-rounds.json'),JSON.stringify(report,null,2));
  return report;
 }

@@ -959,3 +959,14 @@ html[data-positron="true"] .po-dvr-extend-end{
 html[data-positron="true"] .po-dvr-extend-end:focus-visible{
  outline:2px solid var(--po-accent,#79dfc6);outline-offset:2px;
 }
+
+/* P203: keep desktop TV transport unobstructed by native notification tray.
+   Warning/error notices stay visible; topbar notification archive remains openable. */
+@media(min-width:1000px){
+ html[data-positron="true"]:has(#page-tv.active-page) #toastArea{
+  top:66px!important;bottom:auto!important;right:16px!important;
+  max-width:min(360px,calc(100vw - 88px))!important;
+ }
+ html[data-positron="true"]:has(#page-tv.active-page)
+  #toastArea>.po-toast-history-toggle{display:none!important}
+}

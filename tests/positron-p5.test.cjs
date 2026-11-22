@@ -2223,3 +2223,17 @@ test('P5.1.202 extends DVR end by fifteen minutes without scheduling or passing 
   'positron-p51202-dvr-extend-after-1920x1080-real.png'])
   assert.ok(qa.includes(token),'Missing P202 real Electron QA '+token);
 });
+
+
+test('P5.1.203 TV uses desktop notification safe lane without hiding critical notices',()=>{
+ const css=read('renderer/positron-twenty.css'),qa=read('scripts/positron-20-extension.cjs');
+ for(const token of ['@media(min-width:1000px)','html[data-positron="true"]:has(#page-tv.active-page) #toastArea',
+  'top:66px!important','bottom:auto!important','max-width:min(360px',
+  '#toastArea>.po-toast-history-toggle{display:none!important}'])
+  assert.ok(css.includes(token),'Missing TV-safe notification rule '+token);
+ for(const token of ['tvToastSafeQA','noPlayerControlOverlap','historyFloatingHidden',
+  'topbarArchiveAccessible','warningPreserved','normalPageRestored',
+  'positron-p51203-tv-toast-safe-before-1920x1080-real.png',
+  'positron-p51203-tv-toast-safe-after-1920x1080-real.png'])
+  assert.ok(qa.includes(token),'Missing P203 actual Electron TV QA '+token);
+});

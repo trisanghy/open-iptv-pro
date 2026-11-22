@@ -1587,3 +1587,11 @@ P5.1.81 follow-up: real Electron capture found nav overflow; replace flexible no
 - Chỉ điều chỉnh giờ kết thúc của biểu mẫu, không tự đặt lịch, không tự phát kênh, không thay playlist hay lịch ghi đã lưu. Không cho gia hạn vượt 8 giờ; trường không hợp lệ được cảnh báo.
 - Electron screenshot: positron-p51202-dvr-extend-after-1920x1080-real.png
 - Real Electron QA: positron-p51202-dvr-extend-before-1920x1080-real.png và positron-p51202-dvr-extend-after-1920x1080-real.png (chờ CI và mở ảnh thực).
+
+
+## P5.1.203 / 4.23.288 — Thông báo TV không che nút phát/âm lượng (CANDIDATE)
+- Feature priority: NEW — Khi xem truyền hình trên desktop, thông báo được đưa đến vùng góc phía trên; nút mở danh sách nổi không che thanh phát và âm lượng, trong khi cảnh báo quan trọng cùng lịch sử trên thanh đầu vẫn truy cập được.
+- User action: Mở trang Xem truyền hình trên desktop và thực hiện thao tác phát sinh thông báo; điều khiển Play/Volume không còn bị banner che. Bấm Thông báo trên thanh trên để xem nhật ký.
+- Electron screenshot: positron-p51203-tv-toast-safe-after-1920x1080-real.png
+- Đầu vào: ảnh Electron thật P5.1.202 1920×1080 tại trang TV, nút “Xem thêm 6 thông báo” và banner bên dưới đang đè lên âm lượng/phần dưới player.
+- Chỉ thay CSS scoped desktop TV tối thiểu 1000px, bảo toàn cảnh báo, archive và hành vi giao diện 450px; QA P203 chạy Electron trước/sau và đo geometry.
