@@ -922,11 +922,13 @@ function playbackReady(token){
 function playbackFailure(token,message){
  if(!playbackActive(token))return;
  var browserButton=byId('browserFallback');
+ var sourceLabel='Nguồn '+(playbackStreamIndex+1)+'/'+Math.max(1,playbackStreamUrls.length);
+ browserButton.textContent='Phát '+sourceLabel+' trong Samsung Internet (Cast)';
  browserButton.hidden=false;
  if(byId('channelPicker').hidden&&browserButton.focus)try{browserButton.focus({preventScroll:true});}catch(e){browserButton.focus();}
  clearPlaybackTimer();
  byId('player').classList.remove('is-playing');
- setPlayerStatus('Không phát được kênh. '+String(message||'Nguồn hoặc codec không hỗ trợ.').slice(0,230));
+ setPlayerStatus('Không phát được kênh ('+sourceLabel+'). '+String(message||'Nguồn hoặc codec không hỗ trợ.').slice(0,210));
  byId('playbackDiag').hidden=!playbackEvidence.length;
 }
 function fallbackFromAvplay(channel,token,message){
