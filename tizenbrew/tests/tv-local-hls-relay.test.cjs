@@ -21,8 +21,8 @@ function request(method,path,body,opts={}){
 }
 test('serviceFile is registered on TizenBrew app manifest; OTA bootstrap untouched',()=>{
  assert.equal(manifest.packageType,'app');
- assert.equal(manifest.version,'0.1.36');
- assert.equal(manifest.tizenbrewEdition,'0.1.36');
+ assert.equal(manifest.version,'0.1.37');
+ assert.equal(manifest.tizenbrewEdition,'0.1.37');
  assert.equal(manifest.appPath,'tizenbrew/bootstrap.html');
  assert.equal(manifest.serviceFile,'tizenbrew/hls-relay-v1.js');
 });
@@ -74,6 +74,8 @@ test('TV localhost service CORS preflight works without actual X-Open-IPTV-Relay
   assert.equal(denied.headers['access-control-allow-origin'],undefined);
   const noHeader=await request('GET','/health',null,{custom:false});
   assert.equal(noHeader.status,403);
+  const mediaWithoutHeader=await request('GET','/r/'+ 'a'.repeat(40) +'/0',null,{custom:false});
+  assert.equal(mediaWithoutHeader.status,404, 'media requests must reach session lookup without custom headers');
   const invalid=await request('POST','/session',{url:'http://127.0.0.1:80/admin'});
   assert.equal(invalid.status,400);
   const secret='https://cdn.example.org/vtv2/live.m3u8?token=TOP_SECRET';
