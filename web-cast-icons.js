@@ -90,7 +90,7 @@
    ['.cx-icon','cast'],['#cxTabPair','pair','Ghép đôi TV'],
    ['#cxTabCast','cast','Google Cast'],['#cxTabAir','airplay','AirPlay'],
    ['#cxPaneCast .cx-featureicon','cast'],['#cxPaneAir .cx-featureicon','airplay'],
-   ['#cxCopyTv','copy','Sao chép'],['#cxConnect','link','Kết nối'],
+   ['#cxCopyTv','copy','Sao chép'],['#cxCopyTvOriginal','copy','Sao chép'],['#cxConnect','link','Kết nối'],
    ['#cxRemotePlay','play','Phát lên TV'],['#cxRemotePause','pause','Tạm dừng'],
    ['#cxRemoteResume','play','Tiếp tục'],['#cxRemoteStop','stop','Dừng'],
    ['#cxCastScan','search','Tìm thiết bị'],['#cxCastPlay','play','Phát trên TV'],
