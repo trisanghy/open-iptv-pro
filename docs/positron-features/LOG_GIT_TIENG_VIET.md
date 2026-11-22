@@ -2,14 +2,22 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
-## P5.1.249 — Escape trả tiêu điểm về kênh trước đó
+## P5.1.250 — Electron 4.23.335 — Ẩn chỉ báo vị trí đã cũ (CANDIDATE)
 
-**Ứng dụng:** 4.23.334 · **Trạng thái:** Chưa có bản phát hành
+**Ứng dụng:** Chưa xác minh · **Trạng thái:** Chưa có bản phát hành
+
+Dựa trên ảnh Electron thật P5.1.249: chỉ báo `Kênh 412/561` nằm dưới bộ đếm. Kiểm tra mã phát hiện chỉ có `focusin` cập nhật nên nhãn vẫn hiển thị khi đã rời danh sách. Sửa: `focusout` xóa vị trí focus cũ khi chuyển sang thanh công cụ; tạm giữ vị trí gốc khi hộp nhảy số mở và khôi phục khi Escape. Không đọc/sửa dữ liệu luồng M3U hay Favorites.
+
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
+
+## P5.1.249 — Electron 4.23.334 — Escape hủy rồi trở về hàng kênh đang chọn (CANDIDATE)
+
+**Ứng dụng:** 4.23.334 · **Trạng thái:** Đã phát hành
 
 Feature priority: NEW — Khi mở bảng nhảy số từ một hàng kênh đang focus, phím Escape hủy và trả tiêu điểm về đúng hàng đó, để tiếp tục duyệt bằng lên/xuống. Trước đây Escape chỉ trả focus về nút mở bảng, gây đứt dòng điều hướng. User action: Chọn QA Channel 412, Alt+Shift+J, Escape: bảng đóng và kênh 412 sáng trở lại; nếu mở từ thanh công cụ thì Escape tiếp tục focus nút như cũ.
 
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/f892cc51f322bd35dc2a5a7b1c6bd62ec2ed71ae)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/a327fe578da6d5d0ea1f2ff5ff1845b8f5e689dd)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.334-p5.1.249)
 
 ## P5.1.248 — Electron 4.23.333 — Alt+Shift+J điền sẵn số kênh đang focus (CANDIDATE)
 

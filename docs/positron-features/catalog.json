@@ -1,21 +1,101 @@
 {
-  "generatedAt": "2026-11-22T19:18:44.409669+00:00",
+  "generatedAt": "2026-11-22T19:28:58.783597+00:00",
   "repository": "trisanghy/open-iptv-pro",
   "branch": "Positron",
   "versions": [
     {
-      "number": 249,
-      "version": "P5.1.249",
-      "appVersion": "4.23.334",
-      "title": "Escape trả tiêu điểm về kênh trước đó",
-      "description": "Feature priority: NEW — Khi mở bảng nhảy số từ một hàng kênh đang focus, phím Escape hủy và trả tiêu điểm về đúng hàng đó, để tiếp tục duyệt bằng lên/xuống. Trước đây Escape chỉ trả focus về nút mở bảng, gây đứt dòng điều hướng. User action: Chọn QA Channel 412, Alt+Shift+J, Escape: bảng đóng và kênh 412 sáng trở lại; nếu mở từ thanh công cụ thì Escape tiếp tục focus nút như cũ.",
+      "number": 250,
+      "version": "P5.1.250",
+      "appVersion": "Chưa xác minh",
+      "title": "Electron 4.23.335 — Ẩn chỉ báo vị trí đã cũ (CANDIDATE)",
+      "description": "Dựa trên ảnh Electron thật P5.1.249: chỉ báo `Kênh 412/561` nằm dưới bộ đếm. Kiểm tra mã phát hiện chỉ có `focusin` cập nhật nên nhãn vẫn hiển thị khi đã rời danh sách. Sửa: `focusout` xóa vị trí focus cũ khi chuyển sang thanh công cụ; tạm giữ vị trí gốc khi hộp nhảy số mở và khôi phục khi Escape. Không đọc/sửa dữ liệu luồng M3U hay Favorites.",
       "kind": "fix",
       "status": "candidate",
       "published": "",
       "tag": "",
-      "commit": "f892cc51f322bd35dc2a5a7b1c6bd62ec2ed71ae",
-      "url": "https://github.com/trisanghy/open-iptv-pro/tree/Positron",
+      "commit": "",
+      "url": "https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md",
       "assets": [],
+      "image": null
+    },
+    {
+      "number": 249,
+      "version": "P5.1.249",
+      "appVersion": "4.23.334",
+      "title": "Electron 4.23.334 — Escape hủy rồi trở về hàng kênh đang chọn (CANDIDATE)",
+      "description": "Feature priority: NEW — Khi mở bảng nhảy số từ một hàng kênh đang focus, phím Escape hủy và trả tiêu điểm về đúng hàng đó, để tiếp tục duyệt bằng lên/xuống. Trước đây Escape chỉ trả focus về nút mở bảng, gây đứt dòng điều hướng. User action: Chọn QA Channel 412, Alt+Shift+J, Escape: bảng đóng và kênh 412 sáng trở lại; nếu mở từ thanh công cụ thì Escape tiếp tục focus nút như cũ.",
+      "kind": "fix",
+      "status": "release",
+      "published": "2026-11-22T19:22:43Z",
+      "tag": "positron/v4.23.334-p5.1.249",
+      "commit": "a327fe578da6d5d0ea1f2ff5ff1845b8f5e689dd",
+      "url": "https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.334-p5.1.249",
+      "assets": [
+        {
+          "name": "audit-p4-50-rounds.json",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.334-p5.1.249/audit-p4-50-rounds.json"
+        },
+        {
+          "name": "audit-p5-20-rounds.json",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.334-p5.1.249/audit-p5-20-rounds.json"
+        },
+        {
+          "name": "Open-IPTV-Pro-4.23.334-mac-arm64.dmg",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.334-p5.1.249/Open-IPTV-Pro-4.23.334-mac-arm64.dmg"
+        },
+        {
+          "name": "Open-IPTV-Pro-4.23.334-mac-x64.dmg",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.334-p5.1.249/Open-IPTV-Pro-4.23.334-mac-x64.dmg"
+        },
+        {
+          "name": "Open-IPTV-Pro-4.23.334-x64.exe",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.334-p5.1.249/Open-IPTV-Pro-4.23.334-x64.exe"
+        },
+        {
+          "name": "Open-IPTV-Pro-Setup-4.23.334-x64.exe",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.334-p5.1.249/Open-IPTV-Pro-Setup-4.23.334-x64.exe"
+        },
+        {
+          "name": "OpenIPTVPro-Positron-P51249-Source.zip",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.334-p5.1.249/OpenIPTVPro-Positron-P51249-Source.zip"
+        },
+        {
+          "name": "positron-desktop-1920x1080-16x9-main-real.png",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.334-p5.1.249/positron-desktop-1920x1080-16x9-main-real.png"
+        },
+        {
+          "name": "positron-p4-final-main-real.png",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.334-p5.1.249/positron-p4-final-main-real.png"
+        },
+        {
+          "name": "positron-p4-round-10-real.png",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.334-p5.1.249/positron-p4-round-10-real.png"
+        },
+        {
+          "name": "positron-p4-round-20-real.png",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.334-p5.1.249/positron-p4-round-20-real.png"
+        },
+        {
+          "name": "positron-p4-round-30-real.png",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.334-p5.1.249/positron-p4-round-30-real.png"
+        },
+        {
+          "name": "positron-p4-round-40-real.png",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.334-p5.1.249/positron-p4-round-40-real.png"
+        },
+        {
+          "name": "Positron-P51249-20-Real-Screenshots.zip",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.334-p5.1.249/Positron-P51249-20-Real-Screenshots.zip"
+        },
+        {
+          "name": "Positron-P51249-50-Real-Screenshots.zip",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.334-p5.1.249/Positron-P51249-50-Real-Screenshots.zip"
+        },
+        {
+          "name": "SHA256SUMS.txt",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.334-p5.1.249/SHA256SUMS.txt"
+        }
+      ],
       "image": null
     },
     {
