@@ -13,7 +13,8 @@ test('Four player output buttons share centered 24px SVG masks and equal touch t
  assert.match(css,/transform:translate\(-50%,-50%\)!important/);
  assert.match(css,/width:24px!important;height:24px!important/);
  assert.match(css,/height:48px!important/);
- assert.match(css,/--ipc-icon:var\(--iptv-airplay-icon\)/);
+ assert.doesNotMatch(css,/#castBtn::before/);
+ assert.match(fs.readFileSync(path.join(root,'web-cast-v2.css'),'utf8'),/#castBtn > svg\.oip-cast-svg/);
  assert.match(css,/--ipc-icon:var\(--iptv-fullscreen-icon\)/);
  assert.match(css,/fullscreenBtn\[aria-pressed="true"\]::before/);
 });
