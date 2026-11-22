@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Open IPTV Pro · Samsung Cast playback engine</title>
+<style>html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#000}video{display:block;width:100%;height:100%;object-fit:contain;background:#000}</style>
+</head>
+<body>
+<video id="castVideo" playsinline x-webkit-airplay="allow" preload="none"></video>
+<script src="../hls.min.js"></script>
+<script src="../dash.all.min.js"></script>
+<script>
+(function(){
+'use strict';
+// This isolated player uses the same site origin and playback libraries as tv.html.
+// Stream URLs arrive only through postMessage from TizenBrew's local WebView.
+// No query-string URL, storage, analytics, or server proxy.
+var video=document.getElementById('castVideo'),hls=null,dash=null,session='',parentOrigin='',lastUrl='',nativeRetried=false;
+var isHls=function(url){return /\.m3u8?(?:[?#]|$)/i.test(url);};
+var isDash=function(url){return /\.mpd(?:[?#]|$)/i.test(url);};
+function notify(type,detail){
+ if(!parentOrigin)return;
+ try{parent.postMessage({app:'openiptv-tizen-hosted',type:type,session:session,detail:String(detail||'').slice(0,145)},parentOrigin);}catch(e){}
+}
+function cleanup(){
+ try{if(hls)hls.destroy();}catch(e){}hls=null;
+ try{if(dash)dash.reset();}catch(e){}dash=null;
+ try{video.pause();video.removeAttribute('src');video.load();}catch(e){}
+ nativeRetried=false;lastUrl='';
+}
+function failure(reason){
+ notify('error',reason);
+}
+function startVideo(){
+ try{
+  var result=video.play();
+  if(result&&result.catch)result.catch(function(e){
+   if(e&&e.name==='NotAllowedError')notify('blocked','Nhấn OK để phát');
+   else failure('HTML5: '+String(e&&e.message||'nguồn không hỗ trợ').slice(0,100));
+  });
+ }catch(e){failure('HTML5: '+String(e&&e.message||e).slice(0,100));}
+}
+function hlsPlayer(url){
+ if(!window.Hls||!window.Hls.isSupported||!window.Hls.isSupported())return false;
+ try{
+  hls=new window.Hls({enableWorker:true,lowLatencyMode:true,maxBufferLength:20});
+  hls.on(window.Hls.Events.MEDIA_ATTACHED,function(){if(lastUrl===url)hls.loadSource(url);});
+  hls.on(window.Hls.Events.MANIFEST_PARSED,function(){if(lastUrl===url)startVideo();});
+  hls.on(window.Hls.Events.ERROR,function(event,data){
+   if(!data||!data.fatal||lastUrl!==url)return;
+   var detail=String(data.details||data.type||'HLS error');
+   var status=Number(data.response&&data.response.code||0);
+   if(status)detail+=' HTTP '+status;
+   if(!nativeRetried&&video.canPlayType('application/vnd.apple.mpegurl')){
+    nativeRetried=true;
+    try{hls.destroy();}catch(e){}hls=null;
+    video.src=url;startVideo();return;
+   }
+   failure(detail);
+  });
+  hls.attachMedia(video);return true;
+ }catch(e){try{hls.destroy();}catch(x){}hls=null;return false;}
+}
+function playUrl(url){
+ cleanup();lastUrl=url;
+ if(isHls(url)&&video.canPlayType('application/vnd.apple.mpegurl')){
+  video.src=url;startVideo();return;
+ }
+ if(isHls(url)&&hlsPlayer(url))return;
+ if(isDash(url)&&window.dashjs&&window.dashjs.MediaPlayer){
+  try{dash=window.dashjs.MediaPlayer().create();dash.initialize(video,url,true);return;}
+  catch(e){try{dash.reset();}catch(x){}dash=null;}
+ }
+ video.src=url;startVideo();
+}
+video.addEventListener('playing',function(){notify('playing','');});
+video.addEventListener('pause',function(){if(lastUrl&&!video.ended)notify('paused','');});
+video.addEventListener('waiting',function(){if(lastUrl)notify('buffering','');});
+video.addEventListener('error',function(){
+ if(!lastUrl)return;
+ if(!isHls(lastUrl)&&!nativeRetried&&hlsPlayer(lastUrl)){nativeRetried=true;return;}
+ failure('Không tải/giải mã được nguồn HTML5 (mã '+(video.error&&video.error.code||0)+')');
+});
+window.addEventListener('message',function(event){
+ if(event.source!==parent||!/^http:\/\/(?:127\.0\.0\.1|localhost):8081$/.test(event.origin))return;
+ var data=event.data;if(!data||data.app!=='openiptv-tizen-hosted'||typeof data.type!=='string')return;
+ if(data.type==='play'){
+  var url=String(data.url||'').trim();
+  if(!/^https:\/\/[^ ]+$/i.test(url)||url.length>4096){parentOrigin=event.origin;session=String(data.session||'');failure('URL HTTPS không hợp lệ');return;}
+  session=String(data.session||'').slice(0,80);parentOrigin=event.origin;
+  playUrl(url);
+ }else if(data.session===session&&data.type==='toggle'){
+  if(video.paused)startVideo();else video.pause();
+ }else if(data.session===session&&data.type==='stop'){
+  cleanup();notify('stopped','');
+ }
+});
+try{parent.postMessage({app:'openiptv-tizen-hosted',type:'ready'},'*');}catch(e){}
+})();
+</script>
+</body>
+</html>
