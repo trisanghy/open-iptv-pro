@@ -1,4 +1,14 @@
-# Open IPTV Pro TV · TizenBrew v0.1.30 (OTA)
+# Open IPTV Pro TV · TizenBrew v0.1.31 (OTA)
+
+## v0.1.31 — Giữ đúng URL kênh được chọn; không tự đổi sang cùng tên ở nguồn khác
+
+- **Lỗi được xác nhận trong mã:** `playbackCandidates()` trước đây tìm mọi kênh có cùng tên, bất kể nguồn M3U, rồi tự thử từng URL khi có lỗi. Một kênh VTV7 được chọn ở nguồn 1 có thể bất ngờ chuyển qua nguồn 2 với hostname, token hoặc quyền truy cập khác và nhận HTTP 403.
+- **Sửa:** ưu tiên và giữ nguyên URL chính xác trên bản ghi kênh được người dùng chọn. Không tự lấy URL của những bản ghi khác chỉ vì trùng tên. Nếu một bản ghi có mảng `backupUrls` hoặc `fallbackUrls` được gắn rõ, mới thử tối đa bốn URL dự phòng riêng của bản ghi đó, kiểm tra HTTP(S), loại trùng và giữ thứ tự.
+- **Chẩn đoán không lộ bí mật:** mỗi lần khởi chạy, hiển thị thứ tự `Nguồn 1/N` và **chỉ tên miền nguồn đang thử**, không hiện đường dẫn, query string hay token. Các lỗi HLS.js vẫn thể hiện HTTP 403/404 khi có mã phản hồi.
+- **Hạn chế kỹ thuật còn lại:** WebView TizenBrew chạy qua localhost và không có Samsung AVPlay native trên nhiều TV; nếu máy chủ HLS chặn CORS/origin hoặc codec không được hỗ trợ thì thay đổi này không đủ để phát được. Cần đối chiếu URL kênh và phản hồi mạng, hoặc dùng Cast 6 số đang hoạt động qua Samsung Internet; **không sửa bộ phát Cast Web** trong bản này.
+- **Giữ nguyên:** appPath OTA `tizenbrew/bootstrap.html`, giao diện, Back, QR quản lý/sắp xếp, danh sách kênh, lịch sử và yêu thích. Chỉ sửa nhánh `tizenbrew`.
+- **Kiểm thử:** `tizenbrew/tests/tizen-playback-source-recovery.test.cjs` xác minh không nhảy giữa playlist trùng tên, URL dự phòng phải được chỉ định rõ, giữ tối đa năm URL, không hiển thị token và không ảnh hưởng kênh khác.
+- Chưa kiểm thử phát thành công VTV1–VTV7 trên phần cứng Samsung; kiểm thử CI chỉ xác nhận logic trình phát.
 
 ## v0.1.30 — Sửa nút Cast sai trang và bỏ đường thử nghiệm gây manifestLoadError
 
