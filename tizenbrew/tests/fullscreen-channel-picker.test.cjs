@@ -32,7 +32,7 @@ function harness(){
  const ctx={
    items:channels,playing,byId:id=>els[id],elem:el,
    localStorage:{getItem(){return null;},setItem(){}},
-   select:ch=>selected.push(ch.id),play:ch=>played.push(ch.id)
+   select:ch=>selected.push(ch.id),play:ch=>{played.push(ch.id);ctx.playing=ch;}
  };
  const picker=vm.runInNewContext(focusCode+pickerCode+'\n({openChannelPicker,closeChannelPicker,pickerMove,confirmPickerChannel,pickerSetGroup,pickerGroupsAll,renderChannelPicker,current:()=>({pickerGroup,pickerIndex,pickerChannels,lastPickerPosition})});',ctx);
  return {picker,els,channels,played,selected,ctx,focused};
@@ -46,16 +46,21 @@ test('Full-screen player opens a real picker with the playing channel highlighte
  assert.equal(s.played.length,0,'opening picker must not switch channels');
  assert.ok(s.els.pickerList.children.some(row=>row.className.includes('active')));
 });
-test('Up/Down changes highlighted channel and OK selects one channel',()=>{
+test('Up/Down immediately changes playback while keeping the list visible',()=>{
  const s=harness();s.picker.openChannelPicker();
  s.picker.pickerMove('ArrowDown');
  assert.equal(s.picker.current().pickerChannels[s.picker.current().pickerIndex].id,'c12');
- assert.equal(s.played.length,0,'D-pad selection must not trigger playback');
- assert.equal(s.picker.confirmPickerChannel(),true);
- assert.deepEqual(s.selected,['c12']);
  assert.deepEqual(s.played,['c12']);
- assert.equal(s.els.channelPicker.hidden,true);
+ assert.deepEqual(s.selected,['c12']);
+ assert.equal(s.els.channelPicker.hidden,false,'keep list visible after changing channels');
+ s.picker.pickerMove('ArrowUp');
+ assert.deepEqual(s.played,['c12','c11']);
+ assert.equal(s.els.channelPicker.hidden,false);
+ assert.equal(s.picker.confirmPickerChannel(),true);
+ assert.equal(s.els.channelPicker.hidden,true,'OK dismisses overlay');
+ assert.deepEqual(s.played,['c12','c11'],'OK must not reload playing stream');
 });
+
 test('Left/Right switches folders and keeps group-specific channels',()=>{
  const s=harness();s.picker.openChannelPicker();
  s.picker.pickerMove('ArrowRight');
@@ -68,35 +73,50 @@ test('Left/Right switches folders and keeps group-specific channels',()=>{
  assert.equal(s.picker.current().pickerGroup,'Tin tức');
  assert.equal(s.played.length,0);
 });
-test('Closing picker returns to fullscreen without changing currently playing channel',()=>{
+test('Back closes picker without undoing the newly playing channel',()=>{
  const s=harness();s.picker.openChannelPicker();
  s.picker.pickerMove('ArrowDown');s.picker.closeChannelPicker();
  assert.equal(s.els.channelPicker.hidden,true);
  assert.equal(s.els.player.hidden,false);
- assert.equal(s.played.length,0);
+ assert.equal(s.ctx.playing.id,'c12');
+ assert.deepEqual(s.played,['c12']);
  assert.equal(s.focused.at(-1),'player');
 });
-test('Every remote arrow opens picker; subsequent arrows navigate, never play directly',()=>{
+
+test('First remote Up/Down both opens picker and changes channel immediately',()=>{
  const code=extract('function keyHandler(e){',"document.querySelectorAll('[data-nav]')");
- const s=harness(),calls={open:0,move:[],change:0,confirm:0};
+ const s=harness(),calls={open:[],move:[],change:0,confirm:0};
  const byId=id=>({modal:{hidden:true},player:{hidden:false},channelPicker:s.els.channelPicker})[id];
  const fn=vm.runInNewContext(code+'\nkeyHandler;',{
-   byId,isRemoteBack:()=>false,handleBack(){},
-   openChannelPicker(){calls.open++;s.els.channelPicker.hidden=false;},
-   pickerMove:k=>calls.move.push(k),confirmPickerChannel:()=>{calls.confirm++;},
-   changeChannel:()=>{calls.change++;},togglePlayback(){},move(){}
+  byId,isRemoteBack:()=>false,handleBack(){},
+  openChannelPicker:anchor=>{calls.open.push(anchor);s.els.channelPicker.hidden=false;return true;},
+  pickerMove:k=>calls.move.push(k),confirmPickerChannel:()=>{calls.confirm++;},
+  changeChannel:()=>{calls.change++;},togglePlayback(){},move(){}
  });
  for(const [key,keyCode] of [['ArrowUp',38],['ArrowDown',40],['ArrowLeft',37],['ArrowRight',39]]){
-   s.els.channelPicker.hidden=true;
-   fn({key,keyCode,preventDefault(){},stopPropagation(){}});
+  s.els.channelPicker.hidden=true;
+  fn({key,keyCode,preventDefault(){},stopPropagation(){}});
  }
- assert.equal(calls.open,4);
+ assert.deepEqual(calls.open,[true,true,false,false]);
+ assert.deepEqual(calls.move,['ArrowUp','ArrowDown']);
  assert.equal(calls.change,0);
  fn({key:'ArrowDown',keyCode:40,preventDefault(){},stopPropagation(){}});
- assert.deepEqual(calls.move,['ArrowDown']);
+ assert.deepEqual(calls.move,['ArrowUp','ArrowDown','ArrowDown']);
  fn({key:'Enter',keyCode:13,preventDefault(){}});
  assert.equal(calls.confirm,1);
 });
+test('First Up/Down anchors to currently playing channel, ignoring stale picker selection',()=>{
+ const s=harness();
+ s.picker.openChannelPicker();s.picker.pickerMove('ArrowDown');s.picker.closeChannelPicker();
+ s.ctx.playing=s.channels[30];
+ s.picker.openChannelPicker(true);
+ assert.equal(s.picker.current().pickerGroup,'Tất cả');
+ assert.equal(s.picker.current().pickerChannels[s.picker.current().pickerIndex].id,'c31');
+ s.picker.pickerMove('ArrowUp');
+ assert.equal(s.played.at(-1),'c30');
+ assert.equal(s.els.channelPicker.hidden,false);
+});
+
 test('Samsung duplicate Back events cannot leave app after closing picker or player',()=>{
  const code=extract('function handleBack(e){','function keyHandler(e){');
  const state={modal:false,picker:true,player:true};
@@ -123,7 +143,7 @@ test('HTML picker is inside the player and announces remote navigation',()=>{
  assert.match(markup,/id="pickerGroups"/);
  assert.match(markup,/id="pickerList"/);
  assert.match(markup,/Back Đóng danh sách/);
- assert.match(html,/↑ ↓ ← → Mở danh sách kênh/);
+ assert.match(html,/↑ ↓ Chuyển ngay và hiện danh sách/);
 });
 
 
