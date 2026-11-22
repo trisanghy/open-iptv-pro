@@ -1,24 +1,36 @@
 /* Main-site quick and original URL references: visible text, copy, and safe fallback. */
-#oipAccessLinks{position:relative;flex:0 0 auto;display:inline-flex;align-items:center;--oiplink-bg:#101b29;--oiplink-pane:#182a3b;--oiplink-edge:#334a60;--oiplink-ink:#f0f6fe;--oiplink-muted:#a4b6c9;--oiplink-accent:#36db82;z-index:1200}
-html[data-theme="light"] #oipAccessLinks{--oiplink-bg:#fff;--oiplink-pane:#f1f7fa;--oiplink-edge:#cfdfe7;--oiplink-ink:#1c3244;--oiplink-muted:#547085;--oiplink-accent:#087c4b}
-html[data-theme="amoled"] #oipAccessLinks{--oiplink-bg:#090909;--oiplink-pane:#171717;--oiplink-edge:#3a3a3f;--oiplink-ink:#fff;--oiplink-muted:#bcbcbc;--oiplink-accent:#41e894}
-#oipAccessLinks summary{list-style:none;display:inline-flex;align-items:center;gap:7px;border:1px solid var(--oiplink-edge);border-radius:9px;padding:8px 11px;background:var(--oiplink-pane);color:var(--oiplink-ink);font-weight:700;font-size:12px;cursor:pointer;user-select:none;min-height:38px}
-#oipAccessLinks summary::-webkit-details-marker{display:none}
-#oipAccessLinks summary:hover,#oipAccessLinks[open] summary{border-color:var(--oiplink-accent)}
-#oipAccessLinks summary svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linejoin:round;stroke-linecap:round}
-#oipAccessLinks :is(summary,button,a):focus-visible{outline:2px solid var(--oiplink-accent);outline-offset:3px}
-#oipAccessLinks .oip-links-pop{position:fixed;right:clamp(12px,2vw,28px);top:clamp(54px,7vw,87px);width:min(510px,calc(100vw - 24px));max-height:min(75dvh,680px);overflow:auto;overscroll-behavior:contain;box-sizing:border-box;padding:18px;display:grid;gap:15px;background:var(--oiplink-bg);border:1px solid var(--oiplink-edge);border-radius:16px;box-shadow:0 24px 65px #0007;color:var(--oiplink-ink);font-size:13px;z-index:100000}
+:is(#oipAccessLinks,#oipMobileLinkOverlay){position:relative;flex:0 0 auto;display:inline-flex;align-items:center;--oiplink-bg:#101b29;--oiplink-pane:#182a3b;--oiplink-edge:#334a60;--oiplink-ink:#f0f6fe;--oiplink-muted:#a4b6c9;--oiplink-accent:#36db82;z-index:1200}
+html[data-theme="light"] :is(#oipAccessLinks,#oipMobileLinkOverlay){--oiplink-bg:#fff;--oiplink-pane:#f1f7fa;--oiplink-edge:#cfdfe7;--oiplink-ink:#1c3244;--oiplink-muted:#547085;--oiplink-accent:#087c4b}
+html[data-theme="amoled"] :is(#oipAccessLinks,#oipMobileLinkOverlay){--oiplink-bg:#090909;--oiplink-pane:#171717;--oiplink-edge:#3a3a3f;--oiplink-ink:#fff;--oiplink-muted:#bcbcbc;--oiplink-accent:#41e894}
+:is(#oipAccessLinks,#oipMobileLinkOverlay) summary{list-style:none;display:inline-flex;align-items:center;gap:7px;border:1px solid var(--oiplink-edge);border-radius:9px;padding:8px 11px;background:var(--oiplink-pane);color:var(--oiplink-ink);font-weight:700;font-size:12px;cursor:pointer;user-select:none;min-height:38px}
+:is(#oipAccessLinks,#oipMobileLinkOverlay) summary::-webkit-details-marker{display:none}
+:is(#oipAccessLinks,#oipMobileLinkOverlay) summary:hover,:is(#oipAccessLinks,#oipMobileLinkOverlay)[open] summary{border-color:var(--oiplink-accent)}
+:is(#oipAccessLinks,#oipMobileLinkOverlay) summary svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linejoin:round;stroke-linecap:round}
+:is(#oipAccessLinks,#oipMobileLinkOverlay) :is(summary,button,a):focus-visible{outline:2px solid var(--oiplink-accent);outline-offset:3px}
+:is(#oipAccessLinks,#oipMobileLinkOverlay) .oip-links-pop{position:fixed;right:clamp(12px,2vw,28px);top:clamp(54px,7vw,87px);width:min(510px,calc(100vw - 24px));max-height:min(75dvh,680px);overflow:auto;overscroll-behavior:contain;box-sizing:border-box;padding:18px;display:grid;gap:15px;background:var(--oiplink-bg);border:1px solid var(--oiplink-edge);border-radius:16px;box-shadow:0 24px 65px #0007;color:var(--oiplink-ink);font-size:13px;z-index:100000}
 #oipAccessLinks:not([open]) .oip-links-pop{display:none}
-#oipAccessLinks .oip-links-title{font-size:16px;font-weight:800;margin:0}
-#oipAccessLinks .oip-links-note{font-size:12px;color:var(--oiplink-muted);line-height:1.6;margin:0}
-#oipAccessLinks .oip-links-set{display:grid;gap:9px}
-#oipAccessLinks .oip-links-set-title{font-weight:770;font-size:13px}
-#oipAccessLinks .oip-links-row{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:6px 8px;padding:11px 12px;border:1px solid var(--oiplink-edge);border-radius:11px;background:var(--oiplink-pane);min-width:0}
-#oipAccessLinks .oip-links-kind{grid-column:1/-1;font-size:11px;color:var(--oiplink-muted);font-weight:750}
-#oipAccessLinks .oip-links-row a{min-width:0;color:var(--oiplink-accent);font-size:12px;line-height:1.5;overflow-wrap:anywhere;text-decoration:underline;text-underline-offset:2px}
-#oipAccessLinks .oip-links-row button{background:var(--oiplink-bg);border:1px solid var(--oiplink-edge);border-radius:8px;color:var(--oiplink-ink);font-weight:740;cursor:pointer;padding:8px 11px;font-size:12px;min-height:34px}
-#oipAccessLinks .oip-links-row button:hover{border-color:var(--oiplink-accent)}
-#oipAccessLinks .oip-links-result{font-size:11px;color:var(--oiplink-muted);margin:0;min-height:16px}
-@media(max-width:600px){#oipAccessLinks summary{padding:7px 9px}#oipAccessLinks .oip-links-pop{padding:13px;top:65px}
-#oipAccessLinks .oip-links-row{grid-template-columns:minmax(0,1fr) auto;gap:5px}}
-@media(max-width:350px){#oipAccessLinks .oip-links-row{grid-template-columns:minmax(0,1fr)}#oipAccessLinks .oip-links-row button{justify-self:start}}
+:is(#oipAccessLinks,#oipMobileLinkOverlay) .oip-links-title{font-size:16px;font-weight:800;margin:0}
+:is(#oipAccessLinks,#oipMobileLinkOverlay) .oip-links-note{font-size:12px;color:var(--oiplink-muted);line-height:1.6;margin:0}
+:is(#oipAccessLinks,#oipMobileLinkOverlay) .oip-links-set{display:grid;gap:9px}
+:is(#oipAccessLinks,#oipMobileLinkOverlay) .oip-links-set-title{font-weight:770;font-size:13px}
+:is(#oipAccessLinks,#oipMobileLinkOverlay) .oip-links-row{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:6px 8px;padding:11px 12px;border:1px solid var(--oiplink-edge);border-radius:11px;background:var(--oiplink-pane);min-width:0}
+:is(#oipAccessLinks,#oipMobileLinkOverlay) .oip-links-kind{grid-column:1/-1;font-size:11px;color:var(--oiplink-muted);font-weight:750}
+:is(#oipAccessLinks,#oipMobileLinkOverlay) .oip-links-row a{min-width:0;color:var(--oiplink-accent);font-size:12px;line-height:1.5;overflow-wrap:anywhere;text-decoration:underline;text-underline-offset:2px}
+:is(#oipAccessLinks,#oipMobileLinkOverlay) .oip-links-row button{background:var(--oiplink-bg);border:1px solid var(--oiplink-edge);border-radius:8px;color:var(--oiplink-ink);font-weight:740;cursor:pointer;padding:8px 11px;font-size:12px;min-height:34px}
+:is(#oipAccessLinks,#oipMobileLinkOverlay) .oip-links-row button:hover{border-color:var(--oiplink-accent)}
+:is(#oipAccessLinks,#oipMobileLinkOverlay) .oip-links-result{font-size:11px;color:var(--oiplink-muted);margin:0;min-height:16px}
+@media(max-width:600px){:is(#oipAccessLinks,#oipMobileLinkOverlay) summary{padding:7px 9px}:is(#oipAccessLinks,#oipMobileLinkOverlay) .oip-links-pop{padding:13px;top:65px}
+:is(#oipAccessLinks,#oipMobileLinkOverlay) .oip-links-row{grid-template-columns:minmax(0,1fr) auto;gap:5px}}
+@media(max-width:350px){:is(#oipAccessLinks,#oipMobileLinkOverlay) .oip-links-row{grid-template-columns:minmax(0,1fr)}:is(#oipAccessLinks,#oipMobileLinkOverlay) .oip-links-row button{justify-self:start}}
+
+/* Mobile More sheet access: original links remain visible even when topbar is hidden. */
+#oipMobileLinkOverlay[hidden]{display:none!important}
+#oipMobileLinkOverlay{position:fixed!important;inset:0!important;display:flex!important;align-items:center;justify-content:center;
+padding:14px!important;background:rgba(0,0,0,.73);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+z-index:220000!important;overflow:auto;box-sizing:border-box}
+#oipMobileLinkOverlay .oip-links-pop{position:static!important;top:auto!important;right:auto!important;
+width:min(510px,100%)!important;max-height:85dvh!important;overflow:auto}
+#oipMobileLinkOverlay .oip-links-close{float:right;border:1px solid var(--oiplink-edge);border-radius:10px;
+background:var(--oiplink-pane);color:var(--oiplink-ink);min-height:37px;min-width:37px;cursor:pointer}
+#iptvMobileMoreOverlay #oipMobileLinkAction .mobile-more-icon{width:24px;height:24px;fill:none;stroke:currentColor;
+stroke-width:1.9;stroke-linejoin:round;stroke-linecap:round;flex:0 0 24px}
