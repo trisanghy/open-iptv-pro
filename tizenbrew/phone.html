@@ -166,7 +166,7 @@ var CONFIG={url:'https://zjbsvqryaxtafuffpifu.supabase.co',key:'sb_publishable_j
 var match=/^#code=([a-f0-9]{32})$/i.exec(location.hash||''),token=match&&match[1],client=null,room=null,subscribed=false,online=false,started=Date.now(),lastSeen=0;
 var pending={},pulse=0,pingBusy=false,snapshot=null,currentSource='',offset=0,query='',editMode='',editTarget=null,busy=false,filterTimer=0;
 var managerMode='all',activeGroup='',selectionMode=false,selectedItems={},collapsedFolders={},moveTarget=null,moveBusy=false;
-var folderCache={},folderCacheScope='',channelViews=[],folderLoadObserver=null;
+var folderCache=Object.create(null),folderCacheScope='',channelViews=[],folderLoadObserver=null;
 function feedback(message,error){var el=byId('feedback');el.textContent=String(message||'');el.dataset.error=error?'true':'false';}
 function connection(yes,message){
  online=!!yes;byId('connection').dataset.connected=online?'true':'false';
@@ -261,7 +261,7 @@ function applySnapshot(state){
  snapshot=state;currentSource=state.sourceId||'';offset=state.offset||0;
  managerMode=state.filter||managerMode;activeGroup=state.group||'';
  var nextScope=[currentSource,state.revision,managerMode,query].join('|');
- if(folderCacheScope!==nextScope){folderCache={};folderCacheScope=nextScope;}
+ if(folderCacheScope!==nextScope){folderCache=Object.create(null);folderCacheScope=nextScope;}
  if(oldSource!==currentSource||oldRevision!==state.revision)selectedItems={};
  var sel=byId('sourceSelect');sel.textContent='';
  state.sources.forEach(function(source){
@@ -281,6 +281,53 @@ function button(parent,label,action,index,style){
  var b=document.createElement('button');b.type='button';b.textContent=label;b.dataset.action=action;b.dataset.index=String(index);
  if(style)b.className=style;parent.appendChild(b);return b;
 }
+
+/* TV sends at most 30 channels per message. Folder headings always render
+ * together; an opened group loads its channels in background on scroll. */
+async function loadFolderGroup(group,retry){
+ if(!snapshot||!online||expires()||collapsedFolders[currentSource+'|'+group]!==false)return;
+ var cache=folderCache[group];
+ if(!cache){cache=folderCache[group]={channels:[],next:0,hasMore:true,loading:false,error:false};}
+ if(cache.loading||(!cache.hasMore&&!retry)||(cache.error&&!retry))return;
+ var scope=folderCacheScope,source=currentSource,revision=snapshot.revision,filter=managerMode,searchTerm=query;
+ cache.error=false;cache.loading=true;
+ try{
+  var reply=await request('snapshot',{sourceId:source,group:group,filter:filter,query:searchTerm,offset:cache.next},30000);
+  var page=reply&&reply.state;
+  if(!page||page.sourceId!==source||page.revision!==revision||page.group!==group)
+   throw Error('Danh sách trên TV đã thay đổi. Hãy đồng bộ lại.');
+  if(scope!==folderCacheScope)return;
+  (page.channels||[]).forEach(function(item){
+   if(!cache.channels.some(function(c){return c.id===item.id&&c.index===item.index;}))cache.channels.push(item);
+  });
+  cache.next=page.offset+(page.channels||[]).length;
+  cache.hasMore=!!page.hasMore;
+  if(cache.hasMore&&!(page.channels||[]).length)throw Error('TV trả về trang trống. Hãy thử lại.');
+ }catch(e){
+  if(scope===folderCacheScope){
+   cache.error=true;
+   feedback('Không tải được kênh trong thư mục '+group+': '+String(e.message||e),true);
+  }
+ }finally{
+  if(scope===folderCacheScope){cache.loading=false;renderChannels();}
+ }
+}
+function observeFolderLoads(){
+ if(folderLoadObserver){folderLoadObserver.disconnect();folderLoadObserver=null;}
+ var targets=Array.from(byId('channelList').querySelectorAll('.folder-loader'));
+ if(!targets.length||!online)return;
+ if(typeof IntersectionObserver==='function'){
+  folderLoadObserver=new IntersectionObserver(function(entries){
+   entries.forEach(function(entry){
+    if(entry.isIntersecting)void loadFolderGroup(entry.target.dataset.group);
+   });
+  },{root:null,rootMargin:'250px 0px 250px 0px',threshold:0});
+  targets.forEach(function(el){folderLoadObserver.observe(el);});
+ }else{
+  targets.slice(0,2).forEach(function(el){void loadFolderGroup(el.dataset.group);});
+ }
+}
+
 function renderChannels(){
  var holder=byId('channelList');holder.textContent='';
  var groups=currentGroupNames();channelViews=[];
@@ -582,10 +629,10 @@ byId('createFolder').onclick=async function(){
  name=name.trim().slice(0,80);if(!name){feedback('Tên thư mục không được trống.',true);return;}
  try{await command('create-folder',{name:name});}catch(e){}
 };
-byId('expandFolders').onclick=function(){collapsedFolders={};renderChannels();};
+byId('expandFolders').onclick=function(){currentGroupNames().forEach(function(g){collapsedFolders[currentSource+'|'+g.name]=false;});renderChannels();};
 byId('collapseFolders').onclick=function(){currentGroupNames().forEach(function(g){collapsedFolders[currentSource+'|'+g.name]=true;});renderChannels();};
 byId('selectionToggle').onclick=function(){selectionMode=!selectionMode;if(!selectionMode)selectedItems={};renderChannels();updateControls();};
-byId('selectPage').onclick=function(){if(!snapshot)return;snapshot.channels.forEach(function(c){selectedItems[c.id]={id:c.id,index:c.index};});selectionMode=true;renderChannels();updateControls();};
+byId('selectPage').onclick=function(){if(!snapshot)return;channelViews.slice(0,60).forEach(function(c){selectedItems[c.id]={id:c.id,index:c.index};});selectionMode=true;renderChannels();updateControls();};
 byId('clearSelection').onclick=clearChosen;
 byId('batchMove').onclick=function(){void runBatch('batch-move',{group:byId('batchGroup').value||'Khác',position:byId('batchPosition').value||null});};
 byId('batchFavorite').onclick=function(){void runBatch('batch-favorite',{favorite:true});};
@@ -605,7 +652,8 @@ byId('channelList').onclick=async function(event){
  var btn=event.target.closest('button[data-action]');
  if(!btn||!snapshot||!online||busy)return;
  var action=btn.dataset.action,group=btn.dataset.group||'';
- if(action==='collapse-folder'){var key=currentSource+'|'+group;collapsedFolders[key]=!collapsedFolders[key];renderChannels();return;}
+ if(action==='collapse-folder'){var key=currentSource+'|'+group;collapsedFolders[key]=collapsedFolders[key]===false;renderChannels();if(collapsedFolders[key]===false)void loadFolderGroup(group);return;}
+ if(action==='load-folder'){void loadFolderGroup(group,true);return;}
  if(['rename-folder','delete-folder','folder-up','folder-down'].indexOf(action)>=0){
   if(action==='rename-folder'){
    var name=prompt('Tên thư mục mới:',group);if(name===null)return;
@@ -617,7 +665,7 @@ byId('channelList').onclick=async function(event){
   var fields=op==='move-folder'?{name:group,direction:action==='folder-up'?'up':'down'}:{name:group};
   try{await command(op,fields);}catch(e){}return;
  }
- var c=snapshot.channels[Number(btn.dataset.index)];if(!c)return;
+ var c=channelViews[Number(btn.dataset.index)];if(!c)return;
  var details={index:c.index,channelId:c.id};
  if(action==='select-row'){setSelectedChannel(c);return;}
  if(action==='move-channel-ui'){showMoveDialog(c);return;}
@@ -656,7 +704,7 @@ document.addEventListener('touchstart',function(event){
  if(!online||busy||selectionMode||event.touches.length!==1||byId('managerPanel').hidden)return;
  var row=event.target.closest('.mobile-channel');
  if(!row||!byId('channelList').contains(row)||!event.target.closest('.channel-head'))return;
- var t=event.changedTouches[0],index=Number(row.dataset.index),c=snapshot&&snapshot.channels[index];
+ var t=event.changedTouches[0],index=Number(row.dataset.index),c=channelViews[index];
  if(!c)return;
  dragClear();
  dragGesture={id:t.identifier,x:t.clientX,y:t.clientY,source:row,channel:c,active:false,hover:null,timer:setTimeout(function(){
