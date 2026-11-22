@@ -2,14 +2,23 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
-## P5.1.161 — sắp xếp kênh thiếu logo A–Z và Z–A
+## P5.1.162 — chuyển nhanh tới trang kênh thiếu logo bất kỳ
 
-**Ứng dụng:** 4.23.246 · **Trạng thái:** Chưa có bản phát hành
+**Ứng dụng:** 4.23.247 · **Trạng thái:** Chưa có bản phát hành
+
+Feature priority: NEW — Nhập trực tiếp trang muốn xem ở bảng kênh thiếu logo thay vì bấm nút Tiếp liên tục khi thư viện có hàng chục trang; tự giới hạn trong khoảng trang hợp lệ, tránh mất vị trí. User action: Mở Thư viện → Kênh thiếu logo → chọn nhóm hoặc tìm kiếm → nhập số trang trong ô cạnh nút Trước/Tiếp rồi nhấn Enter hoặc nút Đến để chuyển ngay.
+
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/bf88bf4ba3743247679a6adce5b617ce47245ba2)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+
+## P5.1.161 — Sắp xếp kênh thiếu logo A–Z/Z–A / Electron 4.23.246
+
+**Ứng dụng:** 4.23.246 · **Trạng thái:** Đã phát hành
 
 Feature priority: NEW — Hỗ trợ sắp xếp những kênh thiếu logo theo tên tăng/giảm với so sánh số tự nhiên, để nhanh chóng phát hiện và rà soát các kênh có tên tương tự trong thư viện lớn. User action: Mở Thư viện → Kênh thiếu logo → chọn nhóm tùy ý → chọn Thứ tự playlist, Tên kênh A–Z hoặc Tên kênh Z–A để sắp xếp riêng danh sách trên màn hình.
 
 [Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/caba7377c1e7c484c9db78cd1e6ee8ec48d40182)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.246-p5.1.161)
 
 ## P5.1.160 — .1 — Hoàn thiện lọc nhóm và minh chứng Electron / 4.23.245
 
