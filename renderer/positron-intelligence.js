@@ -208,7 +208,7 @@
   if(!enabled||!alertEnabled||model.observations<3)return;
   const now=Date.now();
   const items=core.startingForYou(channels(),guide(),win.IPTVGuide,model,webValid(),
-   {clock:now,windowMinutes:2,threshold:0.72,limit:3});
+   {clock:now,windowMinutes:2,threshold:0.65,limit:3});
   for(const entry of items){
    const key=String(entry.channel.id)+'|'+entry.programme.start+'|'+entry.programme.title;
    if(notified.has(key))continue;
