@@ -4049,6 +4049,8 @@ async function runTwenty(page){
  assert.ok(baseline160.channels>=100&&baseline160.count>=10&&baseline160.sample,
   'P160 phải dùng dữ liệu QA P159 có nhóm thực: '+JSON.stringify(baseline160));
  await page.selectOption('#poLibraryMissingGroup',baseline160.group);
+ // Playwright selectOption không bảo đảm panel cuộn đến ô chọn: phải hiện ô trong ảnh.
+ await page.evaluate(()=>document.getElementById('poLibraryMissingGroup').scrollIntoView({block:'center',behavior:'instant'}));
  const selected160=await page.evaluate(expected=>{
   const core=window.PositronLibraryPulseCore;
   const filtered=core.missingLogos(window.IPTVState.getChannels(),{group:expected.group});
@@ -4057,6 +4059,10 @@ async function runTwenty(page){
   const header=document.querySelector('#poLibraryPulsePanel .po-pulse-header')?.getBoundingClientRect();
   return {
    dropdownPresent:document.getElementById('poLibraryMissingGroup')?.options.length>2,
+   dropdownOnScreen:(()=>{
+    const rect=document.getElementById('poLibraryMissingGroup')?.getBoundingClientRect();
+    return !!rect&&!!panel&&!!header&&rect.width>100&&rect.top>=header.bottom&&rect.bottom<panel.bottom;
+   })(),
    groupSelected:document.getElementById('poLibraryMissingGroup')?.value===expected.group,
    correctGroupCount:filtered.total===expected.count&&document.getElementById('poLibraryMissingToggle')?.textContent.endsWith(String(expected.count)),
    correctVisibleRows:rows.length===filtered.rows.length&&rows.every((r,i)=>
