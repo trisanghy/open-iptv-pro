@@ -2,14 +2,23 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
-## P5.1.229 — phím F thêm và bỏ yêu thích ngay trên hàng kênh
+## P5.1.230 — chuyển nhanh giữa nhóm kênh bằng phím trái/phải
 
-**Ứng dụng:** 4.23.314 · **Trạng thái:** Chưa có bản phát hành
+**Ứng dụng:** 4.23.315 · **Trạng thái:** Chưa có bản phát hành
+
+Feature priority: NEW — Chọn một kênh rồi nhấn → để tới đầu nhóm mở kế tiếp, ← để về đầu nhóm trước. Bỏ qua nhóm thu gọn, giữ nguyên luồng phát, dữ liệu playlist và Favorites. Electron screenshot: positron-p51230-group-navigation-after-1920x1080-real.png
+
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/2f88744de2986daca475a3668d4308f01977bd85)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+
+## P5.1.229 — Đánh dấu yêu thích ngay bằng phím F / Electron 4.23.314
+
+**Ứng dụng:** 4.23.314 · **Trạng thái:** Đã phát hành
 
 Feature priority: NEW — Người dùng đang duyệt hàng trăm kênh bằng phím mũi tên có thể nhấn F trên hàng kênh được focus để thêm/bỏ Yêu thích ngay lập tức, không cần rê chuột tới biểu tượng sao nhỏ và không làm chuyển hoặc phát kênh. Electron screenshot: positron-p51229-keyboard-favorite-after-1920x1080-real.png
 
 [Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/0b4614e9ce376a8b62899c1558b2644ee6a46e16)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.314-p5.1.229)
 
 ## P5.1.228 — Duyệt kênh bằng bàn phím, không cần chuột / Electron 4.23.313
 
