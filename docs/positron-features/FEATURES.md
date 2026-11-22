@@ -11,7 +11,7 @@ Trang này được tạo tự động từ GitHub Releases và ảnh kiểm th�
 
 **Ứng dụng:** 4.23.256 · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
 
-Feature priority: NEW — Ảnh thật P5.1.170 cho thấy Trang 1 / 57 nhưng không nêu đang xem kênh số mấy trong 561 kênh. Thêm nhãn Đang xem 1–10 / 561 kênh, cập nhật theo bộ lọc, phân trang 10/25/50; danh sách rỗng có thông báo rõ. Không thay đổi playlist, URL, EPG, Cast, PiP và hành vi playback. Dùng trạng thái `aria-live=polite` cho công cụ đọc màn hình.
+Electron screenshot: positron-p51171-visible-range-after-1920x1080-real.png User action: Mở Thư viện → Kênh thiếu logo → chuyển trang hoặc đổi số kênh/trang; quan sát dòng Đang xem X–Y / tổng kênh ngay dưới thanh phân trang.
 
 *Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
 

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-22T05:14:25.722009+00:00",
+  "generatedAt": "2026-11-22T05:15:28.487011+00:00",
   "repository": "trisanghy/open-iptv-pro",
   "branch": "Positron",
   "versions": [
@@ -8,7 +8,7 @@
       "version": "P5.1.171",
       "appVersion": "4.23.256",
       "title": "hiển thị phạm vi kênh đang xem theo phân trang",
-      "description": "Feature priority: NEW — Ảnh thật P5.1.170 cho thấy Trang 1 / 57 nhưng không nêu đang xem kênh số mấy trong 561 kênh. Thêm nhãn Đang xem 1–10 / 561 kênh, cập nhật theo bộ lọc, phân trang 10/25/50; danh sách rỗng có thông báo rõ. Không thay đổi playlist, URL, EPG, Cast, PiP và hành vi playback. Dùng trạng thái `aria-live=polite` cho công cụ đọc màn hình.",
+      "description": "Electron screenshot: positron-p51171-visible-range-after-1920x1080-real.png User action: Mở Thư viện → Kênh thiếu logo → chuyển trang hoặc đổi số kênh/trang; quan sát dòng Đang xem X–Y / tổng kênh ngay dưới thanh phân trang.",
       "kind": "fix",
       "status": "candidate",
       "published": "",
