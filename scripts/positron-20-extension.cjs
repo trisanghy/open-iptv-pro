@@ -3473,9 +3473,9 @@ async function runTwenty(page){
 
  // BẤT BIẾN 22/11/2026: ảnh GIỚI THIỆU desktop Electron thật 1920x1080 16:9.
  // Ảnh hẹp được giữ để phát hiện lỗi responsive, không dùng làm ảnh đại diện.
- const desktopEdition=/P5[.]1[.]([0-9]+)/.exec(require('../package.json').description||'');
+ const desktopEdition=/P5[.]1[.]([0-9]+)(?:[.]([0-9]+))?/.exec(require('../package.json').description||'');
  assert.ok(desktopEdition,'Thiếu nhãn P5.1.x để lưu ảnh desktop theo đúng phiên bản');
- const desktopPrefix='positron-p51'+desktopEdition[1];
+ const desktopPrefix='positron-p51'+desktopEdition[1]+(desktopEdition[2]||'');
  const desktop16x9Screenshots=[];
  await page.setViewportSize({width:1920,height:1080});
  for(const [target,slug] of [['tv','trang-chu'],['sources','nguon'],['epg','lich-phat-song'],['fav','yeu-thich']]){

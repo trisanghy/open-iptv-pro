@@ -20,11 +20,12 @@ test('Positron HEAD preserves immutable feature-first rule and branch isolation'
 
 test('every following Positron application version must justify feature-first decision', () => {
   const pkg = JSON.parse(read('package.json'));
-  const match = /\bPositron\s+P5\.1\.(\d+)/.exec(String(pkg.description || ''));
+  const match = /\bPositron\s+(P5\.1\.(\d+)(?:\.\d+)?)/.exec(String(pkg.description || ''));
   assert.ok(match, 'package.json must retain its Positron P5.1.N label');
-  const number = Number(match[1]);
+  const label = match[1];
+  const number = Number(match[2]);
   const sections = read('POSITRON_P5_CHANGELOG.md').split(/\n(?=## P5\.1\.\d+)/);
-  const heading = '## P5.1.' + number;
+  const heading = '## ' + label;
   const current = sections.find(s => s.startsWith(heading + ' '));
   assert.ok(current, 'current Positron version needs own changelog section ' + heading);
   // Baseline P5.1.133 predates adoption; future releases may not bypass this gate.
@@ -33,7 +34,7 @@ test('every following Positron application version must justify feature-first de
   assert.ok(declared, heading + ' must declare NEW or justified BLOCKER_FIX');
   assert.ok(declared[2].trim().length >= 35, 'priority needs a real impact explanation');
   const screenshot = /^- Electron screenshot: (.+)$/m.exec(current);
-  assert.ok(screenshot && screenshot[1].includes('p51' + number) && /\.png\b/i.test(screenshot[1]),
+  assert.ok(screenshot && screenshot[1].includes(label.toLowerCase().replaceAll('.','')) && /\.png\b/i.test(screenshot[1]),
     'declare genuine native Electron screenshot filename for same version');
   if (declared[1] === 'NEW') {
     const action = /^- User action: (.+)$/m.exec(current);
@@ -81,11 +82,11 @@ test('HEAD bất biến yêu cầu đủ 20 tính năng mới, 20 phiên bản v
 
 test('Hai PNG Electron thật riêng cho phiên bản mới phải được khai báo và CI kiểm tra',()=>{
  const pkg=JSON.parse(read('package.json'));
- const m=/Positron\s+P5\.1\.(\d+)/.exec(pkg.description||'');
+ const m=/Positron\s+(P5\.1\.(\d+)(?:\.\d+)?)/.exec(pkg.description||'');
  assert.ok(m,'cần nhãn sản phẩm để đối chiếu bằng chứng');
- const n=Number(m[1]);
+ const n=Number(m[2]);
  if(n<136)return; // Nhãn lịch sử trước khi áp dụng cổng này.
- const prefix='positron-p51'+n+'-';
+ const prefix='positron-'+m[1].toLowerCase().replaceAll('.','')+'-';
  const qa=read('scripts/positron-20-extension.cjs');
  const workflow=read('.github/workflows/positron-lab.yml');
  const names=[...qa.matchAll(/positron-p51\d+[-a-zA-Z0-9]+\.png/g)]
