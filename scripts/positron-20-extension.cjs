@@ -5018,7 +5018,7 @@ async function runTwenty(page){
    selectorAccessible:d.getElementById('positronFavoritePageSize')?.getAttribute('aria-label')==='Số kênh gợi ý hiển thị',
    bulkLabel:box.querySelector('.po-fav-more-bulk')?.textContent==='Lưu cả 12 kênh',
    largePanel:box.getBoundingClientRect().width>=900,
-   desktopColumns:cols.length===4,
+   desktopColumns:cols.length===6, // P188: responsive desktop now deliberately uses six tracks.
    favoritesStillEight:d.querySelectorAll('#favoriteList .fav-card').length===8,
    noAutoplay:st.getCurrent()===null,
    noHorizontalOverflow:d.documentElement.scrollWidth<=innerWidth+1

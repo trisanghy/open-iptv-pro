@@ -2002,5 +2002,6 @@ test('P5.1.188 favorites suggestions fill 1920px desktop but preserve narrow lay
  assert.ok(css.includes('max-width:none;width:100%;min-width:0'));
  assert.ok(css.includes('grid-template-columns:repeat(6,minmax(0,1fr))'));
  assert.ok(qa.includes('favoriteWideQA'));
+ assert.ok(qa.includes('desktopColumns:cols.length===6'),'P183 scenario now verifies the actual six-column responsive desktop target');
  assert.ok(qa.includes('positron-p51188-favorite-wide-after-1920x1080-real.png'));
 });

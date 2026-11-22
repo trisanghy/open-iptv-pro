@@ -141,3 +141,5 @@ Evaluate defects revealed by real screenshot of previous build before making cha
 - QA bắt buộc: `favoriteWideQA`, PNG sau `positron-p51188-favorite-wide-after-1920x1080-real.png`, Node regression; không tính hoàn thành trước khi có CI và mở soát ảnh.
 
 - Bổ sung ảnh Electron BEFORE qua Playwright trên cùng trang P188 với CSS P187 tạm thời tái hiện, rồi phục hồi CSS P188 và chụp AFTER. Ảnh BEFORE là trạng thái thật của Electron, không phải bộ cài P187.
+
+- P188 CI run 44999143948: Node 828/833 pass (5 skipped); capture thất bại ở P183 cũ vì assertion `desktopColumns===4` không còn phù hợp với tính năng mới 6 cột. Giữ toàn bộ checks và đổi yêu cầu thành đúng **6 cột** ở 1920, không hạ kiểm tra còn lại. Commit sửa tăng tiếp nối.
