@@ -177,5 +177,41 @@
    e.preventDefault();e.stopImmediatePropagation();suppressClickUntil=0;
   }
  },true);
+ // Route vertical swipes starting in the fixed channel header to the PAGE,
+ // never to the channel list or panel. Native horizontal filter swipes remain.
+ let headerSwipe=null;
+ const headerZone='.channel-panel .panel-header,.channel-panel .filter-box,.channel-panel .folder-actions,.channel-panel .filter-tabs';
+ function pageScrollTarget(el){
+  for(let node=el?.parentElement;node&&node!==d.body;node=node.parentElement){
+   if(node.matches?.('.channel-panel,#channelList'))continue;
+   const style=w.getComputedStyle(node);
+   if(/auto|scroll/.test(style.overflowY)&&node.scrollHeight>node.clientHeight+3)return node;
+  }
+  return d.scrollingElement||d.documentElement;
+ }
+ d.addEventListener('touchstart',e=>{
+  if(!isMobile()||e.touches.length!==1||e.target.closest('input,textarea,select,[contenteditable="true"]'))return;
+  const zone=e.target.closest(headerZone);
+  if(!zone||!d.getElementById('page-tv')?.contains(zone))return;
+  const t=e.touches[0];
+  headerSwipe={id:t.identifier,x:t.clientX,y:t.clientY,lastY:t.clientY,
+   axis:null,scroll:pageScrollTarget(zone),filter:!!e.target.closest('.filter-tabs')};
+ },{capture:true,passive:true});
+ d.addEventListener('touchmove',e=>{
+  const g=headerSwipe;if(!g)return;
+  const t=touchAt(e,g.id);if(!t)return;
+  const dx=t.clientX-g.x,dy=t.clientY-g.y;
+  if(!g.axis&&Math.hypot(dx,dy)>7)g.axis=Math.abs(dx)>Math.abs(dy)?'x':'y';
+  if(g.axis==='x'){headerSwipe=null;return;}
+  if(g.axis!=='y')return;
+  const delta=g.lastY-t.clientY;g.lastY=t.clientY;
+  const port=g.scroll;
+  if(port&&Math.abs(delta)>.1){
+   if(e.cancelable)e.preventDefault();
+   port.scrollTop+=delta;
+  }
+ },{capture:true,passive:false});
+ d.addEventListener('touchend',e=>{if(headerSwipe&&touchAt(e,headerSwipe.id))headerSwipe=null;},{capture:true,passive:true});
+ d.addEventListener('touchcancel',()=>{headerSwipe=null;},true);
  w.OpenIPTVMobileTouchSort=Object.freeze({decorate,commitChannel,commitFolder,isMobile});
 })(window,document);
