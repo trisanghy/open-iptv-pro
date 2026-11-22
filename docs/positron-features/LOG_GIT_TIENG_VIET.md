@@ -2,14 +2,23 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
-## P5.1.234 — sửa tìm tên nhóm có Đ viết hoa
+## P5.1.235 — lịch sử nhóm bỏ điểm quay lại trùng nhóm hiện tại
 
-**Ứng dụng:** 4.23.319 · **Trạng thái:** Chưa có bản phát hành
+**Ứng dụng:** 4.23.320 · **Trạng thái:** Chưa có bản phát hành
+
+Feature priority: NEW — Lịch sử điều hướng nhóm theo phiên chỉ giữ một vị trí cho mỗi nhóm và tự loại đích quay lại trùng nhóm đang xem, giúp nút “Nhóm trước” không quay vòng vô ích hoặc hiển thị nhầm sau khi trở về. Electron screenshot: positron-p51235-history-dedupe-after-1920x1080-real.png
+
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/e65f216e629350fcfaf9d4159b3cb0ac8d5a1be9)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+
+## P5.1.234 — Tìm đúng nhóm có Đ viết hoa bằng chữ không dấu / Electron 4.23.319
+
+**Ứng dụng:** 4.23.319 · **Trạng thái:** Đã phát hành
 
 Feature priority: NEW — Hỗ trợ tìm tên thư mục tiếng Việt có chữ Đ viết hoa bằng từ khóa không dấu ngay trong bộ chọn nhóm, giúp người xem truy cập đúng dữ liệu danh sách kênh mà không cần đổi tên thư mục hoặc mở video. Electron screenshot: positron-p51234-vietnamese-group-after-1920x1080-real.png
 
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/44805db1954307444caddba65579ccf48902bdb6)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/c7423143a230c9dde4f3552f729a6ada0dcc52e0)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.319-p5.1.234)
 
 ## P5.1.233 — Quay về nhóm vừa rời / Electron 4.23.318
 
