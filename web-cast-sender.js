@@ -7,7 +7,7 @@
  if(!root?.document || root.streamleaf?.castDiscover)return;
  const doc=root.document, $=id=>doc.getElementById(id);
  const SDK='https://www.gstatic.com/cv/js/sender/v1/cast_sender.js?loadCastFramework=1';
- let context=null, sdkFailed=false, initialized=false, source='', channel=null, active=false, busy=false, remotePaused=false;
+ let context=null, sdkFailed=false, initialized=false, source='', channel=null, active=false, busy=false, remotePaused=false,queuedChannel=false;
  const el=id=>$(id);
  const video=()=>el('video');
  const validSource=value=>{
@@ -177,7 +177,14 @@
    setStatus('Đã gửi '+(channel?.name||'kênh')+' lên '+getName(session)+'. Nếu TV không phát, nguồn có thể bị giới hạn quyền truy cập hoặc codec.');
    video()?.pause?.();
   }catch(error){setStatus('Không phát được trên TV: '+String(error?.message||error),true);}
-  finally{busy=false;sync();}
+  finally{
+   busy=false;sync();
+   if(queuedChannel&&currentSession()){
+    queuedChannel=false;
+    // Multiple fast channel changes coalesce to the newest selected channel.
+    void play();
+   }
+  }
  }
  async function stop(){
   if(!context||!currentSession())return;
@@ -202,7 +209,10 @@
   channel=next;source=selectedUrl||next.url||source;
   root.OpenIPTVWebCastV2?.onChannelChanged?.(next,source);
   // Changing channels must replace the remote media, not disconnect the Cast session.
-  if(wasDifferent&&active&&currentSession())void play();
+  if(wasDifferent&&currentSession()&&!root.OpenIPTVWebCastV2?.getStatus?.().pair){
+   if(busy)queuedChannel=true;
+   else void play();
+  }
  }
  function initControls(){
   el('castScan')?.addEventListener('click',scan);
