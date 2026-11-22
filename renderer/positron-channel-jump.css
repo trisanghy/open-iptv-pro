@@ -111,3 +111,32 @@ html[data-positron="true"] #page-tv #poChannelGroupRow :is(button,select):focus-
   grid-template-columns:54px minmax(0,1fr) 56px!important;gap:3px!important;
  }
 }
+
+/* P5.1.232: local group-name filter has distinct readable label, search and
+   match-count columns. The 58px label keeps Vietnamese glyphs from overlap. */
+html[data-positron="true"] #page-tv #poChannelGroupSearchRow{
+ grid-column:1/-1!important;display:grid!important;
+ grid-template-columns:58px minmax(0,1fr) 62px!important;
+ align-items:center!important;gap:4px!important;min-width:0!important;
+}
+html[data-positron="true"] #page-tv #poChannelGroupSearchRow label{
+ min-width:0!important;white-space:nowrap!important;font-size:10.5px!important;
+}
+html[data-positron="true"] #page-tv #poChannelGroupSearch{
+ box-sizing:border-box!important;display:block!important;width:100%!important;min-width:0!important;
+ padding:5px!important;min-height:34px!important;border-radius:7px!important;
+ background:#0d1c28!important;border:1px solid #426375!important;color:#f0ffff!important;
+ font-size:11px!important;
+}
+html[data-positron="true"] #page-tv #poChannelGroupMatchCount{
+ min-width:0!important;text-align:center!important;color:#a9d4d1!important;
+ font-size:10px!important;font-variant-numeric:tabular-nums!important;
+}
+html[data-positron="true"] #page-tv #poChannelGroupSearch:focus-visible{
+ outline:2px solid #8ae2d7!important;outline-offset:2px!important;
+}
+@media(max-width:450px){
+ html[data-positron="true"] #page-tv #poChannelGroupSearchRow{
+  grid-template-columns:54px minmax(0,1fr) 56px!important;gap:3px!important;
+ }
+}

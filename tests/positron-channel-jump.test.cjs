@@ -58,7 +58,7 @@ test('P5.1.231 opens native folder picker with Alt+G and does not play a stream'
   "groupSelect.setAttribute('aria-keyshortcuts','Alt+G')"])
   assert.ok(ui.includes(key),'Missing direct folder picker behavior: '+key);
  assert.ok(!ui.includes('playChannel('));
- assert.equal(JSON.parse(read('package.json')).version,'4.23.316');
+ assert.ok(Number(JSON.parse(read('package.json')).version.split('.')[2])>=316,'P231 direct folder picker must survive later versions');
 });
 test('P5.1.231 requires real Electron group picker screenshots and focus/scroll QA',()=>{
  const qa=read('scripts/positron-20-extension.cjs');
@@ -72,4 +72,27 @@ test('P5.1.231 requires real Electron group picker screenshots and focus/scroll 
   "page.locator('#poChannelGroupSelect').selectOption({index:2})",
   'selectedGroupFocused:','noAutoplay:','noHorizontalOverflow:','labelNotOverlapping:','buttonNotOverlapping:'])
   assert.ok(qa.includes(key),'Missing P231 Electron QA '+key);
+});
+
+test('P5.1.232 local filter finds named groups without touching playback',()=>{
+ const ui=read('renderer/positron-channel-jump.js');
+ for(const token of ["searchRow.id='poChannelGroupSearchRow'","const normalizeGroup=",
+  "function filterGroups(){","groupSearch.addEventListener('input',filterGroups)",
+  "matchCount.textContent=filtered.length+'/'+groups.length",
+  "groupSearch.focus()","groupGo.disabled=!filtered.length"])
+  assert.ok(ui.includes(token),'P232 missing native group filter '+token);
+ assert.ok(!ui.includes('playChannel('));
+ assert.equal(JSON.parse(read('package.json')).version,'4.23.317');
+});
+test('P5.1.232 captures real Electron group search before/after with overflow and no autoplay checks',()=>{
+ const qa=read('scripts/positron-20-extension.cjs');
+ const flow=read('.github/workflows/positron-lab.yml');
+ for(const name of ['positron-p51232-group-search-before-1920x1080-real.png',
+ 'positron-p51232-group-search-after-1920x1080-real.png']){
+  assert.ok(qa.includes(name));assert.ok(flow.includes(name));
+ }
+ for(const token of ["page.locator('#poChannelGroupSearch').fill('other')",
+  "page.locator('#poChannelGroupGo').click()","filteredToOne:","selectedGroupFocused:",
+  "noAutoplay:","labelNotOverlapping:","noHorizontalOverflow:"])
+  assert.ok(qa.includes(token));
 });

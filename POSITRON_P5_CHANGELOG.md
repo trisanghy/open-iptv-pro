@@ -1,5 +1,14 @@
 # Positron P5 Changelog
 
+## P5.1.232 — Tìm nhanh nhóm kênh theo tên / Electron 4.23.317
+- Feature priority: NEW — Khi có hàng chục thư mục, người dùng có thể gõ một phần tên để thu hẹp nhóm ngay trong bộ chọn Alt+G, thay vì bấm tới từng nhóm; hỗ trợ tên tiếng Việt không dấu. Đồng thời sửa lỗi ảnh P5.1.231 cho thấy nhãn “Đến nhóm” chồng lên ô chọn.
+- Electron screenshot: positron-p51232-group-search-after-1920x1080-real.png
+- User action: Mở trang TV, nhấn Alt+G, gõ tên nhóm (ví dụ other), danh sách nhóm chỉ còn kết quả phù hợp; nhấn Enter hoặc Đến nhóm để chuyển focus tới kênh đầu, không tự phát.
+- QA: Electron thật 1920×1080, 561 kênh QA, bộ đếm kết quả, kiểm tra hình học chống chồng nhãn, không thay đổi playlist và không tự phát; lưu ảnh before/after và mở ảnh soát.
+- P5.1.231 được phát hành từ commit trước khi người dùng/AI duyệt ảnh, nên tag cũ được giữ bất biến; bản P5.1.232 mới mới bao gồm sửa chồng nhãn.
+- CANDIDATE tới khi test/ảnh/CI và Release đầy đủ.
+
+
 ## P5.1.231 — Bộ chọn nhóm kênh trực tiếp qua Alt+G / Electron 4.23.316
 - Feature priority: NEW — Sau khi chuyển nhóm tuần tự đã hoạt động, người dùng có hàng chục nhóm kênh cần nhảy trực tiếp tới bất kỳ nhóm nào bằng menu chọn có nhãn rõ ràng và hỗ trợ bàn phím; có thể mở nhóm thu gọn qua thao tác gốc.
 - Electron screenshot: positron-p51231-group-picker-after-1920x1080-real.png

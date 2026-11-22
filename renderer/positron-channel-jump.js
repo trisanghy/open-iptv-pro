@@ -34,19 +34,40 @@
  status.before(groupRow);
  const groupSelect=groupRow.querySelector('#poChannelGroupSelect');
  const groupGo=groupRow.querySelector('#poChannelGroupGo');
+ // P232: searchable native group picker. Filter only local folder captions;
+ // never inspect or expose playlist URLs, favorite state or playback metadata.
+ const searchRow=d.createElement('div');
+ searchRow.id='poChannelGroupSearchRow';
+ searchRow.innerHTML='<label for="poChannelGroupSearch">Tìm nhóm</label><input id="poChannelGroupSearch" type="search" autocomplete="off" spellcheck="false" placeholder="Tên nhóm" aria-label="Lọc nhóm kênh theo tên"/><output id="poChannelGroupMatchCount" aria-live="polite"></output>';
+ groupRow.before(searchRow);
+ const groupSearch=searchRow.querySelector('#poChannelGroupSearch');
+ const matchCount=searchRow.querySelector('#poChannelGroupMatchCount');
  const visibleHeaders=()=>[...d.querySelectorAll('#channelList .folder-header[data-group]')];
- function refreshGroups(){
+ const normalizeGroup=value=>String(value||'').normalize('NFD')
+  .replace(/[\u0300-\u036f]/g,'').replace(/đ/g,'d').toLowerCase().trim();
+ function filterGroups(){
   const groups=visibleHeaders();
+  const needle=normalizeGroup(groupSearch.value);
+  const filtered=groups.filter(header=>{
+   const label=header.querySelector('span:nth-child(3)')?.textContent||header.dataset.group;
+   return !needle||normalizeGroup(label).includes(needle);
+  });
   groupSelect.replaceChildren();
-  groups.forEach(header=>{
+  filtered.forEach(header=>{
    const option=d.createElement('option');
    option.value=header.dataset.group;
    option.textContent=header.querySelector('span:nth-child(3)')?.textContent||header.dataset.group;
    groupSelect.append(option);
   });
-  groupGo.disabled=!groups.length;
-  return groups.length;
+  groupGo.disabled=!filtered.length;
+  matchCount.textContent=filtered.length+'/'+groups.length;
+  return filtered.length;
  }
+ function refreshGroups(){
+  groupSearch.value='';
+  return filterGroups();
+ }
+ groupSearch.addEventListener('input',filterGroups);
  function jumpGroup(){
   const group=groupSelect.value;
   const header=visibleHeaders().find(node=>node.dataset.group===group);
@@ -69,6 +90,9 @@
   status.textContent='Đã tới nhóm '+group+': '+count+' kênh. Nhấn Enter để phát kênh được chọn.';
  }
  groupGo.addEventListener('click',jumpGroup);
+ groupSearch.addEventListener('keydown',event=>{
+  if(event.key==='Enter'){event.preventDefault();if(!groupGo.disabled)jumpGroup();}
+ });
  groupSelect.addEventListener('keydown',event=>{
   if(event.key==='Enter'){event.preventDefault();jumpGroup();}
  });
@@ -197,7 +221,7 @@
    event.preventDefault();
    setOpen(true);
    refreshGroups();
-   groupSelect.focus();
+   groupSearch.focus();
    return;
   }
   if(event.altKey&&!event.ctrlKey&&!event.metaKey&&event.key.toLowerCase()==='j'&&
