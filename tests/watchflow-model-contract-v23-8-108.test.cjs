@@ -1,8 +1,9 @@
 'use strict';
 const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs');
 const source=fs.readFileSync('renderer/watchflow-ai-demo-v23-8-102.js','utf8');
-test('agreed lightweight AI model is ~18 MB, not the 1 MB fallback',()=>{
- assert.match(source,/≈18 MB · Chưa tích hợp/);
+test('Standard under 20MB and Smart under 200MB do not claim missing weights',()=>{
+ assert.match(source,/Dưới 20 MB · Naive Bayes đang chạy/);
+ assert.match(source,/Dưới 200 MB · tự chọn mô hình/);
  assert.match(source,/Standard: phân loại bằng Naive Bayes/);
  assert.match(source,/Chưa có trọng số/);
 });

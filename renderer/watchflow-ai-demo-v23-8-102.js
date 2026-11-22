@@ -1,5 +1,5 @@
 'use strict';
-/* WatchFlow UI preview: no AI model, crawling, source import or new playback path. */
+/* WatchFlow native Standard Bayes with optional Smart configuration catalog; no simulated AI inference. */
 (function(root,factory){
  const api=factory(root);
  if(typeof module==='object'&&module.exports)module.exports=api;
@@ -37,12 +37,27 @@
   const panel=doc.createElement('section');panel.id='watchflowDemo';panel.className='watchflow-demo';panel.hidden=true;
   panel.setAttribute('aria-label','WatchFlow AI bản xem trước');
   panel.innerHTML='<div class="wf-head"><div><small>WATCHFLOW · TỰ ĐỘNG KHÁM PHÁ (BETA)</small><h2>AI Phân tích kênh & Đề xuất</h2><p>Phân loại kênh, khám phá nội dung và học sở thích xem TV.</p></div><button id="wfClose" type="button" aria-label="Đóng">×</button></div>'+
-  '<div class="wf-modes" role="radiogroup" aria-label="Chế độ AI"><button type="button" data-wf-mode="standard" role="radio"><b>◈ Tiêu chuẩn</b><small>Naive Bayes · EPG · tên kênh</small><small class="wf-size">Dưới 1 MB · tích hợp sẵn</small></button><button type="button" data-wf-mode="smart" role="radio"><b>ϟ Thông minh</b><small>fastText · Mô hình chủ đề đã huấn luyện</small><small class="wf-size">≈18 MB · Chưa tích hợp</small><small class="wf-fallback">Chưa có trọng số · Standard vẫn chạy độc lập</small></button><button type="button" data-wf-mode="intelligence" role="radio"><b>✧ Intelligence</b><small>Dùng chung Qwen3/Hy-MT2 đã tải hoặc tải thêm</small><small class="wf-size">Dung lượng theo mô hình · Không tải trùng</small><small class="wf-fallback">Hiện chỉ xếp hạng EPG, chưa chạy LLM</small></button></div>'+
-  '<p id="wfModeHint" class="wf-hint"></p><div id="wfIntelligenceModels" class="wf-model-picker" hidden><label for="wfModelSelect">Mô hình Intelligence dùng chung</label><div class="wf-model-row"><select id="wfModelSelect" aria-label="Chọn mô hình AI đã có hoặc tải mới"><option value="auto">Tự chọn mô hình đã cài</option></select><button id="wfModelRefresh" type="button">↻ Làm mới</button><button id="wfModelInstall" type="button" disabled>Tải mô hình đã chọn</button></div><small id="wfModelStatus" role="status">Đang kiểm tra mô hình cục bộ…</small></div><div class="wf-auto-banner"><label><input type="checkbox" id="wfAutoEnabled"/> Tự động tìm hiểu kênh và phân loại qua Internet</label><span id="wfAutoStatus" role="status">Đang chuẩn bị quét nền…</span><small>Chỉ tra tên kênh công khai và chủ đề trên Wikidata; không gửi URL phát, không tự nhập M3U. Có thể tắt bất cứ lúc nào.</small></div><nav class="wf-tabs" role="tablist" aria-label="Chức năng WatchFlow"><button type="button" data-wf-tab="overview" role="tab">Tổng quan</button><button type="button" data-wf-tab="classify" role="tab">Phân loại EPG</button><button type="button" data-wf-tab="suggest" role="tab">Đề xuất cho bạn</button><button type="button" data-wf-tab="search" role="tab">Tìm kênh Internet</button></nav>'+
+  '<div class="wf-modes" role="radiogroup" aria-label="Chế độ AI"><button type="button" data-wf-mode="standard" role="radio"><b>◈ Tiêu chuẩn</b><small>Naive Bayes · EPG · tên kênh</small><small class="wf-size">Dưới 20 MB · Naive Bayes đang chạy</small></button><button type="button" data-wf-mode="smart" role="radio"><b>ϟ Thông minh</b><small>TinyBERT · MobileBERT · E5 · MiniLM · PhoBERT</small><small class="wf-size">Dưới 200 MB · tự chọn mô hình</small><small class="wf-fallback">Chưa cài trọng số · dùng Standard để phân loại</small></button><button type="button" data-wf-mode="intelligence" role="radio"><b>✧ Intelligence</b><small>Dùng chung Qwen3/Hy-MT2 đã tải hoặc tải thêm</small><small class="wf-size">Dung lượng theo mô hình · Không tải trùng</small><small class="wf-fallback">Hiện chỉ xếp hạng EPG, chưa chạy LLM</small></button></div>'+
+  '<p id="wfModeHint" class="wf-hint"></p><div id="wfSmartModels" class="wf-model-picker" hidden><label for="wfSmartModelSelect">Chọn mô hình Smart (dưới 200 MB)</label><div class="wf-model-row"><select id="wfSmartModelSelect" aria-label="Chọn mô hình Smart"></select></div><p id="wfSmartModelBenefit" class="wf-model-benefit"></p><small id="wfSmartModelStatus" role="status"></small><div id="wfSmartModelList" class="wf-smart-list"></div></div><div id="wfIntelligenceModels" class="wf-model-picker" hidden><label for="wfModelSelect">Mô hình Intelligence dùng chung</label><div class="wf-model-row"><select id="wfModelSelect" aria-label="Chọn mô hình AI đã có hoặc tải mới"><option value="auto">Tự chọn mô hình đã cài</option></select><button id="wfModelRefresh" type="button">↻ Làm mới</button><button id="wfModelInstall" type="button" disabled>Tải mô hình đã chọn</button></div><small id="wfModelStatus" role="status">Đang kiểm tra mô hình cục bộ…</small></div><div class="wf-auto-banner"><label><input type="checkbox" id="wfAutoEnabled"/> Tự động tìm hiểu kênh và phân loại qua Internet</label><span id="wfAutoStatus" role="status">Đang chuẩn bị quét nền…</span><small>Chỉ tra tên kênh công khai và chủ đề trên Wikidata; không gửi URL phát, không tự nhập M3U. Có thể tắt bất cứ lúc nào.</small></div><nav class="wf-tabs" role="tablist" aria-label="Chức năng WatchFlow"><button type="button" data-wf-tab="overview" role="tab">Tổng quan</button><button type="button" data-wf-tab="classify" role="tab">Phân loại EPG</button><button type="button" data-wf-tab="suggest" role="tab">Đề xuất cho bạn</button><button type="button" data-wf-tab="search" role="tab">Tìm kênh Internet</button></nav>'+
   '<div id="wfContents" class="wf-contents" role="tabpanel" aria-live="polite"></div><footer class="wf-foot"><span id="wfOrigin">Không tự thu thập dữ liệu.</span><button type="button" id="wfRefresh">↻ Làm mới</button></footer>';
   row.insertAdjacentElement('afterend',panel);
   const $=id=>doc.getElementById(id);
   const el=(name,cls='',text)=>{const x=doc.createElement(name);x.className=cls;if(text!==undefined)x.textContent=String(text);return x;};
+  const modelCatalog=root.OpenIPTVWatchFlowModelCatalog;
+  let smartChoice=modelCatalog?.read(root.localStorage)||'tinybert-4l-int8';
+  const smartSelect=$('wfSmartModelSelect'),smartList=$('wfSmartModelList');
+  if(modelCatalog&&smartSelect){
+   for(const item of modelCatalog.SMART){
+    const option=el('option','',item.label+' · '+item.size);option.value=item.id;smartSelect.append(option);
+    const card=el('article','wf-smart-card');card.dataset.modelId=item.id;
+    card.append(el('strong','',item.label+' · '+item.size),el('p','',item.advantage),el('small','',item.note));smartList.append(card);
+   }
+   smartSelect.value=smartChoice;
+   smartSelect.addEventListener('change',()=>{
+    if(!modelCatalog.getSmart(smartSelect.value))return;
+    smartChoice=smartSelect.value;modelCatalog.save(root.localStorage,smartChoice);render();
+   });
+  }
   let mode='standard',tab='overview';
   try{const s=root.localStorage?.getItem('watchflow:demo-mode');if(['standard','smart','intelligence'].includes(s))mode=s;}catch{}
   const data=()=>{
@@ -63,12 +78,20 @@
   function render(){
    const d=data(),real=d.channels.length>0,channels=(real?d.channels:example).slice(0,120);
    const local=engine&&real?engine.analyze(d.channels,d.guide,root.IPTVGuide):new Map(),analysis=auto?.enrich(local,d.channels,root.localStorage,engine)||local,learning=engine?.read(root.localStorage);
-   // Standard owns the bundled Naive Bayes classifier. Smart has no verified fastText weights yet.
+   // Standard runs the real bundled Naive Bayes. Smart dropdown persists a target, not a working model.
    const category=c=>analysis.has(String(c.id))?analysis.get(String(c.id)):classify(c,d.current?.id===c.id?d.epg:'');
    const learnedOrder=real&&mode!=='standard'?engine.rank(d.channels,analysis,learning,d.recent,Date.now(),mode):null;
    for(const x of panel.querySelectorAll('[data-wf-mode]')){const active=x.dataset.wfMode===mode;x.classList.toggle('wf-active',active);x.setAttribute('aria-checked',String(active));}
    for(const x of panel.querySelectorAll('[data-wf-tab]')){const active=x.dataset.wfTab===tab;x.classList.toggle('wf-active',active);x.setAttribute('aria-selected',String(active));}
-   $('wfModeHint').textContent=mode==='standard'?'Standard: phân loại bằng Naive Bayes trên tên kênh và EPG, không cần tải mô hình và không ghi thói quen.':mode==='smart'?'Smart: đúng thiết kế fastText đã huấn luyện ≈18 MB, CHƯA có trọng số xác thực. Khi chưa có, dùng kết quả Standard để hiển thị, không nhận là fastText đang hoạt động.':'Intelligence: dùng chung Qwen3/Hy-MT2 đã tải hoặc chọn tải mới. Chưa nối suy luận LLM với WatchFlow (giao diện thử nghiệm).';
+   $('wfModeHint').textContent=mode==='standard'?'Standard: phân loại bằng Naive Bayes theo tên kênh/EPG, bộ đang chạy dưới 1 MB. Giới hạn Standard dưới 20 MB; fastText ~18 MB chưa có trọng số. Không ghi thói quen ở Standard.':mode==='smart'?'Smart: lựa chọn mô hình dưới 200 MB. Khi chưa có file trọng số và runtime đã kiểm chứng, tiếp tục phân loại bằng Naive Bayes; học sở thích bằng bộ xếp hạng hành vi hiện có.':'Intelligence: dùng chung Qwen3/Hy-MT2 đã tải hoặc chọn tải mới. Qwen3 đã có đường suy luận native trên Mac Apple Silicon.';
+   const smartArea=$('wfSmartModels');if(smartArea)smartArea.hidden=mode!=='smart';
+   if(mode==='smart'&&modelCatalog){
+    const selected=modelCatalog.getSmart(smartChoice);
+    smartSelect.value=selected?.id||modelCatalog.SMART[0].id;
+    $('wfSmartModelBenefit').textContent=selected?.advantage||'';
+    $('wfSmartModelStatus').textContent='Đã lưu cấu hình: '+(selected?.label||'')+'. Chưa có trọng số/bộ chạy được xác minh — chưa kích hoạt mô hình Smart. Kích thước chỉ là ước tính; bắt buộc dưới 200 MB (gồm tokenizer).';
+    for(const card of smartList.children)card.classList.toggle('wf-smart-selected',card.dataset.modelId===smartChoice);
+   }
    const modelArea=$('wfIntelligenceModels');if(modelArea)modelArea.hidden=mode!=='intelligence';
    $('wfOrigin').textContent=real?'Dữ liệu kênh từ playlist đang nhập, lịch sử trên thiết bị.':'Dữ liệu ví dụ, chưa có playlist và EPG thực tế.';
    const autoEnabled=$('wfAutoEnabled');if(autoEnabled)autoEnabled.checked=auto?.enabled(root.localStorage)!==false;
@@ -83,7 +106,7 @@
     for(const [name,n] of [...count].sort((a,b)=>b[1]-a[1]).slice(0,6)){
      const bar=el('div','wf-bar');bar.append(el('span','',name));const track=el('div','wf-track'),fill=el('i','wf-fill');
      fill.style.width=(100*n/channels.length)+'%';track.append(fill);bar.append(track,el('b','',n));main.append(bar);}
-    main.append(el('p','wf-hint',mode==='standard'?'Naive Bayes dự đoán từ tên kênh + EPG.':mode==='smart'?'fastText ≈18 MB chưa được cài; bảng này vẫn là kết quả Naive Bayes của Standard.':'Intelligence đang xếp hạng EPG + giờ xem, chưa gọi mô hình LLM.'));
+    main.append(el('p','wf-hint',mode==='standard'?'Naive Bayes dự đoán từ tên kênh + EPG.':mode==='smart'?'Smart chưa có model chạy; bảng này vẫn là kết quả Naive Bayes của Standard.':'Intelligence đang xếp hạng EPG + giờ xem, chưa gọi mô hình LLM.'));
    }else if(tab==='classify'||tab==='suggest'){
     main.append(el('h3','',tab==='classify'?'Phân loại kênh theo EPG và chủ đề':'Gợi ý dựa trên các kênh đã xem gần đây'));
     const list=el('div','wf-list'),ordered=tab==='suggest'?(learnedOrder?learnedOrder.slice(0,8).map(x=>x.channel):recommend(channels,d.recent,d.current?.id).slice(0,8)):channels.slice(0,16);

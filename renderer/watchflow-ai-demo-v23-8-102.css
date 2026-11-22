@@ -69,3 +69,16 @@ html[data-theme=dark] #page-tv .wf-auto-banner{background:#32243e;border-color:#
 #page-tv .wf-model-row button:disabled{opacity:.55;cursor:not-allowed}
 #page-tv #wfModelStatus{color:#7a6789;font-size:11px}
 html[data-theme=dark] #page-tv .wf-model-picker,html[data-theme=amoled] #page-tv .wf-model-picker{background:#282038;border-color:#6d5186}
+
+/* v23.8.112: Smart model comparison, readable in light/dark mode. */
+#page-tv .wf-model-benefit{font-size:12px;line-height:1.5;margin:0;color:#67458c;font-weight:700}
+#page-tv #wfSmartModelStatus{font-size:11px;line-height:1.5;color:#816c92}
+#page-tv .wf-smart-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:8px}
+#page-tv .wf-smart-card{border:1px solid #d7cae4;background:#fff;border-radius:9px;padding:9px;min-width:0}
+#page-tv .wf-smart-card strong{font-size:12px;color:#4c306e}
+#page-tv .wf-smart-card p{font-size:11px;line-height:1.45;margin:5px 0;color:#4d4660}
+#page-tv .wf-smart-card small{font-size:10px;color:#7c6d87;line-height:1.45}
+#page-tv .wf-smart-card.wf-smart-selected{outline:2px solid #955ad1;border-color:#955ad1}
+html[data-theme=dark] #page-tv .wf-smart-card,html[data-theme=amoled] #page-tv .wf-smart-card{background:#30283d;border-color:#685679}
+html[data-theme=dark] #page-tv .wf-smart-card :is(strong,p,small),html[data-theme=amoled] #page-tv .wf-smart-card :is(strong,p,small){color:#ede2fa}
+html[data-theme=dark] #page-tv :is(.wf-model-benefit,#wfSmartModelStatus),html[data-theme=amoled] #page-tv :is(.wf-model-benefit,#wfSmartModelStatus){color:#dbc5f1}

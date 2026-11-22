@@ -5,13 +5,14 @@ const css=fs.readFileSync('renderer/watchflow-ai-demo-v23-8-102.css','utf8');
 test('Standard routes Naive Bayes EPG analysis, independent of Smart',()=>{
  assert.match(ui,/Standard: phân loại bằng Naive Bayes/);
  assert.match(ui,/const category=c=>analysis\.has\(String\(c\.id\)\)/);
- assert.match(ui,/Dưới 1 MB · tích hợp sẵn/);
+ assert.match(ui,/Dưới 20 MB · Naive Bayes đang chạy/);
 });
-test('Smart is fastText ~18MB and never pretends Bayes is fastText',()=>{
- assert.match(ui,/fastText · Mô hình chủ đề đã huấn luyện/);
- assert.match(ui,/≈18 MB · Chưa tích hợp/);
- assert.match(ui,/fastText ≈18 MB chưa được cài/);
+test('Smart offers a selector without pretending Transformer inference already works',()=>{
+ assert.match(ui,/Dưới 200 MB · tự chọn mô hình/);
+ assert.match(ui,/wfSmartModelSelect/);
+ assert.match(ui,/modelCatalog\.save\(root\.localStorage,smartChoice\)/);
  assert.match(ui,/bảng này vẫn là kết quả Naive Bayes của Standard/);
+ assert.match(ui,/Chưa có trọng số\/bộ chạy được xác minh/);
 });
 test('Intelligence native inventory is reused, and new model installs need an explicit click',()=>{
  assert.match(ui,/native\.aiStorageStatus\(\)/);
