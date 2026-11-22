@@ -1,4 +1,12 @@
-# Open IPTV Pro TV · TizenBrew v0.1.35 (OTA)
+# Open IPTV Pro TV · TizenBrew v0.1.40 (OTA)
+
+## v0.1.40 — Chuyển kênh trực tiếp bằng ↑/↓ trong toàn màn hình
+
+- Bấm ↑ hoặc ↓ khi đang xem: danh sách kênh hiện lên và **chuyển sang kênh trước/sau ngay lập tức**, không cần OK.
+- Danh sách vẫn hiển thị khi chuyển kênh tiếp bằng ↑/↓. ←/→ chỉ đổi thư mục. OK/Back đóng danh sách mà vẫn giữ kênh đang phát.
+- Lần bấm ↑/↓ đầu tiên bắt đầu từ kênh thực sự đang phát, tránh chọn sai do vị trí cũ. OK không khởi chạy lại cùng một kênh.
+- Chỉ cập nhật `tizenbrew/index.html` và kiểm thử bộ chọn kênh, không tác động đến bản web/Cast hoặc relay.
+- Đã kiểm tra cú pháp JavaScript; bài kiểm thử tự động được bổ sung. Chưa xác minh trên Samsung TV thật.
 
 ## v0.1.35 — Hiện chẩn đoán HLS và User-Agent đầy đủ
 
