@@ -62,7 +62,7 @@ button,input,textarea{font:inherit;color:inherit}button{cursor:pointer;border:2p
 @media(max-width:1100px){.nav .sidebar-shortcuts{gap:6px;padding:0 2px}.nav .sidebar-shortcuts button{font-size:13px;padding:8px 9px}}
 </style></head><body data-theme="dark">
 <div id="app">
-<header class="top"><div class="brand"><div class="brandicon">▶</div><div><strong>Open IPTV Pro <small>TV</small></strong><p>Samsung Tizen Edition · TizenBrew v0.1.18</p></div></div><div class="toolbar"><span class="clock" id="clock">--:--</span><button id="searchBtn">⌕ Tìm</button><button id="addBtn">＋ Nguồn</button><button id="themeBtn">◐ Giao diện</button></div></header>
+<header class="top"><div class="brand"><div class="brandicon">▶</div><div><strong>Open IPTV Pro <small>TV</small></strong><p>Samsung Tizen Edition · TizenBrew v0.1.19</p></div></div><div class="toolbar"><span class="clock" id="clock">--:--</span><button id="searchBtn">⌕ Tìm</button><button id="addBtn">＋ Nguồn</button><button id="themeBtn">◐ Giao diện</button></div></header>
 <div class="main"><nav class="nav"><button class="active" data-nav="all">▣　Trực tiếp</button><button data-nav="favorites">♡　Yêu thích</button><button data-nav="recent">◷　Đã xem</button><button data-nav="sources">☷　Nguồn M3U</button><button data-nav="help">⚙　Hướng dẫn</button><div id="sidebarShortcuts" class="sidebar-shortcuts"><button type="button" id="tizenTubeBtn" title="Chuyển sang TizenTube đã cài trong TizenBrew">▶ TizenTube</button><button type="button" id="exitModuleBtn" class="exit-small" title="Thoát về TizenBrew">✕ Thoát</button></div><p class="tip">Dùng ↑ ↓ ← → và OK để điều khiển bằng remote TV.</p></nav>
 <section class="listpane"><div class="heading"><div><div class="eyebrow">DANH SÁCH KÊNH</div><h1 id="heading">Trực tiếp</h1></div><span id="count">0 kênh</span></div><div class="groups" id="groups"></div><div class="channels" id="channels"></div><div class="empty" id="empty" hidden><h2>Chưa có kênh IPTV</h2><p>Thêm nguồn bằng URL trên remote hoặc quét QR để nhập bằng điện thoại.</p><button id="emptyAdd" class="primary">＋ Thêm nguồn IPTV</button><button id="sampleBtn">▶ Luồng kiểm thử</button></div><button id="more" hidden>Xem thêm kênh ↓</button></section>
 <aside class="details"><div class="preview"><span class="live">● TRỰC TIẾP</span><b id="previewText">TV</b><span class="watermark">OPEN IPTV PRO</span></div><div class="eyebrow">KÊNH ĐANG CHỌN</div><h2 id="channelTitle">Open IPTV Pro TV</h2><p id="channelGroup">Chọn kênh để xem</p><div class="info"><div class="eyebrow">THÔNG TIN</div><p id="channelInfo">Hỗ trợ nhập M3U, nhóm kênh, yêu thích và remote Samsung.</p></div><div class="actions"><button class="primary" id="watchBtn">▶ Xem</button><button id="favBtn">♡ Yêu thích</button></div></aside></div>
@@ -96,7 +96,7 @@ try{var old=JSON.parse(localStorage.getItem(storageKey)||'{}');if(old&&typeof ol
 function save(){try{localStorage.setItem(storageKey,JSON.stringify(state));return true;}catch(e){notify('Không đủ bộ nhớ để lưu danh sách.');return false;}}
 
 var SOURCE_CONFIG={url:'https://zjbsvqryaxtafuffpifu.supabase.co',key:'sb_publishable_j_aWS273AgxBi0JYj4O-WA_bNxHFxM7'};
-var SOURCE_PAGE='https://trisanghy.github.io/open-iptv-pro/tizen/phone.html?v=022';
+var SOURCE_PAGE='https://trisanghy.github.io/open-iptv-pro/tizen/phone.html?v=023';
 var sourcePair=null,pairSeq=0,pairTimer=0,sourceSdkPromise=null;
 function sourceStatus(s){byId('sourceQRStatus').textContent=s;}
 function newToken(){if(!window.crypto||!window.crypto.getRandomValues)throw Error('TV không hỗ trợ tạo mã QR an toàn.');
@@ -553,7 +553,7 @@ function openDialog(kind){byId('modal').hidden=false;byId('sourceDialog').hidden
 byId('modal').firstElementChild.classList.toggle('source-mode',kind!=='search');
 byId('dialogTitle').textContent=kind==='search'?'Tìm kiếm kênh':'Thêm nguồn IPTV';
 if(kind==='source'){setRightsChecked(false);void openPair();}else stopPair();
-setTimeout(function(){byId(kind==='search'?'searchInput':'sourceUrl').focus();},40);}
+setTimeout(function(){byId(kind==='search'?'searchInput':'toSourceUrl').focus();},40);}
 function setRightsChecked(on){byId('rights').setAttribute('aria-checked',on?'true':'false');}
 function toggleRights(){setRightsChecked(byId('rights').getAttribute('aria-checked')!=='true');}
 function closeDialog(){stopPair();byId('modal').hidden=true;byId('addBtn').focus();}
@@ -682,6 +682,7 @@ function keyHandler(e){if(isRemoteBack(e)){handleBack(e);return;}var k=e.key||''
 if(!byId('modal').hidden){
 var active=document.activeElement,isText=active&&active.tagName==='INPUT'&&active.type!=='checkbox';
 if(active===byId('sourceName')&&(k==='ArrowDown'||k==='Enter')){e.preventDefault();e.stopPropagation();byId('sourceUrl').focus();return;}
+if(active===byId('toSourceUrl')&&k==='ArrowDown'){e.preventDefault();e.stopPropagation();byId('sourceUrl').focus();return;}
 if(active===byId('sourceUrl')&&k==='ArrowUp'){e.preventDefault();e.stopPropagation();byId('sourceName').focus();return;}
 if(active===byId('sourceUrl')&&k==='ArrowDown'){e.preventDefault();e.stopPropagation();byId('rights').focus();return;}
 if(active===byId('rights')&&(k==='Enter'||k==='OK'||k===' '||k==='Spacebar'||c===13||c===32)){e.preventDefault();e.stopPropagation();if(!e.repeat)toggleRights();return;}
