@@ -222,7 +222,20 @@
    const li=d.createElement('li');li.className='po-pulse-missing-row';
    const name=d.createElement('strong');name.textContent=item.name;
    const group=d.createElement('small');group.textContent=item.group;
-   li.append(name,group);missingRows.append(li);
+   // P5.1.172: đưa chính tên kênh từ kiểm kê về danh sách TV, không tự phát.
+   const locate=d.createElement('button');locate.type='button';
+   locate.className='po-pulse-missing-locate';locate.textContent='Tìm';
+   locate.setAttribute('aria-label','Tìm kênh '+item.name+' trong danh sách TV');
+   locate.addEventListener('click',()=>{
+    const search=d.getElementById('searchBox');
+    const all=d.querySelector('#page-tv .filter-tab[data-filter="all"]');
+    if(!search||!all)return;
+    state.setPage('tv');
+    if(!all.classList.contains('active'))all.click();
+    search.value=item.name;search.dispatchEvent(new Event('input',{bubbles:true}));
+    hide();search.focus({preventScroll:true});
+   });
+   li.append(name,group,locate);missingRows.append(li);
   }
   if(!report.rows.length){
    const empty=d.createElement('li');empty.className='po-pulse-missing-empty';

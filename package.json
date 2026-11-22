@@ -1,7 +1,7 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.256",
+  "version": "4.23.257",
   "description": "Positron P5.1.171: hiển thị phạm vi kênh đang xem theo phân trang",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",

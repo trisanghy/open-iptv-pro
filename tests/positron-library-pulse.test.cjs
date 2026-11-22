@@ -335,3 +335,17 @@ test('P5.1.171 nhãn phạm vi kênh không sửa danh sách nguồn',()=>{
  assert.ok(css.includes('#poLibraryMissingRange{'));
  assert.ok(!js.includes('deleteChannel(')&&!js.includes('importSource('));
 });
+
+test('P5.1.172 Tìm kênh thiếu logo trong TV an toàn, không tự mở playback',()=>{
+ const js=fs.readFileSync(path.join(__dirname,'../renderer/positron-library-pulse.js'),'utf8');
+ const css=fs.readFileSync(path.join(__dirname,'../renderer/positron-library-pulse.css'),'utf8');
+ assert.ok(js.includes("locate.className='po-pulse-missing-locate'"));
+ assert.ok(js.includes("locate.setAttribute('aria-label'"),'Có tên thao tác trợ năng');
+ assert.ok(js.includes("d.querySelector('#page-tv .filter-tab[data-filter=\"all\"]')"));
+ assert.ok(js.includes("search.value=item.name;search.dispatchEvent(new Event('input',{bubbles:true}))"));
+ assert.ok(js.includes("state.setPage('tv')"),'Quay về đúng tab TV');
+ assert.ok(js.includes('hide();search.focus({preventScroll:true})'),'Đóng popup, focus ô tìm');
+ assert.ok(css.includes('grid-template-columns:minmax(0,1fr) auto'),'Nút không tăng chiều cao một hàng');
+ assert.ok(css.includes('.po-pulse-missing-locate:focus-visible'),'Nút có focus rõ');
+ assert.ok(!js.includes('state.playChannel(')&&!js.includes('deleteChannel('));
+});

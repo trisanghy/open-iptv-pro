@@ -1,3 +1,11 @@
+## P5.1.172 — Tìm đúng kênh thiếu logo trong danh sách TV / Electron 4.23.257
+- Feature priority: NEW — Ảnh Electron thật P5.1.171 cho thấy trang kiểm kê hiển thị kênh 11–20 trong khi danh sách TV bên trái còn kênh 1–10, thiếu cầu nối tìm đúng kênh để người dùng sửa hoặc xem thông tin. Thêm nút Tìm cho mỗi hàng, đặt ô tìm trong TV theo đúng tên kênh và mở bộ lọc Tất cả.
+- User action: Mở Thư viện → Kênh thiếu logo → chuyển tới trang cần kiểm tra → bấm Tìm cạnh kênh muốn định vị; panel đóng, tab TV hiện danh sách đã lọc theo tên, chỉ phát khi người dùng chủ động bấm kênh.
+- Electron screenshot: positron-p51172-locate-channel-after-1920x1080-real.png
+- Nguồn quyết định: đã mở ảnh thật P5.1.171 `positron-p51171-visible-range-after-1920x1080-real.png` thấy bảng kiểm kê và danh sách kênh chính chưa liên thông. Không tự phát, không thay playlist hoặc URL, không gọi mạng.
+- Kiểm thử mới: Node regression giữ nguyên textContent/aria-label/nút có focus, Electron 1920×1080 trước/sau và 10 phép đo trạng thái TV, bộ lọc, tên, focus, không autoplay, không đụng nguồn.
+- Trạng thái: CANDIDATE — chỉ tính hoàn thành khi Node + Electron screenshot thật xem bằng mắt + GitHub Release x64/DMG đạt.
+
 ## P5.1.171 — Phạm vi kênh thực đang xem / Electron 4.23.256
 - Electron screenshot: positron-p51171-visible-range-after-1920x1080-real.png
 - User action: Mở Thư viện → Kênh thiếu logo → chuyển trang hoặc đổi số kênh/trang; quan sát dòng Đang xem X–Y / tổng kênh ngay dưới thanh phân trang.
