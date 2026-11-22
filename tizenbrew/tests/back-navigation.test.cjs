@@ -12,7 +12,7 @@ function harness(options={}){
  const state={modal:options.modal||false,player:options.player||false,history:options.history===undefined?2:options.history,active:options.active||'BUTTON'};
  const hits={closedDialog:0,closedPlayer:0,back:0,exited:0,prevent:0};
  const doc={activeElement:{tagName:state.active}};
- const elems={modal:{hidden:!state.modal},player:{hidden:!state.player},video:{pause(){}}};
+ const elems={modal:{hidden:!state.modal},player:{hidden:!state.player},channelPicker:{hidden:true},video:{pause(){}}};
  const win={history:{length:state.history,back(){hits.back++}},location:{href:''}};
  const tizen={application:{getCurrentApplication(){return {exit(){hits.exited++}}}}};
  const funcs=Function('document','window','byId','closeDialog','closePlayer','stopPair','tizen',code+'; return {handleBack,isRemoteBack};')(
