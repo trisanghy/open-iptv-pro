@@ -70,7 +70,7 @@ test('If Samsung prepare fails, HTML5 fallback runs without losing the selected 
  s.calls.prepared[0].fail('NotSupportedError');
  assert.equal(s.api.engine(),'html5');
  assert.equal(s.video.src,c.url);
- assert.equal(s.calls.htmlPlay,1);
+ assert.equal(s.calls.htmlPlay,2,'native attempt is followed by HLS.js after the simulated native error');
  assert.equal(s.video.hidden,false);
  assert.equal(s.objects.avplayObject.hidden,true);
  assert.equal(s.state.sources[0].name,'Nguồn cũ');

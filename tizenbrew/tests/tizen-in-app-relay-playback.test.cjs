@@ -49,7 +49,7 @@ function harness({relayAvailable=true}={}){
  return {api,instances,requests,elements,notes,video,env,timers,calls,state};
 }
 async function flush(){await new Promise(resolve=>setImmediate(resolve));}
-test('Click channel uses in-app player and direct HLS first; only manifest failure invokes local relay',async()=>{
+test('Click channel tries native HLS first, then HLS.js and TV-local relay on failure',async()=>{
  const s=harness(),selected={id:'vtv2',name:'VTV2',url:'https://cdn.example.org/live/vtv2.m3u8?token=private'};
  s.api.play(selected);await flush();
  assert.equal(s.api.current().playbackEngine,'html5');
@@ -75,7 +75,7 @@ test('Click channel uses in-app player and direct HLS first; only manifest failu
  const headers={};s.instances[1].options.xhrSetup({setRequestHeader:(k,v)=>headers[k]=v});
  assert.equal(headers['X-Open-IPTV-Relay'],'1');
  s.instances[1].ready();await flush();
- assert.equal(s.calls.play,1,'in-app HTML5 video plays after HLS manifest is ready');
+ assert.equal(s.calls.play,2,'video is attempted natively, then after HLS.js manifest is ready');
 });
 test('Switch channel invalidates stale local relay callbacks and never starts a wrong stream',async()=>{
  const s=harness(),a={id:'a',name:'VTV2',url:'https://cdn.example.org/old.m3u8'},
