@@ -2,14 +2,23 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
-## P5.1.253 — Căn giữa kênh khi quay lại
+## P5.1.254 — Quay lại kênh từ mọi trang
 
-**Ứng dụng:** 4.23.338 · **Trạng thái:** Chưa có bản phát hành
+**Ứng dụng:** 4.23.339 · **Trạng thái:** Chưa có bản phát hành
+
+Từ Nguồn IPTV, Lịch EPG và Cài đặt, Alt+Shift+L trở về TV, khôi phục focus ở kênh cuối cùng đã duyệt và căn giữa danh sách, không tự phát. Chỉ kích hoạt nếu đã có kênh được nhớ; không chiếm phím khi đang nhập liệu. Playlist, Favorites, nguồn và trạng thái phát không thay đổi. Electron QA: `positron-p51254-cross-page-before-1920x1080-real.png` và `positron-p51254-cross-page-after-1920x1080-real.png`; phải xem ảnh thật, đo focus/kích thước và xác minh CI trước khi đánh dấu hoàn thành.
+
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/411de0d7a45ba37690c4648f6ebe6a9824ed2b13)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+
+## P5.1.253 — Electron 4.23.338 — Căn giữa hàng kênh được khôi phục (CANDIDATE)
+
+**Ứng dụng:** 4.23.338 · **Trạng thái:** Đã phát hành
 
 Feature priority: NEW — Khi dùng Alt+Shift+L quay lại hàng kênh đã duyệt, danh sách cuộn tự động căn hàng đó gần giữa panel để người xem có thể thấy các kênh lân cận cả phía trên và dưới, không chỉ nhìn hàng sát mép cuối. Electron screenshot: positron-p51253-centered-row-after-1920x1080-real.png
 
 [Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/d03e102c2f6b62f08545e4f98baa92ea56b9d712)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.338-p5.1.253)
 
 ## P5.1.252 — Electron 4.23.337 — Quay lại kênh cả sau khi đổi bộ lọc (HOÀN TẤT)
 

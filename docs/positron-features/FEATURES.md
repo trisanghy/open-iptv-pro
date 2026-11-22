@@ -7,15 +7,28 @@ Trang này được tạo tự động từ GitHub Releases và ảnh kiểm th�
 [Mở WEBSITE changelog tương tác](https://raw.githack.com/trisanghy/open-iptv-pro/Positron/docs/positron-features/index.html) · [Giao diện HTML trong repository](index.html) · [Các bản phát hành](https://github.com/trisanghy/open-iptv-pro/releases) · [Nhật ký Git tiếng Việt](LOG_GIT_TIENG_VIET.md) · [Quy tắc ưu tiên tính năng](../../POSITRON_FEATURE_RULES.md)
 
 <details>
-<summary><strong>P5.1.253</strong> · Căn giữa kênh khi quay lại · CHƯA CÓ BẢN PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.254</strong> · Quay lại kênh từ mọi trang · CHƯA CÓ BẢN PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
 
-**Ứng dụng:** 4.23.338 · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
+**Ứng dụng:** 4.23.339 · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
+
+Từ Nguồn IPTV, Lịch EPG và Cài đặt, Alt+Shift+L trở về TV, khôi phục focus ở kênh cuối cùng đã duyệt và căn giữa danh sách, không tự phát. Chỉ kích hoạt nếu đã có kênh được nhớ; không chiếm phím khi đang nhập liệu. Playlist, Favorites, nguồn và trạng thái phát không thay đổi. Electron QA: `positron-p51254-cross-page-before-1920x1080-real.png` và `positron-p51254-cross-page-after-1920x1080-real.png`; phải xem ảnh thật, đo focus/kích thước và xác minh CI trước khi đánh dấu hoàn thành.
+
+*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+
+[Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/tree/Positron) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/411de0d7a45ba37690c4648f6ebe6a9824ed2b13)
+
+</details>
+
+<details>
+<summary><strong>P5.1.253</strong> · Electron 4.23.338 — Căn giữa hàng kênh được khôi phục (CANDIDATE) · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+
+**Ứng dụng:** 4.23.338 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
 Feature priority: NEW — Khi dùng Alt+Shift+L quay lại hàng kênh đã duyệt, danh sách cuộn tự động căn hàng đó gần giữa panel để người xem có thể thấy các kênh lân cận cả phía trên và dưới, không chỉ nhìn hàng sát mép cuối. Electron screenshot: positron-p51253-centered-row-after-1920x1080-real.png
 
 *Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
 
-[Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/tree/Positron) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/d03e102c2f6b62f08545e4f98baa92ea56b9d712)
+[Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.338-p5.1.253) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/d03e102c2f6b62f08545e4f98baa92ea56b9d712) · [Tải Windows Setup x64](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.338-p5.1.253/Open-IPTV-Pro-Setup-4.23.338-x64.exe) · [Tải gói ảnh QA](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.338-p5.1.253/Positron-P51253-20-Real-Screenshots.zip)
 
 </details>
 
