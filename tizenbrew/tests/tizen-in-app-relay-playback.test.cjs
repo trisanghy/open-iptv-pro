@@ -53,6 +53,10 @@ test('Click channel uses in-app player and direct HLS first; only manifest failu
  const s=harness(),selected={id:'vtv2',name:'VTV2',url:'https://cdn.example.org/live/vtv2.m3u8?token=private'};
  s.api.play(selected);await flush();
  assert.equal(s.api.current().playbackEngine,'html5');
+ assert.equal(s.api.current().html5Mode,'native');
+ assert.equal(s.video.src,selected.url,'native Samsung video is attempted first');
+ assert.equal(s.instances.length,0);
+ s.api.handleHtml5Error(s.api.current().playbackSerial,'Native HLS playback failed');await flush();
  assert.equal(s.api.current().html5Mode,'hlsjs');
  assert.equal(s.instances.length,1);
  assert.equal(s.instances[0].url,selected.url);
@@ -76,17 +80,21 @@ test('Click channel uses in-app player and direct HLS first; only manifest failu
 test('Switch channel invalidates stale local relay callbacks and never starts a wrong stream',async()=>{
  const s=harness(),a={id:'a',name:'VTV2',url:'https://cdn.example.org/old.m3u8'},
   b={id:'b',name:'VTV7',url:'https://cdn.example.org/new.m3u8'};
- s.api.play(a);await flush();const old=s.instances[0];old.fail(); // queues session callback
+ s.api.play(a);await flush();
+ s.api.handleHtml5Error(s.api.current().playbackSerial,'Native HLS playback failed');await flush();
+ const old=s.instances[0];old.fail(); // queues session callback
  s.api.play(b);await flush();
  assert.equal(s.api.current().playing.id,'b');
- assert.equal(s.api.current().html5Mode,'hlsjs');
- assert.equal(s.instances.at(-1).url,b.url);
+ assert.equal(s.api.current().html5Mode,'native');
+ assert.equal(s.video.src,b.url);
+ assert.equal(old.destroyed,true,'old HLS engine is stopped on channel change');
  assert.equal(s.elements.browserFallback.hidden,true);
 });
 test('When local relay service is absent, app reports failure and does not open Cast automatically',async()=>{
  const s=harness({relayAvailable:false});
  s.api.play({id:'vtv3',name:'VTV3',url:'https://cdn.example.org/live.m3u8'});
- await flush();s.instances[0].fail('manifestLoadError',403);await flush();
+ await flush();s.api.handleHtml5Error(s.api.current().playbackSerial,'Native HLS playback failed');await flush();
+ s.instances[0].fail('manifestLoadError',403);await flush();
  assert.equal(s.api.current().html5Mode,'hls-relay');
  // Service startup is asynchronous; simulate the 7 bounded retries.
  for(let i=0;i<7;i++){

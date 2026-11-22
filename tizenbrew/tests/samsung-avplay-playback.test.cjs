@@ -113,7 +113,7 @@ test('Closing playback stops and closes native AVPlay',()=>{
  assert.equal(s.player.hidden,true);
  assert.equal(s.objects.avplayObject.hidden,true);
 });
-test('HLS.js fallback is used when AVPlay is missing and native browser cannot play HLS',async()=>{
+test('HLS.js fallback follows a real Samsung native HLS failure',async()=>{
  const s=setup(false),c=s.channel('VTV4','https://example.com/live.m3u8');
  let hlsLoaded='',attachCalls=0;
  class HlsMock{
@@ -127,6 +127,9 @@ test('HLS.js fallback is used when AVPlay is missing and native browser cannot p
  HlsMock.Events={MANIFEST_PARSED:'manifest',ERROR:'error'};
  s.env.window.Hls=HlsMock;
  s.api.play(c);
+ assert.equal(s.api.mode(),'native','Samsung native video is attempted first');
+ assert.equal(s.video.src,c.url);
+ s.api.handleHtml5Error(s.api.serial(),'Native HLS playback failed');
  await Promise.resolve();await Promise.resolve();
  assert.equal(hlsLoaded,c.url);
  assert.equal(attachCalls,1);
@@ -161,6 +164,7 @@ test('When AVPlay and MediaSource are unavailable the TV explains the limitation
  class HlsMock{static isSupported(){return false;}}
  s.env.window.Hls=HlsMock;
  s.api.play(c);
+ s.api.handleHtml5Error(s.api.serial(),'Native playback failed');
  await Promise.resolve();await Promise.resolve();
  assert.match(s.status.textContent,/Đang xác minh lỗi phát/);
  const grace=s.calls.timers.filter(t=>t.ms===2400).at(-1);
