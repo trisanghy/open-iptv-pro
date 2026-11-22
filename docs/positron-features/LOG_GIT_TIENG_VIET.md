@@ -2,14 +2,23 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
-## P5.1.254 — Quay lại kênh từ mọi trang
+## P5.1.255 — Nút quay lại kênh tại Nguồn IPTV
 
-**Ứng dụng:** 4.23.339 · **Trạng thái:** Chưa có bản phát hành
+**Ứng dụng:** 4.23.340 · **Trạng thái:** Chưa có bản phát hành
+
+Feature priority: NEW — Thêm nút một chạm ở phần đầu trang Nguồn IPTV, hiện số kênh đã duyệt gần nhất và quay về kênh ấy mà không phát video; dùng chung cơ chế với Alt+Shift+L. Nút tự vô hiệu khi chưa có dấu vị trí và không thay đổi M3U, Favorites, playback hoặc cài đặt. Electron screenshot: positron-p51255-return-button-after-1920x1080-real.png
+
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/f647528038b6ef32350d427d1569e7b63af3dee8)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+
+## P5.1.254 — Alt+Shift+L quay lại kênh từ trang khác / Electron 4.23.339
+
+**Ứng dụng:** 4.23.339 · **Trạng thái:** Đã phát hành
 
 Feature priority: NEW — Alt+Shift+L cho phép quay lại TV từ Nguồn IPTV, EPG hoặc Cài đặt, tìm đúng kênh vừa duyệt và căn giữa danh sách. Chỉ dùng bookmark trong phiên, không chiếm phím khi nhập liệu, không tự phát và không thay đổi playlist, Favorites hay nguồn. Electron screenshot: positron-p51254-cross-page-after-1920x1080-real.png
 
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/411de0d7a45ba37690c4648f6ebe6a9824ed2b13)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/9f4a2d1cd69ade9b4b94099b1894a6d9ee768377)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.339-p5.1.254)
 
 ## P5.1.253 — Electron 4.23.338 — Căn giữa hàng kênh được khôi phục (CANDIDATE)
 
