@@ -373,7 +373,13 @@
    historyFavoriteFilter.textContent='☆ Chỉ yêu thích';
    historyFavoriteFilter.setAttribute('aria-pressed','false');
    historyFavoriteFilter.setAttribute('aria-label','Chỉ hiện kênh Yêu thích trong lịch sử khám phá');
-   historyPanel.append(historyHead,historyNote,historySearch,historyFavoriteFilter,historyList);d.body.append(historyPanel);
+   // P219: switch between recent order and Vietnamese-aware alphabetic order.
+   const historySort=d.createElement('select');historySort.id='poRandomHistorySort';
+   historySort.setAttribute('aria-label','Sắp xếp lịch sử khám phá theo');
+   for(const [value,label] of [['recent','Mới khám phá nhất'],['az','Tên kênh A–Z'],['za','Tên kênh Z–A']]){
+    const item=d.createElement('option');item.value=value;item.textContent=label;historySort.append(item);
+   }
+   historyPanel.append(historyHead,historyNote,historySearch,historyFavoriteFilter,historySort,historyList);d.body.append(historyPanel);
    const closeHistory=(restoreFocus=false)=>{
     historyPanel.hidden=true;historyButton.setAttribute('aria-expanded','false');
     if(restoreFocus&&!historyButton.hidden)historyButton.focus();
@@ -392,7 +398,11 @@
     const favCore=window.OpenIPTVFavorites,store=window.IPTVState?.getStore?.();
     const visible=onlyFavorites
      ?recent.filter(c=>Boolean(favCore?.has?.(store,c))):recent;
-    const filtered=query?visible.filter(c=>normalizeHistory(c.name+' '+(c.group||'')).includes(query)):visible;
+    const filtered=query?visible.filter(c=>normalizeHistory(c.name+' '+(c.group||'')).includes(query)):visible.slice();
+    if(historySort.value==='az'||historySort.value==='za'){
+     const sign=historySort.value==='az'?1:-1;
+     filtered.sort((a,b)=>sign*String(a.name||'').localeCompare(String(b.name||''),'vi',{numeric:true}));
+    }
     historyList.replaceChildren();
     for(const channel of filtered){
      const option=d.createElement('button');option.type='button';
@@ -462,6 +472,7 @@
     }
    };
    historySearch.addEventListener('input',renderHistory);
+   historySort.addEventListener('change',renderHistory);
    historyFavoriteFilter.addEventListener('click',()=>{
     const enabled=historyFavoriteFilter.getAttribute('aria-pressed')!=='true';
     historyFavoriteFilter.setAttribute('aria-pressed',String(enabled));
@@ -484,6 +495,7 @@
     historySearch.value='';
     historyFavoriteFilter.setAttribute('aria-pressed','false');
     historyFavoriteFilter.textContent='☆ Chỉ yêu thích';
+    historySort.value='recent';
     renderHistory();
     const bounds=historyButton.getBoundingClientRect();
     historyPanel.style.left=Math.max(12,Math.min(bounds.left-125,innerWidth-372))+'px';

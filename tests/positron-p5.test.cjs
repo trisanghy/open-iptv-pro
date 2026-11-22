@@ -2317,7 +2317,7 @@ test('P5.1.207 accessible reset clears only random session history',()=>{
   'positron-p51207-random-reset-after-1920x1080-real.png'])
   assert.ok(qa.includes(t),'Missing genuine reset QA '+t);
  const pkg=JSON.parse(read('package.json'));
- assert.ok(flow.includes('TAG=positron/v'+pkg.version+'-p5.1.218'));
+ assert.ok(flow.includes('TAG=positron/v'+pkg.version+'-p5.1.219'));
 });
 
 
@@ -2527,4 +2527,22 @@ test('P5.1.218 filters discovery history to Favorites without playback or playli
   'positron-p51218-favorites-filter-after-1920x1080-real.png','before218.equals(after218),false'])
   assert.ok(qa.includes(x),'Missing real P218 QA '+x);
  assert.ok(flow.includes('test -s positron-evidence/p5-20-rounds/positron-p51218-favorites-filter-after-1920x1080-real.png'));
+});
+
+
+test('P5.1.219 sorts the recent discovery list by Vietnamese name without altering channel data',()=>{
+ const js=read('renderer/positron-horizon-v4.js'),css=read('renderer/positron-twenty.css');
+ const qa=read('scripts/positron-20-extension.cjs'),flow=read('.github/workflows/positron-lab.yml');
+ for(const token of ["historySort.id='poRandomHistorySort'",
+  "['recent','Mới khám phá nhất']","['az','Tên kênh A–Z']","['za','Tên kênh Z–A']",
+  "historySort.addEventListener('change',renderHistory)",
+  "filtered.sort((a,b)=>sign*String(a.name||'').localeCompare"])
+  assert.ok(js.includes(token),'P219 missing real sorting '+token);
+ assert.ok(css.includes('#poRandomHistorySort:focus-visible'));
+ for(const token of ['sortStart219','sortAZ219','sortZA219','sortRestore219','compact219',
+  'alphabetical','descending','originalOrder','noAutoplay',
+  'positron-p51219-history-sort-before-1920x1080-real.png',
+  'positron-p51219-history-sort-after-1920x1080-real.png','before219.equals(after219),false'])
+  assert.ok(qa.includes(token),'P219 missing native Electron QA '+token);
+ assert.ok(flow.includes('test -s positron-evidence/p5-20-rounds/positron-p51219-history-sort-after-1920x1080-real.png'));
 });

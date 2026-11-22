@@ -1149,3 +1149,14 @@ html[data-positron="true"] #poRandomFavoriteFilter[aria-pressed="true"]{
 html[data-positron="true"] #poRandomFavoriteFilter:focus-visible{
  outline:2px solid var(--po-accent,#79dfc6);outline-offset:1px;
 }
+
+/* P219: readable Vietnamese-aware history sort with native keyboard select. */
+html[data-positron="true"] #poRandomHistorySort{
+ display:block;box-sizing:border-box;width:100%;min-height:34px;
+ margin:0 0 9px;padding:5px 9px;border:1px solid var(--po-border,#325160);
+ border-radius:8px;background:var(--po-input,#17303c);color:var(--po-text,#e6f4f4);
+ font:inherit;font-size:12px;cursor:pointer;
+}
+html[data-positron="true"] #poRandomHistorySort:focus-visible{
+ outline:2px solid var(--po-accent,#79dfc6);outline-offset:1px;
+}

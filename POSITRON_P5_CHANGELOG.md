@@ -1,5 +1,13 @@
 # Positron P5 Changelog
 
+## P5.1.219 — Sắp xếp lịch sử khám phá theo tên / Electron 4.23.304
+- Feature priority: NEW — Ảnh Electron thật P5.1.218 cho thấy tìm kiếm và lọc Yêu thích hoạt động nhưng lịch sử chỉ theo thời điểm khám phá; thêm chế độ tên A–Z và Z–A theo thứ tự tiếng Việt.
+- Electron screenshot: positron-p51219-history-sort-after-1920x1080-real.png
+- User action: Mở ☷ lịch sử khám phá, chọn Mới khám phá nhất, Tên kênh A–Z hoặc Tên kênh Z–A trong ô Sắp xếp; có thể kết hợp tìm và lọc Yêu thích.
+- Tính năng: select native hỗ trợ bàn phím, dùng localeCompare vi và numeric true; chỉ sắp xếp bản sao dữ liệu hiển thị, không viết lịch sử, Favorites, M3U, EPG hay tự phát video.
+- Electron before/after: positron-p51219-history-sort-before-1920x1080-real.png / positron-p51219-history-sort-after-1920x1080-real.png. QA: thứ tự A–Z/Z–A, hoàn nguyên gần nhất, không autoplay và viewport 450px.
+- Trạng thái: CANDIDATE tới khi Node, ảnh Electron mở kiểm, CI 6/6 và release đủ assets.
+
 ## P5.1.218 — Lọc nhanh Yêu thích trong lịch sử khám phá / Electron 4.23.303
 - Feature priority: NEW — Ảnh Electron thật P5.1.217 cho thấy nút sao mới đã giúp lưu kênh, nhưng danh sách lịch sử còn trộn kênh thường và kênh đã yêu thích. Thêm lọc theo Favorites trong phiên, kết hợp tìm kiếm.
 - Electron screenshot: positron-p51218-favorites-filter-after-1920x1080-real.png
