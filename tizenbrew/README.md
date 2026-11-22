@@ -1,4 +1,16 @@
-# Open IPTV Pro TV · TizenBrew v0.1.25 (OTA)
+# Open IPTV Pro TV · TizenBrew v0.1.26 (OTA)
+
+## v0.1.26 — Ghi nhớ vị trí con trỏ và đồng bộ sắp xếp kênh từ điện thoại
+
+- **Con trỏ Samsung không nhảy về đầu:** khi menu được dựng lại, ghi nhớ nút đang chọn theo định danh ổn định (ID kênh, tên thư mục, thanh điều hướng hoặc ID nút), khôi phục focus và cuộn nút vừa chọn vào vùng nhìn thấy. Áp dụng cả sau khi đổi trang/mục, thêm hoặc chỉnh sửa nguồn, thay yêu thích và đóng bảng nhập QR.
+- **Ghi nhớ sau khi mở ứng dụng lại:** lưu key focus nhỏ gọn trong localStorage riêng (`open-iptv-tizen-focus-v1`), không ghi lại cả playlist sau mỗi lần điều hướng. Khi đang nhập liệu hoặc xem toàn màn hình thì không giành focus của hộp thoại/video.
+- **Bảng chọn kênh toàn màn hình:** nhớ thư mục và ID kênh vừa bôi sáng trong `open-iptv-tizen-picker-v1`. Đóng/mở lại bảng chọn vẫn ở vị trí trước, ↑/↓ duyệt tiếp, ←/→ đổi thư mục, OK mới phát.
+- **Điện thoại sắp xếp → TV cập nhật ngay:** thao tác kéo thả trong trang QR đã lưu `groupOrder` nhưng trước đây TV chỉ duyệt `source.channels` nguyên bản. TV hiện tạo danh sách theo `groupOrder` từng nguồn, đồng thời tôn trọng thứ tự kênh đã kéo trong từng nhóm; nhóm được chuyển đến vị trí mới trong giao diện chính và bảng chọn full-screen.
+- **Đồng bộ cấu trúc nhất quán:** snapshot cho điện thoại cũng trả danh sách theo thứ tự được lưu, nhưng mỗi kênh giữ **index vật lý** gốc của mảng `source.channels` để lệnh sửa/kéo thả tiếp theo định vị đúng và không chuyển nhầm kênh.
+- **Không làm mất vị trí:** thao tác `managerMutation` không xóa `selected` sau mỗi lệnh QR; TV cập nhật danh sách ngay sau khi lưu thành công và giữ kênh đang chọn theo ID.
+- **Bảo toàn:** appPath OTA vẫn là `tizenbrew/bootstrap.html`; không xóa playlist M3U, lịch sử, yêu thích, thông số bộ phát hoặc chỉnh sửa các nhánh khác.
+- **Kiểm thử CI:** `tizenbrew/tests/tizen-focus-order-sync.test.cjs` xác minh sắp xếp thư mục, index vật lý trong snapshot, cập nhật TV và khôi phục focus; `tizenbrew/tests/fullscreen-channel-picker.test.cjs` kiểm tra vị trí cuối trong bảng chọn.
+- Chưa xác minh trực tiếp trên Samsung TV; chỉ xác nhận kiểm thử mô phỏng và mã nguồn trên GitHub Actions.
 
 ## v0.1.25 — Phát VTV1 muộn, lỗi HLS manifest và tự chọn URL dự phòng
 
