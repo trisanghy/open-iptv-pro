@@ -19,6 +19,7 @@ on:
       - 'web-online/tests/web-access-links.test.cjs'
       - 'web-tv-pair.js'
       - 'web-tv-receiver.js'
+      - 'web-online/tests/tv-hls-playback-recovery.test.cjs'
       - 'tv.html'
       - 'web-online/tests/web-cast-v2*.cjs'
       - 'web-online/tests/web-tv-remote-buttons-browser.test.cjs'
@@ -57,6 +58,7 @@ jobs:
       - name: Test real encrypted TV pairing with mocked Realtime channels
         run: |
           node --test web-online/tests/web-cast-v2.test.cjs
+          node --test web-online/tests/tv-hls-playback-recovery.test.cjs
           node --test web-online/tests/web-cast-icons.test.cjs
           node --test web-online/tests/web-access-links.test.cjs
           node --test web-online/tests/web-player-icons.test.cjs
