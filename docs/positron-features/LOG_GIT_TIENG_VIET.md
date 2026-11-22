@@ -2,14 +2,23 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
-## P5.1.183 — duyệt và lưu 6/12/24 kênh Yêu thích theo lựa chọn
+## P5.1.184 — lọc gợi ý Yêu thích theo nhóm kênh thực
 
-**Ứng dụng:** 4.23.268 · **Trạng thái:** Chưa có bản phát hành
+**Ứng dụng:** 4.23.269 · **Trạng thái:** Chưa có bản phát hành
+
+Feature priority: NEW — Ảnh P5.1.183 chứng minh có 553 kênh chưa lưu nhưng gợi ý không phân loại theo nhóm; tìm bằng mắt còn rườm rà. Thêm dropdown nhóm được tạo trực tiếp từ metadata nguồn đang bật, chỉ lọc tên nhóm thực có kênh chưa đánh dấu sao. Kết hợp tìm kiếm không dấu và lựa chọn 6/12/24 kênh, nút Lưu cả N vẫn theo số thẻ được lọc. Tập dữ liệu nguồn và favoriteKeys giữ nguyên.
+
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/250d32a80cb052b96f54e734ee5343933545b1e6)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+
+## P5.1.183 — Gợi ý Yêu thích 6/12/24 kênh / Electron 4.23.268
+
+**Ứng dụng:** 4.23.268 · **Trạng thái:** Đã phát hành
 
 Feature priority: NEW — Ảnh Electron P5.1.182 cho thấy 6 gợi ý bị bó trong card 720px trên desktop rộng 1920px, duyệt nhiều kênh mất thao tác. Viewer chọn 6, 12 hoặc 24 gợi ý, giữ mặc định sáu, nút Gợi ý khác nhảy đúng số đang chọn, Lưu cả N chỉ lưu kênh hiển thị sau nhấn chủ động. Tăng panel lên tối đa 1180px, 4/2/1 cột responsive.
 
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/f626730fe394251c62c2afbe004f5881566e02f9)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/c27cf4ce68b224a24d6c2a0e63e281b670a61974)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.268-p5.1.183)
 
 ## P5.1.182 — Sắp xếp Yêu thích theo tên / Electron 4.23.267
 
