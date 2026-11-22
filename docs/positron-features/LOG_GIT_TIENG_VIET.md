@@ -2,13 +2,14 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
-## P5.1.168 — Thanh phân trang kênh thiếu logo luôn dễ thao tác / Electron 4.23.253
+## P5.1.168 — tùy chỉnh 10/25/50 kênh thiếu logo mỗi trang
 
-**Ứng dụng:** Chưa xác minh · **Trạng thái:** Chưa có bản phát hành
+**Ứng dụng:** 4.23.253 · **Trạng thái:** Chưa có bản phát hành
 
 Ảnh INPUT thực tế P5.1.167: `positron-p51167-missing-page-size-after-1920x1080-real.png` có nhóm Trước / Trang / Đến / Tiếp chỉ lộ một phần ở mép dưới bảng Thư viện khi danh sách dài. Nguyên nhân trong mã: đặt thanh phân trang sau `#poLibraryMissingRows` trong panel có max-height và scroll.
 
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/3cadcd3c61547c09bb45f8aebfb837df63baeeb5)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
 
 ## P5.1.167 — Thay đổi số kênh thiếu logo mỗi trang / Electron 4.23.252
 
