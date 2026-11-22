@@ -204,7 +204,7 @@ function handler(req,res){
  var path=Url.parse(req.url).pathname;
  // Samsung WebKit/HLS.js may omit custom headers on media GETs. Keep those
  // requests scoped to the allowlisted app origin and unguessable session ID.
- var isMediaRequest=req.method==='GET'&&/^\\/r\\/[0-9a-f]{40}\\/\\d+$/.test(path);
+ var isMediaRequest=req.method==='GET'&&/^\/r\/[0-9a-f]{40}\/\d+$/.test(path);
  if(!isMediaRequest&&req.headers['x-open-iptv-relay']!=='1'){
   json(res,403,{error:'Yêu cầu thiếu mã ứng dụng.'});return;
  }
