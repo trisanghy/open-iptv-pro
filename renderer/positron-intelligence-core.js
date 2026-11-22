@@ -140,7 +140,12 @@
    let programmes=[];
    try{programmes=api.find(guide,ch)||[];}catch{continue;}
    if(!Array.isArray(programmes))continue;
-   for(const p of programmes.slice(0,120)){
+   // XMLTV.find is sorted but may include hundreds of expired items;
+   // the first 120 entries can all be stale. Bound FUTURE candidates, not
+   // the raw head of the guide, so a long archive cannot hide tomorrow.
+   let futureCount=0;
+   for(const p of programmes){
+    if(Number.isFinite(p?.start)&&p.start>clock&&p.start<=horizon&&++futureCount>120)break;
     if(!Number.isFinite(p?.start)||!Number.isFinite(p?.end)
      ||p.end<=p.start||p.start<=clock||p.start>horizon)continue;
     const title=String(p.title||'').trim().replace(/\s+/g,' ').slice(0,140);

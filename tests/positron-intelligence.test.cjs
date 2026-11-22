@@ -106,3 +106,14 @@ test('HEAD: chỉ AI hoặc đột phá có bằng chứng được tăng bản 
  assert.match(c,/Feature class: (?:AI|BREAKTHROUGH)/);
  assert.match(c,/Evidence:/);
 });
+
+test('P267 lịch nhiều ngày không mất các chương trình tương lai sau 200 mục đã hết',()=>{
+ const stale=Array.from({length:205},(_,i)=>({
+  title:'Đã phát '+i,start:now-(i+1)*600000,end:now-i*600000
+ }));
+ const future={title:'Trực tiếp bóng đá',start:now+3600000,end:now+7200000};
+ const rows=C.upcomingForYou([sport],epg,{find:()=>[...stale,future]},
+  C.emptyModel(),{}, {clock:now});
+ assert.equal(rows.length,1);
+ assert.equal(rows[0].programme.title,'Trực tiếp bóng đá');
+});
