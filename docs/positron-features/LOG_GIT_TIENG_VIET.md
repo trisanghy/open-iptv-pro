@@ -2,14 +2,23 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
-## P5.1.198 — hẹn ghi ngày mai cùng giờ bằng một nút
+## P5.1.199 — tên bản ghi tự tạo đồng bộ khi đổi giờ
 
-**Ứng dụng:** 4.23.283 · **Trạng thái:** Chưa có bản phát hành
+**Ứng dụng:** 4.23.284 · **Trạng thái:** Chưa có bản phát hành
+
+Sửa lỗi nhìn thấy trên ảnh thật P5.1.198: tên tự tạo giữ ngày cũ sau khi bấm Ngày mai cùng giờ. Tên do Positron tạo trong phiên và chưa được chỉnh tay sẽ đổi theo giờ/kênh; tên thủ công và tên đã lưu giữ nguyên.
+
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/4519a271a972e69634d7c1fe19bd7fe47fe4b223)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+
+## P5.1.198 — Hẹn giờ ghi ngày mai cùng giờ / Electron 4.23.283
+
+**Ứng dụng:** 4.23.283 · **Trạng thái:** Đã phát hành
 
 Feature priority: NEW — Ảnh Electron P5.1.197 thực tế cho thấy các nút bắt đầu nhanh chỉ có Sau 5, Sau 15, Sau 30 phút, không có cách chuyển lịch ghi sang ngày mai giữ nguyên giờ đã chọn. Bổ sung nút Ngày mai cùng giờ ở cả hai mẫu ghi hình để tiện lên lịch mà không nhập lại giờ kết thúc. Electron screenshot: positron-p51198-dvr-tomorrow-after-1920x1080-real.png
 
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/ea13bd8fa571b62a7767c6cdf8bc41b5b80944a2)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/f84f7f4e84d3b5b398bded8c4111162797ce4810)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.283-p5.1.198)
 
 ## P5.1.197 — Sao chép lịch ghi và bỏ lặp tên kênh / Electron 4.23.282
 
