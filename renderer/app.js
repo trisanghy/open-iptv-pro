@@ -924,7 +924,6 @@
   }
   try{await tryPlayback(playCandidates[0],generation);}catch(e){recoverPlayback(generation,e.message);}
  }
- document.addEventListener('openiptv:remote-player-attached',()=>{try{disposeActiveMedia();}catch{}try{player.pause();}catch{}});
  async function playToggle(){if(window.OpenIPTVDesktopTVPair?.isConnected?.())return window.OpenIPTVDesktopTVPair.toggle();if(!current){const first=enabledChannels()[0];if(first)await playChannel(first.id);else toast('Hãy thêm file M3U hoặc URL trước','warn');return;}
   if(player.paused){try{await player.play();$('#playBtn').textContent='Ⅱ';}catch(e){toast('Không thể phát: '+e.message,'error');}}
   else{player.pause();$('#playBtn').textContent='▶';}}
@@ -1177,6 +1176,7 @@
   const autoM3U=$('#autoRefreshM3UStart');
   if(autoM3U){autoM3U.checked=store.autoRefreshM3UOnStart!==false;autoM3U.addEventListener('change',()=>{store.autoRefreshM3UOnStart=autoM3U.checked;save();});}
   $('#searchBox').addEventListener('input',renderList);$('#volume').addEventListener('input',e=>{player.volume=e.target.value/100;store.volume=player.volume;save();window.OpenIPTVDesktopTVPair?.onVolume?.(player.volume,player.muted);});
+  document.addEventListener('openiptv:remote-player-attached',()=>{try{disposeActiveMedia();}catch{}try{player.pause();}catch{}});
   player.volume=store.volume??.8;$('#volume').value=Math.round(player.volume*100);
   const fit=['contain','cover','fill','none'].includes(store.videoFit)?store.videoFit:'contain';$('#videoFit').value=fit;player.className='fit-'+fit;$('#videoFit').addEventListener('change',e=>{store.videoFit=e.target.value;player.className='fit-'+store.videoFit;save();});
   player.addEventListener('playing',()=>{if(!activeMediaEvent())return;waitingSerial++;clearTimeout(failoverTimer);if(stablePlayback.attempt===playAttemptSerial&&!stablePlayback.startedAt){stablePlayback.startedAt=Date.now();stablePlayback.mediaAt=Number(player.currentTime)||0;}const generation=playGeneration;setTimeout(()=>markPlaybackVerified(generation),1800);window.IPTVProAdvanced?.onPlaying?.(current,playCandidates[playCandidateIndex]);if(motionEnhanced)startMotionGuard(playGeneration);$('#streamInfo').textContent=motionEnhanced?'● Nội suy '+(window.OpenIPTVVideoEnhancement?.getSettings?.()?.fps||'')+' FPS · FFmpeg':compatSource?'● FFmpeg tương thích • Đang phát':'● Đang phát';$('#playBtn').textContent='Ⅱ';textStatus('Đang xem: '+(current?.name||''));});

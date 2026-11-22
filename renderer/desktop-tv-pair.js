@@ -6,6 +6,12 @@
  const d=root.document,$=id=>d.getElementById(id);
  const clamp=x=>Math.max(0,Math.min(1,Number(x)||0));
  let channel=null,source='',controller=null,busy=false,state='stopped',serial=0,mediaId='',lastKey='',lastAudible=.8,queued=Promise.resolve(),timeout=0,volumeTimeout=0,volumeValue=null;
+ const mount=$('castChannel');
+ if(mount&&!$('desktopTvPair')){
+  const fragment=d.createElement('template');
+  fragment.innerHTML="\n<section id=\"desktopTvPair\" class=\"cast-section dtv-section\" aria-labelledby=\"dtvHeader\" data-connected=\"false\">\n <div class=\"dtv-head\"><h3 id=\"dtvHeader\">Ghép đôi TV bằng mã 6 số</h3><button class=\"dtv-disconnect\" type=\"button\" id=\"dtvDisconnect\" hidden aria-label=\"Ngắt kết nối TV\">✕ Ngắt kết nối</button></div>\n <div id=\"dtvSetup\" class=\"dtv-setup\">\n  <p class=\"dtv-intro\">Mở trang TV, nhập mã 6 số. TV tự kết nối, không cần chọn “Cho phép”.</p>\n  <div class=\"dtv-links\" aria-label=\"Danh sách liên kết\">\n   <div class=\"dtv-link\"><span>Web · Link rút gọn</span><a href=\"https://is.gd/openiptv\" rel=\"noopener noreferrer\" target=\"_blank\">https://is.gd/openiptv</a><button type=\"button\" data-dtv-copy=\"https://is.gd/openiptv\">Sao chép</button></div>\n   <div class=\"dtv-link\"><span>TV · Link rút gọn</span><a href=\"https://is.gd/IPTVTV\" rel=\"noopener noreferrer\" target=\"_blank\">https://is.gd/IPTVTV</a><button type=\"button\" data-dtv-copy=\"https://is.gd/IPTVTV\">Sao chép</button></div>\n   <div class=\"dtv-link\"><span>TV · Link gốc dự phòng</span><a href=\"https://trisanghy.github.io/open-iptv-pro/tv.html\" rel=\"noopener noreferrer\" target=\"_blank\">https://trisanghy.github.io/open-iptv-pro/tv.html</a><button type=\"button\" data-dtv-copy=\"https://trisanghy.github.io/open-iptv-pro/tv.html\">Sao chép</button></div>\n  </div>\n  <div class=\"dtv-connect-form\"><label for=\"dtvPin\">Nhập mã hiển thị trên TV</label><input id=\"dtvPin\" maxlength=\"7\" inputmode=\"numeric\" autocomplete=\"one-time-code\" placeholder=\"000 000\" aria-label=\"Mã TV 6 số\"><button id=\"dtvConnect\" type=\"button\">Kết nối</button></div>\n </div>\n <div class=\"dtv-television\" aria-label=\"Trạng thái kết nối và điều khiển TV\" data-state=\"disconnected\">\n  <div class=\"dtv-brand\"><svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M2 17v4h4m-4-9a9 9 0 0 1 9 9M2 7a14 14 0 0 1 14 14M4 3h17v14h-5\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\"/></svg> OPEN IPTV PRO · TV</div>\n  <div class=\"dtv-check\" aria-hidden=\"true\"><svg viewBox=\"0 0 80 80\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"4\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"10\" y=\"9\" width=\"60\" height=\"47\" rx=\"6\"/><path d=\"M30 32l8 8 15-16M28 67h24M40 56v11\"/></svg></div>\n  <div class=\"dtv-big\" id=\"dtvHeadline\">CHỜ KẾT NỐI</div>\n  <div class=\"dtv-crypto\" id=\"dtvCrypto\">Nhập mã ghép đôi từ TV</div>\n  <div class=\"dtv-controls\" id=\"dtvControls\" hidden role=\"group\" aria-label=\"Điều khiển TV\">\n    <button id=\"dtvPrev\" type=\"button\" title=\"Kênh trước\" aria-label=\"Kênh trước\" class=\"dtv-key\"><svg viewBox=\"0 0 24 24\"><path d=\"M5 5v14M19 5 8 12l11 7V5Z\"/></svg></button>\n    <button id=\"dtvToggle\" type=\"button\" title=\"Phát trên TV\" aria-label=\"Phát trên TV\" class=\"dtv-key dtv-main-key\"><svg viewBox=\"0 0 24 24\"><path d=\"M7 5 20 12 7 19Z\"/></svg></button>\n    <button id=\"dtvStop\" type=\"button\" title=\"Dừng trên TV\" aria-label=\"Dừng trên TV\" class=\"dtv-key\"><svg viewBox=\"0 0 24 24\"><rect x=\"6\" y=\"6\" width=\"12\" height=\"12\"/></svg></button>\n    <button id=\"dtvNext\" type=\"button\" title=\"Kênh tiếp\" aria-label=\"Kênh tiếp\" class=\"dtv-key\"><svg viewBox=\"0 0 24 24\"><path d=\"M19 5v14M5 5l11 7-11 7V5Z\"/></svg></button>\n    <span class=\"dtv-divider\" aria-hidden=\"true\"></span>\n    <button id=\"dtvMute\" type=\"button\" title=\"Tắt tiếng TV\" aria-label=\"Tắt tiếng TV\" class=\"dtv-key\"><svg viewBox=\"0 0 24 24\"><path d=\"M4 9h4l5-4v14l-5-4H4ZM16 9a4 4 0 0 1 0 6M18.5 6a8 8 0 0 1 0 12\"/></svg></button>\n    <input type=\"range\" id=\"dtvVolume\" min=\"0\" max=\"100\" value=\"80\" step=\"1\" aria-label=\"Âm lượng TV\">\n  </div>\n </div>\n <p id=\"dtvStatus\" class=\"dtv-status\" role=\"status\" aria-live=\"polite\">Chưa ghép đôi TV.</p>\n</section>\n\n";
+  mount.insertAdjacentElement('afterend',fragment.content.firstElementChild);
+ }
  const stage=$('desktopTvPair'),panel=$('castModal');
  if(!stage||!panel)return;
  const set=(id,value)=>{const e=$(id);if(e)e.textContent=value;};
@@ -155,8 +161,12 @@
    void queue(()=>x.controller.command('volume',{volume:x.volume,muted:x.muted})).catch(error=>notice('TV không nhận âm lượng: '+String(error?.message||error),true));
   },240);
  }
- function copy(url){
-  return root.navigator.clipboard?.writeText?.(url).then(()=>notice('Đã sao chép liên kết.')).catch(()=>notice('Không sao chép được. Chọn liên kết để sao chép thủ công.',true));
+ async function copy(url){
+  try{
+   if(!root.navigator.clipboard?.writeText)throw Error('Clipboard API chưa hỗ trợ');
+   await root.navigator.clipboard.writeText(url);
+   notice('Đã sao chép liên kết.');
+  }catch{notice('Không sao chép được. Chọn liên kết để sao chép thủ công.',true);}
  }
  $('dtvPin').addEventListener('input',event=>{
   const pin=event.target.value.replace(/\D/g,'').slice(0,6);
