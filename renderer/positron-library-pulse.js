@@ -81,9 +81,13 @@
  const missingExport=d.createElement('button');missingExport.type='button';
  missingExport.id='poLibraryMissingExport';missingExport.textContent='Xuất CSV';
  missingExport.setAttribute('aria-label','Xuất CSV tên và nhóm kênh thiếu logo đã lọc');
+ // P5.1.170: một thao tác khôi phục toàn bộ bộ lọc Thư viện, không sửa nguồn IPTV.
+ const missingReset=d.createElement('button');missingReset.type='button';
+ missingReset.id='poLibraryMissingReset';missingReset.textContent='Xóa bộ lọc';
+ missingReset.setAttribute('aria-label','Xóa các bộ lọc kênh thiếu logo');
  const exportStatus=d.createElement('span');exportStatus.id='poLibraryMissingExportStatus';
  exportStatus.setAttribute('role','status');exportStatus.setAttribute('aria-live','polite');
- exportBar.append(missingExport,exportStatus);
+ exportBar.append(missingExport,missingReset,exportStatus);
  const missingRows=d.createElement('ol');missingRows.id='poLibraryMissingRows';
  const missingNav=d.createElement('div');missingNav.className='po-pulse-missing-nav';missingNav.id='poLibraryMissingNav';
  const missingPrev=d.createElement('button');missingPrev.type='button';missingPrev.id='poLibraryMissingPrev';
@@ -207,6 +211,7 @@
   const report=core.missingLogos(state.getChannels(),{offset:missingIndex*size,limit:size,query:missingSearch.value,group:missingGroup.value,sort:missingSort.value,epg:missingEpg.value});
   missingTotal=report.total;missingRows.replaceChildren();
   missingExport.disabled=missingTotal===0;
+  missingReset.hidden=!(missingSearch.value.trim()||missingGroup.value||missingEpg.value||missingSort.value!=='playlist'||missingSize.value!=='10');
   missingExport.textContent='Xuất CSV · '+missingTotal+' kênh';
   exportStatus.textContent='';
   missingToggle.textContent='Kênh thiếu logo: '+missingTotal;
@@ -321,6 +326,11 @@
  missingEpg.addEventListener('change',()=>{missingIndex=0;renderMissing();});
  missingSort.addEventListener('change',()=>{missingIndex=0;renderMissing();});
  missingSize.addEventListener('change',()=>{missingIndex=0;renderMissing();});
+ missingReset.addEventListener('click',()=>{
+  missingSearch.value='';missingGroup.value='';missingEpg.value='';
+  missingSort.value='playlist';missingSize.value='10';missingIndex=0;
+  renderMissing();missingSearch.focus({preventScroll:true});
+ });
  missingExport.addEventListener('click',()=>{
   const options={query:missingSearch.value,group:missingGroup.value,sort:missingSort.value,epg:missingEpg.value};
   const count=core.missingLogos(state.getChannels(),options).total;

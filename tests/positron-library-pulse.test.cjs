@@ -300,3 +300,17 @@ test('P5.1.169 lọc kênh thiếu logo theo mã EPG, CSV giữ đúng bộ lọ
  assert.ok(ui.includes('epg:missingEpg.value'));
  assert.ok(!ui.includes('importSource(')&&!ui.includes('playChannel('));
 });
+
+
+test('P5.1.170 nút Xóa bộ lọc khôi phục đủ 5 điều kiện mà không sửa playlist',()=>{
+ const ui=fs.readFileSync(path.join(__dirname,'../renderer/positron-library-pulse.js'),'utf8');
+ const css=fs.readFileSync(path.join(__dirname,'../renderer/positron-library-pulse.css'),'utf8');
+ assert.ok(ui.includes('poLibraryMissingReset'));
+ assert.ok(ui.includes("missingReset.addEventListener('click'"));
+ for(const token of ["missingSearch.value=''", "missingGroup.value=''", "missingEpg.value=''", "missingSort.value='playlist'", "missingSize.value='10'", "missingIndex=0"])
+  assert.ok(ui.includes(token),token);
+ assert.ok(ui.includes("missingSearch.focus({preventScroll:true})"));
+ assert.ok(ui.includes("missingReset.hidden=!("));
+ assert.ok(css.includes('#poLibraryMissingReset[hidden]{display:none!important}'));
+ assert.ok(!ui.includes('importSource(')&&!ui.includes('playChannel(')&&!ui.includes('deleteChannel('));
+});

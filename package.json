@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.254",
-  "description": "Positron P5.1.169: lọc kênh thiếu logo theo tình trạng mã EPG",
+  "version": "4.23.255",
+  "description": "Positron P5.1.170: nút xóa nhanh toàn bộ bộ lọc kênh thiếu logo",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

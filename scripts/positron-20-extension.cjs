@@ -4554,12 +4554,54 @@ async function runTwenty(page){
  const after169=await page.screenshot({path:path.join(out,'positron-p51169-epg-filter-after-1920x1080-real.png'),animations:'disabled'});
  assert.deepEqual([after169.readUInt32BE(16),after169.readUInt32BE(20)],[1920,1080]);
  await page.selectOption('#poLibraryMissingEpg','');
+
+ // P5.1.170: Xóa bộ lọc riêng Thư viện sau khi ảnh P169 cho thấy nhiều điều kiện liên tiếp.
+ await page.selectOption('#poLibraryMissingSize','25');
+ await page.selectOption('#poLibraryMissingSort','name-desc');
+ await page.selectOption('#poLibraryMissingEpg','with-epg');
+ await page.fill('#poLibraryMissingSearch','QA Channel 00');
+ await page.evaluate(()=>{
+  window.__poP170Baseline=JSON.stringify(window.IPTVState.getChannels());
+  document.getElementById('poLibraryMissingReset').scrollIntoView({block:'center',behavior:'instant'});
+ });
+ const before170=await page.screenshot({path:path.join(out,'positron-p51170-clear-filters-before-1920x1080-real.png'),animations:'disabled'});
+ assert.deepEqual([before170.readUInt32BE(16),before170.readUInt32BE(20)],[1920,1080]);
+ const resetBefore170=await page.evaluate(()=>{
+  const el=document.getElementById('poLibraryMissingReset'),box=el.getBoundingClientRect();
+  return !el.hidden&&box.width>40&&box.height>25;
+ });
+ assert.equal(resetBefore170,true,'P170 reset visible for active filters');
+ await page.click('#poLibraryMissingReset');
+ const missingResetQA=await page.evaluate(()=>{
+  const d=document,st=window.IPTVState,core=window.PositronLibraryPulseCore;
+  const total=core.missingLogos(st.getChannels()).total;
+  const rows=[...d.querySelectorAll('#poLibraryMissingRows .po-pulse-missing-row strong')].map(n=>n.textContent);
+  const expected=core.missingLogos(st.getChannels(),{limit:10}).rows.map(x=>x.name);
+  return {searchReset:d.getElementById('poLibraryMissingSearch').value==='',
+   groupReset:d.getElementById('poLibraryMissingGroup').value==='',
+   epgReset:d.getElementById('poLibraryMissingEpg').value==='',
+   sortReset:d.getElementById('poLibraryMissingSort').value==='playlist',
+   sizeReset:d.getElementById('poLibraryMissingSize').value==='10',
+   firstPage:d.getElementById('poLibraryMissingPage').textContent==='Trang 1 / '+Math.max(1,Math.ceil(total/10)),
+   rowsMatch:JSON.stringify(rows)===JSON.stringify(expected),
+   hiddenAfter:!!d.getElementById('poLibraryMissingReset').hidden,
+   focusReturned:d.activeElement===d.getElementById('poLibraryMissingSearch'),
+   exportAll:d.getElementById('poLibraryMissingExport').textContent==='Xuất CSV · '+total+' kênh',
+   noMutation:JSON.stringify(st.getChannels())===window.__poP170Baseline,
+   noOverflow:d.documentElement.scrollWidth<=innerWidth+1,
+   noAutoplay:st.getCurrent()===null};
+ });
+ for(const [key,value] of Object.entries(missingResetQA))
+  assert.equal(value,true,'P170 reset filters '+key+': '+JSON.stringify(missingResetQA));
+ const after170=await page.screenshot({path:path.join(out,'positron-p51170-clear-filters-after-1920x1080-real.png'),animations:'disabled'});
+ assert.deepEqual([after170.readUInt32BE(16),after170.readUInt32BE(20)],[1920,1080]);
+ await page.evaluate(()=>{delete window.__poP170Baseline;});
  await page.keyboard.press('Escape');
  await page.setViewportSize({width:1360,height:820});
 
 
   const report={type:'Positron P5 twenty distinct desktop screenshot cases',realElectron:true,syntheticChannels:false,
-  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,desktop16x9Screenshots,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA,chooserQa,toastLayoutQA,nativeToastQA,compactIdleQA,channelChipRailQA,advancedFilterQA,readableCardsQA,keyboardTabQA,favoriteEmptyQA,duplicateEmptyQA,categoryFilterQA,categoryFixtureQA,compactSingleQA,directFavoriteQA,favoriteCountQA,compactToastStackQA,toastDismissQA,toastFocusReturnQA,toastDockQA,wheelQA,pinnedAllQA,pinnedMaskQA,categoryKeyQA,dropdownChipQA,pinnedRightMaskQA,pinnedBorderMaskQA,asciiDSearchQA,emptySearchActionQA,readableCardTitleQA,favoriteSvgQA,keyboardFavoriteQA,multiTermSearchQA,keyboardSearchQA,arrowNavigationQA,pageNavigationQA,favoriteSortQA,onAirFilterQA,programmeSearchQA,upcomingProgrammeQA,soonProgrammeQA,earliestEpgSortQA,timeWindowQA,scheduleProgressQA:scheduleProgressQA,nativeReminderQA,cancelReminderQA,reminderLeadQA,toastHistoryQA,notificationArchiveQA,alertFilterQA,noticeSearchQA,quietModeQA,dismissToastQA,libraryPulseQA,groupDistributionQA,logoMissingQA,missingSearchQA,missingGroupQA,missingSortQA,missingJumpQA,missingCsvQA,duplicateQA,duplicateSearchQA,duplicateCsvQA,duplicateScopeQA,missingSizeQA,missingPagerQA,missingEpgFilterQA};
+  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,desktop16x9Screenshots,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA,chooserQa,toastLayoutQA,nativeToastQA,compactIdleQA,channelChipRailQA,advancedFilterQA,readableCardsQA,keyboardTabQA,favoriteEmptyQA,duplicateEmptyQA,categoryFilterQA,categoryFixtureQA,compactSingleQA,directFavoriteQA,favoriteCountQA,compactToastStackQA,toastDismissQA,toastFocusReturnQA,toastDockQA,wheelQA,pinnedAllQA,pinnedMaskQA,categoryKeyQA,dropdownChipQA,pinnedRightMaskQA,pinnedBorderMaskQA,asciiDSearchQA,emptySearchActionQA,readableCardTitleQA,favoriteSvgQA,keyboardFavoriteQA,multiTermSearchQA,keyboardSearchQA,arrowNavigationQA,pageNavigationQA,favoriteSortQA,onAirFilterQA,programmeSearchQA,upcomingProgrammeQA,soonProgrammeQA,earliestEpgSortQA,timeWindowQA,scheduleProgressQA:scheduleProgressQA,nativeReminderQA,cancelReminderQA,reminderLeadQA,toastHistoryQA,notificationArchiveQA,alertFilterQA,noticeSearchQA,quietModeQA,dismissToastQA,libraryPulseQA,groupDistributionQA,logoMissingQA,missingSearchQA,missingGroupQA,missingSortQA,missingJumpQA,missingCsvQA,duplicateQA,duplicateSearchQA,duplicateCsvQA,duplicateScopeQA,missingSizeQA,missingPagerQA,missingEpgFilterQA,missingResetQA};
  fs.writeFileSync(path.resolve('positron-evidence','audit-p5-20-rounds.json'),JSON.stringify(report,null,2));
  return report;
 }

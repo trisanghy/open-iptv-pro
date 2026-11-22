@@ -121,3 +121,8 @@ html[data-positron="true"] #poLibraryMissingRows{scrollbar-gutter:stable}
 /* P5.1.169: bộ lọc mã EPG cho danh sách thiếu logo, giữ kích thước chạm và focus. */
 html[data-positron="true"] #poLibraryMissingEpg{box-sizing:border-box;width:100%;min-width:0;min-height:36px;padding:7px 10px;border:1px solid var(--po-border,#42606b);border-radius:9px;background:var(--po-card,#162934);color:var(--po-text,#eaf7f7);font:inherit;font-size:12px}
 html[data-positron="true"] #poLibraryMissingEpg:focus-visible{outline:2px solid var(--po-accent,#66d4c2);outline-offset:2px}
+
+/* P5.1.170: nút Xóa bộ lọc xuất hiện khi có điều kiện đang áp dụng. */
+html[data-positron="true"] #poLibraryMissingReset{min-height:34px;flex:0 0 auto;border-color:var(--po-border,#36515c);font-weight:650}
+html[data-positron="true"] #poLibraryMissingReset[hidden]{display:none!important}
+html[data-positron="true"] #poLibraryMissingReset:focus-visible{outline:2px solid var(--po-accent,#66d4c2);outline-offset:2px}

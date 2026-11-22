@@ -1,3 +1,12 @@
+## P5.1.170 — Xóa nhanh toàn bộ bộ lọc Thư viện / Electron 4.23.255
+- Feature priority: NEW — Cho phép đưa năm điều kiện tìm kiếm, nhóm, EPG, thứ tự và mật độ phân trang về mặc định chỉ với một lần bấm, thay vì hoàn nguyên từng ô khi kiểm kê danh sách nhiều kênh.
+- User action: Mở Thư viện → Kênh thiếu logo → thay đổi ít nhất một bộ lọc → bấm nút Xóa bộ lọc cạnh Xuất CSV để trở về tất cả kênh, thứ tự playlist, 10 kênh/trang.
+- Electron screenshot: positron-p51170-clear-filters-after-1920x1080-real.png
+- Ảnh TRƯỚC/SAU Electron thực 1920×1080: positron-p51170-clear-filters-before-1920x1080-real.png / positron-p51170-clear-filters-after-1920x1080-real.png. Ảnh P5.1.169 đã được trực tiếp mở làm nền, nhận thấy thiếu thao tác reset nhanh.
+- Chỉ thay đổi DOM state cục bộ, không sửa playlist, không xóa cấu hình, không phát video hay gọi mạng. Nút chỉ xuất hiện khi có điều kiện lọc khác mặc định; sau khi bấm đưa focus về ô tìm kiếm.
+- Kiểm thử: Node regression 5 giá trị mặc định/focus/không có delete/play; Electron QA áp dụng tìm kiếm + EPG + sort + page size, chụp trước, bấm reset, soát ảnh, kiểm chứng 13 điều kiện và dữ liệu playlist không đổi.
+- Trạng thái: CANDIDATE; chỉ tính vòng sau khi Node, ảnh Electron và Release thực sự đã xác minh.
+
 ## P5.1.169 — Lọc kênh thiếu logo theo mã EPG / Electron 4.23.254
 - Feature priority: NEW — Cho phép phát hiện kênh vừa thiếu logo vừa thiếu mã nhận diện EPG hoặc có EPG nhưng thiếu logo, hỗ trợ người dùng tự ưu tiên sửa metadata thư viện lớn mà không thay đổi playlist.
 - User action: Mở Thư viện → Kênh thiếu logo → chọn Mọi tình trạng EPG, Thiếu cả mã EPG hoặc Đã có mã EPG; kết hợp tìm kiếm, lọc nhóm, sắp xếp, phân trang và xuất CSV theo đúng tập đã lọc.
