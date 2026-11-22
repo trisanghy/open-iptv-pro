@@ -21,6 +21,14 @@ function documentFixture(theme,device){
   'document.body.dataset.castIconOk=String(document.querySelector("#castBtn > svg[data-iptv-svg-icon=cast]")!==null);',
   'document.body.dataset.castPseudo=String(getComputedStyle(document.getElementById("castBtn"),"::before").display);',
   'document.body.dataset.castLink=String(document.getElementById("cxTvUrl").href);',
+  'document.body.dataset.castConnected=String(document.getElementById("castBtn").dataset.castConnection);',
+  'document.body.dataset.castCaption=String(document.querySelector("#castBtn .cast-label").textContent);',
+  'document.body.dataset.castTab=String(document.getElementById("cxTabCast").dataset.connected);',
+  'window.OpenIPTVWebCast.getState=()=>({initialized:true,connected:false,active:false,name:""});',
+  'window.OpenIPTVWebCast.getAirplayState=()=>({connected:true,name:"Samsung AirPlay"});',
+  'window.OpenIPTVWebCastV2.syncAirplayState();',
+  'document.body.dataset.airConnected=String(document.getElementById("castBtn").dataset.castConnection);',
+  'document.body.dataset.airTab=String(document.getElementById("cxTabAir").dataset.connected);',
   'document.body.dataset.castOverflow=String(document.documentElement.scrollWidth>window.innerWidth+8);',
   '})();'
  ].join('');
@@ -33,7 +41,9 @@ function documentFixture(theme,device){
   '<link rel="stylesheet" href="web-cast-v2.css">',
   '<style>html,body{margin:0;width:100%;height:100%;background:#111}</style></head>',
   '<body><div id="page-tv"><div class="player-control-card"><div class="control-layout-top"><div class="output-controls"><button id="castBtn">▣ <span class="cast-label">Cast / AirPlay</span></button></div></div></div></div>',
-  '<script src="web-cast-icons.js"></script><script src="web-cast-v2.js"></script>',
+  '<script src="web-cast-icons.js"></script>',
+  '<script>window.OpenIPTVWebCast={getState:()=>({initialized:true,connected:true,active:true,name:"Samsung Cast"}),getAirplayState:()=>({connected:false})};</script>',
+  '<script src="web-cast-v2.js"></script>',
   '<script>window.OpenIPTVWebCastV2.open({channel:{name:"VTV2",group:"VTV",url:"https://media.example/live.m3u8"},source:"https://media.example/live.m3u8"});</script>',
   '<script>'+probe+'</script></body></html>'
  ].join('');
@@ -58,6 +68,11 @@ for(const theme of ['light','dark','amoled']){
     assert.match(dom,/data-cast-icon-ok="true"/);
     assert.match(dom,/data-cast-pseudo="none"/);
     assert.match(dom,/data-cast-link="https:\/\/is\.gd\/IPTVTV"/);
+    assert.match(dom,/data-cast-connected="cast"/);
+    assert.match(dom,/data-cast-tab="true"/);
+    assert.match(dom,/data-cast-caption="Cast · Đã kết nối"/);
+    assert.match(dom,/data-air-connected="airplay"/);
+    assert.match(dom,/data-air-tab="true"/);
     assert.match(dom,/data-cast-overflow="false"/);
     const palette=dom.match(/data-cast-bg="([^"]+)"/)?.[1];
     assert.ok(palette,'No semantic palette resolved');
