@@ -2037,3 +2037,18 @@ test('P5.1.190 selecting the current TV tab returns to player top without changi
  assert.ok(qa.includes('positron-p51190-tv-reselect-before-1920x1080-real.png'));
  assert.ok(qa.includes('positron-p51190-tv-reselect-after-1920x1080-real.png'));
 });
+
+test('P5.1.191 quick recording presets set End without scheduling or starting playback',()=>{
+ const js=read('renderer/positron-twenty.js');
+ const css=read('renderer/positron-twenty.css');
+ const qa=read('scripts/positron-20-extension.cjs');
+ assert.ok(js.includes("attachDvrPresets('dvrStart','dvrEnd','poDvrDurationPresets')"));
+ assert.ok(js.includes("attachDvrPresets('dvrQuickStart','dvrQuickEnd','poDvrQuickDurationPresets')"));
+ assert.ok(js.includes("for(const minutes of [30,60,120])"));
+ assert.ok(js.includes("end.value=dvrLocalDateTime(until)"));
+ assert.ok(!js.includes("button.addEventListener('click',()=>window.IPTVState?.submitDvr"));
+ assert.ok(css.includes('.po-dvr-presets button:focus-visible'));
+ assert.ok(qa.includes('dvrDurationPresetQA'));
+ assert.ok(qa.includes('positron-p51191-dvr-presets-before-1920x1080-real.png'));
+ assert.ok(qa.includes('positron-p51191-dvr-presets-after-1920x1080-real.png'));
+});

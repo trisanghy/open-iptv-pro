@@ -1,5 +1,15 @@
 # Positron P5 Changelog
 
+## P5.1.191 — Chọn nhanh thời lượng DVR 30/60/120 phút / Electron 4.23.276
+- Feature priority: NEW — Ảnh EPG Electron thật P5.1.190 ở 1920×1080 cho thấy hẹn giờ ghi hình phải nhập thủ công cả thời gian Bắt đầu và Kết thúc. Thêm nút cộng 30, 60, 120 phút dưới trường Kết thúc ở cả lịch ghi trên EPG và biểu mẫu ghi nhanh trên TV.
+- Nút chỉ tính và điền giá trị Kết thúc theo thời gian Bắt đầu ở múi giờ cục bộ; kích hoạt input/change để form gốc kiểm tra. Không tự đặt lịch, không khởi chạy DVR, không sửa nguồn M3U, danh sách kênh hoặc quyền xem.
+- Electron screenshot: positron-p51191-dvr-presets-after-1920x1080-real.png
+- Before screenshot: positron-p51191-dvr-presets-before-1920x1080-real.png
+- User action: Mở Lịch phát sóng EPG > Hẹn giờ ghi hình, chọn giờ bắt đầu rồi bấm +30 phút, +60 phút hoặc +120 phút bên dưới giờ kết thúc; sau khi xem lại chỉ bấm Đặt lịch ghi nếu muốn lưu. Biểu mẫu ghi nhanh trên TV cũng có ba nút này.
+- QA: ảnh Electron 1920×1080 trước/sau với cùng form, bắt đầu 23/11/2026 10:20, bấm +60 và kiểm Kết thúc 11:20; form không submit, kênh không phát, cả hai form có 3 preset và không tràn ngang.
+- Status: CANDIDATE, chờ Node, ảnh Electron sau, build và Release.
+
+
 ## P5.1.190 — Bấm lại tab TV để trở về khung phát / Electron 4.23.275
 - Feature priority: NEW — Ảnh Electron P5.1.189 1920×1080 cho thấy đầu trình phát bị khuất khi đang ở trang TV nhưng cuộn còn sâu; thao tác chọn TV khi tab đã active không quay về vùng video vì setPage chỉ đặt lại scroll ở lần chuyển tab.
 - Khi chọn lại nút TV đang active, cuộn nội dung về đầu trình phát ngay. Chỉ áp dụng cho trang TV, không chuyển kênh, không tự phát và không thay đổi các tab/thiết lập khác.

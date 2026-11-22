@@ -801,3 +801,20 @@ html[data-positron="true"] #page-fav #positronFavoriteMoreSort:focus-visible{
   flex:1 1 100%;max-width:none;
  }
 }
+
+/* P5.1.191: quick DVR duration chips within existing Start/End field groups. */
+html[data-positron="true"] .po-dvr-presets{
+ display:flex;align-items:center;flex-wrap:wrap;gap:5px;margin-top:7px;
+}
+html[data-positron="true"] .po-dvr-presets button{
+ min-height:29px;padding:5px 8px;border-radius:7px;cursor:pointer;
+ border:1px solid var(--po-border,#325160);
+ background:var(--po-input,#17303c);color:var(--po-text,#e6f4f4);
+ font:inherit;font-size:11px;line-height:1.1;white-space:nowrap;
+}
+html[data-positron="true"] .po-dvr-presets button:hover{
+ border-color:var(--po-accent,#6ad9c7);
+}
+html[data-positron="true"] .po-dvr-presets button:focus-visible{
+ outline:2px solid var(--po-accent,#6ad9c7);outline-offset:2px;
+}

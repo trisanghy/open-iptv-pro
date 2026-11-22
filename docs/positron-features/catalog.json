@@ -4,6 +4,21 @@
   "branch": "Positron",
   "versions": [
     {
+      "number": 191,
+      "version": "P5.1.191",
+      "appVersion": "4.23.276",
+      "title": "Nút chọn nhanh thời lượng ghi hình 30/60/120 phút",
+      "description": "Bổ sung 3 nút +30/+60/+120 phút dưới giờ Kết thúc trong lịch DVR EPG và ghi nhanh TV. Chỉ điền thời gian dựa trên giờ bắt đầu, không tự lập lịch hoặc ghi hình.",
+      "kind": "feature",
+      "status": "candidate",
+      "published": "",
+      "tag": "",
+      "commit": "",
+      "url": "https://github.com/trisanghy/open-iptv-pro/tree/Positron",
+      "assets": [],
+      "image": null
+    },
+    {
       "number": 190,
       "version": "P5.1.190",
       "appVersion": "4.23.275",

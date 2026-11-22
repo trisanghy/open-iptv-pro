@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.275",
-  "description": "Positron P5.1.190: chọn lại TV để trở về đầu khung phát",
+  "version": "4.23.276",
+  "description": "Positron P5.1.191: chọn nhanh thời lượng ghi hình 30 60 120 phút",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

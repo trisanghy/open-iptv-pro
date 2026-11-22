@@ -5347,8 +5347,40 @@ async function runTwenty(page){
  assert.deepEqual([after190.readUInt32BE(16),after190.readUInt32BE(20)],[1920,1080]);
  await page.setViewportSize({width:1360,height:820});
 
+ // P5.1.191: P190 true 16:9 EPG screenshot needed manual recording End.
+ // Reproduce old state by temporarily hiding only the new chips on native Electron.
+ await page.setViewportSize({width:1920,height:1080});
+ await page.evaluate(()=>window.IPTVState.setPage('epg'));
+ await page.locator('#dvrStart').fill('2026-11-23T10:20');
+ await page.evaluate(()=>{
+  window.__p191DvrSubmits=0;
+  document.getElementById('dvrForm').addEventListener('submit',()=>{window.__p191DvrSubmits++;});
+ });
+ await page.locator('#poDvrDurationPresets').evaluate(row=>row.style.display='none');
+ const before191=await page.screenshot({path:path.join(out,'positron-p51191-dvr-presets-before-1920x1080-real.png'),animations:'disabled'});
+ assert.deepEqual([before191.readUInt32BE(16),before191.readUInt32BE(20)],[1920,1080]);
+ await page.locator('#poDvrDurationPresets').evaluate(row=>row.style.removeProperty('display'));
+ await page.locator('#poDvrDurationPresets button[data-duration-minutes="60"]').click();
+ const dvrDurationPresetQA=await page.evaluate(()=>{
+  const d=document,full=d.getElementById('poDvrDurationPresets'),quick=d.getElementById('poDvrQuickDurationPresets');
+  return {
+   fullPresets:full?.querySelectorAll('button[type="button"]').length===3,
+   quickPresets:quick?.querySelectorAll('button[type="button"]').length===3,
+   startUnchanged:d.getElementById('dvrStart')?.value==='2026-11-23T10:20',
+   endSetToOneHour:d.getElementById('dvrEnd')?.value==='2026-11-23T11:20',
+   noScheduleSubmitted:window.__p191DvrSubmits===0,
+   noAutoplay:window.IPTVState.getCurrent()===null,
+   noHorizontalOverflow:d.documentElement.scrollWidth<=innerWidth+1
+  };
+ });
+ for(const [key,value] of Object.entries(dvrDurationPresetQA))
+  assert.equal(value,true,'P191 DVR one-click duration '+key+': '+JSON.stringify(dvrDurationPresetQA));
+ const after191=await page.screenshot({path:path.join(out,'positron-p51191-dvr-presets-after-1920x1080-real.png'),animations:'disabled'});
+ assert.deepEqual([after191.readUInt32BE(16),after191.readUInt32BE(20)],[1920,1080]);
+ await page.setViewportSize({width:1360,height:820});
+
   const report={type:'Positron P5 twenty distinct desktop screenshot cases',realElectron:true,syntheticChannels:false,
-  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,desktop16x9Screenshots,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA,chooserQa,toastLayoutQA,nativeToastQA,compactIdleQA,channelChipRailQA,advancedFilterQA,readableCardsQA,keyboardTabQA,favoriteEmptyQA,duplicateEmptyQA,categoryFilterQA,categoryFixtureQA,compactSingleQA,directFavoriteQA,favoriteCountQA,compactToastStackQA,toastDismissQA,toastFocusReturnQA,toastDockQA,wheelQA,pinnedAllQA,pinnedMaskQA,categoryKeyQA,dropdownChipQA,pinnedRightMaskQA,pinnedBorderMaskQA,asciiDSearchQA,emptySearchActionQA,readableCardTitleQA,favoriteSvgQA,keyboardFavoriteQA,multiTermSearchQA,keyboardSearchQA,arrowNavigationQA,pageNavigationQA,favoriteSortQA,onAirFilterQA,programmeSearchQA,upcomingProgrammeQA,soonProgrammeQA,earliestEpgSortQA,timeWindowQA,scheduleProgressQA:scheduleProgressQA,nativeReminderQA,cancelReminderQA,reminderLeadQA,toastHistoryQA,notificationArchiveQA,alertFilterQA,noticeSearchQA,quietModeQA,dismissToastQA,libraryPulseQA,groupDistributionQA,logoMissingQA,missingSearchQA,missingGroupQA,missingSortQA,missingJumpQA,missingCsvQA,duplicateQA,duplicateSearchQA,duplicateCsvQA,duplicateScopeQA,missingSizeQA,missingPagerQA,missingEpgFilterQA,missingResetQA,missingRangeQA,missingLocateQA,libraryReturnQA,favoriteActionQA,quickFavoriteQA,favoriteMoreQA,favoriteSearchQA,favoriteRotateQA,favoriteSuggestSearchQA,favoriteBulkQA,favoriteLayoutQA,favoriteNameSortQA,searchAfterSortQA,restoredSortQA,favoriteSuggestion12QA,batchFavorite12QA,restoreSixQA,favoriteRegionalQA,favoriteGroupSearchQA,resetGroupQA,favoriteQuickGroupQA,favoriteQuickResetQA,favoritePageLastQA,favoritePageNavigationQA,favoriteJumpSevenQA,favoriteJumpClampQA,favoriteWideQA,favoriteSuggestionSortQA,tvReselectTopQA};
+  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,desktop16x9Screenshots,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA,chooserQa,toastLayoutQA,nativeToastQA,compactIdleQA,channelChipRailQA,advancedFilterQA,readableCardsQA,keyboardTabQA,favoriteEmptyQA,duplicateEmptyQA,categoryFilterQA,categoryFixtureQA,compactSingleQA,directFavoriteQA,favoriteCountQA,compactToastStackQA,toastDismissQA,toastFocusReturnQA,toastDockQA,wheelQA,pinnedAllQA,pinnedMaskQA,categoryKeyQA,dropdownChipQA,pinnedRightMaskQA,pinnedBorderMaskQA,asciiDSearchQA,emptySearchActionQA,readableCardTitleQA,favoriteSvgQA,keyboardFavoriteQA,multiTermSearchQA,keyboardSearchQA,arrowNavigationQA,pageNavigationQA,favoriteSortQA,onAirFilterQA,programmeSearchQA,upcomingProgrammeQA,soonProgrammeQA,earliestEpgSortQA,timeWindowQA,scheduleProgressQA:scheduleProgressQA,nativeReminderQA,cancelReminderQA,reminderLeadQA,toastHistoryQA,notificationArchiveQA,alertFilterQA,noticeSearchQA,quietModeQA,dismissToastQA,libraryPulseQA,groupDistributionQA,logoMissingQA,missingSearchQA,missingGroupQA,missingSortQA,missingJumpQA,missingCsvQA,duplicateQA,duplicateSearchQA,duplicateCsvQA,duplicateScopeQA,missingSizeQA,missingPagerQA,missingEpgFilterQA,missingResetQA,missingRangeQA,missingLocateQA,libraryReturnQA,favoriteActionQA,quickFavoriteQA,favoriteMoreQA,favoriteSearchQA,favoriteRotateQA,favoriteSuggestSearchQA,favoriteBulkQA,favoriteLayoutQA,favoriteNameSortQA,searchAfterSortQA,restoredSortQA,favoriteSuggestion12QA,batchFavorite12QA,restoreSixQA,favoriteRegionalQA,favoriteGroupSearchQA,resetGroupQA,favoriteQuickGroupQA,favoriteQuickResetQA,favoritePageLastQA,favoritePageNavigationQA,favoriteJumpSevenQA,favoriteJumpClampQA,favoriteWideQA,favoriteSuggestionSortQA,tvReselectTopQA,dvrDurationPresetQA};
  fs.writeFileSync(path.resolve('positron-evidence','audit-p5-20-rounds.json'),JSON.stringify(report,null,2));
  return report;
 }

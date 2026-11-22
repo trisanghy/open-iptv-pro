@@ -587,6 +587,40 @@
 
 
 
+ // P5.1.191: one-click recording duration presets, additive only.
+ // No automatic DVR schedule is created; the native form still requires Submit.
+ const dvrLocalDateTime=date=>{
+  const pad=value=>String(value).padStart(2,'0');
+  return date.getFullYear()+'-'+pad(date.getMonth()+1)+'-'+pad(date.getDate())
+   +'T'+pad(date.getHours())+':'+pad(date.getMinutes());
+ };
+ const attachDvrPresets=(startId,endId,rowId)=>{
+  const start=byId(startId),end=byId(endId);
+  if(!start||!end||byId(rowId))return;
+  const row=d.createElement('div');row.id=rowId;row.className='po-dvr-presets';
+  row.setAttribute('role','group');row.setAttribute('aria-label','Đặt nhanh thời lượng ghi hình');
+  for(const minutes of [30,60,120]){
+   const button=d.createElement('button');button.type='button';
+   button.dataset.durationMinutes=String(minutes);
+   button.textContent='+'+minutes+' phút';
+   button.setAttribute('aria-label','Chọn ghi hình '+minutes+' phút từ giờ bắt đầu');
+   button.addEventListener('click',()=>{
+    const from=new Date(start.value);
+    if(!start.value||!Number.isFinite(from.getTime())){
+     start.focus();window.IPTVState?.toast?.('Chọn giờ bắt đầu ghi hình trước','warn');return;
+    }
+    const until=new Date(from.getTime()+minutes*60000);
+    end.value=dvrLocalDateTime(until);
+    end.dispatchEvent(new Event('input',{bubbles:true}));
+    end.dispatchEvent(new Event('change',{bubbles:true}));
+   });
+   row.append(button);
+  }
+  end.parentElement.append(row);
+ };
+ attachDvrPresets('dvrStart','dvrEnd','poDvrDurationPresets');
+ attachDvrPresets('dvrQuickStart','dvrQuickEnd','poDvrQuickDurationPresets');
+
  // P5.1.33: real P5.1.32 TV 450px screenshot shows an actionable
  // favorite star beside 'Chưa chọn kênh'. Use the native selection API,
  // not an empty-state string, to protect existing playlist semantics.

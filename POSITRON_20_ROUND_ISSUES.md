@@ -158,3 +158,9 @@ Evaluate defects revealed by real screenshot of previous build before making cha
 - Feature: nhấn tab TV đang active sẽ trở về đầu vùng video, không thay đổi current channel hoặc nguồn.
 - QA: Playwright trên Electron chụp `positron-p51190-tv-reselect-before-1920x1080-real.png` khi cuộn, click nav TV, xác minh scroll về 0 và chụp `positron-p51190-tv-reselect-after-1920x1080-real.png`.
 - Status: chưa công nhận hoàn thành trước khi build/CI/soát ảnh và Release.
+
+## P5.1.191 (CANDIDATE) — ý tưởng từ ảnh EPG P190
+- Input: `positron-p51190-desktop-1920x1080-lich-phat-song-real.png` đã mở trực tiếp; form Bắt đầu/Kết thúc nhập tay gây chậm thao tác và dễ gõ sai thời lượng.
+- Feature: các preset +30/+60/+120 phút cập nhật riêng giờ Kết thúc của biểu mẫu DVR chính hoặc ghi nhanh; không submit tự động.
+- QA: screenshot native Electron trước/sau `positron-p51191-dvr-presets-before-1920x1080-real.png` / `positron-p51191-dvr-presets-after-1920x1080-real.png`, kiểm end time +60 phút, không submit, không autoplay, không overflow.
+- Status: chờ CI và xem PNG thật trước khi công nhận.
