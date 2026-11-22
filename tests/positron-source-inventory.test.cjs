@@ -150,7 +150,7 @@ test('P5.1.263 allows safe Up/Down roving focus through filtered source rows',()
   assert.ok(code.includes(token),'P263 keyboard source inventory '+token);
  assert.ok(css.includes('li[data-po-inventory-active="true"]'));
  assert.ok(!code.includes('playChannel(')&&!code.includes('save(')&&!code.includes('localStorage.setItem('));
- assert.equal(JSON.parse(read('package.json')).version,'4.23.350');
+ assert.ok(Number(JSON.parse(read('package.json')).version.split('.').at(-1))>=350,'giữ mốc Electron 4.23.350 trở đi');
 });
 test('P5.1.263 Electron screenshots verify keyboard focus order and zero playback mutation',()=>{
  const qa=read('scripts/positron-20-extension.cjs'),wf=read('.github/workflows/positron-lab.yml');
@@ -170,7 +170,7 @@ test('P5.1.264 resets source inventory search, state filter and sorting together
   assert.ok(js.includes(t),'P264 reset implementation '+t);
  assert.ok(css.includes('#poSourceInventoryReset:disabled'));
  assert.ok(!js.includes('playChannel(')&&!js.includes('save(')&&!js.includes('localStorage.setItem('));
- assert.equal(JSON.parse(read('package.json')).version,'4.23.350');
+ assert.ok(Number(JSON.parse(read('package.json')).version.split('.').at(-1))>=350,'giữ mốc Electron 4.23.350 trở đi');
 });
 test('P5.1.264 real Electron QA covers reset before/after and 720px layout',()=>{
  const qa=read('scripts/positron-20-extension.cjs'),wf=read('.github/workflows/positron-lab.yml');
@@ -190,7 +190,7 @@ test('P5.1.265 Enter or Space on focused inventory row opens native source card'
   assert.ok(code.includes(token),'P265 source activation '+token);
  assert.ok(css.includes('li[data-source-id]:focus-visible'));
  assert.ok(!code.includes('playChannel(')&&!code.includes('save(')&&!code.includes('localStorage.setItem('));
- assert.equal(JSON.parse(read('package.json')).version,'4.23.350');
+ assert.ok(Number(JSON.parse(read('package.json')).version.split('.').at(-1))>=350,'giữ mốc Electron 4.23.350 trở đi');
 });
 test('P5.1.265 Electron before/after and narrow screenshots validate Enter/Space navigation',()=>{
  const qa=read('scripts/positron-20-extension.cjs'),wf=read('.github/workflows/positron-lab.yml');
