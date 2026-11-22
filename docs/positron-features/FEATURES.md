@@ -7,15 +7,15 @@ Trang này được tạo tự động từ GitHub Releases và ảnh kiểm th�
 [Mở WEBSITE changelog tương tác](https://raw.githack.com/trisanghy/open-iptv-pro/Positron/docs/positron-features/index.html) · [Giao diện HTML trong repository](index.html) · [Các bản phát hành](https://github.com/trisanghy/open-iptv-pro/releases) · [Nhật ký Git tiếng Việt](LOG_GIT_TIENG_VIET.md) · [Quy tắc ưu tiên tính năng](../../POSITRON_FEATURE_RULES.md)
 
 <details>
-<summary><strong>P5.1.190</strong> · chọn lại TV để trở về đầu khung phát · CHƯA CÓ BẢN PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.190</strong> · Bấm lại tab TV để trở về khung phát / Electron 4.23.275 · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
 
-**Ứng dụng:** 4.23.275 · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
+**Ứng dụng:** 4.23.275 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
 Feature priority: NEW — Ảnh Electron P5.1.189 1920×1080 cho thấy đầu trình phát bị khuất khi đang ở trang TV nhưng cuộn còn sâu; thao tác chọn TV khi tab đã active không quay về vùng video vì setPage chỉ đặt lại scroll ở lần chuyển tab. Khi chọn lại nút TV đang active, cuộn nội dung về đầu trình phát ngay. Chỉ áp dụng cho trang TV, không chuyển kênh, không tự phát và không thay đổi các tab/thiết lập khác.
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.190](./screenshots/positron-p51190-desktop-1920x1080-trang-chu-real.png)
 
-[Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/tree/Positron) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/b8a22f0f8b7e0e533ad9fd264fde379b045733e8)
+[Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.275-p5.1.190) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/b8a22f0f8b7e0e533ad9fd264fde379b045733e8) · [Tải Windows Setup x64](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.275-p5.1.190/Open-IPTV-Pro-Setup-4.23.275-x64.exe) · [Tải gói ảnh QA](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.275-p5.1.190/Positron-P51190-20-Real-Screenshots.zip)
 
 </details>
 
@@ -26,7 +26,7 @@ Feature priority: NEW — Ảnh Electron P5.1.189 1920×1080 cho thấy đầu t
 
 Feature priority: NEW — Ảnh Electron thật P5.1.188 đã dàn đủ sáu cột gợi ý nhưng chỉ có tìm kiếm và lọc nhóm, chưa có cách sắp xếp các kênh chưa yêu thích khi nguồn chứa hàng trăm kênh. Thêm tùy chọn hiển thị Theo nguồn, Tên A–Z, Tên Z–A theo thứ tự tiếng Việt. Lựa chọn chỉ sắp xếp mảng gợi ý đã lọc trước khi phân trang; giữ nguyên thứ tự nguồn M3U, Favorites đã lưu, trạng thái kênh hiện tại và nút lưu hàng loạt, không tự phát video.
 
-![Ảnh chụp Electron thật P5.1.189](./screenshots/positron-p51189-desktop-1920x1080-trang-chu-real.png)
+![Ảnh chụp Electron thật P5.1.189](./screenshots/positron-p51189-favorite-sort-after-1920x1080-real.png)
 
 [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.274-p5.1.189) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/61177c02fc3c2e727e1057034b65dd678fad3c16) · [Tải Windows Setup x64](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.274-p5.1.189/Open-IPTV-Pro-Setup-4.23.274-x64.exe) · [Tải gói ảnh QA](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.274-p5.1.189/Positron-P51189-20-Real-Screenshots.zip)
 

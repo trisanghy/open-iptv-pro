@@ -2,14 +2,14 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
-## P5.1.190 — chọn lại TV để trở về đầu khung phát
+## P5.1.190 — Bấm lại tab TV để trở về khung phát / Electron 4.23.275
 
-**Ứng dụng:** 4.23.275 · **Trạng thái:** Chưa có bản phát hành
+**Ứng dụng:** 4.23.275 · **Trạng thái:** Đã phát hành
 
 Feature priority: NEW — Ảnh Electron P5.1.189 1920×1080 cho thấy đầu trình phát bị khuất khi đang ở trang TV nhưng cuộn còn sâu; thao tác chọn TV khi tab đã active không quay về vùng video vì setPage chỉ đặt lại scroll ở lần chuyển tab. Khi chọn lại nút TV đang active, cuộn nội dung về đầu trình phát ngay. Chỉ áp dụng cho trang TV, không chuyển kênh, không tự phát và không thay đổi các tab/thiết lập khác.
 
 [Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/b8a22f0f8b7e0e533ad9fd264fde379b045733e8)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.275-p5.1.190)
 
 ## P5.1.189 — Sắp xếp gợi ý Yêu thích A–Z / Z–A / theo nguồn / Electron 4.23.274
 
