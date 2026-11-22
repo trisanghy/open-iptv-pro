@@ -113,8 +113,8 @@ test('Web-only CSS contains no visible three-bar grip and leaves touch scrolling
  assert.match(css,/#channelList \.channel-move\{\s*display:none!important/);
  assert.match(css,/touch-action:pan-y!important/);
  assert.doesNotMatch(css,/\.folder-sort-grip/);
- for(const asset of ['web-mobile-touch-sort.css','web-mobile-touch-sort.js']){
-  const url=asset+'?v=mobile-touch-sort-20261122a';
+ for(const [asset,version] of [['web-mobile-touch-sort.css','page-swipe-fixed-header-20261122c'],['web-mobile-touch-sort.js','mobile-touch-sort-20261122a']]){
+  const url=asset+'?v='+version;
   assert.ok(html.includes(url),url);
   assert.ok(builder.includes(url),url+' in build');
  }
