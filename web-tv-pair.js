@@ -129,9 +129,11 @@
       onStatus('Đã ghép đôi an toàn. Bạn có thể chọn kênh trên máy tính.');
      }else if(msg.kind==='command'){
       const kind=String(msg.action||'');
-      if(!['play','pause','resume','stop','disconnect'].includes(kind))return;
+      if(!['play','pause','resume','stop','volume','disconnect'].includes(kind))return;
       if(kind==='play'&&!validateUrl(msg.url)){onStatus('TV từ chối URL luồng không hợp lệ.');return;}
-      onCommand({action:kind,url:kind==='play'?validateUrl(msg.url):'',name:String(msg.name||'').slice(0,100)});
+      onCommand({action:kind,url:kind==='play'?validateUrl(msg.url):'',name:String(msg.name||'').slice(0,100),
+       mediaId:String(msg.mediaId||'').slice(0,320),
+       volume:Number.isFinite(msg.volume)?Math.max(0,Math.min(1,msg.volume)):null,muted:!!msg.muted});
       if(kind==='disconnect')await close();
      }
     });
@@ -146,10 +148,10 @@
     state.pending=null;onRequest(null);onStatus('Ghép đôi thất bại: '+String(error.message||error));throw error;
    }
   }
-  async function reportPlayback(playbackState,name=''){
+  async function reportPlayback(playbackState,name='',mediaId=''){
    if(!state.connected||!state.session||!state.key)return false;
-   if(!['playing','paused','error'].includes(playbackState))return false;
-   await send(state.session,'sealed',await seal(state.key,{kind:'playback',sender:'tv',state:playbackState,name:String(name||'').slice(0,100),ts:Date.now()}));
+   if(!['playing','paused','error','stopped'].includes(playbackState))return false;
+   await send(state.session,'sealed',await seal(state.key,{kind:'playback',sender:'tv',state:playbackState,name:String(name||'').slice(0,100),mediaId:String(mediaId||'').slice(0,320),ts:Date.now()}));
    return true;
   }
   function deny(){
@@ -190,8 +192,8 @@
        await unsubscribe(state.client,state.room);state.room=null;
        onConnected();onStatus('Ghép đôi TV thành công. Lệnh phát được mã hóa.');
       }else if(msg?.kind==='playback'&&msg.sender==='tv'&&state.connected&&
-               ['playing','paused','error'].includes(msg.state)){
-       onPlayback({state:msg.state,name:String(msg.name||'').slice(0,100)});
+               ['playing','paused','error','stopped'].includes(msg.state)){
+       onPlayback({state:msg.state,name:String(msg.name||'').slice(0,100),mediaId:String(msg.mediaId||'').slice(0,320)});
       }
      });
      await joined(session);
@@ -210,13 +212,15 @@
    const result=await send(state.session,'sealed',await seal(state.key,data));
    if(result==='error')throw Error('TV chưa nhận được lệnh. Kiểm tra kết nối.');
   }
-  async function command(action,{url='',name=''}={}){
-   if(!['play','pause','resume','stop'].includes(action))throw Error('Lệnh không hợp lệ.');
+  async function command(action,{url='',name='',mediaId='',volume=null,muted=false}={}){
+   if(!['play','pause','resume','stop','volume'].includes(action))throw Error('Lệnh không hợp lệ.');
    if(action==='play'){
     url=validateUrl(url);
     if(!url)throw Error('Luồng phải là HTTP/HTTPS truy cập được từ TV; URL nội bộ/blob không hỗ trợ.');
    }
-   return transmit('command',{action,url,name:String(name||'').slice(0,100)});
+   if(action==='volume'&&(!Number.isFinite(volume)||volume<0||volume>1))throw Error('Âm lượng phải nằm trong khoảng 0–1.');
+   return transmit('command',{action,url,name:String(name||'').slice(0,100),mediaId:String(mediaId||'').slice(0,320),
+    volume:action==='volume'?volume:null,muted:action==='volume'?!!muted:false});
   }
   async function disconnect(notify=true){
    clearTimeout(state.timeout);
