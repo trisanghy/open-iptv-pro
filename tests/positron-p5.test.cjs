@@ -1777,3 +1777,25 @@ test('P5.1.174 Empty Favorites CTA hướng TV khi có kênh, Sources khi không
  assert.ok(qa.includes('favoriteActionQA'));
  assert.ok(!js.includes('window.IPTVState?.importSource?.('));
 });
+test('P5.1.175 lựa chọn yêu thích nhanh từ nguồn đã bật không phát stream',()=>{
+ const js=read('renderer/positron-twenty.js');
+ const css=read('renderer/positron-twenty.css');
+ const qa=read('scripts/positron-20-extension.cjs');
+ assert.ok(js.includes("suggestionId='positronFavoriteQuickAdd'"));
+ assert.ok(js.includes("channels.filter(ch=>ch&&ch.id&&!favorites.has(store,ch)).slice(0,6)"));
+ assert.ok(js.includes("favorites.toggle(current,active)"),'Thêm sao phải do người dùng bấm');
+ assert.ok(js.includes("chip.setAttribute('aria-label'"),'Tên kênh đọc được');
+ assert.ok(js.includes("window.IPTVState?.save?.()"),'Lưu yêu thích');
+ assert.ok(js.includes("window.IPTVState?.render?.()"),'Cập nhật danh sách ngay');
+ assert.ok(js.includes("search.value=''"),'CTA TV không giữ bộ lọc cũ');
+ assert.ok(css.includes('#positronFavoriteQuickAdd'));
+ assert.ok(css.includes('grid-template-columns:repeat(2,minmax(0,1fr))'));
+ assert.ok(qa.includes('quickFavoriteQA'));
+ const favorites=require('../renderer/favorites-core.js');
+ const channel={id:'q1',sourceId:'s',name:'QA test A',group:'A',url:'https://example.org/stream'};
+ const store={sources:[{id:'s',enabled:true}],channels:[channel],favorites:[],favoriteKeys:[],snapshots:{}};
+ const original=JSON.stringify(store.channels);
+ assert.equal(favorites.toggle(store,channel),true);
+ assert.equal(favorites.visible(store).length,1);
+ assert.equal(JSON.stringify(store.channels),original,'Không sửa playlist nguồn');
+});

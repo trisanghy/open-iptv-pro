@@ -1,3 +1,12 @@
+## P5.1.175 — Thêm nhanh kênh vào Yêu thích ngay trong empty state / Electron 4.23.260
+- Feature priority: NEW — Ảnh Electron thật P5.1.174 cho thấy trang Yêu thích đang trống nhưng có 561 kênh và CTA phải chuyển sang TV. Tạo cụm chọn nhanh tối đa 6 kênh đang bật, bấm ☆ bên cạnh tên kênh sẽ đánh dấu yêu thích ngay tại đây, không cần mở player. Đồng thời CTA tới TV xóa từ khóa QA Channel 011 cũ để trả lại toàn bộ 561 kênh.
+- User action: Mở Yêu thích khi chưa có kênh yêu thích nhưng đã có nguồn → chọn một trong tối đa 6 nút ☆ kênh được gợi ý → kênh đó xuất hiện thành thẻ Yêu thích; có thể mở TV để chọn thêm kênh khác.
+- Electron screenshot: positron-p51175-quick-favorite-after-1920x1080-real.png
+- Baseline: đã mở trực tiếp ảnh Electron P5.1.174 `positron-p51174-favorite-action-before-1920x1080-real.png` (empty state) và `positron-p51174-favorite-action-after-1920x1080-real.png` (TV còn bộ lọc cũ).
+- Chỉ dùng metadata các kênh có sẵn và favorites-core đã tích hợp, không thay playlist, stream, EPG hoặc kích hoạt phát tự động. Yêu thích chỉ lưu khi bấm nút; không gợi ý kênh đã thích; giao diện responsive 1–2 cột.
+- Regression: kiểm tra 6 lựa chọn, hành động toggle + save/render, giữ nguyên playlist, focus, ảnh Electron 1920×1080 trước/sau + DOM assertions no autoplay.
+- Trạng thái: CANDIDATE; cần Node + ảnh Electron thật mở soát + Release x64/DMG hoàn chỉnh để tính vòng.
+
 ## P5.1.174 — Yêu thích trống dẫn đúng tới TV thay vì Quản lý nguồn / Electron 4.23.259
 - Feature priority: NEW — Ảnh Electron thật P5.1.173 tại trang Yêu thích cho thấy 561 kênh đã nhập nhưng danh sách chưa có sao, nút CTA vẫn ghi Quản lý nguồn IPTV; dẫn người dùng sang việc thêm nguồn không liên quan. CTA giờ đổi theo dữ liệu hiện có: có kênh → Xem kênh để đánh dấu ★ (quay về TV, focus ô tìm); không có kênh → Quản lý nguồn IPTV.
 - User action: Mở Yêu thích khi đã có kênh nhưng chưa đánh dấu sao → bấm Xem kênh để đánh dấu ★ → tự đến TV và focus tìm kênh; việc đánh dấu sao vẫn do người dùng thực hiện.

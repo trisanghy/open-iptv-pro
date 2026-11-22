@@ -132,7 +132,9 @@
     button.addEventListener('click',()=>{
      if((window.IPTVState?.getChannels?.()||[]).length){
       window.IPTVState?.setPage?.('tv');
-      byId('searchBox')?.focus({preventScroll:true});
+      const search=byId('searchBox');
+      if(search?.value){search.value='';search.dispatchEvent(new Event('input',{bubbles:true}));}
+      search?.focus({preventScroll:true});
      }else window.IPTVState?.setPage?.('sources');
     });
     empty.append(button);
@@ -143,6 +145,35 @@
     'Mở trang quản lý và thêm nguồn IPTV';
    if(button.textContent!==actionText)button.textContent=actionText;
    if(button.title!==actionTitle)button.title=actionTitle;
+   // P5.1.175: thêm nhanh một kênh yêu thích ngay tại trang trống.
+   // Chỉ lấy tên/nhóm từ các kênh đã được bật; không nạp stream hoặc gọi mạng.
+   const suggestionId='positronFavoriteQuickAdd';
+   if(hasChannels&&!empty.querySelector('#'+suggestionId)&&window.OpenIPTVFavorites){
+    const wrap=d.createElement('div');wrap.id=suggestionId;wrap.className='po-fav-quick';
+    const heading=d.createElement('strong');heading.textContent='Thêm nhanh vào Yêu thích';
+    heading.className='po-fav-quick-heading';
+    const hint=d.createElement('small');hint.textContent='Chọn một kênh đã có để đánh dấu sao, không phát video.';
+    const grid=d.createElement('div');grid.className='po-fav-quick-grid';
+    const favorites=window.OpenIPTVFavorites;
+    const store=window.IPTVState?.getStore?.();
+    const picks=channels.filter(ch=>ch&&ch.id&&!favorites.has(store,ch)).slice(0,6);
+    for(const candidate of picks){
+     const chip=d.createElement('button');chip.type='button';
+     chip.className='po-fav-quick-chip';chip.textContent='☆ '+String(candidate.name||'Kênh');
+     chip.setAttribute('aria-label','Thêm '+String(candidate.name||'kênh')+' vào Yêu thích');
+     chip.addEventListener('click',()=>{
+      const active=window.IPTVState?.getChannels?.().find(ch=>ch.id===candidate.id);
+      const current=window.IPTVState?.getStore?.();
+      if(!active||!current||favorites.has(current,active))return;
+      favorites.toggle(current,active);
+      window.IPTVState?.save?.();
+      window.IPTVState?.render?.();
+      window.IPTVState?.setPage?.('fav');
+     });
+     grid.append(chip);
+    }
+    wrap.append(heading,hint,grid);empty.append(wrap);
+   }
   };
   new MutationObserver(syncFavoriteSourceAction).observe(favoriteList,{childList:true,subtree:true});
   const countNode=byId('sourceCount');

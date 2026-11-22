@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.259",
-  "description": "Positron P5.1.174: nút Yêu thích trống mở đúng danh sách TV",
+  "version": "4.23.260",
+  "description": "Positron P5.1.175: chọn nhanh kênh để thêm vào Yêu thích",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",
