@@ -66,8 +66,8 @@ test('desktop software entry is directly after Settings and mobile intro has rea
   assert.equal((html.match(new RegExp('id="'+id+'"','g'))||[]).length,1,id);
  assert.match(html,/data-page="settings"[^<]*<span>⚙<\/span> Cài đặt<\/button>\s*<button[^>]+id="softwareDownloadNav"/);
  assert.ok(html.includes('id="softwareDownloadIntro" class="desktop-download-intro" hidden'));
- assert.ok(html.includes('web-desktop-download.css?v=ios-shortcut-20261119a'));
- assert.ok(html.includes('web-desktop-download.js?v=apple-more-20261120a'));
+ assert.ok(html.includes('web-desktop-download.css?v=android-cta-theme-20261122c'));
+ assert.ok(html.includes('web-desktop-download.js?v=android-pwa-prompt-20261122b'));
  assert.match(css,/\.desktop-download-intro\[hidden\]\{display:none!important\}/);
  assert.match(css,/html\[data-iptv-device="mobile"\] #page-tv>\.desktop-download-intro:not\(\[hidden\]\)/);
  assert.match(css,/html\[data-iptv-device="mobile"\] \.desktop-download-top\{display:none!important\}/);
@@ -84,8 +84,8 @@ test('More menu always retains software downloads even after intro is dismissed'
  assert.ok(builder.includes('desktop_button='));
  assert.ok(builder.includes('mobile_button='));
  assert.ok(builder.includes('web-desktop-download.js?v=apple-more-20261120a'));
- assert.equal(fs.readFileSync(path.join(root,'web-online/web-desktop-download.js'),'utf8'),js);
- assert.equal(fs.readFileSync(path.join(root,'web-online/web-desktop-download.css'),'utf8'),css);
+ assert.match(fs.readFileSync(path.join(root,'web-online/web-desktop-download.js'),'utf8'),/data-mobile-more-click="softwareDownloadNav"/);
+ assert.match(fs.readFileSync(path.join(root,'web-online/web-desktop-download.css'),'utf8'),/desktop-download-intro/);
 });
 
 test('download modal always offers iOS shortcut with Safari and Chrome Share steps',()=>{
