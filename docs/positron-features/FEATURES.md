@@ -7,15 +7,28 @@ Trang này được tạo tự động từ GitHub Releases và ảnh kiểm th�
 [Mở WEBSITE changelog tương tác](https://raw.githack.com/trisanghy/open-iptv-pro/Positron/docs/positron-features/index.html) · [Giao diện HTML trong repository](index.html) · [Các bản phát hành](https://github.com/trisanghy/open-iptv-pro/releases) · [Nhật ký Git tiếng Việt](LOG_GIT_TIENG_VIET.md) · [Quy tắc ưu tiên tính năng](../../POSITRON_FEATURE_RULES.md)
 
 <details>
-<summary><strong>P5.1.215</strong> · tìm kiếm kênh trong lịch sử khám phá ngẫu nhiên · CHƯA CÓ BẢN PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.216</strong> · tìm kiếm kênh trong lịch sử khám phá ngẫu nhiên · CHƯA CÓ BẢN PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
 
-**Ứng dụng:** 4.23.300 · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
+**Ứng dụng:** 4.23.301 · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
+
+Quan sát từ ảnh Electron thật P5.1.215 ở 1920×1080 và mã thực tế: mở danh sách lịch sử tập trung vào lựa chọn đầu, không phải ô tìm nên bàn phím phải nhấn Tab hoặc click mới có thể nhập truy vấn. Sửa: mở ☷ tự focus ô tìm; gõ ngay để lọc kênh theo tên/nhóm; ArrowDown chọn kết quả đầu, ArrowUp chọn kết quả cuối; Enter mới phát, Escape đóng và trả focus về nút ☷.
+
+*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+
+[Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/tree/Positron) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/33f4cec7eda78980e001dd7b45c121727bc989c5)
+
+</details>
+
+<details>
+<summary><strong>P5.1.215</strong> · Tìm kiếm nhanh trong lịch sử khám phá kênh / Electron 4.23.300 · CHƯA CÓ BẢN PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+
+**Ứng dụng:** Chưa xác minh · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
 
 Feature priority: NEW — Ảnh P5.1.214 xác nhận lịch sử khám phá có nút chọn bằng bàn phím nhưng chưa có ô tìm khi nhiều kênh xuất hiện. Thêm tìm nhanh theo tên hoặc nhóm, hỗ trợ bỏ dấu tiếng Việt. Electron screenshot: positron-p51215-history-search-after-1920x1080-real.png
 
 *Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
 
-[Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/tree/Positron) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/37816aa49163733d664bf5725631b17805cd5f4f)
+[Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
 
 </details>
 
