@@ -109,7 +109,7 @@ label{display:block;color:#ecf6ff;font-weight:650;margin:12px 0 6px}
 <div class="manager-filter" id="managerFilters" role="group" aria-label="Lọc kênh"><button type="button" data-filter="all" class="active">Tất cả</button><button type="button" data-filter="fav">★ Yêu thích</button><button type="button" data-filter="recent">◷ Vừa xem</button><button type="button" data-filter="visible">◉ Đang hiện</button><button type="button" data-filter="hidden">◌ Đã ẩn</button></div>
 <div class="folder-filter"><div><label for="groupFilter">Lọc theo thư mục</label><select id="groupFilter" disabled><option value="">Tất cả thư mục</option></select></div><button id="createFolder" title="Tạo thư mục" type="button" disabled>＋</button></div>
 <div class="manager-toolbar"><button id="newChannel" type="button" disabled>＋ Thêm kênh</button><button id="expandFolders" type="button" disabled>▾ Mở hết</button><button id="collapseFolders" type="button" disabled>▸ Gập hết</button><button id="selectionToggle" type="button" disabled>☑ Chọn nhiều</button></div>
-<p class="manager-hint">Bấm tên kênh để phát trên TV. Giữ kênh 0,8 giây rồi kéo để sắp xếp hoặc chuyển thư mục. Chọn nhiều để chuyển hàng loạt.</p>
+<p class="manager-hint">Bấm tên kênh để phát trên TV. Giữ kênh hoặc thư mục 0,5 giây rồi kéo để đổi thứ tự, chuyển kênh giữa các thư mục. Chọn nhiều để chuyển hàng loạt.</p>
 <div id="selectionBar" class="manager-selection" hidden>
 <strong id="selectionCount">Đã chọn 0 kênh</strong>
 <div class="selection-grid"><select id="batchGroup" aria-label="Thư mục đích"></select><input type="number" min="1" max="5000" id="batchPosition" placeholder="Vị trí" aria-label="Vị trí đầu tiên, để trống để chuyển cuối"></div>
@@ -117,7 +117,7 @@ label{display:block;color:#ecf6ff;font-weight:650;margin:12px 0 6px}
 <div class="actions"><button id="selectPage" type="button">Chọn trang này</button><button id="clearSelection" type="button">Bỏ chọn</button></div>
 </div>
 <div id="channelList"><div class="empty">Kết nối TV để xem kênh.</div></div>
-<div class="pager"><button id="previous" type="button" disabled>← Trước</button><span id="pageText">Trang 1</span><button id="next" type="button" disabled>Tiếp →</button></div>
+<p id="pageText" class="manager-hint">Tất cả thư mục được hiển thị. Mở thư mục để tải kênh tự động khi cuộn.</p>
 <div class="hint">Mọi thay đổi được gửi tới TV và chỉ báo hoàn tất sau khi TV xác nhận đã lưu. Giữ màn hình QR mở trên TV.</div>
 </section>
 <section id="addPanel" class="panel" hidden>
@@ -166,6 +166,7 @@ var CONFIG={url:'https://zjbsvqryaxtafuffpifu.supabase.co',key:'sb_publishable_j
 var match=/^#code=([a-f0-9]{32})$/i.exec(location.hash||''),token=match&&match[1],client=null,room=null,subscribed=false,online=false,started=Date.now(),lastSeen=0;
 var pending={},pulse=0,pingBusy=false,snapshot=null,currentSource='',offset=0,query='',editMode='',editTarget=null,busy=false,filterTimer=0;
 var managerMode='all',activeGroup='',selectionMode=false,selectedItems={},collapsedFolders={},moveTarget=null,moveBusy=false;
+var folderCache={},folderCacheScope='',channelViews=[],folderLoadObserver=null;
 function feedback(message,error){var el=byId('feedback');el.textContent=String(message||'');el.dataset.error=error?'true':'false';}
 function connection(yes,message){
  online=!!yes;byId('connection').dataset.connected=online?'true':'false';
@@ -199,8 +200,6 @@ function updateControls(){
  byId('sourceSelect').disabled=!good||!snapshot||!snapshot.sources.length;
  ['renameSource','deleteSource','sourceUp','sourceDown','newChannel'].forEach(function(id){byId(id).disabled=!hasSource;});
  byId('filterChannels').disabled=!hasSource;
- byId('previous').disabled=!hasSource||!snapshot||snapshot.offset<=0;
- byId('next').disabled=!hasSource||!snapshot||!snapshot.hasMore;
  byId('editSave').disabled=!good;
  ['groupFilter','createFolder','expandFolders','collapseFolders','selectionToggle'].forEach(function(id){byId(id).disabled=!hasSource;});
  ['batchMove','batchFavorite','batchUnfavorite','batchHide','batchShow','batchDelete'].forEach(function(id){byId(id).disabled=!good||!Object.keys(selectedItems).length;});
@@ -261,6 +260,8 @@ function applySnapshot(state){
  var oldSource=currentSource,oldRevision=snapshot&&snapshot.revision;
  snapshot=state;currentSource=state.sourceId||'';offset=state.offset||0;
  managerMode=state.filter||managerMode;activeGroup=state.group||'';
+ var nextScope=[currentSource,state.revision,managerMode,query].join('|');
+ if(folderCacheScope!==nextScope){folderCache={};folderCacheScope=nextScope;}
  if(oldSource!==currentSource||oldRevision!==state.revision)selectedItems={};
  var sel=byId('sourceSelect');sel.textContent='';
  state.sources.forEach(function(source){
@@ -271,7 +272,7 @@ function applySnapshot(state){
  var source=state.sources.find(function(x){return x.id===currentSource;});
  byId('sourceInfo').textContent=source?('Nguồn: '+(source.address||'Danh sách đã lưu trên TV')):'Chưa có nguồn IPTV.';
  byId('channelCount').textContent=state.total+' kênh';
- byId('pageText').textContent='Hiển thị '+(state.total?state.offset+1:0)+'–'+(state.offset+state.channels.length)+' / '+state.total;
+ byId('pageText').textContent='Có '+state.total+' kênh phù hợp. Chạm thư mục để mở; kênh tự tải khi cuộn, không cần chuyển trang.';
  Array.from(byId('managerFilters').querySelectorAll('button[data-filter]')).forEach(function(b){b.classList.toggle('active',b.dataset.filter===managerMode);});
  renderGroupSelectors();
  renderChannels();updateControls();
@@ -282,22 +283,23 @@ function button(parent,label,action,index,style){
 }
 function renderChannels(){
  var holder=byId('channelList');holder.textContent='';
- var channels=snapshot&&snapshot.channels||[],groups=currentGroupNames();
+ var groups=currentGroupNames();channelViews=[];
+ var channels=[];Object.keys(folderCache).forEach(function(g){var cache=folderCache[g];if(cache&&cache.channels)cache.channels.forEach(function(c){channels.push(c);});});
  if(!snapshot){holder.appendChild(document.createTextNode('Đang chờ TV…'));return;}
  var byGroup={},names=[];
  channels.forEach(function(c,index){
   var name=String(c.group||'Khác');if(!byGroup[name]){byGroup[name]=[];names.push(name);}
-  byGroup[name].push({channel:c,pageIndex:index});
+  channelViews.push(c);byGroup[name].push({channel:c,pageIndex:channelViews.length-1});
  });
- var ordered=groups.map(function(g){return g.name;}).filter(function(g){return !!byGroup[g];});
+ var ordered=groups.map(function(g){return g.name;});
  names.forEach(function(g){if(ordered.indexOf(g)<0)ordered.push(g);});
- if(managerMode==='all'&&!query&&!activeGroup&&offset===0)groups.filter(function(g){return g.count===0;}).forEach(function(g){if(ordered.indexOf(g.name)<0)ordered.push(g.name);});
+ if(activeGroup)ordered=ordered.filter(function(g){return g===activeGroup;});
  if(!ordered.length){var empty=document.createElement('div');empty.className='empty';empty.textContent='Không có kênh phù hợp với bộ lọc. Hãy thử Tất cả hoặc chọn nguồn khác.';holder.appendChild(empty);return;}
  ordered.forEach(function(group){
   var groupMeta=groups.find(function(g){return g.name===group;}),entries=byGroup[group]||[];
   var section=document.createElement('section');section.className='folder-block';section.dataset.group=group;
   var head=document.createElement('button');head.type='button';head.className='folder-header';head.dataset.group=group;head.dataset.action='collapse-folder';
-  var folded=!!collapsedFolders[currentSource+'|'+group]&&!query;
+  var folded=collapsedFolders[currentSource+'|'+group]!==false;
   var arrow=document.createElement('span');arrow.textContent=folded?'▸':'▾';head.appendChild(arrow);
   var label=document.createElement('strong');label.className='folder-title';label.textContent='📁 '+group;head.appendChild(label);
   var badge=document.createElement('span');badge.className='folder-count';badge.textContent=groupMeta?groupMeta.count:entries.length;head.appendChild(badge);
@@ -343,10 +345,21 @@ function renderChannels(){
     more.appendChild(tools);shortcuts.appendChild(more);
     row.appendChild(shortcuts);body.appendChild(row);
    });
+   var cache=folderCache[group];
+   if(cache&&cache.error){
+    var retry=button(body,'Không tải được kênh — bấm để thử lại','load-folder',-1);
+    retry.dataset.group=group;
+   }else if(!cache||cache.hasMore||cache.loading){
+    var more=document.createElement('div');
+    more.className='folder-loader manager-hint';more.dataset.group=group;
+    more.textContent=cache&&cache.loading?'Đang tải kênh…':cache&&cache.channels.length?'Cuộn xuống để tải thêm kênh…':'Đang chờ tải kênh…';
+    body.appendChild(more);
+   }
    section.appendChild(body);
   }
   holder.appendChild(section);
  });
+ observeFolderLoads();
 }
 
 async function command(action,details,notice){
@@ -501,8 +514,6 @@ byId('tabAdd').onclick=function(){showTab('add');};
 byId('refresh').onclick=function(){void getSnapshot(currentSource,offset,query);};
 byId('sourceSelect').onchange=function(){query='';activeGroup='';managerMode='all';selectedItems={};selectionMode=false;byId('filterChannels').value='';void getSnapshot(this.value,0,'');};
 byId('filterChannels').oninput=function(){var next=this.value.trim().slice(0,90);clearTimeout(filterTimer);filterTimer=setTimeout(function(){void getSnapshot(currentSource,0,next);},350);};
-byId('previous').onclick=function(){void getSnapshot(currentSource,Math.max(0,offset-30),query);};
-byId('next').onclick=function(){void getSnapshot(currentSource,offset+30,query);};
 byId('sourceForm').onsubmit=async function(event){
  event.preventDefault();
  var name=byId('name').value.trim().slice(0,80),address=validUrl(byId('address').value);
