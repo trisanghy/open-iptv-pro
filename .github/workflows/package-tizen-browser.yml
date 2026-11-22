@@ -1,0 +1,137 @@
+name: Package TizenBrew browser WGT for Mac
+on:
+  push:
+    branches: [tizenbrew]
+    paths:
+      - '.github/workflows/package-tizen-browser.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build browser-preview WGT and Mac one-command launcher
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import os, zipfile, xml.etree.ElementTree as ET
+
+          sha = os.environ['GITHUB_SHA']
+          tag = 'tizenbrew-browser-' + sha[:12]
+          out = Path('dist-tizen-browser')
+          out.mkdir(exist_ok=True)
+          target = out / 'Open-IPTV-Pro-TizenBrowser.wgt'
+
+          tv = Path('tizenbrew/index.html').read_text(encoding='utf-8')
+          phone = Path('tizenbrew/phone.html').read_text(encoding='utf-8')
+          sdk = Path('supabase-sdk.js').read_text(encoding='utf-8')
+
+          assert 'sourceQR' in tv and 'sourceUrl' in tv, 'TV source dialog missing'
+          assert 'manager-request' in tv and 'manager-result' in phone, 'QR management not present'
+          script_tag = '<script>\n(function(){'
+          assert script_tag in tv and script_tag in phone
+          tv = tv.replace(script_tag, '<script src="supabase-sdk.js"></script>\n' + script_tag, 1)
+          phone = phone.replace(script_tag, '<script src="supabase-sdk.js"></script>\n' + script_tag, 1)
+
+          xml = '''<?xml version="1.0" encoding="utf-8"?>
+          <widget xmlns="http://www.w3.org/ns/widgets" xmlns:tizen="http://tizen.org/ns/widgets"
+            id="http://trisanghy.github.io/open-iptv-pro/tizen-browser" version="0.1.6" viewmodes="fullscreen">
+            <name>Open IPTV Pro TV - Browser Preview</name>
+            <content src="index.html"/>
+            <tizen:application id="OPENIPTVBR.Browser" package="OPENIPTVBR" required_version="2.4"/>
+            <tizen:profile name="tv"/>
+          </widget>'''
+          ET.fromstring(xml)
+
+          with zipfile.ZipFile(target, 'w', compression=zipfile.ZIP_DEFLATED, compresslevel=9) as z:
+              z.writestr('index.html', tv)
+              z.writestr('phone.html', phone)
+              z.writestr('supabase-sdk.js', sdk)
+              z.writestr('config.xml', xml)
+              z.write('tizenbrew/README.md', 'README.md')
+              z.write('tizenbrew/THIRD_PARTY_NOTICES.md', 'THIRD_PARTY_NOTICES.md')
+
+          with zipfile.ZipFile(target) as z:
+              assert z.testzip() is None
+              assert all(p in z.namelist() for p in ['index.html', 'phone.html', 'config.xml', 'supabase-sdk.js'])
+              assert 'sourceQR' in z.read('index.html').decode('utf-8')
+
+          launcher = '''#!/bin/bash
+          set -euo pipefail
+          TAG="__TAG__"
+          URL="https://github.com/trisanghy/open-iptv-pro/releases/download/$TAG/Open-IPTV-Pro-TizenBrowser.wgt"
+          DEST="$HOME/Library/Caches/OpenIPTVPro/TizenBrowser/$TAG"
+          mkdir -p "$DEST"
+          echo "Đang tải gói TizenBrew từ GitHub..."
+          curl --fail --location --silent --show-error --retry 3 "$URL" -o "$DEST/Open-IPTV-Pro-TizenBrowser.wgt"
+          python3 - "$DEST/Open-IPTV-Pro-TizenBrowser.wgt" "$DEST" <<'PYRUN'
+          import sys, zipfile, os, http.server, functools, subprocess
+          archive, folder = sys.argv[1:3]
+          with zipfile.ZipFile(archive, 'r') as z:
+              if z.testzip(): raise RuntimeError("Gói WGT tải về không hợp lệ")
+              wanted = {"index.html","phone.html","config.xml","supabase-sdk.js","README.md","THIRD_PARTY_NOTICES.md"}
+              for f in z.infolist():
+                  if f.filename in wanted:
+                      z.extract(f, folder)
+          if not os.path.exists(os.path.join(folder, "index.html")):
+              raise RuntimeError("WGT không chứa index.html")
+          handler = functools.partial(http.server.SimpleHTTPRequestHandler, directory=folder)
+          server = http.server.ThreadingHTTPServer(("127.0.0.1",0), handler)
+          address = "http://127.0.0.1:" + str(server.server_port) + "/index.html"
+          print("\\nĐã khởi động Open IPTV Pro Tizen Browser Preview")
+          print("Mở: " + address)
+          print("Để dừng máy chủ, quay lại Terminal và nhấn Control+C.\\n")
+          subprocess.run(["open", address], check=True)
+          try: server.serve_forever()
+          except KeyboardInterrupt: pass
+          finally: server.server_close()
+          PYRUN
+          '''.replace('__TAG__', tag)
+
+          script = out / 'Open-Tizen-Mac.command'
+          script.write_text(launcher, encoding='utf-8')
+          script.chmod(0o755)
+
+          notes = f'''# Open IPTV Pro TV TizenBrew — browser preview
+          Built from the TizenBrew branch commit {sha}.
+          **This WGT is unsigned and is only intended for local browser preview (not direct installation on Samsung TV).**
+          On Mac, run the one-line Terminal command:
+          bash <(curl -fsSL https://github.com/trisanghy/open-iptv-pro/releases/download/{tag}/Open-Tizen-Mac.command)
+          The launcher downloads this WGT, extracts it, starts a local Python server and opens the default browser.
+          Requires macOS, curl, and Python 3. Leave Terminal open; press Control+C to stop.
+          '''.replace('          ', '')
+          (out / 'README.txt').write_text(notes, encoding='utf-8')
+          print('Created:', tag, target, target.stat().st_size)
+          PY
+
+      - name: Upload files to the workflow run
+        uses: actions/upload-artifact@v4
+        with:
+          name: tizen-browser-wgt
+          path: dist-tizen-browser/*
+          if-no-files-found: error
+
+      - name: Publish immutable browser-preview download
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          short="$(echo "$GITHUB_SHA" | cut -c1-12)"
+          tag="tizenbrew-browser-$short"
+          if gh release view "$tag" >/dev/null 2>&1; then
+            echo "Release already exists; keeping immutable assets."
+            exit 0
+          fi
+          gh release create "$tag" \
+            dist-tizen-browser/Open-IPTV-Pro-TizenBrowser.wgt \
+            dist-tizen-browser/Open-Tizen-Mac.command \
+            dist-tizen-browser/README.txt \
+            --title "Open IPTV Pro Tizen Browser Preview $short" \
+            --notes-file dist-tizen-browser/README.txt \
+            --target "$GITHUB_SHA" \
+            --prerelease
