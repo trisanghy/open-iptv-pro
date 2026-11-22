@@ -1,4 +1,4 @@
-# Open IPTV Pro TV · TizenBrew v0.1.6 (thử nghiệm)
+# Open IPTV Pro TV · TizenBrew v0.1.7 (thử nghiệm)
 
 ## Cập nhật không cần USB
 
@@ -56,7 +56,7 @@ Không cung cấp nguồn IPTV bản quyền mặc định. Chỉ sử dụng n�
 - Tab **Thêm nguồn**: gửi tên và URL M3U, chỉ khi TV đã xác nhận kết nối. TV trả tiến độ, số kênh thực tế hoặc lỗi.
 - Các thay đổi thực hiện tại TV rồi lưu cục bộ; trang điện thoại chỉ hiển thị trạng thái đã lưu khi nhận \`manager-result\`. Khi hết 10 phút, cần QR mới.
 - **Giữ hộp thoại QR mở trên TV** trong lúc quản lý. Nếu TV không hiển thị trạng thái "TV đã trực tuyến" dưới QR, kết nối chưa hoạt động và điện thoại không thể gửi nguồn.
-- Trang quản lý dùng GitHub Pages `https://trisanghy.github.io/open-iptv-pro/tizen/phone.html`; QR thêm `?v=016#code=...` để bảo đảm mở đúng phiên bản và giữ mã ghép TV. Không dùng RawGitHack.
+- Trang quản lý dùng GitHub Pages `https://trisanghy.github.io/open-iptv-pro/tizen/phone.html`; QR thêm `?v=017#code=...` để bảo đảm mở đúng phiên bản và giữ mã ghép TV. Không dùng RawGitHack.
 
 ## Sửa Back và nút THOÁT v0.1.6
 
@@ -67,3 +67,13 @@ Không cung cấp nguồn IPTV bản quyền mặc định. Chỉ sử dụng n�
 - Nếu không điều hướng được, dự phòng thoát ứng dụng Tizen qua native API.
 - Đã kiểm thử giả lập logic ở mức mã nguồn; việc bắt phím vật lý vẫn cần xác minh trên TV Samsung thật.
 - Để tải mã mới, đóng hẳn TizenBrew và mở lại; có thể cần gỡ/thêm module nếu bộ đệm cũ.
+
+## Sửa lỗi nguồn và URL v0.1.7 (22/11/2026)
+
+- Ô URL trên **TV và điện thoại** nhận tên miền thiếu giao thức (`d.org.vn/listiptv`) rồi chuẩn hóa thành `https://d.org.vn/listiptv`.
+- Tự sửa cú pháp nhầm `htttp://`, `htttps://`, `https//`, `https:/`, `http//` và giữ đúng HTTP hoặc HTTPS đã nhập.
+- Sau khi nhập, điện thoại hiện URL đã chuẩn hóa. Khi lưu, TV chuẩn hóa lại để tương thích với trang quản lý phiên bản cũ.
+- TV phân biệt HTTP 403/404, trang HTML không phải playlist, thiếu kênh hợp lệ, timeout và lỗi mạng/HTTPS/CORS. Lỗi sẽ phản hồi qua QR về điện thoại; chỉ báo thành công sau khi TV lưu được nguồn.
+- Mã QR mở trang quản lý ở `https://trisanghy.github.io/open-iptv-pro/tizen/phone.html?v=017` và tệp này đã được đồng bộ với `web/online:tizen/phone.html`. Ứng dụng Web chính không bị thay đổi.
+- Lưu ý: tự sửa cú pháp URL **không** thể giúp trình duyệt TV vượt chính sách CORS, HTTPS/chứng chỉ hỏng, lỗi máy chủ hoặc nội dung bị giới hạn quyền. Nếu nguồn vẫn lỗi, mở URL đã chuẩn hóa trên TV và dùng playlist có CORS phù hợp.
+- Kiểm thử: `node --test tizenbrew/tests/source-dialog.test.cjs` (môi trường Node cần có khi chạy cục bộ/CI). Kiểm tra thực tế trên Samsung Tizen vẫn cần thực hiện.
