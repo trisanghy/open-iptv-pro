@@ -35,7 +35,7 @@ jobs:
             const page=await app.firstWindow({timeout:45000});
             await page.setViewportSize({width:1600,height:900});
             await page.waitForSelector('#castBtn',{timeout:20000});
-            await page.evaluate(()=>document.getElementById('castBtn').click());
+            await page.evaluate(()=>{document.getElementById('castModal')?.classList.remove('hidden');window.OpenIPTVCastUI?.open?.(null,'');});
             await page.waitForSelector('#desktopTvPair #dtvPin',{timeout:15000});
             await page.screenshot({path:'screenshots/electron-tv-pair-enter-pin-real-app-1600x900.png',animations:'disabled'});
             // Controlled UI fixture within the running Electron application:
