@@ -7372,7 +7372,17 @@ async function runTwenty(page){
    outerPageStable:Math.abs((d.querySelector('.main .content')?.scrollTop||0)-window.__p231Outer)<=1,
    noHorizontalOverflow:d.documentElement.scrollWidth<=innerWidth+1,
    countPreserved:window.IPTVState.getChannels().length===561,
-   statusMentionsGroup:d.getElementById('poChannelJumpStatus').textContent.includes('Đã tới nhóm')};
+   statusMentionsGroup:d.getElementById('poChannelJumpStatus').textContent.includes('Đã tới nhóm'),
+   labelNotOverlapping:(()=>{
+    const a=d.querySelector('#poChannelGroupRow label').getBoundingClientRect();
+    const v=d.getElementById('poChannelGroupSelect').getBoundingClientRect();
+    return a.right+1<=v.left;
+   })(),
+   buttonNotOverlapping:(()=>{
+    const a=d.getElementById('poChannelGroupSelect').getBoundingClientRect();
+    const v=d.getElementById('poChannelGroupGo').getBoundingClientRect();
+    return a.right+1<=v.left;
+   })()};
  });
  for(const [key,ok] of Object.entries(groupQA231))
   assert.equal(ok,true,'P231 direct group picker '+key+': '+JSON.stringify(groupQA231));

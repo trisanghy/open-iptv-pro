@@ -70,6 +70,6 @@ test('P5.1.231 requires real Electron group picker screenshots and focus/scroll 
  }
  for(const key of ["page.keyboard.press('Alt+g')",
   "page.locator('#poChannelGroupSelect').selectOption({index:2})",
-  'selectedGroupFocused:','noAutoplay:','noHorizontalOverflow:'])
+  'selectedGroupFocused:','noAutoplay:','noHorizontalOverflow:','labelNotOverlapping:','buttonNotOverlapping:'])
   assert.ok(qa.includes(key),'Missing P231 Electron QA '+key);
 });

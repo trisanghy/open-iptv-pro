@@ -85,8 +85,8 @@ html[data-positron="true"] #page-tv #channelList .channel-item:focus .channel-st
    Nested grid prevents the selected group label from causing horizontal overflow. */
 html[data-positron="true"] #page-tv #poChannelGroupRow{
  grid-column:1/-1!important;display:grid!important;
- grid-template-columns:48px minmax(0,1fr) 70px!important;
- align-items:center!important;gap:6px!important;min-width:0!important;
+ grid-template-columns:58px minmax(0,1fr) 62px!important;
+ align-items:center!important;gap:4px!important;min-width:0!important;
 }
 html[data-positron="true"] #page-tv #poChannelGroupRow label{
  font-size:10.5px!important;min-width:0!important;white-space:nowrap!important;
@@ -108,6 +108,6 @@ html[data-positron="true"] #page-tv #poChannelGroupRow :is(button,select):focus-
 }
 @media(max-width:450px){
  html[data-positron="true"] #page-tv #poChannelGroupRow{
-  grid-template-columns:44px minmax(0,1fr) 62px!important;gap:4px!important;
+  grid-template-columns:54px minmax(0,1fr) 56px!important;gap:3px!important;
  }
 }
