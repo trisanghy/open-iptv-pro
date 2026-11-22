@@ -131,9 +131,18 @@
       const kind=String(msg.action||'');
       if(!['play','pause','resume','stop','volume','disconnect'].includes(kind))return;
       if(kind==='play'&&!validateUrl(msg.url)){onStatus('TV từ chối URL luồng không hợp lệ.');return;}
-      onCommand({action:kind,url:kind==='play'?validateUrl(msg.url):'',name:String(msg.name||'').slice(0,100),
-       mediaId:String(msg.mediaId||'').slice(0,320),
-       volume:Number.isFinite(msg.volume)?Math.max(0,Math.min(1,msg.volume)):null,muted:!!msg.muted});
+      const commandId=/^[a-f0-9]{32}$/.test(String(msg.commandId||''))?msg.commandId:'';
+      try{
+       await onCommand({action:kind,url:kind==='play'?validateUrl(msg.url):'',name:String(msg.name||'').slice(0,100),
+        mediaId:String(msg.mediaId||'').slice(0,320),
+        volume:Number.isFinite(msg.volume)?Math.max(0,Math.min(1,msg.volume)):null,muted:!!msg.muted});
+       if(commandId)await send(session,'sealed',await seal(state.key,
+        {kind:'command-ack',sender:'tv',commandId,accepted:true,action:kind,ts:Date.now()}));
+      }catch(error){
+       if(commandId)await send(session,'sealed',await seal(state.key,
+        {kind:'command-ack',sender:'tv',commandId,accepted:false,action:kind,ts:Date.now()}));
+       onStatus('TV không xử lý được lệnh '+kind+': '+String(error?.message||error));
+      }
       if(kind==='disconnect')await close();
      }
     });
@@ -166,7 +175,7 @@
   return {get code(){return state.code;},get ready(){return state.ready;},get connected(){return state.connected;},start,approve,deny,close,reportPlayback};
  }
  function createController({onStatus=()=>{},onConnected=()=>{},onDisconnected=()=>{},onPlayback=()=>{}}={}){
-  const state={client:null,room:null,session:null,key:null,pair:null,peer:null,connected:false,closed:false,seq:0,seen:new Set(),pin:'',timeout:null};
+  const state={client:null,room:null,session:null,key:null,pair:null,peer:null,connected:false,closed:false,seq:0,seen:new Set(),pin:'',timeout:null,pendingAcks:new Map()};
   async function connect(rawCode){
    const code=String(rawCode||'').replace(/\D/g,'');
    if(!/^\d{6}$/.test(code))throw Error('Nhập đúng 6 số hiển thị trên TV.');
@@ -191,6 +200,13 @@
        state.connected=true;clearTimeout(state.timeout);
        await unsubscribe(state.client,state.room);state.room=null;
        onConnected();onStatus('Ghép đôi TV thành công. Lệnh phát được mã hóa.');
+      }else if(msg?.kind==='command-ack'&&msg.sender==='tv'&&state.connected){
+       const pending=state.pendingAcks.get(String(msg.commandId||''));
+       if(pending){
+        state.pendingAcks.delete(msg.commandId);clearTimeout(pending.timer);
+        if(msg.accepted)pending.resolve(true);
+        else pending.reject(Error('TV từ chối lệnh '+String(msg.action||'')));
+       }
       }else if(msg?.kind==='playback'&&msg.sender==='tv'&&state.connected&&
                ['playing','paused','error','stopped'].includes(msg.state)){
        onPlayback({state:msg.state,name:String(msg.name||'').slice(0,100),mediaId:String(msg.mediaId||'').slice(0,320)});
@@ -219,13 +235,34 @@
     if(!url)throw Error('Luồng phải là HTTP/HTTPS truy cập được từ TV; URL nội bộ/blob không hỗ trợ.');
    }
    if(action==='volume'&&(!Number.isFinite(volume)||volume<0||volume>1))throw Error('Âm lượng phải nằm trong khoảng 0–1.');
-   return transmit('command',{action,url,name:String(name||'').slice(0,100),mediaId:String(mediaId||'').slice(0,320),
-    volume:action==='volume'?volume:null,muted:action==='volume'?!!muted:false});
+   const commandId=id();
+   let timer;
+   let settle;
+   const acknowledged=new Promise((resolve,reject)=>{
+    settle={resolve,reject};
+    timer=setTimeout(()=>{
+     state.pendingAcks.delete(commandId);
+     reject(Error('TV không phản hồi lệnh '+action+' trong 8 giây. Kiểm tra trình duyệt TV và mạng.'));
+    },8000);
+   });
+   state.pendingAcks.set(commandId,{...settle,timer});
+   try{
+    await transmit('command',{action,url,name:String(name||'').slice(0,100),mediaId:String(mediaId||'').slice(0,320),
+     volume:action==='volume'?volume:null,muted:action==='volume'?!!muted:false,commandId});
+   }catch(error){
+    clearTimeout(timer);state.pendingAcks.delete(commandId);
+    // Attach a rejection handler to the ACK promise created above.
+    void acknowledged.catch(()=>{});
+    throw error;
+   }
+   return acknowledged;
   }
   async function disconnect(notify=true){
    clearTimeout(state.timeout);
    if(notify&&state.connected)try{await transmit('command',{action:'disconnect'});}catch{}
    state.closed=true;state.connected=false;
+   for(const pending of state.pendingAcks.values()){clearTimeout(pending.timer);pending.reject(Error('TV đã ngắt kết nối.'));}
+   state.pendingAcks.clear();
    await Promise.all([unsubscribe(state.client,state.room),unsubscribe(state.client,state.session)]);
    state.room=null;state.session=null;state.key=null;state.pair=null;state.peer=null;
    onDisconnected();
