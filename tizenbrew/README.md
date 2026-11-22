@@ -17,6 +17,15 @@
 - QR mở `https://trisanghy.github.io/open-iptv-pro/tizen/phone.html?v=020`; đồng bộ **duy nhất** trang QR ở `web/online:tizen/phone.html`. Không áp dụng tính năng trạng thái **Sống/Die** của bản Web vì Tizen chưa có bộ kiểm tra độc lập; tránh hiển thị kết quả kiểm tra không có thật.
 - Đã chạy mô phỏng các thao tác quản lý nguồn/thư mục/kênh và kiểm tra cú pháp JavaScript. **Chưa xác minh trực tiếp trên Samsung TV**; cần kiểm tra kéo thả và phát kênh trên thiết bị thật.
 
+## v0.1.14 — Danh sách thư mục gập mặc định, tự tải kênh và kéo thả 0,5 giây
+
+- Trang quản lý qua QR mở ra với **toàn bộ thư mục được gập mặc định**. Danh sách hiển thị đầy đủ tên thư mục, gồm cả nhóm chưa có kênh; không cắt danh sách ở 100 nhóm như trước.
+- Bỏ nút **Trước / Tiếp**. Khi mở thư mục hoặc cuộn tới cuối kênh đã tải, điện thoại tự xin 30 kênh tiếp theo từ TV và ghép vào nhóm đang mở. Kỹ thuật phân trang vẫn giữ ở lớp truyền Supabase để tránh gửi hàng nghìn kênh qua một tin nhắn, nhưng người dùng không cần thao tác chuyển trang.
+- **Giữ 0,5 giây (500 ms)** trên tên kênh hoặc tiêu đề thư mục để bắt đầu kéo. Kéo kênh lên hàng kênh khác để sắp xếp trước/sau, thả trên tiêu đề thư mục để chuyển nhóm; kéo tiêu đề thư mục lên hoặc xuống tiêu đề khác để đổi thứ tự các thư mục. Có tự cuộn gần mép màn hình.
+- Thao tác sắp xếp được gửi qua TV, kiểm tra ID kênh và tên thư mục, lưu thứ tự trên TV. Mọi thư mục tự gập khi mở lại tab quản lý hay thay nguồn. Bộ lọc, chọn nhiều, yêu thích và nhập nguồn vẫn giữ nguyên.
+- Trang QR mới dùng `https://trisanghy.github.io/open-iptv-pro/tizen/phone.html?v=021`; chỉ cập nhật `web/online:tizen/phone.html` để xuất bản, không sửa trình phát Web chính.
+- Mô phỏng kiểm tra thành công: trả đủ 120 thư mục, tải lần lượt 72 kênh trong 3 gói 30/30/12, kéo sắp xếp thư mục trước/sau, kéo kênh giữa các nhóm. **Chưa xác minh bằng thao tác cảm ứng trên điện thoại thực và Samsung TV**.
+
 ## Cập nhật không cần USB
 
 1. Mở ứng dụng **TizenBrew** (không phải TizenBrew Installer).
