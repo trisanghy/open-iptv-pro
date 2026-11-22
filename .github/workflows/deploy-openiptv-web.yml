@@ -149,7 +149,7 @@ jobs:
           node --test web-online/tests/web-playlist-url.test.cjs
           grep -Fq 'collector.js?v=collector-quota-20261120b' _site/index.html
           grep -Fq 'source-edit.js?v=playlist-input-20261119c' _site/index.html
-          grep -Fq 'app.js?v=tv-remote-sync-20261122a' _site/index.html
+          grep -Fq 'app.js?v=tv-controls-sync-20261122b' _site/index.html
           grep -Fq 'advanced.js?v=advanced-health-compact-20261120a' _site/index.html
           grep -Fq 'advanced-core.js?v=collector-merge-repair-20261119a' _site/index.html
           node --check _site/web-recent-channels.js
@@ -197,9 +197,9 @@ jobs:
           node --test web-online/tests/web-cast-v2.test.cjs
           node --test web-online/tests/web-cast-icons.test.cjs
           node --test web-online/tests/web-access-links.test.cjs
-          grep -Fq 'web-cast-sender.js?v=tv-remote-sync-20261122a' _site/index.html
-          grep -Fq 'web-cast-v2.css?v=tv-remote-sync-20261122a' _site/index.html
-          grep -Fq 'web-tv-pair.js?v=tv-remote-sync-20261122a' _site/index.html
+          grep -Fq 'web-cast-sender.js?v=tv-controls-sync-20261122b' _site/index.html
+          grep -Fq 'web-cast-v2.css?v=tv-controls-sync-20261122b' _site/index.html
+          grep -Fq 'web-tv-pair.js?v=tv-controls-sync-20261122b' _site/index.html
           grep -Fq 'wss:' _site/index.html
           grep -Fq 'x-webkit-airplay="allow"' _site/index.html
           grep -Fq 'web-player-icons.css?v=single-icon-first-paint-20261119a' _site/index.html
