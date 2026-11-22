@@ -7,15 +7,28 @@ Trang này được tạo tự động từ GitHub Releases và ảnh kiểm th�
 [Mở WEBSITE changelog tương tác](https://raw.githack.com/trisanghy/open-iptv-pro/Positron/docs/positron-features/index.html) · [Giao diện HTML trong repository](index.html) · [Các bản phát hành](https://github.com/trisanghy/open-iptv-pro/releases) · [Nhật ký Git tiếng Việt](LOG_GIT_TIENG_VIET.md) · [Quy tắc ưu tiên tính năng](../../POSITRON_FEATURE_RULES.md)
 
 <details>
-<summary><strong>P5.1.194</strong> · bắt đầu ghi nhanh sau 5 15 30 phút · CHƯA CÓ BẢN PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.195</strong> · tự đặt tên bản ghi từ kênh và giờ bắt đầu · CHƯA CÓ BẢN PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
 
-**Ứng dụng:** 4.23.279 · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
+**Ứng dụng:** 4.23.280 · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
 
-Feature priority: NEW — Ảnh Electron P5.1.193 thực ở 1920×1080 cho thấy lịch ghi có các nút chọn thời lượng nhưng trường Bắt đầu vẫn cần nhập ngày giờ thủ công. Bổ sung chọn giờ bắt đầu từ hiện tại để giảm thao tác hẹn ghi, không gửi lịch khi chưa xác nhận. Tính năng: dưới giờ Bắt đầu có ba nút “Sau 5 phút”, “Sau 15 phút”, “Sau 30 phút” ở EPG và biểu mẫu ghi nhanh TV. Nhấn chỉ điền Bắt đầu dựa trên phút hiện tại, đồng thời dời Kết thúc để giữ thời lượng cũ nếu hợp lệ (1–480 phút), hoặc 60 phút khi thiếu/không hợp lệ. Tự cập nhật nhãn thời lượng và trạng thái preset P5.1.192/193.
+Feature priority: NEW — Ảnh P5.1.194 Electron thật cho thấy ô Tên chương trình vẫn rỗng ngay cả khi kênh và giờ ghi đã được chọn; người dùng cần gõ lại hoặc không thể lưu vì trường bắt buộc. Thêm nút gợi ý tên chính xác theo kênh/giờ, tuyệt đối không ghi đè tên tự nhập. Tính năng: nút “Tạo tên từ kênh và giờ” bên dưới Tên chương trình của mẫu EPG. Nhấn để điền tên kênh đã chọn và thời gian địa phương đã nhập (DD.MM.YYYY HH:mm), loại ký tự không an toàn; nếu người dùng đã nhập tên khác thì chỉ báo và giữ nguyên. Không đổi giờ, kênh, nguồn hay trạng thái ghi hình.
 
 *Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
 
-[Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/tree/Positron) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/ff29ada0c777398a4fc8dcba36db4cd9c99dd474)
+[Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/tree/Positron) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/4c0af9abac7b5a596d024e423b04a7d947672f33)
+
+</details>
+
+<details>
+<summary><strong>P5.1.194</strong> · Chọn nhanh giờ bắt đầu ghi hình sau 5/15/30 phút / Electron 4.23.279 · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+
+**Ứng dụng:** 4.23.279 · **Trạng thái:** ĐÃ PHÁT HÀNH
+
+Feature priority: NEW — Ảnh Electron P5.1.193 thực ở 1920×1080 cho thấy lịch ghi có các nút chọn thời lượng nhưng trường Bắt đầu vẫn cần nhập ngày giờ thủ công. Bổ sung chọn giờ bắt đầu từ hiện tại để giảm thao tác hẹn ghi, không gửi lịch khi chưa xác nhận. Tính năng: dưới giờ Bắt đầu có ba nút “Sau 5 phút”, “Sau 15 phút”, “Sau 30 phút” ở EPG và biểu mẫu ghi nhanh TV. Nhấn chỉ điền Bắt đầu dựa trên phút hiện tại, đồng thời dời Kết thúc để giữ thời lượng cũ nếu hợp lệ (1–480 phút), hoặc 60 phút khi thiếu/không hợp lệ. Tự cập nhật nhãn thời lượng và trạng thái preset P5.1.192/193.
+
+![Ảnh chụp Electron thật P5.1.194](./screenshots/positron-p51194-desktop-1920x1080-trang-chu-real.png)
+
+[Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.279-p5.1.194) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/ff29ada0c777398a4fc8dcba36db4cd9c99dd474) · [Tải Windows Setup x64](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.279-p5.1.194/Open-IPTV-Pro-Setup-4.23.279-x64.exe) · [Tải gói ảnh QA](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.279-p5.1.194/Positron-P51194-20-Real-Screenshots.zip)
 
 </details>
 
@@ -26,7 +39,7 @@ Feature priority: NEW — Ảnh Electron P5.1.193 thực ở 1920×1080 cho th�
 
 Feature priority: NEW — Ảnh Electron thực của P5.1.192 cho thấy thời lượng 1 giờ nhưng ba nút 30/60/120 phút có giao diện giống hệt nhau, khiến người xem khó xác định lựa chọn hiện tại khi chỉnh giờ ghi. Khi nhập Bắt đầu/Kết thúc, ứng dụng đánh dấu đúng nút có số phút tương ứng bằng aria-pressed và viền màu chủ đề; không có nút được chọn khi chỉnh giờ không khớp hoặc lịch sai.
 
-![Ảnh chụp Electron thật P5.1.193](./screenshots/positron-p51193-desktop-1920x1080-trang-chu-real.png)
+![Ảnh chụp Electron thật P5.1.193](./screenshots/positron-p51193-dvr-selected-preset-after-1920x1080-real.png)
 
 [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.278-p5.1.193) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/5074565d748fc23c50d1b26cb6523cf024a2388b) · [Tải Windows Setup x64](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.278-p5.1.193/Open-IPTV-Pro-Setup-4.23.278-x64.exe) · [Tải gói ảnh QA](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.278-p5.1.193/Positron-P51193-20-Real-Screenshots.zip)
 
