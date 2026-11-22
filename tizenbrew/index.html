@@ -851,7 +851,7 @@ function onHostedCastMessage(event){
   finishPlaybackError(hostedCastToken,'Cast HTTPS: '+String(data.detail||'không phát được').slice(0,100));
  }
 }
-window.addEventListener('message',onHostedCastMessage,false);
+if(window&&typeof window.addEventListener==='function')window.addEventListener('message',onHostedCastMessage,false);
 function finishPlaybackError(token,message){
  if(!playbackActive(token)||playbackFailed||playbackConfirmed)return;
  playbackFailed=true;
