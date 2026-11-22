@@ -243,6 +243,7 @@
     const badge=nextRandom.querySelector('.po-random-count');
     if(badge){badge.hidden=false;badge.textContent=String(randomSeenIds.size);}
     nextRandom.dataset.poDiscoverCount=String(randomSeenIds.size);
+    syncRandomProgress();
     nextRandom.title='Đổi sang kênh chưa khám phá · '+randomSeenIds.size+' lượt';
     nextRandom.setAttribute('aria-label','Đổi sang kênh chưa khám phá, đã chọn '+randomSeenIds.size+' kênh');
     Promise.resolve(window.IPTVState.playChannel(selected.id))
@@ -255,8 +256,17 @@
    nextRandom.id='poNextRandomChannel';nextRandom.className='control-sm po-switch-random';
    nextRandom.title='Đổi sang kênh ngẫu nhiên khác';
    nextRandom.setAttribute('aria-label','Đổi sang kênh ngẫu nhiên khác');
-   nextRandom.innerHTML='<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="3"/><circle cx="8.5" cy="8.5" r="1" fill="currentColor"/><circle cx="12" cy="12" r="1" fill="currentColor"/><circle cx="15.5" cy="15.5" r="1" fill="currentColor"/></svg><span class="po-random-label">Bất kỳ</span><span class="po-random-count" hidden aria-hidden="true"></span>';
+   nextRandom.innerHTML='<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="3"/><circle cx="8.5" cy="8.5" r="1" fill="currentColor"/><circle cx="12" cy="12" r="1" fill="currentColor"/><circle cx="15.5" cy="15.5" r="1" fill="currentColor"/></svg><span class="po-random-label">Bất kỳ</span><span class="po-random-count" hidden aria-hidden="true"></span><span class="po-random-progress" hidden aria-hidden="true"></span>';
    nextRandom.hidden=true;
+   // P209: Show how many of the eligible channels have been explored.
+   // Session-only information; never starts playback or changes sources.
+   const syncRandomProgress=()=>{
+    const total=window.IPTVState?.getChannels?.().filter(c=>c?.id&&c?.url&&c.status!=='dead').length||0;
+    const progress=nextRandom.querySelector('.po-random-progress');
+    if(!progress)return;
+    progress.textContent=total>1?'/'+total:'';
+    progress.hidden=total<2||randomSeenIds.size===0;
+   };
    nextRandom.addEventListener('click',switchRandomChannel);
    byId('nextBtn')?.parentElement?.append(nextRandom);
    // P207: explicit accessible reset for the session-only discovery cycle.
@@ -272,6 +282,7 @@
     const badge=nextRandom.querySelector('.po-random-count');
     if(badge){badge.hidden=true;badge.textContent='';}
     nextRandom.dataset.poDiscoverCount='0';
+    syncRandomProgress();
     nextRandom.title='Đổi sang kênh ngẫu nhiên khác';
     nextRandom.setAttribute('aria-label','Đổi sang kênh ngẫu nhiên khác');
     resetRandom.hidden=true;
@@ -292,6 +303,7 @@
     random.hidden=!first;
     nextRandom.hidden=channels.filter(c=>c?.id&&c?.url&&c.status!=='dead').length<2;
     resetRandom.hidden=nextRandom.hidden||randomSeenIds.size===0;
+    syncRandomProgress();
     // P5.1.89: the native player subtitle should not say "import a
     // playlist" after enabled channels are present; preserve stop/playback
     // captions, which are owned by the native player state machine.

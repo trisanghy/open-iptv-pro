@@ -2317,7 +2317,7 @@ test('P5.1.207 accessible reset clears only random session history',()=>{
   'positron-p51207-random-reset-after-1920x1080-real.png'])
   assert.ok(qa.includes(t),'Missing genuine reset QA '+t);
  const pkg=JSON.parse(read('package.json'));
- assert.ok(flow.includes('TAG=positron/v'+pkg.version+'-p5.1.208'));
+ assert.ok(flow.includes('TAG=positron/v'+pkg.version+'-p5.1.209'));
 });
 
 
@@ -2336,4 +2336,23 @@ test('P5.1.208 restores keyboard focus after hiding random reset',()=>{
   'before208.equals(after208),false'])
   assert.ok(qa.includes(token),'Missing real Electron proof: '+token);
  assert.ok(flow.includes('test -s positron-evidence/p5-20-rounds/positron-p51208-focus-return-after-1920x1080-real.png'));
+});
+
+
+test('P5.1.209 displays native random exploration progress without source mutation',()=>{
+ const js=read('renderer/positron-horizon-v4.js'),css=read('renderer/positron-twenty.css');
+ const qa=read('scripts/positron-20-extension.cjs'),flow=read('.github/workflows/positron-lab.yml');
+ for(const token of ['po-random-progress','const syncRandomProgress=()=>',
+  'progress.textContent=total>1?', 'progress.hidden=total<2||randomSeenIds.size===0',
+  'syncRandomProgress();'])assert.ok(js.includes(token),'Missing discovery progress: '+token);
+ for(const token of ['#poNextRandomChannel .po-random-progress',
+  '.po-random-progress[hidden]{display:none!important}'])
+  assert.ok(css.includes(token),'Missing compact progress CSS: '+token);
+ for(const token of ['discoveryProgressQA','showsTotal','selectedOneByClick',
+  'noPlaylistMutation','compact209','progressCollapsed',
+  'positron-p51209-random-progress-before-1920x1080-real.png',
+  'positron-p51209-random-progress-after-1920x1080-real.png',
+  'before209.equals(after209),false'])
+  assert.ok(qa.includes(token),'Missing native Electron proof: '+token);
+ assert.ok(flow.includes('test -s positron-evidence/p5-20-rounds/positron-p51209-random-progress-after-1920x1080-real.png'));
 });

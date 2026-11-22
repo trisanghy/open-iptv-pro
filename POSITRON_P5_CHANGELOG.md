@@ -1,5 +1,15 @@
 # Positron P5 Changelog
 
+## P5.1.209 — Tiến độ khám phá ngẫu nhiên có mẫu số / Electron 4.23.294
+- Feature priority: NEW — Ảnh Electron P5.1.208 cho thấy nút Bất kỳ chỉ hiển thị số kênh đã thử trong phiên (1), không cho biết tổng số kênh đủ điều kiện. Thêm mẫu số trực tiếp để người xem biết đã khám phá bao nhiêu trong toàn bộ playlist hiện tại.
+- Electron screenshot: positron-p51209-random-progress-after-1920x1080-real.png
+- User action: Trên trang TV khi đã có nguồn, bấm Bất kỳ để thử một kênh; nhãn mới hiển thị số lượt đã chọn và tổng số kênh hợp lệ. Có thể bấm làm mới để bắt đầu lại, mẫu số tự ẩn khi bộ đếm bằng 0.
+- Tính năng: nhãn tiến độ /tổng được cập nhật tại chỗ, chỉ đếm kênh có ID/link và không bị đánh dấu chết. Màn hẹp 450px ẩn mẫu số để giữ không gian điều khiển; giữ nguyên số đã chọn dạng badge, không thay playlist hay tự phát kênh.
+- Before: `positron-p51209-random-progress-before-1920x1080-real.png`; after: `positron-p51209-random-progress-after-1920x1080-real.png`.
+- QA: 1920×1080 Electron, phát thử qua nhấn nút và mock native player không tải stream, xác minh mẫu số chính xác, badge số, không sửa dữ liệu; thử lại tại 450px không tràn ngang.
+- Status: CANDIDATE chờ CI, mở PNG sau, build Windows/macOS và Release xác minh.
+
+
 ## P5.1.208 — Giữ tiêu điểm khi làm mới khám phá ngẫu nhiên / Electron 4.23.293
 - Feature priority: BLOCKER_FIX — Nút làm mới tự ẩn khi đang có tiêu điểm bàn phím khiến người dùng điều khiển từ xa mất vị trí tiếp tục thao tác chọn kênh phát; lỗi chặn trải nghiệm xem và không thể đi tiếp bằng Enter như mong đợi.
 - Electron screenshot: positron-p51208-focus-return-after-1920x1080-real.png

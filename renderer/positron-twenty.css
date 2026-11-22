@@ -1023,3 +1023,13 @@ html[data-positron="true"] #poRandomCycleReset:focus-visible{
  outline:2px solid var(--po-accent,#79dfc6);outline-offset:2px;
 }
 @media(max-width:1000px){html[data-positron="true"] #poRandomCycleReset{min-width:28px;height:34px;padding:0 5px}}
+
+/* P209: reveal the total eligible pool next to the existing distinct count. */
+html[data-positron="true"] #poNextRandomChannel .po-random-progress{
+ color:var(--po-muted,#a4c4cf);font-size:10px;font-weight:600;
+ font-variant-numeric:tabular-nums;white-space:nowrap;
+}
+html[data-positron="true"] #poNextRandomChannel .po-random-progress[hidden]{display:none!important}
+@media(max-width:1000px){
+ html[data-positron="true"] #poNextRandomChannel .po-random-progress{display:none!important}
+}
