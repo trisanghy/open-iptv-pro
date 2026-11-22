@@ -36,7 +36,7 @@ test('P5.1.257 Electron screenshot QA checks read-only breakdown at wide and 720
 test('P5.1.258 search source names across all sources without modifying playlists',()=>{
  const vm=require('node:vm');
  const js=read('renderer/positron-source-inventory.js'),css=read('renderer/positron-source-inventory.css');
- for(const token of ["search.id='poSourceInventorySearch';","search.type='search';","search.hidden=true;","search.addEventListener('input'",'sources.filter(source=>','filtered.slice(0,30)',"Không tìm thấy nguồn phù hợp.","if(!expanded){search.value='';statusSelect.value='all';}"])
+ for(const token of ["search.id='poSourceInventorySearch';","search.type='search';","search.hidden=true;","search.addEventListener('input'",'sources.filter(source=>','filtered.slice(0,30)',"Không tìm thấy nguồn phù hợp.","if(!expanded){search.value='';","statusSelect.value='all';"])
   assert.ok(js.includes(token),'P258 source search missing: '+token);
  const match=js.match(/const foldSourceName=value=>[\s\S]*?toLocaleLowerCase\('vi'\);/);
  assert.ok(match,'P258 normalization helper absent');
