@@ -1,3 +1,11 @@
+## P5.1.151 — Nhật ký thông báo của phiên chạy / Electron v4.23.235
+- Feature priority: NEW — Thêm nhật ký tối đa 30 thông báo thành công, cảnh báo và lỗi trong phiên để có thể xem lại sau khi thông báo nổi tự hết hạn mà không lưu dữ liệu riêng xuống đĩa.
+- User action: Bấm Thông báo trên thanh trên để xem nội dung và thời điểm thông báo; chọn Xóa lịch sử hoặc Đóng/Escape. Lịch sử tự xóa khi thoát ứng dụng.
+- Electron screenshot: positron-p51151-notification-archive-after-1920x1080-real.png
+- Before: positron-p51151-notification-archive-before-1920x1080-real.png; After: positron-p51151-notification-archive-after-1920x1080-real.png. Chỉ xác minh ảnh sau khi mở PNG Electron thật.
+- Bảo vệ: giới hạn 30 mục trong RAM, phân biệt cảnh báo và lỗi, không truy cập playlist, không gọi mạng hay tự phát kênh.
+- Trạng thái: CANDIDATE cho đến khi CI và Release cùng bộ cài xác minh.
+
 ## P5.1.150 — Trung tâm thông báo gọn, xem lại thông báo khi cần / Electron v4.23.234
 
 - Feature priority: NEW — Thêm nút "Xem thêm N thông báo" cho các xác nhận thành công còn hiệu lực, mặc định thu gọn chỉ hiện thông báo mới nhất. Bấm để mở lại rồi bấm thu gọn. Cảnh báo và lỗi không bị ẩn, người dùng vẫn có thể đóng từng thông báo, và bộ hẹn tự tắt 5,5 giây không thay đổi. Không ghi thông báo lên đĩa và không sửa playlist/player.

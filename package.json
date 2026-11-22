@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.234",
-  "description": "Positron P5.1.150: trung tâm thông báo thành công có thể thu gọn",
+  "version": "4.23.235",
+  "description": "Positron P5.1.151: nhật ký thông báo trong phiên chạy",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

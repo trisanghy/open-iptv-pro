@@ -37,7 +37,7 @@ test('P5 assets are loaded after P4 without replacing it',()=>{
 test('P5 release is immutable and versioned separately from P4.1',()=>{
  const pkg=JSON.parse(read('package.json'));
  const flow=read('.github/workflows/positron-lab.yml');
- assert.equal(pkg.version,'4.23.234');
+ assert.equal(pkg.version,'4.23.235');
  const label=pkg.description.match(/Positron\s+(P\d+\.\d+\.\d+)/)?.[1];
  assert.ok(label,'product P-label must accompany SemVer');
  assert.ok(flow.includes('TAG=positron/v'+pkg.version+'-'+label.toLowerCase()),'release tag and app version must match');
@@ -1469,4 +1469,19 @@ test('P5.1.150 groups recent native success toasts and exposes a reversible view
   'positron-p51150-toast-centre-collapsed-1920x1080-real.png',
   'positron-p51150-toast-centre-expanded-1920x1080-real.png'])
   assert.ok(qa.includes(token),'native Electron QA missing '+token);
+});
+
+test('P5.1.151 nhật ký thông báo phiên có thể mở và xóa, không lưu dữ liệu người dùng',()=>{
+ const js=read('renderer/positron-toast-dismiss.js');
+ const css=read('renderer/positron-twenty.css');
+ const qa=read('scripts/positron-20-extension.cjs');
+ assert.doesNotThrow(()=>new vm.Script(js));
+ for(const needle of ['history=history.slice(0,30)','new WeakSet()','poArchiveToggle','poArchiveClear','MutationObserver','entries.replaceChildren()',"event.key==='Escape'"])
+  assert.ok(js.includes(needle),'thiếu tính năng: '+needle);
+ assert.ok(js.includes("node.classList.contains('warn')"),'bảo toàn cảnh báo');
+ assert.ok(!js.includes('localStorage'),'nhật ký không được ghi dữ liệu bền');
+ assert.ok(!js.includes('IPTVState.playChannel'),'nhật ký không được tự phát');
+ assert.ok(css.includes('.po-archive-panel[hidden]'),'popup đóng không che trình phát');
+ for(const file of ['positron-p51151-notification-archive-before-1920x1080-real.png','positron-p51151-notification-archive-after-1920x1080-real.png'])
+  assert.ok(qa.includes(file),'thiếu bài QA chụp Electron thật '+file);
 });

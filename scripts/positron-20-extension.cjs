@@ -3567,9 +3567,70 @@ async function runTwenty(page){
  for(const [key,value] of Object.entries(toastHistoryQA))
   assert.equal(value,true,'P5.1.150 native toast centre '+key+': '+JSON.stringify(toastHistoryQA));
 
+
+ // P5.1.151: ảnh thật 1920x1080 chứng minh nhật ký thông báo còn sau khi toast gốc tự mất.
+ const input151=await page.evaluate(()=>{
+  const state=window.IPTVState;
+  const channels=state.getChannels().length;
+  const idle=state.getCurrent()===null;
+  state.toast('QA P151: cập nhật thư viện thành công');
+  state.toast('QA P151: nguồn cần kiểm tra','warn');
+  state.toast('QA P151: cài đặt đã lưu');
+  return {channels,idle};
+ });
+ await page.waitForTimeout(150);
+ const count151=await page.evaluate(()=>({
+  button:!!document.getElementById('poArchiveToggle'),
+  closed:document.getElementById('poArchivePanel')?.hidden===true,
+  count:Number(document.querySelector('#poArchiveToggle .po-archive-count')?.textContent||0)
+ }));
+ assert.equal(count151.button,true,'P151 no archive button');
+ assert.equal(count151.closed,true,'P151 archive must start closed');
+ assert.ok(count151.count>=3,'P151 observer missed native messages');
+ await page.screenshot({path:path.join(out,'positron-p51151-notification-archive-before-1920x1080-real.png'),animations:'disabled'});
+ await page.click('#poArchiveToggle');
+ const open151=await page.evaluate(expected=>{
+  const nodes=[...document.querySelectorAll('#poArchiveEntries .po-archive-item')];
+  const labels=nodes.map(n=>n.textContent);
+  return {
+   panelOpened:document.getElementById('poArchivePanel')?.hidden===false,
+   ariaExpanded:document.getElementById('poArchiveToggle')?.getAttribute('aria-expanded')==='true',
+   threeNotices:['cập nhật thư viện thành công','nguồn cần kiểm tra','cài đặt đã lưu'].every(t=>labels.some(x=>x.includes(t))),
+   warningRetained:nodes.some(n=>n.classList.contains('po-archive-warn')&&n.textContent.includes('nguồn cần kiểm tra')),
+   maxThirty:nodes.length<=30,
+   channelsUnchanged:window.IPTVState.getChannels().length===expected.channels,
+   noAutoplay:!expected.idle||window.IPTVState.getCurrent()===null,
+   noHorizontalOverflow:document.documentElement.scrollWidth<=innerWidth+1
+  };
+ },input151);
+ await page.evaluate(()=>{
+  for(const node of [...document.querySelectorAll('#toastArea>.toast')])
+   if((node.textContent||'').includes('QA P151:'))node.remove();
+ });
+ await page.waitForTimeout(100);
+ const persistent151=await page.evaluate(()=>({
+  afterNativeRemoval:[...document.querySelectorAll('#poArchiveEntries .po-archive-item')]
+    .filter(n=>n.textContent.includes('QA P151:')).length===3,
+  nativeRemoved:![...document.querySelectorAll('#toastArea>.toast')].some(n=>n.textContent.includes('QA P151:'))
+ }));
+ await page.screenshot({path:path.join(out,'positron-p51151-notification-archive-after-1920x1080-real.png'),animations:'disabled'});
+ await page.click('#poArchiveClear');
+ const clear151=await page.evaluate(()=>({
+  emptyList:document.querySelectorAll('#poArchiveEntries .po-archive-item').length===0,
+  clearDisabled:document.getElementById('poArchiveClear')?.disabled===true
+ }));
+ await page.click('#poArchiveClose');
+ const closed151=await page.evaluate(()=>({
+  panelHidden:document.getElementById('poArchivePanel')?.hidden===true,
+  focusRestored:document.activeElement?.id==='poArchiveToggle'
+ }));
+ const notificationArchiveQA={...open151,...persistent151,...clear151,...closed151};
+ for(const [key,value] of Object.entries(notificationArchiveQA))
+  assert.equal(value,true,'P151 archive '+key+': '+JSON.stringify(notificationArchiveQA));
+
  await page.setViewportSize({width:1360,height:820});
   const report={type:'Positron P5 twenty distinct desktop screenshot cases',realElectron:true,syntheticChannels:false,
-  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,desktop16x9Screenshots,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA,chooserQa,toastLayoutQA,nativeToastQA,compactIdleQA,channelChipRailQA,advancedFilterQA,readableCardsQA,keyboardTabQA,favoriteEmptyQA,duplicateEmptyQA,categoryFilterQA,categoryFixtureQA,compactSingleQA,directFavoriteQA,favoriteCountQA,compactToastStackQA,toastDismissQA,toastFocusReturnQA,toastDockQA,wheelQA,pinnedAllQA,pinnedMaskQA,categoryKeyQA,dropdownChipQA,pinnedRightMaskQA,pinnedBorderMaskQA,asciiDSearchQA,emptySearchActionQA,readableCardTitleQA,favoriteSvgQA,keyboardFavoriteQA,multiTermSearchQA,keyboardSearchQA,arrowNavigationQA,pageNavigationQA,favoriteSortQA,onAirFilterQA,programmeSearchQA,upcomingProgrammeQA,soonProgrammeQA,earliestEpgSortQA,timeWindowQA,scheduleProgressQA:scheduleProgressQA,nativeReminderQA,cancelReminderQA,reminderLeadQA,toastHistoryQA};
+  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,desktop16x9Screenshots,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA,chooserQa,toastLayoutQA,nativeToastQA,compactIdleQA,channelChipRailQA,advancedFilterQA,readableCardsQA,keyboardTabQA,favoriteEmptyQA,duplicateEmptyQA,categoryFilterQA,categoryFixtureQA,compactSingleQA,directFavoriteQA,favoriteCountQA,compactToastStackQA,toastDismissQA,toastFocusReturnQA,toastDockQA,wheelQA,pinnedAllQA,pinnedMaskQA,categoryKeyQA,dropdownChipQA,pinnedRightMaskQA,pinnedBorderMaskQA,asciiDSearchQA,emptySearchActionQA,readableCardTitleQA,favoriteSvgQA,keyboardFavoriteQA,multiTermSearchQA,keyboardSearchQA,arrowNavigationQA,pageNavigationQA,favoriteSortQA,onAirFilterQA,programmeSearchQA,upcomingProgrammeQA,soonProgrammeQA,earliestEpgSortQA,timeWindowQA,scheduleProgressQA:scheduleProgressQA,nativeReminderQA,cancelReminderQA,reminderLeadQA,toastHistoryQA,notificationArchiveQA};
  fs.writeFileSync(path.resolve('positron-evidence','audit-p5-20-rounds.json'),JSON.stringify(report,null,2));
  return report;
 }
