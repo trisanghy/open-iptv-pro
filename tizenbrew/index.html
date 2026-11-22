@@ -813,6 +813,7 @@ function startHostedCastPlayback(channel,token){
  if(!frame)return false;
  hostedCastAttempted=true;
  stopPlaybackEngine();
+ playbackFailed=false;playbackConfirmed=false;
  playbackEngine='hosted-cast';
  hostedCastToken=token;
  hostedCastSession='cast-'+token+'-'+Date.now();
