@@ -4048,6 +4048,8 @@ async function runTwenty(page){
  });
  assert.ok(baseline160.channels>=100&&baseline160.count>=10&&baseline160.sample,
   'P160 phải dùng dữ liệu QA P159 có nhóm thực: '+JSON.stringify(baseline160));
+ const beforeP1601=await page.screenshot({path:path.join(out,'positron-p511601-group-filter-before-1920x1080-real.png'),animations:'disabled'});
+ assert.deepEqual([beforeP1601.readUInt32BE(16),beforeP1601.readUInt32BE(20)],[1920,1080],'P160.1 PNG TRƯỚC sai 16:9');
  await page.selectOption('#poLibraryMissingGroup',baseline160.group);
  // Playwright selectOption không bảo đảm panel cuộn đến ô chọn: phải hiện ô trong ảnh.
  await page.evaluate(()=>document.getElementById('poLibraryMissingGroup').scrollIntoView({block:'center',behavior:'instant'}));
@@ -4076,6 +4078,8 @@ async function runTwenty(page){
  },baseline160);
  const afterP160=await page.screenshot({path:path.join(out,'positron-p51160-group-filter-after-1920x1080-real.png'),animations:'disabled'});
  assert.deepEqual([afterP160.readUInt32BE(16),afterP160.readUInt32BE(20)],[1920,1080],'P160 PNG SAU phải 1920x1080');
+ const afterP1601=await page.screenshot({path:path.join(out,'positron-p511601-group-filter-after-1920x1080-real.png'),animations:'disabled'});
+ assert.deepEqual([afterP1601.readUInt32BE(16),afterP1601.readUInt32BE(20)],[1920,1080],'P160.1 PNG SAU sai 16:9');
  await page.fill('#poLibraryMissingSearch',baseline160.sample);
  const combined160=await page.evaluate(expected=>{
   const r=window.PositronLibraryPulseCore.missingLogos(window.IPTVState.getChannels(),{group:expected.group,query:expected.sample});
@@ -4096,7 +4100,13 @@ async function runTwenty(page){
   closed:document.getElementById('poLibraryPulsePanel')?.hidden===true,
   focus:document.activeElement?.id==='poLibraryPulseToggle'
  }));
- const missingGroupQA={...selected160,...combined160,...cleared160,...exit160};
+ const mask1601=await page.evaluate(()=>{
+  const h=document.querySelector('#poLibraryPulsePanel .po-pulse-header');
+  const style=h?getComputedStyle(h,'::before'):null;
+  return {maskExists:!!style&&style.content!=='none'&&style.position==='absolute',
+   maskOpaque:!!style&&style.backgroundColor!=='rgba(0, 0, 0, 0)'};
+ });
+ const missingGroupQA={...selected160,...combined160,...cleared160,...exit160,...mask1601};
  for(const [key,value] of Object.entries(missingGroupQA))
   assert.equal(value,true,'P160 filter group missing logos '+key+': '+JSON.stringify(missingGroupQA));
 

@@ -37,7 +37,7 @@ test('P5 assets are loaded after P4 without replacing it',()=>{
 test('P5 release is immutable and versioned separately from P4.1',()=>{
  const pkg=JSON.parse(read('package.json'));
  const flow=read('.github/workflows/positron-lab.yml');
- assert.equal(pkg.version,'4.23.244');
+ assert.equal(pkg.version,'4.23.245');
  const label=pkg.description.match(/Positron\s+(P\d+\.\d+\.\d+)/)?.[1];
  assert.ok(label,'product P-label must accompany SemVer');
  assert.ok(flow.includes('TAG=positron/v'+pkg.version+'-'+label.toLowerCase()),'release tag and app version must match');
@@ -1606,4 +1606,19 @@ test('P5.1.160 chọn nhóm kênh thiếu logo riêng với theme và ảnh Elec
  for(const name of ['positron-p51160-group-filter-before-1920x1080-real.png','positron-p51160-group-filter-after-1920x1080-real.png'])
   assert.ok(qa.includes(name),'thiếu ảnh '+name);
  assert.ok(!ui.includes('fetch(')&&!ui.includes('playChannel('));
+});
+
+test('P5.1.160.1 phát hành bản vá ảnh desktop đúng phiên bản bất biến',()=>{
+ const pkg=JSON.parse(read('package.json'));
+ const qa=read('scripts/positron-20-extension.cjs');
+ const css=read('renderer/positron-library-pulse.css');
+ const workflow=read('.github/workflows/positron-lab.yml');
+ assert.equal(pkg.version,'4.23.245');
+ assert.match(pkg.description,/P5\.1\.160\.1/);
+ assert.match(css,/\.po-pulse-header::before\{content:/);
+ assert.match(qa,/mask1601/);
+ assert.match(workflow,/TAG=positron\/v4\.23\.245-p5\.1\.160\.1/);
+ for(const n of ['positron-p511601-group-filter-before-1920x1080-real.png','positron-p511601-group-filter-after-1920x1080-real.png']){
+  assert.ok(qa.includes(n)&&workflow.includes(n),'Ảnh P160.1 thiếu ở QA/workflow: '+n);
+ }
 });

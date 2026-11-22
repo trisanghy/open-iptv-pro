@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.244",
-  "description": "Positron P5.1.160: lọc kênh thiếu logo theo nhóm chính xác",
+  "version": "4.23.245",
+  "description": "Positron P5.1.160.1: hoàn thiện lọc nhóm thiếu logo và ảnh Electron 16:9",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

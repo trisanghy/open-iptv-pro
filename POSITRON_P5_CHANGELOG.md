@@ -1,3 +1,11 @@
+## P5.1.160.1 — Hoàn thiện lọc nhóm và minh chứng Electron / 4.23.245
+- Feature priority: BLOCKER_FIX — Sửa lỗi kiểm chứng CI khi bộ lọc nhóm đang hoạt động nhưng ảnh Electron sau thao tác không cho thấy điều khiển, bảo đảm hình ảnh đại diện đúng giao diện được phát hành.
+- Electron screenshot: positron-p511601-group-filter-after-1920x1080-real.png
+- Before: positron-p511601-group-filter-before-1920x1080-real.png; After: positron-p511601-group-filter-after-1920x1080-real.png, từ Electron thật 1920×1080.
+- UX: cuộn đúng vị trí bộ lọc thiếu logo, giữ tiêu đề Thư viện và che nội dung cuộn phía trên tiêu đề.
+- Giữ nguyên release/tag P5.1.160, xuất bản bản vá P5.1.160.1 với SemVer 4.23.245 và tag mới, không force-push, không sửa M3U/URL người dùng.
+- Status: CANDIDATE — cần test, chụp/mở ảnh, build và xác minh phát hành độc lập.
+
 ## P5.1.160 — Lọc kênh thiếu logo theo nhóm / Electron 4.23.244
 - Feature priority: NEW — Thêm lựa chọn nhóm riêng trong danh sách kênh thiếu logo, hiển thị số kênh từng nhóm và kết hợp tìm theo tên không dấu, giảm thao tác với thư viện hàng trăm kênh.
 - User action: Mở Thư viện → Kênh thiếu logo → chọn nhóm trong ô “Tất cả nhóm thiếu logo”; có thể nhập tiếp tên kênh để tìm trong riêng nhóm đã chọn.
