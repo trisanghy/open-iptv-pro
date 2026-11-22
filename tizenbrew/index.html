@@ -41,7 +41,7 @@ button,input,textarea{font:inherit;color:inherit}button{cursor:pointer;border:2p
 @media(max-height:780px){#sourceQR{width:300px;height:300px;padding:8px}.source-pair{padding:8px}.dialog.source-mode{max-height:97vh}}
 </style></head><body data-theme="dark">
 <div id="app">
-<header class="top"><div class="brand"><div class="brandicon">▶</div><div><strong>Open IPTV Pro <small>TV</small></strong><p>Samsung Tizen Edition · TizenBrew</p></div></div><div class="toolbar"><span class="clock" id="clock">--:--</span><button id="searchBtn">⌕ Tìm</button><button id="addBtn">＋ Nguồn</button><button id="themeBtn">◐ Giao diện</button></div></header>
+<header class="top"><div class="brand"><div class="brandicon">▶</div><div><strong>Open IPTV Pro <small>TV</small></strong><p>Samsung Tizen Edition · TizenBrew</p></div></div><div class="toolbar"><span class="clock" id="clock">--:--</span><button id="searchBtn">⌕ Tìm</button><button id="addBtn">＋ Nguồn</button><button id="themeBtn">◐ Giao diện</button><button id="exitModuleBtn" title="Quay về TizenBrew">↶ Thoát</button></div></header>
 <div class="main"><nav class="nav"><button class="active" data-nav="all">▣　Trực tiếp</button><button data-nav="favorites">♡　Yêu thích</button><button data-nav="recent">◷　Đã xem</button><button data-nav="sources">☷　Nguồn M3U</button><button data-nav="help">⚙　Hướng dẫn</button><p class="tip">Dùng ↑ ↓ ← → và OK để điều khiển bằng remote TV.</p></nav>
 <section class="listpane"><div class="heading"><div><div class="eyebrow">DANH SÁCH KÊNH</div><h1 id="heading">Trực tiếp</h1></div><span id="count">0 kênh</span></div><div class="groups" id="groups"></div><div class="channels" id="channels"></div><div class="empty" id="empty" hidden><h2>Chưa có kênh IPTV</h2><p>Thêm nguồn bằng URL trên remote hoặc quét QR để nhập bằng điện thoại.</p><button id="emptyAdd" class="primary">＋ Thêm nguồn IPTV</button><button id="sampleBtn">▶ Luồng kiểm thử</button></div><button id="more" hidden>Xem thêm kênh ↓</button></section>
 <aside class="details"><div class="preview"><span class="live">● TRỰC TIẾP</span><b id="previewText">TV</b><span class="watermark">OPEN IPTV PRO</span></div><div class="eyebrow">KÊNH ĐANG CHỌN</div><h2 id="channelTitle">Open IPTV Pro TV</h2><p id="channelGroup">Chọn kênh để xem</p><div class="info"><div class="eyebrow">THÔNG TIN</div><p id="channelInfo">Hỗ trợ nhập M3U, nhóm kênh, yêu thích và remote Samsung.</p></div><div class="actions"><button class="primary" id="watchBtn">▶ Xem</button><button id="favBtn">♡ Yêu thích</button></div></aside></div>
@@ -174,16 +174,37 @@ function changeChannel(offset){var i=items.findIndex(function(c){return playing&
 function move(key){var scope=byId('modal').hidden?document:byId('modal');var nodes=Array.from(scope.querySelectorAll('button:not([disabled]),input:not([disabled])')).filter(function(e){return e.getClientRects().length>0;});
 var active=document.activeElement,r=active&&active.getBoundingClientRect();if(!r||nodes.indexOf(active)<0){if(nodes.length)nodes[0].focus();return;}var x=r.left+r.width/2,y=r.top+r.height/2,best=null,min=Infinity;
 nodes.forEach(function(el){if(el===active)return;var q=el.getBoundingClientRect(),dx=q.left+q.width/2-x,dy=q.top+q.height/2-y;if(key==='ArrowLeft'&&dx>=0||key==='ArrowRight'&&dx<=0||key==='ArrowUp'&&dy>=0||key==='ArrowDown'&&dy<=0)return;var s=(key==='ArrowLeft'||key==='ArrowRight')?Math.abs(dx)+Math.abs(dy)*2.3:Math.abs(dy)+Math.abs(dx)*2.3;if(s<min){min=s;best=el;}});if(best){best.focus();best.scrollIntoView({block:'nearest',inline:'nearest'});}}
-function keyHandler(e){var k=e.key||'',c=e.keyCode;var keys={37:'ArrowLeft',38:'ArrowUp',39:'ArrowRight',40:'ArrowDown'};if(keys[c])k=keys[c];
+var lastBackEventAt=0;
+function isRemoteBack(e){
+ var key=String(e.key||''),code=e.keyCode||e.which||0;
+ if(key==='Backspace'&&document.activeElement&&/^(INPUT|TEXTAREA)$/.test(document.activeElement.tagName))return false;
+ return code===10009||code===461||['Escape','Back','Return','BrowserBack','GoBack','XF86Back','Backspace'].indexOf(key)!==-1;
+}
+function exitModule(){
+ // TizenBrew opens app modules with location.href, so the previous entry is its launcher.
+ try{stopPair();}catch(e){}
+ try{byId('video').pause();}catch(e){}
+ try{if(window.history&&window.history.length>1){window.history.back();return;}}catch(e){}
+ // Autolaunch may have no previous history entry: exit the TizenBrew shell itself.
+ try{if(typeof tizen!=='undefined'&&tizen.application){tizen.application.getCurrentApplication().exit();return;}}catch(e){}
+ window.location.href='file:///tizenbrew-ui/dist/index.html';
+}
+function handleBack(e){
+ if(e){if(typeof e.preventDefault==='function')e.preventDefault();if(typeof e.stopImmediatePropagation==='function')e.stopImmediatePropagation();}
+ var now=Date.now();if(now-lastBackEventAt<160)return;lastBackEventAt=now;
+ if(!byId('modal').hidden){closeDialog();return;}
+ if(!byId('player').hidden){closePlayer();return;}
+ exitModule();
+}
+function keyHandler(e){if(isRemoteBack(e)){handleBack(e);return;}var k=e.key||'',c=e.keyCode;var keys={37:'ArrowLeft',38:'ArrowUp',39:'ArrowRight',40:'ArrowDown'};if(keys[c])k=keys[c];
 if(!byId('modal').hidden){
-if(c===10009||k==='Escape'){e.preventDefault();closeDialog();return;}
 var active=document.activeElement,isText=active&&active.tagName==='INPUT'&&active.type!=='checkbox';
 if(active===byId('sourceName')&&(k==='ArrowDown'||k==='Enter')){e.preventDefault();e.stopPropagation();byId('sourceUrl').focus();return;}
 if(active===byId('sourceUrl')&&k==='ArrowUp'){e.preventDefault();e.stopPropagation();byId('sourceName').focus();return;}
 if(isText&&(k==='ArrowLeft'||k==='ArrowRight'))return;
 if(k.indexOf('Arrow')===0){e.preventDefault();e.stopPropagation();move(k);}return;}
-if(!byId('player').hidden){if(c===10009||k==='Escape'){e.preventDefault();closePlayer();return;}if(c===427||k==='ChannelUp'){e.preventDefault();changeChannel(1);return;}if(c===428||k==='ChannelDown'){e.preventDefault();changeChannel(-1);return;}if(k==='Enter'||c===415||c===10252){e.preventDefault();var v=byId('video');if(v.paused)v.play().catch(function(){notify('Luồng không hỗ trợ phát trên TV.');});else v.pause();}return;}
-if(k.indexOf('Arrow')===0){e.preventDefault();move(k);}else if(c===10009||k==='Escape'){e.preventDefault();section='all';group='Tất cả';draw();}}
+if(!byId('player').hidden){if(c===427||k==='ChannelUp'){e.preventDefault();changeChannel(1);return;}if(c===428||k==='ChannelDown'){e.preventDefault();changeChannel(-1);return;}if(k==='Enter'||c===415||c===10252){e.preventDefault();var v=byId('video');if(v.paused)v.play().catch(function(){notify('Luồng không hỗ trợ phát trên TV.');});else v.pause();}return;}
+if(k.indexOf('Arrow')===0){e.preventDefault();move(k);}}
 document.querySelectorAll('[data-nav]').forEach(function(b){b.onclick=function(){var which=b.dataset.nav;if(which==='sources'){openDialog('source');return;}if(which==='help'){notify('Điều khiển bằng ↑↓←→, OK, Back, CH±. Thêm M3U bằng + Nguồn.');return;}section=which;group='Tất cả';showLimit=160;draw();};});
 byId('addBtn').onclick=function(){openDialog('source');};byId('emptyAdd').onclick=byId('addBtn').onclick;
 byId('searchBtn').onclick=function(){byId('searchInput').value=search;openDialog('search');};
@@ -191,11 +212,13 @@ byId('cancelSource').onclick=closeDialog;byId('cancelSearch').onclick=closeDialo
 byId('toSourceUrl').onclick=function(){byId('sourceUrl').focus();};
 byId('refreshSourceQR').onclick=function(){void openPair();};
 byId('applySearch').onclick=function(){search=byId('searchInput').value.trim().toLowerCase();showLimit=160;closeDialog();draw();};
+byId('exitModuleBtn').onclick=exitModule;
 byId('themeBtn').onclick=function(){var themes=['dark','light','amoled'];state.theme=themes[(themes.indexOf(state.theme)+1)%3];document.body.dataset.theme=state.theme;save();notify('Giao diện: '+state.theme);};
 byId('watchBtn').onclick=function(){play(selected);};byId('favBtn').onclick=function(){if(!selected)return;if(state.favorites[selected.id])delete state.favorites[selected.id];else state.favorites[selected.id]=true;save();draw();};
 byId('more').onclick=function(){showLimit+=160;draw();};byId('sampleBtn').onclick=function(){if(!state.sources.some(function(s){return s.name==='Thử nghiệm';})){state.sources.push({name:'Thử nghiệm',channels:parse('#EXTM3U\n#EXTINF:-1,Mux Test HLS\nhttps://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8','Thử nghiệm')});save();}draw();notify('Đã thêm luồng thử nghiệm HLS.');};
 byId('exitPlayer').onclick=closePlayer;byId('video').onerror=function(){byId('playerStatus').textContent='TV không phát được luồng (định dạng, codec, CORS hoặc HTTPS).';};
 window.addEventListener('keydown',keyHandler,true);
+document.addEventListener('tizenhwkey',function(e){if(String(e.keyName||'').toLowerCase()==='back')handleBack(e);},true);
 document.body.dataset.theme=state.theme;draw();setTimeout(function(){document.querySelector('[data-nav=all]').focus();},50);
 function clock(){var d=new Date();byId('clock').textContent=String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');}clock();setInterval(clock,30000);
 })();

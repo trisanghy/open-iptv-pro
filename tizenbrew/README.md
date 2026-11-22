@@ -1,4 +1,4 @@
-# Open IPTV Pro TV · TizenBrew v0.1.2 (thử nghiệm)
+# Open IPTV Pro TV · TizenBrew v0.1.3 (thử nghiệm)
 
 ## Cập nhật không cần USB
 
@@ -23,3 +23,12 @@
 - Nhánh tizenbrew độc lập, không sửa `main`, `web/online`, Electron, Rust hay Mobile.
 
 Không cung cấp nguồn IPTV bản quyền mặc định. Chỉ sử dụng nội dung có quyền truy cập.
+
+## Điều khiển Back / Thoát (v0.1.3)
+
+- **Back** trong trình phát: trở lại danh sách kênh.
+- **Back** trong hộp thêm nguồn, QR hoặc tìm kiếm: đóng hộp thoại và dừng ghép đôi.
+- **Back** tại màn hình chính: trở về TizenBrew (trên phiên mở thông thường bằng lịch sử); nếu mở trực tiếp không có lịch sử, thoát TizenBrew về Samsung Home.
+- Bổ sung nút **↶ Thoát** trên thanh công cụ để dự phòng.
+- Xử lý cả phím 10009 (`keydown`) lẫn sự kiện `tizenhwkey`, không thêm `Back` vào `package.json.keys` vì phím hệ thống không được đăng ký theo cách đó.
+- Kiểm thử logic với mô phỏng phím Back. Vẫn cần xác minh trên TV Samsung thật.
