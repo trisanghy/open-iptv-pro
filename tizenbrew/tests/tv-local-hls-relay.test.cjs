@@ -55,7 +55,7 @@ test('HLS playlist rewrite keeps variant, key and init-segment resources on TV-l
  assert.equal(session.resources[2],'https://cdn.example.org/live/init.mp4');
  assert.equal(session.resources[3],'https://cdn.example.org/live/segment0001.ts?quality=hd');
  assert.equal(session.resources[4],'https://second.example.org/hi/stream.m3u8');
- for(let i=0;i<5;i++)assert.ok(out.includes('http://127.0.0.1:17865/r/'+session.id+'/'+i));
+ for(let i=0;i<5;i++)assert.ok(out.includes('http://127.0.0.1:17866/r/'+session.id+'/'+i));
  assert.doesNotMatch(out,/second\.example\.org|token=123/);
 });
 test('TV localhost service CORS preflight works without actual X-Open-IPTV-Relay header',async()=>{
@@ -80,7 +80,7 @@ test('TV localhost service CORS preflight works without actual X-Open-IPTV-Relay
   const result=await request('POST','/session',{url:secret,browserUserAgent:'TestTV/1.0'});
   assert.equal(result.status,201);
   const data=JSON.parse(result.body);
-  assert.match(data.url,/^http:\/\/127\.0\.0\.1:17865\/r\/[a-f0-9]{40}\/0$/);
+  assert.match(data.url,/^http:\/\/127\.0\.0\.1:17866\/r\/[a-f0-9]{40}\/0$/);
   assert.doesNotMatch(result.body,/TOP_SECRET|cdn\.example\.org/);
   const sessionId=data.url.match(/\/r\/([a-f0-9]{40})\/0$/)[1];
   const diagnostics=await request('GET','/diag/'+sessionId);
@@ -95,7 +95,7 @@ test('TizenBrew video player tries local relay only on HLS failure and never nav
  assert.match(ui,/function startRelayHlsPlayback\(channel,token\)/);
  assert.match(ui,/function loadRelayDiagnostics\(token\)/);
  assert.match(ui,/TizenBrew User-Agent/);
- assert.match(ui,/hlsRelayServer='http:\/\/127\.0\.0\.1:17865'/);
+ assert.match(ui,/hlsRelayServer='http:\/\/127\.0\.0\.1:17866'/);
  assert.match(ui,/if\(\/manifestLoadError\|manifestLoadTimeout\|levelLoadError\|levelLoadTimeout\/i\.test/);
  assert.match(ui,/method:'POST',mode:'cors',cache:'no-store'/);
  assert.match(ui,/xhrSetup:function\(xhr\)/);
