@@ -10,7 +10,7 @@ function code(start,end){
 const src=code('function setPlayerStatus(message){','function updateBottomActions(){');
 test('TV offers browser fallback only after playback errors, without removing video list UI',()=>{
  assert.match(html,/<button id="browserFallback" type="button" hidden>/);
- assert.match(html,/byId\('browserFallback'\)\.hidden=false/);
+ assert.match(html,/browserButton\.hidden=false/);
  assert.match(html,/byId\('browserFallback'\)\.hidden=true/);
  assert.match(html,/openChannelInSamsungBrowser/);
  assert.match(html,/c===403\|\|k==='ColorF0Red'/);
