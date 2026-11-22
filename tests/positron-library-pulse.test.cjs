@@ -1,6 +1,7 @@
 'use strict';
 const test=require('node:test'),assert=require('node:assert/strict');
 const core=require('../renderer/positron-library-pulse-core.js');
+const fs=require('node:fs'),path=require('node:path');
 test('Library Pulse tổng hợp metadata thực, không thay đổi playlist',()=>{
  const rows=[
   {id:'1',name:'A',group:'VTV',sourceId:'s1',logo:'http://example.com/a.png',tvgId:'vtv1',status:'alive'},
