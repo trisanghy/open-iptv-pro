@@ -182,7 +182,7 @@ jobs:
           node --check _site/web-cast-sender.js
           node --test web-online/tests/web-airplay.test.cjs
           node --test web-online/tests/web-cast-sender.test.cjs
-          grep -Fq 'web-cast-sender.js?v=web-cast-sdk-20261122a' _site/index.html
+          grep -Fq 'web-cast-sender.js?v=web-cast-sdk-20261122b' _site/index.html
           grep -Fq 'x-webkit-airplay="allow"' _site/index.html
           grep -Fq 'web-player-icons.css?v=single-icon-first-paint-20261119a' _site/index.html
           grep -Fq 'web-player-icons.js?v=audio-state-sync-20261119a' _site/index.html
