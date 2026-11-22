@@ -3628,9 +3628,56 @@ async function runTwenty(page){
  for(const [key,value] of Object.entries(notificationArchiveQA))
   assert.equal(value,true,'P151 archive '+key+': '+JSON.stringify(notificationArchiveQA));
 
+
+ // P5.1.152: QA chụp Electron thật trước/sau khi lọc cảnh báo trong nhật ký.
+ const input152=await page.evaluate(()=>{
+  const state=window.IPTVState;
+  const channels=state.getChannels().length;
+  const idle=state.getCurrent()===null;
+  state.toast('QA P152: đã lưu cài đặt');
+  state.toast('QA P152: kiểm tra kết nối nguồn','warn');
+  state.toast('QA P152: thêm kênh thành công');
+  return {channels,idle};
+ });
+ await page.waitForTimeout(120);
+ await page.click('#poArchiveToggle');
+ const all152=await page.evaluate(()=>{
+  const nodes=[...document.querySelectorAll('#poArchiveEntries .po-archive-item')];
+  return {allSelected:document.getElementById('poArchiveFilterAll')?.getAttribute('aria-pressed')==='true',
+   allThree:nodes.filter(n=>n.textContent.includes('QA P152:')).length===3,
+   ariaGroup:document.querySelector('.po-archive-filters')?.getAttribute('role')==='group'
+  };
+ });
+ await page.screenshot({path:path.join(out,'positron-p51152-alert-filter-before-1920x1080-real.png'),animations:'disabled'});
+ await page.click('#poArchiveFilterWarn');
+ const warn152=await page.evaluate(expected=>{
+  const nodes=[...document.querySelectorAll('#poArchiveEntries .po-archive-item')];
+  return {
+   warnPressed:document.getElementById('poArchiveFilterWarn')?.getAttribute('aria-pressed')==='true',
+   allUnpressed:document.getElementById('poArchiveFilterAll')?.getAttribute('aria-pressed')==='false',
+   onlyWarning:nodes.length===1&&nodes[0].classList.contains('po-archive-warn')&&nodes[0].textContent.includes('QA P152: kiểm tra kết nối nguồn'),
+   totalUnchanged:Number(document.querySelector('#poArchiveToggle .po-archive-count')?.textContent)===3,
+   playlistIntact:window.IPTVState.getChannels().length===expected.channels,
+   noAutoplay:!expected.idle||window.IPTVState.getCurrent()===null,
+   noOverflow:document.documentElement.scrollWidth<=innerWidth+1
+  };
+ },input152);
+ await page.screenshot({path:path.join(out,'positron-p51152-alert-filter-after-1920x1080-real.png'),animations:'disabled'});
+ await page.click('#poArchiveFilterAll');
+ const restore152=await page.evaluate(()=>({
+  threeBack:document.querySelectorAll('#poArchiveEntries .po-archive-item').length===3,
+  allPressed:document.getElementById('poArchiveFilterAll')?.getAttribute('aria-pressed')==='true'
+ }));
+ await page.click('#poArchiveClear');await page.click('#poArchiveClose');
+ await page.evaluate(()=>{for(const node of [...document.querySelectorAll('#toastArea>.toast')])
+  if((node.textContent||'').includes('QA P152:'))node.remove();});
+ const alertFilterQA={...all152,...warn152,...restore152};
+ for(const [key,value] of Object.entries(alertFilterQA))
+  assert.equal(value,true,'P152 filter '+key+': '+JSON.stringify(alertFilterQA));
+
  await page.setViewportSize({width:1360,height:820});
   const report={type:'Positron P5 twenty distinct desktop screenshot cases',realElectron:true,syntheticChannels:false,
-  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,desktop16x9Screenshots,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA,chooserQa,toastLayoutQA,nativeToastQA,compactIdleQA,channelChipRailQA,advancedFilterQA,readableCardsQA,keyboardTabQA,favoriteEmptyQA,duplicateEmptyQA,categoryFilterQA,categoryFixtureQA,compactSingleQA,directFavoriteQA,favoriteCountQA,compactToastStackQA,toastDismissQA,toastFocusReturnQA,toastDockQA,wheelQA,pinnedAllQA,pinnedMaskQA,categoryKeyQA,dropdownChipQA,pinnedRightMaskQA,pinnedBorderMaskQA,asciiDSearchQA,emptySearchActionQA,readableCardTitleQA,favoriteSvgQA,keyboardFavoriteQA,multiTermSearchQA,keyboardSearchQA,arrowNavigationQA,pageNavigationQA,favoriteSortQA,onAirFilterQA,programmeSearchQA,upcomingProgrammeQA,soonProgrammeQA,earliestEpgSortQA,timeWindowQA,scheduleProgressQA:scheduleProgressQA,nativeReminderQA,cancelReminderQA,reminderLeadQA,toastHistoryQA,notificationArchiveQA};
+  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,desktop16x9Screenshots,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA,chooserQa,toastLayoutQA,nativeToastQA,compactIdleQA,channelChipRailQA,advancedFilterQA,readableCardsQA,keyboardTabQA,favoriteEmptyQA,duplicateEmptyQA,categoryFilterQA,categoryFixtureQA,compactSingleQA,directFavoriteQA,favoriteCountQA,compactToastStackQA,toastDismissQA,toastFocusReturnQA,toastDockQA,wheelQA,pinnedAllQA,pinnedMaskQA,categoryKeyQA,dropdownChipQA,pinnedRightMaskQA,pinnedBorderMaskQA,asciiDSearchQA,emptySearchActionQA,readableCardTitleQA,favoriteSvgQA,keyboardFavoriteQA,multiTermSearchQA,keyboardSearchQA,arrowNavigationQA,pageNavigationQA,favoriteSortQA,onAirFilterQA,programmeSearchQA,upcomingProgrammeQA,soonProgrammeQA,earliestEpgSortQA,timeWindowQA,scheduleProgressQA:scheduleProgressQA,nativeReminderQA,cancelReminderQA,reminderLeadQA,toastHistoryQA,notificationArchiveQA,alertFilterQA};
  fs.writeFileSync(path.resolve('positron-evidence','audit-p5-20-rounds.json'),JSON.stringify(report,null,2));
  return report;
 }

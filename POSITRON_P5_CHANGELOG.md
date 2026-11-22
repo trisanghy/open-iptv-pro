@@ -1,3 +1,11 @@
+## P5.1.152 — Lọc nhật ký theo loại thông báo / Electron v4.23.236
+- Feature priority: NEW — Cho phép tìm nhanh cảnh báo, lỗi và xác nhận thành công trong nhật ký tối đa 30 mục bằng bộ lọc không phá hủy, phù hợp khi phải kiểm tra nhiều thông báo.
+- User action: Mở Thông báo ở thanh trên, bấm Cảnh báo / Lỗi / Hoàn thành để chỉ xem loại tương ứng; chọn Tất cả để khôi phục toàn bộ danh sách.
+- Electron screenshot: positron-p51152-alert-filter-after-1920x1080-real.png
+- Before: positron-p51152-alert-filter-before-1920x1080-real.png; After: positron-p51152-alert-filter-after-1920x1080-real.png (phải mở ảnh Electron thật để xác minh).
+- Dữ liệu: không xóa thông báo khi lọc, không thay đổi M3U/EPG/nhắc lịch, không phát video, không truy cập mạng.
+- Trạng thái ban đầu: CANDIDATE cho tới khi QA screenshot, CI và installer Release xác minh.
+
 ## P5.1.151 — Nhật ký thông báo của phiên chạy / Electron v4.23.235
 - Feature priority: NEW — Thêm nhật ký tối đa 30 thông báo thành công, cảnh báo và lỗi trong phiên để có thể xem lại sau khi thông báo nổi tự hết hạn mà không lưu dữ liệu riêng xuống đĩa.
 - User action: Bấm Thông báo trên thanh trên để xem nội dung và thời điểm thông báo; chọn Xóa lịch sử hoặc Đóng/Escape. Lịch sử tự xóa khi thoát ứng dụng.

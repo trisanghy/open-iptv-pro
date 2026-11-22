@@ -503,3 +503,9 @@ html[data-positron="true"] .po-archive-actions button{font:inherit;font-size:12p
 html[data-positron="true"] .po-archive-actions button:disabled{opacity:.5}
 html[data-positron="true"] .po-archive-toggle:focus-visible,html[data-positron="true"] .po-archive-actions button:focus-visible{outline:2px solid var(--po-accent,#66d4c2);outline-offset:2px}
 @media(max-width:600px){html[data-positron="true"] .po-archive-label{display:none}html[data-positron="true"] .po-archive-toggle{min-width:35px;padding:0 7px}html[data-positron="true"] .po-archive-panel{top:54px;right:8px;max-height:55vh}}
+
+/* P5.1.152: lọc lịch sử thông báo theo mức độ, không xóa dữ liệu. */
+html[data-positron="true"] .po-archive-filters{display:flex;gap:5px;flex-wrap:wrap;align-items:center;margin:0 0 10px}
+html[data-positron="true"] .po-archive-filters button{font:inherit;font-size:11px;min-height:29px;padding:5px 8px;border-radius:8px;cursor:pointer;border:1px solid var(--po-border,#42606b);color:var(--po-text,#eaf7f6);background:transparent}
+html[data-positron="true"] .po-archive-filters button[aria-pressed="true"]{background:#356b61;border-color:#6dd4bc;color:white}
+html[data-positron="true"] .po-archive-filters button:focus-visible{outline:2px solid var(--po-accent,#6fddce);outline-offset:2px}

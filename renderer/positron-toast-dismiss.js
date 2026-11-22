@@ -89,21 +89,33 @@
   panel.setAttribute('aria-label','Nhật ký thông báo phiên hiện tại');
   const title=document.createElement('h2');title.textContent='Nhật ký thông báo';
   const hint=document.createElement('p');hint.textContent='Tối đa 30 thông báo trong phiên này; tự xóa khi thoát ứng dụng.';
+  // P5.1.152: bộ lọc trực quan; không làm mất thông báo gốc.
+  const filters=document.createElement('div');filters.className='po-archive-filters';
+  filters.setAttribute('role','group');filters.setAttribute('aria-label','Lọc loại thông báo');
+  const filterButtons=[];
+  for(const [id,text] of [['all','Tất cả'],['warn','Cảnh báo'],['err','Lỗi'],['ok','Hoàn thành']]){
+   const button=document.createElement('button');button.type='button';
+   button.id='poArchiveFilter'+id[0].toUpperCase()+id.slice(1);
+   button.dataset.poArchiveFilter=id;button.textContent=text;
+   button.setAttribute('aria-pressed',String(id==='all'));
+   filters.append(button);filterButtons.push(button);
+  }
   const entries=document.createElement('ol');entries.id='poArchiveEntries';
   const actions=document.createElement('div');actions.className='po-archive-actions';
   const clear=document.createElement('button');clear.type='button';clear.id='poArchiveClear';clear.textContent='Xóa lịch sử';
   const close=document.createElement('button');close.type='button';close.id='poArchiveClose';close.textContent='Đóng';
-  actions.append(clear,close);panel.append(title,hint,entries,actions);document.body.append(panel);
-  let history=[],isOpen=false;const seen=new WeakSet();
+  actions.append(clear,close);panel.append(title,hint,filters,entries,actions);document.body.append(panel);
+  let history=[],isOpen=false,filterMode='all';const seen=new WeakSet();
   const render=()=>{
    count.textContent=String(history.length);count.hidden=history.length===0;
    trigger.setAttribute('aria-label','Nhật ký thông báo, '+history.length+' mục');
    entries.replaceChildren();
-   if(!history.length){
+   const visible=history.filter(item=>filterMode==='all'||item.severity===filterMode);
+   if(!visible.length){
     const empty=document.createElement('li');empty.className='po-archive-empty';
-    empty.textContent='Chưa có thông báo trong phiên này.';entries.append(empty);
+    empty.textContent=history.length?'Không có thông báo thuộc nhóm này.':'Chưa có thông báo trong phiên này.';entries.append(empty);
    }
-   for(const item of history){
+   for(const item of visible){
     const li=document.createElement('li');li.className='po-archive-item po-archive-'+item.severity;
     const heading=document.createElement('strong');
     heading.textContent=(item.severity==='warn'?'Cảnh báo':item.severity==='err'?'Lỗi':'Hoàn thành')+' · '+item.time;
@@ -132,6 +144,11 @@
    isOpen=true;panel.hidden=false;trigger.setAttribute('aria-expanded','true');
    render();close.focus({preventScroll:true});
   });
+  filterButtons.forEach(button=>button.addEventListener('click',()=>{
+   filterMode=button.dataset.poArchiveFilter;
+   filterButtons.forEach(item=>item.setAttribute('aria-pressed',String(item===button)));
+   render();
+  }));
   close.addEventListener('click',dismiss);
   clear.addEventListener('click',()=>{history=[];render();clear.focus({preventScroll:true});});
   document.addEventListener('keydown',event=>{
