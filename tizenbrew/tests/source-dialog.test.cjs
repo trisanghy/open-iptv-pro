@@ -188,8 +188,8 @@ test('TV manager hello confirms online and returns a live snapshot',async()=>{
 });
 
 test('QR manager uses the official GitHub Pages URL rather than RawGitHack',()=>{
- const expected='https://trisanghy.github.io/open-iptv-pro/tizen/phone.html?v=017';
- assert.match(tv,/var SOURCE_PAGE='https:\/\/trisanghy[.]github[.]io\/open-iptv-pro\/tizen\/phone[.]html[?]v=017';/);
+ const expected='https://trisanghy.github.io/open-iptv-pro/tizen/phone.html?v=018';
+ assert.match(tv,/var SOURCE_PAGE='https:\/\/trisanghy[.]github[.]io\/open-iptv-pro\/tizen\/phone[.]html[?]v=018';/);
  assert.ok(tv.includes("var qrLink=SOURCE_PAGE+'#code='+token"),'QR must preserve ephemeral pairing token');
  assert.ok(tv.includes(expected));
  assert.doesNotMatch(tv,/raw[.]githack[.]com/);
@@ -226,4 +226,54 @@ test('TV and QR page normalize missing and mistyped HTTP(S) URLs identically',()
  assert.match(tv,/Máy chủ trả HTTP /);
  assert.match(tv,/sourceStatus\('✕ Không tải được nguồn: '/);
  assert.match(phone,/byId\('address'\)\.value=address/);
+});
+
+
+test('QR phone M3U transfer is chunked, hash-checked and saves only on TV confirmation',()=>{
+ const begin=tv.indexOf('function playlistStart(req){');
+ const end=tv.indexOf('async function onManagerRequest(',begin);
+ const phoneBegin=phone.indexOf('function playlistHash(s){');
+ const phoneEnd=phone.indexOf("byId('openSource').onclick",phoneBegin);
+ assert.ok(begin>0&&end>begin,'TV transfer methods exist');
+ assert.ok(phoneBegin>0&&phoneEnd>phoneBegin,'phone transfer methods exist');
+ const ctx=vm.createContext({
+  state:{sources:[],favorites:{}},playlistTransfer:null,managerRevision:0,
+  search:'',group:'',section:'',selected:null,
+  url:input=>input,hash:input=>{var h=2166136261;for(var i=0;i<input.length;i++){h^=input.charCodeAt(i);h=Math.imul(h,16777619);}return(h>>>0).toString(36);},
+  newToken:()=>''.padStart(32,'b'),parse:(raw,name)=>raw.includes('#EXTINF:')?[{id:'channel-1',name,group:'Khác',url:'https://example.com/live.m3u8'}]:[],
+  save:()=>true,draw:()=>{},notify:()=>{},sourceStatus:()=>{},
+  managerSnapshot:()=>({sources:[],channels:[]})
+ });
+ vm.runInContext(tv.slice(begin,end),ctx);
+ const helper=vm.runInNewContext(phone.slice(phoneBegin,phoneEnd)+'\n({playlistHash,splitPlaylist});',{});
+ const raw='#EXTM3U\n#EXTINF:-1,Đài truyền hình 😀\nhttps://example.com/live.m3u8\n';
+ const parts=helper.splitPlaylist(raw);
+ assert.equal(parts.join(''),raw);
+ assert.equal(helper.playlistHash(raw),ctx.hash(raw));
+ const id='a'.repeat(32),start={transferId:id,name:'Nguồn thử',parts:parts.length,total:raw.length,checksum:helper.playlistHash(raw),address:'https://example.com/channels.m3u',rights:true};
+ assert.throws(()=>ctx.playlistStart({...start,rights:false}),/xác nhận/);
+ ctx.playlistStart(start);
+ assert.equal(ctx.state.sources.length,0,'must not save before final confirmation');
+ for(let i=0;i<parts.length;i++)assert.equal(ctx.playlistChunk({transferId:id,index:i,chunk:parts[i]}),i+1);
+ assert.equal(ctx.playlistChunk({transferId:id,index:0,chunk:parts[0]}),parts.length,'same chunk replay is idempotent');
+ const result=ctx.playlistFinish({transferId:id});
+ assert.equal(result.count,1);
+ assert.equal(ctx.state.sources.length,1);
+ assert.equal(ctx.state.sources[0].address,'https://example.com/channels.m3u');
+ assert.equal(ctx.playlistTransfer,null,'clear upload buffer after saving');
+ assert.equal(ctx.managerRevision,1);
+ ctx.playlistStart({...start,transferId:'c'.repeat(32),checksum:'tampered'});
+ for(let i=0;i<parts.length;i++)ctx.playlistChunk({transferId:'c'.repeat(32),index:i,chunk:parts[i]});
+ assert.throws(()=>ctx.playlistFinish({transferId:'c'.repeat(32)}),/toàn vẹn/);
+ assert.equal(ctx.state.sources.length,1,'corrupt transfer must not save');
+});
+test('QR import UI can choose M3U file and tries phone fetch if TV URL fails',()=>{
+ for(const id of ['playlistFile','sendFile','tryPhone','openSource'])assert.match(phone,new RegExp('id="'+id+'"'));
+ for(const action of ['playlist-start','playlist-chunk','playlist-finish']){assert.ok(tv.includes("action==='"+action+"'"));assert.ok(phone.includes("'"+action+"'"));}
+ assert.match(phone,/function readPlaylistFile\(file\)/);
+ assert.match(phone,/function splitPlaylist\(s\)/);
+ assert.match(phone,/if\(ack.received!==i\+1\)/);
+ assert.match(phone,/if\(saved.state\)applySnapshot\(saved.state\)/);
+ assert.match(tv,/if\(!save\(\)\)\{state.sources.pop\(\)/);
+ assert.match(tv,/playlistTransfer=null;managerRevision\+\+/);
 });
