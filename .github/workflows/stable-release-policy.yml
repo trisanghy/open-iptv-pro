@@ -1,0 +1,72 @@
+name: Enforce Stable-only Latest release
+on:
+  release:
+    types: [published, edited]
+  push:
+    branches: [main]
+    paths:
+      - README.md
+      - .github/workflows/stable-release-policy.yml
+  workflow_dispatch:
+  schedule:
+    - cron: '17 0 * * *'
+permissions:
+  contents: write
+jobs:
+  audit-release-channels:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+      - name: Recover incorrectly classified experimental releases
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          # GitHub Releases are shared by every branch. Never delete assets/tags.
+          gh api --paginate "repos/${GITHUB_REPOSITORY}/releases?per_page=100" \
+            --jq '.[] | select(.draft == false and .prerelease == false and (.tag_name | test("^(rust-lab/|positron/|electron[-/]|mobile/|tizenbrew[-/]|experiment/)"))) | [.id, .tag_name] | @tsv' \
+            > "${RUNNER_TEMP}/misclassified-experiments.tsv"
+          while IFS=$'\t' read -r id tag; do
+            [[ -n "$id" ]] || continue
+            echo "Correcting experimental prerelease: $tag ($id)"
+            gh api --method PATCH "repos/${GITHUB_REPOSITORY}/releases/${id}" \
+              -F prerelease=true -f make_latest=false >/dev/null
+          done < "${RUNNER_TEMP}/misclassified-experiments.tsv"
+      - name: Verify all Stable tags belong to main, including Latest
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          gh api --paginate "repos/${GITHUB_REPOSITORY}/releases?per_page=100" \
+            --jq '.[] | select(.draft == false and .prerelease == false) | .tag_name' \
+            > "${RUNNER_TEMP}/stable-tags.txt"
+          while IFS= read -r tag; do
+            [[ -n "$tag" ]] || continue
+            if [[ ! "$tag" =~ ^[vV][0-9]+(\.[0-9]+)*$ ]]; then
+              echo "::error::Non-version tag is incorrectly Stable: $tag"
+              exit 1
+            fi
+            git rev-parse --verify "refs/tags/${tag}^{commit}" >/dev/null
+            if ! git merge-base --is-ancestor "refs/tags/${tag}^{commit}" origin/main; then
+              echo "::error::Stable release is not a commit from main: $tag"
+              exit 1
+            fi
+          done < "${RUNNER_TEMP}/stable-tags.txt"
+          latest="$(gh api "repos/${GITHUB_REPOSITORY}/releases/latest" --jq '.tag_name')"
+          grep -Fxq "$latest" "${RUNNER_TEMP}/stable-tags.txt"
+          echo "Latest is an official main Stable: $latest"
+      - name: Reject experimental download links on main README
+        shell: bash
+        run: |
+          set -euo pipefail
+          if grep -En 'github[.]com/trisanghy/open-iptv-pro/releases/(tag|download)/(rust-lab|mobile|positron|electron-|tizenbrew)' README.md; then
+            echo '::error::main README must advertise official Stable downloads only.'
+            exit 1
+          fi
+          grep -Fq '/releases/latest' README.md
