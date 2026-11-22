@@ -15,6 +15,8 @@ test('initial paint suppresses glyphs with CSS, preserving SVG masks',()=>{
 });
 const chrome=process.env.ICON_FIRST_PAINT_CHROME;
 const styles=(html.match(/<link rel="stylesheet" href="[^"]+"\/>/g)||[]).join('\n');
+const castMarkup=html.match(/<button class="control-sm" id="castBtn"[^>]*>[\s\S]*?<\/button>/)?.[0];
+assert.ok(castMarkup&&castMarkup.includes('data-iptv-svg-icon="cast"'),'HTML must render Cast SVG without JavaScript');
 for(const [device,width,style] of [['desktop',1440,'current'],['mobile',390,'current'],['desktop',1440,'material3']]){
  test('Chrome first paint has one icon on '+device+' '+style,{skip:!chrome},()=>{
   const dest=path.join(root,'_site','test-first-paint-'+device+'-'+style+'.html');
@@ -25,13 +27,14 @@ for(const [device,width,style] of [['desktop',1440,'current'],['mobile',390,'cur
    '</div></div><div class="player-control-card"><div class="control-layout-top"><div class="controls transport-controls">',
    '<button class="control-sm" id="prevBtn">⏮</button><button class="control-main" id="playBtn">▶</button>',
    '<button class="control-sm" id="stopBtn">■</button><button class="control-sm" id="nextBtn">⏭</button>',
-   '</div><div class="output-controls"><button class="control-sm" id="castBtn">▣</button>',
+   '</div><div class="output-controls">',castMarkup,
    '<button class="control-sm" id="pipBtn">▣</button><button class="control-sm" id="fullscreenBtn">⛶</button>',
    '</div></div><div class="control-layout-bottom"><button id="openGuideBtn">▤</button>',
    '<button id="favCurrentBtn">☆</button></div></div></div></section>',
    "<script>onload=()=>{const ids=['prevBtn','playBtn','stopBtn','nextBtn','castBtn','pipBtn','fullscreenBtn','openGuideBtn','favCurrentBtn','fsPrev','fsPlay','fsNext','fsExit'];",
    "const bad=[];for(const id of ids){const el=document.getElementById(id);const font=getComputedStyle(el).fontSize;",
    "const glyph=getComputedStyle(el,'::before');const mask=glyph.webkitMaskImage||glyph.maskImage;",
+   "if(id==='castBtn'){const svg=el.querySelector('svg[data-iptv-svg-icon=cast]');if(!svg||svg.getBoundingClientRect().width<18||glyph.display!=='none')bad.push(id+':bad-inline-svg');continue;}",
    "if(font!=='0px'||glyph.display==='none'||parseFloat(glyph.width)<15||!mask||mask==='none')bad.push(id+':'+font+':'+glyph.width);}",
    "document.body.dataset.firstPaint=bad.length?'invalid':'valid';document.body.dataset.problems=bad.join(',');};</script>",
    '</body></html>'
