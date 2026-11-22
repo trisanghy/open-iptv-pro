@@ -2275,3 +2275,9 @@ test('P5.1.205 has actual Electron screenshot proof of persistent random switch'
   assert.ok(qa.includes(token),'Missing actual P205 Electron QA '+token);
  assert.ok(flow.includes('TAG=positron/v4.23.290-p5.1.205'));
 });
+
+test('P5.1.205 before/after screenshots must have different real pixels',()=>{
+ const qa=read('scripts/positron-20-extension.cjs');
+ assert.ok(qa.includes("el.style.setProperty('display','none','important')"));
+ assert.ok(qa.includes('before205.equals(after205),false'));
+});

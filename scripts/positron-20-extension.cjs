@@ -5888,7 +5888,7 @@ async function runTwenty(page){
  // Previous P204 screenshot was independently inspected from Actions artifacts.
  await page.setViewportSize({width:1920,height:1080});
  await page.evaluate(()=>window.IPTVState.setPage('tv'));
- await page.locator('#poNextRandomChannel').evaluate(el=>{el.style.display='none'});
+ await page.locator('#poNextRandomChannel').evaluate(el=>{el.style.setProperty('display','none','important')});
  const before205=await page.screenshot({path:path.join(out,'positron-p51205-tv-switch-before-1920x1080-real.png'),animations:'disabled'});
  assert.deepEqual([before205.readUInt32BE(16),before205.readUInt32BE(20)],[1920,1080]);
  await page.locator('#poNextRandomChannel').evaluate(el=>el.style.removeProperty('display'));
@@ -5919,6 +5919,8 @@ async function runTwenty(page){
   assert.equal(value,true,'P205 actual Electron random follow-up '+key+': '+JSON.stringify(randomFollowupQA));
  const after205=await page.screenshot({path:path.join(out,'positron-p51205-tv-switch-after-1920x1080-real.png'),animations:'disabled'});
  assert.deepEqual([after205.readUInt32BE(16),after205.readUInt32BE(20)],[1920,1080]);
+ // Reject identical screenshot pixels: CSS important can override inline display.
+ assert.equal(before205.equals(after205),false,'P205 before and after PNG must differ');
  await page.setViewportSize({width:450,height:820});
  const compact205=await page.evaluate(()=>({
   labelHidden:getComputedStyle(document.querySelector('#poNextRandomChannel .po-random-label')).display==='none',
