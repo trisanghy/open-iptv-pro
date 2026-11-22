@@ -498,6 +498,36 @@ footer{border-top-color:rgba(174,190,220,.13);font-size:14px}
     font-size:clamp(9px,2.7vw,11px);
   }
 }
+
+/* Keep the five mobile destinations inside the visual edge-to-edge bar. */
+@media(max-width:700px){
+  .home-mobile-tabs{
+    left:0!important;
+    right:0!important;
+    inset-inline:0!important;
+    width:100vw!important;
+    max-width:100vw!important;
+    margin:0!important;
+    transform:none!important;
+    box-sizing:border-box;
+    overflow:hidden;
+    grid-template-columns:repeat(5,minmax(0,1fr));
+    padding-left:max(4px,env(safe-area-inset-left,0px));
+    padding-right:max(4px,env(safe-area-inset-right,0px));
+  }
+  .home-mobile-tabs>a{
+    width:100%;
+    min-width:0;
+    max-width:100%;
+    overflow:hidden;
+    box-sizing:border-box;
+  }
+  .home-mobile-tabs a span{
+    min-width:0;
+    max-width:100%;
+    font-size:clamp(9px,2.7vw,11px);
+  }
+}
 </style>
 </head><body>
 <a class="skip" href="#main">Đi tới nội dung chính</a>
