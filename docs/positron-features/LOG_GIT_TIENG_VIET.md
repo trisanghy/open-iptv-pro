@@ -2,14 +2,23 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
-## P5.1.184 — lọc gợi ý Yêu thích theo nhóm kênh thực
+## P5.1.185 — truy cập nhanh nhóm nhiều kênh và đếm số lượng
 
-**Ứng dụng:** 4.23.269 · **Trạng thái:** Chưa có bản phát hành
+**Ứng dụng:** 4.23.270 · **Trạng thái:** Chưa có bản phát hành
+
+Feature priority: NEW — Ảnh Electron P5.1.184 có dropdown nhóm nhưng không biết số kênh từng nhóm trước khi chọn; duyệt 541 kênh mất thời gian. Thêm dải nút truy cập nhanh các nhóm nhiều kênh với đếm số lượng thực từ kênh còn gợi ý, đánh dấu nhóm đang chọn bằng aria-pressed; chọn Tất cả khôi phục. Dropdown hiện số lượng từng nhóm và tổng kênh; không can thiệp M3U, favoriteKeys hay phát video.
+
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/6f4cce74d501e53e1360278bbe433c9b93f4ff77)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+
+## P5.1.184 — Lọc gợi ý Yêu thích theo nhóm / Electron 4.23.269
+
+**Ứng dụng:** 4.23.269 · **Trạng thái:** Đã phát hành
 
 Feature priority: NEW — Ảnh P5.1.183 chứng minh có 553 kênh chưa lưu nhưng gợi ý không phân loại theo nhóm; tìm bằng mắt còn rườm rà. Thêm dropdown nhóm được tạo trực tiếp từ metadata nguồn đang bật, chỉ lọc tên nhóm thực có kênh chưa đánh dấu sao. Kết hợp tìm kiếm không dấu và lựa chọn 6/12/24 kênh, nút Lưu cả N vẫn theo số thẻ được lọc. Tập dữ liệu nguồn và favoriteKeys giữ nguyên.
 
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/250d32a80cb052b96f54e734ee5343933545b1e6)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/4f8caf8a4166a6cf47b655ad5a63fdf3a0352e89)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.269-p5.1.184)
 
 ## P5.1.183 — Gợi ý Yêu thích 6/12/24 kênh / Electron 4.23.268
 
