@@ -12,13 +12,13 @@ test('approved Cast modal matches demo, has 3 actual modes and all theme variant
  assert.match(ui,/api\.scan\(\)/);assert.match(ui,/OpenIPTVWebCast\?\.airplayPicker/);
  for(const name of ['light','dark','amoled'])assert.ok(css.includes('html[data-theme="'+name+'"] #iptvCastOverlay'),name);
  assert.match(css,/@media\(max-width:760px\)/);
- assert.match(html,/web-cast-v2\.css\?v=icons-v3-20261122a/);
+ assert.match(html,/web-cast-v2\.css\?v=dual-links-20261122a/);
  assert.match(html,/web-tv-pair\.js\?v=cast-v2-20261122a/);
- assert.match(html,/web-cast-v2\.js\?v=icons-v3-20261122a/);
+ assert.match(html,/web-cast-v2\.js\?v=dual-links-20261122a/);
  assert.match(sender,/OpenIPTVWebCastV2\.open/);
 });
 test('all Cast UI icons come from one real SVG source, not overlapping pseudo glyphs',()=>{
- assert.match(html,/web-cast-icons\.js\?v=icons-v3-20261122a/);
+ assert.match(html,/web-cast-icons\.js\?v=dual-links-20261122a/);
  assert.match(ui,/OpenIPTVCastIcons\?\.decorateModal\?\.\(overlay\)/);
  assert.match(icons,/data-iptv-svg-icon/);
  assert.match(icons,/createElementNS/);
@@ -32,7 +32,7 @@ test('all Cast UI icons come from one real SVG source, not overlapping pseudo gl
  assert.match(ui,/\$\('cxTvUrl'\)\.href=tvUrl\(\)/);
  assert.match(ui,/https:\/\/is\.gd\/IPTVTV/);
  assert.doesNotMatch(ui,/directTvUrl/);
- assert.match(tv,/web-cast-icons\.js\?v=icons-v3-20261122a/);
+ assert.match(tv,/web-cast-icons\.js\?v=dual-links-20261122a/);
 });
 test('TV landing screen uses same theme design and real video receiver',()=>{
  for(const source of ['supabase-sdk.js','web-tv-pair.js','web-tv-receiver.js','web-cast-v2.css'])
