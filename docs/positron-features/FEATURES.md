@@ -7,15 +7,28 @@ Trang này được tạo tự động từ GitHub Releases và ảnh kiểm th�
 [Mở WEBSITE changelog tương tác](https://raw.githack.com/trisanghy/open-iptv-pro/Positron/docs/positron-features/index.html) · [Giao diện HTML trong repository](index.html) · [Các bản phát hành](https://github.com/trisanghy/open-iptv-pro/releases) · [Nhật ký Git tiếng Việt](LOG_GIT_TIENG_VIET.md) · [Quy tắc ưu tiên tính năng](../../POSITRON_FEATURE_RULES.md)
 
 <details>
-<summary><strong>P5.1.223</strong> · nhập XMLTV trực tiếp từ EPG · CHƯA CÓ BẢN PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.224</strong> · phản hồi nhập XMLTV ngay trên EPG · CHƯA CÓ BẢN PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
 
-**Ứng dụng:** 4.23.308 · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
+**Ứng dụng:** 4.23.309 · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
+
+Feature priority: NEW — Sau khi người dùng nhập hoặc hủy file XMLTV ngay từ trang Lịch phát sóng, phản hồi không còn bị giấu trong mục Cài đặt, tránh nhầm rằng ứng dụng treo hoặc mất dữ liệu EPG. Electron screenshot: positron-p51224-epg-feedback-after-1920x1080-real.png
+
+*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+
+[Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/tree/Positron) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/be3e79f8049cae0ebd42a211c47b73577a991fce)
+
+</details>
+
+<details>
+<summary><strong>P5.1.223</strong> · Nhập XMLTV trực tiếp từ trạng thái EPG rỗng / Electron 4.23.308 · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+
+**Ứng dụng:** 4.23.308 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
 Feature priority: NEW — Người xem có file XMLTV hợp pháp trong máy có thể nhập trực tiếp từ trang Lịch phát sóng mà không phải đi vòng qua trang Cài đặt; dùng nguyên luồng kiểm tra, xác nhận và lưu của chức năng nhập hiện có. Electron screenshot: positron-p51223-epg-import-after-1920x1080-real.png
 
 *Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
 
-[Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/tree/Positron) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/b3f8bbac5158a01e6665655d52c51f606e99f8f2)
+[Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.308-p5.1.223) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/50bd3ac3820dbf615c5191abf5a7ac989691b51b) · [Tải Windows Setup x64](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.308-p5.1.223/Open-IPTV-Pro-Setup-4.23.308-x64.exe) · [Tải gói ảnh QA](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.308-p5.1.223/Positron-P51223-20-Real-Screenshots.zip)
 
 </details>
 
