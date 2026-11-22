@@ -60,8 +60,8 @@ test('Manifest failure no longer launches broken HTTPS iframe automatically',()=
  assert.equal(s.els.browserFallback.hidden,false);
  assert.match(s.els.browserFallback.textContent,/Cast chuẩn.*mã 6 số/);
 });
-test('When imported backup URLs exist, fail over without launching iframe',()=>{
- const s=harness(),ch={id:'vtv2',name:'VTV2',url:'https://example.org/one.mp4'};
+test('When explicit channel backup URLs exist, fail over without launching iframe',()=>{
+ const s=harness(),ch={id:'vtv2',name:'VTV2',url:'https://example.org/one.mp4',backupUrls:['https://example.org/two.mp4']};
  s.state.sources=[{channels:[ch,{id:'backup',name:'VTV2',url:'https://example.org/two.mp4'}]}];
  s.api.play(ch);
  s.api.finishPlaybackError(s.api.current().playbackSerial,'NotSupportedError');
