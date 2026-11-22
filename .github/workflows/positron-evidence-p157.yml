@@ -46,4 +46,15 @@ jobs:
           git add docs/positron-features/screenshots/positron-p51158-missing-logos-*-1920x1080-real.png
           git diff --cached --quiet && { echo 'Đã có ảnh, không commit lại'; exit 0; }
           git commit -m "Tài liệu Positron: lưu cặp ảnh Electron thực P5.1.158 [skip ci]"
-          git push origin HEAD:Positron
+          # Đồng bộ với commit mới từ workflow tài liệu; tuyệt đối không force-push.
+          for attempt in 1 2 3 4; do
+            git fetch origin Positron
+            git rebase origin/Positron
+            if git push origin HEAD:Positron; then
+              echo "Ảnh đã commit an toàn trên HEAD mới nhất"
+              exit 0
+            fi
+            sleep 2
+          done
+          echo "::error::HEAD thay đổi liên tục, không ghi đè lịch sử"
+          exit 1
