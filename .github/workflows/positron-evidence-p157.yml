@@ -1,0 +1,49 @@
+name: Positron P5.1.157 · Lưu ảnh Electron trước và sau đã kiểm thử
+on:
+  push:
+    branches: [Positron]
+    paths:
+      - '.github/workflows/positron-evidence-p157.yml'
+permissions:
+  contents: write
+  actions: read
+jobs:
+  preserve-screenshots:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Tải đúng ảnh PNG thực từ CI đã thành công
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -Eeuo pipefail
+          gh run download 44970820752 --repo "$GITHUB_REPOSITORY" --name positron-p51157-real-desktop-screenshots -D /tmp/positron-qa
+          mkdir -p docs/positron-features/screenshots
+          for state in before after; do
+            name="positron-p51157-groups-${state}-1920x1080-real.png"
+            from="/tmp/positron-qa/p5-20-rounds/$name"
+            test -s "$from"
+            node - "$from" <<'NODE'
+          const fs = require('fs');
+          const b = fs.readFileSync(process.argv[2]);
+          if (b.subarray(0,8).toString('hex')!=='89504e470d0a1a0a' ||
+              b.readUInt32BE(16)!==1920 || b.readUInt32BE(20)!==1080)
+            throw Error('Ảnh không phải PNG Electron gốc 1920x1080');
+          NODE
+            cp "$from" "docs/positron-features/screenshots/$name"
+          done
+          sha256sum docs/positron-features/screenshots/positron-p51157-groups-*-1920x1080-real.png
+      - name: Commit ảnh QA không sửa lịch sử Positron
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/positron-features/screenshots/positron-p51157-groups-*-1920x1080-real.png
+          git diff --cached --quiet && { echo 'Đã có ảnh, không commit lại'; exit 0; }
+          git commit -m "Tài liệu Positron: lưu cặp ảnh Electron thực P5.1.157 [skip ci]"
+          git push origin HEAD:Positron
