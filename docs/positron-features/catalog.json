@@ -1,22 +1,102 @@
 {
-  "generatedAt": "2026-11-22T05:30:45.770346+00:00",
+  "generatedAt": "2026-11-22T05:37:01.260235+00:00",
   "repository": "trisanghy/open-iptv-pro",
   "branch": "Positron",
   "versions": [
     {
-      "number": 173,
-      "version": "P5.1.173",
-      "appVersion": "4.23.258",
-      "title": "trở lại đúng trang kiểm kê sau khi tìm kênh",
-      "description": "Feature priority: NEW — Ảnh Electron P5.1.172 cho thấy bấm Tìm sẽ đưa đúng một kênh lên TV nhưng người dùng phải tìm lại vị trí kiểm kê; bổ sung nút ↩ Kiểm kê · trang N xuất hiện cạnh ô tìm TV chỉ sau thao tác định vị, quay về đúng trang kênh thiếu logo đang xử lý mà không mất bộ lọc. User action: Từ Thư viện → Kênh thiếu logo → sang trang 2 → bấm Tìm một kênh → chọn ↩ Kiểm kê · trang 2 ngay dưới ô tìm để quay lại đúng trang thứ hai và tiếp tục rà soát.",
+      "number": 174,
+      "version": "P5.1.174",
+      "appVersion": "4.23.259",
+      "title": "nút Yêu thích trống mở đúng danh sách TV",
+      "description": "Feature priority: NEW — Ảnh Electron thật P5.1.173 tại trang Yêu thích cho thấy 561 kênh đã nhập nhưng danh sách chưa có sao, nút CTA vẫn ghi Quản lý nguồn IPTV; dẫn người dùng sang việc thêm nguồn không liên quan. CTA giờ đổi theo dữ liệu hiện có: có kênh → Xem kênh để đánh dấu ★ (quay về TV, focus ô tìm); không có kênh → Quản lý nguồn IPTV. User action: Mở Yêu thích khi đã có kênh nhưng chưa đánh dấu sao → bấm Xem kênh để đánh dấu ★ → tự đến TV và focus tìm kênh; việc đánh dấu sao vẫn do người dùng thực hiện.",
       "kind": "fix",
       "status": "candidate",
       "published": "",
       "tag": "",
-      "commit": "1dd6895f7bde24deb17a19c4b3a4b86de072ce55",
+      "commit": "240af7385b31dc55da55264675cd05ae2f14df44",
       "url": "https://github.com/trisanghy/open-iptv-pro/tree/Positron",
       "assets": [],
       "image": null
+    },
+    {
+      "number": 173,
+      "version": "P5.1.173",
+      "appVersion": "4.23.258",
+      "title": "Quay lại đúng vị trí kiểm kê sau khi tìm kênh / Electron 4.23.258",
+      "description": "Feature priority: NEW — Ảnh Electron P5.1.172 cho thấy bấm Tìm sẽ đưa đúng một kênh lên TV nhưng người dùng phải tìm lại vị trí kiểm kê; bổ sung nút ↩ Kiểm kê · trang N xuất hiện cạnh ô tìm TV chỉ sau thao tác định vị, quay về đúng trang kênh thiếu logo đang xử lý mà không mất bộ lọc. User action: Từ Thư viện → Kênh thiếu logo → sang trang 2 → bấm Tìm một kênh → chọn ↩ Kiểm kê · trang 2 ngay dưới ô tìm để quay lại đúng trang thứ hai và tiếp tục rà soát.",
+      "kind": "fix",
+      "status": "release",
+      "published": "2026-11-22T05:35:44Z",
+      "tag": "positron/v4.23.258-p5.1.173",
+      "commit": "1dd6895f7bde24deb17a19c4b3a4b86de072ce55",
+      "url": "https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.258-p5.1.173",
+      "assets": [
+        {
+          "name": "audit-p4-50-rounds.json",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.258-p5.1.173/audit-p4-50-rounds.json"
+        },
+        {
+          "name": "audit-p5-20-rounds.json",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.258-p5.1.173/audit-p5-20-rounds.json"
+        },
+        {
+          "name": "Open-IPTV-Pro-4.23.258-mac-arm64.dmg",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.258-p5.1.173/Open-IPTV-Pro-4.23.258-mac-arm64.dmg"
+        },
+        {
+          "name": "Open-IPTV-Pro-4.23.258-mac-x64.dmg",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.258-p5.1.173/Open-IPTV-Pro-4.23.258-mac-x64.dmg"
+        },
+        {
+          "name": "Open-IPTV-Pro-4.23.258-x64.exe",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.258-p5.1.173/Open-IPTV-Pro-4.23.258-x64.exe"
+        },
+        {
+          "name": "Open-IPTV-Pro-Setup-4.23.258-x64.exe",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.258-p5.1.173/Open-IPTV-Pro-Setup-4.23.258-x64.exe"
+        },
+        {
+          "name": "OpenIPTVPro-Positron-P51173-Source.zip",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.258-p5.1.173/OpenIPTVPro-Positron-P51173-Source.zip"
+        },
+        {
+          "name": "positron-desktop-1920x1080-16x9-main-real.png",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.258-p5.1.173/positron-desktop-1920x1080-16x9-main-real.png"
+        },
+        {
+          "name": "positron-p4-final-main-real.png",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.258-p5.1.173/positron-p4-final-main-real.png"
+        },
+        {
+          "name": "positron-p4-round-10-real.png",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.258-p5.1.173/positron-p4-round-10-real.png"
+        },
+        {
+          "name": "positron-p4-round-20-real.png",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.258-p5.1.173/positron-p4-round-20-real.png"
+        },
+        {
+          "name": "positron-p4-round-30-real.png",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.258-p5.1.173/positron-p4-round-30-real.png"
+        },
+        {
+          "name": "positron-p4-round-40-real.png",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.258-p5.1.173/positron-p4-round-40-real.png"
+        },
+        {
+          "name": "Positron-P51173-20-Real-Screenshots.zip",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.258-p5.1.173/Positron-P51173-20-Real-Screenshots.zip"
+        },
+        {
+          "name": "Positron-P51173-50-Real-Screenshots.zip",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.258-p5.1.173/Positron-P51173-50-Real-Screenshots.zip"
+        },
+        {
+          "name": "SHA256SUMS.txt",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.258-p5.1.173/SHA256SUMS.txt"
+        }
+      ],
+      "image": "screenshots/positron-p51173-desktop-1920x1080-trang-chu-real.png"
     },
     {
       "number": 172,
@@ -96,7 +176,7 @@
           "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.257-p5.1.172/SHA256SUMS.txt"
         }
       ],
-      "image": "screenshots/positron-p51172-desktop-1920x1080-trang-chu-real.png"
+      "image": "screenshots/positron-p51172-locate-channel-after-1920x1080-real.png"
     },
     {
       "number": 171,
