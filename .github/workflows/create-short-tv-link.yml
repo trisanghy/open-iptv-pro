@@ -1,0 +1,47 @@
+name: Create short TV link (one-time)
+on:
+  push:
+    branches:
+      - web/online
+    paths:
+      - '.github/workflows/create-short-tv-link.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  shorten:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Create memorable short link for TV pairing page
+        shell: bash
+        run: |
+          set -euo pipefail
+          LONG="https://trisanghy.github.io/open-iptv-pro/tv.html"
+          for CODE in IPTVTV OpenIPTVTV IPTVTV2026; do
+            echo "Trying human-readable alias: $CODE"
+            RESPONSE=$(curl --silent --show-error --max-time 20 --get \
+              --data-urlencode "format=simple" \
+              --data-urlencode "url=$LONG" \
+              --data-urlencode "shorturl=$CODE" \
+              https://is.gd/create.php || true)
+            if [[ "$RESPONSE" == "https://is.gd/"* ]]; then
+              echo "SHORT_URL=$RESPONSE"
+              echo "LONG_URL=$LONG"
+              LOOKUP=$(curl --silent --show-error --max-time 20 --get \
+                --data-urlencode "format=json" \
+                --data-urlencode "shorturl=$CODE" \
+                https://is.gd/forward.php || true)
+              echo "LOOKUP=$LOOKUP"
+              if [[ "$LOOKUP" == *"trisanghy.github.io/open-iptv-pro/tv.html"* ]]; then
+                echo "VERIFIED_SHORT_URL=$RESPONSE"
+                printf "TV Short URL: %s\nOriginal URL: %s\n" "$RESPONSE" "$LONG" >> "$GITHUB_STEP_SUMMARY"
+                exit 0
+              fi
+              echo "Shortener returned a URL but lookup could not verify it; do not publish"
+              exit 1
+            fi
+            echo "Alias unavailable or service failure: $RESPONSE"
+          done
+          echo "Could not create a verified URL using the preferred short aliases." >&2
+          exit 1
