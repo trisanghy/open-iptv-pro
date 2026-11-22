@@ -2,14 +2,23 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
-## P5.1.204 — khám phá kênh ngẫu nhiên bằng một nút
+## P5.1.205 — đổi sang kênh ngẫu nhiên khác ngay trong thanh phát
 
-**Ứng dụng:** 4.23.289 · **Trạng thái:** Chưa có bản phát hành
+**Ứng dụng:** 4.23.290 · **Trạng thái:** Chưa có bản phát hành
+
+Đã trực tiếp mở screenshot P5.1.204 thực 1920×1080 từ CI run 45016102045, thấy nút Khám phá ngẫu nhiên chỉ nằm trong empty player. Bổ sung nút xúc xắc sau Kênh sau trên native transport, chỉ hiển thị khi có từ 2 kênh hợp lệ và chỉ phát kênh khác sau nhấn chuột. Không tự phát, không ghi dữ liệu playlist.
+
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/56158e3defb6a23a97927001542fe687221db451)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+
+## P5.1.204 — 4.23.289 — Khám phá kênh ngẫu nhiên từ trang TV (CANDIDATE)
+
+**Ứng dụng:** 4.23.289 · **Trạng thái:** Đã phát hành
 
 Feature priority: NEW — Khi có nhiều kênh đã nhập nhưng chưa chọn kênh để xem, nút “Khám phá kênh ngẫu nhiên” giúp tìm nội dung mới thay vì luôn bắt đầu từ kênh thứ nhất; không chọn kênh chết/thiếu URL, không tự chạy lúc mở app. User action: Mở trang Xem truyền hình, khi chưa chọn kênh hãy nhấn Khám phá kênh ngẫu nhiên; ứng dụng chọn một kênh hợp lệ bằng hành động rõ ràng của người xem.
 
 [Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/9052de6fe686bbdae4a04b548e6e158590c5c5ba)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.289-p5.1.204)
 
 ## P5.1.203 — 4.23.288 — Thông báo TV không che nút phát/âm lượng (CANDIDATE)
 

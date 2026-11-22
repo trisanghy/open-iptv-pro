@@ -1,21 +1,101 @@
 {
-  "generatedAt": "2026-11-22T11:11:52.066052+00:00",
+  "generatedAt": "2026-11-22T11:37:23.883171+00:00",
   "repository": "trisanghy/open-iptv-pro",
   "branch": "Positron",
   "versions": [
     {
-      "number": 204,
-      "version": "P5.1.204",
-      "appVersion": "4.23.289",
-      "title": "khám phá kênh ngẫu nhiên bằng một nút",
-      "description": "Feature priority: NEW — Khi có nhiều kênh đã nhập nhưng chưa chọn kênh để xem, nút “Khám phá kênh ngẫu nhiên” giúp tìm nội dung mới thay vì luôn bắt đầu từ kênh thứ nhất; không chọn kênh chết/thiếu URL, không tự chạy lúc mở app. User action: Mở trang Xem truyền hình, khi chưa chọn kênh hãy nhấn Khám phá kênh ngẫu nhiên; ứng dụng chọn một kênh hợp lệ bằng hành động rõ ràng của người xem.",
+      "number": 205,
+      "version": "P5.1.205",
+      "appVersion": "4.23.290",
+      "title": "đổi sang kênh ngẫu nhiên khác ngay trong thanh phát",
+      "description": "Đã trực tiếp mở screenshot P5.1.204 thực 1920×1080 từ CI run 45016102045, thấy nút Khám phá ngẫu nhiên chỉ nằm trong empty player. Bổ sung nút xúc xắc sau Kênh sau trên native transport, chỉ hiển thị khi có từ 2 kênh hợp lệ và chỉ phát kênh khác sau nhấn chuột. Không tự phát, không ghi dữ liệu playlist.",
       "kind": "fix",
       "status": "candidate",
       "published": "",
       "tag": "",
-      "commit": "9052de6fe686bbdae4a04b548e6e158590c5c5ba",
+      "commit": "56158e3defb6a23a97927001542fe687221db451",
       "url": "https://github.com/trisanghy/open-iptv-pro/tree/Positron",
       "assets": [],
+      "image": null
+    },
+    {
+      "number": 204,
+      "version": "P5.1.204",
+      "appVersion": "4.23.289",
+      "title": "4.23.289 — Khám phá kênh ngẫu nhiên từ trang TV (CANDIDATE)",
+      "description": "Feature priority: NEW — Khi có nhiều kênh đã nhập nhưng chưa chọn kênh để xem, nút “Khám phá kênh ngẫu nhiên” giúp tìm nội dung mới thay vì luôn bắt đầu từ kênh thứ nhất; không chọn kênh chết/thiếu URL, không tự chạy lúc mở app. User action: Mở trang Xem truyền hình, khi chưa chọn kênh hãy nhấn Khám phá kênh ngẫu nhiên; ứng dụng chọn một kênh hợp lệ bằng hành động rõ ràng của người xem.",
+      "kind": "fix",
+      "status": "release",
+      "published": "2026-11-22T11:17:39Z",
+      "tag": "positron/v4.23.289-p5.1.204",
+      "commit": "9052de6fe686bbdae4a04b548e6e158590c5c5ba",
+      "url": "https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.289-p5.1.204",
+      "assets": [
+        {
+          "name": "audit-p4-50-rounds.json",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.289-p5.1.204/audit-p4-50-rounds.json"
+        },
+        {
+          "name": "audit-p5-20-rounds.json",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.289-p5.1.204/audit-p5-20-rounds.json"
+        },
+        {
+          "name": "Open-IPTV-Pro-4.23.289-mac-arm64.dmg",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.289-p5.1.204/Open-IPTV-Pro-4.23.289-mac-arm64.dmg"
+        },
+        {
+          "name": "Open-IPTV-Pro-4.23.289-mac-x64.dmg",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.289-p5.1.204/Open-IPTV-Pro-4.23.289-mac-x64.dmg"
+        },
+        {
+          "name": "Open-IPTV-Pro-4.23.289-x64.exe",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.289-p5.1.204/Open-IPTV-Pro-4.23.289-x64.exe"
+        },
+        {
+          "name": "Open-IPTV-Pro-Setup-4.23.289-x64.exe",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.289-p5.1.204/Open-IPTV-Pro-Setup-4.23.289-x64.exe"
+        },
+        {
+          "name": "OpenIPTVPro-Positron-P51204-Source.zip",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.289-p5.1.204/OpenIPTVPro-Positron-P51204-Source.zip"
+        },
+        {
+          "name": "positron-desktop-1920x1080-16x9-main-real.png",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.289-p5.1.204/positron-desktop-1920x1080-16x9-main-real.png"
+        },
+        {
+          "name": "positron-p4-final-main-real.png",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.289-p5.1.204/positron-p4-final-main-real.png"
+        },
+        {
+          "name": "positron-p4-round-10-real.png",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.289-p5.1.204/positron-p4-round-10-real.png"
+        },
+        {
+          "name": "positron-p4-round-20-real.png",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.289-p5.1.204/positron-p4-round-20-real.png"
+        },
+        {
+          "name": "positron-p4-round-30-real.png",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.289-p5.1.204/positron-p4-round-30-real.png"
+        },
+        {
+          "name": "positron-p4-round-40-real.png",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.289-p5.1.204/positron-p4-round-40-real.png"
+        },
+        {
+          "name": "Positron-P51204-20-Real-Screenshots.zip",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.289-p5.1.204/Positron-P51204-20-Real-Screenshots.zip"
+        },
+        {
+          "name": "Positron-P51204-50-Real-Screenshots.zip",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.289-p5.1.204/Positron-P51204-50-Real-Screenshots.zip"
+        },
+        {
+          "name": "SHA256SUMS.txt",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.289-p5.1.204/SHA256SUMS.txt"
+        }
+      ],
       "image": null
     },
     {
