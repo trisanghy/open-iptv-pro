@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.282",
-  "description": "Positron P5.1.197: sao chép lịch ghi và loại trùng tên kênh",
+  "version": "4.23.283",
+  "description": "Positron P5.1.198: hẹn ghi ngày mai cùng giờ bằng một nút",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

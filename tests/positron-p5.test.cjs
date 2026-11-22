@@ -2137,3 +2137,18 @@ test('P5.1.197 copies only validated DVR summary and prevents duplicate channel 
  assert.ok(qa.includes('positron-p51197-dvr-copy-before-1920x1080-real.png'));
  assert.ok(qa.includes('positron-p51197-dvr-copy-after-1920x1080-real.png'));
 });
+
+
+test('P5.1.198 tomorrow DVR preset preserves clock and duration across native forms',()=>{
+ const js=read('renderer/positron-twenty.js'),css=read('renderer/positron-twenty.css');
+ const qa=read('scripts/positron-20-extension.cjs');
+ for(const t of ['poDvrTomorrowStart','poDvrTomorrowQuickStart',
+  "tomorrow.dataset.startTomorrow='true'","next.setDate(next.getDate()+1)",
+  'next.setHours(previousStart.getHours(),previousStart.getMinutes(),0,0)',
+  'minutes>0&&minutes<=480?minutes:60','row.append(tomorrow)'])
+  assert.ok(js.includes(t),'Missing P198 tomorrow feature: '+t);
+ assert.ok(css.includes('[data-start-tomorrow="true"]'));
+ for(const t of ['dvrTomorrowQA','positron-p51198-dvr-tomorrow-before-1920x1080-real.png',
+  'positron-p51198-dvr-tomorrow-after-1920x1080-real.png'])
+  assert.ok(qa.includes(t),'Missing P198 Electron QA: '+t);
+});

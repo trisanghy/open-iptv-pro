@@ -1,5 +1,10 @@
 # Positron — New 20-round issue register
 
+## Đợt hiện tại — P5.1.198 (CANDIDATE)
+- Baseline từ ảnh Electron thật P5.1.197 đã MỞ: EPG có 3 chọn nhanh 5/15/30 phút nhưng không có cách chuyển mốc ghi sang ngày mai giữ cùng giờ.
+- Giải pháp P5.1.198 / Electron 4.23.283: thêm nút Ngày mai cùng giờ trên cả mẫu EPG và ghi nhanh TV, giữ duration 1–480 phút và title, update preview, không gửi lịch.
+- Phải có đủ Node, before/after thật 1920×1080 và MỞ soát ảnh, commit/6 CI jobs/Release; không tính các bài ảnh lịch sử là vòng sửa.
+
 ## Đợt hiện tại — vòng kế tiếp P5.1.197 (CANDIDATE)
 - Đầu vào: ảnh Electron P5.1.196 thật trước/sau đã MỞ xem 1920×1080; ở ảnh sau, dòng lịch ghi nhỏ và lặp 'QA Channel 001' do tên auto đã có tên kênh.
 - P5.1.197 / app 4.23.282: Sao chép lịch ghi khi hợp lệ, rõ ràng thông báo clipboard, bỏ lặp kênh trong tóm tắt; không ảnh hưởng DVR/playlist.

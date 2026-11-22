@@ -1,5 +1,14 @@
 # Positron P5 Changelog
 
+## P5.1.198 — Hẹn giờ ghi ngày mai cùng giờ / Electron 4.23.283
+- Feature priority: NEW — Ảnh Electron P5.1.197 thực tế cho thấy các nút bắt đầu nhanh chỉ có Sau 5, Sau 15, Sau 30 phút, không có cách chuyển lịch ghi sang ngày mai giữ nguyên giờ đã chọn. Bổ sung nút Ngày mai cùng giờ ở cả hai mẫu ghi hình để tiện lên lịch mà không nhập lại giờ kết thúc.
+- Electron screenshot: positron-p51198-dvr-tomorrow-after-1920x1080-real.png
+- User action: Mở Lịch phát sóng > Hẹn giờ ghi, đặt kênh và mốc thời gian rồi bấm Ngày mai cùng giờ để chuyển bắt đầu/kết thúc sang ngày kế tiếp, sau đó tự quyết định có Đặt lịch ghi hay không.
+- Tính năng: Chọn ngày mai theo giờ máy và giữ giờ/phút bắt đầu đã nhập, giữ thời lượng nếu hợp lệ 1–480 phút, mặc định 60 phút nếu thiếu; cập nhật preview, không tự ghi, không phát và không chỉnh tên thủ công.
+- Before: `positron-p51198-dvr-tomorrow-before-1920x1080-real.png`; after: `positron-p51198-dvr-tomorrow-after-1920x1080-real.png`.
+- QA: xác minh giờ/phút được giữ, ngày +1, thời lượng 120 phút giữ nguyên, quick DVR vẫn có nút, không tràn ngang, không autoplay/submission hoặc sửa tên.
+- Status: CANDIDATE cho đến khi CI pass, ảnh Electron thật được mở kiểm tra và release/tag/asset được xác minh.
+
 ## P5.1.197 — Sao chép lịch ghi và bỏ lặp tên kênh / Electron 4.23.282
 - Feature priority: NEW — Ảnh Electron P5.1.196 thật ở 1920×1080 cho thấy dòng xem trước nhỏ, lặp kênh hai lần khi tên được tạo tự động và không thể sao chép nội dung để đối chiếu. Bổ sung nút sao chép theo yêu cầu, trạng thái thành công/thất bại và nội dung tóm tắt gọn dễ đọc.
 - Electron screenshot: positron-p51197-dvr-copy-after-1920x1080-real.png

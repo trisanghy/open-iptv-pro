@@ -905,3 +905,12 @@ html[data-positron="true"] #poDvrReviewCopy:disabled{opacity:.45;cursor:not-allo
 html[data-positron="true"] #poDvrReviewCopy[data-state="copied"]{border-color:var(--po-accent,#79dfc6);color:var(--po-accent,#79dfc6)}
 html[data-positron="true"] #poDvrReviewCopy:focus-visible{outline:2px solid var(--po-accent,#79dfc6);outline-offset:2px}
 @media(max-width:700px){html[data-positron="true"] #poDvrReviewCopy{width:100%;white-space:normal}}
+
+
+/* P198: tomorrow preset is an ordinary accessible quick start control. */
+html[data-positron="true"] .po-dvr-quick-start button[data-start-tomorrow="true"]{
+ border-color:var(--po-accent,#79dfc6);color:var(--po-accent,#79dfc6);
+}
+html[data-positron="true"] .po-dvr-quick-start button[data-start-tomorrow="true"]:focus-visible{
+ outline:2px solid var(--po-accent,#79dfc6);outline-offset:2px;
+}

@@ -697,6 +697,28 @@
    });
    row.append(button);
   }
+
+  // P198: start tomorrow at the time currently selected, preserving legal
+  // duration, and never modifying the title, playlist or schedule.
+  const tomorrow=d.createElement('button');tomorrow.type='button';
+  tomorrow.id=startId==='dvrStart'?'poDvrTomorrowStart':'poDvrTomorrowQuickStart';
+  tomorrow.dataset.startTomorrow='true';tomorrow.textContent='Ngày mai cùng giờ';
+  tomorrow.setAttribute('aria-label','Đặt giờ bắt đầu ghi hình vào ngày mai cùng giờ');
+  tomorrow.addEventListener('click',()=>{
+   const previousStart=start.value?new Date(start.value):new Date();
+   const previousEnd=end.value?new Date(end.value):new Date(NaN);
+   const minutes=Math.round((previousEnd.getTime()-previousStart.getTime())/60000);
+   const duration=Number.isFinite(minutes)&&minutes>0&&minutes<=480?minutes:60;
+   const next=new Date();next.setDate(next.getDate()+1);
+   next.setHours(previousStart.getHours(),previousStart.getMinutes(),0,0);
+   start.value=dvrLocalDateTime(next);
+   end.value=dvrLocalDateTime(new Date(next.getTime()+duration*60000));
+   for(const field of [start,end]){
+    field.dispatchEvent(new Event('input',{bubbles:true}));
+    field.dispatchEvent(new Event('change',{bubbles:true}));
+   }
+  });
+  row.append(tomorrow);
   start.parentElement.append(row);
  };
  attachDvrQuickStart('dvrStart','dvrEnd','poDvrQuickStartPresets');
