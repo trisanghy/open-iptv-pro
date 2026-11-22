@@ -525,7 +525,7 @@ jobs:
           fi
       - uses: actions/upload-artifact@v4
         with:
-          name: positron-p51268-${{ matrix.label }}
+          name: positron-p51269-${{ matrix.label }}
           path: |
             dist/*.dmg
             dist/*.exe
@@ -540,7 +540,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/download-artifact@v4
         with:
-          pattern: positron-p51268-*
+          pattern: positron-p51269-*
           path: release-stage
           merge-multiple: true
       - name: Assemble source and verifiable 50-round P4 evidence
