@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.283",
-  "description": "Positron P5.1.198: hẹn ghi ngày mai cùng giờ bằng một nút",
+  "version": "4.23.284",
+  "description": "Positron P5.1.199: tên bản ghi tự tạo đồng bộ khi đổi giờ",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

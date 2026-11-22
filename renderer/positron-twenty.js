@@ -730,6 +730,37 @@
  const attachDvrSuggestedTitle=()=>{
   const nameInput=byId('dvrTitle'),selector=byId('dvrChannel'),start=byId('dvrStart');
   if(!nameInput||!selector||!start||byId('poDvrSuggestName'))return;
+  // P199: only generated names (not edited manually) track time/channel edits.
+  let generatedValue='';
+  const suggest=()=>{
+   const selected=selector.selectedOptions?.[0]?.textContent?.trim()||'';
+   if(selector.disabled||!selected||selected==='Chưa có kênh để ghi hình')return '';
+   const safeName=selected.replace(/[\\/:*?"<>|]/g,' ').replace(/\s+/g,' ').trim();
+   const local=start.value?new Date(start.value):new Date(NaN);
+   const pad=n=>String(n).padStart(2,'0');
+   const stamp=Number.isFinite(local.getTime())
+    ?pad(local.getDate())+'.'+pad(local.getMonth()+1)+'.'+local.getFullYear()
+      +' '+pad(local.getHours())+':'+pad(local.getMinutes())
+    :'';
+   return [safeName,stamp].filter(Boolean).join(' - ');
+  };
+  const syncGenerated=()=>{
+   if(!generatedValue||nameInput.value!==generatedValue)return;
+   const generated=suggest();
+   if(!generated)return;
+   const next=generated.slice(0,Math.max(1,nameInput.maxLength||220));
+   if(next===generatedValue)return;
+   nameInput.value=next;generatedValue=next;
+   nameInput.dispatchEvent(new Event('input',{bubbles:true}));
+   nameInput.dispatchEvent(new Event('change',{bubbles:true}));
+  };
+  nameInput.addEventListener('input',()=>{
+   if(nameInput.value!==generatedValue)generatedValue='';
+  });
+  for(const field of [selector,start]){
+   field.addEventListener('input',syncGenerated);
+   field.addEventListener('change',syncGenerated);
+  }
   const button=d.createElement('button');button.id='poDvrSuggestName';button.type='button';
   button.className='po-dvr-suggest-name';
   button.textContent='Tạo tên từ kênh và giờ';
@@ -746,16 +777,10 @@
     window.IPTVState?.toast?.('Chọn kênh trước khi tạo tên bản ghi','warn');
     return;
    }
-   const safeName=selected.replace(/[\\/:*?"<>|]/g,' ').replace(/\s+/g,' ').trim();
-   const local=start.value?new Date(start.value):new Date(NaN);
-   const pad=n=>String(n).padStart(2,'0');
-   const stamp=Number.isFinite(local.getTime())
-    ?pad(local.getDate())+'.'+pad(local.getMonth()+1)+'.'+local.getFullYear()
-      +' '+pad(local.getHours())+':'+pad(local.getMinutes())
-    :'';
-   const generated=[safeName,stamp].filter(Boolean).join(' - ');
+   const generated=suggest();
    if(!generated)return;
    nameInput.value=generated.slice(0,Math.max(1,nameInput.maxLength||220));
+   generatedValue=nameInput.value;
    nameInput.dispatchEvent(new Event('input',{bubbles:true}));
    nameInput.dispatchEvent(new Event('change',{bubbles:true}));
    nameInput.focus({preventScroll:true});

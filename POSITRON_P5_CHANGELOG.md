@@ -1554,3 +1554,9 @@ P5.1.81 follow-up: real Electron capture found nav overflow; replace flexible no
 - Release job reached a real GitHub HTTP 422: `body is too long (maximum is 125000 characters)`. The complete historical changelog outgrew GitHub's Release body limit.
 - Keep the historical `POSITRON_P5_CHANGELOG.md` intact in the bundled source, publish short notes with a pointer to the full file, and add a Node regression assertion against using full changelog as release notes.
 - No UI code, filter semantics, 450px Electron screenshot requirements, tags or previous versions were altered. Round 05 remains candidate until a fresh full CI run and immutable Release pass.
+
+
+## P5.1.199 / 4.23.284 — Đồng bộ tên ghi hình tạo tự động (CANDIDATE)
+- Sửa lỗi nhìn thấy trên ảnh thật P5.1.198: tên tự tạo giữ ngày cũ sau khi bấm Ngày mai cùng giờ.
+- Tên do Positron tạo trong phiên và chưa được chỉnh tay sẽ đổi theo giờ/kênh; tên thủ công và tên đã lưu giữ nguyên.
+- Regression Node và Electron 1920×1080 before/after, kiểm chứng CI và release bất biến.

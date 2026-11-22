@@ -1,5 +1,10 @@
 # Positron — New 20-round issue register
 
+## P5.1.199 / Electron 4.23.284 — CANDIDATE (22/11/2026)
+- Đã mở ảnh Electron thật P5.1.198 1920×1080: Bắt đầu 23/11 nhưng tên tạo tự động còn 22/11; nút tạo tên yêu cầu xóa tên cũ.
+- Sửa trên Positron: chỉ đồng bộ tên được tạo bởi app trong phiên khi giờ bắt đầu/kênh thay đổi; bảo vệ tên thủ công, playlist, DVR và stream.
+- Bắt buộc trước khi ghi VERIFIED: 11 QA Electron, ảnh 16:9 trước/sau đã mở, Node test, CI 6/6, release và installer thực.
+
 ## Đợt hiện tại — P5.1.198 (CANDIDATE)
 - Baseline từ ảnh Electron thật P5.1.197 đã MỞ: EPG có 3 chọn nhanh 5/15/30 phút nhưng không có cách chuyển mốc ghi sang ngày mai giữ cùng giờ.
 - Giải pháp P5.1.198 / Electron 4.23.283: thêm nút Ngày mai cùng giờ trên cả mẫu EPG và ghi nhanh TV, giữ duration 1–480 phút và title, update preview, không gửi lịch.

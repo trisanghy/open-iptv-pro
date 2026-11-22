@@ -2153,3 +2153,18 @@ test('P5.1.198 tomorrow DVR preset preserves clock and duration across native fo
   'positron-p51198-dvr-tomorrow-after-1920x1080-real.png'])
   assert.ok(qa.includes(t),'Missing P198 Electron QA: '+t);
 });
+
+
+test('P5.1.199 generated DVR name tracks start edits and respects manual names',()=>{
+ const js=read('renderer/positron-twenty.js'),qa=read('scripts/positron-20-extension.cjs');
+ for(const token of ["let generatedValue=''",'const syncGenerated=()=>',
+  'if(!generatedValue||nameInput.value!==generatedValue)return',
+  "nameInput.addEventListener('input'","field.addEventListener('change',syncGenerated)",
+  'generatedValue=nameInput.value'])
+  assert.ok(js.includes(token),'Missing generated-only DVR sync: '+token);
+ for(const token of ['dvrTitleSyncQA','generatedTitleFollowsTomorrow',
+  'customTitleNeverOverwritten','buttonDoesNotReplaceCustom','noSubmit',
+  'positron-p51199-dvr-title-sync-before-1920x1080-real.png',
+  'positron-p51199-dvr-title-sync-after-1920x1080-real.png'])
+  assert.ok(qa.includes(token),'Missing real Electron P199 QA: '+token);
+});
