@@ -1,5 +1,11 @@
 # Positron P5 Changelog
 
+## P5.1.261 — Đi tới thẻ nguồn từ bảng chi tiết / Electron 4.23.346
+- Feature priority: NEW — Bấm trực tiếp từ dòng nguồn trong phần Chi tiết nguồn để tìm và làm nổi bật thẻ nguồn gốc bên dưới, giữ đúng ID nguồn dù bảng chi tiết đã sắp xếp; không thay đổi playlist hoặc tự phát video.
+- Electron screenshot: positron-p51261-source-jump-after-1920x1080-real.png
+- User action: Mở Nguồn IPTV → Chi tiết nguồn → chọn sắp xếp Ít kênh trước → nhấn “Đi tới” cạnh nguồn muốn quản lý; thẻ nguồn tương ứng sẽ cuộn vào vùng xem và được viền nổi bật.
+- Electron QA: `positron-p51261-source-jump-before-1920x1080-real.png` / `positron-p51261-source-jump-after-1920x1080-real.png` / `positron-p51261-source-jump-720-real.png`; xác minh focus, ID nguồn, vị trí thẻ, dữ liệu bất biến, không autoplay và không tràn ngang.
+
 ## P5.1.260 — Sắp xếp nguồn theo số kênh hoặc tên / Electron 4.23.345
 - Feature priority: NEW — Cho phép xem nguồn nhiều kênh nhất hoặc ít kênh nhất ở đầu bảng chi tiết, hoặc sắp xếp tên A–Z; chỉ thay đổi thứ tự hiển thị bảng phụ, hoàn toàn giữ nguyên dữ liệu M3U và thứ tự nguồn gốc.
 - Electron screenshot: positron-p51260-source-sort-after-1920x1080-real.png

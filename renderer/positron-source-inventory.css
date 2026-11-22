@@ -79,3 +79,16 @@ html[data-positron="true"] #page-sources #poSourceInventorySort{
 html[data-positron="true"] #page-sources #poSourceInventorySort:focus-visible{
  outline:2px solid #9bf4dd;outline-offset:2px;
 }
+
+/* P261: direct, accessible navigation to each native source card. */
+html[data-positron="true"] #page-sources #poSourceInventoryDetails .po-source-inventory-jump{
+ flex:0 0 auto;min-height:23px;padding:3px 7px;border-radius:6px;
+ background:#244459;border:1px solid #42788b;color:#d3f2f8;
+ font:600 10px/1.25 system-ui,sans-serif;cursor:pointer;
+}
+html[data-positron="true"] #page-sources #poSourceInventoryDetails .po-source-inventory-jump:focus-visible{
+ outline:2px solid #a3f8e1;outline-offset:2px;
+}
+html[data-positron="true"] #page-sources #sourcesList .source-card[data-po-inventory-target="true"]{
+ outline:2px solid #8be9d2;outline-offset:3px;
+}

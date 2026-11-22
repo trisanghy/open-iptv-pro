@@ -96,7 +96,26 @@
    const status=d.createElement('strong');
    status.dataset.enabled=String(source.enabled!==false);
    status.textContent=source.enabled===false?'Tắt':'Bật';
-   li.append(name,status);
+   // P261: navigate to the native card for the selected source without editing it.
+   const jump=d.createElement('button');
+   jump.type='button';
+   jump.className='po-source-inventory-jump';
+   jump.textContent='Đi tới';
+   jump.setAttribute('aria-label','Đi tới thẻ nguồn '+String(source.name||'chưa đặt tên'));
+   jump.addEventListener('click',()=>{
+    const current=state.getStore();
+    const currentSources=Array.isArray(current?.sources)?current.sources:[];
+    const index=currentSources.findIndex(item=>String(item?.id)===String(source.id));
+    const cards=[...d.querySelectorAll('#sourcesList .source-card')];
+    const target=index>=0?cards[index]:null;
+    if(!target)return;
+    for(const card of cards)card.removeAttribute('data-po-inventory-target');
+    target.dataset.poInventoryTarget='true';
+    target.tabIndex=-1;
+    target.focus({preventScroll:true});
+    target.scrollIntoView({block:'center',behavior:'auto'});
+   });
+   li.append(name,status,jump);
    details.append(li);
   }
   if(!filtered.length){

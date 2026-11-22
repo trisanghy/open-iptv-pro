@@ -17,10 +17,16 @@
 - Ảnh lọc "Đang tắt" có 0/2 nguồn vì cả 2 nguồn trong fixture đang bật. Cần bổ sung kiểm thử nguồn bị tắt thực trong vòng sau.
 - Release: `positron/v4.23.344-p5.1.259`; source HEAD phát hành `fe4dd6a7eab43d3520a113317ddc3f655e46b4f8`.
 
-## Vòng 03 — P5.1.260 / 4.23.345 — ĐANG XÁC MINH
-- Từ ảnh P259, nguồn thứ nhất 552 kênh và nguồn thứ hai 9 kênh, chưa có cách đổi thứ tự nhìn nhanh. Thêm sort ở bảng phụ: ít/nhiều kênh, tên A-Z, thứ tự gốc; không sửa M3U.
-- Screenshot cần xem: `positron-p51260-source-sort-before-1920x1080-real.png`, `positron-p51260-source-sort-after-1920x1080-real.png`, `positron-p51260-source-sort-720-real.png`.
-- Đếm khi CI xanh, mở ảnh thật và Release xuất đủ installer.
+## Vòng 03 — P5.1.260 / 4.23.345 — ĐÃ XÁC MINH
+- Đã thêm sắp xếp bảng chi tiết theo nhiều/ít kênh và tên A–Z, dữ liệu/thứ tự M3U gốc bất biến.
+- QA: 946 tests, 941 pass, 5 skipped, 0 fail; 6/6 CI jobs success. PNG trước/sau 1920x1080 và 720px đã tải/mở. Trước là nguồn 552 trước 9; sau là 9 trước 552.
+- Release: `positron/v4.23.345-p5.1.260`; commit `6a34a041ba7f688e0f584dd90ec646f679b2124f`.
+- Phát hiện từ ảnh: có thể thấy danh sách đã sắp xếp nhưng chưa điều hướng từ hàng trong bảng tới thẻ nguồn gốc.
+
+## Vòng 04 — P5.1.261 / 4.23.346 — ĐANG XÁC MINH
+- Thêm nút Đi tới, tìm native source card theo ID và focus/scroll/highlight đúng thẻ nguồn, không thay đổi thứ tự hay playback.
+- Screenshot cần trực tiếp mở: `positron-p51261-source-jump-before-1920x1080-real.png`, `positron-p51261-source-jump-after-1920x1080-real.png`, `positron-p51261-source-jump-720-real.png`.
+- Chỉ ghi đạt khi test/CI, ảnh thật và release đã xác minh.
 
 ## Các vòng kế
 - Bám theo PNG và nhật ký của vòng gần nhất, không tự ghi 20/20 khi chưa có bằng chứng.

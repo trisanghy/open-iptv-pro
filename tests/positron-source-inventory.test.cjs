@@ -86,7 +86,7 @@ test('P5.1.260 sorts only a local filtered source inventory, not playlist order'
  assert.ok(css.includes('#poSourceInventorySort:focus-visible'));
  assert.ok(!code.includes('store.sources.sort(')&&!code.includes('sources.sort('));
  assert.ok(!code.includes('save(')&&!code.includes('playChannel('));
- assert.equal(JSON.parse(read('package.json')).version,'4.23.345');
+ assert.ok(Number(JSON.parse(read('package.json')).version.split('.')[2])>=345);
 });
 test('P5.1.260 screenshots Electron source sort sequence and 720px UI',()=>{
  const qa=read('scripts/positron-20-extension.cjs'),wf=read('.github/workflows/positron-lab.yml');
@@ -96,4 +96,25 @@ test('P5.1.260 screenshots Electron source sort sequence and 720px UI',()=>{
  for(const key of ['sourceSortQA260','ascendingByChannelCount:','reversedOriginalOrder:',
   'noAutoplay:','sourcesUnchanged:','playlistUnchanged:','noOverflow:'])
   assert.ok(qa.includes(key),'Missing P260 real Electron verification '+key);
+});
+
+test('P5.1.261 source detail rows jump to matching native source card safely',()=>{
+ const js=read('renderer/positron-source-inventory.js'),css=read('renderer/positron-source-inventory.css');
+ for(const token of ["jump.className='po-source-inventory-jump';","jump.textContent='Đi tới';",
+  "jump.addEventListener('click'","currentSources.findIndex(", "#sourcesList .source-card",
+  "target.dataset.poInventoryTarget='true';","target.focus({preventScroll:true});",
+  "target.scrollIntoView({block:'center',behavior:'auto'});"])
+  assert.ok(js.includes(token),'P261 direct source navigation '+token);
+ assert.ok(css.includes('.source-card[data-po-inventory-target="true"]'));
+ assert.ok(!js.includes('playChannel(')&&!js.includes('save(')&&!js.includes('localStorage.setItem('));
+ assert.equal(JSON.parse(read('package.json')).version,'4.23.346');
+});
+test('P5.1.261 Electron screenshots verify native card focus, scroll and unchanged playlist',()=>{
+ const qa=read('scripts/positron-20-extension.cjs'),wf=read('.github/workflows/positron-lab.yml');
+ for(const filename of ['positron-p51261-source-jump-before-1920x1080-real.png',
+  'positron-p51261-source-jump-after-1920x1080-real.png','positron-p51261-source-jump-720-real.png'])
+  assert.ok(qa.includes(filename)&&wf.includes(filename),filename);
+ for(const key of ['sourceJumpQA261','focusedCard:','highlightedCard:',
+  'sourceIdCorrect:','noAutoplay:','sourcesUnchanged:','playlistUnchanged:','noOverflow:'])
+  assert.ok(qa.includes(key),'P261 native card QA '+key);
 });
