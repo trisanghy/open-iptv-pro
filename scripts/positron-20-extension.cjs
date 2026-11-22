@@ -5049,10 +5049,56 @@ async function runTwenty(page){
   document.getElementById('positronFavoritePageSize')?.value==='6');
  assert.equal(restoreSixQA,true,'P183 six-item mode remains available');
  await page.evaluate(()=>{delete window.__poP183Count;});
+ // P5.1.184: actual P183 screenshot shows 553 candidates but no group selector.
+ // Native Electron fixture has Main, Regional, Other and nine small groups.
+ await page.setViewportSize({width:1920,height:1080});
+ await page.locator('#positronFavoriteMore').scrollIntoViewIfNeeded();
+ const before184=await page.screenshot({path:path.join(out,'positron-p51184-favorite-group-before-1920x1080-real.png'),animations:'disabled'});
+ assert.deepEqual([before184.readUInt32BE(16),before184.readUInt32BE(20)],[1920,1080]);
+ await page.selectOption('#positronFavoritePageSize','12');
+ await page.selectOption('#positronFavoriteMoreGroup',{label:'02 • Regional channels'});
+ const favoriteRegionalQA=await page.evaluate(()=>{
+  const d=document,st=window.IPTVState,more=d.getElementById('positronFavoriteMore');
+  const chips=[...more.querySelectorAll('.po-fav-more-chip')];
+  const all=st.getChannels(),names=chips.map(c=>c.textContent.replace(/^☆\s*/,'').trim());
+  const matched=names.map(name=>all.find(ch=>ch.name===name));
+  const group=d.getElementById('positronFavoriteMoreGroup');
+  return {
+   hasGroupDropdown:!!group,
+   accessible:group.getAttribute('aria-label')==='Lọc gợi ý Yêu thích theo nhóm kênh',
+   availableGroups:group.options.length>=4,
+   regionalSelected:group.value==='02 • Regional channels',
+   twelveRegionalSuggestions:chips.length===12&&matched.every(ch=>ch?.group==='02 • Regional channels'),
+   batchLabel:more.querySelector('.po-fav-more-bulk')?.textContent==='Lưu cả 12 kênh',
+   originalFavorites:d.querySelectorAll('#favoriteList .fav-card').length===20,
+   noAutoplay:st.getCurrent()===null,
+   noHorizontalOverflow:d.documentElement.scrollWidth<=innerWidth+1
+  };
+ });
+ for(const [key,value] of Object.entries(favoriteRegionalQA))
+  assert.equal(value,true,'P184 Favorites group '+key+': '+JSON.stringify(favoriteRegionalQA));
+ await page.locator('#positronFavoriteMore').scrollIntoViewIfNeeded();
+ const after184=await page.screenshot({path:path.join(out,'positron-p51184-favorite-group-after-1920x1080-real.png'),animations:'disabled'});
+ assert.deepEqual([after184.readUInt32BE(16),after184.readUInt32BE(20)],[1920,1080]);
+ await page.fill('#positronFavoriteMoreSearch','QA Channel 050');
+ const favoriteGroupSearchQA=await page.evaluate(()=>{
+  const chips=[...document.querySelectorAll('#positronFavoriteMore .po-fav-more-chip')];
+  return chips.length===1&&chips[0].textContent.includes('QA Channel 050') &&
+   document.getElementById('positronFavoriteMoreGroup').value==='02 • Regional channels' &&
+   window.IPTVState.getCurrent()===null;
+ });
+ assert.equal(favoriteGroupSearchQA,true,'P184 group and text search must intersect');
+ await page.fill('#positronFavoriteMoreSearch','');
+ await page.selectOption('#positronFavoriteMoreGroup','');
+ const resetGroupQA=await page.evaluate(()=>{
+  const select=document.getElementById('positronFavoriteMoreGroup');
+  return select.value===''&&document.querySelectorAll('#positronFavoriteMore .po-fav-more-chip').length===12;
+ });
+ assert.equal(resetGroupQA,true,'P184 all-groups reset must restore twelve suggestions');
  await page.setViewportSize({width:1360,height:820});
 
   const report={type:'Positron P5 twenty distinct desktop screenshot cases',realElectron:true,syntheticChannels:false,
-  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,desktop16x9Screenshots,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA,chooserQa,toastLayoutQA,nativeToastQA,compactIdleQA,channelChipRailQA,advancedFilterQA,readableCardsQA,keyboardTabQA,favoriteEmptyQA,duplicateEmptyQA,categoryFilterQA,categoryFixtureQA,compactSingleQA,directFavoriteQA,favoriteCountQA,compactToastStackQA,toastDismissQA,toastFocusReturnQA,toastDockQA,wheelQA,pinnedAllQA,pinnedMaskQA,categoryKeyQA,dropdownChipQA,pinnedRightMaskQA,pinnedBorderMaskQA,asciiDSearchQA,emptySearchActionQA,readableCardTitleQA,favoriteSvgQA,keyboardFavoriteQA,multiTermSearchQA,keyboardSearchQA,arrowNavigationQA,pageNavigationQA,favoriteSortQA,onAirFilterQA,programmeSearchQA,upcomingProgrammeQA,soonProgrammeQA,earliestEpgSortQA,timeWindowQA,scheduleProgressQA:scheduleProgressQA,nativeReminderQA,cancelReminderQA,reminderLeadQA,toastHistoryQA,notificationArchiveQA,alertFilterQA,noticeSearchQA,quietModeQA,dismissToastQA,libraryPulseQA,groupDistributionQA,logoMissingQA,missingSearchQA,missingGroupQA,missingSortQA,missingJumpQA,missingCsvQA,duplicateQA,duplicateSearchQA,duplicateCsvQA,duplicateScopeQA,missingSizeQA,missingPagerQA,missingEpgFilterQA,missingResetQA,missingRangeQA,missingLocateQA,libraryReturnQA,favoriteActionQA,quickFavoriteQA,favoriteMoreQA,favoriteSearchQA,favoriteRotateQA,favoriteSuggestSearchQA,favoriteBulkQA,favoriteLayoutQA,favoriteNameSortQA,searchAfterSortQA,restoredSortQA,favoriteSuggestion12QA,batchFavorite12QA,restoreSixQA};
+  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,desktop16x9Screenshots,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA,chooserQa,toastLayoutQA,nativeToastQA,compactIdleQA,channelChipRailQA,advancedFilterQA,readableCardsQA,keyboardTabQA,favoriteEmptyQA,duplicateEmptyQA,categoryFilterQA,categoryFixtureQA,compactSingleQA,directFavoriteQA,favoriteCountQA,compactToastStackQA,toastDismissQA,toastFocusReturnQA,toastDockQA,wheelQA,pinnedAllQA,pinnedMaskQA,categoryKeyQA,dropdownChipQA,pinnedRightMaskQA,pinnedBorderMaskQA,asciiDSearchQA,emptySearchActionQA,readableCardTitleQA,favoriteSvgQA,keyboardFavoriteQA,multiTermSearchQA,keyboardSearchQA,arrowNavigationQA,pageNavigationQA,favoriteSortQA,onAirFilterQA,programmeSearchQA,upcomingProgrammeQA,soonProgrammeQA,earliestEpgSortQA,timeWindowQA,scheduleProgressQA:scheduleProgressQA,nativeReminderQA,cancelReminderQA,reminderLeadQA,toastHistoryQA,notificationArchiveQA,alertFilterQA,noticeSearchQA,quietModeQA,dismissToastQA,libraryPulseQA,groupDistributionQA,logoMissingQA,missingSearchQA,missingGroupQA,missingSortQA,missingJumpQA,missingCsvQA,duplicateQA,duplicateSearchQA,duplicateCsvQA,duplicateScopeQA,missingSizeQA,missingPagerQA,missingEpgFilterQA,missingResetQA,missingRangeQA,missingLocateQA,libraryReturnQA,favoriteActionQA,quickFavoriteQA,favoriteMoreQA,favoriteSearchQA,favoriteRotateQA,favoriteSuggestSearchQA,favoriteBulkQA,favoriteLayoutQA,favoriteNameSortQA,searchAfterSortQA,restoredSortQA,favoriteSuggestion12QA,batchFavorite12QA,restoreSixQA,favoriteRegionalQA,favoriteGroupSearchQA,resetGroupQA};
  fs.writeFileSync(path.resolve('positron-evidence','audit-p5-20-rounds.json'),JSON.stringify(report,null,2));
  return report;
 }

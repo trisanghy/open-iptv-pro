@@ -711,3 +711,15 @@ html[data-positron="true"] #page-fav #positronFavoritePageSize:focus-visible{
 }
 @media(max-width:900px){html[data-positron="true"] #page-fav .po-fav-more-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:540px){html[data-positron="true"] #page-fav .po-fav-more-grid{grid-template-columns:1fr}}
+
+/* P5.1.184: filter suggestions by actual group metadata, responsive and accessible. */
+html[data-positron="true"] #page-fav #positronFavoriteMoreGroup{
+ flex:1 1 210px;min-width:160px;max-width:330px;min-height:36px;
+ padding:7px 10px;border:1px solid var(--po-border,#324f59);
+ border-radius:8px;background:var(--po-input,#152933);
+ color:var(--po-text,#eaf7f7);font-size:12px;cursor:pointer;
+}
+html[data-positron="true"] #page-fav #positronFavoriteMoreGroup:focus-visible{
+ outline:2px solid var(--po-accent,#60d7c2);outline-offset:2px;
+}
+@media(max-width:650px){html[data-positron="true"] #page-fav #positronFavoriteMoreGroup{max-width:none;flex:1 1 100%}}

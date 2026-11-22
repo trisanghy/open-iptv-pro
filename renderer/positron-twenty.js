@@ -184,7 +184,7 @@
   const more=d.createElement('section');more.id='positronFavoriteMore';
   more.className='po-fav-more';more.hidden=true;
   favoriteList.after(more);
-  let moreCursor=0,moreQuery='',morePageSize=6;
+  let moreCursor=0,moreQuery='',morePageSize=6,moreGroup='';
   const foldMore=value=>String(value||'').normalize('NFD')
    .replace(/[\u0300-\u036f]/g,'').replace(/đ/gi,'d').toLowerCase().trim();
   const syncFavoriteMore=()=>{
@@ -196,10 +196,14 @@
    const available=store&&fav?channels.filter(ch=>ch&&ch.id&&!fav.has(store,ch)):[];
    more.replaceChildren();
    if(!available.length){more.hidden=true;return;}
-   // P5.1.179: tìm kiếm cả kênh chưa đánh sao, kết hợp chuyển nhóm.
+   // P5.1.184: combine chosen group with the existing accent-insensitive search.
+   const groups=[...new Set(available.map(ch=>String(ch.group||'Không phân nhóm')))]
+    .sort((a,b)=>a.localeCompare(b,'vi',{numeric:true}));
+   if(moreGroup&&!groups.includes(moreGroup))moreGroup='';
    const words=foldMore(moreQuery).split(/\s+/).filter(Boolean);
-   const filtered=words.length?available.filter(ch=>
-    words.every(word=>foldMore((ch.name||'')+' '+(ch.group||'')).includes(word))):available;
+   const filtered=available.filter(ch=>
+    (!moreGroup||String(ch.group||'Không phân nhóm')===moreGroup) &&
+    (!words.length||words.every(word=>foldMore((ch.name||'')+' '+(ch.group||'')).includes(word))));
    moreCursor=filtered.length?moreCursor%filtered.length:0;
    const picks=Array.from({length:Math.min(morePageSize,filtered.length)},
     (_,index)=>filtered[(moreCursor+index)%filtered.length]);
@@ -257,7 +261,20 @@
     const focus=d.getElementById('positronFavoriteMoreSearch');
     if(focus){focus.focus();focus.setSelectionRange(caret,caret);}
    });
-   searchRow.append(searchLabel,moreInput);
+   // Group controls are derived exclusively from currently enabled playlist metadata.
+   const groupLabel=d.createElement('label');groupLabel.htmlFor='positronFavoriteMoreGroup';
+   groupLabel.textContent='Nhóm';
+   const groupSelect=d.createElement('select');groupSelect.id='positronFavoriteMoreGroup';
+   groupSelect.setAttribute('aria-label','Lọc gợi ý Yêu thích theo nhóm kênh');
+   for(const [value,label] of [['','Tất cả nhóm'],...groups.map(group=>[group,group])]){
+    const option=d.createElement('option');option.value=value;option.textContent=label;groupSelect.append(option);
+   }
+   groupSelect.value=moreGroup;
+   groupSelect.addEventListener('change',()=>{
+    moreGroup=groupSelect.value;moreCursor=0;syncFavoriteMore();
+    more.querySelector('#positronFavoriteMoreGroup')?.focus();
+   });
+   searchRow.append(searchLabel,moreInput,groupLabel,groupSelect);
    const hint=d.createElement('p');
    hint.textContent='Tìm thấy '+filtered.length+' / '+available.length+' kênh chưa yêu thích. Bấm ☆ để lưu, không tự phát video.';
    const grid=d.createElement('div');grid.className='po-fav-more-grid';

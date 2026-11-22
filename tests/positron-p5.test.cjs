@@ -1928,3 +1928,18 @@ test('P5.1.183 expands Favorites suggestions to 6 12 or 24 without changing the 
  assert.ok(qa.includes('batchFavorite12QA'));
  assert.ok(qa.includes('restoreSixQA'));
 });
+
+test('P5.1.184 filters Favorites suggestions by actual source groups with accent-insensitive search',()=>{
+ const js=read('renderer/positron-twenty.js'),css=read('renderer/positron-twenty.css');
+ const qa=read('scripts/positron-20-extension.cjs');
+ assert.ok(js.includes("let moreCursor=0,moreQuery='',morePageSize=6,moreGroup='';"));
+ assert.ok(js.includes("groupSelect.id='positronFavoriteMoreGroup'"));
+ assert.ok(js.includes("available.map(ch=>String(ch.group||'Không phân nhóm'))"));
+ assert.ok(js.includes("(!moreGroup||String(ch.group||'Không phân nhóm')===moreGroup)"));
+ assert.ok(js.includes('moreGroup=groupSelect.value;moreCursor=0;syncFavoriteMore()'));
+ assert.ok(js.includes('words.every(word=>foldMore((ch.name||\'\')+\' \'+(ch.group||\'\')).includes(word))'));
+ assert.ok(css.includes('#positronFavoriteMoreGroup:focus-visible'));
+ assert.ok(qa.includes('favoriteRegionalQA'));
+ assert.ok(qa.includes('favoriteGroupSearchQA'));
+ assert.ok(qa.includes('resetGroupQA'));
+});

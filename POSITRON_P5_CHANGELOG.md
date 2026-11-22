@@ -1,5 +1,14 @@
 # Positron P5 Changelog
 
+## P5.1.184 — Lọc gợi ý Yêu thích theo nhóm / Electron 4.23.269
+- Feature priority: NEW — Ảnh P5.1.183 chứng minh có 553 kênh chưa lưu nhưng gợi ý không phân loại theo nhóm; tìm bằng mắt còn rườm rà.
+- Thêm dropdown nhóm được tạo trực tiếp từ metadata nguồn đang bật, chỉ lọc tên nhóm thực có kênh chưa đánh dấu sao. Kết hợp tìm kiếm không dấu và lựa chọn 6/12/24 kênh, nút Lưu cả N vẫn theo số thẻ được lọc. Tập dữ liệu nguồn và favoriteKeys giữ nguyên.
+- Electron screenshot: positron-p51184-favorite-group-after-1920x1080-real.png
+- Before screenshot: positron-p51184-favorite-group-before-1920x1080-real.png
+- User action: Vào Yêu thích, chọn Nhóm để xem riêng kênh trong nhóm, nhập tên nếu muốn lọc tiếp; chọn Tất cả nhóm để quay lại toàn bộ gợi ý.
+- QA: dropdown hiển thị nhóm thực, 12 kênh thuộc nhóm Regional, kết hợp tìm QA Channel 050, reset toàn bộ, không autoplay/overflow; screenshot Electron trước/sau 1920×1080.
+- Status: CANDIDATE đến khi QA/CI và EXE/DMG Release được xác minh.
+
 ## P5.1.183 — Gợi ý Yêu thích 6/12/24 kênh / Electron 4.23.268
 - Feature priority: NEW — Ảnh Electron P5.1.182 cho thấy 6 gợi ý bị bó trong card 720px trên desktop rộng 1920px, duyệt nhiều kênh mất thao tác.
 - Viewer chọn 6, 12 hoặc 24 gợi ý, giữ mặc định sáu, nút Gợi ý khác nhảy đúng số đang chọn, Lưu cả N chỉ lưu kênh hiển thị sau nhấn chủ động. Tăng panel lên tối đa 1180px, 4/2/1 cột responsive.

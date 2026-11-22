@@ -108,3 +108,9 @@ Evaluate defects revealed by real screenshot of previous build before making cha
 - Feature: chọn 6/12/24 gợi ý, bảng rộng hơn 1180px, cập nhật next/bulk theo N; không sửa nguồn/phát video.
 - QA: `favoriteSuggestion12QA`, `batchFavorite12QA`, `restoreSixQA`, ảnh Electron before/after P183 1920×1080.
 - Chờ CI/release + mở ảnh trực tiếp, không tính VERIFIED trước đó.
+
+## P5.1.184 (CANDIDATE) — nhóm kênh gợi ý từ ảnh P183
+- Input: P183 cho 12 chip nhưng 553 ứng viên thuộc nhiều nhóm và chưa có dropdown lọc nhóm.
+- Feature: nhóm theo M3U enabled, kết hợp search không dấu, pageSize 6/12/24 và bulk, không thay nguồn hay tự phát.
+- QA: `favoriteRegionalQA`, `favoriteGroupSearchQA`, `resetGroupQA`, hai ảnh thực P184 before/after.
+- Chờ test, mở PNG và release.

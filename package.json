@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.268",
-  "description": "Positron P5.1.183: duyệt và lưu 6/12/24 kênh Yêu thích theo lựa chọn",
+  "version": "4.23.269",
+  "description": "Positron P5.1.184: lọc gợi ý Yêu thích theo nhóm kênh thực",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",
