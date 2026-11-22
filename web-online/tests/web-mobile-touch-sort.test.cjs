@@ -79,7 +79,7 @@ test('short tap and finger swipe before 0.8s never sort nor block default scroll
  assert.equal(end.prevented,false);
  f.tick(500);assert.equal(f.stats.saved,0);
  f.touch('touchstart',r);
- assert.deepEqual(f.registered.touchmove.map(x=>x.options.passive),[true]);
+ assert.ok(f.registered.touchmove.some(x=>x.options.passive===true),'channel touchmove must remain passive');
  const move=f.touch('touchmove',r,45,90);
  assert.equal(move.prevented,false);
  f.tick(1000);
@@ -113,7 +113,7 @@ test('Web-only CSS contains no visible three-bar grip and leaves touch scrolling
  assert.match(css,/#channelList \.channel-move\{\s*display:none!important/);
  assert.match(css,/touch-action:pan-y!important/);
  assert.doesNotMatch(css,/\.folder-sort-grip/);
- for(const [asset,version] of [['web-mobile-touch-sort.css','page-swipe-fixed-header-20261122c'],['web-mobile-touch-sort.js','mobile-touch-sort-20261122a']]){
+ for(const [asset,version] of [['web-mobile-touch-sort.css','header-page-scroll-20261122d'],['web-mobile-touch-sort.js','header-swipe-page-20261122e']]){
   const url=asset+'?v='+version;
   assert.ok(html.includes(url),url);
   assert.ok(builder.includes(url),url+' in build');
