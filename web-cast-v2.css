@@ -167,7 +167,7 @@ html[data-iptv-device="mobile"] body #page-tv .player-control-card .control-layo
 .iptv-tv-body svg.oip-cast-svg {
   display:inline-block;flex:0 0 auto;width:20px;height:20px;
   min-width:0;max-width:none;max-height:none;
-  vertical-align:middle;fill:currentColor;stroke:currentColor;
+  vertical-align:middle;
   color:inherit;overflow:visible;pointer-events:none;
 }
 #iptvCastPanel .cx-icon > svg.oip-cast-svg {width:29px;height:29px;color:var(--cx-accent)}
