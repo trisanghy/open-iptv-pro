@@ -1,4 +1,4 @@
-# Open IPTV Pro TV · TizenBrew v0.1.3 (thử nghiệm)
+# Open IPTV Pro TV · TizenBrew v0.1.4 (thử nghiệm)
 
 ## Cập nhật không cần USB
 
@@ -24,7 +24,7 @@
 
 Không cung cấp nguồn IPTV bản quyền mặc định. Chỉ sử dụng nội dung có quyền truy cập.
 
-## Điều khiển Back / Thoát (v0.1.3)
+## Điều khiển Back / Thoát (v0.1.4)
 
 - **Back** trong trình phát: trở lại danh sách kênh.
 - **Back** trong hộp thêm nguồn, QR hoặc tìm kiếm: đóng hộp thoại và dừng ghép đôi.
@@ -32,3 +32,10 @@ Không cung cấp nguồn IPTV bản quyền mặc định. Chỉ sử dụng n�
 - Bổ sung nút **↶ Thoát** trên thanh công cụ để dự phòng.
 - Xử lý cả phím 10009 (`keydown`) lẫn sự kiện `tizenhwkey`, không thêm `Back` vào `package.json.keys` vì phím hệ thống không được đăng ký theo cách đó.
 - Kiểm thử logic với mô phỏng phím Back. Vẫn cần xác minh trên TV Samsung thật.
+
+## Sửa lỗi v0.1.4 — ô xác nhận quyền trên Samsung TV
+
+- Thay ô checkbox nhỏ không nhận OK bằng nút dạng checkbox có vùng bấm rộng, trạng thái ✓ hiển thị rõ và thuộc tính `aria-checked`.
+- Remote: từ ô URL nhấn **↓** đến ô xác nhận, nhấn **OK** để bật/tắt dấu ✓, sau đó nhấn **↓** đến **Lưu và tải**; nhấn **↑** để quay lại.
+- Chặn lặp phím OK giữ lâu; hỗ trợ click bằng chuột/remote và reset xác nhận mỗi khi mở hộp thoại mới.
+- Điều kiện xác nhận vẫn bắt buộc, không tự tích và không bỏ qua quyền sử dụng nội dung.

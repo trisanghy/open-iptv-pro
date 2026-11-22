@@ -39,6 +39,14 @@ button,input,textarea{font:inherit;color:inherit}button{cursor:pointer;border:2p
 #toSourceUrl{display:block;margin-top:10px;width:100%;font-size:18px}
 @media(max-width:1150px){.source-grid{grid-template-columns:minmax(0,1fr) 330px;gap:12px}#sourceQR{width:318px;height:318px;padding:9px}}
 @media(max-height:780px){#sourceQR{width:300px;height:300px;padding:8px}.source-pair{padding:8px}.dialog.source-mode{max-height:97vh}}
+
+/* Samsung Tizen remote-safe checkbox: a real focusable button with checkbox semantics. */
+.dialog .rights-toggle{display:flex;align-items:center;gap:16px;width:100%;text-align:left;background:transparent;border:2px solid var(--edge);margin-top:18px;padding:13px 14px;border-radius:14px;font-size:19px;line-height:1.45;font-weight:650}
+.dialog .rights-box{display:inline-flex;flex:none;align-items:center;justify-content:center;width:42px;height:42px;background:var(--bg);border:3px solid #9fb6d0;border-radius:8px;color:white;font-size:31px;line-height:1}
+.dialog .rights-toggle[aria-checked=true]{background:rgba(13,145,238,.14);border-color:#34b9ef}
+.dialog .rights-toggle[aria-checked=true] .rights-box{background:#08a76e;border-color:#08a76e}
+.dialog .rights-toggle[aria-checked=true] .rights-box::before{content:"✓";font-weight:800}
+.dialog .rights-toggle:focus,.dialog .rights-toggle:focus-visible{outline:4px solid var(--focus);outline-offset:3px;box-shadow:0 0 0 7px #168df833}
 </style></head><body data-theme="dark">
 <div id="app">
 <header class="top"><div class="brand"><div class="brandicon">▶</div><div><strong>Open IPTV Pro <small>TV</small></strong><p>Samsung Tizen Edition · TizenBrew</p></div></div><div class="toolbar"><span class="clock" id="clock">--:--</span><button id="searchBtn">⌕ Tìm</button><button id="addBtn">＋ Nguồn</button><button id="themeBtn">◐ Giao diện</button><button id="exitModuleBtn" title="Quay về TizenBrew">↶ Thoát</button></div></header>
@@ -51,7 +59,7 @@ button,input,textarea{font:inherit;color:inherit}button{cursor:pointer;border:2p
 <label for="sourceName">Tên nguồn</label><input id="sourceName" placeholder="Danh sách của tôi" maxlength="80" autocomplete="off">
 <button type="button" id="toSourceUrl">↓ Chuyển xuống nhập đường dẫn</button>
 <label for="sourceUrl">URL M3U / M3U8</label><input id="sourceUrl" type="url" placeholder="https://example.com/channels.m3u" autocomplete="off">
-<label class="consent"><input type="checkbox" id="rights"> Tôi có quyền sử dụng danh sách và nội dung này</label>
+<button type="button" class="rights-toggle" id="rights" role="checkbox" aria-checked="false" aria-label="Tôi có quyền sử dụng danh sách và nội dung này"><span class="rights-box" aria-hidden="true"></span><span>Tôi có quyền sử dụng danh sách và nội dung này</span></button>
 <p class="hint">Remote: nhấn ↓ hoặc OK sau tên để tới URL. Danh sách trực tuyến cần máy chủ hỗ trợ CORS.</p>
 <div class="buttons"><button id="cancelSource">Hủy</button><button id="saveSource" class="primary">Lưu và tải</button></div></section>
 <section class="source-pair"><h3>📱 Nhập bằng điện thoại</h3><p>Quét mã QR để nhập tên và URL trên điện thoại.</p>
@@ -149,11 +157,13 @@ document.querySelectorAll('[data-nav]').forEach(function(b){b.classList.toggle('
 function openDialog(kind){byId('modal').hidden=false;byId('sourceDialog').hidden=kind==='search';byId('searchDialog').hidden=kind!=='search';
 byId('modal').firstElementChild.classList.toggle('source-mode',kind!=='search');
 byId('dialogTitle').textContent=kind==='search'?'Tìm kiếm kênh':'Thêm nguồn IPTV';
-if(kind==='source')void openPair();else stopPair();
+if(kind==='source'){setRightsChecked(false);void openPair();}else stopPair();
 setTimeout(function(){byId(kind==='search'?'searchInput':'sourceName').focus();},40);}
+function setRightsChecked(on){byId('rights').setAttribute('aria-checked',on?'true':'false');}
+function toggleRights(){setRightsChecked(byId('rights').getAttribute('aria-checked')!=='true');}
 function closeDialog(){stopPair();byId('modal').hidden=true;byId('addBtn').focus();}
 async function addSource(data,fromPhone){
-var rights=fromPhone?data&&data.rights:byId('rights').checked;
+var rights=fromPhone?data&&data.rights:byId('rights').getAttribute('aria-checked')==='true';
 if(rights!==true){notify('Cần xác nhận quyền sử dụng danh sách.');return {ok:false,error:'Cần xác nhận quyền sử dụng.'};}
 var name=String((fromPhone?data.name:byId('sourceName').value)||'Nguồn của tôi').trim().slice(0,80)||'Nguồn của tôi';
 var address=url(fromPhone?data.address:byId('sourceUrl').value);
@@ -201,6 +211,11 @@ if(!byId('modal').hidden){
 var active=document.activeElement,isText=active&&active.tagName==='INPUT'&&active.type!=='checkbox';
 if(active===byId('sourceName')&&(k==='ArrowDown'||k==='Enter')){e.preventDefault();e.stopPropagation();byId('sourceUrl').focus();return;}
 if(active===byId('sourceUrl')&&k==='ArrowUp'){e.preventDefault();e.stopPropagation();byId('sourceName').focus();return;}
+if(active===byId('sourceUrl')&&k==='ArrowDown'){e.preventDefault();e.stopPropagation();byId('rights').focus();return;}
+if(active===byId('rights')&&(k==='Enter'||k==='OK'||k===' '||k==='Spacebar'||c===13||c===32)){e.preventDefault();e.stopPropagation();if(!e.repeat)toggleRights();return;}
+if(active===byId('rights')&&k==='ArrowUp'){e.preventDefault();e.stopPropagation();byId('sourceUrl').focus();return;}
+if(active===byId('rights')&&k==='ArrowDown'){e.preventDefault();e.stopPropagation();byId('saveSource').focus();return;}
+if(active===byId('saveSource')&&k==='ArrowUp'){e.preventDefault();e.stopPropagation();byId('rights').focus();return;}
 if(isText&&(k==='ArrowLeft'||k==='ArrowRight'))return;
 if(k.indexOf('Arrow')===0){e.preventDefault();e.stopPropagation();move(k);}return;}
 if(!byId('player').hidden){if(c===427||k==='ChannelUp'){e.preventDefault();changeChannel(1);return;}if(c===428||k==='ChannelDown'){e.preventDefault();changeChannel(-1);return;}if(k==='Enter'||c===415||c===10252){e.preventDefault();var v=byId('video');if(v.paused)v.play().catch(function(){notify('Luồng không hỗ trợ phát trên TV.');});else v.pause();}return;}
@@ -209,6 +224,7 @@ document.querySelectorAll('[data-nav]').forEach(function(b){b.onclick=function()
 byId('addBtn').onclick=function(){openDialog('source');};byId('emptyAdd').onclick=byId('addBtn').onclick;
 byId('searchBtn').onclick=function(){byId('searchInput').value=search;openDialog('search');};
 byId('cancelSource').onclick=closeDialog;byId('cancelSearch').onclick=closeDialog;byId('saveSource').onclick=function(){void addSource(null,false);};
+byId('rights').onclick=toggleRights;
 byId('toSourceUrl').onclick=function(){byId('sourceUrl').focus();};
 byId('refreshSourceQR').onclick=function(){void openPair();};
 byId('applySearch').onclick=function(){search=byId('searchInput').value.trim().toLowerCase();showLimit=160;closeDialog();draw();};

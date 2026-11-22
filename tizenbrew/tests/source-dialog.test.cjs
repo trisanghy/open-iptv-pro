@@ -44,7 +44,7 @@ test('Samsung remote D-pad can leave input name for URL',()=>{
  const modal={hidden:false};
  const name={tagName:'INPUT',type:'text',focus(){active=name}};
  const address={tagName:'INPUT',type:'url',focus(){active=address}};
- const ctx={document:{get activeElement(){return active;}},
+ const ctx={isRemoteBack:e=>e.key==='Escape',handleBack:()=>{closed=true;},document:{get activeElement(){return active;}},
   byId:id=>id==='modal'?modal:id==='sourceName'?name:id==='sourceUrl'?address:null,
   move:key=>{moved=key;},closeDialog:()=>{closed=true;}};
  const keyHandler=vm.runInNewContext(tv.slice(start,end)+'\nkeyHandler;',ctx);
@@ -55,4 +55,43 @@ test('Samsung remote D-pad can leave input name for URL',()=>{
  active=name;fire('ArrowLeft',37);assert.equal(prevented,false);
  active={tagName:'BUTTON'};fire('ArrowDown',40);assert.equal(moved,'ArrowDown');
  fire('Escape',27);assert.equal(closed,true);
+});
+
+test('Samsung remote can focus, check and uncheck the large consent control',()=>{
+ assert.match(tv,/id="rights" role="checkbox" aria-checked="false"/);
+ assert.match(tv,/class="rights-box"/);
+ assert.match(tv,/\.rights-toggle\[aria-checked=true\]/);
+ assert.doesNotMatch(tv,/id="rights"[^>]*type="checkbox"/);
+ assert.match(tv,/byId\('rights'\)\.onclick=toggleRights/);
+ assert.match(tv,/getAttribute\('aria-checked'\)==='true'/);
+ const start=tv.indexOf('function setRightsChecked(');
+ const end=tv.indexOf('async function addSource(',start);
+ assert.ok(start>=0&&end>start);
+ let checked='false';
+ const rights={getAttribute:k=>k==='aria-checked'?checked:null,setAttribute:(k,v)=>{if(k==='aria-checked')checked=v}};
+ const funcs=vm.runInNewContext(tv.slice(start,end)+'\n({setRightsChecked,toggleRights});',{byId:id=>id==='rights'?rights:{focus(){}}});
+ funcs.toggleRights();assert.equal(checked,'true');
+ funcs.toggleRights();assert.equal(checked,'false');
+ funcs.setRightsChecked(false);assert.equal(checked,'false');
+ const begin=tv.indexOf('function keyHandler(e){');
+ const finish=tv.indexOf("\ndocument.querySelectorAll('[data-nav]')",begin);
+ let active,prevented=false,stopped=false,toggles=0;
+ const modal={hidden:false};
+ const name={tagName:'INPUT',type:'text',focus(){active=name}};
+ const address={tagName:'INPUT',type:'url',focus(){active=address}};
+ const rightButton={tagName:'BUTTON',focus(){active=rightButton}};
+ const save={tagName:'BUTTON',focus(){active=save}};
+ const keyFn=vm.runInNewContext(tv.slice(begin,finish)+'\nkeyHandler;',{
+  document:{get activeElement(){return active;}},
+  byId:id=>({modal,sourceName:name,sourceUrl:address,rights:rightButton,saveSource:save})[id],
+  isRemoteBack:()=>false,handleBack:()=>{},toggleRights:()=>{toggles++},move:()=>{}
+ });
+ const send=(key,keyCode,repeat=false)=>{prevented=false;stopped=false;keyFn({key,keyCode,repeat,preventDefault(){prevented=true},stopPropagation(){stopped=true}});};
+ active=address;send('ArrowDown',40);assert.equal(active,rightButton);assert.equal(prevented,true);
+ send('Enter',13);assert.equal(toggles,1);assert.equal(prevented,true);assert.equal(stopped,true);
+ send('Enter',13,true);assert.equal(toggles,1,'holding OK must not toggle repeatedly');
+ send(' ',32);assert.equal(toggles,2);
+ send('ArrowDown',40);assert.equal(active,save);
+ send('ArrowUp',38);assert.equal(active,rightButton);
+ send('ArrowUp',38);assert.equal(active,address);
 });
