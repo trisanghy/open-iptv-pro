@@ -9269,16 +9269,24 @@ async function runTwenty(page){
  const qa271=await page.evaluate(()=>{
   const old=window.IPTVState.getCurrent()?.id||'',oldIds=JSON.stringify(window.IPTVState.getChannels().map(x=>x.id));
   const select=document.querySelector('.po-ai-teacher select'),core=window.PositronIntelligenceCore;
+  const panel=document.getElementById('poWatchFlowPanel').getBoundingClientRect();
+  const first=select?.getBoundingClientRect();
+  const visibleBefore=!!select&&select.isConnected&&first.height>=25&&first.top>=panel.top&&first.bottom<=panel.bottom;
   const before=window.PositronIntelligence.categoryProfile().examples;
   if(select){select.value='education';select.dispatchEvent(new Event('change',{bubbles:true}));}
   const after=window.PositronIntelligence.categoryProfile().examples;
+  // A change rebuilds the card DOM: never measure the detached old select.
+  const refreshed=document.querySelector('.po-ai-teacher select');
+  const second=refreshed?.getBoundingClientRect();
+  const visibleAfter=!!refreshed&&refreshed.isConnected&&second.height>=25&&second.bottom<=panel.bottom;
   let model=core.emptyCategoryModel();
   model=core.teachCategory(model,{name:'Atlas Academy Alpha'},'education');
   model=core.teachCategory(model,{name:'Atlas Academy Omega'},'education');
   model=core.teachCategory(model,{name:'Business Daily Report'},'news');
   const pred=core.predictCategory(model,{name:'Atlas Academy Beta'});
   return {
-   teacherVisible:!!select&&select.getBoundingClientRect().height>=25,
+   teacherVisible:visibleBefore&&visibleAfter,
+   labelCountOnScreen:document.getElementById('poAISummary')?.textContent.includes(after+' nhãn AI')===true,
    learnedOnChoice:after===before+1,
    actualNB:pred?.key==='education'&&pred.confidence>=0.72,
    noAutoplay:(window.IPTVState.getCurrent()?.id||'')===old,
