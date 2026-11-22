@@ -93,6 +93,8 @@ test('TV localhost service CORS preflight works without actual X-Open-IPTV-Relay
 });
 test('TizenBrew video player tries local relay only on HLS failure and never navigates to Cast',()=>{
  assert.match(ui,/function startRelayHlsPlayback\(channel,token\)/);
+ assert.match(ui,/function loadRelayDiagnostics\(token\)/);
+ assert.match(ui,/TizenBrew User-Agent/);
  assert.match(ui,/hlsRelayServer='http:\/\/127\.0\.0\.1:17865'/);
  assert.match(ui,/if\(\/manifestLoadError\|manifestLoadTimeout\|levelLoadError\|levelLoadTimeout\/i\.test/);
  assert.match(ui,/method:'POST',mode:'cors',cache:'no-store'/);

@@ -737,11 +737,11 @@ function nativeAvplay(){
 function hlsAddress(address){return /\.m3u8?(?:[?#]|$)/i.test(String(address||''));}
 function dashAddress(address){return /\.mpd(?:[?#]|$)/i.test(String(address||''));}
 function logPlayback(text){
- var message=String(text||'').replace(/[\\r\\n\\u0000-\\u001f]/g,' ').slice(0,280);
+ var message=String(text||'').replace(/[\r\n\u0000-\u001f]/g,' ').slice(0,280);
  if(message&&playbackEvidence.indexOf(message)<0)playbackEvidence.push(message);
  if(playbackEvidence.length>8)playbackEvidence.shift();
  var label=byId('playbackDiag');
- label.textContent=playbackEvidence.join('\\n');
+ label.textContent=playbackEvidence.join('\n');
  label.hidden=!playbackEvidence.length;
 }
 function playbackChannelKey(channel){
@@ -1057,10 +1057,10 @@ function requestLocalHlsSession(channel,attempt){
  });
 }
 function diagText(value,max){
- return String(value||'').replace(/[\\r\\n\\u0000-\\u001f]/g,' ').slice(0,max||180);
+ return String(value||'').replace(/[\r\n\u0000-\u001f]/g,' ').slice(0,max||180);
 }
 function loadRelayDiagnostics(token){
- var match=/^http:\\/\\/127\\.0\\.0\\.1:17865\\/r\\/([0-9a-f]{40})\\/\\d+$/.exec(String(hlsRelayUrl||''));
+ var match=/^http:\/\/127\.0\.0\.1:17865\/r\/([0-9a-f]{40})\/\d+$/.exec(String(hlsRelayUrl||''));
  if(!match)return;
  fetch(hlsRelayServer+'/diag/'+match[1],{method:'GET',mode:'cors',cache:'no-store',headers:{'X-Open-IPTV-Relay':'1'}})
   .then(function(response){if(!response.ok)throw Error('HTTP '+response.status);return response.json();})
