@@ -44,7 +44,7 @@
  const matchCount=searchRow.querySelector('#poChannelGroupMatchCount');
  const visibleHeaders=()=>[...d.querySelectorAll('#channelList .folder-header[data-group]')];
  const normalizeGroup=value=>String(value||'').normalize('NFD')
-  .replace(/[\u0300-\u036f]/g,'').replace(/đ/g,'d').toLowerCase().trim();
+  .replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/đ/g,'d').trim();
  function filterGroups(){
   const groups=visibleHeaders();
   const needle=normalizeGroup(groupSearch.value);

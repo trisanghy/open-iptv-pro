@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.318",
-  "description": "Positron P5.1.233: quay về nhóm kênh trước bằng lịch sử focus trong phiên",
+  "version": "4.23.319",
+  "description": "Positron P5.1.234: sửa tìm tên nhóm có Đ viết hoa",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

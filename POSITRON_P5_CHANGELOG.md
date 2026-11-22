@@ -1,5 +1,12 @@
 # Positron P5 Changelog
 
+## P5.1.234 — Tìm đúng nhóm có Đ viết hoa bằng chữ không dấu / Electron 4.23.319
+- Từ mã P233: bộ lọc tên nhóm loại dấu rồi thay chữ đ trước khi chuyển chữ hoa thành thường; do đó tên ĐÀI TRUYỀN HÌNH không khớp khi gõ dai truyen hinh.
+- Bản sửa đặt chuyển thường trước khi thay đ→d; ảnh hưởng duy nhất bộ lọc nhóm cục bộ. Không sửa nguồn IPTV, playlist, Favorites, playback hoặc EPG.
+- Regression Node kiểm tra ĐÀI/Đại/đài; QA Electron thật 1920×1080 với fixture tên nhóm, ảnh before/after, 1 kết quả, không autoplay, không tràn.
+- Trạng thái: CANDIDATE cho tới khi test/ảnh/Release xác minh.
+
+
 ## P5.1.233 — Quay về nhóm vừa rời / Electron 4.23.318
 - Feature priority: NEW — Người dùng nhảy từ nhóm 01 sang một nhóm bất kỳ có thể quay lại nhóm cũ trong một lần nhấn, kể cả khi hai nhóm cách xa nhau; lịch sử focus nhóm trong phiên hoàn toàn tách biệt lịch sử phát video và không ghi đè dữ liệu playlist.
 - Electron screenshot: positron-p51233-group-history-after-1920x1080-real.png

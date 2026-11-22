@@ -3,6 +3,7 @@ const test=require('node:test');
 const assert=require('node:assert/strict');
 const fs=require('node:fs');
 const path=require('node:path');
+const vm=require('node:vm');
 const read=file=>fs.readFileSync(path.join(__dirname,'..',file),'utf8');
 test('P5.1.226 ships visible accessible numeric channel jump without playback',()=>{
  const html=read('renderer/index.html'),js=read('renderer/positron-channel-jump.js');
@@ -106,7 +107,7 @@ test('P5.1.233 stores bounded in-session folder navigation history, no autoplay'
   "groupSelect.value=previous","target.focus({preventScroll:true})"])
   assert.ok(ui.includes(token),'Missing P233 group history: '+token);
  assert.ok(!ui.includes('playChannel('));
- assert.equal(JSON.parse(read('package.json')).version,'4.23.318');
+ assert.ok(Number(JSON.parse(read('package.json')).version.split('.')[2])>=318);
 });
 test('P5.1.233 validates real Electron history jump with screenshot and unchanged media',()=>{
  const qa=read('scripts/positron-20-extension.cjs');
@@ -119,4 +120,25 @@ test('P5.1.233 validates real Electron history jump with screenshot and unchange
   "historyButtonVisible:","returnedToPreviousGroup:","noAutoplay:",
   "noHorizontalOverflow:"])
   assert.ok(qa.includes(token));
+});
+
+
+test('P5.1.234 normalizes uppercase Vietnamese Đ in real group filter helper',()=>{
+ const source=read('renderer/positron-channel-jump.js').match(/const normalizeGroup=value=>[\s\S]*?\.trim\(\);/);
+ assert.ok(source);
+ const normalizeGroup=vm.runInNewContext(source[0]+'\nnormalizeGroup');
+ for(const [label,expected] of [
+  ['ĐÀI TRUYỀN HÌNH','dai truyen hinh'],['Đại chúng','dai chung'],
+  ['đài địa phương','dai dia phuong'],['  Nhóm ÁNH SÁNG  ','nhom anh sang']])
+  assert.equal(normalizeGroup(label),expected,label);
+ assert.equal(JSON.parse(read('package.json')).version,'4.23.319');
+});
+test('P5.1.234 requires real Electron screenshots and non-playback Vietnamese folder QA',()=>{
+ const qa=read('scripts/positron-20-extension.cjs'),workflow=read('.github/workflows/positron-lab.yml');
+ for(const name of ['positron-p51234-vietnamese-group-before-1920x1080-real.png','positron-p51234-vietnamese-group-after-1920x1080-real.png']){
+  assert.ok(qa.includes(name),'QA screenshot absent: '+name);
+  assert.ok(workflow.includes(name),'Workflow screenshot absent: '+name);
+ }
+ for(const token of ['ĐÀI TRUYỀN HÌNH',"fill('dai truyen hinh')",'oneMatch:','uppercaseDMatches:','noAutoplay:','noHorizontalOverflow:'])
+  assert.ok(qa.includes(token),'QA assertion absent: '+token);
 });

@@ -25,3 +25,8 @@ Ngày 22/11/2026. Chỉ nhánh Positron. Không đếm 70 ảnh QA là 20 vòng 
 - Feature: lịch sử nhóm focus trong phiên tối đa 10, nút ↶ Nhóm trước chỉ hiện khi có nơi để quay lại; không ảnh hưởng lịch sử xem video.
 - QA mới: screenshot P5.1.233 before/after 1920×1080; kiểm chứng focus trả về nhóm 01, không autoplay, không tràn.
 - Chưa tính đạt tới khi CI/ảnh/Release được xác minh.
+
+## Đợt mới sau P5.1.233 — Vòng 01 / P5.1.234 (CANDIDATE)
+- Lỗi phát hiện: viết hoa Đ trong tên nhóm không khớp tìm kiếm không dấu; nguyên nhân là thứ tự chuẩn hóa trong renderer/positron-channel-jump.js.
+- Sửa helper normalizeGroup, thêm Node regression và Electron ảnh before/after trên dữ liệu QA. Không sửa URL nguồn hoặc logic phát.
+- Chưa tính đạt tới khi xác minh Node test, ảnh Electron thật đã mở xem, build và Release.
