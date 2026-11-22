@@ -6063,6 +6063,9 @@ async function runTwenty(page){
  // P209: native Electron screenshot of per-session random discovery progress.
  await page.setViewportSize({width:1920,height:1080});
  await page.evaluate(()=>window.IPTVState.setPage('tv'));
+ // The P208 regression intentionally re-explores one channel. Reset only the
+ // in-memory discovery counter before the P209 before/after comparison.
+ await page.evaluate(()=>{const reset=document.getElementById('poRandomCycleReset');if(reset&&!reset.hidden)reset.click();});
  const before209=await page.screenshot({path:path.join(out,'positron-p51209-random-progress-before-1920x1080-real.png'),animations:'disabled'});
  assert.deepEqual([before209.readUInt32BE(16),before209.readUInt32BE(20)],[1920,1080]);
  const discoveryProgressQA=await page.evaluate(()=>{
