@@ -7,15 +7,28 @@ Trang này được tạo tự động từ GitHub Releases và ảnh kiểm th�
 [Mở WEBSITE changelog tương tác](https://raw.githack.com/trisanghy/open-iptv-pro/Positron/docs/positron-features/index.html) · [Giao diện HTML trong repository](index.html) · [Các bản phát hành](https://github.com/trisanghy/open-iptv-pro/releases) · [Nhật ký Git tiếng Việt](LOG_GIT_TIENG_VIET.md) · [Quy tắc ưu tiên tính năng](../../POSITRON_FEATURE_RULES.md)
 
 <details>
-<summary><strong>P5.1.241</strong> · Chip yêu thích cho biết lọc hiện tại và xóa lọc · CHƯA CÓ BẢN PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.242</strong> · Chip thông báo mọi bộ lọc kênh và xóa lọc · CHƯA CÓ BẢN PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
 
-**Ứng dụng:** 4.23.326 · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
+**Ứng dụng:** 4.23.327 · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
+
+Feature priority: NEW — Mở rộng chip báo trạng thái P5.1.241 từ riêng Yêu thích sang mọi tab lọc native, gồm Vừa xem, Sống, Die và Chưa rõ. Khi tab bị thu gọn hoặc lọc ra 0 kênh, người dùng vẫn nhìn thấy tên bộ lọc, số kênh và hành động Xem tất cả để tránh hiểu nhầm mất playlist. Màu chip Vừa xem dịu hơn và mọi thao tác không thay đổi Favorites, playback hay nguồn. Electron screenshot: positron-p51242-recent-filter-after-1920x1080-real.png
+
+*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+
+[Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/tree/Positron) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/f08c90c8876b294c55ac44fcbacef636353bc7e7)
+
+</details>
+
+<details>
+<summary><strong>P5.1.241</strong> · Chip lọc Yêu thích có nút Xem tất cả / Electron 4.23.326 · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+
+**Ứng dụng:** 4.23.326 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
 Feature priority: NEW — Khi Shift+F lọc còn 20 kênh, ảnh P5.1.240 chỉ báo 20/561 mà không nêu bộ lọc đang bật, rất dễ hiểu nhầm mất kênh. Thêm chip nhỏ trực tiếp dưới ô tìm để hiển thị `Yêu thích · 20` cùng hành động `Xem tất cả`, khôi phục danh sách bằng bộ lọc native và giữ focus; không thay đổi dữ liệu Favorites hoặc IPTV. Electron screenshot: positron-p51241-favorite-chip-after-1920x1080-real.png
 
 *Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
 
-[Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/tree/Positron) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/80a5575b2ebd4aca5071e52285161299f606f68f)
+[Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.326-p5.1.241) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/5722a5a8839de898f683452d63fa105c6ca7810a) · [Tải Windows Setup x64](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.326-p5.1.241/Open-IPTV-Pro-Setup-4.23.326-x64.exe) · [Tải gói ảnh QA](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.326-p5.1.241/Positron-P51241-20-Real-Screenshots.zip)
 
 </details>
 

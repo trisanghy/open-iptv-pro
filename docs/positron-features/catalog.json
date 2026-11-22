@@ -1,21 +1,101 @@
 {
-  "generatedAt": "2026-11-22T18:17:49.220059+00:00",
+  "generatedAt": "2026-11-22T18:24:00.399744+00:00",
   "repository": "trisanghy/open-iptv-pro",
   "branch": "Positron",
   "versions": [
     {
-      "number": 241,
-      "version": "P5.1.241",
-      "appVersion": "4.23.326",
-      "title": "Chip yêu thích cho biết lọc hiện tại và xóa lọc",
-      "description": "Feature priority: NEW — Khi Shift+F lọc còn 20 kênh, ảnh P5.1.240 chỉ báo 20/561 mà không nêu bộ lọc đang bật, rất dễ hiểu nhầm mất kênh. Thêm chip nhỏ trực tiếp dưới ô tìm để hiển thị `Yêu thích · 20` cùng hành động `Xem tất cả`, khôi phục danh sách bằng bộ lọc native và giữ focus; không thay đổi dữ liệu Favorites hoặc IPTV. Electron screenshot: positron-p51241-favorite-chip-after-1920x1080-real.png",
+      "number": 242,
+      "version": "P5.1.242",
+      "appVersion": "4.23.327",
+      "title": "Chip thông báo mọi bộ lọc kênh và xóa lọc",
+      "description": "Feature priority: NEW — Mở rộng chip báo trạng thái P5.1.241 từ riêng Yêu thích sang mọi tab lọc native, gồm Vừa xem, Sống, Die và Chưa rõ. Khi tab bị thu gọn hoặc lọc ra 0 kênh, người dùng vẫn nhìn thấy tên bộ lọc, số kênh và hành động Xem tất cả để tránh hiểu nhầm mất playlist. Màu chip Vừa xem dịu hơn và mọi thao tác không thay đổi Favorites, playback hay nguồn. Electron screenshot: positron-p51242-recent-filter-after-1920x1080-real.png",
       "kind": "fix",
       "status": "candidate",
       "published": "",
       "tag": "",
-      "commit": "80a5575b2ebd4aca5071e52285161299f606f68f",
+      "commit": "f08c90c8876b294c55ac44fcbacef636353bc7e7",
       "url": "https://github.com/trisanghy/open-iptv-pro/tree/Positron",
       "assets": [],
+      "image": null
+    },
+    {
+      "number": 241,
+      "version": "P5.1.241",
+      "appVersion": "4.23.326",
+      "title": "Chip lọc Yêu thích có nút Xem tất cả / Electron 4.23.326",
+      "description": "Feature priority: NEW — Khi Shift+F lọc còn 20 kênh, ảnh P5.1.240 chỉ báo 20/561 mà không nêu bộ lọc đang bật, rất dễ hiểu nhầm mất kênh. Thêm chip nhỏ trực tiếp dưới ô tìm để hiển thị `Yêu thích · 20` cùng hành động `Xem tất cả`, khôi phục danh sách bằng bộ lọc native và giữ focus; không thay đổi dữ liệu Favorites hoặc IPTV. Electron screenshot: positron-p51241-favorite-chip-after-1920x1080-real.png",
+      "kind": "fix",
+      "status": "release",
+      "published": "2026-11-22T18:21:47Z",
+      "tag": "positron/v4.23.326-p5.1.241",
+      "commit": "5722a5a8839de898f683452d63fa105c6ca7810a",
+      "url": "https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.326-p5.1.241",
+      "assets": [
+        {
+          "name": "audit-p4-50-rounds.json",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.326-p5.1.241/audit-p4-50-rounds.json"
+        },
+        {
+          "name": "audit-p5-20-rounds.json",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.326-p5.1.241/audit-p5-20-rounds.json"
+        },
+        {
+          "name": "Open-IPTV-Pro-4.23.326-mac-arm64.dmg",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.326-p5.1.241/Open-IPTV-Pro-4.23.326-mac-arm64.dmg"
+        },
+        {
+          "name": "Open-IPTV-Pro-4.23.326-mac-x64.dmg",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.326-p5.1.241/Open-IPTV-Pro-4.23.326-mac-x64.dmg"
+        },
+        {
+          "name": "Open-IPTV-Pro-4.23.326-x64.exe",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.326-p5.1.241/Open-IPTV-Pro-4.23.326-x64.exe"
+        },
+        {
+          "name": "Open-IPTV-Pro-Setup-4.23.326-x64.exe",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.326-p5.1.241/Open-IPTV-Pro-Setup-4.23.326-x64.exe"
+        },
+        {
+          "name": "OpenIPTVPro-Positron-P51241-Source.zip",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.326-p5.1.241/OpenIPTVPro-Positron-P51241-Source.zip"
+        },
+        {
+          "name": "positron-desktop-1920x1080-16x9-main-real.png",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.326-p5.1.241/positron-desktop-1920x1080-16x9-main-real.png"
+        },
+        {
+          "name": "positron-p4-final-main-real.png",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.326-p5.1.241/positron-p4-final-main-real.png"
+        },
+        {
+          "name": "positron-p4-round-10-real.png",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.326-p5.1.241/positron-p4-round-10-real.png"
+        },
+        {
+          "name": "positron-p4-round-20-real.png",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.326-p5.1.241/positron-p4-round-20-real.png"
+        },
+        {
+          "name": "positron-p4-round-30-real.png",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.326-p5.1.241/positron-p4-round-30-real.png"
+        },
+        {
+          "name": "positron-p4-round-40-real.png",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.326-p5.1.241/positron-p4-round-40-real.png"
+        },
+        {
+          "name": "Positron-P51241-20-Real-Screenshots.zip",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.326-p5.1.241/Positron-P51241-20-Real-Screenshots.zip"
+        },
+        {
+          "name": "Positron-P51241-50-Real-Screenshots.zip",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.326-p5.1.241/Positron-P51241-50-Real-Screenshots.zip"
+        },
+        {
+          "name": "SHA256SUMS.txt",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.326-p5.1.241/SHA256SUMS.txt"
+        }
+      ],
       "image": null
     },
     {

@@ -2,14 +2,23 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
-## P5.1.241 — Chip yêu thích cho biết lọc hiện tại và xóa lọc
+## P5.1.242 — Chip thông báo mọi bộ lọc kênh và xóa lọc
 
-**Ứng dụng:** 4.23.326 · **Trạng thái:** Chưa có bản phát hành
+**Ứng dụng:** 4.23.327 · **Trạng thái:** Chưa có bản phát hành
+
+Feature priority: NEW — Mở rộng chip báo trạng thái P5.1.241 từ riêng Yêu thích sang mọi tab lọc native, gồm Vừa xem, Sống, Die và Chưa rõ. Khi tab bị thu gọn hoặc lọc ra 0 kênh, người dùng vẫn nhìn thấy tên bộ lọc, số kênh và hành động Xem tất cả để tránh hiểu nhầm mất playlist. Màu chip Vừa xem dịu hơn và mọi thao tác không thay đổi Favorites, playback hay nguồn. Electron screenshot: positron-p51242-recent-filter-after-1920x1080-real.png
+
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/f08c90c8876b294c55ac44fcbacef636353bc7e7)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+
+## P5.1.241 — Chip lọc Yêu thích có nút Xem tất cả / Electron 4.23.326
+
+**Ứng dụng:** 4.23.326 · **Trạng thái:** Đã phát hành
 
 Feature priority: NEW — Khi Shift+F lọc còn 20 kênh, ảnh P5.1.240 chỉ báo 20/561 mà không nêu bộ lọc đang bật, rất dễ hiểu nhầm mất kênh. Thêm chip nhỏ trực tiếp dưới ô tìm để hiển thị `Yêu thích · 20` cùng hành động `Xem tất cả`, khôi phục danh sách bằng bộ lọc native và giữ focus; không thay đổi dữ liệu Favorites hoặc IPTV. Electron screenshot: positron-p51241-favorite-chip-after-1920x1080-real.png
 
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/80a5575b2ebd4aca5071e52285161299f606f68f)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/5722a5a8839de898f683452d63fa105c6ca7810a)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.326-p5.1.241)
 
 ## P5.1.240 — Shift+F lọc nhanh yêu thích không thay đổi dấu sao / Electron 4.23.325
 
