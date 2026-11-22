@@ -14,6 +14,7 @@
     captionTranslationStatus: 'caption:translationStatus', captionTranslationInstall: 'caption:translationInstall',
     captionTestTranslation: 'caption:testTranslation', aiStorageStatus: 'ai:storage', aiRemoveModel: 'ai:removeModel',
     aiModelStatus: 'ai:modelStatus', aiInstallModel: 'ai:installModel',
+    aiClassifyChannel: 'ai:classifyChannel',
     ttsStatus: 'tts:status', ttsInstall: 'tts:install',
     ttsVoiceStatus: 'tts:voiceStatus', ttsVoiceInstall: 'tts:voiceInstall', ttsPrewarm: 'tts:prewarm',
     ttsSynthesize: 'tts:synthesize', ttsStop: 'tts:stop',

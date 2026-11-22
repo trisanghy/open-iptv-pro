@@ -156,6 +156,7 @@ pub async fn bridge(app:AppHandle,state:State<'_,Arc<AppState>>,local_ai_state:S
      item(&args,1).as_str().unwrap_or("auto"),item(&args,2).as_str().unwrap_or("balanced")).await,
     "ai:modelStatus"=>Ok(local_ai::mlx_status(ai)),
     "ai:installModel"=>local_ai::mlx_install(app.clone(),ai.clone(),text(&args,0)?).await,
+   "ai:classifyChannel"=>local_ai::mlx_classify_channel(ai,text(&args,0)?,text(&args,1)?).await,
    "ai:storage"=>Ok(local_ai::ai_storage_status(ai)),
    "ai:removeModel"=>local_ai::ai_remove_model(ai,text(&args,0)?).await,
   "caption:translationInstall"=>local_ai::translation_install(app.clone(),ai.clone(),text(&args,0)?,item(&args,1).as_str().unwrap_or("en")).await,

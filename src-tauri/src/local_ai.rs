@@ -634,6 +634,10 @@ pub fn mlx_status(ai:&LocalAi)->Value{mlx_ai::status(ai)}
 pub async fn mlx_install(app:AppHandle,ai:Arc<LocalAi>,key:&str)->Result<Value,String>{
  mlx_ai::install(app,ai,key).await
 }
+pub async fn mlx_classify_channel(ai:&LocalAi,key:&str,metadata:&str)->Result<Value,String>{
+ let label=mlx_ai::classify_channel(ai,key,metadata).await?;
+ Ok(json!({"model":key,"label":label,"source":"local-mlx-qwen3"}))
+}
 pub async fn ai_test_translation(app:AppHandle,ai:Arc<LocalAi>,target:&str,engine:&str,mode:&str)->Result<Value,String>{
  if !translation_supported(target){return Err("Ngôn ngữ đích không hỗ trợ".into());}
  if !matches!(engine,"auto"|"argos")&&!mlx_ai::keys().any(|id|id==engine){

@@ -242,6 +242,37 @@ pub(super) async fn translate(ai:&LocalAi,key:&str,source:&str,target:&str,text:
   }
  }
 }
+pub(super) async fn classify_channel(ai:&LocalAi,key:&str,metadata:&str)->Result<String,String>{
+ model_info(key)?;
+ if !key.starts_with("qwen"){return Err("Hy-MT2 chỉ hỗ trợ dịch; phân loại WatchFlow cần Qwen3".into());}
+ if !supported(){return Err("MLX Qwen3 hiện chỉ hỗ trợ Mac Apple Silicon".into());}
+ if !has_weights(ai,key)||!runtime_ready(ai){return Err("Qwen3 chưa cài đủ hoặc thiếu môi trường MLX".into());}
+ let bounded:String=metadata.chars().take(600).collect();
+ if bounded.trim().len()<2{return Err("Thiếu tên kênh hoặc EPG".into());}
+ let mut slot=ai.mlx_worker.lock().await;
+ start_locked(ai,&mut slot,key).await?;
+ let worker=slot.as_mut().ok_or("MLX chưa hoạt động")?;
+ let id=Uuid::new_v4().to_string();
+ let payload=json!({"id":id,"task":"watchflow-classify","text":bounded}).to_string()+"\n";
+ worker.stdin.write_all(payload.as_bytes()).await.map_err(error)?;
+ worker.stdin.flush().await.map_err(error)?;
+ let deadline=tokio::time::Instant::now()+Duration::from_secs(90);
+ loop{
+  let remaining=deadline.saturating_duration_since(tokio::time::Instant::now());
+  if remaining.is_zero(){let _=worker.child.start_kill();*slot=None;return Err("WatchFlow Qwen3 quá thời gian".into());}
+  let mut line=String::new();
+  let bytes=tokio::time::timeout(remaining,worker.stdout.read_line(&mut line)).await
+   .map_err(|_|"Qwen3 không phản hồi")?.map_err(error)?;
+  if bytes==0{*slot=None;return Err("Tiến trình Qwen3 đã thoát".into());}
+  if let Ok(event)=serde_json::from_str::<Value>(&line){
+   if event["id"].as_str()!=Some(&id){continue;}
+   if event["ok"]!=true{return Err(format!("Qwen3 lỗi: {}",event["error"].as_str().unwrap_or("không rõ")));}
+   let label=event["text"].as_str().unwrap_or("").trim();
+   return Ok(if matches!(label,"Tin tức"|"Thể thao"|"Phim truyện"|"Thiếu nhi"|"Giải trí"|"Khoa học"){label.to_string()}else{"Chưa phân loại".into()});
+  }
+ }
+}
+
 pub(super) async fn remove(ai:&LocalAi,key:&str)->Result<Value,String>{
  model_info(key)?;
  if ai.mlx_installing.load(Ordering::SeqCst){return Err("Đang tải mô hình MLX; không thể xóa".into());}
