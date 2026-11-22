@@ -7,20 +7,20 @@ Trang này được tạo tự động từ GitHub Releases và ảnh kiểm th�
 [Mở WEBSITE changelog tương tác](https://raw.githack.com/trisanghy/open-iptv-pro/Positron/docs/positron-features/index.html) · [Giao diện HTML trong repository](index.html) · [Các bản phát hành](https://github.com/trisanghy/open-iptv-pro/releases) · [Nhật ký Git tiếng Việt](LOG_GIT_TIENG_VIET.md) · [Quy tắc ưu tiên tính năng](../../POSITRON_FEATURE_RULES.md)
 
 <details>
-<summary><strong>P5.1.265</strong> · Enter/Space đi tới thẻ nguồn IPTV đang chọn · CHƯA CÓ BẢN PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.265</strong> · Đi tới nguồn bằng Enter/Space / Electron 4.23.350 · ĐÃ PHÁT HÀNH · TÍNH NĂNG</summary>
 
-**Ứng dụng:** 4.23.350 · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
+**Ứng dụng:** 4.23.350 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
 Feature priority: NEW — Người dùng bàn phím có thể focus một hàng trong Chi tiết nguồn rồi bấm Enter hoặc Space để mở thẻ nguồn tương ứng; giữ nguyên điều khiển nút Đi tới và không can thiệp vào phát kênh. Electron screenshot: positron-p51265-source-enter-after-1920x1080-real.png
 
 *Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
 
-[Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/tree/Positron) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/99fff2bb69216077cb628f7878309a2ed253c2c0)
+[Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.350-p5.1.265) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/9bbb0834b1a7c019a390621956f88eef8751320b) · [Tải Windows Setup x64](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.350-p5.1.265/Open-IPTV-Pro-Setup-4.23.350-x64.exe) · [Tải gói ảnh QA](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.350-p5.1.265/Positron-P51265-20-Real-Screenshots.zip)
 
 </details>
 
 <details>
-<summary><strong>P5.1.264</strong> · Đặt lại bộ lọc chi tiết nguồn / Electron 4.23.349 · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.264</strong> · Đặt lại bộ lọc chi tiết nguồn / Electron 4.23.349 · ĐÃ PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.349 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
@@ -33,7 +33,7 @@ Feature priority: NEW — Một nút “Đặt lại” khôi phục đồng th�
 </details>
 
 <details>
-<summary><strong>P5.1.263</strong> · Điều hướng danh sách nguồn bằng phím mũi tên / Electron 4.23.348 · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.263</strong> · Điều hướng danh sách nguồn bằng phím mũi tên / Electron 4.23.348 · ĐÃ PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.348 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
@@ -46,7 +46,7 @@ Feature priority: NEW — Duyệt các hàng trong Chi tiết nguồn bằng mũ
 </details>
 
 <details>
-<summary><strong>P5.1.262</strong> · Trở lại chi tiết nguồn đã chọn / Electron 4.23.347 · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.262</strong> · Trở lại chi tiết nguồn đã chọn / Electron 4.23.347 · ĐÃ PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.347 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
@@ -59,7 +59,7 @@ Feature priority: NEW — Thêm nút trở lại ngay trên thẻ nguồn sau kh
 </details>
 
 <details>
-<summary><strong>P5.1.261</strong> · Đi tới thẻ nguồn từ bảng chi tiết / Electron 4.23.346 · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.261</strong> · Đi tới thẻ nguồn từ bảng chi tiết / Electron 4.23.346 · ĐÃ PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.346 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
@@ -72,7 +72,7 @@ Feature priority: NEW — Bấm trực tiếp từ dòng nguồn trong phần Ch
 </details>
 
 <details>
-<summary><strong>P5.1.260</strong> · Sắp xếp nguồn theo số kênh hoặc tên / Electron 4.23.345 · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.260</strong> · Sắp xếp nguồn theo số kênh hoặc tên / Electron 4.23.345 · ĐÃ PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.345 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
@@ -85,7 +85,7 @@ Feature priority: NEW — Cho phép xem nguồn nhiều kênh nhất hoặc ít 
 </details>
 
 <details>
-<summary><strong>P5.1.259</strong> · Lọc nhanh nguồn bật/tắt trong chi tiết IPTV / Electron 4.23.344 · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.259</strong> · Lọc nhanh nguồn bật/tắt trong chi tiết IPTV / Electron 4.23.344 · ĐÃ PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.344 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
@@ -98,7 +98,7 @@ Feature priority: NEW — Có bộ chọn trạng thái Tất cả / Đang bật
 </details>
 
 <details>
-<summary><strong>P5.1.258</strong> · Tìm kiếm trong danh sách chi tiết nguồn IPTV / Electron 4.23.343 · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.258</strong> · Tìm kiếm trong danh sách chi tiết nguồn IPTV / Electron 4.23.343 · ĐÃ PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.343 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
@@ -111,7 +111,7 @@ Feature priority: NEW — Bổ sung ô tìm nguồn ngay sau khi mở “Chi ti�
 </details>
 
 <details>
-<summary><strong>P5.1.257</strong> · Mở chi tiết nguồn và số kênh từ thẻ thống kê / Electron 4.23.342 · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.257</strong> · Mở chi tiết nguồn và số kênh từ thẻ thống kê / Electron 4.23.342 · ĐÃ PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.342 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
@@ -124,7 +124,7 @@ Feature priority: NEW — Thêm nút Chi tiết nguồn ngay cạnh thống kê 
 </details>
 
 <details>
-<summary><strong>P5.1.256</strong> · Thống kê nguồn đang bật và tổng kênh ngay trong tiêu đề Nguồn IPTV / Electron 4.23.341 · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.256</strong> · Thống kê nguồn đang bật và tổng kênh ngay trong tiêu đề Nguồn IPTV / Electron 4.23.341 · ĐÃ PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.341 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
@@ -137,7 +137,7 @@ Feature priority: NEW — Hiển thị thẻ số liệu `2/2 nguồn bật · 5
 </details>
 
 <details>
-<summary><strong>P5.1.255</strong> · Nút quay lại kênh ngay trên trang Nguồn IPTV / Electron 4.23.340 · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.255</strong> · Nút quay lại kênh ngay trên trang Nguồn IPTV / Electron 4.23.340 · ĐÃ PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.340 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
@@ -150,7 +150,7 @@ Feature priority: NEW — Thêm nút một chạm ở phần đầu trang Nguồ
 </details>
 
 <details>
-<summary><strong>P5.1.254</strong> · Alt+Shift+L quay lại kênh từ trang khác / Electron 4.23.339 · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.254</strong> · Alt+Shift+L quay lại kênh từ trang khác / Electron 4.23.339 · ĐÃ PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.339 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
@@ -163,7 +163,7 @@ Feature priority: NEW — Alt+Shift+L cho phép quay lại TV từ Nguồn IPTV,
 </details>
 
 <details>
-<summary><strong>P5.1.253</strong> · Electron 4.23.338 — Căn giữa hàng kênh được khôi phục (CANDIDATE) · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.253</strong> · Electron 4.23.338 — Căn giữa hàng kênh được khôi phục (CANDIDATE) · ĐÃ PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.338 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
@@ -176,7 +176,7 @@ Feature priority: NEW — Khi dùng Alt+Shift+L quay lại hàng kênh đã duy�
 </details>
 
 <details>
-<summary><strong>P5.1.252</strong> · Electron 4.23.337 — Quay lại kênh cả sau khi đổi bộ lọc (HOÀN TẤT) · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.252</strong> · Electron 4.23.337 — Quay lại kênh cả sau khi đổi bộ lọc (HOÀN TẤT) · ĐÃ PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.337 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
@@ -189,7 +189,7 @@ Feature priority: NEW — Khi người dùng lọc Yêu thích hoặc Vừa xem 
 </details>
 
 <details>
-<summary><strong>P5.1.251</strong> · Electron 4.23.336 — Alt+Shift+L quay lại hàng kênh vừa duyệt (HOÀN TẤT) · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.251</strong> · Electron 4.23.336 — Alt+Shift+L quay lại hàng kênh vừa duyệt (HOÀN TẤT) · ĐÃ PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.336 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
@@ -202,7 +202,7 @@ Feature priority: NEW — Thêm phím tắt Alt+Shift+L trở lại đúng hàng
 </details>
 
 <details>
-<summary><strong>P5.1.250</strong> · Electron 4.23.335 — Ẩn chỉ báo vị trí đã cũ (HOÀN TẤT) · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.250</strong> · Electron 4.23.335 — Ẩn chỉ báo vị trí đã cũ (HOÀN TẤT) · ĐÃ PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.335 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
@@ -215,7 +215,7 @@ Feature priority: NEW — Thêm tương tác mới tự ẩn chỉ báo vị tr�
 </details>
 
 <details>
-<summary><strong>P5.1.249</strong> · Electron 4.23.334 — Escape hủy rồi trở về hàng kênh đang chọn (CANDIDATE) · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.249</strong> · Electron 4.23.334 — Escape hủy rồi trở về hàng kênh đang chọn (CANDIDATE) · ĐÃ PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.334 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
@@ -228,7 +228,7 @@ Feature priority: NEW — Khi mở bảng nhảy số từ một hàng kênh đa
 </details>
 
 <details>
-<summary><strong>P5.1.248</strong> · Electron 4.23.333 — Alt+Shift+J điền sẵn số kênh đang focus (CANDIDATE) · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.248</strong> · Electron 4.23.333 — Alt+Shift+J điền sẵn số kênh đang focus (CANDIDATE) · ĐÃ PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.333 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
@@ -241,7 +241,7 @@ Feature priority: NEW — Trên danh sách kênh đang focus, Alt+Shift+J mở b
 </details>
 
 <details>
-<summary><strong>P5.1.247</strong> · Electron 4.23.332 — Hiện vị trí kênh đang chọn (CANDIDATE) · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.247</strong> · Electron 4.23.332 — Hiện vị trí kênh đang chọn (CANDIDATE) · ĐÃ PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.332 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
@@ -254,7 +254,7 @@ Feature priority: NEW — Dưới tổng số kênh ở tiêu đề danh sách c
 </details>
 
 <details>
-<summary><strong>P5.1.246</strong> · Electron 4.23.331 — Ctrl+Enter nhảy kênh rồi thu gọn bảng (CANDIDATE) · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.246</strong> · Electron 4.23.331 — Ctrl+Enter nhảy kênh rồi thu gọn bảng (CANDIDATE) · ĐÃ PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.331 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
@@ -267,7 +267,7 @@ Feature priority: NEW — Khi nhập số kênh, Ctrl+Enter (Mac có thể Comma
 </details>
 
 <details>
-<summary><strong>P5.1.245</strong> · Electron 4.23.330 — Đồng bộ nhóm với kênh đang chọn (CANDIDATE) · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.245</strong> · Electron 4.23.330 — Đồng bộ nhóm với kênh đang chọn (CANDIDATE) · ĐÃ PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.330 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
@@ -280,7 +280,7 @@ Feature priority: NEW — Hộp chọn nhóm trong trình nhảy kênh tự ch�
 </details>
 
 <details>
-<summary><strong>P5.1.244</strong> · Electron 4.23.329 — Gõ số để nhảy nhanh tới kênh (CANDIDATE) · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.244</strong> · Electron 4.23.329 — Gõ số để nhảy nhanh tới kênh (CANDIDATE) · ĐÃ PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.329 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
@@ -293,7 +293,7 @@ Feature priority: NEW — Gõ chữ số 0–9 khi focus hàng kênh để mở 
 </details>
 
 <details>
-<summary><strong>P5.1.243</strong> · Shift+R mở/thoát Vừa xem mà không cần chuột / Electron 4.23.328 · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.243</strong> · Shift+R mở/thoát Vừa xem mà không cần chuột / Electron 4.23.328 · ĐÃ PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.328 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
@@ -306,7 +306,7 @@ Feature priority: NEW — Thêm phím Shift+R ngay tại hàng kênh để mở 
 </details>
 
 <details>
-<summary><strong>P5.1.242</strong> · Chip báo mọi bộ lọc kênh ẩn / Electron 4.23.327 · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.242</strong> · Chip báo mọi bộ lọc kênh ẩn / Electron 4.23.327 · ĐÃ PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.327 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
@@ -319,7 +319,7 @@ Feature priority: NEW — Mở rộng chip báo trạng thái P5.1.241 từ riê
 </details>
 
 <details>
-<summary><strong>P5.1.241</strong> · Chip lọc Yêu thích có nút Xem tất cả / Electron 4.23.326 · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.241</strong> · Chip lọc Yêu thích có nút Xem tất cả / Electron 4.23.326 · ĐÃ PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.326 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
@@ -332,7 +332,7 @@ Feature priority: NEW — Khi Shift+F lọc còn 20 kênh, ảnh P5.1.240 chỉ 
 </details>
 
 <details>
-<summary><strong>P5.1.240</strong> · Shift+F lọc nhanh yêu thích không thay đổi dấu sao / Electron 4.23.325 · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.240</strong> · Shift+F lọc nhanh yêu thích không thay đổi dấu sao / Electron 4.23.325 · ĐÃ PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.325 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
@@ -345,7 +345,7 @@ Feature priority: NEW — Thêm phím tắt Shift+F trong danh sách kênh để
 </details>
 
 <details>
-<summary><strong>P5.1.239</strong> · Escape đóng bảng nhảy kênh từ danh sách / Electron 4.23.324 · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.239</strong> · Escape đóng bảng nhảy kênh từ danh sách / Electron 4.23.324 · ĐÃ PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.324 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
@@ -358,7 +358,7 @@ Feature priority: NEW — Bổ sung phím Escape để đóng ngay bảng nhảy
 </details>
 
 <details>
-<summary><strong>P5.1.238</strong> · Không cướp focus khi đang nhập với Alt+J/Alt+G / Electron 4.23.323 · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.238</strong> · Không cướp focus khi đang nhập với Alt+J/Alt+G / Electron 4.23.323 · ĐÃ PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.323 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
@@ -371,7 +371,7 @@ Feature priority: NEW — Tăng khả năng điều hướng bằng bàn phím c
 </details>
 
 <details>
-<summary><strong>P5.1.237</strong> · Alt+←/Alt+→ điều hướng lịch sử nhóm / Electron 4.23.322 · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.237</strong> · Alt+←/Alt+→ điều hướng lịch sử nhóm / Electron 4.23.322 · ĐÃ PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.322 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
@@ -384,7 +384,7 @@ Feature priority: NEW — Điều hướng lịch sử nhóm trực tiếp từ 
 </details>
 
 <details>
-<summary><strong>P5.1.236</strong> · Nhóm sau: quay lại nhóm vừa rời sau thao tác Back / Electron 4.23.321 · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.236</strong> · Nhóm sau: quay lại nhóm vừa rời sau thao tác Back / Electron 4.23.321 · ĐÃ PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.321 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
@@ -397,7 +397,7 @@ Feature priority: NEW — Thêm nút “↷ Nhóm sau” chỉ xuất hiện sau
 </details>
 
 <details>
-<summary><strong>P5.1.235</strong> · Quay về nhóm trước mà không lặp lại nhóm hiện tại / Electron 4.23.320 · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.235</strong> · Quay về nhóm trước mà không lặp lại nhóm hiện tại / Electron 4.23.320 · ĐÃ PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.320 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
@@ -410,7 +410,7 @@ Feature priority: NEW — Lịch sử điều hướng nhóm theo phiên chỉ g
 </details>
 
 <details>
-<summary><strong>P5.1.234</strong> · Tìm đúng nhóm có Đ viết hoa bằng chữ không dấu / Electron 4.23.319 · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.234</strong> · Tìm đúng nhóm có Đ viết hoa bằng chữ không dấu / Electron 4.23.319 · ĐÃ PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.319 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
@@ -423,7 +423,7 @@ Feature priority: NEW — Hỗ trợ tìm tên thư mục tiếng Việt có ch�
 </details>
 
 <details>
-<summary><strong>P5.1.233</strong> · Quay về nhóm vừa rời / Electron 4.23.318 · CHƯA CÓ BẢN PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.233</strong> · Quay về nhóm vừa rời / Electron 4.23.318 · CHƯA CÓ BẢN PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** Chưa xác minh · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
 
@@ -436,7 +436,7 @@ Feature priority: NEW — Người dùng nhảy từ nhóm 01 sang một nhóm b
 </details>
 
 <details>
-<summary><strong>P5.1.232</strong> · Tìm nhanh nhóm kênh theo tên / Electron 4.23.317 · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.232</strong> · Tìm nhanh nhóm kênh theo tên / Electron 4.23.317 · ĐÃ PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.317 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
@@ -449,7 +449,7 @@ Feature priority: NEW — Khi có hàng chục thư mục, người dùng có th
 </details>
 
 <details>
-<summary><strong>P5.1.231</strong> · Bộ chọn nhóm kênh trực tiếp qua Alt+G / Electron 4.23.316 · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.231</strong> · Bộ chọn nhóm kênh trực tiếp qua Alt+G / Electron 4.23.316 · ĐÃ PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.316 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
@@ -462,7 +462,7 @@ Feature priority: NEW — Sau khi chuyển nhóm tuần tự đã hoạt động
 </details>
 
 <details>
-<summary><strong>P5.1.230</strong> · Chuyển nhóm kênh bằng phím trái/phải / Electron 4.23.315 · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.230</strong> · Chuyển nhóm kênh bằng phím trái/phải / Electron 4.23.315 · ĐÃ PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.315 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
@@ -475,7 +475,7 @@ Feature priority: NEW — Chọn một kênh rồi nhấn → để tới đầu
 </details>
 
 <details>
-<summary><strong>P5.1.229</strong> · Đánh dấu yêu thích ngay bằng phím F / Electron 4.23.314 · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.229</strong> · Đánh dấu yêu thích ngay bằng phím F / Electron 4.23.314 · ĐÃ PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.314 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
@@ -488,7 +488,7 @@ Feature priority: NEW — Người dùng đang duyệt hàng trăm kênh bằng 
 </details>
 
 <details>
-<summary><strong>P5.1.228</strong> · Duyệt kênh bằng bàn phím, không cần chuột / Electron 4.23.313 · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.228</strong> · Duyệt kênh bằng bàn phím, không cần chuột / Electron 4.23.313 · ĐÃ PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.313 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
@@ -514,7 +514,7 @@ Feature priority: BLOCKER_FIX — Ảnh Electron P5.1.226 cho thấy nhảy tớ
 </details>
 
 <details>
-<summary><strong>P5.1.226</strong> · Nhảy nhanh tới kênh theo số, không tự phát / Electron 4.23.311 · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.226</strong> · Nhảy nhanh tới kênh theo số, không tự phát / Electron 4.23.311 · ĐÃ PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.311 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
@@ -540,7 +540,7 @@ Feature priority: BLOCKER_FIX — Các nút điều khiển phát video, âm lư
 </details>
 
 <details>
-<summary><strong>P5.1.224</strong> · Trạng thái nhập XMLTV hiển thị ngay trong EPG / 4.23.309 · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.224</strong> · Trạng thái nhập XMLTV hiển thị ngay trong EPG / 4.23.309 · ĐÃ PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.309 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
@@ -553,7 +553,7 @@ Feature priority: NEW — Sau khi người dùng nhập hoặc hủy file XMLTV 
 </details>
 
 <details>
-<summary><strong>P5.1.223</strong> · Nhập XMLTV trực tiếp từ trạng thái EPG rỗng / Electron 4.23.308 · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.223</strong> · Nhập XMLTV trực tiếp từ trạng thái EPG rỗng / Electron 4.23.308 · ĐÃ PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.308 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
@@ -566,7 +566,7 @@ Feature priority: NEW — Người xem có file XMLTV hợp pháp trong máy có
 </details>
 
 <details>
-<summary><strong>P5.1.222</strong> · Chọn nhanh nguồn EPG khi chưa tải dữ liệu / Electron 4.23.307 · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.222</strong> · Chọn nhanh nguồn EPG khi chưa tải dữ liệu / Electron 4.23.307 · ĐÃ PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.307 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
@@ -592,7 +592,7 @@ Feature priority: BLOCKER_FIX — Các nhãn Bắt đầu và Kết thúc lệch
 </details>
 
 <details>
-<summary><strong>P5.1.220</strong> · Mở rộng lịch sử khám phá tối đa 50 kênh / Electron 4.23.305 · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.220</strong> · Mở rộng lịch sử khám phá tối đa 50 kênh / Electron 4.23.305 · ĐÃ PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.305 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
@@ -605,7 +605,7 @@ Feature priority: NEW — Mã và ảnh Electron P5.1.219 cho thấy lịch sử
 </details>
 
 <details>
-<summary><strong>P5.1.219</strong> · Sắp xếp lịch sử khám phá theo tên / Electron 4.23.304 · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.219</strong> · Sắp xếp lịch sử khám phá theo tên / Electron 4.23.304 · ĐÃ PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.304 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
@@ -618,7 +618,7 @@ Feature priority: NEW — Ảnh Electron thật P5.1.218 cho thấy tìm kiếm 
 </details>
 
 <details>
-<summary><strong>P5.1.218</strong> · Lọc nhanh Yêu thích trong lịch sử khám phá / Electron 4.23.303 · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.218</strong> · Lọc nhanh Yêu thích trong lịch sử khám phá / Electron 4.23.303 · ĐÃ PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.303 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
@@ -631,7 +631,7 @@ Feature priority: NEW — Ảnh Electron thật P5.1.217 cho thấy nút sao m�
 </details>
 
 <details>
-<summary><strong>P5.1.217</strong> · Đánh dấu Yêu thích trong lịch sử khám phá / Electron 4.23.302 · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.217</strong> · Đánh dấu Yêu thích trong lịch sử khám phá / Electron 4.23.302 · ĐÃ PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.302 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
@@ -644,7 +644,7 @@ Feature priority: NEW — Ảnh Electron P5.1.216 cho thấy menu khám phá cho
 </details>
 
 <details>
-<summary><strong>P5.1.216</strong> · Gõ tìm ngay khi mở lịch sử khám phá / Electron 4.23.301 · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.216</strong> · Gõ tìm ngay khi mở lịch sử khám phá / Electron 4.23.301 · ĐÃ PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.301 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
@@ -657,7 +657,7 @@ Feature priority: NEW — Mở menu với tiêu điểm ở ô tìm, gõ ngay v�
 </details>
 
 <details>
-<summary><strong>P5.1.215</strong> · Tìm kiếm nhanh trong lịch sử khám phá kênh / Electron 4.23.300 · CHƯA CÓ BẢN PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.215</strong> · Tìm kiếm nhanh trong lịch sử khám phá kênh / Electron 4.23.300 · CHƯA CÓ BẢN PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** Chưa xác minh · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
 
@@ -670,7 +670,7 @@ Feature priority: NEW — Ảnh P5.1.214 xác nhận lịch sử khám phá có 
 </details>
 
 <details>
-<summary><strong>P5.1.214</strong> · Điều hướng menu lịch sử bằng bàn phím/remote / Electron 4.23.299 · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.214</strong> · Điều hướng menu lịch sử bằng bàn phím/remote / Electron 4.23.299 · ĐÃ PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.299 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
@@ -683,7 +683,7 @@ Feature priority: NEW — Ảnh P5.1.213 chứng minh menu lịch sử mở và 
 </details>
 
 <details>
-<summary><strong>P5.1.213</strong> · Lịch sử kênh ngẫu nhiên chọn phát lại / Electron 4.23.298 · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.213</strong> · Lịch sử kênh ngẫu nhiên chọn phát lại / Electron 4.23.298 · ĐÃ PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.298 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
@@ -696,7 +696,7 @@ Feature priority: NEW — Từ ảnh P5.1.212, Back và Forward chỉ chuyển k
 </details>
 
 <details>
-<summary><strong>P5.1.212</strong> · Tiến tới trong lịch sử kênh ngẫu nhiên / Electron 4.23.297 · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.212</strong> · Tiến tới trong lịch sử kênh ngẫu nhiên / Electron 4.23.297 · ĐÃ PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.297 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
@@ -709,7 +709,7 @@ Feature priority: NEW — Ảnh P5.1.211 cho thấy nút ↶ cho phép quay về
 </details>
 
 <details>
-<summary><strong>P5.1.211</strong> · Trở lại kênh ngẫu nhiên đã khám phá / Electron 4.23.296 · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.211</strong> · Trở lại kênh ngẫu nhiên đã khám phá / Electron 4.23.296 · ĐÃ PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.296 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
@@ -722,7 +722,7 @@ Feature priority: NEW — Sau ảnh Electron P5.1.210, thanh Bất kỳ đã có
 </details>
 
 <details>
-<summary><strong>P5.1.210</strong> · Tự cập nhật bộ đếm khám phá khi đổi nguồn / Electron 4.23.295 · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.210</strong> · Tự cập nhật bộ đếm khám phá khi đổi nguồn / Electron 4.23.295 · ĐÃ PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.295 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
@@ -735,7 +735,7 @@ Feature priority: NEW — Từ ảnh P5.1.209 và mã xử lý danh sách nguồ
 </details>
 
 <details>
-<summary><strong>P5.1.209</strong> · Tiến độ khám phá ngẫu nhiên có mẫu số / Electron 4.23.294 · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.209</strong> · Tiến độ khám phá ngẫu nhiên có mẫu số / Electron 4.23.294 · ĐÃ PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.294 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
@@ -761,7 +761,7 @@ Feature priority: BLOCKER_FIX — Nút làm mới tự ẩn khi đang có tiêu 
 </details>
 
 <details>
-<summary><strong>P5.1.207</strong> · Electron 4.23.292 — Làm mới vòng khám phá ngẫu nhiên (CANDIDATE) · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.207</strong> · Electron 4.23.292 — Làm mới vòng khám phá ngẫu nhiên (CANDIDATE) · ĐÃ PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.292 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
@@ -774,7 +774,7 @@ Feature priority: NEW — Thêm nút làm mới trực tiếp trên thanh phát 
 </details>
 
 <details>
-<summary><strong>P5.1.206</strong> · Electron 4.23.291 — Khám phá ngẫu nhiên không lặp kênh (CANDIDATE) · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.206</strong> · Electron 4.23.291 — Khám phá ngẫu nhiên không lặp kênh (CANDIDATE) · ĐÃ PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.291 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
@@ -787,7 +787,7 @@ Feature priority: NEW — Người xem dùng nút Bất kỳ nhiều lần mà t
 </details>
 
 <details>
-<summary><strong>P5.1.205</strong> · Electron 4.23.290 — Đổi kênh ngẫu nhiên ngay khi xem (CANDIDATE) · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.205</strong> · Electron 4.23.290 — Đổi kênh ngẫu nhiên ngay khi xem (CANDIDATE) · ĐÃ PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.290 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
@@ -800,7 +800,7 @@ Feature priority: NEW — Người xem có thể khám phá kênh ngẫu nhiên 
 </details>
 
 <details>
-<summary><strong>P5.1.204</strong> · 4.23.289 — Khám phá kênh ngẫu nhiên từ trang TV (CANDIDATE) · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.204</strong> · 4.23.289 — Khám phá kênh ngẫu nhiên từ trang TV (CANDIDATE) · ĐÃ PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.289 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
@@ -813,7 +813,7 @@ Feature priority: NEW — Khi có nhiều kênh đã nhập nhưng chưa chọn 
 </details>
 
 <details>
-<summary><strong>P5.1.203</strong> · 4.23.288 — Thông báo TV không che nút phát/âm lượng (CANDIDATE) · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.203</strong> · 4.23.288 — Thông báo TV không che nút phát/âm lượng (CANDIDATE) · ĐÃ PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.288 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
@@ -826,7 +826,7 @@ Feature priority: NEW — Khi xem truyền hình trên desktop, thông báo đư
 </details>
 
 <details>
-<summary><strong>P5.1.202</strong> · 4.23.287 — Gia hạn lịch ghi thêm 15 phút, giới hạn tối đa 8 giờ (CANDIDATE) · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.202</strong> · 4.23.287 — Gia hạn lịch ghi thêm 15 phút, giới hạn tối đa 8 giờ (CANDIDATE) · ĐÃ PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.287 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
@@ -839,7 +839,7 @@ Feature priority: NEW — Giữ nguyên kênh và giờ bắt đầu, cho phép 
 </details>
 
 <details>
-<summary><strong>P5.1.201</strong> · 4.23.286 — Hoàn tác lần thay tên bản ghi vừa xác nhận (CANDIDATE) · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.201</strong> · 4.23.286 — Hoàn tác lần thay tên bản ghi vừa xác nhận (CANDIDATE) · ĐÃ PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.286 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
@@ -852,7 +852,7 @@ Feature priority: NEW — Cho phép khôi phục đúng tên chương trình ng�
 </details>
 
 <details>
-<summary><strong>P5.1.200</strong> · 4.23.285 — Xác nhận thay tên lịch ghi bằng hai lần nhấn (CANDIDATE) · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.200</strong> · 4.23.285 — Xác nhận thay tên lịch ghi bằng hai lần nhấn (CANDIDATE) · ĐÃ PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.285 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
@@ -865,234 +865,234 @@ Feature priority: NEW — Khi đã có tên ghi hình tự nhập, nút tạo t�
 </details>
 
 <details>
-<summary><strong>P5.1.199</strong> · 4.23.284 — Đồng bộ tên ghi hình tạo tự động (CANDIDATE) · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.199</strong> · 4.23.284 — Đồng bộ tên ghi hình tạo tự động (CANDIDATE) · ĐÃ PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.284 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
 Feature priority: NEW — Tên được ứng dụng tạo từ kênh và giờ nay tự cập nhật khi người xem đổi thời gian ghi hoặc kênh, tránh tạo lịch với tên sai ngày nhưng vẫn bảo vệ nhãn nhập tay. User action: Mở Lịch phát sóng, tạo tên từ kênh và giờ, sau đó chọn Ngày mai cùng giờ hoặc sửa giờ bắt đầu để thấy tên tự cập nhật.
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.199](./screenshots/positron-p51199-desktop-1920x1080-trang-chu-real.png)
 
 [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.284-p5.1.199) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/9eb4ea091ac8e419caf488b644c0ae7639ec44fa) · [Tải Windows Setup x64](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.284-p5.1.199/Open-IPTV-Pro-Setup-4.23.284-x64.exe) · [Tải gói ảnh QA](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.284-p5.1.199/Positron-P51199-20-Real-Screenshots.zip)
 
 </details>
 
 <details>
-<summary><strong>P5.1.198</strong> · Hẹn giờ ghi ngày mai cùng giờ / Electron 4.23.283 · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.198</strong> · Hẹn giờ ghi ngày mai cùng giờ / Electron 4.23.283 · ĐÃ PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.283 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
 Feature priority: NEW — Ảnh Electron P5.1.197 thực tế cho thấy các nút bắt đầu nhanh chỉ có Sau 5, Sau 15, Sau 30 phút, không có cách chuyển lịch ghi sang ngày mai giữ nguyên giờ đã chọn. Bổ sung nút Ngày mai cùng giờ ở cả hai mẫu ghi hình để tiện lên lịch mà không nhập lại giờ kết thúc. Electron screenshot: positron-p51198-dvr-tomorrow-after-1920x1080-real.png
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.198](./screenshots/positron-p51198-dvr-tomorrow-after-1920x1080-real.png)
 
 [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.283-p5.1.198) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/f84f7f4e84d3b5b398bded8c4111162797ce4810) · [Tải Windows Setup x64](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.283-p5.1.198/Open-IPTV-Pro-Setup-4.23.283-x64.exe) · [Tải gói ảnh QA](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.283-p5.1.198/Positron-P51198-20-Real-Screenshots.zip)
 
 </details>
 
 <details>
-<summary><strong>P5.1.197</strong> · Sao chép lịch ghi và bỏ lặp tên kênh / Electron 4.23.282 · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.197</strong> · Sao chép lịch ghi và bỏ lặp tên kênh / Electron 4.23.282 · ĐÃ PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.282 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
 Feature priority: NEW — Ảnh Electron P5.1.196 thật ở 1920×1080 cho thấy dòng xem trước nhỏ, lặp kênh hai lần khi tên được tạo tự động và không thể sao chép nội dung để đối chiếu. Bổ sung nút sao chép theo yêu cầu, trạng thái thành công/thất bại và nội dung tóm tắt gọn dễ đọc. Electron screenshot: positron-p51197-dvr-copy-after-1920x1080-real.png
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.197](./screenshots/positron-p51197-dvr-copy-after-1920x1080-real.png)
 
 [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.282-p5.1.197) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/70906dee44f4669c739051a079d9dc6bb7e251bd) · [Tải Windows Setup x64](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.282-p5.1.197/Open-IPTV-Pro-Setup-4.23.282-x64.exe) · [Tải gói ảnh QA](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.282-p5.1.197/Positron-P51197-20-Real-Screenshots.zip)
 
 </details>
 
 <details>
-<summary><strong>P5.1.196</strong> · Xem trước lịch ghi hình / Electron 4.23.281 · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.196</strong> · Xem trước lịch ghi hình / Electron 4.23.281 · ĐÃ PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.281 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
 Feature priority: NEW — Ảnh Electron thật P5.1.195 cho thấy người dùng điền kênh, tên và hai mốc thời gian nhưng thiếu bước xem lại toàn bộ lịch. Thêm phần xem trước luôn cập nhật, cho phép phát hiện thời lượng sai trước khi người dùng chủ động xác nhận. Electron screenshot: positron-p51196-dvr-preview-after-1920x1080-real.png
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.196](./screenshots/positron-p51196-dvr-preview-after-1920x1080-real.png)
 
 [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.281-p5.1.196) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/35e66592acf4182cb74d412a2eb643abc241c049) · [Tải Windows Setup x64](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.281-p5.1.196/Open-IPTV-Pro-Setup-4.23.281-x64.exe) · [Tải gói ảnh QA](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.281-p5.1.196/Positron-P51196-20-Real-Screenshots.zip)
 
 </details>
 
 <details>
-<summary><strong>P5.1.195</strong> · Đặt tên bản ghi tự động theo kênh và giờ / Electron 4.23.280 · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.195</strong> · Đặt tên bản ghi tự động theo kênh và giờ / Electron 4.23.280 · ĐÃ PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.280 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
 Feature priority: NEW — Ảnh P5.1.194 Electron thật cho thấy ô Tên chương trình vẫn rỗng ngay cả khi kênh và giờ ghi đã được chọn; người dùng cần gõ lại hoặc không thể lưu vì trường bắt buộc. Thêm nút gợi ý tên chính xác theo kênh/giờ, tuyệt đối không ghi đè tên tự nhập. Tính năng: nút “Tạo tên từ kênh và giờ” bên dưới Tên chương trình của mẫu EPG. Nhấn để điền tên kênh đã chọn và thời gian địa phương đã nhập (DD.MM.YYYY HH:mm), loại ký tự không an toàn; nếu người dùng đã nhập tên khác thì chỉ báo và giữ nguyên. Không đổi giờ, kênh, nguồn hay trạng thái ghi hình.
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.195](./screenshots/positron-p51195-dvr-autoname-after-1920x1080-real.png)
 
 [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.280-p5.1.195) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/4c0af9abac7b5a596d024e423b04a7d947672f33) · [Tải Windows Setup x64](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.280-p5.1.195/Open-IPTV-Pro-Setup-4.23.280-x64.exe) · [Tải gói ảnh QA](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.280-p5.1.195/Positron-P51195-20-Real-Screenshots.zip)
 
 </details>
 
 <details>
-<summary><strong>P5.1.194</strong> · Chọn nhanh giờ bắt đầu ghi hình sau 5/15/30 phút / Electron 4.23.279 · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.194</strong> · Chọn nhanh giờ bắt đầu ghi hình sau 5/15/30 phút / Electron 4.23.279 · ĐÃ PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.279 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
 Feature priority: NEW — Ảnh Electron P5.1.193 thực ở 1920×1080 cho thấy lịch ghi có các nút chọn thời lượng nhưng trường Bắt đầu vẫn cần nhập ngày giờ thủ công. Bổ sung chọn giờ bắt đầu từ hiện tại để giảm thao tác hẹn ghi, không gửi lịch khi chưa xác nhận. Tính năng: dưới giờ Bắt đầu có ba nút “Sau 5 phút”, “Sau 15 phút”, “Sau 30 phút” ở EPG và biểu mẫu ghi nhanh TV. Nhấn chỉ điền Bắt đầu dựa trên phút hiện tại, đồng thời dời Kết thúc để giữ thời lượng cũ nếu hợp lệ (1–480 phút), hoặc 60 phút khi thiếu/không hợp lệ. Tự cập nhật nhãn thời lượng và trạng thái preset P5.1.192/193.
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.194](./screenshots/positron-p51194-dvr-start-after-after-1920x1080-real.png)
 
 [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.279-p5.1.194) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/ff29ada0c777398a4fc8dcba36db4cd9c99dd474) · [Tải Windows Setup x64](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.279-p5.1.194/Open-IPTV-Pro-Setup-4.23.279-x64.exe) · [Tải gói ảnh QA](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.279-p5.1.194/Positron-P51194-20-Real-Screenshots.zip)
 
 </details>
 
 <details>
-<summary><strong>P5.1.193</strong> · Nút DVR tự đánh dấu thời lượng 30/60/120 phút / Electron 4.23.278 · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.193</strong> · Nút DVR tự đánh dấu thời lượng 30/60/120 phút / Electron 4.23.278 · ĐÃ PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.278 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
 Feature priority: NEW — Ảnh Electron thực của P5.1.192 cho thấy thời lượng 1 giờ nhưng ba nút 30/60/120 phút có giao diện giống hệt nhau, khiến người xem khó xác định lựa chọn hiện tại khi chỉnh giờ ghi. Khi nhập Bắt đầu/Kết thúc, ứng dụng đánh dấu đúng nút có số phút tương ứng bằng aria-pressed và viền màu chủ đề; không có nút được chọn khi chỉnh giờ không khớp hoặc lịch sai.
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.193](./screenshots/positron-p51193-dvr-selected-preset-after-1920x1080-real.png)
 
 [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.278-p5.1.193) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/5074565d748fc23c50d1b26cb6523cf024a2388b) · [Tải Windows Setup x64](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.278-p5.1.193/Open-IPTV-Pro-Setup-4.23.278-x64.exe) · [Tải gói ảnh QA](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.278-p5.1.193/Positron-P51193-20-Real-Screenshots.zip)
 
 </details>
 
 <details>
-<summary><strong>P5.1.192</strong> · Thời lượng ghi hình trực tiếp và cảnh báo 8 giờ / Electron 4.23.277 · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.192</strong> · Thời lượng ghi hình trực tiếp và cảnh báo 8 giờ / Electron 4.23.277 · ĐÃ PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.277 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
 Feature priority: NEW — Ảnh Electron thật P5.1.191 cho thấy nút chọn thời lượng 30/60/120 phút đã hoạt động, nhưng form không có thông tin tổng thời lượng và chưa cảnh báo trực quan khi người dùng sửa giờ kết thúc sai. Thêm dòng kiểm tra trực tiếp cho cả EPG DVR và ghi nhanh TV mà không can thiệp luồng ghi hình. Hiển thị số giờ/phút ngay khi nhập thời gian; nếu kết thúc không sau bắt đầu hoặc vượt 8 giờ, báo rõ lỗi. Không tự thay đổi giờ nhập, không tự tạo lịch, không phát video, giữ xác thực DVR native.
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.192](./screenshots/positron-p51192-dvr-duration-after-1920x1080-real.png)
 
 [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.277-p5.1.192) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/1b90ff51eb4aa01d12b0b48e4483051b34118c70) · [Tải Windows Setup x64](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.277-p5.1.192/Open-IPTV-Pro-Setup-4.23.277-x64.exe) · [Tải gói ảnh QA](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.277-p5.1.192/Positron-P51192-20-Real-Screenshots.zip)
 
 </details>
 
 <details>
-<summary><strong>P5.1.191</strong> · Chọn nhanh thời lượng DVR 30/60/120 phút / Electron 4.23.276 · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.191</strong> · Chọn nhanh thời lượng DVR 30/60/120 phút / Electron 4.23.276 · ĐÃ PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.276 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
 Feature priority: NEW — Ảnh EPG Electron thật P5.1.190 ở 1920×1080 cho thấy hẹn giờ ghi hình phải nhập thủ công cả thời gian Bắt đầu và Kết thúc. Thêm nút cộng 30, 60, 120 phút dưới trường Kết thúc ở cả lịch ghi trên EPG và biểu mẫu ghi nhanh trên TV. Nút chỉ tính và điền giá trị Kết thúc theo thời gian Bắt đầu ở múi giờ cục bộ; kích hoạt input/change để form gốc kiểm tra. Không tự đặt lịch, không khởi chạy DVR, không sửa nguồn M3U, danh sách kênh hoặc quyền xem.
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.191](./screenshots/positron-p51191-dvr-presets-after-1920x1080-real.png)
 
 [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.276-p5.1.191) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/324ce2606c258faa412d811b4acb95865f8c1c81) · [Tải Windows Setup x64](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.276-p5.1.191/Open-IPTV-Pro-Setup-4.23.276-x64.exe) · [Tải gói ảnh QA](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.276-p5.1.191/Positron-P51191-20-Real-Screenshots.zip)
 
 </details>
 
 <details>
-<summary><strong>P5.1.190</strong> · Bấm lại tab TV để trở về khung phát / Electron 4.23.275 · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.190</strong> · Bấm lại tab TV để trở về khung phát / Electron 4.23.275 · ĐÃ PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.275 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
 Feature priority: NEW — Ảnh Electron P5.1.189 1920×1080 cho thấy đầu trình phát bị khuất khi đang ở trang TV nhưng cuộn còn sâu; thao tác chọn TV khi tab đã active không quay về vùng video vì setPage chỉ đặt lại scroll ở lần chuyển tab. Khi chọn lại nút TV đang active, cuộn nội dung về đầu trình phát ngay. Chỉ áp dụng cho trang TV, không chuyển kênh, không tự phát và không thay đổi các tab/thiết lập khác.
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.190](./screenshots/positron-p51190-tv-reselect-after-1920x1080-real.png)
 
 [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.275-p5.1.190) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/b8a22f0f8b7e0e533ad9fd264fde379b045733e8) · [Tải Windows Setup x64](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.275-p5.1.190/Open-IPTV-Pro-Setup-4.23.275-x64.exe) · [Tải gói ảnh QA](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.275-p5.1.190/Positron-P51190-20-Real-Screenshots.zip)
 
 </details>
 
 <details>
-<summary><strong>P5.1.189</strong> · Sắp xếp gợi ý Yêu thích A–Z / Z–A / theo nguồn / Electron 4.23.274 · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.189</strong> · Sắp xếp gợi ý Yêu thích A–Z / Z–A / theo nguồn / Electron 4.23.274 · ĐÃ PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.274 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
 Feature priority: NEW — Ảnh Electron thật P5.1.188 đã dàn đủ sáu cột gợi ý nhưng chỉ có tìm kiếm và lọc nhóm, chưa có cách sắp xếp các kênh chưa yêu thích khi nguồn chứa hàng trăm kênh. Thêm tùy chọn hiển thị Theo nguồn, Tên A–Z, Tên Z–A theo thứ tự tiếng Việt. Lựa chọn chỉ sắp xếp mảng gợi ý đã lọc trước khi phân trang; giữ nguyên thứ tự nguồn M3U, Favorites đã lưu, trạng thái kênh hiện tại và nút lưu hàng loạt, không tự phát video.
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.189](./screenshots/positron-p51189-favorite-sort-after-1920x1080-real.png)
 
 [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.274-p5.1.189) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/61177c02fc3c2e727e1057034b65dd678fad3c16) · [Tải Windows Setup x64](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.274-p5.1.189/Open-IPTV-Pro-Setup-4.23.274-x64.exe) · [Tải gói ảnh QA](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.274-p5.1.189/Positron-P51189-20-Real-Screenshots.zip)
 
 </details>
 
 <details>
-<summary><strong>P5.1.188</strong> · Gợi ý Yêu thích đủ rộng trên desktop / Electron 4.23.273 · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.188</strong> · Gợi ý Yêu thích đủ rộng trên desktop / Electron 4.23.273 · ĐÃ PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.273 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
 Feature priority: NEW — Thêm chế độ dàn gợi ý toàn chiều rộng desktop giúp duyệt kênh nhanh hơn, dựa trên ảnh Electron P5.1.187 thật ở 1920×1080 cho thấy phần gợi ý chỉ chiếm 1180px, để thừa vùng trống rộng bên phải, trong khi danh sách Yêu thích phía trên dùng đủ chiều ngang. Với desktop từ 1600px, mở rộng riêng khối gợi ý theo bề ngang vùng nội dung, tự bố trí 6 cột dễ đọc. Giữ 4 cột ở laptop, 2/1 cột ở máy hẹp; không đụng dữ liệu M3U/Favorites, phát video hoặc phân trang.
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.188](./screenshots/positron-p51188-favorite-wide-after-1920x1080-real.png)
 
 [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.273-p5.1.188) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/688f2740afdf66c424ce82dcd6aeb3e4391272a5) · [Tải Windows Setup x64](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.273-p5.1.188/Open-IPTV-Pro-Setup-4.23.273-x64.exe) · [Tải gói ảnh QA](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.273-p5.1.188/Positron-P51188-20-Real-Screenshots.zip)
 
 </details>
 
 <details>
-<summary><strong>P5.1.187</strong> · Đi thẳng tới trang gợi ý / Electron 4.23.272 · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.187</strong> · Đi thẳng tới trang gợi ý / Electron 4.23.272 · ĐÃ PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.272 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
 Feature priority: NEW — Ảnh P5.1.186 hiển thị Trang 9/9 và Trước/Tiếp, nhưng chưa thể tới trang số bất kỳ khi nguồn có hàng chục hoặc hàng trăm trang. Thêm ô số “Đến trang” với giới hạn 1..tổng trang, nhập và nhấn Enter hoặc đổi giá trị để nhảy trực tiếp; tự kẹp số quá nhỏ/lớn, đồng bộ chỉ số và số kênh, giữ nguyên tìm kiếm/nhóm/pageSize và dữ liệu nguồn.
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.187](./screenshots/positron-p51187-favorite-direct-page-after-1920x1080-real.png)
 
 [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.272-p5.1.187) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/93abc920f4197ca4e3724b8ce83411f23ddcaa7f) · [Tải Windows Setup x64](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.272-p5.1.187/Open-IPTV-Pro-Setup-4.23.272-x64.exe) · [Tải gói ảnh QA](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.272-p5.1.187/Positron-P51187-20-Real-Screenshots.zip)
 
 </details>
 
 <details>
-<summary><strong>P5.1.186</strong> · Phân trang gợi ý Trước / Tiếp / Trang x/y / Electron 4.23.271 · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.186</strong> · Phân trang gợi ý Trước / Tiếp / Trang x/y / Electron 4.23.271 · ĐÃ PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.271 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
 Feature priority: NEW — Ảnh P5.1.185 có hàng trăm kênh gợi ý nhưng chỉ có Gợi ý khác, không biết đang ở trang nào, không quay lại trang trước và vòng lặp cũ có thể lặp kênh ở trang cuối. Thêm nút Trước, chỉ số Trang x/y (aria-live), giữ nút Gợi ý khác để tiến tiếp; phân trang theo các lát cắt không trùng kênh. Trang cuối đúng số còn lại, nút Lưu cả N phản ánh số hiện tại, chức năng cũ vẫn giữ và không tự phát video.
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.186](./screenshots/positron-p51186-favorite-paging-after-1920x1080-real.png)
 
 [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.271-p5.1.186) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/3d990557bb77972a22f4e0d77ff55b7436da7bcb) · [Tải Windows Setup x64](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.271-p5.1.186/Open-IPTV-Pro-Setup-4.23.271-x64.exe) · [Tải gói ảnh QA](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.271-p5.1.186/Positron-P51186-20-Real-Screenshots.zip)
 
 </details>
 
 <details>
-<summary><strong>P5.1.185</strong> · Nhóm gợi ý truy cập nhanh có số kênh / Electron 4.23.270 · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.185</strong> · Nhóm gợi ý truy cập nhanh có số kênh / Electron 4.23.270 · ĐÃ PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.270 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
 Feature priority: NEW — Ảnh Electron P5.1.184 có dropdown nhóm nhưng không biết số kênh từng nhóm trước khi chọn; duyệt 541 kênh mất thời gian. Thêm dải nút truy cập nhanh các nhóm nhiều kênh với đếm số lượng thực từ kênh còn gợi ý, đánh dấu nhóm đang chọn bằng aria-pressed; chọn Tất cả khôi phục. Dropdown hiện số lượng từng nhóm và tổng kênh; không can thiệp M3U, favoriteKeys hay phát video.
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.185](./screenshots/positron-p51185-group-quick-after-1920x1080-real.png)
 
 [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.270-p5.1.185) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/cda6a6fe6f29798b3dda34faeab54ab5f648f452) · [Tải Windows Setup x64](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.270-p5.1.185/Open-IPTV-Pro-Setup-4.23.270-x64.exe) · [Tải gói ảnh QA](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.270-p5.1.185/Positron-P51185-20-Real-Screenshots.zip)
 
 </details>
 
 <details>
-<summary><strong>P5.1.184</strong> · Lọc gợi ý Yêu thích theo nhóm / Electron 4.23.269 · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.184</strong> · Lọc gợi ý Yêu thích theo nhóm / Electron 4.23.269 · ĐÃ PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.269 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
 Feature priority: NEW — Ảnh P5.1.183 chứng minh có 553 kênh chưa lưu nhưng gợi ý không phân loại theo nhóm; tìm bằng mắt còn rườm rà. Thêm dropdown nhóm được tạo trực tiếp từ metadata nguồn đang bật, chỉ lọc tên nhóm thực có kênh chưa đánh dấu sao. Kết hợp tìm kiếm không dấu và lựa chọn 6/12/24 kênh, nút Lưu cả N vẫn theo số thẻ được lọc. Tập dữ liệu nguồn và favoriteKeys giữ nguyên.
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.184](./screenshots/positron-p51184-favorite-group-after-1920x1080-real.png)
 
 [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.269-p5.1.184) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/4f8caf8a4166a6cf47b655ad5a63fdf3a0352e89) · [Tải Windows Setup x64](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.269-p5.1.184/Open-IPTV-Pro-Setup-4.23.269-x64.exe) · [Tải gói ảnh QA](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.269-p5.1.184/Positron-P51184-20-Real-Screenshots.zip)
 
 </details>
 
 <details>
-<summary><strong>P5.1.183</strong> · Gợi ý Yêu thích 6/12/24 kênh / Electron 4.23.268 · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.183</strong> · Gợi ý Yêu thích 6/12/24 kênh / Electron 4.23.268 · ĐÃ PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.268 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
 Feature priority: NEW — Ảnh Electron P5.1.182 cho thấy 6 gợi ý bị bó trong card 720px trên desktop rộng 1920px, duyệt nhiều kênh mất thao tác. Viewer chọn 6, 12 hoặc 24 gợi ý, giữ mặc định sáu, nút Gợi ý khác nhảy đúng số đang chọn, Lưu cả N chỉ lưu kênh hiển thị sau nhấn chủ động. Tăng panel lên tối đa 1180px, 4/2/1 cột responsive.
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.183](./screenshots/positron-p51183-favorite-suggestions-after-1920x1080-real.png)
 
 [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.268-p5.1.183) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/c27cf4ce68b224a24d6c2a0e63e281b670a61974) · [Tải Windows Setup x64](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.268-p5.1.183/Open-IPTV-Pro-Setup-4.23.268-x64.exe) · [Tải gói ảnh QA](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.268-p5.1.183/Positron-P51183-20-Real-Screenshots.zip)
 
 </details>
 
 <details>
-<summary><strong>P5.1.182</strong> · Sắp xếp Yêu thích theo tên / Electron 4.23.267 · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.182</strong> · Sắp xếp Yêu thích theo tên / Electron 4.23.267 · ĐÃ PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.267 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
 Feature priority: NEW — Từ ảnh Electron P181 nhận thấy danh sách 8 Favorites thiếu điều khiển sắp xếp, khó tìm bằng mắt ở thư viện nhiều kênh. Thêm select “Thứ tự ban đầu / Tên A–Z / Tên Z–A” cạnh ô tìm kiếm; Intl.Collator('vi') và CSS order, không ghi thay đổi vào favoriteKeys, M3U hay trạng thái trình phát.
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.182](./screenshots/positron-p51182-favorites-sort-after-1920x1080-real.png)
 
 [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.267-p5.1.182) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/38923e0aa8f2fd1715eb6892999ddacb3139e869) · [Tải Windows Setup x64](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.267-p5.1.182/Open-IPTV-Pro-Setup-4.23.267-x64.exe) · [Tải gói ảnh QA](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.267-p5.1.182/Positron-P51182-20-Real-Screenshots.zip)
 
@@ -1105,124 +1105,124 @@ Feature priority: NEW — Từ ảnh Electron P181 nhận thấy danh sách 8 Fa
 
 Feature priority: BLOCKER_FIX — Ảnh P5.1.180 xác nhận lỗi cắt tên Yêu thích khiến người xem không nhận diện chính xác kênh trước khi bấm phát video, nguy cơ chọn sai kênh; đây là lỗi cản trở sử dụng cốt lõi. Visual bug confirmed from real screenshot P5.1.180: khi lưu 6 kênh một lần tổng 8 Favorites, auto-fit grid dàn thành 6 cột hẹp, tên "QA Ch..." bị ellipsis và metadata dồn 4 dòng.
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.181](./screenshots/positron-p51181-readable-favorites-after-1920x1080-real.png)
 
 [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.266-p5.1.181) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/93edf7c6aea472f95462e1606ef9d7597526bb60) · [Tải Windows Setup x64](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.266-p5.1.181/Open-IPTV-Pro-Setup-4.23.266-x64.exe) · [Tải gói ảnh QA](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.266-p5.1.181/Positron-P51181-20-Real-Screenshots.zip)
 
 </details>
 
 <details>
-<summary><strong>P5.1.180</strong> · Lưu nhiều kênh gợi ý vào Yêu thích bằng một nhấn / Electron 4.23.265 · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.180</strong> · Lưu nhiều kênh gợi ý vào Yêu thích bằng một nhấn / Electron 4.23.265 · ĐÃ PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.265 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
 Feature priority: NEW — Ảnh Electron thật P5.1.179 cho thấy tìm ra kênh gợi ý dễ hơn nhưng người xem vẫn phải nhấn ☆ nhiều lần để lưu một nhóm sáu kênh. Thêm thao tác Lưu cả N kênh chỉ lưu danh sách gợi ý hiện tại khi có nhấn chủ động, không sửa playlist hoặc tự phát. User action: Mở Yêu thích có ít nhất một kênh → xem nhóm gợi ý hoặc lọc theo tên/nhóm → bấm Lưu cả N kênh để đánh dấu yêu thích toàn bộ danh sách N kênh đang hiển thị.
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.180](./screenshots/positron-p51180-bulk-favorites-after-1920x1080-real.png)
 
 [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.265-p5.1.180) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/7324378988794dfed8c96fc16bdbd3bad9083b94) · [Tải Windows Setup x64](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.265-p5.1.180/Open-IPTV-Pro-Setup-4.23.265-x64.exe) · [Tải gói ảnh QA](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.265-p5.1.180/Positron-P51180-20-Real-Screenshots.zip)
 
 </details>
 
 <details>
-<summary><strong>P5.1.179</strong> · Tìm trực tiếp trong 559 kênh gợi ý / Electron 4.23.264 · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.179</strong> · Tìm trực tiếp trong 559 kênh gợi ý / Electron 4.23.264 · ĐÃ PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.264 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
 Feature priority: NEW — Ảnh Electron thật P5.1.178 cho thấy Gợi ý khác đã duyệt sáu kênh mỗi lần nhưng không có cách tìm tên hoặc nhóm khi 559 kênh chưa sao. Bổ sung bộ tìm riêng ngay trong khu vực gợi ý, hỗ trợ tiếng Việt không dấu, không ảnh hưởng bộ lọc của Favorites đã lưu. User action: Mở Yêu thích có ít nhất một kênh → gõ tên hoặc nhóm trong ô Tìm kênh để thêm → chọn ☆ để lưu hoặc xóa từ khóa để xem các nhóm kênh tiếp.
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.179](./screenshots/positron-p51179-search-suggestions-after-1920x1080-real.png)
 
 [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.264-p5.1.179) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/f6f2736a5f91cc3904ffc2f692439e803440529f) · [Tải Windows Setup x64](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.264-p5.1.179/Open-IPTV-Pro-Setup-4.23.264-x64.exe) · [Tải gói ảnh QA](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.264-p5.1.179/Positron-P51179-20-Real-Screenshots.zip)
 
 </details>
 
 <details>
-<summary><strong>P5.1.178</strong> · Gợi ý khác để duyệt thêm kênh Yêu thích / Electron 4.23.263 · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.178</strong> · Gợi ý khác để duyệt thêm kênh Yêu thích / Electron 4.23.263 · ĐÃ PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.263 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
 Feature priority: NEW — Ảnh Electron thật P5.1.176 cho thấy bảng Gợi ý thêm vào Yêu thích chỉ có sáu kênh đầu dù còn hàng trăm kênh chưa đánh sao. Thêm nút Gợi ý khác để duyệt các nhóm sáu kênh chưa sao tiếp theo mà không sửa playlist và không tự phát. User action: Mở trang Yêu thích có ít nhất một kênh → bấm Gợi ý khác để thấy sáu kênh tiếp theo → bấm ☆ ở kênh mong muốn để thêm vào Yêu thích.
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.178](./screenshots/positron-p51178-rotate-favorites-after-1920x1080-real.png)
 
 [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.263-p5.1.178) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/433dcac2d6833063948cf6bad53c980ebe4d7896) · [Tải Windows Setup x64](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.263-p5.1.178/Open-IPTV-Pro-Setup-4.23.263-x64.exe) · [Tải gói ảnh QA](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.263-p5.1.178/Positron-P51178-20-Real-Screenshots.zip)
 
 </details>
 
 <details>
-<summary><strong>P5.1.177</strong> · Tìm kiếm không dấu trong Yêu thích / Electron 4.23.262 · CHƯA CÓ BẢN PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.177</strong> · Tìm kiếm không dấu trong Yêu thích / Electron 4.23.262 · CHƯA CÓ BẢN PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** Chưa xác minh · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
 
 Feature priority: NEW — Ảnh thực P5.1.176 đã có 2 thẻ yêu thích với số lượng có thể tăng liên tục; trang chưa có ô tìm riêng theo tên/nhóm. Bổ sung thanh tìm kênh trong Yêu thích, hỗ trợ tiếng Việt không dấu, case-insensitive, trả về số hiển thị X / tổng mà không thay đổi số kênh yêu thích thật. User action: Mở trang Yêu thích đang có nhiều thẻ → nhập một phần tên hoặc nhóm vào ô Tìm trong Yêu thích → chỉ còn thẻ phù hợp; xóa từ khóa để trở lại danh sách đầy đủ.
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.177](./screenshots/positron-p51177-search-favorites-after-1920x1080-real.png)
 
 [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
 
 </details>
 
 <details>
-<summary><strong>P5.1.176</strong> · Gợi ý thêm Yêu thích sau kênh đầu tiên / Electron 4.23.261 · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.176</strong> · Gợi ý thêm Yêu thích sau kênh đầu tiên / Electron 4.23.261 · ĐÃ PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.261 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
 Feature priority: NEW — Ảnh Electron thật P5.1.175 sau thao tác cho thấy QA Channel 001 là thẻ Yêu thích duy nhất, còn phần lớn trang trống, trong khi 560 kênh khác đã nhập. Bổ sung bảng Gợi ý thêm vào Yêu thích ở cuối danh sách khi đã có Favorites, với tối đa 6 kênh chưa đánh dấu sao; bấm ☆ lưu trực tiếp, không phát. User action: Mở Yêu thích đã có ít nhất một kênh → chọn ☆ tại bảng Gợi ý thêm vào Yêu thích → kênh tiếp theo xuất hiện trong danh sách ngay lập tức, cập nhật số sao.
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.176](./screenshots/positron-p51176-more-favorites-after-1920x1080-real.png)
 
 [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.261-p5.1.176) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/12f85294771a70492470a5183470e1f157512326) · [Tải Windows Setup x64](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.261-p5.1.176/Open-IPTV-Pro-Setup-4.23.261-x64.exe) · [Tải gói ảnh QA](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.261-p5.1.176/Positron-P51176-20-Real-Screenshots.zip)
 
 </details>
 
 <details>
-<summary><strong>P5.1.175</strong> · Thêm nhanh kênh vào Yêu thích ngay trong empty state / Electron 4.23.260 · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.175</strong> · Thêm nhanh kênh vào Yêu thích ngay trong empty state / Electron 4.23.260 · ĐÃ PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.260 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
 Feature priority: NEW — Ảnh Electron thật P5.1.174 cho thấy trang Yêu thích đang trống nhưng có 561 kênh và CTA phải chuyển sang TV. Tạo cụm chọn nhanh tối đa 6 kênh đang bật, bấm ☆ bên cạnh tên kênh sẽ đánh dấu yêu thích ngay tại đây, không cần mở player. Đồng thời CTA tới TV xóa từ khóa QA Channel 011 cũ để trả lại toàn bộ 561 kênh. User action: Mở Yêu thích khi chưa có kênh yêu thích nhưng đã có nguồn → chọn một trong tối đa 6 nút ☆ kênh được gợi ý → kênh đó xuất hiện thành thẻ Yêu thích; có thể mở TV để chọn thêm kênh khác.
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.175](./screenshots/positron-p51175-quick-favorite-after-1920x1080-real.png)
 
 [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.260-p5.1.175) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/c4da69de4d8d282026a8cd48cf6d24f019eff9cc) · [Tải Windows Setup x64](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.260-p5.1.175/Open-IPTV-Pro-Setup-4.23.260-x64.exe) · [Tải gói ảnh QA](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.260-p5.1.175/Positron-P51175-20-Real-Screenshots.zip)
 
 </details>
 
 <details>
-<summary><strong>P5.1.174</strong> · Yêu thích trống dẫn đúng tới TV thay vì Quản lý nguồn / Electron 4.23.259 · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.174</strong> · Yêu thích trống dẫn đúng tới TV thay vì Quản lý nguồn / Electron 4.23.259 · ĐÃ PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.259 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
 Feature priority: NEW — Ảnh Electron thật P5.1.173 tại trang Yêu thích cho thấy 561 kênh đã nhập nhưng danh sách chưa có sao, nút CTA vẫn ghi Quản lý nguồn IPTV; dẫn người dùng sang việc thêm nguồn không liên quan. CTA giờ đổi theo dữ liệu hiện có: có kênh → Xem kênh để đánh dấu ★ (quay về TV, focus ô tìm); không có kênh → Quản lý nguồn IPTV. User action: Mở Yêu thích khi đã có kênh nhưng chưa đánh dấu sao → bấm Xem kênh để đánh dấu ★ → tự đến TV và focus tìm kênh; việc đánh dấu sao vẫn do người dùng thực hiện.
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.174](./screenshots/positron-p51174-favorite-action-after-1920x1080-real.png)
 
 [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.259-p5.1.174) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/240af7385b31dc55da55264675cd05ae2f14df44) · [Tải Windows Setup x64](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.259-p5.1.174/Open-IPTV-Pro-Setup-4.23.259-x64.exe) · [Tải gói ảnh QA](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.259-p5.1.174/Positron-P51174-20-Real-Screenshots.zip)
 
 </details>
 
 <details>
-<summary><strong>P5.1.173</strong> · Quay lại đúng vị trí kiểm kê sau khi tìm kênh / Electron 4.23.258 · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.173</strong> · Quay lại đúng vị trí kiểm kê sau khi tìm kênh / Electron 4.23.258 · ĐÃ PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.258 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
 Feature priority: NEW — Ảnh Electron P5.1.172 cho thấy bấm Tìm sẽ đưa đúng một kênh lên TV nhưng người dùng phải tìm lại vị trí kiểm kê; bổ sung nút ↩ Kiểm kê · trang N xuất hiện cạnh ô tìm TV chỉ sau thao tác định vị, quay về đúng trang kênh thiếu logo đang xử lý mà không mất bộ lọc. User action: Từ Thư viện → Kênh thiếu logo → sang trang 2 → bấm Tìm một kênh → chọn ↩ Kiểm kê · trang 2 ngay dưới ô tìm để quay lại đúng trang thứ hai và tiếp tục rà soát.
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.173](./screenshots/positron-p51173-return-inspection-after-1920x1080-real.png)
 
 [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.258-p5.1.173) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/1dd6895f7bde24deb17a19c4b3a4b86de072ce55) · [Tải Windows Setup x64](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.258-p5.1.173/Open-IPTV-Pro-Setup-4.23.258-x64.exe) · [Tải gói ảnh QA](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.258-p5.1.173/Positron-P51173-20-Real-Screenshots.zip)
 
 </details>
 
 <details>
-<summary><strong>P5.1.172</strong> · Tìm đúng kênh thiếu logo trong danh sách TV / Electron 4.23.257 · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.172</strong> · Tìm đúng kênh thiếu logo trong danh sách TV / Electron 4.23.257 · ĐÃ PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.257 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
 Feature priority: NEW — Ảnh Electron thật P5.1.171 cho thấy trang kiểm kê hiển thị kênh 11–20 trong khi danh sách TV bên trái còn kênh 1–10, thiếu cầu nối tìm đúng kênh để người dùng sửa hoặc xem thông tin. Thêm nút Tìm cho mỗi hàng, đặt ô tìm trong TV theo đúng tên kênh và mở bộ lọc Tất cả. User action: Mở Thư viện → Kênh thiếu logo → chuyển tới trang cần kiểm tra → bấm Tìm cạnh kênh muốn định vị; panel đóng, tab TV hiện danh sách đã lọc theo tên, chỉ phát khi người dùng chủ động bấm kênh.
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.172](./screenshots/positron-p51172-locate-channel-after-1920x1080-real.png)
 
 [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.257-p5.1.172) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/511b1331a809f62bd39c47abfbfb6048e3c27f19) · [Tải Windows Setup x64](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.257-p5.1.172/Open-IPTV-Pro-Setup-4.23.257-x64.exe) · [Tải gói ảnh QA](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.257-p5.1.172/Positron-P51172-20-Real-Screenshots.zip)
 
@@ -1235,33 +1235,33 @@ Feature priority: NEW — Ảnh Electron thật P5.1.171 cho thấy trang kiểm
 
 Electron screenshot: positron-p51171-visible-range-after-1920x1080-real.png User action: Mở Thư viện → Kênh thiếu logo → chuyển trang hoặc đổi số kênh/trang; quan sát dòng Đang xem X–Y / tổng kênh ngay dưới thanh phân trang.
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.171](./screenshots/positron-p51171-visible-range-after-1920x1080-real.png)
 
 [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.256-p5.1.171) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/d41dac20e845cdbef5bea8d34cb4737be5887903) · [Tải Windows Setup x64](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.256-p5.1.171/Open-IPTV-Pro-Setup-4.23.256-x64.exe) · [Tải gói ảnh QA](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.256-p5.1.171/Positron-P51171-20-Real-Screenshots.zip)
 
 </details>
 
 <details>
-<summary><strong>P5.1.170</strong> · Xóa nhanh toàn bộ bộ lọc Thư viện / Electron 4.23.255 · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.170</strong> · Xóa nhanh toàn bộ bộ lọc Thư viện / Electron 4.23.255 · ĐÃ PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.255 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
 Feature priority: NEW — Cho phép đưa năm điều kiện tìm kiếm, nhóm, EPG, thứ tự và mật độ phân trang về mặc định chỉ với một lần bấm, thay vì hoàn nguyên từng ô khi kiểm kê danh sách nhiều kênh. User action: Mở Thư viện → Kênh thiếu logo → thay đổi ít nhất một bộ lọc → bấm nút Xóa bộ lọc cạnh Xuất CSV để trở về tất cả kênh, thứ tự playlist, 10 kênh/trang.
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.170](./screenshots/positron-p51170-clear-filters-after-1920x1080-real.png)
 
 [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.255-p5.1.170) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/b577e4d1bfa84bab81209ca0fec6e5b1e295998c) · [Tải Windows Setup x64](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.255-p5.1.170/Open-IPTV-Pro-Setup-4.23.255-x64.exe) · [Tải gói ảnh QA](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.255-p5.1.170/Positron-P51170-20-Real-Screenshots.zip)
 
 </details>
 
 <details>
-<summary><strong>P5.1.169</strong> · Lọc kênh thiếu logo theo mã EPG / Electron 4.23.254 · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.169</strong> · Lọc kênh thiếu logo theo mã EPG / Electron 4.23.254 · ĐÃ PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.254 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
 Feature priority: NEW — Cho phép phát hiện kênh vừa thiếu logo vừa thiếu mã nhận diện EPG hoặc có EPG nhưng thiếu logo, hỗ trợ người dùng tự ưu tiên sửa metadata thư viện lớn mà không thay đổi playlist. User action: Mở Thư viện → Kênh thiếu logo → chọn Mọi tình trạng EPG, Thiếu cả mã EPG hoặc Đã có mã EPG; kết hợp tìm kiếm, lọc nhóm, sắp xếp, phân trang và xuất CSV theo đúng tập đã lọc.
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.169](./screenshots/positron-p51169-epg-filter-after-1920x1080-real.png)
 
 [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.254-p5.1.169) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/c4ecb019b4eb7863a919491b8865666699e25d79) · [Tải Windows Setup x64](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.254-p5.1.169/Open-IPTV-Pro-Setup-4.23.254-x64.exe) · [Tải gói ảnh QA](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.254-p5.1.169/Positron-P51169-20-Real-Screenshots.zip)
 
@@ -1274,98 +1274,98 @@ Feature priority: NEW — Cho phép phát hiện kênh vừa thiếu logo vừa 
 
 Feature priority: BLOCKER_FIX — Thanh điều hướng phân trang dữ liệu thư viện bị che khỏi vùng nhìn khiến người dùng không mở được những trang kênh còn lại khi danh sách lớn; đưa nút lên trên vùng cuộn giúp truy cập đầy đủ. Electron screenshot: positron-p51168-pager-visible-after-1920x1080-real.png
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.168](./screenshots/positron-p51168-pager-visible-after-1920x1080-real.png)
 
 [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.253-p5.1.168) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/14265297ee9e49a053ec8e0440d9dfaddde59641) · [Tải Windows Setup x64](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.253-p5.1.168/Open-IPTV-Pro-Setup-4.23.253-x64.exe) · [Tải gói ảnh QA](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.253-p5.1.168/Positron-P51168-20-Real-Screenshots.zip)
 
 </details>
 
 <details>
-<summary><strong>P5.1.167</strong> · Thay đổi số kênh thiếu logo mỗi trang / Electron 4.23.252 · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.167</strong> · Thay đổi số kênh thiếu logo mỗi trang / Electron 4.23.252 · ĐÃ PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.252 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
 Feature priority: NEW — Duyệt 10, 25 hoặc 50 kênh thiếu logo mỗi trang; thao tác nhanh với thư viện lớn (ảnh gốc có 432 kênh thiếu logo), không cần nhấn Tiếp hàng chục lần. User action: Thư viện → Kênh thiếu logo → chọn 10 / 25 / 50 kênh/trang; bộ lọc, tìm kiếm, nhảy trang và xuất CSV vẫn bảo toàn giá trị, tự tính lại số trang, quay về trang 1 sau đổi mật độ.
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.167](./screenshots/positron-p51167-missing-page-size-after-1920x1080-real.png)
 
 [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.252-p5.1.167) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/7a66aabb01e3ca3167feef41cee6ba2756eb1ee9) · [Tải Windows Setup x64](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.252-p5.1.167/Open-IPTV-Pro-Setup-4.23.252-x64.exe) · [Tải gói ảnh QA](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.252-p5.1.167/Positron-P51167-20-Real-Screenshots.zip)
 
 </details>
 
 <details>
-<summary><strong>P5.1.166</strong> · Lọc tên kênh trùng theo nguồn và Xóa lọc / Electron 4.23.251 · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.166</strong> · Lọc tên kênh trùng theo nguồn và Xóa lọc / Electron 4.23.251 · ĐÃ PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.251 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
 Feature priority: NEW — Thêm bộ lọc tên kênh trùng giữa nhiều nguồn, trong một nguồn hoặc thiếu mã nguồn, giúp rà soát metadata nhanh và tránh nhầm kênh khi trùng tên giữa nhiều playlist. User action: Mở Thư viện → Tên kênh trùng → chọn chế độ lọc nguồn; khi ô tìm kiếm còn từ khóa cũ bấm Xóa lọc để hiện danh sách đầy đủ, không cần xóa từng ký tự. Xuất CSV vẫn tôn trọng bộ lọc nguồn.
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.166](./screenshots/positron-p51166-duplicate-scope-after-1920x1080-real.png)
 
 [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.251-p5.1.166) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/3acc2ba80124e18d6ffacfe301583df6a60fdce8) · [Tải Windows Setup x64](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.251-p5.1.166/Open-IPTV-Pro-Setup-4.23.251-x64.exe) · [Tải gói ảnh QA](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.251-p5.1.166/Positron-P51166-20-Real-Screenshots.zip)
 
 </details>
 
 <details>
-<summary><strong>P5.1.165</strong> · Xuất CSV tên kênh trùng / Electron 4.23.250 · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.165</strong> · Xuất CSV tên kênh trùng / Electron 4.23.250 · ĐÃ PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.250 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
 Feature priority: NEW — Xuất bảng metadata có thể đối chiếu toàn bộ tên kênh trùng theo bộ lọc, giúp rà soát hàng trăm kênh mà không phải sửa playlist hoặc mở từng trang. User action: Thư viện → Tên kênh trùng → tìm tên hoặc nhóm → Xuất CSV; ghi toàn bộ kết quả được lọc vào file tải về.
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.165](./screenshots/positron-p51165-duplicate-csv-after-1920x1080-real.png)
 
 [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.250-p5.1.165) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/936c1fb09c2e92eb275236dd960edee4111ed8c3) · [Tải Windows Setup x64](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.250-p5.1.165/Open-IPTV-Pro-Setup-4.23.250-x64.exe) · [Tải gói ảnh QA](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.250-p5.1.165/Positron-P51165-20-Real-Screenshots.zip)
 
 </details>
 
 <details>
-<summary><strong>P5.1.164</strong> · Phát hiện tên kênh trùng trong thư viện / Electron 4.23.249 · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.164</strong> · Phát hiện tên kênh trùng trong thư viện / Electron 4.23.249 · ĐÃ PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.249 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
 Feature priority: NEW — Phát hiện các tên kênh bị nhập lặp trong playlist hoặc nhiều nguồn để rà soát thư viện lớn; phân biệt tên khác dấu tiếng Việt, không tự xóa kênh. User action: Mở Thư viện → Tên kênh trùng → mở danh sách, tìm theo tên hoặc nhóm, xem số kênh, số nhóm và số nguồn có tên trùng; dùng Trước/Tiếp để xem những trang còn lại.
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.164](./screenshots/positron-p51164-duplicates-after-1920x1080-real.png)
 
 [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.249-p5.1.164) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/752bfdb8f84196ac0b4b065a50b2650303b4179c) · [Tải Windows Setup x64](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.249-p5.1.164/Open-IPTV-Pro-Setup-4.23.249-x64.exe) · [Tải gói ảnh QA](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.249-p5.1.164/Positron-P51164-20-Real-Screenshots.zip)
 
 </details>
 
 <details>
-<summary><strong>P5.1.163</strong> · Xuất CSV kênh thiếu logo an toàn / Electron 4.23.248 · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.163</strong> · Xuất CSV kênh thiếu logo an toàn / Electron 4.23.248 · ĐÃ PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.248 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
 Feature priority: NEW — Thư viện → Kênh thiếu logo → lọc/tìm/sắp xếp → **Xuất CSV** tất cả kênh khớp, không chỉ 10 hàng hiện tại. User action: Mở Thư viện → Kênh thiếu logo → chọn nhóm, tìm hoặc sắp xếp → bấm Xuất CSV, nhận file tên và nhóm kênh trong thư mục Tải xuống.
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.163](./screenshots/positron-p51163-csv-after-1920x1080-real.png)
 
 [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.248-p5.1.163) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/a4a9f1e5d87d17716e5c89dd71d0bf57aaace4b9) · [Tải Windows Setup x64](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.248-p5.1.163/Open-IPTV-Pro-Setup-4.23.248-x64.exe) · [Tải gói ảnh QA](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.248-p5.1.163/Positron-P51163-20-Real-Screenshots.zip)
 
 </details>
 
 <details>
-<summary><strong>P5.1.162</strong> · Chuyển nhanh tới trang bất kỳ trong thư viện / Electron 4.23.247 · CHƯA CÓ BẢN PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.162</strong> · Chuyển nhanh tới trang bất kỳ trong thư viện / Electron 4.23.247 · CHƯA CÓ BẢN PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** Chưa xác minh · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
 
 Feature priority: NEW — Nhập trực tiếp trang muốn xem ở bảng kênh thiếu logo thay vì bấm nút Tiếp liên tục khi thư viện có hàng chục trang; tự giới hạn trong khoảng trang hợp lệ, tránh mất vị trí. User action: Mở Thư viện → Kênh thiếu logo → chọn nhóm hoặc tìm kiếm → nhập số trang trong ô cạnh nút Trước/Tiếp rồi nhấn Enter hoặc nút Đến để chuyển ngay.
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.162](./screenshots/positron-p51162-jump-page-after-1920x1080-real.png)
 
 [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
 
 </details>
 
 <details>
-<summary><strong>P5.1.161</strong> · Sắp xếp kênh thiếu logo A–Z/Z–A / Electron 4.23.246 · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.161</strong> · Sắp xếp kênh thiếu logo A–Z/Z–A / Electron 4.23.246 · ĐÃ PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.246 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
 Feature priority: NEW — Hỗ trợ sắp xếp những kênh thiếu logo theo tên tăng/giảm với so sánh số tự nhiên, để nhanh chóng phát hiện và rà soát các kênh có tên tương tự trong thư viện lớn. User action: Mở Thư viện → Kênh thiếu logo → chọn nhóm tùy ý → chọn Thứ tự playlist, Tên kênh A–Z hoặc Tên kênh Z–A để sắp xếp riêng danh sách trên màn hình.
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.161](./screenshots/positron-p51161-sort-missing-after-1920x1080-real.png)
 
 [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.246-p5.1.161) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/caba7377c1e7c484c9db78cd1e6ee8ec48d40182) · [Tải Windows Setup x64](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.246-p5.1.161/Open-IPTV-Pro-Setup-4.23.246-x64.exe) · [Tải gói ảnh QA](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.246-p5.1.161/Positron-P51161-20-Real-Screenshots.zip)
 
@@ -1378,345 +1378,345 @@ Feature priority: NEW — Hỗ trợ sắp xếp những kênh thiếu logo theo
 
 Feature priority: BLOCKER_FIX — Sửa lỗi kiểm chứng CI khi bộ lọc nhóm đang hoạt động nhưng ảnh Electron sau thao tác không cho thấy điều khiển, bảo đảm hình ảnh đại diện đúng giao diện được phát hành. Electron screenshot: positron-p511601-group-filter-after-1920x1080-real.png
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.160](./screenshots/positron-p51160-group-filter-after-1920x1080-real.png)
 
 [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.244-p5.1.160) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/78ef17739da4e26d3e167d5f3dd02ff15670e953) · [Tải Windows Setup x64](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.244-p5.1.160/Open-IPTV-Pro-Setup-4.23.244-x64.exe) · [Tải gói ảnh QA](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.244-p5.1.160/Positron-P51160-20-Real-Screenshots.zip)
 
 </details>
 
 <details>
-<summary><strong>P5.1.159</strong> · Tìm kiếm kênh thiếu logo / Electron 4.23.243 · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.159</strong> · Tìm kiếm kênh thiếu logo / Electron 4.23.243 · ĐÃ PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.243 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
 Feature priority: NEW — Thêm tìm kiếm kênh chưa có logo theo tên hoặc nhóm, hỗ trợ tiếng Việt không dấu để người dùng không phải duyệt từng trang trong playlist lớn. User action: Mở Thư viện → Kênh thiếu logo → nhập tên hoặc nhóm; danh sách cập nhật ngay và xoá tìm kiếm để xem lại tất cả.
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.159](./screenshots/positron-p51159-search-missing-after-1920x1080-real.png)
 
 [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.243-p5.1.159) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/88483997300e24fb6e19d4a7031edd230ca0cb46) · [Tải Windows Setup x64](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.243-p5.1.159/Open-IPTV-Pro-Setup-4.23.243-x64.exe) · [Tải gói ảnh QA](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.243-p5.1.159/Positron-P51159-20-Real-Screenshots.zip)
 
 </details>
 
 <details>
-<summary><strong>P5.1.158</strong> · Chẩn đoán kênh thiếu logo / Electron 4.23.242 · CHƯA CÓ BẢN PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.158</strong> · Chẩn đoán kênh thiếu logo / Electron 4.23.242 · CHƯA CÓ BẢN PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** Chưa xác minh · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
 
 Feature priority: NEW — Từ tỷ lệ logo 0/561 nhìn thấy trên ảnh Electron P5.1.157, bổ sung danh sách các kênh chưa có URL logo, chia trang 10 kênh để người dùng xác định metadata thiếu. User action: Thư viện → Kênh thiếu logo → Trước / Tiếp; hiển thị tên và nhóm từ playlist đã nhập, không tự quét mạng và không bổ sung logo giả.
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.158](./screenshots/positron-p51158-missing-logos-after-1920x1080-real.png)
 
 [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
 
 </details>
 
 <details>
-<summary><strong>P5.1.157</strong> · Phân bố kênh theo nhóm · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.157</strong> · Phân bố kênh theo nhóm · ĐÃ PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.241 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
 Feature priority: NEW — Thêm danh sách nhóm kênh với số lượng và thanh tỷ lệ ngay trong Bản đồ thư viện; có thể mở thêm từng 5 nhóm mà không cần tải nguồn mới hoặc thử phát. User action: Bấm Thư viện, xem Phân bố kênh theo nhóm; nhấn Xem thêm 5 nhóm để đọc tiếp, chọn Thu gọn danh sách khi đã xem hết.
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.157](./screenshots/positron-p51157-groups-after-1920x1080-real.png)
 
 [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.241-p5.1.157) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/ca549834c5d2cdee64ecc6b7a8feb75f1be0e51c) · [Tải Windows Setup x64](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.241-p5.1.157/Open-IPTV-Pro-Setup-4.23.241-x64.exe) · [Tải gói ảnh QA](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.241-p5.1.157/Positron-P51157-20-Real-Screenshots.zip)
 
 </details>
 
 <details>
-<summary><strong>P5.1.156</strong> · Bản đồ thư viện kênh ngoại tuyến · CHƯA CÓ BẢN PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.156</strong> · Bản đồ thư viện kênh ngoại tuyến · CHƯA CÓ BẢN PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.240 · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
 
 Feature priority: NEW — Thêm bảng Library Pulse riêng trong thanh trên: đếm số kênh, số nguồn, số nhóm, trạng thái khả dụng đã được lưu, URL logo và mã EPG của dữ liệu hiện có. User action: Chọn Thư viện, xem các thẻ thống kê và thanh mức độ hoàn thiện metadata; nhấn Cập nhật để đọc lại dữ liệu hiện hành hoặc Escape để đóng.
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.156](./screenshots/positron-p51156-library-pulse-after-1920x1080-real.png)
 
 [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
 
 </details>
 
 <details>
-<summary><strong>P5.1.155</strong> · Dọn banner nổi, giữ nhật ký · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.155</strong> · Dọn banner nổi, giữ nhật ký · ĐÃ PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.239 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
 Feature priority: NEW — Thêm thao tác Dọn banner để người dùng đóng nhanh toàn bộ banner đang che trình phát, không phải chạm từng toast và không làm mất dòng nhật ký đã ghi. User action: Mở Thông báo và bấm Dọn banner; các banner thành công/cảnh báo/lỗi đang nổi biến mất theo thao tác chủ động, nhưng nội dung và số mục trong Nhật ký giữ nguyên.
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.155](./screenshots/positron-p51155-dismiss-toasts-after-1920x1080-real.png)
 
 [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.239-p5.1.155) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/98c9a6e5f9d77dc59f85a2a5515cb5e7e8a13647) · [Tải Windows Setup x64](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.239-p5.1.155/Open-IPTV-Pro-Setup-4.23.239-x64.exe) · [Tải gói ảnh QA](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.239-p5.1.155/Positron-P51155-20-Real-Screenshots.zip)
 
 </details>
 
 <details>
-<summary><strong>P5.1.154</strong> · Chế độ Không làm phiền khi xem TV · CHƯA CÓ BẢN PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.154</strong> · Chế độ Không làm phiền khi xem TV · CHƯA CÓ BẢN PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.238 · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
 
 Feature priority: NEW — Bổ sung công tắc Ẩn xác nhận nổi để giảm banner che nội dung video, nhưng vẫn ghi toàn bộ sự kiện vào nhật ký phiên và luôn giữ banner cảnh báo/lỗi quan trọng. User action: Mở Thông báo, bấm Ẩn xác nhận nổi: Bật; các thông báo thành công mới không che màn hình nhưng vẫn xem được trong Nhật ký. Bấm lại để tắt chế độ.
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.154](./screenshots/positron-p51154-quiet-mode-after-1920x1080-real.png)
 
 [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
 
 </details>
 
 <details>
-<summary><strong>P5.1.153</strong> · Tìm trong nhật ký thông báo bằng từ khóa không dấu · CHƯA CÓ BẢN PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.153</strong> · Tìm trong nhật ký thông báo bằng từ khóa không dấu · CHƯA CÓ BẢN PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.237 · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
 
 Feature priority: NEW — Cho phép tìm kiếm nội dung thông báo ngay trong nhật ký 30 mục theo từ khóa tiếng Việt có hoặc không có dấu, kết hợp bộ lọc loại thông báo mà không xóa dữ liệu. User action: Mở Thông báo, nhập từ khóa trong ô Tìm trong thông báo; có thể gõ ket noi để tìm kết nối, hoặc nhấn Xóa tìm kiếm để khôi phục danh sách.
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.153](./screenshots/positron-p51153-notice-search-after-1920x1080-real.png)
 
 [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
 
 </details>
 
 <details>
-<summary><strong>P5.1.152</strong> · Lọc nhật ký theo loại thông báo · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.152</strong> · Lọc nhật ký theo loại thông báo · ĐÃ PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.236 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
 Feature priority: NEW — Cho phép tìm nhanh cảnh báo, lỗi và xác nhận thành công trong nhật ký tối đa 30 mục bằng bộ lọc không phá hủy, phù hợp khi phải kiểm tra nhiều thông báo. User action: Mở Thông báo ở thanh trên, bấm Cảnh báo / Lỗi / Hoàn thành để chỉ xem loại tương ứng; chọn Tất cả để khôi phục toàn bộ danh sách.
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.152](./screenshots/positron-p51152-alert-filter-after-1920x1080-real.png)
 
 [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.236-p5.1.152) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/fb8572b91feb1d0047db68a1eeed4cfdc15e71e0) · [Tải Windows Setup x64](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.236-p5.1.152/Open-IPTV-Pro-Setup-4.23.236-x64.exe) · [Tải gói ảnh QA](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.236-p5.1.152/Positron-P51152-20-Real-Screenshots.zip)
 
 </details>
 
 <details>
-<summary><strong>P5.1.151</strong> · Nhật ký thông báo của phiên chạy · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.151</strong> · Nhật ký thông báo của phiên chạy · ĐÃ PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.235 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
 Feature priority: NEW — Thêm nhật ký tối đa 30 thông báo thành công, cảnh báo và lỗi trong phiên để có thể xem lại sau khi thông báo nổi tự hết hạn mà không lưu dữ liệu riêng xuống đĩa. User action: Bấm Thông báo trên thanh trên để xem nội dung và thời điểm thông báo; chọn Xóa lịch sử hoặc Đóng/Escape. Lịch sử tự xóa khi thoát ứng dụng.
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.151](./screenshots/positron-p51151-notification-archive-after-1920x1080-real.png)
 
 [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.235-p5.1.151) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/6cb00b963173e2632315916e9896a8fee070dfe7) · [Tải Windows Setup x64](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.235-p5.1.151/Open-IPTV-Pro-Setup-4.23.235-x64.exe) · [Tải gói ảnh QA](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.235-p5.1.151/Positron-P51151-20-Real-Screenshots.zip)
 
 </details>
 
 <details>
-<summary><strong>P5.1.150</strong> · Trung tâm thông báo gọn, xem lại thông báo khi cần · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.150</strong> · Trung tâm thông báo gọn, xem lại thông báo khi cần · ĐÃ PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.234 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
 Feature priority: NEW — Thêm nút "Xem thêm N thông báo" cho các xác nhận thành công còn hiệu lực, mặc định thu gọn chỉ hiện thông báo mới nhất. Bấm để mở lại rồi bấm thu gọn. Cảnh báo và lỗi không bị ẩn, người dùng vẫn có thể đóng từng thông báo, và bộ hẹn tự tắt 5,5 giây không thay đổi. Không ghi thông báo lên đĩa và không sửa playlist/player. User action: Khi thao tác nhiều, chỉ một thông báo thành công mới nhất và một nút Xem thêm xuất hiện; bấm Xem thêm để đọc lại những thông báo vẫn còn trên màn hình, bấm Thu gọn để giải phóng không gian.
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.150](./screenshots/positron-p51150-toast-centre-after-1920x1080-real.png)
 
 [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.234-p5.1.150) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/73ecdec3a25b805e791c2e8d48b5fc286fe72ac0) · [Tải Windows Setup x64](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.234-p5.1.150/Open-IPTV-Pro-Setup-4.23.234-x64.exe) · [Tải gói ảnh QA](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.234-p5.1.150/Positron-P51150-20-Real-Screenshots.zip)
 
 </details>
 
 <details>
-<summary><strong>P5.1.149</strong> · Chọn nhắc EPG trước 5/10/15/30 phút · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.149</strong> · Chọn nhắc EPG trước 5/10/15/30 phút · ĐÃ PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.233 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
 Feature priority: NEW — Chọn thông báo XMLTV trước 5, 10, 15 hoặc 30 phút; mỗi lịch giữ thời điểm riêng. Lịch cũ không có leadMinutes vẫn mặc định 10 phút; không đụng nguồn và không autoplay. User action: Trong Chọn kênh, bật lọc Sắp chiếu hoặc Đang chiếu (EPG), mở Bộ lọc, chọn Nhắc trước 5/10/15/30 phút rồi bấm chuông trên thẻ kênh. Bấm lại để hủy như P5.1.148.
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.149](./screenshots/positron-p51149-reminder-lead-after-450-real.png)
 
 [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.233-p5.1.149) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/e447a573a3acb2000cb4bd7d8ee6aefd2f511306) · [Tải Windows Setup x64](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.233-p5.1.149/Open-IPTV-Pro-Setup-4.23.233-x64.exe) · [Tải gói ảnh QA](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.233-p5.1.149/Positron-P51149-20-Real-Screenshots.zip)
 
 </details>
 
 <details>
-<summary><strong>P5.1.148</strong> · Hủy hoặc bật lại lịch nhắc EPG ngay bằng chuông · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.148</strong> · Hủy hoặc bật lại lịch nhắc EPG ngay bằng chuông · ĐÃ PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.232 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
 Feature priority: NEW — Nút chuông nhắc lịch ngay trên thẻ kênh nay thể hiện rõ đã lưu/chưa lưu, và cho phép bấm lần nữa để hủy đúng một chương trình đã nhắc; sử dụng lịch XMLTV đã nhập và dịch vụ nhắc nội bộ hiện có, không tự phát và không tác động lịch khác. User action: Mở Chọn kênh và bật bộ lọc EPG, tìm chương trình sắp chiếu rồi nhấn chuông để lưu; chuông đổi màu và trạng thái đã nhắc. Nhấn lại chuông để hủy, không phải tìm vào màn EPG và không cần tải nguồn ngoài.
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.148](./screenshots/positron-p51148-cancel-reminder-after-450-real.png)
 
 [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.232-p5.1.148) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/681f1406615d9f0b6f4c7a6fc5c15a159ed62ac2) · [Tải Windows Setup x64](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.232-p5.1.148/Open-IPTV-Pro-Setup-4.23.232-x64.exe) · [Tải gói ảnh QA](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.232-p5.1.148/Positron-P51148-20-Real-Screenshots.zip)
 
 </details>
 
 <details>
-<summary><strong>P5.1.147</strong> · Nhắc trước 10 phút ngay trên kênh có chương trình sắp chiếu · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.147</strong> · Nhắc trước 10 phút ngay trên kênh có chương trình sắp chiếu · ĐÃ PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.231 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
 Feature priority: NEW — Thêm nút chuông độc lập trên thẻ kênh có lịch XMLTV sắp chiếu, cho phép đặt nhắc trước 10 phút bằng hệ thống nhắc lịch thật đã có; không cần mở trang EPG và tuyệt đối không tự phát video. User action: Trong Chọn kênh bật “Sắp chiếu” hoặc “Đang chiếu (EPG)”, tìm kênh có chương trình tiếp theo, nhấn nút chuông ở góc phải trên để lưu nhắc. Nhấn lần nữa nhận thông báo đã có nhắc, không tạo lịch trùng.
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.147](./screenshots/positron-p51147-epg-reminder-after-450-real.png)
 
 [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.231-p5.1.147) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/274567ce608e2d8e8f8a96681cdb5edb654f0de0) · [Tải Windows Setup x64](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.231-p5.1.147/Open-IPTV-Pro-Setup-4.23.231-x64.exe) · [Tải gói ảnh QA](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.231-p5.1.147/Positron-P51147-20-Real-Screenshots.zip)
 
 </details>
 
 <details>
-<summary><strong>P5.1.146</strong> · Thanh tiến độ và phút còn lại theo lịch XMLTV · CHƯA CÓ BẢN PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.146</strong> · Thanh tiến độ và phút còn lại theo lịch XMLTV · CHƯA CÓ BẢN PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.230 · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
 
 Feature priority: NEW — Xem tiến độ ước tính của chương trình **theo lịch EPG**, gồm thanh phần trăm và số phút còn lại. Không mô tả là tiến độ phát video thực tế. User action: TV → Chọn kênh → Bộ lọc → “Có chương trình đang chiếu (EPG)”, xem “Theo lịch EPG: 50% · còn 15 phút” trên thẻ kênh. Không có dữ liệu EPG hợp lệ hoặc tắt bộ lọc thì ẩn tiến độ.
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.146](./screenshots/positron-p51146-epg-progress-after-450-real.png)
 
 [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
 
 </details>
 
 <details>
-<summary><strong>P5.1.145</strong> · Tùy chỉnh mốc lọc EPG sắp chiếu 15, 30, 60 phút · CHƯA CÓ BẢN PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.145</strong> · Tùy chỉnh mốc lọc EPG sắp chiếu 15, 30, 60 phút · CHƯA CÓ BẢN PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.229 · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
 
 Feature priority: NEW — Cho phép chọn khoảng thời gian 15, 30 hoặc 60 phút khi lọc chương trình sắp chiếu. Danh sách thay đổi tức thì theo giờ phát thật từ XMLTV đã nhập, không tự tải thêm lịch hay tác động playlist. User action: Mở TV → Chọn kênh → Bộ lọc → bật “Sắp chiếu” → chọn “Khoảng thời gian” 15, 30 hoặc 60 phút. Hệ thống cập nhật bộ lọc ngay, người dùng tắt chế độ để trở về danh sách đầy đủ.
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.145](./screenshots/positron-p51145-time-window-after-450-real.png)
 
 [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
 
 </details>
 
 <details>
-<summary><strong>P5.1.144</strong> · Sắp xếp chương trình EPG sắp phát sớm nhất · CHƯA CÓ BẢN PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.144</strong> · Sắp xếp chương trình EPG sắp phát sớm nhất · CHƯA CÓ BẢN PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.228 · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
 
 Feature priority: NEW — Thêm tùy chọn sắp xếp kênh theo thời điểm bắt đầu chương trình tiếp theo từ lịch XMLTV thực tế đã nhập; kênh chưa có EPG vẫn giữ lại cuối danh sách và không mất nguồn. User action: Mở TV → Chọn kênh → Bộ lọc → Sắp xếp → “Chương trình sắp phát sớm nhất (EPG)”; các kênh có chương trình gần tới đứng đầu, trên thẻ hiện giờ và tên chương trình. Chọn “Tên A → Z” để trở về như cũ.
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.144](./screenshots/positron-p51144-earliest-epg-after-450-real.png)
 
 [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
 
 </details>
 
 <details>
-<summary><strong>P5.1.143</strong> · Lọc chương trình sắp chiếu trong 60 phút · CHƯA CÓ BẢN PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.143</strong> · Lọc chương trình sắp chiếu trong 60 phút · CHƯA CÓ BẢN PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.227 · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
 
 Feature priority: NEW — Lọc kênh có chương trình sẽ bắt đầu trong 60 phút tới từ EPG/XMLTV đã nhập, kể cả kênh chưa có chương trình đang phát. Hiện giờ phát và tên, tìm tên không dấu. Tách biệt và loại trừ bộ lọc “Đang chiếu”. User action: TV → Chọn kênh → Bộ lọc → “Sắp chiếu trong 60 phút (EPG)”; tìm “phim sap chieu”. Không tự mở nguồn phát, đặt lịch nhắc, tải XMLTV mới hay thay đổi playlist.
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.143](./screenshots/positron-p51143-soon-filter-after-450-real.png)
 
 [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
 
 </details>
 
 <details>
-<summary><strong>P5.1.142</strong> · Xem lịch chương trình tiếp theo ngay trên thẻ kênh · CHƯA CÓ BẢN PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.142</strong> · Xem lịch chương trình tiếp theo ngay trên thẻ kênh · CHƯA CÓ BẢN PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.226 · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
 
 Feature priority: NEW — Hiển thị tên và giờ bắt đầu chương trình sắp phát bên dưới chương trình hiện tại trên thẻ kênh, chỉ khi người dùng bật bộ lọc EPG và chỉ từ lịch XMLTV có thật đã nhập; không tự mở nguồn ngoài, tự phát video hay đặt nhắc lịch. User action: Mở TV → Chọn kênh → Bộ lọc → bật “Có chương trình đang chiếu (EPG)”; thẻ kênh sẽ hiện “Theo EPG: ...” và “Tiếp theo HH:MM: ...” khi lịch XMLTV có chương trình kế tiếp.
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.142](./screenshots/positron-p51142-next-programme-after-450-real.png)
 
 [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
 
 </details>
 
 <details>
-<summary><strong>P5.1.141</strong> · Tìm theo tên chương trình đang chiếu · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.141</strong> · Tìm theo tên chương trình đang chiếu · ĐÃ PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.225 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
 Feature priority: NEW — Cho phép tìm kênh bằng **tên chương trình đang chiếu** từ XMLTV hiện có ngay trong giao diện TV, không cần mở trang Lịch phát sóng; tìm tiếng Việt không dấu và nhiều từ linh hoạt. Chỉ bật tính năng khi người dùng chủ động lọc EPG. User action: Mở Chọn kênh → Bộ lọc → Có chương trình đang chiếu (EPG), nhập tên chương trình như “tin yeu thich” để tìm kênh đang có chương trình đó theo XMLTV; nhấn vào thẻ mới phát.
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.141](./screenshots/positron-p51141-programme-title-search-after-450-real.png)
 
 [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.225-p5.1.141) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/361a2830232bc83a820cb5375c0be6cc9de8e704) · [Tải Windows Setup x64](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.225-p5.1.141/Open-IPTV-Pro-Setup-4.23.225-x64.exe) · [Tải gói ảnh QA](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.225-p5.1.141/Positron-P51141-20-Real-Screenshots.zip)
 
 </details>
 
 <details>
-<summary><strong>P5.1.140</strong> · Lọc kênh đang có chương trình từ XMLTV · CHƯA CÓ BẢN PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.140</strong> · Lọc kênh đang có chương trình từ XMLTV · CHƯA CÓ BẢN PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.224 · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
 
 Feature priority: NEW — Thêm bộ lọc chỉ hiển thị các kênh có chương trình hiện tại trong lịch EPG/XMLTV đã nhập, kèm tên chương trình ngay trên thẻ; không dự đoán lịch phát và không kiểm tra hoặc tự mở luồng mạng. User action: Mở Chọn kênh → Bộ lọc → bật “Có chương trình đang chiếu (EPG)”; chọn kênh có tên chương trình theo lịch, hoặc tắt bộ lọc để xem toàn bộ.
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.140](./screenshots/positron-p51140-epg-current-filter-after-450-real.png)
 
 [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
 
 </details>
 
 <details>
-<summary><strong>P5.1.139</strong> · Ưu tiên kênh yêu thích lên đầu · CHƯA CÓ BẢN PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.139</strong> · Ưu tiên kênh yêu thích lên đầu · CHƯA CÓ BẢN PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.223 · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
 
 Feature priority: NEW — Thêm tùy chọn sắp xếp “Yêu thích lên đầu” trong danh sách kênh, đưa kênh đã đánh dấu sao lên trước nhưng giữ các kênh khác theo thứ tự tên; chỉ thay đổi cách hiển thị, không sửa playlist hay dữ liệu nguồn. User action: Mở Chọn kênh, mở Bộ lọc rồi chọn Sắp xếp → Yêu thích lên đầu; có thể trở lại Tên A → Z/Z → A ngay lập tức.
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.139](./screenshots/positron-p51139-favorites-first-after-450-real.png)
 
 [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
 
 </details>
 
 <details>
-<summary><strong>P5.1.138</strong> · Chuyển trang kênh bằng PageDown/PageUp · CHƯA CÓ BẢN PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.138</strong> · Chuyển trang kênh bằng PageDown/PageUp · CHƯA CÓ BẢN PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.222 · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
 
 Feature priority: NEW — Duyệt xuyên qua các trang kênh dài chỉ bằng hai phím PageDown/PageUp, giữ tiêu điểm vào thẻ ở trang mới và không tự phát; hữu ích khi danh sách có hàng trăm kênh. User action: Mở Chọn kênh, dùng Enter chọn thẻ rồi nhấn PageDown để sang trang kế tiếp và chọn kênh đầu; PageUp trở về trang trước và chọn thẻ cuối, nhấn Enter trên thẻ mới phát.
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.138](./screenshots/positron-p51138-page-navigation-after-450-real.png)
 
 [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
 
 </details>
 
 <details>
-<summary><strong>P5.1.137</strong> · Duyệt thẻ kênh bằng phím mũi tên · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.137</strong> · Duyệt thẻ kênh bằng phím mũi tên · ĐÃ PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.221 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
 Feature priority: NEW — Điều hướng các kênh ngay trong Chọn kênh bằng bốn phím mũi tên và Home/End, bám đúng vị trí thẻ ở cả dạng lưới và danh sách; không cần Tab qua từng nút yêu thích và không tự phát video. User action: Mở Chọn kênh, nhập “QA Channel” rồi Enter để chọn thẻ đầu tiên; dùng ← → ↑ ↓ để di chuyển theo vị trí kênh, Home về đầu và End tới cuối; chỉ Enter trên thẻ mới phát.
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.137](./screenshots/positron-p51137-arrow-navigation-after-450-real.png)
 
 [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.221-p5.1.137) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/6d8b23968e30a4264feca3cd58b44ace6d1720ee) · [Tải Windows Setup x64](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.221-p5.1.137/Open-IPTV-Pro-Setup-4.23.221-x64.exe) · [Tải gói ảnh QA](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.221-p5.1.137/Positron-P51137-20-Real-Screenshots.zip)
 
 </details>
 
 <details>
-<summary><strong>P5.1.136</strong> · Enter chọn kết quả tìm kênh · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.136</strong> · Enter chọn kết quả tìm kênh · ĐÃ PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.220 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
 Feature priority: NEW — Chuyển tiêu điểm bàn phím tới thẻ kênh phù hợp đầu tiên sau khi tìm kiếm, tránh phải dùng chuột và không tự phát hoặc thay đổi dữ liệu người dùng. User action: Mở Chọn kênh ở TV, nhập tên kênh vào Tìm kiếm rồi nhấn Enter để chọn thẻ đầu tiên; nhấn Enter thêm lần nữa trên thẻ mới phát kênh nếu muốn.
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.136](./screenshots/positron-p51136-search-enter-after-450-real.png)
 
 [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.220-p5.1.136) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/a883e66d3a727ee4e007253869dd811269c9bec3) · [Tải Windows Setup x64](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.220-p5.1.136/Open-IPTV-Pro-Setup-4.23.220-x64.exe) · [Tải gói ảnh QA](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.220-p5.1.136/Positron-P51136-20-Real-Screenshots.zip)
 
 </details>
 
 <details>
-<summary><strong>P5.1.135</strong> · Tìm kênh nhiều từ không đúng thứ tự · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.135</strong> · Tìm kênh nhiều từ không đúng thứ tự · ĐÃ PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.219 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
 Feature priority: NEW — Tìm được kênh bằng nhiều từ khóa trong tên và nhóm dù đảo thứ tự, có khoảng trắng lặp hoặc gõ tiếng Việt không dấu; không truy cập URL, không tự phát video và không đổi dữ liệu. User action: Mở Chọn kênh, gõ "001 Channel QA" hoặc "qa 001" vào Tìm kiếm; kết quả "QA Channel 001" xuất hiện mà không cần gõ chính xác thứ tự.
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.135](./screenshots/positron-p51135-reordered-search-before-450-real.png)
 
 [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.219-p5.1.135) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/f257bf79031549cc75d4eb5f3beb463786930daf) · [Tải Windows Setup x64](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.219-p5.1.135/Open-IPTV-Pro-Setup-4.23.219-x64.exe) · [Tải gói ảnh QA](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.219-p5.1.135/Positron-P51135-20-Real-Screenshots.zip)
 
 </details>
 
 <details>
-<summary><strong>P5.1.134</strong> · Nhấn F để thêm/bỏ Yêu thích và dùng biểu tượng sao SVG · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.134</strong> · Nhấn F để thêm/bỏ Yêu thích và dùng biểu tượng sao SVG · ĐÃ PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.218 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
 Khi chọn một thẻ kênh, nhấn phím F để thêm kênh vào Yêu thích; nhấn lần nữa để bỏ lưu mà không phát video. Nút sao sử dụng SVG 20 px đồng nhất thay ký tự phụ thuộc phông chữ, giữ nguyên dữ liệu đã lưu, thao tác chuột và bàn phím.
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.134](./screenshots/positron-p51134-favorite-native-svg-after-450-real.png)
 
 [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.218-p5.1.134) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/d973e0886eae15c9fed6f8bee1886639bbfaa46e) · [Tải Windows Setup x64](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.218-p5.1.134/Open-IPTV-Pro-Setup-4.23.218-x64.exe) · [Tải gói ảnh QA](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.218-p5.1.134/Positron-P51134-20-Real-Screenshots.zip)
 
@@ -1729,7 +1729,7 @@ Khi chọn một thẻ kênh, nhấn phím F để thêm kênh vào Yêu thích;
 
 Ở cửa sổ 450 px, tên kênh dài bị cắt cạnh nút hình sao. Bản này dành hàng riêng cho nút Yêu thích, cho phép tên kênh xuống hai dòng mà vẫn giữ nguyên thao tác phát và dữ liệu đã lưu.
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.133](./screenshots/positron-p51133-compact-card-title-star-450-real.png)
 
 [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
 
@@ -1742,7 +1742,7 @@ Khi chọn một thẻ kênh, nhấn phím F để thêm kênh vào Yêu thích;
 
 Khi tìm kiếm hoặc chọn nhóm mà không có kết quả, xuất hiện nút “Xóa bộ lọc và xem tất cả kênh”. Nhấn nút sẽ xóa truy vấn, khôi phục danh sách và đưa con trỏ về ô tìm kiếm; không tự phát kênh.
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.132](./screenshots/positron-p51132-empty-search-clear-after-450-real.png)
 
 [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.216-p5.1.132) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/eab0be6a1e9e6873894becc3a472b117fb60cea2) · [Tải Windows Setup x64](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.216-p5.1.132/Open-IPTV-Pro-Setup-4.23.216-x64.exe) · [Tải gói ảnh QA](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.216-p5.1.132/Positron-P51132-20-Real-Screenshots.zip)
 
@@ -1755,7 +1755,7 @@ Khi tìm kiếm hoặc chọn nhóm mà không có kết quả, xuất hiện n�
 
 Bổ sung quy đổi chữ “đ” thành “d” khi tìm kiếm. Ví dụ, gõ “dia phuong” có thể tìm nhóm “TH địa phương”. Tên và nhóm kênh gốc không bị thay đổi.
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.131](./screenshots/positron-p51131-ascii-d-search-450-real.png)
 
 [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
 
@@ -1768,7 +1768,7 @@ Bổ sung quy đổi chữ “đ” thành “d” khi tìm kiếm. Ví dụ, g�
 
 Mở rộng vùng che có điều kiện cho thanh nhóm kênh cuộn ngang, xử lý nét viền còn lộ cạnh “Tất cả”. Các nút nhóm bên cạnh vẫn bấm được và không ảnh hưởng phát kênh.
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.130](./screenshots/positron-p51130-border-mask-450-real.png)
 
 [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
 
@@ -1781,7 +1781,7 @@ Mở rộng vùng che có điều kiện cho thanh nhóm kênh cuộn ngang, x�
 
 Theo ảnh Electron 450 px, một phần chữ của nhóm bị cuộn lọt ra cạnh nút “Tất cả”. Đồng bộ trạng thái cuộn và chỉ che phần chữ thừa khi thực sự cuộn ngang.
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.129](./screenshots/positron-p51129-right-mask-450-real.png)
 
 [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.213-p5.1.129) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/c3754e3d196f4ef9354a93617f235cd89538166a) · [Tải Windows Setup x64](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.213-p5.1.129/Open-IPTV-Pro-Setup-4.23.213-x64.exe) · [Tải gói ảnh QA](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.213-p5.1.129/Positron-P51129-20-Real-Screenshots.zip)
 
@@ -1794,7 +1794,7 @@ Theo ảnh Electron 450 px, một phần chữ của nhóm bị cuộn lọt ra 
 
 Khi đổi nhóm bằng bộ lọc nâng cao, thanh nhóm kênh tự cuộn để hiện nút nhóm đang được chọn. Chọn “Tất cả” sẽ đưa thanh về đầu.
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.128](./screenshots/positron-p51128-dropdown-chip-450-real.png)
 
 [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.212-p5.1.128) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/7003357116d97ec3d98c76af54071fd4e81b717d) · [Tải Windows Setup x64](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.212-p5.1.128/Open-IPTV-Pro-Setup-4.23.212-x64.exe) · [Tải gói ảnh QA](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.212-p5.1.128/Positron-P51128-20-Real-Screenshots.zip)
 
@@ -1807,7 +1807,7 @@ Khi đổi nhóm bằng bộ lọc nâng cao, thanh nhóm kênh tự cuộn đ�
 
 Cho phép chuyển tiêu điểm giữa các nhóm bằng phím mũi tên, Home và End trên màn hình hẹp. Chỉ thay đổi bộ lọc khi người dùng chọn nhóm.
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.127](./screenshots/positron-p51127-category-keys-450-real.png)
 
 [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.211-p5.1.127) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/8bad7fc08d009c3529447d0389a176caabe30648) · [Tải Windows Setup x64](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.211-p5.1.127/Open-IPTV-Pro-Setup-4.23.211-x64.exe) · [Tải gói ảnh QA](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.211-p5.1.127/Positron-P51127-20-Real-Screenshots.zip)
 
@@ -1820,7 +1820,7 @@ Cho phép chuyển tiêu điểm giữa các nhóm bằng phím mũi tên, Home 
 
 Thêm vùng che phía dưới nút “Tất cả” được ghim khi thanh nhóm cuộn ngang, tránh hiển thị chữ chồng và tránh chọn nhầm nhóm bị che.
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.126](./screenshots/positron-p51126-pinned-all-masked-450-real.png)
 
 [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.210-p5.1.126) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/9aac59d3c7b66e5689a2d3f24e3da76d704e8483) · [Tải Windows Setup x64](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.210-p5.1.126/Open-IPTV-Pro-Setup-4.23.210-x64.exe) · [Tải gói ảnh QA](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.210-p5.1.126/Positron-P51126-20-Real-Screenshots.zip)
 
@@ -1833,7 +1833,7 @@ Thêm vùng che phía dưới nút “Tất cả” được ghim khi thanh nhó
 
 Giữ nút đặt lại “Tất cả” ở mép trái của thanh nhóm kênh trên cửa sổ hẹp. Các nhóm còn lại vẫn hỗ trợ cuộn, cảm ứng và bàn phím.
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.125](./screenshots/positron-p51125-pinned-all-450-real.png)
 
 [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.209-p5.1.125) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/b7cc07b69b8c3d503edb39f3284add1695a658ac) · [Tải Windows Setup x64](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.209-p5.1.125/Open-IPTV-Pro-Setup-4.23.209-x64.exe) · [Tải gói ảnh QA](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.209-p5.1.125/Positron-P51125-20-Real-Screenshots.zip)
 
@@ -1846,7 +1846,7 @@ Giữ nút đặt lại “Tất cả” ở mép trái của thanh nhóm kênh 
 
 Dùng bánh xe chuột để di chuyển thanh nhóm kênh theo chiều ngang khi còn nội dung cần cuộn. Khi tới mép, trả thao tác cuộn về trang như bình thường.
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.124](./screenshots/positron-p51124-chip-wheel-450-real.png)
 
 [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.208-p5.1.124) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/808e2f8ef5260b4bd9b41dc2747ce3113256181d) · [Tải Windows Setup x64](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.208-p5.1.124/Open-IPTV-Pro-Setup-4.23.208-x64.exe) · [Tải gói ảnh QA](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.208-p5.1.124/Positron-P51124-20-Real-Screenshots.zip)
 
@@ -1859,7 +1859,7 @@ Dùng bánh xe chuột để di chuyển thanh nhóm kênh theo chiều ngang kh
 
 Đưa thông báo thành công vào dải gọn phía dưới và giữ nút đóng. Các thông báo cảnh báo/lỗi vẫn được ưu tiên hiển thị.
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.123](./screenshots/positron-p51123-success-toast-footer-450-real.png)
 
 [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.207-p5.1.123) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/38011da89d7b384431bbf3babb9da4f581674340) · [Tải Windows Setup x64](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.207-p5.1.123/Open-IPTV-Pro-Setup-4.23.207-x64.exe) · [Tải gói ảnh QA](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.207-p5.1.123/Positron-P51123-20-Real-Screenshots.zip)
 
@@ -1872,7 +1872,7 @@ Dùng bánh xe chuột để di chuyển thanh nhóm kênh theo chiều ngang kh
 
 Khi đóng thông báo, tiêu điểm quay lại điều khiển trước đó thay vì bị mất. Giữ nguyên thời gian tự tắt, mức cảnh báo và các chức năng khác.
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.122](./screenshots/positron-p51122-toast-focus-return-450-real.png)
 
 [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.206-p5.1.122) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/9b5676910c4e9c88250b68f49bfe47e8abcad956) · [Tải Windows Setup x64](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.206-p5.1.122/Open-IPTV-Pro-Setup-4.23.206-x64.exe) · [Tải gói ảnh QA](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.206-p5.1.122/Positron-P51122-20-Real-Screenshots.zip)
 
@@ -1885,7 +1885,7 @@ Khi đóng thông báo, tiêu điểm quay lại điều khiển trước đó t
 
 Bổ sung nút đóng có thể dùng bằng cảm ứng và bàn phím cho thông báo trong Positron. Không thay đổi nội dung và thời gian tự tắt của thông báo.
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.121](./screenshots/positron-p51121-toast-dismiss-visible-450-real.png)
 
 [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.205-p5.1.121) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/daefa5bb1e8119c8d16ddbf22d7b04003881f5b7) · [Tải Windows Setup x64](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.205-p5.1.121/Open-IPTV-Pro-Setup-4.23.205-x64.exe) · [Tải gói ảnh QA](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.205-p5.1.121/Positron-P51121-20-Real-Screenshots.zip)
 
@@ -1898,7 +1898,7 @@ Bổ sung nút đóng có thể dùng bằng cảm ứng và bàn phím cho thô
 
 Chỉ hiện thông báo thành công mới nhất ở cửa sổ hẹp để không che danh sách kênh; cảnh báo, lỗi và bộ hẹn giờ vẫn hoạt động.
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.120](./screenshots/positron-p51120-compact-toast-stack-450-real.png)
 
 [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.204-p5.1.120) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/2eec95e697ef50b9e2f2c1b420652515005423bc) · [Tải Windows Setup x64](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.204-p5.1.120/Open-IPTV-Pro-Setup-4.23.204-x64.exe) · [Tải gói ảnh QA](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.204-p5.1.120/Positron-P51120-20-Real-Screenshots.zip)
 
@@ -1911,7 +1911,7 @@ Chỉ hiện thông báo thành công mới nhất ở cửa sổ hẹp để kh
 
 Thêm huy hiệu đếm số kênh đã lưu ở tab Yêu thích. Số được cập nhật khi thêm/bỏ sao và ẩn khi bằng không; có nhãn hỗ trợ truy cập.
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.119](./screenshots/positron-p51119-favorite-count-badge-450-real.png)
 
 [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.203-p5.1.119) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/f3bd1bf867f939335eb2d96e555be9dd7408e81e) · [Tải Windows Setup x64](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.203-p5.1.119/Open-IPTV-Pro-Setup-4.23.203-x64.exe) · [Tải gói ảnh QA](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.203-p5.1.119/Positron-P51119-20-Real-Screenshots.zip)
 
@@ -1924,7 +1924,7 @@ Thêm huy hiệu đếm số kênh đã lưu ở tab Yêu thích. Số được 
 
 Thêm nút hình sao riêng trên từng thẻ kênh. Người dùng có thể lưu hoặc bỏ Yêu thích mà không cần phát kênh trước.
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.118](./screenshots/positron-p51118-direct-favorite-channel-450-real.png)
 
 [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.202-p5.1.118) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/9751d3c02c2a293c63301f066b16b079a2d884ff) · [Tải Windows Setup x64](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.202-p5.1.118/Open-IPTV-Pro-Setup-4.23.202-x64.exe) · [Tải gói ảnh QA](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.202-p5.1.118/Positron-P51118-20-Real-Screenshots.zip)
 
@@ -1937,7 +1937,7 @@ Thêm nút hình sao riêng trên từng thẻ kênh. Người dùng có thể l
 
 Khi chỉ còn một kênh trong kết quả lọc trên màn hình hẹp, thẻ kênh tự chiếm toàn bộ hàng thay vì bó hẹp trong nửa cột.
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.117](./screenshots/positron-p51117-single-result-wide-card-450-real.png)
 
 [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.201-p5.1.117) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/15a29463a11da0679caa367515362c74bfec8029) · [Tải Windows Setup x64](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.201-p5.1.117/Open-IPTV-Pro-Setup-4.23.201-x64.exe) · [Tải gói ảnh QA](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.201-p5.1.117/Positron-P51117-20-Real-Screenshots.zip)
 
@@ -1950,7 +1950,7 @@ Khi chỉ còn một kênh trong kết quả lọc trên màn hình hẹp, thẻ
 
 Thanh lọc nhanh lấy nhóm có trong nguồn M3U đã nhập, không hiện nhóm rỗng. Trạng thái nút được chọn và khả năng dùng bàn phím được cải thiện.
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.116](./screenshots/positron-p51116-real-category-filter-450-real.png)
 
 [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.200-p5.1.116) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/68bf5505bc72a73853284574dc3106bfad7e9973) · [Tải Windows Setup x64](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.200-p5.1.116/Open-IPTV-Pro-Setup-4.23.200-x64.exe) · [Tải gói ảnh QA](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.200-p5.1.116/Positron-P51116-20-Real-Screenshots.zip)
 
@@ -1963,7 +1963,7 @@ Thanh lọc nhanh lấy nhóm có trong nguồn M3U đã nhập, không hiện n
 
 Trên màn hình hẹp, ẩn bảng phụ rỗng bị lặp với thông báo chính của tab đang mở. Các bảng hữu ích khác vẫn được giữ lại.
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.115](./screenshots/positron-p51115-no-duplicate-favorite-450-real.png)
 
 [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.199-p5.1.115) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/caf6a5bff4a115cac60f8474519e5d6101dfdd87) · [Tải Windows Setup x64](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.199-p5.1.115/Open-IPTV-Pro-Setup-4.23.199-x64.exe) · [Tải gói ảnh QA](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.199-p5.1.115/Positron-P51115-20-Real-Screenshots.zip)
 
@@ -1976,7 +1976,7 @@ Trên màn hình hẹp, ẩn bảng phụ rỗng bị lặp với thông báo ch
 
 Phân biệt chưa có Yêu thích, chưa có lịch sử và lọc không ra kết quả. Thêm nút “Xem tất cả kênh” để quay lại thư viện.
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.114](./screenshots/positron-p51114-favorite-empty-action-450-real.png)
 
 [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.198-p5.1.114) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/257422b56d81d4eca9c8efacfb1aeb4ebd2dab83) · [Tải Windows Setup x64](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.198-p5.1.114/Open-IPTV-Pro-Setup-4.23.198-x64.exe) · [Tải gói ảnh QA](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.198-p5.1.114/Positron-P51114-20-Real-Screenshots.zip)
 
@@ -1989,7 +1989,7 @@ Phân biệt chưa có Yêu thích, chưa có lịch sử và lọc không ra k�
 
 Hỗ trợ phím mũi tên, Home và End để chuyển tab; giữ trạng thái được chọn, tiêu điểm và các thao tác chuột vốn có.
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.113](./screenshots/positron-p51113-keyboard-favorites-tab-450-real.png)
 
 [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.197-p5.1.113) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/e634e2c7c9da33ebb5c54043e4d212ab8d3a40a3) · [Tải Windows Setup x64](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.197-p5.1.113/Open-IPTV-Pro-Setup-4.23.197-x64.exe) · [Tải gói ảnh QA](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.197-p5.1.113/Positron-P51113-20-Real-Screenshots.zip)
 
@@ -2002,7 +2002,7 @@ Hỗ trợ phím mũi tên, Home và End để chuyển tab; giữ trạng thái
 
 Thay lưới thẻ quá nhỏ bằng hai cột và cho phép tên kênh hiển thị nhiều dòng, tránh cắt mất tên.
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.112](./screenshots/positron-p51112-readable-channel-cards-450-real.png)
 
 [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.196-p5.1.112) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/50a2f2e24710e1727b7fe6a31273cc2808bc30d0) · [Tải Windows Setup x64](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.196-p5.1.112/Open-IPTV-Pro-Setup-4.23.196-x64.exe) · [Tải gói ảnh QA](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.196-p5.1.112/Positron-P51112-20-Real-Screenshots.zip)
 
@@ -2015,7 +2015,7 @@ Thay lưới thẻ quá nhỏ bằng hai cột và cho phép tên kênh hiển t
 
 Hiển thị nhóm trong một hàng cuộn ngang thay vì xuống nhiều dòng. Giữ vị trí thanh cuộn sau khi chọn nhóm.
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.111](./screenshots/positron-p51111-single-row-chips-450-real.png)
 
 [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.195-p5.1.111) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/ba5a3f4b282ad68a4d5c270fe523935dbf35b00e) · [Tải Windows Setup x64](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.195-p5.1.111/Open-IPTV-Pro-Setup-4.23.195-x64.exe) · [Tải gói ảnh QA](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.195-p5.1.111/Positron-P51111-20-Real-Screenshots.zip)
 
@@ -2028,7 +2028,7 @@ Hiển thị nhóm trong một hàng cuộn ngang thay vì xuống nhiều dòng
 
 Ở cửa sổ hẹp và chưa phát gì, thu gọn vùng giới thiệu để đưa phần tìm kênh lên cao hơn. Khung video thực vẫn giữ tỷ lệ.
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.110](./screenshots/positron-p51110-compact-idle-player-450-real.png)
 
 [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.194-p5.1.110) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/75d4acb5bf940eb46ecb868476aca6bda33e99f4) · [Tải Windows Setup x64](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.194-p5.1.110/Open-IPTV-Pro-Setup-4.23.194-x64.exe) · [Tải gói ảnh QA](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.194-p5.1.110/Positron-P51110-20-Real-Screenshots.zip)
 
@@ -2041,7 +2041,7 @@ Hiển thị nhóm trong một hàng cuộn ngang thay vì xuống nhiều dòng
 
 Nếu một thông báo cùng nội dung và mức độ vẫn đang mở, không tạo bản trùng. Thông báo khác hoặc mức cảnh báo khác vẫn xuất hiện.
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.109](./screenshots/positron-p51109-native-toast-dedupe-450-real.png)
 
 [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.193-p5.1.109) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/1b2c5d4d55f3d60a9ff64f45529aa181d3a9454e) · [Tải Windows Setup x64](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.193-p5.1.109/Open-IPTV-Pro-Setup-4.23.193-x64.exe) · [Tải gói ảnh QA](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.193-p5.1.109/Positron-P51109-20-Real-Screenshots.zip)
 
@@ -2054,7 +2054,7 @@ Nếu một thông báo cùng nội dung và mức độ vẫn đang mở, khôn
 
 Giới hạn vị trí thông báo trong cửa sổ hẹp để không che thanh điều hướng có biểu tượng bên trái.
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.108](./screenshots/positron-p51108-toast-clear-of-sidebar-450-real.png)
 
 [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.192-p5.1.108) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/a19d24c9858fba65cabc17c0ef478a861e44b0f1) · [Tải Windows Setup x64](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.192-p5.1.108/Open-IPTV-Pro-Setup-4.23.192-x64.exe) · [Tải gói ảnh QA](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.192-p5.1.108/Positron-P51108-20-Real-Screenshots.zip)
 
@@ -2067,7 +2067,7 @@ Giới hạn vị trí thông báo trong cửa sổ hẹp để không che thanh
 
 Các nút tab thư viện kênh và chế độ xem dùng biểu tượng SVG thay cho ký tự phụ thuộc phông chữ. Thao tác và nhãn hỗ trợ truy cập được giữ nguyên.
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.107](./screenshots/positron-p51107-chooser-native-svg-450-real.png)
 
 [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.191-p5.1.107) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/ac4670a51959aef9a9e6917c85495184c460bf1a) · [Tải Windows Setup x64](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.191-p5.1.107/Open-IPTV-Pro-Setup-4.23.191-x64.exe) · [Tải gói ảnh QA](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.191-p5.1.107/Positron-P51107-20-Real-Screenshots.zip)
 
@@ -2080,7 +2080,7 @@ Các nút tab thư viện kênh và chế độ xem dùng biểu tượng SVG th
 
 Sửa khoảng cách ở hộp WatchFlow khi chưa có nguồn để không xuất hiện thanh cuộn ngang không cần thiết.
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.106](./screenshots/positron-p51106-empty-watchflow-no-horizontal-scroll-real.png)
 
 [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.190-p5.1.106) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/19746909a874bdcc659f6948319cee86f0eec1da) · [Tải Windows Setup x64](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.190-p5.1.106/Open-IPTV-Pro-Setup-4.23.190-x64.exe) · [Tải gói ảnh QA](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.190-p5.1.106/Positron-P51106-20-Real-Screenshots.zip)
 
@@ -2093,7 +2093,7 @@ Sửa khoảng cách ở hộp WatchFlow khi chưa có nguồn để không xu�
 
 Bổ sung thao tác xử lý dấu trang Xem sau không còn nguồn hợp lệ, có bước xác nhận rõ ràng để tránh xóa nhầm.
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.105](./screenshots/positron-p51105-dormant-manage-after-real.png)
 
 [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.189-p5.1.105) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/937db5120885efefe32c62fe3a9476601e76955c) · [Tải Windows Setup x64](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.189-p5.1.105/Open-IPTV-Pro-Setup-4.23.189-x64.exe) · [Tải gói ảnh QA](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.189-p5.1.105/Positron-P51105-20-Real-Screenshots.zip)
 
@@ -2106,7 +2106,7 @@ Bổ sung thao tác xử lý dấu trang Xem sau không còn nguồn hợp lệ,
 
 Phát hiện dấu trang đã lưu nhưng nguồn không còn sẵn có; thông báo rõ tình trạng mà không tự xóa dữ liệu đã lưu.
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.104](./screenshots/positron-p51104-watchlater-unavailable-552-real.png)
 
 [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.188-p5.1.104) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/0e6a64d5d4dbcda6e4131a3375b414e63cb54a52) · [Tải Windows Setup x64](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.188-p5.1.104/Open-IPTV-Pro-Setup-4.23.188-x64.exe) · [Tải gói ảnh QA](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.188-p5.1.104/Positron-P51104-20-Real-Screenshots.zip)
 
@@ -2119,7 +2119,7 @@ Phát hiện dấu trang đã lưu nhưng nguồn không còn sẵn có; thông 
 
 Khi đạt giới hạn 80 kênh lưu Xem sau, ngăn việc âm thầm loại kênh cũ. Người dùng được thông báo để tự quyết định.
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.103](./screenshots/positron-p51103-watchlater-cap-after-real.png)
 
 [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.187-p5.1.103) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/ff67dc0c2963ac5cc3c514fdebad65221e10e962) · [Tải Windows Setup x64](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.187-p5.1.103/Open-IPTV-Pro-Setup-4.23.187-x64.exe) · [Tải gói ảnh QA](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.187-p5.1.103/Positron-P51103-20-Real-Screenshots.zip)
 
@@ -2132,7 +2132,7 @@ Khi đạt giới hạn 80 kênh lưu Xem sau, ngăn việc âm thầm loại k�
 
 Cải thiện tìm kiếm dấu trang đã lưu bằng nhiều từ khóa và thông tin nhóm/chất lượng, thay vì chỉ khớp chuỗi liền nhau.
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.102](./screenshots/positron-p51102-watch-later-multiterm-552-real.png)
 
 [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.186-p5.1.102) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/5efab277eaabfb558fed5434e4218408c6286e27) · [Tải Windows Setup x64](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.186-p5.1.102/Open-IPTV-Pro-Setup-4.23.186-x64.exe) · [Tải gói ảnh QA](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.186-p5.1.102/Positron-P51102-20-Real-Screenshots.zip)
 
@@ -2145,7 +2145,7 @@ Cải thiện tìm kiếm dấu trang đã lưu bằng nhiều từ khóa và th
 
 Thêm ô tìm kiếm cục bộ cho tối đa 80 kênh đã lưu Xem sau, hỗ trợ không dấu, không gửi dữ liệu lên mạng và không tự phát video.
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.101](./screenshots/positron-p51101-watch-later-search-552-real.png)
 
 [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.185-p5.1.101) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/a902ab2c34fc4b06e7e93dcbb89744c05593753f) · [Tải Windows Setup x64](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.185-p5.1.101/Open-IPTV-Pro-Setup-4.23.185-x64.exe) · [Tải gói ảnh QA](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.185-p5.1.101/Positron-P51101-20-Real-Screenshots.zip)
 
@@ -2158,7 +2158,7 @@ Thêm ô tìm kiếm cục bộ cho tối đa 80 kênh đã lưu Xem sau, hỗ t
 
 Cố định tiêu đề và các tab WatchFlow khi cuộn sâu trong danh sách Xem sau, giúp nút đóng và điều hướng luôn dễ tìm.
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.100](./screenshots/positron-p51100-watch-later-sticky-552-real.png)
 
 [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.184-p5.1.100) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/060fbad7faebcf5715d3b3dc67e25927527d1041) · [Tải Windows Setup x64](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.184-p5.1.100/Open-IPTV-Pro-Setup-4.23.184-x64.exe) · [Tải gói ảnh QA](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.184-p5.1.100/Positron-P51100-20-Real-Screenshots.zip)
 
@@ -2171,7 +2171,7 @@ Cố định tiêu đề và các tab WatchFlow khi cuộn sâu trong danh sách
 
 Bên cạnh chương trình đang phát, WatchFlow hiển thị chương trình tiếp theo và giờ bắt đầu khi có dữ liệu XMLTV hợp lệ. Không tự suy đoán tên chương trình.
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.99](./screenshots/positron-p5199-next-epg-watchflow-552-real.png)
 
 [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
 
@@ -2184,7 +2184,7 @@ Bên cạnh chương trình đang phát, WatchFlow hiển thị chương trình 
 
 Kết hợp dữ liệu lịch XMLTV đã nhập để thẻ gợi ý WatchFlow hiện chương trình đang phát, thay vì chỉ tên kênh.
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.98](./screenshots/positron-p5198-live-epg-watchflow-552-real.png)
 
 [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.182-p5.1.98) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/420ee5a4a8a0a31ab5b77565f034acae9d25d1a9) · [Tải Windows Setup x64](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.182-p5.1.98/Open-IPTV-Pro-Setup-4.23.182-x64.exe) · [Tải gói ảnh QA](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.182-p5.1.98/Positron-P5198-20-Real-Screenshots.zip)
 
@@ -2197,7 +2197,7 @@ Kết hợp dữ liệu lịch XMLTV đã nhập để thẻ gợi ý WatchFlow 
 
 Bổ sung cách duyệt các dấu trang vượt quá tám kênh đầu tiên, giúp truy cập đủ danh sách đã lưu.
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.97](./screenshots/positron-p5197-watch-later-many-552-real.png)
 
 [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
 
@@ -2210,7 +2210,7 @@ Bổ sung cách duyệt các dấu trang vượt quá tám kênh đầu tiên, g
 
 Bổ sung danh sách Xem sau cục bộ để người dùng lưu kênh muốn quay lại. Không tải dữ liệu lên máy chủ và không tự phát.
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.96](./screenshots/positron-p5196-watch-later-552-real.png)
 
 [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.180-p5.1.96) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/20aeb922547ba56061990cad948bbfadaedeef8b) · [Tải Windows Setup x64](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.180-p5.1.96/Open-IPTV-Pro-Setup-4.23.180-x64.exe) · [Tải gói ảnh QA](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.180-p5.1.96/Positron-P5196-20-Real-Screenshots.zip)
 
@@ -2223,7 +2223,7 @@ Bổ sung danh sách Xem sau cục bộ để người dùng lưu kênh muốn q
 
 Điều chỉnh vị trí chỉ báo cuộn dựa trên ảnh kiểm thử thực, tránh lớp chỉ dẫn nằm đè lên nội dung thẻ.
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.95](./screenshots/positron-p5195-watchflow-inline-scroll-cue-552-real.png)
 
 [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.179-p5.1.95) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/8ae65c2a26c0da3d4bc605e1c5aa18283e82a020) · [Tải Windows Setup x64](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.179-p5.1.95/Open-IPTV-Pro-Setup-4.23.179-x64.exe) · [Tải gói ảnh QA](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.179-p5.1.95/Positron-P5195-20-Real-Screenshots.zip)
 
@@ -2236,7 +2236,7 @@ Bổ sung danh sách Xem sau cục bộ để người dùng lưu kênh muốn q
 
 Thêm dấu hiệu trực quan khi danh sách gợi ý WatchFlow còn nội dung bên dưới, giúp người dùng biết có thể cuộn xem thêm.
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.94](./screenshots/positron-p5194-watchflow-scroll-cue-552-real.png)
 
 [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.178-p5.1.94) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/01c99e34d6d41ff7ca24a32f0704be839818ed92) · [Tải Windows Setup x64](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.178-p5.1.94/Open-IPTV-Pro-Setup-4.23.178-x64.exe) · [Tải gói ảnh QA](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.178-p5.1.94/Positron-P5194-20-Real-Screenshots.zip)
 
@@ -2249,7 +2249,7 @@ Thêm dấu hiệu trực quan khi danh sách gợi ý WatchFlow còn nội dung
 
 Điều chỉnh cách chọn gợi ý Mix theo ngày để không tập trung quá nhiều kênh trong một nhóm, đồng thời vẫn dựa trên dữ liệu phát thực tế.
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.93](./screenshots/positron-p5193-group-balanced-mix-552-real.png)
 
 [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.177-p5.1.93) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/0d582fb30e70380537a9e3d3ac4258bfe83c60e5) · [Tải Windows Setup x64](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.177-p5.1.93/Open-IPTV-Pro-Setup-4.23.177-x64.exe) · [Tải gói ảnh QA](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.177-p5.1.93/Positron-P5193-20-Real-Screenshots.zip)
 
@@ -2262,7 +2262,7 @@ Thêm dấu hiệu trực quan khi danh sách gợi ý WatchFlow còn nội dung
 
 Dùng ngày theo múi giờ của thiết bị khi tạo gợi ý Mix hằng ngày và chuyển kênh thông minh, tránh lệch ngày.
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.92](./screenshots/positron-p5192-local-calendar-mix-552-real.png)
 
 [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.176-p5.1.92) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/720dbd1e0ab38a690a6d263b68300353d4726c68) · [Tải Windows Setup x64](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.176-p5.1.92/Open-IPTV-Pro-Setup-4.23.176-x64.exe) · [Tải gói ảnh QA](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.176-p5.1.92/Positron-P5192-20-Real-Screenshots.zip)
 
@@ -2275,7 +2275,7 @@ Dùng ngày theo múi giờ của thiết bị khi tạo gợi ý Mix hằng ng�
 
 Sử dụng hình SVG Phát và Tạm dừng tương ứng với bộ biểu tượng trên nhánh Web, giữ kích thước và đường nét đồng nhất.
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.91](./screenshots/positron-p5191-web-play-svg-552-metadata-real.png)
 
 [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
 
@@ -2288,7 +2288,7 @@ Sử dụng hình SVG Phát và Tạm dừng tương ứng với bộ biểu tư
 
 Không hiện công cụ Video Lab khi người dùng chưa chọn kênh, tránh nút dẫn vào tính năng chưa có nội dung. Cài đặt không bị xóa.
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.90](./screenshots/positron-p5190-player-ready-video-lab-hidden-552-metadata-real.png)
 
 [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.174-p5.1.90) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/8a49f9757459d137c2005762d50fa956b1c3a646) · [Tải Windows Setup x64](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.174-p5.1.90/Open-IPTV-Pro-Setup-4.23.174-x64.exe) · [Tải gói ảnh QA](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.174-p5.1.90/Positron-P5190-20-Real-Screenshots.zip)
 
@@ -2301,7 +2301,7 @@ Không hiện công cụ Video Lab khi người dùng chưa chọn kênh, tránh
 
 Thay lời hướng dẫn mặc định dựa trên việc danh sách có kênh khả dụng hay không, giúp người dùng biết bước tiếp theo.
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.89](./screenshots/positron-p5189-player-ready-subtitle-552-metadata-real.png)
 
 [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.173-p5.1.89) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/2b3e6070e7f086dbd233e29224b9b09d04153dca) · [Tải Windows Setup x64](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.173-p5.1.89/Open-IPTV-Pro-Setup-4.23.173-x64.exe) · [Tải gói ảnh QA](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.173-p5.1.89/Positron-P5189-20-Real-Screenshots.zip)
 
@@ -2314,7 +2314,7 @@ Thay lời hướng dẫn mặc định dựa trên việc danh sách có kênh 
 
 Khi đã có danh sách kênh, hiển thị lời mời chọn kênh và số kênh thực tế. Khi chưa có nguồn, giữ hướng dẫn nhập danh sách.
 
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+![Ảnh chụp Electron thật P5.1.88](./screenshots/positron-p5188-player-ready-552-metadata-real.png)
 
 [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.172-p5.1.88) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/6a6bc1def4b416d5e65d0405a251bf84e1639b48) · [Tải Windows Setup x64](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.172-p5.1.88/Open-IPTV-Pro-Setup-4.23.172-x64.exe) · [Tải gói ảnh QA](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.172-p5.1.88/Positron-P5188-20-Real-Screenshots.zip)
 

@@ -2,14 +2,14 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
-## P5.1.265 — Enter/Space đi tới thẻ nguồn IPTV đang chọn
+## P5.1.265 — Đi tới nguồn bằng Enter/Space / Electron 4.23.350
 
-**Ứng dụng:** 4.23.350 · **Trạng thái:** Chưa có bản phát hành
+**Ứng dụng:** 4.23.350 · **Trạng thái:** Đã phát hành
 
 Feature priority: NEW — Người dùng bàn phím có thể focus một hàng trong Chi tiết nguồn rồi bấm Enter hoặc Space để mở thẻ nguồn tương ứng; giữ nguyên điều khiển nút Đi tới và không can thiệp vào phát kênh. Electron screenshot: positron-p51265-source-enter-after-1920x1080-real.png
 
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/99fff2bb69216077cb628f7878309a2ed253c2c0)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/9bbb0834b1a7c019a390621956f88eef8751320b)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.350-p5.1.265)
 
 ## P5.1.264 — Đặt lại bộ lọc chi tiết nguồn / Electron 4.23.349
 
