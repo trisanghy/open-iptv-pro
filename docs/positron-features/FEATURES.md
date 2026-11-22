@@ -7,15 +7,28 @@ Trang này được tạo tự động từ GitHub Releases và ảnh kiểm th�
 [Mở WEBSITE changelog tương tác](https://raw.githack.com/trisanghy/open-iptv-pro/Positron/docs/positron-features/index.html) · [Giao diện HTML trong repository](index.html) · [Các bản phát hành](https://github.com/trisanghy/open-iptv-pro/releases) · [Nhật ký Git tiếng Việt](LOG_GIT_TIENG_VIET.md) · [Quy tắc ưu tiên tính năng](../../POSITRON_FEATURE_RULES.md)
 
 <details>
-<summary><strong>P5.1.217</strong> · đánh dấu Yêu thích ngay trong lịch sử khám phá · CHƯA CÓ BẢN PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.218</strong> · lọc nhanh kênh Yêu thích trong lịch sử khám phá · CHƯA CÓ BẢN PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
 
-**Ứng dụng:** 4.23.302 · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
+**Ứng dụng:** 4.23.303 · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
+
+Feature priority: NEW — Ảnh Electron thật P5.1.217 cho thấy nút sao mới đã giúp lưu kênh, nhưng danh sách lịch sử còn trộn kênh thường và kênh đã yêu thích. Thêm lọc theo Favorites trong phiên, kết hợp tìm kiếm. Electron screenshot: positron-p51218-favorites-filter-after-1920x1080-real.png
+
+*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+
+[Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/tree/Positron) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/e7667a49aeec087a0f1c812e0a55eed4d7a954e0)
+
+</details>
+
+<details>
+<summary><strong>P5.1.217</strong> · Đánh dấu Yêu thích trong lịch sử khám phá / Electron 4.23.302 · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+
+**Ứng dụng:** 4.23.302 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
 Feature priority: NEW — Ảnh Electron P5.1.216 cho thấy menu khám phá cho phép chọn phát lại và tìm kiếm nhưng thiếu thao tác lưu ngay kênh vừa thấy vào Yêu thích; thêm nút sao độc lập trong mỗi dòng. Electron screenshot: positron-p51217-history-favorite-after-1920x1080-real.png
 
 *Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
 
-[Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/tree/Positron) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/050d158fdb9a1c313db74fe333211d339040f7fd)
+[Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.302-p5.1.217) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/31f35aac8c43f3a4af93522a0063a98fe2175b8b) · [Tải Windows Setup x64](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.302-p5.1.217/Open-IPTV-Pro-Setup-4.23.302-x64.exe) · [Tải gói ảnh QA](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.302-p5.1.217/Positron-P51217-20-Real-Screenshots.zip)
 
 </details>
 
