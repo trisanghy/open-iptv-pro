@@ -4,7 +4,7 @@
  */
 (function(root){
  const d=root.document,$=id=>d.getElementById(id);
- let receiver=null,hls=null,dash=null,busy=false,accepted=false,playingName='',fullscreenAttempted=false;
+ let receiver=null,hls=null,dash=null,busy=false,accepted=false,playingName='',playingId='',suppressPause=true,fullscreenAttempted=false;
  const cinemaButton=$('tvExitFullscreen');
  const video=$('tvVideo');
  const status=text=>{$('tvStatus').textContent=String(text||'');};
@@ -35,6 +35,7 @@
   }catch{} // TV browsers often require a remote-control gesture; CSS cinema remains usable.
  }
  function cleanupPlayer(){
+  suppressPause=true;
   leaveCinema();
   try{video.pause();}catch{}
   try{hls?.destroy();}catch{}hls=null;
@@ -42,8 +43,9 @@
   video.removeAttribute('src');
   try{video.load();}catch{}
  }
- async function loadVideo(url,name){
+ async function loadVideo(url,name,mediaId=''){
   cleanupPlayer();
+  playingId=String(mediaId||'').slice(0,320);
   fullscreenAttempted=false;playingName=String(name||'Open IPTV Pro');
   $('tvPlayingTitle').textContent=name||'Open IPTV Pro';
   const u=new URL(url);
@@ -77,22 +79,27 @@
  }
  video.addEventListener('playing',()=>{
   if(!accepted)return;
+  suppressPause=false;
   enterCinema();
   status('Đang phát '+playingName+' trên TV.');
-  void receiver?.reportPlayback('playing',playingName).catch(()=>{});
+  void receiver?.reportPlayback('playing',playingName,playingId).catch(()=>{});
  });
  video.addEventListener('error',()=>{
   if(!video.error)return;
   status('TV không giải mã hoặc tải được luồng. Thử kênh khác, kiểm tra HTTPS và định dạng video.');
-  if(accepted)void receiver?.reportPlayback('error',playingName).catch(()=>{});
+  if(accepted)void receiver?.reportPlayback('error',playingName,playingId).catch(()=>{});
  });
  function handleCommand(command){
   if(!accepted)return;
   switch(command.action){
-   case 'play':show('tvPlayer');void loadVideo(command.url,command.name);break;
-   case 'pause':video.pause();status('Đã tạm dừng phát theo lệnh từ máy tính.');break;
+   case 'play':show('tvPlayer');void loadVideo(command.url,command.name,command.mediaId);break;
+   case 'pause':suppressPause=false;video.pause();status('Đã tạm dừng phát theo lệnh từ máy tính.');break;
    case 'resume':void video.play().catch(()=>status('TV cần nhấn Phát để tiếp tục.'));break;
-   case 'stop':cleanupPlayer();status('Đã dừng kênh. Chọn kênh mới trên máy tính.');break;
+   case 'stop':cleanupPlayer();status('Đã dừng kênh. Chọn kênh mới trên máy tính.');void receiver?.reportPlayback('stopped',playingName,playingId).catch(()=>{});break;
+   case 'volume':
+    if(command.volume!==null)try{video.volume=command.volume;}catch{}
+    video.muted=!!command.muted;
+    break;
    case 'disconnect':accepted=false;cleanupPlayer();show('tvPairing');status('Máy tính đã ngắt kết nối. Tạo mã mới để tiếp tục.');break;
   }
  }
@@ -145,7 +152,7 @@
   }
  });
  $('tvLocalPause').addEventListener('click',()=>video.pause());
- video.addEventListener('pause',()=>{if(accepted&&!video.ended)void receiver?.reportPlayback('paused',playingName).catch(()=>{});});
+ video.addEventListener('pause',()=>{if(accepted&&!video.ended&&!suppressPause)void receiver?.reportPlayback('paused',playingName,playingId).catch(()=>{});});
  root.addEventListener('pagehide',()=>{void receiver?.close();cleanupPlayer();});
  void boot();
 })(window);
