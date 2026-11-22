@@ -14,4 +14,4 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - run: node --test tizenbrew/tests/source-dialog.test.cjs tizenbrew/tests/last-channel-startup.test.cjs tizenbrew/tests/tizentube-player-controls.test.cjs tizenbrew/tests/back-navigation-v016.test.cjs
+      - run: node --test tizenbrew/tests/*.test.cjs
