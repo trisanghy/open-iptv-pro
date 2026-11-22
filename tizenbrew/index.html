@@ -591,7 +591,7 @@ function updateBottomActions(){byId('exitModuleBtn').title='Thoát về TizenBre
 /* Samsung playback engines: AVPlay is preferred for IPTV. HTML5 and HLS.js
  * are fallbacks, not the only engine. Never send playlist URLs to a proxy. */
 var playbackSerial=0,playbackEngine='',avplayInstance=null,hlsInstance=null,playbackTimer=0,hlsLibraryPromise=null;
-var html5Mode='',hlsAttempted=false,playbackEvidence=[];
+var html5Mode='',hlsAttempted=false,playbackEvidence=[],playbackFailed=false;
 function nativeAvplay(){
  try{
   return typeof webapis!=='undefined'&&webapis.avplay&&typeof webapis.avplay.open==='function'?
@@ -609,7 +609,8 @@ function logPlayback(text){
  label.hidden=!playbackEvidence.length;
 }
 function finishPlaybackError(token,message){
- if(!playbackActive(token))return;
+ if(!playbackActive(token)||playbackFailed)return;
+ playbackFailed=true;
  var video=byId('video');
  var code=video&&video.error&&video.error.code||0;
  logPlayback('Lỗi HTML5 '+(code?('mã '+code):'')+' '+String(message||'').slice(0,75));
@@ -734,7 +735,7 @@ function startHlsPlayback(channel,token,why){
  return true;
 }
 function handleHtml5Error(token,reason){
- if(!playbackActive(token)||playbackEngine!=='html5')return;
+ if(!playbackActive(token)||playbackFailed||playbackEngine!=='html5')return;
  if(html5Mode==='native'&&!hlsAttempted&&!dashAddress(playing&&playing.url)){
   logPlayback(String(reason||'HTML5 không hỗ trợ').slice(0,100));
   if(startHlsPlayback(playing,token,true))return;
@@ -794,7 +795,7 @@ function startAvplay(channel,token){
 function play(c){
  if(!c)return;
  playbackSerial++;var token=playbackSerial;stopPlaybackEngine();playing=c;
- hlsAttempted=false;playbackEvidence=[];
+ hlsAttempted=false;playbackEvidence=[];playbackFailed=false;
  byId('playbackDiag').textContent='';byId('playbackDiag').hidden=true;
  logPlayback('AVPlay: '+(nativeAvplay()?'có API':'không có API'));
  state.recent=[c.id].concat(state.recent.filter(function(id){return id!==c.id;})).slice(0,60);save();
@@ -825,7 +826,7 @@ function togglePlayback(){
 }
 function closePlayer(){
  playbackSerial++;stopPlaybackEngine();byId('player').hidden=true;
- hlsAttempted=false;playbackEvidence=[];byId('playbackDiag').textContent='';byId('playbackDiag').hidden=true;
+ hlsAttempted=false;playbackEvidence=[];playbackFailed=false;byId('playbackDiag').textContent='';byId('playbackDiag').hidden=true;
  byId('player').classList.remove('is-playing');setPlayerStatus('');
  playing=null;draw();updateBottomActions();
 }
