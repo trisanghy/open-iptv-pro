@@ -187,8 +187,18 @@
   }
   async function recoveryHistory(){
    if(!user?.id)return [];
-   const rows=await recoveryTransaction('readonly',store=>store.getAll());
-   return (rows||[]).filter(x=>x.userId===user.id&&x.payload)
+   let rows=[];
+   try{rows=await recoveryTransaction('readonly',store=>store.getAll());}
+   catch(e){console.warn('Could not list IndexedDB recovery',e);}
+   try{
+    for(let i=0;i<localStorage.length;i++){
+     const key=localStorage.key(i);
+     if(!key?.startsWith('openiptv:cross-cloud:recovery:'))continue;
+     const item=JSON.parse(localStorage.getItem(key)||'null');
+     if(item?.userId===user.id&&item.payload)rows.push(item);
+    }
+   }catch(e){console.warn('Could not list fallback recovery',e);}
+   return rows.filter(x=>x.userId===user.id&&x.payload)
     .sort((a,b)=>String(b.createdAt).localeCompare(String(a.createdAt)));
   }
   async function secureBackup(value,reason){
@@ -214,6 +224,7 @@
     try{
      const key='openiptv:cross-cloud:recovery:'+Date.now();
      localStorage.setItem(key,JSON.stringify(item));
+     recoveryDownload.hidden=false;
      return key;
     }catch(_){
      throw Error('Không lưu được bản dự phòng. Đồng bộ đã dừng để bảo vệ dữ liệu; hãy xuất JSON trước.');
