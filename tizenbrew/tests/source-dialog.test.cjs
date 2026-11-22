@@ -188,8 +188,8 @@ test('TV manager hello confirms online and returns a live snapshot',async()=>{
 });
 
 test('QR manager uses the official GitHub Pages URL rather than RawGitHack',()=>{
- const expected='https://trisanghy.github.io/open-iptv-pro/tizen/phone.html?v=018';
- assert.match(tv,/var SOURCE_PAGE='https:\/\/trisanghy[.]github[.]io\/open-iptv-pro\/tizen\/phone[.]html[?]v=018';/);
+ const expected='https://trisanghy.github.io/open-iptv-pro/tizen/phone.html?v=019';
+ assert.match(tv,/var SOURCE_PAGE='https:\/\/trisanghy[.]github[.]io\/open-iptv-pro\/tizen\/phone[.]html[?]v=019';/);
  assert.ok(tv.includes("var qrLink=SOURCE_PAGE+'#code='+token"),'QR must preserve ephemeral pairing token');
  assert.ok(tv.includes(expected));
  assert.doesNotMatch(tv,/raw[.]githack[.]com/);
@@ -224,7 +224,7 @@ test('TV and QR page normalize missing and mistyped HTTP(S) URLs identically',()
  }
  assert.match(tv,/URL trả về trang HTML thay vì danh sách M3U/);
  assert.match(tv,/Máy chủ trả HTTP /);
- assert.match(tv,/sourceStatus\('✕ Không tải được nguồn: '/);
+ assert.match(tv,/sourceStatus\('✕ TV không tải được URL\./);
  assert.match(phone,/byId\('address'\)\.value=address/);
 });
 
@@ -276,4 +276,12 @@ test('QR import UI can choose M3U file and tries phone fetch if TV URL fails',()
  assert.match(phone,/if\(saved.state\)applySnapshot\(saved.state\)/);
  assert.match(tv,/if\(!save\(\)\)\{state.sources.pop\(\)/);
  assert.match(tv,/playlistTransfer=null;managerRevision\+\+/);
+});
+
+test('Mobile provides pasted M3U import when both TV and phone cannot fetch URLs',()=>{
+ assert.match(phone,/id="playlistText"/);
+ assert.match(phone,/id="sendText"/);
+ assert.match(phone,/byId\('sendText'\)\.onclick=async function/);
+ assert.match(phone,/await transferPlaylist\(raw,/);
+ assert.match(tv,/Trên điện thoại hãy chọn tệp hoặc dán M3U qua QR/);
 });
