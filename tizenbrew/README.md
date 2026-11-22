@@ -1,4 +1,15 @@
-# Open IPTV Pro TV · TizenBrew v0.1.27 (OTA)
+# Open IPTV Pro TV · TizenBrew v0.1.28 (OTA)
+
+## v0.1.28 — Bộ phát Cast HTTPS dự phòng cho Samsung TV
+
+- **Cơ sở sửa lỗi:** trang Cast `tv.html` đang chạy tốt trong Samsung Internet sử dụng HTML5 HLS gốc trước, HLS.js/dash.js cục bộ khi cần, và có nguồn gốc trang `https://trisanghy.github.io`. Module TizenBrew lại chạy từ `http://127.0.0.1:8081` và một số luồng báo `manifestLoadError` khi mở trực tiếp. Cùng TV nhưng khác origin và ngữ cảnh WebView; không được kết luận luồng M3U hỏng.
+- **Đường phát Cast tách biệt:** bổ sung `tizen/hosted-player.html` trên nhánh `web/online`, cùng origin, thư viện HLS.js và dash.js với trang Cast đang chạy. Trang này không cần mã 6 số, không sử dụng Supabase, không lưu URL hoặc token nguồn.
+- **Tự chuyển trên TizenBrew:** nếu HTML5/HLS.js/AVPlay nội bộ thất bại ổn định, tự thử **cùng URL HTTPS** bên trong iframe ghép qua `postMessage`; không đẩy URL lên proxy và không sửa M3U đã lưu. Chỉ sau khi bộ phát Cast cũng lỗi mới thử URL dự phòng khác (nếu có).
+- **Giữ điều khiển:** giao diện TV bên ngoài vẫn quản lý ↑ ↓ ← → bảng chọn kênh, OK phát/tạm dừng qua `postMessage`, Back đóng khung phát và về danh sách. Khung Cast không chiếm focus điều khiển TV; khi chuyển kênh, hủy khung cũ và bỏ callback đến muộn.
+- **An toàn:** chỉ gửi URL tới origin HTTPS cố định `trisanghy.github.io`; bộ phát từ chối lệnh của parent có origin khác TizenBrew nội bộ, parent không chấp nhận thông điệp từ iframe lạ. URL nguồn không đi vào query string hoặc log. Không dùng iframe cho nguồn HTTP vì sẽ vướng mixed-content trên trang HTTPS.
+- **Giới hạn:** Samsung Internet chạy độc lập và WebView TizenBrew không hoàn toàn giống nhau; HTTPS iframe có thể vẫn bị giới hạn phát tự động/codec hoặc chính sách nhúng. Thử nghiệm mã không chứng minh đã phát được VTV2–VTV5 trên TV thật. Nút mở nguồn trong Samsung Internet ở v0.1.27 được giữ nguyên để dự phòng.
+- **OTA vẫn giữ nguyên:** `package.json` tiếp tục `appPath=tizenbrew/bootstrap.html`. Không sửa phát hành Electron/Rust/main, không xóa danh sách, thứ tự kênh, lịch sử/yêu thích.
+- **Kiểm thử:** `tizenbrew/tests/hosted-samsung-cast.test.cjs` kiểm tra phát HTTPS, kiểm tra origin, OK, Back, chuyển nguồn và HTTP không vào HTTPS iframe.
 
 ## v0.1.27 — Đường phát bằng Samsung Internet và nguồn Tizen độc lập
 
