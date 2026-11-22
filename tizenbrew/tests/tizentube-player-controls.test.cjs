@@ -76,7 +76,7 @@ test('Player clears status on real playback and does not keep old autoplay warni
  const video={paused:false,readyState:4};
  const byId=id=>({video,player:{classList:cls},playerStatus:status})[id];
  const setPlayerStatus=msg=>{status.textContent=msg||'';status.hidden=!msg;};
- vm.runInNewContext(code,{byId,setPlayerStatus});
+ vm.runInNewContext(code,{byId,setPlayerStatus,playbackEngine:'html5',playbackSerial:7,playbackReady:()=>{cls.add('is-playing');setPlayerStatus('');}});
  video.onplaying();assert.equal(status.hidden,true);assert.equal(cls.present,true);
  status.textContent='Lỗi cũ';status.hidden=false;video.ontimeupdate();
  assert.equal(status.hidden,true);
@@ -85,7 +85,7 @@ test('Player clears status on real playback and does not keep old autoplay warni
 test('Main script remains syntactically valid and playback events are wired',()=>{
  const scripts=[...html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/g)];
  scripts.forEach(s=>assert.doesNotThrow(()=>new vm.Script(s[1])));
- assert.match(html,/onplaying=function\(\)\{byId\('player'\)\.classList\.add\('is-playing'\);setPlayerStatus\(''\);\}/);
+ assert.match(html,/onplaying=function\(\)\{if\(playbackEngine==='html5'\)playbackReady\(playbackSerial\);\}/);
  assert.match(html,/ontimeupdate=function\(\)/);
- assert.match(html,/if\(playing&&playing.id===c.id&&video.paused\)/);
+ assert.match(html,/function startAvplay\(channel,token\)/);assert.match(html,/api\.prepareAsync\(/);assert.match(html,/fallbackFromAvplay\(/);
 });
