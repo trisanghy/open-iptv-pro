@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-22T11:37:23.883171+00:00",
+  "generatedAt": "2026-11-22T11:39:56.645863+00:00",
   "repository": "trisanghy/open-iptv-pro",
   "branch": "Positron",
   "versions": [
@@ -8,7 +8,7 @@
       "version": "P5.1.205",
       "appVersion": "4.23.290",
       "title": "đổi sang kênh ngẫu nhiên khác ngay trong thanh phát",
-      "description": "Đã trực tiếp mở screenshot P5.1.204 thực 1920×1080 từ CI run 45016102045, thấy nút Khám phá ngẫu nhiên chỉ nằm trong empty player. Bổ sung nút xúc xắc sau Kênh sau trên native transport, chỉ hiển thị khi có từ 2 kênh hợp lệ và chỉ phát kênh khác sau nhấn chuột. Không tự phát, không ghi dữ liệu playlist.",
+      "description": "Feature priority: NEW — Người xem có thể khám phá kênh ngẫu nhiên khác ngay khi đang phát thay vì phải trở về màn hình chưa chọn kênh. User action: Tại Xem truyền hình, khi có từ hai kênh hợp lệ, nhấn biểu tượng xúc xắc Bất kỳ bên cạnh nút Kênh sau.",
       "kind": "fix",
       "status": "candidate",
       "published": "",
