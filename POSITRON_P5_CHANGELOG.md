@@ -1,5 +1,14 @@
 # Positron P5 Changelog
 
+## P5.1.214 — Điều hướng menu lịch sử bằng bàn phím/remote / Electron 4.23.299
+- Feature priority: NEW — Ảnh P5.1.213 chứng minh menu lịch sử mở và chọn kênh bằng click nhưng thiếu di chuyển tiêu điểm có điều khiển với phím mũi tên. Thêm ↑/↓ chuyển lựa chọn và quay vòng, Home/End đến đầu/cuối; Enter thực hiện xem lại.
+- Electron screenshot: positron-p51214-history-keys-after-1920x1080-real.png
+- User action: Bấm nút ☷ mở danh sách kênh đã khám phá, nhấn ↑/↓ hoặc Home/End chọn kênh, Enter phát, Esc đóng. Chọn kênh không cần chuột.
+- Tính năng: chỉ chuyển tiêu điểm khi điều hướng, không tự phát video; giữ tiêu điểm khi đóng menu, không thay đổi số lượt khám phá, playlist hay nguồn và hỗ trợ màn 450px.
+- Before: `positron-p51214-history-keys-before-1920x1080-real.png`; after: `positron-p51214-history-keys-after-1920x1080-real.png`.
+- QA: Electron thật 1920×1080 chụp focus trước/sau; kiểm ArrowDown/ArrowUp/Home/End/Enter, không autoplay khi chọn, no overflow 450px.
+- Status: CANDIDATE chờ Node/Electron screenshot/build Release.
+
 ## P5.1.213 — Lịch sử kênh ngẫu nhiên chọn phát lại / Electron 4.23.298
 - Feature priority: NEW — Từ ảnh P5.1.212, Back và Forward chỉ chuyển kênh từng bước. Menu mới mở trực tiếp tối đa 10 kênh vừa khám phá để chọn phát lại bằng một lần bấm.
 - Electron screenshot: positron-p51213-random-history-after-1920x1080-real.png

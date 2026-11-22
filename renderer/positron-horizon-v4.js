@@ -356,7 +356,7 @@
    historyClose.textContent='×';historyClose.setAttribute('aria-label','Đóng lịch sử khám phá');
    historyHead.append(historyTitle,historyClose);
    const historyNote=d.createElement('p');historyNote.className='po-random-history-note';
-   historyNote.textContent='Chọn một kênh để xem lại. Chỉ lưu trong phiên này.';
+   historyNote.textContent='↑/↓ chọn kênh, Enter để xem. Chỉ lưu trong phiên này.';
    const historyList=d.createElement('div');historyList.id='poRandomHistoryList';
    historyPanel.append(historyHead,historyNote,historyList);d.body.append(historyPanel);
    const closeHistory=(restoreFocus=false)=>{
@@ -405,6 +405,20 @@
     historyPanel.style.bottom=Math.max(12,innerHeight-bounds.top+8)+'px';
     historyPanel.hidden=false;historyButton.setAttribute('aria-expanded','true');
     historyList.querySelector('button')?.focus();
+   });
+
+   // P214: remote/keyboard selection stays within the history, without autoplay.
+   historyList.addEventListener('keydown',event=>{
+    if(!['ArrowDown','ArrowUp','Home','End'].includes(event.key))return;
+    const options=Array.from(historyList.querySelectorAll('.po-random-history-item'));
+    if(!options.length)return;
+    const current=options.indexOf(d.activeElement);
+    let target=0;
+    if(event.key==='ArrowDown')target=(current+1)%options.length;
+    else if(event.key==='ArrowUp')target=(current-1+options.length)%options.length;
+    else if(event.key==='End')target=options.length-1;
+    event.preventDefault();event.stopPropagation();
+    options[target].focus();
    });
    historyClose.addEventListener('click',()=>closeHistory(true));
    d.addEventListener('keydown',event=>{

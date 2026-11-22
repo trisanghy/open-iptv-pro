@@ -2317,7 +2317,7 @@ test('P5.1.207 accessible reset clears only random session history',()=>{
   'positron-p51207-random-reset-after-1920x1080-real.png'])
   assert.ok(qa.includes(t),'Missing genuine reset QA '+t);
  const pkg=JSON.parse(read('package.json'));
- assert.ok(flow.includes('TAG=positron/v'+pkg.version+'-p5.1.213'));
+ assert.ok(flow.includes('TAG=positron/v'+pkg.version+'-p5.1.214'));
 });
 
 
@@ -2438,4 +2438,20 @@ test('P5.1.213 enables one-click replay from random discovery history',()=>{
   'positron-p51213-random-history-after-1920x1080-real.png'])
   assert.ok(qa.includes(token),'Missing Electron QA: '+token);
  assert.ok(flow.includes('test -s positron-evidence/p5-20-rounds/positron-p51213-random-history-after-1920x1080-real.png'));
+});
+
+
+test('P5.1.214 supports arrow, Home and End navigation in random-channel history',()=>{
+ const js=read('renderer/positron-horizon-v4.js'),qa=read('scripts/positron-20-extension.cjs');
+ const flow=read('.github/workflows/positron-lab.yml');
+ for(const token of ["historyList.addEventListener('keydown',event=>","'ArrowDown','ArrowUp','Home','End'",
+  'event.preventDefault();event.stopPropagation()','options[target].focus()',
+  "historyNote.textContent='↑/↓ chọn kênh, Enter để xem. Chỉ lưu trong phiên này.'"])
+  assert.ok(js.includes(token),'Missing accessible arrow navigation '+token);
+ for(const token of ['historyKeyboardQA','compact214','arrowDownFocus','homeFocus','endFocus',
+  'wrapDown','wrapUp','noAutoplayDuringNavigation','enterReplaysFocused',
+  'positron-p51214-history-keys-before-1920x1080-real.png',
+  'positron-p51214-history-keys-after-1920x1080-real.png','before214.equals(after214),false'])
+  assert.ok(qa.includes(token),'Missing native keyboard QA '+token);
+ assert.ok(flow.includes('test -s positron-evidence/p5-20-rounds/positron-p51214-history-keys-after-1920x1080-real.png'));
 });

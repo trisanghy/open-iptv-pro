@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.298",
-  "description": "Positron P5.1.213: xem lại kênh ngẫu nhiên từ lịch sử phiên",
+  "version": "4.23.299",
+  "description": "Positron P5.1.214: điều hướng lịch sử kênh bằng bàn phím và điều khiển TV",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",
