@@ -7,15 +7,28 @@ Trang này được tạo tự động từ GitHub Releases và ảnh kiểm th�
 [Mở WEBSITE changelog tương tác](https://raw.githack.com/trisanghy/open-iptv-pro/Positron/docs/positron-features/index.html) · [Giao diện HTML trong repository](index.html) · [Các bản phát hành](https://github.com/trisanghy/open-iptv-pro/releases) · [Nhật ký Git tiếng Việt](LOG_GIT_TIENG_VIET.md) · [Quy tắc ưu tiên tính năng](../../POSITRON_FEATURE_RULES.md)
 
 <details>
-<summary><strong>P5.1.209</strong> · xem tiến độ khám phá ngẫu nhiên theo tổng số kênh · CHƯA CÓ BẢN PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.210</strong> · tự cập nhật tiến độ khám phá khi danh sách kênh đổi · CHƯA CÓ BẢN PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
 
-**Ứng dụng:** 4.23.294 · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
+**Ứng dụng:** 4.23.295 · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
+
+Feature priority: NEW — Từ ảnh P5.1.209 và mã xử lý danh sách nguồn, bộ đếm Bất kỳ có thể tiếp tục ghi nhận các kênh đã xóa hoặc thay nguồn, dẫn tới tiến độ sai cho tới lúc người dùng tự bấm chuyển kênh tiếp. Bổ sung đồng bộ thông minh khi danh sách kênh được cập nhật, tránh khiến tiến độ kênh không còn tồn tại gây nhầm lẫn. Electron screenshot: positron-p51210-source-sync-after-1920x1080-real.png
+
+*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+
+[Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/tree/Positron) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/182655c876ec4ba61c23759848b0f26c9f7185b9)
+
+</details>
+
+<details>
+<summary><strong>P5.1.209</strong> · Tiến độ khám phá ngẫu nhiên có mẫu số / Electron 4.23.294 · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+
+**Ứng dụng:** 4.23.294 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
 Feature priority: NEW — Ảnh Electron P5.1.208 cho thấy nút Bất kỳ chỉ hiển thị số kênh đã thử trong phiên (1), không cho biết tổng số kênh đủ điều kiện. Thêm mẫu số trực tiếp để người xem biết đã khám phá bao nhiêu trong toàn bộ playlist hiện tại. Electron screenshot: positron-p51209-random-progress-after-1920x1080-real.png
 
 *Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
 
-[Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/tree/Positron) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/61a62f3f416b1494aad43e17c75814d54112f49f)
+[Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.294-p5.1.209) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/61a62f3f416b1494aad43e17c75814d54112f49f) · [Tải Windows Setup x64](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.294-p5.1.209/Open-IPTV-Pro-Setup-4.23.294-x64.exe) · [Tải gói ảnh QA](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.294-p5.1.209/Positron-P51209-20-Real-Screenshots.zip)
 
 </details>
 

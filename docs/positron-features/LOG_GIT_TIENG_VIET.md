@@ -2,14 +2,23 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
-## P5.1.209 — xem tiến độ khám phá ngẫu nhiên theo tổng số kênh
+## P5.1.210 — tự cập nhật tiến độ khám phá khi danh sách kênh đổi
 
-**Ứng dụng:** 4.23.294 · **Trạng thái:** Chưa có bản phát hành
+**Ứng dụng:** 4.23.295 · **Trạng thái:** Chưa có bản phát hành
+
+Feature priority: NEW — Từ ảnh P5.1.209 và mã xử lý danh sách nguồn, bộ đếm Bất kỳ có thể tiếp tục ghi nhận các kênh đã xóa hoặc thay nguồn, dẫn tới tiến độ sai cho tới lúc người dùng tự bấm chuyển kênh tiếp. Bổ sung đồng bộ thông minh khi danh sách kênh được cập nhật, tránh khiến tiến độ kênh không còn tồn tại gây nhầm lẫn. Electron screenshot: positron-p51210-source-sync-after-1920x1080-real.png
+
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/182655c876ec4ba61c23759848b0f26c9f7185b9)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+
+## P5.1.209 — Tiến độ khám phá ngẫu nhiên có mẫu số / Electron 4.23.294
+
+**Ứng dụng:** 4.23.294 · **Trạng thái:** Đã phát hành
 
 Feature priority: NEW — Ảnh Electron P5.1.208 cho thấy nút Bất kỳ chỉ hiển thị số kênh đã thử trong phiên (1), không cho biết tổng số kênh đủ điều kiện. Thêm mẫu số trực tiếp để người xem biết đã khám phá bao nhiêu trong toàn bộ playlist hiện tại. Electron screenshot: positron-p51209-random-progress-after-1920x1080-real.png
 
 [Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/61a62f3f416b1494aad43e17c75814d54112f49f)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.294-p5.1.209)
 
 ## P5.1.208 — Giữ tiêu điểm khi làm mới khám phá ngẫu nhiên / Electron 4.23.293
 
