@@ -2,14 +2,23 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
-## P5.1.213 — xem lại kênh ngẫu nhiên từ lịch sử phiên
+## P5.1.214 — điều hướng lịch sử kênh bằng bàn phím và điều khiển TV
 
-**Ứng dụng:** 4.23.298 · **Trạng thái:** Chưa có bản phát hành
+**Ứng dụng:** 4.23.299 · **Trạng thái:** Chưa có bản phát hành
+
+Feature priority: NEW — Ảnh P5.1.213 chứng minh menu lịch sử mở và chọn kênh bằng click nhưng thiếu di chuyển tiêu điểm có điều khiển với phím mũi tên. Thêm ↑/↓ chuyển lựa chọn và quay vòng, Home/End đến đầu/cuối; Enter thực hiện xem lại. Electron screenshot: positron-p51214-history-keys-after-1920x1080-real.png
+
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/010dd8f1ce13cc2d000fd4b600f40837c3f89e7a)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+
+## P5.1.213 — Lịch sử kênh ngẫu nhiên chọn phát lại / Electron 4.23.298
+
+**Ứng dụng:** 4.23.298 · **Trạng thái:** Đã phát hành
 
 Feature priority: NEW — Từ ảnh P5.1.212, Back và Forward chỉ chuyển kênh từng bước. Menu mới mở trực tiếp tối đa 10 kênh vừa khám phá để chọn phát lại bằng một lần bấm. Electron screenshot: positron-p51213-random-history-after-1920x1080-real.png
 
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/d68de2896dab2f52513a41a1a853d7ab00ffa4e1)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/fccaef6054b3259c98de64e01198e3fa9f8efb9c)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.298-p5.1.213)
 
 ## P5.1.212 — Tiến tới trong lịch sử kênh ngẫu nhiên / Electron 4.23.297
 
