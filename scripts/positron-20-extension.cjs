@@ -5423,6 +5423,9 @@ async function runTwenty(page){
   assert.equal(value,true,'P192 real DVR duration '+key+': '+JSON.stringify(dvrDurationLiveQA));
  const after192=await page.screenshot({path:path.join(out,'positron-p51192-dvr-duration-after-1920x1080-real.png'),animations:'disabled'});
  assert.deepEqual([after192.readUInt32BE(16),after192.readUInt32BE(20)],[1920,1080]);
+ // Native Electron BEFORE state: 60-minute choice, before changing it to 120.
+ const before193=await page.screenshot({path:path.join(out,'positron-p51193-dvr-selected-preset-before-1920x1080-real.png'),animations:'disabled'});
+ assert.deepEqual([before193.readUInt32BE(16),before193.readUInt32BE(20)],[1920,1080]);
  // P193: after-image of previous actual Electron CI P192 is the baseline.
  const dvrPresetSelectionQA=await page.evaluate(()=>{
   const d=document,start=d.getElementById('dvrStart'),end=d.getElementById('dvrEnd');
