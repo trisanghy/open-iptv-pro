@@ -217,3 +217,12 @@ html[data-iptv-device="mobile"] body #page-tv .player-control-card
  .control-layout-bottom :is(#openGuideBtn,#favCurrentBtn){
  font-size:0!important;
 }
+
+/* The Cast button owns its SVG; do not paint a second masked icon on top. */
+html[data-iptv-device="mobile"] body #page-tv .player-control-card
+ .control-layout-top>.output-controls #castBtn::before,
+html[data-iptv-device="mobile"] body #page-tv .player-control-card
+ .control-layout-top>.output-controls #castBtn::after{
+ content:none!important;display:none!important;
+ -webkit-mask:none!important;mask:none!important;
+}
