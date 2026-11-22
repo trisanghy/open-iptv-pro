@@ -14,6 +14,87 @@ on:
 permissions:
   contents: write
 jobs:
+  classify-experimental-releases:
+    name: Ensure only stable desktop releases can be Latest
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Correct legacy Rust Lab releases without deleting EXE assets
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          # GitHub Releases are repository-wide, not scoped by branch.
+          # Only Rust Lab tags accidentally published as stable are changed.
+          gh api --paginate "repos/${GITHUB_REPOSITORY}/releases?per_page=100" \
+            --jq '.[] | select(.draft == false and .prerelease == false and (.tag_name | startswith("rust-lab/"))) | [.id, .tag_name] | @tsv' \
+            > "${RUNNER_TEMP}/rust-lab-misclassified.tsv"
+          while IFS=
+    runs-on: windows-latest
+    timeout-minutes: 90
+    steps:
+      - name: Checkout exact Rust Lab revision
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Install Rust MSVC
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: x86_64-pc-windows-msvc
+      - name: Restore Rust compilation cache
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: src-tauri -> target
+      - name: Install npm dependencies
+        run: npm ci
+      - name: Run renderer and app regression tests
+        run: npm run test:quick
+      - name: Build Tauri Windows NSIS installer
+        run: npx tauri build --bundles nsis --target x86_64-pc-windows-msvc
+      - name: Stage actual Windows EXE installers
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          New-Item -ItemType Directory -Path dist-windows -Force | Out-Null
+          $installers = @(Get-ChildItem -Path src-tauri/target -Filter '*-setup.exe' -Recurse -File)
+          if ($installers.Count -eq 0) {
+            $installers = @(Get-ChildItem -Path src-tauri/target -Filter '*.exe' -Recurse -File | Where-Object { $_.FullName -match '[\\/]bundle[\\/]nsis[\\/]' })
+          }
+          if ($installers.Count -eq 0) { throw 'No built NSIS .exe found; refusing to publish empty or stale output.' }
+          foreach ($file in $installers) { Copy-Item $file.FullName -Destination dist-windows -Force }
+          Get-ChildItem dist-windows | Format-Table Name,Length
+      - name: Upload downloadable Windows EXE
+        uses: actions/upload-artifact@v4
+        with:
+          name: Open-IPTV-Pro-Rust-Lab-Windows-EXE
+          path: dist-windows/*.exe
+          if-no-files-found: error
+      - name: Publish unique immutable GitHub release with direct EXE link
+        if: success()
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $tag = 'rust-lab/windows-exe-' + $env:GITHUB_RUN_ID + '-' + $env:GITHUB_RUN_ATTEMPT
+          gh release create $tag dist-windows/*.exe --repo $env:GITHUB_REPOSITORY --target $env:GITHUB_SHA --prerelease --latest=false --title ('Rust Lab Windows EXE ' + $env:GITHUB_RUN_ID) --notes ('Windows NSIS installer built from branch experiment/rust-tauri-v2, commit ' + $env:GITHUB_SHA + '. Unsigned Windows installer; SmartScreen may require confirmation.')
+\t' read -r release_id tag; do
+            [ -n "$release_id" ] || continue
+            echo "Marking Rust Lab release ${tag} (${release_id}) as prerelease"
+            gh api --method PATCH "repos/${GITHUB_REPOSITORY}/releases/${release_id}" \
+              -F prerelease=true -f make_latest=false > /dev/null
+          done < "${RUNNER_TEMP}/rust-lab-misclassified.tsv"
+          # Stable means a separately published, verified desktop release.
+          latest="$(gh api "repos/${GITHUB_REPOSITORY}/releases/latest" --jq '.tag_name')"
+          if [[ "$latest" == rust-lab/* ]]; then
+            echo "::error::Experimental Rust Lab release is still Latest: $latest"
+            exit 1
+          fi
+          echo "Latest release is not Rust Lab: $latest"
   windows-exe:
     runs-on: windows-latest
     timeout-minutes: 90
