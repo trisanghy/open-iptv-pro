@@ -35,7 +35,7 @@ test('Full-screen player cannot navigate to hidden sidebar buttons with remote',
  const byId=id=>({player:{hidden:false},modal:{hidden:true},video,exitModuleBtn:exit,tizenTubeBtn:tube})[id];
  const fn=vm.runInNewContext(html.slice(from,to)+'\nkeyHandler;',{
   byId,isRemoteBack:()=>false,handleBack(){},document:{activeElement:exit},notify(){},
-  changeChannel(){},move(){focused++}
+  togglePlayback(){played++;},changeChannel(){},move(){focused++}
  });
  for(const key of ['ArrowUp','ArrowDown','ArrowLeft','ArrowRight'])fn({key,keyCode:0,preventDefault(){prevented++}});
  assert.equal(focused,0,'no hidden sidebar button may be focused from the player');
