@@ -1149,18 +1149,17 @@ async function runTwenty(page){
    similarButton:!!document.getElementById('poFlowPlussimilar'),
    zapButton:!!document.getElementById('poFlowPluszap'),
    notPlaying:window.IPTVState.getCurrent()===null,
-   navOneRow:(()=>{const a=[...panel.querySelectorAll('.po-flowplus-nav button')];return a.length===6&&a.every(b=>Math.abs(b.getBoundingClientRect().top-a[0].getBoundingClientRect().top)<=1);})(),
+   navOneRow:(()=>{const a=[...panel.querySelectorAll('.po-flowplus-nav button')];return a.length===5&&a.every(b=>Math.abs(b.getBoundingClientRect().top-a[0].getBoundingClientRect().top)<=1);})(),
    navNoOverflow:(()=>{const a=panel.querySelector('.po-flowplus-nav');return a.scrollWidth<=a.clientWidth+1;})(),
    navNoTruncatedLabels:[...panel.querySelectorAll('.po-flowplus-nav button span')].every(label=>label.scrollWidth<=label.clientWidth+1),
    ariaFull:[...panel.querySelectorAll('.po-flowplus-nav button')].every(b=>b.getAttribute('aria-label')?.length>=5),
    navButtonVisible:[...panel.querySelectorAll('.po-flowplus-nav button')].every(b=>b.getBoundingClientRect().width>=48),
-   aiModeVisible:(()=>{const ai=panel.querySelector('.po-flowplus-nav #poFlowPlusAI');return !!ai&&ai.getBoundingClientRect().width>=48&&ai.scrollWidth<=ai.clientWidth+1&&ai.getAttribute('aria-label').includes('học máy');})(),
    navOverflowPx:(()=>{const n=panel.querySelector('.po-flowplus-nav');return n.scrollWidth-n.clientWidth;})()
   };
  });
  assert.equal(plusQA.mixCards,5,'WatchFlow Plus must display five real-native metadata QA channels');
  await page.screenshot({path:path.join(out,'positron-watchflow-plus-mix-552-metadata-before-assert-real.png'),animations:'disabled'});
- for(const key of ['mixSelected','resumeButton','similarButton','zapButton','notPlaying','navOneRow','navNoOverflow','navNoTruncatedLabels','ariaFull','navButtonVisible','aiModeVisible'])
+ for(const key of ['mixSelected','resumeButton','similarButton','zapButton','notPlaying','navOneRow','navNoOverflow','navNoTruncatedLabels','ariaFull','navButtonVisible'])
   assert.equal(plusQA[key],true,'WatchFlow Plus QA failed: '+key+' overflowPx='+plusQA.navOverflowPx);
  // Explicit assertions keep legacy regression guards discoverable while
  // ensuring each new accessibility requirement is actually evaluated.

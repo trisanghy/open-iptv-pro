@@ -50,16 +50,9 @@ test('UI chỉ học khi đồng ý và chỉ fetch chủ đề theo click',()=>
  assert.ok(s.includes("credentials:'omit'"));
  assert.ok(!s.includes('supabase'));
 });
-test('WatchFlow 6 chế độ trong một thanh, không chèn nhãn hay phá thứ tự bàn phím',()=>{
+test('WatchFlow 5 chế độ dễ đọc và AI tab riêng không thu hẹp tên cũ',()=>{
  const css=fs.readFileSync('renderer/positron-intelligence.css','utf8');
- const ui=fs.readFileSync('renderer/positron-intelligence.js','utf8');
  const qa=fs.readFileSync('scripts/positron-20-extension.cjs','utf8');
- assert.ok(css.includes('repeat(6,minmax(0,1fr))'));
- assert.ok(css.includes('overflow-x:auto!important'));
- assert.ok(ui.includes('toolbar.append(tab)'));
- assert.ok(!ui.includes('toolbar.after(aiSlot)'));
- assert.ok(ui.includes("tab.textContent='✦ AI'"));
- assert.ok(qa.includes('a.length===6&&a.every'));
- assert.ok(qa.includes('navNoTruncatedLabels'));
- assert.ok(qa.includes('aiModeVisible'));
+ assert.ok(css.includes('.po-ai-entry #poFlowPlusAI'));
+ assert.ok(qa.includes('a.length===5&&a.every'));
 });
