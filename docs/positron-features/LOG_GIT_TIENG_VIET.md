@@ -2,14 +2,23 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
-## P5.1.192 — hiển thị thời lượng ghi hình và cảnh báo 8 giờ
+## P5.1.193 — tự đánh dấu thời lượng ghi hình đang chọn
 
-**Ứng dụng:** 4.23.277 · **Trạng thái:** Chưa có bản phát hành
+**Ứng dụng:** 4.23.278 · **Trạng thái:** Chưa có bản phát hành
+
+tự đánh dấu thời lượng ghi hình đang chọn
+
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/592ff19d767e443f682ff6c64fd73ce9b56b9252)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+
+## P5.1.192 — Thời lượng ghi hình trực tiếp và cảnh báo 8 giờ / Electron 4.23.277
+
+**Ứng dụng:** 4.23.277 · **Trạng thái:** Đã phát hành
 
 Feature priority: NEW — Ảnh Electron thật P5.1.191 cho thấy nút chọn thời lượng 30/60/120 phút đã hoạt động, nhưng form không có thông tin tổng thời lượng và chưa cảnh báo trực quan khi người dùng sửa giờ kết thúc sai. Thêm dòng kiểm tra trực tiếp cho cả EPG DVR và ghi nhanh TV mà không can thiệp luồng ghi hình. Hiển thị số giờ/phút ngay khi nhập thời gian; nếu kết thúc không sau bắt đầu hoặc vượt 8 giờ, báo rõ lỗi. Không tự thay đổi giờ nhập, không tự tạo lịch, không phát video, giữ xác thực DVR native.
 
 [Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/1b90ff51eb4aa01d12b0b48e4483051b34118c70)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.277-p5.1.192)
 
 ## P5.1.191 — Chọn nhanh thời lượng DVR 30/60/120 phút / Electron 4.23.276
 
