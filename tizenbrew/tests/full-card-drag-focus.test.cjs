@@ -21,7 +21,8 @@ function row(kind,group,id,index){
   return {
     classList:classes(kind),
     dataset:{group,channelId:id||'',index:String(index||0)},
-    getBoundingClientRect:()=>({top:250,height:100})
+    getBoundingClientRect:()=>({top:250,height:100}),
+    closest(selector){return this.classList.contains('mobile-channel')&&selector.includes('.mobile-channel')||this.classList.contains('folder-header')&&selector.includes('.folder-header')?this:null;}
   };
 }
 function setup(){
