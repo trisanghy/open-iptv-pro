@@ -18,13 +18,13 @@ function setup(){
   exitModuleBtn:{title:''},channelPicker:{hidden:true}};
  const state={sources:[],favorites:{},recent:[]};
  const context={
-  state,byId:id=>els[id],
+  state,URL,byId:id=>els[id],
   window:{Hls:undefined},save:()=>true,draw(){},notify(){},
   document:{head:{appendChild(){}},createElement(){return {}}},
   setTimeout:(fn,ms)=>{const t={fn,ms,cancelled:false};callbacks.push(t);return t;},
   clearTimeout:t=>{if(t)t.cancelled=true;}
  };
- const api=vm.runInNewContext(code+'\n({play,playbackReady,finishPlaybackError,playbackCandidates,describeHlsError,playbackActive,handleHtml5Error,tryNextChannelSource,current:()=>({playing,playbackStreamIndex,playbackStreamUrls:playbackStreamUrls.slice(),playbackConfirmed,playbackFailed,playbackSerial,html5Mode})});',context);
+ const api=vm.runInNewContext(code+'\n({play,playbackReady,finishPlaybackError,playbackCandidates,describeHlsError,playbackActive,handleHtml5Error,tryNextChannelSource,current:()=>({playing,playbackStreamIndex,playbackStreamUrls:playbackStreamUrls.slice(),playbackConfirmed,playbackFailed,playbackSerial,html5Mode,streamUrl:playbackStream&&playbackStream.url})});',context);
  function advance(ms){
   const t=callbacks.find(t=>!t.cancelled&&t.ms===ms);
   assert.ok(t,'Expected timer '+ms+' ms');
@@ -42,7 +42,7 @@ test('Same-name channels in independent M3U sources never replace the selected U
  s.api.play(c);s.api.finishPlaybackError(s.api.current().playbackSerial,'manifestLoadError HTTP 403');
  s.advance(2400);
  assert.equal(s.api.current().playbackStreamIndex,0);
- assert.equal(s.els.video.src,c.url,'Do not silently use any other provider');
+ assert.equal(s.api.current().streamUrl,c.url,'Do not silently use any other provider');
  assert.equal(s.state.sources[0].channels[1].url,'https://cdn2.example.org/two.m3u8?token=other');
  assert.match(s.els.playerStatus.textContent,/cdn1.example.org/);
  assert.doesNotMatch(s.els.playerStatus.textContent,/token=selected|token=other/);
