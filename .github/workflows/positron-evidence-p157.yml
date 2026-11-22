@@ -1,4 +1,4 @@
-name: Positron P5.1.157 · Lưu ảnh Electron trước và sau đã kiểm thử
+name: Positron P5.1.158 · Lưu ảnh Electron trước và sau đã kiểm thử
 on:
   push:
     branches: [Positron]
@@ -21,10 +21,10 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -Eeuo pipefail
-          gh run download 44970820752 --repo "$GITHUB_REPOSITORY" --name positron-p51157-real-desktop-screenshots -D /tmp/positron-qa
+          gh run download 44971811937 --repo "$GITHUB_REPOSITORY" --name positron-p51158-real-desktop-screenshots -D /tmp/positron-qa
           mkdir -p docs/positron-features/screenshots
           for state in before after; do
-            name="positron-p51157-groups-${state}-1920x1080-real.png"
+            name="positron-p51158-missing-logos-${state}-1920x1080-real.png"
             from="/tmp/positron-qa/p5-20-rounds/$name"
             test -s "$from"
             node - "$from" <<'NODE'
@@ -36,14 +36,14 @@ jobs:
           NODE
             cp "$from" "docs/positron-features/screenshots/$name"
           done
-          sha256sum docs/positron-features/screenshots/positron-p51157-groups-*-1920x1080-real.png
+          sha256sum docs/positron-features/screenshots/positron-p51158-missing-logos-*-1920x1080-real.png
       - name: Commit ảnh QA không sửa lịch sử Positron
         shell: bash
         run: |
           set -Eeuo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add docs/positron-features/screenshots/positron-p51157-groups-*-1920x1080-real.png
+          git add docs/positron-features/screenshots/positron-p51158-missing-logos-*-1920x1080-real.png
           git diff --cached --quiet && { echo 'Đã có ảnh, không commit lại'; exit 0; }
-          git commit -m "Tài liệu Positron: lưu cặp ảnh Electron thực P5.1.157 [skip ci]"
+          git commit -m "Tài liệu Positron: lưu cặp ảnh Electron thực P5.1.158 [skip ci]"
           git push origin HEAD:Positron
