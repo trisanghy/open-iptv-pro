@@ -2536,7 +2536,7 @@ test('P5.1.219 sorts the recent discovery list by Vietnamese name without alteri
  for(const token of ["historySort.id='poRandomHistorySort'",
   "['recent','Mới khám phá nhất']","['az','Tên kênh A–Z']","['za','Tên kênh Z–A']",
   "historySort.addEventListener('change',renderHistory)",
-  "filtered.sort((a,b)=>sign*String(a.name||'').localeCompare"])
+  "matches.sort((a,b)=>sign*String(a.name||'').localeCompare"])
   assert.ok(js.includes(token),'P219 missing real sorting '+token);
  assert.ok(css.includes('#poRandomHistorySort:focus-visible'));
  for(const token of ['sortStart219','sortAZ219','sortZA219','sortRestore219','compact219',
