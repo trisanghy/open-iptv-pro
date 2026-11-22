@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.332",
-  "description": "Positron P5.1.247: Hiện vị trí của kênh đang chọn",
+  "version": "4.23.333",
+  "description": "Positron P5.1.248: Alt+Shift+J điền sẵn số kênh",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

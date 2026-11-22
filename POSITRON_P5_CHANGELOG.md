@@ -1981,3 +1981,12 @@ P5.1.81 follow-up: real Electron capture found nav overflow; replace flexible no
 - Đầu vào ảnh Electron P5.1.246 đã MỞ: danh sách có hàng QA Channel 412 được tô sáng nhưng tiêu đề chỉ báo 561/561, không hiển thị vị trí hàng.
 - QA: ảnh 1920x1080 trước/sau, nhãn đổi từ Kênh 1/561 sang 412/561, aria-live, không tràn hoặc sửa dữ liệu M3U/Favorites.
 - Chỉ hoàn thành sau Node/Electron QA và release bất biến.
+
+
+## P5.1.248 / Electron 4.23.333 — Alt+Shift+J điền sẵn số kênh đang focus (CANDIDATE)
+- Feature priority: NEW — Trên danh sách kênh đang focus, Alt+Shift+J mở bảng nhảy và tự điền số hàng đang chọn để sửa sang một kênh lân cận; Alt+J vẫn mở ô trống như trước.
+- User action: Sau khi chọn vị trí kênh 412/561, nhấn Alt+Shift+J để ô số đã có 412; sửa thành 413 rồi Enter nếu muốn, không tự phát.
+- Electron screenshot: positron-p51248-prefill-index-after-1920x1080-real.png
+- Đầu vào từ ảnh thật P5.1.247: nhãn vị trí 412/561 đã hiển thị nhưng bảng nhảy khi mở vẫn trống.
+- QA: giữ Alt+J cũ, test phím mới, panel mở, number=412, focus số, dữ liệu IPTV/Favorites không đổi, ảnh 1920x1080.
+- Chỉ coi hoàn thành khi release và bộ ảnh Electron được xác minh, mở soát.

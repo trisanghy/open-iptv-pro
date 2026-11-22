@@ -468,15 +468,23 @@
    groupSearch.focus();
    return;
   }
+  // P248: Alt+Shift+J opens with the currently focused row's number.
+  // Plain Alt+J keeps its existing blank-input behavior.
   if(event.altKey&&!event.ctrlKey&&!event.metaKey&&event.key.toLowerCase()==='j'&&
    d.getElementById('page-tv')?.classList.contains('active-page')){
+   const row=event.target instanceof HTMLElement&&event.target.matches('.channel-item')?event.target:null;
+   const selectedIndex=row&&channelList?[...channelList.querySelectorAll('.channel-item')].indexOf(row)+1:0;
    event.preventDefault();
    setOpen(true);
+   if(event.shiftKey&&selectedIndex>0){
+    number.value=String(selectedIndex);
+    status.textContent='Đang chọn kênh '+selectedIndex+'. Sửa số rồi Enter để nhảy, Ctrl+Enter để nhảy và thu gọn.';
+   }
   }
  });
  groupSelect.setAttribute('aria-keyshortcuts','Alt+G');
  groupSelect.title='Chọn nhóm kênh nhanh (Alt+G)';
- toggle.setAttribute('aria-keyshortcuts','Alt+J');
- toggle.title='Nhảy tới kênh theo số (Alt+J)';
+ toggle.setAttribute('aria-keyshortcuts','Alt+J Alt+Shift+J');
+ toggle.title='Alt+J: nhập số kênh; Alt+Shift+J: điền số hàng kênh đang chọn';
  window.OpenIPTVPositronChannelJump=Object.freeze({open:()=>setOpen(true)});
 })();
