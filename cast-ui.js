@@ -47,10 +47,23 @@
    if(requestAirPlayPicker())return;
    showMobileAirPlayGuide();return;
   }
+  $('castTitle').textContent='▣ Phát lên TV / thiết bị khác';
   $('castModal').dataset.airplayMobile='false';
   $('castModal').classList.remove('hidden');
   $('airplaySection').classList.toggle('hidden',navigator.platform?.toLowerCase().includes('mac')===false);
-  if(!hasNative){status('Chức năng Cast chỉ có trong bản ứng dụng đã cài cho Windows hoặc Mac.',true);$('castScan').disabled=true;$('castPlay').disabled=true;$('castAirplay').disabled=true;$('castLink').disabled=true;return;}
+  if(!hasNative){
+   const android=/Android/i.test(navigator.userAgent||'');
+   $('castScan').disabled=true;$('castPlay').disabled=true;$('castAirplay').disabled=true;$('castLink').disabled=true;$('castStop').disabled=true;
+   $('airplaySection').classList.add('hidden');
+   if(android){
+    $('castTitle').textContent='Truyền hình lên TV trên Android';
+    status('Chrome Android không cung cấp API Google Cast trực tiếp cho website này. Để truyền màn hình, hãy dùng nút Truyền màn hình / Cast trong Cài đặt nhanh của Android, chọn TV cùng mạng Wi-Fi. Nếu TV hỗ trợ Chromecast, bạn cũng có thể mở trang bằng Chrome trên TV. Không thể tự động tìm hoặc chọn TV từ trang Web.',false);
+   }else{
+    $('castTitle').textContent='Phát lên TV / thiết bị khác';
+    status('Trình duyệt hiện tại không hỗ trợ tìm TV trực tiếp. Google Cast trong ứng dụng desktop cần backend native; trên iPhone/iPad hãy dùng Safari và AirPlay.',false);
+   }
+   return;
+  }
   api.capabilities().then(c=>{macOS=c.platform==='darwin';$('airplaySection').classList.toggle('hidden',!macOS);if(macOS)scanAirplay();}).catch(()=>{});
   status('Google Cast và AirPlay là hai loại thiết bị khác nhau. Có thể tìm AirPlay ở mục bên dưới.');
   scan();
