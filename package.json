@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.336",
-  "description": "Positron P5.1.251: Phím quay lại hàng kênh vừa duyệt",
+  "version": "4.23.337",
+  "description": "Positron P5.1.252: Quay lại kênh sau khi đổi bộ lọc",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

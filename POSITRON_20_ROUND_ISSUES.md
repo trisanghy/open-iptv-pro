@@ -65,3 +65,11 @@ Chỉ đánh dấu hoàn tất khi sửa nguồn, node test pass, Electron scree
 ## Đợt 23/11/2026 — Vòng 02/20 P5.1.251 CANDIDATE
 - Ảnh P250 SAU cho thấy đã mất viền focus ở hàng 412 khi đi sang toolbar. Mục tiêu: Alt+Shift+L trở lại hàng duyệt gần nhất, không phát video, không mutate playlist.
 - Đầu vào P251: P250 release thành công; mở PNG gốc trước khi sửa; tạo QA before/after riêng, commit SemVer 4.23.336 và chỉ hoàn thành sau CI + mở ảnh thật + release mới.
+
+## Đợt 23/11/2026 — Vòng 02/20 P5.1.251 HOÀN TẤT
+- Ảnh đầu vào P250 đã mở: sau khi focus sang toolbar, hàng 412 không còn highlight. Thêm Alt+Shift+L quay lại hàng kênh focus gần nhất, bảo toàn playlist và playback.
+- Electron before/after P251 đã trực tiếp MỞ và đối chiếu; `rowReturnQA251` mọi phép thử true (row 412, badge, playlist, favorites, no autoplay, no overflow).
+- Commit `8d91b18927192866b127c61eb2912983eddbf02d`; CI `45062166884` 6/6 thành công, Node 930 tests / 925 pass, 5 skipped, 0 fail. Release `positron/v4.23.336-p5.1.251` xác nhận EXE/DMG/ZIP QA.
+## Đợt 23/11/2026 — Vòng 03/20 P5.1.252 CANDIDATE
+- Từ ảnh P251 SAU và mã: bookmark chỉ lưu tham chiếu DOM; nếu đổi bộ lọc Yêu thích rồi quay lại, hàng DOM cũ có thể bị huỷ nên Alt+Shift+L không còn tác dụng.
+- Mục tiêu: lưu ID kênh, khôi phục view Tất cả khi cần rồi focus row tương ứng, không phát và không thay đổi dữ liệu. QA phải xác minh màn hình trước/sau 1920×1080 và CI.

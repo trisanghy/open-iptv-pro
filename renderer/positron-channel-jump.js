@@ -92,10 +92,13 @@
  const focusList=d.getElementById('channelList');
  // P251: session-only bookmark of the most recently keyboard-focused channel.
  let lastVisitedRow=null;
+ // P252: stable channel ID survives list re-render or hidden native filters.
+ let lastVisitedChannelId=null;
  focusList?.addEventListener('focusin',event=>{
   const row=event.target.closest?.('.channel-item');
   if(!row)return;
   lastVisitedRow=row;
+  lastVisitedChannelId=row.dataset.channelId||null;
   let header=row.previousElementSibling;
   while(header&&!header.matches('.folder-header'))header=header.previousElementSibling;
   lastFocusedGroup=header?.dataset.group||'';
@@ -480,17 +483,30 @@
   if(event.altKey&&event.shiftKey&&!event.ctrlKey&&!event.metaKey&&
      event.key.toLowerCase()==='l'&&panel.hidden&&
      d.getElementById('page-tv')?.classList.contains('active-page')){
-   const row=lastVisitedRow;
-   if(!row?.isConnected||!row.matches('.channel-item')||!row.getClientRects().length)return;
    const list=focusList;
    if(!list)return;
+   // P252: if favorite/recent filters rebuilt the list, restore the
+   // previous channel by its stable ID, expanding only the view filter.
+   const available=row=>row?.isConnected&&row.matches('.channel-item')&&row.getClientRects().length;
+   let row=lastVisitedRow,restoredAll=false;
+   if(!available(row)&&lastVisitedChannelId){
+    row=[...list.querySelectorAll('.channel-item')].find(el=>el.dataset.channelId===lastVisitedChannelId);
+    if(!available(row)){
+     const all=d.querySelector('#page-tv .filter-tab[data-filter="all"]');
+     if(all&&!all.classList.contains('active')){
+      all.click();restoredAll=true;
+     }
+     row=[...list.querySelectorAll('.channel-item')].find(el=>el.dataset.channelId===lastVisitedChannelId);
+    }
+   }
+   if(!available(row))return;
    event.preventDefault();event.stopPropagation();
    const box=list.getBoundingClientRect(),rect=row.getBoundingClientRect();
    if(rect.top<box.top)list.scrollTop+=rect.top-box.top;
    else if(rect.bottom>box.bottom)list.scrollTop+=rect.bottom-box.bottom;
    row.focus({preventScroll:true});
    const index=[...list.querySelectorAll('.channel-item')].indexOf(row)+1;
-   status.textContent='Đã quay lại kênh '+index+'. Nhấn Enter để phát.';
+   status.textContent=(restoredAll?'Đã xem tất cả để quay lại. ':'')+'Đã quay lại kênh '+index+'. Nhấn Enter để phát.';
    return;
   }
   // P243: when recent history is empty there are no channel rows to focus.
