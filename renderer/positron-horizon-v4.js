@@ -226,6 +226,8 @@
    const randomSeenIds=new Set();
    // P211: session-only trail for returning to a previously discovered channel.
    const randomTrail=[];
+   // P212: forward stack supports redo after returning to an earlier discovery.
+   const randomRedoIds=[];
    const switchRandomChannel=()=>{
     const candidates=window.IPTVState?.getChannels?.().filter(c=>c?.id&&c?.url&&c.status!=='dead')||[];
     if(!candidates.length)return;
@@ -243,6 +245,7 @@
     randomSeenIds.add(selected.id);
     if(randomTrail[randomTrail.length-1]!==selected.id)randomTrail.push(selected.id);
     if(randomTrail.length>50)randomTrail.shift();
+    randomRedoIds.length=0;
     resetRandom.hidden=false;
     const badge=nextRandom.querySelector('.po-random-count');
     if(badge){badge.hidden=false;badge.textContent=String(randomSeenIds.size);}
@@ -270,6 +273,7 @@
     const activeIds=new Set(eligible.map(c=>c.id));
     for(const id of randomSeenIds)if(!activeIds.has(id))randomSeenIds.delete(id);
     for(let i=randomTrail.length-1;i>=0;i--)if(!activeIds.has(randomTrail[i]))randomTrail.splice(i,1);
+    for(let i=randomRedoIds.length-1;i>=0;i--)if(!activeIds.has(randomRedoIds[i]))randomRedoIds.splice(i,1);
     const total=eligible.length,count=randomSeenIds.size;
     const badge=nextRandom.querySelector('.po-random-count');
     if(badge){badge.hidden=count===0;badge.textContent=count?String(count):'';}
@@ -282,6 +286,8 @@
     if(reset)reset.hidden=nextRandom.hidden||count===0;
     const back=byId('poRandomBack');
     if(back)back.hidden=nextRandom.hidden||randomTrail.length<2;
+    const forward=byId('poRandomForward');
+    if(forward)forward.hidden=nextRandom.hidden||randomRedoIds.length===0;
    };
    nextRandom.addEventListener('click',switchRandomChannel);
    byId('nextBtn')?.parentElement?.append(nextRandom);
@@ -294,7 +300,8 @@
    backRandom.addEventListener('click',()=>{
     if(randomTrail.length<2)return;
     const restoreKeyboardFocus=d.activeElement===backRandom;
-    randomTrail.pop();
+    const departedId=randomTrail.pop();
+    randomRedoIds.push(departedId);
     const previousId=randomTrail[randomTrail.length-1];
     syncRandomProgress();
     if(restoreKeyboardFocus&&!nextRandom.hidden)nextRandom.focus();
@@ -303,6 +310,26 @@
      .catch(e=>window.IPTVState?.toast?.(e.message||String(e),'error'));
    });
    byId('nextBtn')?.parentElement?.append(backRandom);
+   // P212: redo a step after visiting the previous random channel.
+   const forwardRandom=d.createElement('button');forwardRandom.type='button';
+   forwardRandom.id='poRandomForward';forwardRandom.className='control-sm po-random-forward';
+   forwardRandom.textContent='↷';forwardRandom.title='Tiến tới kênh khám phá vừa quay lại';
+   forwardRandom.setAttribute('aria-label','Tiến tới kênh ngẫu nhiên tiếp theo trong lịch sử');
+   forwardRandom.hidden=true;
+   forwardRandom.addEventListener('click',()=>{
+    if(!randomRedoIds.length)return;
+    const restoreKeyboardFocus=d.activeElement===forwardRandom;
+    const forwardId=randomRedoIds.pop();
+    if(!window.IPTVState?.getChannels?.().some(c=>c?.id===forwardId&&c?.url&&c.status!=='dead')){
+     syncRandomProgress();return;
+    }
+    randomTrail.push(forwardId);
+    syncRandomProgress();
+    if(restoreKeyboardFocus&&forwardRandom.hidden&&!nextRandom.hidden)nextRandom.focus();
+    Promise.resolve(window.IPTVState.playChannel(forwardId))
+     .catch(e=>window.IPTVState?.toast?.(e.message||String(e),'error'));
+   });
+   byId('nextBtn')?.parentElement?.append(forwardRandom);
    // P207: explicit accessible reset for the session-only discovery cycle.
    const resetRandom=d.createElement('button');resetRandom.type='button';
    resetRandom.id='poRandomCycleReset';resetRandom.className='control-sm po-random-reset';
@@ -314,6 +341,7 @@
     const restoreKeyboardFocus=d.activeElement===resetRandom;
     randomSeenIds.clear();
     randomTrail.length=0;
+    randomRedoIds.length=0;
     const badge=nextRandom.querySelector('.po-random-count');
     if(badge){badge.hidden=true;badge.textContent='';}
     nextRandom.dataset.poDiscoverCount='0';

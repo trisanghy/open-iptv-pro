@@ -2317,7 +2317,7 @@ test('P5.1.207 accessible reset clears only random session history',()=>{
   'positron-p51207-random-reset-after-1920x1080-real.png'])
   assert.ok(qa.includes(t),'Missing genuine reset QA '+t);
  const pkg=JSON.parse(read('package.json'));
- assert.ok(flow.includes('TAG=positron/v'+pkg.version+'-p5.1.211'));
+ assert.ok(flow.includes('TAG=positron/v'+pkg.version+'-p5.1.212'));
 });
 
 
@@ -2396,4 +2396,25 @@ test('P5.1.211 adds an accessible previous-random-channel control',()=>{
   'before211.equals(after211),false'])
   assert.ok(qa.includes(token),'Missing native Electron random back evidence: '+token);
  assert.ok(flow.includes('test -s positron-evidence/p5-20-rounds/positron-p51211-random-back-after-1920x1080-real.png'));
+});
+
+
+test('P5.1.212 adds forward navigation after revisiting an earlier random channel',()=>{
+ const js=read('renderer/positron-horizon-v4.js'),css=read('renderer/positron-twenty.css');
+ const qa=read('scripts/positron-20-extension.cjs'),flow=read('.github/workflows/positron-lab.yml');
+ for(const token of ['const randomRedoIds=[]','randomRedoIds.length=0',
+  'randomRedoIds.push(departedId)','forwardRandom.id=\'poRandomForward\'',
+  'forwardRandom.addEventListener(\'click\'','const forwardId=randomRedoIds.pop()',
+  'randomTrail.push(forwardId)',
+  'if(restoreKeyboardFocus&&forwardRandom.hidden&&!nextRandom.hidden)nextRandom.focus()'])
+  assert.ok(js.includes(token),'Missing random forward: '+token);
+ assert.ok(css.includes('#poRandomForward[hidden]{display:none!important}'));
+ for(const token of ['forwardHistoryQA','forwardActionQA','twoDistinctChoices',
+  'backReplayValid','forwardShownAfterBack','replayedSecond','forwardHiddenAfterRedo',
+  'playlistUnchanged','compact212',
+  'positron-p51212-random-forward-before-1920x1080-real.png',
+  'positron-p51212-random-forward-after-1920x1080-real.png',
+  'before212.equals(after212),false'])
+  assert.ok(qa.includes(token),'Missing Electron forward proof: '+token);
+ assert.ok(flow.includes('test -s positron-evidence/p5-20-rounds/positron-p51212-random-forward-after-1920x1080-real.png'));
 });

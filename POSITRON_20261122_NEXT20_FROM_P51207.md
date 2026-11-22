@@ -21,8 +21,13 @@ Phạm vi: chỉ `Positron`. Baseline HEAD `2e0d53a478a3361731e0f191e8b06c54a943
 - Test dự kiến: `sourceChangeQA` với hai cặp kênh fixture và MutationObserver Electron thật; before/after `positron-p51210-source-sync-before-1920x1080-real.png`, `positron-p51210-source-sync-after-1920x1080-real.png`; Node regression và 450px. Chỉ đếm hoàn thành sau CI và trực tiếp mở PNG sau; release tag `positron/v4.23.295-p5.1.210` duy nhất nếu thành công.
 - Đã xác minh: Actions #45023542761 6/6 success, ảnh Electron thật P210 trước/sau đã mở và soát, không tràn ngang, mock nguồn không làm thay đổi playlist. Release `positron/v4.23.295-p5.1.210` có đủ Setup/Portable EXE, DMG ARM/Intel, ảnh, SHA256SUMS.
 
-## Vòng 04/20 — P5.1.211 / Electron 4.23.296 — CANDIDATE
+## Vòng 04/20 — P5.1.211 / Electron 4.23.296 — ĐÃ HOÀN THÀNH
 - Phát hiện từ ảnh P210: thanh Bất kỳ có đếm và Reset nhưng không có thao tác trở lại kênh ngẫu nhiên vừa xem khi đã chuyển sang kênh tiếp.
 - Đã sửa source: bộ nhớ lịch sử ngẫu nhiên tối đa 50 ID, nút ↶ trở lại kênh khám phá trước, chỉ hiện khi có ít nhất 2 ID, ẩn/giữ tiêu điểm bàn phím phù hợp; không đụng playlist và lượt khám phá không tăng khi quay lại.
 - Test và ảnh bắt buộc: `randomBackQA`, `randomBackActionQA`, Electron 1920×1080 `positron-p51211-random-back-before-1920x1080-real.png` và `positron-p51211-random-back-after-1920x1080-real.png`, 450px, Node regression. Không đếm vòng 04 trước khi chạy và xem ảnh.
-- Vòng 05–20: CHƯA LÀM. Baseline phải là HEAD/Release mới nhất; không đếm chạy lại screenshot lịch sử như vòng mới.
+- Đã xác minh: Actions #45024273180 test/capture/Mac ARM/Mac x64/Windows x64/release success; trước/sau Electron 1920×1080 đã mở, nút ↶ xuất hiện khi có hai lượt, phép thử keyboard focus và playlist đều đạt. Release `positron/v4.23.296-p5.1.211` có đủ EXE/DMG/source/ảnh/SHA256SUMS.
+
+## Vòng 05/20 — P5.1.212 / Electron 4.23.297 — CANDIDATE
+- Đầu vào từ ảnh P211: đã quay lại kênh ngẫu nhiên trước nhưng không có thao tác tiến lại khi người xem đổi ý. Thêm nút ↷ tiến theo lịch sử phiên sau Back, dùng stack riêng; bấm khám phá mới sẽ xóa ngăn tiến, source edit lọc ID cũ, không sửa kênh gốc.
+- Test và ảnh P212: `forwardHistoryQA`, `forwardActionQA`, native Electron `positron-p51212-random-forward-before-1920x1080-real.png` và `positron-p51212-random-forward-after-1920x1080-real.png`, 450px và focus; chưa đếm hoàn tất khi CI chưa thành công hoặc chưa mở ảnh.
+- Vòng 06–20: CHƯA LÀM; mỗi vòng phải đọc ảnh và CI phiên trước, sửa thực, tăng version và chỉ công bố release khi xác minh.
