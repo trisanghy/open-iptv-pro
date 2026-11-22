@@ -2317,7 +2317,7 @@ test('P5.1.207 accessible reset clears only random session history',()=>{
   'positron-p51207-random-reset-after-1920x1080-real.png'])
   assert.ok(qa.includes(t),'Missing genuine reset QA '+t);
  const pkg=JSON.parse(read('package.json'));
- assert.ok(flow.includes('TAG=positron/v'+pkg.version+'-p5.1.219'));
+ assert.ok(flow.includes('TAG=positron/v'+pkg.version+'-p5.1.220'));
 });
 
 
@@ -2545,4 +2545,22 @@ test('P5.1.219 sorts the recent discovery list by Vietnamese name without alteri
   'positron-p51219-history-sort-after-1920x1080-real.png','before219.equals(after219),false'])
   assert.ok(qa.includes(token),'P219 missing native Electron QA '+token);
  assert.ok(flow.includes('test -s positron-evidence/p5-20-rounds/positron-p51219-history-sort-after-1920x1080-real.png'));
+});
+
+
+test('P5.1.220 expands session discovery history from 10 to 50 with reversible focus-safe controls',()=>{
+ const js=read('renderer/positron-horizon-v4.js'),css=read('renderer/positron-twenty.css');
+ const qa=read('scripts/positron-20-extension.cjs'),flow=read('.github/workflows/positron-lab.yml');
+ for(const x of ["historyMore.id='poRandomHistoryMore'","historyMore.hidden=true",
+  "recent.length<50","const filtered=historyExpanded?matches:matches.slice(0,10)",
+  "historyMore.addEventListener('click',()=>{","historyExpanded=false",
+  "historyMore.setAttribute('aria-expanded',String(historyExpanded))"])
+  assert.ok(js.includes(x),'Missing P220 expandable history: '+x);
+ assert.ok(css.includes('#poRandomHistoryMore[hidden]{display:none!important}'));
+ for(const x of ['expandStart220','expandQA220','collapseQA220','compact220',
+  'sixteenDiscovered','showsAll16','tenCollapsed','sourceIntact','noAdditionalPlayback',
+  'positron-p51220-history-more-before-1920x1080-real.png',
+  'positron-p51220-history-more-after-1920x1080-real.png','before220.equals(after220),false'])
+  assert.ok(qa.includes(x),'Missing native P220 QA: '+x);
+ assert.ok(flow.includes('test -s positron-evidence/p5-20-rounds/positron-p51220-history-more-after-1920x1080-real.png'));
 });

@@ -379,7 +379,14 @@
    for(const [value,label] of [['recent','Mới khám phá nhất'],['az','Tên kênh A–Z'],['za','Tên kênh Z–A']]){
     const item=d.createElement('option');item.value=value;item.textContent=label;historySort.append(item);
    }
-   historyPanel.append(historyHead,historyNote,historySearch,historyFavoriteFilter,historySort,historyList);d.body.append(historyPanel);
+   // P220: reveal up to 50 session discoveries on demand; 10 stay compact by default.
+   const historyMore=d.createElement('button');historyMore.type='button';
+   historyMore.id='poRandomHistoryMore';historyMore.className='po-random-history-more';
+   historyMore.hidden=true;historyMore.setAttribute('aria-expanded','false');
+   historyMore.setAttribute('aria-label','Xem thêm kênh đã khám phá');
+   let historyExpanded=false;
+   historyPanel.append(historyHead,historyNote,historySearch,historyFavoriteFilter,historySort,historyMore,historyList);
+   d.body.append(historyPanel);
    const closeHistory=(restoreFocus=false)=>{
     historyPanel.hidden=true;historyButton.setAttribute('aria-expanded','false');
     if(restoreFocus&&!historyButton.hidden)historyButton.focus();
@@ -389,7 +396,7 @@
     const live=new Map(channels.map(c=>[c.id,c]));
     const ids=[...randomTrail,...randomRedoIds.slice().reverse()];
     const used=new Set(),recent=[];
-    for(let i=ids.length-1;i>=0&&recent.length<10;i--){
+    for(let i=ids.length-1;i>=0&&recent.length<50;i--){
      const id=ids[i];if(used.has(id)||!live.has(id))continue;
      used.add(id);recent.push(live.get(id));
     }
@@ -398,11 +405,15 @@
     const favCore=window.OpenIPTVFavorites,store=window.IPTVState?.getStore?.();
     const visible=onlyFavorites
      ?recent.filter(c=>Boolean(favCore?.has?.(store,c))):recent;
-    const filtered=query?visible.filter(c=>normalizeHistory(c.name+' '+(c.group||'')).includes(query)):visible.slice();
+    const matches=query?visible.filter(c=>normalizeHistory(c.name+' '+(c.group||'')).includes(query)):visible.slice();
     if(historySort.value==='az'||historySort.value==='za'){
      const sign=historySort.value==='az'?1:-1;
-     filtered.sort((a,b)=>sign*String(a.name||'').localeCompare(String(b.name||''),'vi',{numeric:true}));
+     matches.sort((a,b)=>sign*String(a.name||'').localeCompare(String(b.name||''),'vi',{numeric:true}));
     }
+    historyMore.hidden=matches.length<=10;
+    historyMore.setAttribute('aria-expanded',String(historyExpanded));
+    historyMore.textContent=historyExpanded?'Thu gọn về 10 kênh':'Xem thêm '+Math.max(0,matches.length-10)+' kênh';
+    const filtered=historyExpanded?matches:matches.slice(0,10);
     historyList.replaceChildren();
     for(const channel of filtered){
      const option=d.createElement('button');option.type='button';
@@ -472,6 +483,10 @@
     }
    };
    historySearch.addEventListener('input',renderHistory);
+   historyMore.addEventListener('click',()=>{
+    historyExpanded=!historyExpanded;renderHistory();
+    if(!historyMore.hidden)historyMore.focus({preventScroll:true});
+   });
    historySort.addEventListener('change',renderHistory);
    historyFavoriteFilter.addEventListener('click',()=>{
     const enabled=historyFavoriteFilter.getAttribute('aria-pressed')!=='true';
@@ -496,6 +511,7 @@
     historyFavoriteFilter.setAttribute('aria-pressed','false');
     historyFavoriteFilter.textContent='☆ Chỉ yêu thích';
     historySort.value='recent';
+    historyExpanded=false;
     renderHistory();
     const bounds=historyButton.getBoundingClientRect();
     historyPanel.style.left=Math.max(12,Math.min(bounds.left-125,innerWidth-372))+'px';

@@ -1,5 +1,13 @@
 # Positron P5 Changelog
 
+## P5.1.220 — Mở rộng lịch sử khám phá tối đa 50 kênh / Electron 4.23.305
+- Feature priority: NEW — Mã và ảnh Electron P5.1.219 cho thấy lịch sử có thể chứa 50 lần khám phá nhưng popup chỉ hiện 10 kênh gần nhất, khiến các kênh cũ không thể truy cập; thêm nút mở rộng/thu gọn.
+- Electron screenshot: positron-p51220-history-more-after-1920x1080-real.png
+- User action: Mở ☷ lịch sử khám phá; khi có trên 10 kênh, bấm Xem thêm N kênh để mở tối đa 50, hoặc Thu gọn về 10 kênh. Có thể tìm kiếm, lọc Yêu thích và sắp xếp.
+- Tính năng: mặc định 10 mục; mở rộng đọc tối đa 50 mục phiên hiện tại từ trail/redo có sẵn, không phát video, không sửa nguồn, danh sách Favorites hay dữ liệu EPG. Có aria-expanded và focus được khôi phục.
+- Electron before/after: positron-p51220-history-more-before-1920x1080-real.png và positron-p51220-history-more-after-1920x1080-real.png. QA tạo 16 lần khám phá không autoplay, xác minh 10→16→10, giữ playlist, 450px không tràn.
+- Trạng thái: CANDIDATE tới khi Node, ảnh Electron mở kiểm, CI 6/6 và Release.
+
 ## P5.1.219 — Sắp xếp lịch sử khám phá theo tên / Electron 4.23.304
 - Feature priority: NEW — Ảnh Electron thật P5.1.218 cho thấy tìm kiếm và lọc Yêu thích hoạt động nhưng lịch sử chỉ theo thời điểm khám phá; thêm chế độ tên A–Z và Z–A theo thứ tự tiếng Việt.
 - Electron screenshot: positron-p51219-history-sort-after-1920x1080-real.png

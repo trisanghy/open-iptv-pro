@@ -1160,3 +1160,15 @@ html[data-positron="true"] #poRandomHistorySort{
 html[data-positron="true"] #poRandomHistorySort:focus-visible{
  outline:2px solid var(--po-accent,#79dfc6);outline-offset:1px;
 }
+
+/* P220: reveal up to 50 session discoveries without cluttering initial 10 rows. */
+html[data-positron="true"] #poRandomHistoryMore{
+ display:block;width:100%;min-height:34px;box-sizing:border-box;margin:0 0 9px;
+ padding:6px 10px;border:1px dashed var(--po-accent,#79dfc6);border-radius:8px;
+ background:var(--po-input,#17303c);color:var(--po-text,#e6f4f4);
+ font:inherit;font-size:12px;font-weight:600;cursor:pointer;
+}
+html[data-positron="true"] #poRandomHistoryMore[hidden]{display:none!important}
+html[data-positron="true"] #poRandomHistoryMore:focus-visible{
+ outline:2px solid var(--po-accent,#79dfc6);outline-offset:1px;
+}
