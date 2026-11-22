@@ -91,7 +91,7 @@ button,input,textarea{font:inherit;color:inherit}button{cursor:pointer;border:2p
 <script type="text/javascript" src="$WEBAPIS/webapis/webapis.js"></script>
 </head><body data-theme="dark">
 <div id="app">
-<header class="top"><div class="brand"><div class="brandicon">▶</div><div><strong>Open IPTV Pro <small>TV</small></strong><p>Samsung Tizen Edition · TizenBrew v0.1.30</p></div></div><div class="toolbar"><span class="clock" id="clock">--:--</span><button id="searchBtn">⌕ Tìm</button><button id="addBtn">＋ Nguồn</button><button id="themeBtn">◐ Giao diện</button></div></header>
+<header class="top"><div class="brand"><div class="brandicon">▶</div><div><strong>Open IPTV Pro <small>TV</small></strong><p>Samsung Tizen Edition · TizenBrew v0.1.31</p></div></div><div class="toolbar"><span class="clock" id="clock">--:--</span><button id="searchBtn">⌕ Tìm</button><button id="addBtn">＋ Nguồn</button><button id="themeBtn">◐ Giao diện</button></div></header>
 <div class="main"><nav class="nav"><button class="active" data-nav="all">▣　Trực tiếp</button><button data-nav="favorites">♡　Yêu thích</button><button data-nav="recent">◷　Đã xem</button><button data-nav="sources">☷　Nguồn M3U</button><button data-nav="help">⚙　Hướng dẫn</button><div id="sidebarShortcuts" class="sidebar-shortcuts"><button type="button" id="tizenTubeBtn" title="Chuyển sang TizenTube đã cài trong TizenBrew">▶ TizenTube</button><button type="button" id="exitModuleBtn" class="exit-small" title="Thoát về TizenBrew">✕ Thoát</button></div><p class="tip">Dùng ↑ ↓ ← → và OK để điều khiển bằng remote TV.</p></nav>
 <section class="listpane"><div class="heading"><div><div class="eyebrow">DANH SÁCH KÊNH</div><h1 id="heading">Trực tiếp</h1></div><span id="count">0 kênh</span></div><div class="groups" id="groups"></div><div class="channels" id="channels"></div><div class="empty" id="empty" hidden><h2>Chưa có kênh IPTV</h2><p>Thêm nguồn bằng URL trên remote hoặc quét QR để nhập bằng điện thoại.</p><button id="emptyAdd" class="primary">＋ Thêm nguồn IPTV</button><button id="sampleBtn">▶ Luồng kiểm thử</button></div><button id="more" hidden>Xem thêm kênh ↓</button></section>
 <aside class="details"><div class="preview"><span class="live">● TRỰC TIẾP</span><b id="previewText">TV</b><span class="watermark">OPEN IPTV PRO</span></div><div class="eyebrow">KÊNH ĐANG CHỌN</div><h2 id="channelTitle">Open IPTV Pro TV</h2><p id="channelGroup">Chọn kênh để xem</p><div class="info"><div class="eyebrow">THÔNG TIN</div><p id="channelInfo">Hỗ trợ nhập M3U, nhóm kênh, yêu thích và remote Samsung.</p></div><div class="actions"><button class="primary" id="watchBtn">▶ Xem</button><button id="favBtn">♡ Yêu thích</button></div></aside></div>
@@ -747,15 +747,25 @@ function playbackChannelKey(channel){
  return String(channel&&channel.name||'').trim().toLowerCase().replace(/\s+/g,' ');
 }
 function playbackCandidates(channel){
- var urls=[],key=playbackChannelKey(channel);
- function add(value){var candidate=String(value||'').trim();if(/^https?:\/\//i.test(candidate)&&urls.indexOf(candidate)<0&&urls.length<5)urls.push(candidate);}
+ // Channel names do not identify the same stream across independent playlists.
+ // Keep the user's selected URL. Backup URLs must be explicitly attached to
+ // this channel, rather than collected from every same-name channel.
+ var urls=[];
+ function add(value){
+  var candidate=String(value||'').trim();
+  if(/^https?:\/\/\S+$/i.test(candidate)&&candidate.length<=4096&&
+     urls.indexOf(candidate)<0&&urls.length<5)urls.push(candidate);
+ }
  add(channel&&channel.url);
- (state.sources||[]).forEach(function(src){
-  (src.channels||[]).forEach(function(c){
-   if(playbackChannelKey(c)===key)add(c.url);
-  });
- });
+ var backups=channel&&(channel.backupUrls||channel.fallbackUrls);
+ if(Array.isArray(backups))backups.forEach(add);
  return urls;
+}
+function playbackSafeHost(address){
+ try{
+  var parsed=new URL(String(address||''));
+  return (parsed.protocol==='https:'||parsed.protocol==='http:')?parsed.hostname.slice(0,100):'';
+ }catch(e){return '';}
 }
 function describeHlsError(data){
  var code=Number(data&&data.response&&data.response.code||0),details=String(data&&data.details||'lỗi mạng');
@@ -772,6 +782,8 @@ function clearPlaybackGrace(){
 }
 function startPlaybackStream(channel,token){
  playbackStream=channel;
+ var host=playbackSafeHost(channel&&channel.url);
+ logPlayback('Nguồn '+(playbackStreamIndex+1)+'/'+Math.max(1,playbackStreamUrls.length)+(host?' · '+host:''));
  if(!startAvplay(channel,token)){
   if(nativeAvplay())logPlayback('AVPlay khởi động thất bại');
   startHtml5Playback(channel,token);
@@ -788,7 +800,7 @@ function tryNextChannelSource(token){
  playbackFailed=false;playbackConfirmed=false;hlsAttempted=false;nativeReplayUsed=false;hostedCastAttempted=false;
  playbackEvidence=[];
  byId('playbackDiag').hidden=true;byId('playbackDiag').textContent='';
- setPlayerStatus('Đang thử nguồn dự phòng '+(playbackStreamIndex+1)+' / '+playbackStreamUrls.length+'…');
+ setPlayerStatus('Đang thử URL dự phòng được gắn với kênh '+(playbackStreamIndex+1)+' / '+playbackStreamUrls.length+'…');
  startPlaybackStream(Object.assign({},original,{url:urlValue}),nextToken);
  return true;
 }
@@ -926,8 +938,7 @@ function playbackFailure(token,message){
  if(byId('channelPicker').hidden&&browserButton.focus)try{browserButton.focus({preventScroll:true});}catch(e){browserButton.focus();}
  clearPlaybackTimer();
  byId('player').classList.remove('is-playing');
- var sourceHost='';
- try{sourceHost=(new URL(String(playbackStream&&playbackStream.url||playing&&playing.url||''))).hostname;}catch(e){}
+ var sourceHost=playbackSafeHost(playbackStream&&playbackStream.url||playing&&playing.url);
  setPlayerStatus('Không phát được kênh ('+sourceLabel+(sourceHost?', máy chủ '+sourceHost:'')+'). '+String(message||'Nguồn hoặc codec không hỗ trợ.').slice(0,140)+' · Có thể mở Cast chuẩn và chọn kênh từ Web/điện thoại.');
  byId('playbackDiag').hidden=!playbackEvidence.length;
 }
