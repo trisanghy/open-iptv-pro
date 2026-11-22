@@ -25,8 +25,12 @@
    button.setAttribute('aria-label',detail);
    const caption=button.querySelector('.cast-label');
    if(caption)caption.textContent=label;
+   button.setAttribute('aria-pressed',String(kind!=='none'));
   }
   if(overlay){
+   for(const [tab,connected] of [['cxTabPair',!!pair?.connected],['cxTabCast',!!cast.connected],['cxTabAir',!!air.connected]]){
+    const node=$(tab);if(node)node.dataset.connected=String(connected);
+   }
    const airBadge=$('cxAirBadge');
    if(airBadge){airBadge.dataset.ok=String(!!air.connected);airBadge.textContent=air.connected?'● AirPlay · Đã kết nối':'● AirPlay hệ thống';}
   }
@@ -237,7 +241,6 @@
   if(state.connected&&state.active){
    const media=state.remotePaused?'resume':'pause';
    const ok=await root.OpenIPTVWebCast?.transportRemote?.(media);
-   if(ok)root.OpenIPTVWebCast?.setRemotePaused?.(media==='pause');
    return !!ok;
   }
   return false;
