@@ -224,7 +224,7 @@ jobs:
           grep -Fq 'web-fullscreen-controls.js?v=epg-player-details-20261120a' _site/index.html
           grep -Fq 'web-fullscreen-controls.css?v=epg-player-details-20261120a' _site/index.html
           node --test web-online/tests/web-no-timeshift.test.cjs
-          grep -Fq 'web-only.css?v=epg-player-details-20261120a' _site/index.html
+          grep -Fq 'web-only.css?v=cast-visible-20261122a' _site/index.html
           if grep -Eq 'id="bufferToggle"|id="bufferRewind"|id="bufferRewind10"|id="bufferLive"|id="autoTimeshiftSetting"|name="replayMinutesChoice"' _site/index.html; then
             echo 'Live Timeshift must not appear in Web desktop or mobile'; exit 1
           fi
