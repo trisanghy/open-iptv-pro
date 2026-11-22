@@ -2,14 +2,23 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
-## P5.1.228 — phím điều hướng kênh không tự phát video
+## P5.1.229 — phím F thêm và bỏ yêu thích ngay trên hàng kênh
 
-**Ứng dụng:** 4.23.313 · **Trạng thái:** Chưa có bản phát hành
+**Ứng dụng:** 4.23.314 · **Trạng thái:** Chưa có bản phát hành
+
+Feature priority: NEW — Người dùng đang duyệt hàng trăm kênh bằng phím mũi tên có thể nhấn F trên hàng kênh được focus để thêm/bỏ Yêu thích ngay lập tức, không cần rê chuột tới biểu tượng sao nhỏ và không làm chuyển hoặc phát kênh. Electron screenshot: positron-p51229-keyboard-favorite-after-1920x1080-real.png
+
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/0b4614e9ce376a8b62899c1558b2644ee6a46e16)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+
+## P5.1.228 — Duyệt kênh bằng bàn phím, không cần chuột / Electron 4.23.313
+
+**Ứng dụng:** 4.23.313 · **Trạng thái:** Đã phát hành
 
 Feature priority: NEW — Người dùng có hàng trăm kênh có thể di chuyển focus bằng mũi tên lên xuống, Home, End, PageUp và PageDown mà không phải nhấn phát từng kênh; thêm viền focus rõ ràng và Alt+J mở ô nhảy tới số kênh, giữ nguyên video đang xem. Electron screenshot: positron-p51228-keyboard-channels-after-1920x1080-real.png
 
 [Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/d0ea0be1b121c96c203a869c076280efbf7af1cd)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.313-p5.1.228)
 
 ## P5.1.227 — Nhảy kênh không cuộn cả trang video, tiêu đề gọn / Electron 4.23.312
 
