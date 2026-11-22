@@ -474,6 +474,30 @@ footer{border-top-color:rgba(174,190,220,.13);font-size:14px}
   .card,.platform,.visual-gallery img{transition:none}
 }
 
+
+/* Fix mobile bottom navigation width and safe-area alignment. */
+@media(max-width:700px){
+  .home-mobile-tabs{
+    left:max(8px,env(safe-area-inset-left,0px));
+    right:max(8px,env(safe-area-inset-right,0px));
+    width:auto;
+    max-width:640px;
+    margin-inline:auto;
+    box-sizing:border-box;
+    overflow:hidden;
+    grid-template-columns:repeat(5,minmax(0,1fr));
+  }
+  .home-mobile-tabs>a{
+    width:100%;
+    min-width:0;
+    box-sizing:border-box;
+  }
+  .home-mobile-tabs a span{
+    min-width:0;
+    max-width:100%;
+    font-size:clamp(9px,2.7vw,11px);
+  }
+}
 </style>
 </head><body>
 <a class="skip" href="#main">Đi tới nội dung chính</a>
