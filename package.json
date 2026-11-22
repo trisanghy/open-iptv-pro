@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.237",
-  "description": "Positron P5.1.153: tìm kiếm nhanh nhật ký thông báo",
+  "version": "4.23.238",
+  "description": "Positron P5.1.154: chế độ không làm phiền xác nhận nổi",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

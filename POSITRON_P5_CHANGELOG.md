@@ -1,3 +1,11 @@
+## P5.1.154 — Chế độ Không làm phiền khi xem TV / Electron v4.23.238
+- Feature priority: NEW — Bổ sung công tắc Ẩn xác nhận nổi để giảm banner che nội dung video, nhưng vẫn ghi toàn bộ sự kiện vào nhật ký phiên và luôn giữ banner cảnh báo/lỗi quan trọng.
+- User action: Mở Thông báo, bấm Ẩn xác nhận nổi: Bật; các thông báo thành công mới không che màn hình nhưng vẫn xem được trong Nhật ký. Bấm lại để tắt chế độ.
+- Electron screenshot: positron-p51154-quiet-mode-after-1920x1080-real.png
+- Before: positron-p51154-quiet-mode-before-1920x1080-real.png; After: positron-p51154-quiet-mode-after-1920x1080-real.png. Soát ảnh Electron thật khi QA chạy xong.
+- Bảo vệ: không ẩn cảnh báo/lỗi, không đổi thời gian tự biến mất, không ghi dữ liệu xuống đĩa hoặc ảnh hưởng phát kênh.
+- Trạng thái ban đầu: CANDIDATE cho tới khi CI/QA/Release được xác minh.
+
 ## P5.1.153 — Tìm trong nhật ký thông báo bằng từ khóa không dấu / Electron v4.23.237
 - Feature priority: NEW — Cho phép tìm kiếm nội dung thông báo ngay trong nhật ký 30 mục theo từ khóa tiếng Việt có hoặc không có dấu, kết hợp bộ lọc loại thông báo mà không xóa dữ liệu.
 - User action: Mở Thông báo, nhập từ khóa trong ô Tìm trong thông báo; có thể gõ ket noi để tìm kết nối, hoặc nhấn Xóa tìm kiếm để khôi phục danh sách.

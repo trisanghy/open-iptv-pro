@@ -109,10 +109,14 @@
   searchClear.id='poArchiveSearchClear';searchClear.textContent='Xóa tìm kiếm';searchClear.hidden=true;
   searchRow.append(searchInput,searchClear);
   const entries=document.createElement('ol');entries.id='poArchiveEntries';
+  // P5.1.154: Ẩn xác nhận nổi nhưng vẫn lưu nhật ký và luôn giữ cảnh báo/lỗi.
+  const quiet=document.createElement('button');quiet.type='button';
+  quiet.id='poArchiveQuiet';quiet.className='po-archive-quiet';
+  quiet.setAttribute('aria-pressed','false');quiet.textContent='Ẩn xác nhận nổi: Tắt';
   const actions=document.createElement('div');actions.className='po-archive-actions';
   const clear=document.createElement('button');clear.type='button';clear.id='poArchiveClear';clear.textContent='Xóa lịch sử';
   const close=document.createElement('button');close.type='button';close.id='poArchiveClose';close.textContent='Đóng';
-  actions.append(clear,close);panel.append(title,hint,filters,searchRow,entries,actions);document.body.append(panel);
+  actions.append(clear,close);panel.append(title,hint,quiet,filters,searchRow,entries,actions);document.body.append(panel);
   let history=[],isOpen=false,filterMode='all';const seen=new WeakSet();
   const normalizeArchiveText=value=>String(value||'').toLocaleLowerCase('vi-VN')
    .replace(/đ/g,'d').normalize('NFD').replace(/[\u0300-\u036f]/g,'');
@@ -164,6 +168,12 @@
   }));
   searchInput.addEventListener('input',render);
   searchClear.addEventListener('click',()=>{searchInput.value='';render();searchInput.focus({preventScroll:true});});
+  quiet.addEventListener('click',()=>{
+   const enabled=quiet.getAttribute('aria-pressed')!=='true';
+   quiet.setAttribute('aria-pressed',String(enabled));
+   quiet.textContent='Ẩn xác nhận nổi: '+(enabled?'Bật':'Tắt');
+   document.documentElement.classList.toggle('po-toast-quiet',enabled);
+  });
   close.addEventListener('click',dismiss);
   clear.addEventListener('click',()=>{history=[];render();clear.focus({preventScroll:true});});
   document.addEventListener('keydown',event=>{

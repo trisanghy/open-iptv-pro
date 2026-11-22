@@ -37,7 +37,7 @@ test('P5 assets are loaded after P4 without replacing it',()=>{
 test('P5 release is immutable and versioned separately from P4.1',()=>{
  const pkg=JSON.parse(read('package.json'));
  const flow=read('.github/workflows/positron-lab.yml');
- assert.equal(pkg.version,'4.23.237');
+ assert.equal(pkg.version,'4.23.238');
  const label=pkg.description.match(/Positron\s+(P\d+\.\d+\.\d+)/)?.[1];
  assert.ok(label,'product P-label must accompany SemVer');
  assert.ok(flow.includes('TAG=positron/v'+pkg.version+'-'+label.toLowerCase()),'release tag and app version must match');
@@ -1508,4 +1508,17 @@ test('P5.1.153 tìm kiếm thông báo tiếng Việt không dấu cùng bộ l�
  assert.ok(css.includes('.po-archive-search input'));
  for(const n of ['positron-p51153-notice-search-before-1920x1080-real.png','positron-p51153-notice-search-after-1920x1080-real.png'])
   assert.ok(qa.includes(n),'thiếu ảnh Electron '+n);
+});
+
+test('P5.1.154 có chế độ không làm phiền nhưng vẫn lưu cảnh báo/lỗi',()=>{
+ const js=read('renderer/positron-toast-dismiss.js');
+ const css=read('renderer/positron-twenty.css');
+ const qa=read('scripts/positron-20-extension.cjs');
+ assert.doesNotThrow(()=>new vm.Script(js));
+ for(const t of ['poArchiveQuiet','po-toast-quiet',"setAttribute('aria-pressed',String(enabled))",'history.unshift'])
+  assert.ok(js.includes(t),'quiet mode missing: '+t);
+ assert.ok(css.includes('#toastArea>.toast:not(.warn):not(.err)'),
+  'chỉ được ẩn banner thành công, không ẩn cảnh báo/lỗi');
+ for(const n of ['positron-p51154-quiet-mode-before-1920x1080-real.png','positron-p51154-quiet-mode-after-1920x1080-real.png'])
+  assert.ok(qa.includes(n),'thiếu ảnh Electron thật '+n);
 });

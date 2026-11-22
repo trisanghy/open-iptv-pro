@@ -516,3 +516,9 @@ html[data-positron="true"] .po-archive-search input{flex:1;min-width:0;min-heigh
 html[data-positron="true"] .po-archive-search button{border:1px solid var(--po-border,#42606b);border-radius:8px;padding:6px 9px;background:transparent;color:inherit;font:inherit;font-size:11px;cursor:pointer}
 html[data-positron="true"] .po-archive-search button[hidden]{display:none!important}
 html[data-positron="true"] .po-archive-search input:focus-visible,html[data-positron="true"] .po-archive-search button:focus-visible{outline:2px solid var(--po-accent,#6fddce);outline-offset:1px}
+
+/* P5.1.154: Chế độ Không làm phiền cho xác nhận nổi, không ẩn warning/error. */
+html[data-positron="true"] .po-archive-quiet{display:block;width:100%;text-align:left;cursor:pointer;font:inherit;font-size:12px;min-height:33px;border:1px solid var(--po-border,#42606b);border-radius:8px;padding:6px 10px;margin:0 0 10px;background:transparent;color:var(--po-text,#eaf7f6)}
+html[data-positron="true"] .po-archive-quiet[aria-pressed="true"]{background:#235446;border-color:#6dd4bc;color:#e5fff5}
+html[data-positron="true"] .po-archive-quiet:focus-visible{outline:2px solid var(--po-accent,#6fddce);outline-offset:2px}
+html[data-positron="true"].po-toast-quiet #toastArea>.toast:not(.warn):not(.err){display:none!important}
