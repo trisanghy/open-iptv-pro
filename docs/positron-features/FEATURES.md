@@ -7,15 +7,28 @@ Trang này được tạo tự động từ GitHub Releases và ảnh kiểm th�
 [Mở WEBSITE changelog tương tác](https://raw.githack.com/trisanghy/open-iptv-pro/Positron/docs/positron-features/index.html) · [Giao diện HTML trong repository](index.html) · [Các bản phát hành](https://github.com/trisanghy/open-iptv-pro/releases) · [Nhật ký Git tiếng Việt](LOG_GIT_TIENG_VIET.md) · [Quy tắc ưu tiên tính năng](../../POSITRON_FEATURE_RULES.md)
 
 <details>
-<summary><strong>P5.1.244</strong> · Gõ số trực tiếp trên hàng kênh để nhảy nhanh · CHƯA CÓ BẢN PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.245</strong> · Tự chọn đúng nhóm của kênh đang focus · CHƯA CÓ BẢN PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
 
-**Ứng dụng:** 4.23.329 · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
+**Ứng dụng:** 4.23.330 · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
+
+Feature priority: NEW — Hộp chọn nhóm trong trình nhảy kênh tự chỉ đúng nhóm của hàng kênh được focus sau thao tác bằng bàn phím, thay vì duy trì lựa chọn cũ. User action: Tại Xem truyền hình, focus một hàng kênh và gõ 412 Enter; ô Đến nhóm hiển thị 03 · Other channels đúng với QA Channel 412.
+
+*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+
+[Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/tree/Positron) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/eff9081b19b1802f69d969479270684dc877c684)
+
+</details>
+
+<details>
+<summary><strong>P5.1.244</strong> · Electron 4.23.329 — Gõ số để nhảy nhanh tới kênh (CANDIDATE) · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+
+**Ứng dụng:** 4.23.329 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
 Feature priority: NEW — Gõ chữ số 0–9 khi focus hàng kênh để mở hộp nhảy số, nhập tiếp và nhấn Enter để đi tới kênh; không tự phát hoặc đổi nguồn. User action: Focus một hàng kênh trong Xem truyền hình; gõ 412 rồi Enter để chuyển tiêu điểm tới kênh 412, Escape để hủy.
 
 *Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
 
-[Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/tree/Positron) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/b1d614ea6af394e5a88924c72d1cb968a6ccecc4)
+[Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.329-p5.1.244) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/5f150a49c2bf077834ac8f5b3e4ef31c20bb3287) · [Tải Windows Setup x64](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.329-p5.1.244/Open-IPTV-Pro-Setup-4.23.329-x64.exe) · [Tải gói ảnh QA](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.329-p5.1.244/Positron-P51244-20-Real-Screenshots.zip)
 
 </details>
 

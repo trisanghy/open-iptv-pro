@@ -2,14 +2,23 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
-## P5.1.244 — Gõ số trực tiếp trên hàng kênh để nhảy nhanh
+## P5.1.245 — Tự chọn đúng nhóm của kênh đang focus
 
-**Ứng dụng:** 4.23.329 · **Trạng thái:** Chưa có bản phát hành
+**Ứng dụng:** 4.23.330 · **Trạng thái:** Chưa có bản phát hành
+
+Feature priority: NEW — Hộp chọn nhóm trong trình nhảy kênh tự chỉ đúng nhóm của hàng kênh được focus sau thao tác bằng bàn phím, thay vì duy trì lựa chọn cũ. User action: Tại Xem truyền hình, focus một hàng kênh và gõ 412 Enter; ô Đến nhóm hiển thị 03 · Other channels đúng với QA Channel 412.
+
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/eff9081b19b1802f69d969479270684dc877c684)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+
+## P5.1.244 — Electron 4.23.329 — Gõ số để nhảy nhanh tới kênh (CANDIDATE)
+
+**Ứng dụng:** 4.23.329 · **Trạng thái:** Đã phát hành
 
 Feature priority: NEW — Gõ chữ số 0–9 khi focus hàng kênh để mở hộp nhảy số, nhập tiếp và nhấn Enter để đi tới kênh; không tự phát hoặc đổi nguồn. User action: Focus một hàng kênh trong Xem truyền hình; gõ 412 rồi Enter để chuyển tiêu điểm tới kênh 412, Escape để hủy.
 
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/b1d614ea6af394e5a88924c72d1cb968a6ccecc4)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/5f150a49c2bf077834ac8f5b3e4ef31c20bb3287)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.329-p5.1.244)
 
 ## P5.1.243 — Shift+R mở/thoát Vừa xem mà không cần chuột / Electron 4.23.328
 
