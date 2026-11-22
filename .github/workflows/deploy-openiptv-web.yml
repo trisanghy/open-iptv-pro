@@ -14,6 +14,7 @@ on:
       - 'cloud-config.json'
       - 'assets/**'
       - 'locales/**'
+      - 'tizen/**'
   workflow_dispatch:
 permissions:
   contents: write
@@ -46,6 +47,12 @@ jobs:
           # Deploy the exact versioned static website already committed here.
           find . -maxdepth 1 -type f \( -name '*.js' -o -name '*.css' -o -name '*.html' -o -name '*.json' -o -name '*.webmanifest' -o -name '.nojekyll' \) -exec cp -p {} _site/ \;
           cp -p robots.txt sitemap.xml sitemap.xsl _site/
+          # Keep Tizen QR manager alongside the existing website without replacing pages.
+          if [ -s tizen/phone.html ]; then
+            mkdir -p _site/tizen
+            cp -p tizen/phone.html _site/tizen/phone.html
+            grep -Fq 'manager-request' _site/tizen/phone.html
+          fi
           for dir in assets locales epg; do
             test -d "$dir"
             cp -R "$dir" "_site/$dir"
