@@ -14,7 +14,7 @@ function setup(){
    play(){this.paused=false;calls.play++;return Promise.resolve();},
    load(){},removeAttribute(key){if(key==='src')this.src='';}};
  const els={player,video,playerStatus:{hidden:true,textContent:''},
-  playbackDiag:{hidden:true,textContent:''},avplayObject:{hidden:true},playingName:{textContent:''},
+  playbackDiag:{hidden:true,textContent:''},browserFallback:{hidden:true},avplayObject:{hidden:true},playingName:{textContent:''},
   exitModuleBtn:{title:''},channelPicker:{hidden:true}};
  const state={sources:[],favorites:{},recent:[]};
  const context={
