@@ -1,8 +1,23 @@
 {
-  "generatedAt": "2026-11-22T02:31:47.237722+00:00",
+  "generatedAt": "2026-11-22T02:40:01.771592+00:00",
   "repository": "trisanghy/open-iptv-pro",
   "branch": "Positron",
   "versions": [
+    {
+      "number": 161,
+      "version": "P5.1.161",
+      "appVersion": "4.23.246",
+      "title": "sắp xếp kênh thiếu logo A–Z và Z–A",
+      "description": "Feature priority: NEW — Hỗ trợ sắp xếp những kênh thiếu logo theo tên tăng/giảm với so sánh số tự nhiên, để nhanh chóng phát hiện và rà soát các kênh có tên tương tự trong thư viện lớn. User action: Mở Thư viện → Kênh thiếu logo → chọn nhóm tùy ý → chọn Thứ tự playlist, Tên kênh A–Z hoặc Tên kênh Z–A để sắp xếp riêng danh sách trên màn hình.",
+      "kind": "fix",
+      "status": "candidate",
+      "published": "",
+      "tag": "",
+      "commit": "caba7377c1e7c484c9db78cd1e6ee8ec48d40182",
+      "url": "https://github.com/trisanghy/open-iptv-pro/tree/Positron",
+      "assets": [],
+      "image": null
+    },
     {
       "number": 160,
       "version": "P5.1.160",
