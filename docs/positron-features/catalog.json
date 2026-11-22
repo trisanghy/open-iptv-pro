@@ -1,22 +1,102 @@
 {
-  "generatedAt": "2026-11-22T10:03:02.246889+00:00",
+  "generatedAt": "2026-11-22T10:12:56.760129+00:00",
   "repository": "trisanghy/open-iptv-pro",
   "branch": "Positron",
   "versions": [
     {
-      "number": 199,
-      "version": "P5.1.199",
-      "appVersion": "4.23.284",
-      "title": "tên bản ghi tự tạo đồng bộ khi đổi giờ",
-      "description": "Feature priority: NEW — Tên được ứng dụng tạo từ kênh và giờ nay tự cập nhật khi người xem đổi thời gian ghi hoặc kênh, tránh tạo lịch với tên sai ngày nhưng vẫn bảo vệ nhãn nhập tay. User action: Mở Lịch phát sóng, tạo tên từ kênh và giờ, sau đó chọn Ngày mai cùng giờ hoặc sửa giờ bắt đầu để thấy tên tự cập nhật.",
+      "number": 200,
+      "version": "P5.1.200",
+      "appVersion": "4.23.285",
+      "title": "xác nhận hai lần trước khi thay tên lịch ghi",
+      "description": "Feature priority: NEW — Khi đã có tên ghi hình tự nhập, nút tạo tên tự động cho phép xác nhận rõ ràng bằng hai lần nhấn thay vì bắt xóa tên cũ; tránh ghi đè vô ý và giảm bước thao tác. User action: Vào Lịch phát sóng, nhập tên riêng, bấm Tạo tên từ kênh và giờ một lần để xem xác nhận, bấm lần hai để thay hoặc nhấn Escape để hủy.",
       "kind": "fix",
       "status": "candidate",
       "published": "",
       "tag": "",
-      "commit": "4519a271a972e69634d7c1fe19bd7fe47fe4b223",
+      "commit": "bf241269944d5a1bdff620f74ba17dba4229c49d",
       "url": "https://github.com/trisanghy/open-iptv-pro/tree/Positron",
       "assets": [],
       "image": null
+    },
+    {
+      "number": 199,
+      "version": "P5.1.199",
+      "appVersion": "4.23.284",
+      "title": "4.23.284 — Đồng bộ tên ghi hình tạo tự động (CANDIDATE)",
+      "description": "Feature priority: NEW — Tên được ứng dụng tạo từ kênh và giờ nay tự cập nhật khi người xem đổi thời gian ghi hoặc kênh, tránh tạo lịch với tên sai ngày nhưng vẫn bảo vệ nhãn nhập tay. User action: Mở Lịch phát sóng, tạo tên từ kênh và giờ, sau đó chọn Ngày mai cùng giờ hoặc sửa giờ bắt đầu để thấy tên tự cập nhật.",
+      "kind": "fix",
+      "status": "release",
+      "published": "2026-11-22T10:08:39Z",
+      "tag": "positron/v4.23.284-p5.1.199",
+      "commit": "9eb4ea091ac8e419caf488b644c0ae7639ec44fa",
+      "url": "https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.284-p5.1.199",
+      "assets": [
+        {
+          "name": "audit-p4-50-rounds.json",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.284-p5.1.199/audit-p4-50-rounds.json"
+        },
+        {
+          "name": "audit-p5-20-rounds.json",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.284-p5.1.199/audit-p5-20-rounds.json"
+        },
+        {
+          "name": "Open-IPTV-Pro-4.23.284-mac-arm64.dmg",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.284-p5.1.199/Open-IPTV-Pro-4.23.284-mac-arm64.dmg"
+        },
+        {
+          "name": "Open-IPTV-Pro-4.23.284-mac-x64.dmg",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.284-p5.1.199/Open-IPTV-Pro-4.23.284-mac-x64.dmg"
+        },
+        {
+          "name": "Open-IPTV-Pro-4.23.284-x64.exe",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.284-p5.1.199/Open-IPTV-Pro-4.23.284-x64.exe"
+        },
+        {
+          "name": "Open-IPTV-Pro-Setup-4.23.284-x64.exe",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.284-p5.1.199/Open-IPTV-Pro-Setup-4.23.284-x64.exe"
+        },
+        {
+          "name": "OpenIPTVPro-Positron-P51199-Source.zip",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.284-p5.1.199/OpenIPTVPro-Positron-P51199-Source.zip"
+        },
+        {
+          "name": "positron-desktop-1920x1080-16x9-main-real.png",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.284-p5.1.199/positron-desktop-1920x1080-16x9-main-real.png"
+        },
+        {
+          "name": "positron-p4-final-main-real.png",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.284-p5.1.199/positron-p4-final-main-real.png"
+        },
+        {
+          "name": "positron-p4-round-10-real.png",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.284-p5.1.199/positron-p4-round-10-real.png"
+        },
+        {
+          "name": "positron-p4-round-20-real.png",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.284-p5.1.199/positron-p4-round-20-real.png"
+        },
+        {
+          "name": "positron-p4-round-30-real.png",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.284-p5.1.199/positron-p4-round-30-real.png"
+        },
+        {
+          "name": "positron-p4-round-40-real.png",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.284-p5.1.199/positron-p4-round-40-real.png"
+        },
+        {
+          "name": "Positron-P51199-20-Real-Screenshots.zip",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.284-p5.1.199/Positron-P51199-20-Real-Screenshots.zip"
+        },
+        {
+          "name": "Positron-P51199-50-Real-Screenshots.zip",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.284-p5.1.199/Positron-P51199-50-Real-Screenshots.zip"
+        },
+        {
+          "name": "SHA256SUMS.txt",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.284-p5.1.199/SHA256SUMS.txt"
+        }
+      ],
+      "image": "screenshots/positron-p51199-desktop-1920x1080-trang-chu-real.png"
     },
     {
       "number": 198,
@@ -96,7 +176,7 @@
           "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.283-p5.1.198/SHA256SUMS.txt"
         }
       ],
-      "image": "screenshots/positron-p51198-desktop-1920x1080-trang-chu-real.png"
+      "image": "screenshots/positron-p51198-dvr-tomorrow-after-1920x1080-real.png"
     },
     {
       "number": 197,
