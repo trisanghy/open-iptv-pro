@@ -14,5 +14,5 @@ test('P5.1.225 bounds desktop TV stage height but preserves actual video object 
  assert.ok(aspect.includes('object-fit: contain'));
  assert.ok(aspect.includes('#page-tv #playerBox:not(:fullscreen)'));
  assert.ok(read('scripts/positron-50-audit.cjs').includes('P5.1.225 native Electron TV viewport control audit PASS'));
- assert.equal(JSON.parse(read('package.json')).version,'4.23.310');
+ assert.ok(Number(JSON.parse(read('package.json')).version.split('.')[2])>=310,'P225 desktop TV regression must remain enabled in later Positron patches');
 });
