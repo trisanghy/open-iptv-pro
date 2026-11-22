@@ -971,6 +971,7 @@
   // local decoder while asynchronous TV commands are in flight.
   if(!native&&window.OpenIPTVWebCastV2?.shouldUseRemotePlayer?.()){
    try{player.pause();player.removeAttribute('src');player.load();}catch{}
+   window.OpenIPTVWebCastV2?.syncRemoteControls?.();
    $('#streamInfo').textContent='● Đang điều khiển TV · '+found.name;
    textStatus('Đang chuyển '+found.name+' trên TV…');
    return;
