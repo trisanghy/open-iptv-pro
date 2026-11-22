@@ -2,14 +2,23 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
-## P5.1.232 — tìm nhóm kênh theo tên và chọn nhanh không tự phát
+## P5.1.233 — quay về nhóm kênh trước bằng lịch sử focus trong phiên
 
-**Ứng dụng:** 4.23.317 · **Trạng thái:** Chưa có bản phát hành
+**Ứng dụng:** 4.23.318 · **Trạng thái:** Chưa có bản phát hành
+
+Feature priority: NEW — Người dùng nhảy từ nhóm 01 sang một nhóm bất kỳ có thể quay lại nhóm cũ trong một lần nhấn, kể cả khi hai nhóm cách xa nhau; lịch sử focus nhóm trong phiên hoàn toàn tách biệt lịch sử phát video và không ghi đè dữ liệu playlist. Electron screenshot: positron-p51233-group-history-after-1920x1080-real.png
+
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/865adfd8055fc752ea3a79dcedc1a8d9b8b44793)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+
+## P5.1.232 — Tìm nhanh nhóm kênh theo tên / Electron 4.23.317
+
+**Ứng dụng:** 4.23.317 · **Trạng thái:** Đã phát hành
 
 Feature priority: NEW — Khi có hàng chục thư mục, người dùng có thể gõ một phần tên để thu hẹp nhóm ngay trong bộ chọn Alt+G, thay vì bấm tới từng nhóm; hỗ trợ tên tiếng Việt không dấu. Đồng thời sửa lỗi ảnh P5.1.231 cho thấy nhãn “Đến nhóm” chồng lên ô chọn. Electron screenshot: positron-p51232-group-search-after-1920x1080-real.png
 
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/e05b7e277dc2699d271ad32939be17672f981108)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/bb0d388b064196f684708f01f8cedf82f8718652)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.317-p5.1.232)
 
 ## P5.1.231 — Bộ chọn nhóm kênh trực tiếp qua Alt+G / Electron 4.23.316
 
