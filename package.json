@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.246",
-  "description": "Positron P5.1.161: sắp xếp kênh thiếu logo A–Z và Z–A",
+  "version": "4.23.247",
+  "description": "Positron P5.1.162: chuyển nhanh tới trang kênh thiếu logo bất kỳ",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

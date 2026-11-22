@@ -45,6 +45,16 @@
   return [...groups].map(([name,count])=>({name,count}))
    .sort((a,b)=>b.count-a.count||a.name.localeCompare(b.name,'vi'));
  }
+ // Đến trang N: chặn vượt biên, giữ trang hiện tại nếu dữ liệu nhập không hợp lệ.
+ function missingPage(value,totalPages,current=1){
+  const total=Number.isFinite(Number(totalPages))?Math.max(1,Math.floor(Number(totalPages))):1;
+  const fallback=Math.max(1,Math.min(total,Math.floor(Number(current)||1)));
+  const requested=String(value??'').trim();
+  if(!/^\d+$/.test(requested))return fallback;
+  const number=Number(requested);
+  if(!Number.isSafeInteger(number))return fallback;
+  return Math.max(1,Math.min(total,number));
+ }
  function missingLogos(input,{offset=0,limit=10,query='',group='',sort='playlist'}={}){
   const terms=fold(query).split(/\s+/).filter(Boolean);
   const rows=(Array.isArray(input)?input:[]).filter(c=>c&&typeof c==='object'&&
@@ -64,5 +74,5 @@
     name:clean(c.name),group:clean(c.group||c.groupTitle)||'Chưa phân nhóm'
    }))};
  }
- return Object.freeze({summarize,pageGroups,missingLogos,missingLogoGroups});
+ return Object.freeze({summarize,pageGroups,missingLogos,missingLogoGroups,missingPage});
 });

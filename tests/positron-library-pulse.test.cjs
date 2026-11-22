@@ -131,3 +131,18 @@ test('P5.1.161 sắp xếp tên kênh thiếu logo, giữ nguyên thứ tự ngu
  assert.equal(JSON.stringify(items),original);
  assert.ok(!JSON.stringify(core.missingLogos(items,{sort:'name-desc'})).includes('https://private/'));
 });
+
+test('P5.1.162 đến trang N giới hạn đúng, bỏ qua số không hợp lệ, không sửa playlist',()=>{
+ const cases=[
+  ['1',44,3,1],['17',44,1,17],['44',44,1,44],['999',44,1,44],
+  ['0',44,3,1],['-2',44,3,3],['',44,3,3],['xyz',44,3,3],
+  ['1.5',44,3,3],['9999999999999999999999999999999999999',44,3,3],
+  ['2',0,1,1],['2',1,1,1]
+ ];
+ for(const [value,total,current,expected] of cases)
+  assert.equal(core.missingPage(value,total,current),expected,JSON.stringify({value,total,current}));
+ const original=[{name:'QA 1',logo:''},{name:'QA 2',logo:''}];
+ const snapshot=JSON.stringify(original);
+ assert.equal(core.missingLogos(original,{offset:(core.missingPage('2',2)-1),limit:1}).rows[0].name,'QA 2');
+ assert.equal(JSON.stringify(original),snapshot);
+});

@@ -67,3 +67,9 @@ html[data-positron="true"] .po-pulse-header::before{content:"";position:absolute
 /* P5.1.161: lựa chọn sắp xếp chỉ thay đổi thứ tự hiển thị metadata, không lưu đè M3U. */
 html[data-positron="true"] #poLibraryMissingSort{box-sizing:border-box;width:100%;min-width:0;min-height:36px;padding:8px 10px;border:1px solid var(--po-border,#42606b);border-radius:9px;background:var(--po-card,#162934);color:var(--po-text,#eaf7f7);font:inherit;font-size:12px}
 html[data-positron="true"] #poLibraryMissingSort:focus-visible{outline:2px solid var(--po-accent,#66d4c2);outline-offset:2px}
+
+/* P5.1.162: đi đến số trang kênh thiếu logo an toàn, dùng được cả bàn phím. */
+html[data-positron="true"] .po-pulse-missing-nav{flex-wrap:wrap;justify-content:flex-end;gap:6px}
+html[data-positron="true"] #poLibraryMissingNav #poLibraryMissingJump{box-sizing:border-box;width:55px;min-height:32px;border:1px solid var(--po-border,#42606b);border-radius:8px;background:var(--po-card,#162934);color:var(--po-text,#eaf7f7);text-align:center;font:inherit;font-size:12px}
+html[data-positron="true"] #poLibraryMissingNav #poLibraryMissingJump:focus-visible{outline:2px solid var(--po-accent,#66d4c2);outline-offset:2px}
+html[data-positron="true"] #poLibraryMissingNav #poLibraryMissingPage{margin-right:auto}

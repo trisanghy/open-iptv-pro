@@ -1,3 +1,11 @@
+## P5.1.162 — Chuyển nhanh tới trang bất kỳ trong thư viện / Electron 4.23.247
+- Feature priority: NEW — Nhập trực tiếp trang muốn xem ở bảng kênh thiếu logo thay vì bấm nút Tiếp liên tục khi thư viện có hàng chục trang; tự giới hạn trong khoảng trang hợp lệ, tránh mất vị trí.
+- User action: Mở Thư viện → Kênh thiếu logo → chọn nhóm hoặc tìm kiếm → nhập số trang trong ô cạnh nút Trước/Tiếp rồi nhấn Enter hoặc nút Đến để chuyển ngay.
+- Electron screenshot: positron-p51162-jump-page-after-1920x1080-real.png
+- Before: positron-p51162-jump-page-before-1920x1080-real.png; After: positron-p51162-jump-page-after-1920x1080-real.png, chụp từ Electron thật 1920×1080.
+- Logic: số trang không hợp lệ sẽ giữ vị trí; số ngoài giới hạn được chặn ở trang đầu/cuối, không thay đổi thứ tự playlist, URL stream, EPG, Favorites hay playback.
+- Status: CANDIDATE — cần Node tests, chụp/soát ảnh Electron, build Windows/macOS, xác minh Release bất biến.
+
 ## P5.1.161 — Sắp xếp kênh thiếu logo A–Z/Z–A / Electron 4.23.246
 - Feature priority: NEW — Hỗ trợ sắp xếp những kênh thiếu logo theo tên tăng/giảm với so sánh số tự nhiên, để nhanh chóng phát hiện và rà soát các kênh có tên tương tự trong thư viện lớn.
 - User action: Mở Thư viện → Kênh thiếu logo → chọn nhóm tùy ý → chọn Thứ tự playlist, Tên kênh A–Z hoặc Tên kênh Z–A để sắp xếp riêng danh sách trên màn hình.

@@ -1,5 +1,5 @@
 'use strict';
-// Positron P5.1.161 — Bảng phân tích metadata thư viện, không thử stream.
+// Positron P5.1.162 — Bảng phân tích metadata thư viện, không thử stream.
 (()=>{
  const d=document,root=d.documentElement,bar=d.getElementById('positronBar');
  const core=window.PositronLibraryPulseCore,state=window.IPTVState;
@@ -64,13 +64,18 @@
   missingSort.append(option);
  }
  const missingRows=d.createElement('ol');missingRows.id='poLibraryMissingRows';
- const missingNav=d.createElement('div');missingNav.className='po-pulse-missing-nav';
+ const missingNav=d.createElement('div');missingNav.className='po-pulse-missing-nav';missingNav.id='poLibraryMissingNav';
  const missingPrev=d.createElement('button');missingPrev.type='button';missingPrev.id='poLibraryMissingPrev';
  missingPrev.textContent='Trước';
  const missingPageLabel=d.createElement('span');missingPageLabel.id='poLibraryMissingPage';
  const missingNext=d.createElement('button');missingNext.type='button';missingNext.id='poLibraryMissingNext';
  missingNext.textContent='Tiếp';
- missingNav.append(missingPrev,missingPageLabel,missingNext);
+ const missingJump=d.createElement('input');missingJump.type='number';missingJump.min='1';
+ missingJump.id='poLibraryMissingJump';missingJump.inputMode='numeric';missingJump.placeholder='Số';
+ missingJump.setAttribute('aria-label','Nhập số trang của danh sách kênh thiếu logo');
+ const missingGo=d.createElement('button');missingGo.type='button';missingGo.id='poLibraryMissingGo';
+ missingGo.textContent='Đến';
+ missingNav.append(missingPrev,missingPageLabel,missingJump,missingGo,missingNext);
  missingBody.append(missingSearch,missingGroup,missingSort,missingRows,missingNav);missingPane.append(missingToggle,missingBody);
  const footer=d.createElement('footer');footer.className='po-pulse-footer';
  const stamp=d.createElement('span');stamp.id='poLibraryPulseStamp';
@@ -149,6 +154,8 @@
   }
   const pages=Math.max(1,Math.ceil(missingTotal/10));
   missingPageLabel.textContent='Trang '+(missingIndex+1)+' / '+pages;
+  missingJump.max=String(pages);
+  missingJump.value=String(missingIndex+1);
   missingPrev.disabled=missingIndex===0;
   missingNext.disabled=(missingIndex+1)*10>=missingTotal;
  };
@@ -179,6 +186,15 @@
  missingSearch.addEventListener('input',()=>{missingIndex=0;renderMissing();});
  missingGroup.addEventListener('change',()=>{missingIndex=0;renderMissing();});
  missingSort.addEventListener('change',()=>{missingIndex=0;renderMissing();});
+ const goMissingPage=()=>{
+  const max=Math.max(1,Math.ceil(missingTotal/10));
+  missingIndex=core.missingPage(missingJump.value,max,missingIndex+1)-1;
+  renderMissing();missingJump.focus({preventScroll:true});
+ };
+ missingGo.addEventListener('click',goMissingPage);
+ missingJump.addEventListener('keydown',event=>{
+  if(event.key==='Enter'){event.preventDefault();goMissingPage();}
+ });
  missingPrev.addEventListener('click',()=>{
   if(missingIndex>0)missingIndex--;
   renderMissing();missingPrev.focus({preventScroll:true});
