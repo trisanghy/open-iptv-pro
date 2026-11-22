@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-22T08:29:57.504953+00:00",
+  "generatedAt": "2026-11-22T08:32:23.619504+00:00",
   "repository": "trisanghy/open-iptv-pro",
   "branch": "Positron",
   "versions": [
@@ -8,7 +8,7 @@
       "version": "P5.1.193",
       "appVersion": "4.23.278",
       "title": "tự đánh dấu thời lượng ghi hình đang chọn",
-      "description": "tự đánh dấu thời lượng ghi hình đang chọn",
+      "description": "Feature priority: NEW — Ảnh Electron thực của P5.1.192 cho thấy thời lượng 1 giờ nhưng ba nút 30/60/120 phút có giao diện giống hệt nhau, khiến người xem khó xác định lựa chọn hiện tại khi chỉnh giờ ghi. Khi nhập Bắt đầu/Kết thúc, ứng dụng đánh dấu đúng nút có số phút tương ứng bằng aria-pressed và viền màu chủ đề; không có nút được chọn khi chỉnh giờ không khớp hoặc lịch sai.",
       "kind": "fix",
       "status": "candidate",
       "published": "",
