@@ -968,3 +968,19 @@ html[data-positron="true"] .po-dvr-extend-end:focus-visible{
   max-width:min(360px,calc(100vw - 88px))!important;
  }
 }
+
+/* P204: simple random-channel discovery, native action only on user click. */
+html[data-positron="true"] #poRandomChannelAction{
+ max-width:100%;min-height:36px;padding:9px 13px;
+ border:1px solid var(--po-border,#325160);border-radius:9px;
+ background:var(--po-input,#17303c);color:var(--po-text,#e6f4f4);
+ font-size:12px;font-weight:600;white-space:normal;cursor:pointer;
+}
+html[data-positron="true"] #poRandomChannelAction[hidden]{display:none!important}
+html[data-positron="true"] #poRandomChannelAction:focus-visible{
+ outline:2px solid var(--po-accent,#79dfc6);outline-offset:3px;
+}
+@media(max-width:700px){
+ html[data-positron="true"] #emptyPlayer .empty-actions{flex-wrap:wrap;justify-content:center}
+ html[data-positron="true"] #poRandomChannelAction{width:100%}
+}

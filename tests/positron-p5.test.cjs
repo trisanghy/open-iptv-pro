@@ -2237,3 +2237,20 @@ test('P5.1.203 TV uses desktop notification safe lane without hiding critical no
   'positron-p51203-tv-toast-safe-after-1920x1080-real.png'])
   assert.ok(qa.includes(token),'Missing P203 actual Electron TV QA '+token);
 });
+
+
+test('P5.1.204 random channel discovery requires a click and filters unusable streams',()=>{
+ const js=read('renderer/positron-horizon-v4.js'),css=read('renderer/positron-twenty.css');
+ const qa=read('scripts/positron-20-extension.cjs');
+ for(const token of ["random.id='poRandomChannelAction'","random.addEventListener('click'",
+  "c?.id&&c?.url&&c.status!=='dead'","const other=candidates.filter(c=>c.id!==currentId)",
+  "Math.floor(Math.random()*available.length)","window.IPTVState.playChannel(selected.id)",
+  'buttons.prepend(start,random)',"random.hidden=!first"])
+  assert.ok(js.includes(token),'Missing P204 discovery logic '+token);
+ assert.ok(css.includes('#poRandomChannelAction[hidden]{display:none!important}'));
+ for(const token of ['randomDiscoveryQA','nativeButtonVisible','singleUserTriggeredSelection',
+  'selectsExistingPlayableChannel','noPlaylistMutation','noUnexpectedPlay',
+  'positron-p51204-tv-random-before-1920x1080-real.png',
+  'positron-p51204-tv-random-after-1920x1080-real.png'])
+  assert.ok(qa.includes(token),'Missing real Electron random discovery QA '+token);
+});

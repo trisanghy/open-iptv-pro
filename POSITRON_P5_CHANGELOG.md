@@ -1595,3 +1595,11 @@ P5.1.81 follow-up: real Electron capture found nav overflow; replace flexible no
 - Electron screenshot: positron-p51203-tv-toast-safe-after-1920x1080-real.png
 - Đầu vào: ảnh Electron thật P5.1.202 1920×1080 tại trang TV, nút “Xem thêm 6 thông báo” và banner bên dưới đang đè lên âm lượng/phần dưới player.
 - Chỉ thay CSS scoped desktop TV tối thiểu 1000px, bảo toàn cảnh báo, archive và hành vi giao diện 450px; QA P203 chạy Electron trước/sau và đo geometry.
+
+
+## P5.1.204 / 4.23.289 — Khám phá kênh ngẫu nhiên từ trang TV (CANDIDATE)
+- Feature priority: NEW — Khi có nhiều kênh đã nhập nhưng chưa chọn kênh để xem, nút “Khám phá kênh ngẫu nhiên” giúp tìm nội dung mới thay vì luôn bắt đầu từ kênh thứ nhất; không chọn kênh chết/thiếu URL, không tự chạy lúc mở app.
+- User action: Mở trang Xem truyền hình, khi chưa chọn kênh hãy nhấn Khám phá kênh ngẫu nhiên; ứng dụng chọn một kênh hợp lệ bằng hành động rõ ràng của người xem.
+- Electron screenshot: positron-p51204-tv-random-after-1920x1080-real.png
+- Ảnh Electron P5.1.203 thực cho thấy màn hình TV chỉ có Xem kênh đầu tiên, chưa có cách khám phá bất kỳ kênh nào. Nút mới chỉ có hiệu lực khi có kênh dùng được, thử nghiệm bằng stub chọn kênh an toàn trong Electron (không khẳng định luồng IPTV đã chạy).
+- Regression bảo toàn thứ tự playlist, kênh, EPG, DVR, không tự phát video, có focus keyboard và giao diện mobile hẹp.

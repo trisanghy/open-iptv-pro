@@ -214,7 +214,26 @@
     if(!first)return;
     Promise.resolve(window.IPTVState.playChannel(first.id)).catch(e=>window.IPTVState?.toast?.(e.message||String(e),'error'));
    });
-   buttons.prepend(start);
+
+   // P204: explicit discovery action. Never auto-starts playback on open;
+   // excludes unusable channels and avoids repeating the current selection.
+   const random=d.createElement('button');random.type='button';
+   random.id='poRandomChannelAction';random.className='btn btn-subtle';
+   random.textContent='Khám phá kênh ngẫu nhiên';
+   random.setAttribute('aria-label','Chọn và phát một kênh ngẫu nhiên có thể xem');
+   random.hidden=true;
+   random.addEventListener('click',()=>{
+    const candidates=window.IPTVState?.getChannels?.().filter(c=>c?.id&&c?.url&&c.status!=='dead')||[];
+    if(!candidates.length)return;
+    const currentId=window.IPTVState?.getCurrent?.()?.id;
+    const other=candidates.filter(c=>c.id!==currentId);
+    const available=other.length?other:candidates;
+    const selected=available[Math.floor(Math.random()*available.length)];
+    if(!selected)return;
+    Promise.resolve(window.IPTVState.playChannel(selected.id))
+     .catch(e=>window.IPTVState?.toast?.(e.message||String(e),'error'));
+   });
+   buttons.prepend(start,random);
    const syncPlayerIntro=()=>{
     const channels=window.IPTVState.getChannels();
     const hasChannels=channels.length>0;
@@ -226,6 +245,7 @@
      'Đã có '+channels.length+' kênh, nhưng chưa tìm thấy link có thể thử phát. Hãy kiểm tra nguồn.'):originalHint;
     fileAction.hidden=hasChannels&&!!first;urlAction.hidden=hasChannels&&!!first;
     start.hidden=!first;
+    random.hidden=!first;
     // P5.1.89: the native player subtitle should not say "import a
     // playlist" after enabled channels are present; preserve stop/playback
     // captions, which are owned by the native player state machine.

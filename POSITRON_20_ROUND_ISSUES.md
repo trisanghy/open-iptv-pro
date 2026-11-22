@@ -1,5 +1,10 @@
 # Positron — New 20-round issue register
 
+## Vòng 03/20 — P5.1.204 / Electron 4.23.289 — CANDIDATE
+- Input: đã MỞ ảnh Electron thật P5.1.203 `positron-p51203-tv-toast-safe-after-1920x1080-real.png`; màn hình TV không có cách khám phá kênh khác khi danh sách nhiều nguồn.
+- Tính năng mới: Khám phá kênh ngẫu nhiên qua một nút hiển thị khi có kênh hợp lệ; chọn kênh khác nếu đang xem; không autoplay khi mở app; chỉ kích hoạt bằng click.
+- Kiểm chứng: Node regression và Electron trước/sau 1920×1080 với native channels; chỉ xác minh chọn ID (stub playback), không tuyên bố stream thật; CI/release đầy đủ và xem ảnh SAU.
+
 ## Vòng 02/20 — P5.1.203 / Electron 4.23.288 — CANDIDATE
 - Input: đã trực tiếp MỞ ảnh Electron P5.1.202 `positron-p51202-desktop-1920x1080-trang-chu-real.png` và thấy các banner thông báo che thanh âm lượng/transport TV.
 - Sửa: ở desktop TV từ 1000px, ghim toast lên phía trên, chuyển cả nút Xem thêm nổi lên phía trên, giữ nút có thể bấm và nhật ký thông báo ở header và cảnh báo. Các màn hình khác không đổi.
