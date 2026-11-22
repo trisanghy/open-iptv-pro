@@ -62,7 +62,7 @@ button,input,textarea{font:inherit;color:inherit}button{cursor:pointer;border:2p
 @media(max-width:1100px){.nav .sidebar-shortcuts{gap:6px;padding:0 2px}.nav .sidebar-shortcuts button{font-size:13px;padding:8px 9px}}
 </style></head><body data-theme="dark">
 <div id="app">
-<header class="top"><div class="brand"><div class="brandicon">▶</div><div><strong>Open IPTV Pro <small>TV</small></strong><p>Samsung Tizen Edition · TizenBrew v0.1.19</p></div></div><div class="toolbar"><span class="clock" id="clock">--:--</span><button id="searchBtn">⌕ Tìm</button><button id="addBtn">＋ Nguồn</button><button id="themeBtn">◐ Giao diện</button></div></header>
+<header class="top"><div class="brand"><div class="brandicon">▶</div><div><strong>Open IPTV Pro <small>TV</small></strong><p>Samsung Tizen Edition · TizenBrew v0.1.20</p></div></div><div class="toolbar"><span class="clock" id="clock">--:--</span><button id="searchBtn">⌕ Tìm</button><button id="addBtn">＋ Nguồn</button><button id="themeBtn">◐ Giao diện</button></div></header>
 <div class="main"><nav class="nav"><button class="active" data-nav="all">▣　Trực tiếp</button><button data-nav="favorites">♡　Yêu thích</button><button data-nav="recent">◷　Đã xem</button><button data-nav="sources">☷　Nguồn M3U</button><button data-nav="help">⚙　Hướng dẫn</button><div id="sidebarShortcuts" class="sidebar-shortcuts"><button type="button" id="tizenTubeBtn" title="Chuyển sang TizenTube đã cài trong TizenBrew">▶ TizenTube</button><button type="button" id="exitModuleBtn" class="exit-small" title="Thoát về TizenBrew">✕ Thoát</button></div><p class="tip">Dùng ↑ ↓ ← → và OK để điều khiển bằng remote TV.</p></nav>
 <section class="listpane"><div class="heading"><div><div class="eyebrow">DANH SÁCH KÊNH</div><h1 id="heading">Trực tiếp</h1></div><span id="count">0 kênh</span></div><div class="groups" id="groups"></div><div class="channels" id="channels"></div><div class="empty" id="empty" hidden><h2>Chưa có kênh IPTV</h2><p>Thêm nguồn bằng URL trên remote hoặc quét QR để nhập bằng điện thoại.</p><button id="emptyAdd" class="primary">＋ Thêm nguồn IPTV</button><button id="sampleBtn">▶ Luồng kiểm thử</button></div><button id="more" hidden>Xem thêm kênh ↓</button></section>
 <aside class="details"><div class="preview"><span class="live">● TRỰC TIẾP</span><b id="previewText">TV</b><span class="watermark">OPEN IPTV PRO</span></div><div class="eyebrow">KÊNH ĐANG CHỌN</div><h2 id="channelTitle">Open IPTV Pro TV</h2><p id="channelGroup">Chọn kênh để xem</p><div class="info"><div class="eyebrow">THÔNG TIN</div><p id="channelInfo">Hỗ trợ nhập M3U, nhóm kênh, yêu thích và remote Samsung.</p></div><div class="actions"><button class="primary" id="watchBtn">▶ Xem</button><button id="favBtn">♡ Yêu thích</button></div></aside></div>
@@ -603,27 +603,51 @@ function isRemoteBack(e){
  return code===10009||code===461||['Escape','Back','Return','BrowserBack','GoBack','XF86Back','Backspace'].indexOf(key)!==-1;
 }
 function exitModule(){
- // TizenBrew loads the module with location.href from its local web-service.
- // Navigate to the actual TizenBrew launcher, not history.back() (which may
- // point to the same module or an unrelated route) or a file:// URL.
+ // In TizenBrew the launcher navigates with location.href to this module.
+ // Back through the WebView history returns to the real bundled launcher.
+ // Port 8081 is only the module proxy service; /tizenbrew-ui does not exist there.
  try{stopPair();}catch(e){}
  try{byId('video').pause();}catch(e){}
  try{
-  var loc=window.location;
-  var base=(loc.protocol==='http:'||loc.protocol==='https:')?
-    loc.protocol+'//'+loc.host:'http://localhost:8081';
-  loc.replace(base+'/tizenbrew-ui/dist/index.html');
-  return;
- }catch(err){
-  // Last resort: exit the native TizenBrew shell to the Samsung home.
-  try{
-   if(typeof tizen!=='undefined'&&tizen.application){
-    tizen.application.getCurrentApplication().exit();
-    return;
-   }
-  }catch(ignored){}
-  try{window.location.href='http://localhost:8081/tizenbrew-ui/dist/index.html';}catch(ignored){}
+  if(window.history&&window.history.length>1){
+   window.history.back();
+   return;
+  }
+ }catch(e){}
+ // Standalone launch with no launcher history: leave the native app rather
+ // than navigating to the local module proxy and showing a blank screen.
+ try{
+  if(typeof tizen!=='undefined'&&tizen.application){
+   tizen.application.getCurrentApplication().exit();
+   return;
+  }
+ }catch(e){}
+ try{window.close();}catch(e){}
+ notify('Không tìm thấy lịch sử TizenBrew. Nhấn Home rồi mở lại TizenBrew.');
+}
+function refreshTizenBrewModules(){
+ // TizenBrew caches GetModules in its local service. Ask it to reload
+ // package.json on startup so its launcher reflects a fresh CDN version.
+ // This is read-only and does not reinstall or clear the user's channel data.
+ var socket=null,finishTimer=0,done=false;
+ function finish(){
+  if(done)return;done=true;clearTimeout(finishTimer);
+  try{if(socket)socket.close();}catch(e){}
  }
+ try{
+  socket=new WebSocket('ws://127.0.0.1:8081');
+  finishTimer=setTimeout(finish,7000);
+  socket.onopen=function(){
+   try{socket.send(JSON.stringify({type:4,payload:true}));}catch(e){finish();}
+  };
+  socket.onmessage=function(event){
+   try{
+    var response=JSON.parse(event.data);
+    if(response.type===4&&Array.isArray(response.payload))finish();
+   }catch(e){}
+  };
+  socket.onerror=finish;
+ }catch(e){finish();}
 }
 function openTizenTube(){
  // Ask TizenBrew to launch an already installed module; never navigate to plain YouTube.
@@ -718,11 +742,27 @@ byId('video').ontimeupdate=function(){if(!this.paused&&this.readyState>=2){byId(
 byId('video').onpause=function(){byId('player').classList.remove('is-playing');};
 byId('video').onwaiting=function(){byId('player').classList.remove('is-playing');};
 byId('video').onerror=function(){if(this.paused||this.readyState<2)setPlayerStatus('TV không phát được luồng (định dạng, codec, CORS hoặc HTTPS).');};
-window.addEventListener('keydown',keyHandler,true);
-window.addEventListener('keyup',function(e){if(isRemoteBack(e))handleBack(e);},true);
+var backDownHandled=false,backDownReset=0;
+window.addEventListener('keydown',function(e){
+ if(isRemoteBack(e)){
+  if(backDownHandled){if(e.preventDefault)e.preventDefault();return;}
+  backDownHandled=true;
+  clearTimeout(backDownReset);backDownReset=setTimeout(function(){backDownHandled=false;},1800);
+ }
+ keyHandler(e);
+},true);
+window.addEventListener('keyup',function(e){
+ if(!isRemoteBack(e))return;
+ if(backDownHandled){
+  backDownHandled=false;clearTimeout(backDownReset);
+  if(e.preventDefault)e.preventDefault();
+  return;
+ }
+ handleBack(e);
+},true);
 document.addEventListener('tizenhwkey',function(e){if(String(e.keyName||'').toLowerCase()==='back')handleBack(e);},true);
 window.addEventListener('tizenhwkey',function(e){if(String(e.keyName||'').toLowerCase()==='back')handleBack(e);},true);
-document.body.dataset.theme=state.theme;draw();updateBottomActions();setTimeout(function(){if(resumeLastChannel())byId('video').focus();else document.querySelector('[data-nav=all]').focus();},50);
+document.body.dataset.theme=state.theme;draw();updateBottomActions();refreshTizenBrewModules();setTimeout(function(){if(resumeLastChannel())byId('video').focus();else document.querySelector('[data-nav=all]').focus();},50);
 function clock(){var d=new Date();byId('clock').textContent=String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');}clock();setInterval(clock,30000);
 })();
 </script></body></html>
