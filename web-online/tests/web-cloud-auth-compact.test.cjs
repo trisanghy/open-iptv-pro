@@ -47,7 +47,8 @@ test('iPhone uses a native one-row textarea for editable email cursor and select
 test('iOS visual cursor follows textarea selection without intercepting native edits',()=>{
  const script=read('cloud-sync.js');
  assert.match(html,/<span id="cloudEmailVisualCaret" class="cloud-email-visual-caret" aria-hidden="true" hidden><\/span>/);
- assert.match(html,/cloud-sync\.js\?v=ios-visual-caret-20261121a/);
+ assert.match(html,/cloud-recovery-storage\.js\?v=cloud-idb-recovery-20261122a/);
+ assert.match(html,/cloud-sync\.js\?v=cloud-idb-recovery-20261122a/);
  assert.match(script,/function attachMobileEmailCaret\(\)/);
  assert.match(script,/emailInput\.selectionStart!==emailInput\.selectionEnd/);
  assert.match(script,/emailInput\.value\.slice\(0,start\)/);
