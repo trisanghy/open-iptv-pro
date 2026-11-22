@@ -203,7 +203,7 @@
  // A new remote channel invalidates all callbacks from the previous HLS/DASH
  // session. Never report a failure until every compatible decoder was tried.
  let playbackGeneration=0,stageGeneration=0,playbackStages=[],stageIndex=-1;
- let playbackStage='',stageTimer=0,playbackStarted=false,stageError='',pendingUserGesture=false;
+ let playbackStage='',stageTimer=0,playbackStarted=false,stageError='',pendingUserGesture=false,playbackEngineReady=false;
  function clearStageTimer(){
   if(stageTimer){root.clearTimeout(stageTimer);stageTimer=0;}
  }
@@ -217,7 +217,7 @@
  }
  function cleanupPlayer(){
   playbackGeneration++;stageGeneration++;playbackStages=[];stageIndex=-1;
-  playbackStage='';playbackStarted=false;stageError='';pendingUserGesture=false;
+  playbackStage='';playbackStarted=false;stageError='';pendingUserGesture=false;playbackEngineReady=false;
   suppressPause=true;playingUrl='';
   renderHistory();leaveCinema();
   resetMedia();
@@ -277,7 +277,7 @@
   resetMedia();
   stageIndex++;stageGeneration++;
   const attempt=stageGeneration,mode=playbackStages[stageIndex],url=playingUrl;
-  playbackStage=mode;playbackStarted=false;pendingUserGesture=false;
+  playbackStage=mode;playbackStarted=false;pendingUserGesture=false;playbackEngineReady=false;
   if(!mode){playbackIssue(stageError||'không có bộ phát phù hợp',session,attempt);return;}
   status('Đang thử '+mode+' cho '+playingName+'…');
   stageTimer=root.setTimeout(()=>{
@@ -295,7 +295,7 @@
      if(session===playbackGeneration&&attempt===stageGeneration)engine.loadSource(url);
     });
     engine.on(root.Hls.Events.MANIFEST_PARSED,()=>{
-     if(session===playbackGeneration&&attempt===stageGeneration)playWhenReady(session,attempt);
+     if(session===playbackGeneration&&attempt===stageGeneration){playbackEngineReady=true;playWhenReady(session,attempt);}
     });
     engine.on(root.Hls.Events.ERROR,(_event,data)=>{
      if(session!==playbackGeneration||attempt!==stageGeneration||!data?.fatal)return;
@@ -309,7 +309,7 @@
    if(mode==='dashjs'){
     const engine=root.dashjs.MediaPlayer().create();dash=engine;
     const eventName=root.dashjs.MediaPlayer.events?.STREAM_INITIALIZED||'streamInitialized';
-    engine.on?.(eventName,()=>playWhenReady(session,attempt));
+    engine.on?.(eventName,()=>{playbackEngineReady=true;playWhenReady(session,attempt);});
     engine.on?.(root.dashjs.MediaPlayer.events?.ERROR||'error',data=>{
      playbackIssue('DASH: '+String(data?.error?.message||data?.event?.message||'không phát được'),session,attempt);
     });
@@ -318,6 +318,7 @@
    }
    // Native and native-HLS have an actual src before play(), unlike MSE.
    video.src=url;
+   playbackEngineReady=true;
    playWhenReady(session,attempt);
   }catch(error){
    playbackIssue(String(error?.message||error),session,attempt);
@@ -424,7 +425,7 @@
   // Use this explicit TV remote action if fullscreen was rejected during automatic playback.
   fullscreenAttempted=false;
   enterCinema();
-  if(playbackStage==='hlsjs'&&!video.currentSrc){status('Đang chờ HLS tải xong trước khi phát…');return;}
+  if(!playbackEngineReady){status('Đang chờ bộ phát tải xong dữ liệu trước khi phát…');return;}
   void video.play().catch(error=>{
    if(error?.name!=='NotAllowedError')playbackIssue(error?.message||error,playbackGeneration,stageGeneration);
   });
