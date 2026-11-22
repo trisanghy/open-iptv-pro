@@ -1810,7 +1810,7 @@ test('P5.1.176 gợi ý thêm kênh khi Favorites đã có ít nhất một th�
  assert.ok(js.includes("favoriteList.querySelector('.fav-card')"),'Chỉ hiện khi đã có favorites');
  assert.ok(js.includes("more.hidden=!populated"),'Ẩn khi danh sách trống');
  assert.ok(js.includes("channels.filter(ch=>ch&&ch.id&&!fav.has(store,ch))"), 'Chỉ gợi ý kênh chưa đánh dấu sao');
- assert.ok(js.includes('Array.from({length:Math.min(6,available.length)}'), 'Vẫn giới hạn tối đa sáu gợi ý mỗi lượt');
+ assert.ok(js.includes('Array.from({length:Math.min(6,filtered.length)}'), 'Vẫn giới hạn tối đa sáu gợi ý mỗi lượt trong kết quả lọc');
  assert.ok(js.includes("fav.toggle(current,active);state.save();state.render();state.setPage('fav')"));
  assert.ok(js.includes("new MutationObserver(syncFavoriteMore).observe(favoriteList"));
  assert.ok(css.includes('#positronFavoriteMore[hidden]{display:none!important}'));
@@ -1839,10 +1839,10 @@ test('P5.1.178 đổi nhóm kênh gợi ý không tự phát hoặc sửa nguồ
  const css=read('renderer/positron-twenty.css');
  const qa=read('scripts/positron-20-extension.cjs');
  assert.ok(js.includes('let moreCursor=0'));
- assert.ok(js.includes('moreCursor=(moreCursor+6)%available.length'));
+ assert.ok(js.includes('moreCursor=(moreCursor+6)%filtered.length'), 'Tiếp tục chuyển nhóm trong tập kênh còn phù hợp');
  assert.ok(js.includes("next.setAttribute('aria-label','Xem sáu kênh chưa yêu thích tiếp theo')"));
- assert.ok(js.includes('moreCursor%=available.length'));
- assert.ok(js.includes('next.hidden=available.length<=6'));
+ assert.ok(js.includes('moreCursor=filtered.length?moreCursor%filtered.length:0'), 'Giữ con trỏ hợp lệ kể cả khi không tìm thấy kênh');
+ assert.ok(js.includes('next.hidden=filtered.length<=6'), 'Ẩn chuyển nhóm khi kết quả đã lọc có tối đa sáu kênh');
  assert.ok(js.includes("more.querySelector('.po-fav-more-next')?.focus()"));
  assert.ok(!js.includes("channels.filter(ch=>ch&&ch.id&&!fav.has(store,ch)).slice(0,6)"));
  assert.ok(css.includes('#page-fav .po-fav-more-next:focus-visible'));
