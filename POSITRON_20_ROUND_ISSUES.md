@@ -1,5 +1,10 @@
 # Positron — New 20-round issue register
 
+## Vòng 03/20 — P5.1.201 / Electron 4.23.286 — CANDIDATE
+- Đầu vào: đã mở ba ảnh Electron P5.1.200 1920×1080 (before, confirm và after). Thay tên hai lần đã đúng nhưng sau khi tên cũ bị thay chưa có cách phục hồi ngay.
+- Tính năng: nút “Hoàn tác thay tên” chỉ hiện sau một lần thay tên được xác nhận, khôi phục đúng tên nhập tay nếu người dùng chưa sửa thêm. Khi sửa nội dung/kênh/giờ thì trạng thái hoàn tác mất hiệu lực.
+- Bằng chứng bắt buộc: Node regression; Electron 3 ảnh thật 1920×1080 before/after/restored đã MỞ; kiểm tra không tự ghi lịch, không phát video; CI 6/6 + release/tag/bộ cài mới. Hiện CANDIDATE.
+
 ## Vòng 02/20 — P5.1.200 / Electron 4.23.285 — CANDIDATE
 - Đầu vào: ảnh Electron P5.1.199 after 1920×1080 đã MỞ, tên tạo tự động cập nhật chính xác nhưng kịch bản cố tạo tên khi có nhãn thủ công hiện thông báo yêu cầu xóa thủ công.
 - Tính năng: thay vì bắt xóa tên, nút “Tạo tên từ kênh và giờ” chuyển sang xác nhận màu hổ phách ở lần đầu; lần nhấn thứ hai mới thay tên, có hủy Escape/sửa nội dung/bỏ focus. Không tự đặt lịch, không sửa M3U, không tự phát.

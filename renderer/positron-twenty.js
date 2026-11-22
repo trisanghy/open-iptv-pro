@@ -733,6 +733,8 @@
   // P199: only generated names (not edited manually) track time/channel edits.
   let generatedValue='';
   let replacePending=false;
+  // P201: one-step undo only for a confirmed replacement within this form.
+  let undoValue='',undoExpected='';
   const suggest=()=>{
    const selected=selector.selectedOptions?.[0]?.textContent?.trim()||'';
    if(selector.disabled||!selected||selected==='Chưa có kênh để ghi hình')return '';
@@ -768,8 +770,16 @@
    button.textContent='Tạo tên từ kênh và giờ';
    button.setAttribute('aria-label','Tự đặt tên bản ghi theo kênh và giờ bắt đầu');
   };
+  const undo=d.createElement('button');undo.id='poDvrUndoName';undo.type='button';
+  undo.className='po-dvr-undo-name';undo.textContent='Hoàn tác thay tên';
+  undo.setAttribute('aria-label','Khôi phục tên ghi hình trước lần thay gần nhất');
+  undo.hidden=true;
+  const clearUndo=()=>{
+   undoValue='';undoExpected='';undo.hidden=true;
+  };
   nameInput.addEventListener('input',()=>{
    if(nameInput.value!==generatedValue)generatedValue='';
+   if(undoExpected&&nameInput.value!==undoExpected)clearUndo();
    clearReplace();
   });
   for(const field of [selector,start]){
@@ -777,6 +787,8 @@
    field.addEventListener('change',syncGenerated);
    field.addEventListener('input',clearReplace);
    field.addEventListener('change',clearReplace);
+   field.addEventListener('input',clearUndo);
+   field.addEventListener('change',clearUndo);
   }
   button.addEventListener('keydown',event=>{
    if(event.key==='Escape'&&replacePending){
@@ -801,14 +813,26 @@
     button.setAttribute('aria-label','Xác nhận thay tên hiện tại bằng tên từ kênh và giờ');
     return;
    }
-   clearReplace();
+   const manualBefore=nameInput.value.trim()&&nameInput.value!==generatedValue?nameInput.value:'';
+   clearReplace();clearUndo();
    nameInput.value=generated.slice(0,Math.max(1,nameInput.maxLength||220));
    generatedValue=nameInput.value;
    nameInput.dispatchEvent(new Event('input',{bubbles:true}));
    nameInput.dispatchEvent(new Event('change',{bubbles:true}));
+   if(manualBefore){
+    undoValue=manualBefore;undoExpected=nameInput.value;undo.hidden=false;
+   }
    nameInput.focus({preventScroll:true});
   });
-  nameInput.parentElement.append(button);
+  undo.addEventListener('click',()=>{
+   if(!undoExpected||nameInput.value!==undoExpected){clearUndo();return;}
+   const previous=undoValue;clearUndo();
+   generatedValue='';nameInput.value=previous;
+   nameInput.dispatchEvent(new Event('input',{bubbles:true}));
+   nameInput.dispatchEvent(new Event('change',{bubbles:true}));
+   nameInput.focus({preventScroll:true});
+  });
+  nameInput.parentElement.append(button,undo);
  };
  attachDvrSuggestedTitle();
 

@@ -2187,3 +2187,21 @@ test('P5.1.200 DVR replace action needs an explicit second click and can be canc
   'positron-p51200-dvr-replace-after-1920x1080-real.png'])
   assert.ok(qa.includes(token),'Missing P200 real Electron QA '+token);
 });
+
+
+test('P5.1.201 can undo one confirmed DVR name replacement without scheduling',()=>{
+ const js=read('renderer/positron-twenty.js'),css=read('renderer/positron-twenty.css');
+ const qa=read('scripts/positron-20-extension.cjs');
+ for(const token of ["let undoValue='',undoExpected='';","undo.id='poDvrUndoName'",
+  "const clearUndo=()=>","undoValue=manualBefore;undoExpected=nameInput.value;undo.hidden=false",
+  "const previous=undoValue;clearUndo();","generatedValue='';nameInput.value=previous",
+  "field.addEventListener('change',clearUndo)","nameInput.parentElement.append(button,undo)"])
+  assert.ok(js.includes(token),'Missing limited DVR rename undo: '+token);
+ assert.ok(css.includes('#poDvrUndoName[hidden]'));
+ for(const token of ['dvrUndoQA','undoHiddenInitially','appearsOnlyAfterConfirmedReplace',
+  'restoresExactManualTitle','undoDismissedAfterRestore','manualEditCancelsUndo',
+  'positron-p51201-dvr-undo-before-1920x1080-real.png',
+  'positron-p51201-dvr-undo-after-1920x1080-real.png',
+  'positron-p51201-dvr-undo-restored-1920x1080-real.png'])
+  assert.ok(qa.includes(token),'Missing P201 real Electron undo check: '+token);
+});

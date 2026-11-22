@@ -932,3 +932,18 @@ html[data-positron="true"] #poDvrSuggestName[data-confirm-replace="true"]{
 html[data-positron="true"] #poDvrSuggestName[data-confirm-replace="true"]:focus-visible{
  outline:2px solid #ffd18c;outline-offset:2px;
 }
+
+
+/* P201: optional undo for a just-confirmed manual DVR name replacement. */
+html[data-positron="true"] #poDvrUndoName{
+ display:inline-flex;align-items:center;justify-content:center;
+ min-height:32px;margin:6px 0 0 6px;padding:5px 11px;
+ border:1px solid var(--po-accent,#79dfc6);border-radius:7px;
+ background:var(--po-input,#17303c);color:var(--po-accent,#79dfc6);
+ font:inherit;font-size:11px;font-weight:600;cursor:pointer;
+}
+html[data-positron="true"] #poDvrUndoName[hidden]{display:none!important}
+html[data-positron="true"] #poDvrUndoName:focus-visible{
+ outline:2px solid var(--po-accent,#79dfc6);outline-offset:2px;
+}
+@media(max-width:700px){html[data-positron="true"] #poDvrUndoName:not([hidden]){margin-left:0;width:100%}}

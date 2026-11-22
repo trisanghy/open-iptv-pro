@@ -1571,3 +1571,11 @@ P5.1.81 follow-up: real Electron capture found nav overflow; replace flexible no
 - Electron screenshot: positron-p51200-dvr-replace-after-1920x1080-real.png
 - Ba ảnh Electron 1920×1080 trước, trong lúc xác nhận, sau khi thực hiện; kiểm thử nút và input thay đổi không gây ghi lịch/auto-play.
 - Không chỉnh nhánh khác, bảo toàn dữ liệu người dùng và giữ tất cả tag trước.
+
+
+## P5.1.201 / 4.23.286 — Hoàn tác lần thay tên bản ghi vừa xác nhận (CANDIDATE)
+- Feature priority: NEW — Cho phép khôi phục đúng tên chương trình người dùng vừa thay bằng nút hoàn tác một lần, tránh mất tên nhập thủ công khi họ đổi ý và không làm thay đổi bất cứ lịch ghi nào.
+- User action: Mở Lịch phát sóng, nhập tên riêng, xác nhận hai lần thay tên theo kênh, rồi nhấn Hoàn tác thay tên để trở về tên trước đó.
+- Electron screenshot: positron-p51201-dvr-undo-after-1920x1080-real.png
+- Ảnh Electron trước thay, sau thay có nút hoàn tác, và sau khôi phục; kiểm thử trạng thái hết hiệu lực khi người dùng tự sửa tiếp.
+- Không sửa dữ liệu nguồn, lịch ghi đã lưu hoặc nhánh khác.

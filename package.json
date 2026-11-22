@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.285",
-  "description": "Positron P5.1.200: xác nhận hai lần trước khi thay tên lịch ghi",
+  "version": "4.23.286",
+  "description": "Positron P5.1.201: hoàn tác thay tên bản ghi an toàn",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

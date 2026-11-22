@@ -5709,10 +5709,60 @@ async function runTwenty(page){
   assert.equal(value,true,'P200 real Electron safe rename '+key+': '+JSON.stringify(dvrReplaceConfirmQA));
  const after200=await page.screenshot({path:path.join(out,'positron-p51200-dvr-replace-after-1920x1080-real.png'),animations:'disabled'});
  assert.deepEqual([after200.readUInt32BE(16),after200.readUInt32BE(20)],[1920,1080]);
+
+ // P201: actual Electron before, visible undo, and restored manual name.
+ await page.locator('#dvrTitle').fill('Tên lịch riêng để hoàn tác');
+ const before201=await page.screenshot({path:path.join(out,'positron-p51201-dvr-undo-before-1920x1080-real.png'),animations:'disabled'});
+ assert.deepEqual([before201.readUInt32BE(16),before201.readUInt32BE(20)],[1920,1080]);
+ const dvrUndoShowQA=await page.evaluate(()=>{
+  const d=document,title=d.getElementById('dvrTitle'),gen=d.getElementById('poDvrSuggestName');
+  const undo=d.getElementById('poDvrUndoName'),old=title.value;
+  const checks={undoHiddenInitially:undo.hidden,properButtonType:undo.type==='button',
+   noRenameBeforeConfirm:title.value===old};
+  gen.click();
+  checks.stillNoUndoDuringConfirm=undo.hidden&&gen.dataset.confirmReplace==='true';
+  gen.click();
+  checks.appearsOnlyAfterConfirmedReplace=!undo.hidden&&title.value!==old;
+  checks.generatedNameCorrect=title.value.startsWith('QA Channel 001 - ');
+  checks.previewShowsReplacement=d.getElementById('poDvrReviewText')?.textContent?.startsWith(title.value+' · ')===true;
+  checks.noScheduleSubmit=window.__p191DvrSubmits===0;
+  return checks;
+ });
+ const after201=await page.screenshot({path:path.join(out,'positron-p51201-dvr-undo-after-1920x1080-real.png'),animations:'disabled'});
+ assert.deepEqual([after201.readUInt32BE(16),after201.readUInt32BE(20)],[1920,1080]);
+ const dvrUndoRestoreQA=await page.evaluate(()=>{
+  const d=document,title=d.getElementById('dvrTitle'),undo=d.getElementById('poDvrUndoName');
+  undo.click();
+  return {
+   restoresExactManualTitle:title.value==='Tên lịch riêng để hoàn tác',
+   undoDismissedAfterRestore:undo.hidden,
+   previewRestored:d.getElementById('poDvrReviewText')?.textContent?.includes('Tên lịch riêng để hoàn tác')===true
+  };
+ });
+ const restored201=await page.screenshot({path:path.join(out,'positron-p51201-dvr-undo-restored-1920x1080-real.png'),animations:'disabled'});
+ assert.deepEqual([restored201.readUInt32BE(16),restored201.readUInt32BE(20)],[1920,1080]);
+ const dvrUndoCancelQA=await page.evaluate(()=>{
+  const d=document,title=d.getElementById('dvrTitle'),gen=d.getElementById('poDvrSuggestName');
+  const undo=d.getElementById('poDvrUndoName');
+  const checks={};
+  gen.click();gen.click();
+  checks.undoAvailableForSecondOperation=!undo.hidden;
+  title.value='Đã sửa sau khi thay';title.dispatchEvent(new Event('input',{bubbles:true}));
+  checks.manualEditCancelsUndo=undo.hidden&&title.value==='Đã sửa sau khi thay';
+  undo.click();
+  checks.staleUndoCannotOverwrite=title.value==='Đã sửa sau khi thay';
+  checks.noAutoplay=window.IPTVState.getCurrent()===null;
+  checks.noDvrSubmit=window.__p191DvrSubmits===0;
+  checks.noHorizontalOverflow=d.documentElement.scrollWidth<=innerWidth+1;
+  return checks;
+ });
+ const dvrUndoQA={...dvrUndoShowQA,...dvrUndoRestoreQA,...dvrUndoCancelQA};
+ for(const [key,value] of Object.entries(dvrUndoQA))
+  assert.equal(value,true,'P201 actual Electron undo '+key+': '+JSON.stringify(dvrUndoQA));
  await page.setViewportSize({width:1360,height:820});
 
   const report={type:'Positron P5 twenty distinct desktop screenshot cases',realElectron:true,syntheticChannels:false,
-  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,desktop16x9Screenshots,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA,chooserQa,toastLayoutQA,nativeToastQA,compactIdleQA,channelChipRailQA,advancedFilterQA,readableCardsQA,keyboardTabQA,favoriteEmptyQA,duplicateEmptyQA,categoryFilterQA,categoryFixtureQA,compactSingleQA,directFavoriteQA,favoriteCountQA,compactToastStackQA,toastDismissQA,toastFocusReturnQA,toastDockQA,wheelQA,pinnedAllQA,pinnedMaskQA,categoryKeyQA,dropdownChipQA,pinnedRightMaskQA,pinnedBorderMaskQA,asciiDSearchQA,emptySearchActionQA,readableCardTitleQA,favoriteSvgQA,keyboardFavoriteQA,multiTermSearchQA,keyboardSearchQA,arrowNavigationQA,pageNavigationQA,favoriteSortQA,onAirFilterQA,programmeSearchQA,upcomingProgrammeQA,soonProgrammeQA,earliestEpgSortQA,timeWindowQA,scheduleProgressQA:scheduleProgressQA,nativeReminderQA,cancelReminderQA,reminderLeadQA,toastHistoryQA,notificationArchiveQA,alertFilterQA,noticeSearchQA,quietModeQA,dismissToastQA,libraryPulseQA,groupDistributionQA,logoMissingQA,missingSearchQA,missingGroupQA,missingSortQA,missingJumpQA,missingCsvQA,duplicateQA,duplicateSearchQA,duplicateCsvQA,duplicateScopeQA,missingSizeQA,missingPagerQA,missingEpgFilterQA,missingResetQA,missingRangeQA,missingLocateQA,libraryReturnQA,favoriteActionQA,quickFavoriteQA,favoriteMoreQA,favoriteSearchQA,favoriteRotateQA,favoriteSuggestSearchQA,favoriteBulkQA,favoriteLayoutQA,favoriteNameSortQA,searchAfterSortQA,restoredSortQA,favoriteSuggestion12QA,batchFavorite12QA,restoreSixQA,favoriteRegionalQA,favoriteGroupSearchQA,resetGroupQA,favoriteQuickGroupQA,favoriteQuickResetQA,favoritePageLastQA,favoritePageNavigationQA,favoriteJumpSevenQA,favoriteJumpClampQA,favoriteWideQA,favoriteSuggestionSortQA,tvReselectTopQA,dvrDurationPresetQA,dvrDurationLiveQA,dvrPresetSelectionQA,dvrQuickStartQA,dvrSuggestedTitleQA,dvrReviewQA,dvrCopyQA,dvrTomorrowQA,dvrTitleSyncQA,dvrReplaceConfirmQA};
+  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,desktop16x9Screenshots,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA,chooserQa,toastLayoutQA,nativeToastQA,compactIdleQA,channelChipRailQA,advancedFilterQA,readableCardsQA,keyboardTabQA,favoriteEmptyQA,duplicateEmptyQA,categoryFilterQA,categoryFixtureQA,compactSingleQA,directFavoriteQA,favoriteCountQA,compactToastStackQA,toastDismissQA,toastFocusReturnQA,toastDockQA,wheelQA,pinnedAllQA,pinnedMaskQA,categoryKeyQA,dropdownChipQA,pinnedRightMaskQA,pinnedBorderMaskQA,asciiDSearchQA,emptySearchActionQA,readableCardTitleQA,favoriteSvgQA,keyboardFavoriteQA,multiTermSearchQA,keyboardSearchQA,arrowNavigationQA,pageNavigationQA,favoriteSortQA,onAirFilterQA,programmeSearchQA,upcomingProgrammeQA,soonProgrammeQA,earliestEpgSortQA,timeWindowQA,scheduleProgressQA:scheduleProgressQA,nativeReminderQA,cancelReminderQA,reminderLeadQA,toastHistoryQA,notificationArchiveQA,alertFilterQA,noticeSearchQA,quietModeQA,dismissToastQA,libraryPulseQA,groupDistributionQA,logoMissingQA,missingSearchQA,missingGroupQA,missingSortQA,missingJumpQA,missingCsvQA,duplicateQA,duplicateSearchQA,duplicateCsvQA,duplicateScopeQA,missingSizeQA,missingPagerQA,missingEpgFilterQA,missingResetQA,missingRangeQA,missingLocateQA,libraryReturnQA,favoriteActionQA,quickFavoriteQA,favoriteMoreQA,favoriteSearchQA,favoriteRotateQA,favoriteSuggestSearchQA,favoriteBulkQA,favoriteLayoutQA,favoriteNameSortQA,searchAfterSortQA,restoredSortQA,favoriteSuggestion12QA,batchFavorite12QA,restoreSixQA,favoriteRegionalQA,favoriteGroupSearchQA,resetGroupQA,favoriteQuickGroupQA,favoriteQuickResetQA,favoritePageLastQA,favoritePageNavigationQA,favoriteJumpSevenQA,favoriteJumpClampQA,favoriteWideQA,favoriteSuggestionSortQA,tvReselectTopQA,dvrDurationPresetQA,dvrDurationLiveQA,dvrPresetSelectionQA,dvrQuickStartQA,dvrSuggestedTitleQA,dvrReviewQA,dvrCopyQA,dvrTomorrowQA,dvrTitleSyncQA,dvrReplaceConfirmQA,dvrUndoQA};
  fs.writeFileSync(path.resolve('positron-evidence','audit-p5-20-rounds.json'),JSON.stringify(report,null,2));
  return report;
 }
