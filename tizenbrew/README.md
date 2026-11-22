@@ -77,3 +77,17 @@ Không cung cấp nguồn IPTV bản quyền mặc định. Chỉ sử dụng n�
 - Mã QR mở trang quản lý ở `https://trisanghy.github.io/open-iptv-pro/tizen/phone.html?v=017` và tệp này đã được đồng bộ với `web/online:tizen/phone.html`. Ứng dụng Web chính không bị thay đổi.
 - Lưu ý: tự sửa cú pháp URL **không** thể giúp trình duyệt TV vượt chính sách CORS, HTTPS/chứng chỉ hỏng, lỗi máy chủ hoặc nội dung bị giới hạn quyền. Nếu nguồn vẫn lỗi, mở URL đã chuẩn hóa trên TV và dùng playlist có CORS phù hợp.
 - Kiểm thử: `node --test tizenbrew/tests/source-dialog.test.cjs` (môi trường Node cần có khi chạy cục bộ/CI). Kiểm tra thực tế trên Samsung Tizen vẫn cần thực hiện.
+
+## Mở luôn bản WGT mới nhất từ GitHub trên Windows (CMD)
+
+Mỗi lần chạy lệnh sau trong Command Prompt, công cụ tải đúng HEAD của nhánh `tizenbrew`, dựng **WGT chưa ký dành cho bản xem thử trên trình duyệt**, phục vụ giao diện qua `http://127.0.0.1` rồi tự mở trình duyệt mặc định. Máy không cần Python hay Tizen Studio, cần Windows PowerShell 5.1+:
+
+```bat
+powershell.exe -NoProfile -ExecutionPolicy Bypass -Command "$f=Join-Path $env:TEMP 'OpenIPTV-Latest-WGT.ps1'; Invoke-WebRequest -UseBasicParsing 'https://raw.githubusercontent.com/trisanghy/open-iptv-pro/tizenbrew/tizenbrew/Open-Latest-WGT-Windows.ps1' -OutFile $f; & $f"
+```
+
+- Không lấy một Release cố định: script truy vấn SHA nhánh `tizenbrew` mới nhất mỗi lần khởi chạy và tải tệp từ chính SHA đó, nên không dùng nhầm mã nguồn cũ.
+- WGT sinh ra được lưu tại `%LOCALAPPDATA%\OpenIPTVPro\TizenBrowser\<commit-sha>\Open-IPTV-Pro-TizenBrowser.wgt`.
+- Phiên bản đã tải được cache theo SHA; cùng SHA thì không tải lại. Nhấn **Ctrl+C** trong CMD để tắt máy chủ. Không cần quyền quản trị.
+- Workflow `package-tizen-browser.yml` tự dựng WGT Preview từ mỗi thay đổi `tizenbrew/**` và phát hành tag bất biến theo SHA.
+- Đây **không phải gói WGT đã ký để cài lên TV Samsung**; không hỗ trợ một số API Tizen khi chạy trên Chrome/Edge. Trình duyệt truy cập Internet khi dùng các tính năng liên kết QR.

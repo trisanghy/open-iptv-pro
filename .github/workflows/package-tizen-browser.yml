@@ -4,16 +4,34 @@ on:
     branches: [tizenbrew]
     paths:
       - '.github/workflows/package-tizen-browser.yml'
+      - 'tizenbrew/**'
+      - 'supabase-sdk.js'
+      - 'package.json'
   workflow_dispatch:
 
 permissions:
   contents: write
+
+concurrency:
+  group: tizenbrew-browser-package
+  cancel-in-progress: true
 
 jobs:
   package:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Check Windows one-command launcher syntax
+        shell: pwsh
+        run: |
+          $tokens = $null
+          $errors = $null
+          [System.Management.Automation.Language.Parser]::ParseFile('tizenbrew/Open-Latest-WGT-Windows.ps1', [ref]$tokens, [ref]$errors) | Out-Null
+          if ($errors.Count -gt 0) {
+            $errors | ForEach-Object { Write-Error $_.Message }
+            throw 'Invalid Windows PowerShell script'
+          }
+          Write-Host 'PowerShell syntax validated.'
       - name: Build browser-preview WGT and Mac one-command launcher
         shell: bash
         run: |
@@ -96,6 +114,10 @@ jobs:
           script = out / 'Open-Tizen-Mac.command'
           script.write_text(launcher, encoding='utf-8')
           script.chmod(0o755)
+          # Keep the independent Windows launcher available with each immutable WGT release.
+          windows_launcher = Path('tizenbrew/Open-Latest-WGT-Windows.ps1')
+          assert windows_launcher.is_file()
+          (out / 'Open-Latest-WGT-Windows.ps1').write_bytes(windows_launcher.read_bytes())
 
           notes = f'''# Open IPTV Pro TV TizenBrew — browser preview
           Built from the TizenBrew branch commit {sha}.
@@ -104,6 +126,8 @@ jobs:
           bash <(curl -fsSL https://github.com/trisanghy/open-iptv-pro/releases/download/{tag}/Open-Tizen-Mac.command)
           The launcher downloads this WGT, extracts it, starts a local Python server and opens the default browser.
           Requires macOS, curl, and Python 3. Leave Terminal open; press Control+C to stop.
+          For Windows CMD, download and run Open-Latest-WGT-Windows.ps1 from the tizenbrew branch, which rebuilds from the current HEAD each time.
+          The package is UNSIGNED, for browser preview only and not Samsung TV installation.
           '''.replace('          ', '')
           (out / 'README.txt').write_text(notes, encoding='utf-8')
           print('Created:', tag, target, target.stat().st_size)
@@ -130,6 +154,7 @@ jobs:
           gh release create "$tag" \
             dist-tizen-browser/Open-IPTV-Pro-TizenBrowser.wgt \
             dist-tizen-browser/Open-Tizen-Mac.command \
+            dist-tizen-browser/Open-Latest-WGT-Windows.ps1 \
             dist-tizen-browser/README.txt \
             --title "Open IPTV Pro Tizen Browser Preview $short" \
             --notes-file dist-tizen-browser/README.txt \
