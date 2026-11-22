@@ -73,3 +73,10 @@ Chỉ đánh dấu hoàn tất khi sửa nguồn, node test pass, Electron scree
 ## Đợt 23/11/2026 — Vòng 03/20 P5.1.252 CANDIDATE
 - Từ ảnh P251 SAU và mã: bookmark chỉ lưu tham chiếu DOM; nếu đổi bộ lọc Yêu thích rồi quay lại, hàng DOM cũ có thể bị huỷ nên Alt+Shift+L không còn tác dụng.
 - Mục tiêu: lưu ID kênh, khôi phục view Tất cả khi cần rồi focus row tương ứng, không phát và không thay đổi dữ liệu. QA phải xác minh màn hình trước/sau 1920×1080 và CI.
+
+## Đợt 23/11/2026 — Vòng 03/20 P5.1.252 HOÀN TẤT
+- Ảnh P251 là input; ổn định ID hàng kênh khi lọc Yêu thích/All. Đã MỞ ảnh P252 trước (20/561 Favorites) và sau (561/561, row 412 focus).
+- CI `45062930623`: 6/6 success; Node 932 tests, 927 passed, 0 failed, 5 skipped. Release `positron/v4.23.337-p5.1.252` xác nhận EXE x64, Mac DMG, ZIP QA. Commit `b2c93b5403781274aefe2555a71ec72b2844ada1`.
+- `filteredReturnQA252` tất cả true: all filter restored, rowId, position, no autoplay, favorites/playlist unchanged, no overflow.
+## Đợt 23/11/2026 — Vòng 04/20 P5.1.253 CANDIDATE
+- Ảnh P252 SAU: hàng 412 hiện tại sát mép dưới danh sách cuộn. Mục tiêu mới: Alt+Shift+L căn giữa row, cho thấy thêm các kênh kề cạnh; đo vị trí bằng DOM, chụp before/after Electron thật.

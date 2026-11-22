@@ -501,9 +501,10 @@
    }
    if(!available(row))return;
    event.preventDefault();event.stopPropagation();
+   // P253: center the restored row with context above and below it.
+   // Native scrollTop clamps at the list edges; never scroll the main page.
    const box=list.getBoundingClientRect(),rect=row.getBoundingClientRect();
-   if(rect.top<box.top)list.scrollTop+=rect.top-box.top;
-   else if(rect.bottom>box.bottom)list.scrollTop+=rect.bottom-box.bottom;
+   list.scrollTop+=rect.top-box.top-(list.clientHeight-rect.height)/2;
    row.focus({preventScroll:true});
    const index=[...list.querySelectorAll('.channel-item')].indexOf(row)+1;
    status.textContent=(restoredAll?'Đã xem tất cả để quay lại. ':'')+'Đã quay lại kênh '+index+'. Nhấn Enter để phát.';

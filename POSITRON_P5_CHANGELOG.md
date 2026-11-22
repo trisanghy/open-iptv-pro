@@ -2016,9 +2016,16 @@ P5.1.81 follow-up: real Electron capture found nav overflow; replace flexible no
 - Đầu vào: ảnh P5.1.250 SAU đã trực tiếp mở xem; nhãn vị trí 412/561 đã được ẩn đúng khi focus ra toolbar nhưng không có thao tác quay lại nhanh bằng bàn phím.
 - Kiểm thử: before/after Electron thật 1920×1080, giữ dữ liệu Favorites/Playlist và không làm video tự phát. Chờ CI và release trước khi tính vòng hoàn tất.
 
-## P5.1.252 / Electron 4.23.337 — Quay lại kênh cả sau khi đổi bộ lọc (CANDIDATE)
+## P5.1.252 / Electron 4.23.337 — Quay lại kênh cả sau khi đổi bộ lọc (HOÀN TẤT)
 - Feature priority: NEW — Khi người dùng lọc Yêu thích hoặc Vừa xem làm mất hàng kênh cũ khỏi DOM, Alt+Shift+L ghi nhớ ID kênh ổn định, tự trở về bộ lọc Tất cả nếu cần và focus đúng kênh, không sửa nội dung playlist hay tự phát video.
 - Electron screenshot: positron-p51252-resume-filter-after-1920x1080-real.png
 - User action: Đang focus kênh 412, chọn bộ lọc Yêu thích rồi nhấn Alt+Shift+L từ thanh công cụ để khôi phục danh sách đầy đủ và trở lại chính kênh 412.
 - Đầu vào ảnh P5.1.251 đã trực tiếp MỞ: hàng 412 focus lại đúng, nhưng mã chỉ lưu tham chiếu DOM của hàng; khi bộ lọc dựng lại danh sách, tham chiếu này bị mất tính hợp lệ.
 - Kiểm thử: 2 ảnh Electron 1920×1080 khác biệt; dữ liệu Favorites và M3U không đổi, không phát stream. Đợi CI / release thực trước khi tính thành công.
+
+## P5.1.253 / Electron 4.23.338 — Căn giữa hàng kênh được khôi phục (CANDIDATE)
+- Feature priority: NEW — Khi dùng Alt+Shift+L quay lại hàng kênh đã duyệt, danh sách cuộn tự động căn hàng đó gần giữa panel để người xem có thể thấy các kênh lân cận cả phía trên và dưới, không chỉ nhìn hàng sát mép cuối.
+- Electron screenshot: positron-p51253-centered-row-after-1920x1080-real.png
+- User action: Focus QA Channel 412, chuyển sang thanh công cụ rồi Alt+Shift+L để quay lại. Hàng đang chọn hiện gần trung tâm danh sách thay vì cạnh dưới, cuộn không ảnh hưởng vùng nội dung ngoài.
+- Đầu vào: ĐÃ MỞ ảnh Electron thật P5.1.252 SAU; hàng 412 được focus nhưng nằm sát mép dưới panel, thiếu bối cảnh duyệt.
+- QA: đo hình học vị trí row trước/sau, ảnh Electron 1920×1080, không phát video hoặc thay đổi M3U/Favorites; chỉ hoàn tất sau CI/release.
