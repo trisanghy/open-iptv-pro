@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Open IPTV Pro TV - TizenBrew</title>
+<style>
+*{box-sizing:border-box}html,body{margin:0;height:100%;overflow:hidden}body{--bg:#08101f;--panel:#101d32;--item:#192943;--fg:#f4f8ff;--muted:#a7b7cc;--edge:#2a415c;--blue:#078cf5;--focus:#59c8ff;background:var(--bg);color:var(--fg);font:22px Arial,"SamsungOne",sans-serif}
+body[data-theme=amoled]{--bg:#000;--panel:#080808;--item:#181818;--edge:#343434}
+body[data-theme=light]{--bg:#f0f4fa;--panel:#fff;--item:#e5eef8;--fg:#15263b;--muted:#526781;--edge:#c8d4e2}
+button,input,textarea{font:inherit;color:inherit}button{cursor:pointer;border:2px solid transparent;border-radius:14px;background:var(--item);color:var(--fg);padding:15px;font-weight:600}button:focus-visible,input:focus,textarea:focus{outline:4px solid var(--focus);outline-offset:2px;box-shadow:0 0 0 6px #168df844;background:var(--blue);color:white}[hidden]{display:none!important}
+#app{height:100%;display:flex;flex-direction:column}.top{height:11%;min-height:75px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--edge);padding:12px 30px}
+.brand{display:flex;gap:15px;align-items:center}.brandicon{border:4px solid var(--blue);border-radius:10px;padding:9px;color:#42b5ff;font-size:30px}.brand strong{display:block;font-size:31px}.brand small{background:var(--blue);font-size:17px;border-radius:6px;padding:3px 8px;color:white}.brand p{margin:4px 0 0;font-size:16px;color:var(--muted)}
+.toolbar{display:flex;align-items:center;gap:12px}.toolbar button{font-size:19px}.clock{font-size:27px;margin-right:12px}
+.main{height:81%;display:grid;grid-template-columns:21% 38% 41%;min-height:0}.nav{background:var(--panel);border-right:1px solid var(--edge);padding:24px 16px;display:flex;flex-direction:column;gap:12px}
+.nav button{text-align:left;font-size:23px;padding:21px 17px}.nav button.active{background:linear-gradient(120deg,#138af0,#0757c6);color:#fff}.tip{margin-top:auto;color:var(--muted);font-size:16px;line-height:1.5;padding:12px}
+.listpane{padding:26px 20px;border-right:1px solid var(--edge);display:flex;flex-direction:column;min-height:0}.eyebrow{font-size:15px;letter-spacing:2px;color:var(--muted);font-weight:bold}.heading{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:18px}.heading h1{font-size:32px;margin:6px 0}.heading span{font-size:16px;color:var(--muted)}
+.groups{display:flex;gap:9px;overflow-x:auto;padding:5px 5px 16px;flex-shrink:0;scrollbar-width:none}.groups button{font-size:19px;padding:12px 19px;white-space:nowrap}.groups button.active{background:var(--blue);color:white}
+.channels{flex:1;overflow-y:auto;scrollbar-width:thin;padding:6px}.channel{display:flex;align-items:center;text-align:left;gap:13px;width:100%;margin-bottom:10px;background:var(--item);border:1px solid var(--edge);padding:17px 12px}.channel.selected{border-color:var(--focus)}
+.num{font-size:16px;color:var(--muted);background:var(--bg);border-radius:8px;padding:10px;min-width:50px;text-align:center}.logo{width:56px;height:43px;object-fit:contain}.placeholder{width:56px;font-size:20px;font-weight:bold;color:#4bc0ff;text-align:center}
+.chtext{flex:1;min-width:0}.chtext strong{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:21px}.chtext small{display:block;color:var(--muted);font-size:15px;margin-top:5px}.heart{font-size:25px;color:#ff72aa}
+.empty{text-align:center;padding:50px 12px;overflow:auto}.empty h2{font-size:30px}.empty p{font-size:18px;color:var(--muted);line-height:1.5}.empty button{display:block;margin:15px auto}
+.more{margin-top:8px;font-size:18px}.details{padding:26px 27px;overflow:auto}.preview{height:42%;min-height:170px;max-height:340px;background:radial-gradient(ellipse at 50% 30%,#1b5180,#071326 75%);border-radius:20px;position:relative;display:flex;align-items:center;justify-content:center;margin-bottom:22px;border:1px solid var(--edge)}.preview b{font-size:67px;color:white}.live{position:absolute;right:17px;top:17px;background:#be243e;color:white;font-size:16px;border-radius:9px;padding:8px 12px}.watermark{position:absolute;bottom:17px;left:18px;color:#b5dfff;font-size:17px;font-weight:bold}
+.details h2{font-size:32px;margin:10px 0}.details p{font-size:19px;color:var(--muted);margin:8px 0}.info{background:var(--item);padding:22px;border:1px solid var(--edge);border-radius:16px;margin:20px 0;min-height:110px;overflow-wrap:anywhere}.info p{line-height:1.5;font-size:17px}.actions{display:flex;gap:12px}.actions button{flex:1;font-size:19px}.primary{background:var(--blue);color:#fff}
+.footer{height:8%;background:var(--panel);border-top:1px solid var(--edge);display:flex;align-items:center;justify-content:space-around;font-size:16px;color:var(--muted)}.footer b{color:var(--fg);padding:8px;border-radius:8px;background:var(--item);margin-right:7px}
+.overlay{position:absolute;inset:0;background:#000d;display:grid;place-items:center;z-index:10}.dialog{width:min(800px,85vw);max-height:90vh;overflow-y:auto;background:var(--panel);border:2px solid var(--edge);border-radius:20px;padding:28px 35px}.dialog h2{margin:0 0 16px}.dialog label{display:block;margin-top:15px;font-size:18px;font-weight:bold}.dialog input:not([type=checkbox]),.dialog textarea{background:var(--bg);border:1px solid var(--edge);border-radius:10px;padding:14px;width:100%;margin-top:7px;font-size:19px}.dialog .consent{display:flex;gap:12px;align-items:center;line-height:1.45}.dialog .consent input{width:26px;height:26px}.dialog .hint{color:var(--muted);font-size:16px;line-height:1.4}.dialog .buttons{display:flex;justify-content:flex-end;gap:12px;margin-top:18px}
+#player{position:absolute;inset:0;background:#000;z-index:7}#video{width:100%;height:100%;object-fit:contain}.playerhead{position:absolute;top:0;left:0;right:0;padding:24px 32px;background:linear-gradient(#000b,transparent);display:flex;justify-content:space-between;align-items:center}.playerhead strong{font-size:30px}.playerstatus{position:absolute;top:45%;width:100%;text-align:center;color:#fff;font-size:22px;padding:0 9%}.playerfoot{position:absolute;bottom:0;width:100%;text-align:center;padding:25px;background:linear-gradient(transparent,#000a);font-size:20px}
+#toast{position:absolute;z-index:30;left:50%;transform:translateX(-50%);bottom:11%;padding:17px 25px;border-radius:14px;background:#0563ae;color:#fff;font-size:20px;max-width:70%}
+@media(max-width:1100px){body{font-size:18px}.brand strong{font-size:24px}.nav button{font-size:18px;padding:14px}.listpane,.details{padding:15px}.top{padding:10px}.toolbar button{font-size:16px}.footer{font-size:13px}}
+</style></head><body data-theme="dark">
+<div id="app">
+<header class="top"><div class="brand"><div class="brandicon">▶</div><div><strong>Open IPTV Pro <small>TV</small></strong><p>Samsung Tizen Edition · TizenBrew</p></div></div><div class="toolbar"><span class="clock" id="clock">--:--</span><button id="searchBtn">⌕ Tìm</button><button id="addBtn">＋ Nguồn</button><button id="themeBtn">◐ Giao diện</button></div></header>
+<div class="main"><nav class="nav"><button class="active" data-nav="all">▣　Trực tiếp</button><button data-nav="favorites">♡　Yêu thích</button><button data-nav="recent">◷　Đã xem</button><button data-nav="sources">☷　Nguồn M3U</button><button data-nav="help">⚙　Hướng dẫn</button><p class="tip">Dùng ↑ ↓ ← → và OK để điều khiển bằng remote TV.</p></nav>
+<section class="listpane"><div class="heading"><div><div class="eyebrow">DANH SÁCH KÊNH</div><h1 id="heading">Trực tiếp</h1></div><span id="count">0 kênh</span></div><div class="groups" id="groups"></div><div class="channels" id="channels"></div><div class="empty" id="empty" hidden><h2>Chưa có kênh IPTV</h2><p>Thêm URL M3U hoặc dán danh sách mà bạn có quyền sử dụng.</p><button id="emptyAdd" class="primary">＋ Thêm nguồn IPTV</button><button id="sampleBtn">▶ Luồng kiểm thử</button></div><button id="more" hidden>Xem thêm kênh ↓</button></section>
+<aside class="details"><div class="preview"><span class="live">● TRỰC TIẾP</span><b id="previewText">TV</b><span class="watermark">OPEN IPTV PRO</span></div><div class="eyebrow">KÊNH ĐANG CHỌN</div><h2 id="channelTitle">Open IPTV Pro TV</h2><p id="channelGroup">Chọn kênh để xem</p><div class="info"><div class="eyebrow">THÔNG TIN</div><p id="channelInfo">Hỗ trợ nhập M3U, nhóm kênh, yêu thích và remote Samsung.</p></div><div class="actions"><button class="primary" id="watchBtn">▶ Xem</button><button id="favBtn">♡ Yêu thích</button></div></aside></div>
+<footer class="footer"><span><b>↑ ↓ ← →</b> Di chuyển</span><span><b>OK</b> Chọn</span><span><b>↶</b> Trở lại</span><span><b>CH ±</b> Chuyển kênh</span></footer></div>
+<div class="overlay" id="modal" hidden><div class="dialog" role="dialog" aria-modal="true"><h2 id="dialogTitle">Thêm nguồn IPTV</h2><div id="sourceDialog">
+<label for="sourceName">Tên nguồn</label><input id="sourceName" placeholder="Danh sách của tôi" maxlength="80">
+<label for="sourceUrl">URL M3U / M3U8</label><input id="sourceUrl" placeholder="https://example.com/channels.m3u">
+<label for="sourceText">Hoặc dán nội dung M3U</label><textarea rows="4" id="sourceText" placeholder="#EXTM3U..."></textarea>
+<label class="consent"><input type="checkbox" id="rights"> Tôi có quyền sử dụng danh sách và nội dung này</label>
+<p class="hint">Danh sách trực tuyến cần máy chủ cho phép CORS. Trình phát HTML5 có thể không hỗ trợ mọi định dạng.</p>
+<div class="buttons"><button id="cancelSource">Hủy</button><button id="saveSource" class="primary">Lưu và tải</button></div></div>
+<div id="searchDialog" hidden><label for="searchInput">Tìm kênh</label><input id="searchInput" placeholder="Nhập tên kênh..."><div class="buttons"><button id="cancelSearch">Hủy</button><button id="applySearch" class="primary">Tìm</button></div></div></div></div>
+<div id="player" hidden><video id="video" playsinline preload="none"></video><div class="playerhead"><strong id="playingName">Open IPTV Pro TV</strong><button id="exitPlayer">✕ Danh sách</button></div><div class="playerstatus" id="playerStatus">Đang tải luồng…</div><div class="playerfoot">CH ± Chuyển kênh　·　OK Phát/Tạm dừng　·　Back Danh sách</div></div>
+<div id="toast" hidden></div>
+<script>
+(function(){
+'use strict';
+var byId=function(id){return document.getElementById(id);};
+var storageKey='openiptv-tizenbrew-tv-v1';
+var state={sources:[],favorites:{},recent:[],theme:'dark'},section='all',group='Tất cả',search='',selected=null,playing=null,showLimit=160,items=[];
+try{var old=JSON.parse(localStorage.getItem(storageKey)||'{}');if(old&&typeof old==='object'){state.sources=Array.isArray(old.sources)?old.sources:[];state.favorites=old.favorites||{};state.recent=Array.isArray(old.recent)?old.recent:[];state.theme=['dark','light','amoled'].indexOf(old.theme)>=0?old.theme:'dark';}}catch(e){}
+function save(){try{localStorage.setItem(storageKey,JSON.stringify(state));}catch(e){notify('Không đủ bộ nhớ để lưu danh sách.');}}
+var timer=0;function notify(t){var el=byId('toast');el.textContent=t;el.hidden=false;clearTimeout(timer);timer=setTimeout(function(){el.hidden=true;},4100);}
+function url(s){try{var u=new URL(String(s||'').trim());return u.protocol==='https:'||u.protocol==='http:'?u.href:'';}catch(e){return '';}}
+function hash(s){var h=2166136261;for(var i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619);}return(h>>>0).toString(36);}
+function attr(line,key){var r=new RegExp(key+'="([^"]*)"','i'),m=line.match(r);return m?m[1]:'';}
+function parse(text,title){if(text.length>3000000)throw Error('M3U lớn hơn 3 MB');var arr=text.replace(/\r/g,'').split('\n'),out=[],meta=null;
+for(var i=0;i<arr.length&&out.length<5000;i++){var s=arr[i].trim();if(/^#EXTINF:/i.test(s)){var p=s.lastIndexOf(',');meta={name:attr(s,'tvg-name')||s.slice(p+1),group:attr(s,'group-title')||'Khác',logo:url(attr(s,'tvg-logo'))};}
+else if(s&&s[0]!=='#'){var u=url(s);if(u){var name=(meta&&meta.name||title||'IPTV').trim();out.push({id:hash(u+name),name:name.slice(0,140),group:meta?meta.group:'Khác',logo:meta?meta.logo:'',url:u});}meta=null;}}
+return out;}
+function elem(tag,cls,text){var x=document.createElement(tag);if(cls)x.className=cls;if(text!==undefined)x.textContent=text;return x;}
+function all(){var seen={},out=[];state.sources.forEach(function(s){(s.channels||[]).forEach(function(c){if(c.id&&!seen[c.id]){seen[c.id]=true;out.push(c);}});});return out;}
+function select(c){selected=c;byId('channelTitle').textContent=c?c.name:'Open IPTV Pro TV';byId('channelGroup').textContent=c?c.group:'Chọn một kênh để xem';byId('channelInfo').textContent=c?'Nguồn: '+c.url.slice(0,130):'Thêm danh sách M3U từ mục Nguồn.';byId('previewText').textContent=c?c.name.slice(0,4).toUpperCase():'TV';byId('watchBtn').disabled=!c;byId('favBtn').disabled=!c;byId('favBtn').textContent=c&&state.favorites[c.id]?'♥ Đã thích':'♡ Yêu thích';}
+function draw(){items=all();if(selected)selected=items.filter(function(c){return c.id===selected.id;})[0]||null;
+var list=items.filter(function(c){return section==='favorites'?!!state.favorites[c.id]:section==='recent'?state.recent.indexOf(c.id)>=0:true;});
+if(section==='recent')list.sort(function(a,b){return state.recent.indexOf(a.id)-state.recent.indexOf(b.id);});
+var gs=['Tất cả'];list.forEach(function(c){if(gs.indexOf(c.group)<0)gs.push(c.group);});if(gs.indexOf(group)<0)group='Tất cả';
+byId('groups').replaceChildren();gs.slice(0,80).forEach(function(g){var b=elem('button',g===group?'active':'',g);b.onclick=function(){group=g;showLimit=160;draw();};byId('groups').appendChild(b);});
+list=list.filter(function(c){return (group==='Tất cả'||c.group===group)&&(!search||(c.name+' '+c.group).toLowerCase().indexOf(search)>=0);});
+byId('count').textContent=list.length+' kênh';byId('heading').textContent=section==='favorites'?'Yêu thích':section==='recent'?'Đã xem':'Trực tiếp';
+var holder=byId('channels');holder.replaceChildren();list.slice(0,showLimit).forEach(function(c,i){var b=elem('button','channel'+(selected&&selected.id===c.id?' selected':''));b.appendChild(elem('span','num',String(i+1).padStart(3,'0')));
+if(c.logo){var image=elem('img','logo');image.src=c.logo;image.alt='';image.onerror=function(){image.replaceWith(elem('span','placeholder','TV'));};b.appendChild(image);}else b.appendChild(elem('span','placeholder','TV'));
+var meta=elem('span','chtext');meta.appendChild(elem('strong','',c.name));meta.appendChild(elem('small','',c.group));b.appendChild(meta);if(state.favorites[c.id])b.appendChild(elem('span','heart','♥'));b.onfocus=function(){select(c);};b.onclick=function(){select(c);play(c);};holder.appendChild(b);});
+byId('more').hidden=list.length<=showLimit;byId('empty').hidden=list.length>0;
+if(!selected&&list.length)select(list[0]);else select(selected);
+document.querySelectorAll('[data-nav]').forEach(function(b){b.classList.toggle('active',b.dataset.nav===section);});}
+function openDialog(kind){byId('modal').hidden=false;byId('sourceDialog').hidden=kind==='search';byId('searchDialog').hidden=kind!=='search';byId('dialogTitle').textContent=kind==='search'?'Tìm kiếm kênh':'Thêm nguồn IPTV';setTimeout(function(){byId(kind==='search'?'searchInput':'sourceName').focus();},40);}
+function closeDialog(){byId('modal').hidden=true;byId('addBtn').focus();}
+async function addSource(){if(!byId('rights').checked){notify('Cần xác nhận quyền sử dụng danh sách.');return;}
+var name=(byId('sourceName').value||'Nguồn của tôi').trim(),address=url(byId('sourceUrl').value),raw=byId('sourceText').value.trim();if(!raw&&!address){notify('Nhập URL hoặc dán M3U.');return;}
+try{byId('saveSource').disabled=true;byId('saveSource').textContent='Đang tải...';
+if(!raw){if(/\.m3u8(?:[?#]|$)/i.test(address)){raw='#EXTM3U\n#EXTINF:-1,'+name+'\n'+address;}else{var resp=await fetch(address,{cache:'no-store'});if(!resp.ok)throw Error('HTTP '+resp.status);raw=await resp.text();}}
+var list=parse(raw,name);if(!list.length)throw Error('M3U không chứa URL hợp lệ');if(state.sources.length>=15)throw Error('Đã đạt 15 nguồn');state.sources.push({name:name,channels:list});save();search='';group='Tất cả';section='all';selected=null;draw();closeDialog();notify('Đã thêm '+list.length+' kênh.');}
+catch(e){notify('Lỗi nguồn: '+String(e.message||e)+' (kiểm tra URL/CORS).');}finally{byId('saveSource').disabled=false;byId('saveSource').textContent='Lưu và tải';}}
+function play(c){if(!c)return;playing=c;state.recent=[c.id].concat(state.recent.filter(function(id){return id!==c.id;})).slice(0,60);save();byId('player').hidden=false;byId('playingName').textContent=c.name;
+var video=byId('video');try{video.pause();video.removeAttribute('src');video.load();video.src=c.url;byId('playerStatus').textContent='Đang mở '+c.name+'...';video.play().then(function(){byId('playerStatus').textContent='';}).catch(function(){byId('playerStatus').textContent='Không tự phát được. Nhấn OK thử lại; codec hoặc CORS có thể không được hỗ trợ.';});}catch(e){byId('playerStatus').textContent=String(e.message||e);}}
+function closePlayer(){var v=byId('video');try{v.pause();v.removeAttribute('src');v.load();}catch(e){}byId('player').hidden=true;playing=null;draw();}
+function changeChannel(offset){var i=items.findIndex(function(c){return playing&&c.id===playing.id;});if(i>=0)play(items[(i+offset+items.length)%items.length]);}
+function move(key){var nodes=Array.from(document.querySelectorAll('button:not([disabled]),input:not([disabled]),textarea:not([disabled])')).filter(function(e){return e.getClientRects().length>0;});
+var active=document.activeElement,r=active&&active.getBoundingClientRect();if(!r||nodes.indexOf(active)<0){if(nodes.length)nodes[0].focus();return;}var x=r.left+r.width/2,y=r.top+r.height/2,best=null,min=Infinity;
+nodes.forEach(function(el){if(el===active)return;var q=el.getBoundingClientRect(),dx=q.left+q.width/2-x,dy=q.top+q.height/2-y;if(key==='ArrowLeft'&&dx>=0||key==='ArrowRight'&&dx<=0||key==='ArrowUp'&&dy>=0||key==='ArrowDown'&&dy<=0)return;var s=(key==='ArrowLeft'||key==='ArrowRight')?Math.abs(dx)+Math.abs(dy)*2.3:Math.abs(dy)+Math.abs(dx)*2.3;if(s<min){min=s;best=el;}});if(best){best.focus();best.scrollIntoView({block:'nearest',inline:'nearest'});}}
+function keyHandler(e){var k=e.key,c=e.keyCode;if(!byId('modal').hidden){if(c===10009||k==='Escape'){e.preventDefault();closeDialog();}else if(k.indexOf('Arrow')===0&&document.activeElement.tagName!=='INPUT'&&document.activeElement.tagName!=='TEXTAREA'){e.preventDefault();move(k);}return;}
+if(!byId('player').hidden){if(c===10009||k==='Escape'){e.preventDefault();closePlayer();return;}if(c===427||k==='ChannelUp'){e.preventDefault();changeChannel(1);return;}if(c===428||k==='ChannelDown'){e.preventDefault();changeChannel(-1);return;}if(k==='Enter'||c===415||c===10252){e.preventDefault();var v=byId('video');if(v.paused)v.play().catch(function(){notify('Luồng không hỗ trợ phát trên TV.');});else v.pause();}return;}
+if(k.indexOf('Arrow')===0){e.preventDefault();move(k);}else if(c===10009||k==='Escape'){e.preventDefault();section='all';group='Tất cả';draw();}}
+document.querySelectorAll('[data-nav]').forEach(function(b){b.onclick=function(){var which=b.dataset.nav;if(which==='sources'){openDialog('source');return;}if(which==='help'){notify('Điều khiển bằng ↑↓←→, OK, Back, CH±. Thêm M3U bằng + Nguồn.');return;}section=which;group='Tất cả';showLimit=160;draw();};});
+byId('addBtn').onclick=function(){openDialog('source');};byId('emptyAdd').onclick=byId('addBtn').onclick;
+byId('searchBtn').onclick=function(){byId('searchInput').value=search;openDialog('search');};
+byId('cancelSource').onclick=closeDialog;byId('cancelSearch').onclick=closeDialog;byId('saveSource').onclick=function(){void addSource();};
+byId('applySearch').onclick=function(){search=byId('searchInput').value.trim().toLowerCase();showLimit=160;closeDialog();draw();};
+byId('themeBtn').onclick=function(){var themes=['dark','light','amoled'];state.theme=themes[(themes.indexOf(state.theme)+1)%3];document.body.dataset.theme=state.theme;save();notify('Giao diện: '+state.theme);};
+byId('watchBtn').onclick=function(){play(selected);};byId('favBtn').onclick=function(){if(!selected)return;if(state.favorites[selected.id])delete state.favorites[selected.id];else state.favorites[selected.id]=true;save();draw();};
+byId('more').onclick=function(){showLimit+=160;draw();};byId('sampleBtn').onclick=function(){if(!state.sources.some(function(s){return s.name==='Thử nghiệm';})){state.sources.push({name:'Thử nghiệm',channels:parse('#EXTM3U\n#EXTINF:-1,Mux Test HLS\nhttps://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8','Thử nghiệm')});save();}draw();notify('Đã thêm luồng thử nghiệm HLS.');};
+byId('exitPlayer').onclick=closePlayer;byId('video').onerror=function(){byId('playerStatus').textContent='TV không phát được luồng (định dạng, codec, CORS hoặc HTTPS).';};
+window.addEventListener('keydown',keyHandler);
+document.body.dataset.theme=state.theme;draw();setTimeout(function(){document.querySelector('[data-nav=all]').focus();},50);
+function clock(){var d=new Date();byId('clock').textContent=String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');}clock();setInterval(clock,30000);
+})();
+</script></body></html>
