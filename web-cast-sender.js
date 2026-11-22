@@ -20,6 +20,7 @@
  const setStatus=(message,error=false)=>{
   const node=el('castStatus');if(!node)return;
   node.textContent=message;node.classList.toggle('cast-error',!!error);
+  root.OpenIPTVWebCastV2?.setCastFeedback?.(message,!!error);
  };
  const currentSession=()=>context?.getCurrentSession?.()||null;
  const getName=session=>session?.getCastDevice?.()?.friendlyName||'TV đã kết nối';
@@ -45,6 +46,7 @@
   if(stop)stop.disabled=!session||busy;
   selectDevice();
   if(session)active=true;
+  root.OpenIPTVWebCastV2?.syncCast?.();
  }
  function initCast(){
   if(initialized||!root.cast?.framework?.CastContext||!root.chrome?.cast?.media)return false;
@@ -125,6 +127,7 @@
  }
  function open(ch,url){
   channel=ch;source=url||ch?.url||'';
+  if(root.OpenIPTVWebCastV2?.open){root.OpenIPTVWebCastV2.open({channel:ch,source});return;}
   renderBrowser();
  }
  function castPicker(){
@@ -194,7 +197,12 @@
   catch{input.focus?.();input.select?.();setStatus('Đã chọn URL; hãy sao chép thủ công.');}
  }
  function stopOnLocalStop(){if(!active)return;void stop();}
- function onChannelChanged(next){if(!active||!channel||next?.id===channel.id)return;stopOnLocalStop();}
+ function onChannelChanged(next){
+  if(!next||next.id===channel?.id)return;
+  channel=next;source=next.url||source;
+  root.OpenIPTVWebCastV2?.onChannelChanged?.(next,source);
+  if(active)stopOnLocalStop();
+ }
  function initControls(){
   el('castScan')?.addEventListener('click',scan);
   el('castPlay')?.addEventListener('click',()=>{void play();});
@@ -205,5 +213,6 @@
  }
  initControls();
  loadSdk();
- root.OpenIPTVWebCast=Object.freeze({open,scan,play,stop,stopOnLocalStop,onChannelChanged,airplayPicker,validSource,mediaType});
+ const getState=()=>({initialized,connected:!!currentSession(),name:currentSession()?getName(currentSession()):'',active});
+ root.OpenIPTVWebCast=Object.freeze({open,scan,play,stop,stopOnLocalStop,onChannelChanged,airplayPicker,validSource,mediaType,getState});
 })(typeof window==='undefined'?null:window);
