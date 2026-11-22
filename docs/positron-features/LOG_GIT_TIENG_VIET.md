@@ -2,14 +2,23 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
-## P5.1.172 — tìm kênh thiếu logo trực tiếp trong danh sách TV
+## P5.1.173 — trở lại đúng trang kiểm kê sau khi tìm kênh
 
-**Ứng dụng:** 4.23.257 · **Trạng thái:** Chưa có bản phát hành
+**Ứng dụng:** 4.23.258 · **Trạng thái:** Chưa có bản phát hành
+
+Feature priority: NEW — Ảnh Electron P5.1.172 cho thấy bấm Tìm sẽ đưa đúng một kênh lên TV nhưng người dùng phải tìm lại vị trí kiểm kê; bổ sung nút ↩ Kiểm kê · trang N xuất hiện cạnh ô tìm TV chỉ sau thao tác định vị, quay về đúng trang kênh thiếu logo đang xử lý mà không mất bộ lọc. User action: Từ Thư viện → Kênh thiếu logo → sang trang 2 → bấm Tìm một kênh → chọn ↩ Kiểm kê · trang 2 ngay dưới ô tìm để quay lại đúng trang thứ hai và tiếp tục rà soát.
+
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/1dd6895f7bde24deb17a19c4b3a4b86de072ce55)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+
+## P5.1.172 — Tìm đúng kênh thiếu logo trong danh sách TV / Electron 4.23.257
+
+**Ứng dụng:** 4.23.257 · **Trạng thái:** Đã phát hành
 
 Feature priority: NEW — Ảnh Electron thật P5.1.171 cho thấy trang kiểm kê hiển thị kênh 11–20 trong khi danh sách TV bên trái còn kênh 1–10, thiếu cầu nối tìm đúng kênh để người dùng sửa hoặc xem thông tin. Thêm nút Tìm cho mỗi hàng, đặt ô tìm trong TV theo đúng tên kênh và mở bộ lọc Tất cả. User action: Mở Thư viện → Kênh thiếu logo → chuyển tới trang cần kiểm tra → bấm Tìm cạnh kênh muốn định vị; panel đóng, tab TV hiện danh sách đã lọc theo tên, chỉ phát khi người dùng chủ động bấm kênh.
 
 [Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/511b1331a809f62bd39c47abfbfb6048e3c27f19)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.257-p5.1.172)
 
 ## P5.1.171 — Phạm vi kênh thực đang xem / Electron 4.23.256
 
