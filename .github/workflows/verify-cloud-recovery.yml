@@ -1,0 +1,43 @@
+name: Verify Cloud Recovery (no release tags)
+on:
+  push:
+    branches:
+      - experiment/rust-tauri-v2
+      - Positron
+      - experiment/mobile-capacitor-4211
+      - tizenbrew
+    paths:
+      - 'renderer/cloud-portable.js'
+      - 'experiments/mobile-capacitor/public/cloud-portable.js'
+      - 'tests/cloud-portable-recovery.test.cjs'
+      - 'experiments/mobile-capacitor/tests/cloud-portable-recovery.test.cjs'
+      - 'cloud-sync.js'
+      - 'cloud-recovery-storage.js'
+      - 'tizenbrew/index.html'
+      - 'tests/tizen-cloud-recovery.test.cjs'
+      - '.github/workflows/verify-cloud-recovery.yml'
+  workflow_dispatch:
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify cloud recovery without publishing a release
+        shell: bash
+        run: |
+          set -euo pipefail
+          found=0
+          for file in tests/cloud-portable-recovery.test.cjs experiments/mobile-capacitor/tests/cloud-portable-recovery.test.cjs tests/tizen-cloud-recovery.test.cjs; do
+            if [ -f "$file" ]; then
+              echo "Checking $file"
+              node --test "$file"
+              found=$((found+1))
+            fi
+          done
+          if [ "$found" -eq 0 ]; then
+            echo "No cloud recovery test found"
+            exit 1
+          fi
