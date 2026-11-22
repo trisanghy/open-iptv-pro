@@ -129,7 +129,7 @@ test('signed-in account hides guest login copy and prevents restore button overf
  assert.match(script,/card\.dataset\.hasMigration=hasMigration\?'true':'false'/);
  assert.match(script,/migrationRestore\.textContent='Khôi phục dữ liệu cũ'/);
  assert.match(html,/id="cloudPrivacyNote"/);
- assert.match(html,/cloud-sync\.js\?v=ios-visual-caret-20261121a/);
+ assert.match(html,/cloud-sync\.js\?v=cloud-idb-recovery-20261122a/);
  assert.match(source,/#cloudSyncCard\[data-auth-state="signed-in"\] > \.cloud-sync-actions/);
  assert.match(source,/grid-template-columns:repeat\(2,minmax\(0,1fr\)\)/);
  assert.match(source,/white-space:normal!important/);
@@ -207,7 +207,7 @@ test('server inventory reads confirmed payload and guards against mistaken local
  assert.match(script,/uid!==originalId/);
  assert.match(source,/#cloudSyncCard \.cloud-server-stats/);
  assert.match(source,/@media\(max-width:550px\)/);
- assert.match(html,/cloud-sync\.js\?v=ios-visual-caret-20261121a/);
+ assert.match(html,/cloud-sync\.js\?v=cloud-idb-recovery-20261122a/);
  assert.match(html,/cloud-core\.js\?v=exclude-images-20261120b/);
  assert.match(builder,/server_stats_html/);
  assert.match(builder,/id="cloudServerChannelCount"/);
