@@ -2,14 +2,23 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
-## P5.1.179 — tìm kênh chưa yêu thích theo tên hoặc nhóm
+## P5.1.180 — lưu nhiều kênh gợi ý cùng lúc
 
-**Ứng dụng:** 4.23.264 · **Trạng thái:** Chưa có bản phát hành
+**Ứng dụng:** 4.23.265 · **Trạng thái:** Chưa có bản phát hành
+
+Feature priority: NEW — Ảnh Electron thật P5.1.179 cho thấy tìm ra kênh gợi ý dễ hơn nhưng người xem vẫn phải nhấn ☆ nhiều lần để lưu một nhóm sáu kênh. Thêm thao tác Lưu cả N kênh chỉ lưu danh sách gợi ý hiện tại khi có nhấn chủ động, không sửa playlist hoặc tự phát. User action: Mở Yêu thích có ít nhất một kênh → xem nhóm gợi ý hoặc lọc theo tên/nhóm → bấm Lưu cả N kênh để đánh dấu yêu thích toàn bộ danh sách N kênh đang hiển thị.
+
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/7324378988794dfed8c96fc16bdbd3bad9083b94)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+
+## P5.1.179 — Tìm trực tiếp trong 559 kênh gợi ý / Electron 4.23.264
+
+**Ứng dụng:** 4.23.264 · **Trạng thái:** Đã phát hành
 
 Feature priority: NEW — Ảnh Electron thật P5.1.178 cho thấy Gợi ý khác đã duyệt sáu kênh mỗi lần nhưng không có cách tìm tên hoặc nhóm khi 559 kênh chưa sao. Bổ sung bộ tìm riêng ngay trong khu vực gợi ý, hỗ trợ tiếng Việt không dấu, không ảnh hưởng bộ lọc của Favorites đã lưu. User action: Mở Yêu thích có ít nhất một kênh → gõ tên hoặc nhóm trong ô Tìm kênh để thêm → chọn ☆ để lưu hoặc xóa từ khóa để xem các nhóm kênh tiếp.
 
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/2dc261e3279bb5e434704bf84960ce7607f37650)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/f6f2736a5f91cc3904ffc2f692439e803440529f)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.264-p5.1.179)
 
 ## P5.1.178 — Gợi ý khác để duyệt thêm kênh Yêu thích / Electron 4.23.263
 
