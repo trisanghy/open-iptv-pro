@@ -1585,4 +1585,5 @@ P5.1.81 follow-up: real Electron capture found nav overflow; replace flexible no
 - Feature priority: NEW — Giữ nguyên kênh và giờ bắt đầu, cho phép gia hạn mốc kết thúc thêm 15 phút khi chương trình thể thao hoặc trực tiếp kéo dài.
 - User action: Vào Lịch phát sóng → Hẹn giờ ghi hình, chọn thời gian bắt đầu/kết thúc hợp lệ, nhấn “Gia hạn +15 phút”; có cả trên mẫu ghi nhanh từ TV.
 - Chỉ điều chỉnh giờ kết thúc của biểu mẫu, không tự đặt lịch, không tự phát kênh, không thay playlist hay lịch ghi đã lưu. Không cho gia hạn vượt 8 giờ; trường không hợp lệ được cảnh báo.
+- Electron screenshot: positron-p51202-dvr-extend-after-1920x1080-real.png
 - Real Electron QA: positron-p51202-dvr-extend-before-1920x1080-real.png và positron-p51202-dvr-extend-after-1920x1080-real.png (chờ CI và mở ảnh thực).
