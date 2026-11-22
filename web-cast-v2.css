@@ -283,3 +283,14 @@ html[data-iptv-device="mobile"] body #page-tv #castBtn[data-cast-connection]:not
 .iptv-tv-body #tvClearHistory:not(:disabled):focus-visible{outline:3px solid #29d776;outline-offset:3px}
 
 @media(prefers-reduced-motion:reduce){.iptv-tv-body #tvPairPin{transition:none}}
+/* Keyboard / TV remote browsing: make focused history tiles unmistakable. */
+.iptv-tv-body .tv-history-card:focus,
+.iptv-tv-body .tv-history-card[data-keyboard-selected="true"]{
+ outline:3px solid #29d776!important;outline-offset:2px;
+ border-color:#29d776!important;
+ background:color-mix(in srgb,#29d776 14%,var(--tv-card))!important;
+}
+.iptv-tv-body .tv-history-card:focus .tv-history-icon,
+.iptv-tv-body .tv-history-card[data-keyboard-selected="true"] .tv-history-icon{
+ background:#29d776;color:#082015
+}
