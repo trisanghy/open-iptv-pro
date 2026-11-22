@@ -1,3 +1,8 @@
+# Vòng ứng viên P5.1.221 — Form EPG lệch nhãn (CANDIDATE)
+- Baseline: ảnh Electron P5.1.219 EPG desktop 1920×1080 đã MỞ, nhìn thấy nhãn lịch ghi xô lệch do căn đáy khi các nút giờ nhanh làm label cao thấp khác nhau.
+- Fix: CSS top-align chỉ Positron desktop, giữ 720px một cột, giữ trình đặt lịch native.
+- Yêu cầu vòng: test Node, Electron screenshots trước/sau (xem ảnh SAU), geometry 1920px, overflow 720px, CI và phát hành bất biến. Chưa tính hoàn thành nếu còn thiếu.
+
 # Positron — New 20-round issue register
 
 ## Vòng 03/20 — P5.1.204 / Electron 4.23.289 — CANDIDATE

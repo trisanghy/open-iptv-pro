@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.305",
-  "description": "Positron P5.1.220: xem mở rộng 50 kênh trong lịch sử khám phá",
+  "version": "4.23.306",
+  "description": "Positron P5.1.221: sửa lệch nhãn form hẹn giờ ghi hình EPG",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

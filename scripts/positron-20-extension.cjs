@@ -6809,8 +6809,68 @@ async function runTwenty(page){
  });
  await page.setViewportSize({width:1360,height:820});
 
+
+ // P221: run real Electron EPG before/after: reproduce legacy bottom alignment,
+ // then remove temporary inline styles so the shipped top-alignment is reviewed.
+ await page.setViewportSize({width:1920,height:1080});
+ await page.evaluate(()=>window.IPTVState.setPage('epg'));
+ await page.waitForTimeout(110);
+ const epgStart221=await page.evaluate(()=>{
+  const f=document.getElementById('dvrForm'),ls=[...f.querySelectorAll(':scope > label')];
+  return {visible:!!f.getClientRects().length,fourLabels:ls.length===4,
+   version:document.title.includes('4.23.306')};
+ });
+ for(const [k,v] of Object.entries(epgStart221))
+  assert.equal(v,true,'P221 baseline EPG '+k+': '+JSON.stringify(epgStart221));
+ await page.evaluate(()=>{
+  const f=document.getElementById('dvrForm');
+  f.style.setProperty('align-items','end','important');
+  f.querySelectorAll(':scope > label').forEach(n=>n.style.setProperty('align-self','auto','important'));
+  const b=document.getElementById('dvrAdd');
+  b.style.setProperty('align-self','end','important');
+  b.style.setProperty('margin-top','0','important');
+ });
+ const before221=await page.screenshot({path:path.join(out,'positron-p51221-dvr-form-before-1920x1080-real.png'),animations:'disabled'});
+ const oldStagger221=await page.evaluate(()=>{
+  const a=[...document.querySelectorAll('#dvrForm > label')].map(n=>n.getBoundingClientRect().top);
+  return Math.round(Math.max(...a)-Math.min(...a));
+ });
+ await page.evaluate(()=>{
+  const f=document.getElementById('dvrForm');
+  f.style.removeProperty('align-items');
+  f.querySelectorAll(':scope > label').forEach(n=>n.style.removeProperty('align-self'));
+  const b=document.getElementById('dvrAdd');
+  b.style.removeProperty('align-self');b.style.removeProperty('margin-top');
+ });
+ const epgAligned221=await page.evaluate(()=>{
+  const f=document.getElementById('dvrForm'),ls=[...f.querySelectorAll(':scope > label')];
+  const tops=ls.map(n=>n.getBoundingClientRect().top),b=document.getElementById('dvrAdd');
+  const inputTop=ls[0].querySelector('select').getBoundingClientRect().top;
+  return {headingsAligned:Math.max(...tops)-Math.min(...tops)<=2,
+   alignStart:getComputedStyle(f).alignItems==='start',
+   submitAtInput:Math.abs(b.getBoundingClientRect().top-inputTop)<=8,
+   labelsIntact:ls.map(n=>n.firstChild.textContent.trim()).join('|')==='Kênh|Tên chương trình|Bắt đầu|Kết thúc',
+   noOverflow:document.documentElement.scrollWidth<=innerWidth+1};
+ });
+ for(const [k,v] of Object.entries(epgAligned221))
+  assert.equal(v,true,'P221 aligned DVR '+k+': '+JSON.stringify(epgAligned221));
+ const after221=await page.screenshot({path:path.join(out,'positron-p51221-dvr-form-after-1920x1080-real.png'),animations:'disabled'});
+ assert.deepEqual([after221.readUInt32BE(16),after221.readUInt32BE(20)],[1920,1080]);
+ assert.equal(before221.equals(after221),false,'P221 EPG screenshot reflects alignment fix');
+ assert.ok(oldStagger221>=8,'P221 reproduce old stagger '+oldStagger221+'px');
+ await page.setViewportSize({width:720,height:820});
+ const compact221=await page.evaluate(()=>({
+  noOverflow:document.documentElement.scrollWidth<=innerWidth+1,
+  inputsIntact:['dvrChannel','dvrTitle','dvrStart','dvrEnd','dvrAdd'].every(x=>!!document.getElementById(x)),
+  singleColumn:getComputedStyle(document.getElementById('dvrForm')).gridTemplateColumns.split(' ').length===1
+ }));
+ for(const [k,v] of Object.entries(compact221))
+  assert.equal(v,true,'P221 narrow DVR '+k+': '+JSON.stringify(compact221));
+ await page.setViewportSize({width:1360,height:820});
+ await page.evaluate(()=>window.IPTVState.setPage('tv'));
+
  const report={type:'Positron P5 twenty distinct desktop screenshot cases',realElectron:true,syntheticChannels:false,
-  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,desktop16x9Screenshots,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA,chooserQa,toastLayoutQA,nativeToastQA,compactIdleQA,channelChipRailQA,advancedFilterQA,readableCardsQA,keyboardTabQA,favoriteEmptyQA,duplicateEmptyQA,categoryFilterQA,categoryFixtureQA,compactSingleQA,directFavoriteQA,favoriteCountQA,compactToastStackQA,toastDismissQA,toastFocusReturnQA,toastDockQA,wheelQA,pinnedAllQA,pinnedMaskQA,categoryKeyQA,dropdownChipQA,pinnedRightMaskQA,pinnedBorderMaskQA,asciiDSearchQA,emptySearchActionQA,readableCardTitleQA,favoriteSvgQA,keyboardFavoriteQA,multiTermSearchQA,keyboardSearchQA,arrowNavigationQA,pageNavigationQA,favoriteSortQA,onAirFilterQA,programmeSearchQA,upcomingProgrammeQA,soonProgrammeQA,earliestEpgSortQA,timeWindowQA,scheduleProgressQA:scheduleProgressQA,nativeReminderQA,cancelReminderQA,reminderLeadQA,toastHistoryQA,notificationArchiveQA,alertFilterQA,noticeSearchQA,quietModeQA,dismissToastQA,libraryPulseQA,groupDistributionQA,logoMissingQA,missingSearchQA,missingGroupQA,missingSortQA,missingJumpQA,missingCsvQA,duplicateQA,duplicateSearchQA,duplicateCsvQA,duplicateScopeQA,missingSizeQA,missingPagerQA,missingEpgFilterQA,missingResetQA,missingRangeQA,missingLocateQA,libraryReturnQA,favoriteActionQA,quickFavoriteQA,favoriteMoreQA,favoriteSearchQA,favoriteRotateQA,favoriteSuggestSearchQA,favoriteBulkQA,favoriteLayoutQA,favoriteNameSortQA,searchAfterSortQA,restoredSortQA,favoriteSuggestion12QA,batchFavorite12QA,restoreSixQA,favoriteRegionalQA,favoriteGroupSearchQA,resetGroupQA,favoriteQuickGroupQA,favoriteQuickResetQA,favoritePageLastQA,favoritePageNavigationQA,favoriteJumpSevenQA,favoriteJumpClampQA,favoriteWideQA,favoriteSuggestionSortQA,tvReselectTopQA,dvrDurationPresetQA,dvrDurationLiveQA,dvrPresetSelectionQA,dvrQuickStartQA,dvrSuggestedTitleQA,dvrReviewQA,dvrCopyQA,dvrTomorrowQA,dvrTitleSyncQA,dvrReplaceConfirmQA,dvrUndoQA,dvrExtendQA,tvToastSafeQA,otherPage203,randomDiscoveryQA,randomFollowupQA,compact205,randomCycleQA,compact206,randomResetQA,compact207,focusReturnQA,compact208,discoveryProgressQA,compact209,sourceChangeQA,compact210,randomBackQA,randomBackActionQA,compact211,forwardHistoryQA,forwardActionQA,compact212,historyOpenQA,historyPickQA,compact213,historyKeyboardQA,compact214,historySearchQA,searchEnterQA,missing215,compact215,first216,typed216,down216,up216,close216,compact216,favoriteStart217,favoriteQA217,compact217,filterStart218,filterQA218,empty218,reset218,compact218,sortStart219,sortAZ219,sortZA219,sortRestore219,compact219,expandStart220,expandQA220,collapseQA220,compact220};
+  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,desktop16x9Screenshots,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA,chooserQa,toastLayoutQA,nativeToastQA,compactIdleQA,channelChipRailQA,advancedFilterQA,readableCardsQA,keyboardTabQA,favoriteEmptyQA,duplicateEmptyQA,categoryFilterQA,categoryFixtureQA,compactSingleQA,directFavoriteQA,favoriteCountQA,compactToastStackQA,toastDismissQA,toastFocusReturnQA,toastDockQA,wheelQA,pinnedAllQA,pinnedMaskQA,categoryKeyQA,dropdownChipQA,pinnedRightMaskQA,pinnedBorderMaskQA,asciiDSearchQA,emptySearchActionQA,readableCardTitleQA,favoriteSvgQA,keyboardFavoriteQA,multiTermSearchQA,keyboardSearchQA,arrowNavigationQA,pageNavigationQA,favoriteSortQA,onAirFilterQA,programmeSearchQA,upcomingProgrammeQA,soonProgrammeQA,earliestEpgSortQA,timeWindowQA,scheduleProgressQA:scheduleProgressQA,nativeReminderQA,cancelReminderQA,reminderLeadQA,toastHistoryQA,notificationArchiveQA,alertFilterQA,noticeSearchQA,quietModeQA,dismissToastQA,libraryPulseQA,groupDistributionQA,logoMissingQA,missingSearchQA,missingGroupQA,missingSortQA,missingJumpQA,missingCsvQA,duplicateQA,duplicateSearchQA,duplicateCsvQA,duplicateScopeQA,missingSizeQA,missingPagerQA,missingEpgFilterQA,missingResetQA,missingRangeQA,missingLocateQA,libraryReturnQA,favoriteActionQA,quickFavoriteQA,favoriteMoreQA,favoriteSearchQA,favoriteRotateQA,favoriteSuggestSearchQA,favoriteBulkQA,favoriteLayoutQA,favoriteNameSortQA,searchAfterSortQA,restoredSortQA,favoriteSuggestion12QA,batchFavorite12QA,restoreSixQA,favoriteRegionalQA,favoriteGroupSearchQA,resetGroupQA,favoriteQuickGroupQA,favoriteQuickResetQA,favoritePageLastQA,favoritePageNavigationQA,favoriteJumpSevenQA,favoriteJumpClampQA,favoriteWideQA,favoriteSuggestionSortQA,tvReselectTopQA,dvrDurationPresetQA,dvrDurationLiveQA,dvrPresetSelectionQA,dvrQuickStartQA,dvrSuggestedTitleQA,dvrReviewQA,dvrCopyQA,dvrTomorrowQA,dvrTitleSyncQA,dvrReplaceConfirmQA,dvrUndoQA,dvrExtendQA,tvToastSafeQA,otherPage203,randomDiscoveryQA,randomFollowupQA,compact205,randomCycleQA,compact206,randomResetQA,compact207,focusReturnQA,compact208,discoveryProgressQA,compact209,sourceChangeQA,compact210,randomBackQA,randomBackActionQA,compact211,forwardHistoryQA,forwardActionQA,compact212,historyOpenQA,historyPickQA,compact213,historyKeyboardQA,compact214,historySearchQA,searchEnterQA,missing215,compact215,first216,typed216,down216,up216,close216,compact216,favoriteStart217,favoriteQA217,compact217,filterStart218,filterQA218,empty218,reset218,compact218,sortStart219,sortAZ219,sortZA219,sortRestore219,compact219,expandStart220,expandQA220,collapseQA220,compact220,epgStart221,oldStagger221,epgAligned221,compact221};
  fs.writeFileSync(path.resolve('positron-evidence','audit-p5-20-rounds.json'),JSON.stringify(report,null,2));
  return report;
 }

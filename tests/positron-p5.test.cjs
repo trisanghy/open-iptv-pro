@@ -2317,7 +2317,7 @@ test('P5.1.207 accessible reset clears only random session history',()=>{
   'positron-p51207-random-reset-after-1920x1080-real.png'])
   assert.ok(qa.includes(t),'Missing genuine reset QA '+t);
  const pkg=JSON.parse(read('package.json'));
- assert.ok(flow.includes('TAG=positron/v'+pkg.version+'-p5.1.220'));
+ assert.ok(flow.includes('TAG=positron/v'+pkg.version+'-p5.1.221'));
 });
 
 
@@ -2563,4 +2563,18 @@ test('P5.1.220 expands session discovery history from 10 to 50 with reversible f
   'positron-p51220-history-more-after-1920x1080-real.png','before220.equals(after220),false'])
   assert.ok(qa.includes(x),'Missing native P220 QA: '+x);
  assert.ok(flow.includes('test -s positron-evidence/p5-20-rounds/positron-p51220-history-more-after-1920x1080-real.png'));
+});
+
+test('P5.1.221 aligns EPG DVR labels with actual Electron screenshot regression',()=>{
+ const css=read('renderer/positron-twenty.css'),qa=read('scripts/positron-20-extension.cjs');
+ const flow=read('.github/workflows/positron-lab.yml'),pkg=JSON.parse(read('package.json'));
+ assert.equal(pkg.version,'4.23.306');
+ for(const x of ['P5.1.221: EPG recording form','#page-epg #dvrForm.dvr-form>label','align-self:start!important'])
+  assert.ok(css.includes(x),'P221 CSS missing '+x);
+ for(const x of ['epgStart221','epgAligned221','oldStagger221','compact221','headingsAligned',
+  'submitAtInput','noOverflow','positron-p51221-dvr-form-before-1920x1080-real.png',
+  'positron-p51221-dvr-form-after-1920x1080-real.png'])
+  assert.ok(qa.includes(x),'P221 native screenshot QA missing '+x);
+ assert.ok(flow.includes('test -s positron-evidence/p5-20-rounds/positron-p51221-dvr-form-after-1920x1080-real.png'));
+ assert.ok(flow.includes('TAG=positron/v'+pkg.version+'-p5.1.221'));
 });

@@ -1172,3 +1172,14 @@ html[data-positron="true"] #poRandomHistoryMore[hidden]{display:none!important}
 html[data-positron="true"] #poRandomHistoryMore:focus-visible{
  outline:2px solid var(--po-accent,#79dfc6);outline-offset:1px;
 }
+
+/* P5.1.221: EPG recording form. Quick-hour controls inside date labels
+   make their heights unequal. End alignment staggered Kênh/Tên/Bắt đầu/Kết thúc.
+   Keep all labels on one top line and Submit on the native input line. */
+@media(min-width:1051px){
+ html[data-positron="true"] #page-epg #dvrForm.dvr-form{align-items:start!important}
+ html[data-positron="true"] #page-epg #dvrForm.dvr-form>label{align-self:start!important}
+ html[data-positron="true"] #page-epg #dvrForm.dvr-form>#dvrAdd{
+  align-self:start!important;margin-top:22px!important
+ }
+}

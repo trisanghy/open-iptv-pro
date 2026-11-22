@@ -1,5 +1,12 @@
 # Positron P5 Changelog
 
+## P5.1.221 — Căn thẳng các nhãn EPG DVR / Electron 4.23.306
+- Input: ảnh Electron thật P5.1.219 1920×1080 có các nhãn Kênh, Tên chương trình, Bắt đầu và Kết thúc lệch dọc. Root cause: .dvr-form căn cuối với label chứa hàng nút giờ khác chiều cao.
+- Sửa riêng Positron desktop >1050px: các nhãn căn cạnh trên, nút Đặt lịch ghi giữ cùng hàng input. Không sửa logic DVR, danh sách M3U, Favorites, stream.
+- QA: ảnh Electron thực before (reproduced legacy bottom alignment) và after 1920×1080; geometry assert và viewport 720px.
+- Trạng thái: CANDIDATE cho tới khi mở ảnh sau, Node tests, CI 6/6, release/tag mới được kiểm chứng.
+
+
 ## P5.1.220 — Mở rộng lịch sử khám phá tối đa 50 kênh / Electron 4.23.305
 - Feature priority: NEW — Mã và ảnh Electron P5.1.219 cho thấy lịch sử có thể chứa 50 lần khám phá nhưng popup chỉ hiện 10 kênh gần nhất, khiến các kênh cũ không thể truy cập; thêm nút mở rộng/thu gọn.
 - Electron screenshot: positron-p51220-history-more-after-1920x1080-real.png
