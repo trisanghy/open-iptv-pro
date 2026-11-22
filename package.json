@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.273",
-  "description": "Positron P5.1.188: tận dụng màn hình desktop rộng cho gợi ý Yêu thích",
+  "version": "4.23.274",
+  "description": "Positron P5.1.189: thêm sắp xếp gợi ý Yêu thích theo tên hoặc nguồn",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

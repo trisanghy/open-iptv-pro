@@ -1,5 +1,15 @@
 # Positron P5 Changelog
 
+## P5.1.189 — Sắp xếp gợi ý Yêu thích A–Z / Z–A / theo nguồn / Electron 4.23.274
+- Feature priority: NEW — Ảnh Electron thật P5.1.188 đã dàn đủ sáu cột gợi ý nhưng chỉ có tìm kiếm và lọc nhóm, chưa có cách sắp xếp các kênh chưa yêu thích khi nguồn chứa hàng trăm kênh. Thêm tùy chọn hiển thị Theo nguồn, Tên A–Z, Tên Z–A theo thứ tự tiếng Việt.
+- Lựa chọn chỉ sắp xếp mảng gợi ý đã lọc trước khi phân trang; giữ nguyên thứ tự nguồn M3U, Favorites đã lưu, trạng thái kênh hiện tại và nút lưu hàng loạt, không tự phát video.
+- Electron screenshot: positron-p51189-favorite-sort-after-1920x1080-real.png
+- Before screenshot: positron-p51189-favorite-sort-before-1920x1080-real.png
+- User action: Trong Yêu thích, dưới mục Gợi ý thêm vào Yêu thích chọn Thứ tự rồi chọn Theo nguồn, Tên A–Z hoặc Tên Z–A; danh sách chuyển ngay, trở về trang đầu và vẫn giữ nhóm, tìm kiếm, số kênh mỗi trang.
+- QA: 100 kênh Regional từ dữ liệu QA, 12/thẻ, Z–A bắt đầu kênh 120 kết thúc 109; A–Z và Theo nguồn khôi phục 021–032, 20 Favorites giữ nguyên, không autoplay hoặc tràn ngang, chụp và soát ảnh Electron thật 1920×1080.
+- Status: CANDIDATE cho đến khi Node, screenshot review, CI, build và GitHub Release được xác minh.
+
+
 ## P5.1.188 — Gợi ý Yêu thích đủ rộng trên desktop / Electron 4.23.273
 - Feature priority: NEW — Thêm chế độ dàn gợi ý toàn chiều rộng desktop giúp duyệt kênh nhanh hơn, dựa trên ảnh Electron P5.1.187 thật ở 1920×1080 cho thấy phần gợi ý chỉ chiếm 1180px, để thừa vùng trống rộng bên phải, trong khi danh sách Yêu thích phía trên dùng đủ chiều ngang.
 - Với desktop từ 1600px, mở rộng riêng khối gợi ý theo bề ngang vùng nội dung, tự bố trí 6 cột dễ đọc. Giữ 4 cột ở laptop, 2/1 cột ở máy hẹp; không đụng dữ liệu M3U/Favorites, phát video hoặc phân trang.

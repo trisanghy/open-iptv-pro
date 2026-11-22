@@ -785,3 +785,19 @@ html[data-positron="true"] #page-fav label[for="positronFavoriteJump"][hidden]{d
   grid-template-columns:repeat(6,minmax(0,1fr));
  }
 }
+
+/* P5.1.189: source-order/locale-name sort for unsaved Favorites suggestions. */
+html[data-positron="true"] #page-fav #positronFavoriteMoreSort{
+ flex:0 1 185px;min-width:160px;max-width:225px;min-height:36px;
+ padding:7px 10px;border:1px solid var(--po-border,#324f59);
+ border-radius:8px;background:var(--po-input,#152933);
+ color:var(--po-text,#eaf7f7);font-size:12px;cursor:pointer;
+}
+html[data-positron="true"] #page-fav #positronFavoriteMoreSort:focus-visible{
+ outline:2px solid var(--po-accent,#60d7c2);outline-offset:2px;
+}
+@media(max-width:650px){
+ html[data-positron="true"] #page-fav #positronFavoriteMoreSort{
+  flex:1 1 100%;max-width:none;
+ }
+}

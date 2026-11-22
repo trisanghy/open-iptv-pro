@@ -1811,7 +1811,7 @@ test('P5.1.176 gợi ý thêm kênh khi Favorites đã có ít nhất một th�
  assert.ok(js.includes("more.hidden=!populated"),'Ẩn khi danh sách trống');
  assert.ok(js.includes("channels.filter(ch=>ch&&ch.id&&!fav.has(store,ch))"), 'Chỉ gợi ý kênh chưa đánh dấu sao');
  assert.ok(js.includes('const picks=filtered.slice(moreCursor,moreCursor+morePageSize)'), 'Phân trang không lặp kênh trên trang cuối');
- assert.ok(js.includes("let moreCursor=0,moreQuery='',morePageSize=6,moreGroup='';"), 'Mặc định sáu kênh được giữ để tương thích P176');
+ assert.ok(js.includes("let moreCursor=0,moreQuery='',morePageSize=6,moreGroup='',moreSort='source';"), 'Mặc định sáu kênh được giữ để tương thích P176');
  assert.ok(js.includes("fav.toggle(current,active);state.save();state.render();state.setPage('fav')"));
  assert.ok(js.includes("new MutationObserver(syncFavoriteMore).observe(favoriteList"));
  assert.ok(css.includes('#positronFavoriteMore[hidden]{display:none!important}'));
@@ -1841,7 +1841,7 @@ test('P5.1.178 đổi nhóm kênh gợi ý không tự phát hoặc sửa nguồ
  const qa=read('scripts/positron-20-extension.cjs');
  assert.ok(js.includes('let moreCursor=0'));
  assert.ok(js.includes('moreCursor=((pageIndex+1)%pageCount)*morePageSize'), 'Chuyển sang trang kế đúng thứ tự, không lặp vòng sai');
- assert.ok(js.includes("let moreCursor=0,moreQuery='',morePageSize=6,moreGroup='';"),'Vẫn bắt đầu với 6 như bản P178');
+ assert.ok(js.includes("let moreCursor=0,moreQuery='',morePageSize=6,moreGroup='',moreSort='source';"),'Vẫn bắt đầu với 6 như bản P178');
  assert.ok(js.includes("next.setAttribute('aria-label','Xem trang gợi ý tiếp')"),'ARIA diễn giải điều hướng trang');
  assert.ok(js.includes('moreCursor=pageIndex*morePageSize'), 'Con trỏ chuẩn hóa theo trang hợp lệ');
  assert.ok(js.includes('next.hidden=pageCount<=1'), 'Ẩn điều hướng khi chỉ có một trang');
@@ -1915,7 +1915,7 @@ test('P5.1.182 sorts Favorites A-Z/Z-A without changing source records',()=>{
 test('P5.1.183 expands Favorites suggestions to 6 12 or 24 without changing the source',()=>{
  const js=read('renderer/positron-twenty.js'),css=read('renderer/positron-twenty.css');
  const qa=read('scripts/positron-20-extension.cjs');
- assert.ok(js.includes("let moreCursor=0,moreQuery='',morePageSize=6,moreGroup='';"));
+ assert.ok(js.includes("let moreCursor=0,moreQuery='',morePageSize=6,moreGroup='',moreSort='source';"));
  assert.ok(js.includes("pageSize.id='positronFavoritePageSize'"));
  assert.ok(js.includes('for(const amount of [6,12,24])'));
  assert.ok(js.includes('morePageSize=Number(pageSize.value)||6'));
@@ -1933,7 +1933,7 @@ test('P5.1.183 expands Favorites suggestions to 6 12 or 24 without changing the 
 test('P5.1.184 filters Favorites suggestions by actual source groups with accent-insensitive search',()=>{
  const js=read('renderer/positron-twenty.js'),css=read('renderer/positron-twenty.css');
  const qa=read('scripts/positron-20-extension.cjs');
- assert.ok(js.includes("let moreCursor=0,moreQuery='',morePageSize=6,moreGroup='';"));
+ assert.ok(js.includes("let moreCursor=0,moreQuery='',morePageSize=6,moreGroup='',moreSort='source';"));
  assert.ok(js.includes("groupSelect.id='positronFavoriteMoreGroup'"));
  assert.ok(js.includes("const group=String(channel.group||'Không phân nhóm')"));
  assert.ok(js.includes('groupCounts.set(group,(groupCounts.get(group)||0)+1)'), 'Every available source channel contributes to group counts');
@@ -2004,4 +2004,19 @@ test('P5.1.188 favorites suggestions fill 1920px desktop but preserve narrow lay
  assert.ok(qa.includes('favoriteWideQA'));
  assert.ok(qa.includes('desktopColumns:cols.length===6'),'P183 scenario now verifies the actual six-column responsive desktop target');
  assert.ok(qa.includes('positron-p51188-favorite-wide-after-1920x1080-real.png'));
+});
+
+test('P5.1.189 sorts unsaved Favorites suggestions by Vietnamese channel name without mutating data',()=>{
+ const js=read('renderer/positron-twenty.js');
+ const css=read('renderer/positron-twenty.css');
+ const qa=read('scripts/positron-20-extension.cjs');
+ assert.ok(js.includes("sortMore.id='positronFavoriteMoreSort'"));
+ assert.ok(js.includes("['name-asc','Tên A–Z']"));
+ assert.ok(js.includes("['name-desc','Tên Z–A']"));
+ assert.ok(js.includes("new Intl.Collator('vi',{sensitivity:'base',numeric:true})"));
+ assert.ok(js.includes("moreSort=sortMore.value;moreCursor=0;syncFavoriteMore()"));
+ assert.ok(css.includes('#positronFavoriteMoreSort:focus-visible'));
+ assert.ok(qa.includes('favoriteSuggestionSortQA'));
+ assert.ok(qa.includes('positron-p51189-favorite-sort-before-1920x1080-real.png'));
+ assert.ok(qa.includes('positron-p51189-favorite-sort-after-1920x1080-real.png'));
 });

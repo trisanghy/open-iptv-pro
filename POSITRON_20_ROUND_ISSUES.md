@@ -143,3 +143,9 @@ Evaluate defects revealed by real screenshot of previous build before making cha
 - Bổ sung ảnh Electron BEFORE qua Playwright trên cùng trang P188 với CSS P187 tạm thời tái hiện, rồi phục hồi CSS P188 và chụp AFTER. Ảnh BEFORE là trạng thái thật của Electron, không phải bộ cài P187.
 
 - P188 CI run 44999143948: Node 828/833 pass (5 skipped); capture thất bại ở P183 cũ vì assertion `desktopColumns===4` không còn phù hợp với tính năng mới 6 cột. Giữ toàn bộ checks và đổi yêu cầu thành đúng **6 cột** ở 1920, không hạ kiểm tra còn lại. Commit sửa tăng tiếp nối.
+
+## P5.1.189 (CANDIDATE) — từ ảnh Electron P188 đã soi trực tiếp
+- Input: `positron-p51188-favorite-wide-after-1920x1080-real.png`, tải từ Actions 44999409219 và đã mở xem; nhóm Regional có 100 kênh chưa yêu thích, nhưng bộ lọc chưa có lựa chọn sắp xếp.
+- Feature: thêm dropdown Theo nguồn / Tên A–Z / Tên Z–A vào hàng tìm gợi ý; Collator tiếng Việt, đặt lại trang đầu khi đổi, giữ các bộ lọc và Favorites/playlist thật.
+- QA: chụp Electron `positron-p51189-favorite-sort-before-1920x1080-real.png` và `positron-p51189-favorite-sort-after-1920x1080-real.png`, kiểm tra thứ tự 120..109, 021..032, số lượng và nguồn không bị đổi.
+- Status: chưa công nhận hoàn thành trước CI, mở xem ảnh SAU và Release mới.

@@ -184,7 +184,7 @@
   const more=d.createElement('section');more.id='positronFavoriteMore';
   more.className='po-fav-more';more.hidden=true;
   favoriteList.after(more);
-  let moreCursor=0,moreQuery='',morePageSize=6,moreGroup='';
+  let moreCursor=0,moreQuery='',morePageSize=6,moreGroup='',moreSort='source';
   const foldMore=value=>String(value||'').normalize('NFD')
    .replace(/[\u0300-\u036f]/g,'').replace(/đ/gi,'d').toLowerCase().trim();
   const syncFavoriteMore=()=>{
@@ -208,6 +208,13 @@
    const filtered=available.filter(ch=>
     (!moreGroup||String(ch.group||'Không phân nhóm')===moreGroup) &&
     (!words.length||words.every(word=>foldMore((ch.name||'')+' '+(ch.group||'')).includes(word))));
+   // P5.1.189: opt-in display sorting; preserves playlist and stored Favorite order.
+   if(moreSort!=='source'){
+    const collator=new Intl.Collator('vi',{sensitivity:'base',numeric:true});
+    filtered.sort((a,b)=>moreSort==='name-desc'
+     ?collator.compare(String(b.name||''),String(a.name||''))
+     :collator.compare(String(a.name||''),String(b.name||'')));
+   }
    // P5.1.186: stable, non-overlapping pages; the final page may be smaller.
    const pageCount=Math.max(1,Math.ceil(filtered.length/morePageSize));
    const pageIndex=Math.min(pageCount-1,Math.max(0,Math.floor(moreCursor/morePageSize)));
@@ -308,7 +315,20 @@
     moreGroup=groupSelect.value;moreCursor=0;syncFavoriteMore();
     more.querySelector('#positronFavoriteMoreGroup')?.focus();
    });
-   searchRow.append(searchLabel,moreInput,groupLabel,groupSelect);
+   // P5.1.189: sort suggestions without changing source order or storage.
+   const sortMoreLabel=d.createElement('label');sortMoreLabel.htmlFor='positronFavoriteMoreSort';
+   sortMoreLabel.textContent='Thứ tự';
+   const sortMore=d.createElement('select');sortMore.id='positronFavoriteMoreSort';
+   sortMore.setAttribute('aria-label','Sắp xếp kênh gợi ý chưa yêu thích');
+   for(const [value,text] of [['source','Theo nguồn'],['name-asc','Tên A–Z'],['name-desc','Tên Z–A']]){
+    const option=d.createElement('option');option.value=value;option.textContent=text;sortMore.append(option);
+   }
+   sortMore.value=moreSort;
+   sortMore.addEventListener('change',()=>{
+    moreSort=sortMore.value;moreCursor=0;syncFavoriteMore();
+    more.querySelector('#positronFavoriteMoreSort')?.focus();
+   });
+   searchRow.append(searchLabel,moreInput,groupLabel,groupSelect,sortMoreLabel,sortMore);
    // P5.1.185: one-click most populated groups, with live count and pressed state.
    const quickRow=d.createElement('div');quickRow.className='po-fav-group-quick';
    quickRow.setAttribute('role','group');
