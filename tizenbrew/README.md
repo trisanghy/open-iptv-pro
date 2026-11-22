@@ -1,4 +1,4 @@
-# Open IPTV Pro TV · TizenBrew v0.1.5 (thử nghiệm)
+# Open IPTV Pro TV · TizenBrew v0.1.6 (thử nghiệm)
 
 ## Cập nhật không cần USB
 
@@ -57,3 +57,13 @@ Không cung cấp nguồn IPTV bản quyền mặc định. Chỉ sử dụng n�
 - Các thay đổi thực hiện tại TV rồi lưu cục bộ; trang điện thoại chỉ hiển thị trạng thái đã lưu khi nhận \`manager-result\`. Khi hết 10 phút, cần QR mới.
 - **Giữ hộp thoại QR mở trên TV** trong lúc quản lý. Nếu TV không hiển thị trạng thái "TV đã trực tuyến" dưới QR, kết nối chưa hoạt động và điện thoại không thể gửi nguồn.
 - Hiện đang dùng trang quản lý từ \`raw.githack.com\`; URL QR có \`?v=015\` để tránh cache giao diện trước.
+
+## Sửa Back và nút THOÁT v0.1.6
+
+- Thêm nút đỏ lớn **⏻ THOÁT ỨNG DỤNG** tại cuối menu bên trái; nút **⏻ THOÁT** trên thanh trên vẫn được giữ và làm nổi bật.
+- Back trên màn chính: điều hướng **trực tiếp** về launcher TizenBrew bằng URL `/tizenbrew-ui/dist/index.html` cùng host hiện tại, thay vì `history.back()` vốn có thể quay về sai trang.
+- Back khi nhập nguồn/QR/tìm kiếm: đóng hộp thoại; Back khi đang xem: trở về danh sách.
+- Bắt `keydown`, `keyup`, `tizenhwkey` với chống lặp phím; không đăng ký phím Back qua `tvinputdevice.registerKey`.
+- Nếu không điều hướng được, dự phòng thoát ứng dụng Tizen qua native API.
+- Đã kiểm thử giả lập logic ở mức mã nguồn; việc bắt phím vật lý vẫn cần xác minh trên TV Samsung thật.
+- Để tải mã mới, đóng hẳn TizenBrew và mở lại; có thể cần gỡ/thêm module nếu bộ đệm cũ.
