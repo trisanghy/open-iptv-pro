@@ -123,3 +123,47 @@ test('P267 screenshot review reopens already active AI without toggling it off',
  assert.ok(script.includes("if(ai.getAttribute('aria-pressed')!=='true')ai.click()"));
  assert.ok(script.includes("document.getElementById('poAIChannels').click()"));
 });
+
+test('P268 AI cảnh báo lịch sắp chiếu cần mô hình đã học và EPG thực, không autoplay',()=>{
+ const t=now,guide={programmes:[{id:'fixture'}]};
+ const find={find:(_g,ch)=>[{title:ch.id==='sport'?'Trực tiếp bóng đá':'Bản tin thời sự',
+  start:t+60000,end:t+3660000}]};
+ const model=C.emptyModel();
+ assert.deepEqual(C.startingForYou([sport],guide,find,model,{}, {clock:t}),[]);
+ let learned=model;
+ for(let i=0;i<20;i++)learned=C.learn(learned,
+  C.features(sport,{key:'sport',source:'epg'},new Date(t+60000)),1);
+ for(let i=0;i<20;i++)learned=C.learn(learned,
+  C.features(news,{key:'news',source:'epg'},new Date(t+60000)),0);
+ const original=JSON.stringify([sport,news]);
+ const found=C.startingForYou([news,sport],guide,find,learned,{}, {clock:t,threshold:0.7});
+ assert.ok(found.some(row=>row.channel.id==='sport'));
+ assert.ok(found.every(row=>row.probability>=0.7));
+ assert.ok(found.every(row=>row.programme.start>t));
+ assert.equal(JSON.stringify([sport,news]),original);
+ assert.deepEqual(C.startingForYou([sport],null,find,learned,{}, {clock:t}),[]);
+});
+test('P268 không nhắc chương trình ngoài khung giờ, đã hết hoặc sai timestamp',()=>{
+ let m=C.emptyModel();
+ for(let i=0;i<15;i++)m=C.learn(m,C.features(sport,{key:'sport',source:'epg'},date),1);
+ const bad={find:()=>[
+  {title:'Đã hết',start:now-900000,end:now-1000},
+  {title:'Quá xa',start:now+600000,end:now+3600000},
+  {title:'Dữ liệu lỗi',start:NaN,end:now+600000}
+ ]};
+ assert.deepEqual(C.startingForYou([sport],epg,bad,m,{}, {clock:now}),[]);
+});
+test('P268 AI panel hiển thị độc quyền và cảnh báo cần opt-in riêng',()=>{
+ const js=fs.readFileSync('renderer/positron-intelligence.js','utf8');
+ const css=fs.readFileSync('renderer/positron-intelligence.css','utf8');
+ const qa=fs.readFileSync('scripts/positron-20-extension.cjs','utf8');
+ assert.ok(js.includes("panel.dataset.poAiActive='true'"));
+ assert.ok(js.includes('syncAIView();render()'));
+ assert.ok(js.includes("delete panel.dataset.poAiActive"));
+ assert.ok(css.includes('#poWatchFlowPanel[data-po-ai-active="true"]'));
+ assert.ok(js.includes("alertCheck.addEventListener('change'"));
+ assert.ok(js.includes('win.setInterval(checkAlerts,60000)'));
+ assert.ok(js.includes('if(!enabled||!alertEnabled||model.observations<3)return'));
+ assert.ok(qa.includes('getBoundingClientRect().top'));
+ assert.ok(qa.includes('aiCardsActuallyHidden'));
+});

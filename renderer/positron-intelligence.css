@@ -33,3 +33,18 @@ html[data-positron="true"].po-horizon body #poWatchFlowPanel.po-watchflow-panel:
 #poWatchFlowPanel .po-ai-entry{display:flex;justify-content:flex-start;align-items:center;margin:-4px 0 11px;min-width:0}
 #poWatchFlowPanel .po-ai-entry #poFlowPlusAI{width:auto!important;max-width:100%;font-size:12px!important;padding:8px 13px!important;background:#215146;border:1px solid #4b9e80;border-radius:11px}
 #poWatchFlowPanel .po-ai-entry #poFlowPlusAI[aria-pressed="true"]{background:#317963;color:#fff}
+
+
+/* P268: AI is an exclusive accessible mode, even after native Plus refresh. */
+#poWatchFlowPanel[data-po-ai-active="true"] :is(
+ .po-watchflow-modes,.po-watchflow-subhead,#poWatchFlowResults,.po-watchflow-note,
+ #poFlowPlusResults,#poWatchLaterSearchRow,.po-flowplus-privacy
+){display:none!important}
+#poWatchFlowPanel[data-po-ai-active="true"] #poIntelligenceResults:not([hidden]){display:grid!important}
+#poWatchFlowPanel .po-ai-alerts{
+ display:flex;gap:10px;align-items:flex-start;border:1px solid #3c6e63;
+ background:#173a38;border-radius:10px;padding:11px 12px;
+ color:#d6f5e8;font-size:12px;line-height:1.45;cursor:pointer
+}
+#poWatchFlowPanel .po-ai-alerts input{accent-color:#72ddb9;width:18px;height:18px;flex:0 0 18px}
+#poWatchFlowPanel .po-ai-alerts:has(input:disabled){opacity:.7;cursor:not-allowed}

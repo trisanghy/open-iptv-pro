@@ -175,6 +175,22 @@
   return rows.slice(0,Math.max(1,Math.min(20,Math.trunc(limit)||8)));
  }
 
+
+ // P5.1.268: local, model-scored on-air-soon alerts. Never infer schedules
+ // without an imported XMLTV guide; do not create OS/network notifications.
+ function startingForYou(channels,guide,api,model,webMap={}, {clock=Date.now(),windowMinutes=2,threshold=0.72,limit=3}={}){
+  const m=sanitizedModel(model);
+  if(m.observations<3||!guide||typeof api?.find!=='function'||!Number.isFinite(clock))return [];
+  const minutes=Math.max(1,Math.min(5,Number(windowMinutes)||2));
+  const cutoff=clock+minutes*60000;
+  const minScore=Math.max(0.6,Math.min(0.95,Number(threshold)||0.72));
+  // Look back 90s so minute-level polling still catches a programme that
+  // began just before the tick, as long as it has not finished.
+  const found=upcomingForYou(channels,guide,api,m,webMap,{clock:clock-90000,hours:1,limit:20});
+  return found.filter(row=>row.programme.start<=cutoff&&row.programme.end>clock
+   &&row.probability>=minScore).slice(0,Math.max(1,Math.min(3,Math.trunc(limit)||3)));
+ }
+
  function cleanQuery(name){
   const s=String(name||'').trim();
   if(!s||s.length>70||/[:\\/]/.test(s)||/https?\b|@|[<>]/i.test(s))return '';
@@ -200,5 +216,5 @@
   return best;
  }
  return Object.freeze({KINDS,normalize,subject,metadataTopic,topicFor,features,emptyModel,
-  sanitizedModel,predict,learn,recommend,upcomingForYou,cleanQuery,readWikiSearch});
+  sanitizedModel,predict,learn,recommend,upcomingForYou,startingForYou,cleanQuery,readWikiSearch});
 });

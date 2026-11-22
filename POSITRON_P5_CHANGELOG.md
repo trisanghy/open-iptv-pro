@@ -1,5 +1,16 @@
 # Positron P5 Changelog
 
+## P5.1.268 — AI nhắc chương trình hợp gu đúng lúc / Electron 4.23.353
+- Feature priority: NEW — Bổ sung công cụ **Nhắc trong ứng dụng** cho WatchFlow Intelligence. Khi người xem chủ động bật học và bật nhắc, ứng dụng định kỳ kiểm tra XMLTV đã tải, lấy chương trình gần giờ chiếu và dùng **mô hình logistic đã học từ hành vi/đánh giá** để thông báo chương trình có xác suất hợp gu đạt ngưỡng. Chỉ hiển thị lời nhắc cục bộ, không tự phát kênh, không gửi hành vi lên mạng, không mở thông báo OS khi chưa xin quyền.
+- Feature class: AI
+- Evidence: Unit test bắt buộc có ít nhất 3 quan sát học, xác suất đạt ngưỡng và chương trình XMLTV trong khoảng giờ sắp chiếu; loại lịch quá xa, đã kết thúc, sai timestamp; thử 20 phản hồi tích cực thể thao và 20 phản hồi tiêu cực tin tức để đổi mô hình. Test UI xác minh quyền bật học + quyền nhắc riêng. Electron screenshot phải trực tiếp nhìn thấy tiêu đề AI và checkbox nhắc trong viewport, trong khi Mix cũ ẩn hẳn, không chỉ DOM hidden=false; kiểm tra khi đóng/mở WatchFlow vẫn đúng, không autoplay/playlist mutation.
+- User action: TV → WatchFlow → ✦ AI hợp gu → bật học sở thích → tích **Nhắc trong ứng dụng khi AI tìm thấy chương trình hợp gu sắp phát**. Ứng dụng còn mở sẽ hiển thị lời nhắc 1 lần khi có lịch phù hợp (ngưỡng dự đoán ≥72%) sắp bắt đầu; không tự xem. Tắt học tự tắt nhắc; xóa mô hình xóa lựa chọn nhắc.
+- Sửa lỗi chặn: ảnh Electron P5.1.267 cho thấy Mix che khuất nội dung AI sau khi mở lại. P5.1.268 dùng trạng thái exclusive CSS và đồng bộ khi mở để AI có thể thực sự nhìn thấy; QA chặn nếu AI nằm ngoài khung nhìn.
+- Privacy: chỉ XMLTV từ nguồn đã nạp, trọng số local-first, mặc định tắt học và nhắc; không theo dõi khi không đồng ý. Tra cứu Wikipedia tiếp tục chỉ theo nút chủ động riêng.
+- Electron screenshot: positron-p51268-ai-alerts-before-1920x1080-real.png / positron-p51268-ai-alerts-after-1920x1080-real.png, lấy từ Electron CDP và cần được mở xem bằng mắt.
+- Trạng thái: CANDIDATE cho tới khi Node tests, ảnh native 1920×1080, Windows EXE, macOS DMG, Actions và Release bất biến đạt.
+
+
 ## P5.1.267 — AI lịch EPG hợp gu từ chương trình sắp chiếu / Electron 4.23.352
 - Feature priority: NEW — Một chế độ mới **Lịch EPG hợp gu** trong WatchFlow Intelligence: dùng EPG XMLTV hiện có để tìm chương trình sẽ bắt đầu trong 8 giờ tới, không bịa giờ hoặc tiêu đề; xếp chương trình theo mức độ phù hợp nhờ trọng số logistic học từ phản hồi và thời lượng xem, cá nhân hóa theo giờ phát và loại nội dung. Phân loại chủ đề từ tên/mô tả EPG dùng luật rõ ràng (không quảng cáo là LLM), còn xếp hạng bằng mô hình học thực.
 - Feature class: AI

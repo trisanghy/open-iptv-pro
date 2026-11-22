@@ -12,6 +12,7 @@
  const load=(key)=>{try{return JSON.parse(win.localStorage.getItem(key)||'null');}catch{return null;}};
  let record=load(KEY);
  let enabled=record?.enabled===true,model=core.sanitizedModel(record?.model),active=null,aiOpen=false;
+ let alertEnabled=enabled&&record?.alertEnabled===true;const notified=new Set();
  let web=load(WEB_KEY);if(!web||typeof web!=='object'||Array.isArray(web))web={};
  const webValid=()=>{
   const live={};const now=Date.now();
@@ -21,7 +22,7 @@
   }
   return live;
  };
- const save=()=>{try{win.localStorage.setItem(KEY,JSON.stringify({enabled,model}));return true;}catch{return false;}};
+ const save=()=>{try{win.localStorage.setItem(KEY,JSON.stringify({enabled,alertEnabled,model}));return true;}catch{return false;}};
  const saveWeb=()=>{try{
   const entries=Object.entries(web).sort((a,b)=>(b[1]?.at||0)-(a[1]?.at||0)).slice(0,60);
   web=Object.fromEntries(entries);win.localStorage.setItem(WEB_KEY,JSON.stringify(web));return true;
@@ -57,23 +58,37 @@
  let upcomingOpen=false;
  channelsMode.addEventListener('click',()=>{upcomingOpen=false;render();});
  upcomingMode.addEventListener('click',()=>{upcomingOpen=true;render();});
+ const alertRow=d.createElement('label');alertRow.className='po-ai-alerts';
+ const alertCheck=d.createElement('input');alertCheck.type='checkbox';alertCheck.id='poAIAlerts';
+ alertCheck.checked=alertEnabled;alertCheck.disabled=!enabled;
+ const alertLabel=d.createElement('span');
+ alertLabel.textContent='Nhắc trong ứng dụng khi AI tìm thấy chương trình hợp gu sắp phát (không tự mở kênh)';
+ alertRow.append(alertCheck,alertLabel);
  const summary=d.createElement('p');summary.className='po-ai-summary';summary.id='poAISummary';
  const list=d.createElement('div');list.id='poAICards';list.className='po-ai-cards';
  const privacy=d.createElement('p');privacy.className='po-ai-privacy';
  privacy.textContent='Mặc định KHÔNG học. Khi bật: chỉ lưu trọng số sở thích trong máy; học sau ≥35 giây phát có hình/tiếng, không tải stream hay lịch sử lên mạng. Tra cứu web chỉ gửi tên kênh, không gửi playlist/URL/hành vi. Bạn có thể xóa mô hình.';
- area.append(title,controls,modeBar,summary,list,privacy);
+ area.append(title,controls,alertRow,modeBar,summary,list,privacy);
  const extras=[panel.querySelector('.po-watchflow-modes'),panel.querySelector('.po-watchflow-subhead'),
   byId('poWatchFlowResults'),panel.querySelector('.po-watchflow-note')].filter(Boolean);
  const originals=[byId('poFlowPlusResults'),byId('poWatchLaterSearchRow'),panel.querySelector('.po-flowplus-privacy')].filter(Boolean);
- function showAI(){
-  aiOpen=true;area.hidden=false;tab.setAttribute('aria-pressed','true');
+ // Native WatchFlow Plus refreshes Mix on every reopen, which previously
+ // surfaced five non-AI cards above the AI panel. Re-apply the exclusive
+ // panel mode on reopen AND enforce it in CSS so an async refresh cannot
+ // shadow AI controls underneath a scrollable card list.
+ function syncAIView(){
+  if(!aiOpen||panel.hidden)return;
+  panel.dataset.poAiActive='true';area.hidden=false;
+  tab.setAttribute('aria-pressed','true');
   for(const button of toolbar.querySelectorAll('button[data-flowplus-mode]'))button.setAttribute('aria-pressed','false');
   for(const el of extras)el.classList.add('po-flowplus-hidden');
   for(const el of originals)el.hidden=true;
-  render();
+  panel.scrollTop=0;
  }
+ function showAI(){aiOpen=true;syncAIView();render();}
  function hideAI(){
-  aiOpen=false;area.hidden=true;tab.setAttribute('aria-pressed','false');
+  aiOpen=false;delete panel.dataset.poAiActive;area.hidden=true;
+  tab.setAttribute('aria-pressed','false');
  }
  tab.addEventListener('click',()=>{if(aiOpen){toolbar.querySelector('[data-flowplus-mode="discover"]')?.click();return;}showAI();});
  toolbar.addEventListener('click',event=>{if(event.target.closest('[data-flowplus-mode]'))hideAI();},true);
@@ -89,7 +104,7 @@
   const collection=channels();const profile=webValid();
   channelsMode.setAttribute('aria-pressed',String(!upcomingOpen));
   upcomingMode.setAttribute('aria-pressed',String(upcomingOpen));
-  summary.textContent=(enabled?'● Đang học':'○ Chưa bật học')+' · '+model.observations+
+  summary.textContent=(enabled?'● Đang học':'○ Chưa bật học')+(alertEnabled?' · Nhắc lịch AI bật':'')+' · '+model.observations+
    ' phản hồi hợp lệ · '+collection.length+' kênh khả dụng · Web chỉ tra khi nhấn nút';
   list.replaceChildren();
   if(!collection.length){
@@ -169,13 +184,42 @@
    actions.append(play,like,dislike,lookup);card.append(actions);list.append(card);
   }
  }
- check.addEventListener('change',()=>{enabled=check.checked;active=null;
-  if(!save())state()?.toast?.('Không lưu được quyền học trên máy','warn');render();});
+ check.addEventListener('change',()=>{
+  enabled=check.checked;active=null;
+  if(!enabled)alertEnabled=false;
+  alertCheck.checked=alertEnabled;alertCheck.disabled=!enabled;
+  if(!save())state()?.toast?.('Không lưu được quyền học trên máy','warn');render();
+ });
+ alertCheck.addEventListener('change',()=>{
+  alertEnabled=enabled&&alertCheck.checked;alertCheck.checked=alertEnabled;
+  if(!save())state()?.toast?.('Không lưu được cài đặt nhắc lịch AI','warn');
+  if(alertEnabled)checkAlerts();
+  if(aiOpen)render();
+ });
  clear.addEventListener('click',()=>{
   if(!win.confirm('Xóa toàn bộ trọng số học sở thích trên thiết bị này?'))return;
-  model=core.emptyModel();active=null;save();render();
+  model=core.emptyModel();active=null;alertEnabled=false;alertCheck.checked=false;
+  notified.clear();save();render();
   state()?.toast?.('Đã xóa mô hình sở thích cục bộ','info');
  });
+ // Opt-in, in-app alert only: score actual imported EPG against locally
+ // trained preferences, no URLs sent out and never start playback.
+ function checkAlerts(){
+  if(!enabled||!alertEnabled||model.observations<3)return;
+  const now=Date.now();
+  const items=core.startingForYou(channels(),guide(),win.IPTVGuide,model,webValid(),
+   {clock:now,windowMinutes:2,threshold:0.72,limit:3});
+  for(const entry of items){
+   const key=String(entry.channel.id)+'|'+entry.programme.start+'|'+entry.programme.title;
+   if(notified.has(key))continue;
+   notified.add(key);
+   if(notified.size>90)notified.delete(notified.values().next().value);
+   const text='AI hợp gu · Sắp phát: '+entry.programme.title.slice(0,65)
+    +' · '+String(entry.channel.name).slice(0,50);
+   state()?.toast?.(text,'info');
+  }
+ }
+ win.setInterval(checkAlerts,60000);
  // Only a real decoded/playable frame triggers tracking. Switching, pausing
  // or a stalled player does not count as a long viewing session.
  const player=byId('video');
@@ -206,9 +250,10 @@
  }
  const count=byId('navCount');
  if(count)new MutationObserver(()=>{if(aiOpen&&!panel.hidden)render();}).observe(count,{childList:true,characterData:true,subtree:true});
- new MutationObserver(()=>{if(aiOpen&&!panel.hidden)render();}).observe(panel,{attributes:true,attributeFilter:['hidden']});
+ new MutationObserver(()=>{if(aiOpen&&!panel.hidden){syncAIView();render();}}).observe(panel,{attributes:true,attributeFilter:['hidden']});
  win.PositronIntelligence=Object.freeze({render,getProfile:()=>({enabled,observations:model.observations}),
   recommend:()=>core.recommend(channels(),guide(),win.IPTVGuide,model,webValid()),
   upcoming:()=>core.upcomingForYou(channels(),guide(),win.IPTVGuide,model,webValid()),
+  alerts:()=>({enabled:alertEnabled,candidates:alertEnabled?core.startingForYou(channels(),guide(),win.IPTVGuide,model,webValid()):[]}),
   getTopic:metadata});
 })();

@@ -11,6 +11,12 @@
 - Web: chỉ tra cứu khi người dùng nhấn và chỉ gửi tên kênh; không gửi M3U/URL/hành vi.
 - Mọi phiên bản NEW đều phải có `Feature class: AI` hoặc `Feature class: BREAKTHROUGH`, trường `Evidence:` và bài kiểm thử, không đếm thay đổi CSS/icon/nhãn là tính năng.
 
+
+### P5.1.268: AI phải nhìn thấy và được điều khiển được trong Electron
+- Không tính chế độ AI là đạt chỉ vì `hidden=false`: phải đo bounding box của tiêu đề, điều khiển chính và bảo đảm khuất/ẩn nội dung chế độ cũ khi mở lại.
+- Thông báo tự động từ ML chỉ khi người xem **bật học** và **bật nhắc riêng**, chỉ từ lịch XMLTV thực có timestamp hợp lệ, không autoplay và không gửi URL M3U lên Internet.
+- Lưu bộ kiểm thử hồi quy thay đổi trọng số dự đoán và hạn chế nhắc lặp. Sửa hiển thị lỗi chặn chỉ tính BLOCKER_FIX; vòng tính năng mới phải là khả năng AI thực mới cho người xem.
+
 ## HEAD BẤT BIẾN — TỪ P5.1.266: CHỈ PHÁT HÀNH TÍNH NĂNG AI HOẶC ĐỘT PHÁ THỰC CHẤT
 
 **Chỉ được tính một phiên bản NEW nếu thêm khả năng người xem chưa từng có, thuộc ít nhất một nhóm: AI học từ tương tác có mô hình và đánh giá được; phân loại/nội suy chủ đề từ EPG có dữ liệu thật; khám phá kiến thức kênh có nguồn, kiểm soát quyền mạng; hoặc nâng cấp hệ thống phát/khám phá khác biệt rõ ràng, kiểm chứng bằng tác vụ đầu-cuối.** Không dùng việc đổi màu, sắp xếp, phím tắt, biểu tượng, nhãn, nút dẫn trang, số phiên bản, báo cáo kiểm thử hoặc tinh chỉnh nhỏ làm phiên bản NEW độc lập.

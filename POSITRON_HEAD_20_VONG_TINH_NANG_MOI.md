@@ -4,6 +4,11 @@
 
 **BẤT BIẾN CỦA HEAD MỚI TỪ P5.1.266:** Mỗi phiên bản NEW phải là AI thực (mô hình học từ dữ liệu quan sát, không giả ML) hoặc tính năng đột phá đã có bằng chứng đầu-cuối. Phân loại chủ đề theo EPG, tra cứu kiến thức kênh có chấp thuận mạng, đề xuất cá nhân hóa dựa trên hành vi xem là ba hướng ưu tiên. CI gác `Feature class: AI|BREAKTHROUGH` và `Evidence:`; không đếm CSS/phím tắt/nút mới là một phiên bản tính năng. Các lỗi BLOCKER_FIX vẫn theo ngoại lệ đã nêu. Quy tắc chi tiết tại [POSITRON_FEATURE_RULES.md](POSITRON_FEATURE_RULES.md).
 
+## BỔ SUNG BẤT BIẾN P5.1.268 — AI THỰC SỰ HIỂN THỊ ĐƯỢC
+- AI cảnh báo EPG phải yêu cầu hai quyền rõ ràng: học sở thích và bật nhắc; mặc định cả hai tắt, dữ liệu/ML ở thiết bị, không autoplay, không bịa lịch.
+- Ảnh Electron trước/sau phải có thay đổi khả kiến ở viewport, vị trí controls nằm trong panel và không có các thẻ từ mode cũ che nội dung AI. Kiểm tra mở lại modal.
+- Tiếp tục chỉ tính bản NEW thuộc `Feature class: AI` hoặc `Feature class: BREAKTHROUGH`, có `Evidence:`, CI, ảnh Electron thật, EXE x64, DMG, Release.
+
 ## BẤT BIẾN: Ưu tiên AI hoặc tính năng đột phá (nhắc lại từ P5.1.267)
 - Mọi phiên bản tính năng mới cần AI có mô hình học thật hoặc bước nhảy chức năng được kiểm chứng, không chỉ đổi màu, icon, nhãn, phím tắt.
 - Ưu tiên phân tích XMLTV, lịch sắp chiếu và sở thích hành vi; không bịa thông tin, không tải dữ liệu riêng lên mạng. Test CI phải đọc mục changelog mới nhất có `Feature class: AI|BREAKTHROUGH` và `Evidence:`.

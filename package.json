@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.352",
-  "description": "Positron P5.1.267: AI đề xuất chương trình sắp chiếu theo EPG và hành vi",
+  "version": "4.23.353",
+  "description": "Positron P5.1.268: AI nhắc chương trình hợp gu theo EPG và hành vi",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",
