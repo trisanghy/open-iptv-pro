@@ -1,4 +1,10 @@
-# Open IPTV Pro TV · TizenBrew v0.1.15 (thử nghiệm)
+# Open IPTV Pro TV · TizenBrew v0.1.16 (thử nghiệm)
+
+## v0.1.16 — Hai nút tách thành hai hàng trong ô trống sidebar
+
+- Hai nút **▶ TizenTube** và **✕ Thoát** nay được xếp **dọc, mỗi nút một hàng** ngay dưới **Hướng dẫn** trong menu bên trái, đúng hai khu vực được đánh dấu trên ảnh. Nút thấp hơn các nút menu chính, tối ưu bấm bằng remote.
+- Không còn nút ở footer hoặc đè trên video. Khi đang phát, hai nút ẩn cùng sidebar; phím Back trở về danh sách.
+- Nếu bản xem thử trên Mac vẫn có nút ở góc phải footer, đó là tab localhost/WGT cũ. Cần mở bản preview từ release/tệp mới thay vì chỉ tải lại tab đã ghim một tag cũ.
 
 ## v0.1.15 — Chỉnh đúng vị trí menu và cách nhận bản mới
 
