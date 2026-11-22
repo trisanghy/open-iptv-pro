@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<meta name="color-scheme" content="light dark">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self' https: wss:; media-src 'self' blob: https: http:; object-src 'none'; frame-ancestors 'none'; base-uri 'self'">
+<title>Open IPTV Pro · Ghép đôi TV</title>
+<link rel="icon" type="image/png" href="assets/icon.png">
+<link rel="stylesheet" href="web-cast-v2.css?v=tv-pair-v1">
+</head>
+<body class="iptv-tv-body" data-theme="dark">
+ <main class="tv-site">
+  <div class="tv-row"><span class="tv-pill">▣ OPEN IPTV PRO · TV</span>
+   <button type="button" class="tv-theme" data-tv-theme="light">Sáng</button>
+   <button type="button" class="tv-theme" data-tv-theme="dark" data-active="true">Tối</button>
+   <button type="button" class="tv-theme" data-tv-theme="amoled">Đen</button>
+  </div>
+  <section id="tvPairing">
+   <h1>Ghép đôi TV</h1>
+   <p>Mở Open IPTV Pro trên máy tính hoặc điện thoại → Cast → Ghép đôi TV.<br>
+   Nhập mã dưới đây, sau đó xác nhận trên TV để điều khiển phát.</p>
+   <div class="tv-pair-pin" id="tvPairPin" aria-label="Mã ghép đôi">••• •••</div>
+   <p id="tvExpire">Mã 6 số có hiệu lực trong 5 phút và thay đổi khi tải lại trang.</p>
+   <div class="tv-actions">
+    <button id="tvNewPin" type="button">↻ Tạo mã mới</button>
+   </div>
+  </section>
+  <section id="tvRequest" hidden>
+   <h1>Cho phép ghép đôi?</h1>
+   <p>Thiết bị đang yêu cầu điều khiển TV:</p>
+   <h2 id="tvRequestLabel">Trình duyệt</h2>
+   <p>Chỉ chấp thuận nếu bạn vừa nhập mã trên thiết bị của mình.</p>
+   <div class="tv-actions"><button id="tvAllow" type="button" class="tv-primary">✓ Cho phép kết nối</button>
+   <button id="tvDeny" type="button">✕ Từ chối</button></div>
+  </section>
+  <section id="tvPlayer" hidden>
+   <h1 id="tvPlayingTitle">TV đã ghép đôi</h1>
+   <p>Chọn một kênh từ Open IPTV Pro trên thiết bị đã ghép đôi.</p>
+   <video id="tvVideo" controls playsinline x-webkit-airplay="allow" preload="none"></video>
+   <div class="tv-actions"><button id="tvLocalPlay" type="button" class="tv-primary">▶ Phát trên TV</button>
+    <button id="tvLocalPause" type="button">Ⅱ Tạm dừng</button>
+    <button id="tvDisconnect" type="button">Ngắt kết nối</button></div>
+  </section>
+  <p class="tv-status" id="tvStatus" role="status" aria-live="polite">Đang khởi tạo kết nối TV…</p>
+  <p class="tv-help">Ghép đôi cần Internet trên cả hai thiết bị. Chỉ cho phép thiết bị của bạn. Kênh phải phát được trong trình duyệt TV; một số nguồn cần codec hoặc proxy riêng của ứng dụng Electron.</p>
+ </main>
+ <script src="supabase-sdk.js"></script>
+ <script src="hls.min.js"></script>
+ <script src="dash.all.min.js"></script>
+ <script src="web-tv-pair.js?v=tv-pair-v1"></script>
+ <script src="web-tv-receiver.js?v=tv-pair-v1"></script>
+</body>
+</html>
