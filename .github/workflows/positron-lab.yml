@@ -568,7 +568,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -Eeuo pipefail
-          TAG=positron/v4.23.349-p5.1.263
+          TAG=positron/v4.23.349-p5.1.264
           echo 'GitHub Release publication has not been verified.' > release-stage/PUBLISH_STATUS.txt
           if gh api "repos/$GITHUB_REPOSITORY/git/ref/tags/$TAG" --jq '.object.sha' >/tmp/tag-sha 2>/dev/null; then
             test "$(cat /tmp/tag-sha)" = "$GITHUB_SHA" || { echo '::error::Immutable tag points to a different commit'; exit 1; }
