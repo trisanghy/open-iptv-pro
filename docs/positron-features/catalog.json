@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-22T22:44:32.245271+00:00",
+  "generatedAt": "2026-11-22T22:46:23.519180+00:00",
   "repository": "trisanghy/open-iptv-pro",
   "branch": "Positron",
   "versions": [
@@ -5726,7 +5726,7 @@
           "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.279-p5.1.194/SHA256SUMS.txt"
         }
       ],
-      "image": "screenshots/positron-p51194-dvr-start-after-before-1920x1080-real.png"
+      "image": "screenshots/positron-p51194-dvr-start-after-after-1920x1080-real.png"
     },
     {
       "number": 193,
