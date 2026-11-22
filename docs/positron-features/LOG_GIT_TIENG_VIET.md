@@ -2,14 +2,23 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
-## P5.1.163 — xuất CSV kênh thiếu logo an toàn
+## P5.1.164 — phát hiện tên kênh trùng từ metadata nội bộ
 
-**Ứng dụng:** 4.23.248 · **Trạng thái:** Chưa có bản phát hành
+**Ứng dụng:** 4.23.249 · **Trạng thái:** Chưa có bản phát hành
+
+Feature priority: NEW — Phát hiện các tên kênh bị nhập lặp trong playlist hoặc nhiều nguồn để rà soát thư viện lớn; phân biệt tên khác dấu tiếng Việt, không tự xóa kênh. User action: Mở Thư viện → Tên kênh trùng → mở danh sách, tìm theo tên hoặc nhóm, xem số kênh, số nhóm và số nguồn có tên trùng; dùng Trước/Tiếp để xem những trang còn lại.
+
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/752bfdb8f84196ac0b4b065a50b2650303b4179c)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+
+## P5.1.163 — Xuất CSV kênh thiếu logo an toàn / Electron 4.23.248
+
+**Ứng dụng:** 4.23.248 · **Trạng thái:** Đã phát hành
 
 Feature priority: NEW — Thư viện → Kênh thiếu logo → lọc/tìm/sắp xếp → **Xuất CSV** tất cả kênh khớp, không chỉ 10 hàng hiện tại. User action: Mở Thư viện → Kênh thiếu logo → chọn nhóm, tìm hoặc sắp xếp → bấm Xuất CSV, nhận file tên và nhóm kênh trong thư mục Tải xuống.
 
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/c4b2223eab085f05b802dd8fc03392744dee6058)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/a4a9f1e5d87d17716e5c89dd71d0bf57aaace4b9)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.248-p5.1.163)
 
 ## P5.1.162 — Chuyển nhanh tới trang bất kỳ trong thư viện / Electron 4.23.247
 
