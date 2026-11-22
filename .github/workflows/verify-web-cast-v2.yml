@@ -13,6 +13,7 @@ on:
       - 'web-tv-receiver.js'
       - 'tv.html'
       - 'web-online/tests/web-cast-v2*.cjs'
+      - 'web-online/tests/web-cast-icons.test.cjs'
       - '.github/workflows/verify-web-cast-v2.yml'
   workflow_dispatch:
 permissions:
@@ -43,6 +44,7 @@ jobs:
       - name: Test real encrypted TV pairing with mocked Realtime channels
         run: |
           node --test web-online/tests/web-cast-v2.test.cjs
+          node --test web-online/tests/web-cast-icons.test.cjs
           node --test web-online/tests/web-cast-sender.test.cjs
           node --test web-online/tests/web-airplay.test.cjs
       - name: Capture desktop 16:9 and mobile screenshots in all three themes
