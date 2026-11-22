@@ -197,8 +197,12 @@
    more.replaceChildren();
    if(!available.length){more.hidden=true;return;}
    // P5.1.184: combine chosen group with the existing accent-insensitive search.
-   const groups=[...new Set(available.map(ch=>String(ch.group||'Không phân nhóm')))]
-    .sort((a,b)=>a.localeCompare(b,'vi',{numeric:true}));
+   const groupCounts=new Map();
+   for(const channel of available){
+    const group=String(channel.group||'Không phân nhóm');
+    groupCounts.set(group,(groupCounts.get(group)||0)+1);
+   }
+   const groups=[...groupCounts.keys()].sort((a,b)=>a.localeCompare(b,'vi',{numeric:true}));
    if(moreGroup&&!groups.includes(moreGroup))moreGroup='';
    const words=foldMore(moreQuery).split(/\s+/).filter(Boolean);
    const filtered=available.filter(ch=>
@@ -266,7 +270,7 @@
    groupLabel.textContent='Nhóm';
    const groupSelect=d.createElement('select');groupSelect.id='positronFavoriteMoreGroup';
    groupSelect.setAttribute('aria-label','Lọc gợi ý Yêu thích theo nhóm kênh');
-   for(const [value,label] of [['','Tất cả nhóm'],...groups.map(group=>[group,group])]){
+   for(const [value,label] of [['','Tất cả nhóm ('+available.length+')'],...groups.map(group=>[group,group+' ('+groupCounts.get(group)+')'])]){
     const option=d.createElement('option');option.value=value;option.textContent=label;groupSelect.append(option);
    }
    groupSelect.value=moreGroup;
@@ -275,6 +279,24 @@
     more.querySelector('#positronFavoriteMoreGroup')?.focus();
    });
    searchRow.append(searchLabel,moreInput,groupLabel,groupSelect);
+   // P5.1.185: one-click most populated groups, with live count and pressed state.
+   const quickRow=d.createElement('div');quickRow.className='po-fav-group-quick';
+   quickRow.setAttribute('role','group');
+   quickRow.setAttribute('aria-label','Nhóm kênh gợi ý truy cập nhanh');
+   const sortedGroups=[...groups].sort((a,b)=>groupCounts.get(b)-groupCounts.get(a)||a.localeCompare(b,'vi'));
+   const featured=sortedGroups.slice(0,4);
+   if(moreGroup&&!featured.includes(moreGroup))featured.push(moreGroup);
+   for(const [value,label,count] of [['','Tất cả',available.length],...featured.map(group=>[group,group,groupCounts.get(group)])]){
+    const chip=d.createElement('button');chip.type='button';chip.className='po-fav-group-chip';
+    chip.dataset.poFavGroupValue=value;
+    chip.textContent=label+' · '+count;
+    chip.setAttribute('aria-pressed',String(moreGroup===value));
+    chip.addEventListener('click',()=>{
+     moreGroup=value;moreCursor=0;syncFavoriteMore();
+     [...more.querySelectorAll('.po-fav-group-chip')].find(node=>node.dataset.poFavGroupValue===value)?.focus();
+    });
+    quickRow.append(chip);
+   }
    const hint=d.createElement('p');
    hint.textContent='Tìm thấy '+filtered.length+' / '+available.length+' kênh chưa yêu thích. Bấm ☆ để lưu, không tự phát video.';
    const grid=d.createElement('div');grid.className='po-fav-more-grid';
@@ -294,7 +316,7 @@
     });
     grid.append(chip);
    }
-   more.append(toolbar,searchRow,hint,grid);
+   more.append(toolbar,searchRow,quickRow,hint,grid);
   };
   new MutationObserver(syncFavoriteMore).observe(favoriteList,{childList:true,subtree:true});
   syncFavoriteMore();

@@ -1943,3 +1943,19 @@ test('P5.1.184 filters Favorites suggestions by actual source groups with accent
  assert.ok(qa.includes('favoriteGroupSearchQA'));
  assert.ok(qa.includes('resetGroupQA'));
 });
+
+test('P5.1.185 exposes one-click top groups with source counts and aria pressed state',()=>{
+ const js=read('renderer/positron-twenty.js'),css=read('renderer/positron-twenty.css');
+ const qa=read('scripts/positron-20-extension.cjs');
+ assert.ok(js.includes('const groupCounts=new Map()'));
+ assert.ok(js.includes('groupCounts.set(group,(groupCounts.get(group)||0)+1)'));
+ assert.ok(js.includes("group+' ('+groupCounts.get(group)+')"));
+ assert.ok(js.includes("quickRow.setAttribute('role','group')"));
+ assert.ok(js.includes("chip.className='po-fav-group-chip'"));
+ assert.ok(js.includes("chip.setAttribute('aria-pressed',String(moreGroup===value))"));
+ assert.ok(js.includes('moreGroup=value;moreCursor=0;syncFavoriteMore()'));
+ assert.ok(css.includes('.po-fav-group-chip[aria-pressed="true"]'));
+ assert.ok(css.includes('.po-fav-group-chip:focus-visible'));
+ assert.ok(qa.includes('favoriteQuickGroupQA'));
+ assert.ok(qa.includes('favoriteQuickResetQA'));
+});

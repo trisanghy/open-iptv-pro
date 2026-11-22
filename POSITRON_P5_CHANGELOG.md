@@ -1,5 +1,14 @@
 # Positron P5 Changelog
 
+## P5.1.185 — Nhóm gợi ý truy cập nhanh có số kênh / Electron 4.23.270
+- Feature priority: NEW — Ảnh Electron P5.1.184 có dropdown nhóm nhưng không biết số kênh từng nhóm trước khi chọn; duyệt 541 kênh mất thời gian.
+- Thêm dải nút truy cập nhanh các nhóm nhiều kênh với đếm số lượng thực từ kênh còn gợi ý, đánh dấu nhóm đang chọn bằng aria-pressed; chọn Tất cả khôi phục. Dropdown hiện số lượng từng nhóm và tổng kênh; không can thiệp M3U, favoriteKeys hay phát video.
+- Electron screenshot: positron-p51185-group-quick-after-1920x1080-real.png
+- Before screenshot: positron-p51185-group-quick-before-1920x1080-real.png
+- User action: Vào Yêu thích, chọn một nút nhóm nổi bật có số kênh, hoặc chọn Tất cả; bộ lọc nhóm và tìm kiếm trước đây vẫn giữ nguyên.
+- QA: ghi nhận đúng 100 kênh Regional, 541 ứng viên tổng, trạng thái bấm, 12 chip thuộc Regional, reset All, không autoplay/overflow; screenshot Electron thật 1920×1080.
+- Status: CANDIDATE đến khi mở soát PNG thật và Release Windows/Mac đạt.
+
 ## P5.1.184 — Lọc gợi ý Yêu thích theo nhóm / Electron 4.23.269
 - Feature priority: NEW — Ảnh P5.1.183 chứng minh có 553 kênh chưa lưu nhưng gợi ý không phân loại theo nhóm; tìm bằng mắt còn rườm rà.
 - Thêm dropdown nhóm được tạo trực tiếp từ metadata nguồn đang bật, chỉ lọc tên nhóm thực có kênh chưa đánh dấu sao. Kết hợp tìm kiếm không dấu và lựa chọn 6/12/24 kênh, nút Lưu cả N vẫn theo số thẻ được lọc. Tập dữ liệu nguồn và favoriteKeys giữ nguyên.

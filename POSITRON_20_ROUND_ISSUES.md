@@ -114,3 +114,9 @@ Evaluate defects revealed by real screenshot of previous build before making cha
 - Feature: nhóm theo M3U enabled, kết hợp search không dấu, pageSize 6/12/24 và bulk, không thay nguồn hay tự phát.
 - QA: `favoriteRegionalQA`, `favoriteGroupSearchQA`, `resetGroupQA`, hai ảnh thực P184 before/after.
 - Chờ test, mở PNG và release.
+
+## P5.1.185 (CANDIDATE) — từ ảnh dropdown P184
+- Input: 541 ứng viên, dropdown nhóm không hiển thị quy mô từng nhóm trước khi người dùng chọn.
+- Feature: nhóm nổi bật một chạm, số kênh thực theo nguồn đang bật, aria-pressed, giữ group select + search.
+- QA: `favoriteQuickGroupQA`, `favoriteQuickResetQA`, trước/sau PNG Electron 1920×1080.
+- Chờ CI và mở ảnh/release.

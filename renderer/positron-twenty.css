@@ -723,3 +723,22 @@ html[data-positron="true"] #page-fav #positronFavoriteMoreGroup:focus-visible{
  outline:2px solid var(--po-accent,#60d7c2);outline-offset:2px;
 }
 @media(max-width:650px){html[data-positron="true"] #page-fav #positronFavoriteMoreGroup{max-width:none;flex:1 1 100%}}
+
+/* P5.1.185: top source groups by actual eligible-channel counts. */
+html[data-positron="true"] #page-fav .po-fav-group-quick{
+ display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin:3px 0 12px;
+}
+html[data-positron="true"] #page-fav .po-fav-group-chip{
+ display:inline-flex;align-items:center;max-width:min(100%,290px);
+ min-height:32px;padding:6px 11px;border-radius:18px;
+ border:1px solid var(--po-border,#314956);
+ background:var(--po-input,#0a1c25);color:var(--po-text,#eaf4f1);
+ font-size:12px;line-height:1.25;overflow-wrap:anywhere;cursor:pointer;
+}
+html[data-positron="true"] #page-fav .po-fav-group-chip[aria-pressed="true"]{
+ background:var(--po-selected,#173931);border-color:var(--po-accent,#60d7c2);
+}
+html[data-positron="true"] #page-fav .po-fav-group-chip:hover{border-color:var(--po-accent,#60d7c2)}
+html[data-positron="true"] #page-fav .po-fav-group-chip:focus-visible{
+ outline:2px solid var(--po-accent,#60d7c2);outline-offset:2px;
+}
