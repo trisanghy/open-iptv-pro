@@ -14,6 +14,9 @@ on:
       - 'web-online/tests/web-player-icons*.cjs'
       - 'web-online/tests/web-mobile-controls-polish.test.cjs'
       - 'web-cast-v2.css'
+      - 'web-access-links.js'
+      - 'web-access-links.css'
+      - 'web-online/tests/web-access-links.test.cjs'
       - 'web-tv-pair.js'
       - 'web-tv-receiver.js'
       - 'tv.html'
@@ -40,6 +43,7 @@ jobs:
           node --check web-tv-receiver.js
           node --check web-cast-v2.js
           node --check web-cast-icons.js
+          node --check web-access-links.js
           node --check web-cast-sender.js
           node --check cast-ui.js
           test -s tv.html
@@ -50,6 +54,7 @@ jobs:
         run: |
           node --test web-online/tests/web-cast-v2.test.cjs
           node --test web-online/tests/web-cast-icons.test.cjs
+          node --test web-online/tests/web-access-links.test.cjs
           node --test web-online/tests/web-player-icons.test.cjs
           node --test web-online/tests/web-mobile-controls-polish.test.cjs
           node --test web-online/tests/web-cast-sender.test.cjs
