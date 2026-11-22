@@ -36,3 +36,18 @@ html[data-positron="true"] #page-sources #poSourceInventoryDetails li span{
 }
 html[data-positron="true"] #page-sources #poSourceInventoryDetails strong{color:#9debd7;flex-shrink:0}
 html[data-positron="true"] #page-sources #poSourceInventoryDetails strong[data-enabled="false"]{color:#fac6b2}
+
+/* P258: filter many source names without extending the whole Sources page. */
+html[data-positron="true"] #page-sources #poSourceInventorySearch{
+ display:block;box-sizing:border-box;width:min(100%,460px);max-width:100%;
+ min-height:35px;margin:8px 0 0;padding:7px 12px;border-radius:8px;
+ background:#142c39;color:#e4f5fb;border:1px solid #3d6572;
+ font:500 12px/1.3 inherit;
+}
+html[data-positron="true"] #page-sources #poSourceInventorySearch[hidden]{display:none!important}
+html[data-positron="true"] #page-sources #poSourceInventorySearch:focus-visible{
+ outline:2px solid #9bf4dd;outline-offset:2px;
+}
+html[data-positron="true"] #page-sources #poSourceInventoryDetails{
+ max-height:245px;overflow-y:auto;overscroll-behavior:contain;
+}

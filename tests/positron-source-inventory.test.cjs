@@ -8,7 +8,7 @@ test('P5.1.256 read-only live source inventory badge follows native footer count
  assert.ok(html.includes('positron-source-inventory.js')&&html.includes('positron-source-inventory.css'));
  assert.ok(css.includes('#page-sources #poSourceInventorySummary'));
  assert.ok(!js.includes('save(')&&!js.includes('playChannel('),'Inventory must only read library metadata');
- assert.equal(JSON.parse(read('package.json')).version,'4.23.342');
+ assert.ok(Number(JSON.parse(read('package.json')).version.split('.')[2])>=342);
 });
 test('P5.1.256 real Electron screenshots verify source counts and narrow layout',()=>{
  const qa=read('scripts/positron-20-extension.cjs'),wf=read('.github/workflows/positron-lab.yml');
@@ -23,7 +23,7 @@ test('P5.1.257 source inventory has accessible optional read-only source breakdo
  for(const t of ["toggle.id='poSourceInventoryToggle';","toggle.setAttribute('aria-expanded','false');","details.id='poSourceInventoryDetails';","const countBySource=new Map();","source.name||'Nguồn chưa đặt tên'","status.textContent=source.enabled===false?'Tắt':'Bật';","toggle.addEventListener('click',()=>","if(!details.hidden)renderDetails();"])
   assert.ok(js.includes(t),'P257 source overview missing '+t);
  assert.ok(css.includes('#page-sources #poSourceInventoryDetails[hidden]'));
- assert.equal(JSON.parse(read('package.json')).version,'4.23.342');
+ assert.ok(Number(JSON.parse(read('package.json')).version.split('.')[2])>=342);
 });
 test('P5.1.257 Electron screenshot QA checks read-only breakdown at wide and 720px',()=>{
  const qa=read('scripts/positron-20-extension.cjs'),flow=read('.github/workflows/positron-lab.yml');
@@ -31,4 +31,28 @@ test('P5.1.257 Electron screenshot QA checks read-only breakdown at wide and 720
   assert.ok(qa.includes(n)&&flow.includes(n),'P257 screenshot missing '+n);
  for(const t of ['sourceDetailsStartQA257','sourceDetailsQA257','sourceDetailsNarrowQA257',"page.locator('#poSourceInventoryToggle').click()",'rowCountsCorrect:','statusesCorrect:','noAutoplay:','sourcesUnchanged:','noOverflow:'])
   assert.ok(qa.includes(t),'P257 QA missing '+t);
+});
+
+test('P5.1.258 search source names across all sources without modifying playlists',()=>{
+ const vm=require('node:vm');
+ const js=read('renderer/positron-source-inventory.js'),css=read('renderer/positron-source-inventory.css');
+ for(const token of ["search.id='poSourceInventorySearch';","search.type='search';","search.hidden=true;","search.addEventListener('input'",'sources.filter(source=>','filtered.slice(0,30)',"Không tìm thấy nguồn phù hợp.","if(!expanded)search.value=''"])
+  assert.ok(js.includes(token),'P258 source search missing: '+token);
+ const match=js.match(/const foldSourceName=value=>[\s\S]*?toLocaleLowerCase\('vi'\);/);
+ assert.ok(match,'P258 normalization helper absent');
+ const fold=vm.runInNewContext(match[0]+'\nfoldSourceName');
+ assert.equal(fold('ĐÀI TRUYỀN HÌNH'),'dai truyen hinh');
+ assert.equal(fold('  Nguồn Ánh  '),'nguon anh');
+ assert.equal(fold('LỌC CATEGORY'),'loc category');
+ assert.ok(css.includes('#poSourceInventorySearch[hidden]'));
+ assert.ok(css.includes('max-height:245px'));
+ assert.ok(!js.includes('save(')&&!js.includes('playChannel('));
+ assert.equal(JSON.parse(read('package.json')).version,'4.23.343');
+});
+test('P5.1.258 validates real filtered Electron source screenshots and readonly state',()=>{
+ const qa=read('scripts/positron-20-extension.cjs'),wf=read('.github/workflows/positron-lab.yml');
+ for(const f of ['positron-p51258-source-search-before-1920x1080-real.png','positron-p51258-source-search-after-1920x1080-real.png','positron-p51258-source-search-720-real.png'])
+  assert.ok(qa.includes(f)&&wf.includes(f),'Missing P258 real screenshot '+f);
+ for(const key of ['sourceSearchQA258','filteredToOne:','queryMatches:','noAutoplay:','sourcesUnchanged:','playlistUnchanged:','noOverflow:'])
+  assert.ok(qa.includes(key),'P258 QA missing '+key);
 });

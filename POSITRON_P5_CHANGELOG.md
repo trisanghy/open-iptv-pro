@@ -1,5 +1,10 @@
 # Positron P5 Changelog
 
+## P5.1.258 — Tìm kiếm trong danh sách chi tiết nguồn IPTV / Electron 4.23.343
+- Feature priority: NEW — Bổ sung ô tìm nguồn ngay sau khi mở “Chi tiết nguồn”, tìm không phân biệt hoa/thường và dấu tiếng Việt trên **toàn bộ danh sách nguồn**, không chỉ 30 dòng đầu. Danh sách chi tiết có cuộn riêng và thông báo khi không có kết quả.
+- Không gọi playback, không ghi dữ liệu nguồn/M3U, giữ số kênh/trạng thái từng nguồn và có thể thu gọn như trước.
+- Electron QA: `positron-p51258-source-search-before-1920x1080-real.png` / `positron-p51258-source-search-after-1920x1080-real.png` / `positron-p51258-source-search-720-real.png`. CI kiểm tra đúng một nguồn được lọc, dữ liệu và playback bất biến, không tràn ngang. Chỉ công nhận vòng khi đã xem PNG thật và CI hoàn tất.
+
 ## P5.1.257 — Mở chi tiết nguồn và số kênh từ thẻ thống kê / Electron 4.23.342
 - Feature priority: NEW — Thêm nút Chi tiết nguồn ngay cạnh thống kê thư viện. Khi bấm, ứng dụng liệt kê tên từng nguồn, số kênh thuộc nguồn và trạng thái Bật/Tắt, có thể đóng lại; bản lớn giới hạn hiển thị 30 nguồn để tránh làm nặng giao diện. Tất cả chỉ đọc, không thay đổi playlist.
 - Electron screenshot: positron-p51257-source-details-after-1920x1080-real.png
