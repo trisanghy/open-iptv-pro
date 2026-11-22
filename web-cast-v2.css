@@ -193,3 +193,30 @@ html[data-iptv-device="mobile"] body #page-tv .player-control-card .control-layo
 #iptvCastPanel .cx-link-row .cx-button{min-height:35px;padding:6px 10px;font-size:12px}
 @media(max-width:400px){#iptvCastPanel .cx-link-row{grid-template-columns:1fr}
 #iptvCastPanel .cx-link-row .cx-button{justify-self:start}}
+
+
+/* TV cinema mode: all-browser viewport even when Samsung Browser denies Fullscreen API
+ * for playback started from a Realtime event without a remote key press.
+ */
+.iptv-tv-body .tv-exit-cinema{display:none}
+.iptv-tv-body.tv-cinema{overflow:hidden!important;height:100dvh!important;padding:0!important;margin:0!important;background:#000!important}
+.iptv-tv-body.tv-cinema .tv-site{background:#000!important;border:0!important;border-radius:0!important;
+ box-shadow:none!important;padding:0!important;margin:0!important;width:100vw!important;max-width:none!important;
+ height:100dvh!important;min-height:100dvh!important;display:block!important}
+.iptv-tv-body.tv-cinema :is(.tv-row,#tvPairing,#tvRequest,#tvStatus,.tv-help){display:none!important}
+.iptv-tv-body.tv-cinema #tvPlayer{display:block!important}
+.iptv-tv-body.tv-cinema #tvPlayer > :is(h1,p,.tv-actions){display:none!important}
+.iptv-tv-body.tv-cinema #tvVideo{
+ display:block!important;position:fixed!important;inset:0!important;z-index:10000!important;
+ width:100vw!important;height:100dvh!important;max-width:none!important;max-height:none!important;
+ aspect-ratio:auto!important;object-fit:contain!important;margin:0!important;padding:0!important;
+ border:0!important;border-radius:0!important;background:#000!important
+}
+.iptv-tv-body.tv-cinema .tv-exit-cinema{
+ display:inline-flex!important;align-items:center;justify-content:center;
+ position:fixed!important;z-index:10005!important;right:12px!important;top:12px!important;
+ background:#081521bb!important;border:1px solid #ffffff60!important;color:#fff!important;
+ border-radius:10px!important;padding:10px 15px!important;font-size:14px!important;
+ cursor:pointer!important
+}
+.iptv-tv-body.tv-cinema .tv-exit-cinema:focus-visible{outline:3px solid #2ee58a!important;outline-offset:3px}
