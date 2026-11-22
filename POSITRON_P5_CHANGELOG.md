@@ -1,6 +1,7 @@
 ## P5.1.158 — Chẩn đoán kênh thiếu logo / Electron 4.23.242
 - Feature priority: NEW — Từ tỷ lệ logo 0/561 nhìn thấy trên ảnh Electron P5.1.157, bổ sung danh sách các kênh chưa có URL logo, chia trang 10 kênh để người dùng xác định metadata thiếu.
 - User action: Thư viện → Kênh thiếu logo → Trước / Tiếp; hiển thị tên và nhóm từ playlist đã nhập, không tự quét mạng và không bổ sung logo giả.
+- Electron screenshot: positron-p51158-missing-logos-after-1920x1080-real.png
 - Before: positron-p51158-missing-logos-before-1920x1080-real.png
 - After: positron-p51158-missing-logos-after-1920x1080-real.png (chỉ công nhận khi chụp và trực tiếp xem ảnh Electron thật).
 - Logic: hàm thuần missingLogos() trả total, offset, limit, rows không lộ URL stream; có regression cho danh sách rỗng, phân trang, bất biến playlist.
