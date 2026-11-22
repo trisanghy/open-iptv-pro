@@ -188,9 +188,42 @@ test('TV manager hello confirms online and returns a live snapshot',async()=>{
 });
 
 test('QR manager uses the official GitHub Pages URL rather than RawGitHack',()=>{
- const expected='https://trisanghy.github.io/open-iptv-pro/tizen/phone.html?v=016';
- assert.match(tv,/var SOURCE_PAGE='https:\/\/trisanghy[.]github[.]io\/open-iptv-pro\/tizen\/phone[.]html[?]v=016';/);
+ const expected='https://trisanghy.github.io/open-iptv-pro/tizen/phone.html?v=017';
+ assert.match(tv,/var SOURCE_PAGE='https:\/\/trisanghy[.]github[.]io\/open-iptv-pro\/tizen\/phone[.]html[?]v=017';/);
  assert.ok(tv.includes("var qrLink=SOURCE_PAGE+'#code='+token"),'QR must preserve ephemeral pairing token');
  assert.ok(tv.includes(expected));
  assert.doesNotMatch(tv,/raw[.]githack[.]com/);
+});
+
+
+test('TV and QR page normalize missing and mistyped HTTP(S) URLs identically',()=>{
+ const tvStart=tv.indexOf('function url(s){'),tvEnd=tv.indexOf('function hash(s)',tvStart);
+ const phoneStart=phone.indexOf('function validUrl(s){'),phoneEnd=phone.indexOf('function loadSdk()',phoneStart);
+ assert.ok(tvStart>=0&&tvEnd>tvStart);
+ assert.ok(phoneStart>=0&&phoneEnd>phoneStart);
+ const tvUrl=vm.runInNewContext(tv.slice(tvStart,tvEnd)+'\nurl;', {URL});
+ const phoneUrl=vm.runInNewContext(phone.slice(phoneStart,phoneEnd)+'\nvalidUrl;', {URL});
+ const examples=[
+  ['d.org.vn/listiptv','https://d.org.vn/listiptv'],
+  ['htttp://d.org.vn/listiptv','http://d.org.vn/listiptv'],
+  ['htttps://d.org.vn/listiptv','https://d.org.vn/listiptv'],
+  ['https//d.org.vn/listiptv','https://d.org.vn/listiptv'],
+  ['https:/d.org.vn/listiptv','https://d.org.vn/listiptv'],
+  ['http//d.org.vn/listiptv','http://d.org.vn/listiptv'],
+  ['  HTTPS://d.org.vn/listiptv  ','https://d.org.vn/listiptv'],
+  ['https://d.org.vn/listiptv','https://d.org.vn/listiptv'],
+  ['example.com:8080/channels.m3u','https://example.com:8080/channels.m3u'],
+  ['//d.org.vn/listiptv','https://d.org.vn/listiptv'],
+  ['ftp://example.com/x',''],
+  ['javascript:alert(1)',''],
+  ['https://d.org.vn/a b','']
+ ];
+ for(const [input,expected] of examples){
+  assert.equal(tvUrl(input),expected,'TV: '+input);
+  assert.equal(phoneUrl(input),expected,'phone: '+input);
+ }
+ assert.match(tv,/URL trả về trang HTML thay vì danh sách M3U/);
+ assert.match(tv,/Máy chủ trả HTTP /);
+ assert.match(tv,/sourceStatus\('✕ Không tải được nguồn: '/);
+ assert.match(phone,/byId\('address'\)\.value=address/);
 });
