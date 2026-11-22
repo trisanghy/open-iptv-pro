@@ -195,7 +195,7 @@
   try{await root.navigator.clipboard.writeText(input.value);setStatus('Đã sao chép URL nguồn.');}
   catch{input.focus?.();input.select?.();setStatus('Đã chọn URL; hãy sao chép thủ công.');}
  }
- function stopOnLocalStop(){if(!active)return;void transportRemote('stop');} // Stop receiver media, retain the connected Cast session.
+ function stopOnLocalStop(){if(!active)return Promise.resolve(false);return transportRemote('stop');} // Await receiver acknowledgement; retain the Cast session.
  function onChannelChanged(next,selectedUrl){
   if(!next)return;
   const wasDifferent=next.id!==channel?.id||(selectedUrl||next.url||'')!==source;
