@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.339",
-  "description": "Positron P5.1.254: Quay lại kênh từ mọi trang",
+  "version": "4.23.340",
+  "description": "Positron P5.1.255: Nút quay lại kênh tại Nguồn IPTV",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

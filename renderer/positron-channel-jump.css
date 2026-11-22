@@ -208,3 +208,8 @@ html[data-positron="true"] #page-tv #poFocusedPosition{
  font-weight:650!important;font-variant-numeric:tabular-nums!important;
 }
 html[data-positron="true"] #page-tv #poFocusedPosition[hidden]{display:none!important}
+
+/* P255: preserve header controls on narrow Sources viewports. */
+html[data-positron="true"] #page-sources #poBackToChannel{max-width:100%;white-space:nowrap;font-size:12px}
+html[data-positron="true"] #page-sources #poBackToChannel:focus-visible{outline:2px solid #9bf4dd;outline-offset:2px}
+@media(max-width:800px){html[data-positron="true"] #page-sources .heading-actions{flex-wrap:wrap}}

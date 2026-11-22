@@ -1,5 +1,12 @@
 # Positron P5 Changelog
 
+## P5.1.255 — Nút quay lại kênh ngay trên trang Nguồn IPTV / Electron 4.23.340
+- Feature priority: NEW — Thêm nút một chạm ở phần đầu trang Nguồn IPTV, hiện số kênh đã duyệt gần nhất và quay về kênh ấy mà không phát video; dùng chung cơ chế với Alt+Shift+L. Nút tự vô hiệu khi chưa có dấu vị trí và không thay đổi M3U, Favorites, playback hoặc cài đặt.
+- Electron screenshot: positron-p51255-return-button-after-1920x1080-real.png
+- User action: Chọn một hàng kênh trên TV, mở Nguồn IPTV, bấm nút “↩ Kênh 412” trong phần tiêu đề để trở về hàng kênh đã chọn, không cần nhớ phím tắt.
+- Electron QA: đối chiếu `positron-p51255-return-button-before-1920x1080-real.png` và `positron-p51255-return-button-after-1920x1080-real.png`, test click và đo focus/center/overflow/dữ liệu. Trạng thái release chỉ xác nhận sau CI và mở ảnh thật.
+
+
 ## P5.1.254 — Alt+Shift+L quay lại kênh từ trang khác / Electron 4.23.339
 - Feature priority: NEW — Alt+Shift+L cho phép quay lại TV từ Nguồn IPTV, EPG hoặc Cài đặt, tìm đúng kênh vừa duyệt và căn giữa danh sách. Chỉ dùng bookmark trong phiên, không chiếm phím khi nhập liệu, không tự phát và không thay đổi playlist, Favorites hay nguồn.
 - Electron screenshot: positron-p51254-cross-page-after-1920x1080-real.png

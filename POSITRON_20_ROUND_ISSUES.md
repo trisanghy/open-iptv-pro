@@ -86,3 +86,14 @@ Chỉ đánh dấu hoàn tất khi sửa nguồn, node test pass, Electron scree
 - Lỗi: shortcut Alt+Shift+L bị giới hạn ở page-tv.active-page và không thể quay lại hàng kênh sau khi sang Nguồn/EPG/Cài đặt.
 - Thay đổi: phím quay lại TV khi có bookmark; không can thiệp các ô nhập, không autoplay và không sửa dữ liệu.
 - Chờ xác minh: Node test, 2 ảnh Electron 1920x1080 thật, QA focus kênh 412, release và bộ cài.
+
+## Đợt mới tiếp theo — Vòng 01/20 P5.1.254 [HOÀN TẤT]
+- Node 935 tests: 930 pass, 5 skipped, 0 fail. CI 45065493786: 6/6 jobs success (test, capture, Windows x64, Mac ARM64, Mac Intel, release).
+- Hai PNG Electron thật 1920x1080 đã tải và trực tiếp mở đối chiếu (Sources trước / TV sau); audit crossPageStartQA254/crossPageQA254 đều true, trở về hàng QA Channel 412 và căn giữa, không tự phát, không sửa Favorites/playlist, không tràn ngang.
+- Release bất biến `positron/v4.23.339-p5.1.254`, xác minh Setup/Portable EXE, DMG 2 kiến trúc, QA images, SHA256SUMS.
+- Commit code `411de0d7a45ba37690c4648f6ebe6a9824ed2b13`; commit sửa quy chuẩn changelog `9f4a2d1cd69ade9b4b94099b1894a6d9ee768377`.
+- Phát hiện từ ảnh trước: trang Sources không có nút quay lại kênh bằng chuột; chỉ có phím tắt khó khám phá. Ưu tiên vòng 02 mở nút riêng trong header Sources.
+
+## Đợt mới tiếp theo — Vòng 02/20 P5.1.255 [CANDIDATE]
+- Từ screenshot P254, thêm nút Sources “↩ Kênh 412”, disabled khi chưa có bookmark; click trả về hàng kênh và giữ mọi dữ liệu; tái dùng logic Alt+Shift+L; bố cục ưu tiên không tràn viewport.
+- QA bắt buộc: Node tests, ảnh Electron Sources trước / TV sau 1920x1080, click, tập trung hàng 412, căn giữa, không playback, không mutate danh sách và release mới.

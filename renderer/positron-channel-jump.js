@@ -89,6 +89,19 @@
   if(lastFocusedGroup&&[...groupSelect.options].some(option=>option.value===lastFocusedGroup))
    groupSelect.value=lastFocusedGroup;
  };
+ // P255: visible mouse-friendly back-to-channel button on Sources.
+ const sourceActions=d.querySelector('#page-sources .heading-actions');
+ const sourceReturnButton=sourceActions?d.createElement('button'):null;
+ if(sourceReturnButton){
+  sourceReturnButton.type='button';
+  sourceReturnButton.id='poBackToChannel';
+  sourceReturnButton.className='btn btn-subtle';
+  sourceReturnButton.textContent='↩ Kênh vừa duyệt';
+  sourceReturnButton.title='Trở lại hàng kênh đã duyệt, không tự phát';
+  sourceReturnButton.setAttribute('aria-label','Quay lại kênh đã duyệt từ trang Nguồn IPTV');
+  sourceReturnButton.disabled=true;
+  sourceActions.prepend(sourceReturnButton);
+ }
  const focusList=d.getElementById('channelList');
  // P251: session-only bookmark of the most recently keyboard-focused channel.
  let lastVisitedRow=null;
@@ -107,6 +120,7 @@
   const index=visibleRows.indexOf(row)+1;
   focusedPosition.textContent=index>0?'Kênh '+index+'/'+visibleRows.length:'';
   focusedPosition.hidden=index<1;
+  if(sourceReturnButton&&index>0){sourceReturnButton.disabled=false;sourceReturnButton.textContent='↩ Kênh '+index;}
  });
  // P250: hide the keyboard-focus position when focus leaves channel rows.
  // Retain the origin label while numeric-jump is open for Escape recovery.
@@ -472,23 +486,15 @@
    status.textContent=(groupMove?'Đã chuyển nhóm. ':'')+'Đang chọn '+(targetIndex+1)+'/'+rows.length+': '+name+'. Nhấn Enter để phát.';
   });
  }
- d.addEventListener('keydown',event=>{
-  if(historyShortcut(event))return;
-  // P238: global group/jump shortcuts must not hijack text editing.
-  // History shortcuts above already guard inputs; keep the same protection
-  // for Alt+G and Alt+J, including native selects and contenteditable fields.
-  if(event.defaultPrevented||event.isComposing||event.target?.closest?.('input,textarea,select,[contenteditable]:not([contenteditable="false"]),[role="textbox"]'))return;
-  // P251: Alt+Shift+L resumes keyboard browsing at the last focused row,
-  // even after visiting toolbar controls. Does not change playback or data.
-  if(event.altKey&&event.shiftKey&&!event.ctrlKey&&!event.metaKey&&
-     event.key.toLowerCase()==='l'&&panel.hidden){
+ // P255: one shared safe return path for keyboard and mouse.
+ function returnToBookmarkedChannel(){
    const list=focusList;
-   if(!list||(!lastVisitedChannelId&&!lastVisitedRow))return;
+   if(!list||(!lastVisitedChannelId&&!lastVisitedRow))return false;
    // P254: cross-page return to last focused channel with no autoplay.
    const tvPage=d.getElementById('page-tv');
    const returnFromAnotherPage=!tvPage?.classList.contains('active-page');
    if(returnFromAnotherPage)state.setPage('tv');
-   if(!tvPage?.classList.contains('active-page'))return;
+   if(!tvPage?.classList.contains('active-page'))return false;
    // P252: if favorite/recent filters rebuilt the list, restore the
    // previous channel by its stable ID, expanding only the view filter.
    const available=row=>row?.isConnected&&row.matches('.channel-item')&&row.getClientRects().length;
@@ -503,8 +509,7 @@
      row=[...list.querySelectorAll('.channel-item')].find(el=>el.dataset.channelId===lastVisitedChannelId);
     }
    }
-   if(!available(row))return;
-   event.preventDefault();event.stopPropagation();
+   if(!available(row))return false;
    // P253: center the restored row with context above and below it.
    // Native scrollTop clamps at the list edges; never scroll the main page.
    const box=list.getBoundingClientRect(),rect=row.getBoundingClientRect();
@@ -512,6 +517,20 @@
    row.focus({preventScroll:true});
    const index=[...list.querySelectorAll('.channel-item')].indexOf(row)+1;
    status.textContent=(returnFromAnotherPage?'Đã về trang TV. ':'')+(restoredAll?'Đã xem tất cả để quay lại. ':'')+'Đã quay lại kênh '+index+'. Nhấn Enter để phát.';
+   return true;
+ }
+ sourceReturnButton?.addEventListener('click',()=>returnToBookmarkedChannel());
+ d.addEventListener('keydown',event=>{
+  if(historyShortcut(event))return;
+  // P238: global group/jump shortcuts must not hijack text editing.
+  // History shortcuts above already guard inputs; keep the same protection
+  // for Alt+G and Alt+J, including native selects and contenteditable fields.
+  if(event.defaultPrevented||event.isComposing||event.target?.closest?.('input,textarea,select,[contenteditable]:not([contenteditable="false"]),[role="textbox"]'))return;
+  // P251: Alt+Shift+L resumes keyboard browsing at the last focused row,
+  // even after visiting toolbar controls. Does not change playback or data.
+  if(event.altKey&&event.shiftKey&&!event.ctrlKey&&!event.metaKey&&
+     event.key.toLowerCase()==='l'&&panel.hidden){
+   if(returnToBookmarkedChannel()){event.preventDefault();event.stopPropagation();}
    return;
   }
   // P243: when recent history is empty there are no channel rows to focus.
