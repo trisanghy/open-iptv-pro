@@ -55,3 +55,6 @@ html[data-theme=dark] #page-tv .wf-modes .wf-size{color:#d0b0f1!important}
 #page-tv .wf-auto-banner span{font-size:11px;color:#704e9e}
 #page-tv .wf-auto-banner small{width:100%;color:#85859a;font-size:10px}
 html[data-theme=dark] #page-tv .wf-auto-banner{background:#32243e;border-color:#76528d}
+
+#page-tv .wf-modes .wf-fallback{display:block;font-size:10px!important;color:#887298!important;font-weight:600}
+#page-tv .wf-modes button{min-height:113px!important}

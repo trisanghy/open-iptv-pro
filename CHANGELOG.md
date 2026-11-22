@@ -1,3 +1,7 @@
+## Rust Lab v23.8.108 — Sửa đúng mô hình Smart 18 MB và Intelligence dùng chung mô hình
+
+Đính chính giao diện: Smart ~18 MB là mô hình huấn luyện đã chốt nhưng chưa có trọng số để triển khai; Bayes dưới 1 MB chỉ là dự phòng. Intelligence ưu tiên dùng Qwen3/Hy-MT2 đã tải hoặc tải thêm qua quản lý AI, chưa gọi LLM từ WatchFlow. Không đưa prerelease thành Stable/Latest. [Ghi chú](RELEASE_NOTES_RUST_LAB_V23_8_108.md).
+
 ## Rust Lab v23.8.107 — Tăng độ tin cậy phân loại Internet, sửa CI (PRERELEASE)
 
 - Sửa test và phân loại thực tế: mô tả thể thao/tin tức/phim/giải trí/thiếu nhi/khoa học rõ ràng từ Wikidata không bị bỏ sót khi điểm Naive Bayes thấp. Chỉ dùng khi đúng tên kênh, EPG chính xác vẫn ưu tiên cao nhất.
