@@ -119,8 +119,8 @@
   if(!hasNative){window.OpenIPTVWebCast?.stopOnLocalStop?.();return;}
   if(!casting)return;casting=false;selectedTarget=null;api.castStop().catch(()=>{});
  }
- function onChannelChanged(ch){
-  if(!hasNative){window.OpenIPTVWebCast?.onChannelChanged?.(ch);return;}
+ function onChannelChanged(ch,url){
+  if(!hasNative){window.OpenIPTVWebCast?.onChannelChanged?.(ch,url);return;}
   if(!casting||!channel||ch.id===channel.id)return;
   stopOnLocalStop();status('Đã đổi kênh: phiên Cast cũ được dừng. Mở Cast để phát kênh mới.');
  }
