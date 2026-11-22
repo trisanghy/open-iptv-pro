@@ -1,5 +1,15 @@
 # Positron P5 Changelog
 
+## P5.1.208 — Giữ tiêu điểm khi làm mới khám phá ngẫu nhiên / Electron 4.23.293
+- Feature priority: BLOCKER_FIX — Nút làm mới tự ẩn khi đang có tiêu điểm bàn phím khiến người dùng điều khiển từ xa mất vị trí tiếp tục thao tác chọn kênh phát; lỗi chặn trải nghiệm xem và không thể đi tiếp bằng Enter như mong đợi.
+- Electron screenshot: positron-p51208-focus-return-after-1920x1080-real.png
+- User action: Trong trình phát, khám phá một kênh ngẫu nhiên, dùng bàn phím Tab đến nút làm mới, nhấn Enter và tiếp tục nhấn nút Bất kỳ mà không cần tìm lại tiêu điểm.
+- Thay đổi: ghi lại trạng thái focus ngay trước khi nút reset bị ẩn, chuyển focus sang Bất kỳ nếu nút còn hiện; không tự phát hoặc sửa playlist, chỉ xóa bộ đếm khám phá phiên hiện tại.
+- Before: `positron-p51208-focus-return-before-1920x1080-real.png`; after: `positron-p51208-focus-return-after-1920x1080-real.png` (Electron CI phải tạo và mở xem).
+- QA: Node regression cho source/focus/ảnh; Electron 1920×1080 nhấn Enter thực, kiểm nút reset ẩn, focus sang nút tiếp tục, counter về 0, kênh hiện tại/playlist giữ nguyên, kiểm 450px không tràn ngang.
+- Status: CANDIDATE cho đến khi Node tests, Electron PNG đã được mở xem, Mac/Win build và GitHub Release verified.
+
+
 ## P5.1.198 — Hẹn giờ ghi ngày mai cùng giờ / Electron 4.23.283
 - Feature priority: NEW — Ảnh Electron P5.1.197 thực tế cho thấy các nút bắt đầu nhanh chỉ có Sau 5, Sau 15, Sau 30 phút, không có cách chuyển lịch ghi sang ngày mai giữ nguyên giờ đã chọn. Bổ sung nút Ngày mai cùng giờ ở cả hai mẫu ghi hình để tiện lên lịch mà không nhập lại giờ kết thúc.
 - Electron screenshot: positron-p51198-dvr-tomorrow-after-1920x1080-real.png
