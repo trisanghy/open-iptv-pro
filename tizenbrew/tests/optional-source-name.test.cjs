@@ -11,8 +11,8 @@ function block(source,from,to){
  return source.slice(a,b);
 }
 const sourceNameHelper=block(tv,'function sourceDisplayName(value){','function playlistStart(req){');
-test('version 0.1.18 is consistent in TizenBrew metadata and TV header',()=>{
- assert.equal(pkg.version,'0.1.18');
+test('version 0.1.19 is consistent in TizenBrew metadata and TV header',()=>{
+ assert.equal(pkg.version,'0.1.19');
  assert.equal(pkg.tizenbrewEdition,pkg.version);
  assert.ok(tv.includes('Samsung Tizen Edition · TizenBrew v'+pkg.version));
 });
@@ -23,7 +23,7 @@ test('TV and QR phone labels clearly say source name is optional',()=>{
  assert.doesNotMatch(nameInput,/\brequired\b/);
  assert.ok(phone.includes("byId('sourceForm').onsubmit=async function"));
  assert.doesNotMatch(phone,/if\(!name\|\|!address\|\|!byId\('rights'\)\.checked\)/);
- assert.ok(tv.includes("byId(kind==='search'?'searchInput':'sourceUrl').focus()"),'TV should focus directly on URL');
+ assert.ok(tv.includes("byId(kind==='search'?'searchInput':'toSourceUrl').focus()"),'TV should avoid opening Samsung keyboard automatically');
 });
 test('TV generates a source name only when missing',()=>{
  const state={sources:[]};
