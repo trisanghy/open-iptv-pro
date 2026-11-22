@@ -2,14 +2,23 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
-## P5.1.239 — Escape đóng bảng nhảy khi duyệt kênh
+## P5.1.240 — Shift+F lọc nhanh Yêu thích mà không đổi dấu sao
 
-**Ứng dụng:** 4.23.324 · **Trạng thái:** Chưa có bản phát hành
+**Ứng dụng:** 4.23.325 · **Trạng thái:** Chưa có bản phát hành
+
+Feature priority: NEW — Thêm phím tắt Shift+F trong danh sách kênh để luân phiên bộ lọc Tất cả/Yêu thích và giữ focus trên hàng đầu. Trước đây Shift+F bị hiểu nhầm là F và đảo dấu sao, dễ thay đổi dữ liệu yêu thích ngoài ý muốn. Bản mới chỉ chuyển bộ lọc sẵn có, tuyệt đối không ghi M3U hoặc thay đổi Favorites. Electron screenshot: positron-p51240-shift-favorites-after-1920x1080-real.png
+
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/1f91a9f63bb9492b6bf1ac06b88cbfd81776cda0)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+
+## P5.1.239 — Escape đóng bảng nhảy kênh từ danh sách / Electron 4.23.324
+
+**Ứng dụng:** 4.23.324 · **Trạng thái:** Đã phát hành
 
 Feature priority: NEW — Bổ sung phím Escape để đóng ngay bảng nhảy kênh/nhóm khi đang focus một hàng kênh, giảm chiều cao phần biểu mẫu và trả lại không gian duyệt kênh mà không phải quay về nút đóng. Không bắt đầu playback, không đổi M3U/EPG/Favorites và không thay đổi lịch sử nhóm. Electron screenshot: positron-p51239-escape-jump-after-1920x1080-real.png
 
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/1b3dce1f1b3dc4590076193a08d599911fdf0bd2)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/33a73f03a973ed73987a0b86f96738f73ce7e912)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.324-p5.1.239)
 
 ## P5.1.238 — Không cướp focus khi đang nhập với Alt+J/Alt+G / Electron 4.23.323
 
