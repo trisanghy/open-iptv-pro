@@ -29,16 +29,17 @@ test('Full-screen player cannot navigate to hidden sidebar buttons with remote',
  const from=html.indexOf('function keyHandler(e){');
  const to=html.indexOf("\ndocument.querySelectorAll('[data-nav]')",from);
  assert.ok(from>0&&to>from);
- let focused=0,clicked=0,played=0,paused=0,prevented=0;
+ let focused=0,clicked=0,played=0,paused=0,prevented=0,opened=0;
  const video={paused:true,play(){played++;return Promise.resolve()},pause(){paused++}};
  const exit={focus(){focused++},click(){clicked++}},tube={focus(){focused++},click(){clicked++}};
- const byId=id=>({player:{hidden:false},modal:{hidden:true},video,exitModuleBtn:exit,tizenTubeBtn:tube})[id];
+ const byId=id=>({player:{hidden:false},modal:{hidden:true},channelPicker:{hidden:true},video,exitModuleBtn:exit,tizenTubeBtn:tube})[id];
  const fn=vm.runInNewContext(html.slice(from,to)+'\nkeyHandler;',{
   byId,isRemoteBack:()=>false,handleBack(){},document:{activeElement:exit},notify(){},
-  togglePlayback(){played++;},changeChannel(){},move(){focused++}
+  togglePlayback(){played++;},changeChannel(){throw Error('Arrows must not directly change a channel');},openChannelPicker(){opened++;},move(){focused++}
  });
  for(const key of ['ArrowUp','ArrowDown','ArrowLeft','ArrowRight'])fn({key,keyCode:0,preventDefault(){prevented++}});
  assert.equal(focused,0,'no hidden sidebar button may be focused from the player');
+ assert.equal(opened,4,'each D-pad direction opens the selector from fullscreen');
  fn({key:'Enter',keyCode:13,preventDefault(){prevented++}});
  assert.equal(played,1,'OK should control video');
  assert.equal(clicked,0,'OK on player must not activate old sidebar focus');
