@@ -18,8 +18,8 @@ h1{font-size:23px;margin:0 0 10px;letter-spacing:-.6px}h2{font-size:18px;margin:
 button{font:inherit;cursor:pointer;border-radius:11px;border:1px solid #36506f;background:#1c3553;color:#ecf6ff;padding:12px 13px;font-weight:650}
 button:disabled{opacity:.45;cursor:not-allowed}button.primary{background:#078bec;border-color:#138bf3;color:#fff}
 .tabs button{border:0;background:transparent;color:#a9bed3;font-size:15px}.tabs button.active{background:#1466a5;color:#fff}
-input,select{width:100%;font:inherit;border:1px solid #45617f;border-radius:11px;background:#0b1b32;color:#fff;padding:13px 12px;outline:none;font-size:16px}
-input:focus,select:focus,button:focus-visible{border-color:#70ceff;outline:2px solid #70ceff33}
+input,select,textarea{width:100%;font:inherit;border:1px solid #45617f;border-radius:11px;background:#0b1b32;color:#fff;padding:13px 12px;outline:none;font-size:16px}
+input:focus,select:focus,textarea:focus,button:focus-visible{border-color:#70ceff;outline:2px solid #70ceff33}
 label{display:block;color:#ecf6ff;font-weight:650;margin:12px 0 6px}
 .actions{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
 .actions button{flex:1;min-width:95px}.source-head{display:flex;gap:10px;align-items:end}.source-head >div{flex:1}
@@ -74,6 +74,12 @@ label{display:block;color:#ecf6ff;font-weight:650;margin:12px 0 6px}
 <p class="micro">Tệp tối đa 3 MB. TV xác nhận từng phần và chỉ báo thành công sau khi lưu.</p>
 <button id="sendFile" class="primary full" type="button" disabled>↑ Gửi tệp M3U sang TV</button>
 <button id="tryPhone" class="full" type="button" disabled style="margin-top:8px">↻ Thử tải URL trên điện thoại</button>
+<details style="margin-top:15px"><summary style="cursor:pointer;font-weight:650;color:#a8dcff;padding:10px 0">Hoặc dán nội dung M3U đã sao chép</summary>
+<p class="micro">Nếu mở URL trên điện thoại thấy văn bản bắt đầu bằng #EXTM3U, sao chép rồi dán vào đây. Không cần lưu tệp.</p>
+<label for="playlistText">Nội dung M3U (tối đa 3 MB)</label>
+<textarea id="playlistText" rows="5" maxlength="3000000" placeholder="#EXTM3U&#10;#EXTINF:-1,Tên kênh&#10;https://example.com/live.m3u8" style="resize:vertical;min-height:130px"></textarea>
+<button id="sendText" class="primary full" type="button" disabled style="margin-top:10px">Gửi nội dung M3U sang TV</button>
+</details>
 </section>
 <section id="editPanel" class="panel" hidden>
 <h2 id="editTitle">Chỉnh sửa kênh</h2>
@@ -122,7 +128,7 @@ var script=document.createElement('script');script.src=sites.shift();script.onlo
 function expires(){return Date.now()-started>600000;}
 function updateControls(){
  var good=online&&!busy&&!expires(),hasSource=good&&snapshot&&snapshot.sourceId;
- byId('send').disabled=!good;byId('refresh').disabled=!good;byId('sendFile').disabled=!good;byId('tryPhone').disabled=!good;
+ byId('send').disabled=!good;byId('refresh').disabled=!good;byId('sendFile').disabled=!good;byId('tryPhone').disabled=!good;byId('sendText').disabled=!good;
  byId('sourceSelect').disabled=!good||!snapshot||!snapshot.sources.length;
  ['renameSource','deleteSource','sourceUp','sourceDown','newChannel'].forEach(function(id){byId(id).disabled=!hasSource;});
  byId('filterChannels').disabled=!hasSource;
@@ -326,6 +332,17 @@ byId('sendFile').onclick=async function(){
  }catch(e){feedback('Lỗi gửi tệp: '+String(e.message||e),true);}
 };
 byId('tryPhone').onclick=async function(){try{await importFromPhoneUrl();}catch(e){feedback('Không tải được bằng điện thoại: '+String(e.message||e),true);}};
+byId('sendText').onclick=async function(){
+ try{
+  var raw=byId('playlistText').value.replace(/^\uFEFF/,'').trim();
+  if(!raw||raw.length>3000000)throw Error('Nội dung M3U trống hoặc vượt 3 MB.');
+  if(!/^#EXTM3U\b/i.test(raw))throw Error('Nội dung phải bắt đầu bằng #EXTM3U. Hãy sao chép văn bản playlist, không phải trang HTML.');
+  var input=byId('address').value.trim(),address=input?validUrl(input):'';
+  if(input&&!address)throw Error('URL nguồn không hợp lệ. Có thể xóa URL để gửi nội dung M3U riêng.');
+  await transferPlaylist(raw,byId('name').value.trim()||'Nguồn từ nội dung M3U',address);
+  byId('playlistText').value='';
+ }catch(e){feedback('Lỗi gửi nội dung M3U: '+String(e.message||e),true);}
+};
 byId('tabManage').onclick=function(){showTab('manage');if(online&&!snapshot)void getSnapshot('',0,'');};
 byId('tabAdd').onclick=function(){showTab('add');};
 byId('refresh').onclick=function(){void getSnapshot(currentSource,offset,query);};
