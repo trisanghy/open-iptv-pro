@@ -1860,8 +1860,8 @@ test('P5.1.179 tìm trong các kênh chưa đánh sao không làm mất nguồn'
  assert.ok(js.includes("words.every(word=>foldMore((ch.name||'')+' '+(ch.group||'')).includes(word))"));
  assert.ok(js.includes("replace(/[\\u0300-\\u036f]/g,'').replace(/đ/gi,'d')"));
  assert.ok(js.includes("focus.setSelectionRange(caret,caret)"));
- assert.ok(js.includes('moreCursor=filtered.length?moreCursor%filtered.length:0'));
- assert.ok(js.includes('Array.from({length:Math.min(morePageSize,filtered.length)}'));
+ assert.ok(js.includes('moreCursor=pageIndex*morePageSize'), 'Search results retain a valid, deterministic page');
+ assert.ok(js.includes('const picks=filtered.slice(moreCursor,moreCursor+morePageSize)'), 'Filtered pages never duplicate channels');
  assert.ok(js.includes("noMatch.textContent='Không có kênh chưa yêu thích phù hợp. Hãy thử từ khóa khác.'"));
  assert.ok(css.includes('#page-fav #positronFavoriteMoreSearch:focus-visible'));
  assert.ok(qa.includes('favoriteSuggestSearchQA'));
