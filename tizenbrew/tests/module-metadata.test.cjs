@@ -22,5 +22,5 @@ test('TizenBrew card exposes the actual Samsung TV edition', () => {
 test('TizenBrew module description fits TV module cards', () => {
   assert.ok(pkg.description.length > 0 && pkg.description.length <= 150, 'Keep module descriptions concise');
   assert.doesNotMatch(pkg.description, /Full Desktop|Windows\/macOS|Timeshift for Windows/i);
-  assert.match(pkg.description, /TV Samsung/);
+  assert.match(pkg.description, /TV Samsung|TV cho Samsung/);
 });
