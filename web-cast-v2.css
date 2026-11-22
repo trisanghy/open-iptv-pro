@@ -220,3 +220,23 @@ html[data-iptv-device="mobile"] body #page-tv .player-control-card .control-layo
  cursor:pointer!important
 }
 .iptv-tv-body.tv-cinema .tv-exit-cinema:focus-visible{outline:3px solid #2ee58a!important;outline-offset:3px}
+
+
+/* Connection badges use real Cast / AirPlay / TV state, not a fake selection.
+ * Keep the single SVG silhouette, only tint the existing button and tab.
+ */
+html body #page-tv #castBtn[data-cast-connection]:not([data-cast-connection="none"]),
+html[data-iptv-device="mobile"] body #page-tv #castBtn[data-cast-connection]:not([data-cast-connection="none"]){
+ border-color:var(--accent,#30dc79)!important;
+ background:color-mix(in srgb,var(--accent,#30dc79) 14%,transparent)!important;
+ color:var(--accent,#30dc79)!important;
+ box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--accent,#30dc79) 28%,transparent)!important;
+}
+#iptvCastPanel .cx-tab[data-connected="true"]{
+ border-color:var(--cx-accent)!important;
+ background:var(--cx-soft)!important;
+ color:var(--cx-ink)!important;
+}
+#iptvCastPanel #cxAirBadge[data-ok="true"]{
+ border-color:var(--cx-accent);color:var(--cx-good);background:var(--cx-soft);
+}
