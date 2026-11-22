@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro",
-  "version": "4.23.39",
-  "description": "Open IPTV Pro v4.23.39 Full Desktop — independent collapsible channel list with persisted visibility, Rust-style collapsible icon sidebar, manual primary/backup stream selection and video controls kept outside picture; folder/channel reorder with Shift multi-select, HLS/DASH, FFmpeg, DVR and Timeshift for Windows/macOS.",
+  "version": "0.1.17",
+  "description": "Trình phát IPTV cho TV Samsung: nhập nguồn M3U bằng mã QR, quản lý kênh từ điện thoại, danh sách kênh và điều khiển remote.",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",
@@ -128,5 +128,5 @@
     "ColorF0Red",
     "ColorF1Green"
   ],
-  "tizenbrewEdition": "0.1.16"
+  "tizenbrewEdition": "0.1.17"
 }
