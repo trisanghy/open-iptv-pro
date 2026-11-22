@@ -2,14 +2,23 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
-## P5.1.201 — hoàn tác thay tên bản ghi an toàn
+## P5.1.202 — gia hạn lịch ghi thêm 15 phút an toàn
 
-**Ứng dụng:** 4.23.286 · **Trạng thái:** Chưa có bản phát hành
+**Ứng dụng:** 4.23.287 · **Trạng thái:** Chưa có bản phát hành
+
+Feature priority: NEW — Giữ nguyên kênh và giờ bắt đầu, cho phép gia hạn mốc kết thúc thêm 15 phút khi chương trình thể thao hoặc trực tiếp kéo dài. User action: Vào Lịch phát sóng → Hẹn giờ ghi hình, chọn thời gian bắt đầu/kết thúc hợp lệ, nhấn “Gia hạn +15 phút”; có cả trên mẫu ghi nhanh từ TV.
+
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/9fe3fcbac2535d01be32c8c72031a44db2421c41)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+
+## P5.1.201 — 4.23.286 — Hoàn tác lần thay tên bản ghi vừa xác nhận (CANDIDATE)
+
+**Ứng dụng:** 4.23.286 · **Trạng thái:** Đã phát hành
 
 Feature priority: NEW — Cho phép khôi phục đúng tên chương trình người dùng vừa thay bằng nút hoàn tác một lần, tránh mất tên nhập thủ công khi họ đổi ý và không làm thay đổi bất cứ lịch ghi nào. User action: Mở Lịch phát sóng, nhập tên riêng, xác nhận hai lần thay tên theo kênh, rồi nhấn Hoàn tác thay tên để trở về tên trước đó.
 
 [Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/cf02d2a3c4e7aca3788d66ca5ef548bcfef5dd14)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.286-p5.1.201)
 
 ## P5.1.200 — 4.23.285 — Xác nhận thay tên lịch ghi bằng hai lần nhấn (CANDIDATE)
 
