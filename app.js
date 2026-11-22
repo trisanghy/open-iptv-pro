@@ -967,6 +967,14 @@
    document.dispatchEvent(new CustomEvent('openiptv:audio-channel',{detail:{channelId:found.id,url:playCandidates[0]}}));
    return;
   }
+  // A paired TV/active Cast is the playback owner. Do not start a competing
+  // local decoder while asynchronous TV commands are in flight.
+  if(!native&&window.OpenIPTVWebCastV2?.shouldUseRemotePlayer?.()){
+   try{player.pause();player.removeAttribute('src');player.load();}catch{}
+   $('#streamInfo').textContent='● Đang điều khiển TV · '+found.name;
+   textStatus('Đang chuyển '+found.name+' trên TV…');
+   return;
+  }
   try{await tryPlayback(playCandidates[0],generation,preferredTransport);}catch(e){recoverPlayback(generation,e.message);}
  }
  async function playToggle(){if(window.OpenIPTVBackgroundAudio?.active)return window.OpenIPTVBackgroundAudio.togglePlayback();if(!native&&window.OpenIPTVWebCastV2?.isRemoteActive?.()){await window.OpenIPTVWebCastV2.toggleRemotePlayback();return;}if(!current){const first=sortedChannels(enabledChannels())[0];if(first)await playChannel(first.id);else toast('Hãy thêm file M3U hoặc URL trước','warn');return;}
