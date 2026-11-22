@@ -2,14 +2,23 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
-## P5.1.267 — AI đề xuất chương trình sắp chiếu theo EPG và hành vi
+## P5.1.268 — AI nhắc chương trình hợp gu theo EPG và hành vi
 
-**Ứng dụng:** 4.23.352 · **Trạng thái:** Chưa có bản phát hành
+**Ứng dụng:** 4.23.353 · **Trạng thái:** Chưa có bản phát hành
+
+Feature priority: NEW — Bổ sung công cụ **Nhắc trong ứng dụng** cho WatchFlow Intelligence. Khi người xem chủ động bật học và bật nhắc, ứng dụng định kỳ kiểm tra XMLTV đã tải, lấy chương trình gần giờ chiếu và dùng **mô hình logistic đã học từ hành vi/đánh giá** để thông báo chương trình có xác suất hợp gu đạt ngưỡng. Chỉ hiển thị lời nhắc cục bộ, không tự phát kênh, không gửi hành vi lên mạng, không mở thông báo OS khi chưa xin quyền. Feature class: AI
+
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/5656648fa016ad3cefd00ff3701545322cd9d00d)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+
+## P5.1.267 — AI lịch EPG hợp gu từ chương trình sắp chiếu / Electron 4.23.352
+
+**Ứng dụng:** 4.23.352 · **Trạng thái:** Đã phát hành
 
 Feature priority: NEW — Một chế độ mới **Lịch EPG hợp gu** trong WatchFlow Intelligence: dùng EPG XMLTV hiện có để tìm chương trình sẽ bắt đầu trong 8 giờ tới, không bịa giờ hoặc tiêu đề; xếp chương trình theo mức độ phù hợp nhờ trọng số logistic học từ phản hồi và thời lượng xem, cá nhân hóa theo giờ phát và loại nội dung. Phân loại chủ đề từ tên/mô tả EPG dùng luật rõ ràng (không quảng cáo là LLM), còn xếp hạng bằng mô hình học thực. Feature class: AI
 
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/426d8ab1ae52345cf820f6a1111d8531c95d623a)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/ba8669395b31bc115a8d1acea232c159f418e70a)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.352-p5.1.267)
 
 ## P5.1.266 — WatchFlow Intelligence: học máy sở thích, phân loại EPG và tìm chủ đề trên Wikipedia / Electron 4.23.351
 
@@ -1996,39 +2005,19 @@ Giảm khoảng đệm của hướng dẫn nhập nguồn và khám phá nguồ
 
 ## P5.1.22 — Nút điều khiển hình ảnh SVG rõ ràng hơn
 
-**Ứng dụng:** 4.23.106 · **Trạng thái:** Đã phát hành
+**Ứng dụng:** 4.23.106 · **Trạng thái:** Chưa có bản phát hành
 
 Thay ký tự biểu tượng bằng SVG đơn sắc, giữ trạng thái bật/tắt và tên điều khiển.
 
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/d3d26dc1122d9671512162d555eba7bfc44c0914)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.106-p5.1.22)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
 
 ## P5.1.21 — Sửa bố cục lựa chọn luồng phát trên cửa sổ nhỏ
 
-**Ứng dụng:** 4.23.105 · **Trạng thái:** Đã phát hành
+**Ứng dụng:** 4.23.105 · **Trạng thái:** Chưa có bản phát hành
 
 Đưa bộ chọn đường phát thành một hàng đủ rộng trong cửa sổ rất hẹp.
 
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/073dbf4a530e8162111f271dee93d61a42dbfb57)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.105-p5.1.21)
-
-## P5.1.20 — Phím tắt tìm kiếm phù hợp hệ điều hành
-
-**Ứng dụng:** 4.23.104 · **Trạng thái:** Đã phát hành
-
-Hiển thị gợi ý phím tắt tìm kiếm theo hệ điều hành đang sử dụng.
-
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/0b7b8dc5575323a7675384ac1121fed4f620c873)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.104-p5.1.20)
-
-## P5.1.16 — Biểu tượng âm lượng dạng vector
-
-**Ứng dụng:** 4.23.100 · **Trạng thái:** Đã phát hành
-
-Sử dụng biểu tượng âm lượng có nét đồng nhất, không phụ thuộc phông chữ.
-
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/5dec102bfa2fc0bafee67bf9ae404e1afed127dc)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.100-p5.1.16)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
 
 ## P5.1.12 — Gợi ý phím tắt tìm kiếm dễ đọc hơn
 
