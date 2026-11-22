@@ -431,10 +431,14 @@
         return;
        }
        state.render?.();renderHistory();
-       const updated=Array.from(historyList.querySelectorAll('.po-random-history-favorite'))
-        .find(b=>b.dataset.channelId===String(channel.id));
-       updated?.focus({preventScroll:true});
        state.toast?.((added?'Đã thêm yêu thích: ':'Đã bỏ yêu thích: ')+(channel.name||'Kênh'));
+       // Native Favorites render may redraw the focused DOM in the same frame.
+       // Restore focus to the replacement star AFTER all synchronous redraws.
+       requestAnimationFrame(()=>{
+        const updated=Array.from(historyList.querySelectorAll('.po-random-history-favorite'))
+         .find(b=>b.dataset.channelId===String(channel.id));
+        if(!historyPanel.hidden&&updated?.isConnected)updated.focus({preventScroll:true});
+       });
       });
       row.append(favorite);
      }

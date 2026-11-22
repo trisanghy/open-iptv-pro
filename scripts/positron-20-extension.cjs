@@ -6551,6 +6551,11 @@ async function runTwenty(page){
  const before217=await page.screenshot({path:path.join(out,'positron-p51217-history-favorite-before-1920x1080-real.png'),animations:'disabled'});
  assert.deepEqual([before217.readUInt32BE(16),before217.readUInt32BE(20)],[1920,1080]);
  await page.evaluate(()=>document.querySelector('#poRandomHistoryList .po-random-history-favorite').click());
+ await page.waitForFunction(()=>{
+  const star=[...document.querySelectorAll('#poRandomHistoryList .po-random-history-favorite')]
+   .find(b=>b.dataset.channelId===String(window.__p217ChannelId));
+  return Boolean(star&&document.activeElement===star);
+ },{timeout:3000});
  const favoriteQA217=await page.evaluate(()=>{
   const native=window.__p217Native,core=window.OpenIPTVFavorites,store=native.getStore();
   const channel=native.getChannels().find(c=>c.id===window.__p217ChannelId);
