@@ -10,7 +10,7 @@ function fixture(){
  ],sources:[{id:'s1'},{id:'s2'}],favorites:['vtv1'],snapshots:{'https://iptv.test/vtv1':'snapshot'},
   groupOrder:['VTV','HTV','Trống'],channelOrder:{VTV:['vtv1','vtv2'],HTV:['htv7']},
   collapsedGroups:['HTV'],folders:['Trống']};
- const handlers={},stats={saved:0,rendered:0,toasts:[],canSave:true},timers=new Map();
+ const handlers={},registered={},stats={saved:0,rendered:0,toasts:[],canSave:true},timers=new Map();
  let timeoutIndex=0,now=0,hover=null;
  function classList(classes){const c=new Set(classes);return{contains:k=>c.has(k),add:k=>c.add(k),remove:(...args)=>args.forEach(x=>c.delete(x))}}
  const nodes={};
@@ -20,7 +20,8 @@ function fixture(){
   getElementById:element,querySelector:()=>null,
   elementFromPoint:()=>hover,
   createElement:tag=>({tag,classList:classList([]),style:{},remove(){},setAttribute(){}}),
-  addEventListener:(n,fn)=>{handlers[n]=fn}
+  addEventListener:(n,fn,options)=>{(registered[n]||=[]).push({fn,options});handlers[n]=e=>(registered[n]||[]).slice().forEach(x=>x.fn(e));},
+  removeEventListener:(n,fn)=>{registered[n]=(registered[n]||[]).filter(x=>x.fn!==fn);}
  };
  const win={IPTVState:{getStore:()=>store,save(){stats.saved++;return stats.canSave},
   render(){stats.rendered++},toast:(...a)=>stats.toasts.push(a)},
@@ -44,7 +45,7 @@ function fixture(){
   handlers[type](e);return e;
  }
  function tick(ms){now+=ms;for(const [i,t]of [...timers])if(t.at<=now){timers.delete(i);t.cb()}}
- return {store,stats,win,doc,handlers,row,touch,tick,setHover:x=>hover=x,timers};
+ return {store,stats,win,doc,handlers,registered,row,touch,tick,setHover:x=>hover=x,timers};
 }
 test('channel reorder uses the existing store without changing source/favorites/snapshot',()=>{
  const f=fixture(),saved=JSON.stringify({sources:f.store.sources,favorites:f.store.favorites,snapshots:f.store.snapshots});
@@ -77,7 +78,9 @@ test('short tap and finger swipe before 0.8s never sort nor block default scroll
  const end=f.touch('touchend',r);
  assert.equal(end.prevented,false);
  f.tick(500);assert.equal(f.stats.saved,0);
- f.touch('touchstart',r);const move=f.touch('touchmove',r,45,90);
+ f.touch('touchstart',r);
+ assert.deepEqual(f.registered.touchmove.map(x=>x.options.passive),[true]);
+ const move=f.touch('touchmove',r,45,90);
  assert.equal(move.prevented,false);
  f.tick(1000);
  assert.equal(f.stats.saved,0);
@@ -111,7 +114,7 @@ test('Web-only CSS contains no visible three-bar grip and leaves touch scrolling
  assert.match(css,/touch-action:pan-y!important/);
  assert.doesNotMatch(css,/\.folder-sort-grip/);
  for(const asset of ['web-mobile-touch-sort.css','web-mobile-touch-sort.js']){
-  const url=asset+'?v=mobile-touch-sort-20261120b';
+  const url=asset+'?v=mobile-touch-sort-20261122a';
   assert.ok(html.includes(url),url);
   assert.ok(builder.includes(url),url+' in build');
  }
