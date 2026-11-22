@@ -1,21 +1,101 @@
 {
-  "generatedAt": "2026-11-22T10:14:08.886756+00:00",
+  "generatedAt": "2026-11-22T10:23:00.880065+00:00",
   "repository": "trisanghy/open-iptv-pro",
   "branch": "Positron",
   "versions": [
     {
-      "number": 200,
-      "version": "P5.1.200",
-      "appVersion": "4.23.285",
-      "title": "xác nhận hai lần trước khi thay tên lịch ghi",
-      "description": "Feature priority: NEW — Khi đã có tên ghi hình tự nhập, nút tạo tên tự động cho phép xác nhận rõ ràng bằng hai lần nhấn thay vì bắt xóa tên cũ; tránh ghi đè vô ý và giảm bước thao tác. User action: Vào Lịch phát sóng, nhập tên riêng, bấm Tạo tên từ kênh và giờ một lần để xem xác nhận, bấm lần hai để thay hoặc nhấn Escape để hủy.",
+      "number": 201,
+      "version": "P5.1.201",
+      "appVersion": "4.23.286",
+      "title": "hoàn tác thay tên bản ghi an toàn",
+      "description": "Feature priority: NEW — Cho phép khôi phục đúng tên chương trình người dùng vừa thay bằng nút hoàn tác một lần, tránh mất tên nhập thủ công khi họ đổi ý và không làm thay đổi bất cứ lịch ghi nào. User action: Mở Lịch phát sóng, nhập tên riêng, xác nhận hai lần thay tên theo kênh, rồi nhấn Hoàn tác thay tên để trở về tên trước đó.",
       "kind": "fix",
       "status": "candidate",
       "published": "",
       "tag": "",
-      "commit": "bf241269944d5a1bdff620f74ba17dba4229c49d",
+      "commit": "cf02d2a3c4e7aca3788d66ca5ef548bcfef5dd14",
       "url": "https://github.com/trisanghy/open-iptv-pro/tree/Positron",
       "assets": [],
+      "image": null
+    },
+    {
+      "number": 200,
+      "version": "P5.1.200",
+      "appVersion": "4.23.285",
+      "title": "4.23.285 — Xác nhận thay tên lịch ghi bằng hai lần nhấn (CANDIDATE)",
+      "description": "Feature priority: NEW — Khi đã có tên ghi hình tự nhập, nút tạo tên tự động cho phép xác nhận rõ ràng bằng hai lần nhấn thay vì bắt xóa tên cũ; tránh ghi đè vô ý và giảm bước thao tác. User action: Vào Lịch phát sóng, nhập tên riêng, bấm Tạo tên từ kênh và giờ một lần để xem xác nhận, bấm lần hai để thay hoặc nhấn Escape để hủy.",
+      "kind": "fix",
+      "status": "release",
+      "published": "2026-11-22T10:19:32Z",
+      "tag": "positron/v4.23.285-p5.1.200",
+      "commit": "59eb5d2427b5867b127eb26b547004a3d35b3c8e",
+      "url": "https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.285-p5.1.200",
+      "assets": [
+        {
+          "name": "audit-p4-50-rounds.json",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.285-p5.1.200/audit-p4-50-rounds.json"
+        },
+        {
+          "name": "audit-p5-20-rounds.json",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.285-p5.1.200/audit-p5-20-rounds.json"
+        },
+        {
+          "name": "Open-IPTV-Pro-4.23.285-mac-arm64.dmg",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.285-p5.1.200/Open-IPTV-Pro-4.23.285-mac-arm64.dmg"
+        },
+        {
+          "name": "Open-IPTV-Pro-4.23.285-mac-x64.dmg",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.285-p5.1.200/Open-IPTV-Pro-4.23.285-mac-x64.dmg"
+        },
+        {
+          "name": "Open-IPTV-Pro-4.23.285-x64.exe",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.285-p5.1.200/Open-IPTV-Pro-4.23.285-x64.exe"
+        },
+        {
+          "name": "Open-IPTV-Pro-Setup-4.23.285-x64.exe",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.285-p5.1.200/Open-IPTV-Pro-Setup-4.23.285-x64.exe"
+        },
+        {
+          "name": "OpenIPTVPro-Positron-P51200-Source.zip",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.285-p5.1.200/OpenIPTVPro-Positron-P51200-Source.zip"
+        },
+        {
+          "name": "positron-desktop-1920x1080-16x9-main-real.png",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.285-p5.1.200/positron-desktop-1920x1080-16x9-main-real.png"
+        },
+        {
+          "name": "positron-p4-final-main-real.png",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.285-p5.1.200/positron-p4-final-main-real.png"
+        },
+        {
+          "name": "positron-p4-round-10-real.png",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.285-p5.1.200/positron-p4-round-10-real.png"
+        },
+        {
+          "name": "positron-p4-round-20-real.png",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.285-p5.1.200/positron-p4-round-20-real.png"
+        },
+        {
+          "name": "positron-p4-round-30-real.png",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.285-p5.1.200/positron-p4-round-30-real.png"
+        },
+        {
+          "name": "positron-p4-round-40-real.png",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.285-p5.1.200/positron-p4-round-40-real.png"
+        },
+        {
+          "name": "Positron-P51200-20-Real-Screenshots.zip",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.285-p5.1.200/Positron-P51200-20-Real-Screenshots.zip"
+        },
+        {
+          "name": "Positron-P51200-50-Real-Screenshots.zip",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.285-p5.1.200/Positron-P51200-50-Real-Screenshots.zip"
+        },
+        {
+          "name": "SHA256SUMS.txt",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.285-p5.1.200/SHA256SUMS.txt"
+        }
+      ],
       "image": null
     },
     {
@@ -96,7 +176,7 @@
           "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.284-p5.1.199/SHA256SUMS.txt"
         }
       ],
-      "image": "screenshots/positron-p51199-desktop-1920x1080-trang-chu-real.png"
+      "image": null
     },
     {
       "number": 198,
@@ -176,7 +256,7 @@
           "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.283-p5.1.198/SHA256SUMS.txt"
         }
       ],
-      "image": "screenshots/positron-p51198-dvr-tomorrow-after-1920x1080-real.png"
+      "image": null
     },
     {
       "number": 197,
@@ -256,7 +336,7 @@
           "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.282-p5.1.197/SHA256SUMS.txt"
         }
       ],
-      "image": "screenshots/positron-p51197-dvr-copy-after-1920x1080-real.png"
+      "image": null
     },
     {
       "number": 196,
@@ -336,7 +416,7 @@
           "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.281-p5.1.196/SHA256SUMS.txt"
         }
       ],
-      "image": "screenshots/positron-p51196-dvr-preview-after-1920x1080-real.png"
+      "image": null
     },
     {
       "number": 195,
@@ -416,7 +496,7 @@
           "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.280-p5.1.195/SHA256SUMS.txt"
         }
       ],
-      "image": "screenshots/positron-p51195-dvr-autoname-after-1920x1080-real.png"
+      "image": null
     },
     {
       "number": 194,
@@ -496,7 +576,7 @@
           "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.279-p5.1.194/SHA256SUMS.txt"
         }
       ],
-      "image": "screenshots/positron-p51194-dvr-start-after-before-1920x1080-real.png"
+      "image": null
     },
     {
       "number": 193,
@@ -576,7 +656,7 @@
           "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.278-p5.1.193/SHA256SUMS.txt"
         }
       ],
-      "image": "screenshots/positron-p51193-dvr-selected-preset-after-1920x1080-real.png"
+      "image": null
     },
     {
       "number": 192,
@@ -656,7 +736,7 @@
           "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.277-p5.1.192/SHA256SUMS.txt"
         }
       ],
-      "image": "screenshots/positron-p51192-dvr-duration-after-1920x1080-real.png"
+      "image": null
     },
     {
       "number": 191,
@@ -736,7 +816,7 @@
           "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.276-p5.1.191/SHA256SUMS.txt"
         }
       ],
-      "image": "screenshots/positron-p51191-dvr-presets-after-1920x1080-real.png"
+      "image": null
     },
     {
       "number": 190,
@@ -816,7 +896,7 @@
           "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.275-p5.1.190/SHA256SUMS.txt"
         }
       ],
-      "image": "screenshots/positron-p51190-tv-reselect-after-1920x1080-real.png"
+      "image": null
     },
     {
       "number": 189,
@@ -896,7 +976,7 @@
           "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.274-p5.1.189/SHA256SUMS.txt"
         }
       ],
-      "image": "screenshots/positron-p51189-favorite-sort-after-1920x1080-real.png"
+      "image": null
     },
     {
       "number": 188,
@@ -976,7 +1056,7 @@
           "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.273-p5.1.188/SHA256SUMS.txt"
         }
       ],
-      "image": "screenshots/positron-p51188-favorite-wide-after-1920x1080-real.png"
+      "image": null
     },
     {
       "number": 187,
@@ -1056,7 +1136,7 @@
           "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.272-p5.1.187/SHA256SUMS.txt"
         }
       ],
-      "image": "screenshots/positron-p51187-favorite-direct-page-after-1920x1080-real.png"
+      "image": null
     },
     {
       "number": 186,
@@ -1136,7 +1216,7 @@
           "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.271-p5.1.186/SHA256SUMS.txt"
         }
       ],
-      "image": "screenshots/positron-p51186-favorite-paging-after-1920x1080-real.png"
+      "image": null
     },
     {
       "number": 185,
@@ -1216,7 +1296,7 @@
           "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.270-p5.1.185/SHA256SUMS.txt"
         }
       ],
-      "image": "screenshots/positron-p51185-group-quick-after-1920x1080-real.png"
+      "image": null
     },
     {
       "number": 184,
@@ -1296,7 +1376,7 @@
           "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.269-p5.1.184/SHA256SUMS.txt"
         }
       ],
-      "image": "screenshots/positron-p51184-favorite-group-after-1920x1080-real.png"
+      "image": null
     },
     {
       "number": 183,
@@ -1376,7 +1456,7 @@
           "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.268-p5.1.183/SHA256SUMS.txt"
         }
       ],
-      "image": "screenshots/positron-p51183-favorite-suggestions-after-1920x1080-real.png"
+      "image": null
     },
     {
       "number": 182,
@@ -1456,7 +1536,7 @@
           "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.267-p5.1.182/SHA256SUMS.txt"
         }
       ],
-      "image": "screenshots/positron-p51182-favorites-sort-after-1920x1080-real.png"
+      "image": null
     },
     {
       "number": 181,
@@ -1536,7 +1616,7 @@
           "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.266-p5.1.181/SHA256SUMS.txt"
         }
       ],
-      "image": "screenshots/positron-p51181-readable-favorites-after-1920x1080-real.png"
+      "image": null
     },
     {
       "number": 180,
@@ -1616,7 +1696,7 @@
           "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.265-p5.1.180/SHA256SUMS.txt"
         }
       ],
-      "image": "screenshots/positron-p51180-bulk-favorites-after-1920x1080-real.png"
+      "image": null
     },
     {
       "number": 179,
@@ -1696,7 +1776,7 @@
           "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.264-p5.1.179/SHA256SUMS.txt"
         }
       ],
-      "image": "screenshots/positron-p51179-search-suggestions-after-1920x1080-real.png"
+      "image": null
     },
     {
       "number": 178,
@@ -1776,7 +1856,7 @@
           "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.263-p5.1.178/SHA256SUMS.txt"
         }
       ],
-      "image": "screenshots/positron-p51178-rotate-favorites-after-1920x1080-real.png"
+      "image": null
     },
     {
       "number": 177,
@@ -1791,7 +1871,7 @@
       "commit": "",
       "url": "https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md",
       "assets": [],
-      "image": "screenshots/positron-p51177-search-favorites-after-1920x1080-real.png"
+      "image": null
     },
     {
       "number": 176,
@@ -1871,7 +1951,7 @@
           "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.261-p5.1.176/SHA256SUMS.txt"
         }
       ],
-      "image": "screenshots/positron-p51176-more-favorites-after-1920x1080-real.png"
+      "image": null
     },
     {
       "number": 175,
@@ -1951,7 +2031,7 @@
           "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.260-p5.1.175/SHA256SUMS.txt"
         }
       ],
-      "image": "screenshots/positron-p51175-quick-favorite-after-1920x1080-real.png"
+      "image": null
     },
     {
       "number": 174,
@@ -2031,7 +2111,7 @@
           "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.259-p5.1.174/SHA256SUMS.txt"
         }
       ],
-      "image": "screenshots/positron-p51174-favorite-action-after-1920x1080-real.png"
+      "image": null
     },
     {
       "number": 173,
@@ -2111,7 +2191,7 @@
           "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.258-p5.1.173/SHA256SUMS.txt"
         }
       ],
-      "image": "screenshots/positron-p51173-return-inspection-after-1920x1080-real.png"
+      "image": null
     },
     {
       "number": 172,
@@ -2191,7 +2271,7 @@
           "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.257-p5.1.172/SHA256SUMS.txt"
         }
       ],
-      "image": "screenshots/positron-p51172-locate-channel-after-1920x1080-real.png"
+      "image": null
     },
     {
       "number": 171,
@@ -2271,7 +2351,7 @@
           "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.256-p5.1.171/SHA256SUMS.txt"
         }
       ],
-      "image": "screenshots/positron-p51171-visible-range-after-1920x1080-real.png"
+      "image": null
     },
     {
       "number": 170,
@@ -2351,7 +2431,7 @@
           "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.255-p5.1.170/SHA256SUMS.txt"
         }
       ],
-      "image": "screenshots/positron-p51170-clear-filters-after-1920x1080-real.png"
+      "image": null
     },
     {
       "number": 169,
@@ -2431,7 +2511,7 @@
           "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.254-p5.1.169/SHA256SUMS.txt"
         }
       ],
-      "image": "screenshots/positron-p51169-epg-filter-after-1920x1080-real.png"
+      "image": null
     },
     {
       "number": 168,
@@ -2511,7 +2591,7 @@
           "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.253-p5.1.168/SHA256SUMS.txt"
         }
       ],
-      "image": "screenshots/positron-p51168-pager-visible-after-1920x1080-real.png"
+      "image": null
     },
     {
       "number": 167,
@@ -2591,7 +2671,7 @@
           "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.252-p5.1.167/SHA256SUMS.txt"
         }
       ],
-      "image": "screenshots/positron-p51167-missing-page-size-after-1920x1080-real.png"
+      "image": null
     },
     {
       "number": 166,
@@ -2671,7 +2751,7 @@
           "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.251-p5.1.166/SHA256SUMS.txt"
         }
       ],
-      "image": "screenshots/positron-p51166-duplicate-scope-after-1920x1080-real.png"
+      "image": null
     },
     {
       "number": 165,
@@ -2751,7 +2831,7 @@
           "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.250-p5.1.165/SHA256SUMS.txt"
         }
       ],
-      "image": "screenshots/positron-p51165-duplicate-csv-after-1920x1080-real.png"
+      "image": null
     },
     {
       "number": 164,
@@ -2831,7 +2911,7 @@
           "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.249-p5.1.164/SHA256SUMS.txt"
         }
       ],
-      "image": "screenshots/positron-p51164-duplicates-after-1920x1080-real.png"
+      "image": null
     },
     {
       "number": 163,
@@ -2911,7 +2991,7 @@
           "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.248-p5.1.163/SHA256SUMS.txt"
         }
       ],
-      "image": "screenshots/positron-p51163-csv-after-1920x1080-real.png"
+      "image": null
     },
     {
       "number": 162,
@@ -2926,7 +3006,7 @@
       "commit": "",
       "url": "https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md",
       "assets": [],
-      "image": "screenshots/positron-p51162-jump-page-after-1920x1080-real.png"
+      "image": null
     },
     {
       "number": 161,
@@ -3006,7 +3086,7 @@
           "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.246-p5.1.161/SHA256SUMS.txt"
         }
       ],
-      "image": "screenshots/positron-p51161-sort-missing-after-1920x1080-real.png"
+      "image": null
     },
     {
       "number": 160,
@@ -3086,7 +3166,7 @@
           "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.244-p5.1.160/SHA256SUMS.txt"
         }
       ],
-      "image": "screenshots/positron-p51160-group-filter-after-1920x1080-real.png"
+      "image": null
     },
     {
       "number": 159,
@@ -3166,7 +3246,7 @@
           "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.243-p5.1.159/SHA256SUMS.txt"
         }
       ],
-      "image": "screenshots/positron-p51159-search-missing-after-1920x1080-real.png"
+      "image": null
     },
     {
       "number": 158,
@@ -3181,7 +3261,7 @@
       "commit": "",
       "url": "https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md",
       "assets": [],
-      "image": "screenshots/positron-p51158-missing-logos-after-1920x1080-real.png"
+      "image": null
     },
     {
       "number": 157,
@@ -3261,7 +3341,7 @@
           "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.241-p5.1.157/SHA256SUMS.txt"
         }
       ],
-      "image": "screenshots/positron-p51157-groups-after-1920x1080-real.png"
+      "image": null
     },
     {
       "number": 156,
@@ -3276,7 +3356,7 @@
       "commit": "",
       "url": "https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md",
       "assets": [],
-      "image": "screenshots/positron-p51156-library-pulse-after-1920x1080-real.png"
+      "image": null
     },
     {
       "number": 155,
@@ -3356,7 +3436,7 @@
           "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.239-p5.1.155/SHA256SUMS.txt"
         }
       ],
-      "image": "screenshots/positron-p51155-dismiss-toasts-after-1920x1080-real.png"
+      "image": null
     },
     {
       "number": 154,
@@ -3371,7 +3451,7 @@
       "commit": "",
       "url": "https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md",
       "assets": [],
-      "image": "screenshots/positron-p51154-quiet-mode-after-1920x1080-real.png"
+      "image": null
     },
     {
       "number": 153,
@@ -3386,7 +3466,7 @@
       "commit": "",
       "url": "https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md",
       "assets": [],
-      "image": "screenshots/positron-p51153-notice-search-after-1920x1080-real.png"
+      "image": null
     },
     {
       "number": 152,
@@ -3466,7 +3546,7 @@
           "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.236-p5.1.152/SHA256SUMS.txt"
         }
       ],
-      "image": "screenshots/positron-p51152-alert-filter-after-1920x1080-real.png"
+      "image": null
     },
     {
       "number": 151,
@@ -3546,7 +3626,7 @@
           "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.235-p5.1.151/SHA256SUMS.txt"
         }
       ],
-      "image": "screenshots/positron-p51151-notification-archive-after-1920x1080-real.png"
+      "image": null
     },
     {
       "number": 150,
@@ -3626,7 +3706,7 @@
           "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.234-p5.1.150/SHA256SUMS.txt"
         }
       ],
-      "image": "screenshots/positron-p51150-toast-centre-after-1920x1080-real.png"
+      "image": null
     },
     {
       "number": 149,
@@ -3706,7 +3786,7 @@
           "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.233-p5.1.149/SHA256SUMS.txt"
         }
       ],
-      "image": "screenshots/positron-p51149-reminder-lead-after-450-real.png"
+      "image": null
     },
     {
       "number": 148,
@@ -3782,7 +3862,7 @@
           "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.232-p5.1.148/SHA256SUMS.txt"
         }
       ],
-      "image": "screenshots/positron-p51148-cancel-reminder-after-450-real.png"
+      "image": null
     },
     {
       "number": 147,
@@ -3858,7 +3938,7 @@
           "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.231-p5.1.147/SHA256SUMS.txt"
         }
       ],
-      "image": "screenshots/positron-p51147-epg-reminder-after-450-real.png"
+      "image": null
     },
     {
       "number": 146,
@@ -3873,7 +3953,7 @@
       "commit": "",
       "url": "https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md",
       "assets": [],
-      "image": "screenshots/positron-p51146-epg-progress-after-450-real.png"
+      "image": null
     },
     {
       "number": 145,
@@ -3888,7 +3968,7 @@
       "commit": "",
       "url": "https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md",
       "assets": [],
-      "image": "screenshots/positron-p51145-time-window-after-450-real.png"
+      "image": null
     },
     {
       "number": 144,
@@ -3903,7 +3983,7 @@
       "commit": "",
       "url": "https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md",
       "assets": [],
-      "image": "screenshots/positron-p51144-earliest-epg-after-450-real.png"
+      "image": null
     },
     {
       "number": 143,
@@ -3918,7 +3998,7 @@
       "commit": "",
       "url": "https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md",
       "assets": [],
-      "image": "screenshots/positron-p51143-soon-filter-after-450-real.png"
+      "image": null
     },
     {
       "number": 142,
@@ -3933,7 +4013,7 @@
       "commit": "",
       "url": "https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md",
       "assets": [],
-      "image": "screenshots/positron-p51142-next-programme-after-450-real.png"
+      "image": null
     },
     {
       "number": 141,
@@ -4009,7 +4089,7 @@
           "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.225-p5.1.141/SHA256SUMS.txt"
         }
       ],
-      "image": "screenshots/positron-p51141-programme-title-search-after-450-real.png"
+      "image": null
     },
     {
       "number": 140,
@@ -4024,7 +4104,7 @@
       "commit": "",
       "url": "https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md",
       "assets": [],
-      "image": "screenshots/positron-p51140-epg-current-filter-after-450-real.png"
+      "image": null
     },
     {
       "number": 139,
@@ -4039,7 +4119,7 @@
       "commit": "",
       "url": "https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md",
       "assets": [],
-      "image": "screenshots/positron-p51139-favorites-first-after-450-real.png"
+      "image": null
     },
     {
       "number": 138,
@@ -4054,7 +4134,7 @@
       "commit": "",
       "url": "https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md",
       "assets": [],
-      "image": "screenshots/positron-p51138-page-navigation-after-450-real.png"
+      "image": null
     },
     {
       "number": 137,
@@ -4130,7 +4210,7 @@
           "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.221-p5.1.137/SHA256SUMS.txt"
         }
       ],
-      "image": "screenshots/positron-p51137-arrow-navigation-after-450-real.png"
+      "image": null
     },
     {
       "number": 136,
@@ -4206,7 +4286,7 @@
           "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.220-p5.1.136/SHA256SUMS.txt"
         }
       ],
-      "image": "screenshots/positron-p51136-search-enter-after-450-real.png"
+      "image": null
     },
     {
       "number": 135,
@@ -4282,7 +4362,7 @@
           "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.219-p5.1.135/SHA256SUMS.txt"
         }
       ],
-      "image": "screenshots/positron-p51135-reordered-search-before-450-real.png"
+      "image": null
     },
     {
       "number": 134,
@@ -4358,7 +4438,7 @@
           "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.218-p5.1.134/SHA256SUMS.txt"
         }
       ],
-      "image": "screenshots/positron-p51134-favorite-native-svg-after-450-real.png"
+      "image": null
     },
     {
       "number": 133,
@@ -4373,7 +4453,7 @@
       "commit": "",
       "url": "https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md",
       "assets": [],
-      "image": "screenshots/positron-p51133-compact-card-title-star-450-real.png"
+      "image": null
     },
     {
       "number": 132,
@@ -4449,7 +4529,7 @@
           "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.216-p5.1.132/SHA256SUMS.txt"
         }
       ],
-      "image": "screenshots/positron-p51132-empty-search-clear-after-450-real.png"
+      "image": null
     },
     {
       "number": 131,
@@ -4464,7 +4544,7 @@
       "commit": "",
       "url": "https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md",
       "assets": [],
-      "image": "screenshots/positron-p51131-ascii-d-search-450-real.png"
+      "image": null
     },
     {
       "number": 130,
@@ -4479,7 +4559,7 @@
       "commit": "",
       "url": "https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md",
       "assets": [],
-      "image": "screenshots/positron-p51130-border-mask-450-real.png"
+      "image": null
     },
     {
       "number": 129,
@@ -4555,7 +4635,7 @@
           "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.213-p5.1.129/SHA256SUMS.txt"
         }
       ],
-      "image": "screenshots/positron-p51129-right-mask-450-real.png"
+      "image": null
     },
     {
       "number": 128,
@@ -4631,7 +4711,7 @@
           "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.212-p5.1.128/SHA256SUMS.txt"
         }
       ],
-      "image": "screenshots/positron-p51128-dropdown-chip-450-real.png"
+      "image": null
     },
     {
       "number": 127,
@@ -4707,7 +4787,7 @@
           "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.211-p5.1.127/SHA256SUMS.txt"
         }
       ],
-      "image": "screenshots/positron-p51127-category-keys-450-real.png"
+      "image": null
     },
     {
       "number": 126,
@@ -4783,7 +4863,7 @@
           "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.210-p5.1.126/SHA256SUMS.txt"
         }
       ],
-      "image": "screenshots/positron-p51126-pinned-all-masked-450-real.png"
+      "image": null
     },
     {
       "number": 125,
@@ -4859,7 +4939,7 @@
           "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.209-p5.1.125/SHA256SUMS.txt"
         }
       ],
-      "image": "screenshots/positron-p51125-pinned-all-450-real.png"
+      "image": null
     },
     {
       "number": 124,
@@ -4935,7 +5015,7 @@
           "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.208-p5.1.124/SHA256SUMS.txt"
         }
       ],
-      "image": "screenshots/positron-p51124-chip-wheel-450-real.png"
+      "image": null
     },
     {
       "number": 123,
@@ -5011,7 +5091,7 @@
           "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.207-p5.1.123/SHA256SUMS.txt"
         }
       ],
-      "image": "screenshots/positron-p51123-success-toast-footer-450-real.png"
+      "image": null
     },
     {
       "number": 122,
@@ -5087,7 +5167,7 @@
           "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.206-p5.1.122/SHA256SUMS.txt"
         }
       ],
-      "image": "screenshots/positron-p51122-toast-focus-return-450-real.png"
+      "image": null
     },
     {
       "number": 121,
@@ -5163,7 +5243,7 @@
           "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.205-p5.1.121/SHA256SUMS.txt"
         }
       ],
-      "image": "screenshots/positron-p51121-toast-dismiss-visible-450-real.png"
+      "image": null
     },
     {
       "number": 120,
@@ -5239,7 +5319,7 @@
           "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.204-p5.1.120/SHA256SUMS.txt"
         }
       ],
-      "image": "screenshots/positron-p51120-compact-toast-stack-450-real.png"
+      "image": null
     },
     {
       "number": 119,
@@ -5315,7 +5395,7 @@
           "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.203-p5.1.119/SHA256SUMS.txt"
         }
       ],
-      "image": "screenshots/positron-p51119-favorite-count-badge-450-real.png"
+      "image": null
     },
     {
       "number": 118,
@@ -5391,7 +5471,7 @@
           "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.202-p5.1.118/SHA256SUMS.txt"
         }
       ],
-      "image": "screenshots/positron-p51118-direct-favorite-channel-450-real.png"
+      "image": null
     },
     {
       "number": 117,
@@ -5467,7 +5547,7 @@
           "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.201-p5.1.117/SHA256SUMS.txt"
         }
       ],
-      "image": "screenshots/positron-p51117-single-result-wide-card-450-real.png"
+      "image": null
     },
     {
       "number": 116,
@@ -5543,7 +5623,7 @@
           "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.200-p5.1.116/SHA256SUMS.txt"
         }
       ],
-      "image": "screenshots/positron-p51116-real-category-filter-450-real.png"
+      "image": null
     },
     {
       "number": 115,
@@ -5619,7 +5699,7 @@
           "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.199-p5.1.115/SHA256SUMS.txt"
         }
       ],
-      "image": "screenshots/positron-p51115-no-duplicate-favorite-450-real.png"
+      "image": null
     },
     {
       "number": 114,
@@ -5695,7 +5775,7 @@
           "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.198-p5.1.114/SHA256SUMS.txt"
         }
       ],
-      "image": "screenshots/positron-p51114-favorite-empty-action-450-real.png"
+      "image": null
     },
     {
       "number": 113,
@@ -5771,7 +5851,7 @@
           "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.197-p5.1.113/SHA256SUMS.txt"
         }
       ],
-      "image": "screenshots/positron-p51113-keyboard-favorites-tab-450-real.png"
+      "image": null
     },
     {
       "number": 112,
@@ -5847,7 +5927,7 @@
           "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.196-p5.1.112/SHA256SUMS.txt"
         }
       ],
-      "image": "screenshots/positron-p51112-readable-channel-cards-450-real.png"
+      "image": null
     },
     {
       "number": 111,
@@ -5923,7 +6003,7 @@
           "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.195-p5.1.111/SHA256SUMS.txt"
         }
       ],
-      "image": "screenshots/positron-p51111-single-row-chips-450-real.png"
+      "image": null
     },
     {
       "number": 110,
@@ -5999,7 +6079,7 @@
           "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.194-p5.1.110/SHA256SUMS.txt"
         }
       ],
-      "image": "screenshots/positron-p51110-compact-idle-player-450-real.png"
+      "image": null
     },
     {
       "number": 109,
@@ -6075,7 +6155,7 @@
           "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.193-p5.1.109/SHA256SUMS.txt"
         }
       ],
-      "image": "screenshots/positron-p51109-native-toast-dedupe-450-real.png"
+      "image": null
     },
     {
       "number": 108,
@@ -6151,7 +6231,7 @@
           "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.192-p5.1.108/SHA256SUMS.txt"
         }
       ],
-      "image": "screenshots/positron-p51108-toast-clear-of-sidebar-450-real.png"
+      "image": null
     },
     {
       "number": 107,
@@ -6227,7 +6307,7 @@
           "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.191-p5.1.107/SHA256SUMS.txt"
         }
       ],
-      "image": "screenshots/positron-p51107-chooser-native-svg-450-real.png"
+      "image": null
     },
     {
       "number": 106,
@@ -6303,7 +6383,7 @@
           "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.190-p5.1.106/SHA256SUMS.txt"
         }
       ],
-      "image": "screenshots/positron-p51106-empty-watchflow-no-horizontal-scroll-real.png"
+      "image": null
     },
     {
       "number": 105,
@@ -6379,7 +6459,7 @@
           "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.189-p5.1.105/SHA256SUMS.txt"
         }
       ],
-      "image": "screenshots/positron-p51105-dormant-manage-after-real.png"
+      "image": null
     },
     {
       "number": 104,
@@ -6455,7 +6535,7 @@
           "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.188-p5.1.104/SHA256SUMS.txt"
         }
       ],
-      "image": "screenshots/positron-p51104-watchlater-unavailable-552-real.png"
+      "image": null
     },
     {
       "number": 103,
@@ -6531,7 +6611,7 @@
           "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.187-p5.1.103/SHA256SUMS.txt"
         }
       ],
-      "image": "screenshots/positron-p51103-watchlater-cap-after-real.png"
+      "image": null
     },
     {
       "number": 102,
@@ -6607,7 +6687,7 @@
           "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.186-p5.1.102/SHA256SUMS.txt"
         }
       ],
-      "image": "screenshots/positron-p51102-watch-later-multiterm-552-real.png"
+      "image": null
     },
     {
       "number": 101,
@@ -6683,7 +6763,7 @@
           "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.185-p5.1.101/SHA256SUMS.txt"
         }
       ],
-      "image": "screenshots/positron-p51101-watch-later-search-552-real.png"
+      "image": null
     },
     {
       "number": 100,
@@ -6759,7 +6839,7 @@
           "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.184-p5.1.100/SHA256SUMS.txt"
         }
       ],
-      "image": "screenshots/positron-p51100-watch-later-sticky-552-real.png"
+      "image": null
     },
     {
       "number": 99,
@@ -6774,7 +6854,7 @@
       "commit": "",
       "url": "https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md",
       "assets": [],
-      "image": "screenshots/positron-p5199-next-epg-watchflow-552-real.png"
+      "image": null
     },
     {
       "number": 98,
@@ -6850,7 +6930,7 @@
           "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.182-p5.1.98/SHA256SUMS.txt"
         }
       ],
-      "image": "screenshots/positron-p5198-live-epg-watchflow-552-real.png"
+      "image": null
     },
     {
       "number": 97,
@@ -6865,7 +6945,7 @@
       "commit": "",
       "url": "https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md",
       "assets": [],
-      "image": "screenshots/positron-p5197-watch-later-many-552-real.png"
+      "image": null
     },
     {
       "number": 96,
@@ -6941,7 +7021,7 @@
           "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.180-p5.1.96/SHA256SUMS.txt"
         }
       ],
-      "image": "screenshots/positron-p5196-watch-later-552-real.png"
+      "image": null
     },
     {
       "number": 95,
@@ -7017,7 +7097,7 @@
           "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.179-p5.1.95/SHA256SUMS.txt"
         }
       ],
-      "image": "screenshots/positron-p5195-watchflow-inline-scroll-cue-552-real.png"
+      "image": null
     },
     {
       "number": 94,
@@ -7093,7 +7173,7 @@
           "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.178-p5.1.94/SHA256SUMS.txt"
         }
       ],
-      "image": "screenshots/positron-p5194-watchflow-scroll-cue-552-real.png"
+      "image": null
     },
     {
       "number": 93,
@@ -7169,7 +7249,7 @@
           "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.177-p5.1.93/SHA256SUMS.txt"
         }
       ],
-      "image": "screenshots/positron-p5193-group-balanced-mix-552-real.png"
+      "image": null
     },
     {
       "number": 92,
@@ -7245,7 +7325,7 @@
           "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.176-p5.1.92/SHA256SUMS.txt"
         }
       ],
-      "image": "screenshots/positron-p5192-local-calendar-mix-552-real.png"
+      "image": null
     },
     {
       "number": 91,
@@ -7260,7 +7340,7 @@
       "commit": "",
       "url": "https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md",
       "assets": [],
-      "image": "screenshots/positron-p5191-web-play-svg-552-metadata-real.png"
+      "image": null
     },
     {
       "number": 90,
@@ -7336,7 +7416,7 @@
           "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.174-p5.1.90/SHA256SUMS.txt"
         }
       ],
-      "image": "screenshots/positron-p5190-player-ready-video-lab-hidden-552-metadata-real.png"
+      "image": null
     },
     {
       "number": 89,
@@ -7412,7 +7492,7 @@
           "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.173-p5.1.89/SHA256SUMS.txt"
         }
       ],
-      "image": "screenshots/positron-p5189-player-ready-subtitle-552-metadata-real.png"
+      "image": null
     },
     {
       "number": 88,
@@ -7488,7 +7568,7 @@
           "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.172-p5.1.88/SHA256SUMS.txt"
         }
       ],
-      "image": "screenshots/positron-p5188-player-ready-552-metadata-real.png"
+      "image": null
     },
     {
       "number": 87,

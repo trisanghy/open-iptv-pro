@@ -2,14 +2,23 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
-## P5.1.200 — xác nhận hai lần trước khi thay tên lịch ghi
+## P5.1.201 — hoàn tác thay tên bản ghi an toàn
 
-**Ứng dụng:** 4.23.285 · **Trạng thái:** Chưa có bản phát hành
+**Ứng dụng:** 4.23.286 · **Trạng thái:** Chưa có bản phát hành
+
+Feature priority: NEW — Cho phép khôi phục đúng tên chương trình người dùng vừa thay bằng nút hoàn tác một lần, tránh mất tên nhập thủ công khi họ đổi ý và không làm thay đổi bất cứ lịch ghi nào. User action: Mở Lịch phát sóng, nhập tên riêng, xác nhận hai lần thay tên theo kênh, rồi nhấn Hoàn tác thay tên để trở về tên trước đó.
+
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/cf02d2a3c4e7aca3788d66ca5ef548bcfef5dd14)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+
+## P5.1.200 — 4.23.285 — Xác nhận thay tên lịch ghi bằng hai lần nhấn (CANDIDATE)
+
+**Ứng dụng:** 4.23.285 · **Trạng thái:** Đã phát hành
 
 Feature priority: NEW — Khi đã có tên ghi hình tự nhập, nút tạo tên tự động cho phép xác nhận rõ ràng bằng hai lần nhấn thay vì bắt xóa tên cũ; tránh ghi đè vô ý và giảm bước thao tác. User action: Vào Lịch phát sóng, nhập tên riêng, bấm Tạo tên từ kênh và giờ một lần để xem xác nhận, bấm lần hai để thay hoặc nhấn Escape để hủy.
 
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/bf241269944d5a1bdff620f74ba17dba4229c49d)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/59eb5d2427b5867b127eb26b547004a3d35b3c8e)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.285-p5.1.200)
 
 ## P5.1.199 — 4.23.284 — Đồng bộ tên ghi hình tạo tự động (CANDIDATE)
 
