@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.239",
-  "description": "Positron P5.1.155: dọn banner nổi không mất nhật ký",
+  "version": "4.23.240",
+  "description": "Positron P5.1.156: bản đồ dữ liệu thư viện kênh",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

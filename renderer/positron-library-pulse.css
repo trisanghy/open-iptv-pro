@@ -1,0 +1,24 @@
+/* P5.1.156: bảng phân tích kênh chỉ dùng metadata cục bộ. */
+html[data-positron="true"] .po-pulse-toggle{display:inline-flex;gap:6px;align-items:center;justify-content:center;min-height:34px;padding:0 11px;border:1px solid var(--po-border,#36515c);border-radius:9px;background:var(--po-card,#162934);color:var(--po-text,#eaf7f7);font:inherit;font-size:12px;font-weight:650;cursor:pointer}
+html[data-positron="true"] .po-pulse-toggle[aria-expanded="true"]{border-color:#6cd3c4;background:#1b584b}
+html[data-positron="true"] .po-pulse-panel{position:fixed;top:58px;right:16px;z-index:5100;width:min(425px,calc(100vw - 20px));max-height:min(78vh,680px);display:flex;flex-direction:column;gap:12px;overflow-y:auto;padding:16px;border:1px solid var(--po-border,#36515c);border-radius:14px;background:var(--po-card,#162934);box-shadow:0 18px 55px #0009;color:var(--po-text,#eaf7f7)}
+html[data-positron="true"] .po-pulse-panel[hidden]{display:none!important}
+html[data-positron="true"] .po-pulse-header{display:flex;align-items:center;justify-content:space-between;gap:10px}
+html[data-positron="true"] .po-pulse-header h2{margin:0;font-size:17px;color:inherit}
+html[data-positron="true"] .po-pulse-panel button:not(.po-pulse-toggle){min-height:32px;padding:6px 10px;border:1px solid var(--po-border,#42606b);border-radius:8px;background:transparent;color:inherit;font:inherit;font-size:12px;cursor:pointer}
+html[data-positron="true"] .po-pulse-hint{margin:0;font-size:11px;line-height:1.55;color:var(--po-muted,#a4b9c0)}
+html[data-positron="true"] .po-pulse-cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+html[data-positron="true"] .po-pulse-card{display:flex;flex-direction:column;gap:5px;min-height:82px;padding:12px;border:1px solid #ffffff13;border-radius:11px;background:#ffffff08}
+html[data-positron="true"] .po-pulse-card strong{font-size:27px;line-height:1.1;color:var(--po-accent,#80ded0);font-variant-numeric:tabular-nums}
+html[data-positron="true"] .po-pulse-card span{font-size:11px;line-height:1.3;color:var(--po-muted,#b2c5cb)}
+html[data-positron="true"] .po-pulse-ratios{display:flex;flex-direction:column;gap:10px}
+html[data-positron="true"] .po-pulse-ratio{display:grid;grid-template-columns:1fr auto;gap:6px 10px;align-items:center}
+html[data-positron="true"] .po-pulse-ratio p{margin:0;font-size:12px}
+html[data-positron="true"] .po-pulse-ratio strong{font-size:12px;font-variant-numeric:tabular-nums}
+html[data-positron="true"] .po-pulse-track{height:6px;grid-column:1/-1;background:#ffffff14;border-radius:100px;overflow:hidden}
+html[data-positron="true"] .po-pulse-track span{height:100%;display:block;border-radius:100px;background:var(--po-accent,#74daca)}
+html[data-positron="true"] .po-pulse-footer{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:2px}
+html[data-positron="true"] .po-pulse-footer span{font-size:11px;color:var(--po-muted,#adbec5)}
+html[data-positron="true"] .po-pulse-panel button:focus-visible,html[data-positron="true"] .po-pulse-toggle:focus-visible{outline:2px solid var(--po-accent,#66d4c2);outline-offset:2px}
+@media(max-width:1250px){html[data-positron="true"] .po-pulse-toggle-label{display:none}html[data-positron="true"] .po-pulse-toggle{min-width:35px;padding:0 8px}}
+@media(max-width:600px){html[data-positron="true"] .po-pulse-panel{top:52px;right:8px;max-height:65vh}}

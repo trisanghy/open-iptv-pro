@@ -1,3 +1,11 @@
+## P5.1.156 — Bản đồ thư viện kênh ngoại tuyến / Electron v4.23.240
+- Feature priority: NEW — Thêm bảng Library Pulse riêng trong thanh trên: đếm số kênh, số nguồn, số nhóm, trạng thái khả dụng đã được lưu, URL logo và mã EPG của dữ liệu hiện có.
+- User action: Chọn Thư viện, xem các thẻ thống kê và thanh mức độ hoàn thiện metadata; nhấn Cập nhật để đọc lại dữ liệu hiện hành hoặc Escape để đóng.
+- Electron screenshot: positron-p51156-library-pulse-after-1920x1080-real.png
+- Before: positron-p51156-library-pulse-before-1920x1080-real.png; After: positron-p51156-library-pulse-after-1920x1080-real.png.
+- Bảo vệ: phân tích tại máy, không tải nguồn mới, không phát IPTV, không kiểm tra mạng hoặc suy đoán EPG/khả năng phát hiện tại; label chỉ phản ánh metadata đã lưu.
+- Trạng thái ban đầu: CANDIDATE tới khi QA/CI/release được xác minh.
+
 ## P5.1.155 — Dọn banner nổi, giữ nhật ký / Electron v4.23.239
 - Feature priority: NEW — Thêm thao tác Dọn banner để người dùng đóng nhanh toàn bộ banner đang che trình phát, không phải chạm từng toast và không làm mất dòng nhật ký đã ghi.
 - User action: Mở Thông báo và bấm Dọn banner; các banner thành công/cảnh báo/lỗi đang nổi biến mất theo thao tác chủ động, nhưng nội dung và số mục trong Nhật ký giữ nguyên.

@@ -37,7 +37,7 @@ test('P5 assets are loaded after P4 without replacing it',()=>{
 test('P5 release is immutable and versioned separately from P4.1',()=>{
  const pkg=JSON.parse(read('package.json'));
  const flow=read('.github/workflows/positron-lab.yml');
- assert.equal(pkg.version,'4.23.239');
+ assert.equal(pkg.version,'4.23.240');
  const label=pkg.description.match(/Positron\s+(P\d+\.\d+\.\d+)/)?.[1];
  assert.ok(label,'product P-label must accompany SemVer');
  assert.ok(flow.includes('TAG=positron/v'+pkg.version+'-'+label.toLowerCase()),'release tag and app version must match');
@@ -1535,4 +1535,24 @@ test('P5.1.155 dọn banner đang nổi nhưng giữ nguyên nhật ký và trá
  assert.ok(!js.includes('IPTVState.playChannel'),'thao tác dọn banner không được phát kênh');
  for(const n of ['positron-p51155-dismiss-toasts-before-1920x1080-real.png','positron-p51155-dismiss-toasts-after-1920x1080-real.png'])
   assert.ok(qa.includes(n),'thiếu ảnh QA '+n);
+});
+
+test('P5.1.156 Bản đồ thư viện chỉ đọc metadata và dùng Electron thật',()=>{
+ const html=read('renderer/index.html');
+ const core=read('renderer/positron-library-pulse-core.js');
+ const ui=read('renderer/positron-library-pulse.js');
+ const css=read('renderer/positron-library-pulse.css');
+ const qa=read('scripts/positron-20-extension.cjs');
+ assert.doesNotThrow(()=>new vm.Script(core));
+ assert.doesNotThrow(()=>new vm.Script(ui));
+ assert.ok(html.includes('src="positron-library-pulse-core.js"'));
+ assert.ok(html.includes('src="positron-library-pulse.js"'));
+ assert.ok(html.includes('href="positron-library-pulse.css"'));
+ for(const required of ['poLibraryPulseToggle','poLibraryPulsePanel','poLibraryPulseRefresh','state.getChannels()'])
+  assert.ok(ui.includes(required),'thiếu hành động: '+required);
+ for(const forbidden of ['fetch(','playChannel(','localStorage','sessionStorage'])
+  assert.ok(!ui.includes(forbidden),'không được phát hoặc truy cập nguồn: '+forbidden);
+ assert.ok(css.includes('.po-pulse-panel[hidden]'));
+ for(const n of ['positron-p51156-library-pulse-before-1920x1080-real.png','positron-p51156-library-pulse-after-1920x1080-real.png'])
+  assert.ok(qa.includes(n),'thiếu ảnh Electron thật '+n);
 });

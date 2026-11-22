@@ -3823,9 +3823,58 @@ async function runTwenty(page){
  for(const [key,value] of Object.entries(dismissToastQA))
   assert.equal(value,true,'P155 dismiss '+key+': '+JSON.stringify(dismissToastQA));
 
+
+ // P5.1.156: Library Pulse chỉ đọc, ảnh Electron 16:9.
+ const baseline156=await page.evaluate(()=>{
+  const state=window.IPTVState,core=window.PositronLibraryPulseCore;
+  const summary=core?.summarize(state.getChannels());
+  return {summary,channels:state.getChannels().length,idle:state.getCurrent()===null};
+ });
+ const before156=await page.evaluate(()=>({
+  togglePresent:!!document.getElementById('poLibraryPulseToggle'),
+  panelInitiallyHidden:document.getElementById('poLibraryPulsePanel')?.hidden===true,
+  noHorizontalOverflow:document.documentElement.scrollWidth<=innerWidth+1
+ }));
+ await page.screenshot({path:path.join(out,'positron-p51156-library-pulse-before-1920x1080-real.png'),animations:'disabled'});
+ await page.click('#poLibraryPulseToggle');
+ const open156=await page.evaluate(expected=>{
+  const panel=document.getElementById('poLibraryPulsePanel');
+  const cards=[...panel.querySelectorAll('.po-pulse-card strong')].map(n=>Number(n.textContent));
+  const tracks=[...panel.querySelectorAll('.po-pulse-ratio strong')].map(n=>n.textContent);
+  return {
+   panelOpen:panel?.hidden===false,
+   expanded:document.getElementById('poLibraryPulseToggle')?.getAttribute('aria-expanded')==='true',
+   fourCards:cards.length===4,
+   totalCorrect:cards[0]===expected.summary.total&&cards[0]===expected.channels,
+   sourcesCorrect:cards[1]===expected.summary.sources,
+   groupsCorrect:cards[2]===expected.summary.groups,
+   healthNotGuessed:cards[3]===expected.summary.knownAlive,
+   logoRatio:tracks[0]===expected.summary.withLogoMeta+' / '+expected.summary.total,
+   epgRatio:tracks[1]===expected.summary.withEpgId+' / '+expected.summary.total,
+   noOverflow:document.documentElement.scrollWidth<=innerWidth+1,
+   playlistUnchanged:window.IPTVState.getChannels().length===expected.channels,
+   noAutoplay:!expected.idle||window.IPTVState.getCurrent()===null
+  };
+ },baseline156);
+ await page.click('#poLibraryPulseRefresh');
+ const refresh156=await page.evaluate(()=>({
+  refreshFocused:document.activeElement?.id==='poLibraryPulseRefresh',
+  stampShown:document.getElementById('poLibraryPulseStamp')?.textContent.includes('Cập nhật lúc')
+ }));
+ await page.screenshot({path:path.join(out,'positron-p51156-library-pulse-after-1920x1080-real.png'),animations:'disabled'});
+ await page.keyboard.press('Escape');
+ const exit156=await page.evaluate(()=>({
+  panelClosed:document.getElementById('poLibraryPulsePanel')?.hidden===true,
+  ariaRestored:document.getElementById('poLibraryPulseToggle')?.getAttribute('aria-expanded')==='false',
+  focusRestored:document.activeElement?.id==='poLibraryPulseToggle'
+ }));
+ const libraryPulseQA={...before156,...open156,...refresh156,...exit156};
+ for(const [name,value] of Object.entries(libraryPulseQA))
+  assert.equal(value,true,'P156 library pulse '+name+': '+JSON.stringify(libraryPulseQA));
+
  await page.setViewportSize({width:1360,height:820});
   const report={type:'Positron P5 twenty distinct desktop screenshot cases',realElectron:true,syntheticChannels:false,
-  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,desktop16x9Screenshots,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA,chooserQa,toastLayoutQA,nativeToastQA,compactIdleQA,channelChipRailQA,advancedFilterQA,readableCardsQA,keyboardTabQA,favoriteEmptyQA,duplicateEmptyQA,categoryFilterQA,categoryFixtureQA,compactSingleQA,directFavoriteQA,favoriteCountQA,compactToastStackQA,toastDismissQA,toastFocusReturnQA,toastDockQA,wheelQA,pinnedAllQA,pinnedMaskQA,categoryKeyQA,dropdownChipQA,pinnedRightMaskQA,pinnedBorderMaskQA,asciiDSearchQA,emptySearchActionQA,readableCardTitleQA,favoriteSvgQA,keyboardFavoriteQA,multiTermSearchQA,keyboardSearchQA,arrowNavigationQA,pageNavigationQA,favoriteSortQA,onAirFilterQA,programmeSearchQA,upcomingProgrammeQA,soonProgrammeQA,earliestEpgSortQA,timeWindowQA,scheduleProgressQA:scheduleProgressQA,nativeReminderQA,cancelReminderQA,reminderLeadQA,toastHistoryQA,notificationArchiveQA,alertFilterQA,noticeSearchQA,quietModeQA,dismissToastQA};
+  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,desktop16x9Screenshots,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA,chooserQa,toastLayoutQA,nativeToastQA,compactIdleQA,channelChipRailQA,advancedFilterQA,readableCardsQA,keyboardTabQA,favoriteEmptyQA,duplicateEmptyQA,categoryFilterQA,categoryFixtureQA,compactSingleQA,directFavoriteQA,favoriteCountQA,compactToastStackQA,toastDismissQA,toastFocusReturnQA,toastDockQA,wheelQA,pinnedAllQA,pinnedMaskQA,categoryKeyQA,dropdownChipQA,pinnedRightMaskQA,pinnedBorderMaskQA,asciiDSearchQA,emptySearchActionQA,readableCardTitleQA,favoriteSvgQA,keyboardFavoriteQA,multiTermSearchQA,keyboardSearchQA,arrowNavigationQA,pageNavigationQA,favoriteSortQA,onAirFilterQA,programmeSearchQA,upcomingProgrammeQA,soonProgrammeQA,earliestEpgSortQA,timeWindowQA,scheduleProgressQA:scheduleProgressQA,nativeReminderQA,cancelReminderQA,reminderLeadQA,toastHistoryQA,notificationArchiveQA,alertFilterQA,noticeSearchQA,quietModeQA,dismissToastQA,libraryPulseQA};
  fs.writeFileSync(path.resolve('positron-evidence','audit-p5-20-rounds.json'),JSON.stringify(report,null,2));
  return report;
 }
