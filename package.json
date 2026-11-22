@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.331",
-  "description": "Positron P5.1.246: Ctrl+Enter nhảy kênh và đóng bảng",
+  "version": "4.23.332",
+  "description": "Positron P5.1.247: Hiện vị trí của kênh đang chọn",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

@@ -74,6 +74,14 @@
  const forwardGroups=[]; // P236: in-session redo navigation, no persistence or playback
  let lastFocusedGroup='';
  let returningToHistory=false;
+ // P247: show the keyboard-focused row index without replacing the native
+ // source count. The label is presentation only, never a media action.
+ const focusedPosition=d.createElement('output');
+ focusedPosition.id='poFocusedPosition';
+ focusedPosition.hidden=true;
+ focusedPosition.setAttribute('aria-live','polite');
+ focusedPosition.title='Vị trí trong danh sách kênh đang hiển thị';
+ d.getElementById('channelMeta')?.after(focusedPosition);
  // P245: follow the focused row's group in the native picker without media changes.
  const syncFocusedGroupToPicker=()=>{
   if(lastFocusedGroup&&[...groupSelect.options].some(option=>option.value===lastFocusedGroup))
@@ -87,6 +95,10 @@
   while(header&&!header.matches('.folder-header'))header=header.previousElementSibling;
   lastFocusedGroup=header?.dataset.group||'';
   syncFocusedGroupToPicker();
+  const visibleRows=[...focusList.querySelectorAll('.channel-item')];
+  const index=visibleRows.indexOf(row)+1;
+  focusedPosition.textContent=index>0?'Kênh '+index+'/'+visibleRows.length:'';
+  focusedPosition.hidden=index<1;
  });
  const backRow=d.createElement('div');
  backRow.id='poChannelGroupHistoryRow';

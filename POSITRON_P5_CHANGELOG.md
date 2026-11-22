@@ -1972,3 +1972,12 @@ P5.1.81 follow-up: real Electron capture found nav overflow; replace flexible no
 - Bằng chứng đầu vào: đã trực tiếp xem ảnh SAU P5.1.245, bảng nhảy cao chiếm diện tích danh sách sau khi thao tác hoàn tất.
 - QA: kiểm tra Ctrl+Enter và điều khiển truy cập; focus, visibility, playlist, Favorites và playback không đổi; 1920×1080 before/after.
 - Cần CI, ảnh thật mở soát và release hoàn chỉnh để tính vòng hoàn tất.
+
+
+## P5.1.247 / Electron 4.23.332 — Hiện vị trí kênh đang chọn (CANDIDATE)
+- Feature priority: NEW — Dưới tổng số kênh ở tiêu đề danh sách có nhãn nhỏ "Kênh 412/561" được cập nhật khi focus bằng bàn phím hoặc nhảy số. Hữu ích với các kênh tên giống nhau, không cần mở lại bảng nhảy.
+- User action: Chọn một kênh bằng mũi tên hoặc gõ 412 Ctrl+Enter; nhãn vị trí hiện theo hàng đang chọn; không phát video.
+- Electron screenshot: positron-p51247-focus-index-after-1920x1080-real.png
+- Đầu vào ảnh Electron P5.1.246 đã MỞ: danh sách có hàng QA Channel 412 được tô sáng nhưng tiêu đề chỉ báo 561/561, không hiển thị vị trí hàng.
+- QA: ảnh 1920x1080 trước/sau, nhãn đổi từ Kênh 1/561 sang 412/561, aria-live, không tràn hoặc sửa dữ liệu M3U/Favorites.
+- Chỉ hoàn thành sau Node/Electron QA và release bất biến.

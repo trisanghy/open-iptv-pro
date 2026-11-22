@@ -197,3 +197,14 @@ html[data-positron="true"] #page-tv #poFavoriteFilterChip[data-mode="recent"]{
 html[data-positron="true"] #page-tv #poFavoriteFilterChip[data-mode="recent"] strong{
  color:#a7d7ff!important;
 }
+
+
+/* P5.1.247: the focused channel's visible-list position, not total source count. */
+html[data-positron="true"] #page-tv #poFocusedPosition{
+ display:block!important;width:max-content!important;max-width:140px!important;
+ min-width:0!important;margin-top:3px!important;overflow:hidden!important;
+ text-overflow:ellipsis!important;white-space:nowrap!important;
+ color:#8be1cc!important;font-size:10px!important;line-height:1.1!important;
+ font-weight:650!important;font-variant-numeric:tabular-nums!important;
+}
+html[data-positron="true"] #page-tv #poFocusedPosition[hidden]{display:none!important}
