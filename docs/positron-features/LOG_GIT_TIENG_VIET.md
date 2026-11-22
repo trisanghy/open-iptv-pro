@@ -2,14 +2,23 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
-## P5.1.220 — xem mở rộng 50 kênh trong lịch sử khám phá
+## P5.1.221 — sửa lệch nhãn form hẹn giờ ghi hình EPG
 
-**Ứng dụng:** 4.23.305 · **Trạng thái:** Chưa có bản phát hành
+**Ứng dụng:** 4.23.306 · **Trạng thái:** Chưa có bản phát hành
+
+Sửa riêng Positron desktop >1050px: các nhãn căn cạnh trên, nút Đặt lịch ghi giữ cùng hàng input. Không sửa logic DVR, danh sách M3U, Favorites, stream. Trạng thái: CANDIDATE cho tới khi mở ảnh sau, Node tests, CI 6/6, release/tag mới được kiểm chứng.
+
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/b1b72a489c6accd30145126451e9909d5934924a)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+
+## P5.1.220 — Mở rộng lịch sử khám phá tối đa 50 kênh / Electron 4.23.305
+
+**Ứng dụng:** 4.23.305 · **Trạng thái:** Đã phát hành
 
 Feature priority: NEW — Mã và ảnh Electron P5.1.219 cho thấy lịch sử có thể chứa 50 lần khám phá nhưng popup chỉ hiện 10 kênh gần nhất, khiến các kênh cũ không thể truy cập; thêm nút mở rộng/thu gọn. Electron screenshot: positron-p51220-history-more-after-1920x1080-real.png
 
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/5dfd8b5c56108a8000cf0daf3dc6fee872c8783e)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/d1dd21a6f3662daa57a4ae5944f7617274259b07)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.305-p5.1.220)
 
 ## P5.1.219 — Sắp xếp lịch sử khám phá theo tên / Electron 4.23.304
 

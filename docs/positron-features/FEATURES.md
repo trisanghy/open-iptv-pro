@@ -7,15 +7,28 @@ Trang này được tạo tự động từ GitHub Releases và ảnh kiểm th�
 [Mở WEBSITE changelog tương tác](https://raw.githack.com/trisanghy/open-iptv-pro/Positron/docs/positron-features/index.html) · [Giao diện HTML trong repository](index.html) · [Các bản phát hành](https://github.com/trisanghy/open-iptv-pro/releases) · [Nhật ký Git tiếng Việt](LOG_GIT_TIENG_VIET.md) · [Quy tắc ưu tiên tính năng](../../POSITRON_FEATURE_RULES.md)
 
 <details>
-<summary><strong>P5.1.220</strong> · xem mở rộng 50 kênh trong lịch sử khám phá · CHƯA CÓ BẢN PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.221</strong> · sửa lệch nhãn form hẹn giờ ghi hình EPG · CHƯA CÓ BẢN PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
 
-**Ứng dụng:** 4.23.305 · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
+**Ứng dụng:** 4.23.306 · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
+
+Sửa riêng Positron desktop >1050px: các nhãn căn cạnh trên, nút Đặt lịch ghi giữ cùng hàng input. Không sửa logic DVR, danh sách M3U, Favorites, stream. Trạng thái: CANDIDATE cho tới khi mở ảnh sau, Node tests, CI 6/6, release/tag mới được kiểm chứng.
+
+*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+
+[Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/tree/Positron) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/b1b72a489c6accd30145126451e9909d5934924a)
+
+</details>
+
+<details>
+<summary><strong>P5.1.220</strong> · Mở rộng lịch sử khám phá tối đa 50 kênh / Electron 4.23.305 · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+
+**Ứng dụng:** 4.23.305 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
 Feature priority: NEW — Mã và ảnh Electron P5.1.219 cho thấy lịch sử có thể chứa 50 lần khám phá nhưng popup chỉ hiện 10 kênh gần nhất, khiến các kênh cũ không thể truy cập; thêm nút mở rộng/thu gọn. Electron screenshot: positron-p51220-history-more-after-1920x1080-real.png
 
 *Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
 
-[Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/tree/Positron) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/5dfd8b5c56108a8000cf0daf3dc6fee872c8783e)
+[Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.305-p5.1.220) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/d1dd21a6f3662daa57a4ae5944f7617274259b07) · [Tải Windows Setup x64](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.305-p5.1.220/Open-IPTV-Pro-Setup-4.23.305-x64.exe) · [Tải gói ảnh QA](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.305-p5.1.220/Positron-P51220-20-Real-Screenshots.zip)
 
 </details>
 
