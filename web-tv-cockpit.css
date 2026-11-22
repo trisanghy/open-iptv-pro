@@ -55,3 +55,24 @@
  #iptvCastPanel .cx-tv-key{width:26px}
  #iptvCastPanel .cx-tv-toggle{width:43px;height:43px}
 }
+
+/* Keep the existing X in the circled upper-right position when paired.
+   Closing a dialog must never disconnect the encrypted TV session. */
+#iptvCastPanel .cx-pair-hero .cx-close{
+ display:grid;place-items:center;flex:0 0 44px;width:44px;height:44px;
+ border:1px solid var(--cx-edge);border-radius:11px;
+ background:var(--cx-pane2);color:var(--cx-ink)
+}
+#iptvCastPanel .cx-pair-hero .cx-close:hover{border-color:var(--cx-accent);background:var(--cx-soft)}
+#iptvCastPanel .cx-tv>.cx-disconnect{
+ position:absolute;top:clamp(9px,1.5vw,16px);right:clamp(9px,1.5vw,16px);z-index:5;
+ min-height:36px;padding:7px 11px;gap:6px;
+ background:#132b38e6;border:1px solid #597582;border-radius:10px;
+ color:#f3fbff;font-size:12px;line-height:1.2;backdrop-filter:blur(5px)
+}
+#iptvCastPanel .cx-tv>.cx-disconnect:hover{background:#582d36;border-color:#f3999e;color:#fff}
+#iptvCastPanel .cx-tv>.cx-disconnect svg{width:16px;height:16px}
+@media(max-width:760px){
+ #iptvCastPanel .cx-pair-hero{justify-content:flex-end}
+ #iptvCastPanel .cx-tv>.cx-disconnect{top:8px;right:8px;min-height:33px;padding:6px 8px;font-size:11px}
+}
