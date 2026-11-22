@@ -15,8 +15,8 @@ test('TV offers browser fallback only after playback errors, without removing vi
  assert.match(html,/openChannelInSamsungBrowser/);
  assert.match(html,/c===403\|\|k==='ColorF0Red'/);
 });
-test('Browser fallback opens the Cast player page rather than a raw M3U8 URL',()=>{
- const calls=[],notices=[],url='https://example.org/vtv2.m3u8?source=owner';
+test('Browser fallback opens the verified paired Cast receiver, not experimental standalone M3U8',()=>{
+ const calls=[],notices=[],url='https://example.org/vtv7.m3u8?secret=private';
  let stopped=0;
  const tizen={ApplicationControl:function(operation,address){this.operation=operation;this.uri=address;},
   application:{launchAppControl:(control,id,onSuccess)=>{calls.push({control,id});onSuccess();}}};
@@ -28,26 +28,21 @@ test('Browser fallback opens the Cast player page rather than a raw M3U8 URL',()
  assert.equal(run(),true);
  assert.equal(calls.length,1);
  assert.equal(calls[0].control.operation,'http://tizen.org/appcontrol/operation/view');
- const target=calls[0].control.uri;
- assert.match(target,/^https:\/\/trisanghy\.github\.io\/open-iptv-pro\/tizen\/hosted-player\.html\?v=/);
- assert.ok(target.includes('#stream='));
- assert.equal(decodeURIComponent(target.split('#stream=')[1]),url);
- assert.ok(!target.split('#')[0].includes(url),'Private URL must stay out of the HTTPS request path/query');
- assert.equal(stopped,1,'Only one playback engine should remain after launching Samsung Browser');
- assert.ok(notices.some(message=>message.includes('Cast')));
+ assert.equal(calls[0].control.uri,'https://trisanghy.github.io/open-iptv-pro/tv.html');
+ assert.ok(!calls[0].control.uri.includes('private'),'No private source/token in browser history');
+ assert.equal(stopped,1);
+ assert.ok(notices.some(m=>m.includes('mã 6 số')));
 });
-test('Native Samsung Browser handoff uses active alternate URL and keeps failure state if launch is rejected',()=>{
- const active='https://example.org/alternate.m3u8',calls=[];
- const tizen={ApplicationControl:function(operation,address){this.uri=address;},
-  application:{launchAppControl:(control,id,ok,fail)=>{calls.push(control.uri);fail(Error('no browser'));}}};
+test('Browser failure keeps TizenBrew player state untouched',()=>{
  let stopped=0;
- const run=vm.runInNewContext('var playing={url:"https://example.org/original.m3u8"};var playbackStream={url:'+JSON.stringify(active)+'};\n'+src+'\nopenChannelInSamsungBrowser;',{
+ const tizen={ApplicationControl:function(op,u){this.uri=u;},
+  application:{launchAppControl:(c,id,ok,fail)=>fail(Error('no browser'))}};
+ const run=vm.runInNewContext('var playing={url:"https://example.org/original.m3u8"};var playbackStream=null;\n'+src+'\nopenChannelInSamsungBrowser;',{
  tizen,byId:()=>({hidden:false,textContent:''}),notify(){},stopPlaybackEngine:()=>{stopped++;},
  window:{open(){return null;}}
  });
- assert.equal(run(),true,'AppControl launch request was submitted');
- assert.equal(decodeURIComponent(calls[0].split('#stream=')[1]),active);
- assert.equal(stopped,0,'Do not stop TizenBrew if browser launch fails');
+ assert.equal(run(),true);
+ assert.equal(stopped,0);
 });
 test('Browser fallback uses active alternate channel URL, not another channel',()=>{
  const first='https://example.org/original.m3u8',second='https://example.org/alternate.m3u8';
@@ -55,11 +50,11 @@ test('Browser fallback uses active alternate channel URL, not another channel',(
   byId:()=>({hidden:true,textContent:''}),notify:()=>{},window:{}});
  assert.equal(value(),second);
 });
-test('Browser Cast handoff refuses HTTP sources to avoid mixed-content playback',()=>{
- const browser=vm.runInNewContext('var playing={url:"http://example.org/live.m3u8"};var playbackStream=null;\n'+src+'\nbrowserCastHandoffUrl;',{
+test('Genuine Cast receiver URL never embeds a failing HTTP/HTTPS stream',()=>{
+ const run=vm.runInNewContext('var playing={url:"http://example.org/live.m3u8"};var playbackStream=null;\n'+src+'\nbrowserCastHandoffUrl;',{
   byId:()=>({hidden:true,textContent:''}),notify(){},window:{}
  });
- assert.equal(browser(),'');
+ assert.equal(run(),'https://trisanghy.github.io/open-iptv-pro/tv.html');
 });
 test('Browser fallback rejects unknown or unsafe protocols',()=>{
  const browser=vm.runInNewContext('var playing={url:"javascript:alert(1)"};var playbackStream=null;\n'+src+'\nbrowserFallbackUrl;',{
