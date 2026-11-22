@@ -1,0 +1,17 @@
+name: Verify TizenBrew source dialog
+on:
+  push:
+    branches: [tizenbrew]
+    paths:
+      - 'tizenbrew/**'
+      - '.github/workflows/verify-tizenbrew-source.yml'
+  workflow_dispatch:
+jobs:
+  source-dialog:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node --test tizenbrew/tests/source-dialog.test.cjs

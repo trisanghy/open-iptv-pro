@@ -1,16 +1,25 @@
-# Open IPTV Pro TV · TizenBrew v0.1.1 (thử nghiệm)
+# Open IPTV Pro TV · TizenBrew v0.1.2 (thử nghiệm)
 
-## Cài không cần USB
+## Cập nhật không cần USB
 
-1. Mở ứng dụng TizenBrew trên TV (khác TizenBrew Installer).
-2. Vào Module Manager → Add GitHub Module.
-3. Nhập: trisanghy/open-iptv-pro@tizenbrew
-4. Quay về màn hình chính TizenBrew và mở Open IPTV Pro TV.
+1. Mở ứng dụng **TizenBrew** (không phải TizenBrew Installer).
+2. Vào **Module Manager → Add GitHub Module**, nhập `trisanghy/open-iptv-pro@tizenbrew`.
+3. Mở/cập nhật module **Open IPTV Pro TV**. Nếu thấy giao diện cũ, tải lại module hoặc xóa cache.
 
-Nếu chỉ thấy ba nút Cập nhật TizenBrew / Cài đặt app từ USB / Cài đặt app từ GitHub, đó là TizenBrew Installer, không phải Module Manager. Cần mở ứng dụng TizenBrew.
+## Thêm nguồn IPTV
 
-## Phạm vi
+- **Remote:** chọn **＋ Nguồn**, nhập **Tên nguồn**, nhấn **OK** hoặc **↓** để chuyển xuống URL. Có nút **↓ Chuyển xuống nhập đường dẫn** làm đường dự phòng khi bàn phím Samsung giữ phím điều hướng. Nhập URL, xác nhận quyền sử dụng và nhấn **Lưu và tải**.
+- **Điện thoại:** chọn **＋ Nguồn**, quét **mã QR lớn** bên phải; trên điện thoại nhập tên và URL M3U/M3U8, xác nhận quyền sử dụng rồi **Gửi nguồn sang TV**. TV tải và lưu danh sách, điện thoại nhận kết quả.
+- Mã QR được tạo **tại TV** từ token ngẫu nhiên 128-bit, hết hạn trong **10 phút** hoặc khi đóng hộp thoại/tạo QR mới. Mã chỉ cho phép gửi nguồn đến TV đang hiển thị mã.
+- Trang biểu mẫu nằm trong nhánh `tizenbrew` tại `tizenbrew/phone.html`, hiển thị qua CDN HTML `raw.githack.com`. CDN có thể yêu cầu **xác nhận truy cập lần đầu** hoặc tạm thời không hoạt động. Khi đó dùng remote.
+- Luồng nhập dùng **Supabase Realtime Broadcast tạm thời** (TLS). Không ghi danh sách nguồn vào database; TV lưu dữ liệu cục bộ. Dịch vụ chuyển tiếp vẫn xử lý dữ liệu truyền, nên không chia sẻ QR với người không được phép.
 
-Giao diện tối ưu cho remote, nhập/dán M3U, quản lý nhóm kênh, tìm kiếm, yêu thích, kênh đã xem, 3 giao diện. Chạy trong module web, dùng HTML5 video; không có Samsung AVPlay trong trang module TizenBrew. Việc phát phụ thuộc codec, CORS, hỗ trợ HLS và HTTPS. Chưa thử trực tiếp trên Samsung TV. Không có nguồn IPTV bản quyền mặc định. Chỉ dùng nội dung được phép sử dụng.
+## Giới hạn và kiểm thử
 
-Nhánh riêng tizenbrew, không sửa main, web/online, Electron, Rust, Mobile.
+- TV và điện thoại cần Internet/WebSocket; TV cần `crypto.getRandomValues`. Phần mềm phải tải được Supabase SDK từ nguồn lưu trữ công khai.
+- Danh sách M3U phải có URL HTTP(S) và máy chủ cho phép CORS. HTML5 trên TizenBrew không dùng Samsung AVPlay; khả năng phát tùy codec/HTTPS.
+- **Đã bỏ ô dán nội dung M3U** trong màn thêm nguồn. Danh sách đã lưu từ các phiên bản trước vẫn được giữ nguyên.
+- Kiểm thử tự động: `node --test tizenbrew/tests/source-dialog.test.cjs`. Chưa xác minh thực tế trên TV Samsung.
+- Nhánh tizenbrew độc lập, không sửa `main`, `web/online`, Electron, Rust hay Mobile.
+
+Không cung cấp nguồn IPTV bản quyền mặc định. Chỉ sử dụng nội dung có quyền truy cập.

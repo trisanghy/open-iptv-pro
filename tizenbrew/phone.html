@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow"><meta name="referrer" content="no-referrer">
+<title>Open IPTV Pro · Nhập nguồn cho Samsung TV</title>
+<style>
+*{box-sizing:border-box}body{margin:0;min-height:100vh;background:#081322;color:#f0f6ff;font:16px/1.5 system-ui,-apple-system,Arial,sans-serif;padding:24px 15px}
+main{max-width:520px;margin:0 auto;background:#12223a;border:1px solid #304666;border-radius:24px;padding:27px 23px;box-shadow:0 20px 50px #0005}
+.eyebrow{color:#72c9ff;font-size:13px;letter-spacing:.1em;font-weight:800}h1{font-size:29px;margin:8px 0}p{color:#c2d3e7;margin:9px 0 22px}label{display:block;margin:16px 0 6px;font-weight:700}input[type=text],input[type=url]{width:100%;border:2px solid #35506e;background:#09182b;border-radius:13px;padding:16px;color:white;font-size:18px;outline:none}input:focus{border-color:#59c8ff}
+.rights{display:flex;gap:11px;align-items:flex-start;font-weight:500}.rights input{width:23px;height:23px;flex:none;margin:3px 0}
+button{width:100%;background:#0d91ee;color:white;border:0;border-radius:13px;font-weight:750;font-size:18px;padding:17px;margin-top:14px;cursor:pointer}
+button:disabled{opacity:.5;cursor:not-allowed}
+#status{margin-top:18px;border-radius:12px;background:#1a3452;padding:14px;color:#d4e8ff;min-height:62px;font-size:15px}
+.note{font-size:13px;color:#9db5ce;margin:17px 0 2px}strong{color:#fff}
+</style></head>
+<body><main>
+<div class="eyebrow">OPEN IPTV PRO · TIZENBREW</div>
+<h1>Thêm nguồn IPTV lên TV</h1>
+<p>Nhập trên điện thoại. Sau khi gửi, TV sẽ tự tải danh sách kênh và lưu nguồn.</p>
+<form id="sourceForm">
+<label for="name">Tên nguồn</label><input id="name" type="text" maxlength="80" placeholder="Ví dụ: Danh sách của tôi" required autocomplete="off">
+<label for="address">Đường dẫn URL M3U / M3U8</label><input id="address" type="url" maxlength="4096" placeholder="https://example.com/channels.m3u" required inputmode="url" autocapitalize="off" autocomplete="off" spellcheck="false">
+<label class="rights"><input id="rights" type="checkbox" required> Tôi có quyền sử dụng danh sách và nội dung này.</label>
+<button id="send" type="submit" disabled>Gửi nguồn sang TV</button>
+</form>
+<div id="status" role="status" aria-live="polite">Đang kết nối đến TV…</div>
+<p class="note">Mã QR là mã kết nối riêng có hiệu lực tối đa 10 phút. Không nhập mật khẩu tài khoản hoặc token riêng tư vào đây. TV cần Internet và máy chủ M3U phải cho phép tải danh sách.</p>
+</main>
+<script>
+(function(){
+'use strict';
+var byId=function(s){return document.getElementById(s);};
+var CONFIG={url:'https://zjbsvqryaxtafuffpifu.supabase.co',key:'sb_publishable_j_aWS273AgxBi0JYj4O-WA_bNxHFxM7'};
+var match=/^#code=([a-f0-9]{32})$/i.exec(location.hash||''),token=match&&match[1],client=null,room=null,ready=false,pendingId='',timer=0,connectedAt=Date.now();
+function status(message){byId('status').textContent=message;}
+function secureId(){if(!window.crypto||!crypto.getRandomValues)throw Error('Trình duyệt cần hỗ trợ tạo mã an toàn.');var a=new Uint8Array(16);crypto.getRandomValues(a);return Array.prototype.map.call(a,function(n){return('0'+n.toString(16)).slice(-2);}).join('');}
+function validUrl(s){try{var u=new URL(String(s||'').trim());return (u.protocol==='https:'||u.protocol==='http:')&&u.href.length<=4096?u.href:'';}catch(e){return '';}}
+function loadSdk(){if(window.supabase&&window.supabase.createClient)return Promise.resolve(window.supabase);
+return new Promise(function(resolve,reject){
+var sites=['https://trisanghy.github.io/open-iptv-pro/supabase-sdk.js','https://cdn.jsdelivr.net/gh/trisanghy/open-iptv-pro@tizenbrew/supabase-sdk.js'];
+function next(){if(!sites.length){reject(Error('Không tải được thư viện kết nối.'));return;}
+var script=document.createElement('script');script.src=sites.shift();script.onload=function(){if(window.supabase&&window.supabase.createClient)resolve(window.supabase);else next();};script.onerror=next;document.head.appendChild(script);}next();
+});}
+async function start(){
+if(!token){status('Mã QR không hợp lệ. Hãy quét lại mã hiển thị trên TV.');return;}
+try{
+secureId();var sdk=await loadSdk();
+client=sdk.createClient(CONFIG.url,CONFIG.key,{auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false},realtime:{params:{eventsPerSecond:5}}});
+room=client.channel('openiptv-tizen-source-v1-'+token,{config:{broadcast:{ack:true,self:false}}});
+room.on('broadcast',{event:'source-result'},function(reply){
+if(!reply||reply.id!==pendingId)return;
+clearTimeout(timer);pendingId='';
+if(reply.ok){status('✓ Đã thêm '+(reply.count||0)+' kênh thành công trên TV. Bạn có thể đóng trang này.');byId('send').disabled=true;}
+else{status('TV báo lỗi: '+String(reply.error||'Không đọc được nguồn')+'. Kiểm tra URL rồi gửi lại.');byId('send').disabled=false;}
+});
+room.subscribe(function(s){
+if(s==='SUBSCRIBED'){ready=true;status('✓ Đã sẵn sàng. Nhập tên và URL rồi nhấn Gửi nguồn sang TV.');byId('send').disabled=false;}
+else if(s==='CLOSED'||s==='CHANNEL_ERROR'||s==='TIMED_OUT'){ready=false;byId('send').disabled=true;status('Mất kết nối TV. Hãy quét lại mã QR mới.');}
+});
+}catch(e){status('Không kết nối được TV: '+String(e.message||e)+'. Hãy quét lại QR hoặc kiểm tra Internet.');}
+}
+byId('sourceForm').addEventListener('submit',async function(e){
+e.preventDefault();if(!ready||!room||pendingId)return;
+if(Date.now()-connectedAt>600000){status('Mã QR đã hết hạn. Hãy tạo QR mới trên TV.');byId('send').disabled=true;return;}
+var name=byId('name').value.trim().slice(0,80),address=validUrl(byId('address').value),rights=byId('rights').checked;
+if(!name||!address||!rights){status('Hãy điền tên, URL hợp lệ và xác nhận quyền sử dụng.');return;}
+try{
+pendingId=secureId();var requestId=pendingId;byId('send').disabled=true;
+status('Đã gửi yêu cầu. TV đang tải danh sách kênh, vui lòng kiểm tra TV…');
+var outcome=await room.send({type:'broadcast',event:'source-submit',payload:{id:requestId,name:name,address:address,rights:true}});
+if(outcome==='error')throw Error('Máy chủ chưa nhận được yêu cầu.');
+timer=setTimeout(function(){if(pendingId!==requestId)return;pendingId='';byId('send').disabled=false;status('Chưa nhận được kết quả từ TV. Kiểm tra TV, thử gửi lại hoặc quét QR mới.');},45000);
+}catch(error){pendingId='';byId('send').disabled=false;status('Lỗi gửi: '+String(error.message||error));}
+});
+window.addEventListener('pagehide',function(){if(client&&room)client.removeChannel(room);});
+start();
+})();
+</script></body></html>
