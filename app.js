@@ -700,6 +700,10 @@
  function looksLikeHlsUrl(raw){return /\.m3u8(?:$|[?#&])/i.test(String(raw||''))||/[?&](?:file|url)=[^#]*\.m3u8(?:$|[&#])/i.test(String(raw||''));}
  async function tryPlayback(url,generation,transport='relay'){
   if(generation!==playGeneration)return;
+  if(!native&&window.OpenIPTVWebCastV2?.shouldUseRemotePlayer?.()){
+   releaseLocalForRemote(); // Prevent a late HLS retry from starting local video during TV playback.
+   return;
+  }
   const attempt=++playAttemptSerial;
   attemptedTransports.add(transport);
   activeTransport=transport;
@@ -1347,7 +1351,7 @@
   const fit=['contain','cover','fill','none'].includes(store.videoFit)?store.videoFit:'contain';$('#videoFit').value=fit;player.className='fit-'+fit;$('#videoFit').addEventListener('change',e=>{store.videoFit=e.target.value;player.className='fit-'+store.videoFit;save();});
   player.addEventListener('playing',()=>{if((!native&&window.OpenIPTVWebCastV2?.shouldUseRemotePlayer?.())||window.OpenIPTVBackgroundAudio?.active){player.pause();if(!native&&window.OpenIPTVWebCastV2?.shouldUseRemotePlayer?.())releaseLocalForRemote();return;}clearTimeout(failoverTimer);clearTimeout(stallTimer);clearTimeout(startupNoteTimer);markPlaybackVerified();window.IPTVProAdvanced?.onPlaying?.(current,playCandidates[playCandidateIndex]);$('#streamInfo').textContent='● Đang phát';$('#playBtn').textContent='Ⅱ';textStatus('Đang xem: '+(current?.name||''));});
   player.addEventListener('timeupdate',markPlaybackVerified);
-  player.addEventListener('loadeddata',()=>{clearTimeout(startupNoteTimer);
+  player.addEventListener('loadeddata',()=>{if(!native&&window.OpenIPTVWebCastV2?.shouldUseRemotePlayer?.())return;clearTimeout(startupNoteTimer);
    if(current&&!firstFrameReported&&channelRequestedAt){
     firstFrameReported=true;
     firstFrameDurationMs=performance.now()-channelRequestedAt;
