@@ -977,48 +977,6 @@ async function runTwenty(page){
  // 552 synthetic channels so the user playlist never enters source control or
  // CI logs and live streams are never requested.
 
- // P5.1.159: tìm và lọc kênh thiếu logo, chụp trước/sau Electron thật.
- await page.screenshot({path:path.join(out,'positron-p51159-search-missing-before-1920x1080-real.png'),animations:'disabled'});
- await page.click('#poLibraryPulseToggle');
- await page.click('#poLibraryMissingToggle');
- const before159=await page.evaluate(()=>({
-  expected:window.PositronLibraryPulseCore.missingLogos(window.IPTVState.getChannels(),{query:'QA Channel 005'}),
-  total:window.IPTVState.getChannels().length,missingTotal:window.PositronLibraryPulseCore.missingLogos(window.IPTVState.getChannels()).total,idle:window.IPTVState.getCurrent()===null
- }));
- await page.fill('#poLibraryMissingSearch','QA Channel 005');
- const found159=await page.evaluate(x=>{
-  const rows=[...document.querySelectorAll('#poLibraryMissingRows .po-pulse-missing-row')];
-  return {
-   searchVisible:document.getElementById('poLibraryMissingSearch')?.offsetWidth>50,
-   match:rows.length===x.expected.rows.length&&rows.every((r,i)=>r.querySelector('strong')?.textContent===x.expected.rows[i].name),
-   count:document.getElementById('poLibraryMissingToggle')?.textContent.endsWith(String(x.expected.total)),
-   onePage:document.getElementById('poLibraryMissingPage')?.textContent==='Trang 1 / 1',
-   nextDisabled:document.getElementById('poLibraryMissingNext')?.disabled===true,
-   unchanged:window.IPTVState.getChannels().length===x.total,
-   noAutoplay:!x.idle||window.IPTVState.getCurrent()===null,
-   noOverflow:document.documentElement.scrollWidth<=innerWidth+1
-  };
- },before159);
- await page.screenshot({path:path.join(out,'positron-p51159-search-missing-after-1920x1080-real.png'),animations:'disabled'});
- await page.fill('#poLibraryMissingSearch','khong co 1234');
- const empty159=await page.evaluate(()=>({
-  empty:document.querySelector('#poLibraryMissingRows .po-pulse-missing-empty')?.textContent==='Không tìm thấy kênh phù hợp.',
-  zero:document.getElementById('poLibraryMissingToggle')?.textContent.endsWith(': 0'),
-  disabled:document.getElementById('poLibraryMissingNext')?.disabled===true
- }));
- await page.fill('#poLibraryMissingSearch','');
- const cleared159=await page.evaluate(x=>({
-  restored:document.querySelectorAll('#poLibraryMissingRows .po-pulse-missing-row').length===Math.min(10,x.total),
-  pagination:document.getElementById('poLibraryMissingPage')?.textContent==='Trang 1 / '+Math.max(1,Math.ceil(x.missingTotal/10))
- }),before159);
- await page.keyboard.press('Escape');
- const closed159=await page.evaluate(()=>({
-  closed:document.getElementById('poLibraryPulsePanel')?.hidden===true,
-  focusReturned:document.activeElement?.id==='poLibraryPulseToggle'
- }));
- const missingSearchQA={...found159,...empty159,...cleared159,...closed159};
- for(const [key,value] of Object.entries(missingSearchQA))
-  assert.equal(value,true,'P159 missing logo search '+key+': '+JSON.stringify(missingSearchQA));
 
  await page.setViewportSize({width:1360,height:820});
  const metadataQa=await page.evaluate(()=>{
@@ -4011,6 +3969,64 @@ async function runTwenty(page){
  const logoMissingQA={...pageOne158,...pageTwo158,...back158,...closed158};
  for(const [name,value] of Object.entries(logoMissingQA))
   assert.equal(value,true,'P158 missing logos '+name+': '+JSON.stringify(logoMissingQA));
+
+ // P5.1.159: CHỈ sau dữ liệu QA P158 (561 kênh), desktop 16:9 chuẩn.
+ await page.setViewportSize({width:1920,height:1080});
+ await page.evaluate(()=>window.IPTVState.setPage('tv'));
+ await page.waitForTimeout(100);
+ const preflight159=await page.evaluate(()=>({
+  width:innerWidth,height:innerHeight,
+  channels:window.IPTVState.getChannels().length,
+  missing:window.PositronLibraryPulseCore.missingLogos(window.IPTVState.getChannels()).total,
+  searched:window.PositronLibraryPulseCore.missingLogos(window.IPTVState.getChannels(),{query:'QA Channel 005'}).total
+ }));
+ assert.deepEqual([preflight159.width,preflight159.height],[1920,1080],'P159 viewport sai 16:9');
+ assert.ok(preflight159.channels>=100&&preflight159.missing>=10&&preflight159.searched>=1,
+  'P159 thiếu playlist QA thật từ vòng P158: '+JSON.stringify(preflight159));
+ const beforeP159=await page.screenshot({path:path.join(out,'positron-p51159-search-missing-before-1920x1080-real.png'),animations:'disabled'});
+ assert.deepEqual([beforeP159.readUInt32BE(16),beforeP159.readUInt32BE(20)],[1920,1080],'PNG TRƯỚC P159 không phải 1920x1080');
+ await page.click('#poLibraryPulseToggle');
+ await page.click('#poLibraryMissingToggle');
+ const before159=await page.evaluate(()=>({
+  expected:window.PositronLibraryPulseCore.missingLogos(window.IPTVState.getChannels(),{query:'QA Channel 005'}),
+  total:window.IPTVState.getChannels().length,missingTotal:window.PositronLibraryPulseCore.missingLogos(window.IPTVState.getChannels()).total,idle:window.IPTVState.getCurrent()===null
+ }));
+ await page.fill('#poLibraryMissingSearch','QA Channel 005');
+ const found159=await page.evaluate(x=>{
+  const rows=[...document.querySelectorAll('#poLibraryMissingRows .po-pulse-missing-row')];
+  return {
+   searchVisible:document.getElementById('poLibraryMissingSearch')?.offsetWidth>50,
+   match:rows.length===x.expected.rows.length&&rows.every((r,i)=>r.querySelector('strong')?.textContent===x.expected.rows[i].name),
+   count:document.getElementById('poLibraryMissingToggle')?.textContent.endsWith(String(x.expected.total)),
+   onePage:document.getElementById('poLibraryMissingPage')?.textContent==='Trang 1 / 1',
+   nextDisabled:document.getElementById('poLibraryMissingNext')?.disabled===true,
+   unchanged:window.IPTVState.getChannels().length===x.total,
+   noAutoplay:!x.idle||window.IPTVState.getCurrent()===null,
+   noOverflow:document.documentElement.scrollWidth<=innerWidth+1
+  };
+ },before159);
+ const afterP159=await page.screenshot({path:path.join(out,'positron-p51159-search-missing-after-1920x1080-real.png'),animations:'disabled'});
+ assert.deepEqual([afterP159.readUInt32BE(16),afterP159.readUInt32BE(20)],[1920,1080],'PNG SAU P159 không phải 1920x1080');
+ await page.fill('#poLibraryMissingSearch','khong co 1234');
+ const empty159=await page.evaluate(()=>({
+  empty:document.querySelector('#poLibraryMissingRows .po-pulse-missing-empty')?.textContent==='Không tìm thấy kênh phù hợp.',
+  zero:document.getElementById('poLibraryMissingToggle')?.textContent.endsWith(': 0'),
+  disabled:document.getElementById('poLibraryMissingNext')?.disabled===true
+ }));
+ await page.fill('#poLibraryMissingSearch','');
+ const cleared159=await page.evaluate(x=>({
+  restored:document.querySelectorAll('#poLibraryMissingRows .po-pulse-missing-row').length===Math.min(10,x.total),
+  pagination:document.getElementById('poLibraryMissingPage')?.textContent==='Trang 1 / '+Math.max(1,Math.ceil(x.missingTotal/10))
+ }),before159);
+ await page.keyboard.press('Escape');
+ const closed159=await page.evaluate(()=>({
+  closed:document.getElementById('poLibraryPulsePanel')?.hidden===true,
+  focusReturned:document.activeElement?.id==='poLibraryPulseToggle'
+ }));
+ const missingSearchQA={...found159,...empty159,...cleared159,...closed159};
+ for(const [key,value] of Object.entries(missingSearchQA))
+  assert.equal(value,true,'P159 missing logo search '+key+': '+JSON.stringify(missingSearchQA));
+
 
  await page.setViewportSize({width:1360,height:820});
   const report={type:'Positron P5 twenty distinct desktop screenshot cases',realElectron:true,syntheticChannels:false,
