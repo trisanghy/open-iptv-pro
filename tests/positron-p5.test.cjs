@@ -1809,7 +1809,8 @@ test('P5.1.176 gợi ý thêm kênh khi Favorites đã có ít nhất một th�
  assert.ok(js.includes('favoriteList.after(more)'), 'Đặt ngoài list để render không xóa');
  assert.ok(js.includes("favoriteList.querySelector('.fav-card')"),'Chỉ hiện khi đã có favorites');
  assert.ok(js.includes("more.hidden=!populated"),'Ẩn khi danh sách trống');
- assert.ok(js.includes("channels.filter(ch=>ch&&ch.id&&!fav.has(store,ch)).slice(0,6)"));
+ assert.ok(js.includes("channels.filter(ch=>ch&&ch.id&&!fav.has(store,ch))"), 'Chỉ gợi ý kênh chưa đánh dấu sao');
+ assert.ok(js.includes('Array.from({length:Math.min(6,available.length)}'), 'Vẫn giới hạn tối đa sáu gợi ý mỗi lượt');
  assert.ok(js.includes("fav.toggle(current,active);state.save();state.render();state.setPage('fav')"));
  assert.ok(js.includes("new MutationObserver(syncFavoriteMore).observe(favoriteList"));
  assert.ok(css.includes('#positronFavoriteMore[hidden]{display:none!important}'));
