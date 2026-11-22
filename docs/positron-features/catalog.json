@@ -1,21 +1,101 @@
 {
-  "generatedAt": "2026-11-22T18:24:00.399744+00:00",
+  "generatedAt": "2026-11-22T18:31:18.395104+00:00",
   "repository": "trisanghy/open-iptv-pro",
   "branch": "Positron",
   "versions": [
     {
-      "number": 242,
-      "version": "P5.1.242",
-      "appVersion": "4.23.327",
-      "title": "Chip thông báo mọi bộ lọc kênh và xóa lọc",
-      "description": "Feature priority: NEW — Mở rộng chip báo trạng thái P5.1.241 từ riêng Yêu thích sang mọi tab lọc native, gồm Vừa xem, Sống, Die và Chưa rõ. Khi tab bị thu gọn hoặc lọc ra 0 kênh, người dùng vẫn nhìn thấy tên bộ lọc, số kênh và hành động Xem tất cả để tránh hiểu nhầm mất playlist. Màu chip Vừa xem dịu hơn và mọi thao tác không thay đổi Favorites, playback hay nguồn. Electron screenshot: positron-p51242-recent-filter-after-1920x1080-real.png",
+      "number": 243,
+      "version": "P5.1.243",
+      "appVersion": "4.23.328",
+      "title": "Shift+R mở Vừa xem và quay về tất cả bằng bàn phím",
+      "description": "Feature priority: NEW — Thêm phím Shift+R ngay tại hàng kênh để mở lọc Vừa xem. Ảnh P5.1.242 cho thấy khi lịch sử rỗng không còn hàng nào để focus, do đó Shift+R trên chip Vừa xem cũng quay lại Tất cả và trả focus về kênh đầu tiên. Cho phép thao tác hai chiều bằng bàn phím, không tự phát, không sửa Favorites hay nguồn. Electron screenshot: positron-p51243-keyboard-recent-after-1920x1080-real.png",
       "kind": "fix",
       "status": "candidate",
       "published": "",
       "tag": "",
-      "commit": "f08c90c8876b294c55ac44fcbacef636353bc7e7",
+      "commit": "e37e695ef965ec6b55a9fe26dfc54ac1a0d08032",
       "url": "https://github.com/trisanghy/open-iptv-pro/tree/Positron",
       "assets": [],
+      "image": null
+    },
+    {
+      "number": 242,
+      "version": "P5.1.242",
+      "appVersion": "4.23.327",
+      "title": "Chip báo mọi bộ lọc kênh ẩn / Electron 4.23.327",
+      "description": "Feature priority: NEW — Mở rộng chip báo trạng thái P5.1.241 từ riêng Yêu thích sang mọi tab lọc native, gồm Vừa xem, Sống, Die và Chưa rõ. Khi tab bị thu gọn hoặc lọc ra 0 kênh, người dùng vẫn nhìn thấy tên bộ lọc, số kênh và hành động Xem tất cả để tránh hiểu nhầm mất playlist. Màu chip Vừa xem dịu hơn và mọi thao tác không thay đổi Favorites, playback hay nguồn. Electron screenshot: positron-p51242-recent-filter-after-1920x1080-real.png",
+      "kind": "fix",
+      "status": "release",
+      "published": "2026-11-22T18:28:20Z",
+      "tag": "positron/v4.23.327-p5.1.242",
+      "commit": "f08c90c8876b294c55ac44fcbacef636353bc7e7",
+      "url": "https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.327-p5.1.242",
+      "assets": [
+        {
+          "name": "audit-p4-50-rounds.json",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.327-p5.1.242/audit-p4-50-rounds.json"
+        },
+        {
+          "name": "audit-p5-20-rounds.json",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.327-p5.1.242/audit-p5-20-rounds.json"
+        },
+        {
+          "name": "Open-IPTV-Pro-4.23.327-mac-arm64.dmg",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.327-p5.1.242/Open-IPTV-Pro-4.23.327-mac-arm64.dmg"
+        },
+        {
+          "name": "Open-IPTV-Pro-4.23.327-mac-x64.dmg",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.327-p5.1.242/Open-IPTV-Pro-4.23.327-mac-x64.dmg"
+        },
+        {
+          "name": "Open-IPTV-Pro-4.23.327-x64.exe",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.327-p5.1.242/Open-IPTV-Pro-4.23.327-x64.exe"
+        },
+        {
+          "name": "Open-IPTV-Pro-Setup-4.23.327-x64.exe",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.327-p5.1.242/Open-IPTV-Pro-Setup-4.23.327-x64.exe"
+        },
+        {
+          "name": "OpenIPTVPro-Positron-P51242-Source.zip",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.327-p5.1.242/OpenIPTVPro-Positron-P51242-Source.zip"
+        },
+        {
+          "name": "positron-desktop-1920x1080-16x9-main-real.png",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.327-p5.1.242/positron-desktop-1920x1080-16x9-main-real.png"
+        },
+        {
+          "name": "positron-p4-final-main-real.png",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.327-p5.1.242/positron-p4-final-main-real.png"
+        },
+        {
+          "name": "positron-p4-round-10-real.png",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.327-p5.1.242/positron-p4-round-10-real.png"
+        },
+        {
+          "name": "positron-p4-round-20-real.png",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.327-p5.1.242/positron-p4-round-20-real.png"
+        },
+        {
+          "name": "positron-p4-round-30-real.png",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.327-p5.1.242/positron-p4-round-30-real.png"
+        },
+        {
+          "name": "positron-p4-round-40-real.png",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.327-p5.1.242/positron-p4-round-40-real.png"
+        },
+        {
+          "name": "Positron-P51242-20-Real-Screenshots.zip",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.327-p5.1.242/Positron-P51242-20-Real-Screenshots.zip"
+        },
+        {
+          "name": "Positron-P51242-50-Real-Screenshots.zip",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.327-p5.1.242/Positron-P51242-50-Real-Screenshots.zip"
+        },
+        {
+          "name": "SHA256SUMS.txt",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.327-p5.1.242/SHA256SUMS.txt"
+        }
+      ],
       "image": null
     },
     {
