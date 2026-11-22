@@ -64,7 +64,7 @@ label{display:block;color:#ecf6ff;font-weight:650;margin:12px 0 6px}
 <h1>Thêm nguồn IPTV</h1><p>Gửi URL hoặc chuyển tệp M3U qua QR khi TV không đọc được nguồn.</p>
 <form id="sourceForm">
 <label for="name">Tên nguồn</label><input id="name" type="text" maxlength="80" placeholder="Ví dụ: Danh sách của tôi" required autocomplete="off">
-<label for="address">Đường dẫn URL M3U / M3U8</label><input id="address" type="url" maxlength="4096" placeholder="https://example.com/channels.m3u" required inputmode="url" autocapitalize="off" autocomplete="off" spellcheck="false">
+<label for="address">Đường dẫn URL M3U / M3U8</label><input id="address" type="text" maxlength="4096" placeholder="https://example.com/channels.m3u" required inputmode="url" autocapitalize="off" autocomplete="off" spellcheck="false">
 <label class="checkline"><input id="rights" type="checkbox" required> Tôi có quyền sử dụng danh sách và nội dung này.</label>
 <button id="send" class="primary full" type="submit" disabled>Gửi nguồn sang TV</button>
 </form>
@@ -86,7 +86,7 @@ label{display:block;color:#ecf6ff;font-weight:650;margin:12px 0 6px}
 <form id="editForm">
 <label for="editName">Tên kênh</label><input id="editName" type="text" maxlength="140" required>
 <label for="editGroup">Nhóm kênh</label><input id="editGroup" type="text" maxlength="80" placeholder="Khác">
-<label for="editUrl">URL phát HTTP(S)</label><input id="editUrl" type="url" maxlength="4096" required autocapitalize="off" spellcheck="false">
+<label for="editUrl">URL phát HTTP(S)</label><input id="editUrl" type="text" maxlength="4096" required autocapitalize="off" spellcheck="false">
 <div class="actions"><button id="editCancel" type="button">Hủy</button><button id="editSave" class="primary" type="submit" disabled>Lưu lên TV</button></div>
 </form></section>
 <div id="feedback" role="status" aria-live="polite">Chưa kết nối TV. Hãy giữ trang QR mở trên TV.</div>
