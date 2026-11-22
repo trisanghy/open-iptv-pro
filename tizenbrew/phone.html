@@ -499,7 +499,7 @@ byId('sendText').onclick=async function(){
 byId('tabManage').onclick=function(){showTab('manage');if(online&&!snapshot)void getSnapshot('',0,'');};
 byId('tabAdd').onclick=function(){showTab('add');};
 byId('refresh').onclick=function(){void getSnapshot(currentSource,offset,query);};
-byId('sourceSelect').onchange=function(){query='';byId('filterChannels').value='';void getSnapshot(this.value,0,'');};
+byId('sourceSelect').onchange=function(){query='';activeGroup='';managerMode='all';selectedItems={};selectionMode=false;byId('filterChannels').value='';void getSnapshot(this.value,0,'');};
 byId('filterChannels').oninput=function(){var next=this.value.trim().slice(0,90);clearTimeout(filterTimer);filterTimer=setTimeout(function(){void getSnapshot(currentSource,0,next);},350);};
 byId('previous').onclick=function(){void getSnapshot(currentSource,Math.max(0,offset-30),query);};
 byId('next').onclick=function(){void getSnapshot(currentSource,offset+30,query);};
@@ -538,19 +538,87 @@ byId('newChannel').onclick=function(){
  byId('editForm').reset();byId('editGroup').value='Khác';
  byId('editPanel').hidden=false;byId('editName').focus();
 };
+
+function selectedPayload(){return Object.keys(selectedItems).map(function(id){return {id:id,index:selectedItems[id].index};});}
+function setSelectedChannel(c){
+ if(!c)return;
+ if(selectedItems[c.id])delete selectedItems[c.id];
+ else if(Object.keys(selectedItems).length<60)selectedItems[c.id]={id:c.id,index:c.index};
+ else{feedback('Tối đa 60 kênh mỗi lượt.',true);return;}
+ selectionMode=true;renderChannels();updateControls();
+}
+function clearChosen(){selectedItems={};renderChannels();updateControls();}
+async function runBatch(action,extras){
+ var items=selectedPayload();
+ if(!items.length){feedback('Chọn ít nhất một kênh.',true);return;}
+ try{await command(action,Object.assign({items:items},extras||{}));selectedItems={};renderChannels();updateControls();}
+ catch(e){}
+}
+function showMoveDialog(c){
+ if(!c)return;
+ moveTarget=c;byId('moveTitle').textContent='Chuyển kênh: '+c.name;
+ byId('movePanel').hidden=false;byId('moveGroup').value=c.group||'Khác';
+ byId('movePosition').value='';byId('movePanel').scrollIntoView({block:'nearest',behavior:'smooth'});
+}
+byId('managerFilters').onclick=function(event){
+ var btn=event.target.closest('button[data-filter]');
+ if(!btn||!online||busy||managerMode===btn.dataset.filter)return;
+ managerMode=btn.dataset.filter;selectedItems={};void getSnapshot(currentSource,0,query);
+};
+byId('groupFilter').onchange=function(){activeGroup=this.value;selectedItems={};void getSnapshot(currentSource,0,query);};
+byId('createFolder').onclick=async function(){
+ var name=prompt('Tên thư mục mới trên TV:');if(name===null)return;
+ name=name.trim().slice(0,80);if(!name){feedback('Tên thư mục không được trống.',true);return;}
+ try{await command('create-folder',{name:name});}catch(e){}
+};
+byId('expandFolders').onclick=function(){collapsedFolders={};renderChannels();};
+byId('collapseFolders').onclick=function(){currentGroupNames().forEach(function(g){collapsedFolders[currentSource+'|'+g.name]=true;});renderChannels();};
+byId('selectionToggle').onclick=function(){selectionMode=!selectionMode;if(!selectionMode)selectedItems={};renderChannels();updateControls();};
+byId('selectPage').onclick=function(){if(!snapshot)return;snapshot.channels.forEach(function(c){selectedItems[c.id]={id:c.id,index:c.index};});selectionMode=true;renderChannels();updateControls();};
+byId('clearSelection').onclick=clearChosen;
+byId('batchMove').onclick=function(){void runBatch('batch-move',{group:byId('batchGroup').value||'Khác',position:byId('batchPosition').value||null});};
+byId('batchFavorite').onclick=function(){void runBatch('batch-favorite',{favorite:true});};
+byId('batchUnfavorite').onclick=function(){void runBatch('batch-favorite',{favorite:false});};
+byId('batchHide').onclick=function(){void runBatch('batch-visibility',{hidden:true});};
+byId('batchShow').onclick=function(){void runBatch('batch-visibility',{hidden:false});};
+byId('batchDelete').onclick=function(){var count=Object.keys(selectedItems).length;if(count&&confirm('Xóa '+count+' kênh khỏi TV? Không thể hoàn tác.'))void runBatch('batch-delete');};
+byId('moveCancel').onclick=function(){moveTarget=null;byId('movePanel').hidden=true;};
+byId('moveConfirm').onclick=async function(){
+ if(!moveTarget||moveBusy)return;moveBusy=true;
+ try{await command('batch-move',{items:[{id:moveTarget.id,index:moveTarget.index}],group:byId('moveGroup').value||'Khác',position:byId('movePosition').value||null});
+  byId('movePanel').hidden=true;moveTarget=null;}catch(e){}finally{moveBusy=false;}
+};
+
 byId('channelList').onclick=async function(event){
- var button=event.target.closest('button[data-action]');
- if(!button||!snapshot||!online)return;
- var c=snapshot.channels[Number(button.dataset.index)];if(!c)return;
- var action=button.dataset.action,details={index:c.index,channelId:c.id};
+ if(Date.now()<dragSuppressClickUntil){event.preventDefault();event.stopPropagation();return;}
+ var btn=event.target.closest('button[data-action]');
+ if(!btn||!snapshot||!online||busy)return;
+ var action=btn.dataset.action,group=btn.dataset.group||'';
+ if(action==='collapse-folder'){var key=currentSource+'|'+group;collapsedFolders[key]=!collapsedFolders[key];renderChannels();return;}
+ if(['rename-folder','delete-folder','folder-up','folder-down'].indexOf(action)>=0){
+  if(action==='rename-folder'){
+   var name=prompt('Tên thư mục mới:',group);if(name===null)return;
+   name=name.trim().slice(0,80);if(!name){feedback('Tên thư mục không được trống.',true);return;}
+   try{await command('rename-folder',{oldName:group,name:name});}catch(e){}return;
+  }
+  if(action==='delete-folder'&&!confirm('Xóa thư mục "'+group+'"? Các kênh được chuyển sang Khác, không bị xóa.'))return;
+  var op=action==='folder-up'||action==='folder-down'?'move-folder':action;
+  var fields=op==='move-folder'?{name:group,direction:action==='folder-up'?'up':'down'}:{name:group};
+  try{await command(op,fields);}catch(e){}return;
+ }
+ var c=snapshot.channels[Number(btn.dataset.index)];if(!c)return;
+ var details={index:c.index,channelId:c.id};
+ if(action==='select-row'){setSelectedChannel(c);return;}
+ if(action==='move-channel-ui'){showMoveDialog(c);return;}
  if(action==='edit-channel'){
   editMode='edit-channel';editTarget=c;byId('editTitle').textContent='Sửa kênh: '+c.name;
   byId('editName').value=c.name;byId('editGroup').value=c.group||'Khác';byId('editUrl').value=c.url||'';
-  byId('editPanel').hidden=false;byId('editName').focus();return;
+  byId('editPanel').hidden=false;byId('editPanel').scrollIntoView({block:'nearest'});return;
  }
- if(action==='delete-channel'&&!confirm('Xóa kênh "'+c.name+'" khỏi danh sách trên TV?'))return;
+ if(action==='delete-channel'&&!confirm('Xóa kênh "'+c.name+'" khỏi TV?'))return;
  if(action==='move-up'||action==='move-down'){details.direction=action==='move-up'?'up':'down';action='move-channel';}
- try{await command(action,details);}catch(e){}
+ if(action==='play-channel'&&selectionMode){setSelectedChannel(c);return;}
+ try{await command(action,details,action==='play-channel'?'Đang yêu cầu TV phát '+c.name+'…':undefined);}catch(e){}
 };
 byId('editCancel').onclick=function(){byId('editPanel').hidden=true;editMode='';editTarget=null;};
 byId('editForm').onsubmit=async function(event){
@@ -561,6 +629,59 @@ byId('editForm').onsubmit=async function(event){
  if(editMode==='edit-channel'&&editTarget){fields.index=editTarget.index;fields.channelId=editTarget.id;}
  try{await command(editMode,fields);byId('editPanel').hidden=true;editMode='';editTarget=null;}catch(e){}
 };
+
+var dragGesture=null,dragSuppressClickUntil=0;
+function dragClear(){
+ if(dragGesture&&dragGesture.timer)clearTimeout(dragGesture.timer);
+ if(dragGesture&&dragGesture.hover)dragGesture.hover.classList.remove('drag-hover');
+ dragGesture=null;
+}
+function dragTouch(event,id){
+ var touches=event.changedTouches||[];
+ for(var i=0;i<touches.length;i++)if(touches[i].identifier===id)return touches[i];
+ return null;
+}
+document.addEventListener('touchstart',function(event){
+ if(!online||busy||selectionMode||event.touches.length!==1||byId('managerPanel').hidden)return;
+ var row=event.target.closest('.mobile-channel');
+ if(!row||!byId('channelList').contains(row)||!event.target.closest('.channel-head'))return;
+ var t=event.changedTouches[0],index=Number(row.dataset.index),c=snapshot&&snapshot.channels[index];
+ if(!c)return;
+ dragClear();
+ dragGesture={id:t.identifier,x:t.clientX,y:t.clientY,source:row,channel:c,active:false,hover:null,timer:setTimeout(function(){
+  if(!dragGesture)return;dragGesture.active=true;
+  feedback('Kéo kênh “'+c.name+'” lên kênh hoặc thư mục đích rồi thả.');
+  if(navigator.vibrate)try{navigator.vibrate(15);}catch(e){}
+ },800)};
+},{passive:true});
+document.addEventListener('touchmove',function(event){
+ var drag=dragGesture;if(!drag)return;
+ var t=dragTouch(event,drag.id);if(!t)return;
+ if(!drag.active){if(Math.abs(t.clientX-drag.x)+Math.abs(t.clientY-drag.y)>16)dragClear();return;}
+ if(event.cancelable)event.preventDefault();
+ if(drag.hover)drag.hover.classList.remove('drag-hover');
+ var candidate=document.elementFromPoint(t.clientX,t.clientY);
+ drag.hover=candidate&&candidate.closest('.mobile-channel,.folder-header');
+ if(drag.hover===drag.source)drag.hover=null;
+ if(drag.hover)drag.hover.classList.add('drag-hover');
+},{passive:false});
+document.addEventListener('touchend',function(event){
+ var drag=dragGesture;if(!drag)return;
+ var t=dragTouch(event,drag.id);if(!t)return;
+ if(!drag.active){dragClear();return;}
+ if(event.cancelable)event.preventDefault();
+ var target=drag.hover,origin=drag.channel;
+ if(target){
+  var toGroup=target.dataset.group||origin.group,anchor=target.classList.contains('mobile-channel')?target.dataset.channelId:'';
+  if(anchor!==origin.id){
+   dragSuppressClickUntil=Date.now()+850;
+   void command('relocate-channel',{index:origin.index,channelId:origin.id,group:toGroup,anchorId:anchor,after:false}).catch(function(){});
+  }
+ }
+ dragClear();
+},{passive:false});
+document.addEventListener('touchcancel',dragClear,{passive:true});
+
 window.addEventListener('pagehide',function(){clearInterval(pulse);if(room&&client)void client.removeChannel(room);});
 connection(false,'Đang kết nối máy chủ, sau đó xác thực TV…');
 void connect();
