@@ -32,7 +32,7 @@ test('Full-screen player cannot navigate to hidden sidebar buttons with remote',
  let focused=0,clicked=0,played=0,paused=0,prevented=0,opened=0;
  const video={paused:true,play(){played++;return Promise.resolve()},pause(){paused++}};
  const exit={focus(){focused++},click(){clicked++}},tube={focus(){focused++},click(){clicked++}};
- const byId=id=>({player:{hidden:false},modal:{hidden:true},channelPicker:{hidden:true},video,exitModuleBtn:exit,tizenTubeBtn:tube})[id];
+ const byId=id=>({player:{hidden:false},modal:{hidden:true},channelPicker:{hidden:true},browserFallback:{hidden:true},video,exitModuleBtn:exit,tizenTubeBtn:tube})[id];
  const fn=vm.runInNewContext(html.slice(from,to)+'\nkeyHandler;',{
   byId,isRemoteBack:()=>false,handleBack(){},document:{activeElement:exit},notify(){},
   togglePlayback(){played++;},changeChannel(){throw Error('Arrows must not directly change a channel');},openChannelPicker(){opened++;},move(){focused++}
