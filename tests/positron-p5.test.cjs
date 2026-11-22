@@ -37,7 +37,7 @@ test('P5 assets are loaded after P4 without replacing it',()=>{
 test('P5 release is immutable and versioned separately from P4.1',()=>{
  const pkg=JSON.parse(read('package.json'));
  const flow=read('.github/workflows/positron-lab.yml');
- assert.equal(pkg.version,'4.23.242');
+ assert.equal(pkg.version,'4.23.243');
  const label=pkg.description.match(/Positron\s+(P\d+\.\d+\.\d+)/)?.[1];
  assert.ok(label,'product P-label must accompany SemVer');
  assert.ok(flow.includes('TAG=positron/v'+pkg.version+'-'+label.toLowerCase()),'release tag and app version must match');
@@ -1575,3 +1575,19 @@ test('P5.1.158 xem kênh thiếu logo bằng phân trang từ metadata cục b�
  assert.ok(p158.includes('- Electron screenshot: positron-p51158-missing-logos-after-1920x1080-real.png'));
 });
 
+
+test('P5.1.159 tìm kênh thiếu logo có ô tìm và ảnh trước/sau Electron',()=>{
+ const core=read('renderer/positron-library-pulse-core.js');
+ const ui=read('renderer/positron-library-pulse.js');
+ const css=read('renderer/positron-library-pulse.css');
+ const qa=read('scripts/positron-20-extension.cjs');
+ assert.doesNotThrow(()=>new vm.Script(core));
+ assert.doesNotThrow(()=>new vm.Script(ui));
+ assert.match(core,/terms\.every/);
+ assert.match(ui,/missingSearch\.addEventListener\('input'/);
+ assert.match(ui,/query:missingSearch\.value/);
+ assert.match(css,/#poLibraryMissingSearch:focus-visible/);
+ for(const name of ['positron-p51159-search-missing-before-1920x1080-real.png','positron-p51159-search-missing-after-1920x1080-real.png'])
+  assert.ok(qa.includes(name),'thiếu ảnh thật '+name);
+ assert.ok(!ui.includes('fetch(')&&!ui.includes('playChannel('));
+});

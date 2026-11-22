@@ -71,3 +71,21 @@ test('P5.1.158 Escape luôn khôi phục focus về nút Thư viện kể cả s
  assert.match(source,/const restore=restoreFocus\|\|panel\.contains\(d\.activeElement\)/);
  assert.match(source,/event\.key==='Escape'\)\{event\.preventDefault\(\);hide\(true\);/);
 });
+
+test('P5.1.159 tìm kiếm không dấu theo tên/nhóm, không lộ URL stream',()=>{
+ const list=[{name:'Đài Địa phương',group:'Tin tức',url:'https://secret/1'},
+  {name:'VTV8',group:'Truyền hình địa phương',logo:' ',url:'https://secret/2'},
+  {name:'Đài Thiếu nhi',group:'Giải trí',logo:'https://logo/x.png'},
+  {name:'Đài Thể thao',group:'Thể thao',logo:''}];
+ const original=JSON.stringify(list);
+ const a=core.missingLogos(list,{query:'dai dia phuong'});
+ const b=core.missingLogos(list,{query:'truyen hinh dia phuong'});
+ assert.equal(a.total,1);assert.equal(a.rows[0].name,'Đài Địa phương');
+ assert.equal(b.total,1);assert.equal(b.rows[0].name,'VTV8');
+ assert.equal(core.missingLogos(list,{query:'dai'}).total,2);
+ assert.equal(core.missingLogos(list,{query:'khong co'}).total,0);
+ assert.equal(core.missingLogos(list,{query:'secret'}).total,0);
+ assert.equal(core.missingLogos(list,{query:' '}).total,3);
+ assert.ok(!JSON.stringify(a).includes('https://secret'));
+ assert.equal(JSON.stringify(list),original);
+});

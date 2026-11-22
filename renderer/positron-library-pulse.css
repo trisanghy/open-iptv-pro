@@ -50,3 +50,8 @@ html[data-positron="true"] .po-pulse-missing-nav{display:flex;justify-content:sp
 html[data-positron="true"] .po-pulse-missing-nav span{font-size:11px;font-variant-numeric:tabular-nums}
 html[data-positron="true"] .po-pulse-missing-nav button:disabled{opacity:.4;cursor:default}
 html[data-positron="true"] .po-pulse-missing-empty{font-size:11px;padding:8px;color:var(--po-muted,#a4b9c0)}
+
+/* P5.1.159: tìm kiếm tên/nhóm thiếu logo, hỗ trợ bàn phím. */
+html[data-positron="true"] #poLibraryMissingSearch{box-sizing:border-box;width:100%;min-width:0;min-height:36px;border:1px solid var(--po-border,#42606b);border-radius:9px;padding:8px 11px;background:var(--po-card,#162934);color:var(--po-text,#eaf7f7);font:inherit;font-size:12px}
+html[data-positron="true"] #poLibraryMissingSearch::placeholder{color:var(--po-muted,#a4b9c0)}
+html[data-positron="true"] #poLibraryMissingSearch:focus-visible{outline:2px solid var(--po-accent,#66d4c2);outline-offset:2px}

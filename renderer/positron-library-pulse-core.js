@@ -33,10 +33,13 @@
   const size=Number.isFinite(limit)?Math.max(0,Math.floor(limit)):5;
   return {rows:values.slice(0,size),remaining:Math.max(0,values.length-size)};
  }
+ const fold=v=>clean(v).normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/gi,'d').toLocaleLowerCase('vi');
  // P5.1.158: liệt kê kênh thiếu logo bằng metadata đã có, không tải ảnh/mạng.
- function missingLogos(input,{offset=0,limit=10}={}){
+ function missingLogos(input,{offset=0,limit=10,query=''}={}){
+  const terms=fold(query).split(/\s+/).filter(Boolean);
   const rows=(Array.isArray(input)?input:[]).filter(c=>c&&typeof c==='object'&&
-   clean(c.name)&&!clean(c.logo));
+   clean(c.name)&&!clean(c.logo)&&terms.every(term=>
+    fold(clean(c.name)+' '+clean(c.group||c.groupTitle)).includes(term)));
   const start=Number.isFinite(offset)?Math.max(0,Math.floor(offset)):0;
   const count=Number.isFinite(limit)?Math.min(50,Math.max(1,Math.floor(limit))):10;
   return {total:rows.length,offset:start,limit:count,

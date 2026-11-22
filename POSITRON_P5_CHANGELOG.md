@@ -1,3 +1,11 @@
+## P5.1.159 — Tìm kiếm kênh thiếu logo / Electron 4.23.243
+- Feature priority: NEW — Thêm tìm kiếm kênh chưa có logo theo tên hoặc nhóm, hỗ trợ tiếng Việt không dấu để người dùng không phải duyệt từng trang trong playlist lớn.
+- User action: Mở Thư viện → Kênh thiếu logo → nhập tên hoặc nhóm; danh sách cập nhật ngay và xoá tìm kiếm để xem lại tất cả.
+- Electron screenshot: positron-p51159-search-missing-after-1920x1080-real.png
+- Before: positron-p51159-search-missing-before-1920x1080-real.png; After: positron-p51159-search-missing-after-1920x1080-real.png (phải thực sự mở kiểm tra).
+- Không truy cập mạng, URL stream, playback hoặc thay đổi M3U/Favorites. Có test logic, không dấu, pagination và ảnh 16:9.
+- Status: CANDIDATE, chỉ hoàn thành khi Node/CI, ảnh Electron và phát hành/artifact được xác minh.
+
 ## P5.1.158 — Chẩn đoán kênh thiếu logo / Electron 4.23.242
 - Feature priority: NEW — Từ tỷ lệ logo 0/561 nhìn thấy trên ảnh Electron P5.1.157, bổ sung danh sách các kênh chưa có URL logo, chia trang 10 kênh để người dùng xác định metadata thiếu.
 - User action: Thư viện → Kênh thiếu logo → Trước / Tiếp; hiển thị tên và nhóm từ playlist đã nhập, không tự quét mạng và không bổ sung logo giả.
