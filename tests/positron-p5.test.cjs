@@ -2568,7 +2568,7 @@ test('P5.1.220 expands session discovery history from 10 to 50 with reversible f
 test('P5.1.221 aligns EPG DVR labels with actual Electron screenshot regression',()=>{
  const css=read('renderer/positron-twenty.css'),qa=read('scripts/positron-20-extension.cjs');
  const flow=read('.github/workflows/positron-lab.yml'),pkg=JSON.parse(read('package.json'));
- assert.equal(pkg.version,'4.23.306');
+ assert.equal(pkg.version,'4.23.307');
  for(const x of ['P5.1.221: EPG recording form','#page-epg #dvrForm.dvr-form>label','align-self:start!important'])
   assert.ok(css.includes(x),'P221 CSS missing '+x);
  for(const x of ['epgStart221','epgAligned221','oldStagger221','compact221','headingsAligned',
