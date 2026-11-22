@@ -41,3 +41,10 @@ html[data-theme=dark] #page-tv .watchflow-demo,html[data-theme=amoled] #page-tv 
 html[data-theme=dark] #page-tv .wf-modes button,html[data-theme=amoled] #page-tv .wf-modes button,html[data-theme=dark] #page-tv .wf-metric,html[data-theme=amoled] #page-tv .wf-metric,html[data-theme=dark] #page-tv .wf-item,html[data-theme=amoled] #page-tv .wf-item{background:#292638;color:#f3e9ff;border-color:#4c425b}
 html[data-theme=dark] #page-tv .wf-modes button.wf-active,html[data-theme=amoled] #page-tv .wf-modes button.wf-active{background:#462d60;border-color:#ad75e4}
 @media(max-width:850px){#page-tv .wf-modes,#page-tv .wf-list{grid-template-columns:1fr}#page-tv .wf-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}#page-tv .watchflow-demo{padding:12px!important}}
+
+#page-tv .wf-modes button{min-height:91px!important}
+#page-tv .wf-modes .wf-size{font-size:10px!important;color:#8242b0!important;border-top:1px dashed #e2d1f2;padding-top:5px;margin-top:4px;font-weight:750}
+#page-tv .wf-internet-results{display:grid;gap:8px;margin-top:11px}
+#page-tv .wf-external{color:#8942b0;text-decoration:underline;font-size:11px;white-space:nowrap}
+#page-tv .wf-clear{border:1px solid #cdb2e3;background:transparent;color:#7d43a7;border-radius:8px;padding:8px;font-weight:700;font-size:11px;cursor:pointer}
+html[data-theme=dark] #page-tv .wf-modes .wf-size{color:#d0b0f1!important}

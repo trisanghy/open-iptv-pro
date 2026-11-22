@@ -1,3 +1,7 @@
+## Rust Lab v23.8.105 — WatchFlow học máy thực + hiển thị dung lượng (PRERELEASE)
+
+Học máy Naive Bayes thực, đọc EPG đa kênh, học sở thích từ quá trình xem thật khi bật Smart/Intelligence, xếp hạng theo thời điểm và tra cứu danh mục kênh Wikidata bằng một lần nhấn. Dung lượng dưới ba nút; AI Qwen3 cỡ ~1,4 GB chỉ là tùy chọn chưa kết nối WatchFlow. Chính sách mọi bản Rust Lab/EXE phải luôn là prerelease, không thay Latest.
+
 # Rust Lab v23.8.104 — WatchFlow Smart và Intelligence screenshots
 
 Chụp thêm 8 ảnh giao diện thực tế trong Chromium: bốn tab ở chế độ Smart (AI nhẹ) và bốn tab ở chế độ Intelligence (AI nâng cao). Xác minh cả mode selector và các tab chuyển được. Chưa chạy mô hình học máy thực tế. Xem [release notes](RELEASE_NOTES_RUST_LAB_V23_8_104.md).
