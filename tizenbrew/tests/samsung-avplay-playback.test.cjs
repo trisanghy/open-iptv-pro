@@ -18,7 +18,7 @@ function setup(hasAvplay){
   pause(){calls.htmlPause++;this.paused=true;},
   removeAttribute(k){if(k==='src')this.src='';},load(){},
  };
- const objects={player,channelPicker:{hidden:true},playerStatus:status,playbackDiag:{hidden:true,textContent:''},video,avplayObject:{hidden:true},playingName:{textContent:''},exitModuleBtn:{title:''}};
+ const objects={player,channelPicker:{hidden:true},browserFallback:{hidden:true},playerStatus:status,playbackDiag:{hidden:true,textContent:''},video,avplayObject:{hidden:true},playingName:{textContent:''},exitModuleBtn:{title:''}};
  let avState='NONE';
  const av={
   open(url){calls.avOpen.push(url);avState='IDLE';},
