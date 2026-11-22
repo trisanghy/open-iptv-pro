@@ -22,7 +22,7 @@
    }
    if(typeof video.remote?.prompt==='function'){
     const pending=video.remote.prompt();
-    pending?.catch?.(()=>showMobileAirPlayGuide());
+    pending?.catch?.(()=>{if(isAppleMobile())showMobileAirPlayGuide();else showBrowserCastGuide();});
     return true;
    }
   }catch(e){console.warn('AirPlay picker unavailable',e);}
@@ -38,6 +38,14 @@
   $('castModal').classList.remove('hidden');
   status('Trình duyệt hiện tại không mở được AirPlay. Hãy mở website trực tiếp trong Safari; nếu cần, dùng Phản chiếu màn hình trong Trung tâm điều khiển iPhone.',true);
  }
+ function showBrowserCastGuide(){
+  $('castModal').dataset.airplayMobile='false';
+  $('castTitle').textContent='Cast / AirPlay lên TV';
+  $('castModal').classList.remove('hidden');
+  $('airplaySection').classList.add('hidden');
+  for(const id of ['castScan','castPlay','castAirplay','castLink','castStop'])$(id).disabled=true;
+  status('Trình duyệt này chưa mở được bộ chọn TV trực tiếp. Trong Chrome, mở menu ⋮ > Truyền (Cast), chọn TV rồi chọn truyền tab. Trên Safari, sử dụng AirPlay nếu thiết bị hỗ trợ.');
+ }
  function open(ch,url){
   channel=ch;source=url||ch?.url;
   $('castChannel').textContent=(ch?.name||'')+' · '+(ch?.group||'');
@@ -50,7 +58,7 @@
   $('castModal').dataset.airplayMobile='false';
   $('castModal').classList.remove('hidden');
   $('airplaySection').classList.toggle('hidden',navigator.platform?.toLowerCase().includes('mac')===false);
-  if(!hasNative){status('Chức năng Cast chỉ có trong bản ứng dụng đã cài cho Windows hoặc Mac.',true);$('castScan').disabled=true;$('castPlay').disabled=true;$('castAirplay').disabled=true;$('castLink').disabled=true;return;}
+  if(!hasNative){if(requestAirPlayPicker())return;showBrowserCastGuide();return;}
   api.capabilities().then(c=>{macOS=c.platform==='darwin';$('airplaySection').classList.toggle('hidden',!macOS);if(macOS)scanAirplay();}).catch(()=>{});
   status('Google Cast và AirPlay là hai loại thiết bị khác nhau. Có thể tìm AirPlay ở mục bên dưới.');
   scan();
