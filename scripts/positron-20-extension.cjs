@@ -6930,8 +6930,79 @@ async function runTwenty(page){
  await page.setViewportSize({width:1360,height:820});
  await page.evaluate(()=>window.IPTVState.setPage('tv'));
 
+
+ // P223: direct local XMLTV import from the no-guide EPG state.
+ // Forward to existing guarded import button; do not open the OS picker during CI.
+ await page.setViewportSize({width:1920,height:1080});
+ await page.evaluate(()=>window.IPTVState.setPage('epg'));
+ const epgImportStart223=await page.evaluate(()=>{
+  const group=document.querySelector('#epgGuide .po-epg-setup-actions');
+  const action=document.getElementById('poEpgImportFileAction');
+  window.__p223InitialIds=window.IPTVState.getChannels().map(c=>c.id).join('|');
+  return {group:!!group,sourceButton:!!document.getElementById('poEpgSetupAction'),
+   importButton:!!action,correctLabel:action?.textContent.trim()==='Nhập file EPG từ máy',
+   nativeImporter:!!document.getElementById('epgImportFileBtn'),
+   hasChannels:window.IPTVState.getChannels().length>0};
+ });
+ for(const [k,v] of Object.entries(epgImportStart223))
+  assert.equal(v,true,'P223 real EPG import start '+k+': '+JSON.stringify(epgImportStart223));
+ await page.evaluate(()=>{
+  document.getElementById('poEpgImportFileAction').style.setProperty('display','none','important');
+ });
+ const before223=await page.screenshot({path:path.join(out,'positron-p51223-epg-import-before-1920x1080-real.png'),animations:'disabled'});
+ await page.evaluate(()=>{
+  document.getElementById('poEpgImportFileAction').style.removeProperty('display');
+ });
+ const epgImportQA223=await page.evaluate(()=>{
+  const group=document.querySelector('#epgGuide .po-epg-setup-actions'),btn=document.getElementById('poEpgImportFileAction');
+  const source=document.getElementById('poEpgSetupAction');
+  const r=group.getBoundingClientRect(),parent=group.parentElement.getBoundingClientRect();
+  return {twoActions:group.querySelectorAll('button').length===2,
+   actionVisible:!!btn.getClientRects().length,
+   separateRow:r.top>parent.top+10,
+   sourcePreserved:!!source.getClientRects().length,
+   noOverflow:document.documentElement.scrollWidth<=innerWidth+1};
+ });
+ for(const [k,v] of Object.entries(epgImportQA223))
+  assert.equal(v,true,'P223 grouped import UI '+k+': '+JSON.stringify(epgImportQA223));
+ const after223=await page.screenshot({path:path.join(out,'positron-p51223-epg-import-after-1920x1080-real.png'),animations:'disabled'});
+ assert.deepEqual([after223.readUInt32BE(16),after223.readUInt32BE(20)],[1920,1080]);
+ assert.equal(before223.equals(after223),false,'P223 import action visible change');
+ await page.evaluate(()=>{
+  const hidden=document.getElementById('epgImportFileBtn');
+  window.__p223Forwarded=false;
+  window.__p223Guard=e=>{window.__p223Forwarded=true;e.preventDefault();e.stopImmediatePropagation();};
+  hidden.addEventListener('click',window.__p223Guard,true);
+ });
+ await page.locator('#poEpgImportFileAction').focus();
+ await page.keyboard.press('Enter');
+ const importForwardQA223=await page.evaluate(()=>{
+  const hidden=document.getElementById('epgImportFileBtn');
+  hidden.removeEventListener('click',window.__p223Guard,true);
+  delete window.__p223Guard;
+  const status={forwarded:window.__p223Forwarded===true,
+   playlistUnchanged:window.IPTVState.getChannels().map(c=>c.id).join('|')===window.__p223InitialIds,
+   stillEPG:document.getElementById('page-epg').classList.contains('active-page')};
+  delete window.__p223Forwarded;delete window.__p223InitialIds;
+  return status;
+ });
+ for(const [k,v] of Object.entries(importForwardQA223))
+  assert.equal(v,true,'P223 import forwarding '+k+': '+JSON.stringify(importForwardQA223));
+ await page.setViewportSize({width:450,height:820});
+ const compact223=await page.evaluate(()=>{
+  const group=document.querySelector('#epgGuide .po-epg-setup-actions'),buttons=[...group.querySelectorAll('button')];
+  return {twoButtons:buttons.length===2,
+   noOverflow:document.documentElement.scrollWidth<=innerWidth+1,
+   bothFit:buttons.every(b=>b.getBoundingClientRect().right<=innerWidth+1),
+   verticalGroup:buttons[1].getBoundingClientRect().top>buttons[0].getBoundingClientRect().bottom};
+ });
+ for(const [k,v] of Object.entries(compact223))
+  assert.equal(v,true,'P223 compact file import '+k+': '+JSON.stringify(compact223));
+ await page.setViewportSize({width:1360,height:820});
+ await page.evaluate(()=>window.IPTVState.setPage('tv'));
+
  const report={type:'Positron P5 twenty distinct desktop screenshot cases',realElectron:true,syntheticChannels:false,
-  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,desktop16x9Screenshots,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA,chooserQa,toastLayoutQA,nativeToastQA,compactIdleQA,channelChipRailQA,advancedFilterQA,readableCardsQA,keyboardTabQA,favoriteEmptyQA,duplicateEmptyQA,categoryFilterQA,categoryFixtureQA,compactSingleQA,directFavoriteQA,favoriteCountQA,compactToastStackQA,toastDismissQA,toastFocusReturnQA,toastDockQA,wheelQA,pinnedAllQA,pinnedMaskQA,categoryKeyQA,dropdownChipQA,pinnedRightMaskQA,pinnedBorderMaskQA,asciiDSearchQA,emptySearchActionQA,readableCardTitleQA,favoriteSvgQA,keyboardFavoriteQA,multiTermSearchQA,keyboardSearchQA,arrowNavigationQA,pageNavigationQA,favoriteSortQA,onAirFilterQA,programmeSearchQA,upcomingProgrammeQA,soonProgrammeQA,earliestEpgSortQA,timeWindowQA,scheduleProgressQA:scheduleProgressQA,nativeReminderQA,cancelReminderQA,reminderLeadQA,toastHistoryQA,notificationArchiveQA,alertFilterQA,noticeSearchQA,quietModeQA,dismissToastQA,libraryPulseQA,groupDistributionQA,logoMissingQA,missingSearchQA,missingGroupQA,missingSortQA,missingJumpQA,missingCsvQA,duplicateQA,duplicateSearchQA,duplicateCsvQA,duplicateScopeQA,missingSizeQA,missingPagerQA,missingEpgFilterQA,missingResetQA,missingRangeQA,missingLocateQA,libraryReturnQA,favoriteActionQA,quickFavoriteQA,favoriteMoreQA,favoriteSearchQA,favoriteRotateQA,favoriteSuggestSearchQA,favoriteBulkQA,favoriteLayoutQA,favoriteNameSortQA,searchAfterSortQA,restoredSortQA,favoriteSuggestion12QA,batchFavorite12QA,restoreSixQA,favoriteRegionalQA,favoriteGroupSearchQA,resetGroupQA,favoriteQuickGroupQA,favoriteQuickResetQA,favoritePageLastQA,favoritePageNavigationQA,favoriteJumpSevenQA,favoriteJumpClampQA,favoriteWideQA,favoriteSuggestionSortQA,tvReselectTopQA,dvrDurationPresetQA,dvrDurationLiveQA,dvrPresetSelectionQA,dvrQuickStartQA,dvrSuggestedTitleQA,dvrReviewQA,dvrCopyQA,dvrTomorrowQA,dvrTitleSyncQA,dvrReplaceConfirmQA,dvrUndoQA,dvrExtendQA,tvToastSafeQA,otherPage203,randomDiscoveryQA,randomFollowupQA,compact205,randomCycleQA,compact206,randomResetQA,compact207,focusReturnQA,compact208,discoveryProgressQA,compact209,sourceChangeQA,compact210,randomBackQA,randomBackActionQA,compact211,forwardHistoryQA,forwardActionQA,compact212,historyOpenQA,historyPickQA,compact213,historyKeyboardQA,compact214,historySearchQA,searchEnterQA,missing215,compact215,first216,typed216,down216,up216,close216,compact216,favoriteStart217,favoriteQA217,compact217,filterStart218,filterQA218,empty218,reset218,compact218,sortStart219,sortAZ219,sortZA219,sortRestore219,compact219,expandStart220,expandQA220,collapseQA220,compact220,epgStart221,oldStagger221,epgAligned221,compact221,epgEmptyStart222,epgEmptyQA222,navigation222,compact222};
+  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,desktop16x9Screenshots,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA,chooserQa,toastLayoutQA,nativeToastQA,compactIdleQA,channelChipRailQA,advancedFilterQA,readableCardsQA,keyboardTabQA,favoriteEmptyQA,duplicateEmptyQA,categoryFilterQA,categoryFixtureQA,compactSingleQA,directFavoriteQA,favoriteCountQA,compactToastStackQA,toastDismissQA,toastFocusReturnQA,toastDockQA,wheelQA,pinnedAllQA,pinnedMaskQA,categoryKeyQA,dropdownChipQA,pinnedRightMaskQA,pinnedBorderMaskQA,asciiDSearchQA,emptySearchActionQA,readableCardTitleQA,favoriteSvgQA,keyboardFavoriteQA,multiTermSearchQA,keyboardSearchQA,arrowNavigationQA,pageNavigationQA,favoriteSortQA,onAirFilterQA,programmeSearchQA,upcomingProgrammeQA,soonProgrammeQA,earliestEpgSortQA,timeWindowQA,scheduleProgressQA:scheduleProgressQA,nativeReminderQA,cancelReminderQA,reminderLeadQA,toastHistoryQA,notificationArchiveQA,alertFilterQA,noticeSearchQA,quietModeQA,dismissToastQA,libraryPulseQA,groupDistributionQA,logoMissingQA,missingSearchQA,missingGroupQA,missingSortQA,missingJumpQA,missingCsvQA,duplicateQA,duplicateSearchQA,duplicateCsvQA,duplicateScopeQA,missingSizeQA,missingPagerQA,missingEpgFilterQA,missingResetQA,missingRangeQA,missingLocateQA,libraryReturnQA,favoriteActionQA,quickFavoriteQA,favoriteMoreQA,favoriteSearchQA,favoriteRotateQA,favoriteSuggestSearchQA,favoriteBulkQA,favoriteLayoutQA,favoriteNameSortQA,searchAfterSortQA,restoredSortQA,favoriteSuggestion12QA,batchFavorite12QA,restoreSixQA,favoriteRegionalQA,favoriteGroupSearchQA,resetGroupQA,favoriteQuickGroupQA,favoriteQuickResetQA,favoritePageLastQA,favoritePageNavigationQA,favoriteJumpSevenQA,favoriteJumpClampQA,favoriteWideQA,favoriteSuggestionSortQA,tvReselectTopQA,dvrDurationPresetQA,dvrDurationLiveQA,dvrPresetSelectionQA,dvrQuickStartQA,dvrSuggestedTitleQA,dvrReviewQA,dvrCopyQA,dvrTomorrowQA,dvrTitleSyncQA,dvrReplaceConfirmQA,dvrUndoQA,dvrExtendQA,tvToastSafeQA,otherPage203,randomDiscoveryQA,randomFollowupQA,compact205,randomCycleQA,compact206,randomResetQA,compact207,focusReturnQA,compact208,discoveryProgressQA,compact209,sourceChangeQA,compact210,randomBackQA,randomBackActionQA,compact211,forwardHistoryQA,forwardActionQA,compact212,historyOpenQA,historyPickQA,compact213,historyKeyboardQA,compact214,historySearchQA,searchEnterQA,missing215,compact215,first216,typed216,down216,up216,close216,compact216,favoriteStart217,favoriteQA217,compact217,filterStart218,filterQA218,empty218,reset218,compact218,sortStart219,sortAZ219,sortZA219,sortRestore219,compact219,expandStart220,expandQA220,collapseQA220,compact220,epgStart221,oldStagger221,epgAligned221,compact221,epgEmptyStart222,epgEmptyQA222,navigation222,compact222,epgImportStart223,epgImportQA223,importForwardQA223,compact223};
  fs.writeFileSync(path.resolve('positron-evidence','audit-p5-20-rounds.json'),JSON.stringify(report,null,2));
  return report;
 }

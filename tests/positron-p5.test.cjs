@@ -2317,7 +2317,7 @@ test('P5.1.207 accessible reset clears only random session history',()=>{
   'positron-p51207-random-reset-after-1920x1080-real.png'])
   assert.ok(qa.includes(t),'Missing genuine reset QA '+t);
  const pkg=JSON.parse(read('package.json'));
- assert.ok(flow.includes('TAG=positron/v'+pkg.version+'-p5.1.222'));
+ assert.ok(flow.includes('TAG=positron/v'+pkg.version+'-p5.1.223'));
 });
 
 
@@ -2568,7 +2568,7 @@ test('P5.1.220 expands session discovery history from 10 to 50 with reversible f
 test('P5.1.221 aligns EPG DVR labels with actual Electron screenshot regression',()=>{
  const css=read('renderer/positron-twenty.css'),qa=read('scripts/positron-20-extension.cjs');
  const flow=read('.github/workflows/positron-lab.yml'),pkg=JSON.parse(read('package.json'));
- assert.equal(pkg.version,'4.23.307');
+ assert.equal(pkg.version,'4.23.308');
  for(const x of ['P5.1.221: EPG recording form','#page-epg #dvrForm.dvr-form>label','align-self:start!important'])
   assert.ok(css.includes(x),'P221 CSS missing '+x);
  for(const x of ['epgStart221','epgAligned221','oldStagger221','compact221','headingsAligned',
@@ -2576,7 +2576,7 @@ test('P5.1.221 aligns EPG DVR labels with actual Electron screenshot regression'
   'positron-p51221-dvr-form-after-1920x1080-real.png'])
   assert.ok(qa.includes(x),'P221 native screenshot QA missing '+x);
  assert.ok(flow.includes('test -s positron-evidence/p5-20-rounds/positron-p51221-dvr-form-after-1920x1080-real.png'));
- assert.ok(flow.includes('TAG=positron/v'+pkg.version+'-p5.1.222'));
+ assert.ok(flow.includes('TAG=positron/v'+pkg.version+'-p5.1.223'));
 });
 
 test('P5.1.222 offers actionable source setup only for never-loaded EPG',()=>{
@@ -2594,4 +2594,22 @@ test('P5.1.222 offers actionable source setup only for never-loaded EPG',()=>{
   assert.ok(qa.includes(x),'P222 actual Electron regression missing '+x);
  assert.ok(flow.includes('test -s positron-evidence/p5-20-rounds/positron-p51222-epg-source-after-1920x1080-real.png'));
  assert.ok(flow.includes('TAG=positron/v'+JSON.parse(read('package.json')).version+'-p5.1.222'));
+});
+
+test('P5.1.223 adds guarded local XMLTV import directly to EPG empty state',()=>{
+ const js=read('renderer/features.js'),css=read('renderer/positron-twenty.css');
+ const qa=read('scripts/positron-20-extension.cjs'),wf=read('.github/workflows/positron-lab.yml');
+ for(const x of ["fileAction.id='poEpgImportFileAction'",
+  "fileAction.addEventListener('click',()=>$('#epgImportFileBtn')?.click())",
+  "actions.className='po-epg-setup-actions'","actions.append(setup,fileAction)"])
+  assert.ok(js.includes(x),'P223 native XMLTV affordance '+x);
+ for(const x of ['.po-epg-setup-actions','#poEpgImportFileAction:focus-visible'])
+  assert.ok(css.includes(x),'P223 action layout '+x);
+ for(const x of ['epgImportStart223','epgImportQA223','importForwardQA223','compact223',
+  'playlistUnchanged','verticalGroup','poEpgImportFileAction',
+  'positron-p51223-epg-import-before-1920x1080-real.png',
+  'positron-p51223-epg-import-after-1920x1080-real.png'])
+  assert.ok(qa.includes(x),'P223 Electron test '+x);
+ assert.ok(wf.includes('test -s positron-evidence/p5-20-rounds/positron-p51223-epg-import-after-1920x1080-real.png'));
+ assert.ok(wf.includes('TAG=positron/v'+JSON.parse(read('package.json')).version+'-p5.1.223'));
 });

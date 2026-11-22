@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.307",
-  "description": "Positron P5.1.222: chỉ dẫn mở nguồn khi EPG chưa tải",
+  "version": "4.23.308",
+  "description": "Positron P5.1.223: nhập XMLTV trực tiếp từ EPG",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

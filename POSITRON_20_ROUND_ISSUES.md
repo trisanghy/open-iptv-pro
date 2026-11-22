@@ -1,3 +1,9 @@
+# Vòng ứng viên P5.1.223 — Nhập EPG tại trang Lịch (CANDIDATE)
+- Input: MỞ ảnh sau P5.1.222 1920×1080; CTA Chọn nguồn EPG đang sát cuối câu, và người có file XMLTV phải điều hướng qua Cài đặt để nhập.
+- Tính năng mới: nhóm hành động ở dưới mô tả, thêm Nhập file EPG từ máy gọi lại bộ nhập và confirm gốc.
+- Bắt buộc: test forwarding Enter (không bật file picker trong CI), ảnh thật before/after, 450px no-overflow, test 6 jobs, release.
+- Không thay backend EPG, M3U, Favorites, timeshift hoặc DVR.
+
 # Vòng ứng viên P5.1.222 — Trạng thái EPG chưa tải (CANDIDATE)
 - Baseline: MỞ ảnh Electron P5.1.221 sau sửa (1920×1080), phần tóm tắt nói Chưa tải EPG nhưng vùng kết quả lại báo Không tìm thấy lịch khớp với kênh.
 - Nguyên nhân: renderer/features.js chỉ dựa channels.length khi matched.length=0, bỏ qua updatedAt và guide.programmes.length.

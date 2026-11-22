@@ -306,7 +306,15 @@
     setup.id='poEpgSetupAction';setup.className='btn btn-primary po-epg-setup-action';
     setup.textContent='Chọn nguồn EPG';
     setup.addEventListener('click',()=>$('#epgSettingsBtn')?.click());
-    empty.append(setup);
+    // P223: a desktop user may already have a licensed XMLTV file locally.
+    // Reuse the existing guarded import path (confirm/validate/cache), not a new importer.
+    const fileAction=document.createElement('button');fileAction.type='button';
+    fileAction.id='poEpgImportFileAction';
+    fileAction.className='btn btn-subtle po-epg-setup-action';
+    fileAction.textContent='Nhập file EPG từ máy';
+    fileAction.addEventListener('click',()=>$('#epgImportFileBtn')?.click());
+    const actions=document.createElement('div');actions.className='po-epg-setup-actions';
+    actions.append(setup,fileAction);empty.append(actions);
    }else{
     empty.textContent=channels.length?'Không tìm thấy lịch khớp với kênh trong playlist. Thử nguồn EPG khác hoặc thêm tvg-id vào M3U.':"Chưa có kênh. Thêm nguồn M3U trong Quản lý nguồn để xem lịch phát sóng.";
    }

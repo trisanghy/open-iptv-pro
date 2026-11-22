@@ -1,5 +1,14 @@
 # Positron P5 Changelog
 
+## P5.1.223 — Nhập XMLTV trực tiếp từ trạng thái EPG rỗng / Electron 4.23.308
+- Feature priority: NEW — Người xem có file XMLTV hợp pháp trong máy có thể nhập trực tiếp từ trang Lịch phát sóng mà không phải đi vòng qua trang Cài đặt; dùng nguyên luồng kiểm tra, xác nhận và lưu của chức năng nhập hiện có.
+- Electron screenshot: positron-p51223-epg-import-after-1920x1080-real.png
+- User action: Khi chưa tải EPG, bấm Nhập file EPG từ máy ở dưới lời hướng dẫn. Trình chọn file hệ điều hành chạy qua chức năng gốc; xem và xác nhận việc thay dữ liệu EPG như trước, kênh và lịch ghi đã đặt không bị thay đổi.
+- Screenshot QA: native Electron before/after 1920×1080, nút nằm dưới hướng dẫn, phím Enter chuyển tiếp click tới bộ nhập gốc (CI chặn hộp thoại hệ điều hành), 450px không tràn.
+- Giữ nguyên chức năng Chọn nguồn EPG của P5.1.222; dữ liệu người dùng không bị thay đổi bởi việc hiển thị nút.
+- CANDIDATE cho đến khi Node, Electron screenshot sau đã MỞ, 6 jobs và release được xác minh.
+
+
 ## P5.1.222 — Chọn nhanh nguồn EPG khi chưa tải dữ liệu / Electron 4.23.307
 - Feature priority: NEW — Bổ sung nút chọn nguồn XMLTV ngay trong trạng thái rỗng của lịch phát sóng, giúp người dùng nhập và kiểm tra nguồn thay vì bị báo sai là danh sách kênh không khớp khi chưa tải lịch.
 - Electron screenshot: positron-p51222-epg-source-after-1920x1080-real.png

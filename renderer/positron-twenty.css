@@ -1193,3 +1193,20 @@ html[data-positron="true"] #page-epg #poEpgSetupAction{
 html[data-positron="true"] #page-epg #poEpgSetupAction:focus-visible{
  outline:2px solid var(--po-accent,#79dfc6);outline-offset:3px;
 }
+
+/* P5.1.223: both safe EPG acquisition paths live under the guidance message. */
+html[data-positron="true"] #page-epg .po-epg-setup-actions{
+ display:flex;justify-content:center;align-items:center;flex-wrap:wrap;
+ gap:10px;margin:12px auto 0;max-width:100%;box-sizing:border-box;
+}
+html[data-positron="true"] #page-epg .po-epg-setup-actions>.po-epg-setup-action{
+ margin:0!important;min-height:40px;max-width:100%;font:inherit;font-size:12px;
+}
+html[data-positron="true"] #page-epg #poEpgImportFileAction:focus-visible{
+ outline:2px solid var(--po-accent,#79dfc6);outline-offset:3px;
+}
+@media(max-width:600px){
+ html[data-positron="true"] #page-epg .po-epg-setup-actions{
+  flex-direction:column;align-items:stretch;width:100%;
+ }
+}
