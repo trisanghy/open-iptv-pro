@@ -11,7 +11,7 @@ Trang này được tạo tự động từ GitHub Releases và ảnh kiểm th�
 
 **Ứng dụng:** 4.23.293 · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
 
-giữ tiêu điểm bàn phím sau làm mới khám phá kênh
+Feature priority: BLOCKER_FIX — Nút làm mới tự ẩn khi đang có tiêu điểm bàn phím khiến người dùng điều khiển từ xa mất vị trí tiếp tục thao tác chọn kênh phát; lỗi chặn trải nghiệm xem và không thể đi tiếp bằng Enter như mong đợi. Electron screenshot: positron-p51208-focus-return-after-1920x1080-real.png
 
 *Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
 

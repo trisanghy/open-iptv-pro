@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-22T12:19:41.241497+00:00",
+  "generatedAt": "2026-11-22T12:21:28.798282+00:00",
   "repository": "trisanghy/open-iptv-pro",
   "branch": "Positron",
   "versions": [
@@ -8,7 +8,7 @@
       "version": "P5.1.208",
       "appVersion": "4.23.293",
       "title": "giữ tiêu điểm bàn phím sau làm mới khám phá kênh",
-      "description": "giữ tiêu điểm bàn phím sau làm mới khám phá kênh",
+      "description": "Feature priority: BLOCKER_FIX — Nút làm mới tự ẩn khi đang có tiêu điểm bàn phím khiến người dùng điều khiển từ xa mất vị trí tiếp tục thao tác chọn kênh phát; lỗi chặn trải nghiệm xem và không thể đi tiếp bằng Enter như mong đợi. Electron screenshot: positron-p51208-focus-return-after-1920x1080-real.png",
       "kind": "fix",
       "status": "candidate",
       "published": "",
