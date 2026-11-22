@@ -2067,3 +2067,15 @@ test('P5.1.192 displays safe live recording duration and warns beyond 8 hours',(
  assert.ok(qa.includes('positron-p51192-dvr-duration-before-1920x1080-real.png'));
  assert.ok(qa.includes('positron-p51192-dvr-duration-after-1920x1080-real.png'));
 });
+
+test('P5.1.193 only active recording duration preset is aria-pressed, including edits',()=>{
+ const js=read('renderer/positron-twenty.js'),css=read('renderer/positron-twenty.css');
+ const qa=read('scripts/positron-20-extension.cjs');
+ for(const token of ["const syncPreset=minutes=>","syncPreset(NaN)",
+ "if(minutes>0&&minutes<=480)syncPreset(minutes)",
+ "button.setAttribute('aria-pressed',String(Number(button.dataset.durationMinutes)===minutes))"])
+  assert.ok(js.includes(token),'Missing DVR preset toggle: '+token);
+ assert.ok(css.includes('.po-dvr-presets button[aria-pressed="true"]'));
+ assert.ok(qa.includes('dvrPresetSelectionQA'));
+ assert.ok(qa.includes('positron-p51193-dvr-selected-preset-after-1920x1080-real.png'));
+});

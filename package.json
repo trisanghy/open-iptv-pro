@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.277",
-  "description": "Positron P5.1.192: hiển thị thời lượng ghi hình và cảnh báo 8 giờ",
+  "version": "4.23.278",
+  "description": "Positron P5.1.193: tự đánh dấu thời lượng ghi hình đang chọn",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

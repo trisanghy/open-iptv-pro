@@ -629,7 +629,14 @@
   status.className='po-dvr-duration-status';status.setAttribute('role','status');
   status.setAttribute('aria-live','polite');
   end.parentElement.append(status);
+  // P5.1.193: press state matches the actual time window (no DVR submission).
+  const presets=end.parentElement.querySelector('.po-dvr-presets');
+  const syncPreset=minutes=>{
+   for(const button of presets?.querySelectorAll('button[data-duration-minutes]')||[])
+    button.setAttribute('aria-pressed',String(Number(button.dataset.durationMinutes)===minutes));
+  };
   const refresh=()=>{
+   syncPreset(NaN);
    if(!start.value||!end.value){
     status.dataset.state='idle';status.textContent='Chọn giờ bắt đầu và kết thúc để xem thời lượng ghi.';
     return;
@@ -640,6 +647,7 @@
     return;
    }
    const minutes=Math.round((endMs-startMs)/60000);
+   if(minutes>0&&minutes<=480)syncPreset(minutes);
    if(minutes<=0){
     status.dataset.state='error';status.textContent='Giờ kết thúc phải sau giờ bắt đầu.';
    }else if(minutes>480){

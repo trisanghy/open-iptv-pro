@@ -830,3 +830,11 @@ html[data-positron="true"] .po-dvr-duration-status[data-state="valid"]{
 html[data-positron="true"] .po-dvr-duration-status[data-state="error"]{
  color:#ffb08e;font-weight:700;
 }
+
+/* P5.1.193: show the native DVR preset that currently matches Start/End. */
+html[data-positron="true"] .po-dvr-presets button[aria-pressed="true"]{
+ border-color:var(--po-accent,#6ad9c7);
+ background:rgba(101,218,191,.24);
+ box-shadow:inset 0 0 0 1px var(--po-accent,#6ad9c7);
+ color:var(--po-text,#e6f4f4);
+}
