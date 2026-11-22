@@ -4292,9 +4292,54 @@ async function runTwenty(page){
   assert.equal(value,true,'P163 CSV QA '+key+': '+JSON.stringify(missingCsvQA));
  await page.keyboard.press('Escape');
 
+
+ // P5.1.164: Kiểm tra bộ phát hiện tên trùng từ metadata, Electron 16:9.
+ await page.setViewportSize({width:1920,height:1080});
+ await page.evaluate(()=>window.IPTVState.setPage('tv'));
+ await page.click('#poLibraryPulseToggle');
+ if(await page.getAttribute('#poLibraryMissingToggle','aria-expanded')==='true')
+  await page.click('#poLibraryMissingToggle');
+ await page.evaluate(()=>document.getElementById('poLibraryDuplicateToggle').scrollIntoView({block:'center',behavior:'instant'}));
+ const before164=await page.screenshot({path:path.join(out,'positron-p51164-duplicates-before-1920x1080-real.png'),animations:'disabled'});
+ assert.deepEqual([before164.readUInt32BE(16),before164.readUInt32BE(20)],[1920,1080]);
+ await page.click('#poLibraryDuplicateToggle');
+ await page.evaluate(()=>document.getElementById('poLibraryDuplicateBody').scrollIntoView({block:'nearest',behavior:'instant'}));
+ const duplicateQA=await page.evaluate(()=>{
+  const c=window.PositronLibraryPulseCore,s=window.IPTVState,d=document;
+  const actual=c.duplicateNames(s.getChannels(),{limit:8});
+  const t=d.getElementById('poLibraryDuplicateToggle'),b=d.getElementById('poLibraryDuplicateBody');
+  const count=d.querySelectorAll('#poLibraryDuplicateRows .po-pulse-duplicate-row').length;
+  const rows=[...d.querySelectorAll('#poLibraryDuplicateRows .po-pulse-duplicate-row strong')];
+  const p=d.getElementById('poLibraryPulsePanel').getBoundingClientRect();
+  const r=t.getBoundingClientRect();
+  const fixture=c.duplicateNames([
+   {name:'QA Trùng',group:'Tin tức',sourceId:'A',url:'https://private.invalid/a'},
+   {name:'qa trùng',group:'Giải trí',sourceId:'B',url:'https://private.invalid/b'}]);
+  return {opened:t.getAttribute('aria-expanded')==='true'&&!b.hidden,
+   visible:r.width>150&&r.top>=p.top&&r.bottom<=p.bottom,
+   countMatches:t.textContent.includes(String(actual.total)),
+   rowsMatch:count===Math.min(actual.total,8),
+   namesMatch:rows.every((row,i)=>row.textContent===actual.rows[i]?.name),
+   privacy:!b.textContent.includes('://'),
+   fixture:fixture.total===1&&fixture.extraChannels===1&&fixture.rows[0].sourceCount===2,
+   noOverflow:d.documentElement.scrollWidth<=innerWidth+1,
+   noAutoPlay:s.getCurrent()===null};
+ });
+ const after164=await page.screenshot({path:path.join(out,'positron-p51164-duplicates-after-1920x1080-real.png'),animations:'disabled'});
+ assert.deepEqual([after164.readUInt32BE(16),after164.readUInt32BE(20)],[1920,1080]);
+ for(const [key,value] of Object.entries(duplicateQA))
+  assert.equal(value,true,'P164 duplicate QA '+key+': '+JSON.stringify(duplicateQA));
+ await page.fill('#poLibraryDuplicateSearch','unlikely-qa-no-channel-duplicate-name');
+ const duplicateSearchQA=await page.evaluate(()=>{
+  const rows=document.querySelectorAll('#poLibraryDuplicateRows .po-pulse-duplicate-row');
+  return rows.length===0&&document.getElementById('poLibraryDuplicateSummary').textContent.includes('0 kênh');
+ });
+ assert.ok(duplicateSearchQA,'P164 duplicate query empty state');
+ await page.keyboard.press('Escape');
+
  await page.setViewportSize({width:1360,height:820});
   const report={type:'Positron P5 twenty distinct desktop screenshot cases',realElectron:true,syntheticChannels:false,
-  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,desktop16x9Screenshots,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA,chooserQa,toastLayoutQA,nativeToastQA,compactIdleQA,channelChipRailQA,advancedFilterQA,readableCardsQA,keyboardTabQA,favoriteEmptyQA,duplicateEmptyQA,categoryFilterQA,categoryFixtureQA,compactSingleQA,directFavoriteQA,favoriteCountQA,compactToastStackQA,toastDismissQA,toastFocusReturnQA,toastDockQA,wheelQA,pinnedAllQA,pinnedMaskQA,categoryKeyQA,dropdownChipQA,pinnedRightMaskQA,pinnedBorderMaskQA,asciiDSearchQA,emptySearchActionQA,readableCardTitleQA,favoriteSvgQA,keyboardFavoriteQA,multiTermSearchQA,keyboardSearchQA,arrowNavigationQA,pageNavigationQA,favoriteSortQA,onAirFilterQA,programmeSearchQA,upcomingProgrammeQA,soonProgrammeQA,earliestEpgSortQA,timeWindowQA,scheduleProgressQA:scheduleProgressQA,nativeReminderQA,cancelReminderQA,reminderLeadQA,toastHistoryQA,notificationArchiveQA,alertFilterQA,noticeSearchQA,quietModeQA,dismissToastQA,libraryPulseQA,groupDistributionQA,logoMissingQA,missingSearchQA,missingGroupQA,missingSortQA,missingJumpQA,missingCsvQA};
+  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,desktop16x9Screenshots,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA,chooserQa,toastLayoutQA,nativeToastQA,compactIdleQA,channelChipRailQA,advancedFilterQA,readableCardsQA,keyboardTabQA,favoriteEmptyQA,duplicateEmptyQA,categoryFilterQA,categoryFixtureQA,compactSingleQA,directFavoriteQA,favoriteCountQA,compactToastStackQA,toastDismissQA,toastFocusReturnQA,toastDockQA,wheelQA,pinnedAllQA,pinnedMaskQA,categoryKeyQA,dropdownChipQA,pinnedRightMaskQA,pinnedBorderMaskQA,asciiDSearchQA,emptySearchActionQA,readableCardTitleQA,favoriteSvgQA,keyboardFavoriteQA,multiTermSearchQA,keyboardSearchQA,arrowNavigationQA,pageNavigationQA,favoriteSortQA,onAirFilterQA,programmeSearchQA,upcomingProgrammeQA,soonProgrammeQA,earliestEpgSortQA,timeWindowQA,scheduleProgressQA:scheduleProgressQA,nativeReminderQA,cancelReminderQA,reminderLeadQA,toastHistoryQA,notificationArchiveQA,alertFilterQA,noticeSearchQA,quietModeQA,dismissToastQA,libraryPulseQA,groupDistributionQA,logoMissingQA,missingSearchQA,missingGroupQA,missingSortQA,missingJumpQA,missingCsvQA,duplicateQA,duplicateSearchQA};
  fs.writeFileSync(path.resolve('positron-evidence','audit-p5-20-rounds.json'),JSON.stringify(report,null,2));
  return report;
 }

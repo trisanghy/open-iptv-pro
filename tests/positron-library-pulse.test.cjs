@@ -167,3 +167,31 @@ test('P5.1.163 CSV chỉ metadata, đủ trên 50 dòng, chống công thức Ex
  assert.equal(JSON.stringify(items),original);
  assert.equal(core.missingLogoCsv([]),'\ufeff"Tên kênh","Nhóm"\r\n');
 });
+
+test('P5.1.164 phân tích kênh trùng tên bằng metadata, không nhầm dấu hoặc thay đổi nguồn',()=>{
+ const list=[
+  {name:'VTV 1',group:'Tin tức',sourceId:'A',url:'https://private/a'},
+  {name:'vtv 1',group:'Thời sự',sourceId:'B',url:'https://private/b'},
+  {name:'VTV1',group:'Tin tức',sourceId:'A'},
+  {name:'Hòa Bình',group:'Khác',sourceId:'A'},
+  {name:'Hoa Binh',group:'Khác',sourceId:'A'},
+  {name:'Kênh   N',group:'Giải trí',sourceId:'A'},
+  {name:'KÊNH N',group:'Giải trí',sourceId:'B'},
+  {name:'  ',group:'Giải trí'},
+ ];
+ const snapshot=JSON.stringify(list),out=core.duplicateNames(list);
+ assert.equal(out.total,2);
+ assert.equal(out.extraChannels,2);
+ assert.equal(out.rows[0].name,'Kênh N');
+ assert.equal(out.rows[0].count,2);
+ assert.equal(out.rows[0].sourceCount,2);
+ assert.equal(out.rows[1].name,'VTV 1');
+ assert.equal(out.rows[1].groupCount,2);
+ assert.equal(core.duplicateNames(list,{query:'tin tuc'}).total,1);
+ assert.equal(core.duplicateNames(list,{query:'does-not-exist'}).total,0);
+ assert.equal(core.duplicateNames(list,{limit:1}).rows.length,1);
+ assert.equal(core.duplicateNames(list,{offset:1,limit:1}).rows[0].name,'VTV 1');
+ assert.equal(JSON.stringify(list),snapshot);
+ assert.ok(!JSON.stringify(out).includes('https://private/'));
+ assert.equal(core.duplicateNames([]).total,0);
+});

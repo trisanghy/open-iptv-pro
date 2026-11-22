@@ -1613,7 +1613,7 @@ test('P5.1.160.1 phát hành bản vá ảnh desktop đúng phiên bản bất b
  const qa=read('scripts/positron-20-extension.cjs');
  const css=read('renderer/positron-library-pulse.css');
  const workflow=read('.github/workflows/positron-lab.yml');
- assert.equal(pkg.version,'4.23.248');
+ assert.equal(pkg.version,'4.23.249');
  assert.match(read('POSITRON_P5_CHANGELOG.md'),/## P5\.1\.160\.1/);
  assert.match(css,/\.po-pulse-header::before\{content:/);
  assert.match(qa,/mask1601/);
@@ -1630,7 +1630,7 @@ test('P5.1.161 sắp xếp A-Z/Z-A có ảnh thật và không gọi stream',()=
  const css=read('renderer/positron-library-pulse.css');
  const qa=read('scripts/positron-20-extension.cjs');
  const workflow=read('.github/workflows/positron-lab.yml');
- assert.equal(pkg.version,'4.23.248');
+ assert.equal(pkg.version,'4.23.249');
  assert.match(read('POSITRON_P5_CHANGELOG.md'),/## P5\.1\.161/);
  assert.doesNotThrow(()=>new vm.Script(core));
  assert.doesNotThrow(()=>new vm.Script(ui));
@@ -1651,7 +1651,7 @@ test('P5.1.162 đến trang N có ảnh Electron và kiểm tra giới hạn s�
  const css=read('renderer/positron-library-pulse.css');
  const qa=read('scripts/positron-20-extension.cjs');
  const workflow=read('.github/workflows/positron-lab.yml');
- assert.equal(pkg.version,'4.23.248');
+ assert.equal(pkg.version,'4.23.249');
  assert.match(read('POSITRON_P5_CHANGELOG.md'),/## P5\.1\.162/);
  assert.doesNotThrow(()=>new vm.Script(core));
  assert.doesNotThrow(()=>new vm.Script(ui));
@@ -1672,15 +1672,37 @@ test('P5.1.163 Xuất CSV có nút và ảnh Electron 16:9, không quét stream'
  const css=read('renderer/positron-library-pulse.css');
  const qa=read('scripts/positron-20-extension.cjs');
  const flow=read('.github/workflows/positron-lab.yml');
- assert.equal(pkg.version,'4.23.248');
- assert.match(pkg.description,/Positron P5\.1\.163:/);
+ assert.equal(pkg.version,'4.23.249');
+ assert.match(read('POSITRON_P5_CHANGELOG.md'),/## P5\.1\.163/);
  assert.match(core,/missingLogoCsv/);
  assert.match(ui,/missingExport\.addEventListener\('click'/);
  assert.match(ui,/URL\.createObjectURL\(blob\)/);
  assert.match(css,/#poLibraryMissingExport:disabled/);
  assert.match(qa,/missingCsvQA/);
- assert.match(flow,/TAG=positron\/v4\.23\.248-p5\.1\.163/);
+ assert.match(read('POSITRON_P5_CHANGELOG.md'),/Electron 4\.23\.248/);
  for(const n of ['positron-p51163-csv-before-1920x1080-real.png','positron-p51163-csv-after-1920x1080-real.png'])
   assert.ok(qa.includes(n)&&flow.includes(n),n);
+ assert.ok(!ui.includes('fetch(')&&!ui.includes('playChannel('));
+});
+
+test('P5.1.164 phân tích tên kênh trùng ở Thư viện, ảnh Electron 1920x1080',()=>{
+ const pkg=JSON.parse(read('package.json'));
+ const core=read('renderer/positron-library-pulse-core.js');
+ const ui=read('renderer/positron-library-pulse.js');
+ const css=read('renderer/positron-library-pulse.css');
+ const qa=read('scripts/positron-20-extension.cjs');
+ const flow=read('.github/workflows/positron-lab.yml');
+ assert.equal(pkg.version,'4.23.249');
+ assert.match(pkg.description,/Positron P5\.1\.164:/);
+ assert.doesNotThrow(()=>new vm.Script(core));
+ assert.doesNotThrow(()=>new vm.Script(ui));
+ assert.match(core,/function duplicateNames\(/);
+ assert.match(ui,/duplicateToggle\.addEventListener\('click'/);
+ assert.match(ui,/duplicateSearch\.addEventListener\('input'/);
+ assert.match(css,/#poLibraryDuplicateSearch:focus-visible/);
+ assert.match(qa,/duplicateQA/);
+ assert.match(flow,/TAG=positron\/v4\.23\.249-p5\.1\.164/);
+ for(const n of ['positron-p51164-duplicates-before-1920x1080-real.png','positron-p51164-duplicates-after-1920x1080-real.png'])
+  assert.ok(qa.includes(n)&&flow.includes(n),'P164 thiếu ảnh '+n);
  assert.ok(!ui.includes('fetch(')&&!ui.includes('playChannel('));
 });

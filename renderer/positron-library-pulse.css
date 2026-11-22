@@ -79,3 +79,21 @@ html[data-positron="true"] .po-pulse-export-bar{display:flex;align-items:center;
 html[data-positron="true"] #poLibraryMissingExport{border-color:var(--po-accent,#6ed9c4);font-weight:700}
 html[data-positron="true"] #poLibraryMissingExport:disabled{opacity:.45;cursor:not-allowed}
 html[data-positron="true"] #poLibraryMissingExportStatus{font-size:11px;color:var(--po-muted,#a4b9c0);overflow-wrap:anywhere}
+
+/* P5.1.164: đọc tên kênh trùng giữa các playlist, không gộp/xoá tự động. */
+html[data-positron="true"] .po-pulse-duplicates{display:flex;flex-direction:column;gap:8px;min-width:0}
+html[data-positron="true"] .po-pulse-duplicates>button{font-weight:700!important;border-color:var(--po-accent,#6ed9c4)!important;text-align:left;width:100%}
+html[data-positron="true"] .po-pulse-duplicates>button[aria-expanded="true"]{background:#1e5b4d!important}
+html[data-positron="true"] .po-pulse-duplicate-body[hidden]{display:none!important}
+html[data-positron="true"] .po-pulse-duplicate-body{display:flex;flex-direction:column;gap:8px;min-width:0}
+html[data-positron="true"] #poLibraryDuplicateSearch{box-sizing:border-box;min-width:0;width:100%;min-height:36px;border:1px solid var(--po-border,#42606b);border-radius:9px;padding:8px 10px;background:var(--po-card,#162934);color:var(--po-text,#eaf7f7);font:inherit;font-size:12px}
+html[data-positron="true"] #poLibraryDuplicateSearch:focus-visible{outline:2px solid var(--po-accent,#66d4c2);outline-offset:2px}
+html[data-positron="true"] .po-pulse-duplicate-summary{margin:0;font-size:11px;color:var(--po-muted,#a4b9c0)}
+html[data-positron="true"] #poLibraryDuplicateRows{list-style:none;display:flex;flex-direction:column;gap:5px;max-height:225px;overflow-y:auto;overscroll-behavior:contain;padding:0 4px;margin:0}
+html[data-positron="true"] .po-pulse-duplicate-row{display:flex;flex-direction:column;gap:3px;min-width:0;padding:8px 9px;border:1px solid #ffffff14;background:#ffffff09;border-radius:8px}
+html[data-positron="true"] .po-pulse-duplicate-row strong{font-size:12px;overflow-wrap:anywhere}
+html[data-positron="true"] .po-pulse-duplicate-row small,html[data-positron="true"] .po-pulse-duplicate-row span{font-size:11px;color:var(--po-muted,#a4b9c0);overflow-wrap:anywhere}
+html[data-positron="true"] .po-pulse-duplicate-nav{display:flex;justify-content:space-between;align-items:center;gap:8px}
+html[data-positron="true"] .po-pulse-duplicate-nav span{font-size:11px;font-variant-numeric:tabular-nums}
+html[data-positron="true"] .po-pulse-duplicate-nav button:disabled{opacity:.45;cursor:not-allowed}
+html[data-positron="true"] .po-pulse-duplicate-empty{font-size:11px;color:var(--po-muted,#a4b9c0);padding:8px}

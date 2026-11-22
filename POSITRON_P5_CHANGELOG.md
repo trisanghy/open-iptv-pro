@@ -1,3 +1,12 @@
+## P5.1.164 — Phát hiện tên kênh trùng trong thư viện / Electron 4.23.249
+- Feature priority: NEW — Phát hiện các tên kênh bị nhập lặp trong playlist hoặc nhiều nguồn để rà soát thư viện lớn; phân biệt tên khác dấu tiếng Việt, không tự xóa kênh.
+- User action: Mở Thư viện → Tên kênh trùng → mở danh sách, tìm theo tên hoặc nhóm, xem số kênh, số nhóm và số nguồn có tên trùng; dùng Trước/Tiếp để xem những trang còn lại.
+- Electron screenshot: positron-p51164-duplicates-after-1920x1080-real.png
+- Before: positron-p51164-duplicates-before-1920x1080-real.png; After: positron-p51164-duplicates-after-1920x1080-real.png, ảnh Electron thực 1920×1080.
+- Dữ liệu chỉ đọc; chuẩn hóa khoảng trắng, NFC, chữ hoa/thường nhưng giữ dấu; không truy xuất/hiển thị URL, không nhập mạng, không xóa playlist, không tự phát video.
+- Regression: Unit fixture đa nguồn, tiếng Việt, nhóm, tìm kiếm, phân trang, không rò URL; Electron UI 16:9 có trạng thái rỗng và ảnh trước/sau.
+- Status: CANDIDATE — cần xác minh test, chụp/soát ảnh, build và release bất biến.
+
 ## P5.1.163 — Xuất CSV kênh thiếu logo an toàn / Electron 4.23.248
 - Feature priority: NEW — Thư viện → Kênh thiếu logo → lọc/tìm/sắp xếp → **Xuất CSV** tất cả kênh khớp, không chỉ 10 hàng hiện tại.
 - User action: Mở Thư viện → Kênh thiếu logo → chọn nhóm, tìm hoặc sắp xếp → bấm Xuất CSV, nhận file tên và nhóm kênh trong thư mục Tải xuống.

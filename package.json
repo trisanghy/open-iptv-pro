@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.248",
-  "description": "Positron P5.1.163: xuất CSV kênh thiếu logo an toàn",
+  "version": "4.23.249",
+  "description": "Positron P5.1.164: phát hiện tên kênh trùng từ metadata nội bộ",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

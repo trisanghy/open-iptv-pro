@@ -1,5 +1,5 @@
 'use strict';
-// Positron P5.1.163 — Bảng phân tích metadata thư viện, không thử stream.
+// Positron P5.1.164 — Bảng phân tích metadata thư viện, không thử stream.
 (()=>{
  const d=document,root=d.documentElement,bar=d.getElementById('positronBar');
  const core=window.PositronLibraryPulseCore,state=window.IPTVState;
@@ -85,11 +85,36 @@
  missingGo.textContent='Đến';
  missingNav.append(missingPrev,missingPageLabel,missingJump,missingGo,missingNext);
  missingBody.append(missingSearch,missingGroup,missingSort,exportBar,missingRows,missingNav);missingPane.append(missingToggle,missingBody);
+ // P5.1.164: tên trùng ở nhiều kênh/nguồn, chỉ xem metadata, không tự xóa.
+ const duplicatePane=d.createElement('section');duplicatePane.id='poLibraryDuplicates';
+ duplicatePane.className='po-pulse-duplicates';
+ const duplicateToggle=d.createElement('button');duplicateToggle.type='button';
+ duplicateToggle.id='poLibraryDuplicateToggle';duplicateToggle.textContent='Tên kênh trùng';
+ duplicateToggle.setAttribute('aria-controls','poLibraryDuplicateBody');
+ duplicateToggle.setAttribute('aria-expanded','false');
+ const duplicateBody=d.createElement('div');duplicateBody.id='poLibraryDuplicateBody';
+ duplicateBody.hidden=true;duplicateBody.className='po-pulse-duplicate-body';
+ const duplicateSearch=d.createElement('input');duplicateSearch.type='search';
+ duplicateSearch.id='poLibraryDuplicateSearch';duplicateSearch.placeholder='Tìm tên trùng hoặc nhóm…';
+ duplicateSearch.setAttribute('aria-label','Tìm tên kênh trùng trong thư viện');
+ duplicateSearch.setAttribute('autocomplete','off');
+ const duplicateSummary=d.createElement('p');duplicateSummary.id='poLibraryDuplicateSummary';
+ duplicateSummary.className='po-pulse-duplicate-summary';
+ const duplicateRows=d.createElement('ol');duplicateRows.id='poLibraryDuplicateRows';
+ const duplicateNav=d.createElement('div');duplicateNav.className='po-pulse-duplicate-nav';
+ const duplicatePrev=d.createElement('button');duplicatePrev.type='button';
+ duplicatePrev.id='poLibraryDuplicatePrev';duplicatePrev.textContent='Trước';
+ const duplicatePage=d.createElement('span');duplicatePage.id='poLibraryDuplicatePage';
+ const duplicateNext=d.createElement('button');duplicateNext.type='button';
+ duplicateNext.id='poLibraryDuplicateNext';duplicateNext.textContent='Tiếp';
+ duplicateNav.append(duplicatePrev,duplicatePage,duplicateNext);
+ duplicateBody.append(duplicateSearch,duplicateSummary,duplicateRows,duplicateNav);
+ duplicatePane.append(duplicateToggle,duplicateBody);
  const footer=d.createElement('footer');footer.className='po-pulse-footer';
  const stamp=d.createElement('span');stamp.id='poLibraryPulseStamp';
  const refresh=d.createElement('button');refresh.type='button';refresh.id='poLibraryPulseRefresh';
  refresh.textContent='Cập nhật';footer.append(stamp,refresh);
- panel.append(header,hint,cards,ratios,groupPane,missingPane,footer);d.body.append(panel);
+ panel.append(header,hint,cards,ratios,groupPane,missingPane,duplicatePane,footer);d.body.append(panel);
  const addCard=(label,value)=>{
   const item=d.createElement('div');item.className='po-pulse-card';
   const number=d.createElement('strong');number.textContent=String(value);
@@ -142,7 +167,7 @@
    option.textContent=group.name+' · '+group.count+' kênh';missingGroup.append(option);
   }
   missingGroup.value=[...missingGroup.options].some(o=>o.value===selectedGroup)?selectedGroup:'';
-  missingIndex=0;renderMissing();
+  missingIndex=0;renderMissing();duplicateIndex=0;renderDuplicates();
   stamp.textContent='Cập nhật lúc '+new Date().toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit'});
  };
  let missingIndex=0,missingTotal=0;
@@ -170,6 +195,34 @@
   missingPrev.disabled=missingIndex===0;
   missingNext.disabled=(missingIndex+1)*10>=missingTotal;
  };
+ // Kết quả trùng tên là bản sao metadata; không truy xuất hoặc sửa URL nguồn.
+ let duplicateIndex=0,duplicateTotal=0;
+ const renderDuplicates=()=>{
+  const report=core.duplicateNames(state.getChannels(),{
+   query:duplicateSearch.value,offset:duplicateIndex*8,limit:8});
+  duplicateTotal=report.total;
+  duplicateToggle.textContent='Tên kênh trùng: '+duplicateTotal;
+  duplicateSummary.textContent=report.extraChannels+' kênh bổ sung trùng tên · Chỉ để rà soát';
+  duplicateRows.replaceChildren();
+  for(const item of report.rows){
+   const li=d.createElement('li');li.className='po-pulse-duplicate-row';
+   const name=d.createElement('strong');name.textContent=item.name;
+   const details=d.createElement('small');
+   details.textContent=item.count+' kênh · '+item.groupCount+' nhóm'+
+    (item.sourceCount?' · '+item.sourceCount+' nguồn':'');
+   const groups=d.createElement('span');groups.textContent=item.groups.join(' · ');
+   li.append(name,details,groups);duplicateRows.append(li);
+  }
+  if(!report.rows.length){
+   const empty=d.createElement('li');empty.className='po-pulse-duplicate-empty';
+   empty.textContent=duplicateSearch.value.trim()?
+    'Không có tên trùng phù hợp.':'Không có kênh bị trùng tên.';duplicateRows.append(empty);
+  }
+  const totalPages=Math.max(1,Math.ceil(duplicateTotal/8));
+  duplicatePage.textContent='Trang '+(duplicateIndex+1)+' / '+totalPages;
+  duplicatePrev.disabled=duplicateIndex===0;
+  duplicateNext.disabled=(duplicateIndex+1)*8>=duplicateTotal;
+ };
  let opened=false;
  const hide=(restoreFocus=false)=>{if(!opened)return;const restore=restoreFocus||panel.contains(d.activeElement);
   opened=false;panel.hidden=true;toggle.setAttribute('aria-expanded','false');
@@ -193,6 +246,21 @@
   missingBody.hidden=!expanded;
   missingToggle.setAttribute('aria-expanded',String(expanded));
   if(expanded)missingPane.scrollIntoView({block:'nearest',behavior:'instant'});
+ });
+ duplicateToggle.addEventListener('click',()=>{
+  const expanded=duplicateToggle.getAttribute('aria-expanded')!=='true';
+  duplicateBody.hidden=!expanded;
+  duplicateToggle.setAttribute('aria-expanded',String(expanded));
+  if(expanded)duplicatePane.scrollIntoView({block:'nearest',behavior:'instant'});
+ });
+ duplicateSearch.addEventListener('input',()=>{duplicateIndex=0;renderDuplicates();});
+ duplicatePrev.addEventListener('click',()=>{
+  if(duplicateIndex>0)duplicateIndex--;
+  renderDuplicates();duplicatePrev.focus({preventScroll:true});
+ });
+ duplicateNext.addEventListener('click',()=>{
+  if((duplicateIndex+1)*8<duplicateTotal)duplicateIndex++;
+  renderDuplicates();duplicateNext.focus({preventScroll:true});
  });
  missingSearch.addEventListener('input',()=>{missingIndex=0;renderMissing();});
  missingGroup.addEventListener('change',()=>{missingIndex=0;renderMissing();});
