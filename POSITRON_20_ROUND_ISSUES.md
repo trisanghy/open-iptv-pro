@@ -102,3 +102,9 @@ Evaluate defects revealed by real screenshot of previous build before making cha
 - Regression: source test, Electron `favoriteNameSortQA`, `searchAfterSortQA`, `restoredSortQA`.
 - Screenshots cần: `positron-p51182-favorites-sort-before-1920x1080-real.png`, `positron-p51182-favorites-sort-after-1920x1080-real.png`.
 - CANDIDATE trước CI/soát ảnh/Release.
+
+## P5.1.183 (CANDIDATE) — từ ảnh Electron P182
+- Input: screenshot P182 gợi ý chỉ 6 chip trong card 720px, desktop 1920px bỏ trống phần lớn không gian.
+- Feature: chọn 6/12/24 gợi ý, bảng rộng hơn 1180px, cập nhật next/bulk theo N; không sửa nguồn/phát video.
+- QA: `favoriteSuggestion12QA`, `batchFavorite12QA`, `restoreSixQA`, ảnh Electron before/after P183 1920×1080.
+- Chờ CI/release + mở ảnh trực tiếp, không tính VERIFIED trước đó.

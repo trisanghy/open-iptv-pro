@@ -1839,10 +1839,11 @@ test('P5.1.178 đổi nhóm kênh gợi ý không tự phát hoặc sửa nguồ
  const css=read('renderer/positron-twenty.css');
  const qa=read('scripts/positron-20-extension.cjs');
  assert.ok(js.includes('let moreCursor=0'));
- assert.ok(js.includes('moreCursor=(moreCursor+6)%filtered.length'), 'Tiếp tục chuyển nhóm trong tập kênh còn phù hợp');
- assert.ok(js.includes("next.setAttribute('aria-label','Xem sáu kênh chưa yêu thích tiếp theo')"));
+ assert.ok(js.includes('moreCursor=(moreCursor+morePageSize)%filtered.length'), 'Chuyển đúng số kênh viewer đã chọn');
+ assert.ok(js.includes('let moreCursor=0,moreQuery=\'\',morePageSize=6;'),'Vẫn bắt đầu với 6 như bản P178');
+ assert.ok(js.includes("next.setAttribute('aria-label','Xem '+Math.min(morePageSize,filtered.length)"),'ARIA phản ánh số kênh thực');
  assert.ok(js.includes('moreCursor=filtered.length?moreCursor%filtered.length:0'), 'Giữ con trỏ hợp lệ kể cả khi không tìm thấy kênh');
- assert.ok(js.includes('next.hidden=filtered.length<=6'), 'Ẩn chuyển nhóm khi kết quả đã lọc có tối đa sáu kênh');
+ assert.ok(js.includes('next.hidden=filtered.length<=morePageSize'), 'Ẩn chuyển nhóm khi mọi kết quả đã hiển thị');
  assert.ok(js.includes("more.querySelector('.po-fav-more-next')?.focus()"));
  assert.ok(!js.includes("channels.filter(ch=>ch&&ch.id&&!fav.has(store,ch)).slice(0,6)"));
  assert.ok(css.includes('#page-fav .po-fav-more-next:focus-visible'));
@@ -1859,7 +1860,7 @@ test('P5.1.179 tìm trong các kênh chưa đánh sao không làm mất nguồn'
  assert.ok(js.includes("replace(/[\\u0300-\\u036f]/g,'').replace(/đ/gi,'d')"));
  assert.ok(js.includes("focus.setSelectionRange(caret,caret)"));
  assert.ok(js.includes('moreCursor=filtered.length?moreCursor%filtered.length:0'));
- assert.ok(js.includes('Array.from({length:Math.min(6,filtered.length)}'));
+ assert.ok(js.includes('Array.from({length:Math.min(morePageSize,filtered.length)}'));
  assert.ok(js.includes("noMatch.textContent='Không có kênh chưa yêu thích phù hợp. Hãy thử từ khóa khác.'"));
  assert.ok(css.includes('#page-fav #positronFavoriteMoreSearch:focus-visible'));
  assert.ok(qa.includes('favoriteSuggestSearchQA'));
@@ -1908,4 +1909,21 @@ test('P5.1.182 sorts Favorites A-Z/Z-A without changing source records',()=>{
  assert.ok(qa.includes('searchAfterSortQA'));
  assert.ok(qa.includes('restoredSortQA'));
  assert.ok(qa.includes('positron-p51182-favorites-sort-after-1920x1080-real.png'));
+});
+
+test('P5.1.183 expands Favorites suggestions to 6 12 or 24 without changing the source',()=>{
+ const js=read('renderer/positron-twenty.js'),css=read('renderer/positron-twenty.css');
+ const qa=read('scripts/positron-20-extension.cjs');
+ assert.ok(js.includes("let moreCursor=0,moreQuery='',morePageSize=6;"));
+ assert.ok(js.includes("pageSize.id='positronFavoritePageSize'"));
+ assert.ok(js.includes('for(const amount of [6,12,24])'));
+ assert.ok(js.includes('morePageSize=Number(pageSize.value)||6'));
+ assert.ok(js.includes('Math.min(morePageSize,filtered.length)'));
+ assert.ok(js.includes('moreCursor=(moreCursor+morePageSize)%filtered.length'));
+ assert.ok(js.includes("bulk.textContent='Lưu cả '+picks.length+' kênh'"),'Batch save reflects visible suggestions');
+ assert.ok(css.includes('max-width:1180px;width:min(100%,1180px)'));
+ assert.ok(css.includes('#positronFavoritePageSize:focus-visible'));
+ assert.ok(qa.includes('favoriteSuggestion12QA'));
+ assert.ok(qa.includes('batchFavorite12QA'));
+ assert.ok(qa.includes('restoreSixQA'));
 });

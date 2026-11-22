@@ -689,3 +689,25 @@ html[data-positron="true"] #page-fav #positronFavoriteSort:focus-visible{
  outline:2px solid var(--po-accent,#60d7c2);outline-offset:2px;
 }
 @media(max-width:650px){html[data-positron="true"] #page-fav #positronFavoriteSort{flex:1 1 170px}}
+
+/* P5.1.183: wider readable suggestion grid and a visible 6/12/24 selection. */
+html[data-positron="true"] #page-fav #positronFavoriteMore{
+ max-width:1180px;width:min(100%,1180px);box-sizing:border-box;
+}
+html[data-positron="true"] #page-fav .po-fav-more-grid{
+ grid-template-columns:repeat(4,minmax(0,1fr));
+}
+html[data-positron="true"] #page-fav .po-fav-more-top label{
+ color:var(--po-text,#eaf7f7);font-size:12px;font-weight:650;
+}
+html[data-positron="true"] #page-fav #positronFavoritePageSize{
+ min-width:104px;min-height:34px;padding:6px 10px;
+ border:1px solid var(--po-border,#314956);border-radius:8px;
+ background:var(--po-input,#0a1c25);color:var(--po-text,#eaf4f1);
+ font-size:12px;cursor:pointer;
+}
+html[data-positron="true"] #page-fav #positronFavoritePageSize:focus-visible{
+ outline:2px solid var(--po-accent,#60d7c2);outline-offset:2px;
+}
+@media(max-width:900px){html[data-positron="true"] #page-fav .po-fav-more-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:540px){html[data-positron="true"] #page-fav .po-fav-more-grid{grid-template-columns:1fr}}

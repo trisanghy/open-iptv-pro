@@ -1,5 +1,15 @@
 # Positron P5 Changelog
 
+## P5.1.183 — Gợi ý Yêu thích 6/12/24 kênh / Electron 4.23.268
+- Feature priority: NEW — Ảnh Electron P5.1.182 cho thấy 6 gợi ý bị bó trong card 720px trên desktop rộng 1920px, duyệt nhiều kênh mất thao tác.
+- Viewer chọn 6, 12 hoặc 24 gợi ý, giữ mặc định sáu, nút Gợi ý khác nhảy đúng số đang chọn, Lưu cả N chỉ lưu kênh hiển thị sau nhấn chủ động. Tăng panel lên tối đa 1180px, 4/2/1 cột responsive.
+- Không tự phát, không sửa M3U, không lưu số chọn vào dữ liệu nguồn. Có aria-label và focus-visible.
+- Electron screenshot: positron-p51183-favorite-suggestions-after-1920x1080-real.png
+- Before screenshot: positron-p51183-favorite-suggestions-before-1920x1080-real.png
+- User action: Vào Yêu thích, chọn Số kênh 6/12/24 để duyệt nhiều gợi ý; dùng Lưu cả N kênh chỉ khi muốn đánh dấu tất cả gợi ý đang hiện.
+- QA cần: 12 chip, 4 cột, 8 Favorites giữ nguyên trước lưu, batch thêm đúng 12, tổng 20, không autoplay/overflow, trả về 6.
+- Status: CANDIDATE cho đến khi ảnh Electron thật đã được mở soát và Release EXE/DMG xác minh.
+
 ## P5.1.182 — Sắp xếp Yêu thích theo tên / Electron 4.23.267
 - Feature priority: NEW — Từ ảnh Electron P181 nhận thấy danh sách 8 Favorites thiếu điều khiển sắp xếp, khó tìm bằng mắt ở thư viện nhiều kênh.
 - Thêm select “Thứ tự ban đầu / Tên A–Z / Tên Z–A” cạnh ô tìm kiếm; Intl.Collator('vi') và CSS order, không ghi thay đổi vào favoriteKeys, M3U hay trạng thái trình phát.

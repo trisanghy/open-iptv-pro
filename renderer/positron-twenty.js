@@ -184,7 +184,7 @@
   const more=d.createElement('section');more.id='positronFavoriteMore';
   more.className='po-fav-more';more.hidden=true;
   favoriteList.after(more);
-  let moreCursor=0,moreQuery='';
+  let moreCursor=0,moreQuery='',morePageSize=6;
   const foldMore=value=>String(value||'').normalize('NFD')
    .replace(/[\u0300-\u036f]/g,'').replace(/đ/gi,'d').toLowerCase().trim();
   const syncFavoriteMore=()=>{
@@ -201,16 +201,16 @@
    const filtered=words.length?available.filter(ch=>
     words.every(word=>foldMore((ch.name||'')+' '+(ch.group||'')).includes(word))):available;
    moreCursor=filtered.length?moreCursor%filtered.length:0;
-   const picks=Array.from({length:Math.min(6,filtered.length)},
+   const picks=Array.from({length:Math.min(morePageSize,filtered.length)},
     (_,index)=>filtered[(moreCursor+index)%filtered.length]);
    const toolbar=d.createElement('div');toolbar.className='po-fav-more-top';
    const heading=d.createElement('h3');heading.textContent='Gợi ý thêm vào Yêu thích';
    const next=d.createElement('button');next.type='button';next.className='po-fav-more-next';
    next.textContent='Gợi ý khác ↻';
-   next.setAttribute('aria-label','Xem sáu kênh chưa yêu thích tiếp theo');
-   next.hidden=filtered.length<=6;
+   next.setAttribute('aria-label','Xem '+Math.min(morePageSize,filtered.length)+' kênh chưa yêu thích tiếp theo');
+   next.hidden=filtered.length<=morePageSize;
    next.addEventListener('click',()=>{
-    moreCursor=(moreCursor+6)%filtered.length;
+    moreCursor=(moreCursor+morePageSize)%filtered.length;
     syncFavoriteMore();
     more.querySelector('.po-fav-more-next')?.focus();
    });
@@ -230,7 +230,21 @@
     if(!added)return;
     state.save();state.render();state.setPage('fav');
    });
-   toolbar.append(heading,next,bulk);
+   // P5.1.183: viewer controls the number of suggestion cards.
+   const pageLabel=d.createElement('label');pageLabel.htmlFor='positronFavoritePageSize';
+   pageLabel.textContent='Số kênh';
+   const pageSize=d.createElement('select');pageSize.id='positronFavoritePageSize';
+   pageSize.setAttribute('aria-label','Số kênh gợi ý hiển thị');
+   for(const amount of [6,12,24]){
+    const option=d.createElement('option');option.value=String(amount);
+    option.textContent=amount+' kênh';pageSize.append(option);
+   }
+   pageSize.value=String(morePageSize);
+   pageSize.addEventListener('change',()=>{
+    morePageSize=Number(pageSize.value)||6;moreCursor=0;
+    syncFavoriteMore();more.querySelector('#positronFavoritePageSize')?.focus();
+   });
+   toolbar.append(heading,pageLabel,pageSize,next,bulk);
    const searchRow=d.createElement('div');searchRow.className='po-fav-more-search-row';
    const searchLabel=d.createElement('label');searchLabel.htmlFor='positronFavoriteMoreSearch';
    searchLabel.textContent='Tìm kênh để thêm';
