@@ -1,4 +1,14 @@
-# Open IPTV Pro TV · TizenBrew v0.1.23 (OTA)
+# Open IPTV Pro TV · TizenBrew v0.1.24 (OTA)
+
+## v0.1.24 — Bảng chọn kênh khi nhấn ↑ ↓ ← → trong màn hình toàn màn hình
+
+- **Bốn phím mũi tên đều mở bảng chọn kênh phủ lên màn hình đang phát**; không tự chuyển kênh ngay khi nhấn lần đầu.
+- **Khi bảng chọn đã mở:** ↑/↓ chọn kênh trước/sau; ←/→ đổi thư mục; OK phát kênh đang bôi sáng; Back đóng bảng chọn và quay lại video đang phát. CH± vẫn hỗ trợ chuyển nhanh khi bảng chọn đóng.
+- **Trực quan trên TV:** panel bên trái hiển thị tên kênh, thư mục, kênh đang xem và số thứ tự; hỗ trợ kho kênh lớn bằng cách chỉ dựng tối đa 21 hàng gần vị trí chọn, tránh treo khi có nhiều kênh.
+- **Back một lần:** chặn một lần nhấn bị gửi đồng thời qua `keydown`, `keyup` và `tizenhwkey` gây đóng video rồi thoát hẳn ứng dụng. Có thời gian chống lặp 650 ms giữa các hành động Back, ưu tiên đóng bảng chọn, sau đó mới đóng trình phát, rồi mới thoát ở giao diện chính.
+- **Bảo toàn dữ liệu:** không thay đổi playlist M3U, yêu thích, lịch sử, cơ chế giải mã HLS/AVPlay hoặc đường khởi động `tizenbrew/bootstrap.html` (OTA).
+- **Kiểm thử:** `tizenbrew/tests/fullscreen-channel-picker.test.cjs` kiểm tra mở bảng chọn bằng 4 phím, điều hướng thư mục/kênh, OK, Back và tránh thoát ứng dụng do sự kiện trùng.
+- Chưa kiểm thử trực tiếp trên TV Samsung; kiểm thử CI chỉ xác nhận logic mô phỏng và JavaScript.
 
 ## v0.1.23 — Thử lại luồng IPTV HLS và chẩn đoán ngay trên TV
 
