@@ -7408,7 +7408,7 @@ async function runTwenty(page){
   const select=document.getElementById('poChannelGroupSelect');
   return {filteredToOne:select.options.length===1,
    matchedGroup:select.options[0]?.textContent.toLowerCase().includes('other'),
-   countVisible:document.getElementById('poChannelGroupMatchCount').textContent==='1/3',
+   countVisible:document.getElementById('poChannelGroupMatchCount').textContent==='1/'+document.querySelectorAll('#channelList .folder-header[data-group]').length,
    searchFocused:document.activeElement===document.getElementById('poChannelGroupSearch')};
  });
  for(const [key,ok] of Object.entries(filterQA232))
