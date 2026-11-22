@@ -1,5 +1,15 @@
 # Open IPTV Pro TV · TizenBrew v0.1.12 (thử nghiệm)
 
+## v0.1.12 — Quản lý kênh theo Web Mobile trên trang QR
+
+- Bố cục trang quản lý `tizenbrew/phone.html` được thiết kế lại theo danh sách kênh của `web/online`: thẻ kênh có logo, tên, trạng thái yêu thích/ẩn/đang phát; thư mục có thể mở/gập và sắp xếp.
+- Các bộ lọc **Tất cả · Yêu thích · Vừa xem · Đang hiện · Đã ẩn**, tìm kiếm theo tên/nhóm và chọn nguồn. Trên TV, dữ liệu được phân trang **30 kênh/lần** để tránh quá giới hạn Supabase Broadcast.
+- Từ điện thoại qua QR: **phát kênh trên TV**; sửa tên/nhóm/URL; bật/tắt hiển thị, yêu thích; xóa kênh. Giữ **800 ms** trên hàng kênh để kéo chuyển thư mục hoặc thay đổi thứ tự. Vuốt thông thường vẫn cuộn trang.
+- Tạo/đổi tên/xóa/sắp xếp thư mục trên từng nguồn; xóa thư mục chỉ chuyển kênh về nhóm `Khác`, **không xóa kênh**. Chọn nhiều kênh trong trang để chuyển thư mục/vị trí, thêm/bỏ yêu thích, ẩn/hiện hoặc xóa (có xác nhận).
+- Những thay đổi thực sự chạy qua các lệnh quản lý trên TV, được kiểm tra danh tính kênh và chỉ hiện thành công sau khi TV lưu. Khi TV bị mất kết nối, nút quản lý bị vô hiệu; mã QR hết hạn sau 10 phút.
+- QR mở `https://trisanghy.github.io/open-iptv-pro/tizen/phone.html?v=020`; đồng bộ **duy nhất** trang QR ở `web/online:tizen/phone.html`. Không áp dụng tính năng trạng thái **Sống/Die** của bản Web vì Tizen chưa có bộ kiểm tra độc lập; tránh hiển thị kết quả kiểm tra không có thật.
+- Đã chạy mô phỏng các thao tác quản lý nguồn/thư mục/kênh và kiểm tra cú pháp JavaScript. **Chưa xác minh trực tiếp trên Samsung TV**; cần kiểm tra kéo thả và phát kênh trên thiết bị thật.
+
 ## Cập nhật không cần USB
 
 1. Mở ứng dụng **TizenBrew** (không phải TizenBrew Installer).
