@@ -79,3 +79,22 @@ html[data-iptv-device="mobile"] body #page-tv .channel-panel > #channelList{
 html[data-iptv-device="mobile"] body #page-tv #channelList .folder-header{
  position:relative!important;top:auto!important;z-index:auto!important;
 }
+
+/* Fix Android/iOS: header, search and folder controls must not swallow vertical
+   swipe gestures. The panel is the sole vertical scrollport; tabs remain horizontal. */
+html[data-iptv-device="mobile"] body #page-tv .channel-panel :is(
+ .panel-header,.panel-header *,.filter-box,.filter-box *,
+ .folder-actions,.folder-actions *,.channel-drag-hint
+){
+ touch-action:pan-y!important;
+}
+html[data-iptv-device="mobile"] body #page-tv .channel-panel .filter-tabs{
+ touch-action:pan-x pan-y!important;
+}
+html[data-iptv-device="mobile"] body #page-tv .channel-panel .filter-tabs .filter-tab{
+ touch-action:pan-x pan-y!important;
+}
+html[data-iptv-device="mobile"] body #page-tv .channel-panel{
+ min-height:0!important;max-height:65dvh!important;
+ overflow-y:auto!important;overscroll-behavior-y:contain!important;
+}
