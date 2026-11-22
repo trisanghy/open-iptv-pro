@@ -6,7 +6,7 @@ Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA 
 
 **Ứng dụng:** 4.23.335 · **Trạng thái:** Chưa có bản phát hành
 
-Dựa trên ảnh Electron thật P5.1.249: chỉ báo `Kênh 412/561` nằm dưới bộ đếm. Kiểm tra mã phát hiện chỉ có `focusin` cập nhật nên nhãn vẫn hiển thị khi đã rời danh sách. Sửa: `focusout` xóa vị trí focus cũ khi chuyển sang thanh công cụ; tạm giữ vị trí gốc khi hộp nhảy số mở và khôi phục khi Escape. Không đọc/sửa dữ liệu luồng M3U hay Favorites.
+Feature priority: NEW — Thêm tương tác mới tự ẩn chỉ báo vị trí đang chọn khi người dùng đưa tiêu điểm ra khỏi danh sách kênh, không hiển thị sai trạng thái và không tác động việc phát video hay dữ liệu playlist. Electron screenshot: positron-p51250-focus-badge-after-1920x1080-real.png
 
 [Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/41bb78b88c6994c8f68b9ae0316446574f1991ac)
 [Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)

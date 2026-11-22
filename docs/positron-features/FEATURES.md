@@ -11,7 +11,7 @@ Trang này được tạo tự động từ GitHub Releases và ảnh kiểm th�
 
 **Ứng dụng:** 4.23.335 · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
 
-Dựa trên ảnh Electron thật P5.1.249: chỉ báo `Kênh 412/561` nằm dưới bộ đếm. Kiểm tra mã phát hiện chỉ có `focusin` cập nhật nên nhãn vẫn hiển thị khi đã rời danh sách. Sửa: `focusout` xóa vị trí focus cũ khi chuyển sang thanh công cụ; tạm giữ vị trí gốc khi hộp nhảy số mở và khôi phục khi Escape. Không đọc/sửa dữ liệu luồng M3U hay Favorites.
+Feature priority: NEW — Thêm tương tác mới tự ẩn chỉ báo vị trí đang chọn khi người dùng đưa tiêu điểm ra khỏi danh sách kênh, không hiển thị sai trạng thái và không tác động việc phát video hay dữ liệu playlist. Electron screenshot: positron-p51250-focus-badge-after-1920x1080-real.png
 
 *Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
 
