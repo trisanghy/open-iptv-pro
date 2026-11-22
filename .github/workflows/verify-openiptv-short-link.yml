@@ -1,0 +1,32 @@
+name: Verify Open IPTV Pro short link
+on:
+  push:
+    branches: ['web/online']
+    paths:
+      - '.github/workflows/verify-openiptv-short-link.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify-short-url:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Resolve user-provided short URL
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import urllib.request, json
+          short='openiptv'
+          url='https://is.gd/forward.php?format=json&shorturl='+short
+          req=urllib.request.Request(url,headers={'User-Agent':'OpenIPTVPro-LinkVerification/1.0'})
+          with urllib.request.urlopen(req,timeout=20) as r:
+              raw=r.read(20000).decode()
+          print("LOOKUP_RESPONSE:",raw)
+          data=json.loads(raw)
+          target=data.get('url') or data.get('longurl') or data.get('long_url')
+          print("RESOLVED_TARGET:",target)
+          if not target or not target.startswith('https://trisanghy.github.io/open-iptv-pro'):
+              raise SystemExit('SHORT LINK DOES NOT MATCH EXPECTED OPEN IPTV PRO WEBSITE')
+          print("VERIFIED_SHORT_URL=https://is.gd/openiptv")
+          PY
