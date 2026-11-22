@@ -2,14 +2,23 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
-## P5.1.207 — làm mới vòng khám phá kênh ngẫu nhiên
+## P5.1.208 — giữ tiêu điểm bàn phím sau làm mới khám phá kênh
 
-**Ứng dụng:** 4.23.292 · **Trạng thái:** Chưa có bản phát hành
+**Ứng dụng:** 4.23.293 · **Trạng thái:** Chưa có bản phát hành
+
+giữ tiêu điểm bàn phím sau làm mới khám phá kênh
+
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/aa861ee00858d029ea39c4173f3113aedc78bcc0)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+
+## P5.1.207 — Electron 4.23.292 — Làm mới vòng khám phá ngẫu nhiên (CANDIDATE)
+
+**Ứng dụng:** 4.23.292 · **Trạng thái:** Đã phát hành
 
 Feature priority: NEW — Thêm nút làm mới trực tiếp trên thanh phát để người xem bắt đầu một lượt khám phá ngẫu nhiên mới bất cứ khi nào, không cần chờ đi hết toàn bộ danh sách hợp lệ. User action: Sau khi nhấn Bất kỳ ít nhất một lần, nhấn nút ↻ ngay bên cạnh để xóa bộ đếm lượt khám phá hiện tại rồi bắt đầu chọn lại từ đầu.
 
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/114798ba93001db99175aa09c641368b83d704ce)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/b9e283ba16cf68d174c8ac2feefef51c4414245c)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.292-p5.1.207)
 
 ## P5.1.206 — Electron 4.23.291 — Khám phá ngẫu nhiên không lặp kênh (CANDIDATE)
 
