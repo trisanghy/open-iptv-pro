@@ -2,14 +2,23 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
-## P5.1.152 — lọc nhanh lịch sử thông báo
+## P5.1.153 — tìm kiếm nhanh nhật ký thông báo
 
-**Ứng dụng:** 4.23.236 · **Trạng thái:** Chưa có bản phát hành
+**Ứng dụng:** 4.23.237 · **Trạng thái:** Chưa có bản phát hành
+
+Feature priority: NEW — Cho phép tìm kiếm nội dung thông báo ngay trong nhật ký 30 mục theo từ khóa tiếng Việt có hoặc không có dấu, kết hợp bộ lọc loại thông báo mà không xóa dữ liệu. User action: Mở Thông báo, nhập từ khóa trong ô Tìm trong thông báo; có thể gõ ket noi để tìm kết nối, hoặc nhấn Xóa tìm kiếm để khôi phục danh sách.
+
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/6af7f8fb5b7ca2d5d2251f368407fde298503d9d)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+
+## P5.1.152 — Lọc nhật ký theo loại thông báo
+
+**Ứng dụng:** 4.23.236 · **Trạng thái:** Đã phát hành
 
 Feature priority: NEW — Cho phép tìm nhanh cảnh báo, lỗi và xác nhận thành công trong nhật ký tối đa 30 mục bằng bộ lọc không phá hủy, phù hợp khi phải kiểm tra nhiều thông báo. User action: Mở Thông báo ở thanh trên, bấm Cảnh báo / Lỗi / Hoàn thành để chỉ xem loại tương ứng; chọn Tất cả để khôi phục toàn bộ danh sách.
 
 [Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/fb8572b91feb1d0047db68a1eeed4cfdc15e71e0)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.236-p5.1.152)
 
 ## P5.1.151 — Nhật ký thông báo của phiên chạy
 

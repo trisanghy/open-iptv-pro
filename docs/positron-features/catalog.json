@@ -1,22 +1,102 @@
 {
-  "generatedAt": "2026-11-22T00:41:07.134578+00:00",
+  "generatedAt": "2026-11-22T00:51:16.069448+00:00",
   "repository": "trisanghy/open-iptv-pro",
   "branch": "Positron",
   "versions": [
     {
-      "number": 152,
-      "version": "P5.1.152",
-      "appVersion": "4.23.236",
-      "title": "lọc nhanh lịch sử thông báo",
-      "description": "Feature priority: NEW — Cho phép tìm nhanh cảnh báo, lỗi và xác nhận thành công trong nhật ký tối đa 30 mục bằng bộ lọc không phá hủy, phù hợp khi phải kiểm tra nhiều thông báo. User action: Mở Thông báo ở thanh trên, bấm Cảnh báo / Lỗi / Hoàn thành để chỉ xem loại tương ứng; chọn Tất cả để khôi phục toàn bộ danh sách.",
+      "number": 153,
+      "version": "P5.1.153",
+      "appVersion": "4.23.237",
+      "title": "tìm kiếm nhanh nhật ký thông báo",
+      "description": "Feature priority: NEW — Cho phép tìm kiếm nội dung thông báo ngay trong nhật ký 30 mục theo từ khóa tiếng Việt có hoặc không có dấu, kết hợp bộ lọc loại thông báo mà không xóa dữ liệu. User action: Mở Thông báo, nhập từ khóa trong ô Tìm trong thông báo; có thể gõ ket noi để tìm kết nối, hoặc nhấn Xóa tìm kiếm để khôi phục danh sách.",
       "kind": "fix",
       "status": "candidate",
       "published": "",
       "tag": "",
-      "commit": "fb8572b91feb1d0047db68a1eeed4cfdc15e71e0",
+      "commit": "6af7f8fb5b7ca2d5d2251f368407fde298503d9d",
       "url": "https://github.com/trisanghy/open-iptv-pro/tree/Positron",
       "assets": [],
       "image": null
+    },
+    {
+      "number": 152,
+      "version": "P5.1.152",
+      "appVersion": "4.23.236",
+      "title": "Lọc nhật ký theo loại thông báo",
+      "description": "Feature priority: NEW — Cho phép tìm nhanh cảnh báo, lỗi và xác nhận thành công trong nhật ký tối đa 30 mục bằng bộ lọc không phá hủy, phù hợp khi phải kiểm tra nhiều thông báo. User action: Mở Thông báo ở thanh trên, bấm Cảnh báo / Lỗi / Hoàn thành để chỉ xem loại tương ứng; chọn Tất cả để khôi phục toàn bộ danh sách.",
+      "kind": "fix",
+      "status": "release",
+      "published": "2026-11-22T00:48:20Z",
+      "tag": "positron/v4.23.236-p5.1.152",
+      "commit": "fb8572b91feb1d0047db68a1eeed4cfdc15e71e0",
+      "url": "https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.236-p5.1.152",
+      "assets": [
+        {
+          "name": "audit-p4-50-rounds.json",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.236-p5.1.152/audit-p4-50-rounds.json"
+        },
+        {
+          "name": "audit-p5-20-rounds.json",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.236-p5.1.152/audit-p5-20-rounds.json"
+        },
+        {
+          "name": "Open-IPTV-Pro-4.23.236-mac-arm64.dmg",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.236-p5.1.152/Open-IPTV-Pro-4.23.236-mac-arm64.dmg"
+        },
+        {
+          "name": "Open-IPTV-Pro-4.23.236-mac-x64.dmg",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.236-p5.1.152/Open-IPTV-Pro-4.23.236-mac-x64.dmg"
+        },
+        {
+          "name": "Open-IPTV-Pro-4.23.236-x64.exe",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.236-p5.1.152/Open-IPTV-Pro-4.23.236-x64.exe"
+        },
+        {
+          "name": "Open-IPTV-Pro-Setup-4.23.236-x64.exe",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.236-p5.1.152/Open-IPTV-Pro-Setup-4.23.236-x64.exe"
+        },
+        {
+          "name": "OpenIPTVPro-Positron-P51152-Source.zip",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.236-p5.1.152/OpenIPTVPro-Positron-P51152-Source.zip"
+        },
+        {
+          "name": "positron-desktop-1920x1080-16x9-main-real.png",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.236-p5.1.152/positron-desktop-1920x1080-16x9-main-real.png"
+        },
+        {
+          "name": "positron-p4-final-main-real.png",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.236-p5.1.152/positron-p4-final-main-real.png"
+        },
+        {
+          "name": "positron-p4-round-10-real.png",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.236-p5.1.152/positron-p4-round-10-real.png"
+        },
+        {
+          "name": "positron-p4-round-20-real.png",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.236-p5.1.152/positron-p4-round-20-real.png"
+        },
+        {
+          "name": "positron-p4-round-30-real.png",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.236-p5.1.152/positron-p4-round-30-real.png"
+        },
+        {
+          "name": "positron-p4-round-40-real.png",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.236-p5.1.152/positron-p4-round-40-real.png"
+        },
+        {
+          "name": "Positron-P51152-20-Real-Screenshots.zip",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.236-p5.1.152/Positron-P51152-20-Real-Screenshots.zip"
+        },
+        {
+          "name": "Positron-P51152-50-Real-Screenshots.zip",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.236-p5.1.152/Positron-P51152-50-Real-Screenshots.zip"
+        },
+        {
+          "name": "SHA256SUMS.txt",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.236-p5.1.152/SHA256SUMS.txt"
+        }
+      ],
+      "image": "screenshots/positron-p51152-desktop-1920x1080-trang-chu-real.png"
     },
     {
       "number": 151,
@@ -96,7 +176,7 @@
           "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.235-p5.1.151/SHA256SUMS.txt"
         }
       ],
-      "image": "screenshots/positron-p51151-desktop-1920x1080-trang-chu-real.png"
+      "image": "screenshots/positron-p51151-notification-archive-after-1920x1080-real.png"
     },
     {
       "number": 150,
