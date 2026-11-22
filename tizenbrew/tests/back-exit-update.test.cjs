@@ -8,10 +8,10 @@ function block(a,b){
  assert.ok(start>=0&&end>start,'Missing code boundary: '+a);
  return html.slice(start,end);
 }
-test('TizenBrew v0.1.23 metadata matches on-screen header',()=>{
- assert.equal(packageInfo.version,'0.1.23');
+test('TizenBrew v0.1.24 metadata matches on-screen header',()=>{
+ assert.equal(packageInfo.version,'0.1.24');
  assert.equal(packageInfo.version,packageInfo.tizenbrewEdition);
- assert.ok(html.includes('Samsung Tizen Edition · TizenBrew v0.1.23'));
+ assert.ok(html.includes('Samsung Tizen Edition · TizenBrew v0.1.24'));
 });
 test('Back from the main screen navigates real WebView history (not the proxy port)',()=>{
  const code=block('function exitModule(){','function refreshTizenBrewModules(){');
@@ -45,10 +45,10 @@ test('Remote Back closes modal, closes player then quits app',()=>{
  const code=block('function handleBack(e){','function keyHandler(e){');
  let modal=true,player=true,exits=0,modalClosed=0,playerClosed=0;
  const handler=vm.runInNewContext('var lastBackEventAt=0;\n'+code+'\nhandleBack;',{
-   Date:{now:(()=>{let n=1000;return()=>n+=400;})()},
-   byId:id=>({modal:{get hidden(){return !modal;}},player:{get hidden(){return !player;}}})[id],
+   Date:{now:(()=>{let n=1000;return()=>n+=850;})()},
+   byId:id=>({modal:{get hidden(){return !modal;}},player:{get hidden(){return !player;}},channelPicker:{hidden:true}})[id],
    closeDialog:()=>{modal=false;modalClosed++;},
-   closePlayer:()=>{player=false;playerClosed++;},
+   closePlayer:()=>{player=false;playerClosed++;},closeChannelPicker:()=>{},
    exitModule:()=>{exits++;}
  });
  const e={preventDefault(){},stopImmediatePropagation(){}};
