@@ -128,7 +128,7 @@ function managerGroups(source){
  folders.forEach(function(g){if(order.indexOf(g)<0)order.push(g);});
  var preferred=(source&&source.groupOrder||[]).filter(function(g){return order.indexOf(g)>=0;});
  order=preferred.concat(order.filter(function(g){return preferred.indexOf(g)<0;}));
- return order.slice(0,100).map(function(g){return {name:g,count:counts[g]||0};});
+ return order.map(function(g){return {name:g,count:counts[g]||0};});
 }
 function managerSnapshot(opts){
  opts=opts||{};managerIds();
@@ -225,6 +225,19 @@ function managerPerform(action,payload){
   (source.channels||[]).forEach(function(c){if(String(c.group||'Khác')===name)c.group='Khác';});
   source.folders=(source.folders||[]).filter(function(x){return x!==name;});
   source.groupOrder=(source.groupOrder||[]).filter(function(x){return x!==name;});
+ });
+
+ if(action==='reorder-folder')return managerMutation(function(){
+  source=findManagerSource(data.sourceId);
+  var name=managerGroupName(data.name),anchor=managerGroupName(data.anchor);
+  var groups=managerGroups(source).map(function(g){return g.name;});
+  var index=groups.indexOf(name),target=groups.indexOf(anchor);
+  if(index<0||target<0)throw Error('Thư mục đã thay đổi, hãy đồng bộ lại.');
+  if(name===anchor)throw Error('Không thể kéo thư mục lên chính nó.');
+  groups.splice(index,1);
+  target=groups.indexOf(anchor)+(data.after===true?1:0);
+  groups.splice(target,0,name);
+  source.groupOrder=groups;
  });
  if(action==='move-folder')return managerMutation(function(){
   source=findManagerSource(data.sourceId);
