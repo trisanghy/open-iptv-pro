@@ -88,3 +88,10 @@ Evaluate defects revealed by real screenshot of previous build before making cha
 - Ảnh thật P5.1.179 đã mở: bộ tìm đề xuất có kết quả rõ, nhưng mỗi kênh phải tự đánh dấu sao. Khi sáu gợi ý cần lưu cần sáu thao tác.
 - Thêm nút Lưu cả N kênh chủ động, kiểm tra lại favorites hiện tại và save/render một lần. Không xóa nguồn, không autoplay.
 - Bằng chứng bắt buộc: 9 QA trên Electron thật, Node xanh, hai ảnh trước/sau trực tiếp soát, release EXE/DMG có tài sản được xác minh.
+
+
+## P5.1.181 (CANDIDATE) — lỗi từ PNG vòng P5.1.180
+- Ảnh TRƯỚC đã mở: `positron-p51180-bulk-favorites-after-1920x1080-real.png`; hiển thị 8 Favorites trên 6 cột chật, tên cắt "QA Ch..." và small text tự xuống dòng.
+- Nguyên nhân: `.favorite-grid` kế thừa auto-fit min-width nhỏ từ `--ui-grid-min`, vốn dùng chung cả các trang.
+- Sửa riêng trong Positron: grid min 390px/cột, một cột ở viewport hẹp; giữ logic Favorites và ứng dụng nguyên trạng.
+- Cần ảnh SAU thật `positron-p51181-readable-favorites-after-1920x1080-real.png`, QA đo số cột, card width/title clipping; verify CI EXE/DMG + release.

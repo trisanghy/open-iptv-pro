@@ -1880,3 +1880,14 @@ test('P5.1.180 chỉ lưu các kênh đang gợi ý sau khi người dùng chủ
  assert.ok(css.includes('#page-fav .po-fav-more-bulk:focus-visible'));
  assert.ok(qa.includes('favoriteBulkQA'));
 });
+
+test('P5.1.181 giữ card Favorites đọc được khi có 8 kênh',()=>{
+ const css=read('renderer/positron-twenty.css');
+ const qa=read('scripts/positron-20-extension.cjs');
+ assert.ok(css.includes('#page-fav #favoriteList.favorite-grid'));
+ assert.ok(css.includes('repeat(auto-fit,minmax(min(100%,390px),1fr))!important'));
+ assert.ok(css.includes('#page-fav #favoriteList .fav-card h3'));
+ assert.ok(css.includes('grid-template-columns:minmax(0,1fr)!important'));
+ assert.ok(qa.includes('favoriteLayoutQA'));
+ assert.ok(qa.includes('titleNotTruncated'));
+});
