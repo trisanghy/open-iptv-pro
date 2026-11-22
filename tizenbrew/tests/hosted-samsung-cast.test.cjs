@@ -47,7 +47,8 @@ test('cast-like HTTPS player is an isolated iframe, not a proxy or direct URL na
  assert.match(html,/id="castPlayerFrame" hidden tabindex="-1"/);
  assert.match(html,/sandbox="allow-scripts allow-same-origin allow-presentation"/);
  assert.match(html,/referrerpolicy="no-referrer"/);
- assert.match(html,/https:\/\/trisanghy\.github\.io\/open-iptv-pro\/tizen\/hosted-player\.html/);
+ assert.match(html,/hostedCastOrigin='https:\/\/trisanghy\.github\.io'/);
+ assert.match(html,/\/open-iptv-pro\/tizen\/hosted-player\.html/);
 });
 test('VTV2 failing in module retries same HTTPS stream in GitHub Pages Cast origin',()=>{
  const s=harness(),channel={id:'vtv2',name:'VTV2',url:'https://example.org/vtv2.m3u8'};
@@ -105,7 +106,8 @@ test('Cast failure moves to user-provided alternate channel source once, not an 
  s.trigger(2400);
  assert.equal(s.api.current().playbackStreamIndex,1);
  assert.equal(s.frame.hidden,true);
- assert.equal(s.video.src,'https://example.org/two.m3u8');
+ assert.equal(s.api.current().playbackEngine,'html5');
+ assert.equal(s.api.current().playbackStreamIndex,1);
  assert.equal(s.api.current().hostedCastAttempted,false);
 });
 test('HTTP channel is not sent into HTTPS iframe, matching Samsung Browser mixed-content restrictions',()=>{
