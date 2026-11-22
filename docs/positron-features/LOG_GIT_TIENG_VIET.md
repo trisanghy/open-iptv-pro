@@ -2,14 +2,23 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
-## P5.1.256 — Thống kê nguồn và kênh
+## P5.1.257 — Chi tiết nguồn và số kênh
 
-**Ứng dụng:** 4.23.341 · **Trạng thái:** Chưa có bản phát hành
+**Ứng dụng:** 4.23.342 · **Trạng thái:** Chưa có bản phát hành
+
+Feature priority: NEW — Thêm nút Chi tiết nguồn ngay cạnh thống kê thư viện. Khi bấm, ứng dụng liệt kê tên từng nguồn, số kênh thuộc nguồn và trạng thái Bật/Tắt, có thể đóng lại; bản lớn giới hạn hiển thị 30 nguồn để tránh làm nặng giao diện. Tất cả chỉ đọc, không thay đổi playlist. Electron screenshot: positron-p51257-source-details-after-1920x1080-real.png
+
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/b7aa11106930fec36fe1e0ca4a544bf09c9f5156)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+
+## P5.1.256 — Thống kê nguồn đang bật và tổng kênh ngay trong tiêu đề Nguồn IPTV / Electron 4.23.341
+
+**Ứng dụng:** 4.23.341 · **Trạng thái:** Đã phát hành
 
 Feature priority: NEW — Hiển thị thẻ số liệu `2/2 nguồn bật · 561 kênh` theo thư viện thực, tự cập nhật khi số lượng nguồn/kênh trong footer chính thay đổi. Giúp nhận ra nguồn đang tắt ngay trên màn quản lý thay vì phải tìm nút trạng thái; chỉ đọc dữ liệu, không phát kênh hay lưu nguồn. Electron screenshot: positron-p51256-inventory-after-1920x1080-real.png
 
 [Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/abaf2d182b3381713d88853ecd388cb0bd5dd835)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.341-p5.1.256)
 
 ## P5.1.255 — Nút quay lại kênh ngay trên trang Nguồn IPTV / Electron 4.23.340
 
