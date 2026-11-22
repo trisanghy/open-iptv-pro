@@ -188,8 +188,8 @@ test('TV manager hello confirms online and returns a live snapshot',async()=>{
 });
 
 test('QR manager uses the official GitHub Pages URL rather than RawGitHack',()=>{
- const expected='https://trisanghy.github.io/open-iptv-pro/tizen/phone.html?v=019';
- assert.match(tv,/var SOURCE_PAGE='https:\/\/trisanghy[.]github[.]io\/open-iptv-pro\/tizen\/phone[.]html[?]v=019';/);
+ const expected='https://trisanghy.github.io/open-iptv-pro/tizen/phone.html?v=020';
+ assert.match(tv,/var SOURCE_PAGE='https:\/\/trisanghy[.]github[.]io\/open-iptv-pro\/tizen\/phone[.]html[?]v=020';/);
  assert.ok(tv.includes("var qrLink=SOURCE_PAGE+'#code='+token"),'QR must preserve ephemeral pairing token');
  assert.ok(tv.includes(expected));
  assert.doesNotMatch(tv,/raw[.]githack[.]com/);
@@ -326,4 +326,46 @@ test('Tizen retries verified public HTTPS playlist on CORS but not arbitrary URL
  const other=await api.fetchM3UText('https://example.com/private.m3u');
  assert.equal(other.usedFallback,false);
  assert.deepEqual(calls,['https://example.com/private.m3u']);
+});
+
+
+test('Web Mobile channel management controls exist on the QR phone page',()=>{
+ for(const id of ['managerFilters','groupFilter','createFolder','expandFolders','collapseFolders','selectionToggle',
+  'selectionBar','batchGroup','batchPosition','batchMove','batchFavorite','batchUnfavorite',
+  'batchHide','batchShow','batchDelete','selectPage','clearSelection','movePanel','moveGroup','moveConfirm'])
+  assert.match(phone,new RegExp('id="'+id+'"'),'missing '+id);
+ for(const mode of ['all','fav','recent','visible','hidden'])
+  assert.match(phone,new RegExp('data-filter="'+mode+'"'));
+ for(const fn of ['renderGroupSelectors','renderChannels','renderSelection','runBatch','dragClear'])
+  assert.ok(phone.includes('function '+fn+'('),'missing '+fn);
+ assert.match(phone,/},800\)/,'touch long press mirrors Web Mobile');
+ assert.match(phone,/passive:false/,'active touch drag can prevent scrolling');
+ assert.match(phone,/command\('relocate-channel'/);
+ assert.match(phone,/command\('play-channel'|action==='play-channel'/);
+});
+test('TV manager supports folder filtering, favorite/recent, batch actions and TV playback',()=>{
+ const start=tv.indexOf('var managerRevision=0'),end=tv.indexOf('function stopPair()',start);
+ assert.ok(start>=0&&end>start);
+ const state={sources:[{id:'src',name:'IPTV',channels:[
+  {id:'n1',name:'News',group:'Tin tức',url:'https://example.com/news.m3u8'},
+  {id:'s1',name:'Sports',group:'Thể thao',url:'https://example.com/sports.m3u8'},
+  {id:'n2',name:'World',group:'Tin tức',url:'https://example.com/world.m3u8'}]}],
+  favorites:{},recent:['s1','n1']};
+ let played='';
+ const ctx=vm.createContext({state,save:()=>true,draw:()=>{},selected:null,byId:()=>({hidden:false}),
+  hash:()=>'',url:s=>s,play:c=>{played=c.id;},setTimeout,clearTimeout});
+ vm.runInContext(tv.slice(start,end),ctx);
+ const data={sourceId:'src'};
+ assert.equal(ctx.managerSnapshot(data).groups.length,2);
+ assert.equal(ctx.managerSnapshot({...data,filter:'recent'}).channels[0].id,'s1');
+ assert.equal(ctx.managerPerform('create-folder',{...data,name:'Tổng hợp'}).ok,true);
+ assert.ok(ctx.managerSnapshot(data).groups.some(g=>g.name==='Tổng hợp'&&g.count===0));
+ assert.equal(ctx.managerPerform('batch-favorite',{...data,items:[{id:'n1',index:0}],favorite:true}).ok,true);
+ assert.equal(ctx.managerSnapshot({...data,filter:'fav'}).channels[0].id,'n1');
+ assert.equal(ctx.managerPerform('batch-move',{...data,items:[{id:'s1',index:1}],group:'Tin tức',position:1}).ok,true);
+ assert.equal(ctx.state.sources[0].channels[0].id,'s1');
+ assert.equal(ctx.managerPerform('batch-delete',{...data,items:[{id:'n2',index:0}]}).ok,false,'stale requests cannot delete');
+ assert.equal(ctx.managerPerform('play-channel',{...data,index:0,channelId:'s1'}).ok,true);
+ assert.equal(played,'s1');
+ assert.equal(ctx.managerSnapshot({...data,group:'Tin tức'}).total,3);
 });
