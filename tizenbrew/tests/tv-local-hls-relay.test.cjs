@@ -69,7 +69,7 @@ test('TV localhost service CORS preflight works without actual X-Open-IPTV-Relay
   const health=await request('GET','/health');
   assert.equal(health.status,200);
   assert.equal(JSON.parse(health.body).ok,true);
-  assert.equal(JSON.parse(health.body).version,'0.1.40');
+  assert.equal(JSON.parse(health.body).version,'0.1.39');
   const denied=await request('GET','/health',null,{origin:'https://untrusted.example'});
   assert.equal(denied.status,403);
   assert.equal(denied.headers['access-control-allow-origin'],undefined);
