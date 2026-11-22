@@ -155,21 +155,76 @@
   }
  };
  const isDifferentUser=id=>{const p=localStorage.getItem(ACTIVE);return p&&p!==id};
- const saveRecoveryCopy=(id,state,fields)=>{
-  // Save an unmerged version locally when two devices edited the same field.
-  // If recovery storage is full, do not discard that unsynced local change.
+ const recoveryStore=window.OpenIPTVCloudRecovery;
+ const recoveryDownload=document.createElement('button');
+ recoveryDownload.id='cloudRecoveryDownload';recoveryDownload.type='button';
+ recoveryDownload.className='btn btn-subtle';recoveryDownload.hidden=true;
+ recoveryDownload.textContent='Tải bản dự phòng xung đột';
+ migrationRestore.after(recoveryDownload);
+ async function refreshRecoveryAction(){
+  if(!uid){show(recoveryDownload,false);return;}
+  let available=!!localStorage.getItem(RECOVERY(uid));
+  if(recoveryStore){
+   try{available=available||(await recoveryStore.list(uid)).length>0;}
+   catch(e){console.warn('Could not check browser recovery snapshots',e);}
+  }
+  show(recoveryDownload,available&&!!uid);
+ }
+ const saveRecoveryCopy=async(id,state,fields)=>{
+  // Keep an exact unmerged snapshot before choosing the newer cloud version.
+  // IndexedDB has a separate, larger storage quota than localStorage.
+  const record={
+   savedAt:new Date().toISOString(),reason:'simultaneous-edit',
+   conflictedFields:fields,payload:core.snapshot(state)
+  };
+  if(recoveryStore){
+   try{
+    await recoveryStore.save(id,record.payload,fields);
+    void refreshRecoveryAction();
+    return true;
+   }catch(e){console.warn('IndexedDB cloud recovery failed',e);}
+  }
+  // Legacy fallback for private browsers without working IndexedDB.
   try{
-   localStorage.setItem(RECOVERY(id),JSON.stringify({
-    savedAt:new Date().toISOString(),reason:'simultaneous-edit',
-    conflictedFields:fields,payload:core.snapshot(state)
-   }));
+   localStorage.setItem(RECOVERY(id),JSON.stringify(record));
+   void refreshRecoveryAction();
    return true;
   }catch(e){
-   console.warn('Cloud conflict backup quota reached',e);
-   label('Không đủ bộ nhớ lưu bản dự phòng khi hai thiết bị cùng sửa. Đồng bộ tạm dừng để tránh mất dữ liệu.','error');
+   console.warn('Cloud recovery storage exhausted',e);
+   label('Không lưu được bản dự phòng xung đột trên thiết bị này. Đồng bộ tạm dừng để bảo vệ dữ liệu; hãy xuất bản sao lưu JSON và kiểm tra dung lượng trình duyệt.','error');
    return false;
   }
  };
+ recoveryDownload.addEventListener('click',async()=>{
+  if(!uid)return;
+  recoveryDownload.disabled=true;
+  try{
+   let snapshot=null;
+   if(recoveryStore){
+    try{snapshot=await recoveryStore.latest(uid);}
+    catch(e){console.warn('IndexedDB cloud recovery read failed',e);}
+   }
+   const legacy=localStorage.getItem(RECOVERY(uid));
+   if(legacy){
+    const old=JSON.parse(legacy);
+    if(!snapshot||String(old.savedAt)>String(snapshot.savedAt))snapshot=old;
+   }
+   if(!snapshot?.payload)throw Error('Không tìm thấy bản dự phòng hợp lệ.');
+   // Portable format is compatible with the Open IPTV Pro backup schema.
+   const archive={
+    format:'open-iptv-pro-backup',schemaVersion:1,appVersion:'web-cloud-recovery',
+    createdAt:snapshot.savedAt,platform:'Web',
+    storage:{'open-iptv-pro-4':JSON.stringify(snapshot.payload)}
+   };
+   const url=URL.createObjectURL(new Blob([JSON.stringify(archive)],{type:'application/json'}));
+   const a=document.createElement('a');
+   a.href=url;a.download='open-iptv-pro-recovery-'+new Date().toISOString().slice(0,10)+'.json';
+   document.body.append(a);a.click();a.remove();
+   setTimeout(()=>URL.revokeObjectURL(url),30000);
+   label('Đã tạo file bản dự phòng để tải về. File có thể chứa liên kết M3U và token riêng tư.');
+  }catch(e){report(e,'tải bản dự phòng xung đột');}
+  finally{recoveryDownload.disabled=false;}
+ });
  const swapIntoLocal=(state,id,rev)=>{
   core.validate(state);
   const from=core.snapshot(state);
@@ -276,7 +331,7 @@
     }
     if(outcome==='download'){
      // Preserve unsynced old-version local changes before cloud restore.
-     if(meta && meta.hash!==contentHash(local) && !saveRecoveryCopy(originalId,local,['legacy-conflict']))return false;
+     if(meta && meta.hash!==contentHash(local) && !await saveRecoveryCopy(originalId,local,['legacy-conflict']))return false;
      completed=swapIntoLocal(remote.payload,originalId,remote.revision);
      return completed;
     }
@@ -285,7 +340,7 @@
      const merged=core.mergeFields({local,remote:remote.payload,baseline:meta.fields});
      desired=core.validate(merged.merged).payload;
      conflicts=merged.conflicts;
-     if(conflicts.length && !saveRecoveryCopy(originalId,local,conflicts))
+     if(conflicts.length && !await saveRecoveryCopy(originalId,local,conflicts))
       return false;
     }
     const expected=remote?.revision||0;
@@ -362,7 +417,7 @@
   uid=id;window.__iptvCloudUserName=authName(user);
   if(serverCount)serverCount.textContent='—';
   if(serverUpdated)serverUpdated.textContent='Đang kiểm tra bản lưu trên Supabase…';
-  ready=true;show(choices,false);syncControls();
+  ready=true;show(choices,false);syncControls();void refreshRecoveryAction();
   label('Đăng nhập thành công · đang tự khôi phục và đồng bộ…');
   // Do not wait for a button press: new accounts upload automatically, and
   // previously saved accounts download automatically in a fresh browser.
@@ -509,7 +564,7 @@
     const remote=await readRemote(uid);
     if(remote&&core.isMeaningful(remote.payload)){
      if(!confirm('Tài khoản Supabase mới đã có dữ liệu. Khôi phục sẽ thay thế dữ liệu đang đồng bộ bằng bản cũ. Tiếp tục?'))return;
-     if(!saveRecoveryCopy(uid,remote.payload,['before-project-switch-restore']))return;
+     if(!await saveRecoveryCopy(uid,remote.payload,['before-project-switch-restore']))return;
     }
     // Seed a revision baseline, then the normal CAS upload runs after reload.
     if(!swapIntoLocal(payload,uid,remote?.revision||0))return;
