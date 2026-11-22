@@ -100,7 +100,7 @@ function respondUpstream(source,req,res,session,depth){
  if(depth>4){json(res,502,{error:'Quá nhiều chuyển hướng nguồn.'});return;}
  dns.lookup(parsed.hostname,function(err,address){
   if(err||!safeIp(String(address||''))){json(res,502,{error:'Không thể xác minh địa chỉ máy chủ phát.'});return;}
-  var headers={'Host':parsed.host,'Accept':'*/*','User-Agent':'OpenIPTVPro-TV/0.1.32'};
+  var headers={'Host':parsed.host,'Accept':'*/*','User-Agent':session.userAgent||'OpenIPTVPro-TV/0.1.32'};
   if(req.headers.range)headers.Range=String(req.headers.range).slice(0,120);
   var options={
    hostname:address,port:parsed.port||(parsed.protocol==='https:'?443:80),
@@ -198,7 +198,8 @@ function handler(req,res){
    try{data=JSON.parse(Buffer.concat(parts).toString('utf8'));}catch(e){json(res,400,{error:'Yêu cầu không đúng định dạng.'});return;}
    if(!inspectRemote(data.url)){json(res,400,{error:'Địa chỉ nguồn không hợp lệ.'});return;}
    prune();
-   var session={id:crypto.randomBytes(20).toString('hex'),resources:[String(data.url)],last:Date.now()};
+   var agent=String(data.browserUserAgent||'').slice(0,300).replace(/[\r\n\u0000-\u001f\u007f]/g,'');
+   var session={id:crypto.randomBytes(20).toString('hex'),resources:[String(data.url)],last:Date.now(),userAgent:agent};
    sessions[session.id]=session;
    json(res,201,{url:'http://127.0.0.1:'+PORT+'/r/'+session.id+'/0'});
   });
