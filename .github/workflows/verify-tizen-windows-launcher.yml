@@ -1,0 +1,38 @@
+name: Verify Windows CMD latest Tizen WGT launcher
+on:
+  push:
+    branches: [tizenbrew]
+    paths:
+      - 'tizenbrew/Open-Latest-WGT-Windows.ps1'
+      - '.github/workflows/verify-tizen-windows-launcher.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  windows-browser-preview:
+    runs-on: windows-latest
+    timeout-minutes: 15
+    env:
+      OPENIPTV_BUILD_ONLY: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run launcher on real Windows PowerShell 5.1
+        shell: pwsh
+        run: |
+          $oldPs = Join-Path $env:SystemRoot 'System32\WindowsPowerShell\v1.0\powershell.exe'
+          & $oldPs -NoProfile -ExecutionPolicy Bypass -File '.\tizenbrew\Open-Latest-WGT-Windows.ps1'
+          if ($LASTEXITCODE -ne 0) { throw 'PowerShell 5.1 launcher failed.' }
+          $cache = Join-Path $env:LOCALAPPDATA 'OpenIPTVPro\TizenBrowser'
+          if (!(Test-Path -LiteralPath $cache)) { throw 'Missing WGT cache folder.' }
+          $wgt = Get-ChildItem -LiteralPath $cache -Filter 'Open-IPTV-Pro-TizenBrowser.wgt' -File -Recurse | Select-Object -First 1
+          if (!$wgt) { throw 'Launcher did not create an unsigned WGT.' }
+          Add-Type -AssemblyName System.IO.Compression.FileSystem
+          $zip = [IO.Compression.ZipFile]::OpenRead($wgt.FullName)
+          try {
+            foreach ($name in @('index.html','phone.html','supabase-sdk.js','config.xml')) {
+              if ($null -eq $zip.GetEntry($name)) { throw ('Broken WGT: '+$name) }
+            }
+          } finally { $zip.Dispose() }
+          Write-Host ('Windows WGT build verified: ' + $wgt.FullName)

@@ -56,8 +56,8 @@ try {
         $prefix = '<script src="supabase-sdk.js"></script>' + [char]10
         $tv = $tv.Replace($anchor, $prefix + $anchor)
         $phone = $phone.Replace($anchor, $prefix + $anchor)
-        [IO.File]::WriteAllText($tvFile, $tv, (New-Object Text.UTF8Encoding($false)))
-        [IO.File]::WriteAllText($phoneFile, $phone, (New-Object Text.UTF8Encoding($false)))
+        [IO.File]::WriteAllText($tvFile, $tv, ([Text.UTF8Encoding]::new($false)))
+        [IO.File]::WriteAllText($phoneFile, $phone, ([Text.UTF8Encoding]::new($false)))
 
         $config = @'
 <?xml version="1.0" encoding="utf-8"?>
@@ -69,7 +69,7 @@ try {
  <tizen:profile name="tv"/>
 </widget>
 '@
-        [IO.File]::WriteAllText((Join-Path $app 'config.xml'), $config, (New-Object Text.UTF8Encoding($false)))
+        [IO.File]::WriteAllText((Join-Path $app 'config.xml'), $config, ([Text.UTF8Encoding]::new($false)))
         Add-Type -AssemblyName System.IO.Compression.FileSystem
         if (Test-Path -LiteralPath $wgt) { Remove-Item -LiteralPath $wgt -Force }
         [IO.Compression.ZipFile]::CreateFromDirectory($app, $wgt, [IO.Compression.CompressionLevel]::Optimal, $false)
@@ -82,6 +82,11 @@ try {
         Write-Host ('Latest browser-preview WGT built: ' + $wgt) -ForegroundColor Green
     } else {
         Write-Host ('Using already-built WGT for latest commit ' + $sha.Substring(0,12))
+    }
+
+    if ($env:OPENIPTV_BUILD_ONLY -eq '1') {
+        Write-Host ('WGT build-only check passed for ' + $sha.Substring(0,12)) -ForegroundColor Green
+        return
     }
 
     # Windows-compatible HTTP loopback server, without Python, npm, or HTTP.sys ACL/admin rights.
