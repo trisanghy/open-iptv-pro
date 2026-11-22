@@ -2,14 +2,23 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
-## P5.1.157 — phân bố nhóm thư viện kênh
+## P5.1.158 — khám phá kênh thiếu logo
 
-**Ứng dụng:** 4.23.241 · **Trạng thái:** Chưa có bản phát hành
+**Ứng dụng:** 4.23.242 · **Trạng thái:** Chưa có bản phát hành
+
+Feature priority: NEW — Từ tỷ lệ logo 0/561 nhìn thấy trên ảnh Electron P5.1.157, bổ sung danh sách các kênh chưa có URL logo, chia trang 10 kênh để người dùng xác định metadata thiếu. User action: Thư viện → Kênh thiếu logo → Trước / Tiếp; hiển thị tên và nhóm từ playlist đã nhập, không tự quét mạng và không bổ sung logo giả.
+
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/34075d9367efca892ce2a9f5abbc185ee782c6e0)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+
+## P5.1.157 — Phân bố kênh theo nhóm
+
+**Ứng dụng:** 4.23.241 · **Trạng thái:** Đã phát hành
 
 Feature priority: NEW — Thêm danh sách nhóm kênh với số lượng và thanh tỷ lệ ngay trong Bản đồ thư viện; có thể mở thêm từng 5 nhóm mà không cần tải nguồn mới hoặc thử phát. User action: Bấm Thư viện, xem Phân bố kênh theo nhóm; nhấn Xem thêm 5 nhóm để đọc tiếp, chọn Thu gọn danh sách khi đã xem hết.
 
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/c709ad40eb079ed9acc45420b9e60f7ca4b47a3e)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/ca549834c5d2cdee64ecc6b7a8feb75f1be0e51c)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.241-p5.1.157)
 
 ## P5.1.156 — Bản đồ thư viện kênh ngoại tuyến
 
