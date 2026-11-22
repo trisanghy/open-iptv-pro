@@ -11,7 +11,10 @@ const html = fs.readFileSync(path.join(root, 'tizenbrew/index.html'), 'utf8');
 test('TizenBrew card exposes the actual Samsung TV edition', () => {
   assert.equal(pkg.packageType, 'app');
   assert.equal(pkg.appName, 'Open IPTV Pro TV');
-  assert.equal(pkg.appPath, 'tizenbrew/index.html');
+  assert.equal(pkg.appPath, 'tizenbrew/bootstrap.html');
+  const boot=fs.readFileSync(path.join(root, 'tizenbrew/bootstrap.html'), 'utf8');
+  assert.match(boot, /api\.github\.com\/repos\//);
+  assert.match(boot, /tizenbrew\/index\.html/);
   assert.equal(pkg.version, pkg.tizenbrewEdition, 'TizenBrew reads package.version for the module card');
   assert.ok(html.includes('Samsung Tizen Edition · TizenBrew v' + pkg.version));
 });
