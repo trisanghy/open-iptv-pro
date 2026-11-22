@@ -2,14 +2,23 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
-## P5.1.269 — AI lập lịch xem 24 giờ tránh trùng chương trình
+## P5.1.270 — AI khám phá kênh bằng contextual bandit
 
-**Ứng dụng:** 4.23.354 · **Trạng thái:** Chưa có bản phát hành
+**Ứng dụng:** 4.23.355 · **Trạng thái:** Chưa có bản phát hành
+
+Feature priority: NEW — Chế độ **Khám phá AI** tính điểm UCB cho chủ đề ít được đánh giá kết hợp xác suất logistic đã học thực tế, chọn ra danh sách đa dạng, tránh lặp quá nhiều kênh cùng chủ đề và giảm dần mức khám phá khi chủ đề được phản hồi. Feature class: AI
+
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/aabfd6c885a45920eb78e3df5d453d1addceadc4)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+
+## P5.1.269 — AI lập lịch xem 24 giờ tránh trùng giờ / Electron 4.23.354
+
+**Ứng dụng:** 4.23.354 · **Trạng thái:** Đã phát hành
 
 Feature priority: NEW — WatchFlow Intelligence có chế độ **Lịch AI 24h** tối ưu lịch xem không trùng giờ. Thuật toán weighted interval scheduling chọn tối đa 8 chương trình từ XMLTV thật theo trọng số logistic học từ sở thích; chương trình chồng thời gian cạnh tranh cùng một vị trí, không bịa lịch khi thiếu EPG. Feature class: AI
 
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/eb333e86d8cb69489168d8bbfad95ed5f1815f0a)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/00e269d9d88d4279865266b24131f927af1b9f10)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.354-p5.1.269)
 
 ## P5.1.268 — AI nhắc chương trình hợp gu đúng lúc / Electron 4.23.353
 
@@ -1881,30 +1890,19 @@ Sửa cách hiển thị tiêu đề ở cửa sổ khoảng 600 px theo ảnh E
 
 ## P5.1.57 — Hoàn thiện Horizon và WatchFlow có dữ liệu thử nghiệm
 
-**Ứng dụng:** 4.23.141 · **Trạng thái:** Đã phát hành
+**Ứng dụng:** 4.23.141 · **Trạng thái:** Chưa có bản phát hành
 
 Kiểm tra WatchFlow với dữ liệu kênh giả lập và sửa tiêu đề thiếu tương phản trên nền tối.
 
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/3a8bd1b6c80b5bb6165db1990915f61c47074f6f)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.141-p5.1.57)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
 
 ## P5.1.56 — Thiết kế lại Horizon và gợi ý WatchFlow cục bộ
 
-**Ứng dụng:** 4.23.140 · **Trạng thái:** Đã phát hành
+**Ứng dụng:** 4.23.140 · **Trạng thái:** Chưa có bản phát hành
 
 Bổ sung lớp bố cục Horizon và các gợi ý WatchFlow dựa trên dữ liệu có sẵn cục bộ, kèm ảnh kiểm thử Electron.
 
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/38a28739b8e003f59cb3b863bc8df4a0ddb10e2b)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.140-p5.1.56)
-
-## P5.1.54 — Tinh chỉnh điều khiển phát và không gian TV
-
-**Ứng dụng:** 4.23.138 · **Trạng thái:** Đã phát hành
-
-Điều chỉnh bộ công cụ phát video và bố cục trang TV, giữ các nguồn kênh và chức năng vốn có.
-
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/e96ca46c8af19aa84c344c6df4430186b266e7b8)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.138-p5.1.54)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
 
 ## P5.1.51 — Sửa màn hình DVR trống theo ảnh kiểm thử
 

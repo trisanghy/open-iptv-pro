@@ -7,15 +7,28 @@ Trang này được tạo tự động từ GitHub Releases và ảnh kiểm th�
 [Mở WEBSITE changelog tương tác](https://raw.githack.com/trisanghy/open-iptv-pro/Positron/docs/positron-features/index.html) · [Giao diện HTML trong repository](index.html) · [Các bản phát hành](https://github.com/trisanghy/open-iptv-pro/releases) · [Nhật ký Git tiếng Việt](LOG_GIT_TIENG_VIET.md) · [Quy tắc ưu tiên tính năng](../../POSITRON_FEATURE_RULES.md)
 
 <details>
-<summary><strong>P5.1.269</strong> · AI lập lịch xem 24 giờ tránh trùng chương trình · CHƯA CÓ BẢN PHÁT HÀNH · TÍNH NĂNG</summary>
+<summary><strong>P5.1.270</strong> · AI khám phá kênh bằng contextual bandit · CHƯA CÓ BẢN PHÁT HÀNH · TÍNH NĂNG</summary>
 
-**Ứng dụng:** 4.23.354 · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
+**Ứng dụng:** 4.23.355 · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
+
+Feature priority: NEW — Chế độ **Khám phá AI** tính điểm UCB cho chủ đề ít được đánh giá kết hợp xác suất logistic đã học thực tế, chọn ra danh sách đa dạng, tránh lặp quá nhiều kênh cùng chủ đề và giảm dần mức khám phá khi chủ đề được phản hồi. Feature class: AI
+
+*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+
+[Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/tree/Positron) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/aabfd6c885a45920eb78e3df5d453d1addceadc4)
+
+</details>
+
+<details>
+<summary><strong>P5.1.269</strong> · AI lập lịch xem 24 giờ tránh trùng giờ / Electron 4.23.354 · ĐÃ PHÁT HÀNH · TÍNH NĂNG</summary>
+
+**Ứng dụng:** 4.23.354 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
 Feature priority: NEW — WatchFlow Intelligence có chế độ **Lịch AI 24h** tối ưu lịch xem không trùng giờ. Thuật toán weighted interval scheduling chọn tối đa 8 chương trình từ XMLTV thật theo trọng số logistic học từ sở thích; chương trình chồng thời gian cạnh tranh cùng một vị trí, không bịa lịch khi thiếu EPG. Feature class: AI
 
 *Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
 
-[Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/tree/Positron) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/eb333e86d8cb69489168d8bbfad95ed5f1815f0a)
+[Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.354-p5.1.269) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/00e269d9d88d4279865266b24131f927af1b9f10) · [Tải Windows Setup x64](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.354-p5.1.269/Open-IPTV-Pro-Setup-4.23.354-x64.exe) · [Tải gói ảnh QA](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.354-p5.1.269/Positron-P51269-20-Real-Screenshots.zip)
 
 </details>
 
@@ -2763,41 +2776,28 @@ Sửa cách hiển thị tiêu đề ở cửa sổ khoảng 600 px theo ảnh E
 </details>
 
 <details>
-<summary><strong>P5.1.57</strong> · Hoàn thiện Horizon và WatchFlow có dữ liệu thử nghiệm · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.57</strong> · Hoàn thiện Horizon và WatchFlow có dữ liệu thử nghiệm · CHƯA CÓ BẢN PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
 
-**Ứng dụng:** 4.23.141 · **Trạng thái:** ĐÃ PHÁT HÀNH
+**Ứng dụng:** 4.23.141 · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
 
 Kiểm tra WatchFlow với dữ liệu kênh giả lập và sửa tiêu đề thiếu tương phản trên nền tối.
 
 *Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
 
-[Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.141-p5.1.57) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/3a8bd1b6c80b5bb6165db1990915f61c47074f6f) · [Tải Windows Setup x64](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.141-p5.1.57/Open-IPTV-Pro-Setup-4.23.141-x64.exe) · [Tải gói ảnh QA](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.141-p5.1.57/Positron-P5157-20-Real-Screenshots.zip)
+[Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
 
 </details>
 
 <details>
-<summary><strong>P5.1.56</strong> · Thiết kế lại Horizon và gợi ý WatchFlow cục bộ · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.56</strong> · Thiết kế lại Horizon và gợi ý WatchFlow cục bộ · CHƯA CÓ BẢN PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
 
-**Ứng dụng:** 4.23.140 · **Trạng thái:** ĐÃ PHÁT HÀNH
+**Ứng dụng:** 4.23.140 · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
 
 Bổ sung lớp bố cục Horizon và các gợi ý WatchFlow dựa trên dữ liệu có sẵn cục bộ, kèm ảnh kiểm thử Electron.
 
 *Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
 
-[Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.140-p5.1.56) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/38a28739b8e003f59cb3b863bc8df4a0ddb10e2b) · [Tải Windows Setup x64](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.140-p5.1.56/Open-IPTV-Pro-Setup-4.23.140-x64.exe) · [Tải gói ảnh QA](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.140-p5.1.56/Positron-P5156-20-Real-Screenshots.zip)
-
-</details>
-
-<details>
-<summary><strong>P5.1.54</strong> · Tinh chỉnh điều khiển phát và không gian TV · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
-
-**Ứng dụng:** 4.23.138 · **Trạng thái:** ĐÃ PHÁT HÀNH
-
-Điều chỉnh bộ công cụ phát video và bố cục trang TV, giữ các nguồn kênh và chức năng vốn có.
-
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
-
-[Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.138-p5.1.54) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/e96ca46c8af19aa84c344c6df4430186b266e7b8) · [Tải Windows Setup x64](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.138-p5.1.54/Open-IPTV-Pro-Setup-4.23.138-x64.exe) · [Tải gói ảnh QA](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.138-p5.1.54/Positron-P5154-20-Real-Screenshots.zip)
+[Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
 
 </details>
 
