@@ -12,7 +12,7 @@
  const selector='#channelList .folder-header[data-group],#folderManager .folder-card[data-group],#channelList .channel-item[data-channel-id]';
  const HOLD_MS=800;
  const CANCEL_SLOP=14;
- let gesture=null,ghost=null,highlight=null,scrollFrame=0,suppressClickUntil=0,suppressClickSource=null;
+ let gesture=null,ghost=null,highlight=null,scrollFrame=0,suppressClickUntil=0,suppressClickSource=null,activeDragMove=null;
  // No extra drag icons: long press anywhere on a channel or folder.
  // A short tap retains the existing play/expand behavior; normal scroll cancels
  // the pending hold. Use cancellable touchmove for reliable iPhone Safari drag.
@@ -29,6 +29,7 @@
  }
  function reset(){
   if(gesture?.timer)w.clearTimeout(gesture.timer);
+  if(activeDragMove){d.removeEventListener('touchmove',activeDragMove,true);activeDragMove=null;}
   gesture?.source?.classList.remove('touch-sorting');
   if(highlight){highlight.classList.remove('touch-sort-before','touch-sort-after','touch-sort-into');highlight=null;}
   if(ghost){ghost.remove();ghost=null;}
@@ -39,6 +40,9 @@
   const g=gesture;if(!g||g.started||!isMobile())return;
   if(!canEdit()){api.toast('Hồ sơ trẻ em không được thay đổi thứ tự','warn');reset();return;}
   g.started=true;g.source.classList.add('touch-sorting');
+  // Only a long-press reorder drag needs to cancel native scrolling.
+  activeDragMove=handleActiveDragMove;
+  d.addEventListener('touchmove',activeDragMove,{capture:true,passive:false});
   ghost=d.createElement('div');ghost.className='web-touch-sort-ghost';
   ghost.textContent=g.kind==='channel'?(api.getStore().channels.find(c=>c.id===g.id)?.name||'Kênh'):g.id;
   ghost.setAttribute('aria-hidden','true');d.body.append(ghost);
@@ -126,20 +130,23 @@
    lastX:touch.clientX,lastY:touch.clientY,started:false,drop:null,timer:0};
   gesture.timer=w.setTimeout(startDrag,HOLD_MS);
  },{capture:true,passive:true});
- d.addEventListener('touchmove',e=>{
-  const g=gesture;if(!g)return;
+ function handleActiveDragMove(e){
+  const g=gesture;if(!g?.started)return;
   if(e.touches.length!==1){reset();return;}
   const touch=touchAt(e,g.identifier);if(!touch)return;
   g.lastX=touch.clientX;g.lastY=touch.clientY;
-  if(!g.started){
-   // Finger movement before 0.8 s is a normal swipe/scroll, not a drag.
-   if(Math.hypot(g.lastX-g.x,g.lastY-g.y)>CANCEL_SLOP)reset();
-   return;
-  }
   if(e.cancelable)e.preventDefault();
   positionGhost(touch.clientX,touch.clientY);dropTarget(touch.clientX,touch.clientY);
   if(!scrollFrame)scrollFrame=w.requestAnimationFrame(scrollStep);
- },{capture:true,passive:false});
+ }
+ // Keep ordinary channel-list swipes on the browser's passive scrolling path.
+ d.addEventListener('touchmove',e=>{
+  const g=gesture;if(!g||g.started)return;
+  if(e.touches.length!==1){reset();return;}
+  const touch=touchAt(e,g.identifier);if(!touch)return;
+  g.lastX=touch.clientX;g.lastY=touch.clientY;
+  if(Math.hypot(g.lastX-g.x,g.lastY-g.y)>CANCEL_SLOP)reset();
+ },{capture:true,passive:true});
  d.addEventListener('touchend',e=>{
   const g=gesture;if(!g)return;
   const touch=touchAt(e,g.identifier);if(!touch)return;
