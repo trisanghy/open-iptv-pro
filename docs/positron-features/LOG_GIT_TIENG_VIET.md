@@ -2,14 +2,23 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
-## P5.1.168 — tùy chỉnh 10/25/50 kênh thiếu logo mỗi trang
+## P5.1.169 — lọc kênh thiếu logo theo tình trạng mã EPG
 
-**Ứng dụng:** 4.23.253 · **Trạng thái:** Chưa có bản phát hành
+**Ứng dụng:** 4.23.254 · **Trạng thái:** Chưa có bản phát hành
+
+Feature priority: NEW — Cho phép phát hiện kênh vừa thiếu logo vừa thiếu mã nhận diện EPG hoặc có EPG nhưng thiếu logo, hỗ trợ người dùng tự ưu tiên sửa metadata thư viện lớn mà không thay đổi playlist. User action: Mở Thư viện → Kênh thiếu logo → chọn Mọi tình trạng EPG, Thiếu cả mã EPG hoặc Đã có mã EPG; kết hợp tìm kiếm, lọc nhóm, sắp xếp, phân trang và xuất CSV theo đúng tập đã lọc.
+
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/e4ce55e29cbfe6d691fa75cfb02eab7b802eba59)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+
+## P5.1.168 — Thanh phân trang kênh thiếu logo luôn dễ thao tác / Electron 4.23.253
+
+**Ứng dụng:** 4.23.253 · **Trạng thái:** Đã phát hành
 
 Feature priority: BLOCKER_FIX — Thanh điều hướng phân trang dữ liệu thư viện bị che khỏi vùng nhìn khiến người dùng không mở được những trang kênh còn lại khi danh sách lớn; đưa nút lên trên vùng cuộn giúp truy cập đầy đủ. Electron screenshot: positron-p51168-pager-visible-after-1920x1080-real.png
 
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/3cadcd3c61547c09bb45f8aebfb837df63baeeb5)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/14265297ee9e49a053ec8e0440d9dfaddde59641)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.253-p5.1.168)
 
 ## P5.1.167 — Thay đổi số kênh thiếu logo mỗi trang / Electron 4.23.252
 
