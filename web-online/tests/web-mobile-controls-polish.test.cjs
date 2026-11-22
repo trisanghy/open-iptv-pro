@@ -28,7 +28,7 @@ test('Five bottom tabs fit narrow iPhones with no flex overflow',()=>{
  assert.ok(css.includes('.mobile-more-trigger'));
 });
 test('Polish stylesheet loads last in both Pages and generated Web builds',()=>{
- assert.match(html,/web-tv-wide\.css[^"]*"\/><link rel="stylesheet" href="web-mobile-controls-polish\.css\?v=cast-pseudo-icon-fix-20261122g"/);
+ assert.match(html,/web-tv-wide\.css[^"]*"\/><link rel="stylesheet" href="web-mobile-controls-polish\.css\?v=quick-icons-unified-20261119b"/);
  assert.ok(builder.includes("'web-mobile-controls-polish.css'"));
  assert.ok(builder.includes('web-mobile-controls-polish.css?v=quick-icons-unified-20261119b'));
  assert.ok(workflow.includes('web-online/tests/web-mobile-controls-polish.test.cjs'));

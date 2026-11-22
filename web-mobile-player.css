@@ -934,19 +934,3 @@ html[data-iptv-device="mobile"] .mobile-more-action[href="huong-dan.html"]{--mob
  html[data-iptv-device="mobile"] .mobile-more-action{font-size:12px!important;gap:7px!important;padding:9px 8px!important}
  html[data-iptv-device="mobile"] .mobile-more-action>.mobile-more-icon{width:22px!important;height:22px!important;flex-basis:22px!important}
 }
-
-/* Cast icon: force exactly one visible SVG, independent of legacy icon fonts
-   and mobile/desktop button overrides. */
-#page-tv #castBtn{
- display:inline-flex!important;align-items:center!important;justify-content:center!important;
- font-size:0!important;line-height:1!important;
- overflow:hidden!important;white-space:nowrap!important;
-}
-#page-tv #castBtn>.cast-svg-icon{
- display:block!important;flex:0 0 24px!important;width:24px!important;height:24px!important;
- min-width:24px!important;max-width:24px!important;min-height:24px!important;
- fill:none!important;stroke:currentColor!important;stroke-width:1.9!important;
- pointer-events:none!important;opacity:1!important;visibility:visible!important;
- transform:none!important;position:static!important;
-}
-#page-tv #castBtn>:not(.cast-svg-icon){display:none!important}

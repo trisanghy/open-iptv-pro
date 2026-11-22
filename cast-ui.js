@@ -11,47 +11,6 @@
   const ua=String(navigator.userAgent||'');
   return /iPhone|iPad|iPod/i.test(ua)||(/Macintosh/i.test(ua)&&Number(navigator.maxTouchPoints||0)>1);
  };
- const isAndroid=()=>/Android/i.test(String(navigator.userAgent||''));
- // Browser-managed device discovery is available on some Android Chrome builds.
- // prompt() must be called synchronously within the user's Cast tap.
- function showAndroidRemoteHelp(error){
-  const video=$('video'),canRetry=typeof video?.remote?.prompt==='function';
-  $('castTitle').textContent='Truyền hình lên TV trên Android';
-  $('castModal').dataset.airplayMobile='false';
-  $('castModal').classList.remove('hidden');
-  $('airplaySection').classList.add('hidden');
-  for(const id of ['castPlay','castAirplay','castLink','castStop'])$(id).disabled=true;
-  $('castScan').disabled=!canRetry;
-  $('castScan').textContent=canRetry?'Chọn TV bằng Chrome':'Tìm TV';
-  $('castScan').setAttribute('aria-label',canRetry?'Thử chọn TV bằng Chrome':'Tìm TV');
-  const kind=String(error?.name||'');
-  if(!error&&canRetry){
-   status('Nhấn “Chọn TV bằng Chrome” để mở danh sách TV. Nếu Chrome không hỗ trợ luồng IPTV này, hãy thử kênh khác hoặc Truyền màn hình từ Android.',false);
-  }else if(kind==='NotSupportedError'){
-   status('Chrome nhận diện được TV nhưng không hỗ trợ truyền trực tiếp luồng đang phát. Hãy thử kênh khác hoặc dùng Truyền màn hình trên Android.',true);
-  }else if(kind==='NotAllowedError'||kind==='AbortError'){
-   status('Chrome đã hủy hoặc từ chối mở bộ chọn TV. Nhấn “Chọn TV bằng Chrome” để thử lại, hoặc dùng Truyền màn hình của Android.',true);
-  }else if(kind==='NotFoundError'){
-   status('Chrome không tìm được thiết bị tương thích với video hiện tại. Hãy kiểm tra điện thoại và TV cùng mạng Wi-Fi, sau đó thử lại.',true);
-  }else if(!canRetry){
-   status('Trình duyệt này không cung cấp bộ chọn TV cho trang web. Hãy mở bằng Chrome có hỗ trợ phát từ xa hoặc dùng Truyền màn hình trong Cài đặt nhanh Android.',false);
-  }else{
-   status('Không mở được bộ chọn TV của Chrome'+(kind?' ('+kind+')':'')+'. Hãy thử lại hoặc dùng Truyền màn hình trên Android.',true);
-  }
- }
- function requestAndroidRemotePicker(){
-  const video=$('video');
-  if(typeof video?.remote?.prompt!=='function')return false;
-  video.disableRemotePlayback=false;
-  // This function is called only from the dedicated, user-tapped Chrome button.
-  // Keep the Cast dialog visible: Chrome can leave prompt() pending without opening a picker.
-  status('Đang yêu cầu Chrome mở bộ chọn TV…');
-  try{
-   const pending=video.remote.prompt();
-   pending?.catch?.(error=>showAndroidRemoteHelp(error));
-  }catch(error){showAndroidRemoteHelp(error);}
-  return true;
- }
  // Called synchronously inside the user's Cast tap; Safari requires activation.
  function requestAirPlayPicker(){
   const video=$('video');if(!video)return false;
@@ -83,27 +42,15 @@
   channel=ch;source=url||ch?.url;
   $('castChannel').textContent=(ch?.name||'')+' · '+(ch?.group||'');
   $('castUrl').value='';$('castCopy').disabled=true;
-  // Always present a visible Cast action on Android. A Remote Playback prompt
-  // can be a no-op or pending forever; never hide the entire Cast UI behind it.
-  if(isAndroid()&&!hasNative){
-   showAndroidRemoteHelp();return;
-  }
   // AirPlay device selection is owned by WebKit, not the desktop Cast backend.
   if(isAppleMobile()&&!hasNative){
    if(requestAirPlayPicker())return;
    showMobileAirPlayGuide();return;
   }
-  $('castTitle').textContent='▣ Phát lên TV / thiết bị khác';
   $('castModal').dataset.airplayMobile='false';
   $('castModal').classList.remove('hidden');
   $('airplaySection').classList.toggle('hidden',navigator.platform?.toLowerCase().includes('mac')===false);
-  if(!hasNative){
-   $('castScan').disabled=true;$('castPlay').disabled=true;$('castAirplay').disabled=true;$('castLink').disabled=true;$('castStop').disabled=true;
-   $('airplaySection').classList.add('hidden');
-   $('castTitle').textContent='Phát lên TV / thiết bị khác';
-   status('Trình duyệt hiện tại không hỗ trợ tìm TV trực tiếp. Google Cast trong ứng dụng desktop cần backend native; trên iPhone/iPad hãy dùng Safari và AirPlay.',false);
-   return;
-  }
+  if(!hasNative){status('Chức năng Cast chỉ có trong bản ứng dụng đã cài cho Windows hoặc Mac.',true);$('castScan').disabled=true;$('castPlay').disabled=true;$('castAirplay').disabled=true;$('castLink').disabled=true;return;}
   api.capabilities().then(c=>{macOS=c.platform==='darwin';$('airplaySection').classList.toggle('hidden',!macOS);if(macOS)scanAirplay();}).catch(()=>{});
   status('Google Cast và AirPlay là hai loại thiết bị khác nhau. Có thể tìm AirPlay ở mục bên dưới.');
   scan();
@@ -165,10 +112,7 @@
  $('castClose').addEventListener('click',close);$('castDone').addEventListener('click',close);
  $('castModal').addEventListener('click',e=>{if(e.target===$('castModal'))close();});
  window.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('castModal').classList.contains('hidden'))close();});
- $('castScan').addEventListener('click',()=>{
-  if(isAndroid()&&!hasNative){if(!requestAndroidRemotePicker())showAndroidRemoteHelp();return;}
-  scan();
- });
+ $('castScan').addEventListener('click',scan);
  $('airplayScan').addEventListener('click',scanAirplay);
  $('castPlay').addEventListener('click',play);
  $('castAirplay').addEventListener('click',airplay);
