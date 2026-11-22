@@ -127,3 +127,7 @@ html[data-theme="amoled"] #iptvCastPanel{background-image:none!important}
 .iptv-tv-body .tv-row button[data-active="true"]{background:#258758;color:white}
 .iptv-tv-body .tv-help{margin-top:17px;font-size:12px!important;opacity:.8}
 .iptv-tv-body [hidden]{display:none!important}
+
+/* Keep the TV URL and remote controls inside narrow mobile viewports. */
+#iptvCastPanel .cx-link{overflow-wrap:anywhere;word-break:break-word;max-width:100%;min-width:0}
+#iptvCastPanel .cx-card,#iptvCastPanel .cx-remote{overflow-wrap:anywhere}
