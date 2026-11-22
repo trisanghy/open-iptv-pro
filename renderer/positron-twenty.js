@@ -121,14 +121,28 @@
     :'Chưa có kênh yêu thích trong các nguồn đang bật. Đánh dấu sao để lưu kênh hoặc kiểm tra những nguồn đã tắt trong Quản lý nguồn IPTV.';
    const copy=empty.firstChild;
    if(copy?.nodeType===3&&copy.textContent!==guidance)copy.textContent=guidance;
-   if(empty.querySelector('#positronFavoritesSources'))return;
-   const button=d.createElement('button');
-   button.id='positronFavoritesSources';button.type='button';
-   button.className='btn btn-primary po-fav-action';
-   button.textContent='Quản lý nguồn IPTV';
-   button.title='Mở trang quản lý và thêm nguồn IPTV';
-   button.addEventListener('click',()=>window.IPTVState?.setPage?.('sources'));
-   empty.append(button);
+   // P5.1.174: có kênh sẵn nhưng chưa có Favorites thì đưa người dùng về TV để bấm sao.
+   // Chỉ khi chưa có kênh mới giữ lối dẫn vào Quản lý nguồn IPTV.
+   const channels=window.IPTVState?.getChannels?.()||[];
+   const hasChannels=channels.length>0;
+   let button=empty.querySelector('#positronFavoritesSources');
+   if(!button){
+    button=d.createElement('button');button.id='positronFavoritesSources';
+    button.type='button';button.className='btn btn-primary po-fav-action';
+    button.addEventListener('click',()=>{
+     if((window.IPTVState?.getChannels?.()||[]).length){
+      window.IPTVState?.setPage?.('tv');
+      byId('searchBox')?.focus({preventScroll:true});
+     }else window.IPTVState?.setPage?.('sources');
+    });
+    empty.append(button);
+   }
+   const actionText=hasChannels?'Xem kênh để đánh dấu ★':'Quản lý nguồn IPTV';
+   const actionTitle=hasChannels?
+    'Mở TV và bấm sao bên cạnh kênh muốn yêu thích':
+    'Mở trang quản lý và thêm nguồn IPTV';
+   if(button.textContent!==actionText)button.textContent=actionText;
+   if(button.title!==actionTitle)button.title=actionTitle;
   };
   new MutationObserver(syncFavoriteSourceAction).observe(favoriteList,{childList:true,subtree:true});
   const countNode=byId('sourceCount');

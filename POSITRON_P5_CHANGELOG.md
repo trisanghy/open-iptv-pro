@@ -1,3 +1,12 @@
+## P5.1.174 — Yêu thích trống dẫn đúng tới TV thay vì Quản lý nguồn / Electron 4.23.259
+- Feature priority: NEW — Ảnh Electron thật P5.1.173 tại trang Yêu thích cho thấy 561 kênh đã nhập nhưng danh sách chưa có sao, nút CTA vẫn ghi Quản lý nguồn IPTV; dẫn người dùng sang việc thêm nguồn không liên quan. CTA giờ đổi theo dữ liệu hiện có: có kênh → Xem kênh để đánh dấu ★ (quay về TV, focus ô tìm); không có kênh → Quản lý nguồn IPTV.
+- User action: Mở Yêu thích khi đã có kênh nhưng chưa đánh dấu sao → bấm Xem kênh để đánh dấu ★ → tự đến TV và focus tìm kênh; việc đánh dấu sao vẫn do người dùng thực hiện.
+- Electron screenshot: positron-p51174-favorite-action-after-1920x1080-real.png
+- Baseline thật đã mở: `positron-p51173-desktop-1920x1080-yeu-thich-real.png` hiện nút Quản lý nguồn IPTV dù có 561 kênh.
+- Không sửa danh sách kênh, Favorites lưu trữ, URL stream hoặc phát tự động. Duy trì nhánh fallback tới Sources khi chưa có nguồn; mở rộng bài test P5.1.9 thay vì bỏ assert.
+- Kiểm thử mới: Node regression hai nhánh, ảnh Electron 1920×1080 trước/sau, xác minh trang TV, focus, danh sách hiển thị, không autoplay/không thay đổi nguồn.
+- Trạng thái: CANDIDATE — phải xác minh Node + ảnh Electron thật + Release installers trước khi tính vòng.
+
 ## P5.1.173 — Quay lại đúng vị trí kiểm kê sau khi tìm kênh / Electron 4.23.258
 - Feature priority: NEW — Ảnh Electron P5.1.172 cho thấy bấm Tìm sẽ đưa đúng một kênh lên TV nhưng người dùng phải tìm lại vị trí kiểm kê; bổ sung nút ↩ Kiểm kê · trang N xuất hiện cạnh ô tìm TV chỉ sau thao tác định vị, quay về đúng trang kênh thiếu logo đang xử lý mà không mất bộ lọc.
 - User action: Từ Thư viện → Kênh thiếu logo → sang trang 2 → bấm Tìm một kênh → chọn ↩ Kiểm kê · trang 2 ngay dưới ô tìm để quay lại đúng trang thứ hai và tiếp tục rà soát.

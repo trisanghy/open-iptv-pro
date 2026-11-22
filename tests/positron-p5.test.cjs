@@ -77,7 +77,9 @@ test('P5.1.9 Favorites empty state navigates to Sources without mutating stored 
  const audit=read('scripts/positron-20-extension.cjs');
  assert.ok(js.includes("const favoriteList=byId('favoriteList')"));
  assert.ok(js.includes("empty.querySelector('#positronFavoritesSources')"));
- assert.ok(js.includes("button.addEventListener('click',()=>window.IPTVState?.setPage?.('sources'))"));
+ assert.ok(js.includes("window.IPTVState?.setPage?.('sources')"),'Không có kênh vẫn mở Sources');
+ assert.ok(js.includes("window.IPTVState?.setPage?.('tv')"),'Có kênh sẽ mở TV để đánh dấu sao');
+ assert.ok(js.includes("window.IPTVState?.getChannels?.()||[]"),'Đếm kênh thật theo nguồn đang bật');
  assert.ok(js.includes('new MutationObserver(syncFavoriteSourceAction)'));
  assert.ok(css.includes('#page-fav #positronFavoritesSources'));
  assert.ok(audit.includes("destination,'page-sources'"));
@@ -1760,4 +1762,18 @@ test('P5.1.167 phân trang 10/25/50 kênh thiếu logo và giữ chức năng t�
  for(const png of ['positron-p51167-missing-page-size-before-1920x1080-real.png','positron-p51167-missing-page-size-after-1920x1080-real.png'])
   assert.ok(qa.includes(png)&&flow.includes(png),'P167 screenshot check '+png);
  assert.ok(!ui.includes('fetch(')&&!ui.includes('importSource('));
+});
+
+test('P5.1.174 Empty Favorites CTA hướng TV khi có kênh, Sources khi không có kênh',()=>{
+ const js=read('renderer/positron-twenty.js');
+ const qa=read('scripts/positron-20-extension.cjs');
+ assert.ok(js.includes("const hasChannels=channels.length>0"));
+ assert.ok(js.includes("hasChannels?'Xem kênh để đánh dấu ★':'Quản lý nguồn IPTV'"));
+ assert.ok(js.includes("button.addEventListener('click',()=>{"));
+ assert.ok(js.includes("window.IPTVState?.setPage?.('tv')"));
+ assert.ok(js.includes("window.IPTVState?.setPage?.('sources')"));
+ assert.ok(js.includes("byId('searchBox')?.focus({preventScroll:true})"));
+ assert.ok(js.includes("if(button.textContent!==actionText)button.textContent=actionText"));
+ assert.ok(qa.includes('favoriteActionQA'));
+ assert.ok(!js.includes('window.IPTVState?.importSource?.('));
 });
