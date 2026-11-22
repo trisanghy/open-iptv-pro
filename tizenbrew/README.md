@@ -1,4 +1,28 @@
-# Open IPTV Pro TV · TizenBrew v0.1.21 (thử nghiệm)
+# Open IPTV Pro TV · TizenBrew v0.1.22 (OTA)
+
+## v0.1.22 — Khắc phục bản TV bị kẹt tại 0.1.17 dù đã xóa/cài lại
+
+### Nguyên nhân xác minh được
+TizenBrew tải `package.json` và các file module từ `https://cdn.jsdelivr.net/gh/trisanghy/open-iptv-pro@tizenbrew/`. Trong log GitHub Actions, jsDelivr trả HTTP 200 nhưng có `"throttled":true`; yêu cầu purge thực tế bị từ chối. Các workflow cũ chỉ kiểm tra mã HTTP nên báo thành công sai. Lỗi này làm việc xóa/cài lại cùng đường dẫn module vẫn nhận code cache cũ.
+
+### Cách cài lại một lần qua đường dẫn đã xác minh
+Mở **TizenBrew > Module Manager > Add GitHub Module**, nhập nguyên văn:
+
+```text
+gh/trisanghy/open-iptv-pro@77e9b0bebbbad18914334b02ff3042e5883db939
+```
+
+Đây là **commit chính xác đã được GitHub Actions xác minh CDN tải được cả `package.json` v0.1.22 và `tizenbrew/bootstrap.html`**, xem workflow `tizenbrew-ota-smoke.yml`. Không thay thành `@tizenbrew` vì URL cũ đang bị CDN hạn chế purge. Có thể xóa thẻ Open IPTV Pro cũ khỏi danh sách TizenBrew nếu muốn tránh trùng; không chọn xóa dữ liệu TizenBrew.
+
+### Cơ chế OTA không phụ thuộc cache URL nhánh
+- `package.json` đặt `appPath: tizenbrew/bootstrap.html`.
+- Bootstrap đọc SHA đầu nhánh `tizenbrew` bằng GitHub API khi mở ứng dụng.
+- HTML TV được lấy qua `https://cdn.jsdelivr.net/gh/trisanghy/open-iptv-pro@<sha>/tizenbrew/index.html`, tức **URL commit mới cho mỗi bản mới**, tránh URL cố định `@tizenbrew` bị giữ bản cũ.
+- Nếu CDN lỗi, tải bản đúng SHA từ `raw.githubusercontent.com`. Nếu API lỗi, thử tải trực tiếp `tizenbrew/index.html` của nhánh, kèm cache-buster.
+- Bootstrap thay nội dung cùng WebView bằng `document.open/write/close`, giữ nguyên origin của TizenBrew, không xóa dữ liệu kênh, đăng nhập hoặc yêu thích.
+- **Lưu ý:** TizenBrew sẽ hiển thị thẻ module `0.1.22` vì đường cài dùng commit cố định; còn bên trong ứng dụng sẽ tải và hiển thị phiên bản mới hơn từ HEAD sau các lần cập nhật. Không được hiểu số thẻ bootstrap là phiên bản runtime.
+- Không khẳng định đã kiểm thử trên Samsung TV thực tế: mới xác minh logic Node.js, GitHub Actions và URL CDN theo commit.
+- Workflow purge mới phải kiểm tra `.paths[*].throttled` và so sánh `package.json` thật trên CDN. Không tiếp tục gọi purge mỗi commit code tránh bị rate limit.
 
 ## v0.1.21 — Khắc phục lỗi không phát được bất kỳ kênh IPTV nào
 
