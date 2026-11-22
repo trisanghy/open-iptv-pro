@@ -30,7 +30,9 @@
  tab.type='button';tab.id='poFlowPlusAI';tab.className='po-ai-tab';
  tab.textContent='✦ AI hợp gu';tab.title='Học sở thích xem và phân loại theo EPG';
  tab.setAttribute('aria-label','WatchFlow Intelligence: học máy sở thích và chủ đề theo EPG');
- tab.setAttribute('aria-pressed','false');toolbar.append(tab);
+ tab.setAttribute('aria-pressed','false');
+ const aiSlot=d.createElement('div');aiSlot.id='poAIEntry';aiSlot.className='po-ai-entry';
+ aiSlot.append(tab);toolbar.after(aiSlot);
  const area=d.createElement('section');area.id='poIntelligenceResults';area.className='po-ai-panel';
  area.hidden=true;area.setAttribute('aria-live','polite');
  panel.querySelector('#poFlowPlusResults')?.after(area);

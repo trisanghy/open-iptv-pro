@@ -1149,7 +1149,7 @@ async function runTwenty(page){
    similarButton:!!document.getElementById('poFlowPlussimilar'),
    zapButton:!!document.getElementById('poFlowPluszap'),
    notPlaying:window.IPTVState.getCurrent()===null,
-   navOneRow:(()=>{const a=[...panel.querySelectorAll('.po-flowplus-nav button')];return a.length===6&&a.every(b=>Math.abs(b.getBoundingClientRect().top-a[0].getBoundingClientRect().top)<=1);})(),
+   navOneRow:(()=>{const a=[...panel.querySelectorAll('.po-flowplus-nav button')];return a.length===5&&a.every(b=>Math.abs(b.getBoundingClientRect().top-a[0].getBoundingClientRect().top)<=1);})(),
    navNoOverflow:(()=>{const a=panel.querySelector('.po-flowplus-nav');return a.scrollWidth<=a.clientWidth+1;})(),
    navNoTruncatedLabels:[...panel.querySelectorAll('.po-flowplus-nav button span')].every(label=>label.scrollWidth<=label.clientWidth+1),
    ariaFull:[...panel.querySelectorAll('.po-flowplus-nav button')].every(b=>b.getAttribute('aria-label')?.length>=5),
