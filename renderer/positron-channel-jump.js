@@ -84,9 +84,21 @@
  // Focus never starts playback: Enter/Space remain native playback actions.
  const channelList=d.getElementById('channelList');
  if(channelList){
-  channelList.setAttribute('aria-label','Danh sách kênh, dùng các phím mũi tên, Home, End, Page Up hoặc Page Down để chuyển vị trí');
+  channelList.setAttribute('aria-label','Danh sách kênh, dùng lên/xuống để duyệt; trái/phải để chuyển nhóm; Home, End, Page Up và Page Down để nhảy vị trí');
+  // P230: jump only between visible group boundaries, never touch playback.
+  const groupBoundaryTarget=(row,direction)=>{
+   let group=row.previousElementSibling;
+   while(group&&!group.matches('.folder-header'))group=group.previousElementSibling;
+   if(!group)return row;
+   const headers=[...channelList.querySelectorAll('.folder-header')];
+   for(let i=headers.indexOf(group)+direction;i>=0&&i<headers.length;i+=direction){
+    const candidate=headers[i].nextElementSibling;
+    if(candidate?.matches('.channel-item'))return candidate;
+   }
+   return row;
+  };
   channelList.addEventListener('keydown',event=>{
-   const keys=['ArrowUp','ArrowDown','Home','End','PageUp','PageDown'];
+   const keys=['ArrowUp','ArrowDown','Home','End','PageUp','PageDown','ArrowLeft','ArrowRight'];
    const favoriteKey=(event.key==='f'||event.key==='F')&&!event.ctrlKey&&!event.altKey&&!event.metaKey;
    if(!favoriteKey&&!keys.includes(event.key))return;
    const current=event.target;
@@ -115,7 +127,9 @@
    event.preventDefault();
    event.stopPropagation();
    const pageSize=Math.max(1,Math.floor(channelList.clientHeight/Math.max(35,current.getBoundingClientRect().height)));
-   const targetIndex=event.key==='Home'?0:event.key==='End'?rows.length-1:
+   const groupMove=event.key==='ArrowLeft'||event.key==='ArrowRight';
+   const targetIndex=groupMove?rows.indexOf(groupBoundaryTarget(current,event.key==='ArrowRight'?1:-1)):
+    event.key==='Home'?0:event.key==='End'?rows.length-1:
     event.key==='ArrowDown'?Math.min(rows.length-1,index+1):
     event.key==='ArrowUp'?Math.max(0,index-1):
     event.key==='PageDown'?Math.min(rows.length-1,index+pageSize):
@@ -127,7 +141,7 @@
    else if(nextRect.bottom>listRect.bottom)channelList.scrollTop+=nextRect.bottom-listRect.bottom;
    next.focus({preventScroll:true});
    const name=next.querySelector('.channel-text b')?.textContent||'';
-   status.textContent='Đang chọn '+(targetIndex+1)+'/'+rows.length+': '+name+'. Nhấn Enter để phát.';
+   status.textContent=(groupMove?'Đã chuyển nhóm. ':'')+'Đang chọn '+(targetIndex+1)+'/'+rows.length+': '+name+'. Nhấn Enter để phát.';
   });
  }
  d.addEventListener('keydown',event=>{

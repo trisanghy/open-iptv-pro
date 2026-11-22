@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.314",
-  "description": "Positron P5.1.229: phím F thêm và bỏ yêu thích ngay trên hàng kênh",
+  "version": "4.23.315",
+  "description": "Positron P5.1.230: chuyển nhanh giữa nhóm kênh bằng phím trái/phải",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

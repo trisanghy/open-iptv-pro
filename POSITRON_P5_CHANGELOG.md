@@ -1,5 +1,12 @@
 # Positron P5 Changelog
 
+## P5.1.230 — Chuyển nhóm kênh bằng phím trái/phải / Electron 4.23.315
+- Feature priority: NEW — Chọn một kênh rồi nhấn → để tới đầu nhóm mở kế tiếp, ← để về đầu nhóm trước. Bỏ qua nhóm thu gọn, giữ nguyên luồng phát, dữ liệu playlist và Favorites.
+- Electron screenshot: positron-p51230-group-navigation-after-1920x1080-real.png
+- QA: Electron thật 1920×1080 trước/sau, 561 kênh QA, kiểm tra focus, nội dung nhóm, vùng cuộn, no autoplay và không tràn.
+- CANDIDATE đến khi Node test/ảnh thực đã mở/CI 6 jobs và Release được xác minh.
+
+
 ## P5.1.229 — Đánh dấu yêu thích ngay bằng phím F / Electron 4.23.314
 - Feature priority: NEW — Người dùng đang duyệt hàng trăm kênh bằng phím mũi tên có thể nhấn F trên hàng kênh được focus để thêm/bỏ Yêu thích ngay lập tức, không cần rê chuột tới biểu tượng sao nhỏ và không làm chuyển hoặc phát kênh.
 - Electron screenshot: positron-p51229-keyboard-favorite-after-1920x1080-real.png

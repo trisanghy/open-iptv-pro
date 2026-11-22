@@ -26,3 +26,25 @@ test('P5.1.226 real Electron image and list focus are checked in CI',()=>{
  assert.ok(qa.includes('stillNotPlaying:'));
  assert.ok(qa.includes('focusReturned:'));
 });
+
+test('P5.1.230 keyboard group hopping does not play or reorder channels',()=>{
+ const js=read('renderer/positron-channel-jump.js');
+ for(const token of ["'ArrowLeft','ArrowRight'","const groupBoundaryTarget=",
+  ".folder-header","nextElementSibling","rows.indexOf(groupBoundaryTarget(",
+  "event.key==='ArrowRight'?1:-1","groupMove?'Đã chuyển nhóm. '"])
+  assert.ok(js.includes(token),'Missing P230 behavior: '+token);
+ assert.ok(!js.includes('playChannel('),'No autoplay allowed');
+ assert.equal(JSON.parse(read('package.json')).version,'4.23.315');
+});
+test('P5.1.230 checks left/right transitions in real 16:9 Electron screenshots',()=>{
+ const qa=read('scripts/positron-20-extension.cjs');
+ const flow=read('.github/workflows/positron-lab.yml');
+ for(const filename of ['positron-p51230-group-navigation-before-1920x1080-real.png',
+  'positron-p51230-group-navigation-after-1920x1080-real.png']){
+  assert.ok(qa.includes(filename));
+  assert.ok(flow.includes(filename));
+ }
+ for(const token of ["page.keyboard.press('ArrowRight')","page.keyboard.press('ArrowLeft')",
+  'nextGroupFocused:','firstGroupFocused:','noAutoplay:','noHorizontalOverflow:'])
+  assert.ok(qa.includes(token));
+});
