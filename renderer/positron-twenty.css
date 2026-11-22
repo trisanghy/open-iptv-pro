@@ -947,3 +947,15 @@ html[data-positron="true"] #poDvrUndoName:focus-visible{
  outline:2px solid var(--po-accent,#79dfc6);outline-offset:2px;
 }
 @media(max-width:700px){html[data-positron="true"] #poDvrUndoName:not([hidden]){margin-left:0;width:100%}}
+
+/* P202: DVR manual fifteen-minute end-time extension button. */
+html[data-positron="true"] .po-dvr-extend-end{
+ display:inline-flex;align-items:center;justify-content:center;
+ min-height:30px;margin:6px 0 0;padding:5px 10px;
+ border:1px solid var(--po-border,#325160);border-radius:7px;
+ background:var(--po-input,#17303c);color:var(--po-accent,#79dfc6);
+ font:inherit;font-size:11px;cursor:pointer;max-width:100%;white-space:normal;
+}
+html[data-positron="true"] .po-dvr-extend-end:focus-visible{
+ outline:2px solid var(--po-accent,#79dfc6);outline-offset:2px;
+}

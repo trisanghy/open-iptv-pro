@@ -621,6 +621,39 @@
  attachDvrPresets('dvrStart','dvrEnd','poDvrDurationPresets');
  attachDvrPresets('dvrQuickStart','dvrQuickEnd','poDvrQuickDurationPresets');
 
+
+ // P202: safely extend the ending of a pending recording by fifteen minutes.
+ // This action never submits a DVR job or changes playback.
+ const attachDvrExtendEnd=(startId,endId,buttonId)=>{
+  const start=byId(startId),end=byId(endId);
+  if(!start||!end||byId(buttonId))return;
+  const button=d.createElement('button');
+  button.id=buttonId;button.type='button';button.className='po-dvr-extend-end';
+  button.textContent='Gia hạn +15 phút';
+  button.setAttribute('aria-label','Gia hạn giờ kết thúc ghi hình thêm 15 phút, tối đa 8 giờ');
+  button.addEventListener('click',()=>{
+   const from=start.value?new Date(start.value):new Date(NaN);
+   const until=end.value?new Date(end.value):new Date(NaN);
+   if(!Number.isFinite(from.getTime())||!Number.isFinite(until.getTime())||until<=from){
+    end.focus({preventScroll:true});
+    window.IPTVState?.toast?.('Chọn giờ bắt đầu và kết thúc hợp lệ trước khi gia hạn','warn');
+    return;
+   }
+   const next=new Date(until.getTime()+15*60000);
+   if(next.getTime()-from.getTime()>480*60000){
+    end.focus({preventScroll:true});
+    window.IPTVState?.toast?.('Mỗi lịch ghi tối đa 8 giờ','warn');
+    return;
+   }
+   end.value=dvrLocalDateTime(next);
+   end.dispatchEvent(new Event('input',{bubbles:true}));
+   end.dispatchEvent(new Event('change',{bubbles:true}));
+  });
+  end.parentElement.append(button);
+ };
+ attachDvrExtendEnd('dvrStart','dvrEnd','poDvrExtendEnd');
+ attachDvrExtendEnd('dvrQuickStart','dvrQuickEnd','poDvrQuickExtendEnd');
+
  // P5.1.192: live duration feedback; informational only, never submits a DVR job.
  const attachDvrDurationStatus=(startId,endId,statusId)=>{
   const start=byId(startId),end=byId(endId);

@@ -5759,10 +5759,44 @@ async function runTwenty(page){
  const dvrUndoQA={...dvrUndoShowQA,...dvrUndoRestoreQA,...dvrUndoCancelQA};
  for(const [key,value] of Object.entries(dvrUndoQA))
   assert.equal(value,true,'P201 actual Electron undo '+key+': '+JSON.stringify(dvrUndoQA));
+
+ // P202: real Electron before and after extension, with no scheduling.
+ await page.locator('#dvrStart').fill('2026-11-23T10:20');
+ await page.locator('#dvrEnd').fill('2026-11-23T11:20');
+ const before202=await page.screenshot({path:path.join(out,'positron-p51202-dvr-extend-before-1920x1080-real.png'),animations:'disabled'});
+ assert.deepEqual([before202.readUInt32BE(16),before202.readUInt32BE(20)],[1920,1080]);
+ const dvrExtendQA=await page.evaluate(()=>{
+  const d=document,start=d.getElementById('dvrStart'),end=d.getElementById('dvrEnd');
+  const button=d.getElementById('poDvrExtendEnd'),quick=d.getElementById('poDvrQuickExtendEnd');
+  const result={
+   bothFormsHaveExtension:!!button&&!!quick,
+   safeButtonType:button?.type==='button'&&quick?.type==='button',
+   sameStartBefore:start.value==='2026-11-23T10:20'
+  };
+  button.click();
+  result.extendsExactly15Minutes=end.value==='2026-11-23T11:35';
+  result.startUnchanged=start.value==='2026-11-23T10:20';
+  result.durationStatusUpdated=d.getElementById('poDvrDurationStatus')?.textContent?.includes('1 giờ 15 phút')===true;
+  result.previewUpdates=d.getElementById('poDvrReviewText')?.textContent?.includes('11:35')===true;
+  result.noAutoSchedule=window.__p191DvrSubmits===0;
+  result.noAutoplay=window.IPTVState.getCurrent()===null;
+  end.value='2026-11-23T18:20';
+  end.dispatchEvent(new Event('input',{bubbles:true}));
+  button.click();
+  result.enforcesEightHourLimit=end.value==='2026-11-23T18:20';
+  end.value='2026-11-23T11:35';
+  end.dispatchEvent(new Event('input',{bubbles:true}));
+  result.noHorizontalOverflow=d.documentElement.scrollWidth<=innerWidth+1;
+  return result;
+ });
+ for(const [key,value] of Object.entries(dvrExtendQA))
+  assert.equal(value,true,'P202 actual Electron DVR extend '+key+': '+JSON.stringify(dvrExtendQA));
+ const after202=await page.screenshot({path:path.join(out,'positron-p51202-dvr-extend-after-1920x1080-real.png'),animations:'disabled'});
+ assert.deepEqual([after202.readUInt32BE(16),after202.readUInt32BE(20)],[1920,1080]);
  await page.setViewportSize({width:1360,height:820});
 
   const report={type:'Positron P5 twenty distinct desktop screenshot cases',realElectron:true,syntheticChannels:false,
-  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,desktop16x9Screenshots,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA,chooserQa,toastLayoutQA,nativeToastQA,compactIdleQA,channelChipRailQA,advancedFilterQA,readableCardsQA,keyboardTabQA,favoriteEmptyQA,duplicateEmptyQA,categoryFilterQA,categoryFixtureQA,compactSingleQA,directFavoriteQA,favoriteCountQA,compactToastStackQA,toastDismissQA,toastFocusReturnQA,toastDockQA,wheelQA,pinnedAllQA,pinnedMaskQA,categoryKeyQA,dropdownChipQA,pinnedRightMaskQA,pinnedBorderMaskQA,asciiDSearchQA,emptySearchActionQA,readableCardTitleQA,favoriteSvgQA,keyboardFavoriteQA,multiTermSearchQA,keyboardSearchQA,arrowNavigationQA,pageNavigationQA,favoriteSortQA,onAirFilterQA,programmeSearchQA,upcomingProgrammeQA,soonProgrammeQA,earliestEpgSortQA,timeWindowQA,scheduleProgressQA:scheduleProgressQA,nativeReminderQA,cancelReminderQA,reminderLeadQA,toastHistoryQA,notificationArchiveQA,alertFilterQA,noticeSearchQA,quietModeQA,dismissToastQA,libraryPulseQA,groupDistributionQA,logoMissingQA,missingSearchQA,missingGroupQA,missingSortQA,missingJumpQA,missingCsvQA,duplicateQA,duplicateSearchQA,duplicateCsvQA,duplicateScopeQA,missingSizeQA,missingPagerQA,missingEpgFilterQA,missingResetQA,missingRangeQA,missingLocateQA,libraryReturnQA,favoriteActionQA,quickFavoriteQA,favoriteMoreQA,favoriteSearchQA,favoriteRotateQA,favoriteSuggestSearchQA,favoriteBulkQA,favoriteLayoutQA,favoriteNameSortQA,searchAfterSortQA,restoredSortQA,favoriteSuggestion12QA,batchFavorite12QA,restoreSixQA,favoriteRegionalQA,favoriteGroupSearchQA,resetGroupQA,favoriteQuickGroupQA,favoriteQuickResetQA,favoritePageLastQA,favoritePageNavigationQA,favoriteJumpSevenQA,favoriteJumpClampQA,favoriteWideQA,favoriteSuggestionSortQA,tvReselectTopQA,dvrDurationPresetQA,dvrDurationLiveQA,dvrPresetSelectionQA,dvrQuickStartQA,dvrSuggestedTitleQA,dvrReviewQA,dvrCopyQA,dvrTomorrowQA,dvrTitleSyncQA,dvrReplaceConfirmQA,dvrUndoQA};
+  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,desktop16x9Screenshots,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA,chooserQa,toastLayoutQA,nativeToastQA,compactIdleQA,channelChipRailQA,advancedFilterQA,readableCardsQA,keyboardTabQA,favoriteEmptyQA,duplicateEmptyQA,categoryFilterQA,categoryFixtureQA,compactSingleQA,directFavoriteQA,favoriteCountQA,compactToastStackQA,toastDismissQA,toastFocusReturnQA,toastDockQA,wheelQA,pinnedAllQA,pinnedMaskQA,categoryKeyQA,dropdownChipQA,pinnedRightMaskQA,pinnedBorderMaskQA,asciiDSearchQA,emptySearchActionQA,readableCardTitleQA,favoriteSvgQA,keyboardFavoriteQA,multiTermSearchQA,keyboardSearchQA,arrowNavigationQA,pageNavigationQA,favoriteSortQA,onAirFilterQA,programmeSearchQA,upcomingProgrammeQA,soonProgrammeQA,earliestEpgSortQA,timeWindowQA,scheduleProgressQA:scheduleProgressQA,nativeReminderQA,cancelReminderQA,reminderLeadQA,toastHistoryQA,notificationArchiveQA,alertFilterQA,noticeSearchQA,quietModeQA,dismissToastQA,libraryPulseQA,groupDistributionQA,logoMissingQA,missingSearchQA,missingGroupQA,missingSortQA,missingJumpQA,missingCsvQA,duplicateQA,duplicateSearchQA,duplicateCsvQA,duplicateScopeQA,missingSizeQA,missingPagerQA,missingEpgFilterQA,missingResetQA,missingRangeQA,missingLocateQA,libraryReturnQA,favoriteActionQA,quickFavoriteQA,favoriteMoreQA,favoriteSearchQA,favoriteRotateQA,favoriteSuggestSearchQA,favoriteBulkQA,favoriteLayoutQA,favoriteNameSortQA,searchAfterSortQA,restoredSortQA,favoriteSuggestion12QA,batchFavorite12QA,restoreSixQA,favoriteRegionalQA,favoriteGroupSearchQA,resetGroupQA,favoriteQuickGroupQA,favoriteQuickResetQA,favoritePageLastQA,favoritePageNavigationQA,favoriteJumpSevenQA,favoriteJumpClampQA,favoriteWideQA,favoriteSuggestionSortQA,tvReselectTopQA,dvrDurationPresetQA,dvrDurationLiveQA,dvrPresetSelectionQA,dvrQuickStartQA,dvrSuggestedTitleQA,dvrReviewQA,dvrCopyQA,dvrTomorrowQA,dvrTitleSyncQA,dvrReplaceConfirmQA,dvrUndoQA,dvrExtendQA};
  fs.writeFileSync(path.resolve('positron-evidence','audit-p5-20-rounds.json'),JSON.stringify(report,null,2));
  return report;
 }

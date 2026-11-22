@@ -1,5 +1,10 @@
 # Positron — New 20-round issue register
 
+## Vòng 01/20 đợt mới — P5.1.202 / Electron 4.23.287 — CANDIDATE
+- Đầu vào: bộ ảnh Electron P5.1.201 before/after/restored đã tải và MỞ; biểu mẫu hiện tại chỉ có preset thời lượng, không có cách gia hạn mốc Kết thúc đang nhập.
+- Tính năng: Gia hạn +15 phút cho EPG và ghi nhanh TV; không thay đổi Bắt đầu, cảnh báo trường không hợp lệ và giới hạn 8 giờ.
+- Hoàn tất khi Node tests, Electron before/after 1920×1080 đã MỞ, push, CI 6/6, tag/release và bộ cài xác minh. Thiếu bất kỳ bước nào: CANDIDATE.
+
 ## Vòng 03/20 — P5.1.201 / Electron 4.23.286 — CANDIDATE
 - Đầu vào: đã mở ba ảnh Electron P5.1.200 1920×1080 (before, confirm và after). Thay tên hai lần đã đúng nhưng sau khi tên cũ bị thay chưa có cách phục hồi ngay.
 - Tính năng: nút “Hoàn tác thay tên” chỉ hiện sau một lần thay tên được xác nhận, khôi phục đúng tên nhập tay nếu người dùng chưa sửa thêm. Khi sửa nội dung/kênh/giờ thì trạng thái hoàn tác mất hiệu lực.

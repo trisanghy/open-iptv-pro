@@ -2205,3 +2205,21 @@ test('P5.1.201 can undo one confirmed DVR name replacement without scheduling',(
   'positron-p51201-dvr-undo-restored-1920x1080-real.png'])
   assert.ok(qa.includes(token),'Missing P201 real Electron undo check: '+token);
 });
+
+
+test('P5.1.202 extends DVR end by fifteen minutes without scheduling or passing eight hours',()=>{
+ const js=read('renderer/positron-twenty.js'),css=read('renderer/positron-twenty.css');
+ const qa=read('scripts/positron-20-extension.cjs');
+ for(const token of ["attachDvrExtendEnd('dvrStart','dvrEnd','poDvrExtendEnd')",
+  "attachDvrExtendEnd('dvrQuickStart','dvrQuickEnd','poDvrQuickExtendEnd')",
+  "button.type='button'","until.getTime()+15*60000","next.getTime()-from.getTime()>480*60000",
+  "end.value=dvrLocalDateTime(next)","end.dispatchEvent(new Event('change',{bubbles:true}))"])
+  assert.ok(js.includes(token),'Missing DVR extension safeguard '+token);
+ assert.ok(css.includes('.po-dvr-extend-end:focus-visible'));
+ for(const token of ['dvrExtendQA','bothFormsHaveExtension','extendsExactly15Minutes',
+  'startUnchanged','durationStatusUpdated','previewUpdates','enforcesEightHourLimit',
+  'noAutoSchedule','noAutoplay','noHorizontalOverflow',
+  'positron-p51202-dvr-extend-before-1920x1080-real.png',
+  'positron-p51202-dvr-extend-after-1920x1080-real.png'])
+  assert.ok(qa.includes(token),'Missing P202 real Electron QA '+token);
+});
