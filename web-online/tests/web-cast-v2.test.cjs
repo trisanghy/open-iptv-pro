@@ -107,6 +107,7 @@ test('TV uses one-time PIN for automatic encrypted pairing and reports actual pl
  assert.equal(commands[0].action,'play');
  assert.equal(commands[0].name,'VTV2');
  assert.equal(commands[0].mediaId,'channel-1');
+ assert.equal(messages.some(msg=>msg.event==='sealed'),true,'commands are encrypted and acknowledged');
  assert.equal(commands[0].url,'https://media.example/live.m3u8?token=temporary');
  assert.equal(messages.some(msg=>JSON.stringify(msg).includes('media.example')),false,'URL never appears in public broadcast');
  assert.equal(messages.some(msg=>msg.event==='sealed'&&typeof msg.payload.ciphertext==='string'),true);
@@ -145,6 +146,14 @@ test('TV receiver requests fullscreen on playback and provides viewport fallback
 test('remote sync routes selected channels and controls to the TV and reflects real connected state',()=>{
  const app=load('app.js'),castUI=load('cast-ui.js');
  assert.match(app,/OpenIPTVCastUI\?\.onChannelChanged\?\.\(found,playCandidates\[0\]\)/);
+ assert.match(app,/OpenIPTVWebCastV2\?\.shouldUseRemotePlayer\?\.\(\)/);
+ assert.match(app,/syncRemoteControls\?\.\(\)/);
+ assert.match(app,/Đang điều khiển TV/);
+ assert.match(ui,/function shouldUseRemotePlayer\(/);
+ assert.match(ui,/volumeTimer=root\.setTimeout/);
+ assert.match(core,/kind:'command-ack'/);
+ assert.match(core,/pendingAcks:new Map\(\)/);
+ assert.match(core,/TV không phản hồi lệnh/);
  assert.match(castUI,/OpenIPTVWebCast\?\.onChannelChanged\?\.\(ch,url\)/);
  assert.match(app,/OpenIPTVWebCastV2\.toggleRemotePlayback\(\)/);
  assert.match(app,/OpenIPTVWebCastV2\?\.onLocalStop\?\.\(\)/);
