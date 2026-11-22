@@ -6818,7 +6818,7 @@ async function runTwenty(page){
  const epgStart221=await page.evaluate(()=>{
   const f=document.getElementById('dvrForm'),ls=[...f.querySelectorAll(':scope > label')];
   return {visible:!!f.getClientRects().length,fourLabels:ls.length===4,
-   version:document.title.includes('4.23.306')};
+   nativeGrid:getComputedStyle(f).display==='grid'};
  });
  for(const [k,v] of Object.entries(epgStart221))
   assert.equal(v,true,'P221 baseline EPG '+k+': '+JSON.stringify(epgStart221));
