@@ -1,3 +1,12 @@
+## P5.1.177 — Tìm kiếm không dấu trong Yêu thích / Electron 4.23.262
+- Feature priority: NEW — Ảnh thực P5.1.176 đã có 2 thẻ yêu thích với số lượng có thể tăng liên tục; trang chưa có ô tìm riêng theo tên/nhóm. Bổ sung thanh tìm kênh trong Yêu thích, hỗ trợ tiếng Việt không dấu, case-insensitive, trả về số hiển thị X / tổng mà không thay đổi số kênh yêu thích thật.
+- User action: Mở trang Yêu thích đang có nhiều thẻ → nhập một phần tên hoặc nhóm vào ô Tìm trong Yêu thích → chỉ còn thẻ phù hợp; xóa từ khóa để trở lại danh sách đầy đủ.
+- Electron screenshot: positron-p51177-search-favorites-after-1920x1080-real.png
+- Baseline đã mở bằng mắt: `positron-p51176-more-favorites-after-1920x1080-real.png` với QA Channel 001, 002 và 6 gợi ý còn lại.
+- Lọc hiển thị bằng DOM `hidden`, không sửa playlist/favoriteKeys, không kích hoạt player, tự áp lại bộ lọc sau khi user thêm/bỏ favorite; thông báo trạng thái `aria-live=polite`.
+- Regression: kiểm tra selector/normalization và 9 phép DOM QA Electron 1920×1080, ảnh trước/sau, giữ dữ liệu và không playback.
+- Trạng thái: CANDIDATE tới khi Node+Electron thật xem ảnh+Release EXE/DMG thành công.
+
 ## P5.1.176 — Gợi ý thêm Yêu thích sau kênh đầu tiên / Electron 4.23.261
 - Feature priority: NEW — Ảnh Electron thật P5.1.175 sau thao tác cho thấy QA Channel 001 là thẻ Yêu thích duy nhất, còn phần lớn trang trống, trong khi 560 kênh khác đã nhập. Bổ sung bảng Gợi ý thêm vào Yêu thích ở cuối danh sách khi đã có Favorites, với tối đa 6 kênh chưa đánh dấu sao; bấm ☆ lưu trực tiếp, không phát.
 - User action: Mở Yêu thích đã có ít nhất một kênh → chọn ☆ tại bảng Gợi ý thêm vào Yêu thích → kênh tiếp theo xuất hiện trong danh sách ngay lập tức, cập nhật số sao.

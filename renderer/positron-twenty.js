@@ -211,6 +211,40 @@
   };
   new MutationObserver(syncFavoriteMore).observe(favoriteList,{childList:true,subtree:true});
   syncFavoriteMore();
+
+  // P5.1.177: tìm tên/nhóm trong Yêu thích đã lưu, không tác động TV hay source.
+  const favFilter=d.createElement('section');favFilter.id='positronFavoriteFilter';
+  favFilter.className='po-fav-filter';favFilter.hidden=true;
+  const filterLabel=d.createElement('label');filterLabel.htmlFor='positronFavoriteSearch';
+  filterLabel.textContent='Tìm trong Yêu thích';
+  const favSearch=d.createElement('input');favSearch.id='positronFavoriteSearch';
+  favSearch.type='search';favSearch.placeholder='Tìm theo tên kênh hoặc nhóm…';
+  favSearch.setAttribute('autocomplete','off');
+  const favCountText=d.createElement('small');favCountText.id='positronFavoriteVisibleCount';
+  favCountText.setAttribute('role','status');favCountText.setAttribute('aria-live','polite');
+  const noResults=d.createElement('p');noResults.id='positronFavoriteNoResults';
+  noResults.textContent='Không có kênh Yêu thích phù hợp';noResults.hidden=true;
+  favFilter.append(filterLabel,favSearch,favCountText,noResults);favoriteList.before(favFilter);
+  const foldFav=value=>String(value||'').normalize('NFD')
+   .replace(/[\u0300-\u036f]/g,'').replace(/đ/gi,'d').toLowerCase().trim();
+  const updateFavFilter=()=>{
+   const cards=[...favoriteList.querySelectorAll('.fav-card')];
+   favFilter.hidden=!cards.length;
+   if(!cards.length)return;
+   const words=foldFav(favSearch.value).split(/\s+/).filter(Boolean);
+   let visible=0;
+   for(const card of cards){
+    const name=foldFav(card.querySelector('h3')?.textContent);
+    const group=foldFav(card.querySelector('small')?.textContent);
+    const matches=words.every(word=>(name+' '+group).includes(word));
+    card.hidden=!matches;if(matches)visible++;
+   }
+   favCountText.textContent='Hiển thị '+visible+' / '+cards.length+' kênh yêu thích';
+   noResults.hidden=visible!==0;
+  };
+  favSearch.addEventListener('input',updateFavFilter);
+  new MutationObserver(updateFavFilter).observe(favoriteList,{childList:true});
+  updateFavFilter();
  }
 
  // P5.1.12 / round 05: real 1360px Settings screenshot shows the old

@@ -580,3 +580,29 @@ html[data-positron="true"] #page-fav .po-fav-more-chip:focus-visible{
 @media(max-width:540px){html[data-positron="true"] #page-fav .po-fav-more-grid{
  grid-template-columns:1fr;
 }}
+/* P5.1.177: tìm kiếm Favorite chỉ lọc DOM card, giữ danh sách nguồn. */
+html[data-positron="true"] #page-fav #positronFavoriteFilter{
+ max-width:580px;margin:5px 0 14px;display:flex;align-items:center;flex-wrap:wrap;
+ gap:7px 12px;padding:10px 12px;border:1px solid var(--po-border,#314956);
+ border-radius:10px;background:var(--po-card,#12252f);
+}
+html[data-positron="true"] #page-fav #positronFavoriteFilter[hidden]{display:none!important}
+html[data-positron="true"] #page-fav #positronFavoriteFilter label{
+ font-size:12px;font-weight:650;color:var(--po-text,#eaf4f1);
+}
+html[data-positron="true"] #page-fav #positronFavoriteSearch{
+ flex:1 1 180px;min-width:0;min-height:34px;padding:7px 10px;
+ border:1px solid var(--po-border,#314956);border-radius:8px;
+ background:var(--po-input,#0a1c25);color:var(--po-text,#eaf4f1);font-size:12px;
+}
+html[data-positron="true"] #page-fav #positronFavoriteVisibleCount{
+ flex-basis:100%;color:var(--po-muted,#9bb5be);font-size:11px;
+}
+html[data-positron="true"] #page-fav #positronFavoriteNoResults{
+ margin:0;color:var(--po-muted,#9bb5be);font-size:12px;
+}
+html[data-positron="true"] #page-fav #positronFavoriteNoResults[hidden]{display:none!important}
+html[data-positron="true"] #page-fav .fav-card[hidden]{display:none!important}
+html[data-positron="true"] #page-fav #positronFavoriteSearch:focus-visible{
+ outline:2px solid var(--po-accent,#60d7c2);outline-offset:2px;
+}

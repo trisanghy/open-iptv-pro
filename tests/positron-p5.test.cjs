@@ -1816,3 +1816,19 @@ test('P5.1.176 gợi ý thêm kênh khi Favorites đã có ít nhất một th�
  assert.ok(css.includes('grid-template-columns:repeat(3,minmax(0,1fr))'));
  assert.ok(qa.includes('favoriteMoreQA'));
 });
+
+test('P5.1.177 tìm Yêu thích theo tên/nhóm không xóa kênh và không chạm player',()=>{
+ const js=read('renderer/positron-twenty.js');
+ const css=read('renderer/positron-twenty.css');
+ const qa=read('scripts/positron-20-extension.cjs');
+ assert.ok(js.includes("favSearch.id='positronFavoriteSearch'"));
+ assert.ok(js.includes("favoriteList.before(favFilter)"),'Lọc UI đặt ngoài list');
+ assert.ok(js.includes("favCountText.setAttribute('aria-live','polite')"));
+ assert.ok(js.includes("new MutationObserver(updateFavFilter).observe(favoriteList,{childList:true})"));
+ assert.ok(js.includes("card.hidden=!matches"));
+ assert.ok(js.includes("words.every(word=>(name+' '+group).includes(word))"));
+ assert.ok(js.includes("normalize('NFD')"),'Tìm không dấu');
+ assert.ok(css.includes('.fav-card[hidden]{display:none!important}'));
+ assert.ok(css.includes('#positronFavoriteFilter[hidden]{display:none!important}'));
+ assert.ok(qa.includes('favoriteSearchQA'));
+});
