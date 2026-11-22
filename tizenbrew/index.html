@@ -57,7 +57,7 @@ button,input,textarea{font:inherit;color:inherit}button{cursor:pointer;border:2p
 @media(max-width:1200px){.nav .nav-exit{min-height:62px;font-size:17px}.top .header-exit{min-width:105px;font-size:16px;padding:9px}}
 </style></head><body data-theme="dark">
 <div id="app">
-<header class="top"><div class="brand"><div class="brandicon">▶</div><div><strong>Open IPTV Pro <small>TV</small></strong><p>Samsung Tizen Edition · TizenBrew v0.1.8</p></div></div><div class="toolbar"><span class="clock" id="clock">--:--</span><button id="searchBtn">⌕ Tìm</button><button id="addBtn">＋ Nguồn</button><button id="themeBtn">◐ Giao diện</button><button id="exitModuleBtn" class="header-exit" title="Thoát về TizenBrew">⏻ THOÁT</button></div></header>
+<header class="top"><div class="brand"><div class="brandicon">▶</div><div><strong>Open IPTV Pro <small>TV</small></strong><p>Samsung Tizen Edition · TizenBrew v0.1.9</p></div></div><div class="toolbar"><span class="clock" id="clock">--:--</span><button id="searchBtn">⌕ Tìm</button><button id="addBtn">＋ Nguồn</button><button id="themeBtn">◐ Giao diện</button><button id="exitModuleBtn" class="header-exit" title="Thoát về TizenBrew">⏻ THOÁT</button></div></header>
 <div class="main"><nav class="nav"><button class="active" data-nav="all">▣　Trực tiếp</button><button data-nav="favorites">♡　Yêu thích</button><button data-nav="recent">◷　Đã xem</button><button data-nav="sources">☷　Nguồn M3U</button><button data-nav="help">⚙　Hướng dẫn</button><button id="navExitBtn" class="nav-exit" aria-label="Thoát khỏi Open IPTV Pro về TizenBrew">⏻　THOÁT ỨNG DỤNG</button><p class="tip">Dùng ↑ ↓ ← → và OK để điều khiển bằng remote TV.</p></nav>
 <section class="listpane"><div class="heading"><div><div class="eyebrow">DANH SÁCH KÊNH</div><h1 id="heading">Trực tiếp</h1></div><span id="count">0 kênh</span></div><div class="groups" id="groups"></div><div class="channels" id="channels"></div><div class="empty" id="empty" hidden><h2>Chưa có kênh IPTV</h2><p>Thêm nguồn bằng URL trên remote hoặc quét QR để nhập bằng điện thoại.</p><button id="emptyAdd" class="primary">＋ Thêm nguồn IPTV</button><button id="sampleBtn">▶ Luồng kiểm thử</button></div><button id="more" hidden>Xem thêm kênh ↓</button></section>
 <aside class="details"><div class="preview"><span class="live">● TRỰC TIẾP</span><b id="previewText">TV</b><span class="watermark">OPEN IPTV PRO</span></div><div class="eyebrow">KÊNH ĐANG CHỌN</div><h2 id="channelTitle">Open IPTV Pro TV</h2><p id="channelGroup">Chọn kênh để xem</p><div class="info"><div class="eyebrow">THÔNG TIN</div><p id="channelInfo">Hỗ trợ nhập M3U, nhóm kênh, yêu thích và remote Samsung.</p></div><div class="actions"><button class="primary" id="watchBtn">▶ Xem</button><button id="favBtn">♡ Yêu thích</button></div></aside></div>
@@ -68,7 +68,7 @@ button,input,textarea{font:inherit;color:inherit}button{cursor:pointer;border:2p
 <button type="button" id="toSourceUrl">↓ Chuyển xuống nhập đường dẫn</button>
 <label for="sourceUrl">URL M3U / M3U8</label><input id="sourceUrl" type="url" placeholder="https://example.com/channels.m3u" autocomplete="off">
 <button type="button" class="rights-toggle" id="rights" role="checkbox" aria-checked="false" aria-label="Tôi có quyền sử dụng danh sách và nội dung này"><span class="rights-box" aria-hidden="true"></span><span>Tôi có quyền sử dụng danh sách và nội dung này</span></button>
-<p class="hint">Remote: nhấn ↓ hoặc OK sau tên để tới URL. Danh sách trực tuyến cần máy chủ hỗ trợ CORS.</p>
+<p class="hint">Remote: ↓ hoặc OK để chuyển từ tên tới URL. Nếu tải nguồn lỗi, trên điện thoại quét QR, chọn tệp M3U hoặc dán nội dung M3U.</p>
 <div class="buttons"><button id="cancelSource">Hủy</button><button id="saveSource" class="primary">Lưu và tải</button></div></section>
 <section class="source-pair"><h3>📱 Quản lý IPTV bằng điện thoại</h3><p>Quét QR để thêm nguồn, xem và chỉnh sửa danh sách kênh trên TV. Giữ màn hình này mở khi quản lý.</p>
 <div id="sourceQR" aria-label="Mã QR nhập nguồn IPTV"></div>
@@ -91,7 +91,7 @@ try{var old=JSON.parse(localStorage.getItem(storageKey)||'{}');if(old&&typeof ol
 function save(){try{localStorage.setItem(storageKey,JSON.stringify(state));return true;}catch(e){notify('Không đủ bộ nhớ để lưu danh sách.');return false;}}
 
 var SOURCE_CONFIG={url:'https://zjbsvqryaxtafuffpifu.supabase.co',key:'sb_publishable_j_aWS273AgxBi0JYj4O-WA_bNxHFxM7'};
-var SOURCE_PAGE='https://trisanghy.github.io/open-iptv-pro/tizen/phone.html?v=018';
+var SOURCE_PAGE='https://trisanghy.github.io/open-iptv-pro/tizen/phone.html?v=019';
 var sourcePair=null,pairSeq=0,pairTimer=0,sourceSdkPromise=null;
 function sourceStatus(s){byId('sourceQRStatus').textContent=s;}
 function newToken(){if(!window.crypto||!window.crypto.getRandomValues)throw Error('TV không hỗ trợ tạo mã QR an toàn.');
@@ -285,7 +285,7 @@ async function onManagerRequest(req,channel,seq,token){
    if(!operation.ok)throw Error(operation.error||'Không lưu được thay đổi.');
    answer.state=managerSnapshot({sourceId:req.sourceId,query:req.query,offset:req.offset});
   }
- }catch(e){answer.ok=false;answer.error=String(e.message||e).slice(0,250);sourceStatus('Lỗi nhập từ điện thoại: '+answer.error);}
+ }catch(e){answer.ok=false;answer.error=String(e.message||e).slice(0,250);sourceStatus(action==='add-source'&&/truy cập|CORS|Network|HTTPS|Tải M3U/i.test(answer.error)?'✕ URL không tải được trên TV. Dùng mục gửi tệp hoặc dán M3U ở điện thoại.':'Lỗi: '+answer.error.slice(0,130));}
  finally{delete managerBusy[req.id];}
  managerCache[req.id]=answer;
  if(Object.keys(managerCache).length>60)managerCache={};
@@ -396,7 +396,7 @@ var list=parse(raw,name);if(!list.length)throw Error('M3U không chứa URL hợ
 state.sources.push({id:'src-'+newToken(),name:name,address:address,channels:list});if(!save()){state.sources.pop();throw Error('Bộ nhớ TV đầy, không thể lưu nguồn.');}search='';group='Tất cả';section='all';selected=null;draw();
 if(!fromPhone)closeDialog();notify('Đã thêm '+list.length+' kênh.');
 return {ok:true,count:list.length};}
-catch(e){var error=sourceError(e,address);notify('Không tải được M3U. Hãy chuyển tệp từ điện thoại qua QR.');if(fromPhone)sourceStatus('✕ Không tải được nguồn: '+error);return {ok:false,error:error};}
+catch(e){var error=sourceError(e,address);notify('Không tải được URL. Quét QR trên điện thoại để gửi tệp hoặc dán M3U.');if(fromPhone)sourceStatus('✕ TV không tải được URL. Trên điện thoại hãy chọn tệp hoặc dán M3U qua QR.');return {ok:false,error:error};}
 finally{byId('saveSource').disabled=false;byId('saveSource').textContent='Lưu và tải';}}
 function play(c){if(!c)return;playing=c;state.recent=[c.id].concat(state.recent.filter(function(id){return id!==c.id;})).slice(0,60);save();byId('player').hidden=false;byId('playingName').textContent=c.name;
 var video=byId('video');try{video.pause();video.removeAttribute('src');video.load();video.src=c.url;byId('playerStatus').textContent='Đang mở '+c.name+'...';video.play().then(function(){byId('playerStatus').textContent='';}).catch(function(){byId('playerStatus').textContent='Không tự phát được. Nhấn OK thử lại; codec hoặc CORS có thể không được hỗ trợ.';});}catch(e){byId('playerStatus').textContent=String(e.message||e);}}
