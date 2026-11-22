@@ -983,7 +983,7 @@ async function runTwenty(page){
  await page.click('#poLibraryMissingToggle');
  const before159=await page.evaluate(()=>({
   expected:window.PositronLibraryPulseCore.missingLogos(window.IPTVState.getChannels(),{query:'QA Channel 005'}),
-  total:window.IPTVState.getChannels().length,idle:window.IPTVState.getCurrent()===null
+  total:window.IPTVState.getChannels().length,missingTotal:window.PositronLibraryPulseCore.missingLogos(window.IPTVState.getChannels()).total,idle:window.IPTVState.getCurrent()===null
  }));
  await page.fill('#poLibraryMissingSearch','QA Channel 005');
  const found159=await page.evaluate(x=>{
@@ -1009,7 +1009,7 @@ async function runTwenty(page){
  await page.fill('#poLibraryMissingSearch','');
  const cleared159=await page.evaluate(x=>({
   restored:document.querySelectorAll('#poLibraryMissingRows .po-pulse-missing-row').length===Math.min(10,x.total),
-  pagination:document.getElementById('poLibraryMissingPage')?.textContent==='Trang 1 / '+Math.ceil(x.total/10)
+  pagination:document.getElementById('poLibraryMissingPage')?.textContent==='Trang 1 / '+Math.max(1,Math.ceil(x.missingTotal/10))
  }),before159);
  await page.keyboard.press('Escape');
  const closed159=await page.evaluate(()=>({
