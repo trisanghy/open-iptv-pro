@@ -2,14 +2,23 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
-## P5.1.268 — AI nhắc chương trình hợp gu theo EPG và hành vi
+## P5.1.269 — AI lập lịch xem 24 giờ tránh trùng chương trình
 
-**Ứng dụng:** 4.23.353 · **Trạng thái:** Chưa có bản phát hành
+**Ứng dụng:** 4.23.354 · **Trạng thái:** Chưa có bản phát hành
+
+Feature priority: NEW — WatchFlow Intelligence có chế độ **Lịch AI 24h** tối ưu lịch xem không trùng giờ. Thuật toán weighted interval scheduling chọn tối đa 8 chương trình từ XMLTV thật theo trọng số logistic học từ sở thích; chương trình chồng thời gian cạnh tranh cùng một vị trí, không bịa lịch khi thiếu EPG. Feature class: AI
+
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/eb333e86d8cb69489168d8bbfad95ed5f1815f0a)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+
+## P5.1.268 — AI nhắc chương trình hợp gu đúng lúc / Electron 4.23.353
+
+**Ứng dụng:** 4.23.353 · **Trạng thái:** Đã phát hành
 
 Feature priority: NEW — Bổ sung công cụ **Nhắc trong ứng dụng** cho WatchFlow Intelligence. Khi người xem chủ động bật học và bật nhắc, ứng dụng định kỳ kiểm tra XMLTV đã tải, lấy chương trình gần giờ chiếu và dùng **mô hình logistic đã học từ hành vi/đánh giá** để thông báo chương trình có xác suất hợp gu đạt ngưỡng. Chỉ hiển thị lời nhắc cục bộ, không tự phát kênh, không gửi hành vi lên mạng, không mở thông báo OS khi chưa xin quyền. Feature class: AI
 
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/5656648fa016ad3cefd00ff3701545322cd9d00d)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/86ef0b3e39ffde2accb6c27f79e5421cd23403ec)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.353-p5.1.268)
 
 ## P5.1.267 — AI lịch EPG hợp gu từ chương trình sắp chiếu / Electron 4.23.352
 
@@ -1942,42 +1951,6 @@ Bổ sung hướng dẫn đưa nguồn lịch phát sóng vào ứng dụng.
 [Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/41f754be653caf87ffed14c50604f9d272d1cbc7)
 [Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.129-p5.1.44)
 
-## P5.1.32 — Thay biểu tượng chủ đề nhỏ bằng SVG một màu
-
-**Ứng dụng:** 4.23.116 · **Trạng thái:** Đã phát hành
-
-Dùng biểu tượng chủ đề dạng SVG thay cho ký tự hệ thống khó nhìn ở màn hình hẹp.
-
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/ebd254689a615dd11f18d88f825267174f69b8de)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.116-p5.1.32)
-
-## P5.1.31 — Việt hóa tên công cụ Tua lại
-
-**Ứng dụng:** 4.23.115 · **Trạng thái:** Đã phát hành
-
-Thay tên nút mở công cụ tua lại bằng lời tiếng Việt dễ hiểu.
-
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/62d490ffe41252dcaff472cc98ab86b9408160ad)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.115-p5.1.31)
-
-## P5.1.28 — Sửa khoảng cách trang Nguồn khi chưa có dữ liệu
-
-**Ứng dụng:** 4.23.112 · **Trạng thái:** Đã phát hành
-
-Giảm các vùng trống dư trong trang quản lý nguồn trên máy tính.
-
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/6f74ad62f9f1f60583acd7b50dcecea2eb5ac51a)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.112-p5.1.28)
-
-## P5.1.26 — Vô hiệu hóa kiểm tra Chẩn đoán khi chưa có kênh
-
-**Ứng dụng:** 4.23.110 · **Trạng thái:** Đã phát hành
-
-Không cho chạy thao tác phân tích chưa có dữ liệu trên trang Chẩn đoán, tránh báo cáo sai.
-
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/d31854697e0246d6d5da18486e74c1e074d93add)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.110-p5.1.26)
-
 ## P5.1.25 — Sửa nút xóa kênh khi chưa có kênh nào
 
 **Ứng dụng:** 4.23.109 · **Trạng thái:** Chưa có bản phát hành
@@ -1988,12 +1961,11 @@ Không cho chạy thao tác phân tích chưa có dữ liệu trên trang Chẩn
 
 ## P5.1.24 — Biểu tượng ghi hình DVR rõ hơn
 
-**Ứng dụng:** 4.23.108 · **Trạng thái:** Đã phát hành
+**Ứng dụng:** 4.23.108 · **Trạng thái:** Chưa có bản phát hành
 
 Thay biểu tượng ghi hình bằng SVG đồng nhất mà không ảnh hưởng lịch hẹn và dữ liệu.
 
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/4c66a3d20d9d3c11b0555f8548c48da4e4605afd)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.108-p5.1.24)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
 
 ## P5.1.23 — Thu gọn hướng dẫn Nguồn ở cửa sổ hẹp
 
