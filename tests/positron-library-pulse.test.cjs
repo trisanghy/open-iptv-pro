@@ -195,3 +195,25 @@ test('P5.1.164 phân tích kênh trùng tên bằng metadata, không nhầm dấ
  assert.ok(!JSON.stringify(out).includes('https://private/'));
  assert.equal(core.duplicateNames([]).total,0);
 });
+
+test('P5.1.165 Xuất CSV tên trùng trên 50 hàng và chống rò URL',()=>{
+ const list=Array.from({length:63},(_,i)=>[
+  {name:'Kênh '+String(i+1).padStart(3,'0'),group:'Tin tức',sourceId:'S1',url:'https://private.invalid/'+i},
+  {name:'kênh '+String(i+1).padStart(3,'0'),group:'Thể thao',sourceId:'S2',url:'https://secret.invalid/'+i}
+ ]).flat();
+ list.push({name:'=cmd',group:'+Group',sourceId:'S1',url:'https://private.invalid/x'});
+ list.push({name:'=CMD',group:'+Group',sourceId:'S2',url:'https://private.invalid/y'});
+ const original=JSON.stringify(list),csv=core.duplicateNamesCsv(list);
+ assert.ok(csv.startsWith('\ufeff"Tên kênh","Số kênh","Số nhóm","Số nguồn","Nhóm"\r\n'));
+ assert.equal(csv.split('\r\n').filter(Boolean).length,65);
+ assert.ok(csv.includes("'+Group"));
+ assert.ok(csv.includes("'=cmd"));
+ assert.ok(csv.includes('"Kênh 063","2","2","2"'));
+ assert.ok(!csv.includes('private.invalid')&&!csv.includes('secret.invalid'));
+ assert.ok(!csv.includes('S1')&&!csv.includes('S2'));
+ const filtered=core.duplicateNamesCsv(list,{query:'kenh 063'});
+ assert.equal(filtered.split('\r\n').filter(Boolean).length,2);
+ assert.ok(filtered.includes('"Kênh 063"'));
+ assert.equal(core.duplicateNamesCsv([]),'\ufeff"Tên kênh","Số kênh","Số nhóm","Số nguồn","Nhóm"\r\n');
+ assert.equal(JSON.stringify(list),original);
+});

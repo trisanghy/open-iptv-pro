@@ -1,5 +1,5 @@
 'use strict';
-// Positron P5.1.164 — Bảng phân tích metadata thư viện, không thử stream.
+// Positron P5.1.165 — Bảng phân tích metadata thư viện, không thử stream.
 (()=>{
  const d=document,root=d.documentElement,bar=d.getElementById('positronBar');
  const core=window.PositronLibraryPulseCore,state=window.IPTVState;
@@ -100,6 +100,12 @@
  duplicateSearch.setAttribute('autocomplete','off');
  const duplicateSummary=d.createElement('p');duplicateSummary.id='poLibraryDuplicateSummary';
  duplicateSummary.className='po-pulse-duplicate-summary';
+ const duplicateExportBar=d.createElement('div');duplicateExportBar.className='po-pulse-export-bar';
+ const duplicateExport=d.createElement('button');duplicateExport.type='button';duplicateExport.id='poLibraryDuplicateExport';
+ duplicateExport.setAttribute('aria-label','Xuất CSV tên kênh trùng đã lọc, không chứa URL');
+ const duplicateExportStatus=d.createElement('span');duplicateExportStatus.id='poLibraryDuplicateExportStatus';
+ duplicateExportStatus.setAttribute('role','status');duplicateExportStatus.setAttribute('aria-live','polite');
+ duplicateExportBar.append(duplicateExport,duplicateExportStatus);
  const duplicateRows=d.createElement('ol');duplicateRows.id='poLibraryDuplicateRows';
  const duplicateNav=d.createElement('div');duplicateNav.className='po-pulse-duplicate-nav';
  const duplicatePrev=d.createElement('button');duplicatePrev.type='button';
@@ -108,7 +114,7 @@
  const duplicateNext=d.createElement('button');duplicateNext.type='button';
  duplicateNext.id='poLibraryDuplicateNext';duplicateNext.textContent='Tiếp';
  duplicateNav.append(duplicatePrev,duplicatePage,duplicateNext);
- duplicateBody.append(duplicateSearch,duplicateSummary,duplicateRows,duplicateNav);
+ duplicateBody.append(duplicateSearch,duplicateSummary,duplicateExportBar,duplicateRows,duplicateNav);
  duplicatePane.append(duplicateToggle,duplicateBody);
  const footer=d.createElement('footer');footer.className='po-pulse-footer';
  const stamp=d.createElement('span');stamp.id='poLibraryPulseStamp';
@@ -201,6 +207,9 @@
   const report=core.duplicateNames(state.getChannels(),{
    query:duplicateSearch.value,offset:duplicateIndex*8,limit:8});
   duplicateTotal=report.total;
+  duplicateExport.disabled=duplicateTotal===0;
+  duplicateExport.textContent='Xuất CSV · '+duplicateTotal+' tên trùng';
+  duplicateExportStatus.textContent='';
   duplicateToggle.textContent='Tên kênh trùng: '+duplicateTotal;
   duplicateSummary.textContent=report.extraChannels+' kênh bổ sung trùng tên · Chỉ để rà soát';
   duplicateRows.replaceChildren();
@@ -254,6 +263,20 @@
   if(expanded)duplicatePane.scrollIntoView({block:'nearest',behavior:'instant'});
  });
  duplicateSearch.addEventListener('input',()=>{duplicateIndex=0;renderDuplicates();});
+ duplicateExport.addEventListener('click',()=>{
+  const options={query:duplicateSearch.value};
+  const count=core.duplicateNames(state.getChannels(),options).total;
+  if(!count)return;
+  const csv=core.duplicateNamesCsv(state.getChannels(),options);
+  const blob=new Blob([csv],{type:'text/csv;charset=utf-8'});
+  const url=URL.createObjectURL(blob);
+  const link=d.createElement('a');link.href=url;
+  link.download='positron-ten-kenh-trung-'+new Date().toISOString().slice(0,10)+'.csv';
+  d.body.append(link);link.click();link.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
+  duplicateExportStatus.textContent='Đã xuất '+count+' tên trùng · Không chứa URL';
+  duplicateExport.focus({preventScroll:true});
+ });
  duplicatePrev.addEventListener('click',()=>{
   if(duplicateIndex>0)duplicateIndex--;
   renderDuplicates();duplicatePrev.focus({preventScroll:true});

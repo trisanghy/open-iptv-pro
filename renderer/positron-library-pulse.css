@@ -97,3 +97,8 @@ html[data-positron="true"] .po-pulse-duplicate-nav{display:flex;justify-content:
 html[data-positron="true"] .po-pulse-duplicate-nav span{font-size:11px;font-variant-numeric:tabular-nums}
 html[data-positron="true"] .po-pulse-duplicate-nav button:disabled{opacity:.45;cursor:not-allowed}
 html[data-positron="true"] .po-pulse-duplicate-empty{font-size:11px;color:var(--po-muted,#a4b9c0);padding:8px}
+
+/* P5.1.165: Xuất CSV tên trùng, nút gọn trong panel hẹp. */
+html[data-positron="true"] .po-pulse-duplicates #poLibraryDuplicateExport{min-height:34px;white-space:normal}
+html[data-positron="true"] .po-pulse-duplicates #poLibraryDuplicateExport:disabled{opacity:.45;cursor:not-allowed}
+html[data-positron="true"] #poLibraryDuplicateExportStatus{font-size:11px;color:var(--po-muted,#a4b9c0);overflow-wrap:anywhere}
