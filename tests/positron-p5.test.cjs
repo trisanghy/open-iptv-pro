@@ -2028,3 +2028,12 @@ test('P5.1.189 Electron QA verifies all 12 suggestion labels against enabled-cha
  assert.ok(qa.includes("comparePage189('name-asc')"));
  assert.ok(qa.includes("comparePage189('source')"));
 });
+
+test('P5.1.190 selecting the current TV tab returns to player top without changing pages or channels',()=>{
+ const app=read('renderer/app.js');
+ const qa=read('scripts/positron-20-extension.cjs');
+ assert.ok(app.includes("if(last!==p||p==='tv'){const scrolling=$('.content');if(scrolling)scrolling.scrollTop=0;}"));
+ assert.ok(qa.includes('tvReselectTopQA'));
+ assert.ok(qa.includes('positron-p51190-tv-reselect-before-1920x1080-real.png'));
+ assert.ok(qa.includes('positron-p51190-tv-reselect-after-1920x1080-real.png'));
+});

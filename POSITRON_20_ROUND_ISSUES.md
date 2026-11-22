@@ -151,3 +151,10 @@ Evaluate defects revealed by real screenshot of previous build before making cha
 - Status: chưa công nhận hoàn thành trước CI, mở xem ảnh SAU và Release mới.
 
 - CI P189 run 45000062232: Node 829 pass, 5 skip, 0 fail; Electron cũ kiểm tra cố định mã QA Channel 120/109 không khớp thực tế. Nâng phép thử so sánh toàn bộ 12 nhãn hiển thị với thứ tự dự kiến tính trực tiếp từ danh sách nguồn đã bật và Intl.Collator tiếng Việt, đồng thời chụp ảnh SAU trước assert và ghi log actual/expected. Không thay đổi thuật toán sắp xếp hay dữ liệu để che lỗi.
+
+## P5.1.190 (CANDIDATE) — ảnh P189 đã xem trực tiếp
+- Input: ảnh `positron-p51189-desktop-1920x1080-trang-chu-real.png` từ CI 45000491204 thực tế cho thấy phía trên video/đầu danh sách kênh bị che vì TV còn ở vị trí cuộn sâu.
+- Root: `renderer/app.js` chỉ reset `.content.scrollTop` khi `last!==p`; nhấn lại TV khi `last===p==='tv'` giữ nguyên chỗ cuộn.
+- Feature: nhấn tab TV đang active sẽ trở về đầu vùng video, không thay đổi current channel hoặc nguồn.
+- QA: Playwright trên Electron chụp `positron-p51190-tv-reselect-before-1920x1080-real.png` khi cuộn, click nav TV, xác minh scroll về 0 và chụp `positron-p51190-tv-reselect-after-1920x1080-real.png`.
+- Status: chưa công nhận hoàn thành trước khi build/CI/soát ảnh và Release.

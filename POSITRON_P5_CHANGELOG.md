@@ -1,5 +1,15 @@
 # Positron P5 Changelog
 
+## P5.1.190 — Bấm lại tab TV để trở về khung phát / Electron 4.23.275
+- Feature priority: NEW — Ảnh Electron P5.1.189 1920×1080 cho thấy đầu trình phát bị khuất khi đang ở trang TV nhưng cuộn còn sâu; thao tác chọn TV khi tab đã active không quay về vùng video vì setPage chỉ đặt lại scroll ở lần chuyển tab.
+- Khi chọn lại nút TV đang active, cuộn nội dung về đầu trình phát ngay. Chỉ áp dụng cho trang TV, không chuyển kênh, không tự phát và không thay đổi các tab/thiết lập khác.
+- Electron screenshot: positron-p51190-tv-reselect-after-1920x1080-real.png
+- Before screenshot: positron-p51190-tv-reselect-before-1920x1080-real.png
+- User action: Ở màn hình TV khi đã cuộn xuống danh sách, nhấn lại biểu tượng TV trên thanh bên; ứng dụng đưa phần trình phát lên đầu, giữ nguyên kênh đang xem và các danh sách đã lưu.
+- QA: Electron thật 1920×1080 chủ động cuộn >150px, chụp trước; click nav TV đang active, kiểm tra scrollTop về 0, tab vẫn active, lựa chọn kênh giữ nguyên và không tràn ngang; chụp rồi mở ảnh sau.
+- Status: CANDIDATE, chờ CI, kiểm thử ảnh, build và Release.
+
+
 ## P5.1.189 — Sắp xếp gợi ý Yêu thích A–Z / Z–A / theo nguồn / Electron 4.23.274
 - Feature priority: NEW — Ảnh Electron thật P5.1.188 đã dàn đủ sáu cột gợi ý nhưng chỉ có tìm kiếm và lọc nhóm, chưa có cách sắp xếp các kênh chưa yêu thích khi nguồn chứa hàng trăm kênh. Thêm tùy chọn hiển thị Theo nguồn, Tên A–Z, Tên Z–A theo thứ tự tiếng Việt.
 - Lựa chọn chỉ sắp xếp mảng gợi ý đã lọc trước khi phân trang; giữ nguyên thứ tự nguồn M3U, Favorites đã lưu, trạng thái kênh hiện tại và nút lưu hàng loạt, không tự phát video.

@@ -4,6 +4,21 @@
   "branch": "Positron",
   "versions": [
     {
+      "number": 190,
+      "version": "P5.1.190",
+      "appVersion": "4.23.275",
+      "title": "Chọn lại tab TV để trở về đầu trình phát",
+      "description": "Khi đang ở TV và cuộn xuống danh sách, nhấn lại tab TV sẽ cuộn lên phần video mà không đổi kênh hoặc dữ liệu. Cải tiến từ ảnh Electron thật P5.1.189 cho thấy đầu video bị khuất.",
+      "kind": "feature",
+      "status": "candidate",
+      "published": "",
+      "tag": "",
+      "commit": "",
+      "url": "https://github.com/trisanghy/open-iptv-pro/tree/Positron",
+      "assets": [],
+      "image": null
+    },
+    {
       "number": 189,
       "version": "P5.1.189",
       "appVersion": "4.23.274",
