@@ -173,10 +173,15 @@ function respondUpstream(source,req,res,session,depth){
 function handler(req,res){
  setCors(req,res);
  var origin=req.headers.origin||'';
- if(!own(ALLOWED_ORIGINS,origin)||req.headers['x-open-iptv-relay']!=='1'){
+ if(!own(ALLOWED_ORIGINS,origin)){
   json(res,403,{error:'Chỉ ứng dụng TizenBrew trên TV được phép sử dụng.'});return;
  }
+ // A CORS preflight carries Access-Control-Request-Headers, not the actual
+ // X-Open-IPTV-Relay header. It must be handled before checking that header.
  if(req.method==='OPTIONS'){res.writeHead(204);res.end();return;}
+ if(req.headers['x-open-iptv-relay']!=='1'){
+  json(res,403,{error:'Yêu cầu thiếu mã ứng dụng.'});return;
+ }
  var path=Url.parse(req.url).pathname;
  if(req.method==='GET'&&path==='/health'){json(res,200,{ok:true,transport:'local-hls',version:'1'});return;}
  if(req.method==='POST'&&path==='/session'){
