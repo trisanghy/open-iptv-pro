@@ -1,10 +1,12 @@
 # Positron P5 Changelog
 
 ## P5.1.188 — Gợi ý Yêu thích đủ rộng trên desktop / Electron 4.23.273
-- Feature priority: UX — Ảnh Electron P5.1.187 thật ở 1920×1080 cho thấy phần gợi ý chỉ chiếm 1180px, để thừa vùng trống rộng bên phải, trong khi danh sách Yêu thích phía trên dùng đủ chiều ngang.
+- Feature priority: NEW — Thêm chế độ dàn gợi ý toàn chiều rộng desktop giúp duyệt kênh nhanh hơn, dựa trên ảnh Electron P5.1.187 thật ở 1920×1080 cho thấy phần gợi ý chỉ chiếm 1180px, để thừa vùng trống rộng bên phải, trong khi danh sách Yêu thích phía trên dùng đủ chiều ngang.
 - Với desktop từ 1600px, mở rộng riêng khối gợi ý theo bề ngang vùng nội dung, tự bố trí 6 cột dễ đọc. Giữ 4 cột ở laptop, 2/1 cột ở máy hẹp; không đụng dữ liệu M3U/Favorites, phát video hoặc phân trang.
-- Ảnh TRƯỚC: positron-p51187-favorite-direct-page-after-1920x1080-real.png (artifact CI P187 đã mở xem trực tiếp).
-- Ảnh SAU dự kiến từ Electron CI: positron-p51188-favorite-wide-after-1920x1080-real.png.
+- Electron screenshot: positron-p51188-favorite-wide-after-1920x1080-real.png
+- Before screenshot: positron-p51188-favorite-wide-before-1920x1080-real.png
+- Ảnh P187 nguồn đã mở trực tiếp: positron-p51187-favorite-direct-page-after-1920x1080-real.png.
+- User action: Mở mục Yêu thích với màn hình desktop rộng từ 1600px, khối gợi ý tự dùng chiều rộng còn trống và dàn thành sáu cột dễ xem; không cần đổi cài đặt.
 - QA: panel ≥1600px, 6 cột ở 1920, 12 thẻ, 20 Favorites không đổi, không autoplay và không tràn ngang; Node regression.
 - Trạng thái: CANDIDATE, chờ CI, trực tiếp xem PNG sau và xác minh EXE/DMG.
 

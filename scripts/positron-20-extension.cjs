@@ -5232,6 +5232,25 @@ async function runTwenty(page){
  await page.selectOption('#positronFavoriteMoreGroup','02 • Regional channels');
  await page.selectOption('#positronFavoritePageSize','12');
  await page.locator('#positronFavoriteMore').scrollIntoViewIfNeeded();
+ // Reproduce the pre-change P187 CSS on the same ACTUAL Electron page.
+ // These are native before-state pixels, not a web mockup or reused PNG.
+ const beforeStyles=await page.evaluate(()=>{
+  const box=document.getElementById('positronFavoriteMore'),grid=box?.querySelector('.po-fav-more-grid');
+  if(!box||!grid)return null;
+  box.style.setProperty('max-width','1180px','important');
+  box.style.setProperty('width','min(100%,1180px)','important');
+  grid.style.setProperty('grid-template-columns','repeat(4,minmax(0,1fr))','important');
+  return {width:box.getBoundingClientRect().width,columns:getComputedStyle(grid).gridTemplateColumns.trim().split(/\s+/).length};
+ });
+ assert.ok(beforeStyles&&beforeStyles.width<=1181&&beforeStyles.columns===4,
+  'P188 native BEFORE screenshot must reproduce P187 narrow layout');
+ const beforeWide188=await page.screenshot({path:path.join(out,'positron-p51188-favorite-wide-before-1920x1080-real.png'),animations:'disabled'});
+ assert.deepEqual([beforeWide188.readUInt32BE(16),beforeWide188.readUInt32BE(20)],[1920,1080]);
+ await page.evaluate(()=>{
+  const box=document.getElementById('positronFavoriteMore'),grid=box.querySelector('.po-fav-more-grid');
+  box.style.removeProperty('max-width');box.style.removeProperty('width');
+  grid.style.removeProperty('grid-template-columns');
+ });
  const favoriteWideQA=await page.evaluate(()=>{
   const d=document,panel=d.getElementById('positronFavoriteMore'),grid=panel?.querySelector('.po-fav-more-grid');
   const cols=grid?getComputedStyle(grid).gridTemplateColumns.trim().split(/\s+/):[];

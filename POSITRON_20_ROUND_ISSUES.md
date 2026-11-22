@@ -139,3 +139,5 @@ Evaluate defects revealed by real screenshot of previous build before making cha
 - Nguyên nhân gốc: CSS P183 `#positronFavoriteMore{max-width:1180px;width:min(100%,1180px)}`.
 - Sửa: chỉ desktop ≥1600px mở rộng khối gợi ý và tăng thành 6 cột, không đổi viewport nhỏ, nguồn IPTV/Favorites hoặc trình phát.
 - QA bắt buộc: `favoriteWideQA`, PNG sau `positron-p51188-favorite-wide-after-1920x1080-real.png`, Node regression; không tính hoàn thành trước khi có CI và mở soát ảnh.
+
+- Bổ sung ảnh Electron BEFORE qua Playwright trên cùng trang P188 với CSS P187 tạm thời tái hiện, rồi phục hồi CSS P188 và chụp AFTER. Ảnh BEFORE là trạng thái thật của Electron, không phải bộ cài P187.
