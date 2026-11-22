@@ -5991,8 +5991,9 @@ async function runTwenty(page){
   const beforeCount=Number(btn.dataset.poDiscoverCount||0);
   const idsBefore=native.getChannels().map(c=>c.id).join('|');
   window.IPTVState={...native,playChannel:id=>{playCalls++;return Promise.resolve();}};
-  try{reset.focus();reset.click();}finally{window.IPTVState=native;}
-  const resetState={hadPriorDiscoveries:beforeCount>0,focusable:d.activeElement===reset,
+  let focusable=false;
+  try{reset.focus();focusable=d.activeElement===reset;reset.click();}finally{window.IPTVState=native;}
+  const resetState={hadPriorDiscoveries:beforeCount>0,focusable,
    countCleared:btn.dataset.poDiscoverCount==='0',
    badgeHidden:badge.hidden,resetHidden:reset.hidden,
    noPlaybackTriggered:playCalls===0,
