@@ -1,6 +1,8 @@
 ## P5.1.165 — Xuất CSV tên kênh trùng / Electron 4.23.250
-- NEW — Thư viện → Tên kênh trùng → tìm tên hoặc nhóm → Xuất CSV; xuất toàn bộ kết quả lọc, không giới hạn tám mục trên trang.
+- Feature priority: NEW — Xuất bảng metadata có thể đối chiếu toàn bộ tên kênh trùng theo bộ lọc, giúp rà soát hàng trăm kênh mà không phải sửa playlist hoặc mở từng trang.
+- User action: Thư viện → Tên kênh trùng → tìm tên hoặc nhóm → Xuất CSV; ghi toàn bộ kết quả được lọc vào file tải về.
 - CSV gồm tên, số kênh, số nhóm, số nguồn và nhóm; UTF-8 BOM, chống công thức Excel; không xuất URL stream hay ID nguồn, không truy cập mạng và không thay đổi playlist.
+- Electron screenshot: positron-p51165-duplicate-csv-after-1920x1080-real.png
 - Ảnh Electron 16:9: positron-p51165-duplicate-csv-before-1920x1080-real.png / positron-p51165-duplicate-csv-after-1920x1080-real.png.
 - Regression và UI QA với dữ liệu metadata mẫu; không xem là kiểm chứng playback. 
 - Status: CANDIDATE — chờ Actions, soát ảnh và xác minh Release.
