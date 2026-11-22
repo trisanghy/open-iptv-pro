@@ -11,7 +11,7 @@ Trang này được tạo tự động từ GitHub Releases và ảnh kiểm th�
 
 **Ứng dụng:** 4.23.301 · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
 
-Quan sát từ ảnh Electron thật P5.1.215 ở 1920×1080 và mã thực tế: mở danh sách lịch sử tập trung vào lựa chọn đầu, không phải ô tìm nên bàn phím phải nhấn Tab hoặc click mới có thể nhập truy vấn. Sửa: mở ☷ tự focus ô tìm; gõ ngay để lọc kênh theo tên/nhóm; ArrowDown chọn kết quả đầu, ArrowUp chọn kết quả cuối; Enter mới phát, Escape đóng và trả focus về nút ☷.
+Feature priority: NEW — Mở menu với tiêu điểm ở ô tìm, gõ ngay và di chuyển hai hướng giữa kết quả bằng bàn phím; không tự phát kênh. Quan sát từ ảnh Electron thật P5.1.215 ở 1920×1080 và mã thực tế: mở danh sách lịch sử tập trung vào lựa chọn đầu, không phải ô tìm nên bàn phím phải nhấn Tab hoặc click mới có thể nhập truy vấn.
 
 *Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
 
