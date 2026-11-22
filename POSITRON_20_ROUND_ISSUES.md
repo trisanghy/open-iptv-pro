@@ -26,3 +26,11 @@ Chỉ đánh dấu hoàn tất khi sửa nguồn, node test pass, Electron scree
 
 ## Vòng 03 — P5.1.240 [CANDIDATE]
 - Shift+F đổi bộ lọc all/fav bằng control native, F thường vẫn đánh dấu sao; QA xác thực dữ liệu Favorites không đổi, screenshot mới trước/sau và 6/6 CI.
+
+## Vòng 03 — P5.1.240 / 4.23.325 [HOÀN TẤT]
+- CI `45053439491`: 908 tests / 903 pass / 5 skipped; 6/6 job thành công, release `positron/v4.23.325-p5.1.240`.
+- Mở ảnh Electron before/after thật, 561 kênh xuống 20 kênh yêu thích; xác nhận dữ liệu Favorites vẫn bất biến và đảo về Tất cả được.
+- Đầu vào vòng 04: ảnh SAU chỉ hiển thị 20/561 chứ không nói đã bật bộ lọc Yêu thích; có nguy cơ người dùng nghĩ danh sách bị mất kênh.
+
+## Vòng 04 — P5.1.241 [CANDIDATE]
+- Thêm chip nhắc lọc Yêu thích trong panel kênh và nút Xem tất cả, không mutate playlist; kiểm thử Electron screenshot trước/sau và QA kích thước.

@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.325",
-  "description": "Positron P5.1.240: Shift+F lọc nhanh Yêu thích mà không đổi dấu sao",
+  "version": "4.23.326",
+  "description": "Positron P5.1.241: Chip yêu thích cho biết lọc hiện tại và xóa lọc",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

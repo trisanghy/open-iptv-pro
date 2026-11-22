@@ -263,6 +263,30 @@
  const channelList=d.getElementById('channelList');
  if(channelList){
   channelList.setAttribute('aria-label','Danh sách kênh, dùng lên/xuống để duyệt; trái/phải để chuyển nhóm; Home, End, Page Up và Page Down để nhảy vị trí');
+  // P241: The native favorites tab is hidden under compact filters.
+  // Show a directly actionable current-filter chip for keyboard users.
+  const searchArea=d.querySelector('#page-tv .filter-box');
+  if(searchArea){
+   const chip=d.createElement('button');chip.type='button';
+   chip.id='poFavoriteFilterChip';chip.className='po-favorite-filter-chip';chip.hidden=true;
+   const label=d.createElement('span'),clear=d.createElement('strong');
+   clear.textContent='Xem tất cả';chip.append(label,clear);searchArea.after(chip);
+   const syncFavoriteChip=()=>{
+    const active=d.querySelector('#page-tv .filter-tab[data-filter="fav"]')?.classList.contains('active')===true;
+    chip.hidden=!active;
+    if(!active)return;
+    const count=Number(d.getElementById('channelMeta')?.textContent?.match(/^\\s*(\\d+)/)?.[1]||0);
+    label.textContent='★ Yêu thích · '+count;
+    chip.setAttribute('aria-label','Đang lọc '+count+' kênh yêu thích. Nhấn để xem tất cả.');
+   };
+   chip.addEventListener('click',()=>{
+    d.querySelector('#page-tv .filter-tab[data-filter="all"]')?.click();
+    syncFavoriteChip();
+    (channelList.querySelector('.channel-item')||d.getElementById('searchBox'))?.focus({preventScroll:true});
+   });
+   new MutationObserver(syncFavoriteChip).observe(channelList,{childList:true});
+   syncFavoriteChip();
+  }
   // P230: jump only between visible group boundaries, never touch playback.
   const groupBoundaryTarget=(row,direction)=>{
    let group=row.previousElementSibling;

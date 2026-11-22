@@ -1,5 +1,12 @@
 # Positron P5 Changelog
 
+## P5.1.241 — Chip lọc Yêu thích có nút Xem tất cả / Electron 4.23.326
+- Feature priority: NEW — Khi Shift+F lọc còn 20 kênh, ảnh P5.1.240 chỉ báo 20/561 mà không nêu bộ lọc đang bật, rất dễ hiểu nhầm mất kênh. Thêm chip nhỏ trực tiếp dưới ô tìm để hiển thị `Yêu thích · 20` cùng hành động `Xem tất cả`, khôi phục danh sách bằng bộ lọc native và giữ focus; không thay đổi dữ liệu Favorites hoặc IPTV.
+- Electron screenshot: positron-p51241-favorite-chip-after-1920x1080-real.png
+- User action: Từ danh sách kênh nhấn Shift+F, nhìn chip Yêu thích dưới ô tìm; nhấn Xem tất cả trên chip để bỏ lọc và quay về danh sách đầy đủ.
+- Electron QA: ảnh trước `positron-p51241-favorite-chip-before-1920x1080-real.png`, sau `positron-p51241-favorite-chip-after-1920x1080-real.png`; kiểm tra chip hiện, không vượt chiều rộng panel, xóa lọc và giữ nguyên Favorites.
+
+
 ## P5.1.240 — Shift+F lọc nhanh yêu thích không thay đổi dấu sao / Electron 4.23.325
 - Feature priority: NEW — Thêm phím tắt Shift+F trong danh sách kênh để luân phiên bộ lọc Tất cả/Yêu thích và giữ focus trên hàng đầu. Trước đây Shift+F bị hiểu nhầm là F và đảo dấu sao, dễ thay đổi dữ liệu yêu thích ngoài ý muốn. Bản mới chỉ chuyển bộ lọc sẵn có, tuyệt đối không ghi M3U hoặc thay đổi Favorites.
 - Electron screenshot: positron-p51240-shift-favorites-after-1920x1080-real.png

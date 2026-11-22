@@ -274,7 +274,7 @@ test('P5.1.240 Shift+F cycles the native favorite filter without toggling any st
   "Đang lọc các kênh yêu thích"])
   assert.ok(source.includes(fragment),'Missing Shift+F filter: '+fragment);
  assert.ok(!source.includes('playChannel('));
- assert.equal(JSON.parse(read('package.json')).version,'4.23.325');
+ assert.ok(Number(JSON.parse(read('package.json')).version.split('.')[2])>=325);
 });
 test('P5.1.240 demands real Electron favorite-filter screenshots and unchanged data',()=>{
  const qa=read('scripts/positron-20-extension.cjs'),wf=read('.github/workflows/positron-lab.yml');
@@ -285,4 +285,23 @@ test('P5.1.240 demands real Electron favorite-filter screenshots and unchanged d
  for(const token of ["page.keyboard.press('Shift+F')","favoriteFilterQA240","favoriteFilterRestoreQA240",
   "favoritesUnchanged:","favoriteFilterActive:","allFilterRestored:","noAutoplay:"])
   assert.ok(qa.includes(token),'Missing P240 Electron QA '+token);
+});
+
+test('P5.1.241 native favorite-filter chip shows mode and clears with all-tab, not data edits',()=>{
+ const js=read('renderer/positron-channel-jump.js'),css=read('renderer/positron-channel-jump.css');
+ for(const token of ["chip.id='poFavoriteFilterChip'","searchArea.after(chip)","new MutationObserver(syncFavoriteChip)",
+  "chip.addEventListener('click'","filter-tab[data-filter=\"all\"]","Xem tất cả","channelMeta"])
+  assert.ok(js.includes(token),'P241 chip implementation missing '+token);
+ assert.ok(css.includes('#poFavoriteFilterChip[hidden]'));
+ assert.ok(css.includes('#poFavoriteFilterChip:focus-visible'));
+ assert.ok(!js.includes('playChannel('));
+ assert.equal(JSON.parse(read('package.json')).version,'4.23.326');
+});
+test('P5.1.241 asserts real Electron before/after and favorite chip clear',()=>{
+ const qa=read('scripts/positron-20-extension.cjs'),wf=read('.github/workflows/positron-lab.yml');
+ for(const f of ['positron-p51241-favorite-chip-before-1920x1080-real.png','positron-p51241-favorite-chip-after-1920x1080-real.png']){
+  assert.ok(qa.includes(f));assert.ok(wf.includes(f));
+ }
+ for(const token of ["favoriteChipQA241","favoriteChipClearQA241","chipVisible:","chipFitsPanel:","favoritesUnchanged:","chipHidden:","noAutoplay:"])
+  assert.ok(qa.includes(token),'Missing P241 Electron screenshot QA '+token);
 });
