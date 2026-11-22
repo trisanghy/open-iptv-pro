@@ -1070,6 +1070,7 @@ function loadRelayDiagnostics(token){
    if(ua)logPlayback('TizenBrew User-Agent: '+ua);
    var media=report&&report.mediaRequest;
    if(media)logPlayback('Relay media request: Origin '+diagText(media.origin,180)+' · X-Open-IPTV-Relay '+(media.appHeader?'có':'không'));
+   else logPlayback('Relay chưa ghi nhận yêu cầu media: chưa tới route hoặc phiên/Origin bị chặn.');
    var rows=report&&Array.isArray(report.requests)?report.requests:[];
    if(!rows.length)logPlayback('Relay chưa ghi được phản hồi upstream; kiểm tra kết nối dịch vụ.');
    rows.forEach(function(row,index){
