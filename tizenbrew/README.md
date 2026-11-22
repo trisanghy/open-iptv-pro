@@ -1,4 +1,16 @@
-# Open IPTV Pro TV · TizenBrew v0.1.24 (OTA)
+# Open IPTV Pro TV · TizenBrew v0.1.25 (OTA)
+
+## v0.1.25 — Phát VTV1 muộn, lỗi HLS manifest và tự chọn URL dự phòng
+
+- **Tránh báo lỗi trước khi video phát:** Sau lỗi tải HLS/HTML5, chờ thêm 2,4 giây để phát hiện sự kiện video bắt đầu phát thật. Nếu TV bắt đầu giải mã trong khoảng này, hủy lỗi và không đổi nguồn đang xem.
+- **Thử bộ phát HLS gốc thêm một lần:** nếu HLS.js báo `manifestLoadError` hoặc `manifestLoadTimeout` và Samsung khai báo native HLS, thử lại trực tiếp một lần trước khi kết luận nguồn hỏng. Không vòng lặp vô hạn.
+- **Tự dự phòng nguồn cùng kênh:** khi nguồn hiện tại thất bại chắc chắn, tìm tối đa 5 URL khác nhau đã có trong playlist do người dùng nhập, chỉ khi tên kênh khớp (bỏ qua khoảng trắng, không phân biệt hoa/thường). Không thay URL nguồn đã lưu, không chuyển sang kênh tên khác, không tải danh sách công khai ngoài ý muốn.
+- **Chẩn đoán lỗi cụ thể hơn:** `manifestLoadError` sẽ thể hiện HTTP 401/403/404/5xx nếu HLS.js trả mã; nếu mã 0 chỉ nêu khả năng mạng/CORS, không tự kết luận. Không hiển thị URL hay token.
+- **Chuyển kênh an toàn:** callback cũ và thời gian chờ bị vô hiệu hóa khi người dùng đổi kênh; OK khi bộ phát báo lỗi sẽ khởi động lại thay vì chỉ gọi `video.play()` trên nguồn hỏng.
+- **Giới hạn kỹ thuật:** TizenBrew không cấp AVPlay nếu module không có quyền hệ thống. Nếu mọi URL đều cần AVPlay hoặc bị CORS thì mã JavaScript không thể đảm bảo phát được; khi đó cần WGT có quyền AVPlay hoặc một URL hợp lệ có hỗ trợ CORS.
+- **Bảo toàn:** cơ chế OTA `tizenbrew/bootstrap.html`, bảng chọn kênh điều khiển Samsung, Back, nguồn, lịch sử và yêu thích.
+- **Kiểm thử hồi quy:** `tizenbrew/tests/tizen-playback-source-recovery.test.cjs` bao gồm sự kiện video đến muộn, chuyển nguồn, hạn chế số nguồn, đổi kênh giữa thời gian chờ, và thông báo HTTP/CORS không tiết lộ thông tin nguồn.
+- Chưa được xác nhận phát thành công trên TV Samsung thực tế.
 
 ## v0.1.24 — Bảng chọn kênh khi nhấn ↑ ↓ ← → trong màn hình toàn màn hình
 
