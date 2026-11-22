@@ -55,10 +55,10 @@
    if(requestAirPlayPicker())return;
    showMobileAirPlayGuide();return;
   }
+  if(!hasNative){if(requestAirPlayPicker())return;showBrowserCastGuide();return;}
   $('castModal').dataset.airplayMobile='false';
   $('castModal').classList.remove('hidden');
   $('airplaySection').classList.toggle('hidden',navigator.platform?.toLowerCase().includes('mac')===false);
-  if(!hasNative){if(requestAirPlayPicker())return;showBrowserCastGuide();return;}
   api.capabilities().then(c=>{macOS=c.platform==='darwin';$('airplaySection').classList.toggle('hidden',!macOS);if(macOS)scanAirplay();}).catch(()=>{});
   status('Google Cast và AirPlay là hai loại thiết bị khác nhau. Có thể tìm AirPlay ở mục bên dưới.');
   scan();
