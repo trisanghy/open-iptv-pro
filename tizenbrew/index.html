@@ -84,14 +84,14 @@ button,input,textarea{font:inherit;color:inherit}button{cursor:pointer;border:2p
 .picker-row .picker-onair{color:#aff4c5;font-size:14px;flex:none}
 .picker-help{font-size:16px;color:#b4cadf;line-height:1.45;border-top:1px solid #36506b;padding-top:12px}
 @media(max-width:1050px){.picker-panel{width:60vw;padding:19px}.picker-heading{font-size:24px}.picker-row{min-height:48px;font-size:16px}}
-.playerdiag{position:absolute;z-index:3;top:calc(45% + 55px);left:8%;right:8%;color:#f7dda6;font-size:18px;line-height:1.5;text-align:center;overflow-wrap:anywhere;text-shadow:0 1px 3px #000}
+.playerdiag{position:absolute;z-index:3;top:calc(45% + 55px);left:7%;right:7%;max-height:30vh;overflow:auto;white-space:pre-line;overflow-wrap:anywhere;padding:12px 18px;border:1px solid #8b6c3b;border-radius:10px;background:#080a0ee8;color:#ffe0aa;font-size:19px;line-height:1.45;text-align:left;text-shadow:0 1px 3px #000}
 #player.is-playing .playerdiag{display:none}
 @media(max-width:1100px){.nav .sidebar-shortcuts{gap:6px;padding:0 2px}.nav .sidebar-shortcuts button{font-size:13px;padding:8px 9px}}
 </style>
 <script type="text/javascript" src="$WEBAPIS/webapis/webapis.js"></script>
 </head><body data-theme="dark">
 <div id="app">
-<header class="top"><div class="brand"><div class="brandicon">▶</div><div><strong>Open IPTV Pro <small>TV</small></strong><p>Samsung Tizen Edition · TizenBrew v0.1.34</p></div></div><div class="toolbar"><span class="clock" id="clock">--:--</span><button id="searchBtn">⌕ Tìm</button><button id="addBtn">＋ Nguồn</button><button id="themeBtn">◐ Giao diện</button></div></header>
+<header class="top"><div class="brand"><div class="brandicon">▶</div><div><strong>Open IPTV Pro <small>TV</small></strong><p>Samsung Tizen Edition · TizenBrew v0.1.35</p></div></div><div class="toolbar"><span class="clock" id="clock">--:--</span><button id="searchBtn">⌕ Tìm</button><button id="addBtn">＋ Nguồn</button><button id="themeBtn">◐ Giao diện</button></div></header>
 <div class="main"><nav class="nav"><button class="active" data-nav="all">▣　Trực tiếp</button><button data-nav="favorites">♡　Yêu thích</button><button data-nav="recent">◷　Đã xem</button><button data-nav="sources">☷　Nguồn M3U</button><button data-nav="help">⚙　Hướng dẫn</button><div id="sidebarShortcuts" class="sidebar-shortcuts"><button type="button" id="tizenTubeBtn" title="Chuyển sang TizenTube đã cài trong TizenBrew">▶ TizenTube</button><button type="button" id="exitModuleBtn" class="exit-small" title="Thoát về TizenBrew">✕ Thoát</button></div><p class="tip">Dùng ↑ ↓ ← → và OK để điều khiển bằng remote TV.</p></nav>
 <section class="listpane"><div class="heading"><div><div class="eyebrow">DANH SÁCH KÊNH</div><h1 id="heading">Trực tiếp</h1></div><span id="count">0 kênh</span></div><div class="groups" id="groups"></div><div class="channels" id="channels"></div><div class="empty" id="empty" hidden><h2>Chưa có kênh IPTV</h2><p>Thêm nguồn bằng URL trên remote hoặc quét QR để nhập bằng điện thoại.</p><button id="emptyAdd" class="primary">＋ Thêm nguồn IPTV</button><button id="sampleBtn">▶ Luồng kiểm thử</button></div><button id="more" hidden>Xem thêm kênh ↓</button></section>
 <aside class="details"><div class="preview"><span class="live">● TRỰC TIẾP</span><b id="previewText">TV</b><span class="watermark">OPEN IPTV PRO</span></div><div class="eyebrow">KÊNH ĐANG CHỌN</div><h2 id="channelTitle">Open IPTV Pro TV</h2><p id="channelGroup">Chọn kênh để xem</p><div class="info"><div class="eyebrow">THÔNG TIN</div><p id="channelInfo">Hỗ trợ nhập M3U, nhóm kênh, yêu thích và remote Samsung.</p></div><div class="actions"><button class="primary" id="watchBtn">▶ Xem</button><button id="favBtn">♡ Yêu thích</button></div></aside></div>
@@ -737,11 +737,11 @@ function nativeAvplay(){
 function hlsAddress(address){return /\.m3u8?(?:[?#]|$)/i.test(String(address||''));}
 function dashAddress(address){return /\.mpd(?:[?#]|$)/i.test(String(address||''));}
 function logPlayback(text){
- var message=String(text||'').slice(0,135);
+ var message=String(text||'').replace(/[\\r\\n\\u0000-\\u001f]/g,' ').slice(0,280);
  if(message&&playbackEvidence.indexOf(message)<0)playbackEvidence.push(message);
- if(playbackEvidence.length>5)playbackEvidence.shift();
+ if(playbackEvidence.length>8)playbackEvidence.shift();
  var label=byId('playbackDiag');
- label.textContent=playbackEvidence.join(' · ');
+ label.textContent=playbackEvidence.join('\\n');
  label.hidden=!playbackEvidence.length;
 }
 function playbackChannelKey(channel){
@@ -1032,7 +1032,7 @@ function ensureTizenHlsRelayService(){
     ws.send(JSON.stringify({
      type:6,
      payload:{
-      fullName:'gh/trisanghy/open-iptv-pro@17b703253829f65b35dd065791695c12b6db7b68',
+      fullName:'gh/trisanghy/open-iptv-pro@791beb5e4c3a256c625e189a8d5c2e9a86b13f7c',
       serviceFile:'tizenbrew/hls-relay-v1.js'
      }
     }));
@@ -1055,6 +1055,32 @@ function requestLocalHlsSession(channel,attempt){
   return new Promise(function(resolve){setTimeout(resolve,650);})
    .then(function(){return requestLocalHlsSession(channel,attempt+1);});
  });
+}
+function diagText(value,max){
+ return String(value||'').replace(/[\\r\\n\\u0000-\\u001f]/g,' ').slice(0,max||180);
+}
+function loadRelayDiagnostics(token){
+ var match=/^http:\\/\\/127\\.0\\.0\\.1:17865\\/r\\/([0-9a-f]{40})\\/\\d+$/.exec(String(hlsRelayUrl||''));
+ if(!match)return;
+ fetch(hlsRelayServer+'/diag/'+match[1],{method:'GET',mode:'cors',cache:'no-store',headers:{'X-Open-IPTV-Relay':'1'}})
+  .then(function(response){if(!response.ok)throw Error('HTTP '+response.status);return response.json();})
+  .then(function(report){
+   if(!playbackActive(token)||html5Mode!=='hls-relay')return;
+   var ua=diagText(report&&report.browserUserAgent,300);
+   if(ua)logPlayback('TizenBrew User-Agent: '+ua);
+   var rows=report&&Array.isArray(report.requests)?report.requests:[];
+   if(!rows.length)logPlayback('Relay chưa ghi được phản hồi upstream; kiểm tra kết nối dịch vụ.');
+   rows.forEach(function(row,index){
+    var message='Upstream '+(index+1)+': '+diagText(row.host,120)+' HTTP '+Number(row.status||0)+' · '+(row.context==='cast-page'?'Cast HTTPS':'TizenBrew');
+    if(row.server)message+=' · Server: '+diagText(row.server,90);
+    if(row.contentType)message+=' · Type: '+diagText(row.contentType,90);
+    if(row.origin)message+=' · Origin: '+diagText(row.origin,100);
+    if(row.referer)message+=' · Referer: '+diagText(row.referer,150);
+    logPlayback(message);
+   });
+  }).catch(function(error){
+   if(playbackActive(token))logPlayback('Không đọc được chẩn đoán relay: '+diagText(error&&error.message||error,120));
+  });
 }
 function startRelayHlsPlayback(channel,token){
  if(hlsRelayAttempted||!playbackActive(token)||playbackEngine!=='html5')return false;
@@ -1102,6 +1128,7 @@ function startRelayHlsPlayback(channel,token){
     if(!playbackActive(token)||html5Mode!=='hls-relay'||!data||!data.fatal)return;
     var cause=describeHlsError(data);
     logPlayback('HLS TV nội bộ: '+cause);
+    loadRelayDiagnostics(token);
     finishPlaybackError(token,'HLS nội bộ: '+cause);
    });
    engine.attachMedia(video);
