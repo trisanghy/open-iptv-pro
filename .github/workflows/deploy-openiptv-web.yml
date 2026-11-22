@@ -293,7 +293,10 @@ jobs:
           node --check _site/web-autoplay.js
           node --test web-online/tests/web-autoplay.test.cjs
           node --check _site/cloud-core.js
+          test -s _site/cloud-recovery-storage.js
+          node --check _site/cloud-recovery-storage.js
           node --check _site/cloud-sync.js
+          node --test tests/web-cloud-recovery-idb.test.cjs
           node --test web-online/tests/web-supabase-cutover.test.cjs
           # Keep cross-browser email OTP working during every Supabase deployment.
           node --test tests/web-email-otp-login.test.cjs
