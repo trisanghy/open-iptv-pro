@@ -91,7 +91,7 @@ try{var old=JSON.parse(localStorage.getItem(storageKey)||'{}');if(old&&typeof ol
 function save(){try{localStorage.setItem(storageKey,JSON.stringify(state));return true;}catch(e){notify('Không đủ bộ nhớ để lưu danh sách.');return false;}}
 
 var SOURCE_CONFIG={url:'https://zjbsvqryaxtafuffpifu.supabase.co',key:'sb_publishable_j_aWS273AgxBi0JYj4O-WA_bNxHFxM7'};
-var SOURCE_PAGE='https://trisanghy.github.io/open-iptv-pro/tizen/phone.html?v=016';
+var SOURCE_PAGE='https://trisanghy.github.io/open-iptv-pro/tizen/phone.html?v=017';
 var sourcePair=null,pairSeq=0,pairTimer=0,sourceSdkPromise=null;
 function sourceStatus(s){byId('sourceQRStatus').textContent=s;}
 function newToken(){if(!window.crypto||!window.crypto.getRandomValues)throw Error('TV không hỗ trợ tạo mã QR an toàn.');
@@ -277,7 +277,26 @@ async function openPair(){
  }catch(e){if(seq===pairSeq)sourceStatus('TV không kết nối được: '+String(e.message||e)+'. Thử làm mới mã QR.');}
 }
 var timer=0;function notify(t){var el=byId('toast');el.textContent=t;el.hidden=false;clearTimeout(timer);timer=setTimeout(function(){el.hidden=true;},4100);}
-function url(s){try{var u=new URL(String(s||'').trim());return u.protocol==='https:'||u.protocol==='http:'?u.href:'';}catch(e){return '';}}
+function url(s){
+ var value=String(s==null?'':s).replace(/[\u200B-\u200D\uFEFF]/g,'').trim();
+ if(!value||value.length>4096)return '';
+ value=value.replace(/\\/g,'/');
+ var match=value.match(/^(h+t+p+s*)\s*(?::\s*\/{0,2}|\/{1,2}|\s+)(.*)$/i);
+ if(match)value=(/s$/i.test(match[1])?'https':'http')+'://'+match[2].replace(/^\/+/,'');
+ else if(/^\/\//.test(value))value='https:'+value;
+ else if(!/^[a-z][a-z0-9+.-]*:\/\//i.test(value)){
+  if(/^[a-z][a-z0-9+.-]*:/i.test(value)&&!/^[\w.-]+:\d+(?:[/?#]|$)/i.test(value))return '';
+  value='https://'+value;
+ }
+ if(/\s/.test(value))return '';
+ try{var u=new URL(value);return(u.protocol==='https:'||u.protocol==='http:')&&u.hostname?u.href:'';}catch(e){return '';}
+}
+function sourceError(e,address){
+ var message=String(e&&e.message||e||'Không xác định');
+ if(/Failed to fetch|NetworkError|Load failed|Network request failed|fetch failure/i.test(message))
+  return 'TV không truy cập được máy chủ M3U. Kiểm tra mạng TV, HTTPS/chứng chỉ, CORS hoặc HTTP bị chặn ('+address+').';
+ return message.slice(0,220);
+}
 function hash(s){var h=2166136261;for(var i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619);}return(h>>>0).toString(36);}
 function attr(line,key){var r=new RegExp(key+'="([^"]*)"','i'),m=line.match(r);return m?m[1]:'';}
 function parse(text,title){if(text.length>3000000)throw Error('M3U lớn hơn 3 MB');var arr=text.replace(/\r/g,'').split('\n'),out=[],meta=null;
@@ -312,19 +331,23 @@ async function addSource(data,fromPhone){
 var rights=fromPhone?data&&data.rights:byId('rights').getAttribute('aria-checked')==='true';
 if(rights!==true){notify('Cần xác nhận quyền sử dụng danh sách.');return {ok:false,error:'Cần xác nhận quyền sử dụng.'};}
 var name=String((fromPhone?data.name:byId('sourceName').value)||'Nguồn của tôi').trim().slice(0,80)||'Nguồn của tôi';
-var address=url(fromPhone?data.address:byId('sourceUrl').value);
-if(!address){notify('URL M3U không hợp lệ.');return {ok:false,error:'URL M3U không hợp lệ'};}
+var originalAddress=fromPhone?data.address:byId('sourceUrl').value;
+var address=url(originalAddress);
+if(!address){notify('URL M3U không hợp lệ.');return {ok:false,error:'URL không hợp lệ. Nhập tên miền hoặc địa chỉ HTTP(S), ví dụ example.com/list.m3u'};}
+if(!fromPhone)byId('sourceUrl').value=address;
 try{byId('saveSource').disabled=true;byId('saveSource').textContent='Đang tải...';
 var raw;if(/\.m3u8(?:[?#]|$)/i.test(address)){raw='#EXTM3U\n#EXTINF:-1,'+name+'\n'+address;}
 else{var deadline;try{
 var resp=await Promise.race([fetch(address,{cache:'no-store'}),new Promise(function(_resolve,reject){deadline=setTimeout(function(){reject(Error('Tải M3U quá 25 giây. Kiểm tra mạng TV/URL/CORS.'));},25000);})]);
-if(!resp.ok)throw Error('HTTP '+resp.status);raw=await Promise.race([resp.text(),new Promise(function(_resolve,reject){clearTimeout(deadline);deadline=setTimeout(function(){reject(Error('Đọc M3U quá 25 giây.'));},25000);})]);
+if(!resp.ok)throw Error('Máy chủ trả HTTP '+resp.status+(resp.status===403?' (có thể chặn TV hoặc yêu cầu đăng nhập)':resp.status===404?' (không tìm thấy đường dẫn M3U)':''));
+raw=await Promise.race([resp.text(),new Promise(function(_resolve,reject){clearTimeout(deadline);deadline=setTimeout(function(){reject(Error('Đọc M3U quá 25 giây.'));},25000);})]);
+if(/^\s*(?:<!doctype\s+html|<html[\s>]|<head[\s>]|<body[\s>])/i.test(raw))throw Error('URL trả về trang HTML thay vì danh sách M3U. Hãy kiểm tra link nguồn trực tiếp.');
 }finally{clearTimeout(deadline);}}
 var list=parse(raw,name);if(!list.length)throw Error('M3U không chứa URL hợp lệ');if(state.sources.length>=15)throw Error('Đã đạt 15 nguồn');
 state.sources.push({id:'src-'+newToken(),name:name,address:address,channels:list});if(!save()){state.sources.pop();throw Error('Bộ nhớ TV đầy, không thể lưu nguồn.');}search='';group='Tất cả';section='all';selected=null;draw();
 if(!fromPhone)closeDialog();notify('Đã thêm '+list.length+' kênh.');
 return {ok:true,count:list.length};}
-catch(e){var error=String(e.message||e).slice(0,200);notify('Lỗi nguồn: '+error+' (URL/CORS).');return {ok:false,error:error};}
+catch(e){var error=sourceError(e,address);notify('Lỗi nguồn: '+error);if(fromPhone)sourceStatus('✕ Không tải được nguồn: '+error);return {ok:false,error:error};}
 finally{byId('saveSource').disabled=false;byId('saveSource').textContent='Lưu và tải';}}
 function play(c){if(!c)return;playing=c;state.recent=[c.id].concat(state.recent.filter(function(id){return id!==c.id;})).slice(0,60);save();byId('player').hidden=false;byId('playingName').textContent=c.name;
 var video=byId('video');try{video.pause();video.removeAttribute('src');video.load();video.src=c.url;byId('playerStatus').textContent='Đang mở '+c.name+'...';video.play().then(function(){byId('playerStatus').textContent='';}).catch(function(){byId('playerStatus').textContent='Không tự phát được. Nhấn OK thử lại; codec hoặc CORS có thể không được hỗ trợ.';});}catch(e){byId('playerStatus').textContent=String(e.message||e);}}
