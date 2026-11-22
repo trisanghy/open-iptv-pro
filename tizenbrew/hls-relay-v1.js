@@ -19,7 +19,8 @@ var net=require('net');
 var crypto=require('crypto');
 var Url=require('url');
 
-var PORT=17866;
+var PORT=17867;
+var SERVICE_VERSION='0.1.39';
 var MAX_SESSIONS=32,MAX_RESOURCES=3500,MAX_PLAYLIST=2*1024*1024;
 var MAX_SEGMENT=48*1024*1024,EXPIRE_MS=20*60*1000;
 var ALLOWED_ORIGINS={'http://127.0.0.1:8081':true,'http://localhost:8081':true};
@@ -226,7 +227,7 @@ function handler(req,res){
   mediaSession.mediaRequest={origin:String(origin||'(no Origin)').slice(0,180),
    appHeader:req.headers['x-open-iptv-relay']==='1'};
  }
- if(req.method==='GET'&&path==='/health'){json(res,200,{ok:true,transport:'local-hls',version:'1'});return;}
+ if(req.method==='GET'&&path==='/health'){json(res,200,{ok:true,transport:'local-hls',version:SERVICE_VERSION});return;}
  if(req.method==='POST'&&path==='/session'){
   var length=0,parts=[];
   req.on('data',function(chunk){
@@ -252,7 +253,7 @@ function handler(req,res){
   var debugSession=sessions[diagMatch[1]];
   if(!debugSession||Date.now()-debugSession.last>EXPIRE_MS){json(res,404,{error:'Phiên phát đã hết hạn.'});return;}
   debugSession.last=Date.now();
-  json(res,200,{browserUserAgent:String(debugSession.userAgent||''),mediaRequest:debugSession.mediaRequest||null,requests:debugSession.requestDiagnostics||[]});
+  json(res,200,{relayVersion:SERVICE_VERSION,browserUserAgent:String(debugSession.userAgent||''),mediaRequest:debugSession.mediaRequest||null,requests:debugSession.requestDiagnostics||[]});
   return;
  }
  var match=/^\/r\/([0-9a-f]{40})\/(\d+)$/.exec(path);
