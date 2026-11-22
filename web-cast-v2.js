@@ -15,9 +15,11 @@
  function renderConnectionStatus(){
   const cast=castState(),air=root.OpenIPTVWebCast?.getAirplayState?.()||{connected:false};
   let label='Cast / AirPlay',detail='Cast / AirPlay lên TV',kind='none';
-  if(pair?.connected){label='TV · Đã kết nối';detail='Đã kết nối TV qua mã ghép đôi';kind='pair';}
+  if(air.connected){label='AirPlay · Đã kết nối';detail='Đã kết nối TV qua AirPlay';kind='airplay';}
+  else if(cast.connected&&cast.active){label='Cast · Đã kết nối';detail='Đang phát trên Google Cast: '+cast.name;kind='cast';}
+  else if(pair?.connected&&remoteState!=='stopped'){label='TV · Đã kết nối';detail='Đang điều khiển TV đã ghép đôi';kind='pair';}
   else if(cast.connected){label='Cast · Đã kết nối';detail='Đã kết nối Google Cast: '+cast.name;kind='cast';}
-  else if(air.connected){label='AirPlay · Đã kết nối';detail='Đã kết nối TV qua AirPlay';kind='airplay';}
+  else if(pair?.connected){label='TV · Đã kết nối';detail='Đã kết nối TV qua mã ghép đôi';kind='pair';}
   const button=$('castBtn');
   if(button){
    button.dataset.castConnection=kind;
@@ -238,18 +240,19 @@
    return true;
   }
   const state=castState();
-  if(state.connected&&state.active){
+  if(state.connected){
+   if(!state.active){await root.OpenIPTVWebCast?.play?.();return true;}
    const media=state.remotePaused?'resume':'pause';
    const ok=await root.OpenIPTVWebCast?.transportRemote?.(media);
    return !!ok;
   }
   return false;
  }
- function isRemoteActive(){const cast=castState();return !!pair?.connected||(!!cast.connected&&!!cast.active);}
+ function isRemoteActive(){const cast=castState();return !!pair?.connected||!!cast.connected;}
  function onLocalVolumeChanged(volume,muted){
-  if(!pair?.connected)return;
   const level=Math.max(0,Math.min(1,Number(volume)||0));
-  void enqueueCommand(()=>pair?.connected?pair.command('volume',{volume:level,muted:!!muted}):false).catch(()=>{});
+  if(pair?.connected){void enqueueCommand(()=>pair?.connected?pair.command('volume',{volume:level,muted:!!muted}):false).catch(()=>{});return;}
+  if(castState().connected)void root.OpenIPTVWebCast?.setReceiverVolume?.(level,!!muted);
  }
  function syncAirplayState(){renderConnectionStatus();}
  function getStatus(){const cast=castState(),air=root.OpenIPTVWebCast?.getAirplayState?.()||{};return {pair:!!pair?.connected,cast:!!cast.connected,airplay:!!air.connected,remoteState};}
