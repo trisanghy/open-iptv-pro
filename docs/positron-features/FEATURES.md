@@ -11,7 +11,7 @@ Trang này được tạo tự động từ GitHub Releases và ảnh kiểm th�
 
 **Ứng dụng:** 4.23.310 · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
 
-giữ điều khiển TV trong khung hình desktop thấp
+Feature priority: BLOCKER_FIX — Các nút điều khiển phát video, âm lượng và chọn kênh bị đẩy xuống dưới vùng nhìn khi desktop rộng mà cửa sổ thấp, nên cần giới hạn riêng chiều cao stage để tránh cắt thao tác quan trọng mà không thay đổi dữ liệu người xem. Electron screenshot: positron-p51225-tv-controls-after-1920x1080-real.png
 
 *Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
 

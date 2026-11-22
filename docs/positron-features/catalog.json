@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-22T15:32:55.364736+00:00",
+  "generatedAt": "2026-11-22T15:35:56.453422+00:00",
   "repository": "trisanghy/open-iptv-pro",
   "branch": "Positron",
   "versions": [
@@ -8,7 +8,7 @@
       "version": "P5.1.225",
       "appVersion": "4.23.310",
       "title": "giữ điều khiển TV trong khung hình desktop thấp",
-      "description": "giữ điều khiển TV trong khung hình desktop thấp",
+      "description": "Feature priority: BLOCKER_FIX — Các nút điều khiển phát video, âm lượng và chọn kênh bị đẩy xuống dưới vùng nhìn khi desktop rộng mà cửa sổ thấp, nên cần giới hạn riêng chiều cao stage để tránh cắt thao tác quan trọng mà không thay đổi dữ liệu người xem. Electron screenshot: positron-p51225-tv-controls-after-1920x1080-real.png",
       "kind": "fix",
       "status": "candidate",
       "published": "",

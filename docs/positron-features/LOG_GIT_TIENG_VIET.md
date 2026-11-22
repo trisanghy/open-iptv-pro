@@ -6,7 +6,7 @@ Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA 
 
 **Ứng dụng:** 4.23.310 · **Trạng thái:** Chưa có bản phát hành
 
-giữ điều khiển TV trong khung hình desktop thấp
+Feature priority: BLOCKER_FIX — Các nút điều khiển phát video, âm lượng và chọn kênh bị đẩy xuống dưới vùng nhìn khi desktop rộng mà cửa sổ thấp, nên cần giới hạn riêng chiều cao stage để tránh cắt thao tác quan trọng mà không thay đổi dữ liệu người xem. Electron screenshot: positron-p51225-tv-controls-after-1920x1080-real.png
 
 [Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/0f8f4e8374c9075f1154e3359a7532a3603e58ca)
 [Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
