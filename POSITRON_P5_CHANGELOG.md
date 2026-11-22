@@ -1,5 +1,14 @@
 # Positron P5 Changelog
 
+## P5.1.186 — Phân trang gợi ý Trước / Tiếp / Trang x/y / Electron 4.23.271
+- Feature priority: NEW — Ảnh P5.1.185 có hàng trăm kênh gợi ý nhưng chỉ có Gợi ý khác, không biết đang ở trang nào, không quay lại trang trước và vòng lặp cũ có thể lặp kênh ở trang cuối.
+- Thêm nút Trước, chỉ số Trang x/y (aria-live), giữ nút Gợi ý khác để tiến tiếp; phân trang theo các lát cắt không trùng kênh. Trang cuối đúng số còn lại, nút Lưu cả N phản ánh số hiện tại, chức năng cũ vẫn giữ và không tự phát video.
+- Electron screenshot: positron-p51186-favorite-paging-after-1920x1080-real.png
+- Before screenshot: positron-p51186-favorite-paging-before-1920x1080-real.png
+- User action: Trong Yêu thích, chọn nhóm và số kênh, bấm Trước hoặc Gợi ý khác để chuyển trang, đọc chỉ số Trang x/y; tới trang cuối chỉ còn số kênh chưa được hiển thị.
+- QA: 100 kênh Regional và 12 kênh/trang = 9 trang, trang cuối đúng 4 kênh 117–120, quay lại trang đầu và trang 2 không trùng, giữ 20 Favorites, không playback/overflow.
+- Status: CANDIDATE chờ QA/ảnh thực và release Windows/Mac.
+
 ## P5.1.185 — Nhóm gợi ý truy cập nhanh có số kênh / Electron 4.23.270
 - Feature priority: NEW — Ảnh Electron P5.1.184 có dropdown nhóm nhưng không biết số kênh từng nhóm trước khi chọn; duyệt 541 kênh mất thời gian.
 - Thêm dải nút truy cập nhanh các nhóm nhiều kênh với đếm số lượng thực từ kênh còn gợi ý, đánh dấu nhóm đang chọn bằng aria-pressed; chọn Tất cả khôi phục. Dropdown hiện số lượng từng nhóm và tổng kênh; không can thiệp M3U, favoriteKeys hay phát video.

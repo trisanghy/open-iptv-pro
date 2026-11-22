@@ -120,3 +120,9 @@ Evaluate defects revealed by real screenshot of previous build before making cha
 - Feature: nhóm nổi bật một chạm, số kênh thực theo nguồn đang bật, aria-pressed, giữ group select + search.
 - QA: `favoriteQuickGroupQA`, `favoriteQuickResetQA`, trước/sau PNG Electron 1920×1080.
 - Chờ CI và mở ảnh/release.
+
+## P5.1.186 (CANDIDATE) — từ ảnh P185
+- Input: 541 gợi ý, bộ phân trang chỉ có Gợi ý khác, không có Trước/chỉ số và có nguy cơ lặp trang cuối.
+- Feature: Trước/Tiếp + Trang x/y, trang cuối ngắn đúng dữ liệu, không trùng kênh/bulk đúng N.
+- QA: `favoritePageLastQA`, `favoritePageNavigationQA`, PNG before/after Electron 1920×1080.
+- Chờ CI và soát ảnh/release.

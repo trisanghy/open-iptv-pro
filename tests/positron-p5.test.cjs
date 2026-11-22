@@ -1810,7 +1810,7 @@ test('P5.1.176 gợi ý thêm kênh khi Favorites đã có ít nhất một th�
  assert.ok(js.includes("favoriteList.querySelector('.fav-card')"),'Chỉ hiện khi đã có favorites');
  assert.ok(js.includes("more.hidden=!populated"),'Ẩn khi danh sách trống');
  assert.ok(js.includes("channels.filter(ch=>ch&&ch.id&&!fav.has(store,ch))"), 'Chỉ gợi ý kênh chưa đánh dấu sao');
- assert.ok(js.includes('Array.from({length:Math.min(morePageSize,filtered.length)}'), 'Giới hạn theo số kênh người xem chọn');
+ assert.ok(js.includes('const picks=filtered.slice(moreCursor,moreCursor+morePageSize)'), 'Phân trang không lặp kênh trên trang cuối');
  assert.ok(js.includes("let moreCursor=0,moreQuery='',morePageSize=6,moreGroup='';"), 'Mặc định sáu kênh được giữ để tương thích P176');
  assert.ok(js.includes("fav.toggle(current,active);state.save();state.render();state.setPage('fav')"));
  assert.ok(js.includes("new MutationObserver(syncFavoriteMore).observe(favoriteList"));
@@ -1840,11 +1840,11 @@ test('P5.1.178 đổi nhóm kênh gợi ý không tự phát hoặc sửa nguồ
  const css=read('renderer/positron-twenty.css');
  const qa=read('scripts/positron-20-extension.cjs');
  assert.ok(js.includes('let moreCursor=0'));
- assert.ok(js.includes('moreCursor=(moreCursor+morePageSize)%filtered.length'), 'Chuyển đúng số kênh viewer đã chọn');
+ assert.ok(js.includes('moreCursor=((pageIndex+1)%pageCount)*morePageSize'), 'Chuyển sang trang kế đúng thứ tự, không lặp vòng sai');
  assert.ok(js.includes("let moreCursor=0,moreQuery='',morePageSize=6,moreGroup='';"),'Vẫn bắt đầu với 6 như bản P178');
- assert.ok(js.includes("next.setAttribute('aria-label','Xem '+Math.min(morePageSize,filtered.length)"),'ARIA phản ánh số kênh thực');
- assert.ok(js.includes('moreCursor=filtered.length?moreCursor%filtered.length:0'), 'Giữ con trỏ hợp lệ kể cả khi không tìm thấy kênh');
- assert.ok(js.includes('next.hidden=filtered.length<=morePageSize'), 'Ẩn chuyển nhóm khi mọi kết quả đã hiển thị');
+ assert.ok(js.includes("next.setAttribute('aria-label','Xem trang gợi ý tiếp')"),'ARIA diễn giải điều hướng trang');
+ assert.ok(js.includes('moreCursor=pageIndex*morePageSize'), 'Con trỏ chuẩn hóa theo trang hợp lệ');
+ assert.ok(js.includes('next.hidden=pageCount<=1'), 'Ẩn điều hướng khi chỉ có một trang');
  assert.ok(js.includes("more.querySelector('.po-fav-more-next')?.focus()"));
  assert.ok(!js.includes("channels.filter(ch=>ch&&ch.id&&!fav.has(store,ch)).slice(0,6)"));
  assert.ok(css.includes('#page-fav .po-fav-more-next:focus-visible'));
@@ -1919,8 +1919,9 @@ test('P5.1.183 expands Favorites suggestions to 6 12 or 24 without changing the 
  assert.ok(js.includes("pageSize.id='positronFavoritePageSize'"));
  assert.ok(js.includes('for(const amount of [6,12,24])'));
  assert.ok(js.includes('morePageSize=Number(pageSize.value)||6'));
- assert.ok(js.includes('Math.min(morePageSize,filtered.length)'));
- assert.ok(js.includes('moreCursor=(moreCursor+morePageSize)%filtered.length'));
+ assert.ok(js.includes('const picks=filtered.slice(moreCursor,moreCursor+morePageSize)'));
+ assert.ok(js.includes('Math.ceil(filtered.length/morePageSize)'));
+ assert.ok(js.includes('moreCursor=((pageIndex+1)%pageCount)*morePageSize'));
  assert.ok(js.includes("bulk.textContent='Lưu cả '+picks.length+' kênh'"),'Batch save reflects visible suggestions');
  assert.ok(css.includes('max-width:1180px;width:min(100%,1180px)'));
  assert.ok(css.includes('#positronFavoritePageSize:focus-visible'));
@@ -1959,4 +1960,21 @@ test('P5.1.185 exposes one-click top groups with source counts and aria pressed 
  assert.ok(css.includes('.po-fav-group-chip:focus-visible'));
  assert.ok(qa.includes('favoriteQuickGroupQA'));
  assert.ok(qa.includes('favoriteQuickResetQA'));
+});
+
+test('P5.1.186 adds previous page and truthful page index, last page never duplicates channels',()=>{
+ const js=read('renderer/positron-twenty.js'),css=read('renderer/positron-twenty.css');
+ const qa=read('scripts/positron-20-extension.cjs');
+ assert.ok(js.includes('const pageCount=Math.max(1,Math.ceil(filtered.length/morePageSize))'));
+ assert.ok(js.includes('const pageIndex=Math.min(pageCount-1'));
+ assert.ok(js.includes('const picks=filtered.slice(moreCursor,moreCursor+morePageSize)'));
+ assert.ok(js.includes("prev.className='po-fav-more-prev'"));
+ assert.ok(js.includes("pageStatus.textContent='Trang '+(pageIndex+1)+'/'+pageCount"));
+ assert.ok(js.includes("prev.setAttribute('aria-label','Xem trang gợi ý trước')"));
+ assert.ok(js.includes("next.setAttribute('aria-label','Xem trang gợi ý tiếp')"));
+ assert.ok(js.includes('moreCursor=((pageIndex+pageCount-1)%pageCount)*morePageSize'));
+ assert.ok(js.includes('moreCursor=((pageIndex+1)%pageCount)*morePageSize'));
+ assert.ok(css.includes('.po-fav-more-prev:focus-visible'));
+ assert.ok(qa.includes('favoritePageLastQA'));
+ assert.ok(qa.includes('favoritePageNavigationQA'));
 });

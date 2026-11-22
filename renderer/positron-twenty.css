@@ -742,3 +742,19 @@ html[data-positron="true"] #page-fav .po-fav-group-chip:hover{border-color:var(-
 html[data-positron="true"] #page-fav .po-fav-group-chip:focus-visible{
  outline:2px solid var(--po-accent,#60d7c2);outline-offset:2px;
 }
+
+/* P5.1.186: reversible and truthful Favorites suggestion paging. */
+html[data-positron="true"] #page-fav .po-fav-more-prev{
+ min-height:34px;padding:6px 10px;border:1px solid var(--po-border,#324f59);
+ border-radius:8px;background:var(--po-input,#152933);color:var(--po-text,#eaf7f7);
+ font-size:12px;font-weight:650;cursor:pointer;
+}
+html[data-positron="true"] #page-fav .po-fav-more-prev[hidden]{display:none!important}
+html[data-positron="true"] #page-fav .po-fav-more-prev:hover{border-color:var(--po-accent,#60d7c2)}
+html[data-positron="true"] #page-fav .po-fav-more-prev:focus-visible{
+ outline:2px solid var(--po-accent,#60d7c2);outline-offset:2px;
+}
+html[data-positron="true"] #page-fav .po-fav-more-page{
+ color:var(--po-muted,#9bb4bd);font-size:12px;font-variant-numeric:tabular-nums;
+ white-space:nowrap;align-self:center;
+}
