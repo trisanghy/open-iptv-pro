@@ -182,3 +182,14 @@ html[data-iptv-device="mobile"] body #page-tv .player-control-card .control-layo
 .iptv-tv-body .tv-pill{display:inline-flex;align-items:center;gap:8px}
 .iptv-tv-body .tv-pill > svg.oip-cast-svg{width:18px;height:18px}
 .iptv-tv-body button:has(>svg.oip-cast-svg){display:inline-flex;align-items:center;justify-content:center;gap:8px}
+
+
+/* Short + original TV URLs remain visible together, responsive on all themes. */
+#iptvCastPanel .cx-link-stack{display:grid;gap:9px;margin-top:15px;min-width:0}
+#iptvCastPanel .cx-link-row{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:7px 11px;
+  padding:12px;border:1px solid var(--cx-edge);border-radius:12px;background:var(--cx-pane2);min-width:0}
+#iptvCastPanel .cx-link-type{grid-column:1/-1;color:var(--cx-dim);font-size:11px;font-weight:800;letter-spacing:.045em}
+#iptvCastPanel .cx-link-row .cx-link{overflow-wrap:anywhere;word-break:break-word;font-size:13px;line-height:1.45;min-width:0}
+#iptvCastPanel .cx-link-row .cx-button{min-height:35px;padding:6px 10px;font-size:12px}
+@media(max-width:400px){#iptvCastPanel .cx-link-row{grid-template-columns:1fr}
+#iptvCastPanel .cx-link-row .cx-button{justify-self:start}}
