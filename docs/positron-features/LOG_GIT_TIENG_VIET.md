@@ -2,14 +2,23 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
-## P5.1.188 — tận dụng màn hình desktop rộng cho gợi ý Yêu thích
+## P5.1.189 — thêm sắp xếp gợi ý Yêu thích theo tên hoặc nguồn
 
-**Ứng dụng:** 4.23.273 · **Trạng thái:** Chưa có bản phát hành
+**Ứng dụng:** 4.23.274 · **Trạng thái:** Chưa có bản phát hành
+
+Feature priority: NEW — Ảnh Electron thật P5.1.188 đã dàn đủ sáu cột gợi ý nhưng chỉ có tìm kiếm và lọc nhóm, chưa có cách sắp xếp các kênh chưa yêu thích khi nguồn chứa hàng trăm kênh. Thêm tùy chọn hiển thị Theo nguồn, Tên A–Z, Tên Z–A theo thứ tự tiếng Việt. Lựa chọn chỉ sắp xếp mảng gợi ý đã lọc trước khi phân trang; giữ nguyên thứ tự nguồn M3U, Favorites đã lưu, trạng thái kênh hiện tại và nút lưu hàng loạt, không tự phát video.
+
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/41a409bd4c13a5b80e8b183a3cf2a1d86294cdf5)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+
+## P5.1.188 — Gợi ý Yêu thích đủ rộng trên desktop / Electron 4.23.273
+
+**Ứng dụng:** 4.23.273 · **Trạng thái:** Đã phát hành
 
 Feature priority: NEW — Thêm chế độ dàn gợi ý toàn chiều rộng desktop giúp duyệt kênh nhanh hơn, dựa trên ảnh Electron P5.1.187 thật ở 1920×1080 cho thấy phần gợi ý chỉ chiếm 1180px, để thừa vùng trống rộng bên phải, trong khi danh sách Yêu thích phía trên dùng đủ chiều ngang. Với desktop từ 1600px, mở rộng riêng khối gợi ý theo bề ngang vùng nội dung, tự bố trí 6 cột dễ đọc. Giữ 4 cột ở laptop, 2/1 cột ở máy hẹp; không đụng dữ liệu M3U/Favorites, phát video hoặc phân trang.
 
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/8eb44ce4b7e2befc4130198329c4abe314fc9a70)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/688f2740afdf66c424ce82dcd6aeb3e4391272a5)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.273-p5.1.188)
 
 ## P5.1.187 — Đi thẳng tới trang gợi ý / Electron 4.23.272
 
