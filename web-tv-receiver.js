@@ -4,7 +4,8 @@
  */
 (function(root){
  const d=root.document,$=id=>d.getElementById(id);
- let receiver=null,hls=null,dash=null,busy=false,accepted=false;
+ let receiver=null,hls=null,dash=null,busy=false,accepted=false,playingName='',fullscreenAttempted=false;
+ const cinemaButton=$('tvExitFullscreen');
  const video=$('tvVideo');
  const status=text=>{$('tvStatus').textContent=String(text||'');};
  const show=id=>{
@@ -18,7 +19,23 @@
  }
  d.querySelectorAll('[data-tv-theme]').forEach(button=>button.addEventListener('click',()=>theme(button.dataset.tvTheme)));
  try{theme(root.localStorage.getItem('openiptv-tv-theme')||'dark');}catch{theme('dark');}
+ function leaveCinema(){
+  d.body.classList.remove('tv-cinema');
+  if(d.fullscreenElement&&typeof d.exitFullscreen==='function')void Promise.resolve(d.exitFullscreen()).catch(()=>{});
+ }
+ function enterCinema(){
+  d.body.classList.add('tv-cinema'); // Guaranteed viewport-sized playback when native fullscreen is blocked.
+  if(fullscreenAttempted)return;
+  fullscreenAttempted=true;
+  try{
+   if(typeof video.requestFullscreen==='function')void Promise.resolve(video.requestFullscreen()).catch(()=>{});
+   else if(typeof video.webkitEnterFullscreen==='function')video.webkitEnterFullscreen();
+   else if(typeof d.documentElement?.requestFullscreen==='function')
+    void Promise.resolve(d.documentElement.requestFullscreen()).catch(()=>{});
+  }catch{} // TV browsers often require a remote-control gesture; CSS cinema remains usable.
+ }
  function cleanupPlayer(){
+  leaveCinema();
   try{video.pause();}catch{}
   try{hls?.destroy();}catch{}hls=null;
   try{dash?.reset();}catch{}dash=null;
@@ -27,6 +44,7 @@
  }
  async function loadVideo(url,name){
   cleanupPlayer();
+  fullscreenAttempted=false;playingName=String(name||'Open IPTV Pro');
   $('tvPlayingTitle').textContent=name||'Open IPTV Pro';
   const u=new URL(url);
   if(u.protocol==='http:'&&root.location.protocol==='https:'){
@@ -57,9 +75,16 @@
    status('Đã nhận kênh '+(name||'')+'. Nhấn nút ▶ Phát trên TV bằng điều khiển TV nếu tự phát bị chặn.');
   }
  }
+ video.addEventListener('playing',()=>{
+  if(!accepted)return;
+  enterCinema();
+  status('Đang phát '+playingName+' trên TV.');
+  void receiver?.reportPlayback('playing',playingName).catch(()=>{});
+ });
  video.addEventListener('error',()=>{
   if(!video.error)return;
   status('TV không giải mã hoặc tải được luồng. Thử kênh khác, kiểm tra HTTPS và định dạng video.');
+  if(accepted)void receiver?.reportPlayback('error',playingName).catch(()=>{});
  });
  function handleCommand(command){
   if(!accepted)return;
@@ -79,12 +104,11 @@
    await receiver?.close();
    if(!root.OpenIPTVTVPair)throw Error('Thiếu thư viện ghép đôi.');
    receiver=root.OpenIPTVTVPair.createReceiver({
+    autoApprove:true,
     onStatus:status,
     onRequest:request=>{
-     if(request){
-      $('tvRequestLabel').textContent=request.label||'Trình duyệt';
-      show('tvRequest');status('Máy tính yêu cầu ghép đôi. Hãy kiểm tra và chấp thuận trên TV.');
-     }else if(!accepted)show('tvPairing');
+     // No confirmation popup: possessing the one-time, expiring TV code is sufficient.
+     if(!request&&!accepted)show('tvPairing');
     },
     onCommand:handleCommand,
     onConnected:()=>{accepted=true;show('tvPlayer');$('tvPlayingTitle').textContent='TV đã được ghép đôi';status('Đã kết nối. Chọn kênh trên Open IPTV Pro.');}
@@ -92,7 +116,7 @@
    await receiver.start();
    const code=receiver.code;
    $('tvPairPin').textContent=code.slice(0,3)+' '+code.slice(3);
-   status('TV đã sẵn sàng. Nhập mã này ở mục Ghép đôi TV trên máy tính.');
+   status('Nhập mã 6 số trên Web; TV tự ghép đôi, không cần bấm Cho phép.');
   }catch(error){
    status('Không thể tạo mã ghép đôi: '+String(error.message||error)+'. Hãy kiểm tra Internet rồi thử lại.');
   }finally{busy=false;$('tvNewPin').disabled=false;}
@@ -108,8 +132,20 @@
   accepted=false;cleanupPlayer();await receiver?.close();receiver=null;
   await boot();
  });
- $('tvLocalPlay').addEventListener('click',()=>void video.play().catch(()=>status('Không phát được luồng trên trình duyệt TV.')));
+ $('tvLocalPlay').addEventListener('click',()=>{
+  // Use this explicit TV remote action if fullscreen was rejected during automatic playback.
+  fullscreenAttempted=false;
+  enterCinema();
+  void video.play().catch(()=>status('Không phát được luồng trên trình duyệt TV.'));
+ });
+ cinemaButton?.addEventListener('click',leaveCinema);
+ d.addEventListener('keydown',event=>{
+  if(event.key==='Escape'||event.key==='Backspace'||event.keyCode===10009){
+   if(d.body.classList.contains('tv-cinema')){event.preventDefault();leaveCinema();}
+  }
+ });
  $('tvLocalPause').addEventListener('click',()=>video.pause());
+ video.addEventListener('pause',()=>{if(accepted&&!video.ended)void receiver?.reportPlayback('paused',playingName).catch(()=>{});});
  root.addEventListener('pagehide',()=>{void receiver?.close();cleanupPlayer();});
  void boot();
 })(window);
