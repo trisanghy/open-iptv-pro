@@ -1618,3 +1618,10 @@ P5.1.81 follow-up: real Electron capture found nav overflow; replace flexible no
 - Electron screenshot: positron-p51206-random-cycle-after-1920x1080-real.png
 - Đã trực tiếp mở và soi ảnh Electron thật của P5.1.205 1920×1080: nút Bất kỳ hoạt động nhưng thiếu dấu hiệu tiến độ và có thể lặp các kênh đã chọn sau vài lượt. P206 bổ sung bộ nhớ phiên không lưu cloud, tự loại ID không còn trong source, không tự mở player khi khởi động.
 - QA dự kiến: Node regression, Electron two-click stub, screenshot before/after thực 1920×1080 với pixel khác nhau, không tràn ở 450px; chưa thử stream live trên TV/GPU.
+
+## P5.1.207 / Electron 4.23.292 — Làm mới vòng khám phá ngẫu nhiên (CANDIDATE)
+- Feature priority: NEW — Thêm nút làm mới trực tiếp trên thanh phát để người xem bắt đầu một lượt khám phá ngẫu nhiên mới bất cứ khi nào, không cần chờ đi hết toàn bộ danh sách hợp lệ.
+- User action: Sau khi nhấn Bất kỳ ít nhất một lần, nhấn nút ↻ ngay bên cạnh để xóa bộ đếm lượt khám phá hiện tại rồi bắt đầu chọn lại từ đầu.
+- Electron screenshot: positron-p51207-random-reset-after-1920x1080-real.png
+- Baseline đã MỞ: P5.1.206 có huy hiệu số đếm bên cạnh Bất kỳ, không tràn ngang; lượt random không lặp nhưng chưa có cách chủ động reset. Nút mới chỉ xóa Set trong RAM, không tự gọi playChannel và không làm mất playlist, Favorites hoặc lịch sử người dùng.
+- QA: Node regression, Electron stub xác minh reset không phát, đếm về 0, dùng lại thì đếm từ 1; hai PNG thật 1920×1080 khác pixel và viewport 450px không tràn. Chờ kết quả CI/Release.

@@ -239,6 +239,7 @@
     const selected=available[Math.floor(Math.random()*available.length)];
     if(!selected)return;
     randomSeenIds.add(selected.id);
+    resetRandom.hidden=false;
     const badge=nextRandom.querySelector('.po-random-count');
     if(badge){badge.hidden=false;badge.textContent=String(randomSeenIds.size);}
     nextRandom.dataset.poDiscoverCount=String(randomSeenIds.size);
@@ -258,6 +259,22 @@
    nextRandom.hidden=true;
    nextRandom.addEventListener('click',switchRandomChannel);
    byId('nextBtn')?.parentElement?.append(nextRandom);
+   // P207: explicit accessible reset for the session-only discovery cycle.
+   const resetRandom=d.createElement('button');resetRandom.type='button';
+   resetRandom.id='poRandomCycleReset';resetRandom.className='control-sm po-random-reset';
+   resetRandom.textContent='↻';resetRandom.title='Làm mới lượt khám phá kênh ngẫu nhiên';
+   resetRandom.setAttribute('aria-label','Làm mới lượt khám phá kênh ngẫu nhiên');
+   resetRandom.hidden=true;
+   resetRandom.addEventListener('click',()=>{
+    randomSeenIds.clear();
+    const badge=nextRandom.querySelector('.po-random-count');
+    if(badge){badge.hidden=true;badge.textContent='';}
+    nextRandom.dataset.poDiscoverCount='0';
+    nextRandom.title='Đổi sang kênh ngẫu nhiên khác';
+    nextRandom.setAttribute('aria-label','Đổi sang kênh ngẫu nhiên khác');
+    resetRandom.hidden=true;
+   });
+   byId('nextBtn')?.parentElement?.append(resetRandom);
    const syncPlayerIntro=()=>{
     const channels=window.IPTVState.getChannels();
     const hasChannels=channels.length>0;
@@ -271,6 +288,7 @@
     start.hidden=!first;
     random.hidden=!first;
     nextRandom.hidden=channels.filter(c=>c?.id&&c?.url&&c.status!=='dead').length<2;
+    resetRandom.hidden=nextRandom.hidden||randomSeenIds.size===0;
     // P5.1.89: the native player subtitle should not say "import a
     // playlist" after enabled channels are present; preserve stop/playback
     // captions, which are owned by the native player state machine.

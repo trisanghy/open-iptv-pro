@@ -2298,5 +2298,23 @@ test('P5.1.206 random cycle skips previously explored channels and counts visits
   'positron-p51206-random-cycle-before-1920x1080-real.png',
   'positron-p51206-random-cycle-after-1920x1080-real.png'])
   assert.ok(qa.includes(t),'Missing actual Electron proof '+t);
- assert.ok(flow.includes('TAG=positron/v4.23.291-p5.1.206'));
+ const pkg=JSON.parse(read('package.json'));
+ const label=pkg.description.split(' ')[1].replace(/:$/,'');
+ assert.ok(flow.includes('TAG=positron/v'+pkg.version+'-'+label.toLowerCase()));
+});
+
+test('P5.1.207 accessible reset clears only random session history',()=>{
+ const js=read('renderer/positron-horizon-v4.js'),css=read('renderer/positron-twenty.css');
+ const qa=read('scripts/positron-20-extension.cjs'),flow=read('.github/workflows/positron-lab.yml');
+ for(const t of ["resetRandom.id='poRandomCycleReset'","resetRandom.setAttribute('aria-label'",
+  "resetRandom.addEventListener('click',()=>{","randomSeenIds.clear()",
+  "nextRandom.dataset.poDiscoverCount='0'","resetRandom.hidden=nextRandom.hidden||randomSeenIds.size===0"])
+  assert.ok(js.includes(t),'Missing reset control '+t);
+ assert.ok(css.includes('#poRandomCycleReset[hidden]{display:none!important}'));
+ for(const t of ['randomResetQA','noPlaybackTriggered','noPlaylistMutation',
+  'restartsCounterAtOne','compact207','before207.equals(after207),false',
+  'positron-p51207-random-reset-before-1920x1080-real.png',
+  'positron-p51207-random-reset-after-1920x1080-real.png'])
+  assert.ok(qa.includes(t),'Missing genuine reset QA '+t);
+ assert.ok(flow.includes('TAG=positron/v4.23.292-p5.1.207'));
 });

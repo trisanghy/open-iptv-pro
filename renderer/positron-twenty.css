@@ -1010,3 +1010,16 @@ html[data-positron="true"] #poNextRandomChannel .po-random-count[hidden]{display
 @media(max-width:1000px){
  html[data-positron="true"] #poNextRandomChannel .po-random-count{min-width:17px;height:17px;font-size:9px}
 }
+
+/* P207: reset random exploration without affecting playback or playlists. */
+html[data-positron="true"] #poRandomCycleReset{
+ display:inline-flex!important;align-items:center;justify-content:center;
+ min-width:32px;height:36px;padding:0 7px;border:1px solid var(--po-border,#325160);
+ border-radius:9px;background:var(--po-input,#17303c);color:var(--po-text,#e6f4f4);
+ font-size:20px;line-height:1;cursor:pointer;
+}
+html[data-positron="true"] #poRandomCycleReset[hidden]{display:none!important}
+html[data-positron="true"] #poRandomCycleReset:focus-visible{
+ outline:2px solid var(--po-accent,#79dfc6);outline-offset:2px;
+}
+@media(max-width:1000px){html[data-positron="true"] #poRandomCycleReset{min-width:28px;height:34px;padding:0 5px}}
