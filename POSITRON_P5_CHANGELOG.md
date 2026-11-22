@@ -1,3 +1,12 @@
+## P5.1.176 — Gợi ý thêm Yêu thích sau kênh đầu tiên / Electron 4.23.261
+- Feature priority: NEW — Ảnh Electron thật P5.1.175 sau thao tác cho thấy QA Channel 001 là thẻ Yêu thích duy nhất, còn phần lớn trang trống, trong khi 560 kênh khác đã nhập. Bổ sung bảng Gợi ý thêm vào Yêu thích ở cuối danh sách khi đã có Favorites, với tối đa 6 kênh chưa đánh dấu sao; bấm ☆ lưu trực tiếp, không phát.
+- User action: Mở Yêu thích đã có ít nhất một kênh → chọn ☆ tại bảng Gợi ý thêm vào Yêu thích → kênh tiếp theo xuất hiện trong danh sách ngay lập tức, cập nhật số sao.
+- Electron screenshot: positron-p51176-more-favorites-after-1920x1080-real.png
+- Nguồn ảnh: đã mở P5.1.175 `positron-p51175-quick-favorite-after-1920x1080-real.png`, thấy một thẻ kênh và phần trống lớn bên dưới.
+- Bảng gợi ý nằm ngoài danh sách do app render nên bền khi cập nhật, tự ẩn khi Favorites trống và không hiển thị kênh đã sao; chỉ đọc metadata từ nguồn đang bật, lưu khi nhấn nút. Bố cục 3/2/1 cột theo viewport.
+- Regression: test trạng thái có thẻ/trống, không gợi ý kênh đã sao, nút focus, toggle/save/render không tự phát, chụp ảnh Electron 1920x1080 trước/sau và đo 9 trạng thái.
+- Trạng thái: CANDIDATE; phải xác minh Node+ảnh Electron thật mở bằng mắt+Release có EXE/DMG để tính hoàn thành.
+
 ## P5.1.175 — Thêm nhanh kênh vào Yêu thích ngay trong empty state / Electron 4.23.260
 - Feature priority: NEW — Ảnh Electron thật P5.1.174 cho thấy trang Yêu thích đang trống nhưng có 561 kênh và CTA phải chuyển sang TV. Tạo cụm chọn nhanh tối đa 6 kênh đang bật, bấm ☆ bên cạnh tên kênh sẽ đánh dấu yêu thích ngay tại đây, không cần mở player. Đồng thời CTA tới TV xóa từ khóa QA Channel 011 cũ để trả lại toàn bộ 561 kênh.
 - User action: Mở Yêu thích khi chưa có kênh yêu thích nhưng đã có nguồn → chọn một trong tối đa 6 nút ☆ kênh được gợi ý → kênh đó xuất hiện thành thẻ Yêu thích; có thể mở TV để chọn thêm kênh khác.

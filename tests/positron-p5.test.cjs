@@ -1800,3 +1800,19 @@ test('P5.1.175 lựa chọn yêu thích nhanh từ nguồn đã bật không ph�
  assert.equal(favorites.visible(store).length,1);
  assert.equal(JSON.stringify(store.channels),original,'Không sửa playlist nguồn');
 });
+
+test('P5.1.176 gợi ý thêm kênh khi Favorites đã có ít nhất một thẻ',()=>{
+ const js=read('renderer/positron-twenty.js');
+ const css=read('renderer/positron-twenty.css');
+ const qa=read('scripts/positron-20-extension.cjs');
+ assert.ok(js.includes("more.id='positronFavoriteMore'"));
+ assert.ok(js.includes('favoriteList.after(more)'), 'Đặt ngoài list để render không xóa');
+ assert.ok(js.includes("favoriteList.querySelector('.fav-card')"),'Chỉ hiện khi đã có favorites');
+ assert.ok(js.includes("more.hidden=!populated"),'Ẩn khi danh sách trống');
+ assert.ok(js.includes("channels.filter(ch=>ch&&ch.id&&!fav.has(store,ch)).slice(0,6)"));
+ assert.ok(js.includes("fav.toggle(current,active);state.save();state.render();state.setPage('fav')"));
+ assert.ok(js.includes("new MutationObserver(syncFavoriteMore).observe(favoriteList"));
+ assert.ok(css.includes('#positronFavoriteMore[hidden]{display:none!important}'));
+ assert.ok(css.includes('grid-template-columns:repeat(3,minmax(0,1fr))'));
+ assert.ok(qa.includes('favoriteMoreQA'));
+});

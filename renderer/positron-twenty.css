@@ -550,3 +550,33 @@ html[data-positron="true"] #page-fav .po-fav-quick-chip:focus-visible{
 @media(max-width:540px){
  html[data-positron="true"] #page-fav .po-fav-quick-grid{grid-template-columns:1fr}
 }
+/* P5.1.176: tiếp tục mở rộng Favorites sau khi đã lưu kênh đầu tiên. */
+html[data-positron="true"] #page-fav #positronFavoriteMore{
+ max-width:720px;margin:18px 0 0;padding:16px;
+ border:1px solid var(--po-border,#314956);border-radius:12px;
+ background:var(--po-card,#12252f);color:var(--po-text,#edf7f5);
+}
+html[data-positron="true"] #page-fav #positronFavoriteMore[hidden]{display:none!important}
+html[data-positron="true"] #page-fav #positronFavoriteMore h3{margin:0 0 5px;font-size:14px}
+html[data-positron="true"] #page-fav #positronFavoriteMore p{
+ margin:0 0 12px;font-size:12px;color:var(--po-muted,#9bb4bd);
+}
+html[data-positron="true"] #page-fav .po-fav-more-grid{
+ display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;
+}
+html[data-positron="true"] #page-fav .po-fav-more-chip{
+ padding:8px 10px;min-height:36px;min-width:0;text-align:left;
+ border:1px solid var(--po-border,#324f59);border-radius:8px;
+ background:transparent;color:var(--po-text,#eaf7f7);font-size:12px;
+ overflow-wrap:anywhere;cursor:pointer;
+}
+html[data-positron="true"] #page-fav .po-fav-more-chip:hover{border-color:var(--po-accent,#60d7c2)}
+html[data-positron="true"] #page-fav .po-fav-more-chip:focus-visible{
+ outline:2px solid var(--po-accent,#60d7c2);outline-offset:2px;
+}
+@media(max-width:900px){html[data-positron="true"] #page-fav .po-fav-more-grid{
+ grid-template-columns:repeat(2,minmax(0,1fr));
+}}
+@media(max-width:540px){html[data-positron="true"] #page-fav .po-fav-more-grid{
+ grid-template-columns:1fr;
+}}

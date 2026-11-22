@@ -179,6 +179,38 @@
   const countNode=byId('sourceCount');
   if(countNode)new MutationObserver(syncFavoriteSourceAction).observe(countNode,{childList:true,subtree:true,characterData:true});
   syncFavoriteSourceAction();
+  // P5.1.176: Favorites đã có kênh vẫn gợi ý thêm các kênh khác.
+  // Thanh này nằm ngoài danh sách nên không bị renderFavorites() xóa.
+  const more=d.createElement('section');more.id='positronFavoriteMore';
+  more.className='po-fav-more';more.hidden=true;
+  favoriteList.after(more);
+  const syncFavoriteMore=()=>{
+   const populated=Boolean(favoriteList.querySelector('.fav-card'));
+   more.hidden=!populated;
+   if(!populated)return;
+   const state=window.IPTVState,fav=window.OpenIPTVFavorites;
+   const store=state?.getStore?.(),channels=state?.getChannels?.()||[];
+   const picks=store&&fav?channels.filter(ch=>ch&&ch.id&&!fav.has(store,ch)).slice(0,6):[];
+   more.replaceChildren();
+   if(!picks.length)return;
+   const heading=d.createElement('h3');heading.textContent='Gợi ý thêm vào Yêu thích';
+   const hint=d.createElement('p');hint.textContent='Bấm ☆ để lưu kênh khác mà không mở video.';
+   const grid=d.createElement('div');grid.className='po-fav-more-grid';
+   for(const candidate of picks){
+    const chip=d.createElement('button');chip.type='button';
+    chip.className='po-fav-more-chip';chip.textContent='☆ '+String(candidate.name||'Kênh');
+    chip.setAttribute('aria-label','Thêm '+String(candidate.name||'kênh')+' vào Yêu thích');
+    chip.addEventListener('click',()=>{
+     const current=state.getStore(),active=state.getChannels().find(ch=>ch.id===candidate.id);
+     if(!active||fav.has(current,active))return;
+     fav.toggle(current,active);state.save();state.render();state.setPage('fav');
+    });
+    grid.append(chip);
+   }
+   more.append(heading,hint,grid);
+  };
+  new MutationObserver(syncFavoriteMore).observe(favoriteList,{childList:true,subtree:true});
+  syncFavoriteMore();
  }
 
  // P5.1.12 / round 05: real 1360px Settings screenshot shows the old
