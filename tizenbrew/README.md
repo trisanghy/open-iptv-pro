@@ -1,4 +1,12 @@
-# Open IPTV Pro TV · TizenBrew v0.1.17 (thử nghiệm)
+# Open IPTV Pro TV · TizenBrew v0.1.18 (thử nghiệm)
+
+## v0.1.18 — Không bắt buộc nhập tên nguồn M3U
+
+- **TV:** có thể bỏ trống ô tên nguồn, chỉ nhập URL hợp lệ và xác nhận quyền sử dụng. Khi mở hộp thoại, remote focus trực tiếp vào ô URL; nhấn ↑ nếu muốn đặt tên thủ công.
+- **Điện thoại qua QR:** bỏ `required` và điều kiện kiểm tra tên nguồn trong biểu mẫu gửi URL M3U/M3U8. Tải file M3U hoặc dán nội dung cũng không yêu cầu tự gõ tên.
+- **TV tự đặt tên:** nếu tên trống hoặc chỉ chứa khoảng trắng, lưu là `Nguồn IPTV 1`, `Nguồn IPTV 2`, … theo số nguồn hiện có. Áp dụng cho nhập URL trên TV, gửi nguồn URL từ điện thoại và nhận playlist theo từng phần.
+- Vẫn yêu cầu **URL hợp lệ**, hoặc nội dung/tệp M3U hợp lệ, và **xác nhận quyền sử dụng**. Không nới lỏng các kiểm tra an toàn nguồn.
+- Cập nhật metadata và header ứng dụng thành **v0.1.18**. Nhánh TizenBrew được tự động yêu cầu làm mới CDN sau khi push.
 
 ## v0.1.17 — Sửa phiên bản và mô tả thẻ ứng dụng TizenBrew
 
