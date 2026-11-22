@@ -43,79 +43,40 @@ function harness(hasFrame=true){
  }
  return {api,frame,sent,events,timers,trigger,signal,video,els,classes,ctx,state};
 }
-test('cast-like HTTPS player is an isolated iframe, not a proxy or direct URL navigation',()=>{
+test('TizenBrew keeps the legacy iframe hidden and opens genuine Cast as fallback',()=>{
  assert.match(html,/id="castPlayerFrame" hidden tabindex="-1"/);
- assert.match(html,/sandbox="allow-scripts allow-same-origin allow-presentation"/);
- assert.match(html,/referrerpolicy="no-referrer"/);
- assert.match(html,/hostedCastOrigin='https:\/\/trisanghy\.github\.io'/);
- assert.match(html,/\/open-iptv-pro\/tizen\/hosted-player\.html/);
+ assert.match(html,/return 'https:\/\/trisanghy\.github\.io\/open-iptv-pro\/tv\.html'/);
+ const fn=html.slice(html.indexOf('function finishPlaybackError(token,message){'),html.indexOf('function playbackActive(token){'));
+ assert.doesNotMatch(fn,/startHostedCastPlayback\(/);
 });
-test('VTV2 failing in module retries same HTTPS stream in GitHub Pages Cast origin',()=>{
- const s=harness(),channel={id:'vtv2',name:'VTV2',url:'https://example.org/vtv2.m3u8'};
- s.api.play(channel);
- s.api.finishPlaybackError(s.api.current().playbackSerial,'manifestLoadError');
- s.trigger(2400);
- assert.equal(s.api.current().playbackEngine,'hosted-cast');
- assert.equal(s.frame.hidden,false);
- assert.match(s.frame.src,/tizen\/hosted-player\.html/);
- assert.equal(s.video.hidden,true);
- assert.equal(s.api.current().playbackFailed,false);
- s.frame.onload();
- assert.equal(s.sent.length,1);
- assert.equal(s.sent[0].target,'https://trisanghy.github.io');
- assert.equal(s.sent[0].packet.url,channel.url);
- assert.equal(s.sent[0].packet.type,'play');
- assert.equal(s.sent[0].packet.app,'openiptv-tizen-hosted');
-});
-test('only messages from exact trusted iframe are accepted, and delayed playing clears error',()=>{
- const s=harness(),channel={id:'vtv3',name:'VTV3',url:'https://example.org/vtv3.m3u8'};
- s.api.play(channel);
- s.api.finishPlaybackError(s.api.current().playbackSerial,'HTML5 decode');
- s.trigger(2400);s.frame.onload();
- const initial=s.api.current().playbackConfirmed;
- s.events.message({origin:'https://evil.example',source:s.frame.contentWindow,
-  data:{app:'openiptv-tizen-hosted',type:'playing',session:s.api.current().hostedCastSession}});
- assert.equal(s.api.current().playbackConfirmed,initial);
- s.events.message({origin:'https://trisanghy.github.io',source:{},
-  data:{app:'openiptv-tizen-hosted',type:'playing',session:s.api.current().hostedCastSession}});
- assert.equal(s.api.current().playbackConfirmed,initial);
- s.signal('playing');
- assert.equal(s.api.current().playbackConfirmed,true);
- assert.equal(s.els.playerStatus.hidden,true);
- assert.ok(s.classes.has('is-playing'));
-});
-test('OK pauses/resumes hosted player without switching the channel; Back tears down iframe',()=>{
- const s=harness(),ch={id:'vtv4',name:'VTV4',url:'https://example.org/vtv4.m3u8'};
- s.api.play(ch);s.api.finishPlaybackError(s.api.current().playbackSerial,'HTML5');s.trigger(2400);
- s.frame.onload();s.signal('playing');
- s.api.togglePlayback();
- assert.equal(s.sent.at(-1).packet.type,'toggle');
- s.api.closePlayer();
- assert.equal(s.frame.hidden,true);
- assert.equal(s.frame.src,'about:blank');
- assert.equal(s.els.player.hidden,true);
- assert.equal(s.state.recent[0],'vtv4');
-});
-test('Cast failure moves to user-provided alternate channel source once, not an infinite iframe retry',()=>{
- const s=harness(),ch={id:'vtv5',name:'VTV5',url:'https://example.org/one.m3u8'};
- s.state.sources=[{channels:[ch,{id:'vtv5-alt',name:'VTV5',url:'https://example.org/two.m3u8'}]}];
+test('Manifest failure no longer launches broken HTTPS iframe automatically',()=>{
+ const s=harness(),ch={id:'vtv7',name:'VTV7',url:'https://example.org/vtv7.m3u8'};
  s.api.play(ch);
- s.api.finishPlaybackError(s.api.current().playbackSerial,'HTML5');
- s.trigger(2400);s.frame.onload();
- s.signal('error',{detail:'manifestLoadError HTTP 403'});
- s.trigger(2400);
- assert.equal(s.api.current().playbackStreamIndex,1);
- assert.equal(s.frame.hidden,true);
- assert.equal(s.api.current().playbackEngine,'html5');
- assert.equal(s.api.current().playbackStreamIndex,1);
- assert.equal(s.api.current().hostedCastAttempted,false);
-});
-test('HTTP channel is not sent into HTTPS iframe, matching Samsung Browser mixed-content restrictions',()=>{
- const s=harness(),ch={id:'test',name:'HTTP',url:'http://example.org/live.m3u8'};
- s.api.play(ch);
- s.api.finishPlaybackError(s.api.current().playbackSerial,'HTTP blocked');
+ s.api.finishPlaybackError(s.api.current().playbackSerial,'manifestLoadError HTTP 403');
  s.trigger(2400);
  assert.equal(s.frame.hidden,true);
  assert.equal(s.sent.length,0);
  assert.equal(s.api.current().playbackEngine,'html5');
+ assert.equal(s.els.browserFallback.hidden,false);
+ assert.match(s.els.browserFallback.textContent,/Cast chuẩn.*mã 6 số/);
+});
+test('When imported backup URLs exist, fail over without launching iframe',()=>{
+ const s=harness(),ch={id:'vtv2',name:'VTV2',url:'https://example.org/one.mp4'};
+ s.state.sources=[{channels:[ch,{id:'backup',name:'VTV2',url:'https://example.org/two.mp4'}]}];
+ s.api.play(ch);
+ s.api.finishPlaybackError(s.api.current().playbackSerial,'NotSupportedError');
+ s.trigger(2400);
+ assert.equal(s.api.current().playbackStreamIndex,1);
+ assert.equal(s.frame.hidden,true);
+ assert.equal(s.sent.length,0);
+ assert.equal(s.video.src,'https://example.org/two.mp4');
+});
+test('A successful channel still supports playback with no intrusive iframe',()=>{
+ const s=harness(),ch={id:'vtv1',name:'VTV1',url:'https://example.org/vtv1.mp4'};
+ s.api.play(ch);
+ assert.equal(s.frame.hidden,true);
+ assert.equal(s.api.current().playbackEngine,'html5');
+ s.api.closePlayer();
+ assert.equal(s.els.player.hidden,true);
+ assert.equal(s.state.recent[0],'vtv1');
 });
