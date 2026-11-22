@@ -2,14 +2,23 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
-## P5.1.225 — giữ điều khiển TV trong khung hình desktop thấp
+## P5.1.226 — nhảy nhanh tới kênh theo số mà không phát
 
-**Ứng dụng:** 4.23.310 · **Trạng thái:** Chưa có bản phát hành
+**Ứng dụng:** 4.23.311 · **Trạng thái:** Chưa có bản phát hành
+
+Feature priority: NEW — Khi playlist có hàng trăm kênh, người dùng có thể nhập số thứ tự để định vị kênh trong danh sách mà không phải cuộn qua hàng trăm mục hoặc làm gián đoạn video đang phát. Electron screenshot: positron-p51226-channel-jump-after-1920x1080-real.png
+
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/df7276459d1c6a71581184851559ea0d526da0f5)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+
+## P5.1.225 — Giữ điều khiển phát video trong cửa sổ desktop / Electron 4.23.310
+
+**Ứng dụng:** 4.23.310 · **Trạng thái:** Đã phát hành
 
 Feature priority: BLOCKER_FIX — Các nút điều khiển phát video, âm lượng và chọn kênh bị đẩy xuống dưới vùng nhìn khi desktop rộng mà cửa sổ thấp, nên cần giới hạn riêng chiều cao stage để tránh cắt thao tác quan trọng mà không thay đổi dữ liệu người xem. Electron screenshot: positron-p51225-tv-controls-after-1920x1080-real.png
 
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/0f8f4e8374c9075f1154e3359a7532a3603e58ca)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/88fbb97fa7e16aaeb7c22d210aaec162e4ac6e95)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.310-p5.1.225)
 
 ## P5.1.224 — Trạng thái nhập XMLTV hiển thị ngay trong EPG / 4.23.309
 
