@@ -536,9 +536,9 @@ for asset in ('web-mobile-touch-sort.css','web-mobile-touch-sort.js'):
         sys.exit('Missing Web mobile touch-sort asset: '+asset)
     copy2(touch_sort_root / asset,out / asset)
 if 'web-mobile-touch-sort.css' not in html:
-    html=html.replace('</head>','<link rel="stylesheet" href="web-mobile-touch-sort.css?v=page-swipe-fixed-header-20261122c"/></head>',1)
+    html=html.replace('</head>','<link rel="stylesheet" href="web-mobile-touch-sort.css?v=header-page-scroll-20261122d"/></head>',1)
 if 'web-mobile-touch-sort.js' not in html:
-    html=html.replace('</body>','<script src="web-mobile-touch-sort.js?v=mobile-touch-sort-20261122a"></script></body>',1)
+    html=html.replace('</body>','<script src="web-mobile-touch-sort.js?v=header-swipe-page-20261122e"></script></body>',1)
 if html.count('web-mobile-touch-sort.js?v=')!=1 or html.count('web-mobile-touch-sort.css?v=')!=1:
     sys.exit('Duplicated Web touch-sort assets')
 
