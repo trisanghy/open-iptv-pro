@@ -11,7 +11,7 @@ Trang này được tạo tự động từ GitHub Releases và ảnh kiểm th�
 
 **Ứng dụng:** 4.23.250 · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
 
-NEW — Thư viện → Tên kênh trùng → tìm tên hoặc nhóm → Xuất CSV; xuất toàn bộ kết quả lọc, không giới hạn tám mục trên trang. CSV gồm tên, số kênh, số nhóm, số nguồn và nhóm; UTF-8 BOM, chống công thức Excel; không xuất URL stream hay ID nguồn, không truy cập mạng và không thay đổi playlist.
+Feature priority: NEW — Xuất bảng metadata có thể đối chiếu toàn bộ tên kênh trùng theo bộ lọc, giúp rà soát hàng trăm kênh mà không phải sửa playlist hoặc mở từng trang. User action: Thư viện → Tên kênh trùng → tìm tên hoặc nhóm → Xuất CSV; ghi toàn bộ kết quả được lọc vào file tải về.
 
 *Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
 
