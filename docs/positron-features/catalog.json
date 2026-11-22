@@ -1,20 +1,20 @@
 {
-  "generatedAt": "2026-11-22T05:23:43.989603+00:00",
+  "generatedAt": "2026-11-22T05:24:48.876796+00:00",
   "repository": "trisanghy/open-iptv-pro",
   "branch": "Positron",
   "versions": [
     {
       "number": 172,
       "version": "P5.1.172",
-      "appVersion": "Chưa xác minh",
-      "title": "Tìm đúng kênh thiếu logo trong danh sách TV / Electron 4.23.257",
+      "appVersion": "4.23.257",
+      "title": "tìm kênh thiếu logo trực tiếp trong danh sách TV",
       "description": "Feature priority: NEW — Ảnh Electron thật P5.1.171 cho thấy trang kiểm kê hiển thị kênh 11–20 trong khi danh sách TV bên trái còn kênh 1–10, thiếu cầu nối tìm đúng kênh để người dùng sửa hoặc xem thông tin. Thêm nút Tìm cho mỗi hàng, đặt ô tìm trong TV theo đúng tên kênh và mở bộ lọc Tất cả. User action: Mở Thư viện → Kênh thiếu logo → chuyển tới trang cần kiểm tra → bấm Tìm cạnh kênh muốn định vị; panel đóng, tab TV hiện danh sách đã lọc theo tên, chỉ phát khi người dùng chủ động bấm kênh.",
       "kind": "fix",
       "status": "candidate",
       "published": "",
       "tag": "",
-      "commit": "",
-      "url": "https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md",
+      "commit": "511b1331a809f62bd39c47abfbfb6048e3c27f19",
+      "url": "https://github.com/trisanghy/open-iptv-pro/tree/Positron",
       "assets": [],
       "image": null
     },
