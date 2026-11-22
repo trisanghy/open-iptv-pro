@@ -1,3 +1,11 @@
+## P5.1.167 — Thay đổi số kênh thiếu logo mỗi trang / Electron 4.23.252
+- Feature priority: NEW — Duyệt 10, 25 hoặc 50 kênh thiếu logo mỗi trang; thao tác nhanh với thư viện lớn (ảnh gốc có 432 kênh thiếu logo), không cần nhấn Tiếp hàng chục lần.
+- User action: Thư viện → Kênh thiếu logo → chọn 10 / 25 / 50 kênh/trang; bộ lọc, tìm kiếm, nhảy trang và xuất CSV vẫn bảo toàn giá trị, tự tính lại số trang, quay về trang 1 sau đổi mật độ.
+- Electron screenshot: positron-p51167-missing-page-size-after-1920x1080-real.png
+- Ảnh thật trước/sau 1920×1080: positron-p51167-missing-page-size-before-1920x1080-real.png / positron-p51167-missing-page-size-after-1920x1080-real.png.
+- Test fixture 57 kênh kiểm tra số hàng 10/25/50, trang cuối, đi tới trang, CSV toàn bộ, không sửa dữ liệu playlist, không thử stream thật.
+- Status: CANDIDATE — chờ 810+ test, Electron screenshot review, build Windows x64/macOS và Release.
+
 ## P5.1.166 — Lọc tên kênh trùng theo nguồn và Xóa lọc / Electron 4.23.251
 - Feature priority: NEW — Thêm bộ lọc tên kênh trùng giữa nhiều nguồn, trong một nguồn hoặc thiếu mã nguồn, giúp rà soát metadata nhanh và tránh nhầm kênh khi trùng tên giữa nhiều playlist.
 - User action: Mở Thư viện → Tên kênh trùng → chọn chế độ lọc nguồn; khi ô tìm kiếm còn từ khóa cũ bấm Xóa lọc để hiện danh sách đầy đủ, không cần xóa từng ký tự. Xuất CSV vẫn tôn trọng bộ lọc nguồn.

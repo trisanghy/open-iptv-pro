@@ -109,3 +109,7 @@ html[data-positron="true"] #poLibraryDuplicateScope{flex:1 1 170px;max-width:100
 html[data-positron="true"] #poLibraryDuplicateClear{min-height:36px;flex:0 0 auto}
 html[data-positron="true"] #poLibraryDuplicateClear[hidden]{display:none!important}
 html[data-positron="true"] #poLibraryDuplicateScope:focus-visible,html[data-positron="true"] #poLibraryDuplicateClear:focus-visible{outline:2px solid var(--po-accent,#66d4c2);outline-offset:2px}
+
+/* P5.1.167: Lựa chọn số kênh thiếu logo mỗi trang (10/25/50). */
+html[data-positron="true"] #poLibraryMissingSize{box-sizing:border-box;max-width:100%;min-height:36px;padding:6px 10px;border:1px solid var(--po-border,#42606b);border-radius:9px;background:var(--po-card,#162934);color:var(--po-text,#eaf7f7);font:inherit;font-size:12px}
+html[data-positron="true"] #poLibraryMissingSize:focus-visible{outline:2px solid var(--po-accent,#66d4c2);outline-offset:2px}

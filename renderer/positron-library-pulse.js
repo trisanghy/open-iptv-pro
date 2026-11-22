@@ -1,5 +1,5 @@
 'use strict';
-// Positron P5.1.166 — Bảng phân tích metadata thư viện, không thử stream.
+// Positron P5.1.167 — Bảng phân tích metadata thư viện, không thử stream.
 (()=>{
  const d=document,root=d.documentElement,bar=d.getElementById('positronBar');
  const core=window.PositronLibraryPulseCore,state=window.IPTVState;
@@ -64,6 +64,12 @@
   missingSort.append(option);
  }
  // P5.1.163: xuất CSV chỉ chứa tên/nhóm theo bộ lọc hiện hành.
+ const missingSize=d.createElement('select');missingSize.id='poLibraryMissingSize';
+ missingSize.setAttribute('aria-label','Số kênh thiếu logo mỗi trang');
+ for(const n of [10,25,50]){
+  const option=d.createElement('option');option.value=String(n);option.textContent=n+' kênh/trang';
+  missingSize.append(option);
+ }
  const exportBar=d.createElement('div');exportBar.className='po-pulse-export-bar';
  const missingExport=d.createElement('button');missingExport.type='button';
  missingExport.id='poLibraryMissingExport';missingExport.textContent='Xuất CSV';
@@ -84,7 +90,7 @@
  const missingGo=d.createElement('button');missingGo.type='button';missingGo.id='poLibraryMissingGo';
  missingGo.textContent='Đến';
  missingNav.append(missingPrev,missingPageLabel,missingJump,missingGo,missingNext);
- missingBody.append(missingSearch,missingGroup,missingSort,exportBar,missingRows,missingNav);missingPane.append(missingToggle,missingBody);
+ missingBody.append(missingSearch,missingGroup,missingSort,missingSize,exportBar,missingRows,missingNav);missingPane.append(missingToggle,missingBody);
  // P5.1.164: tên trùng ở nhiều kênh/nguồn, chỉ xem metadata, không tự xóa.
  const duplicatePane=d.createElement('section');duplicatePane.id='poLibraryDuplicates';
  duplicatePane.className='po-pulse-duplicates';
@@ -188,8 +194,10 @@
   stamp.textContent='Cập nhật lúc '+new Date().toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit'});
  };
  let missingIndex=0,missingTotal=0;
+ const missingPageSize=()=>Number(missingSize.value)||10;
  const renderMissing=()=>{
-  const report=core.missingLogos(state.getChannels(),{offset:missingIndex*10,limit:10,query:missingSearch.value,group:missingGroup.value,sort:missingSort.value});
+  const size=missingPageSize();
+  const report=core.missingLogos(state.getChannels(),{offset:missingIndex*size,limit:size,query:missingSearch.value,group:missingGroup.value,sort:missingSort.value});
   missingTotal=report.total;missingRows.replaceChildren();
   missingExport.disabled=missingTotal===0;
   missingExport.textContent='Xuất CSV · '+missingTotal+' kênh';
@@ -205,12 +213,12 @@
    const empty=d.createElement('li');empty.className='po-pulse-missing-empty';
    empty.textContent=(missingSearch.value.trim()||missingGroup.value)?'Không tìm thấy kênh phù hợp.':'Không có kênh thiếu URL logo.';missingRows.append(empty);
   }
-  const pages=Math.max(1,Math.ceil(missingTotal/10));
+  const pages=Math.max(1,Math.ceil(missingTotal/size));
   missingPageLabel.textContent='Trang '+(missingIndex+1)+' / '+pages;
   missingJump.max=String(pages);
   missingJump.value=String(missingIndex+1);
   missingPrev.disabled=missingIndex===0;
-  missingNext.disabled=(missingIndex+1)*10>=missingTotal;
+  missingNext.disabled=(missingIndex+1)*size>=missingTotal;
  };
  // Kết quả trùng tên là bản sao metadata; không truy xuất hoặc sửa URL nguồn.
  let duplicateIndex=0,duplicateTotal=0;
@@ -304,6 +312,7 @@
  missingSearch.addEventListener('input',()=>{missingIndex=0;renderMissing();});
  missingGroup.addEventListener('change',()=>{missingIndex=0;renderMissing();});
  missingSort.addEventListener('change',()=>{missingIndex=0;renderMissing();});
+ missingSize.addEventListener('change',()=>{missingIndex=0;renderMissing();});
  missingExport.addEventListener('click',()=>{
   const options={query:missingSearch.value,group:missingGroup.value,sort:missingSort.value};
   const count=core.missingLogos(state.getChannels(),options).total;
@@ -319,7 +328,7 @@
   missingExport.focus({preventScroll:true});
  });
  const goMissingPage=()=>{
-  const max=Math.max(1,Math.ceil(missingTotal/10));
+  const max=Math.max(1,Math.ceil(missingTotal/missingPageSize()));
   missingIndex=core.missingPage(missingJump.value,max,missingIndex+1)-1;
   renderMissing();missingJump.focus({preventScroll:true});
  };
@@ -332,7 +341,7 @@
   renderMissing();missingPrev.focus({preventScroll:true});
  });
  missingNext.addEventListener('click',()=>{
-  if((missingIndex+1)*10<missingTotal)missingIndex++;
+  if((missingIndex+1)*missingPageSize()<missingTotal)missingIndex++;
   renderMissing();missingNext.focus({preventScroll:true});
  });
  close.addEventListener('click',hide);

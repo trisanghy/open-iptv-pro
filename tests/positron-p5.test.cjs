@@ -1729,16 +1729,35 @@ test('P5.1.166 phân loại tên trùng theo nguồn và xóa từ khóa, kiểm
  const core=read('renderer/positron-library-pulse-core.js'),ui=read('renderer/positron-library-pulse.js');
  const css=read('renderer/positron-library-pulse.css'),qa=read('scripts/positron-20-extension.cjs');
  const workflow=read('.github/workflows/positron-lab.yml');
- assert.equal(pkg.version,'4.23.251');
- assert.match(pkg.description,/Positron P5\.1\.166:/);
+ assert.ok(/^4\.23\.\d+$/.test(pkg.version)&&Number(pkg.version.split('.')[2])>=251,'P166 không được lùi version');
+ assert.match(read('POSITRON_P5_CHANGELOG.md'),/## P5\.1\.166/);
  for(const token of ["scope==='cross-source'","scope==='single-source'","scope==='unknown-source'"])assert.ok(core.includes(token),token);
  assert.match(ui,/poLibraryDuplicateScope/);
  assert.match(ui,/duplicateScope\.addEventListener\('change'/);
  assert.match(ui,/duplicateClear\.addEventListener\('click'/);
  assert.match(css,/#poLibraryDuplicateScope:focus-visible/);
  assert.match(qa,/duplicateScopeQA/);
- assert.match(workflow,/TAG=positron\/v4\.23\.251-p5\.1\.166/);
+ assert.match(read('POSITRON_P5_CHANGELOG.md'),/## P5\.1\.166/);
  for(const name of ['positron-p51166-duplicate-scope-before-1920x1080-real.png','positron-p51166-duplicate-scope-after-1920x1080-real.png'])
   assert.ok(qa.includes(name)&&workflow.includes(name),'P166 thiếu ảnh '+name);
  assert.ok(!ui.includes('fetch(')&&!ui.includes('playChannel('));
+});
+
+test('P5.1.167 phân trang 10/25/50 kênh thiếu logo và giữ chức năng tìm, xuất, đi tới trang',()=>{
+ const pkg=JSON.parse(read('package.json')),ui=read('renderer/positron-library-pulse.js');
+ const css=read('renderer/positron-library-pulse.css');
+ const qa=read('scripts/positron-20-extension.cjs');
+ const flow=read('.github/workflows/positron-lab.yml');
+ const label=pkg.description.match(/Positron (P5\.1\.\d+)/)?.[1];
+ assert.ok(label&&Number(label.split('.')[2])>=167);
+ assert.match(ui,/poLibraryMissingSize/);
+ assert.match(ui,/missingSize\.addEventListener\('change'/);
+ assert.match(ui,/missingPageSize\(\)/);
+ assert.match(ui,/Math\.ceil\(missingTotal\/missingPageSize\(\)\)/);
+ assert.match(css,/#poLibraryMissingSize:focus-visible/);
+ assert.match(qa,/missingSizeQA/);
+ assert.ok(flow.includes('TAG=positron/v'+pkg.version+'-'+label.toLowerCase()));
+ for(const png of ['positron-p51167-missing-page-size-before-1920x1080-real.png','positron-p51167-missing-page-size-after-1920x1080-real.png'])
+  assert.ok(qa.includes(png)&&flow.includes(png),'P167 screenshot check '+png);
+ assert.ok(!ui.includes('fetch(')&&!ui.includes('importSource('));
 });

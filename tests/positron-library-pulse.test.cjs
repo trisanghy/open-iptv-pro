@@ -240,3 +240,24 @@ test('P5.1.166 lọc tên trùng nhiều nguồn, một nguồn, chưa rõ ngu�
  assert.ok(!csv.includes('private.invalid')&&!csv.includes('https://'));
  assert.equal(JSON.stringify(input),original);
 });
+
+test('P5.1.167 phân trang thiếu logo 10/25/50 giữ tên và dữ liệu gốc',()=>{
+ const input=Array.from({length:57},(_,i)=>({name:'QA Channel '+String(i+1).padStart(3,'0'),group:'Tin tức',sourceId:'test-'+i}));
+ const before=JSON.stringify(input);
+ const p10=core.missingLogos(input,{offset:0,limit:10});
+ const p25=core.missingLogos(input,{offset:0,limit:25});
+ const p50=core.missingLogos(input,{offset:0,limit:50});
+ assert.equal(p10.total,57);assert.equal(p10.rows.length,10);
+ assert.equal(p25.total,57);assert.equal(p25.rows.length,25);
+ assert.equal(p50.total,57);assert.equal(p50.rows.length,50);
+ assert.equal(core.missingLogos(input,{offset:50,limit:50}).rows.length,7);
+ assert.deepEqual(p25.rows.slice(0,10),p10.rows);
+ assert.equal(Math.ceil(p10.total/10),6);
+ assert.equal(Math.ceil(p25.total/25),3);
+ assert.equal(Math.ceil(p50.total/50),2);
+ assert.equal(core.missingPage('3',3,1),3);
+ assert.equal(core.missingPage('999',3,1),3);
+ const csv=core.missingLogoCsv(input);
+ assert.equal(csv.split('\r\n').filter(Boolean).length,58);
+ assert.equal(JSON.stringify(input),before);
+});
