@@ -1,4 +1,15 @@
-# Open IPTV Pro TV · TizenBrew v0.1.31 (OTA)
+# Open IPTV Pro TV · TizenBrew v0.1.32 (OTA)
+
+## v0.1.32 — Phát HLS ngay trong TizenBrew, không chuyển sang Cast
+
+- **Đúng mục tiêu:** khi chọn VTV1/VTV2/VTV7 ngay trong Open IPTV Pro trên TizenBrew, ứng dụng phát qua bộ phát hiện tại; nếu HLS.js không tải được manifest do CORS, tự kích hoạt **bộ chuyển tiếp HLS chạy trên chính Samsung TV**. Video tiếp tục hiển thị trong trình phát, remote OK/Back/↑↓←→ không thay đổi. Không tự mở `tv.html` hoặc đòi mã ghép đôi.
+- **Dịch vụ TizenBrew:** khai báo `serviceFile: tizenbrew/hls-relay-v1.js` trong `package.json`. Mã dịch vụ được nạp qua cơ chế TizenBrew `StartService` (WebSocket event type 6) ngay khi module khởi động, không cần người dùng tự cài Node, mở laptop, hoặc sử dụng proxy bên ngoài. Cơ chế gọi khởi động có điều tiết; client thử kết nối lại dịch vụ tối đa 7 lần nếu tiến trình chưa sẵn sàng.
+- **Phạm vi bảo mật:** dịch vụ chỉ lắng nghe `127.0.0.1:17865`, chỉ chấp nhận Origin TizenBrew localhost và header riêng, từ chối địa chỉ IP mạng nội bộ/loopback từ playlist, chỉ kết nối HTTP(S). URL và token gốc không ghi vào log, không gửi tới máy chủ proxy bên thứ ba. Playlist HLS được viết lại sang ID tài nguyên ngẫu nhiên trên TV; hỗ trợ manifest nhiều mức chất lượng, audio URI, AES key, init segment và HTTP Range. Giới hạn phiên, số tài nguyên và kích thước để giảm rủi ro.
+- **Khả năng khắc phục:** giải quyết một lớp lỗi **CORS của WebView** khi TV vẫn có mạng và nguồn HLS hợp lệ. **Không thể** khắc phục HTTP 403 do máy chủ từ chối cả yêu cầu từ dịch vụ TV, codec phần cứng không hỗ trợ, DRM hoặc AVPlay bị giới hạn. Khi đó lỗi sẽ hiển thị trên TV; không được coi là đã phát thành công.
+- **Kênh & dữ liệu:** giữ chính xác URL đã chọn (bản v0.1.31), không gom URL của kênh trùng tên; giữ QR, thứ tự kênh, lịch sử và mục yêu thích. Đường OTA vẫn `tizenbrew/bootstrap.html`. **Không chỉnh sửa `web/online` hoặc trình phát Cast**.
+- **Kiểm thử:** `tizenbrew/tests/tv-local-hls-relay.test.cjs` kiểm tra CORS preflight, bắt buộc header và nguồn TV, playlist rewriting, không rò URL/token, chặn loopback/private IP. `tizenbrew/tests/tizen-in-app-relay-playback.test.cjs` kiểm tra HLS.js tự thử relay, chọn kênh khác hủy callback cũ và không tự dùng Cast. `tizenbrew/tests/last-channel-startup.test.cjs` kiểm tra dịch vụ khởi động trước khi mở kênh gần nhất.
+- **Kích hoạt:** TizenBrew có thể dùng metadata module cũ trong cache ngay sau khi OTA. Mã ứng dụng sẽ gửi `StartService` cho dịch vụ riêng để giảm tình trạng đó. Nếu TV không kết nối được dịch vụ nội bộ sau OTA, đóng hẳn rồi mở lại TizenBrew (không xóa ứng dụng, không mất kênh).
+- **Giới hạn xác minh:** kiểm thử CI kiểm tra mã và luồng giả lập; chưa có phép thử phát VTV2/VTV7 trực tiếp trên thiết bị Samsung của người dùng.
 
 ## v0.1.31 — Giữ đúng URL kênh được chọn; không tự đổi sang cùng tên ở nguồn khác
 
