@@ -30,10 +30,11 @@ function setup(){
   const channelOne=row('mobile-channel','Tin tức','c1',0);
   const channelTwo=row('mobile-channel','Tin tức','c2',1);
   const folderHead=row('folder-header','Thể thao','',0);
+  const folderHeadA=row('folder-header','Tin tức','',0);
   const folderBlock={classList:classes('folder-block'),querySelector:()=>folderHead};
   const managed={
     managerPanel:{hidden:false},
-    channelList:{contains:x=>[channelOne,channelTwo,folderHead].includes(x)}
+    channelList:{contains:x=>[channelOne,channelTwo,folderHead,folderHeadA].includes(x)}
   };
   const doc={
     addEventListener:(name,fn)=>{listeners[name]=fn;},
@@ -52,7 +53,7 @@ function setup(){
   };
   const code=section(phone,'/* Same touch model as Web Mobile:',"document.addEventListener('touchcancel',dragClear,true);");
   const inspect=vm.runInNewContext(code+'\n({current:()=>dragGesture});',context);
-  return {listeners,timers,sent,inspect,channelOne,channelTwo,folderHead,folderBlock,doc};
+  return {listeners,timers,sent,inspect,channelOne,channelTwo,folderHead,folderHeadA,folderBlock,doc};
 }
 function target(card){
   return {closest:selector=>selector.includes('.mobile-channel')?card:null};
@@ -89,6 +90,30 @@ test('channel can be dragged onto a different channel',async()=>{
   assert.equal(s.sent[0].action,'relocate-channel');
   assert.equal(s.sent[0].data.channelId,'c1');
   assert.equal(s.sent[0].data.anchorId,'c2');
+});
+test('dragging a channel onto another folder moves it across folders',()=>{
+  const s=setup(),inner=target(s.channelOne);
+  s.doc.elementFromPoint=()=>s.folderHead;
+  s.listeners.touchstart(event('touchstart',inner,100,200));
+  s.timers[0].fn();
+  s.listeners.touchmove(event('touchmove',inner,100,270));
+  s.listeners.touchend(event('touchend',inner,100,270));
+  assert.equal(s.sent.length,1);
+  assert.equal(s.sent[0].action,'relocate-channel');
+  assert.equal(s.sent[0].data.group,'Thể thao');
+  assert.equal(s.sent[0].data.anchorId,'');
+});
+test('dragging a folder onto another folder reorders the folders',()=>{
+  const s=setup();
+  s.doc.elementFromPoint=()=>s.folderHead;
+  s.listeners.touchstart(event('touchstart',target(s.folderHeadA),100,200));
+  s.timers[0].fn();
+  s.listeners.touchmove(event('touchmove',target(s.folderHeadA),100,270));
+  s.listeners.touchend(event('touchend',target(s.folderHeadA),100,270));
+  assert.equal(s.sent.length,1);
+  assert.equal(s.sent[0].action,'reorder-folder');
+  assert.equal(s.sent[0].data.name,'Tin tức');
+  assert.equal(s.sent[0].data.anchor,'Thể thao');
 });
 test('folder can be held from its blank body, without touching a dedicated button',()=>{
   const s=setup();
