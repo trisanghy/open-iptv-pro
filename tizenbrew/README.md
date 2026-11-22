@@ -11,7 +11,7 @@
 - **Remote:** chọn **＋ Nguồn**, nhập **Tên nguồn**, nhấn **OK** hoặc **↓** để chuyển xuống URL. Có nút **↓ Chuyển xuống nhập đường dẫn** làm đường dự phòng khi bàn phím Samsung giữ phím điều hướng. Nhập URL, xác nhận quyền sử dụng và nhấn **Lưu và tải**.
 - **Điện thoại:** chọn **＋ Nguồn**, quét **mã QR lớn** bên phải; trên điện thoại nhập tên và URL M3U/M3U8, xác nhận quyền sử dụng rồi **Gửi nguồn sang TV**. TV tải và lưu danh sách, điện thoại nhận kết quả.
 - Mã QR được tạo **tại TV** từ token ngẫu nhiên 128-bit, hết hạn trong **10 phút** hoặc khi đóng hộp thoại/tạo QR mới. Mã chỉ cho phép gửi nguồn đến TV đang hiển thị mã.
-- Trang biểu mẫu nằm trong nhánh `tizenbrew` tại `tizenbrew/phone.html`, hiển thị qua CDN HTML `raw.githack.com`. CDN có thể yêu cầu **xác nhận truy cập lần đầu** hoặc tạm thời không hoạt động. Khi đó dùng remote.
+- Mã nguồn trang quản lý nằm ở `tizenbrew/phone.html` và bản được xuất bản độc lập trên GitHub Pages tại **https://trisanghy.github.io/open-iptv-pro/tizen/phone.html** (tệp xuất bản: `web/online:tizen/phone.html`). Quét QR sẽ mở trực tiếp trang này, không cần trang trung gian RawGitHack. Khi cập nhật chức năng trang quản lý, cần đồng bộ bản sao trên `web/online`.
 - Luồng nhập dùng **Supabase Realtime Broadcast tạm thời** (TLS). Không ghi danh sách nguồn vào database; TV lưu dữ liệu cục bộ. Dịch vụ chuyển tiếp vẫn xử lý dữ liệu truyền, nên không chia sẻ QR với người không được phép.
 
 ## Giới hạn và kiểm thử
@@ -56,7 +56,7 @@ Không cung cấp nguồn IPTV bản quyền mặc định. Chỉ sử dụng n�
 - Tab **Thêm nguồn**: gửi tên và URL M3U, chỉ khi TV đã xác nhận kết nối. TV trả tiến độ, số kênh thực tế hoặc lỗi.
 - Các thay đổi thực hiện tại TV rồi lưu cục bộ; trang điện thoại chỉ hiển thị trạng thái đã lưu khi nhận \`manager-result\`. Khi hết 10 phút, cần QR mới.
 - **Giữ hộp thoại QR mở trên TV** trong lúc quản lý. Nếu TV không hiển thị trạng thái "TV đã trực tuyến" dưới QR, kết nối chưa hoạt động và điện thoại không thể gửi nguồn.
-- Hiện đang dùng trang quản lý từ \`raw.githack.com\`; URL QR có \`?v=015\` để tránh cache giao diện trước.
+- Trang quản lý dùng GitHub Pages `https://trisanghy.github.io/open-iptv-pro/tizen/phone.html`; QR thêm `?v=016#code=...` để bảo đảm mở đúng phiên bản và giữ mã ghép TV. Không dùng RawGitHack.
 
 ## Sửa Back và nút THOÁT v0.1.6
 
