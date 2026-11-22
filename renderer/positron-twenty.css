@@ -922,3 +922,13 @@ html[data-positron="true"] button.po-dvr-tomorrow{
  background:var(--po-input,#17303c);color:var(--po-accent,#79dfc6);
  font:inherit;font-size:11px;cursor:pointer;
 }
+
+
+/* P200: explicit two-click replacement warning for custom DVR names. */
+html[data-positron="true"] #poDvrSuggestName[data-confirm-replace="true"]{
+ color:#ffdc9e;border-color:#c98b42;background:var(--po-input,#17303c);
+ min-height:34px;font-weight:600;
+}
+html[data-positron="true"] #poDvrSuggestName[data-confirm-replace="true"]:focus-visible{
+ outline:2px solid #ffd18c;outline-offset:2px;
+}

@@ -1,5 +1,10 @@
 # Positron — New 20-round issue register
 
+## Vòng 02/20 — P5.1.200 / Electron 4.23.285 — CANDIDATE
+- Đầu vào: ảnh Electron P5.1.199 after 1920×1080 đã MỞ, tên tạo tự động cập nhật chính xác nhưng kịch bản cố tạo tên khi có nhãn thủ công hiện thông báo yêu cầu xóa thủ công.
+- Tính năng: thay vì bắt xóa tên, nút “Tạo tên từ kênh và giờ” chuyển sang xác nhận màu hổ phách ở lần đầu; lần nhấn thứ hai mới thay tên, có hủy Escape/sửa nội dung/bỏ focus. Không tự đặt lịch, không sửa M3U, không tự phát.
+- Bắt buộc chứng minh bằng Node tests, Electron 3 ảnh thật 1920×1080 before/confirm/after đã mở, CI 6/6 và release mới bất biến; hiện CANDIDATE tới khi xác minh xong.
+
 ## P5.1.199 / Electron 4.23.284 — CANDIDATE (22/11/2026)
 - Đã mở ảnh Electron thật P5.1.198 1920×1080: Bắt đầu 23/11 nhưng tên tạo tự động còn 22/11; nút tạo tên yêu cầu xóa tên cũ.
 - Sửa trên Positron: chỉ đồng bộ tên được tạo bởi app trong phiên khi giờ bắt đầu/kênh thay đổi; bảo vệ tên thủ công, playlist, DVR và stream.

@@ -2168,3 +2168,22 @@ test('P5.1.199 generated DVR name tracks start edits and respects manual names',
   'positron-p51199-dvr-title-sync-after-1920x1080-real.png'])
   assert.ok(qa.includes(token),'Missing real Electron P199 QA: '+token);
 });
+
+
+test('P5.1.200 DVR replace action needs an explicit second click and can be cancelled',()=>{
+ const js=read('renderer/positron-twenty.js');
+ const css=read('renderer/positron-twenty.css');
+ const qa=read('scripts/positron-20-extension.cjs');
+ for(const token of ["let replacePending=false;","const clearReplace=()=>",
+  "button.dataset.confirmReplace='true'","button.textContent='Nhấn lần nữa để thay tên'",
+  "if(event.key==='Escape'&&replacePending)","if(nameInput.value.trim()&&nameInput.value!==generatedValue&&!replacePending)",
+  "button.addEventListener('blur'"])
+  assert.ok(js.includes(token),'Missing safe two-click DVR replace '+token);
+ assert.ok(css.includes('#poDvrSuggestName[data-confirm-replace="true"]'));
+ for(const token of ['dvrReplaceConfirmQA','noReplacementOnFirstClick',
+  'replacesOnlyOnSecondClick','escapeCancelsReplace','editingCancelsReplace',
+  'positron-p51200-dvr-replace-before-1920x1080-real.png',
+  'positron-p51200-dvr-replace-confirm-1920x1080-real.png',
+  'positron-p51200-dvr-replace-after-1920x1080-real.png'])
+  assert.ok(qa.includes(token),'Missing P200 real Electron QA '+token);
+});

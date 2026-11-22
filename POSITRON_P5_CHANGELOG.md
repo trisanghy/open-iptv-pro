@@ -1563,3 +1563,11 @@ P5.1.81 follow-up: real Electron capture found nav overflow; replace flexible no
 - Sửa lỗi nhìn thấy trên ảnh thật P5.1.198: tên tự tạo giữ ngày cũ sau khi bấm Ngày mai cùng giờ.
 - Tên do Positron tạo trong phiên và chưa được chỉnh tay sẽ đổi theo giờ/kênh; tên thủ công và tên đã lưu giữ nguyên.
 - Regression Node và Electron 1920×1080 before/after, kiểm chứng CI và release bất biến.
+
+
+## P5.1.200 / 4.23.285 — Xác nhận thay tên lịch ghi bằng hai lần nhấn (CANDIDATE)
+- Feature priority: NEW — Khi đã có tên ghi hình tự nhập, nút tạo tên tự động cho phép xác nhận rõ ràng bằng hai lần nhấn thay vì bắt xóa tên cũ; tránh ghi đè vô ý và giảm bước thao tác.
+- User action: Vào Lịch phát sóng, nhập tên riêng, bấm Tạo tên từ kênh và giờ một lần để xem xác nhận, bấm lần hai để thay hoặc nhấn Escape để hủy.
+- Electron screenshot: positron-p51200-dvr-replace-after-1920x1080-real.png
+- Ba ảnh Electron 1920×1080 trước, trong lúc xác nhận, sau khi thực hiện; kiểm thử nút và input thay đổi không gây ghi lịch/auto-play.
+- Không chỉnh nhánh khác, bảo toàn dữ liệu người dùng và giữ tất cả tag trước.

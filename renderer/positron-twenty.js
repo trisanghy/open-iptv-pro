@@ -732,6 +732,7 @@
   if(!nameInput||!selector||!start||byId('poDvrSuggestName'))return;
   // P199: only generated names (not edited manually) track time/channel edits.
   let generatedValue='';
+  let replacePending=false;
   const suggest=()=>{
    const selected=selector.selectedOptions?.[0]?.textContent?.trim()||'';
    if(selector.disabled||!selected||selected==='Chưa có kênh để ghi hình')return '';
@@ -754,31 +755,51 @@
    nameInput.dispatchEvent(new Event('input',{bubbles:true}));
    nameInput.dispatchEvent(new Event('change',{bubbles:true}));
   };
-  nameInput.addEventListener('input',()=>{
-   if(nameInput.value!==generatedValue)generatedValue='';
-  });
-  for(const field of [selector,start]){
-   field.addEventListener('input',syncGenerated);
-   field.addEventListener('change',syncGenerated);
-  }
+
   const button=d.createElement('button');button.id='poDvrSuggestName';button.type='button';
   button.className='po-dvr-suggest-name';
   button.textContent='Tạo tên từ kênh và giờ';
   button.setAttribute('aria-label','Tự đặt tên bản ghi theo kênh và giờ bắt đầu');
-  button.addEventListener('click',()=>{
-   if(nameInput.value.trim()){
-    nameInput.focus({preventScroll:true});
-    window.IPTVState?.toast?.('Tên bản ghi đã có. Hãy xóa tên trước khi tạo tự động.','warn');
-    return;
+  // P200: a second deliberate press is required before replacing a manual title.
+  // Editing the form or pressing Escape cancels the pending replacement.
+  const clearReplace=()=>{
+   replacePending=false;
+   button.dataset.confirmReplace='false';
+   button.textContent='Tạo tên từ kênh và giờ';
+   button.setAttribute('aria-label','Tự đặt tên bản ghi theo kênh và giờ bắt đầu');
+  };
+  nameInput.addEventListener('input',()=>{
+   if(nameInput.value!==generatedValue)generatedValue='';
+   clearReplace();
+  });
+  for(const field of [selector,start]){
+   field.addEventListener('input',()=>{clearReplace();syncGenerated();});
+   field.addEventListener('change',()=>{clearReplace();syncGenerated();});
+  }
+  button.addEventListener('keydown',event=>{
+   if(event.key==='Escape'&&replacePending){
+    event.preventDefault();event.stopPropagation();clearReplace();
    }
+  });
+  button.addEventListener('blur',()=>{if(replacePending)clearReplace();});
+  button.addEventListener('click',()=>{
    const selected=selector.selectedOptions?.[0]?.textContent?.trim()||'';
    if(selector.disabled||!selected||selected==='Chưa có kênh để ghi hình'){
+    clearReplace();
     selector.focus({preventScroll:true});
     window.IPTVState?.toast?.('Chọn kênh trước khi tạo tên bản ghi','warn');
     return;
    }
    const generated=suggest();
    if(!generated)return;
+   if(nameInput.value.trim()&&nameInput.value!==generatedValue&&!replacePending){
+    replacePending=true;
+    button.dataset.confirmReplace='true';
+    button.textContent='Nhấn lần nữa để thay tên';
+    button.setAttribute('aria-label','Xác nhận thay tên hiện tại bằng tên từ kênh và giờ');
+    return;
+   }
+   clearReplace();
    nameInput.value=generated.slice(0,Math.max(1,nameInput.maxLength||220));
    generatedValue=nameInput.value;
    nameInput.dispatchEvent(new Event('input',{bubbles:true}));
