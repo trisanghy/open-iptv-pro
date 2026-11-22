@@ -9,3 +9,12 @@
 ## Cách tính vòng
 
 Chỉ đánh dấu hoàn tất khi sửa nguồn, node test pass, Electron screenshot mới đã trực tiếp mở để xem, HEAD/CI/release kiểm chứng; không đếm mỗi ảnh hay mỗi test như vòng riêng.
+
+## Vòng 01 — P5.1.238 / 4.23.323 [HOÀN TẤT]
+- Commit nguồn `6e2ce559ca45e8a4887a1f9913e2840a676fe573`; fix CI `636b484fe5fdec59aad8377e4b37532c688c6c08`.
+- CI `45051988709`: 904 Node tests, 899 pass, 5 skipped; 6/6 jobs thành công; release `positron/v4.23.323-p5.1.238`.
+- Mở ảnh Electron P238 trước/sau 1920x1080 trực tiếp, `shortcutGuardQA238` và `shortcutAfterQA238` đều true.
+- Đầu vào vòng 02: ảnh sau khi bật bảng nhảy làm danh sách kênh bị đẩy xuống; cần cách đóng bảng nhanh khi đang focus hàng kênh.
+
+## Vòng 02 — P5.1.239 [CANDIDATE]
+- Escape đóng bảng nhảy khi đang focus hàng kênh, khôi phục focus và không tự phát; thêm screenshot regression trước/sau.

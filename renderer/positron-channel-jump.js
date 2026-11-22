@@ -277,6 +277,17 @@
   };
   channelList.addEventListener('keydown',event=>{
    if(historyShortcut(event))return;
+   // P239: Escape closes the jump panel from a channel row without playback
+   // and restores focus to that same row after setOpen focuses the toggle.
+   if(event.key==='Escape'&&!panel.hidden&&!event.altKey&&!event.ctrlKey&&!event.metaKey){
+    const row=event.target;
+    if(row instanceof HTMLElement&&row.matches('.channel-item')){
+     event.preventDefault();event.stopPropagation();
+     setOpen(false);
+     if(row.isConnected)row.focus({preventScroll:true});
+     return;
+    }
+   }
    if(event.altKey||event.ctrlKey||event.metaKey)return;
    const keys=['ArrowUp','ArrowDown','Home','End','PageUp','PageDown','ArrowLeft','ArrowRight'];
    const favoriteKey=(event.key==='f'||event.key==='F')&&!event.ctrlKey&&!event.altKey&&!event.metaKey;

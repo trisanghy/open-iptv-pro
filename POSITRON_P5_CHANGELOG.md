@@ -1,5 +1,13 @@
 # Positron P5 Changelog
 
+## P5.1.239 — Escape đóng bảng nhảy kênh từ danh sách / Electron 4.23.324
+- Feature priority: NEW — Bổ sung phím Escape để đóng ngay bảng nhảy kênh/nhóm khi đang focus một hàng kênh, giảm chiều cao phần biểu mẫu và trả lại không gian duyệt kênh mà không phải quay về nút đóng. Không bắt đầu playback, không đổi M3U/EPG/Favorites và không thay đổi lịch sử nhóm.
+- Electron screenshot: positron-p51239-escape-jump-after-1920x1080-real.png
+- User action: Trên trang TV nhấn Alt+J từ danh sách để mở bảng nhảy, nhấn Escape khi vẫn focus một kênh để thu bảng và giữ focus ở đúng kênh trước đó.
+- Electron QA: `positron-p51239-escape-jump-before-1920x1080-real.png` và `positron-p51239-escape-jump-after-1920x1080-real.png`, phải mở nhìn sau khi CI chụp thật.
+- Version: 4.23.324; chỉ coi phát hành sau đủ test / capture / build / release.
+
+
 ## P5.1.238 — Không cướp focus khi đang nhập với Alt+J/Alt+G / Electron 4.23.323
 - Feature priority: NEW — Tăng khả năng điều hướng bằng bàn phím có nhận biết ngữ cảnh: Alt+J/Alt+G chỉ bật bảng nhảy khi ngoài vùng soạn thảo, trong ô tìm kiếm hoặc biểu mẫu người dùng tiếp tục nhập không mất focus, bảo toàn dữ liệu và thao tác video hiện tại. Giải quyết việc phím tắt toàn cục can thiệp vào chỉnh sửa nội dung.
 - Giữ nguyên thao tác Alt+J/Alt+G khi focus ngoài các ô nhập; không tự phát kênh, không thay đổi nguồn M3U, lịch sử hay danh sách Yêu thích.

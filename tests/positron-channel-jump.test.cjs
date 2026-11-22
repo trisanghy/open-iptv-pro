@@ -237,7 +237,7 @@ test('P5.1.238 keeps Alt+J / Alt+G inside editable controls without opening chan
  assert.ok(check.includes("[role=\"textbox\"]"),'custom text editor protected');
  assert.ok(check.includes("event.target?.closest?.('input,textarea,select"),'native input and select protected');
  assert.ok(!code.includes('playChannel('),'keyboard navigation must never start playback');
- assert.equal(JSON.parse(read('package.json')).version,'4.23.323');
+ assert.ok(Number(JSON.parse(read('package.json')).version.split('.')[2])>=323);
 });
 test('P5.1.238 captures real Electron blocked and allowed Alt+J screenshots',()=>{
  const qa=read('scripts/positron-20-extension.cjs');
@@ -248,4 +248,21 @@ test('P5.1.238 captures real Electron blocked and allowed Alt+J screenshots',()=
  }
  for(const token of ["page.keyboard.press('Alt+j')","page.keyboard.press('Alt+g')",'inputRetainsFocus:','panelStayedClosed:','jumpOpenedOutsideInput:','noAutoplay:'])
   assert.ok(qa.includes(token),'missing P238 QA assertion '+token);
+});
+
+test('P5.1.239 Escape closes channel jump with native row focus, no playback',()=>{
+ const js=read('renderer/positron-channel-jump.js');
+ for(const fragment of ["event.key==='Escape'&&!panel.hidden","row instanceof HTMLElement&&row.matches('.channel-item')",
+ "event.preventDefault();event.stopPropagation();","setOpen(false);","if(row.isConnected)row.focus({preventScroll:true});"])
+ assert.ok(js.includes(fragment),'Missing Escape behavior: '+fragment);
+ assert.ok(!js.includes('playChannel('));
+ assert.ok(Number(JSON.parse(read('package.json')).version.split('.')[2])>=324);
+});
+test('P5.1.239 requires Electron Escape before/after and focus assertions',()=>{
+ const qa=read('scripts/positron-20-extension.cjs'),wf=read('.github/workflows/positron-lab.yml');
+ for(const fn of ['positron-p51239-escape-jump-before-1920x1080-real.png','positron-p51239-escape-jump-after-1920x1080-real.png']){
+  assert.ok(qa.includes(fn));assert.ok(wf.includes(fn));
+ }
+ for(const token of ["page.keyboard.press('Escape')","panelClosedAfterEscape:","rowFocusRetained:","noAutoplay:"])
+  assert.ok(qa.includes(token),'Missing P239 Electron assertion: '+token);
 });
