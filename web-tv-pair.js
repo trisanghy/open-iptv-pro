@@ -3,7 +3,8 @@
  * Open IPTV Pro: ephemeral, consented TV pairing over Supabase Realtime Broadcast.
  * No database tables and no persistent credentials. The six-digit code is discovery
  * only. Commands and media URLs use a fresh ECDH P-256 / AES-GCM session key.
- * The TV owner must approve the pending controller on the TV screen.
+ * The TV may enable one-time auto-pairing after it displays an expiring PIN.
+ * A code grants access to that TV session, so never share a code with strangers.
  */
 (function(root){
  if(!root||!root.document)return;
@@ -79,7 +80,7 @@
   });
  });
  const unsubscribe=async(client,ch)=>{if(!ch)return;try{await client.removeChannel(ch);}catch{}};
- function createReceiver({onStatus=()=>{},onRequest=()=>{},onCommand=()=>{},onConnected=()=>{}}={}){
+ function createReceiver({onStatus=()=>{},onRequest=()=>{},onCommand=()=>{},onConnected=()=>{},autoApprove=false}={}){
   const state={code:pin(),connected:false,closed:false,ready:false,pending:null,channel:null,session:null,client:null,key:null,controllerId:null,seen:new Set(),expiry:null};
   async function start(){
    state.client=await getClient();
@@ -94,7 +95,10 @@
        typeof request.pub!=='string'||request.pub.length>200)return;
     if(Date.now()>state.expiry)return;
     state.pending={sender:request.sender,pub:request.pub,label:String(request.label||'Trình duyệt').slice(0,70)};
-    onRequest(state.pending);
+    if(autoApprove){
+     onStatus('Đã nhận đúng mã TV. Đang tự động ghép đôi an toàn…');
+     void approve().catch(error=>onStatus('Không thể tự ghép đôi: '+String(error?.message||error)));
+    }else onRequest(state.pending);
    });
    await joined(channel);
    state.ready=true;
@@ -120,6 +124,8 @@
      if(msg.kind==='hello'){
       state.connected=true;onConnected();
       await send(session,'sealed',await seal(state.key,{kind:'ready',ts:Date.now(),sender:'tv'}));
+      // A PIN is one-use only. Stop accepting new pair requests on the public room.
+      await unsubscribe(state.client,state.channel);state.channel=null;
       onStatus('Đã ghép đôi an toàn. Bạn có thể chọn kênh trên máy tính.');
      }else if(msg.kind==='command'){
       const kind=String(msg.action||'');
@@ -137,6 +143,12 @@
     onStatus('Đang xác thực và kết nối với máy tính…');
    }catch(error){state.pending=null;onRequest(null);onStatus('Ghép đôi thất bại: '+String(error.message||error));throw error;}
   }
+  async function reportPlayback(playbackState,name=''){
+   if(!state.connected||!state.session||!state.key)return false;
+   if(!['playing','paused','error'].includes(playbackState))return false;
+   await send(state.session,'sealed',await seal(state.key,{kind:'playback',sender:'tv',state:playbackState,name:String(name||'').slice(0,100),ts:Date.now()}));
+   return true;
+  }
   function deny(){
    if(state.pending)void send(state.channel,'pair-denied',{target:state.pending.sender});
    state.pending=null;onRequest(null);onStatus('Đã từ chối ghép đôi. TV đang chờ kết nối mới.');
@@ -146,9 +158,9 @@
    await Promise.all([unsubscribe(state.client,state.channel),unsubscribe(state.client,state.session)]);
    state.channel=null;state.session=null;state.key=null;state.controllerId=null;
   }
-  return {get code(){return state.code;},get ready(){return state.ready;},get connected(){return state.connected;},start,approve,deny,close};
+  return {get code(){return state.code;},get ready(){return state.ready;},get connected(){return state.connected;},start,approve,deny,close,reportPlayback};
  }
- function createController({onStatus=()=>{},onConnected=()=>{},onDisconnected=()=>{}}={}){
+ function createController({onStatus=()=>{},onConnected=()=>{},onDisconnected=()=>{},onPlayback=()=>{}}={}){
   const state={client:null,room:null,session:null,key:null,pair:null,peer:null,connected:false,closed:false,seq:0,seen:new Set(),pin:'',timeout:null};
   async function connect(rawCode){
    const code=String(rawCode||'').replace(/\D/g,'');
@@ -174,6 +186,9 @@
        state.connected=true;clearTimeout(state.timeout);
        await unsubscribe(state.client,state.room);state.room=null;
        onConnected();onStatus('Ghép đôi TV thành công. Lệnh phát được mã hóa.');
+      }else if(msg?.kind==='playback'&&msg.sender==='tv'&&state.connected&&
+               ['playing','paused','error'].includes(msg.state)){
+       onPlayback({state:msg.state,name:String(msg.name||'').slice(0,100)});
       }
      });
      await joined(session);
@@ -183,7 +198,7 @@
    });
    await joined(room);
    await send(room,'pair-request',{sender:state.peer,pub:await pub(state.pair),label:String(root.navigator?.platform||'Trình duyệt').slice(0,50)});
-   onStatus('Đã gửi yêu cầu tới TV. Hãy chọn “Cho phép” trên màn hình TV.');
+   onStatus('Đã gửi mã ghép đôi. TV sẽ tự kết nối nếu mã hợp lệ và còn hiệu lực.');
    state.timeout=setTimeout(()=>{if(!state.connected&&!state.closed){onStatus('Chưa kết nối được TV. Kiểm tra mã và nhấn thử lại.');void disconnect(false);}},60000);
   }
   async function transmit(kind,fields={},allowHandshake=false){
