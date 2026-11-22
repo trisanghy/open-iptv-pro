@@ -2,14 +2,23 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
-## P5.1.247 — Hiện vị trí của kênh đang chọn
+## P5.1.248 — Alt+Shift+J điền sẵn số kênh
 
-**Ứng dụng:** 4.23.332 · **Trạng thái:** Chưa có bản phát hành
+**Ứng dụng:** 4.23.333 · **Trạng thái:** Chưa có bản phát hành
+
+Feature priority: NEW — Trên danh sách kênh đang focus, Alt+Shift+J mở bảng nhảy và tự điền số hàng đang chọn để sửa sang một kênh lân cận; Alt+J vẫn mở ô trống như trước. User action: Sau khi chọn vị trí kênh 412/561, nhấn Alt+Shift+J để ô số đã có 412; sửa thành 413 rồi Enter nếu muốn, không tự phát.
+
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/42d3264949a995d7a5bdae3d06a69e7c5e4849d3)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+
+## P5.1.247 — Electron 4.23.332 — Hiện vị trí kênh đang chọn (CANDIDATE)
+
+**Ứng dụng:** 4.23.332 · **Trạng thái:** Đã phát hành
 
 Feature priority: NEW — Dưới tổng số kênh ở tiêu đề danh sách có nhãn nhỏ "Kênh 412/561" được cập nhật khi focus bằng bàn phím hoặc nhảy số. Hữu ích với các kênh tên giống nhau, không cần mở lại bảng nhảy. User action: Chọn một kênh bằng mũi tên hoặc gõ 412 Ctrl+Enter; nhãn vị trí hiện theo hàng đang chọn; không phát video.
 
 [Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/d4e18fb0b945a3d984c250f375b81766c411fd59)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.332-p5.1.247)
 
 ## P5.1.246 — Electron 4.23.331 — Ctrl+Enter nhảy kênh rồi thu gọn bảng (CANDIDATE)
 
