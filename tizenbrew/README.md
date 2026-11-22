@@ -1,4 +1,14 @@
-# Open IPTV Pro TV · TizenBrew v0.1.26 (OTA)
+# Open IPTV Pro TV · TizenBrew v0.1.27 (OTA)
+
+## v0.1.27 — Đường phát bằng Samsung Internet và nguồn Tizen độc lập
+
+- **Đối chiếu lỗi thực tế:** TizenBrew WebView có thể không cấp `webapis.avplay`, khiến VTV2–VTV5 thất bại mặc dù Samsung Internet và các ứng dụng khác vẫn xem cùng M3U. HLS.js dùng tải manifest/segment qua JavaScript nên chịu kiểm soát CORS; không thể khắc phục máy chủ chặn bằng cách tăng timeout.
+- **Trình phát TizenBrew:** khi các bộ phát hiện có thất bại, hiện nút lớn **Mở thử kênh bằng Samsung Internet**. Có thể nhấn OK trên nút hoặc phím đỏ (`ColorF0Red`) để thử mở URL gốc của kênh bằng `tizen.application.launchAppControl`, không gửi qua proxy ngoài và không sửa URL đã lưu. Khả năng Samsung Internet xử lý trực tiếp URL HLS phụ thuộc thiết bị/nguồn.
+- **Nếu luồng bắt đầu phát muộn:** ẩn nút dự phòng, trả focus lại màn hình trình phát. Danh sách kênh, thứ tự từ điện thoại, bảng chọn full-screen, phím Back và OTA được giữ nguyên.
+- **Ứng dụng native AVPlay:** thêm `tizen-native/config.xml`, `tizen-native/build.py`, `tizen-native/README.md` và workflow `.github/workflows/package-tizen-native-avplay.yml`. Build tạo **gói WGT chưa ký** có cấu trúc native và tích hợp thư viện HLS local; không phải bản cài được ngay trên TV.
+- **Hướng cài không USB:** cần Tizen Studio + Samsung Certificate Manager, chứng chỉ distributor gắn với DUID chính TV, ký và cài qua Wi-Fi; không chia sẻ chứng chỉ/mật khẩu. Bản WGT native là ứng dụng riêng, không được cập nhật bởi OTA TizenBrew, cũng không dùng chung localStorage.
+- **Giới hạn xác minh:** chưa có kiểm thử phát thành công VTV2–VTV5 trên TV thật. Chỉ kiểm thử cú pháp, hành vi AppControl giả lập, cấu trúc WGT và CI.
+- Bản `tizenbrew/bootstrap.html` vẫn là đường khởi động OTA đã hoạt động.
 
 ## v0.1.26 — Ghi nhớ vị trí con trỏ và đồng bộ sắp xếp kênh từ điện thoại
 
