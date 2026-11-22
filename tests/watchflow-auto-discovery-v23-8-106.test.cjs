@@ -37,3 +37,16 @@ test('Still prerelease-only with immutable tags and no Latest change',()=>{
  const w=fs.readFileSync('.github/workflows/rust-lab-version-tags.yml','utf8'),x=fs.readFileSync('.github/workflows/rustlab-windows-exe-on-push.yml','utf8');
  assert.match(w,/prerelease: true/);assert.match(w,/make_latest: false/);assert.match(x,/--prerelease --latest=false/);
 });
+test('Confident Internet description is used even when Bayesian vocabulary is sparse',()=>{
+ const store=memory(),v=auto.read(store);
+ v.queries.htv7={at:Date.now(),items:[{name:'HTV7',description:'Vietnamese entertainment television channel',url:'https://www.wikidata.org/wiki/Q100'}]};
+ store.setItem(auto.KEY,JSON.stringify(v));
+ const result=auto.enrich(new Map([['x',{label:'Chưa phân loại',confidence:0}]]),[{id:'x',name:'HTV7 HD'}],store,ml);
+ assert.equal(result.get('x').label,'Giải trí');assert.equal(result.get('x').from,'Internet/Wikidata');
+});
+test('Background EPG analysis available even without opening WatchFlow panel',()=>{
+ const file=fs.readFileSync('renderer/watchflow-auto-discovery-v23-8-106.js','utf8');
+ assert.match(file,/backgroundAnalysis\.set\(win,preliminary\)/);
+ assert.match(file,/backgroundAnalysis\.set\(win,enrich\(preliminary,channels/);
+ assert.match(file,/getBackgroundAnalysis:/);
+});

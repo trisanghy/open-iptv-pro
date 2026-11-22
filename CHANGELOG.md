@@ -1,3 +1,9 @@
+## Rust Lab v23.8.107 — Tăng độ tin cậy phân loại Internet, sửa CI (PRERELEASE)
+
+- Sửa test và phân loại thực tế: mô tả thể thao/tin tức/phim/giải trí/thiếu nhi/khoa học rõ ràng từ Wikidata không bị bỏ sót khi điểm Naive Bayes thấp. Chỉ dùng khi đúng tên kênh, EPG chính xác vẫn ưu tiên cao nhất.
+- Tự chạy phân loại EPG của tất cả kênh ở nền ngay khi khởi động thay vì đợi người dùng mở WatchFlow; cập nhật sau khi tra cứu Internet.
+- Giữ giới hạn truy vấn, cài đặt quyền riêng tư và chỉ phát hành prerelease; không thay các nhánh khác.
+
 ## Rust Lab v23.8.106 — AI tự động tìm hiểu và phân loại kênh trên Internet (PRERELEASE)
 
 - WatchFlow chủ động quét EPG và tên kênh đang có, tra cứu công khai Wikidata khi mở ứng dụng, định kỳ trong khi chạy, và tự tìm gợi ý kênh theo chủ đề quan tâm — không cần người dùng nhập từ khóa.

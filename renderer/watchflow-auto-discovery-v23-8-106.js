@@ -4,6 +4,7 @@
  * or downloads/imports playlists. Runs while the application is open. */
 (function(root,factory){const api=factory();if(typeof module==='object'&&module.exports)module.exports=api;if(root)root.OpenIPTVWatchFlowAuto=api;})(typeof window==='undefined'?globalThis:window,function(){
  const KEY='watchflow:auto-catalog-v1',OPT='watchflow:auto-discovery-enabled';
+ const backgroundAnalysis=new WeakMap();
  const TOPICS={'Tin tức':'news television channel','Thể thao':'sports television channel','Phim truyện':'movie television channel','Thiếu nhi':'children television channel','Giải trí':'entertainment television channel','Khoa học':'science documentary television channel'};
  const DAY_LIMIT=24,RUN_LIMIT=6,CACHE_MS=48*3600*1000,PAUSE_MS=15*60*1000;
  const normalize=s=>String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/g,'d').toLowerCase().replace(/[^a-z0-9]/g,'');
@@ -30,7 +31,19 @@
  }
  function enrich(analysis,channels,storage,engine){const cache=read(storage).queries;const map=new Map(analysis||[]);for(const c of channels){const q=publicName(c.name).toLowerCase(),record=cache[q];if(!q||!record||Date.now()-record.at>CACHE_MS)continue;
    const matching=record.items.find(x=>normalize(publicName(x.name))===normalize(publicName(c.name))&&isTv(x));if(!matching)continue;
-   const guess=engine?.predict?.(matching.name+' '+matching.description);const prior=map.get(String(c.id));
+   // Explicit public-genre descriptions are high-quality evidence even when
+   // a small Bayes vocabulary yields low confidence on short English metadata.
+   const desc=String(matching.description||'');
+   const strong=[
+    ['Tin tức',/\bnews\b|\bcurrent affairs\b|thời sự|tin tức/i],
+    ['Thể thao',/\bsports?\b|football|bóng đá|thể thao/i],
+    ['Phim truyện',/\bmovies?\b|\bfilms?\b|cinema|phim truyện/i],
+    ['Thiếu nhi',/\bchildren\b|\bkids?\b|cartoon|thiếu nhi/i],
+    ['Khoa học',/\bscience\b|\bdocumentary\b|khám phá|khoa học/i],
+    ['Giải trí',/\bentertainment\b|\bvariety\b|giải trí/i]
+   ].find(([,re])=>re.test(desc));
+   const bayes=engine?.predict?.(matching.name+' '+desc);
+   const guess=strong?{label:strong[0],confidence:90}:bayes;const prior=map.get(String(c.id));
    if(!guess||guess.label==='Chưa phân loại'||guess.confidence<35||prior?.from==='EPG')continue;
    if(prior?.label!=='Chưa phân loại'&&Number(prior?.confidence||0)>=guess.confidence)continue;
    map.set(String(c.id),{...prior,label:guess.label,confidence:guess.confidence,from:'Internet/Wikidata',sourceUrl:matching.url});
@@ -64,8 +77,13 @@
   const run=async(force=false)=>{
    if(busy||!enabled(win.localStorage))return;
    if(!force&&Date.now()-last<PAUSE_MS)return;busy=true;last=Date.now();notify({running:true});
-   try{const channels=win.IPTVState?.getChannels?.()||[];
+   try{const channels=win.IPTVState?.getChannels?.()||[],guide=win.IPTVExtras?.getGuide?.();
+    // Preclassify all loaded channels now, not only when the user opens the panel.
+    const preliminary=engine.analyze(channels,guide,win.IPTVGuide);
+    backgroundAnalysis.set(win,preliminary);
+    notify({running:true,classified:preliminary.size});
     await scan({storage:win.localStorage,channels,engine,lookup:q=>engine.searchInternet(q),onUpdate:notify});
+    backgroundAnalysis.set(win,enrich(preliminary,channels,win.localStorage,engine));
    }catch(error){notify({error:String(error?.message||error).slice(0,140)});}
    finally{busy=false;notify({running:false,discovered:collect(win.localStorage,win.IPTVState?.getChannels?.()||[],engine).length});}
   };
@@ -74,5 +92,5 @@
   win.document.addEventListener('openiptv:watchflow-auto-rescan',()=>{last=0;void run(true);});
   return true;
  }
- return Object.freeze({KEY,OPT,DAY_LIMIT,publicName,isTv,read,enabled,setEnabled,collect,enrich,scan,start});
+ return Object.freeze({getBackgroundAnalysis:win=>backgroundAnalysis.get(win)||new Map(),KEY,OPT,DAY_LIMIT,publicName,isTv,read,enabled,setEnabled,collect,enrich,scan,start});
 });
