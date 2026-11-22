@@ -424,7 +424,7 @@ async function onManagerRequest(req,channel,seq,token){
   }else{
    var operation=managerPerform(action,req);
    if(!operation.ok)throw Error(operation.error||'Không lưu được thay đổi.');
-   answer.state=managerSnapshot({sourceId:req.sourceId,query:req.query,offset:req.offset,filter:req.filter,group:req.group});
+   answer.state=managerSnapshot({sourceId:req.sourceId,query:req.query,offset:req.offset,filter:req.filter,group:req.viewGroup===undefined?req.group:req.viewGroup});
   }
  }catch(e){answer.ok=false;answer.error=String(e.message||e).slice(0,250);sourceStatus(action==='add-source'&&/truy cập|CORS|Network|HTTPS|Tải M3U/i.test(answer.error)?'✕ URL không tải được trên TV. Dùng mục gửi tệp hoặc dán M3U ở điện thoại.':'Lỗi: '+answer.error.slice(0,130));}
  finally{delete managerBusy[req.id];}
