@@ -7,15 +7,28 @@ Trang này được tạo tự động từ GitHub Releases và ảnh kiểm th�
 [Mở WEBSITE changelog tương tác](https://raw.githack.com/trisanghy/open-iptv-pro/Positron/docs/positron-features/index.html) · [Giao diện HTML trong repository](index.html) · [Các bản phát hành](https://github.com/trisanghy/open-iptv-pro/releases) · [Nhật ký Git tiếng Việt](LOG_GIT_TIENG_VIET.md) · [Quy tắc ưu tiên tính năng](../../POSITRON_FEATURE_RULES.md)
 
 <details>
-<summary><strong>P5.1.246</strong> · Ctrl+Enter nhảy kênh và đóng bảng · CHƯA CÓ BẢN PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.247</strong> · Hiện vị trí của kênh đang chọn · CHƯA CÓ BẢN PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
 
-**Ứng dụng:** 4.23.331 · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
+**Ứng dụng:** 4.23.332 · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
+
+Feature priority: NEW — Dưới tổng số kênh ở tiêu đề danh sách có nhãn nhỏ "Kênh 412/561" được cập nhật khi focus bằng bàn phím hoặc nhảy số. Hữu ích với các kênh tên giống nhau, không cần mở lại bảng nhảy. User action: Chọn một kênh bằng mũi tên hoặc gõ 412 Ctrl+Enter; nhãn vị trí hiện theo hàng đang chọn; không phát video.
+
+*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+
+[Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/tree/Positron) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/d4e18fb0b945a3d984c250f375b81766c411fd59)
+
+</details>
+
+<details>
+<summary><strong>P5.1.246</strong> · Electron 4.23.331 — Ctrl+Enter nhảy kênh rồi thu gọn bảng (CANDIDATE) · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+
+**Ứng dụng:** 4.23.331 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
 Feature priority: NEW — Khi nhập số kênh, Ctrl+Enter (Mac có thể Command+Enter) nhảy đến hàng kênh rồi tự thu gọn công cụ, trả lại không gian danh sách và giữ tiêu điểm đúng hàng; Enter thông thường vẫn để mở bảng cho tác vụ tiếp. User action: Tại Xem truyền hình, chọn hàng kênh, gõ 412 rồi Ctrl+Enter để tới QA Channel 412 mà không tự phát, đồng thời bảng nhập số thu gọn.
 
 *Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
 
-[Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/tree/Positron) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/31098587fa83f667bc76fc95bea368bfba36192f)
+[Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.331-p5.1.246) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/31098587fa83f667bc76fc95bea368bfba36192f) · [Tải Windows Setup x64](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.331-p5.1.246/Open-IPTV-Pro-Setup-4.23.331-x64.exe) · [Tải gói ảnh QA](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.331-p5.1.246/Positron-P51246-20-Real-Screenshots.zip)
 
 </details>
 
