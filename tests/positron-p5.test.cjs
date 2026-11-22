@@ -2576,7 +2576,7 @@ test('P5.1.221 aligns EPG DVR labels with actual Electron screenshot regression'
   'positron-p51221-dvr-form-after-1920x1080-real.png'])
   assert.ok(qa.includes(x),'P221 native screenshot QA missing '+x);
  assert.ok(flow.includes('test -s positron-evidence/p5-20-rounds/positron-p51221-dvr-form-after-1920x1080-real.png'));
- assert.ok(flow.includes('TAG=positron/v'+pkg.version+'-p5.1.221'));
+ assert.ok(flow.includes('TAG=positron/v'+pkg.version+'-p5.1.222'));
 });
 
 test('P5.1.222 offers actionable source setup only for never-loaded EPG',()=>{
