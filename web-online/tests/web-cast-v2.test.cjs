@@ -12,9 +12,9 @@ test('approved Cast modal matches demo, has 3 actual modes and all theme variant
  assert.match(ui,/api\.scan\(\)/);assert.match(ui,/OpenIPTVWebCast\?\.airplayPicker/);
  for(const name of ['light','dark','amoled'])assert.ok(css.includes('html[data-theme="'+name+'"] #iptvCastOverlay'),name);
  assert.match(css,/@media\(max-width:760px\)/);
- assert.match(html,/web-cast-v2\.css\?v=tv-remote-buttons-20261122c/);
- assert.match(html,/web-tv-pair\.js\?v=tv-remote-buttons-20261122c/);
- assert.match(html,/web-cast-v2\.js\?v=tv-remote-buttons-20261122c/);
+ assert.match(html,/web-cast-v2\.css\?v=tv-local-handoff-20261122d/);
+ assert.match(html,/web-tv-pair\.js\?v=tv-local-handoff-20261122d/);
+ assert.match(html,/web-cast-v2\.js\?v=tv-local-handoff-20261122d/);
  assert.match(sender,/OpenIPTVWebCastV2\.open/);
 });
 test('all Cast UI icons come from one real SVG source, not overlapping pseudo glyphs',()=>{
