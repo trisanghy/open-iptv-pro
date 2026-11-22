@@ -2,6 +2,8 @@
 
 ## P5.1.216 — Gõ tìm ngay khi mở lịch sử khám phá / Electron 4.23.301
 - Feature priority: NEW — Mở menu với tiêu điểm ở ô tìm, gõ ngay và di chuyển hai hướng giữa kết quả bằng bàn phím; không tự phát kênh.
+- Electron screenshot: positron-p51216-search-focus-after-1920x1080-real.png
+- User action: Bấm ☷ trong thanh phát, gõ tên kênh ngay vào ô tìm, dùng ↑/↓ chọn kết quả rồi nhấn Enter để xem kênh.
 - Quan sát từ ảnh Electron thật P5.1.215 ở 1920×1080 và mã thực tế: mở danh sách lịch sử tập trung vào lựa chọn đầu, không phải ô tìm nên bàn phím phải nhấn Tab hoặc click mới có thể nhập truy vấn.
 - Sửa: mở ☷ tự focus ô tìm; gõ ngay để lọc kênh theo tên/nhóm; ArrowDown chọn kết quả đầu, ArrowUp chọn kết quả cuối; Enter mới phát, Escape đóng và trả focus về nút ☷.
 - Không tự phát khi mở/tìm/chuyển focus, không cập nhật playlist, Favorites hoặc lưu lịch sử lên mạng.
