@@ -11,8 +11,8 @@ function block(source,from,to){
  return source.slice(a,b);
 }
 const sourceNameHelper=block(tv,'function sourceDisplayName(value){','function playlistStart(req){');
-test('version 0.1.29 is consistent in TizenBrew metadata and TV header',()=>{
- assert.equal(pkg.version,'0.1.29');
+test('version 0.1.30 is consistent in TizenBrew metadata and TV header',()=>{
+ assert.equal(pkg.version,'0.1.30');
  assert.equal(pkg.tizenbrewEdition,pkg.version);
  assert.ok(tv.includes('Samsung Tizen Edition · TizenBrew v'+pkg.version));
 });
