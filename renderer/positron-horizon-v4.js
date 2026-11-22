@@ -367,7 +367,13 @@
    historySearch.setAttribute('autocomplete','off');
    const normalizeHistory=value=>String(value||'').normalize('NFD')
     .replace(/[\u0300-\u036f]/g,'').replace(/đ/gi,'d').toLowerCase().trim();
-   historyPanel.append(historyHead,historyNote,historySearch,historyList);d.body.append(historyPanel);
+   // P218: session-history view filter; reads existing Favorites, never writes them.
+   const historyFavoriteFilter=d.createElement('button');historyFavoriteFilter.type='button';
+   historyFavoriteFilter.id='poRandomFavoriteFilter';historyFavoriteFilter.className='po-random-favorite-filter';
+   historyFavoriteFilter.textContent='☆ Chỉ yêu thích';
+   historyFavoriteFilter.setAttribute('aria-pressed','false');
+   historyFavoriteFilter.setAttribute('aria-label','Chỉ hiện kênh Yêu thích trong lịch sử khám phá');
+   historyPanel.append(historyHead,historyNote,historySearch,historyFavoriteFilter,historyList);d.body.append(historyPanel);
    const closeHistory=(restoreFocus=false)=>{
     historyPanel.hidden=true;historyButton.setAttribute('aria-expanded','false');
     if(restoreFocus&&!historyButton.hidden)historyButton.focus();
@@ -382,7 +388,11 @@
      used.add(id);recent.push(live.get(id));
     }
     const query=normalizeHistory(historySearch.value);
-    const filtered=query?recent.filter(c=>normalizeHistory(c.name+' '+(c.group||'')).includes(query)):recent;
+    const onlyFavorites=historyFavoriteFilter.getAttribute('aria-pressed')==='true';
+    const favCore=window.OpenIPTVFavorites,store=window.IPTVState?.getStore?.();
+    const visible=onlyFavorites
+     ?recent.filter(c=>Boolean(favCore?.has?.(store,c))):recent;
+    const filtered=query?visible.filter(c=>normalizeHistory(c.name+' '+(c.group||'')).includes(query)):visible;
     historyList.replaceChildren();
     for(const channel of filtered){
      const option=d.createElement('button');option.type='button';
@@ -445,11 +455,19 @@
      historyList.append(row);
     }
     if(!filtered.length){
-     const empty=d.createElement('p');empty.textContent=recent.length?'Không tìm thấy kênh phù hợp.':'Chưa có kênh hợp lệ trong lịch sử.';
+     const empty=d.createElement('p');
+     empty.textContent=onlyFavorites&&recent.length?'Không có kênh Yêu thích phù hợp.'
+      :recent.length?'Không tìm thấy kênh phù hợp.':'Chưa có kênh hợp lệ trong lịch sử.';
      historyList.append(empty);
     }
    };
    historySearch.addEventListener('input',renderHistory);
+   historyFavoriteFilter.addEventListener('click',()=>{
+    const enabled=historyFavoriteFilter.getAttribute('aria-pressed')!=='true';
+    historyFavoriteFilter.setAttribute('aria-pressed',String(enabled));
+    historyFavoriteFilter.textContent=enabled?'★ Chỉ yêu thích':'☆ Chỉ yêu thích';
+    renderHistory();
+   });
    historySearch.addEventListener('keydown',event=>{
     // P216: start from the search box and allow both directions by keyboard.
     if(event.key==='ArrowDown'||event.key==='ArrowUp'){
@@ -464,6 +482,8 @@
    historyButton.addEventListener('click',()=>{
     if(!historyPanel.hidden){closeHistory(true);return;}
     historySearch.value='';
+    historyFavoriteFilter.setAttribute('aria-pressed','false');
+    historyFavoriteFilter.textContent='☆ Chỉ yêu thích';
     renderHistory();
     const bounds=historyButton.getBoundingClientRect();
     historyPanel.style.left=Math.max(12,Math.min(bounds.left-125,innerWidth-372))+'px';

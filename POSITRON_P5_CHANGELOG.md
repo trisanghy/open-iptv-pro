@@ -1,5 +1,13 @@
 # Positron P5 Changelog
 
+## P5.1.218 — Lọc nhanh Yêu thích trong lịch sử khám phá / Electron 4.23.303
+- Feature priority: NEW — Ảnh Electron thật P5.1.217 cho thấy nút sao mới đã giúp lưu kênh, nhưng danh sách lịch sử còn trộn kênh thường và kênh đã yêu thích. Thêm lọc theo Favorites trong phiên, kết hợp tìm kiếm.
+- Electron screenshot: positron-p51218-favorites-filter-after-1920x1080-real.png
+- User action: Mở ☷ lịch sử khám phá, nhấn ☆ Chỉ yêu thích để chỉ xem kênh đã lưu; bấm lại để xem toàn bộ; vẫn có thể tìm tên hoặc nhóm trong danh sách đang lọc.
+- Tính năng: chỉ đọc dữ liệu Favorites sẵn có bằng OpenIPTVFavorites.has; lọc tại chỗ, không tự phát, không ghi hoặc sửa M3U và danh sách yêu thích; có aria-pressed và trạng thái rỗng riêng.
+- Electron before/after: positron-p51218-favorites-filter-before-1920x1080-real.png / positron-p51218-favorites-filter-after-1920x1080-real.png. QA dùng một kênh yêu thích, một kênh thường; kiểm Enter bật lọc, tìm không khớp, tắt lọc, lưu dữ liệu không đổi, viewport 450px.
+- Trạng thái: CANDIDATE tới khi Node, ảnh Electron đã mở kiểm, CI 6/6 và Release thành công.
+
 ## P5.1.217 — Đánh dấu Yêu thích trong lịch sử khám phá / Electron 4.23.302
 - Feature priority: NEW — Ảnh Electron P5.1.216 cho thấy menu khám phá cho phép chọn phát lại và tìm kiếm nhưng thiếu thao tác lưu ngay kênh vừa thấy vào Yêu thích; thêm nút sao độc lập trong mỗi dòng.
 - Electron screenshot: positron-p51217-history-favorite-after-1920x1080-real.png

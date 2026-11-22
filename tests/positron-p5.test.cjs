@@ -2317,7 +2317,7 @@ test('P5.1.207 accessible reset clears only random session history',()=>{
   'positron-p51207-random-reset-after-1920x1080-real.png'])
   assert.ok(qa.includes(t),'Missing genuine reset QA '+t);
  const pkg=JSON.parse(read('package.json'));
- assert.ok(flow.includes('TAG=positron/v'+pkg.version+'-p5.1.217'));
+ assert.ok(flow.includes('TAG=positron/v'+pkg.version+'-p5.1.218'));
 });
 
 
@@ -2508,4 +2508,23 @@ test('P5.1.217 adds an independent, persistent Favorite button to each discovere
   'before217.equals(after217),false'])
   assert.ok(qa.includes(token),'Missing true Electron favorite QA: '+token);
  assert.ok(flow.includes('test -s positron-evidence/p5-20-rounds/positron-p51217-history-favorite-after-1920x1080-real.png'));
+});
+
+
+test('P5.1.218 filters discovery history to Favorites without playback or playlist mutation',()=>{
+ const js=read('renderer/positron-horizon-v4.js'),css=read('renderer/positron-twenty.css');
+ const qa=read('scripts/positron-20-extension.cjs'),flow=read('.github/workflows/positron-lab.yml');
+ for(const x of ["historyFavoriteFilter.id='poRandomFavoriteFilter'",
+  "historyFavoriteFilter.setAttribute('aria-pressed','false')",
+  "historyFavoriteFilter.addEventListener('click',()=>{",
+  "recent.filter(c=>Boolean(favCore?.has?.(store,c)))",
+  'Không có kênh Yêu thích phù hợp.'])
+  assert.ok(js.includes(x),'Missing P218 Favorite-only filter '+x);
+ assert.ok(css.includes('#poRandomFavoriteFilter[aria-pressed="true"]'));
+ for(const x of ['filterStart218','filterQA218','empty218','reset218','compact218',
+  'favoriteOnly','noAutoplay','playlistImmutable',
+  'positron-p51218-favorites-filter-before-1920x1080-real.png',
+  'positron-p51218-favorites-filter-after-1920x1080-real.png','before218.equals(after218),false'])
+  assert.ok(qa.includes(x),'Missing real P218 QA '+x);
+ assert.ok(flow.includes('test -s positron-evidence/p5-20-rounds/positron-p51218-favorites-filter-after-1920x1080-real.png'));
 });

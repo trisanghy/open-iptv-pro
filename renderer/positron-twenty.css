@@ -1134,3 +1134,18 @@ html[data-positron="true"] #poRandomHistoryPanel .po-random-history-favorite[ari
 html[data-positron="true"] #poRandomHistoryPanel .po-random-history-favorite:hover{
  border-color:var(--po-accent,#79dfc6);
 }
+
+/* P218: session-only Favorite filter, accessible and compact in discovery history. */
+html[data-positron="true"] #poRandomFavoriteFilter{
+ display:flex;align-items:center;justify-content:center;width:100%;min-height:34px;
+ margin:0 0 9px;padding:5px 10px;box-sizing:border-box;
+ border:1px solid var(--po-border,#325160);border-radius:8px;
+ background:var(--po-input,#17303c);color:var(--po-muted,#a4c4cf);
+ font:inherit;font-size:12px;font-weight:600;cursor:pointer;
+}
+html[data-positron="true"] #poRandomFavoriteFilter[aria-pressed="true"]{
+ color:#ffd76d;border-color:#7f683b;background:var(--po-raised,#1b2934);
+}
+html[data-positron="true"] #poRandomFavoriteFilter:focus-visible{
+ outline:2px solid var(--po-accent,#79dfc6);outline-offset:1px;
+}
