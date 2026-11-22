@@ -1,21 +1,101 @@
 {
-  "generatedAt": "2026-11-22T12:41:18.219468+00:00",
+  "generatedAt": "2026-11-22T12:49:48.909116+00:00",
   "repository": "trisanghy/open-iptv-pro",
   "branch": "Positron",
   "versions": [
     {
-      "number": 210,
-      "version": "P5.1.210",
-      "appVersion": "4.23.295",
-      "title": "tự cập nhật tiến độ khám phá khi danh sách kênh đổi",
-      "description": "Feature priority: NEW — Từ ảnh P5.1.209 và mã xử lý danh sách nguồn, bộ đếm Bất kỳ có thể tiếp tục ghi nhận các kênh đã xóa hoặc thay nguồn, dẫn tới tiến độ sai cho tới lúc người dùng tự bấm chuyển kênh tiếp. Bổ sung đồng bộ thông minh khi danh sách kênh được cập nhật, tránh khiến tiến độ kênh không còn tồn tại gây nhầm lẫn. Electron screenshot: positron-p51210-source-sync-after-1920x1080-real.png",
+      "number": 211,
+      "version": "P5.1.211",
+      "appVersion": "4.23.296",
+      "title": "trở lại kênh đã khám phá ngẫu nhiên trước đó",
+      "description": "Feature priority: NEW — Sau ảnh Electron P5.1.210, thanh Bất kỳ đã có số lượt và nút làm mới nhưng chưa có thao tác quay lại khi vừa khám phá một kênh ngẫu nhiên thú vị rồi chuyển tiếp. Thêm nút quay lại theo lịch sử phiên khám phá để tiết kiệm thao tác tìm kênh và giữ ngữ cảnh. Electron screenshot: positron-p51211-random-back-after-1920x1080-real.png",
       "kind": "fix",
       "status": "candidate",
       "published": "",
       "tag": "",
-      "commit": "182655c876ec4ba61c23759848b0f26c9f7185b9",
+      "commit": "7114bfbad4b3018e39d5da180b1b94d029e94a0d",
       "url": "https://github.com/trisanghy/open-iptv-pro/tree/Positron",
       "assets": [],
+      "image": null
+    },
+    {
+      "number": 210,
+      "version": "P5.1.210",
+      "appVersion": "4.23.295",
+      "title": "Tự cập nhật bộ đếm khám phá khi đổi nguồn / Electron 4.23.295",
+      "description": "Feature priority: NEW — Từ ảnh P5.1.209 và mã xử lý danh sách nguồn, bộ đếm Bất kỳ có thể tiếp tục ghi nhận các kênh đã xóa hoặc thay nguồn, dẫn tới tiến độ sai cho tới lúc người dùng tự bấm chuyển kênh tiếp. Bổ sung đồng bộ thông minh khi danh sách kênh được cập nhật, tránh khiến tiến độ kênh không còn tồn tại gây nhầm lẫn. Electron screenshot: positron-p51210-source-sync-after-1920x1080-real.png",
+      "kind": "fix",
+      "status": "release",
+      "published": "2026-11-22T12:46:28Z",
+      "tag": "positron/v4.23.295-p5.1.210",
+      "commit": "9cbd49228ed9ae4bba7c56edb8cabc2efe7d55e0",
+      "url": "https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.295-p5.1.210",
+      "assets": [
+        {
+          "name": "audit-p4-50-rounds.json",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.295-p5.1.210/audit-p4-50-rounds.json"
+        },
+        {
+          "name": "audit-p5-20-rounds.json",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.295-p5.1.210/audit-p5-20-rounds.json"
+        },
+        {
+          "name": "Open-IPTV-Pro-4.23.295-mac-arm64.dmg",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.295-p5.1.210/Open-IPTV-Pro-4.23.295-mac-arm64.dmg"
+        },
+        {
+          "name": "Open-IPTV-Pro-4.23.295-mac-x64.dmg",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.295-p5.1.210/Open-IPTV-Pro-4.23.295-mac-x64.dmg"
+        },
+        {
+          "name": "Open-IPTV-Pro-4.23.295-x64.exe",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.295-p5.1.210/Open-IPTV-Pro-4.23.295-x64.exe"
+        },
+        {
+          "name": "Open-IPTV-Pro-Setup-4.23.295-x64.exe",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.295-p5.1.210/Open-IPTV-Pro-Setup-4.23.295-x64.exe"
+        },
+        {
+          "name": "OpenIPTVPro-Positron-P51210-Source.zip",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.295-p5.1.210/OpenIPTVPro-Positron-P51210-Source.zip"
+        },
+        {
+          "name": "positron-desktop-1920x1080-16x9-main-real.png",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.295-p5.1.210/positron-desktop-1920x1080-16x9-main-real.png"
+        },
+        {
+          "name": "positron-p4-final-main-real.png",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.295-p5.1.210/positron-p4-final-main-real.png"
+        },
+        {
+          "name": "positron-p4-round-10-real.png",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.295-p5.1.210/positron-p4-round-10-real.png"
+        },
+        {
+          "name": "positron-p4-round-20-real.png",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.295-p5.1.210/positron-p4-round-20-real.png"
+        },
+        {
+          "name": "positron-p4-round-30-real.png",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.295-p5.1.210/positron-p4-round-30-real.png"
+        },
+        {
+          "name": "positron-p4-round-40-real.png",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.295-p5.1.210/positron-p4-round-40-real.png"
+        },
+        {
+          "name": "Positron-P51210-20-Real-Screenshots.zip",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.295-p5.1.210/Positron-P51210-20-Real-Screenshots.zip"
+        },
+        {
+          "name": "Positron-P51210-50-Real-Screenshots.zip",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.295-p5.1.210/Positron-P51210-50-Real-Screenshots.zip"
+        },
+        {
+          "name": "SHA256SUMS.txt",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.295-p5.1.210/SHA256SUMS.txt"
+        }
+      ],
       "image": null
     },
     {

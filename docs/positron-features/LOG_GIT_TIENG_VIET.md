@@ -2,14 +2,23 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
-## P5.1.210 — tự cập nhật tiến độ khám phá khi danh sách kênh đổi
+## P5.1.211 — trở lại kênh đã khám phá ngẫu nhiên trước đó
 
-**Ứng dụng:** 4.23.295 · **Trạng thái:** Chưa có bản phát hành
+**Ứng dụng:** 4.23.296 · **Trạng thái:** Chưa có bản phát hành
+
+Feature priority: NEW — Sau ảnh Electron P5.1.210, thanh Bất kỳ đã có số lượt và nút làm mới nhưng chưa có thao tác quay lại khi vừa khám phá một kênh ngẫu nhiên thú vị rồi chuyển tiếp. Thêm nút quay lại theo lịch sử phiên khám phá để tiết kiệm thao tác tìm kênh và giữ ngữ cảnh. Electron screenshot: positron-p51211-random-back-after-1920x1080-real.png
+
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/7114bfbad4b3018e39d5da180b1b94d029e94a0d)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+
+## P5.1.210 — Tự cập nhật bộ đếm khám phá khi đổi nguồn / Electron 4.23.295
+
+**Ứng dụng:** 4.23.295 · **Trạng thái:** Đã phát hành
 
 Feature priority: NEW — Từ ảnh P5.1.209 và mã xử lý danh sách nguồn, bộ đếm Bất kỳ có thể tiếp tục ghi nhận các kênh đã xóa hoặc thay nguồn, dẫn tới tiến độ sai cho tới lúc người dùng tự bấm chuyển kênh tiếp. Bổ sung đồng bộ thông minh khi danh sách kênh được cập nhật, tránh khiến tiến độ kênh không còn tồn tại gây nhầm lẫn. Electron screenshot: positron-p51210-source-sync-after-1920x1080-real.png
 
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/182655c876ec4ba61c23759848b0f26c9f7185b9)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/9cbd49228ed9ae4bba7c56edb8cabc2efe7d55e0)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.295-p5.1.210)
 
 ## P5.1.209 — Tiến độ khám phá ngẫu nhiên có mẫu số / Electron 4.23.294
 
