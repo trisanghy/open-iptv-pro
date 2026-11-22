@@ -104,7 +104,7 @@ function toRow(release){
 
 function renderGallery(){
  const area=$('gallery');area.replaceChildren();
- const photos=state.rows.filter(r=>r.image&&/^screenshots\\/[a-z0-9_.-]+\\.png$/i.test(r.image)).slice(0,4);
+ const photos=state.rows.filter(r=>r.image&&/^screenshots\/[a-z0-9_.-]+\.png$/i.test(r.image)).slice(0,4);
  if(!photos.length){area.append(el('p','small','Chưa đồng bộ được ảnh đã kiểm chứng từ GitHub. Có thể mở gói ảnh kiểm thử trong từng bản phát hành.'));return;}
  for(const r of photos){
   const tile=el('a','gallery-card');tile.href=publicAssets+r.image;tile.target='_blank';tile.rel='noopener noreferrer';

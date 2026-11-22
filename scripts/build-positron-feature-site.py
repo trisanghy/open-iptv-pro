@@ -141,7 +141,7 @@ def summary_name(release):
 def feature_type(n: int, title: str, detail: str):
     # Explicit known feature rounds come from the verified Positron changelog.
     if n in FEATURE_NUMBERS or re.search(
-        r"(?:feature priority:\\s*new\\b|\\bnew feature\\b|feat\\(|introduce|add new|thêm chức năng|tính năng mới)",
+        r"(?:feature priority:\s*new\b|\bnew feature\b|feat\(|introduce|add new|thêm chức năng|tính năng mới)",
         title + " " + detail[:450], re.I
     ):
         return "feature"
@@ -285,7 +285,7 @@ def attach_checked_in_images(rows):
         if size <= 1000 or size > 12_000_000:
             continue
         with file.open("rb") as handle:
-            if handle.read(8) != b"\\x89PNG\\r\\n\\x1a\\n":
+            if handle.read(8) != b"\x89PNG\r\n\x1a\n":
                 continue
         name = file.name.lower()
         score = (20 if "after" in name else 0) + (5 if "real" in name else 0) + (
