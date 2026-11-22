@@ -1,13 +1,14 @@
-name: TizenBrew - refresh module CDN
+name: TizenBrew - verify CDN refresh
 
 on:
   push:
-    branches:
-      - tizenbrew
+    branches: [tizenbrew]
     paths:
       - package.json
-      - tizenbrew/**
+      - tizenbrew/bootstrap.html
       - .github/workflows/tizenbrew-cdn-refresh.yml
+  schedule:
+    - cron: "19 */12 * * *"
   workflow_dispatch:
 
 permissions:
@@ -19,26 +20,44 @@ concurrency:
 
 jobs:
   purge:
-    name: Refresh TizenBrew package and app HTML
+    name: Refresh TizenBrew metadata and verify CDN content
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - name: Purge jsDelivr branch cache for TizenBrew
+      - uses: actions/checkout@v4
+      - name: Detect throttling instead of accepting HTTP 200 as success
         shell: bash
         env:
           REPOSITORY: ${{ github.repository }}
         run: |
           set -euo pipefail
-          for file in package.json tizenbrew/index.html; do
+          expected="$(jq -r '.version' package.json)"
+          for file in package.json tizenbrew/bootstrap.html; do
             url="https://purge.jsdelivr.net/gh/${REPOSITORY}@tizenbrew/${file}"
-            echo "::group::Purging ${file}"
-            status="$(curl --silent --show-error --location --retry 3 --retry-delay 3 --max-time 35 --output response.json --write-out '%{http_code}' "$url")"
+            echo "::group::Purge ${file}"
+            code="$(curl -fLsS --retry 1 --max-time 30 -o response.json -w '%{http_code}' "$url")"
             cat response.json
             echo
-            echo "HTTP status: ${status}"
-            if [[ ! "${status}" =~ ^2[0-9][0-9]$ ]]; then
-              echo "::error::jsDelivr cache purge failed for ${file} (HTTP ${status})"
+            if [[ ! "$code" =~ ^2[0-9][0-9]$ ]]; then
+              echo "::error::Purge request failed: HTTP ${code} for ${file}"
+              exit 1
+            fi
+            if ! jq -e '.status=="finished" and (.paths|type=="object")' response.json >/dev/null; then
+              echo "::error::Unexpected purge response for ${file}"
+              exit 1
+            fi
+            if jq -e '[.paths[] | select(.throttled == true)] | length > 0' response.json >/dev/null; then
+              echo "::error::jsDelivr refused purge (throttled=true) for ${file}, despite HTTP ${code}."
               exit 1
             fi
             echo "::endgroup::"
           done
+          curl -fLsS --retry 2 --max-time 30 \
+            "https://cdn.jsdelivr.net/gh/${REPOSITORY}@tizenbrew/package.json" -o cdn-package.json
+          actual="$(jq -r '.version' cdn-package.json)"
+          echo "GitHub version: ${expected}; jsDelivr version: ${actual}"
+          if [[ "${actual}" != "${expected}" ]]; then
+            echo "::error::CDN still serves version ${actual}, expected ${expected}"
+            exit 1
+          fi
+          echo "CDN version verified: ${actual}"
