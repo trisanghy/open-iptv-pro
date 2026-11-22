@@ -57,7 +57,7 @@ button,input,textarea{font:inherit;color:inherit}button{cursor:pointer;border:2p
 @media(max-width:1200px){.nav .nav-exit{min-height:62px;font-size:17px}.top .header-exit{min-width:105px;font-size:16px;padding:9px}}
 </style></head><body data-theme="dark">
 <div id="app">
-<header class="top"><div class="brand"><div class="brandicon">▶</div><div><strong>Open IPTV Pro <small>TV</small></strong><p>Samsung Tizen Edition · TizenBrew v0.1.11</p></div></div><div class="toolbar"><span class="clock" id="clock">--:--</span><button id="searchBtn">⌕ Tìm</button><button id="addBtn">＋ Nguồn</button><button id="themeBtn">◐ Giao diện</button><button id="exitModuleBtn" class="header-exit" title="Thoát về TizenBrew">⏻ THOÁT</button></div></header>
+<header class="top"><div class="brand"><div class="brandicon">▶</div><div><strong>Open IPTV Pro <small>TV</small></strong><p>Samsung Tizen Edition · TizenBrew v0.1.12</p></div></div><div class="toolbar"><span class="clock" id="clock">--:--</span><button id="searchBtn">⌕ Tìm</button><button id="addBtn">＋ Nguồn</button><button id="themeBtn">◐ Giao diện</button><button id="exitModuleBtn" class="header-exit" title="Thoát về TizenBrew">⏻ THOÁT</button></div></header>
 <div class="main"><nav class="nav"><button class="active" data-nav="all">▣　Trực tiếp</button><button data-nav="favorites">♡　Yêu thích</button><button data-nav="recent">◷　Đã xem</button><button data-nav="sources">☷　Nguồn M3U</button><button data-nav="help">⚙　Hướng dẫn</button><button id="navExitBtn" class="nav-exit" aria-label="Thoát khỏi Open IPTV Pro về TizenBrew">⏻　THOÁT ỨNG DỤNG</button><p class="tip">Dùng ↑ ↓ ← → và OK để điều khiển bằng remote TV.</p></nav>
 <section class="listpane"><div class="heading"><div><div class="eyebrow">DANH SÁCH KÊNH</div><h1 id="heading">Trực tiếp</h1></div><span id="count">0 kênh</span></div><div class="groups" id="groups"></div><div class="channels" id="channels"></div><div class="empty" id="empty" hidden><h2>Chưa có kênh IPTV</h2><p>Thêm nguồn bằng URL trên remote hoặc quét QR để nhập bằng điện thoại.</p><button id="emptyAdd" class="primary">＋ Thêm nguồn IPTV</button><button id="sampleBtn">▶ Luồng kiểm thử</button></div><button id="more" hidden>Xem thêm kênh ↓</button></section>
 <aside class="details"><div class="preview"><span class="live">● TRỰC TIẾP</span><b id="previewText">TV</b><span class="watermark">OPEN IPTV PRO</span></div><div class="eyebrow">KÊNH ĐANG CHỌN</div><h2 id="channelTitle">Open IPTV Pro TV</h2><p id="channelGroup">Chọn kênh để xem</p><div class="info"><div class="eyebrow">THÔNG TIN</div><p id="channelInfo">Hỗ trợ nhập M3U, nhóm kênh, yêu thích và remote Samsung.</p></div><div class="actions"><button class="primary" id="watchBtn">▶ Xem</button><button id="favBtn">♡ Yêu thích</button></div></aside></div>
@@ -563,6 +563,15 @@ finally{byId('saveSource').disabled=false;byId('saveSource').textContent='Lưu v
 function play(c){if(!c)return;playing=c;state.recent=[c.id].concat(state.recent.filter(function(id){return id!==c.id;})).slice(0,60);save();byId('player').hidden=false;byId('playingName').textContent=c.name;
 var video=byId('video');try{video.pause();video.removeAttribute('src');video.load();video.src=c.url;byId('playerStatus').textContent='Đang mở '+c.name+'...';video.play().then(function(){byId('playerStatus').textContent='';}).catch(function(){byId('playerStatus').textContent='Không tự phát được. Nhấn OK thử lại; codec hoặc CORS có thể không được hỗ trợ.';});}catch(e){byId('playerStatus').textContent=String(e.message||e);}}
 function closePlayer(){var v=byId('video');try{v.pause();v.removeAttribute('src');v.load();}catch(e){}byId('player').hidden=true;playing=null;draw();}
+function resumeLastChannel(){
+ // Watch history is already persisted in localStorage by play(). Only restore a channel still visible in the current M3U lists.
+ var id=state.recent&&state.recent[0];
+ if(!id||playing||!byId('modal').hidden)return false;
+ var channel=items.find(function(c){return c.id===id;});
+ if(!channel)return false;
+ select(channel);play(channel);
+ return true;
+}
 function changeChannel(offset){var i=items.findIndex(function(c){return playing&&c.id===playing.id;});if(i>=0)play(items[(i+offset+items.length)%items.length]);}
 function move(key){var scope=byId('modal').hidden?document:byId('modal');var nodes=Array.from(scope.querySelectorAll('button:not([disabled]),input:not([disabled])')).filter(function(e){return e.getClientRects().length>0;});
 var active=document.activeElement,r=active&&active.getBoundingClientRect();if(!r||nodes.indexOf(active)<0){if(nodes.length)nodes[0].focus();return;}var x=r.left+r.width/2,y=r.top+r.height/2,best=null,min=Infinity;
@@ -635,7 +644,7 @@ window.addEventListener('keydown',keyHandler,true);
 window.addEventListener('keyup',function(e){if(isRemoteBack(e))handleBack(e);},true);
 document.addEventListener('tizenhwkey',function(e){if(String(e.keyName||'').toLowerCase()==='back')handleBack(e);},true);
 window.addEventListener('tizenhwkey',function(e){if(String(e.keyName||'').toLowerCase()==='back')handleBack(e);},true);
-document.body.dataset.theme=state.theme;draw();setTimeout(function(){document.querySelector('[data-nav=all]').focus();},50);
+document.body.dataset.theme=state.theme;draw();setTimeout(function(){if(resumeLastChannel())byId('exitPlayer').focus();else document.querySelector('[data-nav=all]').focus();},50);
 function clock(){var d=new Date();byId('clock').textContent=String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');}clock();setInterval(clock,30000);
 })();
 </script></body></html>

@@ -1,10 +1,18 @@
-# Open IPTV Pro TV · TizenBrew v0.1.10 (thử nghiệm)
+# Open IPTV Pro TV · TizenBrew v0.1.12 (thử nghiệm)
 
 ## Cập nhật không cần USB
 
 1. Mở ứng dụng **TizenBrew** (không phải TizenBrew Installer).
 2. Vào **Module Manager → Add GitHub Module**, nhập `trisanghy/open-iptv-pro@tizenbrew`.
 3. Mở/cập nhật module **Open IPTV Pro TV**. Nếu thấy giao diện cũ, tải lại module hoặc xóa cache.
+
+## v0.1.12 — Tự mở kênh xem gần nhất khi khởi động
+
+- Khi mở Open IPTV Pro TV, TV tự tìm **kênh đã xem gần nhất** từ lịch sử **Đã xem** đã lưu trên thiết bị, mở trình phát và thử phát ngay, không cần nhấn **Xem**.
+- Lịch sử được lưu vào `localStorage` ngay mỗi lần bắt đầu phát hoặc đổi kênh; dùng lại lịch sử cũ, không xóa nguồn, yêu thích hoặc tùy chỉnh giao diện.
+- Nếu chưa xem kênh nào, hoặc kênh gần nhất đã xóa/ẩn/không còn trong nguồn M3U, giữ giao diện chọn kênh bình thường. Không tự ý phát một kênh khác.
+- Khi trình duyệt hoặc codec chặn phát tự động, trình phát hiển thị hướng dẫn nhấn **OK** để thử lại; chức năng Back, CH± vẫn hoạt động như trước.
+- Kiểm thử hồi quy: `node --test tizenbrew/tests/last-channel-startup.test.cjs`. Cần xác minh autoplay thực tế trên Samsung TV.
 
 ## Thêm nguồn IPTV
 
