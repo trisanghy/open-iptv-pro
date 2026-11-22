@@ -2265,3 +2265,13 @@ test('P5.1.205 native transport allows explicit random channel follow-up',()=>{
   '#poNextRandomChannel:focus-visible','#poNextRandomChannel .po-random-label'])
   assert.ok(css.includes(t),'Missing P205 native layout: '+t);
 });
+
+test('P5.1.205 has actual Electron screenshot proof of persistent random switch',()=>{
+ const qa=read('scripts/positron-20-extension.cjs'),flow=read('.github/workflows/positron-lab.yml');
+ for(const token of ['randomFollowupQA','doesNotRepeatCurrent','noPlaylistMutation',
+  'noAutoStartOnOpen','followsNativeNextButton','compact205',
+  'positron-p51205-tv-switch-before-1920x1080-real.png',
+  'positron-p51205-tv-switch-after-1920x1080-real.png'])
+  assert.ok(qa.includes(token),'Missing actual P205 Electron QA '+token);
+ assert.ok(flow.includes('TAG=positron/v4.23.290-p5.1.205'));
+});
