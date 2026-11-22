@@ -11,7 +11,7 @@ Trang này được tạo tự động từ GitHub Releases và ảnh kiểm th�
 
 **Ứng dụng:** 4.23.315 · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
 
-Feature priority: NEW — Chọn một kênh rồi nhấn → để tới đầu nhóm mở kế tiếp, ← để về đầu nhóm trước. Bỏ qua nhóm thu gọn, giữ nguyên luồng phát, dữ liệu playlist và Favorites. Electron screenshot: positron-p51230-group-navigation-after-1920x1080-real.png
+Feature priority: NEW — Chọn một kênh rồi nhấn → để tới đầu nhóm mở kế tiếp, ← để về đầu nhóm trước. Bỏ qua nhóm thu gọn, giữ nguyên luồng phát, dữ liệu playlist và Favorites. User action: Trên trang TV, focus một hàng kênh rồi nhấn mũi tên phải để tới đầu nhóm kế tiếp đang mở, nhấn mũi tên trái để quay lại nhóm trước; nhấn Enter mới phát.
 
 *Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
 

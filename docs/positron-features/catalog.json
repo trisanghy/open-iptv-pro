@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-22T16:21:41.067802+00:00",
+  "generatedAt": "2026-11-22T16:23:06.666294+00:00",
   "repository": "trisanghy/open-iptv-pro",
   "branch": "Positron",
   "versions": [
@@ -8,7 +8,7 @@
       "version": "P5.1.230",
       "appVersion": "4.23.315",
       "title": "chuyển nhanh giữa nhóm kênh bằng phím trái/phải",
-      "description": "Feature priority: NEW — Chọn một kênh rồi nhấn → để tới đầu nhóm mở kế tiếp, ← để về đầu nhóm trước. Bỏ qua nhóm thu gọn, giữ nguyên luồng phát, dữ liệu playlist và Favorites. Electron screenshot: positron-p51230-group-navigation-after-1920x1080-real.png",
+      "description": "Feature priority: NEW — Chọn một kênh rồi nhấn → để tới đầu nhóm mở kế tiếp, ← để về đầu nhóm trước. Bỏ qua nhóm thu gọn, giữ nguyên luồng phát, dữ liệu playlist và Favorites. User action: Trên trang TV, focus một hàng kênh rồi nhấn mũi tên phải để tới đầu nhóm kế tiếp đang mở, nhấn mũi tên trái để quay lại nhóm trước; nhấn Enter mới phát.",
       "kind": "fix",
       "status": "candidate",
       "published": "",
