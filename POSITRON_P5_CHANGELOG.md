@@ -6,7 +6,7 @@
 - Electron screenshot: positron-p51150-toast-centre-after-1920x1080-real.png
 - Before (bộ thử mở rộng, tái hiện 7 banner): `positron-p51150-toast-centre-before-1920x1080-real.png`. After (chỉ hiện 1 thông báo): `positron-p51150-toast-centre-after-1920x1080-real.png`. Bản P5.1.149 có ảnh desktop thật cho tình trạng trước khi sửa. Có thêm ảnh collapsed/expanded để kiểm tra trạng thái tương tác.
 - QA: tạo 7 sự kiện thông báo thành công thật trong ứng dụng và một cảnh báo; xác minh 1/7 thành công hiển thị khi thu gọn, 7/7 khi mở, cảnh báo vẫn hiển thị, không tràn ngang, không phát kênh, không sửa playlist; Node + native Electron + kiểm tra ảnh.
-- Trạng thái: CANDIDATE cho tới khi CI, ảnh sau đã mở và installer Release bất biến xác minh.
+- Trạng thái: ĐÃ XÁC MINH — Actions `44965060471` 6/6 thành công; 780 Node tests (775 pass, 5 skipped, 0 fail); Electron 1920×1080 và 10/10 native toast QA pass, hai ảnh trước/sau đã mở; release bất biến `positron/v4.23.234-p5.1.150` và EXE/DMG/SHA256SUMS đã xác minh.
 
 ## P5.1.149 — Chọn nhắc EPG trước 5/10/15/30 phút / Electron v4.23.233
 
