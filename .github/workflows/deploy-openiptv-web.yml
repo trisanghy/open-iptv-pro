@@ -15,6 +15,7 @@ on:
       - 'assets/**'
       - 'locales/**'
       - 'tizen/**'
+      - 'tests/tizen-hosted-browser-player.test.cjs'
   workflow_dispatch:
 permissions:
   contents: write
@@ -60,6 +61,7 @@ jobs:
             cp -p tizen/hosted-player.html _site/tizen/hosted-player.html
             grep -Fq 'openiptv-tizen-hosted' _site/tizen/hosted-player.html
           fi
+          node --test tests/tizen-hosted-browser-player.test.cjs
           for dir in assets locales epg; do
             test -d "$dir"
             cp -R "$dir" "_site/$dir"
