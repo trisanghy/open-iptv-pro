@@ -1,5 +1,12 @@
 # Positron P5 Changelog
 
+## P5.1.256 — Thống kê nguồn đang bật và tổng kênh ngay trong tiêu đề Nguồn IPTV / Electron 4.23.341
+- Feature priority: NEW — Hiển thị thẻ số liệu `2/2 nguồn bật · 561 kênh` theo thư viện thực, tự cập nhật khi số lượng nguồn/kênh trong footer chính thay đổi. Giúp nhận ra nguồn đang tắt ngay trên màn quản lý thay vì phải tìm nút trạng thái; chỉ đọc dữ liệu, không phát kênh hay lưu nguồn.
+- Electron screenshot: positron-p51256-inventory-after-1920x1080-real.png
+- User action: Mở trang Nguồn IPTV và xem thống kê ngay dưới phần mô tả; khi thêm/xóa hoặc bật/tắt nguồn, thống kê tổng và số nguồn đang bật theo trạng thái mới.
+- Electron QA: `positron-p51256-inventory-before-1920x1080-real.png` / `positron-p51256-inventory-after-1920x1080-real.png` (1920x1080), thêm `positron-p51256-inventory-720-real.png` (720px), kiểm tra dữ liệu từ store, không tràn ngang, không mutate M3U/Favorites/playback; chỉ công nhận sau CI và mở ảnh.
+
+
 ## P5.1.255 — Nút quay lại kênh ngay trên trang Nguồn IPTV / Electron 4.23.340
 - Feature priority: NEW — Thêm nút một chạm ở phần đầu trang Nguồn IPTV, hiện số kênh đã duyệt gần nhất và quay về kênh ấy mà không phát video; dùng chung cơ chế với Alt+Shift+L. Nút tự vô hiệu khi chưa có dấu vị trí và không thay đổi M3U, Favorites, playback hoặc cài đặt.
 - Electron screenshot: positron-p51255-return-button-after-1920x1080-real.png

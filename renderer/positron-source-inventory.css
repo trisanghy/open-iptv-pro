@@ -1,0 +1,13 @@
+/* P5.1.256: an inventory summary near Sources title, not an extra toolbar button. */
+html[data-positron="true"] #page-sources #poSourceInventorySummary{
+ display:inline-flex;align-items:center;max-width:100%;margin-top:7px;
+ background:#12342f;border:1px solid #277669;border-radius:99px;
+ color:#b9f4e4;font-size:11px;font-weight:650;line-height:1.3;
+ padding:4px 10px;white-space:normal;font-variant-numeric:tabular-nums;
+}
+html[data-positron="true"] #page-sources #poSourceInventorySummary[hidden]{display:none!important}
+@media(max-width:720px){
+ html[data-positron="true"] #page-sources #poSourceInventorySummary{
+  font-size:10px;margin-top:6px;padding:4px 8px;
+ }
+}

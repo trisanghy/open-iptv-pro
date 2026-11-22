@@ -97,3 +97,13 @@ Chỉ đánh dấu hoàn tất khi sửa nguồn, node test pass, Electron scree
 ## Đợt mới tiếp theo — Vòng 02/20 P5.1.255 [CANDIDATE]
 - Từ screenshot P254, thêm nút Sources “↩ Kênh 412”, disabled khi chưa có bookmark; click trả về hàng kênh và giữ mọi dữ liệu; tái dùng logic Alt+Shift+L; bố cục ưu tiên không tràn viewport.
 - QA bắt buộc: Node tests, ảnh Electron Sources trước / TV sau 1920x1080, click, tập trung hàng 412, căn giữa, không playback, không mutate danh sách và release mới.
+
+## Đợt tiếp theo — Vòng 02/20 P5.1.255 [HOÀN TẤT]
+- Node 936 tests: 931 pass/0 fail/5 skipped; CI 45066510928 6/6 jobs success; release `positron/v4.23.340-p5.1.255` có EXE/DMG/QA ZIP và SHA256SUMS.
+- Đã trực tiếp mở ảnh Electron P255 Sources trước (nút ↩ Kênh 412 nằm cùng File M3U/URL) và TV sau (focus QA Channel 412, căn giữa), không tràn. QA returnButtonStartQA255/returnButtonQA255 đều true, nguồn/playlist/Favorites và player bất biến.
+- Commit tính năng `f647528038b6ef32350d427d1569e7b63af3dee8`, commit giữ test P254 sau tái sử dụng hàm `0cabb37d421f6ba0ed6bf152323bb9d91d72110b`.
+- Đầu vào vòng 03: ảnh Sources cho thấy tổng 561 kênh/2 nguồn chỉ trong thanh trạng thái cuối màn hình. Bổ sung chip thống kê nguồn bật/ngắt và kênh ngay tiêu đề.
+
+## Đợt tiếp theo — Vòng 03/20 P5.1.256 [CANDIDATE]
+- Chỉ đọc store hiện có và cập nhật thông tin số nguồn đang bật/tất cả nguồn, tổng kênh trong trang Nguồn. Đồng bộ theo thay đổi footer native, không sửa danh sách hoặc phát.
+- QA phải có ảnh Electron thật trước/sau 1920x1080 và 720px, assert nội dung khớp state, không tràn, test/regression và release bất biến.
