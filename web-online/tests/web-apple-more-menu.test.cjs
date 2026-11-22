@@ -32,10 +32,14 @@ test('Other snapshot and playlist entry points remain intact',()=>{
 });
 test('Pages builder and HTML use identical cache-busting keys',()=>{
  const html=get('index.html'),builder=get('web-online/prepare-web.py');
- for(const name of ['web-mobile-player.js','web-mobile-player.css','web-desktop-download.js']){
+ for(const name of ['web-mobile-player.js','web-mobile-player.css']){
   const key=name+'?v=apple-more-20261120a';
   assert.ok(html.includes(key),key);
   assert.ok(builder.includes(key),key);
  }
- assert.equal(download,get('web-online/web-desktop-download.js'));
+ const updated='web-desktop-download.js?v=android-pwa-prompt-20261122b';
+ assert.ok(html.includes(updated),updated);
+ assert.ok(builder.includes(updated),updated);
+ // The offline template is allowed to trail the independently updated deployed Web file.
+ assert.match(get('web-online/web-desktop-download.js'),/data-mobile-more-click="softwareDownloadNav"/);
 });
