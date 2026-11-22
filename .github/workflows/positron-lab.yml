@@ -228,8 +228,8 @@ jobs:
           test -s positron-evidence/p5-20-rounds/positron-p51154-quiet-mode-after-1920x1080-real.png
           test -s positron-evidence/p5-20-rounds/positron-p51155-dismiss-toasts-before-1920x1080-real.png
           test -s positron-evidence/p5-20-rounds/positron-p51155-dismiss-toasts-after-1920x1080-real.png
-          test -s positron-evidence/p5-20-rounds/positron-p51157-library-pulse-before-1920x1080-real.png
-          test -s positron-evidence/p5-20-rounds/positron-p51157-library-pulse-after-1920x1080-real.png
+          test -s positron-evidence/p5-20-rounds/positron-p51156-library-pulse-before-1920x1080-real.png
+          test -s positron-evidence/p5-20-rounds/positron-p51156-library-pulse-after-1920x1080-real.png
           test -s positron-evidence/p5-20-rounds/positron-p51157-groups-before-1920x1080-real.png
           test -s positron-evidence/p5-20-rounds/positron-p51157-groups-after-1920x1080-real.png
           node -e "let a=require('./positron-evidence/audit-p4-50-rounds.json');if(a.newP4Rounds!==50||a.screenshotCount!==50||a.rounds.length!==50)process.exit(1);let p=require('./positron-evidence/audit-p5-20-rounds.json');if(p.screenshotCount!==20||p.upgradeChecks!==20||p.rounds.length!==20)process.exit(1)"
