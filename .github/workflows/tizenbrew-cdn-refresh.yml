@@ -1,0 +1,44 @@
+name: TizenBrew - refresh module CDN
+
+on:
+  push:
+    branches:
+      - tizenbrew
+    paths:
+      - package.json
+      - tizenbrew/**
+      - .github/workflows/tizenbrew-cdn-refresh.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: tizenbrew-cdn-refresh
+  cancel-in-progress: true
+
+jobs:
+  purge:
+    name: Refresh TizenBrew package and app HTML
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Purge jsDelivr branch cache for TizenBrew
+        shell: bash
+        env:
+          REPOSITORY: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          for file in package.json tizenbrew/index.html; do
+            url="https://purge.jsdelivr.net/gh/${REPOSITORY}@tizenbrew/${file}"
+            echo "::group::Purging ${file}"
+            status="$(curl --silent --show-error --location --retry 3 --retry-delay 3 --max-time 35 --output response.json --write-out '%{http_code}' "$url")"
+            cat response.json
+            echo
+            echo "HTTP status: ${status}"
+            if [[ ! "${status}" =~ ^2[0-9][0-9]$ ]]; then
+              echo "::error::jsDelivr cache purge failed for ${file} (HTTP ${status})"
+              exit 1
+            fi
+            echo "::endgroup::"
+          done
