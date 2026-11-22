@@ -4929,16 +4929,16 @@ async function runTwenty(page){
  // Soát TRƯỚC trong Electron thật: tái hiện sáu cột hẹp đã quan sát trên ảnh P180.
  // Quy tắc 6 cột chỉ dùng tạm thời cho ảnh QA; ảnh P180 gốc vẫn là chứng cứ độc lập.
  await page.evaluate(()=>{
-  const legacy=document.createElement('style');legacy.id='poP181LegacyFavoriteGrid';
-  legacy.textContent='html[data-positron="true"] #page-fav #favoriteList.favorite-grid{grid-template-columns:repeat(6,minmax(0,1fr))!important;gap:var(--ui-gap,13px)!important}';
-  document.head.append(legacy);
+  const grid=document.getElementById('favoriteList');
+  // In-line important wins over Positron high-specificity CSS only during screenshot baseline.
+  grid.style.setProperty('grid-template-columns','repeat(6,minmax(0,1fr))','important');
  });
  const legacyFavoriteColumns=await page.evaluate(()=>
   getComputedStyle(document.getElementById('favoriteList')).gridTemplateColumns.trim().split(/\s+/).length);
  assert.ok(legacyFavoriteColumns>0,'P181 baseline must report legacy grid tracks');
  const before181=await page.screenshot({path:path.join(out,'positron-p51181-readable-favorites-before-1920x1080-real.png'),animations:'disabled'});
  assert.deepEqual([before181.readUInt32BE(16),before181.readUInt32BE(20)],[1920,1080]);
- await page.evaluate(()=>document.getElementById('poP181LegacyFavoriteGrid')?.remove());
+ await page.evaluate(()=>document.getElementById('favoriteList').style.removeProperty('grid-template-columns'));
  const favoriteLayoutQA=await page.evaluate(()=>{
   const d=document,grid=d.getElementById('favoriteList');
   const cards=[...grid.querySelectorAll('.fav-card')];
