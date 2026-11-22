@@ -5,7 +5,7 @@
 - Before: positron-p51164-duplicates-before-1920x1080-real.png; After: positron-p51164-duplicates-after-1920x1080-real.png, ảnh Electron thực 1920×1080.
 - Dữ liệu chỉ đọc; chuẩn hóa khoảng trắng, NFC, chữ hoa/thường nhưng giữ dấu; không truy xuất/hiển thị URL, không nhập mạng, không xóa playlist, không tự phát video.
 - Regression: Unit fixture đa nguồn, tiếng Việt, nhóm, tìm kiếm, phân trang, không rò URL; Electron UI 16:9 có trạng thái rỗng và ảnh trước/sau.
-- Status: CANDIDATE — cần xác minh test, chụp/soát ảnh, build và release bất biến.
+- Status: PUBLISHED_AND_VERIFIED — 806 Node tests (801 pass, 5 skipped, 0 fail), Electron QA 9/9 + tìm kiếm, 6/6 Actions, 16 Release assets; https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.249-p5.1.164
 
 ## P5.1.163 — Xuất CSV kênh thiếu logo an toàn / Electron 4.23.248
 - Feature priority: NEW — Thư viện → Kênh thiếu logo → lọc/tìm/sắp xếp → **Xuất CSV** tất cả kênh khớp, không chỉ 10 hàng hiện tại.
@@ -15,7 +15,7 @@
 - Chống CSV formula injection, dấu nháy và xuống dòng; thứ tự playlist gốc không đổi.
 - Node regression: >50 hàng, lọc, sắp xếp, thoát công thức. Electron UI 1920×1080 before/after, kiểm tra tạo Blob; không giả nhận đã thử Save As của hệ điều hành.
 - Ảnh trước: positron-p51163-csv-before-1920x1080-real.png; sau: positron-p51163-csv-after-1920x1080-real.png.
-- Trạng thái CANDIDATE cho đến khi CI, ảnh sau đã xem và bản cài đặt Release xác minh.
+- Trạng thái PUBLISHED_AND_VERIFIED — 804 Node tests (799 pass, 5 skipped, 0 fail), Electron QA CSV 10/10, 6/6 Actions, 16 Release assets; https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.248-p5.1.163
 
 ## P5.1.162 — Chuyển nhanh tới trang bất kỳ trong thư viện / Electron 4.23.247
 - Feature priority: NEW — Nhập trực tiếp trang muốn xem ở bảng kênh thiếu logo thay vì bấm nút Tiếp liên tục khi thư viện có hàng chục trang; tự giới hạn trong khoảng trang hợp lệ, tránh mất vị trí.
