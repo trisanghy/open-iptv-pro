@@ -3,7 +3,7 @@
 # Windows symlink permissions are checked before downloading any dependencies.
 # No signing, release publishing, or system-wide installs are performed.
 $ErrorActionPreference = 'Stop'
-$expectedVersion = '4.23.354'
+$expectedVersion = '4.23.355'
 $root = [System.IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
 $projectFile = Join-Path $root 'package.json'
 $logDir = Join-Path $root 'build-logs'

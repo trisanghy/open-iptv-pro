@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.354",
-  "description": "Positron P5.1.269: AI lập lịch xem 24 giờ tránh trùng chương trình",
+  "version": "4.23.355",
+  "description": "Positron P5.1.270: AI khám phá kênh bằng contextual bandit",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

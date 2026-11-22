@@ -1,5 +1,14 @@
 # Positron P5 Changelog
 
+## P5.1.270 — AI khám phá theo contextual bandit / Electron 4.23.355
+- Feature priority: NEW — Chế độ **Khám phá AI** tính điểm UCB cho chủ đề ít được đánh giá kết hợp xác suất logistic đã học thực tế, chọn ra danh sách đa dạng, tránh lặp quá nhiều kênh cùng chủ đề và giảm dần mức khám phá khi chủ đề được phản hồi.
+- Feature class: AI
+- Evidence: Kiểm thử 25 lần thích thể thao, 18 lần không thích thời sự, chủ đề thiếu nhi chưa từng đánh giá; phần thưởng UCB của thiếu nhi phải cao hơn thể thao; giữ playlist, không tự phát. Screenshot Electron 1920×1080 trước/sau chuyển sang nút Khám phá AI và kiểm tra consent/geometry.
+- User action: TV → WatchFlow → ✦ AI hợp gu → bật học sở thích → Khám phá AI. Nhấn Hợp gu/Không hợp để cập nhật mô hình logistic và thống kê chủ đề trên máy; nút tự khóa nếu chưa đồng ý học và Xóa dữ liệu học xóa cả bộ đếm.
+- Privacy: Chỉ lưu số lần đánh giá theo loại nội dung, không lưu danh tính kênh/URL/M3U, không tải dữ liệu riêng lên Internet, không tự chuyển hay phát kênh.
+- Electron screenshot: positron-p51270-ai-bandit-before-1920x1080-real.png / positron-p51270-ai-bandit-after-1920x1080-real.png cần mở kiểm tra bằng mắt.
+- Trạng thái: CANDIDATE tới khi test, ảnh thực, 6 CI jobs và Release được xác minh.
+
 ## P5.1.269 — AI lập lịch xem 24 giờ tránh trùng giờ / Electron 4.23.354
 - Feature priority: NEW — WatchFlow Intelligence có chế độ **Lịch AI 24h** tối ưu lịch xem không trùng giờ. Thuật toán weighted interval scheduling chọn tối đa 8 chương trình từ XMLTV thật theo trọng số logistic học từ sở thích; chương trình chồng thời gian cạnh tranh cùng một vị trí, không bịa lịch khi thiếu EPG.
 - Feature class: AI

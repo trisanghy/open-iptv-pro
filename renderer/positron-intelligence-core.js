@@ -177,6 +177,52 @@
 
 
 
+
+ // P5.1.270: consent-based contextual bandit. Genre-level UCB bonuses shrink
+ // as the user explicitly rates/watches a category; no channel history stored.
+ function sanitizedBandit(raw){
+  const out={};if(!raw||typeof raw!=='object'||Array.isArray(raw))return out;
+  for(const key of Object.keys(KINDS)){
+   const n=Number(raw[key]);if(Number.isFinite(n)&&n>0)out[key]=Math.min(10000,Math.trunc(n));
+  }
+  return out;
+ }
+ function observeBandit(raw,key){
+  const out=sanitizedBandit(raw);
+  if(KINDS[key])out[key]=Math.min(10000,(out[key]||0)+1);
+  return out;
+ }
+ function banditBonus(count,total){
+  const visits=Math.max(0,Math.min(10000,Number(count)||0)),n=Math.max(0,Math.min(100000,Number(total)||0));
+  return Math.min(0.3,0.11*Math.sqrt(Math.log(n+10)/(visits+1)));
+ }
+ function exploreWithBandit(channels,guide,api,model,webMap={},history={},{limit=8,clock=Date.now()}={}){
+  const m=sanitizedModel(model),bandit=sanitizedBandit(history);
+  const total=Object.values(bandit).reduce((a,b)=>a+b,0),rows=[];
+  for(const ch of Array.isArray(channels)?channels:[]){
+   if(!ch?.id||!ch.name||!ch.url||ch.status==='dead')continue;
+   const topic=topicFor(ch,guide,api,clock,webMap[String(ch.name)]||null);
+   const probability=predict(m,features(ch,topic,new Date(clock)));
+   const bonus=banditBonus(bandit[topic.key]||0,total);
+   const score=(m.observations>=2?probability:0.5)+bonus+(topic.source==='epg'?0.02:0);
+   rows.push({channel:ch,topic,score,probability,bonus,
+    reason:(m.observations>=2?'AI học từ '+m.observations+' phản hồi':'Chưa học đủ hành vi')
+    +' · '+(bandit[topic.key]||0)+' lượt đánh giá chủ đề · Khám phá có kiểm soát'});
+  }
+  rows.sort((a,b)=>b.score-a.score||String(a.channel.name).localeCompare(String(b.channel.name),'vi'));
+  const chosen=[],counts=new Map(),max=Math.max(1,Math.min(20,Math.trunc(limit)||8));
+  while(chosen.length<max&&rows.length){
+   let best=0,value=-Infinity;
+   for(let i=0;i<rows.length;i++){
+    const rank=rows[i].score-0.07*(counts.get(rows[i].topic.key)||0);
+    if(rank>value){best=i;value=rank;}
+   }
+   const item=rows.splice(best,1)[0];chosen.push(item);
+   counts.set(item.topic.key,(counts.get(item.topic.key)||0)+1);
+  }
+  return chosen;
+ }
+
  // P5.1.269: local 24h watch schedule. XMLTV candidates are scored by the
  // existing learned logistic model; weighted interval scheduling chooses a
  // conflict-free set. No guide means no invented broadcasts or playback.
@@ -263,5 +309,5 @@
   return best;
  }
  return Object.freeze({KINDS,normalize,subject,metadataTopic,topicFor,features,emptyModel,
-  sanitizedModel,predict,learn,recommend,upcomingForYou,planForYou,startingForYou,cleanQuery,readWikiSearch});
+  sanitizedModel,predict,learn,recommend,sanitizedBandit,observeBandit,banditBonus,exploreWithBandit,upcomingForYou,planForYou,startingForYou,cleanQuery,readWikiSearch});
 });

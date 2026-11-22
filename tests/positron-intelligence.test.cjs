@@ -201,3 +201,29 @@ test('P269 lịch không bịa XMLTV, lọc tương lai và khống chế số c
  assert.ok(src.includes('core.planForYou(collection,guide(),win.IPTVGuide,model,profile'));
  assert.ok(src.includes('programmeTopic||metadata(channel)'));
 });
+
+test('P270 contextual bandit UCB ưu tiên chủ đề ít đánh giá và giảm sau quan sát',()=>{
+ const b=C.observeBandit({sport:20,news:10,invalid:999},'sport');
+ assert.equal(b.sport,21);assert.equal(b.news,10);assert.equal(b.invalid,undefined);
+ assert.ok(C.banditBonus(0,31)>C.banditBonus(21,31));
+ assert.deepEqual(C.sanitizedBandit({sport:-40,kids:'x',news:1.5}),{news:1});
+});
+test('P270 AI khám phá dựa trên phản hồi, vẫn trả chủ đề thiếu nhi mới và giữ playlist',()=>{
+ const kids=mk('kids','Kênh thiếu nhi'),channels=[sport,news,kids],before=JSON.stringify(channels);
+ const guide={programmes:[{id:'fixture'}]};
+ const resolver={find:(_g,ch)=>[{title:ch.id==='sport'?'Trực tiếp bóng đá':ch.id==='news'?'Bản tin thời sự':'Hoạt hình thiếu nhi',
+  start:now-1000,end:now+3600000}]};
+ let m=C.emptyModel(),history={};
+ for(let i=0;i<25;i++){m=C.learn(m,C.features(sport,{key:'sport',source:'epg'},date),1);history=C.observeBandit(history,'sport');}
+ for(let i=0;i<18;i++){m=C.learn(m,C.features(news,{key:'news',source:'epg'},date),0);history=C.observeBandit(history,'news');}
+ const rows=C.exploreWithBandit(channels,guide,resolver,m,{},history,{clock:now,limit:3});
+ assert.equal(rows.length,3);assert.ok(rows.some(x=>x.topic.key==='kids'));
+ assert.ok(rows.find(x=>x.topic.key==='kids').bonus>rows.find(x=>x.topic.key==='sport').bonus);
+ assert.equal(JSON.stringify(channels),before);
+});
+test('P270 chế độ AI bandit phụ thuộc consent và có nút xóa bộ đếm',()=>{
+ const s=fs.readFileSync('renderer/positron-intelligence.js','utf8');
+ for(const x of ["exploreMode.disabled=!enabled","exploreMode.addEventListener('click'",
+  "core.exploreWithBandit(collection,guide(),win.IPTVGuide,model,profile,bandit",
+  "bandit=core.observeBandit(bandit,topic.key)","model=core.emptyModel();bandit={}"])assert.ok(s.includes(x),x);
+});

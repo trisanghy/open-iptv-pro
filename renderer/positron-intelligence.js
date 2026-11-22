@@ -11,7 +11,7 @@
  const guide=()=>{try{return win.IPTVExtras?.getGuide?.()||null;}catch{return null;}};
  const load=(key)=>{try{return JSON.parse(win.localStorage.getItem(key)||'null');}catch{return null;}};
  let record=load(KEY);
- let enabled=record?.enabled===true,model=core.sanitizedModel(record?.model),active=null,aiOpen=false;
+ let enabled=record?.enabled===true,model=core.sanitizedModel(record?.model),bandit=core.sanitizedBandit(record?.bandit),active=null,aiOpen=false;
  let alertEnabled=enabled&&record?.alertEnabled===true;const notified=new Set();
  let web=load(WEB_KEY);if(!web||typeof web!=='object'||Array.isArray(web))web={};
  const webValid=()=>{
@@ -22,7 +22,7 @@
   }
   return live;
  };
- const save=()=>{try{win.localStorage.setItem(KEY,JSON.stringify({enabled,alertEnabled,model}));return true;}catch{return false;}};
+ const save=()=>{try{win.localStorage.setItem(KEY,JSON.stringify({enabled,alertEnabled,model,bandit}));return true;}catch{return false;}};
  const saveWeb=()=>{try{
   const entries=Object.entries(web).sort((a,b)=>(b[1]?.at||0)-(a[1]?.at||0)).slice(0,60);
   web=Object.fromEntries(entries);win.localStorage.setItem(WEB_KEY,JSON.stringify(web));return true;
@@ -56,11 +56,15 @@
  upcomingMode.textContent='Lịch EPG hợp gu';upcomingMode.setAttribute('aria-pressed','false');
  const planMode=d.createElement('button');planMode.type='button';planMode.id='poAIPlan';
  planMode.textContent='Lịch AI 24h';planMode.setAttribute('aria-pressed','false');
- modeBar.append(channelsMode,upcomingMode,planMode);
- let upcomingOpen=false,planOpen=false;
- channelsMode.addEventListener('click',()=>{upcomingOpen=false;planOpen=false;render();});
- upcomingMode.addEventListener('click',()=>{upcomingOpen=true;planOpen=false;render();});
- planMode.addEventListener('click',()=>{upcomingOpen=false;planOpen=true;render();});
+
+ const exploreMode=d.createElement('button');exploreMode.type='button';exploreMode.id='poAIExplore';
+ exploreMode.textContent='Khám phá AI';exploreMode.setAttribute('aria-pressed','false');exploreMode.disabled=!enabled;
+ modeBar.append(channelsMode,upcomingMode,planMode,exploreMode);
+ let upcomingOpen=false,planOpen=false,exploreOpen=false;
+ channelsMode.addEventListener('click',()=>{upcomingOpen=false;planOpen=false;exploreOpen=false;render();});
+ upcomingMode.addEventListener('click',()=>{upcomingOpen=true;planOpen=false;exploreOpen=false;render();});
+ planMode.addEventListener('click',()=>{upcomingOpen=false;planOpen=true;exploreOpen=false;render();});
+ exploreMode.addEventListener('click',()=>{if(!enabled)return;upcomingOpen=false;planOpen=false;exploreOpen=true;render();});
  const alertRow=d.createElement('label');alertRow.className='po-ai-alerts';
  const alertCheck=d.createElement('input');alertCheck.type='checkbox';alertCheck.id='poAIAlerts';
  alertCheck.checked=alertEnabled;alertCheck.disabled=!enabled;
@@ -101,7 +105,8 @@
   const topic=programmeTopic||metadata(channel);
   const when=Number.isFinite(programmeStart)&&programmeStart>0?new Date(programmeStart):new Date();
   const vector=core.features(channel,topic,when);
-  model=core.learn(model,vector,label);if(!save())state()?.toast?.('Không lưu được sở thích trên thiết bị','warn');
+  model=core.learn(model,vector,label);bandit=core.observeBandit(bandit,topic.key);
+  if(!save())state()?.toast?.('Không lưu được sở thích trên thiết bị','warn');
   render();
  }
  function render(){
@@ -110,6 +115,7 @@
   channelsMode.setAttribute('aria-pressed',String(!upcomingOpen));
   upcomingMode.setAttribute('aria-pressed',String(upcomingOpen));
   planMode.setAttribute('aria-pressed',String(planOpen));
+  exploreMode.setAttribute('aria-pressed',String(exploreOpen));exploreMode.disabled=!enabled;
   summary.textContent=(enabled?'● Đang học':'○ Chưa bật học')+(alertEnabled?' · Nhắc lịch AI bật':'')+' · '+model.observations+
    ' phản hồi hợp lệ · '+collection.length+' kênh khả dụng · Web chỉ tra khi nhấn nút';
   list.replaceChildren();
@@ -118,7 +124,9 @@
    empty.textContent='Chưa có nguồn IPTV. Hãy thêm playlist hợp lệ và EPG để phân loại, sau đó bật học nếu muốn.';
    list.append(empty);return;
   }
-  const ranked=planOpen
+  const ranked=exploreOpen
+   ?core.exploreWithBandit(collection,guide(),win.IPTVGuide,model,profile,bandit,{limit:8,clock:Date.now()})
+   :planOpen
    ?core.planForYou(collection,guide(),win.IPTVGuide,model,profile,{limit:8,clock:Date.now(),hours:24})
    :upcomingOpen
    ?core.upcomingForYou(collection,guide(),win.IPTVGuide,model,profile,{limit:8,clock:Date.now(),hours:8})
@@ -197,7 +205,7 @@
  }
  check.addEventListener('change',()=>{
   enabled=check.checked;active=null;
-  if(!enabled)alertEnabled=false;
+  if(!enabled){alertEnabled=false;exploreOpen=false;}
   alertCheck.checked=alertEnabled;alertCheck.disabled=!enabled;
   if(!save())state()?.toast?.('Không lưu được quyền học trên máy','warn');render();
  });
@@ -209,7 +217,7 @@
  });
  clear.addEventListener('click',()=>{
   if(!win.confirm('Xóa toàn bộ trọng số học sở thích trên thiết bị này?'))return;
-  model=core.emptyModel();active=null;alertEnabled=false;alertCheck.checked=false;
+  model=core.emptyModel();bandit={};active=null;alertEnabled=false;alertCheck.checked=false;
   notified.clear();save();render();
   state()?.toast?.('Đã xóa mô hình sở thích cục bộ','info');
  });
@@ -249,7 +257,7 @@
    if(isSecond)active.second=true;else active.first=true;
    const topic=metadata(ch),vector=core.features(ch,topic,new Date(now));
    model=core.learn(model,vector,1,{rate:isSecond?0.18:0.42});
-   save();if(aiOpen)render();
+   bandit=core.observeBandit(bandit,topic.key);save();if(aiOpen)render();
   }
  }
  if(player){
@@ -266,6 +274,7 @@
   recommend:()=>core.recommend(channels(),guide(),win.IPTVGuide,model,webValid()),
   upcoming:()=>core.upcomingForYou(channels(),guide(),win.IPTVGuide,model,webValid()),
   plan:()=>core.planForYou(channels(),guide(),win.IPTVGuide,model,webValid()),
+  explore:()=>enabled?core.exploreWithBandit(channels(),guide(),win.IPTVGuide,model,webValid(),bandit):[],
   alerts:()=>({enabled:alertEnabled,candidates:alertEnabled?core.startingForYou(channels(),guide(),win.IPTVGuide,model,webValid()):[]}),
   getTopic:metadata});
 })();
