@@ -57,7 +57,7 @@
   grid.replaceChildren(fragment);
   $('tvHistoryCount').textContent=watchHistory.length+'/'+HISTORY_LIMIT;
   $('tvHistoryEmpty').hidden=watchHistory.length>0;
-  $('tvClearHistory').hidden=watchHistory.length===0;
+  $('tvClearHistory').disabled=watchHistory.length===0;
  }
  function rememberChannel(url,name,mediaId){
   const entry=normalizeHistory({url,name,mediaId,watchedAt:Date.now()});
@@ -66,6 +66,35 @@
   try{root.localStorage.setItem(HISTORY_KEY,JSON.stringify(watchHistory));}catch{}
   renderHistory();
  }
+
+ // Gradually compact the 6-digit pairing code as viewers scroll down to history.
+ // Change layout dimensions, not just transform(), to actually free vertical room.
+ function resizePairPin(){
+  const pin=$('tvPairPin');
+  if(!pin||!pin.style)return;
+  const offset=Math.max(0,Number(root.scrollY||root.pageYOffset||d.documentElement?.scrollTop||d.body?.scrollTop||0));
+  const width=Math.max(280,root.innerWidth||d.documentElement?.clientWidth||950);
+  const viewportHeight=Math.max(350,root.innerHeight||d.documentElement?.clientHeight||800);
+  const progress=Math.min(1,offset/Math.min(380,Math.max(170,viewportHeight*.45)));
+  const large=Math.max(54,Math.min(112,width*.11));
+  const compact=Math.max(28,Math.min(36,width*.037));
+  const size=large-(large-compact)*progress;
+  const margin=30-23*progress;
+  pin.style.fontSize=size.toFixed(1)+'px';
+  pin.style.marginTop=margin.toFixed(1)+'px';
+  pin.style.marginBottom=margin.toFixed(1)+'px';
+  pin.dataset.compact=progress>=.99?'true':'false';
+ }
+ let resizePairPinPending=false;
+ function requestPinResize(){
+  if(resizePairPinPending)return;
+  resizePairPinPending=true;
+  const update=()=>{resizePairPinPending=false;resizePairPin();};
+  if(typeof root.requestAnimationFrame==='function')root.requestAnimationFrame(update);
+  else update();
+ }
+ root.addEventListener('scroll',requestPinResize,{passive:true});
+ root.addEventListener('resize',requestPinResize);
  const cinemaButton=$('tvExitFullscreen');
  const video=$('tvVideo');
  const status=text=>{$('tvStatus').textContent=String(text||'');};
@@ -209,6 +238,7 @@
  }
  watchHistory=readHistory();
  renderHistory();
+ requestPinResize();
  $('tvClearHistory').addEventListener('click',()=>{
   watchHistory=[];
   try{root.localStorage.removeItem(HISTORY_KEY);}catch{}
