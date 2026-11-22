@@ -82,7 +82,7 @@ test('P5.1.232 local filter finds named groups without touching playback',()=>{
   "groupSearch.focus()","groupGo.disabled=!filtered.length"])
   assert.ok(ui.includes(token),'P232 missing native group filter '+token);
  assert.ok(!ui.includes('playChannel('));
- assert.equal(JSON.parse(read('package.json')).version,'4.23.317');
+ assert.ok(Number(JSON.parse(read('package.json')).version.split('.')[2])>=317,'P232 search feature must survive later versions');
 });
 test('P5.1.232 captures real Electron group search before/after with overflow and no autoplay checks',()=>{
  const qa=read('scripts/positron-20-extension.cjs');
@@ -94,5 +94,29 @@ test('P5.1.232 captures real Electron group search before/after with overflow an
  for(const token of ["page.locator('#poChannelGroupSearch').fill('other')",
   "page.locator('#poChannelGroupGo').click()","filteredToOne:","selectedGroupFocused:",
   "noAutoplay:","labelNotOverlapping:","noHorizontalOverflow:"])
+  assert.ok(qa.includes(token));
+});
+
+test('P5.1.233 stores bounded in-session folder navigation history, no autoplay',()=>{
+ const ui=read('renderer/positron-channel-jump.js');
+ for(const token of ["const groupHistory=[];","let returningToHistory=false;",
+  "focusList?.addEventListener('focusin'","backRow.id='poChannelGroupHistoryRow'",
+  "backButton.addEventListener('click'","groupHistory.push(lastFocusedGroup)",
+  "if(groupHistory.length>10)groupHistory.shift()","returningToHistory=true;",
+  "groupSelect.value=previous","target.focus({preventScroll:true})"])
+  assert.ok(ui.includes(token),'Missing P233 group history: '+token);
+ assert.ok(!ui.includes('playChannel('));
+ assert.equal(JSON.parse(read('package.json')).version,'4.23.318');
+});
+test('P5.1.233 validates real Electron history jump with screenshot and unchanged media',()=>{
+ const qa=read('scripts/positron-20-extension.cjs');
+ const flow=read('.github/workflows/positron-lab.yml');
+ for(const name of ['positron-p51233-group-history-before-1920x1080-real.png',
+ 'positron-p51233-group-history-after-1920x1080-real.png']){
+  assert.ok(qa.includes(name));assert.ok(flow.includes(name));
+ }
+ for(const token of ["page.locator('#poChannelGroupBack').click()",
+  "historyButtonVisible:","returnedToPreviousGroup:","noAutoplay:",
+  "noHorizontalOverflow:"])
   assert.ok(qa.includes(token));
 });

@@ -1,5 +1,14 @@
 # Positron P5 Changelog
 
+## P5.1.233 — Quay về nhóm vừa rời / Electron 4.23.318
+- Feature priority: NEW — Người dùng nhảy từ nhóm 01 sang một nhóm bất kỳ có thể quay lại nhóm cũ trong một lần nhấn, kể cả khi hai nhóm cách xa nhau; lịch sử focus nhóm trong phiên hoàn toàn tách biệt lịch sử phát video và không ghi đè dữ liệu playlist.
+- Electron screenshot: positron-p51233-group-history-after-1920x1080-real.png
+- User action: Mở trang TV, tập trung vào kênh nhóm 01 rồi nhấn Alt+G để nhảy sang nhóm 03; trong hộp chọn nhóm xuất hiện ↶ Nhóm trước. Nhấn nút này để quay về nhóm 01 mà không phát kênh.
+- QA: Electron thật 1920×1080, 561 kênh, xác minh nút quay lại chỉ xuất hiện khi có lịch sử, trả focus về kênh nhóm trước, không tự phát hoặc sửa dữ liệu.
+- CI optimization: build Mac/Windows có thể chạy song song với QA sau khi Node test xanh; Release vẫn bắt buộc cả capture và build thành công.
+- CANDIDATE tới khi test, ảnh thật đã mở và Release đủ bộ cài.
+
+
 ## P5.1.232 — Tìm nhanh nhóm kênh theo tên / Electron 4.23.317
 - Feature priority: NEW — Khi có hàng chục thư mục, người dùng có thể gõ một phần tên để thu hẹp nhóm ngay trong bộ chọn Alt+G, thay vì bấm tới từng nhóm; hỗ trợ tên tiếng Việt không dấu. Đồng thời sửa lỗi ảnh P5.1.231 cho thấy nhãn “Đến nhóm” chồng lên ô chọn.
 - Electron screenshot: positron-p51232-group-search-after-1920x1080-real.png

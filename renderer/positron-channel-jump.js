@@ -68,6 +68,46 @@
   return filterGroups();
  }
  groupSearch.addEventListener('input',filterGroups);
+ // P233: reversible, in-session folder navigation history. This is independent
+ // of viewing/playback history and never writes a user's saved IPTV settings.
+ const groupHistory=[];
+ let lastFocusedGroup='';
+ let returningToHistory=false;
+ const focusList=d.getElementById('channelList');
+ focusList?.addEventListener('focusin',event=>{
+  const row=event.target.closest?.('.channel-item');
+  if(!row)return;
+  let header=row.previousElementSibling;
+  while(header&&!header.matches('.folder-header'))header=header.previousElementSibling;
+  lastFocusedGroup=header?.dataset.group||'';
+ });
+ const backRow=d.createElement('div');
+ backRow.id='poChannelGroupHistoryRow';
+ backRow.innerHTML='<button id="poChannelGroupBack" type="button" aria-label="Quay về nhóm kênh trước">↶ Nhóm trước</button><output id="poChannelGroupBackHint" aria-live="polite"></output>';
+ status.before(backRow);
+ const backButton=backRow.querySelector('#poChannelGroupBack');
+ const backHint=backRow.querySelector('#poChannelGroupBackHint');
+ function updateBackRow(){
+  backRow.hidden=!groupHistory.length;
+  backHint.textContent=groupHistory.length?groupHistory[groupHistory.length-1]:'';
+ }
+ backButton.addEventListener('click',()=>{
+  let previous='';
+  while(groupHistory.length){
+   const candidate=groupHistory.pop();
+   if(visibleHeaders().some(header=>header.dataset.group===candidate)){
+    previous=candidate;break;
+   }
+  }
+  if(!previous){updateBackRow();return;}
+  groupSearch.value='';
+  filterGroups();
+  groupSelect.value=previous;
+  returningToHistory=true;
+  try{jumpGroup();}finally{returningToHistory=false;}
+  updateBackRow();
+ });
+ updateBackRow();
  function jumpGroup(){
   const group=groupSelect.value;
   const header=visibleHeaders().find(node=>node.dataset.group===group);
@@ -86,7 +126,12 @@
   const list=d.getElementById('channelList');
   const box=list.getBoundingClientRect(),rect=target.getBoundingClientRect();
   list.scrollTop+=rect.top-box.top-(list.clientHeight-rect.height)/2;
+  if(!returningToHistory&&lastFocusedGroup&&lastFocusedGroup!==group){
+   groupHistory.push(lastFocusedGroup);
+   if(groupHistory.length>10)groupHistory.shift();
+  }
   target.focus({preventScroll:true});
+  updateBackRow();
   status.textContent='Đã tới nhóm '+group+': '+count+' kênh. Nhấn Enter để phát kênh được chọn.';
  }
  groupGo.addEventListener('click',jumpGroup);

@@ -140,3 +140,25 @@ html[data-positron="true"] #page-tv #poChannelGroupSearch:focus-visible{
   grid-template-columns:54px minmax(0,1fr) 56px!important;gap:3px!important;
  }
 }
+
+/* P5.1.233: reversible group focus history, no media/player mutation. */
+html[data-positron="true"] #page-tv #poChannelGroupHistoryRow[hidden]{display:none!important}
+html[data-positron="true"] #page-tv #poChannelGroupHistoryRow{
+ grid-column:1/-1!important;display:flex!important;align-items:center!important;
+ gap:7px!important;min-width:0!important;
+}
+html[data-positron="true"] #page-tv #poChannelGroupBack{
+ display:inline-flex!important;align-items:center!important;justify-content:center!important;
+ flex-shrink:0!important;min-height:30px!important;padding:4px 8px!important;
+ border:1px solid #568d83!important;border-radius:7px!important;
+ background:#184136!important;color:#b5f4e0!important;font-size:11px!important;
+ font-weight:700!important;cursor:pointer!important;
+}
+html[data-positron="true"] #page-tv #poChannelGroupBackHint{
+ display:block!important;min-width:0!important;max-width:100%!important;
+ white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;
+ color:#a5bfc0!important;font-size:10px!important;
+}
+html[data-positron="true"] #page-tv #poChannelGroupBack:focus-visible{
+ outline:2px solid #8ae2d7!important;outline-offset:2px!important;
+}

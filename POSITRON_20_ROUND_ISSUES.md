@@ -13,7 +13,15 @@ Ngày 22/11/2026. Chỉ nhánh Positron. Không đếm 70 ảnh QA là 20 vòng 
 - Release đầu tiên của P231 đã phát hành từ commit trước sửa; không ghi đè tag, không tính vòng hoàn thành.
 - Sửa CSS 58px nhãn và thêm regression geometry ở SHA 0b096c095021ea4d82e0dbda9ce1bfb88e83e829; phát hành corrected version kế tiếp dưới tag MỚI.
 
-## Vòng 02 tiếp tục — P5.1.232 / Electron 4.23.317 — CANDIDATE
+## Vòng 02 tiếp tục — P5.1.232 / Electron 4.23.317 — ĐẠT
 - Bổ sung tìm nhóm theo tên không dấu ngay trên Alt+G, giữ tính năng chọn nhóm.
 - Bảo toàn CSS sửa P231, test thêm input/name filter/no autoplay/geometry, Electron screenshot trước/sau.
 - Chưa ghi vòng đạt cho đến khi xem PNG và Release hoàn tất.
+
+- Kết quả P5.1.232: CI 45045467358 success 6/6; Release positron/v4.23.317-p5.1.232; Electron before/after đã mở, 1/12 nhóm tìm được và kênh 121 focus đúng.
+
+## Vòng 03 — P5.1.233 / Electron 4.23.318 — CANDIDATE
+- Input: ảnh P5.1.232 cho thấy đã nhảy tới nhóm 03 từ hộp chọn nhưng thiếu lối quay về nhóm 01 đã dùng.
+- Feature: lịch sử nhóm focus trong phiên tối đa 10, nút ↶ Nhóm trước chỉ hiện khi có nơi để quay lại; không ảnh hưởng lịch sử xem video.
+- QA mới: screenshot P5.1.233 before/after 1920×1080; kiểm chứng focus trả về nhóm 01, không autoplay, không tràn.
+- Chưa tính đạt tới khi CI/ảnh/Release được xác minh.

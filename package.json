@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.317",
-  "description": "Positron P5.1.232: tìm nhóm kênh theo tên và chọn nhanh không tự phát",
+  "version": "4.23.318",
+  "description": "Positron P5.1.233: quay về nhóm kênh trước bằng lịch sử focus trong phiên",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",
