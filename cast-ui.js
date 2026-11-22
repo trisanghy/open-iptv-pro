@@ -55,7 +55,10 @@
    if(requestAirPlayPicker())return;
    showMobileAirPlayGuide();return;
   }
-  if(!hasNative){if(requestAirPlayPicker())return;showBrowserCastGuide();return;}
+  if(!hasNative){
+   if(window.OpenIPTVWebCast?.open){window.OpenIPTVWebCast.open(ch,source);return;}
+   if(requestAirPlayPicker())return;showBrowserCastGuide();return;
+  }
   $('castModal').dataset.airplayMobile='false';
   $('castModal').classList.remove('hidden');
   $('airplaySection').classList.toggle('hidden',navigator.platform?.toLowerCase().includes('mac')===false);
@@ -112,14 +115,21 @@
  async function stop(){return action(async()=>{
   await api.castStop();casting=false;selectedTarget=null;$('castCopy').disabled=true;$('castUrl').value='';status('Đã dừng truyền luồng.');
  });}
- function stopOnLocalStop(){if(!hasNative||!casting)return;casting=false;selectedTarget=null;api.castStop().catch(()=>{});}
- function onChannelChanged(ch){if(!casting||!channel||ch.id===channel.id)return;
+ function stopOnLocalStop(){
+  if(!hasNative){window.OpenIPTVWebCast?.stopOnLocalStop?.();return;}
+  if(!casting)return;casting=false;selectedTarget=null;api.castStop().catch(()=>{});
+ }
+ function onChannelChanged(ch){
+  if(!hasNative){window.OpenIPTVWebCast?.onChannelChanged?.(ch);return;}
+  if(!casting||!channel||ch.id===channel.id)return;
   stopOnLocalStop();status('Đã đổi kênh: phiên Cast cũ được dừng. Mở Cast để phát kênh mới.');
  }
  $('castBtn')?.addEventListener('click',()=>{ /* wired by app.js with current channel */ });
  $('castClose').addEventListener('click',close);$('castDone').addEventListener('click',close);
  $('castModal').addEventListener('click',e=>{if(e.target===$('castModal'))close();});
  window.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('castModal').classList.contains('hidden'))close();});
+ // Native network discovery and LAN server must never run in a browser.
+ if(hasNative){
  $('castScan').addEventListener('click',scan);
  $('airplayScan').addEventListener('click',scanAirplay);
  $('castPlay').addEventListener('click',play);
@@ -131,5 +141,6 @@
   try{await navigator.clipboard.writeText(input.value);status('Đã sao chép địa chỉ xem trên TV.');}
   catch{input.focus();input.select();try{document.execCommand('copy');status('Đã chọn địa chỉ. Sao chép để mở trên TV.');}catch{status('Hãy sao chép link trong ô phía trên.');}}
  });
+ }
  window.OpenIPTVCastUI=Object.freeze({open,stopOnLocalStop,onChannelChanged,isAppleMobile,requestAirPlayPicker});
 })();
