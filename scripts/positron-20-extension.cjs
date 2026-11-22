@@ -8988,7 +8988,7 @@ async function runTwenty(page){
   const sort=document.getElementById('poSourceInventorySort');
   sort.value='original';sort.dispatchEvent(new Event('change',{bubbles:true}));
   const rows=[...document.querySelectorAll('#poSourceInventoryDetails li[data-source-id]')];
-  assert.equal(rows.length,2);
+  if(rows.length!==2)throw new Error('P265 requires two local QA source rows');
   window.__p265Sources=JSON.stringify(window.IPTVState.getStore().sources);
   window.__p265Channels=JSON.stringify(window.IPTVState.getChannels().map(c=>c.id));
   window.__p265Current=window.IPTVState.getCurrent()?.id||null;
