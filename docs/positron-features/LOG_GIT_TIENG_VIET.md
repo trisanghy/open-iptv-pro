@@ -2,14 +2,23 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
-## P5.1.222 — chỉ dẫn mở nguồn khi EPG chưa tải
+## P5.1.223 — nhập XMLTV trực tiếp từ EPG
 
-**Ứng dụng:** 4.23.307 · **Trạng thái:** Chưa có bản phát hành
+**Ứng dụng:** 4.23.308 · **Trạng thái:** Chưa có bản phát hành
+
+Feature priority: NEW — Người xem có file XMLTV hợp pháp trong máy có thể nhập trực tiếp từ trang Lịch phát sóng mà không phải đi vòng qua trang Cài đặt; dùng nguyên luồng kiểm tra, xác nhận và lưu của chức năng nhập hiện có. Electron screenshot: positron-p51223-epg-import-after-1920x1080-real.png
+
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/b3f8bbac5158a01e6665655d52c51f606e99f8f2)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+
+## P5.1.222 — Chọn nhanh nguồn EPG khi chưa tải dữ liệu / Electron 4.23.307
+
+**Ứng dụng:** 4.23.307 · **Trạng thái:** Đã phát hành
 
 Feature priority: NEW — Bổ sung nút chọn nguồn XMLTV ngay trong trạng thái rỗng của lịch phát sóng, giúp người dùng nhập và kiểm tra nguồn thay vì bị báo sai là danh sách kênh không khớp khi chưa tải lịch. Electron screenshot: positron-p51222-epg-source-after-1920x1080-real.png
 
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/c537ce32f4adc702d5b4af374c6897bcbf12c564)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/3848d687983751697f938c1e8c43c42273a5591c)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.307-p5.1.222)
 
 ## P5.1.221 — Căn thẳng các nhãn EPG DVR / Electron 4.23.306
 
