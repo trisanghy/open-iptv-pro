@@ -275,7 +275,7 @@
     const active=d.querySelector('#page-tv .filter-tab[data-filter="fav"]')?.classList.contains('active')===true;
     chip.hidden=!active;
     if(!active)return;
-    const count=Number(d.getElementById('channelMeta')?.textContent?.match(/^\\s*(\\d+)/)?.[1]||0);
+    const count=Number(d.getElementById('channelMeta')?.textContent?.match(/^\s*(\d+)/)?.[1]||0);
     label.textContent='★ Yêu thích · '+count;
     chip.setAttribute('aria-label','Đang lọc '+count+' kênh yêu thích. Nhấn để xem tất cả.');
    };
