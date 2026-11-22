@@ -1,3 +1,7 @@
+## Rust Lab v23.8.109 — Tách đúng 3 tầng WatchFlow AI (PRE-RELEASE)
+
+Standard dùng Naive Bayes tích hợp, đọc EPG hiện có. Smart là mô hình fastText huấn luyện trước với mục tiêu ≈18 MB nhưng chưa có file trọng số được xác minh; hiển thị rõ chưa kích hoạt, không gọi bộ Bayes là fastText. Intelligence có bộ chọn mô hình cục bộ từ Rust Lab: tự tìm mô hình MLX đã tải, không tải trùng; chỉ cài mới khi người dùng bấm Tải. Giao diện phân biệt giữa mô hình có sẵn và backend LLM WatchFlow chưa được nối. Test hồi quy + giữ prerelease, không đụng main/Latest.
+
 ## Rust Lab v23.8.108 — Sửa đúng mô hình Smart 18 MB và Intelligence dùng chung mô hình
 
 Đính chính giao diện: Smart ~18 MB là mô hình huấn luyện đã chốt nhưng chưa có trọng số để triển khai; Bayes dưới 1 MB chỉ là dự phòng. Intelligence ưu tiên dùng Qwen3/Hy-MT2 đã tải hoặc tải thêm qua quản lý AI, chưa gọi LLM từ WatchFlow. Không đưa prerelease thành Stable/Latest. [Ghi chú](RELEASE_NOTES_RUST_LAB_V23_8_108.md).
