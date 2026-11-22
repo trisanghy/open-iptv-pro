@@ -2,14 +2,23 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
-## P5.1.240 — Shift+F lọc nhanh Yêu thích mà không đổi dấu sao
+## P5.1.241 — Chip yêu thích cho biết lọc hiện tại và xóa lọc
 
-**Ứng dụng:** 4.23.325 · **Trạng thái:** Chưa có bản phát hành
+**Ứng dụng:** 4.23.326 · **Trạng thái:** Chưa có bản phát hành
+
+Feature priority: NEW — Khi Shift+F lọc còn 20 kênh, ảnh P5.1.240 chỉ báo 20/561 mà không nêu bộ lọc đang bật, rất dễ hiểu nhầm mất kênh. Thêm chip nhỏ trực tiếp dưới ô tìm để hiển thị `Yêu thích · 20` cùng hành động `Xem tất cả`, khôi phục danh sách bằng bộ lọc native và giữ focus; không thay đổi dữ liệu Favorites hoặc IPTV. Electron screenshot: positron-p51241-favorite-chip-after-1920x1080-real.png
+
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/80a5575b2ebd4aca5071e52285161299f606f68f)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+
+## P5.1.240 — Shift+F lọc nhanh yêu thích không thay đổi dấu sao / Electron 4.23.325
+
+**Ứng dụng:** 4.23.325 · **Trạng thái:** Đã phát hành
 
 Feature priority: NEW — Thêm phím tắt Shift+F trong danh sách kênh để luân phiên bộ lọc Tất cả/Yêu thích và giữ focus trên hàng đầu. Trước đây Shift+F bị hiểu nhầm là F và đảo dấu sao, dễ thay đổi dữ liệu yêu thích ngoài ý muốn. Bản mới chỉ chuyển bộ lọc sẵn có, tuyệt đối không ghi M3U hoặc thay đổi Favorites. Electron screenshot: positron-p51240-shift-favorites-after-1920x1080-real.png
 
 [Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/1f91a9f63bb9492b6bf1ac06b88cbfd81776cda0)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.325-p5.1.240)
 
 ## P5.1.239 — Escape đóng bảng nhảy kênh từ danh sách / Electron 4.23.324
 

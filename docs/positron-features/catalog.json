@@ -1,21 +1,101 @@
 {
-  "generatedAt": "2026-11-22T18:09:40.428363+00:00",
+  "generatedAt": "2026-11-22T18:17:20.121907+00:00",
   "repository": "trisanghy/open-iptv-pro",
   "branch": "Positron",
   "versions": [
     {
-      "number": 240,
-      "version": "P5.1.240",
-      "appVersion": "4.23.325",
-      "title": "Shift+F lọc nhanh Yêu thích mà không đổi dấu sao",
-      "description": "Feature priority: NEW — Thêm phím tắt Shift+F trong danh sách kênh để luân phiên bộ lọc Tất cả/Yêu thích và giữ focus trên hàng đầu. Trước đây Shift+F bị hiểu nhầm là F và đảo dấu sao, dễ thay đổi dữ liệu yêu thích ngoài ý muốn. Bản mới chỉ chuyển bộ lọc sẵn có, tuyệt đối không ghi M3U hoặc thay đổi Favorites. Electron screenshot: positron-p51240-shift-favorites-after-1920x1080-real.png",
+      "number": 241,
+      "version": "P5.1.241",
+      "appVersion": "4.23.326",
+      "title": "Chip yêu thích cho biết lọc hiện tại và xóa lọc",
+      "description": "Feature priority: NEW — Khi Shift+F lọc còn 20 kênh, ảnh P5.1.240 chỉ báo 20/561 mà không nêu bộ lọc đang bật, rất dễ hiểu nhầm mất kênh. Thêm chip nhỏ trực tiếp dưới ô tìm để hiển thị `Yêu thích · 20` cùng hành động `Xem tất cả`, khôi phục danh sách bằng bộ lọc native và giữ focus; không thay đổi dữ liệu Favorites hoặc IPTV. Electron screenshot: positron-p51241-favorite-chip-after-1920x1080-real.png",
       "kind": "fix",
       "status": "candidate",
       "published": "",
       "tag": "",
-      "commit": "1f91a9f63bb9492b6bf1ac06b88cbfd81776cda0",
+      "commit": "80a5575b2ebd4aca5071e52285161299f606f68f",
       "url": "https://github.com/trisanghy/open-iptv-pro/tree/Positron",
       "assets": [],
+      "image": null
+    },
+    {
+      "number": 240,
+      "version": "P5.1.240",
+      "appVersion": "4.23.325",
+      "title": "Shift+F lọc nhanh yêu thích không thay đổi dấu sao / Electron 4.23.325",
+      "description": "Feature priority: NEW — Thêm phím tắt Shift+F trong danh sách kênh để luân phiên bộ lọc Tất cả/Yêu thích và giữ focus trên hàng đầu. Trước đây Shift+F bị hiểu nhầm là F và đảo dấu sao, dễ thay đổi dữ liệu yêu thích ngoài ý muốn. Bản mới chỉ chuyển bộ lọc sẵn có, tuyệt đối không ghi M3U hoặc thay đổi Favorites. Electron screenshot: positron-p51240-shift-favorites-after-1920x1080-real.png",
+      "kind": "fix",
+      "status": "release",
+      "published": "2026-11-22T18:14:07Z",
+      "tag": "positron/v4.23.325-p5.1.240",
+      "commit": "1f91a9f63bb9492b6bf1ac06b88cbfd81776cda0",
+      "url": "https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.325-p5.1.240",
+      "assets": [
+        {
+          "name": "audit-p4-50-rounds.json",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.325-p5.1.240/audit-p4-50-rounds.json"
+        },
+        {
+          "name": "audit-p5-20-rounds.json",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.325-p5.1.240/audit-p5-20-rounds.json"
+        },
+        {
+          "name": "Open-IPTV-Pro-4.23.325-mac-arm64.dmg",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.325-p5.1.240/Open-IPTV-Pro-4.23.325-mac-arm64.dmg"
+        },
+        {
+          "name": "Open-IPTV-Pro-4.23.325-mac-x64.dmg",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.325-p5.1.240/Open-IPTV-Pro-4.23.325-mac-x64.dmg"
+        },
+        {
+          "name": "Open-IPTV-Pro-4.23.325-x64.exe",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.325-p5.1.240/Open-IPTV-Pro-4.23.325-x64.exe"
+        },
+        {
+          "name": "Open-IPTV-Pro-Setup-4.23.325-x64.exe",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.325-p5.1.240/Open-IPTV-Pro-Setup-4.23.325-x64.exe"
+        },
+        {
+          "name": "OpenIPTVPro-Positron-P51240-Source.zip",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.325-p5.1.240/OpenIPTVPro-Positron-P51240-Source.zip"
+        },
+        {
+          "name": "positron-desktop-1920x1080-16x9-main-real.png",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.325-p5.1.240/positron-desktop-1920x1080-16x9-main-real.png"
+        },
+        {
+          "name": "positron-p4-final-main-real.png",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.325-p5.1.240/positron-p4-final-main-real.png"
+        },
+        {
+          "name": "positron-p4-round-10-real.png",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.325-p5.1.240/positron-p4-round-10-real.png"
+        },
+        {
+          "name": "positron-p4-round-20-real.png",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.325-p5.1.240/positron-p4-round-20-real.png"
+        },
+        {
+          "name": "positron-p4-round-30-real.png",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.325-p5.1.240/positron-p4-round-30-real.png"
+        },
+        {
+          "name": "positron-p4-round-40-real.png",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.325-p5.1.240/positron-p4-round-40-real.png"
+        },
+        {
+          "name": "Positron-P51240-20-Real-Screenshots.zip",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.325-p5.1.240/Positron-P51240-20-Real-Screenshots.zip"
+        },
+        {
+          "name": "Positron-P51240-50-Real-Screenshots.zip",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.325-p5.1.240/Positron-P51240-50-Real-Screenshots.zip"
+        },
+        {
+          "name": "SHA256SUMS.txt",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.325-p5.1.240/SHA256SUMS.txt"
+        }
+      ],
       "image": null
     },
     {
