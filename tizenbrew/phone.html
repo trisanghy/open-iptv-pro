@@ -1,77 +1,295 @@
 <!doctype html>
-<html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<html lang="vi"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="robots" content="noindex,nofollow"><meta name="referrer" content="no-referrer">
-<title>Open IPTV Pro · Nhập nguồn cho Samsung TV</title>
+<title>Open IPTV Pro TV · Quản lý IPTV</title>
 <style>
-*{box-sizing:border-box}body{margin:0;min-height:100vh;background:#081322;color:#f0f6ff;font:16px/1.5 system-ui,-apple-system,Arial,sans-serif;padding:24px 15px}
-main{max-width:520px;margin:0 auto;background:#12223a;border:1px solid #304666;border-radius:24px;padding:27px 23px;box-shadow:0 20px 50px #0005}
-.eyebrow{color:#72c9ff;font-size:13px;letter-spacing:.1em;font-weight:800}h1{font-size:29px;margin:8px 0}p{color:#c2d3e7;margin:9px 0 22px}label{display:block;margin:16px 0 6px;font-weight:700}input[type=text],input[type=url]{width:100%;border:2px solid #35506e;background:#09182b;border-radius:13px;padding:16px;color:white;font-size:18px;outline:none}input:focus{border-color:#59c8ff}
-.rights{display:flex;gap:11px;align-items:flex-start;font-weight:500}.rights input{width:23px;height:23px;flex:none;margin:3px 0}
-button{width:100%;background:#0d91ee;color:white;border:0;border-radius:13px;font-weight:750;font-size:18px;padding:17px;margin-top:14px;cursor:pointer}
-button:disabled{opacity:.5;cursor:not-allowed}
-#status{margin-top:18px;border-radius:12px;background:#1a3452;padding:14px;color:#d4e8ff;min-height:62px;font-size:15px}
-.note{font-size:13px;color:#9db5ce;margin:17px 0 2px}strong{color:#fff}
-</style></head>
-<body><main>
-<div class="eyebrow">OPEN IPTV PRO · TIZENBREW</div>
-<h1>Thêm nguồn IPTV lên TV</h1>
-<p>Nhập trên điện thoại. Sau khi gửi, TV sẽ tự tải danh sách kênh và lưu nguồn.</p>
+*{box-sizing:border-box}html{background:#070e1b}body{margin:0;color:#eaf2fc;background:linear-gradient(160deg,#0b1b34,#070e1b 70%);min-height:100vh;font:15px/1.45 -apple-system,BlinkMacSystemFont,system-ui,Arial,sans-serif;padding:calc(env(safe-area-inset-top) + 20px) 12px calc(env(safe-area-inset-bottom) + 30px)}
+main{max-width:770px;margin:auto}.brand{display:flex;align-items:center;gap:12px;padding:14px 4px 22px}
+.brand-icon{display:grid;place-items:center;background:linear-gradient(135deg,#038cee,#1655b7);border-radius:15px;width:54px;height:54px;font-size:27px;font-weight:bold}
+.brand strong{display:block;font-size:21px;letter-spacing:-.5px}.brand small{color:#94badf;font-size:12px}
+.panel{background:#14243e;border:1px solid #294360;border-radius:21px;padding:17px 16px;margin-bottom:14px;box-shadow:0 14px 30px #0002}
+h1{font-size:23px;margin:0 0 10px;letter-spacing:-.6px}h2{font-size:18px;margin:0 0 12px}p{color:#adbfda;margin:6px 0 15px}
+.status{display:flex;align-items:center;gap:11px;background:#0d1d32;border:1px solid #30445f;border-radius:13px;padding:13px 14px;margin-bottom:14px}
+.dot{width:12px;height:12px;border-radius:50%;background:#efaa42;flex:none;box-shadow:0 0 0 4px #efaa4222}
+.status[data-connected=true] .dot{background:#36dca1;box-shadow:0 0 0 4px #36dca120}
+.status strong{display:block;font-size:15px}.status small{display:block;color:#a6bbd2;line-height:1.35}
+.tabs{display:grid;grid-template-columns:1fr 1fr;gap:7px;background:#071429;border:1px solid #2e425d;border-radius:14px;padding:5px;margin-bottom:15px}
+button{font:inherit;cursor:pointer;border-radius:11px;border:1px solid #36506f;background:#1c3553;color:#ecf6ff;padding:12px 13px;font-weight:650}
+button:disabled{opacity:.45;cursor:not-allowed}button.primary{background:#078bec;border-color:#138bf3;color:#fff}
+.tabs button{border:0;background:transparent;color:#a9bed3;font-size:15px}.tabs button.active{background:#1466a5;color:#fff}
+input,select{width:100%;font:inherit;border:1px solid #45617f;border-radius:11px;background:#0b1b32;color:#fff;padding:13px 12px;outline:none;font-size:16px}
+input:focus,select:focus,button:focus-visible{border-color:#70ceff;outline:2px solid #70ceff33}
+label{display:block;color:#ecf6ff;font-weight:650;margin:12px 0 6px}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
+.actions button{flex:1;min-width:95px}.source-head{display:flex;gap:10px;align-items:end}.source-head >div{flex:1}
+.micro{font-size:12px;color:#8eaac6}.hint{background:#0c1c31;border-radius:12px;padding:11px;margin-top:14px;color:#aac4db;font-size:13px}
+.checkline{display:flex;gap:12px;align-items:flex-start;padding:11px 0;line-height:1.35;font-weight:500}
+.checkline input{flex:0 0 auto;width:22px;height:22px;margin:0;accent-color:#159aef}
+.full{width:100%}.section-title{display:flex;justify-content:space-between;align-items:center;gap:8px;margin:15px 0 8px}
+.channel{background:#0b1e34;border:1px solid #314b6b;border-radius:14px;padding:13px;margin:10px 0}
+.channel-top{display:flex;align-items:flex-start;gap:10px}
+.channel-top .counter{flex:none;color:#9ec7eb;font-size:12px;margin-top:4px;min-width:32px}
+.channel-main{min-width:0;flex:1}.channel-main strong{display:block;font-size:16px;overflow-wrap:anywhere}
+.channel-main small{display:block;color:#95b0d2;margin-top:2px;overflow-wrap:anywhere}
+.ch-actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin-top:11px}
+.ch-actions button{padding:9px 5px;font-size:13px;white-space:nowrap}
+.flag{color:#59d4ab}.dim{opacity:.6}
+.pager{display:flex;align-items:center;justify-content:space-between;gap:9px;margin-top:15px}
+.pager span{font-size:13px;color:#bad0e3}.pager button{min-width:92px}
+#feedback{border:1px solid #315a81;background:#112e4b;color:#d0eaff;padding:13px;border-radius:13px;margin:12px 0;min-height:45px;white-space:pre-wrap;overflow-wrap:anywhere}
+#feedback[data-error=true]{border-color:#ac5c66;background:#361f32;color:#ffd5da}
+#editPanel{border-color:#267ec4;background:#152c49}
+.empty{padding:22px;text-align:center;color:#97b7cf}
+[hidden]{display:none!important}
+@media(min-width:600px){.ch-actions{grid-template-columns:repeat(6,minmax(0,1fr))}.panel{padding:22px 24px}}
+</style></head><body>
+<main>
+<header class="brand"><div class="brand-icon">▶</div><div><strong>Open IPTV Pro TV</strong><small>Samsung Tizen · Quản lý từ điện thoại</small></div></header>
+<section class="status" id="connection" data-connected="false"><span class="dot"></span><div><strong id="connectionTitle">Đang tìm TV…</strong><small id="connectionSubtitle">Chưa xác minh TV đã trực tuyến. Không thể gửi nguồn khi chưa kết nối.</small></div></section>
+<div class="tabs"><button id="tabManage" class="active" type="button">☷ Quản lý danh sách</button><button id="tabAdd" type="button">＋ Thêm nguồn</button></div>
+<section id="managerPanel" class="panel">
+<h1>Danh sách trên TV</h1><p id="summary">Đang yêu cầu TV gửi danh sách nguồn…</p>
+<div class="source-head"><div><label for="sourceSelect">Nguồn IPTV</label><select id="sourceSelect" disabled><option>Chưa kết nối TV</option></select></div><button id="refresh" type="button" disabled>↻</button></div>
+<div class="actions"><button id="renameSource" type="button" disabled>✎ Đổi tên</button><button id="sourceUp" type="button" disabled>↑ Nguồn</button><button id="sourceDown" type="button" disabled>↓ Nguồn</button><button id="deleteSource" type="button" disabled>Xóa nguồn</button></div>
+<p class="micro" id="sourceInfo"></p>
+<div class="section-title"><h2>Kênh truyền hình</h2><span id="channelCount" class="micro">0 kênh</span></div>
+<input id="filterChannels" type="search" placeholder="⌕ Tìm tên kênh hoặc nhóm..." disabled>
+<div class="actions"><button id="newChannel" type="button" disabled>＋ Thêm kênh thủ công</button></div>
+<div id="channelList"><div class="empty">Kết nối TV để xem kênh.</div></div>
+<div class="pager"><button id="previous" type="button" disabled>← Trước</button><span id="pageText">Trang 1</span><button id="next" type="button" disabled>Tiếp →</button></div>
+<div class="hint">Mọi thay đổi được gửi tới TV và chỉ báo hoàn tất sau khi TV xác nhận đã lưu. Giữ màn hình QR mở trên TV.</div>
+</section>
+<section id="addPanel" class="panel" hidden>
+<h1>Thêm nguồn IPTV</h1><p>Nhập URL M3U / M3U8 và gửi trực tiếp sang TV đã kết nối.</p>
 <form id="sourceForm">
 <label for="name">Tên nguồn</label><input id="name" type="text" maxlength="80" placeholder="Ví dụ: Danh sách của tôi" required autocomplete="off">
 <label for="address">Đường dẫn URL M3U / M3U8</label><input id="address" type="url" maxlength="4096" placeholder="https://example.com/channels.m3u" required inputmode="url" autocapitalize="off" autocomplete="off" spellcheck="false">
-<label class="rights"><input id="rights" type="checkbox" required> Tôi có quyền sử dụng danh sách và nội dung này.</label>
-<button id="send" type="submit" disabled>Gửi nguồn sang TV</button>
+<label class="checkline"><input id="rights" type="checkbox" required> Tôi có quyền sử dụng danh sách và nội dung này.</label>
+<button id="send" class="primary full" type="submit" disabled>Gửi nguồn sang TV</button>
 </form>
-<div id="status" role="status" aria-live="polite">Đang kết nối đến TV…</div>
-<p class="note">Mã QR là mã kết nối riêng có hiệu lực tối đa 10 phút. Không nhập mật khẩu tài khoản hoặc token riêng tư vào đây. TV cần Internet và máy chủ M3U phải cho phép tải danh sách.</p>
+<p class="hint">Điện thoại không tải danh sách thay TV. Nếu nguồn chặn CORS hoặc TV không đọc được tệp, TV sẽ báo lỗi cụ thể.</p>
+</section>
+<section id="editPanel" class="panel" hidden>
+<h2 id="editTitle">Chỉnh sửa kênh</h2>
+<form id="editForm">
+<label for="editName">Tên kênh</label><input id="editName" type="text" maxlength="140" required>
+<label for="editGroup">Nhóm kênh</label><input id="editGroup" type="text" maxlength="80" placeholder="Khác">
+<label for="editUrl">URL phát HTTP(S)</label><input id="editUrl" type="url" maxlength="4096" required autocapitalize="off" spellcheck="false">
+<div class="actions"><button id="editCancel" type="button">Hủy</button><button id="editSave" class="primary" type="submit" disabled>Lưu lên TV</button></div>
+</form></section>
+<div id="feedback" role="status" aria-live="polite">Chưa kết nối TV. Hãy giữ trang QR mở trên TV.</div>
+<p class="micro">Kết nối QR hết hạn sau tối đa 10 phút. Dữ liệu được lưu trong bộ nhớ TV; khi TV không kết nối, trang này không thể sửa danh sách.</p>
 </main>
 <script>
 (function(){
 'use strict';
-var byId=function(s){return document.getElementById(s);};
+var byId=function(id){return document.getElementById(id);};
 var CONFIG={url:'https://zjbsvqryaxtafuffpifu.supabase.co',key:'sb_publishable_j_aWS273AgxBi0JYj4O-WA_bNxHFxM7'};
-var match=/^#code=([a-f0-9]{32})$/i.exec(location.hash||''),token=match&&match[1],client=null,room=null,ready=false,pendingId='',timer=0,connectedAt=Date.now();
-function status(message){byId('status').textContent=message;}
-function secureId(){if(!window.crypto||!crypto.getRandomValues)throw Error('Trình duyệt cần hỗ trợ tạo mã an toàn.');var a=new Uint8Array(16);crypto.getRandomValues(a);return Array.prototype.map.call(a,function(n){return('0'+n.toString(16)).slice(-2);}).join('');}
-function validUrl(s){try{var u=new URL(String(s||'').trim());return (u.protocol==='https:'||u.protocol==='http:')&&u.href.length<=4096?u.href:'';}catch(e){return '';}}
-function loadSdk(){if(window.supabase&&window.supabase.createClient)return Promise.resolve(window.supabase);
-return new Promise(function(resolve,reject){
-var sites=['https://trisanghy.github.io/open-iptv-pro/supabase-sdk.js','https://cdn.jsdelivr.net/gh/trisanghy/open-iptv-pro@tizenbrew/supabase-sdk.js'];
-function next(){if(!sites.length){reject(Error('Không tải được thư viện kết nối.'));return;}
-var script=document.createElement('script');script.src=sites.shift();script.onload=function(){if(window.supabase&&window.supabase.createClient)resolve(window.supabase);else next();};script.onerror=next;document.head.appendChild(script);}next();
-});}
-async function start(){
-if(!token){status('Mã QR không hợp lệ. Hãy quét lại mã hiển thị trên TV.');return;}
-try{
-secureId();var sdk=await loadSdk();
-client=sdk.createClient(CONFIG.url,CONFIG.key,{auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false},realtime:{params:{eventsPerSecond:5}}});
-room=client.channel('openiptv-tizen-source-v1-'+token,{config:{broadcast:{ack:true,self:false}}});
-room.on('broadcast',{event:'source-result'},function(reply){
-if(!reply||reply.id!==pendingId)return;
-clearTimeout(timer);pendingId='';
-if(reply.ok){status('✓ Đã thêm '+(reply.count||0)+' kênh thành công trên TV. Bạn có thể đóng trang này.');byId('send').disabled=true;}
-else{status('TV báo lỗi: '+String(reply.error||'Không đọc được nguồn')+'. Kiểm tra URL rồi gửi lại.');byId('send').disabled=false;}
-});
-room.subscribe(function(s){
-if(s==='SUBSCRIBED'){ready=true;status('✓ Đã sẵn sàng. Nhập tên và URL rồi nhấn Gửi nguồn sang TV.');byId('send').disabled=false;}
-else if(s==='CLOSED'||s==='CHANNEL_ERROR'||s==='TIMED_OUT'){ready=false;byId('send').disabled=true;status('Mất kết nối TV. Hãy quét lại mã QR mới.');}
-});
-}catch(e){status('Không kết nối được TV: '+String(e.message||e)+'. Hãy quét lại QR hoặc kiểm tra Internet.');}
+var match=/^#code=([a-f0-9]{32})$/i.exec(location.hash||''),token=match&&match[1],client=null,room=null,subscribed=false,online=false,started=Date.now(),lastSeen=0;
+var pending={},pulse=0,pingBusy=false,snapshot=null,currentSource='',offset=0,query='',editMode='',editTarget=null,busy=false,filterTimer=0;
+function feedback(message,error){var el=byId('feedback');el.textContent=String(message||'');el.dataset.error=error?'true':'false';}
+function connection(yes,message){
+ online=!!yes;byId('connection').dataset.connected=online?'true':'false';
+ byId('connectionTitle').textContent=online?'✓ TV đã kết nối':'● TV chưa kết nối';
+ byId('connectionSubtitle').textContent=message||(online?'Mọi thao tác được xác nhận từ TV.':'Chỉ máy chủ nhận yêu cầu không có nghĩa TV đã nhận.');
+ updateControls();
 }
-byId('sourceForm').addEventListener('submit',async function(e){
-e.preventDefault();if(!ready||!room||pendingId)return;
-if(Date.now()-connectedAt>600000){status('Mã QR đã hết hạn. Hãy tạo QR mới trên TV.');byId('send').disabled=true;return;}
-var name=byId('name').value.trim().slice(0,80),address=validUrl(byId('address').value),rights=byId('rights').checked;
-if(!name||!address||!rights){status('Hãy điền tên, URL hợp lệ và xác nhận quyền sử dụng.');return;}
-try{
-pendingId=secureId();var requestId=pendingId;byId('send').disabled=true;
-status('Đã gửi yêu cầu. TV đang tải danh sách kênh, vui lòng kiểm tra TV…');
-var outcome=await room.send({type:'broadcast',event:'source-submit',payload:{id:requestId,name:name,address:address,rights:true}});
-if(outcome==='error')throw Error('Máy chủ chưa nhận được yêu cầu.');
-timer=setTimeout(function(){if(pendingId!==requestId)return;pendingId='';byId('send').disabled=false;status('Chưa nhận được kết quả từ TV. Kiểm tra TV, thử gửi lại hoặc quét QR mới.');},45000);
-}catch(error){pendingId='';byId('send').disabled=false;status('Lỗi gửi: '+String(error.message||error));}
-});
-window.addEventListener('pagehide',function(){if(client&&room)client.removeChannel(room);});
-start();
+function tokenId(){if(!window.crypto||!window.crypto.getRandomValues)throw Error('Trình duyệt thiếu Web Crypto.');var a=new Uint8Array(16);window.crypto.getRandomValues(a);return Array.prototype.map.call(a,function(n){return ('0'+n.toString(16)).slice(-2);}).join('');}
+function validUrl(value){try{var u=new URL(String(value||'').trim());return (u.protocol==='https:'||u.protocol==='http:')&&u.href.length<=4096?u.href:'';}catch(e){return '';}}
+function loadSdk(){if(window.supabase&&window.supabase.createClient)return Promise.resolve(window.supabase);
+return new Promise(function(resolve,reject){var sites=['https://trisanghy.github.io/open-iptv-pro/supabase-sdk.js','https://cdn.jsdelivr.net/gh/trisanghy/open-iptv-pro@tizenbrew/supabase-sdk.js'];
+function next(){if(!sites.length){reject(Error('Không tải được thư viện Supabase.'));return;}
+var script=document.createElement('script');script.src=sites.shift();script.onload=function(){if(window.supabase&&window.supabase.createClient)resolve(window.supabase);else next();};script.onerror=next;document.head.appendChild(script);}next();});}
+function expires(){return Date.now()-started>600000;}
+function updateControls(){
+ var good=online&&!busy&&!expires(),hasSource=good&&snapshot&&snapshot.sourceId;
+ byId('send').disabled=!good;byId('refresh').disabled=!good;
+ byId('sourceSelect').disabled=!good||!snapshot||!snapshot.sources.length;
+ ['renameSource','deleteSource','sourceUp','sourceDown','newChannel'].forEach(function(id){byId(id).disabled=!hasSource;});
+ byId('filterChannels').disabled=!hasSource;
+ byId('previous').disabled=!hasSource||!snapshot||snapshot.offset<=0;
+ byId('next').disabled=!hasSource||!snapshot||!snapshot.hasMore;
+ byId('editSave').disabled=!good;
+}
+function showTab(tab){
+ byId('managerPanel').hidden=tab!=='manage';byId('addPanel').hidden=tab!=='add';byId('editPanel').hidden=true;
+ byId('tabManage').classList.toggle('active',tab==='manage');
+ byId('tabAdd').classList.toggle('active',tab==='add');
+}
+function request(action,fields,timeout){
+ return new Promise(async function(resolve,reject){
+  if(!room||!subscribed){reject(Error('Máy chủ chưa kết nối.'));return;}
+  if(expires()){reject(Error('QR đã hết hạn. Tạo mã mới trên TV và quét lại.'));return;}
+  if(action!=='hello'&&!online){reject(Error('TV chưa xác nhận đã kết nối. Giữ màn hình QR mở và thử lại.'));return;}
+  var id=tokenId(),payload=Object.assign({id:id,action:action},fields||{});
+  var timer=setTimeout(function(){delete pending[id];reject(Error(action==='hello'?'TV chưa phản hồi tín hiệu kết nối.':'TV không trả lời sau '+Math.ceil((timeout||30000)/1000)+' giây. Kiểm tra màn hình TV.'));},timeout||30000);
+  pending[id]={resolve:resolve,reject:reject,timer:timer,action:action};
+  try{
+   var result=await room.send({type:'broadcast',event:'manager-request',payload:payload});
+   if(result==='error'||result==='timed out')throw Error('Máy chủ không xác nhận gửi yêu cầu.');
+  }catch(e){clearTimeout(timer);delete pending[id];reject(e);}
+ });
+}
+function applySnapshot(state){
+ if(!state||!Array.isArray(state.sources)||!Array.isArray(state.channels))return;
+ snapshot=state;currentSource=state.sourceId||'';offset=state.offset||0;
+ var previous=byId('sourceSelect').value;
+ var sel=byId('sourceSelect');sel.textContent='';
+ state.sources.forEach(function(source){
+  var opt=document.createElement('option');opt.value=source.id;opt.textContent=source.name+' · '+source.visible+'/'+source.count+' kênh';sel.appendChild(opt);
+ });
+ if(currentSource)sel.value=currentSource;
+ byId('summary').textContent='TV có '+state.sources.length+' nguồn IPTV, '+state.sources.reduce(function(n,s){return n+s.count;},0)+' kênh lưu.';
+ var source=state.sources.find(function(s){return s.id===currentSource;});
+ byId('sourceInfo').textContent=source?('URL nguồn: '+(source.address||'Nguồn cũ chưa lưu địa chỉ')):'Chưa có nguồn. Hãy thêm nguồn mới.';
+ byId('channelCount').textContent=state.total+' kênh';
+ byId('pageText').textContent='Hiển thị '+(state.total?state.offset+1:0)+'–'+(state.offset+state.channels.length)+' / '+state.total;
+ renderChannels();updateControls();
+}
+function button(parent,label,action,index,style){
+ var b=document.createElement('button');b.type='button';b.textContent=label;b.dataset.action=action;b.dataset.index=String(index);
+ if(style)b.className=style;parent.appendChild(b);
+}
+function renderChannels(){
+ var holder=byId('channelList');holder.textContent='';
+ if(!snapshot||!snapshot.channels.length){var el=document.createElement('div');el.className='empty';el.textContent=snapshot?'Không tìm thấy kênh phù hợp.':'Đang chờ TV gửi danh sách kênh.';holder.appendChild(el);return;}
+ snapshot.channels.forEach(function(c,index){
+  var row=document.createElement('article');row.className='channel'+(c.hidden?' dim':'');
+  var top=document.createElement('div');top.className='channel-top';
+  var number=document.createElement('span');number.className='counter';number.textContent=String(c.index+1);
+  var title=document.createElement('div');title.className='channel-main';
+  var strong=document.createElement('strong');strong.textContent=c.name;
+  var detail=document.createElement('small');detail.textContent=c.group+(c.hidden?' · ĐÃ ẨN':'')+(c.favorite?' · ★ Yêu thích':'');
+  title.appendChild(strong);title.appendChild(detail);top.appendChild(number);top.appendChild(title);row.appendChild(top);
+  var controls=document.createElement('div');controls.className='ch-actions';
+  button(controls,'✎ Sửa','edit-channel',index);
+  button(controls,c.favorite?'★ Bỏ thích':'☆ Yêu thích','favorite-channel',index);
+  button(controls,c.hidden?'◉ Hiện':'◉ Ẩn','toggle-channel',index);
+  button(controls,'↑ Lên','move-up',index);
+  button(controls,'↓ Xuống','move-down',index);
+  button(controls,'✕ Xóa','delete-channel',index);
+  row.appendChild(controls);holder.appendChild(row);
+ });
+}
+async function command(action,details,notice){
+ busy=true;updateControls();feedback(notice||'Đang gửi thay đổi đến TV…');
+ try{
+  var payload=Object.assign({sourceId:currentSource,offset:offset,query:query},details||{});
+  var response=await request(action,payload,action==='add-source'?55000:30000);
+  if(response.state)applySnapshot(response.state);
+  feedback(response.message||'✓ TV đã xác nhận lưu thay đổi thành công.');
+  return response;
+ }catch(e){feedback('Lỗi: '+String(e.message||e),true);throw e;}
+ finally{busy=false;updateControls();}
+}
+async function getSnapshot(sourceId,newOffset,newQuery){
+ if(sourceId!==undefined)currentSource=sourceId;
+ if(newOffset!==undefined)offset=newOffset;
+ if(newQuery!==undefined)query=newQuery;
+ try{await command('snapshot',{sourceId:currentSource,offset:offset,query:query},'Đang đồng bộ danh sách từ TV…');}
+ catch(e){}
+}
+function handleResult(packet){
+ var reply=packet&&packet.payload||null;
+ if(!reply||!reply.id||!pending[reply.id])return;
+ var task=pending[reply.id];clearTimeout(task.timer);delete pending[reply.id];
+ lastSeen=Date.now();connection(true,'TV đang trực tuyến. QR có hiệu lực tối đa 10 phút.');
+ if(reply.ok){task.resolve(reply);}
+ else task.reject(Error(reply.error||'TV không xử lý được yêu cầu.'));
+}
+function handleProgress(packet){
+ var message=packet&&packet.payload;if(!message||!pending[message.id])return;
+ feedback(message.progress||'TV đã nhận yêu cầu…');
+}
+async function ping(){
+ if(pingBusy||!subscribed||expires())return;
+ pingBusy=true;
+ try{
+  var response=await request('hello',{},4500);
+  if(!snapshot&&response.state)applySnapshot(response.state);
+  lastSeen=Date.now();connection(true,'✓ TV đã xác nhận kết nối. Bạn có thể quản lý danh sách.');
+ }catch(e){
+  if(!lastSeen||Date.now()-lastSeen>14500){connection(false,'TV chưa phản hồi. Giữ QR mở trên TV và kiểm tra dòng trạng thái dưới mã QR.');}
+ }finally{pingBusy=false;}
+}
+async function connect(){
+ if(!token){feedback('QR không hợp lệ. Hãy quét lại mã trên TV.',true);connection(false,'Mã kết nối không hợp lệ.');return;}
+ try{
+  tokenId();var sdk=await loadSdk();
+  client=sdk.createClient(CONFIG.url,CONFIG.key,{auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false},realtime:{params:{eventsPerSecond:8}}});
+  room=client.channel('openiptv-tizen-source-v1-'+token,{config:{broadcast:{ack:true,self:false}}});
+  room.on('broadcast',{event:'manager-result'},handleResult);
+  room.on('broadcast',{event:'manager-progress'},handleProgress);
+  room.subscribe(function(status){
+   if(status==='SUBSCRIBED'){subscribed=true;feedback('Đã kết nối máy chủ, đang chờ TV xác nhận trực tuyến…');void ping();}
+   else if(status==='CHANNEL_ERROR'||status==='TIMED_OUT'||status==='CLOSED'){subscribed=false;connection(false,'Kết nối máy chủ bị gián đoạn: '+status);feedback('Mất kết nối máy chủ. Quét lại QR mới nếu TV không tự kết nối.',true);}
+  });
+  pulse=setInterval(function(){if(expires()){connection(false,'Mã QR đã hết hạn sau 10 phút. Quét mã mới.');return;}void ping();},7000);
+ }catch(e){feedback('Lỗi: '+String(e.message||e),true);connection(false,'Không mở được kênh kết nối TV.');}
+}
+byId('tabManage').onclick=function(){showTab('manage');if(online&&!snapshot)void getSnapshot('',0,'');};
+byId('tabAdd').onclick=function(){showTab('add');};
+byId('refresh').onclick=function(){void getSnapshot(currentSource,offset,query);};
+byId('sourceSelect').onchange=function(){query='';byId('filterChannels').value='';void getSnapshot(this.value,0,'');};
+byId('filterChannels').oninput=function(){var next=this.value.trim().slice(0,90);clearTimeout(filterTimer);filterTimer=setTimeout(function(){void getSnapshot(currentSource,0,next);},350);};
+byId('previous').onclick=function(){void getSnapshot(currentSource,Math.max(0,offset-30),query);};
+byId('next').onclick=function(){void getSnapshot(currentSource,offset+30,query);};
+byId('sourceForm').onsubmit=async function(event){
+ event.preventDefault();
+ var name=byId('name').value.trim().slice(0,80),address=validUrl(byId('address').value);
+ if(!name||!address||!byId('rights').checked){feedback('Nhập tên, URL hợp lệ và xác nhận quyền sử dụng.',true);return;}
+ try{
+  var response=await command('add-source',{name:name,address:address,rights:true,sourceId:''},'Đang gửi nguồn. Chờ TV xác nhận đã nhận yêu cầu…');
+  byId('sourceForm').reset();query='';offset=0;
+  feedback('✓ TV đã tải và lưu '+(response.count||0)+' kênh. Có thể quản lý ngay.');
+  showTab('manage');
+ }catch(e){}
+};
+byId('renameSource').onclick=async function(){
+ var current=snapshot&&snapshot.sources.find(function(s){return s.id===currentSource;});
+ if(!current)return;var name=prompt('Tên nguồn mới:',current.name);
+ if(name===null)return;name=name.trim().slice(0,80);
+ if(!name){feedback('Tên nguồn không được để trống.',true);return;}
+ try{await command('rename-source',{name:name});}catch(e){}
+};
+byId('sourceUp').onclick=function(){void command('move-source',{direction:'up'}).catch(function(){});};
+byId('sourceDown').onclick=function(){void command('move-source',{direction:'down'}).catch(function(){});};
+byId('deleteSource').onclick=async function(){
+ var current=snapshot&&snapshot.sources.find(function(s){return s.id===currentSource;});
+ if(!current||!confirm('Xóa toàn bộ nguồn "'+current.name+'" và các kênh khỏi TV?'))return;
+ try{await command('delete-source');query='';offset=0;await getSnapshot('',0,'');}catch(e){}
+};
+byId('newChannel').onclick=function(){
+ editMode='add-channel';editTarget=null;byId('editTitle').textContent='Thêm kênh thủ công';
+ byId('editForm').reset();byId('editGroup').value='Khác';
+ byId('editPanel').hidden=false;byId('editName').focus();
+};
+byId('channelList').onclick=async function(event){
+ var button=event.target.closest('button[data-action]');
+ if(!button||!snapshot||!online)return;
+ var c=snapshot.channels[Number(button.dataset.index)];if(!c)return;
+ var action=button.dataset.action,details={index:c.index,channelId:c.id};
+ if(action==='edit-channel'){
+  editMode='edit-channel';editTarget=c;byId('editTitle').textContent='Sửa kênh: '+c.name;
+  byId('editName').value=c.name;byId('editGroup').value=c.group||'Khác';byId('editUrl').value=c.url||'';
+  byId('editPanel').hidden=false;byId('editName').focus();return;
+ }
+ if(action==='delete-channel'&&!confirm('Xóa kênh "'+c.name+'" khỏi danh sách trên TV?'))return;
+ if(action==='move-up'||action==='move-down'){details.direction=action==='move-up'?'up':'down';action='move-channel';}
+ try{await command(action,details);}catch(e){}
+};
+byId('editCancel').onclick=function(){byId('editPanel').hidden=true;editMode='';editTarget=null;};
+byId('editForm').onsubmit=async function(event){
+ event.preventDefault();
+ var name=byId('editName').value.trim().slice(0,140),group=byId('editGroup').value.trim().slice(0,80)||'Khác',address=validUrl(byId('editUrl').value);
+ if(!name||!address){feedback('Tên kênh và URL HTTP(S) là bắt buộc.',true);return;}
+ var fields={name:name,group:group,url:address};
+ if(editMode==='edit-channel'&&editTarget){fields.index=editTarget.index;fields.channelId=editTarget.id;}
+ try{await command(editMode,fields);byId('editPanel').hidden=true;editMode='';editTarget=null;}catch(e){}
+};
+window.addEventListener('pagehide',function(){clearInterval(pulse);if(room&&client)void client.removeChannel(room);});
+connection(false,'Đang kết nối máy chủ, sau đó xác thực TV…');
+void connect();
 })();
 </script></body></html>

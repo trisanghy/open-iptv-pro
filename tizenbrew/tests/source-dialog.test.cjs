@@ -24,16 +24,22 @@ test('Only name, URL and consent are required on Tizen',()=>{
  assert.match(tv,/width:420,height:420/);
  assert.match(tv,/SOURCE_PAGE\+'#code='\+token/);
 });
-test('Phone and TV share the relay protocol and have a time-limited token',()=>{
+test('Mobile and TV share a QR Realtime protocol and token expiry',()=>{
  for(const body of [tv,phone]){
   assert.match(body,/new Uint8Array\(16\)/);
   assert.match(body,/600000/);
-  assert.match(body,/event:'source-submit'/);
-  assert.match(body,/event:'source-result'/);
+  assert.match(body,/manager-request/);
+  assert.match(body,/manager-result/);
+  assert.match(body,/manager-progress/);
   assert.match(body,/openiptv-tizen-source-v1-/);
   assert.match(body,/https:\/\/zjbsvqryaxtafuffpifu\.supabase\.co/);
  }
- assert.match(tv,/addSource\(\{name:msg\.name,address:msg\.address,rights:msg\.rights\},true\)/);
+ assert.match(tv,/event:'manager-request'},function\(event\)\{var message=event&&event\.payload;/);
+ assert.match(phone,/var reply=packet&&packet\.payload/);
+ assert.match(tv,/event:'source-submit'},async function\(event\)\{var message=event&&event\.payload;/);
+ assert.match(tv,/await addSource\(\{name:req\.name,address:req\.address,rights:req\.rights\},true\)/);
+ assert.match(phone,/action!=='hello'&&!online/);
+ assert.match(phone,/lastSeen=Date\.now\(\);connection\(true/);
  assert.match(phone,/id="rights"/);
 });
 test('Samsung remote D-pad can leave input name for URL',()=>{
@@ -94,4 +100,89 @@ test('Samsung remote can focus, check and uncheck the large consent control',()=
  send('ArrowDown',40);assert.equal(active,save);
  send('ArrowUp',38);assert.equal(active,rightButton);
  send('ArrowUp',38);assert.equal(active,address);
+});
+test('QR manager edits persist on TV; hidden/favorites/reorder are real TV state',()=>{
+ const start=tv.indexOf('var managerRevision=0,managerBusy=');
+ const finish=tv.indexOf('var timer=0;function notify',start);
+ assert.ok(start>=0&&finish>start);
+ const ctx=vm.createContext({
+  state:{sources:[{id:'s-1',name:'Danh sách',address:'https://example.com/file.m3u',
+    channels:[{id:'c1',name:'Kênh 1',group:'Tin tức',url:'https://example.com/1.m3u8'},
+              {id:'c2',name:'Kênh 2',group:'Giải trí',url:'https://example.com/2.m3u8'}]}],
+    favorites:{}},
+  save:()=>true,draw:()=>{},selected:null,
+  hash:s=>'hash-'+s.length,url:s=>/^https?:\/\//.test(s)?s:'',
+  byId:()=>({hidden:false}),sourceStatus:()=>{},newToken:()=>''.padStart(32,'0'),
+  setTimeout,clearTimeout,managerRevision:0,pairSeq:1,
+  sourcePair:{token:'pair-ok'}
+ });
+ vm.runInContext(tv.slice(start,finish),ctx);
+ const api={
+  snap:ctx.managerSnapshot,do:ctx.managerPerform
+ };
+ let s=api.snap({sourceId:'s-1'});
+ assert.equal(s.sources.length,1);
+ assert.equal(s.total,2);
+ assert.equal(s.channels[0].name,'Kênh 1');
+ assert.equal(api.do('rename-source',{sourceId:'s-1',name:'Danh sách mới'}).ok,true);
+ assert.equal(ctx.state.sources[0].name,'Danh sách mới');
+ assert.equal(api.do('favorite-channel',{sourceId:'s-1',index:0,channelId:'c1'}).ok,true);
+ assert.equal(ctx.state.favorites.c1,true);
+ assert.equal(api.do('toggle-channel',{sourceId:'s-1',index:0,channelId:'c1'}).ok,true);
+ assert.equal(ctx.state.sources[0].channels[0].hidden,true);
+ assert.equal(api.do('move-channel',{sourceId:'s-1',index:0,channelId:'c1',direction:'down'}).ok,true);
+ assert.equal(ctx.state.sources[0].channels[1].id,'c1');
+ assert.equal(api.do('edit-channel',{sourceId:'s-1',index:1,channelId:'c1',name:'Kênh 1 mới',group:'Sửa tên',url:'https://example.com/new.m3u8'}).ok,true);
+ assert.equal(ctx.state.sources[0].channels[1].group,'Sửa tên');
+ assert.equal(api.do('add-channel',{sourceId:'s-1',name:'Kênh 3',group:'Tin tức',url:'https://example.com/3.m3u8'}).ok,true);
+ assert.equal(ctx.state.sources[0].channels.length,3);
+ assert.equal(api.do('delete-channel',{sourceId:'s-1',index:2,channelId:'hash-42'}).ok,false,'stale ID must be rejected');
+ assert.equal(api.do('delete-source',{sourceId:'s-1'}).ok,true);
+ assert.equal(ctx.state.sources.length,0);
+});
+test('QR snapshots are paginated, avoiding oversized Realtime messages',()=>{
+ const start=tv.indexOf('var managerRevision=0,managerBusy='),finish=tv.indexOf('var timer=0;function notify',start);
+ const items=Array.from({length:75},(_,i)=>({id:'channel-'+i,name:'Kênh '+i,group:'Nhóm',url:'https://example.com/'+i+'.m3u8'}));
+ const ctx=vm.createContext({
+  state:{sources:[{id:'s-2',name:'Nhiều kênh',channels:items}],favorites:{}},
+  save:()=>true,draw:()=>{},hash:()=>'',url:s=>s,
+  byId:()=>({hidden:false}),sourceStatus:()=>{},pairSeq:2,sourcePair:{token:'pair-ok'},
+  setTimeout,clearTimeout
+ });
+ vm.runInContext(tv.slice(start,finish),ctx);
+ const page1=ctx.managerSnapshot({sourceId:'s-2',offset:0});
+ assert.equal(page1.channels.length,30);assert.equal(page1.hasMore,true);
+ const page2=ctx.managerSnapshot({sourceId:'s-2',offset:30});
+ assert.equal(page2.channels[0].index,30);assert.equal(page2.channels.length,30);
+ const page3=ctx.managerSnapshot({sourceId:'s-2',offset:60});
+ assert.equal(page3.channels.length,15);assert.equal(page3.hasMore,false);
+ const filtered=ctx.managerSnapshot({sourceId:'s-2',query:'Kênh 74'});
+ assert.equal(filtered.total,1);
+});
+test('QR phone cannot claim successful delivery without TV response',()=>{
+ assert.match(phone,/connection\(false,'Đang kết nối máy chủ/);
+ assert.match(phone,/action!=='hello'&&!online/);
+ assert.match(phone,/event:'manager-result'/);
+ assert.match(phone,/event:'manager-progress'/);
+ assert.match(phone,/TV không trả lời sau/);
+ assert.match(phone,/Đang gửi nguồn\. Chờ TV xác nhận/);
+ assert.match(tv,/TV đã nhận nguồn từ điện thoại/);
+ assert.match(tv,/await pairSend\(channel,'manager-result',answer\)/);
+ assert.match(tv,/var message=event&&event\.payload/);
+ assert.match(tv,/if\(!save\(\)\)throw Error\('TV không đủ bộ nhớ lưu thay đổi\.'\)/);
+});
+test('TV manager hello confirms online and returns a live snapshot',async()=>{
+ const start=tv.indexOf('var managerRevision=0,managerBusy='),finish=tv.indexOf('var timer=0;function notify',start);
+ const out=[],ctx=vm.createContext({
+  state:{sources:[{id:'src-1',name:'My source',channels:[]}],favorites:{}},
+  save:()=>true,draw:()=>{},hash:()=>'',url:s=>s,
+  byId:()=>({hidden:false}),sourceStatus:()=>{},pairSeq:10,sourcePair:{token:'token-123'},
+  setTimeout,clearTimeout
+ });
+ vm.runInContext(tv.slice(start,finish),ctx);
+ const channel={send:async msg=>{out.push(msg);return 'ok';}};
+ await ctx.onManagerRequest({id:'a'.repeat(32),action:'hello'},channel,10,'token-123');
+ assert.equal(out.length,1);assert.equal(out[0].event,'manager-result');
+ assert.equal(out[0].payload.ok,true);assert.equal(out[0].payload.online,true);
+ assert.equal(out[0].payload.state.sources[0].name,'My source');
 });
