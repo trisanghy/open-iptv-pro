@@ -43,11 +43,19 @@
   const option=d.createElement('option');
   option.value=value;option.textContent=label;statusSelect.append(option);
  }
+ // P260: sort only a fresh filtered view, never reorder store.sources.
+ const sortSelect=d.createElement('select');
+ sortSelect.id='poSourceInventorySort';
+ sortSelect.setAttribute('aria-label','Sắp xếp danh sách nguồn IPTV');
+ for(const [value,label] of [['original','Thứ tự gốc'],['count-desc','Nhiều kênh trước'],['count-asc','Ít kênh trước'],['name','Tên A–Z']]){
+  const option=d.createElement('option');
+  option.value=value;option.textContent=label;sortSelect.append(option);
+ }
  const resultCount=d.createElement('output');
  resultCount.id='poSourceInventoryResultCount';
  resultCount.setAttribute('role','status');
  resultCount.setAttribute('aria-live','polite');
- statusRow.append(statusSelect,resultCount);
+ statusRow.append(statusSelect,sortSelect,resultCount);
  heading.append(statusRow);
  const foldSourceName=value=>String(value??'').trim().normalize('NFD')
   .replace(/[\u0300-\u036f]/g,'').replace(/đ/gi,'d').toLocaleLowerCase('vi');
@@ -70,6 +78,13 @@
   const filter=statusSelect.value;
   const filtered=sources.filter(source=>source&&foldSourceName(source.name||'Nguồn chưa đặt tên').includes(needle)&&
    (filter==='all'||(source.enabled!==false)===(filter==='enabled')));
+  const sort=sortSelect.value;
+  if(sort==='count-asc'||sort==='count-desc'){
+   const sign=sort==='count-asc'?1:-1;
+   filtered.sort((a,b)=>sign*((countBySource.get(String(a.id))||0)-(countBySource.get(String(b.id))||0)));
+  }else if(sort==='name'){
+   filtered.sort((a,b)=>String(a.name||'').localeCompare(String(b.name||''),'vi',{numeric:true,sensitivity:'base'}));
+  }
   resultCount.textContent=filtered.length+'/'+sources.length+' nguồn phù hợp';
   details.replaceChildren();
   for(const source of filtered.slice(0,30)){
@@ -101,13 +116,14 @@
   details.hidden=!expanded;
   search.hidden=!expanded;
   statusRow.hidden=!expanded;
-  if(!expanded){search.value='';statusSelect.value='all';}
+  if(!expanded){search.value='';statusSelect.value='all';sortSelect.value='original';}
   toggle.setAttribute('aria-expanded',String(expanded));
   toggle.textContent=expanded?'Ẩn chi tiết':'Chi tiết nguồn';
   if(expanded)renderDetails();
  });
  search.addEventListener('input',()=>{if(!details.hidden)renderDetails();});
  statusSelect.addEventListener('change',()=>{if(!details.hidden)renderDetails();});
+ sortSelect.addEventListener('change',()=>{if(!details.hidden)renderDetails();});
  const refresh=()=>{
   const store=state.getStore();
   const sources=Array.isArray(store?.sources)?store.sources:[];

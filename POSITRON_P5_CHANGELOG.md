@@ -1,5 +1,11 @@
 # Positron P5 Changelog
 
+## P5.1.260 — Sắp xếp nguồn theo số kênh hoặc tên / Electron 4.23.345
+- Feature priority: NEW — Cho phép xem nguồn nhiều kênh nhất hoặc ít kênh nhất ở đầu bảng chi tiết, hoặc sắp xếp tên A–Z; chỉ thay đổi thứ tự hiển thị bảng phụ, hoàn toàn giữ nguyên dữ liệu M3U và thứ tự nguồn gốc.
+- Electron screenshot: positron-p51260-source-sort-after-1920x1080-real.png
+- User action: Mở Nguồn IPTV → Chi tiết nguồn → mục “Thứ tự gốc”, chọn “Ít kênh trước” để tìm nhanh playlist 9 kênh trước playlist 552 kênh. Có thể chọn “Nhiều kênh trước” hoặc “Tên A–Z”.
+- Electron QA: `positron-p51260-source-sort-before-1920x1080-real.png` / `positron-p51260-source-sort-after-1920x1080-real.png` / `positron-p51260-source-sort-720-real.png`; xác minh thứ tự thực, không thay đổi playlist, không tự phát kênh, không tràn ngang.
+
 ## P5.1.259 — Lọc nhanh nguồn bật/tắt trong chi tiết IPTV / Electron 4.23.344
 - Feature priority: NEW — Có bộ chọn trạng thái Tất cả / Đang bật / Đang tắt ngay trong chi tiết nguồn. Thao tác lọc phối hợp với tìm kiếm theo tên, công khai số nguồn phù hợp và không đổi dữ liệu playlist, Favorites hoặc kênh phát.
 - Electron screenshot: positron-p51259-source-status-after-1920x1080-real.png

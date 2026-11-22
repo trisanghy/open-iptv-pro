@@ -67,7 +67,7 @@ test('P5.1.259 offers native enabled/disabled source filtering and result totals
  assert.ok(css.includes('#poSourceInventoryFilterRow[hidden]'));
  assert.ok(css.includes('#poSourceInventoryStatus:focus-visible'));
  assert.ok(!js.includes('playChannel(')&&!js.includes('save('));
- assert.equal(JSON.parse(read('package.json')).version,'4.23.344');
+ assert.ok(Number(JSON.parse(read('package.json')).version.split('.')[2])>=344);
 });
 test('P5.1.259 requires source status filter Electron before/after and 720px evidence',()=>{
  const qa=read('scripts/positron-20-extension.cjs'),wf=read('.github/workflows/positron-lab.yml');
@@ -75,4 +75,25 @@ test('P5.1.259 requires source status filter Electron before/after and 720px evi
   assert.ok(qa.includes(f)&&wf.includes(f),f);
  for(const key of ['sourceStatusQA259','correctRows:','totalMatches:','noAutoplay:','sourcesUnchanged:','playlistUnchanged:','noOverflow:'])
   assert.ok(qa.includes(key),'P259 QA missing '+key);
+});
+
+test('P5.1.260 sorts only a local filtered source inventory, not playlist order',()=>{
+ const code=read('renderer/positron-source-inventory.js'),css=read('renderer/positron-source-inventory.css');
+ for(const term of ["sortSelect.id='poSourceInventorySort';","['count-desc','Nhiều kênh trước']",
+  "['count-asc','Ít kênh trước']","['name','Tên A–Z']","filtered.sort((a,b)=>sign*",
+  "filtered.sort((a,b)=>String(a.name","sortSelect.value='original'","sortSelect.addEventListener('change'"])
+  assert.ok(code.includes(term),'Missing P260 source sort '+term);
+ assert.ok(css.includes('#poSourceInventorySort:focus-visible'));
+ assert.ok(!code.includes('store.sources.sort(')&&!code.includes('sources.sort('));
+ assert.ok(!code.includes('save(')&&!code.includes('playChannel('));
+ assert.equal(JSON.parse(read('package.json')).version,'4.23.345');
+});
+test('P5.1.260 screenshots Electron source sort sequence and 720px UI',()=>{
+ const qa=read('scripts/positron-20-extension.cjs'),wf=read('.github/workflows/positron-lab.yml');
+ for(const filename of ['positron-p51260-source-sort-before-1920x1080-real.png',
+  'positron-p51260-source-sort-after-1920x1080-real.png','positron-p51260-source-sort-720-real.png'])
+  assert.ok(qa.includes(filename)&&wf.includes(filename),filename);
+ for(const key of ['sourceSortQA260','ascendingByChannelCount:','reversedOriginalOrder:',
+  'noAutoplay:','sourcesUnchanged:','playlistUnchanged:','noOverflow:'])
+  assert.ok(qa.includes(key),'Missing P260 real Electron verification '+key);
 });
