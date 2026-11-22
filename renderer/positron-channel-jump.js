@@ -88,6 +88,7 @@
  const backButton=backRow.querySelector('#poChannelGroupBack');
  const backHint=backRow.querySelector('#poChannelGroupBackHint');
  function updateBackRow(){
+  backRow.dataset.historyDepth=String(groupHistory.length);
   backRow.hidden=!groupHistory.length;
   backHint.textContent=groupHistory.length?groupHistory[groupHistory.length-1]:'';
  }

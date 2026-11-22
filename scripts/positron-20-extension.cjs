@@ -7463,6 +7463,7 @@ async function runTwenty(page){
  const historyReady233=await page.evaluate(()=>{
   const row=document.activeElement;
   const back=document.getElementById('poChannelGroupHistoryRow');
+  window.__p233HistoryDepth=Number(back.dataset.historyDepth);
   return {historyButtonVisible:!back.hidden,
    previouslyVisitedGroup:document.getElementById('poChannelGroupBackHint').textContent.includes('01'),
    thirdGroupFocused:row?.classList.contains('channel-item')&&row?.querySelector('.channel-text b')?.textContent.includes('121'),
@@ -7477,7 +7478,7 @@ async function runTwenty(page){
   const list=d.getElementById('channelList'),a=row?.getBoundingClientRect(),b=list.getBoundingClientRect();
   return {returnedToPreviousGroup:row?.classList.contains('channel-item')&&
     row?.querySelector('.channel-text b')?.textContent.includes('001'),
-   historyConsumed:d.getElementById('poChannelGroupHistoryRow').hidden,
+   historyReducedByOne:Number(d.getElementById('poChannelGroupHistoryRow').dataset.historyDepth)===window.__p233HistoryDepth-1,
    rowVisible:!!a&&a.top>=b.top-3&&a.bottom<=b.bottom+3,
    noAutoplay:(window.IPTVState.getCurrent()?.id||null)===window.__p233Current,
    noHorizontalOverflow:d.documentElement.scrollWidth<=innerWidth+1,
