@@ -333,7 +333,7 @@ test('P5.1.243 Shift+R toggles recent filter from rows and empty recent chip',()
   "chip.hidden=false;chip.focus({preventScroll:true});"])
   assert.ok(js.includes(token),'P243 recent shortcut missing '+token);
  assert.ok(!js.includes('playChannel('));
- assert.equal(JSON.parse(read('package.json')).version,'4.23.328');
+ assert.equal(JSON.parse(read('package.json')).version,'4.23.329');
 });
 test('P5.1.243 requires real Electron Shift+R screenshots and round-trip state',()=>{
  const qa=read('scripts/positron-20-extension.cjs'),wf=read('.github/workflows/positron-lab.yml');
@@ -343,4 +343,18 @@ test('P5.1.243 requires real Electron Shift+R screenshots and round-trip state',
  for(const t of ['keyboardRecentQA243','keyboardRecentReturnQA243','page.keyboard.press(\'Shift+R\')',
   'recentChipFocused:','allChannelsRestored:','favoritesUnchanged:','noAutoplay:'])
   assert.ok(qa.includes(t),'P243 QA missing '+t);
+});
+
+test('P5.1.244 direct digits open channel jump and preserve player',()=>{
+ const js=read('renderer/positron-channel-jump.js');
+ for(const t of ['// P244: direct numeric jump','/^[0-9]$/.test(event.key)',"event.target.matches('.channel-item')",'number.value=event.key'])
+  assert.ok(js.includes(t),'P244: '+t);
+ assert.equal(JSON.parse(read('package.json')).version,'4.23.329');
+});
+test('P5.1.244 real Electron numeric scenario is required',()=>{
+ const qa=read('scripts/positron-20-extension.cjs'),wf=read('.github/workflows/positron-lab.yml');
+ for(const f of ['positron-p51244-direct-number-before-1920x1080-real.png','positron-p51244-direct-number-after-1920x1080-real.png'])
+  assert.ok(qa.includes(f)&&wf.includes(f),'P244 file '+f);
+ for(const t of ['numericStartQA244','numericFinalQA244',"page.keyboard.press('4')","page.keyboard.type('12')",'focusedIndex412:','noAutoplay:'])
+  assert.ok(qa.includes(t),'P244 QA '+t);
 });

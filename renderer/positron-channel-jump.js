@@ -320,6 +320,16 @@
      return;
     }
    }
+   // P244: direct numeric jump from a keyboard-focused channel row.
+   if(!event.altKey&&!event.ctrlKey&&!event.metaKey&&!event.shiftKey&&
+      /^[0-9]$/.test(event.key)&&event.target instanceof HTMLElement&&
+      event.target.matches('.channel-item')){
+    event.preventDefault();event.stopPropagation();
+    setOpen(true);
+    number.value=event.key;
+    status.textContent='Đang nhập số kênh '+event.key+'. Nhập tiếp hoặc Enter để nhảy; Escape để huỷ.';
+    return;
+   }
    if(event.altKey||event.ctrlKey||event.metaKey)return;
    const keys=['ArrowUp','ArrowDown','Home','End','PageUp','PageDown','ArrowLeft','ArrowRight'];
    // P240: Shift+F is a filter shortcut, not an accidental favorite toggle.

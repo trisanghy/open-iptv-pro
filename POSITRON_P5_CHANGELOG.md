@@ -1947,3 +1947,10 @@ P5.1.81 follow-up: real Electron capture found nav overflow; replace flexible no
 - Electron screenshot: positron-p51207-random-reset-after-1920x1080-real.png
 - Baseline đã MỞ: P5.1.206 có huy hiệu số đếm bên cạnh Bất kỳ, không tràn ngang; lượt random không lặp nhưng chưa có cách chủ động reset. Nút mới chỉ xóa Set trong RAM, không tự gọi playChannel và không làm mất playlist, Favorites hoặc lịch sử người dùng.
 - QA: Node regression, Electron stub xác minh reset không phát, đếm về 0, dùng lại thì đếm từ 1; hai PNG thật 1920×1080 khác pixel và viewport 450px không tràn. Chờ kết quả CI/Release.
+
+
+## P5.1.244 / Electron 4.23.329 — Gõ số để nhảy nhanh tới kênh (CANDIDATE)
+- Feature priority: NEW — Gõ chữ số 0–9 khi focus hàng kênh để mở hộp nhảy số, nhập tiếp và nhấn Enter để đi tới kênh; không tự phát hoặc đổi nguồn.
+- User action: Focus một hàng kênh trong Xem truyền hình; gõ 412 rồi Enter để chuyển tiêu điểm tới kênh 412, Escape để hủy.
+- Electron screenshot: positron-p51244-direct-number-after-1920x1080-real.png
+- QA: Ảnh Electron thật 1920×1080 trước/sau; kiểm tra focus, playlist, Favorites, và không tự phát. Chưa hoàn tất nếu thiếu CI/ảnh soát/release.
