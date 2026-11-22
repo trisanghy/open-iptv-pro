@@ -1,6 +1,9 @@
 # Positron P5 Changelog
 
 ## P5.1.196 — Xem trước lịch ghi hình / Electron 4.23.281
+- Feature priority: NEW — Ảnh Electron thật P5.1.195 cho thấy người dùng điền kênh, tên và hai mốc thời gian nhưng thiếu bước xem lại toàn bộ lịch. Thêm phần xem trước luôn cập nhật, cho phép phát hiện thời lượng sai trước khi người dùng chủ động xác nhận.
+- Electron screenshot: positron-p51196-dvr-preview-after-1920x1080-real.png
+- User action: Mở Lịch phát sóng > Hẹn giờ ghi, chọn kênh và nhập giờ; kiểm tra bảng Xem trước lịch ghi trước khi tự bấm Đặt lịch ghi.
 - Ưu tiên thêm tính năng mới: ảnh Electron thật P5.1.195 cho thấy kênh, tên và giờ ghi đã nhập nhưng không có phần tổng hợp để kiểm lại trước khi xác nhận.
 - Thêm **Xem trước lịch ghi** dưới biểu mẫu EPG, hiện kênh/tên/giờ/thời lượng địa phương; tự cập nhật theo thay đổi trong biểu mẫu, báo thiếu dữ liệu hoặc thời lượng sai/vượt 8 giờ.
 - Tính năng chỉ đọc, không thay đổi kênh/playlist/tên/thời gian, không tự phát hoặc tạo lịch. Chỉ nút **Đặt lịch ghi** gốc tạo lịch.
