@@ -2,14 +2,23 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
-## P5.1.202 — gia hạn lịch ghi thêm 15 phút an toàn
+## P5.1.203 — chế độ thông báo không che điều khiển TV
 
-**Ứng dụng:** 4.23.287 · **Trạng thái:** Chưa có bản phát hành
+**Ứng dụng:** 4.23.288 · **Trạng thái:** Chưa có bản phát hành
+
+Feature priority: NEW — Khi xem truyền hình trên desktop, thông báo được đưa đến vùng góc phía trên; nút mở danh sách nổi không che thanh phát và âm lượng, trong khi cảnh báo quan trọng cùng lịch sử trên thanh đầu vẫn truy cập được. User action: Mở trang Xem truyền hình trên desktop và thực hiện thao tác phát sinh thông báo; điều khiển Play/Volume không còn bị banner che. Bấm Thông báo trên thanh trên để xem nhật ký.
+
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/4d4e6fbd0492726fb79ae3cf6420b8ea4f71b568)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+
+## P5.1.202 — 4.23.287 — Gia hạn lịch ghi thêm 15 phút, giới hạn tối đa 8 giờ (CANDIDATE)
+
+**Ứng dụng:** 4.23.287 · **Trạng thái:** Đã phát hành
 
 Feature priority: NEW — Giữ nguyên kênh và giờ bắt đầu, cho phép gia hạn mốc kết thúc thêm 15 phút khi chương trình thể thao hoặc trực tiếp kéo dài. User action: Vào Lịch phát sóng → Hẹn giờ ghi hình, chọn thời gian bắt đầu/kết thúc hợp lệ, nhấn “Gia hạn +15 phút”; có cả trên mẫu ghi nhanh từ TV.
 
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/9fe3fcbac2535d01be32c8c72031a44db2421c41)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/023d2800d24c25eb21673568f88fb6c2339e4cb5)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.287-p5.1.202)
 
 ## P5.1.201 — 4.23.286 — Hoàn tác lần thay tên bản ghi vừa xác nhận (CANDIDATE)
 
