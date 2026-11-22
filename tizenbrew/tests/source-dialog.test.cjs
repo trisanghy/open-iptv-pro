@@ -414,3 +414,10 @@ test('TV returns folders beyond 100 without clipping the folder list',()=>{
  assert.equal(ctx.managerSnapshot({sourceId:'s'}).groups.length,125);
  assert.equal(ctx.managerSnapshot({sourceId:'s',group:'Group 124'}).channels[0].index,124);
 });
+
+
+test('A target folder move does not change the viewed folder filter',()=>{
+ assert.match(phone,/viewGroup:activeGroup/);
+ assert.match(tv,/group:req\.viewGroup===undefined\?req\.group:req\.viewGroup/);
+ assert.match(phone,/command\('relocate-channel'/);
+});
