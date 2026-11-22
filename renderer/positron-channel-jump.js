@@ -290,10 +290,24 @@
    }
    if(event.altKey||event.ctrlKey||event.metaKey)return;
    const keys=['ArrowUp','ArrowDown','Home','End','PageUp','PageDown','ArrowLeft','ArrowRight'];
-   const favoriteKey=(event.key==='f'||event.key==='F')&&!event.ctrlKey&&!event.altKey&&!event.metaKey;
-   if(!favoriteKey&&!keys.includes(event.key))return;
+   // P240: Shift+F is a filter shortcut, not an accidental favorite toggle.
+   const quickFavorites=(event.key==='f'||event.key==='F')&&event.shiftKey;
+   const favoriteKey=(event.key==='f'||event.key==='F')&&!event.shiftKey&&!event.ctrlKey&&!event.altKey&&!event.metaKey;
+   if(!favoriteKey&&!quickFavorites&&!keys.includes(event.key))return;
    const current=event.target;
    if(!(current instanceof HTMLElement)||!current.matches('.channel-item'))return;
+   if(quickFavorites){
+    const fav=d.querySelector('#page-tv .filter-tab[data-filter="fav"]');
+    const all=d.querySelector('#page-tv .filter-tab[data-filter="all"]');
+    if(!fav||!all)return;
+    event.preventDefault();event.stopPropagation();
+    const returnToAll=fav.classList.contains('active');
+    (returnToAll?all:fav).click(); // native list filter, no persistence mutation
+    const first=channelList.querySelector('.channel-item');
+    (first||d.getElementById('searchBox'))?.focus({preventScroll:true});
+    status.textContent=returnToAll?'Đang xem tất cả kênh.':'Đang lọc các kênh yêu thích. Nhấn Shift+F để xem tất cả.';
+    return;
+   }
    if(favoriteKey){
     const star=current.querySelector('.channel-star');
     if(!star)return;

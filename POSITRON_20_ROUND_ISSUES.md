@@ -18,3 +18,11 @@ Chỉ đánh dấu hoàn tất khi sửa nguồn, node test pass, Electron scree
 
 ## Vòng 02 — P5.1.239 [CANDIDATE]
 - Escape đóng bảng nhảy khi đang focus hàng kênh, khôi phục focus và không tự phát; thêm screenshot regression trước/sau.
+
+## Vòng 02 — P5.1.239 / 4.23.324 [HOÀN TẤT]
+- CI `45052833628` 6/6 thành công; release `positron/v4.23.324-p5.1.239`.
+- Electron: mở ảnh P239 before/after thật, Escape đóng bảng, focus vẫn ở QA Channel 001, không playback, không tràn và 561 kênh được giữ.
+- Đầu vào vòng 03: focus đang ở hàng kênh yêu thích; trong nguồn, Shift+F hiện bị xử lý như F thường nên có nguy cơ đổi dấu sao khi người dùng muốn lọc.
+
+## Vòng 03 — P5.1.240 [CANDIDATE]
+- Shift+F đổi bộ lọc all/fav bằng control native, F thường vẫn đánh dấu sao; QA xác thực dữ liệu Favorites không đổi, screenshot mới trước/sau và 6/6 CI.

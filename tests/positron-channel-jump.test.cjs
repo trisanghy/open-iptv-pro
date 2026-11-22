@@ -266,3 +266,23 @@ test('P5.1.239 requires Electron Escape before/after and focus assertions',()=>{
  for(const token of ["page.keyboard.press('Escape')","panelClosedAfterEscape:","rowFocusRetained:","noAutoplay:"])
   assert.ok(qa.includes(token),'Missing P239 Electron assertion: '+token);
 });
+
+test('P5.1.240 Shift+F cycles the native favorite filter without toggling any star',()=>{
+ const source=read('renderer/positron-channel-jump.js');
+ for(const fragment of ["const quickFavorites=","!event.shiftKey&&!event.ctrlKey",
+  "if(quickFavorites){","(returnToAll?all:fav).click();","first||d.getElementById('searchBox')",
+  "Đang lọc các kênh yêu thích"])
+  assert.ok(source.includes(fragment),'Missing Shift+F filter: '+fragment);
+ assert.ok(!source.includes('playChannel('));
+ assert.equal(JSON.parse(read('package.json')).version,'4.23.325');
+});
+test('P5.1.240 demands real Electron favorite-filter screenshots and unchanged data',()=>{
+ const qa=read('scripts/positron-20-extension.cjs'),wf=read('.github/workflows/positron-lab.yml');
+ for(const name of ['positron-p51240-shift-favorites-before-1920x1080-real.png',
+ 'positron-p51240-shift-favorites-after-1920x1080-real.png']){
+  assert.ok(qa.includes(name));assert.ok(wf.includes(name));
+ }
+ for(const token of ["page.keyboard.press('Shift+F')","favoriteFilterQA240","favoriteFilterRestoreQA240",
+  "favoritesUnchanged:","favoriteFilterActive:","allFilterRestored:","noAutoplay:"])
+  assert.ok(qa.includes(token),'Missing P240 Electron QA '+token);
+});

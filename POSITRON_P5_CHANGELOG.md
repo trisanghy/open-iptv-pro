@@ -1,5 +1,12 @@
 # Positron P5 Changelog
 
+## P5.1.240 — Shift+F lọc nhanh yêu thích không thay đổi dấu sao / Electron 4.23.325
+- Feature priority: NEW — Thêm phím tắt Shift+F trong danh sách kênh để luân phiên bộ lọc Tất cả/Yêu thích và giữ focus trên hàng đầu. Trước đây Shift+F bị hiểu nhầm là F và đảo dấu sao, dễ thay đổi dữ liệu yêu thích ngoài ý muốn. Bản mới chỉ chuyển bộ lọc sẵn có, tuyệt đối không ghi M3U hoặc thay đổi Favorites.
+- Electron screenshot: positron-p51240-shift-favorites-after-1920x1080-real.png
+- User action: Focus một hàng trong danh sách TV, nhấn Shift+F để chỉ xem kênh yêu thích, nhấn lại Shift+F để quay về tất cả. Nhấn F thường mới đổi dấu sao.
+- Electron QA: so sánh `positron-p51240-shift-favorites-before-1920x1080-real.png` với `positron-p51240-shift-favorites-after-1920x1080-real.png`, kiểm tra favorites bất biến trước/sau.
+
+
 ## P5.1.239 — Escape đóng bảng nhảy kênh từ danh sách / Electron 4.23.324
 - Feature priority: NEW — Bổ sung phím Escape để đóng ngay bảng nhảy kênh/nhóm khi đang focus một hàng kênh, giảm chiều cao phần biểu mẫu và trả lại không gian duyệt kênh mà không phải quay về nút đóng. Không bắt đầu playback, không đổi M3U/EPG/Favorites và không thay đổi lịch sử nhóm.
 - Electron screenshot: positron-p51239-escape-jump-after-1920x1080-real.png
