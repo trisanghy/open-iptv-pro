@@ -1,4 +1,11 @@
-# Open IPTV Pro TV · TizenBrew v0.1.34 (OTA)
+# Open IPTV Pro TV · TizenBrew v0.1.35 (OTA)
+
+## v0.1.35 — Hiện chẩn đoán HLS và User-Agent đầy đủ
+
+- Sau lỗi phát qua relay TV, hiện User-Agent mà TizenBrew gửi và từng lần upstream trả lỗi: hostname, HTTP status, direct/Cast-page context, Origin/Referer, content-type và server header. Không hiển thị URL, path, query hoặc token kênh.
+- Thêm endpoint chẩn đoán chỉ đọc, loopback-only, yêu cầu cùng Origin và header bảo vệ như các endpoint relay khác; giới hạn tối đa 8 lần lỗi cho mỗi phiên.
+- Giữ lần retry 403 theo ngữ cảnh HTTPS của Cast; không tự thay User-Agent bằng giá trị đoán. Dùng log trên TV để xác định UA nào được gửi trước khi chọn UA khác.
+- Kiểm thử CI xác nhận endpoint debug không trả URL/token; WGT giả lập được đóng gói. Chưa xác nhận trên TV thật.
 
 ## v0.1.34 — Thử lại HTTP 403 theo ngữ cảnh Cast HTTPS
 

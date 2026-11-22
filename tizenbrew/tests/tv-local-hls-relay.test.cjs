@@ -21,8 +21,8 @@ function request(method,path,body,opts={}){
 }
 test('serviceFile is registered on TizenBrew app manifest; OTA bootstrap untouched',()=>{
  assert.equal(manifest.packageType,'app');
- assert.equal(manifest.version,'0.1.34');
- assert.equal(manifest.tizenbrewEdition,'0.1.34');
+ assert.equal(manifest.version,'0.1.35');
+ assert.equal(manifest.tizenbrewEdition,'0.1.35');
  assert.equal(manifest.appPath,'tizenbrew/bootstrap.html');
  assert.equal(manifest.serviceFile,'tizenbrew/hls-relay-v1.js');
 });
@@ -77,11 +77,18 @@ test('TV localhost service CORS preflight works without actual X-Open-IPTV-Relay
   const invalid=await request('POST','/session',{url:'http://127.0.0.1:80/admin'});
   assert.equal(invalid.status,400);
   const secret='https://cdn.example.org/vtv2/live.m3u8?token=TOP_SECRET';
-  const result=await request('POST','/session',{url:secret});
+  const result=await request('POST','/session',{url:secret,browserUserAgent:'TestTV/1.0'});
   assert.equal(result.status,201);
   const data=JSON.parse(result.body);
   assert.match(data.url,/^http:\/\/127\.0\.0\.1:17865\/r\/[a-f0-9]{40}\/0$/);
   assert.doesNotMatch(result.body,/TOP_SECRET|cdn\.example\.org/);
+  const sessionId=data.url.match(/\/r\/([a-f0-9]{40})\/0$/)[1];
+  const diagnostics=await request('GET','/diag/'+sessionId);
+  assert.equal(diagnostics.status,200);
+  const report=JSON.parse(diagnostics.body);
+  assert.equal(report.browserUserAgent,'TestTV/1.0');
+  assert.deepEqual(report.requests,[]);
+  assert.doesNotMatch(diagnostics.body,/TOP_SECRET|cdn\.example\.org/);
  }finally{await new Promise(resolve=>server.close(resolve));}
 });
 test('TizenBrew video player tries local relay only on HLS failure and never navigates to Cast',()=>{

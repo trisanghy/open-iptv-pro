@@ -51,6 +51,15 @@ function inspectRemote(value){
  if(!(port>=1&&port<=65535))return null;
  return parsed;
 }
+function recordDiagnostic(session,parsed,remote,castContext){
+ var rows=session.requestDiagnostics||(session.requestDiagnostics=[]);
+ rows.push({host:String(parsed.hostname||'').slice(0,180),status:Number(remote.statusCode||0),
+  context:castContext?'cast-page':'tizenbrew',userAgent:String(session.userAgent||'').slice(0,300),
+  origin:castContext?CAST_ORIGIN:'',referer:castContext?CAST_REFERER:'',
+  contentType:String(remote.headers['content-type']||'').slice(0,120),
+  server:String(remote.headers.server||'').slice(0,120)});
+ while(rows.length>8)rows.shift();
+}
 function json(res,status,value){
  res.writeHead(status,{'Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store'});
  res.end(JSON.stringify(value));
@@ -117,6 +126,7 @@ function respondUpstream(source,req,res,session,depth,castContext){
     respondUpstream(target,req,res,session,depth+1,castContext);return;
    }
    if(remote.statusCode<200||remote.statusCode>=300){
+    recordDiagnostic(session,parsed,remote,castContext);
     remote.resume();
     // The paired Cast receiver runs at our HTTPS site origin. Some IPTV
     // hosts allow that page context but reject TizenBrew's localhost WebView.
@@ -212,6 +222,14 @@ function handler(req,res){
    sessions[session.id]=session;
    json(res,201,{url:'http://127.0.0.1:'+PORT+'/r/'+session.id+'/0'});
   });
+  return;
+ }
+ var diagMatch=/^\/diag\/([0-9a-f]{40})$/.exec(path);
+ if(req.method==='GET'&&diagMatch){
+  var debugSession=sessions[diagMatch[1]];
+  if(!debugSession||Date.now()-debugSession.last>EXPIRE_MS){json(res,404,{error:'Phiên phát đã hết hạn.'});return;}
+  debugSession.last=Date.now();
+  json(res,200,{browserUserAgent:String(debugSession.userAgent||''),requests:debugSession.requestDiagnostics||[]});
   return;
  }
  var match=/^\/r\/([0-9a-f]{40})\/(\d+)$/.exec(path);
