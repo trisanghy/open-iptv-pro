@@ -2,14 +2,23 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
-## P5.1.170 — nút xóa nhanh toàn bộ bộ lọc kênh thiếu logo
+## P5.1.171 — hiển thị phạm vi kênh đang xem theo phân trang
 
-**Ứng dụng:** 4.23.255 · **Trạng thái:** Chưa có bản phát hành
+**Ứng dụng:** 4.23.256 · **Trạng thái:** Chưa có bản phát hành
+
+NEW: Ảnh thật P5.1.170 cho thấy Trang 1 / 57 nhưng không nêu đang xem kênh số mấy trong 561 kênh. Thêm nhãn Đang xem 1–10 / 561 kênh, cập nhật theo bộ lọc, phân trang 10/25/50; danh sách rỗng có thông báo rõ. Không thay đổi playlist, URL, EPG, Cast, PiP và hành vi playback. Dùng trạng thái `aria-live=polite` cho công cụ đọc màn hình.
+
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/a0db0fb088aeeb95ea0fa18571da30bb6d501a97)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+
+## P5.1.170 — Xóa nhanh toàn bộ bộ lọc Thư viện / Electron 4.23.255
+
+**Ứng dụng:** 4.23.255 · **Trạng thái:** Đã phát hành
 
 Feature priority: NEW — Cho phép đưa năm điều kiện tìm kiếm, nhóm, EPG, thứ tự và mật độ phân trang về mặc định chỉ với một lần bấm, thay vì hoàn nguyên từng ô khi kiểm kê danh sách nhiều kênh. User action: Mở Thư viện → Kênh thiếu logo → thay đổi ít nhất một bộ lọc → bấm nút Xóa bộ lọc cạnh Xuất CSV để trở về tất cả kênh, thứ tự playlist, 10 kênh/trang.
 
 [Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/b577e4d1bfa84bab81209ca0fec6e5b1e295998c)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.255-p5.1.170)
 
 ## P5.1.169 — Lọc kênh thiếu logo theo mã EPG / Electron 4.23.254
 
