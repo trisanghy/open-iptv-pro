@@ -1,8 +1,23 @@
 {
-  "generatedAt": "2026-11-22T22:18:50.511325+00:00",
+  "generatedAt": "2026-11-22T22:24:39.459876+00:00",
   "repository": "trisanghy/open-iptv-pro",
   "branch": "Positron",
   "versions": [
+    {
+      "number": 266,
+      "version": "P5.1.266",
+      "appVersion": "4.23.351",
+      "title": "WatchFlow Intelligence học máy sở thích, phân loại EPG và tra cứu Wikipedia",
+      "description": "Feature priority: NEW — WatchFlow Intelligence với thuật toán học máy hồi quy logistic cập nhật trọng số dựa trên thời lượng xem ≥35 giây có hình hoặc đánh giá Hợp gu/Không hợp; phân loại theo chương trình XMLTV đang/sắp chiếu; tra cứu Wikipedia theo tên kênh và chỉ khi bấm nút, không gửi playlist, URL hoặc lịch sử xem lên mạng. Feature class: AI",
+      "kind": "feature",
+      "status": "candidate",
+      "published": "",
+      "tag": "",
+      "commit": "3212a9084ac6e5ef5958296531145f97cbdfb394",
+      "url": "https://github.com/trisanghy/open-iptv-pro/tree/Positron",
+      "assets": [],
+      "image": null
+    },
     {
       "number": 265,
       "version": "P5.1.265",
@@ -5631,7 +5646,7 @@
           "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.279-p5.1.194/SHA256SUMS.txt"
         }
       ],
-      "image": "screenshots/positron-p51194-dvr-start-after-before-1920x1080-real.png"
+      "image": "screenshots/positron-p51194-dvr-start-after-after-1920x1080-real.png"
     },
     {
       "number": 193,
