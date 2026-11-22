@@ -2,14 +2,23 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
-## P5.1.185 — truy cập nhanh nhóm nhiều kênh và đếm số lượng
+## P5.1.186 — phân trang gợi ý có Trước/Tiếp và trang cuối chính xác
 
-**Ứng dụng:** 4.23.270 · **Trạng thái:** Chưa có bản phát hành
+**Ứng dụng:** 4.23.271 · **Trạng thái:** Chưa có bản phát hành
+
+Feature priority: NEW — Ảnh P5.1.185 có hàng trăm kênh gợi ý nhưng chỉ có Gợi ý khác, không biết đang ở trang nào, không quay lại trang trước và vòng lặp cũ có thể lặp kênh ở trang cuối. Thêm nút Trước, chỉ số Trang x/y (aria-live), giữ nút Gợi ý khác để tiến tiếp; phân trang theo các lát cắt không trùng kênh. Trang cuối đúng số còn lại, nút Lưu cả N phản ánh số hiện tại, chức năng cũ vẫn giữ và không tự phát video.
+
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/2d789e5e0728a99dc9043a8c46166d716b96292e)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+
+## P5.1.185 — Nhóm gợi ý truy cập nhanh có số kênh / Electron 4.23.270
+
+**Ứng dụng:** 4.23.270 · **Trạng thái:** Đã phát hành
 
 Feature priority: NEW — Ảnh Electron P5.1.184 có dropdown nhóm nhưng không biết số kênh từng nhóm trước khi chọn; duyệt 541 kênh mất thời gian. Thêm dải nút truy cập nhanh các nhóm nhiều kênh với đếm số lượng thực từ kênh còn gợi ý, đánh dấu nhóm đang chọn bằng aria-pressed; chọn Tất cả khôi phục. Dropdown hiện số lượng từng nhóm và tổng kênh; không can thiệp M3U, favoriteKeys hay phát video.
 
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/6f4cce74d501e53e1360278bbe433c9b93f4ff77)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/cda6a6fe6f29798b3dda34faeab54ab5f648f452)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.270-p5.1.185)
 
 ## P5.1.184 — Lọc gợi ý Yêu thích theo nhóm / Electron 4.23.269
 
