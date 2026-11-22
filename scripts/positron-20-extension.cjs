@@ -5377,10 +5377,56 @@ async function runTwenty(page){
   assert.equal(value,true,'P191 DVR one-click duration '+key+': '+JSON.stringify(dvrDurationPresetQA));
  const after191=await page.screenshot({path:path.join(out,'positron-p51191-dvr-presets-after-1920x1080-real.png'),animations:'disabled'});
  assert.deepEqual([after191.readUInt32BE(16),after191.readUInt32BE(20)],[1920,1080]);
+ // P5.1.192: same native Electron EPG state, with only new duration feedback
+ // temporarily hidden by inline display to recreate P191 baseline faithfully.
+ await page.setViewportSize({width:1920,height:1080});
+ await page.evaluate(()=>window.IPTVState.setPage('epg'));
+ await page.locator('#dvrStart').fill('2026-11-23T10:20');
+ await page.locator('#dvrEnd').fill('2026-11-23T11:20');
+ await page.locator('#poDvrDurationStatus').evaluate(node=>node.style.display='none');
+ const before192=await page.screenshot({path:path.join(out,'positron-p51192-dvr-duration-before-1920x1080-real.png'),animations:'disabled'});
+ assert.deepEqual([before192.readUInt32BE(16),before192.readUInt32BE(20)],[1920,1080]);
+ await page.locator('#poDvrDurationStatus').evaluate(node=>node.style.removeProperty('display'));
+ const initialDuration192=await page.evaluate(()=>{
+  const status=document.getElementById('poDvrDurationStatus');
+  return status?.dataset.state==='valid'&&status.textContent.includes('Thời lượng ghi: 1 giờ');
+ });
+ await page.locator('#dvrEnd').fill('2026-11-23T09:20');
+ const invalidDuration192=await page.evaluate(()=>{
+  const status=document.getElementById('poDvrDurationStatus');
+  return status?.dataset.state==='error'&&status.textContent.includes('phải sau giờ bắt đầu');
+ });
+ await page.locator('#dvrEnd').fill('2026-11-23T20:20');
+ const excessiveDuration192=await page.evaluate(()=>{
+  const status=document.getElementById('poDvrDurationStatus');
+  return status?.dataset.state==='error'&&status.textContent.includes('8 giờ');
+ });
+ await page.locator('#dvrEnd').fill('2026-11-23T11:20');
+ const quickDuration192=await page.evaluate(()=>{
+  const st=document.getElementById('dvrQuickStart'),en=document.getElementById('dvrQuickEnd');
+  st.value='2026-11-23T10:20';en.value='2026-11-23T10:50';
+  st.dispatchEvent(new Event('input',{bubbles:true}));
+  en.dispatchEvent(new Event('input',{bubbles:true}));
+  const status=document.getElementById('poDvrQuickDurationStatus');
+  return status?.dataset.state==='valid'&&status.textContent.includes('30 phút');
+ });
+ const dvrDurationLiveQA=await page.evaluate(()=>({
+  startStillSame:document.getElementById('dvrStart')?.value==='2026-11-23T10:20',
+  endRestored:document.getElementById('dvrEnd')?.value==='2026-11-23T11:20',
+  statusHasRole:document.getElementById('poDvrDurationStatus')?.getAttribute('role')==='status',
+  noDvrSubmission:window.__p191DvrSubmits===0,
+  noAutoplay:window.IPTVState.getCurrent()===null,
+  noHorizontalOverflow:document.documentElement.scrollWidth<=innerWidth+1
+ }));
+ Object.assign(dvrDurationLiveQA,{initialDuration192,invalidDuration192,excessiveDuration192,quickDuration192});
+ for(const [key,value] of Object.entries(dvrDurationLiveQA))
+  assert.equal(value,true,'P192 real DVR duration '+key+': '+JSON.stringify(dvrDurationLiveQA));
+ const after192=await page.screenshot({path:path.join(out,'positron-p51192-dvr-duration-after-1920x1080-real.png'),animations:'disabled'});
+ assert.deepEqual([after192.readUInt32BE(16),after192.readUInt32BE(20)],[1920,1080]);
  await page.setViewportSize({width:1360,height:820});
 
   const report={type:'Positron P5 twenty distinct desktop screenshot cases',realElectron:true,syntheticChannels:false,
-  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,desktop16x9Screenshots,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA,chooserQa,toastLayoutQA,nativeToastQA,compactIdleQA,channelChipRailQA,advancedFilterQA,readableCardsQA,keyboardTabQA,favoriteEmptyQA,duplicateEmptyQA,categoryFilterQA,categoryFixtureQA,compactSingleQA,directFavoriteQA,favoriteCountQA,compactToastStackQA,toastDismissQA,toastFocusReturnQA,toastDockQA,wheelQA,pinnedAllQA,pinnedMaskQA,categoryKeyQA,dropdownChipQA,pinnedRightMaskQA,pinnedBorderMaskQA,asciiDSearchQA,emptySearchActionQA,readableCardTitleQA,favoriteSvgQA,keyboardFavoriteQA,multiTermSearchQA,keyboardSearchQA,arrowNavigationQA,pageNavigationQA,favoriteSortQA,onAirFilterQA,programmeSearchQA,upcomingProgrammeQA,soonProgrammeQA,earliestEpgSortQA,timeWindowQA,scheduleProgressQA:scheduleProgressQA,nativeReminderQA,cancelReminderQA,reminderLeadQA,toastHistoryQA,notificationArchiveQA,alertFilterQA,noticeSearchQA,quietModeQA,dismissToastQA,libraryPulseQA,groupDistributionQA,logoMissingQA,missingSearchQA,missingGroupQA,missingSortQA,missingJumpQA,missingCsvQA,duplicateQA,duplicateSearchQA,duplicateCsvQA,duplicateScopeQA,missingSizeQA,missingPagerQA,missingEpgFilterQA,missingResetQA,missingRangeQA,missingLocateQA,libraryReturnQA,favoriteActionQA,quickFavoriteQA,favoriteMoreQA,favoriteSearchQA,favoriteRotateQA,favoriteSuggestSearchQA,favoriteBulkQA,favoriteLayoutQA,favoriteNameSortQA,searchAfterSortQA,restoredSortQA,favoriteSuggestion12QA,batchFavorite12QA,restoreSixQA,favoriteRegionalQA,favoriteGroupSearchQA,resetGroupQA,favoriteQuickGroupQA,favoriteQuickResetQA,favoritePageLastQA,favoritePageNavigationQA,favoriteJumpSevenQA,favoriteJumpClampQA,favoriteWideQA,favoriteSuggestionSortQA,tvReselectTopQA,dvrDurationPresetQA};
+  screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,desktop16x9Screenshots,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA,chooserQa,toastLayoutQA,nativeToastQA,compactIdleQA,channelChipRailQA,advancedFilterQA,readableCardsQA,keyboardTabQA,favoriteEmptyQA,duplicateEmptyQA,categoryFilterQA,categoryFixtureQA,compactSingleQA,directFavoriteQA,favoriteCountQA,compactToastStackQA,toastDismissQA,toastFocusReturnQA,toastDockQA,wheelQA,pinnedAllQA,pinnedMaskQA,categoryKeyQA,dropdownChipQA,pinnedRightMaskQA,pinnedBorderMaskQA,asciiDSearchQA,emptySearchActionQA,readableCardTitleQA,favoriteSvgQA,keyboardFavoriteQA,multiTermSearchQA,keyboardSearchQA,arrowNavigationQA,pageNavigationQA,favoriteSortQA,onAirFilterQA,programmeSearchQA,upcomingProgrammeQA,soonProgrammeQA,earliestEpgSortQA,timeWindowQA,scheduleProgressQA:scheduleProgressQA,nativeReminderQA,cancelReminderQA,reminderLeadQA,toastHistoryQA,notificationArchiveQA,alertFilterQA,noticeSearchQA,quietModeQA,dismissToastQA,libraryPulseQA,groupDistributionQA,logoMissingQA,missingSearchQA,missingGroupQA,missingSortQA,missingJumpQA,missingCsvQA,duplicateQA,duplicateSearchQA,duplicateCsvQA,duplicateScopeQA,missingSizeQA,missingPagerQA,missingEpgFilterQA,missingResetQA,missingRangeQA,missingLocateQA,libraryReturnQA,favoriteActionQA,quickFavoriteQA,favoriteMoreQA,favoriteSearchQA,favoriteRotateQA,favoriteSuggestSearchQA,favoriteBulkQA,favoriteLayoutQA,favoriteNameSortQA,searchAfterSortQA,restoredSortQA,favoriteSuggestion12QA,batchFavorite12QA,restoreSixQA,favoriteRegionalQA,favoriteGroupSearchQA,resetGroupQA,favoriteQuickGroupQA,favoriteQuickResetQA,favoritePageLastQA,favoritePageNavigationQA,favoriteJumpSevenQA,favoriteJumpClampQA,favoriteWideQA,favoriteSuggestionSortQA,tvReselectTopQA,dvrDurationPresetQA,dvrDurationLiveQA};
  fs.writeFileSync(path.resolve('positron-evidence','audit-p5-20-rounds.json'),JSON.stringify(report,null,2));
  return report;
 }

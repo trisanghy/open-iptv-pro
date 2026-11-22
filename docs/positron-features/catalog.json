@@ -4,6 +4,21 @@
   "branch": "Positron",
   "versions": [
     {
+      "number": 192,
+      "version": "P5.1.192",
+      "appVersion": "4.23.277",
+      "title": "Hiển thị thời lượng ghi và cảnh báo giới hạn 8 giờ",
+      "description": "Khi đặt lịch DVR từ EPG hoặc TV, dòng trạng thái cho biết thời lượng ghi theo giờ/phút và cảnh báo kết thúc trước bắt đầu hay dài quá 8 giờ. Không tự chỉnh thời gian hoặc gửi lệnh ghi.",
+      "kind": "feature",
+      "status": "candidate",
+      "published": "",
+      "tag": "",
+      "commit": "",
+      "url": "https://github.com/trisanghy/open-iptv-pro/tree/Positron",
+      "assets": [],
+      "image": null
+    },
+    {
       "number": 191,
       "version": "P5.1.191",
       "appVersion": "4.23.276",

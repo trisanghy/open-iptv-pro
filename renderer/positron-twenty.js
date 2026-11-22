@@ -621,6 +621,44 @@
  attachDvrPresets('dvrStart','dvrEnd','poDvrDurationPresets');
  attachDvrPresets('dvrQuickStart','dvrQuickEnd','poDvrQuickDurationPresets');
 
+ // P5.1.192: live duration feedback; informational only, never submits a DVR job.
+ const attachDvrDurationStatus=(startId,endId,statusId)=>{
+  const start=byId(startId),end=byId(endId);
+  if(!start||!end||byId(statusId))return;
+  const status=d.createElement('output');status.id=statusId;
+  status.className='po-dvr-duration-status';status.setAttribute('role','status');
+  status.setAttribute('aria-live','polite');
+  end.parentElement.append(status);
+  const refresh=()=>{
+   if(!start.value||!end.value){
+    status.dataset.state='idle';status.textContent='Chọn giờ bắt đầu và kết thúc để xem thời lượng ghi.';
+    return;
+   }
+   const startMs=new Date(start.value).getTime(),endMs=new Date(end.value).getTime();
+   if(!Number.isFinite(startMs)||!Number.isFinite(endMs)){
+    status.dataset.state='error';status.textContent='Thời gian ghi hình không hợp lệ.';
+    return;
+   }
+   const minutes=Math.round((endMs-startMs)/60000);
+   if(minutes<=0){
+    status.dataset.state='error';status.textContent='Giờ kết thúc phải sau giờ bắt đầu.';
+   }else if(minutes>480){
+    status.dataset.state='error';status.textContent='Vượt giới hạn ghi hình 8 giờ ('+minutes+' phút).';
+   }else{
+    status.dataset.state='valid';
+    const hours=Math.floor(minutes/60),remainder=minutes%60;
+    status.textContent='Thời lượng ghi: '+(hours?hours+' giờ'+(remainder?' '+remainder+' phút':''):minutes+' phút');
+   }
+  };
+  for(const input of [start,end]){
+   input.addEventListener('input',refresh);
+   input.addEventListener('change',refresh);
+  }
+  refresh();
+ };
+ attachDvrDurationStatus('dvrStart','dvrEnd','poDvrDurationStatus');
+ attachDvrDurationStatus('dvrQuickStart','dvrQuickEnd','poDvrQuickDurationStatus');
+
  // P5.1.33: real P5.1.32 TV 450px screenshot shows an actionable
  // favorite star beside 'Chưa chọn kênh'. Use the native selection API,
  // not an empty-state string, to protect existing playlist semantics.

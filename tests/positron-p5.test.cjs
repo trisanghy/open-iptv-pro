@@ -2052,3 +2052,18 @@ test('P5.1.191 quick recording presets set End without scheduling or starting pl
  assert.ok(qa.includes('positron-p51191-dvr-presets-before-1920x1080-real.png'));
  assert.ok(qa.includes('positron-p51191-dvr-presets-after-1920x1080-real.png'));
 });
+
+test('P5.1.192 displays safe live recording duration and warns beyond 8 hours',()=>{
+ const js=read('renderer/positron-twenty.js');
+ const css=read('renderer/positron-twenty.css');
+ const qa=read('scripts/positron-20-extension.cjs');
+ assert.ok(js.includes("attachDvrDurationStatus('dvrStart','dvrEnd','poDvrDurationStatus')"));
+ assert.ok(js.includes("attachDvrDurationStatus('dvrQuickStart','dvrQuickEnd','poDvrQuickDurationStatus')"));
+ assert.ok(js.includes("status.dataset.state='error';status.textContent='Giờ kết thúc phải sau giờ bắt đầu.'"));
+ assert.ok(js.includes("else if(minutes>480)"));
+ assert.ok(js.includes("status.dataset.state='valid'"));
+ assert.ok(css.includes('.po-dvr-duration-status[data-state="error"]'));
+ assert.ok(qa.includes('dvrDurationLiveQA'));
+ assert.ok(qa.includes('positron-p51192-dvr-duration-before-1920x1080-real.png'));
+ assert.ok(qa.includes('positron-p51192-dvr-duration-after-1920x1080-real.png'));
+});

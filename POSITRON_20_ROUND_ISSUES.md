@@ -164,3 +164,9 @@ Evaluate defects revealed by real screenshot of previous build before making cha
 - Feature: các preset +30/+60/+120 phút cập nhật riêng giờ Kết thúc của biểu mẫu DVR chính hoặc ghi nhanh; không submit tự động.
 - QA: screenshot native Electron trước/sau `positron-p51191-dvr-presets-before-1920x1080-real.png` / `positron-p51191-dvr-presets-after-1920x1080-real.png`, kiểm end time +60 phút, không submit, không autoplay, không overflow.
 - Status: chờ CI và xem PNG thật trước khi công nhận.
+
+## P5.1.192 (CANDIDATE) — xem ảnh EPG Electron P191
+- Input: `positron-p51191-dvr-presets-after-1920x1080-real.png` thật đã mở: preset nút nhỏ đúng chỗ nhưng không có phản hồi tổng thời lượng hoặc cảnh báo sai ngày giờ ngay trong biểu mẫu.
+- Feature: output thời lượng động có `aria-live=polite`, tính từ start/end địa phương; cảnh báo kết thúc trước bắt đầu, khoảng >8 giờ. Áp dụng cả DVR EPG và TV, không chỉnh sửa dữ liệu nguồn.
+- QA: Electron cùng trạng thái 1920×1080 chụp `positron-p51192-dvr-duration-before-1920x1080-real.png` và `positron-p51192-dvr-duration-after-1920x1080-real.png`; kiểm từng tình huống giờ, ghi nhanh, no submit và no autoplay.
+- Status: chờ CI/ảnh và release.

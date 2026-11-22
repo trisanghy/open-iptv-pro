@@ -818,3 +818,15 @@ html[data-positron="true"] .po-dvr-presets button:hover{
 html[data-positron="true"] .po-dvr-presets button:focus-visible{
  outline:2px solid var(--po-accent,#6ad9c7);outline-offset:2px;
 }
+
+/* P5.1.192: live DVR duration verification, including invalid time windows. */
+html[data-positron="true"] .po-dvr-duration-status{
+ display:block;margin-top:5px;font-size:11px;line-height:1.45;
+ color:var(--po-muted,#a6bdc6);font-weight:500;
+}
+html[data-positron="true"] .po-dvr-duration-status[data-state="valid"]{
+ color:var(--po-accent,#79dfc6);
+}
+html[data-positron="true"] .po-dvr-duration-status[data-state="error"]{
+ color:#ffb08e;font-weight:700;
+}

@@ -1,5 +1,15 @@
 # Positron P5 Changelog
 
+## P5.1.192 — Thời lượng ghi hình trực tiếp và cảnh báo 8 giờ / Electron 4.23.277
+- Feature priority: NEW — Ảnh Electron thật P5.1.191 cho thấy nút chọn thời lượng 30/60/120 phút đã hoạt động, nhưng form không có thông tin tổng thời lượng và chưa cảnh báo trực quan khi người dùng sửa giờ kết thúc sai. Thêm dòng kiểm tra trực tiếp cho cả EPG DVR và ghi nhanh TV mà không can thiệp luồng ghi hình.
+- Hiển thị số giờ/phút ngay khi nhập thời gian; nếu kết thúc không sau bắt đầu hoặc vượt 8 giờ, báo rõ lỗi. Không tự thay đổi giờ nhập, không tự tạo lịch, không phát video, giữ xác thực DVR native.
+- Electron screenshot: positron-p51192-dvr-duration-after-1920x1080-real.png
+- Before screenshot: positron-p51192-dvr-duration-before-1920x1080-real.png
+- User action: Mở EPG > Hẹn giờ ghi hình, nhập giờ bắt đầu/kết thúc hoặc bấm nút +30/+60/+120 phút; dòng Thời lượng ghi cập nhật tự động, báo lỗi nếu giờ kết thúc quá sớm hoặc dài hơn 8 giờ. Tương tự tại TV > Hẹn giờ ghi.
+- QA: Electron thật 1920×1080, giờ 10:20–11:20 hiện 1 giờ; thử 09:20 cảnh báo sai thứ tự; thử 20:20 cảnh báo vượt 8 giờ; mẫu ghi nhanh 10:20–10:50 hiển thị 30 phút; không submit, không phát, không tràn ngang; chụp và mở ảnh TRƯỚC/SAU.
+- Status: CANDIDATE cho tới khi Node tests, Electron screenshot review, CI, build và phát hành được xác minh.
+
+
 ## P5.1.191 — Chọn nhanh thời lượng DVR 30/60/120 phút / Electron 4.23.276
 - Feature priority: NEW — Ảnh EPG Electron thật P5.1.190 ở 1920×1080 cho thấy hẹn giờ ghi hình phải nhập thủ công cả thời gian Bắt đầu và Kết thúc. Thêm nút cộng 30, 60, 120 phút dưới trường Kết thúc ở cả lịch ghi trên EPG và biểu mẫu ghi nhanh trên TV.
 - Nút chỉ tính và điền giá trị Kết thúc theo thời gian Bắt đầu ở múi giờ cục bộ; kích hoạt input/change để form gốc kiểm tra. Không tự đặt lịch, không khởi chạy DVR, không sửa nguồn M3U, danh sách kênh hoặc quyền xem.
