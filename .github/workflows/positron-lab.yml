@@ -521,15 +521,13 @@ jobs:
           fi
       - uses: actions/upload-artifact@v4
         with:
-          name: positron-p51266-${{ matrix.label }}
+          name: positron-p51267-${{ matrix.label }}
           path: |
             dist/*.dmg
             dist/*.exe
           if-no-files-found: error
 
   release:
-    permissions:
-      contents: write
     needs: [test, capture, build]
     runs-on: ubuntu-latest
     permissions:
@@ -538,7 +536,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/download-artifact@v4
         with:
-          pattern: positron-p51266-*
+          pattern: positron-p51267-*
           path: release-stage
           merge-multiple: true
       - name: Assemble source and verifiable 50-round P4 evidence
