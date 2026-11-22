@@ -153,18 +153,108 @@
    const {data,error}=await cli.from(TABLE).select('payload,revision,updated_at').eq('user_id',user.id).maybeSingle();
    if(error)throw error;return data;
   }
-  function secureBackup(value,reason){
-   const key='openiptv:cross-cloud:recovery:'+Date.now();
-   localStorage.setItem(key,JSON.stringify({reason,createdAt:new Date().toISOString(),payload:copy(value)}));
-   return key;
+  // Per-user recovery history lives in IndexedDB, not the small localStorage quota.
+  const RECOVERY_DB='openiptv-portable-cloud-recovery-v1';
+  const RECOVERY_STORE='snapshots';
+  function openRecoveryDb(){
+   return new Promise((resolve,reject)=>{
+    if(typeof indexedDB==='undefined')return reject(Error('IndexedDB unavailable'));
+    let request;
+    try{request=indexedDB.open(RECOVERY_DB,1);}catch(e){reject(e);return;}
+    request.onupgradeneeded=()=>{
+     if(!request.result.objectStoreNames.contains(RECOVERY_STORE))
+      request.result.createObjectStore(RECOVERY_STORE,{keyPath:'key'});
+    };
+    request.onsuccess=()=>resolve(request.result);
+    request.onerror=()=>reject(request.error||Error('IndexedDB unavailable'));
+    request.onblocked=()=>reject(Error('IndexedDB blocked by another tab'));
+   });
   }
+  async function recoveryTransaction(mode,fn){
+   const db=await openRecoveryDb();
+   return new Promise((resolve,reject)=>{
+    let tx,value;
+    const close=()=>{try{db.close();}catch(_){}};
+    try{
+     tx=db.transaction(RECOVERY_STORE,mode);
+     const request=fn(tx.objectStore(RECOVERY_STORE));
+     if(request)request.onsuccess=()=>{value=request.result;};
+     tx.oncomplete=()=>{close();resolve(value);};
+     tx.onerror=()=>{close();reject(tx.error||Error('IndexedDB write failed'));};
+     tx.onabort=()=>{close();reject(tx.error||Error('IndexedDB transaction aborted'));};
+    }catch(e){close();reject(e);}
+   });
+  }
+  async function recoveryHistory(){
+   if(!user?.id)return [];
+   const rows=await recoveryTransaction('readonly',store=>store.getAll());
+   return (rows||[]).filter(x=>x.userId===user.id&&x.payload)
+    .sort((a,b)=>String(b.createdAt).localeCompare(String(a.createdAt)));
+  }
+  async function secureBackup(value,reason){
+   if(!user?.id)throw Error('Chưa xác định tài khoản cần sao lưu.');
+   const item={
+    key:user.id+':'+Date.now()+':'+Math.random().toString(36).slice(2),
+    userId:user.id,createdAt:new Date().toISOString(),
+    reason,payload:copy(value)
+   };
+   try{
+    // Only transaction.oncomplete acknowledges a durable backup.
+    await recoveryTransaction('readwrite',store=>store.put(item));
+    try{
+     const previous=(await recoveryHistory()).slice(3);
+     if(previous.length)await recoveryTransaction('readwrite',store=>{
+      for(const old of previous)store.delete(old.key);
+     });
+    }catch(e){console.warn('Could not prune older cloud backups',e);}
+    recoveryDownload.hidden=false;
+    return item.key;
+   }catch(e){
+    console.warn('IndexedDB backup failed; trying localStorage fallback',e);
+    try{
+     const key='openiptv:cross-cloud:recovery:'+Date.now();
+     localStorage.setItem(key,JSON.stringify(item));
+     return key;
+    }catch(_){
+     throw Error('Không lưu được bản dự phòng. Đồng bộ đã dừng để bảo vệ dữ liệu; hãy xuất JSON trước.');
+    }
+   }
+  }
+  const recoveryDownload=document.createElement('button');
+  recoveryDownload.id='portableCloudRecoveryDownload';
+  recoveryDownload.type='button';recoveryDownload.className='oc-secondary';
+  recoveryDownload.hidden=true;recoveryDownload.textContent='↓ Tải bản dự phòng JSON';
+  $('portableCloudActions').appendChild(recoveryDownload);
+  async function refreshRecovery(){
+   if(!user){recoveryDownload.hidden=true;return;}
+   try{recoveryDownload.hidden=!(await recoveryHistory()).length;}
+   catch(e){console.warn('Could not read cloud backups',e);}
+  }
+  recoveryDownload.addEventListener('click',async()=>{
+   if(!user)return;
+   recoveryDownload.disabled=true;
+   try{
+    const latest=(await recoveryHistory())[0];
+    if(!latest)throw Error('Chưa có bản dự phòng trong IndexedDB.');
+    const archive={format:'open-iptv-pro-backup',schemaVersion:1,
+     appVersion:'portable-cloud-recovery',createdAt:latest.createdAt,
+     platform:mode,storage:{'open-iptv-pro-4':JSON.stringify(latest.payload)}};
+    const objectUrl=root.URL.createObjectURL(new Blob([JSON.stringify(archive)],{type:'application/json'}));
+    const link=document.createElement('a');link.href=objectUrl;
+    link.download='open-iptv-pro-recovery-'+new Date().toISOString().slice(0,10)+'.json';
+    document.body.append(link);link.click();link.remove();
+    setTimeout(()=>root.URL.revokeObjectURL(objectUrl),30000);
+    say('Đã tạo file JSON dự phòng. File có thể chứa token trong liên kết M3U; hãy giữ riêng tư.');
+   }catch(e){say('Không tải được bản dự phòng: '+e.message);}
+   finally{recoveryDownload.disabled=false;}
+  });
   async function pull(confirmFirst=true){
    if(!user||busy)return;
    busy=true;try{
     const row=await remote();if(!row){say('Tài khoản chưa có dữ liệu trên server.');return;}
     if(confirmFirst&&!confirm('Thay kênh và cài đặt đang đồng bộ trên thiết bị này bằng bản đám mây? Bản cục bộ sẽ được giữ trong bản sao phục hồi.'))return;
     const prior=getState(),next=applyCloud(prior,row.payload,mode);
-    const recovery=secureBackup(prior,'before-cloud-pull');
+    const recovery=await secureBackup(prior,'before-cloud-pull');
     await Promise.resolve(saveState(next));
     setPair(row.revision,hash());
     say('Đã lấy dữ liệu server. Bản cũ: '+recovery+'. Đang cập nhật giao diện…');
@@ -186,7 +276,7 @@
     const safeDesired=copy(desired);
    const serialized=JSON.stringify(safeDesired);
     if(new TextEncoder().encode(serialized).length>1950000)throw Error('Bản đồng bộ vượt 1,95 MB; hãy giảm số kênh');
-    if(row)secureBackup(row.payload,'before-cloud-push');
+    if(row)await secureBackup(row.payload,'before-cloud-push');
     const query=row
       ?cli.from(TABLE).update({payload:safeDesired,revision:row.revision+1,updated_at:new Date().toISOString()})
           .eq('user_id',user.id).eq('revision',row.revision).select('revision').maybeSingle()
@@ -222,6 +312,7 @@
    $('portableCloudAccount').hidden=!signed;
    $('portableCloudActions').hidden=!signed;
    $('portableCloudAccountValue').textContent=signed?(user.email||'Tài khoản Supabase'):'';
+   if(signed)void refreshRecovery();else recoveryDownload.hidden=true;
    if(signed)say('Đã đăng nhập'+(paired()?' · tự đồng bộ mỗi 60 giây':' · chọn dữ liệu cần giữ để bắt đầu đồng bộ'));
    else say(emailRequested?'Đã yêu cầu mã · kiểm tra email và nhập OTP phía dưới':'Chưa đăng nhập · dữ liệu hiện lưu trên thiết bị');
   }
