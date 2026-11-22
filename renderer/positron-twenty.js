@@ -667,6 +667,41 @@
  attachDvrDurationStatus('dvrStart','dvrEnd','poDvrDurationStatus');
  attachDvrDurationStatus('dvrQuickStart','dvrQuickEnd','poDvrQuickDurationStatus');
 
+ // P5.1.194: quick local recording start presets. Keep a previously chosen
+ // legal duration (1..480 min); use 60 min when Start/End are incomplete.
+ // These three buttons never submit, play, or edit the IPTV playlist.
+ const attachDvrQuickStart=(startId,endId,rowId)=>{
+  const start=byId(startId),end=byId(endId);
+  if(!start||!end||byId(rowId))return;
+  const row=d.createElement('div');
+  row.id=rowId;row.className='po-dvr-quick-start';
+  row.setAttribute('role','group');row.setAttribute('aria-label','Đặt nhanh giờ bắt đầu ghi hình');
+  for(const offset of [5,15,30]){
+   const button=d.createElement('button');button.type='button';
+   button.dataset.startAfterMinutes=String(offset);
+   button.textContent='Sau '+offset+' phút';
+   button.setAttribute('aria-label','Bắt đầu ghi hình sau '+offset+' phút');
+   button.addEventListener('click',()=>{
+    const oldStart=start.value?new Date(start.value).getTime():NaN;
+    const oldEnd=end.value?new Date(end.value).getTime():NaN;
+    const currentDuration=Math.round((oldEnd-oldStart)/60000);
+    const duration=Number.isFinite(currentDuration)&&currentDuration>0&&currentDuration<=480?currentDuration:60;
+    const now=Date.now();
+    const nextStart=new Date(Math.ceil(now/60000)*60000+offset*60000);
+    start.value=dvrLocalDateTime(nextStart);
+    end.value=dvrLocalDateTime(new Date(nextStart.getTime()+duration*60000));
+    for(const field of [start,end]){
+     field.dispatchEvent(new Event('input',{bubbles:true}));
+     field.dispatchEvent(new Event('change',{bubbles:true}));
+    }
+   });
+   row.append(button);
+  }
+  start.parentElement.append(row);
+ };
+ attachDvrQuickStart('dvrStart','dvrEnd','poDvrQuickStartPresets');
+ attachDvrQuickStart('dvrQuickStart','dvrQuickEnd','poDvrQuickStartQuickPresets');
+
  // P5.1.33: real P5.1.32 TV 450px screenshot shows an actionable
  // favorite star beside 'Chưa chọn kênh'. Use the native selection API,
  // not an empty-state string, to protect existing playlist semantics.

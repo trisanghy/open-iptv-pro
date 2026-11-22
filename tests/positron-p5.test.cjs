@@ -2079,3 +2079,19 @@ test('P5.1.193 only active recording duration preset is aria-pressed, including 
  assert.ok(qa.includes('dvrPresetSelectionQA'));
  assert.ok(qa.includes('positron-p51193-dvr-selected-preset-after-1920x1080-real.png'));
 });
+
+test('P5.1.194 quick-start DVR buttons preserve legal duration and never submit a job',()=>{
+ const js=read('renderer/positron-twenty.js'),css=read('renderer/positron-twenty.css');
+ const qa=read('scripts/positron-20-extension.cjs');
+ for(const token of ["const attachDvrQuickStart=(startId,endId,rowId)=>",
+  "attachDvrQuickStart('dvrStart','dvrEnd','poDvrQuickStartPresets')",
+  "attachDvrQuickStart('dvrQuickStart','dvrQuickEnd','poDvrQuickStartQuickPresets')",
+  "for(const offset of [5,15,30])","Math.ceil(now/60000)*60000+offset*60000",
+  "currentDuration>0&&currentDuration<=480?currentDuration:60",
+  "button.type='button'","field.dispatchEvent(new Event('input',{bubbles:true}))"])
+  assert.ok(js.includes(token),'Missing quick DVR start: '+token);
+ assert.ok(css.includes('.po-dvr-quick-start button:focus-visible'));
+ assert.ok(qa.includes('dvrQuickStartQA'));
+ assert.ok(qa.includes('positron-p51194-dvr-start-after-before-1920x1080-real.png'));
+ assert.ok(qa.includes('positron-p51194-dvr-start-after-after-1920x1080-real.png'));
+});

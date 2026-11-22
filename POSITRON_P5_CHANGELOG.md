@@ -1,5 +1,14 @@
 # Positron P5 Changelog
 
+## P5.1.194 — Chọn nhanh giờ bắt đầu ghi hình sau 5/15/30 phút / Electron 4.23.279
+- Feature priority: NEW — Ảnh Electron P5.1.193 thực ở 1920×1080 cho thấy lịch ghi có các nút chọn thời lượng nhưng trường Bắt đầu vẫn cần nhập ngày giờ thủ công. Bổ sung chọn giờ bắt đầu từ hiện tại để giảm thao tác hẹn ghi, không gửi lịch khi chưa xác nhận.
+- Tính năng: dưới giờ Bắt đầu có ba nút “Sau 5 phút”, “Sau 15 phút”, “Sau 30 phút” ở EPG và biểu mẫu ghi nhanh TV. Nhấn chỉ điền Bắt đầu dựa trên phút hiện tại, đồng thời dời Kết thúc để giữ thời lượng cũ nếu hợp lệ (1–480 phút), hoặc 60 phút khi thiếu/không hợp lệ. Tự cập nhật nhãn thời lượng và trạng thái preset P5.1.192/193.
+- Electron screenshot: positron-p51194-dvr-start-after-after-1920x1080-real.png
+- Before screenshot: positron-p51194-dvr-start-after-before-1920x1080-real.png
+- User action: Mở Lịch phát sóng EPG hoặc ghi nhanh TV, nhấn “Sau 15 phút” bên dưới Bắt đầu, kiểm lại giờ kết thúc rồi tự chọn “Đặt lịch ghi” khi muốn tạo lịch.
+- QA: Playwright trên Electron thật 1920×1080, chọn 15 phút kể từ hiện tại, bảo toàn thời lượng 120 phút, không tự submit hoặc phát, kiểm preset 120 còn active, có ba nút ở cả hai biểu mẫu và không tràn ngang.
+- Status: CANDIDATE, chờ Node test, ảnh Electron TRƯỚC/SAU mở trực tiếp, CI build và release bất biến thành công.
+
 ## P5.1.193 — Nút DVR tự đánh dấu thời lượng 30/60/120 phút / Electron 4.23.278
 - Feature priority: NEW — Ảnh Electron thực của P5.1.192 cho thấy thời lượng 1 giờ nhưng ba nút 30/60/120 phút có giao diện giống hệt nhau, khiến người xem khó xác định lựa chọn hiện tại khi chỉnh giờ ghi.
 - Khi nhập Bắt đầu/Kết thúc, ứng dụng đánh dấu đúng nút có số phút tương ứng bằng aria-pressed và viền màu chủ đề; không có nút được chọn khi chỉnh giờ không khớp hoặc lịch sai.

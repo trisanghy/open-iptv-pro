@@ -1,5 +1,10 @@
 # Positron — New 20-round issue register
 
+## Đợt mới từ P5.1.193, 22/11/2026
+- P5.1.193 / Electron 4.23.278, Actions 45003368885: 6/6 jobs thành công, 838 Node pass, 5 skip; release positron/v4.23.278-p5.1.193; đã MỞ trước/sau 1920×1080, trạng thái +60/+120 đúng, không tràn ngang.
+- Vòng 02 P5.1.194 / 4.23.279 CANDIDATE: bổ sung giờ bắt đầu nhanh 5/15/30 phút từ thời điểm hiện tại; bảo toàn khoảng ghi, không tự submit. Chỉ tính hoàn thành khi mở ảnh sau, test đạt và release được xác minh.
+- Ưu tiên vòng sau: từ ảnh P194 kiểm tra vị trí hai trường Bắt đầu/Kết thúc và khả năng thao tác bằng bàn phím ở cửa sổ hẹp; chọn tính năng thực sự cần thiết.
+
 Baseline P5.1.105: `937db5120885efefe32c62fe3a9476601e76955c`. Only the `Positron` branch is in scope. No force-push.
 
 ## Round 01/20 — P5.1.106 / v4.23.190 — VERIFIED

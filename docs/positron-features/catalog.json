@@ -4,6 +4,21 @@
   "branch": "Positron",
   "versions": [
     {
+      "number": 194,
+      "version": "P5.1.194",
+      "appVersion": "4.23.279",
+      "title": "DVR: bắt đầu nhanh sau 5/15/30 phút",
+      "description": "Nút đặt nhanh giờ bắt đầu từ thời điểm hiện tại, giữ thời lượng hợp lệ hoặc mặc định 60 phút; không tự ghi hình và không sửa nguồn kênh.",
+      "kind": "feature",
+      "status": "candidate",
+      "published": "",
+      "tag": "",
+      "commit": "",
+      "url": "https://github.com/trisanghy/open-iptv-pro/tree/Positron",
+      "assets": [],
+      "image": null
+    },
+    {
       "number": 193,
       "version": "P5.1.193",
       "appVersion": "4.23.278",

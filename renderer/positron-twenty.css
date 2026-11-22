@@ -838,3 +838,19 @@ html[data-positron="true"] .po-dvr-presets button[aria-pressed="true"]{
  box-shadow:inset 0 0 0 1px var(--po-accent,#6ad9c7);
  color:var(--po-text,#e6f4f4);
 }
+
+/* P5.1.194: quick upcoming DVR start presets in native Start fields. */
+html[data-positron="true"] .po-dvr-quick-start{
+ display:flex;gap:5px;flex-wrap:wrap;margin-top:6px;align-items:center;
+}
+html[data-positron="true"] .po-dvr-quick-start button{
+ appearance:none;min-height:29px;max-width:100%;
+ padding:5px 8px;border:1px solid var(--po-border,#325160);
+ border-radius:7px;background:var(--po-input,#17303c);
+ color:var(--po-text,#e6f4f4);font:inherit;font-size:11px;line-height:1.1;
+ white-space:nowrap;cursor:pointer;
+}
+html[data-positron="true"] .po-dvr-quick-start button:hover{border-color:var(--po-accent,#6ad9c7)}
+html[data-positron="true"] .po-dvr-quick-start button:focus-visible{
+ outline:2px solid var(--po-accent,#6ad9c7);outline-offset:2px;
+}
