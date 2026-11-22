@@ -1,5 +1,14 @@
 # Positron P5 Changelog
 
+## P5.1.197 — Sao chép lịch ghi và bỏ lặp tên kênh / Electron 4.23.282
+- Feature priority: NEW — Ảnh Electron P5.1.196 thật ở 1920×1080 cho thấy dòng xem trước nhỏ, lặp kênh hai lần khi tên được tạo tự động và không thể sao chép nội dung để đối chiếu. Bổ sung nút sao chép theo yêu cầu, trạng thái thành công/thất bại và nội dung tóm tắt gọn dễ đọc.
+- Electron screenshot: positron-p51197-dvr-copy-after-1920x1080-real.png
+- User action: Mở Lịch phát sóng > Hẹn giờ ghi, chọn kênh, tên và giờ hợp lệ; bấm Sao chép lịch để lấy thông tin mà không tạo lịch.
+- Tính năng: Nút **Sao chép lịch** chỉ khả dụng khi đủ dữ liệu hợp lệ; sử dụng quyền Clipboard của Electron nếu sẵn có, hiện phản hồi, không gửi dữ liệu đến mạng; khi tên tự sinh bắt đầu bằng tên kênh, hiển thị nguyên tên một lần. Chữ tóm tắt lớn hơn.
+- QA: kiểm nút chỉ bật khi hợp lệ, bản sao chép giữ đầy đủ kênh/tên/giờ, từ chối copy dữ liệu thiếu, trả lại trạng thái sau sửa, không tự gửi lịch, không phát video, không tràn ngang.
+- Before: `positron-p51197-dvr-copy-before-1920x1080-real.png`; after: `positron-p51197-dvr-copy-after-1920x1080-real.png`.
+- Status: CANDIDATE cho đến khi ảnh Electron thật đã mở, CI xanh và Release được xác minh.
+
 ## P5.1.196 — Xem trước lịch ghi hình / Electron 4.23.281
 - Feature priority: NEW — Ảnh Electron thật P5.1.195 cho thấy người dùng điền kênh, tên và hai mốc thời gian nhưng thiếu bước xem lại toàn bộ lịch. Thêm phần xem trước luôn cập nhật, cho phép phát hiện thời lượng sai trước khi người dùng chủ động xác nhận.
 - Electron screenshot: positron-p51196-dvr-preview-after-1920x1080-real.png

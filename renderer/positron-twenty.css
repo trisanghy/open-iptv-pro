@@ -890,3 +890,18 @@ html[data-positron="true"] #poDvrReview[data-state="invalid"] strong{color:#ffb0
  html[data-positron="true"] #poDvrReview{gap:3px;padding:10px}
  html[data-positron="true"] #poDvrReview strong,html[data-positron="true"] #poDvrReview p{flex:1 1 100%}
 }
+
+
+/* P197: legible DVR recap and accessible explicit clipboard action. */
+html[data-positron="true"] #poDvrReview{align-items:center;gap:10px}
+html[data-positron="true"] #poDvrReview p{font-size:13px;line-height:1.55}
+html[data-positron="true"] #poDvrReviewCopy{
+ min-height:34px;max-width:100%;padding:6px 11px;
+ border:1px solid var(--po-border,#325160);border-radius:8px;
+ background:var(--po-input,#17303c);color:var(--po-text,#e6f4f4);
+ font:inherit;font-size:12px;cursor:pointer;white-space:nowrap;
+}
+html[data-positron="true"] #poDvrReviewCopy:disabled{opacity:.45;cursor:not-allowed}
+html[data-positron="true"] #poDvrReviewCopy[data-state="copied"]{border-color:var(--po-accent,#79dfc6);color:var(--po-accent,#79dfc6)}
+html[data-positron="true"] #poDvrReviewCopy:focus-visible{outline:2px solid var(--po-accent,#79dfc6);outline-offset:2px}
+@media(max-width:700px){html[data-positron="true"] #poDvrReviewCopy{width:100%;white-space:normal}}

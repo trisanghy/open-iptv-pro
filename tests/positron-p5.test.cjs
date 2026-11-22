@@ -2124,3 +2124,16 @@ test('P5.1.196 DVR preview displays channel, title, time and guards',()=>{
   'positron-p51196-dvr-preview-after-1920x1080-real.png'])
   assert.ok(qa.includes(t),'Missing native Electron evidence '+t);
 });
+
+
+test('P5.1.197 copies only validated DVR summary and prevents duplicate channel caption',()=>{
+ const js=read('renderer/positron-twenty.js'),css=read('renderer/positron-twenty.css');
+ const qa=read('scripts/positron-20-extension.cjs');
+ for(const part of ['poDvrReviewCopy',"navigator.clipboard?.writeText","copy.disabled=true",
+  "copy.disabled=false","copy.dataset.state='copied'","title.startsWith(selected+' - ')"])
+  assert.ok(js.includes(part),'Missing P197 clipboard safeguard: '+part);
+ assert.ok(css.includes('#poDvrReviewCopy:disabled'));
+ assert.ok(qa.includes('dvrCopyQA'));
+ assert.ok(qa.includes('positron-p51197-dvr-copy-before-1920x1080-real.png'));
+ assert.ok(qa.includes('positron-p51197-dvr-copy-after-1920x1080-real.png'));
+});

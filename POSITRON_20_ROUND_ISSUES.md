@@ -1,5 +1,10 @@
 # Positron — New 20-round issue register
 
+## Đợt hiện tại — vòng kế tiếp P5.1.197 (CANDIDATE)
+- Đầu vào: ảnh Electron P5.1.196 thật trước/sau đã MỞ xem 1920×1080; ở ảnh sau, dòng lịch ghi nhỏ và lặp 'QA Channel 001' do tên auto đã có tên kênh.
+- P5.1.197 / app 4.23.282: Sao chép lịch ghi khi hợp lệ, rõ ràng thông báo clipboard, bỏ lặp kênh trong tóm tắt; không ảnh hưởng DVR/playlist.
+- Yêu cầu trước khi tính vòng hoàn thành: 12 QA Electron, hai PNG thật trước/sau, MỞ ảnh sau, Node 0 lỗi, build và tag release riêng. Giữ bản cũ bất biến.
+
 ## Vòng mới từ P5.1.195 — 22/11/2026
 - Baseline đã MỞ: hai PNG Electron thật P5.1.195 before/after, 1920×1080; Actions 45004688211 6/6 jobs thành công; release `positron/v4.23.280-p5.1.195`.
 - Lỗi UX từ ảnh: chưa xem lại lịch ghi kênh, tên và thời lượng trong một hàng trước khi bấm Đặt lịch.
