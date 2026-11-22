@@ -98,3 +98,22 @@ html[data-iptv-device="mobile"] .desktop-download-overlay{padding-bottom:max(12p
 .desktop-download-mac-open-guide[hidden]{display:none}
 .desktop-download-mac-open-guide kbd{display:inline-block;background:var(--surface2,#172737);border:1px solid var(--edge,#35485c);border-radius:4px;padding:0 5px}
 .desktop-download-mac-open-guide a{color:var(--accent,#bd89f5)}
+
+/* Android PWA install CTA — matches the download dialog across light, dark and AMOLED themes. */
+#androidWebApkInstall .desktop-download-install-now{
+ display:flex;align-items:center;justify-content:center;gap:9px;width:100%;min-height:46px;
+ box-sizing:border-box;margin:12px 0 4px;padding:11px 16px;
+ border:1px solid color-mix(in srgb,var(--accent,#bd89f5) 76%,transparent);
+ border-radius:12px;background:linear-gradient(120deg,var(--accent,#ad7be8),color-mix(in srgb,var(--accent,#ad7be8) 75%,#7152b6));
+ color:#fff;font:inherit;font-size:14px;font-weight:750;line-height:1.35;
+ box-shadow:0 5px 18px color-mix(in srgb,var(--accent,#ad7be8) 18%,transparent);
+ cursor:pointer;transition:filter .15s,transform .15s;
+}
+#androidWebApkInstall .desktop-download-install-now:hover{filter:brightness(1.09)}
+#androidWebApkInstall .desktop-download-install-now:active{transform:scale(.99)}
+#androidWebApkInstall .desktop-download-install-now:focus-visible{outline:2px solid var(--text,#fff);outline-offset:3px}
+#androidWebApkInstall .desktop-download-install-now:disabled{opacity:.7;cursor:default;box-shadow:none}
+#androidInstallFeedback:empty{display:none}
+#androidInstallFeedback:not(:empty){margin:9px 0 4px;padding:9px 11px;border-radius:9px;
+ background:color-mix(in srgb,var(--accent,#bd89f5) 8%,var(--surface,#101c29));
+ border:1px solid color-mix(in srgb,var(--accent,#bd89f5) 20%,var(--edge,#35485c))}
