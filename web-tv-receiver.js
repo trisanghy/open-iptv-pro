@@ -200,75 +200,163 @@
     void Promise.resolve(d.documentElement.requestFullscreen()).catch(()=>{});
   }catch{} // TV browsers often require a remote-control gesture; CSS cinema remains usable.
  }
- function cleanupPlayer(){
-  suppressPause=true;playingUrl='';
-  renderHistory();
-  leaveCinema();
-  try{video.pause();}catch{}
+ // A new remote channel invalidates all callbacks from the previous HLS/DASH
+ // session. Never report a failure until every compatible decoder was tried.
+ let playbackGeneration=0,stageGeneration=0,playbackStages=[],stageIndex=-1;
+ let playbackStage='',stageTimer=0,playbackStarted=false,stageError='',pendingUserGesture=false;
+ function clearStageTimer(){
+  if(stageTimer){root.clearTimeout(stageTimer);stageTimer=0;}
+ }
+ function resetMedia(){
+  clearStageTimer();
   try{hls?.destroy();}catch{}hls=null;
   try{dash?.reset();}catch{}dash=null;
+  try{video.pause();}catch{}
   video.removeAttribute('src');
   try{video.load();}catch{}
  }
- async function loadVideo(url,name,mediaId=''){
+ function cleanupPlayer(){
+  playbackGeneration++;stageGeneration++;playbackStages=[];stageIndex=-1;
+  playbackStage='';playbackStarted=false;stageError='';pendingUserGesture=false;
+  suppressPause=true;playingUrl='';
+  renderHistory();leaveCinema();
+  resetMedia();
+ }
+ const stageAvailable=stage=>{
+  if(stage==='hlsjs')return !!(root.Hls?.isSupported?.());
+  if(stage==='dashjs')return !!(root.dashjs?.MediaPlayer);
+  if(stage==='native-hls')return !!video.canPlayType?.('application/vnd.apple.mpegurl');
+  return true;
+ };
+ function stagesFor(url){
+  const path=new URL(url).pathname.toLowerCase();
+  const isHls=/\.m3u8?$/.test(path),isDash=/\.mpd$/.test(path);
+  const stages=isHls?['native-hls','hlsjs']:
+   isDash?['dashjs','native']:
+   /\.(?:mp4|m4v|webm|mp3|aac|m4a|ts)$/.test(path)?['native']:
+   ['native','hlsjs','dashjs'];
+  // Some Samsung devices advertise native HLS but reject specific channels.
+  // Always keep a second engine for HLS where MSE is supported.
+  return stages.filter(stageAvailable);
+ }
+ function playbackIssue(reason,session,attempt){
+  if(session!==playbackGeneration||attempt!==stageGeneration||!playingUrl||playbackStarted)return;
+  stageError=String(reason||'không hỗ trợ nguồn').slice(0,155);
+  clearStageTimer();
+  if(stageIndex+1<playbackStages.length){
+   status('Bộ phát '+playbackStage+' không mở được. Đang thử '+playbackStages[stageIndex+1]+'…');
+   nextStage(session);
+  }else{
+   let hostname='';
+   try{hostname=new URL(playingUrl).hostname;}catch{}
+   status('Không phát được '+playingName+(hostname?' ('+hostname+')':'')+': '+stageError+
+    '. Kiểm tra HTTP/CORS, định dạng hoặc thử URL khác trong Open IPTV Pro.');
+   if(accepted)void receiver?.reportPlayback('error',playingName,playingId).catch(()=>{});
+  }
+ }
+ function playWhenReady(session,attempt){
+  if(session!==playbackGeneration||attempt!==stageGeneration||!playingUrl)return;
+  let promise;
+  try{promise=video.play();}
+  catch(error){playbackIssue(error?.message||error,session,attempt);return;}
+  if(promise?.catch)promise.catch(error=>{
+   if(session!==playbackGeneration||attempt!==stageGeneration)return;
+   if(error?.name==='AbortError')return;
+   if(error?.name==='NotAllowedError'){
+    pendingUserGesture=true;
+    clearStageTimer();
+    status('TV chặn tự phát. Nhấn ▶ Phát trên TV bằng điều khiển.');
+    if(accepted)void receiver?.reportPlayback('paused',playingName,playingId).catch(()=>{});
+    return;
+   }
+   playbackIssue(error?.message||error,session,attempt);
+  });
+ }
+ function nextStage(session){
+  if(session!==playbackGeneration||!playingUrl)return;
+  resetMedia();
+  stageIndex++;stageGeneration++;
+  const attempt=stageGeneration,mode=playbackStages[stageIndex],url=playingUrl;
+  playbackStage=mode;playbackStarted=false;pendingUserGesture=false;
+  if(!mode){playbackIssue(stageError||'không có bộ phát phù hợp',session,attempt);return;}
+  status('Đang thử '+mode+' cho '+playingName+'…');
+  stageTimer=root.setTimeout(()=>{
+   if(session===playbackGeneration&&attempt===stageGeneration&&!playbackStarted&&!pendingUserGesture)
+    playbackIssue(mode+' không nhận dữ liệu sau 18 giây',session,attempt);
+  },18000);
+  try{
+   if(mode==='hlsjs'){
+    // hls.js first needs MEDIA_ATTACHED, then a parsed manifest.
+    // Calling video.play() before MANIFEST_PARSED causes the observed
+    // "Failed to load because no supported source was found" on Samsung.
+    const engine=new root.Hls({enableWorker:false,lowLatencyMode:false,maxBufferLength:22});
+    hls=engine;
+    engine.on(root.Hls.Events.MEDIA_ATTACHED,()=>{
+     if(session===playbackGeneration&&attempt===stageGeneration)engine.loadSource(url);
+    });
+    engine.on(root.Hls.Events.MANIFEST_PARSED,()=>{
+     if(session===playbackGeneration&&attempt===stageGeneration)playWhenReady(session,attempt);
+    });
+    engine.on(root.Hls.Events.ERROR,(_event,data)=>{
+     if(session!==playbackGeneration||attempt!==stageGeneration||!data?.fatal)return;
+     const detail=String(data.details||data.type||'HLS không phát được');
+     const code=Number(data.response?.code||0);
+     playbackIssue(detail+(code?' HTTP '+code:'; có thể là CORS/mạng'),session,attempt);
+    });
+    engine.attachMedia(video);
+    return;
+   }
+   if(mode==='dashjs'){
+    const engine=root.dashjs.MediaPlayer().create();dash=engine;
+    const eventName=root.dashjs.MediaPlayer.events?.STREAM_INITIALIZED||'streamInitialized';
+    engine.on?.(eventName,()=>playWhenReady(session,attempt));
+    engine.on?.(root.dashjs.MediaPlayer.events?.ERROR||'error',data=>{
+     playbackIssue('DASH: '+String(data?.error?.message||data?.event?.message||'không phát được'),session,attempt);
+    });
+    engine.initialize(video,url,false);
+    return;
+   }
+   // Native and native-HLS have an actual src before play(), unlike MSE.
+   video.src=url;
+   playWhenReady(session,attempt);
+  }catch(error){
+   playbackIssue(String(error?.message||error),session,attempt);
+  }
+ }
+ function loadVideo(url,name,mediaId=''){
   cleanupPlayer();
+  const session=playbackGeneration;
   playingId=String(mediaId||'').slice(0,320);
   fullscreenAttempted=false;playingName=String(name||'Open IPTV Pro');
-  $('tvPlayingTitle').textContent=name||'Open IPTV Pro';
+  $('tvPlayingTitle').textContent=playingName;
   const safeUrl=safeHistoryUrl(url);
   if(!safeUrl){status('Đường dẫn kênh không hợp lệ.');return;}
   playingUrl=safeUrl;
   const u=new URL(safeUrl);
   if(u.protocol==='http:'&&root.location.protocol==='https:'){
-   status('Nguồn đang dùng HTTP. Trình duyệt TV có thể chặn nội dung không an toàn; hãy dùng HTTPS hoặc ứng dụng Electron.');
-    void receiver?.reportPlayback('error',playingName,playingId).catch(()=>{});
+   status('Nguồn HTTP có thể bị trình duyệt TV chặn trên trang HTTPS. Chọn nguồn HTTPS.');
+   if(accepted)void receiver?.reportPlayback('error',playingName,playingId).catch(()=>{});
    return;
   }
-  const isHls=/\.m3u8?(?:[?#]|$)/i.test(url);
-  const isDash=/\.mpd(?:[?#]|$)/i.test(url);
-  if(isHls&&video.canPlayType('application/vnd.apple.mpegurl')){
-   video.src=url;
-  }else if(isHls&&root.Hls?.isSupported?.()){
-   hls=new root.Hls({enableWorker:true,lowLatencyMode:true});
-   hls.attachMedia(video);
-   hls.on(root.Hls.Events.MEDIA_ATTACHED,()=>hls.loadSource(url));
-   hls.on(root.Hls.Events.ERROR,(_event,data)=>{
-    if(data.fatal){
-      status('Không phát được HLS trên TV: '+String(data.details||data.type||'lỗi nguồn'));
-      void receiver?.reportPlayback('error',playingName,playingId).catch(()=>{});
-     }
-   });
-  }else if(isDash&&root.dashjs?.MediaPlayer){
-   dash=root.dashjs.MediaPlayer().create();
-   dash.initialize(video,url,true);
-  }else{
-   video.src=url;
+  playbackStages=stagesFor(safeUrl);
+  if(!playbackStages.length){
+   status('TV không hỗ trợ bộ phát cho định dạng của kênh.');
+   if(accepted)void receiver?.reportPlayback('error',playingName,playingId).catch(()=>{});
+   return;
   }
-  try{
-   await video.play();
-   status('Đang phát '+(name||'kênh')+' trên TV.');
-  }catch(error){
-   if(error?.name==='NotAllowedError'){
-     status('TV đã chặn tự phát. Nhấn ▶ Phát trực tiếp trên TV bằng điều khiển TV.');
-     void receiver?.reportPlayback('paused',playingName,playingId).catch(()=>{});
-    }else{
-     status('TV chưa phát được '+(name||'kênh')+': '+String(error?.message||error));
-     void receiver?.reportPlayback('error',playingName,playingId).catch(()=>{});
-    }
-  }
+  nextStage(session);
  }
  video.addEventListener('playing',()=>{
   if(!playingUrl)return;
-  suppressPause=false;
-  enterCinema();
+  playbackStarted=true;pendingUserGesture=false;clearStageTimer();
+  suppressPause=false;enterCinema();
   status('Đang phát '+playingName+' trên TV.');
   rememberChannel(playingUrl,playingName,playingId);
   if(accepted)void receiver?.reportPlayback('playing',playingName,playingId).catch(()=>{});
  });
  video.addEventListener('error',()=>{
-  if(!video.error)return;
-  status('TV không giải mã hoặc tải được luồng. Thử kênh khác, kiểm tra HTTPS và định dạng video.');
-  if(accepted)void receiver?.reportPlayback('error',playingName,playingId).catch(()=>{});
+  if(!playingUrl||playbackStarted)return;
+  playbackIssue('HTML5: '+String(video.error?.message||'nguồn hoặc codec không hỗ trợ'),playbackGeneration,stageGeneration);
  });
  function handleCommand(command){
   if(!accepted)return;
@@ -336,7 +424,10 @@
   // Use this explicit TV remote action if fullscreen was rejected during automatic playback.
   fullscreenAttempted=false;
   enterCinema();
-  void video.play().catch(()=>status('Không phát được luồng trên trình duyệt TV.'));
+  if(playbackStage==='hlsjs'&&!video.currentSrc){status('Đang chờ HLS tải xong trước khi phát…');return;}
+  void video.play().catch(error=>{
+   if(error?.name!=='NotAllowedError')playbackIssue(error?.message||error,playbackGeneration,stageGeneration);
+  });
  });
  cinemaButton?.addEventListener('click',leaveCinema);
  // Direction keys and Enter/OK work on computers and Samsung TV remotes.
