@@ -61,14 +61,19 @@ label{display:block;color:#ecf6ff;font-weight:650;margin:12px 0 6px}
 <div class="hint">Mọi thay đổi được gửi tới TV và chỉ báo hoàn tất sau khi TV xác nhận đã lưu. Giữ màn hình QR mở trên TV.</div>
 </section>
 <section id="addPanel" class="panel" hidden>
-<h1>Thêm nguồn IPTV</h1><p>Nhập URL M3U / M3U8 và gửi trực tiếp sang TV đã kết nối.</p>
+<h1>Thêm nguồn IPTV</h1><p>Gửi URL hoặc chuyển tệp M3U qua QR khi TV không đọc được nguồn.</p>
 <form id="sourceForm">
 <label for="name">Tên nguồn</label><input id="name" type="text" maxlength="80" placeholder="Ví dụ: Danh sách của tôi" required autocomplete="off">
 <label for="address">Đường dẫn URL M3U / M3U8</label><input id="address" type="url" maxlength="4096" placeholder="https://example.com/channels.m3u" required inputmode="url" autocapitalize="off" autocomplete="off" spellcheck="false">
 <label class="checkline"><input id="rights" type="checkbox" required> Tôi có quyền sử dụng danh sách và nội dung này.</label>
 <button id="send" class="primary full" type="submit" disabled>Gửi nguồn sang TV</button>
 </form>
-<p class="hint">Điện thoại không tải danh sách thay TV. Nếu nguồn chặn CORS hoặc TV không đọc được tệp, TV sẽ báo lỗi cụ thể.</p>
+<p class="hint">Nếu TV không tải được URL, điện thoại sẽ thử tải. Nếu vẫn lỗi CORS, mở URL bằng trình duyệt, lưu tệp .m3u về máy và gửi qua QR, không cần USB.</p>
+<a id="openSource" href="#" target="_blank" rel="noopener noreferrer" style="display:block;margin:12px 0;color:#87d8ff">↗ Mở URL nguồn bằng trình duyệt</a>
+<label for="playlistFile">Chọn tệp M3U / M3U8 trên điện thoại</label><input id="playlistFile" type="file" accept=".m3u,.m3u8,text/plain,application/vnd.apple.mpegurl,application/x-mpegURL">
+<p class="micro">Tệp tối đa 3 MB. TV xác nhận từng phần và chỉ báo thành công sau khi lưu.</p>
+<button id="sendFile" class="primary full" type="button" disabled>↑ Gửi tệp M3U sang TV</button>
+<button id="tryPhone" class="full" type="button" disabled style="margin-top:8px">↻ Thử tải URL trên điện thoại</button>
 </section>
 <section id="editPanel" class="panel" hidden>
 <h2 id="editTitle">Chỉnh sửa kênh</h2>
@@ -117,7 +122,7 @@ var script=document.createElement('script');script.src=sites.shift();script.onlo
 function expires(){return Date.now()-started>600000;}
 function updateControls(){
  var good=online&&!busy&&!expires(),hasSource=good&&snapshot&&snapshot.sourceId;
- byId('send').disabled=!good;byId('refresh').disabled=!good;
+ byId('send').disabled=!good;byId('refresh').disabled=!good;byId('sendFile').disabled=!good;byId('tryPhone').disabled=!good;
  byId('sourceSelect').disabled=!good||!snapshot||!snapshot.sources.length;
  ['renameSource','deleteSource','sourceUp','sourceDown','newChannel'].forEach(function(id){byId(id).disabled=!hasSource;});
  byId('filterChannels').disabled=!hasSource;
@@ -243,6 +248,84 @@ async function connect(){
 }
 byId('address').addEventListener('blur',function(){var checked=validUrl(this.value);if(checked)this.value=checked;});
 byId('editUrl').addEventListener('blur',function(){var checked=validUrl(this.value);if(checked)this.value=checked;});
+
+function playlistHash(s){var h=2166136261;for(var i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619);}return(h>>>0).toString(36);}
+function splitPlaylist(s){
+ var chunks=[],p=0;
+ while(p<s.length){var e=Math.min(p+12000,s.length);
+  if(e<s.length){var c=s.charCodeAt(e-1);if(c>=0xD800&&c<=0xDBFF)e--;}
+  chunks.push(s.slice(p,e));p=e;
+ }return chunks;
+}
+function readPlaylistFile(file){
+ return new Promise(function(resolve,reject){
+  if(!file){reject(Error('Chưa chọn tệp M3U.'));return;}
+  if(file.size>3000000){reject(Error('M3U vượt 3 MB.'));return;}
+  var r=new FileReader();
+  r.onerror=function(){reject(Error('Không đọc được tệp M3U.'));};
+  r.onload=function(){resolve(String(r.result||'').replace(/^\uFEFF/,''));};
+  r.readAsText(file,'UTF-8');
+ });
+}
+async function fetchPlaylistOnPhone(address){
+ var ctrl=typeof AbortController==='function'?new AbortController():null;
+ var timer=setTimeout(function(){if(ctrl)ctrl.abort();},17000);
+ try{
+  var res=await fetch(address,{cache:'no-store',credentials:'omit',mode:'cors',signal:ctrl?ctrl.signal:undefined});
+  if(!res.ok)throw Error('HTTP '+res.status);
+  var raw=await res.text();if(raw.length>3000000)throw Error('M3U vượt 3 MB.');
+  return raw.replace(/^\uFEFF/,'');
+ }catch(e){throw Error('Điện thoại cũng không tải được URL (CORS/mạng/HTTPS). Lưu tệp M3U bằng trình duyệt rồi chọn tệp. '+String(e.message||e).slice(0,80));}
+ finally{clearTimeout(timer);}
+}
+async function transferPlaylist(raw,name,address){
+ if(!online||!subscribed||expires())throw Error('TV mất kết nối hoặc QR hết hạn.');
+ if(!byId('rights').checked)throw Error('Phải xác nhận quyền sử dụng danh sách.');
+ raw=String(raw||'').replace(/^\uFEFF/,'');
+ if(!raw||raw.length>3000000)throw Error('M3U trống hoặc vượt 3 MB.');
+ if(/^\s*(?:<!doctype\s+html|<html[\s>]|<head[\s>]|<body[\s>])/i.test(raw))throw Error('Nội dung nhận được là HTML, không phải M3U.');
+ var parts=splitPlaylist(raw),id=tokenId();if(parts.length>300)throw Error('Tệp vượt giới hạn truyền QR.');
+ busy=true;updateControls();
+ try{
+  feedback('Đang yêu cầu TV nhận tệp M3U…');
+  await request('playlist-start',{transferId:id,parts:parts.length,total:raw.length,checksum:playlistHash(raw),name:String(name||'Nguồn IPTV').trim().slice(0,80),address:address||'',rights:true},30000);
+  for(var i=0;i<parts.length;i++){
+   var ack,err;
+   for(var retry=0;retry<3;retry++){
+    try{ack=await request('playlist-chunk',{transferId:id,index:i,chunk:parts[i]},30000);
+     if(ack.received!==i+1)throw Error('TV xác nhận sai phần truyền.');
+     err=null;break;
+    }catch(e){err=e;}
+   }
+   if(err)throw err;
+   if(i%5===0||i+1===parts.length)feedback('Đang gửi M3U sang TV: '+(i+1)+'/'+parts.length+' phần ('+Math.round((i+1)/parts.length*100)+'%).');
+  }
+  var saved=await request('playlist-finish',{transferId:id},60000);
+  if(saved.state)applySnapshot(saved.state);
+  byId('playlistFile').value='';
+  feedback('✓ TV đã nhận và lưu '+(saved.count||0)+' kênh từ M3U.');showTab('manage');
+  return saved;
+ }catch(e){feedback('Không gửi được M3U: '+String(e.message||e),true);throw e;}
+ finally{busy=false;updateControls();}
+}
+async function importFromPhoneUrl(){
+ if(!byId('rights').checked)throw Error('Phải xác nhận quyền sử dụng danh sách.');
+ var addr=validUrl(byId('address').value);
+ if(!addr)throw Error('Cần nhập URL nguồn hợp lệ.');
+ feedback('TV không tải được, thử tải URL bằng điện thoại…');
+ return transferPlaylist(await fetchPlaylistOnPhone(addr),byId('name').value.trim()||'Danh sách IPTV',addr);
+}
+
+byId('openSource').onclick=function(e){var addr=validUrl(byId('address').value);if(!addr){e.preventDefault();feedback('Nhập URL hợp lệ trước.',true);}else this.href=addr;};
+byId('sendFile').onclick=async function(){
+ try{
+  var file=byId('playlistFile').files&&byId('playlistFile').files[0];
+  var raw=await readPlaylistFile(file),input=byId('address').value.trim(),address=input?validUrl(input):'';
+  if(input&&!address)throw Error('URL gốc không hợp lệ, có thể xóa URL để gửi riêng tệp.');
+  await transferPlaylist(raw,byId('name').value.trim()||file.name.replace(/\.m3u8?$/i,'')||'Nguồn IPTV',address);
+ }catch(e){feedback('Lỗi gửi tệp: '+String(e.message||e),true);}
+};
+byId('tryPhone').onclick=async function(){try{await importFromPhoneUrl();}catch(e){feedback('Không tải được bằng điện thoại: '+String(e.message||e),true);}};
 byId('tabManage').onclick=function(){showTab('manage');if(online&&!snapshot)void getSnapshot('',0,'');};
 byId('tabAdd').onclick=function(){showTab('add');};
 byId('refresh').onclick=function(){void getSnapshot(currentSource,offset,query);};
@@ -260,7 +343,11 @@ byId('sourceForm').onsubmit=async function(event){
   byId('sourceForm').reset();query='';offset=0;
   feedback('✓ TV đã tải và lưu '+(response.count||0)+' kênh. Có thể quản lý ngay.');
   showTab('manage');
- }catch(e){}
+  }catch(e){
+  if(/TV không truy cập được|Tải M3U quá|NetworkError|Failed to fetch|CORS/i.test(String(e.message||e))){
+   try{await importFromPhoneUrl();}catch(f){feedback('TV và điện thoại đều không tải được URL. Mở nguồn bằng trình duyệt, lưu .m3u và chọn “Gửi tệp M3U sang TV”. '+String(f.message||f).slice(0,120),true);}
+  }
+ }
 };
 byId('renameSource').onclick=async function(){
  var current=snapshot&&snapshot.sources.find(function(s){return s.id===currentSource;});
