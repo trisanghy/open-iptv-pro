@@ -1,4 +1,15 @@
-# Open IPTV Pro TV · TizenBrew v0.1.20 (thử nghiệm)
+# Open IPTV Pro TV · TizenBrew v0.1.21 (thử nghiệm)
+
+## v0.1.21 — Khắc phục lỗi không phát được bất kỳ kênh IPTV nào
+
+- **Nguyên nhân trong mã cũ:** bộ phát chỉ gán trực tiếp URL `c.url` vào thẻ HTML5 `<video>` và gọi `play()`. Khi Samsung Tizen không hỗ trợ luồng IPTV HLS/DASH theo đường HTML5, ứng dụng chỉ báo lỗi mà không chuyển sang bộ phát khác.
+- **Bộ phát Samsung AVPlay:** dùng `webapis.avplay.open(url)` → `setDisplayRect(0,0,1920,1080)` → `prepareAsync()` → `play()` cho các kênh, với đối tượng `application/avplayer` trong trình phát. Chờ sự kiện tiến độ phát trước khi xóa trạng thái tải. AVPlay hỗ trợ HLS và DASH theo tài liệu Samsung.
+- **Tự dự phòng:** nếu AVPlay không có, chuẩn bị lỗi hoặc chờ quá 18 giây, thử trình phát HTML5. Với M3U8 không hỗ trợ HLS nguyên bản, tải HLS.js từ trang chủ GitHub Pages (dự phòng jsDelivr) khi trình duyệt hỗ trợ MediaSource. Không chuyển tiếp playlist riêng tư qua proxy lạ và không can thiệp DRM.
+- **Điều khiển:** nút OK dùng đúng API `play/pause` của bộ phát đang hoạt động; CH± tiếp tục chuyển kênh, Back dừng giải mã và về danh sách. Thay kênh sẽ `stop/close` AVPlay và `destroy` HLS.js cũ trước khi mở kênh mới; callback của kênh cũ được bỏ qua.
+- **Lỗi rõ ràng hơn:** màn hình sẽ cho biết đang thử AVPlay hay HTML5/HLS.js, và lý do thất bại nếu có.
+- **Không xóa nguồn:** giữ nguyên danh sách kênh, QR, yêu thích, lịch sử và thiết lập.
+- **Kiểm thử:** `tizenbrew/tests/samsung-avplay-playback.test.cjs` bổ sung kiểm thử máy giả lập về các nhánh chọn bộ phát, dự phòng, điều khiển, hủy callback cũ, giải phóng và HLS.js. Chưa được xác nhận phát thành công trên Samsung TV thực.
+- **Tự cập nhật:** vẫn dựa vào metadata CDN của TizenBrew, có thể bị trễ do cache. Số phiên bản ở cả metadata và giao diện là **v0.1.21**.
 
 ## v0.1.20 — Sửa Back/Thoát và làm mới thông tin phiên bản trong TizenBrew
 
