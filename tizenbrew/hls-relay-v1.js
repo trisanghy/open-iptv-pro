@@ -193,20 +193,38 @@ function respondUpstream(source,req,res,session,depth,castContext){
  });
 }
 function handler(req,res){
+ var path=Url.parse(req.url).pathname;
+ var mediaMatch=/^\/r\/([0-9a-f]{40})\/(\d+)$/.exec(path);
+ var mediaSession=mediaMatch&&sessions[mediaMatch[1]];
+ var mediaIndex=mediaMatch?Number(mediaMatch[2]):-1;
+ var validMediaRoute=!!(mediaSession&&mediaSession.resources[mediaIndex]&&Date.now()-mediaSession.last<=EXPIRE_MS);
+ var mediaGet=req.method==='GET'&&validMediaRoute;
+ var mediaOptions=req.method==='OPTIONS'&&validMediaRoute;
  setCors(req,res);
  var origin=req.headers.origin||'';
  if(!own(ALLOWED_ORIGINS,origin)){
-  json(res,403,{error:'Chỉ ứng dụng TizenBrew trên TV được phép sử dụng.'});return;
+  // WebKit may use Origin:null or omit Origin for loopback HLS requests.
+  // A valid 160-bit session path is the capability for media only.
+  if(!mediaGet&&!mediaOptions){
+   json(res,403,{error:'Chỉ ứng dụng TizenBrew trên TV được phép sử dụng.'});return;
+  }
+  if(origin){res.setHeader('Access-Control-Allow-Origin',origin);res.setHeader('Vary','Origin');}
+  res.setHeader('Access-Control-Allow-Methods','GET,OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers','Content-Type, X-Open-IPTV-Relay, Range');
  }
  // A CORS preflight carries Access-Control-Request-Headers, not the actual
- // X-Open-IPTV-Relay header. It must be handled before checking that header.
- if(req.method==='OPTIONS'){res.writeHead(204);res.end();return;}
- var path=Url.parse(req.url).pathname;
- // Samsung WebKit/HLS.js may omit custom headers on media GETs. Keep those
- // requests scoped to the allowlisted app origin and unguessable session ID.
- var isMediaRequest=req.method==='GET'&&/^\/r\/[0-9a-f]{40}\/\d+$/.test(path);
- if(!isMediaRequest&&req.headers['x-open-iptv-relay']!=='1'){
+ // X-Open-IPTV-Relay header. Valid media routes can preflight without origin allowlist.
+ if(req.method==='OPTIONS'){
+  if(!own(ALLOWED_ORIGINS,origin)&&!mediaOptions){json(res,403,{error:'Chỉ ứng dụng TizenBrew trên TV được phép sử dụng.'});return;}
+  res.writeHead(204);res.end();return;
+ }
+ if(!mediaGet&&req.headers['x-open-iptv-relay']!=='1'){
   json(res,403,{error:'Yêu cầu thiếu mã ứng dụng.'});return;
+ }
+ if(mediaGet){
+  mediaSession.last=Date.now();
+  mediaSession.mediaRequest={origin:String(origin||'(no Origin)').slice(0,180),
+   appHeader:req.headers['x-open-iptv-relay']==='1'};
  }
  if(req.method==='GET'&&path==='/health'){json(res,200,{ok:true,transport:'local-hls',version:'1'});return;}
  if(req.method==='POST'&&path==='/session'){
@@ -234,7 +252,7 @@ function handler(req,res){
   var debugSession=sessions[diagMatch[1]];
   if(!debugSession||Date.now()-debugSession.last>EXPIRE_MS){json(res,404,{error:'Phiên phát đã hết hạn.'});return;}
   debugSession.last=Date.now();
-  json(res,200,{browserUserAgent:String(debugSession.userAgent||''),requests:debugSession.requestDiagnostics||[]});
+  json(res,200,{browserUserAgent:String(debugSession.userAgent||''),mediaRequest:debugSession.mediaRequest||null,requests:debugSession.requestDiagnostics||[]});
   return;
  }
  var match=/^\/r\/([0-9a-f]{40})\/(\d+)$/.exec(path);
