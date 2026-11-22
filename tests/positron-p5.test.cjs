@@ -1978,3 +1978,18 @@ test('P5.1.186 adds previous page and truthful page index, last page never dupli
  assert.ok(qa.includes('favoritePageLastQA'));
  assert.ok(qa.includes('favoritePageNavigationQA'));
 });
+
+test('P5.1.187 jumps to numbered suggestion pages and clamps out-of-range input',()=>{
+ const js=read('renderer/positron-twenty.js'),css=read('renderer/positron-twenty.css');
+ const qa=read('scripts/positron-20-extension.cjs');
+ assert.ok(js.includes("jump.id='positronFavoriteJump'"));
+ assert.ok(js.includes("jump.type='number';jump.min='1';jump.max=String(pageCount);jump.step='1'"));
+ assert.ok(js.includes("jump.setAttribute('aria-label','Đi thẳng tới trang gợi ý')"));
+ assert.ok(js.includes('Number.isFinite(requested)?Math.max(1,Math.min(pageCount,requested))'));
+ assert.ok(js.includes('moreCursor=(target-1)*morePageSize'));
+ assert.ok(js.includes("jump.addEventListener('keydown',event=>{if(event.key==='Enter')"));
+ assert.ok(js.includes("jump.addEventListener('change',jumpToPage)"));
+ assert.ok(css.includes('#positronFavoriteJump:focus-visible'));
+ assert.ok(qa.includes('favoriteJumpSevenQA'));
+ assert.ok(qa.includes('favoriteJumpClampQA'));
+});

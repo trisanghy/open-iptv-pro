@@ -126,3 +126,9 @@ Evaluate defects revealed by real screenshot of previous build before making cha
 - Feature: Trước/Tiếp + Trang x/y, trang cuối ngắn đúng dữ liệu, không trùng kênh/bulk đúng N.
 - QA: `favoritePageLastQA`, `favoritePageNavigationQA`, PNG before/after Electron 1920×1080.
 - Chờ CI và soát ảnh/release.
+
+## P5.1.187 (CANDIDATE) — từ ảnh P186
+- Input: hàng trăm gợi ý có chỉ số trang nhưng chưa có điều hướng trực tiếp tới trang số bất kỳ.
+- Feature: ô nhập trang có Enter, clamp 1..tổng, giữ nguồn và phân trang.
+- QA: `favoriteJumpSevenQA`, `favoriteJumpClampQA`, ảnh P187 before/after Electron 1920×1080.
+- Chờ CI/ảnh/release.

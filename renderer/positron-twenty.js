@@ -227,6 +227,22 @@
    const pageStatus=d.createElement('span');pageStatus.className='po-fav-more-page';
    pageStatus.setAttribute('role','status');pageStatus.setAttribute('aria-live','polite');
    pageStatus.textContent='Trang '+(pageIndex+1)+'/'+pageCount;
+   // P5.1.187: jump to a specific page without repeated Next/Previous clicks.
+   const jumpLabel=d.createElement('label');jumpLabel.htmlFor='positronFavoriteJump';
+   jumpLabel.textContent='Đến trang';jumpLabel.hidden=pageCount<=1;
+   const jump=d.createElement('input');jump.id='positronFavoriteJump';
+   jump.type='number';jump.min='1';jump.max=String(pageCount);jump.step='1';
+   jump.value=String(pageIndex+1);jump.hidden=pageCount<=1;
+   jump.setAttribute('aria-label','Đi thẳng tới trang gợi ý');
+   const jumpToPage=()=>{
+    const requested=Math.trunc(Number(jump.value));
+    const target=Number.isFinite(requested)?Math.max(1,Math.min(pageCount,requested)):pageIndex+1;
+    moreCursor=(target-1)*morePageSize;
+    syncFavoriteMore();
+    more.querySelector('#positronFavoriteJump')?.focus();
+   };
+   jump.addEventListener('change',jumpToPage);
+   jump.addEventListener('keydown',event=>{if(event.key==='Enter'){event.preventDefault();jumpToPage();}});
    const next=d.createElement('button');next.type='button';next.className='po-fav-more-next';
    next.textContent='Gợi ý khác →';
    next.setAttribute('aria-label','Xem trang gợi ý tiếp');
@@ -266,7 +282,7 @@
     morePageSize=Number(pageSize.value)||6;moreCursor=0;
     syncFavoriteMore();more.querySelector('#positronFavoritePageSize')?.focus();
    });
-   toolbar.append(heading,pageLabel,pageSize,prev,pageStatus,next,bulk);
+   toolbar.append(heading,pageLabel,pageSize,prev,pageStatus,jumpLabel,jump,next,bulk);
    const searchRow=d.createElement('div');searchRow.className='po-fav-more-search-row';
    const searchLabel=d.createElement('label');searchLabel.htmlFor='positronFavoriteMoreSearch';
    searchLabel.textContent='Tìm kênh để thêm';

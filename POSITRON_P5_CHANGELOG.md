@@ -1,5 +1,14 @@
 # Positron P5 Changelog
 
+## P5.1.187 — Đi thẳng tới trang gợi ý / Electron 4.23.272
+- Feature priority: NEW — Ảnh P5.1.186 hiển thị Trang 9/9 và Trước/Tiếp, nhưng chưa thể tới trang số bất kỳ khi nguồn có hàng chục hoặc hàng trăm trang.
+- Thêm ô số “Đến trang” với giới hạn 1..tổng trang, nhập và nhấn Enter hoặc đổi giá trị để nhảy trực tiếp; tự kẹp số quá nhỏ/lớn, đồng bộ chỉ số và số kênh, giữ nguyên tìm kiếm/nhóm/pageSize và dữ liệu nguồn.
+- Electron screenshot: positron-p51187-favorite-direct-page-after-1920x1080-real.png
+- Before screenshot: positron-p51187-favorite-direct-page-before-1920x1080-real.png
+- User action: Vào Yêu thích, chọn nhóm và số kênh/trang, nhập số vào Đến trang rồi nhấn Enter; số ngoài phạm vi tự chuyển về trang đầu hoặc cuối.
+- QA: 100 kênh Regional / 12 = 9 trang, nhập 7 tới đúng kênh 093–104, nhập 99 về 9/9 có bốn kênh, nhập 0 về 1/9; giữ 20 Favorites, không autoplay/overflow.
+- Status: CANDIDATE cho tới khi kiểm thử Electron, soi ảnh và Release EXE/DMG.
+
 ## P5.1.186 — Phân trang gợi ý Trước / Tiếp / Trang x/y / Electron 4.23.271
 - Feature priority: NEW — Ảnh P5.1.185 có hàng trăm kênh gợi ý nhưng chỉ có Gợi ý khác, không biết đang ở trang nào, không quay lại trang trước và vòng lặp cũ có thể lặp kênh ở trang cuối.
 - Thêm nút Trước, chỉ số Trang x/y (aria-live), giữ nút Gợi ý khác để tiến tiếp; phân trang theo các lát cắt không trùng kênh. Trang cuối đúng số còn lại, nút Lưu cả N phản ánh số hiện tại, chức năng cũ vẫn giữ và không tự phát video.

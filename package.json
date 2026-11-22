@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.271",
-  "description": "Positron P5.1.186: phân trang gợi ý có Trước/Tiếp và trang cuối chính xác",
+  "version": "4.23.272",
+  "description": "Positron P5.1.187: đi thẳng tới trang gợi ý, giữ phân trang ổn định",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",
