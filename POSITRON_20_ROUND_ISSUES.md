@@ -34,3 +34,11 @@ Chỉ đánh dấu hoàn tất khi sửa nguồn, node test pass, Electron scree
 
 ## Vòng 04 — P5.1.241 [CANDIDATE]
 - Thêm chip nhắc lọc Yêu thích trong panel kênh và nút Xem tất cả, không mutate playlist; kiểm thử Electron screenshot trước/sau và QA kích thước.
+
+## Vòng 04 — P5.1.241 / 4.23.326 [HOÀN TẤT]
+- CI `45054237610`: 910 tests / 905 pass / 5 skipped; 6/6 jobs success; release `positron/v4.23.326-p5.1.241`.
+- Mở ảnh Electron P241 trước/sau thật; chip hiển thị Yêu thích · 20 và Xem tất cả dưới ô tìm, không tràn cột; click khôi phục 561 kênh, Favorites không thay đổi.
+- Đầu vào vòng 05: chip mới chỉ hỗ trợ Yêu thích; khi tab khác như Vừa xem được bật, vẫn có thể thấy danh sách rỗng mà không hiểu vì sao.
+
+## Vòng 05 — P5.1.242 [CANDIDATE]
+- Tổng quát chip mọi native filter, hiển thị tên, số lượng, hành động xóa; kiểm thử khi chọn Vừa xem, kể cả empty state.

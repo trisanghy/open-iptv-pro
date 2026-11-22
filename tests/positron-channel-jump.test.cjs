@@ -295,7 +295,7 @@ test('P5.1.241 native favorite-filter chip shows mode and clears with all-tab, n
  assert.ok(css.includes('#poFavoriteFilterChip[hidden]'));
  assert.ok(css.includes('#poFavoriteFilterChip:focus-visible'));
  assert.ok(!js.includes('playChannel('));
- assert.equal(JSON.parse(read('package.json')).version,'4.23.326');
+ assert.ok(Number(JSON.parse(read('package.json')).version.split('.')[2])>=326);
 });
 test('P5.1.241 asserts real Electron before/after and favorite chip clear',()=>{
  const qa=read('scripts/positron-20-extension.cjs'),wf=read('.github/workflows/positron-lab.yml');
@@ -304,4 +304,24 @@ test('P5.1.241 asserts real Electron before/after and favorite chip clear',()=>{
  }
  for(const token of ["favoriteChipQA241","favoriteChipClearQA241","chipVisible:","chipFitsPanel:","favoritesUnchanged:","chipHidden:","noAutoplay:"])
   assert.ok(qa.includes(token),'Missing P241 Electron screenshot QA '+token);
+});
+
+test('P5.1.242 chip identifies every hidden channel filter and recovers empty history',()=>{
+ const js=read('renderer/positron-channel-jump.js'),css=read('renderer/positron-channel-jump.css');
+ for(const token of ["const activeTab=[...d.querySelectorAll('#page-tv .filter-tab')]",
+  "const mode=activeTab?.dataset.filter||'all'","chip.dataset.mode=mode",
+  "chip.hidden=mode==='all'","label.textContent=title+' · '+count",
+  "filter-tab[data-filter=\"all\"]"])
+  assert.ok(js.includes(token),'P242 missing generalized active filter: '+token);
+ assert.ok(css.includes('#poFavoriteFilterChip[data-mode="recent"]'));
+ assert.equal(JSON.parse(read('package.json')).version,'4.23.327');
+});
+test('P5.1.242 verifies native Electron recent-filter indicator and clear action',()=>{
+ const qa=read('scripts/positron-20-extension.cjs'),wf=read('.github/workflows/positron-lab.yml');
+ for(const f of ['positron-p51242-recent-filter-before-1920x1080-real.png','positron-p51242-recent-filter-after-1920x1080-real.png']){
+  assert.ok(qa.includes(f));assert.ok(wf.includes(f));
+ }
+ for(const t of ['recentFilterQA242','recentFilterClearQA242','recentChipVisible:','recentNameVisible:',
+  'chipFitsPanel:','favoritesUnchanged:','allTabActive:','noAutoplay:'])
+  assert.ok(qa.includes(t),'P242 UI regression '+t);
 });

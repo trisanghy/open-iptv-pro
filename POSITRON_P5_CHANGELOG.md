@@ -1,5 +1,12 @@
 # Positron P5 Changelog
 
+## P5.1.242 — Chip báo mọi bộ lọc kênh ẩn / Electron 4.23.327
+- Feature priority: NEW — Mở rộng chip báo trạng thái P5.1.241 từ riêng Yêu thích sang mọi tab lọc native, gồm Vừa xem, Sống, Die và Chưa rõ. Khi tab bị thu gọn hoặc lọc ra 0 kênh, người dùng vẫn nhìn thấy tên bộ lọc, số kênh và hành động Xem tất cả để tránh hiểu nhầm mất playlist. Màu chip Vừa xem dịu hơn và mọi thao tác không thay đổi Favorites, playback hay nguồn.
+- Electron screenshot: positron-p51242-recent-filter-after-1920x1080-real.png
+- User action: Vào trang TV chọn bộ lọc Vừa xem, thấy chip màu xanh báo chính xác chế độ hiện tại ngay dưới ô tìm; bấm Xem tất cả để khôi phục toàn bộ danh sách.
+- Electron QA: ảnh `positron-p51242-recent-filter-before-1920x1080-real.png` và `positron-p51242-recent-filter-after-1920x1080-real.png`; kiểm tra chip xuất hiện, vừa cột, màu đúng và một chạm xóa lọc.
+
+
 ## P5.1.241 — Chip lọc Yêu thích có nút Xem tất cả / Electron 4.23.326
 - Feature priority: NEW — Khi Shift+F lọc còn 20 kênh, ảnh P5.1.240 chỉ báo 20/561 mà không nêu bộ lọc đang bật, rất dễ hiểu nhầm mất kênh. Thêm chip nhỏ trực tiếp dưới ô tìm để hiển thị `Yêu thích · 20` cùng hành động `Xem tất cả`, khôi phục danh sách bằng bộ lọc native và giữ focus; không thay đổi dữ liệu Favorites hoặc IPTV.
 - Electron screenshot: positron-p51241-favorite-chip-after-1920x1080-real.png
