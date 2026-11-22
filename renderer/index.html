@@ -511,36 +511,6 @@
  <div class="modal-box cast-modal-box">
   <div class="modal-header"><h2 id="castTitle">▣ Phát lên TV / thiết bị khác</h2><button class="modal-close" id="castClose" title="Đóng">✕</button></div>
   <p id="castChannel" class="cast-channel"></p>
-
-<section id="desktopTvPair" class="cast-section dtv-section" aria-labelledby="dtvHeader" data-connected="false">
- <div class="dtv-head"><h3 id="dtvHeader">Ghép đôi TV bằng mã 6 số</h3><button class="dtv-disconnect" type="button" id="dtvDisconnect" hidden aria-label="Ngắt kết nối TV">✕ Ngắt kết nối</button></div>
- <div id="dtvSetup" class="dtv-setup">
-  <p class="dtv-intro">Mở trang TV, nhập mã 6 số. TV tự kết nối, không cần chọn “Cho phép”.</p>
-  <div class="dtv-links" aria-label="Danh sách liên kết">
-   <div class="dtv-link"><span>Web · Link rút gọn</span><a href="https://is.gd/openiptv" rel="noopener noreferrer" target="_blank">https://is.gd/openiptv</a><button type="button" data-dtv-copy="https://is.gd/openiptv">Sao chép</button></div>
-   <div class="dtv-link"><span>TV · Link rút gọn</span><a href="https://is.gd/IPTVTV" rel="noopener noreferrer" target="_blank">https://is.gd/IPTVTV</a><button type="button" data-dtv-copy="https://is.gd/IPTVTV">Sao chép</button></div>
-   <div class="dtv-link"><span>TV · Link gốc dự phòng</span><a href="https://trisanghy.github.io/open-iptv-pro/tv.html" rel="noopener noreferrer" target="_blank">https://trisanghy.github.io/open-iptv-pro/tv.html</a><button type="button" data-dtv-copy="https://trisanghy.github.io/open-iptv-pro/tv.html">Sao chép</button></div>
-  </div>
-  <div class="dtv-connect-form"><label for="dtvPin">Nhập mã hiển thị trên TV</label><input id="dtvPin" maxlength="7" inputmode="numeric" autocomplete="one-time-code" placeholder="000 000" aria-label="Mã TV 6 số"><button id="dtvConnect" type="button">Kết nối</button></div>
- </div>
- <div class="dtv-television" aria-label="Trạng thái kết nối và điều khiển TV" data-state="disconnected">
-  <div class="dtv-brand"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 17v4h4m-4-9a9 9 0 0 1 9 9M2 7a14 14 0 0 1 14 14M4 3h17v14h-5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg> OPEN IPTV PRO · TV</div>
-  <div class="dtv-check" aria-hidden="true"><svg viewBox="0 0 80 80" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><rect x="10" y="9" width="60" height="47" rx="6"/><path d="M30 32l8 8 15-16M28 67h24M40 56v11"/></svg></div>
-  <div class="dtv-big" id="dtvHeadline">CHỜ KẾT NỐI</div>
-  <div class="dtv-crypto" id="dtvCrypto">Nhập mã ghép đôi từ TV</div>
-  <div class="dtv-controls" id="dtvControls" hidden role="group" aria-label="Điều khiển TV">
-    <button id="dtvPrev" type="button" title="Kênh trước" aria-label="Kênh trước" class="dtv-key"><svg viewBox="0 0 24 24"><path d="M5 5v14M19 5 8 12l11 7V5Z"/></svg></button>
-    <button id="dtvToggle" type="button" title="Phát trên TV" aria-label="Phát trên TV" class="dtv-key dtv-main-key"><svg viewBox="0 0 24 24"><path d="M7 5 20 12 7 19Z"/></svg></button>
-    <button id="dtvStop" type="button" title="Dừng trên TV" aria-label="Dừng trên TV" class="dtv-key"><svg viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12"/></svg></button>
-    <button id="dtvNext" type="button" title="Kênh tiếp" aria-label="Kênh tiếp" class="dtv-key"><svg viewBox="0 0 24 24"><path d="M19 5v14M5 5l11 7-11 7V5Z"/></svg></button>
-    <span class="dtv-divider" aria-hidden="true"></span>
-    <button id="dtvMute" type="button" title="Tắt tiếng TV" aria-label="Tắt tiếng TV" class="dtv-key"><svg viewBox="0 0 24 24"><path d="M4 9h4l5-4v14l-5-4H4ZM16 9a4 4 0 0 1 0 6M18.5 6a8 8 0 0 1 0 12"/></svg></button>
-    <input type="range" id="dtvVolume" min="0" max="100" value="80" step="1" aria-label="Âm lượng TV">
-  </div>
- </div>
- <p id="dtvStatus" class="dtv-status" role="status" aria-live="polite">Chưa ghép đôi TV.</p>
-</section>
-
   <section class="cast-section"><h3>Google Cast / Chromecast / Google TV</h3>
    <p class="hint">TV và máy tính phải dùng chung mạng Wi-Fi/LAN, cho phép mDNS và truy cập cổng trên máy tính.</p>
    <div class="cast-actions"><button class="btn btn-subtle" id="castScan">⌕ Tìm TV</button><select class="modal-input" id="castDevices" aria-label="Chọn TV"><option value="">Chưa tìm thiết bị</option></select></div>

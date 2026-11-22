@@ -851,12 +851,6 @@
   }
   try{await tryPlayback(playCandidates[0],generation,preferredTransport);}catch(e){recoverPlayback(generation,e.message);}
  }
- document.addEventListener('openiptv:remote-player-attached',()=>{
-  if(hls){try{hls.stopLoad?.();hls.destroy();}catch{}hls=null;}
-  if(dash){try{dash.pause?.();dash.reset();}catch{}dash=null;}
-  const old=ffmpegFallbackId;ffmpegFallbackId='';if(old)window.streamleaf?.stopPlaybackFallback?.(old).catch(()=>{});
-  try{player.pause();player.removeAttribute('src');player.load();}catch{}
- });
  async function playToggle(){
   if(window.OpenIPTVDesktopTVPair?.isConnected?.())return window.OpenIPTVDesktopTVPair.toggle();
   if(!current){
@@ -1124,6 +1118,12 @@
    catch(e){if(generation===playGeneration)recoverPlayback(generation,'FFmpeg: '+String(e?.message||e));}
   });
   $('#searchBox').addEventListener('input',renderList);$('#volume').addEventListener('input',e=>{player.volume=e.target.value/100;store.volume=player.volume;save();window.OpenIPTVDesktopTVPair?.onVolume?.(player.volume,player.muted);});
+  document.addEventListener('openiptv:remote-player-attached',()=>{
+   if(hls){try{hls.stopLoad?.();hls.destroy();}catch{}hls=null;}
+   if(dash){try{dash.pause?.();dash.reset();}catch{}dash=null;}
+   const old=ffmpegFallbackId;ffmpegFallbackId='';if(old)window.streamleaf?.stopPlaybackFallback?.(old).catch(()=>{});
+   try{player.pause();player.removeAttribute('src');player.load();}catch{}
+  });
   player.volume=store.volume??.8;$('#volume').value=Math.round(player.volume*100);
   const fit=['contain','cover','fill','none'].includes(store.videoFit)?store.videoFit:'contain';$('#videoFit').value=fit;player.className='fit-'+fit;$('#videoFit').addEventListener('change',e=>{store.videoFit=e.target.value;player.className='fit-'+store.videoFit;save();});
   player.addEventListener('playing',()=>{if(!current)return;if(pausedByUser){player.pause();return;}clearTimeout(failoverTimer);clearTimeout(stallTimer);clearTimeout(startupNoteTimer);markPlaybackVerified();window.IPTVProAdvanced?.onPlaying?.(current,playCandidates[playCandidateIndex]);$('#streamInfo').textContent='● Đang phát';$('#playBtn').textContent='Ⅱ';textStatus('Đang xem: '+(current?.name||''));});

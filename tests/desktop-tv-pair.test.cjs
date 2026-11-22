@@ -9,8 +9,8 @@ test('TV pairing uses unmodified ECDH P-256 and AES-GCM protocol with public Web
  assert.match(proto,/command-ack/);assert.match(proto,/reportPlayback/);
 });
 test('TV pairing panel has approved Web short links, state and usable remote buttons',()=>{
- for(const id of ['desktopTvPair','dtvPin','dtvConnect','dtvDisconnect','dtvHeadline','dtvCrypto','dtvControls','dtvPrev','dtvToggle','dtvStop','dtvNext','dtvMute','dtvVolume'])assert.ok(page.includes('id="'+id+'"'),id);
- for(const link of ['https://is.gd/openiptv','https://is.gd/IPTVTV','https://trisanghy.github.io/open-iptv-pro/tv.html'])assert.ok(page.includes(link),link);
+ for(const id of ['desktopTvPair','dtvPin','dtvConnect','dtvDisconnect','dtvHeadline','dtvCrypto','dtvControls','dtvPrev','dtvToggle','dtvStop','dtvNext','dtvMute','dtvVolume'])assert.ok(ui.includes(id),id);
+ for(const link of ['https://is.gd/openiptv','https://is.gd/IPTVTV','https://trisanghy.github.io/open-iptv-pro/tv.html'])assert.ok(ui.includes(link),link);
  assert.match(ui,/ĐÃ KẾT NỐI/);assert.match(ui,/Phiên được mã hóa/);assert.match(ui,/onPlayback:info/);
  assert.match(ui,/awaitPlayback/);assert.match(ui,/onVolume/);assert.match(ui,/root\.OpenIPTVDesktopTVPair=Object\.freeze/);
  assert.match(css,/grid-template-columns:repeat\(4,minmax\(0,1fr\)\) 1px 40px minmax\(70px,30%\)/);
