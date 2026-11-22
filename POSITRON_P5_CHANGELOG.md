@@ -6,7 +6,7 @@
 - Electron screenshot: positron-p51189-favorite-sort-after-1920x1080-real.png
 - Before screenshot: positron-p51189-favorite-sort-before-1920x1080-real.png
 - User action: Trong Yêu thích, dưới mục Gợi ý thêm vào Yêu thích chọn Thứ tự rồi chọn Theo nguồn, Tên A–Z hoặc Tên Z–A; danh sách chuyển ngay, trở về trang đầu và vẫn giữ nhóm, tìm kiếm, số kênh mỗi trang.
-- QA: 100 kênh Regional từ dữ liệu QA, 12/thẻ, Z–A bắt đầu kênh 120 kết thúc 109; A–Z và Theo nguồn khôi phục 021–032, 20 Favorites giữ nguyên, không autoplay hoặc tràn ngang, chụp và soát ảnh Electron thật 1920×1080.
+- QA: Regional với 12 kênh/trang, so sánh toàn bộ 12 nhãn thực tế với thứ tự dự kiến tính từ nguồn đang bật bằng Intl.Collator tiếng Việt ở cả ba chế độ; 20 Favorites giữ nguyên, không autoplay hoặc tràn ngang, chụp và soát ảnh Electron thật 1920×1080.
 - Status: CANDIDATE cho đến khi Node, screenshot review, CI, build và GitHub Release được xác minh.
 
 

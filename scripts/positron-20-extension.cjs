@@ -5273,36 +5273,46 @@ async function runTwenty(page){
  const before189=await page.screenshot({path:path.join(out,'positron-p51189-favorite-sort-before-1920x1080-real.png'),animations:'disabled'});
  assert.deepEqual([before189.readUInt32BE(16),before189.readUInt32BE(20)],[1920,1080]);
  await page.selectOption('#positronFavoriteMoreSort','name-desc');
- const favoriteSuggestionSortQA=await page.evaluate(()=>{
-  const d=document,box=d.getElementById('positronFavoriteMore'),cards=[...box.querySelectorAll('.po-fav-more-chip')];
-  return {
+ // Compute expected order from live enabled channels rather than assuming their
+ // numeric suffixes; this catches incorrect ordering across the entire visible page.
+ const comparePage189=async order=>page.evaluate(sortMode=>{
+  const d=document,state=window.IPTVState,favorites=window.OpenIPTVFavorites;
+  const store=state.getStore(),group=d.getElementById('positronFavoriteMoreGroup')?.value;
+  const collator=new Intl.Collator('vi',{sensitivity:'base',numeric:true});
+  const expected=state.getChannels().filter(ch=>ch&&ch.id&&!favorites.has(store,ch)
+   &&String(ch.group||'Không phân nhóm')===group);
+  if(sortMode==='name-desc')expected.sort((a,b)=>collator.compare(String(b.name||''),String(a.name||'')));
+  if(sortMode==='name-asc')expected.sort((a,b)=>collator.compare(String(a.name||''),String(b.name||'')));
+  const expectedLabels=expected.slice(0,12).map(ch=>'☆ '+String(ch.name||'Kênh'));
+  const box=d.getElementById('positronFavoriteMore');
+  const actualLabels=[...box.querySelectorAll('.po-fav-more-chip')].map(ch=>ch.textContent);
+  const qa={
    sortAccessible:d.getElementById('positronFavoriteMoreSort')?.getAttribute('aria-label')==='Sắp xếp kênh gợi ý chưa yêu thích',
-   descSelected:d.getElementById('positronFavoriteMoreSort')?.value==='name-desc',
-   descStart:cards[0]?.textContent.includes('QA Channel 120'),
-   descEnd:cards[11]?.textContent.includes('QA Channel 109'),
-   twelveSuggestions:cards.length===12,
-   groupUnchanged:d.getElementById('positronFavoriteMoreGroup')?.value==='02 • Regional channels',
+   selectedCorrectly:d.getElementById('positronFavoriteMoreSort')?.value===sortMode,
+   allTwelveCorrect:actualLabels.length===12&&expectedLabels.length===12
+    &&actualLabels.every((label,index)=>label===expectedLabels[index]),
+   groupUnchanged:group==='02 • Regional channels',
    favoritesIntact:d.querySelectorAll('#favoriteList .fav-card').length===20,
-   noAutoplay:window.IPTVState.getCurrent()===null,
+   noAutoplay:state.getCurrent()===null,
    noHorizontalOverflow:d.documentElement.scrollWidth<=innerWidth+1
   };
- });
- for(const [key,value] of Object.entries(favoriteSuggestionSortQA))
-  assert.equal(value,true,'P189 descending suggestions '+key+': '+JSON.stringify(favoriteSuggestionSortQA));
+  return {qa,samples:{sortMode,actual:actualLabels.slice(0,12),expected:expectedLabels.slice(0,12)}};
+ },order);
+ const descCompare189=await comparePage189('name-desc');
+ const favoriteSuggestionSortQA=descCompare189.qa;
+ console.log('P5.1.189 Electron descending order evidence:',JSON.stringify(descCompare189.samples));
  const after189=await page.screenshot({path:path.join(out,'positron-p51189-favorite-sort-after-1920x1080-real.png'),animations:'disabled'});
  assert.deepEqual([after189.readUInt32BE(16),after189.readUInt32BE(20)],[1920,1080]);
+ for(const [key,value] of Object.entries(favoriteSuggestionSortQA))
+  assert.equal(value,true,'P189 descending suggestions '+key+': '+JSON.stringify(descCompare189));
  await page.selectOption('#positronFavoriteMoreSort','name-asc');
- const asc189=await page.evaluate(()=>{
-  const box=document.getElementById('positronFavoriteMore'),names=[...box.querySelectorAll('.po-fav-more-chip')].map(x=>x.textContent);
-  return names.length===12&&names[0].includes('QA Channel 021')&&names[11].includes('QA Channel 032');
- });
- assert.equal(asc189,true,'P189 ascending suggestions must begin QA Channel 021–032');
+ const asc189=await comparePage189('name-asc');
+ for(const [key,value] of Object.entries(asc189.qa))
+  assert.equal(value,true,'P189 ascending suggestions '+key+': '+JSON.stringify(asc189));
  await page.selectOption('#positronFavoriteMoreSort','source');
- const source189=await page.evaluate(()=>{
-  const box=document.getElementById('positronFavoriteMore'),names=[...box.querySelectorAll('.po-fav-more-chip')].map(x=>x.textContent);
-  return names.length===12&&names[0].includes('QA Channel 021')&&names[11].includes('QA Channel 032');
- });
- assert.equal(source189,true,'P189 source order restoration must preserve original sequence');
+ const source189=await comparePage189('source');
+ for(const [key,value] of Object.entries(source189.qa))
+  assert.equal(value,true,'P189 restore source order '+key+': '+JSON.stringify(source189));
  await page.selectOption('#positronFavoriteMoreGroup','');
  await page.setViewportSize({width:1360,height:820});
 

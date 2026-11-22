@@ -2020,3 +2020,11 @@ test('P5.1.189 sorts unsaved Favorites suggestions by Vietnamese channel name wi
  assert.ok(qa.includes('positron-p51189-favorite-sort-before-1920x1080-real.png'));
  assert.ok(qa.includes('positron-p51189-favorite-sort-after-1920x1080-real.png'));
 });
+
+test('P5.1.189 Electron QA verifies all 12 suggestion labels against enabled-channel order',()=>{
+ const qa=read('scripts/positron-20-extension.cjs');
+ assert.ok(qa.includes("actualLabels.every((label,index)=>label===expectedLabels[index])"));
+ assert.ok(qa.includes("comparePage189('name-desc')"));
+ assert.ok(qa.includes("comparePage189('name-asc')"));
+ assert.ok(qa.includes("comparePage189('source')"));
+});

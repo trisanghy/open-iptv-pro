@@ -149,3 +149,5 @@ Evaluate defects revealed by real screenshot of previous build before making cha
 - Feature: thêm dropdown Theo nguồn / Tên A–Z / Tên Z–A vào hàng tìm gợi ý; Collator tiếng Việt, đặt lại trang đầu khi đổi, giữ các bộ lọc và Favorites/playlist thật.
 - QA: chụp Electron `positron-p51189-favorite-sort-before-1920x1080-real.png` và `positron-p51189-favorite-sort-after-1920x1080-real.png`, kiểm tra thứ tự 120..109, 021..032, số lượng và nguồn không bị đổi.
 - Status: chưa công nhận hoàn thành trước CI, mở xem ảnh SAU và Release mới.
+
+- CI P189 run 45000062232: Node 829 pass, 5 skip, 0 fail; Electron cũ kiểm tra cố định mã QA Channel 120/109 không khớp thực tế. Nâng phép thử so sánh toàn bộ 12 nhãn hiển thị với thứ tự dự kiến tính trực tiếp từ danh sách nguồn đã bật và Intl.Collator tiếng Việt, đồng thời chụp ảnh SAU trước assert và ghi log actual/expected. Không thay đổi thuật toán sắp xếp hay dữ liệu để che lỗi.
