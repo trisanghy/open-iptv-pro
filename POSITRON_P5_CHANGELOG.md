@@ -5,6 +5,8 @@
 - Thêm select “Thứ tự ban đầu / Tên A–Z / Tên Z–A” cạnh ô tìm kiếm; Intl.Collator('vi') và CSS order, không ghi thay đổi vào favoriteKeys, M3U hay trạng thái trình phát.
 - Phục hồi ngay thứ tự ban đầu và vẫn hỗ trợ lọc; aria-label, focus-visible.
 - Before P181: positron-p51181-readable-favorites-after-1920x1080-real.png đã mở và soát; cần ảnh Electron P182 before/after, 8-card, sort, filter, no autoplay, no overflow.
+- Electron screenshot: positron-p51182-favorites-sort-after-1920x1080-real.png
+- User action: Vào Yêu thích, chọn Sắp xếp và đổi Tên A–Z hoặc Tên Z–A; chọn Thứ tự ban đầu để quay lại.
 - Status: CANDIDATE cho tới khi mở và xác minh screenshot cùng Release EXE/DMG.
 
 ## P5.1.181 — Sửa lưới Yêu thích 6 cột hẹp/cắt tên / Electron 4.23.266
