@@ -57,6 +57,13 @@
  const missingGroup=d.createElement('select');
  missingGroup.id='poLibraryMissingGroup';
  missingGroup.setAttribute('aria-label','Lọc kênh thiếu logo theo nhóm');
+ // P5.1.169: lọc riêng kênh thiếu logo theo mã nhận diện EPG (chỉ đọc metadata).
+ const missingEpg=d.createElement('select');missingEpg.id='poLibraryMissingEpg';
+ missingEpg.setAttribute('aria-label','Lọc kênh thiếu logo theo mã EPG');
+ for(const [value,label] of [['','Mọi tình trạng EPG'],['missing-epg','Thiếu cả mã EPG'],['with-epg','Đã có mã EPG']]){
+  const option=d.createElement('option');option.value=value;option.textContent=label;
+  missingEpg.append(option);
+ }
  const missingSort=d.createElement('select');missingSort.id='poLibraryMissingSort';
  missingSort.setAttribute('aria-label','Sắp xếp danh sách kênh thiếu logo');
  for(const [value,label] of [['playlist','Thứ tự playlist'],['name-asc','Tên kênh A–Z'],['name-desc','Tên kênh Z–A']]){
@@ -90,7 +97,7 @@
  const missingGo=d.createElement('button');missingGo.type='button';missingGo.id='poLibraryMissingGo';
  missingGo.textContent='Đến';
  missingNav.append(missingPrev,missingPageLabel,missingJump,missingGo,missingNext);
- missingBody.append(missingSearch,missingGroup,missingSort,missingSize,exportBar,missingNav,missingRows);missingPane.append(missingToggle,missingBody);
+ missingBody.append(missingSearch,missingGroup,missingEpg,missingSort,missingSize,exportBar,missingNav,missingRows);missingPane.append(missingToggle,missingBody);
  // P5.1.164: tên trùng ở nhiều kênh/nguồn, chỉ xem metadata, không tự xóa.
  const duplicatePane=d.createElement('section');duplicatePane.id='poLibraryDuplicates';
  duplicatePane.className='po-pulse-duplicates';
@@ -197,7 +204,7 @@
  const missingPageSize=()=>Number(missingSize.value)||10;
  const renderMissing=()=>{
   const size=missingPageSize();
-  const report=core.missingLogos(state.getChannels(),{offset:missingIndex*size,limit:size,query:missingSearch.value,group:missingGroup.value,sort:missingSort.value});
+  const report=core.missingLogos(state.getChannels(),{offset:missingIndex*size,limit:size,query:missingSearch.value,group:missingGroup.value,sort:missingSort.value,epg:missingEpg.value});
   missingTotal=report.total;missingRows.replaceChildren();
   missingExport.disabled=missingTotal===0;
   missingExport.textContent='Xuất CSV · '+missingTotal+' kênh';
@@ -211,7 +218,7 @@
   }
   if(!report.rows.length){
    const empty=d.createElement('li');empty.className='po-pulse-missing-empty';
-   empty.textContent=(missingSearch.value.trim()||missingGroup.value)?'Không tìm thấy kênh phù hợp.':'Không có kênh thiếu URL logo.';missingRows.append(empty);
+   empty.textContent=(missingSearch.value.trim()||missingGroup.value||missingEpg.value)?'Không tìm thấy kênh phù hợp.':'Không có kênh thiếu URL logo.';missingRows.append(empty);
   }
   const pages=Math.max(1,Math.ceil(missingTotal/size));
   missingPageLabel.textContent='Trang '+(missingIndex+1)+' / '+pages;
@@ -311,10 +318,11 @@
  });
  missingSearch.addEventListener('input',()=>{missingIndex=0;renderMissing();});
  missingGroup.addEventListener('change',()=>{missingIndex=0;renderMissing();});
+ missingEpg.addEventListener('change',()=>{missingIndex=0;renderMissing();});
  missingSort.addEventListener('change',()=>{missingIndex=0;renderMissing();});
  missingSize.addEventListener('change',()=>{missingIndex=0;renderMissing();});
  missingExport.addEventListener('click',()=>{
-  const options={query:missingSearch.value,group:missingGroup.value,sort:missingSort.value};
+  const options={query:missingSearch.value,group:missingGroup.value,sort:missingSort.value,epg:missingEpg.value};
   const count=core.missingLogos(state.getChannels(),options).total;
   if(!count)return;
   const csv=core.missingLogoCsv(state.getChannels(),options);

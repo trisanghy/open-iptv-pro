@@ -1,3 +1,12 @@
+## P5.1.169 — Lọc kênh thiếu logo theo mã EPG / Electron 4.23.254
+- Feature priority: NEW — Cho phép phát hiện kênh vừa thiếu logo vừa thiếu mã nhận diện EPG hoặc có EPG nhưng thiếu logo, hỗ trợ người dùng tự ưu tiên sửa metadata thư viện lớn mà không thay đổi playlist.
+- User action: Mở Thư viện → Kênh thiếu logo → chọn Mọi tình trạng EPG, Thiếu cả mã EPG hoặc Đã có mã EPG; kết hợp tìm kiếm, lọc nhóm, sắp xếp, phân trang và xuất CSV theo đúng tập đã lọc.
+- Electron screenshot: positron-p51169-epg-filter-after-1920x1080-real.png
+- Ảnh Electron thật 1920×1080 trước/sau: positron-p51169-epg-filter-before-1920x1080-real.png / positron-p51169-epg-filter-after-1920x1080-real.png. Đầu vào quyết định: P5.1.168 ảnh Thư viện thật đã mở soát, chức năng mới đặt gần bộ lọc sẵn có và bảo toàn thanh phân trang.
+- Logic cục bộ: lọc tvgId trong metadata hiện có, không gọi mạng, không sửa stream URL, không phát kênh, không xóa playlist; CSV chỉ chứa tên/nhóm và tôn trọng lọc EPG.
+- Kiểm thử: Node fixture kênh có/không có tvgId và logo, combo nhóm/tìm kiếm, CSV an toàn; Electron QA xác minh chọn bộ lọc, đếm hàng, hiển thị trạng thái rỗng, điều hướng phân trang, dữ liệu không rò URL; ảnh trước/sau 16:9.
+- Trạng thái: CANDIDATE — chỉ tính vòng sau khi Node, Electron screenshot review và GitHub Release đủ EXE/DMG thành công.
+
 ## P5.1.168 — Thanh phân trang kênh thiếu logo luôn dễ thao tác / Electron 4.23.253
 - Feature priority: BLOCKER_FIX — Thanh điều hướng phân trang dữ liệu thư viện bị che khỏi vùng nhìn khiến người dùng không mở được những trang kênh còn lại khi danh sách lớn; đưa nút lên trên vùng cuộn giúp truy cập đầy đủ.
 - Electron screenshot: positron-p51168-pager-visible-after-1920x1080-real.png

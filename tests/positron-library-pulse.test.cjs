@@ -273,3 +273,30 @@ test('P5.1.168 phân trang thiếu logo hiển thị trước danh sách cuộn'
  assert.ok(css.includes('#poLibraryMissingRows{scrollbar-gutter:stable}'), 'Giữ scroll độc lập');
  assert.ok(js.includes("missingNext.addEventListener('click'"), 'Giữ nguyên điều hướng');
 });
+
+
+test('P5.1.169 lọc kênh thiếu logo theo mã EPG, CSV giữ đúng bộ lọc và an toàn',()=>{
+ const channels=[
+  {name:'VTV 1',group:'Tin tức',tvgId:'vtv1',url:'https://secret.example/one'},
+  {name:'VTV 2',group:'Tin tức',tvgId:'',url:'https://secret.example/two'},
+  {name:'TH địa phương',group:'Địa phương',tvgId:'th-local'},
+  {name:'Đã có logo',group:'Tin tức',logo:'https://secret.example/logo.png',tvgId:'logo-epg'}
+ ];
+ const before=JSON.stringify(channels);
+ const withEpg=core.missingLogos(channels,{epg:'with-epg'});
+ const noEpg=core.missingLogos(channels,{epg:'missing-epg'});
+ assert.equal(withEpg.total,2);assert.deepEqual(withEpg.rows.map(x=>x.name),['VTV 1','TH địa phương']);
+ assert.equal(noEpg.total,1);assert.equal(noEpg.rows[0].name,'VTV 2');
+ assert.equal(core.missingLogos(channels,{epg:'missing-epg',group:'Địa phương'}).total,0);
+ assert.equal(core.missingLogos(channels,{epg:'with-epg',query:'dia phuong'}).rows[0].name,'TH địa phương');
+ assert.equal(core.missingLogos(channels,{epg:'invalid'}).total,3);
+ const csv=core.missingLogoCsv(channels,{epg:'missing-epg'});
+ assert.ok(csv.includes('VTV 2')&&!csv.includes('VTV 1')&&!csv.includes('TH địa phương'));
+ assert.ok(!csv.includes('secret.example')&&!csv.includes('https://'));
+ assert.equal(JSON.stringify(channels),before,'Không thay đổi playlist');
+ const ui=fs.readFileSync(path.join(__dirname,'../renderer/positron-library-pulse.js'),'utf8');
+ assert.ok(ui.includes('poLibraryMissingEpg'));
+ assert.ok(ui.includes("missingEpg.addEventListener('change'"));
+ assert.ok(ui.includes('epg:missingEpg.value'));
+ assert.ok(!ui.includes('importSource(')&&!ui.includes('playChannel('));
+});
