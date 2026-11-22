@@ -1,22 +1,102 @@
 {
-  "generatedAt": "2026-11-22T08:50:53.057876+00:00",
+  "generatedAt": "2026-11-22T09:12:11.229698+00:00",
   "repository": "trisanghy/open-iptv-pro",
   "branch": "Positron",
   "versions": [
     {
-      "number": 195,
-      "version": "P5.1.195",
-      "appVersion": "4.23.280",
-      "title": "tự đặt tên bản ghi từ kênh và giờ bắt đầu",
-      "description": "Feature priority: NEW — Ảnh P5.1.194 Electron thật cho thấy ô Tên chương trình vẫn rỗng ngay cả khi kênh và giờ ghi đã được chọn; người dùng cần gõ lại hoặc không thể lưu vì trường bắt buộc. Thêm nút gợi ý tên chính xác theo kênh/giờ, tuyệt đối không ghi đè tên tự nhập. Tính năng: nút “Tạo tên từ kênh và giờ” bên dưới Tên chương trình của mẫu EPG. Nhấn để điền tên kênh đã chọn và thời gian địa phương đã nhập (DD.MM.YYYY HH:mm), loại ký tự không an toàn; nếu người dùng đã nhập tên khác thì chỉ báo và giữ nguyên. Không đổi giờ, kênh, nguồn hay trạng thái ghi hình.",
-      "kind": "fix",
+      "number": 196,
+      "version": "P5.1.196",
+      "appVersion": "4.23.281",
+      "title": "xem trước lịch ghi trước khi xác nhận",
+      "description": "Ưu tiên thêm tính năng mới: ảnh Electron thật P5.1.195 cho thấy kênh, tên và giờ ghi đã nhập nhưng không có phần tổng hợp để kiểm lại trước khi xác nhận. Thêm **Xem trước lịch ghi** dưới biểu mẫu EPG, hiện kênh/tên/giờ/thời lượng địa phương; tự cập nhật theo thay đổi trong biểu mẫu, báo thiếu dữ liệu hoặc thời lượng sai/vượt 8 giờ.",
+      "kind": "feature",
       "status": "candidate",
       "published": "",
       "tag": "",
-      "commit": "4c0af9abac7b5a596d024e423b04a7d947672f33",
+      "commit": "dc3fb9c240562335154411a5c7e3b00d08e9dcc5",
       "url": "https://github.com/trisanghy/open-iptv-pro/tree/Positron",
       "assets": [],
       "image": null
+    },
+    {
+      "number": 195,
+      "version": "P5.1.195",
+      "appVersion": "4.23.280",
+      "title": "Đặt tên bản ghi tự động theo kênh và giờ / Electron 4.23.280",
+      "description": "Feature priority: NEW — Ảnh P5.1.194 Electron thật cho thấy ô Tên chương trình vẫn rỗng ngay cả khi kênh và giờ ghi đã được chọn; người dùng cần gõ lại hoặc không thể lưu vì trường bắt buộc. Thêm nút gợi ý tên chính xác theo kênh/giờ, tuyệt đối không ghi đè tên tự nhập. Tính năng: nút “Tạo tên từ kênh và giờ” bên dưới Tên chương trình của mẫu EPG. Nhấn để điền tên kênh đã chọn và thời gian địa phương đã nhập (DD.MM.YYYY HH:mm), loại ký tự không an toàn; nếu người dùng đã nhập tên khác thì chỉ báo và giữ nguyên. Không đổi giờ, kênh, nguồn hay trạng thái ghi hình.",
+      "kind": "fix",
+      "status": "release",
+      "published": "2026-11-22T08:56:32Z",
+      "tag": "positron/v4.23.280-p5.1.195",
+      "commit": "4c0af9abac7b5a596d024e423b04a7d947672f33",
+      "url": "https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.280-p5.1.195",
+      "assets": [
+        {
+          "name": "audit-p4-50-rounds.json",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.280-p5.1.195/audit-p4-50-rounds.json"
+        },
+        {
+          "name": "audit-p5-20-rounds.json",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.280-p5.1.195/audit-p5-20-rounds.json"
+        },
+        {
+          "name": "Open-IPTV-Pro-4.23.280-mac-arm64.dmg",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.280-p5.1.195/Open-IPTV-Pro-4.23.280-mac-arm64.dmg"
+        },
+        {
+          "name": "Open-IPTV-Pro-4.23.280-mac-x64.dmg",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.280-p5.1.195/Open-IPTV-Pro-4.23.280-mac-x64.dmg"
+        },
+        {
+          "name": "Open-IPTV-Pro-4.23.280-x64.exe",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.280-p5.1.195/Open-IPTV-Pro-4.23.280-x64.exe"
+        },
+        {
+          "name": "Open-IPTV-Pro-Setup-4.23.280-x64.exe",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.280-p5.1.195/Open-IPTV-Pro-Setup-4.23.280-x64.exe"
+        },
+        {
+          "name": "OpenIPTVPro-Positron-P51195-Source.zip",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.280-p5.1.195/OpenIPTVPro-Positron-P51195-Source.zip"
+        },
+        {
+          "name": "positron-desktop-1920x1080-16x9-main-real.png",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.280-p5.1.195/positron-desktop-1920x1080-16x9-main-real.png"
+        },
+        {
+          "name": "positron-p4-final-main-real.png",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.280-p5.1.195/positron-p4-final-main-real.png"
+        },
+        {
+          "name": "positron-p4-round-10-real.png",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.280-p5.1.195/positron-p4-round-10-real.png"
+        },
+        {
+          "name": "positron-p4-round-20-real.png",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.280-p5.1.195/positron-p4-round-20-real.png"
+        },
+        {
+          "name": "positron-p4-round-30-real.png",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.280-p5.1.195/positron-p4-round-30-real.png"
+        },
+        {
+          "name": "positron-p4-round-40-real.png",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.280-p5.1.195/positron-p4-round-40-real.png"
+        },
+        {
+          "name": "Positron-P51195-20-Real-Screenshots.zip",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.280-p5.1.195/Positron-P51195-20-Real-Screenshots.zip"
+        },
+        {
+          "name": "Positron-P51195-50-Real-Screenshots.zip",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.280-p5.1.195/Positron-P51195-50-Real-Screenshots.zip"
+        },
+        {
+          "name": "SHA256SUMS.txt",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.280-p5.1.195/SHA256SUMS.txt"
+        }
+      ],
+      "image": "screenshots/positron-p51195-desktop-1920x1080-trang-chu-real.png"
     },
     {
       "number": 194,
@@ -96,7 +176,7 @@
           "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.279-p5.1.194/SHA256SUMS.txt"
         }
       ],
-      "image": "screenshots/positron-p51194-desktop-1920x1080-trang-chu-real.png"
+      "image": "screenshots/positron-p51194-dvr-start-after-after-1920x1080-real.png"
     },
     {
       "number": 193,
