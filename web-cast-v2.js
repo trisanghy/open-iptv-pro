@@ -5,13 +5,19 @@
  const d=root.document,$=id=>d.getElementById(id);
  let overlay=null,mode='pair',channel=null,source='',pair=null,pairPending=false;
  let remoteState='stopped',lastSentKey='',lastMediaId='',playSerial=0,commandQueue=Promise.resolve();
- let volumeTimer=0,pendingVolume=null,playbackTimer=0;
+ let volumeTimer=0,pendingVolume=null,playbackTimer=0,tvLastAudible=80;
  const clean=s=>String(s||'').replace(/\s+/g,' ').trim();
  const tvUrl=()=> 'https://is.gd/IPTVTV';
  const tvOriginalUrl=()=> 'https://trisanghy.github.io/open-iptv-pro/tv.html';
  const validSource=()=>root.OpenIPTVTVPair?.validateUrl(source)||'';
  const set=(id,text)=>{if($(id))$(id).textContent=text;};
- function notice(id,text,kind=''){const n=$(id);if(n){n.textContent=text;n.dataset.kind=kind;}}
+ function notice(id,text,kind=''){
+  const n=$(id);if(n){n.textContent=text;n.dataset.kind=kind;}
+  if(id==='cxPairNotice'){
+   const feedback=$('cxTvFeedback');
+   if(feedback){feedback.hidden=kind!=='error'||!pair?.connected;feedback.textContent=kind==='error'?text:'';}
+  }
+ }
  function castState(){return root.OpenIPTVWebCast?.getState?.()||{initialized:false,connected:false,name:''};}
  function renderConnectionStatus(){
   const cast=castState(),air=root.OpenIPTVWebCast?.getAirplayState?.()||{connected:false};
@@ -41,11 +47,50 @@
  function build(){
   if(overlay)return;
   overlay=d.createElement('div');overlay.id='iptvCastOverlay';overlay.hidden=true;
-  overlay.innerHTML="\n<div id=\"iptvCastPanel\" role=\"dialog\" aria-modal=\"true\" aria-labelledby=\"cxTitle\">\n <header class=\"cx-head\"><div class=\"cx-title-line\"><span class=\"cx-icon\" aria-hidden=\"true\">▣</span><div>\n  <h2 id=\"cxTitle\">Cast / AirPlay lên TV</h2><p class=\"cx-sub\">Kết nối TV, phát kênh và điều khiển từ Open IPTV Pro</p>\n </div></div><button id=\"cxClose\" class=\"cx-close\" type=\"button\" aria-label=\"Đóng\">×</button></header>\n <nav class=\"cx-tabs\" role=\"tablist\" aria-label=\"Chọn phương thức kết nối\">\n  <button class=\"cx-tab\" role=\"tab\" aria-selected=\"true\" aria-controls=\"cxPanePair\" id=\"cxTabPair\" data-cx-mode=\"pair\">▣ Ghép đôi TV</button>\n  <button class=\"cx-tab\" role=\"tab\" aria-selected=\"false\" aria-controls=\"cxPaneCast\" id=\"cxTabCast\" data-cx-mode=\"cast\">◫ Google Cast</button>\n  <button class=\"cx-tab\" role=\"tab\" aria-selected=\"false\" aria-controls=\"cxPaneAir\" id=\"cxTabAir\" data-cx-mode=\"air\">◭ AirPlay</button>\n </nav>\n <div class=\"cx-main\">\n  <section id=\"cxPanePair\" class=\"cx-pane\" role=\"tabpanel\" aria-labelledby=\"cxTabPair\">\n   <div class=\"cx-sectionhead\"><div><h3>Ghép đôi TV bằng mã 6 số</h3>\n    <p>Điều khiển trình duyệt TV Samsung hoặc Smart TV mà không cần Chromecast.</p></div>\n    <span class=\"cx-chip\" id=\"cxPairBadge\"><span class=\"cx-dot\"></span><span id=\"cxPairBadgeText\">Chưa kết nối</span></span>\n   </div>\n   <div class=\"cx-grid\">\n    <div class=\"cx-card\"><span class=\"cx-eyebrow\">BƯỚC 01 · KẾT NỐI</span>\n     <h4>Mở Open IPTV Pro trên TV</h4>\n     <p class=\"cx-p\">Mở địa chỉ dưới đây bằng trình duyệt của TV. TV sẽ tự tạo mã 6 số.</p>\n     <div class=\"cx-link-stack\">\n      <div class=\"cx-link-row\"><span class=\"cx-link-type\">Link rút gọn</span><a id=\"cxTvUrl\" class=\"cx-link\" href=\"tv.html\" target=\"_blank\" rel=\"noopener noreferrer\">https://is.gd/IPTVTV</a><button id=\"cxCopyTv\" class=\"cx-button cx-button-secondary\" type=\"button\">⧉ Sao chép</button></div>\n      <div class=\"cx-link-row\"><span class=\"cx-link-type\">Link gốc dự phòng</span><a id=\"cxTvOriginalUrl\" class=\"cx-link\" href=\"tv.html\" target=\"_blank\" rel=\"noopener noreferrer\">https://trisanghy.github.io/open-iptv-pro/tv.html</a><button id=\"cxCopyTvOriginal\" class=\"cx-button cx-button-secondary\" type=\"button\">⧉ Sao chép</button></div>\n     </div>\n     <ol class=\"cx-steps\"><li><b>1</b> TV hiển thị mã 6 số.</li>\n      <li><b>2</b> Nhập mã vào ô bên dưới.</li>\n      <li><b>3</b> Chọn “Cho phép” trên màn hình TV.</li></ol>\n     <div id=\"cxPairForm\"><label class=\"cx-label\" for=\"cxPin\">Nhập mã ghép đôi trên TV</label>\n      <div class=\"cx-inline\"><input id=\"cxPin\" class=\"cx-pin\" inputmode=\"numeric\" autocomplete=\"one-time-code\" maxlength=\"7\" placeholder=\"000 000\" aria-label=\"Mã TV gồm 6 số\">\n       <button id=\"cxConnect\" class=\"cx-button cx-button-primary\" type=\"button\">↗ Kết nối</button></div></div>\n     <div class=\"cx-remote\" id=\"cxRemote\" hidden>\n      <span class=\"cx-eyebrow\">BƯỚC 02 · ĐIỀU KHIỂN</span>\n      <label class=\"cx-label\">Kênh hiện tại</label><div id=\"cxChannel\" class=\"cx-channelname\">Chưa chọn kênh</div>\n      <p class=\"cx-p\" style=\"margin:7px 0 13px\">Chọn kênh trên Open IPTV Pro, rồi nhấn Phát lên TV.</p>\n      <div class=\"cx-inline\">\n       <button id=\"cxRemotePlay\" class=\"cx-button cx-button-primary\" type=\"button\">▶ Phát lên TV</button>\n       <button id=\"cxRemotePause\" class=\"cx-button\" type=\"button\">Ⅱ Tạm dừng</button>\n       <button id=\"cxRemoteResume\" class=\"cx-button\" type=\"button\">▶ Tiếp tục</button>\n       <button id=\"cxRemoteStop\" class=\"cx-button\" type=\"button\">■ Dừng</button>\n       <button id=\"cxDisconnect\" class=\"cx-button cx-button-secondary\" type=\"button\">Ngắt kết nối</button>\n      </div>\n     </div>\n     <p id=\"cxPairNotice\" class=\"cx-notice\" role=\"status\" aria-live=\"polite\">Mở trang TV và nhập mã do thiết bị TV tạo để bắt đầu.</p>\n    </div>\n    <div class=\"cx-card cx-tvcard\"><div class=\"cx-toptv\"><span class=\"cx-eyebrow\">GIAO DIỆN TV</span><span class=\"cx-tvbadge\">SMART TV</span></div>\n     <div class=\"cx-tv\" aria-label=\"Minh họa trạng thái TV\"><div class=\"cx-tvcontent\">\n      <div class=\"cx-tvlogo\">▣ OPEN IPTV PRO · TV</div>\n      <div id=\"cxTvLine\" class=\"cx-tvdesc\">Mã do TV thật tạo khi mở trang TV</div>\n      <div class=\"cx-tvcode\" id=\"cxTvCode\">••• •••</div>\n      <div id=\"cxTvSub\" class=\"cx-tvdesc\">Không dùng mã cố định của bản demo</div>\n      <span id=\"cxTvChip\" class=\"cx-tvstatus\">● Đang chờ mã</span>\n     </div></div><div class=\"cx-tvstand\" aria-hidden=\"true\"></div>\n     <p class=\"cx-p\" style=\"margin-top:20px;text-align:center\">Mã thật chỉ xuất hiện trên TV. Trạng thái kết nối được cập nhật trực tiếp.</p>\n    </div>\n   </div>\n  </section>\n  <section id=\"cxPaneCast\" class=\"cx-pane\" role=\"tabpanel\" aria-labelledby=\"cxTabCast\" hidden>\n   <div class=\"cx-sectionhead\"><div><h3>Google Cast / Chromecast / Google TV</h3>\n    <p>Chọn TV qua bộ chọn của Chrome, không quét IP như Electron.</p></div>\n    <span class=\"cx-chip\" id=\"cxCastBadge\"><span class=\"cx-dot\"></span><span id=\"cxCastBadgeText\">Chưa kết nối</span></span></div>\n   <div class=\"cx-grid\"><div class=\"cx-card cx-feature\"><span class=\"cx-featureicon\">◫</span><h4>Chọn Chromecast / Google TV</h4>\n    <p class=\"cx-p\">TV cần hỗ trợ Google Cast và chung Wi-Fi. TV chỉ hỗ trợ AirPlay có thể không xuất hiện.</p>\n    <div class=\"cx-inline\" style=\"margin-top:20px\">\n     <button id=\"cxCastScan\" class=\"cx-button cx-button-primary\" type=\"button\">⌕ Tìm thiết bị</button>\n     <button id=\"cxCastPlay\" class=\"cx-button\" type=\"button\" disabled>▶ Phát trên TV</button>\n     <button id=\"cxCastStop\" class=\"cx-button\" type=\"button\" disabled>■ Dừng</button></div>\n    <p class=\"cx-notice\" id=\"cxCastNotice\" role=\"status\">Đang kiểm tra Google Cast SDK…</p></div>\n    <div class=\"cx-card cx-feature\"><span class=\"cx-eyebrow\">THIẾT BỊ THỰC</span>\n     <div class=\"cx-statuscard\" id=\"cxCastDevice\">Chưa có TV được chọn. Chrome sẽ mở danh sách thiết bị thực tế.</div>\n     <p class=\"cx-p\" style=\"margin-top:19px\">Luồng HTTP/HTTPS phải được TV truy cập và hỗ trợ codec. Web không có proxy LAN của Electron.</p></div>\n   </div>\n  </section>\n  <section id=\"cxPaneAir\" class=\"cx-pane\" role=\"tabpanel\" aria-labelledby=\"cxTabAir\" hidden>\n   <div class=\"cx-sectionhead\"><div><h3>AirPlay · Safari trên Mac / iPhone / iPad</h3>\n    <p>Giữ nguyên bộ chọn AirPlay của Safari và hệ điều hành.</p></div>\n    <span class=\"cx-chip\"><span class=\"cx-dot\"></span>AirPlay hệ thống</span></div>\n   <div class=\"cx-grid\"><div class=\"cx-card cx-feature\"><span class=\"cx-featureicon\">◭</span>\n    <h4>Phát lên Samsung TV bằng AirPlay</h4><p class=\"cx-p\">Safari sẽ tự hiển thị TV AirPlay thật. Chrome không quét Bonjour giống Electron.</p>\n    <div class=\"cx-inline\" style=\"margin-top:20px\"><button id=\"cxAirOpen\" class=\"cx-button cx-button-primary\" type=\"button\">◉ Chọn TV bằng AirPlay</button></div>\n    <p id=\"cxAirNotice\" class=\"cx-notice\" role=\"status\">Nhấn để mở AirPlay trong Safari.</p></div>\n    <div class=\"cx-card cx-feature\"><span class=\"cx-eyebrow\">THÔNG TIN KẾT NỐI</span>\n     <div class=\"cx-statuscard\">TV Samsung có AirPlay, Apple TV và thiết bị tương thích phải dùng chung mạng Wi-Fi. Safari quản lý kết nối.</div>\n     <p class=\"cx-p\" style=\"margin-top:18px\">Đang dùng Chrome? Mở trang trong Safari hoặc dùng Phản chiếu màn hình trên macOS.</p></div>\n   </div>\n  </section>\n </div>\n <footer class=\"cx-footer\"><span><b>Open IPTV Pro</b> · Một nút Cast, ba phương thức kết nối</span>\n <span id=\"cxFooter\">Ghép đôi TV · Xác nhận trên TV · Mã hóa</span></footer>\n</div>";
+  overlay.innerHTML="\n<div id=\"iptvCastPanel\" role=\"dialog\" aria-modal=\"true\" aria-labelledby=\"cxTitle\">\n <header class=\"cx-head\"><div class=\"cx-title-line\"><span class=\"cx-icon\" aria-hidden=\"true\">▣</span><div>\n  <h2 id=\"cxTitle\">Cast / AirPlay lên TV</h2><p class=\"cx-sub\">Kết nối TV, phát kênh và điều khiển từ Open IPTV Pro</p>\n </div></div><button id=\"cxClose\" class=\"cx-close\" type=\"button\" aria-label=\"Đóng\">×</button></header>\n <nav class=\"cx-tabs\" role=\"tablist\" aria-label=\"Chọn phương thức kết nối\">\n  <button class=\"cx-tab\" role=\"tab\" aria-selected=\"true\" aria-controls=\"cxPanePair\" id=\"cxTabPair\" data-cx-mode=\"pair\">▣ Ghép đôi TV</button>\n  <button class=\"cx-tab\" role=\"tab\" aria-selected=\"false\" aria-controls=\"cxPaneCast\" id=\"cxTabCast\" data-cx-mode=\"cast\">◫ Google Cast</button>\n  <button class=\"cx-tab\" role=\"tab\" aria-selected=\"false\" aria-controls=\"cxPaneAir\" id=\"cxTabAir\" data-cx-mode=\"air\">◭ AirPlay</button>\n </nav>\n <div class=\"cx-main\">\n  <section id=\"cxPanePair\" class=\"cx-pane\" role=\"tabpanel\" aria-labelledby=\"cxTabPair\">\n   <div class=\"cx-sectionhead\"><div><h3>Ghép đôi TV bằng mã 6 số</h3>\n    <p>Điều khiển trình duyệt TV Samsung hoặc Smart TV mà không cần Chromecast.</p></div>\n    <span class=\"cx-chip\" id=\"cxPairBadge\"><span class=\"cx-dot\"></span><span id=\"cxPairBadgeText\">Chưa kết nối</span></span>\n   </div>\n   <div class=\"cx-grid\">\n    <div class=\"cx-card\"><span class=\"cx-eyebrow\">BƯỚC 01 · KẾT NỐI</span>\n     <h4>Mở Open IPTV Pro trên TV</h4>\n     <p class=\"cx-p\">Mở địa chỉ dưới đây bằng trình duyệt của TV. TV sẽ tự tạo mã 6 số.</p>\n     <div class=\"cx-link-stack\">\n      <div class=\"cx-link-row\"><span class=\"cx-link-type\">Link rút gọn</span><a id=\"cxTvUrl\" class=\"cx-link\" href=\"tv.html\" target=\"_blank\" rel=\"noopener noreferrer\">https://is.gd/IPTVTV</a><button id=\"cxCopyTv\" class=\"cx-button cx-button-secondary\" type=\"button\">⧉ Sao chép</button></div>\n      <div class=\"cx-link-row\"><span class=\"cx-link-type\">Link gốc dự phòng</span><a id=\"cxTvOriginalUrl\" class=\"cx-link\" href=\"tv.html\" target=\"_blank\" rel=\"noopener noreferrer\">https://trisanghy.github.io/open-iptv-pro/tv.html</a><button id=\"cxCopyTvOriginal\" class=\"cx-button cx-button-secondary\" type=\"button\">⧉ Sao chép</button></div>\n     </div>\n     <ol class=\"cx-steps\"><li><b>1</b> TV hiển thị mã 6 số.</li>\n      <li><b>2</b> Nhập mã vào ô bên dưới.</li>\n</ol>\n     <div id=\"cxPairForm\"><label class=\"cx-label\" for=\"cxPin\">Nhập mã ghép đôi trên TV</label>\n      <div class=\"cx-inline\"><input id=\"cxPin\" class=\"cx-pin\" inputmode=\"numeric\" autocomplete=\"one-time-code\" maxlength=\"7\" placeholder=\"000 000\" aria-label=\"Mã TV gồm 6 số\">\n       <button id=\"cxConnect\" class=\"cx-button cx-button-primary\" type=\"button\">↗ Kết nối</button></div></div>\n     <div class=\"cx-remote\" id=\"cxRemote\" hidden>\n      <span class=\"cx-eyebrow\">BƯỚC 02 · ĐIỀU KHIỂN</span>\n      <label class=\"cx-label\">Kênh hiện tại</label><div id=\"cxChannel\" class=\"cx-channelname\">Chưa chọn kênh</div>\n      <p class=\"cx-p\" style=\"margin:7px 0 13px\">Chọn kênh trên Open IPTV Pro, rồi nhấn Phát lên TV.</p>\n      <div class=\"cx-inline\">\n       <button id=\"cxRemotePlay\" class=\"cx-button cx-button-primary\" type=\"button\">▶ Phát lên TV</button>\n       <button id=\"cxRemotePause\" class=\"cx-button\" type=\"button\">Ⅱ Tạm dừng</button>\n       <button id=\"cxRemoteResume\" class=\"cx-button\" type=\"button\">▶ Tiếp tục</button>\n       <button id=\"cxRemoteStop\" class=\"cx-button\" type=\"button\">■ Dừng</button>\n       <button id=\"cxDisconnect\" class=\"cx-button cx-button-secondary\" type=\"button\">Ngắt kết nối</button>\n      </div>\n     </div>\n     <p id=\"cxPairNotice\" class=\"cx-notice\" role=\"status\" aria-live=\"polite\">Mở trang TV và nhập mã do thiết bị TV tạo để bắt đầu.</p>\n    </div>\n    <div class=\"cx-card cx-tvcard\"><div class=\"cx-toptv\"><span class=\"cx-eyebrow\">GIAO DIỆN TV</span><span class=\"cx-tvbadge\">SMART TV</span></div>\n     <div class=\"cx-tv\" aria-label=\"Minh họa trạng thái TV\"><div class=\"cx-tvcontent\">\n      <div class=\"cx-tvlogo\">▣ OPEN IPTV PRO · TV</div>\n      <div id=\"cxTvLine\" class=\"cx-tvdesc\">Mã do TV thật tạo khi mở trang TV</div>\n      <div class=\"cx-tvcode\" id=\"cxTvCode\">••• •••</div>\n      <div id=\"cxTvSub\" class=\"cx-tvdesc\">Không dùng mã cố định của bản demo</div>\n      <span id=\"cxTvChip\" class=\"cx-tvstatus\">● Đang chờ mã</span>\n     </div></div><div class=\"cx-tvstand\" aria-hidden=\"true\"></div>\n     <p class=\"cx-p\" style=\"margin-top:20px;text-align:center\">Mã thật chỉ xuất hiện trên TV. Trạng thái kết nối được cập nhật trực tiếp.</p>\n    </div>\n   </div>\n  </section>\n  <section id=\"cxPaneCast\" class=\"cx-pane\" role=\"tabpanel\" aria-labelledby=\"cxTabCast\" hidden>\n   <div class=\"cx-sectionhead\"><div><h3>Google Cast / Chromecast / Google TV</h3>\n    <p>Chọn TV qua bộ chọn của Chrome, không quét IP như Electron.</p></div>\n    <span class=\"cx-chip\" id=\"cxCastBadge\"><span class=\"cx-dot\"></span><span id=\"cxCastBadgeText\">Chưa kết nối</span></span></div>\n   <div class=\"cx-grid\"><div class=\"cx-card cx-feature\"><span class=\"cx-featureicon\">◫</span><h4>Chọn Chromecast / Google TV</h4>\n    <p class=\"cx-p\">TV cần hỗ trợ Google Cast và chung Wi-Fi. TV chỉ hỗ trợ AirPlay có thể không xuất hiện.</p>\n    <div class=\"cx-inline\" style=\"margin-top:20px\">\n     <button id=\"cxCastScan\" class=\"cx-button cx-button-primary\" type=\"button\">⌕ Tìm thiết bị</button>\n     <button id=\"cxCastPlay\" class=\"cx-button\" type=\"button\" disabled>▶ Phát trên TV</button>\n     <button id=\"cxCastStop\" class=\"cx-button\" type=\"button\" disabled>■ Dừng</button></div>\n    <p class=\"cx-notice\" id=\"cxCastNotice\" role=\"status\">Đang kiểm tra Google Cast SDK…</p></div>\n    <div class=\"cx-card cx-feature\"><span class=\"cx-eyebrow\">THIẾT BỊ THỰC</span>\n     <div class=\"cx-statuscard\" id=\"cxCastDevice\">Chưa có TV được chọn. Chrome sẽ mở danh sách thiết bị thực tế.</div>\n     <p class=\"cx-p\" style=\"margin-top:19px\">Luồng HTTP/HTTPS phải được TV truy cập và hỗ trợ codec. Web không có proxy LAN của Electron.</p></div>\n   </div>\n  </section>\n  <section id=\"cxPaneAir\" class=\"cx-pane\" role=\"tabpanel\" aria-labelledby=\"cxTabAir\" hidden>\n   <div class=\"cx-sectionhead\"><div><h3>AirPlay · Safari trên Mac / iPhone / iPad</h3>\n    <p>Giữ nguyên bộ chọn AirPlay của Safari và hệ điều hành.</p></div>\n    <span class=\"cx-chip\"><span class=\"cx-dot\"></span>AirPlay hệ thống</span></div>\n   <div class=\"cx-grid\"><div class=\"cx-card cx-feature\"><span class=\"cx-featureicon\">◭</span>\n    <h4>Phát lên Samsung TV bằng AirPlay</h4><p class=\"cx-p\">Safari sẽ tự hiển thị TV AirPlay thật. Chrome không quét Bonjour giống Electron.</p>\n    <div class=\"cx-inline\" style=\"margin-top:20px\"><button id=\"cxAirOpen\" class=\"cx-button cx-button-primary\" type=\"button\">◉ Chọn TV bằng AirPlay</button></div>\n    <p id=\"cxAirNotice\" class=\"cx-notice\" role=\"status\">Nhấn để mở AirPlay trong Safari.</p></div>\n    <div class=\"cx-card cx-feature\"><span class=\"cx-eyebrow\">THÔNG TIN KẾT NỐI</span>\n     <div class=\"cx-statuscard\">TV Samsung có AirPlay, Apple TV và thiết bị tương thích phải dùng chung mạng Wi-Fi. Safari quản lý kết nối.</div>\n     <p class=\"cx-p\" style=\"margin-top:18px\">Đang dùng Chrome? Mở trang trong Safari hoặc dùng Phản chiếu màn hình trên macOS.</p></div>\n   </div>\n  </section>\n </div>\n <footer class=\"cx-footer\"><span><b>Open IPTV Pro</b> · Một nút Cast, ba phương thức kết nối</span>\n <span id=\"cxFooter\">Ghép đôi TV · Xác nhận trên TV · Mã hóa</span></footer>\n</div>";
   d.body.appendChild(overlay);
+  // The approved paired-state design lives in the existing modal, not in a
+  // second player. Keep the original pairing form available on disconnect.
+  const pairPane=$('cxPanePair');
+  const hero=d.createElement('div');
+  hero.className='cx-pair-hero';
+  const webLink=d.createElement('a');
+  webLink.id='cxWebShort';webLink.className='cx-web-short';
+  webLink.href='https://is.gd/openiptv';webLink.target='_blank';
+  webLink.rel='noopener noreferrer';webLink.textContent='is.gd/openiptv';
+  const disconnectBtn=$('cxDisconnect');
+  disconnectBtn.hidden=true;disconnectBtn.className='cx-disconnect';
+  disconnectBtn.setAttribute('aria-label','Ngắt kết nối TV');
+  hero.append(webLink,disconnectBtn);
+  pairPane.insertBefore(hero,pairPane.querySelector('.cx-sectionhead'));
+  overlay.querySelector('.cx-tvbadge')?.remove();
+  overlay.querySelector('.cx-tvcard > .cx-p')?.remove();
+  const verified=d.createElement('div');
+  verified.id='cxTvVerified';verified.className='cx-tv-verified';verified.hidden=true;
+  verified.setAttribute('aria-hidden','true');
+  verified.innerHTML='<svg viewBox="0 0 80 80" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="10" y="9" width="60" height="47" rx="6"/><path d="M30 32l8 8 15-16M29 67h22M40 56v11"/></svg>';
+  $('cxTvLine').parentNode.insertBefore(verified,$('cxTvLine'));
+  const controls=d.createElement('div');
+  controls.id='cxTvControls';controls.className='cx-tv-controls';controls.hidden=true;
+  controls.setAttribute('role','group');controls.setAttribute('aria-label','Điều khiển TV');
+  controls.innerHTML='<button id="cxTvPrev" type="button" class="cx-tv-key" title="Kênh trước" aria-label="Kênh trước"></button>'+
+   '<button id="cxTvToggle" type="button" class="cx-tv-key cx-tv-toggle" title="Phát trên TV" aria-label="Phát trên TV"></button>'+
+   '<button id="cxTvStop" type="button" class="cx-tv-key" title="Dừng trên TV" aria-label="Dừng trên TV"></button>'+
+   '<button id="cxTvNext" type="button" class="cx-tv-key" title="Kênh tiếp theo" aria-label="Kênh tiếp theo"></button>'+
+   '<span class="cx-tv-divider" aria-hidden="true"></span>'+
+   '<button id="cxTvMute" type="button" class="cx-tv-key" title="Tắt tiếng TV" aria-label="Tắt tiếng TV"></button>'+
+   '<input id="cxTvVolume" type="range" min="0" max="100" step="1" value="80" aria-label="Âm lượng TV">';
+  overlay.querySelector('.cx-tv').appendChild(controls);
+  const feedback=d.createElement('p');feedback.id='cxTvFeedback';feedback.className='cx-tv-feedback';
+  feedback.setAttribute('role','status');feedback.setAttribute('aria-live','polite');feedback.hidden=true;
+  overlay.querySelector('.cx-tv').appendChild(feedback);
   const airBadge=overlay.querySelector('#cxPaneAir .cx-chip');
   if(airBadge)airBadge.id='cxAirBadge';
   root.OpenIPTVCastIcons?.decorateModal?.(overlay);
+  webLink.prepend(root.OpenIPTVCastIcons.svg('link'));
+  root.OpenIPTVCastIcons?.replace?.(disconnectBtn,'close','Ngắt kết nối');
+  for(const [id,kind] of [['cxTvPrev','prev'],['cxTvToggle','play'],['cxTvStop','stop'],['cxTvNext','next'],['cxTvMute','volume']])
+   setTvIcon($(id),kind);
   $('cxTvUrl').href=tvUrl();$('cxTvUrl').textContent=tvUrl();
   $('cxTvOriginalUrl').href=tvOriginalUrl();$('cxTvOriginalUrl').textContent=tvOriginalUrl();
   $('cxClose').addEventListener('click',close);
@@ -72,6 +117,34 @@
   $('cxRemoteResume').addEventListener('click',()=>void remote('resume'));
   $('cxRemoteStop').addEventListener('click',()=>void remote('stop'));
   $('cxDisconnect').addEventListener('click',()=>void disconnect());
+  // Navigation reuses the original playlist handlers and existing encrypted
+  // onChannelChanged dispatch, so the TV and Web never select different channels.
+  $('cxTvPrev').addEventListener('click',()=>{if(pair?.connected)$('prevBtn')?.click();});
+  $('cxTvNext').addEventListener('click',()=>{if(pair?.connected)$('nextBtn')?.click();});
+  $('cxTvToggle').addEventListener('click',()=>{if(pair?.connected)void toggleRemotePlayback();});
+  $('cxTvStop').addEventListener('click',()=>{if(pair?.connected)$('cxRemoteStop')?.click();});
+  $('cxTvMute').addEventListener('click',()=>{
+   if(!pair?.connected)return;
+   const video=$('video'),original=$('volume');if(!video)return;
+   if(video.muted||Number(video.volume)===0){
+    if(Number(video.volume)===0&&original){
+     original.value=String(Math.max(15,tvLastAudible));
+     original.dispatchEvent(new root.Event('input',{bubbles:true}));
+    }
+    video.muted=false;
+   }else video.muted=true;
+   syncTvVolume();
+  });
+  $('cxTvVolume').addEventListener('input',event=>{
+   if(!pair?.connected)return;
+   const original=$('volume'),video=$('video');if(!original||!video)return;
+   const value=Math.max(0,Math.min(100,Number(event.currentTarget.value)||0));
+   if(value>0)tvLastAudible=value;
+   original.value=String(value);
+   original.dispatchEvent(new root.Event('input',{bubbles:true}));
+   video.muted=value===0;syncTvVolume();
+  });
+  $('video')?.addEventListener('volumechange',syncTvVolume);
   $('cxCastScan').addEventListener('click',()=>{
    const api=root.OpenIPTVWebCast;
    if(!api){notice('cxCastNotice','Google Cast SDK chưa được tải.','error');return;}
@@ -97,9 +170,65 @@
   set('cxFooter',next==='pair'?'Ghép đôi TV · Mã 6 số · Tự kết nối · Mã hóa lệnh':next==='cast'?'Google Cast · Danh sách TV do Chrome chọn':'AirPlay · Safari chọn thiết bị');
   if(next==='cast')syncCast();if(next==='air')syncAir();
  }
+ // Shared SVG vocabulary: the existing Cast icons provide Play/Pause/Stop.
+ // The three extra transport glyphs are native inline SVG, not text/emoji.
+ function setTvIcon(button,name){
+  if(!button)return;
+  const existing=root.OpenIPTVCastIcons;
+  if(['play','pause','stop','close','link'].includes(name)){existing?.replace?.(button,name);return;}
+  const icon=d.createElementNS('http://www.w3.org/2000/svg','svg');
+  icon.setAttribute('viewBox','0 0 24 24');
+  icon.setAttribute('class','oip-cast-svg');
+  icon.setAttribute('width','24');icon.setAttribute('height','24');
+  icon.setAttribute('fill','none');icon.setAttribute('stroke','currentColor');
+  icon.setAttribute('stroke-width','2');icon.setAttribute('stroke-linecap','round');
+  icon.setAttribute('stroke-linejoin','round');icon.setAttribute('aria-hidden','true');
+  const paths={prev:['M5 5v14','M19 5 8 12l11 7V5z'],
+   next:['M19 5v14','M5 5l11 7-11 7V5z'],
+   volume:['M4 9h4l5-4v14l-5-4H4z','M16 9a4 4 0 0 1 0 6','M18.5 6a8 8 0 0 1 0 12'],
+   muted:['M4 9h4l5-4v14l-5-4H4z','M17 9l5 6','M22 9l-5 6']};
+  for(const path of paths[name]||[]){const node=d.createElementNS('http://www.w3.org/2000/svg','path');node.setAttribute('d',path);icon.appendChild(node);}
+  button.replaceChildren(icon);
+ }
+ function syncTvVolume(){
+  if(!overlay)return;
+  const slider=$('cxTvVolume'),mute=$('cxTvMute'),video=$('video');
+  if(!slider||!mute||!video)return;
+  const value=Math.max(0,Math.min(100,Math.round(Number(video.volume||0)*100)));
+  const silent=!!video.muted||value===0;
+  if(value>0)tvLastAudible=value;
+  slider.value=String(silent?0:value);
+  slider.style.setProperty('--cx-volume-fill',(silent?0:value)+'%');
+  slider.setAttribute('aria-valuenow',String(silent?0:value));
+  mute.setAttribute('aria-pressed',String(silent));
+  mute.setAttribute('aria-label',silent?'Bật tiếng TV':'Tắt tiếng TV');
+  mute.title=silent?'Bật tiếng TV':'Tắt tiếng TV';
+  setTvIcon(mute,silent?'muted':'volume');
+ }
+ function syncTvTransport(){
+  if(!overlay)return;
+  const active=!!pair?.connected,playing=remoteState==='playing';
+  const toggle=$('cxTvToggle');
+  if(toggle){
+   toggle.dataset.playing=String(playing);
+   toggle.setAttribute('aria-label',playing?'Tạm dừng trên TV':'Phát trên TV');
+   toggle.title=playing?'Tạm dừng trên TV':'Phát trên TV';
+   setTvIcon(toggle,playing?'pause':'play');
+  }
+  for(const id of ['cxTvPrev','cxTvToggle','cxTvStop','cxTvNext','cxTvMute','cxTvVolume']){
+   const node=$(id);if(node)node.disabled=!active;
+  }
+  syncTvVolume();
+ }
  function renderPair(){
   renderConnectionStatus();
   if(!overlay)return;
+  const paired=!!pair?.connected;
+  $('cxPanePair').dataset.paired=String(paired);
+  $('cxDisconnect').hidden=!paired;
+  $('cxTvControls').hidden=!paired;
+  $('cxTvVerified').hidden=!paired;
+  const feedback=$('cxTvFeedback');if(feedback&&!paired)feedback.hidden=true;
   const p=$('cxPin').value.replace(/\D/g,'');
   $('cxPairBadge').dataset.ok=String(!!pair?.connected);
   set('cxPairBadgeText',pair?.connected?'Đã kết nối':'Chưa kết nối');
@@ -119,6 +248,7 @@
    set('cxTvSub','TV tự kết nối khi mã hợp lệ');
    set('cxTvChip','● Chưa ghép đôi');
   }
+  syncTvTransport();
  }
  async function connect(){
   if(pairPending||pair?.connected)return;
@@ -168,6 +298,7 @@
   const label=remoteState==='playing'?'TV đang phát':remoteState==='paused'?'TV đã tạm dừng':remoteState==='loading'?'TV đang tải luồng':remoteState==='error'?'TV chưa phát được':'TV đã dừng';
   if(connected)set('streamInfo','● '+label+(channel?.name?' · '+channel.name:''));
   renderConnectionStatus();
+  syncTvTransport();
   // Vector icons read the paired TV's actual playback state, never local video.
   root.OpenIPTVPlayerIcons?.sync?.();
   d.dispatchEvent(new root.CustomEvent('openiptv:remote-playback-state',{detail:{connected,state:connected?remoteState:'stopped',method:'pair'}}));
@@ -287,6 +418,7 @@
  function shouldUseRemotePlayer(){return isRemoteActive();}
  function syncRemoteControls(){if(pair?.connected){updateRemoteTransport();return;}renderConnectionStatus();}
  function onLocalVolumeChanged(volume,muted){
+  syncTvVolume();
   const level=Math.max(0,Math.min(1,Number(volume)||0));
   if(pair?.connected){
    // Dragging the volume slider can emit dozens of events per second;

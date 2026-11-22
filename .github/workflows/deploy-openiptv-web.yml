@@ -195,6 +195,8 @@ jobs:
           node --test web-online/tests/web-airplay.test.cjs
           node --test web-online/tests/web-cast-sender.test.cjs
           node --test web-online/tests/web-cast-v2.test.cjs
+          node --test web-online/tests/web-tv-cockpit.test.cjs
+          test -s _site/web-tv-cockpit.css
           node --test web-online/tests/web-cast-icons.test.cjs
           node --test web-online/tests/web-access-links.test.cjs
           grep -Fq 'web-cast-sender.js?v=tv-local-handoff-20261122d' _site/index.html
