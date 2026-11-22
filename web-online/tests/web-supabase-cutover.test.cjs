@@ -32,13 +32,14 @@ test('old account data is backed up before the new project can clear the prior s
  assert.match(script,/if\(new URL\(cfg\.url\)\.hostname===NEW_CLOUD_REF\+'\.supabase\.co'&&!preserveOldProjectData\(\)\)return/);
  assert.match(script,/migrationRestore\.addEventListener\('click'/);
  assert.match(script,/confirm\('Khôi phục dữ liệu/);
- assert.match(script,/if\(!saveRecoveryCopy\(uid,remote\.payload/);
+ assert.match(script,/if\(!await saveRecoveryCopy\(uid,remote\.payload/);
  assert.match(script,/if\(!swapIntoLocal\(payload,uid,remote\?\.revision\|\|0\)\)return/);
 });
 
 test('web refreshes its cloud script and retains OTP and OAuth provider checks',()=>{
  const html=read('index.html'),script=read('cloud-sync.js');
- assert.match(html,/cloud-sync\.js\?v=ios-visual-caret-20261121a/);
+ assert.match(html,/cloud-recovery-storage\.js\?v=cloud-idb-recovery-20261122a/);
+ assert.match(html,/cloud-sync\.js\?v=cloud-idb-recovery-20261122a/);
  assert.match(script,/client\.auth\.verifyOtp\(\{email,token,type:'email'\}\)/);
  assert.match(script,/signInWithOAuth\(\{provider/);
  assert.match(script,/enabledProviders\.github/);
