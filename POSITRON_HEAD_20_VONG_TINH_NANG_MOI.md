@@ -4,6 +4,11 @@
 
 **BẤT BIẾN CỦA HEAD MỚI TỪ P5.1.266:** Mỗi phiên bản NEW phải là AI thực (mô hình học từ dữ liệu quan sát, không giả ML) hoặc tính năng đột phá đã có bằng chứng đầu-cuối. Phân loại chủ đề theo EPG, tra cứu kiến thức kênh có chấp thuận mạng, đề xuất cá nhân hóa dựa trên hành vi xem là ba hướng ưu tiên. CI gác `Feature class: AI|BREAKTHROUGH` và `Evidence:`; không đếm CSS/phím tắt/nút mới là một phiên bản tính năng. Các lỗi BLOCKER_FIX vẫn theo ngoại lệ đã nêu. Quy tắc chi tiết tại [POSITRON_FEATURE_RULES.md](POSITRON_FEATURE_RULES.md).
 
+## BẤT BIẾN: Ưu tiên AI hoặc tính năng đột phá (nhắc lại từ P5.1.267)
+- Mọi phiên bản tính năng mới cần AI có mô hình học thật hoặc bước nhảy chức năng được kiểm chứng, không chỉ đổi màu, icon, nhãn, phím tắt.
+- Ưu tiên phân tích XMLTV, lịch sắp chiếu và sở thích hành vi; không bịa thông tin, không tải dữ liệu riêng lên mạng. Test CI phải đọc mục changelog mới nhất có `Feature class: AI|BREAKTHROUGH` và `Evidence:`.
+- Một vòng được tính hoàn thành chỉ sau test, ảnh Electron thật before/after đã trực tiếp xem, commit, CI, installer và release bất biến.
+
 ## Quy tắc ảnh 16:9 desktop bất biến — áp dụng từ 22/11/2026
 
 **Ảnh chính cho báo cáo, nhật ký tính năng và Release của Positron bắt buộc ưu tiên chụp từ Electron thật ở 1920 × 1080 (16:9).** Quy tắc này được duy trì cho các phiên bản tiếp theo, kể cả khi chuyển cuộc trò chuyện hoặc bàn giao file.

@@ -48,11 +48,20 @@
  const clear=d.createElement('button');clear.type='button';clear.id='poAIReset';
  clear.textContent='Xóa dữ liệu học';clear.title='Xóa các trọng số học máy lưu ở thiết bị này';
  controls.append(checkLabel,clear);
+ const modeBar=d.createElement('div');modeBar.className='po-ai-modes';
+ const channelsMode=d.createElement('button');channelsMode.type='button';channelsMode.id='poAIChannels';
+ channelsMode.textContent='Kênh hợp gu';channelsMode.setAttribute('aria-pressed','true');
+ const upcomingMode=d.createElement('button');upcomingMode.type='button';upcomingMode.id='poAIUpcoming';
+ upcomingMode.textContent='Lịch EPG hợp gu';upcomingMode.setAttribute('aria-pressed','false');
+ modeBar.append(channelsMode,upcomingMode);
+ let upcomingOpen=false;
+ channelsMode.addEventListener('click',()=>{upcomingOpen=false;render();});
+ upcomingMode.addEventListener('click',()=>{upcomingOpen=true;render();});
  const summary=d.createElement('p');summary.className='po-ai-summary';summary.id='poAISummary';
  const list=d.createElement('div');list.id='poAICards';list.className='po-ai-cards';
  const privacy=d.createElement('p');privacy.className='po-ai-privacy';
  privacy.textContent='Mặc định KHÔNG học. Khi bật: chỉ lưu trọng số sở thích trong máy; học sau ≥35 giây phát có hình/tiếng, không tải stream hay lịch sử lên mạng. Tra cứu web chỉ gửi tên kênh, không gửi playlist/URL/hành vi. Bạn có thể xóa mô hình.';
- area.append(title,controls,summary,list,privacy);
+ area.append(title,controls,modeBar,summary,list,privacy);
  const extras=[panel.querySelector('.po-watchflow-modes'),panel.querySelector('.po-watchflow-subhead'),
   byId('poWatchFlowResults'),panel.querySelector('.po-watchflow-note')].filter(Boolean);
  const originals=[byId('poFlowPlusResults'),byId('poWatchLaterSearchRow'),panel.querySelector('.po-flowplus-privacy')].filter(Boolean);
@@ -78,6 +87,8 @@
  function render(){
   if(!aiOpen)return;
   const collection=channels();const profile=webValid();
+  channelsMode.setAttribute('aria-pressed',String(!upcomingOpen));
+  upcomingMode.setAttribute('aria-pressed',String(upcomingOpen));
   summary.textContent=(enabled?'● Đang học':'○ Chưa bật học')+' · '+model.observations+
    ' phản hồi hợp lệ · '+collection.length+' kênh khả dụng · Web chỉ tra khi nhấn nút';
   list.replaceChildren();
@@ -86,8 +97,15 @@
    empty.textContent='Chưa có nguồn IPTV. Hãy thêm playlist hợp lệ và EPG để phân loại, sau đó bật học nếu muốn.';
    list.append(empty);return;
   }
-  const ranked=core.recommend(collection,guide(),win.IPTVGuide,model,profile,
-   {limit:8,clock:Date.now(),excludeId:''});
+  const ranked=upcomingOpen
+   ?core.upcomingForYou(collection,guide(),win.IPTVGuide,model,profile,{limit:8,clock:Date.now(),hours:8})
+   :core.recommend(collection,guide(),win.IPTVGuide,model,profile,
+    {limit:8,clock:Date.now(),excludeId:''});
+  if(upcomingOpen&&!ranked.length){
+   const empty=d.createElement('p');empty.className='po-ai-empty';
+   empty.textContent='Chưa có chương trình sắp phát trong 8 giờ tới từ EPG đã nhập. Hãy tải XMLTV hợp lệ; AI không tự đoán lịch.';
+   list.append(empty);return;
+  }
   for(const [index,item] of ranked.entries()){
    const ch=item.channel,topic=item.topic;
    const card=d.createElement('article');card.className='po-ai-card';
@@ -97,6 +115,13 @@
    metric.textContent=topic.label+' · '+(topic.source==='epg'?'EPG':topic.source==='web'?'Wikipedia':
     topic.key==='other'?'Chưa rõ chủ đề':'Tên/nhóm')+(model.observations>=2?' · '+Math.round(item.probability*100)+'% hợp gu':'');
    header.append(chName,metric);card.append(header);
+   if(upcomingOpen&&item.programme){
+    const schedule=d.createElement('p');schedule.className='po-ai-programme';
+    const time=new Date(item.programme.start).toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit'});
+    schedule.textContent=time+' · '+item.programme.title;
+    schedule.title='Lịch XMLTV, không xác nhận chương trình đang phát: '+item.programme.title;
+    card.append(schedule);
+   }
    if(topic.nowTitle||topic.nextTitle){
     const onAir=d.createElement('p');onAir.className='po-ai-epg';
     onAir.textContent=topic.nowTitle?'EPG đang chiếu: '+topic.nowTitle:'EPG sắp tới: '+topic.nextTitle;
@@ -110,6 +135,7 @@
    }
    const actions=d.createElement('div');actions.className='po-ai-actions';
    const play=d.createElement('button');play.type='button';play.textContent='▶ Xem';
+   if(upcomingOpen)play.textContent='▶ Xem kênh';
    play.addEventListener('click',()=>{
     if(!channels().some(c=>String(c.id)===String(ch.id)))return render();
     win.PositronWatchFlow?.close?.();state()?.setPage?.('tv');
@@ -182,5 +208,7 @@
  if(count)new MutationObserver(()=>{if(aiOpen&&!panel.hidden)render();}).observe(count,{childList:true,characterData:true,subtree:true});
  new MutationObserver(()=>{if(aiOpen&&!panel.hidden)render();}).observe(panel,{attributes:true,attributeFilter:['hidden']});
  win.PositronIntelligence=Object.freeze({render,getProfile:()=>({enabled,observations:model.observations}),
-  recommend:()=>core.recommend(channels(),guide(),win.IPTVGuide,model,webValid()),getTopic:metadata});
+  recommend:()=>core.recommend(channels(),guide(),win.IPTVGuide,model,webValid()),
+  upcoming:()=>core.upcomingForYou(channels(),guide(),win.IPTVGuide,model,webValid()),
+  getTopic:metadata});
 })();

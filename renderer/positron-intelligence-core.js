@@ -128,6 +128,48 @@
   rows.sort((a,b)=>b.score-a.score||String(a.channel.name).localeCompare(String(b.channel.name),'vi'));
   return rows.slice(0,Math.max(1,Math.min(20,Math.trunc(limit)||6)));
  }
+
+ // P5.1.267: rank actual future XMLTV programmes with learned preferences.
+ // Topic words are explicitly rule-based; personalized scoring is logistic ML.
+ function upcomingForYou(channels,guide,api,model,webMap={}, {limit=8,clock=Date.now(),hours=8}={}){
+  if(!guide||typeof api?.find!=='function'||!Number.isFinite(clock))return [];
+  const m=sanitizedModel(model),seen=new Set(),rows=[];
+  const horizon=clock+Math.max(1,Math.min(12,Number(hours)||8))*3600000;
+  for(const ch of (Array.isArray(channels)?channels:[]).slice(0,900)){
+   if(!ch?.id||!ch.name||!ch.url||ch.status==='dead')continue;
+   let programmes=[];
+   try{programmes=api.find(guide,ch)||[];}catch{continue;}
+   if(!Array.isArray(programmes))continue;
+   for(const p of programmes.slice(0,120)){
+    if(!Number.isFinite(p?.start)||!Number.isFinite(p?.end)
+     ||p.end<=p.start||p.start<=clock||p.start>horizon)continue;
+    const title=String(p.title||'').trim().replace(/\s+/g,' ').slice(0,140);
+    if(!title)continue;
+    const id=String(ch.id)+'|'+p.start+'|'+normalize(title);
+    if(seen.has(id))continue;
+    seen.add(id);
+    const matched=Object.keys(subject(title+' '+String(p.description||'').slice(0,220)))[0];
+    const fallback=metadataTopic(ch);
+    const saved=webMap[String(ch.name)]||null;
+    const webKey=saved?.key&&KINDS[saved.key]&&saved.confidence>=0.7?saved.key:null;
+    const key=matched||webKey||fallback.key;
+    const topic={key,label:KINDS[key],source:matched?'epg':webKey?'web':'metadata',
+     confidence:matched?0.85:webKey?0.7:fallback.confidence};
+    const probability=predict(m,features(ch,topic,new Date(p.start)));
+    const score=(m.observations>=2?probability:0.5)
+     +(matched?0.025:0)+(ch.status==='alive'?0.02:0);
+    const reason=(m.observations>=2
+     ?'Học từ '+m.observations+' phản hồi xem trên máy'
+     :'Chưa học đủ hành vi · Lịch từ XMLTV')
+     +(matched?' · Chủ đề từ EPG':' · Chưa xác minh chủ đề từ EPG');
+    rows.push({channel:ch,programme:{title,start:p.start,end:p.end},topic,probability,score,reason});
+   }
+  }
+  rows.sort((a,b)=>b.score-a.score||a.programme.start-b.programme.start
+   ||String(a.channel.name).localeCompare(String(b.channel.name),'vi'));
+  return rows.slice(0,Math.max(1,Math.min(20,Math.trunc(limit)||8)));
+ }
+
  function cleanQuery(name){
   const s=String(name||'').trim();
   if(!s||s.length>70||/[:\\/]/.test(s)||/https?\b|@|[<>]/i.test(s))return '';
@@ -153,5 +195,5 @@
   return best;
  }
  return Object.freeze({KINDS,normalize,subject,metadataTopic,topicFor,features,emptyModel,
-  sanitizedModel,predict,learn,recommend,cleanQuery,readWikiSearch});
+  sanitizedModel,predict,learn,recommend,upcomingForYou,cleanQuery,readWikiSearch});
 });

@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.351",
-  "description": "Positron P5.1.266: WatchFlow Intelligence học máy sở thích, phân loại EPG và tra cứu Wikipedia",
+  "version": "4.23.352",
+  "description": "Positron P5.1.267: AI đề xuất chương trình sắp chiếu theo EPG và hành vi",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

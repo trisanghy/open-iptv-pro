@@ -4,6 +4,13 @@
 
 
 
+
+### Bất biến nâng cấp AI từ P5.1.267
+- AI phát lịch: phải lấy tên/giờ thực từ XMLTV đã nạp, không đoán lịch khi thiếu nguồn.
+- AI cá nhân hóa: phải học trọng số từ phản hồi/thời lượng hợp lệ, kiểm chứng thứ hạng trước/sau; luật từ khóa không được gọi là ML.
+- Web: chỉ tra cứu khi người dùng nhấn và chỉ gửi tên kênh; không gửi M3U/URL/hành vi.
+- Mọi phiên bản NEW đều phải có `Feature class: AI` hoặc `Feature class: BREAKTHROUGH`, trường `Evidence:` và bài kiểm thử, không đếm thay đổi CSS/icon/nhãn là tính năng.
+
 ## HEAD BẤT BIẾN — TỪ P5.1.266: CHỈ PHÁT HÀNH TÍNH NĂNG AI HOẶC ĐỘT PHÁ THỰC CHẤT
 
 **Chỉ được tính một phiên bản NEW nếu thêm khả năng người xem chưa từng có, thuộc ít nhất một nhóm: AI học từ tương tác có mô hình và đánh giá được; phân loại/nội suy chủ đề từ EPG có dữ liệu thật; khám phá kiến thức kênh có nguồn, kiểm soát quyền mạng; hoặc nâng cấp hệ thống phát/khám phá khác biệt rõ ràng, kiểm chứng bằng tác vụ đầu-cuối.** Không dùng việc đổi màu, sắp xếp, phím tắt, biểu tượng, nhãn, nút dẫn trang, số phiên bản, báo cáo kiểm thử hoặc tinh chỉnh nhỏ làm phiên bản NEW độc lập.

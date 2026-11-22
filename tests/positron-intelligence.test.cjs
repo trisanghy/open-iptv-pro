@@ -56,3 +56,52 @@ test('WatchFlow 5 chế độ dễ đọc và AI tab riêng không thu hẹp tê
  assert.ok(css.includes('.po-ai-entry #poFlowPlusAI'));
  assert.ok(qa.includes('a.length===5&&a.every'));
 });
+
+test('P267 AI xếp lịch XMLTV cá nhân hóa từ phản hồi học máy, không sửa playlist',()=>{
+ const guide={programmes:[{id:'qa'}]},t=now,before=JSON.stringify([sport,news]);
+ const finder={find:(_g,ch)=>[
+  {title:ch.id==='sport'?'Trực tiếp bóng đá':'Bản tin thời sự',start:t+3600000,end:t+7200000},
+  {title:'Đã kết thúc',start:t-7200000,end:t-3600000}]};
+ let m=C.emptyModel();
+ const sf=C.features(sport,{key:'sport',source:'epg'},new Date(t+3600000));
+ const nf=C.features(news,{key:'news',source:'epg'},new Date(t+3600000));
+ for(let i=0;i<12;i++)m=C.learn(m,sf,1);
+ for(let i=0;i<9;i++)m=C.learn(m,nf,0);
+ const rows=C.upcomingForYou([news,sport],guide,finder,m,{}, {clock:t});
+ assert.equal(rows.length,2);
+ assert.equal(rows[0].channel.id,'sport');
+ assert.equal(rows[0].topic.source,'epg');
+ assert.ok(rows[0].probability>rows[1].probability);
+ assert.equal(JSON.stringify([sport,news]),before);
+});
+test('P267 không bịa lịch nếu thiếu EPG, bỏ trùng và các giờ vô hiệu',()=>{
+ assert.deepEqual(C.upcomingForYou([sport],null,resolver,C.emptyModel()),[]);
+ const guide={programmes:[]};
+ const invalid={find:()=>[
+  {title:'Cũ',start:now-7200000,end:now-3600000},
+  {title:'Quá xa',start:now+90000000,end:now+94000000},
+  {title:'Invalid',start:NaN,end:now+3600000}]};
+ assert.deepEqual(C.upcomingForYou([sport],guide,invalid,C.emptyModel(),{}, {clock:now}),[]);
+ const valid={find:()=>[
+  {title:'Chương trình A',start:now+3600000,end:now+7200000},
+  {title:'Chương trình A',start:now+3600000,end:now+7200000}]};
+ const rows=C.upcomingForYou([sport],guide,valid,C.emptyModel(),{}, {clock:now});
+ assert.equal(rows.length,1);
+ assert.notEqual(rows[0].topic.source,'epg');
+});
+test('P267 UI có chế độ lịch sắp chiếu, không tự tải EPG hay tự phát',()=>{
+ const s=fs.readFileSync('renderer/positron-intelligence.js','utf8');
+ const c=fs.readFileSync('renderer/positron-intelligence-core.js','utf8');
+ assert.ok(s.includes("upcomingMode.addEventListener('click'"));
+ assert.ok(s.includes('core.upcomingForYou(collection,guide(),win.IPTVGuide,model,profile'));
+ assert.ok(s.includes('Lịch EPG hợp gu'));
+ assert.ok(s.includes('AI không tự đoán lịch'));
+ assert.ok(c.includes('api.find(guide,ch)'));
+});
+test('HEAD: chỉ AI hoặc đột phá có bằng chứng được tăng bản tính năng',()=>{
+ const h=fs.readFileSync('POSITRON_HEAD_20_VONG_TINH_NANG_MOI.md','utf8');
+ const c=fs.readFileSync('POSITRON_P5_CHANGELOG.md','utf8').split(/^## /m)[1];
+ assert.match(h,/CHỈ PHÁT HÀNH TÍNH NĂNG AI HOẶC ĐỘT PHÁ/);
+ assert.match(c,/Feature class: (?:AI|BREAKTHROUGH)/);
+ assert.match(c,/Evidence:/);
+});

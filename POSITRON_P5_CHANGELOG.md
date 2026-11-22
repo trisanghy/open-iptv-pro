@@ -1,5 +1,15 @@
 # Positron P5 Changelog
 
+## P5.1.267 — AI lịch EPG hợp gu từ chương trình sắp chiếu / Electron 4.23.352
+- Feature priority: NEW — Một chế độ mới **Lịch EPG hợp gu** trong WatchFlow Intelligence: dùng EPG XMLTV hiện có để tìm chương trình sẽ bắt đầu trong 8 giờ tới, không bịa giờ hoặc tiêu đề; xếp chương trình theo mức độ phù hợp nhờ trọng số logistic học từ phản hồi và thời lượng xem, cá nhân hóa theo giờ phát và loại nội dung. Phân loại chủ đề từ tên/mô tả EPG dùng luật rõ ràng (không quảng cáo là LLM), còn xếp hạng bằng mô hình học thực.
+- Feature class: AI
+- Evidence: Node tests xây fixture XMLTV với chương trình thể thao và thời sự, 12 phản hồi tích cực thể thao + 9 tiêu cực tin tức phải làm thứ tự xếp hạng thay đổi. Test bảo toàn playlist, lọc giờ quá khứ/quá xa/không hợp lệ và khử trùng. Electron CDP kiểm tra chuyển chế độ trong WatchFlow và chụp before/after 1920×1080, không autoplay.
+- User action: TV → WatchFlow → ✦ AI → Lịch EPG hợp gu. Xem giờ phát và tên chương trình từ XMLTV, nhấn Xem kênh khi muốn phát; quay lại Kênh hợp gu để xem đề xuất kênh. Tra cứu Wikipedia vẫn chỉ thực hiện theo nút của từng kênh.
+- Privacy: Local-first, mặc định không học, có quyền bật/tắt/xóa; không tải EPG mạng tùy tiện, không gửi M3U, stream URL, trọng số hoặc lịch sử xem lên Wikipedia.
+- Electron screenshot: positron-p51267-ai-epg-before-1920x1080-real.png / positron-p51267-ai-epg-after-1920x1080-real.png; chỉ tính hoàn thành sau khi CI, ảnh soát bằng mắt, EXE/DMG và Release được xác minh.
+- Trạng thái: CANDIDATE cho tới khi tất cả bằng chứng đạt.
+
+
 ## P5.1.266 — WatchFlow Intelligence: học máy sở thích, phân loại EPG và tìm chủ đề trên Wikipedia / Electron 4.23.351
 - Feature priority: NEW — WatchFlow Intelligence với thuật toán học máy hồi quy logistic cập nhật trọng số dựa trên thời lượng xem ≥35 giây có hình hoặc đánh giá Hợp gu/Không hợp; phân loại theo chương trình XMLTV đang/sắp chiếu; tra cứu Wikipedia theo tên kênh và chỉ khi bấm nút, không gửi playlist, URL hoặc lịch sử xem lên mạng.
 - Feature class: AI
