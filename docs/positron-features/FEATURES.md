@@ -11,7 +11,7 @@ Trang này được tạo tự động từ GitHub Releases và ảnh kiểm th�
 
 **Ứng dụng:** 4.23.306 · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
 
-Sửa riêng Positron desktop >1050px: các nhãn căn cạnh trên, nút Đặt lịch ghi giữ cùng hàng input. Không sửa logic DVR, danh sách M3U, Favorites, stream. Trạng thái: CANDIDATE cho tới khi mở ảnh sau, Node tests, CI 6/6, release/tag mới được kiểm chứng.
+Feature priority: BLOCKER_FIX — Các nhãn Bắt đầu và Kết thúc lệch hàng khiến việc chọn đúng thời điểm ghi video trở nên khó kiểm tra; sửa bố cục để tránh thao tác nhầm mà không thay đổi dữ liệu lịch hoặc luồng ghi hình. Electron screenshot: positron-p51221-dvr-form-after-1920x1080-real.png
 
 *Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
 

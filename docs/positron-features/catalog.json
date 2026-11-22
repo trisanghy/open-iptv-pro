@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-22T14:48:00.351905+00:00",
+  "generatedAt": "2026-11-22T14:49:54.431037+00:00",
   "repository": "trisanghy/open-iptv-pro",
   "branch": "Positron",
   "versions": [
@@ -8,7 +8,7 @@
       "version": "P5.1.221",
       "appVersion": "4.23.306",
       "title": "sửa lệch nhãn form hẹn giờ ghi hình EPG",
-      "description": "Sửa riêng Positron desktop >1050px: các nhãn căn cạnh trên, nút Đặt lịch ghi giữ cùng hàng input. Không sửa logic DVR, danh sách M3U, Favorites, stream. Trạng thái: CANDIDATE cho tới khi mở ảnh sau, Node tests, CI 6/6, release/tag mới được kiểm chứng.",
+      "description": "Feature priority: BLOCKER_FIX — Các nhãn Bắt đầu và Kết thúc lệch hàng khiến việc chọn đúng thời điểm ghi video trở nên khó kiểm tra; sửa bố cục để tránh thao tác nhầm mà không thay đổi dữ liệu lịch hoặc luồng ghi hình. Electron screenshot: positron-p51221-dvr-form-after-1920x1080-real.png",
       "kind": "fix",
       "status": "candidate",
       "published": "",
