@@ -5,7 +5,7 @@
 - Fix: chỉ override `#page-fav #favoriteList.favorite-grid` trong Positron bằng min-width 390px/cột, giữ auto-fit; dưới 760px dùng một cột. Không sửa hệ thống grid Sources/EPG, không xóa/sửa Favorites hay trình phát.
 - Input screenshot true native Electron: `positron-p51180-bulk-favorites-after-1920x1080-real.png` trong Release P5.1.180.
 - Electron screenshot: positron-p51181-readable-favorites-after-1920x1080-real.png
-- Before screenshot: positron-p51181-readable-favorites-before-1920x1080-real.png (Electron chạy cùng nguồn, tạm phục hồi CSS legacy đã quan sát trong ảnh P180).
+- Before screenshot: positron-p51181-readable-favorites-before-1920x1080-real.png (Electron thật với CSS sáu cột tái hiện lỗi đã quan sát; ảnh P180 nguyên gốc vẫn được lưu riêng).
 - Regression: Node + chín kiểm tra DOM Electron, gồm 8 cards, 2–4 cột ở desktop, card >=345px, tên không tràn/cắt, favorite count, gợi ý còn nguyên, không autoplay/overflow.
 - Status: CANDIDATE đến khi ảnh và release EXE/DMG được xác minh.
 

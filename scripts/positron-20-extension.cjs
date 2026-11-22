@@ -4926,11 +4926,11 @@ async function runTwenty(page){
  // P5.1.181: sửa lưới sáu cột hẹp phát hiện khi lưu 8 Favorites trong ảnh P180.
  // Ảnh TRƯỚC lấy từ artifact của P5.1.180, không tái sử dụng ảnh giả.
  await page.setViewportSize({width:1920,height:1080});
- // Soát TRƯỚC bằng cách phục hồi selector legacy trong Electron thật trong chốc lát.
- // Screenshot gốc P180 từ code cũ đã được mở độc lập, đây là tái hiện trực tiếp trên cùng DOM.
+ // Soát TRƯỚC trong Electron thật: tái hiện sáu cột hẹp đã quan sát trên ảnh P180.
+ // Quy tắc 6 cột chỉ dùng tạm thời cho ảnh QA; ảnh P180 gốc vẫn là chứng cứ độc lập.
  await page.evaluate(()=>{
   const legacy=document.createElement('style');legacy.id='poP181LegacyFavoriteGrid';
-  legacy.textContent='html[data-positron="true"] #page-fav #favoriteList.favorite-grid{grid-template-columns:repeat(auto-fit,minmax(min(100%,var(--ui-grid-min,270px)),1fr))!important;gap:var(--ui-gap,13px)!important}';
+  legacy.textContent='html[data-positron="true"] #page-fav #favoriteList.favorite-grid{grid-template-columns:repeat(6,minmax(0,1fr))!important;gap:var(--ui-gap,13px)!important}';
   document.head.append(legacy);
  });
  const legacyFavoriteColumns=await page.evaluate(()=>
