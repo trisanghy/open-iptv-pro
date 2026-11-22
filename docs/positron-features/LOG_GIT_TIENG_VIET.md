@@ -2,14 +2,23 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
-## P5.1.178 — duyệt các nhóm kênh gợi ý Yêu thích
+## P5.1.179 — tìm kênh chưa yêu thích theo tên hoặc nhóm
 
-**Ứng dụng:** 4.23.263 · **Trạng thái:** Chưa có bản phát hành
+**Ứng dụng:** 4.23.264 · **Trạng thái:** Chưa có bản phát hành
+
+Feature priority: NEW — Ảnh Electron thật P5.1.178 cho thấy Gợi ý khác đã duyệt sáu kênh mỗi lần nhưng không có cách tìm tên hoặc nhóm khi 559 kênh chưa sao. Bổ sung bộ tìm riêng ngay trong khu vực gợi ý, hỗ trợ tiếng Việt không dấu, không ảnh hưởng bộ lọc của Favorites đã lưu. User action: Mở Yêu thích có ít nhất một kênh → gõ tên hoặc nhóm trong ô Tìm kênh để thêm → chọn ☆ để lưu hoặc xóa từ khóa để xem các nhóm kênh tiếp.
+
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/2dc261e3279bb5e434704bf84960ce7607f37650)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+
+## P5.1.178 — Gợi ý khác để duyệt thêm kênh Yêu thích / Electron 4.23.263
+
+**Ứng dụng:** 4.23.263 · **Trạng thái:** Đã phát hành
 
 Feature priority: NEW — Ảnh Electron thật P5.1.176 cho thấy bảng Gợi ý thêm vào Yêu thích chỉ có sáu kênh đầu dù còn hàng trăm kênh chưa đánh sao. Thêm nút Gợi ý khác để duyệt các nhóm sáu kênh chưa sao tiếp theo mà không sửa playlist và không tự phát. User action: Mở trang Yêu thích có ít nhất một kênh → bấm Gợi ý khác để thấy sáu kênh tiếp theo → bấm ☆ ở kênh mong muốn để thêm vào Yêu thích.
 
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/ab491aad067db5ed7387d07421f58d3ae1ec39cf)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/433dcac2d6833063948cf6bad53c980ebe4d7896)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.263-p5.1.178)
 
 ## P5.1.177 — Tìm kiếm không dấu trong Yêu thích / Electron 4.23.262
 
