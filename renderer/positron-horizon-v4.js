@@ -244,8 +244,6 @@
     if(badge){badge.hidden=false;badge.textContent=String(randomSeenIds.size);}
     nextRandom.dataset.poDiscoverCount=String(randomSeenIds.size);
     syncRandomProgress();
-    nextRandom.title='Đổi sang kênh chưa khám phá · '+randomSeenIds.size+' lượt';
-    nextRandom.setAttribute('aria-label','Đổi sang kênh chưa khám phá, đã chọn '+randomSeenIds.size+' kênh');
     Promise.resolve(window.IPTVState.playChannel(selected.id))
      .catch(e=>window.IPTVState?.toast?.(e.message||String(e),'error'));
    };
@@ -261,11 +259,22 @@
    // P209: Show how many of the eligible channels have been explored.
    // Session-only information; never starts playback or changes sources.
    const syncRandomProgress=()=>{
-    const total=window.IPTVState?.getChannels?.().filter(c=>c?.id&&c?.url&&c.status!=='dead').length||0;
+    // P210: source edits can remove previously discovered channels.
+    // Drop stale session IDs when the native channel list changes, not only
+    // when the next random button is pressed. Never mutate the playlist.
+    const eligible=window.IPTVState?.getChannels?.().filter(c=>c?.id&&c?.url&&c.status!=='dead')||[];
+    const activeIds=new Set(eligible.map(c=>c.id));
+    for(const id of randomSeenIds)if(!activeIds.has(id))randomSeenIds.delete(id);
+    const total=eligible.length,count=randomSeenIds.size;
+    const badge=nextRandom.querySelector('.po-random-count');
+    if(badge){badge.hidden=count===0;badge.textContent=count?String(count):'';}
+    nextRandom.dataset.poDiscoverCount=String(count);
     const progress=nextRandom.querySelector('.po-random-progress');
-    if(!progress)return;
-    progress.textContent=total>1?'/'+total:'';
-    progress.hidden=total<2||randomSeenIds.size===0;
+    if(progress){progress.textContent=total>1?'/'+total:'';progress.hidden=total<2||count===0;}
+    nextRandom.title=count?'Đã khám phá '+count+'/'+total+' kênh':'Đổi sang kênh ngẫu nhiên khác';
+    nextRandom.setAttribute('aria-label',count?'Đã khám phá '+count+' trong '+total+' kênh; nhấn để xem kênh khác':'Đổi sang kênh ngẫu nhiên khác');
+    const reset=byId('poRandomCycleReset');
+    if(reset)reset.hidden=nextRandom.hidden||count===0;
    };
    nextRandom.addEventListener('click',switchRandomChannel);
    byId('nextBtn')?.parentElement?.append(nextRandom);

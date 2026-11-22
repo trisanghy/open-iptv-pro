@@ -2317,7 +2317,7 @@ test('P5.1.207 accessible reset clears only random session history',()=>{
   'positron-p51207-random-reset-after-1920x1080-real.png'])
   assert.ok(qa.includes(t),'Missing genuine reset QA '+t);
  const pkg=JSON.parse(read('package.json'));
- assert.ok(flow.includes('TAG=positron/v'+pkg.version+'-p5.1.209'));
+ assert.ok(flow.includes('TAG=positron/v'+pkg.version+'-p5.1.210'));
 });
 
 
@@ -2355,4 +2355,23 @@ test('P5.1.209 displays native random exploration progress without source mutati
   'before209.equals(after209),false'])
   assert.ok(qa.includes(token),'Missing native Electron proof: '+token);
  assert.ok(flow.includes('test -s positron-evidence/p5-20-rounds/positron-p51209-random-progress-after-1920x1080-real.png'));
+});
+
+
+test('P5.1.210 automatically prunes random exploration when channels are removed',()=>{
+ const js=read('renderer/positron-horizon-v4.js');
+ const qa=read('scripts/positron-20-extension.cjs');
+ const flow=read('.github/workflows/positron-lab.yml');
+ for(const token of ['const activeIds=new Set(eligible.map(c=>c.id))',
+  'if(!activeIds.has(id))randomSeenIds.delete(id)',
+  'badge.hidden=count===0','nextRandom.dataset.poDiscoverCount=String(count)',
+  'reset.hidden=nextRandom.hidden||count===0'])
+  assert.ok(js.includes(token),'Missing source-sync behaviour: '+token);
+ for(const token of ['sourceChangeQA','autoPruned','resetHidden','ariaFresh',
+  'originalPlaylistUnchanged','oneExplicitPlayback','compact210',
+  'positron-p51210-source-sync-before-1920x1080-real.png',
+  'positron-p51210-source-sync-after-1920x1080-real.png',
+  'before210.equals(after210),false'])
+  assert.ok(qa.includes(token),'Missing Electron native source-change QA: '+token);
+ assert.ok(flow.includes('test -s positron-evidence/p5-20-rounds/positron-p51210-source-sync-after-1920x1080-real.png'));
 });

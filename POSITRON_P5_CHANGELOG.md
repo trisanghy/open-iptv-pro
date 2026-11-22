@@ -1,5 +1,15 @@
 # Positron P5 Changelog
 
+## P5.1.210 — Tự cập nhật bộ đếm khám phá khi đổi nguồn / Electron 4.23.295
+- Feature priority: NEW — Từ ảnh P5.1.209 và mã xử lý danh sách nguồn, bộ đếm Bất kỳ có thể tiếp tục ghi nhận các kênh đã xóa hoặc thay nguồn, dẫn tới tiến độ sai cho tới lúc người dùng tự bấm chuyển kênh tiếp. Bổ sung đồng bộ thông minh khi danh sách kênh được cập nhật, tránh khiến tiến độ kênh không còn tồn tại gây nhầm lẫn.
+- Electron screenshot: positron-p51210-source-sync-after-1920x1080-real.png
+- User action: Dùng Bất kỳ để khám phá kênh, sau đó cập nhật/xóa một nguồn IPTV trong Quản lý nguồn; khi danh sách kênh thay đổi, bộ đếm và trạng thái nút Làm mới tự điều chỉnh theo những kênh còn hợp lệ, không cần bấm Bất kỳ thêm một lần.
+- Thay đổi: chỉ xóa các ID không còn hợp lệ trong tập tạm của phiên khám phá, cập nhật badge, tiến độ, aria-label và nút reset; không viết playlist, Favorites, đồng bộ hoặc ghi phát.
+- Before: `positron-p51210-source-sync-before-1920x1080-real.png`; after: `positron-p51210-source-sync-after-1920x1080-real.png`.
+- QA: Electron thật 1920×1080; mô phỏng thay đổi duy nhất bộ lọc đọc từ IPTVState trong fixture UI, kích hoạt native MutationObserver, xác minh bỏ ID cũ, đồng bộ badge/ARIA/reset; không sửa playlist hoặc phát thêm; kiểm tra lại viewport 450px.
+- Status: CANDIDATE cho tới khi Node tests, ảnh Electron được mở, Mac/Windows build và Release xác minh.
+
+
 ## P5.1.209 — Tiến độ khám phá ngẫu nhiên có mẫu số / Electron 4.23.294
 - Feature priority: NEW — Ảnh Electron P5.1.208 cho thấy nút Bất kỳ chỉ hiển thị số kênh đã thử trong phiên (1), không cho biết tổng số kênh đủ điều kiện. Thêm mẫu số trực tiếp để người xem biết đã khám phá bao nhiêu trong toàn bộ playlist hiện tại.
 - Electron screenshot: positron-p51209-random-progress-after-1920x1080-real.png

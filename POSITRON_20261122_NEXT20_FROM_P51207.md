@@ -8,5 +8,15 @@ Phạm vi: chỉ `Positron`. Baseline HEAD `2e0d53a478a3361731e0f191e8b06c54a943
 - Baseline ảnh thực lấy từ Actions #45020339907: `p5-20-rounds/positron-p51207-random-reset-after-1920x1080-real.png` đã mở và nhìn, 1920×1080, nút Bất kỳ và Làm mới xuất hiện trên transport.
 - Sửa: ghi trạng thái focus trước khi ẩn nút Reset; sau reset chuyển focus về `#poNextRandomChannel` khi nút đó còn hiển thị. Không phát video, không đụng playlist/favorites.
 - Regression: `tests/positron-p5.test.cjs`; Electron test sẽ nhấn Enter thực ở nút Reset, soát focus/counter/current channel/playlist và chụp `positron-p51208-focus-return-before-1920x1080-real.png`, `positron-p51208-focus-return-after-1920x1080-real.png`.
-- **Trạng thái tại commit: CANDIDATE / CHƯA TÍNH HOÀN THÀNH**. Phải đợi CI kiểm thử, tải và MỞ ảnh P208 rồi mới được kết luận. Nếu test/ảnh không đạt, sửa lại cùng vòng. Chỉ tăng số vòng khi đủ bằng chứng.
-- Vòng 02–20: CHƯA LÀM; chọn lỗi từ ảnh P208 và tiếp tục phiên bản nối tiếp, không sửa hàng loạt không kiểm thử.
+- **ĐÃ HOÀN THÀNH**: GitHub Actions #45021828902 6/6 thành công; Ảnh trước/sau 1920×1080 được mở, kiểm focus, giữ playlist/current channel; tag bất biến `positron/v4.23.293-p5.1.208`, Release đã xác minh, đầy đủ Win EXE + Mac DMG.
+
+## Vòng 02/20 — P5.1.209 / Electron 4.23.294 — ĐÃ HOÀN THÀNH
+- Chọn từ ảnh P208: số kênh khám phá chỉ có tử số, không có tổng. Thêm mẫu số tổng số kênh hợp lệ với giao diện ẩn khi chưa khám phá hay viewport hẹp.
+- Release bất biến `positron/v4.23.294-p5.1.209`, commit phát hành `61a62f3f416b1494aad43e17c75814d54112f49f`, Actions #45022454342 6/6 thành công, đã trực tiếp mở 2 PNG từ chính run đó: `positron-p51209-random-progress-before-1920x1080-real.png` và `positron-p51209-random-progress-after-1920x1080-real.png`, sau hiển thị 1/561 với fixture Electron hợp lệ. Assets EXE/DMG, source, ảnh, SHA256SUMS đã xác minh bằng API.
+- Một commit sau release `0b188ef` chỉ bổ sung reset bộ đếm trong kịch bản QA để trước/sau dễ so sánh. Workflow chạy lại thành công test, ảnh, build nhưng *release* từ run này bị chặn vì tag P209 đã bất biến trỏ `61a62f3`; không đẩy lại tag. P209 vẫn phát hành nguyên vẹn từ run gốc.
+
+## Vòng 03/20 — P5.1.210 / Electron 4.23.295 — CANDIDATE
+- Lỗi nguồn P209: `syncRandomProgress` đọc tổng kênh mới, nhưng `randomSeenIds` còn lưu ID nguồn cũ cho đến khi bấm Bất kỳ lần sau. Tiến độ có thể tạm sai sau cập nhật nguồn.
+- Thay đổi đề xuất/triển khai: khi `syncPlayerIntro` chạy vì native channelMeta thay đổi, lọc tập ID tạm theo kênh hiện có; cập nhật badge/progress/reset/aria-label; không sửa playlist, không autoplay.
+- Test dự kiến: `sourceChangeQA` với hai cặp kênh fixture và MutationObserver Electron thật; before/after `positron-p51210-source-sync-before-1920x1080-real.png`, `positron-p51210-source-sync-after-1920x1080-real.png`; Node regression và 450px. Chỉ đếm hoàn thành sau CI và trực tiếp mở PNG sau; release tag `positron/v4.23.295-p5.1.210` duy nhất nếu thành công.
+- Vòng 04–20: CHƯA LÀM. Baseline phải là HEAD/Release mới nhất; không đếm chạy lại screenshot lịch sử như vòng mới.

@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.294",
-  "description": "Positron P5.1.209: xem tiến độ khám phá ngẫu nhiên theo tổng số kênh",
+  "version": "4.23.295",
+  "description": "Positron P5.1.210: tự cập nhật tiến độ khám phá khi danh sách kênh đổi",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",
