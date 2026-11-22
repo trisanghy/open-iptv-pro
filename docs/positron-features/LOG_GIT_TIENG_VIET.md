@@ -2,14 +2,23 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
-## P5.1.180 — lưu nhiều kênh gợi ý cùng lúc
+## P5.1.181 — sửa thẻ Yêu thích bị bó hẹp khi có nhiều kênh
 
-**Ứng dụng:** 4.23.265 · **Trạng thái:** Chưa có bản phát hành
+**Ứng dụng:** 4.23.266 · **Trạng thái:** Chưa có bản phát hành
+
+Visual bug confirmed from real screenshot P5.1.180: khi lưu 6 kênh một lần tổng 8 Favorites, auto-fit grid dàn thành 6 cột hẹp, tên "QA Ch..." bị ellipsis và metadata dồn 4 dòng. Fix: chỉ override `#page-fav #favoriteList.favorite-grid` trong Positron bằng min-width 390px/cột, giữ auto-fit; dưới 760px dùng một cột. Không sửa hệ thống grid Sources/EPG, không xóa/sửa Favorites hay trình phát.
+
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/0609496ff3da38ea7a0871ef8841a0f8e0548d8a)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+
+## P5.1.180 — Lưu nhiều kênh gợi ý vào Yêu thích bằng một nhấn / Electron 4.23.265
+
+**Ứng dụng:** 4.23.265 · **Trạng thái:** Đã phát hành
 
 Feature priority: NEW — Ảnh Electron thật P5.1.179 cho thấy tìm ra kênh gợi ý dễ hơn nhưng người xem vẫn phải nhấn ☆ nhiều lần để lưu một nhóm sáu kênh. Thêm thao tác Lưu cả N kênh chỉ lưu danh sách gợi ý hiện tại khi có nhấn chủ động, không sửa playlist hoặc tự phát. User action: Mở Yêu thích có ít nhất một kênh → xem nhóm gợi ý hoặc lọc theo tên/nhóm → bấm Lưu cả N kênh để đánh dấu yêu thích toàn bộ danh sách N kênh đang hiển thị.
 
 [Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/7324378988794dfed8c96fc16bdbd3bad9083b94)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.265-p5.1.180)
 
 ## P5.1.179 — Tìm trực tiếp trong 559 kênh gợi ý / Electron 4.23.264
 
