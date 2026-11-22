@@ -2,14 +2,23 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
-## P5.1.159 — tìm kênh thiếu logo theo tên và nhóm không dấu
+## P5.1.160 — lọc kênh thiếu logo theo nhóm chính xác
 
-**Ứng dụng:** 4.23.243 · **Trạng thái:** Chưa có bản phát hành
+**Ứng dụng:** 4.23.244 · **Trạng thái:** Chưa có bản phát hành
+
+Feature priority: NEW — Thêm lựa chọn nhóm riêng trong danh sách kênh thiếu logo, hiển thị số kênh từng nhóm và kết hợp tìm theo tên không dấu, giảm thao tác với thư viện hàng trăm kênh. User action: Mở Thư viện → Kênh thiếu logo → chọn nhóm trong ô “Tất cả nhóm thiếu logo”; có thể nhập tiếp tên kênh để tìm trong riêng nhóm đã chọn.
+
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/78ef17739da4e26d3e167d5f3dd02ff15670e953)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+
+## P5.1.159 — Tìm kiếm kênh thiếu logo / Electron 4.23.243
+
+**Ứng dụng:** 4.23.243 · **Trạng thái:** Đã phát hành
 
 Feature priority: NEW — Thêm tìm kiếm kênh chưa có logo theo tên hoặc nhóm, hỗ trợ tiếng Việt không dấu để người dùng không phải duyệt từng trang trong playlist lớn. User action: Mở Thư viện → Kênh thiếu logo → nhập tên hoặc nhóm; danh sách cập nhật ngay và xoá tìm kiếm để xem lại tất cả.
 
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/c4095c80d445cb80aa0002aea64f9d1c80fafdb2)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/88483997300e24fb6e19d4a7031edd230ca0cb46)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.243-p5.1.159)
 
 ## P5.1.158 — Chẩn đoán kênh thiếu logo / Electron 4.23.242
 
