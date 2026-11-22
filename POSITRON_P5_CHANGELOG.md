@@ -1,3 +1,12 @@
+# Positron P5 Changelog
+
+## P5.1.182 — Sắp xếp Yêu thích theo tên / Electron 4.23.267
+- Feature priority: NEW — Từ ảnh Electron P181 nhận thấy danh sách 8 Favorites thiếu điều khiển sắp xếp, khó tìm bằng mắt ở thư viện nhiều kênh.
+- Thêm select “Thứ tự ban đầu / Tên A–Z / Tên Z–A” cạnh ô tìm kiếm; Intl.Collator('vi') và CSS order, không ghi thay đổi vào favoriteKeys, M3U hay trạng thái trình phát.
+- Phục hồi ngay thứ tự ban đầu và vẫn hỗ trợ lọc; aria-label, focus-visible.
+- Before P181: positron-p51181-readable-favorites-after-1920x1080-real.png đã mở và soát; cần ảnh Electron P182 before/after, 8-card, sort, filter, no autoplay, no overflow.
+- Status: CANDIDATE cho tới khi mở và xác minh screenshot cùng Release EXE/DMG.
+
 ## P5.1.181 — Sửa lưới Yêu thích 6 cột hẹp/cắt tên / Electron 4.23.266
 - Feature priority: BLOCKER_FIX — Ảnh P5.1.180 xác nhận lỗi cắt tên Yêu thích khiến người xem không nhận diện chính xác kênh trước khi bấm phát video, nguy cơ chọn sai kênh; đây là lỗi cản trở sử dụng cốt lõi.
 - Visual bug confirmed from real screenshot P5.1.180: khi lưu 6 kênh một lần tổng 8 Favorites, auto-fit grid dàn thành 6 cột hẹp, tên "QA Ch..." bị ellipsis và metadata dồn 4 dòng.

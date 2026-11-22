@@ -95,3 +95,10 @@ Evaluate defects revealed by real screenshot of previous build before making cha
 - Nguyên nhân: `.favorite-grid` kế thừa auto-fit min-width nhỏ từ `--ui-grid-min`, vốn dùng chung cả các trang.
 - Sửa riêng trong Positron: grid min 390px/cột, một cột ở viewport hẹp; giữ logic Favorites và ứng dụng nguyên trạng.
 - Cần ảnh SAU thật `positron-p51181-readable-favorites-after-1920x1080-real.png`, QA đo số cột, card width/title clipping; verify CI EXE/DMG + release.
+
+## P5.1.182 (CANDIDATE) — từ PNG P181
+- Input: ảnh Electron P181 `positron-p51181-readable-favorites-after-1920x1080-real.png` có tám thẻ rõ tên nhưng thiếu sort.
+- Change: danh sách sắp xếp theo A–Z/Z–A/ban đầu, presentation-only; giữ Favorites, nguồn, playback.
+- Regression: source test, Electron `favoriteNameSortQA`, `searchAfterSortQA`, `restoredSortQA`.
+- Screenshots cần: `positron-p51182-favorites-sort-before-1920x1080-real.png`, `positron-p51182-favorites-sort-after-1920x1080-real.png`.
+- CANDIDATE trước CI/soát ảnh/Release.

@@ -1892,3 +1892,20 @@ test('P5.1.181 giữ card Favorites đọc được khi có 8 kênh',()=>{
  assert.ok(qa.includes('favoriteLayoutQA'));
  assert.ok(qa.includes('titleNotTruncated'));
 });
+
+test('P5.1.182 sorts Favorites A-Z/Z-A without changing source records',()=>{
+ const js=read('renderer/positron-twenty.js'),css=read('renderer/positron-twenty.css');
+ const qa=read('scripts/positron-20-extension.cjs');
+ assert.ok(js.includes("favSort.id='positronFavoriteSort'"));
+ assert.ok(js.includes("['source','Thứ tự ban đầu']"));
+ assert.ok(js.includes("['name-asc','Tên A–Z']"));
+ assert.ok(js.includes("['name-desc','Tên Z–A']"));
+ assert.ok(js.includes("card.style.order=String(index)"));
+ assert.ok(js.includes("new Intl.Collator('vi'"));
+ assert.ok(js.includes("favSort.addEventListener('change',updateFavFilter)"));
+ assert.ok(css.includes('#positronFavoriteSort:focus-visible'));
+ assert.ok(qa.includes('favoriteNameSortQA'));
+ assert.ok(qa.includes('searchAfterSortQA'));
+ assert.ok(qa.includes('restoredSortQA'));
+ assert.ok(qa.includes('positron-p51182-favorites-sort-after-1920x1080-real.png'));
+});

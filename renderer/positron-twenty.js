@@ -280,13 +280,31 @@
   favCountText.setAttribute('role','status');favCountText.setAttribute('aria-live','polite');
   const noResults=d.createElement('p');noResults.id='positronFavoriteNoResults';
   noResults.textContent='Không có kênh Yêu thích phù hợp';noResults.hidden=true;
-  favFilter.append(filterLabel,favSearch,favCountText,noResults);favoriteList.before(favFilter);
+  // P5.1.182: switch only the visible card order; do not change stored Favorites.
+  const sortLabel=d.createElement('label');sortLabel.htmlFor='positronFavoriteSort';
+  sortLabel.textContent='Sắp xếp';
+  const favSort=d.createElement('select');favSort.id='positronFavoriteSort';
+  favSort.setAttribute('aria-label','Sắp xếp kênh yêu thích');
+  for(const [value,title] of [['source','Thứ tự ban đầu'],['name-asc','Tên A–Z'],['name-desc','Tên Z–A']]){
+   const opt=d.createElement('option');opt.value=value;opt.textContent=title;favSort.append(opt);
+  }
+  favFilter.append(filterLabel,favSearch,sortLabel,favSort,favCountText,noResults);favoriteList.before(favFilter);
   const foldFav=value=>String(value||'').normalize('NFD')
    .replace(/[\u0300-\u036f]/g,'').replace(/đ/gi,'d').toLowerCase().trim();
   const updateFavFilter=()=>{
    const cards=[...favoriteList.querySelectorAll('.fav-card')];
    favFilter.hidden=!cards.length;
    if(!cards.length)return;
+   // CSS presentation order changes without modifying source order or persistence.
+   const ranked=cards.slice(),selected=favSort.value;
+   if(selected!=='source'){
+    const collator=new Intl.Collator('vi',{sensitivity:'base',numeric:true});
+    ranked.sort((a,b)=>{
+     const byName=collator.compare(a.querySelector('h3')?.textContent||'',b.querySelector('h3')?.textContent||'');
+     return selected==='name-desc'?-byName:byName;
+    });
+   }
+   ranked.forEach((card,index)=>{card.style.order=String(index);});
    const words=foldFav(favSearch.value).split(/\s+/).filter(Boolean);
    let visible=0;
    for(const card of cards){
@@ -299,6 +317,7 @@
    noResults.hidden=visible!==0;
   };
   favSearch.addEventListener('input',updateFavFilter);
+  favSort.addEventListener('change',updateFavFilter);
   new MutationObserver(updateFavFilter).observe(favoriteList,{childList:true});
   updateFavFilter();
  }

@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.266",
-  "description": "Positron P5.1.181: sửa thẻ Yêu thích bị bó hẹp khi có nhiều kênh",
+  "version": "4.23.267",
+  "description": "Positron P5.1.182: sắp xếp Yêu thích A–Z/Z–A và giữ dữ liệu gốc",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",
