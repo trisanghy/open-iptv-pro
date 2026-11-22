@@ -5,6 +5,7 @@
  const d=root.document,$=id=>d.getElementById(id);
  let overlay=null,mode='pair',channel=null,source='',pair=null,pairPending=false;
  let remoteState='stopped',lastSentKey='',lastMediaId='',playSerial=0,commandQueue=Promise.resolve();
+ let volumeTimer=0,pendingVolume=null;
  const clean=s=>String(s||'').replace(/\s+/g,' ').trim();
  const tvUrl=()=> 'https://is.gd/IPTVTV';
  const tvOriginalUrl=()=> 'https://trisanghy.github.io/open-iptv-pro/tv.html';
@@ -253,7 +254,20 @@
  function syncRemoteControls(){if(pair?.connected){updateRemoteTransport();return;}renderConnectionStatus();}
  function onLocalVolumeChanged(volume,muted){
   const level=Math.max(0,Math.min(1,Number(volume)||0));
-  if(pair?.connected){void enqueueCommand(()=>pair?.connected?pair.command('volume',{volume:level,muted:!!muted}):false).catch(()=>{});return;}
+  if(pair?.connected){
+   // Dragging the volume slider can emit dozens of events per second;
+   // Realtime's configured 8 events/sec would otherwise queue behind them
+   // and starve next/previous, pause and stop TV commands.
+   pendingVolume={volume:level,muted:!!muted,controller:pair};
+   root.clearTimeout(volumeTimer);
+   volumeTimer=root.setTimeout(()=>{
+    const value=pendingVolume;pendingVolume=null;volumeTimer=0;
+    if(!value||!value.controller.connected||pair!==value.controller)return;
+    void enqueueCommand(()=>value.controller.connected?value.controller.command('volume',value):false)
+     .catch(error=>notice('cxPairNotice','TV không nhận chỉnh âm lượng: '+clean(error?.message),'error'));
+   },240);
+   return;
+  }
   if(castState().connected)void root.OpenIPTVWebCast?.setReceiverVolume?.(level,!!muted);
  }
  function syncAirplayState(){renderConnectionStatus();}
