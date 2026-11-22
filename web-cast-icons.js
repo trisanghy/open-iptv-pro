@@ -60,11 +60,9 @@
   if(!icon){
    // app.js can replace textContent at any time. Recreate the exact same SVG.
    const newIcon=svg('cast');
-   button.replaceChildren(newIcon,label||doc.createElement('span'));
-   if(!label){
-    const text=button.lastElementChild;
-    text.className='cast-label';text.textContent='Cast / AirPlay';
-   }
+   const caption=label||doc.createElement('span');
+   if(!label){caption.className='cast-label';caption.textContent='Cast / AirPlay';}
+   button.replaceChildren(newIcon,caption);
   }else{
    // Old direct text glyphs are removed by web-player-icons.js, but this also
    // runs when that module is skipped or loaded after another player rewrite.
