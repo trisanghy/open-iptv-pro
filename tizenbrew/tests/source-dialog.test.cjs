@@ -285,3 +285,10 @@ test('Mobile provides pasted M3U import when both TV and phone cannot fetch URLs
  assert.match(phone,/await transferPlaylist\(raw,/);
  assert.match(tv,/Trên điện thoại hãy chọn tệp hoặc dán M3U qua QR/);
 });
+
+test('Phone URL inputs permit typo correction before browser form validation',()=>{
+ assert.match(phone,/id="address" type="text"/);
+ assert.match(phone,/id="editUrl" type="text"/);
+ assert.doesNotMatch(phone,/id="address" type="url"/);
+ assert.match(phone,/var name=byId\('name'\)\.value\.trim\(\)\.slice\(0,80\),address=validUrl\(/);
+});
