@@ -50,3 +50,9 @@ test('UI chỉ học khi đồng ý và chỉ fetch chủ đề theo click',()=>
  assert.ok(s.includes("credentials:'omit'"));
  assert.ok(!s.includes('supabase'));
 });
+test('WatchFlow sáu chế độ cùng một hàng và mọi nút có tên hỗ trợ',()=>{
+ const css=fs.readFileSync('renderer/positron-intelligence.css','utf8');
+ const qa=fs.readFileSync('scripts/positron-20-extension.cjs','utf8');
+ assert.ok(css.includes('grid-template-columns:repeat(6,minmax(0,1fr))'));
+ assert.ok(qa.includes('a.length===6&&a.every'));
+});

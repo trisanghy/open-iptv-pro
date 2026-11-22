@@ -23,3 +23,6 @@
 #poWatchFlowPanel .po-ai-link{font-size:11px;color:#91e6ca;text-decoration:underline}
 #poWatchFlowPanel .po-ai-empty{font-size:12px;color:#a5bac3}
 @media(max-width:800px){#poWatchFlowPanel .po-ai-cards{grid-template-columns:1fr}#poWatchFlowPanel .po-ai-actions button{flex:1}}
+/* Six functional modes; the legacy five-column rule stays for historical regression. */
+#poWatchFlowPanel .po-flowplus-nav{grid-template-columns:repeat(6,minmax(0,1fr))!important}
+#poWatchFlowPanel .po-flowplus-nav #poFlowPlusAI{width:100%!important;min-width:0!important;max-width:none!important;padding:7px 2px!important;font-size:10px!important;text-overflow:ellipsis!important;overflow:hidden!important}
