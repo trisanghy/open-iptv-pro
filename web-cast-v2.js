@@ -71,8 +71,10 @@
   const disconnectBtn=$('cxDisconnect');
   disconnectBtn.hidden=true;disconnectBtn.className='cx-disconnect';
   disconnectBtn.setAttribute('aria-label','Ngắt kết nối TV');
-  hero.append(disconnectBtn);
+  // The outer action is reserved for closing the popup. Disconnect stays
+  // inside the mock TV and only appears while the encrypted pair is live.
   pairPane.insertBefore(hero,pairPane.querySelector('.cx-sectionhead'));
+  overlay.querySelector('.cx-tv').append(disconnectBtn);
   overlay.querySelector('.cx-tvbadge')?.remove();
   overlay.querySelector('.cx-tvcard > .cx-p')?.remove();
   const verified=d.createElement('div');
@@ -177,6 +179,18 @@
    else notice('cxAirNotice','Trình duyệt này chưa mở được AirPlay. Hãy thử Safari.','error');
   });
  }
+ function placePopupClose(){
+  if(!overlay)return;
+  const button=$('cxClose');
+  const pairedView=mode==='pair'&&!!pair?.connected;
+  const target=overlay.querySelector(pairedView?'.cx-pair-hero':'.cx-head');
+  if(button&&target&&button.parentElement!==target)target.append(button);
+  if(button){
+   button.classList.toggle('cx-paired-popup-close',pairedView);
+   button.setAttribute('aria-label','Đóng popup Cast / AirPlay');
+   button.title='Đóng popup (giữ kết nối TV)';
+  }
+ }
  function setMode(next){
   mode=next;build();
   for(const [name,id] of Object.entries({pair:'cxPanePair',cast:'cxPaneCast',air:'cxPaneAir'})){
@@ -184,6 +198,7 @@
    $(name==='pair'?'cxTabPair':name==='cast'?'cxTabCast':'cxTabAir').setAttribute('aria-selected',String(name===next));
   }
   set('cxFooter',next==='pair'?'Ghép đôi TV · Mã 6 số · Tự kết nối · Mã hóa lệnh':next==='cast'?'Google Cast · Danh sách TV do Chrome chọn':'AirPlay · Safari chọn thiết bị');
+  placePopupClose();
   if(next==='cast')syncCast();if(next==='air')syncAir();
  }
  // Shared SVG vocabulary: the existing Cast icons provide Play/Pause/Stop.
@@ -241,6 +256,7 @@
   if(!overlay)return;
   const paired=!!pair?.connected;
   $('cxPanePair').dataset.paired=String(paired);
+  placePopupClose();
   $('cxDisconnect').hidden=!paired;
   $('cxTvControls').hidden=!paired;
   $('cxTvVerified').hidden=!paired;
