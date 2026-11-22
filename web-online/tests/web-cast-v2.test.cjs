@@ -102,25 +102,30 @@ test('TV uses one-time PIN for automatic encrypted pairing and reports actual pl
  assert.equal(mobile.connected,true);
  assert.equal(state.connected,true);
  assert.equal(pending.length,0,'Auto-pairing must not display an approval prompt');
- await mobile.command('play',{url:'https://media.example/live.m3u8?token=temporary',name:'VTV2'});
+ await mobile.command('play',{url:'https://media.example/live.m3u8?token=temporary',name:'VTV2',mediaId:'channel-1'});
  for(let i=0;i<50&&!commands.length;i++)await new Promise(r=>setTimeout(r,3));
  assert.equal(commands[0].action,'play');
  assert.equal(commands[0].name,'VTV2');
+ assert.equal(commands[0].mediaId,'channel-1');
  assert.equal(commands[0].url,'https://media.example/live.m3u8?token=temporary');
  assert.equal(messages.some(msg=>JSON.stringify(msg).includes('media.example')),false,'URL never appears in public broadcast');
  assert.equal(messages.some(msg=>msg.event==='sealed'&&typeof msg.payload.ciphertext==='string'),true);
- await host.reportPlayback('playing','VTV2');
+ await host.reportPlayback('playing','VTV2','channel-1');
  for(let i=0;i<100&&!playback.length;i++)await new Promise(r=>setTimeout(r,2));
  assert.equal(playback[0].state,'playing');
  assert.equal(playback[0].name,'VTV2');
+ assert.equal(playback[0].mediaId,'channel-1');
  assert.equal(await host.reportPlayback('unknown'),false);
  // A consumed PIN stops listening on the public pairing room.
  assert.equal(client.__channels?.filter(x=>x.topic.endsWith('pin-'+host.code)&&x.joined).length||0,0);
  await mobile.command('pause');
  await mobile.command('resume');
+ await mobile.command('volume',{volume:0.4,muted:false});
  await mobile.command('stop');
- for(let i=0;i<30&&commands.length<4;i++)await new Promise(r=>setTimeout(r,3));
- assert.deepEqual(commands.map(x=>x.action),['play','pause','resume','stop']);
+ for(let i=0;i<30&&commands.length<5;i++)await new Promise(r=>setTimeout(r,3));
+ assert.deepEqual(commands.map(x=>x.action),['play','pause','resume','volume','stop']);
+ assert.equal(commands[3].volume,0.4);
+ assert.equal(commands[3].muted,false);
  await mobile.disconnect(false);await host.close();
 });
 test('TV receiver requests fullscreen on playback and provides viewport fallback and TV remote exit',()=>{
@@ -136,6 +141,25 @@ test('TV receiver requests fullscreen on playback and provides viewport fallback
  assert.match(css,/width:100vw!important;height:100dvh!important/);
  assert.match(ui,/onPlayback:info/);
  assert.match(ui,/if\(localVideo&&!localVideo\.paused\)localVideo\.pause\(\)/);
+});
+test('remote sync routes selected channels and controls to the TV and reflects real connected state',()=>{
+ const app=load('app.js'),castUI=load('cast-ui.js');
+ assert.match(app,/OpenIPTVCastUI\?\.onChannelChanged\?\.\(found,playCandidates\[0\]\)/);
+ assert.match(castUI,/OpenIPTVWebCast\?\.onChannelChanged\?\.\(ch,url\)/);
+ assert.match(app,/OpenIPTVWebCastV2\?\.toggleRemotePlayback\(\)/);
+ assert.match(app,/OpenIPTVWebCastV2\?\.onLocalStop\?\.\(\)/);
+ assert.match(app,/OpenIPTVWebCastV2\?\.onLocalVolumeChanged\?\.\(player.volume,player.muted\)/);
+ assert.match(ui,/function sendRemotePlay\(/);
+ assert.match(ui,/playSerial/);
+ assert.match(ui,/if\(info.mediaId&&info.mediaId!==lastMediaId\)return/);
+ assert.match(ui,/pair\.command\('volume'|onLocalVolumeChanged/);
+ assert.match(ui,/function renderConnectionStatus\(/);
+ assert.match(ui,/button\.dataset\.castConnection=kind/);
+ assert.match(ui,/getAirplayState/);
+ assert.match(ui,/dataset\.castConnection/);
+ assert.match(css,/#castBtn\[data-cast-connection\]/);
+ assert.match(receiver,/case 'volume'/);
+ assert.match(receiver,/command\.volume/);
 });
 test('invalid media schemes and local addresses are rejected before transmission',()=>{
  assert.match(core,/AES-GCM/);
