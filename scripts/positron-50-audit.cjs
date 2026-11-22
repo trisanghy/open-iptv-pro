@@ -182,6 +182,63 @@ const wait=ms=>new Promise(r=>setTimeout(r,ms));
     rounds:screenshots};
   fs.writeFileSync(path.join('positron-evidence','audit-p4-50-rounds.json'),JSON.stringify(report,null,2));
   await require('./positron-20-extension.cjs').runTwenty(page);
+
+  // P5.1.225, new round 01: measure the real Electron TV stage at 1920x1080.
+  // The before view is the prior unbounded rule recreated temporarily in the
+  // current Electron renderer; no mock browser frame or synthesized screenshot.
+  await page.setViewportSize({width:1920,height:1080});
+  await page.evaluate(() => {
+    const tv=document.querySelector('#appSidebar .nav[data-page="tv"]');
+    if(!tv)throw Error('Missing native TV navigation');
+    tv.click();
+    const content=document.querySelector('.main .content');
+    if(content)content.scrollTop=0;
+  });
+  await page.waitForTimeout(200);
+  const legacy225=await page.addStyleTag({content:'@media (min-width:1180px) and (min-height:901px) and (max-height:1150px){html[data-positron="true"].po-v3.po-horizon #page-tv #playerBox:not(:fullscreen){max-height:none!important}}'});
+  const measure225=()=>page.evaluate(()=>{
+    const measure=selector=>{
+      const el=document.querySelector(selector);
+      if(!el)return null;
+      const r=el.getBoundingClientRect();
+      return {left:r.left,top:r.top,right:r.right,bottom:r.bottom,width:r.width,height:r.height};
+    };
+    return {width:innerWidth,height:innerHeight,positron:document.documentElement.dataset.positron,
+      classes:document.documentElement.className,player:measure('#page-tv #playerBox'),
+      controls:measure('#page-tv .player-control-card'),play:measure('#page-tv #playBtn')};
+  });
+  const before225=await measure225();
+  const evidence225=path.resolve('positron-evidence','p5-20-rounds');
+  fs.mkdirSync(evidence225,{recursive:true});
+  const before225Png=await page.screenshot({path:path.join(evidence225,'positron-p51225-tv-controls-before-1920x1080-real.png'),animations:'disabled'});
+  await legacy225.evaluate(el=>el.remove());
+  await page.waitForTimeout(180);
+  const after225=await measure225();
+  const after225Png=await page.screenshot({path:path.join(evidence225,'positron-p51225-tv-controls-after-1920x1080-real.png'),animations:'disabled'});
+  assert.ok(before225.player&&after225.player&&after225.controls&&after225.play,'P225 native TV/controls missing');
+  assert.equal(after225.width,1920,'P225 desktop capture width');
+  assert.equal(after225.height,1080,'P225 desktop capture height');
+  assert.ok(after225.player.width>=1000,'P225 must preserve a large desktop video');
+  assert.ok(before225.player.height-after225.player.height>=60,
+    'P225 stage should shrink instead of pushing controls below screen: '+JSON.stringify({before:before225,after:after225}));
+  assert.ok(after225.player.height<=742,
+    'P225 stage must respect available window height: '+after225.player.height);
+  assert.ok(after225.controls.bottom<after225.height-42,
+    'P225 all transport and secondary controls must stay above the fixed footer: '+JSON.stringify(after225.controls));
+  assert.ok(after225.play.bottom<after225.height-42,'P225 Play button out of view');
+  assert.ok(!before225Png.equals(after225Png),'P225 before/after real screenshots should differ');
+  for(const png of [before225Png,after225Png]){
+    assert.equal(png.subarray(0,8).toString('hex'),'89504e470d0a1a0a','P225 PNG magic');
+    assert.equal(png.readUInt32BE(16),1920,'P225 PNG width');
+    assert.equal(png.readUInt32BE(20),1080,'P225 PNG height');
+  }
+  fs.writeFileSync(path.join('positron-evidence','audit-p51225-tv-viewport.json'),JSON.stringify({
+    version:'P5.1.225',environment:'real Electron via CDP, synthetic local QA channels, not IPTV playback',
+    before:{...before225,sha256:crypto.createHash('sha256').update(before225Png).digest('hex')},
+    after:{...after225,sha256:crypto.createHash('sha256').update(after225Png).digest('hex')},
+    passed:true
+  },null,2));
+  process.stdout.write('Positron P5.1.225 native Electron TV viewport control audit PASS\n');
   await browser.close();
 })().catch(e=>{
   console.error('P4 50-round audit failed: '+(e&&e.stack||e));

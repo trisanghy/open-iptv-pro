@@ -1249,3 +1249,14 @@ html[data-positron="true"].po-horizon #toastArea.toast-area
  >.po-toast-history-toggle:focus-visible{
  outline:2px solid var(--po-accent,#67d4c0)!important;outline-offset:2px!important
 }
+
+
+/* P5.1.225 — Desktop TV: keep transport and lower controls reachable without
+   scrolling when a wide 16:9 stage outgrows the available window height.
+   The media element continues to use native object-fit:contain; fullscreen
+   and non-Positron renderers are unaffected. */
+@media (min-width:1180px) and (min-height:901px) and (max-height:1150px) {
+  html[data-positron="true"].po-v3.po-horizon #page-tv #playerBox:not(:fullscreen) {
+    max-height:calc(100dvh - 340px)!important;
+  }
+}
