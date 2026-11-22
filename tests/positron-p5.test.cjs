@@ -2317,7 +2317,7 @@ test('P5.1.207 accessible reset clears only random session history',()=>{
   'positron-p51207-random-reset-after-1920x1080-real.png'])
   assert.ok(qa.includes(t),'Missing genuine reset QA '+t);
  const pkg=JSON.parse(read('package.json'));
- assert.ok(flow.includes('TAG=positron/v'+pkg.version+'-p5.1.215'));
+ assert.ok(flow.includes('TAG=positron/v'+pkg.version+'-p5.1.216'));
 });
 
 
@@ -2473,4 +2473,18 @@ test('P5.1.215 supports no-accent search and deliberate Enter replay in random h
   'before215.equals(after215),false'])
   assert.ok(qa.includes(token),'Missing real Electron search QA '+token);
  assert.ok(flow.includes('test -s positron-evidence/p5-20-rounds/positron-p51215-history-search-after-1920x1080-real.png'));
+});
+
+
+test('P5.1.216 opens discovery history with focused search and bidirectional arrow keys',()=>{
+ const js=read('renderer/positron-horizon-v4.js'),qa=read('scripts/positron-20-extension.cjs'),flow=read('.github/workflows/positron-lab.yml');
+ for(const token of ["historySearch.focus();","event.key==='ArrowDown'||event.key==='ArrowUp'","options[options.length-1]","event.key==='Enter'"])
+  assert.ok(js.includes(token),'Missing P216 keyboard-first search: '+token);
+ for(const token of ['first216','typed216','down216','up216','close216','compact216',
+  'focusOnSearch','typedWithoutMouse','matchingResults','neverAutoPlays','noOverflow',
+  'positron-p51216-search-focus-before-1920x1080-real.png',
+  'positron-p51216-search-focus-after-1920x1080-real.png',
+  'before216.equals(after216),false'])
+  assert.ok(qa.includes(token),'Missing P216 Electron screenshot QA: '+token);
+ assert.ok(flow.includes('test -s positron-evidence/p5-20-rounds/positron-p51216-search-focus-after-1920x1080-real.png'));
 });

@@ -1,5 +1,12 @@
 # Positron P5 Changelog
 
+## P5.1.216 — Gõ tìm ngay khi mở lịch sử khám phá / Electron 4.23.301
+- Quan sát từ ảnh Electron thật P5.1.215 ở 1920×1080 và mã thực tế: mở danh sách lịch sử tập trung vào lựa chọn đầu, không phải ô tìm nên bàn phím phải nhấn Tab hoặc click mới có thể nhập truy vấn.
+- Sửa: mở ☷ tự focus ô tìm; gõ ngay để lọc kênh theo tên/nhóm; ArrowDown chọn kết quả đầu, ArrowUp chọn kết quả cuối; Enter mới phát, Escape đóng và trả focus về nút ☷.
+- Không tự phát khi mở/tìm/chuyển focus, không cập nhật playlist, Favorites hoặc lưu lịch sử lên mạng.
+- Ảnh bắt buộc Electron 1920×1080 trước/sau: `positron-p51216-search-focus-before-1920x1080-real.png`, `positron-p51216-search-focus-after-1920x1080-real.png`. Kiểm thêm viewport 450px, tiêu điểm và no autoplay.
+- Trạng thái: CANDIDATE; chỉ công nhận khi CI, ảnh mở soát và release được xác minh.
+
 ## P5.1.215 — Tìm kiếm nhanh trong lịch sử khám phá kênh / Electron 4.23.300
 - Feature priority: NEW — Ảnh P5.1.214 xác nhận lịch sử khám phá có nút chọn bằng bàn phím nhưng chưa có ô tìm khi nhiều kênh xuất hiện. Thêm tìm nhanh theo tên hoặc nhóm, hỗ trợ bỏ dấu tiếng Việt.
 - Electron screenshot: positron-p51215-history-search-after-1920x1080-real.png

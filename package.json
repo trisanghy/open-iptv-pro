@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.300",
-  "description": "Positron P5.1.215: tìm kiếm kênh trong lịch sử khám phá ngẫu nhiên",
+  "version": "4.23.301",
+  "description": "Positron P5.1.216: tìm kiếm kênh trong lịch sử khám phá ngẫu nhiên",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

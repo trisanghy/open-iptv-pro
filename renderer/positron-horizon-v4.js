@@ -410,9 +410,11 @@
    };
    historySearch.addEventListener('input',renderHistory);
    historySearch.addEventListener('keydown',event=>{
-    if(event.key==='ArrowDown'){
-     const first=historyList.querySelector('.po-random-history-item');
-     if(first){event.preventDefault();event.stopPropagation();first.focus();}
+    // P216: start from the search box and allow both directions by keyboard.
+    if(event.key==='ArrowDown'||event.key==='ArrowUp'){
+     const options=historyList.querySelectorAll('.po-random-history-item');
+     const target=event.key==='ArrowDown'?options[0]:options[options.length-1];
+     if(target){event.preventDefault();event.stopPropagation();target.focus();}
     }else if(event.key==='Enter'){
      const first=historyList.querySelector('.po-random-history-item');
      if(first){event.preventDefault();event.stopPropagation();first.click();}
@@ -426,7 +428,8 @@
     historyPanel.style.left=Math.max(12,Math.min(bounds.left-125,innerWidth-372))+'px';
     historyPanel.style.bottom=Math.max(12,innerHeight-bounds.top+8)+'px';
     historyPanel.hidden=false;historyButton.setAttribute('aria-expanded','true');
-    historyList.querySelector('button')?.focus();
+    // P216: ready to type a search immediately, without selecting or playing.
+    historySearch.focus();
    });
 
    // P214: remote/keyboard selection stays within the history, without autoplay.
