@@ -130,7 +130,7 @@
    if(pair)await pair.disconnect(false);
    pair=root.OpenIPTVTVPair.createController({
     onStatus:msg=>notice('cxPairNotice',msg),
-    onConnected:()=>{pairPending=false;$('cxConnect').disabled=false;remoteState='stopped';renderPair();notice('cxPairNotice','Đã kết nối TV. Đang đồng bộ kênh được chọn…','ok');if(validSource())void sendRemotePlay(true);const local=$('video');if(local)onLocalVolumeChanged(local.volume,local.muted);},
+    onConnected:()=>{pairPending=false;$('cxConnect').disabled=false;remoteState='stopped';renderPair();notice('cxPairNotice','Đã kết nối TV. Đang đồng bộ kênh được chọn…','ok');d.dispatchEvent(new root.CustomEvent('openiptv:remote-player-attached',{detail:{method:'pair'}}));if(validSource())void sendRemotePlay(true);const local=$('video');if(local)onLocalVolumeChanged(local.volume,local.muted);},
     onPlayback:info=>{
      if(info.mediaId&&info.mediaId!==lastMediaId)return; // Ignore stale acknowledgements after changing channel.
      if(info.state==='playing'){
