@@ -2,14 +2,23 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
-## P5.1.245 — Tự chọn đúng nhóm của kênh đang focus
+## P5.1.246 — Ctrl+Enter nhảy kênh và đóng bảng
 
-**Ứng dụng:** 4.23.330 · **Trạng thái:** Chưa có bản phát hành
+**Ứng dụng:** 4.23.331 · **Trạng thái:** Chưa có bản phát hành
+
+Feature priority: NEW — Khi nhập số kênh, Ctrl+Enter (Mac có thể Command+Enter) nhảy đến hàng kênh rồi tự thu gọn công cụ, trả lại không gian danh sách và giữ tiêu điểm đúng hàng; Enter thông thường vẫn để mở bảng cho tác vụ tiếp. User action: Tại Xem truyền hình, chọn hàng kênh, gõ 412 rồi Ctrl+Enter để tới QA Channel 412 mà không tự phát, đồng thời bảng nhập số thu gọn.
+
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/31098587fa83f667bc76fc95bea368bfba36192f)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+
+## P5.1.245 — Electron 4.23.330 — Đồng bộ nhóm với kênh đang chọn (CANDIDATE)
+
+**Ứng dụng:** 4.23.330 · **Trạng thái:** Đã phát hành
 
 Feature priority: NEW — Hộp chọn nhóm trong trình nhảy kênh tự chỉ đúng nhóm của hàng kênh được focus sau thao tác bằng bàn phím, thay vì duy trì lựa chọn cũ. User action: Tại Xem truyền hình, focus một hàng kênh và gõ 412 Enter; ô Đến nhóm hiển thị 03 · Other channels đúng với QA Channel 412.
 
 [Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/eff9081b19b1802f69d969479270684dc877c684)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.330-p5.1.245)
 
 ## P5.1.244 — Electron 4.23.329 — Gõ số để nhảy nhanh tới kênh (CANDIDATE)
 
