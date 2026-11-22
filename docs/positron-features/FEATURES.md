@@ -2802,67 +2802,15 @@ Bổ sung lớp bố cục Horizon và các gợi ý WatchFlow dựa trên dữ 
 </details>
 
 <details>
-<summary><strong>P5.1.53</strong> · Bỏ phần lịch EPG trống bị lặp và làm mới tìm kiếm · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.51</strong> · Sửa màn hình DVR trống theo ảnh kiểm thử · CHƯA CÓ BẢN PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
 
-**Ứng dụng:** 4.23.137 · **Trạng thái:** ĐÃ PHÁT HÀNH
-
-Giảm nội dung EPG trùng khi chưa có dữ liệu và cải thiện cách trình bày ô tìm lịch.
-
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
-
-[Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.137-p5.1.53) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/1ac0fb93d1e9277a61702d17b885818c13da96e4) · [Tải Windows Setup x64](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.137-p5.1.53/Open-IPTV-Pro-Setup-4.23.137-x64.exe) · [Tải gói ảnh QA](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.137-p5.1.53/Positron-P5153-20-Real-Screenshots.zip)
-
-</details>
-
-<details>
-<summary><strong>P5.1.52</strong> · Ẩn công cụ EPG chưa dùng được khi lịch chưa tải · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
-
-**Ứng dụng:** 4.23.136 · **Trạng thái:** ĐÃ PHÁT HÀNH
-
-Không cho thao tác các công cụ lịch chương trình khi chưa có dữ liệu hướng dẫn truyền hình hợp lệ.
-
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
-
-[Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.136-p5.1.52) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/b4feb93fc39706b82497566a51fe1e66b6ac6716) · [Tải Windows Setup x64](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.136-p5.1.52/Open-IPTV-Pro-Setup-4.23.136-x64.exe) · [Tải gói ảnh QA](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.136-p5.1.52/Positron-P5152-20-Real-Screenshots.zip)
-
-</details>
-
-<details>
-<summary><strong>P5.1.51</strong> · Sửa màn hình DVR trống theo ảnh kiểm thử · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
-
-**Ứng dụng:** 4.23.135 · **Trạng thái:** ĐÃ PHÁT HÀNH
+**Ứng dụng:** Chưa xác minh · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
 
 Điều chỉnh trang ghi hình khi chưa có kênh, tránh hiển thị lịch hẹn không thể sử dụng.
 
 *Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
 
-[Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.135-p5.1.51) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/d70e5f7966926929c42cad6097307ce6df3c0eb5) · [Tải Windows Setup x64](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.135-p5.1.51/Open-IPTV-Pro-Setup-4.23.135-x64.exe) · [Tải gói ảnh QA](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.135-p5.1.51/Positron-P5151-20-Real-Screenshots.zip)
-
-</details>
-
-<details>
-<summary><strong>P5.1.46</strong> · Thu gọn lịch DVR không khả dụng và sửa nhãn bản phát hành · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
-
-**Ứng dụng:** 4.23.130 · **Trạng thái:** ĐÃ PHÁT HÀNH
-
-Cải thiện bố cục lịch ghi hình khi chưa có dữ liệu, đồng thời đồng bộ nhãn phiên bản.
-
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
-
-[Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.130-p5.1.46) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/428217ada04e29b3092a35e13dca89c71d36e053) · [Tải Windows Setup x64](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.130-p5.1.46/Open-IPTV-Pro-Setup-4.23.130-x64.exe) · [Tải gói ảnh QA](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.130-p5.1.46/Positron-P5146-20-Real-Screenshots.zip)
-
-</details>
-
-<details>
-<summary><strong>P5.1.44</strong> · Hướng dẫn thiết lập nguồn dữ liệu EPG · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
-
-**Ứng dụng:** 4.23.129 · **Trạng thái:** ĐÃ PHÁT HÀNH
-
-Bổ sung hướng dẫn đưa nguồn lịch phát sóng vào ứng dụng.
-
-*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
-
-[Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.129-p5.1.44) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/41f754be653caf87ffed14c50604f9d272d1cbc7) · [Tải Windows Setup x64](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.129-p5.1.44/Open-IPTV-Pro-Setup-4.23.129-x64.exe) · [Tải gói ảnh QA](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.129-p5.1.44/Positron-P5145-20-Real-Screenshots.zip)
+[Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
 
 </details>
 

@@ -1906,50 +1906,13 @@ Bổ sung lớp bố cục Horizon và các gợi ý WatchFlow dựa trên dữ 
 [Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/e96ca46c8af19aa84c344c6df4430186b266e7b8)
 [Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.138-p5.1.54)
 
-## P5.1.53 — Bỏ phần lịch EPG trống bị lặp và làm mới tìm kiếm
-
-**Ứng dụng:** 4.23.137 · **Trạng thái:** Đã phát hành
-
-Giảm nội dung EPG trùng khi chưa có dữ liệu và cải thiện cách trình bày ô tìm lịch.
-
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/1ac0fb93d1e9277a61702d17b885818c13da96e4)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.137-p5.1.53)
-
-## P5.1.52 — Ẩn công cụ EPG chưa dùng được khi lịch chưa tải
-
-**Ứng dụng:** 4.23.136 · **Trạng thái:** Đã phát hành
-
-Không cho thao tác các công cụ lịch chương trình khi chưa có dữ liệu hướng dẫn truyền hình hợp lệ.
-
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/b4feb93fc39706b82497566a51fe1e66b6ac6716)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.136-p5.1.52)
-
 ## P5.1.51 — Sửa màn hình DVR trống theo ảnh kiểm thử
 
-**Ứng dụng:** 4.23.135 · **Trạng thái:** Đã phát hành
+**Ứng dụng:** Chưa xác minh · **Trạng thái:** Chưa có bản phát hành
 
 Điều chỉnh trang ghi hình khi chưa có kênh, tránh hiển thị lịch hẹn không thể sử dụng.
 
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/d70e5f7966926929c42cad6097307ce6df3c0eb5)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.135-p5.1.51)
-
-## P5.1.46 — Thu gọn lịch DVR không khả dụng và sửa nhãn bản phát hành
-
-**Ứng dụng:** 4.23.130 · **Trạng thái:** Đã phát hành
-
-Cải thiện bố cục lịch ghi hình khi chưa có dữ liệu, đồng thời đồng bộ nhãn phiên bản.
-
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/428217ada04e29b3092a35e13dca89c71d36e053)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.130-p5.1.46)
-
-## P5.1.44 — Hướng dẫn thiết lập nguồn dữ liệu EPG
-
-**Ứng dụng:** 4.23.129 · **Trạng thái:** Đã phát hành
-
-Bổ sung hướng dẫn đưa nguồn lịch phát sóng vào ứng dụng.
-
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/41f754be653caf87ffed14c50604f9d272d1cbc7)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.129-p5.1.44)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
 
 ## P5.1.25 — Sửa nút xóa kênh khi chưa có kênh nào
 
