@@ -18,8 +18,8 @@
   }catch{return '';}
  };
  const setStatus=(message,error=false)=>{
-  const node=el('castStatus');if(!node)return;
-  node.textContent=message;node.classList.toggle('cast-error',!!error);
+  const node=el('castStatus');
+  if(node){node.textContent=message;node.classList.toggle('cast-error',!!error);}
   root.OpenIPTVWebCastV2?.setCastFeedback?.(message,!!error);
  };
  const currentSession=()=>context?.getCurrentSession?.()||null;
@@ -45,7 +45,6 @@
   if(play)play.disabled=!initialized||busy;
   if(stop)stop.disabled=!session||busy;
   selectDevice();
-  if(session)active=true;
   root.OpenIPTVWebCastV2?.syncCast?.();
  }
  function initCast(){
@@ -197,11 +196,13 @@
   catch{input.focus?.();input.select?.();setStatus('Đã chọn URL; hãy sao chép thủ công.');}
  }
  function stopOnLocalStop(){if(!active)return;void stop();}
- function onChannelChanged(next){
-  if(!next||next.id===channel?.id)return;
-  channel=next;source=next.url||source;
+ function onChannelChanged(next,selectedUrl){
+  if(!next)return;
+  const wasDifferent=next.id!==channel?.id||(selectedUrl||next.url||'')!==source;
+  channel=next;source=selectedUrl||next.url||source;
   root.OpenIPTVWebCastV2?.onChannelChanged?.(next,source);
-  if(active)stopOnLocalStop();
+  // Changing channels must replace the remote media, not disconnect the Cast session.
+  if(wasDifferent&&active&&currentSession())void play();
  }
  function initControls(){
   el('castScan')?.addEventListener('click',scan);
@@ -213,6 +214,36 @@
  }
  initControls();
  loadSdk();
+ const getAirplayState=()=>{
+  const media=video();
+  const connected=isSafari()&&!!(media&&(media.webkitCurrentPlaybackTargetIsWireless===true||
+   media.remote?.state==='connected'));
+  return {connected,name:connected?'AirPlay TV':''};
+ };
+ function initAirplayWatcher(){
+  const media=video();if(!media)return;
+  const update=()=>root.OpenIPTVWebCastV2?.syncAirplayState?.();
+  media.addEventListener?.('webkitcurrentplaybacktargetiswirelesschanged',update);
+  media.remote?.addEventListener?.('connect',update);
+  media.remote?.addEventListener?.('disconnect',update);
+  media.remote?.addEventListener?.('connecting',update);
+  update();
+ }
+ async function transportRemote(action){
+  const session=currentSession(),remote=session?.getMediaSession?.();
+  if(!session||!remote||!['pause','resume','stop'].includes(action))return false;
+  const method=action==='resume'?'play':action;
+  const methodName=action==='resume'?'PlayRequest':action==='pause'?'PauseRequest':'StopRequest';
+  const Request=root.chrome?.cast?.media?.[methodName];
+  const request=typeof Request==='function'?new Request():{};
+  try{
+   await new Promise((resolve,reject)=>remote[method](request,resolve,reject));
+   if(action==='stop')active=false;
+   root.OpenIPTVWebCastV2?.syncCast?.();
+   return true;
+  }catch(error){setStatus('Không điều khiển được TV qua Google Cast: '+String(error?.message||error),true);return false;}
+ }
+ initAirplayWatcher();
  const getState=()=>({initialized,connected:!!currentSession(),name:currentSession()?getName(currentSession()):'',active});
- root.OpenIPTVWebCast=Object.freeze({open,scan,play,stop,stopOnLocalStop,onChannelChanged,airplayPicker,validSource,mediaType,getState});
+ root.OpenIPTVWebCast=Object.freeze({open,scan,play,stop,stopOnLocalStop,onChannelChanged,airplayPicker,validSource,mediaType,getState,getAirplayState,transportRemote});
 })(typeof window==='undefined'?null:window);
