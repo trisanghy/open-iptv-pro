@@ -91,7 +91,7 @@ button,input,textarea{font:inherit;color:inherit}button{cursor:pointer;border:2p
 <script type="text/javascript" src="$WEBAPIS/webapis/webapis.js"></script>
 </head><body data-theme="dark">
 <div id="app">
-<header class="top"><div class="brand"><div class="brandicon">▶</div><div><strong>Open IPTV Pro <small>TV</small></strong><p>Samsung Tizen Edition · TizenBrew v0.1.29</p></div></div><div class="toolbar"><span class="clock" id="clock">--:--</span><button id="searchBtn">⌕ Tìm</button><button id="addBtn">＋ Nguồn</button><button id="themeBtn">◐ Giao diện</button></div></header>
+<header class="top"><div class="brand"><div class="brandicon">▶</div><div><strong>Open IPTV Pro <small>TV</small></strong><p>Samsung Tizen Edition · TizenBrew v0.1.30</p></div></div><div class="toolbar"><span class="clock" id="clock">--:--</span><button id="searchBtn">⌕ Tìm</button><button id="addBtn">＋ Nguồn</button><button id="themeBtn">◐ Giao diện</button></div></header>
 <div class="main"><nav class="nav"><button class="active" data-nav="all">▣　Trực tiếp</button><button data-nav="favorites">♡　Yêu thích</button><button data-nav="recent">◷　Đã xem</button><button data-nav="sources">☷　Nguồn M3U</button><button data-nav="help">⚙　Hướng dẫn</button><div id="sidebarShortcuts" class="sidebar-shortcuts"><button type="button" id="tizenTubeBtn" title="Chuyển sang TizenTube đã cài trong TizenBrew">▶ TizenTube</button><button type="button" id="exitModuleBtn" class="exit-small" title="Thoát về TizenBrew">✕ Thoát</button></div><p class="tip">Dùng ↑ ↓ ← → và OK để điều khiển bằng remote TV.</p></nav>
 <section class="listpane"><div class="heading"><div><div class="eyebrow">DANH SÁCH KÊNH</div><h1 id="heading">Trực tiếp</h1></div><span id="count">0 kênh</span></div><div class="groups" id="groups"></div><div class="channels" id="channels"></div><div class="empty" id="empty" hidden><h2>Chưa có kênh IPTV</h2><p>Thêm nguồn bằng URL trên remote hoặc quét QR để nhập bằng điện thoại.</p><button id="emptyAdd" class="primary">＋ Thêm nguồn IPTV</button><button id="sampleBtn">▶ Luồng kiểm thử</button></div><button id="more" hidden>Xem thêm kênh ↓</button></section>
 <aside class="details"><div class="preview"><span class="live">● TRỰC TIẾP</span><b id="previewText">TV</b><span class="watermark">OPEN IPTV PRO</span></div><div class="eyebrow">KÊNH ĐANG CHỌN</div><h2 id="channelTitle">Open IPTV Pro TV</h2><p id="channelGroup">Chọn kênh để xem</p><div class="info"><div class="eyebrow">THÔNG TIN</div><p id="channelInfo">Hỗ trợ nhập M3U, nhóm kênh, yêu thích và remote Samsung.</p></div><div class="actions"><button class="primary" id="watchBtn">▶ Xem</button><button id="favBtn">♡ Yêu thích</button></div></aside></div>
@@ -109,7 +109,7 @@ button,input,textarea{font:inherit;color:inherit}button{cursor:pointer;border:2p
 <p id="sourceQRStatus" role="status">Đang tạo mã QR…</p><p id="sourcePhoneLink"></p>
 <button type="button" id="refreshSourceQR">↻ Tạo mã QR mới</button></section></div></div>
 <div id="searchDialog" hidden><label for="searchInput">Tìm kênh</label><input id="searchInput" placeholder="Nhập tên kênh..."><div class="buttons"><button id="cancelSearch">Hủy</button><button id="applySearch" class="primary">Tìm</button></div></div></div></div>
-<div id="player" hidden tabindex="-1"><video id="video" tabindex="0" playsinline preload="none"></video><object id="avplayObject" type="application/avplayer" hidden></object><iframe id="castPlayerFrame" hidden tabindex="-1" title="Bộ phát Cast HTTPS" allow="autoplay; fullscreen; encrypted-media" referrerpolicy="no-referrer" sandbox="allow-scripts allow-same-origin allow-presentation"></iframe><div class="playerhead"><strong id="playingName">Open IPTV Pro TV</strong></div><div class="playerstatus" id="playerStatus" role="status">Đang tải luồng…</div><div class="playerdiag" id="playbackDiag" hidden></div><button id="browserFallback" type="button" hidden>Phát kênh trong Samsung Internet (Cast)</button><div class="playerfoot">↑ ↓ ← → Mở danh sách kênh　·　CH ± Chuyển nhanh　·　OK Phát/Tạm dừng　·　Đỏ: Trình duyệt　·　Back Danh sách</div>
+<div id="player" hidden tabindex="-1"><video id="video" tabindex="0" playsinline preload="none"></video><object id="avplayObject" type="application/avplayer" hidden></object><iframe id="castPlayerFrame" hidden tabindex="-1" title="Bộ phát Cast HTTPS" allow="autoplay; fullscreen; encrypted-media" referrerpolicy="no-referrer" sandbox="allow-scripts allow-same-origin allow-presentation"></iframe><div class="playerhead"><strong id="playingName">Open IPTV Pro TV</strong></div><div class="playerstatus" id="playerStatus" role="status">Đang tải luồng…</div><div class="playerdiag" id="playbackDiag" hidden></div><button id="browserFallback" type="button" hidden>Mở Cast chuẩn · ghép mã 6 số</button><div class="playerfoot">↑ ↓ ← → Mở danh sách kênh　·　CH ± Chuyển nhanh　·　OK Phát/Tạm dừng　·　Đỏ: Trình duyệt　·　Back Danh sách</div>
 <div id="channelPicker" hidden tabindex="-1" role="dialog" aria-label="Chọn kênh">
   <div class="picker-panel">
     <div class="picker-heading">Chọn kênh TV</div>
@@ -687,18 +687,15 @@ function browserFallbackUrl(){
  return address;
 }
 function browserCastHandoffUrl(){
- var stream=browserFallbackUrl();
- if(!/^https:\/\/[^\s]+$/i.test(stream)||stream.length>4096)return '';
- // Fragment stays on device and is removed immediately by the Cast page.
- // Never ask Samsung Internet to open raw M3U8 as a standalone URL.
- return 'https://trisanghy.github.io/open-iptv-pro/tizen/hosted-player.html?v=20261122c#stream='+encodeURIComponent(stream);
+ // This is the ACTUAL receiver used by the functioning Web Cast flow.
+ // The hosted-player standalone page was never equivalent to the paired
+ // receiver and can fail when it receives an outdated M3U8 URL.
+ // Do not place a private stream URL in browser history or a URL fragment.
+ return 'https://trisanghy.github.io/open-iptv-pro/tv.html';
 }
 function openChannelInSamsungBrowser(){
  var address=browserCastHandoffUrl();
- if(!address){
-  notify('Trang Cast trên Samsung Internet cần nguồn HTTPS. Nguồn HTTP phải mở bằng ứng dụng hỗ trợ riêng.');
-  return false;
- }
+ if(!address){notify('Không tìm thấy trang Cast TV.');return false;}
  try{
   if(typeof tizen!=='undefined'&&tizen.application&&typeof tizen.ApplicationControl==='function'&&
      typeof tizen.application.launchAppControl==='function'){
@@ -706,7 +703,7 @@ function openChannelInSamsungBrowser(){
    tizen.application.launchAppControl(control,null,function(){
     // Only the Cast page remains active when leaving TizenBrew: no audio overlap.
     stopPlaybackEngine();
-    notify('Đã mở trình phát Cast trong Samsung Internet.');
+    notify('Đã mở Cast chuẩn. Trên điện thoại/máy tính chọn Cast, nhập mã 6 số hiện trên TV để phát đúng nguồn đang dùng.');
    },function(error){
     notify('Samsung Internet không nhận được yêu cầu: '+String(error&&error.message||'không hỗ trợ trên TV này').slice(0,90));
    });
@@ -717,7 +714,7 @@ function openChannelInSamsungBrowser(){
   var opened=window.open(address,'_blank');
   if(opened){stopPlaybackEngine();return true;}
  }catch(e){}
- notify('Không thể mở Samsung Internet từ module. Hãy mở trang Cast TV trên trình duyệt và ghép đôi từ điện thoại.');
+ notify('Hãy mở is.gd/openiptv trên Samsung Internet hoặc trang Cast TV rồi ghép đôi bằng mã 6 số.');
  return false;
 }
 function updateBottomActions(){byId('exitModuleBtn').title='Thoát về TizenBrew';}
@@ -877,7 +874,8 @@ function finishPlaybackError(token,message){
  playbackGraceTimer=setTimeout(function(){
   playbackGraceTimer=0;
   if(!playbackActive(token)||playbackConfirmed)return;
-  if(startHostedCastPlayback(playbackStream||playing,token))return;
+  // Do not auto-open the experimental hosted HTTPS iframe. It is not
+  // the 6-digit paired Cast receiver and is known to repeat manifestLoadError.
   if(tryNextChannelSource(token))return;
   var tip=!nativeAvplay()?'AVPlay không có trong TizenBrew. ':'';
   var last=playbackEvidence.length?playbackEvidence[playbackEvidence.length-1]:'nguồn không phát được';
@@ -923,12 +921,14 @@ function playbackFailure(token,message){
  if(!playbackActive(token))return;
  var browserButton=byId('browserFallback');
  var sourceLabel='Nguồn '+(playbackStreamIndex+1)+'/'+Math.max(1,playbackStreamUrls.length);
- browserButton.textContent='Phát '+sourceLabel+' trong Samsung Internet (Cast)';
+ browserButton.textContent='Mở Cast chuẩn trên Samsung Internet (mã 6 số)';
  browserButton.hidden=false;
  if(byId('channelPicker').hidden&&browserButton.focus)try{browserButton.focus({preventScroll:true});}catch(e){browserButton.focus();}
  clearPlaybackTimer();
  byId('player').classList.remove('is-playing');
- setPlayerStatus('Không phát được kênh ('+sourceLabel+'). '+String(message||'Nguồn hoặc codec không hỗ trợ.').slice(0,210));
+ var sourceHost='';
+ try{sourceHost=(new URL(String(playbackStream&&playbackStream.url||playing&&playing.url||''))).hostname;}catch(e){}
+ setPlayerStatus('Không phát được kênh ('+sourceLabel+(sourceHost?', máy chủ '+sourceHost:'')+'). '+String(message||'Nguồn hoặc codec không hỗ trợ.').slice(0,140)+' · Có thể mở Cast chuẩn và chọn kênh từ Web/điện thoại.');
  byId('playbackDiag').hidden=!playbackEvidence.length;
 }
 function fallbackFromAvplay(channel,token,message){
