@@ -1,0 +1,129 @@
+/* Open IPTV Pro Web Cast V2: demo-approved design, semantic three-theme tokens. */
+#iptvCastOverlay,#iptvCastOverlay *,.iptv-tv-body,.iptv-tv-body *{box-sizing:border-box}
+#iptvCastOverlay{
+ --cx-bg:#101a27;--cx-pane:#142232;--cx-pane2:#172838;--cx-edge:#293d4f;
+ --cx-ink:#eef6ff;--cx-dim:#9fb2c6;--cx-accent:var(--accent,#30df77);
+ --cx-good:#4cda8b;--cx-soft:color-mix(in srgb,var(--cx-accent) 18%,var(--cx-pane));
+ position:fixed;inset:0;z-index:210000;display:grid;place-items:center;
+ padding:clamp(9px,2.5vw,28px);background:rgba(1,7,12,.77);
+ backdrop-filter:blur(11px);-webkit-backdrop-filter:blur(11px);
+ color:var(--cx-ink);font-family:Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif
+}
+html[data-theme="light"] #iptvCastOverlay{
+ --cx-bg:#fff;--cx-pane:#f5f9fd;--cx-pane2:#eaf2f7;--cx-edge:#d6e3ed;
+ --cx-ink:#192c3d;--cx-dim:#536c80;--cx-good:#137645
+}
+html[data-theme="dark"] #iptvCastOverlay{
+ --cx-bg:#101a27;--cx-pane:#152435;--cx-pane2:#1b3041;--cx-edge:#324557;
+ --cx-ink:#edf5ff;--cx-dim:#9db2c6
+}
+html[data-theme="amoled"] #iptvCastOverlay{
+ --cx-bg:#080808;--cx-pane:#121212;--cx-pane2:#1a1a1a;--cx-edge:#333338;
+ --cx-ink:#fafafa;--cx-dim:#b0b0b6;--cx-soft:#151d18
+}
+#iptvCastOverlay[hidden]{display:none!important}
+#iptvCastPanel{width:min(1110px,100%);max-height:min(93dvh,1000px);overflow:auto;overscroll-behavior:contain;
+ background:var(--cx-bg)!important;background-image:linear-gradient(145deg,transparent,color-mix(in srgb,var(--cx-accent) 2%,transparent))!important;
+ border:1px solid var(--cx-edge);border-radius:22px;box-shadow:0 32px 100px #0007;color:var(--cx-ink)}
+html[data-theme="amoled"] #iptvCastPanel{background-image:none!important}
+#iptvCastPanel button,#iptvCastPanel input{font:inherit}
+#iptvCastPanel button{cursor:pointer;color:inherit}
+#iptvCastPanel button:disabled{cursor:not-allowed;opacity:.44}
+#iptvCastPanel :is(button,input):focus-visible{outline:2px solid var(--cx-accent);outline-offset:3px}
+#iptvCastPanel .cx-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:25px 30px 21px;border-bottom:1px solid var(--cx-edge)}
+#iptvCastPanel .cx-title-line{display:flex;gap:14px;align-items:center;min-width:0}
+#iptvCastPanel .cx-icon{width:50px;height:50px;border-radius:16px;border:1px solid color-mix(in srgb,var(--cx-accent) 38%,var(--cx-edge));background:var(--cx-soft);color:var(--cx-accent);display:grid;place-items:center;font-size:24px;flex:0 0 auto}
+#iptvCastPanel h2,#iptvCastPanel h3,#iptvCastPanel h4{margin:0;line-height:1.25;color:var(--cx-ink);font-weight:760}
+#iptvCastPanel h2{font-size:clamp(20px,2.5vw,27px);letter-spacing:-.035em}
+#iptvCastPanel .cx-sub{font-size:13px;line-height:1.6;color:var(--cx-dim);margin:6px 0 0}
+#iptvCastPanel .cx-close{border:0;background:transparent;color:var(--cx-dim);font-size:29px;line-height:1;width:42px;height:42px;border-radius:10px}
+#iptvCastPanel .cx-close:hover{background:var(--cx-pane2)}
+#iptvCastPanel .cx-tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;padding:18px 30px;background:var(--cx-pane);border-bottom:1px solid var(--cx-edge)}
+#iptvCastPanel .cx-tab{border:1px solid var(--cx-edge);background:var(--cx-pane2);padding:14px 11px;border-radius:12px;min-height:51px;display:flex;align-items:center;justify-content:center;gap:9px;font-weight:720;font-size:14px;white-space:nowrap}
+#iptvCastPanel .cx-tab[aria-selected="true"]{border-color:var(--cx-accent);background:var(--cx-soft);color:var(--cx-ink);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--cx-accent) 16%,transparent)}
+#iptvCastPanel .cx-main{padding:27px 30px 28px}
+#iptvCastPanel .cx-pane[hidden]{display:none!important}
+#iptvCastPanel .cx-sectionhead{display:flex;align-items:start;justify-content:space-between;gap:12px;margin-bottom:20px}
+#iptvCastPanel .cx-sectionhead h3{font-size:20px;letter-spacing:-.025em;margin-bottom:5px}
+#iptvCastPanel .cx-sectionhead p{font-size:13px;color:var(--cx-dim);line-height:1.55}
+#iptvCastPanel .cx-chip{display:inline-flex;gap:8px;align-items:center;border:1px solid var(--cx-edge);background:var(--cx-pane);color:var(--cx-dim);border-radius:100px;padding:8px 11px;font-size:12px;white-space:nowrap}
+#iptvCastPanel .cx-chip[data-ok="true"]{border-color:color-mix(in srgb,var(--cx-accent) 55%,var(--cx-edge));background:var(--cx-soft);color:var(--cx-good)}
+#iptvCastPanel .cx-dot{width:7px;height:7px;border-radius:50%;background:currentColor}
+#iptvCastPanel .cx-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+#iptvCastPanel .cx-card{min-width:0;border:1px solid var(--cx-edge);border-radius:17px;padding:23px;background:var(--cx-pane)}
+#iptvCastPanel .cx-card h4{font-size:20px;margin:11px 0 13px;letter-spacing:-.025em}
+#iptvCastPanel .cx-eyebrow{font-size:11px;color:color-mix(in srgb,var(--cx-ink) 43%,var(--cx-accent));text-transform:uppercase;letter-spacing:.11em;font-weight:800}
+#iptvCastPanel .cx-p{font-size:13px;line-height:1.66;color:var(--cx-dim)}
+#iptvCastPanel .cx-steps{list-style:none;margin:21px 0;padding:0;display:grid;gap:11px}
+#iptvCastPanel .cx-steps li{display:flex;gap:10px;align-items:center;font-size:13px}
+#iptvCastPanel .cx-steps b{width:26px;height:26px;border-radius:99px;display:grid;place-items:center;background:var(--cx-pane2);border:1px solid var(--cx-edge);color:var(--cx-dim);font-size:11px;flex:none}
+#iptvCastPanel .cx-label{display:block;font-weight:700;font-size:13px;margin-bottom:10px}
+#iptvCastPanel .cx-inline{display:flex;gap:9px;align-items:center;flex-wrap:wrap}
+#iptvCastPanel .cx-pin{flex:1;min-width:135px;max-width:250px;text-align:center;font-size:23px;font-weight:780;letter-spacing:.18em;font-variant-numeric:tabular-nums;background:var(--cx-bg);border:1px solid var(--cx-edge);color:var(--cx-ink);border-radius:11px;padding:12px}
+#iptvCastPanel .cx-button{background:var(--cx-pane2);border:1px solid var(--cx-edge);color:var(--cx-ink);border-radius:10px;min-height:44px;padding:10px 16px;font-weight:750;font-size:13px;display:inline-flex;align-items:center;justify-content:center;gap:8px}
+#iptvCastPanel .cx-button:hover:not(:disabled){filter:brightness(1.09);border-color:var(--cx-accent)}
+#iptvCastPanel .cx-button-primary{background:var(--cx-accent);color:#071b12!important;border-color:var(--cx-accent);font-weight:800}
+#iptvCastPanel .cx-button-secondary{background:var(--cx-bg)}
+#iptvCastPanel .cx-notice{font-size:12px;line-height:1.6;padding:12px 14px;background:var(--cx-pane2);border:1px solid var(--cx-edge);border-radius:11px;color:var(--cx-dim);margin-top:17px;overflow-wrap:anywhere}
+#iptvCastPanel .cx-notice[data-kind="ok"]{border-color:color-mix(in srgb,var(--cx-accent) 40%,var(--cx-edge));background:var(--cx-soft);color:var(--cx-ink)}
+#iptvCastPanel .cx-notice[data-kind="error"]{border-color:#a65a64;color:#db747d}
+#iptvCastPanel .cx-tvcard{display:flex;align-items:center;flex-direction:column;min-height:340px;background:var(--cx-pane)}
+#iptvCastPanel .cx-toptv{display:flex;justify-content:space-between;width:100%;color:var(--cx-dim);font-size:12px;margin-bottom:17px}
+#iptvCastPanel .cx-tvbadge{border:1px solid var(--cx-edge);border-radius:7px;padding:4px 8px}
+#iptvCastPanel .cx-tv{width:100%;max-width:510px;aspect-ratio:16/10;position:relative;background:radial-gradient(ellipse at 78% 27%,#205440,#0b1725 70%);border:7px solid #303f4e;border-bottom-width:10px;border-radius:14px;box-shadow:0 18px 30px #0004;display:grid;place-items:center;text-align:center;overflow:hidden;color:#fff}
+#iptvCastPanel .cx-tvcontent{padding:14px}
+#iptvCastPanel .cx-tvlogo{font-size:12px;font-weight:800;letter-spacing:.04em;margin-bottom:12px;color:#ddfdec}
+#iptvCastPanel .cx-tvcode{font-size:clamp(28px,4vw,48px);font-weight:800;letter-spacing:.14em;font-variant-numeric:tabular-nums;color:#fff;margin:7px 0}
+#iptvCastPanel .cx-tvdesc{font-size:12px;color:#b8d1df;line-height:1.7}
+#iptvCastPanel .cx-tvstatus{border:1px solid #365e4e;border-radius:99px;color:#c0ffd5;background:#14453088;padding:5px 9px;font-size:11px;margin-top:12px;display:inline-block}
+#iptvCastPanel .cx-tvstand{width:30%;height:7px;border-radius:0 0 7px 7px;background:#536273}
+#iptvCastPanel .cx-remote{border-top:1px solid var(--cx-edge);margin-top:20px;padding-top:20px}
+#iptvCastPanel .cx-remote[hidden]{display:none!important}
+#iptvCastPanel .cx-remote .cx-label{margin-top:12px}
+#iptvCastPanel .cx-feature{min-height:265px}
+#iptvCastPanel .cx-featureicon{width:52px;height:52px;border-radius:14px;background:var(--cx-soft);border:1px solid var(--cx-edge);color:var(--cx-accent);display:grid;place-items:center;font-size:24px}
+#iptvCastPanel .cx-statuscard{background:var(--cx-bg);border:1px solid var(--cx-edge);border-radius:12px;padding:15px;margin-top:16px;font-size:13px;color:var(--cx-dim)}
+#iptvCastPanel .cx-footer{display:flex;gap:16px;justify-content:space-between;flex-wrap:wrap;padding:15px 30px;border-top:1px solid var(--cx-edge);color:var(--cx-dim);font-size:11px}
+#iptvCastPanel .cx-link{color:var(--cx-accent)!important;text-decoration:underline;text-underline-offset:3px}
+#iptvCastPanel .cx-footer b{color:var(--cx-ink)}
+#iptvCastPanel .cx-channelname{font-weight:800;color:var(--cx-ink);font-size:14px;overflow-wrap:anywhere}
+@media(max-width:760px){
+ #iptvCastOverlay{padding:0;place-items:end center}
+ #iptvCastPanel{width:100%;max-height:96dvh;border-radius:18px 18px 0 0}
+ #iptvCastPanel .cx-head{padding:18px 17px 16px}
+ #iptvCastPanel .cx-main{padding:20px 16px 22px}
+ #iptvCastPanel .cx-tabs{padding:12px 15px;gap:7px}
+ #iptvCastPanel .cx-tab{font-size:12px;min-height:48px;padding:9px 5px;gap:5px}
+ #iptvCastPanel .cx-grid{grid-template-columns:minmax(0,1fr)}
+ #iptvCastPanel .cx-card{padding:19px}
+ #iptvCastPanel .cx-sectionhead{flex-wrap:wrap}
+ #iptvCastPanel .cx-tvcard{min-height:265px}
+ #iptvCastPanel .cx-footer{padding:13px 17px}
+ #iptvCastPanel .cx-title-line .cx-icon{width:44px;height:44px}
+}
+@media(max-width:400px){
+ #iptvCastPanel .cx-tab{font-size:11px}
+ #iptvCastPanel .cx-pin{min-width:0;width:100%;max-width:100%}
+ #iptvCastPanel .cx-inline .cx-button{flex:1}
+}
+@media(prefers-reduced-motion:reduce){#iptvCastOverlay *{scroll-behavior:auto!important;transition:none!important}}
+/* Dedicated receiver site, with the exact same palette as the desktop dialog. */
+.iptv-tv-body{margin:0;min-height:100dvh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;background:#0a131e;color:#edf7ff;font-family:Inter,system-ui,-apple-system,sans-serif;padding:28px}
+.iptv-tv-body[data-theme="light"]{background:#eef4f8;color:#172a3d;--tv-card:#fff;--tv-edge:#d8e4ed;--tv-muted:#4c6378}
+.iptv-tv-body[data-theme="dark"]{background:#0a131e;color:#edf7ff;--tv-card:#121e2c;--tv-edge:#304254;--tv-muted:#a3b5c8}
+.iptv-tv-body[data-theme="amoled"]{background:#000;color:#fff;--tv-card:#0c0c0c;--tv-edge:#303036;--tv-muted:#b1b1b9}
+.iptv-tv-body .tv-site{background:var(--tv-card);border:1px solid var(--tv-edge);border-radius:21px;padding:clamp(18px,4vw,38px);width:min(950px,100%);text-align:center;box-shadow:0 30px 80px #0002}
+.iptv-tv-body .tv-site h1{font-size:clamp(22px,3vw,34px);margin:0 0 12px;letter-spacing:-.025em}
+.iptv-tv-body .tv-site p{color:var(--tv-muted);line-height:1.55;font-size:clamp(13px,1.5vw,17px)}
+.iptv-tv-body .tv-pair-pin{font-size:clamp(54px,11vw,112px);font-weight:850;letter-spacing:.13em;font-variant-numeric:tabular-nums;margin:30px 0;color:inherit}
+.iptv-tv-body button{border:1px solid var(--tv-edge);background:var(--tv-card);padding:12px 17px;border-radius:11px;color:inherit;font-weight:750;font-size:15px;cursor:pointer}
+.iptv-tv-body button.tv-primary{background:#29d776;border-color:#29d776;color:#042013}
+.iptv-tv-body button:disabled{opacity:.4;cursor:default}
+.iptv-tv-body .tv-actions{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:22px}
+.iptv-tv-body .tv-pill{display:inline-block;background:#1c5139;color:#caffdf;padding:7px 12px;border-radius:50px;font-size:13px;font-weight:750}
+.iptv-tv-body .tv-status{margin:22px 0 0;color:var(--tv-muted);line-height:1.5}
+.iptv-tv-body #tvVideo{width:100%;max-height:65dvh;aspect-ratio:16/9;background:#000;border-radius:13px;display:block}
+.iptv-tv-body .tv-row{display:flex;gap:8px;justify-content:center;align-items:center;flex-wrap:wrap;margin-bottom:16px}
+.iptv-tv-body .tv-row button[data-active="true"]{background:#258758;color:white}
+.iptv-tv-body .tv-help{margin-top:17px;font-size:12px!important;opacity:.8}
+.iptv-tv-body [hidden]{display:none!important}
