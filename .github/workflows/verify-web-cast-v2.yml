@@ -44,8 +44,8 @@ jobs:
           node --check cast-ui.js
           test -s tv.html
           test -s web-cast-v2.css
-          grep -Fq 'web-cast-icons.js?v=icons-v3-20261122a' index.html
-          grep -Fq 'web-cast-icons.js?v=icons-v3-20261122a' tv.html
+          grep -Fq 'web-cast-icons.js?v=dual-links-20261122a' index.html
+          grep -Fq 'web-cast-icons.js?v=dual-links-20261122a' tv.html
       - name: Test real encrypted TV pairing with mocked Realtime channels
         run: |
           node --test web-online/tests/web-cast-v2.test.cjs
