@@ -1,4 +1,6 @@
 ## P5.1.171 — Phạm vi kênh thực đang xem / Electron 4.23.256
+- Electron screenshot: positron-p51171-visible-range-after-1920x1080-real.png
+- User action: Mở Thư viện → Kênh thiếu logo → chuyển trang hoặc đổi số kênh/trang; quan sát dòng Đang xem X–Y / tổng kênh ngay dưới thanh phân trang.
 - Feature priority: NEW — Ảnh thật P5.1.170 cho thấy Trang 1 / 57 nhưng không nêu đang xem kênh số mấy trong 561 kênh. Thêm nhãn Đang xem 1–10 / 561 kênh, cập nhật theo bộ lọc, phân trang 10/25/50; danh sách rỗng có thông báo rõ.
 - Baseline: ảnh Electron `positron-p51170-clear-filters-after-1920x1080-real.png` từ Actions 44986538072, đã trực tiếp mở xem.
 - Không thay đổi playlist, URL, EPG, Cast, PiP và hành vi playback. Dùng trạng thái `aria-live=polite` cho công cụ đọc màn hình.
