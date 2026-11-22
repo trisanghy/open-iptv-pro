@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.313",
-  "description": "Positron P5.1.228: phím điều hướng kênh không tự phát video",
+  "version": "4.23.314",
+  "description": "Positron P5.1.229: phím F thêm và bỏ yêu thích ngay trên hàng kênh",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

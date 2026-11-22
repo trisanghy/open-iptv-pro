@@ -87,9 +87,28 @@
   channelList.setAttribute('aria-label','Danh sách kênh, dùng các phím mũi tên, Home, End, Page Up hoặc Page Down để chuyển vị trí');
   channelList.addEventListener('keydown',event=>{
    const keys=['ArrowUp','ArrowDown','Home','End','PageUp','PageDown'];
-   if(!keys.includes(event.key))return;
+   const favoriteKey=(event.key==='f'||event.key==='F')&&!event.ctrlKey&&!event.altKey&&!event.metaKey;
+   if(!favoriteKey&&!keys.includes(event.key))return;
    const current=event.target;
    if(!(current instanceof HTMLElement)||!current.matches('.channel-item'))return;
+   if(favoriteKey){
+    const star=current.querySelector('.channel-star');
+    if(!star)return;
+    event.preventDefault();
+    event.stopPropagation();
+    const wasFavorite=star.getAttribute('aria-pressed')==='true';
+    const id=current.dataset.channelId;
+    // Invoke native favorite logic, including its save, feedback and syncing.
+    // A plain F key must never trigger the channel's playback handler.
+    star.click();
+    const replacement=[...channelList.querySelectorAll('.channel-item')]
+      .find(row=>row.dataset.channelId===id);
+    if(replacement)replacement.focus({preventScroll:true});
+    else (channelList.querySelector('.channel-item')||d.getElementById('searchBox'))?.focus({preventScroll:true});
+    const title=current.querySelector('.channel-text b')?.textContent||'kênh';
+    status.textContent=(wasFavorite?'Đã bỏ':'Đã thêm')+' yêu thích: '+title+'. Nhấn F để đảo lại.';
+    return;
+   }
    const rows=[...channelList.querySelectorAll('.channel-item')];
    const index=rows.indexOf(current);
    if(index<0)return;

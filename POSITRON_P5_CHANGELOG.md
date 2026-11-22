@@ -1,5 +1,14 @@
 # Positron P5 Changelog
 
+## P5.1.229 — Đánh dấu yêu thích ngay bằng phím F / Electron 4.23.314
+- Feature priority: NEW — Người dùng đang duyệt hàng trăm kênh bằng phím mũi tên có thể nhấn F trên hàng kênh được focus để thêm/bỏ Yêu thích ngay lập tức, không cần rê chuột tới biểu tượng sao nhỏ và không làm chuyển hoặc phát kênh.
+- Electron screenshot: positron-p51229-keyboard-favorite-after-1920x1080-real.png
+- User action: Chọn hàng kênh bằng phím mũi tên hoặc số thứ tự; nhấn F để thêm yêu thích, nhấn F lần nữa để bỏ. Enter vẫn là thao tác phát kênh. Viền focus giữ nguyên để tiếp tục duyệt.
+- QA Electron: ảnh trước/sau 1920×1080 chọn QA Channel 412, so sánh aria-pressed và màu sao, Favorites tăng một rồi giảm một, phục hồi dữ liệu thử nghiệm, không autoplay, không cuộn trang ngoài hoặc mất focus.
+- Tận dụng nút sao gốc để giữ chức năng lưu, phản hồi, đồng bộ và tương thích với mọi bộ lọc.
+- CANDIDATE cho tới khi test Node, ảnh Electron đã MỞ và Release thành công.
+
+
 ## P5.1.228 — Duyệt kênh bằng bàn phím, không cần chuột / Electron 4.23.313
 - Feature priority: NEW — Người dùng có hàng trăm kênh có thể di chuyển focus bằng mũi tên lên xuống, Home, End, PageUp và PageDown mà không phải nhấn phát từng kênh; thêm viền focus rõ ràng và Alt+J mở ô nhảy tới số kênh, giữ nguyên video đang xem.
 - Electron screenshot: positron-p51228-keyboard-channels-after-1920x1080-real.png
