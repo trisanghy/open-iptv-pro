@@ -338,7 +338,7 @@ test('Web Mobile channel management controls exist on the QR phone page',()=>{
   assert.match(phone,new RegExp('data-filter="'+mode+'"'));
  for(const fn of ['renderGroupSelectors','renderChannels','renderSelection','runBatch','dragClear'])
   assert.ok(phone.includes('function '+fn+'('),'missing '+fn);
- assert.match(phone,/},800\)/,'touch long press mirrors Web Mobile');
+ assert.match(phone,/},500\)/,'touch long press activates in 0.5 seconds');
  assert.match(phone,/passive:false/,'active touch drag can prevent scrolling');
  assert.match(phone,/command\('relocate-channel'/);
  assert.match(phone,/command\('play-channel'|action==='play-channel'/);
@@ -368,4 +368,49 @@ test('TV manager supports folder filtering, favorite/recent, batch actions and T
  assert.equal(ctx.managerPerform('play-channel',{...data,index:0,channelId:'s1'}).ok,true);
  assert.equal(played,'s1');
  assert.equal(ctx.managerSnapshot({...data,group:'Tin tức'}).total,3);
+});
+
+
+test('All group headers are visible and initially collapsed, with no manual pagination controls',()=>{
+ assert.match(phone,/var folded=collapsedFolders\[currentSource\+'\|'\+group\]!==false/);
+ assert.match(phone,/var ordered=groups\.map\(function\(g\)\{return g\.name;\}\)/);
+ assert.match(phone,/function loadFolderGroup\(group,retry\)/);
+ assert.match(phone,/function observeFolderLoads\(\)/);
+ assert.match(phone,/folder-loader/);
+ assert.match(phone,/cache\.next=page\.offset\+\(page\.channels\|\|\[\]\)\.length/);
+ assert.doesNotMatch(phone,/id="previous"|id="next"/);
+ assert.doesNotMatch(phone,/byId\('previous'\)|byId\('next'\)/);
+ assert.match(phone,/channelViews\[Number\(btn\.dataset\.index\)\]/);
+});
+test('500ms drag supports folder ordering and channel drop before or after',()=>{
+ assert.match(phone,/},500\)/);
+ assert.match(phone,/kind:folder\?'folder':'channel'/);
+ assert.match(phone,/action='reorder-folder'/);
+ assert.match(phone,/action='relocate-channel'/);
+ assert.match(phone,/after:drop\.after/);
+ assert.match(phone,/dragAutoTimer=setInterval\(dragScrollStep,75\)/);
+ assert.match(tv,/action==='reorder-folder'/);
+ const start=tv.indexOf('var managerRevision=0'),end=tv.indexOf('function stopPair()',start);
+ const ctx=vm.createContext({state:{sources:[{id:'s',name:'Test',channels:[
+  {id:'a',name:'A',group:'Tin'}, {id:'b',name:'B',group:'Phim'}, {id:'c',name:'C',group:'The thao'}
+ ]}],favorites:{},recent:[]},save:()=>true,draw:()=>{},hash:()=>'',url:v=>v,play:()=>{},
+  byId:()=>({hidden:false}),selected:null});
+ vm.runInContext(tv.slice(start,end),ctx);
+ const opts={sourceId:'s'};
+ assert.deepEqual(Array.from(ctx.managerSnapshot(opts).groups,g=>g.name),['Tin','Phim','The thao']);
+ const reorder=ctx.managerPerform('reorder-folder',{...opts,name:'The thao',anchor:'Tin',after:false});
+ assert.equal(reorder.ok,true);
+ assert.deepEqual(Array.from(ctx.managerSnapshot(opts).groups,g=>g.name),['The thao','Tin','Phim']);
+ const move=ctx.managerPerform('relocate-channel',{...opts,index:0,channelId:'a',group:'Phim',anchorId:'b',after:true});
+ assert.equal(move.ok,true);
+ assert.equal(ctx.state.sources[0].channels[1].id,'a');
+ assert.equal(ctx.state.sources[0].channels[1].group,'Phim');
+});
+test('TV returns folders beyond 100 without clipping the folder list',()=>{
+ const start=tv.indexOf('var managerRevision=0'),end=tv.indexOf('function stopPair()',start);
+ const state={sources:[{id:'s',name:'Large',channels:Array.from({length:125},(_,i)=>({id:'c'+i,name:'Channel '+i,group:'Group '+i}))}],favorites:{},recent:[]};
+ const ctx=vm.createContext({state,save:()=>true,draw:()=>{},hash:()=>'',url:v=>v,play:()=>{},byId:()=>({hidden:false}),selected:null});
+ vm.runInContext(tv.slice(start,end),ctx);
+ assert.equal(ctx.managerSnapshot({sourceId:'s'}).groups.length,125);
+ assert.equal(ctx.managerSnapshot({sourceId:'s',group:'Group 124'}).channels[0].index,124);
 });
