@@ -2,14 +2,23 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
-## P5.1.250 — Ẩn chỉ báo focus đã cũ
+## P5.1.251 — Phím quay lại hàng kênh vừa duyệt
 
-**Ứng dụng:** 4.23.335 · **Trạng thái:** Chưa có bản phát hành
+**Ứng dụng:** 4.23.336 · **Trạng thái:** Chưa có bản phát hành
+
+Feature priority: NEW — Thêm phím tắt Alt+Shift+L trở lại đúng hàng kênh từng được focus trước khi chuyển sang thanh công cụ; tận dụng ghi nhớ vị trí trong phiên làm việc, không ghi dữ liệu hay tự phát video. Electron screenshot: positron-p51251-return-to-row-after-1920x1080-real.png
+
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/8d91b18927192866b127c61eb2912983eddbf02d)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+
+## P5.1.250 — Electron 4.23.335 — Ẩn chỉ báo vị trí đã cũ (HOÀN TẤT)
+
+**Ứng dụng:** 4.23.335 · **Trạng thái:** Đã phát hành
 
 Feature priority: NEW — Thêm tương tác mới tự ẩn chỉ báo vị trí đang chọn khi người dùng đưa tiêu điểm ra khỏi danh sách kênh, không hiển thị sai trạng thái và không tác động việc phát video hay dữ liệu playlist. Electron screenshot: positron-p51250-focus-badge-after-1920x1080-real.png
 
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/41bb78b88c6994c8f68b9ae0316446574f1991ac)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/b02d3ff4947e473d233f3d97b40ade1c0ff8a14b)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.335-p5.1.250)
 
 ## P5.1.249 — Electron 4.23.334 — Escape hủy rồi trở về hàng kênh đang chọn (CANDIDATE)
 

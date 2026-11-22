@@ -7,15 +7,28 @@ Trang này được tạo tự động từ GitHub Releases và ảnh kiểm th�
 [Mở WEBSITE changelog tương tác](https://raw.githack.com/trisanghy/open-iptv-pro/Positron/docs/positron-features/index.html) · [Giao diện HTML trong repository](index.html) · [Các bản phát hành](https://github.com/trisanghy/open-iptv-pro/releases) · [Nhật ký Git tiếng Việt](LOG_GIT_TIENG_VIET.md) · [Quy tắc ưu tiên tính năng](../../POSITRON_FEATURE_RULES.md)
 
 <details>
-<summary><strong>P5.1.250</strong> · Ẩn chỉ báo focus đã cũ · CHƯA CÓ BẢN PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.251</strong> · Phím quay lại hàng kênh vừa duyệt · CHƯA CÓ BẢN PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
 
-**Ứng dụng:** 4.23.335 · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
+**Ứng dụng:** 4.23.336 · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
+
+Feature priority: NEW — Thêm phím tắt Alt+Shift+L trở lại đúng hàng kênh từng được focus trước khi chuyển sang thanh công cụ; tận dụng ghi nhớ vị trí trong phiên làm việc, không ghi dữ liệu hay tự phát video. Electron screenshot: positron-p51251-return-to-row-after-1920x1080-real.png
+
+*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+
+[Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/tree/Positron) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/8d91b18927192866b127c61eb2912983eddbf02d)
+
+</details>
+
+<details>
+<summary><strong>P5.1.250</strong> · Electron 4.23.335 — Ẩn chỉ báo vị trí đã cũ (HOÀN TẤT) · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+
+**Ứng dụng:** 4.23.335 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
 Feature priority: NEW — Thêm tương tác mới tự ẩn chỉ báo vị trí đang chọn khi người dùng đưa tiêu điểm ra khỏi danh sách kênh, không hiển thị sai trạng thái và không tác động việc phát video hay dữ liệu playlist. Electron screenshot: positron-p51250-focus-badge-after-1920x1080-real.png
 
 *Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
 
-[Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/tree/Positron) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/41bb78b88c6994c8f68b9ae0316446574f1991ac)
+[Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.335-p5.1.250) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/b02d3ff4947e473d233f3d97b40ade1c0ff8a14b) · [Tải Windows Setup x64](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.335-p5.1.250/Open-IPTV-Pro-Setup-4.23.335-x64.exe) · [Tải gói ảnh QA](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.335-p5.1.250/Positron-P51250-20-Real-Screenshots.zip)
 
 </details>
 
