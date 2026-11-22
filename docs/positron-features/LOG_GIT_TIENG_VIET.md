@@ -2,14 +2,14 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
-## P5.1.266 — WatchFlow Intelligence học máy sở thích, phân loại EPG và tra cứu Wikipedia
+## P5.1.266 — WatchFlow Intelligence: học máy sở thích, phân loại EPG và tìm chủ đề trên Wikipedia / Electron 4.23.351
 
-**Ứng dụng:** 4.23.351 · **Trạng thái:** Chưa có bản phát hành
+**Ứng dụng:** 4.23.351 · **Trạng thái:** Đã phát hành
 
 Feature priority: NEW — WatchFlow Intelligence với thuật toán học máy hồi quy logistic cập nhật trọng số dựa trên thời lượng xem ≥35 giây có hình hoặc đánh giá Hợp gu/Không hợp; phân loại theo chương trình XMLTV đang/sắp chiếu; tra cứu Wikipedia theo tên kênh và chỉ khi bấm nút, không gửi playlist, URL hoặc lịch sử xem lên mạng. Feature class: AI
 
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/3212a9084ac6e5ef5958296531145f97cbdfb394)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/2334d964cdfe9c1092b6a44c21469a0ff9e62f79)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.351-p5.1.266)
 
 ## P5.1.265 — Đi tới nguồn bằng Enter/Space / Electron 4.23.350
 
