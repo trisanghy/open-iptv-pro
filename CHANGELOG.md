@@ -1,3 +1,7 @@
+## Rust Lab v23.8.102 — WatchFlow AI UI demo
+
+Thêm nút AI Phân tích kênh & Đề xuất bên cạnh các công cụ phát, với bảng demo tương tác chế độ Tiêu chuẩn, Smart, Intelligence; phân loại tên/EPG hiện có, đề xuất theo lịch sử và tìm kiếm chủ đề. Smart/Intelligence chưa có mô hình thực và Internet chỉ mở kết quả tìm kiếm khi bấm nút. Xem [release notes](RELEASE_NOTES_RUST_LAB_V23_8_102.md).
+
 ## Rust Lab v23.8.91 — Bộ icon Web, bảo toàn bản dịch và kiểm thử
 
 Giữ bộ icon SVG từ v23.8.90 nhưng trả lại chuỗi nhãn có sẵn để tránh phá kiểm tra 17 ngôn ngữ, cập nhật hai kiểm thử bố cục để chấp nhận chữ Chụp ảnh không chứa ký tự ▣. Bổ sung CSS che ký tự trang trí của nút DVR và giữ nguyên nhãn cho trình đọc màn hình. Bản phát hành v23.8.91 có tag riêng bất biến, không sửa v23.8.89 hoặc v23.8.90. [Release notes](RELEASE_NOTES_RUST_LAB_V23_8_91.md).
