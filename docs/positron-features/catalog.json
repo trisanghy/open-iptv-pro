@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-22T04:26:11.887042+00:00",
+  "generatedAt": "2026-11-22T04:27:55.898621+00:00",
   "repository": "trisanghy/open-iptv-pro",
   "branch": "Positron",
   "versions": [
@@ -8,7 +8,7 @@
       "version": "P5.1.168",
       "appVersion": "4.23.253",
       "title": "tùy chỉnh 10/25/50 kênh thiếu logo mỗi trang",
-      "description": "Ảnh INPUT thực tế P5.1.167: `positron-p51167-missing-page-size-after-1920x1080-real.png` có nhóm Trước / Trang / Đến / Tiếp chỉ lộ một phần ở mép dưới bảng Thư viện khi danh sách dài. Nguyên nhân trong mã: đặt thanh phân trang sau `#poLibraryMissingRows` trong panel có max-height và scroll.",
+      "description": "Feature priority: BLOCKER_FIX — Thanh điều hướng phân trang dữ liệu thư viện bị che khỏi vùng nhìn khiến người dùng không mở được những trang kênh còn lại khi danh sách lớn; đưa nút lên trên vùng cuộn giúp truy cập đầy đủ. Electron screenshot: positron-p51168-pager-visible-after-1920x1080-real.png",
       "kind": "fix",
       "status": "candidate",
       "published": "",

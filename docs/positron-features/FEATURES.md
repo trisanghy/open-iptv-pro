@@ -11,7 +11,7 @@ Trang này được tạo tự động từ GitHub Releases và ảnh kiểm th�
 
 **Ứng dụng:** 4.23.253 · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
 
-Ảnh INPUT thực tế P5.1.167: `positron-p51167-missing-page-size-after-1920x1080-real.png` có nhóm Trước / Trang / Đến / Tiếp chỉ lộ một phần ở mép dưới bảng Thư viện khi danh sách dài. Nguyên nhân trong mã: đặt thanh phân trang sau `#poLibraryMissingRows` trong panel có max-height và scroll.
+Feature priority: BLOCKER_FIX — Thanh điều hướng phân trang dữ liệu thư viện bị che khỏi vùng nhìn khiến người dùng không mở được những trang kênh còn lại khi danh sách lớn; đưa nút lên trên vùng cuộn giúp truy cập đầy đủ. Electron screenshot: positron-p51168-pager-visible-after-1920x1080-real.png
 
 *Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
 
