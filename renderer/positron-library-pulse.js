@@ -1,5 +1,5 @@
 'use strict';
-// Positron P5.1.160 — Bảng phân tích metadata thư viện, không thử stream.
+// Positron P5.1.161 — Bảng phân tích metadata thư viện, không thử stream.
 (()=>{
  const d=document,root=d.documentElement,bar=d.getElementById('positronBar');
  const core=window.PositronLibraryPulseCore,state=window.IPTVState;
@@ -57,6 +57,12 @@
  const missingGroup=d.createElement('select');
  missingGroup.id='poLibraryMissingGroup';
  missingGroup.setAttribute('aria-label','Lọc kênh thiếu logo theo nhóm');
+ const missingSort=d.createElement('select');missingSort.id='poLibraryMissingSort';
+ missingSort.setAttribute('aria-label','Sắp xếp danh sách kênh thiếu logo');
+ for(const [value,label] of [['playlist','Thứ tự playlist'],['name-asc','Tên kênh A–Z'],['name-desc','Tên kênh Z–A']]){
+  const option=d.createElement('option');option.value=value;option.textContent=label;
+  missingSort.append(option);
+ }
  const missingRows=d.createElement('ol');missingRows.id='poLibraryMissingRows';
  const missingNav=d.createElement('div');missingNav.className='po-pulse-missing-nav';
  const missingPrev=d.createElement('button');missingPrev.type='button';missingPrev.id='poLibraryMissingPrev';
@@ -65,7 +71,7 @@
  const missingNext=d.createElement('button');missingNext.type='button';missingNext.id='poLibraryMissingNext';
  missingNext.textContent='Tiếp';
  missingNav.append(missingPrev,missingPageLabel,missingNext);
- missingBody.append(missingSearch,missingGroup,missingRows,missingNav);missingPane.append(missingToggle,missingBody);
+ missingBody.append(missingSearch,missingGroup,missingSort,missingRows,missingNav);missingPane.append(missingToggle,missingBody);
  const footer=d.createElement('footer');footer.className='po-pulse-footer';
  const stamp=d.createElement('span');stamp.id='poLibraryPulseStamp';
  const refresh=d.createElement('button');refresh.type='button';refresh.id='poLibraryPulseRefresh';
@@ -128,7 +134,7 @@
  };
  let missingIndex=0,missingTotal=0;
  const renderMissing=()=>{
-  const report=core.missingLogos(state.getChannels(),{offset:missingIndex*10,limit:10,query:missingSearch.value,group:missingGroup.value});
+  const report=core.missingLogos(state.getChannels(),{offset:missingIndex*10,limit:10,query:missingSearch.value,group:missingGroup.value,sort:missingSort.value});
   missingTotal=report.total;missingRows.replaceChildren();
   missingToggle.textContent='Kênh thiếu logo: '+missingTotal;
   for(const item of report.rows){
@@ -172,6 +178,7 @@
  });
  missingSearch.addEventListener('input',()=>{missingIndex=0;renderMissing();});
  missingGroup.addEventListener('change',()=>{missingIndex=0;renderMissing();});
+ missingSort.addEventListener('change',()=>{missingIndex=0;renderMissing();});
  missingPrev.addEventListener('click',()=>{
   if(missingIndex>0)missingIndex--;
   renderMissing();missingPrev.focus({preventScroll:true});

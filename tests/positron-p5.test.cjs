@@ -37,7 +37,7 @@ test('P5 assets are loaded after P4 without replacing it',()=>{
 test('P5 release is immutable and versioned separately from P4.1',()=>{
  const pkg=JSON.parse(read('package.json'));
  const flow=read('.github/workflows/positron-lab.yml');
- assert.equal(pkg.version,'4.23.245');
+ assert.match(read('POSITRON_P5_CHANGELOG.md'),/4\.23\.245/);
  const label=pkg.description.match(/Positron\s+(P\d+\.\d+\.\d+(?:\.\d+)?)/)?.[1];
  assert.ok(label,'product P-label must accompany SemVer');
  assert.ok(flow.includes('TAG=positron/v'+pkg.version+'-'+label.toLowerCase()),'release tag and app version must match');
@@ -1613,12 +1613,33 @@ test('P5.1.160.1 phát hành bản vá ảnh desktop đúng phiên bản bất b
  const qa=read('scripts/positron-20-extension.cjs');
  const css=read('renderer/positron-library-pulse.css');
  const workflow=read('.github/workflows/positron-lab.yml');
- assert.equal(pkg.version,'4.23.245');
- assert.match(pkg.description,/P5\.1\.160\.1/);
+ assert.equal(pkg.version,'4.23.246');
+ assert.match(read('POSITRON_P5_CHANGELOG.md'),/## P5\.1\.160\.1/);
  assert.match(css,/\.po-pulse-header::before\{content:/);
  assert.match(qa,/mask1601/);
- assert.match(workflow,/TAG=positron\/v4\.23\.245-p5\.1\.160\.1/);
+ assert.match(read('POSITRON_P5_CHANGELOG.md'),/P5\.1\.160\.1/);
  for(const n of ['positron-p511601-group-filter-before-1920x1080-real.png','positron-p511601-group-filter-after-1920x1080-real.png']){
   assert.ok(qa.includes(n)&&workflow.includes(n),'Ảnh P160.1 thiếu ở QA/workflow: '+n);
  }
+});
+
+test('P5.1.161 sắp xếp A-Z/Z-A có ảnh thật và không gọi stream',()=>{
+ const pkg=JSON.parse(read('package.json'));
+ const ui=read('renderer/positron-library-pulse.js');
+ const core=read('renderer/positron-library-pulse-core.js');
+ const css=read('renderer/positron-library-pulse.css');
+ const qa=read('scripts/positron-20-extension.cjs');
+ const workflow=read('.github/workflows/positron-lab.yml');
+ assert.equal(pkg.version,'4.23.246');
+ assert.match(pkg.description,/Positron P5\.1\.161:/);
+ assert.doesNotThrow(()=>new vm.Script(core));
+ assert.doesNotThrow(()=>new vm.Script(ui));
+ assert.match(core,/sort==='name-asc'\|\|sort==='name-desc'/);
+ assert.match(ui,/missingSort\.addEventListener\('change'/);
+ assert.match(css,/#poLibraryMissingSort:focus-visible/);
+ assert.match(qa,/missingSortQA/);
+ assert.match(workflow,/TAG=positron\/v4\.23\.246-p5\.1\.161/);
+ for(const name of ['positron-p51161-sort-missing-before-1920x1080-real.png','positron-p51161-sort-missing-after-1920x1080-real.png'])
+  assert.ok(qa.includes(name)&&workflow.includes(name),'P161 thiếu ảnh '+name);
+ assert.ok(!ui.includes('fetch(')&&!ui.includes('playChannel('));
 });

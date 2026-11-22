@@ -45,12 +45,18 @@
   return [...groups].map(([name,count])=>({name,count}))
    .sort((a,b)=>b.count-a.count||a.name.localeCompare(b.name,'vi'));
  }
- function missingLogos(input,{offset=0,limit=10,query='',group=''}={}){
+ function missingLogos(input,{offset=0,limit=10,query='',group='',sort='playlist'}={}){
   const terms=fold(query).split(/\s+/).filter(Boolean);
   const rows=(Array.isArray(input)?input:[]).filter(c=>c&&typeof c==='object'&&
    clean(c.name)&&!clean(c.logo)&&
    (!clean(group)||(clean(c.group||c.groupTitle)||'Chưa phân nhóm')===clean(group))&&
    terms.every(term=>fold(clean(c.name)+' '+clean(c.group||c.groupTitle)).includes(term)));
+  // Chỉ sắp xếp bản sao danh sách đã lọc. Không thay đổi thứ tự nguồn/M3U.
+  if(sort==='name-asc'||sort==='name-desc'){
+   const direction=sort==='name-asc'?1:-1;
+   rows.sort((a,b)=>direction*clean(a.name).localeCompare(clean(b.name),'vi',
+    {numeric:true,sensitivity:'base'}));
+  }
   const start=Number.isFinite(offset)?Math.max(0,Math.floor(offset)):0;
   const count=Number.isFinite(limit)?Math.min(50,Math.max(1,Math.floor(limit))):10;
   return {total:rows.length,offset:start,limit:count,

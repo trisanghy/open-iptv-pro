@@ -111,3 +111,23 @@ test('P5.1.160 chọn nhóm thiếu logo chính xác, kết hợp tìm kiếm kh
  assert.ok(!JSON.stringify(core.missingLogoGroups(list)).includes('private'));
  assert.equal(JSON.stringify(list),snapshot);
 });
+
+test('P5.1.161 sắp xếp tên kênh thiếu logo, giữ nguyên thứ tự nguồn và không lộ URL',()=>{
+ const items=[
+  {name:'QA Channel 2',group:'Nhóm',url:'https://private/2'},
+  {name:'QA Channel 10',group:'Nhóm',url:'https://private/10'},
+  {name:'QA Channel 1',group:'Nhóm',url:'https://private/1'},
+  {name:'QA Channel 3',group:'Khác',url:'https://private/3'},
+  {name:'QA Channel 4',group:'Nhóm',logo:'https://logo/4'}
+ ];
+ const original=JSON.stringify(items);
+ const rownames=o=>core.missingLogos(items,o).rows.map(x=>x.name);
+ assert.deepEqual(rownames({group:'Nhóm'}),['QA Channel 2','QA Channel 10','QA Channel 1']);
+ assert.deepEqual(rownames({group:'Nhóm',sort:'name-asc'}),['QA Channel 1','QA Channel 2','QA Channel 10']);
+ assert.deepEqual(rownames({group:'Nhóm',sort:'name-desc'}),['QA Channel 10','QA Channel 2','QA Channel 1']);
+ assert.deepEqual(rownames({sort:'name-asc',offset:1,limit:2}),['QA Channel 2','QA Channel 3']);
+ assert.deepEqual(rownames({sort:'name-unknown'}),rownames({}));
+ assert.equal(core.missingLogos(items,{query:'qa',sort:'name-desc',group:'Nhóm'}).total,3);
+ assert.equal(JSON.stringify(items),original);
+ assert.ok(!JSON.stringify(core.missingLogos(items,{sort:'name-desc'})).includes('https://private/'));
+});

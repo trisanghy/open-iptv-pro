@@ -1,3 +1,11 @@
+## P5.1.161 — Sắp xếp kênh thiếu logo A–Z/Z–A / Electron 4.23.246
+- Feature priority: NEW — Hỗ trợ sắp xếp những kênh thiếu logo theo tên tăng/giảm với so sánh số tự nhiên, để nhanh chóng phát hiện và rà soát các kênh có tên tương tự trong thư viện lớn.
+- User action: Mở Thư viện → Kênh thiếu logo → chọn nhóm tùy ý → chọn Thứ tự playlist, Tên kênh A–Z hoặc Tên kênh Z–A để sắp xếp riêng danh sách trên màn hình.
+- Electron screenshot: positron-p51161-sort-missing-after-1920x1080-real.png
+- Before: positron-p51161-sort-missing-before-1920x1080-real.png; After: positron-p51161-sort-missing-after-1920x1080-real.png, phải chụp và kiểm tra thật 1920×1080.
+- Duy trì thứ tự playlist như mặc định; sắp xếp danh sách lọc sao chép chỉ trong bộ nhớ, không sửa M3U, URL stream, EPG, Favorites hoặc phát video.
+- Status: CANDIDATE — cần Node tests, chụp/soát ảnh Electron, build Windows/macOS, chứng thực Release.
+
 ## P5.1.160.1 — Hoàn thiện lọc nhóm và minh chứng Electron / 4.23.245
 - Feature priority: BLOCKER_FIX — Sửa lỗi kiểm chứng CI khi bộ lọc nhóm đang hoạt động nhưng ảnh Electron sau thao tác không cho thấy điều khiển, bảo đảm hình ảnh đại diện đúng giao diện được phát hành.
 - Electron screenshot: positron-p511601-group-filter-after-1920x1080-real.png
