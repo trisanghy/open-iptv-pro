@@ -2,7 +2,7 @@
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
   "version": "4.23.335",
-  "description": "Positron P5.1.249: Escape trả tiêu điểm về kênh trước đó",
+  "description": "Positron P5.1.250: Ẩn chỉ báo focus đã cũ",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",
