@@ -1,21 +1,101 @@
 {
-  "generatedAt": "2026-11-22T11:02:42.367253+00:00",
+  "generatedAt": "2026-11-22T11:11:52.066052+00:00",
   "repository": "trisanghy/open-iptv-pro",
   "branch": "Positron",
   "versions": [
     {
-      "number": 203,
-      "version": "P5.1.203",
-      "appVersion": "4.23.288",
-      "title": "chế độ thông báo không che điều khiển TV",
-      "description": "Feature priority: NEW — Khi xem truyền hình trên desktop, thông báo được đưa đến vùng góc phía trên; nút mở danh sách nổi vẫn bấm được nhưng không che thanh phát và âm lượng, trong khi cảnh báo quan trọng cùng lịch sử trên thanh đầu vẫn truy cập được. User action: Mở trang Xem truyền hình trên desktop và thực hiện thao tác phát sinh thông báo; điều khiển Play/Volume không còn bị banner che. Bấm Thông báo trên thanh trên để xem nhật ký.",
+      "number": 204,
+      "version": "P5.1.204",
+      "appVersion": "4.23.289",
+      "title": "khám phá kênh ngẫu nhiên bằng một nút",
+      "description": "Feature priority: NEW — Khi có nhiều kênh đã nhập nhưng chưa chọn kênh để xem, nút “Khám phá kênh ngẫu nhiên” giúp tìm nội dung mới thay vì luôn bắt đầu từ kênh thứ nhất; không chọn kênh chết/thiếu URL, không tự chạy lúc mở app. User action: Mở trang Xem truyền hình, khi chưa chọn kênh hãy nhấn Khám phá kênh ngẫu nhiên; ứng dụng chọn một kênh hợp lệ bằng hành động rõ ràng của người xem.",
       "kind": "fix",
       "status": "candidate",
       "published": "",
       "tag": "",
-      "commit": "4d4e6fbd0492726fb79ae3cf6420b8ea4f71b568",
+      "commit": "9052de6fe686bbdae4a04b548e6e158590c5c5ba",
       "url": "https://github.com/trisanghy/open-iptv-pro/tree/Positron",
       "assets": [],
+      "image": null
+    },
+    {
+      "number": 203,
+      "version": "P5.1.203",
+      "appVersion": "4.23.288",
+      "title": "4.23.288 — Thông báo TV không che nút phát/âm lượng (CANDIDATE)",
+      "description": "Feature priority: NEW — Khi xem truyền hình trên desktop, thông báo được đưa đến vùng góc phía trên; nút mở danh sách nổi vẫn bấm được nhưng không che thanh phát và âm lượng, trong khi cảnh báo quan trọng cùng lịch sử trên thanh đầu vẫn truy cập được. User action: Mở trang Xem truyền hình trên desktop và thực hiện thao tác phát sinh thông báo; điều khiển Play/Volume không còn bị banner che. Bấm Thông báo trên thanh trên để xem nhật ký.",
+      "kind": "fix",
+      "status": "release",
+      "published": "2026-11-22T11:09:38Z",
+      "tag": "positron/v4.23.288-p5.1.203",
+      "commit": "a8bf38dceee311551c452c8127c8614cf16639b2",
+      "url": "https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.288-p5.1.203",
+      "assets": [
+        {
+          "name": "audit-p4-50-rounds.json",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.288-p5.1.203/audit-p4-50-rounds.json"
+        },
+        {
+          "name": "audit-p5-20-rounds.json",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.288-p5.1.203/audit-p5-20-rounds.json"
+        },
+        {
+          "name": "Open-IPTV-Pro-4.23.288-mac-arm64.dmg",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.288-p5.1.203/Open-IPTV-Pro-4.23.288-mac-arm64.dmg"
+        },
+        {
+          "name": "Open-IPTV-Pro-4.23.288-mac-x64.dmg",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.288-p5.1.203/Open-IPTV-Pro-4.23.288-mac-x64.dmg"
+        },
+        {
+          "name": "Open-IPTV-Pro-4.23.288-x64.exe",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.288-p5.1.203/Open-IPTV-Pro-4.23.288-x64.exe"
+        },
+        {
+          "name": "Open-IPTV-Pro-Setup-4.23.288-x64.exe",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.288-p5.1.203/Open-IPTV-Pro-Setup-4.23.288-x64.exe"
+        },
+        {
+          "name": "OpenIPTVPro-Positron-P51203-Source.zip",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.288-p5.1.203/OpenIPTVPro-Positron-P51203-Source.zip"
+        },
+        {
+          "name": "positron-desktop-1920x1080-16x9-main-real.png",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.288-p5.1.203/positron-desktop-1920x1080-16x9-main-real.png"
+        },
+        {
+          "name": "positron-p4-final-main-real.png",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.288-p5.1.203/positron-p4-final-main-real.png"
+        },
+        {
+          "name": "positron-p4-round-10-real.png",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.288-p5.1.203/positron-p4-round-10-real.png"
+        },
+        {
+          "name": "positron-p4-round-20-real.png",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.288-p5.1.203/positron-p4-round-20-real.png"
+        },
+        {
+          "name": "positron-p4-round-30-real.png",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.288-p5.1.203/positron-p4-round-30-real.png"
+        },
+        {
+          "name": "positron-p4-round-40-real.png",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.288-p5.1.203/positron-p4-round-40-real.png"
+        },
+        {
+          "name": "Positron-P51203-20-Real-Screenshots.zip",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.288-p5.1.203/Positron-P51203-20-Real-Screenshots.zip"
+        },
+        {
+          "name": "Positron-P51203-50-Real-Screenshots.zip",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.288-p5.1.203/Positron-P51203-50-Real-Screenshots.zip"
+        },
+        {
+          "name": "SHA256SUMS.txt",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.288-p5.1.203/SHA256SUMS.txt"
+        }
+      ],
       "image": null
     },
     {
