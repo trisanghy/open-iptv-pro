@@ -2,7 +2,7 @@
 
 ## Vòng 02/20 — P5.1.203 / Electron 4.23.288 — CANDIDATE
 - Input: đã trực tiếp MỞ ảnh Electron P5.1.202 `positron-p51202-desktop-1920x1080-trang-chu-real.png` và thấy các banner thông báo che thanh âm lượng/transport TV.
-- Sửa: ở desktop TV từ 1000px, ghim toast lên phía trên, ẩn nút Xem thêm nổi trong lúc xem TV nhưng vẫn giữ nhật ký thông báo ở header và cảnh báo. Các màn hình khác không đổi.
+- Sửa: ở desktop TV từ 1000px, ghim toast lên phía trên, chuyển cả nút Xem thêm nổi lên phía trên, giữ nút có thể bấm và nhật ký thông báo ở header và cảnh báo. Các màn hình khác không đổi.
 - QA yêu cầu: ảnh Electron before/after 1920×1080, đo không overlap, test Node/legacy, CI 6/6, release bất biến; chỉ đánh dấu hoàn tất sau khi mở PNG thật.
 
 ## Vòng 01/20 đợt mới — P5.1.202 / Electron 4.23.287 — CANDIDATE

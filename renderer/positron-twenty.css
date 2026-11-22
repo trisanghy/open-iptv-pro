@@ -967,6 +967,4 @@ html[data-positron="true"] .po-dvr-extend-end:focus-visible{
   top:66px!important;bottom:auto!important;right:16px!important;
   max-width:min(360px,calc(100vw - 88px))!important;
  }
- html[data-positron="true"]:has(#page-tv.active-page)
-  #toastArea>.po-toast-history-toggle{display:none!important}
 }

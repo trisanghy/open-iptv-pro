@@ -1590,7 +1590,7 @@ P5.1.81 follow-up: real Electron capture found nav overflow; replace flexible no
 
 
 ## P5.1.203 / 4.23.288 — Thông báo TV không che nút phát/âm lượng (CANDIDATE)
-- Feature priority: NEW — Khi xem truyền hình trên desktop, thông báo được đưa đến vùng góc phía trên; nút mở danh sách nổi không che thanh phát và âm lượng, trong khi cảnh báo quan trọng cùng lịch sử trên thanh đầu vẫn truy cập được.
+- Feature priority: NEW — Khi xem truyền hình trên desktop, thông báo được đưa đến vùng góc phía trên; nút mở danh sách nổi vẫn bấm được nhưng không che thanh phát và âm lượng, trong khi cảnh báo quan trọng cùng lịch sử trên thanh đầu vẫn truy cập được.
 - User action: Mở trang Xem truyền hình trên desktop và thực hiện thao tác phát sinh thông báo; điều khiển Play/Volume không còn bị banner che. Bấm Thông báo trên thanh trên để xem nhật ký.
 - Electron screenshot: positron-p51203-tv-toast-safe-after-1920x1080-real.png
 - Đầu vào: ảnh Electron thật P5.1.202 1920×1080 tại trang TV, nút “Xem thêm 6 thông báo” và banner bên dưới đang đè lên âm lượng/phần dưới player.

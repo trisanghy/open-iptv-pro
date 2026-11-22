@@ -5830,7 +5830,7 @@ async function runTwenty(page){
     &&parseFloat(getComputedStyle(area).top)<=90,
    noPlayerControlOverlap:rect.bottom<controls.top-8,
    warningPreserved:!!warning&&getComputedStyle(warning).display!=='none',
-   historyFloatingHidden:!!history&&getComputedStyle(history).display==='none',
+   historyAccessibleAbovePlayer:!!history&&getComputedStyle(history).display!=='none'&&history.getBoundingClientRect().bottom<controls.top-8,
    topbarArchiveAccessible:!!archive&&getComputedStyle(archive).display!=='none',
    volumeControlPreserved:!!volume&&volume.isConnected,
    noAutoplay:window.IPTVState.getCurrent()===null,
