@@ -2,14 +2,23 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
-## P5.1.176 — gợi ý thêm kênh sau khi có Yêu thích
+## P5.1.177 — tìm Yêu thích theo tên và nhóm không dấu
 
-**Ứng dụng:** 4.23.261 · **Trạng thái:** Chưa có bản phát hành
+**Ứng dụng:** 4.23.262 · **Trạng thái:** Chưa có bản phát hành
+
+Feature priority: NEW — Ảnh thực P5.1.176 đã có 2 thẻ yêu thích với số lượng có thể tăng liên tục; trang chưa có ô tìm riêng theo tên/nhóm. Bổ sung thanh tìm kênh trong Yêu thích, hỗ trợ tiếng Việt không dấu, case-insensitive, trả về số hiển thị X / tổng mà không thay đổi số kênh yêu thích thật. User action: Mở trang Yêu thích đang có nhiều thẻ → nhập một phần tên hoặc nhóm vào ô Tìm trong Yêu thích → chỉ còn thẻ phù hợp; xóa từ khóa để trở lại danh sách đầy đủ.
+
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/56e4f6e26bc8342f1a83a10fc43c204352440822)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+
+## P5.1.176 — Gợi ý thêm Yêu thích sau kênh đầu tiên / Electron 4.23.261
+
+**Ứng dụng:** 4.23.261 · **Trạng thái:** Đã phát hành
 
 Feature priority: NEW — Ảnh Electron thật P5.1.175 sau thao tác cho thấy QA Channel 001 là thẻ Yêu thích duy nhất, còn phần lớn trang trống, trong khi 560 kênh khác đã nhập. Bổ sung bảng Gợi ý thêm vào Yêu thích ở cuối danh sách khi đã có Favorites, với tối đa 6 kênh chưa đánh dấu sao; bấm ☆ lưu trực tiếp, không phát. User action: Mở Yêu thích đã có ít nhất một kênh → chọn ☆ tại bảng Gợi ý thêm vào Yêu thích → kênh tiếp theo xuất hiện trong danh sách ngay lập tức, cập nhật số sao.
 
 [Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/12f85294771a70492470a5183470e1f157512326)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.261-p5.1.176)
 
 ## P5.1.175 — Thêm nhanh kênh vào Yêu thích ngay trong empty state / Electron 4.23.260
 
