@@ -1,22 +1,102 @@
 {
-  "generatedAt": "2026-11-22T00:32:40.646235+00:00",
+  "generatedAt": "2026-11-22T00:41:07.134578+00:00",
   "repository": "trisanghy/open-iptv-pro",
   "branch": "Positron",
   "versions": [
     {
-      "number": 151,
-      "version": "P5.1.151",
-      "appVersion": "4.23.235",
-      "title": "nhật ký thông báo trong phiên chạy",
-      "description": "Feature priority: NEW — Thêm nhật ký tối đa 30 thông báo thành công, cảnh báo và lỗi trong phiên để có thể xem lại sau khi thông báo nổi tự hết hạn mà không lưu dữ liệu riêng xuống đĩa. User action: Bấm Thông báo trên thanh trên để xem nội dung và thời điểm thông báo; chọn Xóa lịch sử hoặc Đóng/Escape. Lịch sử tự xóa khi thoát ứng dụng.",
+      "number": 152,
+      "version": "P5.1.152",
+      "appVersion": "4.23.236",
+      "title": "lọc nhanh lịch sử thông báo",
+      "description": "Feature priority: NEW — Cho phép tìm nhanh cảnh báo, lỗi và xác nhận thành công trong nhật ký tối đa 30 mục bằng bộ lọc không phá hủy, phù hợp khi phải kiểm tra nhiều thông báo. User action: Mở Thông báo ở thanh trên, bấm Cảnh báo / Lỗi / Hoàn thành để chỉ xem loại tương ứng; chọn Tất cả để khôi phục toàn bộ danh sách.",
       "kind": "fix",
       "status": "candidate",
       "published": "",
       "tag": "",
-      "commit": "b2582db6a8e2883b6d34d6eb636603b03e62def4",
+      "commit": "fb8572b91feb1d0047db68a1eeed4cfdc15e71e0",
       "url": "https://github.com/trisanghy/open-iptv-pro/tree/Positron",
       "assets": [],
       "image": null
+    },
+    {
+      "number": 151,
+      "version": "P5.1.151",
+      "appVersion": "4.23.235",
+      "title": "Nhật ký thông báo của phiên chạy",
+      "description": "Feature priority: NEW — Thêm nhật ký tối đa 30 thông báo thành công, cảnh báo và lỗi trong phiên để có thể xem lại sau khi thông báo nổi tự hết hạn mà không lưu dữ liệu riêng xuống đĩa. User action: Bấm Thông báo trên thanh trên để xem nội dung và thời điểm thông báo; chọn Xóa lịch sử hoặc Đóng/Escape. Lịch sử tự xóa khi thoát ứng dụng.",
+      "kind": "fix",
+      "status": "release",
+      "published": "2026-11-22T00:38:01Z",
+      "tag": "positron/v4.23.235-p5.1.151",
+      "commit": "6cb00b963173e2632315916e9896a8fee070dfe7",
+      "url": "https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.235-p5.1.151",
+      "assets": [
+        {
+          "name": "audit-p4-50-rounds.json",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.235-p5.1.151/audit-p4-50-rounds.json"
+        },
+        {
+          "name": "audit-p5-20-rounds.json",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.235-p5.1.151/audit-p5-20-rounds.json"
+        },
+        {
+          "name": "Open-IPTV-Pro-4.23.235-mac-arm64.dmg",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.235-p5.1.151/Open-IPTV-Pro-4.23.235-mac-arm64.dmg"
+        },
+        {
+          "name": "Open-IPTV-Pro-4.23.235-mac-x64.dmg",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.235-p5.1.151/Open-IPTV-Pro-4.23.235-mac-x64.dmg"
+        },
+        {
+          "name": "Open-IPTV-Pro-4.23.235-x64.exe",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.235-p5.1.151/Open-IPTV-Pro-4.23.235-x64.exe"
+        },
+        {
+          "name": "Open-IPTV-Pro-Setup-4.23.235-x64.exe",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.235-p5.1.151/Open-IPTV-Pro-Setup-4.23.235-x64.exe"
+        },
+        {
+          "name": "OpenIPTVPro-Positron-P51151-Source.zip",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.235-p5.1.151/OpenIPTVPro-Positron-P51151-Source.zip"
+        },
+        {
+          "name": "positron-desktop-1920x1080-16x9-main-real.png",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.235-p5.1.151/positron-desktop-1920x1080-16x9-main-real.png"
+        },
+        {
+          "name": "positron-p4-final-main-real.png",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.235-p5.1.151/positron-p4-final-main-real.png"
+        },
+        {
+          "name": "positron-p4-round-10-real.png",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.235-p5.1.151/positron-p4-round-10-real.png"
+        },
+        {
+          "name": "positron-p4-round-20-real.png",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.235-p5.1.151/positron-p4-round-20-real.png"
+        },
+        {
+          "name": "positron-p4-round-30-real.png",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.235-p5.1.151/positron-p4-round-30-real.png"
+        },
+        {
+          "name": "positron-p4-round-40-real.png",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.235-p5.1.151/positron-p4-round-40-real.png"
+        },
+        {
+          "name": "Positron-P51151-20-Real-Screenshots.zip",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.235-p5.1.151/Positron-P51151-20-Real-Screenshots.zip"
+        },
+        {
+          "name": "Positron-P51151-50-Real-Screenshots.zip",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.235-p5.1.151/Positron-P51151-50-Real-Screenshots.zip"
+        },
+        {
+          "name": "SHA256SUMS.txt",
+          "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.235-p5.1.151/SHA256SUMS.txt"
+        }
+      ],
+      "image": "screenshots/positron-p51151-desktop-1920x1080-trang-chu-real.png"
     },
     {
       "number": 150,
@@ -96,7 +176,7 @@
           "url": "https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.234-p5.1.150/SHA256SUMS.txt"
         }
       ],
-      "image": "screenshots/positron-p51150-desktop-1920x1080-trang-chu-real.png"
+      "image": "screenshots/positron-p51150-toast-centre-after-1920x1080-real.png"
     },
     {
       "number": 149,

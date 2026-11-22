@@ -2,14 +2,23 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
-## P5.1.151 — nhật ký thông báo trong phiên chạy
+## P5.1.152 — lọc nhanh lịch sử thông báo
 
-**Ứng dụng:** 4.23.235 · **Trạng thái:** Chưa có bản phát hành
+**Ứng dụng:** 4.23.236 · **Trạng thái:** Chưa có bản phát hành
+
+Feature priority: NEW — Cho phép tìm nhanh cảnh báo, lỗi và xác nhận thành công trong nhật ký tối đa 30 mục bằng bộ lọc không phá hủy, phù hợp khi phải kiểm tra nhiều thông báo. User action: Mở Thông báo ở thanh trên, bấm Cảnh báo / Lỗi / Hoàn thành để chỉ xem loại tương ứng; chọn Tất cả để khôi phục toàn bộ danh sách.
+
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/fb8572b91feb1d0047db68a1eeed4cfdc15e71e0)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+
+## P5.1.151 — Nhật ký thông báo của phiên chạy
+
+**Ứng dụng:** 4.23.235 · **Trạng thái:** Đã phát hành
 
 Feature priority: NEW — Thêm nhật ký tối đa 30 thông báo thành công, cảnh báo và lỗi trong phiên để có thể xem lại sau khi thông báo nổi tự hết hạn mà không lưu dữ liệu riêng xuống đĩa. User action: Bấm Thông báo trên thanh trên để xem nội dung và thời điểm thông báo; chọn Xóa lịch sử hoặc Đóng/Escape. Lịch sử tự xóa khi thoát ứng dụng.
 
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/b2582db6a8e2883b6d34d6eb636603b03e62def4)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/6cb00b963173e2632315916e9896a8fee070dfe7)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.235-p5.1.151)
 
 ## P5.1.150 — Trung tâm thông báo gọn, xem lại thông báo khi cần
 
