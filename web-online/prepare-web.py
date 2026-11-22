@@ -394,8 +394,8 @@ if html.count(top_anchor)!=1 or html.count(tv_anchor)!=1 or html.count(sidebar_a
 html=html.replace(top_anchor,top_anchor+desktop_button,1)
 html=html.replace(sidebar_anchor,sidebar_anchor+'\n  '+sidebar_button,1)
 html=html.replace(tv_anchor,tv_anchor+'\n    '+mobile_button,1)
-html=html.replace('</head>','<link rel="stylesheet" href="web-desktop-download.css?v=ios-shortcut-20261119a"/></head>',1)
-html=html.replace('</body>','<script src="web-desktop-download.js?v=apple-more-20261120a"></script></body>',1)
+html=html.replace('</head>','<link rel="stylesheet" href="web-desktop-download.css?v=android-cta-theme-20261122c"/></head>',1)
+html=html.replace('</body>','<script src="web-desktop-download.js?v=android-pwa-prompt-20261122b"></script></body>',1)
 # Stable Web controls + watched channels; preserve them through subsequent builds.
 if html.count('<div class="filter-tabs">')!=1:sys.exit('Recent channel filter slot changed')
 html=html.replace('<div class="filter-tabs">','<div class="filter-tabs"><button class="filter-tab" data-filter="recent">Vừa xem</button>',1)
