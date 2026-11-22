@@ -18,6 +18,11 @@ test('Only one small exit remains; a separate TizenTube button is provided',()=>
  assert.match(nav,/id="exitModuleBtn"/);
  assert.doesNotMatch(player,/id="exitModuleBtn"|id="tizenTubeBtn"|sidebarShortcuts/);
  assert.doesNotMatch(html,/\.tv-shortcuts\{|position:fixed;z-index:8;right:18px/);
+ assert.match(html,/\.nav \.sidebar-shortcuts\{margin-top:12px;/,'shortcuts should sit immediately below Hướng dẫn');
+ assert.match(html,/\.nav \.tip\{margin-top:auto;/,'TV remote instructions should remain at the bottom');
+ const footer=html.slice(html.indexOf('<footer class="footer">'),html.indexOf('</footer>')+9);
+ assert.doesNotMatch(footer,/id="exitModuleBtn"|id="tizenTubeBtn"/,'neither shortcut may appear in footer');
+
 });
 test('Full-screen player cannot navigate to hidden sidebar buttons with remote',()=>{
  const from=html.indexOf('function keyHandler(e){');

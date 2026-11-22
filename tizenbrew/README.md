@@ -1,4 +1,11 @@
-# Open IPTV Pro TV · TizenBrew v0.1.14 (thử nghiệm)
+# Open IPTV Pro TV · TizenBrew v0.1.15 (thử nghiệm)
+
+## v0.1.15 — Chỉnh đúng vị trí menu và cách nhận bản mới
+
+- Đặt hai nút nhỏ **TizenTube** và **Thoát** **ngay dưới Hướng dẫn** trong sidebar, thay vì để khoảng trống tự giãn trước nút. Giữ chú thích điều khiển ở dưới cùng nhờ `.nav .tip{margin-top:auto}`.
+- Không để hai nút nằm trong footer dưới cùng hay đè lên khung video. Nếu thấy chúng ở góc phải footer, trình duyệt vẫn đang sử dụng **tệp HTML cũ**, thường từ bản preview WGT/tag bất biến hoặc tab localhost chưa tải lại.
+- Để xem mã mới nhất trên Mac trong thư mục preview đã dùng: chạy `mkdir -p ~/Downloads/OpenIPTV-Tizen && curl -fLsS -H 'Cache-Control: no-cache' "https://raw.githubusercontent.com/trisanghy/open-iptv-pro/tizenbrew/tizenbrew/index.html?fresh=$(date +%s)" -o ~/Downloads/OpenIPTV-Tizen/index.html && open ~/Downloads/OpenIPTV-Tizen/index.html`. Trang mở bằng file có bộ nhớ khác với bản localhost; không xóa dữ liệu TV và không sử dụng bản file để thay thế môi trường TV.
+- Trên TizenBrew TV, tải lại module từ nhánh `trisanghy/open-iptv-pro@tizenbrew`, kiểm tra header hiển thị **v0.1.15** trước khi xác nhận vị trí nút mới.
 
 ## v0.1.14 — Đặt nút TizenTube và Thoát tại menu chính
 
