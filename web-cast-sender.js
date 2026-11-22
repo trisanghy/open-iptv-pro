@@ -25,7 +25,9 @@
  const getName=session=>session?.getCastDevice?.()?.friendlyName||'TV đã kết nối';
  const isAppleMobile=()=>/iPhone|iPad|iPod/i.test(root.navigator?.userAgent||'')||
   (/Macintosh/i.test(root.navigator?.userAgent||'')&&Number(root.navigator?.maxTouchPoints||0)>1);
- const hasAirPlay=()=>!!(video()&&(typeof video().webkitShowPlaybackTargetPicker==='function'||
+ const isMac=()=>/Macintosh|Mac OS X/i.test(root.navigator?.userAgent||'');
+ const isSafari=()=>/Safari/i.test(root.navigator?.userAgent||'')&&!/Chrome|Chromium|CriOS|Edg|OPR/i.test(root.navigator?.userAgent||'');
+ const hasAirPlay=()=>isSafari()&&!!(video()&&(typeof video().webkitShowPlaybackTargetPicker==='function'||
    typeof video().remote?.prompt==='function'));
  function selectDevice(){
   const select=el('castDevices');if(!select)return;
@@ -103,9 +105,9 @@
   el('castScan').textContent='⌕ Tìm TV';
   el('castPlay').textContent='▶ Phát trên TV đã chọn';
   const airSection=el('airplaySection');
-  airSection.classList.toggle('hidden',!hasAirPlay()&&!isAppleMobile());
+  airSection.classList.toggle('hidden',!hasAirPlay()&&!isAppleMobile()&&!isMac());
   el('airplayScan').hidden=true; // Bonjour discovery needs the Electron native process.
-  el('airplayDeviceList').textContent='Safari tự hiển thị TV AirPlay trong bộ chọn; website không thể đọc danh sách Bonjour.';
+  el('airplayDeviceList').textContent=hasAirPlay()?'Safari tự hiển thị TV AirPlay trong bộ chọn; website không thể đọc danh sách Bonjour.':'AirPlay cần Safari trên Mac/iPhone/iPad. Nếu dùng Chrome, mở trang này trong Safari hoặc dùng Phản chiếu màn hình.';
   el('castAirplay').textContent='◉ Chọn TV bằng AirPlay';
   el('castAirplay').disabled=!hasAirPlay();
   el('airplayMobileHelp').hidden=hasAirPlay();
