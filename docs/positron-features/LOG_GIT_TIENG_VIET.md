@@ -2,14 +2,22 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
-## P5.1.156 — bản đồ dữ liệu thư viện kênh
+## P5.1.157 — phân bố nhóm thư viện kênh
+
+**Ứng dụng:** 4.23.241 · **Trạng thái:** Chưa có bản phát hành
+
+Feature priority: NEW — Thêm danh sách nhóm kênh với số lượng và thanh tỷ lệ ngay trong Bản đồ thư viện; có thể mở thêm từng 5 nhóm mà không cần tải nguồn mới hoặc thử phát. User action: Bấm Thư viện, xem Phân bố kênh theo nhóm; nhấn Xem thêm 5 nhóm để đọc tiếp, chọn Thu gọn danh sách khi đã xem hết.
+
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/c709ad40eb079ed9acc45420b9e60f7ca4b47a3e)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+
+## P5.1.156 — Bản đồ thư viện kênh ngoại tuyến
 
 **Ứng dụng:** 4.23.240 · **Trạng thái:** Chưa có bản phát hành
 
 Feature priority: NEW — Thêm bảng Library Pulse riêng trong thanh trên: đếm số kênh, số nguồn, số nhóm, trạng thái khả dụng đã được lưu, URL logo và mã EPG của dữ liệu hiện có. User action: Chọn Thư viện, xem các thẻ thống kê và thanh mức độ hoàn thiện metadata; nhấn Cập nhật để đọc lại dữ liệu hiện hành hoặc Escape để đóng.
 
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/e124df2c3230584f5642674051a4a6dda87f8837)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
 
 ## P5.1.155 — Dọn banner nổi, giữ nhật ký
 
