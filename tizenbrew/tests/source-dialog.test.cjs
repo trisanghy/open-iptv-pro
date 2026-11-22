@@ -419,5 +419,5 @@ test('TV returns folders beyond 100 without clipping the folder list',()=>{
 test('A target folder move does not change the viewed folder filter',()=>{
  assert.match(phone,/viewGroup:activeGroup/);
  assert.match(tv,/group:req\.viewGroup===undefined\?req\.group:req\.viewGroup/);
- assert.match(phone,/command\('relocate-channel'/);
+ assert.match(phone,/action='relocate-channel'/);
 });
