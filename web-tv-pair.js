@@ -90,7 +90,7 @@
    const channel=state.client.channel(topic,{config:{broadcast:{ack:true,self:false}}});
    state.channel=channel;
    listen(channel,'pair-request',async request=>{
-    if(state.closed||state.connected||state.pending||!request||
+    if(state.closed||state.connected||state.pending||state.session||!request||
        !/^[a-f0-9]{32}$/.test(String(request.sender||''))||
        typeof request.pub!=='string'||request.pub.length>200)return;
     if(Date.now()>state.expiry)return;
@@ -141,7 +141,10 @@
     state.pending=null;
     onRequest(null);
     onStatus('Đang xác thực và kết nối với máy tính…');
-   }catch(error){state.pending=null;onRequest(null);onStatus('Ghép đôi thất bại: '+String(error.message||error));throw error;}
+   }catch(error){
+    if(!state.connected){await unsubscribe(state.client,state.session);state.session=null;state.key=null;state.controllerId=null;}
+    state.pending=null;onRequest(null);onStatus('Ghép đôi thất bại: '+String(error.message||error));throw error;
+   }
   }
   async function reportPlayback(playbackState,name=''){
    if(!state.connected||!state.session||!state.key)return false;
