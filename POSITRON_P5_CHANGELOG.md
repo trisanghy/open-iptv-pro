@@ -1,6 +1,9 @@
 # Positron P5 Changelog
 
 ## P5.1.234 — Tìm đúng nhóm có Đ viết hoa bằng chữ không dấu / Electron 4.23.319
+- Feature priority: NEW — Hỗ trợ tìm tên thư mục tiếng Việt có chữ Đ viết hoa bằng từ khóa không dấu ngay trong bộ chọn nhóm, giúp người xem truy cập đúng dữ liệu danh sách kênh mà không cần đổi tên thư mục hoặc mở video.
+- Electron screenshot: positron-p51234-vietnamese-group-after-1920x1080-real.png
+- User action: Mở trang TV và nhấn Alt+G, nhập `dai truyen hinh` để chọn nhóm mang tên `ĐÀI TRUYỀN HÌNH` rồi dùng nút Đến nhóm nếu muốn chuyển focus.
 - Từ mã P233: bộ lọc tên nhóm loại dấu rồi thay chữ đ trước khi chuyển chữ hoa thành thường; do đó tên ĐÀI TRUYỀN HÌNH không khớp khi gõ dai truyen hinh.
 - Bản sửa đặt chuyển thường trước khi thay đ→d; ảnh hưởng duy nhất bộ lọc nhóm cục bộ. Không sửa nguồn IPTV, playlist, Favorites, playback hoặc EPG.
 - Regression Node kiểm tra ĐÀI/Đại/đài; QA Electron thật 1920×1080 với fixture tên nhóm, ảnh before/after, 1 kết quả, không autoplay, không tràn.
