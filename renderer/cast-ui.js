@@ -9,6 +9,7 @@
  const close=()=>{$('castModal').classList.add('hidden');};
  function open(ch,url){
   channel=ch;source=url||ch?.url;
+  window.OpenIPTVDesktopTVPair?.setCurrent?.(ch,source);
   $('castChannel').textContent=(ch?.name||'')+' · '+(ch?.group||'');
   $('castUrl').value='';$('castCopy').disabled=true;
   $('castModal').classList.remove('hidden');
@@ -42,6 +43,7 @@
   finally{airplayScanning=false;button.disabled=false;}
  }
  async function play(){return action(async()=>{
+  if(window.OpenIPTVDesktopTVPair?.isConnected?.())await window.OpenIPTVDesktopTVPair.disconnect();
   const device=$('castDevices').value;if(!device)throw Error('Hãy chọn thiết bị Cast trước');
   status('Đang chuẩn bị luồng phát và kết nối TV…');
   const response=await api.castPlay(device,source,channel?.name||'IPTV');
@@ -49,11 +51,13 @@
   document.getElementById('video')?.pause();
  });}
  async function airplay(){return action(async()=>{
+  if(window.OpenIPTVDesktopTVPair?.isConnected?.())await window.OpenIPTVDesktopTVPair.disconnect();
   status('Đang mở Safari trên Mac…');
   await api.openAirplay(source);casting=true;selectedTarget='airplay';
   status('Đã mở Safari. Chọn TV bằng nút AirPlay trong trình phát Safari; ứng dụng chưa chọn TV thay bạn.');
  });}
  async function link(){return action(async()=>{
+  if(window.OpenIPTVDesktopTVPair?.isConnected?.())await window.OpenIPTVDesktopTVPair.disconnect();
   status('Đang tạo liên kết phát trên mạng LAN…');
   const result=await api.castLan(source);
   casting=true;selectedTarget='lan';$('castUrl').value=result.page;$('castCopy').disabled=false;
@@ -62,8 +66,8 @@
  async function stop(){return action(async()=>{
   await api.castStop();casting=false;selectedTarget=null;$('castCopy').disabled=true;$('castUrl').value='';status('Đã dừng truyền luồng.');
  });}
- function stopOnLocalStop(){if(!hasNative||!casting)return;casting=false;selectedTarget=null;api.castStop().catch(()=>{});}
- function onChannelChanged(ch){if(!casting||!channel||ch.id===channel.id)return;
+ function stopOnLocalStop(){if(window.OpenIPTVDesktopTVPair?.isConnected?.()){window.OpenIPTVDesktopTVPair.onLocalStop();return;}if(!hasNative||!casting)return;casting=false;selectedTarget=null;api.castStop().catch(()=>{});}
+ function onChannelChanged(ch,url){window.OpenIPTVDesktopTVPair?.onChannelChanged?.(ch,url);if(!casting||!channel||ch.id===channel.id)return;
   stopOnLocalStop();status('Đã đổi kênh: phiên Cast cũ được dừng. Mở Cast để phát kênh mới.');
  }
  $('castBtn')?.addEventListener('click',()=>{ /* wired by app.js with current channel */ });
