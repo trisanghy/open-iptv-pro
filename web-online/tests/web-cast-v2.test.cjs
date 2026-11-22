@@ -5,17 +5,34 @@ const fs=require('node:fs'),path=require('node:path'),vm=require('node:vm');
 const {webcrypto}=require('node:crypto');
 const root=path.resolve(__dirname,'../..'),load=name=>fs.readFileSync(path.join(root,name),'utf8');
 const ui=load('web-cast-v2.js'),css=load('web-cast-v2.css'),tv=load('tv.html'),receiver=load('web-tv-receiver.js');
-const core=load('web-tv-pair.js'),sender=load('web-cast-sender.js'),html=load('index.html');
+const core=load('web-tv-pair.js'),sender=load('web-cast-sender.js'),html=load('index.html'),icons=load('web-cast-icons.js');
 test('approved Cast modal matches demo, has 3 actual modes and all theme variants',()=>{
  assert.match(ui,/Ghép đôi TV/);assert.match(ui,/Google Cast/);assert.match(ui,/AirPlay/);
  assert.match(ui,/onConnected/);assert.match(ui,/pair\.command/);
  assert.match(ui,/api\.scan\(\)/);assert.match(ui,/OpenIPTVWebCast\?\.airplayPicker/);
  for(const name of ['light','dark','amoled'])assert.ok(css.includes('html[data-theme="'+name+'"] #iptvCastOverlay'),name);
  assert.match(css,/@media\(max-width:760px\)/);
- assert.match(html,/web-cast-v2\.css\?v=cast-v2-20261122a/);
+ assert.match(html,/web-cast-v2\.css\?v=icons-v3-20261122a/);
  assert.match(html,/web-tv-pair\.js\?v=cast-v2-20261122a/);
- assert.match(html,/web-cast-v2\.js\?v=tv-short-url-20261122b/);
+ assert.match(html,/web-cast-v2\.js\?v=icons-v3-20261122a/);
  assert.match(sender,/OpenIPTVWebCastV2\.open/);
+});
+test('all Cast UI icons come from one real SVG source, not overlapping pseudo glyphs',()=>{
+ assert.match(html,/web-cast-icons\.js\?v=icons-v3-20261122a/);
+ assert.match(ui,/OpenIPTVCastIcons\?\.decorateModal\?\.\(overlay\)/);
+ assert.match(icons,/data-iptv-svg-icon/);
+ assert.match(icons,/createElementNS/);
+ assert.match(icons,/function ensurePlayerButton/);
+ assert.match(icons,/new root\.MutationObserver/);
+ for(const name of ['cast','airplay','pair','search','link','copy','play','pause','stop','close'])
+  assert.match(icons,new RegExp('\\b'+name+':\\{'),name);
+ assert.match(css,/#castBtn::before/);
+ assert.match(css,/content:none!important;display:none!important/);
+ assert.match(css,/oip-cast-svg/);
+ assert.match(ui,/\$\('cxTvUrl'\)\.href=tvUrl\(\)/);
+ assert.match(ui,/https:\/\/is\.gd\/IPTVTV/);
+ assert.doesNotMatch(ui,/directTvUrl/);
+ assert.match(tv,/web-cast-icons\.js\?v=icons-v3-20261122a/);
 });
 test('TV landing screen uses same theme design and real video receiver',()=>{
  for(const source of ['supabase-sdk.js','web-tv-pair.js','web-tv-receiver.js','web-cast-v2.css'])
