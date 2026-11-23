@@ -1136,3 +1136,18 @@ test('P304 local Naive Bayes topic migration exposes confident label swaps witho
  for(const marker of ['qa304','positron-p51304-topic-shifts-before-1920x1080-real.png',
   'positron-p51304-topic-shifts-after-1920x1080-real.png'])assert.ok(qa.includes(marker),marker);
 });
+
+// P304 regression: the live Electron QA must not dismiss the containing
+// WatchFlow dialog until the topic-migration screenshot has been examined.
+test('P304 Electron screenshot review keeps WatchFlow open while testing migration',()=>{
+ const qa=fs.readFileSync('scripts/positron-20-extension.cjs','utf8');
+ const start=qa.indexOf('// P304: inspect read-only classifier migration');
+ const finish=qa.indexOf("console.log('P304 Naive Bayes topic migration QA passed:'",start);
+ assert.ok(start>0&&finish>start,'P304 scenario and completion marker exist');
+ const window304=qa.slice(start,finish);
+ assert.ok(window304.includes('preflight304.panelVisible'),'P304 requires visible live WatchFlow');
+ assert.ok(window304.includes('preflight304.rect?.height>0'),'P304 checks actual geometry');
+ assert.ok(!window304.includes('window.PositronWatchFlow.close()'),'no early dialog dismissal');
+ assert.ok(qa.indexOf('await page.evaluate(()=>window.PositronWatchFlow.close());',finish)>finish,
+  'close the panel only after all P304 screenshots and assertions');
+});

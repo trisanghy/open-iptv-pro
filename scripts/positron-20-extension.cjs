@@ -10795,7 +10795,8 @@ async function runTwenty(page){
   window.IPTVExtras.getGuide=window.__p273GuideOriginal;
   window.IPTVGuide.find=window.__p273FindOriginal;
   delete window.__p273GuideOriginal;delete window.__p273FindOriginal;
-  window.PositronWatchFlow.close();
+  // Do not close WatchFlow yet: P304 inspects a disclosure inside this
+  // same live panel. Closing it here makes a valid summary 0x0 and breaks CDP.
  });
 
 
@@ -10812,11 +10813,15 @@ async function runTwenty(page){
      display:getComputedStyle(n).display,visibility:getComputedStyle(n).visibility,
      open:n.tagName==='DETAILS'?n.open:null});return items;})():[];
   const r=el?.getBoundingClientRect();
-  return {found:!!el,text:el?.textContent||'',rect:r?{x:r.x,y:r.y,width:r.width,height:r.height}:null,
+  const watchflow=document.getElementById('poWatchFlowPanel');
+  return {found:!!el,panelVisible:!!watchflow&&!watchflow.hidden,
+   text:el?.textContent||'',rect:r?{x:r.x,y:r.y,width:r.width,height:r.height}:null,
    ancestry:anc};
  });
  console.log('P304 topic shifts Electron preflight:',JSON.stringify(preflight304));
  assert.equal(preflight304.found,true,'P304 topic migration disclosure must exist in rendered Electron UI');
+ assert.equal(preflight304.panelVisible,true,'P304 must inspect an open WatchFlow panel');
+ assert.ok(preflight304.rect?.height>0,'P304 disclosure must have actual visible geometry');
  const shifts304=page.locator('#poAICategoryTopicShifts > summary');
  await shifts304.scrollIntoViewIfNeeded({timeout:8000});
  const before304=await page.screenshot({path:path.join(out,'positron-p51304-topic-shifts-before-1920x1080-real.png'),animations:'disabled'});
@@ -10847,6 +10852,8 @@ async function runTwenty(page){
  for(const png of [before304,after304])assert.deepEqual([png.readUInt32BE(16),png.readUInt32BE(20)],[1920,1080]);
  assert.ok(!before304.equals(after304),'P304 migration details expand in actual Electron screenshot');
  console.log('P304 Naive Bayes topic migration QA passed:',JSON.stringify(qa304));
+ // Preserve the prior QA's close-on-exit behavior after the final screenshot.
+ await page.evaluate(()=>window.PositronWatchFlow.close());
 
  const report={type:'Positron P5 twenty distinct desktop screenshot cases',realElectron:true,syntheticChannels:false,
   screenshotCount:results.length,upgradeChecks:20,previousP4Checks:50,rounds:results,desktop16x9Screenshots,metadataQa,watchFlowQa,watchFlowPlusQa:plusQA,chooserQa,toastLayoutQA,nativeToastQA,compactIdleQA,channelChipRailQA,advancedFilterQA,readableCardsQA,keyboardTabQA,favoriteEmptyQA,duplicateEmptyQA,categoryFilterQA,categoryFixtureQA,compactSingleQA,directFavoriteQA,favoriteCountQA,compactToastStackQA,toastDismissQA,toastFocusReturnQA,toastDockQA,wheelQA,pinnedAllQA,pinnedMaskQA,categoryKeyQA,dropdownChipQA,pinnedRightMaskQA,pinnedBorderMaskQA,asciiDSearchQA,emptySearchActionQA,readableCardTitleQA,favoriteSvgQA,keyboardFavoriteQA,multiTermSearchQA,keyboardSearchQA,arrowNavigationQA,pageNavigationQA,favoriteSortQA,onAirFilterQA,programmeSearchQA,upcomingProgrammeQA,soonProgrammeQA,earliestEpgSortQA,timeWindowQA,scheduleProgressQA:scheduleProgressQA,nativeReminderQA,cancelReminderQA,reminderLeadQA,toastHistoryQA,notificationArchiveQA,alertFilterQA,noticeSearchQA,quietModeQA,dismissToastQA,libraryPulseQA,groupDistributionQA,logoMissingQA,missingSearchQA,missingGroupQA,missingSortQA,missingJumpQA,missingCsvQA,duplicateQA,duplicateSearchQA,duplicateCsvQA,duplicateScopeQA,missingSizeQA,missingPagerQA,missingEpgFilterQA,missingResetQA,missingRangeQA,missingLocateQA,libraryReturnQA,favoriteActionQA,quickFavoriteQA,favoriteMoreQA,favoriteSearchQA,favoriteRotateQA,favoriteSuggestSearchQA,favoriteBulkQA,favoriteLayoutQA,favoriteNameSortQA,searchAfterSortQA,restoredSortQA,favoriteSuggestion12QA,batchFavorite12QA,restoreSixQA,favoriteRegionalQA,favoriteGroupSearchQA,resetGroupQA,favoriteQuickGroupQA,favoriteQuickResetQA,favoritePageLastQA,favoritePageNavigationQA,favoriteJumpSevenQA,favoriteJumpClampQA,favoriteWideQA,favoriteSuggestionSortQA,tvReselectTopQA,dvrDurationPresetQA,dvrDurationLiveQA,dvrPresetSelectionQA,dvrQuickStartQA,dvrSuggestedTitleQA,dvrReviewQA,dvrCopyQA,dvrTomorrowQA,dvrTitleSyncQA,dvrReplaceConfirmQA,dvrUndoQA,dvrExtendQA,tvToastSafeQA,otherPage203,randomDiscoveryQA,randomFollowupQA,compact205,randomCycleQA,compact206,randomResetQA,compact207,focusReturnQA,compact208,discoveryProgressQA,compact209,sourceChangeQA,compact210,randomBackQA,randomBackActionQA,compact211,forwardHistoryQA,forwardActionQA,compact212,historyOpenQA,historyPickQA,compact213,historyKeyboardQA,compact214,historySearchQA,searchEnterQA,missing215,compact215,first216,typed216,down216,up216,close216,compact216,favoriteStart217,favoriteQA217,compact217,filterStart218,filterQA218,empty218,reset218,compact218,sortStart219,sortAZ219,sortZA219,sortRestore219,compact219,expandStart220,expandQA220,collapseQA220,compact220,epgStart221,oldStagger221,epgAligned221,compact221,epgEmptyStart222,epgEmptyQA222,navigation222,compact222,epgImportStart223,epgImportQA223,importForwardQA223,compact223,epgImportFeedbackBaseline224,epgImportFeedbackQA224,epgFeedbackCompact224,tvControlQA225,channelJumpQA226,enterQA226,escapeQA226,jumpScrollQA227,downQA228,keyboardChannelQA228,endQA228,homeQA228,shortcutQA228,favoriteQA229,favoriteRestoreQA229,groupQA230,groupBackQA230,groupQA231,pickerReady231,groupQA232,filterQA232,historyQA233,historyReady233,groupDiacriticQA234,historyDedupeQA235,forwardQA236,keyboardBack237,keyboardForward237,shortcutGuardQA238,shortcutAfterQA238,escapeJumpBeforeQA239,escapeJumpAfterQA239,favoriteFilterQA240,favoriteFilterRestoreQA240,favoriteChipQA241,favoriteChipClearQA241,recentFilterQA242,recentFilterClearQA242,keyboardRecentQA243,keyboardRecentReturnQA243,numericStartQA244,numericFinalQA244,beforeGroupQA245,groupSyncQA245,quickCloseStartQA246,quickCloseQA246,positionStartQA247,positionQA247,regularJumpQA248,prefillQA248,escapeStartQA249,escapeRestoreQA249,toggleAfterNonRowEscape,positionStartQA250,positionClearedQA250,positionJumpQA250,positionReturnQA250,rowReturnStartQA251,rowReturnQA251,filteredReturnStartQA252,filteredReturnQA252,centerRowStartQA253,centerRowQA253,crossPageStartQA254,crossPageQA254,returnButtonStartQA255,returnButtonQA255,sourceInventoryQA256,sourceInventoryNarrowQA256,sourceDetailsStartQA257,sourceDetailsQA257,sourceDetailsNarrowQA257,sourceResetQA264,narrowResetQA264,sourceEnterQA265,sourceReturnQA265,sourceSpaceQA265,intelligenceQA266,qa267,qa268,qa272,qa273,qa274,qa275,qa276,qa277,qa278,qa279,qa280,qa281,qa282:validated282,qa283:validated283,qa284,qa285,qa286,qa287,qa288,qa289,qa290,qa291,qa292,qa293,qa294,qa295,qa296,qa297,qa298,qa299,qa300,qa301,qa302,qa303,qa304};

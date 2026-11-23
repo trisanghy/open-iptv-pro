@@ -13,6 +13,7 @@
 - CI run 45156986359: Node 1013 pass/5 skipped/0 fail, Windows/Mac ARM/x64 build success, nhưng Electron capture FAIL tại P289 `showForecast=false` vì thêm nested details làm khung dự báo vượt khỏi viewport. Ảnh P289 before/after trong artifact 14809132642 đã mở và đối chiếu P303.
 - QA repair 1: tách ma trận thành sibling; chạy lại Actions 45158560556, P289–P303 PASS nhưng P304 không thể cuộn tới summary vì đặt sau phần chi tiết dài.
 - QA repair 2: dời summary ma trận lên TRƯỚC các chi tiết P289 và thêm preflight đo DOM/computed style, giữ đầy đủ assertion.
+- QA repair 3 (23/11): P303 đóng WatchFlow trước P304; CDP preflight xác minh phần tử P304 tồn tại nhưng rect 0×0 do cha `#poWatchFlowPanel[hidden]`. Giữ bảng mở đến sau ảnh/QA P304, thêm assert panelVisible + geometry và test hồi quy vòng đời. Chưa coi là vòng mới; chờ CI và mở ảnh.
 - Điều kiện hoàn tất: CI mới xanh, mở xem trực tiếp hai PNG P304, kiểm tra QA, tính ổn định; chờ kết quả trước khi đánh dấu ĐẠT.
 - Các vòng 02–20: chưa triển khai; không được tính vòng bằng ảnh QA sẵn có.
 
