@@ -842,6 +842,29 @@
      showGapExamples('Mất độ chắc chắn: ',topicShifts.lostExamples);
      showGapExamples('Mới đủ chắc chắn: ',topicShifts.gainedExamples);
      showGapExamples('Chưa đủ chắc chắn ở cả hai: ',topicShifts.unresolvedExamples);
+     // P308: explicit journey from low-confidence names to manual AI labeling.
+     const review=d.createElement('button');review.type='button';review.id='poAIReviewUncertain';
+     review.className='po-ai-review-uncertain';review.textContent='Dạy AI cho kênh chưa phân loại';
+     review.title='Mở hàng đợi gán nhãn thủ công, không tự bật học hoặc phát video';
+     review.addEventListener('click',()=>{
+      if(!enabled){
+       modelStatus.textContent='Hãy tự bật quyền học trên máy trước khi dạy AI. Chưa có nhãn nào được lưu.';
+       check.scrollIntoView({block:'center',behavior:'instant'});check.focus();
+       return;
+      }
+      upcomingOpen=false;planOpen=false;exploreOpen=false;foldersOpen=true;programmesOpen=false;
+      activeTeachIndex=0;render();
+      const trainer=byId('poAIActiveLearning');
+      if(trainer){
+       const folder=trainer.closest('details.po-ai-folder');if(folder)folder.open=true;
+       trainer.scrollIntoView({block:'center',behavior:'instant'});
+       (byId('poAIActiveSelect0')||trainer.querySelector('button'))?.focus({preventScroll:true});
+      }else{
+       byId('poAICards')?.scrollIntoView({block:'nearest',behavior:'instant'});
+       state()?.toast?.('Không có kênh phù hợp trong hàng đợi dạy AI hiện tại.','info');
+      }
+     });
+     gap.append(review);
      const gapNote=d.createElement('small');
      gapNote.textContent='Đây là chênh lệch dự đoán Naive Bayes trên máy, không phải lỗi luồng phát và không thay đổi kênh, mô hình hay playlist.';
      gap.append(gapNote);shifts.append(gap);

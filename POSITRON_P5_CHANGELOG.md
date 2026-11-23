@@ -1,3 +1,13 @@
+## P5.1.308 — Chuyển từ nhóm AI chưa chắc chắn sang hàng đợi dạy nhãn / Electron 4.23.393
+- Feature priority: NEW — Từ danh sách kênh mà hai mô hình Naive Bayes đều chưa đủ chắc chắn, thêm nút mở trực tiếp hàng đợi dạy AI đã có thay vì tìm qua Thư mục EPG; luôn do người xem quyết định nhãn, không tự bật quyền hoặc phát video.
+- Feature class: AI
+- User action: TV → WatchFlow → AI hợp gu → Quản lý mô hình → nhập bản sao JSON → mở “AI kiểm tra độ chắc chắn” → nhấn “Dạy AI cho kênh chưa phân loại” → tự chọn chủ đề. Khi quyền học đang tắt, chỉ đưa focus đến ô đồng ý và chờ người dùng quyết định.
+- Electron screenshot: positron-p51308-training-link-before-1920x1080-real.png / positron-p51308-training-link-after-1920x1080-real.png.
+- Evidence: Nút dùng nguyên hàng đợi Naive Bayes có sẵn, mở thư mục kênh chưa phân loại và focus selector gán nhãn; kiểm thử nguồn bảo vệ điều kiện bật học, Electron QA 1920×1080 xác thực vị trí focus, không có nút bị che và bất biến playlist, mô hình, thao tác xác nhận nhập/luồng đang phát. Phải có CI xanh, xem cả hai ảnh thật trước khi tính vòng đã đạt.
+- Privacy: Không tự bật học, không tự ghi nhãn, không gửi tên/địa chỉ stream hoặc hành vi xem lên mạng; chưa áp dụng dữ liệu từ bản sao JSON.
+- Baseline: Ảnh Electron P5.1.307 đã mở thật cho thấy ba nhóm ví dụ có tên kênh, nhưng thiếu hành động đưa tới nhãn học thủ công.
+- Status: CANDIDATE — chờ CI, native screenshots, Windows/macOS artifacts.
+
 ## P5.1.307 — Xem kênh AI chưa đủ chắc chắn, tránh che nội dung / Electron 4.23.392
 - Feature priority: NEW — Hiển thị ví dụ từ kênh mà cả Naive Bayes hiện tại và mô hình khôi phục đều chưa đủ chắc chắn phân loại, thay vì chỉ số đếm; ngăn tên nhúng URL lộ địa chỉ và giữ dòng mẫu khỏi nút xác nhận khôi phục sticky.
 - Feature class: AI

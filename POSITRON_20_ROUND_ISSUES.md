@@ -31,3 +31,6 @@ Chưa thực hiện. Mỗi vòng yêu cầu commit/version, test, ảnh Electron
 - Bổ sung tên mẫu của nhóm kênh cả hai mô hình đều chưa đủ chắc chắn, bảo vệ URL, chỉ đọc, kèm regression và QA ảnh Electron trước/sau. Chỉ đánh dấu hoàn thành sau CI xanh và đã mở xem ảnh thật.
 
 - Trực tiếp mở PNG Electron P5.1.306: thấy dòng ví dụ bị CTA khôi phục sticky che ở cạnh dưới. P5.1.307 bổ sung khoảng cuộn và QA kiểm tra hàng ví dụ nằm trên CTA; ảnh P5.1.307 vẫn cần xác minh.
+
+## P5.1.308 — CANDIDATE
+- Dựa trên ảnh thật P5.1.307: bổ sung nút dẫn tới hàng đợi dạy AI từ danh sách kênh chưa chắc chắn. Không tự bật quyền, không tự cập nhật mô hình hay phát kênh. CI Electron cần xác minh hàng đợi và focus sau điều hướng.

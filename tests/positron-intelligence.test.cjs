@@ -1259,3 +1259,14 @@ test('P307 reserves scroll space and checks sticky confirm occlusion in Electron
  assert.ok(qa.includes('notCoveredByConfirm:observed307.aboveConfirm'));
  assert.ok(qa.includes("scrollIntoView({block:'center'"));
 });
+
+// P308: evidence opens manual label queue without silently enabling AI.
+test('P308 opens opt-in Naive Bayes guided labeling without automatic data changes',()=>{
+ const ui=fs.readFileSync('renderer/positron-intelligence.js','utf8');
+ const css=fs.readFileSync('renderer/positron-intelligence.css','utf8');
+ const qa=fs.readFileSync('scripts/positron-20-extension.cjs','utf8');
+ for(const part of ["review.id='poAIReviewUncertain'","if(!enabled){","foldersOpen=true;programmesOpen=false;","byId('poAIActiveLearning')","check.focus()"])
+  assert.ok(ui.includes(part),'missing opt-in trainer path '+part);
+ assert.ok(css.includes('#poAIReviewUncertain:focus-visible'));
+ for(const name of ['qa308','positron-p51308-training-link-before-1920x1080-real.png','positron-p51308-training-link-after-1920x1080-real.png'])assert.ok(qa.includes(name));
+});
