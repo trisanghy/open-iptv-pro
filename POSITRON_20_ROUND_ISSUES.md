@@ -21,3 +21,12 @@ Vòng 01 dự kiến P5.1.279:
 ### CI repair P5.1.280
 - Run 45105567504: 993 tests, 972 pass / 16 fail / 5 skipped. Blocker: 4.23.364 vẫn còn trong title HTML, Windows launcher và workflow build/tag, đồng thời workflow trỏ sai ảnh P280 folders-persist thay vì ảnh P279 và chưa kiểm chứng cặp P280 active-queue.
 - Khắc phục trên cùng nhãn P5.1.280, không tính phiên bản/vòng mới; giữ test nghiêm ngặt, không bỏ assertion. Chỉ tính vòng khi CI và ảnh thật đạt.
+
+## CHECKPOINT ĐỢT MỚI — 2026-11-23 — 01/20 ĐÃ HOÀN THÀNH
+- Nền ban đầu: P5.1.279 v4.23.364, HEAD 03cb3e724ebc7032132466d7b4bfa031d50e0ebe.
+- Vòng 01/20 P5.1.280 v4.23.365: GitHub commits ba5cd38ab8378a6c2712d06ca962c21579527d43 (tính năng) và f6758a23b4888f8603ab9df8376d9c4c9bc2a39e (fix đồng bộ version/workflow); không tạo release thử nghiệm vì chính sách Stable-only.
+- Actions build & capture: https://github.com/trisanghy/open-iptv-pro/actions/runs/45105835336 — SUCCESS: 988 tests passed, 5 skipped, 0 failed; job capture Electron success; Windows x64, Mac arm64, Mac x64 builds success, release skipped theo chính sách.
+- Artifacts: Windows x64 14787043326; Mac arm64 14787382799; Mac x64 14786464917; Electron screenshots 14786983727. GitHub screenshot link https://github.com/trisanghy/open-iptv-pro/actions/runs/45105835336/artifacts/14786983727.
+- Ảnh thật đã trực tiếp MỞ/soát trong chat: positron-p51280-active-queue-before-1920x1080-real.png và positron-p51280-active-queue-after-1920x1080-real.png. Vì môi trường mở ZIP cục bộ lỗi, workflow bridge 45107410299 xuất nguyên PNG qua GitHub Actions log để mở và xem trực tiếp. Trong ảnh SAU: “6 đã bỏ qua trong phiên”, nút “Xem lại 6 kênh đã bỏ qua”, có đề xuất kênh tiếp theo, không quan sát thấy nút/nhãn bị chồng hay cắt tại vùng sửa. Đây là 01 vòng đầy đủ; KHÔNG đếm 20.
+- Chưa làm Vòng 02. Quan sát tiếp từ ảnh P280: Khi người xem dạy một nhãn sai bằng Ghi nhãn & tiếp, ứng dụng thiếu hoàn tác riêng, chỉ quản lý xóa toàn mô hình. Ưu tiên kế tiếp P5.1.281 là thêm Undo nhãn AI cuối cùng bằng snapshot mô hình + taughtIds trong phiên, thử khôi phục chính xác mô hình có dữ liệu cũ, không tự phát/đổi M3U; yêu cầu Node+Electron before/after/undo, xem ảnh, build và version riêng. KHÔNG tuyên bố P281 đã được commit.
+- Chỉ sửa nhánh Positron; trước mỗi lần làm lại kiểm tra HEAD mới nhất vì bot tài liệu có thể tự commit; dùng expected_sha và force:false. Không sửa main/nhánh khác và không xuất các candidate lên GitHub Releases.
