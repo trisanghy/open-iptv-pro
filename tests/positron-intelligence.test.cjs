@@ -364,7 +364,7 @@ test('P276 WatchFlow quản lý 3 mô hình có trọng số và xóa riêng an 
  for(const s of ['poAIModelManager','poAIModelRows','poAIModelStatus','learnedInventory',
   'Tiêu chuẩn · Gợi ý sở thích (Logistic ML)','Smart · Phân loại chủ đề (Naive Bayes)',
   'Smart · Khám phá (UCB)',"bulk.addEventListener('click'",
-  "if(item.id==='category')categoryModel=core.emptyCategoryModel()",
+  "if(item.id==='category'){categoryModel=core.emptyCategoryModel();taughtIds.clear();activeStatusMessage='';}",
   'modelInventory:()=>learnedInventory()'])assert.ok(ui.includes(s),s);
  assert.ok(!ui.includes("win.confirm('Xóa toàn bộ trọng số"));
  assert.ok(ui.includes('modelManager.hidden=true;')&&ui.includes('area.append(title,controls,alertRow,modeBar,summary,list,privacy,modelManager)'),
