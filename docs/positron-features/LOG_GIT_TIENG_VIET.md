@@ -2,14 +2,22 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
-## P5.1.307 — hiển thị các kênh AI chưa đủ chắc chắn ở cả hai mô hình
+## P5.1.308 — đi từ AI chưa chắc chắn tới hàng đợi dạy nhãn thủ công
 
-**Ứng dụng:** 4.23.392 · **Trạng thái:** Chưa có bản phát hành
+**Ứng dụng:** 4.23.393 · **Trạng thái:** Chưa có bản phát hành
+
+Feature priority: NEW — Từ danh sách kênh mà hai mô hình Naive Bayes đều chưa đủ chắc chắn, thêm nút mở trực tiếp hàng đợi dạy AI đã có thay vì tìm qua Thư mục EPG; luôn do người xem quyết định nhãn, không tự bật quyền hoặc phát video. Feature class: AI
+
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/c1e942dd87189d3573ea6fd945ee68a25828f094)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+
+## P5.1.307 — Xem kênh AI chưa đủ chắc chắn, tránh che nội dung / Electron 4.23.392
+
+**Ứng dụng:** Chưa xác minh · **Trạng thái:** Chưa có bản phát hành
 
 Feature priority: NEW — Hiển thị ví dụ từ kênh mà cả Naive Bayes hiện tại và mô hình khôi phục đều chưa đủ chắc chắn phân loại, thay vì chỉ số đếm; ngăn tên nhúng URL lộ địa chỉ và giữ dòng mẫu khỏi nút xác nhận khôi phục sticky. Feature class: AI
 
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/0d2dbb9176f2843bf5ef21f9265fa7588d5759d2)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
 
 ## P5.1.306 — AI chỉ ra nhóm kênh mất độ chắc chắn khi khôi phục / Electron 4.23.391
 
