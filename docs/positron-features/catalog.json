@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-23T22:29:48.949184+00:00",
+  "generatedAt": "2026-11-23T22:30:31.615916+00:00",
   "repository": "trisanghy/open-iptv-pro",
   "branch": "Positron",
   "versions": [
@@ -8,8 +8,8 @@
       "version": "P5.1.345",
       "appVersion": "4.23.430",
       "title": "hướng dẫn điều khiển AI bằng remote với bảng phím mở gọn",
-      "description": "hướng dẫn điều khiển AI bằng remote với bảng phím mở gọn",
-      "kind": "fix",
+      "description": "Feature priority: NEW — Ảnh Electron P344 cho thấy PageUp/PageDown chạy đúng nhưng chỉ có hướng dẫn Alt+Shift+J; người dùng bàn phím/remote không biết đủ các phím khi danh sách dài, trong khi thêm nhiều nút vào header sẽ che nội dung. Feature class: AI",
+      "kind": "feature",
       "status": "candidate",
       "published": "",
       "tag": "",

@@ -7,11 +7,11 @@ Trang này được tạo tự động từ GitHub Releases và ảnh kiểm th�
 [Mở WEBSITE changelog tương tác](https://raw.githack.com/trisanghy/open-iptv-pro/Positron/docs/positron-features/index.html) · [Giao diện HTML trong repository](index.html) · [Các bản phát hành](https://github.com/trisanghy/open-iptv-pro/releases) · [Nhật ký Git tiếng Việt](LOG_GIT_TIENG_VIET.md) · [Quy tắc ưu tiên tính năng](../../POSITRON_FEATURE_RULES.md)
 
 <details>
-<summary><strong>P5.1.345</strong> · hướng dẫn điều khiển AI bằng remote với bảng phím mở gọn · CHƯA CÓ BẢN PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.345</strong> · hướng dẫn điều khiển AI bằng remote với bảng phím mở gọn · CHƯA CÓ BẢN PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.430 · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
 
-hướng dẫn điều khiển AI bằng remote với bảng phím mở gọn
+Feature priority: NEW — Ảnh Electron P344 cho thấy PageUp/PageDown chạy đúng nhưng chỉ có hướng dẫn Alt+Shift+J; người dùng bàn phím/remote không biết đủ các phím khi danh sách dài, trong khi thêm nhiều nút vào header sẽ che nội dung. Feature class: AI
 
 *Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
 
