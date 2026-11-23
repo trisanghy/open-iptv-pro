@@ -142,3 +142,6 @@ Baseline 24/11/2026: HEAD 557361b9ab74340ca0f2999f1e0912c2c43803db, P5.1.323 / 4
 - Ảnh Electron thật P335 720 px: nút Xem gợi ý thứ hai có focus ring nhưng nằm ngay sát mép dưới panel; thiếu nhãn vị trí gợi ý hiện tại cho người dùng/trình đọc màn hình.
 - New AI UX: tự cuộn gợi ý được chọn bằng K tới giữa vùng nhìn, và trạng thái «Gợi ý N/Tổng» aria-live trên bảng chỉ khi nhấn J/K; giữ nội dung người dùng và hành vi phát.
 - Kiểm thử bắt buộc: Node và Electron 720/1920 before/after; phím chuyển 1→2, vòng về đầu, badge có aria-live, nút Xem có margin, ảnh thật MỞ soi; trước khi đạt không tính vòng.
+
+## P5.1.336 screenshot-review correction (same patch version)
+- P336 screenshot review found false-positive: badge CSS was visible but it scrolled above viewport when button K centered at 720px; fix attaches badge to sticky h2 title and strengthens native QA to check badge pixel geometry inside sticky header (not only display/visibility).

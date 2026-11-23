@@ -437,9 +437,10 @@ html[data-positron="true"] #poWatchFlowPanel[data-po-ai-active="true"] .po-ai-en
 
 /* P5.1.336: compact, screen-reader announced current AI recommendation index.
    Persistent controls remain uncluttered until the user presses J/K. */
-#poWatchFlowPanel .po-ai-keyboard-help .po-ai-focus-progress[hidden]{display:none!important}
-#poWatchFlowPanel .po-ai-keyboard-help .po-ai-focus-progress{
- display:inline-block!important;vertical-align:middle;margin-left:7px;padding:3px 7px;
+#poWatchFlowPanel .po-watchflow-head #poWatchFlowTitle .po-ai-focus-progress[hidden]{display:none!important}
+#poWatchFlowPanel .po-watchflow-head #poWatchFlowTitle .po-ai-focus-progress{
+ display:inline-block!important;vertical-align:middle;margin-left:9px;padding:3px 7px;
  border:1px solid #73b89e;border-radius:8px;background:#214d43;color:#e4fff2;
+ font-size:11px!important;line-height:1.2!important;letter-spacing:0!important;
  font-weight:800;white-space:nowrap;
 }

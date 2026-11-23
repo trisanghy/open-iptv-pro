@@ -235,7 +235,8 @@
  focusProgress.hidden=true;
  focusProgress.setAttribute('role','status');
  focusProgress.setAttribute('aria-live','polite');
- modeHelp.append(focusProgress);
+ // The badge is attached to the sticky title by syncWatchHeader,
+ // so the counter remains visible as the recommendation list scrolls.
  const updateFocusProgress=(target)=>{
   const cards=[...area.querySelectorAll('.po-ai-card .po-ai-actions button:first-child')]
    .filter(button=>!button.disabled&&button.getClientRects().length);
@@ -264,7 +265,12 @@
  const originalWatchKicker=watchKicker?.textContent||'KHÁM PHÁ KÊNH CỦA BẠN';
  const syncWatchHeader=()=>{
   const isAI=aiOpen&&!panel.hidden;
-  if(watchTitle)watchTitle.textContent=isAI?'AI hợp gu':originalWatchTitle;
+  if(watchTitle){
+   watchTitle.textContent=isAI?'AI hợp gu':originalWatchTitle;
+   // Keep the keyboard position badge in the sticky header, not in
+   // the scrollable AI mode description (visually discovered in P336 PNG).
+   if(isAI)watchTitle.append(focusProgress);
+  }
   if(watchKicker)watchKicker.textContent=isAI?'WATCHFLOW INTELLIGENCE':originalWatchKicker;
  };
  const extras=[panel.querySelector('.po-watchflow-modes'),panel.querySelector('.po-watchflow-subhead'),

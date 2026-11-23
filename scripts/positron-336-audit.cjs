@@ -15,8 +15,12 @@ const inspect=page=>page.evaluate(()=>{
  const buttons=[...document.querySelectorAll('#poAICards .po-ai-card .po-ai-actions button:first-child')]
  .filter(button=>!button.disabled&&button.getClientRects().length);
  const focus=buttons.indexOf(document.activeElement),pos=document.activeElement?.getBoundingClientRect(),bounds=p.getBoundingClientRect();
+ const badgeRect=badge?.getBoundingClientRect(),headerRect=p.querySelector('.po-watchflow-head')?.getBoundingClientRect();
  return {focus,count:buttons.length,progress:badge?.textContent||'',
-  badgeVisible:!badge?.hidden&&getComputedStyle(badge).visibility!=='hidden',
+  badgeVisible:!badge?.hidden&&getComputedStyle(badge).visibility!=='hidden'&&
+   !!badgeRect&&badgeRect.width>=40&&badgeRect.height>=12&&
+   badgeRect.top>=headerRect.top-2&&badgeRect.bottom<=headerRect.bottom+2&&
+   badgeRect.top>=bounds.top-2&&badgeRect.bottom<=bounds.bottom+2,
   role:badge?.getAttribute('role'),ariaLive:badge?.getAttribute('aria-live'),
   actionComfortable:!!pos&&pos.top>=bounds.top+45&&pos.bottom<=bounds.bottom-12,
   actionVisible:!!pos&&pos.top>=bounds.top&&pos.bottom<=bounds.bottom+3,
