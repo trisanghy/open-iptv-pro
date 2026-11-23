@@ -2,14 +2,22 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
-## P5.1.275 — Chỉ mục EPG thông minh và quét lại thủ công
+## P5.1.276 — Quản lý ba mô hình WatchFlow và xóa an toàn
 
-**Ứng dụng:** 4.23.360 · **Trạng thái:** Chưa có bản phát hành
+**Ứng dụng:** 4.23.361 · **Trạng thái:** Chưa có bản phát hành
+
+Feature priority: NEW — Bảng quản lý giúp kiểm tra ba mô hình học thực Logistic, Naive Bayes, UCB cùng dữ liệu/dung lượng từng mô hình và xóa riêng, không đụng đến playlist, guide hoặc mô hình học còn lại. Feature class: AI
+
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/37ace0c0276a01abb712e7415c787b53ea648cd9)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+
+## P5.1.275 — Chỉ mục EPG tái sử dụng và chủ động quét lại / Electron 4.23.360
+
+**Ứng dụng:** Chưa xác minh · **Trạng thái:** Chưa có bản phát hành
 
 Feature priority: NEW — Lập chỉ mục kênh/chương trình theo XMLTV rồi dùng lại khi thay đổi giao diện, mở thư mục hoặc cập nhật chỉ báo số kênh, thay vì quét toàn bộ 561 kênh mỗi lần hiển thị. Người dùng có nút **Quét lại EPG** trong Thư mục EPG và Chương trình EPG; thay đổi nguồn, EPG có nhận diện mới hoặc qua mốc thời gian tự làm mới kết quả. Giữ nguyên trạng thái mở/đóng các thư mục khi giao diện được cập nhật. Feature class: BREAKTHROUGH
 
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/b4af68fc4e65b68e21de79c9ce7bfc826077d1f3)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
 
 ## P5.1.274 — Tìm chương trình EPG xuyên chủ đề không dấu / Electron 4.23.359
 
