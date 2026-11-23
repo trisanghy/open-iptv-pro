@@ -38,15 +38,33 @@ async function run(page){
    window.IPTVState=Object.freeze({...native,getChannels:()=>fixture});
   }
  });
- await page.keyboard.press('F6');
+ // P335 repair: F6 is a *toggle* and may be blocked by initial text focus.
+ // Set the native panel/mode explicitly, then test the J/K shortcuts themselves.
+ await page.evaluate(()=>{
+  const panel=document.getElementById('poWatchFlowPanel');
+  if(panel.hidden)window.PositronWatchFlow.open();
+  const tab=document.getElementById('poFlowPlusAI');
+  if(panel.dataset.poAiActive!=='true'&&tab)tab.click();
+  document.getElementById('poAIChannels')?.click();
+  panel.scrollTop=0;
+ });
  await page.waitForFunction(()=>{
   const p=document.getElementById('poWatchFlowPanel');
   return p&&!p.hidden&&p.dataset.poAiActive==='true';
- },null,{timeout:15000});
- await page.evaluate(()=>document.getElementById('poAIChannels').click());
+ },null,{timeout:5000});
  await page.waitForFunction(()=>
   document.querySelectorAll('#poAICards .po-ai-card .po-ai-actions button:first-child').length>=2,
- null,{timeout:15000});
+ null,{timeout:9000}).catch(async error=>{
+  const diagnostics=await page.evaluate(()=>({
+   aiActive:document.getElementById('poWatchFlowPanel')?.dataset.poAiActive,
+   mode:document.getElementById('poAIChannels')?.getAttribute('aria-pressed'),
+   playlist:window.IPTVState?.getChannels?.().length,
+   cards:document.querySelectorAll('#poAICards .po-ai-card').length,
+   actionButtons:document.querySelectorAll('#poAICards .po-ai-card .po-ai-actions button:first-child').length,
+   text:document.getElementById('poAICards')?.textContent?.slice(0,350)
+  }));
+  throw Error('P335 native QA lacks two visible recommendations: '+JSON.stringify(diagnostics)+'; '+error.message);
+ });
  const original=await persistent(page);
  await page.keyboard.press('Alt+Shift+J');
  const beforeWide=await sample(page);
