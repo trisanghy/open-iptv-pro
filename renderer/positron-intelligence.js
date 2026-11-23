@@ -733,6 +733,26 @@
    warning.className=comparison.lossCount?'po-ai-compare-warning po-ai-compare-risk':'po-ai-compare-warning';
    warning.textContent=comparison.warning+' '+comparison.caution;
    importPreview.append(warning);importPreview.hidden=false;
+
+   const impact=core.previewLearningImpact({model},parsed,channels(),guide(),win.IPTVGuide,
+    {clock:Date.now(),limit:3});
+   if(impact.ok){
+    const forecast=d.createElement('div');forecast.id='poAIImportImpact';
+    forecast.className='po-ai-impact';
+    const heading=d.createElement('strong');heading.textContent='AI thử thứ hạng trước khi khôi phục';
+    const describe=(rows,placeholder)=>rows.length
+     ?rows.map((row,index)=>(index+1)+'. '+row.name).join(' · '):placeholder;
+    const before=d.createElement('p');before.textContent='Đang dùng: '+
+     describe(impact.before,'Chưa có kênh để so sánh');
+    const after=d.createElement('p');after.textContent='Nếu nhập JSON: '+
+     describe(impact.after,'Chưa có kênh để so sánh');
+    const caution=d.createElement('small');
+    caution.textContent=(impact.changedPositions
+     ?'Có '+impact.changedPositions+' vị trí thay đổi trong gợi ý thử. '
+     :'Thứ tự ba gợi ý chưa thay đổi. ')+impact.caution;
+    forecast.append(heading,before,after,caution);importPreview.append(forecast);
+   }
+
    pendingLearningImport=parsed;importConfirm.hidden=false;
    modelStatus.textContent='Xem trước: '+parsed.summary.preferenceObservations+' phản hồi, '
     +parsed.summary.categoryLabels+' nhãn và '+parsed.summary.exploredTopics

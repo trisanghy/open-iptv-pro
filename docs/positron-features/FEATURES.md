@@ -7,6 +7,19 @@ Trang này được tạo tự động từ GitHub Releases và ảnh kiểm th�
 [Mở WEBSITE changelog tương tác](https://raw.githack.com/trisanghy/open-iptv-pro/Positron/docs/positron-features/index.html) · [Giao diện HTML trong repository](index.html) · [Các bản phát hành](https://github.com/trisanghy/open-iptv-pro/releases) · [Nhật ký Git tiếng Việt](LOG_GIT_TIENG_VIET.md) · [Quy tắc ưu tiên tính năng](../../POSITRON_FEATURE_RULES.md)
 
 <details>
+<summary><strong>P5.1.288</strong> · Xem thử tác động thứ hạng gợi ý AI · CANDIDATE · TÍNH NĂNG</summary>
+
+**Ứng dụng:** 4.23.373 · **Trạng thái:** chờ kiểm thử Electron và Actions.
+
+Feature class: AI — Sau khi chọn bản sao JSON, WatchFlow cho thấy ba gợi ý Logistic ML đang dùng và ba gợi ý sẽ có nếu khôi phục. Xếp hạng dựa trên dữ liệu máy đang có, không hứa độ chính xác, không phát luồng hay lưu trọng số ở bước xem thử.
+
+Bằng chứng hình ảnh tại GitHub Actions khi được kiểm chứng.
+
+[Xem mã nguồn và changelog](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+
+</details>
+
+<details>
 <summary><strong>P5.1.287</strong> · hoàn tác an toàn lần nhập mô hình AI gần nhất · CHƯA CÓ BẢN PHÁT HÀNH · TÍNH NĂNG</summary>
 
 **Ứng dụng:** 4.23.372 · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH

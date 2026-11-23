@@ -340,6 +340,32 @@
    caution:'Số lượng mẫu không chứng minh mô hình chính xác hơn.'};
  }
 
+
+ // P288: preview ranking impact of imported local ML weights without
+ // saving data, opening streams or contacting any online service.
+ function previewLearningImpact(current,loaded,channelRows,guide,api,{clock=Date.now(),limit=3}={}){
+  const imported=loaded?.ok===true?loaded:parseLearningBackup(loaded);
+  if(!imported?.ok)return {ok:false,reason:imported?.reason||'Không đọc được mô hình AI.'};
+  const beforeModel=sanitizedModel(current?.model),afterModel=sanitizedModel(imported.model);
+  const candidates=(Array.isArray(channelRows)?channelRows:[])
+   .filter(ch=>ch?.id&&ch?.name&&ch?.url&&ch.status!=='dead').slice(0,180);
+  const options={limit:Math.max(1,Math.min(5,Math.trunc(limit)||3)),
+   clock:Number.isFinite(clock)?clock:Date.now()};
+  const normalizeRows=rows=>rows.map(row=>({
+   name:cleanQuery(row.channel.name)||'Kênh chưa rõ',
+   probability:Math.round(row.probability*100),
+   evidence:row.topic?.source==='epg'?'epg':'metadata'
+  }));
+  const before=normalizeRows(recommend(candidates,guide,api,beforeModel,{},options));
+  const after=normalizeRows(recommend(candidates,guide,api,afterModel,{},options));
+  const changedPositions=before.reduce((sum,row,index)=>sum+(row.name!==after[index]?.name?1:0),0);
+  return {ok:true,before,after,changedPositions,
+   trainedBefore:beforeModel.observations>=2,trainedAfter:afterModel.observations>=2,
+   caution:beforeModel.observations<2||afterModel.observations<2
+    ?'Một mô hình chưa đủ hai phản hồi: thứ hạng minh họa chưa phản ánh sở thích đã học.'
+    :'Đây là thứ hạng thử trên dữ liệu hiện có, không chứng minh độ chính xác của mô hình.'};
+ }
+
  // P282: explain learned Naive Bayes evidence using only channel-name tokens.
  // Never show a prediction from shared generic group names or unsupervised web data.
  function explainCategory(raw,channel){
@@ -596,5 +622,5 @@
   return best;
  }
  return Object.freeze({KINDS,normalize,subject,metadataTopic,topicFor,features,emptyModel,
-  sanitizedModel,predict,learn,recommend,emptyCategoryModel,sanitizedCategoryModel,teachCategory,predictCategory,explainCategory,categoryLearningHealth,buildLearningBackup,parseLearningBackup,compareLearningBackup,sanitizedBandit,observeBandit,banditBonus,exploreWithBandit,upcomingForYou,planForYou,startingForYou,rankUnclassified,epgFolders,programmeFolders,searchProgrammes,cleanQuery,readWikiSearch});
+  sanitizedModel,predict,learn,recommend,emptyCategoryModel,sanitizedCategoryModel,teachCategory,predictCategory,explainCategory,categoryLearningHealth,buildLearningBackup,parseLearningBackup,compareLearningBackup,previewLearningImpact,sanitizedBandit,observeBandit,banditBonus,exploreWithBandit,upcomingForYou,planForYou,startingForYou,rankUnclassified,epgFolders,programmeFolders,searchProgrammes,cleanQuery,readWikiSearch});
 });

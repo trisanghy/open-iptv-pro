@@ -669,3 +669,46 @@ test('P287 hoàn tác an toàn lần khôi phục mô hình AI gần nhất',()=
  assert.ok(qa.includes('positron-p51287-ai-undo-after-1920x1080-real.png'));
  assert.ok(qa.includes('undoRestoresPreviousLearning'));
 });
+
+
+test('P288 dự báo thay đổi thứ hạng kênh theo trọng số Logistic ML khi nhập JSON',()=>{
+ const channels=[
+  {id:'sports',name:'Kênh Thể thao',group:'Tổng hợp',url:'https://private.invalid/secret-sport.m3u8',status:'alive'},
+  {id:'news',name:'Kênh Tin tức',group:'Tổng hợp',url:'https://private.invalid/secret-news.m3u8',status:'alive'}
+ ];
+ const original=JSON.stringify(channels),clock=now,d=new Date(clock);
+ let sports=C.emptyModel(),news=C.emptyModel();
+ const sportFeature=C.features(channels[0],C.topicFor(channels[0],null,null,clock),d);
+ const newsFeature=C.features(channels[1],C.topicFor(channels[1],null,null,clock),d);
+ for(let i=0;i<12;i++){
+  sports=C.learn(C.learn(sports,sportFeature,1),newsFeature,0);
+  news=C.learn(C.learn(news,newsFeature,1),sportFeature,0);
+ }
+ const backup=C.buildLearningBackup({model:news,categoryModel:C.emptyCategoryModel(),bandit:{}});
+ const serialized=JSON.stringify(backup),current={model:sports};
+ const result=C.previewLearningImpact(current,backup,channels,null,null,{clock,limit:2});
+ assert.equal(result.ok,true);
+ assert.equal(result.before[0].name,'Kênh Thể thao');
+ assert.equal(result.after[0].name,'Kênh Tin tức');
+ assert.equal(result.changedPositions,2);
+ assert.equal(result.trainedBefore,true);
+ assert.equal(result.trainedAfter,true);
+ assert.ok(result.caution.includes('không chứng minh độ chính xác'));
+ assert.equal(JSON.stringify(channels),original,'never mutate playlist');
+ assert.equal(JSON.stringify(backup),serialized,'preview must not mutate imported weights');
+ assert.ok(!JSON.stringify(result).includes('secret-sport')&&!JSON.stringify(result).includes('private.invalid'));
+ const cold=C.previewLearningImpact({model:C.emptyModel()},backup,channels,null,null,{clock,limit:2});
+ assert.equal(cold.trainedBefore,false);
+ assert.ok(cold.caution.includes('chưa đủ hai phản hồi'));
+ assert.equal(C.previewLearningImpact(current,{},channels,null,null,{clock}).ok,false);
+ assert.deepEqual(C.previewLearningImpact(current,backup,[],null,null,{clock}).before,[]);
+ const ui=fs.readFileSync('renderer/positron-intelligence.js','utf8');
+ const qa=fs.readFileSync('scripts/positron-20-extension.cjs','utf8');
+ const css=fs.readFileSync('renderer/positron-intelligence.css','utf8');
+ assert.ok(ui.includes("core.previewLearningImpact({model},parsed,channels(),guide(),win.IPTVGuide"));
+ assert.ok(ui.includes("forecast.id='poAIImportImpact'"));
+ assert.ok(css.includes('#poWatchFlowPanel .po-ai-impact'));
+ for(const name of ['positron-p51288-ai-ranking-before-1920x1080-real.png',
+  'positron-p51288-ai-ranking-after-1920x1080-real.png'])assert.ok(qa.includes(name));
+ assert.ok(qa.includes('bothRankingsVisible'));
+});

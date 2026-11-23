@@ -1,3 +1,11 @@
+## P5.1.288 — Xem thử thứ hạng gợi ý AI trước khi nhập mô hình / Electron 4.23.373
+- Feature priority: NEW — Mô phỏng tác động của trọng số Logistic ML trong tệp sao lưu lên ba gợi ý kênh hiện tại ngay ở màn hình xem trước. Hiển thị thứ hạng trước/sau, số vị trí thay đổi và cảnh báo khi mô hình chưa học đủ. Không tự phát kênh, không ghi mô hình hay gửi dữ liệu lên mạng.
+- Feature class: AI
+- User action: TV → WatchFlow → AI hợp gu → Quản lý mô hình → Khôi phục mô hình AI → chọn JSON → xem mục "AI thử thứ hạng trước khi khôi phục".
+- Electron screenshot: positron-p51288-ai-ranking-before-1920x1080-real.png / positron-p51288-ai-ranking-after-1920x1080-real.png.
+- Evidence: Node test dùng mô hình logistic huấn luyện đối nghịch trên kênh Thể thao/Tin tức để chứng minh thứ hạng đảo chiều, kiểm tra không đưa URL vào kết quả; Electron thật kiểm tra preview trước/sau, lưu trữ/playlist/phát kênh bất biến, không tràn và hai ảnh PNG 1920×1080.
+- Status: CANDIDATE — Chờ CI, ảnh thật và artifact đã xác minh; GitHub Releases chỉ cho Stable.
+
 ## P5.1.287 — Hoàn tác lần khôi phục mô hình AI gần nhất / Electron 4.23.372
 - Feature priority: NEW — Sau khi xác nhận nhập JSON trọng số, người dùng có thể Hoàn tác để trở lại chính xác ba mô hình học trước đó và các nhãn đã dạy. Snapshot nằm trong RAM, tự chặn nếu mô hình tiếp tục học để tránh ghi đè dữ liệu mới.
 - Feature class: AI

@@ -192,3 +192,9 @@ html[data-positron="true"].po-horizon body #poWatchFlowPanel.po-watchflow-panel:
 #poWatchFlowPanel .po-ai-undo-import:hover{background:#66532e}
 #poWatchFlowPanel .po-ai-undo-import:focus-visible{outline:2px solid #fce6a4;outline-offset:2px}
 #poWatchFlowPanel #poAIUndoImport[hidden]{display:none!important}
+
+/* P288: honest read-only ML recommendation preview before importing backup. */
+#poWatchFlowPanel .po-ai-impact{margin-top:9px;padding:8px;border:1px solid #4b806f;border-radius:8px;background:#12372f;color:#e8fff3;font-size:11px}
+#poWatchFlowPanel .po-ai-impact>strong{display:block;font-size:12px;margin-bottom:4px}
+#poWatchFlowPanel .po-ai-impact p{margin:4px 0;line-height:1.45;overflow-wrap:anywhere}
+#poWatchFlowPanel .po-ai-impact small{display:block;color:#a4cebf;font-size:10px;line-height:1.4;margin-top:6px}
