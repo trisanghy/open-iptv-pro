@@ -8,7 +8,7 @@ test('Standard under 20MB and Smart under 200MB do not claim missing weights',()
  assert.match(source,/Chưa có trọng số/);
 });
 test('advanced model uses already installed Qwen3 or Hy-MT2, or offers new download through existing model manager',()=>{
- assert.match(source,/Chọn mô hình AI để tải \/ sử dụng/);
+ assert.match(source,/Intelligence · các mô hình Qwen3 và Hy-MT2 dùng chung/);
  assert.match(source,/Qwen3 native có thể phân tích sâu/);
 });
 test('prior prerelease rules remain enforced',()=>{

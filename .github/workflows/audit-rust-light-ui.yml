@@ -74,8 +74,10 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: rust-lab-watchflow-all-models-v23-8-136
-          path: rust-watchflow-catalog-v23-8-136.png
+          name: rust-lab-watchflow-all-models-v23-8-137
+          path: |
+            rust-watchflow-catalog-v23-8-136.png
+            rust-watchflow-models-v23-8-137-*.png
           if-no-files-found: warn
           retention-days: 14
       - name: Capture all Rust Lab feature pages and expanded panels

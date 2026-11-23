@@ -20,6 +20,14 @@ const {chromium}=require('playwright-core');
   if(!check.standard||!check.smart||!check.intelligence||check.cards!==5||check.options!==5||!check.expanded||check.active!=='true')
    throw Error('Incomplete catalog: '+JSON.stringify(check));
   await page.locator('#wfSettings').screenshot({path:'rust-watchflow-catalog-v23-8-136.png',timeout:20000,animations:'disabled'});
+  // Separate real screenshots are easier to inspect than one clipped long panel.
+  for(const [id,name] of [
+   ['wfStandardModels','standard'],['wfSmartModels','smart'],['wfIntelligenceModels','intelligence']
+  ]){
+   await page.locator('#'+id).screenshot({
+    path:'rust-watchflow-models-v23-8-137-'+name+'.png',timeout:20000,animations:'disabled'
+   });
+  }
   console.log('PASS full models visible under actual renderer CSP: '+JSON.stringify(check));
  }finally{await browser.close();}
 })().catch(e=>{console.error(e);process.exitCode=1;});

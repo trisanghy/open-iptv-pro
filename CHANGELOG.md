@@ -1,3 +1,9 @@
+## Rust Lab v23.8.137 — Đồng bộ kiểm thử danh mục AI, ảnh 3 nhóm riêng (PRERELEASE)
+
+- Sửa 2 kiểm thử Windows còn bắt buộc nhãn Intelligence cũ sau khi hiển thị đầy đủ Standard/Smart/Intelligence v23.8.136. Giữ kiểm tra đúng nhãn mới và khả năng tái sử dụng Qwen3; không thay đường xử lý AI thật hoặc nguồn phát.
+- Bộ kiểm thử Chromium chụp thêm 3 ảnh thật riêng cho Standard, cả 5 mô hình Smart và Intelligence để so sánh dễ dàng; toàn bộ cùng xuất trong artifact.
+- Không ghi đè tag bất biến, không chỉnh main/Electron hay Stable/Latest, giữ CSP sửa WebAssembly và prerelease-only.
+
 ## Rust Lab v23.8.136 — Không ẩn các lựa chọn AI theo chế độ (PRERELEASE)
 
 - Sửa nguyên nhân gốc: Standard tự ẩn 5 mô hình Smart và kho Intelligence khiến người dùng thấy chỉ 2 lựa chọn. Bây giờ hiển thị đủ ba nhóm mô hình cùng lúc trong Mô hình AI & dung lượng, viền nhấn nhóm đang sử dụng.
