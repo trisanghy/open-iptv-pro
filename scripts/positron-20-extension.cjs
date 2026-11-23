@@ -9830,8 +9830,9 @@ async function runTwenty(page){
 
  // P284: real Electron click starts local JSON export and does not change models.
  console.log('P284 Electron backup QA entering model-manager flow');
- await page.locator('#poAIReset').click({timeout:8000});
- console.log('P284 Electron backup manager opened');
+ const isManagerHidden284=await page.locator('#poAIModelManager').evaluate(el=>el.hidden);
+ if(isManagerHidden284)await page.locator('#poAIReset').click({timeout:8000});
+ console.log('P284 Electron backup manager state ensured open:',!isManagerHidden284?'already open':'opened by click');
  await page.locator('#poAIBackup').scrollIntoViewIfNeeded({timeout:8000});
  const baseline284=await page.evaluate(()=>({
   visible:!document.getElementById('poAIModelManager')?.hidden,
