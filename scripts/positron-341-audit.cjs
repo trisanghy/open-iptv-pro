@@ -44,6 +44,9 @@ async function boot(page){
 }
 async function beforeAfter(page,size){
  await page.setViewportSize(size);
+ // Exit the prior viewport's editor guard before testing the global J shortcut.
+ // This preserves the real input safety behavior while resetting test focus.
+ await page.evaluate(()=>document.getElementById('poAIChannels')?.focus());
  await page.keyboard.press('Alt+Shift+J');
  await page.keyboard.press('Alt+Shift+I');
  const before=await snap(page),n=before.count;
