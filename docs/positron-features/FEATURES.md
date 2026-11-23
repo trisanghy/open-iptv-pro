@@ -7,15 +7,28 @@ Trang này được tạo tự động từ GitHub Releases và ảnh kiểm th�
 [Mở WEBSITE changelog tương tác](https://raw.githack.com/trisanghy/open-iptv-pro/Positron/docs/positron-features/index.html) · [Giao diện HTML trong repository](index.html) · [Các bản phát hành](https://github.com/trisanghy/open-iptv-pro/releases) · [Nhật ký Git tiếng Việt](LOG_GIT_TIENG_VIET.md) · [Quy tắc ưu tiên tính năng](../../POSITRON_FEATURE_RULES.md)
 
 <details>
-<summary><strong>P5.1.343</strong> · AI nhảy tới gợi ý đầu/cuối bằng Home/End trên remote (NEW) · CHƯA CÓ BẢN PHÁT HÀNH · TÍNH NĂNG</summary>
+<summary><strong>P5.1.344</strong> · PageUp/PageDown lướt 5 gợi ý AI và sửa kiểm thử sticky focus · CHƯA CÓ BẢN PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
 
-**Ứng dụng:** 4.23.428 · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
+**Ứng dụng:** 4.23.429 · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
+
+PageUp/PageDown lướt 5 gợi ý AI và sửa kiểm thử sticky focus
+
+*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+
+[Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/tree/Positron) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/3eb60d273753c5314e053354569e40286d550274)
+
+</details>
+
+<details>
+<summary><strong>P5.1.343</strong> · Electron 4.23.428 — Home/End nhảy đầu/cuối gợi ý AI bằng remote (CANDIDATE) · CHƯA CÓ BẢN PHÁT HÀNH · TÍNH NĂNG</summary>
+
+**Ứng dụng:** Chưa xác minh · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
 
 Feature priority: NEW — Khi danh sách AI có nhiều gợi ý, dùng phím mũi tên đi từng thẻ rất chậm. Bổ sung Home/End từ nút Xem để nhảy ngay đến thẻ đầu/cuối mà vẫn thấy tiêu đề, nút phát và tên kênh ở dải thông tin, không tự phát. Feature class: AI
 
 *Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
 
-[Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/tree/Positron) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/f2b3d2f29f553f499f230bebfcdcc279b616e976)
+[Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
 
 </details>
 

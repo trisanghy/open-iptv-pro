@@ -2,14 +2,22 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
-## P5.1.343 — AI nhảy tới gợi ý đầu/cuối bằng Home/End trên remote (NEW)
+## P5.1.344 — PageUp/PageDown lướt 5 gợi ý AI và sửa kiểm thử sticky focus
 
-**Ứng dụng:** 4.23.428 · **Trạng thái:** Chưa có bản phát hành
+**Ứng dụng:** 4.23.429 · **Trạng thái:** Chưa có bản phát hành
+
+PageUp/PageDown lướt 5 gợi ý AI và sửa kiểm thử sticky focus
+
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/3eb60d273753c5314e053354569e40286d550274)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+
+## P5.1.343 — Electron 4.23.428 — Home/End nhảy đầu/cuối gợi ý AI bằng remote (CANDIDATE)
+
+**Ứng dụng:** Chưa xác minh · **Trạng thái:** Chưa có bản phát hành
 
 Feature priority: NEW — Khi danh sách AI có nhiều gợi ý, dùng phím mũi tên đi từng thẻ rất chậm. Bổ sung Home/End từ nút Xem để nhảy ngay đến thẻ đầu/cuối mà vẫn thấy tiêu đề, nút phát và tên kênh ở dải thông tin, không tự phát. Feature class: AI
 
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/f2b3d2f29f553f499f230bebfcdcc279b616e976)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
 
 ## P5.1.342 — Electron 4.23.427 — Điều hướng gợi ý AI hiển thị trọn tiêu đề (CANDIDATE)
 
