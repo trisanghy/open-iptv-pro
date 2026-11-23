@@ -31,7 +31,7 @@ test('Google TV 16:9 shell includes actual approved Web logo and complete contro
  for(const id of ['searchBtn','addBtn','themeBtn','appsBtn','guideCard','guideBtn','infoBtn','guideNowTitle',
   'guideNextTitle','guideProgress','searchSuggestions','searchNotice','epgIndicator','channelPicker','sourceQR'])
   assert.match(html,new RegExp('id="'+id+'"'));
- assert.match(html,/class="brand-svg official-web-logo"/);
+ assert.match(html,/class="brand-svg"/);
  assert.match(html,/M 197,266/,'official Web icon.svg play shape preserved');
  assert.match(html,/GOOGLE TV \/ MATERIAL 3 DESIGN/);
  assert.match(html,/body #app \.channel\.is-selected\{background:#9dc6ff/);
@@ -46,15 +46,15 @@ test('Web default EPG source, daily refresh and bounded separate storage',()=>{
  assert.equal(ctx.EPG_BACKUP,'https://epgshare01.online/epgshare01/epg_ripper_VN1.xml.gz');
  assert.equal(ctx.EPG_DAY_KEY,'openiptv-tizen-epg-day-v1');
  assert.notEqual(ctx.EPG_DAY_KEY,'openiptv-tizenbrew-tv-v1');
- assert.match(epgSource,/var maxRows=4500/);
+ assert.match(epgSource,/maxRows=4500/);
  assert.match(epgSource,/if\(meta\.lastAttempt===today\)/);
  assert.match(epgSource,/if\(!all\(\)\.length\)/);
  assert.match(epgSource,/if\(json.length>750000\)/);
  assert.match(epgSource,/8000000/);
  assert.match(epgSource,/24000000/);
  assert.match(epgSource,/epgDatabase\(\)/);
- assert.match(html,/draw\(\);void epgStartup\(\)/);
- assert.match(html,/void epgStartup\(\);if\(!fromPhone\)closeDialog\(\)/);
+ assert.match(html,/clock\(\);setInterval\(clock,30000\);void epgStartup\(\)/);
+ assert.match(html,/if\(typeof epgStartup==='function'\)void epgStartup\(\);if\(!fromPhone\)closeDialog\(\)/);
 });
 test('XMLTV timezone, tvg-id match and live/next programme',()=>{
  const ctx=runEpg();

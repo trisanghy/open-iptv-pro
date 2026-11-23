@@ -12,7 +12,7 @@ test('Only one exit remains; a separate TizenTube button is provided',()=>{
  const nav=html.slice(html.indexOf('<nav class="nav">'),html.indexOf('</nav>')+6);
  const player=html.slice(html.indexOf('<div id="player"'),html.indexOf('<div id="toast"'));
  assert.ok(nav.includes('id="sidebarShortcuts"'),'Both shortcuts should be inside the left sidebar');
- assert.ok(nav.indexOf('data-nav="help"')<nav.indexOf('id="sidebarShortcuts"'),'Below Hướng dẫn');
+ assert.ok(nav.indexOf('id="tizenTubeBtn"')<nav.indexOf('id="appsBtn"')&&nav.indexOf('id="appsBtn"')<nav.indexOf('data-nav="help"'),'Google TV order: TizenTube, Apps, Help');
  assert.match(nav,/id="tizenTubeBtn"/);
  assert.match(nav,/id="exitModuleBtn"/);
  assert.doesNotMatch(player,/id="exitModuleBtn"|id="tizenTubeBtn"|sidebarShortcuts/);

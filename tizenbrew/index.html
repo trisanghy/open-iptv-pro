@@ -513,7 +513,7 @@ body[data-theme=amoled] #app{background:#000}
 #app .top{min-height:104px;padding:14px 0 19px;gap:16px}
 #app .brand{gap:15px;min-width:320px}
 body #app .brandicon{display:flex;align-items:center;justify-content:center;width:74px;height:74px;border-radius:22px;background:#fff!important;box-shadow:0 5px 18px #0006!important;overflow:hidden;flex:none}
-body #app .brand-svg.official-web-logo{display:block;width:100%;height:100%;color:inherit}
+body #app .brand-svg{display:block;width:100%;height:100%;color:inherit}
 #app .brand strong{font-size:34px;font-weight:800;color:var(--fg)}
 #app .brand p{font-size:17px;color:var(--muted)}
 #app .toolbar{gap:14px}
@@ -624,7 +624,7 @@ body #app .nav button:focus span.nav-icon,body #app .nav button.active:focus spa
 </head><body data-theme="dark">
 <div id="app">
 <header class="top">
-  <div class="brand"><div class="brandicon" aria-hidden="true"><svg class="brand-svg official-web-logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" aria-hidden="true" focusable="false">
+  <div class="brand"><div class="brandicon" aria-hidden="true"><svg class="brand-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" aria-hidden="true" focusable="false">
 <defs><linearGradient id="tri" x1="0" y1="0" x2=".95" y2=".95"><stop offset="0" stop-color="#00e6d4"/><stop offset=".4" stop-color="#22a6f8"/><stop offset=".74" stop-color="#5a60f7"/><stop offset="1" stop-color="#ba35fa"/></linearGradient></defs>
 <rect width="1024" height="1024" rx="220" fill="#ffffff"/>
 <path d="M 197,266 Q 197,173 297,173 Q 315,173 343,192 L 796,462 Q 879,514 796,566 L 343,836 Q 197,928 197,758 Z" fill="url(#tri)"/>
@@ -1333,7 +1333,7 @@ var EPG_DB='openiptv-tizen-epg-bounded-v1';
 var EPG_DAY_KEY='openiptv-tizen-epg-day-v1';
 var epgGuide={names:{},aliasesById:{},programmes:[]},epgRowsById={};
 var epgReady=false,epgLoading=false,epgAttemptInSession=false,epgDay='',epgError='';
-function epgNorm(v){var s=String(v||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/g,'d').toLowerCase();
+function epgNorm(v){var s=String(v||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/đ/g,'d');
  return s.replace(/\b(?:hd|fhd|uhd|1080p|720p|4k)\b/g,'').replace(/[^a-z0-9]/g,'');}
 function epgClock(v){var m=String(v||'').match(/^(\d{4})(\d\d)(\d\d)(\d\d)(\d\d)(\d\d)?\s*(Z|[+-]\d{4})?/);
  if(!m)return NaN;var tz=m[7]||'Z',offset=tz==='Z'?0:(tz.charAt(0)==='-'?-1:1)*(Number(tz.slice(1,3))*60+Number(tz.slice(3,5)));
@@ -1803,7 +1803,7 @@ function draw(){
 function openDialog(kind){if(typeof stopHomePreview==='function')stopHomePreview();byId('modal').hidden=false;byId('sourceDialog').hidden=kind==='search';byId('searchDialog').hidden=kind!=='search';
 byId('modal').firstElementChild.classList.toggle('source-mode',kind!=='search');
 byId('dialogTitle').textContent=kind==='search'?'Tìm kiếm kênh':'Thêm nguồn IPTV';
-if(kind==='source'){setRightsChecked(false);void openPair();}else {stopPair();renderSearchSuggestions(byId('searchInput').value);}
+if(kind==='source'){setRightsChecked(false);void openPair();}else {stopPair();if(typeof renderSearchSuggestions==='function')renderSearchSuggestions(byId('searchInput').value);}
 setTimeout(function(){byId(kind==='search'?'searchInput':'toSourceUrl').focus();},40);}
 function setRightsChecked(on){byId('rights').setAttribute('aria-checked',on?'true':'false');}
 function toggleRights(){setRightsChecked(byId('rights').getAttribute('aria-checked')!=='true');}
@@ -1825,7 +1825,7 @@ else{
 }
 var list=parse(raw,name);if(!list.length)throw Error('M3U không chứa URL hợp lệ');if(state.sources.length>=15)throw Error('Đã đạt 15 nguồn');
 state.sources.push({id:'src-'+newToken(),name:name,address:address,channels:list});if(!save()){state.sources.pop();throw Error('Bộ nhớ TV đầy, không thể lưu nguồn.');}search='';group='Tất cả';section='all';selected=null;draw();
-void epgStartup();if(!fromPhone)closeDialog();notify('Đã thêm '+list.length+' kênh'+(webAliasUsed?' qua nguồn HTTPS của bản Web':'')+'.');if(fromPhone&&webAliasUsed)sourceStatus('✓ TV tải được '+list.length+' kênh qua nguồn HTTPS giống bản Web.');
+if(typeof epgStartup==='function')void epgStartup();if(!fromPhone)closeDialog();notify('Đã thêm '+list.length+' kênh'+(webAliasUsed?' qua nguồn HTTPS của bản Web':'')+'.');if(fromPhone&&webAliasUsed)sourceStatus('✓ TV tải được '+list.length+' kênh qua nguồn HTTPS giống bản Web.');
 return {ok:true,count:list.length,usedFallback:webAliasUsed};}
 catch(e){var error=sourceError(e,address);notify('Không tải được URL. Quét QR trên điện thoại để gửi tệp hoặc dán M3U.');if(fromPhone)sourceStatus('✕ TV không tải được URL. Trên điện thoại hãy chọn tệp hoặc dán M3U qua QR.');return {ok:false,error:error};}
 finally{byId('saveSource').disabled=false;byId('saveSource').textContent='Lưu và tải';}}
@@ -3271,7 +3271,7 @@ window.addEventListener('keyup',function(e){
 document.addEventListener('tizenhwkey',function(e){if(String(e.keyName||'').toLowerCase()==='back')handleBack(e);},true);
 window.addEventListener('tizenhwkey',function(e){if(String(e.keyName||'').toLowerCase()==='back')handleBack(e);},true);
 document.addEventListener('focusin',function(event){rememberHomeFocus(event.target);},true);
-document.body.dataset.theme=state.theme;draw();void epgStartup();updateBottomActions();refreshTizenBrewModules();ensureTizenHlsRelayService();setTimeout(function(){if(resumeLastChannel())byId('player').focus();else restoreHomeFocus();},50);
-function clock(){var d=new Date();byId('clock').textContent=String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');}clock();setInterval(clock,30000);setInterval(function(){if(selected)renderSelectedEPG();},60000);
+document.body.dataset.theme=state.theme;draw();updateBottomActions();refreshTizenBrewModules();ensureTizenHlsRelayService();setTimeout(function(){if(resumeLastChannel())byId('player').focus();else restoreHomeFocus();},50);
+function clock(){var d=new Date();byId('clock').textContent=String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');}clock();setInterval(clock,30000);void epgStartup();setInterval(function(){if(selected)renderSelectedEPG();},60000);
 })();
 </script></body></html>
