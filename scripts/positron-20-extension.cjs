@@ -11887,6 +11887,13 @@ async function runTwenty(page){
  await require('./positron-342-audit.cjs').run(page);
  await require('./positron-343-audit.cjs').run(page);
  await require('./positron-344-audit.cjs').run(page);
+ await require('./positron-345-audit.cjs').run(page);
+ // P345 genuine Electron shortcut-guide before/after evidence:
+ // positron-p51345-shortcut-guide-before-1920x1080-real.png
+ // positron-p51345-shortcut-guide-after-1920x1080-real.png
+ // positron-p51345-shortcut-guide-before-720x900-real.png
+ // positron-p51345-shortcut-guide-after-720x900-real.png
+
  // P344 actual Electron PageUp/PageDown 5-card navigation before/after:
  // positron-p51344-page-navigation-before-1920x1080-real.png
  // positron-p51344-page-navigation-after-1920x1080-real.png

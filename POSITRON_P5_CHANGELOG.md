@@ -1,3 +1,13 @@
+## P5.1.345 / Electron 4.23.430 — Phím điều khiển AI mở gọn bằng remote (CANDIDATE)
+- Feature priority: NEW — Ảnh Electron P344 cho thấy PageUp/PageDown chạy đúng nhưng chỉ có hướng dẫn Alt+Shift+J; người dùng bàn phím/remote không biết đủ các phím khi danh sách dài, trong khi thêm nhiều nút vào header sẽ che nội dung.
+- Feature class: AI
+- User action: Mở WatchFlow AI và mục Phím điều khiển AI; nhấn Enter trên summary để thấy 7 hướng dẫn gồm F6, J/K/P, PageUp/PageDown, Home/End, Alt+Shift+I, nhấn Enter lần nữa để thu gọn.
+- Root cause: help text đơn đã cũ và tooltip không hiển thị được trên remote TV; nhiều phím mới sau P344 không có chỉ dẫn trực quan và có thể bị bỏ sót.
+- Evidence: scripts/positron-345-audit.cjs chạy Electron thật 1920x1080 và 720x900 với Enter mở/đóng details, kiểm đủ 7 hướng dẫn, min-height 44px, không tràn ngang, ảnh before/after, không thay playlist/current playback/model; Node regression tests/positron-345.test.cjs.
+- Electron screenshot: positron-p51345-shortcut-guide-before-720x900-real.png / positron-p51345-shortcut-guide-after-720x900-real.png.
+- Privacy: Danh sách phím là dữ liệu tĩnh trong ứng dụng, không gửi playlist, nguồn IPTV, URL hay mẫu học AI lên mạng.
+- Status: CANDIDATE tới khi Node, native Electron, mở/soát PNG và CI Mac/Win đạt; GitHub Release Stable-only.
+
 ## P5.1.344 / Electron 4.23.429 — PageUp/PageDown duyệt gợi ý AI (CANDIDATE)
 - Feature priority: NEW — Người dùng TV/remote có danh sách 8 gợi ý AI phải bấm mũi tên từng lần hoặc Home/End; nay PageUp/PageDown di chuyển nhanh năm thẻ mà vẫn giữ nút Xem trong tầm nhìn.
 - Feature class: AI
