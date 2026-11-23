@@ -282,6 +282,7 @@ test('P272 WatchFlow hiển thị thư mục có thể mở và kênh đa nhóm,
  assert.ok(ui.includes("foldersMode.textContent='Thư mục EPG'"));
  assert.ok(ui.includes("const catalog=indexed('folders',collection)"));
  assert.ok(ui.includes('indexCache.folders=core.epgFolders(collection,g,win.IPTVGuide'));
+ assert.ok(ui.includes("[c?.id,c?.name,c?.group,c?.groupTitle].join(':')"),'health/status changes must not trigger a full EPG scan');
  assert.ok(ui.includes("folder.dataset.topic=key"));
  assert.ok(ui.includes("folder.append(rows);list.append(folder)"));
  assert.ok(css.includes('#poAICards[data-mode="folders"]'));

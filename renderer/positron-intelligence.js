@@ -143,7 +143,7 @@
  const indexCache={key:'',folders:null,programmes:null,folderScans:0,programmeScans:0};
  let scanNotice='';
  const channelSignature=collection=>(Array.isArray(collection)?collection:[]).map(c=>
-  [c?.id,c?.name,c?.group,c?.groupTitle,c?.status].join(':')).join('\u001f');
+  [c?.id,c?.name,c?.group,c?.groupTitle].join(':')).join('\u001f');
  function guideSignature(g){
   if(!g)return 'no-epg';
   const list=g.programmes;
