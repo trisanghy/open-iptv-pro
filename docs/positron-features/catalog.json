@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-23T20:05:01.925769+00:00",
+  "generatedAt": "2026-11-23T20:07:57.713862+00:00",
   "repository": "trisanghy/open-iptv-pro",
   "branch": "Positron",
   "versions": [
@@ -8,7 +8,7 @@
       "version": "P5.1.333",
       "appVersion": "4.23.418",
       "title": "sửa chồng thanh điều hướng AI và nút Xem bị che (BLOCKER_FIX)",
-      "description": "Feature priority: BLOCKER_FIX Fix: Ẩn thanh năm chế độ WatchFlow thường **chỉ khi chế độ AI đang mở**. Người dùng vẫn nhấn «AI hợp gu» để quay về WatchFlow thường; không xóa tính năng.",
+      "description": "Feature priority: BLOCKER_FIX — Sửa lỗi CI kiểm thử Electron làm thất bại bước chụp ảnh và chặn kiểm chứng bản phát hành, đồng thời khôi phục nút Xem AI bị che trên màn 720px. Feature class: AI",
       "kind": "fix",
       "status": "candidate",
       "published": "",

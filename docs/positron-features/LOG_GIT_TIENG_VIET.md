@@ -6,7 +6,7 @@ Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA 
 
 **Ứng dụng:** 4.23.418 · **Trạng thái:** Chưa có bản phát hành
 
-Feature priority: BLOCKER_FIX Fix: Ẩn thanh năm chế độ WatchFlow thường **chỉ khi chế độ AI đang mở**. Người dùng vẫn nhấn «AI hợp gu» để quay về WatchFlow thường; không xóa tính năng.
+Feature priority: BLOCKER_FIX — Sửa lỗi CI kiểm thử Electron làm thất bại bước chụp ảnh và chặn kiểm chứng bản phát hành, đồng thời khôi phục nút Xem AI bị che trên màn 720px. Feature class: AI
 
 [Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/4cf381311eb081cd09ab25c1674c40d31de5cb83)
 [Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
