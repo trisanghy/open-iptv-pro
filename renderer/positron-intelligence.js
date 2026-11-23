@@ -278,6 +278,28 @@
    fullInfoTopic.textContent=card?.querySelector('.po-ai-card-header small')?.textContent?.trim()||'';
   }
  };
+
+ // P342: keep focused channel headings below the sticky WatchFlow title and
+ // optional full information strip, not merely the Play button.
+ const revealRecommendationCard=target=>{
+  const card=target?.closest?.('#poAICards .po-ai-card');
+  if(!card||panel.hidden)return;
+  const panelRect=panel.getBoundingClientRect();
+  const headRect=panel.querySelector('.po-watchflow-head')?.getBoundingClientRect();
+  const infoRect=fullInfo.hidden?null:fullInfo.getBoundingClientRect();
+  const visibleTop=Math.max(panelRect.top,headRect?.bottom||0,infoRect?.bottom||0)+9;
+  const visibleBottom=panelRect.bottom-10;
+  if(visibleTop>=visibleBottom)return;
+  const cardRect=card.getBoundingClientRect();
+  if(cardRect.height<=visibleBottom-visibleTop){
+   if(cardRect.top<visibleTop)panel.scrollTop=Math.max(0,panel.scrollTop-(visibleTop-cardRect.top));
+   else if(cardRect.bottom>visibleBottom)panel.scrollTop+=cardRect.bottom-visibleBottom;
+  }else{
+   const actionRect=target.getBoundingClientRect();
+   if(actionRect.top<visibleTop)panel.scrollTop=Math.max(0,panel.scrollTop-(visibleTop-actionRect.top));
+   else if(actionRect.bottom>visibleBottom)panel.scrollTop+=actionRect.bottom-visibleBottom;
+  }
+ };
  // P337: keep the recommendation index synchronized with standard Tab, click,
  // remote focus and the existing J/K shortcuts. A focused feedback / lookup
  // action belongs to its parent card; focus elsewhere clears stale status.
@@ -286,6 +308,7 @@
   const card=event.target?.closest?.('#poAICards .po-ai-card');
   const play=card?.querySelector('.po-ai-actions button:first-child');
   updateFocusProgress(play||null);
+  revealRecommendationCard(play);
   if(play&&!fullInfo.hidden&&play.getClientRects().length)
    play.scrollIntoView({block:'center',behavior:'instant'});
  });
@@ -397,6 +420,7 @@
   target.focus({preventScroll:true});
   target.scrollIntoView({block:'nearest',behavior:'instant'});
   updateFocusProgress(target);
+  revealRecommendationCard(target);
  });
  // P335: jump to the next *watchable* recommendation, skipping feedback
  // buttons and wrapping at the end; local focus only, no play/learning.
@@ -419,6 +443,7 @@
   target.focus({preventScroll:true});
   target.scrollIntoView({block:'center',behavior:'instant'});
   updateFocusProgress(target);
+  revealRecommendationCard(target);
  });
  // P338: opt-in reverse traversal through the watchable AI recommendations,
  // with a safe last-item start and wrap. Never trigger play or model learning.
@@ -442,6 +467,7 @@
   target.focus({preventScroll:true});
   target.scrollIntoView({block:'center',behavior:'instant'});
   updateFocusProgress(target);
+  revealRecommendationCard(target);
  });
  // P340: reveal/hide complete recommendation identity via keyboard or remote.
  // The information bar is local and never calls playback or preference learning.
@@ -467,6 +493,7 @@
    const focused=d.activeElement?.closest?.('.po-ai-card .po-ai-actions button:first-child');
    if(focused?.getClientRects().length)focused.scrollIntoView({block:'center',behavior:'instant'});
   }else fullInfo.hidden=true;
+   revealRecommendationCard(d.activeElement);
  });
  // P341: native TV remote uses Up/Down while focus is on a channel's Xem
  // action. Move between actionable recommendations, not the page scroll, and
@@ -489,6 +516,7 @@
   next.focus({preventScroll:true});
   next.scrollIntoView({block:'center',behavior:'instant'});
   updateFocusProgress(next);
+  revealRecommendationCard(next);
  });
  tab.addEventListener('click',()=>{if(aiOpen){toolbar.querySelector('[data-flowplus-mode="discover"]')?.click();return;}showAI();});
  toolbar.addEventListener('click',event=>{if(event.target.closest('[data-flowplus-mode]'))hideAI();},true);

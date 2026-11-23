@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.426",
-  "description": "Positron P5.1.341: AI dùng mũi tên remote ↑↓ để di chuyển gợi ý (NEW)",
+  "version": "4.23.427",
+  "description": "Positron P5.1.342: tự giữ tiêu đề gợi ý AI không bị thanh nổi che khi điều hướng (NEW)",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

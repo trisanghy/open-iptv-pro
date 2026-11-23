@@ -47,3 +47,10 @@
 
 ## Vòng 05/20 — P5.1.341 / 4.23.426 (CANDIDATE)
 - Feature class AI: Up/Down between native AI Xem actions, wrap and maintain focus/selected-channel context, preserve privacy and playlist, no autoplay. Before/after screenshots 1920×1080 and 720×900, awaiting CI/real screenshot review.
+
+
+## Đợt 20 vòng MỚI từ P5.1.340 — vòng 01: P5.1.342 CANDIDATE
+- P5.1.341 được một phiên khác push trong khi nghiên cứu, nên không sửa lùi hoặc ghi đè; tiếp tục từ P341 sau khi kiểm tra HEAD.
+- Ảnh baseline P340 thực 720×900, mở trực tiếp từ artifact 14864433144, cho thấy tiêu đề gợi ý 1 nằm dưới sticky title/info strip. Mã P341 giữ J/K/P và thêm ArrowUp/Down cũng cuộn vào nút Xem, lỗi còn cơ sở tái hiện.
+- Sửa `renderer/positron-intelligence.js`: helper đo vùng trống thực giữa header và đáy panel, điều chỉnh cuộn để cả heading và Play nhìn thấy khi đủ không gian; dùng chung focusin/Tab, J/K/P, ArrowUp/Down, bật/tắt Alt+Shift+I. Không sửa playlist, model hoặc luồng playback.
+- Bằng chứng P342 gồm `tests/positron-342.test.cjs` và `scripts/positron-342-audit.cjs` (real Electron 1920/720, trước tái hiện vị trí cuộn che tiêu đề, sau phím thật sửa, không autoplay). Chỉ đánh dấu đạt sau CI và mở ảnh.
