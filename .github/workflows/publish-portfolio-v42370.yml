@@ -192,6 +192,7 @@ jobs:
           retention-days: 14
 
   publish:
+    if: false # published immutable Stable version; QA artifacts only
     name: Publish new stable v4.23.70 after validating installer embedded notices
     needs: [regression, web, rust, electron]
     runs-on: ubuntu-latest
