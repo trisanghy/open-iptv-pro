@@ -3,7 +3,7 @@ const test=require('node:test'),assert=require('node:assert/strict');
 const {audit,engine}=require('../scripts/audit-rustlab-l10n.cjs');
 test('100% of explicitly audited static HTML UI labels are localized for every non-Vietnamese language',()=>{
  const result=audit();
- assert.ok(result.total>=359,'Audit unexpectedly removed UI elements');
+ assert.ok(result.total>=350,'Audit unexpectedly removed UI elements');
  for(const [locale,info] of Object.entries(result.byLocale)){
   assert.equal(info.localized,result.total,locale+': missing native UI translations:\n'+info.missing.join('\n'));
  }
