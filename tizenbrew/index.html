@@ -2058,8 +2058,8 @@ function startRelayHlsPlayback(channel,token){
     if(!playbackActive(token)||html5Mode!=='hls-relay'||!data||!data.fatal)return;
     var cause=describeHlsError(data);
     logPlayback('HLS TV nội bộ: '+cause);
-    loadRelayDiagnostics(token);
     if(tryRecoverHlsInPlace(engine,data,token))return;
+    loadRelayDiagnostics(token);
     if(playbackConfirmed&&recoverStalledPlayback(token,'HLS nội bộ: '+cause))return;
     finishPlaybackError(token,'HLS nội bộ: '+cause);
    });

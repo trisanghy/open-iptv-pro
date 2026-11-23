@@ -84,7 +84,7 @@ test('Player clears status on real playback and does not keep old autoplay warni
 test('Main script remains syntactically valid and playback events are wired',()=>{
  const scripts=[...html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/g)];
  scripts.forEach(s=>assert.doesNotThrow(()=>new vm.Script(s[1])));
- assert.match(html,/onplaying=function\(\)\{if\(playbackEngine==='html5'\)playbackReady\(playbackSerial\);\}/);
+ assert.match(html,/onplaying=function\(\)\{\s*if\(playbackEngine==='html5'&&!this.paused&&this.readyState>=2\)/);
  assert.match(html,/ontimeupdate=function\(\)/);
  assert.match(html,/function startAvplay\(channel,token\)/);assert.match(html,/api\.prepareAsync\(/);assert.match(html,/fallbackFromAvplay\(/);
 });

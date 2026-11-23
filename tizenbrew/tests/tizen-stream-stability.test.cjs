@@ -110,18 +110,22 @@ test('A fatal HLS error after first picture is recovered, not silently ignored',
  assert.equal(s.requests.filter(x=>x.address.endsWith('/session')).length,sessions+1,'new local relay session created');
  assert.equal(old.destroyed,true);
 });
-test('Failed relay recovery tries the next decoder without an endless relay loop',async()=>{
+test('Known-good relay retries twice before falling back to a different decoder',async()=>{
  const s=setup();await proveRelay(s);
  s.api.play(c);await flush();
  const engine=s.instances.at(-1);engine.ready();await flush();
  s.api.playbackReady(s.api.current().serial);
  engine.fail('fragmentLoadError');await flush();
- const next=s.instances.at(-1);
- next.fail('manifestLoadError');await flush();
- assert.equal(s.api.current().mode,'native','after one relay retry, fallback to Samsung HTML5');
+ assert.equal(s.api.current().mode,'hls-relay');
+ const first=s.instances.at(-1);
+ first.fail('manifestLoadError');await flush();
+ assert.equal(s.api.current().mode,'hls-relay','transient second failure stays on proven relay');
+ const second=s.instances.at(-1);
+ second.fail('manifestLoadError');await flush();
+ assert.equal(s.api.current().mode,'native','bounded retries eventually switch decoder');
  const sessions=s.requests.length;
  s.api.handleHtml5Error(s.api.current().serial,'native blocked');await flush();
- assert.equal(s.requests.length,sessions,'failed relay is not immediately repeated');
+ assert.equal(s.requests.length,sessions,'bad relay is not retried immediately');
 });
 test('Picker autoplay and preview do not change source URLs or leak credentials to diagnostics',()=>{
  assert.match(html,/pickerPlayTimer=setTimeout\(commitPickerPlay,200\)/);
