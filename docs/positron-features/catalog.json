@@ -1,20 +1,35 @@
 {
-  "generatedAt": "2026-11-23T18:05:15.489239+00:00",
+  "generatedAt": "2026-11-23T18:16:39.444311+00:00",
   "repository": "trisanghy/open-iptv-pro",
   "branch": "Positron",
   "versions": [
     {
+      "number": 326,
+      "version": "P5.1.326",
+      "appVersion": "4.23.411",
+      "title": "AI đánh dấu điểm hợp gu sơ bộ khi thiếu phản hồi",
+      "description": "Feature priority: NEW — hiển thị rõ mức hợp gu mới chỉ là ước tính khi AI chưa có đủ 10 phản hồi; kèm giải thích bằng tooltip và nhãn đọc màn hình, không đổi thứ hạng hay tỷ lệ mô hình. Feature class: AI",
+      "kind": "feature",
+      "status": "candidate",
+      "published": "",
+      "tag": "",
+      "commit": "b716cf4039cb9787a0e18201df6b142d5771c610",
+      "url": "https://github.com/trisanghy/open-iptv-pro/tree/Positron",
+      "assets": [],
+      "image": null
+    },
+    {
       "number": 325,
       "version": "P5.1.325",
-      "appVersion": "4.23.410",
-      "title": "điều hướng năm chế độ WatchFlow bằng phím mũi tên an toàn",
+      "appVersion": "Chưa xác minh",
+      "title": "Electron 4.23.410 — WatchFlow chuyển tiêu điểm bằng phím mũi tên mà không tự phát (CANDIDATE)",
       "description": "Feature priority: NEW — năm chế độ WatchFlow và mục AI có điều hướng ArrowLeft/ArrowRight/Home/End bằng bàn phím hoặc remote; chỉ chuyển tiêu điểm, không tự chạy Smart Zap và không phát kênh. Feature class: AI",
       "kind": "feature",
       "status": "candidate",
       "published": "",
       "tag": "",
-      "commit": "cf55aff744d5a96c0241d6138f4395cc8891c0a8",
-      "url": "https://github.com/trisanghy/open-iptv-pro/tree/Positron",
+      "commit": "",
+      "url": "https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md",
       "assets": [],
       "image": null
     },
@@ -1981,7 +1996,7 @@
       "commit": "",
       "url": "https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md",
       "assets": [],
-      "image": "screenshots/positron-p51194-dvr-start-after-after-1920x1080-real.png"
+      "image": "screenshots/positron-p51194-dvr-start-after-before-1920x1080-real.png"
     },
     {
       "number": 193,
