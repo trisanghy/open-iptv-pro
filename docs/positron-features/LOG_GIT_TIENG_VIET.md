@@ -2,14 +2,22 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
-## P5.1.329 — nhấn lại F6 hoặc Alt+Shift+W để đóng WatchFlow AI
+## P5.1.330 — bảo vệ phím tắt WatchFlow AI trong hộp thoại Cast/Thêm nguồn và khi nhập văn bản
 
-**Ứng dụng:** 4.23.414 · **Trạng thái:** Chưa có bản phát hành
+**Ứng dụng:** 4.23.415 · **Trạng thái:** Chưa có bản phát hành
+
+bảo vệ phím tắt WatchFlow AI trong hộp thoại Cast/Thêm nguồn và khi nhập văn bản
+
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/068763ffa15910dabd6a94a169fec4b5ece33500)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+
+## P5.1.329 — Electron 4.23.414 — Phím tắt hai chiều mở/đóng WatchFlow AI (CANDIDATE)
+
+**Ứng dụng:** Chưa xác minh · **Trạng thái:** Chưa có bản phát hành
 
 Feature priority: NEW — điều khiển hoàn toàn bằng một phím để bật và tắt bảng AI, không phải đưa chuột tìm nút × hoặc chuyển sang Escape khi đang xem truyền hình. Feature class: AI
 
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/0f48093ce424130fbd5dad859a54f1ce84444031)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
 
 ## P5.1.328 — Electron 4.23.413 — Phím tắt mở nhanh WatchFlow Intelligence (CANDIDATE)
 
