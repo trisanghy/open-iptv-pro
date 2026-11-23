@@ -2,14 +2,22 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
-## P5.1.301 — hiển thị cảnh báo rủi ro AI trước xác nhận
+## P5.1.302 — mở trực tiếp nhóm kênh AI có nguy cơ mất phân loại
 
-**Ứng dụng:** 4.23.386 · **Trạng thái:** Chưa có bản phát hành
+**Ứng dụng:** 4.23.387 · **Trạng thái:** Chưa có bản phát hành
+
+Feature priority: NEW — Thêm thao tác điều hướng một chạm trực tiếp từ cảnh báo Naive Bayes đến danh sách tên kênh đang bị ảnh hưởng, tự mở phần chi tiết và đặt mẫu kênh vào vùng nhìn không bị nút xác nhận cố định che, giảm thao tác cuộn dài. Feature class: AI
+
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/5815ea6613d23ef610ccea6111bf88ab8bf724b5)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+
+## P5.1.301 — Cảnh báo khôi phục AI không bị che / Electron 4.23.386
+
+**Ứng dụng:** Chưa xác minh · **Trạng thái:** Chưa có bản phát hành
 
 Feature priority: NEW — Thêm trạng thái cảnh báo riêng trên nút khôi phục AI khi mô hình mới có thể làm mất dữ liệu phân loại đã học, giúp người xem phân biệt thao tác có rủi ro và kiểm tra trước khi xác nhận. Feature class: AI
 
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/8ec333440d559cd82b5169307f48b0b8015c8703)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
 
 ## P5.1.300 — AI hiển thị tên kênh dễ mất phân loại khi thay mô hình / Electron 4.23.385
 
