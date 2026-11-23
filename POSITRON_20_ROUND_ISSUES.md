@@ -113,3 +113,9 @@ Baseline 24/11/2026: HEAD 557361b9ab74340ca0f2999f1e0912c2c43803db, P5.1.323 / 4
 - P332 sửa trực tiếp trong CSS/JS: đảm bảo AI-active desktop panel width 528px kể cả khi chưa có playlist, tăng min-height 44px; hiển thị hướng dẫn phím và aria-describedby.
 - QA Electron mới: đo width 1920, minheight 44 của đủ 6 nút, hint, focus-only, 720 width/overflow, không đổi playlist/model/autoplay; ảnh before panel đóng và after panel mở; đối chiếu với ảnh P331 panel mở làm baseline cũ.
 - CHƯA ĐẠT cho đến khi CI/ảnh thật của P332 được mở soát.
+
+
+### P332 — giữ bất biến DOM của P276 thay vì bỏ bài hồi quy
+- Fast QA ban đầu (45252855915): 14/14 flag đạt, ảnh desktop/720 đã MỞ; desktop width 528px, sáu nút height 44px, helper liên kết aria-describedby.
+- Node full suite run 45252855893: 1047 pass, 5 skipped, 1 fail ở test P276 vì static invariant bắt buộc lệnh area.append(title,controls,alertRow,modeBar,summary,list,privacy,modelManager) không đổi.
+- Sửa mã thực: giữ nguyên câu lệnh area.append và dùng modeBar.after(modeHelp) để thêm dòng gợi ý bên dưới; DOM hiển thị giữ đúng hình và không phá thứ tự nhóm điều hướng trước model manager. Chạy lại Node và Electron sau sửa.

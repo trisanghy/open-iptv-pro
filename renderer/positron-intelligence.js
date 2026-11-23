@@ -239,7 +239,8 @@
  const list=d.createElement('div');list.id='poAICards';list.className='po-ai-cards';
  const privacy=d.createElement('p');privacy.className='po-ai-privacy';
  privacy.textContent='Mặc định KHÔNG học. Khi bật: chỉ lưu trọng số sở thích trong máy; học sau ≥35 giây phát có hình/tiếng, không tải stream hay lịch sử lên mạng. Tra cứu web chỉ gửi tên kênh, không gửi playlist/URL/hành vi. Bạn có thể xóa mô hình.';
- area.append(title,controls,alertRow,modeBar,modeHelp,summary,list,privacy,modelManager);
+ area.append(title,controls,alertRow,modeBar,summary,list,privacy,modelManager);
+ modeBar.after(modeHelp);
 
  // P322: context-aware accessible header; preserve native wording for non-AI.
  const watchTitle=byId('poWatchFlowTitle'),watchKicker=panel.querySelector('.po-watchflow-kicker');

@@ -6,7 +6,7 @@ test('P332 AI panel expands for no-source onboarding, 44px mode targets and keyb
  const qa=read('scripts/positron-332-audit.cjs'),ext=read('scripts/positron-20-extension.cjs');
  const wf=read('.github/workflows/positron-lab.yml');
  for(const token of ['poAIKeyboardHelp','← → ↑ ↓: chuyển chế độ · Enter/Space: chọn',
-  'modeBar.setAttribute(\'aria-describedby\',modeHelp.id)','area.append(title,controls,alertRow,modeBar,modeHelp,summary'])
+  'modeBar.setAttribute(\'aria-describedby\',modeHelp.id)','area.append(title,controls,alertRow,modeBar,summary','modeBar.after(modeHelp)'])
   assert.ok(js.includes(token),token);
  for(const token of ['P5.1.332','@media(min-width:1000px)','po-watchflow-panel[data-po-ai-active="true"]',
   'width:min(528px','min-height:44px!important','.po-ai-keyboard-help'])assert.ok(css.includes(token),token);
