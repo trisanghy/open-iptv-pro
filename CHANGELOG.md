@@ -1,3 +1,7 @@
+## Rust Lab v23.8.133 — Sửa bốn bài test lỗi nhãn Smart cũ (PRERELEASE)
+
+Cập nhật bốn kiểm thử hồi quy từ chữ “tự chọn mô hình” sang “Smart · tự chuẩn bị”, phù hợp giao diện một lần chọn chế độ là ứng dụng tự tải AI. Giữ nguyên mô hình, logic cài đặt, playlist, trình phát và chính sách prerelease bất biến. Khắc phục lỗi build Windows của v23.8.132 do test cũ.
+
 ## Rust Lab v23.8.132 — Chọn Smart/Intelligence là ứng dụng tự chuẩn bị AI (PRERELEASE)
 
 - Smart: tự dùng lại mô hình ONNX đa ngôn ngữ đã tải hoặc tự tải một lần (~118 MB) khi người dùng chọn chế độ; tiến độ/lỗi hiển thị ngay tại WatchFlow, không cần tìm tệp trọng số. Khi hoàn tất tự kích hoạt phân loại kênh và EPG. Không gọi bộ fastText 18 MB chưa được kiểm chứng là đã cài.

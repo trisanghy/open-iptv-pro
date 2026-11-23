@@ -56,7 +56,7 @@ test('Native installs and removals require user clicks/confirmation; storage sho
 });
 test('Standard remains operational; Smart catalog is not falsely advertised as installed',()=>{
  assert.match(src,/Dưới 20 MB · Naive Bayes đang chạy/);
- assert.match(src,/Dưới 200 MB · tự chọn mô hình/);
+ assert.match(src,/Smart · tự chuẩn bị/);
  assert.match(src,/chưa kích hoạt mô hình Smart/);
  assert.match(src,/Hy-MT2 chuyên dịch/);
 });

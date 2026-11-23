@@ -8,7 +8,7 @@ test('Standard routes Naive Bayes EPG analysis, independent of Smart',()=>{
  assert.match(ui,/Dưới 20 MB · Naive Bayes đang chạy/);
 });
 test('Smart offers a selector and honest installed/available ONNX status',()=>{
- assert.match(ui,/Dưới 200 MB · tự chọn mô hình/);
+ assert.match(ui,/Smart · tự chuẩn bị/);
  assert.match(ui,/wfSmartModelSelect/);
  assert.match(ui,/modelCatalog\.save\(root\.localStorage,smartChoice\)/);
  assert.match(ui,/Smart bổ sung chủ đề từ mô hình ONNX đã tải/);
