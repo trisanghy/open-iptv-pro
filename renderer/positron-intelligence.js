@@ -47,6 +47,21 @@
  const area=d.createElement('section');area.id='poIntelligenceResults';area.className='po-ai-panel';
  area.hidden=true;area.setAttribute('aria-live','polite');
  panel.querySelector('#poFlowPlusResults')?.after(area);
+ // P321: local, accessible navigation back to the AI overview after scrolling
+ // a long model explanation. No playback, learning, or playlist mutation.
+ const backTop=d.createElement('button');backTop.type='button';
+ backTop.id='poAIBackTop';backTop.textContent='↑ Đầu AI';
+ backTop.title='Về đầu bảng WatchFlow AI';
+ backTop.setAttribute('aria-label','Về đầu bảng WatchFlow AI');
+ backTop.hidden=true;
+ panel.querySelector('.po-watchflow-head #poWatchFlowClose')?.before(backTop);
+ const syncAIBackTop=()=>{backTop.hidden=panel.hidden||!aiOpen||panel.scrollTop<=120;};
+ panel.addEventListener('scroll',syncAIBackTop,{passive:true});
+ backTop.addEventListener('click',()=>{
+  if(!aiOpen||panel.hidden)return;
+  panel.scrollTop=0;syncAIBackTop();tab.focus({preventScroll:true});
+ });
+
  const title=d.createElement('div');title.className='po-ai-heading';
  const name=d.createElement('h3');name.textContent='WatchFlow Intelligence';
  const desc=d.createElement('p');desc.textContent='AI học trực tuyến trên thiết bị · Phân loại chương trình từ EPG thật · Tra cứu Wikipedia khi bạn yêu cầu';
@@ -199,7 +214,7 @@
   for(const button of toolbar.querySelectorAll('button[data-flowplus-mode]'))button.setAttribute('aria-pressed','false');
   for(const el of extras)el.classList.add('po-flowplus-hidden');
   for(const el of originals)el.hidden=true;
-  panel.scrollTop=0;
+  panel.scrollTop=0;syncAIBackTop();
  }
  function showAI(){aiOpen=true;syncAIView();render();}
  function hideAI(){
@@ -207,7 +222,7 @@
   wideButton.setAttribute('aria-pressed','false');wideButton.textContent='Đọc rộng';
   delete panel.dataset.poAiActive;delete panel.dataset.poAiTraining;
   delete panel.dataset.poAiWide;area.hidden=true;
-  tab.setAttribute('aria-pressed','false');
+  tab.setAttribute('aria-pressed','false');syncAIBackTop();
  }
  wideButton.addEventListener('click',()=>{
   if(!aiOpen||panel.hidden)return;

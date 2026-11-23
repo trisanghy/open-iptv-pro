@@ -59,3 +59,9 @@ Chưa thực hiện. Mỗi vòng yêu cầu commit/version, test, ảnh Electron
 - Ảnh P312 sau: giao diện phản hồi đã yêu cầu tải JSON nhưng chưa hiển thị tên tệp/kích thước hay kiểm chứng trực tiếp tính toàn vẹn tệp vừa xuất. Cơ hội P313: kiểm tra/sao lưu mô hình có xác thực cấu trúc và thông tin kiểm chứng rõ ràng, không gửi dữ liệu lên mạng, chỉ sau thao tác người dùng.
 - Baseline mới nhất hoàn tất đã xác minh: P5.1.312, Electron 4.23.397, commit c94c1c9d179d4d9dbf10cc008b51c92685d8775a; QA repair/website bot HEAD có thể mới hơn. Phải đọc lại HEAD và package.json trước sửa.
 - Đợt này mới có 2/20 vòng đủ tiêu chí; không trộn 70 ảnh test tích lũy của CI vào số vòng sửa mới.
+
+## Đợt tiếp theo từ P5.1.320 — 23/11/2026
+- Baseline P5.1.320 / Electron 4.23.405; HEAD 157c6d5eaeab360530ae147d974e728f92f915f0; Actions 45205998261 test/capture/build Win & Mac success, release skipped.
+- Đã tải artifact 14833832765 và mở ảnh trước/sau P320 thực 1920×1080; tiêu đề AI bị cuộn một phần dưới nav sticky.
+- Vòng 01/20 — P5.1.321 CANDIDATE: thêm nút ↑ Đầu AI có điều kiện trong header sticky; test và ảnh P321 trước/sau; chưa tính hoàn thành trước CI và soát ảnh sau.
+- Vòng 02–20: chưa thực hiện; không lấy số screenshot tích lũy làm số vòng mới.

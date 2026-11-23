@@ -1507,3 +1507,17 @@ test('P320 primary AI recommendation actions precede optional ML explanation in 
  for(const word of ['qa320','positron-p51320-ai-actions-before-1920x1080-real.png',
   'positron-p51320-ai-actions-after-1920x1080-real.png'])assert.ok(qa.includes(word),word);
 });
+
+
+test('P321 adds accessible scroll-to-overview without touching IPTV or learned models',()=>{
+ const ui=fs.readFileSync('renderer/positron-intelligence.js','utf8');
+ const css=fs.readFileSync('renderer/positron-intelligence.css','utf8');
+ const qa=fs.readFileSync('scripts/positron-20-extension.cjs','utf8');
+ for(const term of ["backTop.id='poAIBackTop'","backTop.hidden=panel.hidden||!aiOpen||panel.scrollTop<=120",
+  "panel.scrollTop=0;syncAIBackTop();tab.focus({preventScroll:true})",
+  "panel.addEventListener('scroll',syncAIBackTop,{passive:true})"])assert.ok(ui.includes(term),term);
+ assert.ok(css.includes('#poWatchFlowPanel #poAIBackTop[hidden]'));
+ assert.ok(css.includes('#poAIBackTop:focus-visible'));
+ for(const name of ['qa321','positron-p51321-ai-return-before-1920x1080-real.png',
+  'positron-p51321-ai-return-after-1920x1080-real.png'])assert.ok(qa.includes(name),name);
+});

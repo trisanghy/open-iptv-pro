@@ -1,3 +1,9 @@
+## P5.1.321 / Electron 4.23.406 — Về đầu bảng WatchFlow AI khi cuộn sâu (CANDIDATE)
+- Ảnh Electron thật P320: tiêu đề WatchFlow Intelligence bị cuộn dưới thanh nav cố định khi đọc giải thích Logistic.
+- Thêm nút ↑ Đầu AI vào header sticky, chỉ hiện khi chế độ AI mở và người dùng cuộn >120px; bấm về đầu, trả focus về tab AI; không cập nhật mô hình hay tự phát.
+- Regression & screenshot thực P321 1920×1080 trước/sau; QA kiểm tra hiển thị, keyboard focus, viewport, playlist, current channel, localStorage. Chỉ đánh dấu đạt sau CI và mở ảnh.
+- Giữ chính sách chỉ công bố Stable trên Releases; installer/QA thử nghiệm trong Actions.
+
 ## P5.1.320 / Electron 4.23.405 — Nút Xem/Hợp gu luôn nằm trên phần giải thích AI (CANDIDATE)
 - Feature priority: BLOCKER_FIX — Ảnh Electron thật P319 chứng minh mở giải thích AI đã đẩy nút Xem khởi động playback và Hợp gu ra khỏi vùng bấm, chặn thao tác chính với kênh. Đưa hàng nút lên trên phần giải thích và kiểm chứng click target trong Electron.
 - Feature class: AI
