@@ -534,13 +534,17 @@
   window.IPTVProAdvanced?.onFavoritesChanged?.();
   window.dispatchEvent(new CustomEvent('openiptv:favorites-changed',{detail:{count:favCore.visible(store).length}}));
  }
- function render(preserveScroll=false){
+ function render(preserveScroll=false,startup=false){
   syncGroupOrder();
   const visibleFavorites=favCore.sync(store);
   const enabled=store.sources.filter(s=>s.enabled!==false);const visible=store.channels.filter(c=>enabled.some(s=>s.id===c.sourceId));
   $('#navCount').textContent=visible.length;$('#favCount').textContent=visibleFavorites.length;$('#sourceCount').textContent=store.sources.length;$('#footerCounts').textContent=`${store.channels.length} kênh • ${store.sources.length} nguồn`;
   $('#activeSourceTag').textContent=store.sources.length?`${store.sources.length} nguồn M3U`:'Chưa có nguồn';
-  renderList(preserveScroll);renderSources();renderShots();renderFavorites();renderFolders();$('#folderCount').textContent=groupNames().length;
+  renderList(preserveScroll);
+  // Offscreen pages are populated by renderOnNavigation when first opened.
+  // A fresh site load must not build thousands of hidden cards and snapshots.
+  if(!startup){renderSources();renderShots();renderFavorites();renderFolders();}
+  $('#folderCount').textContent=groupNames().length;
   updatePlayerFavorite();notifyFavorites();window.IPTVExtras?.render?.();
  }
  function updateFavoriteButton(button,channel){
@@ -715,7 +719,7 @@
    releaseLocalForRemote();
  });
  function stopPlayer(){channelSelectionSerial++;const oldFallback=ffmpegFallbackId;ffmpegFallbackId='';if(oldFallback)window.streamleaf?.stopPlaybackFallback?.(oldFallback).catch(()=>{});window.OpenIPTVCastUI?.stopOnLocalStop?.();if(!native)void window.OpenIPTVWebCastV2?.onLocalStop?.();playGeneration++;playAttemptSerial++;clearTimeout(failoverTimer);clearTimeout(stallTimer);clearTimeout(startupNoteTimer);attemptedTransports.clear();nativeHlsTried.clear();window.IPTVProAdvanced?.onStop?.();if(hls){hls.destroy();hls=null;}if(dash){try{dash.reset();}catch{}dash=null;}player.pause();player.removeAttribute('src');player.load();current=null;mediaInfo={hls:false,mode:'unknown',seekable:false};document.dispatchEvent(new CustomEvent('openiptv:media-info',{detail:mediaInfo}));$('#playingTitle').textContent='Chưa chọn kênh';$('#playingSubtitle').textContent='Chọn kênh để phát';$('#playBtn').textContent='▶';$('#emptyPlayer').classList.remove('hidden');$('#playingIcon').textContent='TV';updatePlayerFavorite();updateManualLinkPicker();renderList();window.IPTVExtras?.onChannel?.(null);}
- async function loadHlsLib(){if(window.Hls)return window.Hls;if(native)throw Error('Ứng dụng chưa đóng gói hls.js. Hãy chạy npm install rồi đóng gói lại.');return new Promise((resolve,reject)=>{const script=document.createElement('script');script.src='https://cdn.jsdelivr.net/npm/hls.js@1.6.15/dist/hls.min.js';script.onload=()=>window.Hls?resolve(window.Hls):reject(Error('Thiếu thư viện hls.js'));script.onerror=()=>reject(Error('Không tải được hls.js từ CDN để phát HLS trên trình duyệt này'));document.head.append(script);});}
+ async function loadHlsLib(){if(window.Hls)return window.Hls;if(native)throw Error('Ứng dụng chưa đóng gói hls.js. Hãy cài lại bản Desktop đầy đủ.');if(!window.OpenIPTVPlaybackLibs?.load)throw Error('Thiếu bộ nạp trình phát Web. Hãy tải lại trang.');return window.OpenIPTVPlaybackLibs.load('hls');}
  function isInternalMediaUrl(raw){return /^https?:\/\/127\.0\.0\.1:\d+\/(?:stream|buffer|snapshot|playback-fallback)\b/i.test(String(raw||''));}
  function isTimeshiftUrl(raw){return /^https?:\/\/127\.0\.0\.1:\d+\/buffer\b/i.test(String(raw||''))||/[?&]file=rolling\.m3u8(?:$|[&#])/i.test(String(raw||''));}
  function looksLikeHlsUrl(raw){return /\.m3u8(?:$|[?#&])/i.test(String(raw||''))||/[?&](?:file|url)=[^#]*\.m3u8(?:$|[&#])/i.test(String(raw||''));}
@@ -814,7 +818,8 @@
   };
   if(looksDash){
    activeEngine='dashjs';
-   const Dash=window.dashjs;
+   const Dash=window.dashjs||(native?null:await window.OpenIPTVPlaybackLibs?.load?.('dash'));
+   if(!isCurrent())return;
    if(!Dash?.MediaPlayer)throw Error('Thiếu dash.js trong gói ứng dụng; cài lại đầy đủ phụ thuộc npm.');
    if(!window.MediaSource && !window.ManagedMediaSource)throw Error('MPEG-DASH yêu cầu trình duyệt hỗ trợ Media Source Extensions');
    const engine=Dash.MediaPlayer().create();dash=engine;
@@ -1399,7 +1404,7 @@
  });
  updateManualLinkPicker();
  window.IPTVState=Object.freeze({readSourceURL,getStore:()=>store,isBusy:()=>tasks.check.running||tasks.shots.running,getCurrent:()=>current,getChannels:()=>enabledChannels(),openSnapshotChannel,setPage,save,toast,textStatus,player,renderList,render,playChannel,switchChannel,getPlaybackOrder:()=>sortedChannels(enabledChannels()),getAudioLinks:channel=>currentAvailableLinks(channel),suspendVideoForBackground,stopPlayer,refreshManualLinks:updateManualLinkPicker,openModal,loadHlsLib,getPlayMode:()=>playMode,getMediaInfo:()=>mediaInfo,tryNextLink:()=>{if(playMode!=='live'||playCandidateIndex+1>=playCandidates.length)return false;void recoverPlayback(playGeneration,'Giám sát xác nhận đứng hình');return true;},importSource:addSource});
- wire();render();if(upgradedChecker)save();
+ wire();render(false,true);if(upgradedChecker)save();
  $('#appMode').textContent=native?'Ứng dụng • Desktop':'Bản xem thử • Web';
  $('#miniStatus').textContent=native?'Không cần Python / VLC':'Safari phát HLS trực tiếp';
  if(native)window.streamleaf.capabilities().then(x=>{snapshotBase=x.snapshotBase||'';window.__snapshotBase=snapshotBase;render();textStatus('Sẵn sàng • FFmpeg tích hợp: '+(x.ffmpegExists?'đã sẵn sàng':'không khả dụng; vui lòng cài lại bản Full'));}).catch(()=>textStatus('Không đọc được thông tin môi trường'));

@@ -240,6 +240,29 @@ channel_search_new="let pendingChannelSearch=0;$('#searchBox').addEventListener(
 if app_text.count(channel_search_old)!=1:sys.exit('Web performance search patch drift')
 app_text=app_text.replace(channel_search_old,channel_search_new,1)
 
+
+# Web startup fast path: keep the built WebView source in sync with the
+# reviewed Web-only decoder loading and offscreen-page policy.
+# This patch never touches Electron/Rust or the upstream WebView frontend.
+reviewed_load=re.search(r'(?m)^ async function loadHlsLib\(\)\{[^\n]*\}',web_app)
+built_load=re.search(r'(?m)^ async function loadHlsLib\(\)\{[^\n]*\}',app_text)
+if reviewed_load is None or built_load is None:
+    sys.exit('Web fastload HLS loader anchor changed')
+app_text=app_text[:built_load.start()]+reviewed_load.group(0)+app_text[built_load.end():]
+dash_old='   const Dash=window.dashjs;'
+dash_new="   const Dash=window.dashjs||(native?null:await window.OpenIPTVPlaybackLibs?.load?.('dash'));\n   if(!isCurrent())return;"
+if app_text.count(dash_old)!=1:sys.exit('Web fastload DASH anchor changed')
+app_text=app_text.replace(dash_old,dash_new,1)
+render_sig=' function render(preserveScroll=false){'
+render_old='  renderList(preserveScroll);renderSources();renderShots();renderFavorites();renderFolders();'
+startup_call=' wire();render();if(upgradedChecker)save();'
+if any(app_text.count(item)!=1 for item in (render_sig,render_old,startup_call)):
+    sys.exit('Web fastload hidden-page startup anchors changed')
+app_text=app_text.replace(render_sig,' function render(preserveScroll=false,startup=false){',1)
+app_text=app_text.replace(render_old,
+ '  renderList(preserveScroll);if(!startup){renderSources();renderShots();renderFavorites();renderFolders();}',1)
+app_text=app_text.replace(startup_call,' wire();render(false,true);if(upgradedChecker)save();',1)
+
 app_file.write_text(app_text,encoding='utf-8')
 
 html=(out/'index.html').read_text(encoding='utf-8')
@@ -596,6 +619,20 @@ if not all(x in html and x in root_html for x in (repair_start,repair_end)):
     sys.exit('Missing Source Repair section anchors')
 html=html[:html.index(repair_start)]+root_html[root_html.index(repair_start):root_html.index(repair_end,root_html.index(repair_start))]+html[html.index(repair_end,html.index(repair_start)):]
 html=html.replace('</head>','<link rel="stylesheet" href="web-source-repair-layout.css?v=source-repair-layout-20261120a"/></head>',1)
+
+# Keep the heavy DASH/HLS decoders installed but do not download or execute
+# them until playback. Same-origin loader is versioned and browser-cacheable.
+for name in ('hls.min.js','dash.all.min.js'):
+    eager='<script src="'+name+'"></script>'
+    if html.count(eager)!=1:sys.exit('Web fastload decoder script anchor changed: '+name)
+    html=html.replace(eager,'',1)
+loader_tag='<script src="web-playback-libs.js?v=startup-fastload-20261123a"></script>'
+app_match=re.search(r'<script src="app\.js\?v=[^"]+"></script>',html)
+if app_match is None or html.count('<script src="app.js?')!=1:
+    sys.exit('Web fastload entrypoint anchor missing')
+html=html[:app_match.start()]+loader_tag+html[app_match.start():]
+copy2(Path(__file__).resolve().parent.parent/'web-playback-libs.js',out/'web-playback-libs.js')
+
 (out/'index.html').write_text(html,encoding='utf-8')
 (out/'.nojekyll').write_text('')
 (out/'manifest.webmanifest').write_text(json.dumps({

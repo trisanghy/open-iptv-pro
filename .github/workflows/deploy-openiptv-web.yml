@@ -62,11 +62,14 @@ jobs:
             grep -Fq 'openiptv-tizen-hosted' _site/tizen/hosted-player.html
           fi
           node --test tests/tizen-hosted-browser-player.test.cjs
+          node --test tests/web-playback-libs.test.cjs
+          node --test web-online/tests/web-startup-performance.test.cjs
+          node --check _site/web-playback-libs.js
           for dir in assets locales epg; do
             test -d "$dir"
             cp -R "$dir" "_site/$dir"
           done
-          for f in index.html huong-dan.html app.js web-only.js hls.min.js dash.all.min.js supabase-sdk.js cloud-core.js cloud-sync.js source-use-consent-v1.js source-use-consent-v1.css web-smart-discovery.js smart-discovery-ui.js web-mobile-player.js web-mobile-player.css web-player-icons.js web-player-icons.css web-tv-wide.css web-mobile-controls-polish.css web-desktop-download.js web-desktop-download.css web-channel-snapshot.js; do
+          for f in index.html huong-dan.html app.js web-only.js web-playback-libs.js hls.min.js dash.all.min.js supabase-sdk.js cloud-core.js cloud-sync.js source-use-consent-v1.js source-use-consent-v1.css web-smart-discovery.js smart-discovery-ui.js web-mobile-player.js web-mobile-player.css web-player-icons.js web-player-icons.css web-tv-wide.css web-mobile-controls-polish.css web-desktop-download.js web-desktop-download.css web-channel-snapshot.js; do
             test -s "_site/$f"
           done
           test -s _site/robots.txt && test -s _site/sitemap.xml && test -s _site/sitemap.xsl
@@ -165,7 +168,9 @@ jobs:
           node --test web-online/tests/web-playlist-url.test.cjs
           grep -Fq 'collector.js?v=collector-quota-20261120b' _site/index.html
           grep -Fq 'source-edit.js?v=playlist-input-20261119c' _site/index.html
-          grep -Fq 'app.js?v=unified-search-20261123a' _site/index.html
+          grep -Fq 'app.js?v=startup-fastload-20261123a' _site/index.html
+          grep -Fq 'src="web-playback-libs.js?v=startup-fastload-20261123a"' _site/index.html
+          if grep -Eq '<script src="(hls.min.js|dash.all.min.js)"' _site/index.html; then echo 'Video decoders block startup'; exit 1; fi
           node --check _site/web-channel-search.js
           node --test tests/web-channel-search.test.cjs
           node --check _site/web-channel-intelligence.js
