@@ -518,6 +518,27 @@
   updateFocusProgress(next);
   revealRecommendationCard(next);
  });
+ // P343: Home/End skip directly to the first/last playable recommendation.
+ // Focus only; playback remains opt-in with Enter.
+ list.setAttribute('aria-keyshortcuts',list.getAttribute('aria-keyshortcuts')+' Home End');
+ list.title+=' · Home/End trên nút Xem: tới gợi ý đầu/cuối';
+ modeHelp.title+=' · Home: đầu · End: cuối (khi đang chọn nút Xem)';
+ list.addEventListener('keydown',event=>{
+  if(!aiOpen||panel.hidden||event.defaultPrevented||event.altKey||event.ctrlKey||
+   event.metaKey||event.shiftKey||event.isComposing||event.repeat)return;
+  if(event.key!=='Home'&&event.key!=='End')return;
+  const current=event.target?.closest?.('.po-ai-card .po-ai-actions button:first-child');
+  if(!current||event.target!==current||current.disabled)return;
+  const actions=[...list.querySelectorAll('.po-ai-card .po-ai-actions button:first-child')]
+   .filter(button=>!button.disabled&&button.getClientRects().length);
+  if(actions.indexOf(current)<0||!actions.length)return;
+  const next=event.key==='Home'?actions[0]:actions[actions.length-1];
+  event.preventDefault();event.stopPropagation();
+  next.focus({preventScroll:true});
+  next.scrollIntoView({block:'center',behavior:'instant'});
+  updateFocusProgress(next);
+  revealRecommendationCard(next);
+ });
  tab.addEventListener('click',()=>{if(aiOpen){toolbar.querySelector('[data-flowplus-mode="discover"]')?.click();return;}showAI();});
  toolbar.addEventListener('click',event=>{if(event.target.closest('[data-flowplus-mode]'))hideAI();},true);
  const learnedSource=(channel,cache=null)=>{

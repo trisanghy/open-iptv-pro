@@ -54,3 +54,9 @@
 - Ảnh baseline P340 thực 720×900, mở trực tiếp từ artifact 14864433144, cho thấy tiêu đề gợi ý 1 nằm dưới sticky title/info strip. Mã P341 giữ J/K/P và thêm ArrowUp/Down cũng cuộn vào nút Xem, lỗi còn cơ sở tái hiện.
 - Sửa `renderer/positron-intelligence.js`: helper đo vùng trống thực giữa header và đáy panel, điều chỉnh cuộn để cả heading và Play nhìn thấy khi đủ không gian; dùng chung focusin/Tab, J/K/P, ArrowUp/Down, bật/tắt Alt+Shift+I. Không sửa playlist, model hoặc luồng playback.
 - Bằng chứng P342 gồm `tests/positron-342.test.cjs` và `scripts/positron-342-audit.cjs` (real Electron 1920/720, trước tái hiện vị trí cuộn che tiêu đề, sau phím thật sửa, không autoplay). Chỉ đánh dấu đạt sau CI và mở ảnh.
+
+
+## Đợt mới từ P5.1.340 — vòng 02/20, P5.1.343 CANDIDATE
+- Input: đã mở ảnh Electron thật P342 desktop và 720px, tên và nút Xem đủ nhìn. Trên danh sách lớn chỉ có ArrowUp/Down từng bước, không có lối nhảy đầu/cuối bằng remote.
+- Feature class AI, priority NEW: Home/End ngay trên Xem đưa focus tới gợi ý đầu/cuối, nhãn/tên đổi theo, vẫn cần Enter mới phát; không đổi model/M3U, giữ phím mũi tên.
+- New real Electron audit scripts/positron-343-audit.cjs (4 ảnh trước/sau ở 1920/720), tests/positron-343.test.cjs; chỉ tính đạt sau native QA+CI và mở ảnh.
