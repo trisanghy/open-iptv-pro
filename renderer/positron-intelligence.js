@@ -825,9 +825,11 @@
      const riskSmall=d.createElement('button');riskSmall.type='button';
      riskSmall.id='poAICategorySampleFilter';riskSmall.className='po-ai-risk-sort';
      const sampleNote=d.createElement('small');sampleNote.id='poAICategorySampleNote';
+     const namesToggle=d.createElement('button');namesToggle.type='button';
+     namesToggle.id='poAICategoryNamesToggle';namesToggle.className='po-ai-risk-sort';
      const riskRows=d.createElement('div');riskRows.id='poAICategoryRiskRows';
-     riskDetails.append(riskSort,riskSmall,sampleNote,riskRows);
-     let rateMode=false,hideSmall=false;
+     riskDetails.append(riskSort,riskSmall,namesToggle,sampleNote,riskRows);
+     let rateMode=false,hideSmall=false,namesVisible=false;
      const renderRiskRows=()=>{
       const ranked=core.previewCategoryGroupRisks({categoryModel},parsed,channels(),{
        limit:5,maxChannels:1000,sortBy:rateMode?'rate':'count',minGroupSize:hideSmall?5:1});
@@ -837,6 +839,14 @@
        line.textContent=group.label+': '+group.lost+'/'+group.count+
         ' kênh có thể mất dự đoán ('+group.lossRate+'% của nhóm) · '+
         group.relabeled+' đổi chủ đề · '+group.gained+' mới đủ chắc chắn.';
+       // P300: optional read-only inspection of channel names implicated by
+       // genuine local Naive Bayes prediction drift, never the stream URLs.
+       const examples=d.createElement('small');examples.className='po-ai-category-samples';
+       examples.hidden=!namesVisible;
+       examples.textContent=group.lostExamples.length
+        ?'Kênh cần kiểm tra: '+group.lostExamples.join(' · ')
+        :'Không có kênh mất dự đoán đủ chắc chắn trong nhóm đã lấy mẫu.';
+       line.append(examples);
        riskRows.append(line);
       }
       riskSort.textContent=rateMode?'Đang ưu tiên tỷ lệ % · Xem theo số kênh':
@@ -844,12 +854,15 @@
       riskSort.setAttribute('aria-pressed',String(rateMode));
       riskSmall.setAttribute('aria-pressed',String(hideSmall));
       riskSmall.textContent=hideSmall?'Đang ẩn nhóm <5 kênh · Hiện tất cả':'Ẩn nhóm dưới 5 kênh';
+      namesToggle.textContent=namesVisible?'Ẩn tên kênh cần kiểm tra':'Xem tên kênh cần kiểm tra';
+      namesToggle.setAttribute('aria-pressed',String(namesVisible));
       sampleNote.textContent=hideSmall
        ?'Đã ẩn '+ranked.excludedSmallGroups+' nhóm có dưới 5 kênh trong thư viện kiểm tra. Nhóm nhỏ không đủ đại diện để so sánh tỷ lệ.'
        :'Có thể ẩn nhóm dưới 5 kênh để tránh so sánh tỷ lệ 100% từ chỉ một vài kênh.';
      };
      riskSort.addEventListener('click',()=>{rateMode=!rateMode;renderRiskRows();});
      riskSmall.addEventListener('click',()=>{hideSmall=!hideSmall;renderRiskRows();});
+     namesToggle.addEventListener('click',()=>{namesVisible=!namesVisible;renderRiskRows();});
      renderRiskRows();
      const riskNote=d.createElement('small');riskNote.textContent=groupsRisk.caution;
      riskDetails.append(riskNote);details.append(riskDetails);

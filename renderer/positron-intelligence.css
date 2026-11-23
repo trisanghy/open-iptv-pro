@@ -251,3 +251,10 @@ html[data-positron="true"].po-horizon body #poWatchFlowPanel.po-watchflow-panel:
 
 /* P299 real-image review: keep warning clear of the fixed confirmation control. */
 #poWatchFlowPanel #poAICategoryGroupRiskAlert{scroll-margin-top:82px;scroll-margin-bottom:112px}
+
+/* P300: user-requested local AI evidence, never exposed automatically. */
+#poWatchFlowPanel #poAICategoryNamesToggle{display:block;width:100%;min-height:40px;padding:8px 10px;margin:5px 0;border:1px solid #578c85;border-radius:7px;background:#1b403a;color:#ddfff2;text-align:left;font-size:11px;font-weight:700;cursor:pointer}
+#poWatchFlowPanel #poAICategoryNamesToggle[aria-pressed="true"]{border-color:#9ce6b6;background:#285445}
+#poWatchFlowPanel #poAICategoryNamesToggle:focus-visible{outline:2px solid #c2ffdc;outline-offset:2px}
+#poWatchFlowPanel .po-ai-category-samples{display:block;margin:7px 0 1px;padding:6px 9px;border-left:3px solid #74ceb4;background:#1a3e38;color:#e5fff2;font-size:11px;line-height:1.5;overflow-wrap:anywhere}
+#poWatchFlowPanel .po-ai-category-samples[hidden]{display:none!important}

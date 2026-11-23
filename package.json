@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.384",
-  "description": "Positron P5.1.299: AI cảnh báo rủi ro phân loại tập trung theo nhóm",
+  "version": "4.23.385",
+  "description": "Positron P5.1.300: AI xem tên kênh có thể mất phân loại",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

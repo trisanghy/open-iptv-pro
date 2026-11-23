@@ -1015,3 +1015,30 @@ test('P299 warns when Naive Bayes loss is concentrated in one group',()=>{
  assert.ok(css.includes('#poAICategoryGroupRiskAlert[hidden]'));
  for(const s of ['qa299','positron-p51299-group-alert-before-1920x1080-real.png','positron-p51299-group-alert-after-1920x1080-real.png'])assert.ok(qa.includes(s),s);
 });
+
+
+test('P300 AI shows true local example names for groups losing classification, never URLs',()=>{
+ const film={id:'film',name:'Phim hành động',group:'Phim',url:'https://private.invalid/path.m3u8'};
+ const sport={id:'sport',name:'Bóng đá thể thao',group:'Thể thao',url:'https://private.invalid/secret.m3u8'};
+ let trained=C.emptyCategoryModel();
+ for(let n=0;n<14;n++){trained=C.teachCategory(trained,film,'cinema');trained=C.teachCategory(trained,sport,'sport');}
+ const channels=[...Array.from({length:8},(_,i)=>({...film,id:'film-'+i})),...Array.from({length:7},(_,i)=>({...sport,id:'sport-'+i}))];
+ const imported=C.buildLearningBackup({model:C.emptyModel(),categoryModel:C.emptyCategoryModel(),bandit:{}});
+ const oldChannels=JSON.stringify(channels),oldModel=JSON.stringify(trained);
+ const result=C.previewCategoryGroupRisks({categoryModel:trained},imported,channels,{limit:5});
+ assert.ok(result.ok);
+ const affected=result.groups.filter(g=>g.lost>=3);
+ assert.equal(affected.length,2,'two genuinely trained channel categories must lose predictions');
+ assert.ok(affected.every(g=>g.lostExamples.length===3),'P300 caps at three actual channels per group');
+ assert.ok(affected.some(g=>g.lostExamples.every(x=>x==='Phim hành động')));
+ assert.ok(!JSON.stringify(result).includes('https://')&&!JSON.stringify(result).includes('.m3u8'));
+ const unchanged=C.previewCategoryGroupRisks({categoryModel:trained},
+  C.buildLearningBackup({model:C.emptyModel(),categoryModel:trained,bandit:{}}),channels);
+ assert.ok(unchanged.groups.every(g=>g.lostExamples.length===0));
+ assert.equal(JSON.stringify(channels),oldChannels);assert.equal(JSON.stringify(trained),oldModel);
+ const ui=fs.readFileSync('renderer/positron-intelligence.js','utf8'),qa=fs.readFileSync('scripts/positron-20-extension.cjs','utf8');
+ assert.ok(ui.includes("namesToggle.id='poAICategoryNamesToggle'"));
+ assert.ok(ui.includes("namesToggle.addEventListener('click'"));
+ for(const n of ['qa300','positron-p51300-affected-names-before-1920x1080-real.png',
+ 'positron-p51300-affected-names-after-1920x1080-real.png'])assert.ok(qa.includes(n),n);
+});

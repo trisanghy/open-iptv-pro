@@ -1,3 +1,12 @@
+## P5.1.300 — AI hiển thị tên kênh dễ mất phân loại khi thay mô hình / Electron 4.23.385
+- Feature priority: NEW — Sau khi AI Naive Bayes cảnh báo nhóm chịu rủi ro, người xem có thể chủ động mở danh sách tối đa ba tên kênh thực đang có nguy cơ mất dự đoán đủ chắc chắn trong mỗi nhóm, thay vì chỉ nhìn tỷ lệ tổng hợp; danh sách không tự phát video.
+- Feature class: AI
+- User action: TV → WatchFlow → AI hợp gu → Quản lý mô hình → Khôi phục JSON → Nhóm bị ảnh hưởng → bấm “Xem tên kênh cần kiểm tra” để hiện mẫu từ dữ liệu trên máy và bấm lại để ẩn.
+- Electron screenshot: positron-p51300-affected-names-before-1920x1080-real.png / positron-p51300-affected-names-after-1920x1080-real.png.
+- Evidence: Bộ so sánh hai mô hình Naive Bayes giữ tối đa ba tên kênh thực cho mỗi nhóm có dự đoán bị mất (không chép URL, chỉ đọc từ danh sách đang nạp); Node test hai nhóm đã dạy chứng minh mẫu chỉ tồn tại khi dự đoán thực mất và không xuất hiện với mô hình không thay đổi; Electron QA 1920×1080 kiểm tra nút bật/tắt, tên hiển thị, tránh bị nút xác nhận che, không tự phát và không thay đổi playlist/trọng số.
+- Privacy: Chỉ hiển thị tên kênh tại chỗ trong WatchFlow theo yêu cầu người xem, làm sạch chuỗi chứa URL; không gửi stream URL/M3U, lịch sử, trọng số hoặc nội dung EPG ra mạng; không coi kết quả Naive Bayes là thực tế phát kênh.
+- Status: CANDIDATE — chỉ xác nhận sau GitHub Actions, build và mở ảnh Electron thật; không đưa bản thử nghiệm lên Releases Stable.
+
 ## P5.1.299 — AI phát hiện rủi ro tập trung theo nhóm khi khôi phục mô hình / Electron 4.23.384
 - Feature priority: NEW — Khi mô hình Naive Bayes mới làm ít nhất 5 kênh trong một nhóm mất phân loại đủ chắc chắn, chiếm tối thiểu 60% nhóm, hiện cảnh báo độc lập ngay trước xác nhận khôi phục kể cả khi mức giảm trung bình toàn thư viện còn thấp.
 - Feature class: AI

@@ -456,13 +456,21 @@
   for(const ch of entries){
    const label=cleanQuery(ch.group||ch.groupTitle||'')||'Chưa có nhóm';
    const key=normalize(label);
-   if(!groups.has(key))groups.set(key,{label,count:0,before:0,after:0,lost:0,relabeled:0,gained:0});
+   if(!groups.has(key))groups.set(key,{label,count:0,before:0,after:0,lost:0,relabeled:0,gained:0,lostExamples:[]});
    const bucket=groups.get(key);
    const before=predictCategory(present,ch,{threshold:0.6}),after=predictCategory(future,ch,{threshold:0.6});
    bucket.count++;
    if(before)bucket.before++;
    if(after)bucket.after++;
-   if(before&&!after){bucket.lost++;lostTotal++;}
+   if(before&&!after){
+    bucket.lost++;lostTotal++;
+    // P300: preserve only three human-readable names from already-loaded
+    // channels. Never copy channel IDs, stream URLs or playlist metadata.
+    if(bucket.lostExamples.length<3){
+     const name=String(ch.name).replace(/https?:\/\/\S+/gi,'[đường dẫn]').trim().slice(0,80);
+     if(name)bucket.lostExamples.push(name);
+    }
+   }
    if(before&&after&&before.key!==after.key)bucket.relabeled++;
    if(!before&&after)bucket.gained++;
   }
