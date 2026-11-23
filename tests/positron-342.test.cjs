@@ -6,7 +6,7 @@ test('P342 scroll target uses visible card bounds below sticky title and identit
  assert.ok(js.includes('const revealRecommendationCard=target=>{'));
  assert.ok(js.includes('visibleTop=Math.max(panelRect.top,headRect?.bottom||0,infoRect?.bottom||0)+9'));
  assert.ok(js.includes('if(cardRect.top<visibleTop)panel.scrollTop=Math.max(0,panel.scrollTop-(visibleTop-cardRect.top))'));
- assert.ok(js.includes('updateFocusProgress(play||null);\n  revealRecommendationCard(play);'),'Tab and remote focus');
+ assert.ok(js.includes('updateFocusProgress(play||null);\n  // Do not scroll the panel when focusing explanation summary or feedback.\n  if(event.target===play)revealRecommendationCard(play);'),'Tab and remote focus');
  assert.equal(js.split('updateFocusProgress(target);\n  revealRecommendationCard(target);').length-1,3,'J/K/P');
  assert.ok(js.includes('updateFocusProgress(next);\n  revealRecommendationCard(next);'),'remote arrows');
  assert.ok(js.includes('revealRecommendationCard(d.activeElement);'),'full identity toggle');

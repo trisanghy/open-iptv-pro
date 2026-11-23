@@ -308,8 +308,9 @@
   const card=event.target?.closest?.('#poAICards .po-ai-card');
   const play=card?.querySelector('.po-ai-actions button:first-child');
   updateFocusProgress(play||null);
-  revealRecommendationCard(play);
-  if(play&&!fullInfo.hidden&&play.getClientRects().length)
+  // Do not scroll the panel when focusing explanation summary or feedback.
+  if(event.target===play)revealRecommendationCard(play);
+  if(event.target===play&&play&&!fullInfo.hidden&&play.getClientRects().length)
    play.scrollIntoView({block:'center',behavior:'instant'});
  });
  modeBar.setAttribute('aria-describedby',modeHelp.id);

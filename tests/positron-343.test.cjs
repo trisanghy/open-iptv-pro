@@ -11,6 +11,7 @@ test('P343 remote Home End jumps to first/last AI recommendation only when Xem i
   "updateFocusProgress(next);\n  revealRecommendationCard(next);"])
  assert.ok(js.includes(token),'missing P343 token '+token);
  assert.ok(js.includes("if(event.key!=='ArrowUp'&&event.key!=='ArrowDown')return"),'existing remote arrow keys retained');
+ assert.ok(js.includes('if(event.target===play)revealRecommendationCard(play);'),'explanation/feedback focus must not cause scrolling');
 });
 test('P343 real Electron before/after supports keyboard Home End with safe source preservation',()=>{
  const qa=read('scripts/positron-343-audit.cjs'),pkg=JSON.parse(read('package.json'));
