@@ -202,6 +202,7 @@
   });
   doc.addEventListener('openiptv:watchflow-manual-rescan',()=>{manualWaiting=true;});
   doc.addEventListener('openiptv:renderer-ready',()=>schedule());
+  doc.addEventListener('openiptv:watchflow-model-installed',()=>schedule());
   doc.addEventListener('change',event=>{if(event.target?.id==='wfModelSelect')schedule();});
   doc.addEventListener('click',event=>{if(event.target?.closest?.('[data-wf-mode="intelligence"]'))schedule();});
   win.setTimeout(()=>schedule(),2400);

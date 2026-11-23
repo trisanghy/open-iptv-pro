@@ -230,3 +230,10 @@ html[data-theme=dark] #page-tv .wf-delete-confirm .wf-delete-yes,html[data-theme
 #page-tv #wfSmartInstall:disabled{cursor:wait;opacity:.7}
 html[data-theme=dark] #page-tv .wf-unavailable,html[data-theme=amoled] #page-tv .wf-unavailable{color:#afa4bc}
 html[data-theme=dark] #page-tv #wfStandardStatus,html[data-theme=amoled] #page-tv #wfStandardStatus{color:#8bdbb5}
+
+#page-tv .wf-easy-status{margin:8px 0 0;padding:8px 11px;border:1px solid #dfd4f4;border-radius:9px;color:#634287;background:#f9f4ff;font-size:12px;line-height:1.45;font-weight:650}
+#page-tv .wf-easy-status[data-state="ready"]{border-color:#a1d3bb;color:#226749;background:#f1faf5}
+#page-tv .wf-easy-status[data-state="error"]{border-color:#edc5a6;color:#94502a;background:#fff8f1}
+html[data-theme="dark"] #page-tv .wf-easy-status{background:#292237;color:#ddc7ff;border-color:#564771}
+html[data-theme="dark"] #page-tv .wf-easy-status[data-state="ready"]{background:#203a32;color:#a7e3c4}
+html[data-theme="dark"] #page-tv .wf-easy-status[data-state="error"]{background:#442b25;color:#ffc8a7}

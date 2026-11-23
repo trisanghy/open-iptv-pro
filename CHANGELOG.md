@@ -1,3 +1,9 @@
+## Rust Lab v23.8.132 — Chọn Smart/Intelligence là ứng dụng tự chuẩn bị AI (PRERELEASE)
+
+- Smart: tự dùng lại mô hình ONNX đa ngôn ngữ đã tải hoặc tự tải một lần (~118 MB) khi người dùng chọn chế độ; tiến độ/lỗi hiển thị ngay tại WatchFlow, không cần tìm tệp trọng số. Khi hoàn tất tự kích hoạt phân loại kênh và EPG. Không gọi bộ fastText 18 MB chưa được kiểm chứng là đã cài.
+- Intelligence: tự dùng Qwen3 MLX có sẵn hoặc tự cài Qwen3 nhỏ nhất (~360 MB) khi người dùng chọn Intelligence trên Mac Apple Silicon; kiểm tra sẵn sàng rồi tự chạy phân loại kênh mới. Windows và khi lỗi vẫn có Standard.
+- Đồng bộ package-lock lỗi phiên bản v23.8.130 với mã v23.8.132. Không chỉnh nhánh khác, bảo vệ Stable/Latest, chỉ prerelease.
+
 ## Rust Lab v23.8.110 — Cập nhật kiểm thử hồi quy cho kiến trúc AI đã chốt (PRERELEASE)
 
 Test cũ không còn ép Bayes chạy dưới Smart hoặc mô tả sai về mô hình Intelligence. Giữ Standard = Naive Bayes, Smart = fastText đã huấn luyện 18 MB (chưa có trọng số), Intelligence = dùng chung mô hình đang cài hoặc tải mới. Các tính năng phát và AI khác không thay đổi.
