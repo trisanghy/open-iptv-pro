@@ -165,7 +165,12 @@ jobs:
           node --test web-online/tests/web-playlist-url.test.cjs
           grep -Fq 'collector.js?v=collector-quota-20261120b' _site/index.html
           grep -Fq 'source-edit.js?v=playlist-input-20261119c' _site/index.html
-          grep -Fq 'app.js?v=tv-local-handoff-20261122d' _site/index.html
+          grep -Fq 'app.js?v=search-epg-20261123a' _site/index.html
+          node --check _site/web-channel-search.js
+          node --test tests/web-channel-search.test.cjs
+          grep -Fq 'src="web-channel-search.js?v=search-epg-20261123b"' _site/index.html
+          grep -Fq 'href="web-channel-search.css?v=search-epg-20261123a"' _site/index.html
+          grep -Fq 'id="channelSearchHelp"' _site/index.html
           grep -Fq 'advanced.js?v=advanced-health-compact-20261120a' _site/index.html
           grep -Fq 'advanced-core.js?v=collector-merge-repair-20261119a' _site/index.html
           node --check _site/web-recent-channels.js
