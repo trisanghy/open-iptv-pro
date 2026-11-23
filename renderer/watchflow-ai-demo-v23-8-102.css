@@ -174,3 +174,20 @@ html[data-theme=dark] #page-tv .wf-reason,html[data-theme=amoled] #page-tv .wf-r
 #page-tv #wfScanAgain:disabled{opacity:.6;cursor:wait}
 html[data-theme=dark] #page-tv #wfScanAgain,html[data-theme=amoled] #page-tv #wfScanAgain{background:#21483b;color:#c4f5da;border-color:#467660}
 @media(max-width:600px){#page-tv .wf-scan-row{align-items:flex-start}#page-tv #wfScanAgain{font-size:10px;padding:5px 7px}}
+
+/* v23.8.124: Close icon was white-on-white under inherited dark app button rules. */
+#page-tv .watchflow-demo #wfClose{
+ display:inline-flex!important;align-items:center!important;justify-content:center!important;
+ flex:0 0 32px!important;min-width:32px!important;width:32px!important;height:32px!important;
+ padding:0!important;color:#51306d!important;background:#fff!important;
+ border:1px solid #c8b7d9!important;border-radius:8px!important;
+ font:800 22px/1 Arial,system-ui,sans-serif!important;opacity:1!important;
+ -webkit-text-fill-color:#51306d!important;cursor:pointer!important
+}
+#page-tv .watchflow-demo #wfClose:hover{background:#f0e6fb!important;border-color:#a775ce!important}
+#page-tv .watchflow-demo #wfClose:focus-visible{outline:2px solid #9a5bd3!important;outline-offset:2px}
+html[data-theme=dark] #page-tv .watchflow-demo #wfClose,
+html[data-theme=amoled] #page-tv .watchflow-demo #wfClose{
+ color:#f5e8ff!important;-webkit-text-fill-color:#f5e8ff!important;
+ background:#342442!important;border-color:#745a87!important
+}

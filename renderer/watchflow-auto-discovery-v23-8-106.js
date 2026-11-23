@@ -83,6 +83,8 @@
  }
  // Channel labels are immutable until their name/group/EPG ID changes or a user rescans.
  const CHANNEL_CACHE='watchflow:classified-channels-v4',CHANNEL_CACHE_VERSION=4;
+ const durable=typeof window!=='undefined'?window.OpenIPTVWatchFlowPersistence:
+  typeof require==='function'?require('./watchflow-persistence-v23-8-124.js'):null;
  function readChannelCache(storage){
   try{
    const data=JSON.parse(storage?.getItem(CHANNEL_CACHE)||'null');
@@ -110,6 +112,27 @@
    }catch{}
   }
   return false;
+ }
+ // Prefer IndexedDB, which does not share the 5MB localStorage quota used by
+ // playlists, preferences and guide cache. Legacy localStorage cache is migrated
+ // without deleting any unrelated application data.
+ async function loadPersistentCache(win){
+  let saved=null;
+  try{saved=await durable?.read(win,'channels');}catch{}
+  if(saved?.version===CHANNEL_CACHE_VERSION&&saved.entries&&typeof saved.entries==='object')
+   return saved.entries;
+  return readChannelCache(win?.localStorage);
+ }
+ async function persistChannelCache(win,entries){
+  try{
+   if(await durable?.write(win,'channels',{version:CHANNEL_CACHE_VERSION,entries,updatedAt:Date.now()})){
+    // Remove *only* the old WatchFlow cache, after the replacement is safely saved.
+    try{win?.localStorage?.removeItem(CHANNEL_CACHE);}catch{}
+    return 'indexeddb';
+   }
+  }catch{}
+  if(saveChannelCache(win?.localStorage,entries))return 'localstorage';
+  return 'memory'; // Session still has correct results; warning is surfaced to user.
  }
  function channelSignature(channel){
   let hash=2166136261;
@@ -241,18 +264,18 @@
   if(win[tag])return true;win[tag]=true;
   let lastKey='',lastGuide=null,guideVersion=0,generation=0,webBusy=false,lastInternet=0;
   const status={running:false,processed:0,total:0,classified:0,epgChannels:0,epgProgrammes:0,
-   guideProgrammes:0,newChannels:0,newProgrammes:0,updatedAt:0,error:''};
+   guideProgrammes:0,newChannels:0,newProgrammes:0,updatedAt:0,error:'',warning:'',storage:'loading'};
   statusByWindow.set(win,status);
   const notify=detail=>win.document.dispatchEvent(new win.CustomEvent('openiptv:watchflow-auto-update',{detail}));
   const channels=()=>win.IPTVState?.getChannels?.()||[];
   const guide=()=>{try{return win.IPTVExtras?.getGuide?.()||null;}catch{return null;}};
   const yieldNow=()=>new Promise(resolve=>win.setTimeout(resolve,0));
-  const restored=readChannelCache(win.localStorage);
-  function restoreCached(){
+  let sessionEntries=readChannelCache(win.localStorage);
+  function restoreCached(entries=sessionEntries){
    const list=channels(),map=new Map();
    for(const channel of list){
     if(!channel?.id)continue;
-    const old=restored[String(channel.id)];
+    const old=entries[String(channel.id)];
     if(old?.signature!==channelSignature(channel))continue;
     const item=cachedSnapshot(old);
     if(item)map.set(String(channel.id),item);
@@ -264,15 +287,22 @@
     notify({local:true,restored:true,...status});
    }
   }
-  restoreCached();
+  restoreCached(); // Display legacy cache immediately, if present.
+  const cacheReady=loadPersistentCache(win).then(entries=>{
+   sessionEntries=entries;
+   restoreCached(entries); // IndexedDB cache is loaded before a fresh EPG scan.
+   return entries;
+  }).catch(()=>sessionEntries);
   async function runLocal(list,epg,{force=false}={}){
    const token=++generation;
+   await cacheReady;
+   if(token!==generation)return;
    const retained=backgroundAnalysis.get(win)||new Map();
    const alive=new Set(list.map(ch=>String(ch?.id)));
    const partial=new Map([...retained].filter(([id])=>alive.has(id)));
-   const oldCache=readChannelCache(win.localStorage);
+   const oldCache=sessionEntries;
    Object.assign(status,{running:true,processed:0,total:list.length,classified:0,epgChannels:0,
-    epgProgrammes:0,newChannels:0,newProgrammes:0,guideProgrammes:epg?.programmes?.length||0,error:''});
+    epgProgrammes:0,newChannels:0,newProgrammes:0,guideProgrammes:epg?.programmes?.length||0,error:'',warning:''});
    backgroundAnalysis.set(win,partial);notify({local:true,...status});
    let lastNotify=0;
    try{
@@ -289,8 +319,11 @@
      }});
     if(token!==generation||result.cancelled)return;
     backgroundAnalysis.set(win,mergeSavedNative(win,enrich(result.analysis,list,win.localStorage,engine)));
-    const persisted=saveChannelCache(win.localStorage,result.entries);
-    Object.assign(status,{running:false,error:persisted?'':'Không thể lưu phân loại: bộ nhớ ứng dụng đã đầy.',
+    const persisted=await persistChannelCache(win,result.entries);
+    if(token!==generation)return;
+    sessionEntries=result.entries;
+    Object.assign(status,{running:false,error:'',storage:persisted,
+     warning:persisted==='memory'?'Kết quả vẫn dùng được, nhưng chưa lưu được để mở lại ứng dụng. Hãy giải phóng dung lượng ứng dụng khi có thể.':'',
      processed:result.processed,total:result.total,
      newChannels:result.newChannels,newProgrammes:result.newProgrammes,updatedAt:Date.now()});
     notify({local:true,complete:true,manual:force,newChannels:result.newChannels,newProgrammes:result.newProgrammes,...status});
@@ -343,5 +376,5 @@
   // Internet checks no longer poll constantly: startup, new channels or a manual scan only.
   return true;
  }
- return Object.freeze({setNativeTopics,CHANNEL_CACHE,readChannelCache,saveChannelCache,channelSignature,cachedSnapshot,getBackgroundAnalysis:win=>backgroundAnalysis.get(win)||new Map(),getLocalStatus:win=>({...statusByWindow.get(win)}),KEY,OPT,DAY_LIMIT,publicName,isTv,read,enabled,setEnabled,collect,enrich,scan,scanLocal,fingerprint,start});
+ return Object.freeze({setNativeTopics,CHANNEL_CACHE,readChannelCache,saveChannelCache,loadPersistentCache,persistChannelCache,channelSignature,cachedSnapshot,getBackgroundAnalysis:win=>backgroundAnalysis.get(win)||new Map(),getLocalStatus:win=>({...statusByWindow.get(win)}),KEY,OPT,DAY_LIMIT,publicName,isTv,read,enabled,setEnabled,collect,enrich,scan,scanLocal,fingerprint,start});
 });

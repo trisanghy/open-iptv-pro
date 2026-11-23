@@ -384,10 +384,12 @@
   function showLocalProgress(){
     const x=auto?.getLocalStatus?.(root)||{},status=$('wfLocalScanStatus'),bar=$('wfLocalScanProgress');
     if(!status||!bar)return;
-    if(x.error)status.textContent='Lỗi quét: '+x.error;
+    if(x.error)status.textContent='Lỗi phân tích: '+x.error;
+    else if(x.warning)status.textContent='Đã phân loại '+x.processed+'/'+x.total+' kênh. '+x.warning;
     else if(!x.total)status.textContent='Chờ playlist; sẽ tự quét khi có kênh hoặc EPG';
-    else status.textContent=(x.running?'Đang kiểm tra EPG ':'Đã lưu ')+x.processed+'/'+x.total+' kênh · '+
-     x.newChannels+' kênh mới · '+x.newProgrammes+' mục EPG mới · '+x.classified+' kênh có chủ đề';
+    else status.textContent=(x.running?'Đang kiểm tra EPG ':'Đã phân loại ')+x.processed+'/'+x.total+' kênh · '+
+     x.newChannels+' kênh mới · '+x.newProgrammes+' mục EPG mới · '+x.classified+' kênh có chủ đề'+
+     (x.storage==='indexeddb'?' · đã lưu an toàn':'');
     bar.value=x.total?Math.round(100*(x.processed||0)/x.total):0;
    }
    let renderPending=false;

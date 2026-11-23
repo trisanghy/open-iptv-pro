@@ -8,6 +8,9 @@
  if(root?.document)api.mount(root);
 })(typeof window==='undefined'?null:window,function(){
  const STORE='watchflow:qwen-channel-cache-v2'; // No expiry for a stable channel/model identity.
+ const durable=typeof window!=='undefined'?window.OpenIPTVWatchFlowPersistence:
+  typeof require==='function'?require('./watchflow-persistence-v23-8-124.js'):null;
+ const sessionCache=new WeakMap();
  const compatible=k=>/^qwen(?:06|17|4|8)$/.test(String(k));
  const select=(key,models)=>compatible(key)&&models?.[key]?.installed&&models?.[key]?.runtimeReady?key:
   key==='auto'?['qwen06','qwen17','qwen4','qwen8'].find(k=>models?.[k]?.installed&&models?.[k]?.runtimeReady)||'':'';
@@ -43,6 +46,26 @@
  function save(storage,cache){try{const latest=Object.entries(cache).sort((a,b)=>(b[1].at||0)-(a[1].at||0)).slice(0,2400);
   storage?.setItem(STORE,JSON.stringify({version:2,entries:Object.fromEntries(latest)}));return true;
  }catch{return false;}}
+ async function loadPersistent(win){
+  const legacy=read(win?.localStorage);
+  let saved=null;
+  try{saved=await durable?.read(win,'qwen');}catch{}
+  const stored=saved?.version===2&&saved.entries&&typeof saved.entries==='object'?saved.entries:{};
+  const combined={...legacy,...stored,...(sessionCache.get(win)||{})};
+  sessionCache.set(win,combined);
+  return combined;
+ }
+ async function persist(win,cache){
+  sessionCache.set(win,{...cache});
+  try{
+   if(await durable?.write(win,'qwen',{version:2,entries:cache,updatedAt:Date.now()})){
+    // Only remove the legacy WatchFlow key after a successful IndexedDB write.
+    try{win?.localStorage?.removeItem(STORE);}catch{}
+    return 'indexeddb';
+   }
+  }catch{}
+  return save(win?.localStorage,cache)?'localstorage':'memory';
+ }
  function mount(win){
   const doc=win.document;
   let busy=false,scheduled=false,pending=false,pendingForce=false,manualWaiting=false,lastLog='';
@@ -80,7 +103,7 @@
     const native=win.streamleaf,all=(win.IPTVState?.getChannels?.()||[]).filter(c=>c?.id);
     if(!all.length){notify('Chưa có playlist; kênh mới sẽ tự phân loại sau khi nhập.');return;}
     const guide=win.IPTVExtras?.getGuide?.(),auto=win.OpenIPTVWatchFlowAuto;
-    const cache=read(win.localStorage),models=['qwen06','qwen17','qwen4','qwen8'];
+    const cache=await loadPersistent(win),models=['qwen06','qwen17','qwen4','qwen8'];
     const active=await installed().catch(()=>''),preferred=active||models.find(key=>all.some(ch=>cache[channelKey(key,ch)]))||models[0];
     const analysis=auto?.getBackgroundAnalysis?.(win)||new Map();
     const priority=ch=>{
@@ -109,7 +132,7 @@
       restored.push(channel);
      }else toClassify.push(channel);
     }
-    save(win.localStorage,cache);
+    await persist(win,cache);
     if(restored.length)doc.dispatchEvent(new win.CustomEvent('openiptv:watchflow-auto-update',
      {detail:{native:true,complete:true,restored:restored.length}}));
     if(mode()!=='intelligence'){
@@ -134,7 +157,7 @@
       if(tags.length&&auto?.setNativeTopics?.(win,channel,tags,{silent:true}))classified++;
       done++;
       if(done%4===0){
-       save(win.localStorage,cache);
+       await persist(win,cache);
        doc.dispatchEvent(new win.CustomEvent('openiptv:watchflow-auto-update',{detail:{native:true,progress:true,processed:done,total:pendingChannels.length}}));
       }
      }catch(error){
@@ -144,10 +167,11 @@
      }
      await new Promise(resolve=>win.setTimeout(resolve,150));
     }
-    save(win.localStorage,cache);
+    const storeMode=await persist(win,cache);
     doc.dispatchEvent(new win.CustomEvent('openiptv:watchflow-auto-update',{detail:{native:true,complete:true,processed:done,total:pendingChannels.length}}));
     if(errors<3)notify('Qwen3 '+active+' · '+done+'/'+pendingChannels.length+
-     ' kênh cần phân loại · '+classified+' bổ sung. '+restored.length+' kênh cũ giữ nguyên.');
+     ' kênh cần phân loại · '+classified+' bổ sung. '+restored.length+' kênh cũ giữ nguyên.'+
+     (storeMode==='memory'?' Lưu tạm trong phiên vì bộ nhớ chưa sẵn sàng.':''));
    }catch(error){
     lastLog=String(error?.message||error).slice(0,140);
     notify('Qwen3: '+lastLog+' · kết quả đã lưu vẫn có thể sử dụng.');
@@ -183,5 +207,5 @@
   win.setTimeout(()=>schedule(),2400);
   return true;
  }
- return Object.freeze({compatible,select,metadata,labelsFrom,fingerprint,channelKey,read,save,mount});
+ return Object.freeze({compatible,select,metadata,labelsFrom,fingerprint,channelKey,read,save,loadPersistent,persist,mount});
 });

@@ -59,3 +59,12 @@ The original v4.23.82 UI concept shows:
 
 - Persistent classifications should never be discarded solely because a large EPG pushes WebView localStorage over its quota. The serializer retries with smaller optional programme caches (160/40, 80/20, 40/10, 16/5, finally base-channel-only), preserving all channel topic labels and stable signatures wherever possible. A full-storage failure is surfaced as an error instead of silently pretending persistence succeeded.
 - Added regression tests simulate a strict localStorage quota with 560 channels and verify that labels survive restarts, as well as an asynchronous native Qwen3 queue that does not rerun on EPG-only refresh, processes a new channel once, and obeys explicit manual rescan.
+
+## v23.8.124 — Durable WatchFlow cache in IndexedDB
+
+- WatchFlow's channel classification/EPG programme cache and native Qwen3 cache now use a separate **IndexedDB** database (`OpenIPTV-WatchFlow-Cache`) with two purpose-specific keys (`channels`, `qwen`) instead of competing with playlist/EPG/preferences in quota-limited WebView `localStorage`.
+- Existing `watchflow:classified-channels-v4` and `watchflow:qwen-channel-cache-v2` values are migrated automatically. The legacy **WatchFlow-only** localStorage key is removed strictly after its replacement is saved successfully; playlist/EPG/other app storage is neither cleared nor changed.
+- First launch restores channel categories from durable storage **before** incremental channel/EPG analysis. Restarts reuse Qwen classifications without re-inference; Qwen also retains an in-memory cache for the current session when all persistent storage is genuinely unavailable.
+- On IndexedDB errors/unavailability, the previous compact localStorage fallback remains. If both stores are unavailable, correct in-memory results remain usable, with an honest storage warning rather than a misleading `Lỗi quét` (classification failure).
+- The WatchFlow close control explicitly sets a legible × foreground in light and dark themes rather than inheriting white text on a white background.
+- Regression tests simulate a completely full localStorage with 560 channels and 40 EPG items each, confirm successful IndexedDB restoration and Qwen cache persistence across app restarts, verify migration is restricted to WatchFlow-owned keys, and check failures are not suppressed.
