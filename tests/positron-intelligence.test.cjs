@@ -550,3 +550,27 @@ test('P283 sức khỏe dữ liệu AI nhận diện thiếu chủ đề và l�
   'positron-p51283-ai-training-health-after-1920x1080-real.png'])
   assert.ok(qa.includes(name),name);
 });
+
+test('P284 sao lưu các mô hình AI không bao gồm dữ liệu kênh và URL',()=>{
+ const ch={id:'secret-channel-01',name:'Atlas Academy',url:'https://example.invalid/private/secret-token.m3u8'};
+ const category=C.teachCategory(C.emptyCategoryModel(),ch,'education');
+ const model=C.learn(C.emptyModel(),{bias:1,'topic:education':1},1);
+ const bandit=C.observeBandit({},'education');
+ const raw={model,categoryModel:category,bandit,taughtIds:[ch.id],playlist:[ch],history:[ch]};
+ const before=JSON.stringify(raw),b=C.buildLearningBackup(raw),json=JSON.stringify(b);
+ assert.equal(b.schemaVersion,1);assert.equal(b.format,'open-iptv-positron-ai-weights');
+ assert.equal(b.summary.preferenceObservations,1);assert.equal(b.summary.categoryLabels,1);
+ for(const priv of [ch.id,ch.url,'secret-token','playlist','history','taughtIds'])
+  assert.ok(!json.includes(priv),'must exclude '+priv);
+ assert.equal(before,JSON.stringify(raw));
+ assert.deepEqual(C.buildLearningBackup(null).summary,
+  {preferenceObservations:0,categoryLabels:0,exploredTopics:0});
+ const ui=fs.readFileSync('renderer/positron-intelligence.js','utf8');
+ const css=fs.readFileSync('renderer/positron-intelligence.css','utf8');
+ const qa=fs.readFileSync('scripts/positron-20-extension.cjs','utf8');
+ for(const key of ['poAIBackup','core.buildLearningBackup({model,categoryModel,bandit})',
+  "a.download='positron-ai-models-'"])assert.ok(ui.includes(key),key);
+ assert.ok(css.includes('#poWatchFlowPanel .po-ai-backup:focus-visible'));
+ for(const shot of ['positron-p51284-ai-backup-before-1920x1080-real.png',
+  'positron-p51284-ai-backup-after-1920x1080-real.png'])assert.ok(qa.includes(shot),shot);
+});

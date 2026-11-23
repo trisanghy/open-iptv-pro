@@ -62,9 +62,12 @@
  const modelStatus=d.createElement('p');modelStatus.className='po-ai-model-status';modelStatus.id='poAIModelStatus';
  modelStatus.setAttribute('role','status');modelStatus.setAttribute('aria-live','polite');
  const modelHint=d.createElement('small');modelHint.textContent='Tiêu chuẩn và Smart tích hợp sẵn, không cần tải. Xóa trọng số học không xóa nguồn, kênh hoặc EPG.';
+ const backup=d.createElement('button');backup.type='button';backup.id='poAIBackup';
+ backup.className='po-ai-backup';backup.textContent='Sao lưu mô hình AI (.json)';
+ backup.title='Tải các trọng số học AI về máy; không có playlist hoặc URL';
  const bulk=d.createElement('button');bulk.type='button';bulk.id='poAIClearAll';
  bulk.className='po-ai-clear-all';bulk.textContent='Xóa toàn bộ dữ liệu học';bulk.title='Xóa tất cả ba mô hình học sau khi xác nhận hai lần';
- modelManager.append(modelToggle,modelRows,bulk,modelStatus,modelHint);
+ modelManager.append(modelToggle,modelRows,backup,bulk,modelStatus,modelHint);
  let pendingModel='',pendingAt=0;
  const modelBytes=value=>new TextEncoder().encode(JSON.stringify(value||{})).byteLength;
  const learnedInventory=()=>[
@@ -107,7 +110,7 @@
    row.append(left,remove);modelRows.append(row);
   }
   modelToggle.textContent='Mô hình AI trên máy · '+models.length+' thuật toán · '+models.reduce((n,x)=>n+modelBytes(x.data),0)+' byte';
-  bulk.disabled=!models.some(x=>x.count>0);bulk.textContent=pendingModel==='all'?'Xác nhận xóa':'Xóa toàn bộ dữ liệu học';
+  backup.disabled=!models.some(x=>x.count>0);bulk.disabled=!models.some(x=>x.count>0);bulk.textContent=pendingModel==='all'?'Xác nhận xóa':'Xóa toàn bộ dữ liệu học';
  }
  const modeBar=d.createElement('div');modeBar.className='po-ai-modes';
  const channelsMode=d.createElement('button');channelsMode.type='button';channelsMode.id='poAIChannels';
@@ -644,6 +647,21 @@
   clear.textContent=modelManager.hidden?'Quản lý mô hình':'Đóng quản lý mô hình';
   if(!modelManager.hidden){modelManager.open=true;modelManager.scrollIntoView({block:'nearest',behavior:'instant'});}
   else clear.focus();
+ });
+ // Export only after explicit user action; Blob URL never sends data to the network.
+ backup.addEventListener('click',()=>{
+  if(backup.disabled)return;
+  try{
+   const snapshot=core.buildLearningBackup({model,categoryModel,bandit});
+   const bytes=new Blob([JSON.stringify(snapshot,null,2)+'\n'],{type:'application/json;charset=utf-8'});
+   const url=win.URL.createObjectURL(bytes),a=d.createElement('a');
+   a.href=url;a.download='positron-ai-models-'+new Date().toISOString().slice(0,10)+'.json';
+   a.hidden=true;d.body.append(a);a.click();a.remove();
+   win.setTimeout(()=>win.URL.revokeObjectURL(url),30000);
+   modelStatus.textContent='Đã yêu cầu lưu bản sao trọng số AI. Không gồm playlist, URL hoặc lịch sử xem.';
+  }catch{
+   modelStatus.textContent='Không tạo được tệp sao lưu AI; kiểm tra quyền tải tệp rồi thử lại.';
+  }
  });
  bulk.addEventListener('click',()=>confirmDelete('all',bulk,()=>{
   model=core.emptyModel();bandit={};categoryModel=core.emptyCategoryModel();taughtIds.clear();activeStatusMessage='';lastActiveTeachUndo=null;active=null;alertEnabled=false;alertCheck.checked=false;

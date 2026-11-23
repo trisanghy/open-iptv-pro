@@ -30,3 +30,8 @@ Vòng 01 dự kiến P5.1.279:
 - Ảnh thật đã trực tiếp MỞ/soát trong chat: positron-p51280-active-queue-before-1920x1080-real.png và positron-p51280-active-queue-after-1920x1080-real.png. Vì môi trường mở ZIP cục bộ lỗi, workflow bridge 45107410299 xuất nguyên PNG qua GitHub Actions log để mở và xem trực tiếp. Trong ảnh SAU: “6 đã bỏ qua trong phiên”, nút “Xem lại 6 kênh đã bỏ qua”, có đề xuất kênh tiếp theo, không quan sát thấy nút/nhãn bị chồng hay cắt tại vùng sửa. Đây là 01 vòng đầy đủ; KHÔNG đếm 20.
 - Chưa làm Vòng 02. Quan sát tiếp từ ảnh P280: Khi người xem dạy một nhãn sai bằng Ghi nhãn & tiếp, ứng dụng thiếu hoàn tác riêng, chỉ quản lý xóa toàn mô hình. Ưu tiên kế tiếp P5.1.281 là thêm Undo nhãn AI cuối cùng bằng snapshot mô hình + taughtIds trong phiên, thử khôi phục chính xác mô hình có dữ liệu cũ, không tự phát/đổi M3U; yêu cầu Node+Electron before/after/undo, xem ảnh, build và version riêng. KHÔNG tuyên bố P281 đã được commit.
 - Chỉ sửa nhánh Positron; trước mỗi lần làm lại kiểm tra HEAD mới nhất vì bot tài liệu có thể tự commit; dùng expected_sha và force:false. Không sửa main/nhánh khác và không xuất các candidate lên GitHub Releases.
+
+## Đợt mới tiếp nhận tệp 23/11/2026 11:50 +07
+- HEAD baseline bd565c29a3020739f47ea3198fb72dcbf1c03bdb, P5.1.283 / 4.23.368; Actions 45113392896 thành công (test, capture, Win x64, Mac x64/arm64). Release skipped theo Stable-only.
+- Đã TẢI và MỞ hai PNG Electron thật P283 trước/sau từ artifact 14791140087; không thấy chồng nút tại khu vực vừa thêm.
+- Vòng đầu P5.1.284: xuất JSON của ba thuật toán học AI riêng, không xuất dữ liệu M3U, URL hoặc ID kênh; test chống rò rỉ và QA before/after. Trạng thái CHƯA ĐẠT cho tới khi build + mở ảnh sau.

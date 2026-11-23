@@ -1,3 +1,12 @@
+## P5.1.284 — Sao lưu trọng số ba mô hình AI / Electron 4.23.369
+- Feature priority: NEW — Chủ động tải JSON trọng số Logistic, Naive Bayes và UCB cùng bộ đếm mẫu, chỉ dữ liệu học trên máy; không gồm playlist, URL, ID kênh hoặc lịch sử xem.
+- Feature class: AI
+- Evidence: Node regression xác nhận JSON không lộ dữ liệu kênh; QA Electron 1920×1080 nhấn Sao lưu mô hình AI, xác minh filename/blob, ảnh trước/sau và không thay đổi playlist, mô hình, playback. Chỉ đánh dấu đạt khi Actions xanh và đã trực tiếp mở ảnh thật.
+- User action: TV → WatchFlow → AI hợp gu → Quản lý mô hình → Sao lưu mô hình AI (.json).
+- Privacy: Tệp chỉ sinh khi người dùng bấm, không upload mạng. Trọng số học/từ khóa có thể là dữ liệu riêng tư nên cần bảo quản file.
+- Electron screenshot: positron-p51284-ai-backup-before-1920x1080-real.png / positron-p51284-ai-backup-after-1920x1080-real.png.
+- Trạng thái: CANDIDATE — chỉ Actions, GitHub Releases dành riêng Stable.
+
 ## P5.1.283 — AI kiểm tra độ cân bằng nhãn huấn luyện / Electron 4.23.368
 - Feature priority: NEW — Đánh giá số chủ đề đã có nhãn thật, tổng số mẫu, tỷ lệ tập trung chủ đề lớn nhất và nhóm chủ đề chưa được học; đưa lời khuyên chống lệch mẫu mà không tự phân loại kênh hay hứa hẹn độ chính xác.
 - Feature class: AI

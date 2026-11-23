@@ -254,6 +254,17 @@
    dominant:largest?.key||null,trained,missing,advice};
  }
 
+ // P284: offline backup contains learned weights only, not playlist, URL, ID or viewing history.
+ function buildLearningBackup(raw){
+  const v=raw&&typeof raw==='object'?raw:{};
+  const preference=sanitizedModel(v.model),category=sanitizedCategoryModel(v.categoryModel),explore=sanitizedBandit(v.bandit);
+  return {format:'open-iptv-positron-ai-weights',schemaVersion:1,
+   models:{preference,category,explore},
+   summary:{preferenceObservations:preference.observations,categoryLabels:category.examples,
+    exploredTopics:Object.keys(explore).length},
+   note:'Chỉ chứa trọng số và từ khóa học AI, không có M3U, URL, lịch sử xem hoặc ID kênh.'};
+ }
+
  // P282: explain learned Naive Bayes evidence using only channel-name tokens.
  // Never show a prediction from shared generic group names or unsupervised web data.
  function explainCategory(raw,channel){
@@ -510,5 +521,5 @@
   return best;
  }
  return Object.freeze({KINDS,normalize,subject,metadataTopic,topicFor,features,emptyModel,
-  sanitizedModel,predict,learn,recommend,emptyCategoryModel,sanitizedCategoryModel,teachCategory,predictCategory,explainCategory,categoryLearningHealth,sanitizedBandit,observeBandit,banditBonus,exploreWithBandit,upcomingForYou,planForYou,startingForYou,rankUnclassified,epgFolders,programmeFolders,searchProgrammes,cleanQuery,readWikiSearch});
+  sanitizedModel,predict,learn,recommend,emptyCategoryModel,sanitizedCategoryModel,teachCategory,predictCategory,explainCategory,categoryLearningHealth,buildLearningBackup,sanitizedBandit,observeBandit,banditBonus,exploreWithBandit,upcomingForYou,planForYou,startingForYou,rankUnclassified,epgFolders,programmeFolders,searchProgrammes,cleanQuery,readWikiSearch});
 });

@@ -163,3 +163,9 @@ html[data-positron="true"].po-horizon body #poWatchFlowPanel.po-watchflow-panel:
 #poWatchFlowPanel #poAIActiveHealth progress::-webkit-progress-value{background:#65d5ad;border-radius:8px}
 #poWatchFlowPanel #poAIActiveHealth p{margin:5px 0;font-size:11px;color:#d8efe4}
 #poWatchFlowPanel #poAIActiveHealth small{margin:5px 0 0;color:#addacb;font-size:11px}
+
+/* P284: accessible local AI backup control. */
+#poWatchFlowPanel .po-ai-backup{width:100%;min-height:38px;padding:8px 12px;border:1px solid #66bea4;border-radius:8px;background:#1c554c;color:#edfff8;cursor:pointer;font-size:12px;font-weight:700}
+#poWatchFlowPanel .po-ai-backup:hover{background:#286b5d}
+#poWatchFlowPanel .po-ai-backup:focus-visible{outline:2px solid #9df3d3;outline-offset:2px}
+#poWatchFlowPanel .po-ai-backup:disabled{opacity:.55;cursor:not-allowed}
