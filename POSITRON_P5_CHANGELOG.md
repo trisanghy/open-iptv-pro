@@ -2235,6 +2235,11 @@ P5.1.81 follow-up: real Electron capture found nav overflow; replace flexible no
 
 
 ## P5.1.279 — Không tự đóng danh sách chưa phân loại
+- Feature priority: BLOCKER_FIX — CI không thể build bản phát hành khi kiểm thử P272 đã lỗi sau P278, đồng thời danh sách con đang mở bị đóng lúc dạy AI và render lại, khiến người dùng không xem hết dữ liệu.
+- Feature class: AI
+- User action: Vào WatchFlow Intelligence, mở Thư mục EPG, mở Chưa có chủ đề, mở danh sách đầy đủ rồi Bỏ qua hoặc render lại; cả hai thư mục vẫn phải mở.
+- Electron screenshot: positron-p51279-folders-persist-after-1920x1080-real.png
+- Evidence: Native Electron QA tests opening the nested unclassified-channel disclosure, rerendering WatchFlow and checking rawOpen, parentOpen, cached scans, playlist immutability and no automatic playback.
 - Sửa trạng thái mở danh sách con trong thư mục EPG ảo khi WatchFlow Intelligence render lại hoặc khi người dùng dạy AI, bỏ qua kênh.
 - Đồng bộ kiểm thử P272 với DOM lồng thực tế P278; kiểm tra cả nhánh thư mục thường và danh sách kênh con, không xóa assertion.
 - Thêm smoke test Electron P279: mở danh sách, render lại, xác thực trạng thái, cache, không tự phát và playlist nguyên vẹn; ghi 2 PNG 1920×1080.
