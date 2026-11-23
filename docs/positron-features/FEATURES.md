@@ -11,7 +11,7 @@ Trang này được tạo tự động từ GitHub Releases và ảnh kiểm th�
 
 **Ứng dụng:** 4.23.390 · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
 
-Feature priority: NEW AI — Chẩn đoán số kênh mô hình hiện tại/bản sao cùng phân loại đủ chắc chắn trước khi nhập mô hình; tránh hiểu nhầm 0/0 là không đổi chủ đề. Feature class: AI / model transparency
+Feature priority: NEW — Bổ sung bảng đối chiếu số kênh mà mô hình Naive Bayes hiện tại và mô hình sao lưu phân loại đủ chắc chắn, phát hiện thiếu bằng chứng thay vì hiển thị 0/0 (0%) gây nhầm lẫn. Feature class: AI
 
 *Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
 

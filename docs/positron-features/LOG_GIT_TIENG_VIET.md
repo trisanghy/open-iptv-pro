@@ -6,7 +6,7 @@ Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA 
 
 **Ứng dụng:** 4.23.390 · **Trạng thái:** Chưa có bản phát hành
 
-Feature priority: NEW AI — Chẩn đoán số kênh mô hình hiện tại/bản sao cùng phân loại đủ chắc chắn trước khi nhập mô hình; tránh hiểu nhầm 0/0 là không đổi chủ đề. Feature class: AI / model transparency
+Feature priority: NEW — Bổ sung bảng đối chiếu số kênh mà mô hình Naive Bayes hiện tại và mô hình sao lưu phân loại đủ chắc chắn, phát hiện thiếu bằng chứng thay vì hiển thị 0/0 (0%) gây nhầm lẫn. Feature class: AI
 
 [Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/207dfb18b2ca7bf9a17f4d43663a19f60222d082)
 [Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
