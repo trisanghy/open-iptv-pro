@@ -1,3 +1,12 @@
+## P5.1.294 — AI phát hiện bất đồng giữa hai mẫu kênh / Electron 4.23.379
+- Feature priority: NEW — Khi xem trước khôi phục mô hình Naive Bayes, so sánh 180 kênh đầu và mẫu phân tầng theo nhóm, đo chênh lệch độ bao phủ trước/sau và mức suy giảm; cảnh báo khi hai kết quả chênh từ 20 điểm phần trăm hoặc mức rủi ro khác nhau.
+- Feature class: AI
+- User action: TV → WatchFlow → AI hợp gu → Quản lý mô hình → Khôi phục JSON → mở dự báo Naive Bayes → Đối chiếu hai mẫu.
+- Electron screenshot: positron-p51294-disagreement-before-1920x1080-real.png / positron-p51294-disagreement-after-1920x1080-real.png.
+- Evidence: Unit regression 260 kênh thuộc ba nhóm, mẫu đầu kênh không thấy rủi ro còn mẫu phân tầng nhận diện khác biệt; test không sửa trọng số hoặc playlist. Electron QA kiểm tra cặp ảnh thật, không phát video, không tràn.
+- Privacy: Chỉ tính toán trên tên/nhóm kênh nội bộ, không gửi M3U, URL stream, hồ sơ hay trọng số đi nơi khác; bất đồng không phải chỉ số độ chính xác AI.
+- Status: CANDIDATE — chờ kiểm chứng CI, ảnh Electron và các build Actions.
+
 ## P5.1.293 — AI kiểm tra chéo kênh theo nhóm trước khôi phục / Electron 4.23.378
 - Feature priority: NEW — Bên cạnh dự báo Naive Bayes theo 180 kênh đầu, thêm kiểm tra chéo luân phiên lấy mẫu theo nhóm để không bỏ sót nhóm kênh ở cuối playlist. Hiển thị riêng độ bao phủ và cảnh báo suy giảm trên mẫu đa nhóm.
 - Feature class: AI

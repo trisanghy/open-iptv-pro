@@ -791,6 +791,20 @@
        'Chưa thấy suy giảm mạnh trên mẫu đa nhóm.')+
       ' Đây là mẫu phân tầng, không phải đánh giá độ chính xác trên toàn bộ thư viện.';
      details.append(diversity);
+     // P294: compare the actual two local prediction samples before import.
+     const comparison=core.compareCategorySamples(categoryImpact,balanced);
+     if(comparison.ok){
+      const cross=d.createElement('p');cross.id='poAICategorySampleDisagreement';
+      cross.className=comparison.divergent?'po-ai-coverage-risk':'po-ai-category-breakdown';
+      if(comparison.divergent)cross.setAttribute('role','alert');
+      cross.textContent='Đối chiếu hai mẫu: chênh lệch mức suy giảm '+comparison.dropGap+
+       ' điểm %, tỷ lệ phân loại trước khác '+comparison.beforeGap+
+       ' điểm %, sau khác '+comparison.afterGap+' điểm %. '+
+       (comparison.divergent
+        ?'Cảnh báo: hai mẫu đưa ra kết quả khác biệt lớn; nên kiểm tra nhóm kênh trước khi thay mô hình.'
+        :'Hai mẫu chưa có bất đồng lớn ở ngưỡng 20 điểm %. ')+comparison.caution;
+      details.append(cross);
+     }
     }
     const note=d.createElement('small');note.textContent=categoryImpact.caution;
     details.append(note);importPreview.append(details);

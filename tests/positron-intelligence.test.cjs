@@ -865,3 +865,31 @@ test('P293 stratified Naive Bayes import forecast covers groups beyond first 180
  for(const token of ['qa293','positron-p51293-balanced-before-1920x1080-real.png',
   'positron-p51293-balanced-after-1920x1080-real.png'])assert.ok(qa.includes(token),token);
 });
+
+test('P294 flags disagreement between first 180 and group-balanced AI restore previews',()=>{
+ const sport={id:'p294-sport',name:'Bóng đá thể thao',group:'Thể thao'};
+ const film={id:'p294-film',name:'Phim hành động',group:'Phim'};
+ let learned=C.emptyCategoryModel();
+ for(let i=0;i<12;i++){learned=C.teachCategory(learned,sport,'sport');learned=C.teachCategory(learned,film,'cinema');}
+ const channels=[
+  ...Array.from({length:220},(_,i)=>({id:'news-'+i,name:'Bản tin '+i,group:'Tin tức'})),
+  ...Array.from({length:20},(_,i)=>({...sport,id:'sport-'+i})),
+  ...Array.from({length:20},(_,i)=>({...film,id:'film-'+i}))
+ ];
+ const saved=C.buildLearningBackup({model:C.emptyModel(),categoryModel:C.emptyCategoryModel(),bandit:{}});
+ const before=JSON.stringify(channels),weights=JSON.stringify(learned);
+ const first=C.previewCategoryImpact({categoryModel:learned},saved,channels);
+ const broad=C.previewCategoryImpact({categoryModel:learned},saved,channels,{strategy:'balanced'});
+ const result=C.compareCategorySamples(first,broad);
+ assert.equal(result.ok,true);assert.equal(result.divergent,true);
+ assert.ok(result.beforeGap>=20);assert.ok(result.dropGap>=20);
+ assert.equal(C.compareCategorySamples(broad,broad).divergent,false);
+ assert.equal(C.compareCategorySamples(null,broad).ok,false);
+ assert.equal(JSON.stringify(channels),before);assert.equal(JSON.stringify(learned),weights);
+ assert.ok(!JSON.stringify(result).includes('https://'));
+ const ui=fs.readFileSync('renderer/positron-intelligence.js','utf8');
+ const audit=fs.readFileSync('scripts/positron-20-extension.cjs','utf8');
+ assert.ok(ui.includes("cross.id='poAICategorySampleDisagreement'"));
+ for(const q of ['qa294','positron-p51294-disagreement-before-1920x1080-real.png',
+ 'positron-p51294-disagreement-after-1920x1080-real.png'])assert.ok(audit.includes(q),q);
+});
