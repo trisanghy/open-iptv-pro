@@ -484,3 +484,21 @@ html[data-positron="true"] #poWatchFlowPanel[data-po-ai-active="true"] .po-ai-en
  color:#a5dfd4;font-size:11px!important;line-height:1.25!important;
  white-space:normal;overflow-wrap:anywhere;
 }
+
+/* P345 keyboard and remote guidance is a native, optional disclosure. */
+#poWatchFlowPanel #poAIShortcutGuide.po-ai-shortcut-guide{
+ display:block;min-width:0;max-width:100%;margin:0 0 7px;
+ border:1px solid #47766f;border-radius:10px;background:#142f36;color:#d9f7ed;
+}
+#poWatchFlowPanel #poAIShortcutGuide.po-ai-shortcut-guide>summary{
+ min-height:44px;box-sizing:border-box;padding:12px 14px;
+ cursor:pointer;font-size:12px;font-weight:800;line-height:1.5;color:#d7fff3;
+}
+#poWatchFlowPanel #poAIShortcutGuide.po-ai-shortcut-guide>summary:focus-visible{
+ outline:3px solid #a6ffdc;outline-offset:-3px;border-radius:8px;
+}
+#poWatchFlowPanel #poAIShortcutGuide.po-ai-shortcut-guide>ul{
+ margin:0;padding:0 16px 13px 30px;display:grid;gap:8px;
+ max-width:100%;box-sizing:border-box;font-size:12px;
+ line-height:1.5;overflow-wrap:anywhere;
+}

@@ -326,6 +326,25 @@
  privacy.textContent='Mặc định KHÔNG học. Khi bật: chỉ lưu trọng số sở thích trong máy; học sau ≥35 giây phát có hình/tiếng, không tải stream hay lịch sử lên mạng. Tra cứu web chỉ gửi tên kênh, không gửi playlist/URL/hành vi. Bạn có thể xóa mô hình.';
  area.append(title,controls,alertRow,modeBar,summary,list,privacy,modelManager);
  modeBar.after(modeHelp);
+ // P345: an optional native shortcut disclosure for TV/remote users.
+ // The collapsed default leaves channel actions visible; Enter toggles details.
+ const shortcutGuide=d.createElement('details');shortcutGuide.id='poAIShortcutGuide';
+ shortcutGuide.className='po-ai-shortcut-guide';
+ const shortcutSummary=d.createElement('summary');shortcutSummary.textContent='Phím điều khiển AI';
+ shortcutSummary.title='Xem hoặc ẩn hướng dẫn remote và bàn phím';
+ shortcutSummary.setAttribute('aria-label','Mở hoặc đóng hướng dẫn phím WatchFlow AI');
+ const shortcutList=d.createElement('ul');
+ for(const hint of [
+  'F6 hoặc Alt+Shift+W: mở hoặc đóng WatchFlow AI',
+  '← → ↑ ↓: chuyển chế độ · Enter/Space: chọn chế độ',
+  'Alt+Shift+J: gợi ý đầu · K: tiếp theo · P: trước đó',
+  'PageUp/PageDown: lùi hoặc tiến 5 gợi ý khi focus nút Xem',
+  'Home/End: về gợi ý đầu hoặc cuối',
+  'Alt+Shift+I: xem tên và chủ đề kênh đầy đủ',
+  'Chỉ Enter hoặc Space trên nút Xem mới phát kênh'
+ ]){const item=d.createElement('li');item.textContent=hint;shortcutList.append(item);}
+ shortcutGuide.append(shortcutSummary,shortcutList);
+ modeHelp.after(shortcutGuide);
 
  // P322: context-aware accessible header; preserve native wording for non-AI.
  const watchTitle=byId('poWatchFlowTitle'),watchKicker=panel.querySelector('.po-watchflow-kicker');
