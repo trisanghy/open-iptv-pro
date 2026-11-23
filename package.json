@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.411",
-  "description": "Positron P5.1.326: AI đánh dấu điểm hợp gu sơ bộ khi thiếu phản hồi",
+  "version": "4.23.412",
+  "description": "Positron P5.1.327: repair focus on reopening WatchFlow AI",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

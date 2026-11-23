@@ -1325,7 +1325,14 @@
  }
  const count=byId('navCount');
  if(count)new MutationObserver(()=>{if(aiOpen&&!panel.hidden)render();}).observe(count,{childList:true,characterData:true,subtree:true});
- new MutationObserver(()=>{syncWatchHeader();if(aiOpen&&!panel.hidden){syncAIView();render();}}).observe(panel,{attributes:true,attributeFilter:['hidden']});
+ // P327: restore keyboard focus to visible AI tab on panel reopen.
+ // Native WatchFlow can focus a mode hidden by the AI-only view.
+ new MutationObserver(()=>{syncWatchHeader();if(aiOpen&&!panel.hidden){
+  syncAIView();render();
+  const active=d.activeElement;
+  if(!active||!panel.contains(active)||!active.getClientRects().length)
+   tab.focus({preventScroll:true});
+ }}).observe(panel,{attributes:true,attributeFilter:['hidden']});
  win.PositronIntelligence=Object.freeze({render,getProfile:()=>({enabled,observations:model.observations}),
   recommend:()=>core.recommend(channels(),guide(),win.IPTVGuide,model,webValid()),
   upcoming:()=>core.upcomingForYou(channels(),guide(),win.IPTVGuide,model,webValid()),

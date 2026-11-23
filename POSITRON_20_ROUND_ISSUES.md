@@ -42,3 +42,9 @@ Baseline 24/11/2026: HEAD 557361b9ab74340ca0f2999f1e0912c2c43803db, P5.1.323 / 4
 - Actions 45236620519: Node 1.042 pass/5 skipped/0 fail, capture & Win x64/Mac arm64/Mac x64 success; public release skipped Stable-only.
 - Real Electron artifact 14848624172: ảnh trước/sau 1920 và sau 720 đã tải và MỞ; 11/11 QA pass; 86% giữ nguyên, thêm nhãn (sơ bộ), nút Xem vẫn hiển thị.
 - Chốt 03/20 vòng đủ bằng chứng. 17 vòng sau CHƯA thực hiện; cần tiếp tục dựa trên ảnh P326 và HEAD hiện hành.
+
+## Đợt MỚI từ P5.1.326 — 01/20 P5.1.327 (CANDIDATE)
+- Baseline P326: 1042 Node pass, 5 skipped, 11/11 Electron QA, Win/Mac builds pass; Release skipped stable-only. Đã MỞ ảnh after 1920 và 720.
+- Lỗi quan sát: viền focus nằm tại nút WatchFlow trên topbar phía sau bảng AI đang mở. Nguyên nhân: opener cố focus một tab cũ bị AI ẩn.
+- Sửa: khi bảng AI mở lại, chỉ chuyển focus từ ngoài hoặc từ control đã ẩn vào nút AI; không thay đổi tiêu điểm của control đang hiển thị bên trong.
+- QA: Electron thực trước/sau 1920, sau 720, focus DOM, overflow, no autoplay và playlist/model giữ nguyên. Chỉ tính hoàn thành sau khi có CI/ảnh được MỞ xác nhận.

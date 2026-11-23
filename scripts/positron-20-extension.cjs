@@ -11869,6 +11869,9 @@ async function runTwenty(page){
  await require('./positron-324-audit.cjs').run(page);
  await require('./positron-325-audit.cjs').run(page);
  await require('./positron-326-audit.cjs').run(page);
+ await require('./positron-327-audit.cjs').run(page);
+ for(const png of ['positron-p51327-ai-focus-before-1920x1080-real.png','positron-p51327-ai-focus-after-1920x1080-real.png','positron-p51327-ai-focus-after-720x900-real.png'])
+  assert.ok(fs.existsSync(path.join(out,png)),'P327 missing real screenshot '+png);
  for(const png of [
   'positron-p51326-ai-sample-before-1920x1080-real.png',
   'positron-p51326-ai-sample-after-1920x1080-real.png',
