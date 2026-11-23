@@ -11886,6 +11886,13 @@ async function runTwenty(page){
  await require('./positron-341-audit.cjs').run(page);
  await require('./positron-342-audit.cjs').run(page);
  await require('./positron-343-audit.cjs').run(page);
+ await require('./positron-344-audit.cjs').run(page);
+ // P344 actual Electron PageUp/PageDown 5-card navigation before/after:
+ // positron-p51344-page-navigation-before-1920x1080-real.png
+ // positron-p51344-page-navigation-after-1920x1080-real.png
+ // positron-p51344-page-navigation-before-720x900-real.png
+ // positron-p51344-page-navigation-after-720x900-real.png
+
  // P343 actual Electron Home/End recommendation before/after screenshots:
  // positron-p51343-home-end-ai-before-1920x1080-real.png
  // positron-p51343-home-end-ai-after-1920x1080-real.png

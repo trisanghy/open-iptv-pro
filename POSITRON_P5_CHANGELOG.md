@@ -1,3 +1,13 @@
+## P5.1.344 / Electron 4.23.429 — PageUp/PageDown duyệt gợi ý AI (CANDIDATE)
+- Feature priority: NEW — Người dùng TV/remote có danh sách 8 gợi ý AI phải bấm mũi tên từng lần hoặc Home/End; nay PageUp/PageDown di chuyển nhanh năm thẻ mà vẫn giữ nút Xem trong tầm nhìn.
+- Feature class: AI
+- User action: Từ nút Xem trong WatchFlow AI, nhấn PageDown để tiến năm gợi ý, PageUp lùi năm, Home/End đến đầu/cuối; không tự phát video hoặc chiếm ô nhập.
+- Root cause: P343 mới hỗ trợ mũi tên và Home/End, chưa có cách đi nhanh theo trang khi dùng remote.
+- Evidence: Native Electron Playwright scripts/positron-344-audit.cjs ghi và kiểm bốn PNG 1920×1080/720×900, xác minh tập kênh, focus, không autoplay, overflow và mô hình AI không đổi; P334 historical QA sửa đo nhầm tab khi cuộn.
+- Electron screenshot: positron-p51344-page-navigation-before-720x900-real.png / positron-p51344-page-navigation-after-720x900-real.png.
+- Privacy: Không thay đổi dữ liệu M3U/EPG hay model học trên máy, không tự gọi playback hoặc gửi URL đi đâu.
+- Status: CANDIDATE cho đến khi CI và mở ảnh thật đạt, public Releases chỉ dành cho Stable.
+
 ## P5.1.343 / Electron 4.23.428 — Home/End nhảy đầu/cuối gợi ý AI bằng remote (CANDIDATE)
 - Feature priority: NEW — Khi danh sách AI có nhiều gợi ý, dùng phím mũi tên đi từng thẻ rất chậm. Bổ sung Home/End từ nút Xem để nhảy ngay đến thẻ đầu/cuối mà vẫn thấy tiêu đề, nút phát và tên kênh ở dải thông tin, không tự phát.
 - Feature class: AI
