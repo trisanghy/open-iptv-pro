@@ -32,7 +32,7 @@ async function run(page){
   const p=document.getElementById('poWatchFlowPanel');
   return p&&!p.hidden&&p.querySelectorAll('.po-flowplus-nav button[data-flowplus-mode]').length===5;
  },null,{timeout:15000});
- const stateBefore=await savedState();
+ const stateBefore=await savedState(page);
  await page.locator('#poFlowPlusdiscover').focus();
  await page.keyboard.press('Home');
  const first=await snapshot(page);
@@ -54,7 +54,7 @@ async function run(page){
  await page.keyboard.press('ArrowRight');
  const narrow=await snapshot(page);
  const narrowPng=await page.screenshot({path:path.join(out,'positron-p51325-keyboard-modes-after-720x900-real.png'),animations:'disabled'});
- const stateAfter=await savedState();
+ const stateAfter=await savedState(page);
  const qa325={
   fiveButtons:first.navigationCount===5&&second.navigationCount===5&&narrow.navigationCount===5,
   homeToFirst:first.focus==='poFlowPlusdiscover',
