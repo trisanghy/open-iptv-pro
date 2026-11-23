@@ -2,14 +2,22 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
-## P5.1.324 — năm chế độ WatchFlow có vùng bấm 44px
+## P5.1.325 — điều hướng năm chế độ WatchFlow bằng phím mũi tên an toàn
 
-**Ứng dụng:** 4.23.409 · **Trạng thái:** Chưa có bản phát hành
+**Ứng dụng:** 4.23.410 · **Trạng thái:** Chưa có bản phát hành
+
+Feature priority: NEW — năm chế độ WatchFlow và mục AI có điều hướng ArrowLeft/ArrowRight/Home/End bằng bàn phím hoặc remote; chỉ chuyển tiêu điểm, không tự chạy Smart Zap và không phát kênh. Feature class: AI
+
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/cf55aff744d5a96c0241d6138f4395cc8891c0a8)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+
+## P5.1.324 — Electron 4.23.409 — 5 chế độ WatchFlow đủ vùng bấm 44px (CANDIDATE)
+
+**Ứng dụng:** Chưa xác minh · **Trạng thái:** Chưa có bản phát hành
 
 Feature priority: NEW — tăng vùng bấm của năm nút Gợi ý, Tiếp, Cùng gu, Mix, Zap từ 35px lên 44px; vẫn trên một hàng. Feature class: AI
 
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/e124f3896e7138d39a943fd174fcc05e1ced9290)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
 
 ## P5.1.323 — Cập nhật Positron P5.1.323
 
