@@ -66,7 +66,10 @@ async function run(page){
  await page.setViewportSize({width:1920,height:1080});
  await page.evaluate(()=>{
   const native=window.IPTVState;window.__p337Native=native;native.setPage('tv');
-  if(!native.getChannels().length){
+  // The latest QA can inherit 1-2 short-lived channels from Electron state.
+  // Supply a private three-item fixture whenever fewer than three are present;
+  // never persist a fixture or replace a user's real playlist.
+  if(native.getChannels().length<3){
    const fixture=['Giải trí','Thể thao','Thời sự'].map((label,i)=>({
     id:'p337-qa-'+i,name:'QA P337 '+label,url:'https://example.invalid/p337-'+i+'.m3u8',
     group:'QA kiểm thử',status:'alive'
@@ -77,8 +80,38 @@ async function run(page){
   if(p.hidden)window.PositronWatchFlow.open();
   if(p.dataset.poAiActive!=='true')document.getElementById('poFlowPlusAI')?.click();
   document.getElementById('poAIChannels')?.click();
+  window.PositronIntelligence?.render?.();
  });
- await page.waitForFunction(()=>document.querySelectorAll('#poAICards .po-ai-card .po-ai-actions button:first-child').length>=3,null,{timeout:15000});
+ // Wait until the actual AI panel has finished opening before validating cards.
+ // If the previous native WatchFlow lifecycle rerenders after our first click,
+ // repeat the same explicit selection once; the test still requires three
+ // visible, focusable native buttons with working badge and geometry.
+ const ready=async()=>page.evaluate(()=>{
+  const p=document.getElementById('poWatchFlowPanel');
+  const buttons=[...document.querySelectorAll('#poAICards .po-ai-card .po-ai-actions button:first-child')]
+   .filter(el=>!el.disabled&&el.getClientRects().length);
+  return {aiActive:p?.dataset.poAiActive==='true'&&!p.hidden,cardCount:buttons.length,
+    synthetic:window.IPTVState.getChannels().length,mode:document.getElementById('poAICards')?.dataset.mode};
+ });
+ let state=await ready();
+ if(!state.aiActive||state.cardCount<3){
+  await page.waitForTimeout(220);
+  await page.evaluate(()=>{
+   const p=document.getElementById('poWatchFlowPanel');
+   if(p.hidden)window.PositronWatchFlow.open();
+   if(p.dataset.poAiActive!=='true')document.getElementById('poFlowPlusAI')?.click();
+   document.getElementById('poAIChannels')?.click();
+   window.PositronIntelligence?.render?.();
+  });
+ }
+ await page.waitForFunction(()=>{
+  const p=document.getElementById('poWatchFlowPanel');
+  return p?.dataset.poAiActive==='true'&&!p.hidden&&
+   [...document.querySelectorAll('#poAICards .po-ai-card .po-ai-actions button:first-child')]
+    .filter(el=>!el.disabled&&el.getClientRects().length).length>=3;
+ },null,{timeout:20000}).catch(async error=>{
+  throw Error('P337 native cards not ready: '+JSON.stringify(await ready())+'; '+error.message);
+ });
  const desktop=await beforeAfter(page,{width:1920,height:1080});
  const narrow=await beforeAfter(page,{width:720,height:900});
  await page.evaluate(()=>{
