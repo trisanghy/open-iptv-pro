@@ -1,3 +1,12 @@
+## P5.1.330 / Electron 4.23.415 — Phím tắt AI an toàn theo ngữ cảnh (CANDIDATE)
+- Feature priority: NEW — bổ sung khả năng nhận biết vùng biên tập và hộp thoại đang hoạt động trước khi mở bảng AI, tránh F6/Alt+Shift+W chiếm tiêu điểm gây gián đoạn nhập dữ liệu hoặc thao tác nguồn và Cast.
+- Feature class: AI
+- User action: Khi đang nhập văn bản hoặc mở Cast/Thêm nguồn, nhấn F6/Alt+Shift+W để tiếp tục thao tác hiện tại; khi trở về TV, nhấn các phím này để mở AI và nhấn lại để đóng.
+- Electron screenshot: positron-p51330-modal-f6-before-1920x1080-real.png / positron-p51330-modal-f6-after-1920x1080-real.png / positron-p51330-ai-after-720x900-real.png.
+- Evidence: Mã P329 chỉ chặn contenteditable="true" và palette, chưa chặn nội dung chỉnh sửa kiểu plaintext-only hoặc modal Cast/Thêm nguồn. QA P330 chạy Electron thật, nhấn hai tổ hợp phím dưới những trạng thái đó, đối chiếu ảnh và focus 1920/720, bảo toàn playlist/model và không tự phát luồng.
+- Privacy: sự kiện phím xử lý hoàn toàn tại Electron; không gửi stream URL, M3U, EPG, dữ liệu xem hay mô hình AI ra mạng.
+- Status: CANDIDATE đến khi Node tests, Electron screenshot audit, build và mở PNG thật đều đạt; stable-only Release.
+
 ## P5.1.329 / Electron 4.23.414 — Phím tắt hai chiều mở/đóng WatchFlow AI (CANDIDATE)
 - Feature priority: NEW — điều khiển hoàn toàn bằng một phím để bật và tắt bảng AI, không phải đưa chuột tìm nút × hoặc chuyển sang Escape khi đang xem truyền hình.
 - Feature class: AI
