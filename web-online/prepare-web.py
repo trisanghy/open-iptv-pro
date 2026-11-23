@@ -485,7 +485,7 @@ for pattern,label in (
 for filename in ('web-tv-channel-hub.js','web-tv-channel-hub.css'):
     copy2(Path(__file__).resolve().parent/filename,out/filename)
 hub_css='<link rel="stylesheet" href="web-tv-channel-hub.css?v=tv-hub-20261119c"/>'
-hub_js='<script src="web-tv-channel-hub.js?v=tv-hub-stability-20261120a"></script>'
+hub_js='<script src="web-tv-channel-hub.js?v=tv-hub-unified-search-20261123a"></script>'
 if html.count('</head>')!=1 or html.count('</body>')!=1:
     sys.exit('Web channel hub insertion points missing')
 html=html.replace('</head>',hub_css+'</head>',1)

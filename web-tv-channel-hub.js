@@ -8,6 +8,7 @@
  if(root?.document){root.OpenIPTVChannelHub=api;api.mount(root);}
 })(typeof window!=='undefined'?window:null,function(){
  const LIMIT=48,BATCH_SIZE=96;
+ const sharedSearch=typeof require==='function'?require('./web-channel-search.js'):null;
  const langPack={
  vi:['Chọn kênh','Yêu thích','Xem gần đây','Tìm kênh…','Tất cả','Nhóm','Tất cả nhóm','Sắp xếp','Thứ tự nguồn','Tên A → Z','Tên Z → A','Xem tất cả','Kênh trước','Kênh sau','Chưa có kênh phù hợp.','Chưa có kênh yêu thích.','Chưa có lịch sử xem.','Hiển thị thêm','Dạng lưới','Dạng danh sách','Thêm yêu thích','Bỏ yêu thích','Chọn kênh để xem'],
  en:['Channels','Favorites','Recently watched','Search channels…','All','Group','All groups','Sort','Source order','Name A → Z','Name Z → A','View all','Previous channel','Next channel','No matching channels.','No favorite channels yet.','No recently watched channels.','Show more','Grid','List','Add to favorites','Remove favorite','Choose a channel to watch'],
@@ -53,10 +54,12 @@
    data?.favoriteKeys||[],data?.favorites||[],data?.recentChannelIds||[]
   ]);
  }
- function choose(channels,{tab='channels',search='',chip='all',groupName='',sort='source',store={},favCore,recentCore}={}){
+ function choose(channels,{tab='channels',search='',chip='all',groupName='',sort='source',store={},favCore,recentCore,guide=null,engine=null}={}){
   let a=section(channels,tab,store,favCore,recentCore);
-  const query=norm(search).trim();
-  a=a.filter(ch=>(chip==='all'||category(ch,chip))&&(!groupName||group(ch)===groupName)&&(!query||norm(ch.name+' '+group(ch)).includes(query)));
+  a=a.filter(ch=>(chip==='all'||category(ch,chip))&&(!groupName||group(ch)===groupName));
+  const term=String(search||'').trim();
+  if(term){const searchEngine=engine||(typeof window!=='undefined'?window?.OpenIPTVChannelSearch:null)||sharedSearch;
+   a=searchEngine?.search?searchEngine.search(a,term,guide).channels:a.filter(ch=>norm(ch.name+' '+group(ch)).includes(norm(term)));}
   if(sort==='az')a=[...a].sort((a,b)=>a.name.localeCompare(b.name,undefined,{numeric:true,sensitivity:'base'}));
   else if(sort==='za')a=[...a].sort((a,b)=>b.name.localeCompare(a.name,undefined,{numeric:true,sensitivity:'base'}));
   return a;
@@ -72,7 +75,7 @@
   const fav=()=>root.OpenIPTVFavorites;
   const rec=()=>root.OpenIPTVRecentChannels;
   let tab='channels',chip='all',groupName='',sort='source',view='grid',search='',expanded=false;
-  let tileRenderId=0,lastRenderSignature='',lastCurrentId='';
+  let tileRenderId=0,lastRenderSignature='',lastCurrentId='',lastSearchGuide=null,lastSideSignature='',searchTimer=null;
   let currentLang=()=>root.OpenIPTVI18n?.getLanguage?.()||doc.documentElement.lang||'vi';
   const t=key=>label(currentLang(),key);
   const hub=doc.createElement('section');hub.id='webChannelHub';hub.className='web-channel-hub';
@@ -210,9 +213,10 @@
     return;
    }
    if(!api())return;
-   const all=allChannels(),s=store();
+   const all=allChannels(),s=store(),searchGuide=search.trim()?root.IPTVExtras?.getGuide?.()||null:null;
    const signature=renderSignature(all,s,[tab,chip,groupName,sort,view,search,expanded],currentLang());
-   if(signature===lastRenderSignature){updateCurrentSelection();return;}
+   if(signature===lastRenderSignature&&searchGuide===lastSearchGuide){updateCurrentSelection();return;}
+   lastSearchGuide=searchGuide;
    lastRenderSignature=signature;
    lastCurrentId=currentId();
    const ref=tab==='channels'?all:section(all,tab,s,fav(),rec());
@@ -244,17 +248,18 @@
    tiles.classList.toggle('expanded',expanded);
    tileWrap.classList.toggle('expanded',expanded);
    toggle.querySelectorAll('button').forEach(b=>b.classList.toggle('active',b.dataset.view===view));
-   const shown=choose(all,{tab,search,chip,groupName,sort,store:s,favCore:fav(),recentCore:rec()});
+   const shown=choose(all,{tab,search,chip,groupName,sort,store:s,favCore:fav(),recentCore:rec(),guide:searchGuide,engine:root.OpenIPTVChannelSearch});
    tiles.dataset.totalChannels=String(shown.length);
    renderTiles(visible(shown,expanded));
    more.hidden=shown.length<=LIMIT;
-   side();
+   const sideSignature=JSON.stringify([all.length,s.favoriteKeys,s.favorites,s.recentChannelIds,currentLang()]);
+   if(sideSignature!==lastSideSignature){side();lastSideSignature=sideSignature;}
   }
   let scheduled=false;
   function schedule(){if(scheduled)return;scheduled=true;root.setTimeout(()=>{scheduled=false;render();},80);}
   nav.addEventListener('click',event=>{const target=event.target.closest('[data-tab]');if(target)selectTab(target.dataset.tab);});
   aside.addEventListener('click',event=>{const target=event.target.closest('[data-open]');if(target)selectTab(target.dataset.open);});
-  find.addEventListener('input',()=>{search=find.value;expanded=false;render();});
+  find.addEventListener('input',()=>{search=find.value;expanded=false;if(searchTimer)root.clearTimeout(searchTimer);searchTimer=root.setTimeout(()=>{searchTimer=null;render();},110);});
   groupSelect.addEventListener('change',()=>{groupName=groupSelect.value;expanded=false;render();});
   order.addEventListener('change',()=>{sort=order.value;render();});
   toggle.addEventListener('click',event=>{const button=event.target.closest('[data-view]');if(button){view=button.dataset.view;render();}});

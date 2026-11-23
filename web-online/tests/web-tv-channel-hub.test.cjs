@@ -64,11 +64,11 @@ test('channel hub labels exist for all 17 supported UI languages',()=>{
 test('Web only channel hub loads after player and survives WebView rebuild',()=>{
  assert.equal(read('web-online/web-tv-channel-hub.js'),read('web-tv-channel-hub.js'));
  assert.equal(read('web-online/web-tv-channel-hub.css'),css);
- assert.equal((html.match(/src="web-tv-channel-hub[.]js[?]v=tv-hub-stability-20261120a"/g)||[]).length,1);
+ assert.equal((html.match(/src="web-tv-channel-hub[.]js[?]v=tv-hub-unified-search-20261123a"/g)||[]).length,1);
  assert.equal((html.match(/href="web-tv-channel-hub[.]css[?]v=tv-hub-20261119c"/g)||[]).length,1);
  assert.ok(html.indexOf('web-tv-channel-hub.js?v=')>html.indexOf('app.js?v='));
  assert.ok(builder.includes("for filename in ('web-tv-channel-hub.js','web-tv-channel-hub.css')"));
- assert.ok(builder.includes("hub_js='<script src=\"web-tv-channel-hub.js?v=tv-hub-stability-20261120a\"></script>'"));
+ assert.ok(builder.includes("hub_js='<script src=\"web-tv-channel-hub.js?v=tv-hub-unified-search-20261123a\"></script>'"));
  assert.ok(builder.includes("hub_css='<link rel=\"stylesheet\" href=\"web-tv-channel-hub.css?v=tv-hub-20261119c\"/>'"));
  assert.match(read('web-tv-channel-hub.js'),/quick\.insertAdjacentElement\('afterend',hub\)/);
  assert.match(read('web-tv-channel-hub.js'),/api\(\)\?\.playChannel\?\.\(c\.id\)/);
@@ -127,4 +127,14 @@ test('browser layout keeps desktop selector visible but hides it on mobile', {sk
    assert.match(rendered,/data-list-display="(?!none)[^"]+"/,device+' original channel panel remains available');
   }
  }finally{fs.rmSync(dir,{recursive:true,force:true});}
+});
+
+test('Channel hub shares typo, diacritic and EPG search engine with sidebar and AI tabs',()=>{
+ const cs=[{id:'one',name:'VTV1',group:'VTV',tvgId:'abc'},{id:'two',name:'Thời sự',group:'Tin tức',tvgId:'def'}];
+ assert.deepEqual(hub.choose(cs,{search:'vvt1'}).map(c=>c.id),['one']);
+ assert.deepEqual(hub.choose(cs,{search:'thoi su'}).map(c=>c.id),['two']);
+ const search=require('../../web-channel-search.js');
+ const guide={names:{abc:'abc'},programmes:[{id:'abc',title:'Việt Nam hôm nay',start:100,end:90000}]};
+ const e={search:(channels,q,g)=>search.search(channels,q,g,{clock:200})};
+ assert.deepEqual(hub.choose(cs,{search:'viet nam hom nay',guide,engine:e}).map(c=>c.id),['one']);
 });

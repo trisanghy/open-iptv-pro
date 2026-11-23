@@ -103,7 +103,7 @@
   if(!near(queryTokens,bucket.tokens))return null;
   return bucket.entries.find(entry=>near(queryTokens,entry.tokens))||null;
  }
- function search(channels,query,guide,{clock=Date.now()}={}){
+ function search(channels,query,guide,{clock=Date.now(),categoryFor=null}={}){
   const list=Array.isArray(channels)?channels:[];
   const q=normalize(query),qcompact=compact(query),qTokens=words(query);
   if(!q)return {channels:list,matches:new Map(),approximate:false,usedEPG:false};
@@ -113,7 +113,8 @@
   for(const channel of list){
    const title=normalize(channel.name),group=normalize(channel.group);
    const id=normalize(channel.tvgId);
-   const metadata=[title,group,id].filter(Boolean);
+   const extra=typeof categoryFor==='function'?normalize(categoryFor(channel)):'';
+   const metadata=[title,group,id,extra].filter(Boolean);
    const exactMeta=metadata.some(text=>text.includes(q))||
     (qcompact.length>=3&&metadata.some(text=>text.replace(/\s+/g,'').includes(qcompact)))||
     qTokens.every(t=>metadata.some(text=>words(text).some(w=>w===t||w.startsWith(t)&&t.length>=3)));

@@ -1365,7 +1365,7 @@
    try{await tryPlayback(url,generation,'ffmpeg');}
    catch(e){if(generation===playGeneration)recoverPlayback(generation,'FFmpeg: '+String(e?.message||e));}
   });
-  let pendingChannelSearch=0;$('#searchBox').addEventListener('input',()=>{if(pendingChannelSearch)cancelAnimationFrame(pendingChannelSearch);pendingChannelSearch=requestAnimationFrame(()=>{pendingChannelSearch=0;renderList();});});$('#volume').addEventListener('input',e=>{player.volume=e.target.value/100;store.volume=player.volume;save();});
+  let pendingChannelSearch=0,channelSearchTimer=null;$('#searchBox').addEventListener('input',()=>{if(pendingChannelSearch)cancelAnimationFrame(pendingChannelSearch);if(channelSearchTimer)clearTimeout(channelSearchTimer);channelSearchTimer=setTimeout(()=>{channelSearchTimer=null;pendingChannelSearch=requestAnimationFrame(()=>{pendingChannelSearch=0;renderList();});},100);});$('#volume').addEventListener('input',e=>{player.volume=e.target.value/100;store.volume=player.volume;save();});
   player.volume=store.volume??.8;$('#volume').value=Math.round(player.volume*100);
   // Keep TV pairing volume synchronized even when adjusting the existing Web slider.
   player.addEventListener('volumechange',()=>{if(!native)window.OpenIPTVWebCastV2?.onLocalVolumeChanged?.(player.volume,player.muted);});

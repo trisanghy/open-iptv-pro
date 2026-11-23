@@ -40,3 +40,10 @@ test('Empty query preserves source objects and order',()=>{
  const channels=[make('1','A'),make('2','B')],r=s.search(channels,'');
  assert.equal(r.channels,channels);assert.equal(r.approximate,false);
 });
+
+test('Central engine matches inferred AI theme without changing M3U data',()=>{
+ const one=make('one','ABC TV','VTV'),two=make('two','K+ Sport','Thể thao');
+ const found=s.search([one,two],'tin tuc',null,{categoryFor:ch=>ch.id==='one'?'Tin tức':'Thể thao'});
+ assert.deepEqual(found.channels,[one]);
+ assert.equal(one.group,'VTV');
+});

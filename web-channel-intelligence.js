@@ -7,6 +7,7 @@
  if(root?.document){root.OpenIPTVChannelIntelligence=api;api.mount(root);}
 })(typeof window!=='undefined'?window:null,function(){
  const themes=['Tin tức','Thể thao','Phim','Giải trí','Thiếu nhi','Âm nhạc','Khoa học','Du lịch','Tổng hợp'];
+ const sharedSearch=typeof require==='function'?require('./web-channel-search.js'):null;
  const examples={
   'Tin tức':['tin tuc thoi su ban tin','news world breaking headlines','kinh te tai chinh chung khoan','chinh tri xa hoi quoc hoi'],
   'Thể thao':['the thao bong da tennis','sports football champions league','nba bong ro dua xe','fifa world cup giai dau'],
@@ -84,6 +85,23 @@
   return {classified:rows.slice().sort((a,b)=>themes.indexOf(a.category)-themes.indexOf(b.category)||a.index-b.index),
    recommended,byId,coldStart:signals===0};
  }
+ 
+ // All Web channel search surfaces share the same typo, accent and EPG engine.
+ // Scope by category, then retain personalized recommendation ordering.
+ function filterRows(rows,{query='',selected='Tất cả',guide=null,engine=null,clock=Date.now()}={}){
+  const scoped=(Array.isArray(rows)?rows:[]).filter(row=>selected==='Tất cả'||row.category===selected);
+  const term=String(query||'').trim();
+  if(!term)return {rows:scoped,matches:new Map(),approximate:false,usedEPG:false};
+  const searchEngine=engine||(typeof window!=='undefined'?window?.OpenIPTVChannelSearch:null)||sharedSearch;
+  if(!searchEngine?.search)return {rows:[],matches:new Map(),approximate:false,usedEPG:false};
+  const byId=new Map(scoped.map(row=>[String(row.channel.id),row]));
+  const found=searchEngine.search(scoped.map(row=>row.channel),term,guide,{
+   clock,categoryFor:channel=>byId.get(String(channel.id))?.category||''
+  });
+  const matching=new Set(found.channels.map(channel=>String(channel.id)));
+  return {rows:scoped.filter(row=>matching.has(String(row.channel.id))),
+   matches:found.matches,approximate:found.approximate,usedEPG:found.usedEPG};
+ }
  function mount(root){
   const doc=root.document,hub=doc.getElementById('webChannelHub'),nav=hub?.querySelector('.web-hub-tabs');
   const main=hub?.querySelector('.web-hub-main');
@@ -94,15 +112,16 @@
   const panel=doc.createElement('section');panel.id='webChannelIntelligence';panel.className='web-ai-panel';panel.hidden=true;
   const hint=doc.createElement('p');hint.className='web-ai-hint';
   const bar=doc.createElement('div');bar.className='web-ai-bar';
-  const search=doc.createElement('input');search.type='search';search.placeholder='Tìm trong kết quả AI…';search.setAttribute('aria-label','Tìm trong kết quả AI');
+  const search=doc.createElement('input');search.type='search';search.placeholder='Tìm kênh / chương trình EPG…';search.setAttribute('aria-label','Tìm kênh không dấu, sửa lỗi gõ và tìm chương trình EPG');search.setAttribute('aria-describedby','webAiSearchFeedback');search.autocomplete='off';
   bar.append(search);
+  const feedback=doc.createElement('small');feedback.id='webAiSearchFeedback';feedback.className='web-ai-search-feedback';feedback.setAttribute('role','status');feedback.setAttribute('aria-live','polite');
   const chips=doc.createElement('div');chips.className='web-ai-chips';
   const grid=doc.createElement('div');grid.className='web-ai-grid';
   const more=button('Hiển thị thêm','web-hub-more');
-  panel.append(hint,bar,chips,grid,more);main.append(panel);
+  panel.append(hint,bar,feedback,chips,grid,more);main.append(panel);
   const state=()=>root.IPTVState,store=()=>state()?.getStore?.()||{};
   const favorites=()=>root.OpenIPTVFavorites?.visible?.(store())||[];
-  let active='',selected='Tất cả',limit=48,analysis=null,timer=null,version='',renderSerial=0;
+  let active='',selected='Tất cả',limit=48,analysis=null,timer=null,version='',renderSerial=0,inputTimer=null;
   const locale=()=>root.OpenIPTVI18n?.getLanguage?.()||doc.documentElement.lang||'vi';
   function tabText(key){return locale()==='vi'?(key==='classification'?'Phân loại kênh':'Kênh gợi ý'):(key==='classification'?'AI categories':'Recommended');}
   function syncTabState(){
@@ -123,7 +142,7 @@
    if(!active||timer)return;
    timer=root.setTimeout(()=>{timer=null;render();},100);
   }
-  function card(row){
+  function card(row,match=null){
    const c=row.channel,tile=doc.createElement('div');tile.className='web-hub-tile web-ai-tile';
    const play=button('','web-hub-play');play.setAttribute('aria-label','Phát '+c.name);
    const art=doc.createElement('span');art.className='web-hub-art';art.textContent=String(c.name||'TV').slice(0,3).toUpperCase();
@@ -134,7 +153,9 @@
    }
    const name=doc.createElement('span');name.className='web-hub-name';name.textContent=c.name;
    const category=doc.createElement('small');category.className='web-ai-category';category.textContent=row.category;
-   play.append(art,name,category);play.addEventListener('click',()=>{void state()?.playChannel?.(c.id);});
+   play.append(art,name,category);
+   if(match?.programme){const epg=doc.createElement('small');epg.className='web-ai-programme';epg.textContent='EPG: '+match.programme+(match.type==='near-epg'?' · gần đúng':'');epg.title=epg.textContent;play.append(epg);}
+   play.addEventListener('click',()=>{void state()?.playChannel?.(c.id);});
    tile.append(play);
    const isFav=()=>root.OpenIPTVFavorites?.has?.(store(),c);
    const star=button(isFav()?'★':'☆','web-hub-favorite'+(isFav()?' marked':''));
@@ -166,8 +187,9 @@
     chip.setAttribute('aria-pressed',String(item===selected));chip.addEventListener('click',()=>{selected=item;limit=48;render();});
     chips.append(chip);
    }
-   const q=normalize(search.value).trim();
-   const filtered=rows.filter(r=>(selected==='Tất cả'||r.category===selected)&&(!q||normalize(r.channel.name+' '+r.category+' '+r.channel.group).includes(q)));
+   const matches=filterRows(rows,{query:search.value,selected,guide,engine:root.OpenIPTVChannelSearch});
+   const filtered=matches.rows;
+   feedback.textContent=search.value.trim()?(matches.approximate?'Đã sửa lỗi gõ · Kết quả gần đúng.':matches.usedEPG?'Tìm thấy chương trình trong EPG.':filtered.length?'':(programmes.length?'Không có kết quả phù hợp.':'Chưa có EPG khớp; chỉ tìm được theo tên kênh và nhóm.')):'';
    grid.replaceChildren();
    if(!filtered.length){
     const empty=doc.createElement('p');empty.className='web-hub-empty';
@@ -177,19 +199,19 @@
    function batch(){
     if(token!==renderSerial)return;
     const fragment=doc.createDocumentFragment(),stop=Math.min(index+80,end);
-    for(;index<stop;index++)fragment.append(card(filtered[index]));
+    for(;index<stop;index++)fragment.append(card(filtered[index],matches.matches.get(String(filtered[index].channel.id))));
     grid.append(fragment);
     if(index<end)root.requestAnimationFrame?root.requestAnimationFrame(batch):root.setTimeout(batch,0);
    }
    batch();
    more.hidden=filtered.length<=limit;more.textContent='Hiển thị thêm ('+Math.min(48,filtered.length-limit)+')';
   }
-  search.addEventListener('input',()=>{limit=48;render();});
+  search.addEventListener('input',()=>{limit=48;if(inputTimer)root.clearTimeout(inputTimer);inputTimer=root.setTimeout(()=>{inputTimer=null;render();},110);});
   more.addEventListener('click',()=>{limit+=48;render();});
   doc.addEventListener('openiptv:local-saved',schedule);
   root.addEventListener('openiptv:favorites-changed',schedule);
   doc.addEventListener('openiptv:languagechange',()=>{syncTabState();schedule();});
   root.setInterval(()=>{if(active&&doc.visibilityState!=='hidden')schedule();},60000);
  }
- return Object.freeze({themes,normalize,tokens,predict,explicit,analyse,mount});
+ return Object.freeze({themes,normalize,tokens,predict,explicit,analyse,filterRows,mount});
 });

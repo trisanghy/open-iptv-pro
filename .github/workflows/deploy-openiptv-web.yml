@@ -165,10 +165,13 @@ jobs:
           node --test web-online/tests/web-playlist-url.test.cjs
           grep -Fq 'collector.js?v=collector-quota-20261120b' _site/index.html
           grep -Fq 'source-edit.js?v=playlist-input-20261119c' _site/index.html
-          grep -Fq 'app.js?v=search-epg-20261123a' _site/index.html
+          grep -Fq 'app.js?v=unified-search-20261123a' _site/index.html
           node --check _site/web-channel-search.js
           node --test tests/web-channel-search.test.cjs
-          grep -Fq 'src="web-channel-search.js?v=search-epg-20261123b"' _site/index.html
+          node --check _site/web-channel-intelligence.js
+          node --test tests/web-channel-intelligence.test.cjs
+          grep -Fq 'web-channel-intelligence.js?v=nb-unified-search-20261123a' _site/index.html
+          grep -Fq 'src="web-channel-search.js?v=unified-search-20261123a"' _site/index.html
           grep -Fq 'href="web-channel-search.css?v=search-epg-20261123a"' _site/index.html
           grep -Fq 'id="channelSearchHelp"' _site/index.html
           grep -Fq 'advanced.js?v=advanced-health-compact-20261120a' _site/index.html
@@ -181,7 +184,7 @@ jobs:
           CHANNEL_HUB_CHROME="$(command -v google-chrome)" node --test web-online/tests/web-tv-channel-hub-expand-browser.test.cjs
           cmp _site/web-tv-channel-hub.js web-online/web-tv-channel-hub.js
           cmp _site/web-tv-channel-hub.css web-online/web-tv-channel-hub.css
-          grep -Fq 'web-tv-channel-hub.js?v=tv-hub-stability-20261120a' _site/index.html
+          grep -Fq 'web-tv-channel-hub.js?v=tv-hub-unified-search-20261123a' _site/index.html
           grep -Fq 'web-tv-channel-hub.css?v=tv-hub-20261119c' _site/index.html
           grep -Fq 'data-filter="recent"' _site/index.html
           grep -Fq 'web-compact-toolbar.css?v=recent-controls-20261119a' _site/index.html

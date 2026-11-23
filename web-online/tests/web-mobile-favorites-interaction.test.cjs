@@ -73,7 +73,7 @@ test('mobile preview overlay hidden, static build and latest script assets maint
  assert.match(css,/html\[data-iptv-device="mobile"\] body #channelPreview/);
  assert.match(css,/display:none!important;visibility:hidden!important;pointer-events:none!important/);
  assert.match(html,/<script src="app\.js\?v=[^"]+"><\/script>/);
- assert.match(html,/web-channel-search\.js\?v=search-epg-20261123b/);
+ assert.match(html,/web-channel-search\.js\?v=unified-search-20261123a/);
  assert.match(html,/advanced\.js\?v=advanced-health-compact-20261120a/);
  assert.match(html,/web-mobile-player\.css\?v=apple-more-20261120a/);
  assert.match(builder,/Preserve Web favorite card tap-to-play/);
