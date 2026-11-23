@@ -7,15 +7,28 @@ Trang này được tạo tự động từ GitHub Releases và ảnh kiểm th�
 [Mở WEBSITE changelog tương tác](https://raw.githack.com/trisanghy/open-iptv-pro/Positron/docs/positron-features/index.html) · [Giao diện HTML trong repository](index.html) · [Các bản phát hành](https://github.com/trisanghy/open-iptv-pro/releases) · [Nhật ký Git tiếng Việt](LOG_GIT_TIENG_VIET.md) · [Quy tắc ưu tiên tính năng](../../POSITRON_FEATURE_RULES.md)
 
 <details>
-<summary><strong>P5.1.326</strong> · AI đánh dấu điểm hợp gu sơ bộ khi thiếu phản hồi · CHƯA CÓ BẢN PHÁT HÀNH · TÍNH NĂNG</summary>
+<summary><strong>P5.1.327</strong> · Cập nhật Positron P5.1.327 · CHƯA CÓ BẢN PHÁT HÀNH · TÍNH NĂNG</summary>
 
-**Ứng dụng:** 4.23.411 · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
+**Ứng dụng:** 4.23.412 · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
+
+Feature priority: NEW — remote/bàn phím quay về AI tab trong bảng thay vì toolbar phía sau. Feature class: AI
+
+*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+
+[Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/tree/Positron) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/92c6d5ac6f0d649401c6729a44473982e53c07a7)
+
+</details>
+
+<details>
+<summary><strong>P5.1.326</strong> · Electron 4.23.411 — Nhãn AI “sơ bộ” khi mẫu học còn ít (CANDIDATE) · CHƯA CÓ BẢN PHÁT HÀNH · TÍNH NĂNG</summary>
+
+**Ứng dụng:** Chưa xác minh · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
 
 Feature priority: NEW — hiển thị rõ mức hợp gu mới chỉ là ước tính khi AI chưa có đủ 10 phản hồi; kèm giải thích bằng tooltip và nhãn đọc màn hình, không đổi thứ hạng hay tỷ lệ mô hình. Feature class: AI
 
 *Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
 
-[Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/tree/Positron) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/b716cf4039cb9787a0e18201df6b142d5771c610)
+[Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
 
 </details>
 
