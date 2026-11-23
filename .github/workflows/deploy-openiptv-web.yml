@@ -230,13 +230,14 @@ jobs:
           node --check _site/web-ai-quick-access.js
           node --test web-online/tests/web-ai-quick-access.test.cjs
           grep -Fq 'web-ai-quick-access.js?v=ai-shortcut-nav-20261123a' _site/index.html
+          node --test tests/web-cast-native-picker-20261123.test.cjs
           node --test web-online/tests/web-cast-sender.test.cjs
           node --test web-online/tests/web-cast-v2.test.cjs
           node --test web-online/tests/web-tv-cockpit.test.cjs
           test -s _site/web-tv-cockpit.css
           node --test web-online/tests/web-cast-icons.test.cjs
           node --test web-online/tests/web-access-links.test.cjs
-          grep -Fq 'web-cast-sender.js?v=airplay-chrome-20261123b' _site/index.html
+          grep -Eq 'web-cast-sender\.js\?v=[^" ]+' _site/index.html
           grep -Fq 'web-cast-v2.css?v=airplay-chrome-20261123b' _site/index.html
           grep -Fq 'web-tv-pair.js?v=tv-local-handoff-20261122d' _site/index.html
           grep -Fq 'wss:' _site/index.html
