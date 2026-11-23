@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.418",
-  "description": "Positron P5.1.333: sửa chồng thanh điều hướng AI và nút Xem bị che (BLOCKER_FIX)",
+  "version": "4.23.419",
+  "description": "Positron P5.1.334: AI chuyển thẳng đến nút Xem đầu bằng Alt+Shift+J và sửa vùng nút dính header (NEW)",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

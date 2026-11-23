@@ -11876,6 +11876,12 @@ async function runTwenty(page){
  await require('./positron-331-audit.cjs').run(page);
  await require('./positron-332-audit.cjs').run(page);
  await require('./positron-333-audit.cjs').run(page);
+ await require('./positron-334-audit.cjs').run(page);
+ // P334 real Electron before-after evidence:
+ // positron-p51334-ai-jump-before-1920x1080-real.png
+ // positron-p51334-ai-jump-after-1920x1080-real.png
+ // positron-p51334-ai-jump-before-720x900-real.png
+ // positron-p51334-ai-jump-after-720x900-real.png
  // P333 real Electron before-after evidence:
  // positron-p51333-ai-actions-before-1920x1080-real.png
  // positron-p51333-ai-actions-after-1920x1080-real.png

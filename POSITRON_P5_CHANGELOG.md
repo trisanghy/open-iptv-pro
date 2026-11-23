@@ -1,3 +1,12 @@
+## P5.1.334 / Electron 4.23.419 — AI đi tới nút Xem đầu bằng bàn phím và trả khoảng trống dưới header (CANDIDATE)
+- Feature priority: NEW — Thêm phím tắt điều hướng trực tiếp tới gợi ý có thể phát trong WatchFlow Intelligence, để không phải Tab qua nhiều công tắc mô hình trước khi chọn nội dung.
+- Feature class: AI
+- User action: Trên TV nhấn F6 mở WatchFlow AI, khi đang xem các thẻ gợi ý nhấn Alt+Shift+J để đưa tiêu điểm tới nút Xem đầu tiên; Enter mới thực sự phát. Phím không chạy trong ô nhập, ngoài bảng AI hay khi có hộp thoại.
+- Electron screenshot: positron-p51334-ai-jump-before-1920x1080-real.png / positron-p51334-ai-jump-after-1920x1080-real.png / positron-p51334-ai-jump-before-720x900-real.png / positron-p51334-ai-jump-after-720x900-real.png.
+- Evidence: P333 screenshot đã mở cho thấy nút AI sát ngay mép header sticky tại 720, và điều khiển đầu nằm sâu dưới công tắc học máy. P334 thêm lệnh focus-only với Alt+Shift+J, trợ giúp bàn phím và khoảng cách 9px chỉ trong AI active. QA Electron 1920/720 mở ảnh trước/sau, đo khoảng cách tab-header, tiêu điểm nút Xem thực, điều khiển có thể nhấn, giữ nguồn/mô hình và không autoplay; BEFORE là override vị trí P333 trong cùng binary, không phải ảnh lấy từ bản cũ.
+- Privacy: Phím tắt và scroll hoàn toàn cục bộ; không gửi M3U, URL, EPG, lịch sử hay dữ liệu mô hình ra mạng, không bắt đầu phát tự động.
+- Status: CANDIDATE đến khi node tests, native Electron QA, screenshot review và build được xác minh; public Releases chỉ dành cho Stable.
+
 ## P5.1.333 / Electron 4.23.418 — Sửa trùng thanh điều hướng che nút Xem AI (CANDIDATE)
 - Feature priority: BLOCKER_FIX — Sửa lỗi CI kiểm thử Electron làm thất bại bước chụp ảnh và chặn kiểm chứng bản phát hành, đồng thời khôi phục nút Xem AI bị che trên màn 720px.
 - Feature class: AI

@@ -127,3 +127,8 @@ Baseline 24/11/2026: HEAD 557361b9ab74340ca0f2999f1e0912c2c43803db, P5.1.323 / 4
 - Sửa CSS: ẩn năm nút WatchFlow thường khi AI active; giữ tab AI để về chế độ cũ. Không giảm assertion P326.
 - Chạy scripts/positron-333-audit.cjs với before/after Electron, 1920/720, đo CTA và không mất dữ liệu.
 - CHƯA tính vòng nếu chưa đạt Node, QA Electron, soát ảnh SAU và CI.
+
+## 24/11/2026 — vòng 02 P5.1.334 (đầu vào: ảnh sau P333, CANDIDATE)
+- Ảnh thật đã MỞ ở 720/1920: nút «AI hợp gu» ngay sát/chạm thanh tiêu đề dính, và người dùng remote phải Tab qua nhiều điều khiển trước khi tới nút Xem đầu.
+- Chọn nâng cấp AI có thể dùng ngay: Alt+Shift+J đưa focus vào nút Xem đầu, không tự phát; chừa 9px phía dưới header sticky khi AI active. Không sửa nguồn IPTV, dữ liệu người dùng.
+- Kiểm thử: trước/sau Electron hai viewport, focus/aria-keyshortcuts, không tràn, không autoplay, và Node. Vòng này chỉ được tính khi test + mở ảnh + phiên bản/commit đạt.

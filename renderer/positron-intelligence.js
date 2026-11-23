@@ -227,7 +227,7 @@
  // P332: reveal the P331 remote keys and their safe focus-only semantics.
  const modeHelp=d.createElement('p');modeHelp.className='po-ai-keyboard-help';
  modeHelp.id='poAIKeyboardHelp';
- modeHelp.textContent='← → ↑ ↓: chuyển chế độ · Enter/Space: chọn';
+ modeHelp.textContent='← → ↑ ↓: chuyển chế độ · Enter/Space: chọn · Alt+Shift+J: tới nút Xem đầu';
  modeBar.setAttribute('aria-describedby',modeHelp.id);
  const alertRow=d.createElement('label');alertRow.className='po-ai-alerts';
  const alertCheck=d.createElement('input');alertCheck.type='checkbox';alertCheck.id='poAIAlerts';
@@ -312,6 +312,22 @@
   if(!aiOpen)showAI();
   else syncAIView();
   tab.focus({preventScroll:true});
+ });
+ // P334: new opt-in shortcut to focus the first playable AI recommendation;
+ // never plays a stream or intercepts text-entry / active dialogs.
+ area.setAttribute('aria-keyshortcuts','Alt+Shift+J');
+ d.addEventListener('keydown',event=>{
+  const chord=event.altKey&&event.shiftKey&&!event.ctrlKey&&!event.metaKey&&
+   (event.code==='KeyJ'||String(event.key).toLowerCase()==='j');
+  if(!chord||event.defaultPrevented||event.repeat||event.isComposing||!aiOpen||panel.hidden)return;
+  if([event.target,d.activeElement].some(el=>el?.isContentEditable||
+   el?.closest?.('input,textarea,select,[contenteditable],[role="textbox"]')))return;
+  if(d.querySelector('.modal-backdrop:not(.hidden):not([hidden])'))return;
+  const target=area.querySelector('.po-ai-card .po-ai-actions button:not(:disabled)');
+  if(!target)return;
+  event.preventDefault();event.stopPropagation();
+  target.focus({preventScroll:true});
+  target.scrollIntoView({block:'nearest',behavior:'instant'});
  });
  tab.addEventListener('click',()=>{if(aiOpen){toolbar.querySelector('[data-flowplus-mode="discover"]')?.click();return;}showAI();});
  toolbar.addEventListener('click',event=>{if(event.target.closest('[data-flowplus-mode]'))hideAI();},true);

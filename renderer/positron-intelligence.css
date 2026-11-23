@@ -427,3 +427,10 @@ html[data-positron="true"] #poWatchFlowPanel .po-ai-card .po-ai-actions button:f
 html[data-positron="true"] #poWatchFlowPanel[data-po-ai-active="true"] .po-flowplus-nav{
  display:none!important;
 }
+
+/* P5.1.334: native P333 screenshots show the AI mode button nearly touching
+   the sticky title after redundant WatchFlow navigation is correctly hidden.
+   Restore a clear focus outline and a safe space below the sticky header. */
+html[data-positron="true"] #poWatchFlowPanel[data-po-ai-active="true"] .po-ai-entry{
+ margin:9px 0 11px!important;
+}
