@@ -1704,3 +1704,19 @@ test('P341 AI native ArrowUp/Down navigates only focused Xem actions without aut
   'positron-p51341-remote-ai-after-720x900-real.png'
  ])assert.ok(ext.includes(img)&&workflow.includes(img),'P341 evidence filename missing '+img);
 });
+
+// P347: mode selection hides floating keyboard help; prior P345 is editor-safe.
+test('P347 AI mode selection dismisses keyboard overlay and P345 focus is restored',()=>{
+ const js=fs.readFileSync('renderer/positron-intelligence.js','utf8');
+ const oldQA=fs.readFileSync('scripts/positron-345-audit.cjs','utf8');
+ const qa=fs.readFileSync('scripts/positron-347-audit.cjs','utf8');
+ const runner=fs.readFileSync('scripts/positron-50-audit.cjs','utf8');
+ assert.ok(js.includes("modeBar.addEventListener('click',event=>{"));
+ assert.ok(js.includes("if(!shortcutGuide.open||!event.target.closest('button'))return;"));
+ assert.ok(js.includes('shortcutGuide.open=false;'));
+ assert.ok(oldQA.includes("document.getElementById('poWatchFlowToggle')?.focus"));
+ assert.ok(qa.includes("await page.locator('#poAIChannels').click()"));
+ assert.ok(qa.includes("await page.keyboard.press('Enter')"));
+ assert.ok(qa.includes('afterSha256'));
+ assert.ok(runner.includes("await require('./positron-347-audit.cjs').run(page)"));
+});

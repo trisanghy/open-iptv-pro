@@ -359,6 +359,12 @@
  // anchor the collapsed guide inside the already-existing keyboard hint row,
  // so first-card Play actions are not pushed below the modal's viewport.
  modeHelp.after(shortcutGuide);
+ // P347: choosing another AI mode dismisses the expanded shortcut overlay.
+ // The panel and current mode remain intact; click/remote Enter share this path.
+ modeBar.addEventListener('click',event=>{
+  if(!shortcutGuide.open||!event.target.closest('button'))return;
+  shortcutGuide.open=false;
+ });
 
  // P322: context-aware accessible header; preserve native wording for non-AI.
  const watchTitle=byId('poWatchFlowTitle'),watchKicker=panel.querySelector('.po-watchflow-kicker');

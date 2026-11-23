@@ -20,7 +20,10 @@ async function run(page){
   sources:JSON.stringify(window.IPTVState.getChannels().map(x=>x.id)),
   model:localStorage.getItem('positron-intelligence-preferences-v1')
  }));
- await page.evaluate(()=>window.IPTVState.setPage('tv'));
+ // P347 regression repair: P344 intentionally leaves focus in searchBox.
+ // F6 must not hijack editors; place focus on the actual WatchFlow opener.
+ await page.evaluate(()=>{window.IPTVState.setPage('tv');window.PositronWatchFlow?.close?.();
+  document.getElementById('poWatchFlowToggle')?.focus({preventScroll:true});});
  await page.keyboard.press('F6');
  await page.waitForFunction(()=>{
   const p=document.getElementById('poWatchFlowPanel');return p&&!p.hidden&&p.dataset.poAiActive==='true';
