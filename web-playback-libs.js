@@ -6,7 +6,7 @@
  if(typeof module==='object'&&module.exports)module.exports=api;
  if(root)root.OpenIPTVPlaybackLibs=api;
 })(typeof window!=='undefined'?window:null,function(root){
- const sources={hls:{file:'hls.min.js',global:'Hls'},dash:{file:'dash.all.min.js',global:'dashjs'}};
+ const sources={hls:{file:'hls.min.js',global:'Hls'},dash:{file:'dash.all.min.js',global:'dashjs'},mpegts:{file:'mpegts.min.js',global:'mpegts'}};
  const inFlight=new Map();
  function load(kind){
   const entry=sources[kind];

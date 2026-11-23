@@ -263,7 +263,14 @@ app_text=app_text.replace(render_old,
  '  renderList(preserveScroll);if(!startup){renderSources();renderShots();renderFavorites();renderFolders();}',1)
 app_text=app_text.replace(startup_call,' wire();render(false,true);if(upgradedChecker)save();',1)
 
+# Keep the reviewed Web TS/FLV transport in future regenerated builds.
+play_start=' function stopPlayer(){'
+play_end=' function suspendVideoForBackground(){'
+if not all(x in app_text and x in web_app for x in (play_start,play_end)):
+    sys.exit('Web mpegts playback regeneration anchors changed')
+app_text=(app_text[:app_text.index(play_start)]+web_app[web_app.index(play_start):web_app.index(play_end,web_app.index(play_start))]+app_text[app_text.index(play_end,app_text.index(play_start)):])
 app_file.write_text(app_text,encoding='utf-8')
+copy2(Path(__file__).resolve().parent.parent/'mpegts.min.js',out/'mpegts.min.js')
 
 html=(out/'index.html').read_text(encoding='utf-8')
 # Remove redundant Quick Tools capture button only; preserve Snapshot page,
