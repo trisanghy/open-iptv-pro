@@ -511,11 +511,26 @@
   const cap=Math.max(1,Math.min(1200,Math.trunc(Number(maxChannels))||1000));
   const entries=(Array.isArray(channelRows)?channelRows:[]).filter(ch=>ch?.id&&ch?.name).slice(0,cap);
   const matrix=new Map();let comparable=0,changed=0,confidentBefore=0,confidentAfter=0;
+  let lostConfident=0,newlyConfident=0,bothUncertain=0;
+  const lostExamples=[],gainedExamples=[];
   for(const ch of entries){
    const before=predictCategory(present,ch,{threshold:0.6}),after=predictCategory(future,ch,{threshold:0.6});
    if(before)confidentBefore++;
    if(after)confidentAfter++;
-   if(!before||!after)continue;
+   // P306: explain mutually exclusive confidence cohorts without changing
+   // predictions, exposing stream URLs or including playlist identifiers.
+   if(!before||!after){
+    const sample=cleanQuery(ch.name);
+    const safeSample=sample&&!/https?:\/\/|\.m3u8|\.m3u\b/i.test(sample);
+    if(before&&!after){
+     lostConfident++;
+     if(safeSample&&lostExamples.length<3&&!lostExamples.includes(sample))lostExamples.push(sample);
+    }else if(!before&&after){
+     newlyConfident++;
+     if(safeSample&&gainedExamples.length<3&&!gainedExamples.includes(sample))gainedExamples.push(sample);
+    }else bothUncertain++;
+    continue;
+   }
    comparable++;
    if(before.key===after.key)continue;
    changed++;
@@ -532,6 +547,7 @@
   const shiftRate=comparable?Math.round(changed*1000/comparable)/10:0;
   return {ok:true,scanned:entries.length,comparable,changed,shiftRate,
    confidentBefore,confidentAfter,notComparable:entries.length-comparable,
+   lostConfident,newlyConfident,bothUncertain,lostExamples,gainedExamples,
    significant:comparable>=10&&changed>=5&&shiftRate>=20,
    transitions,omittedTransitions:Math.max(0,matrix.size-max),
    caution:'Đây là chuyển đổi nhãn dự đoán Naive Bayes theo tên/nhóm kênh cục bộ, không đo độ chính xác thật hay chất lượng luồng; dữ liệu người dùng chưa thay đổi.'};

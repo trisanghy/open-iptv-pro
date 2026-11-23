@@ -804,7 +804,10 @@
       ' Đây chỉ là dự báo cục bộ, không làm mất kênh khỏi playlist.';
      shifts.append(explanation);
      if(!topicShifts.transitions.length){
-      const empty=d.createElement('p');empty.textContent='Chưa phát hiện chuyển chủ đề đủ chắc chắn trong mẫu kiểm tra.';
+      const empty=d.createElement('p');empty.id='poAINoTopicMigrationEvidence';
+      empty.textContent=topicShifts.comparable
+       ?'Trong '+topicShifts.comparable+' kênh có dự đoán đủ chắc chắn từ cả hai mô hình, chưa phát hiện đổi chủ đề.'
+       :'Không có kênh nào được cả hai mô hình dự đoán đủ chắc chắn; chưa thể kết luận có hay không có chuyển chủ đề.';
       shifts.append(empty);
      }
      for(const row of topicShifts.transitions){
@@ -813,6 +816,34 @@
        (row.examples.length?' · Ví dụ: '+row.examples.join(' · '):'');
       shifts.append(line);
      }
+     // P306: actionable, read-only Naive Bayes confidence-gap evidence.
+     // Disclose only names (never channel IDs/URLs), hidden until clicked.
+     const gap=d.createElement('details');gap.id='poAIConfidenceGapExamples';
+     gap.className='po-ai-category-impact';
+     gap.dataset.lost=String(topicShifts.lostConfident);
+     gap.dataset.gained=String(topicShifts.newlyConfident);
+     gap.dataset.uncertain=String(topicShifts.bothUncertain);
+     gap.dataset.comparable=String(topicShifts.comparable);
+     const gapCaption=d.createElement('summary');
+     gapCaption.textContent='AI kiểm tra độ chắc chắn: '+topicShifts.lostConfident+
+      ' kênh giảm · '+topicShifts.newlyConfident+' kênh tăng · Xem tên mẫu';
+     gap.append(gapCaption);
+     const cohort=d.createElement('p');cohort.className='po-ai-category-breakdown';
+     cohort.textContent='Đối chiếu '+topicShifts.scanned+' kênh: '+topicShifts.lostConfident+
+      ' mất độ chắc chắn, '+topicShifts.newlyConfident+' mới đủ chắc chắn, '+
+      topicShifts.bothUncertain+' chưa đủ ở cả hai, '+topicShifts.comparable+
+      ' đủ chắc chắn ở cả hai mô hình.';
+     gap.append(cohort);
+     const showGapExamples=(title,names)=>{
+      const p=d.createElement('p');p.className='po-ai-category-diff';
+      p.textContent=title+(names.length?names.join(' · '):'Chưa có kênh mẫu trong nhóm này.');
+      gap.append(p);
+     };
+     showGapExamples('Mất độ chắc chắn: ',topicShifts.lostExamples);
+     showGapExamples('Mới đủ chắc chắn: ',topicShifts.gainedExamples);
+     const gapNote=d.createElement('small');
+     gapNote.textContent='Đây là chênh lệch dự đoán Naive Bayes trên máy, không phải lỗi luồng phát và không thay đổi kênh, mô hình hay playlist.';
+     gap.append(gapNote);shifts.append(gap);
      const caution=d.createElement('small');caution.textContent=topicShifts.caution;
      shifts.append(caution);topicShiftPanel=shifts;
     }

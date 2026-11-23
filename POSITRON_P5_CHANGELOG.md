@@ -1,3 +1,13 @@
+## P5.1.306 — AI chỉ ra nhóm kênh mất độ chắc chắn khi khôi phục / Electron 4.23.391
+- Feature priority: NEW — Phân tích 4 nhóm bằng chứng Naive Bayes (cũ chắc/mới không, mới chắc/cũ không, cả hai không chắc, cả hai chắc), cho xem các tên kênh bị giảm độ chắc chắn trước khi nhập sao lưu, và không kết luận không đổi chủ đề khi thiếu mẫu giao.
+- Feature class: AI
+- User action: TV → WatchFlow → AI hợp gu → Quản lý mô hình → Khôi phục JSON → mở “AI chưa đủ dữ liệu đối chiếu chủ đề” → “AI kiểm tra độ chắc chắn” → xem tên kênh mẫu và đánh giá rủi ro trước khi xác nhận.
+- Electron screenshot: positron-p51306-ai-confidence-gap-before-1920x1080-real.png / positron-p51306-ai-confidence-gap-after-1920x1080-real.png.
+- Evidence: Dùng mô hình Naive Bayes đã học nhãn trên máy để so sánh theo kênh, kiểm thử 18/18 kênh mất chắc chắn, trường hợp 18/18 kênh mới chắc và 18/18 kênh đều chưa chắc, xác minh tổng 4 nhóm bằng số kênh đã quét; chụp hai ảnh Electron thật 1920×1080 cùng thử nghiệm mở disclosure, bất biến playlist/mô hình và không autoplay.
+- Privacy: Chỉ hiển thị tối đa 3 tên kênh mẫu mỗi nhóm; không gửi stream URL, M3U, lịch sử xem, ID kênh, mô hình hoặc kết quả ra ngoài.
+- Baseline: P5.1.305 screenshot thật đã mở trực tiếp; câu “Chưa phát hiện chuyển chủ đề đủ chắc chắn trong mẫu kiểm tra” vẫn hiển thị khi 0 kênh so sánh được, gây kết luận âm tính sai.
+- Status: CANDIDATE — chờ CI, soát hai PNG thật và build assets.
+
 ## P5.1.305 — AI chẩn đoán độ chắc chắn khi so sánh khôi phục / Electron 4.23.390
 - Feature priority: NEW — Bổ sung bảng đối chiếu số kênh mà mô hình Naive Bayes hiện tại và mô hình sao lưu phân loại đủ chắc chắn, phát hiện thiếu bằng chứng thay vì hiển thị 0/0 (0%) gây nhầm lẫn.
 - Feature class: AI

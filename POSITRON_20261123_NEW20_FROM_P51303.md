@@ -26,3 +26,7 @@
 - Lỗi từ PNG P304: tiêu đề 0/0 (0%) gây hiểu nhầm không có đổi chủ đề khi thực tế không có kênh chung đủ chắc chắn để so sánh.
 - Mục tiêu P305: thống kê số kênh chắc chắn của mô hình hiện tại, bản sao, phần giao; không kết luận 0% khi không có mẫu so sánh, thêm CDP before/after + QA không sửa dữ liệu.
 - Điều kiện hoàn thành: build và capture CI thành công, mở hai PNG thật P305, kiểm tra SHA/commit/artifact; chưa tính hoàn tất khi thiếu bằng chứng.
+
+## P305 hoàn thành / P306 bắt đầu (23/11/2026)
+- P305, 4.23.390, commit phát triển 207dfb18... và QA 16ea9b1..., Actions 45166821071 đạt test 1015/1015, capture/Windows/Mac arm64/Intel thành công, release skipped. Đã mở ảnh thực positron-p51305-ai-confidence-before-1920x1080-real.png (SHA256 402c0b38cc85c0534350fad055e469fd79dc9b49033990d22041432a5a23e66f) và after (SHA256 667cbfd0eab0d6098bbd62fca8363ff78444a7187be487ca6b81cbdde6c4a2a1); qa305 13/13 true. Vòng 01/20 ĐẠT.
+- Từ ảnh sau P305 vẫn thấy câu “Chưa phát hiện chuyển chủ đề đủ chắc chắn” dù 0 kênh có bằng chứng để so sánh. Vòng 02/20 P306 phát triển bộ đếm 4 nhóm độ chắc chắn + tên kênh mẫu, không sửa dữ liệu; đang chờ CI, ảnh thật và kiểm tra build.

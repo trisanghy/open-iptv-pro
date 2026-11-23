@@ -1174,3 +1174,40 @@ test('P305 model-migration preview reports coverage uncertainty rather than fals
  for(const marker of ['qa305','positron-p51305-ai-confidence-before-1920x1080-real.png',
   'positron-p51305-ai-confidence-after-1920x1080-real.png'])assert.ok(qa.includes(marker),marker);
 });
+
+// P306: separate true missing-evidence uncertainty from actual confidence loss.
+test('P306 AI comparison explains loss-only confidence cohort with safe sample names',()=>{
+ const film={id:'film',name:'Đêm phim hành động',group:'Phim'};
+ const sport={id:'sport',name:'Trận đấu bóng đá',group:'Thể thao'};
+ let trained=C.emptyCategoryModel();
+ for(let i=0;i<18;i++){
+  trained=C.teachCategory(trained,film,'cinema');
+  trained=C.teachCategory(trained,sport,'sport');
+ }
+ const channels=[...Array.from({length:9},(_,i)=>({...film,id:'film'+i,url:'https://secret.invalid/channel.m3u8'})),
+  ...Array.from({length:9},(_,i)=>({...sport,id:'sport'+i}))];
+ const empty=C.buildLearningBackup({categoryModel:C.emptyCategoryModel()});
+ const before=JSON.stringify(channels),beforeModel=JSON.stringify(trained);
+ const loss=C.previewCategoryTopicShifts({categoryModel:trained},empty,channels);
+ assert.equal(loss.ok,true);assert.equal(loss.scanned,18);
+ assert.equal(loss.confidentBefore,18);assert.equal(loss.confidentAfter,0);
+ assert.equal(loss.comparable,0);assert.equal(loss.lostConfident,18);
+ assert.equal(loss.newlyConfident,0);assert.equal(loss.bothUncertain,0);
+ assert.ok(loss.lostExamples.length>0&&loss.lostExamples.length<=3);
+ assert.ok(!JSON.stringify(loss).includes('secret.invalid')&&!JSON.stringify(loss).includes('.m3u8'));
+ const gain=C.previewCategoryTopicShifts({categoryModel:C.emptyCategoryModel()},
+  C.buildLearningBackup({categoryModel:trained}),channels);
+ assert.equal(gain.newlyConfident,18);assert.equal(gain.lostConfident,0);
+ assert.ok(gain.gainedExamples.length>0);
+ const both=C.previewCategoryTopicShifts({categoryModel:C.emptyCategoryModel()},empty,channels);
+ assert.equal(both.bothUncertain,18);
+ assert.equal(both.lostConfident+both.newlyConfident+both.bothUncertain+both.comparable,both.scanned);
+ assert.equal(JSON.stringify(channels),before);
+ assert.equal(JSON.stringify(trained),beforeModel);
+ const ui=fs.readFileSync('renderer/positron-intelligence.js','utf8');
+ assert.ok(ui.includes('Không có kênh nào được cả hai mô hình dự đoán đủ chắc chắn; chưa thể kết luận'));
+ assert.ok(ui.includes("gap.id='poAIConfidenceGapExamples'"));
+ const qa=fs.readFileSync('scripts/positron-20-extension.cjs','utf8');
+ for(const marker of ['qa306','positron-p51306-ai-confidence-gap-before-1920x1080-real.png',
+  'positron-p51306-ai-confidence-gap-after-1920x1080-real.png'])assert.ok(qa.includes(marker),marker);
+});

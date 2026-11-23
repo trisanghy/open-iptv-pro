@@ -283,3 +283,11 @@ html[data-positron="true"].po-horizon body #poWatchFlowPanel.po-watchflow-panel:
  color:#e0fcf3;text-align:left;font-size:11px;font-weight:730;cursor:pointer}
 #poWatchFlowPanel #poAICategoryRiskOnly[aria-pressed="true"]{border-color:#8ddebd;background:#235444;color:#f1fff8}
 #poWatchFlowPanel #poAICategoryRiskOnly:focus-visible{outline:2px solid #9af7d6;outline-offset:2px}
+
+/* P306: legible AI confidence-cohort disclosure, reachable above sticky restore CTA. */
+#poWatchFlowPanel #poAIConfidenceGapExamples{margin:9px 0 7px;max-width:100%}
+#poWatchFlowPanel #poAIConfidenceGapExamples>summary{min-height:39px;padding:9px 10px;
+ background:#1d3942;border:1px solid #587b80;border-radius:7px;color:#dbfff5;
+ font-size:12px;font-weight:750;cursor:pointer;scroll-margin-top:80px;scroll-margin-bottom:110px}
+#poWatchFlowPanel #poAIConfidenceGapExamples>summary:focus-visible{outline:2px solid #9cf2ce;outline-offset:3px}
+#poWatchFlowPanel #poAIConfidenceGapExamples .po-ai-category-diff{overflow-wrap:anywhere}
