@@ -12,35 +12,8 @@ on:
       - 'package-lock.json'
   workflow_dispatch:
 permissions:
-  contents: write
+  contents: read
 jobs:
-  classify-experimental-releases:
-    name: Ensure only stable desktop releases can be Latest
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    steps:
-      - name: Correct legacy Rust Lab releases without deleting EXE assets
-        shell: bash
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          set -euo pipefail
-          # GitHub Releases are repository-wide. Change only Rust Lab tags.
-          gh api --paginate "repos/${GITHUB_REPOSITORY}/releases?per_page=100" \
-            --jq '.[] | select(.draft == false and .prerelease == false and (.tag_name | startswith("rust-lab/"))) | [.id, .tag_name] | @tsv' \
-            > "${RUNNER_TEMP}/rust-lab-misclassified.tsv"
-          while IFS=$'\t' read -r release_id tag; do
-            [ -n "$release_id" ] || continue
-            echo "Marking Rust Lab release ${tag} (${release_id}) as prerelease"
-            gh api --method PATCH "repos/${GITHUB_REPOSITORY}/releases/${release_id}" \
-              -F prerelease=true -f make_latest=false > /dev/null
-          done < "${RUNNER_TEMP}/rust-lab-misclassified.tsv"
-          latest="$(gh api "repos/${GITHUB_REPOSITORY}/releases/latest" --jq '.tag_name')"
-          if [[ "$latest" == rust-lab/* ]]; then
-            echo "::error::Experimental Rust Lab release is still Latest: $latest"
-            exit 1
-          fi
-          echo "Latest release is not Rust Lab: $latest"
   windows-exe:
     runs-on: windows-latest
     timeout-minutes: 90
@@ -84,12 +57,3 @@ jobs:
           name: Open-IPTV-Pro-Rust-Lab-Windows-EXE
           path: dist-windows/*.exe
           if-no-files-found: error
-      - name: Publish unique immutable GitHub release with direct EXE link
-        if: success()
-        shell: pwsh
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          $ErrorActionPreference = 'Stop'
-          $tag = 'rust-lab/windows-exe-' + $env:GITHUB_RUN_ID + '-' + $env:GITHUB_RUN_ATTEMPT
-          gh release create $tag dist-windows/*.exe --repo $env:GITHUB_REPOSITORY --target $env:GITHUB_SHA --prerelease --latest=false --title ('Rust Lab Windows EXE ' + $env:GITHUB_RUN_ID) --notes ('Windows NSIS installer built from branch experiment/rust-tauri-v2, commit ' + $env:GITHUB_SHA + '. Unsigned Windows installer; SmartScreen may require confirmation.')
