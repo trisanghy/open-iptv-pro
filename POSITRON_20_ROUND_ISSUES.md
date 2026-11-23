@@ -35,8 +35,10 @@ Baseline 24/11/2026: HEAD 557361b9ab74340ca0f2999f1e0912c2c43803db, P5.1.323 / 4
 - Real screenshots 14849585829 tải và đã MỞ trước/sau 1920, sau 720; 17/17 QA đạt; focus Gợi ý → Tiếp có viền rõ, vòng Home/End không kích hoạt phát.
 - Vòng 02 được chứng minh đầy đủ.
 
-## Vòng 03 P5.1.326 — CANDIDATE
+## Vòng 03 P5.1.326 — ĐÃ ĐẠT
 - Lỗi từ ảnh sau P325: chỉ bốn phản hồi AI nhưng metric hiện “86% hợp gu” không ghi rõ độ bất định, có thể bị hiểu sai là độ chính xác đã đo.
 - Mục tiêu: thêm nhãn “(sơ bộ)” khi học 2–9 phản hồi, cung cấp giải thích tooltip/aria-label; giữ nguyên thuật toán, điểm, không gửi dữ liệu.
 - Test: Node static regression + Electron screenshot trước/sau 1920 và sau 720, kiểm tra nút Xem không bị đẩy khuất, không tràn và không tự phát.
-- Không tính vòng 03 trước khi CI/ảnh kiểm chứng.
+- Actions 45236620519: Node 1.042 pass/5 skipped/0 fail, capture & Win x64/Mac arm64/Mac x64 success; public release skipped Stable-only.
+- Real Electron artifact 14848624172: ảnh trước/sau 1920 và sau 720 đã tải và MỞ; 11/11 QA pass; 86% giữ nguyên, thêm nhãn (sơ bộ), nút Xem vẫn hiển thị.
+- Chốt 03/20 vòng đủ bằng chứng. 17 vòng sau CHƯA thực hiện; cần tiếp tục dựa trên ảnh P326 và HEAD hiện hành.
