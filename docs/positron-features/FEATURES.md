@@ -7,15 +7,28 @@ Trang này được tạo tự động từ GitHub Releases và ảnh kiểm th�
 [Mở WEBSITE changelog tương tác](https://raw.githack.com/trisanghy/open-iptv-pro/Positron/docs/positron-features/index.html) · [Giao diện HTML trong repository](index.html) · [Các bản phát hành](https://github.com/trisanghy/open-iptv-pro/releases) · [Nhật ký Git tiếng Việt](LOG_GIT_TIENG_VIET.md) · [Quy tắc ưu tiên tính năng](../../POSITRON_FEATURE_RULES.md)
 
 <details>
-<summary><strong>P5.1.278</strong> · Hướng dẫn dạy AI từng kênh và bỏ qua an toàn · CHƯA CÓ BẢN PHÁT HÀNH · TÍNH NĂNG</summary>
+<summary><strong>P5.1.279</strong> · giữ trạng thái mở thư mục con khi WatchFlow render lại · CHƯA CÓ BẢN PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
 
-**Ứng dụng:** 4.23.363 · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
+**Ứng dụng:** 4.23.364 · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
+
+Sửa trạng thái mở danh sách con trong thư mục EPG ảo khi WatchFlow Intelligence render lại hoặc khi người dùng dạy AI, bỏ qua kênh. Đồng bộ kiểm thử P272 với DOM lồng thực tế P278; kiểm tra cả nhánh thư mục thường và danh sách kênh con, không xóa assertion.
+
+*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+
+[Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/tree/Positron) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/1f5ba9fa6c5164fdd0655a2ff8d36337b24c1da6)
+
+</details>
+
+<details>
+<summary><strong>P5.1.278</strong> · Hướng dẫn dạy AI từng kênh / Electron 4.23.363 · CHƯA CÓ BẢN PHÁT HÀNH · TÍNH NĂNG</summary>
+
+**Ứng dụng:** Chưa xác minh · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
 
 Feature priority: NEW — Hướng dẫn dạy AI theo từng kênh chưa phân loại: hiển thị một đề xuất có độ chắc chắn thấp nhất, cho phép Ghi nhãn & tiếp hoặc Bỏ qua an toàn; chuyển danh sách đầy đủ kênh chưa phân loại vào mục mở rộng riêng để không có hai thanh cuộn chen nhau. Feature class: AI
 
 *Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
 
-[Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/tree/Positron) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/92bba48ee5a70c1eacde9616b74b732a27ba653b)
+[Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
 
 </details>
 
