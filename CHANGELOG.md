@@ -1,3 +1,11 @@
+## Rust Lab v23.8.138 — Nút kiểm tra kết quả phân loại kênh, EPG và Internet (PRERELEASE)
+
+- Thêm nút “✓ Kiểm tra phân loại” ngay cạnh Quét lại trong WatchFlow. Bấm nút sẽ đọc danh sách kênh thật đang tải và EPG thực tế, hiển thị bảng kết quả với 5 cột: kênh, tên/nhóm, EPG, Internet/Wikidata và kết quả phân loại cuối.
+- Tự đối chiếu bằng chứng từ EPG, danh sách kênh và tra cứu Internet thực (tối đa 6 truy vấn công khai/lượt theo hạn mức hiện hành, sử dụng cache 48 giờ); ghi rõ chưa tra cứu, không khớp hoặc Internet tắt, không dựng thông tin giả và không đụng tới URL phát.
+- Hỗ trợ sắp xếp theo chủ đề, số nguồn có bằng chứng, tên kênh hoặc kênh đang phát; tìm kiếm và xem thêm 50 kênh/lượt; tóm tắt số kênh có EPG và số đối chiếu Internet.
+- Trình bày responsive Light/Dark/AMOLED, không đụng tới phát video, mô hình AI, PiP hay playlist. Bổ sung kiểm thử Node và Chromium thật, ảnh chụp artifact.
+- Chỉ sửa nhánh experiment/rust-tauri-v2, tag bất biến, mọi phát hành đều prerelease và không cập nhật Stable/Latest.
+
 ## Rust Lab v23.8.137 — Đồng bộ kiểm thử danh mục AI, ảnh 3 nhóm riêng (PRERELEASE)
 
 - Sửa 2 kiểm thử Windows còn bắt buộc nhãn Intelligence cũ sau khi hiển thị đầy đủ Standard/Smart/Intelligence v23.8.136. Giữ kiểm tra đúng nhãn mới và khả năng tái sử dụng Qwen3; không thay đường xử lý AI thật hoặc nguồn phát.
