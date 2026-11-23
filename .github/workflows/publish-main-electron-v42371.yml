@@ -1,15 +1,9 @@
 # Promoted Electron v4.23.71 onto main after 100% GitHub Actions regression success; tag is immutable.
 name: Publish Stable Electron v4.23.71 from main (Mac ARM/Intel, Windows, Source)
+# Historical immutable Stable release: manual QA only; no automatic reruns.
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - '.github/workflows/publish-main-electron-v42371.yml'
   workflow_dispatch:
-concurrency:
-  group: electron-v42371-main-stable-release
-  cancel-in-progress: false
+
 permissions:
   contents: read
 
