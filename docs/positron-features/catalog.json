@@ -1,20 +1,35 @@
 {
-  "generatedAt": "2026-11-23T02:04:24.247340+00:00",
+  "generatedAt": "2026-11-23T02:14:51.504406+00:00",
   "repository": "trisanghy/open-iptv-pro",
   "branch": "Positron",
   "versions": [
     {
+      "number": 277,
+      "version": "P5.1.277",
+      "appVersion": "4.23.362",
+      "title": "AI học chủ động các kênh chưa phân loại từ EPG",
+      "description": "Feature priority: NEW — Học chủ động từ các kênh chưa có chủ đề EPG: xếp hạng độ không chắc chắn của Naive Bayes, hiển thị năm kênh ưu tiên, cho người dùng gán nhãn trực tiếp, không phỏng đoán khi thiếu nhãn hay tự phát video. Feature class: AI",
+      "kind": "feature",
+      "status": "candidate",
+      "published": "",
+      "tag": "",
+      "commit": "5f6c65ba6624777207ff96e4929906caa6a5dc18",
+      "url": "https://github.com/trisanghy/open-iptv-pro/tree/Positron",
+      "assets": [],
+      "image": null
+    },
+    {
       "number": 276,
       "version": "P5.1.276",
-      "appVersion": "4.23.361",
-      "title": "Quản lý ba mô hình WatchFlow và xóa an toàn",
+      "appVersion": "Chưa xác minh",
+      "title": "Quản lý mô hình học AI và xóa riêng / Electron 4.23.361",
       "description": "Feature priority: NEW — Bảng quản lý giúp kiểm tra ba mô hình học thực Logistic, Naive Bayes, UCB cùng dữ liệu/dung lượng từng mô hình và xóa riêng, không đụng đến playlist, guide hoặc mô hình học còn lại. Feature class: AI",
       "kind": "feature",
       "status": "candidate",
       "published": "",
       "tag": "",
-      "commit": "37ace0c0276a01abb712e7415c787b53ea648cd9",
-      "url": "https://github.com/trisanghy/open-iptv-pro/tree/Positron",
+      "commit": "",
+      "url": "https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md",
       "assets": [],
       "image": null
     },
@@ -1246,7 +1261,7 @@
       "commit": "",
       "url": "https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md",
       "assets": [],
-      "image": "screenshots/positron-p51194-dvr-start-after-after-1920x1080-real.png"
+      "image": "screenshots/positron-p51194-dvr-start-after-before-1920x1080-real.png"
     },
     {
       "number": 193,
