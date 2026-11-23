@@ -515,22 +515,22 @@
   const lostExamples=[],gainedExamples=[];
   for(const ch of entries){
    const before=predictCategory(present,ch,{threshold:0.6}),after=predictCategory(future,ch,{threshold:0.6});
+   // Sanitize once per channel, available to both the confidence-gap and
+   // topic-migration paths. Never show private hosts embedded in names.
+   const rawName=String(ch.name);
+   const safeSample=!/(?:https?|rtsp|rtmp|udp):\/\/|\.m3u8?(?:$|[?#\s])/i.test(rawName)
+    ?cleanQuery(rawName):'';
    if(before)confidentBefore++;
    if(after)confidentAfter++;
    // P306: explain mutually exclusive confidence cohorts without changing
    // predictions, exposing stream URLs or including playlist identifiers.
    if(!before||!after){
-    // Inspect raw channel names before normalization: a cleaned URL may
-    // no longer contain a scheme but can still expose a private host.
-    const rawName=String(ch.name);
-    const safeSample=!/(?:https?|rtsp|rtmp|udp):\/\/|\.m3u8?(?:$|[?#\s])/i.test(rawName)
-     ?cleanQuery(rawName):'';
     if(before&&!after){
      lostConfident++;
-     if(safeSample&&lostExamples.length<3&&!lostExamples.includes(sample))lostExamples.push(sample);
+     if(safeSample&&lostExamples.length<3&&!lostExamples.includes(safeSample))lostExamples.push(safeSample);
     }else if(!before&&after){
      newlyConfident++;
-     if(safeSample&&gainedExamples.length<3&&!gainedExamples.includes(sample))gainedExamples.push(sample);
+     if(safeSample&&gainedExamples.length<3&&!gainedExamples.includes(safeSample))gainedExamples.push(safeSample);
     }else bothUncertain++;
     continue;
    }
