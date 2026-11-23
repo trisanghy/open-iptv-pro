@@ -1011,6 +1011,7 @@ test('P299 warns when Naive Bayes loss is concentrated in one group',()=>{
  const qa=fs.readFileSync('scripts/positron-20-extension.cjs','utf8');
  assert.ok(ui.includes("groupAlert.id='poAICategoryGroupRiskAlert'"));
  assert.ok(ui.includes("groupAlert.setAttribute('role','alert')"));
+ assert.ok(ui.includes('details.insertBefore(groupAlert,riskDetails)'),'critical alert must precede scrollable group details');
  assert.ok(css.includes('#poAICategoryGroupRiskAlert[hidden]'));
  for(const s of ['qa299','positron-p51299-group-alert-before-1920x1080-real.png','positron-p51299-group-alert-after-1920x1080-real.png'])assert.ok(qa.includes(s),s);
 });

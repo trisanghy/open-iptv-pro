@@ -864,7 +864,9 @@
        groupsRisk.criticalGroups.map(g=>g.label+' có '+g.lost+'/'+g.count+
         ' kênh có thể mất phân loại đủ chắc chắn ('+g.lossRate+'%)').join('; ')+
        '. Hãy kiểm tra các nhóm này trước khi xác nhận khôi phục. Đây chỉ là dự báo dựa trên mô hình Naive Bayes cục bộ, không phải độ chính xác thực tế hay chất lượng luồng phát.';
-      details.append(groupAlert);
+      // Keep the important warning ABOVE the potentially long, expanded
+      // group list. The sticky Confirm button must never cover the alert.
+      details.insertBefore(groupAlert,riskDetails);
      }
     }
     const note=d.createElement('small');note.textContent=categoryImpact.caution;

@@ -10575,7 +10575,11 @@ async function runTwenty(page){
  await page.locator('#poAICategoryGroupRiskAlert').scrollIntoViewIfNeeded({timeout:8000});
  await page.evaluate(()=>document.getElementById('poAICategoryGroupRiskAlert').hidden=true);
  const before299=await page.screenshot({path:path.join(out,'positron-p51299-group-alert-before-1920x1080-real.png'),animations:'disabled'});
- await page.evaluate(()=>document.getElementById('poAICategoryGroupRiskAlert').hidden=false);
+ await page.evaluate(()=>{
+  const alert=document.getElementById('poAICategoryGroupRiskAlert');
+  alert.hidden=false;
+  alert.scrollIntoView({block:'center',behavior:'instant'});
+ });
  await page.locator('#poAICategoryGroupRiskAlert').scrollIntoViewIfNeeded({timeout:8000});
  const after299=await page.screenshot({path:path.join(out,'positron-p51299-group-alert-after-1920x1080-real.png'),animations:'disabled'});
  const observed299=await page.evaluate(()=>{
@@ -10583,12 +10587,18 @@ async function runTwenty(page){
    panel=document.getElementById('poWatchFlowPanel'),r=alert?.getBoundingClientRect(),p=panel?.getBoundingClientRect();
   return {role:alert?.getAttribute('role'),text:alert?.textContent||'',
    visible:!!(r&&p&&r.height>0&&r.top>=p.top&&r.bottom<=p.bottom),
+   aboveStickyConfirm:(()=>{
+    const button=document.getElementById('poAIImportConfirm');
+    const b=button?.getBoundingClientRect();
+    return !!(r&&b&&r.bottom<=b.top-7);
+   })(),
    model:localStorage.getItem('positron-intelligence-preferences-v1'),
    ids:JSON.stringify(window.IPTVState.getChannels().map(ch=>ch.id)),
    current:window.IPTVState.getCurrent()?.id||'',
    overflow:document.documentElement.scrollWidth>innerWidth+3};
  });
  const qa299={semanticAlert:observed299.role==='alert',visible:observed299.visible,
+  notCoveredByConfirm:observed299.aboveStickyConfirm,
   targeted:observed299.text.includes('Cảnh báo AI theo nhóm')&&observed299.text.includes('kênh có thể mất'),
   honest:observed299.text.includes('Naive Bayes')&&observed299.text.includes('không phải độ chính xác'),
   noLeak:!observed299.text.includes('https://')&&!observed299.text.includes('.m3u8'),

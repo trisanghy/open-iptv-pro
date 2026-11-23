@@ -248,3 +248,6 @@ html[data-positron="true"].po-horizon body #poWatchFlowPanel.po-watchflow-panel:
 /* P299: prominent group-specific model-drift warning before confirming restore. */
 #poWatchFlowPanel #poAICategoryGroupRiskAlert{margin:9px 0 11px;padding:11px 12px;border:1px solid #ca9367;border-radius:9px;background:#3f2f26;color:#ffefdd;font-size:11px;line-height:1.6;overflow-wrap:anywhere}
 #poWatchFlowPanel #poAICategoryGroupRiskAlert[hidden]{display:none!important}
+
+/* P299 real-image review: keep warning clear of the fixed confirmation control. */
+#poWatchFlowPanel #poAICategoryGroupRiskAlert{scroll-margin-top:82px;scroll-margin-bottom:112px}
