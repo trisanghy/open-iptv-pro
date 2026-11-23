@@ -2,7 +2,7 @@
 - Feature priority: NEW — remote/bàn phím quay về AI tab trong bảng thay vì toolbar phía sau.
 - Feature class: AI
 - User action: TV → WatchFlow → AI hợp gu → đóng → mở lại, điều khiển bằng Tab.
-- Screenshot: positron-p51327-ai-focus-before-1920x1080-real.png, positron-p51327-ai-focus-after-1920x1080-real.png, positron-p51327-ai-focus-after-720x900-real.png.
+- Electron screenshot: positron-p51327-ai-focus-before-1920x1080-real.png / positron-p51327-ai-focus-after-1920x1080-real.png / positron-p51327-ai-focus-after-720x900-real.png.
 - Evidence: ảnh P326 đã mở cho thấy focus ring trên WatchFlow toolbar dù bảng AI nằm phía trước. QA P327 sẽ so sánh, kiểm tra focus, không tràn 720px, không tự phát, giữ playlist/model.
 - Privacy: không thay dữ liệu cá nhân, mô hình học, EPG, video hay mạng.
 - Status: CANDIDATE cho tới khi Electron/CI và ảnh review đạt.
