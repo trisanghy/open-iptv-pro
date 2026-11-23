@@ -416,3 +416,11 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -Command "$f=Join-Path $env:TE
 - Lưu lựa chọn vào `openiptv-tizen-ui-theme-v2` (~vài chục byte), tách khỏi danh sách nguồn M3U để hạn chế lỗi quota; khi không lưu được vẫn thay giao diện cho phiên đang mở. Nếu theme cũ là Light/AMOLED, tự chuyển tương ứng sang Minimalist/Tối.
 - Glassmorphism áp dụng blur vừa phải cho các panel chính, không blur nội dung video; trên TV WebKit không hỗ trợ blur sẽ tự dùng nền trong suốt dự phòng.
 - WGT unsigned chỉ để kiểm thử, cần chứng chỉ đúng Samsung TV mới cài native được. HLS/DASH.js không thay thế phần giải mã phần cứng (codec) và không thể vượt qua DRM hoặc kiểm soát truy cập nguồn.
+
+
+## v0.1.47 — MPEG-TS/FLV + tự khớp tỷ lệ video xem thử
+
+- Lõi phát `TV_PLAYBACK_CORE` quản lý HLS.js, DASH.js, mpegts.js, HTML5 video và Samsung AVPlay. Thư viện HLS/DASH/mpegts được nạp theo nhu cầu và đóng gói trong WGT; HTML5 và AVPlay là API firmware nên không sao chép được thành DLL/bộ giải mã độc lập.
+- **mpegts.js 1.8.2** được cài từ npm bản khóa chính xác khi GitHub Actions dựng WGT. Để có fallback cho TizenBrew chạy trực tiếp, repo có bản vendored 1.8.0 theo Apache-2.0, và loader có URL CDN 1.8.2 khi cần. Dùng MPEG-TS/FLV HTTP `.ts`, `.m2ts`, `.flv` có MSE và codec phù hợp; khi lỗi chuyển AVPlay/HTML5.
+- Khung xem thử đọc `videoWidth`/`videoHeight` từ metadata, tự tính vùng trình chiếu nằm gọn trong khung, giữ đủ 4:3, 16:9, 21:9, video dọc mà không crop, kéo méo, hoặc mở thêm trình phát. Chế độ điều chỉnh khi có kích thước video và không áp dụng blur lên video.
+- Giữ giới hạn thử nhiều lượt HLS/DASH, hủy instance cũ khi chuyển kênh và không tích hợp LibVLC.wasm chưa được xác minh trên model Samsung TV cụ thể (bộ WASM giải mã phần mềm tiêu thụ tài nguyên, không bảo đảm MSE/codec/DRM).

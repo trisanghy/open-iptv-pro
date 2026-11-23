@@ -23,8 +23,8 @@ function request(method,path,body,opts={}){
 }
 test('serviceFile is registered on TizenBrew app manifest; OTA bootstrap untouched',()=>{
  assert.equal(manifest.packageType,'app');
- assert.equal(manifest.version,'0.1.45');
- assert.equal(manifest.tizenbrewEdition,'0.1.45');
+ assert.equal(manifest.version,'0.1.47');
+ assert.equal(manifest.tizenbrewEdition,'0.1.47');
  assert.equal(manifest.appPath,'tizenbrew/bootstrap.html');
  assert.equal(manifest.serviceFile,'tizenbrew/hls-relay-v1.js');
 });

@@ -28,3 +28,10 @@ The exact decoder JS blobs are the identical tracked source assets used by the W
 Bundling is for playback via MediaSource Extensions on compatible browsers; it does not
 supply protected content, DRM keys, or rights to any media streams. Preserve upstream
 license notices when redistributing the application.
+
+
+## MPEG-TS / FLV player
+
+- **mpegts.js 1.8.2** (Apache-2.0), source: https://github.com/xqq/mpegts.js, license: https://github.com/xqq/mpegts.js/blob/v1.8.2/LICENSE.
+- CI fetches a pinned, version-verified 1.8.2 UMD distribution via npm at WGT build time. The repository additionally carries an Apache-2.0 licensed 1.8.0 fallback bundle for static TizenBrew hosting. Do not label the fallback 1.8.2.
+- This is a transmuxer using Media Source Extensions, not a packaged Samsung hardware codec or a port of VLC. Original media rights and codec constraints still apply.

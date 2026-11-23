@@ -20,7 +20,7 @@ try {
     $wgt = Join-Path $root 'Open-IPTV-Pro-TizenBrowser.wgt'
     $null = New-Item -ItemType Directory -Path $app -Force
 
-    $required = @('index.html', 'phone.html', 'supabase-sdk.js', 'config.xml', 'hls.min.js', 'dash.all.min.js')
+    $required = @('index.html', 'phone.html', 'supabase-sdk.js', 'config.xml', 'hls.min.js', 'dash.all.min.js', 'mpegts.min.js')
     $build = -not (Test-Path -LiteralPath $wgt)
     foreach ($name in $required) {
         if (-not (Test-Path -LiteralPath (Join-Path $app $name))) { $build = $true }
@@ -35,11 +35,12 @@ try {
             @('supabase-sdk.js', 'supabase-sdk.js'),
             @('hls.min.js', 'hls.min.js'),
             @('dash.all.min.js', 'dash.all.min.js'),
+            @('https://cdn.jsdelivr.net/npm/mpegts.js@1.8.2/dist/mpegts.min.js', 'mpegts.min.js'),
             @('tizenbrew/README.md', 'README.md'),
             @('tizenbrew/THIRD_PARTY_NOTICES.md', 'THIRD_PARTY_NOTICES.md')
         )
         foreach ($item in $files) {
-            $uri = $base + $item[0]
+            $uri = if ([string]$item[0] -match '^https://') { [string]$item[0] } else { $base + $item[0] }
             $target = Join-Path $app $item[1]
             Invoke-WebRequest -Uri $uri -OutFile $target -UseBasicParsing -TimeoutSec 60
             if (-not (Test-Path -LiteralPath $target)) { throw ('Download failed: ' + $uri) }
@@ -129,7 +130,7 @@ try {
                     }
                 }
                 # Strict allowlist prevents reading arbitrary files from the user's computer.
-                if (@('index.html','phone.html','supabase-sdk.js','config.xml','hls.min.js','dash.all.min.js') -notcontains $targetName) {
+                if (@('index.html','phone.html','supabase-sdk.js','config.xml','hls.min.js','dash.all.min.js','mpegts.min.js') -notcontains $targetName) {
                     $status = '404 Not Found'
                     $body = [Text.Encoding]::UTF8.GetBytes('Not Found')
                     $contentType = 'text/plain; charset=utf-8'

@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro",
-  "version": "0.1.45",
-  "description": "Open IPTV Pro TV Samsung: 5 giao diện, HLS/DASH tích hợp WGT, AVPlay dự phòng, EPG, quản lý IPTV qua QR.",
+  "version": "0.1.47",
+  "description": "Open IPTV Pro TV Samsung: 5 giao diện, HLS/DASH/MPEG-TS tích hợp WGT, AVPlay dự phòng, EPG, quản lý IPTV qua QR.",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",
@@ -128,6 +128,6 @@
     "ColorF0Red",
     "ColorF1Green"
   ],
-  "tizenbrewEdition": "0.1.45",
+  "tizenbrewEdition": "0.1.47",
   "serviceFile": "tizenbrew/hls-relay-v1.js"
 }

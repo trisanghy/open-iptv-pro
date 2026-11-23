@@ -11,6 +11,7 @@ on:
       - supabase-sdk.js
       - hls.min.js
       - dash.all.min.js
+      - mpegts.min.js
       - assets/icon.png
       - package.json
       - .github/workflows/package-tizen-native-avplay.yml
@@ -30,6 +31,14 @@ jobs:
     timeout-minutes: 12
     steps:
       - uses: actions/checkout@v4
+      - name: Bundle pinned mpegts.js 1.8.2 (MPEG-TS/FLV)
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/mpegts-install"
+          npm install --prefix "$RUNNER_TEMP/mpegts-install" --ignore-scripts --no-save --no-package-lock --no-audit --no-fund mpegts.js@1.8.2
+          cp "$RUNNER_TEMP/mpegts-install/node_modules/mpegts.js/dist/mpegts.min.js" mpegts.min.js
+          node -e "const s=require('fs').readFileSync('mpegts.min.js','utf8');if(!s.includes('1.8.2')||s.length<200000)process.exit(1)"
       - name: Build unsigned TV web application archive
         run: python3 tizen-native/build.py
       - name: Verify archive, AVPlay assets and version
@@ -47,12 +56,13 @@ jobs:
           with ZipFile(path) as z:
               assert z.testzip() is None
               names=set(z.namelist())
-              assert {'config.xml','index.html','phone.html','hls.min.js','dash.all.min.js','supabase-sdk.js','icon.png'}.issubset(names)
+              assert {'config.xml','index.html','phone.html','hls.min.js','dash.all.min.js','mpegts.min.js','supabase-sdk.js','icon.png'}.issubset(names)
               xml=ET.fromstring(z.read('config.xml'))
               assert xml.attrib['version']==version
               html=z.read('index.html').decode()
               assert 'webapis.avplay' in html
-              assert 'hls.min.js' in html and 'dash.all.min.js' in html
+              assert 'hls.min.js' in html and 'dash.all.min.js' in html and 'mpegts.min.js' in html
+              assert b'1.8.2' in z.read('mpegts.min.js')
               assert '$WEBAPIS/webapis/webapis.js' in html
               assert 'sourceQR' in html
           print('Unsigned Samsung TV WGT source archive passed static validation:',version)
