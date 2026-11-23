@@ -10,7 +10,9 @@
 - Vấn đề: đánh giá độ bao phủ có thể vẫn cao nhưng một loạt kênh đổi sang CHỦ ĐỀ SAI khi khôi phục mô hình Naive Bayes, cần xem chuyển nhãn A → B trước khi áp dụng.
 - Triển khai: `previewCategoryTopicShifts` (ma trận đổi chủ đề sau mô phỏng); hiển thị các cặp nhãn và tối đa 2 tên kênh mẫu/cặp; cảnh báo riêng khi >=5 kênh và >=20% số kênh cả hai mô hình còn chắc chắn, với mẫu tối thiểu 10. Không gửi URL, không sửa mô hình/playlist.
 - Kiểm thử đã thêm: Node test hai mô hình huấn luyện ngược 18 kênh, vẫn có coverage nhưng 18 lần đổi chủ đề; UI/CDP mới `qa304`, ảnh Electron 1920×1080 `positron-p51304-topic-shifts-before-1920x1080-real.png` / `...after...`.
-- Điều kiện hoàn tất: CI xanh, mở xem trực tiếp hai PNG, kiểm tra QA, tính ổn định; chờ kết quả trước khi đánh dấu ĐẠT.
+- CI run 45156986359: Node 1013 pass/5 skipped/0 fail, Windows/Mac ARM/x64 build success, nhưng Electron capture FAIL tại P289 `showForecast=false` vì thêm nested details làm khung dự báo vượt khỏi viewport. Ảnh P289 before/after trong artifact 14809132642 đã mở và đối chiếu P303.
+- QA repair: tách khối ma trận chuyển chủ đề P304 thành `details` đồng cấp, không lồng bên trong phần dự báo P289; bổ sung test chống tái diễn, không giảm assertion.
+- Điều kiện hoàn tất: CI mới xanh, mở xem trực tiếp hai PNG P304, kiểm tra QA, tính ổn định; chờ kết quả trước khi đánh dấu ĐẠT.
 - Các vòng 02–20: chưa triển khai; không được tính vòng bằng ảnh QA sẵn có.
 
 ## Cảnh báo

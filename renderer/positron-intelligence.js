@@ -779,6 +779,9 @@
      line.textContent=row.name+': '+row.before+' → '+row.after;
      details.append(line);
     }
+    // P304: keep topic migration as a sibling disclosure, not inside the
+    // already long P289 impact details (which must fit the scroll viewport).
+    let topicShiftPanel=null;
     // P304: show topic migration separately from loss of classifier coverage.
     const topicShifts=core.previewCategoryTopicShifts({categoryModel},parsed,channels(),{limit:6,maxChannels:1000});
     if(topicShifts.ok){
@@ -806,7 +809,7 @@
       shifts.append(line);
      }
      const caution=d.createElement('small');caution.textContent=topicShifts.caution;
-     shifts.append(caution);details.append(shifts);
+     shifts.append(caution);topicShiftPanel=shifts;
     }
     // P293: independent local preview balanced across channel groups.
     const balanced=core.previewCategoryImpact({categoryModel},parsed,channels(),{limit:4,strategy:'balanced'});
@@ -935,6 +938,7 @@
     }
     const note=d.createElement('small');note.textContent=categoryImpact.caution;
     details.append(note);importPreview.append(details);
+    if(topicShiftPanel)importPreview.append(topicShiftPanel);
     if(topicShifts.ok&&topicShifts.significant){
      const relabelAlert=d.createElement('p');relabelAlert.id='poAICategoryShiftRisk';
      relabelAlert.className='po-ai-coverage-risk';
