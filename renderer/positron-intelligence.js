@@ -199,6 +199,16 @@
  const privacy=d.createElement('p');privacy.className='po-ai-privacy';
  privacy.textContent='Mặc định KHÔNG học. Khi bật: chỉ lưu trọng số sở thích trong máy; học sau ≥35 giây phát có hình/tiếng, không tải stream hay lịch sử lên mạng. Tra cứu web chỉ gửi tên kênh, không gửi playlist/URL/hành vi. Bạn có thể xóa mô hình.';
  area.append(title,controls,alertRow,modeBar,summary,list,privacy,modelManager);
+
+ // P322: context-aware accessible header; preserve native wording for non-AI.
+ const watchTitle=byId('poWatchFlowTitle'),watchKicker=panel.querySelector('.po-watchflow-kicker');
+ const originalWatchTitle=watchTitle?.textContent||'Xem gì bây giờ?';
+ const originalWatchKicker=watchKicker?.textContent||'KHÁM PHÁ KÊNH CỦA BẠN';
+ const syncWatchHeader=()=>{
+  const isAI=aiOpen&&!panel.hidden;
+  if(watchTitle)watchTitle.textContent=isAI?'AI hợp gu':originalWatchTitle;
+  if(watchKicker)watchKicker.textContent=isAI?'WATCHFLOW INTELLIGENCE':originalWatchKicker;
+ };
  const extras=[panel.querySelector('.po-watchflow-modes'),panel.querySelector('.po-watchflow-subhead'),
   byId('poWatchFlowResults'),panel.querySelector('.po-watchflow-note')].filter(Boolean);
  const originals=[byId('poFlowPlusResults'),byId('poWatchLaterSearchRow'),panel.querySelector('.po-flowplus-privacy')].filter(Boolean);
@@ -214,7 +224,7 @@
   for(const button of toolbar.querySelectorAll('button[data-flowplus-mode]'))button.setAttribute('aria-pressed','false');
   for(const el of extras)el.classList.add('po-flowplus-hidden');
   for(const el of originals)el.hidden=true;
-  panel.scrollTop=0;syncAIBackTop();
+  panel.scrollTop=0;syncAIBackTop();syncWatchHeader();
  }
  function showAI(){aiOpen=true;syncAIView();render();}
  function hideAI(){
@@ -222,7 +232,7 @@
   wideButton.setAttribute('aria-pressed','false');wideButton.textContent='Đọc rộng';
   delete panel.dataset.poAiActive;delete panel.dataset.poAiTraining;
   delete panel.dataset.poAiWide;area.hidden=true;
-  tab.setAttribute('aria-pressed','false');syncAIBackTop();
+  tab.setAttribute('aria-pressed','false');syncAIBackTop();syncWatchHeader();
  }
  wideButton.addEventListener('click',()=>{
   if(!aiOpen||panel.hidden)return;
@@ -1302,7 +1312,7 @@
  }
  const count=byId('navCount');
  if(count)new MutationObserver(()=>{if(aiOpen&&!panel.hidden)render();}).observe(count,{childList:true,characterData:true,subtree:true});
- new MutationObserver(()=>{if(aiOpen&&!panel.hidden){syncAIView();render();}}).observe(panel,{attributes:true,attributeFilter:['hidden']});
+ new MutationObserver(()=>{syncWatchHeader();if(aiOpen&&!panel.hidden){syncAIView();render();}}).observe(panel,{attributes:true,attributeFilter:['hidden']});
  win.PositronIntelligence=Object.freeze({render,getProfile:()=>({enabled,observations:model.observations}),
   recommend:()=>core.recommend(channels(),guide(),win.IPTVGuide,model,webValid()),
   upcoming:()=>core.upcomingForYou(channels(),guide(),win.IPTVGuide,model,webValid()),

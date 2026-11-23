@@ -1,3 +1,12 @@
+## P5.1.322 / Electron 4.23.407 — Header WatchFlow theo chế độ AI (CANDIDATE)
+- Feature priority: NEW — Khi đọc WatchFlow Intelligence, header cố định phải nói rõ đang ở chế độ AI hợp gu thay vì nhãn Gợi ý thường, đặc biệt khi cuộn sâu.
+- Feature class: AI
+- User action: TV → WatchFlow → AI hợp gu; xem tiêu đề “AI hợp gu” và trở lại “Xem gì bây giờ?” khi rời AI hoặc đóng bảng.
+- Electron screenshot: positron-p51322-ai-title-before-1920x1080-real.png / positron-p51322-ai-title-after-1920x1080-real.png.
+- Evidence: QA322 Electron thật 1920×1080 xác minh đổi header, aria-labelledby, khôi phục khi đổi mode, đóng/mở lại, hai PNG khác nhau, không tràn ngang, không đổi mô hình, playlist hay kênh phát.
+- Privacy: Không tự phát, không ghi dữ liệu học, không gửi stream URL, M3U, lịch sử lên mạng; chỉ đổi DOM textContent.
+- Release stable-only, Actions chứa bản thực nghiệm.
+
 ## P5.1.321 / Electron 4.23.406 — Về đầu bảng WatchFlow AI khi cuộn sâu (CANDIDATE)
 - Feature priority: NEW — Bổ sung điều hướng trở về đầu nội dung AI khi phải cuộn sâu để xem bằng chứng giải thích Logistic; thao tác này trước đây không tồn tại.
 - Feature class: AI

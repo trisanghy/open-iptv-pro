@@ -65,3 +65,6 @@ Chưa thực hiện. Mỗi vòng yêu cầu commit/version, test, ảnh Electron
 - Đã tải artifact 14833832765 và mở ảnh trước/sau P320 thực 1920×1080; tiêu đề AI bị cuộn một phần dưới nav sticky.
 - Vòng 01/20 — P5.1.321 CANDIDATE: thêm nút ↑ Đầu AI có điều kiện trong header sticky; test và ảnh P321 trước/sau; chưa tính hoàn thành trước CI và soát ảnh sau.
 - Vòng 02–20: chưa thực hiện; không lấy số screenshot tích lũy làm số vòng mới.
+
+- P5.1.321 QA đã xác minh: 1037 tests pass/5 skipped, QA321 9/9, capture và build Win/Mac success; hai ảnh Electron đã mở soát; không public Release.
+- P322 vòng 02/20 CANDIDATE: ảnh sau P321 cho thấy header ghi “Xem gì bây giờ?” không khớp AI; cập nhật nhãn theo mode và bảo toàn trạng thái; chờ CI/ảnh mới.

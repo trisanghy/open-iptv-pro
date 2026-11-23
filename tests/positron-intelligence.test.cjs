@@ -1521,3 +1521,16 @@ test('P321 adds accessible scroll-to-overview without touching IPTV or learned m
  for(const name of ['qa321','positron-p51321-ai-return-before-1920x1080-real.png',
   'positron-p51321-ai-return-after-1920x1080-real.png'])assert.ok(qa.includes(name),name);
 });
+
+
+test('P322 changes WatchFlow heading to active Intelligence and restores it on close',()=>{
+ const ui=fs.readFileSync('renderer/positron-intelligence.js','utf8');
+ const qa=fs.readFileSync('scripts/positron-20-extension.cjs','utf8');
+ for(const x of ["watchTitle=byId('poWatchFlowTitle')",
+  "watchTitle.textContent=isAI?'AI hợp gu':originalWatchTitle",
+  "watchKicker.textContent=isAI?'WATCHFLOW INTELLIGENCE':originalWatchKicker",
+  'panel.scrollTop=0;syncAIBackTop();syncWatchHeader();',
+  "new MutationObserver(()=>{syncWatchHeader();if(aiOpen&&!panel.hidden)"])assert.ok(ui.includes(x),x);
+ for(const x of ['qa322','positron-p51322-ai-title-before-1920x1080-real.png',
+ 'positron-p51322-ai-title-after-1920x1080-real.png'])assert.ok(qa.includes(x),x);
+});
