@@ -7,28 +7,28 @@ Trang này được tạo tự động từ GitHub Releases và ảnh kiểm th�
 [Mở WEBSITE changelog tương tác](https://raw.githack.com/trisanghy/open-iptv-pro/Positron/docs/positron-features/index.html) · [Giao diện HTML trong repository](index.html) · [Các bản phát hành](https://github.com/trisanghy/open-iptv-pro/releases) · [Nhật ký Git tiếng Việt](LOG_GIT_TIENG_VIET.md) · [Quy tắc ưu tiên tính năng](../../POSITRON_FEATURE_RULES.md)
 
 <details>
-<summary><strong>P5.1.289</strong> · Dự báo nhãn Naive Bayes thay đổi khi khôi phục · CANDIDATE · AI</summary>
+<summary><strong>P5.1.289</strong> · xem trước kênh đổi nhãn Naive Bayes khi nhập AI · CHƯA CÓ BẢN PHÁT HÀNH · TÍNH NĂNG</summary>
 
-**Ứng dụng:** 4.23.374 · **Trạng thái:** chờ GitHub Actions và ảnh Electron.
+**Ứng dụng:** 4.23.374 · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
 
-Feature class: AI — Xem thử tối đa 180 kênh theo mô hình phân loại hiện tại và trọng số trong JSON. Danh sách mở rộng hiển thị các kênh có thể đổi chủ đề; không phát video, không ghi dữ liệu, không suy diễn EPG khi chỉ có tên/nhóm.
+Feature priority: NEW — Sau khi chọn JSON sao lưu, AI thử phân loại tối đa 180 kênh theo mô hình Naive Bayes hiện tại và mô hình trong tệp, đếm số kênh có thể đổi nhãn, liệt kê tối đa 4 khác biệt và nêu rõ đây chỉ là dự đoán dựa trên tên/nhóm kênh, không xác nhận từ EPG/luồng. Bảng thu gọn để giữ nút Xác nhận dễ truy cập. Feature class: AI
 
-Bằng chứng ảnh thật được kiểm tra trước khi công bố hoàn tất.
+*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
 
-[Xem changelog và source](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/tree/Positron) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/0491bc0627cf54e33279e4e7baa58f2f3119664d)
 
 </details>
 
 <details>
-<summary><strong>P5.1.288</strong> · xem thử tác động gợi ý AI trước khi khôi phục · CHƯA CÓ BẢN PHÁT HÀNH · TÍNH NĂNG</summary>
+<summary><strong>P5.1.288</strong> · Xem thử thứ hạng gợi ý AI trước khi nhập mô hình / Electron 4.23.373 · CHƯA CÓ BẢN PHÁT HÀNH · TÍNH NĂNG</summary>
 
-**Ứng dụng:** 4.23.373 · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
+**Ứng dụng:** Chưa xác minh · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
 
 Feature priority: NEW — Mô phỏng tác động của trọng số Logistic ML trong tệp sao lưu lên ba gợi ý kênh hiện tại ngay ở màn hình xem trước. Hiển thị thứ hạng trước/sau, số vị trí thay đổi và cảnh báo khi mô hình chưa học đủ. Không tự phát kênh, không ghi mô hình hay gửi dữ liệu lên mạng. Feature class: AI
 
 *Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
 
-[Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/tree/Positron) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/1eb66e19d091af5bdcba6a529caac221373e164b)
+[Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
 
 </details>
 
