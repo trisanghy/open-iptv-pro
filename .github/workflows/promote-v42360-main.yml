@@ -12,6 +12,7 @@ permissions:
 
 jobs:
   promote:
+    if: false # archived: stable-only Releases; do not auto-promote
     runs-on: ubuntu-latest
     timeout-minutes: 35
     outputs:
@@ -191,6 +192,7 @@ jobs:
           if-no-files-found: error
 
   publish:
+    if: false # archived: stable-only Releases; do not auto-promote
     needs: [promote, mac_arm64, mac_x64, windows_x64]
     runs-on: ubuntu-latest
     timeout-minutes: 20
