@@ -340,8 +340,10 @@ jobs:
           test -s positron-evidence/p5-20-rounds/positron-p51318-ai-manager-diff-after-1920x1080-real.png
           test -s positron-evidence/p5-20-rounds/positron-p51319-ai-explain-before-1920x1080-real.png
           test -s positron-evidence/p5-20-rounds/positron-p51319-ai-explain-after-1920x1080-real.png
-          test -s positron-evidence/p5-20-rounds/positron-p51321-ai-actions-before-1920x1080-real.png
-          test -s positron-evidence/p5-20-rounds/positron-p51321-ai-actions-after-1920x1080-real.png
+          test -s positron-evidence/p5-20-rounds/positron-p51320-ai-actions-before-1920x1080-real.png
+          test -s positron-evidence/p5-20-rounds/positron-p51320-ai-actions-after-1920x1080-real.png
+          test -s positron-evidence/p5-20-rounds/positron-p51321-ai-return-before-1920x1080-real.png
+          test -s positron-evidence/p5-20-rounds/positron-p51321-ai-return-after-1920x1080-real.png
           test -s positron-evidence/p5-20-rounds/positron-p51298-small-samples-after-1920x1080-real.png
           test -s positron-evidence/audit-p5-20-rounds.json
           # Kiểm tra pixel PNG thật: ít nhất 4 ảnh desktop 1920 x 1080, không upscale.
@@ -688,7 +690,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -Eeuo pipefail
-          TAG=positron/v4.23.406-p5.1.320
+          TAG=positron/v4.23.406-p5.1.321
           echo 'GitHub Release publication has not been verified.' > release-stage/PUBLISH_STATUS.txt
           if gh api "repos/$GITHUB_REPOSITORY/git/ref/tags/$TAG" --jq '.object.sha' >/tmp/tag-sha 2>/dev/null; then
             test "$(cat /tmp/tag-sha)" = "$GITHUB_SHA" || { echo '::error::Immutable tag points to a different commit'; exit 1; }
@@ -696,7 +698,7 @@ jobs:
           else
             if gh release create "$TAG" release-stage/*.dmg release-stage/*.exe release-stage/*.png release-stage/audit-p4-50-rounds.json release-stage/audit-p5-20-rounds.json release-stage/*.zip release-stage/SHA256SUMS.txt \
               --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" \
-              --title 'Open IPTV Pro Positron P5.1.315 — đối chiếu trọng số AI bất biến với thứ tự JSON' \
+              --title 'Open IPTV Pro Positron P5.1.321 — trở về đầu WatchFlow AI' \
               --notes "Positron $TAG at $GITHUB_SHA. Full change history is included as POSITRON_P5_CHANGELOG.md in the Source ZIP asset. Native Electron screenshots, reports and installer checksums are attached." --prerelease --latest=false 2>/tmp/positron-release-error; then
               echo 'GitHub Release successfully created.'
             elif grep -Eq '(HTTP 403|Resource not accessible by integration)' /tmp/positron-release-error; then

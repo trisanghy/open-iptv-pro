@@ -1,4 +1,10 @@
 ## P5.1.321 / Electron 4.23.406 — Về đầu bảng WatchFlow AI khi cuộn sâu (CANDIDATE)
+- Feature priority: NEW — Bổ sung điều hướng trở về đầu nội dung AI khi phải cuộn sâu để xem bằng chứng giải thích Logistic; thao tác này trước đây không tồn tại.
+- Feature class: AI
+- User action: TV → WatchFlow → AI hợp gu → xem giải thích dài, cuộn xuống; bấm ↑ Đầu AI để quay lại phần tổng quan và tab AI.
+- Electron screenshot: positron-p51321-ai-return-before-1920x1080-real.png / positron-p51321-ai-return-after-1920x1080-real.png
+- Evidence: QA321 Electron thật kiểm tra nút chỉ hiện khi cuộn, trở lại đầu, trả keyboard focus, tiêu đề hiển thị, không đổi model localStorage, playlist và current channel; kiểm tra tràn ngang và 2 ảnh PNG.
+
 - Ảnh Electron thật P320: tiêu đề WatchFlow Intelligence bị cuộn dưới thanh nav cố định khi đọc giải thích Logistic.
 - Thêm nút ↑ Đầu AI vào header sticky, chỉ hiện khi chế độ AI mở và người dùng cuộn >120px; bấm về đầu, trả focus về tab AI; không cập nhật mô hình hay tự phát.
 - Regression & screenshot thực P321 1920×1080 trước/sau; QA kiểm tra hiển thị, keyboard focus, viewport, playlist, current channel, localStorage. Chỉ đánh dấu đạt sau CI và mở ảnh.
