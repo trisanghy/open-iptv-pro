@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.414",
-  "description": "Positron P5.1.329: nhấn lại F6 hoặc Alt+Shift+W để đóng WatchFlow AI",
+  "version": "4.23.415",
+  "description": "Positron P5.1.330: bảo vệ phím tắt WatchFlow AI trong hộp thoại Cast/Thêm nguồn và khi nhập văn bản",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

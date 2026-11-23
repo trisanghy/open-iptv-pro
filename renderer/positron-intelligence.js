@@ -248,8 +248,11 @@
   const chord=event.altKey&&event.shiftKey&&!event.ctrlKey&&!event.metaKey&&
    (event.code==='KeyW'||String(event.key).toLowerCase()==='w');
   if((!f6&&!chord)||event.defaultPrevented||event.repeat||event.isComposing)return;
-  if([event.target,d.activeElement].some(el=>el?.closest?.('input,textarea,select,[contenteditable="true"],[role="textbox"]')))return;
+  // P330: guard plaintext-only and empty contenteditable fields, preserving P328 input checks.
+  if([event.target,d.activeElement].some(el=>el?.isContentEditable||el?.closest?.('input,textarea,select,[contenteditable="true"],[contenteditable],[role="textbox"]')))return;
   if(!byId('page-tv')?.classList.contains('active-page'))return;
+  // Never stack WatchFlow AI above the native source or Cast dialog.
+  if(d.querySelector('.modal-backdrop:not(.hidden):not([hidden])'))return;
   const palette=byId('positronPalette');
   if(palette&&!palette.hidden)return;
   event.preventDefault();event.stopPropagation();

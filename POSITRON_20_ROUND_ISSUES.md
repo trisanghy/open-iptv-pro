@@ -77,3 +77,10 @@ Baseline 24/11/2026: HEAD 557361b9ab74340ca0f2999f1e0912c2c43803db, P5.1.323 / 4
 - Phát hiện từ ảnh sau P328: phím tắt đã mở AI, nhưng nhấn lại không đóng; cửa sổ AI phủ góc video, để đóng phải tìm nút × hoặc dùng phím Escape riêng.
 - Tính năng: F6 và Alt+Shift+W là hai-way toggle cùng trạng thái; lần đầu mở và tập trung nút AI, lần hai đóng và chuyển focus về WatchFlow toolbar, trên cả 1920/720.
 - QA Electron: trước AI mở/sau đóng trên desktop và 720, nhấn lại F6/chord, no overflow/data changes/autoplay; không tính vòng hoàn tất trước Node + ảnh thật + CDP/CI và mở PNG.
+
+
+## Vòng tiếp nối — P5.1.330: CANDIDATE
+- Baseline mới nhất: P5.1.329 / 4.23.414, HEAD kiểm tra trước commit; đã mở ảnh Electron thật P328 (720, 1920) và đọc mã P329.
+- Lỗi phát hiện trong mã: shortcut F6/Alt+Shift+W có thể chồng AI lên dialog Thêm nguồn/Cast, chặn contenteditable="true" nhưng không chặn các biến thể contenteditable="" hoặc "plaintext-only".
+- Sửa P330: thêm guard isContentEditable và .modal-backdrop thật trong renderer/positron-intelligence.js; giữ nguyên cơ chế toggle hai chiều P329. Không ảnh hưởng playlist/model.
+- Electron QA script: source/cast native modal, 2 loại ô editable, shortcut hoạt động ở TV thường, F6 nhấn lại đóng, viewport 1920/720, không tràn, không tự phát. Ảnh before/after 1920 và after 720. Chỉ công nhận vòng đạt khi CI thành công và trực tiếp mở PNG sau.
