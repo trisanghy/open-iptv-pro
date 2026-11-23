@@ -1,3 +1,9 @@
+## P5.1.351 / Electron 4.23.436 — Cô lập nguồn kênh QA, sửa lỗi CI phát hành (ĐANG XÁC MINH)
+- Nguyên nhân: bộ kiểm thử Electron dài chủ động nhập 561 kênh metadata QA, nhưng audit P350 giả định danh sách luôn rỗng; 561 !== 0 làm capture thất bại dù fast audit P350 trống đạt.
+- Thay đổi: thử trạng thái trống bằng lớp API tạm thời, khôi phục nguyên trạng IPTVState; thêm audit P351 so sánh có ba kênh QA với không nguồn, đo CTA/điều hướng/focus/không tràn ở 1920×1080 và 720×900, không phát stream.
+- Quy trình: sửa tên artifact release cũ P341, cập nhật version/nhãn P351 và xác minh chứng cứ riêng; không force push, không đụng nhánh khác.
+- Lưu ý: chưa coi CI, ảnh và installer là đạt cho đến khi kết quả workflow được kiểm tra và mở PNG thực.
+
 ## P5.1.350 / Electron 4.23.435 — Nút nhập nguồn hợp pháp trong WatchFlow chưa có kênh (CANDIDATE)
 - Feature priority: NEW — Ảnh thật P349 cho thấy WatchFlow Intelligence chưa có playlist chỉ hiển thị một dòng hướng dẫn, trong khi thao tác nhập nguồn nằm bên ngoài bảng AI. Thêm lối vào Quản lý nguồn ở đúng trạng thái trống, không tự nhập hoặc phát kênh.
 - Feature class: AI

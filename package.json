@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.435",
-  "description": "Positron P5.1.350: WatchFlow không có kênh có nút mở Quản lý nguồn IPTV hợp pháp, không tự nhập hay phát",
+  "version": "4.23.436",
+  "description": "Positron P5.1.351: QA độc lập kênh IPTV, bảo toàn playlist và thông luồng phát hành",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

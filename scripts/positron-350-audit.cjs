@@ -17,8 +17,18 @@ async function probe(page){return page.evaluate(()=>{
 async function run(page){
  fs.mkdirSync(dir,{recursive:true});
  await page.waitForFunction(()=>!!document.getElementById('poAIShortcutGuide'),null,{timeout:20000});
+ // P351: the long QA pipeline intentionally imported 561 metadata-only channels.
+ // Exercise the no-playlist screen through a reversible API fixture, never by
+ // clearing user data or weakening the empty-state assertion.
+ const nativeBefore=await probe(page);
+ await page.evaluate(()=>{
+  const native=window.IPTVState;
+  window.__p350Native=native;
+  window.IPTVState=Object.freeze({...native,getChannels:()=>[],getCurrent:()=>null});
+  window.PositronWatchFlow?.close?.();
+ });
  const initial=await probe(page),all={};
- assert.equal(JSON.parse(initial.channels).length,0,'native QA profile has no user-supplied playlist');
+ assert.equal(JSON.parse(initial.channels).length,0,'empty source QA fixture must be active');
  for(const [width,height] of [[1920,1080],[720,900]]){
   await page.setViewportSize({width,height});
   await page.evaluate(()=>{window.IPTVState.setPage('tv');window.PositronWatchFlow?.close?.();});
@@ -52,9 +62,17 @@ async function run(page){
  }
  const final=await probe(page);
  for(const k of ['channels','current','model'])assert.deepEqual(initial[k],final[k]);
- await page.evaluate(()=>window.IPTVState.setPage('tv'));
+ await page.evaluate(()=>{
+  window.PositronWatchFlow?.close?.();
+  window.IPTVState=window.__p350Native;
+  delete window.__p350Native;
+  window.IPTVState.setPage('tv');
+ });
+ const nativeAfter=await probe(page);
+ for(const k of ['channels','current','model'])assert.deepEqual(nativeBefore[k],nativeAfter[k],
+  'restore original native source context after empty-state QA: '+k);
  fs.writeFileSync('positron-evidence/audit-p51350-legal-source-onboarding.json',JSON.stringify({
-  version:'P5.1.350',app:'4.23.435',realElectron:true,checks:22,pass:true,all
+  version:'P5.1.350',app:'4.23.435',realElectron:true,checks:25,pass:true,isolatedFixture:true,nativeRestored:true,all
  },null,2));
  await page.setViewportSize({width:1920,height:1080});
  console.log('P350 legal IPTV source onboarding PASS, 22 native checks and four real PNG');
