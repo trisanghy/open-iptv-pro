@@ -54,7 +54,7 @@
   // Native AirPlay is only offered after the user opens the AirPlay tab.
   if(!hasNative){
    if(window.OpenIPTVWebCastV2?.open){
-    window.OpenIPTVWebCastV2.open({channel:ch,source});
+    window.OpenIPTVWebCastV2.open({channel:ch,source,autoCast:true});
     return;
    }
    if(window.OpenIPTVWebCast?.open){window.OpenIPTVWebCast.open(ch,source);return;}
