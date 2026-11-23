@@ -424,13 +424,15 @@
   // P329: a second shortcut dismisses the visible AI panel and returns focus.
   // Never toggle playback, the AI preference model, or a source playlist.
   if(!panel.hidden&&aiOpen){
+   // P346: native close bypasses hideAI(); always release nested help.
+   shortcutGuide.open=false;
    win.PositronWatchFlow?.close?.();
    const opener=byId('poWatchFlowToggle');
    if(panel.hidden&&opener?.getClientRects().length)
     opener.focus({preventScroll:true});
    return;
   }
-  if(panel.hidden)win.PositronWatchFlow?.open?.();
+  if(panel.hidden){shortcutGuide.open=false;win.PositronWatchFlow?.open?.();}
   if(panel.hidden)return;
   if(!aiOpen)showAI();
   else syncAIView();
