@@ -35,3 +35,8 @@ Vòng 01 dự kiến P5.1.279:
 - HEAD baseline bd565c29a3020739f47ea3198fb72dcbf1c03bdb, P5.1.283 / 4.23.368; Actions 45113392896 thành công (test, capture, Win x64, Mac x64/arm64). Release skipped theo Stable-only.
 - Đã TẢI và MỞ hai PNG Electron thật P283 trước/sau từ artifact 14791140087; không thấy chồng nút tại khu vực vừa thêm.
 - Vòng đầu P5.1.284: xuất JSON của ba thuật toán học AI riêng, không xuất dữ liệu M3U, URL hoặc ID kênh; test chống rò rỉ và QA before/after. Trạng thái CHƯA ĐẠT cho tới khi build + mở ảnh sau.
+
+## Vòng 01/20 P5.1.284 — ĐẠT (23/11/2026)
+- Commit tính năng 40a2e226441378a244dcb824cc531211eb51fbe4; QA fix d5abf87d0b11598197089f71c865e568bb17625e. CI 45116563561: 992 pass, 5 skipped, 0 fail, capture và Win/Mac builds success.
+- Bộ ảnh thật artifact 14792206663 đã tải, mở và soát TRƯỚC/SAU; nội dung thông báo sao lưu xuất hiện, không tràn/chồng trong vùng quản lý. Dữ liệu M3U, playback, ML storage bất biến.
+- Vòng 02/20 — P5.1.285 từ ảnh P284: chưa có nút khôi phục, cần xem trước và xác nhận trước khi ghi trọng số, không ảnh hưởng dữ liệu kênh.

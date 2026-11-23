@@ -65,9 +65,18 @@
  const backup=d.createElement('button');backup.type='button';backup.id='poAIBackup';
  backup.className='po-ai-backup';backup.textContent='Sao lưu mô hình AI (.json)';
  backup.title='Tải các trọng số học AI về máy; không có playlist hoặc URL';
+ const importButton=d.createElement('button');importButton.type='button';importButton.id='poAIImport';
+ importButton.className='po-ai-import';importButton.textContent='Khôi phục mô hình AI (.json)';
+ importButton.title='Chọn bản sao AI đã xuất; chỉ thay trọng số khi xác nhận';
+ const importFile=d.createElement('input');importFile.type='file';importFile.id='poAIImportFile';
+ importFile.accept='.json,application/json';importFile.hidden=true;
+ importFile.setAttribute('aria-label','Chọn tệp sao lưu mô hình AI JSON');
+ const importConfirm=d.createElement('button');importConfirm.type='button';importConfirm.id='poAIImportConfirm';
+ importConfirm.className='po-ai-import-confirm';importConfirm.hidden=true;
+ importConfirm.textContent='Xác nhận khôi phục trọng số AI';
  const bulk=d.createElement('button');bulk.type='button';bulk.id='poAIClearAll';
  bulk.className='po-ai-clear-all';bulk.textContent='Xóa toàn bộ dữ liệu học';bulk.title='Xóa tất cả ba mô hình học sau khi xác nhận hai lần';
- modelManager.append(modelToggle,modelRows,backup,bulk,modelStatus,modelHint);
+ modelManager.append(modelToggle,modelRows,backup,importButton,importFile,importConfirm,bulk,modelStatus,modelHint);
  let pendingModel='',pendingAt=0;
  const modelBytes=value=>new TextEncoder().encode(JSON.stringify(value||{})).byteLength;
  const learnedInventory=()=>[
@@ -662,6 +671,46 @@
   }catch{
    modelStatus.textContent='Không tạo được tệp sao lưu AI; kiểm tra quyền tải tệp rồi thử lại.';
   }
+ });
+ // P285: validate and preview a chosen local backup, then require second confirmation.
+ let pendingLearningImport=null,importSequence=0;
+ importButton.addEventListener('click',()=>importFile.click());
+ importFile.addEventListener('change',async()=>{
+  const file=importFile.files?.[0];importFile.value='';
+  const sequence=++importSequence;pendingLearningImport=null;importConfirm.hidden=true;
+  if(!file)return;
+  if(file.size>512000){modelStatus.textContent='Tệp sao lưu vượt giới hạn 500 KB; dữ liệu hiện tại chưa thay đổi.';return;}
+  try{
+   const raw=JSON.parse(await file.text());if(sequence!==importSequence)return;
+   const parsed=core.parseLearningBackup(raw);
+   if(!parsed.ok){modelStatus.textContent='Không thể khôi phục: '+parsed.reason+' Dữ liệu hiện tại vẫn giữ nguyên.';return;}
+   pendingLearningImport=parsed;importConfirm.hidden=false;
+   modelStatus.textContent='Xem trước: '+parsed.summary.preferenceObservations+' phản hồi, '
+    +parsed.summary.categoryLabels+' nhãn và '+parsed.summary.exploredTopics
+    +' chủ đề UCB. Nhấn xác nhận để thay thế trọng số AI đang học; playlist, EPG và Favorites giữ nguyên.';
+  }catch{
+   if(sequence!==importSequence)return;
+   modelStatus.textContent='Không thể đọc JSON sao lưu; dữ liệu AI hiện tại vẫn giữ nguyên.';
+  }
+  modelStatus.scrollIntoView({block:'nearest',behavior:'instant'});
+ });
+ importConfirm.addEventListener('click',()=>{
+  if(!pendingLearningImport)return;
+  const next=pendingLearningImport,previous={model,categoryModel,bandit,taughtIds:[...taughtIds]};
+  model=next.model;categoryModel=next.categoryModel;bandit=next.bandit;taughtIds.clear();
+  if(!save()){
+   model=previous.model;categoryModel=previous.categoryModel;bandit=previous.bandit;
+   for(const id of previous.taughtIds)taughtIds.add(id);
+   modelStatus.textContent='Không thể lưu dữ liệu khôi phục; mô hình cũ đã được giữ nguyên.';
+   return;
+  }
+  pendingLearningImport=null;importConfirm.hidden=true;
+  active=null;activeTeachIndex=0;sessionSkippedIds.clear();lastActiveTeachUndo=null;
+  activeStatusMessage='Đã khôi phục trọng số AI đã xác nhận từ tệp JSON.';
+  render();
+  modelStatus.textContent='Đã khôi phục '+next.summary.preferenceObservations
+   +' phản hồi và '+next.summary.categoryLabels+' nhãn AI. Playlist, EPG và Favorites không thay đổi.';
+  modelStatus.scrollIntoView({block:'nearest',behavior:'instant'});
  });
  bulk.addEventListener('click',()=>confirmDelete('all',bulk,()=>{
   model=core.emptyModel();bandit={};categoryModel=core.emptyCategoryModel();taughtIds.clear();activeStatusMessage='';lastActiveTeachUndo=null;active=null;alertEnabled=false;alertCheck.checked=false;

@@ -574,3 +574,46 @@ test('P284 sao lưu các mô hình AI không bao gồm dữ liệu kênh và URL
  for(const shot of ['positron-p51284-ai-backup-before-1920x1080-real.png',
   'positron-p51284-ai-backup-after-1920x1080-real.png'])assert.ok(qa.includes(shot),shot);
 });
+
+test('P285 khôi phục bản sao AI v1 có xem trước và chặn JSON giả mạo',()=>{
+ const channel={name:'Science Documentary HD',id:'private-id',url:'https://private.invalid/url.m3u8'};
+ let category=C.teachCategory(C.emptyCategoryModel(),channel,'documentary');
+ category=C.teachCategory(category,{name:'Study Academy'},'education');
+ const model=C.learn(C.emptyModel(),{'bias':1,'topic:education':1},1);
+ const bandit=C.observeBandit({},'education');
+ const exported=C.buildLearningBackup({model,categoryModel:category,bandit});
+ const jsonBefore=JSON.stringify(exported),parsed=C.parseLearningBackup(exported);
+ assert.equal(parsed.ok,true);
+ assert.deepEqual(parsed.model,C.sanitizedModel(model));
+ assert.deepEqual(parsed.categoryModel,C.sanitizedCategoryModel(category));
+ assert.deepEqual(parsed.bandit,C.sanitizedBandit(bandit));
+ assert.equal(parsed.summary.categoryLabels,2);
+ assert.equal(JSON.stringify(exported),jsonBefore,'validation does not change original backup');
+ const invalids=[
+  null,{}, {...exported,schemaVersion:99},
+  {...exported,playlist:[channel]},
+  {...exported,summary:{...exported.summary,categoryLabels:9999}},
+  {...exported,models:{...exported.models,preference:{version:0,observations:0,weights:{}}}},
+  {...exported,models:{...exported.models,category:{version:1,examples:99,docs:{news:1},tokens:{news:{news:1}}}}},
+  {...exported,models:{...exported.models,explore:{not_a_topic:1}}},
+  {...exported,models:{...exported.models,preference:{...exported.models.preference,weights:JSON.parse('{"__proto__":1}')}}},
+  {...exported,note:'x'.repeat(512100)}
+ ];
+ for(const payload of invalids){
+  const result=C.parseLearningBackup(payload);
+  assert.equal(result.ok,false,JSON.stringify(payload).slice(0,90));
+  assert.ok(result.reason.length>10);
+ }
+ for(const str of [channel.id,channel.url,'private.invalid','playlist'])
+  assert.ok(!JSON.stringify(parsed).includes(str),'no private '+str);
+ const ui=fs.readFileSync('renderer/positron-intelligence.js','utf8'),
+  css=fs.readFileSync('renderer/positron-intelligence.css','utf8'),
+  qa=fs.readFileSync('scripts/positron-20-extension.cjs','utf8');
+ for(const token of ['poAIImport','poAIImportFile','poAIImportConfirm','pendingLearningImport',
+  'file.size>512000','core.parseLearningBackup(raw)','Xem trước:','if(!save())'])
+  assert.ok(ui.includes(token),token);
+ assert.ok(css.includes('#poWatchFlowPanel #poAIImportConfirm[hidden]'));
+ for(const name of ['positron-p51285-ai-restore-before-1920x1080-real.png',
+  'positron-p51285-ai-restore-after-1920x1080-real.png'])
+  assert.ok(qa.includes(name),name);
+});

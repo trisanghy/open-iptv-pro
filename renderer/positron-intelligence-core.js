@@ -265,6 +265,59 @@
    note:'Chỉ chứa trọng số và từ khóa học AI, không có M3U, URL, lịch sử xem hoặc ID kênh.'};
  }
 
+ // P285: strict, bounded, local-only restore of P284 exported AI weights.
+ // Returns sanitized models, never executes or forwards contents.
+ function parseLearningBackup(raw){
+  const fail=reason=>({ok:false,reason});
+  const object=v=>!!v&&typeof v==='object'&&!Array.isArray(v);
+  const own=(o,k)=>Object.prototype.hasOwnProperty.call(o,k);
+  if(!object(raw)||raw.format!=='open-iptv-positron-ai-weights'||raw.schemaVersion!==1)
+   return fail('Tệp không đúng định dạng sao lưu AI Positron v1.');
+  if(Object.keys(raw).some(key=>!['format','schemaVersion','models','summary','note'].includes(key)))
+   return fail('Tệp có trường dữ liệu không được phép.');
+  if(JSON.stringify(raw).length>512000)return fail('Tệp vượt giới hạn 500 KB.');
+  const v=raw.models;
+  if(!object(v)||!object(raw.summary)||Object.keys(v).sort().join(',')!=='category,explore,preference')
+   return fail('Tệp thiếu ba mô hình AI cần thiết.');
+  const p=v.preference,c=v.category,b=v.explore;
+  if(!object(p)||p.version!==1||!Number.isInteger(p.observations)||p.observations<0||p.observations>5000
+   ||!object(p.weights)||Object.keys(p.weights).length>120)
+   return fail('Trọng số sở thích Logistic không hợp lệ.');
+  for(const [name,value] of Object.entries(p.weights)){
+   if(!name||name.length>80||!Number.isFinite(value)||Math.abs(value)>5||['__proto__','constructor','prototype'].includes(name))
+    return fail('Trọng số Logistic chứa khóa hoặc giá trị không hợp lệ.');
+  }
+  if(!object(c)||c.version!==1||!Number.isInteger(c.examples)||c.examples<0||c.examples>1500
+   ||!object(c.docs)||!object(c.tokens))
+   return fail('Nhãn Naive Bayes không hợp lệ.');
+  let total=0;
+  for(const [kind,docs] of Object.entries(c.docs)){
+   if(!own(KINDS,kind)||kind==='other'||!Number.isInteger(docs)||docs<=0||docs>1000)
+    return fail('Số nhãn hoặc chủ đề Naive Bayes không hợp lệ.');
+   const bag=c.tokens[kind];
+   if(!object(bag)||Object.keys(bag).length>150)
+    return fail('Từ khóa Naive Bayes không hợp lệ.');
+   for(const [token,count] of Object.entries(bag))
+    if(!/^[a-z0-9]{3,22}$/.test(token)||!Number.isInteger(count)||count<=0||count>1000)
+     return fail('Tần suất từ khóa Naive Bayes không hợp lệ.');
+   total+=docs;
+  }
+  if(total!==c.examples||Object.keys(c.tokens).some(kind=>!own(c.docs,kind)))
+   return fail('Tổng số nhãn Naive Bayes không khớp.');
+  if(!object(b)||Object.keys(b).length>Object.keys(KINDS).length)
+   return fail('Số lượt khám phá UCB không hợp lệ.');
+  for(const [kind,count] of Object.entries(b)){
+   if(!own(KINDS,kind)||!Number.isInteger(count)||count<=0||count>10000)
+    return fail('Dữ liệu UCB chứa chủ đề hoặc giá trị không hợp lệ.');
+  }
+  const model=sanitizedModel(p),categoryModel=sanitizedCategoryModel(c),bandit=sanitizedBandit(b);
+  const summary={preferenceObservations:model.observations,categoryLabels:categoryModel.examples,
+   exploredTopics:Object.keys(bandit).length};
+  if(Object.keys(summary).some(key=>!Number.isInteger(raw.summary[key])||raw.summary[key]!==summary[key]))
+   return fail('Bộ đếm mẫu học trong tệp không khớp.');
+  return {ok:true,model,categoryModel,bandit,summary};
+ }
+
  // P282: explain learned Naive Bayes evidence using only channel-name tokens.
  // Never show a prediction from shared generic group names or unsupervised web data.
  function explainCategory(raw,channel){
@@ -521,5 +574,5 @@
   return best;
  }
  return Object.freeze({KINDS,normalize,subject,metadataTopic,topicFor,features,emptyModel,
-  sanitizedModel,predict,learn,recommend,emptyCategoryModel,sanitizedCategoryModel,teachCategory,predictCategory,explainCategory,categoryLearningHealth,buildLearningBackup,sanitizedBandit,observeBandit,banditBonus,exploreWithBandit,upcomingForYou,planForYou,startingForYou,rankUnclassified,epgFolders,programmeFolders,searchProgrammes,cleanQuery,readWikiSearch});
+  sanitizedModel,predict,learn,recommend,emptyCategoryModel,sanitizedCategoryModel,teachCategory,predictCategory,explainCategory,categoryLearningHealth,buildLearningBackup,parseLearningBackup,sanitizedBandit,observeBandit,banditBonus,exploreWithBandit,upcomingForYou,planForYou,startingForYou,rankUnclassified,epgFolders,programmeFolders,searchProgrammes,cleanQuery,readWikiSearch});
 });

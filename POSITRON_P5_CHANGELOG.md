@@ -1,3 +1,11 @@
+## P5.1.285 — Khôi phục mô hình AI từ JSON có xác nhận / Electron 4.23.370
+- Feature priority: NEW / AI — Bổ sung chọn file sao lưu JSON cục bộ, từ chối tệp sai định dạng, giả mạo, vượt 500KB hoặc tổng số mẫu không khớp. Hiển thị xem trước Logistic, Naive Bayes, UCB và bắt buộc nhấn nút xác nhận trước khi thay thế trọng số.
+- Chỉ đọc tệp trong Electron, không tải lên Internet. Bảo toàn quyền bật AI, thông báo, dữ liệu M3U/kênh, EPG, Favorites và trình phát; nếu ghi localStorage thất bại, khôi phục các giá trị cũ trong bộ nhớ.
+- Feature class: AI — Backup/Restore độc lập, cải thiện độ an toàn khi chuyển máy.
+- QA yêu cầu: kiểm thử Node JSON hợp lệ/không hợp lệ/giới hạn kích thước, Electron nhập tệp sai rồi tệp hợp lệ, xác minh không thay đổi dữ liệu trước khi xác nhận, ảnh trước/sau thật, kiểm tra trạng thái lưu.
+- Evidence: positron-p51285-ai-restore-before-1920x1080-real.png / positron-p51285-ai-restore-after-1920x1080-real.png.
+- Status: CANDIDATE đến khi CI + ảnh sau được mở soát, không tạo release thử nghiệm trên trang Stable.
+
 ## P5.1.284 — Sao lưu trọng số ba mô hình AI / Electron 4.23.369
 - Feature priority: NEW — Chủ động tải JSON trọng số Logistic, Naive Bayes và UCB cùng bộ đếm mẫu, chỉ dữ liệu học trên máy; không gồm playlist, URL, ID kênh hoặc lịch sử xem.
 - Feature class: AI

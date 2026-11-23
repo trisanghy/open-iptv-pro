@@ -1,4 +1,4 @@
-name: Positron P5.1.284 · 70 real Electron screenshot checks · Mac and Windows prerelease
+name: Positron P5.1.285 · 70 real Electron screenshot checks · Mac and Windows prerelease
 on:
   push:
     branches: [Positron]
@@ -270,6 +270,8 @@ jobs:
           test -s positron-evidence/p5-20-rounds/positron-p51283-ai-training-health-after-1920x1080-real.png
           test -s positron-evidence/p5-20-rounds/positron-p51284-ai-backup-before-1920x1080-real.png
           test -s positron-evidence/p5-20-rounds/positron-p51284-ai-backup-after-1920x1080-real.png
+          test -s positron-evidence/p5-20-rounds/positron-p51285-ai-restore-before-1920x1080-real.png
+          test -s positron-evidence/p5-20-rounds/positron-p51285-ai-restore-after-1920x1080-real.png
           test -s positron-evidence/audit-p5-20-rounds.json
           # Kiểm tra pixel PNG thật: ít nhất 4 ảnh desktop 1920 x 1080, không upscale.
           node -e 'const fs=require("fs"),p=require("path"),r=require("./positron-evidence/audit-p5-20-rounds.json");if(r.desktop16x9Screenshots?.length!==4)throw Error("Thiếu bộ ảnh desktop 16:9");for(const x of r.desktop16x9Screenshots){const b=fs.readFileSync(p.join("positron-evidence/p5-20-rounds",x.filename));if(b.subarray(0,8).toString("hex")!=="89504e470d0a1a0a"||b.readUInt32BE(16)!==1920||b.readUInt32BE(20)!==1080)throw Error("Ảnh PNG không đúng 1920x1080: "+x.filename)}'
@@ -517,7 +519,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: positron-p51284-real-desktop-screenshots
+          name: positron-p51285-real-desktop-screenshots
           path: positron-evidence/
           retention-days: 30
           if-no-files-found: warn
@@ -546,17 +548,17 @@ jobs:
         shell: bash
         run: |
           set -Eeuo pipefail
-          test "$(node -p 'require("./package.json").version')" = "4.23.369"
+          test "$(node -p 'require("./package.json").version')" = "4.23.370"
           npx electron-builder --${{ matrix.platform }} --${{ matrix.arch }} --publish never
           if [[ "${{ matrix.platform }}" == mac ]]; then
-            test -s "dist/Open-IPTV-Pro-4.23.369-mac-${{ matrix.arch }}.dmg"
+            test -s "dist/Open-IPTV-Pro-4.23.370-mac-${{ matrix.arch }}.dmg"
           else
-            test -s "dist/Open-IPTV-Pro-4.23.369-x64.exe"
-            test -s "dist/Open-IPTV-Pro-Setup-4.23.369-x64.exe"
+            test -s "dist/Open-IPTV-Pro-4.23.370-x64.exe"
+            test -s "dist/Open-IPTV-Pro-Setup-4.23.370-x64.exe"
           fi
       - uses: actions/upload-artifact@v4
         with:
-          name: positron-p51284-${{ matrix.label }}
+          name: positron-p51285-${{ matrix.label }}
           path: |
             dist/*.dmg
             dist/*.exe
@@ -580,9 +582,9 @@ jobs:
         run: |
           set -Eeuo pipefail
           mkdir -p release-stage
-          git archive --format=zip --output=release-stage/OpenIPTVPro-Positron-P51284-Source.zip HEAD
-          zip -q -r release-stage/Positron-P51284-50-Real-Screenshots.zip release-stage/p4-50-rounds
-          zip -q -r release-stage/Positron-P51284-20-Real-Screenshots.zip release-stage/p5-20-rounds
+          git archive --format=zip --output=release-stage/OpenIPTVPro-Positron-P51285-Source.zip HEAD
+          zip -q -r release-stage/Positron-P51285-50-Real-Screenshots.zip release-stage/p4-50-rounds
+          zip -q -r release-stage/Positron-P51285-20-Real-Screenshots.zip release-stage/p5-20-rounds
           node -e 'const fs=require("fs"),p=require("path"),r=require("./release-stage/audit-p5-20-rounds.json");const x=r.desktop16x9Screenshots?.find(s=>s.page==="tv");if(!x)throw Error("Thiếu ảnh 16:9 chính");fs.copyFileSync(p.join("release-stage/p5-20-rounds",x.filename),"release-stage/positron-desktop-1920x1080-16x9-main-real.png")'
           cp release-stage/p4-50-rounds/positron-p4-50-real.png release-stage/positron-p4-final-main-real.png
           cp release-stage/p4-50-rounds/positron-p4-10-real.png release-stage/positron-p4-round-10-real.png
@@ -590,12 +592,12 @@ jobs:
           cp release-stage/p4-50-rounds/positron-p4-30-real.png release-stage/positron-p4-round-30-real.png
           cp release-stage/p4-50-rounds/positron-p4-40-real.png release-stage/positron-p4-round-40-real.png
           for name in \
-            Positron-P51284-20-Real-Screenshots.zip \
+            Positron-P51285-20-Real-Screenshots.zip \
             audit-p5-20-rounds.json \
-            Open-IPTV-Pro-4.23.369-mac-arm64.dmg \
-            Open-IPTV-Pro-4.23.369-mac-x64.dmg \
-            Open-IPTV-Pro-Setup-4.23.369-x64.exe \
-            Open-IPTV-Pro-4.23.369-x64.exe \
+            Open-IPTV-Pro-4.23.370-mac-arm64.dmg \
+            Open-IPTV-Pro-4.23.370-mac-x64.dmg \
+            Open-IPTV-Pro-Setup-4.23.370-x64.exe \
+            Open-IPTV-Pro-4.23.370-x64.exe \
             positron-p4-final-main-real.png \
             positron-desktop-1920x1080-16x9-main-real.png \
             audit-p4-50-rounds.json \
@@ -604,8 +606,8 @@ jobs:
             positron-p4-round-20-real.png \
             positron-p4-round-30-real.png \
             positron-p4-round-40-real.png \
-            Positron-P51284-50-Real-Screenshots.zip \
-            OpenIPTVPro-Positron-P51284-Source.zip; do
+            Positron-P51285-50-Real-Screenshots.zip \
+            OpenIPTVPro-Positron-P51285-Source.zip; do
               test -s "release-stage/$name" || { echo "::error::Missing $name"; exit 1; }
           done
           (cd release-stage && sha256sum *.dmg *.exe *.png *.json *.zip > SHA256SUMS.txt)
@@ -615,7 +617,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -Eeuo pipefail
-          TAG=positron/v4.23.369-p5.1.284
+          TAG=positron/v4.23.370-p5.1.285
           echo 'GitHub Release publication has not been verified.' > release-stage/PUBLISH_STATUS.txt
           if gh api "repos/$GITHUB_REPOSITORY/git/ref/tags/$TAG" --jq '.object.sha' >/tmp/tag-sha 2>/dev/null; then
             test "$(cat /tmp/tag-sha)" = "$GITHUB_SHA" || { echo '::error::Immutable tag points to a different commit'; exit 1; }
@@ -623,7 +625,7 @@ jobs:
           else
             if gh release create "$TAG" release-stage/*.dmg release-stage/*.exe release-stage/*.png release-stage/audit-p4-50-rounds.json release-stage/audit-p5-20-rounds.json release-stage/*.zip release-stage/SHA256SUMS.txt \
               --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" \
-              --title 'Open IPTV Pro Positron P5.1.284 — Độ cân bằng dữ liệu học AI' \
+              --title 'Open IPTV Pro Positron P5.1.285 — Khôi phục an toàn mô hình AI' \
               --notes "Positron $TAG at $GITHUB_SHA. Full change history is included as POSITRON_P5_CHANGELOG.md in the Source ZIP asset. Native Electron screenshots, reports and installer checksums are attached." --prerelease --latest=false 2>/tmp/positron-release-error; then
               echo 'GitHub Release successfully created.'
             elif grep -Eq '(HTTP 403|Resource not accessible by integration)' /tmp/positron-release-error; then
@@ -639,9 +641,9 @@ jobs:
           gh release view "$TAG" --repo "$GITHUB_REPOSITORY" --json assets --jq '.assets[].name' >/tmp/positron-assets
           grep -Fxq 'positron-desktop-1920x1080-16x9-main-real.png' /tmp/positron-assets
           grep -Fxq 'positron-p4-final-main-real.png' /tmp/positron-assets
-          grep -Fxq 'Positron-P51284-20-Real-Screenshots.zip' /tmp/positron-assets
-          grep -Fxq 'Open-IPTV-Pro-4.23.369-mac-arm64.dmg' /tmp/positron-assets
-          grep -Fxq 'Open-IPTV-Pro-Setup-4.23.369-x64.exe' /tmp/positron-assets
+          grep -Fxq 'Positron-P51285-20-Real-Screenshots.zip' /tmp/positron-assets
+          grep -Fxq 'Open-IPTV-Pro-4.23.370-mac-arm64.dmg' /tmp/positron-assets
+          grep -Fxq 'Open-IPTV-Pro-Setup-4.23.370-x64.exe' /tmp/positron-assets
           echo "PUBLISHED_AND_VERIFIED: $TAG at $GITHUB_SHA" > release-stage/PUBLISH_STATUS.txt
           echo "Verified experimental release $TAG from $GITHUB_SHA"
       - name: Preserve installers and release evidence as Actions artifact

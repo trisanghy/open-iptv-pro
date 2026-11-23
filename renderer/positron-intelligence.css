@@ -169,3 +169,10 @@ html[data-positron="true"].po-horizon body #poWatchFlowPanel.po-watchflow-panel:
 #poWatchFlowPanel .po-ai-backup:hover{background:#286b5d}
 #poWatchFlowPanel .po-ai-backup:focus-visible{outline:2px solid #9df3d3;outline-offset:2px}
 #poWatchFlowPanel .po-ai-backup:disabled{opacity:.55;cursor:not-allowed}
+
+/* P285: safe local AI restore, with preview and separate explicit confirmation. */
+#poWatchFlowPanel .po-ai-import{width:100%;min-height:38px;margin-top:5px;padding:8px 12px;border:1px solid #60869d;border-radius:8px;background:#173d52;color:#e9f5ff;cursor:pointer;font-size:12px;font-weight:700}
+#poWatchFlowPanel .po-ai-import:hover{background:#245774}
+#poWatchFlowPanel .po-ai-import:focus-visible,#poWatchFlowPanel .po-ai-import-confirm:focus-visible{outline:2px solid #afe2ff;outline-offset:2px}
+#poWatchFlowPanel .po-ai-import-confirm{width:100%;min-height:38px;margin-top:5px;padding:8px 12px;border:1px solid #9fcdb7;border-radius:8px;background:#247150;color:#f1fff8;cursor:pointer;font-size:12px;font-weight:700}
+#poWatchFlowPanel #poAIImportConfirm[hidden]{display:none!important}
