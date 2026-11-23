@@ -7,15 +7,28 @@ Trang này được tạo tự động từ GitHub Releases và ảnh kiểm th�
 [Mở WEBSITE changelog tương tác](https://raw.githack.com/trisanghy/open-iptv-pro/Positron/docs/positron-features/index.html) · [Giao diện HTML trong repository](index.html) · [Các bản phát hành](https://github.com/trisanghy/open-iptv-pro/releases) · [Nhật ký Git tiếng Việt](LOG_GIT_TIENG_VIET.md) · [Quy tắc ưu tiên tính năng](../../POSITRON_FEATURE_RULES.md)
 
 <details>
-<summary><strong>P5.1.294</strong> · cảnh báo suy giảm bao phủ chủ đề AI trước nhập mô hình · CHƯA CÓ BẢN PHÁT HÀNH · TÍNH NĂNG</summary>
+<summary><strong>P5.1.295</strong> · cảnh báo suy giảm bao phủ chủ đề AI trước nhập mô hình · CHƯA CÓ BẢN PHÁT HÀNH · TÍNH NĂNG</summary>
 
-**Ứng dụng:** 4.23.379 · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
+**Ứng dụng:** 4.23.380 · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
+
+Feature priority: NEW — Trong dự báo trước khi nhập mô hình AI, bổ sung bảng xem riêng tối đa năm nhóm kênh chịu nhiều tác động nhất (mất dự đoán đủ chắc chắn, thay nhãn, mới được phân loại), dựa trên tối đa 1.000 kênh đang có. Không còn phải suy luận từ một tỷ lệ tổng hợp. Feature class: AI
+
+*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+
+[Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/tree/Positron) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/cbc355895e068028dbb0183b852d9994debae17c)
+
+</details>
+
+<details>
+<summary><strong>P5.1.294</strong> · AI phát hiện bất đồng giữa hai mẫu kênh / Electron 4.23.379 · CHƯA CÓ BẢN PHÁT HÀNH · TÍNH NĂNG</summary>
+
+**Ứng dụng:** Chưa xác minh · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
 
 Feature priority: NEW — Khi xem trước khôi phục mô hình Naive Bayes, so sánh 180 kênh đầu và mẫu phân tầng theo nhóm, đo chênh lệch độ bao phủ trước/sau và mức suy giảm; cảnh báo khi hai kết quả chênh từ 20 điểm phần trăm hoặc mức rủi ro khác nhau. Feature class: AI
 
 *Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
 
-[Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/tree/Positron) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/e446438e050224c3b9ac519fc91610ec79a183c2)
+[Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
 
 </details>
 
