@@ -355,7 +355,10 @@
  });
  shortcutGuide.setAttribute('aria-keyshortcuts','Escape');
  shortcutSummary.title+=' · Esc: thu gọn hướng dẫn';
- modeHelp.after(shortcutGuide);
+ // P346 repair from actual P326 native screenshot regression:
+ // anchor the collapsed guide inside the already-existing keyboard hint row,
+ // so first-card Play actions are not pushed below the modal's viewport.
+ modeHelp.append(shortcutGuide);
 
  // P322: context-aware accessible header; preserve native wording for non-AI.
  const watchTitle=byId('poWatchFlowTitle'),watchKicker=panel.querySelector('.po-watchflow-kicker');

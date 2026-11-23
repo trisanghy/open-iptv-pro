@@ -502,3 +502,23 @@ html[data-positron="true"] #poWatchFlowPanel[data-po-ai-active="true"] .po-ai-en
  max-width:100%;box-sizing:border-box;font-size:12px;
  line-height:1.5;overflow-wrap:anywhere;
 }
+
+/* P346 visual regression: collapsed remote guide is a non-reflowing anchor
+   in the existing keyboard hint row. It must never push AI card Play offscreen. */
+#poWatchFlowPanel .po-ai-keyboard-help{position:relative!important;padding-right:155px!important;box-sizing:border-box;min-height:19px;}
+#poWatchFlowPanel #poAIShortcutGuide.po-ai-shortcut-guide{
+ position:absolute!important;top:-13px;right:0;z-index:90;
+ width:147px;max-width:100%;margin:0!important;
+ box-shadow:0 6px 15px #0005;
+}
+#poWatchFlowPanel #poAIShortcutGuide.po-ai-shortcut-guide[open]{
+ width:min(420px,calc(100vw - 100px));max-width:calc(100vw - 100px);
+ box-shadow:0 10px 30px #000b;background:#11353b;
+}
+#poWatchFlowPanel #poAIShortcutGuide.po-ai-shortcut-guide>summary{
+ white-space:nowrap;padding:11px 10px!important;
+}
+@media(max-width:760px){
+ #poWatchFlowPanel .po-ai-keyboard-help{padding-right:147px!important;font-size:10px!important}
+ #poWatchFlowPanel #poAIShortcutGuide.po-ai-shortcut-guide{top:-13px;}
+}
