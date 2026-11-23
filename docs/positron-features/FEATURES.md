@@ -7,15 +7,28 @@ Trang này được tạo tự động từ GitHub Releases và ảnh kiểm th�
 [Mở WEBSITE changelog tương tác](https://raw.githack.com/trisanghy/open-iptv-pro/Positron/docs/positron-features/index.html) · [Giao diện HTML trong repository](index.html) · [Các bản phát hành](https://github.com/trisanghy/open-iptv-pro/releases) · [Nhật ký Git tiếng Việt](LOG_GIT_TIENG_VIET.md) · [Quy tắc ưu tiên tính năng](../../POSITRON_FEATURE_RULES.md)
 
 <details>
-<summary><strong>P5.1.305</strong> · chẩn đoán độ chắc chắn khi so sánh chủ đề AI · CHƯA CÓ BẢN PHÁT HÀNH · TÍNH NĂNG</summary>
+<summary><strong>P5.1.306</strong> · AI tìm kênh mất độ chắc chắn trước khi khôi phục · CHƯA CÓ BẢN PHÁT HÀNH · TÍNH NĂNG</summary>
 
-**Ứng dụng:** 4.23.390 · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
+**Ứng dụng:** 4.23.391 · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
+
+Feature priority: NEW — Phân tích 4 nhóm bằng chứng Naive Bayes (cũ chắc/mới không, mới chắc/cũ không, cả hai không chắc, cả hai chắc), cho xem các tên kênh bị giảm độ chắc chắn trước khi nhập sao lưu, và không kết luận không đổi chủ đề khi thiếu mẫu giao. Feature class: AI
+
+*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+
+[Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/tree/Positron) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/04bc30ace3094cfc0638c464a12dc7dc1f6a1f2a)
+
+</details>
+
+<details>
+<summary><strong>P5.1.305</strong> · AI chẩn đoán độ chắc chắn khi so sánh khôi phục / Electron 4.23.390 · CHƯA CÓ BẢN PHÁT HÀNH · TÍNH NĂNG</summary>
+
+**Ứng dụng:** Chưa xác minh · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
 
 Feature priority: NEW — Bổ sung bảng đối chiếu số kênh mà mô hình Naive Bayes hiện tại và mô hình sao lưu phân loại đủ chắc chắn, phát hiện thiếu bằng chứng thay vì hiển thị 0/0 (0%) gây nhầm lẫn. Feature class: AI
 
 *Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
 
-[Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/tree/Positron) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/207dfb18b2ca7bf9a17f4d43663a19f60222d082)
+[Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
 
 </details>
 
@@ -1456,7 +1469,7 @@ Feature priority: NEW — Ảnh P5.1.194 Electron thật cho thấy ô Tên chư
 
 Feature priority: NEW — Ảnh Electron P5.1.193 thực ở 1920×1080 cho thấy lịch ghi có các nút chọn thời lượng nhưng trường Bắt đầu vẫn cần nhập ngày giờ thủ công. Bổ sung chọn giờ bắt đầu từ hiện tại để giảm thao tác hẹn ghi, không gửi lịch khi chưa xác nhận. Tính năng: dưới giờ Bắt đầu có ba nút “Sau 5 phút”, “Sau 15 phút”, “Sau 30 phút” ở EPG và biểu mẫu ghi nhanh TV. Nhấn chỉ điền Bắt đầu dựa trên phút hiện tại, đồng thời dời Kết thúc để giữ thời lượng cũ nếu hợp lệ (1–480 phút), hoặc 60 phút khi thiếu/không hợp lệ. Tự cập nhật nhãn thời lượng và trạng thái preset P5.1.192/193.
 
-![Ảnh chụp Electron thật P5.1.194](./screenshots/positron-p51194-dvr-start-after-after-1920x1080-real.png)
+![Ảnh chụp Electron thật P5.1.194](./screenshots/positron-p51194-dvr-start-after-before-1920x1080-real.png)
 
 [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
 
