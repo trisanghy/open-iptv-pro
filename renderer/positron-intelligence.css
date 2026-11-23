@@ -240,7 +240,7 @@ html[data-positron="true"].po-horizon body #poWatchFlowPanel.po-watchflow-panel:
 #poWatchFlowPanel #poAICategoryRiskSort:focus-visible{outline:2px solid #b3f0df;outline-offset:2px}
 
 /* P298: hide tiny group samples on demand without discarding model data. */
-#poWatchFlowPanel #poAICategorySampleFilter{margin-top:4px;background:#233747;border-color:#53718c;color:#dceffc}
+#poWatchFlowPanel #poAICategorySampleFilter{display:block;width:100%;min-height:39px;margin-top:4px;padding:8px 10px;line-height:1.4;font-size:11px;font-weight:700;text-align:left;cursor:pointer;border:1px solid #53718c;border-radius:7px;background:#233747;color:#dceffc}
 #poWatchFlowPanel #poAICategorySampleFilter[aria-pressed="true"]{background:#304a62;border-color:#99c7ff}
 #poWatchFlowPanel #poAICategorySampleFilter:focus-visible{outline:2px solid #b3f0df;outline-offset:2px}
 #poWatchFlowPanel #poAICategorySampleNote{display:block;font-size:10px;color:#a9cbd2;margin:4px 0 8px}
