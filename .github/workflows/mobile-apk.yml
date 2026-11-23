@@ -153,6 +153,7 @@ jobs:
           retention-days: 90
 
   release:
+    if: false # Stable-only: branch artifacts are not GitHub Releases
     name: Publish immutable mobile beta only after both builds
     needs: [android, ios, android_screenshot]
     runs-on: ubuntu-latest
