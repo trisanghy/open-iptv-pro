@@ -366,6 +366,12 @@
   shortcutGuide.open=false;
  });
 
+ // P347: expanded keyboard help overlaps controls in narrow windows.
+ // An outside tap first collapses the guide, without closing the AI panel.
+ panel.addEventListener('pointerdown',event=>{
+  if(shortcutGuide.open&&!shortcutGuide.contains(event.target))shortcutGuide.open=false;
+ },true);
+
  // P322: context-aware accessible header; preserve native wording for non-AI.
  const watchTitle=byId('poWatchFlowTitle'),watchKicker=panel.querySelector('.po-watchflow-kicker');
  const originalWatchTitle=watchTitle?.textContent||'Xem gì bây giờ?';

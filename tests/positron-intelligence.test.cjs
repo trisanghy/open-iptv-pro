@@ -1716,6 +1716,8 @@ test('P347 AI mode selection dismisses keyboard overlay and P345 focus is restor
  assert.ok(js.includes('shortcutGuide.open=false;'));
  assert.ok(oldQA.includes("document.getElementById('poWatchFlowToggle')?.focus"));
  assert.ok(qa.includes("await page.locator('#poAIChannels').click()"));
+ assert.ok(qa.includes("await page.locator('#poWatchFlowTitle').click()"));
+ assert.ok(js.includes("panel.addEventListener('pointerdown',event=>{"));
  assert.ok(qa.includes("await page.keyboard.press('Enter')"));
  assert.ok(qa.includes('afterSha256'));
  assert.ok(runner.includes("await require('./positron-347-audit.cjs').run(page)"));

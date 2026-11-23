@@ -32,7 +32,8 @@ async function run(page){
   assert.ok(before.panelOpen&&before.aiActive&&before.guideOpen,'guide expanded in AI panel');
   const stem='positron-p51347-auto-dismiss-mode-';
   const a=await page.screenshot({path:path.join(dir,stem+'before-'+width+'x'+height+'-real.png'),animations:'disabled'});
-  // A real pointer click on the first unobstructed mode must dismiss the popover.
+  // A real outside tap dismisses the overlay before interacting with a mode.
+  await page.locator('#poWatchFlowTitle').click();
   await page.locator('#poAIChannels').click();
   const after=await probe(page);
   assert.ok(after.panelOpen&&after.aiActive&&after.modePressed,'mode stays selected');
