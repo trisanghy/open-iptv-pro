@@ -2,14 +2,22 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
-## P5.1.289 — xem trước kênh đổi nhãn Naive Bayes khi nhập AI
+## P5.1.290 — nút xác nhận khôi phục AI luôn nhìn thấy khi mở dự báo
 
-**Ứng dụng:** 4.23.374 · **Trạng thái:** Chưa có bản phát hành
+**Ứng dụng:** 4.23.375 · **Trạng thái:** Chưa có bản phát hành
+
+Phát hiện từ ảnh P289: xem chi tiết Naive Bayes đẩy nút xác nhận khỏi vùng nhìn thấy. Sửa CSS sticky với bộ lọc :not([hidden]), không thay đổi luồng khôi phục AI.
+
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/61cc1e2962adc2e5b5ad92d08de3b54665173e0d)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+
+## P5.1.289 — Dự báo kênh đổi chủ đề Naive Bayes trước khôi phục / Electron 4.23.374
+
+**Ứng dụng:** Chưa xác minh · **Trạng thái:** Chưa có bản phát hành
 
 Feature priority: NEW — Sau khi chọn JSON sao lưu, AI thử phân loại tối đa 180 kênh theo mô hình Naive Bayes hiện tại và mô hình trong tệp, đếm số kênh có thể đổi nhãn, liệt kê tối đa 4 khác biệt và nêu rõ đây chỉ là dự đoán dựa trên tên/nhóm kênh, không xác nhận từ EPG/luồng. Bảng thu gọn để giữ nút Xác nhận dễ truy cập. Feature class: AI
 
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/0491bc0627cf54e33279e4e7baa58f2f3119664d)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
 
 ## P5.1.288 — Xem thử thứ hạng gợi ý AI trước khi nhập mô hình / Electron 4.23.373
 
