@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-23T12:09:20.958804+00:00",
+  "generatedAt": "2026-11-23T12:12:52.806255+00:00",
   "repository": "trisanghy/open-iptv-pro",
   "branch": "Positron",
   "versions": [
@@ -8,8 +8,8 @@
       "version": "P5.1.307",
       "appVersion": "4.23.392",
       "title": "hiển thị các kênh AI chưa đủ chắc chắn ở cả hai mô hình",
-      "description": "hiển thị các kênh AI chưa đủ chắc chắn ở cả hai mô hình",
-      "kind": "fix",
+      "description": "Feature priority: NEW — Hiển thị ví dụ từ kênh mà cả Naive Bayes hiện tại và mô hình khôi phục đều chưa đủ chắc chắn phân loại, thay vì chỉ số đếm; ngăn tên nhúng URL lộ địa chỉ và giữ dòng mẫu khỏi nút xác nhận khôi phục sticky. Feature class: AI",
+      "kind": "feature",
       "status": "candidate",
       "published": "",
       "tag": "",
