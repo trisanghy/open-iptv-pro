@@ -2,14 +2,22 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
-## P5.1.316 — kiểm tra số trường trọng số AI khác bản sao
+## P5.1.317 — kiểm chứng JSON với mô hình AI sau khi khởi động lại
 
-**Ứng dụng:** 4.23.401 · **Trạng thái:** Chưa có bản phát hành
+**Ứng dụng:** 4.23.402 · **Trạng thái:** Chưa có bản phát hành
+
+Feature priority: NEW — Có thể chọn bản sao JSON cũ để đối chiếu với Logistic, Naive Bayes và UCB đang lưu ở máy dù phiên làm việc này chưa xuất lại mô hình. Trước đây nút bị ẩn và xác minh trả lỗi nếu chưa xuất bản sao trong phiên. Feature class: AI
+
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/eeec05980f44e61705899200170db442dbd90fc6)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+
+## P5.1.316 — Electron 4.23.401 — Đếm trường dữ liệu học AI thay đổi (CANDIDATE)
+
+**Ứng dụng:** Chưa xác minh · **Trạng thái:** Chưa có bản phát hành
 
 Feature priority: NEW — Đếm số giá trị học khác nhau riêng từng mô hình Logistic, Naive Bayes, UCB, kể cả khi bộ đếm mẫu học không đổi; không tính lại thứ tự khóa JSON. Feature class: AI
 
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/e0e2724f904de9f7ab1e38230d1e6d53edbb6fd5)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
 
 ## P5.1.315 — Electron 4.23.400 — Kiểm tra trọng số AI không phụ thuộc thứ tự khóa JSON (CANDIDATE)
 
