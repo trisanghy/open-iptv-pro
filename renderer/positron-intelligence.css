@@ -384,3 +384,17 @@ html[data-positron="true"] #poWatchFlowPanel .po-ai-card .po-ai-actions button:f
   flex:1 1 110px;max-width:100%;
  }
 }
+
+/* P323 repair from genuine 720px Electron geometry:
+   legacy sticky header/nav use -18px side margins while the narrow
+   WatchFlow panel itself has only 13px padding. The extra 5px per side
+   creates a horizontal panel scrollbar even when card actions fit. */
+@media(max-width:800px){
+ html[data-positron="true"].po-horizon body #poWatchFlowPanel.po-watchflow-panel .po-watchflow-head{
+  top:-13px!important;margin:-13px -13px 0!important;
+  padding:10px 13px 9px!important;
+ }
+ html[data-positron="true"].po-horizon body #poWatchFlowPanel.po-watchflow-panel .po-flowplus-nav{
+  margin:0 -13px 12px!important;padding:7px 13px 9px!important;
+ }
+}
