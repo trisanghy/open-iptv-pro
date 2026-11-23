@@ -18,10 +18,17 @@
  function predict(text){const words=tokenize(text).filter(x=>model.vocab.has(x));if(!words.length)return{label:'Chưa phân loại',confidence:0};const scores=labels.map(l=>words.reduce((n,w)=>n+Math.log(((model.classes[l].words[w]||0)+1)/(model.classes[l].total+model.vocab.size)),0));
   const max=Math.max(...scores),prob=scores.map(x=>Math.exp(x-max)),sum=prob.reduce((a,b)=>a+b,0),idx=scores.indexOf(max);return{label:labels[idx],confidence:Math.round(100*prob[idx]/sum)};}
  // Scan every valid programme for each channel, not just the first eight or next twelve hours.
- function analyzeChannel(channel,guide,guideLib,clock=Date.now()){
+ // Stable guide-row signature: programme changes are classified, unchanged rows are reused.
+ function programmeKey(row){
+  // Same programme text in a new timeslot keeps its topic classification.
+  const input=String(row?.title||'')+'|'+String(row?.description||'');
+  let hash=2166136261;for(let i=0;i<input.length;i++){hash^=input.charCodeAt(i);hash=Math.imul(hash,16777619);}
+  return (hash>>>0).toString(36);
+ }
+ function analyzeChannel(channel,guide,guideLib,clock=Date.now(),cached={}){
   if(!channel?.id)return null;
-  const explicit=topics?.channelLabels(channel)||[];
-  const name=predict(String(channel.name||'')+' '+String(channel.group||channel.groupTitle||''));
+  const explicit=Array.isArray(cached.base?.explicit)?cached.base.explicit:topics?.channelLabels(channel)||[];
+  const name=cached.base?.name||predict(String(channel.name||'')+' '+String(channel.group||channel.groupTitle||''));
   let rows=[];
   try{if(guide&&typeof guideLib?.find==='function')rows=guideLib.find(guide,channel)||[];}catch{}
   const votes=new Map(),programmes=[];let epgCount=0,live=null,next=null,first=null;
@@ -31,11 +38,13 @@
    if(row.start<=clock&&row.end>clock)live=row;
    else if(row.start>clock&&(!next||row.start<next.start))next=row;
    if(!first)first=row;
-   const detected=topics?.programmeLabels(row)||[];
-   const prediction=predict(String(row.title||'')+' '+String(row.description||'').slice(0,240));
-   const labels=detected.length?detected:prediction.confidence>=40&&prediction.label!=='Chưa phân loại'?[prediction.label]:[];
+   const rowHash=programmeKey(row),old=cached.programmes?.get?.(rowHash);
+   const detected=old?null:topics?.programmeLabels(row)||[];
+   const prediction=old?null:predict(String(row.title||'')+' '+String(row.description||'').slice(0,240));
+   const labels=old?.labels||(detected.length?detected:prediction.confidence>=40&&prediction.label!=='Chưa phân loại'?[prediction.label]:[]);
    programmes.push({title:String(row.title||'Chưa có tên').slice(0,220),start:row.start,end:row.end,labels,
-    confidence:detected.length?85:prediction.confidence,from:detected.length?'EPG/từ khóa':'EPG/Naive Bayes'});
+    key:rowHash,confidence:old?.confidence??(detected.length?85:prediction.confidence),
+    from:old?.from||(detected.length?'EPG/từ khóa':'EPG/Naive Bayes')});
    const weight=row.start<=clock&&row.end>clock?4:row.start>clock?1.5:.6;
    for(const label of labels)votes.set(label,(votes.get(label)||0)+weight);
   }
@@ -50,7 +59,7 @@
    from:epgTopics.length?'EPG':explicit.length?'Tên/nhóm':'Tên/nhóm',
    programme:String((live||next||first)?.title||'').slice(0,180),
    epgCount,epgMatched:epgCount>0,topics:sorted.slice(0,6).map(([label,score])=>({label,score:Math.round(score*10)/10})),
-   programmes};
+   programmes,base:{explicit,name}};
  }
  function analyze(channels,guide,guideLib,clock=Date.now()){
   const result=new Map();
@@ -74,5 +83,5 @@
   for(const evt of ['pause','ended','stalled','emptied'])video.addEventListener(evt,()=>{time=0;});return true;}
  async function searchInternet(raw,request=fetch){const q=String(raw||'').trim().slice(0,90);if(q.length<2)return[];const url='https://www.wikidata.org/w/api.php?action=wbsearchentities&format=json&language=vi&uselang=vi&limit=8&origin=*&search='+encodeURIComponent(q);
   const response=await request(url,{method:'GET',headers:{Accept:'application/json'},signal:AbortSignal.timeout(12000)});if(!response.ok)throw Error('Wikidata HTTP '+response.status);const json=await response.json();return(Array.isArray(json.search)?json.search:[]).filter(x=>/^Q\d+$/.test(String(x.id||''))).slice(0,8).map(x=>({name:String(x.label||'').slice(0,120),description:String(x.description||'').slice(0,200),url:'https://www.wikidata.org/wiki/'+x.id}));}
- return Object.freeze({KEY,labels,predict,analyzeChannel,analyze,read,learn,save,clear,rank,monitor,searchInternet});
+ return Object.freeze({KEY,labels,predict,programmeKey,analyzeChannel,analyze,read,learn,save,clear,rank,monitor,searchInternet});
 });

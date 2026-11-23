@@ -166,3 +166,11 @@ html[data-theme=dark] #page-tv .wf-local-banner,html[data-theme=amoled] #page-tv
 html[data-theme=dark] #page-tv .wf-storage-head b,html[data-theme=amoled] #page-tv .wf-storage-head b{color:#d8b3ff}
 html[data-theme=dark] #page-tv .wf-reason,html[data-theme=amoled] #page-tv .wf-reason{color:#d7b5f2!important}
 @media(max-width:850px){#page-tv .wf-storage-list{grid-template-columns:1fr}#page-tv .wf-settings .wf-modes button{flex:1 1 90px}#page-tv .wf-settings>summary small{display:none}}
+
+/* v23.8.121 — compact, deliberately user-triggered scan; never blocks folder browsing. */
+#page-tv .wf-scan-row{display:flex;align-items:center;justify-content:space-between;gap:9px;min-width:0}
+#page-tv .wf-scan-row>span{flex:1;min-width:0}
+#page-tv #wfScanAgain{flex-shrink:0;border:1px solid #99d4b9;background:#fff;color:#217453;border-radius:7px;padding:5px 10px;font-size:11px;font-weight:750;cursor:pointer}
+#page-tv #wfScanAgain:disabled{opacity:.6;cursor:wait}
+html[data-theme=dark] #page-tv #wfScanAgain,html[data-theme=amoled] #page-tv #wfScanAgain{background:#21483b;color:#c4f5da;border-color:#467660}
+@media(max-width:600px){#page-tv .wf-scan-row{align-items:flex-start}#page-tv #wfScanAgain{font-size:10px;padding:5px 7px}}

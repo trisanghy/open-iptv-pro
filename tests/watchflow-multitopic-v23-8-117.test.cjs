@@ -72,7 +72,7 @@ test('Qwen auto-classification has no 8 channel ceiling, understands multi-label
  assert.equal(qwen.select('auto',{qwen17:{installed:true,runtimeReady:true}}),'qwen17');
  const s=fs.readFileSync('renderer/watchflow-qwen-native-v23-8-111.js','utf8');
  assert.doesNotMatch(s,/slice\(0,8\)/);
- assert.match(s,/const sorted=\[\.\.\.all\]/);
+ assert.match(s,/const ordered=\[\.\.\.all\]/);
  assert.match(s,/mode\(\)!=='intelligence'/);
  assert.doesNotMatch(qwen.metadata({name:'Secret IPTV',url:'https://private.test/hls.m3u8'},null,null),/private\.test/);
 });

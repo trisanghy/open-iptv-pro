@@ -37,7 +37,7 @@
   const panel=doc.createElement('section');panel.id='watchflowDemo';panel.className='watchflow-demo';panel.hidden=true;
   panel.setAttribute('aria-label','WatchFlow tự động phân tích kênh và EPG');
   panel.innerHTML='<div class="wf-head"><div><small>WATCHFLOW · TỰ ĐỘNG</small><h2>Kênh & chương trình dành cho bạn</h2><p>AI tự quét playlist và EPG · không cần nhấn phân loại</p></div><button id="wfClose" type="button" aria-label="Đóng">×</button></div>'+
-  '<div class="wf-local-banner"><span id="wfLocalScanStatus" role="status" aria-live="polite">Đang đọc kênh và lịch phát…</span><progress id="wfLocalScanProgress" max="100" value="0" aria-label="Tiến độ phân loại"></progress></div>'+
+  '<div class="wf-local-banner"><div class="wf-scan-row"><span id="wfLocalScanStatus" role="status" aria-live="polite">Đang khôi phục kết quả kênh đã lưu…</span><button id="wfScanAgain" type="button" aria-label="Quét lại toàn bộ kênh và chương trình EPG">↻ Quét lại</button></div><progress id="wfLocalScanProgress" max="100" value="0" aria-label="Tiến độ phân loại"></progress></div>'+
   '<details id="wfSettings" class="wf-settings"><summary>⚙ Mô hình AI & dung lượng <small>Chọn · Tải · Xóa</small></summary><div class="wf-settings-body">'+
   '<h3>Chế độ AI</h3><div class="wf-modes" role="radiogroup" aria-label="Chế độ AI"><button type="button" data-wf-mode="standard" role="radio"><b>Tiêu chuẩn</b><small>Dưới 20 MB · Naive Bayes đang chạy</small></button><button type="button" data-wf-mode="smart" role="radio"><b>Thông minh</b><small>Dưới 200 MB · tự chọn mô hình</small></button><button type="button" data-wf-mode="intelligence" role="radio"><b>Intelligence</b><small>Qwen3 · mô hình đã cài</small></button></div><p id="wfModeHint" class="wf-hint"></p>'+
   '<div id="wfSmartModels" class="wf-model-picker" hidden><label for="wfSmartModelSelect">Mô hình Smart dưới 200 MB</label><div class="wf-model-row"><select id="wfSmartModelSelect" aria-label="Chọn mô hình Smart"></select></div><p id="wfSmartModelBenefit" class="wf-model-benefit"></p><small id="wfSmartModelStatus" role="status"></small><details class="wf-smart-details"><summary>Xem ưu điểm từng mô hình</summary><div id="wfSmartModelList" class="wf-smart-list"></div></details></div>'+
@@ -67,6 +67,12 @@
    });
   }
   let mode='standard',tab='suggest';
+  // Preserve disclosure state and how many entries were shown across background updates.
+  const expandedFolders=new Set(),folderPageSizes=new Map();
+  const folderKey=(kind,label)=>kind+':'+label;
+  function rememberFolder(folder,key){
+   if(folder.open)expandedFolders.add(key);else expandedFolders.delete(key);
+  }
   try{const s=root.localStorage?.getItem('watchflow:demo-mode');if(['standard','smart','intelligence'].includes(s))mode=s;}catch{}
   const data=()=>{
    const st=root.IPTVState,channels=st?.getChannels?.()||[],current=st?.getCurrent?.()||null;
@@ -113,7 +119,14 @@
    const discovered=auto?.collect(root.localStorage,d.channels,engine)||[];
    if($('wfAutoStatus'))$('wfAutoStatus').textContent=auto?.enabled(root.localStorage)===false?'Internet tắt · quét EPG trong máy vẫn chạy':'Wikidata đã lưu '+discovered.length+' mục thông tin công khai';
    showLocalProgress();
-   const main=$('wfContents');main.replaceChildren();main.append(el('p','wf-source',real?'Dữ liệu hiện có · '+d.channels.length+' kênh':'XEM TRƯỚC · DỮ LIỆU MINH HỌA'));
+   const main=$('wfContents');
+   // Never collapse a folder when Qwen3/EPG delivers new labels.
+   for(const folder of main.querySelectorAll('.wf-topic-folder[data-folder-key]')){
+    rememberFolder(folder,folder.dataset.folderKey);
+   }
+   const preservedScroll=main.scrollTop;
+   main.replaceChildren();main.append(el('p','wf-source',real?'Dữ liệu hiện có · '+d.channels.length+' kênh':'XEM TRƯỚC · DỮ LIỆU MINH HỌA'));
+   main.scrollTop=preservedScroll;
    if(tab==='overview'){
     const metrics=el('div','wf-metrics'),known=[...analysis.values()].filter(x=>x.label!=='Chưa phân loại').length,localStatus=auto?.getLocalStatus?.(root)||{};
     for(const [title,value] of [['Tổng kênh',real?d.channels.length:'—'],['Đã phân loại',real?known:'—'],['EPG đã đọc',real?(localStatus.epgProgrammes||0):'—'],['Thời gian đã học',mode==='standard'?'Tắt':Math.floor(Object.values(learning?.seconds||{}).reduce((a,b)=>a+Number(b||0),0)/60)+' phút'],['Nguồn EPG',d.guide?.programmes?.length?'Có':'Chưa có']]){
@@ -132,18 +145,19 @@
     if(!real||!categories.length)main.append(el('p','wf-hint','Chưa có playlist hoặc chưa có chủ đề. Hệ thống tự phân tích khi dữ liệu sẵn sàng.'));
     for(const [label,items] of categories){
      const folder=el('details','wf-topic-folder'),summary=el('summary','',label+' · '+items.length+' kênh');
+     const key=folderKey('channel',label);folder.dataset.folderKey=key;
      folder.append(summary);const list=el('div','wf-list'),counter=el('small','wf-folder-count'),more=el('button','wf-more','Xem thêm');
-     more.type='button';let limit=24;
+     more.type='button';let limit=folderPageSizes.get(key)||24;
      const draw=()=>{
       list.replaceChildren();
       for(const ch of items.slice(0,limit))rowFor(list,ch,category(ch),real);
       counter.textContent='Hiển thị '+Math.min(limit,items.length)+'/'+items.length;
       more.hidden=limit>=items.length;
      };
-     more.addEventListener('click',()=>{limit+=24;draw();});
-     folder.append(counter,list,more);folder.addEventListener('toggle',()=>{
-      if(folder.open&&!list.children.length)draw();
-     });
+     more.addEventListener('click',()=>{limit+=24;folderPageSizes.set(key,limit);draw();});
+     folder.append(counter,list,more);
+     folder.addEventListener('toggle',()=>{rememberFolder(folder,key);if(folder.open&&!list.children.length)draw();});
+     if(expandedFolders.has(key)){folder.open=true;draw();}
      main.append(folder);
     }
    }else if(tab==='programmes'){
@@ -163,8 +177,9 @@
      for(const [label,items] of group){
       if(!items.length)continue;
       const folder=el('details','wf-topic-folder'),summary=el('summary','',label+' · '+items.length+' chương trình');
+      const key=folderKey('epg',label);folder.dataset.folderKey=key;
       const list=el('div','wf-programme-list'),counter=el('small','wf-folder-count'),more=el('button','wf-more','Xem thêm chương trình');
-      more.type='button';let limit=24;
+      more.type='button';let limit=folderPageSizes.get(key)||24;
       const draw=()=>{
        list.replaceChildren();
        for(const p of items.slice(0,limit)){
@@ -181,8 +196,10 @@
        counter.textContent='Hiển thị '+Math.min(limit,items.length)+'/'+items.length+' chương trình';
        more.hidden=limit>=items.length;
       };
-      more.addEventListener('click',()=>{limit+=24;draw();});
-      folder.append(summary,counter,list,more);folder.addEventListener('toggle',()=>{if(folder.open&&!list.children.length)draw();});
+      more.addEventListener('click',()=>{limit+=24;folderPageSizes.set(key,limit);draw();});
+      folder.append(summary,counter,list,more);
+      folder.addEventListener('toggle',()=>{rememberFolder(folder,key);if(folder.open&&!list.children.length)draw();});
+      if(expandedFolders.has(key)){folder.open=true;draw();}
       main.append(folder);
      }
     }
@@ -369,14 +386,28 @@
     if(!status||!bar)return;
     if(x.error)status.textContent='Lỗi quét: '+x.error;
     else if(!x.total)status.textContent='Chờ playlist; sẽ tự quét khi có kênh hoặc EPG';
-    else status.textContent=(x.running?'Đang quét ':'Đã quét ')+x.processed+'/'+x.total+' kênh · '+
-     x.epgProgrammes+' mục EPG · '+x.classified+' kênh có chủ đề'+(!x.guideProgrammes?' · chưa có EPG':'');
+    else status.textContent=(x.running?'Đang kiểm tra EPG ':'Đã lưu ')+x.processed+'/'+x.total+' kênh · '+
+     x.newChannels+' kênh mới · '+x.newProgrammes+' mục EPG mới · '+x.classified+' kênh có chủ đề';
     bar.value=x.total?Math.round(100*(x.processed||0)/x.total):0;
    }
+   let renderPending=false;
+   function scheduleResultsUpdate(){
+    if(renderPending||panel.hidden)return;
+    renderPending=true;
+    root.setTimeout(()=>{renderPending=false;if(!panel.hidden)render();},650);
+   }
+   const manualButton=$('wfScanAgain');
+   manualButton.addEventListener('click',()=>{
+    manualButton.disabled=true;manualButton.textContent='Đang quét…';
+    doc.dispatchEvent(new Event('openiptv:watchflow-manual-rescan'));
+   });
    doc.addEventListener('openiptv:watchflow-auto-update',event=>{
-    if(panel.hidden)return;
     showLocalProgress();
-    if(event.detail?.complete)render();
+    if(event.detail?.local&&event.detail?.complete){
+     manualButton.disabled=false;manualButton.textContent='↻ Quét lại';
+    }
+    // Do not rebuild open folders while Qwen3 is streaming per-channel progress.
+    if(!panel.hidden&&event.detail?.complete)scheduleResultsUpdate();
    });
   auto?.start(root,engine);
   const reset=el('button','wf-clear','Xóa sở thích đã học');reset.type='button';

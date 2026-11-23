@@ -81,24 +81,90 @@
   const results=collect(storage,channels,engine);onUpdate({done:true,discovered:results.length,error:state.error});
   return{requests,used:state.used,limit:DAY_LIMIT,discovered:results,error:state.error};
  }
- // Always-on local scan is independent from optional, rate-limited Wikidata lookups.
+ // Channel labels are immutable until their name/group/EPG ID changes or a user rescans.
+ const CHANNEL_CACHE='watchflow:classified-channels-v4',CHANNEL_CACHE_VERSION=4;
+ function readChannelCache(storage){
+  try{
+   const data=JSON.parse(storage?.getItem(CHANNEL_CACHE)||'null');
+   if(data?.version!==CHANNEL_CACHE_VERSION||!data.entries||typeof data.entries!=='object')return {};
+   return data.entries;
+  }catch{return {};}
+ }
+ function saveChannelCache(storage,entries){
+  try{
+   // Keep only local channel/topic/programme metadata, not playback URLs or credentials.
+   storage?.setItem(CHANNEL_CACHE,JSON.stringify({version:CHANNEL_CACHE_VERSION,entries}));
+   return true;
+  }catch{return false;}
+ }
+ function channelSignature(channel){
+  let hash=2166136261;
+  const input=String(channel?.id||'')+'|'+String(channel?.name||'')+'|'+
+   String(channel?.group||channel?.groupTitle||'')+'|'+String(channel?.tvgId||'');
+  for(let i=0;i<input.length;i++){hash^=input.charCodeAt(i);hash=Math.imul(hash,16777619);}
+  return (hash>>>0).toString(36);
+ }
+ function cachedSnapshot(old,clock=Date.now()){
+  const snapshot=old?.snapshot;
+  if(!snapshot||typeof snapshot!=='object')return null;
+  const programmes=(snapshot.programmes||[]).filter(p=>Number(p.end)>clock).slice(0,40);
+  return {...snapshot,programmes,epgCount:programmes.length,
+   epgMatched:programmes.length>0,programme:String(programmes[0]?.title||'')};
+ }
+ function cacheEntry(result,signature,clock,previous=null){
+  // The latest 40 future/current entries are sufficient to restore the programme UI instantly.
+  const programmes=(result.programmes||[]).filter(p=>p.end>clock).slice(0,40).map(p=>({
+   key:String(p.key||''),title:String(p.title||'').slice(0,180),start:p.start,end:p.end,
+   labels:p.labels||[],confidence:p.confidence,from:p.from
+  }));
+  const snapshot={label:result.label,labels:result.labels,confidence:result.confidence,
+   from:result.from,programme:result.programme,epgCount:result.epgCount,
+   epgMatched:result.epgMatched,topics:result.topics,programmes};
+  // Keep per-title classification separately from changing air dates.
+  const known=new Map((previous?.programmeTopics||[]).filter(p=>p?.key).map(p=>[p.key,p]));
+  for(const p of result.programmes||[]){
+   if(!p.key)continue;
+   known.delete(p.key);
+   known.set(p.key,{key:p.key,labels:p.labels||[],confidence:p.confidence,from:p.from});
+  }
+  return {signature,base:result.base,snapshot,programmeTopics:[...known.values()].slice(-160),updatedAt:clock};
+ }
+ // Local scan visits the playlist but never repeats channel inference for identical metadata.
+ // Only EPG rows absent from the compact on-device cache need topic inference.
  async function scanLocal({channels=[],guide=null,guideLib=null,engine,clock=Date.now(),
-  yieldNow=()=>new Promise(resolve=>setTimeout(resolve,0)),onProgress=()=>{},shouldStop=()=>false,batchSize=32}={}){
-  const list=Array.isArray(channels)?channels:[],analysis=new Map();
+  yieldNow=()=>new Promise(resolve=>setTimeout(resolve,0)),onProgress=()=>{},shouldStop=()=>false,
+  batchSize=32,cache={},force=false}={}){
+  const list=Array.isArray(channels)?channels:[],analysis=new Map(),entries={};
   const total=list.length,guideProgrammes=Array.isArray(guide?.programmes)?guide.programmes.length:0;
-  let processed=0,classified=0,epgChannels=0,epgProgrammes=0,lastYield=Date.now();
-  const state=()=>({analysis,total,processed,classified,epgChannels,epgProgrammes,guideProgrammes});
+  let processed=0,classified=0,epgChannels=0,epgProgrammes=0,newChannels=0,newProgrammes=0,lastYield=Date.now();
+  const snapshot=()=>({analysis,entries,total,processed,classified,epgChannels,epgProgrammes,
+   guideProgrammes,newChannels,newProgrammes,manual:force});
   for(const channel of list){
-   if(shouldStop())return {...state(),cancelled:true};
+   if(shouldStop())return {...snapshot(),cancelled:true};
    if(channel?.id){
+    const id=String(channel.id),signature=channelSignature(channel);
+    const previous=!force&&cache[id]?.signature===signature?cache[id]:null;
+    if(!previous)newChannels++;
     let result=null;
     try{
-     result=typeof engine?.analyzeChannel==='function'
-      ?engine.analyzeChannel(channel,guide,guideLib,clock)
-      :engine?.analyze?.([channel],guide,guideLib,clock)?.get(String(channel.id));
+     const cachedProgrammes=new Map([...(previous?.programmeTopics||[]),...(previous?.snapshot?.programmes||[])]
+      .filter(p=>p?.key).map(p=>[p.key,p]));
+     const options={base:previous?.base,programmes:cachedProgrammes};
+     // If EPG hasn't loaded yet, keep the last known valid schedule; never invent rows.
+     if(!guide&&previous?.snapshot){
+      result=cachedSnapshot(previous,clock)||engine?.analyzeChannel?.(channel,null,null,clock,options);
+     }else{
+      result=typeof engine?.analyzeChannel==='function'
+       ?engine.analyzeChannel(channel,guide,guideLib,clock,options)
+       :engine?.analyze?.([channel],guide,guideLib,clock)?.get(id);
+     }
+     if(result&&Array.isArray(result.programmes)){
+      newProgrammes+=new Set(result.programmes.filter(p=>p.key&&!cachedProgrammes.has(p.key)).map(p=>p.key)).size;
+     }
     }catch{}
     if(result){
-     analysis.set(String(channel.id),result);
+     analysis.set(id,result);
+     entries[id]=cacheEntry({...result,base:result.base||previous?.base},signature,clock,previous);
      if(result.label&&result.label!=='Chưa phân loại')classified++;
      if(result.epgMatched||result.epgCount>0)epgChannels++;
      epgProgrammes+=Math.max(0,Number(result.epgCount)||0);
@@ -106,11 +172,11 @@
    }
    processed++;
    if(processed%Math.max(1,batchSize)===0||Date.now()-lastYield>18){
-    onProgress(state());await yieldNow();lastYield=Date.now();
+    onProgress(snapshot());await yieldNow();lastYield=Date.now();
    }
   }
-  onProgress(state());
-  return {...state(),cancelled:false};
+  onProgress(snapshot());
+  return {...snapshot(),cancelled:false};
  }
  function fingerprint(channels){
   let hash=2166136261;
@@ -121,7 +187,7 @@
   return channels.length+':'+(hash>>>0);
  }
  const nativeOverrides=new WeakMap();
- function setNativeTopics(win,channel,values){
+ function setNativeTopics(win,channel,values,{silent=false}={}){
   const id=String(channel?.id||'');if(!id)return false;
   const labels=topicCatalog?.distinct(values)||[];
   if(!labels.length)return false;
@@ -140,7 +206,7 @@
   const label=prior.label&&prior.label!=='Chưa phân loại'?prior.label:topicCatalog?.primary(merged)||merged[0];
   backgroundAnalysis.set(win,new Map(base).set(id,{...prior,label,labels:merged,
    from:prior.label&&prior.label!=='Chưa phân loại'?prior.from||'Tên/nhóm':'Qwen3 offline'}));
-  win?.document?.dispatchEvent?.(new win.CustomEvent('openiptv:watchflow-auto-update',
+  if(!silent)win?.document?.dispatchEvent?.(new win.CustomEvent('openiptv:watchflow-auto-update',
    {detail:{native:true,complete:true,channel:id}}));
   return true;
  }
@@ -161,48 +227,74 @@
   if(win[tag])return true;win[tag]=true;
   let lastKey='',lastGuide=null,guideVersion=0,generation=0,webBusy=false,lastInternet=0;
   const status={running:false,processed:0,total:0,classified:0,epgChannels:0,epgProgrammes:0,
-   guideProgrammes:0,updatedAt:0,error:''};
+   guideProgrammes:0,newChannels:0,newProgrammes:0,updatedAt:0,error:''};
   statusByWindow.set(win,status);
   const notify=detail=>win.document.dispatchEvent(new win.CustomEvent('openiptv:watchflow-auto-update',{detail}));
   const channels=()=>win.IPTVState?.getChannels?.()||[];
   const guide=()=>{try{return win.IPTVExtras?.getGuide?.()||null;}catch{return null;}};
   const yieldNow=()=>new Promise(resolve=>win.setTimeout(resolve,0));
-  async function runLocal(list,epg){
+  const restored=readChannelCache(win.localStorage);
+  function restoreCached(){
+   const list=channels(),map=new Map();
+   for(const channel of list){
+    if(!channel?.id)continue;
+    const old=restored[String(channel.id)];
+    if(old?.signature!==channelSignature(channel))continue;
+    const item=cachedSnapshot(old);
+    if(item)map.set(String(channel.id),item);
+   }
+   if(map.size){
+    backgroundAnalysis.set(win,map);
+    Object.assign(status,{total:list.length,processed:map.size,classified:[...map.values()].filter(x=>x.label!=='Chưa phân loại').length,
+     updatedAt:Date.now()});
+    notify({local:true,restored:true,...status});
+   }
+  }
+  restoreCached();
+  async function runLocal(list,epg,{force=false}={}){
    const token=++generation;
+   const retained=backgroundAnalysis.get(win)||new Map();
+   const alive=new Set(list.map(ch=>String(ch?.id)));
+   const partial=new Map([...retained].filter(([id])=>alive.has(id)));
+   const oldCache=readChannelCache(win.localStorage);
    Object.assign(status,{running:true,processed:0,total:list.length,classified:0,epgChannels:0,
-    epgProgrammes:0,guideProgrammes:epg?.programmes?.length||0,error:''});
-   backgroundAnalysis.set(win,new Map());notify({local:true,...status});
+    epgProgrammes:0,newChannels:0,newProgrammes:0,guideProgrammes:epg?.programmes?.length||0,error:''});
+   backgroundAnalysis.set(win,partial);notify({local:true,...status});
    let lastNotify=0;
    try{
     const result=await scanLocal({channels:list,guide:epg,guideLib:win.IPTVGuide,engine,
-     shouldStop:()=>token!==generation,yieldNow,onProgress:progress=>{
+     cache:oldCache,force,shouldStop:()=>token!==generation,yieldNow,onProgress:progress=>{
       if(token!==generation)return;
-      backgroundAnalysis.set(win,progress.analysis);
+      backgroundAnalysis.set(win,mergeSavedNative(win,new Map([...partial,...progress.analysis])));
       Object.assign(status,{processed:progress.processed,total:progress.total,
-       classified:progress.classified,epgChannels:progress.epgChannels,
-       epgProgrammes:progress.epgProgrammes,guideProgrammes:progress.guideProgrammes});
+       classified:progress.classified,epgChannels:progress.epgChannels,epgProgrammes:progress.epgProgrammes,
+       newChannels:progress.newChannels,newProgrammes:progress.newProgrammes,guideProgrammes:progress.guideProgrammes});
       if(Date.now()-lastNotify>=250||progress.processed===progress.total){
        lastNotify=Date.now();notify({local:true,...status});
       }
      }});
     if(token!==generation||result.cancelled)return;
     backgroundAnalysis.set(win,mergeSavedNative(win,enrich(result.analysis,list,win.localStorage,engine)));
-    Object.assign(status,{running:false,updatedAt:Date.now()});
-    notify({local:true,complete:true,...status});
+    saveChannelCache(win.localStorage,result.entries);
+    Object.assign(status,{running:false,processed:result.processed,total:result.total,
+     newChannels:result.newChannels,newProgrammes:result.newProgrammes,updatedAt:Date.now()});
+    notify({local:true,complete:true,manual:force,newChannels:result.newChannels,newProgrammes:result.newProgrammes,...status});
+    if(result.newChannels>0)void runInternet();
    }catch(error){
     if(token!==generation)return;
     Object.assign(status,{running:false,error:String(error?.message||error).slice(0,180)});
     notify({local:true,complete:true,...status});
    }
   }
-  function inspect(){
+  function inspect({force=false}={}){
    const list=channels(),epg=guide();
    if(epg!==lastGuide){lastGuide=epg;guideVersion++;}
    const mapping=JSON.stringify(epg?.manualMappings||{});
+   // No 30-minute forced reclassification. A changed EPG only checks new programme rows.
    const key=fingerprint(list)+'|'+guideVersion+'|'+(epg?.programmes?.length||0)
-    +'|'+(epg?.offsetMinutes||0)+'|'+mapping+'|'+Math.floor(Date.now()/(30*60000));
-   if(key===lastKey)return;
-   lastKey=key;void runLocal(list,epg);
+    +'|'+(epg?.offsetMinutes||0)+'|'+mapping;
+   if(!force&&key===lastKey)return;
+   lastKey=key;void runLocal(list,epg,{force});
   }
   async function runInternet(){
    if(webBusy||!enabled(win.localStorage))return;
@@ -223,14 +315,18 @@
   // Local classification starts without a panel click and reruns on every playlist/EPG change.
   win.setTimeout(inspect,200);
   win.setInterval(inspect,3000);
-  win.document.addEventListener('openiptv:watchflow-epg-changed',inspect);
-  win.document.addEventListener('openiptv:watchflow-auto-rescan',()=>{
-   lastKey='';inspect();lastInternet=0;void runInternet();
+  win.document.addEventListener('openiptv:watchflow-epg-changed',()=>{lastKey='';inspect();});
+  win.document.addEventListener('openiptv:watchflow-manual-rescan',()=>{
+   // A deliberate click is the only action that forces every channel's local analysis.
+   nativeOverrides.delete(win);
+   inspect({force:true});
+   lastInternet=0;void runInternet();
   });
+  win.document.addEventListener('openiptv:watchflow-auto-rescan',()=>{lastKey='';inspect();lastInternet=0;void runInternet();});
   win.addEventListener?.('openiptv:channel-browser-refresh',inspect);
   win.setTimeout(()=>{void runInternet();},1800);
-  win.setInterval(()=>{void runInternet();},PAUSE_MS);
+  // Internet checks no longer poll constantly: startup, new channels or a manual scan only.
   return true;
  }
- return Object.freeze({setNativeTopics,getBackgroundAnalysis:win=>backgroundAnalysis.get(win)||new Map(),getLocalStatus:win=>({...statusByWindow.get(win)}),KEY,OPT,DAY_LIMIT,publicName,isTv,read,enabled,setEnabled,collect,enrich,scan,scanLocal,fingerprint,start});
+ return Object.freeze({setNativeTopics,CHANNEL_CACHE,readChannelCache,saveChannelCache,channelSignature,cachedSnapshot,getBackgroundAnalysis:win=>backgroundAnalysis.get(win)||new Map(),getLocalStatus:win=>({...statusByWindow.get(win)}),KEY,OPT,DAY_LIMIT,publicName,isTv,read,enabled,setEnabled,collect,enrich,scan,scanLocal,fingerprint,start});
 });

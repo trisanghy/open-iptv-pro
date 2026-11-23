@@ -46,7 +46,7 @@ test('Confident Internet description is used even when Bayesian vocabulary is sp
 });
 test('Background EPG analysis available even without opening WatchFlow panel',()=>{
  const file=fs.readFileSync('renderer/watchflow-auto-discovery-v23-8-106.js','utf8');
- assert.match(file,/backgroundAnalysis\.set\(win,progress\.analysis\)/);
+ assert.match(file,/backgroundAnalysis\.set\(win,mergeSavedNative\(win,new Map/);
  assert.match(file,/backgroundAnalysis\.set\(win,mergeSavedNative\(win,enrich\(result\.analysis,list/);
  assert.match(file,/getBackgroundAnalysis:/);
 });

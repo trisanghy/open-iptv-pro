@@ -35,7 +35,7 @@ test('Automatic startup and EPG event rescan are independent of web lookup toggl
  assert.match(source,/win\.setTimeout\(inspect,200\)/);
  assert.match(source,/win\.setInterval\(inspect,3000\)/);
  assert.match(source,/watchflow-epg-changed/);
- assert.match(source,/void runLocal\(list,epg\)/);
+ assert.match(source,/void runLocal\(list,epg,\{force\}\)/);
  assert.match(source,/if\(webBusy\|\|!enabled\(win\.localStorage\)\)return/);
  const ui=fs.readFileSync('renderer/watchflow-ai-demo-v23-8-102.js','utf8');
  assert.match(ui,/auto\?\.start\(root,engine\)/);
