@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-23T23:11:13.922898+00:00",
+  "generatedAt": "2026-11-23T23:12:19.658300+00:00",
   "repository": "trisanghy/open-iptv-pro",
   "branch": "Positron",
   "versions": [
@@ -8,8 +8,8 @@
       "version": "P5.1.347",
       "appVersion": "4.23.432",
       "title": "chọn chế độ AI tự thu gọn hướng dẫn phím; sửa thứ tự focus bài kiểm thử P345",
-      "description": "chọn chế độ AI tự thu gọn hướng dẫn phím; sửa thứ tự focus bài kiểm thử P345",
-      "kind": "fix",
+      "description": "Feature priority: NEW — Ảnh Electron P346 720px cho thấy hướng dẫn phím che các nút chế độ AI; cho phép chạm bên ngoài lớp hướng dẫn để đóng riêng lớp đó, tránh nhấn nhầm hoặc mất bảng WatchFlow, nhất là khi dùng remote và màn hình hẹp. Feature class: AI",
+      "kind": "feature",
       "status": "candidate",
       "published": "",
       "tag": "",
