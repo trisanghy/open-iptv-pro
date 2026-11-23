@@ -63,11 +63,14 @@ test('Old WatchFlow localStorage cache is migrated and only its own obsolete key
  const entry={a:{signature:'x',base:{name:{label:'Thể thao',confidence:85}},
   snapshot:{label:'Thể thao',labels:['Thể thao'],programmes:[]}}};
  assert.equal(auto.saveChannelCache(localStorage,entry),true);
- assert.deepEqual(await auto.loadPersistentCache({indexedDB,localStorage}),entry);
- assert.equal(await auto.persistChannelCache({indexedDB,localStorage},entry),'indexeddb');
+ const migrated=auto.readChannelCache(localStorage);
+ assert.equal(migrated.a.snapshot.label,'Thể thao');
+ assert.equal(migrated.a.signature,'x');
+ assert.deepEqual(await auto.loadPersistentCache({indexedDB,localStorage}),migrated);
+ assert.equal(await auto.persistChannelCache({indexedDB,localStorage},migrated),'indexeddb');
  assert.equal(values.has(auto.CHANNEL_CACHE),false);
  assert.equal(values.get('iptv:channels'),'KEEP PLAYLIST');
- assert.deepEqual(await auto.loadPersistentCache({indexedDB,localStorage}),entry);
+ assert.deepEqual(await auto.loadPersistentCache({indexedDB,localStorage}),migrated);
 });
 test('Qwen3 results survive app restart even when localStorage quota is already exhausted',async()=>{
  const indexedDB=fakeIDB(),localStorage=localStorageFull();
