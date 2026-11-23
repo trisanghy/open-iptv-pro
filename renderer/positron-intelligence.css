@@ -304,3 +304,10 @@ html[data-positron="true"].po-horizon body #poWatchFlowPanel.po-watchflow-panel:
 /* P308: navigate from uncertain examples to consent-based guided labeling. */
 #poWatchFlowPanel #poAIReviewUncertain{display:block;width:100%;min-height:40px;margin:9px 0 7px;border:1px solid #74b8a4;border-radius:8px;background:#21564d;color:#f0fff8;font:inherit;font-size:12px;font-weight:700;cursor:pointer;padding:8px 10px;text-align:center}
 #poWatchFlowPanel #poAIReviewUncertain:focus-visible{outline:2px solid #b9ffe5;outline-offset:2px}
+
+/* P309: separate pending model restoration from the manual AI labeling mode. */
+#poWatchFlowPanel[data-po-ai-training="true"] #poAIImportConfirm:not([hidden]){display:none!important}
+#poWatchFlowPanel #poAIBackToImport{display:block;min-height:40px;width:100%;margin:0 0 8px;
+ padding:8px 10px;border-radius:9px;border:1px solid #6e999f;background:#1b3e49;
+ color:#e5fff9;font:inherit;font-size:12px;font-weight:750;cursor:pointer;text-align:left}
+#poWatchFlowPanel #poAIBackToImport:focus-visible{outline:2px solid #aeffe5;outline-offset:2px}

@@ -182,7 +182,7 @@
  }
  function showAI(){aiOpen=true;syncAIView();render();}
  function hideAI(){
-  aiOpen=false;delete panel.dataset.poAiActive;area.hidden=true;
+  aiOpen=false;delete panel.dataset.poAiActive;delete panel.dataset.poAiTraining;area.hidden=true;
   tab.setAttribute('aria-pressed','false');
  }
  tab.addEventListener('click',()=>{if(aiOpen){toolbar.querySelector('[data-flowplus-mode="discover"]')?.click();return;}showAI();});
@@ -370,6 +370,21 @@
    if(key==='other'&&enabled){
     const candidates=core.rankUnclassified(items,categoryModel,{limit:5,excludeIds:[...taughtIds,...sessionSkippedIds]});
     const trainer=d.createElement('section');trainer.id='poAIActiveLearning';trainer.className='po-ai-active-learning';
+    // P309: return to pending import review without ever applying its weights.
+    if(panel.dataset.poAiTraining==='true'&&pendingLearningImport&&!importPreview.hidden){
+     const returnToImport=d.createElement('button');returnToImport.type='button';returnToImport.id='poAIBackToImport';
+     returnToImport.textContent='← Trở lại kiểm tra bản sao AI';
+     returnToImport.title='Xem lại bản so sánh trước khi chọn khôi phục; dữ liệu vẫn chưa được áp dụng';
+     returnToImport.addEventListener('click',()=>{
+      delete panel.dataset.poAiTraining;
+      upcomingOpen=false;planOpen=false;exploreOpen=false;foldersOpen=false;programmesOpen=false;
+      render();
+      importPreview.scrollIntoView({block:'center',behavior:'instant'});
+      (byId('poAIConfidenceGapExamples')?.querySelector('summary')||importConfirm)?.focus({preventScroll:true});
+     });
+     trainer.append(returnToImport);
+    }
+
     const heading=d.createElement('strong');heading.textContent='Dạy AI nhanh · '+candidates.length+' kênh ưu tiên'+(sessionSkippedIds.size?' · '+sessionSkippedIds.size+' đã bỏ qua trong phiên':'');
     const hint=d.createElement('p');hint.textContent='AI ưu tiên tên chưa đủ chắc chắn. Chọn chủ đề đúng để mô hình Naive Bayes học tại máy; không tự thay đổi thư mục gốc.';
     const status=d.createElement('p');status.id='poAIActiveStatus';status.setAttribute('role','status');status.setAttribute('aria-live','polite');status.textContent=activeStatusMessage;
@@ -510,6 +525,7 @@
 
  function render(){
   if(!aiOpen)return;
+  if(!foldersOpen)delete panel.dataset.poAiTraining;
   renderModelManager();
   const collection=channels();const profile=profileFor(collection);
   channelsMode.setAttribute('aria-pressed',String(!upcomingOpen&&!planOpen&&!exploreOpen&&!foldersOpen&&!programmesOpen));
@@ -852,6 +868,7 @@
        check.scrollIntoView({block:'center',behavior:'instant'});check.focus();
        return;
       }
+      panel.dataset.poAiTraining='true';
       upcomingOpen=false;planOpen=false;exploreOpen=false;foldersOpen=true;programmesOpen=false;
       activeTeachIndex=0;render();
       const trainer=byId('poAIActiveLearning');

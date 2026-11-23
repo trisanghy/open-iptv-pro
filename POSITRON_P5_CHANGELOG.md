@@ -1,3 +1,13 @@
+## P5.1.309 — Tách xác nhận khôi phục khỏi dạy AI và quay lại an toàn / Electron 4.23.394
+- Feature priority: NEW — Ở hàng đợi dạy nhãn, tạm ẩn nút xác nhận nhập trọng số đang nổi chồng lên bộ chọn chủ đề, đồng thời thêm lối “Trở lại kiểm tra bản sao AI” để quay về xem xét mô hình khôi phục chưa xác nhận. Chuyển chế độ không tự nhập hay mất dữ liệu.
+- Feature class: AI
+- User action: TV → WatchFlow → AI hợp gu → Quản lý mô hình → mở bản sao JSON và nhóm chưa chắc chắn → Dạy AI → dùng “Trở lại kiểm tra bản sao AI” để xem xét lại trọng số; chỉ khi quay về mới có thể bấm xác nhận khôi phục.
+- Electron screenshot: positron-p51309-return-review-before-1920x1080-real.png / positron-p51309-return-review-after-1920x1080-real.png.
+- Evidence: CSS chỉ ẩn CTA khôi phục trong chế độ học thủ công; đoạn JS giữ pending JSON trong bộ nhớ, tạo nút quay lại có focus; QA Electron thật 1920×1080 chụp trước/sau, kiểm chứng CTA không chiếm chỗ trong hàng đợi nhưng khôi phục đúng khi quay về, playlist và mô hình không đổi, không autoplay, không tràn khung. Chưa nhận hoàn tất nếu CI/ảnh thật chưa được kiểm chứng.
+- Privacy: Không tự học, không tự xác nhận nhập JSON hay ghi đè mô hình, không gửi stream URL, M3U hoặc lịch sử xem.
+- Baseline: Ảnh thật P5.1.308 sau khi vào hàng đợi dạy AI cho thấy CTA khôi phục trọng số vẫn nổi ở đáy, dễ nhầm lẫn khi người xem đang chọn nhãn.
+- Status: CANDIDATE — chờ CI xanh, mở ảnh Electron thật và build artifacts.
+
 ## P5.1.308 — Chuyển từ nhóm AI chưa chắc chắn sang hàng đợi dạy nhãn / Electron 4.23.393
 - Feature priority: NEW — Từ danh sách kênh mà hai mô hình Naive Bayes đều chưa đủ chắc chắn, thêm nút mở trực tiếp hàng đợi dạy AI đã có thay vì tìm qua Thư mục EPG; luôn do người xem quyết định nhãn, không tự bật quyền hoặc phát video.
 - Feature class: AI

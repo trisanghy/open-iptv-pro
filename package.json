@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.393",
-  "description": "Positron P5.1.308: đi từ AI chưa chắc chắn tới hàng đợi dạy nhãn thủ công",
+  "version": "4.23.394",
+  "description": "Positron P5.1.309: quay lại so sánh AI an toàn, tách nút khôi phục khỏi hàng đợi dạy",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

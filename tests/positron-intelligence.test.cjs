@@ -1270,3 +1270,16 @@ test('P308 opens opt-in Naive Bayes guided labeling without automatic data chang
  assert.ok(css.includes('#poAIReviewUncertain:focus-visible'));
  for(const name of ['qa308','positron-p51308-training-link-before-1920x1080-real.png','positron-p51308-training-link-after-1920x1080-real.png'])assert.ok(qa.includes(name));
 });
+
+// P309: restore CTA stays pending but cannot overlap the manual training queue.
+test('P309 hides sticky AI restore only while teaching and offers safe return',()=>{
+ const ui=fs.readFileSync('renderer/positron-intelligence.js','utf8');
+ const css=fs.readFileSync('renderer/positron-intelligence.css','utf8');
+ const qa=fs.readFileSync('scripts/positron-20-extension.cjs','utf8');
+ for(const t of ["panel.dataset.poAiTraining='true'","returnToImport.id='poAIBackToImport'",
+  "delete panel.dataset.poAiTraining","importPreview.scrollIntoView({block:'center'"])
+  assert.ok(ui.includes(t),'P309 missing safe return '+t);
+ assert.ok(css.includes('#poAIImportConfirm:not([hidden]){display:none!important}'));
+ for(const p of ['qa309','positron-p51309-return-review-before-1920x1080-real.png','positron-p51309-return-review-after-1920x1080-real.png'])
+  assert.ok(qa.includes(p),'P309 native screenshot/test '+p);
+});
