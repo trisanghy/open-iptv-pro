@@ -65,6 +65,7 @@ jobs:
           node --test web-online/tests/web-mobile-controls-polish.test.cjs
           node --test web-online/tests/web-cast-sender.test.cjs
           node --test web-online/tests/web-airplay.test.cjs
+          node --test web-online/tests/web-airplay-chrome.test.cjs
       - name: Capture desktop 16:9 and mobile screenshots in all three themes
         run: |
           CHROME="$(command -v google-chrome || command -v chromium || true)"
