@@ -11884,6 +11884,12 @@ async function runTwenty(page){
  await require('./positron-339-audit.cjs').run(page);
  await require('./positron-340-audit.cjs').run(page);
  await require('./positron-341-audit.cjs').run(page);
+ await require('./positron-342-audit.cjs').run(page);
+ // P342 REAL Electron sticky heading before/after evidence:
+ // positron-p51342-sticky-recommendation-before-1920x1080-real.png
+ // positron-p51342-sticky-recommendation-after-1920x1080-real.png
+ // positron-p51342-sticky-recommendation-before-720x900-real.png
+ // positron-p51342-sticky-recommendation-after-720x900-real.png
  // P341 actual Electron remote ArrowUp/ArrowDown before/after screenshots:
  // positron-p51341-remote-ai-before-1920x1080-real.png
  // positron-p51341-remote-ai-after-1920x1080-real.png
