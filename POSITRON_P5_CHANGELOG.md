@@ -1,3 +1,12 @@
+## P5.1.293 — AI kiểm tra chéo kênh theo nhóm trước khôi phục / Electron 4.23.378
+- Feature priority: NEW — Bên cạnh dự báo Naive Bayes theo 180 kênh đầu, thêm kiểm tra chéo luân phiên lấy mẫu theo nhóm để không bỏ sót nhóm kênh ở cuối playlist. Hiển thị riêng độ bao phủ và cảnh báo suy giảm trên mẫu đa nhóm.
+- Feature class: AI
+- User action: TV → WatchFlow → AI hợp gu → Quản lý mô hình → Khôi phục JSON → mở dự báo Naive Bayes → xem Kiểm tra chéo theo nhóm.
+- Electron screenshot: positron-p51293-balanced-before-1920x1080-real.png / positron-p51293-balanced-after-1920x1080-real.png.
+- Evidence: Unit regression 260 kênh/3 nhóm xác nhận nhóm bị bỏ sót bởi 180 kênh đầu xuất hiện ở mẫu phân tầng; UI Electron QA 1920x1080 đo dữ liệu giữ nguyên, cảnh báo trung thực, không phát luồng, before/after ảnh thật.
+- Privacy: Chỉ đọc tên/nhóm kênh trên máy. Không gửi M3U, URL, lịch sử, hồ sơ hay trọng số ra mạng; mẫu không chứng minh độ chính xác toàn thư viện.
+- Status: CANDIDATE — chờ CI/ảnh Electron/build.
+
 ## P5.1.292 — AI cảnh báo suy giảm độ bao phủ trước nhập mô hình / Electron 4.23.377
 - Feature priority: NEW — Bộ xem trước Naive Bayes tự đo tỷ lệ kênh còn đủ chắc chắn phân loại trước và sau khi khôi phục JSON; khi tỷ lệ giảm trên ngưỡng lớn có cảnh báo rõ ràng ngay trong bản xem trước, tránh vô tình thay mô hình đang hữu ích bằng mô hình thiếu dữ liệu.
 - Feature class: AI

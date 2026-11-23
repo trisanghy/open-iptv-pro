@@ -1,7 +1,7 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.377",
+  "version": "4.23.378",
   "description": "Positron P5.1.292: cảnh báo suy giảm bao phủ chủ đề AI trước nhập mô hình",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",

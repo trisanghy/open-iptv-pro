@@ -369,12 +369,33 @@
 
  // P289: read-only dry run of how imported Naive Bayes data changes
  // channel topic labels. Never include URLs, start playback, or store results.
- function previewCategoryImpact(current,loaded,channelRows,{limit=4}={}){
+ function previewCategoryImpact(current,loaded,channelRows,{limit=4,strategy='head'}={}){
   const imported=loaded?.ok===true?loaded:parseLearningBackup(loaded);
   if(!imported?.ok)return {ok:false,reason:imported?.reason||'Không đọc được mô hình AI.'};
   const present=sanitizedCategoryModel(current?.categoryModel),future=sanitizedCategoryModel(imported.categoryModel);
-  const sample=(Array.isArray(channelRows)?channelRows:[])
-   .filter(ch=>ch?.id&&ch?.name).slice(0,180);
+  const eligible=(Array.isArray(channelRows)?channelRows:[]).filter(ch=>ch?.id&&ch?.name);
+  // P293: local group-stratified dry-run; preserve previous first-180 behavior by default.
+  const groupKey=ch=>normalize(ch.group||ch.groupTitle||'')||'khong co nhom';
+  const grouped=new Map();
+  for(const ch of eligible){
+   const key=groupKey(ch);
+   if(!grouped.has(key))grouped.set(key,[]);
+   grouped.get(key).push(ch);
+  }
+  let sample=eligible.slice(0,180);
+  if(strategy==='balanced'&&grouped.size>1){
+   sample=[];
+   const groups=[...grouped.values()];
+   for(let offset=0;sample.length<180;offset++){
+    let added=0;
+    for(const rows of groups){
+     if(offset<rows.length){sample.push(rows[offset]);added++;}
+     if(sample.length>=180)break;
+    }
+    if(!added)break;
+   }
+  }
+  const sampledGroups=new Set(sample.map(groupKey)).size;
   const max=Math.max(1,Math.min(8,Math.trunc(limit)||4));
   let changed=0,classifiedBefore=0,classifiedAfter=0,relabeled=0,newlyClassified=0,becameUncertain=0;
   const differences=[];
@@ -400,6 +421,8 @@
   return {ok:true,scanned:sample.length,changed,classifiedBefore,classifiedAfter,
    relabeled,newlyClassified,becameUncertain,confidenceTransitions:newlyClassified+becameUncertain,
    coverageBefore,coverageAfter,coverageDropPoints,coverageRisk,
+   sampling:strategy==='balanced'?'balanced':'head',
+   sampledGroups,totalGroups:grouped.size,
    examplesBefore:present.examples,examplesAfter:future.examples,differences,
    caution:'Đây là dự đoán dựa trên tên/nhóm kênh và nhãn đã dạy, không phải kết quả xem luồng hay sự thật từ EPG.'};
  }

@@ -779,6 +779,19 @@
      line.textContent=row.name+': '+row.before+' → '+row.after;
      details.append(line);
     }
+    // P293: independent local preview balanced across channel groups.
+    const balanced=core.previewCategoryImpact({categoryModel},parsed,channels(),{limit:4,strategy:'balanced'});
+    if(balanced.ok&&balanced.totalGroups>1){
+     const diversity=d.createElement('p');diversity.id='poAICategoryBalancedSample';
+     diversity.className='po-ai-category-breakdown';
+     diversity.textContent='Kiểm tra chéo theo nhóm: '+balanced.scanned+' kênh thuộc '+
+      balanced.sampledGroups+'/'+balanced.totalGroups+' nhóm; độ bao phủ '+
+      balanced.coverageBefore+'% → '+balanced.coverageAfter+'%. '+
+      (balanced.coverageRisk==='high'?'Mẫu đa nhóm cũng cảnh báo suy giảm mạnh.':
+       'Chưa thấy suy giảm mạnh trên mẫu đa nhóm.')+
+      ' Đây là mẫu phân tầng, không phải đánh giá độ chính xác trên toàn bộ thư viện.';
+     details.append(diversity);
+    }
     const note=d.createElement('small');note.textContent=categoryImpact.caution;
     details.append(note);importPreview.append(details);
     if(categoryImpact.coverageRisk==='high'){

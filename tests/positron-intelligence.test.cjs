@@ -836,3 +836,32 @@ test('P292 warns only when a meaningful Naive Bayes coverage collapse is predict
  for(const x of ['qa292','positron-p51292-ai-risk-before-1920x1080-real.png',
   'positron-p51292-ai-risk-after-1920x1080-real.png'])assert.ok(qa.includes(x),x);
 });
+
+test('P293 stratified Naive Bayes import forecast covers groups beyond first 180',()=>{
+ const sport={id:'p293-sport',name:'Bóng đá thể thao',group:'Thể thao'};
+ const film={id:'p293-film',name:'Phim hành động',group:'Phim'};
+ let learned=C.emptyCategoryModel();
+ for(let i=0;i<12;i++){learned=C.teachCategory(learned,sport,'sport');learned=C.teachCategory(learned,film,'cinema');}
+ const channels=[
+  ...Array.from({length:220},(_,i)=>({id:'p293-news-'+i,name:'Bản tin '+i,group:'Tin tức'})),
+  ...Array.from({length:20},(_,i)=>({...sport,id:'p293-sport-'+i})),
+  ...Array.from({length:20},(_,i)=>({...film,id:'p293-film-'+i}))
+ ];
+ const saved=C.buildLearningBackup({model:C.emptyModel(),categoryModel:C.emptyCategoryModel(),bandit:{}});
+ const original=JSON.stringify(channels),model=JSON.stringify(learned);
+ const first=C.previewCategoryImpact({categoryModel:learned},saved,channels);
+ const broad=C.previewCategoryImpact({categoryModel:learned},saved,channels,{strategy:'balanced'});
+ assert.equal(first.ok,true);assert.equal(broad.ok,true);
+ assert.equal(first.scanned,180);assert.equal(broad.scanned,180);
+ assert.equal(first.sampledGroups,1);assert.equal(broad.sampledGroups,3);
+ assert.equal(broad.totalGroups,3);assert.equal(broad.sampling,'balanced');
+ assert.equal(first.sampling,'head');
+ assert.ok(broad.classifiedBefore>first.classifiedBefore,'later groups included in stratified sample');
+ assert.equal(JSON.stringify(channels),original);assert.equal(JSON.stringify(learned),model);
+ assert.ok(!JSON.stringify(broad).includes('.m3u8'));
+ const ui=fs.readFileSync('renderer/positron-intelligence.js','utf8');
+ const qa=fs.readFileSync('scripts/positron-20-extension.cjs','utf8');
+ assert.ok(ui.includes("diversity.id='poAICategoryBalancedSample'"));
+ for(const token of ['qa293','positron-p51293-balanced-before-1920x1080-real.png',
+  'positron-p51293-balanced-after-1920x1080-real.png'])assert.ok(qa.includes(token),token);
+});
