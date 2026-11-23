@@ -1,0 +1,14 @@
+# OPEN IPTV PRO POSITRON — CHECKPOINT ĐỢT 20 VÒNG (23/11/2026)
+- Repo: https://github.com/trisanghy/open-iptv-pro
+- Chỉ nhánh: `Positron`; không sửa `main`, Web, Rust, Mobile, Electron gốc.
+- Đã hoàn thành **2/20 vòng MỚI** (không tính vòng P5.1.310 đã có từ trước).
+- P5.1.310 / Electron 4.23.395 baseline: CI repair run https://github.com/trisanghy/open-iptv-pro/actions/runs/45179155802 (5/5 jobs, qa310 9/9 true, ảnh before/after đã xem).
+- Vòng 01 **P5.1.311 / 4.23.396**, commit logic `abf987ab384aa5b0929d1e718b4ecb1f54e2e208`, QA fix `486e493caa4871e75ee2cf623e28db383c1b4770`, CI https://github.com/trisanghy/open-iptv-pro/actions/runs/45181291993 (1024 pass, 5 skipped, 0 fail; 5/5 jobs). Ảnh thật `positron-p51311-storage-fail-before-1920x1080-real.png` / `-after-`, qa311 7/7 true, artifact https://github.com/trisanghy/open-iptv-pro/actions/runs/45181291993/artifacts/14822051859. Hoàn tác trọng số/hàng đợi/Undo khi bộ nhớ từ chối lưu nhãn.
+- Vòng 02 **P5.1.312 / 4.23.397**, commit `c94c1c9d179d4d9dbf10cc008b51c92685d8775a`, CI https://github.com/trisanghy/open-iptv-pro/actions/runs/45183357907 (1025 pass, 5 skipped, 0 fail; 5/5 jobs). qa312 10/10 true, ảnh thật before/after đã mở, artifact https://github.com/trisanghy/open-iptv-pro/actions/runs/45183357907/artifacts/14821993814. Thêm cảnh báo aria alert màu hổ phách và nút xuất JSON AI chủ động ngay tại lỗi.
+- Windows x64 P312: https://github.com/trisanghy/open-iptv-pro/actions/runs/45183357907/artifacts/14823115113
+- macOS ARM P312: https://github.com/trisanghy/open-iptv-pro/actions/runs/45183357907/artifacts/14821773672
+- macOS Intel P312: https://github.com/trisanghy/open-iptv-pro/actions/runs/45183357907/artifacts/14822073354
+- Kết quả ngoài phạm vi: chưa test GPU/audio/video thật, DRM, Cast, DVR trên thiết bị người dùng. Không có Stable Release mới, phù hợp yêu cầu chỉ giữ stable trên Releases.
+- **Còn 18 vòng**. Vòng 03 dự kiến P5.1.313 hoặc nhãn mới hơn nếu HEAD đổi; ảnh P312 sau cho thấy chỉ ghi nhận “đã yêu cầu tải” mà chưa thể xác nhận tập tin sao lưu hợp lệ. Ưu tiên phát triển xác minh an toàn tệp backup AI với hành động do người dùng khởi tạo; điều chỉnh nếu khảo sát mã/ảnh hiện tại cho thấy lỗi quan trọng hơn.
+- Trước mỗi vòng: xác minh HEAD/tag/Actions mới nhất; sửa mã thật, regression tests, screenshot Electron before/after, trực tiếp mở PNG, soát và báo cáo; version riêng từng vòng; commit expected_sha/force:false; không tạo release thử nghiệm trên trang Stable.
+- Không tuyên bố 20/20 hoặc tạo URL/ảnh/installer không tồn tại. File này chỉ là checkpoint, không phải lệnh chạy nền.

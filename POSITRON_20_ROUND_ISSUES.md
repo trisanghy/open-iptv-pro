@@ -45,12 +45,17 @@ Chưa thực hiện. Mỗi vòng yêu cầu commit/version, test, ảnh Electron
 - Job capture failed at P271: teacherVisible=false although labelCountOnScreen, learnedOnChoice, actualNB true. Opened real Electron P271 before: teacher select is cut by panel bottom.
 - Scroll teacher into viewport before geometry verification, then align replacement after DOM rerender. Keep assertions, no autoplay or data mutation. Candidate until CI green and new screenshot opened.
 
-## Đợt mới từ P5.1.310 — Vòng 01/20: P5.1.311 (CANDIDATE)
+## Đợt mới từ P5.1.310 — Vòng 01/20: P5.1.311 (ĐẠT)
 - Baseline P5.1.310 / Electron 4.23.395: Actions 45179155802 đã đạt test/capture/Windows/Mac; qa310 9/9 true, mở cả ảnh wide-reading trước/sau 1920×1080.
 - Lỗi trong mã: huấn luyện Naive Bayes cập nhật RAM trước save; nếu localStorage đầy, nhãn mất khi khởi động lại. Sửa giao dịch ghi nhãn có rollback trọng số và hàng đợi; QA ép lỗi quota tại khóa AI riêng, kiểm tra playlist không đổi và no-autoplay.
 - ĐẠT sau CI 45181291993: 1024/1029 Node tests pass, 5 skipped, 0 fail; 5/5 job test/capture/Windows x64/macOS x64/ARM64 thành công; qa311 7/7 true. Đã tải và mở hai PNG P311 trước/sau 1920×1080 từ artifact 14822051859. Ảnh sau cho thấy lỗi màu chữ xanh dễ nhầm với thành công → ưu tiên P312.
 
-## Đợt hiện tại — Vòng 02/20: P5.1.312 (CANDIDATE)
+## Đợt hiện tại — Vòng 02/20: P5.1.312 (ĐẠT)
 - Input: mở ảnh P311 sau và thấy trạng thái Không lưu được nhãn AI vẫn màu xanh giống thành công, thiếu lối sao lưu trọng số an toàn tại chỗ.
 - Thêm cảnh báo màu hổ phách, role alert assertive và nút xuất JSON từ AI trainer, ẩn khi không có lỗi. Không xóa mô hình, playlist, EPG hoặc Favorites. QA312 click thao tác thực tế, đối chiếu model/playlist và ảnh trước/sau.
-- Chỉ hoàn thành sau CI và mở ảnh P312 thật.
+- ĐẠT sau CI 45183357907: 1025/1030 test pass, 5 skipped, 0 failed; 5/5 job test/capture/Windows x64/Mac ARM64/x64 thành công; qa312 10/10 true. Đã tải/mở hai PNG P312 before/after từ artifact 14821993814. Cảnh báo hổ phách dễ nhận biết và nút sao lưu chỉ xuất hiện khi lỗi; mô hình/playlist vẫn nguyên.
+
+## Vòng 03/20 → 20/20 — CHƯA THỰC HIỆN
+- Ảnh P312 sau: giao diện phản hồi đã yêu cầu tải JSON nhưng chưa hiển thị tên tệp/kích thước hay kiểm chứng trực tiếp tính toàn vẹn tệp vừa xuất. Cơ hội P313: kiểm tra/sao lưu mô hình có xác thực cấu trúc và thông tin kiểm chứng rõ ràng, không gửi dữ liệu lên mạng, chỉ sau thao tác người dùng.
+- Baseline mới nhất hoàn tất đã xác minh: P5.1.312, Electron 4.23.397, commit c94c1c9d179d4d9dbf10cc008b51c92685d8775a; QA repair/website bot HEAD có thể mới hơn. Phải đọc lại HEAD và package.json trước sửa.
+- Đợt này mới có 2/20 vòng đủ tiêu chí; không trộn 70 ảnh test tích lũy của CI vào số vòng sửa mới.
