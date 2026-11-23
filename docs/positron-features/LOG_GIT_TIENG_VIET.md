@@ -2,14 +2,22 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
-## P5.1.317 — kiểm chứng JSON với mô hình AI sau khi khởi động lại
+## P5.1.318 — chẩn đoán ba mô hình AI ngay trong Quản lý mô hình
 
-**Ứng dụng:** 4.23.402 · **Trạng thái:** Chưa có bản phát hành
+**Ứng dụng:** 4.23.403 · **Trạng thái:** Chưa có bản phát hành
+
+Feature priority: NEW — Khi tệp sao lưu khác trọng số AI đang dùng, hiển thị Logistic/Naive Bayes/UCB với số phản hồi/nhãn/chủ đề và số trường dữ liệu học khác ngay dưới nút đối chiếu trong Quản lý mô hình. Trước đây bảng chi tiết chỉ hiện sâu trong phần Dạy AI. Feature class: AI
+
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/9d33bcdc18ff9958731996a940262015af7a61a4)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+
+## P5.1.317 — Electron 4.23.402 — Đối chiếu bản sao AI cũ sau khi khởi động lại (CANDIDATE)
+
+**Ứng dụng:** Chưa xác minh · **Trạng thái:** Chưa có bản phát hành
 
 Feature priority: NEW — Có thể chọn bản sao JSON cũ để đối chiếu với Logistic, Naive Bayes và UCB đang lưu ở máy dù phiên làm việc này chưa xuất lại mô hình. Trước đây nút bị ẩn và xác minh trả lỗi nếu chưa xuất bản sao trong phiên. Feature class: AI
 
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/eeec05980f44e61705899200170db442dbd90fc6)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
 
 ## P5.1.316 — Electron 4.23.401 — Đếm trường dữ liệu học AI thay đổi (CANDIDATE)
 
