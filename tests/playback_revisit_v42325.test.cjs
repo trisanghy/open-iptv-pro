@@ -17,7 +17,7 @@ test('FIX playlist stream families: HLS, DASH, FLV, opaque paths are routed inde
  assert.equal(format('https://tv.test/live/video.flv'),'flv');
  assert.equal(format('https://tv.test/api/tv360/?id=abcdef'),'unknown');
  assert.equal(format('https://tv.test/index.php?id=1'),'unknown');
- assert.equal(initialTransport('https://tv.test/live/video.flv'),'ffmpeg');
+ assert.equal(initialTransport('https://tv.test/live/video.flv'),'mpegts');
  assert.equal(initialTransport('https://tv.test/live/master.m3u8',{savedTransport:'ffmpeg',savedDurationMs:18000}),'relay');
  assert.equal(initialTransport('https://tv.test/live/master.mpd',{savedTransport:'ffmpeg',savedDurationMs:12000}),'relay');
  assert.equal(initialTransport('https://tv.test/api/tv360/?id=11',{savedTransport:'ffmpeg',savedDurationMs:2000}),'ffmpeg');
@@ -86,5 +86,5 @@ test('opaque VTV-style endpoint carrying raw MPEG-TS is detected before HTML5 tr
  const binary=Buffer.alloc(564,0);binary[0]=binary[188]=binary[376]=0x47;
  const result=inspectMedia({url:'https://tv.test/tv360/?id=12',contentType:'application/octet-stream',sample:binary});
  assert.equal(result.format,'ts');assert.equal(result.ts,true);assert.equal(result.hls,false);
- assert.match(source,/details\.format==='ts'[^]*tryPlayback\(url,generation,'ffmpeg'\)/);
+ assert.match(source,/\['ts','mpegts','flv'\]\.includes\(details\.format\)[^]*tryPlayback\(url,generation,'mpegts'\)/);
 });

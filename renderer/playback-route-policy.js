@@ -16,15 +16,16 @@
    if(/\.m3u8?$/.test(pathname)||/\.m3u8?$/.test(filename))return 'hls';
    if(/\.mpd$/.test(pathname)||/\.mpd$/.test(filename))return 'dash';
    if(/\.flv$/.test(pathname)||/\.flv$/.test(filename))return 'flv';
+   if(/\.(?:ts|m2ts|mpegts)$/.test(pathname)||/\.(?:ts|m2ts|mpegts)$/.test(filename))return 'mpegts';
    if(/\.(?:mp4|m4v|mov|webm)$/.test(pathname)||/\.(?:mp4|webm)$/.test(filename))return 'video';
   }catch{}
   return 'unknown';
  }
  function initialTransport(url,{savedTransport='',savedDurationMs=0}={}){
   const kind=format(url);
-  // HLS and DASH should not repeat slow FFmpeg remux on a revisit.
-  // FLV is not directly decoded by Chromium; send it to FFmpeg immediately.
-  if(kind==='flv')return 'ffmpeg';
+  // Raw TS/FLV needs MSE transmuxing before optional FFmpeg fallback.
+  if(kind==='flv'||kind==='mpegts')return 'mpegts';
+  if(savedTransport==='mpegts'&&kind==='unknown')return 'mpegts';
   if(kind==='unknown'&&savedTransport==='ffmpeg'&&Number(savedDurationMs)>0&&Number(savedDurationMs)<=4000)return 'ffmpeg';
   return 'relay';
  }

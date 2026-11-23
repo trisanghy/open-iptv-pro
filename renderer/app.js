@@ -37,7 +37,7 @@
  let mediaInfo={hls:false,mode:'unknown',seekable:false};
  let channelRequestedAt=0,firstFrameReported=false,firstFrameDurationMs=0,playbackStartStage='',playbackPreferenceUsed=false;
  let activeEngine='html5',nativeHlsTried=new Set(),startupNoteTimer=null;
- let playbackProofTimer=0,playbackProofUrl='',attemptedTransports=new Set(),playAttemptSerial=0,playRequestSerial=0,lastStoppedChannelId='',pausedFallbackNeedsRestart=false,pausedByUser=false,filter='all',page='tv',hls=null,dash=null,current=null,playGeneration=0,playCandidates=[],playCandidateIndex=0,playMode='live',failoverTimer=null,stallTimer=null,ffmpegTried=false,ffmpegFallbackId='',activeTransport='relay',modalHandler=null,snapshotBase='',mediaRecoveryCount=0;
+ let playbackProofTimer=0,playbackProofUrl='',attemptedTransports=new Set(),playAttemptSerial=0,playRequestSerial=0,lastStoppedChannelId='',pausedFallbackNeedsRestart=false,pausedByUser=false,filter='all',page='tv',hls=null,dash=null,mpegtsInstance=null,mpegtsLoadPromise=null,mpegtsMetadataListener=null,current=null,playGeneration=0,playCandidates=[],playCandidateIndex=0,playMode='live',failoverTimer=null,stallTimer=null,ffmpegTried=false,ffmpegFallbackId='',activeTransport='relay',modalHandler=null,snapshotBase='',mediaRecoveryCount=0;
  const tasks={
   check:{running:false,cancel:false,visible:false,total:0,done:0,alive:0,dead:0,uncertain:0,results:[]},
   shots:{running:false,cancel:false,visible:false,total:0,done:0,success:0,failed:0,skipped:0,latest:''}
@@ -597,6 +597,7 @@
    try{dash.reset();}catch(e){console.warn('Destroy DASH:',e);}
    dash=null;
   }
+  destroyMpegts();
   try{player.pause();}catch{}
   try{
    const stream=player.srcObject;
@@ -617,12 +618,37 @@
   window.IPTVExtras?.onChannel?.(null);
   textStatus('Đã dừng phát · ngắt tải ngầm và xóa bộ đệm video');
  }
+
+ function destroyMpegts(){
+  if(mpegtsMetadataListener){player.removeEventListener('loadedmetadata',mpegtsMetadataListener);mpegtsMetadataListener=null;}
+  const engine=mpegtsInstance;mpegtsInstance=null;
+  if(!engine)return;
+  for(const action of ['pause','unload','detachMediaElement','destroy'])try{engine[action]?.();}catch(e){console.warn('MPEG-TS cleanup:',action,e);}
+ }
+ async function loadMpegtsLib(){
+  if(window.mpegts?.createPlayer)return window.mpegts;
+  if(!mpegtsLoadPromise){
+   mpegtsLoadPromise=new Promise((resolve,reject)=>{
+    const script=document.createElement('script');script.src='mpegts.min.js';
+    script.onload=()=>window.mpegts?.createPlayer?resolve(window.mpegts):reject(Error('Thiếu mpegts.js trong gói'));
+    script.onerror=()=>reject(Error('Không tải được mpegts.js đã đóng gói'));
+    document.head.append(script);
+   }).catch(e=>{mpegtsLoadPromise=null;throw e;});
+  }
+  return mpegtsLoadPromise;
+ }
+ function isMpegtsStream(url){
+  const kind=window.IPTVPlaybackRoutePolicy?.format(url);
+  return kind==='mpegts'||kind==='flv'||/\.(?:ts|m2ts|mpegts|flv)(?:[?#]|$)/i.test(String(url||''));
+ }
  async function loadHlsLib(){if(window.Hls)return window.Hls;if(native)throw Error('Ứng dụng chưa đóng gói hls.js. Hãy chạy npm install rồi đóng gói lại.');return new Promise((resolve,reject)=>{const script=document.createElement('script');script.src='https://cdn.jsdelivr.net/npm/hls.js@1.6.15/dist/hls.min.js';script.onload=()=>window.Hls?resolve(window.Hls):reject(Error('Thiếu thư viện hls.js'));script.onerror=()=>reject(Error('Không tải được hls.js từ CDN để phát HLS trên trình duyệt này'));document.head.append(script);});}
  function isInternalMediaUrl(raw){return /^https?:\/\/127\.0\.0\.1:\d+\/(?:stream|buffer|snapshot|playback-fallback)\b/i.test(String(raw||''));}
  function isTimeshiftUrl(raw){return /^https?:\/\/127\.0\.0\.1:\d+\/buffer\b/i.test(String(raw||''))||/[?&]file=rolling\.m3u8(?:$|[&#])/i.test(String(raw||''));}
  function looksLikeHlsUrl(raw){return /\.m3u8(?:$|[?#&])/i.test(String(raw||''))||/[?&](?:file|url)=[^#]*\.m3u8(?:$|[&#])/i.test(String(raw||''));}
  async function tryPlayback(url,generation,transport='relay'){
   if(generation!==playGeneration)return;
+  if(transport==='relay'&&playMode==='live'&&isMpegtsStream(url)&&!attemptedTransports.has('mpegts'))
+   return tryPlayback(url,generation,'mpegts');
   const attempt=++playAttemptSerial;
   attemptedTransports.add(transport);
   activeTransport=transport;
@@ -631,7 +657,7 @@
   const oldFallback=ffmpegFallbackId;ffmpegFallbackId='';
   if(oldFallback)window.streamleaf?.stopPlaybackFallback?.(oldFallback).catch(()=>{});
   if(hls){try{hls.destroy();}catch{}hls=null;}
-  if(dash){try{dash.reset();}catch{}dash=null;}
+  if(dash){try{dash.reset();}catch{}dash=null;}destroyMpegts();
   clearTimeout(failoverTimer);
   mediaRecoveryCount=0;
   player.pause();player.removeAttribute('src');player.load();
@@ -667,9 +693,8 @@
   if(generation!==playGeneration||attempt!==playAttemptSerial)return;
   // An extensionless endpoint can return raw MPEG-TS: Chromium video.src and
   // hls.js cannot decode that container directly. Remux immediately, not after 24 s.
-  if(transport==='relay'&&details.format==='ts'&&native&&window.streamleaf?.startPlaybackFallback){
-   return tryPlayback(url,generation,'ffmpeg');
-  }
+  if(transport==='relay'&&playMode==='live'&&['ts','mpegts','flv'].includes(details.format)&&!attemptedTransports.has('mpegts'))
+   return tryPlayback(url,generation,'mpegts');
   playbackStartStage=transport==='ffmpeg'?'ffmpeg-segments-ready':'format-ready';
   const looksDash=transport==='ffmpeg'?false:!!details.dash||/\.mpd(?:[?#]|$)/i.test(url);
   mediaInfo={...details,hls:looksHls&&!looksDash,dash:looksDash};
@@ -690,7 +715,34 @@
     }else recoverPlayback(generation,e.message||'Lỗi video',attempt);
    });
   };
-  if(looksDash){
+  if(transport==='mpegts'){
+   activeEngine='mpegts';
+   const lib=await loadMpegtsLib();if(!isCurrent())return;
+   if(!lib?.isSupported?.()||!(window.MediaSource||window.ManagedMediaSource))
+    throw Error('MPEG-TS: MediaSource/codec không hỗ trợ');
+   const engine=lib.createPlayer({
+    type:/\.flv(?:[?#]|$)/i.test(url)?'flv':'mse',url:actual,isLive:true
+   },{
+    enableWorker:false,enableStashBuffer:true,stashInitialSize:128*1024,
+    lazyLoad:false,autoCleanupSourceBuffer:true,
+    autoCleanupMaxBackwardDuration:20,autoCleanupMinBackwardDuration:8
+   });
+   mpegtsInstance=engine;
+   const onMetadata=()=>{
+    player.removeEventListener('loadedmetadata',onMetadata);
+    if(mpegtsMetadataListener===onMetadata)mpegtsMetadataListener=null;
+    if(isCurrent())startPlaying();
+   };
+   mpegtsMetadataListener=onMetadata;
+   player.addEventListener('loadedmetadata',onMetadata);
+   if(lib.Events?.ERROR)engine.on(lib.Events.ERROR,(type,detail,info)=>{
+    if(!isCurrent()||engine!==mpegtsInstance)return;
+    recoverPlayback(generation,'MPEG-TS: '+String(detail||type||info?.msg||'lỗi luồng').slice(0,130),attempt);
+   });
+   mediaInfo={...mediaInfo,hls:false,dash:false,mode:'live',seekable:false};
+   document.dispatchEvent(new CustomEvent('openiptv:media-info',{detail:mediaInfo}));
+   engine.attachMediaElement(player);engine.load();
+  }else if(looksDash){
    activeEngine='dashjs';
    const Dash=window.dashjs;
    if(!Dash?.MediaPlayer)throw Error('Thiếu dash.js trong gói ứng dụng; cài lại đầy đủ phụ thuộc npm.');
@@ -776,14 +828,14 @@
    activeEngine=transport==='ffmpeg'?'ffmpeg':'html5';
    player.crossOrigin=native?'anonymous':null;player.src=actual;startPlaying();
   }
-  $('#streamInfo').textContent=transport==='ffmpeg'?'FFmpeg • Đang phát qua bộ tương thích':looksDash?'DASH • Đang kết nối':looksHls?'HLS • Đang kết nối':'Video • Đang kết nối';
+  $('#streamInfo').textContent=transport==='mpegts'?'MPEG-TS • Đang kết nối':transport==='ffmpeg'?'FFmpeg • Đang phát qua bộ tương thích':looksDash?'DASH • Đang kết nối':looksHls?'HLS • Đang kết nối':'Video • Đang kết nối';
   const started=Date.now();window.IPTVProAdvanced?.onLoadStart?.(current,url,started);
   // Fail fast instead of waiting 20 s before launching the compatibility
   // player. Do not shorten user-requested Timeshift initialization.
   // Warn without cancelling a healthy slow source at the old fixed 13-second threshold.
   // Network/decoder errors still fail immediately; a genuine blank startup gets a longer ceiling.
   startupNoteTimer=setTimeout(()=>{if(isCurrent()&&player.readyState<2)textStatus('Đang đợi dữ liệu video từ nguồn • '+(current?.name||'kênh'));},7500);
-  failoverTimer=setTimeout(()=>{if(isCurrent()&&player.readyState<2)recoverPlayback(generation,playMode==='timeshift'?'Bộ đệm chưa tải kịp dữ liệu':'Kết nối quá thời gian',attempt);},playMode==='timeshift'?30000:activeEngine==='native-hls'?6500:transport==='ffmpeg'?19000:24000);
+  failoverTimer=setTimeout(()=>{if(isCurrent()&&player.readyState<2)recoverPlayback(generation,playMode==='timeshift'?'Bộ đệm chưa tải kịp dữ liệu':'Kết nối quá thời gian',attempt);},playMode==='timeshift'?30000:activeEngine==='native-hls'?6500:transport==='ffmpeg'?19000:transport==='mpegts'?12000:24000);
   $('#playBtn').textContent='Ⅱ';textStatus('Đang kết nối: '+current.name);
  }
  function serverDenied(reason){return /\bHTTP\s+(?:401|403)\b/i.test(String(reason||''));}
@@ -794,7 +846,7 @@
   playAttemptSerial++;
   clearTimeout(failoverTimer);clearTimeout(stallTimer);clearTimeout(startupNoteTimer);
   if(hls){try{hls.destroy();}catch{}hls=null;}
-  if(dash){try{dash.reset();}catch{}dash=null;}
+  if(dash){try{dash.reset();}catch{}dash=null;}destroyMpegts();
   const oldFallback=ffmpegFallbackId;ffmpegFallbackId='';
   if(oldFallback)window.streamleaf?.stopPlaybackFallback?.(oldFallback).catch(()=>{});
   player.pause();player.removeAttribute('src');player.load();
@@ -810,12 +862,14 @@
    catch(e){if(generation!==playGeneration)return;reason+='; HLS.js: '+String(e?.message||e).slice(0,110);}
   }
   const canAutoFfmpeg=canFfmpeg&&window.IPTVPlaybackRoutePolicy?.shouldAutoFfmpeg(reason,{mode:playMode,url:candidate,alreadyTried:attemptedTransports.has('ffmpeg')});
-  const other=activeTransport==='ffmpeg'&&!attemptedTransports.has('relay')?'relay':
+  const other=activeTransport==='mpegts'&&canFfmpeg&&!attemptedTransports.has('ffmpeg')&&!/\bHTTP\s*(?:401|403|404|410|429|451|503)\b/i.test(reason)?'ffmpeg':
+    activeTransport==='mpegts'&&!attemptedTransports.has('relay')?'relay':
+    activeTransport==='ffmpeg'&&!attemptedTransports.has('relay')?'relay':
     activeTransport==='relay'&&canAutoFfmpeg?'ffmpeg':null;
   if(other){
    playbackPreferenceUsed=false;
    ffmpegTried=other==='ffmpeg';
-   textStatus((other==='ffmpeg'?'Chromium lỗi, thử FFmpeg':'FFmpeg lỗi, thử Chromium')+' trên cùng link…');
+   textStatus((other==='ffmpeg'?'Trình phát lỗi, thử FFmpeg':other==='relay'?'Thử HTML5 trên cùng link':'Đang thử trình phát khác')+' trên cùng link…');
    try{await tryPlayback(candidate,generation,other);return;}
    catch(e){if(generation!==playGeneration)return;reason+='; '+other+': '+String(e?.message||e).slice(0,105);}
   }
@@ -847,7 +901,8 @@
   const pref=!override&&!manualUrl&&playMode==='live'?window.IPTVPlaybackPreference?.choose(found,allCandidates):null;
   playbackPreferenceUsed=!!pref?.remembered;
   playCandidates=manualUrl?ordered:(pref?.urls?.length?pref.urls:ordered);
-  const preferredTransport=(native&&window.streamleaf?.startPlaybackFallback)?(window.IPTVPlaybackRoutePolicy?.initialTransport(playCandidates[0],{savedTransport:pref?.remembered?pref.transport:'',savedDurationMs:found.lastStartupDurationMs})||'relay'):'relay';
+  const selectedRoute=window.IPTVPlaybackRoutePolicy?.initialTransport(playCandidates[0],{savedTransport:pref?.remembered?pref.transport:'',savedDurationMs:found.lastStartupDurationMs})||'relay';
+  const preferredTransport=native&&window.streamleaf?.startPlaybackFallback?selectedRoute:selectedRoute==='mpegts'?'mpegts':'relay';
   playCandidateIndex=0;attemptedTransports.clear();nativeHlsTried.clear();
   if(pref?.remembered&&found.lastPlayableEngine==='hlsjs'&&found.lastPlayableUrl===playCandidates[0])nativeHlsTried.add(playCandidates[0]);
   playbackProofUrl='';playbackProofTimer=0;
@@ -944,8 +999,9 @@
   const proofKey=ch.id+'|'+activeTransport+'|'+url;
   if(playbackProofUrl===proofKey&&Date.now()-playbackProofTimer<60000)return;
   playbackProofTimer=Date.now();playbackProofUrl=proofKey;
-  ch.lastPlayableUrl=url;ch.lastPlayableTransport=activeTransport==='ffmpeg'?'ffmpeg':'relay';ch.lastPlayableEngine=activeEngine;
-  if(activeTransport==='relay')ch.lastPlayableFormat=mediaInfo.dash?'dash':mediaInfo.hls?'hls':window.IPTVStartupPolicy?.knownMedia?.(url)?.format==='mp4'?'mp4':'';
+  ch.lastPlayableUrl=url;ch.lastPlayableTransport=['ffmpeg','mpegts'].includes(activeTransport)?activeTransport:'relay';ch.lastPlayableEngine=activeEngine;
+  if(activeTransport==='mpegts')ch.lastPlayableFormat='ts';
+   if(activeTransport==='relay')ch.lastPlayableFormat=mediaInfo.dash?'dash':mediaInfo.hls?'hls':window.IPTVStartupPolicy?.knownMedia?.(url)?.format==='mp4'?'mp4':'';
   ch.lastPlaybackAt=new Date().toISOString();
   recentCore.record(store,ch,favCore.key);
   if(firstFrameDurationMs>0)ch.lastStartupDurationMs=Math.round(firstFrameDurationMs);
