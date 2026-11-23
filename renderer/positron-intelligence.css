@@ -291,3 +291,12 @@ html[data-positron="true"].po-horizon body #poWatchFlowPanel.po-watchflow-panel:
  font-size:12px;font-weight:750;cursor:pointer;scroll-margin-top:80px;scroll-margin-bottom:110px}
 #poWatchFlowPanel #poAIConfidenceGapExamples>summary:focus-visible{outline:2px solid #9cf2ce;outline-offset:3px}
 #poWatchFlowPanel #poAIConfidenceGapExamples .po-ai-category-diff{overflow-wrap:anywhere}
+
+/* P307 screenshot review: expanded AI cohort rows must scroll fully above the
+   sticky import confirmation. Keep the reserved space only while open. */
+#poWatchFlowPanel #poAIImportPreview:not([hidden]):has(#poAIConfidenceGapExamples[open]){
+ padding-bottom:110px;
+}
+#poWatchFlowPanel #poAIConfidenceGapExamples .po-ai-category-diff{
+ scroll-margin-bottom:112px;
+}

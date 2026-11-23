@@ -10966,7 +10966,7 @@ async function runTwenty(page){
  const before307=await page.screenshot({path:path.join(out,'positron-p51307-both-uncertain-before-1920x1080-real.png'),animations:'disabled'});
  await gaps306.click({timeout:8000});
  const uncertainRow307=page.locator('#poAIConfidenceGapExamples .po-ai-category-diff').last();
- await uncertainRow307.scrollIntoViewIfNeeded({timeout:8000});
+ await uncertainRow307.evaluate(el=>el.scrollIntoView({block:'center',inline:'nearest',behavior:'auto'}));
  const after307=await page.screenshot({path:path.join(out,'positron-p51307-both-uncertain-after-1920x1080-real.png'),animations:'disabled'});
  const observed307=await page.evaluate(()=>{
   const panel=document.getElementById('poAIConfidenceGapExamples');
@@ -10975,6 +10975,8 @@ async function runTwenty(page){
   const dr=document.getElementById('poWatchFlowPanel')?.getBoundingClientRect();
   return {open:panel?.open===true,rows:rows.length,text:el?.textContent||'',
    visible:!!(rc&&dr&&rc.height>0&&rc.top>=dr.top&&rc.bottom<=dr.bottom),
+   aboveConfirm:!!(rc&&document.getElementById('poAIImportConfirm')&&
+    rc.bottom<=document.getElementById('poAIImportConfirm').getBoundingClientRect().top-8),
    ids:JSON.stringify(window.IPTVState.getChannels().map(c=>c.id)),
    model:localStorage.getItem('positron-intelligence-preferences-v1'),
    current:window.IPTVState.getCurrent()?.id||'',
@@ -10984,7 +10986,7 @@ async function runTwenty(page){
  const qa307={expanded:observed307.open,threeRows:observed307.rows>=3,
   correctCohort:observed307.text.includes('Chưa đủ chắc chắn ở cả hai:'),
   noUrl:!low307.includes('http:')&&!low307.includes('https:')&&!low307.includes('.m3u8')&&!low307.includes('.m3u'),
-  readable:observed307.visible,playlistIntact:observed307.ids===start306.ids,
+  readable:observed307.visible,notCoveredByConfirm:observed307.aboveConfirm,playlistIntact:observed307.ids===start306.ids,
   modelIntact:observed307.model===start306.model,noAutoplay:observed307.current===start306.current,
   noOverflow:!observed307.overflow};
  for(const [key,value] of Object.entries(qa307))assert.equal(value,true,

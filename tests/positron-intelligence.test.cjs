@@ -1249,3 +1249,13 @@ test('P307 safe, read-only uncertain cohort examples',()=>{
  assert.ok(ui.includes("showGapExamples('Chưa đủ chắc chắn ở cả hai: ',topicShifts.unresolvedExamples)"));
  for(const marker of ['qa307','positron-p51307-both-uncertain-before-1920x1080-real.png','positron-p51307-both-uncertain-after-1920x1080-real.png'])assert.ok(qa.includes(marker),marker);
 });
+
+// P307 visual regression: expanded cohort names must not hide under the sticky CTA.
+test('P307 reserves scroll space and checks sticky confirm occlusion in Electron audit',()=>{
+ const css=fs.readFileSync('renderer/positron-intelligence.css','utf8');
+ const qa=fs.readFileSync('scripts/positron-20-extension.cjs','utf8');
+ assert.ok(css.includes('padding-bottom:110px'));
+ assert.ok(css.includes('#poAIConfidenceGapExamples[open]'));
+ assert.ok(qa.includes('notCoveredByConfirm:observed307.aboveConfirm'));
+ assert.ok(qa.includes("scrollIntoView({block:'center'"));
+});
