@@ -6492,6 +6492,28 @@ async function runTwenty(page){
  // The history fixture now mixes QA Channel and long-title channels; searching
  // "qa channel" returns only one row. Exercise a shared actual token instead.
  // Keep the two-result requirement to test ArrowDown/ArrowUp navigation.
+
+ // P298 regression: P216 randomly chosen session history can contain only special,
+ // non-"channel" names. Seed through the REAL discovery action while playback is
+ // already stubbed, rather than deleting the two-result/keyboard assertions.
+ await page.evaluate(()=>{
+  const countMatching=()=>[...document.querySelectorAll('#poRandomHistoryList .po-random-history-item')]
+   .filter(el=>el.textContent.toLowerCase().includes('channel')).length;
+  if(countMatching()>=2)return;
+  const button=document.getElementById('poNextRandomChannel'),nativeRandom=Math.random;
+  let explicitSeedClicks=0;
+  try{
+   Math.random=()=>0;
+   for(let attempts=0;attempts<24&&countMatching()<2;attempts++){
+    button.click();explicitSeedClicks++;
+   }
+  }finally{
+   Math.random=nativeRandom;
+  }
+  // These clicks are deliberate test setup, not search-triggered autoplay.
+  window.__p216ExplicitFixtureClicks=explicitSeedClicks;
+  window.__p216Played.length=0;
+ });
  const available216=await page.evaluate(()=>[...document.querySelectorAll('#poRandomHistoryList .po-random-history-item')]
   .filter(el=>el.textContent.toLowerCase().includes('channel')).length);
  assert.ok(available216>=2,'P216 needs two real history entries sharing the search token');

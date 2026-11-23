@@ -2644,3 +2644,13 @@ test('P5.1.224 mirrors local XMLTV import feedback to active EPG with aria-live 
  assert.ok(wf.includes('test -s positron-evidence/p5-20-rounds/positron-p51224-epg-feedback-after-1920x1080-real.png'));
  assert.ok(wf.includes(currentReleaseTag()));
 });
+
+test('P216 native search QA seeds real history entries deterministically if random discovery lacks shared tokens',()=>{
+ const s=read('scripts/positron-20-extension.cjs');
+ assert.ok(s.includes('window.__p216ExplicitFixtureClicks=explicitSeedClicks'));
+ assert.ok(s.includes("Math.random=()=>0"));
+ assert.ok(s.includes('Math.random=nativeRandom'));
+ assert.ok(s.includes("button.click();explicitSeedClicks++"));
+ assert.ok(s.includes("window.__p216Played.length=0"));
+ assert.ok(s.includes("assert.ok(available216>=2,'P216 needs two real history entries sharing the search token')"));
+});
