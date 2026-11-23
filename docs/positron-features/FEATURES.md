@@ -7,15 +7,28 @@ Trang này được tạo tự động từ GitHub Releases và ảnh kiểm th�
 [Mở WEBSITE changelog tương tác](https://raw.githack.com/trisanghy/open-iptv-pro/Positron/docs/positron-features/index.html) · [Giao diện HTML trong repository](index.html) · [Các bản phát hành](https://github.com/trisanghy/open-iptv-pro/releases) · [Nhật ký Git tiếng Việt](LOG_GIT_TIENG_VIET.md) · [Quy tắc ưu tiên tính năng](../../POSITRON_FEATURE_RULES.md)
 
 <details>
-<summary><strong>P5.1.279</strong> · giữ trạng thái mở thư mục con khi WatchFlow render lại · CHƯA CÓ BẢN PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.280</strong> · hàng đợi dạy AI không lặp và khôi phục bỏ qua · CHƯA CÓ BẢN PHÁT HÀNH · TÍNH NĂNG</summary>
 
-**Ứng dụng:** 4.23.364 · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
+**Ứng dụng:** 4.23.365 · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
 
-Feature priority: BLOCKER_FIX — CI không thể build bản phát hành khi kiểm thử P272 đã lỗi sau P278, đồng thời danh sách con đang mở bị đóng lúc dạy AI và render lại, khiến người dùng không xem hết dữ liệu. Feature class: AI
+Feature priority: NEW — Dạy AI nhanh chuyển qua hơn năm kênh chưa phân loại sau mỗi lần Bỏ qua; giữ danh sách bỏ qua chỉ trong phiên, tránh xuất hiện lại kênh cũ, cho phép Xem lại toàn bộ kênh đã bỏ qua. Xếp hạng vẫn dựa trên độ chưa chắc chắn của Naive Bayes và quyền người dùng tự gán nhãn. Feature class: AI
 
 *Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
 
-[Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/tree/Positron) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/1f5ba9fa6c5164fdd0655a2ff8d36337b24c1da6)
+[Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/tree/Positron) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/ba5cd38ab8378a6c2712d06ca962c21579527d43)
+
+</details>
+
+<details>
+<summary><strong>P5.1.279</strong> · Giữ thư mục con mở khi AI tự render / Electron 4.23.364 · CHƯA CÓ BẢN PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+
+**Ứng dụng:** Chưa xác minh · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
+
+Lỗi đã sửa: trạng thái chi tiết danh sách chưa phân loại được khôi phục khi giao diện render lại, không quét lại EPG, không phát kênh hoặc sửa playlist. Evidence: GitHub Actions 45101613049 test/capture/build thành công; ảnh Electron thật trước/sau đã mở xem trong đợt tiếp nối 23/11/2026.
+
+*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+
+[Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
 
 </details>
 
