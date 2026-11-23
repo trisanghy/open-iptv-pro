@@ -10839,7 +10839,9 @@ async function runTwenty(page){
    current:window.IPTVState.getCurrent()?.id||'',
    overflow:document.documentElement.scrollWidth>innerWidth+3};
  });
- const qa304={expanded:observed304.open,clearSummary:observed304.label.includes('AI kiểm tra đổi chủ đề'),
+ const qa304={expanded:observed304.open,
+  clearSummary:observed304.label.includes('AI kiểm tra đổi chủ đề')
+   ||observed304.label.includes('AI chưa đủ dữ liệu đối chiếu chủ đề'),
   saysConfident:observed304.label.includes('đủ chắc chắn')||observed304.label.includes('chưa đủ dữ liệu'),
   explainsModelNotPlaylist:observed304.text.includes('playlist')||observed304.text.includes('Chưa có kênh'),
   visible:observed304.visible,
