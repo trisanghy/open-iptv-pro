@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.360",
-  "description": "Positron P5.1.275: Chỉ mục EPG thông minh và quét lại thủ công",
+  "version": "4.23.361",
+  "description": "Positron P5.1.276: Quản lý ba mô hình WatchFlow và xóa an toàn",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

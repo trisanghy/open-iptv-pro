@@ -49,6 +49,58 @@
  const clear=d.createElement('button');clear.type='button';clear.id='poAIReset';
  clear.textContent='Xóa dữ liệu học';clear.title='Xóa các trọng số học máy lưu ở thiết bị này';
  controls.append(checkLabel,clear);
+ // P276: Three built-in, locally learned algorithms (no external model download).
+ const modelManager=d.createElement('details');modelManager.id='poAIModelManager';modelManager.className='po-ai-model-manager';
+ modelManager.open=true;
+ const modelToggle=d.createElement('summary');modelToggle.textContent='Mô hình AI trên máy';
+ const modelRows=d.createElement('div');modelRows.className='po-ai-model-rows';modelRows.id='poAIModelRows';
+ const modelStatus=d.createElement('p');modelStatus.className='po-ai-model-status';modelStatus.id='poAIModelStatus';
+ modelStatus.setAttribute('role','status');modelStatus.setAttribute('aria-live','polite');
+ const modelHint=d.createElement('small');modelHint.textContent='Tiêu chuẩn và Smart tích hợp sẵn, không cần tải. Xóa trọng số học không xóa nguồn, kênh hoặc EPG.';
+ modelManager.append(modelToggle,modelRows,modelStatus,modelHint);
+ let pendingModel='',pendingAt=0;
+ const modelBytes=value=>new TextEncoder().encode(JSON.stringify(value||{})).byteLength;
+ const learnedInventory=()=>[
+  {id:'preference',name:'Tiêu chuẩn · Gợi ý sở thích (Logistic ML)',count:model.observations,unit:'phản hồi',data:model},
+  {id:'category',name:'Smart · Phân loại chủ đề (Naive Bayes)',count:categoryModel.examples,unit:'nhãn',data:categoryModel},
+  {id:'explore',name:'Smart · Khám phá (UCB)',count:Object.values(bandit).reduce((n,v)=>n+Math.max(0,Number(v?.visits??v)||0),0),unit:'quan sát',data:bandit}
+ ];
+ const confirmDelete=(key,button,action,label)=>{
+  const now=Date.now();
+  if(pendingModel!==key||now-pendingAt>12000){
+   pendingModel=key;pendingAt=now;button.textContent='Xác nhận xóa';
+   modelStatus.textContent='Bấm “Xác nhận xóa” lần nữa trong 12 giây để xóa '+label+'.';return;
+  }
+  pendingModel='';pendingAt=0;action();
+  const stored=save();render();
+  modelStatus.textContent=stored?'Đã xóa '+label+'. Playlist, EPG và Favorites vẫn giữ nguyên.':
+   'Đã xóa trong phiên nhưng không lưu được thay đổi; kiểm tra quyền lưu.';
+  state()?.toast?.(modelStatus.textContent,stored?'info':'warn');
+ };
+ function renderModelManager(){
+  const models=learnedInventory();modelRows.replaceChildren();
+  for(const item of models){
+   const row=d.createElement('div');row.className='po-ai-model-row';
+   const left=d.createElement('div');left.className='po-ai-model-copy';
+   const title=d.createElement('strong');title.textContent=item.name;
+   const subtitle=d.createElement('small');
+   subtitle.textContent=item.count+' '+item.unit+' · '+modelBytes(item.data)+' byte · '+(item.count?'Đã có dữ liệu học':'Chưa học');
+   left.append(title,subtitle);
+   const remove=d.createElement('button');remove.type='button';remove.dataset.modelDelete=item.id;
+   remove.textContent=pendingModel===item.id&&Date.now()-pendingAt<=12000?'Xác nhận xóa':'Xóa mô hình';
+   remove.disabled=!item.count;remove.title=item.count?'Xóa trọng số riêng của mô hình này':'Chưa có dữ liệu để xóa';
+   remove.addEventListener('click',()=>{
+    if(!item.count)return;
+    confirmDelete(item.id,remove,()=>{
+     if(item.id==='preference'){model=core.emptyModel();active=null;notified.clear();}
+     if(item.id==='category')categoryModel=core.emptyCategoryModel();
+     if(item.id==='explore')bandit={};
+    },item.name);
+   });
+   row.append(left,remove);modelRows.append(row);
+  }
+  modelToggle.textContent='Mô hình AI trên máy · '+models.length+' thuật toán · '+models.reduce((n,x)=>n+modelBytes(x.data),0)+' byte';
+ }
  const modeBar=d.createElement('div');modeBar.className='po-ai-modes';
  const channelsMode=d.createElement('button');channelsMode.type='button';channelsMode.id='poAIChannels';
  channelsMode.textContent='Kênh hợp gu';channelsMode.setAttribute('aria-pressed','true');
@@ -84,7 +136,7 @@
  const list=d.createElement('div');list.id='poAICards';list.className='po-ai-cards';
  const privacy=d.createElement('p');privacy.className='po-ai-privacy';
  privacy.textContent='Mặc định KHÔNG học. Khi bật: chỉ lưu trọng số sở thích trong máy; học sau ≥35 giây phát có hình/tiếng, không tải stream hay lịch sử lên mạng. Tra cứu web chỉ gửi tên kênh, không gửi playlist/URL/hành vi. Bạn có thể xóa mô hình.';
- area.append(title,controls,alertRow,modeBar,summary,list,privacy);
+ area.append(title,controls,modelManager,alertRow,modeBar,summary,list,privacy);
  const extras=[panel.querySelector('.po-watchflow-modes'),panel.querySelector('.po-watchflow-subhead'),
   byId('poWatchFlowResults'),panel.querySelector('.po-watchflow-note')].filter(Boolean);
  const originals=[byId('poFlowPlusResults'),byId('poWatchLaterSearchRow'),panel.querySelector('.po-flowplus-privacy')].filter(Boolean);
@@ -306,6 +358,7 @@
 
  function render(){
   if(!aiOpen)return;
+  renderModelManager();
   const collection=channels();const profile=profileFor(collection);
   channelsMode.setAttribute('aria-pressed',String(!upcomingOpen&&!planOpen&&!exploreOpen&&!foldersOpen&&!programmesOpen));
   upcomingMode.setAttribute('aria-pressed',String(upcomingOpen));
@@ -446,10 +499,10 @@
   if(aiOpen)render();
  });
  clear.addEventListener('click',()=>{
-  if(!win.confirm('Xóa toàn bộ trọng số học sở thích trên thiết bị này?'))return;
-  model=core.emptyModel();bandit={};categoryModel=core.emptyCategoryModel();active=null;alertEnabled=false;alertCheck.checked=false;
-  notified.clear();save();render();
-  state()?.toast?.('Đã xóa mô hình sở thích cục bộ','info');
+  confirmDelete('all',clear,()=>{
+   model=core.emptyModel();bandit={};categoryModel=core.emptyCategoryModel();active=null;alertEnabled=false;alertCheck.checked=false;
+   notified.clear();
+  },'toàn bộ dữ liệu học AI trên máy');
  });
  // Opt-in, in-app alert only: score actual imported EPG against locally
  // trained preferences, no URLs sent out and never start playback.
@@ -506,6 +559,7 @@
   plan:()=>core.planForYou(channels(),guide(),win.IPTVGuide,model,webValid()),
   explore:()=>enabled?core.exploreWithBandit(channels(),guide(),win.IPTVGuide,model,profileFor(channels()),bandit):[],
   categoryProfile:()=>({enabled,examples:categoryModel.examples}),
+  modelInventory:()=>learnedInventory().map(({id,count})=>({id,count})),
   epgFolders:()=>core.epgFolders(channels(),guide(),win.IPTVGuide),
   programmeFolders:()=>indexed('programmes',channels()),
   scanStats:()=>({folderScans:indexCache.folderScans,programmeScans:indexCache.programmeScans}),

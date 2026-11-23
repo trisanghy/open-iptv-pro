@@ -89,3 +89,18 @@ html[data-positron="true"].po-horizon body #poWatchFlowPanel.po-watchflow-panel:
 #poWatchFlowPanel .po-ai-scan-tools button{min-height:34px;border:1px solid #4a8f79;border-radius:8px;background:#1b5148;color:#effff8;padding:6px 12px;font:inherit;font-size:12px;font-weight:700;cursor:pointer}
 #poWatchFlowPanel .po-ai-scan-tools button:focus-visible{outline:2px solid #8de2c5;outline-offset:2px}
 #poWatchFlowPanel .po-ai-scan-tools small{font-size:11px;color:#9fcec0;flex:1}
+
+/* P276: three learned algorithms, independently removable. */
+#poWatchFlowPanel .po-ai-model-manager{border:1px solid #3e6966;border-radius:11px;background:#10282f;padding:7px 10px;color:#d6f6e8;min-width:0}
+#poWatchFlowPanel .po-ai-model-manager>summary{cursor:pointer;font-weight:700;font-size:12px;padding:6px 4px}
+#poWatchFlowPanel .po-ai-model-rows{display:grid;gap:6px;padding:7px 0}
+#poWatchFlowPanel .po-ai-model-row{display:flex;gap:10px;align-items:center;justify-content:space-between;border:1px solid #31565a;border-radius:8px;background:#15343b;padding:8px 9px;min-width:0}
+#poWatchFlowPanel .po-ai-model-copy{display:grid;gap:3px;min-width:0}
+#poWatchFlowPanel .po-ai-model-copy strong{font-size:12px;line-height:1.4;color:#e8fff6}
+#poWatchFlowPanel .po-ai-model-copy small,#poWatchFlowPanel .po-ai-model-manager>small{font-size:11px;line-height:1.35;color:#a8cbd1;overflow-wrap:anywhere}
+#poWatchFlowPanel .po-ai-model-row button{flex:0 0 auto;min-height:34px;border:1px solid #5a9786;border-radius:8px;background:#20534b;color:#f1fff8;padding:6px 9px;cursor:pointer;font-size:11px;font-weight:700}
+#poWatchFlowPanel .po-ai-model-row button:disabled{opacity:.65;cursor:not-allowed}
+#poWatchFlowPanel .po-ai-model-row button:focus-visible,#poWatchFlowPanel .po-ai-model-manager>summary:focus-visible{outline:2px solid #8de2c5;outline-offset:2px}
+#poWatchFlowPanel .po-ai-model-status{font-size:11px;color:#a5e8d6;margin:3px 0}
+#poWatchFlowPanel #poAIReset{cursor:pointer;min-height:34px}
+@media(max-width:560px){#poWatchFlowPanel .po-ai-model-row{align-items:flex-start;flex-wrap:wrap}#poWatchFlowPanel .po-ai-model-row button{width:100%}}

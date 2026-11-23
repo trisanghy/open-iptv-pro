@@ -356,3 +356,18 @@ test('P275 chỉ mục EPG tái sử dụng cùng dữ liệu và có quét lạ
  assert.ok(qa.includes('positron-p51275-index-before-1920x1080-real.png'));
  assert.ok(qa.includes('positron-p51275-index-after-1920x1080-real.png'));
 });
+
+test('P276 WatchFlow quản lý 3 mô hình có trọng số và xóa riêng an toàn',()=>{
+ const ui=fs.readFileSync('renderer/positron-intelligence.js','utf8');
+ const css=fs.readFileSync('renderer/positron-intelligence.css','utf8');
+ const qa=fs.readFileSync('scripts/positron-20-extension.cjs','utf8');
+ for(const s of ['poAIModelManager','poAIModelRows','poAIModelStatus','learnedInventory',
+  'Tiêu chuẩn · Gợi ý sở thích (Logistic ML)','Smart · Phân loại chủ đề (Naive Bayes)',
+  'Smart · Khám phá (UCB)',"confirmDelete('all'",
+  "if(item.id==='category')categoryModel=core.emptyCategoryModel()",
+  'modelInventory:()=>learnedInventory()'])assert.ok(ui.includes(s),s);
+ assert.ok(!ui.includes("win.confirm('Xóa toàn bộ trọng số"));
+ assert.ok(css.includes('.po-ai-model-row button:focus-visible'));
+ for(const name of ['positron-p51276-model-manager-before-1920x1080-real.png',
+  'positron-p51276-model-manager-after-1920x1080-real.png'])assert.ok(qa.includes(name));
+});

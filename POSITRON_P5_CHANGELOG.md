@@ -1,5 +1,14 @@
 # Positron P5 Changelog
 
+## P5.1.276 — Quản lý mô hình học AI và xóa riêng / Electron 4.23.361
+- Feature priority: NEW — Bảng quản lý giúp kiểm tra ba mô hình học thực Logistic, Naive Bayes, UCB cùng dữ liệu/dung lượng từng mô hình và xóa riêng, không đụng đến playlist, guide hoặc mô hình học còn lại.
+- Feature class: AI
+- Evidence: Kiểm thử Node xác nhận giao diện có mô hình thật và xóa hai bước không phụ thuộc hộp thoại native; QA Electron 1920×1080 cần chụp ảnh trước/sau, kiểm tra phản hồi Hợp gu làm tăng số quan sát, xóa lần thứ hai đưa về 0 và giữ nguyên bố cục. Chỉ coi đạt sau khi CI và ảnh được kiểm chứng.
+- User action: TV → WatchFlow → ✦ AI hợp gu → Mô hình AI trên máy → xem Tiêu chuẩn/Smart và trọng số riêng; nhấn Xóa mô hình → Xác nhận xóa. Các thuật toán này tích hợp sẵn, không cần tải.
+- Privacy: Chỉ thay đổi trọng số học trên máy sau thao tác; không tự gửi URL M3U, nội dung EPG hoặc hành vi lên mạng; playlist, EPG và Favorites giữ nguyên.
+- Electron screenshot: positron-p51276-model-manager-before-1920x1080-real.png / positron-p51276-model-manager-after-1920x1080-real.png.
+- Trạng thái: CANDIDATE, Actions-only; GitHub Releases Stable-only.
+
 
 
 ## P5.1.275 — Chỉ mục EPG tái sử dụng và chủ động quét lại / Electron 4.23.360
