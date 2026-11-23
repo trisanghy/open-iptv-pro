@@ -82,6 +82,7 @@ jobs:
           if-no-files-found: error
 
   publish:
+    if: false # published immutable Stable version; QA artifacts only
     needs: [tests, build]
     runs-on: ubuntu-latest
     permissions:
