@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-23T06:33:45.900366+00:00",
+  "generatedAt": "2026-11-23T06:35:13.479741+00:00",
   "repository": "trisanghy/open-iptv-pro",
   "branch": "Positron",
   "versions": [
@@ -8,7 +8,7 @@
       "version": "P5.1.290",
       "appVersion": "4.23.375",
       "title": "nút xác nhận khôi phục AI luôn nhìn thấy khi mở dự báo",
-      "description": "Feature priority: BLOCKER_FIX — Nút xác nhận khôi phục dữ liệu mô hình AI biến mất khỏi vùng nhìn thấy khi mở dự báo Naive Bayes; chặn thao tác đồng ý có chủ đích và gây nhầm lẫn trạng thái dữ liệu.\\n- Feature class: AI\\n- User action: TV → WatchFlow → AI hợp gu → Quản lý mô hình → nhập bản sao → mở chi tiết dự báo, sau đó xác nhận.\\n- Evidence: Đo geometry của nút trước/sau trong cùng Electron thật khi mục dự báo mở rộng, xác minh nút nằm trong panel và trạng thái dữ liệu ML/playlist/phát video bất biến trước khi nhấn.\\n- Privacy: Chỉ tính toán và hiển thị cục bộ; không gửi URL stream, M3U hoặc lịch sử lên mạng.\\n- Electron screenshot: positron-p51290",
+      "description": "Feature priority: BLOCKER_FIX — Nút xác nhận khôi phục dữ liệu mô hình AI biến mất khỏi vùng nhìn thấy khi mở dự báo Naive Bayes; chặn thao tác đồng ý có chủ đích và gây nhầm lẫn trạng thái dữ liệu. Feature class: AI",
       "kind": "fix",
       "status": "candidate",
       "published": "",
@@ -1456,7 +1456,7 @@
       "commit": "",
       "url": "https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md",
       "assets": [],
-      "image": "screenshots/positron-p51194-dvr-start-after-after-1920x1080-real.png"
+      "image": "screenshots/positron-p51194-dvr-start-after-before-1920x1080-real.png"
     },
     {
       "number": 193,

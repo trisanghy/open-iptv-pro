@@ -6,7 +6,7 @@ Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA 
 
 **Ứng dụng:** 4.23.375 · **Trạng thái:** Chưa có bản phát hành
 
-Feature priority: BLOCKER_FIX — Nút xác nhận khôi phục dữ liệu mô hình AI biến mất khỏi vùng nhìn thấy khi mở dự báo Naive Bayes; chặn thao tác đồng ý có chủ đích và gây nhầm lẫn trạng thái dữ liệu.\n- Feature class: AI\n- User action: TV → WatchFlow → AI hợp gu → Quản lý mô hình → nhập bản sao → mở chi tiết dự báo, sau đó xác nhận.\n- Evidence: Đo geometry của nút trước/sau trong cùng Electron thật khi mục dự báo mở rộng, xác minh nút nằm trong panel và trạng thái dữ liệu ML/playlist/phát video bất biến trước khi nhấn.\n- Privacy: Chỉ tính toán và hiển thị cục bộ; không gửi URL stream, M3U hoặc lịch sử lên mạng.\n- Electron screenshot: positron-p51290
+Feature priority: BLOCKER_FIX — Nút xác nhận khôi phục dữ liệu mô hình AI biến mất khỏi vùng nhìn thấy khi mở dự báo Naive Bayes; chặn thao tác đồng ý có chủ đích và gây nhầm lẫn trạng thái dữ liệu. Feature class: AI
 
 [Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/61cc1e2962adc2e5b5ad92d08de3b54665173e0d)
 [Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)

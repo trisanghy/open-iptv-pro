@@ -11,7 +11,7 @@ Trang này được tạo tự động từ GitHub Releases và ảnh kiểm th�
 
 **Ứng dụng:** 4.23.375 · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
 
-Feature priority: BLOCKER_FIX — Nút xác nhận khôi phục dữ liệu mô hình AI biến mất khỏi vùng nhìn thấy khi mở dự báo Naive Bayes; chặn thao tác đồng ý có chủ đích và gây nhầm lẫn trạng thái dữ liệu.\n- Feature class: AI\n- User action: TV → WatchFlow → AI hợp gu → Quản lý mô hình → nhập bản sao → mở chi tiết dự báo, sau đó xác nhận.\n- Evidence: Đo geometry của nút trước/sau trong cùng Electron thật khi mục dự báo mở rộng, xác minh nút nằm trong panel và trạng thái dữ liệu ML/playlist/phát video bất biến trước khi nhấn.\n- Privacy: Chỉ tính toán và hiển thị cục bộ; không gửi URL stream, M3U hoặc lịch sử lên mạng.\n- Electron screenshot: positron-p51290
+Feature priority: BLOCKER_FIX — Nút xác nhận khôi phục dữ liệu mô hình AI biến mất khỏi vùng nhìn thấy khi mở dự báo Naive Bayes; chặn thao tác đồng ý có chủ đích và gây nhầm lẫn trạng thái dữ liệu. Feature class: AI
 
 *Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
 
@@ -1261,7 +1261,7 @@ Feature priority: NEW — Ảnh P5.1.194 Electron thật cho thấy ô Tên chư
 
 Feature priority: NEW — Ảnh Electron P5.1.193 thực ở 1920×1080 cho thấy lịch ghi có các nút chọn thời lượng nhưng trường Bắt đầu vẫn cần nhập ngày giờ thủ công. Bổ sung chọn giờ bắt đầu từ hiện tại để giảm thao tác hẹn ghi, không gửi lịch khi chưa xác nhận. Tính năng: dưới giờ Bắt đầu có ba nút “Sau 5 phút”, “Sau 15 phút”, “Sau 30 phút” ở EPG và biểu mẫu ghi nhanh TV. Nhấn chỉ điền Bắt đầu dựa trên phút hiện tại, đồng thời dời Kết thúc để giữ thời lượng cũ nếu hợp lệ (1–480 phút), hoặc 60 phút khi thiếu/không hợp lệ. Tự cập nhật nhãn thời lượng và trạng thái preset P5.1.192/193.
 
-![Ảnh chụp Electron thật P5.1.194](./screenshots/positron-p51194-dvr-start-after-after-1920x1080-real.png)
+![Ảnh chụp Electron thật P5.1.194](./screenshots/positron-p51194-dvr-start-after-before-1920x1080-real.png)
 
 [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
 
