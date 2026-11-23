@@ -9829,8 +9829,10 @@ async function runTwenty(page){
 
 
  // P284: real Electron click starts local JSON export and does not change models.
- await page.locator('#poAIReset').click();
- await page.locator('#poAIBackup').scrollIntoViewIfNeeded();
+ console.log('P284 Electron backup QA entering model-manager flow');
+ await page.locator('#poAIReset').click({timeout:8000});
+ console.log('P284 Electron backup manager opened');
+ await page.locator('#poAIBackup').scrollIntoViewIfNeeded({timeout:8000});
  const baseline284=await page.evaluate(()=>({
   visible:!document.getElementById('poAIModelManager')?.hidden,
   enabled:!document.getElementById('poAIBackup')?.disabled,
@@ -9848,7 +9850,9 @@ async function runTwenty(page){
   };
   window.__p284Restore=()=>HTMLAnchorElement.prototype.click=native;
  });
- await page.locator('#poAIBackup').click();
+ console.log('P284 Electron backup clicking local export');
+ await page.locator('#poAIBackup').click({timeout:8000});
+ console.log('P284 Electron backup click returned');
  const result284=await page.evaluate(()=>{
   const e=document.getElementById('poAIModelStatus'),r=e?.getBoundingClientRect(),
    panel=document.getElementById('poWatchFlowPanel')?.getBoundingClientRect(),

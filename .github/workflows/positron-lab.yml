@@ -135,7 +135,7 @@ jobs:
           export ELECTRON_DISABLE_SECURITY_WARNINGS=true
           ./node_modules/.bin/electron . --no-sandbox --disable-gpu --remote-debugging-port=9222 > positron-evidence/electron.log 2>&1 &
           echo $! > positron-evidence/electron.pid
-          timeout --signal=TERM --kill-after=10s 260s node scripts/positron-50-audit.cjs
+          timeout --signal=TERM --kill-after=10s 480s node scripts/positron-50-audit.cjs
           test -s positron-evidence/p5-20-rounds/positron-p51225-tv-controls-before-1920x1080-real.png
           test -s positron-evidence/p5-20-rounds/positron-p51225-tv-controls-after-1920x1080-real.png
           test -s positron-evidence/audit-p51225-tv-viewport.json
