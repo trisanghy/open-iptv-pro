@@ -1501,6 +1501,8 @@ test('P320 primary AI recommendation actions precede optional ML explanation in 
  const explanation=card.indexOf('if(preferenceDetails)card.append(preferenceDetails);');
  assert.ok(controls>0&&explanation>controls,'Play/feedback must be before the optional expanded explanation');
  assert.ok(css.includes('.po-ai-card>.po-ai-actions + .po-ai-preference-explain'));
+ assert.ok(css.includes('.po-ai-card>.po-ai-actions{position:relative;z-index:1}'),
+  'primary actions remain above the expanded explanation in the stacking order');
  const qa=fs.readFileSync('scripts/positron-20-extension.cjs','utf8');
  for(const word of ['qa320','positron-p51320-ai-actions-before-1920x1080-real.png',
   'positron-p51320-ai-actions-after-1920x1080-real.png'])assert.ok(qa.includes(word),word);
