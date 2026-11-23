@@ -50,14 +50,16 @@
   channel=ch;source=url||ch?.url;
   $('castChannel').textContent=(ch?.name||'')+' · '+(ch?.group||'');
   $('castUrl').value='';$('castCopy').disabled=true;
-  // AirPlay device selection is owned by WebKit, not the desktop Cast backend.
-  if(isAppleMobile()&&!hasNative){
-   if(requestAirPlayPicker())return;
-   showMobileAirPlayGuide();return;
-  }
+  // Safari and Chrome on iPhone/iPad share the same three-tab Cast dialog.
+  // Native AirPlay is only offered after the user opens the AirPlay tab.
   if(!hasNative){
+   if(window.OpenIPTVWebCastV2?.open){
+    window.OpenIPTVWebCastV2.open({channel:ch,source});
+    return;
+   }
    if(window.OpenIPTVWebCast?.open){window.OpenIPTVWebCast.open(ch,source);return;}
-   if(requestAirPlayPicker())return;showBrowserCastGuide();return;
+   // Do not launch AirPlay automatically if Cast V2 failed to load.
+   showBrowserCastGuide();return;
   }
   $('castModal').dataset.airplayMobile='false';
   $('castModal').classList.remove('hidden');
