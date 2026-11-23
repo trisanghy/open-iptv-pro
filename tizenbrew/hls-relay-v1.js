@@ -19,8 +19,8 @@ var net=require('net');
 var crypto=require('crypto');
 var Url=require('url');
 
-var PORT=17869;
-var SERVICE_VERSION='0.1.42';
+var PORT=17870;
+var SERVICE_VERSION='0.1.43';
 // Some IPTV origins reject Samsung/Tizen (403) but serve the same URL to a
 // desktop browser. Retry once as Chrome and retain the winning UA per session.
 var CHROME_USER_AGENT='Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36';
@@ -91,33 +91,55 @@ function prune(){
   while(ids.length>=MAX_SESSIONS){delete sessions[ids.shift()];}
  }
 }
-function addResource(session,source){
+function addResource(session,source,isPlaylist){
+ var ids=session.resourceIds||(session.resourceIds=Object.create(null));
+ var playlists=session.playlists||(session.playlists=Object.create(null));
+ if(own(ids,source)){
+  if(isPlaylist)playlists[ids[source]]=true;
+  return 'http://127.0.0.1:'+PORT+'/r/'+session.id+'/'+ids[source];
+ }
  if(session.resources.length>=MAX_RESOURCES)return null;
  var parsed=inspectRemote(source);
  if(!parsed)return null;
  var id=session.resources.length;
- session.resources.push(source);
+ session.resources.push(source);ids[source]=id;
+ if(isPlaylist)playlists[id]=true;
  return 'http://127.0.0.1:'+PORT+'/r/'+session.id+'/'+id;
 }
 function rewritePlaylist(raw,base,session){
  // Includes HLS variant manifests, audio renditions, AES key, init maps.
+ var nextIsPlaylist=false;
  return String(raw).replace(/\r/g,'').split('\n').map(function(line){
   if(!line||!line.trim())return line;
   if(line.charAt(0)==='#'){
+   if(/^#EXT-X-STREAM-INF:/.test(line))nextIsPlaylist=true;
+   var uriIsPlaylist=/^#EXT-X-(?:I-FRAME-STREAM-INF|MEDIA|RENDITION-REPORT):/.test(line);
    return line.replace(/URI=(["'])([^"']+)\1/g,function(full,quote,src){
-    var abs=Url.resolve(base,src),local=addResource(session,abs);
+    var abs=Url.resolve(base,src),local=addResource(session,abs,uriIsPlaylist);
     return local?'URI='+quote+local+quote:full;
    });
   }
   var src=line.trim(),resolved=Url.resolve(base,src);
-  return addResource(session,resolved)||line;
+  var local=addResource(session,resolved,nextIsPlaylist);
+  nextIsPlaylist=false;
+  return local||line;
  }).join('\n');
 }
-function respondUpstream(source,req,res,session,depth,chromeRetried){
+function usablePlaylist(text){
+ // A refresh can return an empty window, an HTML error page or a partial
+ // playlist with no segment. hls.js treats those as parsing failures.
+ if(!/^#EXTM3U[ \t]*(?:\n|$)/.test(text))return false;
+ var media=/^#EXTINF:[^\n]+\n(?:[ \t]*#.*\n)*[ \t]*[^# \t\n][^\n]*/m.test(text)||
+  /^#EXT-X-PART:[^\n]*URI="[^"]+"/m.test(text);
+ if(media)return /^#EXT-X-TARGETDURATION:[ \t]*[1-9]\d*[ \t]*$/m.test(text);
+ return /^#EXT-X-STREAM-INF:[^\n]+\n(?:[ \t]*#.*\n)*[ \t]*[^# \t\n][^\n]*/m.test(text);
+}
+function respondUpstream(source,req,res,session,depth,chromeRetried,playlistRetries,expectsPlaylist){
  var parsed=inspectRemote(source);
  if(!parsed){json(res,400,{error:'Nguồn không hợp lệ hoặc không được phép.'});return;}
  if(depth>4){json(res,502,{error:'Quá nhiều chuyển hướng nguồn.'});return;}
  dns.lookup(parsed.hostname,function(err,address){
+  if(res.finished||res.destroyed)return;
   if(err||!safeIp(String(address||''))){json(res,502,{error:'Không thể xác minh địa chỉ máy chủ phát.'});return;}
   var chromeAt=chromeHosts[parsed.hostname]||0;
   var preferChrome=chromeAt&&Date.now()-chromeAt<60*60*1000;
@@ -130,18 +152,20 @@ function respondUpstream(source,req,res,session,depth,chromeRetried){
    rejectUnauthorized:true,timeout:18000,
    agent:parsed.protocol==='https:'?httpsAgent:httpAgent
   };
+  var receivedResponse=false;
   var upstream=(parsed.protocol==='https:'?https:http).request(options,function(remote){
+   receivedResponse=true;
    if(remote.statusCode>=300&&remote.statusCode<400&&remote.headers.location){
     remote.resume();
     var target=Url.resolve(source,remote.headers.location);
-    respondUpstream(target,req,res,session,depth+1,chromeRetried);return;
+    respondUpstream(target,req,res,session,depth+1,chromeRetried,playlistRetries,expectsPlaylist);return;
    }
    if(remote.statusCode<200||remote.statusCode>=300){
     if(remote.statusCode===403&&!chromeRetried&&headers['User-Agent']!==CHROME_USER_AGENT){
      recordDiagnostic(session,parsed,remote);
      remote.resume();
      session.userAgent=CHROME_USER_AGENT;
-     respondUpstream(source,req,res,session,depth,true);return;
+     respondUpstream(source,req,res,session,depth,true,playlistRetries,expectsPlaylist);return;
     }
     recordDiagnostic(session,parsed,remote);
     if(remote.statusCode===403&&headers['User-Agent']===CHROME_USER_AGENT)
@@ -152,10 +176,27 @@ function respondUpstream(source,req,res,session,depth,chromeRetried){
    }
    if(headers['User-Agent']===CHROME_USER_AGENT)chromeHosts[parsed.hostname]=Date.now();
    var contentType=String(remote.headers['content-type']||'');
-   var isPlaylist=/mpegurl|vnd\.apple|x-mpegurl/i.test(contentType)||
+   var isPlaylist=expectsPlaylist||/mpegurl|vnd\.apple|x-mpegurl/i.test(contentType)||
     /\.m3u8?(?:[?#]|$)/i.test(source);
    var size=0,parts=[],done=false;
-   // For unknown extension, sample first chunk to recognize #EXTM3U.
+   function retryInvalidPlaylist(){
+    if(done)return;done=true;
+    if(playlistRetries<2){
+     setTimeout(function(){
+      if(!res.finished&&!res.destroyed)
+       respondUpstream(source,req,res,session,depth,chromeRetried,playlistRetries+1,true);
+     },500*(playlistRetries+1));
+    }else json(res,502,{error:'Máy chủ phát trả playlist HLS rỗng hoặc không hợp lệ.'});
+   }
+   function onUpstreamInterrupted(){
+    if(res.finished||res.destroyed)return;
+    if(isPlaylist)retryInvalidPlaylist();
+    else if(!res.headersSent){done=true;json(res,502,{error:'Dữ liệu phát bị gián đoạn.'});}
+    else res.end();
+   }
+   remote.on('error',onUpstreamInterrupted);
+   remote.on('aborted',onUpstreamInterrupted);
+   // For unknown extension, sample the first chunk to recognize #EXTM3U.
    function rejectTooLarge(limit){
     if(done)return true;
     if(size<=limit)return false;
@@ -176,30 +217,36 @@ function respondUpstream(source,req,res,session,depth,chromeRetried){
      res.write(chunk);
     });
     remote.on('end',function(){res.end();});
-    remote.on('error',function(){res.end();});
    }
    remote.once('data',function(first){
     size=first.length;
-    if(!isPlaylist&&first.toString('utf8',0,Math.min(50,first.length)).indexOf('#EXTM3U')===0)isPlaylist=true;
+    if(!isPlaylist&&/^\uFEFF?#EXTM3U/.test(first.toString('utf8',0,Math.min(50,first.length))))isPlaylist=true;
     if(!isPlaylist){sendStreaming(first);return;}
     parts.push(first);
     if(rejectTooLarge(MAX_PLAYLIST))return;
     remote.on('data',function(chunk){size+=chunk.length;parts.push(chunk);rejectTooLarge(MAX_PLAYLIST);});
     remote.on('end',function(){
-     if(done)return;done=true;
-     var rewritten=rewritePlaylist(Buffer.concat(parts).toString('utf8'),source,session);
+     if(done)return;
+     var playlist=Buffer.concat(parts).toString('utf8').replace(/^\uFEFF/,'').replace(/\r/g,'');
+     if(!usablePlaylist(playlist)){retryInvalidPlaylist();return;}
+     done=true;
+     var rewritten=rewritePlaylist(playlist,source,session);
      res.writeHead(200,{'Content-Type':'application/vnd.apple.mpegurl; charset=utf-8',
        'Cache-Control':'no-store','Access-Control-Expose-Headers':'Content-Type'});
      res.end(rewritten);
     });
    });
    remote.on('end',function(){
-    if(done||size)return;done=true;
+    if(done||size)return;
+    if(isPlaylist){retryInvalidPlaylist();return;}
+    done=true;
     res.writeHead(remote.statusCode,{'Content-Type':contentType||'application/octet-stream','Cache-Control':'no-store'});
     res.end('');
    });
   });
-  upstream.on('error',function(){if(!res.headersSent)json(res,502,{error:'Không kết nối được tới máy chủ phát.'});else res.end();});
+  upstream.on('error',function(){
+   if(!receivedResponse&&!res.finished&&!res.destroyed)json(res,502,{error:'Không kết nối được tới máy chủ phát.'});
+  });
   upstream.setTimeout(18000,function(){upstream.abort();});
   upstream.end();
  });
@@ -274,7 +321,7 @@ function handler(req,res){
    json(res,404,{error:'Phiên phát đã hết hạn.'});return;
   }
   session.last=Date.now();
-  respondUpstream(session.resources[index],req,res,session,0);
+  respondUpstream(session.resources[index],req,res,session,0,false,0,index===0||Boolean(session.playlists&&session.playlists[index]));
   return;
  }
  json(res,404,{error:'Không có đường dẫn này.'});

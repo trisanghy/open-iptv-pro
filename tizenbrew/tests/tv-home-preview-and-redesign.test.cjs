@@ -53,7 +53,7 @@ function setup({failRelay=false}={}){
 async function settle(){for(let i=0;i<15;i++)await Promise.resolve();}
 const c1={id:'vtv1',name:'VTV1',url:'https://tv.example/vtv1.m3u8'};
 const c2={id:'vtv2',name:'VTV2',url:'https://tv.example/vtv2.m3u8'};
-const local='http://127.0.0.1:17869/r/'+'a'.repeat(40)+'/0';
+const local='http://127.0.0.1:17870/r/'+'a'.repeat(40)+'/0';
 test('Home TV layout uses large controls and consistent SVG icons',()=>{
  assert.match(html,/id="previewStage"/);assert.match(html,/id="homePreviewVideo" playsinline muted/);
  assert.match(html,/id="previewStatus"/);assert.match(html,/id="watchBtn"[^>]*><svg/);

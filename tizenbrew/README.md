@@ -1,4 +1,10 @@
-# Open IPTV Pro TV · TizenBrew v0.1.42 (OTA)
+# Open IPTV Pro TV · TizenBrew v0.1.43 (OTA)
+
+## v0.1.43 — Ổn định phát HLS sau khi kênh đã lên hình
+
+- Relay kiểm tra playlist chính và các playlist biến thể. Với phản hồi rỗng, bị ngắt hoặc sai định dạng, relay thử lại tối đa hai lần trước khi báo lỗi về trình phát.
+- Trình phát thử tải lại playlist ngay trên bộ đệm hiện tại khi gặp `levelParsingError` lúc đang xem. Nếu lỗi kéo dài, ứng dụng vẫn dùng cơ chế dự phòng có giới hạn.
+- Relay dùng lại đường dẫn nội bộ của các đoạn video xuất hiện ở nhiều lần cập nhật playlist. Dịch vụ mới dùng cổng loopback `17870` để tránh dùng nhầm tiến trình còn chạy từ bản cũ.
 
 ## v0.1.42 — Thử lại bằng Chrome khi nguồn trả HTTP 403
 

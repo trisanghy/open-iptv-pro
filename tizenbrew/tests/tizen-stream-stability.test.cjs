@@ -7,7 +7,7 @@ const from=html.indexOf('function setPlayerStatus(message){');
 const to=html.indexOf('function resumeLastChannel(){',from);
 assert.ok(from>0&&to>from);
 const source=html.slice(from,to);
-const local='http://127.0.0.1:17869/r/'+'b'.repeat(40)+'/0';
+const local='http://127.0.0.1:17870/r/'+'b'.repeat(40)+'/0';
 const c={id:'vtv3',name:'VTV3',url:'https://private-cdn.example/live.m3u8?token=never-save'};
 async function flush(){for(let i=0;i<30;i++)await Promise.resolve();}
 function setup(storage=new Map()){
@@ -174,4 +174,41 @@ test('The same relay is not restarted every few seconds by premature recovery co
  const token=s.api.current().serial;s.api.playbackReady(token);
  for(const sec of [0,2,4,6,8]){s.advance(1800);s.api.notePlaybackProgress(token,sec);}
  assert.equal(s.api.current().recoveries,1,'5.5s playing is not a sustained 60s recovery');
+});
+
+test('A malformed live refresh retries on the same player after the HLS error event',async()=>{
+ const s=setup(),token=await proveRelay(s);
+ const engine=s.instances.at(-1),count=s.instances.length;
+ const restarts=[];
+ engine.startLoad=(...args)=>restarts.push(args);
+
+ engine.fail('levelParsingError',200);
+ engine.fail('levelParsingError',200);
+ assert.equal(restarts.length,0,'wait for HLS.js to finish handling the fatal error');
+ const first=s.timers.filter(t=>t.ms===750&&!t.cancelled);
+ assert.equal(first.length,1,'duplicate errors share the pending retry');
+ first[0].fn();
+ assert.deepEqual(restarts,[[-1,true]],'skip an initial seek to keep the current position');
+ assert.equal(s.api.current().serial,token);
+ assert.equal(s.instances.length,count);
+ assert.equal(engine.destroyed,undefined);
+
+ engine.fail('levelParsingError',200);
+ const second=s.timers.at(-1);
+ assert.equal(second.ms,1500);
+ second.fn();
+ engine.fail('levelParsingError',200);
+ await flush();
+ assert.equal(s.api.current().recoveries,1,'persistent failures reach bounded fallback');
+});
+
+test('Relay session setup failure switches routes without leaving the TV loading',async()=>{
+ const storage=new Map();
+ await proveRelay(setup(storage));
+ const s=setup(storage);
+ s.env.fetch=()=>Promise.resolve({ok:false,status:400});
+ s.api.play(c);
+ await flush();
+ assert.equal(s.api.current().mode,'native');
+ assert.match(s.elements.playbackDiag.textContent,/HTTP 400/);
 });
