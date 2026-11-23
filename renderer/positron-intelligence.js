@@ -841,6 +841,7 @@
      };
      showGapExamples('Mất độ chắc chắn: ',topicShifts.lostExamples);
      showGapExamples('Mới đủ chắc chắn: ',topicShifts.gainedExamples);
+     showGapExamples('Chưa đủ chắc chắn ở cả hai: ',topicShifts.unresolvedExamples);
      const gapNote=d.createElement('small');
      gapNote.textContent='Đây là chênh lệch dự đoán Naive Bayes trên máy, không phải lỗi luồng phát và không thay đổi kênh, mô hình hay playlist.';
      gap.append(gapNote);shifts.append(gap);

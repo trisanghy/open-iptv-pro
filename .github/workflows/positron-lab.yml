@@ -1,4 +1,4 @@
-name: Positron P5.1.306 · 70 Electron screenshots + AI confidence cohort QA · Mac/Windows experiments
+name: Positron P5.1.307 · 70 Electron screenshots + both-uncertain AI cohort QA · Mac/Windows experiments
 on:
   push:
     branches: [Positron]
@@ -314,6 +314,8 @@ jobs:
           test -s positron-evidence/p5-20-rounds/positron-p51305-ai-confidence-after-1920x1080-real.png
           test -s positron-evidence/p5-20-rounds/positron-p51306-ai-confidence-gap-before-1920x1080-real.png
           test -s positron-evidence/p5-20-rounds/positron-p51306-ai-confidence-gap-after-1920x1080-real.png
+          test -s positron-evidence/p5-20-rounds/positron-p51307-both-uncertain-before-1920x1080-real.png
+          test -s positron-evidence/p5-20-rounds/positron-p51307-both-uncertain-after-1920x1080-real.png
           test -s positron-evidence/p5-20-rounds/positron-p51298-small-samples-after-1920x1080-real.png
           test -s positron-evidence/audit-p5-20-rounds.json
           # Kiểm tra pixel PNG thật: ít nhất 4 ảnh desktop 1920 x 1080, không upscale.

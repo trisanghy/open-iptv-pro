@@ -1231,3 +1231,21 @@ test('P306 AI confidence cohort never leaks stream URLs embedded inside channel 
  assert.ok(!JSON.stringify(result).includes('secret.invalid'));
  assert.ok(!JSON.stringify(result).includes('.m3u8'));
 });
+
+// P307 regression: examples for channels both AI models cannot classify.
+test('P307 safe, read-only uncertain cohort examples',()=>{
+ const names=['Kênh Văn Hóa 1','Kênh Văn Hóa 2','Kênh Văn Hóa 3','Kênh Văn Hóa 4','Ẩn https://private.invalid/live.m3u8'];
+ const channels=names.map((name,i)=>({id:'p307-'+i,name,group:'Tổng hợp',url:'https://secret.invalid/'+i}));
+ const original=JSON.stringify(channels);
+ const empty=C.buildLearningBackup({categoryModel:C.emptyCategoryModel()});
+ const result=C.previewCategoryTopicShifts({categoryModel:C.emptyCategoryModel()},empty,channels);
+ assert.equal(result.ok,true);assert.equal(result.bothUncertain,5);
+ assert.deepEqual(result.unresolvedExamples,names.slice(0,3));
+ assert.equal(result.comparable,0);
+ assert.ok(!JSON.stringify(result).includes('private.invalid')&&!JSON.stringify(result).includes('secret.invalid'));
+ assert.equal(JSON.stringify(channels),original);
+ const ui=fs.readFileSync('renderer/positron-intelligence.js','utf8');
+ const qa=fs.readFileSync('scripts/positron-20-extension.cjs','utf8');
+ assert.ok(ui.includes("showGapExamples('Chưa đủ chắc chắn ở cả hai: ',topicShifts.unresolvedExamples)"));
+ for(const marker of ['qa307','positron-p51307-both-uncertain-before-1920x1080-real.png','positron-p51307-both-uncertain-after-1920x1080-real.png'])assert.ok(qa.includes(marker),marker);
+});

@@ -26,3 +26,6 @@ Chưa thực hiện. Mỗi vòng yêu cầu commit/version, test, ảnh Electron
 ## Đợt mới sau P5.1.304 — 23/11/2026
 - Vòng 01/20 — P5.1.305: ĐẠT. Khắc phục tỷ lệ 0/0 gây hiểu sai, chẩn đoán độ chắc chắn trước/sau; 1015 tests pass, 5 skip; 10/10 QA P305, Windows/macOS builds success, soát trực tiếp ảnh 1920×1080. GitHub Actions 45166821071.
 - Vòng 02/20 — P5.1.306: CANDIDATE. Ảnh cuối P305 hiển thị lời khẳng định “Chưa phát hiện chuyển chủ đề” dù không có kênh chung đủ chắc chắn. Sửa thông báo thành “chưa thể kết luận”, thêm thống kê bốn nhóm độ chắc chắn và tên kênh mẫu theo yêu cầu người xem. Test/ảnh/build đang chờ; KHÔNG tính hoàn thành trước khi soát ảnh thật.
+
+## P5.1.307 — CANDIDATE
+- Bổ sung tên mẫu của nhóm kênh cả hai mô hình đều chưa đủ chắc chắn, bảo vệ URL, chỉ đọc, kèm regression và QA ảnh Electron trước/sau. Chỉ đánh dấu hoàn thành sau CI xanh và đã mở xem ảnh thật.

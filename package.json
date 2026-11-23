@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.391",
-  "description": "Positron P5.1.306: AI tìm kênh mất độ chắc chắn trước khi khôi phục",
+  "version": "4.23.392",
+  "description": "Positron P5.1.307: hiển thị các kênh AI chưa đủ chắc chắn ở cả hai mô hình",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

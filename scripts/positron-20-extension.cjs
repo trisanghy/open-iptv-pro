@@ -10960,7 +10960,40 @@ async function runTwenty(page){
  assert.ok(!before306.equals(after306),'P306 must visibly expand native Electron cohort examples');
  console.log('P306 safe AI confidence gap evidence passed:',JSON.stringify(qa306));
 
- // Close the live panel only after P306's final screenshot and assertions.
+ // P307: prove the additional uncertain examples via real Electron screenshots.
+ await gaps306.click({timeout:8000});
+ await gaps306.scrollIntoViewIfNeeded({timeout:8000});
+ const before307=await page.screenshot({path:path.join(out,'positron-p51307-both-uncertain-before-1920x1080-real.png'),animations:'disabled'});
+ await gaps306.click({timeout:8000});
+ const uncertainRow307=page.locator('#poAIConfidenceGapExamples .po-ai-category-diff').last();
+ await uncertainRow307.scrollIntoViewIfNeeded({timeout:8000});
+ const after307=await page.screenshot({path:path.join(out,'positron-p51307-both-uncertain-after-1920x1080-real.png'),animations:'disabled'});
+ const observed307=await page.evaluate(()=>{
+  const panel=document.getElementById('poAIConfidenceGapExamples');
+  const rows=[...panel?.querySelectorAll('.po-ai-category-diff')||[]];
+  const el=rows[rows.length-1],rc=el?.getBoundingClientRect();
+  const dr=document.getElementById('poWatchFlowPanel')?.getBoundingClientRect();
+  return {open:panel?.open===true,rows:rows.length,text:el?.textContent||'',
+   visible:!!(rc&&dr&&rc.height>0&&rc.top>=dr.top&&rc.bottom<=dr.bottom),
+   ids:JSON.stringify(window.IPTVState.getChannels().map(c=>c.id)),
+   model:localStorage.getItem('positron-intelligence-preferences-v1'),
+   current:window.IPTVState.getCurrent()?.id||'',
+   overflow:document.documentElement.scrollWidth>innerWidth+3};
+ });
+ const low307=observed307.text.toLowerCase();
+ const qa307={expanded:observed307.open,threeRows:observed307.rows>=3,
+  correctCohort:observed307.text.includes('Chưa đủ chắc chắn ở cả hai:'),
+  noUrl:!low307.includes('http:')&&!low307.includes('https:')&&!low307.includes('.m3u8')&&!low307.includes('.m3u'),
+  readable:observed307.visible,playlistIntact:observed307.ids===start306.ids,
+  modelIntact:observed307.model===start306.model,noAutoplay:observed307.current===start306.current,
+  noOverflow:!observed307.overflow};
+ for(const [key,value] of Object.entries(qa307))assert.equal(value,true,
+  'P307 Electron uncertain examples '+key+': '+JSON.stringify({qa307,observed307}));
+ for(const png of [before307,after307])assert.deepEqual([png.readUInt32BE(16),png.readUInt32BE(20)],[1920,1080]);
+ assert.ok(!before307.equals(after307),'P307 must expand examples visibly');
+ console.log('P307 both-uncertain Electron screenshot QA passed:',JSON.stringify(qa307));
+
+ // Close the live panel only after P307's final screenshot and assertions.
  await page.evaluate(()=>window.PositronWatchFlow.close());
 
  const report={type:'Positron P5 twenty distinct desktop screenshot cases',realElectron:true,syntheticChannels:false,

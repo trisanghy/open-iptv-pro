@@ -512,7 +512,7 @@
   const entries=(Array.isArray(channelRows)?channelRows:[]).filter(ch=>ch?.id&&ch?.name).slice(0,cap);
   const matrix=new Map();let comparable=0,changed=0,confidentBefore=0,confidentAfter=0;
   let lostConfident=0,newlyConfident=0,bothUncertain=0;
-  const lostExamples=[],gainedExamples=[];
+  const lostExamples=[],gainedExamples=[],unresolvedExamples=[];
   for(const ch of entries){
    const before=predictCategory(present,ch,{threshold:0.6}),after=predictCategory(future,ch,{threshold:0.6});
    // Sanitize once per channel, available to both the confidence-gap and
@@ -531,7 +531,10 @@
     }else if(!before&&after){
      newlyConfident++;
      if(safeSample&&gainedExamples.length<3&&!gainedExamples.includes(safeSample))gainedExamples.push(safeSample);
-    }else bothUncertain++;
+    }else {
+     bothUncertain++;
+     if(safeSample&&unresolvedExamples.length<3&&!unresolvedExamples.includes(safeSample))unresolvedExamples.push(safeSample);
+    }
     continue;
    }
    comparable++;
@@ -550,7 +553,7 @@
   const shiftRate=comparable?Math.round(changed*1000/comparable)/10:0;
   return {ok:true,scanned:entries.length,comparable,changed,shiftRate,
    confidentBefore,confidentAfter,notComparable:entries.length-comparable,
-   lostConfident,newlyConfident,bothUncertain,lostExamples,gainedExamples,
+   lostConfident,newlyConfident,bothUncertain,lostExamples,gainedExamples,unresolvedExamples,
    significant:comparable>=10&&changed>=5&&shiftRate>=20,
    transitions,omittedTransitions:Math.max(0,matrix.size-max),
    caution:'Đây là chuyển đổi nhãn dự đoán Naive Bayes theo tên/nhóm kênh cục bộ, không đo độ chính xác thật hay chất lượng luồng; dữ liệu người dùng chưa thay đổi.'};
