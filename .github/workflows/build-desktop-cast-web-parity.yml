@@ -1,0 +1,52 @@
+name: Electron Cast Web Parity (Windows EXE + macOS DMG)
+on:
+  push:
+    branches: [build-sources/electron-desktop]
+    paths:
+      - 'renderer/**'
+      - 'tests/cast-web-v2-parity.test.cjs'
+      - '.github/workflows/build-desktop-cast-web-parity.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: electron-cast-web-parity-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  test-and-build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - {os: windows-latest, platform: win, arch: x64, label: windows-x64}
+          - {os: macos-15, platform: mac, arch: arm64, label: mac-arm64}
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 85
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+      - name: Run full Electron regression tests
+        run: npm test
+      - name: Build installer
+        shell: bash
+        env:
+          CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+        run: |
+          set -euo pipefail
+          npx electron-builder --${{ matrix.platform }} --${{ matrix.arch }} --publish never
+          if [[ '${{ matrix.platform }}' == win ]]; then
+            compgen -G 'dist/*.exe' >/dev/null
+          else
+            compgen -G 'dist/*.dmg' >/dev/null
+          fi
+      - name: Upload verified installers (no preview Releases)
+        uses: actions/upload-artifact@v4
+        with:
+          name: electron-cast-web-parity-${{ matrix.label }}
+          path: |
+            dist/*.exe
+            dist/*.dmg
+          if-no-files-found: error
