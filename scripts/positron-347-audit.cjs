@@ -6,8 +6,8 @@ const hash=b=>crypto.createHash('sha256').update(b).digest('hex');
 async function probe(page){return page.evaluate(()=>{
  const p=document.getElementById('poWatchFlowPanel'),g=document.getElementById('poAIShortcutGuide');
  const b=document.getElementById('poAIChannels');
- return {panelOpen:!p.hidden,aiActive:p.dataset.poAiActive==='true',guideOpen:g.open,
-  modePressed:b.getAttribute('aria-pressed')==='true',modeFocused:document.activeElement===b,
+ return {panelOpen:!p.hidden,aiActive:p.dataset.poAiActive==='true',guideOpen:!!g?.open,
+  modePressed:b?.getAttribute('aria-pressed')==='true',modeFocused:!!b&&document.activeElement===b,
   noOverflow:p.scrollWidth<=p.clientWidth+3&&document.documentElement.scrollWidth<=innerWidth+3,
   channels:JSON.stringify(window.IPTVState.getChannels().map(c=>c.id)),
   current:window.IPTVState.getCurrent()?.id||'',
