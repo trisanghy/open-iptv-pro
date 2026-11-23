@@ -19,5 +19,5 @@ test('P333 active AI hides redundant WatchFlow modes and preserves original path
  assert.ok(wf.includes('audit-p51333-ai-actions.json'));
  assert.match(wf,/release:\s*\n\s*if: false/);
  assert.ok(read('POSITRON_P5_CHANGELOG.md').includes('## P5.1.333 / Electron 4.23.418'));
- assert.equal(JSON.parse(read('package.json')).version,'4.23.418');
+ assert.ok(Number(JSON.parse(read('package.json')).version.split('.')[2])>=418,'P333 repair must persist across later patch versions');
 });

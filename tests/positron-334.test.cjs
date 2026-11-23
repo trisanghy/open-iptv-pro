@@ -23,6 +23,6 @@ test('P334 actual AI keyboard shortcut focuses first Play without autoplay and c
  assert.ok(wf.includes('node --check scripts/positron-334-audit.cjs'));
  assert.ok(wf.includes('audit-p51334-ai-jump.json'));
  assert.match(wf,/release:\s*\n\s*if: false/);
- assert.equal(JSON.parse(read('package.json')).version,'4.23.419');
- assert.ok(read('POSITRON_P5_CHANGELOG.md').startsWith('## P5.1.334 / Electron 4.23.419'));
+ assert.ok(Number(JSON.parse(read('package.json')).version.split('.')[2])>=419,'P334 feature must persist across later patches');
+ assert.ok(read('POSITRON_P5_CHANGELOG.md').includes('## P5.1.334 / Electron 4.23.419'));
 });
