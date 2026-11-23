@@ -7,15 +7,28 @@ Trang này được tạo tự động từ GitHub Releases và ảnh kiểm th�
 [Mở WEBSITE changelog tương tác](https://raw.githack.com/trisanghy/open-iptv-pro/Positron/docs/positron-features/index.html) · [Giao diện HTML trong repository](index.html) · [Các bản phát hành](https://github.com/trisanghy/open-iptv-pro/releases) · [Nhật ký Git tiếng Việt](LOG_GIT_TIENG_VIET.md) · [Quy tắc ưu tiên tính năng](../../POSITRON_FEATURE_RULES.md)
 
 <details>
-<summary><strong>P5.1.308</strong> · đi từ AI chưa chắc chắn tới hàng đợi dạy nhãn thủ công · CHƯA CÓ BẢN PHÁT HÀNH · TÍNH NĂNG</summary>
+<summary><strong>P5.1.309</strong> · quay lại so sánh AI an toàn, tách nút khôi phục khỏi hàng đợi dạy · CHƯA CÓ BẢN PHÁT HÀNH · TÍNH NĂNG</summary>
 
-**Ứng dụng:** 4.23.393 · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
+**Ứng dụng:** 4.23.394 · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
+
+Feature priority: NEW — Ở hàng đợi dạy nhãn, tạm ẩn nút xác nhận nhập trọng số đang nổi chồng lên bộ chọn chủ đề, đồng thời thêm lối “Trở lại kiểm tra bản sao AI” để quay về xem xét mô hình khôi phục chưa xác nhận. Chuyển chế độ không tự nhập hay mất dữ liệu. Feature class: AI
+
+*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+
+[Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/tree/Positron) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/b632b1e7fb2e5b4bf59dab5c233ac7f68d04da70)
+
+</details>
+
+<details>
+<summary><strong>P5.1.308</strong> · Chuyển từ nhóm AI chưa chắc chắn sang hàng đợi dạy nhãn / Electron 4.23.393 · CHƯA CÓ BẢN PHÁT HÀNH · TÍNH NĂNG</summary>
+
+**Ứng dụng:** Chưa xác minh · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
 
 Feature priority: NEW — Từ danh sách kênh mà hai mô hình Naive Bayes đều chưa đủ chắc chắn, thêm nút mở trực tiếp hàng đợi dạy AI đã có thay vì tìm qua Thư mục EPG; luôn do người xem quyết định nhãn, không tự bật quyền hoặc phát video. Feature class: AI
 
 *Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
 
-[Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/tree/Positron) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/c1e942dd87189d3573ea6fd945ee68a25828f094)
+[Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
 
 </details>
 
