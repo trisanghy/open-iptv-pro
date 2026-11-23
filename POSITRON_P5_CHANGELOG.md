@@ -1,3 +1,13 @@
+## P5.1.341 / Electron 4.23.426 — Remote lên/xuống duyệt gợi ý AI (CANDIDATE)
+- Feature priority: NEW — Các phím Alt+Shift+J/K/P của WatchFlow AI dùng trên bàn phím PC nhưng không thuận tiện khi điều khiển bằng remote TV hoặc phím mũi tên cơ bản. Bổ sung ArrowUp/ArrowDown trực tiếp khi nút Xem đang được focus, tự cuộn và quay vòng danh sách.
+- Feature class: AI
+- User action: Mở WatchFlow AI bằng F6, nhấn Alt+Shift+J đến nút Xem đầu; dùng phím mũi tên xuống/lên trên remote hoặc bàn phím để chuyển tới nút Xem của gợi ý khác, cuộn tới giữa vùng nhìn và cập nhật tên kênh đầy đủ (Alt+Shift+I); chỉ Enter mới phát.
+- Root cause: P340 đã có tên đầy đủ nhưng ArrowUp/ArrowDown tại nút Xem chỉ gây cuộn trình duyệt, không điều hướng thông minh qua các nút Xem. P341 giữ nguyên navigation của input/6 nút chọn AI khác, chỉ bắt mũi tên khi đúng nút Xem đang focus, bỏ qua feedback và disabled.
+- Electron screenshot: positron-p51341-remote-ai-before-1920x1080-real.png / positron-p51341-remote-ai-after-1920x1080-real.png / positron-p51341-remote-ai-before-720x900-real.png / positron-p51341-remote-ai-after-720x900-real.png.
+- Evidence: Dùng ảnh thật P340 đã MỞ ở 1920×1080 và 720×900 làm baseline; native Electron CDP P341 phải kiểm chứng ArrowDown từ thẻ 1 tới thẻ 2, ArrowUp về đầu và vòng cuối, đồng bộ Gợi ý 2/N và thanh thông tin đầy đủ, bảo vệ ô tìm kiếm, không tràn UI, không auto-play hay thay playlist, current channel, mô hình AI.
+- Privacy: điều hướng native DOM cục bộ, không gửi tên, stream URL, M3U, EPG hoặc mô hình ra ngoài.
+- Status: CANDIDATE cho đến khi Node test, ảnh trước/sau Electron mở xem và CI installers kiểm chứng; không tạo experimental GitHub Release theo AGENTS.md.
+
 ## P5.1.340 / Electron 4.23.425 — AI mở tên kênh đầy đủ bằng bàn phím (CANDIDATE)
 - Feature priority: NEW — Ở giao diện WatchFlow AI 720px, chip tên kênh P339 cố ý rút gọn để tránh chiếm chỗ; nhưng remote và bàn phím không có hover để biết tên đầy đủ. Bổ sung phím xem thông tin kênh và chủ đề khi cần, luôn theo gợi ý đang focus.
 - Feature class: AI

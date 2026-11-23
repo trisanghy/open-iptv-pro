@@ -462,6 +462,28 @@
    fullInfo.hidden=false;
   }else fullInfo.hidden=true;
  });
+ // P341: native TV remote uses Up/Down while focus is on a channel's Xem
+ // action. Move between actionable recommendations, not the page scroll, and
+ // never activate a stream or feedback until the viewer presses Enter.
+ list.setAttribute('aria-keyshortcuts','Alt+Shift+J Alt+Shift+K Alt+Shift+P Alt+Shift+I ArrowUp ArrowDown');
+ list.title+=' · ↑/↓ từ nút Xem: đổi gợi ý (không tự phát)';
+ list.addEventListener('keydown',event=>{
+  if(!aiOpen||panel.hidden||event.defaultPrevented||event.altKey||event.ctrlKey||
+   event.metaKey||event.shiftKey||event.isComposing)return;
+  if(event.key!=='ArrowUp'&&event.key!=='ArrowDown')return;
+  const current=event.target?.closest?.('.po-ai-card .po-ai-actions button:first-child');
+  if(!current||event.target!==current||current.disabled)return;
+  const actions=[...list.querySelectorAll('.po-ai-card .po-ai-actions button:first-child')]
+   .filter(button=>!button.disabled&&button.getClientRects().length);
+  const index=actions.indexOf(current);
+  if(index<0||actions.length<2)return;
+  const step=event.key==='ArrowDown'?1:-1;
+  const next=actions[(index+step+actions.length)%actions.length];
+  event.preventDefault();event.stopPropagation();
+  next.focus({preventScroll:true});
+  next.scrollIntoView({block:'center',behavior:'instant'});
+  updateFocusProgress(next);
+ });
  tab.addEventListener('click',()=>{if(aiOpen){toolbar.querySelector('[data-flowplus-mode="discover"]')?.click();return;}showAI();});
  toolbar.addEventListener('click',event=>{if(event.target.closest('[data-flowplus-mode]'))hideAI();},true);
  const learnedSource=(channel,cache=null)=>{

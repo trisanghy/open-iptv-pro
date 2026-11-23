@@ -11883,6 +11883,12 @@ async function runTwenty(page){
  await require('./positron-338-audit.cjs').run(page);
  await require('./positron-339-audit.cjs').run(page);
  await require('./positron-340-audit.cjs').run(page);
+ await require('./positron-341-audit.cjs').run(page);
+ // P341 actual Electron remote ArrowUp/ArrowDown before/after screenshots:
+ // positron-p51341-remote-ai-before-1920x1080-real.png
+ // positron-p51341-remote-ai-after-1920x1080-real.png
+ // positron-p51341-remote-ai-before-720x900-real.png
+ // positron-p51341-remote-ai-after-720x900-real.png
  // P340 actual Electron full-channel name disclosure before/after:
  // positron-p51340-full-channel-before-1920x1080-real.png
  // positron-p51340-full-channel-after-1920x1080-real.png

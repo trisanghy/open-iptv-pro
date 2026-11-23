@@ -39,3 +39,11 @@
 ## Vòng 04/20 — P5.1.340 / 4.23.425 (CANDIDATE)
 - New AI shortcut Alt+Shift+I toggles full focused channel/topic info, follows P/K navigation, blocks while typing, preserves playlist/current playback and AI model; native CDP before/after screenshots at 1920×1080 and 720×900 needed.
 - Pending test/CI/visual review and installer evidence. Do not count until proven.
+
+## Vòng 04/20 — P5.1.340 / 4.23.425
+- Real P339 image showed narrow 720px title chip truncated. Added keyboard/remote Alt+Shift+I to expand full channel name and category in optional sticky detail strip. User can toggle, P/K moves update info; no autoplay.
+- Fast native Electron QA run 45269675922 PASS, 20 checks, real before/after PNG 1920×1080/720×900 downloaded and OPENED. UI shows full name / topic in 720 without clipping focused Xem. Full CI run 45269675753: Node success, installers and full capture check status directly.
+- Next: from P340 visual, remote users still need Alt+Shift shortcut for next card. Native directional Up/Down should navigate the cards without stealing input events.
+
+## Vòng 05/20 — P5.1.341 / 4.23.426 (CANDIDATE)
+- Feature class AI: Up/Down between native AI Xem actions, wrap and maintain focus/selected-channel context, preserve privacy and playlist, no autoplay. Before/after screenshots 1920×1080 and 720×900, awaiting CI/real screenshot review.

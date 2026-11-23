@@ -1672,3 +1672,35 @@ test('P340 native keyboard opens full selected channel name and topic without pl
   'positron-p51340-full-channel-after-720x900-real.png'
  ])assert.ok(ext.includes(filename)&&workflow.includes(filename),filename);
 });
+
+
+test('P341 AI native ArrowUp/Down navigates only focused Xem actions without autoplay',()=>{
+ const js=fs.readFileSync('renderer/positron-intelligence.js','utf8');
+ const qa=fs.readFileSync('scripts/positron-341-audit.cjs','utf8');
+ const ext=fs.readFileSync('scripts/positron-20-extension.cjs','utf8');
+ const workflow=fs.readFileSync('.github/workflows/positron-lab.yml','utf8');
+ for(const token of [
+  "list.addEventListener('keydown',event=>{",
+  "if(event.key!=='ArrowUp'&&event.key!=='ArrowDown')return",
+  "event.target?.closest?.('.po-ai-card .po-ai-actions button:first-child')",
+  "event.target!==current",
+  "const step=event.key==='ArrowDown'?1:-1",
+  "next.focus({preventScroll:true})",
+  "updateFocusProgress(next)",
+  "Alt+Shift+I ArrowUp ArrowDown"
+ ])assert.ok(js.includes(token),'P341 missing remote arrow feature '+token);
+ for(const token of [
+  "await page.keyboard.press('ArrowDown')",
+  "await page.keyboard.press('ArrowUp')",
+  "'remote Up wraps first to last recommendation'",
+  "'remote arrows must not hijack typing fields'",
+  "assert.deepEqual(restored,original,"
+ ])assert.ok(qa.includes(token),'P341 missing native Electron regression '+token);
+ assert.ok(ext.includes("require('./positron-341-audit.cjs').run(page)"));
+ for(const img of [
+  'positron-p51341-remote-ai-before-1920x1080-real.png',
+  'positron-p51341-remote-ai-after-1920x1080-real.png',
+  'positron-p51341-remote-ai-before-720x900-real.png',
+  'positron-p51341-remote-ai-after-720x900-real.png'
+ ])assert.ok(ext.includes(img)&&workflow.includes(img),'P341 evidence filename missing '+img);
+});
