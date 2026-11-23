@@ -228,6 +228,22 @@
  const modeHelp=d.createElement('p');modeHelp.className='po-ai-keyboard-help';
  modeHelp.id='poAIKeyboardHelp';
  modeHelp.textContent='← → ↑ ↓: chuyển chế độ · Enter/Space: chọn · Alt+Shift+J: tới nút Xem đầu';
+ // P336: show + announce which recommendation was reached by keyboard.
+ const focusProgress=d.createElement('span');
+ focusProgress.id='poAIFocusProgress';
+ focusProgress.className='po-ai-focus-progress';
+ focusProgress.hidden=true;
+ focusProgress.setAttribute('role','status');
+ focusProgress.setAttribute('aria-live','polite');
+ modeHelp.append(focusProgress);
+ const updateFocusProgress=(target)=>{
+  const cards=[...area.querySelectorAll('.po-ai-card .po-ai-actions button:first-child')]
+   .filter(button=>!button.disabled&&button.getClientRects().length);
+  const index=cards.indexOf(target);
+  if(index<0){focusProgress.hidden=true;focusProgress.textContent='';return;}
+  focusProgress.hidden=false;
+  focusProgress.textContent='Gợi ý '+(index+1)+'/'+cards.length;
+ };
  modeBar.setAttribute('aria-describedby',modeHelp.id);
  const alertRow=d.createElement('label');alertRow.className='po-ai-alerts';
  const alertCheck=d.createElement('input');alertCheck.type='checkbox';alertCheck.id='poAIAlerts';
@@ -270,6 +286,7 @@
  }
  function showAI(){aiOpen=true;syncAIView();render();}
  function hideAI(){
+  focusProgress.hidden=true;focusProgress.textContent='';
   aiOpen=false;wideAI=false;wideButton.hidden=true;
   wideButton.setAttribute('aria-pressed','false');wideButton.textContent='Đọc rộng';
   delete panel.dataset.poAiActive;delete panel.dataset.poAiTraining;
@@ -328,6 +345,7 @@
   event.preventDefault();event.stopPropagation();
   target.focus({preventScroll:true});
   target.scrollIntoView({block:'nearest',behavior:'instant'});
+  updateFocusProgress(target);
  });
  // P335: jump to the next *watchable* recommendation, skipping feedback
  // buttons and wrapping at the end; local focus only, no play/learning.
@@ -348,7 +366,8 @@
   const target=actions[(current+1)%actions.length];
   event.preventDefault();event.stopPropagation();
   target.focus({preventScroll:true});
-  target.scrollIntoView({block:'nearest',behavior:'instant'});
+  target.scrollIntoView({block:'center',behavior:'instant'});
+  updateFocusProgress(target);
  });
  tab.addEventListener('click',()=>{if(aiOpen){toolbar.querySelector('[data-flowplus-mode="discover"]')?.click();return;}showAI();});
  toolbar.addEventListener('click',event=>{if(event.target.closest('[data-flowplus-mode]'))hideAI();},true);
@@ -753,6 +772,7 @@
 
  function render(){
   if(!aiOpen)return;
+  focusProgress.hidden=true;focusProgress.textContent='';
   if(!foldersOpen)delete panel.dataset.poAiTraining;
   renderModelManager();
   const collection=channels();const profile=profileFor(collection);

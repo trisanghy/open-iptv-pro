@@ -137,3 +137,8 @@ Baseline 24/11/2026: HEAD 557361b9ab74340ca0f2999f1e0912c2c43803db, P5.1.323 / 4
 - Screenshot P334 720px: nút Xem gợi ý đầu đã được focus qua Alt+Shift+J. Danh sách AI có nhiều thẻ nhưng phím Tab phải đi qua nút đánh giá/tra cứu mỗi thẻ mới tới gợi ý tiếp theo.
 - New actionable AI feature: Alt+Shift+K nhảy lần lượt qua nút Xem mỗi thẻ và quay vòng; không bắt đầu phát, không sửa danh sách nguồn/mô hình.
 - QA: Electron thực 1920/720 chụp trước/sau focus từ thẻ đầu sang thẻ kế, thử wrap, lưu PNG SHA, Node regression và nhập liệu được bảo vệ. Chỉ ghi vòng đạt khi kiểm thử và mở ảnh hoàn tất.
+
+## 24/11/2026 — vòng 04 P5.1.336 (đầu vào: ảnh sau P335)
+- Ảnh Electron thật P335 720 px: nút Xem gợi ý thứ hai có focus ring nhưng nằm ngay sát mép dưới panel; thiếu nhãn vị trí gợi ý hiện tại cho người dùng/trình đọc màn hình.
+- New AI UX: tự cuộn gợi ý được chọn bằng K tới giữa vùng nhìn, và trạng thái «Gợi ý N/Tổng» aria-live trên bảng chỉ khi nhấn J/K; giữ nội dung người dùng và hành vi phát.
+- Kiểm thử bắt buộc: Node và Electron 720/1920 before/after; phím chuyển 1→2, vòng về đầu, badge có aria-live, nút Xem có margin, ảnh thật MỞ soi; trước khi đạt không tính vòng.

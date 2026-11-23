@@ -1,3 +1,12 @@
+## P5.1.336 / Electron 4.23.421 — AI thông báo vị trí gợi ý bằng chữ và screen reader; cuộn vào giữa khi chuyển (CANDIDATE)
+- Feature priority: NEW — Thông báo vị trí trong tập gợi ý AI (ví dụ Gợi ý 2/3) khi điều hướng bằng bàn phím, giúp người dùng biết đang xem mục nào và phát hiện điểm dừng rõ ràng trên remote/desktop.
+- Feature class: AI
+- User action: Mở WatchFlow Intelligence bằng F6 trên TV, nhấn Alt+Shift+J tới nút Xem đầu, rồi Alt+Shift+K tới gợi ý tiếp theo. Khi điều hướng, bảng hiển thị Gợi ý 1/3, 2/3... và công bố vị trí qua aria-live polite. Nếu gợi ý sát mép dưới, trình xem tự cuộn nó tới giữa panel; Enter mới phát.
+- Electron screenshot: positron-p51336-focus-position-before-1920x1080-real.png / positron-p51336-focus-position-after-1920x1080-real.png / positron-p51336-focus-position-before-720x900-real.png / positron-p51336-focus-position-after-720x900-real.png.
+- Evidence: Ảnh P335 Electron thật 720 sau khi nhấn K cho thấy nút Xem gợi ý hai chạm gần mép dưới panel (khoảng 2px); P336 thêm badge vị trí thông báo cho screen reader, đổi scrollIntoView từ nearest sang center cho gợi ý kế và reset badge khi model rerender/AI đóng. BEFORE là phiên bản P336 với badge tạm ẩn (tái hiện giao diện P335) còn AFTER chụp Electron đang chạy; xác nhận nút có khoảng đệm thoải mái, đủ dữ liệu QA và không autoplay.
+- Privacy: Không thay M3U/URL, EPG, dữ liệu học hoặc lịch sử; cập nhật chỉ DOM cục bộ, không phát kênh tự động.
+- Status: CANDIDATE tới khi native screenshot review, Node tests và full CI đạt; bản thử nghiệm chỉ có Actions artifacts, Release dành cho Stable.
+
 ## P5.1.335 / Electron 4.23.420 — AI chọn gợi ý kế tiếp bằng Alt+Shift+K, tự quay vòng (CANDIDATE)
 - Feature priority: NEW — Xem liên tiếp các gợi ý AI bằng phím tắt tập trung vào nút Xem của từng thẻ, không phải Tab qua nút phản hồi Hợp gu/Không hợp hoặc công cụ tra cứu.
 - Feature class: AI

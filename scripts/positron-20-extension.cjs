@@ -11878,6 +11878,12 @@ async function runTwenty(page){
  await require('./positron-333-audit.cjs').run(page);
  await require('./positron-334-audit.cjs').run(page);
  await require('./positron-335-audit.cjs').run(page);
+ await require('./positron-336-audit.cjs').run(page);
+ // P336 native AI keyboard position screenshots:
+ // positron-p51336-focus-position-before-1920x1080-real.png
+ // positron-p51336-focus-position-after-1920x1080-real.png
+ // positron-p51336-focus-position-before-720x900-real.png
+ // positron-p51336-focus-position-after-720x900-real.png
  // P335 native Electron next recommendation keyboard screenshots:
  // positron-p51335-next-ai-before-1920x1080-real.png
  // positron-p51335-next-ai-after-1920x1080-real.png
