@@ -701,8 +701,21 @@
    const header=d.createElement('div');header.className='po-ai-card-header';
    const chName=d.createElement('strong');chName.textContent=(index+1)+'. '+ch.name;
    const metric=d.createElement('small');
+   // P326: a 4-feedback model score is an estimate, not measured accuracy.
+   // Keep the ranking unchanged; disclose small-sample uncertainty in text,
+   // hover title and accessible name without consuming a new mobile row.
+   const earlySample=model.observations>=2&&model.observations<10;
+   const scoreText=model.observations>=2?' · '+Math.round(item.probability*100)+'% hợp gu'+
+    (earlySample?' (sơ bộ)':''):'';
    metric.textContent=topic.label+' · '+(topic.source==='epg'?'EPG':topic.source==='web'?'Wikipedia':topic.source==='ml'?'AI học nhãn':
-    topic.key==='other'?'Chưa rõ chủ đề':'Tên/nhóm')+(model.observations>=2?' · '+Math.round(item.probability*100)+'% hợp gu':'');
+    topic.key==='other'?'Chưa rõ chủ đề':'Tên/nhóm')+scoreText;
+   if(earlySample){
+    const caveat='Điểm hợp gu là ước tính ban đầu từ '+model.observations+
+     ' phản hồi; không phải độ chính xác được kiểm chứng.';
+    metric.title=caveat;
+    metric.setAttribute('aria-label',metric.textContent+'. '+caveat);
+    metric.dataset.aiSample='provisional';
+   }
    header.append(chName,metric);card.append(header);
    if((upcomingOpen||planOpen)&&item.programme){
     const schedule=d.createElement('p');schedule.className='po-ai-programme';

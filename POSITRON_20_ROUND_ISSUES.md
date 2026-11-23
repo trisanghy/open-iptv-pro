@@ -28,3 +28,15 @@ Baseline 24/11/2026: HEAD 557361b9ab74340ca0f2999f1e0912c2c43803db, P5.1.323 / 4
 - Sửa có ích: ArrowLeft, ArrowRight, Home, End chỉ dịch focus qua năm nút; không click, không kích hoạt Zap, không làm thay đổi kênh/playlist/mô hình khi chỉ bấm mũi tên.
 - Kịch bản Electron P325: focus trước/sau 1920 và focus 720; soát ảnh, geometry, không tràn, noAutoplay, mô hình không thay đổi.
 - **Không coi vòng 02 đã đạt trước CI và ảnh thật đã được mở.**
+
+## Vòng 02 P5.1.325 — ĐÃ ĐẠT
+- Final CI code SHA 4e5008e885b7495ca205411ad0ed02cee7a6d6bc, thêm CI repair 42d8122... khi QA thiếu tham số page.
+- Actions 45234509867: 1.041 Node pass, 5 skipped, 0 fail; capture success; Win/mac arm/mac Intel build success; Release skipped do Stable-only.
+- Real screenshots 14849585829 tải và đã MỞ trước/sau 1920, sau 720; 17/17 QA đạt; focus Gợi ý → Tiếp có viền rõ, vòng Home/End không kích hoạt phát.
+- Vòng 02 được chứng minh đầy đủ.
+
+## Vòng 03 P5.1.326 — CANDIDATE
+- Lỗi từ ảnh sau P325: chỉ bốn phản hồi AI nhưng metric hiện “86% hợp gu” không ghi rõ độ bất định, có thể bị hiểu sai là độ chính xác đã đo.
+- Mục tiêu: thêm nhãn “(sơ bộ)” khi học 2–9 phản hồi, cung cấp giải thích tooltip/aria-label; giữ nguyên thuật toán, điểm, không gửi dữ liệu.
+- Test: Node static regression + Electron screenshot trước/sau 1920 và sau 720, kiểm tra nút Xem không bị đẩy khuất, không tràn và không tự phát.
+- Không tính vòng 03 trước khi CI/ảnh kiểm chứng.

@@ -11868,6 +11868,12 @@ async function runTwenty(page){
  // P324 companion CDP cycle reuses the live Electron app after P323.
  await require('./positron-324-audit.cjs').run(page);
  await require('./positron-325-audit.cjs').run(page);
+ await require('./positron-326-audit.cjs').run(page);
+ for(const png of [
+  'positron-p51326-ai-sample-before-1920x1080-real.png',
+  'positron-p51326-ai-sample-after-1920x1080-real.png',
+  'positron-p51326-ai-sample-after-720x900-real.png'
+ ])assert.ok(fs.existsSync(path.join(out,png)),'P326 missing Electron screenshot '+png);
  for(const name of [
   'positron-p51325-keyboard-modes-before-1920x1080-real.png',
   'positron-p51325-keyboard-modes-after-1920x1080-real.png',

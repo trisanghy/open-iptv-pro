@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.410",
-  "description": "Positron P5.1.325: điều hướng năm chế độ WatchFlow bằng phím mũi tên an toàn",
+  "version": "4.23.411",
+  "description": "Positron P5.1.326: AI đánh dấu điểm hợp gu sơ bộ khi thiếu phản hồi",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

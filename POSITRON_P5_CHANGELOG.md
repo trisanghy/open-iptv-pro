@@ -1,3 +1,12 @@
+## P5.1.326 / Electron 4.23.411 — Nhãn AI “sơ bộ” khi mẫu học còn ít (CANDIDATE)
+- Feature priority: NEW — hiển thị rõ mức hợp gu mới chỉ là ước tính khi AI chưa có đủ 10 phản hồi; kèm giải thích bằng tooltip và nhãn đọc màn hình, không đổi thứ hạng hay tỷ lệ mô hình.
+- Feature class: AI
+- User action: Mở TV → WatchFlow → AI hợp gu, xem thẻ kênh có nhãn “sơ bộ” sau phần trăm hợp gu khi số phản hồi dưới 10; rê chuột hoặc dùng trình đọc màn hình để biết đây không phải độ chính xác đã kiểm chứng.
+- Electron screenshot: positron-p51326-ai-sample-before-1920x1080-real.png / positron-p51326-ai-sample-after-1920x1080-real.png / positron-p51326-ai-sample-after-720x900-real.png.
+- Evidence: Ảnh thật P325 ở 720px ghi “86% hợp gu” với đúng 4 phản hồi; UI trước đó có thể khiến người dùng tưởng 86% là độ chính xác được kiểm chứng. QA P326 kiểm tra nhãn điều kiện 2–9 phản hồi, tooltip, aria-label, giữ nguyên 86%, không che nút Xem ở 720px và không sửa playlist/mô hình.
+- Privacy: toàn bộ số phản hồi và điểm AI đều tính trên máy, không gửi dữ liệu kênh/URL/EPG lên server.
+- CANDIDATE: chỉ hoàn tất khi test/ảnh Electron thật được mở soát; release công khai vẫn chỉ Stable.
+
 ## P5.1.325 / Electron 4.23.410 — WatchFlow chuyển tiêu điểm bằng phím mũi tên mà không tự phát (CANDIDATE)
 - Feature priority: NEW — năm chế độ WatchFlow và mục AI có điều hướng ArrowLeft/ArrowRight/Home/End bằng bàn phím hoặc remote; chỉ chuyển tiêu điểm, không tự chạy Smart Zap và không phát kênh.
 - Feature class: AI
