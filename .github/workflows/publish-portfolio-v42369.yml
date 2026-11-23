@@ -1,12 +1,8 @@
 name: Publish portfolio v4.23.69 — Electron 4.23.68, Rust 23.8.30, Web
+# Historical immutable Stable release: manual QA only; no automatic reruns.
 on:
-  push:
-    branches: [main]
-    paths:
-      - '.github/workflows/publish-portfolio-v42369.yml'
-      - 'BUILD_MAC.command'
-      - 'build-mac-v42366-public.sh'
   workflow_dispatch:
+
 permissions:
   contents: read
 concurrency:
