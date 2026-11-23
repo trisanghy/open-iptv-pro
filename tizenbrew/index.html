@@ -1431,12 +1431,16 @@ function markPlaybackRouteBad(route){
 }
 var playbackWatchdogTimer=0,playbackLastProgressAt=0,playbackLastMediaTime=null;
 var playbackProgressSeconds=0,playbackStableAt=0,playbackRecoveryAttempts={},playbackRecoveries=0;
+var playbackClockReliable=false,playbackWaitingSince=0,playbackLastDecodedFrames=null;
+var playbackHlsSoftRecoveries=0,playbackHlsSoftLastAt=0;
 function clearPlaybackWatchdog(){
  if(playbackWatchdogTimer){clearTimeout(playbackWatchdogTimer);playbackWatchdogTimer=0;}
 }
 function resetPlaybackProgress(){
  clearPlaybackWatchdog();playbackLastProgressAt=0;playbackLastMediaTime=null;
- playbackProgressSeconds=0;playbackStableAt=0;
+ playbackProgressSeconds=0;playbackStableAt=0;playbackClockReliable=false;
+ playbackWaitingSince=0;playbackLastDecodedFrames=null;
+ playbackHlsSoftRecoveries=0;playbackHlsSoftLastAt=0;
 }
 function notePlaybackProgress(token,mediaTime){
  if(!playbackActive(token)||!playbackConfirmed||!isFinite(mediaTime)||mediaTime<0)return;
@@ -1445,26 +1449,88 @@ function notePlaybackProgress(token,mediaTime){
  var moved=time-playbackLastMediaTime;
  // Live streams may wrap their PTS. An actual wrap is still new frame progress.
  if(moved>0.12||moved< -2){
+  playbackClockReliable=true;
   playbackProgressSeconds+=moved>0?Math.min(moved,2):0.5;
-  playbackLastMediaTime=time;playbackLastProgressAt=now;
+  playbackLastMediaTime=time;playbackLastProgressAt=now;playbackWaitingSince=0;
   if(playbackProgressSeconds>=5.5&&!playbackStableAt){
    playbackStableAt=now;
    markVerifiedPlaybackRoute();
-   playbackRecoveryAttempts={};playbackRecoveries=0;
+  }
+  // Do not reset failure counts after just 5.5s: intermittent 403 streams
+  // would otherwise restart the same failed player forever.
+  if(playbackStableAt&&now-playbackStableAt>=60000&&playbackRecoveries){
+   playbackRecoveryAttempts={};playbackRecoveries=0;playbackStableAt=now;
   }
  }
 }
+
+// Recover an HLS hiccup without discarding a healthy image and its decoder.
+// A failed recovery still enters the existing bounded fallback chain.
+function tryRecoverHlsInPlace(engine,data,token){
+ if(!playbackActive(token)||!playbackConfirmed||engine!==hlsInstance||
+    playbackHlsSoftRecoveries>=2)return false;
+ var code=Number(data&&data.response&&data.response.code||0);
+ if(code===401||code===403||code===404)return false;
+ var type=String(data&&data.type||'').toLowerCase();
+ var detail=String(data&&data.details||'').toLowerCase(),method='';
+ if((type.indexOf('media')>=0||detail.indexOf('buffer')>=0)&&
+    typeof engine.recoverMediaError==='function')method='recoverMediaError';
+ else if((type.indexOf('network')>=0||detail.indexOf('load')>=0)&&
+    typeof engine.startLoad==='function')method='startLoad';
+ if(!method)return false;
+ try{
+  engine[method]();
+  playbackHlsSoftRecoveries++;playbackHlsSoftLastAt=Date.now();
+  logPlayback('HLS phục hồi tại chỗ: '+method+' ('+playbackHlsSoftRecoveries+'/2)');
+  return true;
+ }catch(e){return false;}
+}
+
+function playbackDecodedFrames(video){
+ try{
+  if(video&&typeof video.getVideoPlaybackQuality==='function'){
+   var q=video.getVideoPlaybackQuality(),n=Number(q&&q.totalVideoFrames);
+   if(isFinite(n)&&n>0)return n;
+  }
+  var webkit=Number(video&&video.webkitDecodedFrameCount);
+  if(isFinite(webkit)&&webkit>0)return webkit;
+ }catch(e){}
+ return null;
+}
 function playbackWatchdog(token){
  if(!playbackActive(token)||!playbackConfirmed)return;
+ var now=Date.now(),shouldRecover=false,reason='';
  if(playbackEngine==='html5'){
   var v=byId('video');
-  if(!v.paused&&Number.isFinite(Number(v.currentTime)))notePlaybackProgress(token,Number(v.currentTime));
+  if(!v.paused&&Number.isFinite(Number(v.currentTime)))
+   notePlaybackProgress(token,Number(v.currentTime));
+  var frames=playbackDecodedFrames(v);
+  if(frames!==null){
+   if(playbackLastDecodedFrames!==null&&frames>playbackLastDecodedFrames){
+    playbackLastProgressAt=now;playbackWaitingSince=0;playbackClockReliable=true;
+   }
+   playbackLastDecodedFrames=frames;
+  }
+  // Tizen can report a fixed currentTime for an actively decoded live HLS
+  // stream. Never blank good video solely because that clock stays at zero.
+  if(!v.paused){
+   var elapsed=now-playbackLastProgressAt;
+   if(v.error){shouldRecover=true;reason='HTML5 báo lỗi giải mã';}
+   else if(playbackWaitingSince&&now-playbackWaitingSince>18000&&elapsed>18000){
+    shouldRecover=true;reason='Luồng đang chờ dữ liệu trên 18 giây';
+   }else if(playbackClockReliable&&elapsed>30000){
+    shouldRecover=true;reason='Không có khung hình mới trong 30 giây';
+   }else if(!playbackClockReliable&&v.readyState<2&&elapsed>25000){
+    shouldRecover=true;reason='Không nhận được hình trong 25 giây';
+   }
+  }
+ }else if(playbackEngine==='avplay'&&playbackClockReliable&&now-playbackLastProgressAt>30000){
+  shouldRecover=true;reason='AVPlay không tiến hình trong 30 giây';
  }
- // A single playing event is insufficient evidence; stale buffered pixels
- // must not keep an HLS engine permanently marked healthy.
- if(playbackLastProgressAt&&Date.now()-playbackLastProgressAt>8000){
-  recoverStalledPlayback(token,'Video không tiến hình trong 8 giây');
-  return;
+ if(shouldRecover){
+  if(recoverStalledPlayback(token,reason))return;
+  // Failed recovery is terminal; don't silently leave a dead watchdog running.
+  finishPlaybackError(token,reason);return;
  }
  playbackWatchdogTimer=setTimeout(function(){playbackWatchdog(token);},1500);
 }
@@ -1497,7 +1563,7 @@ function recoverStalledPlayback(token,reason){
   route==='native'?['native','relay','hlsjs','avplay']:
   route==='hlsjs'?['hlsjs','relay','native','avplay']:
   ['avplay','relay','native','hlsjs'];
- var next=count===0?route:'';
+ var next=count<(route==='relay'?2:1)?route:'';
  if(!next){
   markPlaybackRouteBad(route);
   for(var i=0;i<candidates.length;i++){
@@ -1993,6 +2059,7 @@ function startRelayHlsPlayback(channel,token){
     var cause=describeHlsError(data);
     logPlayback('HLS TV nội bộ: '+cause);
     loadRelayDiagnostics(token);
+    if(tryRecoverHlsInPlace(engine,data,token))return;
     if(playbackConfirmed&&recoverStalledPlayback(token,'HLS nội bộ: '+cause))return;
     finishPlaybackError(token,'HLS nội bộ: '+cause);
    });
@@ -2038,6 +2105,7 @@ function startHlsPlayback(channel,token,why){
     if(!playbackActive(token)||html5Mode!=='hlsjs'||!data||!data.fatal)return;
     var cause=describeHlsError(data);
     logPlayback('HLS.js '+cause);
+    if(tryRecoverHlsInPlace(hlsInstance,data,token))return;
     var videoElement=byId('video');
     if(playbackConfirmed){
      if(recoverStalledPlayback(token,'HLS.js: '+cause))return;
@@ -2540,14 +2608,23 @@ byId('more').onclick=function(){
  focusHomeButton(byId('channels').children[firstNew]);
 };byId('sampleBtn').onclick=function(){if(!state.sources.some(function(s){return s.name==='Thử nghiệm';})){state.sources.push({name:'Thử nghiệm',channels:parse('#EXTM3U\n#EXTINF:-1,Mux Test HLS\nhttps://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8','Thử nghiệm')});if(!save()){state.sources.pop();draw();return;}}draw();notify('Đã thêm luồng thử nghiệm HLS.');};
 byId('previewLogo').onerror=function(){this.hidden=true;byId('previewText').hidden=false;};
-byId('video').onplaying=function(){if(playbackEngine==='html5')playbackReady(playbackSerial);};
+byId('video').onplaying=function(){
+ if(playbackEngine==='html5'&&!this.paused&&this.readyState>=2){
+  playbackWaitingSince=0;playbackReady(playbackSerial);
+ }
+};
 byId('video').ontimeupdate=function(){
  if(playbackEngine==='html5'&&!this.paused&&this.readyState>=2){
   playbackReady(playbackSerial);notePlaybackProgress(playbackSerial,Number(this.currentTime));
  }
 };
 byId('video').onpause=function(){if(playbackEngine==='html5')byId('player').classList.remove('is-playing');};
-byId('video').onwaiting=function(){if(playbackEngine==='html5')byId('player').classList.remove('is-playing');};
+byId('video').onwaiting=function(){
+ if(playbackEngine==='html5'){
+  if(!playbackWaitingSince)playbackWaitingSince=Date.now();
+  byId('player').classList.remove('is-playing');
+ }
+};
 byId('video').onerror=function(){
  if(playbackEngine==='html5')handleHtml5Error(playbackSerial,'HTML5 không giải mã được nguồn (codec/HTTPS).');
 };

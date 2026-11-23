@@ -33,7 +33,11 @@ function setup(storage=new Map()){
   loadSource(url){this.url=url;}
   destroy(){this.destroyed=true;}
   ready(){this.events.manifest?.();}
-  fail(details='manifestLoadError'){this.events.error?.('error',{fatal:true,details,response:{code:403}});}
+  fail(details='manifestLoadError',code=403,type='networkError'){
+   this.events.error?.('error',{fatal:true,type,details,response:{code}});
+  }
+  startLoad(){this.softNetworkRestarts=(this.softNetworkRestarts||0)+1;}
+  recoverMediaError(){this.softMediaRestarts=(this.softMediaRestarts||0)+1;}
  }
  const state={recent:[],favorites:{},sources:[]};
  const env={state,URL,window:{Hls,addEventListener(){}},
@@ -63,14 +67,17 @@ async function proveRelay(s){
  for(const sec of [0,2,4,6,8]){s.advance(1800);s.api.notePlaybackProgress(token,sec);}
  return token;
 }
-test('A single flash is not persisted as a working route',async()=>{
+test('A single flash does not poison player memory or trigger an 8s TV restart',async()=>{
  const s=setup();
  s.api.play(c);
  s.api.playbackReady(s.api.current().serial);
  assert.equal(s.storage.has('openiptv-tizen-playback-path-v3'),false);
+ s.video.paused=false;s.video.readyState=4;s.video.currentTime=0;
  s.advance(9000);
  s.api.playbackWatchdog(s.api.current().serial);
- assert.equal(s.api.current().recoveries,1,'stalled picture triggers a new attempt');
+ assert.equal(s.api.current().recoveries,0,'Tizen live HLS can play while currentTime stays at 0');
+ s.advance(30000);s.api.playbackWatchdog(s.api.current().serial);
+ assert.equal(s.api.current().recoveries,0,'do not reopen the decoder on an unreliable clock');
  assert.equal(s.api.savedPlaybackRoute(c),'','one frame is not trusted');
 });
 test('Sustained relay playback is saved by source fingerprint without URL or token',async()=>{
@@ -122,4 +129,45 @@ test('Picker autoplay and preview do not change source URLs or leak credentials 
  assert.match(html,/video\)\.ontimeupdate|byId\('video'\)\.ontimeupdate/);
  assert.match(html,/playbackProgressSeconds>=5\.5/);
  assert.match(html,/function savedPlaybackRoute\(channel\)/);
+});
+
+test('A genuinely buffering HLS stream recovers only after a prolonged lack of data',async()=>{
+ const s=setup();s.api.play(c);s.api.playbackReady(s.api.current().serial);
+ s.video.paused=false;s.video.readyState=1;s.video.currentTime=0;
+ s.advance(9000);s.api.playbackWatchdog(s.api.current().serial);
+ assert.equal(s.api.current().recoveries,0);
+ s.advance(17000);s.api.playbackWatchdog(s.api.current().serial);
+ assert.equal(s.api.current().recoveries,1,'25s without any video data triggers recovery');
+});
+test('Decoded frames prevent a false stall even when the live clock is frozen',async()=>{
+ const s=setup();s.api.play(c);s.api.playbackReady(s.api.current().serial);
+ s.video.paused=false;s.video.readyState=4;s.video.currentTime=0;
+ s.video.webkitDecodedFrameCount=120;
+ s.advance(17000);s.api.playbackWatchdog(s.api.current().serial);
+ s.video.webkitDecodedFrameCount=140;
+ s.advance(17000);s.api.playbackWatchdog(s.api.current().serial);
+ assert.equal(s.api.current().recoveries,0);
+});
+test('Recoverable HLS network error resumes in-place without blanking video',async()=>{
+ const s=setup();await proveRelay(s);
+ s.api.play(c);await flush();const engine=s.instances.at(-1);engine.ready();
+ s.api.playbackReady(s.api.current().serial);
+ const count=s.instances.length,requests=s.requests.length;
+ engine.fail('fragLoadError',0,'networkError');await flush();
+ assert.equal(engine.softNetworkRestarts,1);
+ assert.equal(s.api.current().recoveries,0);
+ assert.equal(s.instances.length,count);
+ assert.equal(s.requests.length,requests);
+ assert.notEqual(engine.destroyed,true);
+});
+test('The same relay is not restarted every few seconds by premature recovery counter reset',async()=>{
+ const s=setup();await proveRelay(s);
+ s.api.play(c);await flush();const engine=s.instances.at(-1);engine.ready();
+ s.api.playbackReady(s.api.current().serial);
+ engine.fail('manifestLoadError',403);await flush();
+ assert.equal(s.api.current().recoveries,1);
+ const next=s.instances.at(-1);next.ready();
+ const token=s.api.current().serial;s.api.playbackReady(token);
+ for(const sec of [0,2,4,6,8]){s.advance(1800);s.api.notePlaybackProgress(token,sec);}
+ assert.equal(s.api.current().recoveries,1,'5.5s playing is not a sustained 60s recovery');
 });
