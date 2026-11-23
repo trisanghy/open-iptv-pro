@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-23T16:06:04.954602+00:00",
+  "generatedAt": "2026-11-23T16:08:38.836160+00:00",
   "repository": "trisanghy/open-iptv-pro",
   "branch": "Positron",
   "versions": [
@@ -8,8 +8,8 @@
       "version": "P5.1.321",
       "appVersion": "4.23.406",
       "title": "giữ nút Xem/Hợp gu ở trên phần giải thích AI",
-      "description": "Ảnh Electron thật P320: tiêu đề WatchFlow Intelligence bị cuộn dưới thanh nav cố định khi đọc giải thích Logistic. Thêm nút ↑ Đầu AI vào header sticky, chỉ hiện khi chế độ AI mở và người dùng cuộn >120px; bấm về đầu, trả focus về tab AI; không cập nhật mô hình hay tự phát.",
-      "kind": "fix",
+      "description": "Feature priority: NEW — Bổ sung điều hướng trở về đầu nội dung AI khi phải cuộn sâu để xem bằng chứng giải thích Logistic; thao tác này trước đây không tồn tại. Feature class: AI",
+      "kind": "feature",
       "status": "candidate",
       "published": "",
       "tag": "",
