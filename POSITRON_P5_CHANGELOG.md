@@ -1,3 +1,12 @@
+## P5.1.342 / Electron 4.23.427 — Điều hướng gợi ý AI hiển thị trọn tiêu đề (CANDIDATE)
+- Feature priority: NEW — Khi chuyển gợi ý bằng bàn phím hoặc remote, ứng dụng tự tính vùng trống và căn lại vị trí cuộn theo toàn bộ thẻ thay vì chỉ đưa nút Xem vào màn hình, giúp đọc tên kênh chính xác trên màn hình hẹp trước khi phát video.
+- Feature class: AI
+- User action: Trong WatchFlow AI, nhấn Alt+Shift+J để đến gợi ý đầu, dùng Alt+Shift+K/P hoặc phím mũi tên remote lên/xuống để chuyển; bật Alt+Shift+I để thấy tên đầy đủ, tiêu đề và nút Xem vẫn nằm trong vùng nhìn.
+- Root cause: Các shortcut P340/P341 dùng scrollIntoView trên nút Xem, bỏ qua phần tiêu đề nằm trên nút và chiều cao sticky header/identity strip.
+- Electron screenshot: positron-p51342-sticky-recommendation-after-720x900-real.png
+- Evidence: scripts/positron-342-audit.cjs trên Electron thật 1920x1080 và 720x900; trước tái hiện bằng native panel scroll, sau nhấn J; kiểm tra headingClear/actionClear, ArrowUp/Down, không tràn, không autoplay, không đổi M3U/model.
+- Privacy: Chỉ điều chỉnh vị trí cuộn và focus cục bộ; không gửi stream URL, M3U, lịch sử hoặc dữ liệu người dùng lên mạng.
+
 ## P5.1.341 / Electron 4.23.426 — Remote lên/xuống duyệt gợi ý AI (CANDIDATE)
 - Feature priority: NEW — Các phím Alt+Shift+J/K/P của WatchFlow AI dùng trên bàn phím PC nhưng không thuận tiện khi điều khiển bằng remote TV hoặc phím mũi tên cơ bản. Bổ sung ArrowUp/ArrowDown trực tiếp khi nút Xem đang được focus, tự cuộn và quay vòng danh sách.
 - Feature class: AI

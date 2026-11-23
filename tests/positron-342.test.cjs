@@ -16,6 +16,6 @@ test('P342 real Electron before-after audit covers 720px and desktop, without da
  assert.equal(p.version,'4.23.427');assert.match(p.description,/Positron P5\.1\.342/);
  for(const x of ['before.headingClear,false','fixed.headingClear,true','second.headingClear,true',
  'back.headingClear,true','wrapped.headingClear,true','720,height:900','1920,height:1080',
- 'positron-p51342-sticky-recommendation-','assert.deepEqual(restored,original)','noOverflow'])
+ 'positron-p51342-sticky-recommendation-','assert.deepEqual(restored,original,','noOverflow'])
  assert.ok(qa.includes(x),'missing '+x);
 });
