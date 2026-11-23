@@ -200,6 +200,13 @@ test('HLS relay retries a 403 once with Chrome UA and keeps it for HLS segments'
   assert.match(report.browserUserAgent,/Chrome\/131\.0\.0\.0/);
   assert.equal(report.requests[0].status,403,'diagnostics retain the blocked Tizen request');
   assert.equal(report.requests[0].userAgent,'Samsung-Tizen-UA');
+  const second=await request('POST','/session',{url:'https://cdn.example.org/live.m3u8',
+   browserUserAgent:'Samsung-Tizen-UA'},{port:17869});
+  assert.equal(second.status,201);
+  const again=await request('GET',new URL(JSON.parse(second.body).url).pathname,null,media);
+  assert.equal(again.status,200);
+  assert.equal(calls.length,4,'fresh channel reuses the winning Chrome UA');
+  assert.match(calls[3].headers['User-Agent'],/Chrome\/131/);
  }finally{await new Promise(resolve=>server.close(resolve));dns.lookup=oldLookup;https.request=oldRequest;}
 });
 test('TizenBrew video player tries local relay only on HLS failure and never navigates to Cast',()=>{

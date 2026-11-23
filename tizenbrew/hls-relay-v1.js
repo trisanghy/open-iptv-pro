@@ -24,6 +24,11 @@ var SERVICE_VERSION='0.1.42';
 // Some IPTV origins reject Samsung/Tizen (403) but serve the same URL to a
 // desktop browser. Retry once as Chrome and retain the winning UA per session.
 var CHROME_USER_AGENT='Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36';
+// A previously successful Chrome fallback is reused across fresh channel
+// sessions on this TV only. Store hostnames, never URL paths or IPTV tokens.
+var chromeHosts={};
+var httpAgent=new http.Agent({keepAlive:true,maxSockets:12,keepAliveMsecs:9000});
+var httpsAgent=new https.Agent({keepAlive:true,maxSockets:12,keepAliveMsecs:9000});
 var MAX_SESSIONS=32,MAX_RESOURCES=3500,MAX_PLAYLIST=2*1024*1024;
 var MAX_SEGMENT=48*1024*1024,EXPIRE_MS=20*60*1000;
 var ALLOWED_ORIGINS={'http://127.0.0.1:8081':true,'http://localhost:8081':true};
@@ -114,12 +119,16 @@ function respondUpstream(source,req,res,session,depth,chromeRetried){
  if(depth>4){json(res,502,{error:'Quá nhiều chuyển hướng nguồn.'});return;}
  dns.lookup(parsed.hostname,function(err,address){
   if(err||!safeIp(String(address||''))){json(res,502,{error:'Không thể xác minh địa chỉ máy chủ phát.'});return;}
-  var headers={'Host':parsed.host,'Accept':'*/*','User-Agent':session.userAgent||CHROME_USER_AGENT};
+  var chromeAt=chromeHosts[parsed.hostname]||0;
+  var preferChrome=chromeAt&&Date.now()-chromeAt<60*60*1000;
+  var headers={'Host':parsed.host,'Accept':'*/*',
+   'User-Agent':preferChrome?CHROME_USER_AGENT:(session.userAgent||CHROME_USER_AGENT)};
   if(req.headers.range)headers.Range=String(req.headers.range).slice(0,120);
   var options={
    hostname:address,port:parsed.port||(parsed.protocol==='https:'?443:80),
    method:'GET',path:parsed.path||'/',headers:headers,servername:parsed.hostname,
-   rejectUnauthorized:true,timeout:18000
+   rejectUnauthorized:true,timeout:18000,
+   agent:parsed.protocol==='https:'?httpsAgent:httpAgent
   };
   var upstream=(parsed.protocol==='https:'?https:http).request(options,function(remote){
    if(remote.statusCode>=300&&remote.statusCode<400&&remote.headers.location){
@@ -128,17 +137,20 @@ function respondUpstream(source,req,res,session,depth,chromeRetried){
     respondUpstream(target,req,res,session,depth+1,chromeRetried);return;
    }
    if(remote.statusCode<200||remote.statusCode>=300){
-    if(remote.statusCode===403&&!chromeRetried&&session.userAgent!==CHROME_USER_AGENT){
+    if(remote.statusCode===403&&!chromeRetried&&headers['User-Agent']!==CHROME_USER_AGENT){
      recordDiagnostic(session,parsed,remote);
      remote.resume();
      session.userAgent=CHROME_USER_AGENT;
      respondUpstream(source,req,res,session,depth,true);return;
     }
     recordDiagnostic(session,parsed,remote);
+    if(remote.statusCode===403&&headers['User-Agent']===CHROME_USER_AGENT)
+     delete chromeHosts[parsed.hostname];
     remote.resume();
     json(res,remote.statusCode>=400&&remote.statusCode<600?remote.statusCode:502,
      {error:'Máy chủ nguồn trả HTTP '+remote.statusCode});return;
    }
+   if(headers['User-Agent']===CHROME_USER_AGENT)chromeHosts[parsed.hostname]=Date.now();
    var contentType=String(remote.headers['content-type']||'');
    var isPlaylist=/mpegurl|vnd\.apple|x-mpegurl/i.test(contentType)||
     /\.m3u8?(?:[?#]|$)/i.test(source);

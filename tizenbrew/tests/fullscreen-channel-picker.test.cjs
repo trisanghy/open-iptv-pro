@@ -55,26 +55,30 @@ test('Picker inactivity closes the overlay after three seconds and remote input 
  const firstTimer=[...s.timers.keys()][0];
  s.picker.pickerMove('ArrowDown');
  assert.equal(s.timers.has(firstTimer),false,'activity clears the previous deadline');
- assert.deepEqual(s.delays,[3000,3000]);
+ assert.deepEqual(s.delays,[3000,3000,200]);
  const currentTimer=[...s.timers.keys()][0];
  const expire=s.timers.get(currentTimer);s.timers.delete(currentTimer);expire();
  assert.equal(s.els.channelPicker.hidden,true,'inactivity hides the picker');
  assert.equal(s.focused.at(-1),'player','auto-hide returns focus to video');
  assert.equal(s.timers.size,0);
 });
-test('Up/Down immediately changes playback while keeping the list visible',()=>{
+test('Up/Down highlights immediately and plays only after 200 ms idle',()=>{
  const s=harness();s.picker.openChannelPicker();
  s.picker.pickerMove('ArrowDown');
  assert.equal(s.picker.current().pickerChannels[s.picker.current().pickerIndex].id,'c12');
- assert.deepEqual(s.played,['c12']);
+ assert.deepEqual(s.played,[],'one arrow event must not open the stream immediately');
  assert.deepEqual(s.selected,['c12']);
- assert.equal(s.els.channelPicker.hidden,false,'keep list visible after changing channels');
+ assert.ok(s.delays.includes(200));
+ const first=[...s.timers.entries()].at(-1);
+ s.picker.pickerMove('ArrowDown');
+ assert.equal(s.timers.has(first[0]),false,'rapid input clears pending tune');
  s.picker.pickerMove('ArrowUp');
- assert.deepEqual(s.played,['c12','c11']);
+ const last=[...s.timers.entries()].at(-1);
+ last[1]();
+ assert.deepEqual(s.played,['c12'],'only last channel starts');
  assert.equal(s.els.channelPicker.hidden,false);
  assert.equal(s.picker.confirmPickerChannel(),true);
- assert.equal(s.els.channelPicker.hidden,true,'OK dismisses overlay');
- assert.deepEqual(s.played,['c12','c11'],'OK must not reload playing stream');
+ assert.deepEqual(s.played,['c12'],'OK must not reopen the playing stream');
 });
 
 test('Left/Right switches folders and keeps group-specific channels',()=>{
@@ -129,6 +133,8 @@ test('First Up/Down anchors to currently playing channel, ignoring stale picker 
  assert.equal(s.picker.current().pickerGroup,'Tất cả');
  assert.equal(s.picker.current().pickerChannels[s.picker.current().pickerIndex].id,'c31');
  s.picker.pickerMove('ArrowUp');
+ const pending=[...s.timers.entries()].at(-1);
+ pending[1]();
  assert.equal(s.played.at(-1),'c30');
  assert.equal(s.els.channelPicker.hidden,false);
 });
@@ -197,11 +203,23 @@ test('Full-screen picker provides sofa-readable sizes instead of tiny controls',
  assert.ok(html.includes('<b>← →</b> Đổi thư mục'));
  assert.ok(html.includes('<b>OK/Back Đóng danh sách</b>'));
 });
-test('Upsizing the picker does not change its 3-second inactivity close or instant tuning',()=>{
+test('Picker keeps the 3-second auto-hide and delayed 200ms playback',()=>{
  const s=harness();s.picker.openChannelPicker();
  assert.deepEqual(s.delays,[3000]);
  s.picker.pickerMove('ArrowDown');
- assert.deepEqual(s.delays,[3000,3000]);
+ assert.deepEqual(s.delays,[3000,3000,200]);
+ assert.deepEqual(s.played,[]);
+ const pending=[...s.timers.entries()].at(-1);
+ pending[1]();
  assert.deepEqual(s.played,['c12']);
  assert.equal(s.els.channelPicker.hidden,false);
+});
+
+test('Switching folder cancels tuning queued for a previous folder',()=>{
+ const s=harness();s.picker.openChannelPicker();
+ s.picker.pickerMove('ArrowDown');
+ s.picker.pickerMove('ArrowRight');
+ assert.equal(s.picker.current().pickerGroup,'Tin tức');
+ s.picker.closeChannelPicker();
+ assert.deepEqual(s.played,[],'old folder channel never starts');
 });

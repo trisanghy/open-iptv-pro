@@ -45,10 +45,15 @@ function harness({relayAvailable=true}={}){
    return Promise.resolve({ok:true,json:()=>Promise.resolve({url:local})});
   }
  };
- const api=vm.runInNewContext(code+'\n({play,playbackReady,handleHtml5Error,current:()=>({playbackEngine,html5Mode,playing,playbackConfirmed,hlsRelayAttempted,hlsRelayUrl,playbackSerial})});',env);
+ const api=vm.runInNewContext(code+'\n({play,playbackReady,notePlaybackProgress,handleHtml5Error,current:()=>({playbackEngine,html5Mode,playing,playbackConfirmed,hlsRelayAttempted,hlsRelayUrl,playbackSerial})});',env);
  return {api,instances,requests,elements,notes,video,env,timers,calls,state};
 }
 async function flush(){await new Promise(resolve=>setImmediate(resolve));}
+function proveRoute(s){
+ const token=s.api.current().playbackSerial;
+ s.api.playbackReady(token);
+ for(const sec of [0,2,4,6,8])s.api.notePlaybackProgress(token,sec);
+}
 test('Click channel tries native HLS first, then HLS.js and TV-local relay on failure',async()=>{
  const s=harness(),selected={id:'vtv2',name:'VTV2',url:'https://cdn.example.org/live/vtv2.m3u8?token=private'};
  s.api.play(selected);await flush();
@@ -124,12 +129,12 @@ test('An extensionless HLS endpoint retries TV-local relay after HTML5 and direc
  assert.equal(s.elements.browserFallback.hidden,true);
 });
 
-test('Proven relay stream starts instantly on subsequent tuning',async()=>{
+test('Proven stable relay stream starts directly on subsequent tuning',async()=>{
  const s=harness(),channel={id:'vtv3',name:'VTV3',url:'https://cdn.example.org/live/vtv3.m3u8'};
  s.api.play(channel);await flush();
  s.api.handleHtml5Error(s.api.current().playbackSerial,'Native failed');await flush();
  s.instances[0].fail();await flush();s.instances[1].ready();await flush();
- s.api.playbackReady(s.api.current().playbackSerial);
+ proveRoute(s);
  s.api.play(channel);await flush();
  assert.equal(s.api.current().html5Mode,'hls-relay');
  assert.equal(s.requests.length,2);
@@ -141,7 +146,7 @@ test('Fast relay error falls back to native then HLS.js without looping to relay
  s.api.play(channel);await flush();
  s.api.handleHtml5Error(s.api.current().playbackSerial,'Native failed');await flush();
  s.instances[0].fail();await flush();s.instances[1].ready();await flush();
- s.api.playbackReady(s.api.current().playbackSerial);
+ proveRoute(s);
  s.api.play(channel);await flush();
  assert.equal(s.api.current().html5Mode,'hls-relay');
  s.instances[2].fail('manifestLoadError',403);await flush();
@@ -160,7 +165,7 @@ test('Two proven relay streams allow same-host HLS channel fast start',async()=>
   assert.equal(s.api.current().html5Mode,'native');
   s.api.handleHtml5Error(s.api.current().playbackSerial,'Native failed');await flush();
   s.instances.at(-1).fail();await flush();s.instances.at(-1).ready();await flush();
-  s.api.playbackReady(s.api.current().playbackSerial);
+  proveRoute(s);
  }
  const count=s.instances.length;
  s.api.play({id:'vtv6',name:'VTV6',url:url('vtv6')});await flush();

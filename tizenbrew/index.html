@@ -980,7 +980,7 @@ function previewPlayed(channel,token,attempt){
  var v=byId('homePreviewVideo');if(v.paused||v.readyState<2)return;
  clearTimeout(previewFallback);previewFallback=0;byId('previewArt').hidden=true;
  byId('previewStage').classList.add('preview-playing');previewStatus('');
- if(previewRelayTried&&previewHls)provenRelayUrls[channel.url]=Date.now();
+ // Only fullscreen playback with sustained frame progress validates a route.
 }
 function previewFailed(channel,token,attempt){
  if(!previewIsCurrent(channel,token,attempt))return;
@@ -1217,6 +1217,143 @@ var hlsRelayAttempted=false,hlsRelayUrl='',hlsRelayServer='http://127.0.0.1:1786
 // RAM-only hints: never persist or expose source URLs or playlist credentials.
 var provenRelayUrls={},provenRelayHosts={},provenDirectUrls={};
 var fastRelayActive=false,fastRelayRecovered=false;
+
+// Verified route profiles, not raw stream URLs or credentials, survive restarts.
+var routeMemoryKey='openiptv-tizen-playback-path-v3',routeProfiles={};
+try{
+ var storedRoutes=typeof localStorage!=='undefined'&&localStorage.getItem(routeMemoryKey);
+ if(storedRoutes){
+  var decoded=JSON.parse(storedRoutes);
+  if(decoded&&typeof decoded==='object'&&!Array.isArray(decoded))routeProfiles=decoded;
+ }
+}catch(e){routeProfiles={};}
+function playbackRouteFingerprint(address){
+ var text=String(address||''),h=2166136261;
+ for(var i=0;i<text.length;i++){h^=text.charCodeAt(i);h=Math.imul(h,16777619);}
+ return (h>>>0).toString(36)+'-'+text.length.toString(36);
+}
+function currentPlaybackRoute(){return playbackEngine==='avplay'?'avplay':html5Mode==='hls-relay'?'relay':html5Mode==='hlsjs'?'hlsjs':'native';}
+function savedPlaybackRoute(channel){
+ var key=playbackRouteFingerprint(channel&&channel.url),p=routeProfiles[key];
+ if(!p||['relay','hlsjs','native','avplay'].indexOf(p.route)<0)return '';
+ var now=Date.now();
+ if(!p.at||now-p.at>10*24*3600*1000||p.blockedUntil&&now<p.blockedUntil)return '';
+ return p.route;
+}
+function savePlaybackProfiles(){
+ try{
+  if(typeof localStorage==='undefined')return;
+  var keys=Object.keys(routeProfiles).sort(function(a,b){return routeProfiles[b].at-routeProfiles[a].at;});
+  keys.slice(120).forEach(function(k){delete routeProfiles[k];});
+  localStorage.setItem(routeMemoryKey,JSON.stringify(routeProfiles));
+ }catch(e){}
+}
+function markVerifiedPlaybackRoute(){
+ var source=playbackStream&&playbackStream.url;if(!source||!playbackEngine)return;
+ var key=playbackRouteFingerprint(source),route=currentPlaybackRoute();
+ routeProfiles[key]={route:route,at:Date.now(),blockedUntil:0};
+ savePlaybackProfiles();
+ learnPlaybackRoute();
+}
+function markPlaybackRouteBad(route){
+ var source=playbackStream&&playbackStream.url;if(!source)return;
+ var key=playbackRouteFingerprint(source),profile=routeProfiles[key];
+ if(profile&&profile.route===route){
+  profile.blockedUntil=Date.now()+45*1000;
+  savePlaybackProfiles();
+ }
+ if(route==='relay'){
+  delete provenRelayUrls[source];
+  var host=playbackSafeHost(source),hint=host&&provenRelayHosts[host];
+  if(hint)hint.blockedAt=Date.now();
+ }
+ if(route==='native'||route==='hlsjs')delete provenDirectUrls[source];
+}
+var playbackWatchdogTimer=0,playbackLastProgressAt=0,playbackLastMediaTime=null;
+var playbackProgressSeconds=0,playbackStableAt=0,playbackRecoveryAttempts={},playbackRecoveries=0;
+function clearPlaybackWatchdog(){
+ if(playbackWatchdogTimer){clearTimeout(playbackWatchdogTimer);playbackWatchdogTimer=0;}
+}
+function resetPlaybackProgress(){
+ clearPlaybackWatchdog();playbackLastProgressAt=0;playbackLastMediaTime=null;
+ playbackProgressSeconds=0;playbackStableAt=0;
+}
+function notePlaybackProgress(token,mediaTime){
+ if(!playbackActive(token)||!playbackConfirmed||!isFinite(mediaTime)||mediaTime<0)return;
+ var now=Date.now(),time=Number(mediaTime);
+ if(playbackLastMediaTime===null){playbackLastMediaTime=time;return;}
+ var moved=time-playbackLastMediaTime;
+ // Live streams may wrap their PTS. An actual wrap is still new frame progress.
+ if(moved>0.12||moved< -2){
+  playbackProgressSeconds+=moved>0?Math.min(moved,2):0.5;
+  playbackLastMediaTime=time;playbackLastProgressAt=now;
+  if(playbackProgressSeconds>=5.5&&!playbackStableAt){
+   playbackStableAt=now;
+   markVerifiedPlaybackRoute();
+   playbackRecoveryAttempts={};playbackRecoveries=0;
+  }
+ }
+}
+function playbackWatchdog(token){
+ if(!playbackActive(token)||!playbackConfirmed)return;
+ if(playbackEngine==='html5'){
+  var v=byId('video');
+  if(!v.paused&&Number.isFinite(Number(v.currentTime)))notePlaybackProgress(token,Number(v.currentTime));
+ }
+ // A single playing event is insufficient evidence; stale buffered pixels
+ // must not keep an HLS engine permanently marked healthy.
+ if(playbackLastProgressAt&&Date.now()-playbackLastProgressAt>8000){
+  recoverStalledPlayback(token,'Video không tiến hình trong 8 giây');
+  return;
+ }
+ playbackWatchdogTimer=setTimeout(function(){playbackWatchdog(token);},1500);
+}
+function startPlaybackWatchdog(token){
+ resetPlaybackProgress();playbackLastProgressAt=Date.now();
+ playbackWatchdogTimer=setTimeout(function(){playbackWatchdog(token);},1500);
+}
+function launchPlaybackRoute(channel,token,route){
+ if(!playbackActive(token))return false;
+ if(route==='avplay')return startAvplay(channel,token);
+ if(route==='native'){startHtml5Playback(channel,token);return true;}
+ playbackEngine='html5';html5Mode='native';
+ byId('video').hidden=false;byId('avplayObject').hidden=true;
+ if(route==='relay')return startRelayHlsPlayback(channel,token);
+ if(route==='hlsjs')return startHlsPlayback(channel,token,'đường phát đã xác nhận');
+ return false;
+}
+function recoverStalledPlayback(token,reason){
+ if(!playbackActive(token)||playbackRecoveries>=6)return false;
+ var route=currentPlaybackRoute(),count=playbackRecoveryAttempts[route]||0;
+ playbackRecoveryAttempts[route]=count+1;playbackRecoveries++;
+ // Retry a stale player once with a brand-new relay session, then move to
+ // another decoder. No URL mixing and no unbounded reload loop.
+ var candidates=route==='relay'?['relay','native','hlsjs','avplay']:
+  route==='native'?['native','relay','hlsjs','avplay']:
+  route==='hlsjs'?['hlsjs','relay','native','avplay']:
+  ['avplay','relay','native','hlsjs'];
+ var next=count===0?route:'';
+ if(!next){
+  markPlaybackRouteBad(route);
+  for(var i=0;i<candidates.length;i++){
+   var candidate=candidates[i];
+   if(candidate==='avplay'&&!nativeAvplay())continue;
+   if(!playbackRecoveryAttempts[candidate]){next=candidate;break;}
+  }
+ }
+ if(!next)return false;
+ logPlayback('Khôi phục luồng '+(playbackRecoveries)+' · '+String(reason||'').slice(0,85));
+ playbackSerial++;var nextToken=playbackSerial,channel=playbackStream||playing;
+ stopPlaybackEngine();
+ playbackConfirmed=false;playbackFailed=false;hlsAttempted=false;
+ hlsRelayAttempted=false;fastRelayActive=false;fastRelayRecovered=false;nativeReplayUsed=false;
+ byId('player').classList.remove('is-playing');
+ setPlayerStatus('Đang khôi phục hình ảnh bằng '+next+'…');
+ if(!launchPlaybackRoute(channel,nextToken,next)){
+  return recoverStalledPlayback(nextToken,'Bộ phát không khả dụng');
+ }
+ return true;
+}
 function learnPlaybackRoute(){
  var url=String(playbackStream&&playbackStream.url||'');
  if(!url||playbackEngine!=='html5')return;
@@ -1247,7 +1384,7 @@ function recoverFastRelay(token,reason){
     html5Mode!=='hls-relay')return false;
  fastRelayActive=false;fastRelayRecovered=true;
  var url=String(playbackStream&&playbackStream.url||''),host=playbackSafeHost(url);
- if(url)delete provenRelayUrls[url];
+ if(url){delete provenRelayUrls[url];markPlaybackRouteBad('relay');}
  if(host&&provenRelayHosts[host])provenRelayHosts[host].blockedAt=Date.now();
  logPlayback('Đường phát nhanh lỗi: '+String(reason||'').slice(0,90)+'; thử bộ phát chuẩn');
  stopPlaybackEngine();
@@ -1319,6 +1456,11 @@ function startPlaybackStream(channel,token){
  playbackStream=channel;
  var host=playbackSafeHost(channel&&channel.url);
  logPlayback('Nguồn '+(playbackStreamIndex+1)+'/'+Math.max(1,playbackStreamUrls.length)+(host?' · '+host:''));
+ var verified=savedPlaybackRoute(channel);
+ if(verified&&launchPlaybackRoute(channel,token,verified)){
+  logPlayback('Dùng bộ phát '+verified+' đã xác nhận ổn định');
+  return;
+ }
  var hint=!nativeAvplay()&&relayFastStartHint(channel);
  if(hint){
   playbackEngine='html5';html5Mode='native';
@@ -1342,6 +1484,7 @@ function tryNextChannelSource(token){
  stopPlaybackEngine();
  if(!original||byId('player').hidden)return false;
  playbackFailed=false;playbackConfirmed=false;hlsAttempted=false;nativeReplayUsed=false;hostedCastAttempted=false;hlsRelayAttempted=false;hlsRelayUrl='';fastRelayActive=false;fastRelayRecovered=false;
+ playbackRecoveryAttempts={};playbackRecoveries=0;
  playbackEvidence=[];
  byId('playbackDiag').hidden=true;byId('playbackDiag').textContent='';
  setPlayerStatus('Đang thử URL dự phòng được gắn với kênh '+(playbackStreamIndex+1)+' / '+playbackStreamUrls.length+'…');
@@ -1418,7 +1561,12 @@ function onHostedCastMessage(event){
 }
 if(window&&typeof window.addEventListener==='function')window.addEventListener('message',onHostedCastMessage,false);
 function finishPlaybackError(token,message){
- if(!playbackActive(token)||playbackFailed||playbackConfirmed)return;
+ if(!playbackActive(token)||playbackFailed)return;
+ if(playbackConfirmed){
+  if(recoverStalledPlayback(token,message))return;
+  playbackConfirmed=false;
+ }
+ if(playbackRecoveries>0&&recoverStalledPlayback(token,message))return;
  if(recoverFastRelay(token,message))return;
  playbackFailed=true;
  var video=byId('video');
@@ -1443,7 +1591,7 @@ function finishPlaybackError(token,message){
 function playbackActive(token){return token===playbackSerial&&!byId('player').hidden;}
 function clearPlaybackTimer(){if(playbackTimer)clearTimeout(playbackTimer);playbackTimer=0;}
 function stopPlaybackEngine(){
- clearPlaybackTimer();clearPlaybackGrace();
+ clearPlaybackTimer();clearPlaybackGrace();resetPlaybackProgress();
  var engine=playbackEngine;playbackEngine='';
  var hostedFrame=castFrame();
  if(hostedFrame){
@@ -1469,11 +1617,12 @@ function playbackReady(token){
  var browserButton=byId('browserFallback');
  if(document.activeElement===browserButton&&byId('player').focus)byId('player').focus();
  browserButton.hidden=true;
- if(!playbackConfirmed)learnPlaybackRoute();
+ var firstFrame=!playbackConfirmed;
  playbackConfirmed=true;playbackFailed=false;
  clearPlaybackTimer();clearPlaybackGrace();
  byId('player').classList.add('is-playing');setPlayerStatus('');
  byId('playbackDiag').hidden=true;
+ if(firstFrame)startPlaybackWatchdog(token);
 }
 function playbackFailure(token,message){
  if(!playbackActive(token))return;
@@ -1679,6 +1828,7 @@ function startRelayHlsPlayback(channel,token){
     var cause=describeHlsError(data);
     logPlayback('HLS TV nội bộ: '+cause);
     loadRelayDiagnostics(token);
+    if(playbackConfirmed&&recoverStalledPlayback(token,'HLS nội bộ: '+cause))return;
     finishPlaybackError(token,'HLS nội bộ: '+cause);
    });
    engine.attachMedia(video);
@@ -1724,9 +1874,8 @@ function startHlsPlayback(channel,token,why){
     var cause=describeHlsError(data);
     logPlayback('HLS.js '+cause);
     var videoElement=byId('video');
-    if(playbackConfirmed&&!videoElement.paused&&videoElement.readyState>=2){
-     setPlayerStatus('Kênh đang phát; chờ dữ liệu mới từ máy chủ…');
-     return;
+    if(playbackConfirmed){
+     if(recoverStalledPlayback(token,'HLS.js: '+cause))return;
     }
     // A 403 can be a genuine access denial; manifestLoadError with code 0
     // can also mean CORS. Retry exactly the selected URL on the TV's local
@@ -1755,6 +1904,7 @@ function startHlsPlayback(channel,token,why){
 }
 function handleHtml5Error(token,reason){
  if(!playbackActive(token)||playbackFailed||playbackEngine!=='html5')return;
+ if(playbackConfirmed&&recoverStalledPlayback(token,reason))return;
  if(html5Mode==='native'&&!hlsAttempted&&!dashAddress(playbackStream&&playbackStream.url)){
   logPlayback(String(reason||'HTML5 không hỗ trợ').slice(0,100));
   if(startHlsPlayback(playbackStream||playing,token,true))return;
@@ -1797,9 +1947,15 @@ function startAvplay(channel,token){
   api.setListener({
    onbufferingstart:function(){if(playbackActive(token)&&playbackEngine==='avplay')setPlayerStatus('AVPlay đang đệm luồng…');},
    onbufferingcomplete:function(){if(playbackActive(token)&&playbackEngine==='avplay')setPlayerStatus('AVPlay đã đệm, đang phát hình…');},
-   oncurrentplaytime:function(){if(playbackActive(token)&&playbackEngine==='avplay')playbackReady(token);},
+   oncurrentplaytime:function(ms){
+    if(playbackActive(token)&&playbackEngine==='avplay'){
+     playbackReady(token);notePlaybackProgress(token,Number(ms)/1000);
+    }
+   },
    onerror:function(reason){fallbackFromAvplay(channel,token,'Lỗi '+reason);},
-   onstreamcompleted:function(){if(playbackActive(token))setPlayerStatus('Luồng đã kết thúc. Nhấn OK để thử lại.');}
+   onstreamcompleted:function(){if(playbackActive(token)){
+    if(!recoverStalledPlayback(token,'AVPlay báo hết luồng'))setPlayerStatus('Luồng đã kết thúc. Nhấn OK để thử lại.');
+   }}
   });
   playbackTimer=setTimeout(function(){fallbackFromAvplay(channel,token,'quá thời gian chờ');},18000);
   api.prepareAsync(function(){
@@ -1818,6 +1974,7 @@ function play(c){
  byId('browserFallback').hidden=true;
  playbackSerial++;var token=playbackSerial;stopPlaybackEngine();playing=c;
  hlsAttempted=false;playbackEvidence=[];playbackFailed=false;playbackConfirmed=false;nativeReplayUsed=false;hostedCastAttempted=false;hlsRelayAttempted=false;hlsRelayUrl='';fastRelayActive=false;fastRelayRecovered=false;
+ playbackRecoveryAttempts={};playbackRecoveries=0;
  playbackStreamUrls=playbackCandidates(c);playbackStreamIndex=0;
  byId('playbackDiag').textContent='';byId('playbackDiag').hidden=true;
  logPlayback('AVPlay: '+(nativeAvplay()?'có API':'không có API'));
@@ -1853,6 +2010,24 @@ function togglePlayback(){
  * Up/Down play the next channel immediately while leaving the picker visible.
  * Left/Right switch folders; OK/Back dismiss the picker without undoing playback. */
 var pickerGroup='Tất cả',pickerIndex=0,pickerChannels=[],pickerHideTimer=null;
+var pickerPlayTimer=null,pickerQueuedChannel=null;
+function cancelPickerPlay(){
+ if(pickerPlayTimer!==null)clearTimeout(pickerPlayTimer);
+ pickerPlayTimer=null;pickerQueuedChannel=null;
+}
+function commitPickerPlay(){
+ if(pickerPlayTimer!==null)clearTimeout(pickerPlayTimer);
+ pickerPlayTimer=null;
+ var target=pickerQueuedChannel;pickerQueuedChannel=null;
+ if(target&&(!playing||playing.id!==target.id)){select(target);play(target);}
+}
+function queuePickerPlay(channel){
+ cancelPickerPlay();
+ if(!channel||playing&&channel.id===playing.id)return;
+ pickerQueuedChannel=channel;
+ // 200ms debounce: rapid remote navigation never opens/disposes every stream.
+ pickerPlayTimer=setTimeout(commitPickerPlay,200);
+}
 function schedulePickerAutoHide(){
  if(pickerHideTimer!==null)clearTimeout(pickerHideTimer);
  pickerHideTimer=null;
@@ -1920,6 +2095,8 @@ function openChannelPicker(anchorToPlaying){
  return true;
 }
 function closeChannelPicker(){
+ // Honor the last highlighted channel even when OK/Back arrives <200ms later.
+ commitPickerPlay();
  if(pickerHideTimer!==null)clearTimeout(pickerHideTimer);
  pickerHideTimer=null;
  byId('channelPicker').hidden=true;
@@ -1931,14 +2108,16 @@ function pickerMove(key){
  schedulePickerAutoHide();
  if(key==='ArrowLeft'||key==='ArrowRight'){
   var groups=pickerGroupsAll(),index=groups.indexOf(pickerGroup);
+  cancelPickerPlay();
   pickerSetGroup(groups[(index+(key==='ArrowRight'?1:-1)+groups.length)%groups.length]);
   rememberPickerPosition();
  }else if(pickerChannels.length&&(key==='ArrowUp'||key==='ArrowDown')){
   pickerIndex=(pickerIndex+(key==='ArrowDown'?1:-1)+pickerChannels.length)%pickerChannels.length;
   var nextChannel=pickerChannels[pickerIndex];
   rememberPickerPosition();
-  if(nextChannel&&(!playing||nextChannel.id!==playing.id)){
-   select(nextChannel);play(nextChannel);
+  if(nextChannel){
+   select(nextChannel);
+   queuePickerPlay(nextChannel);
   }
   // Playback changes underneath, but the channel list stays visible.
   renderChannelPicker();
@@ -1953,10 +2132,11 @@ function confirmPickerChannel(){
  return !!channel;
 }
 function closePlayer(){
+ cancelPickerPlay();
  byId('browserFallback').hidden=true;
  if(!byId('channelPicker').hidden)closeChannelPicker();
  playbackSerial++;stopPlaybackEngine();byId('player').hidden=true;
- hlsAttempted=false;playbackEvidence=[];playbackFailed=false;playbackConfirmed=false;hostedCastAttempted=false;playbackStreamUrls=[];playbackStream=null;byId('playbackDiag').textContent='';byId('playbackDiag').hidden=true;
+ hlsAttempted=false;playbackEvidence=[];playbackFailed=false;playbackConfirmed=false;hostedCastAttempted=false;playbackRecoveryAttempts={};playbackRecoveries=0;playbackStreamUrls=[];playbackStream=null;byId('playbackDiag').textContent='';byId('playbackDiag').hidden=true;
  byId('player').classList.remove('is-playing');setPlayerStatus('');
  playing=null;draw();updateBottomActions();
 }
@@ -2196,10 +2376,16 @@ byId('more').onclick=function(){
 };byId('sampleBtn').onclick=function(){if(!state.sources.some(function(s){return s.name==='Thử nghiệm';})){state.sources.push({name:'Thử nghiệm',channels:parse('#EXTM3U\n#EXTINF:-1,Mux Test HLS\nhttps://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8','Thử nghiệm')});if(!save()){state.sources.pop();draw();return;}}draw();notify('Đã thêm luồng thử nghiệm HLS.');};
 byId('previewLogo').onerror=function(){this.hidden=true;byId('previewText').hidden=false;};
 byId('video').onplaying=function(){if(playbackEngine==='html5')playbackReady(playbackSerial);};
-byId('video').ontimeupdate=function(){if(playbackEngine==='html5'&&!this.paused&&this.readyState>=2)playbackReady(playbackSerial);};
+byId('video').ontimeupdate=function(){
+ if(playbackEngine==='html5'&&!this.paused&&this.readyState>=2){
+  playbackReady(playbackSerial);notePlaybackProgress(playbackSerial,Number(this.currentTime));
+ }
+};
 byId('video').onpause=function(){if(playbackEngine==='html5')byId('player').classList.remove('is-playing');};
 byId('video').onwaiting=function(){if(playbackEngine==='html5')byId('player').classList.remove('is-playing');};
-byId('video').onerror=function(){if(playbackEngine==='html5'&&(this.paused||this.readyState<2))handleHtml5Error(playbackSerial,'HTML5 không giải mã được nguồn (codec/HTTPS).');};
+byId('video').onerror=function(){
+ if(playbackEngine==='html5')handleHtml5Error(playbackSerial,'HTML5 không giải mã được nguồn (codec/HTTPS).');
+};
 var backDownHandled=false,backDownReset=0;
 window.addEventListener('keydown',function(e){
  if(isRemoteBack(e)){
