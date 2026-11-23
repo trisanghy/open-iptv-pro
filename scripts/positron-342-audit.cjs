@@ -138,7 +138,7 @@ async function run(page){
  const restored=await page.evaluate(()=>({channels:JSON.stringify(window.IPTVState.getChannels().map(c=>c.id)),
   current:window.IPTVState.getCurrent()?.id||'',model:localStorage.getItem('positron-intelligence-preferences-v1')}));
  assert.deepEqual(restored,original,'playlist/current/model state cannot change');
- const report={version:'P5.1.341',app:'4.23.427',realElectron:true,desktop,narrow,checks:18,
+ const report={version:'P5.1.342',app:'4.23.427',realElectron:true,desktop,narrow,checks:18,
   dataUnchanged:true,autoplay:false,pass:true,
   beforeNote:'BEFORE and AFTER use native P342 Electron: BEFORE deliberately reproduces P341 sticky heading overlap by scrolling the real WatchFlow panel; AFTER uses J to reveal card.',
   scope:'Three synthetic QA channels; real Electron UI only, no live IPTV, GPU or Cast testing'};

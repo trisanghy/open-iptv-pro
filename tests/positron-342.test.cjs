@@ -13,7 +13,7 @@ test('P342 scroll target uses visible card bounds below sticky title and identit
 });
 test('P342 real Electron before-after audit covers 720px and desktop, without data change',()=>{
  const qa=read('scripts/positron-342-audit.cjs'),p=JSON.parse(read('package.json'));
- assert.equal(p.version,'4.23.427');assert.match(p.description,/Positron P5\.1\.342/);
+ assert.equal(p.version,'4.23.427');assert.ok(qa.includes("version:'P5.1.342'"),'QA must label actual current release');assert.match(p.description,/Positron P5\.1\.342/);
  for(const x of ['before.headingClear,false','fixed.headingClear,true','second.headingClear,true',
  'back.headingClear,true','wrapped.headingClear,true','720,height:900','1920,height:1080',
  'positron-p51342-sticky-recommendation-','assert.deepEqual(restored,original,','noOverflow'])
