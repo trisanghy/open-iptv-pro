@@ -10,7 +10,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 concurrency:
   group: tizenbrew-browser-package
@@ -82,11 +82,11 @@ jobs:
           launcher = '''#!/bin/bash
           set -euo pipefail
           TAG="__TAG__"
-          URL="https://github.com/trisanghy/open-iptv-pro/releases/download/$TAG/Open-IPTV-Pro-TizenBrowser.wgt"
+          SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
           DEST="$HOME/Library/Caches/OpenIPTVPro/TizenBrowser/$TAG"
           mkdir -p "$DEST"
-          echo "Đang tải gói TizenBrew từ GitHub..."
-          curl --fail --location --silent --show-error --retry 3 "$URL" -o "$DEST/Open-IPTV-Pro-TizenBrowser.wgt"
+          echo "Đang mở gói TizenBrew đã tải từ Actions..."
+          test -s "$SCRIPT_DIR/Open-IPTV-Pro-TizenBrowser.wgt" || { echo "Thiếu file WGT trong thư mục artifact"; exit 1; }\n          cp "$SCRIPT_DIR/Open-IPTV-Pro-TizenBrowser.wgt" "$DEST/Open-IPTV-Pro-TizenBrowser.wgt"
           python3 - "$DEST/Open-IPTV-Pro-TizenBrowser.wgt" "$DEST" <<'PYRUN'
           import sys, zipfile, os, http.server, functools, subprocess
           archive, folder = sys.argv[1:3]
@@ -123,8 +123,8 @@ jobs:
           Built from the TizenBrew branch commit {sha}.
           **This WGT is unsigned and is only intended for local browser preview (not direct installation on Samsung TV).**
           On Mac, run the one-line Terminal command:
-          bash <(curl -fsSL https://github.com/trisanghy/open-iptv-pro/releases/download/{tag}/Open-Tizen-Mac.command)
-          The launcher downloads this WGT, extracts it, starts a local Python server and opens the default browser.
+          bash Open-Tizen-Mac.command (after extracting the latest GitHub Actions artifact containing the WGT and command file)
+          The launcher uses the bundled WGT from the GitHub Actions artifact, extracts it, starts a local Python server and opens the default browser.
           Requires macOS, curl, and Python 3. Leave Terminal open; press Control+C to stop.
           For Windows CMD, download and run Open-Latest-WGT-Windows.ps1 from the tizenbrew branch, which rebuilds from the current HEAD each time.
           The package is UNSIGNED, for browser preview only and not Samsung TV installation.
@@ -140,23 +140,3 @@ jobs:
           path: dist-tizen-browser/*
           if-no-files-found: error
 
-      - name: Publish immutable browser-preview download
-        shell: bash
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          short="$(echo "$GITHUB_SHA" | cut -c1-12)"
-          tag="tizenbrew-browser-$short"
-          if gh release view "$tag" >/dev/null 2>&1; then
-            echo "Release already exists; keeping immutable assets."
-            exit 0
-          fi
-          gh release create "$tag" \
-            dist-tizen-browser/Open-IPTV-Pro-TizenBrowser.wgt \
-            dist-tizen-browser/Open-Tizen-Mac.command \
-            dist-tizen-browser/Open-Latest-WGT-Windows.ps1 \
-            dist-tizen-browser/README.txt \
-            --title "Open IPTV Pro Tizen Browser Preview $short" \
-            --notes-file dist-tizen-browser/README.txt \
-            --target "$GITHUB_SHA" \
-            --prerelease
