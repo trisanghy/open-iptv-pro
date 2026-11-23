@@ -367,6 +367,7 @@ test('P276 WatchFlow quản lý 3 mô hình có trọng số và xóa riêng an 
   "if(item.id==='category')categoryModel=core.emptyCategoryModel()",
   'modelInventory:()=>learnedInventory()'])assert.ok(ui.includes(s),s);
  assert.ok(!ui.includes("win.confirm('Xóa toàn bộ trọng số"));
+ assert.ok(ui.includes('modelManager.open=false;'),'P269 AI schedule controls must remain visible on open');
  assert.ok(css.includes('.po-ai-model-row button:focus-visible'));
  for(const name of ['positron-p51276-model-manager-before-1920x1080-real.png',
   'positron-p51276-model-manager-after-1920x1080-real.png'])assert.ok(qa.includes(name));

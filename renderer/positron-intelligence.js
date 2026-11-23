@@ -51,7 +51,7 @@
  controls.append(checkLabel,clear);
  // P276: Three built-in, locally learned algorithms (no external model download).
  const modelManager=d.createElement('details');modelManager.id='poAIModelManager';modelManager.className='po-ai-model-manager';
- modelManager.open=true;
+ modelManager.open=false; // Keep core navigation visible; expand to manage model weights.
  const modelToggle=d.createElement('summary');modelToggle.textContent='Mô hình AI trên máy';
  const modelRows=d.createElement('div');modelRows.className='po-ai-model-rows';modelRows.id='poAIModelRows';
  const modelStatus=d.createElement('p');modelStatus.className='po-ai-model-status';modelStatus.id='poAIModelStatus';
