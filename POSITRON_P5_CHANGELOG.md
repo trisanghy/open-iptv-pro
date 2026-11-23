@@ -1,3 +1,10 @@
+## P5.1.311 / Electron 4.23.396 — Lưu nhãn Naive Bayes an toàn khi bộ nhớ đầy (CANDIDATE)
+- Feature class: AI
+- Evidence: QA Electron thật `qa311` giả lập QuotaExceededError với localStorage của mô hình AI; ảnh `positron-p51311-storage-fail-before-1920x1080-real.png` / `positron-p51311-storage-fail-after-1920x1080-real.png`, Node regression.
+- Nguyên nhân: nút Ghi nhãn & tiếp cập nhật trọng số Naive Bayes và danh sách đã học trong RAM trước khi lưu; nếu lưu lỗi, giao diện báo đã học dù lần khởi động tiếp theo sẽ mất nhãn.
+- Sửa: khi lưu lỗi, hoàn tác mô hình và taughtIds, bảo toàn Undo, thông báo chưa lưu; chỉ xác nhận học sau khi save thành công.
+- Không chạm M3U/EPG/Favorites/luồng video/DVR/Cast. Chỉ tính hoàn tất sau CI xanh và mở ảnh Electron thật.
+
 ## P5.1.310 — Đọc rộng phân tích AI theo lựa chọn / Electron 4.23.395
 - Feature priority: NEW — Bảng WatchFlow AI mặc định chỉ rộng khoảng 528 px trên desktop 1920 px dù còn nhiều khoảng trống; thêm nút “Đọc rộng” để tăng lên 820 px, cùng “Thu gọn” trở lại. Không tác động mô hình hoặc luồng phát.
 - Feature class: AI

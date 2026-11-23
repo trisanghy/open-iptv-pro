@@ -463,10 +463,21 @@
       if(categoryModel.examples<=count){state()?.toast?.('Không thể học nhãn: cần tên kênh có thông tin','warn');return;}
       taughtIds.add(String(suggestion.channel.id).slice(0,160));
       while(taughtIds.size>1000)taughtIds.delete(taughtIds.values().next().value);
+      // P311: keep training state atomic when local model persistence fails.
+      const previousUndo=lastActiveTeachUndo;
+      if(!save()){
+       categoryModel=previousModel;
+       taughtIds.clear();for(const id of previousTaughtIds)taughtIds.add(id);
+       lastActiveTeachUndo=previousUndo;
+       activeStatusMessage='Không lưu được nhãn AI. Mô hình và hàng đợi đã khôi phục như trước; kiểm tra bộ nhớ rồi thử lại.';
+       render();
+       byId('poAIActiveStatus')?.scrollIntoView({block:'center',behavior:'instant'});
+       state()?.toast?.('Nhãn AI chưa được lưu; mô hình đã hoàn tác','warn');
+       return;
+      }
       lastActiveTeachUndo={model:previousModel,taughtIds:previousTaughtIds,name:String(suggestion.channel.name).slice(0,120)};
       activeStatusMessage='Đã học nhãn '+core.KINDS[select.value]+' cho '+suggestion.channel.name+'.';
-      const stored=save();render();
-      if(!stored)state()?.toast?.('Chưa lưu được mô hình mới vào bộ nhớ','warn');
+      render();
      });
      const skip=d.createElement('button');skip.type='button';skip.id='poAIActiveSkip';skip.textContent='Bỏ qua';
      skip.title='Chuyển sang kênh tiếp theo mà không lưu bất kỳ nhãn nào';

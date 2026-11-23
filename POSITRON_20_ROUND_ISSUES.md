@@ -44,3 +44,8 @@ Chưa thực hiện. Mỗi vòng yêu cầu commit/version, test, ảnh Electron
 ## QA repair P5.1.310 — CI 45177813399
 - Job capture failed at P271: teacherVisible=false although labelCountOnScreen, learnedOnChoice, actualNB true. Opened real Electron P271 before: teacher select is cut by panel bottom.
 - Scroll teacher into viewport before geometry verification, then align replacement after DOM rerender. Keep assertions, no autoplay or data mutation. Candidate until CI green and new screenshot opened.
+
+## Đợt mới từ P5.1.310 — Vòng 01/20: P5.1.311 (CANDIDATE)
+- Baseline P5.1.310 / Electron 4.23.395: Actions 45179155802 đã đạt test/capture/Windows/Mac; qa310 9/9 true, mở cả ảnh wide-reading trước/sau 1920×1080.
+- Lỗi trong mã: huấn luyện Naive Bayes cập nhật RAM trước save; nếu localStorage đầy, nhãn mất khi khởi động lại. Sửa giao dịch ghi nhãn có rollback trọng số và hàng đợi; QA ép lỗi quota tại khóa AI riêng, kiểm tra playlist không đổi và no-autoplay.
+- Ảnh P311 và kết quả CI chưa có; không nhận ĐẠT trước khi xem PNG thật.

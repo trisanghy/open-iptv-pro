@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.395",
-  "description": "Positron P5.1.310: tùy chọn đọc rộng bảng phân tích AI trên desktop",
+  "version": "4.23.396",
+  "description": "Positron P5.1.311: không ghi nhãn AI giả khi bộ nhớ đầy, rollback Naive Bayes an toàn",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

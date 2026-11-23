@@ -1302,3 +1302,20 @@ test('P310 screenshot audit keeps teacher fully visible across rerender',()=>{
  assert.ok(s.includes("refreshed?.scrollIntoView({block:'center',behavior:'instant'})"));
  assert.ok(s.includes('second.top>=panel.top&&second.bottom<=panel.bottom'));
 });
+
+test('P311 label training rollback handles localStorage failure without claiming AI learned',()=>{
+ const s=fs.readFileSync('renderer/positron-intelligence.js','utf8');
+ const qa=fs.readFileSync('scripts/positron-20-extension.cjs','utf8');
+ const pos=s.indexOf('// P311: keep training state atomic');
+ assert.ok(pos>=0,'P311 atomic training path exists');
+ const section=s.slice(pos,pos+1200);
+ for(const part of ['const previousUndo=lastActiveTeachUndo','if(!save()){',
+  'categoryModel=previousModel','taughtIds.clear();for(const id of previousTaughtIds)taughtIds.add(id);',
+  'lastActiveTeachUndo=previousUndo','Nhãn AI chưa được lưu; mô hình đã hoàn tác'])
+  assert.ok(section.includes(part),part);
+ assert.ok(section.indexOf('if(!save()){')<section.indexOf('lastActiveTeachUndo={model:previousModel'),
+  'Undo is recorded only after persistence succeeds');
+ for(const part of ['qa311','positron-p51311-storage-fail-before-1920x1080-real.png',
+  'positron-p51311-storage-fail-after-1920x1080-real.png'])
+  assert.ok(qa.includes(part),part);
+});
