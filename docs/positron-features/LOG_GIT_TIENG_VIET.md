@@ -2,14 +2,22 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
-## P5.1.299 — AI cảnh báo rủi ro phân loại tập trung theo nhóm
+## P5.1.300 — AI xem tên kênh có thể mất phân loại
 
-**Ứng dụng:** 4.23.384 · **Trạng thái:** Chưa có bản phát hành
+**Ứng dụng:** 4.23.385 · **Trạng thái:** Chưa có bản phát hành
+
+Feature priority: NEW — Sau khi AI Naive Bayes cảnh báo nhóm chịu rủi ro, người xem có thể chủ động mở danh sách tối đa ba tên kênh thực đang có nguy cơ mất dự đoán đủ chắc chắn trong mỗi nhóm, thay vì chỉ nhìn tỷ lệ tổng hợp; danh sách không tự phát video. Feature class: AI
+
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/68a129d37738274c641ee7591d2a590eeb3df7bc)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+
+## P5.1.299 — AI phát hiện rủi ro tập trung theo nhóm khi khôi phục mô hình / Electron 4.23.384
+
+**Ứng dụng:** Chưa xác minh · **Trạng thái:** Chưa có bản phát hành
 
 Feature priority: NEW — Khi mô hình Naive Bayes mới làm ít nhất 5 kênh trong một nhóm mất phân loại đủ chắc chắn, chiếm tối thiểu 60% nhóm, hiện cảnh báo độc lập ngay trước xác nhận khôi phục kể cả khi mức giảm trung bình toàn thư viện còn thấp. Feature class: AI
 
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/67a11cd0784212bfe9197ae5d9127772071d3dd4)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
 
 ## P5.1.298 — AI loại nhóm mẫu quá nhỏ khi so sánh rủi ro / Electron 4.23.383
 

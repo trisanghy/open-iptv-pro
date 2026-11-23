@@ -1,20 +1,35 @@
 {
-  "generatedAt": "2026-11-23T09:15:32.407768+00:00",
+  "generatedAt": "2026-11-23T09:28:00.694260+00:00",
   "repository": "trisanghy/open-iptv-pro",
   "branch": "Positron",
   "versions": [
     {
+      "number": 300,
+      "version": "P5.1.300",
+      "appVersion": "4.23.385",
+      "title": "AI xem tên kênh có thể mất phân loại",
+      "description": "Feature priority: NEW — Sau khi AI Naive Bayes cảnh báo nhóm chịu rủi ro, người xem có thể chủ động mở danh sách tối đa ba tên kênh thực đang có nguy cơ mất dự đoán đủ chắc chắn trong mỗi nhóm, thay vì chỉ nhìn tỷ lệ tổng hợp; danh sách không tự phát video. Feature class: AI",
+      "kind": "feature",
+      "status": "candidate",
+      "published": "",
+      "tag": "",
+      "commit": "68a129d37738274c641ee7591d2a590eeb3df7bc",
+      "url": "https://github.com/trisanghy/open-iptv-pro/tree/Positron",
+      "assets": [],
+      "image": null
+    },
+    {
       "number": 299,
       "version": "P5.1.299",
-      "appVersion": "4.23.384",
-      "title": "AI cảnh báo rủi ro phân loại tập trung theo nhóm",
+      "appVersion": "Chưa xác minh",
+      "title": "AI phát hiện rủi ro tập trung theo nhóm khi khôi phục mô hình / Electron 4.23.384",
       "description": "Feature priority: NEW — Khi mô hình Naive Bayes mới làm ít nhất 5 kênh trong một nhóm mất phân loại đủ chắc chắn, chiếm tối thiểu 60% nhóm, hiện cảnh báo độc lập ngay trước xác nhận khôi phục kể cả khi mức giảm trung bình toàn thư viện còn thấp. Feature class: AI",
       "kind": "feature",
       "status": "candidate",
       "published": "",
       "tag": "",
-      "commit": "67a11cd0784212bfe9197ae5d9127772071d3dd4",
-      "url": "https://github.com/trisanghy/open-iptv-pro/tree/Positron",
+      "commit": "",
+      "url": "https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md",
       "assets": [],
       "image": null
     },
@@ -1591,7 +1606,7 @@
       "commit": "",
       "url": "https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md",
       "assets": [],
-      "image": "screenshots/positron-p51194-dvr-start-after-before-1920x1080-real.png"
+      "image": "screenshots/positron-p51194-dvr-start-after-after-1920x1080-real.png"
     },
     {
       "number": 193,
