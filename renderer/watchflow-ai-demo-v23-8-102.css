@@ -221,3 +221,12 @@ html[data-theme=dark] #page-tv .wf-standard-list button,html[data-theme=amoled] 
 html[data-theme=dark] #page-tv .wf-delete-confirm,html[data-theme=amoled] #page-tv .wf-delete-confirm{background:#432637;border-color:#89506a;color:#ffdce8}
 html[data-theme=dark] #page-tv .wf-delete-confirm button,html[data-theme=amoled] #page-tv .wf-delete-confirm button{background:#eee7f0;color:#57283d}
 html[data-theme=dark] #page-tv .wf-delete-confirm .wf-delete-yes,html[data-theme=amoled] #page-tv .wf-delete-confirm .wf-delete-yes{background:#b42f60;color:#fff}
+
+/* v23.8.129 — Standard is preinstalled, click to verify; Smart downloads on click. */
+#page-tv .wf-standard-list #wfStandardInstalled{background:#3d956f!important;color:#fff!important;border-color:#2d825e!important;cursor:pointer!important;opacity:1!important}
+#page-tv #wfStandardStatus{display:block;margin-top:9px;font-size:11px;color:#43936f;line-height:1.45}
+#page-tv .wf-unavailable{font-size:10px;font-weight:750;color:#9a8eaa;white-space:nowrap}
+#page-tv #wfSmartProgress{display:block;line-height:1.6;white-space:pre-wrap;overflow-wrap:anywhere}
+#page-tv #wfSmartInstall:disabled{cursor:wait;opacity:.7}
+html[data-theme=dark] #page-tv .wf-unavailable,html[data-theme=amoled] #page-tv .wf-unavailable{color:#afa4bc}
+html[data-theme=dark] #page-tv #wfStandardStatus,html[data-theme=amoled] #page-tv #wfStandardStatus{color:#8bdbb5}

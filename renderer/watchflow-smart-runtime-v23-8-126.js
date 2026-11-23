@@ -42,7 +42,13 @@
   try{
    if(!await win.caches.has(cacheName(id)))return false;
    const requests=await (await win.caches.open(cacheName(id))).keys();
-   return requests.some(request=>request.url.includes(model.modelRepo)&&/model_(?:quantized|int8)\.onnx/.test(request.url));
+   // Transformers.js v3 can choose model_quantized.onnx, model_q8.onnx or
+   // model.onnx depending on the repository; do not mistake a downloaded
+   // and validated model for 'not installed' merely due to filename.
+   return requests.some(request=>{
+    const url=decodeURIComponent(String(request?.url||''));
+    return url.includes(model.modelRepo)&&/\/onnx\/[^/?#]+\.onnx(?:[?#]|$)/i.test(url);
+   });
   }catch{return false;}
  }
  async function inventory(win){
@@ -63,11 +69,15 @@
    const lib=await import('./vendor/transformers.min.js');
    if(typeof lib.pipeline!=='function'||!lib.env)throw Error('Thiếu Transformers.js cục bộ trong bộ cài.');
    const cache=await win.caches.open(cacheName(id));
+   if(typeof cache?.match!=='function'||typeof cache?.put!=='function')
+    throw Error('CacheStorage không hỗ trợ match/put để lưu model offline');
    lib.env.allowLocalModels=false;
    lib.env.allowRemoteModels=remote;
    lib.env.useBrowserCache=false;
    lib.env.useCustomCache=true;
    lib.env.customCache=cache;
+   if(!lib.env.backends?.onnx?.wasm)
+    throw Error('Bộ chạy ONNX WASM không có trong file Transformers.js đóng gói.');
    lib.env.backends.onnx.wasm.wasmPaths=new URL('vendor/',win.document?.baseURI||win.location.href).href;
    lib.env.backends.onnx.wasm.numThreads=1;
    const engine=await lib.pipeline('feature-extraction',model.modelRepo,{

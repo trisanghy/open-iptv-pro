@@ -50,8 +50,10 @@ test('Download and delete controls invoke real local model operations only after
  assert.match(ui,/smartRemove\.addEventListener\('click',async/);
  assert.match(ui,/await smartRuntime\.install\(root,id,update\)/);
  assert.match(ui,/await smartRuntime\.remove\(root,id\)/);
- assert.match(ui,/root\.confirm\?\.\('Tải '/);
- assert.match(ui,/root\.confirm\?\.\('Xóa '/);
+ assert.doesNotMatch(ui,/root\.confirm\?\.\('Tải '/);
+ assert.doesNotMatch(ui,/root\.confirm\?\.\('Xóa '\+model\.label/);
+ assert.match(ui,/id="wfSmartDeleteConfirm"/);
+ assert.match(ui,/id="wfStandardStatus"/);
  assert.match(auto,/setNativeTopics/);
  assert.match(auto,/setSmartProgrammeLabels/);
  assert.match(auto,/smart-results:/);
