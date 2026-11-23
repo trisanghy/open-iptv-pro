@@ -2,14 +2,22 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
-## P5.1.309 — quay lại so sánh AI an toàn, tách nút khôi phục khỏi hàng đợi dạy
+## P5.1.310 — tùy chọn đọc rộng bảng phân tích AI trên desktop
 
-**Ứng dụng:** 4.23.394 · **Trạng thái:** Chưa có bản phát hành
+**Ứng dụng:** 4.23.395 · **Trạng thái:** Chưa có bản phát hành
+
+Feature priority: NEW — Bảng WatchFlow AI mặc định chỉ rộng khoảng 528 px trên desktop 1920 px dù còn nhiều khoảng trống; thêm nút “Đọc rộng” để tăng lên 820 px, cùng “Thu gọn” trở lại. Không tác động mô hình hoặc luồng phát. Feature class: AI
+
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/51a34fc143a57eae99e4f5b10352dec5415c7d7c)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+
+## P5.1.309 — Tách xác nhận khôi phục khỏi dạy AI và quay lại an toàn / Electron 4.23.394
+
+**Ứng dụng:** Chưa xác minh · **Trạng thái:** Chưa có bản phát hành
 
 Feature priority: NEW — Ở hàng đợi dạy nhãn, tạm ẩn nút xác nhận nhập trọng số đang nổi chồng lên bộ chọn chủ đề, đồng thời thêm lối “Trở lại kiểm tra bản sao AI” để quay về xem xét mô hình khôi phục chưa xác nhận. Chuyển chế độ không tự nhập hay mất dữ liệu. Feature class: AI
 
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/b632b1e7fb2e5b4bf59dab5c233ac7f68d04da70)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
 
 ## P5.1.308 — Chuyển từ nhóm AI chưa chắc chắn sang hàng đợi dạy nhãn / Electron 4.23.393
 
