@@ -1,15 +1,15 @@
-/* Load scripts strictly in original order, after Rust storage hydration. */
+/* Load scripts strictly after Rust storage hydration. Cast V2 + native adapter are loaded by index.html; do not load legacy cast-ui.js here. */
 'use strict';
 (async()=>{
  try{await window.IPTVPrimaryPersistence.ready;}
  catch(error){console.error('Storage bootstrap failed:',error);}
  const modules=[
-  'video-source-aspect-v17.js','app.js','auto-pip-v42363.js','cast-ui.js','features.js','advanced.js','collector.js',
+  'video-source-aspect-v17.js','app.js','auto-pip-v42363.js','features.js','advanced.js','collector.js',
   'doctor-v2.js','smart-discovery-ui.js','doctor-v3.js','backup-ui.js',
   'dvr-ui.js','settings-ui.js','ui-style.js','theme-stage.js','player-ux.js','fullscreen-panels.js','fullscreen-web-parity-v23-8-59.js','rust-channel-browser-v23-8-60.js',
   'rust-ai-preferences-v23-8-4.js','live-captions-v42343.js','local-tts-v42344.js','whisper-auto-v42345.js','local-ai-install-progress-v23-8-87.js',
   'ai-hardware-advice-v42365.js','rust-electron-parity-v23-4.js','rust-ai-settings-v23-6.js','rust-native-cc-v23-8-20.js','rust-subtitle-controls-v23-8-5.js','electron-player-parity-v23-8-21.js',
-  'video-enhancement-v23-8-70.js','supabase-sdk.js','cloud-portable.js','cloud-portable-init.js','web-tv-pair.js','desktop-tv-pair.js'
+  'video-enhancement-v23-8-70.js','supabase-sdk.js','cloud-portable.js','cloud-portable-init.js','web-tv-pair.js'
  ];
  for(const filename of modules){
   await new Promise((resolve,reject)=>{
