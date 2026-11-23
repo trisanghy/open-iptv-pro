@@ -7,15 +7,28 @@ Trang này được tạo tự động từ GitHub Releases và ảnh kiểm th�
 [Mở WEBSITE changelog tương tác](https://raw.githack.com/trisanghy/open-iptv-pro/Positron/docs/positron-features/index.html) · [Giao diện HTML trong repository](index.html) · [Các bản phát hành](https://github.com/trisanghy/open-iptv-pro/releases) · [Nhật ký Git tiếng Việt](LOG_GIT_TIENG_VIET.md) · [Quy tắc ưu tiên tính năng](../../POSITRON_FEATURE_RULES.md)
 
 <details>
-<summary><strong>P5.1.350</strong> · WatchFlow không có kênh có nút mở Quản lý nguồn IPTV hợp pháp, không tự nhập hay phát · CHƯA CÓ BẢN PHÁT HÀNH · TÍNH NĂNG</summary>
+<summary><strong>P5.1.351</strong> · QA độc lập kênh IPTV, bảo toàn playlist và thông luồng phát hành · CHƯA CÓ BẢN PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
 
-**Ứng dụng:** 4.23.435 · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
+**Ứng dụng:** 4.23.436 · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
+
+Nguyên nhân: bộ kiểm thử Electron dài chủ động nhập 561 kênh metadata QA, nhưng audit P350 giả định danh sách luôn rỗng; 561 !== 0 làm capture thất bại dù fast audit P350 trống đạt. Thay đổi: thử trạng thái trống bằng lớp API tạm thời, khôi phục nguyên trạng IPTVState; thêm audit P351 so sánh có ba kênh QA với không nguồn, đo CTA/điều hướng/focus/không tràn ở 1920×1080 và 720×900, không phát stream.
+
+*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+
+[Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/tree/Positron) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/c7ce8c20280ecf33448bcdd95a3e2ac17d1a77d3)
+
+</details>
+
+<details>
+<summary><strong>P5.1.350</strong> · Electron 4.23.435 — Nút nhập nguồn hợp pháp trong WatchFlow chưa có kênh (CANDIDATE) · CHƯA CÓ BẢN PHÁT HÀNH · TÍNH NĂNG</summary>
+
+**Ứng dụng:** Chưa xác minh · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
 
 Feature priority: NEW — Ảnh thật P349 cho thấy WatchFlow Intelligence chưa có playlist chỉ hiển thị một dòng hướng dẫn, trong khi thao tác nhập nguồn nằm bên ngoài bảng AI. Thêm lối vào Quản lý nguồn ở đúng trạng thái trống, không tự nhập hoặc phát kênh. Feature class: AI
 
 *Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
 
-[Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/tree/Positron) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/4917b25c49bd7d292733113e213a89359fb6b44a)
+[Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
 
 </details>
 

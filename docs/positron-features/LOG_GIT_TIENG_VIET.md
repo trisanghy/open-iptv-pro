@@ -2,14 +2,22 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
-## P5.1.350 — WatchFlow không có kênh có nút mở Quản lý nguồn IPTV hợp pháp, không tự nhập hay phát
+## P5.1.351 — QA độc lập kênh IPTV, bảo toàn playlist và thông luồng phát hành
 
-**Ứng dụng:** 4.23.435 · **Trạng thái:** Chưa có bản phát hành
+**Ứng dụng:** 4.23.436 · **Trạng thái:** Chưa có bản phát hành
+
+Nguyên nhân: bộ kiểm thử Electron dài chủ động nhập 561 kênh metadata QA, nhưng audit P350 giả định danh sách luôn rỗng; 561 !== 0 làm capture thất bại dù fast audit P350 trống đạt. Thay đổi: thử trạng thái trống bằng lớp API tạm thời, khôi phục nguyên trạng IPTVState; thêm audit P351 so sánh có ba kênh QA với không nguồn, đo CTA/điều hướng/focus/không tràn ở 1920×1080 và 720×900, không phát stream.
+
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/c7ce8c20280ecf33448bcdd95a3e2ac17d1a77d3)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+
+## P5.1.350 — Electron 4.23.435 — Nút nhập nguồn hợp pháp trong WatchFlow chưa có kênh (CANDIDATE)
+
+**Ứng dụng:** Chưa xác minh · **Trạng thái:** Chưa có bản phát hành
 
 Feature priority: NEW — Ảnh thật P349 cho thấy WatchFlow Intelligence chưa có playlist chỉ hiển thị một dòng hướng dẫn, trong khi thao tác nhập nguồn nằm bên ngoài bảng AI. Thêm lối vào Quản lý nguồn ở đúng trạng thái trống, không tự nhập hoặc phát kênh. Feature class: AI
 
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/4917b25c49bd7d292733113e213a89359fb6b44a)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
 
 ## P5.1.349 — Electron 4.23.434 — Hướng dẫn AI cuộn được và không che nút chế độ (CANDIDATE)
 
