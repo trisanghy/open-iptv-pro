@@ -520,8 +520,11 @@
    // P306: explain mutually exclusive confidence cohorts without changing
    // predictions, exposing stream URLs or including playlist identifiers.
    if(!before||!after){
-    const sample=cleanQuery(ch.name);
-    const safeSample=sample&&!/https?:\/\/|\.m3u8|\.m3u\b/i.test(sample);
+    // Inspect raw channel names before normalization: a cleaned URL may
+    // no longer contain a scheme but can still expose a private host.
+    const rawName=String(ch.name);
+    const safeSample=!/(?:https?|rtsp|rtmp|udp):\/\/|\.m3u8?(?:$|[?#\s])/i.test(rawName)
+     ?cleanQuery(rawName):'';
     if(before&&!after){
      lostConfident++;
      if(safeSample&&lostExamples.length<3&&!lostExamples.includes(sample))lostExamples.push(sample);
@@ -537,7 +540,7 @@
    const key=before.key+'>'+after.key;
    if(!matrix.has(key))matrix.set(key,{beforeKey:before.key,afterKey:after.key,count:0,examples:[]});
    const row=matrix.get(key);row.count++;
-   const safeName=cleanQuery(ch.name);
+   const safeName=safeSample;
    if(safeName&&row.examples.length<2&&!row.examples.includes(safeName))row.examples.push(safeName);
   }
   const max=Math.max(1,Math.min(12,Math.trunc(Number(limit))||6));

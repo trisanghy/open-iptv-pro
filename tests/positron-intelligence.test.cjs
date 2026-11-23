@@ -1211,3 +1211,23 @@ test('P306 AI comparison explains loss-only confidence cohort with safe sample n
  for(const marker of ['qa306','positron-p51306-ai-confidence-gap-before-1920x1080-real.png',
   'positron-p51306-ai-confidence-gap-after-1920x1080-real.png'])assert.ok(qa.includes(marker),marker);
 });
+
+// P306 privacy regression: a URL deliberately inserted into a channel *name*
+// must not be displayed in the AI model comparison examples.
+test('P306 AI confidence cohort never leaks stream URLs embedded inside channel names',()=>{
+ const urlChannel={id:'private',name:'Đêm phim hành động https://secret.invalid/live.m3u8',group:'Phim'};
+ const sport={id:'sport',name:'Trận đấu bóng đá',group:'Thể thao'};
+ let trained=C.emptyCategoryModel();
+ for(let i=0;i<18;i++){
+  trained=C.teachCategory(trained,urlChannel,'cinema');
+  trained=C.teachCategory(trained,sport,'sport');
+ }
+ const backup=C.buildLearningBackup({categoryModel:C.emptyCategoryModel()});
+ const result=C.previewCategoryTopicShifts({categoryModel:trained},backup,[urlChannel,sport]);
+ assert.equal(result.ok,true);
+ assert.equal(result.confidentBefore,2);
+ assert.equal(result.lostConfident,2);
+ assert.ok(result.lostExamples.includes('Trận đấu bóng đá'));
+ assert.ok(!JSON.stringify(result).includes('secret.invalid'));
+ assert.ok(!JSON.stringify(result).includes('.m3u8'));
+});
