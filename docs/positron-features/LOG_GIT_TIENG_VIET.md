@@ -2,14 +2,22 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
-## P5.1.347 — chọn chế độ AI tự thu gọn hướng dẫn phím; sửa thứ tự focus bài kiểm thử P345
+## P5.1.348 — Escape thu gọn hướng dẫn AI dù focus đã chuyển sang nút khác, không đóng nhầm WatchFlow
 
-**Ứng dụng:** 4.23.432 · **Trạng thái:** Chưa có bản phát hành
+**Ứng dụng:** 4.23.433 · **Trạng thái:** Chưa có bản phát hành
+
+Feature priority: NEW — Ảnh Electron thực P347 cho thấy hướng dẫn AI nằm trên các nút chế độ khi bung ra; người dùng remote có thể chuyển focus sang chế độ khác, nên Esc phải đóng riêng hướng dẫn đầu tiên thay vì đóng cả WatchFlow đang sử dụng. Feature class: AI
+
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/a4f57ec93e1991988997ecee8c6a70a9160e205f)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+
+## P5.1.347 — Electron 4.23.432 — Đóng hướng dẫn AI sau thao tác ngoài bảng (CANDIDATE)
+
+**Ứng dụng:** Chưa xác minh · **Trạng thái:** Chưa có bản phát hành
 
 Feature priority: NEW — Ảnh Electron P346 720px cho thấy hướng dẫn phím che các nút chế độ AI; cho phép chạm bên ngoài lớp hướng dẫn để đóng riêng lớp đó, tránh nhấn nhầm hoặc mất bảng WatchFlow, nhất là khi dùng remote và màn hình hẹp. Feature class: AI
 
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/259afb79d21f9a7d2d625ce41e082f2a5ccbdcf8)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
 
 ## P5.1.346 — Electron 4.23.431 — Esc thu gọn hướng dẫn trước khi thoát WatchFlow (CANDIDATE)
 
