@@ -788,15 +788,20 @@
      const shifts=d.createElement('details');shifts.id='poAICategoryTopicShifts';
      shifts.className='po-ai-category-impact';
      const caption=d.createElement('summary');
-     caption.textContent='AI kiểm tra đổi chủ đề: '+topicShifts.changed+'/'+topicShifts.comparable+
-      ' kênh vẫn đủ chắc chắn ('+topicShifts.shiftRate+'%) · Xem chủ đề trước/sau';
+     // P305: zero comparable predictions is insufficient evidence, NOT a 0% topic shift.
+     caption.textContent=topicShifts.comparable
+      ?'AI kiểm tra đổi chủ đề: '+topicShifts.changed+'/'+topicShifts.comparable+
+       ' kênh đủ chắc chắn ('+topicShifts.shiftRate+'%) · Xem chủ đề trước/sau'
+      :'AI chưa đủ dữ liệu đối chiếu chủ đề ('+topicShifts.scanned+' kênh đã thử) · Xem lý do';
      shifts.append(caption);
      const explanation=d.createElement('p');explanation.id='poAICategoryShiftSummary';
-     explanation.textContent='Đã đối chiếu '+topicShifts.scanned+' kênh tại máy. '+
+     explanation.textContent='Đã thử '+topicShifts.scanned+' kênh trên máy. Đang dùng phân loại đủ chắc chắn: '+
+      topicShifts.confidentBefore+'; bản sao: '+topicShifts.confidentAfter+
+      '; cả hai đều chắc chắn: '+topicShifts.comparable+'. '+
       (topicShifts.comparable
-       ?topicShifts.changed+' kênh đổi sang chủ đề khác dù cả hai mô hình vẫn dự đoán đủ chắc chắn.'
-       :'Chưa có kênh được cả hai mô hình phân loại đủ chắc chắn để so sánh chủ đề.')+
-      ' Không đồng nghĩa kênh bị mất khỏi playlist.';
+       ?topicShifts.changed+' kênh đổi sang chủ đề khác trong số các kênh có thể đối chiếu.'
+       :'Chưa đủ dự đoán trùng kênh để kết luận về tỷ lệ đổi chủ đề; cần thêm nhãn do người xem xác nhận trước khi so sánh.')+
+      ' Đây chỉ là dự báo cục bộ, không làm mất kênh khỏi playlist.';
      shifts.append(explanation);
      if(!topicShifts.transitions.length){
       const empty=d.createElement('p');empty.textContent='Chưa phát hiện chuyển chủ đề đủ chắc chắn trong mẫu kiểm tra.';

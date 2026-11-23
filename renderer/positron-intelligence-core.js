@@ -510,9 +510,11 @@
   const present=sanitizedCategoryModel(current?.categoryModel),future=sanitizedCategoryModel(imported.categoryModel);
   const cap=Math.max(1,Math.min(1200,Math.trunc(Number(maxChannels))||1000));
   const entries=(Array.isArray(channelRows)?channelRows:[]).filter(ch=>ch?.id&&ch?.name).slice(0,cap);
-  const matrix=new Map();let comparable=0,changed=0;
+  const matrix=new Map();let comparable=0,changed=0,confidentBefore=0,confidentAfter=0;
   for(const ch of entries){
    const before=predictCategory(present,ch,{threshold:0.6}),after=predictCategory(future,ch,{threshold:0.6});
+   if(before)confidentBefore++;
+   if(after)confidentAfter++;
    if(!before||!after)continue;
    comparable++;
    if(before.key===after.key)continue;
@@ -529,6 +531,7 @@
    .slice(0,max).map(row=>({from:KINDS[row.beforeKey],to:KINDS[row.afterKey],count:row.count,examples:row.examples}));
   const shiftRate=comparable?Math.round(changed*1000/comparable)/10:0;
   return {ok:true,scanned:entries.length,comparable,changed,shiftRate,
+   confidentBefore,confidentAfter,notComparable:entries.length-comparable,
    significant:comparable>=10&&changed>=5&&shiftRate>=20,
    transitions,omittedTransitions:Math.max(0,matrix.size-max),
    caution:'Đây là chuyển đổi nhãn dự đoán Naive Bayes theo tên/nhóm kênh cục bộ, không đo độ chính xác thật hay chất lượng luồng; dữ liệu người dùng chưa thay đổi.'};

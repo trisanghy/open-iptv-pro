@@ -1,16 +1,16 @@
 @echo off
 setlocal EnableExtensions
 cd /d "%~dp0"
-title Open IPTV Pro Positron v4.23.389 - Windows Build Fix
+title Open IPTV Pro Positron v4.23.390 - Windows Build Fix
 set "PROJECT=%~dp0"
 echo ===========================================================
-echo Open IPTV Pro Positron v4.23.389 - BUILD WINDOWS FIX (Setup + Portable)
+echo Open IPTV Pro Positron v4.23.390 - BUILD WINDOWS FIX (Setup + Portable)
 echo ===========================================================
 echo Duong dan project: "%PROJECT%"
 echo.
 if not exist "%PROJECT%package.json" (
   echo [LOI] Khong tim thay package.json trong thu muc goc.
-  echo Hay giai nen ZIP v4.23.389 du, roi chay BUILD_WINDOWS.bat tai thu muc goc.
+  echo Hay giai nen ZIP v4.23.390 du, roi chay BUILD_WINDOWS.bat tai thu muc goc.
   echo Khong chay script trong nhanh experiment/native-webview-ffmpeg.
   pause
   exit /b 2

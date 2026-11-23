@@ -1115,6 +1115,9 @@ test('P304 local Naive Bayes topic migration exposes confident label swaps witho
  assert.equal(result.ok,true);
  assert.equal(result.scanned,18);
  assert.equal(result.comparable,18,'both models retain predictions');
+ assert.equal(result.confidentBefore,18);
+ assert.equal(result.confidentAfter,18);
+ assert.equal(result.notComparable,0);
  assert.equal(result.changed,18,'all channels confidently switch topic');
  assert.equal(result.shiftRate,100);
  assert.equal(result.significant,true);
@@ -1150,4 +1153,24 @@ test('P304 Electron screenshot review keeps WatchFlow open while testing migrati
  assert.ok(!window304.includes('window.PositronWatchFlow.close()'),'no early dialog dismissal');
  assert.ok(qa.indexOf('await page.evaluate(()=>window.PositronWatchFlow.close());',finish)>finish,
   'close the panel only after all P304 screenshots and assertions');
+});
+
+// P305: a 0/0 migration denominator must never be displayed as a reassuring 0%.
+test('P305 model-migration preview reports coverage uncertainty rather than false zero-shift rate',()=>{
+ const channels=Array.from({length:8},(_,i)=>({id:'qa'+i,name:'Kênh thể thao '+i,group:'Thể thao'}));
+ const backup=C.buildLearningBackup({model:C.emptyModel(),categoryModel:C.emptyCategoryModel(),bandit:{}});
+ const result=C.previewCategoryTopicShifts({categoryModel:C.emptyCategoryModel()},backup,channels);
+ assert.equal(result.ok,true);
+ assert.equal(result.scanned,8);
+ assert.equal(result.comparable,0);
+ assert.equal(result.confidentBefore,0);
+ assert.equal(result.confidentAfter,0);
+ assert.equal(result.notComparable,8);
+ assert.equal(result.significant,false);
+ const ui=fs.readFileSync('renderer/positron-intelligence.js','utf8');
+ assert.ok(ui.includes('AI chưa đủ dữ liệu đối chiếu chủ đề'),'zero-overlap must explain uncertainty');
+ assert.ok(ui.includes('topicShifts.confidentBefore')&&ui.includes('topicShifts.confidentAfter'));
+ const qa=fs.readFileSync('scripts/positron-20-extension.cjs','utf8');
+ for(const marker of ['qa305','positron-p51305-ai-confidence-before-1920x1080-real.png',
+  'positron-p51305-ai-confidence-after-1920x1080-real.png'])assert.ok(qa.includes(marker),marker);
 });

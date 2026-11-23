@@ -1,3 +1,12 @@
+## P5.1.305 — AI chẩn đoán độ chắc chắn khi so sánh khôi phục / Electron 4.23.390
+- Feature priority: NEW AI — Chẩn đoán số kênh mô hình hiện tại/bản sao cùng phân loại đủ chắc chắn trước khi nhập mô hình; tránh hiểu nhầm 0/0 là không đổi chủ đề.
+- Feature class: AI / model transparency
+- User action: TV → WatchFlow → AI hợp gu → Quản lý mô hình → Khôi phục JSON → AI đối chiếu chủ đề → Xem lý do / trước-sau.
+- Electron screenshots: positron-p51305-ai-confidence-before-1920x1080-real.png / positron-p51305-ai-confidence-after-1920x1080-real.png.
+- Regression: core test 18/18 đối chiếu và 0/8 thiếu dữ liệu; Electron CDP 1920×1080 kiểm tra nhãn trung thực, có số bao phủ hai mô hình, không sửa playlist/trọng số hoặc tự phát video.
+- Baseline: P304 screenshot QA đã mở thực tế, hiển thị 0/0 (0%) khi đã thử 561 kênh trong khi tỷ lệ dự đoán đủ chắc chắn giảm lớn.
+- Status: CANDIDATE — cần Node tests, Electron screenshots review, build/asset xác minh trước khi công nhận.
+
 ## P5.1.304 — AI phát hiện chuyển chủ đề ngầm khi khôi phục mô hình / Electron 4.23.389
 - Feature priority: NEW — Bổ sung ma trận so sánh chủ đề trước/sau của Naive Bayes, tìm tình huống kênh vẫn đủ chắc chắn nhưng chuyển từ chủ đề A sang B; cảnh báo khi nhiều kênh đổi nhãn dù tỷ lệ bao phủ không giảm.
 - Feature class: AI

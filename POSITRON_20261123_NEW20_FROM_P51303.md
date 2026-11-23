@@ -20,3 +20,9 @@
 ## Cảnh báo
 - Release Positron có thể bị skip để giữ danh sách Release chỉ có Stable. Khi không có Release riêng, chỉ dẫn link Actions artifact có thật, không nói đã phát hành stable.
 - Chưa xác minh live video, GPU, audio, DVR, Cast trên máy vật lý.
+
+## Đợt mới từ P5.1.304 — Vòng 01/20: P5.1.305 (candidate)
+- P304 QA repair f7a7f797: CI 45163491636 test 1014 pass/5 skip/0 fail, capture + Windows/macOS ARM/Intel success, release skipped; đã mở cả hai PNG P304 thật, qa304 9/9 true.
+- Lỗi từ PNG P304: tiêu đề 0/0 (0%) gây hiểu nhầm không có đổi chủ đề khi thực tế không có kênh chung đủ chắc chắn để so sánh.
+- Mục tiêu P305: thống kê số kênh chắc chắn của mô hình hiện tại, bản sao, phần giao; không kết luận 0% khi không có mẫu so sánh, thêm CDP before/after + QA không sửa dữ liệu.
+- Điều kiện hoàn thành: build và capture CI thành công, mở hai PNG thật P305, kiểm tra SHA/commit/artifact; chưa tính hoàn tất khi thiếu bằng chứng.
