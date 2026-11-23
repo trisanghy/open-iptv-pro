@@ -11880,6 +11880,12 @@ async function runTwenty(page){
  await require('./positron-335-audit.cjs').run(page);
  await require('./positron-336-audit.cjs').run(page);
  await require('./positron-337-audit.cjs').run(page);
+ await require('./positron-338-audit.cjs').run(page);
+ // P338 native Electron reverse keyboard shortcut QA:
+ // positron-p51338-previous-ai-before-1920x1080-real.png
+ // positron-p51338-previous-ai-after-1920x1080-real.png
+ // positron-p51338-previous-ai-before-720x900-real.png
+ // positron-p51338-previous-ai-after-720x900-real.png
  // P337 native Electron CDP screenshots (same current binary; see audit beforeNote):
  // positron-p51337-focus-sync-before-1920x1080-real.png
  // positron-p51337-focus-sync-after-1920x1080-real.png

@@ -1562,3 +1562,33 @@ test('P337 AI recommendation counter follows native focusin, not just J/K shortc
    assert.ok(qa.includes(name.replace('720x900','') )||qa.includes("'+size.width+'x'+size.height+"),'dynamic screenshot path');
  }
 });
+
+
+test('P338 AI reverse recommendation shortcut wraps and stays focus-only',()=>{
+ const ui=fs.readFileSync('renderer/positron-intelligence.js','utf8');
+ const qa=fs.readFileSync('scripts/positron-338-audit.cjs','utf8');
+ const extension=fs.readFileSync('scripts/positron-20-extension.cjs','utf8');
+ const workflow=fs.readFileSync('.github/workflows/positron-lab.yml','utf8');
+ for(const part of [
+  "list.setAttribute('aria-keyshortcuts','Alt+Shift+J Alt+Shift+K Alt+Shift+P')",
+  "event.code==='KeyP'",
+  "const index=current<0?actions.length-1:(current-1+actions.length)%actions.length",
+  "target.scrollIntoView({block:'center',behavior:'instant'})",
+  "if(!chord||event.defaultPrevented||event.repeat||event.isComposing||!aiOpen||panel.hidden)return",
+  "el?.closest?.('input,textarea,select,[contenteditable],[role=\"textbox\"]')"
+ ])assert.ok(ui.includes(part),'missing P338 behavior '+part);
+ for(const term of [
+  "await page.keyboard.press('Alt+Shift+P')",
+  "'from first, P wraps to last playable recommendation'",
+  "'previous navigates backward, not forward'",
+  "'do not steal focus while editing'",
+  "assert.deepEqual(restored,original"
+ ])assert.ok(qa.includes(term),'missing P338 native regression '+term);
+ assert.ok(extension.includes("require('./positron-338-audit.cjs').run(page)"));
+ for(const image of [
+  'positron-p51338-previous-ai-before-1920x1080-real.png',
+  'positron-p51338-previous-ai-after-1920x1080-real.png',
+  'positron-p51338-previous-ai-before-720x900-real.png',
+  'positron-p51338-previous-ai-after-720x900-real.png'
+ ])assert.ok(extension.includes(image)&&workflow.includes(image),image);
+});

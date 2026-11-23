@@ -1,3 +1,13 @@
+## P5.1.338 / Electron 4.23.423 — AI điều hướng ngược gợi ý qua Alt+Shift+P (CANDIDATE)
+- Feature priority: NEW — Người dùng trước đây có thể nhấn Alt+Shift+K để đi tới gợi ý kế nhưng không thể quay về gợi ý trước mà không Tab qua các nút đánh giá; bổ sung hành trình hai chiều thực sự cho WatchFlow AI trên remote và desktop.
+- Feature class: AI
+- User action: Trên trang TV, mở WatchFlow AI bằng F6, nhấn Alt+Shift+J để đến nút Xem đầu tiên rồi Alt+Shift+P để tới nút Xem ở gợi ý trước (ở đầu thì quay về cuối); tiếp tục P để lùi, K để tới, Enter mới thực sự phát kênh.
+- Root cause: P335 mới có phím next K, chưa có previous; P338 thêm lối focus-only ngược chiều, bỏ qua nút phản hồi và nút bị vô hiệu hóa, giữ vị trí qua aria-live của P337.
+- Electron screenshot: positron-p51338-previous-ai-before-1920x1080-real.png / positron-p51338-previous-ai-after-1920x1080-real.png / positron-p51338-previous-ai-before-720x900-real.png / positron-p51338-previous-ai-after-720x900-real.png.
+- Evidence: Lấy ảnh P337 đã MỞ ở 1920×1080 và 720×900 làm đầu vào; P338 native Electron CDP kiểm tra first-to-last wrap, previous twice, K goes forward again, badge N/N, không tràn, không autoplay, không chiếm phím trong ô tìm kiếm và không thay playlist, current channel hay mô hình sở thích. BEFORE là nút đầu tiên trong binary P338; AFTER là gợi ý cuối sau phím P, không giả nhận binary cũ.
+- Privacy: chỉ điều hướng focus cục bộ trên máy; không gửi M3U, stream URL, EPG, lịch sử xem hoặc trọng số AI.
+- Status: CANDIDATE cho tới khi Node, native QA, ảnh Electron đã MỞ và CI/build xác minh; bản thử nghiệm không xuất bản GitHub Release theo AGENTS.md.
+
 ## P5.1.337 / Electron 4.23.422 — AI đồng bộ vị trí gợi ý với Tab, chuột và remote (CANDIDATE)
 - Feature priority: NEW — bộ đếm “Gợi ý 2/3” của P336 chỉ cập nhật khi nhấn J/K; di chuyển focus thông thường sang thẻ khác khiến nhãn trong sticky header bị sai.
 - Feature class: AI

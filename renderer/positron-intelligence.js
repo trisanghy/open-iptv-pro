@@ -388,6 +388,29 @@
   target.scrollIntoView({block:'center',behavior:'instant'});
   updateFocusProgress(target);
  });
+ // P338: opt-in reverse traversal through the watchable AI recommendations,
+ // with a safe last-item start and wrap. Never trigger play or model learning.
+ list.setAttribute('aria-keyshortcuts','Alt+Shift+J Alt+Shift+K Alt+Shift+P');
+ list.title='Alt+Shift+J: gợi ý đầu · Alt+Shift+K: gợi ý kế · Alt+Shift+P: gợi ý trước';
+ modeHelp.title='Phím điều hướng gợi ý: J tới đầu · K tiếp theo · P lùi lại (Alt+Shift)';
+ d.addEventListener('keydown',event=>{
+  const chord=event.altKey&&event.shiftKey&&!event.ctrlKey&&!event.metaKey&&
+   (event.code==='KeyP'||String(event.key).toLowerCase()==='p');
+  if(!chord||event.defaultPrevented||event.repeat||event.isComposing||!aiOpen||panel.hidden)return;
+  if([event.target,d.activeElement].some(el=>el?.isContentEditable||
+   el?.closest?.('input,textarea,select,[contenteditable],[role="textbox"]')))return;
+  if(d.querySelector('.modal-backdrop:not(.hidden):not([hidden])'))return;
+  const actions=[...area.querySelectorAll('.po-ai-card .po-ai-actions button:first-child')]
+   .filter(button=>!button.disabled&&button.getClientRects().length);
+  if(!actions.length)return;
+  const current=actions.indexOf(d.activeElement);
+  const index=current<0?actions.length-1:(current-1+actions.length)%actions.length;
+  const target=actions[index];
+  event.preventDefault();event.stopPropagation();
+  target.focus({preventScroll:true});
+  target.scrollIntoView({block:'center',behavior:'instant'});
+  updateFocusProgress(target);
+ });
  tab.addEventListener('click',()=>{if(aiOpen){toolbar.querySelector('[data-flowplus-mode="discover"]')?.click();return;}showAI();});
  toolbar.addEventListener('click',event=>{if(event.target.closest('[data-flowplus-mode]'))hideAI();},true);
  const learnedSource=(channel,cache=null)=>{
