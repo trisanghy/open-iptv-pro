@@ -2,14 +2,22 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
-## P5.1.344 — PageUp/PageDown lướt 5 gợi ý AI và sửa kiểm thử sticky focus
+## P5.1.345 — hướng dẫn điều khiển AI bằng remote với bảng phím mở gọn
 
-**Ứng dụng:** 4.23.429 · **Trạng thái:** Chưa có bản phát hành
+**Ứng dụng:** 4.23.430 · **Trạng thái:** Chưa có bản phát hành
+
+hướng dẫn điều khiển AI bằng remote với bảng phím mở gọn
+
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/8491fd93382f315f44dc78d0520e9cfea75cd8f6)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+
+## P5.1.344 — Electron 4.23.429 — PageUp/PageDown duyệt gợi ý AI (CANDIDATE)
+
+**Ứng dụng:** Chưa xác minh · **Trạng thái:** Chưa có bản phát hành
 
 Feature priority: NEW — Người dùng TV/remote có danh sách 8 gợi ý AI phải bấm mũi tên từng lần hoặc Home/End; nay PageUp/PageDown di chuyển nhanh năm thẻ mà vẫn giữ nút Xem trong tầm nhìn. Feature class: AI
 
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/3eb60d273753c5314e053354569e40286d550274)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
 
 ## P5.1.343 — Electron 4.23.428 — Home/End nhảy đầu/cuối gợi ý AI bằng remote (CANDIDATE)
 
