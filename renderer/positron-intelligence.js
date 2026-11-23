@@ -674,7 +674,10 @@
  });
  // P285: validate and preview a chosen local backup, then require second confirmation.
  let pendingLearningImport=null,importSequence=0;
- importButton.addEventListener('click',()=>importFile.click());
+ importButton.addEventListener('click',()=>{
+  ++importSequence;pendingLearningImport=null;importConfirm.hidden=true;
+  importFile.click();
+ });
  importFile.addEventListener('change',async()=>{
   const file=importFile.files?.[0];importFile.value='';
   const sequence=++importSequence;pendingLearningImport=null;importConfirm.hidden=true;
