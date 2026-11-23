@@ -1486,3 +1486,22 @@ test('P319 explains real logistic preference factors without inventing cold-star
  for(const term of ['qa319','positron-p51319-ai-explain-before-1920x1080-real.png',
   'positron-p51319-ai-explain-after-1920x1080-real.png'])assert.ok(qa.includes(term),term);
 });
+
+test('P320 primary AI recommendation actions precede optional ML explanation in the same card',()=>{
+ const ui=fs.readFileSync('renderer/positron-intelligence.js','utf8');
+ const css=fs.readFileSync('renderer/positron-intelligence.css','utf8');
+ const start=ui.indexOf("const why=d.createElement('p');why.className='po-ai-why'");
+ const end=ui.indexOf("if(enabled&&topic.source!=='epg')",start);
+ assert.ok(start>=0&&end>start);
+ const card=ui.slice(start,end);
+ assert.ok(card.includes('let preferenceDetails=null;'));
+ assert.ok(card.includes('preferenceDetails=details;'));
+ assert.ok(!card.includes('card.append(details);'),'no explanation may precede core actions');
+ const controls=card.indexOf('actions.append(play,like,dislike,lookup);card.append(actions);');
+ const explanation=card.indexOf('if(preferenceDetails)card.append(preferenceDetails);');
+ assert.ok(controls>0&&explanation>controls,'Play/feedback must be before the optional expanded explanation');
+ assert.ok(css.includes('.po-ai-card>.po-ai-actions + .po-ai-preference-explain'));
+ const qa=fs.readFileSync('scripts/positron-20-extension.cjs','utf8');
+ for(const word of ['qa320','positron-p51320-ai-actions-before-1920x1080-real.png',
+  'positron-p51320-ai-actions-after-1920x1080-real.png'])assert.ok(qa.includes(word),word);
+});

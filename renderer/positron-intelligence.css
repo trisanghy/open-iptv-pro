@@ -354,3 +354,7 @@ html[data-positron="true"].po-horizon body #poWatchFlowPanel.po-watchflow-panel:
 #poWatchFlowPanel .po-ai-preference-explain>p{font-size:11px;line-height:1.45;margin:5px 0;overflow-wrap:anywhere}
 #poWatchFlowPanel .po-ai-preference-factor{color:#cae9ed}
 #poWatchFlowPanel .po-ai-preference-explain>summary:focus-visible{outline:2px solid #8de2c5;outline-offset:2px}
+
+/* P320: keep the main WatchFlow actions visually primary above expanded ML evidence. */
+#poWatchFlowPanel .po-ai-card>.po-ai-actions + .po-ai-preference-explain{margin-top:8px}
+#poWatchFlowPanel .po-ai-card>.po-ai-actions{position:relative;z-index:1}

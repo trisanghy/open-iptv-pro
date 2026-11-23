@@ -693,6 +693,9 @@
     card.append(onAir);
    }
    const why=d.createElement('p');why.className='po-ai-why';why.textContent=item.reason;card.append(why);
+   // P320: keep essential player/feedback controls above the expandable
+   // logistic explanation; a long explanation must never bury the Play button.
+   let preferenceDetails=null;
    // P319: actionable, privacy-safe logistic ML explanation, never a made-up EPG reason.
    if(!exploreOpen){
     const explanation=core.explainPreference(model,ch,topic,Date.now(),{limit:3});
@@ -708,7 +711,7 @@
      line.textContent=factor.label+' · '+factor.trend+' điểm ('+factor.impact.toFixed(3)+')';
      details.append(line);
     }
-    card.append(details);
+    preferenceDetails=details;
    }
    const citation=profile[String(ch.name)];
    if(citation?.articleUrl){
@@ -749,6 +752,8 @@
     finally{lookup.disabled=false;lookup.textContent='Tra cứu web';if(aiOpen)render();}
    });
    actions.append(play,like,dislike,lookup);card.append(actions);
+   // P320: expanding the explanation is secondary and cannot displace controls.
+   if(preferenceDetails)card.append(preferenceDetails);
    if(enabled&&topic.source!=='epg'){
     const teach=d.createElement('label');teach.className='po-ai-teacher';
     const title=d.createElement('span');title.textContent='Dạy AI phân loại:';

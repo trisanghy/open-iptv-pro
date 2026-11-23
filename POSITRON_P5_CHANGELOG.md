@@ -1,3 +1,11 @@
+## P5.1.320 / Electron 4.23.405 — Nút Xem/Hợp gu luôn nằm trên phần giải thích AI (CANDIDATE)
+- Feature priority: FIX — Ảnh Electron thật P319 sau khi mở “Vì sao AI gợi ý?” cho thấy nội dung chi tiết đẩy hàng nút ▶ Xem, Hợp gu, Không hợp, Tra cứu web xuống thấp dưới vùng xem. Đặt hành động chính ở trước phần giải thích mở rộng, giữ thứ tự điều khiển bằng phím và nội dung giải thích khi mở.
+- Feature class: UX / AI
+- User action: TV → WatchFlow → AI hợp gu → mở “Vì sao AI gợi ý?”; các nút hành động của kênh vẫn ở trên phần giải thích và thao tác được không phải cuộn xuống.
+- Electron screenshots: positron-p51320-ai-actions-before-1920x1080-real.png / positron-p51320-ai-actions-after-1920x1080-real.png (chỉ công nhận sau CI thực).
+- Evidence: Node regression thứ tự DOM; QA320 Electron thật 1920×1080 mở giải thích và kiểm chứng nút còn thấy, kích thước click, playlist, trọng số học, current channel không đổi, không tràn ngang.
+- Giới hạn: kiểm thử UI không xác minh phát IPTV thực, âm thanh, GPU hay Cast.
+
 ## P5.1.319 / Electron 4.23.404 — AI giải thích thật yếu tố nào tăng/giảm gợi ý Logistic (CANDIDATE)
 - Feature priority: NEW — Từng kênh trong WatchFlow Intelligence có mục "Vì sao AI gợi ý?" đọc-only. Hiển thị các trọng số học đóng góp mạnh nhất vào logit của điểm gợi ý: chủ đề, EPG, khung giờ, ngày thường/cuối tuần, nhóm kênh; tuyệt đối không công bố tên token nhóm riêng tư hay tự dựng lịch.
 - Feature class: AI
