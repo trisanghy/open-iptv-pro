@@ -9293,6 +9293,8 @@ async function runTwenty(page){
   const c=document.getElementById('poAIMLConsent');if(!c.checked)c.click();
   document.getElementById('poAIChannels').click();
  });
+ // P310 repair: use native scroll before asserting real geometry; keep the assertion strict.
+ await page.locator('.po-ai-teacher select').first().scrollIntoViewIfNeeded({timeout:8000});
  const before271=await page.screenshot({path:path.join(out,'positron-p51271-ai-teach-before-1920x1080-real.png'),animations:'disabled'});
  const qa271=await page.evaluate(()=>{
   const old=window.IPTVState.getCurrent()?.id||'',oldIds=JSON.stringify(window.IPTVState.getChannels().map(x=>x.id));
@@ -9305,8 +9307,10 @@ async function runTwenty(page){
   const after=window.PositronIntelligence.categoryProfile().examples;
   // A change rebuilds the card DOM: never measure the detached old select.
   const refreshed=document.querySelector('.po-ai-teacher select');
+  // The selection rebuilds the DOM, so align the replacement within the panel.
+  refreshed?.scrollIntoView({block:'center',behavior:'instant'});
   const second=refreshed?.getBoundingClientRect();
-  const visibleAfter=!!refreshed&&refreshed.isConnected&&second.height>=25&&second.bottom<=panel.bottom;
+  const visibleAfter=!!refreshed&&refreshed.isConnected&&second.height>=25&&second.top>=panel.top&&second.bottom<=panel.bottom;
   let model=core.emptyCategoryModel();
   model=core.teachCategory(model,{name:'Atlas Academy Alpha'},'education');
   model=core.teachCategory(model,{name:'Atlas Academy Omega'},'education');

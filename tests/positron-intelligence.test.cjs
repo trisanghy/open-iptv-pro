@@ -1295,3 +1295,10 @@ test('P310 AI wide reading is user-controlled and preserves narrow responsive mo
  for(const s of ['qa310','positron-p51310-wide-reading-before-1920x1080-real.png','positron-p51310-wide-reading-after-1920x1080-real.png'])
   assert.ok(qa.includes(s),s);
 });
+
+test('P310 screenshot audit keeps teacher fully visible across rerender',()=>{
+ const s=fs.readFileSync('scripts/positron-20-extension.cjs','utf8');
+ assert.ok(s.includes("page.locator('.po-ai-teacher select').first().scrollIntoViewIfNeeded"));
+ assert.ok(s.includes("refreshed?.scrollIntoView({block:'center',behavior:'instant'})"));
+ assert.ok(s.includes('second.top>=panel.top&&second.bottom<=panel.bottom'));
+});

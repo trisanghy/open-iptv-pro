@@ -40,3 +40,7 @@ Chưa thực hiện. Mỗi vòng yêu cầu commit/version, test, ảnh Electron
 
 ## P5.1.310 — CANDIDATE
 - Từ ảnh P5.1.309, WatchFlow AI hẹp ở desktop. Thêm Đọc rộng/Thu gọn tùy chọn; CI sẽ xác minh Electron ở 1920 và 720px; chỉ tính sau soát ảnh.
+
+## QA repair P5.1.310 — CI 45177813399
+- Job capture failed at P271: teacherVisible=false although labelCountOnScreen, learnedOnChoice, actualNB true. Opened real Electron P271 before: teacher select is cut by panel bottom.
+- Scroll teacher into viewport before geometry verification, then align replacement after DOM rerender. Keep assertions, no autoplay or data mutation. Candidate until CI green and new screenshot opened.
