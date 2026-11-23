@@ -1438,3 +1438,26 @@ test('P317 old AI JSON can be compared read-only against current local weights w
   'positron-p51317-ai-restart-after-1920x1080-real.png'])
   assert.ok(qa.includes(part),part);
 });
+
+test('P318 backup comparison shows three-model diagnostic directly in manager, private tokens stay hidden',()=>{
+ const base=C.buildLearningBackup({
+  model:{version:1,observations:1,weights:{news:.2}},
+  categoryModel:{version:1,examples:1,docs:{sport:1},tokens:{sport:{live:1}}},
+  bandit:{news:2}
+ });
+ const file=JSON.parse(JSON.stringify(base));file.models.explore.news=3;
+ const check=C.verifyLearningBackupSnapshot(base,file);
+ assert.equal(check.ok,true);assert.equal(check.matched,2);
+ assert.equal(check.details.find(r=>r.id==='ucb').changedFields,1);
+ const ui=fs.readFileSync('renderer/positron-intelligence.js','utf8');
+ const css=fs.readFileSync('renderer/positron-intelligence.css','utf8');
+ for(const part of ['modelDiagnostics.id=\'poAIModelVerifyDiagnostics\'',
+  'modelDiagnostics.hidden=!(lastVerifyDetails?.ok&&!lastVerifyDetails.match)',
+  'row.dataset.algorithm=item.id','modelDiagnostics.append(row)',
+  'modelDiagnostics.replaceChildren();modelDiagnostics.hidden=true'])
+  assert.ok(ui.includes(part),part);
+ assert.ok(css.includes('#poAIModelVerifyDiagnostics[hidden]'));
+ const qa=fs.readFileSync('scripts/positron-20-extension.cjs','utf8');
+ for(const item of ['qa318','positron-p51318-ai-manager-diff-before-1920x1080-real.png',
+  'positron-p51318-ai-manager-diff-after-1920x1080-real.png'])assert.ok(qa.includes(item),item);
+});

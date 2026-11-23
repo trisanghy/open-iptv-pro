@@ -1,3 +1,11 @@
+## P5.1.318 / Electron 4.23.403 — AI chẩn đoán 3 mô hình trực tiếp trong Quản lý mô hình (CANDIDATE)
+- Feature priority: NEW — Khi tệp sao lưu khác trọng số AI đang dùng, hiển thị Logistic/Naive Bayes/UCB với số phản hồi/nhãn/chủ đề và số trường dữ liệu học khác ngay dưới nút đối chiếu trong Quản lý mô hình. Trước đây bảng chi tiết chỉ hiện sâu trong phần Dạy AI.
+- Feature class: AI
+- User action: TV → WatchFlow → AI hợp gu → Quản lý mô hình → Đối chiếu JSON. Nếu có khác biệt, xem ngay 3 dòng chẩn đoán tại chỗ; không tự nhập trọng số, không lộ token, giữ playlist/EPG.
+- Electron screenshot: positron-p51318-ai-manager-diff-before-1920x1080-real.png / positron-p51318-ai-manager-diff-after-1920x1080-real.png.
+- Evidence: Node regression kiểm chứng bộ đếm khác biệt từng mô hình; QA318 chụp 1920×1080 trong Electron thực khi chọn JSON thay đổi UCB, assert 3 dòng/1 field UCB, không lộ token/không tự khôi phục/không ghi đè localStorage/playlist/current player.
+- Giới hạn: thông tin khác biệt trọng số không phải độ chính xác của ML; không có kiểm thử video/Cast trên TV thật.
+
 ## P5.1.317 / Electron 4.23.402 — Đối chiếu bản sao AI cũ sau khi khởi động lại (CANDIDATE)
 - Feature priority: NEW — Có thể chọn bản sao JSON cũ để đối chiếu với Logistic, Naive Bayes và UCB đang lưu ở máy dù phiên làm việc này chưa xuất lại mô hình. Trước đây nút bị ẩn và xác minh trả lỗi nếu chưa xuất bản sao trong phiên.
 - Feature class: AI

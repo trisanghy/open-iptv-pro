@@ -343,3 +343,7 @@ html[data-positron="true"].po-horizon body #poWatchFlowPanel.po-watchflow-panel:
 #poWatchFlowPanel .po-ai-verify-diagnostic strong{color:#e0f5fb}
 #poWatchFlowPanel .po-ai-verify-diagnostic[data-match="true"] span{color:#9cf0d5}
 #poWatchFlowPanel .po-ai-verify-diagnostic[data-match="false"] span{color:#ffc58d;font-weight:700}
+
+/* P318: the same non-sensitive three-model diagnosis is visible beside model import/backup. */
+#poWatchFlowPanel #poAIModelVerifyDiagnostics[hidden]{display:none!important}
+#poWatchFlowPanel #poAIModelVerifyDiagnostics{margin-top:6px;max-width:100%;overflow-wrap:anywhere}

@@ -66,6 +66,11 @@
  const modelRows=d.createElement('div');modelRows.className='po-ai-model-rows';modelRows.id='poAIModelRows';
  const modelStatus=d.createElement('p');modelStatus.className='po-ai-model-status';modelStatus.id='poAIModelStatus';
  modelStatus.setAttribute('role','status');modelStatus.setAttribute('aria-live','polite');
+ // P318: show all three model differences where the backup is actually selected.
+ const modelDiagnostics=d.createElement('section');modelDiagnostics.id='poAIModelVerifyDiagnostics';
+ modelDiagnostics.className='po-ai-verify-diagnostics';modelDiagnostics.hidden=true;
+ modelDiagnostics.setAttribute('role','group');
+ modelDiagnostics.setAttribute('aria-label','Chi tiết khác biệt của ba mô hình AI');
  const modelHint=d.createElement('small');modelHint.textContent='Tiêu chuẩn và Smart tích hợp sẵn, không cần tải. Xóa trọng số học không xóa nguồn, kênh hoặc EPG.';
  const backup=d.createElement('button');backup.type='button';backup.id='poAIBackup';
  backup.className='po-ai-backup';backup.textContent='Sao lưu mô hình AI (.json)';
@@ -98,7 +103,7 @@
  undoImport.title='Hoàn tác trọng số AI gần nhất trong phiên, không sửa playlist';
  const bulk=d.createElement('button');bulk.type='button';bulk.id='poAIClearAll';
  bulk.className='po-ai-clear-all';bulk.textContent='Xóa toàn bộ dữ liệu học';bulk.title='Xóa tất cả ba mô hình học sau khi xác nhận hai lần';
- modelManager.append(modelToggle,modelRows,backup,verifyBackup,verifyFile,importButton,importFile,importPreview,importConfirm,undoImport,bulk,modelStatus,modelHint);
+ modelManager.append(modelToggle,modelRows,backup,verifyBackup,verifyFile,importButton,importFile,importPreview,importConfirm,undoImport,bulk,modelStatus,modelDiagnostics,modelHint);
  let pendingModel='',pendingAt=0;
  const modelBytes=value=>new TextEncoder().encode(JSON.stringify(value||{})).byteLength;
  const learnedInventory=()=>[
@@ -779,7 +784,7 @@
    a.hidden=true;d.body.append(a);a.click();a.remove();
    win.setTimeout(()=>win.URL.revokeObjectURL(url),30000);
    lastBackupSnapshot={data:snapshot,filename:a.download,size:bytes.size};
-   lastVerifyDetails=null;
+   lastVerifyDetails=null;modelDiagnostics.replaceChildren();modelDiagnostics.hidden=true;
    verifyBackup.hidden=false;
    modelStatus.textContent='Đã yêu cầu lưu bản sao '+a.download+' ('+bytes.size+' byte). Chọn lại tệp để kiểm tra; chưa xác nhận tải thành công.';
   }catch{
@@ -809,6 +814,18 @@
       ?'Tệp sao lưu khác mô hình AI đang dùng: '+check.matched+'/3 mô hình khớp. Chưa nhập hay ghi đè dữ liệu.'
       :'Tệp sao lưu không khớp bản vừa xuất: '+check.matched+'/3 mô hình khớp. Chưa nhập hay ghi đè dữ liệu.');
    }catch{message='Không kiểm chứng được: không đọc được JSON hợp lệ.';}
+  }
+  // P318: immediately expose per-algorithm read-only diagnostics beside file picker.
+  modelDiagnostics.replaceChildren();
+  modelDiagnostics.hidden=!(lastVerifyDetails?.ok&&!lastVerifyDetails.match);
+  if(!modelDiagnostics.hidden)for(const item of lastVerifyDetails.details){
+   const row=d.createElement('div');row.className='po-ai-verify-diagnostic';
+   row.dataset.algorithm=item.id;row.dataset.match=String(item.match);
+   const title=d.createElement('strong');title.textContent=item.label;
+   const result=d.createElement('span');
+   result.textContent=(item.match?'Khớp':'Khác')+' · '+item.countBefore+' → '+item.countAfter+
+    ' '+item.unit+(!item.match?' · '+item.changedFields+' trường AI thay đổi':'');
+   row.append(title,result);modelDiagnostics.append(row);
   }
   modelStatus.textContent=message;activeStatusMessage=message;
   render();
