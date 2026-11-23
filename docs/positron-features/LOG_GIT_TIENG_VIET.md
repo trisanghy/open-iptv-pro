@@ -2,14 +2,22 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
-## P5.1.337 — AI đồng bộ vị trí gợi ý theo Tab, chuột và remote (NEW)
+## P5.1.338 — AI đi ngược gợi ý bằng Alt+Shift+P, quay vòng, không tự phát (NEW)
 
-**Ứng dụng:** 4.23.422 · **Trạng thái:** Chưa có bản phát hành
+**Ứng dụng:** 4.23.423 · **Trạng thái:** Chưa có bản phát hành
+
+Feature priority: NEW — Người dùng trước đây có thể nhấn Alt+Shift+K để đi tới gợi ý kế nhưng không thể quay về gợi ý trước mà không Tab qua các nút đánh giá; bổ sung hành trình hai chiều thực sự cho WatchFlow AI trên remote và desktop. Feature class: AI
+
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/cba8548e75890958781dd6fe1f817612079d616c)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+
+## P5.1.337 — Electron 4.23.422 — AI đồng bộ vị trí gợi ý với Tab, chuột và remote (CANDIDATE)
+
+**Ứng dụng:** Chưa xác minh · **Trạng thái:** Chưa có bản phát hành
 
 Feature priority: NEW — bộ đếm “Gợi ý 2/3” của P336 chỉ cập nhật khi nhấn J/K; di chuyển focus thông thường sang thẻ khác khiến nhãn trong sticky header bị sai. Feature class: AI
 
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/71e2116b84e7cdee69b7a08b66fbafeddd2c4fc6)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
 
 ## P5.1.336 — Electron 4.23.421 — AI thông báo vị trí gợi ý bằng chữ và screen reader; cuộn vào giữa khi chuyển (CANDIDATE)
 
