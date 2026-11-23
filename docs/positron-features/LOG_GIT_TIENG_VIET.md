@@ -2,14 +2,22 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
-## P5.1.328 — phím F6 hoặc Alt+Shift+W mở trực tiếp WatchFlow AI
+## P5.1.329 — nhấn lại F6 hoặc Alt+Shift+W để đóng WatchFlow AI
 
-**Ứng dụng:** 4.23.413 · **Trạng thái:** Chưa có bản phát hành
+**Ứng dụng:** 4.23.414 · **Trạng thái:** Chưa có bản phát hành
+
+Feature priority: NEW — điều khiển hoàn toàn bằng một phím để bật và tắt bảng AI, không phải đưa chuột tìm nút × hoặc chuyển sang Escape khi đang xem truyền hình. Feature class: AI
+
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/0f48093ce424130fbd5dad859a54f1ce84444031)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+
+## P5.1.328 — Electron 4.23.413 — Phím tắt mở nhanh WatchFlow Intelligence (CANDIDATE)
+
+**Ứng dụng:** Chưa xác minh · **Trạng thái:** Chưa có bản phát hành
 
 Feature priority: NEW — thêm lối truy cập AI trực tiếp qua bàn phím mà không phải tìm nút trên toolbar, hỗ trợ thao tác nhanh khi quản lý danh sách kênh. Feature class: AI
 
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/094c163bee254587f7a47c14ad497e4ca133b4b7)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
 
 ## P5.1.327 — Electron 4.23.412 — Điều hướng focus khi mở lại WatchFlow AI (CANDIDATE)
 
