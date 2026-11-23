@@ -154,3 +154,12 @@ html[data-positron="true"].po-horizon body #poWatchFlowPanel.po-watchflow-panel:
 #poWatchFlowPanel #poAIActiveExplain summary:focus-visible{outline:2px solid #b2f7df;outline-offset:-2px}
 #poWatchFlowPanel #poAIActiveExplain p{color:#d7e9e9;font-size:11px;line-height:1.45;margin:5px 10px}
 #poWatchFlowPanel #poAIActiveExplain small{display:block;color:#a2d5d4;font-size:11px;line-height:1.45;margin:6px 10px 10px}
+
+/* P283: training coverage and imbalance diagnostics for the local AI model. */
+#poWatchFlowPanel #poAIActiveHealth{padding:9px 10px;margin:8px 9px 10px;border:1px solid #446b5c;border-radius:7px;background:#14352f}
+#poWatchFlowPanel #poAIActiveHealth>strong{display:block;color:#d1ffde;font-size:11px;margin:0 0 7px}
+#poWatchFlowPanel #poAIActiveHealth progress{display:block;appearance:auto;width:100%;height:9px;accent-color:#65d5ad;margin:4px 0 7px}
+#poWatchFlowPanel #poAIActiveHealth progress::-webkit-progress-bar{background:#24433f;border-radius:8px}
+#poWatchFlowPanel #poAIActiveHealth progress::-webkit-progress-value{background:#65d5ad;border-radius:8px}
+#poWatchFlowPanel #poAIActiveHealth p{margin:5px 0;font-size:11px;color:#d8efe4}
+#poWatchFlowPanel #poAIActiveHealth small{margin:5px 0 0;color:#addacb;font-size:11px}

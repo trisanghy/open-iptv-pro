@@ -1,3 +1,12 @@
+## P5.1.283 — AI kiểm tra độ cân bằng nhãn huấn luyện / Electron 4.23.368
+- Feature priority: NEW — Đánh giá số chủ đề đã có nhãn thật, tổng số mẫu, tỷ lệ tập trung chủ đề lớn nhất và nhóm chủ đề chưa được học; đưa lời khuyên chống lệch mẫu mà không tự phân loại kênh hay hứa hẹn độ chính xác.
+- Feature class: AI
+- Evidence: Node regression cho mô hình trống, một chủ đề, cân bằng và lệch 80%; Electron 1920×1080 mở bảng độ phủ, đọc tiến độ thật, khẳng định không đổi localStorage, không đổi M3U và không tự phát. Chỉ đánh dấu đạt khi đã mở ảnh PNG và CI xanh.
+- User action: TV → WatchFlow → AI hợp gu → Thư mục EPG → Dạy AI nhanh → AI dựa vào đâu để gợi ý? → Độ phủ dữ liệu AI.
+- Privacy: Dữ liệu đánh giá chỉ lấy từ số lượng nhãn cục bộ do người dùng xác nhận, không gửi lịch sử xem, kênh, URL hay trọng số ra mạng; thanh mức phủ không phải độ chính xác của mô hình.
+- Electron screenshot: positron-p51283-ai-training-health-before-1920x1080-real.png / positron-p51283-ai-training-health-after-1920x1080-real.png.
+- Trạng thái: CANDIDATE — chỉ GitHub Actions; trang Releases dành cho Stable.
+
 ## P5.1.282 — AI giải thích bằng chứng Naive Bayes / Electron 4.23.367
 - Feature priority: NEW — Cho phép xem mô hình Naive Bayes đã học bao nhiêu nhãn/chủ đề, có từ khóa nào trùng tên kênh và có dự đoán đáng tin cậy hay chưa; không hiển thị đoán mò khi thiếu nhãn hoặc từ khóa, không tự thay đổi kết quả phân loại.
 - Feature class: AI

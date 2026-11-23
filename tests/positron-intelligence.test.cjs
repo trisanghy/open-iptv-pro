@@ -516,3 +516,37 @@ test('P282 giải thích từ khóa đã học và từ chối đoán khi không
   'positron-p51282-ai-explanation-after-1920x1080-real.png'])
   assert.ok(qa.includes(name),name);
 });
+
+// P283: label diversity and imbalance are computed from local supervised data.
+test('P283 sức khỏe dữ liệu AI nhận diện thiếu chủ đề và lệch mẫu',()=>{
+ const empty=C.categoryLearningHealth(C.emptyCategoryModel());
+ assert.equal(empty.examples,0);assert.equal(empty.covered,0);
+ assert.equal(empty.total,9);assert.equal(empty.concentrated,0);
+ assert.equal(empty.missing.length,3);assert.equal(empty.dominant,null);
+ let model=C.teachCategory(C.emptyCategoryModel(),mk('a','Business Daily'),'news');
+ const one=C.categoryLearningHealth(model);
+ assert.equal(one.examples,1);assert.equal(one.covered,1);
+ assert.equal(one.dominant,'news');assert.equal(one.concentrated,100);
+ assert.ok(one.advice.includes('một chủ đề'));
+ model=C.teachCategory(model,mk('b','Atlas Academy'),'education');
+ const balanced=C.categoryLearningHealth(model);
+ assert.equal(balanced.covered,2);assert.equal(balanced.concentrated,50);
+ for(let i=0;i<3;i++)model=C.teachCategory(model,mk('news'+i,'World Business News '+i),'news');
+ const before=JSON.stringify(model);
+ const skewed=C.categoryLearningHealth(model);
+ assert.equal(skewed.examples,5);assert.equal(skewed.covered,2);
+ assert.equal(skewed.dominant,'news');assert.equal(skewed.concentrated,80);
+ assert.ok(skewed.advice.includes('Mẫu học lệch'));
+ assert.ok(!JSON.stringify(skewed).includes('http')&&!JSON.stringify(skewed).includes('m3u8'));
+ assert.equal(JSON.stringify(model),before,'health inspection never changes learned weights');
+ const ui=fs.readFileSync('renderer/positron-intelligence.js','utf8'),
+  css=fs.readFileSync('renderer/positron-intelligence.css','utf8'),
+  qa=fs.readFileSync('scripts/positron-20-extension.cjs','utf8');
+ for(const token of ['core.categoryLearningHealth(categoryModel)','poAIActiveHealth',
+  'Độ phủ dữ liệu AI','Số chủ đề đã có nhãn AI','Chủ đề chưa có ví dụ'])
+  assert.ok(ui.includes(token),token);
+ assert.ok(css.includes('#poWatchFlowPanel #poAIActiveHealth progress::-webkit-progress-value'));
+ for(const name of ['positron-p51283-ai-training-health-before-1920x1080-real.png',
+  'positron-p51283-ai-training-health-after-1920x1080-real.png'])
+  assert.ok(qa.includes(name),name);
+});

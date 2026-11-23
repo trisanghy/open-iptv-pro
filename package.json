@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.367",
-  "description": "Positron P5.1.282: giải thích dữ liệu và độ tin cậy Naive Bayes",
+  "version": "4.23.368",
+  "description": "Positron P5.1.283: phân tích độ phủ và độ lệch dữ liệu học AI",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

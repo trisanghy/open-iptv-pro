@@ -236,6 +236,24 @@
  }
 
 
+ // P283: evaluate the balance of user-confirmed training samples; no inference
+ // from streams, EPG, identifiers or private viewing behavior.
+ function categoryLearningHealth(raw){
+  const model=sanitizedCategoryModel(raw),available=Object.keys(KINDS).filter(key=>key!=='other');
+  const trained=available.map(key=>({key,count:model.docs[key]||0})).filter(row=>row.count>0);
+  trained.sort((a,b)=>b.count-a.count||a.key.localeCompare(b.key));
+  const covered=trained.length,largest=trained[0]||null;
+  const concentrated=model.examples&&largest?Math.round(largest.count*100/model.examples):0;
+  const missing=available.filter(key=>!model.docs[key]).slice(0,3);
+  const advice=!model.examples?'Hãy ghi nhãn vài kênh có tên rõ nghĩa để bắt đầu học.':
+   covered<2?'Mô hình mới biết một chủ đề. Cần thêm nhãn thuộc chủ đề khác trước khi tin vào dự đoán.':
+   concentrated>=75?'Mẫu học lệch về '+KINDS[largest.key]+'. Hãy xác nhận thêm kênh ở chủ đề ít ví dụ.':
+   model.examples<8?'Đã có nhiều chủ đề hơn nhưng vẫn thiếu ví dụ. Tiếp tục xác nhận nhãn đúng.':
+   'Mẫu học đa dạng hơn, nhưng mọi gợi ý vẫn cần người dùng xác nhận.';
+  return {examples:model.examples,covered,total:available.length,concentrated,
+   dominant:largest?.key||null,trained,missing,advice};
+ }
+
  // P282: explain learned Naive Bayes evidence using only channel-name tokens.
  // Never show a prediction from shared generic group names or unsupervised web data.
  function explainCategory(raw,channel){
@@ -492,5 +510,5 @@
   return best;
  }
  return Object.freeze({KINDS,normalize,subject,metadataTopic,topicFor,features,emptyModel,
-  sanitizedModel,predict,learn,recommend,emptyCategoryModel,sanitizedCategoryModel,teachCategory,predictCategory,explainCategory,sanitizedBandit,observeBandit,banditBonus,exploreWithBandit,upcomingForYou,planForYou,startingForYou,rankUnclassified,epgFolders,programmeFolders,searchProgrammes,cleanQuery,readWikiSearch});
+  sanitizedModel,predict,learn,recommend,emptyCategoryModel,sanitizedCategoryModel,teachCategory,predictCategory,explainCategory,categoryLearningHealth,sanitizedBandit,observeBandit,banditBonus,exploreWithBandit,upcomingForYou,planForYou,startingForYou,rankUnclassified,epgFolders,programmeFolders,searchProgrammes,cleanQuery,readWikiSearch});
 });

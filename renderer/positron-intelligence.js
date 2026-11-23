@@ -444,7 +444,24 @@
       words.textContent=explanation.matches.length
        ?'Từ khóa đã học trùng tên kênh: '+explanation.matches.join(', ')
        :'Không có từ khóa trùng nhãn đã học. AI không tự suy đoán.';
-      why.append(toggle,modelInfo,result,words);trainer.append(why);
+      // P283: measure the training balance rather than pretending the ML is ready.
+      const health=core.categoryLearningHealth(categoryModel);
+      const healthBox=d.createElement('section');healthBox.id='poAIActiveHealth';
+      const healthTitle=d.createElement('strong');
+      healthTitle.textContent='Độ phủ dữ liệu AI · '+health.covered+'/'+health.total+' chủ đề';
+      const gauge=d.createElement('progress');gauge.max=health.total;gauge.value=health.covered;
+      gauge.setAttribute('aria-label','Số chủ đề đã có nhãn AI');
+      const concentration=d.createElement('p');
+      concentration.textContent=health.examples
+       ?'Nhãn đã xác nhận: '+health.examples+' · Chủ đề nhiều mẫu nhất chiếm '+health.concentrated+'%.'
+       :'Chưa có nhãn nào được xác nhận.';
+      const advice=d.createElement('p');advice.textContent=health.advice;
+      const missing=d.createElement('small');
+      missing.textContent=health.missing.length
+       ?'Chủ đề chưa có ví dụ (chỉ dạy nếu có kênh phù hợp): '+health.missing.map(k=>core.KINDS[k]).join(', ')
+       :'Cả chín chủ đề đều đã có nhãn; vẫn cần kiểm chứng độ chính xác.';
+      healthBox.append(healthTitle,gauge,concentration,advice,missing);
+      why.append(toggle,modelInfo,result,words,healthBox);trainer.append(why);
     }
     folder.append(trainer);
 
