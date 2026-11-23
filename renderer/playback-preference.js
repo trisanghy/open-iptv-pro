@@ -20,7 +20,7 @@
   const remembered=recent?channel?.lastPlayableUrl:null;
   const selected=remembered&&urls.includes(remembered)?remembered:null;
   if(selected&&urls[0]!==selected){urls.splice(urls.indexOf(selected),1);urls.unshift(selected);}
-  const transport=selected&&channel.lastPlayableTransport==='ffmpeg'?'ffmpeg':'relay';
+  const transport=selected&&['ffmpeg','mpegts'].includes(channel.lastPlayableTransport)?channel.lastPlayableTransport:'relay';
   return {urls,transport,remembered:!!selected};
  }
  function alternateTransport(current,tried,canFfmpeg){

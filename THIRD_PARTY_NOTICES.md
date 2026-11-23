@@ -41,3 +41,9 @@ only on user request, and each has its own model license. The selected F5-TTS
 Vietnamese checkpoint is CC-BY-NC-4.0 (noncommercial), and voice cloning
 requires the speaker's explicit permission. No model weights or voice samples
 are included in the public installer assets.
+
+
+## MPEG-TS / FLV playback
+
+- `mpegts.js` 1.8.2 is bundled in `renderer/mpegts.min.js` under Apache-2.0. Its license text is shipped in `renderer/licenses/mpegts-Apache-2.0.txt`.
+- The library transmuxes supported streams to MSE; the Chromium/platform decoder still determines which video/audio codecs play.

@@ -57,7 +57,7 @@ test('renderer uses successful playback evidence before routing; guards stale re
  assert.match(app,/IPTVPlaybackPreference\?\.choose\(found,allCandidates\)/);
  assert.match(app,/tryPlayback\(playCandidates\[0\],generation,preferredTransport\)/);
  assert.match(app,/IPTVPlaybackRoutePolicy\?\.initialTransport\(/);
- assert.match(app,/ch\.lastPlayableTransport=activeTransport===/);
+ assert.match(app,/ch\.lastPlayableTransport=\['ffmpeg','mpegts'\]\.includes\(activeTransport\)/);
  assert.match(app,/if\(!ch\|\|!url\|\|player\.readyState<2\|\|player\.paused/);
  assert.match(app,/ch\.lastStartupDurationMs=Math\.round\(firstFrameDurationMs\)/);
 });
