@@ -3,7 +3,7 @@ const test=require('node:test'),assert=require('node:assert/strict'),fs=require(
 const ui=fs.readFileSync('renderer/watchflow-ai-demo-v23-8-102.js','utf8');
 const css=fs.readFileSync('renderer/watchflow-ai-demo-v23-8-102.css','utf8');
 const win=fs.readFileSync('.github/workflows/rustlab-windows-exe-on-push.yml','utf8');
-const all=fs.readFileSync('.github/workflows/rust-lab-version-tags.yml','utf8');
+const all=fs.readFileSync('.github/workflows/rust-lab-version-tags.yml','utf8').replace(/\r\n/g,'\n');
 function chronological(source,items){
  let prev=-1;
  for(const item of items){const index=source.indexOf(item);assert.ok(index>prev,'Missing or out of order: '+item);prev=index;}
