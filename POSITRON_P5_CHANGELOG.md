@@ -1,3 +1,11 @@
+## P5.1.316 / Electron 4.23.401 — Đếm trường dữ liệu học AI thay đổi (CANDIDATE)
+- Feature priority: NEW — Đếm số giá trị học khác nhau riêng từng mô hình Logistic, Naive Bayes, UCB, kể cả khi bộ đếm mẫu học không đổi; không tính lại thứ tự khóa JSON.
+- Feature class: AI
+- User action: TV → WatchFlow → AI hợp gu → sao lưu trọng số → kiểm tra lại JSON tải về; xem số trường khác nhau trong chẩn đoán ba thuật toán, không tự nhập.
+- Electron screenshot: positron-p51316-ai-delta-before-1920x1080-real.png / positron-p51316-ai-delta-after-1920x1080-real.png.
+- Evidence: Node regression đối chiếu ba thuật toán thay đổi từng trọng số với bộ đếm giữ nguyên; QA316 Electron thật 1920×1080, không lộ từ khóa học, không đổi playlist, localStorage, trình phát, không autoplay.
+- Giới hạn: số trường khác không phải đánh giá độ chính xác ML; chưa thử IPTV/GPU/Cast phần cứng thật. Chỉ xác nhận khi CI xanh và đã mở soát ảnh thật.
+
 ## P5.1.315 / Electron 4.23.400 — Kiểm tra trọng số AI không phụ thuộc thứ tự khóa JSON (CANDIDATE)
 - Feature priority: NEW — Phân tích nội dung JSON sau khi chọn lại tệp sao lưu: hai tệp có cùng bộ trọng số Logistic, Naive Bayes, UCB được công nhận tương đương dù khác thứ tự khóa, tránh cảnh báo sai khi JSON được chỉnh định dạng bằng công cụ khác; vẫn nhận ra trọng số số học bị đổi thực sự.
 - Feature class: AI

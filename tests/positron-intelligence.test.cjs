@@ -1393,3 +1393,26 @@ test('P315 backup verification is semantic: reordered Logistic and Naive Bayes t
  for(const item of ['qa315','positron-p51315-ai-key-order-before-1920x1080-real.png',
   'positron-p51315-ai-key-order-after-1920x1080-real.png'])assert.ok(qa.includes(item),item);
 });
+
+test('P316 AI backup reports per-model changed fields independent of JSON key order',()=>{
+ const original=C.buildLearningBackup({
+  model:{version:1,observations:2,weights:{news:.2,sport:.4}},
+  categoryModel:{version:1,examples:1,docs:{sport:1},tokens:{sport:{football:2,live:1}}},
+  bandit:{news:3}
+ });
+ const reordered=JSON.parse(JSON.stringify(original));
+ reordered.models.preference.weights={sport:.4,news:.2};
+ reordered.models.category.tokens.sport={live:1,football:2};
+ const equal=C.verifyLearningBackupSnapshot(original,reordered);
+ assert.equal(equal.match,true);assert.deepEqual(equal.details.map(x=>x.changedFields),[0,0,0]);
+ reordered.models.preference.weights.news=.3;
+ reordered.models.category.tokens.sport.live=2;
+ reordered.models.explore.news=4;
+ const diff=C.verifyLearningBackupSnapshot(original,reordered);
+ assert.equal(diff.ok,true);assert.equal(diff.match,false);assert.equal(diff.matched,0);
+ assert.deepEqual(diff.details.map(x=>[x.id,x.changedFields]),[['logistic',1],['naive-bayes',1],['ucb',1]]);
+ assert.deepEqual(diff.details.map(x=>[x.countBefore,x.countAfter]),[[2,2],[1,1],[1,1]]);
+ assert.ok(fs.readFileSync('renderer/positron-intelligence.js','utf8').includes('trường AI thay đổi'));
+ for(const key of ['qa316','positron-p51316-ai-delta-before-1920x1080-real.png','positron-p51316-ai-delta-after-1920x1080-real.png'])
+  assert.ok(fs.readFileSync('scripts/positron-20-extension.cjs','utf8').includes(key),key);
+});

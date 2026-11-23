@@ -459,7 +459,7 @@
       const name=d.createElement('strong');name.textContent=item.label;
       const result=d.createElement('span');
       result.textContent=(item.match?'Khớp':'Khác')+' · '+item.countBefore+' → '+item.countAfter+
-       ' '+item.unit+(!item.match&&item.countBefore===item.countAfter?' · Trọng số khác':'');
+       ' '+item.unit+(!item.match?' · '+item.changedFields+' trường AI thay đổi':'');
       row.append(name,result);diagnostics.append(row);
      }
      trainer.append(diagnostics);

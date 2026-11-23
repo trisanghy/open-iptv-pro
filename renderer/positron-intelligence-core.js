@@ -336,9 +336,23 @@
   // a JSON editor reorders object keys. Arrays retain their meaningful order.
   const canonical=value=>Array.isArray(value)?value.map(canonical):
    value&&typeof value==='object'?Object.keys(value).sort().map(key=>[key,canonical(value[key])]):value;
+  // P316: count changed ML values, never display the underlying private tokens.
+  const changedFields=(a,b)=>{
+   if(a&&b&&typeof a==='object'&&typeof b==='object'
+    &&!Array.isArray(a)&&!Array.isArray(b)){
+    let changed=0;
+    for(const key of new Set([...Object.keys(a),...Object.keys(b)])){
+     const both=Object.prototype.hasOwnProperty.call(a,key)
+      &&Object.prototype.hasOwnProperty.call(b,key);
+     changed+=both?changedFields(a[key],b[key]):1;
+    }
+    return changed;
+   }
+   return JSON.stringify(canonical(a))===JSON.stringify(canonical(b))?0:1;
+  };
   const details=rows.map(({id,label,before,after,countBefore,countAfter,unit})=>({
    id,label,match:JSON.stringify(canonical(before))===JSON.stringify(canonical(after)),
-   countBefore,countAfter,unit
+   changedFields:changedFields(before,after),countBefore,countAfter,unit
   }));
   const matched=details.filter(item=>item.match).length,match=matched===details.length;
   return {ok:true,match,matched,details,summary:loaded.summary,reason:match?
