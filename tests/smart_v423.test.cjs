@@ -65,7 +65,8 @@ test('Doctor 3 proposes backup only if counterpart was recently verified',()=>{
 test('Desktop integration exposes bounded IPC, page, data backup and intact existing controls',()=>{
  assert.match(pkg.version,/^\d+\.\d+\.\d+$/);
  const html=fs.readFileSync(path.join(__dirname,'../renderer/index.html'),'utf8');
- for(const id of ['smartDiscoverySection','smartCountry','smartFind','smartVerify','smartCancel','smartImportAlive','smartImportAll','doctor3Refresh','doctor3Verify','doctor3Undo','doctorVisualScan','backupExportBtn','backupImportBtn','multiGrid','castModal'])assert.ok(html.includes(`id="${id}"`),id);
+ for(const id of ['smartDiscoverySection','smartCountry','smartFind','smartVerify','smartCancel','smartImportAlive','smartImportAll','doctor3Refresh','doctor3Verify','doctor3Undo','doctorVisualScan','backupExportBtn','backupImportBtn','multiGrid','castBtn'])assert.ok(html.includes(`id="${id}"`),id);
+ assert.match(html,/web-cast-v2\.js/);assert.match(html,/desktop-cast-web-adapter\.js/);assert.doesNotMatch(html,/id="castModal"/);
  const pre=fs.readFileSync(path.join(__dirname,'../src/preload.cjs'),'utf8');
  const main=fs.readFileSync(path.join(__dirname,'../src/main.cjs'),'utf8');
  for(const ipc of ['smart:countries','smart:country','smart:check'])assert.ok(pre.includes(ipc)&&main.includes(ipc));
