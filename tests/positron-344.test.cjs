@@ -13,7 +13,7 @@ test('P344 captures real Electron screenshots and corrects obsolete P334 scroll 
  const p=JSON.parse(read('package.json')),qa=read('scripts/positron-344-audit.cjs'),
   legacy=read('scripts/positron-334-audit.cjs');
  assert.ok(Number(p.version.split('.')[2])>=429);
- assert.ok(Number(p.description.match(/Positron P5\\.1\\.(\\d+)/)?.[1])>=344,'P344 functionality must persist in newer product versions');
+ assert.ok(Number.parseInt(p.description.split('Positron P5.1.')[1]||'0',10)>=344,'P344 paging behavior must survive later release labels');
  for(const s of ["PageDown","PageUp","afterSha256","headingVisible","noOverflow","realElectron:true",
   "positron-p51344-page-navigation-"])assert.ok(qa.includes(s));
  assert.ok(legacy.includes('headingClear'));assert.ok(legacy.includes("afterNarrow.entryMargin==='9px'"));
