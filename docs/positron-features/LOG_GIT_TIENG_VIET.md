@@ -2,14 +2,22 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
-## P5.1.272 — Thư mục EPG đa nhãn tự động
+## P5.1.273 — Thư mục chương trình EPG đa chủ đề
 
-**Ứng dụng:** 4.23.357 · **Trạng thái:** Chưa có bản phát hành
+**Ứng dụng:** 4.23.358 · **Trạng thái:** Chưa có bản phát hành
+
+Feature priority: NEW — Thêm màn hình **Chương trình EPG** cho phép khám phá lịch phát thật theo chủ đề, không chỉ gom kênh. Một chương trình thời sự kết hợp bóng đá có thể xuất hiện đồng thời trong Tin tức và Thể thao, xem tên/giờ/kênh và chủ động chọn xem kênh; chỉ dùng XMLTV đã tải. Feature class: BREAKTHROUGH
+
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/a63eb3b154ee46b00e07d695d72cd5a63f2134fa)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+
+## P5.1.272 — Thư mục EPG đa nhãn tự động / Electron 4.23.357
+
+**Ứng dụng:** Chưa xác minh · **Trạng thái:** Chưa có bản phát hành
 
 Feature priority: NEW — Thêm thư viện chủ đề EPG ảo tự phân loại toàn bộ danh sách kênh trên thiết bị từ các chương trình XMLTV hiện có; một kênh có thể xuất hiện đồng thời trong Thể thao, Tin tức, Phim, Thiếu nhi hoặc các thư mục khác mà không làm thay đổi M3U gốc. Feature class: BREAKTHROUGH
 
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/30168fa7f9d7ebc089ee8000286d8d419760f659)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
 
 ## P5.1.271 — AI tự học phân loại chủ đề / Electron 4.23.356
 

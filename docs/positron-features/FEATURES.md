@@ -7,15 +7,28 @@ Trang này được tạo tự động từ GitHub Releases và ảnh kiểm th�
 [Mở WEBSITE changelog tương tác](https://raw.githack.com/trisanghy/open-iptv-pro/Positron/docs/positron-features/index.html) · [Giao diện HTML trong repository](index.html) · [Các bản phát hành](https://github.com/trisanghy/open-iptv-pro/releases) · [Nhật ký Git tiếng Việt](LOG_GIT_TIENG_VIET.md) · [Quy tắc ưu tiên tính năng](../../POSITRON_FEATURE_RULES.md)
 
 <details>
-<summary><strong>P5.1.272</strong> · Thư mục EPG đa nhãn tự động · CHƯA CÓ BẢN PHÁT HÀNH · TÍNH NĂNG</summary>
+<summary><strong>P5.1.273</strong> · Thư mục chương trình EPG đa chủ đề · CHƯA CÓ BẢN PHÁT HÀNH · TÍNH NĂNG</summary>
 
-**Ứng dụng:** 4.23.357 · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
+**Ứng dụng:** 4.23.358 · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
+
+Feature priority: NEW — Thêm màn hình **Chương trình EPG** cho phép khám phá lịch phát thật theo chủ đề, không chỉ gom kênh. Một chương trình thời sự kết hợp bóng đá có thể xuất hiện đồng thời trong Tin tức và Thể thao, xem tên/giờ/kênh và chủ động chọn xem kênh; chỉ dùng XMLTV đã tải. Feature class: BREAKTHROUGH
+
+*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+
+[Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/tree/Positron) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/a63eb3b154ee46b00e07d695d72cd5a63f2134fa)
+
+</details>
+
+<details>
+<summary><strong>P5.1.272</strong> · Thư mục EPG đa nhãn tự động / Electron 4.23.357 · CHƯA CÓ BẢN PHÁT HÀNH · TÍNH NĂNG</summary>
+
+**Ứng dụng:** Chưa xác minh · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
 
 Feature priority: NEW — Thêm thư viện chủ đề EPG ảo tự phân loại toàn bộ danh sách kênh trên thiết bị từ các chương trình XMLTV hiện có; một kênh có thể xuất hiện đồng thời trong Thể thao, Tin tức, Phim, Thiếu nhi hoặc các thư mục khác mà không làm thay đổi M3U gốc. Feature class: BREAKTHROUGH
 
 *Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
 
-[Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/tree/Positron) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/30168fa7f9d7ebc089ee8000286d8d419760f659)
+[Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
 
 </details>
 
