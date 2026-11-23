@@ -6489,9 +6489,15 @@ async function runTwenty(page){
  const after216=await page.screenshot({path:path.join(out,'positron-p51216-search-focus-after-1920x1080-real.png'),animations:'disabled'});
  assert.deepEqual([after216.readUInt32BE(16),after216.readUInt32BE(20)],[1920,1080]);
  assert.equal(before216.equals(after216),false,'P216 focus ring must visibly move into search');
- await page.keyboard.type('qa channel');
+ // The history fixture now mixes QA Channel and long-title channels; searching
+ // "qa channel" returns only one row. Exercise a shared actual token instead.
+ // Keep the two-result requirement to test ArrowDown/ArrowUp navigation.
+ const available216=await page.evaluate(()=>[...document.querySelectorAll('#poRandomHistoryList .po-random-history-item')]
+  .filter(el=>el.textContent.toLowerCase().includes('channel')).length);
+ assert.ok(available216>=2,'P216 needs two real history entries sharing the search token');
+ await page.keyboard.type('channel');
  const typed216=await page.evaluate(()=>({
-  typedWithoutMouse:document.getElementById('poRandomHistorySearch').value==='qa channel',
+  typedWithoutMouse:document.getElementById('poRandomHistorySearch').value==='channel',
   matchingResults:document.querySelectorAll('#poRandomHistoryList .po-random-history-item').length>=2,
   neverAutoPlays:window.__p216Played.length===0
  }));
