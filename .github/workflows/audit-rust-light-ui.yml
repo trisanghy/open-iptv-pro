@@ -14,6 +14,10 @@ on:
       - tests/rust-dark-amoled-coherence-v23-8-98.test.cjs
       - renderer/index.html
       - renderer/watchflow-smart-runtime-v23-8-126.js
+      - renderer/watchflow-ai-demo-v23-8-102.js
+      - renderer/watchflow-ai-demo-v23-8-102.css
+      - tests/watchflow-all-models-v23-8-136.test.cjs
+      - tests/watchflow-all-models-browser-v23-8-136.cjs
       - tests/watchflow-wasm-csp-v23-8-135.test.cjs
       - tests/watchflow-wasm-csp-browser-v23-8-135.cjs
       - tests/rust-light-consistency-v23-8-92.test.cjs
@@ -58,6 +62,22 @@ jobs:
           set -Eeuo pipefail
           node --test tests/watchflow-wasm-csp-v23-8-135.test.cjs
           CHROME="$(command -v google-chrome)" node tests/watchflow-wasm-csp-browser-v23-8-135.cjs
+      - name: Verify and photograph complete WatchFlow model catalogue
+        shell: bash
+        env:
+          NODE_PATH: ${{ runner.temp }}/iptv-playwright/node_modules
+        run: |
+          set -Eeuo pipefail
+          node --test tests/watchflow-all-models-v23-8-136.test.cjs
+          CHROME="$(command -v google-chrome)" node tests/watchflow-all-models-browser-v23-8-136.cjs
+      - name: Upload full model catalog screenshot
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: rust-lab-watchflow-all-models-v23-8-136
+          path: rust-watchflow-catalog-v23-8-136.png
+          if-no-files-found: warn
+          retention-days: 14
       - name: Capture all Rust Lab feature pages and expanded panels
         shell: bash
         env:

@@ -242,3 +242,10 @@ html[data-theme="dark"] #page-tv .wf-easy-status[data-state="error"]{background:
 #page-tv .watchflow-demo > .wf-modes{margin:12px 0 7px;grid-template-columns:repeat(3,minmax(0,1fr))}
 #page-tv .watchflow-demo > #wfModeHint{margin:4px 0 10px;font-size:11px;color:#777b97}
 @media(max-width:670px){#page-tv .watchflow-demo > .wf-modes{grid-template-columns:1fr}}
+
+#page-tv #wfSettings .wf-model-picker{display:grid;gap:10px}
+#page-tv #wfSettings .wf-model-picker>strong,#page-tv #wfSettings .wf-model-picker>label{font-size:14px;font-weight:800}
+#page-tv #wfSettings .wf-model-current{border-color:#a05edf;box-shadow:inset 0 0 0 1px #a05edf}
+#page-tv #wfSettings .wf-smart-details[open] .wf-smart-list{display:grid}
+#page-tv #wfSettings .wf-smart-details summary{font-weight:700}
+html[data-theme=dark] #page-tv #wfSettings .wf-model-current,html[data-theme=amoled] #page-tv #wfSettings .wf-model-current{border-color:#b47cef;box-shadow:inset 0 0 0 1px #b47cef}

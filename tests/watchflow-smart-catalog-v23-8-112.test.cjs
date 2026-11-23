@@ -29,8 +29,8 @@ test('User can save Smart preference, not activate an unverified model',()=>{
 test('Smart UI is wired before preview; Intelligence installer remains separate',()=>{
  assert.ok(html.indexOf('watchflow-model-catalog-v23-8-112.js')<html.indexOf('watchflow-ai-demo-v23-8-102.js'));
  assert.match(ui,/wfSmartModelSelect/);assert.match(ui,/item\.advantage/);
- assert.match(ui,/smartArea\.hidden=mode!=='smart'/);
- assert.match(ui,/modelArea\.hidden=mode!=='intelligence'/);
+ assert.match(ui,/smartArea.hidden=false/);
+ assert.match(ui,/modelArea.hidden=false/);
  assert.match(ui,/chưa kích hoạt mô hình Smart/);
  assert.match(ui,/native\.aiInstallModel\(key\)/);
  assert.match(ui,/await smartRuntime.install\(root,id,update\)/);

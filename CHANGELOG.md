@@ -1,3 +1,9 @@
+## Rust Lab v23.8.136 — Không ẩn các lựa chọn AI theo chế độ (PRERELEASE)
+
+- Sửa nguyên nhân gốc: Standard tự ẩn 5 mô hình Smart và kho Intelligence khiến người dùng thấy chỉ 2 lựa chọn. Bây giờ hiển thị đủ ba nhóm mô hình cùng lúc trong Mô hình AI & dung lượng, viền nhấn nhóm đang sử dụng.
+- Smart có 5 mô hình hiển thị sẵn với ưu điểm, tình trạng tải và lựa chọn trong dropdown; chỉ 2 ONNX có thể tải, 3 mẫu chưa đủ dữ liệu được ghi rõ. Intelligence giữ bộ quản lý native Qwen3/Hy-MT2, Standard Naive Bayes không cần tải. Không phát hành bản chưa có trọng số giả.
+- Thêm kiểm thử Node và Chromium chụp thật 3 nhóm mô hình cùng lúc; không ảnh hưởng CSP ONNX v23.8.135, playlist, trình phát, TTS, PiP hay Stable/Latest.
+
 ## Rust Lab v23.8.135 — Sửa tận gốc ONNX Smart WebAssembly bị CSP chặn (PRERELEASE)
 
 - Nguyên nhân gốc: thẻ `Content-Security-Policy` trong renderer/index.html có script-src nhưng thiếu `'wasm-unsafe-eval'`, khiến WebView từ chối WebAssembly.compile trước khi khởi tạo ONNX, báo no available backend / Refused to create a WebAssembly object.
