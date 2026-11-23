@@ -2,14 +2,22 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
-## P5.1.320 — giữ nút Xem/Hợp gu ở trên phần giải thích AI
+## P5.1.321 — giữ nút Xem/Hợp gu ở trên phần giải thích AI
 
-**Ứng dụng:** 4.23.405 · **Trạng thái:** Chưa có bản phát hành
+**Ứng dụng:** 4.23.406 · **Trạng thái:** Chưa có bản phát hành
+
+Ảnh Electron thật P320: tiêu đề WatchFlow Intelligence bị cuộn dưới thanh nav cố định khi đọc giải thích Logistic. Thêm nút ↑ Đầu AI vào header sticky, chỉ hiện khi chế độ AI mở và người dùng cuộn >120px; bấm về đầu, trả focus về tab AI; không cập nhật mô hình hay tự phát.
+
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/65d28d9437f225dbe47c7fa091df8bf1403538dd)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+
+## P5.1.320 — Electron 4.23.405 — Nút Xem/Hợp gu luôn nằm trên phần giải thích AI (CANDIDATE)
+
+**Ứng dụng:** Chưa xác minh · **Trạng thái:** Chưa có bản phát hành
 
 Feature priority: BLOCKER_FIX — Ảnh Electron thật P319 chứng minh mở giải thích AI đã đẩy nút Xem khởi động playback và Hợp gu ra khỏi vùng bấm, chặn thao tác chính với kênh. Đưa hàng nút lên trên phần giải thích và kiểm chứng click target trong Electron. Feature class: AI
 
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/e8b586ff04a5f05172942989a1ae4a78ca72955b)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
 
 ## P5.1.319 — Electron 4.23.404 — AI giải thích thật yếu tố nào tăng/giảm gợi ý Logistic (CANDIDATE)
 

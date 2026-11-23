@@ -7,15 +7,28 @@ Trang này được tạo tự động từ GitHub Releases và ảnh kiểm th�
 [Mở WEBSITE changelog tương tác](https://raw.githack.com/trisanghy/open-iptv-pro/Positron/docs/positron-features/index.html) · [Giao diện HTML trong repository](index.html) · [Các bản phát hành](https://github.com/trisanghy/open-iptv-pro/releases) · [Nhật ký Git tiếng Việt](LOG_GIT_TIENG_VIET.md) · [Quy tắc ưu tiên tính năng](../../POSITRON_FEATURE_RULES.md)
 
 <details>
-<summary><strong>P5.1.320</strong> · giữ nút Xem/Hợp gu ở trên phần giải thích AI · CHƯA CÓ BẢN PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.321</strong> · giữ nút Xem/Hợp gu ở trên phần giải thích AI · CHƯA CÓ BẢN PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
 
-**Ứng dụng:** 4.23.405 · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
+**Ứng dụng:** 4.23.406 · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
+
+Ảnh Electron thật P320: tiêu đề WatchFlow Intelligence bị cuộn dưới thanh nav cố định khi đọc giải thích Logistic. Thêm nút ↑ Đầu AI vào header sticky, chỉ hiện khi chế độ AI mở và người dùng cuộn >120px; bấm về đầu, trả focus về tab AI; không cập nhật mô hình hay tự phát.
+
+*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+
+[Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/tree/Positron) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/65d28d9437f225dbe47c7fa091df8bf1403538dd)
+
+</details>
+
+<details>
+<summary><strong>P5.1.320</strong> · Electron 4.23.405 — Nút Xem/Hợp gu luôn nằm trên phần giải thích AI (CANDIDATE) · CHƯA CÓ BẢN PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+
+**Ứng dụng:** Chưa xác minh · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
 
 Feature priority: BLOCKER_FIX — Ảnh Electron thật P319 chứng minh mở giải thích AI đã đẩy nút Xem khởi động playback và Hợp gu ra khỏi vùng bấm, chặn thao tác chính với kênh. Đưa hàng nút lên trên phần giải thích và kiểm chứng click target trong Electron. Feature class: AI
 
 *Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
 
-[Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/tree/Positron) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/e8b586ff04a5f05172942989a1ae4a78ca72955b)
+[Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
 
 </details>
 
