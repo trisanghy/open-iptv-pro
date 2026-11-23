@@ -1,3 +1,11 @@
+## P5.1.348 / Electron 4.23.433 — Esc thu gọn hướng dẫn AI khi focus đang ở chế độ khác (CANDIDATE)
+- Feature priority: NEW — Ảnh Electron thực P347 cho thấy hướng dẫn AI nằm trên các nút chế độ khi bung ra; người dùng remote có thể chuyển focus sang chế độ khác, nên Esc phải đóng riêng hướng dẫn đầu tiên thay vì đóng cả WatchFlow đang sử dụng.
+- Feature class: AI
+- User action: Nhấn F6 mở WatchFlow Intelligence, Enter mở Phím AI, di chuyển focus bằng bàn phím tới Kênh hợp gu rồi nhấn Esc: chỉ hướng dẫn thu gọn, bảng và focus vẫn còn. Nhấn Esc lần nữa mới đóng bảng WatchFlow.
+- Electron screenshot: positron-p51348-escape-other-focus-after-720x900-real.png
+- Evidence: Native Electron CDP captures four before/after PNG at 1920×1080 and 720×900 and verifies first Escape closes nested help, second Escape closes native dialog, no auto-play, no mutation of playlist/current channel/local AI model; CI and image inspection pending.
+- QA: regression test checks capture-phase Escape guard, Playwright real keyboard and screenshot SHA-256. Preserve all other interactions and source data.
+
 ## P5.1.347 / Electron 4.23.432 — Đóng hướng dẫn AI sau thao tác ngoài bảng (CANDIDATE)
 - Feature priority: NEW — Ảnh Electron P346 720px cho thấy hướng dẫn phím che các nút chế độ AI; cho phép chạm bên ngoài lớp hướng dẫn để đóng riêng lớp đó, tránh nhấn nhầm hoặc mất bảng WatchFlow, nhất là khi dùng remote và màn hình hẹp.
 - Feature class: AI

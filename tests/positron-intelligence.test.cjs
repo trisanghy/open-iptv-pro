@@ -1722,3 +1722,18 @@ test('P347 AI mode selection dismisses keyboard overlay and P345 focus is restor
  assert.ok(qa.includes('afterSha256'));
  assert.ok(runner.includes("await require('./positron-347-audit.cjs').run(page)"));
 });
+
+test('P348 Escape while a different AI mode has focus collapses guide first',()=>{
+ const ui=fs.readFileSync('renderer/positron-intelligence.js','utf8');
+ const audit=fs.readFileSync('scripts/positron-348-audit.cjs','utf8');
+ const runner=fs.readFileSync('scripts/positron-50-audit.cjs','utf8');
+ assert.ok(ui.includes("d.addEventListener('keydown',event=>{"));
+ assert.ok(ui.includes("if(!panel.contains(d.activeElement)"));
+ assert.ok(ui.includes('const focusIsInsideGuide=shortcutGuide.contains(d.activeElement)'));
+ assert.ok(ui.includes('event.preventDefault();event.stopPropagation();'));
+ assert.ok(ui.includes('},true);'),'Escape interception must happen before native bubbling close');
+ assert.ok(audit.includes("await page.locator('#poAIChannels').focus()"));
+ assert.ok(audit.includes("await page.keyboard.press('Escape')"));
+ assert.ok(audit.includes('afterSha256'));
+ assert.ok(runner.includes("await require('./positron-348-audit.cjs').run(page)"));
+});

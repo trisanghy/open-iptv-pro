@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.432",
-  "description": "Positron P5.1.347: chọn chế độ AI tự thu gọn hướng dẫn phím; sửa thứ tự focus bài kiểm thử P345",
+  "version": "4.23.433",
+  "description": "Positron P5.1.348: Escape thu gọn hướng dẫn AI dù focus đã chuyển sang nút khác, không đóng nhầm WatchFlow",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

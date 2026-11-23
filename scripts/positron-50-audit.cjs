@@ -241,6 +241,7 @@ const wait=ms=>new Promise(r=>setTimeout(r,ms));
   process.stdout.write('Positron P5.1.225 native Electron TV viewport control audit PASS\n');
   // P347: independent new Electron cycle after the historical full-regression suite.
   await require('./positron-347-audit.cjs').run(page);
+  await require('./positron-348-audit.cjs').run(page);
   await browser.close();
 })().catch(e=>{
   console.error('P4 50-round audit failed: '+(e&&e.stack||e));

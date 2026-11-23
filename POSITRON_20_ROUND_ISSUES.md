@@ -9,3 +9,16 @@
 
 - P347 first CI run 45285958995: 1061 pass, 8 fail, 5 skipped; stale version labels/changelog and evidence declarations must be corrected (assertions unchanged).
 - P347 fast native Electron run 45285958935: expanded keyboard help intercepted mode pointer input; outside-pointer dismissal is now directly tested instead of using forced hidden clicks.
+
+## P5.1.347 — bằng chứng vòng cải tiến
+- HEAD thời điểm kiểm tra P347: b1e23d5a155108165ec400331ac957e30b3e0d4b.
+- Full Node, Windows x64, mac ARM64/Intel CI trước đó: success 45286709984; latest full run 45287352330 đang kiểm tra khi ghi checkpoint.
+- Fast Electron screenshot review: success 45287348167, artifact 14872072899.
+- ĐÃ MỞ TRỰC TIẾP PNG thực của ứng dụng, trước/sau 720×900 và 1920×1080: sau khi chạm ngoài hộp hướng dẫn, các nút chế độ hiện đủ và WatchFlow còn mở.
+- QA: 20 checks PASS, nguồn kênh [], current channel rỗng, local AI model null trước/sau, 4 SHA-256 lưu trong audit-p51347-auto-dismiss-mode.json.
+- Giới hạn: chưa có nguồn xem thực hoặc khả năng kiểm tra GPU/Cast/DVR; GitHub Release stable-only disabled. Không nhận đã phát hành hoặc xác thực playback.
+
+## P5.1.348 — kế tiếp
+- Từ screenshot P347: hướng dẫn mở có thể phủ nút AI ở viewport 720px. Khi focus remote rời summary mà không nhấp chuột, Esc phải thu gọn hướng dẫn trước rồi mới đóng bảng ở lần Esc thứ hai.
+- Implementer: renderer/positron-intelligence.js + native CDP script 348, screenshot in two viewports, private playlist/AI model state unchanged.
+- Đếm đợt 20 mới: P347 có bằng chứng fast Electron thật, P348 chưa thực thi; không đếm các vòng chưa đủ test/ảnh và CI.

@@ -353,6 +353,21 @@
   shortcutGuide.open=false;
   shortcutSummary.focus({preventScroll:true});
  });
+ // P348: remote focus may leave the open guide without a pointer event.
+ // Consume Escape before WatchFlow's own bubbling close handler, but never
+ // intercept editor input, a nested native modal, or keys outside this panel.
+ d.addEventListener('keydown',event=>{
+  if(event.key!=='Escape'||event.defaultPrevented||!shortcutGuide.open||
+   !aiOpen||panel.hidden||event.isComposing||
+   event.altKey||event.ctrlKey||event.metaKey||event.shiftKey)return;
+  if(!panel.contains(d.activeElement)||d.querySelector('.modal-backdrop:not(.hidden):not([hidden])'))return;
+  if([event.target,d.activeElement].some(el=>el?.isContentEditable||
+   el?.closest?.('input,textarea,select,[contenteditable],[role="textbox"]')))return;
+  event.preventDefault();event.stopPropagation();
+  const focusIsInsideGuide=shortcutGuide.contains(d.activeElement);
+  shortcutGuide.open=false;
+  if(focusIsInsideGuide)shortcutSummary.focus({preventScroll:true});
+ },true);
  shortcutGuide.setAttribute('aria-keyshortcuts','Escape');
  shortcutSummary.title+=' · Esc: thu gọn hướng dẫn';
  // P346 repair from actual P326 native screenshot regression:
