@@ -9460,9 +9460,10 @@ async function runTwenty(page){
 
 
  // P276: real Electron inventory plus genuine user feedback and guarded removal.
- await page.evaluate(()=>{document.getElementById('poAIModelManager').open=false;});
+ await page.evaluate(()=>{document.getElementById('poAIModelManager').hidden=true;});
  const before276=await page.screenshot({path:path.join(out,'positron-p51276-model-manager-before-1920x1080-real.png'),animations:'disabled'});
- await page.locator('#poAIModelManager>summary').click();
+ await page.locator('#poAIReset').click();
+ assert.equal(await page.locator('#poAIModelManager').isVisible(),true,'P276 manager opens on request');
  await page.locator('#poAIChannels').click();
  const firstLike276=page.locator('#poAICards .po-ai-actions button').filter({hasText:'Hợp gu'}).first();
  assert.ok(await firstLike276.count()>0,'P276 recommendation must have a real feedback action');

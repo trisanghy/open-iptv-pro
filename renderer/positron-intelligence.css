@@ -104,3 +104,9 @@ html[data-positron="true"].po-horizon body #poWatchFlowPanel.po-watchflow-panel:
 #poWatchFlowPanel .po-ai-model-status{font-size:11px;color:#a5e8d6;margin:3px 0}
 #poWatchFlowPanel #poAIReset{cursor:pointer;min-height:34px}
 @media(max-width:560px){#poWatchFlowPanel .po-ai-model-row{align-items:flex-start;flex-wrap:wrap}#poWatchFlowPanel .po-ai-model-row button{width:100%}}
+
+/* P276 QA: keep WatchFlow recommendations above the optional storage manager. */
+#poWatchFlowPanel #poAIModelManager[hidden]{display:none!important}
+#poWatchFlowPanel .po-ai-clear-all{min-height:36px;border:1px solid #9a665a;border-radius:8px;background:#50312f;color:#fff4eb;padding:8px 10px;cursor:pointer;font-size:12px;font-weight:700}
+#poWatchFlowPanel .po-ai-clear-all:disabled{opacity:.55;cursor:not-allowed}
+#poWatchFlowPanel .po-ai-clear-all:focus-visible{outline:2px solid #8de2c5;outline-offset:2px}

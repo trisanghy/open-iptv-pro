@@ -47,17 +47,19 @@
  const checkText=d.createElement('span');checkText.textContent='Bật học sở thích từ thời lượng xem và phản hồi';
  checkLabel.append(check,checkText);
  const clear=d.createElement('button');clear.type='button';clear.id='poAIReset';
- clear.textContent='Xóa dữ liệu học';clear.title='Xóa các trọng số học máy lưu ở thiết bị này';
+ clear.textContent='Quản lý mô hình';clear.title='Xem các mô hình học AI, dung lượng và chọn dữ liệu muốn xóa';clear.setAttribute('aria-expanded','false');
  controls.append(checkLabel,clear);
  // P276: Three built-in, locally learned algorithms (no external model download).
  const modelManager=d.createElement('details');modelManager.id='poAIModelManager';modelManager.className='po-ai-model-manager';
- modelManager.open=false; // Keep core navigation visible; expand to manage model weights.
+ modelManager.hidden=true;modelManager.open=true; // Open only after explicit user request, outside recommendation flow.
  const modelToggle=d.createElement('summary');modelToggle.textContent='Mô hình AI trên máy';
  const modelRows=d.createElement('div');modelRows.className='po-ai-model-rows';modelRows.id='poAIModelRows';
  const modelStatus=d.createElement('p');modelStatus.className='po-ai-model-status';modelStatus.id='poAIModelStatus';
  modelStatus.setAttribute('role','status');modelStatus.setAttribute('aria-live','polite');
  const modelHint=d.createElement('small');modelHint.textContent='Tiêu chuẩn và Smart tích hợp sẵn, không cần tải. Xóa trọng số học không xóa nguồn, kênh hoặc EPG.';
- modelManager.append(modelToggle,modelRows,modelStatus,modelHint);
+ const bulk=d.createElement('button');bulk.type='button';bulk.id='poAIClearAll';
+ bulk.className='po-ai-clear-all';bulk.textContent='Xóa toàn bộ dữ liệu học';bulk.title='Xóa tất cả ba mô hình học sau khi xác nhận hai lần';
+ modelManager.append(modelToggle,modelRows,bulk,modelStatus,modelHint);
  let pendingModel='',pendingAt=0;
  const modelBytes=value=>new TextEncoder().encode(JSON.stringify(value||{})).byteLength;
  const learnedInventory=()=>[
@@ -100,6 +102,7 @@
    row.append(left,remove);modelRows.append(row);
   }
   modelToggle.textContent='Mô hình AI trên máy · '+models.length+' thuật toán · '+models.reduce((n,x)=>n+modelBytes(x.data),0)+' byte';
+  bulk.disabled=!models.some(x=>x.count>0);bulk.textContent=pendingModel==='all'?'Xác nhận xóa':'Xóa toàn bộ dữ liệu học';
  }
  const modeBar=d.createElement('div');modeBar.className='po-ai-modes';
  const channelsMode=d.createElement('button');channelsMode.type='button';channelsMode.id='poAIChannels';
@@ -136,7 +139,7 @@
  const list=d.createElement('div');list.id='poAICards';list.className='po-ai-cards';
  const privacy=d.createElement('p');privacy.className='po-ai-privacy';
  privacy.textContent='Mặc định KHÔNG học. Khi bật: chỉ lưu trọng số sở thích trong máy; học sau ≥35 giây phát có hình/tiếng, không tải stream hay lịch sử lên mạng. Tra cứu web chỉ gửi tên kênh, không gửi playlist/URL/hành vi. Bạn có thể xóa mô hình.';
- area.append(title,controls,modelManager,alertRow,modeBar,summary,list,privacy);
+ area.append(title,controls,alertRow,modeBar,summary,list,privacy,modelManager);
  const extras=[panel.querySelector('.po-watchflow-modes'),panel.querySelector('.po-watchflow-subhead'),
   byId('poWatchFlowResults'),panel.querySelector('.po-watchflow-note')].filter(Boolean);
  const originals=[byId('poFlowPlusResults'),byId('poWatchLaterSearchRow'),panel.querySelector('.po-flowplus-privacy')].filter(Boolean);
@@ -499,11 +502,16 @@
   if(aiOpen)render();
  });
  clear.addEventListener('click',()=>{
-  confirmDelete('all',clear,()=>{
-   model=core.emptyModel();bandit={};categoryModel=core.emptyCategoryModel();active=null;alertEnabled=false;alertCheck.checked=false;
-   notified.clear();
-  },'toàn bộ dữ liệu học AI trên máy');
+  modelManager.hidden=!modelManager.hidden;
+  clear.setAttribute('aria-expanded',String(!modelManager.hidden));
+  clear.textContent=modelManager.hidden?'Quản lý mô hình':'Đóng quản lý mô hình';
+  if(!modelManager.hidden){modelManager.open=true;modelManager.scrollIntoView({block:'nearest',behavior:'instant'});}
+  else clear.focus();
  });
+ bulk.addEventListener('click',()=>confirmDelete('all',bulk,()=>{
+  model=core.emptyModel();bandit={};categoryModel=core.emptyCategoryModel();active=null;alertEnabled=false;alertCheck.checked=false;
+  notified.clear();
+ },'toàn bộ dữ liệu học AI trên máy'));
  // Opt-in, in-app alert only: score actual imported EPG against locally
  // trained preferences, no URLs sent out and never start playback.
  function checkAlerts(){
