@@ -540,6 +540,7 @@ jobs:
           if-no-files-found: error
 
   release:
+    if: false # Stable-only Releases; preserve built Actions artifacts
     needs: [test, capture, build]
     runs-on: ubuntu-latest
     permissions:
