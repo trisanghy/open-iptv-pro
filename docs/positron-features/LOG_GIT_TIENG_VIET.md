@@ -2,14 +2,22 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
-## P5.1.281 — hoàn tác nhãn AI vừa dạy
+## P5.1.282 — giải thích dữ liệu và độ tin cậy Naive Bayes
 
-**Ứng dụng:** 4.23.366 · **Trạng thái:** Chưa có bản phát hành
+**Ứng dụng:** 4.23.367 · **Trạng thái:** Chưa có bản phát hành
+
+Feature priority: NEW — Cho phép xem mô hình Naive Bayes đã học bao nhiêu nhãn/chủ đề, có từ khóa nào trùng tên kênh và có dự đoán đáng tin cậy hay chưa; không hiển thị đoán mò khi thiếu nhãn hoặc từ khóa, không tự thay đổi kết quả phân loại. Feature class: AI
+
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/f01ca6d1be530e7d43b4c15cfb2f224e50a5c8af)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+
+## P5.1.281 — Hoàn tác chính xác nhãn AI gần nhất / Electron 4.23.366
+
+**Ứng dụng:** Chưa xác minh · **Trạng thái:** Chưa có bản phát hành
 
 Feature priority: NEW — Khôi phục chính xác trọng số Naive Bayes và ID của các kênh đã gán nhãn trước khi dạy sai, không xóa nhãn cũ. Feature class: AI
 
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/907a418834ced0398e55e2cd37990613b0498523)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
 
 ## P5.1.280 — Hàng đợi AI dạy chủ đề không lặp / Electron 4.23.365
 
