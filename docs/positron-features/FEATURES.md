@@ -11,7 +11,7 @@ Trang này được tạo tự động từ GitHub Releases và ảnh kiểm th�
 
 **Ứng dụng:** 4.23.381 · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
 
-BLOCKER_FIX + ACCESSIBILITY. P295 thêm mục “Nhóm bị ảnh hưởng” nằm trong details Naive Bayes; bộ kiểm thử Electron `#poAICategoryImpact summary` chọn hai summary và bị strict-mode violation dù npm test và Windows/macOS build thành công. Chỉnh `scripts/positron-20-extension.cjs`: dùng `#poAICategoryImpact > summary` cho mục cha, không bỏ mục con. Có thêm QA dùng Enter mở bảng nhóm bằng bàn phím, giữ focus và không thay đổi playlist, mô hình hoặc tự phát stream.
+Feature priority: BLOCKER_FIX — Khôi phục CI Electron bị chặn vì bộ chọn nhầm hai mục chi tiết Naive Bayes; bảo vệ dữ liệu AI, playlist và thao tác phát video khỏi hồi quy. Feature class: AI
 
 *Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
 
