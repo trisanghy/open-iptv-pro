@@ -286,6 +286,8 @@
   const card=event.target?.closest?.('#poAICards .po-ai-card');
   const play=card?.querySelector('.po-ai-actions button:first-child');
   updateFocusProgress(play||null);
+  if(play&&!fullInfo.hidden&&play.getClientRects().length)
+   play.scrollIntoView({block:'center',behavior:'instant'});
  });
  modeBar.setAttribute('aria-describedby',modeHelp.id);
  const alertRow=d.createElement('label');alertRow.className='po-ai-alerts';
@@ -460,6 +462,10 @@
    fullInfoName.textContent=name;
    fullInfoTopic.textContent=card?.querySelector('.po-ai-card-header small')?.textContent?.trim()||'';
    fullInfo.hidden=false;
+   // A sticky disclosure increases the covered area in the modal. Re-center
+   // the actually focused action so the overlay never hides the Play button.
+   const focused=d.activeElement?.closest?.('.po-ai-card .po-ai-actions button:first-child');
+   if(focused?.getClientRects().length)focused.scrollIntoView({block:'center',behavior:'instant'});
   }else fullInfo.hidden=true;
  });
  // P341: native TV remote uses Up/Down while focus is on a channel's Xem
