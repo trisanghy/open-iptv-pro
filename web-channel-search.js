@@ -108,7 +108,7 @@
   const q=normalize(query),qcompact=compact(query),qTokens=words(query);
   if(!q)return {channels:list,matches:new Map(),approximate:false,usedEPG:false};
   const index=indexGuide(guide,clock);
-  const exact=[],fuzzy=[],matches=new Map();
+  const exact=[],candidates=[],fuzzy=[],matches=new Map();
   let usedEPG=false;
   for(const channel of list){
    const title=normalize(channel.name),group=normalize(channel.group);
@@ -125,8 +125,11 @@
     if(programme)usedEPG=true;
     continue;
    }
-   // Fuzzy matching is evaluated only after exact text checks, and only
-   // shown as a fallback if the entire query yields zero exact results.
+   candidates.push({channel,metadata,bucket});
+  }
+  // Do not run fuzzy edit-distance calculations at all when exact matches exist.
+  if(exact.length)return {channels:exact,matches,approximate:false,usedEPG};
+  for(const {channel,metadata,bucket} of candidates){
    const metadataTokens=[...new Set(metadata.flatMap(words))];
    if(near(qTokens,metadataTokens)){
     fuzzy.push({channel,match:{type:'near',programme:'',start:0}});
@@ -135,7 +138,6 @@
    const nearby=approximateProgramme(bucket,qTokens);
    if(nearby)fuzzy.push({channel,match:{type:'near-epg',programme:nearby.title,start:nearby.start}});
   }
-  if(exact.length)return {channels:exact,matches,approximate:false,usedEPG};
   return {channels:fuzzy.map(x=>x.channel),matches:new Map(fuzzy.map(x=>[String(x.channel.id),x.match])),
    approximate:fuzzy.length>0,usedEPG:fuzzy.some(x=>x.match.type==='near-epg')};
  }
