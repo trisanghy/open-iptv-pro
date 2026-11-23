@@ -82,6 +82,7 @@ jobs:
           if-no-files-found: error
 
   publish:
+    if: false # archived: stable-only Releases; do not auto-promote
     needs: [tests, build]
     runs-on: ubuntu-latest
     permissions:
