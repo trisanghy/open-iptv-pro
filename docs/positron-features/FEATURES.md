@@ -7,15 +7,28 @@ Trang này được tạo tự động từ GitHub Releases và ảnh kiểm th�
 [Mở WEBSITE changelog tương tác](https://raw.githack.com/trisanghy/open-iptv-pro/Positron/docs/positron-features/index.html) · [Giao diện HTML trong repository](index.html) · [Các bản phát hành](https://github.com/trisanghy/open-iptv-pro/releases) · [Nhật ký Git tiếng Việt](LOG_GIT_TIENG_VIET.md) · [Quy tắc ưu tiên tính năng](../../POSITRON_FEATURE_RULES.md)
 
 <details>
-<summary><strong>P5.1.271</strong> · AI tự học phân loại kênh từ nhãn · CHƯA CÓ BẢN PHÁT HÀNH · TÍNH NĂNG</summary>
+<summary><strong>P5.1.272</strong> · Thư mục EPG đa nhãn tự động · CHƯA CÓ BẢN PHÁT HÀNH · TÍNH NĂNG</summary>
 
-**Ứng dụng:** 4.23.356 · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
+**Ứng dụng:** 4.23.357 · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
+
+Feature priority: NEW — Thêm thư viện chủ đề EPG ảo tự phân loại toàn bộ danh sách kênh trên thiết bị từ các chương trình XMLTV hiện có; một kênh có thể xuất hiện đồng thời trong Thể thao, Tin tức, Phim, Thiếu nhi hoặc các thư mục khác mà không làm thay đổi M3U gốc. Feature class: BREAKTHROUGH
+
+*Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
+
+[Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/tree/Positron) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/30168fa7f9d7ebc089ee8000286d8d419760f659)
+
+</details>
+
+<details>
+<summary><strong>P5.1.271</strong> · AI tự học phân loại chủ đề / Electron 4.23.356 · ĐÃ PHÁT HÀNH · TÍNH NĂNG</summary>
+
+**Ứng dụng:** 4.23.356 · **Trạng thái:** ĐÃ PHÁT HÀNH
 
 Feature priority: NEW — Bổ sung **Dạy AI phân loại** trên từng kênh khi có quyền học, sử dụng mô hình Multinomial Naive Bayes huấn luyện online từ các nhãn chủ đề do người dùng tự xác nhận. Sau khi có ít nhất hai nhóm đủ ví dụ, AI có thể gợi ý chủ đề cho kênh tương tự chưa khớp quy tắc tên hoặc EPG; kết quả phải vượt ngưỡng tin cậy, và EPG thực luôn được ưu tiên. Feature class: AI
 
 *Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
 
-[Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/tree/Positron) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/4de866a505f8ca58ee5d09119fe944ff31b78f09)
+[Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.356-p5.1.271) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/336c2e71333e99b6d1b2d64bf32eb72af315a74b) · [Tải Windows Setup x64](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.356-p5.1.271/Open-IPTV-Pro-Setup-4.23.356-x64.exe) · [Tải gói ảnh QA](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.356-p5.1.271/Positron-P51271-20-Real-Screenshots.zip)
 
 </details>
 
@@ -1014,7 +1027,7 @@ Feature priority: NEW — Ảnh P5.1.194 Electron thật cho thấy ô Tên chư
 
 Feature priority: NEW — Ảnh Electron P5.1.193 thực ở 1920×1080 cho thấy lịch ghi có các nút chọn thời lượng nhưng trường Bắt đầu vẫn cần nhập ngày giờ thủ công. Bổ sung chọn giờ bắt đầu từ hiện tại để giảm thao tác hẹn ghi, không gửi lịch khi chưa xác nhận. Tính năng: dưới giờ Bắt đầu có ba nút “Sau 5 phút”, “Sau 15 phút”, “Sau 30 phút” ở EPG và biểu mẫu ghi nhanh TV. Nhấn chỉ điền Bắt đầu dựa trên phút hiện tại, đồng thời dời Kết thúc để giữ thời lượng cũ nếu hợp lệ (1–480 phút), hoặc 60 phút khi thiếu/không hợp lệ. Tự cập nhật nhãn thời lượng và trạng thái preset P5.1.192/193.
 
-![Ảnh chụp Electron thật P5.1.194](./screenshots/positron-p51194-dvr-start-after-before-1920x1080-real.png)
+![Ảnh chụp Electron thật P5.1.194](./screenshots/positron-p51194-dvr-start-after-after-1920x1080-real.png)
 
 [Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.279-p5.1.194) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/ff29ada0c777398a4fc8dcba36db4cd9c99dd474) · [Tải Windows Setup x64](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.279-p5.1.194/Open-IPTV-Pro-Setup-4.23.279-x64.exe) · [Tải gói ảnh QA](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.279-p5.1.194/Positron-P51194-20-Real-Screenshots.zip)
 
@@ -2724,41 +2737,41 @@ Khi chưa có nguồn kênh, hiện cách thêm IPTV thay vì các bộ lọc th
 </details>
 
 <details>
-<summary><strong>P5.1.62</strong> · Đồng bộ màu thanh phụ đề CC trong giao diện Horizon · ĐÃ PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
+<summary><strong>P5.1.62</strong> · Đồng bộ màu thanh phụ đề CC trong giao diện Horizon · CHƯA CÓ BẢN PHÁT HÀNH · CẢI TIẾN / SỬA LỖI</summary>
 
-**Ứng dụng:** 4.23.146 · **Trạng thái:** ĐÃ PHÁT HÀNH
+**Ứng dụng:** 4.23.146 · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
 
 Chỉnh màu các điều khiển phụ đề và AI theo bảng màu Horizon; không thay đổi hành vi công cụ.
 
 *Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
 
-[Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.146-p5.1.62) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/9efed16d9ecf3fdaa7fdc01376ef97f347385d52) · [Tải Windows Setup x64](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.146-p5.1.62/Open-IPTV-Pro-Setup-4.23.146-x64.exe) · [Tải gói ảnh QA](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.146-p5.1.62/Positron-P5162-20-Real-Screenshots.zip)
+[Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
 
 </details>
 
 <details>
-<summary><strong>P5.1.61</strong> · Tăng độ tương phản thư mục có dữ liệu trong Horizon · ĐÃ PHÁT HÀNH · TÍNH NĂNG</summary>
+<summary><strong>P5.1.61</strong> · Tăng độ tương phản thư mục có dữ liệu trong Horizon · CHƯA CÓ BẢN PHÁT HÀNH · TÍNH NĂNG</summary>
 
-**Ứng dụng:** 4.23.145 · **Trạng thái:** ĐÃ PHÁT HÀNH
+**Ứng dụng:** 4.23.145 · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
 
 Chỉnh nền, chữ và mũi tên của thư mục có kênh để dễ đọc trên giao diện tối, không ảnh hưởng kéo thả.
 
 *Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
 
-[Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.145-p5.1.61) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/7b532fa5adb0acbf2202b34c7c3eedc377c7a623) · [Tải Windows Setup x64](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.145-p5.1.61/Open-IPTV-Pro-Setup-4.23.145-x64.exe) · [Tải gói ảnh QA](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.145-p5.1.61/Positron-P5161-20-Real-Screenshots.zip)
+[Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
 
 </details>
 
 <details>
-<summary><strong>P5.1.60</strong> · Gợi ý WatchFlow cân bằng theo nhóm kênh · ĐÃ PHÁT HÀNH · TÍNH NĂNG</summary>
+<summary><strong>P5.1.60</strong> · Gợi ý WatchFlow cân bằng theo nhóm kênh · CHƯA CÓ BẢN PHÁT HÀNH · TÍNH NĂNG</summary>
 
-**Ứng dụng:** 4.23.144 · **Trạng thái:** ĐÃ PHÁT HÀNH
+**Ứng dụng:** 4.23.144 · **Trạng thái:** CHƯA CÓ BẢN PHÁT HÀNH
 
 Phân bổ gợi ý WatchFlow từ các nhóm nguồn khác nhau thay vì chọn liên tiếp quá nhiều kênh trong một nhóm.
 
 *Chưa có ảnh chụp riêng đã xác minh cho phiên bản này.*
 
-[Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.144-p5.1.60) · [Xem thay đổi Git](https://github.com/trisanghy/open-iptv-pro/commit/8b16f057486172314c84a8e70235ce5e0e94a31e) · [Tải Windows Setup x64](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.144-p5.1.60/Open-IPTV-Pro-Setup-4.23.144-x64.exe) · [Tải gói ảnh QA](https://github.com/trisanghy/open-iptv-pro/releases/download/positron/v4.23.144-p5.1.60/Positron-P5160-20-Real-Screenshots.zip)
+[Bản phát hành / thông tin](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
 
 </details>
 

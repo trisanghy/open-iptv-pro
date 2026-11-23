@@ -2,14 +2,23 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
-## P5.1.271 — AI tự học phân loại kênh từ nhãn
+## P5.1.272 — Thư mục EPG đa nhãn tự động
 
-**Ứng dụng:** 4.23.356 · **Trạng thái:** Chưa có bản phát hành
+**Ứng dụng:** 4.23.357 · **Trạng thái:** Chưa có bản phát hành
+
+Feature priority: NEW — Thêm thư viện chủ đề EPG ảo tự phân loại toàn bộ danh sách kênh trên thiết bị từ các chương trình XMLTV hiện có; một kênh có thể xuất hiện đồng thời trong Thể thao, Tin tức, Phim, Thiếu nhi hoặc các thư mục khác mà không làm thay đổi M3U gốc. Feature class: BREAKTHROUGH
+
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/30168fa7f9d7ebc089ee8000286d8d419760f659)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+
+## P5.1.271 — AI tự học phân loại chủ đề / Electron 4.23.356
+
+**Ứng dụng:** 4.23.356 · **Trạng thái:** Đã phát hành
 
 Feature priority: NEW — Bổ sung **Dạy AI phân loại** trên từng kênh khi có quyền học, sử dụng mô hình Multinomial Naive Bayes huấn luyện online từ các nhãn chủ đề do người dùng tự xác nhận. Sau khi có ít nhất hai nhóm đủ ví dụ, AI có thể gợi ý chủ đề cho kênh tương tự chưa khớp quy tắc tên hoặc EPG; kết quả phải vượt ngưỡng tin cậy, và EPG thực luôn được ưu tiên. Feature class: AI
 
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/4de866a505f8ca58ee5d09119fe944ff31b78f09)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/336c2e71333e99b6d1b2d64bf32eb72af315a74b)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.356-p5.1.271)
 
 ## P5.1.270 — AI khám phá theo contextual bandit / Electron 4.23.355
 
@@ -1854,30 +1863,27 @@ Khi chưa có nguồn kênh, hiện cách thêm IPTV thay vì các bộ lọc th
 
 ## P5.1.62 — Đồng bộ màu thanh phụ đề CC trong giao diện Horizon
 
-**Ứng dụng:** 4.23.146 · **Trạng thái:** Đã phát hành
+**Ứng dụng:** 4.23.146 · **Trạng thái:** Chưa có bản phát hành
 
 Chỉnh màu các điều khiển phụ đề và AI theo bảng màu Horizon; không thay đổi hành vi công cụ.
 
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/9efed16d9ecf3fdaa7fdc01376ef97f347385d52)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.146-p5.1.62)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
 
 ## P5.1.61 — Tăng độ tương phản thư mục có dữ liệu trong Horizon
 
-**Ứng dụng:** 4.23.145 · **Trạng thái:** Đã phát hành
+**Ứng dụng:** 4.23.145 · **Trạng thái:** Chưa có bản phát hành
 
 Chỉnh nền, chữ và mũi tên của thư mục có kênh để dễ đọc trên giao diện tối, không ảnh hưởng kéo thả.
 
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/7b532fa5adb0acbf2202b34c7c3eedc377c7a623)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.145-p5.1.61)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
 
 ## P5.1.60 — Gợi ý WatchFlow cân bằng theo nhóm kênh
 
-**Ứng dụng:** 4.23.144 · **Trạng thái:** Đã phát hành
+**Ứng dụng:** 4.23.144 · **Trạng thái:** Chưa có bản phát hành
 
 Phân bổ gợi ý WatchFlow từ các nhóm nguồn khác nhau thay vì chọn liên tiếp quá nhiều kênh trong một nhóm.
 
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/8b16f057486172314c84a8e70235ce5e0e94a31e)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/releases/tag/positron/v4.23.144-p5.1.60)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
 
 ## P5.1.59 — Đồng bộ màu thanh cuộn của Horizon
 
