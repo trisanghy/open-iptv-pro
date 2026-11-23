@@ -1,4 +1,4 @@
-name: Publish Electron v4.23.76 Stable from main (immutable)
+name: Archived v4.23.76 Stable · manual QA build (never republish)
 # Archived version-specific stable publisher: run manually only.
 # Never rebuild a published immutable tag after unrelated main changes.
 on:
@@ -63,6 +63,7 @@ jobs:
             dist/*.exe
             dist/*.dmg
   release:
+    if: false # v4.23.76 is immutable and published already; future Stable uses a new versioned pipeline
     needs: [test, build]
     runs-on: ubuntu-latest
     permissions:
