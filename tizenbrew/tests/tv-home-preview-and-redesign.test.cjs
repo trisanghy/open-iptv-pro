@@ -14,9 +14,9 @@ function setup({failRelay=false}={}){
  const timers=new Map(),scheduled=[],instances=[],sessions=[],calls=[];
  let i=0;
  const names=new Set();
- const stage={classList:{add:x=>names.add(x),remove:x=>names.delete(x),contains:x=>names.has(x)}};
+ const stage={dataset:{},classList:{add:x=>names.add(x),remove:x=>names.delete(x),contains:x=>names.has(x)}};
  const art={hidden:false},status={textContent:'',hidden:false};
- const video={hidden:true,muted:false,volume:1,paused:true,readyState:0,src:'',
+ const video={hidden:true,muted:false,volume:1,paused:true,readyState:0,src:'',style:{},
   pause(){this.paused=true;},load(){},removeAttribute(attr){if(attr==='src')this.src='';},
   play(){this.paused=false;this.readyState=2;if(this.onplaying)this.onplaying();return Promise.resolve();}
  };
@@ -32,7 +32,7 @@ function setup({failRelay=false}={}){
   ready(){this.handlers.manifest?.();}
   fail(){this.handlers.error?.('error',{fatal:true});}
  }
- const env={selected:null,byId:id=>elements[id],Promise,Date,
+ const env={selected:null,byId:id=>elements[id],Promise,Date,mpegtsAddress:()=>false,
   setTimeout:(fn,ms)=>{let id=++i;timers.set(id,fn);scheduled.push(ms);return id;},
   clearTimeout:id=>timers.delete(id),
   hlsAddress:url=>/\.m3u8(?:[?#]|$)/.test(url),

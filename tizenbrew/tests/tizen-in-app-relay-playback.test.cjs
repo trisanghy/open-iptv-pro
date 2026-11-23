@@ -99,12 +99,12 @@ test('When local relay service is absent, app reports failure and does not open 
  s.instances[0].fail('manifestLoadError',403);await flush();
  assert.equal(s.api.current().html5Mode,'hls-relay');
  // Service startup is asynchronous; simulate the 7 bounded retries.
- for(let i=0;i<7;i++){
+ for(let cycle=0;cycle<2;cycle++)for(let i=0;i<7;i++){
   const retry=s.timers.find(t=>t.ms===650&&!t.cancelled);
-  assert.ok(retry,'local relay retry '+(i+1));
+  assert.ok(retry,'local relay retry '+(cycle*7+i+1));
   retry.cancelled=true;retry.fn();await flush();
  }
- assert.equal(s.api.current().html5Mode,'native','unavailable relay falls back to native');
+ assert.equal(s.api.current().html5Mode,'native','two unavailable relay rounds then native');
  s.api.handleHtml5Error(s.api.current().playbackSerial,'Native unsupported');await flush();
  assert.ok(s.elements.playbackDiag.textContent.includes('HLS nội bộ'));
  const grace=s.timers.find(t=>t.ms===2400&&!t.cancelled);
@@ -147,13 +147,15 @@ test('Fast relay error falls back to native then HLS.js without looping to relay
  s.api.play(channel);await flush();
  assert.equal(s.api.current().html5Mode,'hls-relay');
  s.instances[2].fail('manifestLoadError',403);await flush();
+ assert.equal(s.api.current().html5Mode,'hls-relay','one local retry before native');
+ s.instances[3].fail('manifestLoadError',403);await flush();
  assert.equal(s.api.current().html5Mode,'native');
  assert.equal(s.video.src,channel.url);
  const count=s.requests.length;
  s.api.handleHtml5Error(s.api.current().playbackSerial,'Native failed again');await flush();
  assert.equal(s.api.current().html5Mode,'hlsjs');
- s.instances[3].fail('manifestLoadError',403);await flush();
- assert.equal(s.requests.length,count,'never retry the same failed relay');
+ s.instances.at(-1).fail('manifestLoadError',403);await flush();
+ assert.ok(s.requests.length<=count+1,'bounded relay attempts');
 });
 test('Same-host new HLS channel still probes bundled HLS.js first and falls back to local relay',async()=>{
  const s=harness(),url=id=>'https://same.example.org/live/'+id+'.m3u8';

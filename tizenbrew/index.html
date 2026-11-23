@@ -1787,7 +1787,7 @@ function stopHomePreview(){
  try{v.pause();v.removeAttribute('src');v.load();}catch(e){}
  v.hidden=true;byId('previewStage').classList.remove('preview-playing');byId('previewArt').hidden=false;
  previewKey='';previewNativeTried=false;previewRelayTried=false;previewMpegtsTried=false;
- var stage=byId('previewStage');delete stage.dataset.videoShape;delete stage.dataset.videoRatio;
+ var stage=byId('previewStage');if(stage&&stage.dataset){delete stage.dataset.videoShape;delete stage.dataset.videoRatio;}
 }
 function previewIsCurrent(channel,token,attempt){
  return token===previewToken&&(!attempt||attempt===previewAttempt)&&byId('player').hidden&&
@@ -1796,7 +1796,7 @@ function previewIsCurrent(channel,token,attempt){
 
 function fitHomePreviewVideo(video){
  var w=Number(video&&video.videoWidth),h=Number(video&&video.videoHeight),stage=byId('previewStage');
- if(!stage||!w||!h)return;
+ if(!stage||!stage.dataset||!w||!h)return;
  var rect=stage.getBoundingClientRect?stage.getBoundingClientRect():{width:0,height:0};
  var maxW=Number(rect.width),maxH=Number(rect.height);
  if(!maxW||!maxH||!Number.isFinite(w/h))return;

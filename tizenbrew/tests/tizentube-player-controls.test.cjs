@@ -80,7 +80,7 @@ test('Player clears status on real playback and does not keep old autoplay warni
  const timers=[];
  vm.runInNewContext(code+'\nprepareHtml5Video(7);',{byId,setPlayerStatus,playbackEngine:'html5',
   playbackActive:token=>token===7,playbackConfirmed:false,playbackFailed:false,playbackWaitingSince:0,videoRevealTimer:0,
-  videoFrameCallback:null,html5Video:null,hlsInstance:null,dashInstance:null,document:{},clearPlaybackTimer(){},
+  videoFrameCallback:null,html5Video:null,hlsInstance:null,dashInstance:null,mpegtsInstance:null,preferredDecoderEpoch:0,document:{},clearPlaybackTimer(){},
   clearPlaybackGrace(){},startPlaybackWatchdog(){},notePlaybackProgress(){},clearTimeout(){},
   setTimeout(fn){timers.push(fn);return timers.length;}});
  video.onplaying();assert.equal(status.hidden,false);assert.equal(cls.contains('is-tuning-video'),true);

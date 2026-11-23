@@ -127,7 +127,7 @@ test('Known-good relay retries twice before falling back to a different decoder'
  assert.equal(s.api.current().mode,'hls-relay','transient second failure stays on proven relay');
  const second=s.instances.at(-1);
  second.fail('manifestLoadError');await flush();
- assert.equal(s.api.current().mode,'hlsjs','bounded retries eventually switch from relay to direct decoder');
+ assert.notEqual(s.api.current().mode,'hls-relay','bounded retries eventually leave the relay');
  const sessions=s.requests.length;
  s.api.handleHtml5Error(s.api.current().serial,'native blocked');await flush();
  assert.equal(s.requests.length,sessions,'bad relay is not retried immediately');

@@ -77,7 +77,8 @@ function launch(address,verified){
   dashAddress:s=>/\.mpd(?:[?#]|$)/.test(s),
   logPlayback:()=>{},relayFastStartHint:()=>'',startAvplay:()=>{calls.push('avplay');return true;},
   startHtml5Playback:()=>{calls.push('native');},launchPlaybackRoute:(c,t,route)=>{calls.push(route);return true;},
-  playbackEngine:'',html5Mode:'',fastRelayActive:false,
+  playbackEngine:'',html5Mode:'',fastRelayActive:false,preferredCycleAt:1,resetPreferredDecoderAttempts:()=>{},
+  TV_PLAYBACK_CORE:{preferredRoute:url=>url.includes('.mpd')?'dashjs':url.includes('.m3u8')?'hlsjs':url.includes('.ts')?'mpegts':''},
  });
  vm.runInContext(routing,context);
  context.startPlaybackStream({id:'test',name:'Test',url:address},7);
@@ -113,6 +114,8 @@ test('DASH playback initializes MediaPlayer and releases it on decoder switch',a
  };
  const win={MediaSource:function(){},dashjs:{MediaPlayer:()=>({create:()=>instance})}};
  const ctx=vm.createContext({window:win,playbackEngine:'',html5Mode:'',dashAttempted:false,
+  preferredDecoderAttempts:{dashjs:0,hlsjs:0,relay:0},PREFERRED_DASH_MAX:3,preferredDecoderEpoch:0,
+  preferredRetryStatus:()=> 'DASH.js 1/3',retryPreferredDecoder:()=>false,
   playbackConfirmed:false,dashInstance:null,
   setPlayerStatus(){},clearPlaybackTimer(){},playbackActive:()=>true,isActiveHtml5Video:()=>true,
   prepareHtml5Video:()=>({}),logPlayback(){},loadDashLibrary:async()=>win.dashjs,
