@@ -239,6 +239,7 @@ const wait=ms=>new Promise(r=>setTimeout(r,ms));
     passed:true
   },null,2));
   process.stdout.write('Positron P5.1.225 native Electron TV viewport control audit PASS\n');
+  await require('./positron-324-audit.cjs').run(page);
   await browser.close();
 })().catch(e=>{
   console.error('P4 50-round audit failed: '+(e&&e.stack||e));

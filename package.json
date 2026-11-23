@@ -1,8 +1,8 @@
 {
   "name": "open-iptv-pro",
   "productName": "Open IPTV Pro Positron",
-  "version": "4.23.408",
-  "description": "Positron P5.1.323: nút gợi ý AI cao 44px, dễ bấm chuột và bàn phím",
+  "version": "4.23.409",
+  "description": "Positron P5.1.324: năm chế độ WatchFlow có vùng bấm 44px",
   "main": "src/main.cjs",
   "author": "Open IPTV Pro contributors",
   "license": "MIT",

@@ -201,3 +201,12 @@ html[data-positron="true"].po-horizon body #poWatchFlowPanel.po-watchflow-panel 
   padding:10px 15px 9px!important;
  }
 }
+
+/* P324: Electron 720px P323 shows five mode buttons at only 35px height.
+   Match the 44px recommendation actions without wrapping the five-column nav. */
+html[data-positron="true"] #poWatchFlowPanel.po-watchflow-panel .po-flowplus-nav button{
+ min-height:44px!important;
+ padding-top:10px!important;
+ padding-bottom:10px!important;
+ touch-action:manipulation;
+}

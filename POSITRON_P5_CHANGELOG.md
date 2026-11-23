@@ -1,3 +1,9 @@
+## P5.1.324 / Electron 4.23.409 — 5 chế độ WatchFlow đủ vùng bấm 44px (CANDIDATE)
+- Feature priority: NEW — tăng vùng bấm của năm nút Gợi ý, Tiếp, Cùng gu, Mix, Zap từ 35px lên 44px; vẫn trên một hàng.
+- Feature class: AI
+- Evidence: ảnh Electron P323 720px; QA P324 kiểm tra screenshot trước/sau và 720px, focus, overflow, playlist/model/không tự phát.
+- Chỉ đánh dấu hoàn tất khi CI và ảnh thật đã được xác minh. Public Release chỉ dành cho Stable.
+
 ## P5.1.323 / Electron 4.23.408 — AI recommendation actions 44px (CANDIDATE)
 - Feature priority: NEW — AI hợp gu có thao tác vùng chạm 44px dễ dùng trên máy tính và cửa sổ hẹp, hỗ trợ điều hướng bàn phím rõ nét ngay trong đề xuất kênh.
 - Feature class: AI
