@@ -68,3 +68,30 @@ Chưa thực hiện. Mỗi vòng yêu cầu commit/version, test, ảnh Electron
 
 - P5.1.321 QA đã xác minh: 1037 tests pass/5 skipped, QA321 9/9, capture và build Win/Mac success; hai ảnh Electron đã mở soát; không public Release.
 - P322 vòng 02/20 CANDIDATE: ảnh sau P321 cho thấy header ghi “Xem gì bây giờ?” không khớp AI; cập nhật nhãn theo mode và bảo toàn trạng thái; chờ CI/ảnh mới.
+
+## CHECKPOINT ĐÃ XÁC MINH — 23/11/2026, sau P5.1.322
+**Đợt mới từ P5.1.320: 02/20 vòng sửa có thay đổi mã, test Node, QA Electron thật và soát ảnh trước/sau. Không đồng nhất với 70 ảnh test tích lũy.** Chỉ nhánh Positron. Release của bản thực nghiệm bị disable theo chính sách stable-only; các bộ cài nằm trong GitHub Actions, không nhận đã public release.
+
+### Vòng 01 — P5.1.321 / Electron 4.23.406 — ĐẠT QA
+- Code: 65d28d9437f225dbe47c7fa091df8bf1403538dd; repair 4141cb0beede9a4fa4773970b12d07ff43652b2c.
+- CI: https://github.com/trisanghy/open-iptv-pro/actions/runs/45213107222 — 1037 Node pass, 5 skipped, 0 fail; capture, Win x64, macOS Intel/ARM success. Release skipped, không phát hành stable.
+- QA321: 9/9 true (nút ↑ Đầu AI chỉ hiện khi đã cuộn, cuộn về đầu, focus, bảo toàn playlist/model/player, không tràn).
+- PNG trước: positron-p51321-ai-return-before-1920x1080-real.png; SHA256 360315a50b6fb81477836207177914bc6672021fe1465d30d1b27eca1510618a
+- PNG sau: positron-p51321-ai-return-after-1920x1080-real.png; SHA256 dcdf7de490412a1b568d0c72c68e0c4a200c91f1bc28399f3686ca7c983f92cf
+- Hai PNG đã thực sự MỞ XEM: nút có trên header sticky khi cuộn, sau bấm đầu AI hiển thị, nút ẩn. Source ZIP Actions artifact 14835914716.
+- Lỗi dẫn vòng 02: tiêu đề sticky vẫn ghi “Xem gì bây giờ?” khi AI đang bật.
+
+### Vòng 02 — P5.1.322 / Electron 4.23.407 — ĐẠT QA (macOS ARM64 đang chờ xác minh build)
+- Code: 834fc39e9fde32e056d3ef252a286644b8c186c2.
+- CI: https://github.com/trisanghy/open-iptv-pro/actions/runs/45215506864 — 1038 Node pass, 5 skipped, 0 fail; capture QA322, Windows x64, macOS Intel x64 success; macOS ARM64 vẫn queued tại checkpoint. Release không công bố.
+- QA322: 11/11 true (header theo chế độ AI, phục hồi khi rời AI/đóng/mở, aria-labelledby, bảo toàn playlist/model/player, không tràn).
+- PNG trước: positron-p51322-ai-title-before-1920x1080-real.png; SHA256 7cb9d7050ac096ae0cf5db0ccd55e2a8056126e28f4190cdb88c541bdc99935b
+- PNG sau: positron-p51322-ai-title-after-1920x1080-real.png; SHA256 7d34659f9d4766db3690a2aa9190dcbc2586d2521077ef054f81180101ac2095
+- Hai PNG đã thực sự MỞ XEM: outer header đổi từ “Xem gì bây giờ?” sang “AI hợp gu”, nội dung card không bị che, không có tràn ngang; artifact 14837674301.
+- Windows x64 Actions artifact: https://github.com/trisanghy/open-iptv-pro/actions/runs/45215506864/artifacts/14839580218
+- Mac Intel x64 Actions artifact: https://github.com/trisanghy/open-iptv-pro/actions/runs/45215506864/artifacts/14838601170
+
+### Vòng 03–20 — CHƯA THỰC HIỆN
+- Ưu tiên vòng 03: ảnh P322 cho thấy bốn nút thao tác trong thẻ AI (Xem/Hợp gu/Không hợp/Tra cứu web) dùng chữ rất nhỏ và hit target khoảng 34px, khó thao tác remote/bàn phím. Kiểm tra computed geometry và tăng target tối thiểu hợp lý mà không làm tràn panel 528px/720px; test và screenshot thật trước/sau.
+- Bắt đầu trên HEAD hiện hành, dự kiến label P5.1.323 / Electron 4.23.408 **nếu chưa có ai tăng phiên bản**. Không tự khẳng định đã hoàn thành vòng 03.
+- Phải đọc file/hình thật hiện hành, re-verify branch HEAD/Actions/Release, không force push; một vòng = một bản vá riêng đã kiểm chứng.
