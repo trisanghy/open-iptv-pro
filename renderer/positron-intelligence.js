@@ -246,7 +246,7 @@
  d.addEventListener('keydown',event=>{
   const f6=event.key==='F6'&&!event.altKey&&!event.shiftKey&&!event.ctrlKey&&!event.metaKey;
   const chord=event.altKey&&event.shiftKey&&!event.ctrlKey&&!event.metaKey&&
-   String(event.key).toLowerCase()==='w';
+   (event.code==='KeyW'||String(event.key).toLowerCase()==='w');
   if((!f6&&!chord)||event.defaultPrevented||event.repeat||event.isComposing)return;
   if(event.target?.closest?.('input,textarea,select,[contenteditable="true"],[role="textbox"]'))return;
   if(!byId('page-tv')?.classList.contains('active-page'))return;

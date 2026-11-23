@@ -36,10 +36,21 @@ async function run(page){
  });
  if(inputFound)await page.keyboard.press('F6');
  const typing=await measure(page);
- await page.evaluate(()=>window.IPTVState.setPage('sources'));
+ await page.evaluate(()=>{window.IPTVState.setPage('sources');document.getElementById('positronOpen').focus();});
  await page.keyboard.press('Alt+Shift+W');
  const nonTV=await measure(page);
+ // Mac Option+Shift+W or non-US keyboard layouts can report a different key
+ // while preserving the physical KeyW; exercise that browser event explicitly.
  await page.evaluate(()=>{window.IPTVState.setPage('tv');window.PositronWatchFlow.close();
+  document.getElementById('poWatchFlowToggle').focus();});
+ const altCode=await page.evaluate(()=>{
+  const event=new KeyboardEvent('keydown',{bubbles:true,cancelable:true,
+   key:'„',code:'KeyW',altKey:true,shiftKey:true});
+  document.dispatchEvent(event);
+  return event.defaultPrevented;
+ });
+ const layout=await measure(page);
+ await page.evaluate(()=>{window.PositronWatchFlow.close();
   document.getElementById('poWatchFlowToggle').focus();});
  await page.setViewportSize({width:720,height:900});
  await page.keyboard.press('Alt+Shift+W');
@@ -54,6 +65,7 @@ async function run(page){
   bothShortcutsDeclared:opened.shortcuts.includes('F6')&&opened.shortcuts.includes('Alt+Shift+W'),
   ignoresTextInputs:!inputFound||!typing.open,
   ignoresOtherPages:!nonTV.tv&&!nonTV.open,
+  keyboardLayoutSafe:altCode&&layout.open&&layout.focus==='poFlowPlusAI',
   altShiftWOpensNarrow:narrow.open&&narrow.active&&narrow.pressed&&narrow.focus==='poFlowPlusAI',
   buttonsVisible:opened.tabVisible&&narrow.tabVisible,
   noHorizontalOverflow:!opened.overflow&&!narrow.overflow,
@@ -62,7 +74,7 @@ async function run(page){
   noAutoplay:initial.playing===final.playing
  };
  for(const [k,v] of Object.entries(qa328))assert.equal(v,true,
-  'P328 actual Electron keyboard QA '+k+': '+JSON.stringify({closed,opened,typing,nonTV,narrow,qa328}));
+  'P328 actual Electron keyboard QA '+k+': '+JSON.stringify({closed,opened,typing,nonTV,layout,narrow,qa328}));
  assert.ok(!b.equals(a),'P328 before/after shortcuts should change visible dialog');
  for(const [png,w,h] of [[b,1920,1080],[a,1920,1080],[n,720,900]]){
   assert.equal(png.readUInt32BE(16),w);assert.equal(png.readUInt32BE(20),h);
@@ -70,7 +82,7 @@ async function run(page){
  fs.writeFileSync('positron-evidence/audit-p51328-ai-shortcut.json',JSON.stringify({
   version:'P5.1.328',app:'4.23.413',realElectron:true,
   before:{...closed,sha256:hash(b)},after:{...opened,sha256:hash(a)},
-  narrow:{...narrow,sha256:hash(n)},typing,nonTV,qa328,
+  narrow:{...narrow,sha256:hash(n)},typing,nonTV,layout,qa328,
   scope:'focus/keyboard UI only, no licensed stream/GPU testing'
  },null,2));
  console.log('P328 native Electron AI keyboard QA',JSON.stringify(qa328));
