@@ -225,7 +225,8 @@ test('P5.1.237 tests real Electron keyboard group navigation screenshots',()=>{
 test('P5.1.237 installer builds may parallelize capture only after tests pass',()=>{
  const w=read('.github/workflows/positron-lab.yml');
  assert.match(w,/\n  build:\n    needs: \[test\]/);
- assert.match(w,/\n  release:\n    needs: \[test, capture, build\]/);
+ assert.match(w,/\n  release:\n    if: false # Stable-only Releases[^\n]*\n    needs: \[test, capture, build\]/);
+ assert.doesNotMatch(w,/^\s*gh release create/m,'Không tái bật phát hành Positron');
 });
 
 
