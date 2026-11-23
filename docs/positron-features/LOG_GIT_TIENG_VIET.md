@@ -2,14 +2,22 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
-## P5.1.284 — sao lưu trọng số ba mô hình AI tại máy
+## P5.1.285 — khôi phục an toàn ba mô hình AI từ JSON
 
-**Ứng dụng:** 4.23.369 · **Trạng thái:** Chưa có bản phát hành
+**Ứng dụng:** 4.23.370 · **Trạng thái:** Chưa có bản phát hành
+
+Feature priority: NEW / AI — Bổ sung chọn file sao lưu JSON cục bộ, từ chối tệp sai định dạng, giả mạo, vượt 500KB hoặc tổng số mẫu không khớp. Hiển thị xem trước Logistic, Naive Bayes, UCB và bắt buộc nhấn nút xác nhận trước khi thay thế trọng số. Chỉ đọc tệp trong Electron, không tải lên Internet. Bảo toàn quyền bật AI, thông báo, dữ liệu M3U/kênh, EPG, Favorites và trình phát; nếu ghi localStorage thất bại, khôi phục các giá trị cũ trong bộ nhớ.
+
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/53be84edbdaf9715cdee9a245dd73e706bd91b19)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+
+## P5.1.284 — Sao lưu trọng số ba mô hình AI / Electron 4.23.369
+
+**Ứng dụng:** Chưa xác minh · **Trạng thái:** Chưa có bản phát hành
 
 Feature priority: NEW — Chủ động tải JSON trọng số Logistic, Naive Bayes và UCB cùng bộ đếm mẫu, chỉ dữ liệu học trên máy; không gồm playlist, URL, ID kênh hoặc lịch sử xem. Feature class: AI
 
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/40a2e226441378a244dcb824cc531211eb51fbe4)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
 
 ## P5.1.283 — AI kiểm tra độ cân bằng nhãn huấn luyện / Electron 4.23.368
 
