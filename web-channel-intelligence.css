@@ -1,0 +1,21 @@
+/* Native desktop Web TV channel-hub AI tabs and browser-local results. */
+#page-tv #webChannelHub.web-ai-active .web-hub-main>.web-hub-chips,
+#page-tv #webChannelHub.web-ai-active .web-hub-main>.web-hub-controls,
+#page-tv #webChannelHub.web-ai-active .web-hub-main>.web-hub-carousel,
+#page-tv #webChannelHub.web-ai-active .web-hub-main>.web-hub-more,
+#page-tv #webChannelHub.web-ai-active>.web-hub-side{display:none!important}
+#page-tv #webChannelIntelligence[hidden]{display:none!important}
+#page-tv .web-hub-tabs{gap:6px;scroll-padding-inline:12px}
+#page-tv .web-ai-panel{padding:13px;min-width:0}
+#page-tv .web-ai-hint{margin:0 0 10px;color:var(--muted,#9baab7);font-size:12px;line-height:1.5}
+#page-tv .web-ai-bar{display:flex;gap:8px;margin-bottom:9px}
+#page-tv .web-ai-bar input{min-width:0;flex:1;height:40px;border:1px solid var(--hub-edge,#283a4a);border-radius:9px;background:var(--surface2,#142333);color:var(--text,#fff);padding:9px 12px}
+#page-tv .web-ai-chips{display:flex;gap:7px;overflow-x:auto;padding:0 0 11px;scrollbar-width:thin}
+#page-tv .web-ai-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:9px;max-height:min(65vh,700px);overflow-y:auto;scrollbar-width:thin}
+#page-tv .web-ai-tile{width:100%;min-height:110px}
+#page-tv .web-ai-tile .web-hub-play{min-height:104px;gap:3px}
+#page-tv .web-ai-category{font-size:10px;color:var(--muted,#9baab7);max-width:94%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#page-tv #webChannelIntelligence>.web-hub-more{display:block;margin:12px auto 2px}
+#page-tv #webChannelIntelligence>.web-hub-more[hidden]{display:none}
+#page-tv .web-hub-tab[data-ai-tab]{font-weight:730}
+@media(min-width:1100px){#page-tv .web-hub-tabs{flex-wrap:wrap;overflow-x:visible}}
