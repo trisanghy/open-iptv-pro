@@ -99,9 +99,9 @@ test('When local relay service is absent, app reports failure and does not open 
  s.instances[0].fail('manifestLoadError',403);await flush();
  assert.equal(s.api.current().html5Mode,'hls-relay');
  // Service startup is asynchronous; simulate the 7 bounded retries.
- for(let cycle=0;cycle<2;cycle++)for(let i=0;i<7;i++){
-  const retry=s.timers.find(t=>t.ms===650&&!t.cancelled);
-  assert.ok(retry,'local relay retry '+(cycle*7+i+1));
+ for(let cycle=0;cycle<2;cycle++){
+  const retry=s.timers.find(t=>t.ms===450&&!t.cancelled);
+  assert.ok(retry,'one bounded session retry per relay round '+(cycle+1));
   retry.cancelled=true;retry.fn();await flush();
  }
  assert.equal(s.api.current().html5Mode,'native','two unavailable relay rounds then native');
@@ -114,12 +114,9 @@ test('When local relay service is absent, app reports failure and does not open 
  assert.equal(s.elements.player.hidden,false);
 });
 
-test('An extensionless HLS endpoint retries TV-local relay after HTML5 and direct HLS fail',async()=>{
+test('Extensionless HLS endpoints start HLS.js first and fall back to TV-local relay',async()=>{
  const s=harness(),url='https://cdn.example.org/live/channel?id=vtv7';
  s.api.play({id:'vtv7',name:'VTV7',url});await flush();
- assert.equal(s.api.current().html5Mode,'native');
- s.api.handleHtml5Error(s.api.current().playbackSerial,'HTML5 unsupported');
- await flush();
  assert.equal(s.api.current().html5Mode,'hlsjs');
  const hls=s.instances.at(-1);assert.equal(hls.url,url);
  hls.fail('manifestLoadError');await flush();

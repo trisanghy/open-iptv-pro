@@ -432,3 +432,12 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -Command "$f=Join-Path $env:TE
 - Sửa: giữ hẳn lớp `<video>` tại `inset:0;width:100%;height:100%`, bỏ transform và `aspect-ratio` cưỡng bức; sử dụng `object-fit:contain` để trình duyệt tự căn video 4:3 / 16:9 / dọc / siêu rộng.
 - Metadata chỉ phục vụ phân loại tỷ lệ, không thay đổi kích thước CSS video trong quá trình phát. Khi chuyển nguồn, dọn mọi kiểu inline còn sót. Không đổi pipeline HLS/DASH/mpegts/HTML5/AVPlay.
 - Thêm test chống tái phát lỗi lệch góc. Cần kiểm tra thêm trên chính model TV đang dùng vì Samsung AVPlay và HTML5 compositing có thể khác Chromium.
+
+
+## v0.1.49 — Chẩn đoán và sửa relay HLS lỗi lặp trên TizenBrew
+
+- Không dùng commit `2da8...` cố định để StartService; nhận diện đúng `fullName` hiện có từ URL `/module/...` của TizenBrew, chỉ chấp nhận repo Open IPTV Pro.
+- Trước khi tạo phiên HLS, kiểm tra `/health` của dịch vụ trên chính TV. Thử tối đa 6 lần trong một lần kiểm tra (1,5 giây/lần + chờ giữa các lần), dùng chung promise; ghi nhớ trạng thái lỗi trong 45 giây để không gửi 14 request vô nghĩa. Chỉ thử lại POST `/session` tối đa 1 lần sau khi dịch vụ đã xác nhận hoạt động.
+- Nếu ứng dụng chạy ở WGT xem thử trên trình duyệt máy tính, hiển thị đúng giới hạn: không có Samsung AVPlay và không có Node relay trên TV; không tự báo nhầm rằng luồng kênh bị hỏng.
+- URL luồng không có đuôi như `/tv360?id=...` cũng ưu tiên HLS.js trước. Nguồn từ chối CORS/HTTP vẫn cần relay thực hoạt động, native WGT có AVPlay hoặc nguồn hợp lệ khác; không có cách bảo đảm phát chỉ bằng tăng số lượt giải mã.
+- Khi relay chưa chạy, báo nguyên nhân rõ ràng và tránh thử lặp vô hạn. Dữ liệu M3U, EPG, favorites, five themes và các file bộ phát không đổi.

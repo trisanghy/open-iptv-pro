@@ -296,7 +296,7 @@ test('A relay session waiting to retry stops requesting the previous channel aft
  const s=setup(storage);const requests=[];
  s.env.fetch=address=>{requests.push(address);return Promise.reject(Error('relay starting'));};
  s.api.play(c);await flush();
- const retry=s.timers.find(t=>t.ms===650&&!t.cancelled);
+ const retry=s.timers.find(t=>t.ms===450&&!t.cancelled);
  assert.ok(retry);
  s.api.play({id:'other',name:'Other',url:'https://different.example/b.mp4'});
  retry.fn();await flush();

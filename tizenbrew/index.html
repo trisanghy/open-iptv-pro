@@ -801,7 +801,7 @@ body[data-theme=glass] .dialog{
 <rect width="1024" height="1024" rx="220" fill="#ffffff"/>
 <path d="M 197,266 Q 197,173 297,173 Q 315,173 343,192 L 796,462 Q 879,514 796,566 L 343,836 Q 197,928 197,758 Z" fill="url(#tri)"/>
 </svg></div>
-    <div><strong>Open IPTV Pro</strong><p>Samsung Tizen Edition · TizenBrew v0.1.48</p></div>
+    <div><strong>Open IPTV Pro</strong><p>Samsung Tizen Edition · TizenBrew v0.1.49</p></div>
   </div>
   <div class="toolbar">
     <span class="clock" id="clock">--:--</span>
@@ -2149,11 +2149,11 @@ function retryPreferredDecoder(channel,token,route,reason,canRepeat){
   }
   // A direct HLS failure still has a local HLS.js+relay alternative.
   // Avoid a direct CORS/HTTP dead end switching to AVPlay too soon.
-  if(preferredDecoderAttempts.relay<PREFERRED_HLS_RELAY_MAX){
+  if(relayDownUntil<=Date.now()&&preferredDecoderAttempts.relay<PREFERRED_HLS_RELAY_MAX){
    hlsRelayAttempted=false;fastRelayActive=false;
    if(startRelayHlsPlayback(channel,token))return true;
   }
- }else if(route==='relay'&&preferredDecoderAttempts.relay<PREFERRED_HLS_RELAY_MAX){
+ }else if(route==='relay'&&relayDownUntil<=Date.now()&&preferredDecoderAttempts.relay<PREFERRED_HLS_RELAY_MAX){
   hlsRelayAttempted=false;fastRelayActive=false;
   if(startRelayHlsPlayback(channel,token))return true;
  }else if(route==='dashjs'&&canRepeat!==false&&preferredDecoderAttempts.dashjs<PREFERRED_DASH_MAX){
@@ -2540,6 +2540,11 @@ function startPlaybackStream(channel,token){
  var host=playbackSafeHost(channel&&channel.url);
  logPlayback('Nguồn '+(playbackStreamIndex+1)+'/'+Math.max(1,playbackStreamUrls.length)+(host?' · '+host:''));
  var preferred=TV_PLAYBACK_CORE.preferredRoute(channel.url);
+ // Extensionless HLS redirects like /tv360?id=... need HLS.js too.
+ if(!preferred){
+  var pathname='';try{pathname=new URL(channel.url).pathname||'';}catch(e){}
+  if(pathname&&!/\.[a-z0-9]{2,5}$/i.test(pathname))preferred='hlsjs';
+ }
  var verified=savedPlaybackRoute(channel);
  // A verified HLS-relay route still runs HLS.js and avoids repeatedly
  // probing a known CORS-blocked URL (important on older Samsung TVs).
@@ -2689,7 +2694,8 @@ function finishPlaybackError(token,message){
   // Do not auto-open the experimental hosted HTTPS iframe. It is not
   // the 6-digit paired Cast receiver and is known to repeat manifestLoadError.
   if(tryNextChannelSource(token))return;
-  var tip=!nativeAvplay()?'AVPlay không có trong TizenBrew. ':'';
+  var tip=!nativeAvplay()?'AVPlay không có trong module TizenBrew/trình duyệt. ':'';
+  if(relayDownUntil>Date.now())tip+=relayDownReason+' ';
   var last=playbackEvidence.length?playbackEvidence[playbackEvidence.length-1]:'nguồn không phát được';
   playbackFailure(token,tip+last+' · Kiểm tra nguồn, CORS hoặc HTTP; nếu các app khác phát được, dùng WGT có quyền AVPlay.');
  },2400);
@@ -3028,7 +3034,24 @@ function retryNativeHls(channel,token){
  * Activated only after direct HLS.js fails to fetch its manifest.
  */
 var hlsRelayServiceLastLaunch=0;
+var relayReadyUntil=0,relayDownUntil=0,relayDownReason='',relayProbePromise=null;
+function tizenModuleContext(){
+ if(typeof location==='undefined')return true;
+ return /^(127\.0\.0\.1|localhost)$/.test(String(location.hostname||'')) &&
+  String(location.port)==='8081' && /^http:$/.test(String(location.protocol||''));
+}
+function serviceFullName(){
+ var match=null,name='';
+ try{match=/\/module\/([^/]+)\//.exec(String(location.pathname||''));if(match)name=decodeURIComponent(match[1]);}catch(e){}
+ // Use the exact installed TizenBrew module identity, never an obsolete pinned commit.
+ return /^gh\/trisanghy\/open-iptv-pro@(tizenbrew|[0-9a-f]{40})$/i.test(name)?
+  name:'gh/trisanghy/open-iptv-pro@tizenbrew';
+}
+function relayOfflineError(message){
+ var err=Error(message);err.relayOffline=true;return err;
+}
 function ensureTizenHlsRelayService(){
+ if(!tizenModuleContext())return false;
  // TizenBrew's websocket supports StartService (event 6). Starting our own
  // explicitly named module service avoids waiting for stale CDN metadata to
  // be refreshed after the app HTML OTA has already advanced.
@@ -3044,7 +3067,7 @@ function ensureTizenHlsRelayService(){
     ws.send(JSON.stringify({
      type:6,
      payload:{
-      fullName:'gh/trisanghy/open-iptv-pro@2da8ee134acfc53439716f0066a0b86308ddfea7',
+      fullName:serviceFullName(),
       serviceFile:'tizenbrew/hls-relay-v1.js'
      }
     }));
@@ -3054,19 +3077,78 @@ function ensureTizenHlsRelayService(){
   ws.onerror=function(){clearTimeout(timeout);};
  }catch(e){}
 }
+function relayHealthCheck(){
+ var url=hlsRelayServer+'/health',headers={'X-Open-IPTV-Relay':'1'};
+ return new Promise(function(resolve,reject){
+  var settled=false,controller=typeof AbortController==='function'?new AbortController():null;
+  var timer=setTimeout(function(){
+   if(settled)return;settled=true;
+   if(controller)try{controller.abort();}catch(e){}
+   reject(Error('Relay health timeout'));
+  },1500);
+  fetch(url,{method:'GET',mode:'cors',cache:'no-store',headers:headers,
+   signal:controller?controller.signal:undefined
+  }).then(function(res){
+   if(!res.ok)throw Error('Relay HTTP '+res.status);
+   return res.json();
+  }).then(function(body){
+   if(settled)return;settled=true;clearTimeout(timer);
+   if(!body||body.ok!==true||body.transport!=='local-hls')throw Error('Relay trả sai giao thức');
+   resolve(body);
+  }).catch(function(err){
+   if(settled)return;settled=true;clearTimeout(timer);reject(err);
+  });
+ });
+}
+function ensureRelayReady(active){
+ if(active&&!active())return Promise.reject(Error('Lượt phát đã kết thúc.'));
+ if(!tizenModuleContext())
+  return Promise.reject(relayOfflineError('Bản xem thử trình duyệt không chạy dịch vụ HLS TizenBrew. Cần dùng module trên TV hoặc ứng dụng WGT Samsung đã ký.'));
+ if(typeof location==='undefined')return Promise.resolve({ok:true}); // isolated Node test harness
+ var now=Date.now();
+ if(relayDownUntil>now)return Promise.reject(relayOfflineError(relayDownReason));
+ if(relayReadyUntil>now)return Promise.resolve({ok:true});
+ if(relayProbePromise)return relayProbePromise;
+ ensureTizenHlsRelayService();
+ var count=0;
+ function poll(){
+  if(active&&!active())return Promise.reject(Error('Lượt phát đã kết thúc.'));
+  return relayHealthCheck().then(function(res){
+   relayReadyUntil=Date.now()+30000;relayDownUntil=0;relayDownReason='';
+   return res;
+  }).catch(function(err){
+   count++;
+   if(count<6)return new Promise(function(resolve){setTimeout(resolve,600);}).then(poll);
+   relayReadyUntil=0;relayDownUntil=Date.now()+45000;
+   relayDownReason='Dịch vụ HLS trên TV (127.0.0.1:17870) chưa khởi động hoặc bị chặn. Kiểm tra service của module TizenBrew.';
+   throw relayOfflineError(relayDownReason);
+  });
+ }
+ relayProbePromise=poll().then(function(res){relayProbePromise=null;return res;},function(err){relayProbePromise=null;throw err;});
+ return relayProbePromise;
+}
 function requestLocalHlsSession(channel,attempt,active){
  if(active&&!active())return Promise.reject(Error('Lượt phát đã kết thúc.'));
- return fetch(hlsRelayServer+'/session',{
-  method:'POST',mode:'cors',cache:'no-store',
-  headers:{'Content-Type':'application/json','X-Open-IPTV-Relay':'1'},
-  body:JSON.stringify({url:channel.url,browserUserAgent:typeof navigator!=='undefined'?String(navigator.userAgent||'').slice(0,300):''})
+ return ensureRelayReady(active).then(function(){
+  if(active&&!active())throw Error('Lượt phát đã kết thúc.');
+  return fetch(hlsRelayServer+'/session',{
+   method:'POST',mode:'cors',cache:'no-store',
+   headers:{'Content-Type':'application/json','X-Open-IPTV-Relay':'1'},
+   body:JSON.stringify({url:channel.url,browserUserAgent:typeof navigator!=='undefined'?
+    String(navigator.userAgent||'').slice(0,300):''})
+  });
  }).then(function(response){
-  if(!response.ok){var issue=Error('Dịch vụ HLS TV trả HTTP '+response.status);issue.permanent=response.status>=400&&response.status<500;throw issue;}
+  if(!response.ok){
+   var issue=Error('Dịch vụ HLS TV trả HTTP '+response.status);
+   issue.permanent=response.status>=400&&response.status<500;
+   throw issue;
+  }
   return response.json();
  }).catch(function(error){
-  if(error&&error.permanent||attempt>=7)throw error;
-  return new Promise(function(resolve){setTimeout(resolve,650);})
-   .then(function(){return requestLocalHlsSession(channel,attempt+1,active);});
+  if(error&&error.relayOffline||error&&error.permanent||attempt>=1||
+   active&&!active())throw error;
+  return new Promise(function(resolve){setTimeout(resolve,450);})
+    .then(function(){return requestLocalHlsSession(channel,attempt+1,active);});
  });
 }
 function diagText(value,max){
@@ -3102,7 +3184,7 @@ function loadRelayDiagnostics(token){
 }
 function startRelayHlsPlayback(channel,token){
  if(hlsRelayAttempted||!playbackActive(token)||playbackEngine!=='html5'||
-    preferredDecoderAttempts.relay>=PREFERRED_HLS_RELAY_MAX)return false;
+    relayDownUntil>Date.now()||preferredDecoderAttempts.relay>=PREFERRED_HLS_RELAY_MAX)return false;
  preferredDecoderAttempts.relay++;
  // HLS endpoints can be extensionless (e.g. /live?token=...), so this
  // fallback is gated by an actual HLS.js manifest error, not URL suffix.
@@ -3113,8 +3195,9 @@ function startRelayHlsPlayback(channel,token){
  var expired=false,attempt=preferredDecoderEpoch;
  function active(){return !expired&&isActiveHtml5Video(video,token)&&
   html5Mode==='hls-relay'&&attempt===preferredDecoderEpoch;}
- function failRelay(reason){
+ function failRelay(reason,isServiceDown){
   if(!active())return;
+  if(isServiceDown)preferredDecoderAttempts.relay=PREFERRED_HLS_RELAY_MAX;
   logPlayback('HLS.js nội bộ: '+String(reason||'').slice(0,90));
   if(retryPreferredDecoder(channel,token,'relay',reason,true))return;
   // The bounded HLS-only rounds were tried before any other decoder.
@@ -3169,7 +3252,7 @@ function startRelayHlsPlayback(channel,token){
   clearPlaybackTimer();
   var reason=String(error&&error.message||error||'không khả dụng').slice(0,100);
   logPlayback('HLS nội bộ: '+reason);
-  failRelay('Bộ chuyển tiếp HLS trên TV chưa khả dụng: '+reason);
+  failRelay('Bộ chuyển tiếp HLS trên TV chưa khả dụng: '+reason,!!(error&&error.relayOffline));
  });
  return true;
 }
