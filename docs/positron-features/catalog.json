@@ -1,20 +1,35 @@
 {
-  "generatedAt": "2026-11-23T04:42:00.188651+00:00",
+  "generatedAt": "2026-11-23T04:58:22.829644+00:00",
   "repository": "trisanghy/open-iptv-pro",
   "branch": "Positron",
   "versions": [
     {
+      "number": 284,
+      "version": "P5.1.284",
+      "appVersion": "4.23.369",
+      "title": "sao lưu trọng số ba mô hình AI tại máy",
+      "description": "Feature priority: NEW — Chủ động tải JSON trọng số Logistic, Naive Bayes và UCB cùng bộ đếm mẫu, chỉ dữ liệu học trên máy; không gồm playlist, URL, ID kênh hoặc lịch sử xem. Feature class: AI",
+      "kind": "feature",
+      "status": "candidate",
+      "published": "",
+      "tag": "",
+      "commit": "40a2e226441378a244dcb824cc531211eb51fbe4",
+      "url": "https://github.com/trisanghy/open-iptv-pro/tree/Positron",
+      "assets": [],
+      "image": null
+    },
+    {
       "number": 283,
       "version": "P5.1.283",
-      "appVersion": "4.23.368",
-      "title": "phân tích độ phủ và độ lệch dữ liệu học AI",
+      "appVersion": "Chưa xác minh",
+      "title": "AI kiểm tra độ cân bằng nhãn huấn luyện / Electron 4.23.368",
       "description": "Feature priority: NEW — Đánh giá số chủ đề đã có nhãn thật, tổng số mẫu, tỷ lệ tập trung chủ đề lớn nhất và nhóm chủ đề chưa được học; đưa lời khuyên chống lệch mẫu mà không tự phân loại kênh hay hứa hẹn độ chính xác. Feature class: AI",
       "kind": "feature",
       "status": "candidate",
       "published": "",
       "tag": "",
-      "commit": "4fa6da714e28742fb5d8788aed0f8978a1ac224e",
-      "url": "https://github.com/trisanghy/open-iptv-pro/tree/Positron",
+      "commit": "",
+      "url": "https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md",
       "assets": [],
       "image": null
     },
@@ -1351,7 +1366,7 @@
       "commit": "",
       "url": "https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md",
       "assets": [],
-      "image": "screenshots/positron-p51194-dvr-start-after-before-1920x1080-real.png"
+      "image": "screenshots/positron-p51194-dvr-start-after-after-1920x1080-real.png"
     },
     {
       "number": 193,

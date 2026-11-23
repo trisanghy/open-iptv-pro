@@ -2,14 +2,22 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
-## P5.1.283 — phân tích độ phủ và độ lệch dữ liệu học AI
+## P5.1.284 — sao lưu trọng số ba mô hình AI tại máy
 
-**Ứng dụng:** 4.23.368 · **Trạng thái:** Chưa có bản phát hành
+**Ứng dụng:** 4.23.369 · **Trạng thái:** Chưa có bản phát hành
+
+Feature priority: NEW — Chủ động tải JSON trọng số Logistic, Naive Bayes và UCB cùng bộ đếm mẫu, chỉ dữ liệu học trên máy; không gồm playlist, URL, ID kênh hoặc lịch sử xem. Feature class: AI
+
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/40a2e226441378a244dcb824cc531211eb51fbe4)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+
+## P5.1.283 — AI kiểm tra độ cân bằng nhãn huấn luyện / Electron 4.23.368
+
+**Ứng dụng:** Chưa xác minh · **Trạng thái:** Chưa có bản phát hành
 
 Feature priority: NEW — Đánh giá số chủ đề đã có nhãn thật, tổng số mẫu, tỷ lệ tập trung chủ đề lớn nhất và nhóm chủ đề chưa được học; đưa lời khuyên chống lệch mẫu mà không tự phân loại kênh hay hứa hẹn độ chính xác. Feature class: AI
 
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/4fa6da714e28742fb5d8788aed0f8978a1ac224e)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
 
 ## P5.1.282 — AI giải thích bằng chứng Naive Bayes / Electron 4.23.367
 
