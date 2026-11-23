@@ -368,6 +368,8 @@
       activeTeachIndex=0;
       activeStatusMessage='Đã hoàn tác nhãn cho '+previous.name+'; giữ nguyên các nhãn AI cũ.';
       const stored=save();render();
+      // Rerender can reset the modal scroll; leave the restored feedback visible.
+      byId('poAIActiveStatus')?.scrollIntoView({block:'nearest',behavior:'instant'});
       if(!stored)state()?.toast?.('Chưa lưu được thao tác hoàn tác nhãn AI','warn');
      });
      trainer.append(undo);

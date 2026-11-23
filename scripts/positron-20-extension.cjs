@@ -9645,7 +9645,10 @@ async function runTwenty(page){
  assert.deepEqual([after280.readUInt32BE(16),after280.readUInt32BE(20)],[1920,1080]);
  assert.ok(!before280.equals(after280),'P280 skipped queue and undo affordance must be visible');
 
- // P281: actual Electron ML training plus exact one-step rollback.
+ // P281: the previous QA cases may have already taught a label; restore that
+ // exact pending snapshot before starting an isolated one-step undo scenario.
+ const earlierUndo281=page.locator('#poAIActiveUndoLabel');
+ if(await earlierUndo281.count())await earlierUndo281.click();
  await page.locator('#poAIActiveRow0').scrollIntoViewIfNeeded();
  const baseline281=await page.evaluate(()=>{
   const record=JSON.parse(localStorage.getItem('positron-intelligence-preferences-v1')||'{}');
@@ -9674,6 +9677,12 @@ async function runTwenty(page){
    folderOpen:document.querySelector('details.po-ai-folder[data-topic="other"]')?.open===true,
    skipCount:document.querySelector('#poAIActiveLearning>strong')?.textContent||'',
    status:document.getElementById('poAIActiveStatus')?.textContent||'',
+   statusVisible:(()=>{
+    const el=document.getElementById('poAIActiveStatus'),panel=document.getElementById('poWatchFlowPanel');
+    if(!el||!panel)return false;
+    const a=el.getBoundingClientRect(),b=panel.getBoundingClientRect();
+    return a.height>0&&a.top>=b.top&&a.bottom<=b.bottom;
+   })(),
    ids:JSON.stringify(window.IPTVState.getChannels().map(c=>c.id)),
    playing:window.IPTVState.getCurrent()?.id||'',
    noOverflow:document.documentElement.scrollWidth<=innerWidth+3};
@@ -9691,6 +9700,7 @@ async function runTwenty(page){
   originalIdsRestored:JSON.stringify(restored281.record.taughtIds)===JSON.stringify(baseline281.record.taughtIds),
   examplesRestored:restored281.examples===baseline281.examples,
   undoGone:restored281.undoGone,feedbackVisible:restored281.status.includes('Đã hoàn tác nhãn'),
+  feedbackWithinModal:restored281.statusVisible,
   skipsKept:restored281.skipCount===baseline281.skipCount,
   folderStillOpen:restored281.folderOpen,playlistUnchanged:restored281.ids===baseline281.ids,
   noAutoplay:restored281.playing===baseline281.playing,noOverflow:restored281.noOverflow};
