@@ -75,7 +75,7 @@ test('Player clears status on real playback and does not keep old autoplay warni
  const video={paused:false,readyState:4};
  const byId=id=>({video,player:{classList:cls},playerStatus:status})[id];
  const setPlayerStatus=msg=>{status.textContent=msg||'';status.hidden=!msg;};
- vm.runInNewContext(code,{byId,setPlayerStatus,playbackEngine:'html5',playbackSerial:7,playbackReady:()=>{cls.add('is-playing');setPlayerStatus('');}});
+ vm.runInNewContext(code,{byId,setPlayerStatus,playbackEngine:'html5',playbackSerial:7,notePlaybackProgress(){},playbackReady:()=>{cls.add('is-playing');setPlayerStatus('');}});
  video.onplaying();assert.equal(status.hidden,true);assert.equal(cls.present,true);
  status.textContent='Lỗi cũ';status.hidden=false;video.ontimeupdate();
  assert.equal(status.hidden,true);

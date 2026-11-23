@@ -1318,7 +1318,12 @@ function launchPlaybackRoute(channel,token,route){
  if(route==='native'){startHtml5Playback(channel,token);return true;}
  playbackEngine='html5';html5Mode='native';
  byId('video').hidden=false;byId('avplayObject').hidden=true;
- if(route==='relay')return startRelayHlsPlayback(channel,token);
+ if(route==='relay'){
+  fastRelayActive=true;
+  var started=startRelayHlsPlayback(channel,token);
+  if(!started)fastRelayActive=false;
+  return started;
+ }
  if(route==='hlsjs')return startHlsPlayback(channel,token,'đường phát đã xác nhận');
  return false;
 }
@@ -1726,7 +1731,7 @@ function ensureTizenHlsRelayService(){
     ws.send(JSON.stringify({
      type:6,
      payload:{
-      fullName:'gh/trisanghy/open-iptv-pro@d86fa2e2076eaa85ef31b13d6b621a333d42eb82',
+      fullName:'gh/trisanghy/open-iptv-pro@627d2ae59df723cb0aeaf0b9b33f1101d6feb3de',
       serviceFile:'tizenbrew/hls-relay-v1.js'
      }
     }));

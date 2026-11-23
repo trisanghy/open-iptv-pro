@@ -97,10 +97,10 @@ test('A fatal HLS error after first picture is recovered, not silently ignored',
  s.api.play(c);await flush();
  s.instances.at(-1).ready();await flush();
  s.api.playbackReady(s.api.current().serial);
- const requests=s.requests.length;
+ const sessions=s.requests.filter(x=>x.address.endsWith('/session')).length;
  s.instances.at(-1).fail('fragLoadError');await flush();
  assert.equal(s.api.current().recoveries,1);
- assert.equal(s.requests.length,requests+1,'new local relay session created');
+ assert.equal(s.requests.filter(x=>x.address.endsWith('/session')).length,sessions+1,'new local relay session created');
  assert.equal(old.destroyed,true);
 });
 test('Failed relay recovery tries the next decoder without an endless relay loop',async()=>{
