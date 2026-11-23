@@ -6,7 +6,7 @@ Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA 
 
 **Ứng dụng:** 4.23.405 · **Trạng thái:** Chưa có bản phát hành
 
-Feature priority: FIX — Ảnh Electron thật P319 sau khi mở “Vì sao AI gợi ý?” cho thấy nội dung chi tiết đẩy hàng nút ▶ Xem, Hợp gu, Không hợp, Tra cứu web xuống thấp dưới vùng xem. Đặt hành động chính ở trước phần giải thích mở rộng, giữ thứ tự điều khiển bằng phím và nội dung giải thích khi mở. Feature class: UX / AI
+Feature priority: BLOCKER_FIX — Ảnh Electron thật P319 chứng minh mở giải thích AI đã đẩy nút Xem khởi động playback và Hợp gu ra khỏi vùng bấm, chặn thao tác chính với kênh. Đưa hàng nút lên trên phần giải thích và kiểm chứng click target trong Electron. Feature class: AI
 
 [Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/e8b586ff04a5f05172942989a1ae4a78ca72955b)
 [Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
