@@ -39,3 +39,27 @@ Mục tiêu: 20 cải tiến độc lập trên duy nhất nhánh `Positron`; m�
 - Không có kiểm thử phát IPTV nguồn thực / GPU / DVR / Cast trên thiết bị.
 
 **ĐIỂM PHỤC HỒI:** Tại thời điểm tạo nhật ký, sản phẩm mã mới nhất P5.1.273 / package 4.23.358 (release Actions-only); bắt đầu vòng 03 từ HEAD Positron mới nhất sau khi xác minh.
+
+## Đợt mới từ tệp đính kèm 23/11/2026 — tiếp tục sau P5.1.273
+
+Quy tắc áp dụng: chỉ nhánh `Positron`; **Stable-only GitHub Releases** (Positron dùng Actions artifacts, release job `if: false`); không force-push, không tính lại P272/P273 vào đợt này. Đây là đợt **MỚI** so với phần nhật ký lịch sử ở trên.
+
+### Vòng 01/20 — P5.1.274 (4.23.359) — ĐÃ QA, Actions-only
+- Tính năng NEW/BREAKTHROUGH: tìm chương trình XMLTV theo tên, tên kênh và chủ đề, có/không dấu; khử trùng giữa các thư mục và không tự phát.
+- Commit chính `78d1a920cd1983e4e831e771e951482dba12f03e`; commit sửa assert CI Stable-only `2cc486dbd0f40ecfdd93587d7b357355003dfffe`.
+- CI thành công: https://github.com/trisanghy/open-iptv-pro/actions/runs/45092120324 — 987 test, 982 pass, 5 skip, 0 fail; Electron screenshot job, Win Setup/Portable x64, Mac arm64/x64 đều xanh; Release skipped theo chính sách Stable-only.
+- Ảnh Electron thật đã tải VÀ MỞ: `p5-20-rounds/positron-p51274-programme-search-before-1920x1080-real.png` và `p5-20-rounds/positron-p51274-programme-search-after-1920x1080-real.png`; input BONG DA, 1 kết quả, vẫn focus, không autoplay/overflow.
+- Ảnh/QA Actions artifact: https://github.com/trisanghy/open-iptv-pro/actions/runs/45092120324/artifacts/14780949594
+- Windows x64: https://github.com/trisanghy/open-iptv-pro/actions/runs/45092120324/artifacts/14781816591
+
+### Vòng 02/20 — P5.1.275 (4.23.360) — ĐANG KIỂM CHỨNG ẢNH
+- Tính năng NEW/BREAKTHROUGH: chỉ mục EPG được tái dùng giữa các lần render, nút **Quét lại EPG**, tự làm mới khi playlist/EPG có thay đổi nhận diện được, và giữ trạng thái thư mục đã mở/đóng; bỏ trạng thái health của kênh khỏi khóa làm mới.
+- Commit tính năng `b4af68fc4e65b68e21de79c9ce7bfc826077d1f3`; hai commit hoàn thiện `14a16db02fb795cbe0922272a457d66e03cef8b5` và `67aabf3c2c0b34aadafea78f3e01dfd29c0dd43c`.
+- Node test thành công vòng sửa test: 988 tổng, 983 pass, 5 skip, 0 fail (run https://github.com/trisanghy/open-iptv-pro/actions/runs/45093144782). SHA cuối `67aabf3c...` còn kiểm chứng CI https://github.com/trisanghy/open-iptv-pro/actions/runs/45093436205 .
+- Bằng chứng Electron cần xác nhận: `positron-p51275-index-before-1920x1080-real.png`, `positron-p51275-index-after-1920x1080-real.png`, số lượt quét cache, giữ thư mục đóng, không autoplay/overflow.
+- Chỉ tính đủ 02/20 khi **CI của SHA cuối thành công và hai PNG đã được MỞ**; nếu chưa đủ ghi 01/20 đạt, 02/20 candidate.
+
+### Vòng 03–20 của đợt 23/11 — CHƯA BẮT ĐẦU
+- Không đánh dấu thêm vòng mới khi chưa có đủ thay đổi mã, test, PNG Electron đã mở, version/commit và bằng chứng riêng.
+- Trọng tâm tiếp theo: tối ưu lưu chỉ mục giữa các lần mở ứng dụng mà không lưu stream URL hoặc rò rỉ lịch sử, giới hạn dữ liệu cache; quản lý model học máy, rà soát số nút AI và kết quả phân loại theo EPG.
+- Khi tiếp nối: xác minh HEAD/version mới nhất, ảnh và trạng thái Actions trước. Không tái bật Release prerelease, không chạm main/nhánh khác.
