@@ -2,14 +2,22 @@
 
 Bản diễn giải theo phiên bản từ mã nguồn và GitHub Releases. SHA và liên kết commit nguyên gốc được giữ để đối chiếu.
 
-## P5.1.310 — tùy chọn đọc rộng bảng phân tích AI trên desktop
+## P5.1.311 — không ghi nhãn AI giả khi bộ nhớ đầy, rollback Naive Bayes an toàn
 
-**Ứng dụng:** 4.23.395 · **Trạng thái:** Chưa có bản phát hành
+**Ứng dụng:** 4.23.396 · **Trạng thái:** Chưa có bản phát hành
+
+Feature class: AI Evidence: QA Electron thật `qa311` giả lập QuotaExceededError với localStorage của mô hình AI; ảnh `positron-p51311-storage-fail-before-1920x1080-real.png` / `positron-p51311-storage-fail-after-1920x1080-real.png`, Node regression.
+
+[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/abf987ab384aa5b0929d1e718b4ecb1f54e2e208)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+
+## P5.1.310 — Đọc rộng phân tích AI theo lựa chọn / Electron 4.23.395
+
+**Ứng dụng:** Chưa xác minh · **Trạng thái:** Chưa có bản phát hành
 
 Feature priority: NEW — Bảng WatchFlow AI mặc định chỉ rộng khoảng 528 px trên desktop 1920 px dù còn nhiều khoảng trống; thêm nút “Đọc rộng” để tăng lên 820 px, cùng “Thu gọn” trở lại. Không tác động mô hình hoặc luồng phát. Feature class: AI
 
-[Xem commit gốc](https://github.com/trisanghy/open-iptv-pro/commit/51a34fc143a57eae99e4f5b10352dec5415c7d7c)
-[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/tree/Positron)
+[Bản phát hành hoặc mã nguồn](https://github.com/trisanghy/open-iptv-pro/blob/Positron/POSITRON_P5_CHANGELOG.md)
 
 ## P5.1.309 — Tách xác nhận khôi phục khỏi dạy AI và quay lại an toàn / Electron 4.23.394
 
